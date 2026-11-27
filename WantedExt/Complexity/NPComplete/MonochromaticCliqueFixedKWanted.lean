@@ -24,7 +24,7 @@ doi:10.1006/jcss.2000.1729, p. 292: deciding `F → (G, H)` is coNP-complete for
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.MonochromaticTriangleWanted

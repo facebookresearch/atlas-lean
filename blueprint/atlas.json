@@ -1,0 +1,48 @@
+{
+  "schema": "autoform-atlas/v1",
+  "areas": {
+    "Foundations & Logic": [
+      "Logic",
+      "SetTheory",
+      "Order",
+      "CategoryTheory"
+    ],
+    "Algebra & Number Theory": [
+      "Algebra",
+      "GroupTheory",
+      "RingTheory",
+      "FieldTheory",
+      "LinearAlgebra",
+      "RepresentationTheory",
+      "NumberTheory",
+      "AlgebraicGeometry"
+    ],
+    "Geometry & Topology": [
+      "Geometry",
+      "Topology"
+    ],
+    "Analysis & Probability": [
+      "Analysis",
+      "MeasureTheory",
+      "Probability",
+      "Dynamics"
+    ],
+    "Discrete Mathematics & Computer Science": [
+      "Combinatorics",
+      "GraphTheory",
+      "TheoryOfComputation",
+      "ComputerScience"
+    ],
+    "Applied Mathematics": [
+      "InformationTheory",
+      "QuantumInformation",
+      "GameTheory",
+      "Economics",
+      "Biology",
+      "StatisticalMechanics",
+      "Physics",
+      "Chemistry",
+      "EarthScience"
+    ]
+  }
+}

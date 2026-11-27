@@ -814,10 +814,14 @@ private lemma finalBound (x errV : ℝ) (hx : 8 ≤ x)
 
 end Aux
 
-/-- Source: Berndt, Ramanujan's Notebooks Part I, Chapter 3, Entry 10, Example 1, printed p.
-    64 / PDF p. 74.
+/-- **Logarithmic asymptotics of the square-root Poisson series.** For real $x$ let
+$S(x) = \sum_{k=1}^{\infty} x^k \sqrt{k} / k!$. Then, as $x \to \infty$,
+$$\log S(x) = x + \tfrac{1}{2} \log x - \frac{1}{8x} - \frac{1}{16 x^2} + O\left(x^{-3}\right).$$
 
 Proves `Wanted` entry `ramanujan_part1_ch3_entry10_example1_sqrt_poisson_asymptotic`.
+
+Source: Berndt, Ramanujan's Notebooks Part I, Chapter 3, Entry 10, Example 1, printed p.
+    64 / PDF p. 74.
 -/
 theorem ramanujan_part1_ch3_entry10_example1_sqrt_poisson_asymptotic :
     (fun x : ℝ =>

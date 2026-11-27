@@ -1,0 +1,33 @@
+# Coalescent theory
+
+Backward-in-time models of the genealogy of a sample of genes, from Kingman's coalescent and its generalizations to the site frequency spectrum, recombination and population structure.
+
+- [Hudson–Kaplan bound on recombination events](hudson-kaplan-bound-on-recombination-events/README.md)
+- [Kingman's coalescent and Watterson's estimator](kingman-s-coalescent-and-watterson-s-estimator/README.md)
+- [Ancestral lineage counting and Tavaré's formula](ancestral-lineage-counting-and-tavar-s-formula/README.md)
+- [Expected site frequency spectrum](expected-site-frequency-spectrum/README.md)
+- [Partition-valued Kingman coalescent](partition-valued-kingman-coalescent/README.md)
+- [Ranked labeled histories of coalescent trees](ranked-labeled-histories-of-coalescent-trees/README.md)
+- [Multispecies coalescent](multispecies-coalescent/README.md)
+- [Segregating sites and pairwise differences](segregating-sites-and-pairwise-differences/README.md)
+- [Site frequency spectrum under variable population size](site-frequency-spectrum-under-variable-populatio/README.md)
+- [Skyline plot estimates of population size](skyline-plot-estimates-of-population-size/README.md)
+- [Structured coalescent](structured-coalescent/README.md)
+- [Two-locus coalescent](two-locus-coalescent/README.md)
+- [Λ-coalescents](coalescents/README.md)
+- [Branch-length covariances from random joining](branch-length-covariances-from-random-joining/README.md)
+- [Covariances of the site frequency spectrum](covariances-of-the-site-frequency-spectrum/README.md)
+- [Fu's branch-length covariances for every sample size](fu-s-branch-length-covariances-for-every-sample/README.md)
+- [Fu's covariances of the site frequency spectrum](fu-s-covariances-of-the-site-frequency-spectrum/README.md)
+- [Infinite-sites sampling formula](infinite-sites-sampling-formula/README.md)
+- [Cannings models and multiple-merger coalescents](multiple-merger-coalescents/README.md)
+- [Pairwise differences under Poisson mutation](pairwise-differences-under-poisson-mutation/README.md)
+- [Poisson mutation on the Kingman genealogy](poisson-mutation-on-the-kingman-genealogy/README.md)
+- [Site frequency spectrum under a population bottleneck](site-frequency-spectrum-under-a-population-bottl/README.md)
+- [Site frequency spectrum under exponential growth](site-frequency-spectrum-under-exponential-growth/README.md)
+
+- [Recoverable demographic history from finite genomic samples](recoverable-demographic-history-from-finite-genomic-samples.md)
+- [Coalescent limits of genotype imputation](coalescent-limits-of-genotype-imputation/README.md)
+- [Inverse instantaneous coalescence rate](inverse-instantaneous-coalescence-rate/README.md)
+- [Identifiability of level-1 species networks from quartets and logDet distances](level-1-network-identifiability/README.md)
+- [Duality between site and branch statistics](site-and-branch-statistics-duality/README.md)

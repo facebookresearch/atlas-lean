@@ -28,17 +28,17 @@ variable {V : Type*} {G : SimpleGraph V}
 
 open Finset List
 
-/--
-Two walks are internally disjoint if they share no vertices other than their endpoints.
--/
+/-- **Internally disjoint walks.** Two walks $p$ and $q$ in a simple graph $G$ are internally
+disjoint if no vertex is an interior vertex of both, where the interior vertices of a walk are
+the entries of its vertex sequence other than the first and the last. -/
 def InternallyDisjoint {u v x y : V} (p : G.Walk u v) (q : G.Walk x y) : Prop :=
   Disjoint p.support.tail.dropLast q.support.tail.dropLast
 
-/--
-We say a graph is infinitely connected if any two vertices are connected by infinitely many
-pairwise disjoint paths. Note that graphs with at most one vertex are not classed as
-infinitely connected.
--/
+/-- **Infinitely connected graphs.** A simple graph $G$ is infinitely connected if it has at
+least two vertices and, for any two distinct vertices $u$ and $v$, there is an infinite set of
+paths from $u$ to $v$ in $G$ that are pairwise internally disjoint.
+
+In particular, a graph with at most one vertex is not infinitely connected. -/
 def InfinitelyConnected (G : SimpleGraph V) : Prop := Nontrivial V ∧
   Pairwise fun u v ↦ ∃ P : Set (G.Walk u v),
     P.Infinite ∧ (∀ p ∈ P, p.IsPath) ∧ P.Pairwise InternallyDisjoint
@@ -62,8 +62,9 @@ section BFS
 variable [Fintype V] [DecidableEq V] [DecidableRel G.Adj] {m n : ℕ} {s t : Finset V} {u v w : V}
 
 variable (G s) in
-/-- One round of breadth-first search: `G.bfsStep s` consists of the vertices of `s` together with
-their neighbours. -/
+/-- **One round of breadth-first search.** For a simple graph $G$ on a finite vertex set and a
+set $s$ of vertices, this is the set of vertices that lie in $s$ or are adjacent to some vertex
+of $s$, that is, $s$ together with all neighbours of its vertices. -/
 def bfsStep : Finset V := {w | w ∈ s ∨ ∃ v ∈ s, G.Adj v w}
 
 @[simp, grind =]
@@ -107,7 +108,10 @@ lemma reachable_of_mem_iterate_bfsStep (hv : v ∈ G.bfsStep^[n] {u}) : G.Reacha
     · exact ih hv
     · exact (ih hw).trans hwv.reachable
 
-/-- Iterate `G.bfsStep` at most `n` times, stopping as soon as no new vertex shows up. -/
+/-- **Breadth-first search with a round limit.** For a simple graph $G$ on a finite vertex set,
+a natural number $n$ and a set $s$ of vertices, this applies rounds of breadth-first search to
+$s$ (each round adds all neighbours of the current vertices), stopping after $n$ rounds or as
+soon as a round adds no new vertex, whichever comes first, and returns the resulting set. -/
 def bfsIterate : ℕ → Finset V → Finset V
   | 0, s => s
   | n + 1, s => if (G.bfsStep s).card ≤ s.card then s else bfsIterate n (G.bfsStep s)
@@ -123,7 +127,11 @@ lemma bfsIterate_eq_iterate_bfsStep (n : ℕ) (s : Finset V) :
       exact (Function.iterate_fixed hs _).symm
     · rw [ih, ← Function.iterate_succ_apply]
 
-/-- The finset of vertices reachable from `u`, computed by breadth-first search. -/
+/-- **Vertices reachable from a vertex.** For a simple graph $G$ on a finite vertex set $V$ and
+a vertex $u$, this is the set obtained from $\{u\}$ by breadth-first search with at most $|V|$
+rounds, stopping early as soon as a round adds no new vertex.
+
+It consists exactly of the vertices reachable from $u$ in $G$. -/
 def reachableFinset (u : V) : Finset V := G.bfsIterate (Fintype.card V) {u}
 
 @[simp]

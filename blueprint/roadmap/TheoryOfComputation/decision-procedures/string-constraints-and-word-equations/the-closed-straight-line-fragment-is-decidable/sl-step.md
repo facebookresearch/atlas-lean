@@ -1,0 +1,4 @@
+# One fold step of straight-line evaluation
+
+String terms over an alphabet $\alpha$ with variables $x_0, x_1, \dots$ (indexed by $\mathbb{N}$) are built from constant words, variables, concatenation and letter-to-word morphisms; $\sigma(t)$ denotes the value of a term $t$ under an assignment $\sigma : \mathbb{N} \to \alpha^*$ of words to the variables, and string formulas are positive Boolean combinations (conjunction, disjunction, true, false) of atoms (term equations, regular memberships, length bounds). For a list $l$ of words over $\alpha$ and $j \in \mathbb{N}$, $l[j]$ denotes the $j$-th entry of $l$, or the empty word if $j \ge |l|$. The evaluation step sends a list $l$ of words over $\alpha$ and a term $t$ to the list $l$ followed by
+one more word, $\sigma_l(t)$, where $\sigma_l$ is the assignment sending $x_j$ to $l[j]$.

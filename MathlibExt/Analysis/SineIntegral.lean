@@ -30,7 +30,7 @@ import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
 ## Attribution
 
 Copied verbatim (statements and proofs unchanged) from
-`MathlibExt/Biology/StatisticalGenetics/RareVariantInference/BurdenSKATO.lean`
+`Domains/Biology/StatisticalGenetics/RareVariantInference/BurdenSKATO.lean`
 (T88, open PR #1621, commit 45948b862),
 section `GilPelaez`, where the Dirichlet integral was proved for the Gil-Pelaez and Davies
 p-value formulas.

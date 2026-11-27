@@ -1,0 +1,45 @@
+/-
+Author: @toskua
+-/
+module
+
+public import Mathlib.Analysis.CStarAlgebra.CStarMatrix
+public import Mathlib.Algebra.Star.Unitary
+public import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Defs
+public import MathlibExt.Analysis.CStarAlgebra.CStarMatrix.Map
+
+/-!
+# Actual finite general-linear values of C-star matrix unitaries
+
+Forget the actual matrix norm through the stock ring equivalence, then map
+the unitary's actual inverse pair to ordinary matrix units. This is the DATA
+needed by the original finite K1 representative class. No K-equivalence,
+component quotient, path or matrix-fold output is a premise.
+-/
+
+@[expose] public section
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+namespace CStarMatrix
+
+universe uR uI
+variable {R : Type uR} {ι : Type uI}
+variable [Semiring R] [StarRing R] [Fintype ι] [DecidableEq ι]
+
+/-- The actual unitary-to-ordinary-GL homomorphism, preserving both inverse matrix values. -/
+public def unitaryToGL :
+    unitary (CStarMatrix ι ι R) →* Matrix.GeneralLinearGroup ι R :=
+  (Units.map (CStarMatrix.ofMatrixRingEquiv (n := ι) (A := R)).symm.toMonoidHom).comp
+    Unitary.toUnits
+
+/-- The whole ordinary matrix is exactly the original C-star matrix unitary's value. -/
+public theorem unitaryToGL_coe_matrix (w : unitary (CStarMatrix ι ι R)) :
+    (unitaryToGL w : Matrix ι ι R) =
+      (CStarMatrix.ofMatrixRingEquiv (n := ι) (A := R)).symm (w : CStarMatrix ι ι R) := rfl
+
+/-- Every ordinary finite matrix coefficient has its original unitary value. -/
+public theorem unitaryToGL_apply_entry (w : unitary (CStarMatrix ι ι R)) (i j : ι) :
+    (unitaryToGL w : Matrix ι ι R) i j = (w : CStarMatrix ι ι R) i j := rfl
+
+end CStarMatrix

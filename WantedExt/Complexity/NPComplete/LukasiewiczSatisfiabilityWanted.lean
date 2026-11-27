@@ -18,7 +18,7 @@ CSL 2026, LIPIcs 363 (2026), 14:1-14:18, doi:10.4230/LIPIcs.CSL.2026.14, Section
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Basic.Real.Basic

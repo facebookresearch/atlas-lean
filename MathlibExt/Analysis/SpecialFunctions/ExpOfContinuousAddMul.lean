@@ -25,7 +25,9 @@ namespace MetaMathlibExt
 
 open scoped Interval Topology
 
-/-- A continuous complex-valued homomorphism from the additive reals is an exponential. -/
+/-- **Continuous solutions of the exponential functional equation.** If a continuous function
+$f : \mathbb{R} \to \mathbb{C}$ satisfies $f(0) = 1$ and $f(r + s) = f(r) f(s)$ for all real $r$
+and $s$, then there is a complex number $L$ such that $f(r) = e^{rL}$ for every real $r$. -/
 theorem exists_eq_exp_mul_of_continuous_add_mul (f : ℝ → ℂ) (hf : Continuous f)
     (hzero : f 0 = 1) (hadd : ∀ r s : ℝ, f (r + s) = f r * f s) :
     ∃ L : ℂ, ∀ r : ℝ, f r = Complex.exp ((r : ℂ) * L) := by

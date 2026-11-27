@@ -1,0 +1,3 @@
+# The isotropic stiffness tensor
+
+For reals $c_{11}, c_{12}, c_{44}$, the cubic Voigt matrix has $c_{11}$ on the diagonal and $c_{12}$ off the diagonal of its upper-left $3 \times 3$ normal block, the shear block $c_{44} I_3$, and zero normal-shear couplings. The isotropic (Lamé) Voigt matrix with constants $\lambda, \mu$ is the cubic Voigt matrix with $c_{11} = \lambda + 2\mu$, $c_{12} = \lambda$ and $c_{44} = \mu$. With $v$ the Voigt index of a pair of axes, the isotropic matrix satisfies $C_{v(a,b)\,v(c,d)} = \lambda\,\delta_{ab}\delta_{cd} + \mu(\delta_{ac}\delta_{bd} + \delta_{ad}\delta_{bc})$ for all axes $a, b, c, d$.

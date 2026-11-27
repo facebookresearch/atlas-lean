@@ -1,0 +1,15 @@
+# Farey sequences
+
+- [Farey set](farey-finset.md)
+- [Farey sequence](farey-seq.md)
+- [Membership in the Farey set](mem-farey-finset-iff.md)
+- [Farey sets grow with the order](farey-finset-mono.md)
+- [Farey neighbors](is-farey-neighbor.md)
+- [Mediant](mediant.md)
+- [Farey neighbors have denominator sum exceeding the order](neighbor-den-sum-gt.md)
+- [Determinant one and large denominator sum give Farey neighbors](det-one-and-sum-gt-imp-neighbor.md)
+- [Consecutive Farey fractions have determinant one](det-eq-one.md)
+- [Arithmetic characterization of Farey neighbors](is-farey-neighbor-iff-det-and-sum.md)
+- [The mediant of Farey neighbors is not in the Farey set](mediant-not-mem.md)
+- [Mediants that enter the next Farey set](mediant-mem-succ.md)
+- [Mediants generate the next Farey set](farey-succ-generation.md)

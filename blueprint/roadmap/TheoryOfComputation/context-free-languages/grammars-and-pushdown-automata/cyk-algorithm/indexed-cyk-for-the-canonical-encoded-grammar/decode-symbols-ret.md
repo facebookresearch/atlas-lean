@@ -1,0 +1,4 @@
+# Charged symbol decoding agrees with canonical decoding
+
+Let $T$ be an alphabet. An encoded context-free grammar over an alphabet $T$ consists of a start nonterminal $n_0 \in \mathbb{N}$ and a finite list of encoded productions $(A, \gamma)$ with $A \in \mathbb{N}$ and $\gamma$ a finite word over the disjoint union of $\mathbb{N}$ (nonterminals) and $T$ (terminals); decoding a symbol reads an element of $\mathbb{N}$ as a nonterminal and an element of $T$ as a terminal, and decoding a production $(A, \gamma)$ gives the production $A \to \gamma'$ with $\gamma'$ the symbolwise decoding of $\gamma$. A costed computation returns a value together with a cost in $\mathbb{N}$. The costed decoding of a list of encoded symbols has as value the list of decoded symbols, with cost $1$ for the empty list plus $4$ per symbol. For every list of encoded symbols, the value of its costed decoding is the
+list of decoded symbols.

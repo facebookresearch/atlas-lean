@@ -1,0 +1,15 @@
+# Divisor Dynamics
+
+- [Line Degrees](line-degrees.md)
+- [NDiv](ndiv.md)
+- [Compose Curve](compose-curve.md)
+- [Is Nef Class](is-nef-class.md)
+- [Truncated Euler](truncated-euler.md)
+- [Selected Tensor](selected-tensor.md)
+- [Mixed Intersection](mixed-intersection.md)
+- [Pullback Line](pullback-line.md)
+- [Iterate Map](iterate-map.md)
+- [First Degree](first-degree.md)
+- [Degree Growth](degree-growth.md)
+- [First Dynamical Degree](first-dynamical-degree.md)
+- [Topological Krull Dim eq of smooth](topological-krull-dim-eq-of-smooth.md)

@@ -9,14 +9,14 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.Algorithms.Lean.Numerical.Summation
-public import MathlibExt.Biology.PopulationGenetics.Inference.Numerics.FloatLoglik
+public import MathlibExt.Analysis.Numerical.SumEnclosure
 import Mathlib.Algebra.BigOperators.Fin
 
 /-!
 # Enclosure of a rounded log-likelihood sum
 
 This instantiates the elementary enclosure in
-`MathlibExt.Biology.PopulationGenetics.Inference.Numerics.FloatLoglik` with
+`MathlibExt.Analysis.Numerical.SumEnclosure` with
 the existing recursive summation `rsum`. For `1 ≤ p`, `rsum p` is binary
 round-to-nearest, ties-to-even, unbounded-exponent summation. The enclosure
 inequality also holds at `p = 0`, but that case is only the formal extension

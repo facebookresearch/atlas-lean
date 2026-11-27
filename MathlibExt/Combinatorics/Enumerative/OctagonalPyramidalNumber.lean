@@ -27,15 +27,17 @@ namespace MetaMathlibExt
 @[expose]
 public section
 
-/-- The `k`-th octagonal pyramidal number, `k(k+1)(2k-1)/2`. -/
+/-- **Octagonal pyramidal numbers.** For a natural number $k$, the $k$-th octagonal pyramidal
+number is $k(k+1)(2k-1)/2$. -/
 def octagonalPyramidalNumber (k : ℕ) : ℕ :=
   k * (k + 1) * (2 * k - 1) / 2
 
-/-- Ordered compositions of `k + 14` into `k` positive parts, with no part
-equal to `2`, `3`, or `4`.
+/-- **Compositions avoiding parts 2, 3 and 4.** For a natural number $k$, the restricted
+compositions of $k + 14$ are the ordered compositions of $k + 14$ into $k$ positive parts with no
+part equal to $2$, $3$ or $4$, that is, the tuples $(c_1, \dots, c_k)$ of positive integers with
+$c_1 + \dots + c_k = k + 14$ and $c_i \notin \{2, 3, 4\}$ for every $i$.
 
-Stable source identifiers: concept `jis_sem_775e702cd81d5e5e2661ccc9`,
-statement `jis_4f77f6102ca88eba755447c5`.
+Source: concept `jis_sem_775e702cd81d5e5e2661ccc9`, statement `jis_4f77f6102ca88eba755447c5`.
 -/
 def octagonalPyramidalCompositions (k : ℕ) : Finset (Fin k → ℕ) :=
   (Fintype.piFinset fun _ : Fin k => Finset.Icc 1 (k + 14) \ {2, 3, 4}).filter

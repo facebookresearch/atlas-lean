@@ -57,7 +57,8 @@ variety of soluble groups of derived length at most `k`, i.e. `F_n / (F_n^(k) �
 `U`-embeddable in the class of finite groups. -/
 def solubleOneRelatorGroupsLocallyEmbeddable : Prop :=
   ∀ (k n : ℕ) (r : FreeGroup (Fin n)), IsLocallyEmbeddableIntoFinite
-    (FreeGroup (Fin n) ⧸ (derivedSeries (FreeGroup (Fin n)) k ⊔ Subgroup.normalClosure {r}))
+    (FreeGroup (Fin n) ⧸
+      (Subgroup.derivedSeries (FreeGroup (Fin n)) k ⊔ Subgroup.normalClosure {r}))
 
 /--
 Resolved false: the Kourovka Archive answers 3.15 "No, in both cases", citing Budkin and Gorbunov

@@ -1,0 +1,3 @@
+# Random-cluster measure increases stochastically in $p$ when $q \ge 1$
+
+Let $G = (V, E)$ be a finite simple graph, $0 < p_1 \le p_2 < 1$ and $q \ge 1$. Then $\phi_{G,p_1,q} \preceq \phi_{G,p_2,q}$: $\phi_{G,p_1,q}(A) \le \phi_{G,p_2,q}(A)$ for every increasing set $A$ of assignments $\omega$ of open/closed states to the unordered pairs of vertices (loops and non-edges included), where $\phi_{G,p,q}$ is the [random-cluster probability](../random-cluster-measures-on-finite-graphs/fk-prob.md). Each function $\mu$ on configurations is viewed as the measure $\sum_\omega \max(\mu(\omega), 0)\, \delta_\omega$.

@@ -1,0 +1,15 @@
+# Direct sums of operators
+
+- [Composition of direct sum operators is componentwise](prod-map-comp.md)
+- [Direct sum of identity operators is the identity](prod-map-one.md)
+- [Direct sum of zero operators is zero](prod-map-zero.md)
+- [Scalar multiplication of a direct sum operator](prod-map-smul.md)
+- [Operator norm of a direct sum is the maximum of the norms](norm-prod-map.md)
+- [Kernel of a direct sum operator](ker-prod-map.md)
+- [Range of a direct sum operator](range-prod-map.md)
+- [Invertibility of a direct sum operator](is-unit-prod-map-iff.md)
+- [Spectrum of a direct sum operator is the union of spectra](spectrum-prod-map.md)
+- [Resolvent set of a direct sum operator](resolvent-set-prod-map.md)
+- [Compactness of a direct sum operator](is-compact-operator-prod-map-iff.md)
+- [Fredholmness of a direct sum operator](is-fredholm-prod-map-iff.md)
+- [Fredholm index of a direct sum is additive](index-prod-map.md)

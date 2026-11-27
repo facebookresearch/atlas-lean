@@ -54,12 +54,17 @@ open Cslib.CCS.Recursive Cslib.LTS
 
 variable {Name Constant : Type*} [DecidableEq Name]
 
-/-- The choice of the listed prefixes `a.q`; `nil` for the empty list. -/
+/-- **Sum of prefixes.** For a list $l$ of pairs $(a, q)$ of a label and a process, the process
+that chooses among the prefixes $a.q$ listed in $l$: the empty list gives the inactive process
+$\mathbf{0}$, and the list with head $(a, q)$ and tail $r$ gives the choice $a.q + P$ between the
+prefix $a.q$ and the process $P$ built in the same way from $r$. -/
 def sumOf : List (Label Name × Process Name Constant) → Process Name Constant
   | [] => .nil
   | (a, q) :: rest => .choice (.prefix a q) (sumOf rest)
 
-/-- The transitions of a choice of prefixes are the listed ones. -/
+/-- **Transitions of a sum of prefixes.** For every recursive specification, every list $l$ of
+pairs of a label and a process, every label $a$ and every process $q$, the sum of the prefixes
+listed in $l$ has a transition labelled $a$ to $q$ exactly when $(a, q)$ belongs to $l$. -/
 theorem step_sumOf_iff {spec : Specification Name Constant}
     (l : List (Label Name × Process Name Constant)) (a : Label Name)
     (q : Process Name Constant) :
@@ -71,15 +76,23 @@ theorem step_sumOf_iff {spec : Specification Name Constant}
       rw [sumOf, Process.choice_step_iff, Process.prefix_step_iff, ih]
       simp
 
-/-- `realize` presents processes indexed by codes whose transitions are exactly
-those listed by `steps`. -/
+/-- **Realization of a code-level transition system.** Fix a recursive specification. A family
+of processes $P_x$ indexed by codes $x$ realizes a function $s$ that lists, for each code $x$,
+labelled transitions $(a, y)$ with $a$ a label and $y$ a code, when for every code $x$, every
+label $a$ and every process $q$, the process $P_x$ has a transition with label $a$ to $q$
+exactly when $s(x)$ contains an entry $(a, y)$ with $P_y = q$. -/
 def Realizes (spec : Specification Name Constant) {α : Type*}
     (realize : α → Process Name Constant) (steps : α → List (Label Name × α)) : Prop :=
   ∀ x a q, Process.Step spec (realize x) a q ↔ ∃ y, (a, y) ∈ steps x ∧ realize y = q
 
 variable {spec : Specification Name Constant}
 
-/-- Constants whose bodies list their transitions realize them. -/
+/-- **Constants listing their transitions realize them.** Fix a recursive specification, a map
+$\iota$ from codes to process constants and a function $s$ listing labelled transitions for
+each code. Suppose that for every code $x$, writing $(a_1, y_1), \dots, (a_n, y_n)$ for the
+entries of $s(x)$ in order, the body of the constant $\iota(x)$ is
+$a_1.\iota(y_1) + (a_2.\iota(y_2) + \dots + (a_n.\iota(y_n) + 0))$, which is $0$ when $n = 0$.
+Then the processes $\iota(x)$, indexed by codes $x$, realize $s$. -/
 theorem Realizes.constant {α : Type*} (inj : α → Constant)
     (steps : α → List (Label Name × α))
     (hspec : ∀ x, spec (inj x) =
@@ -94,15 +107,22 @@ theorem Realizes.constant {α : Type*} (inj : α → Constant)
   · rintro ⟨y, hmem, rfl⟩
     exact ⟨(a, y), hmem, rfl, rfl⟩
 
-/-- Code-level parallel composition: either side moves alone, or the two sides
-synchronize on complementary labels. -/
+/-- **Code-level parallel composition.** Given functions $s$ and $t$ listing the labelled
+transitions of codes $x$ and $y$, the transitions of the pair $(x, y)$ are listed in three
+blocks: $(a, (x', y))$ for each entry $(a, x')$ of $s(x)$; then $(a, (x, y'))$ for each entry
+$(a, y')$ of $t(y)$; then $(\tau, (x', y'))$ for each entry $(a, x')$ of $s(x)$ and each entry
+$(b, y')$ of $t(y)$ whose labels are complementary, that is, one is the input and the other the
+output on the same name. -/
 def parSteps {α β : Type*} (s : α → List (Label Name × α)) (t : β → List (Label Name × β))
     (z : α × β) : List (Label Name × (α × β)) :=
   (s z.1).map (fun y => (y.1, (y.2, z.2))) ++ (t z.2).map (fun w => (w.1, (z.1, w.2))) ++
     (s z.1).flatMap fun y =>
       (t z.2).filterMap fun w => (Label.synchronize y.1 w.1).map fun c => (c, (y.2, w.2))
 
-/-- Parallel composition preserves realization. -/
+/-- **Parallel composition preserves realization.** Fix a recursive specification. If the
+processes $P_x$ realize $s$ and the processes $Q_y$ realize $t$, then the parallel compositions
+$P_x \mid Q_y$, indexed by pairs $(x, y)$, realize the code-level parallel composition of $s$
+and $t$. -/
 theorem Realizes.parallel {α β : Type*} {f : α → Process Name Constant}
     {g : β → Process Name Constant} {s : α → List (Label Name × α)}
     {t : β → List (Label Name × β)} (hf : Realizes spec f s) (hg : Realizes spec g t) :
@@ -124,8 +144,10 @@ theorem Realizes.parallel {α β : Type*} {f : α → Process Name Constant}
     · exact Or.inr (Or.inl ⟨_, ⟨y'', hy'', rfl⟩, rfl⟩)
     · exact Or.inr (Or.inr ⟨rfl, b, c, _, _, ⟨x'', hx'', rfl⟩, ⟨y'', hy'', rfl⟩, hbc, rfl⟩)
 
-/-- Whether a restriction to the blocked names permits a label, as a Boolean
-(`allowedB_iff`). -/
+/-- **Boolean restriction test.** For a list $L$ of blocked names, the test returns true on a
+label exactly when the label is the silent action $\tau$, or an input or an output on a name
+that does not occur in $L$. It is the Boolean form of the condition that restriction by $L$
+allows the label. -/
 def allowedB (blocked : List Name) : Label Name → Bool
   | .tau => true
   | .input n => !blocked.contains n
@@ -135,12 +157,17 @@ theorem allowedB_iff (blocked : List Name) (a : Label Name) :
     allowedB blocked a = true ↔ StaticProcess.Allowed blocked a := by
   cases a <;> simp [allowedB, StaticProcess.Allowed]
 
-/-- Code-level restriction: keep the permitted transitions. -/
+/-- **Code-level restriction.** For a list $L$ of blocked names and a function $s$ listing the
+labelled transitions of each code, the restricted transitions of a code $x$ are the entries
+$(a, y)$ of $s(x)$, in order, whose label $a$ is the silent action $\tau$ or an input or an
+output on a name that does not occur in $L$. -/
 def restrictSteps {α : Type*} (blocked : List Name) (s : α → List (Label Name × α)) (x : α) :
     List (Label Name × α) :=
   (s x).filter fun y => allowedB blocked y.1
 
-/-- Restriction preserves realization. -/
+/-- **Restriction preserves realization.** Fix a recursive specification and a list $L$ of
+blocked names. If the processes $P_x$ realize $s$, then the restricted processes
+$P_x \setminus L$ realize the code-level restriction of $s$ by $L$. -/
 theorem Realizes.restriction {α : Type*} {f : α → Process Name Constant}
     {s : α → List (Label Name × α)} (blocked : List Name) (hf : Realizes spec f s) :
     Realizes spec (fun x => .restriction blocked (f x)) (restrictSteps blocked s) := by
@@ -159,18 +186,24 @@ section Certificate
 
 variable {α β : Type*} [DecidableEq α] [DecidableEq β]
 
-/-- Every implementation step from a related pair is matched by a silent step
-of the implementation alone or by one specification step with the same label. -/
+/-- **Forward certificate check.** Let $s$ list the labelled transitions $(a, x')$ of each
+implementation code $x$, let $t$ list those of each specification code $y$, and let $R$ be a
+finite list of code pairs. The forward check succeeds when for every pair $(x, y)$ in $R$ and
+every entry $(a, x')$ of $s(x)$, either $a = \tau$ and $(x', y)$ is in $R$, or some entry
+$(a, y')$ of $t(y)$ with the same label has $(x', y')$ in $R$. -/
 def forwardCheck (s : α → List (Label Name × α)) (t : β → List (Label Name × β))
     (rel : List (α × β)) : Bool :=
   rel.all fun p => (s p.1).all fun step =>
     (step.1 == .tau && rel.contains (step.2, p.2)) ||
       (t p.2).any fun spec => spec.1 == step.1 && rel.contains (step.2, spec.2)
 
-/-- Every specification step from a related pair is matched by the
-implementation directly, or the implementation can take a silent step to a pair
-earlier in `rel`. A silent specification step may also be matched by staying
-put. -/
+/-- **Backward certificate check.** Let $s$ list the labelled transitions $(a, x')$ of each
+implementation code $x$, let $t$ list those of each specification code $y$, and let $R$ be a
+finite list of code pairs. The backward check succeeds when for every pair $(x, y)$ in $R$ and
+every entry $(a, y')$ of $t(y)$, at least one of the following holds: $a = \tau$ and
+$(x, y')$ is in $R$; some entry $(a, x')$ of $s(x)$ with the same label has $(x', y')$ in $R$;
+or some entry $(\tau, x'')$ of $s(x)$ has $(x'', y)$ in $R$, and the first occurrence of
+$(x'', y)$ in $R$ comes strictly before the first occurrence of $(x, y)$. -/
 def backwardCheck (s : α → List (Label Name × α)) (t : β → List (Label Name × β))
     (rel : List (α × β)) : Bool :=
   rel.all fun p => (t p.2).all fun spec =>
@@ -179,7 +212,9 @@ def backwardCheck (s : α → List (Label Name × α)) (t : β → List (Label N
       (s p.1).any fun step =>
         step.1 == .tau && rel.contains (step.2, p.2) && rel.idxOf (step.2, p.2) < rel.idxOf p
 
-/-- The certificate check: both directions. -/
+/-- **Weak-bisimulation certificate check.** For transition lists $s$ of implementation codes
+and $t$ of specification codes and a finite list $R$ of code pairs, the certificate check
+succeeds when both the forward check and the backward check succeed on $s$, $t$ and $R$. -/
 def certCheck (s : α → List (Label Name × α)) (t : β → List (Label Name × β))
     (rel : List (α × β)) : Bool :=
   forwardCheck s t rel && backwardCheck s t rel
@@ -208,7 +243,11 @@ private theorem backward_match (hf : Realizes spec f s) (hb : backwardCheck s t 
       obtain ⟨x', hweak, hmem'⟩ := ih _ (hn ▸ hlt) x'' y rfl hmem a y' hy'
       exact ⟨x', τSTr.trans_sTr (τSTr.of_tr hstep) hweak, hmem'⟩
 
-/-- A successful certificate check makes every listed pair weakly bisimilar. -/
+/-- **Certificate checks give weak bisimilarity.** Let $f$ realize the code-level transition
+function $s$ and $g$ realize $t$ for a recursive specification, and let $R$ be a list of code
+pairs on which the certificate check of $s$, $t$ and $R$ succeeds. Then for every pair $(x, y)$
+in $R$, the processes $f(x)$ and $g(y)$ are weakly bisimilar in the labelled transition system
+of the specification. -/
 theorem weaklyBisimilar_of_certCheck (hf : Realizes spec f s) (hg : Realizes spec g t)
     (hcheck : certCheck s t rel = true) {x : α} {y : β} (hxy : (x, y) ∈ rel) :
     (Process.lts spec).HomWeakBisimilarity (f x) (g y) := by
@@ -233,11 +272,15 @@ theorem weaklyBisimilar_of_certCheck (hf : Realizes spec f s) (hg : Realizes spe
     obtain ⟨x', hweak, hmem⟩ := backward_match hf hbwd _ x y rfl hxy a y' hy'
     exact ⟨f x', hweak, x', y', hmem, rfl, rfl⟩
 
-/-- A sufficient, direct check of the root condition of observation congruence
-at a pair: every first step on either side is matched by exactly one step on
-the other side with the same label, into a pair of the relation. Rooted weak
-bisimilarity also allows silent steps around the matching step, so this check
-is incomplete. -/
+/-- **Direct check of the root condition.** Given code-level transition functions $s$ on codes
+$\alpha$ and $t$ on codes $\beta$, each listing labelled steps to codes, a relation $R$ given as
+a list of code pairs, and codes $x$ and $y$, the root check succeeds exactly when every listed
+step $(a, x')$ of $s(x)$ is matched by some listed step $(a, y')$ of $t(y)$ with the same label
+and $(x', y') \in R$, and every listed step $(a, y')$ of $t(y)$ is matched by some listed step
+$(a, x')$ of $s(x)$ with the same label and $(x', y') \in R$.
+
+This is a sufficient check of the root condition of observation congruence at $(x, y)$. Rooted
+weak bisimilarity also allows silent steps around the matching step, so the check is incomplete. -/
 def rootCheck (s : α → List (Label Name × α)) (t : β → List (Label Name × β))
     (rel : List (α × β)) (x : α) (y : β) : Bool :=
   ((s x).all fun step => (t y).any fun spec =>
@@ -245,8 +288,12 @@ def rootCheck (s : α → List (Label Name × α)) (t : β → List (Label Name 
     (t y).all fun spec => (s x).any fun step =>
       step.1 == spec.1 && rel.contains (step.2, spec.2)
 
-/-- With the root condition, a successful certificate check gives rooted
-observation congruence (Milner, Chapter 7). -/
+/-- **Certificate checks give rooted observation congruence.** Let $f$ realize the code-level
+transition function $s$ and $g$ realize $t$ for a recursive specification, and let $R$ be a list
+of code pairs on which the certificate check of $s$, $t$ and $R$ succeeds. If the root check of
+$s$, $t$ and $R$ succeeds at codes $x$ and $y$, then the processes $f(x)$ and $g(y)$ are rooted
+weakly bisimilar (observation congruent) in the labelled transition system of the specification
+(Milner, Chapter 7). -/
 theorem rootedWeaklyBisimilar_of_certCheck (hf : Realizes spec f s) (hg : Realizes spec g t)
     (hcheck : certCheck s t rel = true) {x : α} {y : β} (hroot : rootCheck s t rel x y = true) :
     (Process.lts spec).RootedWeaklyBisimilar (f x) (g y) := by

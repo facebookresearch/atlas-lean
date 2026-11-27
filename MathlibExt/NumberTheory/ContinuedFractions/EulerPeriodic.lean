@@ -62,8 +62,8 @@ Lagrange direction proved in
 namespace MetaMathlibExt
 
 section
-/-- Euler direction of the Euler–Lagrange theorem: an eventually periodic
-continued fraction forces real quadratic irrationality.
+/-- **Euler's theorem on periodic continued fractions.** If the continued fraction of a real
+number $x$ is eventually periodic, then $x$ is a real quadratic irrational.
 
 Proves `Wanted` entry `isRealQuadraticIrrational_of_continuedFractionEventuallyPeriodic`.
 -/
@@ -386,12 +386,15 @@ theorem isRealQuadraticIrrational_of_continuedFractionEventuallyPeriodic
   have hpos : 0 < (minpoly ℚ x).natDegree := minpoly.natDegree_pos hInt
   exact ⟨hInt, by omega⟩
 
-/-- Euler–Lagrange theorem: the continued fraction of `x` is eventually periodic
-if and only if `x` is a real quadratic irrational. No pure-periodicity claim and
-no stronger reduced-quadratic criterion are asserted.
-Source: Nimbran–Levrie line 136.
+/-- **Euler–Lagrange theorem.** A real number $x$ has an eventually periodic continued fraction if
+and only if $x$ is a real quadratic irrational.
+
+The theorem asserts neither pure periodicity nor the stronger criterion for reduced quadratic
+irrationals.
 
 Proves `Wanted` entry `continuedFractionEventuallyPeriodic_iff_isRealQuadraticIrrational`.
+
+Source: Nimbran–Levrie line 136.
 -/
 theorem continuedFractionEventuallyPeriodic_iff_isRealQuadraticIrrational
     (x : ℝ) : ContinuedFractionEventuallyPeriodic x ↔ IsRealQuadraticIrrational x :=

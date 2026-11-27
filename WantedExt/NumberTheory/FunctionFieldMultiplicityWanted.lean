@@ -37,10 +37,9 @@ attribute [local instance] Classical.propDecidable
 @[expose] public section
 
 /--
-`fixedDegreeMonic F n` is the finite collection `M_n` of monic polynomials over `F`
-of degree `n`.  A coefficient vector `c : Fin n → F` is sent to
-`X ^ n + ∑ i, C (c i) * X ^ i`; thus the formal collection is explicitly finite and
-contains exactly the possible lower coefficients of a monic degree-`n` polynomial.
+**Monic polynomials of fixed degree.** For a finite field $F$ and a natural number $n$, $M_n$ is
+the finite set of monic polynomials of degree $n$ over $F$: the polynomials
+$X^n + c_{n-1} X^{n-1} + \dots + c_1 X + c_0$ with $c_0, \dots, c_{n-1} \in F$.
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
 Definitions.
@@ -52,9 +51,10 @@ public noncomputable def fixedDegreeMonic (F : Type*) [Field F] [Fintype F] [Dec
     X ^ n + ∑ i : Fin n, C (c i) * X ^ (i : ℕ)
 
 /--
-Membership in `fixedDegreeMonic F n` is exactly representability by the displayed
-coefficient-vector construction.  This records the defining finite parametrization of
-`M_n` without appealing to an ambient infinite set of polynomials.
+**Membership in $M_n$.** Let $F$ be a finite field and $n \in \mathbb{N}$. A polynomial $f$ over
+$F$ lies in the set $M_n$ of monic polynomials of degree $n$ over $F$ if and only if there are
+$c_0, \dots, c_{n-1} \in F$ with $f = X^n + \sum_{i=0}^{n-1} c_i X^i$.
+
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
 Definitions.
@@ -66,7 +66,8 @@ public theorem mem_fixedDegreeMonic_iff (F : Type*) [Field F] [Fintype F] [Decid
   simp [fixedDegreeMonic]
 
 /--
-The degree-zero slice `M_0` consists only of the constant monic polynomial `1`.
+**The only monic polynomial of degree zero.** For every finite field $F$, the set $M_0$ of monic
+polynomials of degree $0$ over $F$ is $\{1\}$.
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
 Definitions.
@@ -77,8 +78,9 @@ public theorem fixedDegreeMonic_zero (F : Type*) [Field F] [Fintype F] [Decidabl
   simp [fixedDegreeMonic]
 
 /--
-`monicIrreducible F` is the paper's set `𝒫` of prime polynomials: its two formal clauses
-say respectively that the polynomial is monic and irreducible.
+**Monic irreducible polynomials.** For a field $F$, $\mathcal{P}$ is the set of polynomials over
+$F$ that are monic and irreducible; these are the prime polynomials of the paper.
+
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
 Definitions.
@@ -87,8 +89,10 @@ public def monicIrreducible (F : Type*) [Field F] : Set (Polynomial F) :=
   {P | P.Monic ∧ Irreducible P}
 
 /--
-A polynomial belongs to `monicIrreducible F` precisely when it is both monic and
-irreducible, exposing the two clauses used for `P ∈ 𝒫` in later statements.
+**Membership in the set of monic irreducible polynomials.** Let $F$ be a field. A polynomial $P$
+over $F$ lies in the set $\mathcal{P}$ of monic irreducible polynomials over $F$ if and only if
+$P$ is monic and irreducible.
+
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
 Definitions.
@@ -98,9 +102,13 @@ public theorem mem_monicIrreducible_iff (F : Type*) [Field F] (P : Polynomial F)
   rfl
 
 /--
-`hFree F h` is `S_h`: a member is monic, and no monic irreducible `P` has its `h`th
-power dividing the member.  The condition is intentionally meaningful for every
-natural `h`; the paper's asymptotic theorems separately assume `2 ≤ h`.
+**$h$-free polynomials.** Let $F$ be a field and $h$ a natural number. The set $S_h$ of
+$h$-free polynomials over $F$ consists of the monic polynomials $f$ over $F$ such that no monic
+irreducible polynomial $P$ over $F$ satisfies $P^h \mid f$.
+
+The condition makes sense for every natural number $h$; the paper's asymptotic theorems
+separately assume $h \ge 2$.
+
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
 Definitions.
@@ -109,8 +117,10 @@ public def hFree (F : Type*) [Field F] (h : ℕ) : Set (Polynomial F) :=
   {f | f.Monic ∧ ∀ P ∈ monicIrreducible F, ¬P ^ h ∣ f}
 
 /--
-The unit polynomial is `h`-free for positive `h`: a hypothetical irreducible factor
-would become a unit after taking a positive power, contradicting irreducibility.
+**The polynomial $1$ is $h$-free.** For every field $F$ and every natural number $h \ge 1$,
+the constant polynomial $1 \in F[X]$ is $h$-free: it is monic and no $h$-th power of a monic
+irreducible polynomial divides it.
+
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
 Definitions.
@@ -123,8 +133,12 @@ public theorem one_mem_hFree (F : Type*) [Field F] (h : ℕ) (hh : 0 < h) :
   exact hP.2.not_isUnit ((isUnit_pow_iff hh.ne').mp hpow)
 
 /--
-`hFull F h` is `N_h`: a member is monic, and whenever a monic irreducible `P` divides
-it, `P ^ h` also divides it.  As in the source, theorem statements impose `2 ≤ h`.
+**$h$-full polynomials.** Let $F$ be a field and $h \in \mathbb{N}$. The set $N_h$ of $h$-full
+polynomials over $F$ consists of the monic polynomials $f$ such that $P^h$ divides $f$ for
+every monic irreducible polynomial $P$ that divides $f$.
+
+As in the source, theorem statements impose $h \ge 2$.
+
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
 Definitions.
@@ -133,8 +147,12 @@ public def hFull (F : Type*) [Field F] (h : ℕ) : Set (Polynomial F) :=
   {f | f.Monic ∧ ∀ P ∈ monicIrreducible F, P ∣ f → P ^ h ∣ f}
 
 /--
-The unit polynomial is `h`-full for every `h`, because no irreducible polynomial can
-divide `1`; the divisibility implication in the definition is therefore vacuous.
+**The polynomial $1$ is $h$-full.** For every field $F$ and every natural number $h$, the
+constant polynomial $1 \in F[X]$ is $h$-full: it is monic, and whenever a monic irreducible
+polynomial $P$ divides it, so does $P^h$.
+
+The divisibility condition holds vacuously, since no irreducible polynomial divides $1$.
+
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
 Definitions.
@@ -146,10 +164,11 @@ public theorem one_mem_hFull (F : Type*) [Field F] (h : ℕ) :
   exact False.elim (hP.2.not_isUnit (isUnit_iff_dvd_one.mpr hdiv))
 
 /--
-`omegaMult F k f` is `ω_k(f)`, the number of distinct normalized irreducible factors
-of the nonzero polynomial `f` whose multiplicity in `normalizedFactors f` is exactly
-`k`.  The exceptional input `f = 0`, for which normalized factorization is not the
-paper's finite prime factorization, is assigned value `0` explicitly.
+**Number of prime factors of given multiplicity.** Let $F$ be a field and $k \in \mathbb{N}$. For a
+nonzero polynomial $f$ over $F$, $\omega_k(f)$ is the number of distinct monic irreducible
+polynomials $P$ dividing $f$ whose multiplicity in $f$ (the largest $m$ with $P^m \mid f$) is
+exactly $k$. For the zero polynomial, $\omega_k(0) = 0$ by convention.
+
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
 Definitions.
@@ -160,8 +179,11 @@ public noncomputable def omegaMult (F : Type*) [Field F] (k : ℕ) (f : Polynomi
     ((normalizedFactors f).toFinset.filter fun P => (normalizedFactors f).count P = k).card
 
 /--
-The explicit exceptional convention in `omegaMult` gives `ω_k(0) = 0` for every
-multiplicity `k`.
+**$\omega_k$ vanishes at the zero polynomial.** For every field $F$ and every natural number $k$,
+$\omega_k(0) = 0$. Here $\omega_k(f)$ is the number of distinct monic irreducible polynomials
+dividing a nonzero polynomial $f$ over $F$ with multiplicity exactly $k$, and $\omega_k(0) = 0$
+by convention, so this records that convention.
+
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
 Definitions.
@@ -171,8 +193,12 @@ public theorem omegaMult_zero (F : Type*) [Field F] (k : ℕ) :
   simp [omegaMult]
 
 /--
-The unit polynomial has no normalized irreducible factors, so `ω_k(1) = 0` for every
-multiplicity `k`.
+**$\omega_k$ vanishes at the polynomial $1$.** For every field $F$ and every natural number $k$,
+$\omega_k(1) = 0$, where $\omega_k(f)$ is the number of distinct monic irreducible polynomials
+dividing a nonzero polynomial $f$ over $F$ with multiplicity exactly $k$.
+
+The polynomial $1$ is a unit, so it has no monic irreducible factors.
+
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
 Definitions.
@@ -182,10 +208,14 @@ public theorem omegaMult_one (F : Type*) [Field F] (k : ℕ) :
   simp [omegaMult, normalizedFactors_one]
 
 /--
-`IsDegreeNondecreasing U G` formalizes the source's reversed-looking monotonicity
-convention: for `f₁,f₂ ∈ U`, the inequality `deg f₂ ≤ deg f₁` implies
-`G f₂ ≤ G f₁`.  Natural degree is adequate because `U` will consist of monic, hence
-nonzero, polynomials.
+**Degree-nondecreasing functions.** Let $F$ be a field, $U$ a set of polynomials over $F$ and
+$G$ a real-valued function on polynomials over $F$. Then $G$ is degree-nondecreasing on $U$
+when for all $f_1, f_2 \in U$ with $\deg f_2 \le \deg f_1$ we have $G(f_2) \le G(f_1)$. Here
+$\deg$ is the natural degree, with $\deg 0 = 0$.
+
+In particular $G$ takes the same value on members of $U$ of equal degree. The natural degree is
+adequate because $U$ will consist of monic, hence nonzero, polynomials.
+
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
 Theorem 3 (definition preceding the requested normal-order results).
@@ -196,8 +226,10 @@ public def IsDegreeNondecreasing (F : Type*) [Field F] (U : Set (Polynomial F))
     G f₂ ≤ G f₁
 
 /--
-Every constant real-valued function is degree-nondecreasing on every polynomial set;
-the degree premise is irrelevant because both function values coincide.
+**Constant functions are degree-nondecreasing.** Let $F$ be a field and $U$ a set of
+polynomials over $F$. For every real number $c$, the constant function with value $c$ is
+degree-nondecreasing on $U$.
+
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
 Theorem 3 (definition preceding the requested normal-order results).
@@ -209,12 +241,18 @@ public theorem isDegreeNondecreasing_const (F : Type*) [Field F]
   exact le_rfl
 
 /--
-`HasNormalOrder F U g G` says first that `g` and `G` are nonnegative on `U` and that `G`
-is degree-nondecreasing there.  It then says that for each `ε > 0`, the real-valued count
-of degree-`n` members of `U` outside
-`(1-ε)G(f) < g(f) < (1+ε)G(f)` is little-o of the count of `U ∩ M_n` as `n → ∞`.
-The paper writes `g,G : U → ℝ≥0`; total real-valued functions are used here, with
-nonnegativity of both imposed on `U`, so that finite-set filtering remains direct.
+**Normal order on a set of polynomials.** Let $F$ be a finite field, let $U$ be a set of
+polynomials over $F$, and let $g, G$ be real-valued functions on polynomials over $F$. For
+$n \in \mathbb{N}$ let $M_n$ be the set of monic polynomials of degree $n$ over $F$. Then $g$
+has normal order $G$ on $U$ when $g$ and $G$ are nonnegative on $U$, $G$ is
+degree-nondecreasing on $U$ (for $f_1, f_2 \in U$, $\deg f_2 \le \deg f_1$ implies
+$G(f_2) \le G(f_1)$, with $\deg$ the natural degree), and for every real $\varepsilon > 0$ the
+number of $f \in U \cap M_n$ for which $(1 - \varepsilon)G(f) < g(f) < (1 + \varepsilon)G(f)$
+fails is $o(|U \cap M_n|)$ as $n \to \infty$.
+
+The paper takes $g, G : U \to \mathbb{R}_{\ge 0}$; here both are total real-valued functions,
+with nonnegativity imposed on $U$.
+
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
 Theorem 3 (definition preceding the requested normal-order results).
@@ -232,8 +270,12 @@ public noncomputable def HasNormalOrder (F : Type*) [Field F] [Fintype F] [Decid
           (fun n : ℕ => (((fixedDegreeMonic F n).filter fun f => f ∈ U).card : ℝ))
 
 /--
-Any asserted normal order has a nonnegative comparison function on `U`; this is the
-second defining clause of `HasNormalOrder`.
+**Normal orders are nonnegative.** Let $F$ be a finite field, $U$ a set of polynomials over $F$,
+and $g, G$ real-valued functions on polynomials over $F$. If $g$ has normal order $G$ on $U$, then
+$G(f) \ge 0$ for every $f \in U$.
+
+This is the second defining clause of a normal order.
+
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
 Theorem 3 (definition preceding the requested normal-order results).
@@ -245,11 +287,14 @@ public theorem HasNormalOrder.nonnegative (F : Type*) [Field F] [Fintype F] [Dec
   exact horder.2.1 f hf
 
 /--
-For `2 ≤ h` and `α ≤ β`, the proportion of `h`-free monic degree-`n` polynomials for
-which the standardized value `(ω₁(f) - log n) / sqrt (log n)` lies in `[α,β]` tends
-to the standard Gaussian mass of that interval.  Both finite counts are cast to `ℝ`;
-division by a zero denominator retains ordinary field semantics.  The logarithm sees
-the real cast of `n`.
+**Erdős–Kac theorem for $\omega_1$ on $h$-free polynomials.** Let $F$ be a finite field, let
+$h \ge 2$ and let $\alpha \le \beta$ be real numbers. A monic polynomial $f$ over $F$ is $h$-free
+if $P^h \nmid f$ for every monic irreducible $P$, and $\omega_1(f)$ is the number of distinct
+monic irreducible $P$ that divide $f$ with multiplicity exactly $1$. For each $n$, let $p_n$ be
+the number of $h$-free monic polynomials $f$ of degree $n$ over $F$ with
+$$\alpha \le \frac{\omega_1(f) - \log n}{\sqrt{\log n}} \le \beta,$$
+divided by the number of all $h$-free monic polynomials of degree $n$ over $F$. Then
+$p_n \to \frac{1}{\sqrt{2\pi}} \int_\alpha^\beta e^{-t^2/2}\,dt$ as $n \to \infty$.
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
 Theorem 2.
@@ -271,11 +316,13 @@ public theorem_wanted erdosKac_omegaOne_hFree
         ∫ t : ℝ in α..β, Real.exp (-(t ^ 2) / 2)))
 
 /--
-If `2 ≤ h` and `1 < k < h`, then `ω_k`, viewed as a real-valued function, has no
-normal order on the `h`-free monic polynomials with respect to any nonnegative,
-degree-nondecreasing real comparison function `G`.  Encoding `G` on all polynomials
-rather than as a subtype function is the documented total-function convention of
-`HasNormalOrder`.
+**$\omega_k$ has no normal order on $h$-free polynomials for $1 < k < h$.** Let $F$ be a finite
+field, let $h \ge 2$ and $1 < k < h$, and let $S_h$ be the set of $h$-free monic polynomials over
+$F$. Let $G$ be a real-valued function on polynomials over $F$ that is nonnegative on $S_h$ and
+degree-nondecreasing on $S_h$, that is, $G(f_2) \le G(f_1)$ whenever $f_1, f_2 \in S_h$ and
+$\deg f_2 \le \deg f_1$. Then $\omega_k$, the number of monic irreducible factors of multiplicity
+exactly $k$, viewed as a real-valued function, does not have normal order $G$ on $S_h$.
+
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
 Theorem 4.
@@ -289,11 +336,15 @@ public theorem_wanted omegaMult_no_normalOrder_hFree
     ¬HasNormalOrder F (hFree F h) (fun f => (omegaMult F k f : ℝ)) G
 
 /--
-For `2 ≤ h` and `α ≤ β`, the proportion of `h`-full monic degree-`n` polynomials for
-which `(ω_h(f) - log (n/h)) / sqrt (log (n/h))` lies in `[α,β]` tends to the standard
-Gaussian mass of the interval.  Crucially, `(n : ℝ) / (h : ℝ)` is real division, not
-truncated natural-number division.  Counts are cast to `ℝ`, with ordinary zero-
-denominator field behavior left unchanged.
+**Erdős–Kac theorem for $\omega_h$ on $h$-full polynomials.** Let $F$ be a finite field, let
+$h \ge 2$ and let $\alpha \le \beta$ be real numbers. A monic polynomial $f$ over $F$ is $h$-full
+if $P^h \mid f$ for every monic irreducible $P$ dividing $f$, and $\omega_h(f)$ is the number of
+distinct monic irreducible $P$ that divide $f$ with multiplicity exactly $h$. For each $n$, let
+$p_n$ be the number of $h$-full monic polynomials $f$ of degree $n$ over $F$ with
+$$\alpha \le \frac{\omega_h(f) - \log(n/h)}{\sqrt{\log(n/h)}} \le \beta,$$
+divided by the number of all $h$-full monic polynomials of degree $n$ over $F$, where $n/h$ is
+real division. Then $p_n \to \frac{1}{\sqrt{2\pi}} \int_\alpha^\beta e^{-t^2/2}\,dt$ as
+$n \to \infty$.
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
 Theorem 6.
@@ -315,10 +366,13 @@ public theorem_wanted erdosKac_omegaH_hFull
         ∫ t : ℝ in α..β, Real.exp (-(t ^ 2) / 2)))
 
 /--
-If `2 ≤ h` and `h < k`, then `ω_k`, cast to a real-valued function, has no normal
-order on the `h`-full monic polynomials for any nonnegative degree-nondecreasing
-comparison function `G`.  As elsewhere, `G` is total on polynomials and its sign and
-monotonicity requirements are restricted to `N_h`.
+**$\omega_k$ has no normal order on $h$-full polynomials for $k > h$.** Let $F$ be a finite
+field, let $2 \le h < k$, and let $N_h$ be the set of $h$-full monic polynomials over $F$. Let
+$G$ be a real-valued function on polynomials over $F$ that is nonnegative on $N_h$ and
+degree-nondecreasing on $N_h$, that is, $G(f_2) \le G(f_1)$ whenever $f_1, f_2 \in N_h$ and
+$\deg f_2 \le \deg f_1$. Then $\omega_k$, the number of monic irreducible factors of multiplicity
+exactly $k$, viewed as a real-valued function, does not have normal order $G$ on $N_h$.
+
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
 Theorem 8.
@@ -332,13 +386,18 @@ public theorem_wanted omegaMult_no_normalOrder_hFull
     ¬HasNormalOrder F (hFull F h) (fun f => (omegaMult F k f : ℝ)) G
 
 /--
-For a finite field of size `q`, `ℓ ≥ 2`, and `P ∈ 𝒫`, the real count of degree-`n`
-members of `S_ℓ` coprime to `P` differs by a uniformly bounded amount from
-`q^n (1-q^(1-ℓ)) (1-|P|⁻¹)/(1-|P|⁻ℓ)`, where `|P| = q^(deg P)`.  The existential
-constant follows `F`, `ℓ`, and the degree `d = deg P` but precedes `P` and `n`, so it is
-uniform over irreducibles of the same degree (`O_{ℓ, deg P}(1)`).  `IsCoprime f P` encodes `(f,P)=1`.  The source says `ℓ > 0`, but the
-displayed zeta factor has a pole at `ℓ = 1`, so the formal statement restricts to
-`ℓ ≥ 2`; `1-q^(1-ℓ)` is the explicit reciprocal of `ζ_q(ℓ)`.
+**Counting $\ell$-free polynomials coprime to an irreducible.** Let $F$ be a finite field with
+$q$ elements, let $\ell \ge 2$ and let $d$ be a natural number. Call a monic polynomial over $F$
+$\ell$-free if it is divisible by the $\ell$-th power of no monic irreducible polynomial. There is a
+constant $C \ge 0$ such that for every monic irreducible polynomial $P$ over $F$ of degree $d$,
+with $|P| = q^{d}$, and every natural number $n$, the number $N$ of $\ell$-free monic polynomials
+of degree $n$ over $F$ that are coprime to $P$ satisfies
+$$\left| N - \frac{q^n (1 - q^{1-\ell})(1 - |P|^{-1})}{1 - |P|^{-\ell}} \right| \le C.$$
+So $C$ depends on $F$, $\ell$ and $d$ but not on $P$ or $n$.
+
+The source states the lemma for $\ell > 0$. The factor $1 - q^{1-\ell}$ equals $1/\zeta_q(\ell)$,
+where $\zeta_q(s) = 1/(1 - q^{1-s})$ is the zeta function of the polynomial ring over $F$; it has
+a pole at $s = 1$, so the statement here assumes $\ell \ge 2$.
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
 Lemma 3.
@@ -355,15 +414,19 @@ public theorem_wanted card_hFree_coprime_irreducible_asymptotic
           (1 - (((Fintype.card F : ℝ) ^ P.natDegree) ^ ℓ)⁻¹))| ≤ C
 
 /--
-Let `A(u)` be the `tsum` of the degree-slice coefficients
-`(∑ f ∈ M_m, a f)u^m`.  If the prescribed scalar norm series is summable at a real
-radius `0 < r < 1`, then the degree-`n` coefficient sum equals `1/(2πi)` times the
-counterclockwise `circleIntegral` of `A(u)/u^(n+1)` around the circle centered at zero
-with radius `r`.  The supplied summability hypothesis is exactly the task-requested
-encoding; it is weaker in wording than uniform absolute convergence on the whole
-closed disk, and this formal statement does not silently strengthen it. `A` is only
-required to agree with the series on the circle `‖u‖ = r`, the only values the contour
-integral sees.
+**Perron's formula for degree slices of monic polynomials.** Let $F$ be a finite field,
+let $M_m$ be the set of monic polynomials of degree $m$ over $F$, let
+$a \colon F[X] \to \mathbb{C}$, and write $c_m = \sum_{f \in M_m} a(f)$. Let $r$ be a real
+number with $0 < r < 1$ such that the series $\sum_{m \ge 0} |c_m| r^m$ converges, and let
+$A \colon \mathbb{C} \to \mathbb{C}$ satisfy $A(u) = \sum_{m \ge 0} c_m u^m$ for every
+complex $u$ with $|u| = r$. Then for every $n \ge 0$,
+$$c_n = \frac{1}{2\pi i} \oint_{|u| = r} \frac{A(u)}{u^{n+1}}\, du,$$
+where the circle $|u| = r$ is traversed once counterclockwise.
+
+Convergence of $\sum |c_m| r^m$ at the single radius $r$ stands in for the paper's uniform
+absolute convergence on the closed disk, and $A$ only has to agree with the series on the
+circle, the only values the contour integral sees.
+
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
 Theorem 9.
@@ -382,8 +445,9 @@ public theorem_wanted perron_formula_polynomial_degree_slice
         ∮ u in C(0, r), A u / u ^ (n + 1)
 
 
-/-- The norm `|f| = q^{deg f}` of a polynomial over a finite field with `q` elements, with
-`|0| = 0`.
+/-- **The polynomial norm $q^{\deg f}$ over a finite field.** Let $F$ be a finite field with
+$q$ elements. The norm of a polynomial $f \in F[X]$ is the real number $|f| = q^{\deg f}$ if
+$f \neq 0$, and $|0| = 0$.
 
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
@@ -391,7 +455,8 @@ Introduction. -/
 public noncomputable def polyNorm (F : Type*) [Field F] [Fintype F] (f : Polynomial F) : ℝ :=
   if f = 0 then 0 else (Fintype.card F : ℝ) ^ f.natDegree
 
-/-- `|0| = 0`.
+/-- **The zero polynomial has norm $0$.** For every finite field $F$, the norm of the zero
+polynomial in $F[X]$ is $|0| = 0$.
 
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
@@ -399,7 +464,8 @@ Introduction. -/
 public theorem polyNorm_zero (F : Type*) [Field F] [Fintype F] : polyNorm F 0 = 0 := by
   simp [polyNorm]
 
-/-- `|f| = q^{deg f}` for `f ≠ 0`.
+/-- **A nonzero polynomial has norm $q^{\deg f}$.** Let $F$ be a finite field with $q$
+elements. Every nonzero polynomial $f \in F[X]$ has norm $|f| = q^{\deg f}$.
 
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
@@ -408,8 +474,11 @@ public theorem polyNorm_of_ne_zero (F : Type*) [Field F] [Fintype F] {f : Polyno
     (hf : f ≠ 0) : polyNorm F f = (Fintype.card F : ℝ) ^ f.natDegree := by
   simp [polyNorm, hf]
 
-/-- The function field analogue of the first Mertens constant,
-`B_1 = γ + ∑_P (log(1 - 1/|P|) + 1/|P|)`, the sum over monic irreducible `P`.
+/-- **Function field Mertens constant.** For a finite field $F$ with $q$ elements, the analogue
+of the first Mertens constant is
+$$B_1 = \gamma + \sum_P \left(\log\left(1 - \frac{1}{|P|}\right) + \frac{1}{|P|}\right),$$
+where $\gamma$ is the Euler–Mascheroni constant, the sum runs over the monic irreducible
+polynomials $P$ over $F$, and $|P| = q^{\deg P}$.
 
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
@@ -418,7 +487,11 @@ public noncomputable def functionFieldMertensConstant (F : Type*) [Field F] [Fin
   Real.eulerMascheroniConstant +
     ∑' P : monicIrreducible F, (Real.log (1 - 1 / polyNorm F P) + 1 / polyNorm F P)
 
-/-- Unfolding `B_1`.
+/-- **Series for the function field Mertens constant.** For a finite field $F$ with $q$ elements,
+the function field Mertens constant $B_1$ of $F$ equals
+$$\gamma + \sum_P \left(\log\left(1 - \frac{1}{|P|}\right) + \frac{1}{|P|}\right),$$
+where $\gamma$ is the Euler–Mascheroni constant, the sum runs over the monic irreducible
+polynomials $P$ over $F$, and $|P| = q^{\deg P}$.
 
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
@@ -427,8 +500,14 @@ public theorem functionFieldMertensConstant_eq (F : Type*) [Field F] [Fintype F]
     functionFieldMertensConstant F = Real.eulerMascheroniConstant +
       ∑' P : monicIrreducible F, (Real.log (1 - 1 / polyNorm F P) + 1 / polyNorm F P) := rfl
 
-/-- The `j`-th moment of `ω_k` over the `h`-free monic polynomials of degree `n`,
-`|S_h ∩ M_n|^{-1} ∑_{f ∈ S_h ∩ M_n} ω_k(f)^j`.
+/-- **Moments of $\omega_k$ over $h$-free polynomials.** Let $F$ be a finite field and let $h$,
+$k$, $j$, $n$ be natural numbers. Let $S_h$ be the set of $h$-free monic polynomials over $F$
+(those divisible by no $P^h$ with $P$ monic irreducible), $M_n$ the set of monic polynomials of
+degree $n$ over $F$, and $\omega_k(f)$ the number of distinct monic irreducible factors of $f$
+whose multiplicity is exactly $k$. The $j$-th moment of $\omega_k$ over the $h$-free monic
+polynomials of degree $n$ is the real number
+$$\frac{1}{|S_h \cap M_n|} \sum_{f \in S_h \cap M_n} \omega_k(f)^j,$$
+which is $0$ when $S_h \cap M_n$ is empty.
 
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
@@ -438,7 +517,13 @@ public noncomputable def hFreeMoment (F : Type*) [Field F] [Fintype F] [Decidabl
   (∑ f ∈ (fixedDegreeMonic F n).filter (· ∈ hFree F h), (omegaMult F k f : ℝ) ^ j) /
     (((fixedDegreeMonic F n).filter (· ∈ hFree F h)).card : ℝ)
 
-/-- Unfolding the moment.
+/-- **Explicit formula for the moments over h-free polynomials.** Let $F$ be a finite field and
+let $h, k, j, n$ be natural numbers. Write $M_n$ for the monic polynomials of degree $n$ over
+$F$, $S_h$ for the $h$-free monic polynomials (those divisible by the $h$-th power of no monic
+irreducible polynomial) and $\omega_k(f)$ for the number of distinct monic irreducible factors of
+$f$ of multiplicity exactly $k$. Then the $j$-th moment of $\omega_k$ over $S_h \cap M_n$ equals
+$$\frac{1}{|S_h \cap M_n|} \sum_{f \in S_h \cap M_n} \omega_k(f)^j,$$
+which is $0$ when $S_h \cap M_n$ is empty.
 
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
@@ -448,7 +533,15 @@ public theorem hFreeMoment_eq (F : Type*) [Field F] [Fintype F] [DecidableEq F]
       (∑ f ∈ (fixedDegreeMonic F n).filter (· ∈ hFree F h), (omegaMult F k f : ℝ) ^ j) /
         (((fixedDegreeMonic F n).filter (· ∈ hFree F h)).card : ℝ) := rfl
 
-/-- `T_h = ∑_P (|P|^{h-1} - 1)/(|P|(|P|^h - 1))`, the prime sum in `C_1(S_h, 1)`.
+/-- **The prime sum $T_h$.** Let $F$ be a finite field with $q$ elements, let $h$ be a natural
+number, and write $|P| = q^{\deg P}$ for a monic irreducible polynomial $P$ over $F$. The prime
+sum $T_h$ is the real number
+$$T_h = \sum_P \frac{|P|^{h-1} - 1}{|P|\,(|P|^h - 1)},$$
+the sum running over all monic irreducible polynomials $P$ over $F$, where, when $h = 0$, the
+exponent $h - 1$ is read as $0$ and each summand, whose denominator then vanishes, is read as $0$;
+the sum is taken to be $0$ if it does not converge absolutely.
+For $h \ge 2$ it is the prime sum in the constant term of the mean number of monic irreducible
+factors of multiplicity exactly one of a monic $h$-free polynomial of degree $n$ (Theorem 1).
 
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
@@ -457,7 +550,12 @@ public noncomputable def hFreeOmegaOneSum (F : Type*) [Field F] [Fintype F] (h :
   ∑' P : monicIrreducible F,
     (polyNorm F P ^ (h - 1) - 1) / (polyNorm F P * (polyNorm F P ^ h - 1))
 
-/-- Unfolding `T_h`.
+/-- **Unfolding the prime sum $T_h$.** Let $F$ be a finite field with $q$ elements, let $h$ be a
+natural number, and write $|P| = q^{\deg P}$ for a monic irreducible polynomial $P$ over $F$. Then
+the prime sum $T_h$ equals the real sum over all monic irreducible polynomials $P$ over $F$
+$$\sum_P \frac{|P|^{h-1} - 1}{|P|\,(|P|^h - 1)},$$
+where, when $h = 0$, the exponent $h - 1$ is read as $0$ and each summand, whose denominator then
+vanishes, is read as $0$; the sum is taken to be $0$ if it does not converge absolutely.
 
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
@@ -466,8 +564,15 @@ public theorem hFreeOmegaOneSum_eq (F : Type*) [Field F] [Fintype F] (h : ℕ) :
     hFreeOmegaOneSum F h = ∑' P : monicIrreducible F,
       (polyNorm F P ^ (h - 1) - 1) / (polyNorm F P * (polyNorm F P ^ h - 1)) := rfl
 
-/-- `U_h = ∑_P (|P|^{h-2}(|P| - 1)/(|P|^h - 1))^2`, the squared prime sum in
-`C_3(S_h, 1)` and `C_4(S_h, 1)`.
+/-- **The squared prime sum $U_h$ for multiplicity $1$ on $h$-free polynomials.** Let $F$ be a
+finite field with $q$ elements, let $h$ be a natural number, and for a monic irreducible
+polynomial $P$ over $F$ write $|P| = q^{\deg P}$. Then $U_h$ is the real number
+$$U_h = \sum_P \left(\frac{|P|^{\max(h-2,\,0)} (|P| - 1)}{|P|^h - 1}\right)^2,$$
+the sum over all monic irreducible $P$, where a quotient with zero denominator (only when
+$h = 0$) is read as $0$ and the sum is $0$ when the series does not converge absolutely.
+
+$U_h$ enters the constants in the second moment and the variance of the number of distinct monic
+irreducible factors of multiplicity exactly $1$ over $h$-free polynomials.
 
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
@@ -476,7 +581,13 @@ public noncomputable def hFreeOmegaOneSqSum (F : Type*) [Field F] [Fintype F] (h
   ∑' P : monicIrreducible F,
     (polyNorm F P ^ (h - 2) * (polyNorm F P - 1) / (polyNorm F P ^ h - 1)) ^ 2
 
-/-- Unfolding `U_h`.
+/-- **Series formula for the squared prime sum $U_h$.** Let $F$ be a finite field with $q$
+elements, let $h$ be a natural number, and for a monic irreducible polynomial $P$ over $F$ write
+$|P| = q^{\deg P}$. Then the squared prime sum $U_h$ for multiplicity $1$ on $h$-free polynomials
+equals
+$$\sum_P \left(\frac{|P|^{\max(h-2,\,0)} (|P| - 1)}{|P|^h - 1}\right)^2,$$
+the sum over all monic irreducible $P$, where a quotient with zero denominator (only when
+$h = 0$) is read as $0$ and the sum is $0$ when the series does not converge absolutely.
 
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
@@ -485,7 +596,12 @@ public theorem hFreeOmegaOneSqSum_eq (F : Type*) [Field F] [Fintype F] (h : ℕ)
     hFreeOmegaOneSqSum F h = ∑' P : monicIrreducible F,
       (polyNorm F P ^ (h - 2) * (polyNorm F P - 1) / (polyNorm F P ^ h - 1)) ^ 2 := rfl
 
-/-- `S_{h,k} = ∑_P a_P` with `a_P = |P|^{h-k-1}(|P| - 1)/(|P|^h - 1)`.
+/-- **The prime sum $S_{h,k}$ for multiplicity $k$ on $h$-free polynomials.** Let $F$ be a finite
+field with $q$ elements and let $h$, $k$ be natural numbers. For a monic irreducible polynomial
+$P$ over $F$ write $|P| = q^{\deg P}$ and $a_P = |P|^{\max(h-k-1,\,0)} (|P| - 1)/(|P|^h - 1)$,
+read as $0$ when the denominator vanishes (only when $h = 0$). Then $S_{h,k}$ is the real number
+$\sum_P a_P$, the sum over all monic irreducible $P$, taken to be $0$ when the series does not
+converge absolutely.
 
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
@@ -494,7 +610,12 @@ public noncomputable def hFreeOmegaMultSum (F : Type*) [Field F] [Fintype F] (h 
   ∑' P : monicIrreducible F,
     polyNorm F P ^ (h - k - 1) * (polyNorm F P - 1) / (polyNorm F P ^ h - 1)
 
-/-- Unfolding `S_{h,k}`.
+/-- **Series formula for the prime sum $S_{h,k}$.** Let $F$ be a finite field with $q$ elements
+and let $h$, $k$ be natural numbers. For a monic irreducible polynomial $P$ over $F$ write
+$|P| = q^{\deg P}$ and $a_P = |P|^{\max(h-k-1,\,0)} (|P| - 1)/(|P|^h - 1)$, read as $0$ when the
+denominator vanishes (only when $h = 0$). Then the prime sum $S_{h,k}$ for multiplicity $k$ on
+$h$-free polynomials equals $\sum_P a_P$, the sum over all monic irreducible $P$, taken to be $0$
+when the series does not converge absolutely.
 
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
@@ -503,7 +624,12 @@ public theorem hFreeOmegaMultSum_eq (F : Type*) [Field F] [Fintype F] (h k : ℕ
     hFreeOmegaMultSum F h k = ∑' P : monicIrreducible F,
       polyNorm F P ^ (h - k - 1) * (polyNorm F P - 1) / (polyNorm F P ^ h - 1) := rfl
 
-/-- `∑_P a_P^2` with `a_P = |P|^{h-k-1}(|P| - 1)/(|P|^h - 1)`.
+/-- **Squared prime sum for multiplicity $k$ on $h$-free polynomials.** Let $F$ be a finite field
+with $q$ elements and let $h$, $k$ be natural numbers. For a monic irreducible polynomial $P$
+over $F$ write $|P| = q^{\deg P}$ and $a_P = |P|^{\max(h-k-1,\,0)} (|P| - 1)/(|P|^h - 1)$, read
+as $0$ when the denominator vanishes (only when $h = 0$). The squared prime sum is the real
+number $\sum_P a_P^2$, the sum over all monic irreducible $P$, taken to be $0$ when the series
+does not converge absolutely.
 
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
@@ -512,7 +638,13 @@ public noncomputable def hFreeOmegaMultSqSum (F : Type*) [Field F] [Fintype F] (
   ∑' P : monicIrreducible F,
     (polyNorm F P ^ (h - k - 1) * (polyNorm F P - 1) / (polyNorm F P ^ h - 1)) ^ 2
 
-/-- Unfolding `∑_P a_P^2`.
+/-- **Series formula for the squared prime sum for multiplicity $k$ on $h$-free polynomials.**
+Let $F$ be a finite field with $q$ elements and let $h$, $k$ be natural numbers. For a monic
+irreducible polynomial $P$ over $F$ write $|P| = q^{\deg P}$ and
+$a_P = |P|^{\max(h-k-1,\,0)} (|P| - 1)/(|P|^h - 1)$, read as $0$ when the denominator vanishes
+(only when $h = 0$). Then the squared prime sum for multiplicity $k$ on $h$-free polynomials
+equals $\sum_P a_P^2$, the sum over all monic irreducible $P$, taken to be $0$ when the series
+does not converge absolutely.
 
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
@@ -521,8 +653,13 @@ public theorem hFreeOmegaMultSqSum_eq (F : Type*) [Field F] [Fintype F] (h k : �
     hFreeOmegaMultSqSum F h k = ∑' P : monicIrreducible F,
       (polyNorm F P ^ (h - k - 1) * (polyNorm F P - 1) / (polyNorm F P ^ h - 1)) ^ 2 := rfl
 
-/-- Theorem 1, first moment: for `h ≥ 2`, the mean of `ω_1` over `S_h ∩ M_n` is
-`log n + C_1(S_h, 1) + O(1/n)` with `C_1(S_h, 1) = B_1 - T_h`.
+/-- **Mean of $\omega_1$ over $h$-free polynomials.** Let $F$ be a finite field with $q$ elements
+and let $h \ge 2$. Let $\omega_1(f)$ be the number of monic irreducible $P$ dividing $f$ exactly
+once, write $|P| = q^{\deg P}$, and let $B_1 = \gamma + \sum_P (\log(1 - 1/|P|) + 1/|P|)$ be the
+function field Mertens constant, with $\gamma$ the Euler–Mascheroni constant, and let
+$T_h = \sum_P (|P|^{h-1} - 1)/(|P|(|P|^h - 1))$, both sums over monic irreducible $P$. Then the
+mean of $\omega_1$ over the $h$-free monic polynomials of degree $n$ over $F$ is
+$\log n + B_1 - T_h + O(1/n)$ as $n \to \infty$.
 
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
@@ -533,12 +670,22 @@ public theorem_wanted omegaOne_hFree_mean_asymptotic
         (Real.log n + (functionFieldMertensConstant F - hFreeOmegaOneSum F h)))
       =O[atTop] (fun n : ℕ => 1 / (n : ℝ))
 
-/-- Theorem 1, second moment: for `h ≥ 2` and every `ε > 0`, the mean of `ω_1^2` over
-`S_h ∩ M_n` is `log^2 n + C_2 log n + C_3 + O_ε(n^{ε-1})` with `C_2 = 2(B_1 - T_h) + 1` and
-`C_3 = B_1^2 + B_1 - ζ(2) - U_h + T_h^2 - (2B_1 + 1) T_h`, `ζ(2) = π^2/6`. The printed error
-`O_ε(q^n/n^{1-ε})` is the error of the unnormalized sum in the paper's proof; divided by
-`|S_h ∩ M_n| = q^n/ζ_q(h)` it is `O_ε(n^{ε-1})`, the order the paper's remark (an extra factor
-`n^ε` over the first moment's `O(1/n)`) and its variance formula state.
+/-- **Second moment of $\omega_1$ over $h$-free polynomials.** Let $F$ be a finite field with $q$
+elements, let $h \ge 2$ and let $\varepsilon > 0$. Let $\omega_1(f)$ be the number of monic
+irreducible $P$ dividing $f$ exactly once, write $S_h \cap M_n$ for the set of $h$-free monic
+polynomials of degree $n$ over $F$ and $|P| = q^{\deg P}$, and let
+$B_1 = \gamma + \sum_P (\log(1 - 1/|P|) + 1/|P|)$ be the function field Mertens constant, with
+$\gamma$ the Euler–Mascheroni constant, $T_h = \sum_P (|P|^{h-1} - 1)/(|P|(|P|^h - 1))$ and
+$U_h = \sum_P (|P|^{h-2}(|P| - 1)/(|P|^h - 1))^2$, all sums over monic irreducible $P$. Then the
+mean of $\omega_1^2$ over $S_h \cap M_n$ is $\log^2 n + C_2 \log n + C_3 + O(n^{\varepsilon - 1})$
+as $n \to \infty$, where $C_2 = 2(B_1 - T_h) + 1$ and
+$C_3 = B_1^2 + B_1 - \pi^2/6 - U_h + T_h^2 - (2B_1 + 1) T_h$.
+
+The printed error $O_\varepsilon(q^n/n^{1-\varepsilon})$ is the error of the unnormalized sum in
+the paper's proof; divided by $|S_h \cap M_n| = q^n/\zeta_q(h)$ for $n \ge h$, where
+$\zeta_q(h) = (1 - q^{1-h})^{-1}$, it is $O_\varepsilon(n^{\varepsilon-1})$, the order that the
+paper's remark (an extra factor $n^\varepsilon$ over the first moment's $O(1/n)$) and its
+variance formula state.
 
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
@@ -554,9 +701,15 @@ public theorem_wanted omegaOne_hFree_secondMoment_asymptotic
             (2 * functionFieldMertensConstant F + 1) * hFreeOmegaOneSum F h)))
       =O[atTop] (fun n : ℕ => (n : ℝ) ^ (ε - 1))
 
-/-- Theorem 1, variance: for `h ≥ 2` and every `ε > 0`, the variance of `ω_1` over
-`S_h ∩ M_n` is `log n + C_4(S_h, 1) + O_ε(n^{ε-1})` with
-`C_4(S_h, 1) = B_1 - ζ(2) - U_h - T_h`, `ζ(2) = π^2/6`.
+/-- **Variance of $\omega_1$ over $h$-free polynomials.** Let $F$ be a finite field with $q$
+elements, let $h \ge 2$ and let $\varepsilon > 0$. Let $\omega_1(f)$ be the number of monic
+irreducible $P$ dividing $f$ exactly once, write $|P| = q^{\deg P}$, and let
+$B_1 = \gamma + \sum_P (\log(1 - 1/|P|) + 1/|P|)$ be the function field Mertens constant, with
+$\gamma$ the Euler–Mascheroni constant, $T_h = \sum_P (|P|^{h-1} - 1)/(|P|(|P|^h - 1))$ and
+$U_h = \sum_P (|P|^{h-2}(|P| - 1)/(|P|^h - 1))^2$, all sums over monic irreducible $P$. Then the
+variance of $\omega_1$ over the $h$-free monic polynomials of degree $n$ over $F$, that is, the
+mean of $\omega_1^2$ minus the square of the mean of $\omega_1$, is
+$\log n + B_1 - \pi^2/6 - U_h - T_h + O(n^{\varepsilon - 1})$ as $n \to \infty$.
 
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
@@ -569,8 +722,14 @@ public theorem_wanted omegaOne_hFree_variance_asymptotic
           hFreeOmegaOneSqSum F h - hFreeOmegaOneSum F h)))
       =O[atTop] (fun n : ℕ => (n : ℝ) ^ (ε - 1))
 
-/-- Theorem 3, first moment: for `1 < k < h` and every `ε > 0`, the mean of `ω_k` over
-`S_h ∩ M_n` is `S_{h,k} + O_ε(q^{n/k - n + εn})`.
+/-- **Mean of $\omega_k$ over $h$-free polynomials.** Let $F$ be a finite field with $q$ elements,
+let $h, k$ be natural numbers with $1 < k < h$, and let $\varepsilon > 0$. Write $S_h \cap M_n$ for
+the set of monic polynomials $f$ of degree $n$ over $F$ that are $h$-free (no $P^h$ with $P$ monic
+irreducible divides $f$), and $\omega_k(f)$ for the number of monic irreducible $P$ that divide $f$
+exactly $k$ times. For monic irreducible $P$ put $|P| = q^{\deg P}$ and
+$a_P = |P|^{h-k-1}(|P| - 1)/(|P|^h - 1)$, and let $S_{h,k} = \sum_P a_P$, the sum over monic
+irreducible $P$. Then, as $n \to \infty$, the mean of $\omega_k$ over
+$S_h \cap M_n$ is $S_{h,k} + O(q^{n/k - n + \varepsilon n})$.
 
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
@@ -581,8 +740,14 @@ public theorem_wanted omegaMult_hFree_mean_asymptotic
     (fun n : ℕ => hFreeMoment F h k 1 n - hFreeOmegaMultSum F h k)
       =O[atTop] (fun n : ℕ => (Fintype.card F : ℝ) ^ ((n : ℝ) / k - n + ε * n))
 
-/-- Theorem 3, second moment: for `1 < k < h` and every `ε > 0`, the mean of `ω_k^2` over
-`S_h ∩ M_n` is `S_{h,k}^2 - ∑_P a_P^2 + S_{h,k} + O_ε(q^{n/k - n + εn})`.
+/-- **Second moment of $\omega_k$ over $h$-free polynomials.** Let $F$ be a finite field with $q$
+elements, let $h, k$ be natural numbers with $1 < k < h$, and let $\varepsilon > 0$. Write
+$S_h \cap M_n$ for the set of monic polynomials $f$ of degree $n$ over $F$ that are $h$-free (no
+$P^h$ with $P$ monic irreducible divides $f$), and $\omega_k(f)$ for the number of monic
+irreducible $P$ that divide $f$ exactly $k$ times. For monic irreducible $P$ put
+$|P| = q^{\deg P}$ and $a_P = |P|^{h-k-1}(|P| - 1)/(|P|^h - 1)$, and let $S_{h,k} = \sum_P a_P$,
+the sum over monic irreducible $P$. Then, as $n \to \infty$, the mean of $\omega_k^2$ over
+$S_h \cap M_n$ is $S_{h,k}^2 - \sum_P a_P^2 + S_{h,k} + O(q^{n/k - n + \varepsilon n})$.
 
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
@@ -594,12 +759,18 @@ public theorem_wanted omegaMult_hFree_secondMoment_asymptotic
         (hFreeOmegaMultSum F h k ^ 2 - hFreeOmegaMultSqSum F h k + hFreeOmegaMultSum F h k))
       =O[atTop] (fun n : ℕ => (Fintype.card F : ℝ) ^ ((n : ℝ) / k - n + ε * n))
 
-/-- Lemma 1 (corrected version of Lalín and Zhang's Lemma 3.2): let `G_n`, `f` be analytic
-on a common disk around `1` with `G_n(z) = f(z) n^{z-1} + O(n^{Re z - 2})` uniformly there.
-Then for every `k` and `ε > 0`, `G_n^{(k)}(1) = ∂_z^k (f(z) n^{z-1})|_{z=1} + O_ε(n^{ε-1})`
-(Equation (11) is `k = 1`). The paper's "analytic at `z = 1`" with an error term "in a
-neighborhood of `z = 1`" is read as analyticity on a fixed disk on which the bound holds with
-one constant for all `n ≥ 1`.
+/-- **Derivatives at $z = 1$ of uniform approximations.** Let $r > 0$, let $D$ be the open disk of
+radius $r$ centred at $1$ in $\mathbb{C}$, and let $f$ and $G_n$ ($n \in \mathbb{N}$) be complex
+functions analytic on $D$. Suppose there is a real constant $C$ such that
+$|G_n(z) - f(z)\, n^{z-1}| \le C\, n^{\operatorname{Re} z - 2}$ for all $n \ge 1$ and all
+$z \in D$. Then for every $k \in \mathbb{N}$ and every $\varepsilon > 0$, as $n \to \infty$,
+
+$$G_n^{(k)}(1) - \frac{d^k}{dz^k}\big(f(z)\, n^{z-1}\big)\Big|_{z=1} = O(n^{\varepsilon - 1}).$$
+
+This is the paper's Lemma 1, a corrected version of Lalín and Zhang's Lemma 3.2; Equation (11) is
+the case $k = 1$. The paper's "analytic at $z = 1$" with an error term "in a neighborhood of
+$z = 1$" is read as analyticity on a fixed disk on which the bound holds with one constant for all
+$n \ge 1$.
 
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
@@ -615,14 +786,24 @@ public theorem_wanted iteratedDeriv_sub_isBigO_of_uniform_approx
         iteratedDeriv k (fun z => f z * (n : ℂ) ^ (z - 1)) 1)
       =O[atTop] (fun n : ℕ => (n : ℝ) ^ (ε - 1))
 
-/-- Theorem 10 (quoted Selberg–Delange-type theorem): let `C(u, z) = B(u, z) Z_q(u)^z` with
-`Z_q(u) = (1 - qu)^{-1}`, i.e. `C_z(n) = ∑_{a ≤ n} B_z(a) q^{n-a} (z)_{n-a}/(n-a)!`
-(`(z)_m` the rising factorial; these are the coefficients of `(1 - qu)^{-z}`). If
-`∑_n |B_z(n)| n^{2A+2}/q^n ≪_A 1` uniformly for `|z| ≤ A`, then uniformly for `|z| ≤ A` and
-`n ≥ 1`, `C_z(n) = q^n n^{z-1} B(1/q, z)/Γ(z) + O_A(q^n n^{Re z - 2})`. The paper's `q` is the
-size of the field; the statement is for any real `q > 1`. The weight is `(n+1)^{2A+2}` instead
-of `n^{2A+2}`: equivalent for `n ≥ 1`, and it also bounds `B_z(0)` uniformly, without which the
-conclusion fails (unbounded `B_z(0)` along `z → 2` with `A = 2`).
+/-- **Selberg–Delange theorem for function fields.** Let $q > 1$ and $A > 0$ be real numbers,
+and let $B_z(n)$ and $C_z(n)$ be complex numbers, for $z \in \mathbb{C}$ and integers $n \ge 0$,
+such that for all $z$ and $n$
+$$C_z(n) = \sum_{a=0}^{n} B_z(a)\, q^{n-a} \frac{(z)_{n-a}}{(n-a)!},$$
+where $(z)_m = z(z+1)\cdots(z+m-1)$ is the rising factorial. Suppose there is a constant $M$
+such that for every complex $z$ with $|z| \le A$ the series
+$\sum_{n \ge 0} |B_z(n)| (n+1)^{2A+2} q^{-n}$ converges and its sum is at most $M$. Then there
+is a constant $K$ such that for every complex $z$ with $|z| \le A$ and every integer $n \ge 1$,
+$$\left| C_z(n) - \frac{q^n n^{z-1}}{\Gamma(z)} \sum_{a \ge 0} \frac{B_z(a)}{q^a} \right|
+\le K q^n n^{\operatorname{Re} z - 2}.$$
+
+In terms of the generating functions $B(u, z) = \sum_{n \ge 0} B_z(n) u^n$ and
+$C(u, z) = \sum_{n \ge 0} C_z(n) u^n$, and with $Z_q(u) = (1 - qu)^{-1}$, the hypothesis on
+$C_z(n)$ says $C(u, z) = B(u, z) Z_q(u)^z$, and the main term is
+$q^n n^{z-1} B(1/q, z)/\Gamma(z)$. The paper's $q$ is the size of the field. The weight
+$(n+1)^{2A+2}$ replaces the paper's $n^{2A+2}$: equivalent for $n \ge 1$, it also bounds
+$B_z(0)$ uniformly, without which the conclusion fails (unbounded $B_z(0)$ along $z \to 2$
+with $A = 2$).
 
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
@@ -638,12 +819,25 @@ public theorem_wanted selbergDelange_functionField
       ‖Cz z n - (q : ℂ) ^ n * (n : ℂ) ^ (z - 1) / Complex.Gamma z *
           ∑' a : ℕ, B z a / (q : ℂ) ^ a‖ ≤ K * q ^ n * (n : ℝ) ^ (z.re - 2)
 
-/-- Theorem 11 (quoted extension to `Z_q(u^h)`): let `C(u, z) = B(u, z) Z_q(u^h)^z`, i.e.
-`C_z(n) = ∑ B_z(a) q^m (z)_m/m!` over `a ≤ n` with `h ∣ n - a`, `m = (n - a)/h`. If
-`∑_n |B_z(n)| n^{2A+2}/q^{n/h} ≪_A 1` uniformly for `|z| ≤ A`, then uniformly for `|z| ≤ A`
-and `n ≥ 1`, `C_z(n) = q^{n/h} n^{z-1}/(h^z Γ(z)) ∑_{j<h} ξ^{jn} B((q^{1/h} ξ^j)^{-1}, z)
-+ O_A(q^{n/h} n^{Re z - 2})` for `ξ` a primitive `h`-th root of unity; any real `q > 1`. As in
-Theorem 10 the weight is `(n+1)^{2A+2}`, so that `B_z(0)` is bounded uniformly.
+/-- **Selberg–Delange theorem, $h$-th power version.** Let $q > 1$ and $A > 0$ be real numbers,
+let $h \ge 1$ be an integer, let $\xi$ be a primitive $h$-th root of unity in $\mathbb{C}$, and
+let $B_z(n)$ and $C_z(n)$ be complex numbers, for $z \in \mathbb{C}$ and integers $n \ge 0$,
+such that for all $z$ and $n$
+$$C_z(n) = \sum_{\substack{0 \le a \le n \\ h \mid n - a}} B_z(a)\, q^{(n-a)/h}
+\frac{(z)_{(n-a)/h}}{((n-a)/h)!},$$
+where $(z)_m = z(z+1)\cdots(z+m-1)$ is the rising factorial. Suppose there is a constant $M$
+such that for every complex $z$ with $|z| \le A$ the series
+$\sum_{n \ge 0} |B_z(n)| (n+1)^{2A+2} q^{-n/h}$ converges and its sum is at most $M$. Then there
+is a constant $K$ such that for every complex $z$ with $|z| \le A$ and every integer $n \ge 1$,
+$$\left| C_z(n) - \frac{q^{n/h} n^{z-1}}{h^z \Gamma(z)} \sum_{j=0}^{h-1} \xi^{jn}
+\sum_{a \ge 0} B_z(a) \left(q^{1/h} \xi^j\right)^{-a} \right|
+\le K q^{n/h} n^{\operatorname{Re} z - 2}.$$
+
+In terms of the generating functions $B(u, z) = \sum_{n \ge 0} B_z(n) u^n$ and
+$C(u, z) = \sum_{n \ge 0} C_z(n) u^n$, and with $Z_q(u) = (1 - qu)^{-1}$, the hypothesis on
+$C_z(n)$ says $C(u, z) = B(u, z) Z_q(u^h)^z$, and the inner sums are
+$B((q^{1/h} \xi^j)^{-1}, z)$. The paper's $q$ is the size of the field. As in the case $h = 1$,
+the weight is $(n+1)^{2A+2}$ rather than $n^{2A+2}$, so that $B_z(0)$ is bounded uniformly.
 
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
@@ -665,10 +859,17 @@ public theorem_wanted selbergDelange_functionField_pow
         ≤ K * q ^ ((n : ℝ) / h) * (n : ℝ) ^ (z.re - 2)
 
 
-/-- The coefficient `B_z(n)` of `u^n` in `B_{1,S_h}(u, z) = Z_q(u)^{-z} C_{1,S_h}(u, z)`, where
-`C_{1,S_h}(u, z) = ∑_{f ∈ S_h} z^{ω_1(f)} u^{deg f}` and `Z_q(u)^{-z} = (1 - qu)^z` has
-coefficients `q^m (-z)_m / m!` (`(x)_m` the rising factorial): the Cauchy product of the two
-coefficient sequences.
+/-- **Coefficients of $B_{1,S_h}(u, z)$.** Let $F$ be a finite field with $q$ elements, let $h$
+be a natural number and let $z$ be a complex number. Let $S_h$ be the set of $h$-free monic
+polynomials over $F$ (those divisible by no $P^h$ with $P$ monic irreducible), and $\omega_1(f)$
+the number of distinct monic irreducible factors of $f$ of multiplicity exactly $1$. Write
+$C_{1,S_h}(u, z) = \sum_{f \in S_h} z^{\omega_1(f)} u^{\deg f}$ and
+$B_{1,S_h}(u, z) = Z_q(u)^{-z} C_{1,S_h}(u, z)$, where $Z_q(u)^{-z} = (1 - qu)^z$ is the power
+series with coefficient $q^m (-z)_m / m!$ at $u^m$ and $(x)_m = x(x+1) \cdots (x+m-1)$ is the
+rising factorial. For a natural number $n$, $B_z(n)$ is the coefficient of $u^n$ in
+$B_{1,S_h}(u, z)$, that is,
+$$B_z(n) = \sum_{a=0}^{n} \Bigl(\sum_{f \in S_h,\ \deg f = a} z^{\omega_1(f)}\Bigr)
+\frac{q^{n-a} (-z)_{n-a}}{(n-a)!}.$$
 
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
@@ -680,7 +881,15 @@ public noncomputable def hFreeOmegaOneB (F : Type*) [Field F] [Fintype F] [Decid
       (Fintype.card F : ℂ) ^ (n - a) * (ascPochhammer ℂ (n - a)).eval (-z) /
         ((n - a).factorial : ℂ)
 
-/-- `B_z(0) = 1` for `B_{1,S_h}`, `h > 0`: the only monic polynomial of degree `0` is `1`.
+/-- **Constant coefficient of $B_{1,S_h}$.** Let $F$ be a finite field with $q$ elements and let
+$h \ge 1$ be a natural number. Let $S_h$ be the set of $h$-free monic polynomials over $F$ (those
+divisible by no $P^h$ with $P$ monic irreducible) and $\omega_1(f)$ the number of distinct monic
+irreducible factors of $f$ of multiplicity exactly $1$. For every complex number $z$, the
+coefficient $B_z(0)$ of $u^0$ in the formal power series
+$$B_{1,S_h}(u, z) = (1 - qu)^z \sum_{f \in S_h} z^{\omega_1(f)} u^{\deg f},$$
+where $(1 - qu)^z = \sum_{m \ge 0} \binom{z}{m} (-qu)^m$, equals $1$.
+
+The only monic polynomial of degree $0$ is $1$, which is $h$-free and has $\omega_1(1) = 0$.
 
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
@@ -691,9 +900,19 @@ public theorem hFreeOmegaOneB_zero (F : Type*) [Field F] [Fintype F] [DecidableE
   rw [Finset.filter_singleton]
   simp [one_mem_hFree F h hh, omegaMult_one]
 
-/-- The coefficient `B_z(n)` of `u^n` in `B_{h,N_h}(u, z) = Z_q(u^h)^{-z} C_{h,N_h}(u, z)`, where
-`C_{h,N_h}(u, z) = ∑_{f ∈ N_h} z^{ω_h(f)} u^{deg f}` and `Z_q(u^h)^{-z} = (1 - qu^h)^z` has
-coefficient `q^m (-z)_m / m!` at `u^{hm}`.
+/-- **The coefficients $B_z(n)$ of the $h$-full series.** Let $F$ be a finite field with $q$
+elements, let $h$ and $n$ be natural numbers and let $z$ be a complex number. Write $N_h$ for the
+set of $h$-full monic polynomials over $F$ (monic $f$ such that $P^h$ divides $f$ for every monic
+irreducible $P$ dividing $f$), $\omega_h(f)$ for the number of monic irreducible polynomials that
+divide $f$ with multiplicity exactly $h$, and $(x)_m = x(x + 1) \cdots (x + m - 1)$ for the
+rising factorial. For $0 \le a \le n$ let $c_a = \sum_f z^{\omega_h(f)}$, the sum over the
+$f \in N_h$ of degree $a$. Then $B_z(n)$ is the sum of $c_a \, q^m (-z)_m / m!$ over the $a$ with
+$0 \le a \le n$ and $h \mid n - a$, where $m = (n - a)/h$; when $h = 0$ only $a = n$ occurs, with
+$m = 0$.
+
+For $h \ge 1$, $B_z(n)$ is the coefficient of $u^n$ in
+$B_{h,N_h}(u, z) = (1 - qu^h)^z \sum_{f \in N_h} z^{\omega_h(f)} u^{\deg f}$, since $(1 - qu^h)^z$
+has coefficient $q^m (-z)_m / m!$ at $u^{hm}$.
 
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
@@ -705,7 +924,14 @@ public noncomputable def hFullOmegaHB (F : Type*) [Field F] [Fintype F] [Decidab
       (Fintype.card F : ℂ) ^ ((n - a) / h) * (ascPochhammer ℂ ((n - a) / h)).eval (-z) /
         (((n - a) / h).factorial : ℂ)
 
-/-- `B_z(0) = 1` for `B_{h,N_h}`.
+/-- **Constant coefficient of $B_{h,N_h}$.** Let $F$ be a finite field with $q$ elements, let $h$
+be a natural number and let $z$ be a complex number. Then the coefficient $B_z(0)$ of the
+$h$-full series for $F$, $h$ and $z$ equals $1$. For $h \ge 1$, $B_z(0)$ is the constant
+coefficient of $B_{h,N_h}(u, z) = (1 - qu^h)^z \sum_{f \in N_h} z^{\omega_h(f)} u^{\deg f}$,
+where $N_h$ is the set of $h$-full monic polynomials over $F$ and $\omega_h(f)$ is the number of
+monic irreducible polynomials dividing $f$ with multiplicity exactly $h$.
+
+The only monic polynomial of degree $0$ is $1$, which is $h$-full and has $\omega_h(1) = 0$.
 
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
@@ -716,9 +942,16 @@ public theorem hFullOmegaHB_zero (F : Type*) [Field F] [Fintype F] [DecidableEq 
     dvd_zero, ite_true, Finset.sum_singleton, fixedDegreeMonic_zero]
   simp [one_mem_hFull F h, omegaMult_one]
 
-/-- Lemma 2: for `h ≥ 2`, `A`, and `σ > 1/2` there is a constant `c` with
-`∑_{0 ≤ a ≤ n} |B_z(a)| q^{-σa} ≤ c` for all `|z| ≤ A` and `n ≥ 2`, where `B_z(a)` are the
-coefficients of `B_{1,S_h}(u, z)`.
+/-- **Weighted coefficient bound for $B_{1,S_h}$.** Let $F$ be a finite field with $q$ elements,
+let $h \ge 2$ be a natural number, and let $A$ and $\sigma > 1/2$ be real numbers. Let $S_h$ be
+the set of $h$-free monic polynomials over $F$ (those divisible by no $P^h$ with $P$ monic
+irreducible) and $\omega_1(f)$ the number of distinct monic irreducible factors of $f$ of
+multiplicity exactly $1$. For a complex number $z$ and a natural number $a$ let $B_z(a)$ be the
+coefficient of $u^a$ in the formal power series
+$$B_{1,S_h}(u, z) = (1 - qu)^z \sum_{f \in S_h} z^{\omega_1(f)} u^{\deg f},$$
+where $(1 - qu)^z = \sum_{m \ge 0} \binom{z}{m} (-qu)^m$. Then there is a real constant $c$ such
+that for every complex number $z$ with $|z| \le A$ and every natural number $n \ge 2$,
+$$\sum_{a=0}^{n} |B_z(a)|\, q^{-\sigma a} \le c.$$
 
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
@@ -730,9 +963,13 @@ public theorem_wanted hFreeOmegaOneB_weighted_sum_bounded
       ∑ a ∈ Finset.range (n + 1),
         ‖hFreeOmegaOneB F h z a‖ / (Fintype.card F : ℝ) ^ (σ * a) ≤ c
 
-/-- Lemma 4: for `h ≥ 2`, `A`, and `σ > 1/(h+1)` there is a constant `c` with
-`∑_{0 ≤ a ≤ n} |B_z(a)| q^{-σa} ≤ c` for all `|z| ≤ A` and `n ≥ 2`, where `B_z(a)` are the
-coefficients of `B_{h,N_h}(u, z)`.
+/-- **Uniform bound for the weighted coefficients of $B_{h,N_h}(u, z)$.** Let $F$ be a finite
+field with $q$ elements, let $h \ge 2$ be a natural number, and let $A$ and $\sigma$ be real
+numbers with $\sigma > 1/(h + 1)$. Then there is a real constant $c$ such that for every complex
+number $z$ with $|z| \le A$ and every natural number $n \ge 2$,
+$$\sum_{a=0}^{n} |B_z(a)| \, q^{-\sigma a} \le c,$$
+where $B_z(a)$ is the coefficient of $u^a$ in the series $B_{h,N_h}(u, z)$ attached to the
+$h$-full polynomials over $F$.
 
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
@@ -744,8 +981,13 @@ public theorem_wanted hFullOmegaHB_weighted_sum_bounded
       ∑ a ∈ Finset.range (n + 1),
         ‖hFullOmegaHB F h z a‖ / (Fintype.card F : ℝ) ^ (σ * a) ≤ c
 
-/-- `q^{1/h} ξ^j`, with the real `h`-th root of `q`; its inverses are the poles
-`u = (q^{1/h} ξ_h^j)^{-1}` of `Z_q(u^h)`.
+/-- **The pole parameter $q^{1/h}\xi^j$.** Let $F$ be a finite set with $q$ elements, and let
+$h, j \in \mathbb{N}$ and $\xi \in \mathbb{C}$. The pole parameter is the complex number
+$q^{1/h}\xi^j$, where $q^{1/h}$ is the nonnegative real $h$-th root of $q$ (for $h = 0$ the
+exponent $1/h$ is read as $0$, so that $q^{1/h} = 1$).
+
+When $F$ is a field, $h \ge 1$ and $\xi$ is a primitive $h$-th root of unity, the inverses
+$(q^{1/h}\xi^j)^{-1}$ are the poles $u$ of $Z_q(u^h)$, where $Z_q(u) = 1/(1 - qu)$.
 
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
@@ -753,7 +995,10 @@ Section 4. -/
 public noncomputable def hFullRoot (F : Type*) [Fintype F] (h : ℕ) (ξ : ℂ) (j : ℕ) : ℂ :=
   (((Fintype.card F : ℝ) ^ ((1 : ℝ) / h) : ℝ) : ℂ) * ξ ^ j
 
-/-- Unfolding `q^{1/h} ξ^j`.
+/-- **Formula for the pole parameter.** Let $F$ be a finite set with $q$ elements, and let
+$h, j \in \mathbb{N}$ and $\xi \in \mathbb{C}$. The pole parameter $q^{1/h}\xi^j$ equals the
+real power $q^{1/h}$, whose exponent is the real number $1/h$ (read as $0$ when $h = 0$), viewed
+as a complex number and multiplied by $\xi^j$.
 
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
@@ -761,8 +1006,13 @@ Section 4. -/
 public theorem hFullRoot_eq (F : Type*) [Fintype F] (h : ℕ) (ξ : ℂ) (j : ℕ) :
     hFullRoot F h ξ j = (((Fintype.card F : ℝ) ^ ((1 : ℝ) / h) : ℝ) : ℂ) * ξ ^ j := rfl
 
-/-- `H_{N_h,S_ℓ}(u) = ∏_P (1 + (x^{h+1} - x^ℓ - x^{2h} + x^{h+ℓ})/(1 - x))` with `x = u^{deg P}`,
-the product over monic irreducible `P` (Equation (53)).
+/-- **The Euler product $H_{N_h, S_\ell}$ for $h$-full, $\ell$-free polynomials.** Let $F$ be a
+finite field, let $h$ and $\ell$ be natural numbers and let $u$ be a complex number. Then
+$H_{N_h, S_\ell}(u)$ is the complex number
+$$H_{N_h, S_\ell}(u) = \prod_P (1 + \frac{x^{h+1} - x^{\ell} - x^{2h} + x^{h+\ell}}{1 - x}),$$
+the product running over all monic irreducible polynomials $P$ over $F$, where $x = u^{\deg P}$
+in the factor for $P$ (Equation (53)), the quotient is read as $0$ when $x = 1$, and the product
+is taken to be $1$ if it does not converge unconditionally.
 
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
@@ -774,7 +1024,12 @@ public noncomputable def hFullFreeEulerH (F : Type*) [Field F] [Fintype F] (h �
         (u ^ (P : Polynomial F).natDegree) ^ (2 * h) +
         (u ^ (P : Polynomial F).natDegree) ^ (h + ℓ)) / (1 - u ^ (P : Polynomial F).natDegree))
 
-/-- Unfolding `H_{N_h,S_ℓ}`.
+/-- **Unfolding the Euler product $H_{N_h, S_\ell}$.** Let $F$ be a finite field, let $h$ and
+$\ell$ be natural numbers and let $u$ be a complex number. Then $H_{N_h, S_\ell}(u)$ equals the
+complex product over all monic irreducible polynomials $P$ over $F$
+$$\prod_P \Bigl(1 + \frac{x^{h+1} - x^{\ell} - x^{2h} + x^{h+\ell}}{1 - x}\Bigr),$$
+where $x = u^{\deg P}$ in the factor for $P$, the quotient is read as $0$ when $x = 1$, and the
+product is taken to be $1$ if it does not converge unconditionally.
 
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
@@ -786,9 +1041,17 @@ public theorem hFullFreeEulerH_eq (F : Type*) [Field F] [Fintype F] (h ℓ : ℕ
           (u ^ (P : Polynomial F).natDegree) ^ (h + ℓ)) /
         (1 - u ^ (P : Polynomial F).natDegree)) := rfl
 
-/-- Lemma 5, Equation (51): for `0 < h < ℓ`, a primitive `h`-th root of unity `ξ` and `ε > 0`,
-`|N_h ∩ M_n ∩ S_ℓ| = (q^{n/h}/h) ∑_{j<h} ξ^{jn} H_{N_h,S_ℓ}((q^{1/h}ξ^j)^{-1})
-+ O_ε(q^{n/(h+1) + εn})` for `n ≥ ℓ`.
+/-- **Counting $h$-full, $\ell$-free polynomials.** Let $F$ be a finite field with $q$ elements,
+let $h$ and $\ell$ be natural numbers with $0 < h < \ell$, let $\xi \in \mathbb{C}$ be a primitive
+$h$-th root of unity and let $\varepsilon > 0$. A monic polynomial $f$ over $F$ is $h$-full if
+$P^h \mid f$ for every monic irreducible $P$ dividing $f$, and $\ell$-free if $P^\ell \nmid f$ for
+every monic irreducible $P$. Write $r_j = q^{1/h} \xi^j$ with $q^{1/h}$ the positive real root,
+and let $H(u)$ be the product over all monic irreducible $P$ over $F$ of
+$1 + (x^{h+1} - x^\ell - x^{2h} + x^{h+\ell})/(1 - x)$, where $x = u^{\deg P}$. Then there is a
+constant $C$ such that for every $n \ge \ell$ the number $N$ of monic polynomials of degree $n$
+over $F$ that are $h$-full and $\ell$-free satisfies
+$$\Bigl| N - \frac{q^{n/h}}{h} \sum_{j=0}^{h-1} \xi^{jn} H(r_j^{-1}) \Bigr|
+\le C q^{n/(h+1) + \varepsilon n}.$$
 
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
@@ -802,10 +1065,18 @@ public theorem_wanted card_hFull_hFree_asymptotic
             ∑ j ∈ Finset.range h, ξ ^ (j * n) * hFullFreeEulerH F h ℓ (hFullRoot F h ξ j)⁻¹‖ ≤
         C * (Fintype.card F : ℝ) ^ ((n : ℝ) / (h + 1) + ε * n)
 
-/-- Lemma 5, Equation (52): for a fixed monic irreducible `P₀`, the count of
-`f ∈ N_h ∩ M_n ∩ S_ℓ` coprime to `P₀` is
-`(q^{n/h}/h) ∑_{j<h} ξ^{jn} H_{N_h,S_ℓ}((q^{1/h}ξ^j)^{-1}) (1 - y_j)/(1 - y_j + y_j^h - y_j^ℓ)
-+ O_ε(q^{n/(h+1) + εn})` with `y_j = (q^{1/h}ξ^j)^{-deg P₀}`; the constant may depend on `P₀`.
+/-- **Counting $h$-full, $\ell$-free polynomials coprime to an irreducible.** Let $F$ be a finite
+field with $q$ elements, let $h$ and $\ell$ be natural numbers with $0 < h < \ell$, let
+$\xi \in \mathbb{C}$ be a primitive $h$-th root of unity, let $P_0$ be a monic irreducible
+polynomial over $F$ and let $\varepsilon > 0$. A monic polynomial $f$ over $F$ is $h$-full if
+$P^h \mid f$ for every monic irreducible $P$ dividing $f$, and $\ell$-free if $P^\ell \nmid f$ for
+every monic irreducible $P$. Write $r_j = q^{1/h} \xi^j$ with $q^{1/h}$ the positive real root,
+$y_j = r_j^{-\deg P_0}$, and let $H(u)$ be the product over all monic irreducible $P$ over $F$ of
+$1 + (x^{h+1} - x^\ell - x^{2h} + x^{h+\ell})/(1 - x)$, where $x = u^{\deg P}$. Then there is a
+constant $C$ (which may depend on $P_0$) such that for every $n \ge \ell$ the number $N$ of monic
+polynomials of degree $n$ over $F$ that are $h$-full, $\ell$-free and coprime to $P_0$ satisfies
+$$\Bigl| N - \frac{q^{n/h}}{h} \sum_{j=0}^{h-1} \xi^{jn} H(r_j^{-1})
+\frac{1 - y_j}{1 - y_j + y_j^h - y_j^\ell} \Bigr| \le C q^{n/(h+1) + \varepsilon n}.$$
 
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
@@ -825,8 +1096,14 @@ public theorem_wanted card_hFull_hFree_coprime_asymptotic
                   ((hFullRoot F h ξ j)⁻¹ ^ P₀.natDegree) ^ ℓ))‖ ≤
         C * (Fintype.card F : ℝ) ^ ((n : ℝ) / (h + 1) + ε * n)
 
-/-- The `j`-th moment of `ω_k` over the `h`-full monic polynomials of degree `n`,
-`|N_h ∩ M_n|^{-1} ∑_{f ∈ N_h ∩ M_n} ω_k(f)^j`.
+/-- **The $j$-th moment of $\omega_k$ over $h$-full polynomials of degree $n$.** Let $F$ be a
+finite field and let $h$, $k$, $j$ and $n$ be natural numbers. Let $N_h \cap M_n$ be the finite
+set of $h$-full monic polynomials of degree $n$ over $F$ (monic $f$ such that $P^h$ divides $f$
+for every monic irreducible $P$ dividing $f$), and let $\omega_k(f)$ be the number of monic
+irreducible polynomials that divide $f$ with multiplicity exactly $k$. The moment is the real
+number
+$$|N_h \cap M_n|^{-1} \sum_{f \in N_h \cap M_n} \omega_k(f)^j,$$
+taken to be $0$ when $N_h \cap M_n$ is empty.
 
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
@@ -836,7 +1113,14 @@ public noncomputable def hFullMoment (F : Type*) [Field F] [Fintype F] [Decidabl
   (∑ f ∈ (fixedDegreeMonic F n).filter (· ∈ hFull F h), (omegaMult F k f : ℝ) ^ j) /
     (((fixedDegreeMonic F n).filter (· ∈ hFull F h)).card : ℝ)
 
-/-- Unfolding the `h`-full moment.
+/-- **The $h$-full moment is an average of $\omega_k^j$.** Let $F$ be a finite field and let $h$,
+$k$, $j$ and $n$ be natural numbers. Let $N_h \cap M_n$ be the finite set of $h$-full monic
+polynomials of degree $n$ over $F$ (monic $f$ such that $P^h$ divides $f$ for every monic
+irreducible $P$ dividing $f$), and let $\omega_k(f)$ be the number of monic irreducible
+polynomials that divide $f$ with multiplicity exactly $k$. Then the $j$-th moment of $\omega_k$
+over $N_h \cap M_n$ equals
+$$|N_h \cap M_n|^{-1} \sum_{f \in N_h \cap M_n} \omega_k(f)^j,$$
+where the quotient is $0$ when $N_h \cap M_n$ is empty. This holds by definition.
 
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
@@ -846,7 +1130,13 @@ public theorem hFullMoment_eq (F : Type*) [Field F] [Fintype F] [DecidableEq F]
       (∑ f ∈ (fixedDegreeMonic F n).filter (· ∈ hFull F h), (omegaMult F k f : ℝ) ^ j) /
         (((fixedDegreeMonic F n).filter (· ∈ hFull F h)).card : ℝ) := rfl
 
-/-- `K(P, h, j) = (1 - y)/(|P|(1 - y) + 1)` with `y = (q^{1/h} ξ^j)^{-deg P}`.
+/-- **The local factor $K(P, h, j)$.** Let $F$ be a finite field with $q$ elements, let $h$ and
+$j$ be natural numbers, let $\xi$ be a complex number and let $P$ be a polynomial over $F$. Write
+$\rho_j = q^{1/h} \xi^j$, where $q^{1/h}$ is the positive real $h$-th root of $q$ (read as $1$
+when $h = 0$), and read $\rho_j^{-1}$ as $0$ when $\rho_j = 0$; let $|P| = q^{\deg P}$ if
+$P \ne 0$ and $|0| = 0$; and put $y = (\rho_j^{-1})^{\deg P}$, with $\deg 0$ read as $0$. Then
+$$K(P, h, j) = \frac{1 - y}{|P|\,(1 - y) + 1},$$
+read as $0$ when the denominator vanishes.
 
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
@@ -856,7 +1146,14 @@ public noncomputable def hFullK (F : Type*) [Field F] [Fintype F] (h : ℕ) (ξ 
   (1 - (hFullRoot F h ξ j)⁻¹ ^ P.natDegree) /
     ((polyNorm F P : ℂ) * (1 - (hFullRoot F h ξ j)⁻¹ ^ P.natDegree) + 1)
 
-/-- Unfolding `K(P, h, j)`.
+/-- **Unfolding the local factor $K(P, h, j)$.** Let $F$ be a finite field with $q$ elements, let
+$h$ and $j$ be natural numbers, let $\xi$ be a complex number and let $P$ be a polynomial over $F$.
+Write $\rho_j = q^{1/h} \xi^j$, where $q^{1/h}$ is the positive real $h$-th root of $q$ (read as
+$1$ when $h = 0$), and read $\rho_j^{-1}$ as $0$ when $\rho_j = 0$; let $|P| = q^{\deg P}$ if
+$P \ne 0$ and $|0| = 0$; and put $y = (\rho_j^{-1})^{\deg P}$, with $\deg 0$ read as $0$. Then
+$K(P, h, j)$ equals
+$$\frac{1 - y}{|P|\,(1 - y) + 1},$$
+read as $0$ when the denominator vanishes.
 
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
@@ -865,8 +1162,14 @@ public theorem hFullK_eq (F : Type*) [Field F] [Fintype F] (h : ℕ) (ξ : ℂ) 
     (P : Polynomial F) : hFullK F h ξ j P = (1 - (hFullRoot F h ξ j)⁻¹ ^ P.natDegree) /
       ((polyNorm F P : ℂ) * (1 - (hFullRoot F h ξ j)⁻¹ ^ P.natDegree) + 1) := rfl
 
-/-- `Π_j = ∏_P (1 - 1/|P|)(1 + 1/(|P|(1 - (q^{1/h}ξ^j)^{-deg P})))`, the product over monic
-irreducible `P` taken factor by factor (Equation (46)).
+/-- **The Euler product $\Pi_j$ for $h$-full polynomials.** Let $F$ be a finite field with $q$
+elements, let $h$ and $j$ be natural numbers and let $\xi$ be a complex number. Write
+$\rho_j = q^{1/h} \xi^j$, where $q^{1/h}$ is the positive real $h$-th root of $q$ (read as $1$
+when $h = 0$), read $\rho_j^{-1}$ as $0$ when $\rho_j = 0$, and write $|P| = q^{\deg P}$ for a
+monic irreducible polynomial $P$ over $F$. Then $\Pi_j$ is the complex number
+$$\Pi_j = \prod_P (1 - |P|^{-1})\Bigl(1 + \frac{1}{|P|\,(1 - (\rho_j^{-1})^{\deg P})}\Bigr),$$
+the product running over all monic irreducible polynomials $P$ over $F$ (Equation (46)), where
+$1/0$ is read as $0$, and the product is taken to be $1$ if it does not converge unconditionally.
 
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
@@ -876,7 +1179,15 @@ public noncomputable def hFullEulerProduct (F : Type*) [Field F] [Fintype F] (h 
   ∏' P : monicIrreducible F, (1 - 1 / (polyNorm F P : ℂ)) *
     (1 + 1 / ((polyNorm F P : ℂ) * (1 - (hFullRoot F h ξ j)⁻¹ ^ (P : Polynomial F).natDegree)))
 
-/-- Unfolding `Π_j`.
+/-- **Unfolding the Euler product $\Pi_j$.** Let $F$ be a finite field with $q$ elements, let $h$
+and $j$ be natural numbers and let $\xi$ be a complex number. Write $\rho_j = q^{1/h} \xi^j$, where
+$q^{1/h}$ is the positive real $h$-th root of $q$ (read as $1$ when $h = 0$), read $\rho_j^{-1}$
+as $0$ when $\rho_j = 0$, and write $|P| = q^{\deg P}$ for a monic irreducible polynomial $P$
+over $F$. Then $\Pi_j$ equals the complex product over all monic irreducible polynomials $P$
+over $F$
+$$\prod_P (1 - |P|^{-1})\Bigl(1 + \frac{1}{|P|\,(1 - (\rho_j^{-1})^{\deg P})}\Bigr),$$
+where $1/0$ is read as $0$, and the product is taken to be $1$ if it does not converge
+unconditionally.
 
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
@@ -887,9 +1198,18 @@ public theorem hFullEulerProduct_eq (F : Type*) [Field F] [Fintype F] (h : ℕ) 
         (1 + 1 / ((polyNorm F P : ℂ) *
           (1 - (hFullRoot F h ξ j)⁻¹ ^ (P : Polynomial F).natDegree))) := rfl
 
-/-- The weighted combination
-`|N_h ∩ M_n|^{-1} (q^{n/h}/h) ∑_{j<h} ξ^{jn} Π_j X_j` that carries every `n`-dependent constant
-in Theorems 5 and 7.
+/-- **The $h$-full weighted mean.** Let $F$ be a finite field with $q$ elements, let
+$h, n \in \mathbb{N}$, $\xi \in \mathbb{C}$ and $X : \mathbb{N} \to \mathbb{C}$. Let
+$N_h \cap M_n$ be the set of $h$-full monic polynomials of degree $n$ over $F$. For each $j$ let
+$\rho_j = q^{1/h}\xi^j$ be the pole parameter and let
+$\Pi_j = \prod_P (1 - 1/|P|)(1 + 1/(|P|(1 - \rho_j^{-\deg P})))$, the product over monic
+irreducible $P$ with $|P| = q^{\deg P}$, taken to be $1$ when the family is not multipliable.
+The $h$-full weighted mean of $X$ is the complex number
+$$\frac{q^{n/h}/h}{|N_h \cap M_n|} \sum_{j=0}^{h-1} \xi^{jn} \, \Pi_j \, X_j.$$
+Here $q^{n/h}$ is a real power with real exponent $n/h$, and division by zero (including
+$0^{-1}$) gives $0$.
+
+It carries every $n$-dependent constant in Theorems 5 and 7.
 
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
@@ -900,7 +1220,16 @@ public noncomputable def hFullWeightedMean (F : Type*) [Field F] [Fintype F] [De
       (((fixedDegreeMonic F n).filter (· ∈ hFull F h)).card : ℂ) *
     ∑ j ∈ Finset.range h, ξ ^ (j * n) * hFullEulerProduct F h ξ j * X j
 
-/-- Unfolding the weighted combination.
+/-- **Formula for the $h$-full weighted mean.** Let $F$ be a finite field with $q$ elements, let
+$h, n \in \mathbb{N}$, $\xi \in \mathbb{C}$ and $X : \mathbb{N} \to \mathbb{C}$. Let
+$N_h \cap M_n$ be the set of $h$-full monic polynomials of degree $n$ over $F$. For each $j$ let
+$\rho_j = q^{1/h}\xi^j$ be the pole parameter and let
+$\Pi_j = \prod_P (1 - 1/|P|)(1 + 1/(|P|(1 - \rho_j^{-\deg P})))$, the product over monic
+irreducible $P$ with $|P| = q^{\deg P}$, taken to be $1$ when the family is not multipliable.
+Then the $h$-full weighted mean of $X$ equals
+$$\frac{q^{n/h}/h}{|N_h \cap M_n|} \sum_{j=0}^{h-1} \xi^{jn} \, \Pi_j \, X_j.$$
+Here $q^{n/h}$ is a real power with real exponent $n/h$, and division by zero (including
+$0^{-1}$) gives $0$.
 
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
@@ -911,7 +1240,14 @@ public theorem hFullWeightedMean_eq (F : Type*) [Field F] [Fintype F] [Decidable
           (((fixedDegreeMonic F n).filter (· ∈ hFull F h)).card : ℂ) *
         ∑ j ∈ Finset.range h, ξ ^ (j * n) * hFullEulerProduct F h ξ j * X j := rfl
 
-/-- `κ_j = ∑_P (K(P, h, j) - 1/|P|)`.
+/-- **The constant $\kappa_j$ for $h$-full polynomials.** Let $F$ be a finite field with $q$
+elements, let $h$ and $j$ be natural numbers and let $\xi$ be a complex number. Write
+$\rho = q^{1/h}\xi^j$, where $q^{1/h}$ is the positive real $h$-th root of $q$ for $h \ge 1$ and
+$q^{1/h} = 1$ for $h = 0$, and let $\rho^{-1}$ be read as $0$ when $\rho = 0$. For a monic
+irreducible polynomial $P$ over $F$ write $|P| = q^{\deg P}$, $y = (\rho^{-1})^{\deg P}$ and
+$K(P, h, j) = (1 - y)/(|P|(1 - y) + 1)$, read as $0$ when the denominator vanishes. Then
+$\kappa_j = \sum_P (K(P, h, j) - 1/|P|)$, the sum over all monic irreducible polynomials $P$ over
+$F$, taken as an unconditional sum that is $0$ when the family is not summable.
 
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
@@ -920,7 +1256,15 @@ public noncomputable def hFullKSum (F : Type*) [Field F] [Fintype F] (h : ℕ) (
     (j : ℕ) : ℂ :=
   ∑' P : monicIrreducible F, (hFullK F h ξ j P - 1 / (polyNorm F P : ℂ))
 
-/-- Unfolding `κ_j`.
+/-- **The series defining $\kappa_j$.** Let $F$ be a finite field with $q$ elements, let $h$ and
+$j$ be natural numbers and let $\xi$ be a complex number. Write $\rho = q^{1/h}\xi^j$, where
+$q^{1/h}$ is the positive real $h$-th root of $q$ for $h \ge 1$ and $q^{1/h} = 1$ for $h = 0$, and
+let $\rho^{-1}$ be read as $0$ when $\rho = 0$. For a monic irreducible polynomial $P$ over $F$
+write $|P| = q^{\deg P}$, $y = (\rho^{-1})^{\deg P}$ and $K(P, h, j) = (1 - y)/(|P|(1 - y) + 1)$,
+read as $0$ when the denominator vanishes. Then the constant $\kappa_j$ attached to $F$, $h$, $\xi$
+and $j$ equals $\sum_P (K(P, h, j) - 1/|P|)$, the sum over all monic irreducible polynomials $P$
+over $F$, taken as an unconditional sum that is $0$ when the family is not summable. This holds
+by definition.
 
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
@@ -929,7 +1273,14 @@ public theorem hFullKSum_eq (F : Type*) [Field F] [Fintype F] (h : ℕ) (ξ : �
     hFullKSum F h ξ j =
       ∑' P : monicIrreducible F, (hFullK F h ξ j P - 1 / (polyNorm F P : ℂ)) := rfl
 
-/-- `∑_P K(P, h, j)^2`.
+/-- **The sum $\sum_P K(P, h, j)^2$ over monic irreducible polynomials.** Let $F$ be a finite
+field with $q$ elements, let $h$ and $j$ be natural numbers and let $\xi$ be a complex number.
+Write $\rho = q^{1/h}\xi^j$, where $q^{1/h}$ is the positive real $h$-th root of $q$ for $h \ge 1$
+and $q^{1/h} = 1$ for $h = 0$, and let $\rho^{-1}$ be read as $0$ when $\rho = 0$. For a monic
+irreducible polynomial $P$ over $F$ write $|P| = q^{\deg P}$, $y = (\rho^{-1})^{\deg P}$ and
+$K(P, h, j) = (1 - y)/(|P|(1 - y) + 1)$, read as $0$ when the denominator vanishes. This defines
+the complex number $\sum_P K(P, h, j)^2$, the sum over all monic irreducible polynomials $P$ over
+$F$, taken as an unconditional sum that is $0$ when the family is not summable.
 
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
@@ -938,7 +1289,11 @@ public noncomputable def hFullKSqSum (F : Type*) [Field F] [Fintype F] (h : ℕ)
     (j : ℕ) : ℂ :=
   ∑' P : monicIrreducible F, hFullK F h ξ j P ^ 2
 
-/-- Unfolding `∑_P K(P, h, j)^2`.
+/-- **Unfolding the sum of the squares $K(P, h, j)^2$.** Let $F$ be a finite field, let $h$ and
+$j$ be natural numbers and let $\xi$ be a complex number. The quantity $\sum_P K(P, h, j)^2$ of
+Theorem 5 is the complex sum, over all monic irreducible polynomials $P$ over $F$, of the squares
+of the local factors $K(P, h, j)$ attached to $h$, $j$ and $\xi$, taken to be $0$ if it does not
+converge absolutely.
 
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
@@ -946,7 +1301,14 @@ Theorem 5. -/
 public theorem hFullKSqSum_eq (F : Type*) [Field F] [Fintype F] (h : ℕ) (ξ : ℂ) (j : ℕ) :
     hFullKSqSum F h ξ j = ∑' P : monicIrreducible F, hFullK F h ξ j P ^ 2 := rfl
 
-/-- `∑_P b_P` with `b_P = |P| (q^{1/h}ξ^j)^{-k deg P} K(P, h, j)`.
+/-- **The $h$-full prime sum $\sum_P b_P$.** Let $F$ be a finite field with $q$ elements, let
+$h, k, j \in \mathbb{N}$ and $\xi \in \mathbb{C}$, and let $\rho = q^{1/h}\xi^j$ be the pole
+parameter, where $q^{1/h}$ is a real power whose exponent $1/h$ is read as $0$ when $h = 0$.
+For a monic irreducible polynomial $P$ over $F$ put $|P| = q^{\deg P}$,
+$y_P = \rho^{-\deg P}$, $K(P, h, j) = (1 - y_P)/(|P|(1 - y_P) + 1)$ and
+$b_P = |P| \, y_P^{k} \, K(P, h, j)$. The $h$-full prime sum is the complex number
+$\sum_P b_P$ over all monic irreducible $P$, taken to be $0$ when the family $(b_P)$ is not
+summable. Inverses use the convention $0^{-1} = 0$.
 
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
@@ -956,7 +1318,14 @@ public noncomputable def hFullOmegaMultSum (F : Type*) [Field F] [Fintype F] (h 
   ∑' P : monicIrreducible F, (polyNorm F P : ℂ) *
     (hFullRoot F h ξ j)⁻¹ ^ (k * (P : Polynomial F).natDegree) * hFullK F h ξ j P
 
-/-- Unfolding `∑_P b_P`.
+/-- **Formula for the $h$-full prime sum $\sum_P b_P$.** Let $F$ be a finite field with $q$
+elements, let $h, k, j \in \mathbb{N}$ and $\xi \in \mathbb{C}$, and let $\rho = q^{1/h}\xi^j$
+be the pole parameter, where $q^{1/h}$ is a real power whose exponent $1/h$ is read as $0$
+when $h = 0$. For a monic irreducible polynomial $P$ over $F$ put $|P| = q^{\deg P}$,
+$K(P, h, j) = (1 - \rho^{-\deg P})/(|P|(1 - \rho^{-\deg P}) + 1)$ and
+$b_P = |P| \, (\rho^{-1})^{k \deg P} \, K(P, h, j)$. Then the $h$-full prime sum $\sum_P b_P$
+equals the sum of $b_P$ over all monic irreducible polynomials $P$ over $F$, taken to be $0$
+when the family is not summable. Inverses use the convention $0^{-1} = 0$.
 
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
@@ -965,7 +1334,15 @@ public theorem hFullOmegaMultSum_eq (F : Type*) [Field F] [Fintype F] (h k : ℕ
     (j : ℕ) : hFullOmegaMultSum F h k ξ j = ∑' P : monicIrreducible F, (polyNorm F P : ℂ) *
       (hFullRoot F h ξ j)⁻¹ ^ (k * (P : Polynomial F).natDegree) * hFullK F h ξ j P := rfl
 
-/-- `∑_P b_P^2` with `b_P = |P| (q^{1/h}ξ^j)^{-k deg P} K(P, h, j)`.
+/-- **The sum $\sum_P b_P^2$ over monic irreducible polynomials.** Let $F$ be a finite field
+with $q$ elements, let $h$, $k$ and $j$ be natural numbers and let $\xi$ be a complex number.
+Write $\rho = q^{1/h}\xi^j$, where $q^{1/h}$ is the positive real $h$-th root of $q$ for $h \ge 1$
+and $q^{1/h} = 1$ for $h = 0$, and let $\rho^{-1}$ be read as $0$ when $\rho = 0$. For a monic
+irreducible polynomial $P$ over $F$ write $|P| = q^{\deg P}$, $y = (\rho^{-1})^{\deg P}$,
+$K(P, h, j) = (1 - y)/(|P|(1 - y) + 1)$, read as $0$ when the denominator vanishes, and
+$b_P = |P| (\rho^{-1})^{k \deg P} K(P, h, j)$. This defines the complex number $\sum_P b_P^2$, the
+sum over all monic irreducible polynomials $P$ over $F$, taken as an unconditional sum that is $0$
+when the family is not summable.
 
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
@@ -975,7 +1352,16 @@ public noncomputable def hFullOmegaMultSqSum (F : Type*) [Field F] [Fintype F] (
   ∑' P : monicIrreducible F, ((polyNorm F P : ℂ) *
     (hFullRoot F h ξ j)⁻¹ ^ (k * (P : Polynomial F).natDegree) * hFullK F h ξ j P) ^ 2
 
-/-- Unfolding `∑_P b_P^2`.
+/-- **The series defining $\sum_P b_P^2$.** Let $F$ be a finite field with $q$ elements, let $h$,
+$k$ and $j$ be natural numbers and let $\xi$ be a complex number. Write $\rho = q^{1/h}\xi^j$,
+where $q^{1/h}$ is the positive real $h$-th root of $q$ for $h \ge 1$ and $q^{1/h} = 1$ for
+$h = 0$, and let $\rho^{-1}$ be read as $0$ when $\rho = 0$. For a monic irreducible polynomial
+$P$ over $F$ write $|P| = q^{\deg P}$, $y = (\rho^{-1})^{\deg P}$ and
+$K(P, h, j) = (1 - y)/(|P|(1 - y) + 1)$, read as $0$ when the denominator vanishes. Then the
+constant $\sum_P b_P^2$ attached to $F$, $h$, $k$, $\xi$ and $j$ equals
+$\sum_P (|P| (\rho^{-1})^{k \deg P} K(P, h, j))^2$, the sum over all monic irreducible
+polynomials $P$ over $F$, taken as an unconditional sum that is $0$ when the family is not
+summable. This holds by definition.
 
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
@@ -984,9 +1370,19 @@ public theorem hFullOmegaMultSqSum_eq (F : Type*) [Field F] [Fintype F] (h k : �
     (j : ℕ) : hFullOmegaMultSqSum F h k ξ j = ∑' P : monicIrreducible F, ((polyNorm F P : ℂ) *
       (hFullRoot F h ξ j)⁻¹ ^ (k * (P : Polynomial F).natDegree) * hFullK F h ξ j P) ^ 2 := rfl
 
-/-- Theorem 5, Equation (8): for `h ≥ 2`, a primitive `h`-th root of unity `ξ` and `ε > 0`, the
-mean of `ω_h` over `N_h ∩ M_n` is `log(n/h) + C_1(N_h, h) + O_ε(n^{ε-1})` with
-`C_1(N_h, h) = B_1 + |N_h ∩ M_n|^{-1} (q^{n/h}/h) ∑_j ξ^{jn} Π_j κ_j`.
+/-- **Mean of $\omega_h$ over $h$-full polynomials.** Let $F$ be a finite field with $q$ elements,
+let $h \ge 2$, let $\xi \in \mathbb{C}$ be a primitive $h$-th root of unity, and let
+$\varepsilon > 0$. Write $N_h \cap M_n$ for the set of monic polynomials $f$ of degree $n$ over $F$
+that are $h$-full (if a monic irreducible $P$ divides $f$, then so does $P^h$), and $\omega_h(f)$
+for the number of monic irreducible $P$ that divide $f$ exactly $h$ times. For monic irreducible
+$P$ and $j < h$ put $|P| = q^{\deg P}$, $y_{P,j} = (q^{1/h}\xi^j)^{-\deg P}$ with $q^{1/h} > 0$,
+and $K(P, h, j) = (1 - y_{P,j})/(|P|(1 - y_{P,j}) + 1)$. Let
+$\kappa_j = \sum_P (K(P, h, j) - |P|^{-1})$ and
+$\Pi_j = \prod_P (1 - |P|^{-1})(1 + |P|^{-1}(1 - y_{P,j})^{-1})$, with sum and product over monic
+irreducible $P$, and for $X = (X_j)_j$ put
+$W_n(X) = |N_h \cap M_n|^{-1} (q^{n/h}/h) \sum_{j=0}^{h-1} \xi^{jn} \Pi_j X_j$. Let $B_1$ be the
+function field Mertens constant and $L_n = \log(n/h)$. Then, as $n \to \infty$, the mean
+of $\omega_h$ over $N_h \cap M_n$ is $L_n + B_1 + W_n(\kappa) + O(n^{\varepsilon - 1})$.
 
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
@@ -999,12 +1395,25 @@ public theorem_wanted omegaH_hFull_mean_asymptotic
           hFullWeightedMean F h ξ n (hFullKSum F h ξ)))
       =O[atTop] (fun n : ℕ => (n : ℝ) ^ (ε - 1))
 
-/-- Theorem 5, Equation (9), in the reading of the paper's proof: the mean of `ω_h^2` over
-`N_h ∩ M_n` is `log^2(n/h) + C_2 log(n/h) + C_3 + O_ε(n^{ε-1})` with
-`C_2 = 2B_1 + 1 + 2W(κ)` and `C_3 = B_1^2 + B_1 - ζ(2) + W(-∑_P K^2 + κ^2 + (2B_1 + 1)κ)`,
-where `W(X) = |N_h ∩ M_n|^{-1} (q^{n/h}/h) ∑_j ξ^{jn} Π_j X_j` and `ζ(2) = π^2/6`. The printed
-`C_3` has `-W(∑_P K^2 + κ^2 + (2B_1 + 1)κ)`, which contradicts the final display of the proof
-(page 29) and the printed variance.
+/-- **Second moment of $\omega_h$ over $h$-full polynomials.** Let $F$ be a finite field with $q$
+elements, let $h \ge 2$, let $\xi \in \mathbb{C}$ be a primitive $h$-th root of unity, and let
+$\varepsilon > 0$. Write $N_h \cap M_n$ for the set of monic polynomials $f$ of degree $n$ over $F$
+that are $h$-full (if a monic irreducible $P$ divides $f$, then so does $P^h$), and $\omega_h(f)$
+for the number of monic irreducible $P$ that divide $f$ exactly $h$ times. For monic irreducible
+$P$ and $j < h$ put $|P| = q^{\deg P}$, $y_{P,j} = (q^{1/h}\xi^j)^{-\deg P}$ with $q^{1/h} > 0$,
+and $K(P, h, j) = (1 - y_{P,j})/(|P|(1 - y_{P,j}) + 1)$. Let
+$\kappa_j = \sum_P (K(P, h, j) - |P|^{-1})$ and
+$\Pi_j = \prod_P (1 - |P|^{-1})(1 + |P|^{-1}(1 - y_{P,j})^{-1})$, with sum and product over monic
+irreducible $P$, and for $X = (X_j)_j$ put
+$W_n(X) = |N_h \cap M_n|^{-1} (q^{n/h}/h) \sum_{j=0}^{h-1} \xi^{jn} \Pi_j X_j$. Let $B_1$ be the
+function field Mertens constant and $L_n = \log(n/h)$. Then, as $n \to \infty$,
+the mean of $\omega_h^2$ over $N_h \cap M_n$ is
+$L_n^2 + (2B_1 + 1 + 2W_n(\kappa)) L_n + B_1^2 + B_1 - \pi^2/6 + W_n(X) + O(n^{\varepsilon - 1})$,
+where $X_j = -\sum_P K(P, h, j)^2 + \kappa_j^2 + (2B_1 + 1)\kappa_j$.
+
+This follows the paper's proof: the printed constant term $C_3$ has $-W_n(Z)$ in place of
+$W_n(X)$, where $Z_j = \sum_P K(P, h, j)^2 + \kappa_j^2 + (2B_1 + 1)\kappa_j$; this contradicts
+the final display of the proof (page 29) and the printed variance.
 
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
@@ -1022,11 +1431,26 @@ public theorem_wanted omegaH_hFull_secondMoment_asymptotic
               (2 * (functionFieldMertensConstant F : ℂ) + 1) * hFullKSum F h ξ j))))
       =O[atTop] (fun n : ℕ => (n : ℝ) ^ (ε - 1))
 
-/-- Theorem 5, variance: the variance of `ω_h` over `N_h ∩ M_n` is
-`log(n/h) + B_1 - ζ(2) + W(-∑_P K^2 + κ^2 + κ) - W(κ)^2 + O_ε(n^{ε-1})`, with `W` as in
-`omegaH_hFull_secondMoment_asymptotic`. The printed display writes `ω_1` for `ω_h` in the
-definition of the variance and omits the factor `q^{n/h}/h` in both weighted sums; both are
-restored as in Equations (8) and (9), from which the paper derives the variance.
+/-- **Variance of $\omega_h$ over $h$-full polynomials.** Let $F$ be a finite field with $q$
+elements, let $h \ge 2$, let $\xi \in \mathbb{C}$ be a primitive $h$-th root of unity, and let
+$\varepsilon > 0$. Write $N_h \cap M_n$ for the set of monic polynomials $f$ of degree $n$ over $F$
+that are $h$-full (if a monic irreducible $P$ divides $f$, then so does $P^h$), and $\omega_h(f)$
+for the number of monic irreducible $P$ that divide $f$ exactly $h$ times. For monic irreducible
+$P$ and $j < h$ put $|P| = q^{\deg P}$, $y_{P,j} = (q^{1/h}\xi^j)^{-\deg P}$ with $q^{1/h} > 0$,
+and $K(P, h, j) = (1 - y_{P,j})/(|P|(1 - y_{P,j}) + 1)$. Let
+$\kappa_j = \sum_P (K(P, h, j) - |P|^{-1})$ and
+$\Pi_j = \prod_P (1 - |P|^{-1})(1 + |P|^{-1}(1 - y_{P,j})^{-1})$, with sum and product over monic
+irreducible $P$, and for $X = (X_j)_j$ put
+$W_n(X) = |N_h \cap M_n|^{-1} (q^{n/h}/h) \sum_{j=0}^{h-1} \xi^{jn} \Pi_j X_j$. Let $B_1$ be the
+function field Mertens constant and $L_n = \log(n/h)$. Then, as $n \to \infty$,
+the variance of $\omega_h$ over $N_h \cap M_n$ (the mean of $\omega_h^2$ minus the square of the
+mean of $\omega_h$) is
+$L_n + B_1 - \pi^2/6 + W_n(Y) - W_n(\kappa)^2 + O(n^{\varepsilon - 1})$, where
+$Y_j = -\sum_P K(P, h, j)^2 + \kappa_j^2 + \kappa_j$.
+
+The printed display writes $\omega_1$ for $\omega_h$ in the definition of the variance and omits
+the factor $q^{n/h}/h$ in both weighted sums; both are restored as in Equations (8) and (9), from
+which the paper derives the variance.
 
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
@@ -1042,10 +1466,20 @@ public theorem_wanted omegaH_hFull_variance_asymptotic
           hFullWeightedMean F h ξ n (hFullKSum F h ξ) ^ 2))
       =O[atTop] (fun n : ℕ => (n : ℝ) ^ (ε - 1))
 
-/-- Theorem 7, first moment: for `2 ≤ h < k`, a primitive `h`-th root of unity `ξ` and `ε > 0`,
-the mean of `ω_k` over `N_h ∩ M_n` is `W(∑_P b_P) + O_ε(q^{-n/(h(h+1)) + εn})`, with
-`b_P = |P|(q^{1/h}ξ^j)^{-k deg P} K(P, h, j)` and
-`W(X) = |N_h ∩ M_n|^{-1} (q^{n/h}/h) ∑_j ξ^{jn} Π_j X_j`.
+/-- **Mean of $\omega_k$ over $h$-full polynomials for $k > h$.** Let $F$ be a finite field with
+$q$ elements, let $2 \le h < k$, let $\xi \in \mathbb{C}$ be a primitive $h$-th root of unity and
+let $\varepsilon > 0$. Write $M_n$ for the set of monic polynomials of degree $n$ over $F$, $N_h$
+for the set of $h$-full monic polynomials, $|P| = q^{\deg P}$, and $\omega_k(f)$ for the number of
+monic irreducible $P$ dividing $f$ whose multiplicity in $f$ is exactly $k$. For $j < h$ and a
+monic irreducible $P$ put $y_{P,j} = (q^{1/h}\xi^j)^{-\deg P}$, where $q^{1/h}$ is the positive
+real root, $K(P, h, j) = (1 - y_{P,j})/(|P|(1 - y_{P,j}) + 1)$ and
+$b_P(j) = |P| (q^{1/h}\xi^j)^{-k \deg P} K(P, h, j)$, and let
+$\Pi_j = \prod_P (1 - 1/|P|)(1 + 1/(|P|(1 - y_{P,j})))$, where sums and products over $P$ run
+over the monic irreducible polynomials. For $X = (X_0, \dots, X_{h-1}) \in \mathbb{C}^h$ let
+$W_n(X) = |N_h \cap M_n|^{-1} (q^{n/h}/h) \sum_{j<h} \xi^{jn} \Pi_j X_j$. Then the mean of
+$\omega_k$ over $N_h \cap M_n$ equals
+$W_n\bigl(\sum_P b_P(0), \dots, \sum_P b_P(h-1)\bigr) + O(q^{-n/(h(h+1)) + \varepsilon n})$ as
+$n \to \infty$.
 
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
@@ -1058,10 +1492,24 @@ public theorem_wanted omegaMult_hFull_mean_asymptotic
       =O[atTop] (fun n : ℕ =>
         (Fintype.card F : ℝ) ^ (-((n : ℝ) / (h * (h + 1))) + ε * n))
 
-/-- Theorem 7, second moment, in the reading of the paper's proof: the mean of `ω_k^2` over
-`N_h ∩ M_n` is `W((∑_P b_P)^2 - ∑_P b_P^2 + ∑_P b_P) + O_ε(q^{-n/(h(h+1)) + εn})`. The printed
-statement has `∑_P b_P^2 - (∑_P b_P)^2` with the signs swapped, contradicting the computation of
-`∂²B_{k,N_h}/∂z²` at the end of the proof (page 31).
+/-- **Second moment of $\omega_k$ over $h$-full polynomials for $k > h$.** Let $F$ be a finite
+field with $q$ elements, let $2 \le h < k$, let $\xi \in \mathbb{C}$ be a primitive $h$-th root of
+unity and let $\varepsilon > 0$. Write $M_n$ for the set of monic polynomials of degree $n$ over
+$F$, $N_h$ for the set of $h$-full monic polynomials, $|P| = q^{\deg P}$, and $\omega_k(f)$ for the
+number of monic irreducible $P$ dividing $f$ whose multiplicity in $f$ is exactly $k$. For $j < h$
+and a monic irreducible $P$ put $y_{P,j} = (q^{1/h}\xi^j)^{-\deg P}$, where $q^{1/h}$ is the
+positive real root, $K(P, h, j) = (1 - y_{P,j})/(|P|(1 - y_{P,j}) + 1)$ and
+$b_P(j) = |P| (q^{1/h}\xi^j)^{-k \deg P} K(P, h, j)$, and let
+$\Pi_j = \prod_P (1 - 1/|P|)(1 + 1/(|P|(1 - y_{P,j})))$, where sums and products over $P$ run
+over the monic irreducible polynomials. For $X = (X_0, \dots, X_{h-1}) \in \mathbb{C}^h$ let
+$W_n(X) = |N_h \cap M_n|^{-1} (q^{n/h}/h) \sum_{j<h} \xi^{jn} \Pi_j X_j$. Then the mean of
+$\omega_k^2$ over $N_h \cap M_n$ equals $W_n(X) + O(q^{-n/(h(h+1)) + \varepsilon n})$ as
+$n \to \infty$, where $X_j = (\sum_P b_P(j))^2 - \sum_P b_P(j)^2 + \sum_P b_P(j)$.
+
+This is the reading of the paper's proof. The printed statement has
+$\sum_P b_P^2 - (\sum_P b_P)^2$ (with $b_P = b_P(j)$) with the signs swapped, contradicting the
+computation of the second derivative in $z$ of the paper's generating function $B_{k,N_h}(u, z)$
+at the end of the proof (page 31).
 
 Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
 h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,

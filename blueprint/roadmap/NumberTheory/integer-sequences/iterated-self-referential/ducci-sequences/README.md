@@ -1,0 +1,18 @@
+# Ducci sequences
+
+- [The Ducci map on $\mathbb{Z}_m^n$](ducci-map.md)
+- [The basic Ducci tuple](ducci-basic.md)
+- [Ducci coefficients](ducci-coeff.md)
+- [Binomial coefficients $\binom{p^k - 1}{j}$ modulo $p$](choose-prime-pow-sub-one-mod.md)
+- [Binomial coefficients $\binom{p^k - p^{k-1}}{j}$ modulo $p$](choose-prime-pow-sub-mod.md)
+- [Vanishing of Ducci coefficients modulo $p$](ducci-coeff-vanish-mod.md)
+- [Reduction of Ducci coefficients modulo $p$](ducci-coeff-reduce-mod.md)
+- [Ducci predecessor criterion for even length](ducci-pred-iff.md)
+- [Length $L_m(n)$ of the basic Ducci sequence](ducci-max-length.md)
+- [Any return time bounds the length $L_m(n)$](ducci-max-length-le.md)
+- [One Ducci step from the basic tuple in $\mathbb{Z}_5^4$](ducci-map-basic-five-four.md)
+- [The length $L_5(4)$ is at most $1$](ducci-max-length-five-four-le.md)
+- [Length one when the modulus is coprime to the even length](ducci-max-length-eq-one-of-coprime.md)
+- [Length $p^k$ when the modulus has a single factor $p$](ducci-max-length-eq-prime-pow.md)
+- [Upper bound for the length when the modulus has a factor $p^l$](ducci-max-length-le-prime-pow.md)
+- [The length is the maximum over the prime-power parts of the modulus](ducci-max-length-eq-sup.md)

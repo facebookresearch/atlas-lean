@@ -45,21 +45,30 @@ not determine the minimum of `|A - A|` for every size, so the open-ended "determ
 asymptotically.
 -/
 
-/-- `A ⊆ ℤ^d` is not contained in an affine hyperplane: no nonzero real linear functional is
-constant on `A`. -/
+/-- **Full-dimensional sets in $\mathbb{Z}^d$.** A finite set $A \subseteq \mathbb{Z}^d$ is
+full-dimensional when it is not contained in an affine hyperplane: for every real vector
+$a \in \mathbb{R}^d$ and every real number $c$, if $\sum_i a_i x_i = c$ for all $x \in A$, then
+$a = 0$. -/
 def IsFullDimensional {d : ℕ} (A : Finset (Fin d → ℤ)) : Prop :=
   ∀ (a : Fin d → ℝ) (c : ℝ), (∀ x ∈ A, ∑ i, a i * x i = c) → a = 0
 
-/-- Stanchescu's bound: for every `d ≥ 2`, every sufficiently large full-dimensional finite
-`A ⊆ ℤ^d` has `|A - A| ≥ (2d - 2 + 1/(d - 1))|A| - (2d² - 4d + 3)`. -/
+/-- **Statement of Stanchescu's difference set bound.** The proposition that for every integer
+$d \ge 2$ there is a natural number $N$ such that every full-dimensional finite set
+$A \subseteq \mathbb{Z}^d$ (one not contained in an affine hyperplane) with $|A| \ge N$ satisfies
+$|A - A| \ge \left(2d - 2 + \frac{1}{d - 1}\right)|A| - (2d^2 - 4d + 3)$, where
+$A - A = \{a - b : a, b \in A\}$ is the difference set of $A$. -/
 def stanchescuDifferenceBound : Prop :=
   ∀ d : ℕ, 2 ≤ d → ∃ N : ℕ, ∀ A : Finset (Fin d → ℤ), IsFullDimensional A → N ≤ A.card →
     (2 * d - 2 + 1 / (d - 1 : ℝ)) * A.card - (2 * d ^ 2 - 4 * d + 3) ≤ ((A - A).card : ℝ)
 
 /--
-Resolved true: Conlon and Lim prove `|A - A| ≥ (2d - 2 + 1/(d - 1))|A| - (2d² - 4d + 3)` for every
-`d ≥ 2` and every sufficiently large finite `A ⊆ ℝ^d` not contained in a translate of a hyperplane,
-best possible by a construction of Stanchescu, resolving the question first raised by Uhrin. Source:
+**Conlon–Lim theorem: Stanchescu's difference set bound holds.** For every integer $d \ge 2$ there
+is a natural number $N$ such that every finite set $A \subseteq \mathbb{Z}^d$ with $|A| \ge N$ that
+is not contained in an affine hyperplane (no nonzero real linear functional is constant on $A$)
+satisfies $|A - A| \ge \left(2d - 2 + \frac{1}{d - 1}\right)|A| - (2d^2 - 4d + 3)$, where
+$A - A = \{a - b : a, b \in A\}$ is the difference set of $A$.
+
+Source:
 Problems presented at the workshop on recent trends in additive combinatorics, collected by E. Croot
 and V. F. Lev, AIM workshop problem list, Problem 2.6 (Y. Stanchescu),
 https://aimath.org/WWN/additivecomb/additivecomb.pdf; resolution: D. Conlon and J. Lim, Difference

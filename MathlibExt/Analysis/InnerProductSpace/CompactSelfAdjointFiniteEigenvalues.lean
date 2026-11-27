@@ -56,9 +56,11 @@ variable {𝕜 : Type*} [RCLike 𝕜]
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace 𝕜 H] [CompleteSpace H]
 
 omit [CompleteSpace H] in
-/-- The norm of an eigenvalue of a bounded linear operator is at most the
-operator norm: if `T x = μ • x` for a nonzero vector `x`, then
-`‖μ‖ * ‖x‖ = ‖T x‖ ≤ ‖T‖ * ‖x‖`. -/
+/-- **Eigenvalues are bounded by the operator norm.** Let $T$ be a bounded linear operator on an
+inner product space over $\mathbb{R}$ or $\mathbb{C}$. Every eigenvalue $\mu$ of $T$ satisfies
+$|\mu| \le \|T\|$.
+
+Indeed, if $Tx = \mu x$ with $x \neq 0$, then $|\mu| \, \|x\| = \|Tx\| \le \|T\| \, \|x\|$. -/
 theorem norm_hasEigenvalue_le {T : H →L[𝕜] H} {μ : 𝕜}
     (hμ : Module.End.HasEigenvalue (T : H →ₗ[𝕜] H) μ) : ‖μ‖ ≤ ‖T‖ := by
   obtain ⟨x, hx_mem, hx_ne⟩ := hμ.exists_hasEigenvector
@@ -69,9 +71,9 @@ theorem norm_hasEigenvalue_le {T : H →L[𝕜] H} {μ : 𝕜}
       _ ≤ ‖T‖ * ‖x‖ := T.le_opNorm x
   exact le_of_mul_le_mul_right hle hpos
 
-/-- **Finiteness of eigenvalues bounded away from zero.** For a compact
-self-adjoint operator `T` and any `ε > 0`, the set of eigenvalues `μ` of `T`
-with `ε ≤ ‖μ‖` is finite. -/
+/-- **Finiteness of large eigenvalues of a compact self-adjoint operator.** Let $T$ be a compact
+self-adjoint operator on a Hilbert space over $\mathbb{R}$ or $\mathbb{C}$. For every
+$\varepsilon > 0$, the set of eigenvalues $\mu$ of $T$ with $\varepsilon \le |\mu|$ is finite. -/
 theorem finite_eigenvalues_of_ge {T : H →L[𝕜] H} (hT : IsSelfAdjoint T)
     (hc : IsCompactOperator (T : H → H)) {ε : ℝ} (hε : 0 < ε) :
     Set.Finite {μ : 𝕜 | Module.End.HasEigenvalue (T : H →ₗ[𝕜] H) μ ∧ ε ≤ ‖μ‖} := by

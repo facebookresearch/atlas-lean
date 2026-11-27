@@ -1,0 +1,17 @@
+# Irreducible characters and class functions
+
+- [Class functions on a group](is-class-function.md)
+- [The space of class functions](class-functions.md)
+- [Characters are class functions](character-is-class-function.md)
+- [Class functions agree on conjugate elements](eq-of-is-conj.md)
+- [Class functions factor through conjugacy classes](is-class-function-iff-factor-conj-classe.md)
+- [Class functions as functions on conjugacy classes](class-functions-equiv-conj-classes.md)
+- [Evaluating a class function on conjugacy classes](class-functions-equiv-conj-classes-apply.md)
+- [Lifting a function on conjugacy classes](class-functions-equiv-conj-classes-symm.md)
+- [Dimension of the space of class functions](finrank-class-functions-eq-card-conj-cla.md)
+- [Irreducible representations are simple objects](simple-of-is-irreducible.md)
+- [Characters of nonisomorphic simple representations are linearly independent](linear-independent-character.md)
+- [A class function orthogonal to all irreducible characters vanishes](eq-zero-of-is-class-function-of-orthogon.md)
+- [Irreducible characters are linearly independent](linear-independent-irr-characters.md)
+- [Irreducible characters span the class functions](mem-span-irr-characters-of-is-class-func.md)
+- [Number of irreducible characters](card-irr-characters-eq-card-conj-classes.md)

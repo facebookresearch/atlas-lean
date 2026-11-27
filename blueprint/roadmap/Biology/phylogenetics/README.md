@@ -1,0 +1,34 @@
+# Phylogenetics
+
+Reconstruction of evolutionary trees from sequence data: substitution models, likelihood and parsimony, distance methods, tree metrics, splits and the enumeration of phylogenetic trees.
+
+- [Counting binary phylogenetic trees](../../Combinatorics/elementary-enumeration/counting-binary-phylogenetic-trees/README.md)
+- [Felsenstein's pruning algorithm](felsenstein-s-pruning-algorithm/README.md)
+- [Jukes–Cantor model](jukes-cantor-model/README.md)
+- [Maximum-likelihood ancestral reconstruction](maximum-likelihood-ancestral-reconstruction/README.md)
+- [Neighbor joining](neighbor-joining/README.md)
+- [Atteson's theorem on neighbor joining](atteson-s-theorem-on-neighbor-joining/README.md)
+- [Neighbor joining and balanced minimum evolution](neighbor-joining-and-balanced-minimum-evolution/README.md)
+- [Pauplin's formula and balanced minimum evolution](pauplin-s-formula-and-balanced-minimum-evolution/README.md)
+- [PhyloCSF coding classifier](phylocsf-coding-classifier/README.md)
+- [Small parsimony problem](small-parsimony-problem/README.md)
+- [Pulley principle, LogDet distances and Felsenstein zone](pulley-principle-logdet-distances-and-felsenstei/README.md)
+- [Time-reversible nucleotide substitution models](time-reversible-nucleotide-substitution-models/README.md)
+- [Codon substitution models and dN/dS](codon-substitution-models-and-dn-ds/README.md)
+- [Tree metrics and the four-point condition](../../GraphTheory/graph-families-and-operations/tree-metrics-and-the-four-point-condition/README.md)
+- [Splits, compatibility, ultrametrics and UPGMA](splits-compatibility-ultrametrics-and-upgma/README.md)
+- [Evolutionary conservation scores](evolutionary-conservation-scores/README.md)
+- [Consistency of minimum-distance GTR estimators](consistency-of-minimum-distance-gtr-estimators/README.md)
+- [Consistency of the GTR maximum-likelihood estimator](consistency-of-the-gtr-maximum-likelihood-estima/README.md)
+- [Identifiability of the GTR model](identifiability-of-the-gtr-model/README.md)
+- [Kimura two-parameter model](kimura-two-parameter-model/README.md)
+- [Log-det estimation of the GTR rate matrix](log-det-estimation-of-the-gtr-rate-matrix/README.md)
+- [Quartet support and determination of trees by quartets](quartet-support-and-determination-of-trees-by-qu/README.md)
+- [Sampling model for log-det estimation of the GTR rate matrix](sampling-model-for-log-det-estimation-of-the-gtr/README.md)
+
+- [Phylogenetic inference and comparison](inference-and-comparison/README.md)
+
+- [Phylogenetic diversity](phylogenetic-diversity/README.md)
+- [Phylogenetic invariants](phylogenetic-invariants/README.md)
+- [Displayed-tree measures on phylogenetic networks](displayed-tree-measures-on-phylogenetic-networks/README.md)
+- [Trinet encoding of phylogenetic networks](trinet-encoding-of-phylogenetic-networks/README.md)

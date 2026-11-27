@@ -63,8 +63,12 @@ universe u
 
 variable {V : Type u} [DecidableEq V]
 
-/-- Scan the remaining edges with residual weights `r` and total price `P`: edge `(u, v)` pays
-`δ = min (r u) (r v)`, subtracted from `r u` and `r v`. One unit per edge. -/
+/-- **Pricing scan.** Given rational residual weights $r$ on the vertices, a rational total
+price $P$ and a list of edges (ordered pairs of vertices), the pricing scan processes the
+edges in order: an edge $(u, v)$ has price $\delta = \min(r(u), r(v))$, which is subtracted
+from the residual weight of $u$ and of $v$ (once if $u = v$) and added to the total price.
+The result is the final pair of residual weights and total price, and the scan costs one
+time unit per edge. -/
 def pricingScan : (V → ℚ) → ℚ → List (V × V) → TimeM ℕ ((V → ℚ) × ℚ)
   | r, P, [] => pure (r, P)
   | r, P, (u, v) :: es => do
@@ -72,8 +76,11 @@ def pricingScan : (V → ℚ) → ℚ → List (V × V) → TimeM ℕ ((V → �
       let δ := min (r u) (r v)
       pricingScan (fun x => if x = u ∨ x = v then r x - δ else r x) (P + δ) es
 
-/-- The pricing method: scan the edges starting from the weights, then take the vertices whose
-weight is used up. -/
+/-- **Pricing method for weighted vertex cover.** Given rational weights $w$ on a finite vertex
+set $V$ and a list of edges (ordered pairs of vertices), run the pricing scan on the list
+starting from residual weights $w$ and total price $0$, then return the set of vertices whose
+final residual weight is $0$. On top of the cost of the scan, the selection costs $|V|$ time
+units. -/
 def pricingVertexCover [Fintype V] (w : V → ℚ) (edges : List (V × V)) : TimeM ℕ (Finset V) := do
   let res ← pricingScan w 0 edges
   ✓[Fintype.card V]
@@ -81,7 +88,10 @@ def pricingVertexCover [Fintype V] (w : V → ℚ) (edges : List (V × V)) : Tim
 
 /-! ## The scan -/
 
-/-- Residual weights stay nonnegative and only decrease. -/
+/-- **Pricing scan: residual weights stay between $0$ and their start.** Let $r$ be rational
+residual weights with $r(v) \ge 0$ for every vertex $v$, let $P$ be a rational number and
+let $L$ be a list of edges. If the pricing scan of $L$ from residual weights $r$ and total
+price $P$ ends with residual weights $r'$, then $0 \le r'(v) \le r(v)$ for every vertex $v$. -/
 theorem pricingScan_residual : ∀ (es : List (V × V)) (r : V → ℚ) (P : ℚ), (∀ v, 0 ≤ r v) →
     ∀ v, 0 ≤ (pricingScan r P es).ret.1 v ∧ (pricingScan r P es).ret.1 v ≤ r v
   | [], r, P, hr, v => by simp [pricingScan, hr v]
@@ -100,7 +110,11 @@ theorem pricingScan_residual : ∀ (es : List (V × V)) (r : V → ℚ) (P : ℚ
       · have := le_min (hr a) (hr b); linarith
       · exact le_rfl
 
-/-- After the scan, every listed edge has an endpoint with nothing left. -/
+/-- **Pricing scan: every edge has an exhausted endpoint.** Let $r$ be rational residual
+weights with $r(v) \ge 0$ for every vertex $v$, let $P$ be a rational number and let $L$ be
+a list of edges (ordered pairs of vertices). If the pricing scan of $L$ from residual
+weights $r$ and total price $P$ ends with residual weights $r'$, then every pair $(u, v)$
+in $L$ has $r'(u) = 0$ or $r'(v) = 0$. -/
 theorem pricingScan_covers : ∀ (es : List (V × V)) (r : V → ℚ) (P : ℚ), (∀ v, 0 ≤ r v) →
     ∀ e ∈ es, (pricingScan r P es).ret.1 e.1 = 0 ∨ (pricingScan r P es).ret.1 e.2 = 0
   | [], _, _, _, e, he => by simp at he
@@ -129,8 +143,13 @@ theorem pricingScan_covers : ∀ (es : List (V × V)) (r : V → ℚ) (P : ℚ),
         · right; have := hres b; simp only; linarith [this.1, this.2]
       · exact pricingScan_covers es r' _ hr' e he
 
-/-- What the vertices pay in total is at most twice the total price: each edge's price is paid by
-its two endpoints. -/
+/-- **Pricing scan: the vertices pay at most twice the price.** Let $V$ be a finite vertex set,
+let $r$ be rational residual weights with $r(v) \ge 0$ for every vertex $v$, let $P$ be a
+rational number and let $L$ be a list of edges. If the pricing scan of $L$ from residual
+weights $r$ and total price $P$ ends with residual weights $r'$ and total price $P'$, then
+$\sum_{v \in V} (r(v) - r'(v)) \le 2 (P' - P)$.
+
+Each edge's price is paid by its two endpoints. -/
 theorem sum_drop_le_two_mul_price [Fintype V] : ∀ (es : List (V × V)) (r : V → ℚ) (P : ℚ),
     (∀ v, 0 ≤ r v) →
     ∑ v, (r v - (pricingScan r P es).ret.1 v) ≤ 2 * ((pricingScan r P es).ret.2 - P)
@@ -169,8 +188,14 @@ theorem sum_drop_le_two_mul_price [Fintype V] : ∀ (es : List (V × V)) (r : V 
       rw [hsplit]
       linarith
 
-/-- The total price is at most what the vertices of any cover `C*` of the listed edges pay: every
-edge has an endpoint in `C*`, which pays its price. -/
+/-- **Pricing scan: the total price is at most what a cover pays.** Let $C$ be a finite
+set of vertices, let $r$ be rational residual weights with $r(v) \ge 0$ for every vertex
+$v$, let $P$ be a rational number, and let $L$ be a list of edges (ordered pairs of
+vertices) such that every pair $(u, v)$ in $L$ has $u \in C$ or $v \in C$. If the pricing
+scan of $L$ from residual weights $r$ and total price $P$ ends with residual weights $r'$
+and total price $P'$, then $P' - P \le \sum_{v \in C} (r(v) - r'(v))$.
+
+Every edge has an endpoint in $C$, which pays that edge's price. -/
 theorem price_le_sum_drop (C : Finset V) : ∀ (es : List (V × V)) (r : V → ℚ) (P : ℚ),
     (∀ v, 0 ≤ r v) → (∀ e ∈ es, e.1 ∈ C ∨ e.2 ∈ C) →
     (pricingScan r P es).ret.2 - P ≤ ∑ v ∈ C, (r v - (pricingScan r P es).ret.1 v)
@@ -210,7 +235,10 @@ theorem price_le_sum_drop (C : Finset V) : ∀ (es : List (V × V)) (r : V → �
 
 variable [Fintype V]
 
-/-- The result covers every listed edge. -/
+/-- **The pricing method covers every listed edge.** Let $w$ be rational weights on a finite
+vertex set with $w(v) \ge 0$ for every vertex $v$, and let $L$ be a list of edges (ordered
+pairs of vertices). For every pair $(u, v)$ in $L$, $u$ or $v$ belongs to the set returned
+by the pricing method on $w$ and $L$. -/
 theorem pricingVertexCover_covers (w : V → ℚ) (hw : ∀ v, 0 ≤ w v) (edges : List (V × V)) :
     ∀ e ∈ edges,
       e.1 ∈ (pricingVertexCover w edges).ret ∨ e.2 ∈ (pricingVertexCover w edges).ret := by
@@ -219,8 +247,11 @@ theorem pricingVertexCover_covers (w : V → ℚ) (hw : ∀ v, 0 ≤ w v) (edges
     Finset.mem_univ, true_and]
   exact pricingScan_covers edges w 0 hw e he
 
-/-- For a graph each of whose edges is listed in at least one orientation, the result is a vertex
-cover. -/
+/-- **The pricing method returns a vertex cover.** Let $G$ be a simple graph on a finite
+vertex set, let $w$ be rational vertex weights with $w(v) \ge 0$ for every vertex $v$, and
+let $L$ be a list of ordered pairs of vertices such that for every edge $uv$ of $G$, the
+pair $(u, v)$ or the pair $(v, u)$ is in $L$. Then the set returned by the pricing method on
+$w$ and $L$ is a vertex cover of $G$. -/
 theorem pricingVertexCover_isVertexCover (G : SimpleGraph V) (w : V → ℚ) (hw : ∀ v, 0 ≤ w v)
     (edges : List (V × V)) (hG : ∀ u v, G.Adj u v → (u, v) ∈ edges ∨ (v, u) ∈ edges) :
     G.IsVertexCover ↑(pricingVertexCover w edges).ret := by
@@ -229,8 +260,11 @@ theorem pricingVertexCover_isVertexCover (G : SimpleGraph V) (w : V → ℚ) (hw
   · simpa using pricingVertexCover_covers w hw edges (u, v) h
   · simpa [or_comm] using pricingVertexCover_covers w hw edges (v, u) h
 
-/-- **The 2-approximation.** For nonnegative weights, the result weighs at most twice any vertex
-cover `C*` of the listed edges. -/
+/-- **The pricing method weighs at most twice any cover of the listed edges.** Let $w$ be
+rational weights on a finite vertex set with $w(v) \ge 0$ for every vertex $v$, let $L$ be a
+list of edges (ordered pairs of vertices), and let $C$ be a set of vertices such that every
+pair $(u, v)$ in $L$ has $u \in C$ or $v \in C$. Then the total weight of the set returned by
+the pricing method on $w$ and $L$ is at most $2 \sum_{v \in C} w(v)$. -/
 theorem pricingVertexCover_weight_le (w : V → ℚ) (hw : ∀ v, 0 ≤ w v) (edges : List (V × V))
     (C : Finset V) (hC : ∀ e ∈ edges, e.1 ∈ C ∨ e.2 ∈ C) :
     ∑ v ∈ (pricingVertexCover w edges).ret, w v ≤ 2 * ∑ v ∈ C, w v := by
@@ -253,7 +287,10 @@ theorem pricingVertexCover_weight_le (w : V → ℚ) (hw : ∀ v, 0 ≤ w v) (ed
   simp only [sub_zero] at h3 h4
   linarith
 
-/-- **Cost.** Exactly one unit per listed edge and one per vertex. -/
+/-- **Running time of the pricing method.** For all rational vertex weights $w$ on a finite
+vertex set $V$ and every list $L$ of edges, the pricing method on $w$ and $L$ takes exactly
+$|L| + |V|$ time units, where $|L|$ is the length of the list: one unit per listed edge and
+one per vertex. -/
 theorem pricingVertexCover_time (w : V → ℚ) (edges : List (V × V)) :
     (pricingVertexCover w edges).time = edges.length + Fintype.card V := by
   have : ∀ (es : List (V × V)) (r : V → ℚ) (P : ℚ), (pricingScan r P es).time = es.length := by

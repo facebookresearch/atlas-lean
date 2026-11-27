@@ -1,0 +1,9 @@
+# Engel's theorem
+
+A finite-dimensional Lie algebra over a field is nilpotent if and only if every adjoint operator $\operatorname{ad} x \colon y \mapsto [x, y]$ is nilpotent. Mathlib proves this for Lie algebras over a commutative ring that are Noetherian as modules. Let $R$ be a commutative ring and let $L$ be a Lie algebra over $R$ that is Noetherian as an $R$-module: every $R$-submodule of $L$ is finitely generated. Then $L$ is nilpotent, meaning that its lower central series $L_0 = L$, $L_{k+1} = [L, L_k]$, where $[L, L_k]$ is spanned by the brackets $[x, y]$ with $x \in L$ and $y \in L_k$, reaches $0$ after finitely many steps, if and only if for every $x \in L$ the $R$-linear endomorphism $\operatorname{ad} x$ of $L$ is nilpotent, that is, $(\operatorname{ad} x)^m = 0$ for some $m$ depending on $x$. The Noetherian condition is on $L$ as an $R$-module, not on $R$. A finite-dimensional Lie algebra over any field is Noetherian as a module, so this gives the familiar statement, with no condition on the characteristic of the field and no algebraic closure.
+
+## Sources
+
+- James E. Humphreys, Introduction to Lie Algebras and Representation Theory, Graduate Texts in Mathematics 9, Springer-Verlag, 1972.
+- The mathlib Community, *mathlib4* at revision fc4f59e577feb1a4956671bc04ac18aaaf8cd842, for nilpotent Lie rings, nilpotent as Lie modules over themselves: `LieRing.IsNilpotent`, https://github.com/leanprover-community/mathlib4/blob/fc4f59e577feb1a4956671bc04ac18aaaf8cd842/Mathlib/Algebra/Lie/Nilpotent.lean#L746-L749.
+- The mathlib Community, *mathlib4* at revision fc4f59e577feb1a4956671bc04ac18aaaf8cd842, for nilpotence through the lower central series: `LieModule.isNilpotent_iff`, https://github.com/leanprover-community/mathlib4/blob/fc4f59e577feb1a4956671bc04ac18aaaf8cd842/Mathlib/Algebra/Lie/Nilpotent.lean#L257-L271.

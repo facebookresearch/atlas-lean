@@ -18,21 +18,21 @@ public import MathlibExt.RingTheory.PowerSeries.LagrangeBurmannCoefficient
 namespace MetaMathlibExt
 
 /--
-Central coefficients of Bell-subgroup Riordan matrices: for the Bell matrix
-`(g(X), X*g(X))`, the entry in row `2*n` and column `n` equals `(n+1)`
-times the degree-`(n+1)` coefficient of the compositional inverse `u` of
-`X / g(X)`.
+**Central coefficients of Bell matrices.** Let $g \in \mathbb{Z}[[X]]$ be the power series of a
+Bell matrix over $\mathbb{Z}$, with constant coefficient $g(0) = 1$, and let
+$u \in \mathbb{Z}[[X]]$ be a power series with constant coefficient $0$ such that substituting
+$u$ for $X$ in $X \, g(X)^{-1}$ gives $X$. Then for every natural number $n$, the entry of the
+Bell matrix in row $2n$ and column $n$ equals $(n+1)$ times the coefficient of $X^{n+1}$ in $u$.
 
-Source: Paul Barry, "On the Central Coefficients of Bell Matrices,"
-Journal of Integer Sequences 14 (2011), Article 11.4.3, Theorem `laterthm`,
-lines 167-169, <https://cs.uwaterloo.ca/journals/JIS/VOL14/Barry3/barry132.tex>.
-
-The paper's `[x^n] (1/x) u(x)` is rendered as `coeff (n+1) u`, and
-`T_{2n,n} = [x^{2n}] g*(X*g)^n` follows the paper's proof.
+The source writes the right-hand side as $(n+1)\,[x^n]\,\tfrac{1}{x} u(x)$.
 
 Proves `Wanted` entry `bell_riordan_central_coefficient`; it is now a proved
 theorem, obtained by specializing the Lagrange–Bürmann coefficient formula
 `fps_lagrange_burmann_coeff'`.
+
+Source: Paul Barry, "On the Central Coefficients of Bell Matrices,"
+Journal of Integer Sequences 14 (2011), Article 11.4.3, Theorem `laterthm`,
+lines 167-169, <https://cs.uwaterloo.ca/journals/JIS/VOL14/Barry3/barry132.tex>.
 -/
 theorem bell_riordan_central_coefficient
     (M : BellMatrix ℤ) (u : PowerSeries ℤ)

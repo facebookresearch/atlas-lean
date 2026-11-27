@@ -1,0 +1,3 @@
+# Ghost edges at the physical cluster of $o$
+
+Let $G$ be a graph on a finite vertex set $V$, $o \in V$, and let $\eta$ be a physical configuration, that is, an assignment of $0$ or $1$ to every unordered pair of elements of $V \cup \{\mathfrak{g}\}$ that is not a ghost edge $\{x, \mathfrak{g}\}$. The set of ghost edges $\{x, \mathfrak{g}\}$ such that $x$ is joined to $o$ by an open path of the ghost graph in the configuration that [equals $\eta$ off the ghost edges](abgr-merge.md) and has all ghost edges closed; that is, the ghost edges at the [sites connected to $o$](abgr-active.md) through $\eta$.

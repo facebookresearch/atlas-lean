@@ -26,7 +26,10 @@ single small step can be prepended to a big-step derivation.
 
 namespace Cslib.IMP
 
-/-- Every big-step execution is a finite small-step execution. -/
+/-- **Big-step executions terminate in small steps.** For every IMP command $c$ and states $s$ and
+$s'$, if $c$ evaluates from $s$ to $s'$ in the big-step semantics, then $c$ started in $s$
+terminates by small steps in $s'$: finitely many small steps lead from the configuration $(c, s)$
+to $(\mathrm{skip}, s')$. -/
 theorem Terminates.of_bigStep {c : Cmd} {s s' : State} (h : BigStep c s s') :
     Terminates c s s' := by
   induction h with
@@ -44,7 +47,10 @@ theorem Terminates.of_bigStep {c : Cmd} {s s' : State} (h : BigStep c s s') :
       exact Relation.ReflTransGen.head (Step.whileStep _ _ _)
         (Relation.ReflTransGen.head (Step.iteTrue hg) (Terminates.seq ihBody ihLoop))
 
-/-- A single small step can be prepended to a big-step derivation. -/
+/-- **Prepending one small step to a big-step execution.** Let $x = (c, s)$ and $y = (d, t)$ be
+configurations and $s'$ a state. If $x$ moves to $y$ in one small step and $d$ evaluates from $t$
+to $s'$ in the big-step semantics, then $c$ evaluates from $s$ to $s'$ in the big-step
+semantics. -/
 theorem BigStep.of_step {x y : Config} {s' : State} (hstep : Step x y)
     (h : BigStep y.1 y.2 s') : BigStep x.1 x.2 s' := by
   revert h
@@ -79,29 +85,41 @@ theorem BigStep.of_step {x y : Config} {s' : State} (hstep : Step x y)
         subst hskip
         exact .whileFalse hg
 
-/-- Finitely many small steps can be prepended to a big-step derivation. -/
+/-- **Prepending finitely many small steps to a big-step execution.** Let $x = (c, s)$ and
+$y = (d, t)$ be configurations and $s'$ a state. If $x$ reaches $y$ in finitely many (possibly
+zero) small steps and $d$ evaluates from $t$ to $s'$ in the big-step semantics, then $c$
+evaluates from $s$ to $s'$ in the big-step semantics. -/
 theorem BigStep.of_steps {x y : Config} {s' : State} (hsteps : Steps x y)
     (h : BigStep y.1 y.2 s') : BigStep x.1 x.2 s' := by
   induction hsteps using Relation.ReflTransGen.head_induction_on with
   | refl => exact h
   | head hstep _ ih => exact BigStep.of_step hstep ih
 
-/-- Every terminating small-step execution is a big-step execution. -/
+/-- **Small-step termination implies big-step evaluation.** For every IMP command $c$ and states $s$
+and $s'$, if $c$ started in $s$ terminates by small steps in $s'$, then $c$ evaluates from $s$ to
+$s'$ in the big-step semantics. -/
 theorem BigStep.of_terminates {c : Cmd} {s s' : State} (h : Terminates c s s') :
     BigStep c s s' :=
   BigStep.of_steps h (.skip _)
 
-/-- Small-step termination and big-step execution coincide. -/
+/-- **Equivalence of small-step and big-step semantics.** For every IMP command $c$ and states $s$
+and $s'$, $c$ started in $s$ terminates by small steps in $s'$ if and only if $c$ evaluates from
+$s$ to $s'$ in the big-step semantics. -/
 theorem terminates_iff_bigStep {c : Cmd} {s s' : State} :
     Terminates c s s' ↔ BigStep c s s' :=
   ⟨BigStep.of_terminates, Terminates.of_bigStep⟩
 
-/-- Small-step termination is deterministic. -/
+/-- **Small-step termination is deterministic.** For every IMP command $c$ and states $s$, $s_1$,
+$s_2$, if $c$ started in $s$ terminates by small steps in $s_1$ and also terminates by small steps
+in $s_2$, then $s_1 = s_2$. -/
 theorem Terminates.deterministic {c : Cmd} {s s1 s2 : State}
     (h1 : Terminates c s s1) (h2 : Terminates c s s2) : s1 = s2 :=
   BigStep.deterministic (BigStep.of_terminates h1) (BigStep.of_terminates h2)
 
-/-- Hoare validity can equivalently be stated with small-step termination. -/
+/-- **Hoare validity via small-step termination.** For assertions $P$ and $Q$ on states and an IMP
+command $c$, the partial-correctness Hoare triple with precondition $P$, command $c$ and
+postcondition $Q$ is valid if and only if, for all states $s$ and $s'$, whenever $P$ holds in $s$
+and $c$ started in $s$ terminates by small steps in $s'$, $Q$ holds in $s'$. -/
 theorem Valid.iff_terminates {pre post : Assertion} {c : Cmd} :
     Valid pre c post ↔
       ∀ ⦃s s' : State⦄, pre s → Terminates c s s' → post s' := by

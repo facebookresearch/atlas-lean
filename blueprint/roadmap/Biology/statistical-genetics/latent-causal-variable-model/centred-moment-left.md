@@ -1,0 +1,7 @@
+# Centred mixed fourth moment $E(\alpha_1^3 \alpha_2)$
+
+In every [latent causal variable model](model.md) on a probability measure $P$,
+
+$$\int \alpha_1^3 \alpha_2 \, dP - 3\, q_1 q_2 = \kappa_\pi\, q_1^3 q_2,$$
+
+where $\alpha_1, \alpha_2$ are the [marginal effects](alpha1.md) and $\kappa_\pi$ the [excess kurtosis](kurtosis.md).

@@ -1,0 +1,4 @@
+# Surjective periodicity of is Zero
+
+Over a `ℚ`-algebra, Connes' periodicity map `S : HC^m(A; M) → HC^(m+2)(A; M)` is surjective when
+`HH^(m+2)(A, Hom_R(A, M))` vanishes.

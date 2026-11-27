@@ -1,0 +1,15 @@
+# Finite-population survey sampling
+
+- [Inclusion probability of a unit under a sampling design](inclusion-probability.md)
+- [Horvitz–Thompson estimator of a population total](horvitz-thompson-total.md)
+- [Unbiasedness of the Horvitz–Thompson total](integral-horvitz-thompson-total.md)
+- [Unbiasedness of the Horvitz–Thompson mean](integral-horvitz-thompson-total-div-card.md)
+- [Second-order inclusion probability](pair-inclusion-probability.md)
+- [Yates–Grundy variance form](sen-yates-grundy-variance.md)
+- [Sen–Yates–Grundy variance estimator](sen-yates-grundy-estimate.md)
+- [Variance of the Horvitz–Thompson total](variance-horvitz-thompson-total.md)
+- [Yates–Grundy formula for fixed-size designs](variance-horvitz-thompson-total-fixed.md)
+- [Expectation of the Sen–Yates–Grundy estimator](integral-sen-yates-grundy-estimate.md)
+- [Unbiasedness of the Sen–Yates–Grundy variance estimator](integral-sen-yates-grundy-estimate-eq-va.md)
+- [Unbiasedness of the sample mean under simple random sampling](rand-exp-sample-mean.md)
+- [Variance of the sample mean under simple random sampling](rand-exp-sq-sample-mean-sub-pop-mean.md)

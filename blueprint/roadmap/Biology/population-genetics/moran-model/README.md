@@ -1,0 +1,33 @@
+# Moran model
+
+- [Up-step probability of the Moran process](moran-up.md)
+- [Down-step probability of the Moran process](moran-down.md)
+- [Fixation probability of the Moran process](moran-fixation.md)
+- [One-step transition probabilities of the Moran process](moran-prob.md)
+- [No up-step from the fixed state of the Moran process](moran-up-last.md)
+- [No down-step from the empty state of the Moran process](moran-down-zero.md)
+- [Moran up-step probability is r times the down-step probability](mul-moran-down.md)
+- [Nonnegativity of the Moran up-step probability](moran-up-nonneg.md)
+- [Nonnegativity of the Moran down-step probability](moran-down-nonneg.md)
+- [Moran up- and down-step probabilities sum to at most one](moran-up-add-moran-down-le-one.md)
+- [One-step expectation under the Moran process](sum-moran-prob-mul.md)
+- [Moran process as a stochastic matrix](moran-matrix.md)
+- [An absent mutant is never fixed](moran-fixation-zero.md)
+- [A fixed mutant stays fixed](moran-fixation-self.md)
+- [First-step equation of the Moran fixation probability](moran-fixation-eq-first-step.md)
+- [Uniqueness of the fixation probability](eq-moran-fixation.md)
+- [Fixation probability of the chain](tendsto-mat-pow-moran-matrix-last.md)
+- [Loss probability of the chain](tendsto-mat-pow-moran-matrix-zero.md)
+- [Closed form of Kimura's fixation probability](kimura-fixation-half.md)
+- [Diffusion limit of the Moran fixation probability](tendsto-moran-fixation-diffusion.md)
+
+- [Minimum fixation probability of the Moran process on graphs](minimum-fixation-probability-on-graphs.md)
+- [Worst-case absorption time of the Moran process on graphs](worst-case-absorption-time-on-graphs.md)
+
+- [Fixation probability in a frequency-dependent Moran process](frequency-dependent-moran-fixation-product-formu.md)
+- [The one-third rule for weak selection in the Moran process](one-third-rule-under-weak-selection.md)
+- [Weak-selection fixation probabilities in structured populations](weak-selection-fixation-probabilities/README.md)
+- [Neutral Moran genealogy as a relabeled Cannings model](moran-model-genealogy-per-step-c-2-n-2-and-time.md)
+- [Finite neutral Moran sampling duality on the pair-coalescence clock](finite-moran-forward-backward-sampling-duality.md)
+
+- [Moran and Cannings models: generator limits and effective size](moran-and-cannings-models-generator-limits-and-e.md)

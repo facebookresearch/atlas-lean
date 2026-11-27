@@ -24,9 +24,9 @@ file also states the cut–cycle duality `whb_CorrectWhitney` for this graph.
 
 * `StatMech.Lattice.whb_faceRegion G`: the graph on faces of `ℤ²` joining adjacent faces whose
   shared primal edge is not an edge of `G`.
-* `StatMech.Lattice.whb_CorrectWhitney`: for every graph `H` and lattice edge `pq` outside `H`, `p`
-  and `q` are connected in `H` iff deleting the dual edge across `pq` disconnects its ends in the
-  face-region graph of `H`.
+* `StatMech.Lattice.whb_CorrectWhitney`: for every finite subgraph `H` of the lattice and lattice
+  edge `pq` outside `H`, `p` and `q` are connected in `H` iff deleting the dual edge across `pq`
+  disconnects its ends in the face-region graph of `H`.
 
 ## Main results
 
@@ -151,12 +151,15 @@ theorem whb_faceRegion_interior_bounded :
     ((whb_faceRegion (imageGraph jbc_Pce)).connectedComponentMk ![0, 0]).supp.Finite := by
   rw [whb_faceRegion_interior_supp]; exact Set.finite_singleton _
 
-/-- **Whitney's cut–cycle duality** for subgraphs of `ℤ²` (H. Whitney, *Planar graphs*, 1933):
-for every `H` and lattice edge `pq` not in `H`, with `fg` the dual edge across `pq`, the
-endpoints `p` and `q` are connected in `H` iff `f` and `g` are disconnected in the
-face-region graph of `H` with `fg` deleted. -/
+/-- **Whitney's cut–cycle duality** for finite subgraphs of `ℤ²` (H. Whitney, *Planar graphs*,
+1933): for every finite subgraph `H` of the square lattice and lattice edge `pq` not in `H`, with
+`fg` the dual edge across `pq`, the endpoints `p` and `q` are connected in `H` iff `f` and `g`
+are disconnected in the face-region graph of `H` with `fg` deleted. Both hypotheses on `H` are
+needed: the duality fails for the horizontal axis with one edge removed, and for a graph whose
+edges are not lattice edges. -/
 def whb_CorrectWhitney : Prop :=
   ∀ (H : SimpleGraph (Site 2)) (p q f g : Site 2),
+    H ≤ hypercubicLattice 2 → H.edgeSet.Finite →
     (hypercubicLattice 2).Adj p q → s(p, q) ∉ H.edgeSet →
     (hypercubicLattice 2).Adj f g → sharedPrimalEdge f g = s(p, q) →
     (H.Reachable p q ↔

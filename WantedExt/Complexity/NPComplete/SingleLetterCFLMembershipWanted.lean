@@ -21,7 +21,7 @@ doi:10.1016/0304-3975(84)90092-6.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.QuasiRealTimeLanguageMembershipWanted

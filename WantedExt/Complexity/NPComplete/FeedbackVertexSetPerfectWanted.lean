@@ -20,7 +20,7 @@ doi:10.1016/j.tcs.2012.10.030.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Combinatorics.SimpleGraph.PerfectGraph
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity

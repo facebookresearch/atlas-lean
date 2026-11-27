@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.Biology.Dynamics.FisherKPP
+public import MathlibExt.Analysis.ODE.PlanarShooting.LogisticProfile
 import Mathlib.Analysis.Calculus.ContDiff.RCLike
 import Mathlib.Analysis.Calculus.Deriv.MeanValue
 import MathlibExt.Analysis.ODE.MaximalSolution
@@ -95,6 +95,7 @@ def trappingTriangle (D c : ℝ) : Set (ℝ × ℝ) :=
 
 /-- The trapping triangle is open. -/
 lemma isOpen_trappingTriangle (D c : ℝ) : IsOpen (trappingTriangle D c) := by
+  rw [trappingTriangle, Set.ofPred_and, Set.ofPred_and]
   apply IsOpen.inter (isOpen_lt continuous_fst continuous_const)
   exact (isOpen_lt continuous_snd continuous_const).inter
     (isOpen_lt continuous_const (continuous_snd.add (continuous_const.mul continuous_fst)))

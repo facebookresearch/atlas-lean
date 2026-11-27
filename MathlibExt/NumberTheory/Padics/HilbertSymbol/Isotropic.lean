@@ -37,8 +37,12 @@ set_option autoImplicit false
 
 namespace HilbertSymbol
 
-/-- ArithmeticGeometry:75: a diagonal form in more than two variables over `ℚ_[p]`,
-with `p` odd and every coefficient a unit of `ℤ_[p]`, is isotropic. -/
+/-- **Unit diagonal forms in at least three variables over $\mathbb{Q}_p$ are isotropic for odd
+$p$.** Let $p$ be an odd prime, let $n > 2$, and let $a_1, \dots, a_n$ be units of $\mathbb{Z}_p$.
+Then there is a nonzero vector $(x_1, \dots, x_n) \in \mathbb{Q}_p^n$ with
+$a_1 x_1^2 + \dots + a_n x_n^2 = 0$.
+
+Source: ArithmeticGeometry:75. -/
 theorem diagonal_unit_isotropic (p : ℕ) [Fact p.Prime] (hp_odd : p ≠ 2)
     {n : ℕ} (hn : 2 < n) (a : Fin n → ℤ_[p]ˣ) :
     ∃ x : Fin n → ℚ_[p], x ≠ 0 ∧ ∑ i, ((a i : ℤ_[p]) : ℚ_[p]) * (x i) ^ 2 = 0 := by

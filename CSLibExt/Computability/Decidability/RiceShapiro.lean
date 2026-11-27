@@ -146,7 +146,11 @@ theorem rice_shapiro_finite (C : Set (ℕ →. ℕ)) (hC : TM2Recognizable fun c
 
 /-! ### The effective form -/
 
-/-- The finite partial function with graph `θ`: at `x`, the first value listed for `x`. -/
+/-- **Finite function of a list of pairs.** For a finite list $\theta$ of pairs of natural
+numbers, the finite function of $\theta$ is the partial function
+$\mathbb{N} \rightharpoonup \mathbb{N}$ whose value at $x$ is the second component of the first
+pair in $\theta$ with first component $x$, and which is undefined at $x$ when $\theta$ has no pair
+with first component $x$. -/
 def finFun (θ : List (ℕ × ℕ)) : ℕ →. ℕ := fun x ↦
   ((θ.filterMap fun p ↦ if p.1 = x then some p.2 else none).head? : Part ℕ)
 
@@ -159,11 +163,15 @@ theorem mem_of_mem_finFun {θ : List (ℕ × ℕ)} {x y : ℕ} (h : y ∈ finFun
   rw [← hpx]
   exact hp
 
-/-- `θ` is the graph of a function: every listed pair agrees with the first value listed at its
-input. -/
+/-- **Graphs of finite functions.** A finite list $\theta$ of pairs of natural numbers is a graph
+when, for every pair $(x, y)$ in $\theta$, the finite function of $\theta$ takes the value $y$ at
+$x$; that is, the first pair in $\theta$ with first component $x$ is $(x, y)$. -/
 def IsGraph (θ : List (ℕ × ℕ)) : Prop := ∀ p ∈ θ, p.2 ∈ finFun θ p.1
 
-/-- Being the graph of a function is recognizable (indeed decidable). -/
+/-- **Being a graph is recursively enumerable.** The set of finite lists of pairs of natural
+numbers that are graphs is recursively enumerable.
+
+This set is in fact decidable. -/
 theorem rePred_isGraph : REPred IsGraph := by
   have hsel : Primrec₂ fun (q : List (ℕ × ℕ) × (ℕ × ℕ)) (r : ℕ × ℕ) ↦
       if r.1 = q.2.1 then some r.2 else none :=
@@ -200,7 +208,10 @@ theorem head?_filterMap_ite (s : List ℕ) (x : ℕ) (F : ℕ → Option ℕ) :
       cases h : F z <;> simp_all
     · simp [hz, ih, Ne.symm hz]
 
-/-- A partial function with finite domain is the finite function of its graph. -/
+/-- **Finite-domain partial functions are finite functions.** For every partial function
+$g : \mathbb{N} \rightharpoonup \mathbb{N}$ with finite domain there is a finite list $\theta$ of
+pairs of natural numbers such that the finite function of $\theta$ is $g$ and, for every pair
+$(x, y)$ in $\theta$, $g(x)$ is defined and equals $y$. -/
 theorem exists_finFun_eq {g : ℕ →. ℕ} (hg : g.Dom.Finite) :
     ∃ θ : List (ℕ × ℕ), finFun θ = g ∧ ∀ p ∈ θ, p.2 ∈ g p.1 := by
   classical
@@ -226,8 +237,10 @@ theorem exists_finFun_eq {g : ℕ →. ℕ} (hg : g.Dom.Finite) :
     obtain ⟨y, hy, rfl⟩ := Option.map_eq_some_iff.mp hz
     exact Part.mem_toOption.mp hy
 
-/-- Being a subfunction of `c.eval` is recognizable for a finite graph `θ`: search for a step
-bound at which `c` gives each listed value. -/
+/-- **Extending a finite list of pairs is recursively enumerable.** The set of pairs
+$(c, \theta)$, where $c$ is a code of a partial recursive function and $\theta$ is a finite list of
+pairs of natural numbers, such that for every pair $(x, y)$ in $\theta$ the function computed by
+$c$ is defined at $x$ with value $y$, is recursively enumerable. -/
 theorem rePred_subgraph :
     REPred fun q : Code × List (ℕ × ℕ) ↦ ∀ p ∈ q.2, p.2 ∈ q.1.eval p.1 := by
   have hcomp : ComputablePred fun s : (Code × ℕ × ℕ) × ℕ ↦
@@ -246,9 +259,12 @@ theorem rePred_subgraph :
       (Computable.pair (Computable.fst.comp Computable.snd) (Computable.snd.comp Computable.snd)))
   exact MetaMathlibExt.REPred.forall_mem hR Primrec.snd
 
-/-- **Effective Rice–Shapiro, sufficiency**: a class of partial functions has a recognizable index
-set when, among partial recursive functions, its members are exactly the extensions of the finite
-functions (finite graphs) in a recognizable set `B`. -/
+/-- **Effective Rice–Shapiro, sufficiency.** Let $C$ be a class of partial functions
+$\mathbb{N} \rightharpoonup \mathbb{N}$ and let $B$ be a recognizable set of finite lists of pairs
+of natural numbers. Suppose that a partial recursive function $f$ is in $C$ if and only if some
+$\theta \in B$ satisfies: for every pair $(x, y)$ in $\theta$, $f(x)$ is defined and equals $y$.
+Then the index set of $C$, the set of codes $c$ of partial recursive functions such that the
+function computed by $c$ is in $C$, is recognizable. -/
 theorem tm2Recognizable_of_basis (C : Set (ℕ →. ℕ)) {B : List (ℕ × ℕ) → Prop}
     (hB : TM2Recognizable B)
     (hC : ∀ f : ℕ →. ℕ, Nat.Partrec f → (f ∈ C ↔ ∃ θ, B θ ∧ ∀ p ∈ θ, p.2 ∈ f p.1)) :
@@ -259,9 +275,12 @@ theorem tm2Recognizable_of_basis (C : Set (ℕ →. ℕ)) {B : List (ℕ × ℕ)
     B θ ∧ ∀ p ∈ θ, p.2 ∈ c.eval p.1) (MetaMathlibExt.REPred.and hB' rePred_subgraph)).of_eq
       fun c ↦ (hC _ (Code.exists_code.mpr ⟨c, rfl⟩)).symm
 
-/-- **Effective Rice–Shapiro, necessity**: for a class with a recognizable index set, some
-recognizable set of finite function graphs, namely the graphs of the finite functions in the class,
-has as extensions exactly the partial recursive members of the class. -/
+/-- **Effective Rice–Shapiro, necessity.** Let $C$ be a class of partial functions
+$\mathbb{N} \rightharpoonup \mathbb{N}$ whose index set, the set of codes $c$ of partial
+recursive functions such that the function computed by $c$ is in $C$, is recognizable. Then there
+is a recognizable set $B$ of finite lists of pairs of natural numbers, each of which is a graph,
+such that a partial recursive function $f$ is in $C$ if and only if some $\theta \in B$
+satisfies: for every pair $(x, y)$ in $\theta$, $f(x)$ is defined and equals $y$. -/
 theorem exists_basis_of_tm2Recognizable (C : Set (ℕ →. ℕ))
     (hC : TM2Recognizable fun c : Code ↦ c.eval ∈ C) :
     ∃ B : List (ℕ × ℕ) → Prop, TM2Recognizable B ∧ (∀ θ, B θ → IsGraph θ) ∧

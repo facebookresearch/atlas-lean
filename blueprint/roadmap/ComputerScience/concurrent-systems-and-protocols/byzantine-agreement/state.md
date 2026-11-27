@@ -1,0 +1,5 @@
+# Executions of a Byzantine agreement protocol
+
+Let $Q$ be a [synchronous Byzantine agreement protocol](agreement-protocol.md), $x : G \to V$ an assignment of inputs, $F$ a finite set of faulty processes and $\mathit{adv} : \mathbb{N} \times G \times G \to M$ the behaviour of the faulty processes, a faulty process $j$ sending $\mathit{adv}(r, j, i)$ to process $i$ in round $r$. The state $s_r(i)$ of process $i$ after $r$ rounds is defined by $s_0(i) = \mathrm{init}(i, x_i)$ and $s_{r+1}(i) = \mathrm{recv}(r, i, s_r(i), \mathit{msg})$, where $\mathit{msg}(j) = \mathit{adv}(r, j, i)$ if $j \in F$ and $\mathit{msg}(j) = \mathrm{send}(r, j, s_r(j), i)$ otherwise. Correct processes follow the protocol.
+
+The messages of the faulty processes are an arbitrary function of the round, the sender and the recipient, and every theorem quantifies over all such functions. This loses nothing against an adaptive adversary: the function is chosen after the inputs and the set of faulty processes, and since protocols are deterministic these determine every message an adaptive adversary could react to.

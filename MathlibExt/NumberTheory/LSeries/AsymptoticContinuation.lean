@@ -18,17 +18,30 @@ open Filter Asymptotics Topology
 
 noncomputable section
 
-/-- Linear asymptotic ansatz: pole part plus continuation of the remainder. -/
+/-- **Linear asymptotic Dirichlet continuation.** For $a : \mathbb{N} \to \mathbb{C}$ and
+$\rho \in \mathbb{C}$, the linear asymptotic Dirichlet continuation of $a$ with constant $\rho$ is
+the function $L_{a,\rho} : \mathbb{C} \to \mathbb{C}$ given by
+$L_{a,\rho}(s) = \rho\,\zeta(s) + F_{a-\rho}(s)$, where $\zeta$ is the Riemann zeta function and
+$F_{a-\rho}$ is the Abel continuation of the sequence $n \mapsto a(n) - \rho$.
+
+For $\rho \neq 0$ the term $\rho\,\zeta(s)$ carries the pole at $s = 1$, and $F_{a-\rho}$
+continues the remainder. At $s = 1$ the formula uses the finite value that Mathlib assigns to
+$\zeta(1)$. -/
 def linearAsymptoticDirichletContinuation (a : ℕ → ℂ) (ρ s : ℂ) : ℂ :=
   ρ * riemannZeta s + abelContinuation (fun n => a n - ρ) s
 
-/-- Subtracting a constant shifts one-based partial sums by `n • ρ`. -/
+/-- **Partial sums after subtracting a constant.** For $a : \mathbb{N} \to \mathbb{C}$,
+$\rho \in \mathbb{C}$ and $n \in \mathbb{N}$, the one-based partial sum
+$\sum_{k=1}^{n} (a(k) - \rho)$ equals $\sum_{k=1}^{n} a(k) - n\rho$. -/
 theorem abelPartialSum_sub_const (a : ℕ → ℂ) (ρ : ℂ) (n : ℕ) :
     abelPartialSum (fun k => a k - ρ) n = abelPartialSum a n - n • ρ := by
   simp only [abelPartialSum, Finset.sum_sub_distrib, Finset.sum_const,
     Nat.card_Icc, Nat.add_sub_cancel]
 
-/-- The shifted partial sums inherit the `O(n ^ σ)` bound. -/
+/-- **Growth bound for the partial sums of a shifted sequence.** Let
+$a : \mathbb{N} \to \mathbb{C}$, $\rho \in \mathbb{C}$ and $\sigma \in \mathbb{R}$. If the one-based
+partial sums $A(n) = \sum_{k=1}^{n} a(k)$ satisfy $A(n) - n\rho = O(n^{\sigma})$ as
+$n \to \infty$, then $\sum_{k=1}^{n} (a(k) - \rho) = O(n^{\sigma})$ as $n \to \infty$. -/
 theorem isBigO_abelPartialSum_sub_const (a : ℕ → ℂ) (ρ : ℂ) {σ : ℝ}
     (hO : (fun n => abelPartialSum a n - n • ρ) =O[atTop]
       fun n => ((n : ℝ) ^ σ : ℝ)) :
@@ -36,7 +49,12 @@ theorem isBigO_abelPartialSum_sub_const (a : ℕ → ℂ) (ρ : ℂ) {σ : ℝ}
       fun n => ((n : ℝ) ^ σ : ℝ) := by
   simpa only [abelPartialSum_sub_const] using hO
 
-/-- Analyticity of the linear asymptotic continuation away from `1`. -/
+/-- **Analyticity of the linear asymptotic continuation away from $1$.** Let
+$a : \mathbb{N} \to \mathbb{C}$, $\rho \in \mathbb{C}$ and $\sigma \in \mathbb{R}$, and suppose
+that the one-based partial sums $A(n) = \sum_{k=1}^{n} a(k)$ satisfy
+$A(n) - n\rho = O(n^{\sigma})$ as $n \to \infty$. Then the linear asymptotic Dirichlet
+continuation $L_{a,\rho}$ of $a$ with constant $\rho$ is complex analytic at every
+$s \in \mathbb{C}$ with $\operatorname{Re} s > \sigma$ and $s \neq 1$. -/
 theorem analyticAt_linearAsymptoticDirichletContinuation_of_ne_one
     (a : ℕ → ℂ) (ρ : ℂ) {σ : ℝ}
     (hO : (fun n => abelPartialSum a n - n • ρ) =O[atTop]
@@ -86,7 +104,16 @@ private theorem linearAsymptoticNumerator_one (a : ℕ → ℂ) (ρ : ℂ) :
   unfold linearAsymptoticNumerator
   simp [riemannZeta₁_one]
 
-/-- Cleared-denominator factorization away from `1`. -/
+/-- **Cleared-denominator form of the linear asymptotic continuation.** Let
+$a : \mathbb{N} \to \mathbb{C}$ and $\rho \in \mathbb{C}$, let $L_{a,\rho}$ be the linear
+asymptotic Dirichlet continuation of $a$ with constant $\rho$, and let $F_{a-\rho}$ be the Abel
+continuation of the sequence $n \mapsto a(n) - \rho$. Let $\zeta_1 : \mathbb{C} \to \mathbb{C}$ be
+the function with $\zeta_1(s) = (s - 1)\,\zeta(s)$ for $s \neq 1$ and $\zeta_1(1) = 1$, where
+$\zeta$ is the Riemann zeta function. Then for every $s \in \mathbb{C}$ with $s \neq 1$,
+$$
+L_{a,\rho}(s) = (s - 1)^{-1} \bigl(\rho\,\zeta_1(s) + (s - 1)\,F_{a-\rho}(s)\bigr).
+$$
+-/
 theorem linearAsymptoticDirichletContinuation_eq_inv_sub_mul
     (a : ℕ → ℂ) (ρ : ℂ) {s : ℂ} (hs : s ≠ 1) :
     linearAsymptoticDirichletContinuation a ρ s =
@@ -111,7 +138,11 @@ private theorem linearAsymptoticDirichletContinuation_eventuallyEq
   unfold linearAsymptoticNumerator
   rw [zpow_neg_one, smul_eq_mul]
 
-/-- The continuation is meromorphic at `1`. -/
+/-- **Meromorphy of the linear asymptotic continuation at $1$.** Let
+$a : \mathbb{N} \to \mathbb{C}$, $\rho \in \mathbb{C}$ and $\sigma \in \mathbb{R}$ with
+$\sigma < 1$, and suppose that the one-based partial sums $A(n) = \sum_{k=1}^{n} a(k)$ satisfy
+$A(n) - n\rho = O(n^{\sigma})$ as $n \to \infty$. Then the linear asymptotic Dirichlet
+continuation $L_{a,\rho}$ of $a$ with constant $\rho$ is meromorphic at $s = 1$. -/
 theorem meromorphicAt_linearAsymptoticDirichletContinuation_one
     (a : ℕ → ℂ) (ρ : ℂ) {σ : ℝ} (hσ1 : σ < 1)
     (hO : (fun n => abelPartialSum a n - n • ρ) =O[atTop]
@@ -122,7 +153,12 @@ theorem meromorphicAt_linearAsymptoticDirichletContinuation_one
     analyticAt_linearAsymptoticNumerator a ρ hσ1 hO,
     linearAsymptoticDirichletContinuation_eventuallyEq a ρ⟩
 
-/-- Order of the continuation at `1` when `ρ ≠ 0`. -/
+/-- **The linear asymptotic continuation has a simple pole at $1$.** Let
+$a : \mathbb{N} \to \mathbb{C}$, $\rho \in \mathbb{C}$ with $\rho \neq 0$ and
+$\sigma \in \mathbb{R}$ with $\sigma < 1$, and suppose that the one-based partial sums
+$A(n) = \sum_{k=1}^{n} a(k)$ satisfy $A(n) - n\rho = O(n^{\sigma})$ as $n \to \infty$. Then the
+meromorphic order at $s = 1$ of the linear asymptotic Dirichlet continuation $L_{a,\rho}$ of $a$
+with constant $\rho$ is $-1$. -/
 theorem meromorphicOrderAt_linearAsymptoticDirichletContinuation_one
     (a : ℕ → ℂ) (ρ : ℂ) {σ : ℝ} (hσ1 : σ < 1)
     (hO : (fun n => abelPartialSum a n - n • ρ) =O[atTop]
@@ -137,7 +173,12 @@ theorem meromorphicOrderAt_linearAsymptoticDirichletContinuation_one
       analyticAt_linearAsymptoticNumerator a ρ hσ1 hO, hval,
       linearAsymptoticDirichletContinuation_eventuallyEq a ρ⟩)
 
-/-- Limit of `(s - 1)` times the continuation at `1`. -/
+/-- **Limit of the linear asymptotic continuation times $s - 1$ at $1$.** Let
+$a : \mathbb{N} \to \mathbb{C}$, $\rho \in \mathbb{C}$ and $\sigma \in \mathbb{R}$ with
+$\sigma < 1$, and suppose that the one-based partial sums $A(n) = \sum_{k=1}^{n} a(k)$ satisfy
+$A(n) - n\rho = O(n^{\sigma})$ as $n \to \infty$. Let $L_{a,\rho}$ be the linear asymptotic
+Dirichlet continuation of $a$ with constant $\rho$. Then $(s - 1)\,L_{a,\rho}(s) \to \rho$ as
+$s \to 1$ with $s \neq 1$. -/
 theorem tendsto_sub_one_mul_linearAsymptoticDirichletContinuation
     (a : ℕ → ℂ) (ρ : ℂ) {σ : ℝ} (hσ1 : σ < 1)
     (hO : (fun n => abelPartialSum a n - n • ρ) =O[atTop]
@@ -158,7 +199,12 @@ theorem tendsto_sub_one_mul_linearAsymptoticDirichletContinuation
     unfold linearAsymptoticNumerator
     field_simp [sub_ne_zero.mpr hs1])
 
-/-- Meromorphicity of the linear asymptotic continuation on its domain. -/
+/-- **Meromorphy of the linear asymptotic continuation on a half-plane.** Let
+$a : \mathbb{N} \to \mathbb{C}$, $\rho \in \mathbb{C}$ and $\sigma \in \mathbb{R}$ with
+$\sigma < 1$, and suppose that the one-based partial sums $A(n) = \sum_{k=1}^{n} a(k)$ satisfy
+$A(n) - n\rho = O(n^{\sigma})$ as $n \to \infty$. Then the linear asymptotic Dirichlet
+continuation $L_{a,\rho}$ of $a$ with constant $\rho$ is meromorphic at every point of the
+half-plane $\{s \in \mathbb{C} : \operatorname{Re} s > \sigma\}$. -/
 theorem meromorphicOn_linearAsymptoticDirichletContinuation
     (a : ℕ → ℂ) (ρ : ℂ) {σ : ℝ} (hσ1 : σ < 1)
     (hO : (fun n => abelPartialSum a n - n • ρ) =O[atTop]
@@ -172,7 +218,13 @@ theorem meromorphicOn_linearAsymptoticDirichletContinuation
   · exact (analyticAt_linearAsymptoticDirichletContinuation_of_ne_one
       a ρ hO hs hs1).meromorphicAt
 
-/-- Dirichlet partial sums converge to the linear asymptotic continuation for `1 < s.re`. -/
+/-- **Convergence of the Dirichlet series to the linear asymptotic continuation.** Let
+$a : \mathbb{N} \to \mathbb{C}$, $\rho \in \mathbb{C}$ and $\sigma \in \mathbb{R}$ with
+$\sigma < 1$, and suppose that the one-based partial sums $A(n) = \sum_{k=1}^{n} a(k)$ satisfy
+$A(n) - n\rho = O(n^{\sigma})$ as $n \to \infty$. Then for every $s \in \mathbb{C}$ with
+$\operatorname{Re} s > 1$, the partial sums $\sum_{n=1}^{N} a(n)\, n^{-s}$ converge, as
+$N \to \infty$, to $L_{a,\rho}(s)$, where $L_{a,\rho}$ is the linear asymptotic Dirichlet
+continuation of $a$ with constant $\rho$. -/
 theorem tendsto_linearAsymptoticDirichletContinuation_Icc
     (a : ℕ → ℂ) (ρ : ℂ) {σ : ℝ} (hσ1 : σ < 1)
     (hO : (fun n => abelPartialSum a n - n • ρ) =O[atTop]

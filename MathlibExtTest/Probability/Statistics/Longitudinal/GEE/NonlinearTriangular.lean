@@ -98,7 +98,7 @@ lemma sinh_slope (β₀ : ℝ) : ∀ ε > 0, ∃ δ > 0, Tendsto (fun n => μ {�
     (ε * Real.cosh β₀) (by positivity)
   refine ⟨δ / 2, by positivity, tendsto_const_nhds.congr fun n => ?_⟩
   symm
-  convert measure_empty (μ := μ)
+  convert measure_empty (μ := μ) using 2
   ext ω
   simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false, not_exists, not_and, not_lt]
   intro β hβ
@@ -265,7 +265,7 @@ example [IsProbabilityMeasure μ] (D : ℕ → ℝ) (hD : ∀ᶠ n in atTop, 0 <
     refine tendsto_const_nhds.congr' ?_
     filter_upwards [hD] with n hn
     symm
-    convert measure_univ (μ := μ)
+    convert measure_univ (μ := μ) using 2
     ext ω
     simp only [Set.mem_ofPred_eq, Set.mem_univ, iff_true]
     refine ⟨0, Metric.mem_closedBall_self hδ.le, ?_⟩

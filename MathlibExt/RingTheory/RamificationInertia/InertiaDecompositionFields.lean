@@ -48,8 +48,8 @@ the form Mathlib's inertia/decomposition cardinality lemmas use.
 
 namespace Subgroup
 
-/-- A subgroup whose intersection with `K` has the same cardinality as the
-subgroup itself is contained in `K`. -/
+/-- **Equal cardinality of an intersection forces containment.** Let $H$ and $K$ be subgroups of
+a group $G$ with $H$ finite. If $H \cap K$ has as many elements as $H$, then $H \le K$. -/
 theorem le_of_card_subgroupOf_eq {G : Type*} [Group G] {H K : Subgroup G}
     [Finite H]
     (h : Nat.card (H.subgroupOf K) = Nat.card H) :
@@ -74,9 +74,25 @@ section UnramifiedSplitCharacterization
 variable (K L : Type*) {B : Type*} [Field K] [Field L] [Algebra K L]
   [CommRing B] [MulSemiringAction (L ≃ₐ[K] L) B]
 
-/-- Tower formula for inertia-group cardinalities: the ramification index
-of `𝔓_E / 𝔭` times the size of the inertia group of `𝔓` inside the fixing
-subgroup of `E` equals the size of the full inertia group of `𝔓`. -/
+/-- **Tower formula for inertia groups.**
+Let $L/K$ be a finite Galois extension with Galois group $G$. Let $A$ and $B$ be Dedekind domains
+with $B$ a finite torsion-free $A$-algebra, and let $G$ act on $B$ by ring automorphisms as a
+Galois group of $B$ over $A$: faithfully, fixing the image of $A$, and with every element of $B$
+fixed by $G$ in the image of $A$. Let $E$ be an intermediate field of $L/K$ and $H \le G$ the
+subgroup fixing $E$ pointwise. Let $C$ be a Dedekind domain and a torsion-free $A$-algebra, and
+give $E$ an $A$-algebra structure and an injective ring map $C \to E$ whose image is the set of
+elements of $E$ integral over $A$ (the composite $A \to C \to E$ need not be the given map
+$A \to E$). Suppose $B$ is also a finite torsion-free $C$-algebra, with $A \to C \to B$ equal to
+$A \to B$, and that $H$, acting on $B$ by restriction, is a Galois group of $B$ over $C$. Let
+$\mathfrak p$, $\mathfrak P_E$ and $\mathfrak P$ be maximal ideals of $A$, $C$ and $B$ such that
+$\mathfrak P$ lies over $\mathfrak p$ and over $\mathfrak P_E$ and $\mathfrak P_E$ lies over
+$\mathfrak p$, and suppose that every prime of $B$ over $\mathfrak p$, and every prime of $B$
+over $\mathfrak P_E$, has a separable residue field extension. For a subgroup $S \le G$ write
+$I_S(\mathfrak P)$ for the inertia group of $\mathfrak P$ in $S$, the set of $\sigma \in S$ with
+$\sigma(x) - x \in \mathfrak P$ for all $x \in B$. Then
+$e(\mathfrak P_E \mid \mathfrak p) \cdot |I_H(\mathfrak P)| = |I_G(\mathfrak P)|$, where
+$e(\mathfrak P_E \mid \mathfrak p)$ is the ramification index of $\mathfrak P_E$ over
+$\mathfrak p$. -/
 theorem card_inertia_tower_formula
     {K L : Type*} {B : Type*} [Field K] [Field L] [Algebra K L]
     [CommRing B] [MulSemiringAction (L ≃ₐ[K] L) B]
@@ -109,9 +125,25 @@ theorem card_inertia_tower_formula
   rw [h_sub, ← h_tower]
   exact h_full.symm
 
-/-- The ramification index of `𝔓_E / 𝔭` times the size of the inertia group
-of `𝔓` intersected with the fixing subgroup of `E` equals the size of the
-full inertia group of `𝔓`. -/
+/-- **Tower formula for inertia groups, intersected with the fixing group.**
+Let $L/K$ be a finite Galois extension with Galois group $G$. Let $A$ and $B$ be Dedekind domains
+with $B$ a finite torsion-free $A$-algebra, and let $G$ act on $B$ by ring automorphisms as a
+Galois group of $B$ over $A$: faithfully, fixing the image of $A$, and with every element of $B$
+fixed by $G$ in the image of $A$. Let $E$ be an intermediate field of $L/K$ and $H \le G$ the
+subgroup fixing $E$ pointwise. Let $C$ be a Dedekind domain and a torsion-free $A$-algebra, and
+give $E$ an $A$-algebra structure and an injective ring map $C \to E$ whose image is the set of
+elements of $E$ integral over $A$ (the composite $A \to C \to E$ need not be the given map
+$A \to E$). Suppose $B$ is also a finite torsion-free $C$-algebra, with $A \to C \to B$ equal to
+$A \to B$, and that $H$, acting on $B$ by restriction, is a Galois group of $B$ over $C$. Let
+$\mathfrak p$, $\mathfrak P_E$ and $\mathfrak P$ be maximal ideals of $A$, $C$ and $B$ such that
+$\mathfrak P$ lies over $\mathfrak p$ and over $\mathfrak P_E$ and $\mathfrak P_E$ lies over
+$\mathfrak p$, and suppose that every prime of $B$ over $\mathfrak p$, and every prime of $B$
+over $\mathfrak P_E$, has a separable residue field extension. Let $I(\mathfrak P)$ be the
+inertia group of $\mathfrak P$, the set of $\sigma \in G$ with $\sigma(x) - x \in \mathfrak P$
+for all $x \in B$. Then
+$e(\mathfrak P_E \mid \mathfrak p) \cdot |I(\mathfrak P) \cap H| = |I(\mathfrak P)|$, where
+$e(\mathfrak P_E \mid \mathfrak p)$ is the ramification index of $\mathfrak P_E$ over
+$\mathfrak p$. -/
 theorem ramificationIdx_mul_card_inertia_subgroupOf
     {K L : Type*} {B : Type*} [Field K] [Field L] [Algebra K L]
     [CommRing B] [MulSemiringAction (L ≃ₐ[K] L) B]
@@ -141,8 +173,23 @@ theorem ramificationIdx_mul_card_inertia_subgroupOf
     AddSubgroup.subgroupOf_inertia P.toAddSubgroup E.fixingSubgroup]
   exact card_inertia_tower_formula P p E C_E P_E
 
-/-- The ramification index of `𝔓_E / 𝔭` is `1` exactly when the inertia
-group of `𝔓` is contained in the fixing subgroup of `E`. -/
+/-- **Ramification index one and the inertia group.**
+Let $L/K$ be a finite Galois extension with Galois group $G$. Let $A$ and $B$ be Dedekind domains
+with $B$ a finite torsion-free $A$-algebra, and let $G$ act on $B$ by ring automorphisms as a
+Galois group of $B$ over $A$: faithfully, fixing the image of $A$, and with every element of $B$
+fixed by $G$ in the image of $A$. Let $E$ be an intermediate field of $L/K$ and $H \le G$ the
+subgroup fixing $E$ pointwise. Let $C$ be a Dedekind domain and a torsion-free $A$-algebra, and
+give $E$ an $A$-algebra structure and an injective ring map $C \to E$ whose image is the set of
+elements of $E$ integral over $A$ (the composite $A \to C \to E$ need not be the given map
+$A \to E$). Suppose $B$ is also a finite torsion-free $C$-algebra, with $A \to C \to B$ equal to
+$A \to B$, and that $H$, acting on $B$ by restriction, is a Galois group of $B$ over $C$. Let
+$\mathfrak p$, $\mathfrak P_E$ and $\mathfrak P$ be maximal ideals of $A$, $C$ and $B$ such that
+$\mathfrak P$ lies over $\mathfrak p$ and over $\mathfrak P_E$ and $\mathfrak P_E$ lies over
+$\mathfrak p$, and suppose that every prime of $B$ over $\mathfrak p$, and every prime of $B$
+over $\mathfrak P_E$, has a separable residue field extension. Let $I(\mathfrak P)$ be the
+inertia group of $\mathfrak P$, the set of $\sigma \in G$ with $\sigma(x) - x \in \mathfrak P$
+for all $x \in B$. Then the ramification index $e(\mathfrak P_E \mid \mathfrak p)$ of
+$\mathfrak P_E$ over $\mathfrak p$ equals $1$ if and only if $I(\mathfrak P) \le H$. -/
 theorem ramificationIdx_eq_one_iff_inertia_le_fixingSubgroup
     [IsDedekindDomain B] [FaithfulSMul (L ≃ₐ[K] L) B]
     {A : Type*} [CommRing A] [IsDedekindDomain A] [Algebra A B]
@@ -177,8 +224,24 @@ theorem ramificationIdx_eq_one_iff_inertia_le_fixingSubgroup
     exact mul_right_cancel₀ (Nat.pos_iff_ne_zero.mp Nat.card_pos)
       (htower.trans (one_mul _).symm)
 
-/-- The ramification index of `𝔓_E / 𝔭` is `1` exactly when `E` lies below
-the inertia field of `𝔓`, i.e. the fixed field of its inertia group. -/
+/-- **Ramification index one and the inertia field.**
+Let $L/K$ be a finite Galois extension with Galois group $G$. Let $A$ and $B$ be Dedekind domains
+with $B$ a finite torsion-free $A$-algebra, and let $G$ act on $B$ by ring automorphisms as a
+Galois group of $B$ over $A$: faithfully, fixing the image of $A$, and with every element of $B$
+fixed by $G$ in the image of $A$. Let $E$ be an intermediate field of $L/K$ and $H \le G$ the
+subgroup fixing $E$ pointwise. Let $C$ be a Dedekind domain and a torsion-free $A$-algebra, and
+give $E$ an $A$-algebra structure and an injective ring map $C \to E$ whose image is the set of
+elements of $E$ integral over $A$ (the composite $A \to C \to E$ need not be the given map
+$A \to E$). Suppose $B$ is also a finite torsion-free $C$-algebra, with $A \to C \to B$ equal to
+$A \to B$, and that $H$, acting on $B$ by restriction, is a Galois group of $B$ over $C$. Let
+$\mathfrak p$, $\mathfrak P_E$ and $\mathfrak P$ be maximal ideals of $A$, $C$ and $B$ such that
+$\mathfrak P$ lies over $\mathfrak p$ and over $\mathfrak P_E$ and $\mathfrak P_E$ lies over
+$\mathfrak p$, and suppose that every prime of $B$ over $\mathfrak p$, and every prime of $B$
+over $\mathfrak P_E$, has a separable residue field extension. Let $I(\mathfrak P)$ be the
+inertia group of $\mathfrak P$, the set of $\sigma \in G$ with $\sigma(x) - x \in \mathfrak P$
+for all $x \in B$, and let $L^{I(\mathfrak P)}$ be its fixed field in $L$. Then the ramification
+index $e(\mathfrak P_E \mid \mathfrak p)$ of $\mathfrak P_E$ over $\mathfrak p$ equals $1$ if and
+only if $E \subseteq L^{I(\mathfrak P)}$. -/
 theorem ramificationIdx_eq_one_iff_le_inertiaField
     [IsDedekindDomain B] [FaithfulSMul (L ≃ₐ[K] L) B]
     {A : Type*} [CommRing A] [IsDedekindDomain A] [Algebra A B]
@@ -204,10 +267,24 @@ theorem ramificationIdx_eq_one_iff_le_inertiaField
   exact (IntermediateField.le_iff_le (P.inertia (L ≃ₐ[K] L)) E).symm
 
 set_option maxHeartbeats 400000 in
-/-- Tower formula for decomposition-group cardinalities: `e * f` of
-`𝔓_E / 𝔭` times the size of the decomposition group of `𝔓` intersected
-with the fixing subgroup of `E` equals the size of the full decomposition
-group of `𝔓`. -/
+/-- **Tower formula for decomposition groups.**
+Let $L/K$ be a finite Galois extension with Galois group $G$. Let $A$ and $B$ be Dedekind domains
+with $B$ a finite torsion-free $A$-algebra, and let $G$ act on $B$ by ring automorphisms as a
+Galois group of $B$ over $A$: faithfully, fixing the image of $A$, and with every element of $B$
+fixed by $G$ in the image of $A$. Let $E$ be an intermediate field of $L/K$ and $H \le G$ the
+subgroup fixing $E$ pointwise. Let $C$ be a Dedekind domain and a torsion-free $A$-algebra, and
+give $E$ an $A$-algebra structure and an injective ring map $C \to E$ whose image is the set of
+elements of $E$ integral over $A$ (the composite $A \to C \to E$ need not be the given map
+$A \to E$). Suppose $B$ is also a finite torsion-free $C$-algebra, with $A \to C \to B$ equal to
+$A \to B$, and that $H$, acting on $B$ by restriction, is a Galois group of $B$ over $C$. Let
+$\mathfrak p$, $\mathfrak P_E$ and $\mathfrak P$ be maximal ideals of $A$, $C$ and $B$ such that
+$\mathfrak P$ lies over $\mathfrak p$ and over $\mathfrak P_E$ and $\mathfrak P_E$ lies over
+$\mathfrak p$, and suppose that every prime of $B$ over $\mathfrak p$, and every prime of $B$
+over $\mathfrak P_E$, has a separable residue field extension. Let $D(\mathfrak P)$ be the
+decomposition group of $\mathfrak P$, the set of $\sigma \in G$ with
+$\sigma(\mathfrak P) = \mathfrak P$, and let $e$ and $f$ be the ramification index and the
+inertia degree of $\mathfrak P_E$ over $\mathfrak p$. Then
+$e f \cdot |D(\mathfrak P) \cap H| = |D(\mathfrak P)|$. -/
 theorem ramificationIdx_mul_inertiaDeg_mul_card_stabilizer_subgroupOf
     [IsDedekindDomain B] [FaithfulSMul (L ≃ₐ[K] L) B]
     {A : Type*} [CommRing A] [IsDedekindDomain A] [Algebra A B]
@@ -250,8 +327,24 @@ theorem ramificationIdx_mul_inertiaDeg_mul_card_stabilizer_subgroupOf
   rw [h_sub, h_full, h_e_tower, h_f_tower]
   ring
 
-/-- Both `e` and `f` of `𝔓_E / 𝔭` are `1` exactly when the decomposition
-group of `𝔓` is contained in the fixing subgroup of `E`. -/
+/-- **Ramification index and inertia degree one and the decomposition group.**
+Let $L/K$ be a finite Galois extension with Galois group $G$. Let $A$ and $B$ be Dedekind domains
+with $B$ a finite torsion-free $A$-algebra, and let $G$ act on $B$ by ring automorphisms as a
+Galois group of $B$ over $A$: faithfully, fixing the image of $A$, and with every element of $B$
+fixed by $G$ in the image of $A$. Let $E$ be an intermediate field of $L/K$ and $H \le G$ the
+subgroup fixing $E$ pointwise. Let $C$ be a Dedekind domain and a torsion-free $A$-algebra, and
+give $E$ an $A$-algebra structure and an injective ring map $C \to E$ whose image is the set of
+elements of $E$ integral over $A$ (the composite $A \to C \to E$ need not be the given map
+$A \to E$). Suppose $B$ is also a finite torsion-free $C$-algebra, with $A \to C \to B$ equal to
+$A \to B$, and that $H$, acting on $B$ by restriction, is a Galois group of $B$ over $C$. Let
+$\mathfrak p$, $\mathfrak P_E$ and $\mathfrak P$ be maximal ideals of $A$, $C$ and $B$ such that
+$\mathfrak P$ lies over $\mathfrak p$ and over $\mathfrak P_E$ and $\mathfrak P_E$ lies over
+$\mathfrak p$, and suppose that every prime of $B$ over $\mathfrak p$, and every prime of $B$
+over $\mathfrak P_E$, has a separable residue field extension. Let $D(\mathfrak P)$ be the
+decomposition group of $\mathfrak P$, the set of $\sigma \in G$ with
+$\sigma(\mathfrak P) = \mathfrak P$, and let $e$ and $f$ be the ramification index and the
+inertia degree of $\mathfrak P_E$ over $\mathfrak p$. Then $e = 1$ and $f = 1$ if and only if
+$D(\mathfrak P) \le H$. -/
 theorem ramificationIdx_inertiaDeg_eq_one_iff_stabilizer_le_fixingSubgroup
     [IsDedekindDomain B] [FaithfulSMul (L ≃ₐ[K] L) B]
     {A : Type*} [CommRing A] [IsDedekindDomain A] [Algebra A B]
@@ -291,9 +384,24 @@ theorem ramificationIdx_inertiaDeg_eq_one_iff_stabilizer_le_fixingSubgroup
         (htower.trans (one_mul _).symm)
     exact mul_eq_one.mp hef
 
-/-- Both `e` and `f` of `𝔓_E / 𝔭` are `1` exactly when `E` lies below the
-decomposition field of `𝔓`, i.e. the fixed field of its decomposition
-group (its stabilizer). -/
+/-- **Ramification index and inertia degree one and the decomposition field.**
+Let $L/K$ be a finite Galois extension with Galois group $G$. Let $A$ and $B$ be Dedekind domains
+with $B$ a finite torsion-free $A$-algebra, and let $G$ act on $B$ by ring automorphisms as a
+Galois group of $B$ over $A$: faithfully, fixing the image of $A$, and with every element of $B$
+fixed by $G$ in the image of $A$. Let $E$ be an intermediate field of $L/K$ and $H \le G$ the
+subgroup fixing $E$ pointwise. Let $C$ be a Dedekind domain and a torsion-free $A$-algebra, and
+give $E$ an $A$-algebra structure and an injective ring map $C \to E$ whose image is the set of
+elements of $E$ integral over $A$ (the composite $A \to C \to E$ need not be the given map
+$A \to E$). Suppose $B$ is also a finite torsion-free $C$-algebra, with $A \to C \to B$ equal to
+$A \to B$, and that $H$, acting on $B$ by restriction, is a Galois group of $B$ over $C$. Let
+$\mathfrak p$, $\mathfrak P_E$ and $\mathfrak P$ be maximal ideals of $A$, $C$ and $B$ such that
+$\mathfrak P$ lies over $\mathfrak p$ and over $\mathfrak P_E$ and $\mathfrak P_E$ lies over
+$\mathfrak p$, and suppose that every prime of $B$ over $\mathfrak p$, and every prime of $B$
+over $\mathfrak P_E$, has a separable residue field extension. Let $D(\mathfrak P)$ be the
+decomposition group of $\mathfrak P$, the set of $\sigma \in G$ with
+$\sigma(\mathfrak P) = \mathfrak P$, and let $L^{D(\mathfrak P)}$ be its fixed field in $L$. Let
+$e$ and $f$ be the ramification index and the inertia degree of $\mathfrak P_E$ over
+$\mathfrak p$. Then $e = 1$ and $f = 1$ if and only if $E \subseteq L^{D(\mathfrak P)}$. -/
 theorem ramificationIdx_inertiaDeg_eq_one_iff_le_decompositionField
     [IsDedekindDomain B] [FaithfulSMul (L ≃ₐ[K] L) B]
     {A : Type*} [CommRing A] [IsDedekindDomain A] [Algebra A B]
@@ -320,10 +428,28 @@ theorem ramificationIdx_inertiaDeg_eq_one_iff_le_decompositionField
   rw [IntermediateField.le_iff_le]
   exact ramificationIdx_inertiaDeg_eq_one_iff_stabilizer_le_fixingSubgroup K L P p E C_E P_E
 
-/-- Corollary 7.14: `e = 1` exactly when `E` lies below the inertia field
-of `𝔓`, and `e = f = 1` exactly when `E` lies below the decomposition
-field of `𝔓`. Here `𝔓_E = 𝔓 ∩ 𝓞_E` is the prime `P_E` of the integral
-closure `C_E` of `A` in `E`, and `𝔭 = 𝔓 ∩ A` is the prime `p`. -/
+/-- **Fields below the inertia and decomposition fields.**
+Let $L/K$ be a finite Galois extension with Galois group $G$. Let $A$ and $B$ be Dedekind domains
+with $B$ a finite torsion-free $A$-algebra, and let $G$ act on $B$ by ring automorphisms as a
+Galois group of $B$ over $A$: faithfully, fixing the image of $A$, and with every element of $B$
+fixed by $G$ in the image of $A$. Let $E$ be an intermediate field of $L/K$ and $H \le G$ the
+subgroup fixing $E$ pointwise. Let $C$ be a Dedekind domain and a torsion-free $A$-algebra, and
+give $E$ an $A$-algebra structure and an injective ring map $C \to E$ whose image is the set of
+elements of $E$ integral over $A$ (the composite $A \to C \to E$ need not be the given map
+$A \to E$). Suppose $B$ is also a finite torsion-free $C$-algebra, with $A \to C \to B$ equal to
+$A \to B$, and that $H$, acting on $B$ by restriction, is a Galois group of $B$ over $C$. Let
+$\mathfrak p$, $\mathfrak P_E$ and $\mathfrak P$ be maximal ideals of $A$, $C$ and $B$ such that
+$\mathfrak P$ lies over $\mathfrak p$ and over $\mathfrak P_E$ and $\mathfrak P_E$ lies over
+$\mathfrak p$, and suppose that every prime of $B$ over $\mathfrak p$, and every prime of $B$
+over $\mathfrak P_E$, has a separable residue field extension. Let $I(\mathfrak P)$ be the
+inertia group of $\mathfrak P$, the set of $\sigma \in G$ with $\sigma(x) - x \in \mathfrak P$
+for all $x \in B$, and $D(\mathfrak P)$ its decomposition group, the set of $\sigma \in G$ with
+$\sigma(\mathfrak P) = \mathfrak P$; let $L^{I(\mathfrak P)}$ and $L^{D(\mathfrak P)}$ be their
+fixed fields in $L$, and let $e$ and $f$ be the ramification index and the inertia degree of
+$\mathfrak P_E$ over $\mathfrak p$. Then $e = 1$ if and only if $E \subseteq L^{I(\mathfrak P)}$,
+and $e = f = 1$ if and only if $E \subseteq L^{D(\mathfrak P)}$.
+
+Source: ATLAS NumberTheoryI, Corollary 7.14. -/
 theorem ramificationIdx_inertiaDeg_eq_one_iff_le_inertiaField_decompositionField
     [IsDedekindDomain B] [FaithfulSMul (L ≃ₐ[K] L) B]
     {A : Type*} [CommRing A] [IsDedekindDomain A] [Algebra A B]

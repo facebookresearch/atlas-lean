@@ -1,0 +1,9 @@
+# 3-COLORABILITY OF PLANAR GRAPHS OF MAXIMUM DEGREE 4 is NP-complete
+
+The decision problem 3-COLORABILITY OF PLANAR GRAPHS OF MAXIMUM DEGREE 4 belongs to NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
+
+## Sources
+
+- M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the Theory of NP-Completeness*, W. H. Freeman (1979), problem [GT4] GRAPH K-COLORABILITY (comment: NP-complete for $K = 3$ and planar graphs with no vertex degree exceeding 4).
+- M. R. Garey, D. S. Johnson and L. Stockmeyer, "Some simplified NP-complete graph problems", Theoretical Computer Science 1(3) (1976), 237-267, doi:10.1016/0304-3975(76)90059-1.
+- L. Stockmeyer, "Planar 3-colorability is polynomial complete", ACM SIGACT News 5(3) (1973), 19-25, doi:10.1145/1008293.1008294.

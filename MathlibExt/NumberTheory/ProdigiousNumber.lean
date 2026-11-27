@@ -14,12 +14,14 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Product of the nonzero base-`b` digits of `n`. -/
+/-- **Product of the nonzero digits.** For natural numbers $b$ and $n$, this is the product of the
+nonzero digits of $n$ in base $b$; it equals $1$ when $n = 0$. In the degenerate bases, the digits
+of $n > 0$ are the single digit $n$ when $b = 0$, and $n$ copies of $1$ when $b = 1$. -/
 public def nonzeroDigitProd (b n : ℕ) : ℕ :=
   ((Nat.digits b n).filter (· != 0)).prod
 
-/-- A positive integer `n` is `b`-prodigious iff `2 ≤ b`, `0 < n`,
-and `n` is divisible by the product of its nonzero base-`b` digits. -/
+/-- **Prodigious numbers.** For natural numbers $b$ and $n$, the number $n$ is $b$-prodigious when
+$b \ge 2$, $n > 0$, and $n$ is divisible by the product of the nonzero digits of $n$ in base $b$. -/
 public def IsProdigious (b n : ℕ) : Prop :=
   2 ≤ b ∧ 0 < n ∧ nonzeroDigitProd b n ∣ n
 

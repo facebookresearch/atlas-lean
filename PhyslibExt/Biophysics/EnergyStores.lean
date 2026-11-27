@@ -76,8 +76,8 @@ lemma exercise_efficiency_bound {Pbase Pmech eta : ℝ}
 /-! ## B. Integrated efficiency bound. -/
 
 /-- Integrated form: over any finite window, metabolic energy cost is at
-least the mechanical work, when both powers are integrable and the
-pointwise declared model holds. The window is `a ≤ b`; for `a > b` the
+least the mechanical work, when both powers are integrable on the window,
+nonnegative at every time, and `0 < eta ≤ 1`. The window is `a ≤ b`; for `a > b` the
 signed interval integral reverses the inequality. -/
 lemma exercise_efficiency_integral {Pbase Pmech : ℝ → ℝ} {eta a b : ℝ}
     (hab : a ≤ b) (heta0 : 0 < eta) (heta1 : eta ≤ 1)
@@ -100,8 +100,9 @@ the integration window (`rhoF * F` has derivative `qF` and
 `rhoL * L` has derivative `qL` at every `s ∈ [0, t]`), and the net
 balance `qF + qL = intake - expenditure` on the window, the stored
 energy `E = rhoF * F + rhoL * L` satisfies
-`E t - E 0 = ∫ s in 0..t, (intake s - expenditure s)`. No
-variable-density or hydration term is present in this declared model. -/
+`E t - E 0 = ∫ s in 0..t, (intake s - expenditure s)`, for `t ≥ 0` and `intake - expenditure`
+integrable on `[0, t]`. No variable-density or hydration term is present in this declared
+model. -/
 lemma energy_budget {rhoF rhoL : ℝ} {F L qF qL intake expenditure : ℝ → ℝ}
     {t : ℝ} (hrhoF : 0 < rhoF) (hrhoL : 0 < rhoL) (ht : 0 ≤ t)
     (hF : ∀ s ∈ Set.Icc 0 t, HasDerivAt (fun u => rhoF * F u) (qF s) s)

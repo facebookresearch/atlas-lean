@@ -1,0 +1,18 @@
+# Algebraic Laws
+
+- [Right distributivity of graded tensor multiplication](mul-add.md)
+- [Left distributivity of graded tensor multiplication](add-mul.md)
+- [Right multiplication by zero in the graded tensor](mul-zero.md)
+- [Left multiplication by zero in the graded tensor](zero-mul.md)
+- [Complex linearity of the first graded product factor](smul-mul.md)
+- [Complex linearity of the second graded product factor](mul-smul.md)
+- [Additivity of graded tensor star](star-add.md)
+- [Conjugate-linearity of graded tensor star](star-smul.md)
+- [Associativity of graded tensor multiplication](mul-assoc.md)
+- [Involution law of graded tensor star](star-involutive.md)
+- [Product reversal by graded tensor star](star-mul.md)
+- [The factor generator preserves the graded product](generator-mul.md)
+- [The factor generator preserves graded star](generator-star.md)
+- [Star automorphism of the graded algebraic tensor](generator-star-alg-equiv.md)
+- [Parity action by star-algebra automorphisms](grading-action-hom.md)
+- [Values of the algebraic star grading action](grading-action-hom-apply.md)

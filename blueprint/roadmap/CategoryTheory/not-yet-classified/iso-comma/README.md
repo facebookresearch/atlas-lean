@@ -1,0 +1,18 @@
+# Iso Comma
+
+- [Iso Comma Property](iso-comma-property.md)
+- [Iso Comma](iso-comma.md)
+- [Iso Comma Left](iso-comma-left.md)
+- [Iso Comma Right](iso-comma-right.md)
+- [Iso Comma Comparison](iso-comma-comparison.md)
+- [Iso Comma Comparison hom naturality](iso-comma-comparison-hom-naturality.md)
+- [Iso Comma Comparison inv naturality](iso-comma-comparison-inv-naturality.md)
+- [Inverse Image To Iso Comma](inverse-image-to-iso-comma.md)
+- [Iso Comma To Inverse Image](iso-comma-to-inverse-image.md)
+- [Inverse Image Iso Comma Unit](inverse-image-iso-comma-unit.md)
+- [Inverse Image Iso Comma Counit](inverse-image-iso-comma-counit.md)
+- [Inverse Image Iso Comma Equivalence](inverse-image-iso-comma-equivalence.md)
+- [Inverse Image Iso Comma Equivalence inverse comp inclusion](inverse-image-iso-comma-equivalence-inve.md)
+- [Inverse Image Iso Comma Equivalence functor triangle](inverse-image-iso-comma-equivalence-func.md)
+- [Inverse Image Iso Comma Equivalence inverse triangle](inverse-image-iso-comma-equivalence-inve-2.md)
+- [Inverse Image Iso Comma Left Iso](inverse-image-iso-comma-left-iso.md)

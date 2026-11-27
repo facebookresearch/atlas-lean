@@ -27,29 +27,38 @@ namespace AddSubgroup
 
 variable {A : Type*} [AddCommGroup A]
 
-/-- `L'` is a cyclic sublattice of `L` when `L'` is contained in `L` and
-the quotient of `L` by (the restriction of) `L'` is cyclic. -/
+/-- **Cyclic sublattice of a subgroup.** Let $A$ be an abelian group and let $L'$ and $L$ be
+subgroups of $A$. Then $L'$ is a cyclic sublattice of $L$ when $L' \subseteq L$ and the quotient
+group $L/L'$ is cyclic; formally the quotient is taken by $L' \cap L$, regarded as a subgroup
+of $L$. -/
 def IsCyclicSublattice (L' L : AddSubgroup A) : Prop :=
   L' ≤ L ∧ IsAddCyclic (L ⧸ L'.addSubgroupOf L)
 
-/-- Unfolding of `IsCyclicSublattice`. -/
+/-- **Characterization of cyclic sublattices.** Let $L'$ and $L$ be subgroups of an abelian
+group $A$. Then $L'$ is a cyclic sublattice of $L$ if and only if $L' \subseteq L$ and the
+quotient group $L/(L' \cap L)$, with $L' \cap L$ regarded as a subgroup of $L$, is cyclic. -/
 theorem isCyclicSublattice_iff {L' L : AddSubgroup A} :
     IsCyclicSublattice L' L ↔
       L' ≤ L ∧ IsAddCyclic (L ⧸ L'.addSubgroupOf L) :=
   Iff.rfl
 
-/-- A cyclic sublattice is contained in the ambient subgroup. -/
+/-- **A cyclic sublattice is contained in its ambient subgroup.** Let $L'$ and $L$ be subgroups
+of an abelian group $A$. If $L'$ is a cyclic sublattice of $L$, then $L' \subseteq L$. -/
 theorem IsCyclicSublattice.le {L' L : AddSubgroup A}
     (h : IsCyclicSublattice L' L) : L' ≤ L :=
   h.1
 
-/-- The quotient witnessing cyclicity of a cyclic sublattice. -/
+/-- **The quotient by a cyclic sublattice is cyclic.** Let $L'$ and $L$ be subgroups of an
+abelian group $A$. If $L'$ is a cyclic sublattice of $L$, then the quotient group $L/L'$ is
+cyclic. -/
 theorem IsCyclicSublattice.isAddCyclic_quotient {L' L : AddSubgroup A}
     (h : IsCyclicSublattice L' L) :
     IsAddCyclic (L ⧸ L'.addSubgroupOf L) :=
   h.2
 
-/-- Constructor for `IsCyclicSublattice` from containment and cyclicity. -/
+/-- **Criterion for a cyclic sublattice.** Let $L'$ and $L$ be subgroups of an abelian group $A$.
+If $L' \subseteq L$ and the quotient group $L/L'$ is cyclic, then $L'$ is a cyclic sublattice
+of $L$. -/
 theorem IsCyclicSublattice.mk {L' L : AddSubgroup A} (hle : L' ≤ L)
     (hcyc : IsAddCyclic (L ⧸ L'.addSubgroupOf L)) :
     IsCyclicSublattice L' L :=

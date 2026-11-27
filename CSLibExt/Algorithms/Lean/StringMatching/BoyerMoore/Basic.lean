@@ -127,8 +127,23 @@ decreasing_by
     pure (scanned.reverseMatches.reverse, scanned.attempts,
       scanned.comparisons, scanned.outputs)
 
-/-- Return every occurrence in increasing order, including overlaps.
-The cost counts the documented selected events, not machine instructions. -/
+/-- **Boyer–Moore matcher for all occurrences.** Let $p = p_0 \cdots p_{m-1}$ and
+$t = t_0 \cdots t_{n-1}$ be words over the alphabet $\{0, \dots, \sigma - 1\}$. The matcher
+returns a list of offsets together with a cost. If $m = 0$ it returns $0, 1, \dots, n$ at cost
+$n + 1$, and if $n < m$ it returns the empty list at cost $0$. Otherwise it charges $m + n$ for
+converting $p$ and $t$ to arrays, computes the bad-character table $B$ and the strong
+good-suffix table $G$ of $p$ with the Boyer–Moore preprocessing and charges the cost of that
+preprocessing, and then visits alignments $s$, starting from $s = 0$, as long as
+$s + m \le n$. At each alignment it charges $1$ and compares $p_r$ with $t_{s + r}$ for
+$r = m - 1, m - 2, \dots, 0$, charging $1$ per comparison and stopping at the first mismatch.
+If all $m$ letters agree, it records $s$, charges $2$ and moves to the alignment $s + G_0$. If
+the first mismatch is at position $i$, it charges $1$ and moves to the alignment
+$s + \max(G_i, B_c - m + 1 + i)$, where $c = t_{s + i}$ and the maximum is taken in the
+integers. Finally it charges $1$ for each recorded offset and returns the recorded offsets in
+the order they were found.
+
+The result is every occurrence of $p$ in $t$, in increasing order and including overlaps. The
+cost counts these selected events, not machine instructions. -/
 public def boyerMooreMatches {σ : Nat} (pattern text : List (Fin σ)) :
     TimeM Nat (List Nat) :=
   Prod.fst <$> matchWithCounts pattern text
@@ -464,19 +479,28 @@ termination_by n + 1 - (s + m)
 decreasing_by
   all_goals omega
 
-/-- An empty pattern occurs at every bounded text boundary. -/
+/-- **Boyer–Moore with the empty pattern.** For every text $t$ of length $n$ over the alphabet
+$\{0, \dots, \sigma - 1\}$, the Boyer–Moore matcher with the empty pattern and text $t$ returns
+the list $0, 1, \dots, n$ of all offsets from $0$ to $n$ in increasing order, at cost $n + 1$. -/
 @[simp] public theorem boyerMooreMatches_nil_pattern {σ : Nat} (text : List (Fin σ)) :
     boyerMooreMatches [] text = ⟨List.range (text.length + 1), text.length + 1⟩ := by
   rfl
 
-/-- Overlength patterns return immediately, without preprocessing or search events. -/
+/-- **Boyer–Moore with a pattern longer than the text.** Let $p$ and $t$ be words over the
+alphabet $\{0, \dots, \sigma - 1\}$. If $t$ is strictly shorter than $p$, then the Boyer–Moore
+matcher with pattern $p$ and text $t$ returns the empty list at cost $0$: no preprocessing or
+search events are charged. -/
 @[simp] public theorem boyerMooreMatches_of_length_lt {σ : Nat}
     (pattern text : List (Fin σ)) (h : text.length < pattern.length) :
     boyerMooreMatches pattern text = pure [] := by
   have hm : pattern.length ≠ 0 := by omega
   apply TimeM.ext <;> simp [boyerMooreMatches, matchWithCounts, hm, h]
 
-/-- The matcher returns exactly the canonical occurrences, including overlaps. -/
+/-- **Boyer–Moore returns exactly the occurrences.** For all words $p$ and $t$ over the alphabet
+$\{0, \dots, \sigma - 1\}$ and every natural number $k$, the offset $k$ belongs to the list
+returned by the Boyer–Moore matcher with pattern $p$ and text $t$ if and only if $p$ occurs in
+$t$ at offset $k$, that is, $k \le |t|$ and $p$ is a prefix of the word obtained from $t$ by
+deleting its first $k$ letters. In particular, overlapping occurrences are all returned. -/
 public theorem mem_boyerMooreMatches_iff {σ : Nat} (pattern text : List (Fin σ))
     (offset : Nat) : offset ∈ (boyerMooreMatches pattern text).ret ↔
     StringMatching.MatchAt pattern text offset := by
@@ -506,7 +530,10 @@ public theorem mem_boyerMooreMatches_iff {σ : Nat} (pattern text : List (Fin σ
       simp only [List.not_mem_nil, Nat.zero_le, true_and, false_or] at hmem
       exact hmem.trans hcanonical
 
-/-- All returned offsets are strictly increasing. -/
+/-- **Boyer–Moore returns offsets in strictly increasing order.** For all words $p$ and $t$ over
+the alphabet $\{0, \dots, \sigma - 1\}$, the list of offsets returned by the Boyer–Moore matcher
+with pattern $p$ and text $t$ is strictly increasing: each entry is smaller than every entry
+after it. -/
 public theorem boyerMooreMatches_pairwise {σ : Nat} (pattern text : List (Fin σ)) :
     (boyerMooreMatches pattern text).ret.Pairwise (· < ·) := by
   by_cases hm : pattern.length = 0
@@ -527,8 +554,10 @@ public theorem boyerMooreMatches_pairwise {σ : Nat} (pattern text : List (Fin �
         ret_map, ret_bind, ret_pure]
       exact List.Pairwise.reverse horder
 
-/-- Boyer-Moore and the canonical naive matcher return the same ordered list.
-This is a result specification bridge, not a naive execution path. -/
+/-- **Boyer–Moore agrees with the naive matcher.** For all words $p$ and $t$ over the alphabet
+$\{0, \dots, \sigma - 1\}$, the list of offsets returned by the Boyer–Moore matcher with pattern
+$p$ and text $t$ equals the list returned by the naive matcher with pattern $p$ and text $t$,
+entry by entry and in the same order. Only the returned lists are compared, not the costs. -/
 public theorem boyerMooreMatches_eq_naiveMatches {σ : Nat} (pattern text : List (Fin σ)) :
     (boyerMooreMatches pattern text).ret = (naiveMatches pattern text).ret := by
   apply List.Pairwise.eq_of_mem_iff (boyerMooreMatches_pairwise pattern text)
@@ -537,8 +566,13 @@ public theorem boyerMooreMatches_eq_naiveMatches {σ : Nat} (pattern text : List
   exact (mem_boyerMooreMatches_iff pattern text offset).trans
     (mem_naiveMatches_iff pattern text offset).symm
 
-/-- Quadratic worst-case selected-event bound for all-occurrences matching.
-This does not assert linear all-match comparison complexity or machine runtime. -/
+/-- **Worst-case cost of Boyer–Moore matching.** Let $p$ and $t$ be words over the alphabet
+$\{0, \dots, \sigma - 1\}$ of lengths $m$ and $n$. The cost of the Boyer–Moore matcher with
+pattern $p$ and text $t$ is at most $n + 1$ if $m = 0$, at most $0$ if $n < m$, and at most
+$\sigma + n + 11m - 6 + (m + 4)(n - m + 1)$ if $1 \le m \le n$.
+
+The cost counts the matcher's selected events, not machine instructions. The bound is quadratic
+and does not assert linear all-match comparison complexity or machine runtime. -/
 public theorem boyerMooreMatches_time_le {σ : Nat} (pattern text : List (Fin σ)) :
     (boyerMooreMatches pattern text).time ≤
       if pattern.length = 0 then text.length + 1

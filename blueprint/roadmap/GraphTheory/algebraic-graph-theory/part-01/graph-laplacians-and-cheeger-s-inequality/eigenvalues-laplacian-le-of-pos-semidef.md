@@ -1,0 +1,3 @@
+# Laplacian eigenvalues are monotone in the Loewner order
+
+Let $V$ and $E$ be finite sets and let each $e \in E$ be an edge from $e^-$ to $e^+$ in $V$ (a finite multigraph; loops $e^- = e^+$ are allowed), and let $w, w' : E \to \mathbb{R}$ be weights such that $L_{w'} - L_w$ is positive semidefinite. List the eigenvalues of each [Laplacian](laplacian.md) in decreasing order, with multiplicity. Then for every $k$, the $k$-th eigenvalue of $L_w$ is at most the $k$-th eigenvalue of $L_{w'}$. With $G = (V, E, w')$ and $H = (V, E, w)$ this is D. A. Spielman, *Spectral and Algebraic Graph Theory*, draft of 2 April 2025, Lemma 6.2.1 for $c = 1$ ($G \succcurlyeq H$ implies $\lambda_k(G) \ge \lambda_k(H)$ for all $k$), a consequence of Weyl's inequality.

@@ -24,18 +24,26 @@ namespace NumberField.IsOrder
 
 variable {K : Type*} [Field K] [NumberField K] {O : Subalgebra ℤ K}
 
-/-- Elimination for the integral-closure inclusion clause. -/
+/-- **Orders lie in the ring of integers.** Let $K$ be a number field and $O$ an order in $K$,
+that is, a subring of $K$ contained in the ring of integers $\mathcal{O}_K$ (the integral
+closure of $\mathbb{Z}$ in $K$) whose field of fractions is $K$. Then
+$O \subseteq \mathcal{O}_K$. -/
 theorem le_integralClosure (h : NumberField.IsOrder K O) :
     O ≤ integralClosure ℤ K :=
   h.1
 
-/-- Elimination for the fraction-ring clause. Does not install a global instance. -/
+/-- **The fraction field of an order.** Let $K$ be a number field and $O$ an order in $K$, that
+is, a subring of $K$ contained in the ring of integers $\mathcal{O}_K$ (the integral closure of
+$\mathbb{Z}$ in $K$) whose field of fractions is $K$. Then $K$, with the inclusion
+$O \subseteq K$, is a field of fractions of $O$. -/
 theorem isFractionRing (h : NumberField.IsOrder K O) :
     IsFractionRing O K :=
   h.2
 
-/-- Every element of `K` is a quotient of elements of the order. Uses the local
-`IsFractionRing O K` evidence and `IsFractionRing.div_surjective`. -/
+/-- **Elements of a number field are quotients of elements of an order.** Let $K$ be a number
+field and $O$ an order in $K$, that is, a subring of $K$ contained in the ring of integers
+$\mathcal{O}_K$ (the integral closure of $\mathbb{Z}$ in $K$) whose field of fractions is $K$.
+Then for every $x \in K$ there are $a, b \in O$ with $b \neq 0$ and $x = a / b$. -/
 theorem exists_div_eq (hO : NumberField.IsOrder K O) (x : K) :
     ∃ (a b : O), b ≠ 0 ∧ (a : K) / (b : K) = x := by
   let _inst : IsFractionRing O K := hO.isFractionRing
@@ -44,7 +52,9 @@ theorem exists_div_eq (hO : NumberField.IsOrder K O) (x : K) :
 
 end NumberField.IsOrder
 
-/-- The maximal order `integralClosure ℤ K = 𝓞 K` is an order. -/
+/-- **The ring of integers is an order.** For every number field $K$, the ring of integers
+$\mathcal{O}_K$, the integral closure of $\mathbb{Z}$ in $K$, is an order in $K$, that is, a
+subring of $K$ contained in $\mathcal{O}_K$ whose field of fractions is $K$. -/
 theorem NumberField.isOrder_integralClosure (K : Type*) [Field K] [NumberField K] :
     NumberField.IsOrder K (integralClosure ℤ K) := by
   constructor

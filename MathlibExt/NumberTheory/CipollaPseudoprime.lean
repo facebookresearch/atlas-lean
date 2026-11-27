@@ -126,17 +126,16 @@ private theorem psp_from_prime_psp {b : ℕ} (b_ge_two : 2 ≤ b) {p : ℕ} (p_p
     simpa only [one_pow, pow_mul, hq] using Nat.sub_dvd_pow_sub_pow _ 1 q
   exact dvd_trans ha₇ ha₈
 
-/-- Cipolla construction of a pseudoprime to base `a`: for prime `p` not
-dividing `a * (a^2 - 1)`, `n = n₁ * n₂` with `n₁ = (a^p - 1)/(a - 1)` and
-`n₂ = (a^p + 1)/(a + 1)` is composite with `a^(n-1) ≡ 1 [MOD n]`.
+/-- **Cipolla's pseudoprime construction.** Let $a > 1$ be a natural number and let $p$ be a
+prime that does not divide $a(a^2 - 1)$. Put $n_1 = (a^p - 1)/(a - 1)$,
+$n_2 = (a^p + 1)/(a + 1)$ and $n = n_1 n_2$. Then $n$ is a Fermat pseudoprime to base $a$:
+$n > 1$, $n$ is not prime, and $n$ divides $a^{n-1} - 1$.
+
+Proves `Wanted` entry `cipolla_pseudoprime_construction`.
 
 Source: Y. Hamahata and Y. Kokubun, "Cipolla Pseudoprimes", Journal of
 Integer Sequences 10 (2007), Theorem 1 (Cipolla, cf. Ribenboim), lines 87--95,
 <https://cs.uwaterloo.ca/journals/JIS/VOL10/Hamahata2/hamahata44.tex>.
-
-Pinned Mathlib already contains this construction internally; this theorem
-exposes it publicly through `Nat.FermatPsp`.
-Proves `Wanted` entry `cipolla_pseudoprime_construction`.
 -/
 theorem cipolla_pseudoprime_construction
     (a p : ℕ)

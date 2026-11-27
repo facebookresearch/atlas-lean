@@ -1,0 +1,87 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+Author: @toskua
+-/
+module
+
+public import Mathlib.Analysis.CStarAlgebra.CStarMatrix
+import Mathlib.Data.Matrix.Basis
+
+/-!
+# Nonunital homomorphisms for C-star matrices
+
+Entrywise mapping of finite square matrices by a nonunital ring
+homomorphism, and the single diagonal corner selected by an index,
+over an arbitrary nonunital ring.
+-/
+
+@[expose] public section
+
+namespace CStarMatrix
+
+noncomputable section
+
+universe u v
+
+/-- Let `A` be a possibly nonunital ring. Let `B` be a possibly nonunital ring. For natural numbers `n`
+and `phi : A →ₙ+* B`. Entrywise mapping of a finite square matrix by a nonunital ring homomorphism.
+-/
+def nonUnitalRingHomMap
+    (n : ℕ) {A : Type u} {B : Type v}
+    [NonUnitalRing A] [NonUnitalRing B]
+    (phi : A →ₙ+* B) :
+    CStarMatrix (Fin n) (Fin n) A →ₙ+*
+      CStarMatrix (Fin n) (Fin n) B where
+  toFun M := CStarMatrix.map M phi
+  map_zero' := by ext; simp
+  map_add' M N := by ext; simp
+  map_mul' M N := by
+    apply CStarMatrix.ext
+    intro i j
+    simp [CStarMatrix.map_apply, CStarMatrix.mul_apply, map_sum, map_mul]
+
+@[simp]
+theorem nonUnitalRingHomMap_apply
+    (n : ℕ) {A : Type u} {B : Type v}
+    [NonUnitalRing A] [NonUnitalRing B]
+    (phi : A →ₙ+* B)
+    (M : CStarMatrix (Fin n) (Fin n) A) (i j : Fin n) :
+    nonUnitalRingHomMap n phi M i j = phi (M i j) :=
+  rfl
+
+/-- Let `A` be a possibly nonunital ring. For natural numbers `n` and `i₀ : Fin n`. The single diagonal
+corner selected by `i₀`, over an arbitrary nonunital ring.
+-/
+def ringCornerEmbedding
+    {A : Type u} [NonUnitalRing A]
+    {n : ℕ} (i₀ : Fin n) :
+    A →ₙ+* CStarMatrix (Fin n) (Fin n) A where
+  toFun a := CStarMatrix.ofMatrix (Matrix.single i₀ i₀ a)
+  map_zero' := by ext; simp
+  map_add' a b := by
+    ext i j
+    simp [Matrix.single_add]
+  map_mul' a b := by
+    change CStarMatrix.ofMatrix (Matrix.single i₀ i₀ (a * b)) =
+      CStarMatrix.ofMatrix (Matrix.single i₀ i₀ a) *
+        CStarMatrix.ofMatrix (Matrix.single i₀ i₀ b)
+    exact (Matrix.single_mul_single_same (c := a) i₀ i₀ i₀ b).symm
+
+@[simp]
+theorem ringCornerEmbedding_apply
+    {A : Type u} [NonUnitalRing A]
+    {n : ℕ} (i₀ : Fin n) (a : A) (i j : Fin n) :
+    ringCornerEmbedding i₀ a i j =
+      if i₀ = i ∧ i₀ = j then a else 0 :=
+  rfl
+
+end
+
+end CStarMatrix

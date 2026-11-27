@@ -24,7 +24,7 @@ Symposium on Theory of Computing (1971), 151-158, doi:10.1145/800157.805047.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Logics.Propositional.CNF.Semantics
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
@@ -47,7 +47,7 @@ is a single variable that occurs in no clause and `K = 1`, the question is wheth
 satisfiable, i.e. 3-SATISFIABILITY with clauses of at most three literals.
 
 The variables are `0, …, |X| + |Z| - 1`: `X` is `0, …, |X| - 1` and `Z` is
-`|X|, …, |X| + |Z| - 1`. The clauses are a `Cslib.Logic.PL.CNF` (a literal is a variable with
+`|X|, …, |X| + |Z| - 1`. The clauses are a `Cslib.Logic.LegacyPL.CNF` (a literal is a variable with
 its polarity), each with at most three literals over these variables, and an assignment is a
 list of `|X| + |Z|` truth values.
 
@@ -63,7 +63,7 @@ reduction from every language in `NP`
 -/
 
 /-- An instance: `|X|`, `|Z|`, the clauses `C`, and the bound `K`. -/
-abbrev MaximumDistinguishedOnesInstance := ℕ × ℕ × Cslib.Logic.PL.CNF × ℕ
+abbrev MaximumDistinguishedOnesInstance := ℕ × ℕ × Cslib.Logic.LegacyPL.CNF × ℕ
 
 /-- Well-formedness of an instance: every clause has at most three literals, all over the
 variables `0, …, |X| + |Z| - 1`, and `K` is positive. -/
@@ -73,7 +73,7 @@ def WellFormed (i : MaximumDistinguishedOnesInstance) : Prop :=
 /-- Some assignment satisfies every clause and sets at least `K` variables of `Z` to true. -/
 def MaximumDistinguishedOnesFeasible (i : MaximumDistinguishedOnesInstance) : Prop :=
   ∃ assign : List Bool, assign.length = i.1 + i.2.1 ∧
-    Cslib.Logic.PL.CNF.Satisfies (fun x => assign.getD x false) i.2.2.1 ∧
+    Cslib.Logic.LegacyPL.CNF.Satisfies (fun x => assign.getD x false) i.2.2.1 ∧
     i.2.2.2 ≤ ((List.range i.2.1).filter fun j => assign.getD (i.1 + j) false).length
 
 open Classical in

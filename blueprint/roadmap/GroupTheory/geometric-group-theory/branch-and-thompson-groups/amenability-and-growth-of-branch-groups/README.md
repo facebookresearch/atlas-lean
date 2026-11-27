@@ -1,0 +1,17 @@
+# Amenability and growth of branch groups
+
+- [Vertices of a spherically homogeneous rooted tree (Kourovka 15.14 version)](tree-vertex.md)
+- [Rigid vertex stabilizers (Kourovka 15.14 version)](rigid-vertex-stabilizer.md)
+- [Rigid level stabilizers (Kourovka 15.14 version)](rigid-level-stabilizer.md)
+- [Branch groups (Kourovka 15.14 version)](is-branch-group.md)
+- [Growth rate of a finitely generated group](growth-rate.md)
+- [Groups of exponential growth](has-exponential-growth.md)
+- [Groups containing a free subgroup of rank two](contains-free-group-rank-two.md)
+- [Kourovka Problem 15.14(a): non-amenable branch groups](fg-nonamenable-branch-group.md)
+- [Kourovka Problem 15.14(b): non-amenable branch groups without free subgroups](fg-nonamenable-branch-group-without-free.md)
+- [Kourovka Problem 15.14(c): branch groups containing free subgroups](fg-branch-group-containing-free-group.md)
+- [Kourovka Problem 15.14(d): branch groups of exponential growth](fg-branch-group-of-exponential-growth.md)
+- [Non-amenable branch groups exist (Kourovka 15.14(a))](fg-nonamenable-branch-group-holds.md)
+- [Non-amenable branch groups without free subgroups exist (Kourovka 15.14(b))](fg-nonamenable-branch-group-without-free-2.md)
+- [Branch groups containing free subgroups exist (Kourovka 15.14(c))](fg-branch-group-containing-free-group-ho.md)
+- [Branch groups of exponential growth exist (Kourovka 15.14(d))](fg-branch-group-of-exponential-growth-ho.md)

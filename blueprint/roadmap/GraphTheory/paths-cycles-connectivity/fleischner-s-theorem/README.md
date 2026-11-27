@@ -1,0 +1,17 @@
+# Fleischner's theorem
+
+- [Collapsing the complement of a set](collapse-outside.md)
+- [The collapse map fixes the retained set](collapse-outside-of-mem.md)
+- [The collapse map sends the complement to the contraction vertex](collapse-outside-of-not-mem.md)
+- [Preimages of retained vertices under the collapse map](collapse-outside-eq-some-iff.md)
+- [Preimage of the contraction vertex under the collapse map](collapse-outside-eq-none-iff.md)
+- [The collapse map is surjective](collapse-outside-surjective.md)
+- [Contracting the complement of a vertex set](contract-outside.md)
+- [Contraction preserves adjacency among retained vertices](contract-outside-adj-some.md)
+- [Neighbors of the contraction vertex](contract-outside-adj-none.md)
+- [Contracting the complement preserves 2-connectivity](contract-outside-2.md)
+- [Cardinality bound for contracting the complement](card-contract-outside-lt.md)
+- [Strong square cycle at a vertex](has-strong-square-cycle-2.md)
+- [Characterization of strong square cycles](has-strong-square-cycle-iff.md)
+- [Strengthened Fleischner theorem](has-strong-square-cycle.md)
+- [Fleischner's theorem](fleischner.md)

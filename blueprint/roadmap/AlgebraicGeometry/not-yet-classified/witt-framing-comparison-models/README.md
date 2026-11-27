@@ -1,0 +1,16 @@
+# Witt Framing Comparison Models
+
+- [Frame Actions](frame-actions.md)
+- [Frame Target](frame-target.md)
+- [Framing](framing.md)
+- [Sheaf Restriction Square](sheaf-restriction-square.md)
+- [Action Restriction Square](action-restriction-square.md)
+- [Is Identity On Sections](is-identity-on-sections.md)
+- [Regular Restriction](regular-restriction.md)
+- [Targets](targets.md)
+- [Identify Frame Target](identify-frame-target.md)
+- [Framed Restriction](framed-restriction.md)
+- [Represents Loop](represents-loop.md)
+- [Loop Class](loop-class.md)
+- [Restriction Data](restriction-data.md)
+- [Torsor Quotient Comparison](torsor-quotient-comparison.md)

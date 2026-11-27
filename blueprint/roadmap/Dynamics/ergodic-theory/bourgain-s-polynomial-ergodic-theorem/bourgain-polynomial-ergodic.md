@@ -1,0 +1,17 @@
+# Bourgain's polynomial ergodic theorem
+
+Let $(X, \mu)$ be a probability space, let
+$T : X \to X$ be a measure-preserving map, let $a : \mathbb{N} \to \mathbb{N}$ be an integer
+polynomial sequence, and let $f : X \to \mathbb{R}$ be a function in $L^p(\mu)$ for some
+$p$ with $1 < p < \infty$. Then there is a function $F : X \to \mathbb{R}$ such that for
+$\mu$-almost every $x \in X$ the polynomial ergodic averages
+$\frac{1}{n} \sum_{k=0}^{n-1} f(T^{a(k)}(x))$, $n \ge 1$, where $T^{a(k)}$ is the $a(k)$-fold
+iterate of $T$, converge to $F(x)$ as $n \to \infty$.
+
+## Sources
+
+- Jean Bourgain, *Pointwise ergodic theorems for arithmetic sets*, Publ. Math. IHÉS 69 (1989), 5–41,
+  DOI 10.1007/bf02698838.
+- Oliver Knill, *Some Fundamental Theorems in Mathematics* (2023), §173 (Polynomial Ergodic theorems),
+  <https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf>.
+- Problem `bourgain_polynomial_ergodic` of the lean-eval benchmark.

@@ -19,7 +19,7 @@ doi:10.1016/0166-218X(90)90024-7.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Computability.Complexity.Karp.Color
 public import MathlibExt.Combinatorics.Graph.MengerVertex
 public import MathlibExt.Computability.BinaryNatEncoding

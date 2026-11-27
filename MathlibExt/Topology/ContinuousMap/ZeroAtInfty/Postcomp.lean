@@ -1,0 +1,140 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+Author: @toskua
+-/
+module
+
+public import Mathlib.Topology.ContinuousMap.ZeroAtInfty
+public import Mathlib.Topology.UniformSpace.HeineCantor
+
+/-!
+# Zero-preserving codomain composition on functions vanishing at infinity
+
+A continuous zero-preserving coefficient map acts on continuous functions vanishing at
+infinity by literal postcomposition. The basic construction accepts any
+`ZeroAtInftyContinuousMapClass`; it requires only topological spaces and chosen zeros.
+
+For pseudometric coefficient spaces, postcomposition by a fixed coefficient map is
+continuous for the stock supremum metrics. No global uniform continuity, boundedness,
+local compactness, completeness or nonemptiness assumption is needed.
+-/
+
+@[expose] public section
+
+open Filter Set
+open scoped Topology Uniformity ZeroAtInfty
+
+universe uX uA uB uC uF
+
+namespace ZeroAtInftyContinuousMap
+
+variable {X : Type uX} {A : Type uA} {B : Type uB} [TopologicalSpace X]
+
+section Basic
+
+variable [TopologicalSpace A] [TopologicalSpace B] [Zero A] [Zero B]
+variable {F : Type uF} [FunLike F X A] [ZeroAtInftyContinuousMapClass F X A]
+
+/-- Let `X` be a topological space and let `A` and `B` be topological types with zero. Specify a
+continuous map `g : A → B` with `g(0)=0`, and a continuous input function vanishing at infinity.
+
+Postcomposition by a continuous zero-preserving coefficient map. -/
+def postcomp (g : C(A, B)) (hg0 : g 0 = 0) (f : F) : C₀(X, B) where
+  toFun x := g (f x)
+  continuous_toFun := (map_continuous g).comp (map_continuous f)
+  zero_at_infty' := by
+    change Tendsto ((g : A → B) ∘ (f : X → A)) (cocompact X) (𝓝 (0 : B))
+    simpa only [hg0] using
+      ((map_continuous g).tendsto (0 : A)).comp (zero_at_infty f)
+
+@[simp]
+theorem postcomp_apply (g : C(A, B)) (hg0 : g 0 = 0) (f : F) (x : X) :
+    postcomp g hg0 f x = g (f x) := by
+  unfold postcomp
+  rfl
+
+@[simp]
+theorem postcomp_zero (g : C(A, B)) (hg0 : g 0 = 0) :
+    postcomp g hg0 (0 : C₀(X, A)) = 0 := by
+  ext x
+  simpa only [postcomp_apply, ZeroAtInftyContinuousMap.zero_apply] using hg0
+
+@[simp]
+theorem postcomp_id (f : C₀(X, A)) :
+    postcomp (ContinuousMap.id A) (by rfl) f = f := by
+  ext x
+  rw [postcomp_apply]
+  rfl
+
+/-- Let `X` be a topological space and let `A` and `B` be topological types with zero. Specify a
+continuous map `g : A → B` with `g(0)=0`, and a continuous input function vanishing at infinity.
+A second continuous zero-preserving map has target `C`, another topological type with zero.
+
+Zero-preserving coefficient composition agrees with successive postcomposition. -/
+theorem postcomp_comp {C : Type uC} [TopologicalSpace C] [Zero C]
+    (h : C(B, C)) (hh0 : h 0 = 0) (g : C(A, B)) (hg0 : g 0 = 0) (f : F) :
+    postcomp h hh0 (postcomp g hg0 f) =
+      postcomp (h.comp g) (by simpa only [ContinuousMap.comp_apply, hg0] using hh0) f := by
+  ext x
+  simp only [postcomp_apply, ContinuousMap.comp_apply]
+
+end Basic
+
+section Metric
+
+variable [PseudoMetricSpace A] [PseudoMetricSpace B] [Zero A] [Zero B]
+
+/-- Let `X` be a topological space and let `A` and `B` be topological types with zero. Specify a
+continuous map `g : A → B` with `g(0)=0`, and a continuous input function vanishing at infinity.
+Assume `A` and `B` are pseudometric spaces.
+
+Postcomposition by a fixed continuous zero-preserving coefficient map is continuous for the
+supremum metrics. -/
+theorem continuous_postcomp (g : C(A, B)) (hg0 : g 0 = 0) :
+    Continuous (postcomp g hg0 : C₀(X, A) → C₀(X, B)) := by
+  refine continuous_iff_continuousAt.2 fun f => Metric.continuousAt_iff.2 ?_
+  intro ε hε
+  have hK : IsCompact (insert (0 : A) (range f)) :=
+    (zero_at_infty f).isCompact_insert_range_of_cocompact (map_continuous f)
+  -- The nearby value need not lie in the compact range of f.
+  have hU :
+      {p : A × A | p.1 ∈ insert (0 : A) (range f) →
+        dist (g p.1) (g p.2) < ε / 2} ∈ 𝓤 A :=
+    hK.uniformContinuousAt_of_continuousAt g
+      (fun a _ => (map_continuous g).continuousAt)
+      (Metric.dist_mem_uniformity (half_pos hε))
+  obtain ⟨δ, hδ, hδg⟩ := Metric.mem_uniformity_dist.1 hU
+  refine ⟨δ, hδ, ?_⟩
+  intro f' hff'
+  have hdist : dist (postcomp g hg0 f') (postcomp g hg0 f) ≤ ε / 2 := by
+    rw [← dist_toBCF_eq_dist]
+    refine (BoundedContinuousFunction.dist_le (half_pos hε).le).2 ?_
+    intro x
+    have hf : dist (f x) (f' x) < δ := by
+      calc
+        dist (f x) (f' x) ≤ dist f.toBCF f'.toBCF :=
+          BoundedContinuousFunction.dist_coe_le_dist
+            (f := f.toBCF) (g := f'.toBCF) x
+        _ = dist f' f := by rw [dist_toBCF_eq_dist, dist_comm]
+        _ < δ := hff'
+    have hg : dist (g (f x)) (g (f' x)) < ε / 2 :=
+      hδg hf (mem_insert_of_mem 0 (mem_range_self x))
+    calc
+      dist ((postcomp g hg0 f').toBCF x) ((postcomp g hg0 f).toBCF x) =
+          dist (g (f' x)) (g (f x)) := by
+            change dist ((postcomp g hg0 f') x) ((postcomp g hg0 f) x) = _
+            rw [postcomp_apply, postcomp_apply]
+      _ = dist (g (f x)) (g (f' x)) := dist_comm _ _
+      _ ≤ ε / 2 := hg.le
+  exact hdist.trans_lt (half_lt_self hε)
+
+end Metric
+
+end ZeroAtInftyContinuousMap

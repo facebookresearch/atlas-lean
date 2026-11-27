@@ -1,0 +1,17 @@
+# Stride series for zeta and eta values
+
+- [Alternating stride sum](stride-alternating-sum.md)
+- [Signed stride sum](stride-signed-sum.md)
+- [Alternating stride sum with a single term](stride-alternating-sum-of-le.md)
+- [Signed stride sum with a single term](stride-signed-sum-of-le.md)
+- [Recurrence for the alternating stride sum](stride-alternating-sum-add.md)
+- [Recurrence for the signed stride sum](stride-signed-sum-add.md)
+- [Alternating stride sum series for $\zeta(t + 1)$](tendsto-stride-alternating-sum-riemann-z.md)
+- [Digamma series for the signed stride sum](tendsto-stride-signed-sum-digamma.md)
+- [Stride series for the Dirichlet eta function](tendsto-stride-signed-sum-dirichlet-eta.md)
+- [Digamma identity for stride sums over odd indices](tendsto-stride-sums-digamma-odd.md)
+- [Stride series for the Dirichlet lambda function](tendsto-stride-sums-dirichlet-lambda.md)
+- [Alternating stride sum series for $\zeta(p + t + 1)$](tendsto-stride-alternating-sum-riemann-z-2.md)
+- [Higher-power stride series for the Dirichlet eta function](tendsto-stride-signed-sum-dirichlet-eta-2.md)
+- [Digamma series for the alternating stride sum](tendsto-stride-alternating-sum-digamma-h.md)
+- [Closed form of $\sum_{n \ge 1} 1/(n^t(2n-1))$](tsum-inv-pow-mul-two-mul-sub-one.md)

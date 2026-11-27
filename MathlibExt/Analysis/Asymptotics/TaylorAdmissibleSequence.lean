@@ -14,9 +14,9 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Admissible sequences for Taylor's variance-to-mean power law: sequences
-over indices 1, 2, ... (the value at 0 is ignored), positive at every
-positive index, and eventually strictly increasing.
+/-- **Admissible sequences for Taylor's law.** A sequence $a : \mathbb{N} \to \mathbb{N}$, indexed
+from $1$ (its value at $0$ is ignored), is admissible when $a(n) > 0$ for every $n \ge 1$ and
+there is $n_0 \ge 1$ such that $a(n) < a(n + 1)$ for every $n \ge n_0$.
 
 Source: Joel E. Cohen, *Variance Functions of Asymptotically Exponentially
 Increasing Integer Sequences Go Beyond Taylor's Law*, Journal of Integer

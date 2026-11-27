@@ -58,14 +58,20 @@ the generic N324 conclusion, convergence of `∫ H`, or the prime number theorem
 
 namespace Chebyshev
 
-/-- Global measurability of the normalized theta error. -/
+/-- **Measurability of the normalized theta error.** Let $\theta(x) = \sum_{p \le x} \log p$ be
+Chebyshev's function, the sum running over primes $p$. The normalized theta error
+$H(t) = \theta(e^t)e^{-t} - 1$ is a Borel measurable function of $t \in \mathbb{R}$. -/
 theorem measurable_normalizedThetaError :
     Measurable normalizedThetaError := by
   unfold normalizedThetaError
   exact ((theta_mono.measurable.comp Real.measurable_exp).mul
     (Real.measurable_exp.comp measurable_neg)).sub_const 1
 
-/-- Stronger explicit global bound; the source proof never uses `0 ≤ t`. -/
+/-- **Explicit bound for the normalized theta error.** Let $\theta(x) = \sum_{p \le x} \log p$ be
+Chebyshev's function, the sum running over primes $p$, and let $H(t) = \theta(e^t)e^{-t} - 1$ be
+the normalized theta error. Then $|H(t)| \le \log 4 + 1$ for every real $t$.
+
+The bound holds for all real $t$, not only for $t \ge 0$. -/
 theorem abs_normalizedThetaError_le (t : ℝ) :
     |normalizedThetaError t| ≤ Real.log 4 + 1 := by
   have hx : (0 : ℝ) ≤ Real.exp t := le_of_lt (Real.exp_pos t)
@@ -92,7 +98,10 @@ theorem abs_normalizedThetaError_le (t : ℝ) :
   · linarith
   · linarith
 
-/-- Exact source-shaped boundedness packet needed by N324. -/
+/-- **Boundedness of the normalized theta error on $[0, \infty)$.** Let
+$\theta(x) = \sum_{p \le x} \log p$ be Chebyshev's function, the sum running over primes $p$, and
+let $H(t) = \theta(e^t)e^{-t} - 1$ be the normalized theta error. There is a real number $M$ such
+that $|H(t)| \le M$ for every real $t \ge 0$. -/
 theorem normalizedThetaError_bounded :
     ∃ M : ℝ, ∀ t : ℝ, 0 ≤ t → |normalizedThetaError t| ≤ M :=
   ⟨Real.log 4 + 1, fun t _ => abs_normalizedThetaError_le t⟩

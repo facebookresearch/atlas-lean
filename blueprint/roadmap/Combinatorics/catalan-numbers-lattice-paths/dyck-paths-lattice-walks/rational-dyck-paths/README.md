@@ -1,0 +1,15 @@
+# Rational Dyck paths
+
+- [Dyck words of height at most $2$](is-dyck-height-at-most-two.md)
+- [Block word of a Dyck path of height at most $2$](dyck-height-two-block-word.md)
+- [Maximal runs of a Boolean word](bool-runs.md)
+- [Maximal runs of the word $1001100$](bool-runs-example.md)
+- [Valleys following a run](run-following-valleys.md)
+- [The rational Dyck path run condition](is-tilde-rational-runs.md)
+- [The $Q$-bonacci run condition](is-qbonacci-runs.md)
+- [Examples of the $Q$-bonacci run condition for $q = 4/5$](is-qbonacci-runs-examples.md)
+- [The path sets $\tilde R_n^{r/s}$](tilde-rational-dyck-paths.md)
+- [The $Q$-bonacci paths $Q_n^{r/s}$](q-bonacci-dyck-paths.md)
+- [Path counts for $q = 3/2$](card-q-bonacci-dyck-paths-three-two-four.md)
+- [$Q$-bonacci and rational-run paths are in bijection when $s = t r + 1$](nonempty-equiv-q-bonacci-tilde-rational.md)
+- [$Q$-bonacci and rational-run paths correspond exactly when $s \equiv 1 \pmod r$](forall-nonempty-equiv-q-bonacci-tilde-ra.md)

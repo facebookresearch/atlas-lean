@@ -9,8 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
-public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.Order.Monotone.Monovary
+public import MathlibExt.NumberTheory.BinomialFibonacciConvolution
 import Mathlib.Algebra.BigOperators.Field
 import Mathlib.Algebra.Order.Monovary
 import Mathlib.Analysis.MeanInequalitiesPow
@@ -426,27 +426,6 @@ theorem Nat.sum_Icc_fib_mul_fib_three_mul (n : ℕ) :
       rw [show 3 * (n + 1) = n + 1 + (2 * n + 1) + 1 by ring, Nat.fib_add]
     rw [htriple, heven, hodd', hodd, h2]
     ring
-
-/-- `∑_{i=0}^n binom(n, i) F_{i+m} = F_{2n+m}`. -/
-theorem Nat.sum_range_choose_mul_fib_add (n m : ℕ) :
-    ∑ i ∈ range (n + 1), n.choose i * Nat.fib (i + m) =
-      Nat.fib (2 * n + m) := by
-  induction n generalizing m with
-  | zero => simp
-  | succ n ih =>
-    have h2 : ∑ i ∈ range (n + 2), n.choose i * Nat.fib (i + m) =
-        Nat.fib (2 * n + m) := by
-      rw [sum_range_succ, ih, Nat.choose_succ_self, zero_mul, add_zero]
-    rw [sum_range_succ'] at h2
-    have h1 := ih (m + 1)
-    rw [sum_range_succ']
-    simp only [Nat.choose_succ_succ, add_mul, sum_add_distrib,
-      Nat.choose_zero_right] at h2 ⊢
-    have e : ∀ i, Nat.fib (i + 1 + m) = Nat.fib (i + (m + 1)) := fun i => by
-      rw [add_assoc, add_comm 1 m]
-    simp only [e] at h2 ⊢
-    rw [add_assoc, h2, h1, show 2 * (n + 1) + m = 2 * n + m + 2 by ring,
-      Nat.fib_add_two, add_comm, ← add_assoc]
 
 /-- `∑_{i=1}^n binom(n, i) F_i = F_{2n}`. -/
 theorem Nat.sum_Icc_choose_mul_fib (n : ℕ) :

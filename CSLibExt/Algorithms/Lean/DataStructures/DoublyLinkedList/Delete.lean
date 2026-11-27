@@ -59,9 +59,19 @@ private def finishDelete {α : Type u} {capacity : Nat}
     TimeM.tick 1
     pure (store.set n.val (some { currentN with prev := currentX.prev }) n.isLt, head)
 
-/-- Delete an allocated node by identity, preserving its record and all allocations.
-The two NIL tests and executed pointer assignments cost three or four events.
-Only allocation access is required; list consistency is a correctness premise. -/
+/-- **Deletion from a doubly linked list.** Let the store be an array of cells, each either empty
+or holding a node with a payload and optional next and previous pointers to cells, let $h$ be
+the optional head pointer, and let $x$ be a cell holding a node such that each cell named by its
+previous or next pointer also holds a node. Following CLRS `LIST-DELETE`, deleting $x$ returns a
+new store and head as follows. If the node at $x$ has a previous pointer $p$, the next pointer of
+the node at $p$ is set to the next pointer of $x$ and the head stays $h$; otherwise the head
+becomes the next pointer of $x$. Then, if the node at $x$ has a next pointer $s$, the previous
+pointer of the node at $s$ in the store from the first step is set to the previous pointer of $x$.
+The computation is charged one unit for each of the two NIL tests and one unit for each executed
+pointer or head assignment, so three or four units in total.
+
+The record stored at $x$ is kept and no cell is freed; list consistency is needed only for
+correctness, not to run the procedure. -/
 public def listDelete {α : Type u} {capacity : Nat}
     (store : Vector (Option (Node α (Fin capacity))) capacity)
     (head : Option (Fin capacity)) (x : Fin capacity)
@@ -112,7 +122,12 @@ private lemma finishDelete_head {α : Type u} {capacity : Nat}
   simp only [TimeM.ret_bind]
   split <;> simp
 
-/-- The exact number of executed NIL tests and pointer or header assignments. -/
+/-- **Running time of doubly linked list deletion.** Let the store be an array of cells, each
+either empty or holding a node with optional next and previous pointers, let $h$ be the optional
+head pointer, and let $x$ be a cell holding a node such that each cell named by its previous or
+next pointer also holds a node. Counting one unit per NIL test and per executed pointer or head
+assignment, deleting $x$ from the list with head $h$ costs exactly $4$ units if the node at $x$
+has a next pointer, and exactly $3$ units otherwise. -/
 public theorem listDelete_time {α : Type u} {capacity : Nat}
     (store : Vector (Option (Node α (Fin capacity))) capacity)
     (head : Option (Fin capacity)) (x : Fin capacity)
@@ -128,7 +143,13 @@ public theorem listDelete_time {α : Type u} {capacity : Nat}
   · simp only [first_write_preserves_x]
     split <;> rfl
 
-/-- The header changes to the original successor exactly when the predecessor is NIL. -/
+/-- **Header after doubly linked list deletion.** Let $S$ be a store of $n$ cells, each empty or
+holding a node (a payload with next and previous pointers, each an index or NIL), let $h$ be a
+header (an index in $\{0, \dots, n-1\}$ or NIL), and let $x$ be an index whose cell holds a node
+$X$ such that the cells at the predecessor $X.\mathrm{prev}$ and the successor $X.\mathrm{next}$
+hold nodes whenever these pointers are not NIL. Let $h'$ be the header returned by List Delete on
+$S$, $h$ and $x$. Then $h' = h$ if $X.\mathrm{prev}$ is not NIL, and $h' = X.\mathrm{next}$ if
+$X.\mathrm{prev}$ is NIL. -/
 public theorem listDelete_head {α : Type u} {capacity : Nat}
     (store : Vector (Option (Node α (Fin capacity))) capacity)
     (head : Option (Fin capacity)) (x : Fin capacity)
@@ -163,7 +184,18 @@ private lemma finishDelete_ret {α : Type u} {capacity : Nat}
     exact (congrArg (Option.map fun (node : Node α (Fin capacity)) =>
       { node with prev := ((store.get x).get hx).prev }) (Option.some_get (hn n he)))
 
-/-- The complete returned store and header, with the successor read from the carried store. -/
+/-- **Result of doubly linked list deletion.** Let $S$ be a store of $n$ cells, each empty or
+holding a node (a payload with next and previous pointers, each an index or NIL), let $h$ be a
+header (an index in $\{0, \dots, n-1\}$ or NIL), and let $x$ be an index whose cell holds a node
+$X$ such that the cells at the predecessor $X.\mathrm{prev}$ and the successor $X.\mathrm{next}$
+hold nodes whenever these pointers are not NIL. Let $T$ be $S$ if $X.\mathrm{prev}$ is NIL, and
+otherwise $S$ with the next pointer of the node in cell $X.\mathrm{prev}$ set to
+$X.\mathrm{next}$. Then List Delete on $S$, $h$ and $x$ returns the store equal to $T$ if
+$X.\mathrm{next}$ is NIL, and otherwise to $T$ with the previous pointer of the node in cell
+$X.\mathrm{next}$ of $T$ set to $X.\mathrm{prev}$, together with the header $h$ if
+$X.\mathrm{prev}$ is not NIL and $X.\mathrm{next}$ if it is NIL. The successor's node is read
+from $T$, so when $X.\mathrm{prev}$ and $X.\mathrm{next}$ are the same index (not NIL), both
+pointer updates apply to its node. -/
 public theorem listDelete_ret {α : Type u} {capacity : Nat}
     (store : Vector (Option (Node α (Fin capacity))) capacity)
     (head : Option (Fin capacity)) (x : Fin capacity)
@@ -198,7 +230,16 @@ public theorem listDelete_ret {α : Type u} {capacity : Nat}
     simp only [hm]
     rfl
 
-/-- The pointwise store update, applying the predecessor write before the successor write. -/
+/-- **Cellwise result of doubly linked list deletion.** Let $S$ be a store of $n$ cells, each
+empty or holding a node (a payload with next and previous pointers, each an index or NIL), let $h$
+be a header (an index in $\{0, \dots, n-1\}$ or NIL), and let $x$ be an index whose cell holds a
+node $X$ such that the cells at the predecessor $X.\mathrm{prev}$ and the successor
+$X.\mathrm{next}$ hold nodes whenever these pointers are not NIL. Let $S'$ be the store returned
+by List Delete on $S$, $h$ and $x$. For an index $z$, let $C$ be the cell $S(z)$ with the next
+pointer of its node set to $X.\mathrm{next}$ if $X.\mathrm{prev} = z$, and $C = S(z)$ otherwise.
+Then $S'(z)$ is $C$ with the previous pointer of its node set to $X.\mathrm{prev}$ if
+$X.\mathrm{next} = z$, and $S'(z) = C$ otherwise; an empty cell stays empty. So the write at the
+predecessor is applied before the write at the successor. -/
 public theorem listDelete_get {α : Type u} {capacity : Nat}
     (store : Vector (Option (Node α (Fin capacity))) capacity)
     (head : Option (Fin capacity)) (x : Fin capacity)
@@ -230,7 +271,13 @@ public theorem listDelete_get {α : Type u} {capacity : Nat}
       by_cases hpz : p = z <;> by_cases hnz : n = z <;>
         (try subst p) <;> (try subst n) <;> simp_all [Fin.ext_iff]
 
-/-- Cells distinct from both original neighbors are unchanged. -/
+/-- **Deletion changes only the cells of the neighbors.** Let $S$ be a store of $n$ cells, each
+empty or holding a node (a payload with next and previous pointers, each an index or NIL), let $h$
+be a header (an index in $\{0, \dots, n-1\}$ or NIL), and let $x$ be an index whose cell holds a
+node $X$ such that the cells at the predecessor $X.\mathrm{prev}$ and the successor
+$X.\mathrm{next}$ hold nodes whenever these pointers are not NIL. Let $S'$ be the store returned
+by List Delete on $S$, $h$ and $x$. Then $S'(z) = S(z)$ for every index $z$ with
+$X.\mathrm{prev} \ne z$ and $X.\mathrm{next} \ne z$. -/
 public theorem listDelete_frame {α : Type u} {capacity : Nat}
     (store : Vector (Option (Node α (Fin capacity))) capacity)
     (head : Option (Fin capacity)) (x : Fin capacity)
@@ -244,7 +291,13 @@ public theorem listDelete_frame {α : Type u} {capacity : Nat}
   rw [listDelete_get]
   simp only [hzp, hzn, ↓reduceIte]
 
-/-- Deletion preserves the allocation status of every cell. -/
+/-- **Deletion from a doubly linked list allocates and frees nothing.** Let $S$ be a store of $n$
+cells, each empty or holding a node (a payload with next and previous pointers, each an index or
+NIL), let $h$ be a header (an index in $\{0, \dots, n-1\}$ or NIL), and let $x$ be an index whose
+cell holds a node $X$ such that the cells at the predecessor $X.\mathrm{prev}$ and the successor
+$X.\mathrm{next}$ hold nodes whenever these pointers are not NIL. Let $S'$ be the store returned
+by List Delete on $S$, $h$ and $x$. Then for every index $z$, the cell $S'(z)$ holds a node if and
+only if $S(z)$ does. -/
 public theorem listDelete_allocated {α : Type u} {capacity : Nat}
     (store : Vector (Option (Node α (Fin capacity))) capacity)
     (head : Option (Fin capacity)) (x : Fin capacity)
@@ -257,7 +310,13 @@ public theorem listDelete_allocated {α : Type u} {capacity : Nat}
   by_cases hpz : ((store.get x).get hx).prev = some z <;>
     by_cases hnz : ((store.get x).get hx).next = some z <;> simp [hpz, hnz]
 
-/-- Deletion preserves every allocated node payload. -/
+/-- **Deletion preserves payloads.** Let $S$ be a store of $n$ cells, each empty or holding a node
+(a payload with next and previous pointers, each an index or NIL), let $h$ be a header (an index
+in $\{0, \dots, n-1\}$ or NIL), and let $x$ be an index whose cell holds a node $X$ such that the
+cells at the predecessor $X.\mathrm{prev}$ and the successor $X.\mathrm{next}$ hold nodes
+whenever these pointers are not NIL. Let $S'$ be the store returned by List Delete on $S$, $h$
+and $x$. Then for every index $z$, either $S'(z)$ and $S(z)$ are both empty, or both hold nodes
+and these two nodes have the same payload. -/
 public theorem listDelete_payload {α : Type u} {capacity : Nat}
     (store : Vector (Option (Node α (Fin capacity))) capacity)
     (head : Option (Fin capacity)) (x : Fin capacity)
@@ -272,7 +331,13 @@ public theorem listDelete_payload {α : Type u} {capacity : Nat}
     by_cases hnz : ((store.get x).get hx).next = some z <;>
     simp [hpz, hnz, Option.map_map, Function.comp_def]
 
-/-- The removed node remains allocated with its entire original record. -/
+/-- **The deleted node keeps its record.** Let $S$ be a store of $n$ cells, each empty or holding
+a node (a payload with next and previous pointers, each an index or NIL), let $h$ be a header (an
+index in $\{0, \dots, n-1\}$ or NIL), and let $x$ be an index whose cell holds a node $X$ such that
+the cells at the predecessor $X.\mathrm{prev}$ and the successor $X.\mathrm{next}$ hold nodes
+whenever these pointers are not NIL. Let $S'$ be the store returned by List Delete on $S$, $h$
+and $x$. Then $S'(x) = S(x)$: the deleted node stays allocated with its payload and both of its
+pointers unchanged. -/
 public theorem listDelete_deleted_record {α : Type u} {capacity : Nat}
     (store : Vector (Option (Node α (Fin capacity))) capacity)
     (head : Option (Fin capacity)) (x : Fin capacity)
@@ -289,7 +354,16 @@ public theorem listDelete_deleted_record {α : Type u} {capacity : Nat}
     by_cases hnz : next = some x <;>
     simp [hpz, hnz, ho]
 
-/-- A represented list disjoint from both written neighbors is preserved. -/
+/-- **Deletion preserves lists avoiding the deleted node's neighbors.** Let $S$ be a store of $n$
+cells, each empty or holding a node (a payload with next and previous pointers, each an index or
+NIL), let $h$ be a header (an index in $\{0, \dots, n-1\}$ or NIL), and let $x$ be an index whose
+cell holds a node $X$ such that the cells at the predecessor $X.\mathrm{prev}$ and the successor
+$X.\mathrm{next}$ hold nodes whenever these pointers are not NIL. Let $S'$ be the store returned
+by List Delete on $S$, $h$ and $x$. Let $h_0$ be a header and $L$ a list of indices such that $S$
+with header $h_0$ represents $L$: the entries of $L$ are distinct, $h_0$ is the first entry of
+$L$ (NIL if $L$ is empty), and the cell of each entry of $L$ holds a node whose previous and next
+pointers are the adjacent entries of $L$, NIL at the ends. If neither $X.\mathrm{prev}$ nor
+$X.\mathrm{next}$ is an entry of $L$, then $S'$ with header $h_0$ also represents $L$. -/
 public theorem listDelete_disjoint_represents {α : Type u} {capacity : Nat}
     (store : Vector (Option (Node α (Fin capacity))) capacity)
     (head : Option (Fin capacity)) (x : Fin capacity)
@@ -311,7 +385,12 @@ public theorem listDelete_disjoint_represents {α : Type u} {capacity : Nat}
   exact ⟨node, (listDelete_frame store head x hx hp hn _ hpz hnz).trans hcell,
     hprev, hnext⟩
 
-/-- Deletion executes at most four counted pointer events. -/
+/-- **Doubly linked list deletion costs at most four events.** Let $S$ be a store of $n$ cells,
+each empty or holding a node (a payload with next and previous pointers, each an index or NIL),
+let $h$ be a header (an index in $\{0, \dots, n-1\}$ or NIL), and let $x$ be an index whose cell
+holds a node $X$ such that the cells at the predecessor $X.\mathrm{prev}$ and the successor
+$X.\mathrm{next}$ hold nodes whenever these pointers are not NIL. Then List Delete on $S$, $h$
+and $x$ costs at most $4$, counting NIL tests and executed pointer and header assignments. -/
 public theorem listDelete_time_le {α : Type u} {capacity : Nat}
     (store : Vector (Option (Node α (Fin capacity))) capacity)
     (head : Option (Fin capacity)) (x : Fin capacity)
@@ -456,7 +535,16 @@ private lemma delete_indexed_represents {α : Type u} {capacity : Nat}
       rw [ite_eq_right kn, hnold]
       simp only [List.getElem?_eraseIdx, ite_eq_right (Nat.not_lt.mpr hi1)]
 
-/-- Deleting a represented member removes exactly that identity from the represented list. -/
+/-- **Correctness of doubly linked list deletion.** Let $S$ be a store of $n$ cells, each empty or
+holding a node (a payload with next and previous pointers, each an index or NIL), let $h$ be a
+header (an index in $\{0, \dots, n-1\}$ or NIL), and let $x$ be an index whose cell holds a node
+$X$ such that the cells at the predecessor $X.\mathrm{prev}$ and the successor $X.\mathrm{next}$
+hold nodes whenever these pointers are not NIL. Let $S'$ and $h'$ be the store and header
+returned by List Delete on $S$, $h$ and $x$. Let $L$ be a list of indices such that $S$ with
+header $h$ represents $L$: the entries of $L$ are distinct, $h$ is the first entry of $L$ (NIL if
+$L$ is empty), and the cell of each entry of $L$ holds a node whose previous and next pointers
+are the adjacent entries of $L$, NIL at the ends. If $x$ is an entry of $L$, then $S'$ with
+header $h'$ represents the list obtained from $L$ by removing $x$. -/
 public theorem listDelete_represents {α : Type u} {capacity : Nat}
     (store : Vector (Option (Node α (Fin capacity))) capacity)
     (head : Option (Fin capacity)) (x : Fin capacity)

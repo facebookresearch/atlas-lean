@@ -1,0 +1,7 @@
+# Randomized communication complexity of equality
+
+$\mathrm{EQ}_n : \{0,1\}^n \times \{0,1\}^n \to \{0, 1\}$ is the equality function ($1$ exactly when $x = y$). Here protocols have inputs $X = Y = \{0,1\}^n$. A (deterministic) protocol is a finite binary tree whose leaves carry output bits and whose internal nodes are owned by Alice, labelled by a map $X \to \{0, 1\}$, or by Bob, labelled by a map $Y \to \{0, 1\}$; on inputs $(x, y)$ the run follows the announced bits from the root to a leaf, whose bit is the output, and the depth is the maximal number of bits announced along a root-to-leaf path. A randomized protocol is a finitely supported probability distribution $\pi$ on protocols (weights $\pi(p) \ge 0$, finitely many nonzero, summing to $1$); its cost is the maximal depth of a protocol in its support, and its error for $f$ at $(x, y)$ is $\sum_p \pi(p)\, e_p(x, y)$, where $e_p(x, y)$ is $0$ if $p$ outputs $f(x, y)$ on $(x, y)$ and $1$ otherwise. For $\varepsilon \in \mathbb{R}$, the randomized communication complexity $R_\varepsilon(f)$ is the least $c \in \mathbb{N}$ such that some randomized protocol of cost at most $c$ has error at most $\varepsilon$ for $f$ on every input pair, and $0$ if there is none. For all $n, k \in \mathbb{N}$, $R_{2^{-k}}(\mathrm{EQ}_n) \le k + 1$, by the random-hash protocol.
+
+## Sources
+
+- A. Rao and A. Yehudayoff, *Communication Complexity*, early draft, Chapter 3, Figure 3.1.

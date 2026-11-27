@@ -1,0 +1,17 @@
+# Koszul complexes of linear functionals
+
+- [Differential](differential.md)
+- [Differential eq contract Left](differential-eq-contract-left.md)
+- [Differential apply ιMulti](differential-apply-multi.md)
+- [Differential eq deletion](differential-eq-deletion.md)
+- [Differential comp differential](differential-comp-differential.md)
+- [Complex](complex.md)
+- [Complex X](complex-x.md)
+- [Complex d succ](complex-d-succ.md)
+- [Differential naturality](differential-naturality.md)
+- [Map](map.md)
+- [Map f](map-f.md)
+- [Map id](map-id.md)
+- [Map comp](map-comp.md)
+- [Map Iso](map-iso.md)
+- [Map Iso hom f](map-iso-hom-f.md)

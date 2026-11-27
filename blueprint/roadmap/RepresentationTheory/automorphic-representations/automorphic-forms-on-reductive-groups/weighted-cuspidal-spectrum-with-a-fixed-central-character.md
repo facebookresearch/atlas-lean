@@ -1,0 +1,144 @@
+# Weighted cuspidal spectrum with a fixed central character
+
+This node is still to be broken down. It covers the decomposition of the weighted cuspidal Hilbert space
+with a fixed central character on a Levi factor, which the page on
+[constituents of induced representations](automorphic-representations-as-constituents-of-induced-representations.md)
+uses after Langlands's Lemma 6, and which comes after the
+[discreteness of the cuspidal spectrum](discreteness-of-the-cuspidal-spectrum.md). Let $k$ be a number field, $G$
+a connected reductive group over $k$, $P = MN$ a parabolic subgroup of $G$ over $k$, $Z_M$ the centre of $M$
+(Langlands's $A$), $H_M \colon M(\mathbb{A}) \to \mathfrak{a}_M$ the map with $e^{\langle H_M(m), \lambda \rangle} = \lvert \lambda(m) \rvert$
+for the rational characters $\lambda$ of $M$, and $M(\mathbb{A})^1$ its kernel. After restriction of scalars to
+$\mathbb{Q}$, let $A_{M,\infty}^+$ be the identity component of the real points of the largest $\mathbb{Q}$-split torus in
+the centre; then $M(\mathbb{A}) = A_{M,\infty}^+ \times M(\mathbb{A})^1$ (Arthur, p. 16). The full centre, its split
+component and $A_{M,\infty}^+$ are different groups: for an anisotropic norm-one torus $M$ over $\mathbb{Q}$ the
+split component and $A_{M,\infty}^+$ are trivial while $Z_M = M$, and fixing the trivial character of the full centre
+leaves only the constants, not all of $L^2$ of the compact quotient.
+
+- **Characters.** Let $\chi$ be a continuous character of $Z_M(k) \backslash Z_M(\mathbb{A})$. Its absolute value is
+  trivial on the compact group $Z_M(k) \backslash (Z_M(\mathbb{A}) \cap M(\mathbb{A})^1)$, so
+  $\lvert \chi(z) \rvert = e^{\langle \mu, H_M(z) \rangle}$ for a unique $\mu \in \mathfrak{a}_M^*$; let
+  $\nu(m) = e^{\langle \mu, H_M(m) \rangle}$, a positive character of $M(\mathbb{A})$ trivial on $M(\mathbb{A})^1$, hence on
+  $M(k)$, with $\nu = \lvert \chi \rvert$ on $Z_M(\mathbb{A})$; for $\mathrm{GL}_n$ with $\lvert \chi(z) \rvert = \lvert z \rvert^s$ it is
+  $\lvert \det m \rvert^{s/n}$. The triviality of $\chi$ on $Z_M(k)$ cannot be dropped: for $M = \mathbb{G}_m$ over $\mathbb{Q}$ and
+  $\chi = \lvert \cdot \rvert_p$, no nonzero function on $\mathbb{Q}^\times \backslash \mathbb{A}^\times$ transforms by $\chi$ (rational
+  invariance gives $\psi(px) = \psi(x)$, the character $\psi(px) = p^{-1}\psi(x)$), while $\chi$ divided by itself
+  gives the nonzero line of constants.
+- **Decomposition** (Langlands). Let $L^2_0(M(k) \backslash M(\mathbb{A}), \chi)$ be the space of measurable cuspidal
+  functions $\psi$ on $M(k) \backslash M(\mathbb{A})$ with $\psi(zm) = \chi(z) \psi(m)$ for $z \in Z_M(\mathbb{A})$ and
+  $\int_{Z_M(\mathbb{A}) M(k) \backslash M(\mathbb{A})} \nu^{-2} \lvert \psi \rvert^2 < \infty$, the integrand being invariant under
+  $Z_M(\mathbb{A})$ and $M(k)$. It is a Hilbert space, stable under right translation by $M(\mathbb{A})$, each right translation
+  being bounded (of norm $\nu(h)$ on a nonzero space) and not unitary when $\nu \ne 1$, and it is a Hilbert direct sum of
+  closed irreducible invariant subspaces, each occurring with finite multiplicity; the sum need not be algebraic,
+  and the summands need not be finite-dimensional (for $\mathrm{GL}_1$ and an automorphic $\chi$ the space is a line).
+- **Proof.** (a) Multiplication by $\nu^{-1}$ is an isometry $T$ onto $L^2_0(M(k) \backslash M(\mathbb{A}), \chi\nu^{-1})$,
+  where $\chi\nu^{-1}$ is unitary and trivial on $Z_M(k)$, and $T R(h) T^{-1} = \nu(h) R(h)$; so the invariant subspaces of
+  the two spaces correspond. (b) For a unitary character $\omega$ of $Z_M(k) \backslash Z_M(\mathbb{A})$, restriction to
+  $M(\mathbb{A})^1$ identifies $L^2_0(M(k) \backslash M(\mathbb{A}), \omega)$, with compatible measures, with the subspace of
+  $L^2_{\mathrm{cusp}}(M(k) \backslash M(\mathbb{A})^1)$ on which the compact abelian group
+  $Z_M(k) \backslash (Z_M(\mathbb{A}) \cap M(\mathbb{A})^1)$ acts by $\omega$, a closed $M(\mathbb{A})^1$-invariant summand of the
+  decomposition into the character spaces of that group; the inverse lets $A_{M,\infty}^+$ act by $\omega$, as
+  $Z_M(\mathbb{A}) = A_{M,\infty}^+ \times (Z_M(\mathbb{A}) \cap M(\mathbb{A})^1)$. (c) By the discreteness of the cuspidal spectrum
+  of $M(\mathbb{A})^1$ this summand is a Hilbert direct sum of irreducible subspaces with finite multiplicities, and
+  letting $A_{M,\infty}^+$ act by $\omega$ makes each an irreducible invariant subspace for
+  $M(\mathbb{A}) = A_{M,\infty}^+ \times M(\mathbb{A})^1$.
+- **Use** (after Langlands, pp. 3–4). Let $\mathcal{A}^\circ_P$ be the space of smooth $K$-finite functions $\psi$ on
+  $N(\mathbb{A}) P(k) \backslash G(\mathbb{A})$ such that every slice $m \mapsto \psi(mg)$ is a cuspidal automorphic form on
+  $M(\mathbb{A})$, and let $U \subset V \subset \mathcal{A}^\circ_P$ be modules over the global Hecke algebra realizing an
+  irreducible subquotient $\pi = V/U$, with $V$ generated by a function $\varphi$ on which $Z_M(\mathbb{A})$ acts by $\chi$
+  (Langlands's Lemma 6, on the page on constant terms; such a $\chi$ is trivial on $Z_M(k)$). Every slice of every
+  $\psi \in V$ has central character $\chi$ and lies in $L^2_0(M(k) \backslash M(\mathbb{A}), \chi)$: $\nu^{-1}$ times it is a cusp
+  form with unitary central character, rapidly decreasing and square integrable on $M(k) \backslash M(\mathbb{A})^1$. For an
+  irreducible component $H$ let $F_H \colon \psi \mapsto \psi'$, where $\psi'(g) \in H$ is the projection of $m \mapsto \psi(mg)$: a map
+  of modules over the global Hecke algebra ($V$ consists of $K$-finite functions and is not stable under arbitrary
+  archimedean right translations). The quotient map $V \to \pi$ factors through $F_H$ exactly when $\ker F_H \subseteq U$, and
+  then $\pi \cong F_H(V)/F_H(U)$. A nonzero projection of a slice of the generator does not suffice: for
+  $P = M = G = \mathrm{PGL}_1(D)$, $D$ the Hamilton quaternions over $\mathbb{Q}$ (a compact automorphic quotient, no proper
+  rational parabolic subgroup, trivial centre), the constant function $1$ and the automorphic quadratic character
+  $\theta = \eta \circ \mathrm{Nrd}$, $\eta$ the quadratic idele class character of $\mathbb{Q}(\sqrt 5)$, span a module $V$ generated by
+  $1 + \theta$; for $U = \mathbb{C}\theta$ and $\pi = 1$ the component $H = \mathbb{C}\theta$ detects a slice of the generator, but
+  $F_H(V) = \mathbb{C}\theta$ has no quotient $1$, while $H = \mathbb{C}1$ works. A suitable component exists. (i) Only finitely many
+  components meet the slices of $V$ (have a nonzero projection on one). As $F_H$ is a module map, a component that
+  meets no slice of $\varphi$ meets no slice of $V$. Write $S_g \psi$ for the slice $m \mapsto \psi(mg)$ and $E$ for the
+  finite-dimensional span of the right $K$-translates of $\varphi$. The set $P(\mathbb{A}) \backslash G(\mathbb{A}) / K$ is finite
+  (Langlands, p. 3): its archimedean part is a point by the real Iwasawa decomposition, which holds for every maximal
+  compact subgroup as they are all conjugate; at a finite place $P(k_v) \backslash G(k_v)$ is compact and its
+  $K_v$-orbits are open; and $G(k_v) = P(k_v) K_v$ at the almost all places where $K_v$ is a good maximal compact
+  subgroup. Choose representatives $d_1, \dots, d_r$ with archimedean components $1$. For $g = n m_0 d_i \kappa$ with
+  $n \in N(\mathbb{A})$, $m_0 \in M(\mathbb{A})$ and $\kappa \in K$, left $N(\mathbb{A})$-invariance gives
+  $S_g \varphi = R(m_0) S_{d_i}(R(\kappa)\varphi)$, so every slice of $\varphi$ is a right translate of a vector of one of the
+  finite-dimensional seed spaces $E_i = S_{d_i}(E)$. (Slices at points of $K$ alone would need $G(\mathbb{A}) = P(\mathbb{A})K$,
+  which fails for some maximal compact subgroups: in $\mathrm{Sp}_4(\mathbb{Q}_3)$ the stabilizer of the lattice
+  $\mathcal{O}e_1 + \mathcal{O}f_1 + \mathcal{O}e_2 + 3\mathcal{O}f_2$, for a symplectic basis $e_1, f_1, e_2, f_2$, is a maximal compact
+  subgroup that is not transitive on flags.) The projections onto the summands of a fixed orthogonal decomposition
+  commute with right translations, so a component meets a slice of $\varphi$ only if it meets some $E_i$. The seed spaces
+  have common data: a level, the open compact subgroup $L_M = \bigcap_i (M(\mathbb{A}_f) \cap d_i L d_i^{-1})$ of $M(\mathbb{A}_f)$
+  for an open normal subgroup $L$ of $K_f$ acting trivially on $E$; finitely many types for the maximal compact subgroup
+  $K_{M,\infty} = \mathrm{pr}_M(P_\infty \cap K_\infty)$ of $M_\infty$, as $S_{d_i}(R(\kappa)\psi) = R(\mathrm{pr}_M \kappa) S_{d_i}\psi$ for
+  $\kappa \in P_\infty \cap K_\infty$; and one ideal $J$ of finite codimension in the centre of the enveloping algebra of
+  $\mathfrak{m}$ annihilating them, their elements being cusp forms on $M$. The orthogonal projections preserve this
+  level, these types, the annihilation by $J$ (they commute with the derived action on smooth vectors) and
+  cuspidality, and their images are automorphic forms: after the twist by $\nu^{-1}$ and restriction to $M(\mathbb{A})^1$,
+  the functions of level $L_M$ live on finitely many arithmetic quotients $\Gamma_j \backslash M_\infty^1$, on which a $K$-finite,
+  $\mathcal{Z}$-finite square-integrable function is smooth and of moderate growth (Borel, Proposition 4.1, p. 6, and
+  pp. 27–28), and restoring the action of $A_{M,\infty}^+$ and $\nu$ preserves moderate growth. So the projections of the
+  seed spaces lie in the finite-dimensional space of automorphic forms on $M$ of level $L_M$, these types and
+  annihilated by $J$ (Harish-Chandra's finiteness theorem for $M$), and, being mutually orthogonal, only finitely many
+  are nonzero. Hence the sum $F$ of these finitely many $F_H$ is injective on $V$: the slices of $\psi \in V$ have
+  components in these $H$ only, and a continuous slice that vanishes in $L^2$ vanishes.
+  (ii) For a submodule $V_1 \subseteq V$ with $V_1/(V_1 \cap U) \cong \pi$ and one of these $H$, by irreducibility either $\ker F_H \cap V_1 \subseteq U$, and $\pi$ is a quotient of $F_H(V_1)$, or $\ker F_H \cap V_1$ maps onto $\pi$, and
+  one replaces $V_1$ by it; running through the finitely many $H$ in turn, starting from $V_1 = V$, the first case must
+  occur, since $F$ is injective. So $\pi$ is a quotient
+  of $F_H(V_1)$ for a suitable component $H$ and submodule $V_1 \subseteq V$; Langlands, p. 4, states this conclusion after
+  choosing a component with a nonzero projection, which alone does not ensure it. Since
+  $\psi'(m_1 g) = \sigma(m_1) \psi'(g)$, with $\sigma$ the action of $M(\mathbb{A})$ on $H$ by right translation, $F_H(V_1)$ lies in the
+  normalized induced representation
+  $\mathrm{Ind}(\delta_P^{-1/2} \sigma)$, $\delta_P$ being the modulus character of $M(\mathbb{A})$ on $N(\mathbb{A})$ (Langlands
+  writes $\delta^2 = \delta_P$). This twist by $\delta_P^{-1/2}$ comes from the normalization of induction and is
+  distinct from $\nu$: in the unitary model, $\sigma$ is $\nu$ times the unitary right translation on $\nu^{-1} H$.
+
+## Expansion
+
+A good expansion has a statement page for the decomposition, proved from the discreteness of the cuspidal
+spectrum by the twist and the restriction to $M(\mathbb{A})^1$ above, and leaves the use, with the choice of the
+component, to the page on constituents of induced representations, with the locators below.
+
+## Depends on
+
+- [Automorphic forms, cusp forms and automorphic representations](automorphic-forms-and-automorphic-representations.md), for automorphic forms and cusp forms on $M(\mathbb{A})$
+- [Parabolic subgroups and the rational Bruhat decomposition of reductive groups](../../../GroupTheory/linear-groups/parabolic-subgroups-and-rational-bruhat-decomposition.md), for parabolic subgroups and their Levi factors
+- [Siegel sets and reduction theory for adelic groups](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/reduction-theory-for-adelic-groups.md), for the maps $H_P$ and the groups $G(\mathbb{A})^1$, applied to $M$
+- [Constant terms and Harish-Chandra's convolution identity for automorphic forms](constant-terms-and-convolution-identity.md), for the space $\mathcal{A}^\circ_P$ and Langlands's Lemma 6 in the use
+
+## Proof depends on
+
+- [Discreteness of the cuspidal spectrum](discreteness-of-the-cuspidal-spectrum.md), for the decomposition of $L^2_{\mathrm{cusp}}(M(k) \backslash M(\mathbb{A})^1)$ under $M(\mathbb{A})^1$ in step (c); its fixed-central-character item is for $\mathrm{GL}_n$ only, and steps (a) and (b) give the general case
+- [Integration over quotients of locally compact groups](../../../MeasureTheory/haar-measure/integration-over-quotients-of-locally-compact-groups.md), for the compatible measures on $Z_M(\mathbb{A}) M(k) \backslash M(\mathbb{A})$ and $M(k) \backslash M(\mathbb{A})^1$ in step (b)
+- [Rapid decay of cusp forms](rapid-decay-of-cusp-forms.md), for the square integrability of the slices, twisted by $\nu^{-1}$, in the use
+- [Harish-Chandra's finiteness theorem for automorphic forms](harish-chandra-finiteness-theorem.md), applied to $M$ at the level $L_M$, the finitely many $K_{M,\infty}$-types and the ideal $J$, for the finitely many components met by the slices of $V$ in the use
+- [Siegel sets and reduction theory for adelic groups](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/reduction-theory-for-adelic-groups.md), for the finiteness of $M(k) \backslash M(\mathbb{A}_f) / L_M$, by which the functions of level $L_M$ on the norm-one quotient live on finitely many arithmetic quotients, in the use; and for the compactness of $Z_M(k) \backslash (Z_M(\mathbb{A}) \cap M(\mathbb{A})^1)$: the compactness criterion applies to the identity component of $Z_M$, a torus with no proper parabolic subgroup, and its finite component group contributes a compact factor, for step (b)
+- [Parabolic subgroups, Bruhat–Tits buildings and Moy–Prasad filtrations](../../reductive-groups-over-local-fields/representations-of-p-adic-reductive-groups/parabolic-subgroups-buildings-and-moy-prasad-filtrations.md), for the compactness of $P(k_v) \backslash G(k_v)$ and the decomposition $G(k_v) = P_0(k_v) K_v$ for a good maximal compact subgroup $K_v$, at the finite places, in the finiteness of $P(\mathbb{A}) \backslash G(\mathbb{A}) / K$ used in the use
+- [Iwasawa and Langlands decompositions of real reductive groups](../../reductive-groups-over-local-fields/representations-of-real-reductive-groups/iwasawa-and-langlands-decompositions.md), for the real Iwasawa decomposition $G_\infty = P_\infty K_\infty$ for every maximal compact subgroup $K_\infty$, for the seed spaces in the use
+- [Adelic points of reductive groups: the norm-one subgroup and maximal compact subgroups](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/adelic-points-of-reductive-groups.md), for the goodness of $K_v$ at almost all places and the finiteness of $P(\mathbb{A}) \backslash G(\mathbb{A}) / K$ (Langlands, p. 3), for the seed spaces in the use; and for the decomposition $M(\mathbb{A}) = A_{M,\infty}^+ \times M(\mathbb{A})^1$ (Arthur, p. 16), for steps (b) and (c)
+- [Square-integrable K-finite and Z-finite functions are automorphic forms](square-integrable-automorphic-forms.md), for the regularity of square-integrable $K$-finite, $\mathcal{Z}$-finite functions on a finite-volume arithmetic quotient, at the fixed finite level of the seeds, which have smooth representatives that are automorphic forms (Borel, Proposition 4.1, p. 6, and pp. 27–28), for the projections of the seed spaces in the use
+- [Unitary representations of locally compact groups and representations of compact groups](../../lie-and-topological-representations/unitary-representations-and-representations-of-compact-groups.md), for the decomposition of a unitary representation of the compact abelian group $Z_M(k) \backslash (Z_M(\mathbb{A}) \cap M(\mathbb{A})^1)$ into its character spaces, for step (c)
+
+## Sources
+
+- R. P. Langlands, "On the notion of an automorphic representation", in *Automorphic forms, representations
+  and L-functions*, Proc. Sympos. Pure Math. 33, Part 1, American Mathematical Society, 1979, 203–207;
+  author's version <https://sunsite.ubc.ca/DigitalMathArchive/Langlands/pdf/notion-ps.pdf>: p. 3, the space
+  $\mathcal{A}^\circ_P$, the finiteness of $P(\mathbb{A}) \backslash G(\mathbb{A}) / K$ and Lemma 6 ("Let A be the center of M"), and p. 4 (the positive character $\nu$ with $\nu(a) = \lvert \chi(a) \rvert$ on
+  the centre, the Hilbert space $L^2_0(M(F) \backslash M(\mathbb{A}), \chi)$ weighted by $\nu^{-2}$, "a direct sum of irreducible
+  invariant subspaces", the choice of a component $H$ on which a projection is not zero, after which the text realizes
+  $\pi$ as a quotient of the projected space, and $V' \subset \mathrm{Ind}\, \delta^{-1}\sigma$ with $\delta^2$ the modulus of $M(\mathbb{A})$
+  on $N(\mathbb{A})$; the kernel condition and the choice of component above make that step precise).
+- A. Borel, "Automorphic forms on reductive groups", lecture notes (Park City),
+  <http://homepages.math.uic.edu/~rtakloo/papers/borel/borel3.pdf>: Proposition 4.1, p. 6 (on a finite-volume
+  quotient $\Gamma \backslash G$, a function satisfying (A1)–(A3) that lies in some $L^p$ has moderate growth, hence is an
+  automorphic form), §8, Theorem 8.4, p. 23 (Harish-Chandra: the space $A(\Gamma, J, \xi)$ is finite-dimensional), and
+  "Discrete spectrum and L²-automorphic forms", pp. 27–28 (the $K$-finite, $\mathcal{Z}(\mathfrak{g})$-finite elements of
+  $L^2(\Gamma \backslash G)$ are automorphic forms).
+- J. Arthur, "An introduction to the trace formula", in *Harmonic Analysis, the Trace Formula, and
+  Shimura Varieties*, Clay Math. Proc. 4, American Mathematical Society, 2005, 1–263,
+  <https://www.claymath.org/library/proceedings/cmip04c.pdf>: §3, p. 16 ($A_G$, $\mathfrak{a}_G$, $H_G$, and $G(\mathbb{A})$ as the
+  direct product of $G(\mathbb{A})^1$ and $A_G(\mathbb{R})^0$, over $\mathbb{Q}$).

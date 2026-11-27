@@ -1,0 +1,16 @@
+# Binary quadratic forms
+
+- [Real quadratic form of an integer coefficient triple](of-coefficients.md)
+- [Evaluation of the real quadratic form of a coefficient triple](of-coefficients-apply.md)
+- [Positive definiteness for negative discriminant](of-coefficients-pos-def.md)
+- [The imaginary square root of $-D$](imaginary-root.md)
+- [The imaginary root squares to $-D$](imaginary-root-sq.md)
+- [The imaginary root is integral over $\mathbb{Q}$](imaginary-root-is-integral.md)
+- [The imaginary root is not rational](imaginary-root-not-mem-bot.md)
+- [The imaginary quadratic field $\mathbb{Q}(\sqrt{-D})$](imaginary-quadratic-field.md)
+- [$\mathbb{Q}(\sqrt{-D})$ is a quadratic extension](imaginary-quadratic-field-finrank.md)
+- [The form generator is an algebraic integer](form-generator-is-integral.md)
+- [Ideal of a binary quadratic form](form-ideal.md)
+- [The ideal of a form is nonzero](form-ideal-ne-zero.md)
+- [Ideal class of a binary quadratic form](class-of-form.md)
+- [Gauss-reduced binary quadratic forms](is-gauss-reduced.md)

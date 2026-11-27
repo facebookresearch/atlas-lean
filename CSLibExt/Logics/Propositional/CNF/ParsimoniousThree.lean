@@ -25,7 +25,7 @@ https://github.com/anthropics/formal-math/tree/16a5ce41304fcdaea4e0be7c132e1c361
 
 @[expose] public section
 
-namespace Cslib.Logic.PL
+namespace Cslib.Logic.LegacyPL
 
 namespace CNF
 
@@ -753,4 +753,4 @@ theorem modelCount_to3Parsimonious (formula : CNF) (start : Nat)
 
 end CNF
 
-end Cslib.Logic.PL
+end Cslib.Logic.LegacyPL

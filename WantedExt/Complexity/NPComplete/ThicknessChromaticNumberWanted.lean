@@ -21,10 +21,10 @@ doi:10.1016/0196-6774(85)90012-4, Table 1 (CHROMATIC NUMBER on thickness-`k` gra
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.GraphColoringWanted
+public import CSLibExt.Complexity.NPComplete.GraphColoringDefs
 public import WantedExt.Complexity.NPComplete.GraphThicknessWanted
 
 @[expose] public section

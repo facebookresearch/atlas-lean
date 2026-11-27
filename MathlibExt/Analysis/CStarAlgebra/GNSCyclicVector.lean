@@ -11,7 +11,7 @@ module
 public import Mathlib.Analysis.CStarAlgebra.GelfandNaimarkSegal
 
 /-
-  Author: @toskua, Avocado
+  Author: @toskua, Meta Muse
 -/
 
 @[expose] public section

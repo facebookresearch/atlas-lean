@@ -24,7 +24,8 @@ namespace MathlibExt.Combinatorics.Graph.ArcNetwork
 
 The real-valued arc-ID adapter. Integral splitting is a later claim.
 
-- C1 defines the signed incidence matrix and its flow interpretation.
+- C1 defines the signed incidence matrix and its flow interpretation, and proves that every
+  incidence transfer has zero node sum, yielding the stock-level arc balance.
 - C2 defines endpoint-pair aggregation and the arc-feasibility predicate.
 - C3 transfers arc feasibility to dense feasibility with matching flow value.
 - C4 provides the explicit proportional lift converse for nonnegative capacities.
@@ -65,6 +66,40 @@ theorem incidence_loop_eq_zero {V : Type*} [Fintype V] [DecidableEq V] {E : Type
   simp only [incidenceMatrix]
   rw [hloop]
   exact sub_self _
+
+/-- The node sum of an incidence transfer is zero: every arc
+contributes its transfer once at its head and once with the
+opposite sign at its tail, including parallel arcs and loops. -/
+theorem sum_incidenceMatrix_mulVec_eq_zero {V : Type*} [Fintype V]
+    [DecidableEq V] {E : Type*} [Fintype E] [DecidableEq E]
+    (tail head : E → V) (F : E → ℝ) :
+    ∑ v, (incidenceMatrix tail head).mulVec F v = 0 := by
+  simp only [Matrix.mulVec, dotProduct, incidenceMatrix]
+  rw [Finset.sum_comm]
+  apply Finset.sum_eq_zero
+  intro e _
+  simp only [sub_mul, ite_mul, one_mul, zero_mul]
+  rw [Finset.sum_sub_distrib]
+  rw [Fintype.sum_ite_eq (head e) (fun _ => F e)]
+  rw [Fintype.sum_ite_eq (tail e) (fun _ => F e)]
+  exact sub_self (F e)
+
+/-- Shared finite stock-level arc balance. If node inventories
+update by `m' = m + B *ᵥ F + s - r` over one interval, where
+`F` is a signed arc transfer and `s`, `r` are external source
+and retirement vectors in the same selected stock unit, then
+the total inventory changes only by the external terms. No
+nonnegativity or physical admission hypothesis is used. -/
+theorem stock_level_arc_balance {V : Type*} [Fintype V]
+    [DecidableEq V] {E : Type*} [Fintype E] [DecidableEq E]
+    (tail head : E → V) (F : E → ℝ) {m m' s r : V → ℝ}
+    (h : m' = m + (incidenceMatrix tail head).mulVec F + s - r) :
+    ∑ v, m' v = ∑ v, m v + ∑ v, s v - ∑ v, r v := by
+  rw [h]
+  simp only [Pi.add_apply, Pi.sub_apply]
+  rw [Finset.sum_sub_distrib, Finset.sum_add_distrib, Finset.sum_add_distrib,
+    sum_incidenceMatrix_mulVec_eq_zero]
+  ring
 
 /-- Endpoint-pair aggregation (C2): `aggregate f p q` is the sum of `f e` over arcs
 with `tail e = p` and `head e = q`. The same operation aggregates capacities and flows. -/
@@ -160,9 +195,12 @@ theorem flowValue_aggregate_eq_neg_mulVec {V : Type*} [Fintype V] [DecidableEq V
   rw [aggregate_sum_outgoing, aggregate_sum_incoming, incidence_mulVec]
   ring
 
-/-- Explicit proportional real lift (C4): in a positive-total-capacity endpoint class,
-`F (tail e) (head e) * u e / aggregate u (tail e) (head e)`; in a zero-total-capacity
-class, `0` explicitly. No positivity, parallel-arc, loop, or surjectivity assumptions. -/
+/-- Explicit proportional real lift (C4): on an endpoint class of nonzero total capacity,
+`F (tail e) (head e) * u e / aggregate u (tail e) (head e)`; on a zero-total-capacity class,
+`0` explicitly. The lift therefore splits the flow `F p q` among the arcs from `p` to `q` only on
+pairs of nonzero (for nonnegative capacities, positive) total capacity, and carries no flow on a
+pair of zero total capacity whatever `F p q` is. No positivity, parallel-arc, loop, or
+surjectivity assumptions. -/
 noncomputable def proportionalLift {V : Type*} [Fintype V] [DecidableEq V] {E : Type*} [Fintype E]
     [DecidableEq E] (tail head : E → V) (u : E → ℝ) (F : V → V → ℝ) (e : E) : ℝ :=
   if aggregate tail head u (tail e) (head e) = 0 then 0

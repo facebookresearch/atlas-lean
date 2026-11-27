@@ -89,8 +89,14 @@ private theorem hadamard_sign_matrix_bound (ι : Type*) [Fintype ι] [DecidableE
     exact hprod_le
   exact abs_le_of_sq_le_sq hfin (Real.rpow_nonneg (le_of_lt hcardR) _)
 
-/-- Hadamard-derived determinant bound for arbitrary zero-one real matrices:
-for every `{0,1}` matrix `B` of order `n`, `|det B| ≤ 2^(-n) (n+1)^((n+1)/2)`.
+/-- **Hadamard bound for zero-one determinants.** Let $n \ge 1$ and let $B$ be an $n \times n$
+real matrix each of whose entries is $0$ or $1$. Then
+$$|\det B| \le 2^{-n} (n+1)^{(n+1)/2}.$$
+
+The bound comes from bordering and signing $2B$ to obtain an $(n+1) \times (n+1)$ matrix with
+entries $\pm 1$ whose determinant is $2^n \det B$, and applying Hadamard's determinant inequality.
+
+Proves `Wanted` entry `hadamard_zero_one_determinant_bound`.
 
 Source: Richard P. Brent and Adam B. Yedidia, "Computation of Maximal
 Determinants of Binary Circulant Matrices," Journal of Integer Sequences 21
@@ -102,16 +108,6 @@ Verified source-file SHA-256:
 Verified span SHA-256:
 `92528b378d9b23e03d82114f91e804bb0774e4ed36aaa26e51b5f7fc501a5aaa`.
 Concept ID: `jis_grounded_381bade9817989f697266d6e`.
-
-The source derives this by bordering and signing `2B` to obtain an
-`(n+1) × (n+1)` sign matrix whose determinant is `2^n det B`, then applying
-Hadamard's determinant inequality.
-
-This is the sharper zero-one corollary, distinct from the already-proved
-general row-norm theorem
-`MathlibExt.LinearAlgebra.Matrix.HadamardDeterminant.hadamard_determinant_inequality`
-and from the Hadamard existence conjecture.
-Proves `Wanted` entry `hadamard_zero_one_determinant_bound`.
 -/
 theorem hadamard_zero_one_determinant_bound (n : ℕ)
     (B : Matrix (Fin n) (Fin n) ℝ) (hn : 0 < n)

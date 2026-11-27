@@ -1,0 +1,29 @@
+name = "CDISProbability"
+version = "0.1.0"
+keywords = ["math"]
+defaultTargets = ["Code"]
+
+[leanOptions]
+pp.unicode.fun = true # pretty-prints `fun a ↦ b`
+relaxedAutoImplicit = false
+weak.linter.mathlibStandardSet = true
+weak.linter.style.header = false # Files carry the Meta header, not the Mathlib one.
+maxSynthPendingDepth = 3
+
+[[require]]
+name = "mathlib"
+scope = "leanprover-community"
+rev = "v4.34.0"
+
+[[lean_lib]]
+name = "Code"
+
+# The roadmap is an input of `Verify`, so editing an article re-runs the name check.
+[[input_dir]]
+name = "roadmap"
+path = "roadmap"
+text = true
+
+[[lean_lib]]
+name = "Verify"
+needs = ["roadmap"]

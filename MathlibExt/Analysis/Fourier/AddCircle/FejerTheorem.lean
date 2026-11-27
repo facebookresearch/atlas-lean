@@ -36,11 +36,17 @@ open MeasureTheory AddCircle Finset Filter Complex
 
 namespace AddCircle
 
-/-- Quantitative form of Fejér's theorem: given `ε > 0` and a modulus of continuity
-`δ > 0` for `f ∈ C(AddCircle T, ℂ)` at scale `ε/2`, there exists `N₀` such that
-`∀ N ≥ N₀, ∀ x, dist (f x) (σ_N f x) < ε`. The proof splits the convolution integral
-into the region `‖t‖ < δ` (where `f(x) − f(x − t)` is small) and its complement
-(where the Fejér kernel decays as `O(1/((N+1)δ²))`). -/
+/-- **Quantitative Fejér theorem.** Let $T > 0$, let $f$ be a continuous complex-valued function
+on the circle $\mathbb{R}/T\mathbb{Z}$, and write $\sigma_N f$ for its $N$-th Cesàro–Fourier
+mean. Let $\varepsilon > 0$ and $\delta > 0$ be such that $|f(a) - f(b)| < \varepsilon / 2$ for
+all points $a, b$ of the circle at distance less than $\delta$. Then there is
+$N_0 \in \mathbb{N}$ such that $|f(x) - \sigma_N f(x)| < \varepsilon$ for every $N \ge N_0$ and
+every point $x$ of the circle.
+
+The proof writes $f(x) - \sigma_N f(x) = \int K_N(t)\,(f(x) - f(x - t))\,dt$, where $K_N$ is the
+$N$-th Fejér kernel and the integral is against the Haar probability measure, and splits it
+into the points $t$ at distance less than $\delta$ from $0$, where $f(x) - f(x - t)$ is small,
+and the remaining points, where the Fejér kernel is $O(1/((N+1)\delta^2))$. -/
 theorem cesaroMean_uniform_bound (f : C(AddCircle T, ℂ))
     (ε : ℝ) (hε : 0 < ε) (δ : ℝ) (hδ_pos : 0 < δ)
     (hδ : ∀ ⦃a b : AddCircle T⦄, dist a b < δ → dist (f a) (f b) < ε / 2) :
@@ -168,15 +174,10 @@ theorem cesaroMean_uniform_bound (f : C(AddCircle T, ℂ))
     _ = ε / 2 + 2 * ‖f‖ * C := by rw [integral_norm_fejerKernel]; ring
     _ < ε := by linarith
 
-/-- Fejér's theorem on `AddCircle T`: for every continuous function
-`f : AddCircle T → ℂ` (equivalently, every continuous `T`-periodic function on `ℝ`),
-the Cesàro–Fourier means `σ_N f` converge uniformly to `f` as `N → ∞`.
-
-Transporting this circle result to the real-line Fourier-coefficient interface
-requires descending the periodic function to `AddCircle (2 * Real.pi)`, identifying
-`fourierCoeffOn` and the exponential partial sums with `partialFourierSum`, and
-pulling uniform convergence back along the quotient map. These interface bridges
-are outside this module's scope. -/
+/-- **Fejér's theorem: uniform convergence of Cesàro–Fourier means.** Let $T > 0$ and let $f$ be
+a continuous complex-valued function on the circle $\mathbb{R}/T\mathbb{Z}$ (equivalently, a
+continuous $T$-periodic function on $\mathbb{R}$). Then the Cesàro–Fourier means $\sigma_N f$
+converge to $f$ uniformly on the circle as $N \to \infty$. -/
 theorem fejer_uniform_convergence (f : C(AddCircle T, ℂ)) :
     TendstoUniformly (fun N => cesaroFourierMean (⇑f) N) (⇑f) atTop := by
   rw [Metric.tendstoUniformly_iff]

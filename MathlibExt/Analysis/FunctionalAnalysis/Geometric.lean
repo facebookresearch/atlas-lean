@@ -35,7 +35,7 @@ namespace MathlibExt.Analysis.FunctionalAnalysis.GeometricWanted
 /-! ### Step 1–2: the canonical isometry `E →ₗᵢ C(B_{E*}, ℝ)` (Hahn–Banach + Banach–Alaoglu). -/
 
 /-- The closed unit ball of the dual space, seen inside the weak-* dual `WeakDual ℝ E`. -/
-private def dualBall (E : Type*) [NormedAddCommGroup E] [NormedSpace ℝ E] :
+private noncomputable def dualBall (E : Type*) [NormedAddCommGroup E] [NormedSpace ℝ E] :
     Set (WeakDual ℝ E) :=
   WeakDual.toStrongDual ⁻¹' Metric.closedBall 0 1
 

@@ -33,7 +33,7 @@ into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
 and placed the declarations in the `MathlibExt.Topology.SliceDichotomyWanted` namespace. The shared
-knot-theory prelude is imported from `WantedExt.Topology.ConwayKnotShared` instead of being copied
+knot-theory prelude is imported from `MathlibExt.Topology.ConwayKnotShared` instead of being copied
 here. Mathematical
 statements are unchanged. Source: Casson, 1980s (unpublished); Akbulut-Matveyev, *A convex
 decomposition theorem for 4-manifolds*, IMRN 1998. See also Hedden-Kirk-Livingston, *Non-slice
@@ -42,7 +42,7 @@ linear combinations of algebraic knots*, J. Eur. Math. Soc. 14 (2012).
 module
 
 public import Batteries.Util.ProofWanted
-public import WantedExt.Topology.ConwayKnotShared
+public import MathlibExt.Topology.ConwayKnotShared
 public import Mathlib.Analysis.InnerProductSpace.PiL2
 public import Mathlib.Analysis.Calculus.ContDiff.Basic
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
@@ -56,7 +56,7 @@ open MathlibExt.Topology.ConwayKnotShared.KnotTheory
 
 /-! The knot-theory model (`R3`, `Knot`, `TwoLink`, `AmbientIsotopy`,
 `CircleReparam`, isotopy, `reflectZ`, chirality) is shared with the other
-knot entries via `WantedExt.Topology.ConwayKnotShared` and is not copied
+knot entries via `MathlibExt.Topology.ConwayKnotShared` and is not copied
 here, so all knot entries speak about the same `Knot` type. -/
 
 /-!
@@ -89,7 +89,14 @@ This was first established by Casson; explicit examples were given by
 Akbulut–Matveyev and Hedden–Kirk–Livingston. The solver may take any
 witness — historically tractable ones are positive Whitehead doubles
 of certain knots (Akbulut–Matveyev, 1997). -/
-/-- Source: Casson, 1980s (unpublished); Akbulut-Matveyev, *A convex decomposition theorem for
+/-- **A topologically slice knot that is not smoothly slice.** There is a PL knot $K$ (a closed
+polyline in $\mathbb{R}^3$ with at least three vertices, not required to be simple) that is
+topologically slice but not smoothly slice. Here $K$ is smoothly (respectively topologically)
+slice when some smooth knot whose image is topologically ambient isotopic to the image of $K$
+bounds a smooth (respectively locally flat) properly embedded $2$-disk in
+$\mathbb{R}^3 \times [0, \infty)$.
+
+Source: Casson, 1980s (unpublished); Akbulut-Matveyev, *A convex decomposition theorem for
 4-manifolds*, IMRN 1998. See also Hedden-Kirk-Livingston, *Non-slice linear combinations of
 algebraic knots*, J. Eur. Math. Soc. 14 (2012). Via leanprover/lean-eval@38361be, problem
 `exists_topologically_slice_not_smoothly_slice`. -/

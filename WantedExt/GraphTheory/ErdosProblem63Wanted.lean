@@ -29,15 +29,20 @@ erdosproblems.com/63. `cycleLengths` is MathlibExt's (ported from FC's
 `answer(True)` wrapper is elaborated to a direct proposition. Status:
 resolved true (Mihók–Erdős conjecture, solved via Liu–Montgomery [LiMo20]). -/
 
-/-- Infinite chromatic number forces `2^n` cycle lengths infinitely often. -/
+/-- **Statement of Erdős Problem 63.** The proposition that every simple graph $G$ with infinite
+chromatic number has cycles of length $2^n$ for infinitely many $n$: for every natural number
+$N$ there is some $n \ge N$ such that $G$ contains a cycle of length $2^n$. -/
 def conjecture : Prop :=
   ∀ {V : Type*} (G : SimpleGraph V), G.chromaticNumber = ⊤ →
     ∀ N : ℕ, ∃ n ≥ N, 2 ^ n ∈ G.cycleLengths
 
 /--
-Resolved true: Resolved true (Liu–Montgomery [LiMo20]), per erdosproblems.com/63. Source:
-Liu–Montgomery [LiMo20], per erdosproblems.com/63, https://www.erdosproblems.com/63. Moved from
-`OpenConjectures/GraphTheory/ErdosProblem63`.
+**Erdős Problem 63 (Liu–Montgomery).** Every simple graph $G$ with infinite chromatic number has
+cycles of length $2^n$ for infinitely many $n$: for every natural number $N$ there is some
+$n \ge N$ such that $G$ contains a cycle of length $2^n$.
+
+Source: Liu–Montgomery [LiMo20], per erdosproblems.com/63, https://www.erdosproblems.com/63.
+Moved from `OpenConjectures/GraphTheory/ErdosProblem63`.
 -/
 public theorem_wanted conjecture_holds : conjecture
 

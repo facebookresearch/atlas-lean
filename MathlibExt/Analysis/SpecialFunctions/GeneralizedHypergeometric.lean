@@ -103,16 +103,18 @@ namespace MetaMathlibExt.GeneralizedHypergeometric
 
 variable {K : Type*} [Field K]
 
-/-- The coefficient of `z ^ n` in the generalized hypergeometric series `ₚF_q`
-with upper parameters `a` and lower parameters `b`:
+/-- **Generalized hypergeometric coefficient.** Let $K$ be a field, let $a$ and $b$ be finite
+multisets of elements of $K$ (the upper and lower parameters), and let $n$ be a natural number.
+The $n$-th generalized hypergeometric coefficient is
+$$
+(n!)^{-1} \prod_{x \in a} (x)_n \Big(\prod_{y \in b} (y)_n\Big)^{-1},
+$$
+where $(x)_n = x(x+1)\cdots(x+n-1)$ is the rising factorial, with $(x)_0 = 1$, and the products
+run over the multisets with multiplicity. It is the coefficient of $z^n$ in the generalized
+hypergeometric series ${}_pF_q$ with $p = |a|$ and $q = |b|$.
 
-  `(n ! : K)⁻¹ * ∏_{x ∈ a} (x)ₙ * (∏_{y ∈ b} (y)ₙ)⁻¹`
-
-where `(x)ₙ = (ascPochhammer K n).eval x`.
-
-Division is by totalized inverses in `K`; a zero lower product or factorial
-cast yields `0`.  No analytic claim is made at singular lower parameters, and
-the factorial cast may vanish in positive characteristic. -/
+Inverses are taken in $K$ with the convention $0^{-1} = 0$, so the coefficient is $0$ whenever
+the lower product or $n!$ is zero in $K$; the latter can happen in positive characteristic. -/
 noncomputable def generalizedHypergeometricCoefficient (a b : Multiset K) (n : ℕ) : K :=
   (n.factorial : K)⁻¹ * (a.map fun x => (ascPochhammer K n).eval x).prod *
     (b.map fun x => (ascPochhammer K n).eval x).prod⁻¹
@@ -179,8 +181,12 @@ theorem generalizedHypergeometricCoefficient_two_one (a b c : K) (n : ℕ) :
 
 variable {A : Type*} [Ring A] [Algebra K A] [TopologicalSpace A] [IsTopologicalRing A]
 
-/-- The formal multilinear series `∑ₙ pFqCoeff(a,b,n) • xⁿ` induced by
-`generalizedHypergeometricCoefficient`. -/
+/-- **Generalized hypergeometric series.** Let $K$ be a field and $A$ a topological ring that is
+a $K$-algebra. For finite multisets $a$ and $b$ of elements of $K$, the generalized
+hypergeometric series is the formal multilinear series on $A$ whose $n$-th term is the
+$n$-linear map $(x_1, \dots, x_n) \mapsto c_n \, x_1 x_2 \cdots x_n$, where $c_n \in K$ is the
+$n$-th generalized hypergeometric coefficient with upper parameters $a$ and lower parameters
+$b$. -/
 noncomputable def generalizedHypergeometricSeries (a b : Multiset K) :
     FormalMultilinearSeries K A A :=
   FormalMultilinearSeries.ofScalars A (generalizedHypergeometricCoefficient a b)
@@ -206,22 +212,35 @@ theorem generalizedHypergeometricSeries_two_one (a b c : K) :
 
 /-! ### Complex analytic layer -/
 
-/-- Admissibility for the lower parameters over `ℂ`: no lower parameter is
-`0` or a negative integer. This is the exclusion stated in
-arXiv:2608.10675 `KMY-Conj.tex:456-470` for `_{m+1}F_m`. -/
+/-- **Admissible lower parameters.** A finite multiset $B$ of complex numbers is admissible as
+lower parameters if no element of $B$ is $0$ or a negative integer, that is, $-k \notin B$ for
+every natural number $k$.
+
+Source: arXiv:2608.10675, KMY-Conj.tex lines 456–470, the exclusion of lower parameters from
+$\mathbb{Z}_{\le 0}$ for ${}_{m+1}F_m$. -/
 def LowerParametersAdmissible (bs : Multiset ℂ) : Prop :=
   ∀ k : ℕ, (-(k : ℂ) ∉ bs)
 
-/-- Convergence predicate: the coefficient-weighted power series is `Summable`.
-The source asserts absolute convergence for `|z| < 1` without proof;
-this predicate exposes `Summable` without claiming a radius theorem. -/
+/-- **Summability of the generalized hypergeometric series.** For finite multisets $a$ and $b$ of
+complex numbers and $z \in \mathbb{C}$, the generalized hypergeometric series with upper
+parameters $a$ and lower parameters $b$ is summable at $z$ if the family $(c_n z^n)_{n \ge 0}$ is
+summable in $\mathbb{C}$, where $c_n$ is the $n$-th generalized hypergeometric coefficient.
+
+Summability of a family in $\mathbb{C}$ is unconditional summability, which is equivalent to
+absolute convergence of $\sum_n c_n z^n$. -/
 abbrev SummableHypergeometric (a b : Multiset ℂ) (z : ℂ) : Prop :=
   Summable (fun n : ℕ => generalizedHypergeometricCoefficient a b n * z ^ n)
 
-/-- Complex generalized hypergeometric value defined as the `tsum` of
-Pochhammer-product coefficients: `∑' n, coeff n * z^n`. This matches the
-infinite-sum presentation in `KMY-Conj.tex:456-470`. Admissibility and
-summability are hypotheses of theorems, not arguments of this definition. -/
+/-- **Generalized hypergeometric function.** For finite multisets $a$ and $b$ of complex numbers
+and $z \in \mathbb{C}$, the value ${}_pF_q(a; b; z)$, where $p = |a|$ and $q = |b|$, is the sum
+$\sum_{n \ge 0} c_n z^n$, where $c_n$ is the $n$-th generalized hypergeometric coefficient with
+upper parameters $a$ and lower parameters $b$.
+
+The sum is the unconditional sum of the family $(c_n z^n)_{n \ge 0}$, which is $0$ by convention
+when that family is not summable; no condition on the parameters or on $z$ is imposed.
+
+Source: arXiv:2608.10675, KMY-Conj.tex lines 456–470, the infinite-sum presentation of
+${}_{m+1}F_m$. -/
 noncomputable def generalizedHypergeometricValue (a b : Multiset ℂ) (z : ℂ) : ℂ :=
   ∑' n : ℕ, generalizedHypergeometricCoefficient a b n * z ^ n
 
@@ -236,9 +255,13 @@ theorem generalizedHypergeometricValue_hasSum {a b : Multiset ℂ} {z : ℂ}
       (generalizedHypergeometricValue a b z) :=
   hsum.hasSum
 
-/-- Admissibility implies every lower Pochhammer factor is nonzero.
-Uses `ascPochhammer_eval_eq_zero_iff`: over an integral domain,
-`(ascPochhammer ℂ n).eval b = 0 ↔ ∃ k < n, (k:ℂ) = -b`. -/
+/-- **Rising factorials at admissible lower parameters are nonzero.** Let $B$ be a finite
+multiset of complex numbers that is admissible as lower parameters. Then for every $b \in B$ and
+every natural number $n$, the rising factorial $(b)_n = b(b+1)\cdots(b+n-1)$, with $(b)_0 = 1$,
+is nonzero.
+
+This follows because over $\mathbb{C}$, $(b)_n = 0$ if and only if $b = -k$ for some natural
+number $k < n$. -/
 theorem lowerParametersAdmissible_ascPochhammer_ne_zero {bs : Multiset ℂ}
     (hadm : LowerParametersAdmissible bs) {b : ℂ} (hb : b ∈ bs) (n : ℕ) :
     (ascPochhammer ℂ n).eval b ≠ 0 := by
@@ -256,7 +279,14 @@ theorem lowerParametersAdmissible_forall_mem_ne_zero {bs : Multiset ℂ}
     ∀ b ∈ bs, ∀ n : ℕ, (ascPochhammer ℂ n).eval b ≠ 0 :=
   fun b hb n => lowerParametersAdmissible_ascPochhammer_ne_zero (b := b) hadm hb n
 
-/-- Finite support implies summability when an upper parameter is `-(N : ℂ)`. -/
+/-- **Terminating generalized hypergeometric series are summable.** Let $a$ and $b$ be finite
+multisets of complex numbers, and let $c_n$ be the $n$-th generalized hypergeometric coefficient
+with upper parameters $a$ and lower parameters $b$. If $-N \in a$ for some natural number $N$,
+then for every $z \in \mathbb{C}$ the family $(c_n z^n)_{n \ge 0}$ is summable, that is, the
+generalized hypergeometric series with these parameters is summable at $z$.
+
+Only finitely many terms are nonzero, since $c_n = 0$ for $n > N$; no condition on the lower
+parameters is needed. -/
 theorem summableHypergeometric_of_neg_coe_nat_mem_upper
     {a b : Multiset ℂ} {N : ℕ} {z : ℂ}
     (hmem : (-(N : ℂ) ∈ a)) :
@@ -275,10 +305,16 @@ theorem summableHypergeometric_of_neg_coe_nat_mem_upper
     exact hzero n hlt
   exact summable_of_ne_finset_zero hzero'
 
-/-- Core algebraic identification of the `tsum` with the finite sum over
-`Finset.range (N+1)` when an upper parameter is `-(N : ℂ)`. No admissibility
-hypothesis is needed: the equality holds because the upper Pochhammer factor
-vanishes for `n > N`; the lower product never enters. -/
+/-- **Terminating generalized hypergeometric series are finite sums.** Let $a$ and $b$ be finite
+multisets of complex numbers, and let $c_n$ be the $n$-th generalized hypergeometric coefficient
+with upper parameters $a$ and lower parameters $b$. If $-N \in a$ for some natural number $N$,
+then for every $z \in \mathbb{C}$
+$$
+\sum_{n=0}^{\infty} c_n z^n = \sum_{n=0}^{N} c_n z^n.
+$$
+
+No condition on the lower parameters is needed: $c_n = 0$ for $n > N$ because the rising
+factorial $(-N)_n = (-N)(-N+1)\cdots(-N+n-1)$ vanishes. -/
 theorem generalizedHypergeometric_tsum_eq_finset_sum
     {a b : Multiset ℂ} {N : ℕ} {z : ℂ}
     (hmem : (-(N : ℂ) ∈ a)) :

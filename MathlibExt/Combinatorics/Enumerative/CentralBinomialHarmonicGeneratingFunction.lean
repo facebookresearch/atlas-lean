@@ -744,15 +744,20 @@ private lemma D_hasDeriv_at_zero :
   exact hD.congr_deriv hD'_eq
 
 /--
-Let `H_n` be the `n`th harmonic number. Then the generating function
-`∑_{n=1}^∞ binom(2n,n) H_n x^n` has the stated logarithmic closed form.
+**Central binomial–harmonic generating function.** Let $H_n = \sum_{k=1}^{n} 1/k$ be the $n$th
+harmonic number. For every real number $x$ with $|x| < 1/4$, the series
+$\sum_{n=1}^{\infty} \binom{2n}{n} H_n x^n$ converges unconditionally, with sum
+$$
+\sum_{n=1}^{\infty} \binom{2n}{n} H_n x^n =
+\frac{2}{\sqrt{1-4x}} \log \frac{1 + \sqrt{1-4x}}{2\sqrt{1-4x}}.
+$$
+
+Proves `Wanted` entry `hasSum_centralBinomial_harmonic`.
 
 Source: Hongwei Chen, "Interesting Series Associated with Central Binomial
 Coefficients, Catalan Numbers and Harmonic Numbers," Journal of Integer Sequences
 19 (2016), Article 16.1.5, Theorem (label eq:h_gf), lines 147–151,
 https://cs.uwaterloo.ca/journals/JIS/VOL19/Chen/chen21.tex.
-
-Proves `Wanted` entry `hasSum_centralBinomial_harmonic`.
 -/
 theorem hasSum_centralBinomial_harmonic (x : ℝ) (hx : |x| < 1 / 4) :
   HasSum

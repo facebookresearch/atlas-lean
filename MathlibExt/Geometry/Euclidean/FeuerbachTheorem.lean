@@ -555,13 +555,16 @@ private lemma ex2_weights (s : Triangle ℝ P)
 
 end WantedAux
 
-/-- Feuerbach's theorem (Feuerbach, 1822; statement `feuerbach-s1` from
-https://en.wikipedia.org/wiki/Feuerbach_point): the incircle and nine-point
-circle of a non-equilateral triangle are internally tangent to each other at
-the Feuerbach point of the triangle; more generally, the nine-point circle is
-tangent to the three excircles of the triangle as well as its incircle.
+/-- **Feuerbach's theorem.** Let $T$ be a triangle in a two-dimensional Euclidean affine space,
+with incircle $\omega$, nine-point circle $N$, and excircle $\omega_i$ opposite its $i$-th vertex
+for each $i$. If $T$ is not equilateral, then there is a point $F$ at which $\omega$ is internally
+tangent to $N$ (that is, $F$ lies on both circles and the center of $\omega$ lies on the segment
+from the center of $N$ to $F$), and $F$ is the only common point of $\omega$ and $N$. For every
+triangle $T$ and every $i$, the nine-point circle $N$ is externally tangent to $\omega_i$.
 
-Proves `Wanted` entry `Feuerbach_theorem`.
+Proves `Wanted` entry `Feuerbach_theorem` (statement `feuerbach-s1`).
+
+Source: K. W. Feuerbach, 1822; https://en.wikipedia.org/wiki/Feuerbach_point
 -/
 theorem Feuerbach_theorem {V P : Type*} [NormedAddCommGroup V]
     [InnerProductSpace ℝ V] [MetricSpace P] [NormedAddTorsor V P]

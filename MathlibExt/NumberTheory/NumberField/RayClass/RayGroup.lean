@@ -27,16 +27,29 @@ namespace Modulus
 
 variable {K : Type*} [Field K] [NumberField K]
 
-/-- Finite-prime support of a modulus: primes dividing the finite part. -/
+/-- **Primes dividing a modulus.** Let $\mathfrak m$ be a modulus of a number field $K$, with finite
+part the nonzero ideal $\mathfrak m_0$ of $\mathcal O_K$. A nonzero prime ideal $\mathfrak p$ of
+$\mathcal O_K$ lies in the finite support of $\mathfrak m$ when
+$\mathfrak m_0 \subseteq \mathfrak p$, that is, when $\mathfrak p$ divides $\mathfrak m_0$. -/
 def finiteSupported (m : Modulus K) (v : IsDedekindDomain.HeightOneSpectrum (𝓞 K)) : Prop :=
   (m.finitePart : Ideal (𝓞 K)) ≤ v.asIdeal
 
-/-- Exponent of the finite part of a modulus at a finite prime. -/
+/-- **Exponent of a modulus at a prime.** Let $\mathfrak m$ be a modulus of a number field $K$, with
+finite part the nonzero ideal $\mathfrak m_0$ of $\mathcal O_K$. For a nonzero prime ideal
+$\mathfrak p$ of $\mathcal O_K$, the finite exponent of $\mathfrak m$ at $\mathfrak p$ is the
+integer $v_{\mathfrak p}(\mathfrak m_0)$, the exponent of $\mathfrak p$ in the prime factorization
+of $\mathfrak m_0$. -/
 def finiteExponent (m : Modulus K) (v : IsDedekindDomain.HeightOneSpectrum (𝓞 K)) : ℤ :=
   FractionalIdeal.count K v
     ((m.finitePart : Ideal (𝓞 K)) : FractionalIdeal (𝓞 K)⁰ K)
 
-/-- Fractional ideals coprime to the finite part of a modulus. -/
+/-- **Fractional ideals coprime to a modulus.** Let $\mathfrak m$ be a modulus of a number field
+$K$, with finite part the nonzero ideal $\mathfrak m_0$ of $\mathcal O_K$. For an invertible
+fractional ideal $I$ of $\mathcal O_K$ and a nonzero prime ideal $\mathfrak p$, write
+$v_{\mathfrak p}(I)$ for the exponent of $\mathfrak p$ in the factorization of $I$. The fractional
+ideals coprime to $\mathfrak m$ form the subgroup of the group of invertible fractional ideals of
+$\mathcal O_K$ consisting of those $I$ with $v_{\mathfrak p}(I) = 0$ for every nonzero prime ideal
+$\mathfrak p$ of $\mathcal O_K$ containing $\mathfrak m_0$. -/
 def coprimeFractionalIdeals (m : Modulus K) :
     Subgroup (FractionalIdeal (𝓞 K)⁰ K)ˣ where
   carrier :=
@@ -64,7 +77,11 @@ theorem mem_coprimeFractionalIdeals_iff (m : Modulus K)
         FractionalIdeal.count K v (u : FractionalIdeal (𝓞 K)⁰ K) = 0 :=
   Iff.rfl
 
-/-- Elements of `Kˣ` whose principal ideal is coprime to the modulus. -/
+/-- **Elements coprime to a modulus.** Let $\mathfrak m$ be a modulus of a number field $K$, with
+finite part the nonzero ideal $\mathfrak m_0$ of $\mathcal O_K$. The elements coprime to
+$\mathfrak m$ form the subgroup of $K^\times$ consisting of those $x$ whose principal fractional
+ideal $(x)$ is coprime to $\mathfrak m$, that is, has exponent $0$ at every nonzero prime ideal
+$\mathfrak p$ of $\mathcal O_K$ containing $\mathfrak m_0$. -/
 def rayElements (m : Modulus K) : Subgroup Kˣ :=
   Subgroup.comap (toPrincipalIdeal (𝓞 K) K)
     (coprimeFractionalIdeals m)
@@ -75,7 +92,14 @@ theorem mem_rayElements_iff (m : Modulus K) (x : Kˣ) :
         coprimeFractionalIdeals m :=
   Subgroup.mem_comap
 
-/-- Congruence `x ≡ 1` at the finite part of a modulus. -/
+/-- **Multiplicative congruence to one at the finite part.** Let $\mathfrak m$ be a modulus of a
+number field $K$, with finite part the nonzero ideal $\mathfrak m_0$ of $\mathcal O_K$. For a
+nonzero prime ideal $\mathfrak p$ of $\mathcal O_K$, write $v_{\mathfrak p}(I)$ for the exponent of
+$\mathfrak p$ in the factorization of a nonzero fractional ideal $I$ of $\mathcal O_K$, and for
+$y \in K$ write $v_{\mathfrak p}(y) = v_{\mathfrak p}((y))$ (with $v_{\mathfrak p}(0) = 0$). An
+element $x \in K^\times$ is congruent to $1$ at the finite part of $\mathfrak m$ when, for every
+nonzero prime ideal $\mathfrak p$ of $\mathcal O_K$ containing $\mathfrak m_0$, either $x = 1$ or
+$v_{\mathfrak p}(\mathfrak m_0) \le v_{\mathfrak p}(x - 1)$. -/
 def CongruentOneAtFinitePart (m : Modulus K) (x : Kˣ) : Prop :=
   ∀ v, finiteSupported m v →
     (x : K) = 1 ∨
@@ -83,12 +107,26 @@ def CongruentOneAtFinitePart (m : Modulus K) (x : Kˣ) : Prop :=
         FractionalIdeal.count K v
           (FractionalIdeal.spanSingleton (𝓞 K)⁰ ((x : K) - 1))
 
-/-- Positivity at the real places selected by a modulus. -/
+/-- **Positivity at the infinite part of a modulus.** Let $\mathfrak m$ be a modulus of a number
+field $K$, with infinite part the finite set $\mathfrak m_\infty$ of real places of $K$. An element
+$x \in K^\times$ is positive at the infinite part of $\mathfrak m$ when $\sigma_w(x) > 0$ for every
+real place $w \in \mathfrak m_\infty$, where $\sigma_w \colon K \to \mathbb R$ is the real
+embedding corresponding to $w$. -/
 def PositiveAtInfinitePart (m : Modulus K) (x : Kˣ) : Prop :=
   ∀ w : RealPlace K, w ∈ m.infinitePart →
     InfinitePlace.embedding_of_isReal w.property (x : K) > 0
 
-/-- Ray elements congruent to `1` modulo `m`. -/
+/-- **Elements congruent to one modulo a modulus.** Let $\mathfrak m$ be a modulus of a number field
+$K$, with finite part the nonzero ideal $\mathfrak m_0$ of $\mathcal O_K$ and infinite part the
+finite set $\mathfrak m_\infty$ of real places of $K$. For a nonzero prime ideal $\mathfrak p$ of
+$\mathcal O_K$, write $v_{\mathfrak p}(I)$ for the exponent of $\mathfrak p$ in the factorization
+of a nonzero fractional ideal $I$ of $\mathcal O_K$, and for $y \in K$ write
+$v_{\mathfrak p}(y) = v_{\mathfrak p}((y))$ (with $v_{\mathfrak p}(0) = 0$); for a real place $w$
+write $\sigma_w \colon K \to \mathbb R$ for the corresponding real embedding. An element
+$x \in K^\times$ is congruent to $1$ modulo $\mathfrak m$ when, for every nonzero prime ideal
+$\mathfrak p$ of $\mathcal O_K$ containing $\mathfrak m_0$, $v_{\mathfrak p}(x) = 0$ and either
+$x = 1$ or $v_{\mathfrak p}(\mathfrak m_0) \le v_{\mathfrak p}(x - 1)$, and $\sigma_w(x) > 0$ for
+every real place $w \in \mathfrak m_\infty$. -/
 def IsRayElementOne (m : Modulus K) (x : Kˣ) : Prop :=
   x ∈ rayElements m ∧ CongruentOneAtFinitePart m x ∧ PositiveAtInfinitePart m x
 
@@ -104,7 +142,10 @@ theorem IsRayElementOne.positive {m : Modulus K} {x : Kˣ}
     (h : IsRayElementOne m x) : PositiveAtInfinitePart m x :=
   h.2.2
 
-/-- Principal generators coming from elements congruent to `1` mod `m`. -/
+/-- **Generators of the ray group.** Let $\mathfrak m$ be a modulus of a number field $K$. The ray
+generators of $\mathfrak m$ are the fractional ideals coprime to $\mathfrak m$ of the form $(x)$,
+the principal fractional ideal of an element $x \in K^\times$ that is congruent to $1$ modulo
+$\mathfrak m$. -/
 def rayGenerators (m : Modulus K) : Set (coprimeFractionalIdeals m) :=
   { y |
     ∃ x : Kˣ, ∃ hx : IsRayElementOne m x,
@@ -112,7 +153,10 @@ def rayGenerators (m : Modulus K) : Set (coprimeFractionalIdeals m) :=
         Subgroup.mem_comap.mp hx.1⟩ :
         coprimeFractionalIdeals m) = y }
 
-/-- Subgroup generated by the ray generators: the ray group. -/
+/-- **The ray group of a modulus.** Let $\mathfrak m$ be a modulus of a number field $K$. The ray
+group of $\mathfrak m$ is the subgroup of the group of fractional ideals coprime to $\mathfrak m$
+generated by the principal ideals $(x)$ of the elements $x \in K^\times$ congruent to $1$ modulo
+$\mathfrak m$. -/
 def rayGroup (m : Modulus K) : Subgroup (coprimeFractionalIdeals m) :=
   Subgroup.closure (rayGenerators m)
 

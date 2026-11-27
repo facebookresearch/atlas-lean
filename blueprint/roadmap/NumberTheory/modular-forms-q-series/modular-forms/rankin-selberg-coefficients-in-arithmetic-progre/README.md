@@ -1,0 +1,17 @@
+# Rankin–Selberg coefficients in arithmetic progressions
+
+- [Normalized Fourier coefficients of a cusp form](cusp-form-normalized-coeff.md)
+- [Normalized cusp form coefficient at one](cusp-form-normalized-coeff-one.md)
+- [Normalized Hecke eigenform](is-normalized-hecke-eigenform.md)
+- [Hecke relation at the square of a prime](normalized-coeff-prime-sq.md)
+- [Rankin–Selberg coefficients](rankin-selberg-coeff.md)
+- [Rankin–Selberg coefficients as a sum over square divisors](rankin-selberg-coeff-apply.md)
+- [Rankin–Selberg coefficient at one](rankin-selberg-coeff-one.md)
+- [Rankin–Selberg coefficients at primes](rankin-selberg-coeff-prime.md)
+- [Sums of squared normalized coefficients at perfect powers in arithmetic progressions](sum-cusp-form-normalized-coeff-pow-sq-ar.md)
+- [Hua's theorem on squared Rankin–Selberg coefficients in arithmetic progressions](sum-rankin-selberg-coeff-sq-arithmetic-p.md)
+- [Sums of Rankin–Selberg convolution powers in arithmetic progressions](sum-rankin-selberg-coeff-pow-arithmetic.md)
+- [Sums of squared Rankin–Selberg coefficients twisted by a primitive character](sum-rankin-selberg-coeff-sq-mul-primitiv.md)
+- [Sums of squared Rankin–Selberg coefficients twisted by the principal character](sum-rankin-selberg-coeff-sq-mul-principa.md)
+- [Sums of Rankin–Selberg convolution powers twisted by a primitive character](sum-rankin-selberg-coeff-pow-mul-primiti.md)
+- [Sums of Rankin–Selberg convolution powers twisted by the principal character](sum-rankin-selberg-coeff-pow-mul-princip.md)

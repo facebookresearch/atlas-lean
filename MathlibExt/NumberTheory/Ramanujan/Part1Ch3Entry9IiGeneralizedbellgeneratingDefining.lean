@@ -25,9 +25,11 @@ namespace MathlibExt.NumberTheory.Ramanujan.Part1Ch3
 
 namespace Entry9IiGeneralizedbellgeneratingDefining
 
-/-- Ramanujan's generalized Bell function
-`F(a, b, x; n) = e^{-x} ∑_{k ≥ 0} (a + b(k + 1))ⁿ xᵏ⁺¹ / k!`, definition (9.1) of Berndt,
-Part I, Chapter 3. -/
+/-- **Ramanujan's generalized Bell function.** For complex numbers $a$, $b$, $x$ and a natural
+number $n$, the generalized Bell function is
+$F(a, b, x; n) = e^{-x} \sum_{k=0}^{\infty} \frac{(a + b(k + 1))^n x^{k+1}}{k!}$.
+
+Source: Berndt, Ramanujan's Notebooks Part I, Chapter 3, definition (9.1). -/
 noncomputable def generalizedBellGenerating (a b x : ℂ) (n : ℕ) : ℂ :=
   Complex.exp (-x) * ∑' (k : ℕ),
       ((a + b * (↑(k + 1) : ℂ)) ^ n * x ^ (k + 1) / (↑(Nat.factorial k) : ℂ))
@@ -83,7 +85,12 @@ private lemma summable_bellTerm (a b x : ℂ) (n : ℕ) :
         rw [h2succ, hXsucc, mul_pow]
         ring
 
-/-- Source: Berndt, Ramanujan's Notebooks Part I, Chapter 3, definition (9.1) printed p.
+/-- **Convergence of the generalized Bell series.** Let $F$ denote Ramanujan's generalized Bell
+function. For complex numbers $a$, $b$, $x$ and every natural number $n$, the series
+$\sum_{k=0}^{\infty} (a + b(k + 1))^n x^{k+1} / k!$ converges absolutely and its sum is
+$e^{x} F(a, b, x; n)$.
+
+Source: Berndt, Ramanujan's Notebooks Part I, Chapter 3, definition (9.1) printed p.
     53/PDF p. 63 and Entry 9(ii), formula (9.4), printed p. 54/PDF p. 64.
 Proves `Wanted` entry `ramanujan_part1_ch3_entry9_ii_generalizedbellgenerating_defining`.
 -/

@@ -77,11 +77,17 @@ variable {T : Type*}
 
 /-! ## The procedure -/
 
-/-- A symbol is acceptable when it is a terminal or a nonterminal in `G`. -/
+/-- **Acceptable symbols.** Given a list $G$ of natural numbers and a symbol $s$ of an encoded
+grammar over an alphabet $T$, which is either a nonterminal $i \in \mathbb{N}$ or a terminal in
+$T$, $s$ is acceptable when it is a terminal or a nonterminal that occurs in $G$. The test
+returns a Boolean. -/
 def symOk (G : List ℕ) (s : ℕ ⊕ T) : Bool :=
   Sum.elim (memB G) (fun _ => true) s
 
-/-- A production is acceptable when all symbols of its right-hand side are. -/
+/-- **Acceptable productions.** Given a list $G$ of nonterminals (natural numbers), the test
+accepts an encoded production $(A, \rho)$ when every symbol of $\rho$ is acceptable: a
+terminal always is, and a nonterminal is when it belongs to $G$. So the production is accepted
+exactly when every nonterminal occurring in $\rho$ belongs to $G$. -/
 def ruleOk (G : List ℕ) (e : ℕ × List (ℕ ⊕ T)) : Bool :=
   e.2.foldr (fun s b => symOk G s && b) true
 
@@ -105,7 +111,10 @@ theorem ruleOk_iff {G : List ℕ} {e : ℕ × List (ℕ ⊕ T)} :
       | inr a =>
           simp [symOk]
 
-/-- One round: the left-hand sides of the acceptable productions. -/
+/-- **One round of the generating-nonterminal computation.** Let a list of productions be given,
+each a pair of a nonterminal $A \in \mathbb{N}$ and a right-hand side made of nonterminals and
+terminals, together with a list $G$ of nonterminals. One round returns, in order, the left-hand
+sides of those productions in whose right-hand side every nonterminal belongs to $G$. -/
 def genStep (rules : List (ℕ × List (ℕ ⊕ T))) (G : List ℕ) : List ℕ :=
   rules.filterMap fun e => cond (ruleOk G e) (some e.1) none
 
@@ -133,16 +142,28 @@ theorem genStep_subset {rules : List (ℕ × List (ℕ ⊕ T))} (G : List ℕ) :
   obtain ⟨e, he, rfl, -⟩ := mem_genStep.1 hj
   exact List.mem_map_of_mem he
 
-/-- The nonterminals that derive a terminal word. -/
+/-- **Generating nonterminals.** For an encoded grammar $g$, start from the empty list of
+nonterminals and, in each round, replace the current list $G$ by the list of left-hand sides of
+those productions of $g$ whose right-hand sides contain no nonterminal outside $G$. The
+generating nonterminals of $g$ are the list obtained after as many rounds as $g$ has productions.
+
+Every nonterminal in this list derives a terminal word, and the start nonterminal is in it
+whenever the grammar generates some word. -/
 def generating (g : EncodedCFG T) : List ℕ :=
   (genStep g.rules)^[g.rules.length] []
 
-/-- **The emptiness test**: the start nonterminal derives no terminal word. -/
+/-- **The emptiness test for context-free grammars.** For an encoded grammar $g$, the test returns
+true exactly when the start nonterminal of $g$ is not among the generating nonterminals of $g$. -/
 def isEmptyB (g : EncodedCFG T) : Bool :=
   !memB g.generating g.start
 
 /-! ## Stabilization -/
 
+/-- **The generating nonterminals are closed under one more round.** For an encoded grammar $g$,
+one more round of the generating-nonterminal computation, applied to the productions of $g$ and
+the generating nonterminals of $g$, yields only generating nonterminals of $g$: every left-hand
+side of a production of $g$ whose right-hand side has all its nonterminals among the generating
+nonterminals of $g$ is itself a generating nonterminal of $g$. -/
 theorem genStep_generating_subset (g : EncodedCFG T) :
     genStep g.rules g.generating ⊆ g.generating := by
   have h := iterate_closed (f := genStep g.rules) (fun _ _ => genStep_mono)
@@ -183,7 +204,9 @@ end Primrec
 variable [DecidableEq T]
 
 omit [DecidableEq T] in
-/-- A sentential form whose nonterminals each derive a terminal word derives a terminal word. -/
+/-- **Sentential forms of productive nonterminals derive terminal words.** In a context-free
+grammar $G$, if every nonterminal occurring in a sentential form $u$ derives some terminal word,
+then $u$ derives some terminal word. -/
 theorem exists_derives_of_forall {G : ContextFreeGrammar T} :
     ∀ u : List (Symbol T G.NT),
       (∀ A, Symbol.nonterminal A ∈ u → ∃ w : List T, G.Derives [.nonterminal A] (w.map .terminal))
@@ -200,7 +223,11 @@ theorem exists_derives_of_forall {G : ContextFreeGrammar T} :
           exact ⟨v ++ w, by
             simpa [List.map_append] using derives_append hv hw⟩
 
-/-- **Soundness**: every nonterminal found derives a terminal word. -/
+/-- **Soundness of the productive-nonterminal iteration.** Let $g$ be an encoded context-free
+grammar. A round sends a list $H$ of nonterminals to the left-hand sides of those productions of
+$g$ in whose right-hand side every nonterminal belongs to $H$. For every $k \ge 0$, every
+nonterminal obtained after $k$ rounds starting from the empty list derives some terminal word in
+the context-free grammar that $g$ denotes. -/
 theorem exists_derives_of_mem_iterate (g : EncodedCFG T) :
     ∀ (k : ℕ) {j : ℕ}, j ∈ (genStep g.rules)^[k] [] →
       ∃ w : List T, g.toCFG.Derives [.nonterminal j] (w.map .terminal)
@@ -226,7 +253,13 @@ theorem exists_derives_of_mem_generating {g : EncodedCFG T} {j : ℕ} (h : j ∈
   exists_derives_of_mem_iterate g _ h
 
 omit [DecidableEq T] in
-/-- The interpretation of a sentential form with a nonterminal assigned `0` is `0`. -/
+/-- **A sentential form containing an empty nonterminal denotes the empty language.** Let $T$ be
+an alphabet and $N$ a set of nonterminals, and let $V$ assign a language over $T$ to each
+nonterminal. A sentential form $X_1 \cdots X_m$ over $T$ and $N$ denotes under $V$ the
+concatenation $L_1 \cdots L_m$, where $L_t = V(X_t)$ if $X_t$ is a nonterminal and $L_t = \{X_t\}$
+if $X_t$ is a terminal; the empty form denotes $\{\varepsilon\}$. Let $A \in N$ with
+$V(A) = \emptyset$. Then every sentential form over $T$ and $N$ in which $A$ occurs denotes the
+empty language under $V$. -/
 theorem evalForm_eq_zero_of_mem {N : Type*} {V : N → Language T} {A : N} (hA : V A = 0) :
     ∀ {u : List (Symbol T N)}, Symbol.nonterminal A ∈ u → evalForm V u = 0
   | s :: u, h => by
@@ -235,7 +268,9 @@ theorem evalForm_eq_zero_of_mem {N : Type*} {V : N → Language T} {A : N} (hA :
       · rw [evalSymbol_nonterminal, hA, zero_mul]
       · rw [evalForm_eq_zero_of_mem hA h, mul_zero]
 
-/-- **Completeness**: if the grammar generates a word, its start nonterminal is found. -/
+/-- **Completeness of the generating-nonterminal computation.** If an encoded grammar $g$
+generates some word $w$, then the start nonterminal of $g$ is among the generating nonterminals
+of $g$ computed by the emptiness procedure. -/
 theorem start_mem_generating_of_mem_language {g : EncodedCFG T} {w : List T}
     (hw : w ∈ g.language) : g.start ∈ g.generating := by
   classical
@@ -262,7 +297,8 @@ theorem start_mem_generating_of_mem_language {g : EncodedCFG T} {w : List T}
   simp only [V, hns, ↓reduceIte] at h
   exact Language.notMem_zero w h
 
-/-- **Correctness of the emptiness test.** -/
+/-- **Correctness of the emptiness test.** For every encoded context-free grammar $g$, the
+emptiness test returns true on $g$ if and only if the language of $g$ is empty. -/
 theorem isEmptyB_iff (g : EncodedCFG T) : g.isEmptyB = true ↔ g.language = 0 := by
   simp only [isEmptyB, Bool.not_eq_true', Bool.eq_false_iff, ne_eq, memB_iff]
   constructor
@@ -286,7 +322,10 @@ section Computable
 
 variable [Primcodable T]
 
-/-- **Emptiness of context-free grammars is computable.** -/
+/-- **Emptiness of context-free grammars is computable.** Let $T$ be an alphabet with decidable
+equality and a primitive recursive encoding into the natural numbers. The predicate on encoded
+context-free grammars $g$ over $T$ that holds exactly when the language of $g$ is empty is a
+computable predicate. -/
 theorem computablePred_language_eq_zero :
     ComputablePred fun g : EncodedCFG T => g.language = 0 :=
   ⟨inferInstance,
@@ -295,8 +334,10 @@ theorem computablePred_language_eq_zero :
       · exact (decide_eq_false fun h0 => by simp [(isEmptyB_iff g).2 h0] at h).symm
       · exact (decide_eq_true ((isEmptyB_iff g).1 h)).symm⟩
 
-/-- **Sipser, Theorem 4.8**: emptiness for context-free grammars (E_CFG) is decidable by a
-multi-stack machine. -/
+/-- **Emptiness of context-free grammars is decidable.** For every alphabet $T$ with decidable
+equality and a primitive recursive encoding, the property of an encoded context-free grammar $g$
+over $T$ that the language of $g$ is empty is decidable by a multi-stack machine. This is Sipser,
+Theorem 4.8: the problem $E_{\mathrm{CFG}}$ is decidable. -/
 theorem tm2Decidable_language_eq_zero :
     Cslib.Decidability.TM2Decidable fun g : EncodedCFG T => g.language = 0 :=
   Cslib.Decidability.tm2Decidable_iff_computablePred.2 computablePred_language_eq_zero
@@ -315,7 +356,10 @@ variable {T : Type*}
 
 /-! ## Factors -/
 
-/-- The factor of `w` from position `i` to position `j`. -/
+/-- **Factor of a word.** For a word $w = w_0 w_1 \cdots w_{n-1}$ and natural numbers $i$ and
+$j$, the factor of $w$ from position $i$ to position $j$ is obtained by dropping the first $i$
+letters of $w$ and keeping at most the first $j - i$ letters of the rest, where $j - i$ is $0$
+when $j \le i$. For $i \le j \le n$ it is $w_i w_{i+1} \cdots w_{j-1}$. -/
 def factor (w : List T) (i j : ℕ) : List T :=
   (w.drop i).take (j - i)
 
@@ -344,7 +388,9 @@ theorem factor_cons {w : List T} {i j : ℕ} (hij : i < j) (hj : j ≤ w.length)
 theorem factor_zero_length (w : List T) : factor w 0 w.length = w := by
   simp [factor]
 
-/-- A split of a factor is a pair of adjacent factors. -/
+/-- **Splitting a factor.** Let $w$ be a word and $i \le j \le |w|$, and write $w[i, j)$ for the
+factor of $w$ from position $i$ to position $j$. If $w[i, j) = uv$, then $i + |u| \le j$,
+$w[i, i + |u|) = u$ and $w[i + |u|, j) = v$. -/
 theorem factor_eq_append {w u v : List T} {i j : ℕ} (hij : i ≤ j) (hj : j ≤ w.length)
     (h : factor w i j = u ++ v) :
     i + u.length ≤ j ∧ factor w i (i + u.length) = u ∧ factor w (i + u.length) j = v := by
@@ -370,34 +416,67 @@ theorem factor_eq_append {w u v : List T} {i j : ℕ} (hij : i ≤ j) (hj : j �
 
 variable [DecidableEq T]
 
-/-- Whether a symbol can start at `i`, given the positions `S` where the rest can start and
-the items `R` found so far. -/
+/-- **Fitting a symbol at a position.** Write $\langle s, t \rangle$ for the pairing bijection
+$\mathbb{N} \times \mathbb{N} \to \mathbb{N}$ given by $\langle s, t \rangle = t^2 + s$ if $s < t$
+and $\langle s, t \rangle = s^2 + s + t$ otherwise. Given a word $w$, a list $R$ of items, a
+list $S$ of positions and an encoded symbol $X$, the test at a position $i$ succeeds when either
+$X$ is a terminal $a$, $i + 1 \in S$ and the letter of $w$ at position $i$ (counting from $0$)
+is $a$; or $X$ is a nonterminal $B$ and some $k \in S$ has
+$\langle B, \langle i, k \rangle \rangle \in R$.
+
+In use, $S$ holds the positions where the rest of the right-hand side can start. -/
 def symFits (w : List T) (R : List ℕ) (S : List ℕ) (X : ℕ ⊕ T) (i : ℕ) : Bool :=
   match X with
   | .inr a => memB S (i + 1) && decide (w[i]? = some a)
   | .inl B => S.any fun k => memB R (Nat.pair B (Nat.pair i k))
 
-/-- The positions from which a right-hand side can derive the factor of `w` ending at `j`,
-given the items `R` found so far. -/
+/-- **Start positions of a right-hand side.** Write $\langle s, t \rangle$ for the pairing
+bijection $\mathbb{N} \times \mathbb{N} \to \mathbb{N}$ given by $\langle s, t \rangle = t^2 + s$
+if $s < t$ and $\langle s, t \rangle = s^2 + s + t$ otherwise. Given a word $w$, a list $R$ of
+items (natural numbers), a position $j$ and an encoded right-hand side $X_1 \cdots X_m$, a
+position $i$ is a start when there are positions $i = p_0, p_1, \ldots, p_m = j$ with
+$p_0, \ldots, p_{m-1} \le |w|$ such that for each $l = 1, \ldots, m$: if $X_l$ is a terminal
+$a$, then $p_l = p_{l-1} + 1$ and the letter of $w$ at position $p_{l-1}$ (counting from $0$)
+is $a$; if $X_l$ is a nonterminal $B$, then $R$ contains the code
+$\langle B, \langle p_{l-1}, p_l \rangle \rangle$. The starts are computed from the right, one
+symbol at a time, by the symbol-fitting test; for the empty right-hand side the only start is
+$j$. -/
 def starts (w : List T) (R : List ℕ) (j : ℕ) (rhs : List (ℕ ⊕ T)) : List ℕ :=
   rhs.foldr (fun X S => (List.range (w.length + 1)).filter (symFits w R S X)) [j]
 
-/-- One round: the items `(A, i, j)` for productions `A → rhs` and positions `i` from which
-`rhs` derives the factor ending at `j`. -/
+/-- **One round of the membership procedure.** Write $\langle s, t \rangle$ for the pairing
+bijection $\mathbb{N} \times \mathbb{N} \to \mathbb{N}$ given by $\langle s, t \rangle = t^2 + s$
+if $s < t$ and $\langle s, t \rangle = s^2 + s + t$ otherwise. Given an encoded grammar $g$, a
+word $w$ and a list $R$ of items found so far, the round lists, for every production
+$A \to \rho$ of $g$, every position $j \le |w|$ and every start $i$ of $\rho$ for the factor of
+$w$ ending at $j$ given $R$, the code $\langle A, \langle i, j \rangle \rangle$ of the item
+$(A, i, j)$. -/
 def memStep (g : EncodedCFG T) (w : List T) (R : List ℕ) : List ℕ :=
   g.rules.flatMap fun e => (List.range (w.length + 1)).flatMap fun j =>
     (starts w R j e.2).map fun i => Nat.pair e.1 (Nat.pair i j)
 
-/-- All items `(A, i, j)` with `A` a left-hand side and `i, j ≤ |w|`. -/
+/-- **Candidate items for membership.** For an encoded grammar $g$ and a word $w$, the candidate
+items are the triples $(A, i, j)$, encoded as natural numbers by pairing, where $A$ is the
+left-hand side of a production of $g$ and $i, j \le |w|$; each triple is listed once for every
+production whose left-hand side is $A$. -/
 def items (g : EncodedCFG T) (w : List T) : List ℕ :=
   (g.rules.map Prod.fst).flatMap fun A => (List.range (w.length + 1)).flatMap fun j =>
     (List.range (w.length + 1)).map fun i => Nat.pair A (Nat.pair i j)
 
-/-- The items found: the closure of `memStep`. -/
+/-- **Items found by the membership procedure.** Let $g$ be an encoded context-free grammar and
+$w = w_0 \cdots w_{n-1}$ a word. An item is a triple $(A, i, j)$ of natural numbers, coded as a
+natural number by nested pairing. A round sends a list $R$ of items to the items $(A, i, j)$ such
+that $A \to X_1 \cdots X_m$ is a production of $g$, $j \le n$, and there are positions
+$i = k_0, k_1, \ldots, k_m = j$, each at most $n$, such that for every $t$ with $1 \le t \le m$,
+either $X_t$ is the terminal $w_{k_{t-1}}$ and $k_t = k_{t-1} + 1$, or $X_t$ is a nonterminal $B$
+with $(B, k_{t-1}, k_t)$ in $R$. The items found are the result of applying the round $M$ times
+to the empty list, where $M$ is $(n + 1)^2$ times the length of the list of productions of $g$. -/
 def found (g : EncodedCFG T) (w : List T) : List ℕ :=
   (memStep g w)^[(items g w).length] []
 
-/-- **Membership test** for encoded grammars. -/
+/-- **The membership test for context-free grammars.** For an encoded grammar $g$ with start
+nonterminal $S$ and a word $w$, the test returns true exactly when the item $(S, 0, |w|)$ is
+among the items found for $g$ and $w$. -/
 def memLanguageB (g : EncodedCFG T) (w : List T) : Bool :=
   memB (found g w) (Nat.pair g.start (Nat.pair 0 w.length))
 
@@ -456,7 +535,12 @@ theorem memStep_found_subset (g : EncodedCFG T) (w : List T) :
 
 /-! ## Soundness -/
 
-/-- An item is sound when it codes `(A, i, j)` with `i ≤ j ≤ |w|` and `A` yielding the factor. -/
+/-- **Sound items.** Write $\langle s, t \rangle$ for the pairing bijection
+$\mathbb{N} \times \mathbb{N} \to \mathbb{N}$ given by $\langle s, t \rangle = t^2 + s$ if $s < t$
+and $\langle s, t \rangle = s^2 + s + t$ otherwise. Given an encoded grammar $g$ and a word $w$,
+a natural number $x$ is a sound item when $x = \langle A, \langle i, j \rangle \rangle$ for some
+$A$, $i$, $j$ with $i \le j \le |w|$ such that the nonterminal $A$ yields, in the decoded
+grammar of $g$, the factor of $w$ from position $i$ to position $j$. -/
 def SoundItem (g : EncodedCFG T) (w : List T) (x : ℕ) : Prop :=
   ∃ A i j, x = Nat.pair A (Nat.pair i j) ∧ i ≤ j ∧ j ≤ w.length ∧
     Yields g.toCFG [.nonterminal A] (factor w i j)
@@ -525,6 +609,12 @@ theorem found_sound (g : EncodedCFG T) (w : List T) : ∀ x ∈ found g w, Sound
 
 /-! ## Completeness -/
 
+/-- **Completeness of the start positions.** Let $g$ be an encoded context-free grammar over an
+alphabet $T$ with decidable equality, let $w$ be a word over $T$, and let $\rho$ be an encoded
+right-hand side whose decoding yields a word $u$ in the grammar that $g$ denotes. If
+$i \le j \le |w|$ and $u$ is the factor of $w$ from position $i$ to position $j$, then $i$ is a
+start position of $\rho$ at $j$ for the word $w$ and the list of items found by the membership
+procedure on $g$ and $w$. -/
 theorem mem_starts_of_yields {g : EncodedCFG T} {w : List T} {β : List (Symbol T g.toCFG.NT)}
     {u : List T} (h : Yields g.toCFG β u) :
     ∀ (rhs : List (ℕ ⊕ T)) (i j : ℕ), β = rhs.map decodeSymbol → u = factor w i j → i ≤ j →
@@ -591,7 +681,9 @@ theorem mem_starts_of_yields {g : EncodedCFG T} {w : List T} {β : List (Symbol 
       simp only [symFits, List.any_eq_true, memB_iff]
       exact ⟨k, hkrest, hitem⟩
 
-/-- **Correctness of the membership test.** -/
+/-- **Correctness of the membership test.** For every encoded context-free grammar $g$ and every
+word $w$, the membership test returns true on $g$ and $w$ if and only if $w$ belongs to the
+language of $g$. -/
 theorem memLanguageB_iff {g : EncodedCFG T} {w : List T} :
     memLanguageB g w = true ↔ w ∈ g.language := by
   rw [memLanguageB, memB_iff]
@@ -694,8 +786,11 @@ theorem primrec_memLanguageB : Primrec₂ (memLanguageB (T := T)) :=
       (Primrec₂.natPair.comp (Primrec.const 0) (Primrec.list_length.comp Primrec.snd)))
 
 
-/-- **Sipser, Theorem 4.7**: membership for context-free grammars (A_CFG) is decidable by a
-multi-stack machine. -/
+/-- **Membership for context-free grammars is decidable.** For every alphabet $T$ with decidable
+equality and a primitive recursive encoding, the property of a pair $(g, w)$, where $g$ is an
+encoded context-free grammar over $T$ and $w$ is a word over $T$, that $w$ is in the language of
+$g$ is decidable by a multi-stack machine. This is Sipser, Theorem 4.7: the problem
+$A_{\mathrm{CFG}}$ is decidable. -/
 theorem tm2Decidable_mem_language :
     Cslib.Decidability.TM2Decidable fun p : EncodedCFG T × List T => p.2 ∈ p.1.language :=
   Cslib.Decidability.tm2Decidable_iff_computablePred.2
@@ -714,16 +809,26 @@ open Cslib.Decidability
 
 variable {T : Type*}
 
-/-- A bound on the lengths of the right-hand sides, at least `2`: the largest length, or `2`. -/
+/-- **Right-hand side length bound.** For an encoded grammar $g$, the length bound is the maximum
+of $2$ and the lengths of the right-hand sides of the productions of $g$. -/
 def lenBound (g : EncodedCFG T) : ℕ :=
   g.rules.foldr (fun e m => max e.2.length m) 2
 
-/-- The pumping bound of Ogden's lemma for the decoded grammar (`pumping_of_bound`):
-`lenBound ^ (K + 1)` for `K` the number of distinct left-hand sides. -/
+/-- **Pumping bound of an encoded grammar.** For an encoded grammar $g$, let $L$ be the length
+bound of $g$, the larger of $2$ and the largest length of a right-hand side of a production of
+$g$, and let $K$ be the number of distinct left-hand sides of the productions of $g$. The
+pumping bound of $g$ is $L^{K+1}$.
+
+With this bound, Ogden's lemma with every letter marked gives the pumping lemma for the decoded
+grammar. -/
 def pumpBound (g : EncodedCFG T) : ℕ :=
   g.lenBound ^ ((dedupB (g.rules.map Prod.fst)).length + 1)
 
-/-- The words of length `n` over the letters `A`. -/
+/-- **The words of a given length over a list of letters.** For a list $A$ of letters and a
+natural number $n$, the list obtained from the list whose only entry is the empty word by $n$
+rounds, each of which replaces every word $w$, in order, by the words $a w$ for the letters $a$
+of $A$, in order. Its entries are exactly the words of length $n$ all of whose letters occur in
+$A$. -/
 def wordsOver (A : List T) (n : ℕ) : List (List T) :=
   (fun W => W.flatMap fun w => A.map fun a => a :: w)^[n] [[]]
 
@@ -775,8 +880,12 @@ theorem length_le_lenBound {g : EncodedCFG T} {e : ℕ × List (ℕ ⊕ T)} (he 
 
 variable [DecidableEq T]
 
-/-- The terminals occurring in the productions, each listed once (repetitions would make
-`wordsOver` enumerate the same word many times). -/
+/-- **The terminals of an encoded grammar.** For an encoded context-free grammar $g$ over an
+alphabet $T$ with decidable equality, the list of the terminals that occur in the right-hand
+sides of the productions of $g$, each listed once.
+
+Listing each terminal once keeps the enumeration of the words over these terminals free of
+repetitions. -/
 def terminals (g : EncodedCFG T) : List T :=
   (g.rules.flatMap fun e => e.2.filterMap Sum.getRight?).foldr
     (fun a acc => cond (acc.any fun b => decide (b = a)) acc (a :: acc)) []
@@ -816,8 +925,9 @@ theorem mem_terminals {g : EncodedCFG T} {a : T} :
   · rintro ⟨e, he, ha⟩
     exact ⟨e, he, List.mem_filterMap.2 ⟨_, ha, rfl⟩⟩
 
-/-- **The infiniteness test**: some word over the terminals whose length is between the pumping
-bound `N` and `2N` is generated. -/
+/-- **The infiniteness test.** Let $g$ be an encoded grammar and $N$ its pumping bound. The test
+returns true exactly when some word $w$ whose letters all occur as terminals in the productions
+of $g$, with $N \le |w| < 2N$, is accepted by the membership test for $g$. -/
 def infiniteB (g : EncodedCFG T) : Bool :=
   (List.range g.pumpBound).any fun i =>
     (wordsOver g.terminals (g.pumpBound + i)).any g.memLanguageB
@@ -844,7 +954,9 @@ private theorem terminal_mem_of_yields {G : ContextFreeGrammar T} {α : List (Sy
         · exact Or.inl (List.mem_cons_of_mem _ h)
         · exact Or.inr h
 
-/-- The letters of the generated words are terminals of the productions. -/
+/-- **Letters of generated words occur in the productions.** If a word $w$ is generated by an
+encoded grammar $g$, then every letter of $w$ is among the terminals of $g$, that is, it occurs
+in the right-hand side of some production of $g$. -/
 theorem mem_terminals_of_mem_language {g : EncodedCFG T} {w : List T} (hw : w ∈ g.language)
     {a : T} (ha : a ∈ w) : a ∈ g.terminals := by
   rcases terminal_mem_of_yields (mem_language_iff_yields.1 hw) ha with h | ⟨r, hr, h⟩
@@ -857,7 +969,10 @@ theorem mem_terminals_of_mem_language {g : EncodedCFG T} {w : List T} (hw : w �
         obtain rfl : b = a := by simpa [decodeSymbol] using hsa
         exact mem_terminals.2 ⟨e, he, hs⟩
 
-/-- The pumping lemma for the decoded grammar, with the bound `pumpBound`. -/
+/-- **Pumping lemma for encoded grammars.** Let $g$ be an encoded grammar with pumping bound
+$N$. Every word $w$ generated by $g$ with $|w| \ge N$ can be written as $w = uvxyz$ with $vy$
+nonempty and $|vxy| \le N$, such that $u v^i x y^i z$ is generated by $g$ for every natural
+number $i$, including $i = 0$. -/
 theorem pumping_pumpBound (g : EncodedCFG T) :
     ∀ w ∈ g.language, g.pumpBound ≤ w.length → ∃ u v x y z : List T,
       w = u ++ v ++ x ++ y ++ z ∧ v ++ y ≠ [] ∧ (v ++ x ++ y).length ≤ g.pumpBound ∧
@@ -871,7 +986,9 @@ theorem pumping_pumpBound (g : EncodedCFG T) :
       obtain ⟨e, he, rfl⟩ := mem_toCFG_rules.1 hr
       exact mem_dedupB.2 (List.mem_map_of_mem he)⟩ le_rfl
 
-/-- A generated word of length at least `pumpBound` pumps: the language is infinite. -/
+/-- **Long words make a context-free language infinite.** If the language of an encoded grammar
+$g$ contains a word whose length is at least the pumping bound of $g$, then the language of $g$
+is infinite. -/
 theorem infinite_of_mem_of_le {g : EncodedCFG T} {w : List T} (hw : w ∈ g.language)
     (hlen : g.pumpBound ≤ w.length) : g.language.Infinite := by
   obtain ⟨u, v, x, y, z, -, hvy, -, hpump⟩ := pumping_pumpBound g w hw hlen
@@ -890,8 +1007,11 @@ theorem infinite_of_mem_of_le {g : EncodedCFG T} {w : List T} (hw : w ∈ g.lang
     omega
   exact Nat.eq_of_mul_eq_mul_right hpos this
 
-/-- A generated word of length at least `pumpBound` can be shortened, keeping it generated and
-at least that long, until it is shorter than twice that bound. -/
+/-- **Context-free pumping down below twice the pumping bound.** Let $g$ be an encoded
+context-free grammar, let $L$ be the largest of $2$ and the lengths of the right-hand sides of
+the productions of $g$, let $K$ be the number of distinct left-hand sides of these productions,
+and let $N = L^{K+1}$ be the pumping bound of $g$. For every word $w$ in the language of $g$ with
+$|w| \ge N$, there is a word $v$ in the language of $g$ with $N \le |v| < 2N$. -/
 theorem exists_mem_le_lt {g : EncodedCFG T} :
     ∀ (n : ℕ) (w : List T), w.length = n → w ∈ g.language → g.pumpBound ≤ w.length →
       ∃ v ∈ g.language, g.pumpBound ≤ v.length ∧ v.length < 2 * g.pumpBound := by
@@ -912,7 +1032,8 @@ theorem exists_mem_le_lt {g : EncodedCFG T} :
       exact ih (u ++ x ++ z).length (by simp only [List.length_append]; omega) (u ++ x ++ z) rfl
         h0 (by simp only [List.length_append]; omega)
 
-/-- **Infiniteness of context-free languages is decided by `infiniteB`.** -/
+/-- **Correctness of the infiniteness test.** For every encoded context-free grammar $g$, the
+infiniteness test returns true on $g$ if and only if the language of $g$ is infinite. -/
 theorem infiniteB_iff {g : EncodedCFG T} : g.infiniteB = true ↔ g.language.Infinite := by
   rw [infiniteB, List.any_eq_true]
   constructor
@@ -982,8 +1103,10 @@ theorem primrec_infiniteB : Primrec (infiniteB (T := T)) :=
         (Primrec.nat_add.comp (primrec_pumpBound.comp Primrec.fst) Primrec.snd))).to₂
     (Primrec.list_range.comp primrec_pumpBound)
 
-/-- **Infiniteness of context-free languages (INFINITE_CFG) is decidable** by a multi-stack
-machine. -/
+/-- **Infiniteness of context-free languages is decidable.** For every alphabet $T$ with decidable
+equality and a primitive recursive encoding, the property of an encoded context-free grammar $g$
+over $T$ that the language of $g$ is infinite is decidable by a multi-stack machine. This is the
+problem $\mathrm{INFINITE}_{\mathrm{CFG}}$. -/
 theorem tm2Decidable_language_infinite :
     Cslib.Decidability.TM2Decidable fun g : EncodedCFG T => g.language.Infinite :=
   Cslib.Decidability.tm2Decidable_iff_computablePred.2

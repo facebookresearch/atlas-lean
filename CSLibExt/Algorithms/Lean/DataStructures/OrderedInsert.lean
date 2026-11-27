@@ -36,11 +36,13 @@ namespace Cslib.Algorithms.Lean
 
 variable {α : Type u}
 
-/-- Insert a key into a list at its sorted position: the scan stops at the
-first element that is not smaller than the key and stops there, so a key
-already present is ignored only when the list is strictly sorted (see
-`orderedInsert_eq_of_mem`); on an unsorted list a later duplicate is not
-detected. This is the list-level specification of tree insertion. -/
+/-- **Ordered insertion into a list.** For an element $x$ of a linearly ordered type, the ordered
+insertion of $x$ into the empty list is $[x]$. For a list with head $a$ and tail $\ell$, it is
+$x$ followed by the whole list if $x < a$; it is $a$ followed by the ordered insertion of $x$
+into $\ell$ if $a < x$; and it is the list unchanged if $a = x$.
+
+On a strictly increasing list a key that is already present is therefore ignored. On an unsorted
+list a later duplicate is not detected: inserting $2$ into $[3, 2]$ gives $[2, 3, 2]$. -/
 public def orderedInsert [LinearOrder α] (x : α) : List α → List α
   | [] => [x]
   | a :: as =>
@@ -48,7 +50,9 @@ public def orderedInsert [LinearOrder α] (x : α) : List α → List α
       else if a < x then a :: orderedInsert x as
       else a :: as
 
-/-- Ordered insertion into a list adds exactly the inserted key. -/
+/-- **Members after ordered insertion.** Over a linearly ordered type, for all elements $x$, $y$
+and every list $\ell$, the element $y$ belongs to the ordered insertion of $x$ into $\ell$ if and
+only if $y = x$ or $y$ belongs to $\ell$. -/
 public theorem mem_orderedInsert [LinearOrder α] {x y : α} {xs : List α} :
     y ∈ orderedInsert x xs ↔ y = x ∨ y ∈ xs := by
   induction xs with
@@ -62,9 +66,11 @@ public theorem mem_orderedInsert [LinearOrder α] {x y : α} {xs : List α} :
         subst hEq
         simp [orderedInsert, hxa]
 
-/-- On a strictly sorted list, inserting an already-present key is a no-op.
-This is the duplicate-elision contract the tree implementations rely on;
-without strict sortedness it fails, e.g. `orderedInsert 2 [3, 2] = [2, 3, 2]`. -/
+/-- **Inserting a present element into a strictly increasing list.** Over a linearly ordered
+type, if every element of a list $\ell$ is smaller than every later element of $\ell$ and $x$
+belongs to $\ell$, then the ordered insertion of $x$ into $\ell$ is $\ell$ itself.
+
+Without strict increase this fails: inserting $2$ into $[3, 2]$ gives $[2, 3, 2]$. -/
 public theorem orderedInsert_eq_of_mem [LinearOrder α] {x : α} {xs : List α}
     (hSorted : xs.Pairwise (· < ·)) (hMem : x ∈ xs) :
     orderedInsert x xs = xs := by

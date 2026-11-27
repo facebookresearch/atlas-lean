@@ -16,7 +16,7 @@ Discrete Applied Mathematics 232 (2017), 73-87, doi:10.1016/j.dam.2017.07.016.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Computability.Complexity.Karp.Color
 public import Mathlib.Combinatorics.SimpleGraph.Metric
 public import MathlibExt.Computability.BinaryNatEncoding

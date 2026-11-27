@@ -1,0 +1,3 @@
+# The terminal Smith–Waterman cell
+
+The terminal Smith–Waterman cell of $x$ and $y$ is $H(x, y) = F_{|x| + |y|}(\bar x, \bar y)$, where $F$ is the [fuel-bounded recursion](sw-cell-front.md) and $\bar x, \bar y$ are $x$ and $y$ reversed. For $g \le 0$ it is the best [Needleman–Wunsch score](nw-score.md) of a pair of suffixes of $x$ and $y$ (see [the suffix characterisation](sw-cell-score-eq-suffix-max.md)); for $g > 0$ it can be smaller (for one-letter sequences with $\sigma = -100$ and $g = 1$ the cell is $1$ while the two-gap alignment scores $2$). It need not be the best local score over all positions, which for $g \le 0$ is the [Smith–Waterman score](sw-score.md).

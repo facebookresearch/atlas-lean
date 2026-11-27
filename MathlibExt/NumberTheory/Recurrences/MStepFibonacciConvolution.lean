@@ -159,20 +159,23 @@ private lemma mstep_init (F : ℕ → ℕ) (m : ℕ) (hm : 1 ≤ m)
   exact key (m + 1) (m + 1) (by omega) le_rfl le_rfl
 
 /--
-Power-weighted convolution sum for Fibonacci m-step numbers: for `m ≥ 1`,
-with `F 0 = 0`, `F 1 = 1`, and `F k = ∑_{j=1}^m F (k - j)` for `k ≥ 2`,
-the sum `∑_{j=0}^n 2 ^ j * F (n - j)` equals `2 ^ (n + m - 1) - F (n + 1 + m)`.
+**Power-weighted convolution of Fibonacci $m$-step numbers.** Let $m \ge 1$ and let
+$F \colon \mathbb{N} \to \mathbb{N}$ satisfy $F(0) = 0$, $F(1) = 1$ and
+$F(k) = \sum_{j=1}^{m} F(k - j)$ for every $k \ge 2$, where a term $F(k - j)$ with $j > k$ is
+read as $F(0) = 0$. Then for every natural number $n$,
+$$\sum_{j=0}^{n} 2^j F(n - j) = 2^{n+m-1} - F(n + 1 + m),$$
+where the subtraction on the right is taken in $\mathbb{N}$ (truncated at $0$).
+
+The initial conditions are those of the paper's definition of Fibonacci $m$-step numbers
+(lines 126–133), whose values at negative indices are $0$. The paper states the theorem for
+$m \ge 3$; the cases $m = 1$ and $m = 2$ also hold, so the hypothesis here is $m \ge 1$.
+
+Proves `Wanted` entry `two_pow_convolution_mstep_fibonacci`.
 
 Source: Robert Frontczak and Karol Gryszka, "General Convolution Sums Involving
 Fibonacci m-Step Numbers," Journal of Integer Sequences 27 (2024),
 Article 24.8.8, Theorem (label power2_conv), lines 453–459,
 https://cs.uwaterloo.ca/journals/JIS/VOL27/Gryszka/gryszka12.tex
-
-The m-step initial conditions are the paper's definition (lines 126–133);
-its negative-index values are 0, matching `F 0 = 0` under natural subtraction.
-The paper states the theorem for `m ≥ 3`; the cases `m = 1, 2` also hold (checked
-directly), so the hypothesis here is `1 ≤ m`.
-Proves `Wanted` entry `two_pow_convolution_mstep_fibonacci`.
 -/
 theorem two_pow_convolution_mstep_fibonacci (F : ℕ → ℕ) (m n : ℕ)
     (hm : 1 ≤ m) (h0 : F 0 = 0) (h1 : F 1 = 1)

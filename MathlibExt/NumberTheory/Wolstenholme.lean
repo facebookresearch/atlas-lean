@@ -345,8 +345,8 @@ private theorem mul_sum_sq_eq_zero (p : ℕ) (hp : p.Prime) (h5 : 5 ≤ p) :
   have hring : p * (p * t) = p ^ 2 * t := by ring
   rw [hring, Nat.cast_mul, h0, zero_mul]
 
-/-- If `p ≥ 5` is prime, then the sum of the reciprocals of `1, …, p - 1`
-vanishes modulo `p ^ 2`. -/
+/-- **Wolstenholme's theorem.** If $p \ge 5$ is prime, then $\sum_{k=1}^{p-1} k^{-1} = 0$ in
+$\mathbb{Z}/p^2\mathbb{Z}$, where $k^{-1}$ is the inverse of $k$ modulo $p^2$. -/
 theorem wolstenholme (p : ℕ) (hp : p.Prime) (h5 : 5 ≤ p) :
     ∑ k ∈ Finset.Ico 1 p, ((k : ZMod (p ^ 2))⁻¹) = 0 := by
   rw [sum_inv_eq_neg_mul_sum_sq p hp h5, neg_mul,

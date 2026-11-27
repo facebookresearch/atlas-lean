@@ -80,14 +80,14 @@ theorem irreducible_X_pow_sub_C_of_unitHom {n : ℕ} (hn : 0 < n)
       Int.natAbs_dvd_natAbs.mpr hd
   have hle : g.natDegree ≤ n :=
     (natDegree_le_of_dvd hdiv (X_pow_sub_C_ne_zero hn a)).trans_eq
-      natDegree_X_pow_sub_C
+      (natDegree_X_pow_sub_C a)
   have heq : g.natDegree = n := le_antisymm hle
     (Nat.le_of_dvd (natDegree_pos_iff_degree_pos.mpr
       (degree_pos_of_irreducible hg))
       (hφ.symm.dvd_of_dvd_mul_right hd'))
   exact (associated_of_dvd_of_natDegree_le hdiv
     (X_pow_sub_C_ne_zero hn a)
-    (heq.trans natDegree_X_pow_sub_C.symm).ge).irreducible hg
+    (heq.trans (natDegree_X_pow_sub_C a).symm).ge).irreducible hg
 
 /-- Function form of the integer-character criterion. Multiplication is
 required only for nonzero factors, so the value at zero is arbitrary.

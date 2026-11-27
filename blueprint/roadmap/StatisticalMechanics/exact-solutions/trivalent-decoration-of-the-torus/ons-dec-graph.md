@@ -1,0 +1,3 @@
+# Decorated graph of the torus
+
+For $L \in \mathbb{N}$, the decorated graph $\mathcal{D}_L$ has as vertices the darts $(p, \mu)$ of $T_L = (\mathbb{Z}/L\mathbb{Z})^2$ (a site $p$ and a direction $\mu \in \{0, 1, 2, 3\}$ with unit step $s(\mu)$: $s(0) = (1, 0)$, $s(1) = (0, 1)$, $s(2) = (-1, 0)$, $s(3) = (0, -1)$), with $d \sim e$ when $e = \bar d$ (external edges, where $\bar d = (p + s(\mu), \mu + 2)$ is the reverse of the dart $d = (p, \mu)$) or $d, e$ share their site and have consecutive directions $i, i + 1$ (chain edges). Each site of $T_L$ thus becomes a path of four darts with directions $0, 1, 2, 3$, joined to the neighbouring sites by external edges.

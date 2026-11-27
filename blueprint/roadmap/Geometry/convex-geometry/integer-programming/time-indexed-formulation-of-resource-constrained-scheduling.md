@@ -1,0 +1,7 @@
+# Time-indexed formulation of resource-constrained project scheduling
+
+Let $H \ge 0$ be an integer horizon, finitely many jobs $j$ have integer durations $p_j \ge 0$, precedence pairs $(i, j)$ and finitely many renewable resources $r$ with integer capacities $C_r \ge 0$ and usages $a_{jr} \ge 0$. Binary variables $z_{jt}$, $t \in \{0, \dots, H - p_j\}$, with $\sum_tz_{jt} = 1$, define start times $s_j = \sum_t tz_{jt}$. Jobs with $p_j > H$ have no start variables, so the formulation is infeasible. A job is active at time $u$ when $s_j \le u < s_j + p_j$, so zero-duration jobs are never active; in the variables this reads $\sum_{t : t \le u < t + p_j}z_{jt} = 1$. Then the solutions satisfying the precedence constraints $s_i + p_i \le s_j$ and the linear per-period resource constraints $\sum_j\sum_{t : t \le u < t + p_j}a_{jr}z_{jt} \le C_r$ for every $r$ and every $u \in \{0, \dots, H - 1\}$ correspond exactly to nonpreemptive schedules finishing by $H$ with these constraints. The linear relaxation minimizing a makespan variable $M$ subject to $M \ge 0$ and $M \ge s_j + p_j$ for every job is a lower bound for the problem restricted to horizon $H$, and for the unrestricted problem only when some feasible schedule finishes by $H$. Energy bounds such as $\max_r\sum_ja_{jr}p_j/C_r$ (for $C_r > 0$) are separate statements.
+
+## Expansion
+
+- A primary source that states this result in the form given here is to be located and checked before the statement is relied on.

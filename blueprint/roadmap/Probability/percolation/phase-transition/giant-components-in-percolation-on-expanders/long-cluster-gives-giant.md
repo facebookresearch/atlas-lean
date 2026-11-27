@@ -1,0 +1,3 @@
+# Long clusters and giant components on expanders
+
+Call a finite graph a $(b, d)$-expander if all degrees are at most $d$ and every set $S$ of at most half the vertices has at least $b|S|$ edges leaving it. In bond percolation with $p = 1/2$, the diameter of a cluster is measured in the cluster itself. The claim (Benjamini's Open problem 11.7) is that if, for some $b > 0$ and $d$, $(b, d)$-expanders $G_k$ with $|V(G_k)| \to \infty$ have vertices $v_k$ whose cluster has diameter greater than $\mathrm{diam}(G_k)/2$ with probability greater than $1/2$ for every $k$, then there is $c > 0$ such that the probability that some cluster has at least $c|V(G_k)|$ vertices tends to $1$.

@@ -1,0 +1,15 @@
+# Generalized fruit equation
+
+- [Unramified primes of degree one above $2$](two-unramified-degree-one-primes.md)
+- [Membership in $T_K$](mem-two-unramified-degree-one-primes.md)
+- [Quotients by powers of a prime in $T_K$](ring-of-integers-quotient-pow-ring-equiv.md)
+- [No solutions of the generalized fruit equation with even $x$](generalized-fruit-no-solution-two-dvd.md)
+- [Unramified degree-one primes above $2$ in quadratic fields](two-unramified-degree-one-primes-nonempt.md)
+- [Relative density of square-free integers congruent to $1$ modulo $8$](squarefree-one-mod-eight-relative-densit.md)
+- [Square-free integers in an arithmetic progression](squarefree-count-arithmetic-progression.md)
+- [Torsion points of non-prime-power order are integral](weierstrass-torsion-not-prime-pow-integr.md)
+- [Nagell–Lutz integrality](short-weierstrass-torsion-integral.md)
+- [The Weierstrass curve $E_\alpha$ of the generalized fruit equation](fruit-weierstrass-curve.md)
+- [Discriminant of the curve $E_\alpha$](fruit-weierstrass-curve-2.md)
+- [Torsion points of $E_\alpha$ with even integral $x$-coordinate have prime-power order](fruit-weierstrass-curve-not-is-of-fin-or.md)
+- [Points of $E_\alpha(\mathbb{Q})$ with even numerator have infinite order](fruit-weierstrass-curve-rat-not-is-of-fi.md)

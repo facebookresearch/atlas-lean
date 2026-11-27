@@ -1,0 +1,7 @@
+# Runs of an LBA give grammar derivations
+
+Let $Q$ and $\Gamma$ be finite sets, let $M$ be a linear bounded automaton with state set $Q$ and tape alphabet $\Gamma$, and let $G_M$ be the grammar of $M$. Write $\langle a, x, s, f, \beta\rangle$ for the cell nonterminal with original symbol $a \in \Gamma$, current symbol $x$ (a letter of $\Gamma$ or the blank $\sqcup$), head state $s$ (a state, or $\bot$ if the head is not on the cell), activity flag $f \in \{0, 1\}$ ($1$ meaning active) and boundary tag $\beta$. For a word $w = w_0 \cdots w_{n-1}$ over $\Gamma$ and a configuration $c$ of $M$ with state $q$, tape $x_0 \cdots x_{k-1}$ and head position $h$, the encoding $E_w(c)$ is the sentential form $\langle w_0, x_0, s_0, 1, \beta(0, n)\rangle \cdots \langle w_{m-1}, x_{m-1}, s_{m-1}, 1, \beta(m-1, n)\rangle$ with $m = \min(n, k)$, where $s_j = q$ if $j = h$ and $s_j = \bot$ otherwise, and $\beta(h, n)$ denotes the boundary tag of position $h$ on a tape of length $n$ (both if $h = 0$ and $n = 1$; left if $h = 0$ and $n \ne 1$; right if $h \ne 0$ and $h + 1 = n$; middle otherwise).
+
+Let $w$ be a nonempty word over $\Gamma$ and let $c$ be a configuration reachable from the initial
+configuration $c_0$ of $M$ on $w$ by finitely many (possibly zero) steps of $M$. Then the tape of $c$ has
+length $|w|$, the head position of $c$ is less than the tape length, and $E_w(c_0)$ derives (in finitely many, possibly zero, rewriting steps of $G_M$) $E_w(c)$.

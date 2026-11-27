@@ -22,7 +22,9 @@ Source: M. Panju, *Beta expansions for regular Pisot numbers*, Journal of Intege
 [`panju2.tex`](https://cs.uwaterloo.ca/journals/JIS/VOL14/Panju/panju2.tex).
 -/
 
-/-- `r` is the unique Pisot number that is a root of `P`. -/
+/-- **Unique Pisot root of a polynomial.** Let $P$ be a polynomial with real coefficients and $r$ a
+real number. Then $r$ is the unique Pisot root of $P$ when $r$ is a Pisot number with $P(r) = 0$
+and every Pisot number $s$ with $P(s) = 0$ equals $r$. -/
 public def IsUniquePisotRoot (P : Polynomial ℝ) (r : ℝ) : Prop :=
   IsPisotNumber r ∧ P.IsRoot r ∧
     ∀ s, IsPisotNumber s → P.IsRoot s → s = r

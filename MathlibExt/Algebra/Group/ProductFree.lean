@@ -24,8 +24,8 @@ namespace Set
 
 variable {M : Type*} [Mul M]
 
-/-- A set in a multiplicative type is product-free if no product of two of its elements
-lies in the set. -/
+/-- **Product-free set.** A set $S$ in a type $M$ with a multiplication is product-free if
+$xy \notin S$ for all $x, y \in S$, where $x$ and $y$ need not be distinct. -/
 def IsProductFree (S : Set M) : Prop :=
   ∀ x ∈ S, ∀ y ∈ S, x * y ∉ S
 

@@ -149,3 +149,44 @@ example {X : Type*} [NormedAddCommGroup X] [NormedSpace ℝ X] [CompleteSpace X]
 example (t : ℝ) (ht : t ∈ Icc (0 : ℝ) 1) :
     IntervalIntegrable (fun s => trivialSemigroup (t - s).toNNReal (1 : ℝ)) volume 0 t :=
   isMildSolution_id.2.1 t ht
+
+/-! ### The generator -/
+
+-- On a Banach space, the local bound is not an extra hypothesis.
+example {X : Type*} [NormedAddCommGroup X] [NormedSpace ℝ X] [CompleteSpace X]
+    (S : ℝ≥0 → X →L[ℝ] X) :
+    IsC0Semigroup S ↔ (S 0 = 1 ∧ (∀ s t, S (s + t) = (S s).comp (S t)) ∧
+      ∀ x, Continuous fun t => S t x) :=
+  ⟨fun h => ⟨h.map_zero, h.map_add, h.continuous_apply⟩,
+    fun ⟨h0, h1, h2⟩ => IsC0Semigroup.of_continuous h0 h1 h2⟩
+
+-- `A = 0`: the trivial semigroup has generator `0` everywhere.
+example {X : Type*} [NormedAddCommGroup X] [NormedSpace ℝ X] [CompleteSpace X] (x : X) :
+    HasGeneratorAt (fun t : ℝ≥0 => NormedSpace.exp ((t : ℝ) • (0 : X →L[ℝ] X))) x 0 := by
+  simpa using hasGeneratorAt_exp (0 : X →L[ℝ] X) x
+
+-- Scalar case: the generator of `exp (t • c • id)` is multiplication by `c`.
+example (c x : ℝ) :
+    HasGeneratorAt (fun t : ℝ≥0 => NormedSpace.exp ((t : ℝ) • (c • ContinuousLinearMap.id ℝ ℝ)))
+      x (c * x) := by
+  simpa using hasGeneratorAt_exp (c • ContinuousLinearMap.id ℝ ℝ) x
+
+-- The generator of `exp (t A)` is `A`, on the whole space.
+example {X : Type*} [NormedAddCommGroup X] [NormedSpace ℝ X] [CompleteSpace X]
+    (A : X →L[ℝ] X) (x : generatorDomain (fun t : ℝ≥0 => NormedSpace.exp ((t : ℝ) • A))) :
+    generator (fun t : ℝ≥0 => NormedSpace.exp ((t : ℝ) • A)) x = A x :=
+  generator_exp A x
+
+example {X : Type*} [NormedAddCommGroup X] [NormedSpace ℝ X] [CompleteSpace X]
+    (A : X →L[ℝ] X) :
+    generatorDomain (fun t : ℝ≥0 => NormedSpace.exp ((t : ℝ) • A)) = ⊤ :=
+  generatorDomain_exp A
+
+-- Zero space: every vector is in the domain.
+example (S : ℝ≥0 → (Fin 0 → ℝ) →L[ℝ] (Fin 0 → ℝ)) : generatorDomain S = ⊤ :=
+  eq_top_iff.2 fun x _ => by
+    rw [Subsingleton.elim x 0]; exact (generatorDomain S).zero_mem
+
+#print axioms hasGeneratorAt_exp
+#print axioms generator_exp
+#print axioms IsC0Semigroup.of_continuous

@@ -1,0 +1,15 @@
+# Self-avoiding walks on the honeycomb lattice
+
+- [Vertices of the honeycomb lattice](honeycomb-vertex.md)
+- [Steps in the honeycomb lattice](step.md)
+- [Steps are involutions](step-step.md)
+- [Distinct labels give distinct neighbors](step-injective.md)
+- [Origin of the honeycomb lattice](origin.md)
+- [Endpoint of a direction word](endpoint.md)
+- [Vertices along a direction word](vertex-at.md)
+- [Vertices visited by a direction word](visited-vertices.md)
+- [Self-avoiding direction words](is-self-avoiding.md)
+- [Number of self-avoiding walks on the honeycomb lattice](walk-count.md)
+- [Three-step self-avoiding walks on the honeycomb lattice](walk-count-three.md)
+- [Six-step self-avoiding walks on the honeycomb lattice](walk-count-six.md)
+- [The connective constant of the honeycomb lattice](honeycomb-connective-constant.md)

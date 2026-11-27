@@ -1,0 +1,18 @@
+# Binomial sums with second-order recurrences
+
+- [Alternating squared-binomial sum with Lucas sequences](lucas-u-lucas-v-sum-choose-sq-alternatin.md)
+- [Dixon-type alternating sum with Lucas sequences](lucas-u-lucas-v-sum-choose-cube-alternat.md)
+- [Squared-binomial convolution of the Lucas sequences U and V](lucas-u-lucas-v-sum-choose-sq.md)
+- [Even-index Catalan convolution with Lucas sequences](lucas-u-lucas-v-sum-catalan-even.md)
+- [Shifted Catalan convolution with Lucas sequences](lucas-u-lucas-v-sum-catalan-shifted.md)
+- [Convolution of U and V with shifted binomial weights](lucas-u-lucas-v-sum-choose-two-n.md)
+- [Alternating sum of $\binom{2n}{k} \binom{4n}{2k}$ with Lucas sequences](lucas-u-lucas-v-sum-choose-four-n-even-a.md)
+- [Alternating triple-binomial convolution of U and V](lucas-u-lucas-v-sum-choose-triple-altern.md)
+- [Alternating sum with reciprocal binomial coefficients and Lucas sequences](lucas-u-lucas-v-sum-choose-inv-alternati.md)
+- [Sum of $\binom{n}{k} \binom{2n}{n+k} \binom{n+k}{k}$ with Lucas sequences](lucas-u-lucas-v-sum-choose-n-plus-k.md)
+- [Binomial-Catalan sum with Lucas sequences](lucas-u-lucas-v-sum-choose-catalan.md)
+- [Alternating binomial-Catalan sum with Lucas sequences](lucas-u-lucas-v-sum-choose-catalan-alter.md)
+- [Alternating two-binomial Catalan convolution of U and V](lucas-u-lucas-v-sum-choose-sq-catalan-al.md)
+- [Binomial sums with signs $(-1)^{\binom{k}{2}}$ and Lucas sequences](lucas-u-lucas-v-sum-choose-sign-choose-t.md)
+- [Two-sided binomial sums of products of Lucas sequences](second-order-bi-seq-sum-central-choose-m.md)
+- [Weighted two-sided binomial sums of products of Lucas sequences](second-order-bi-seq-sum-central-choose-m-2.md)

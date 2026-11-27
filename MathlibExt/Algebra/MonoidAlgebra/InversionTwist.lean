@@ -27,12 +27,15 @@ namespace GroupRing
 
 variable (R G : Type*) [CommRing R] [CommGroup G]
 
-/-- The involution on a commutative group ring induced by `g ↦ g⁻¹`. -/
+/-- **Inversion on a group ring.** Let $R$ be a commutative ring and $G$ a commutative group.
+The inversion of the group ring $R[G]$ is the ring automorphism of $R[G]$ induced by the group
+automorphism $g \mapsto g^{-1}$ of $G$: it sends $\sum_g r_g\, g$ to $\sum_g r_g\, g^{-1}$. -/
 def inversion : MonoidAlgebra R G ≃+* MonoidAlgebra R G :=
   MonoidAlgebra.mapDomainRingEquiv R (MulEquiv.inv G)
 
-/-- The group-ring involution sends the basis element at `g` to the basis
-element at `g⁻¹`, without changing its coefficient. -/
+/-- **Inversion on basis elements.** Let $R$ be a commutative ring and $G$ a commutative group.
+For every $g \in G$ and $r \in R$, the inversion of the group ring $R[G]$ sends $r\, g$ to
+$r\, g^{-1}$. -/
 @[simp]
 theorem inversion_single (g : G) (r : R) :
     inversion R G (MonoidAlgebra.single g r) = MonoidAlgebra.single g⁻¹ r := by
@@ -44,8 +47,13 @@ theorem inversion_involution (x : MonoidAlgebra R G) : inversion R G (inversion 
   ext g
   simp [inversion]
 
-/-- The inversion twist of a module. Its underlying additive group is a copy
-of `A`, while scalars act after applying `GroupRing.inversion`. -/
+/-- **Inversion twist of a group-ring module.** Let $R$ be a commutative ring, $G$ a commutative
+group and $A$ a module over the group ring $R[G]$. The inversion twist of $A$ is a copy of $A$
+with the same addition, on which $r \in R[G]$ acts by $a \mapsto \iota(r) \cdot a$, where $\iota$
+is the inversion of $R[G]$ and $\cdot$ is the original action on $A$.
+
+As a bare type, the inversion twist of any type $A$ is a copy of $A$; the addition and the
+action above are defined when $A$ is an $R[G]$-module. -/
 @[ext]
 structure InversionTwist (A : Type*) where
   of ::
@@ -53,7 +61,9 @@ structure InversionTwist (A : Type*) where
 
 namespace InversionTwist
 
-/-- The canonical equivalence between an inversion twist and its underlying type. -/
+/-- **Underlying bijection of the inversion twist.** For every type $A$, the map sending an
+element of the inversion twist of $A$ to its underlying element of $A$ is a bijection, whose
+inverse sends $a \in A$ to its copy in the twist. -/
 def equiv (A : Type*) : InversionTwist A ≃ A where
   toFun := val
   invFun := of
@@ -67,8 +77,11 @@ instance : AddCommGroup (InversionTwist A) := (equiv A).addCommGroup
 instance : SMul (MonoidAlgebra R G) (InversionTwist A) where
   smul r a := of (inversion R G r • a.val)
 
-/-- Scalar multiplication in the twist is the original action precomposed
-with the group-ring inversion. -/
+/-- **Scalar action on the inversion twist.** Let $R$ be a commutative ring, $G$ a commutative
+group and $A$ a module over the group ring $R[G]$. For every $r \in R[G]$ and every element $a$
+of the inversion twist of $A$, with underlying element $\bar a \in A$, the underlying element of
+$r \cdot a$ is $\iota(r) \cdot \bar a$, where $\iota$ is the inversion of $R[G]$ and $\cdot$ on
+the right is the original action on $A$. -/
 @[simp]
 theorem val_smul (r : MonoidAlgebra R G) (a : InversionTwist A) :
     (r • a).val = inversion R G r • a.val := rfl
@@ -101,7 +114,10 @@ instance : Module (MonoidAlgebra R G) (InversionTwist A) where
       inversion R G r • a.val + inversion R G s • a.val
     simp [add_smul]
 
-/-- Twisting twice by inversion canonically recovers the original module. -/
+/-- **Twisting twice by inversion recovers the module.** Let $R$ be a commutative ring, $G$ a
+commutative group and $A$ a module over the group ring $R[G]$. The map sending an element of the
+inversion twist of the inversion twist of $A$ to its underlying element of $A$ is an
+$R[G]$-linear isomorphism. -/
 def twistTwistEquiv : InversionTwist (InversionTwist A) ≃ₗ[MonoidAlgebra R G] A where
   toFun a := a.val.val
   invFun a := of (of a)

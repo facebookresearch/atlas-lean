@@ -109,14 +109,6 @@ private theorem dirac_mem_of_adj_right_of_maxpath {V : Type*}
   rw [SimpleGraph.Walk.length_concat] at hle
   omega
 
-/-- A longest (maximal-length) path exists. -/
-private theorem dirac_exists_maxpath {V : Type*} [Finite V]
-    (G : SimpleGraph V) [Nonempty V] :
-    ∃ (a b : V) (P : G.Walk a b) (_ : P.IsPath),
-      ∀ (u' v' : V) (p' : G.Walk u' v'), p'.IsPath → p'.length ≤ P.length := by
-  have : Finite G.edgeSet := by infer_instance
-  exact SimpleGraph.Walk.exists_isPath_forall_isPath_length_le_length G
-
 /-- A longest path has length at least 2 (via a length-2 path from min-degree 2). -/
 private theorem dirac_maxpath_ge_two {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
@@ -519,12 +511,14 @@ private theorem dirac_spanning {V : Type*} [Fintype V]
   omega
 
 /--
-Dirac's theorem: a finite simple graph with at least 3 vertices whose minimum degree is at least
-half the number of vertices is Hamiltonian.
-Source: G. A. Dirac, Some Theorems on Abstract Graphs, Proc. London Math. Soc. s3-2 (1952), 69–81,
-DOI 10.1112/plms/s3-2.1.69.
+**Dirac's theorem.** Let $G$ be a finite simple graph with $n \ge 3$ vertices in which every
+vertex has degree at least $n/2$. Then $G$ is Hamiltonian, that is, it has a cycle that visits
+every vertex exactly once.
 
 Proves `Wanted` entry `dirac`.
+
+Source: G. A. Dirac, Some Theorems on Abstract Graphs, Proc. London Math. Soc. s3-2 (1952), 69–81,
+DOI 10.1112/plms/s3-2.1.69.
 -/
 theorem dirac {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
@@ -532,7 +526,8 @@ theorem dirac {V : Type*} [Fintype V] [DecidableEq V]
     (hdeg : ∀ v : V, Fintype.card V ≤ 2 * G.degree v) :
     G.IsHamiltonian := by
   have : Nonempty V := Fintype.card_pos_iff.mp (by omega)
-  obtain ⟨a, b, P, hP, hmax⟩ := dirac_exists_maxpath G
+  obtain ⟨a, b, P, hP, hmax⟩ :=
+    SimpleGraph.Walk.exists_isPath_forall_isPath_length_le_length G
   have hl2 := dirac_maxpath_ge_two G hcard hdeg hmax
   obtain ⟨C, hcyc, hlenC, hsup⟩ := dirac_cycle_of_maxpath G hdeg hP hmax hl2
   have hspan := dirac_spanning G hdeg hmax hcyc hsup hlenC

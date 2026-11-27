@@ -24,11 +24,15 @@ namespace MathlibExt.Combinatorics.GaleRyserWanted
 
 /-! # Gale–Ryser theorem -/
 
-/-- Prefix sum of `r` over first `k` entries. -/
+/-- **Prefix sum.** For a sequence $r = (r_0, \dots, r_{m-1})$ of natural numbers and a natural
+number $k$, the prefix sum of $r$ of length $k$ is $\sum_{i < \min(k, m)} r_i$, the sum of the
+first $k$ entries of $r$, or of all entries when $k \ge m$. -/
 def prefixSum {m : ℕ} (r : Fin m → ℕ) (k : ℕ) : ℕ :=
   ∑ i ∈ Finset.range k, if h : i < m then r ⟨i, h⟩ else 0
 
-/-- Rewrite `prefixSum` as a sum over `Fin k` when `k ≤ m`. -/
+/-- **Prefix sums within the sequence length.** For a sequence $r = (r_0, \dots, r_{m-1})$ of
+natural numbers and a natural number $k \le m$, the prefix sum of $r$ of length $k$ equals
+$\sum_{i=0}^{k-1} r_i$. -/
 theorem prefixSum_eq_sum_fin {m : ℕ} (r : Fin m → ℕ) {k : ℕ} (hk : k ≤ m) :
     prefixSum r k = ∑ i : Fin k, r ⟨i.val, lt_of_lt_of_le i.2 hk⟩ := by
   unfold prefixSum
@@ -495,15 +499,18 @@ private lemma sufficiency (n : ℕ) : ∀ (m : ℕ) (r : Fin m → ℕ) (c : Fin
                 omega
 
 /--
-For antitone row and column sum sequences `r` and `c`, a zero-one matrix
-with those margins exists exactly when their total sums agree and the
-Gale-Ryser prefix inequalities hold.
+**Gale–Ryser theorem.** Let $r = (r_0, \dots, r_{m-1})$ and $c = (c_0, \dots, c_{n-1})$ be
+nonincreasing sequences of natural numbers. There is an $m \times n$ matrix with entries in
+$\{0, 1\}$ whose $i$-th row sums to $r_i$ for every $i$ and whose $j$-th column sums to $c_j$ for
+every $j$ if and only if $\sum_{i < m} r_i = \sum_{j < n} c_j$ and, for every $k \le m$,
+$$\sum_{i < k} r_i \le \sum_{j < n} \min(k, c_j).$$
+
+Proves `Wanted` entry `gale_ryser`.
+
 Source: D. Gale, A theorem on flows in networks, Pacific J. Math. 7
 (1957), 1073-1082, DOI 10.2140/pjm.1957.7.1073; H. J. Ryser, Combinatorial
 properties of matrices of zeros and ones, Canad. J. Math. 9 (1957),
 371-377, DOI 10.4153/CJM-1957-044-3.
-
-Proves `Wanted` entry `gale_ryser`.
 -/
 theorem gale_ryser {m n : ℕ} (r : Fin m → ℕ) (c : Fin n → ℕ)
     (hr : Antitone r) (hc : Antitone c) :
