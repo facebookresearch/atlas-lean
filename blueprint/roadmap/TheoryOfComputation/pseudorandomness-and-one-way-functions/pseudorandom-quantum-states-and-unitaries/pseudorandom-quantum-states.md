@@ -6,7 +6,7 @@ $$
 \Bigl|\Pr_{k}\bigl[\mathcal{D}(|\phi_k\rangle^{\otimes t})=1\bigr]-\Pr_{|\psi\rangle\sim\mu}\bigl[\mathcal{D}(|\psi\rangle^{\otimes t})=1\bigr]\Bigr|\le\mathrm{negl}(\lambda).
 $$
 
-*Pseudorandom function-like state (PRFS)* generators additionally take an input $x$ and output $|\phi_{k,x}\rangle$ indistinguishable (given polynomially many copies for adaptively chosen inputs) from independent Haar-random states. *Single-copy* PRS require indistinguishability only for $t=1$ with $n>\lambda$. Complexity-theoretic lower bounds such as $\mathsf{BQP} \ne \mathsf{PP}$ apply to superlogarithmic output lengths $n(\lambda) = \omega(\log \lambda)$ (for $n(\lambda) = c\log\lambda$ with $c < 1$, statistically secure PRS exist unconditionally).
+*(Selectively secure) pseudorandom function-like state (PRFS)* generators (Ananth–Qian–Yuen, Definition 3.3) additionally take an input $x$ and output $|\phi_{k,x}\rangle$ indistinguishable, given polynomially many copies for any fixed (selectively chosen) polynomial-size set of inputs $\{x_1, \dots, x_s\}$, from independent Haar-random states. *Single-copy* PRS (Morimae–Yamakawa, Definition 2.2) require indistinguishability only for $t=1$ (with $n > \lambda$ being the non-triviality regime used for cryptographic constructions, Remark 2.3). Complexity-theoretic lower bounds such as $\mathsf{BQP} \ne \mathsf{PP}$ apply to superlogarithmic output lengths $n(\lambda) = \omega(\log \lambda)$ (for $n(\lambda) = c\log\lambda$ with $c < 1$, statistically secure PRS exist unconditionally).
 
 ## Depends on
 
@@ -16,4 +16,5 @@ $$
 ## Sources
 
 - Zhengfeng Ji, Yi-Kai Liu, Fang Song, "Pseudorandom Quantum States", CRYPTO (2018), IACR ePrint 2018/544.
-- Prabhanjan Ananth, Luowen Qian, Henry Yuen, "Cryptography from Pseudorandom Quantum States", CRYPTO (2022), arXiv:2112.10020.
+- Prabhanjan Ananth, Luowen Qian, Henry Yuen, "Cryptography from Pseudorandom Quantum States", CRYPTO (2022), arXiv:2112.10020 (Definition 3.3).
+- Tomoyuki Morimae, Takashi Yamakawa, "Quantum Commitments and Signatures Without One-Way Functions", CRYPTO (2022), arXiv:2112.06369 (Definition 2.2 and Remark 2.3).
