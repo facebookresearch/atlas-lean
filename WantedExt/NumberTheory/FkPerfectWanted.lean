@@ -42,8 +42,11 @@ public import Mathlib.NumberTheory.Divisors
 public import MathlibExt.NumberTheory.NearPerfectTwoPrimePower
 public import MathlibExt.NumberTheory.OddPrimeDeficientPerfect
 public import MathlibExt.NumberTheory.FkPerfect
+public import MathlibExt.NumberTheory.FkPerfectIsDeficientFPerfectTwoMulPrimePow
+public import MathlibExt.NumberTheory.FkPerfectNotIsNearFPerfectTwoMulPrimePow
 public import MathlibExt.NumberTheory.FkPerfectNotIsDeficientFPerfectOfPrime
 public import MathlibExt.NumberTheory.FkPerfectNotIsKLNearPerfectTwoTwoPowMul
+public import MathlibExt.NumberTheory.FkPerfectNotIsNearFPerfectTwoPowMulPrime
 
 set_option autoImplicit false
 
@@ -145,18 +148,6 @@ theorem_wanted not_klDeficientPerfectWith_two_pow_mul
     ¬ KLDeficientPerfectWith k l (2 ^ a * p) 1 ∧
       ¬ KLDeficientPerfectWith k l (2 ^ a * p) p
 
-/-- **No near $F$-perfect number of the form $2^a p$.** For every prime $p$ and every natural
-number $a$, the number $n = 2^a p$ is not near $F$-perfect: there is no divisor $d$ of $n$ with
-$d < n$ and $\sigma_2(n) = n^2 + d^2 + 3n$, where $\sigma_2(n)$ is the sum of the squares of the
-divisors of $n$.
-
-Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
-and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
-`F_k`-Perfect Numbers", Theorem 9. -/
-theorem_wanted not_isNearFPerfect_two_pow_mul_prime
-    (p a : ℕ) (hp : p.Prime) :
-    ¬ IsNearFPerfect (2 ^ a * p)
-
 /-- **For $a \ge 2$, $2^a p$ is not $[k,\ell]$-near-perfect with divisor $1$ or $p$.** Let $k$,
 $\ell$, $a$ be natural numbers with $\ell \ge 1$ and $a \ge 2$, and let $p$ be an odd prime. Call
 $n$ $[k,\ell]$-near-perfect with divisor $d$ when $d$ divides $n$, $d < n$ and
@@ -172,32 +163,6 @@ theorem_wanted not_klNearPerfectWith_two_pow_mul
     (ha : 1 < a) :
     ¬ KLNearPerfectWith k l (2 ^ a * p) 1 ∧
       ¬ KLNearPerfectWith k l (2 ^ a * p) p
-
-/-- **The only deficient $F$-perfect number of the form $2p^a$ is $6$.** The number $6$ is deficient
-$F$-perfect, and for every prime $p$ and every natural number $a$, if $2p^a$ is deficient
-$F$-perfect then $2p^a = 6$.
-
-The divisor for $6$ is $d = 2$.
-
-Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
-and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
-`F_k`-Perfect Numbers", Theorem 12. -/
-theorem_wanted isDeficientFPerfect_two_mul_prime_pow
-    (p a : ℕ) (hp : p.Prime) :
-    IsDeficientFPerfect 6 ∧
-      (IsDeficientFPerfect (2 * p ^ a) → 2 * p ^ a = 6)
-
-/-- **No near $F$-perfect number of the form $2p^a$.** For every prime $p$ and every natural
-number $a$, the number $n = 2p^a$ is not near $F$-perfect: there is no divisor $d$ of $n$ with
-$d < n$ and $\sigma_2(n) = n^2 + d^2 + 3n$, where $\sigma_2(n)$ is the sum of the squares of the
-divisors of $n$.
-
-Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
-and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
-`F_k`-Perfect Numbers", Theorem 13. -/
-theorem_wanted not_isNearFPerfect_two_mul_prime_pow
-    (p a : ℕ) (hp : p.Prime) :
-    ¬ IsNearFPerfect (2 * p ^ a)
 
 /-- **No deficient $F_k$-perfect number $p_1^a p_2$ with distinct odd primes.** Let $k > 1$ be
 a natural number, let $p_1 \ne p_2$ be odd primes and let $a$ be a natural number. Then
