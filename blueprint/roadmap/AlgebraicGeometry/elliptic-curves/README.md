@@ -11,6 +11,7 @@ Elliptic curves given by Weierstrass equations, their points over finite fields 
 - [Weierstrass curves](weierstrass-curves/README.md)
 - [Hasse bound](hasse-bound/README.md)
 - [Néron–Ogg–Shafarevich criterion, easy direction](good-reduction-torsion-unramified.md)
-- [Faltings height of an elliptic curve in terms of its discriminant and periods](faltings-height-of-an-elliptic-curve.md)
+- [The principal polarization of an elliptic curve](principal-polarization-of-an-elliptic-curve.md)
 - [Congruent number: a positive integer that is the area of a right triangle with rational sides](congruent-number.md)
 - [A positive integer n is congruent iff the curve y^2 = x^3 − n^2 x has a rational point with y ≠ 0](congruent-number-elliptic-curve.md)
+- [Faltings height of an elliptic curve in terms of its discriminant and periods](faltings-height-of-an-elliptic-curve.md)
