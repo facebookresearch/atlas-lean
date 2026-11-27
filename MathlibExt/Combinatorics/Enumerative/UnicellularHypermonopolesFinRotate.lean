@@ -8,30 +8,36 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.RingTheory.Polynomial.Pochhammer
 public import MathlibExt.Combinatorics.Enumerative.ReducedUnicellularHypermonopoles
 import Mathlib.GroupTheory.Perm.Fin
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Group
 import Mathlib.Tactic.LinearCombination
+import MathlibExt.Combinatorics.Enumerative.StirlingAscPochhammer
 import MathlibExt.Combinatorics.Enumerative.ZagierCyclicPermutationProduct
 
 /-!
 # Unicellular hypermonopoles with a cyclic vertex permutation
 
-We prove that the number of permutations `α` of `Fin n` such that `α⁻¹ * finRotate n` has
-exactly one cycle and `α` has exactly `k` cycles, fixed points included, is the cyclic product
-number `cyclicProductNumber n k`. This is Corollary 8 of Cori and Hetyei, *On Reduced
-Unicellular Hypermonopoles* (Corollary 2.2 in the arXiv version, arXiv:2403.19569v2, which
-numbers its statements by section).
+We count the permutations `α` of `Fin n` such that `α⁻¹ * finRotate n` has exactly one cycle
+and `α` has exactly `k` cycles, fixed points included. The count is `cyclicProductNumber n k`.
+Writing `α = finRotate n * τ` turns the face condition into `τ` having exactly one cycle.
+Conjugation makes each cyclic first factor contribute equally, so Zagier's formula gives the
+count for the fixed first factor `finRotate n`.
 
-The proof follows the source. Writing `α = finRotate n * τ`, the condition on
-`α⁻¹ * finRotate n` says that `τ` has exactly one cycle (Remark 2.1 in the arXiv version), so the
-count is the number of such `τ` for which `finRotate n * τ` has `k` cycles (Theorem 1.4 in the
-arXiv version). Every permutation with exactly one cycle is conjugate to `finRotate n`, so each
-of the `(n - 1)!` choices of the first factor `σ` contributes equally to the number of pairs
-`(σ, τ)` of permutations with one cycle each whose product `σ * τ` has `k` cycles; Zagier's
-formula `MetaMathlibExt.zagier_probability_product_two_cyclic_permutations` then gives the
-count.
+The generating polynomial of the cyclic product numbers is a scaled difference of rising and
+falling factorials: the difference selects precisely the Stirling coefficients of the required
+parity.
+
+## References
+
+* Robert Cori and Gábor Hetyei, *On Reduced Unicellular Hypermonopoles*, Journal of Integer
+  Sequences 28 (2025), Article 25.3.3, pp. 1–15, Theorems 4–5, Lemma 6, and Corollary 8.
+* Simona Grusea and Anthony Labarre, *The distribution of cycles in breakpoint graphs of signed
+  permutations*, Discrete Applied Mathematics 161 (2013), pp. 1448–1466, Lemma 8.1.
+* Don Zagier, *On the distribution of the number of cycles of elements in symmetric groups*,
+  Nieuw Archief voor Wiskunde (4) 13 (1995), pp. 489–495, Theorem 1, application 3.
 -/
 
 namespace MetaMathlibExt
@@ -139,8 +145,47 @@ private theorem card_pairs_eq {n : ℕ} (hn : 0 < n) (k : ℕ) :
     Finset.sum_congr rfl fun σ _ ↦ card_fiber_eq k σ.1 σ.2, Finset.sum_const, Finset.card_univ,
     smul_eq_mul, card_cyclic hn]
 
+-- Clear Zagier's denominator before using the natural-number division in `cyclicProductNumber`.
+private theorem card_cyclic_finRotate_mul_scaled {n k : ℕ} (hn : 0 < n) (hk : 0 < k)
+    (hkn : k ≤ n) :
+    (Fintype.card {τ : Equiv.Perm (Fin n) //
+      cycleQuotientCount τ = 1 ∧ cycleQuotientCount (finRotate n * τ) = k} : ℚ) *
+      ((n + 1 : ℚ) * n) = (1 + (-1 : ℚ) ^ (n - k)) * Nat.stirlingFirst (n + 1) k := by
+  let F := Fintype.card {τ : Equiv.Perm (Fin n) //
+    cycleQuotientCount τ = 1 ∧ cycleQuotientCount (finRotate n * τ) = k}
+  have hZ := zagier_probability_product_two_cyclic_permutations n k hn hk hkn
+  have hpairs : Fintype.card {p : Equiv.Perm (Fin n) × Equiv.Perm (Fin n) //
+        Multiset.card p.1.cycleType + Fintype.card (Function.fixedPoints p.1) = 1 ∧
+        Multiset.card p.2.cycleType + Fintype.card (Function.fixedPoints p.2) = 1 ∧
+        Multiset.card (p.1 * p.2).cycleType +
+            Fintype.card (Function.fixedPoints (p.1 * p.2)) = k} =
+      (n - 1).factorial * F := by
+    rw [← card_pairs_eq hn k]
+    exact Fintype.card_congr (Equiv.subtypeEquivRight fun p ↦ by
+      simp only [cycleQuotientCount_eq])
+  have hcyc : Fintype.card {σ : Equiv.Perm (Fin n) //
+      Multiset.card σ.cycleType + Fintype.card (Function.fixedPoints σ) = 1} =
+      (n - 1).factorial := by
+    rw [← card_cyclic hn]
+    exact Fintype.card_congr (Equiv.subtypeEquivRight fun σ ↦ by
+      simp only [cycleQuotientCount_eq])
+  have hfact : (n + 1).factorial = (n + 1) * n * (n - 1).factorial := by
+    obtain ⟨m, rfl⟩ := Nat.exists_eq_succ_of_ne_zero hn.ne'
+    simp only [Nat.succ_sub_one, Nat.factorial_succ, Nat.succ_eq_add_one, mul_assoc]
+  rw [hpairs, hcyc, hfact] at hZ
+  have hn' : (n : ℚ) ≠ 0 := by exact_mod_cast hn.ne'
+  push_cast at hZ
+  field_simp [hn'] at hZ
+  change (F : ℚ) * _ = _
+  linear_combination hZ
+
+private theorem even_add_iff_even_sub {n k : ℕ} (hkn : k ≤ n) :
+    Even (n + k) ↔ Even (n - k) := by
+  rw [show n + k = (n - k) + 2 * k by omega, Nat.even_add]
+  simp
+
 /-- The number of permutations `τ` with one cycle such that `finRotate n * τ` has `k` cycles
-is the cyclic product number (Theorem 1.4 in the arXiv version of the source). -/
+is the cyclic product number (Theorem 5 of the source). -/
 private theorem card_cyclic_finRotate_mul (n k : ℕ) :
     Fintype.card {τ : Equiv.Perm (Fin n) //
       cycleQuotientCount τ = 1 ∧ cycleQuotientCount (finRotate n * τ) = k} =
@@ -165,60 +210,26 @@ private theorem card_cyclic_finRotate_mul (n k : ℕ) :
       · obtain rfl : k = n + 1 := by omega
         exact absurd heven (by rw [Nat.not_even_iff_odd]; exact ⟨n, by ring⟩)
     · rfl
-  -- The main case: Zagier's formula for the pairs of permutations with one cycle each.
-  have hZ := zagier_probability_product_two_cyclic_permutations n k hn hk hkn
-  have hpairs : Fintype.card {p : Equiv.Perm (Fin n) × Equiv.Perm (Fin n) //
-        Multiset.card p.1.cycleType + Fintype.card (Function.fixedPoints p.1) = 1 ∧
-        Multiset.card p.2.cycleType + Fintype.card (Function.fixedPoints p.2) = 1 ∧
-        Multiset.card (p.1 * p.2).cycleType +
-            Fintype.card (Function.fixedPoints (p.1 * p.2)) = k} =
-      (n - 1).factorial * F := by
-    rw [← card_pairs_eq hn k]
-    exact Fintype.card_congr (Equiv.subtypeEquivRight fun p ↦ by
-      simp only [cycleQuotientCount_eq])
-  have hcyc : Fintype.card {σ : Equiv.Perm (Fin n) //
-      Multiset.card σ.cycleType + Fintype.card (Function.fixedPoints σ) = 1} =
-      (n - 1).factorial := by
-    rw [← card_cyclic hn]
-    exact Fintype.card_congr (Equiv.subtypeEquivRight fun σ ↦ by
-      simp only [cycleQuotientCount_eq])
-  rw [hpairs, hcyc] at hZ
-  obtain ⟨m, rfl⟩ : ∃ m, n = m + 1 := ⟨n - 1, by omega⟩
-  have hfact : (m + 1 + 1).factorial = (m + 2) * (m + 1) * m.factorial := by
-    rw [Nat.factorial_succ, Nat.factorial_succ]
-    ring
-  rw [Nat.add_sub_cancel, hfact] at hZ
-  have hpar : Even (m + 1 + k) ↔ Even (m + 1 - k) := by
-    rw [show m + 1 + k = (m + 1 - k) + 2 * k by omega, Nat.even_add]
-    simp
-  by_cases heven : Even (m + 1 - k)
-  · rw [heven.neg_one_pow] at hZ
-    have hkey : (F : ℚ) * ((m + 1) * (m + 2)) = 2 * Nat.stirlingFirst (m + 1 + 1) k := by
-      push_cast at hZ
-      field_simp at hZ
-      linear_combination hZ
-    have hchoose : ((m + 1 + 1).choose 2 : ℚ) * 2 = (m + 1) * (m + 2) := by
-      have h : (m + 1) * (m + 2) = (m + 1 + 1).choose 2 * 2 := by
-        have h' := Nat.add_one_mul_choose_eq (m + 1) 1
-        rw [Nat.choose_one_right] at h'
-        rw [← h']
-        ring
+  have hscaled : (F : ℚ) * ((n + 1 : ℚ) * n) =
+      (1 + (-1 : ℚ) ^ (n - k)) * Nat.stirlingFirst (n + 1) k :=
+    card_cyclic_finRotate_mul_scaled hn hk hkn
+  have hpar := even_add_iff_even_sub hkn
+  by_cases heven : Even (n - k)
+  · rw [heven.neg_one_pow, one_add_one_eq_two] at hscaled
+    have hchoose : ((n + 1).choose 2 : ℚ) * 2 = (n + 1) * n := by
+      have h := Nat.add_one_mul_choose_eq n 1
+      rw [Nat.choose_one_right] at h
       exact_mod_cast h.symm
-    have hnat : Nat.stirlingFirst (m + 1 + 1) k = F * (m + 1 + 1).choose 2 := by
-      have h2 : ((F * (m + 1 + 1).choose 2 : ℕ) : ℚ) * 2 =
-          (Nat.stirlingFirst (m + 1 + 1) k : ℚ) * 2 := by
+    have hnat : Nat.stirlingFirst (n + 1) k = F * (n + 1).choose 2 := by
+      have h2 : ((F * (n + 1).choose 2 : ℕ) : ℚ) * 2 = (Nat.stirlingFirst (n + 1) k : ℚ) * 2 := by
         push_cast
-        linear_combination (F : ℚ) * hchoose + hkey
+        linear_combination (F : ℚ) * hchoose + hscaled
       exact_mod_cast (mul_right_cancel₀ two_ne_zero h2).symm
     rw [cyclicProductNumber, ite_eq_left (hpar.mpr heven), hnat,
       Nat.mul_div_cancel _ (Nat.choose_pos (by omega))]
-  · rw [(Nat.not_even_iff_odd.mp heven).neg_one_pow] at hZ
-    have hF0 : (F : ℚ) = 0 := by
-      push_cast at hZ
-      field_simp at hZ
-      have hprod : (F : ℚ) * ((m + 2) * (m + 1)) = 0 := by linear_combination hZ
-      exact (mul_eq_zero.mp hprod).resolve_right (by positivity)
-    rw [cyclicProductNumber, ite_eq_right (mt hpar.mp heven)]
+  · rw [(Nat.not_even_iff_odd.mp heven).neg_one_pow, add_neg_cancel, zero_mul] at hscaled
+    have hF0 := (mul_eq_zero.mp hscaled).resolve_right (by positivity)
+    rw [cyclicProductNumber_of_odd (mt hpar.mp heven)]
     exact_mod_cast hF0
 
 end card_unicellular_hypermonopoles_finRotate
@@ -245,5 +256,67 @@ public theorem card_unicellular_hypermonopoles_finRotate (n k : ℕ) :
     (Equiv.subtypeEquiv (Equiv.mulLeft (finRotate n)⁻¹) fun α ↦ ?_)
   rw [Equiv.coe_mulLeft, mul_inv_cancel_left, ← cycleCount_inv ((finRotate n)⁻¹ * α),
     mul_inv_rev, inv_inv]
+
+open Polynomial
+
+-- Replacing `X` by `-X` in the rising factorial changes each linear factor by a sign.
+private theorem descPochhammer_eq_stirlingFirst_sum (m : ℕ) :
+    descPochhammer ℚ m = ∑ k ∈ Finset.range (m + 1),
+      C ((-1 : ℚ) ^ (m + k) * Nat.stirlingFirst m k) * X ^ k := by
+  have h : descPochhammer ℚ m = C ((-1 : ℚ) ^ m) * (ascPochhammer ℚ m).comp (-X) := by
+    have he := ascPochhammer_eval_neg_eq_descPochhammer ℚ[X] X m
+    rw [← ascPochhammer_map (C : ℚ →+* ℚ[X]), ← descPochhammer_map (C : ℚ →+* ℚ[X]),
+      eval_map, eval_map] at he
+    change (ascPochhammer ℚ m).comp (-X) = (-1 : ℚ[X]) ^ m * (descPochhammer ℚ m).comp X at he
+    rw [comp_X] at he
+    rw [he, map_pow, map_neg, map_one, ← mul_assoc, ← mul_pow]
+    simp
+  rw [h, ← Nat.sum_stirlingFirst_mul_X_pow, ← coe_compRingHom_apply, map_sum, Finset.mul_sum]
+  refine Finset.sum_congr rfl fun k _ ↦ ?_
+  rw [coe_compRingHom_apply, mul_X_pow_comp, natCast_comp, ← neg_one_mul (X : ℚ[X]),
+    mul_pow, pow_add]
+  simp only [map_mul, map_pow, map_neg, map_one, C_eq_natCast]
+  ring
+
+open card_unicellular_hypermonopoles_finRotate in
+/-- **Generating polynomial of the cyclic product numbers.** For every natural number $n$, let
+$H(n, k)$ be the cyclic product numbers, viewed as rational numbers. Then in the polynomial
+ring $\mathbb{Q}[x]$
+$$\sum_{k=0}^{n} H(n, k) x^k = c_n (x (x + 1) \cdots (x + n) - x (x - 1) \cdots (x - n)),$$
+where $c_n = \frac{1}{(n + 1) n}$ for $n \ge 1$ and $c_0 = 0$; for $n = 0$ both sides are $0$.
+
+Source: Robert Cori and Gábor Hetyei, *On Reduced Unicellular Hypermonopoles*, Journal of
+Integer Sequences 28 (2025), Article 25.3.3, Lemma 6 (`jis-2025-25.3.3-lem-6`), quoting
+S. Grusea and A. Labarre. -/
+public theorem sum_cyclicProductNumber_mul_X_pow (n : ℕ) :
+    ∑ k ∈ Finset.range (n + 1), C (cyclicProductNumber n k : ℚ) * X ^ k =
+      C (((n + 1 : ℚ) * n)⁻¹) * (ascPochhammer ℚ (n + 1) - descPochhammer ℚ (n + 1)) := by
+  rcases Nat.eq_zero_or_pos n with rfl | hn
+  · simp [cyclicProductNumber_zero_right]
+  have hasc : ascPochhammer ℚ (n + 1) = ∑ k ∈ Finset.range (n + 1 + 1),
+      C (Nat.stirlingFirst (n + 1) k : ℚ) * X ^ k := by
+    simpa only [C_eq_natCast] using (Nat.sum_stirlingFirst_mul_X_pow ℚ (n + 1)).symm
+  -- The leading terms of the two monic factorials cancel.
+  rw [hasc, descPochhammer_eq_stirlingFirst_sum, ← Finset.sum_sub_distrib,
+    Finset.sum_range_succ _ (n + 1)]
+  have heven : Even (n + 1 + (n + 1)) := ⟨n + 1, rfl⟩
+  have htop : (-1 : ℚ) ^ (n + 1 + (n + 1)) = 1 := heven.neg_one_pow
+  simp only [htop, one_mul, sub_self, add_zero, Finset.mul_sum]
+  refine Finset.sum_congr rfl fun k hk ↦ ?_
+  rw [← sub_mul, ← (C : ℚ →+* ℚ[X]).map_sub, ← mul_assoc, ← (C : ℚ →+* ℚ[X]).map_mul]
+  apply congrArg (fun r : ℚ ↦ C r * X ^ k)
+  rcases Nat.eq_zero_or_pos k with rfl | hkpos
+  · simp [cyclicProductNumber_zero_right, Nat.stirlingFirst_succ_zero]
+  have hkn : k ≤ n := Nat.le_of_lt_succ (Finset.mem_range.mp hk)
+  have hsign : (-1 : ℚ) ^ ((n + 1) + k) = -((-1 : ℚ) ^ (n - k)) := by
+    rw [show n + 1 + k = (n + k) + 1 by omega, pow_succ,
+      neg_one_pow_congr (even_add_iff_even_sub hkn), mul_neg_one]
+  have hscaled := card_cyclic_finRotate_mul_scaled hn hkpos hkn
+  rw [card_cyclic_finRotate_mul] at hscaled
+  calc
+    (cyclicProductNumber n k : ℚ) = (((n + 1 : ℚ) * n)⁻¹) *
+        ((cyclicProductNumber n k : ℚ) * ((n + 1 : ℚ) * n)) := by
+      rw [mul_left_comm, inv_mul_cancel₀ (by positivity), mul_one]
+    _ = _ := by rw [hscaled, hsign]; ring
 
 end MetaMathlibExt

@@ -1,0 +1,17 @@
+# Single-individual SNP haplotyping
+
+- [Instances of MINIMUM ERROR CORRECTION (single individual SNP haplotyping)](minimum-error-correction-instance.md)
+- [Mismatches](mismatches.md)
+- [Well-formed MINIMUM ERROR CORRECTION (single individual SNP haplotyping) instances](well-formed.md)
+- [Feasible MINIMUM ERROR CORRECTION (single individual SNP haplotyping) instances](minimum-error-correction-feasible.md)
+- [The decision problem MINIMUM ERROR CORRECTION (single individual SNP haplotyping)](minimum-error-correction-dec.md)
+- [MINIMUM ERROR CORRECTION (single individual SNP haplotyping) is NP-complete](minimum-error-correction-np-complete.md)
+- [Conflict At](conflict-at.md)
+- [Fragment Conflict Graph](fragment-conflict-graph.md)
+- [Feasible MINIMUM FRAGMENT REMOVAL instances](minimum-fragment-removal-feasible.md)
+- [The decision problem MINIMUM FRAGMENT REMOVAL](minimum-fragment-removal-dec.md)
+- [MINIMUM FRAGMENT REMOVAL is NP-complete](minimum-fragment-removal-np-complete.md)
+- [Remove Columns](remove-columns.md)
+- [Feasible MINIMUM SNP REMOVAL instances](minimum-snp-removal-feasible.md)
+- [The decision problem MINIMUM SNP REMOVAL](minimum-snp-removal-dec.md)
+- [MINIMUM SNP REMOVAL is NP-complete](minimum-snp-removal-np-complete.md)

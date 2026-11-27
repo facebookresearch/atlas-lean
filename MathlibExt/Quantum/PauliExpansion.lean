@@ -197,7 +197,7 @@ private theorem char_sum {k : ℕ} (b : Fin k → ZMod 2) :
       norm_cast
     simp only [ite_true]
     exact hsum
-  · rw [if_neg hb]
+  · rw [ite_eq_right hb]
     have hex : ∃ i, b i ≠ 0 := by
       by_contra hcon
       push_neg at hcon
@@ -232,9 +232,9 @@ private theorem trace_pauliXZ {k : ℕ} (a b : Fin k → ZMod 2) :
     have hsum : (∑ x : Fin k → ZMod 2, (if x = x + a then (-1 : ℂ) ^ ((b ⬝ᵥ x).val) else 0)) = 0 := by
       apply Finset.sum_eq_zero
       intro x _
-      rw [if_neg (hfalse x)]
+      rw [ite_eq_right (hfalse x)]
     have hcond : ¬(a = 0 ∧ b = 0) := by simp [ha]
-    rw [hsum, if_neg hcond]
+    rw [hsum, ite_eq_right hcond]
 
 /-- Merged `pauliXZ 0 0` is the identity. -/
 private theorem pauliXZ_zero_zero {k : ℕ} : pauliXZ (0 : Fin k → ZMod 2) (0 : Fin k → ZMod 2) = 1 := by
@@ -270,7 +270,7 @@ theorem hermPauli_isHermitian {k : ℕ} (a b : Fin k → ZMod 2) : (hermPauli a 
       exact h2.symm
   by_cases h : y = x + a
   · have hx : x = y + a := hiff.mpr h
-    rw [if_pos hx, if_pos h]
+    rw [ite_eq_left hx, ite_eq_left h]
     have hby : b ⬝ᵥ y = b ⬝ᵥ x + b ⬝ᵥ a := by rw [h, dotProduct_add]
     rw [hby, neg_one_pow_zmod_add, star_mul, star_mul, star_neg_one_pow, star_neg_one_pow]
     have hstar_pow : star (Complex.I ^ (∑ i, (a i).val * (b i).val)) =
@@ -292,7 +292,7 @@ theorem hermPauli_isHermitian {k : ℕ} (a b : Fin k → ZMod 2) : (hermPauli a 
       _ = (Complex.I ^ (∑ i, (a i).val * (b i).val) * (-1 : ℂ) ^ ((b ⬝ᵥ x).val)) * 1 := by rw [hphase]
       _ = Complex.I ^ (∑ i, (a i).val * (b i).val) * (-1 : ℂ) ^ ((b ⬝ᵥ x).val) := by rw [mul_one]
   · have hx : ¬(x = y + a) := fun hh => h (hiff.mp hh)
-    rw [if_neg hx, if_neg h]
+    rw [ite_eq_right hx, ite_eq_right h]
     simp [mul_zero, star_zero]
 
 /-- ±1 parity outcomes; via merged pauliXZ_mul -/
@@ -326,16 +326,16 @@ theorem trace_hermPauli_mul_hermPauli {k : ℕ} (a b a' b' : Fin k → ZMod 2) :
   · obtain ⟨rfl, rfl⟩ := h
     have hcond : a + a = (0 : Fin k → ZMod 2) ∧ b + b = (0 : Fin k → ZMod 2) :=
       ⟨bit_add_self a, bit_add_self b⟩
-    rw [if_pos hcond] at htr
+    rw [ite_eq_left hcond] at htr
     rw [htr]
     have hphase : (Complex.I ^ (∑ i, (a i).val * (b i).val) * Complex.I ^ (∑ i, (a i).val * (b i).val)) *
         (-1 : ℂ) ^ ((b ⬝ᵥ a).val) = 1 := by
       rw [neg_one_pow_dot_val]
       exact phase_mul_self _
-    rw [hphase, one_mul, if_pos ⟨rfl, rfl⟩]
+    rw [hphase, one_mul, ite_eq_left ⟨rfl, rfl⟩]
   · have hneg : ¬(a + a' = 0 ∧ b + b' = 0) := fun hh => h (hequiv.mp hh)
-    rw [if_neg hneg] at htr
-    rw [htr, mul_zero, if_neg h]
+    rw [ite_eq_right hneg] at htr
+    rw [htr, mul_zero, ite_eq_right h]
 
 /-- `(-1)^n = -1` when `n` is odd. -/
 private theorem neg_one_pow_eq_neg_one_of_odd {n : ℕ} (h : n % 2 = 1) : (-1 : ℂ) ^ n = -1 := by
@@ -409,9 +409,9 @@ private theorem inner_sum_b {k : ℕ} (a u x : Fin k → ZMod 2) :
       have hc : (∑ _b : Fin k → ZMod 2, (1 : ℂ)) = (Fintype.card (Fin k → ZMod 2) : ℂ) := by simp
       rw [hc, card_bitstring]
       norm_cast
-    rw [if_pos trivial]
+    rw [ite_eq_left trivial]
     exact hsum
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     have hex : ∃ i, a i ≠ (u + x) i := by
       by_contra hcon
       push_neg at hcon
@@ -453,14 +453,14 @@ private theorem inner_sum_b {k : ℕ} (a u x : Fin k → ZMod 2) :
       intro j hj
       have hji : j ≠ i := Finset.ne_of_mem_erase hj
       have hbe : (b + e) j = b j := by
-        rw [he_pts j b, if_neg hji]
+        rw [he_pts j b, ite_eq_right hji]
       rw [hbe]
     have hflip : ((-1 : ℂ) ^ ((a i).val * ((b + e) i).val) * (-1 : ℂ) ^ (((b + e) i * u i).val) *
           (-1 : ℂ) ^ (((b + e) i * x i).val))
         = -((-1 : ℂ) ^ ((a i).val * (b i).val) * (-1 : ℂ) ^ ((b i * u i).val) *
           (-1 : ℂ) ^ ((b i * x i).val)) := by
       have hbei : (b + e) i = b i + 1 := by
-        rw [he_pts i b, if_pos rfl]
+        rw [he_pts i b, ite_eq_left rfl]
       rw [hbei]
       exact coord_flip hpi
     rw [hsplit (fun c j => (-1 : ℂ) ^ ((a j).val * ((c + e) j).val) * (-1 : ℂ) ^ (((c + e) j * u j).val) *
@@ -507,16 +507,17 @@ private theorem entry_orth {k : ℕ} (v u y x : Fin k → ZMod 2) :
         rw [pow_two]; exact h
       rw [← pow_add, ← two_mul, pow_mul, hI2]
     by_cases hv : v = u + a <;> by_cases hy : y = x + a
-    · rw [if_pos hv, if_pos hy, if_pos ⟨hv, hy⟩]
+    · rw [ite_eq_left hv, ite_eq_left hy, ite_eq_left ⟨hv, hy⟩]
       calc (Complex.I ^ (∑ i, (a i).val * (b i).val) * (-1 : ℂ) ^ ((b ⬝ᵥ u).val)) *
             (Complex.I ^ (∑ i, (a i).val * (b i).val) * (-1 : ℂ) ^ ((b ⬝ᵥ x).val))
           = (Complex.I ^ (∑ i, (a i).val * (b i).val) * Complex.I ^ (∑ i, (a i).val * (b i).val)) *
             ((-1 : ℂ) ^ ((b ⬝ᵥ u).val) * (-1 : ℂ) ^ ((b ⬝ᵥ x).val)) := by ring
         _ = (-1 : ℂ) ^ (∑ i, (a i).val * (b i).val) * (-1 : ℂ) ^ ((b ⬝ᵥ u).val) *
             (-1 : ℂ) ^ ((b ⬝ᵥ x).val) := by rw [hsq]; ring
-    · rw [if_pos hv, if_neg hy, if_neg (fun hcon => hy hcon.2), mul_zero, mul_zero]
-    · rw [if_neg hv, if_pos hy, if_neg (fun hcon => hv hcon.1), mul_zero, zero_mul]
-    · rw [if_neg hv, if_neg hy, if_neg (fun hcon => hv hcon.1), mul_zero, zero_mul]
+    · rw [ite_eq_left hv, ite_eq_right hy, ite_eq_right (fun hcon => hy hcon.2), mul_zero, mul_zero]
+    · rw [ite_eq_right hv, ite_eq_left hy, ite_eq_right (fun hcon => hv hcon.1), mul_zero, zero_mul]
+    · rw [ite_eq_right hv, ite_eq_right hy, ite_eq_right (fun hcon => hv hcon.1), mul_zero,
+        zero_mul]
   simp only [hexpand]
   have hsum_b : ∀ a : Fin k → ZMod 2,
       (∑ b, (if v = u + a ∧ y = x + a then
@@ -525,21 +526,21 @@ private theorem entry_orth {k : ℕ} (v u y x : Fin k → ZMod 2) :
       = (if v = u + a ∧ y = x + a ∧ a = u + x then (2 : ℂ) ^ k else 0) := by
     intro a
     by_cases hcond : v = u + a ∧ y = x + a
-    · simp only [if_pos hcond]
+    · simp only [ite_eq_left hcond]
       have hinner := inner_sum_b (k := k) a u x
       by_cases hax : a = u + x
-      · rw [if_pos hax] at hinner
+      · rw [ite_eq_left hax] at hinner
         have h3 : v = u + a ∧ y = x + a ∧ a = u + x := ⟨hcond.1, hcond.2, hax⟩
-        rw [if_pos h3]; exact hinner
-      · rw [if_neg hax] at hinner
+        rw [ite_eq_left h3]; exact hinner
+      · rw [ite_eq_right hax] at hinner
         have h3 : ¬(v = u + a ∧ y = x + a ∧ a = u + x) := fun hh => hax hh.2.2
-        rw [if_neg h3]; exact hinner
+        rw [ite_eq_right h3]; exact hinner
     · have hsum0 : (∑ b : Fin k → ZMod 2, (if v = u + a ∧ y = x + a then
           (-1 : ℂ) ^ (∑ i, (a i).val * (b i).val) * (-1 : ℂ) ^ ((b ⬝ᵥ u).val) * (-1 : ℂ) ^ ((b ⬝ᵥ x).val)
         else 0)) = 0 := by
-        apply Finset.sum_eq_zero; intro b _; rw [if_neg hcond]
+        apply Finset.sum_eq_zero; intro b _; rw [ite_eq_right hcond]
       have h3 : ¬(v = u + a ∧ y = x + a ∧ a = u + x) := fun hh => hcond ⟨hh.1, hh.2.1⟩
-      rw [hsum0, if_neg h3]
+      rw [hsum0, ite_eq_right h3]
   simp only [hsum_b]
   have hiff : ∀ a : Fin k → ZMod 2, (v = u + a ∧ y = x + a ∧ a = u + x) ↔
       (a = v + u ∧ a = y + x ∧ a = u + x) := by
@@ -571,20 +572,20 @@ private theorem entry_orth {k : ℕ} (v u y x : Fin k → ZMod 2) :
               have e : x + y = y + x := add_comm _ _
               rw [e]; exact (eq_add_iff y x (y + x)).mpr rfl
             exact ⟨e1, e2, add_comm _ _⟩
-          rw [if_pos h3, if_pos ha]
+          rw [ite_eq_left h3, ite_eq_left ha]
         · have h3 : ¬(x = y + a ∧ y = x + a ∧ a = y + x) := by
             intro hh
             exact ha (((hiff a).mp hh).1)
-          rw [if_neg h3, if_neg ha]
+          rw [ite_eq_right h3, ite_eq_right ha]
       rw [Finset.sum_congr rfl (fun a _ => hcongr a)]
       rw [Finset.sum_ite_eq' Finset.univ (x + y) (fun _ => (2 : ℂ) ^ k)]
       simp
-    rw [if_pos ⟨rfl, rfl⟩]
+    rw [ite_eq_left ⟨rfl, rfl⟩]
     exact hsum
   · have hsum0 : (∑ a : Fin k → ZMod 2, (if v = u + a ∧ y = x + a ∧ a = u + x then (2 : ℂ) ^ k else 0)) = 0 := by
       apply Finset.sum_eq_zero
       intro a _
-      rw [if_neg]
+      rw [ite_eq_right]
       intro hh
       have h3 := (hiff a).mp hh
       have e1 : v + u = u + x := h3.1.symm.trans h3.2.2
@@ -596,7 +597,7 @@ private theorem entry_orth {k : ℕ} (v u y x : Fin k → ZMod 2) :
         have h4 : y + x = u + x := e2
         exact add_right_cancel h4
       exact h ⟨hvx, huy.symm⟩
-    rw [hsum0, if_neg h]
+    rw [hsum0, ite_eq_right h]
 
 /-- c_l = Tr(P_l H_j)/2^k (contract) -/
 noncomputable def pauliCoeff {k : ℕ} (A : Matrix (Fin k → ZMod 2) (Fin k → ZMod 2) ℂ) (a b : Fin k → ZMod 2) : ℂ := Matrix.trace (hermPauli a b * A) / 2 ^ k
@@ -654,8 +655,8 @@ theorem sum_pauliCoeff_smul_hermPauli {k : ℕ} (A : Matrix (Fin k → ZMod 2) (
       exact (Finset.sum_div _ _ _).symm
     rw [hdiv, horth]
     by_cases hcon : v = x ∧ u = y
-    · rw [if_pos hcon, if_pos hcon, div_self hne]
-    · rw [if_neg hcon, if_neg hcon, zero_div]
+    · rw [ite_eq_left hcon, ite_eq_left hcon, div_self hne]
+    · rw [ite_eq_right hcon, ite_eq_right hcon, zero_div]
   simp only [hinner]
   have hfinal : (∑ v, ∑ u, A u v * (if v = x ∧ u = y then (1 : ℂ) else 0)) = A y x := by
     have hinner2 : ∀ v : Fin k → ZMod 2, (∑ u, A u v * (if v = x ∧ u = y then (1 : ℂ) else 0))
@@ -670,7 +671,7 @@ theorem sum_pauliCoeff_smul_hermPauli {k : ℕ} (A : Matrix (Fin k → ZMod 2) (
           by_cases hu : u = y
           · subst hu; simp
           · have hcond : ¬(x = x ∧ u = y) := fun hh => hu hh.2
-            rw [if_neg hcond, if_neg hu, mul_zero]
+            rw [ite_eq_right hcond, ite_eq_right hu, mul_zero]
         rw [Finset.sum_congr rfl (fun u _ => hcongr u)]
         rw [Finset.sum_ite_eq' Finset.univ y (fun u => A u x)]
         simp
@@ -678,8 +679,8 @@ theorem sum_pauliCoeff_smul_hermPauli {k : ℕ} (A : Matrix (Fin k → ZMod 2) (
           apply Finset.sum_eq_zero
           intro u _
           have hcond : ¬(v = x ∧ u = y) := fun hh => hv hh.1
-          rw [if_neg hcond, mul_zero]
-        rw [h0, if_neg hv]
+          rw [ite_eq_right hcond, mul_zero]
+        rw [h0, ite_eq_right hv]
     rw [Finset.sum_congr rfl (fun v _ => hinner2 v)]
     rw [Finset.sum_ite_eq' Finset.univ x (fun _ => A y x)]
     simp
@@ -713,7 +714,7 @@ theorem pauliCoeff_eq_of_sum_eq {k : ℕ} (A : Matrix (Fin k → ZMod 2) (Fin k 
             · subst hb'; simp
             · have hcond : ¬(a = a ∧ b = b') := by
                 intro hh; exact hb' (eq_comm.mp hh.2)
-              rw [if_neg hcond, if_neg hb', mul_zero]
+              rw [ite_eq_right hcond, ite_eq_right hb', mul_zero]
           rw [Finset.sum_congr rfl (fun b' _ => hcongr b')]
           rw [Finset.sum_ite_eq' Finset.univ b (fun b' => c a b' * 2 ^ k)]
           simp
@@ -721,8 +722,8 @@ theorem pauliCoeff_eq_of_sum_eq {k : ℕ} (A : Matrix (Fin k → ZMod 2) (Fin k 
             apply Finset.sum_eq_zero
             intro b' _
             have hcond : ¬(a = a' ∧ b = b') := fun hh => ha' (eq_comm.mp hh.1)
-            rw [if_neg hcond, mul_zero]
-          rw [h0, if_neg ha']
+            rw [ite_eq_right hcond, mul_zero]
+          rw [h0, ite_eq_right ha']
       rw [Finset.sum_congr rfl (fun a' _ => hinner a')]
       rw [Finset.sum_ite_eq' Finset.univ a (fun _ => c a b * 2 ^ k)]
       simp
@@ -815,11 +816,11 @@ theorem sum_norm_sq_pauliCoeff {k : ℕ} (A : Matrix (Fin k → ZMod 2) (Fin k �
             · subst hb'; simp
             · have hcond : ¬(a = a ∧ b = b') := by
                 intro hh; exact hb' (eq_comm.mp hh.2)
-              rw [if_neg hcond, if_neg hb', mul_zero]
+              rw [ite_eq_right hcond, ite_eq_right hb', mul_zero]
           rw [Finset.sum_congr rfl (fun b' _ => hcongr b')]
           rw [Finset.sum_ite_eq' Finset.univ b
             (fun b' => (star (pauliCoeff A a b) * pauliCoeff A a b') * 2 ^ k)]
-          simp only [Finset.mem_univ, eq_self_iff_true, if_true]
+          simp only [Finset.mem_univ, eq_self_iff_true, ite_true]
           rw [star_mul_self_eq_norm_sq]
           ring
         · have h0 : (∑ b' : Fin k → ZMod 2, (star (pauliCoeff A a b) * pauliCoeff A a' b')
@@ -827,8 +828,8 @@ theorem sum_norm_sq_pauliCoeff {k : ℕ} (A : Matrix (Fin k → ZMod 2) (Fin k �
             apply Finset.sum_eq_zero
             intro b' _
             have hcond : ¬(a = a' ∧ b = b') := fun hh => ha' (eq_comm.mp hh.1)
-            rw [if_neg hcond, mul_zero]
-          rw [h0, if_neg ha']
+            rw [ite_eq_right hcond, mul_zero]
+          rw [h0, ite_eq_right ha']
       have hstep : (∑ a', ∑ b', (star (pauliCoeff A a b) * pauliCoeff A a' b')
             * Matrix.trace (hermPauli a b * hermPauli a' b'))
           = ∑ a', ∑ b', (star (pauliCoeff A a b) * pauliCoeff A a' b')
@@ -1093,8 +1094,8 @@ noncomputable def signOne (c : ℝ) : ℝ := if 0 ≤ c then 1 else -1
 theorem signOne_mul_abs (c : ℝ) : signOne c * |c| = c := by
   unfold signOne
   by_cases hc : 0 ≤ c
-  · rw [if_pos hc, abs_of_nonneg hc, one_mul]
-  · rw [if_neg hc]
+  · rw [ite_eq_left hc, abs_of_nonneg hc, one_mul]
+  · rw [ite_eq_right hc]
     have hlt : c < 0 := lt_of_not_ge hc
     rw [abs_of_neg hlt]
     ring

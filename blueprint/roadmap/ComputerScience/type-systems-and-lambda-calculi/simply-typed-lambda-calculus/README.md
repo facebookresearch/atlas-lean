@@ -42,3 +42,4 @@
 - [Substitution commutes with instantiation for intrinsically typed STLC terms](subst-instantiate.md)
 - [Substituting by an extended substitution, via lifting](subst-cons.md)
 - [Instantiation is substitution by an extended identity](instantiate-eq-subst-cons.md)
+- [Decision problems for simple types](decision-problems-for-simple-types/README.md)
