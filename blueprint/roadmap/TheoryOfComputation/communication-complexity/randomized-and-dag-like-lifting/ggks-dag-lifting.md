@@ -1,12 +1,12 @@
 # Garg–Göös–Kamath–Sokolov: dag-like lifting from resolution width
 
-There is a gadget $g : \mathcal{X} \times \mathcal{Y} \to \{0,1\}$ on $O(\log n)$ bits such that for every unsatisfiable CNF formula $F$ on $n$ variables, the falsified-clause search problem of the lifted formula satisfies
+Let $m = m(n) := n^{\Delta}$ for a sufficiently large constant $\Delta$, and let $g = \mathrm{IND}_m \colon [m] \times \{0,1\}^m \to \{0,1\}$ be the index gadget (where Alice holds an $O(\log n)$-bit index and Bob holds an $m = n^{\Delta}$-bit string). For every unsatisfiable CNF formula $F$ on $n$ variables, the falsified-clause search problem of the lifted formula satisfies
 
 $$
-\text{min size of a rectangle-DAG for } \mathrm{Search}(F) \circ g^n \ \ge\ n^{\Omega(w(F))},
+\text{min size of a rectangle-DAG for } \mathrm{Search}(F) \circ \mathrm{IND}_m^n \;=\; n^{\Theta(w(F))}
 $$
 
-where $w(F)$ is the minimum width of a resolution refutation of $F$. Consequently there are explicit monotone functions in $\mathrm{NP}$ (the CSP-satisfiability functions of lifted formulas) whose monotone circuit complexity is $2^{N^{\Omega(1)}}$ in the number $N$ of variables, and an exponential separation between monotone circuits and monotone formulas for functions in monotone $\mathrm{P}$.
+(in particular $\ge n^{\Omega(w(F))}$), where $w(F)$ is the minimum width of a resolution refutation of $F$ (Garg–Göös–Kamath–Sokolov, Theorem 3.1). Consequently there are explicit monotone functions in $\mathrm{NP}$ (the CSP-satisfiability functions of lifted formulas) whose monotone circuit complexity is $2^{N^{\Omega(1)}}$ in the number $N$ of variables, and an exponential separation between monotone circuits and monotone formulas for functions in monotone $\mathrm{P}$.
 
 ## Proof sketch
 

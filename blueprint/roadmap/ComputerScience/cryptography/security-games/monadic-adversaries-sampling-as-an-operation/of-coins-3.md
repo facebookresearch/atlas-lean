@@ -1,0 +1,3 @@
+# Coin public-key CCA adversary as a monadic adversary
+
+Let $A$ be a coin public-key chosen-ciphertext adversary: a coin distribution $\mu$ on $R$ and, for each public key $pk$ and $r \in R$, a first stage $A_{pk, r}$ with decryption queries returning $(m_0, m_1)$ and a second stage $g_{pk, r}$. Its monadic form uses the one-operation [sampling family](coin-fam.md) drawing from $\mu$. On public key $pk$ it draws $r$ from $\mu$ once, runs the [embedding](embed.md) of $A_{pk, r}$, and maps its output to $((m_0, m_1),\ c \mapsto \mathrm{embed}(g_{pk, r}(c)))$. The second stage reuses the same $r$; there is no resampling.
