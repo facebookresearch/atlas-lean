@@ -20,7 +20,3 @@
 - [Goldengorin's question 2 (shortest Hamiltonian paths from shortest spanning trees)](spanning-trees-give-shortest-hamiltonian.md)
 - [Goldengorin's question 3 (Hamiltonian cycles from shortest 1-trees)](one-trees-give-hamiltonian-cycle.md)
 - [Goldengorin's question 4 (shortest Hamiltonian cycles from shortest 1-trees)](one-trees-give-shortest-hamiltonian-cycl.md)
-- [No fixed number of successive shortest trees answers Goldengorin's question 1](spanning-trees-give-hamiltonian-path-ref.md)
-- [No fixed number of successive shortest trees answers Goldengorin's question 2](spanning-trees-give-shortest-hamiltonian-2.md)
-- [No fixed number of successive shortest trees answers Goldengorin's question 3](one-trees-give-hamiltonian-cycle-refuted.md)
-- [No fixed number of successive shortest trees answers Goldengorin's question 4](one-trees-give-shortest-hamiltonian-cycl-2.md)

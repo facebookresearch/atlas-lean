@@ -5,4 +5,4 @@ Every $K_4$-free simple graph on a finite vertex set with chromatic number $4$ (
 ## Sources
 
 - T. F. Bloom, Erdős Problems, Problem #1091, https://www.erdosproblems.com/1091.
-- H.-J. Voss, Graphs having circuits with at least two chords, J. Combin. Theory Ser. B 32 (1982), 264–285, https://doi.org/10.1016/0095-8956(82)90054-8.
+- H.-J. Voss, Graphs having circuits with at least two chords, J. Combin. Theory Ser. B 32 (1982), 264–285, https://doi.org/10.1016/0095-8956(82)90004-1.
