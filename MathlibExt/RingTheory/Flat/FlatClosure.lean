@@ -65,25 +65,25 @@ lemma le_flatClosure_iff {B : Subalgebra F (F ⊗[R] G)} {S : Subalgebra R G} :
   Iff.rfl
 
 /-- **Finiteness of the flat closure.** Over a Noetherian ring `R`, for a field `F` that is an
-`R`-algebra and an `R`-algebra `G` that is finitely generated as an `R`-module, the flat
-closure of an `F`-subalgebra of `F ⊗[R] G` is finitely generated as an `R`-module. -/
+`R`-algebra and a commutative `R`-algebra `G` that is finitely generated as an `R`-module, the
+flat closure of an `F`-subalgebra of `F ⊗[R] G` is finitely generated as an `R`-module. -/
 theorem flatClosure_finite [IsNoetherianRing R] [Module.Finite R G]
     (B : Subalgebra F (F ⊗[R] G)) : Module.Finite R (flatClosure B) := by
   have : IsNoetherian R G := isNoetherian_of_isNoetherianRing_of_finite R G
   exact Module.Finite.iff_fg.mpr
     (IsNoetherian.noetherian (Subalgebra.toSubmodule (flatClosure B)))
 
-/-- **Torsion-freeness of the flat closure.** For a field `F` that is an `R`-algebra and an
-`R`-algebra `G` that is torsion-free as an `R`-module, the flat closure of an `F`-subalgebra of
-`F ⊗[R] G` is torsion-free. -/
+/-- **Torsion-freeness of the flat closure.** For a field `F` that is an `R`-algebra and a
+commutative `R`-algebra `G` that is torsion-free as an `R`-module, the flat closure of an
+`F`-subalgebra of `F ⊗[R] G` is torsion-free. -/
 theorem flatClosure_isTorsionFree [Module.IsTorsionFree R G]
     (B : Subalgebra F (F ⊗[R] G)) : Module.IsTorsionFree R (flatClosure B) :=
-  Function.Injective.moduleIsTorsionFree _ Subtype.coe_injective (fun _ _ => rfl)
+  inferInstance
 
 /-- **Freeness of the flat closure over a principal ideal domain.** Over a principal ideal
-domain `R`, for a field `F` that is an `R`-algebra and an `R`-algebra `G` that is finite and
-torsion-free as an `R`-module, the flat closure of an `F`-subalgebra of `F ⊗[R] G` is a free
-`R`-module. -/
+domain `R`, for a field `F` that is an `R`-algebra and a commutative `R`-algebra `G` that is
+finite and torsion-free as an `R`-module, the flat closure of an `F`-subalgebra of `F ⊗[R] G`
+is a free `R`-module. -/
 theorem flatClosure_free [IsDomain R] [IsPrincipalIdealRing R]
     [Module.Finite R G] [Module.IsTorsionFree R G]
     (B : Subalgebra F (F ⊗[R] G)) : Module.Free R (flatClosure B) := by
@@ -92,9 +92,9 @@ theorem flatClosure_free [IsDomain R] [IsPrincipalIdealRing R]
   exact Module.free_of_finite_type_torsion_free'
 
 /-- **Flatness of the flat closure over a principal ideal domain.** Over a principal ideal
-domain `R`, for a field `F` that is an `R`-algebra and an `R`-algebra `G` that is finite and
-torsion-free as an `R`-module, the flat closure of an `F`-subalgebra of `F ⊗[R] G` is a flat
-`R`-module. -/
+domain `R`, for a field `F` that is an `R`-algebra and a commutative `R`-algebra `G` that is
+finite and torsion-free as an `R`-module, the flat closure of an `F`-subalgebra of `F ⊗[R] G`
+is a flat `R`-module. -/
 theorem flatClosure_flat [IsDomain R] [IsPrincipalIdealRing R]
     [Module.Finite R G] [Module.IsTorsionFree R G]
     (B : Subalgebra F (F ⊗[R] G)) : Module.Flat R (flatClosure B) := by
