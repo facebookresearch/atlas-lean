@@ -35,7 +35,9 @@ universe u v w
 
 variable {C : Type u} [Category.{v} C]
 
-private theorem injective_discrete_of_obj {I : Type w} [HasPullbacks C]
+/-- A discrete diagram of injective objects is injective when the value category
+has pullbacks. The extension through a monomorphism is formed componentwise. -/
+theorem injective_discrete_of_obj {I : Type w} [HasPullbacks C]
     (D : Discrete I ⥤ C) (hD : ∀ i, Injective (D.obj i)) : Injective D where
   factors g f _ := by
     have (i : Discrete I) : Injective (D.obj i) := hD i
