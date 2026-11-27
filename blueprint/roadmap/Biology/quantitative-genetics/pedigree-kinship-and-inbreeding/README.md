@@ -65,5 +65,9 @@
 - [Trivial ancestral path](singleton-mem-anc-paths.md)
 - [Wright's path formula for kinship](kinship-eq-sum-paths.md)
 - [Wright's path formula for the inbreeding coefficient](inbreeding-eq-sum-paths.md)
+- [Double half cousins with inbred founders realize every admissible IBD point](double-half-cousins-realize-admissible-ibd-coefficients.md)
+- [Generalized kinship boundary values for inbred founders](generalized-kinship-boundary-values-for-inbred-founders.md)
+- [Every kinship coefficient is realized by half cousins with an inbred founder](half-cousin-kinship-with-inbred-founder.md)
+- [Subdivision of the admissible IBD region by double-half-cousin separations](ibd-triangle-subdivision-by-half-cousin-separations.md)
 
 ## The inverse relationship matrix

@@ -10,7 +10,7 @@
 - [Composite likelihoods for genetic data and their uncertainty](composite-likelihood-and-uncertainty.md)
 - [Simulating the variable-size coalescent by a time change](simulation-correctness.md)
 - [Expected spectra on demographic graphs by dynamic programming (momi2)](momi-demographic-graph-recursions.md)
-- [Simulation-based fitting of site-frequency spectra (fastsimcoal2)](fastsimcoal-and-simulation-based-fitting.md)
+- [Multi-population composite likelihoods and conditional maximization in fastsimcoal2](fastsimcoal-and-simulation-based-fitting.md)
 - [Demographic inference from segments of identity by descent](ibd-segment-demographic-inference.md)
 - [Effect of polarization error on the site-frequency spectrum](polarization-error.md)
 - [Ascertainment conditioning in site-frequency likelihoods](ascertainment-conditioning.md)

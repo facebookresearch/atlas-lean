@@ -4,7 +4,7 @@ Quantities computed from an estimated genealogy are conditional expectations or 
 
 ## Depends on
 
-- [Duality between site and branch statistics](site-versus-branch-statistics.md)
+- [Site and branch statistics of a tree sequence and their duality](../../site-and-branch-statistics-duality/site-and-branch-statistics.md)
 
 ## Expansion
 

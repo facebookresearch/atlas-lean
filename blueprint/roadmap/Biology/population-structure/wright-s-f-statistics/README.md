@@ -1,4 +1,6 @@
 # Wright's F-statistics
 
 - [Wright's hierarchical F-statistics identity](hierarchical-f-statistics.md)
-- [Weir–Cockerham estimator of F_ST as a ratio of unbiased estimators](weir-cockerham-theta-estimator-as-a-ratio-of-unbiased-estimators.md)
+- [Weir–Cockerham estimator of $\theta$ (moment estimator of $F_{ST}$)](weir-cockerham-theta-estimator.md)
+- [Weir–Cockerham variance components of allele frequencies](weir-cockerham-variance-components.md)
+- [Weir–Cockerham estimator of $F_{ST}$ from allele samples as a ratio of unbiased estimators](weir-cockerham-theta-estimator-as-a-ratio-of-unbiased-estimators.md)

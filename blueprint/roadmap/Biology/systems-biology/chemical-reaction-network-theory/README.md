@@ -1,7 +1,7 @@
 # Chemical reaction network theory
 
 - [Persistence of weakly reversible systems with two-dimensional stoichiometric subspace](persistence-of-weakly-reversible-systems-with-two-dimensional-stoichiometric-subspace.md)
-- [Persistence in two-dimensional stoichiometric subspaces: further results](persistence-of-weakly-reversible-systems-with-two-dimensional-stoichiometric-subspace-further-results.md)
+- [Persistence of $\kappa$-variable lower-endotactic systems with two-dimensional stoichiometric subspace](persistence-of-weakly-reversible-systems-with-two-dimensional-stoichiometric-subspace-further-results.md)
 - [Weakly reversible mass-action systems have positive steady states](existence-of-positive-steady-states-for-weakly-reversible-mass-action.md)
 - [Permanence of two-species endotactic mass-action systems](permanence-of-two-species-endotactic-mass-action-systems.md)
 - [Strongly endotactic networks are permanent](strongly-endotactic-networks-are-permanent.md)
@@ -13,7 +13,7 @@
 - [Deficiency one theorem](feinberg-deficiency-one-theorem.md)
 - [Species–reaction graph criterion for unique equilibria (Craciun–Feinberg)](species-reaction-graph-theorem-craciun-feinberg-ii.md)
 - [Criterion for toric steady states](toric-steady-states-criterion-perez-millan-dickenstein-shiu-conradi.md)
-- [A degree-theory criterion for unique versus multiple equilibria](degree-theory-criterion-for-unique-vs-multiple-equilibria-conradi-feli.md)
-- [Minimal siphons via primary decomposition](minimal-siphons-via-primary-decomposition-shiu-sturmfels.md)
+- [Degree-theory criterion for unique versus multiple equilibria through a positive parametrization](degree-theory-criterion-for-unique-vs-multiple-equilibria-conradi-feli.md)
+- [Relevant minimal siphons via primary decomposition of saturations](minimal-siphons-via-primary-decomposition-shiu-sturmfels.md)
 - [Multisite phosphorylation](multisite-phosphorylation/README.md)
 - [Kinetic proofreading](kinetic-proofreading/README.md)

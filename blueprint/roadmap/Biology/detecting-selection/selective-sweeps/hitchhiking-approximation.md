@@ -1,6 +1,11 @@
-# The hitchhiking approximation of a selective sweep
+# Reduction of neutral heterozygosity by a selective sweep
 
-When a favoured allele sweeps through a population, a neutral allele present only on the haplotype in which the favoured allele arose increases in frequency with it (hitchhiking). Without recombination the neutral allele is carried to fixation; with recombination fraction $r$ between the loci, recombination moves gene copies between the favoured and the other haplotypes during the sweep, and the neutral allele stops short of fixation. In the deterministic sweep with selection coefficient $s$, the final frequency of the hitchhiking allele depends almost entirely on the ratio $s/r$ (Maynard Smith and Haigh 1974; Thomson 1977; as presented by Felsenstein, Theoretical Evolutionary Genetics, Ch. VIII). The target is the deterministic two-locus sweep model, the escape of a lineage from the favoured background by recombination, and a theorem on the resulting reduction of neutral heterozygosity in terms of $r/s$ and the duration of the sweep, with the stochastic beginning and end of the sweep treated explicitly; the existing selective-sweep pages are the coalescent side of the same model.
+When a favoured allele sweeps through a population, a neutral allele linked to it changes in frequency with it (hitchhiking). The deterministic two-locus sweep model and the final neutral frequency are the [Maynard Smith–Haigh hitchhiking recursion](maynard-smith-haigh-exact-hitchhiking-recursion.md), with its dependence on the ratio of recombination fraction to selection coefficient in the [logarithmic approximation](maynard-smith-haigh-log-approximation.md), and the escape of a lineage from the favoured background by recombination is the [probability that a neutral lineage stays linked during a deterministic sweep](hitchhiking-deterministic-escape-probability.md). Neither gives a conclusion about heterozygosity at the neutral locus. The target is a theorem on the reduction of neutral heterozygosity by a sweep with selection coefficient $s$ at recombination fraction $r$, in terms of $r/s$ and the duration of the sweep, with the stochastic beginning and end of the sweep treated explicitly (Maynard Smith and Haigh 1974; Thomson 1977; as presented by Felsenstein, Theoretical Evolutionary Genetics, Ch. VIII); the existing selective-sweep pages are the coalescent side of the same model.
+
+## Depends on
+
+- [Maynard Smith–Haigh hitchhiking recursion and the final neutral frequency](maynard-smith-haigh-exact-hitchhiking-recursion.md)
+- [Probability that a neutral lineage stays linked during a deterministic sweep](hitchhiking-deterministic-escape-probability.md)
 
 ## Proof depends on
 
@@ -8,10 +13,8 @@ When a favoured allele sweeps through a population, a neutral allele present onl
 
 ## Expansion
 
-1. The deterministic two-locus sweep: the [logistic trajectory](../../../Biology/detecting-selection/selective-sweeps/sweep-traj.md) of the favoured allele and the haplotype recursion with recombination fraction $r$.
-2. The final frequency of the neutral allele as a function of $s$, $r$ and the initial haplotype frequency, and its dependence on $s/r$.
-3. The stochastic sweep: the diffusion conditioned on fixation for the selected allele, and the escape probability of a sampled lineage.
-4. The reduction in heterozygosity at the neutral locus, and the relation with the coalescent description of escape from a sweep by recombination, as a separate statement.
+1. The stochastic sweep: the diffusion conditioned on fixation for the selected allele, and the escape probability of a sampled lineage.
+2. The reduction in heterozygosity at the neutral locus, and the relation with the coalescent description of escape from a sweep by recombination, as a separate statement.
 
 ## Sources
 

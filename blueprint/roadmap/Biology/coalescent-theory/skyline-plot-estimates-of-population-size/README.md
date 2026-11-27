@@ -20,8 +20,9 @@
 
 - [Canonical probability space for the skyline model](skyline-pi-measure.md)
 - [Coordinate projections form a skyline model](of-pi.md)
+- [Bayesian skyline coalescent prior](bayesian-skyline-coalescent-prior.md)
 
 ## Extensions of the skyline model
 
-- [Grouped and Bayesian skyline models](grouped-skyline-and-bayesian-skyline.md)
+- [Classical, generalized and heterochronous skyline estimates](grouped-skyline-and-bayesian-skyline.md)
 - [Smoothed skyline models: skyride and skygrid](smoothed-skyline-skyride-skygrid.md)

@@ -10,7 +10,7 @@
 - [Positivity of the sweep duration](sweep-duration-pos.md)
 - [Duration of a complete deterministic sweep](sweep-duration-full.md)
 - [Probability that a neutral lineage stays linked during a deterministic sweep](hitchhiking-deterministic-escape-probability.md)
-- [The hitchhiking approximation of a selective sweep](hitchhiking-approximation.md)
+- [Reduction of neutral heterozygosity by a selective sweep](hitchhiking-approximation.md)
 
 ## Extended haplotype homozygosity under a star-shaped sweep genealogy
 
@@ -25,3 +25,7 @@
 - [iHS as the log ratio of genealogy ages](ihs-eq-log-div.md)
 - [iHS is negative exactly when the derived allele is younger](ihs-neg-iff.md)
 - [EHH after a complete sweep](sweep-ehh-sweep-duration-full.md)
+- [Frequency-binned standardized integrated haplotype score](frequency-binned-standardized-ihs.md)
+- [Integrated EHH of an empirical haplotype sample to a homozygosity cutoff](integrated-ehh-to-a-homozygosity-cutoff.md)
+- [Maynard Smith–Haigh hitchhiking recursion and the final neutral frequency](maynard-smith-haigh-exact-hitchhiking-recursion.md)
+- [Logarithmic approximation of hitchhiking at a tightly linked neutral locus](maynard-smith-haigh-log-approximation.md)

@@ -1,10 +1,10 @@
-# Site-frequency counts in the Poisson random field are independent Poisson
+# Segregating sites in the Poisson random field form a Poisson point process
 
-In the Poisson random field model of Sawyer and Hartl (1992), new mutations arise at Poisson times, each at a new site (infinite sites, irreversible), and the frequency of each mutant follows an independent Wright–Fisher path. The expected spectrum of a sample of $n$ gene copies is $E\xi_i = \int_0^1\binom ni x^i(1 - x)^{n-i}\varphi_{\theta,\sigma}(x)\,dx$ with the Sawyer–Hartl density $\varphi_{\theta,\sigma}$, whose neutral case $\theta/x$ is obtained from the Green's function. Under these assumptions the counts $\xi_1, \dots, \xi_{n-1}$ themselves are independent Poisson random variables with these means (Sawyer and Hartl 1992, by the marking theorem); in the neutral case $\xi_i \sim \mathrm{Poisson}(\theta/i)$, independently. The target is this distributional statement: the segregating sites at stationarity form a Poisson point process in frequency space with intensity $\varphi_{\theta,\sigma}$, and the sample counts are independent Poisson by the marking theorem.
+In the Poisson random field model of Sawyer and Hartl (1992), new mutations arise at Poisson times, each at a new site (infinite sites, irreversible), and the frequency of each mutant follows an independent Wright–Fisher path. Under these assumptions the population frequencies of the segregating sites at stationarity form a Poisson point process on $(0, 1)$ with intensity $\varphi_{\theta,\sigma}(x)\,dx$, the [Sawyer–Hartl density](../../../../Biology/population-genetics/diffusion-theory/poisson-random-field-model/prf-density.md), whose neutral case $\theta/x$ is obtained from the Green's function (Sawyer and Hartl 1992). The target is this distributional statement about the population configuration; its consequence for samples, that binomial sampling turns the process into independent Poisson counts per frequency class, is stated with the likelihood in [Expected joint allele-frequency spectrum and its Poisson likelihood](../../../../Biology/population-genetics/diffusion-theory/poisson-random-field-model/expected-joint-allele-frequency-spectrum-and-poisson-likelihood.md).
 
 ## Depends on
 
-- [Expected site frequency spectrum under the Poisson random field](../../../../Biology/population-genetics/diffusion-theory/poisson-random-field-model/expected-sfs.md)
+- [Sawyer–Hartl Poisson random field density](../../../../Biology/population-genetics/diffusion-theory/poisson-random-field-model/prf-density.md)
 - [The neutral density from the Green's function](../../../../Biology/population-genetics/diffusion-theory/poisson-random-field-model/prf-density-zero-eq-neutral-green.md)
 
 ## Expansion
@@ -12,7 +12,6 @@ In the Poisson random field model of Sawyer and Hartl (1992), new mutations aris
 1. The influx model: a Poisson process of mutation origins in time with independent diffusion paths, each started at frequency $1/(2N)$.
 2. The occupation density: for the neutral diffusion, $G(p, x) = 2p/x$ for $x > p$ and $2(1 - p)/(1 - x)$ for $x < p$, and its limit at $p = 1/(2N)$.
 3. The stationary Poisson random field with intensity $\theta/x$, $\theta = 4N\mu$, and its infinite total mass.
-4. Sample counts as independent Poisson variables by the marking theorem, and the [expected site frequency spectrum under the Poisson random field](../../../../Biology/population-genetics/diffusion-theory/poisson-random-field-model/expected-sfs.md) and [neutral spectrum](../../../../Biology/population-genetics/diffusion-theory/poisson-random-field-model/expected-sfs-neutral.md).
 
 ## Sources
 

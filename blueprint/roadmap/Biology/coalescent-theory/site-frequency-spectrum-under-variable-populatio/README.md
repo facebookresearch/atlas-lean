@@ -52,7 +52,7 @@
 - [The time-changed coalescent as the limit of a Wright–Fisher model of varying size](derivation-of-the-time-changed-coalescent-from-a.md)
 - [Two bounded size histories with equal first-coalescence times](perturbing-a-constant-history-by-g-gives-two-bou.md)
 - [Time-ordered product limit for near-identity matrices](time-ordered-product-limit-for-near-identity-mat.md)
-- [Pairwise coalescence time under a variable population size](pair-coalescence-time-under-variable-size.md)
+- [Mass at infinity, density and mean of the pairwise coalescence time under a variable population size](pair-coalescence-time-under-variable-size.md)
 - [First-coalescence means of the variable-size coalescent](first-coalescence-time-under-variable-size.md)
 - [Scale invariance of coalescent time, population size and mutation rate](scale-invariance-of-coalescent-parameters.md)
 - [Clock and epoch lengths of the variable-size coalescent](deterministic-coalescent-time-change.md)
