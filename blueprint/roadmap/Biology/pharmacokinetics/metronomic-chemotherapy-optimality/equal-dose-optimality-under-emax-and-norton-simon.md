@@ -36,4 +36,5 @@ The Gompertz–Norton–Simon equation linearizes under $\log\log(\theta/L)$, wh
 
 ## Sources
 
+- Luis A. Fernández, Cecilia Pola, Judith Sáinz-Pardo, "A mathematical justification for metronomic chemotherapy in oncology", Mathematical Modelling of Natural Phenomena 17 (2022), 12, <https://doi.org/10.1051/mmnp/2022010>. Published version of arXiv:2110.07250, cited next; locators there refer to the arXiv version.
 - Luis A. Fernández, Cecilia Pola, Judith Sáinz-Pardo, "A mathematical justification for metronomic chemotherapy in oncology", arXiv:2110.07250 (2021): Theorem 1, Proposition 1, Lemma 1, problems $(\hat P_1)$ and $(\hat P_2)$, Theorems 2–3 and Corollaries 1–2. <https://doi.org/10.48550/arXiv.2110.07250>

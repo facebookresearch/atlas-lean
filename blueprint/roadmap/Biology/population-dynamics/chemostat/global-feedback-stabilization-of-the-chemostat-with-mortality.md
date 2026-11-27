@@ -22,4 +22,5 @@ The logarithmic coordinates $x_1 = \ln\big(\mu(S^*)X/(D^*(S_{\mathrm{in}}-S))\bi
 
 ## Sources
 
+- Iasson Karafyllis, Epiphane Loko, Miroslav Krstić, Antoine Chaillet, "Global stabilisation of chemostats with nonzero mortality and substrate dynamics", International Journal of Control 99 (2026), 3122–3142, <https://doi.org/10.1080/00207179.2026.2713102>. Published version of arXiv:2502.09310, cited next; locators there refer to the arXiv version.
 - I. Karafyllis, E. Loko, M. Krstic, A. Chaillet, "Global Stabilization of Chemostats with Nonzero Mortality and Substrate Dynamics", arXiv:2502.09310 (2025), Section 2 (lumped chemostat model with mortality; Fact 1, assumption (A) and Theorem 1) and Section 5.1 (proof of Theorem 1). <https://doi.org/10.48550/arXiv.2502.09310>

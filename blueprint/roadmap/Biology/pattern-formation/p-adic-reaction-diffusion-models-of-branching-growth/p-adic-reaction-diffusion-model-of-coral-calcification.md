@@ -24,4 +24,5 @@ Because functions are locally constant on balls of radius $p^{-m}$, the Vladimir
 
 ## Sources
 
+- Angela Fuquen-Tibatá, Yuriria Cortés-Poza, J. Rogelio Pérez-Buendía, "A p-adic reaction-diffusion model of branching coral growth and calcification dynamics", Journal of Mathematical Biology 92 (2026), 27, <https://doi.org/10.1007/s00285-025-02340-8>. Published version of arXiv:2512.00755, cited next; locators there refer to the arXiv version.
 - Angela Fuquen-Tibatá, Yuriria Cortés-Poza, J. Rogelio Pérez-Buendía, "A $p$-adic Reaction--Diffusion Model of Branching Coral Growth and Calcification Dynamics", arXiv (2025). Section 2 (Vladimirov operator), Section 3 (biochemical $p$-adic model and nondimensionalization), Section 4 (discretization), appendix proposition on local well-posedness. <https://doi.org/10.48550/arXiv.2512.00755>

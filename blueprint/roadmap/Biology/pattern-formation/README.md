@@ -13,4 +13,4 @@ Reaction–diffusion models of biological spread and spatial patterning, includi
 - [Threshold for pulse initiation in excitable media](threshold-for-pulse-initiation-in-excitable-media.md)
 - [Well-posedness of the Turing reaction–diffusion system](well-posedness-of-the-turing-reaction-diffusion/README.md)
 - [Bulk-surface membrane-protein clustering](bulk-surface-membrane-protein-clustering/README.md)
-- [P adic reaction diffusion models of branching growth](p-adic-reaction-diffusion-models-of-branching-growth/README.md)
+- [$p$-adic reaction–diffusion models of branching growth](p-adic-reaction-diffusion-models-of-branching-growth/README.md)

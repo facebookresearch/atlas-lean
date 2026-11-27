@@ -1,0 +1,28 @@
+# Optimal and feedback control of epidemics
+
+Vaccination, isolation, testing, lockdown and treatment as controls of transmission models: existence and form of optimal controls, verification theorems and feedback laws.
+
+- [Age-structured economic–epidemic control](age-structured-economic-epidemic-control/README.md)
+- [Budget-constrained minimization of total incidence](budget-constrained-minimization-of-total-incidence/README.md)
+- [Commuting metapopulation SIR and optimal vaccination](commuting-metapopulation-sir-and-optimal-vaccination/README.md)
+- [Convex optimization of the reproduction number](convex-optimization-of-the-reproduction-number/README.md)
+- [Delayed case isolation in heterogeneous SIR models](delayed-case-isolation-in-heterogeneous-sir-models/README.md)
+- [Epidemic peak minimization](epidemic-peak-minimization/README.md)
+- [Feedback lockdown policies for SIR epidemics](feedback-lockdown-policies-for-sir-epidemics/README.md)
+- [Geometric programming for mobility restrictions](geometric-programming-for-mobility-restrictions/README.md)
+- [Greedy control of the ICU-constrained SIR model](greedy-control-of-icu-constrained-sir/README.md)
+- [Observer-based prediction for delayed SIR control](observer-based-prediction-for-delayed-sir-control/README.md)
+- [Online vaccine allocation with Thompson sampling](online-vaccine-allocation-with-thompson-sampling/README.md)
+- [Optimal control of HIV pre-exposure prophylaxis](optimal-control-of-hiv-pre-exposure-prophylaxis/README.md)
+- [Optimal control of infection-age-structured epidemics](optimal-control-of-infection-age-structured-epidemics/README.md)
+- [Optimal control of SIRI epidemics](optimal-control-of-siri-epidemics/README.md)
+- [Optimal control of spatial SEIRS epidemics](optimal-control-of-spatial-seirs-epidemics/README.md)
+- [Optimal vaccination and plasma transfusion](optimal-vaccination-and-plasma-transfusion/README.md)
+- [Optimal vaccination under weekly vaccine supply](optimal-vaccination-under-weekly-vaccine-supply/README.md)
+- [Periodic mechanical control of mosquito breeding sites](periodic-mechanical-control-of-mosquito-breeding-sites/README.md)
+- [Reaction–diffusion HIV/AIDS treatment control](reaction-diffusion-hiv-aids-treatment-control/README.md)
+- [Regional quarantine control of reaction–diffusion epidemics](regional-quarantine-control-of-reaction-diffusion-epidemics/README.md)
+- [Stochastic control of epidemic transmission rates](stochastic-control-of-epidemic-transmission-rates/README.md)
+- [Testing-rate control of the SIDUR model](testing-rate-control-of-the-sidur-model/README.md)
+- [Vaccine allocation at high reproduction numbers](vaccine-allocation-at-high-reproduction-numbers/README.md)
+- [Viscosity solutions for optimal SIRS vaccination](viscosity-solutions-for-optimal-sirs-vaccination/README.md)

@@ -36,4 +36,5 @@ Positivity and the invariance $S+I=1$ follow from a Lyapunov-type stopping-time 
 
 ## Sources
 
+- Ky Tran, George Yin, "Optimal control and numerical methods for hybrid stochastic SIS models", Nonlinear Analysis: Hybrid Systems 41 (2021), 101051, <https://doi.org/10.1016/j.nahs.2021.101051>. Published version of arXiv:2101.03261, cited next; locators there refer to the arXiv version.
 - K. Tran and G. Yin, "Optimal control and numerical methods for hybrid stochastic SIS models", arXiv:2101.03261 (2021), Section 2 (model, Theorem 2.1, cost and HJB equation), Section 3 (Markov chain approximation; Theorems 3.5 and 3.6) and Section 4 (vaccination model; Theorems 4.1 and 4.2), <https://doi.org/10.48550/arXiv.2101.03261>.

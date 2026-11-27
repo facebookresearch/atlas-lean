@@ -1,0 +1,28 @@
+# Run statistics and effective transport of a cargo carried by two nonidentical motors
+
+**Setting.** A cargo is attached to two cooperative but different motors (e.g. kinesin-1 and kinesin-2), each of which binds to and unbinds from a microtubule. In a scale-separated limit (detached motors fastest, then the cargo, then the attached motors) the system coarse-grains to a continuous-time Markov chain on attachment states $\{(1,2),(1),(2),\emptyset\}$ with effective, configuration-averaged switching rates, while the cargo position $M$ drifts and diffuses within each state. Starting from both motors attached, a run consists of $N+1$ *cycles*: excursions from state $(1,2)$ until the next return to $(1,2)$ or the final complete detachment $\emptyset$. Let $(\Delta T^j,\Delta M^j)$ be the i.i.d. durations and cargo displacements of the cycles, $N$ (geometric) the number of completed detachment–reattachment cycles, $T=\sum_{j=1}^{N+1}\Delta T^j$ the run time and $M_\emptyset=\sum_{j=1}^{N+1}\Delta M^j$ the run length.
+
+**Proposition (run time and length).** By Wald's first and second identities,
+
+$$\mathbb E T=\mathbb E[N+1]\,\mu_{\Delta T},\qquad \mathbb E M_\emptyset=\mathbb E[N+1]\,\mu_{\Delta M},$$
+
+$$\operatorname{Var}T=\mathbb E[N+1]\,\sigma^2_{\Delta T}+\operatorname{Var}(N+1)\,\mu^2_{\Delta T},\qquad \operatorname{Var}M_\emptyset=\mathbb E[N+1]\,\sigma^2_{\Delta M}+\operatorname{Var}(N+1)\,\mu^2_{\Delta M},$$
+
+and $\operatorname{Cov}(T,M_\emptyset)=\mathbb E[N+1]\sigma_{\Delta T,\Delta M}+\operatorname{Var}(N+1)\mu_{\Delta T}\mu_{\Delta M}$.
+
+**Proposition (effective velocity and diffusivity).** For the *ensemble* (pooled-run) statistics,
+
+$$V_{\rm pool}=\frac{\mu_{M_\emptyset}}{\mu_T}=\frac{\mu_{\Delta M}}{\mu_{\Delta T}},\qquad D_{\rm pool}=\frac{V_{\rm pool}^2\sigma^2_T+\sigma^2_{M_\emptyset}-2V_{\rm pool}\sigma_{T,M_\emptyset}}{2\mu_T}=\frac{V_{\rm pool}^2\sigma^2_{\Delta T}+\sigma^2_{\Delta M}-2V_{\rm pool}\sigma_{\Delta T,\Delta M}}{2\mu_{\Delta T}} ,$$
+
+and the *long-run* velocity and diffusivity of a cargo that reattaches after complete detachment are given by the renewal–reward formulas $V_{\rm run}=\mu_{\Delta\hat M}/\mu_{\Delta\hat T}$ and $D_{\rm run}=(V_{\rm run}^2\sigma^2_{\Delta\hat T}+\sigma^2_{\Delta\hat M}-2V_{\rm run}\sigma_{\Delta\hat T,\Delta\hat M})/(2\mu_{\Delta\hat T})$ over full renewal cycles $(\Delta\hat T,\Delta\hat M)$. All cycle moments are explicit in the effective nondimensional rates and single-motor velocities.
+
+**Corollary.** For two identical motors $V_{\rm pool}=V_{\rm run}$ and $|D_{\rm pool}-D_{\rm run}|\le 1/(8\mu_{\Delta T})$; for nonidentical motors the two notions of velocity can differ.
+
+## Expansion
+
+The run is a sum of a stopped number of i.i.d. cycle increments, with $N+1$ a stopping time for the cycle filtration, which is exactly the setting of Wald's identities. The effective diffusivity $D=\lim\operatorname{Var}(M_t-Vt)/(2t)$ of a renewal–reward process equals the variance of the centered cycle reward $\Delta M-V\Delta T$ divided by twice the mean cycle length, which expands to the stated quadratic form. The scale separation allows the attachment rates to be computed by averaging over the quasi-stationary spring extension, so that force-dependent detachment and the different stepping speeds of the two motor types enter only through a few effective parameters.
+
+## Sources
+
+- Joseph J. Klobusicky, John Fricks, Peter R. Kramer, "Effective behavior of cooperative and nonidentical molecular motors", Research in the Mathematical Sciences 7 (2020), 29, <https://doi.org/10.1007/s40687-020-00230-7>. Published version of arXiv:2007.02169, cited next; locators there refer to the arXiv version.
+- J. J. Klobusicky, J. Fricks, P. R. Kramer, "Effective behavior of cooperative and nonidentical molecular motors", arXiv:2007.02169 (2020), Section on transport statistics: Proposition 1 (run length and time), Proposition 2 (velocity and diffusivity), Corollary 1 and Proposition 3 (explicit cycle statistics). <https://doi.org/10.48550/arXiv.2007.02169>

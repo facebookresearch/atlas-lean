@@ -29,4 +29,5 @@ The index distributes the length of each edge $e$ among the leaves below it in p
 
 ## Sources
 
+- Kristina Wicke, Mareike Fischer, "Phylogenetic diversity and biodiversity indices on phylogenetic networks", Mathematical Biosciences 298 (2018), 80–90, <https://doi.org/10.1016/j.mbs.2018.02.005>. Published version of arXiv:1706.05279, cited next; locators there refer to the arXiv version.
 - Kristina Wicke and Mareike Fischer, "Phylogenetic diversity and biodiversity indices on phylogenetic networks", arXiv:1706.05279 (2017), Section 2 (inheritance probabilities, Definitions 1-4, Theorem 1), Section 3 (Definitions 5-8, Proposition 1), Section 4 (Definitions 9-12 and the remarks after Definition 12), <https://doi.org/10.48550/arXiv.1706.05279>. Published in Mathematical Biosciences (2018).

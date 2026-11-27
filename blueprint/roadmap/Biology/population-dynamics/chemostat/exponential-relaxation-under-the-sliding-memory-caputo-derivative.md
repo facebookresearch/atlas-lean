@@ -24,4 +24,5 @@ Substituting $z(0)e^{-\lambda t}$ and setting $u = t - \tau$ gives ${}^{\mathrm{
 
 ## Sources
 
+- Kareem T. Elgindy, Muneerah Al Nuwairan, Liew Siaw Ching, "Periodic fractional control in bioprocesses for clean water and ecosystem health", AIMS Mathematics 11 (2026), 1712–1760, <https://doi.org/10.3934/math.2026072>. Published version of arXiv:2508.01022, cited next; locators there refer to the arXiv version.
 - K. T. Elgindy, M. Al Nuwairan, L. S. Ching, "Periodic Fractional Control in Bioprocesses for Clean Water and Ecosystem Health", arXiv:2508.01022 (2025), Appendix C, Lemma 3 and Theorem 4 (local stability of the equilibrium). <https://doi.org/10.48550/arXiv.2508.01022>
