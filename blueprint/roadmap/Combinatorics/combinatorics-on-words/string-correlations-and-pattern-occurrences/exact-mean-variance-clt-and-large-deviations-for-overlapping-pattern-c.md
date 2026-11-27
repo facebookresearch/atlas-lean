@@ -6,6 +6,8 @@ Let $H$ be a nonempty pattern of length $m \ge 1$ with stationary probability $P
 
 - [Finite-state Markov chain with a given transition matrix](../../../Probability/markov-chains/finite-markov-chains/is-finite-markov-chain.md)
 - [Ergodic finite Markov chain](../../../Probability/markov-chains/convergence-theorem-for-finite-markov-chains/is-ergodic.md)
+- [Pattern match at an offset](../../../ComputerScience/string-algorithms/string-matching-problem/match-at.md): possibly overlapping occurrences as matches at starting offsets
+- [Independence of σ-fields, random variables and events](../../../Probability/foundations/independent-events-and-random-variables/independence/independence-sigma-fields.md): independent letters in the Bernoulli model
 
 ## Proof depends on
 

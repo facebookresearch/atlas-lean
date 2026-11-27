@@ -6,6 +6,11 @@ $$F(z) = \frac{z\, AA_z}{1 + (z - q)\, AA_z},$$
 
 by solving the relations $(z - q)F(z) + zF_A(z) = z$ and $F(z) = zAA_zF_A(z)$ (equations (4.4a)–(4.4b)) for the generating function $F_A$ of strings that end with their first occurrence of $A$; he notes that the formula appears, in a different form, in earlier work of Solov'ev. For fair coin tossing the expected number of tosses until $A$ first appears is $F(2) = 2AA_2$ (Section 5.1), and for i.i.d. uniform letters from $q$ symbols the same argument gives $F(q) = q\,AA_q$; for example $6$ for the pattern $HH$, where $AA = 11$ and $AA_2 = 3$. For two distinct nonempty patterns $A \ne B$ of the same length $|A| = |B| \ge 1$ in Penney's game, with fair coin tossing (so neither pattern is a subword of the other and the game ends almost surely with exactly one of them), the odds that the player choosing $B$ wins are $(AA_2 - AB_2)/(BB_2 - BA_2)$ (equation (5.3)), a formula first proved by Conway.
 
+## Depends on
+
+- [Pattern match at an offset](../../../ComputerScience/string-algorithms/string-matching-problem/match-at.md): an occurrence of a pattern as a match at a starting offset
+- [Independence of σ-fields, random variables and events](../../../Probability/foundations/independent-events-and-random-variables/independence/independence-sigma-fields.md): i.i.d. uniform letters
+
 ## Expansion
 
 1. Definitions: correlations and autocorrelations of words and their polynomial readings (Section 3).

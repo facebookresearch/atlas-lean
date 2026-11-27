@@ -17,6 +17,8 @@ in particular $P(\lim_n M_n/\log_{1/p} n = 2) = 1$, twice the Erdős–Rényi gr
 - [Second moment method](../../../Combinatorics/probabilistic-combinatorics/first-and-second-moment-methods/measure-real-eq-zero-le-variance-div-sq.md)
 - [First Borel–Cantelli lemma for outer measures](../../../Probability/foundations/borel-cantelli-lemmas/first-borel-cantelli-lemma/measure-limsup-at-top-eq-zero.md)
 - [Perron–Frobenius theorem for primitive nonnegative matrices](../../../LinearAlgebra/special-matrices/perron-frobenius-theorem/perron-frobenius-for-primitive-nonnegative-matri.md)
+- [Functions of disjoint blocks of independent random variables](../../../Probability/foundations/independent-events-and-random-variables/pi-systems-and-independence/independent-disjoint-blocks-functions.md): match indicators on disjoint blocks of letters are independent, so their covariance vanishes (Arratia and Waterman 1985, pp. 16–17)
+- [Strong Markov property for a.s.-finite stopping times](../../../Probability/markov-chains/markov-and-strong-markov-properties/strong-markov-chain-ae-finite.md): in the Markov case (Theorem 3), restarting the chains at a return time
 
 ## Expansion
 

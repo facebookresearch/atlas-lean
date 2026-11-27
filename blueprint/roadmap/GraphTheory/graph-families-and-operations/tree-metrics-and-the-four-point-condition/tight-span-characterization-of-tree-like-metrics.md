@@ -5,6 +5,7 @@ A metric space $X$ (writing $xy$ for the distance) is tree-like if its distance 
 ## Depends on
 
 - [Four-point condition](../../../GraphTheory/graph-families-and-operations/tree-metrics-and-the-four-point-condition/four-point-condition.md)
+- [Tree metric](../../../GraphTheory/graph-families-and-operations/tree-metrics-and-the-four-point-condition/is-tree-metric.md): finite tree metrics, not a definition of a general real tree
 
 ## Expansion
 

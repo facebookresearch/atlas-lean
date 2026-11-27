@@ -6,6 +6,10 @@ $$C(N, d) = 2\sum_{k=0}^{d-1}\binom{N-1}{k}$$
 
 homogeneously linearly separable dichotomies (Eq. (5)). The empty set, whose single dichotomy is vacuously separable, is excluded. The proof is by induction on $N$ and $d$, starting from $C(1, d) = 2$ (Eq. (12)), through the recursion $C(N + 1, d) = C(N, d) + C(N, d - 1)$: a dichotomy of the old points extends to the new point $x_{N+1}$ in both ways exactly when it is separable by a $w$ orthogonal to $x_{N+1}$, which reduces the count to $d - 1$ dimensions. Consequently a uniformly random dichotomy of $N$ points in general position is separable with probability $C(N, d)/2^N$, which equals $1$ for $N \le d$ and, by the symmetry $\binom{2d-1}{k} = \binom{2d-1}{2d-1-k}$, equals $1/2$ at $N = 2d$; the source calls $2d$ the separating capacity of a homogeneous linear threshold function with $d$ degrees of freedom.
 
+## Depends on
+
+- [Linearly independent family](../../../../LinearAlgebra/bases-and-dimension/bases-and-coordinates/bases/linear-independent.md): general position: every subset of at most $d$ vectors is linearly independent
+
 ## Expansion
 
 1. Definitions: homogeneous linear threshold functions, separable dichotomies and general position.
