@@ -13,6 +13,10 @@ $\lambda z_1 \dots z_p.\, \mathbf{0}$ for $x$ and $\lambda z_1 \dots z_q.\, \mat
 - [Böhm transformations](bohm-transformations.md)
 - [Applicators keep normal terms normalizable](applicators-make-normal-terms-normalizable.md)
 
+## Proof depends on
+
+- [Applicators keep normal terms normalizable](applicators-make-normal-terms-normalizable.md)
+
 ## Sources
 
 - J.-L. Krivine, *Lambda-Calculus, Types and Models*, translated from the French by R. Cori, revised online edition, 2011, <https://www.irif.fr/~krivine/articles/Lambda.pdf>: Chapter 5, Lemma 5.10 and its proof.

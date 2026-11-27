@@ -14,6 +14,10 @@ typed λ-terms.
 - [Simple type assignment à la Curry](../../simply-typed-lambda-calculus/decision-problems-for-simple-types/simple-type-assignment-a-la-curry.md)
 - [β-reduction](../../untyped-lambda-calculus/beta-reduction-and-confluence/beta-reduction.md)
 
+## Proof depends on
+
+- [A CPS translation of λΔ](a-cps-translation-of-lambda-delta.md)
+
 ## Expansion
 
 This page becomes ready once:

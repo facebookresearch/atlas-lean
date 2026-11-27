@@ -21,6 +21,7 @@ So the standard model is a weakly initial fully abstract model; products of full
 ## Proof depends on
 
 - [Finite elements are definable in PCF with the parallel conditional](finite-elements-are-definable-with-parallel.md)
+- [Full abstraction of PCF with the parallel conditional](full-abstraction-of-pcf-with-the-parallel.md)
 
 ## Sources
 

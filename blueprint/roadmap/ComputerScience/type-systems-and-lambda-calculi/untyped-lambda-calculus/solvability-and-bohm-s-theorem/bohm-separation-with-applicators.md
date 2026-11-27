@@ -20,6 +20,7 @@ arguments (Lemma 5.5 of the source), in which any free variables are replaced by
 
 - [Separating head normal forms of different shape](separating-head-normal-forms-of-different-shape.md)
 - [Church–Rosser theorem for βη-reduction](../beta-reduction-and-confluence/church-rosser-theorem-for-beta-eta-reduction.md)
+- [Applicators keep normal terms normalizable](applicators-make-normal-terms-normalizable.md)
 
 ## Sources
 

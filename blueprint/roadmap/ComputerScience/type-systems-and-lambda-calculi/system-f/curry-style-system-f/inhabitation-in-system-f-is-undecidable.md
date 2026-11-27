@@ -8,6 +8,10 @@ propositional logic, which is undecidable (Löb, 1976).
 
 - [Curry–Howard correspondence for second-order propositional logic](curry-howard-correspondence-for-second-order-logic.md)
 
+## Proof depends on
+
+- [Curry–Howard correspondence for second-order propositional logic](curry-howard-correspondence-for-second-order-logic.md)
+
 ## Expansion
 
 This page becomes ready once:

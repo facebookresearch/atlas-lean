@@ -15,6 +15,10 @@ use in Proposition 4.3.7 needs.
 - [The Amadio–Cardelli subtyping algorithm](the-amadio-cardelli-subtyping-algorithm.md)
 - [Canonical forms and regular systems of equations](canonical-forms-and-regular-systems-of-equations.md)
 
+## Proof depends on
+
+- [Canonical forms and regular systems of equations](canonical-forms-and-regular-systems-of-equations.md)
+
 ## Sources
 
 - R. M. Amadio and L. Cardelli, "Subtyping recursive types", *ACM Transactions on Programming Languages and Systems* 15(4):575–631, 1993, <http://lucacardelli.name/Papers/SRT.pdf>: Section 3.4 (positive and negative paths), Section 4.1 (Proposition 4.1.5, representation by root variables of canonical systems), Section 4.3, Lemma 4.3.6 (faithfulness of $\le_A$ w.r.t. paths) and Proposition 4.3.7 (completeness of $\le_A$).

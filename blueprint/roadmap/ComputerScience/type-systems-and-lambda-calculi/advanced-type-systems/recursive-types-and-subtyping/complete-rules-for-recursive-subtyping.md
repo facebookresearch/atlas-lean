@@ -19,6 +19,7 @@ Write $\alpha \le_R \beta$ if $\emptyset \supset \alpha \le \beta$ is derivable.
 ## Proof depends on
 
 - [Correctness of the Amadio–Cardelli subtyping algorithm](correctness-of-the-amadio-cardelli-subtyping-algorithm.md)
+- [Complete rules for equality of recursive types](complete-rules-for-recursive-type-equality.md)
 
 ## Sources
 
