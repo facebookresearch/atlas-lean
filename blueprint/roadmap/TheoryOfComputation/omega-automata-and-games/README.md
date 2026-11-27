@@ -24,3 +24,4 @@ Büchi, generalized Büchi, parity, Rabin, Streett and Muller automata on infini
 
 - [Reactive synthesis](reactive-synthesis/README.md)
 - [Randomized quasipolynomial computation of the mean-payoff winning set](randomized-quasipolynomial-mean-payoff-winning-set.md)
+- [Probabilistic Büchi automata](probabilistic-buchi-automata/README.md)
