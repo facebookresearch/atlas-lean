@@ -28,3 +28,18 @@ example (n : ℕ) (hn : 1 ≤ n) (hle : n ≤ 11) :
 example : ∀ n : ℕ, (ArithmeticFunction.id : ArithmeticFunction ℂ) n = n :=
   multiplicative_nonagonal_additive_eq_id _ isMultiplicative_id.natCast
     (fun a b _ _ _ _ ↦ Nat.cast_add a b)
+
+-- Exponent zero: the public induction hypothesis only asks for the value at zero.
+example (f : ArithmeticFunction ℂ) (hf : f.IsMultiplicative)
+    (hadd : ∀ a b : ℕ, 0 < a → 0 < b →
+      (∃ m : ℤ, 2 * (a : ℤ) = m * (7 * m - 5)) → (∃ m : ℤ, 2 * (b : ℤ) = m * (7 * m - 5)) →
+        f (a + b) = f a + f b) : f 1 = 1 := by
+  simpa using multiplicative_nonagonal_additive_two_pow f hf hadd 0 (by
+    intro n hn
+    have hn0 : n = 0 := by omega
+    simp [hn0])
+
+-- The natural inclusion meets the hypotheses at the power 2 ^ 4 = 16.
+example : (ArithmeticFunction.id : ArithmeticFunction ℂ) 16 = 16 :=
+  multiplicative_nonagonal_additive_two_pow _ isMultiplicative_id.natCast
+    (fun a b _ _ _ _ ↦ Nat.cast_add a b) 4 (fun _ _ ↦ rfl)
