@@ -56,3 +56,5 @@
 - [Rare events in bacterial genotype histograms](rare-events-in-bacterial-genotype-histograms/README.md)
 - [Mutation burden after a population bottleneck](mutation-burden-after-a-population-bottleneck/README.md)
 - [Sheltered load around a balanced polymorphism](sheltered-load-around-a-balanced-polymorphism/README.md)
+- [Muller's ratchet with compensatory mutations](mullers-ratchet-with-compensatory-mutations/README.md)
+- [Replicator-mutator dynamics and Bayesian filtering](replicator-mutator-dynamics-and-bayesian-filtering/README.md)
