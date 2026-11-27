@@ -12,7 +12,7 @@ i.e. at every vertex with at least two distinct predecessors and two distinct su
 
 **Proposition 3.** If $G$ is fully contracted, every $R$ satisfying $\Phi$ is a sufficient breaking set.
 
-**Proposition 4.** If moreover $G$ is a DAG without parallel edges, the minimum-cardinality solution of Eq. 2 is a sufficient breaking set of optimal (minimum) cardinality. In general any sufficient breaking set must disconnect sources from sinks, so its size is at least the minimum source-sink edge cut.
+**Proposition 4.** If moreover $G$ is a DAG without parallel edges, the minimum-cardinality solution of Eq. 2 is a sufficient breaking set of optimal (minimum) cardinality.
 
 ## Expansion
 
