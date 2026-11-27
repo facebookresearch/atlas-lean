@@ -63,8 +63,9 @@ abbrev DasguptaHierarchicalClusteringInstance := ℕ × List (ℕ × ℕ × ℕ)
 
 /-- `|leaves(T[i ∨ j])|`: descending from the root into a child (left child first) as long as
 that child's leaves contain both `i` and `j`, the number of leaves of the subtree where descent
-stops (`1` at a leaf, and `T.leaves.length` when no proper child subtree contains both; when
-`T` has distinct leaf labels, the smallest subtree whose leaves include both `i` and `j`). -/
+stops (`1` at a leaf, and `T.leaves.length` when no proper child subtree contains both; if the
+leaf labels of `T` are distinct and both `i` and `j` occur among them, the number of leaves of
+the smallest rooted subtree containing both). -/
 def lcaLeafCount : Dendrogram ℕ → ℕ → ℕ → ℕ
   | .leaf _, _, _ => 1
   | .node l r, i, j =>
