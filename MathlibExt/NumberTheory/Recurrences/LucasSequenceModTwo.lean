@@ -11,6 +11,7 @@ module
 public import Mathlib.Data.Int.ModEq
 public import MathlibExt.NumberTheory.LucasSequence
 import Mathlib.Algebra.CharP.Two
+import Mathlib.Data.Nat.Periodic
 import Mathlib.Data.ZMod.Basic
 
 /-! # Periodicity and zero indices of Lucas sequences modulo two
@@ -26,18 +27,6 @@ import Mathlib.Data.ZMod.Basic
 -/
 
 namespace MetaMathlibExt
-
-private theorem zeros_of_period (u : ℕ → ZMod 2) {k : ℕ} (hk : 0 < k)
-    (hperiod : ∀ n, u (n + k) = u n) (hsmall : ∀ j < k, u j = 0 ↔ j = 0)
-    (n : ℕ) : u n = 0 ↔ k ∣ n := by
-  have reduce (j m : ℕ) : u (j + k * m) = u j := by
-    induction m with
-    | zero => simp
-    | succ m ih => rw [Nat.mul_succ, ← Nat.add_assoc, hperiod, ih]
-  have hn := reduce (n % k) (n / k)
-  rw [Nat.mod_add_div] at hn
-  exact (congrArg (· = 0) hn).to_iff.trans
-    ((hsmall _ (Nat.mod_lt _ hk)).trans Nat.dvd_iff_mod_eq_zero.symm)
 
 /-- **Lucas sequences modulo 2.** Let $U = U(P, Q)$ be the Lucas sequence with integer parameters
 $P$ and $Q \ne 0$, let $D = P^2 - 4Q$, and suppose $2 \nmid \gcd(P, Q)$. Then $U$ is periodic
@@ -85,24 +74,24 @@ public theorem lucasU_mod_two
       (∀ n, u (n + 2) = u n) ∧ (∀ n, u n = 0 ↔ 2 ∣ n) := by
     have hp : p = 0 := hP.intCast_zmod_two
     have hq : q = 1 := hQ.intCast_zmod_two
-    have hperiod (n : ℕ) : u (n + 2) = u n := by
+    have hperiod : Function.Periodic u 2 := fun n => by
       rw [hrec, hp, hq, zero_mul, one_mul, zero_sub, CharTwo.neg_eq]
-    refine ⟨hperiod, zeros_of_period u (by decide) hperiod ?_⟩
-    intro j hj
-    have hj' : j = 0 ∨ j = 1 := by omega
-    rcases hj' with rfl | rfl <;> simp [u0, u1]
+    refine ⟨hperiod, fun n => ?_⟩
+    rw [← hperiod.map_mod_nat n, Nat.dvd_iff_mod_eq_zero]
+    have hn : n % 2 = 0 ∨ n % 2 = 1 := by omega
+    rcases hn with h | h <;> rw [h] <;> simp [u0, u1]
   have odd_odd (hP : Odd L.p) (hQ : Odd L.q) :
       (∀ n, u (n + 3) = u n) ∧ (∀ n, u n = 0 ↔ 3 ∣ n) := by
     have hp : p = 1 := hP.intCast_zmod_two
     have hq : q = 1 := hQ.intCast_zmod_two
-    have hperiod (n : ℕ) : u (n + 3) = u n := by
+    have hperiod : Function.Periodic u 3 := fun n => by
       rw [show n + 3 = (n + 1) + 2 by rfl, hrec (n + 1), hrec n, hp, hq]
       simp only [one_mul]
       rw [sub_right_comm, sub_self, zero_sub, CharTwo.neg_eq]
-    refine ⟨hperiod, zeros_of_period u (by decide) hperiod ?_⟩
-    intro j hj
-    have hj' : j = 0 ∨ j = 1 ∨ j = 2 := by omega
-    rcases hj' with rfl | rfl | rfl <;> simp [u0, u1, u2, hp]
+    refine ⟨hperiod, fun n => ?_⟩
+    rw [← hperiod.map_mod_nat n, Nat.dvd_iff_mod_eq_zero]
+    have hn : n % 3 = 0 ∨ n % 3 = 1 ∨ n % 3 = 2 := by omega
+    rcases hn with h | h | h <;> rw [h] <;> simp [u0, u1, u2, hp]
   refine ⟨?_, ?_, ?_, fun hP hQ n => (hu n).symm.trans ((odd_odd hP hQ).2 n)⟩
   · rcases Int.even_or_odd L.p with hP | hP <;> rcases Int.even_or_odd L.q with hQ | hQ
     · exact (h2 (Int.dvd_gcd (c := 2) (even_iff_two_dvd.mp hP) (even_iff_two_dvd.mp hQ))).elim
