@@ -30,8 +30,10 @@ Source: T. F. Bloom, Erdős Problems, Problem #765, https://www.erdosproblems.co
 
 `ex(n; C₄)` is Mathlib's `SimpleGraph.extremalNumber n (cycleGraph 4)`, the largest number of edges
 of a graph on `n` vertices with no copy of `C₄`. The asymptotic formula is the one
-erdosproblems.com/765 states, `ex(n; C₄) ∼ n^{3/2} / 2`. `WantedExt` already states small values and
-the projective-plane values (`FourCycleExtremalValuesWanted`), not the asymptotic. Compared with the
+erdosproblems.com/765 states, `ex(n; C₄) ∼ n^{3/2} / 2`. The small values and the projective-plane
+values, not the asymptotic, are proved in
+`MathlibExt.Combinatorics.SimpleGraph.FourCycleExtremalValues` and
+`MathlibExt.Combinatorics.SimpleGraph.FourCycleProjectivePlaneExtremal`. Compared with the
 formal-conjectures statement `ErdosProblems/765.lean` (equivalent; no code imported).
 -/
 

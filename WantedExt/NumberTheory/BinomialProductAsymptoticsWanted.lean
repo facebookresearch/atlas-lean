@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.Choose.Multinomial
 public import MathlibExt.NumberTheory.CentralBinomialProductAsymptotics
 public import MathlibExt.NumberTheory.BinomialProductAsymptoticsTendstoProdMultinomialDiv
+public import MathlibExt.NumberTheory.HirschhornConstant
 
 namespace MetaMathlibExt
 
@@ -126,26 +127,6 @@ public theorem_wanted tendsto_binomialProduct_limit_row (n : ℕ) (hn : 1 ≤ n)
       atTop (𝓝 (∏ ν ∈ Finset.Icc 1 n, (n.choose ν : ℝ))) ∧
     Tendsto (fun a : ℕ => (a : ℝ) ^ (-(x * (x + 1) / 2)) * binomialProductComparison a 1 x)
       atTop (𝓝 (Real.exp (x ^ 2 / 2 + x) / ((2 * Real.pi) ^ (x / 2) * x ^ (x / 2 + 1 / 3))))
-
-/-- **Hirschhorn's constant.** Let $A$ be the Glaisher–Kinkelin constant and $F_1$ the first
-factorial product constant. As $n \to \infty$,
-$$n^{-1/12} \prod_{k=1}^{n} \frac{k!}{\sqrt{2\pi k}\,(k/e)^k}
-\to \frac{(2\pi)^{1/4} e^{1/12}}{A^2},$$
-and this limit equals $F_1$.
-
-Hirschhorn's asymptotic expansion with divergent Bernoulli sums is not part of this statement.
-
-Source: Bernd C. Kellner, *Asymptotic Products of Binomial and Multinomial Coefficients
-Revisited*, INTEGERS 24 (2024), Article A59, Theorem 12 (Hirschhorn) and the discussion
-after it. -/
-public theorem_wanted tendsto_hirschhorn_constant :
-    Tendsto (fun n : ℕ => (n : ℝ) ^ (-(1 : ℝ) / 12) *
-        ∏ k ∈ Finset.Icc 1 n, ((k.factorial : ℝ) /
-          (Real.sqrt (2 * Real.pi * k) * ((k : ℝ) / Real.exp 1) ^ k)))
-      atTop (𝓝 ((2 * Real.pi) ^ ((1 : ℝ) / 4) * Real.exp (1 / 12) /
-        glaisherKinkelinConstant ^ 2)) ∧
-    (2 * Real.pi) ^ ((1 : ℝ) / 4) * Real.exp (1 / 12) / glaisherKinkelinConstant ^ 2 =
-      factorialProductConstant 1
 
 end
 
