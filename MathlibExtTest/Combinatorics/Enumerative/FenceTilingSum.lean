@@ -36,6 +36,30 @@ example : fenceTilingSum (2 : ℕ) 3 1 = 4 := by decide
 example : fenceTilingSum (2 : ℕ) 3 2 = 49 := by decide
 example : fenceTilingSum (2 : ℕ) 3 4 = 3025 := by decide
 
+-- Direct enumeration for odd boards, with unequal weights and with a zero weight.
+example : fenceTilingSum (2 : ℕ) 3 3 = 256 := by decide
+example : fenceTilingSum (2 : ℕ) 0 3 = 16 := by decide
+
+-- At n = 3 only the second interval contributes, and it includes the empty board.
+example {R : Type*} [CommSemiring R] (a b : R) :
+    fenceTilingSum a b 3 = a ^ 2 * fenceTilingSum a b 2 + (2 * a * b + 1) * fenceTilingSum a b 1 +
+      2 * a ^ 2 * fenceTilingSum a b 0 := by
+  have h₁ : Icc 2 ((3 - 1) / 2 : ℕ) = ∅ := by decide
+  have h₂ : Icc 1 ((3 - 1) / 2 : ℕ) = {1} := by decide
+  simpa only [h₁, h₂, sum_empty, sum_singleton, mul_zero, add_zero] using
+    fenceTilingSum_odd a b (n := 3) (by decide) (by decide)
+
+-- At n = 5 both intervals contribute; the second has two terms.
+example {R : Type*} [CommSemiring R] (a b : R) :
+    fenceTilingSum a b 5 = a ^ 2 * fenceTilingSum a b 4 + (2 * a * b + 1) * fenceTilingSum a b 3 +
+      2 * a * b * fenceTilingSum a b 1 +
+        2 * a ^ 2 * (fenceTilingSum a b 2 + fenceTilingSum a b 0) := by
+  have h₁ : Icc 2 ((5 - 1) / 2 : ℕ) = {2} := by decide
+  have h₂ : Icc 1 ((5 - 1) / 2 : ℕ) = {1, 2} := by decide
+  have h₃ : (1 : ℕ) ∉ ({2} : Finset ℕ) := by decide
+  simpa only [h₁, h₂, sum_insert h₃, sum_singleton] using
+    fenceTilingSum_odd a b (n := 5) (by decide) (by decide)
+
 -- At n = 2 both intervals are empty; at n = 4 both contribute a term.
 example {R : Type*} [CommSemiring R] (a b : R) :
     fenceTilingSum a b 2 = b ^ 2 * fenceTilingSum a b 1 + (2 * a * b + 1) * fenceTilingSum a b 0 := by

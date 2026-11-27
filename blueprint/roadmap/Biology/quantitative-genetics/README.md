@@ -25,5 +25,4 @@ The genetics of continuously varying traits: decomposition of genetic variance, 
 - [Information-theoretic quantitative genetics](information-theoretic-quantitative-genetics/README.md)
 - [Informative trait selection for multitrait QTL mapping](informative-trait-selection-for-multitrait-qtl-mapping/README.md)
 - [Translation invariance of marker coding](translation-invariance-of-marker-coding/README.md)
-- [Interval mapping of quantitative trait loci (Lander–Botstein)](lander-botstein-interval-mapping-of-quantitative-trait-loci.md)
-- [Pearson–Aitken selection formulas under linear homoscedastic regression](pearson-aitken-lawley-selection-formulas.md)
+- [Minorize–maximize REML for variance components](minorize-maximize-reml-for-variance-components/README.md)
