@@ -14,3 +14,5 @@
 - [Infixes are prefixes of suffixes](is-infix-iff-exists-is-prefix-drop.md)
 - [Suffix-tree search finds exactly the prefixes of suffixes](has-prefix-suffix-tree-iff-exists.md)
 - [Suffix-tree search finds exactly the infixes](has-prefix-suffix-tree-iff-is-infix.md)
+- [Suffix tree from the suffix array and the LCP array](suffix-tree-from-suffix-and-lcp-arrays.md)
+- [Suffix trees in linear time through suffix arrays](linear-time-suffix-tree-construction.md)
