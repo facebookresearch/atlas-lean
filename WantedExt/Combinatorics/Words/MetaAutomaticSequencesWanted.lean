@@ -20,6 +20,7 @@ public import MathlibExt.Combinatorics.Words.BalancedNestedXor
 public import MathlibExt.Combinatorics.Words.CobhamUniformMorphism
 public import MathlibExt.Combinatorics.Words.MetaAutomaticOne
 public import MathlibExt.Combinatorics.Words.MetaAutomaticTwo
+public import MathlibExt.Combinatorics.Words.MetaAutomaticTwoDigitMask
 public import MathlibExt.Combinatorics.Words.RegularSequence
 public import MathlibExt.Combinatorics.Words.RightSpecialFactors
 public import MathlibExt.Combinatorics.Words.ThueMorseQuarto
@@ -155,26 +156,6 @@ public theorem_wanted metaAutomaticTwo_digit_formula (n : ℕ) :
     metaAutomaticTwo n = decide ((∑ k ∈ Finset.range (n + 1),
       (if k % 3 = 0 then n / 4 ^ k % 4 % 2 + n / 4 ^ k % 4 / 2
         else if k % 3 = 1 then n / 4 ^ k % 4 / 2 else n / 4 ^ k % 4 % 2)) % 2 = 1)
-
-/-- **$\mathcal{M}_2$ is the Thue–Morse sequence along a binary digit mask.** For a natural
-number $m$ with binary digits $b_i = \lfloor m / 2^i \rfloor \bmod 2$, let $q(m)$ be the sum of
-$b_i 2^i$ over the $i \le m$ with $i \not\equiv 2 \pmod 3$, that is, the number obtained from $m$
-by setting its binary digits in the positions $i \equiv 2 \pmod 3$ to zero. Then for every natural
-number $n$, the meta-automatic sequence $\mathcal{M}_2$ and the Thue–Morse sequence $t$ satisfy
-$\mathcal{M}_2(n) = t(q(n))$. Moreover, writing the base-$4$ digits of $n$ as
-$d_k = \lfloor n / 4^k \rfloor \bmod 4 = 2 j_k + i_k$ with $i_k, j_k \in \{0, 1\}$, we have
-$q(n) = \sum_{k=0}^{n} d'_k 4^k$, where $d'_k = d_k$ if $k \equiv 0 \pmod 3$, $d'_k = 2 j_k$ if
-$k \equiv 1 \pmod 3$, and $d'_k = i_k$ if $k \equiv 2 \pmod 3$.
-
-Source: John M. Campbell and Benoît Cloitre, *Meta-Automatic Sequences*, Journal of
-Integer Sequences 29 (2026), Article 26.4.1, Theorem 26 (`jis-2026-26.4.1-thm-26`). -/
-public theorem_wanted metaAutomaticTwo_eq_thueMorse_mask (q : ℕ → ℕ)
-    (hq : ∀ m, q m = ∑ i ∈ (Finset.range (m + 1)).filter (fun i => i % 3 ≠ 2),
-      m / 2 ^ i % 2 * 2 ^ i) (n : ℕ) :
-    metaAutomaticTwo n = thueMorse (q n) ∧
-      q n = ∑ k ∈ Finset.range (n + 1),
-        (if k % 3 = 0 then n / 4 ^ k % 4
-          else if k % 3 = 1 then 2 * (n / 4 ^ k % 4 / 2) else n / 4 ^ k % 4 % 2) * 4 ^ k
 
 /-- **Right-special factor counts of automatic sequences are regular.** Let $k$ be a natural
 number and $a$ an infinite binary word that is $k$-automatic, and for each $n$ let

@@ -8,6 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Analysis.Asymptotics.AsymptoticEquivalent
+public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.Nat.Nth
 public import Mathlib.Data.Nat.Prime.Basic
@@ -105,8 +107,11 @@ private lemma ppr_isEquivalent_mul_log {α : Type} {l : Filter α} {u v : α →
       (fun i => v i * Real.log (v i)) :=
   h.mul (h.log hv)
 
-/-- The `n`th prime is asymptotic to `n log n`. -/
-private lemma ppr_nth_prime_isEquivalent_mul_log :
+/-- **The `n`-th prime is asymptotic to `n log n`.** With the zero-based indexing of
+`Nat.nth Nat.Prime` (so `Nat.nth Nat.Prime 0 = 2`), the `n`-th prime, cast to `ℝ`, is
+asymptotically equivalent to `n * Real.log n` along `atTop`. This is the prime number theorem
+composed with `Nat.nth Nat.Prime`. -/
+public theorem nth_prime_isEquivalent_mul_log :
     Asymptotics.IsEquivalent Filter.atTop
       (fun k : ℕ => ((Nat.nth Nat.Prime k : ℕ) : ℝ))
       (fun k : ℕ => ((k : ℕ) : ℝ) * Real.log ((k : ℕ) : ℝ)) := by
@@ -162,8 +167,8 @@ private lemma ppr_nth_prime_isEquivalent_of_isEquivalent {ι : Type} {l : Filter
     h.symm.tendsto_atTop hmR
   have hm' : Filter.Tendsto m' l Filter.atTop :=
     tendsto_natCast_atTop_iff.mp hm'R
-  have hc1 := ppr_nth_prime_isEquivalent_mul_log.comp_tendsto hm'
-  have hc2 := ppr_nth_prime_isEquivalent_mul_log.comp_tendsto hm
+  have hc1 := nth_prime_isEquivalent_mul_log.comp_tendsto hm'
+  have hc2 := nth_prime_isEquivalent_mul_log.comp_tendsto hm
   have hmul := ppr_isEquivalent_mul_log h hmR
   have e1 : ((fun k : ℕ => ((Nat.nth Nat.Prime k : ℕ) : ℝ)) ∘ m')
       =ᶠ[l] (fun i => (((Nat.nth Nat.Prime (m' i) : ℕ)) : ℝ)) :=
