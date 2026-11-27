@@ -17,6 +17,8 @@ Classical propositional logic: truth-table semantics, natural deduction and its 
 - [Davis–Putnam algorithm](davis-putnam-algorithm/README.md)
 - [Tseitin transformation](tseitin-transformation/README.md)
 - [Propositional proof complexity](propositional-proof-complexity/README.md)
+- [Soundness of unit-propagation conflicts](soundness-of-unit-propagation-conflicts/README.md)
+- [MAX-SAT: the one-half and seven-eighths bounds](max-sat-the-one-half-and-seven-eighths-bounds/README.md)
 - [Sat solving](sat-solving/README.md)
 
 - [Intuitionistic propositional logic](intuitionistic-propositional-logic/README.md)

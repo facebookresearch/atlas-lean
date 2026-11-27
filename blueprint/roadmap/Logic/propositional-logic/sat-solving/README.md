@@ -10,8 +10,6 @@ Algorithms that decide propositional satisfiability: DPLL search with learning a
 - [Final states of abstract DPLL with learning](final-states-of-abstract-dpll-with-learning.md)
 - [Termination of abstract DPLL with learning](termination-of-abstract-dpll-with-learning.md)
 - [Conflict-driven clause learning](conflict-driven-clause-learning/README.md)
-- [MAX-SAT: the one-half and seven-eighths bounds](max-sat-the-one-half-and-seven-eighths-bounds/README.md)
-- [Soundness of unit-propagation conflicts](soundness-of-unit-propagation-conflicts/README.md)
 - [Termination of CDCL without restarts or clause deletion](termination-of-cdcl-without-restarts-or-clause-d/README.md)
 - [Unit resolution and SAT-solver states](unit-resolution-and-sat-solver-states.md)
 - [Conflict clauses and asserting clauses](conflict-clauses-and-asserting-clauses.md)
