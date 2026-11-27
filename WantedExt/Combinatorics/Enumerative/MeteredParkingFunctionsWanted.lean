@@ -15,6 +15,7 @@ public import MathlibExt.Combinatorics.Enumerative.LongMeteredParkingFunctions
 public import MathlibExt.Combinatorics.Enumerative.MeteredParkingLowerBound
 public import MathlibExt.Combinatorics.Enumerative.OneMeteredParkingFunctions
 public import MathlibExt.Combinatorics.Enumerative.ParkingFunction
+public import MathlibExt.Combinatorics.Enumerative.TwoMeteredParkingFunctions
 
 namespace MetaMathlibExt
 
@@ -43,15 +44,6 @@ public theorem_wanted metered_window_count_ge {m n t : ℕ} {f : Fin m → Fin n
     t + 1 + i ≤
       (Finset.univ.filter fun k : Fin m =>
           j ≤ (k : ℕ) + 1 ∧ (k : ℕ) + 1 ≤ j + t ∧ (f k : ℕ) + 1 ≤ i).card + n
-
-/-- **Metered parking functions with two cars.** For every natural number $t \ge 1$ and every
-natural number $n$, the number of $t$-metered $(2, n)$-parking functions is
-$\mathrm{mpf}_{2,n}(t) = \max(n^2 - 1, 0)$, that is, $n^2 - 1$ for $n \ge 1$ and $0$ for $n = 0$.
-
-Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
-Functions*, INTEGERS 25 (2025), Article A73, Corollary 2 (`integers-2025-A73-cor-2`). -/
-public theorem_wanted meteredParkingCount_two {t : ℕ} (ht : 1 ≤ t) (n : ℕ) :
-    meteredParkingCount t 2 n = n ^ 2 - 1
 
 /-- **Lucky cars of 1-metered parking are the lace starts.** Let $0 < m \le n$ and let
 $\alpha = (a_1, \dots, a_m)$, with each $a_i \in \{1, \dots, n\}$, be any sequence of preferred
@@ -143,14 +135,6 @@ Functions*, INTEGERS 25 (2025), Article A73, Corollary 4 (`integers-2025-A73-cor
 public theorem_wanted meteredParkingCount_one_diag {n : ℕ} (hn : 2 < n) :
     meteredParkingCount 1 n n =
       ∑ k ∈ Finset.range (n + 1), (n - 2) ^ (n - k) * (2 * n + 1 - k).choose k
-
-/-- **1-metered parking functions with three cars.** For every natural number $n \ge 2$, the
-number of $1$-metered $(3, n)$-parking functions is $\mathrm{mpf}_{3,n}(1) = n^3 - 2n$.
-
-Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
-Functions*, INTEGERS 25 (2025), Article A73, Proposition 7 (`integers-2025-A73-prop-7`). -/
-public theorem_wanted meteredParkingCount_one_three {n : ℕ} (hn : 2 ≤ n) :
-    meteredParkingCount 1 3 n = n ^ 3 - 2 * n
 
 /-- **Metered parking functions in which every car is lucky.** Let $m \ge 2$, $n \ge 2$ and
 $t \le m - 1$. The number of $t$-metered $(m, n)$-parking functions in which every car parks in

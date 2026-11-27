@@ -17,25 +17,11 @@ public import MathlibExt.NumberTheory.ArithmeticFunction.HBCCalibrating
 public import MathlibExt.NumberTheory.ArithmeticFunction.HBCFirstElementBounds
 public import MathlibExt.NumberTheory.ArithmeticFunction.HBCHalfPrimeProductBounds
 public import MathlibExt.NumberTheory.ArithmeticFunction.OddPerfectMinFac
+public import MathlibExt.NumberTheory.ArithmeticFunction.OddPerfectHBCAdmissible
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Comparison of products of $1 - 1/x$ under prefix-product domination.** Let $k \ge 0$ and let
-$z_1 \le \dots \le z_k$ and $y_1 \le \dots \le y_k$ be real numbers, all greater than $1$, such
-that $z_1 \cdots z_l \le y_1 \cdots y_l$ for every $l$ with $0 \le l \le k$ (for $l = 0$ both sides
-are the empty product). Then $\prod_{i=1}^k (1 - 1/z_i) \le \prod_{i=1}^k (1 - 1/y_i)$, with
-equality if and only if $z_i = y_i$ for all $i$.
-
-Source: Andrew Stone, *Improved Upper Bounds for Odd Perfect Numbers -- Part I*, INTEGERS 24
-(2024), Article A114, Lemma 2 (`integers-2024-A114-lem-2`), citing its reference [4]. -/
-public theorem_wanted prod_one_sub_inv_le_of_prefix_prod_le (k : ℕ) (z y : Fin k → ℝ)
-    (hz : Monotone z) (hy : Monotone y) (hz1 : ∀ i, 1 < z i) (hy1 : ∀ i, 1 < y i)
-    (hprefix : ∀ l ≤ k, ∏ i ∈ Finset.univ.filter (fun i : Fin k => (i : ℕ) < l), z i ≤
-      ∏ i ∈ Finset.univ.filter (fun i : Fin k => (i : ℕ) < l), y i) :
-    ∏ i, (1 - 1 / z i) ≤ ∏ i, (1 - 1 / y i) ∧
-      (∏ i, (1 - 1 / z i) = ∏ i, (1 - 1 / y i) ↔ z = y)
 
 /-- **Sylvester's bound on the number of prime divisors of an odd perfect number.** Every odd
 perfect number has at least five distinct prime divisors.
@@ -146,20 +132,6 @@ public theorem_wanted hbcAdmissible_exists_prefix_le_and_prod_le (a d k : ℕ) (
           ∏ i ∈ Finset.Icc 1 κ', n i < ∏ i ∈ Finset.Icc 1 κ', (y i : ℝ)) →
         a * ∏ i ∈ Finset.Icc 1 k, (y i : ℝ) ≤
           (if κ = k then (d : ℝ) else 1) * (ακ κ ^ 2 ^ k - ακ κ ^ 2 ^ (k - 1))
-
-/-- **Stone's $\sqrt{d}$ product bound for HBC-admissible tuples.** Let $a$ and $d$ be coprime
-positive integers, let $k \ge 1$, and let $y_1 < y_2 < \dots < y_k$ be positive integers with
-$\prod_{i=1}^{k} (1 - 1/y_i) \le a/(a + d) < \prod_{i=1}^{k-1} (1 - 1/y_i)$. Put
-$\beta = (a + d)/\sqrt{d}$. Then $a \prod_{i=1}^{k} y_i \le \beta^{2^k} - \beta^{2^{k-1}}$.
-
-Source: Andrew Stone, *Improved Upper Bounds for Odd Perfect Numbers -- Part I*, INTEGERS 24
-(2024), Article A114, Corollary 1. -/
-public theorem_wanted hbcAdmissible_prod_le_sqrt (a d k : ℕ) (ha : 0 < a) (hd : 0 < d)
-    (hcop : Nat.Coprime a d) (hk : 1 ≤ k) (y : ℕ → ℕ) (hy0 : 0 < y 1) (hmono : ∀ i, 1 ≤ i → i < k → y i < y (i + 1))
-    (hle : ∏ i ∈ Finset.Icc 1 k, (1 - 1 / (y i : ℝ)) ≤ (a : ℝ) / (a + d))
-    (hlt : (a : ℝ) / (a + d) < ∏ i ∈ Finset.Icc 1 (k - 1), (1 - 1 / (y i : ℝ))) :
-    a * ∏ i ∈ Finset.Icc 1 k, (y i : ℝ) ≤
-      ((a + d) / Real.sqrt d) ^ 2 ^ k - ((a + d) / Real.sqrt d) ^ 2 ^ (k - 1)
 
 /-- **Stone's $d^{3/4}$ product bound for HBC-admissible tuples.** Let $a$ and $d$ be coprime
 positive integers, let $k \ge 2$, and let $y_1 < y_2 < \dots < y_k$ be positive integers with
