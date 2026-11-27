@@ -14,7 +14,7 @@ operator is a scalar.
 
 ## Depends on
 
-- [Pauli group, Clifford group and stabilizer states](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/pauli-group-clifford-group-and-stabilizer-states.md)
+- [The Clifford group on $n$ qubits](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/clifford-group-on-n-qubits.md)
 - [Universal gate set](../universal-gate-sets/universal-gate-set.md)
 
 ## Proof depends on

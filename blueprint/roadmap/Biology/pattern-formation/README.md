@@ -18,6 +18,7 @@ Reaction–diffusion models of biological spread and spatial patterning, includi
 - [Nonlocal multi-species advection–diffusion](nonlocal-multi-species-advection-diffusion/README.md)
 - [Reaction–diffusion on concentration-dependent growing domains](reaction-diffusion-on-concentration-dependent-growing-domains/README.md)
 - [Turing and wave instabilities in n-component systems](turing-and-wave-instabilities-in-n-component-systems/README.md)
+- [Turing instabilities for three interacting species](turing-instabilities-for-three-interacting-species/README.md)
 - [Hybrid alignment–chemotaxis particle models](hybrid-alignment-chemotaxis-particle-models/README.md)
 - [Hydrodynamic limit of chemotactic zero-range processes](hydrodynamic-limit-of-chemotactic-zero-range-processes/README.md)
 - [Morphoelastic homogenization of plant tissue growth](morphoelastic-homogenization-of-plant-tissue-growth/README.md)
