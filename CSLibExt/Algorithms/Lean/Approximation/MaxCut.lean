@@ -63,7 +63,7 @@ private lemma cut_indicator_eq (x : V → Bool) (a b : V) :
         - 2 * ((if x a then (1:ℝ) else 0) * (if x b then (1:ℝ) else 0)) := by
   cases ha : x a <;> cases hb : x b
   all_goals simp_all
-  all_goals norm_num
+  norm_num
 
 variable [Fintype V]
 

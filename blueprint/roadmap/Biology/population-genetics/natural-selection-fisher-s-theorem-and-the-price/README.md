@@ -60,3 +60,4 @@
 ## Further topics
 
 - [Fisher-information form of the fundamental theorem](fisher-information-form-of-the-fundamental-theorem/README.md)
+- [Symmetries of selection processes](symmetries-of-selection-processes/README.md)
