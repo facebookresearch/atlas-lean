@@ -23,3 +23,4 @@ reachability, Büchi, parity and Muller conditions are in [Muller, Rabin and Str
 - [Stochastic arenas, stochastic reachability games and simple stochastic games](stochastic-arenas-and-games.md)
 - [Stochastic reachability games are positionally determined](stochastic-reachability-games-are-positionally-determined.md)
 - [Stochastic reachability games reduce to simple stochastic games](stochastic-games-reduce-to-simple-stochastic-games.md)
+- [Quantitative games on pushdown and counter arenas](pushdown-quantitative-games/README.md)
