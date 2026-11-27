@@ -1,6 +1,6 @@
 # Periodic tasks are feasible on a uniform platform matching their utilizations
 
-Let $\tau = \{\tau_1, \dots, \tau_n\}$ be a periodic task system, in the sense of [global EDF scheduling](global-earliest-deadline-first-on-identical-multiprocessors.md), with utilizations $u_i = C_i/T_i \le 1$. There is a [uniform multiprocessor platform](uniform-multiprocessor-platforms.md) $\pi$ on which $\tau$ is feasible, whose fastest processor has speed $s_\pi = \max_i u_i$ and whose cumulative capacity is $S_\pi = U(\tau) = \sum_i u_i$. One such platform has one processor of speed $u_i$ for each task with $u_i > 0$: running every job of $\tau_i$ on its own processor from its arrival completes it in exactly $T_i$ time units, at its deadline.
+Let $\tau = \{\tau_1, \dots, \tau_n\}$ be a periodic task system, in the sense of [global EDF scheduling](global-earliest-deadline-first-on-identical-multiprocessors.md), with utilizations $u_i = C_i/T_i \le 1$, at least one of them positive. There is a [uniform multiprocessor platform](uniform-multiprocessor-platforms.md) $\pi$ on which $\tau$ is feasible, whose fastest processor has speed $s_\pi = \max_i u_i$ and whose cumulative capacity is $S_\pi = U(\tau) = \sum_i u_i$. One such platform has one processor of speed $u_i$ for each task with $u_i > 0$: running every job of $\tau_i$ on its own processor from its arrival completes it in exactly $T_i$ time units, at its deadline.
 
 ## Depends on
 

@@ -12,7 +12,7 @@ which is well defined because $\Pi(D, L)_n$ depends only on $D_1, \dots, D_{n-1}
 2. (minimality) every $\Pi$-regulator that maps $(A, L)$ to some $(D', L)$ has $D'_n \ge D_n$ for all $n$;
 3. $(A, L)$ is $\Pi$-regular if and only if $D = A$.
 
-For the arrival curve operator it is the packetized greedy shaper; for a leaky bucket it gives the max-plus equation of the leaky bucket shaper.
+For the arrival curve operator of an unbounded $\sigma$ with $\sigma^\downarrow(L_n) = 0$ for every $n$ it is the packetized greedy shaper; for a leaky bucket it gives the max-plus equation of the leaky bucket shaper.
 
 ## Depends on
 

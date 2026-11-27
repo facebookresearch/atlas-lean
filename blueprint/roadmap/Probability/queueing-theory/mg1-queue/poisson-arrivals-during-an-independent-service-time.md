@@ -1,6 +1,6 @@
 # Poisson arrivals during an independent service time
 
-Let $A$ be the number of points of a [Poisson process](../../point-processes/poisson-processes/is-poisson-process.md) of rate $\lambda$ in an interval of length $B$, where $B \ge 0$ is a random variable independent of the process with distribution function $F_B$ and Laplace–Stieltjes transform $\tilde B(s) = E[e^{-sB}]$. Then
+Let $A = N(B)$ be the number of points in $(0, B]$ of a [Poisson process](../../point-processes/poisson-processes/is-poisson-process.md) $N$ of rate $\lambda$, where $B \ge 0$ is a random variable independent of $N$ with distribution function $F_B$ and Laplace–Stieltjes transform $\tilde B(s) = E[e^{-sB}]$. Then
 
 $$
 P(A = n) = \int_0^\infty \frac{(\lambda t)^n}{n!} e^{-\lambda t}\, dF_B(t), \qquad E[z^A] = \tilde B(\lambda - \lambda z) \quad (|z| \le 1),

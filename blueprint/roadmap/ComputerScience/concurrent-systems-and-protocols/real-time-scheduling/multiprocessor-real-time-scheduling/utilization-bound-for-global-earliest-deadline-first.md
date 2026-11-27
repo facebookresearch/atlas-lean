@@ -8,7 +8,7 @@ $$
 
 Equivalently, $m \ge \lceil (U(\tau) - u_1)/(1 - u_1) \rceil$ processors suffice when $u_1 < 1$. For $u_1$ close to $1$ the bound approaches $1$ whatever $m$, the effect first observed by Dhall and Liu; with small task utilizations it approaches $m$.
 
-**Proof.** For $u_1 < 1$, $\tau$ is feasible on a uniform platform with $s_\pi = u_1$ and $S_\pi = U(\tau)$, and the bound says $m \ge (U(\tau) - u_1)/(1 - u_1)$, so EDF meets every deadline of the jobs of $\tau$ on $m$ unit-speed processors. For $u_1 = 1$ the bound reads $U(\tau) \le 1$, so $\tau$ has one task of utilization $1$ and the others of utilization $0$, which EDF schedules on one processor.
+**Proof.** If $U(\tau) = 0$, every job needs no execution and meets its deadline. Otherwise, for $u_1 < 1$, $\tau$ is feasible on a uniform platform with $s_\pi = u_1$ and $S_\pi = U(\tau)$, and the bound says $m \ge (U(\tau) - u_1)/(1 - u_1)$, so EDF meets every deadline of the jobs of $\tau$ on $m$ unit-speed processors. For $u_1 = 1$ the bound reads $U(\tau) \le 1$, so $\tau$ has one task of utilization $1$ and the others of utilization $0$, which EDF schedules on one processor.
 
 ## Depends on
 

@@ -8,7 +8,7 @@ In a [PGPS](packet-by-packet-generalized-processor-sharing.md) node of total rat
 
 ## Expansion
 
-This page becomes ready once its proof is stated and checked: the source quotes the result from Parekh and Gallager (1993) without proof. The proof rests on the lemma that packets arriving later do not change the relative GPS departure order of the packets already present, and uses it to show that a packet sent by PGPS after packets with later GPS finish times is delayed by at most one maximum-size packet.
+This page becomes ready once a fluid GPS model with per-packet finish times is stated: the [GPS page](../generalized-processor-sharing-offers-a-constant-rate-service-curve.md) defines GPS only by its rate guarantee. The source's proof, after Proposition 2.1.1, then needs that GPS and PGPS, both work conserving at total rate $c$, have the same busy periods. It takes the last packet $m_0$ sent by PGPS before packet $n$ whose GPS finish time is later, and notes that the packets $m_0 + 1, \dots, n$ arrived after $m_0$ started, by the PGPS selection rule. Counting the GPS service between that start and the GPS finish time of $n$ then gives the bound $L/c$.
 
 ## Sources
 

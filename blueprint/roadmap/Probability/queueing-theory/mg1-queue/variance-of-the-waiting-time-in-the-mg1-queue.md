@@ -17,6 +17,7 @@ with $E[W] = \rho E[R]/(1 - \rho)$. Both follow by differentiating the transform
 ## Proof depends on
 
 - [Moments from generating functions and Laplace–Stieltjes transforms](moments-from-generating-functions-and-laplace-stieltjes-transforms.md)
+- [Residual service time seen by a random arrival](residual-service-time-seen-by-a-random-arrival.md): the first and second moments of $R$.
 
 ## Sources
 

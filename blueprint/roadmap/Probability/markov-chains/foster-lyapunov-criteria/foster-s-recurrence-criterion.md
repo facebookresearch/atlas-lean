@@ -7,11 +7,15 @@ Let $X$ be an irreducible [Markov chain](../construction-of-markov-chains/markov
 
 Then $X$ is recurrent.
 
-**Proof idea.** Stopped at the hitting time $D$ of $F$, $f(X_{n \wedge D})$ is a nonnegative supermartingale. If the chain left every level set $\{f \le M\}$ before reaching $F$ with probability bounded away from $0$, optional stopping at the exit time $S_M$ would give $f(x) \ge M\,P_x[S_M < D]$ for every $M$; hence $F$ is reached almost surely from every state, visited infinitely often, and one of its finitely many states is recurrent.
+**Proof idea.** If from some state the chain stays forever in a finite set with positive probability, some state of that set is visited infinitely often with positive probability, so it is recurrent, and the chain is recurrent by irreducibility. Otherwise the exit time $S_M$ of every finite level set $\{f \le M\}$ is almost surely finite. Stopped at the hitting time $D$ of $F$, $f(X_{n \wedge D})$ is a nonnegative supermartingale, and optional stopping, applied to the bounded times $n \wedge D \wedge S_M$ and then letting $n \to \infty$, gives $f(x) \ge M\,P_x[S_M < D]$. Since $D = \infty$ forces $S_M < D$, $P_x[D = \infty] \le f(x)/M$ for every $M$, so $F$ is reached almost surely from every state, hence visited infinitely often, and one of its finitely many states is recurrent.
 
 ## Depends on
 
 - [Markov chain construction](../construction-of-markov-chains/markov-chain-construction.md)
+
+## Proof depends on
+
+- [Optional stopping for supermartingales](../../martingales/optional-stopping-theorem/expected-stopped-value-anti-mono.md): applied to the bounded stopping times $n \wedge D \wedge S_M$.
 
 ## Sources
 

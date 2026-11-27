@@ -1,10 +1,12 @@
 # Adaptive mixed criticality dominates static mixed criticality
 
-Under static mixed criticality, the response time of $\tau_i$ in a [dual-criticality sporadic task system](dual-criticality-sporadic-task-systems.md) is bounded by the least solution, when one exists, of
+The static mixed criticality (SMC) response-time test of a [dual-criticality sporadic task system](dual-criticality-sporadic-task-systems.md) checks, for every task $\tau_i$, that the equation
 
 $$
 R_i = C_i + \sum_{j \in hp(i)} \left\lceil \frac{R_i}{T_j} \right\rceil C_j(\min(L_i, L_j)) .
 $$
+
+has a solution and that its least solution satisfies $R_i \le D_i$; when every check passes, every job meets its deadline under the rules of SMC. This is a test, not a bound on the response time of a task that fails its check: with two tasks of one criticality, each needing one unit, the higher-priority one with period and deadline $2$ and the lower-priority one with period and deadline $1$, the least solution of $R = 1 + \lceil R/2 \rceil$ is $2$, while with synchronous releases the successive jobs of the lower task have responses $2, 3, 4, \dots$, since its earlier jobs carry in.
 
 Every sporadic task system that is schedulable under the rules and priority assignment of SMC with this test is also schedulable under the rules and priority ordering of AMC with the [AMC response-time bound](response-time-bound-for-adaptive-mixed-criticality.md), and some systems are schedulable under AMC but not SMC. The AMC equation is the SMC equation with part of the LO-criticality interference removed.
 
