@@ -13,11 +13,12 @@ Two facts replace their classical counterparts: small classical circuits give sm
 ## Depends on
 
 - [The Minimum Quantum Circuit Size Problem MQCSP](minimum-quantum-circuit-size-problem.md)
+- [BPP](../../../complexity-classes/time-and-space-complexity-classes/bpp.md)
+- [Promise-SZK and HVSZK: statistical zero-knowledge proofs for promise problems](../../../randomized-and-quantum-complexity/interactive-proofs/statistical-zero-knowledge-structure/promise-szk-and-hvszk.md)
 
 ## Proof depends on
 
 - [Chia–Chou–Zhang–Zhang: MQCSP in BQP rules out quantum-secure one-way functions](mqcsp-in-bqp-rules-out-quantum-secure-one-way-functions.md)
-- [Kabanets–Cai: if MCSP is in BPP, there are no one-way functions](../../meta-complexity-and-one-way-functions/kabanets-cai-mcsp-in-bpp-rules-out-owfs.md)
 
 ## Sources
 

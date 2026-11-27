@@ -14,11 +14,16 @@ Map a 3-CNF $\varphi$ on $n$ variables to $\psi=\mathrm{Disj}(\varphi,\mathrm{PH
 ## Depends on
 
 - [The Proof Analysis Problem PAP and analyzable proof systems](proof-analysis-problem.md)
-- [Cook–Levin theorem: SAT is NP-complete](../../../np-completeness/cook-levin/cook-levin-sat-np-complete.md)
+- [Cook–Levin theorem: SAT is NP-complete](../../../../TheoryOfComputation/np-completeness/cook-levin/cook-levin-sat-np-complete.md)
+- [Levin reductions (witness-preserving many-one reductions)](../../../../TheoryOfComputation/pseudorandomness-and-one-way-functions/cryptographic-meta-complexity/limits-of-np-hardness/levin-reductions.md)
 
 ## Proof depends on
 
-- [Arteche–Atserias–de Rezende–Khaniki: short Resolution proofs of Resolution lower bounds leak satisfying assignments](resolution-proof-analysis-is-in-fp.md)
+None.
+
+## Informally uses
+
+- [Haken's lower bound for the pigeonhole principle](../../../propositional-logic/propositional-proof-complexity/haken-s-lower-bound-for-the-pigeonhole-principle.md)
 
 ## Sources
 

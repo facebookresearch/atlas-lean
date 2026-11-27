@@ -16,6 +16,8 @@ The proof follows the GapMCSP argument with indistinguishability-secure randomiz
 - [Levin reductions (witness-preserving many-one reductions)](levin-reductions.md)
 - [Time-bounded Kolmogorov complexity K^t and Levin's Kt](../../../kolmogorov-complexity/time-bounded-kolmogorov-complexity/time-bounded-kolmogorov-complexity-and-levin-kt.md)
 - [Indistinguishability and virtual black-box obfuscation](../../../../ComputerScience/cryptography/program-obfuscation/indistinguishability-and-virtual-black-box.md)
+- [One-way function families](../../../complexity-classes/time-and-space-complexity-classes/is-one-way-function.md)
+- [Learning with errors](../../../../ComputerScience/cryptography/public-key/hardness-assumptions/learning-with-errors.md)
 
 ## Proof depends on
 
@@ -23,4 +25,4 @@ The proof follows the GapMCSP argument with indistinguishability-secure randomiz
 
 ## Sources
 
-- Noam Mazor and Rafael Pass, "Gap MCSP is not (Levin) NP-complete in Obfustopia", *39th Computational Complexity Conference (CCC 2024)*, LIPIcs, 2024, https://doi.org/10.4230/LIPIcs.CCC.2024.36; numbering from ECCC TR24-053, Revision 2, https://eccc.weizmann.ac.il/report/2024/053/revision/2/ (Theorems 1.3 and 1.4, Definition 4.1, Theorems 4.2 and 4.3, Corollary 4.4).
+- Noam Mazor and Rafael Pass, "Gap MCSP is not (Levin) NP-complete in Obfustopia", *39th Computational Complexity Conference (CCC 2024)*, LIPIcs, 2024, https://doi.org/10.4230/LIPIcs.CCC.2024.36 (Theorems 3 and 4, Definitions 5 and 27, Theorems 28 and 29, Corollary 30).

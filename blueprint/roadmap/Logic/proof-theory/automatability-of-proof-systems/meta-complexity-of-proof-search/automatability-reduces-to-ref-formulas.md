@@ -17,12 +17,12 @@ If $S$ refutes an unsatisfiable $\varphi$ in size $t$, then by the formalized co
 ## Depends on
 
 - [The Proof Analysis Problem PAP and analyzable proof systems](proof-analysis-problem.md)
-- [Automatable proof systems](../../../../Logic/proof-theory/automatability-of-proof-systems/automatable-proof-system.md)
+- [Automatable proof systems](../automatable-proof-system.md)
 
 ## Proof depends on
 
 - [Arteche–Atserias–de Rezende–Khaniki: short Resolution proofs of Resolution lower bounds leak satisfying assignments](resolution-proof-analysis-is-in-fp.md)
-- [The Atserias–Müller reduction from SAT to resolution proof size](../../../../Logic/proof-theory/automatability-of-proof-systems/am-reduction-formula.md)
+- [The Atserias–Müller reduction from SAT to resolution proof size](../am-reduction-formula.md)
 
 ## Sources
 

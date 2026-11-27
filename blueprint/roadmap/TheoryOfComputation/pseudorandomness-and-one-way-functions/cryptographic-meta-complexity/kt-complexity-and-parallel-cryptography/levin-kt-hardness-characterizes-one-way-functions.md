@@ -2,7 +2,7 @@
 
 Although computing Levin's $\mathrm{Kt}$ is EXP-hard in the worst case, its bounded-error average-case hardness over uniform inputs is equivalent to the existence of one-way functions, and hence to average-case hardness of $\mathrm{K}^p$ for some polynomial $p$.
 
-With bounded-error hardness on average taken over the uniform distribution against probabilistic polynomial-time algorithms, the following are equivalent:
+Here $\mathrm{Kt}$ and $\mathrm{K}^p$ are Ren–Santhanam's random-access measures (each bit $x_i$ is decided by $U^{d}(i,b)$, at cost $|d|+\log t$ for $\mathrm{Kt}$), and hardness on average is bounded-error hardness over the uniform distribution against probabilistic polynomial-time algorithms, exact or within an additive approximation. The following are equivalent:
 
 1. $\mathrm{Kt}$ is bounded-error hard on average.
 2. One-way functions exist.
@@ -16,7 +16,7 @@ Combined with the Liu–Pass theorem (one-way functions exist iff $\mathrm{K}^p$
 
 ## Depends on
 
-- [Time-bounded Kolmogorov complexity K^t and Levin's Kt](../../../kolmogorov-complexity/time-bounded-kolmogorov-complexity/time-bounded-kolmogorov-complexity-and-levin-kt.md)
+- [Ren–Santhanam random-access Kt and K^t, parallel variants NC^1-K^t and L-K^t, and average-case hardness](parallel-kolmogorov-complexity-and-kt-average-case-hardness.md)
 - [One-way functions exist](../../impagliazzo-s-five-worlds/owfexists.md)
 
 ## Proof depends on

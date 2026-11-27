@@ -18,12 +18,13 @@ When $\varphi$ is satisfiable it has no refutation at all, so every Resolution l
 
 ## Depends on
 
-- [The Atserias–Müller reduction from SAT to resolution proof size](../../../../Logic/proof-theory/automatability-of-proof-systems/am-reduction-formula.md)
-- [Automatable proof systems](../../../../Logic/proof-theory/automatability-of-proof-systems/automatable-proof-system.md)
+- [The Atserias–Müller reduction from SAT to resolution proof size](../am-reduction-formula.md)
+- [Automatable proof systems](../automatable-proof-system.md)
+- [The complexity class NP](../../../../TheoryOfComputation/complexity-classes/the-classes-p-np-and-conp/np.md)
 
 ## Proof depends on
 
-- [Atserias–Müller: automating resolution is NP-hard](../../../../Logic/proof-theory/automatability-of-proof-systems/atserias-muller.md)
+- [Atserias–Müller: automating resolution is NP-hard](../atserias-muller.md)
 
 ## Sources
 

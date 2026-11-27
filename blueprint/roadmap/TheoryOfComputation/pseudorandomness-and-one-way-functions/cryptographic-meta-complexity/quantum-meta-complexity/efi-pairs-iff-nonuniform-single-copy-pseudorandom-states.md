@@ -16,6 +16,7 @@ As a corollary there is an explicit universal EFI construction: EFI exist iff, f
 
 - [EFI pairs: efficient, statistically far, computationally indistinguishable states](../../microcrypt-and-quantum-one-wayness/efi-pairs.md)
 - [Haar-random states and t-copy indistinguishability](../../pseudorandom-quantum-states-and-unitaries/haar-random-states.md)
+- [Negligible functions](../../../complexity-classes/time-and-space-complexity-classes/negligible.md)
 
 ## Proof depends on
 

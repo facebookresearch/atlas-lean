@@ -7,7 +7,7 @@ For a truth table $tt\in\{0,1\}^{N}$ with $N=2^{n}$, let $\mathrm{Size}(tt)$ be 
 1. Suppose there are a constant $\epsilon>0$ and a function $q(N)=2^{o(N)}$ such that every randomized algorithm $A$ running in time $2^{\epsilon N}$ satisfies $\Pr_{tt\leftarrow U_N}[A(tt)=\mathrm{Size}(tt)]\le 1-1/q(N)$. Then there exists a one-way function.
 2. Suppose there is a weak one-way function computable in DLOGTIME with security $2^{\Omega(N)}$ against circuits. Then no non-uniform algorithm of size $2^{o(N)}$ solves MCSP on a $1-2^{-o(N)}$ fraction of inputs.
 
-These are the circuit-size analogues of the equivalence between $\mathrm{KT}$ hardness and $\mathsf{NC}^0$ one-way functions; the analogy is weaker because circuit size is only polynomially related to KT and the coding bounds for circuits are not tight.
+These are the circuit-size analogues of the equivalence between $\mathrm{KT}$ hardness and $\mathsf{NC}^0$ one-way functions, but they are not exact converses, for two reasons: there is a loss of $2^{O(N\log\log N/\log N)}$, coming from the loose bounds on maximum circuit complexity, and item 1 yields only a polynomial-time computable one-way function, while item 2 starts from a DLOGTIME-computable one.
 
 ## Expansion
 
@@ -19,12 +19,12 @@ For item 1 it suffices to build a length-preserving function that no $2^{\epsilo
 - [Circuit complexity of a Boolean function and truth tables](../../../circuit-complexity/minimum-circuit-size-problem/circuit-complexity-of-a-boolean-function.md)
 - [One-way functions exist](../../impagliazzo-s-five-worlds/owfexists.md)
 - [Weak one-way function](../../one-way-function-transformations/weak-one-way-function.md)
+- [Ren–Santhanam: exact security of weak one-way functions equals average-case circuit hardness of K^t](exact-security-weak-owfs-and-perebor-hypotheses.md)
 
 ## Proof depends on
 
 - [Conditionally entropy-preserving pseudorandom generators from one-way functions](../../meta-complexity-and-one-way-functions/conditionally-entropy-preserving-prgs.md)
 - [Degree-3 decomposable randomized encodings of log-depth computations](../../../../ComputerScience/cryptography/public-key/obfuscation-and-witness-encryption/compact-functional-encryption-to-obfuscation/nc0-randomized-encoding.md)
-- [Ren–Santhanam: exact security of weak one-way functions equals average-case circuit hardness of K^t](exact-security-weak-owfs-and-perebor-hypotheses.md)
 
 ## Sources
 

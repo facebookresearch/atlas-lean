@@ -13,7 +13,7 @@ $$
 
 - No: for every quantum circuit $C$ with at most $s$ gates on at most $n+t$ qubits there is $x$ with that quantity at most $\beta$.
 
-The thresholds exceed $1/2$ because measuring $|+\rangle$ already outputs $f(x)$ with probability $1/2$. The gap version MQCSP$_{a,b}[s,s',t]$ with $t\le s<s'\le 2^{O(n)}$ uses thresholds $2/3$ for circuits of size $s$ (yes) and $1/2$ for all circuits of size $s'$ (no). By Solovay–Kitaev, changing the universal gate set changes circuit size only by a polylogarithmic factor. MQCSP is in NP when only linearly many ancillas are allowed, and MQCSP $\in$ QCMA in general.
+The thresholds exceed $1/2$ because measuring $|+\rangle$ already outputs $f(x)$ with probability $1/2$. The gap version MQCSP$_{a,b}[s,s',t]$ with $t\le s<s'\le 2^{O(n)}$ uses thresholds $2/3$ for circuits of size $s$ (yes) and $1/2$ for all circuits of size $s'$ (no). By Solovay–Kitaev, changing the universal gate set multiplies circuit size by a factor $\mathrm{polylog}(s/\epsilon)$ at a cost of $\epsilon^{2}/2$ in the success amplitude: a size-$s$ circuit achieving $\ge 1-\delta$ yields one over the other gate set achieving $\ge 1-\delta-\epsilon^{2}/2$. MQCSP is in NP when only linearly many ancillas are allowed, and MQCSP $\in$ QCMA in general.
 
 ## Expansion
 
@@ -22,10 +22,13 @@ Unlike classical MCSP, a quantum circuit may compute $f$ only with bounded error
 ## Depends on
 
 - [The Minimum Circuit Size Problem MCSP and Gap-MCSP](../../../circuit-complexity/minimum-circuit-size-problem/minimum-circuit-size-problem.md)
+- [Universal gate set](../../../../QuantumInformation/quantum-error-correction/universal-gate-sets/universal-gate-set.md)
+- [The complexity class NP](../../../complexity-classes/the-classes-p-np-and-conp/np.md)
+- [The class QCMA of quantum verification with classical witnesses](../../../randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/witness-preserving-amplification-and-black-box-groups/quantum-classical-merlin-arthur.md)
 
 ## Proof depends on
 
-- [The class QCMA of quantum verification with classical witnesses](../../../randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/witness-preserving-amplification-and-black-box-groups/quantum-classical-merlin-arthur.md)
+None.
 
 ## Sources
 

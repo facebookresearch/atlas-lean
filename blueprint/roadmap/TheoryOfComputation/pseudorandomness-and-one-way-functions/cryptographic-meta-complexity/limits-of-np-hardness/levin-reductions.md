@@ -25,4 +25,4 @@ None.
 
 ## Sources
 
-- Noam Mazor and Rafael Pass, "Gap MCSP is not (Levin) NP-complete in Obfustopia", *39th Computational Complexity Conference (CCC 2024)*, LIPIcs, 2024, https://doi.org/10.4230/LIPIcs.CCC.2024.36; numbering from ECCC TR24-053, Revision 2, https://eccc.weizmann.ac.il/report/2024/053/revision/2/ (Definitions 2.3, 2.5 and 2.6, Remark 2.4).
+- Noam Mazor and Rafael Pass, "Gap MCSP is not (Levin) NP-complete in Obfustopia", *39th Computational Complexity Conference (CCC 2024)*, LIPIcs, 2024, https://doi.org/10.4230/LIPIcs.CCC.2024.36 (Definitions 7, 9 and 10, Remark 8).

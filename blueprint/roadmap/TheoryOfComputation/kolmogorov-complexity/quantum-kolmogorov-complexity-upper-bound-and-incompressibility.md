@@ -7,7 +7,7 @@ Let $K$ be quantum Kolmogorov complexity based on classical descriptions.
 1. **Upper bound.** For all $n$-qubit pure states $|x\rangle$, $K(|x\rangle\mid n)\le 2n+O(1)$.
 2. **Incompressibility.** For every $c$, under the uniform probability on $n$-qubit pure states, $\Pr\{|x\rangle : K(|x\rangle\mid n)\ge n-c\}\ge 1-2^{-c}$. More precisely, every orthonormal basis $|e_0\rangle,\dots,|e_{2^{n}-1}\rangle$ of the $2^{n}$-dimensional Hilbert space has at least $2^{n}(1-2^{-c})$ vectors with $K(|e_i\rangle\mid n)\ge n-c$.
 
-So, unlike the classical bound $n+O(\log n)$, the trivial description costs up to $2n$ bits, while typical states still need about $n$.
+So, unlike the classical bound $K(x\mid n)\le n+O(1)$, the trivial description costs up to $2n$ bits, while most states need at least $n-c$ bits; by a result of Gács quoted in Remark 6, most states in fact satisfy $K(|x\rangle\mid n)\ge 2n-2\log n$ up to an additive constant, so the upper bound is sharp.
 
 ## Expansion
 
@@ -19,8 +19,8 @@ For the upper bound, write $N=2^{n}$; since $\sum_i|\langle e_i|x\rangle|^{2}=1$
 
 ## Proof depends on
 
-- [Few strings have small complexity](../../../kolmogorov-complexity/incompressible-strings-and-kolmogorov-complexity/card-lt-two-pow.md)
+- [Few strings have small complexity](incompressible-strings-and-kolmogorov-complexity/card-lt-two-pow.md)
 
 ## Sources
 
-- Paul M. B. Vitányi, "Quantum Kolmogorov Complexity Based on Classical Descriptions", *IEEE Transactions on Information Theory*, 2001, https://doi.org/10.1109/18.945258; numbering from arXiv:quant-ph/0102108v2 (Theorem 3, Lemma 1, Theorem 5).
+- Paul M. B. Vitányi, "Quantum Kolmogorov Complexity Based on Classical Descriptions", *IEEE Transactions on Information Theory*, 2001, https://doi.org/10.1109/18.945258; numbering from arXiv:quant-ph/0102108v2 (Theorem 3, Lemma 1, Theorem 5, Remark 6).

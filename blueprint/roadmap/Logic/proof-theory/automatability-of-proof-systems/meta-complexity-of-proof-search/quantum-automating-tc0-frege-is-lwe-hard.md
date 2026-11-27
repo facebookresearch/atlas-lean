@@ -12,12 +12,12 @@ The quantum version of Impagliazzo's observation says that a quantum automatable
 
 ## Depends on
 
-- [Automatable proof systems](../../../../Logic/proof-theory/automatability-of-proof-systems/automatable-proof-system.md)
+- [Automatable proof systems](../automatable-proof-system.md)
+- [Learning with errors](../../../../ComputerScience/cryptography/public-key/hardness-assumptions/learning-with-errors.md)
 
 ## Proof depends on
 
-- [Automatability implies feasible interpolation for systems closed under restriction](../../../../Logic/proof-theory/automatability-of-proof-systems/automatability-implies-interpolation.md)
-- [Frege-type systems are not automatable under cryptographic assumptions](../../../../Logic/proof-theory/automatability-of-proof-systems/bpr-frege-non-automatable.md)
+- [Automatability implies feasible interpolation for systems closed under restriction](../automatability-implies-interpolation.md)
 
 ## Sources
 

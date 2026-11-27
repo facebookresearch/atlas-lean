@@ -15,10 +15,11 @@ If EFI exist, take a non-uniform 1PRS $\{|\phi_{k'}\rangle\}$ with stretch at le
 
 - [Gács quantum algorithmic entropy H and the single-copy problem GapH](gacs-quantum-algorithmic-entropy-and-gaph.md)
 - [EFI pairs: efficient, statistically far, computationally indistinguishable states](../../microcrypt-and-quantum-one-wayness/efi-pairs.md)
+- [Cavalar et al.: EFI pairs exist iff non-uniform single-copy pseudorandom states exist](efi-pairs-iff-nonuniform-single-copy-pseudorandom-states.md)
 
 ## Proof depends on
 
-- [Cavalar et al.: EFI pairs exist iff non-uniform single-copy pseudorandom states exist](efi-pairs-iff-nonuniform-single-copy-pseudorandom-states.md)
+None.
 
 ## Sources
 

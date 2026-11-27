@@ -20,7 +20,9 @@ Conditioning lets the auxiliary string $y$ carry a hidden structure, such as an 
 
 ## Depends on
 
-- [Parallel time-bounded Kolmogorov complexity and average-case hardness of KT](parallel-kolmogorov-complexity-and-kt-average-case-hardness.md)
+- [Ren–Santhanam random-access Kt and K^t, parallel variants NC^1-K^t and L-K^t, and average-case hardness](parallel-kolmogorov-complexity-and-kt-average-case-hardness.md)
+- [Probabilistic polynomial-time Turing machines](../../../../ComputerScience/cryptography/security-games/asymptotic-security/probabilistic-polynomial-time-turing-machines.md)
+- [The complexity class NP](../../../complexity-classes/the-classes-p-np-and-conp/np.md)
 
 ## Proof depends on
 

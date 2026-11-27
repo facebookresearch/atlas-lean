@@ -10,7 +10,7 @@ $$
 
 where $l(p)$ is the length of $p$; the minimizing $|z\rangle$ is the *directly computed part* and the logarithmic term the *approximation part*. **Invariance:** there is a universal machine $U$ such that for every $Q$ there is a constant $c_Q$ with $K_U(|x\rangle\mid y)\le K_Q(|x\rangle\mid y)+c_Q$ for all $|x\rangle$ and $y$. Fixing such a reference machine defines the quantum Kolmogorov complexity $K(|x\rangle\mid y)=K_U(|x\rangle\mid y)$ and $K(|x\rangle)=K_U(|x\rangle\mid\epsilon)$.
 
-**Consistency:** if $|x\rangle$ is a vector of a directly computable orthonormal basis $\mathcal B$ given $y$, then $K(|x\rangle\mid y)$ equals $\min_p\{l(p):U(p,y)=|x\rangle\}$ up to an additive $K(\mathcal B\mid y)$; in particular, on classical objects quantum Kolmogorov complexity coincides with classical prefix complexity up to an additive constant.
+**Consistency:** if $|x\rangle$ is a vector of a directly computable orthonormal basis $\mathcal B$ given $y$, then $K(|x\rangle\mid y)$ equals $\min_p\{l(p):U(p,y)=|x\rangle\}$ up to an additive $K(\mathcal B\mid y)$; in particular, with the dimension of the Hilbert space given conditionally, on classical objects quantum Kolmogorov complexity coincides with classical prefix complexity up to an additive constant.
 
 ## Expansion
 
@@ -18,7 +18,7 @@ The approximation part is the Shannon–Fano code length of $|x\rangle$ in a bas
 
 ## Depends on
 
-- [Kolmogorov complexity](../../../kolmogorov-complexity/k.md)
+- [Kolmogorov complexity](k.md)
 
 ## Proof depends on
 

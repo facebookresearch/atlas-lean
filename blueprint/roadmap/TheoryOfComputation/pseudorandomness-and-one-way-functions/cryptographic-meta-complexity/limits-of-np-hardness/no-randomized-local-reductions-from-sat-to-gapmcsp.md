@@ -14,6 +14,7 @@ First, if a language $L$ has randomized local reductions to GapMCSP, then $L$ is
 
 - [GapMCSP[s,c], GapK[s,c] and weak versus strong average-case hardness on a distribution](../../worst-case-characterizations-of-one-way-functions/gap-meta-complexity-and-weak-strong-average-case-hardness.md)
 - [Locally samplable distributions on truth tables](../../worst-case-characterizations-of-one-way-functions/locally-samplable-distributions.md)
+- [Cook–Levin theorem: SAT is NP-complete](../../../np-completeness/cook-levin/cook-levin-sat-np-complete.md)
 
 ## Proof depends on
 

@@ -2,7 +2,7 @@
 
 For security bounds $S(n)$ up to an $n^{\Theta(\log n)}$ factor, weak one-way functions secure against size-$S$ circuits exist iff $\mathrm{K}^t$ needs size-$S$ circuits to be computed on a $1-1/p(n)$ fraction of inputs; this motivates Perebor hypotheses that brute force is optimal for $\mathrm{K}^t$ and $\mathrm{KT}$.
 
-A length-preserving $f:\{0,1\}^n\to\{0,1\}^n$ is a *weak one-way function with security $S(n)$* if there is a polynomial $p$ such that every circuit $C$ of size $S(n)$ satisfies $\Pr_{x\leftarrow U_n}[C(f(x))\in f^{-1}(f(x))]\le 1-1/p(n)$.
+Here $\mathrm{K}^t$ and $\mathrm{KT}$ are Ren–Santhanam's random-access measures, in which a description lets a universal machine decide each bit $x_i$ separately. A length-preserving $f:\{0,1\}^n\to\{0,1\}^n$ is a *weak one-way function with security $S(n)$* if there is a polynomial $p$ such that every circuit $C$ of size $S(n)$ satisfies $\Pr_{x\leftarrow U_n}[C(f(x))\in f^{-1}(f(x))]\le 1-1/p(n)$.
 
 **Theorem.** Let $S$ be monotone with $S(n+O(\log^{2}n))\le S(n)\cdot n^{O(\log n)}$. The following are equivalent:
 
@@ -21,8 +21,8 @@ Both directions follow the Liu–Pass template with tight parameters. From a wea
 ## Depends on
 
 - [Weak one-way function](../../one-way-function-transformations/weak-one-way-function.md)
-- [Time-bounded Kolmogorov complexity K^t and Levin's Kt](../../../kolmogorov-complexity/time-bounded-kolmogorov-complexity/time-bounded-kolmogorov-complexity-and-levin-kt.md)
-- [Parallel time-bounded Kolmogorov complexity and average-case hardness of KT](parallel-kolmogorov-complexity-and-kt-average-case-hardness.md)
+- [Circuit complexity of a Boolean function and truth tables](../../../circuit-complexity/minimum-circuit-size-problem/circuit-complexity-of-a-boolean-function.md)
+- [Ren–Santhanam random-access Kt and K^t, parallel variants NC^1-K^t and L-K^t, and average-case hardness](parallel-kolmogorov-complexity-and-kt-average-case-hardness.md)
 
 ## Proof depends on
 

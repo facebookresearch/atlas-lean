@@ -17,12 +17,13 @@ Use a target collision-resistant hash $T:\{0,1\}^{n}\to\{0,1\}^{n-\omega(\log n)
 - [Levin reductions (witness-preserving many-one reductions)](levin-reductions.md)
 - [The Minimum Circuit Size Problem MCSP and Gap-MCSP](../../../circuit-complexity/minimum-circuit-size-problem/minimum-circuit-size-problem.md)
 - [Indistinguishability and virtual black-box obfuscation](../../../../ComputerScience/cryptography/program-obfuscation/indistinguishability-and-virtual-black-box.md)
+- [One-way function families](../../../complexity-classes/time-and-space-complexity-classes/is-one-way-function.md)
+- [The complexity class NP](../../../complexity-classes/the-classes-p-np-and-conp/np.md)
 
 ## Proof depends on
 
 - [Rompel: one-way functions yield universal one-way hash functions](../../inaccessible-entropy-and-universal-one-way-hashing/rompel-one-way-functions-yield-uowhfs.md)
-- [One-way function families](../../../complexity-classes/time-and-space-complexity-classes/is-one-way-function.md)
 
 ## Sources
 
-- Noam Mazor and Rafael Pass, "Gap MCSP is not (Levin) NP-complete in Obfustopia", *39th Computational Complexity Conference (CCC 2024)*, LIPIcs, 2024, https://doi.org/10.4230/LIPIcs.CCC.2024.36; numbering from ECCC TR24-053, Revision 2, https://eccc.weizmann.ac.il/report/2024/053/revision/2/ (Theorems 1.1, 1.2, 3.2 and 3.7, Definitions 2.8 and 3.1, Claims 3.3 and 3.4, Lemma 3.6).
+- Noam Mazor and Rafael Pass, "Gap MCSP is not (Levin) NP-complete in Obfustopia", *39th Computational Complexity Conference (CCC 2024)*, LIPIcs, 2024, https://doi.org/10.4230/LIPIcs.CCC.2024.36 (Theorems 1, 2, 19 and 24, Definitions 12 and 18, Claims 20 and 21, Lemma 23).

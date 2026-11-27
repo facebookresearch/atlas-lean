@@ -18,7 +18,11 @@ The smoothing takes a maximum, as for smoothed min-entropies: every state is $2^
 
 ## Depends on
 
-- [Quantum Kolmogorov complexity based on classical descriptions](quantum-kolmogorov-complexity.md)
+- [Kolmogorov complexity](../../../kolmogorov-complexity/k.md)
+- [Universal gate set](../../../../QuantumInformation/quantum-error-correction/universal-gate-sets/universal-gate-set.md)
+- [Trace norm and trace distance](../../../../QuantumInformation/quantum-states-distances-and-entropy/density-matrices-and-fidelity/trace-norm-and-trace-distance.md)
+- [Negligible functions](../../../complexity-classes/time-and-space-complexity-classes/negligible.md)
+- [BQP](../../../complexity-classes/time-and-space-complexity-classes/bqp.md)
 
 ## Proof depends on
 

@@ -1,8 +1,8 @@
 # Arteche–Atserias–de Rezende–Khaniki: short Resolution proofs of Resolution lower bounds leak satisfying assignments
 
-Given a CNF $\varphi$ on $n$ variables and any Resolution refutation of $\mathrm{Ref}_s(\varphi)$ with $s\ge n^{3}$, a deterministic polynomial-time algorithm extracts a satisfying assignment of $\varphi$; for $s\ge n^{2}$ a zero-error randomized algorithm does.
+Given a satisfiable CNF $\varphi$ on $n$ variables and any Resolution refutation of $\mathrm{Ref}_s(\varphi)$ with $s\ge n^{3}$, a deterministic polynomial-time algorithm extracts a satisfying assignment of $\varphi$; for $s\ge n^{2}$ a zero-error randomized algorithm does.
 
-1. $\mathrm{FPAP}_{\mathrm{Res}}[n^{3}]\in\mathsf{FP}$: there is a deterministic polynomial-time algorithm that, given $(\varphi,\pi,1^{s})$ with $s\ge n^{3}$ and $\pi$ a Resolution refutation of $\mathrm{Ref}_s(\varphi)$, outputs a satisfying assignment of $\varphi$ (or rejects if $\pi$ is not a correct refutation).
+1. $\mathrm{FPAP}_{\mathrm{Res}}[n^{3}]\in\mathsf{FP}$: there is a deterministic polynomial-time algorithm that, given $(\varphi,\pi,1^{s})$ with $s\ge n^{3}$ and $\pi$ a Resolution refutation of $\mathrm{Ref}_s(\varphi)$, outputs a satisfying assignment of $\varphi$ whenever $\varphi$ is satisfiable, and otherwise outputs $0$ as $\mathrm{FPAP}$ requires (it rejects if $\pi$ is not a correct refutation).
 2. $\mathrm{FPAP}_{\mathrm{Res}}[n^{2}]\in\mathsf{FZPP}$.
 3. Consequently there is a polynomial-time Levin reduction from search-3SAT to the Proof Size Problem for Resolution: $\varphi\mapsto\mathrm{Ref}_{n^{3}}(\varphi)$, with Pudlák's polynomial-size refutation built from a satisfying assignment in one direction and the extraction algorithm in the other.
 
@@ -15,11 +15,12 @@ First check that $\pi$ refutes $\mathrm{Ref}_s(\varphi)$. A greedy deterministic
 ## Depends on
 
 - [The Proof Analysis Problem PAP and analyzable proof systems](proof-analysis-problem.md)
+- [Levin reductions (witness-preserving many-one reductions)](../../../../TheoryOfComputation/pseudorandomness-and-one-way-functions/cryptographic-meta-complexity/limits-of-np-hardness/levin-reductions.md)
 
 ## Proof depends on
 
-- [Atserias–Müller: automating resolution is NP-hard](../../../../Logic/proof-theory/automatability-of-proof-systems/atserias-muller.md)
-- [The Atserias–Müller reduction from SAT to resolution proof size](../../../../Logic/proof-theory/automatability-of-proof-systems/am-reduction-formula.md)
+- [Atserias–Müller: automating resolution is NP-hard](../atserias-muller.md)
+- [The Atserias–Müller reduction from SAT to resolution proof size](../am-reduction-formula.md)
 
 ## Sources
 

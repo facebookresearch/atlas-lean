@@ -2,7 +2,7 @@
 
 In a non-uniform regime, Levin's $\mathrm{Kt}$ captures complexity-theoretic pseudorandomness: $\mathsf{EXP}\not\subseteq\mathsf{P/poly}$ holds iff, for every $\delta>1/2$, no polynomial-size circuits compute $\mathrm{Kt}$ on a $1-2^{-\delta n}$ fraction of inputs.
 
-A family $G_n:\{0,1\}^{\ell(n)}\to\{0,1\}^{n}$ is a *time-$t$ PRG with seed length $\ell$ against size $s$* if $G(z)$ is computable in time $t(|z|)$ and $G_n(U_{\ell(n)})$ is $1/s(n)$-indistinguishable from $U_n$ by circuits of size $s(n)$; it is *seed-extending* if $z$ is a prefix of $G(z)$. The following are equivalent:
+A family $G_n:\{0,1\}^{\ell(n)}\to\{0,1\}^{n}$ is a *time-$t$ PRG with seed length $\ell$ against size $s$* if $G(z)$ is computable in time $t(|z|)$ and $G_n(U_{\ell(n)})$ is $1/s(n)$-indistinguishable from $U_n$ by circuits of size $s(n)$; it is *seed-extending* if $z$ is a prefix of $G(z)$. Here $\mathrm{Kt}$ is Ren–Santhanam's random-access form of Levin's measure, the least $|d|+\log t$ over descriptions $d$ from which $U^{d}(i,b)$ decides every bit $x_i$ within $t$ steps. The following are equivalent:
 
 1. $\mathsf{EXP}\not\subseteq\mathsf{P/poly}$.
 2. For each $\epsilon>0$ there is a time-$2^{\ell}\mathrm{poly}(\ell)$ PRG with seed length $n^{\epsilon}$ against polynomial size.
@@ -18,7 +18,9 @@ Thus the average-case complexity of the single problem $\mathrm{Kt}$ characteriz
 
 ## Depends on
 
-- [Time-bounded Kolmogorov complexity K^t and Levin's Kt](../../../kolmogorov-complexity/time-bounded-kolmogorov-complexity/time-bounded-kolmogorov-complexity-and-levin-kt.md)
+- [Ren–Santhanam random-access Kt and K^t, parallel variants NC^1-K^t and L-K^t, and average-case hardness](parallel-kolmogorov-complexity-and-kt-average-case-hardness.md)
+- [The class EXP](../../../complexity-classes/time-and-space-complexity-classes/exp.md)
+- [Polynomial time with polynomial advice](../../../complexity-classes/time-and-space-complexity-classes/ppoly.md)
 - [Pseudorandom generators against circuits](../../derandomization/pseudorandom-generators-against-circuits.md)
 
 ## Proof depends on

@@ -21,7 +21,7 @@ Since one-way functions in $\oplus\mathsf{L}$ yield one-way functions in DLOGTIM
 
 ## Depends on
 
-- [Parallel time-bounded Kolmogorov complexity and average-case hardness of KT](parallel-kolmogorov-complexity-and-kt-average-case-hardness.md)
+- [Ren–Santhanam random-access Kt and K^t, parallel variants NC^1-K^t and L-K^t, and average-case hardness](parallel-kolmogorov-complexity-and-kt-average-case-hardness.md)
 - [One-way function families](../../../complexity-classes/time-and-space-complexity-classes/is-one-way-function.md)
 
 ## Proof depends on
