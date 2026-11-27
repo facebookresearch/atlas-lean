@@ -13,6 +13,7 @@ public import MathlibExt.Analysis.SpecialFunctions.QPochhammer
 public import MathlibExt.NumberTheory.ModularForms.JacobiTheta.NonicProduct
 public import MathlibExt.NumberTheory.ModularForms.JacobiTheta.RamanujanOneTwo
 public import MathlibExt.NumberTheory.ModularForms.JacobiTheta.RamanujanProductDifference
+public import MathlibExt.Combinatorics.Enumerative.Partition.SlaterOrderEighteenThetaRamanujanThetaEtaQuotients
 
 /-!
 # Theta-function lemmas for the order-eighteen Rogers-Ramanujan-Slater relations
@@ -20,7 +21,9 @@ public import MathlibExt.NumberTheory.ModularForms.JacobiTheta.RamanujanProductD
 Statements from A. Vanitha, M. P. Chaudhary, and Madiha Khanum, *Modular Relations for the
 Rogers-Ramanujan-Slater Type Functions of Order Eighteen with Applications to Partitions*,
 INTEGERS 24 (2024), Article A103: Section 2 (Lemmas 1-5, classical identities quoted from
-Berndt's *Ramanujan's Notebooks*) and the modular relations of Theorems 1 and 2.
+Berndt's *Ramanujan's Notebooks*) and the modular relations of Theorems 1 and 2. The theorem
+`ramanujanTheta_eta_quotients` is proved in
+`MathlibExt.Combinatorics.Enumerative.Partition.SlaterOrderEighteenThetaRamanujanThetaEtaQuotients`.
 
 Ramanujan's notation, on the open unit disk `‖q‖ < 1`:
 * `f(a, b) = ∑_{n ∈ ℤ} a^{n(n+1)/2} b^{n(n-1)/2}` is `ramanujanThetaRaw a b`;
@@ -66,33 +69,6 @@ INTEGERS 24 (2024), Article A103, Lemma 3, Equation (9) (`integers-2024-A103-lem
 public theorem_wanted ramanujanTheta_one_five {q : ℂ} (hq : ‖q‖ < 1) :
     ramanujanThetaRaw q (q ^ 5) =
       qPochhammerInfRaw (-q) (q ^ 2) * ramanujanThetaRaw (-q ^ 3) ((-q ^ 3) ^ 3)
-
-/-- **Eta-quotients of Ramanujan's theta functions.** Let $q$ be a complex number with
-$|q| < 1$. Write $(a;q)_\infty = \prod_{n \ge 0} (1 - a q^n)$ and $f_k = (q^k;q^k)_\infty$, and
-let $f(a,b) = \sum_{n \in \mathbb{Z}} a^{n(n+1)/2} b^{n(n-1)/2}$ be Ramanujan's theta function.
-Then $f(q,q) f_1^2 f_4^2 = f_2^5$, $f(q,q^3) f_1 = f_2^2$, $f(-q,-q) f_2 = f_1^2$,
-$f(-q,-q^3) f_2 = f_1 f_4$, $f(q,-q^2) f_1 f_4 = f_2^3$, $(-q;q^2)_\infty f_1 f_4 = f_2^2$ and
-$(q;q^2)_\infty f_2 = f_1$.
-
-These are the classical eta-quotients $\varphi(q) = f_2^5/(f_1^2 f_4^2)$, $\psi(q) = f_2^2/f_1$,
-$\varphi(-q) = f_1^2/f_2$, $\psi(-q) = f_1 f_4/f_2$, $f(q) = f_2^3/(f_1 f_4)$,
-$\chi(q) = f_2^2/(f_1 f_4)$ and $\chi(-q) = f_1/f_2$ with the denominators cleared, where
-$\varphi(q) = f(q,q)$, $\psi(q) = f(q,q^3)$, $f(q) = f(q,-q^2)$ and $\chi(q) = (-q;q^2)_\infty$.
-
-Source: A. Vanitha, M. P. Chaudhary, and Madiha Khanum, *Modular Relations for the
-Rogers-Ramanujan-Slater Type Functions of Order Eighteen with Applications to Partitions*,
-INTEGERS 24 (2024), Article A103, Lemma 1 (quoted from Berndt) (`integers-2024-A103-lem-1`). -/
-public theorem_wanted ramanujanTheta_eta_quotients {q : ℂ} (hq : ‖q‖ < 1) :
-    let f₁ := qPochhammerInfRaw q q
-    let f₂ := qPochhammerInfRaw (q ^ 2) (q ^ 2)
-    let f₄ := qPochhammerInfRaw (q ^ 4) (q ^ 4)
-    ramanujanThetaRaw q q * (f₁ ^ 2 * f₄ ^ 2) = f₂ ^ 5 ∧
-      ramanujanThetaRaw q (q ^ 3) * f₁ = f₂ ^ 2 ∧
-      ramanujanThetaRaw (-q) (-q) * f₂ = f₁ ^ 2 ∧
-      ramanujanThetaRaw (-q) (-q ^ 3) * f₂ = f₁ * f₄ ∧
-      ramanujanThetaRaw q (-q ^ 2) * (f₁ * f₄) = f₂ ^ 3 ∧
-      qPochhammerInfRaw (-q) (q ^ 2) * (f₁ * f₄) = f₂ ^ 2 ∧
-      qPochhammerInfRaw q (q ^ 2) * f₂ = f₁
 
 /-- **Modular relations for the order-eighteen Rogers–Ramanujan–Slater functions.** Let $q$ be
 a complex number with $0 < |q| < 1$. Write $(a;q)_\infty = \prod_{n \ge 0} (1 - a q^n)$ and

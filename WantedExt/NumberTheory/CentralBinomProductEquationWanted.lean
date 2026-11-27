@@ -17,6 +17,7 @@ public import MathlibExt.NumberTheory.CentralBinomProductEquationSmall
 public import MathlibExt.NumberTheory.CentralBinomProductEquationSubOne
 public import MathlibExt.NumberTheory.CentralBinomProductEquationSubTwo
 public import MathlibExt.NumberTheory.CentralBinomProductInequality
+public import MathlibExt.NumberTheory.CentralBinomProductEquationCentralBinomAddNeCentralBinomMulChooseSubThree
 
 /-!
 # Solvability of `C(2k, k) = C(2a, a) C(x + 2b, b)`
@@ -43,16 +44,6 @@ INTEGERS 26 (2026), Article A26, Theorem 1 (`integers-2026-A26-thm-1`). -/
 public theorem_wanted centralBinom_add_eq_centralBinom_mul_choose_iff (x a b : ℕ) (hx : 0 < x)
     (hb : 0 < b) :
     (a + b).centralBinom = a.centralBinom * (x + 2 * b).choose b ↔ x = 1 ∧ a = 1
-
-/-- **Central binomial products in the case $x = a - 3$.** Let $a$ and $b$ be natural numbers
-with $4 < 2a \le a + b$. Then $\binom{2(a+b)}{a+b} \ne \binom{2a}{a}\binom{a+2b-3}{b}$, so the
-equation $\binom{2(a+b)}{a+b} = \binom{2a}{a}\binom{x+2b}{b}$ has no solution with $x = a - 3$.
-
-Source: Meaghan Allen, *Solvability of $\binom{2k}{k} = \binom{2a}{a}\binom{x+2b}{b}$*,
-INTEGERS 26 (2026), Article A26, Lemma 4 (`integers-2026-A26-lem-4`). -/
-public theorem_wanted centralBinom_add_ne_centralBinom_mul_choose_sub_three (a b : ℕ)
-    (ha : 4 < 2 * a) (hab : 2 * a ≤ a + b) :
-    (a + b).centralBinom ≠ a.centralBinom * (a + 2 * b - 3).choose b
 
 /-- **Hanson's theorem on a prime factor above $3m/2$ in consecutive integers.** Let $m$ and $n$
 be natural numbers with $0 < m < n$. The product $n(n+1)\cdots(n+m-1)$ has a prime divisor $p$
