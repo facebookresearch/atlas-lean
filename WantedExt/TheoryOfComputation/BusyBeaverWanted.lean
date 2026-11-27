@@ -10,6 +10,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.BusyBeaverStepsThree
+public import CSLibExt.Computability.BusyBeaverStepsFour
 
 @[expose] public section
 
@@ -57,14 +58,6 @@ treated differently:
   theory does not prove, blocks decidability at its size, for any
   consistent theory sound for that machine's halting sentence.
 -/
-
-/-- **Four-state Busy Beaver shift value.** Rado's shift function $S$ satisfies $S(4) = 107$:
-among the two-symbol Busy Beaver machines with $4$ working states that halt when started on the
-blank tape, the largest halting time is $107$.
-
-Source: Brady (1983), determination of `S(4) = 107`. -/
-theorem_wanted busyBeaverSteps_four_wanted :
-    busyBeaverSteps 4 = 107
 
 /-- **Four-state Busy Beaver score value.** Rado's score function $\Sigma$ satisfies
 $\Sigma(4) = 13$: among the two-symbol Busy Beaver machines with $4$ working states that halt when

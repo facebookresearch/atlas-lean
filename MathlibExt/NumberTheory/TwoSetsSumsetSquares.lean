@@ -21,7 +21,7 @@ import Mathlib.Tactic.Ring.Basic
 /-!
 # Two sets whose sumset elements are squares
 
-Ajai Choudhry's integer triples and quadruples and his first three-parameter family of rational
+Ajai Choudhry's integer triples and quadruples and his two three-parameter families of rational
 quadruples have square pairwise sums. The proofs give a square root for each choice of summands.
 His Lemma 1, `exists_int_pairwiseSumsSquares_scale_translate`, scales two rational families with
 square pairwise sums by $k^2$ and shifts them by $-t$ and $+t$: when the results are integers,
@@ -301,5 +301,108 @@ theorem pairwiseSumsSquares_quadruple_family58
   refine ⟨roots i j, ?_⟩
   fin_cases i <;> dsimp [roots, Matrix.cons_val] <;>
     fin_cases j <;> dsimp [Matrix.cons_val, u, v, w, x, y, k, c, d, s] <;> grobner
+
+/-- **Second three-parameter family of rational quadruples with square pairwise sums.** For
+rational numbers $m, q, r$, let
+$a_1 = 16 m^2 (m^4 - 1)^2 \bigl((m^6 - 2m^4 + 5m^2) q^2 + (2m^5 - 12m^3 + 2m) q r +
+(5m^4 - 2m^2 + 1) r^2\bigr)^2$,
+$a_2 = 16 m^2 (m^4 - 1)^2 \bigl((m^6 - 2m^4 + 5m^2) q^2 - (5m^4 - 2m^2 + 1) r^2\bigr)^2$,
+$a_3 = (m^2 - 1)^2 \bigl((m^{10} + 26m^6 - 40m^4 - 3m^2) q^2 +
+(2m^9 - 24m^7 + 76m^5 - 24m^3 + 2m) q r - (3m^8 + 40m^6 - 26m^4 - 1) r^2\bigr)^2$,
+$a_4 = 16 m^2 (m^4 - 1)^2 \bigl((m^6 + 2m^4 - 7m^2) q^2 - (2m^5 - 12m^3 + 2m) q r -
+(7m^4 - 2m^2 - 1) r^2\bigr)^2$,
+$b_1 = 0$,
+$b_2 = -4 m^2 \bigl((m^5 + 6m^3 - 3m) q - (5m^4 - 2m^2 + 1) r\bigr)
+\bigl((3m^5 - 6m^3 - m) q + (5m^4 - 2m^2 + 1) r\bigr)
+\bigl((m^5 - 2m^3 + 5m) q + (3m^4 - 6m^2 - 1) r\bigr)
+\bigl((m^5 - 2m^3 + 5m) q - (m^4 + 6m^2 - 3) r\bigr)$,
+$b_3 = -16 m^2 (m^2 + 1)^2 (m^2 - 1)^3 (q^2 - r^2)
+\bigl((m^5 - 2m^4 + 6m^2 - m) q + (m^4 - 6m^3 + 2m - 1) r\bigr)
+\bigl((m^5 + 2m^4 - 6m^2 - m) q + (m^4 + 6m^3 - 2m - 1) r\bigr)$ and
+$b_4 = 128 m^3 (m^4 - 1)^3 (m r - q)(m^2 q^2 - r^2)\bigl((m^3 - 3m) q + (3m^2 - 1) r\bigr)$.
+Then $a_i + b_j$ is the square of a rational number for all $1 \le i, j \le 4$.
+
+Source: Ajai Choudhry, "Two Sets of Integers Such That All
+Elements of the Sumset of the Two Sets Are Perfect Squares",
+Theorem 4. -/
+theorem pairwiseSumsSquares_quadruple_family59
+    (m q r : ℚ) :
+    PairwiseSumsSquares
+      ![16 * m ^ 2 * (m ^ 4 - 1) ^ 2 *
+            ((m ^ 6 - 2 * m ^ 4 + 5 * m ^ 2) * q ^ 2 +
+              (2 * m ^ 5 - 12 * m ^ 3 + 2 * m) * q * r +
+              (5 * m ^ 4 - 2 * m ^ 2 + 1) * r ^ 2) ^ 2,
+          16 * m ^ 2 * (m ^ 4 - 1) ^ 2 *
+            ((m ^ 6 - 2 * m ^ 4 + 5 * m ^ 2) * q ^ 2 -
+              (5 * m ^ 4 - 2 * m ^ 2 + 1) * r ^ 2) ^ 2,
+          (m ^ 2 - 1) ^ 2 *
+            ((m ^ 10 + 26 * m ^ 6 - 40 * m ^ 4 - 3 * m ^ 2) * q ^ 2 +
+              (2 * m ^ 9 - 24 * m ^ 7 + 76 * m ^ 5 - 24 * m ^ 3 +
+                2 * m) * q * r -
+              (3 * m ^ 8 + 40 * m ^ 6 - 26 * m ^ 4 - 1) * r ^ 2) ^ 2,
+          16 * m ^ 2 * (m ^ 4 - 1) ^ 2 *
+            ((m ^ 6 + 2 * m ^ 4 - 7 * m ^ 2) * q ^ 2 -
+              (2 * m ^ 5 - 12 * m ^ 3 + 2 * m) * q * r -
+              (7 * m ^ 4 - 2 * m ^ 2 - 1) * r ^ 2) ^ 2]
+      ![0,
+        -4 * m ^ 2 * ((m ^ 5 + 6 * m ^ 3 - 3 * m) * q -
+              (5 * m ^ 4 - 2 * m ^ 2 + 1) * r) *
+          ((3 * m ^ 5 - 6 * m ^ 3 - m) * q +
+            (5 * m ^ 4 - 2 * m ^ 2 + 1) * r) *
+          ((m ^ 5 - 2 * m ^ 3 + 5 * m) * q +
+            (3 * m ^ 4 - 6 * m ^ 2 - 1) * r) *
+          ((m ^ 5 - 2 * m ^ 3 + 5 * m) * q -
+            (m ^ 4 + 6 * m ^ 2 - 3) * r),
+        -16 * m ^ 2 * (m ^ 2 + 1) ^ 2 * (m ^ 2 - 1) ^ 3 *
+          (q ^ 2 - r ^ 2) *
+          ((m ^ 5 - 2 * m ^ 4 + 6 * m ^ 2 - m) * q +
+            (m ^ 4 - 6 * m ^ 3 + 2 * m - 1) * r) *
+          ((m ^ 5 + 2 * m ^ 4 - 6 * m ^ 2 - m) * q +
+            (m ^ 4 + 6 * m ^ 3 - 2 * m - 1) * r),
+        128 * m ^ 3 * (m ^ 4 - 1) ^ 3 * (m * r - q) *
+          (m ^ 2 * q ^ 2 - r ^ 2) *
+          ((m ^ 3 - 3 * m) * q + (3 * m ^ 2 - 1) * r)] := by
+  let d := m ^ 2 - 1
+  let s := m ^ 2 + 1
+  let c := m ^ 4 - 6 * m ^ 2 + 1
+  let k := 4 * m * d * s
+  -- The quadratic form shared by the four diagonal roots.
+  let w := (m ^ 6 - 2 * m ^ 4 + 5 * m ^ 2) * q ^ 2 + (2 * m ^ 5 - 12 * m ^ 3 + 2 * m) * q * r +
+    (5 * m ^ 4 - 2 * m ^ 2 + 1) * r ^ 2
+  -- The quadratic forms in the remaining roots, named by the position of their root.
+  let w01 := (m ^ 10 - 8 * m ^ 8 + 18 * m ^ 6 - 32 * m ^ 4 + 5 * m ^ 2) * q ^ 2 +
+    (10 * m ^ 9 - 24 * m ^ 7 + 60 * m ^ 5 - 24 * m ^ 3 + 10 * m) * q * r +
+    (5 * m ^ 8 - 32 * m ^ 6 + 18 * m ^ 4 - 8 * m ^ 2 + 1) * r ^ 2
+  let w02 := (m ^ 5 - 6 * m ^ 3 + m) * q ^ 2 + (m ^ 6 + 3 * m ^ 4 + 3 * m ^ 2 + 1) * q * r +
+    (m ^ 5 - 6 * m ^ 3 + m) * r ^ 2
+  let w03 := (m ^ 6 - 6 * m ^ 4 + m ^ 2) * q ^ 2 + (6 * m ^ 5 - 4 * m ^ 3 + 6 * m) * q * r +
+    (m ^ 4 - 6 * m ^ 2 + 1) * r ^ 2
+  let w10 := (m ^ 6 - 2 * m ^ 4 + 5 * m ^ 2) * q ^ 2 - (5 * m ^ 4 - 2 * m ^ 2 + 1) * r ^ 2
+  let w13 := (m ^ 6 - 6 * m ^ 4 + m ^ 2) * q ^ 2 + (4 * m ^ 5 - 4 * m) * q * r -
+    (m ^ 4 - 6 * m ^ 2 + 1) * r ^ 2
+  let w20 := (m ^ 10 + 26 * m ^ 6 - 40 * m ^ 4 - 3 * m ^ 2) * q ^ 2 +
+    (2 * m ^ 9 - 24 * m ^ 7 + 76 * m ^ 5 - 24 * m ^ 3 + 2 * m) * q * r -
+    (3 * m ^ 8 + 40 * m ^ 6 - 26 * m ^ 4 - 1) * r ^ 2
+  let w21 := (m * q - r) * ((m ^ 3 - 3 * m) * q + (3 * m ^ 2 - 1) * r)
+  let w23 := (m ^ 10 - 38 * m ^ 6 + 24 * m ^ 4 - 3 * m ^ 2) * q ^ 2 +
+    (2 * m ^ 9 + 40 * m ^ 7 - 52 * m ^ 5 + 40 * m ^ 3 + 2 * m) * q * r -
+    (3 * m ^ 8 - 24 * m ^ 6 + 38 * m ^ 4 - 1) * r ^ 2
+  let w30 := (m ^ 6 + 2 * m ^ 4 - 7 * m ^ 2) * q ^ 2 -
+    (2 * m ^ 5 - 12 * m ^ 3 + 2 * m) * q * r - (7 * m ^ 4 - 2 * m ^ 2 - 1) * r ^ 2
+  let w31 := (m ^ 10 + 8 * m ^ 8 - 30 * m ^ 6 + 16 * m ^ 4 - 11 * m ^ 2) * q ^ 2 -
+    (6 * m ^ 9 - 40 * m ^ 7 + 36 * m ^ 5 - 40 * m ^ 3 + 6 * m) * q * r -
+    (11 * m ^ 8 - 16 * m ^ 6 + 30 * m ^ 4 - 8 * m ^ 2 - 1) * r ^ 2
+  let w32 := (3 * m ^ 5 - 6 * m ^ 3 - m) * q ^ 2 -
+    (m ^ 6 - 5 * m ^ 4 - 5 * m ^ 2 + 1) * q * r - (m ^ 5 + 6 * m ^ 3 - 3 * m) * r ^ 2
+  let roots : Fin 4 → Fin 4 → ℚ :=
+    ![![k * w, 2 * m * w01, k * w02, k * w03],
+      ![k * w10, 2 * m * c * w, k * c * (m * q + r) * (q - m * r), k * w13],
+      ![d * w20, s ^ 2 * c * w21, d * c * w, d * w23],
+      ![k * w30, 2 * m * w31, k * w32, k * w]]
+  intro i j
+  refine ⟨roots i j, ?_⟩
+  fin_cases i <;> dsimp [roots, Matrix.cons_val] <;> fin_cases j <;>
+    dsimp [Matrix.cons_val, k, c, d, s, w, w01, w02, w03, w10, w13, w20, w21, w23, w30, w31,
+      w32] <;> ring1
 
 end MathlibExt.NumberTheory.TwoSetsSumsetSquaresWanted
