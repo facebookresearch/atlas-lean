@@ -27,5 +27,3 @@
 - [Minimum epistasis interpolation](minimum-epistasis-interpolation/README.md)
 - [Rho statistic dating of lineages](rho-statistic-dating-of-lineages/README.md)
 - [Sparse Walsh approximation of fitness landscapes](sparse-walsh-approximation-of-fitness-landscapes/README.md)
-- [Fitness landscapes and epistasis](fitness-landscapes-and-epistasis/README.md)
-- [Mutation rates and generation time](mutation-rates-and-generation-time/README.md)
