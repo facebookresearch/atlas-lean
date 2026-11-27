@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.ArithmeticFunction.NonagonalAdditiveUniqueness
 public import MathlibExt.NumberTheory.ArithmeticFunction.NonagonalAdditiveUniquenessMultiplicativeNonagonalAdditiveFivePow
 public import MathlibExt.NumberTheory.ArithmeticFunction.NonagonalAdditiveUniquenessMultiplicativeNonagonalAdditiveThreePow
+public import MathlibExt.NumberTheory.ArithmeticFunction.NonagonalAdditiveUniquenessMultiplicativeNonagonalAdditiveSevenPow
 
 /-!
 # Additive uniqueness of generalized nonagonal numbers (statements)
@@ -28,6 +29,8 @@ Theorem 1 itself. Theorem 2 (`multiplicative_nonagonal_additive_three_pow`) is i
 `MathlibExt.NumberTheory.ArithmeticFunction.NonagonalAdditiveUniquenessMultiplicativeNonagonalAdditiveThreePow`.
 Theorem 3 (`multiplicative_nonagonal_additive_five_pow`) is in
 `MathlibExt.NumberTheory.ArithmeticFunction.NonagonalAdditiveUniquenessMultiplicativeNonagonalAdditiveFivePow`.
+Theorem 4 (`multiplicative_nonagonal_additive_seven_pow`) is proved in
+`MathlibExt.NumberTheory.ArithmeticFunction.NonagonalAdditiveUniquenessMultiplicativeNonagonalAdditiveSevenPow`.
 -/
 
 namespace MetaMathlibExt
@@ -35,23 +38,6 @@ namespace MetaMathlibExt
 @[expose] public section
 
 open ArithmeticFunction
-
-/-- **Nonagonal additive uniqueness: the step at powers of 7.** Let $f$ be a multiplicative
-arithmetic function with values in $\mathbb{C}$ such that $f(a + b) = f(a) + f(b)$ for all
-positive integers $a$ and $b$ that are generalized nonagonal numbers, that is, $2a = m(7m - 5)$
-and $2b = k(7k - 5)$ for some integers $m$ and $k$. Let $r$ be a natural number. If $f(n) = n$
-for every natural number $n < 7^r$, then $f(7^r) = 7^r$.
-
-Source: Poo-Sung Park, *On the Additive Uniqueness of Generalized Nonagonal Numbers for
-Multiplicative Functions*, INTEGERS 25 (2025), Article A99, Theorem 4
-(`integers-2025-A99-thm-4`). -/
-public theorem_wanted multiplicative_nonagonal_additive_seven_pow
-    (f : ArithmeticFunction ℂ) (hf : f.IsMultiplicative)
-    (hadd : ∀ a b : ℕ, 0 < a → 0 < b →
-      (∃ m : ℤ, 2 * (a : ℤ) = m * (7 * m - 5)) → (∃ m : ℤ, 2 * (b : ℤ) = m * (7 * m - 5)) →
-        f (a + b) = f a + f b) (r : ℕ)
-    (hind : ∀ n : ℕ, n < 7 ^ r → f n = n) :
-    f (7 ^ r) = (7 ^ r : ℕ)
 
 /-- **Nonagonal additive uniqueness: the step at powers of 2.** Let $f$ be a multiplicative
 arithmetic function with values in $\mathbb{C}$ such that $f(a + b) = f(a) + f(b)$ for all
