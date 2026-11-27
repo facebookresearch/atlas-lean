@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Combinatorics.Words.DumontThomasProperPrefix
-import all MathlibExt.Combinatorics.Words.DumontThomasNumeration
+import all MathlibExt.Combinatorics.PalindromicRecurrentOutsideP
 import Mathlib.Order.Filter.AtTopBot.Basic
 
 /-!
@@ -30,14 +30,15 @@ formulation works for arbitrary alphabets, beyond the finite alphabets in the so
   aux substitutions*, Theoretical Computer Science 65 (2) (1989), pp. 153–169, Theorem 1.5
   and Lemmas 1.1, 1.3 and 1.4.
 * The proof reuses `properPrefix_morphIterate_decomposition` from
-  `MathlibExt.Combinatorics.Words.DumontThomasProperPrefix` and
-  `admissibleSequence_weightedLength_lt`, `letterAdmissibleSequence_eq_of_weightedLength_eq`,
-  `iterate_append` and `iterate_split` from `MathlibExt.Combinatorics.Words.DumontThomasNumeration`.
+  `MathlibExt.Combinatorics.Words.DumontThomasProperPrefix`,
+  `admissibleSequence_weightedLength_lt` and `letterAdmissibleSequence_eq_of_weightedLength_eq`
+  from `MathlibExt.Combinatorics.Words.DumontThomasNumeration`, and `iterate_succ_right` and
+  `iterate_prefix` from `MathlibExt.Combinatorics.PalindromicRecurrentOutsideP`.
 -/
 
 namespace MetaMathlibExt
 
-open morphIterate_getElem_eq_substitutionAutomaton_tail
+open MathlibExt.Combinatorics.PalindromicRecurrentOutsidePWanted (iterate_succ_right iterate_prefix)
 
 /-- **Dumont–Thomas numeration.** Let $\eta$ be a substitution on an alphabet $A$, extended
 to finite words by concatenation, and let $u_0 u_1 u_2 \cdots$ be a right-infinite word over
@@ -90,19 +91,11 @@ public theorem dumontThomas_numeration {A : Type*} (η : A → List A)
       [a] = (List.range 1).map u := hfirst.symm
       _ <+: (List.range (morphIterate η 1 [a]).length).map u := hprefix hpos
       _ = η a := (hword 1).symm.trans hsingle
-  have hstep (k : ℕ) : morphIterate η (k + 1) [a] = morphIterate η k (η a) := by
-    rw [iterate_split η (show morphExtend η [a] = η a ++ [] by rfl) k,
-      ← iterate_append, List.append_nil]
-  have iteratePrefix (j : ℕ) {v w : List A} (h : v <+: w) :
-      morphIterate η j v <+: morphIterate η j w := by
-    obtain ⟨rest, rfl⟩ := h
-    rw [iterate_append]
-    exact List.prefix_append _ _
   have hmono : Monotone (fun j => (morphIterate η j [a]).length) := by
     apply monotone_nat_of_le_succ
     intro k
-    rw [hstep]
-    exact (iteratePrefix k hseed).length_le
+    rw [iterate_succ_right, List.flatMap_singleton]
+    exact (iterate_prefix hseed η k).length_le
   obtain ⟨k, _, hle, hlt⟩ :=
     hgrow.exists_le_lt_succ (show (morphIterate η 0 [a]).length ≤ n from hn)
   -- Split off a top pair at each level of the iterated proper prefix.
@@ -173,13 +166,13 @@ public theorem dumontThomas_numeration {A : Type*} (η : A → List A)
   have hlead' : [a] <+: (s' k').1 :=
     List.prefix_of_prefix_length_le hseed hpre' (List.length_pos_iff.mpr htop')
   have hle' : (morphIterate η k' [a]).length ≤ n := by
-    have hlen := (iteratePrefix k' hlead').length_le
+    have hlen := (iterate_prefix hlead' η k').length_le
     rw [hw', Finset.sum_range_succ]
     omega
   have hlt' : n < (morphIterate η (k' + 1) [a]).length := by
-    rw [hw', hstep]
+    rw [hw', iterate_succ_right, List.flatMap_singleton]
     exact (admissibleSequence_weightedLength_lt η hη s' k' hs'.1).trans_le
-      (iteratePrefix k' hs'.2).length_le
+      (iterate_prefix hs'.2 η k').length_le
   have hk : k' = k := by
     apply le_antisymm
     · exact le_of_not_gt fun h => hlt.not_ge ((hmono (Nat.succ_le_of_lt h)).trans hle')
