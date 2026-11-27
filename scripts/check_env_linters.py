@@ -13,19 +13,21 @@ A declaration counts as added when the change adds the line that declares it
 for a structure field, a constructor or a `where` or `let rec` helper, its own
 line), and no declaration of that name is in the files the change modifies,
 renames or deletes, as they are at the base. A private declaration (one marked
-`private`, or in a `module` file one that is neither marked `public` nor in a
-`public section`) is the same only as one of its own file: another file's
-private declaration of that name is another declaration. An anonymous instance,
-whose name Lean generates, is known by its namespace and header. A wanted
-statement (`theorem_wanted`, `def_wanted`, `proof_wanted`, `instance_wanted`)
-elaborates to a private placeholder, so it is not the declaration that proves it
-later. So a change that only documents, tags or edits an existing declaration
-does not report it, nor does one that moves a public declaration between those
-files, but one that proves a wanted statement reports the proof. A finding that
-`runLinter` prints without a position (a declaration without a source range,
-such as a structure's `mk.injEq`) is placed on the nearest enclosing declaration
-of the changed files that has one, under the same rule. `runLinter` imports the
-modules with their private declarations, so it lints those as well.
+`private`; in a `module` file, also one that is neither marked `public` nor in a
+`public section`, a `where` or `let rec` helper unless its declaration exposes
+its body, and the constructor of a structure with a private field) is the same
+only as one of its own file: another file's private declaration of that name is
+another declaration. An anonymous instance, whose name Lean generates, is known
+by its namespace and header. A wanted statement (`theorem_wanted`, `def_wanted`,
+`proof_wanted`, `instance_wanted`) elaborates to a private placeholder, so it is
+not the declaration that proves it later. So a change that only documents, tags
+or edits an existing declaration does not report it, nor does one that moves a
+public declaration between those files, but one that proves a wanted statement
+reports the proof. A finding that `runLinter` prints without a position (a
+declaration without a source range, such as a structure's `mk.injEq`) is placed
+on the nearest enclosing declaration of the changed files that has one, under
+the same rule. `runLinter` imports the modules with their private declarations,
+so it lints those as well.
 
     python3 scripts/check_env_linters.py --base origin/main [--report-only]
 
@@ -154,7 +156,7 @@ DECLARATION_KINDS = ("theorem", "lemma", "def", "abbrev", "instance", "structure
                      "inductive", "opaque", "axiom", "example", *WANTED_KINDS,
                      "irreducible_def", "alias")
 COMMAND = re.compile(
-    r"^[ \t]*(?:set_option[ \t]+\S+[ \t]+\S+[ \t]+in\s+)*(?:@\[[^\]]*\]\s*)*"
+    r"^[ \t]*(?:set_option[ \t]+\S+[ \t]+\S+[ \t]+in\s+)*(?P<attributes>(?:@\[[^\]]*\]\s*)*)"
     rf"(?P<modifiers>(?:{MODIFIERS}\s+)*)"
     rf"(?P<kind>namespace|section|end|mutual|{'|'.join(DECLARATION_KINDS)})\b",
     re.MULTILINE)
@@ -172,7 +174,8 @@ NAME_AT = re.compile(rf"\s*(?P<name>{NAME})")
 # An instance's name, after an optional priority; an anonymous instance has none.
 INSTANCE_NAME = re.compile(r"\s*(?:\(priority\s*:=[^)]*\)\s*)?(?P<name>" + NAME
                            + r")(?=[\s:(\[{⦃]|\.\{)")
-FIELD = re.compile(rf"^[ \t]+(?:(?:private|protected)[ \t]+)?(?P<names>{NAME}(?:[ \t]+{NAME})*)"
+FIELD = re.compile(rf"^[ \t]+(?:(?P<visibility>private|protected)[ \t]+)?"
+                   rf"(?P<names>{NAME}(?:[ \t]+{NAME})*)"
                    r"[ \t]*(?:::|[:({\[⦃])", re.MULTILINE)
 CONSTRUCTOR = re.compile(rf"^[ \t]*\|[ \t]*(?P<name>{NAME})", re.MULTILINE)
 
@@ -302,11 +305,13 @@ def index_source(text: str) -> SourceIndex:
         return index
     index.line_starts = [0] + [i + 1 for i, char in enumerate(code) if char == "\n"]
     is_module = MODULE_HEADER.match(code) is not None
-    # Lean's scopes, innermost last: each one's namespace component (if it opens one), and
-    # whether it is public, as in a `public section` or a scope inside one (Lean's scopes
-    # inherit `isPublic`). As `addScopes` does, `namespace A.B` and `section A.B` open one
-    # scope per component, and `end A.B` closes as many.
-    scopes: list[tuple[list[str], bool]] = []
+    # Lean's scopes, innermost last: each one's namespace component (if it opens one), whether
+    # it is public, as in a `public section` or a scope inside one (Lean's scopes inherit
+    # `isPublic`), and whether it exposes its definitions' bodies, as in an
+    # `@[expose] public section` (they inherit attributes too). As `addScopes` does,
+    # `namespace A.B` and `section A.B` open one scope per component, and `end A.B` closes as
+    # many.
+    scopes: list[tuple[list[str], bool, bool]] = []
     commands = list(COMMAND.finditer(code))
     for number, command in enumerate(commands):
         kind = command.group("kind")
@@ -315,20 +320,24 @@ def index_source(text: str) -> SourceIndex:
         name_match = NAME_AT.match(code, rest, stop)
         name = name_match.group("name") if name_match else None
         modifiers = command.group("modifiers").split()
+        exposes = re.search(r"\bexpose\b", command.group("attributes")) is not None
         public_scope = bool(scopes) and scopes[-1][1]
+        exposed_scope = bool(scopes) and scopes[-1][2]
         components = name.split(".") if name else []
         if kind == "namespace":
-            scopes.extend(([unquote_name(part)], public_scope) for part in components or [""])
+            scopes.extend(([unquote_name(part)], public_scope, exposed_scope)
+                          for part in components or [""])
             continue
         if kind in ("section", "mutual"):
             public = public_scope or "public" in modifiers
+            exposed = exposed_scope or exposes
             opened = len(components) if kind == "section" and components else 1
-            scopes.extend(([], public) for _ in range(opened))
+            scopes.extend(([], public, exposed) for _ in range(opened))
             continue
         if kind == "end":
             del scopes[len(scopes) - min(len(scopes), max(len(components), 1)):]
             continue
-        prefix = [part for components, _ in scopes for part in components]
+        prefix = [part for components, _, _ in scopes for part in components]
         line = index.line_at(command.start("kind"))
         # As Lean decides (`Visibility.isInferredPublic`): a declaration marked `private` is
         # private; in a `module` file, so is one that is neither marked `public` nor in a
@@ -375,24 +384,37 @@ def index_source(text: str) -> SourceIndex:
         index.add(declared, line, private)
         body = code[name_match.end():stop] if name_match else ""
         if kind in ("structure", "class"):
-            index.add(f"{declared}.mk", line, private)
+            # A field marked `private` is private. In a `module` file such a field makes the
+            # constructor private too; elsewhere it does not.
+            constructors, any_private_field = [f"{declared}.mk"], False
             where = re.search(r"\bwhere\b", body)
             if where:
                 offset = name_match.end() + where.end()
                 for fields in FIELD.finditer(code, offset, stop):
                     for part in fields.group("names").split():
                         if code[fields.end() - 2: fields.end()] == "::":
-                            index.add(f"{declared}.{unquote_name(part)}", line, private)
+                            constructors.append(f"{declared}.{unquote_name(part)}")
                         else:
+                            field_private = private or fields.group("visibility") == "private"
+                            any_private_field |= field_private
                             index.add(f"{declared}.{unquote_name(part)}",
-                                      index.line_at(fields.start("names")), private)
+                                      index.line_at(fields.start("names")), field_private)
+            for constructor in constructors:
+                index.add(constructor, line, private or (is_module and any_private_field))
         elif kind == "inductive":
             for constructor in CONSTRUCTOR.finditer(code, name_match.end(), stop):
                 index.add(f"{declared}.{unquote_name(constructor.group('name'))}",
                           index.line_at(constructor.start("name")), private)
         elif kind in HELPER_KINDS:
+            # In a `module` file a `where` or `let rec` helper is public only if its
+            # declaration is and exposes its body: an `abbrev`, an instance, or a definition
+            # marked `@[expose]` or in an `@[expose]` section, but never a theorem's.
+            exposed = (kind in ("abbrev", "instance") or exposes or exposed_scope) and \
+                kind not in ("theorem", "lemma")
+            helper_private = private or (is_module and not exposed)
             for helper, offset in helpers(code, name_match.end(), stop):
-                index.add(f"{declared}.{unquote_name(helper)}", index.line_at(offset), private)
+                index.add(f"{declared}.{unquote_name(helper)}", index.line_at(offset),
+                          helper_private)
     return index
 
 

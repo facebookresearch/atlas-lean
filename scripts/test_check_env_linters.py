@@ -286,6 +286,64 @@ end N
 """
 
 
+# In a `module` file, a helper is private unless its declaration exposes its body, a private
+# field is private, and makes the constructor private; Lean's `#print` agrees on every name.
+MODULE_CHILDREN = """\
+module
+
+public section
+
+/-- Outer. -/
+def outer (n : Nat) : Nat := aux n
+where
+  /-- Aux. -/
+  aux (m : Nat) : Nat := m
+
+/-- With rec. -/
+def withRec (n : Nat) : Nat :=
+  let rec loop (k : Nat) : Nat := k
+  loop n
+
+/-- Exposed. -/
+@[expose] def exposedOuter (n : Nat) : Nat := eaux n
+where
+  eaux (m : Nat) : Nat := m
+
+/-- An abbreviation exposes its body. -/
+abbrev ab (n : Nat) : Nat := abAux n
+where
+  abAux (m : Nat) : Nat := m
+
+/-- A structure. -/
+structure S where
+  /-- Public field. -/
+  a : Nat
+  private b : Nat
+
+/-- No private field. -/
+structure T where
+  make ::
+  /-- Public field. -/
+  a : Nat
+
+end
+
+@[expose] public section
+
+/-- In an exposed section. -/
+def inExposed (n : Nat) : Nat := xaux n
+where
+  xaux (m : Nat) : Nat := m
+
+/-- A theorem's helper is never exposed. -/
+theorem thm (n : Nat) : n = n := h n
+where
+  h (k : Nat) : k = k := rfl
+
+end
+"""
+
+
 class IndexTests(unittest.TestCase):
     def test_names_declarations_in_their_namespaces(self):
         index = check.index_source(SOURCE)
@@ -350,6 +408,18 @@ class IndexTests(unittest.TestCase):
         # Outside a `module` file, only `private` makes a declaration private.
         plain = check.index_source(VISIBILITY.replace("module\n", "", 1))
         self.assertEqual(plain.private_names, {"ReviewCases.hiddenAgain"})
+
+    def test_module_files_give_helpers_fields_and_constructors_their_own_visibility(self):
+        index = check.index_source(MODULE_CHILDREN)
+        self.assertEqual(index.private_names,
+                         {"outer.aux", "withRec.loop", "S.b", "S.mk", "thm.h"})
+        self.assertTrue({"outer", "withRec", "exposedOuter", "exposedOuter.eaux", "ab", "ab.abAux",
+                         "S", "S.a", "T", "T.make", "T.a", "inExposed", "inExposed.xaux",
+                         "thm"} <= index.public_names)
+        # Elsewhere, helpers, fields and constructors follow their declaration, except a
+        # private field.
+        plain = check.index_source(MODULE_CHILDREN.replace("module\n", "", 1))
+        self.assertEqual(plain.private_names, {"S.b"})
 
     def test_dotted_sections_open_and_close_one_scope_per_component(self):
         # `end Inner` closes only the inner of `section Outer.Inner`, so `Outer` stays public;
@@ -517,9 +587,8 @@ class PlaceTests(unittest.TestCase):
     def test_dotted_sections_decide_what_a_move_or_a_new_declaration_is(self):
         # `afterInner` is public, so moving it to B is not new; `afterBoth` is private, so a new
         # public `afterBoth` in B is new.
-        a_head = DOTTED.replace(
-            "/-- Still in the public section `Outer`. -/\ndef afterInner (y z : Nat) : Nat := y\n\n",
-            "")
+        a_head = DOTTED.replace("/-- Still in the public section `Outer`. -/\n"
+                                "def afterInner (y z : Nat) : Nat := y\n\n", "")
         b_head = ("module\n\n/-- Moved. -/\npublic def afterInner (y z : Nat) : Nat := y\n\n"
                   "/-- New. -/\npublic def afterBoth (y z : Nat) : Nat := y\n")
         base = base_names(MathlibExt__A=DOTTED, MathlibExt__B="module\n")
@@ -531,6 +600,19 @@ class PlaceTests(unittest.TestCase):
         new = Finding("afterBoth", "unusedArguments", "", "MathlibExt.B", "MathlibExt/B.lean",
                       6, 1)
         self.assertTrue(self.place_in(new, head, base).added)
+
+    def test_a_private_helper_does_not_hide_a_new_public_declaration(self):
+        # In a `module` file, the helpers of public definitions are private, so new public
+        # `outer.aux` and `withRec.loop` in another file are new.
+        b_head = ("module\n\n/-- New. -/\npublic def outer.aux (y z : Nat) : Nat := y\n\n"
+                  "/-- New. -/\npublic def withRec.loop (y z : Nat) : Nat := y\n")
+        base = base_names(MathlibExt__A=MODULE_CHILDREN, MathlibExt__B="module\n")
+        head = {"MathlibExt/A.lean": (MODULE_CHILDREN, set()),
+                "MathlibExt/B.lean": (b_head, set(range(1, 8)))}
+        for name, line in (("outer.aux", 3), ("withRec.loop", 6)):
+            finding = Finding(name, "unusedArguments", "", "MathlibExt.B", "MathlibExt/B.lean",
+                              line, 1)
+            self.assertTrue(self.place_in(finding, head, base).added, name)
 
     def test_an_undecorated_wanted_statement_moved_between_module_files_is_kept(self):
         a_head = VISIBILITY.replace("theorem_wanted stillWanted : True\n\n", "")
