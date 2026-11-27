@@ -1,18 +1,18 @@
 # Ground logical consequences of a definite program
 
-Let $P$ be a definite logic program, a set of clauses $A_0 \leftarrow A_1, \dots, A_n$ ($n \ge 0$) of atoms over a first-order signature, each read as its universal closure, and let $B_P$ be the Herbrand base, the set of ground atoms over the signature. An atom is a predicate symbol applied to terms, $p(t_1, \dots, t_k)$; there is no built-in equality, so equations $s = t$ are not atoms. A [Herbrand model](is-model.md) of $P$ is a set of ground atoms that is a Herbrand model of the set of ground instances of the clauses of $P$, and $M_P$ is the [least Herbrand model](least-model.md) of that set. A ground atom $A$ is a logical consequence of $P$, written $P \models A$, if $A$ is true in every model of $P$, every first-order structure in which all clauses of $P$ are true.
+Let $P$ be a definite logic program, a set of clauses $A_0 \leftarrow A_1, \dots, A_n$ ($n \ge 0$) of atoms over a first-order signature with at least one constant symbol, each read as its universal closure, and let $B_P$ be the Herbrand base, the set of ground atoms over the signature. An atom is a predicate symbol applied to terms, $p(t_1, \dots, t_k)$; there is no built-in equality, so equations $s = t$ are not atoms. A [Herbrand model](is-model.md) of $P$ is a set of ground atoms that is a Herbrand model of the set of ground instances of the clauses of $P$, and $M_P$ is the [least Herbrand model](least-model.md) of that set. A ground atom $A$ is a logical consequence of $P$, written $P \models A$, if $A$ is true in every model of $P$, every first-order structure in which all clauses of $P$ are true.
 
 1. If a ground atom $A$ lies in every Herbrand model of $P$, then $P \models A$. In particular, every atom of $M_P$ is a logical consequence of $P$.
-2. If the signature has at least one constant symbol, then $M_P = \{A \in B_P : P \models A\}$.
+2. $M_P = \{A \in B_P : P \models A\}$.
 
 ## Proof sketch
 
-Let $\mathcal{I}$ be a model of $P$. Every ground instance of a clause of $P$ is true in $\mathcal{I}$, so the set $\{A \in B_P : \mathcal{I} \models A\}$ is a Herbrand model of $P$. If $A$ lies in every Herbrand model of $P$, it lies in this one, so $\mathcal{I} \models A$; this proves part 1. For part 2, part 1 gives the inclusion $\subseteq$. Conversely, with a constant symbol the set of ground terms is nonempty, and the structure on it in which each ground term denotes itself and the true atoms are those of $M_P$ is a model of $P$, because $M_P$ is a Herbrand model of every ground instance. So every ground atom $A$ with $P \models A$ lies in $M_P$.
+Let $\mathcal{I}$ be a model of $P$. Every ground instance of a clause of $P$ is true in $\mathcal{I}$, so the set $\{A \in B_P : \mathcal{I} \models A\}$ is a Herbrand model of $P$. If $A$ lies in every Herbrand model of $P$, it lies in this one, so $\mathcal{I} \models A$; this proves part 1. For part 2, part 1 gives the inclusion $\subseteq$. Conversely, the constant symbol makes the set of ground terms nonempty, and the structure on it in which each ground term denotes itself and the true atoms are those of $M_P$ is a model of $P$, because $M_P$ is a Herbrand model of every ground instance. So every ground atom $A$ with $P \models A$ lies in $M_P$.
 
 ## Remarks
 
 - Part 1 extends to existentially quantified conjunctions of atoms, but not to arbitrary formulas. Over the signature with one constant $a$ and one unary predicate $p$, every Herbrand model of $P = \{p(a)\}$ satisfies $\forall x\, p(x)$, while the structure with universe $\{0, 1\}$, $a$ interpreted as $0$ and $p$ as $\{0\}$ is a model of $P$ in which $\forall x\, p(x)$ is false.
-- Part 2 needs the constant symbol. Over a signature with a unary function symbol, a unary predicate $q$, a nullary predicate $p$ and no constant, the program $q(x) \leftarrow$, $p \leftarrow q(x)$ has no ground instances, so $M_P$ is empty, yet $P \models p$, since first-order structures have nonempty universes.
+- Part 1 also holds over a signature with no constant symbol, with the same proof, which uses no ground term, but part 2 fails there. Over a signature with a unary function symbol, a unary predicate $q$, a nullary predicate $p$ and no constant, the program $q(x) \leftarrow$, $p \leftarrow q(x)$ has no ground instances, so $M_P$ is empty, yet $P \models p$, since first-order structures have nonempty universes.
 
 ## Depends on
 

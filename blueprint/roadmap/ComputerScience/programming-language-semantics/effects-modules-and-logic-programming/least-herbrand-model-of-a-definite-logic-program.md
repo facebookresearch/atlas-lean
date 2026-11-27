@@ -13,7 +13,7 @@ Let $B$ be a set of ground atoms and $P$ a set of ground definite clauses $A_0 \
 
 - If the signature has a ground term (equivalently, a constant symbol), then for a definite logic program $P$ with variables, a Herbrand interpretation is a model of $P$ exactly when it is a model of the set of ground instances of the clauses of $P$, so the least Herbrand model and the immediate consequence operator of $P$ are those of that set.
 - Strass, and van Emden and Kowalski, state the model intersection property for a nonempty family. The empty family has intersection $B$, which is a Herbrand model of every set of clauses over $B$.
-- When the atoms are predicate symbols applied to terms, with no built-in equality, and the signature has a constant symbol, $M_P$ is exactly the set of ground atoms that are logical consequences of $P$; without a constant symbol, every atom of $M_P$ is still a logical consequence of $P$ ([Ground logical consequences of a definite program](ground-logical-consequences-of-a-definite-program.md)).
+- When the atoms are predicate symbols applied to terms, with no built-in equality, and the signature has a constant symbol, $M_P$ is exactly the set of ground atoms that are logical consequences of $P$ ([Ground logical consequences of a definite program](ground-logical-consequences-of-a-definite-program.md)).
 
 ## Sources
 
