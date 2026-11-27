@@ -159,18 +159,6 @@ public theorem_wanted signedInvAvoidCount_eq_factorial_succ :
     signedInvAvoidCount {⟨.gt, true, false⟩, ⟨.eq, true, false⟩, ⟨.lt, false, true⟩} n = (n + 1)! ∧
     signedInvAvoidCount {⟨.gt, true, false⟩, ⟨.eq, false, true⟩, ⟨.lt, false, true⟩} n = (n + 1)!
 
-/-- **Mansour–Safadi Lemma 10.** Write $\bar{I}_n(B)$ for the set of signed inversion
-sequences of length $n$ that avoid every length-2 signed pattern in $B$, where a pattern is
-one of $00$, $01$, $10$ with a bar over each barred letter. Then for every $n \ge 0$,
-$|\bar{I}_n(\{\bar{1}\bar{0}, \bar{0}\bar{0}, 1\bar{0}\})| =
-|\bar{I}_n(\{\bar{1}\bar{0}, 0\bar{0}, 1\bar{0}\})|$.
-
-Source: Toufik Mansour and Amir Safadi, *Signed Inversion Sequences Avoiding a Set of Length-2
-Signed Patterns*, INTEGERS 26 (2026), Article A74, Lemma 10 (`integers-2026-A74-lem-10`). -/
-public theorem_wanted signedInvSeq_wilf_b1b0_b0b0_1b0 :
-    signedInvAvoidCount {⟨.gt, true, true⟩, ⟨.eq, true, true⟩, ⟨.gt, false, true⟩} =
-      signedInvAvoidCount {⟨.gt, true, true⟩, ⟨.eq, false, true⟩, ⟨.gt, false, true⟩}
-
 /-- **Signed Wilf classes of sets of three to twelve patterns.** Let $\mathrm{sw}_k$ be the number
 of Wilf-equivalence classes among the sets of $k$ length-2 signed patterns. Then
 $\mathrm{sw}_3 = 93$, $\mathrm{sw}_4 = 195$, $239 \le \mathrm{sw}_5 \le 240$, $\mathrm{sw}_6 = 190$,
