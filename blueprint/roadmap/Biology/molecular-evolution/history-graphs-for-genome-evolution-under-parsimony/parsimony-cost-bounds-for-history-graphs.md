@@ -23,7 +23,7 @@ with equality throughout when $G$ is an AVG (then $s_l = s_u$ and $r_l = r_u$).
 
 ## Depends on
 
-- [Double-cut-and-join distance formula](../../bioinformatics/genome-rearrangements/double-cut-and-join-distance-formula.md)
+- [Double-cut-and-join distance formula](../../bioinformatics/genome-rearrangements/double-cut-and-join-distance/dcj-distance.md)
 
 ## Expansion
 
