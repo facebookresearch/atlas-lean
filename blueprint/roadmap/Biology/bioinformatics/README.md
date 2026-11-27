@@ -35,3 +35,6 @@ Algorithms and statistical models on biological sequences and data: sequence ali
 - [IBD sharing HMM with linkage disequilibrium](ibd-sharing-hmm-with-linkage-disequilibrium/README.md)
 - [LD-based haplotype blocks](ld-based-haplotype-blocks/README.md)
 - [Read-based single-individual haplotyping](read-based-single-individual-haplotyping/README.md)
+- [Single-cell and bulk expression analysis](single-cell-and-bulk-expression-analysis/README.md)
+- [Reads, assembly, variants and metagenomics](reads-assembly-and-metagenomics/README.md)
+- [Functional scores, enrichment and networks](functional-scores-enrichment-and-networks/README.md)

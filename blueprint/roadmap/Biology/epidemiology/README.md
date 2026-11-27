@@ -35,3 +35,5 @@ Compartmental, renewal and branching-process models of infectious disease transm
 - [Two-strain competition with delayed cross-immunity](two-strain-competition-with-delayed-cross-immunity/README.md)
 - [Two-variant logistic replacement and the selection coefficient](two-variant-logistic-replacement-and-the-selection-coefficient.md)
 - [Epidemic coalescent models](epidemic-coalescent-models/README.md)
+- [Disease burden, surveillance and intervention effects](burden-surveillance-and-intervention-effects/README.md)
+- [Transmission dynamics and outbreak inference](transmission-dynamics-and-outbreak-inference/README.md)

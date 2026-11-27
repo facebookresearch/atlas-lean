@@ -22,3 +22,9 @@ These articles concern inference of evolutionary trees, networks and recorded ce
 
 - [Monte Carlo phylogenetic bootstrap support](phylogenetic-bootstrap-support-definition-and-no.md)
 - [Phylogenetic network identifiability, recombination tests, and tree-space geometry](phylogenetic-network-identifiability-and-geometry/README.md)
+
+## Bayesian, partitioned and recombination-aware inference
+
+- [Bayesian phylodynamic inference](bayesian-phylodynamic-inference/README.md)
+- [Phylogenetic terraces and induced partition trees](phylogenetic-terraces-and-induced-partition-trees/README.md)
+- [Recombination detection by substitution density](recombination-detection-by-substitution-density/README.md)
