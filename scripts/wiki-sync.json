@@ -103947,6 +103947,7 @@
 "ProbabilityTheory.identDistrib_tail": "06a2245d8a38d905",
 "ProbabilityTheory.immigrationDeathFlow": "56dc4c4e0f5bdb57",
 "ProbabilityTheory.immigrationDeathFlow_poisson": "24fbf8551d262d11",
+"ProbabilityTheory.increasingFailureRate_implies_newBetterThanUsed": "232cd234762fb002",
 "ProbabilityTheory.increment_projection_eq": "61d49bda75445f99",
 "ProbabilityTheory.indepFun_groupMean_residual": "b4ef00b7f181f6b7",
 "ProbabilityTheory.indepFun_hasLaw_of_condDistrib_ae_eq_const": "2a82744f476bea83",

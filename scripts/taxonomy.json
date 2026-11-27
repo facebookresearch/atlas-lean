@@ -14906,6 +14906,7 @@
   "MathlibExt/Probability/RegularVariation": {"to": "Probability/infinite-divisibility-regular-variation", "title": "Regular variation"},
   "MathlibExt/Probability/RegularVariationGeneralizedInverse": {"to": "Probability/infinite-divisibility-regular-variation", "title": "Regular variation"},
   "MathlibExt/Probability/RegularVariationKaramata": {"to": "Probability/infinite-divisibility-regular-variation", "title": "Regular variation"},
+  "MathlibExt/Probability/Reliability/FailureRate": {"to": "Probability/nonparametric-survival", "title": "Reliability and monitoring"},
   "MathlibExt/Probability/Renewal/CramerIdentity": {"to": "Probability/random-walks", "title": "The ladder Cramér identity for an i.i.d. integer score walk"},
   "MathlibExt/Probability/Renewal/ExpKeyRenewal": {"to": "Probability/point-processes", "title": "The key renewal theorem for an `Exp(1)` tilted law"},
   "MathlibExt/Probability/Renewal/LatticeConstants": {"to": "Probability/point-processes", "title": "Renewal limits: nonlattice constants versus lattice oscillation"},
