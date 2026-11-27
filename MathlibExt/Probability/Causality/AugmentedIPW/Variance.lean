@@ -432,8 +432,8 @@ theorem tendstoInMeasure_aipwVarianceEstimator_oracle {e m₀ m₁ : 𝒳 → �
 /-- **Asymptotic coverage of the AIPW Wald interval.** Under the hypotheses of
 `tendstoInDistribution_aipwEstimator` and `tendstoInMeasure_aipwVarianceEstimator`, and
 `Var φ ≠ 0`, the probability that the Wald interval `τ̂ₙ ± z √(σ̂ₙ²) / √n` contains `τ = E[ψ]`
-tends to `P(-z ≤ N(0, 1) ≤ z)`. For `z` the `1 - α/2` standard-normal quantile this is
-`1 - α`. -/
+tends to `P(-z ≤ N(0, 1) ≤ z)`. For `0 < α < 1` and `z` the `1 - α/2` standard-normal
+quantile this is `1 - α`. -/
 theorem tendsto_coverage_aipwWaldInterval {e m₀ m₁ : 𝒳 → ℝ}
     {eₙ m₀ₙ m₁ₙ : ℕ → ℕ → Ω → 𝒳 → ℝ}
     (hψ : Measurable (aipwScore T X Y e m₀ m₁)) (hψ2 : MemLp (aipwScore T X Y e m₀ m₁) 2 μ₁)

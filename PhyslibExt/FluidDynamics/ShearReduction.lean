@@ -500,7 +500,7 @@ lemma singleModeProfile_walls {L : ℝ} (hL : L ≠ 0) (A ν t : ℝ) :
   · simp only [singleModeProfile]
     rw [show Real.pi * L / L = Real.pi by field_simp, Real.sin_pi]
     field_simp
-    try ring
+    ring
 
 /-- With `ν = μ / ρ` and `ρ > 0` the single-mode flow satisfies Physlib's Navier-Stokes
 equations. -/
@@ -546,7 +546,7 @@ lemma singleModeProfile_energy_balance {ρ L : ℝ} (hρ : 0 < ρ) (hL : 0 < L) 
       refine htot.congr_deriv ?_
       rw [Real.cos_two_mul]
       field_simp
-      try ring
+      ring
     have hint : IntervalIntegrable (fun y => (A / L - A / L * s * Real.cos (Real.pi * y / L)) ^ 2)
         MeasureTheory.volume 0 L := by
       apply Continuous.intervalIntegrable
@@ -555,13 +555,13 @@ lemma singleModeProfile_energy_balance {ρ L : ℝ} (hρ : 0 < ρ) (hL : 0 < L) 
     rw [show Real.pi * L / L = Real.pi by field_simp, show 2 * Real.pi = 2 * Real.pi from rfl]
     simp only [mul_zero, zero_div, Real.sin_zero, Real.sin_pi, Real.sin_two_pi]
     field_simp
-    try ring
+    ring
   have hwall : deriv (singleModeProfile A L (μ / ρ) t) L = A * (1 + s) / L := by
     rw [hdx]
     simp only
     rw [show Real.pi * L / L = Real.pi by field_simp, Real.cos_pi]
     field_simp
-    try ring
+    ring
   have hwalls := singleModeProfile_walls hL0 A (μ / ρ) t
   have hK := shearFlow_kineticEnergy_hasDerivAt hρ hL.le μ 0 (fun _ => 0)
     (singleModeProfile_contDiff A L (μ / ρ)) (singleModeFlow_navierStokes hρ A L μ 0 (fun _ => 0)) t
