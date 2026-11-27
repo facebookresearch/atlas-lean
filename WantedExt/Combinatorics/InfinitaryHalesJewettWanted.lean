@@ -14,6 +14,7 @@ public import Mathlib.Algebra.Free
 public import Mathlib.Basic.Finite.Defs
 public import Mathlib.Data.Finset.Defs
 public import Mathlib.Data.List.OfFn
+public import MathlibExt.Combinatorics.InfinitaryHalesJewett
 public import MathlibExt.Combinatorics.InfinitaryHalesJewettCentral
 
 /-!
