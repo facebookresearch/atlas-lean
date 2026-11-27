@@ -17,9 +17,9 @@ public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.NumberTheory.Real.GoldenRatio
 public import MathlibExt.Analysis.SpecialFunctions.LambertWFunction
 public import MathlibExt.NumberTheory.GoldenFactorialExponent
-public import MathlibExt.NumberTheory.GoldenRatioLambertSequence
 public import MathlibExt.NumberTheory.GoldenRatioLeftFactorialLambertKurepaPartialIntegralGoldenFactorialExponentBounds
 public import MathlibExt.NumberTheory.GoldenRatioLeftFactorialLambertKurepaPartialIntegralLambertSequenceBounds
+public import MathlibExt.NumberTheory.LambertSequencePartialExpSum
 
 /-!
 # The golden ratio, factorials, and the Lambert `W` function
@@ -161,27 +161,6 @@ public theorem_wanted lambertSequence_lt_goldenFactorialExponent (n : ℕ) (hn :
     (hW : lambertMap (-a / ((n : ℝ) - 1)) =
       -(1 / ((n : ℝ) - 1)) * (4 / 7 : ℝ) ^ (1 / ((n : ℝ) - 1))) :
     a < goldenFactorialExponent n
-
-/-- **Partial exponential sums at the Lambert sequence.** Let $n \ge 5$ and $k$ be natural numbers
-with $k < n - 2$, let $h(y) = y e^y$ be the Lambert map, and let $a$ be a real number with
-$a \ge n - 1$ and
-$$h\left(-\frac{a}{n-1}\right) = -\frac{1}{n-1}\left(\frac{4}{7}\right)^{1/(n-1)}.$$
-Then
-$$\sum_{t=0}^{k} \frac{a^t}{t!} < \frac{a^{k+1}}{(k+1)!}.$$
-
-The two conditions on $a$ say exactly that
-$a = -(n-1)\, W_{-1}\left(-\frac{1}{n-1}\left(\frac{4}{7}\right)^{1/(n-1)}\right)$, where $W_{-1}$
-is the lower real branch of the Lambert $W$ function; this is the paper's $a(n)$.
-
-Source: Petojević, Gorjanac Ranitović, Rastovac and Mandić, *The Golden Ratio,
-Factorials, and the Lambert W Function*, Journal of Integer Sequences 27 (2024),
-Article 24.5.7, Lemma 9 (`jis-2024-24.5.7-lem-9`). -/
-public theorem_wanted sum_pow_div_factorial_lt_lambertSequence (n k : ℕ) (hn : 5 ≤ n)
-    (hk : k < n - 2) (a : ℝ) (ha : (n : ℝ) - 1 ≤ a)
-    (hW : lambertMap (-a / ((n : ℝ) - 1)) =
-      -(1 / ((n : ℝ) - 1)) * (4 / 7 : ℝ) ^ (1 / ((n : ℝ) - 1))) :
-    ∑ t ∈ Finset.range (k + 1), a ^ t / (t.factorial : ℝ) <
-      a ^ (k + 1) / ((k + 1).factorial : ℝ)
 
 /-- **Two-parameter Lambert bounds for the left factorial.** Let $n \ge 5$ and $m \ge 1$ be
 integers, let $!n = \sum_{k=0}^{n-1} k!$ be the left factorial, let
