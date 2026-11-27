@@ -20,6 +20,12 @@ import Mathlib.Analysis.Calculus.Deriv.Mul
 
 Expanding powers in falling factorials and differentiating the resulting binomial
 convolution gives the Stirling expansion of an alternating binomial–harmonic sum.
+
+## References
+
+* Kunle Adegoke and Robert Frontczak, *Three Classes of Combinatorial Sums Involving
+  Central Binomial Coefficients and Harmonic Numbers*, INTEGERS 26 (2026), Article A109,
+  pp. 1–16, Theorems 5 and 6.
 -/
 
 namespace MetaMathlibExt
@@ -157,5 +163,50 @@ public theorem sum_choose_sub_harmonic_diff_stirling (n r : ℕ) (t : ℂ)
   have h := HasDerivAt.fun_sum left
   simp_rw [power_convolution] at h
   exact h.unique ((HasDerivAt.fun_sum right).const_mul _)
+
+/-- **Power sums of $\binom{n-t}{n-k}(H_{k-t} - H_{n-t})$ in Stirling form.** Let $t$ be a
+complex number that is not an integer. For complex $x$ write
+$\binom{x}{k} = x(x-1)\cdots(x-k+1)/k!$, and write $H_x = \psi(x+1) + \gamma$, where $\psi$ is
+the digamma function and $\gamma$ is the Euler–Mascheroni constant (only differences
+$H_x - H_y = \psi(x+1) - \psi(y+1)$ occur below). Let ${r \brace k}$ denote the Stirling numbers
+of the second kind. For all natural numbers $n$ and $r$ (with $0^0 = 1$),
+$$\sum_{k=0}^{n} (-1)^{n-k} \binom{n-t}{n-k} k^r (H_{k-t} - H_{n-t}) =
+\sum_{k=0}^{\min(r,n)} k! {r \brace k} \binom{t}{n-k} (H_t - H_{t-n+k}).$$
+
+Source: Kunle Adegoke and Robert Frontczak, *Three Classes of Combinatorial Sums Involving
+Central Binomial Coefficients and Harmonic Numbers*, INTEGERS 26 (2026), Article A109,
+Theorem 6 (`integers-2026-A109-thm-6`). -/
+public theorem sum_choose_sub_harmonic_diff_stirling_dual (n r : ℕ) (t : ℂ)
+    (ht : ∀ m : ℤ, t ≠ m) :
+    ∑ k ∈ range (n + 1),
+        (-1 : ℂ) ^ (n - k) * Ring.choose ((n : ℂ) - t) (n - k) * (k : ℂ) ^ r *
+          (Complex.digamma (k - t + 1) - Complex.digamma (n - t + 1)) =
+      ∑ k ∈ range (min r n + 1),
+        (k.factorial : ℂ) * (Nat.stirlingSecond r k : ℂ) * Ring.choose t (n - k) *
+          (Complex.digamma (t + 1) - Complex.digamma (t - n + k + 1)) := by
+  have ht' (m : ℤ) : (n : ℂ) - t ≠ m := fun h =>
+    ht ((n : ℤ) - m) (by push_cast; linear_combination -h)
+  have h := congrArg ((-1 : ℂ) ^ n * ·) (sum_choose_sub_harmonic_diff_stirling n r (n - t) ht')
+  have hcancel : (-1 : ℂ) ^ n * (-1 : ℂ) ^ n = 1 := by
+    rw [← pow_add, ← two_mul, pow_mul]
+    norm_num
+  rw [mul_sum, ← mul_assoc, hcancel, one_mul, sub_sub_cancel] at h
+  -- Reflecting the parameter also reverses both digamma differences.
+  apply neg_injective
+  rw [← sum_neg_distrib, ← sum_neg_distrib]
+  convert h using 1
+  · apply sum_congr rfl
+    intro k hk
+    have hk' : k ≤ n := Nat.le_of_lt_succ (mem_range.mp hk)
+    have hsign : (-1 : ℂ) ^ n * (-1 : ℂ) ^ k = (-1 : ℂ) ^ (n - k) := by
+      rw [← pow_add, show n + k = n - k + 2 * k by omega, pow_add, pow_mul]
+      norm_num
+    rw [show (n : ℂ) - t - n + k + 1 = k - t + 1 by ring,
+      ← mul_assoc, ← mul_assoc, ← mul_assoc, hsign]
+    ring
+  · apply sum_congr rfl
+    intro k _
+    rw [show (k : ℂ) - (n - t) + 1 = t - n + k + 1 by ring]
+    ring
 
 end MetaMathlibExt
