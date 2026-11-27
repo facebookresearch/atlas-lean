@@ -70,26 +70,6 @@ public theorem_wanted tsum_inv_pow_gibonacciPoly_succ_sub_odd {x : ℝ} (hx : 0 
     ∑' n : ℕ, (1 / aeval x (g (2 * n + 2)) ^ lam - 1 / aeval x (g (2 * n + 2 + 2 * k)) ^ lam) =
       ∑ r ∈ Finset.Icc 1 k, 1 / aeval x (g (2 * r)) ^ lam
 
-/-- **Telescoping inverse-power series of gibonacci polynomials at odd indices, even shift.**
-Let $x > 0$ be real, and let $g_n$ denote either the Fibonacci polynomials, given by $g_0 = 0$ and
-$g_1 = 1$, or the Lucas polynomials, given by $g_0 = 2$ and $g_1 = x$, both satisfying
-$g_{n+2} = x g_{n+1} + g_n$ and evaluated at $x$. Let $k$ be an even natural number and
-$\lambda$ a positive integer. Then
-$$\sum_{n=0}^{\infty} \left(\frac{1}{g_{2n+1}^{\lambda}} - \frac{1}{g_{2n+1+2k}^{\lambda}}\right) =
-\sum_{r=1}^{k} \frac{1}{g_{2r-1}^{\lambda}}.$$
-
-The source quotes this lemma from Koshy as the sum over $n \ge k/2$ of
-$1/g_{2n+1-k}^{\lambda} - 1/g_{2n+1+k}^{\lambda}$; here the summation index is shifted to start
-at $0$.
-
-Source: Yinqi Lin and Bo Zhou, *Infinite Sums Involving Powers of Gibonacci Polynomials*,
-The Fibonacci Quarterly 62 (2024), Article linzhou02172024,
-Lemma 2.5 (`fq-2024-linzhou02172024-lem-2.5`). -/
-public theorem_wanted tsum_inv_pow_gibonacciPoly_succ_sub_even {x : ℝ} (hx : 0 < x)
-    {g : ℕ → ℤ[X]} (hg : g = 𝔣 ∨ g = 𝔩) {k lam : ℕ} (hk : Even k) (hlam : 0 < lam) :
-    ∑' n : ℕ, (1 / aeval x (g (2 * n + 1)) ^ lam - 1 / aeval x (g (2 * n + 1 + 2 * k)) ^ lam) =
-      ∑ r ∈ Finset.Icc 1 k, 1 / aeval x (g (2 * r - 1)) ^ lam
-
 /-- **Even powers of Lucas polynomials at $n \pm k$.** Let $f_i$ and $\ell_i$ be the
 Fibonacci and Lucas polynomials in $\mathbb{Z}[x]$, defined by $f_0 = 0$, $f_1 = 1$, $\ell_0 = 2$,
 $\ell_1 = x$ and $g_{i+2} = x g_{i+1} + g_i$ for $g = f, \ell$. For all natural numbers
