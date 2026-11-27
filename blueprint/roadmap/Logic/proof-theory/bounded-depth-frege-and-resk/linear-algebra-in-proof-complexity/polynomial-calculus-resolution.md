@@ -8,7 +8,7 @@ $$
 \frac{f\qquad g}{\alpha f+\beta g}\ \ (\alpha,\beta\in\mathbb F)\qquad\qquad \frac{f}{x\cdot f}\ \ (x\text{ a variable}).
 $$
 
-Its *degree* is the maximum degree of a line and its *size* is the total number of monomials appearing in it. A $\mathrm{PCR}_{\mathbb F}$ refutation of $(f_1,\dots,f_m)$ is a $\mathrm{PC}_{\mathbb F}$ refutation of the system obtained by adding, for every variable $x_i$, the Boolean axiom $x_i^2-x_i$, a new *twin variable* $\bar x_i$, and the axioms $1-x_i-\bar x_i$ and $\bar x_i^2-\bar x_i$. A CNF is refuted through its clauses: the clause $\bigvee_{i\in P}x_i\vee\bigvee_{i\in N}\neg x_i$ becomes the polynomial $\prod_{i\in P}(1-x_i)\prod_{i\in N}x_i$, which vanishes exactly at the $0/1$ points satisfying the clause.
+Its *degree* is the maximum degree of a line and its *size* is the total number of monomials appearing in it. A $\mathrm{PCR}_{\mathbb F}$ refutation of $(f_1,\dots,f_m)$ is a $\mathrm{PC}_{\mathbb F}$ refutation of the system obtained by adding, for every variable $x_i$, the Boolean axiom $x_i^2-x_i$, a new *twin variable* $\bar x_i$, and the axioms $1-x_i-\bar x_i$ and $\bar x_i^2-\bar x_i$. A CNF is refuted through its clauses, each translated into a polynomial that vanishes exactly at the $0/1$ points satisfying it (with $\bar x_i=1-x_i$): in $\mathrm{PCR}_{\mathbb F}$ the clause $\bigvee_{i\in P}x_i\vee\bigvee_{i\in N}\neg x_i$ becomes the single monomial $\prod_{i\in P}\bar x_i\prod_{i\in N}x_i$, while in $\mathrm{PC}_{\mathbb F}$, which has no twin variables, it becomes $\prod_{i\in P}(1-x_i)\prod_{i\in N}x_i$, with $2^{|P|}$ monomials when expanded.
 
 ## Expansion
 
@@ -24,4 +24,4 @@ None.
 
 ## Sources
 
-- Michal Garlík, Svyatoslav Gryaznov, Hanlin Ren and Iddo Tzameret, "The Weak Rank Principle: Lower Bounds and Applications", *58th Annual ACM Symposium on Theory of Computing (STOC 2026)*, 2026, https://doi.org/10.1145/3798129.3800735; numbering as in arXiv:2608.08760v1 (Section 4.2, Definition 4.3 (polynomial calculus) and Definition 4.5 (PCR); Section 5, opening, multilinear lines).
+- Michal Garlík, Svyatoslav Gryaznov, Hanlin Ren and Iddo Tzameret, "The Weak Rank Principle: Lower Bounds and Applications", *58th Annual ACM Symposium on Theory of Computing (STOC 2026)*, 2026, https://doi.org/10.1145/3798129.3800735; numbering as in arXiv:2608.08760v1 (Section 4.2, Definition 4.3 (polynomial calculus) and Definition 4.5 (PCR) and the remark after it; Section 5.2, proof of Lemma 5.16, clauses as monomials in the twin variables; Section 5, opening, multilinear lines).

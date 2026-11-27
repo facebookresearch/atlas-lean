@@ -2,7 +2,7 @@
 
 Over $GF(2)$, the determinant identities and the inversion principle $XY=I_n\rightarrow YX=I_n$ have polynomial-size circuit Frege proofs in which every circuit has depth $O(\log^2 n)$, that is NC$^2$-Frege proofs, and quasipolynomial-size Frege proofs.
 
-**Theorem.** Interpret the identities $\det(XY)=\det(X)\det(Y)$ and $\det(Z)=z_{11}\cdots z_{nn}$ (for triangular $Z$), with the determinant circuit of the [main theorem](determinant-identities-pc-proofs.md), as Boolean tautologies over $GF(2)$. Then:
+**Theorem.** Interpret the identities $\det(XY)=\det(X)\det(Y)$ and $\det(Z)=z_{11}\cdots z_{nn}$ (for triangular $Z$), with the determinant circuit of the [main theorem](determinant-identities-pc-proofs.md)'s part (i) for the circuit Frege proofs and the determinant formula of its part (ii) for the Frege proofs, as Boolean tautologies over $GF(2)$. Then:
 
 1. these properties of the determinant have polynomial-size circuit Frege proofs in which every circuit has depth at most $O(\log^2n)$, and quasipolynomial-size Frege proofs;
 2. the implication $(XY=I_n)\rightarrow(YX=I_n)$ for $n\times n$ matrices $X,Y$ has a polynomial-size circuit Frege proof in which every circuit has depth at most $O(\log^2n)$, and a quasipolynomial-size Frege proof.
@@ -22,4 +22,4 @@ None.
 
 ## Sources
 
-- Pavel Hrubeš and Iddo Tzameret, "Short Proofs for the Determinant Identities", *SIAM Journal on Computing*, 2015 (conference version STOC 2012), https://doi.org/10.1137/130917788; numbering as in arXiv:1112.6265v2 (Section 1, introduction; Section 2.5, Proposition 12, Theorem 13 and Remark 14).
+- Pavel Hrubeš and Iddo Tzameret, "Short Proofs for the Determinant Identities", *SIAM Journal on Computing*, 2015 (conference version STOC 2012), https://doi.org/10.1137/130917788; numbering as in arXiv:1112.6265v2 (Section 1, introduction; Section 2.1, Theorem 4; Section 2.5, Proposition 12, Theorem 13 and Remark 14).
