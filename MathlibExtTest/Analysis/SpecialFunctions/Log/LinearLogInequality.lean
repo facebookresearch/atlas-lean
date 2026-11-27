@@ -17,10 +17,12 @@ example {u v x : ℝ} (hu : √(exp 1) ≤ u) (hv : 0 ≤ v) (hx : 0 < x)
     (h : x ≤ u * (v + log x)) : x ≤ 2 * u * (log u + v) :=
   le_two_mul_mul_log_add_of_le_mul_add_log hu hv hx h
 
--- The boundary case `u = √e`, `v = 0`: every `x > 0` with `x ≤ √e log x` is at most `√e`.
-example {x : ℝ} (hx : 0 < x) (h : x ≤ √(exp 1) * (0 + log x)) : x ≤ √(exp 1) := by
-  have := le_two_mul_mul_log_add_of_le_mul_add_log le_rfl le_rfl hx h
+-- The endpoint `u = √e`, with `v = 1/2` and `x = √e`: the hypothesis holds with equality, as
+-- `log √e = 1/2`, and the conclusion is `√e ≤ 2√e`.
+example : √(exp 1) ≤ 2 * √(exp 1) * (log √(exp 1) + 1 / 2) := by
   have hlog : log √(exp 1) = 1 / 2 := by
     rw [← exp_half, log_exp]
-  rw [hlog] at this
-  linarith
+  have hx : 0 < √(exp 1) := sqrt_pos.mpr (exp_pos 1)
+  refine le_two_mul_mul_log_add_of_le_mul_add_log le_rfl (by norm_num) hx ?_
+  rw [hlog]
+  norm_num

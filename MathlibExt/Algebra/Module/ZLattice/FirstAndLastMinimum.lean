@@ -18,9 +18,11 @@ import MathlibExt.LinearAlgebra.Matrix.HadamardDeterminant
 # The first and the last minimum of a lattice in a Euclidean space
 
 For a lattice `L` in a finite-dimensional real inner product space `E` of dimension `n`, this
-module defines the first minimum `ZLattice.firstMinimum L`, the least norm of a nonzero vector of
-`L`, and the last minimum `ZLattice.lastMinimum L`, the least `r > 0` such that `L` contains `n`
-linearly independent vectors of norm at most `r`. It proves two bounds of Gaudron and Rémond's
+module defines the first minimum `ZLattice.firstMinimum L`, the infimum of the norms of the
+nonzero vectors of `L`, and the last minimum `ZLattice.lastMinimum L`, the infimum of the `r > 0`
+such that `L` contains `n` linearly independent vectors of norm at most `r`. In positive dimension
+both infima are attained, so they are the least such values. In dimension `0` both values are `0`
+and neither is attained. It proves two bounds of Gaudron and Rémond's
 *Polarisations et isogénies*, §3, with `vol(L)` the covolume `ZLattice.covolume L` for the volume
 of `E`, the Haar measure that gives an orthonormal basis's parallelepiped volume `1`:
 
@@ -44,8 +46,9 @@ variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDim
 /-- The **first minimum** $\lambda(L)$ of a $\mathbb{Z}$-submodule $L$ of a real inner product
 space $E$: the infimum of the norms $|x|$ of the nonzero vectors $x \in L$,
 $$\lambda(L) = \inf\{|x| : x \in L \setminus \{0\}\}.$$
-For a lattice the infimum is attained, so it is the minimum
-$\min\{|x| : x \in L \setminus \{0\}\}$. When $L = 0$ the set is empty and the value is $0$.
+For a lattice in a space of positive dimension the infimum is attained, so it is the minimum
+$\min\{|x| : x \in L \setminus \{0\}\}$. When $L = 0$, for instance in dimension $0$, the set is
+empty and the value is $0$, which is not attained.
 
 Source: É. Gaudron and G. Rémond, *Polarisations et isogénies*, Duke Math. J. 163 (2014),
 2057–2108, §3, p. 2069. -/
@@ -55,7 +58,10 @@ noncomputable def firstMinimum (L : Submodule ℤ E) : ℝ :=
 /-- The **last minimum** $\Lambda(L)$ of a $\mathbb{Z}$-submodule $L$ of a real inner product
 space $E$ of dimension $n$: the infimum of the real numbers $r > 0$ for which there is a linearly
 independent family $(\omega_1, \dots, \omega_n)$ of elements of $L$ with $|\omega_i| \le r$ for
-all $i$. For a lattice the infimum is attained, so it is the minimum of these numbers.
+all $i$. For a lattice in a space of positive dimension the infimum is attained, so it is the
+minimum of these numbers. In dimension $0$ the empty family qualifies for every $r > 0$, so the
+admissible numbers are all $r > 0$ and the value is $0$, which is not attained. If $L$ contains no
+$n$ linearly independent vectors, the set is empty and the value is $0$.
 
 Source: É. Gaudron and G. Rémond, *Polarisations et isogénies*, Duke Math. J. 163 (2014),
 2057–2108, §3, p. 2069. -/
