@@ -46,8 +46,9 @@ An intertwining map `f : V → W` induces the `E`-linear map `D_S(f) : D_S(V) �
 restriction of `S ⊗ f` (`Representation.periodsMap`); this makes `D_S` an additive functor, and
 `α` is natural in `V` (`Representation.comparison_comp_baseChange_periodsMap`).
 
-For a `(F, H)`-regular ring `S`, Fontaine shows that `dim_E D_S(V) ≤ dim_F V`, and calls `V`
-admissible when `α_V` is an isomorphism, which happens exactly when equality holds
+For a finite-dimensional `V` and an `(F, H)`-regular ring `S`, Fontaine shows that
+`dim_E D_S(V) ≤ dim_F V`, and calls `V` admissible when `α_V` is an isomorphism, which happens
+exactly when equality holds
 (*op. cit.*, §1.4.2 p. 123 and §1.5.1 p. 124; see
 `MathlibExt.RepresentationTheory.AdmissibleRepresentation.Regular`). We record two forms of
 admissibility, without assuming regularity:
@@ -55,13 +56,19 @@ admissibility, without assuming regularity:
 * the **dimension form**: `V` is finite-dimensional and `dim_{S^H} D_S(V) = dim_F V`
   (`Representation.IsAdmissible`), the form in which Fontaine uses admissibility for potential
   semistability (*op. cit.*, Exposé III, §1.8.5 pp. 134–135);
-* the **basis form**: `S ⊗_F V` has an `S`-basis of `H`-invariant vectors, that is, `S ⊗_F V` is a
-  trivial `S`-representation of `H` (`Representation.HasFixedBasis`). Such a basis is an
-  `S^H`-basis of `D_S(V)` (`Representation.periodsBasis`), so the basis form implies the dimension
-  form (`Representation.HasFixedBasis.isAdmissible`) and makes `α_V` an isomorphism
-  (`Representation.HasFixedBasis.comparison_bijective`); conversely, if `α_V` is an isomorphism
-  and `D_S(V)` is free over `S^H`, then the basis form holds
-  (`Representation.hasFixedBasis_of_comparison_bijective`).
+* the **basis form**: `S ⊗_F V` has a finite `S`-basis, indexed by `Fin d` for some `d`, of
+  `H`-invariant vectors, that is, `S ⊗_F V` is a trivial `S`-representation of `H` of finite rank
+  (`Representation.HasFixedBasis`). Such a basis is an `S^H`-basis of `D_S(V)`
+  (`Representation.periodsBasis`), so it makes `α_V` an isomorphism
+  (`Representation.HasFixedBasis.comparison_bijective`), and, for a nonzero `S` and a
+  finite-dimensional `V`, the basis form implies the dimension form
+  (`Representation.HasFixedBasis.isAdmissible`). Conversely, for a nonzero `S` and a
+  finite-dimensional `V`, if `α_V` is an isomorphism and `D_S(V)` is free over `S^H`, then the
+  basis form holds (`Representation.hasFixedBasis_of_comparison_bijective`). Neither implication
+  holds without these hypotheses: over the zero ring every `V` has the empty fixed basis, but
+  `V = F²` is not admissible in the dimension form; and for `S = F`, trivial `H` and an
+  infinite-dimensional `V`, `α_V` is an isomorphism and `D_S(V) = V` is free, but `S ⊗_F V` has
+  no finite basis.
 
 Both forms are invariant under an equivariant isomorphism of `F`-algebras
 (`Representation.isAdmissible_iff_of_algEquiv`, `Representation.hasFixedBasis_iff_of_algEquiv`),
@@ -168,9 +175,9 @@ def IsAdmissible (ρ : Representation F G V) (act : G → S →ₐ[F] S) (H : Su
   FiniteDimensional F V ∧
     Module.finrank (fixedSubalgebra S act H) (ρ.periods act H) = Module.finrank F V
 
-/-- **`V` is admissible for `S` as a representation of `H`, in the basis form**: `S ⊗_F V` has an
-`S`-basis of vectors fixed by the diagonal action of `H`, that is, it is a trivial
-`S`-representation of `H`. -/
+/-- **`V` is admissible for `S` as a representation of `H`, in the basis form**: `S ⊗_F V` has a
+finite `S`-basis, indexed by `Fin d` for some `d`, of vectors fixed by the diagonal action of `H`,
+that is, it is a trivial `S`-representation of `H` of finite rank. -/
 def HasFixedBasis (ρ : Representation F G V) (act : G → S →ₐ[F] S) (H : Subgroup G) : Prop :=
   ∃ (d : ℕ) (b : Module.Basis (Fin d) S (S ⊗[F] V)), ∀ i, b i ∈ ρ.periods act H
 
