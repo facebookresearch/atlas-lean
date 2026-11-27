@@ -15727,6 +15727,7 @@
   "WantedExt/Biology/Epidemiology/HouseholdReproductionNumberWanted": {"to": "Biology/epidemiology", "title": "Household reproduction number and threshold"},
   "WantedExt/Biology/Epidemiology/MultigroupSIRGlobalStabilityWanted": {"to": "Biology/epidemiology", "title": "Global stability of multigroup SIR epidemics"},
   "WantedExt/Biology/Epidemiology/MultigroupSISThresholdWanted": {"to": "Biology/epidemiology", "title": "Multigroup SIS epidemic threshold"},
+  "WantedExt/Biology/Epidemiology/NextGenerationOperatorWanted": {"to": "Biology/epidemiology", "title": "Next-generation operator and basic reproduction number"},
   "WantedExt/Biology/Epidemiology/NonlinearIncidenceGlobalStabilityWanted": {"to": "Biology/epidemiology", "title": "Global stability with nonlinear incidence"},
   "WantedExt/Biology/Epidemiology/PowerLawContactProcessWanted": {"to": "Biology/epidemiology", "title": "Contact process on power-law random graphs"},
   "WantedExt/Biology/Epidemiology/SISLogisticExtinctionTimeWanted": {"to": "Biology/epidemiology", "title": "Extinction times in the stochastic SIS logistic epidemic"},
