@@ -23,12 +23,15 @@ Integration of the percolation mean-field inequality, written in the variable `�
 The change of variables `p = p(β)` and the integrated bound `f(p(β)) ≥ (β - β_c)/β` for a general
 starting point `β_c` are `shr_integrate_beta` and its companions in `BetaReparam`. This file
 specializes the starting point to `β̃_c` (`betaTildeC`), where `p(β̃_c) = p̃_c`. The result is
-proved; the differential inequality for `f` (`hineq`) and `f(p̃_c) ≥ 0` are hypotheses.
+proved for `d > 0`, `J > 0` and `p̃_c < 1`; differentiability of `f` on `[p̃_c, 1)`, including at
+`p̃_c` (`hdiff`), the differential inequality on `(p̃_c, 1)` (`hineq`) and `f(p̃_c) ≥ 0` (`hf0`)
+are hypotheses.
 
 ## ii. Key results
 
-- `bfp_integrate_perco_beta_named` : `f(p(β)) ≥ (β - β̃_c)/β` for `β > β̃_c`, given the
-  differential inequality on `(p̃_c, 1)`
+- `bfp_integrate_perco_beta_named` : `f(p(β)) ≥ (β - β̃_c)/β` for `β > β̃_c`, given
+  differentiability of `f` on `[p̃_c, 1)`, the differential inequality on `(p̃_c, 1)` and
+  `f(p̃_c) ≥ 0`
 
 ## iii. Table of contents
 
@@ -55,8 +58,10 @@ variable {d : ℕ}
 
 /-! ## A. Integration from `β̃_c` -/
 
-/-- If `f` satisfies `(1/(q(1-q))) (1 - f(q)) ≤ f'(q)` on `(p̃_c, 1)` and `f(p̃_c) ≥ 0`, then
-`f(p(β)) ≥ (β - β̃_c)/β` for `β > β̃_c`. -/
+/-- Let `J > 0`, `d > 0` and `p̃_c < 1`. If `f` is differentiable on `[p̃_c, 1)` (including at
+`p̃_c`), satisfies `(1/(q(1-q))) (1 - f(q)) ≤ f'(q)` on `(p̃_c, 1)` and has `f(p̃_c) ≥ 0`, then
+`f(p(β)) ≥ (β - β̃_c)/β` for `β > β̃_c`, where `p(β) = 1 - e^{-βJ}` and `β̃_c = -log(1 - p̃_c)/J`.
+-/
 lemma bfp_integrate_perco_beta_named {J β : ℝ} (f : ℝ → ℝ) (hJ : 0 < J) (hd : 0 < d)
     (htc1 : (tildePc d : ℝ) < 1) (hβ : betaTildeC d J < β)
     (hdiff : ∀ q ∈ Ico (tildePc d : ℝ) 1, DifferentiableAt ℝ f q)

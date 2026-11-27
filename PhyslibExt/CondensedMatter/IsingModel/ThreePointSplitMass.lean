@@ -21,30 +21,37 @@ public import PhyslibExt.CondensedMatter.IsingModel.AizenmanSignDominance
 /-!
 # Three-point inclusion–exclusion for split current weights
 
-The weighted mass of sub-currents with prescribed sources, its behaviour under switching, and a
-three-point (GHS-type) inequality conditional on coherence and domination hypotheses.
+The weighted mass of sub-currents with prescribed sources, its behaviour under odd-edge switching,
+an inclusion–exclusion identity for a three-point gap, and the reduction of a three-point
+(GHS-type) inequality to an assumed domination inequality.
 
 ## i. Overview
 
 For a current `m` and a source set `S`, `hnw_mass m S` is the weighted sum `∑_K w(K) w(m - K)` over
 sub-currents `K ≤ m` with sources `S`. For three distinct sites `o, x, y`, the gap
-`hnw_gap = mass(A) - mass(A ∆ {x,y}) - mass(A ∆ {o,y}) - mass(A ∆ {o,x})` equals `-2 · mass(A)` when
-all three pairs are joined by odd edges (switching lemma), `mass(A)` when no pair is joined by
-positive edges, and `0` in the mixed cases provided odd and positive connectivity agree for the
-three pairs (`hnw_coherent`). Summing over a set `M` of currents gives an inclusion–exclusion
-identity, and hence the three-point inequality
-`mass(A ∆ {x,y}) + mass(A ∆ {o,y}) + mass(A ∆ {o,x}) ≤ mass(A)` summed over `M`.
+`hnw_gap = mass(A) - mass(A ∆ {x,y}) - mass(A ∆ {o,y}) - mass(A ∆ {o,x})` equals `-2 · mass(A)`, for
+every `A`, when all three pairs are joined by edges of odd multiplicity (odd-edge switching). If
+`A` is the source set of `m`, the gap equals `mass(A)` when no pair is joined by edges of positive
+multiplicity, and `0` in the mixed cases provided odd-edge and positive-edge connectivity agree for
+the three pairs (`hnw_coherent`). Summing over a finite set `M` of currents, each with source set
+`A` and coherent, gives an inclusion–exclusion identity: the summed gap is the none-connected mass
+minus twice the all-connected mass. Hence the three-point inequality
+`∑ mass(A ∆ {x,y}) + ∑ mass(A ∆ {o,y}) + ∑ mass(A ∆ {o,x}) ≤ ∑ mass(A)` over `M`, which says that
+the summed gap is nonnegative, holds exactly when the domination inequality
+`2 · (all-connected mass) ≤ (none-connected mass)` holds. That inequality is assumed (`hdom`), not
+proved: no inequality of GHS type is proved here.
 
 Headline fidelity:
-- `hnw_inclusion_exclusion_decomp` is conditional on `hcoh : ∀ m ∈ M, hnw_coherent G m o x y`
-  (odd-edge and positive-edge connectivity agree for each of the three pairs), besides the
-  loopless-graph hypothesis `hnd` and the source hypothesis `hm`.
-- `hnw_closure_of_hdom` and `hnw_ghs_distinct_site_of_hdom` are conditional on `hcoh` and on the
-  domination inequality `hdom` (twice the all-connected mass is at most the none-connected mass).
-  Neither hypothesis is derived in the library. They are satisfiable (for example by `M = ∅`), so
-  the statements are not vacuous, but no nontrivial family satisfying them is constructed.
-- `hnw_mass_eq_weight_mul_count`, `hnw_addBackbone_sources` and `hnw_addBackbone_weight` are
-  unconditional.
+- `hnw_inclusion_exclusion_decomp` assumes that `o, x, y` are distinct and, for every `m ∈ M`, the
+  source hypothesis `hm : Sharpness.sources G m = A` and the coherence hypothesis
+  `hcoh : hnw_coherent G m o x y` (odd-edge and positive-edge connectivity agree for each of the
+  three pairs), besides the loopless-graph hypothesis `hnd`.
+- `hnw_closure_of_hdom` and `hnw_ghs_distinct_site_of_hdom` assume the same and the domination
+  inequality `hdom` (twice the all-connected mass is at most the none-connected mass). Under the
+  other hypotheses each of their conclusions is equivalent to `hdom`. `hcoh` and `hdom` hold for
+  `M = ∅`, so the statements are not vacuous.
+- `hnw_mass_eq_weight_mul_count` and `hnw_addBackbone_weight` (for any finite set `P` of pairs) are
+  unconditional; `hnw_addBackbone_sources` assumes `P ⊆ E(G)`.
 - The backbone chain rule (P2) does not appear.
 
 ## ii. Key results
@@ -53,7 +60,8 @@ Headline fidelity:
 - `StatMech.Ising.hnw_allConn`, `StatMech.Ising.hnw_noneConn`, `StatMech.Ising.hnw_coherent` :
   connectivity patterns of three sites
 - `StatMech.Ising.hnw_inclusion_exclusion_decomp` : the inclusion–exclusion identity
-- `StatMech.Ising.hnw_ghs_distinct_site_of_hdom` : the three-point inequality
+- `StatMech.Ising.hnw_ghs_distinct_site_of_hdom` : the three-point inequality from the assumed
+  domination inequality `hdom`, to which it is equivalent
 - `StatMech.Ising.hnw_addBackbone_weight` : weight of a current with a backbone added
 
 ## iii. Table of contents
@@ -120,14 +128,17 @@ lemma hnw_noneConn_not_allConn (m : Current V) {o x y : V}
   rintro ⟨hxy, _, _⟩
   exact h.1 (connOdd_imp_connPos G.edgeFinset m hxy)
 
-/-- Switching lemma for the split mass. -/
+/-- Switching lemma for the split mass, odd-edge form: if `u ≠ v` are joined by edges of odd
+multiplicity in `m`, then for every `A` the split mass of `m` with sources `A ∆ {u, v}` equals the
+split mass with sources `A`. The classical switching lemma asks only that `u` and `v` be joined by
+edges of positive multiplicity. -/
 lemma hnw_switching (β : ℝ) (J : Sym2 V → ℝ) (m : Current V)
     {u v : V} (huv : u ≠ v) (hconn : connP (oddEdges G.edgeFinset m) u v) (A : Finset V) :
     hnw_mass G β J m (A ∆ {u, v}) = hnw_mass G β J m A :=
   ising_switching_weighted G β J m huv hconn 1 A
 
-/-- The split mass with sources `A ∆ {u, v}` vanishes when `u` and `v` are not joined by positive
-edges. -/
+/-- If `A` is the source set of `m` (`hm`) and `u ≠ v` are not joined by edges of positive
+multiplicity in `m`, then the split mass of `m` with sources `A ∆ {u, v}` vanishes. -/
 lemma hnw_mass_vanish (β : ℝ) (J : Sym2 V → ℝ) (m : Current V)
     (hnd : ∀ e ∈ G.edgeFinset, ¬ e.IsDiag) (A : Finset V) (hm : Sharpness.sources G m = A)
     {u v : V} (huv : u ≠ v) (hdisc : ¬ connP (posEdges G.edgeFinset m) u v) :
@@ -155,7 +166,8 @@ lemma hnw_conn_trans_oy (m : Current V) {o x y : V}
     connP (oddEdges G.edgeFinset m) o y :=
   Relation.ReflTransGen.trans hox hxy
 
-/-- In the all-connected pattern the gap is `-2 · mass(A)`. -/
+/-- For distinct sites `o, x, y` in the all-connected pattern, the gap is `-2 · mass(A)` for every
+`A`. -/
 lemma hnw_gap_allConn (β : ℝ) (J : Sym2 V → ℝ) (m : Current V) (A : Finset V)
     {o x y : V} (hox : o ≠ x) (hoy : o ≠ y) (hxy : x ≠ y)
     (hall : hnw_allConn G m o x y) :
@@ -166,7 +178,8 @@ lemma hnw_gap_allConn (β : ℝ) (J : Sym2 V → ℝ) (m : Current V) (A : Finse
       hnw_switching G β J m hox hox' A]
   ring
 
-/-- In the none-connected pattern the gap is `mass(A)`. -/
+/-- If `A` is the source set of `m` (`hm`) and no two of the distinct sites `o, x, y` are joined by
+edges of positive multiplicity in `m`, the gap is `mass(A)`. -/
 lemma hnw_gap_noneConn (β : ℝ) (J : Sym2 V → ℝ) (m : Current V)
     (hnd : ∀ e ∈ G.edgeFinset, ¬ e.IsDiag) (A : Finset V) (hm : Sharpness.sources G m = A)
     {o x y : V} (hox : o ≠ x) (hoy : o ≠ y) (hxy : x ≠ y)
@@ -186,7 +199,9 @@ def hnw_coherent (m : Current V) (o x y : V) : Prop :=
   ∧ (connP (oddEdges G.edgeFinset m) o y ↔ connP (posEdges G.edgeFinset m) o y)
   ∧ (connP (oddEdges G.edgeFinset m) o x ↔ connP (posEdges G.edgeFinset m) o x)
 
-/-- Under `hnw_coherent`, the gap vanishes in the mixed patterns. -/
+/-- Let `o, x, y` be distinct, let `A` be the source set of `m` (`hm`), and assume that for each
+pair odd-edge and positive-edge connectivity agree (`hnw_coherent`). If neither the all-connected
+nor the none-connected pattern holds, the gap vanishes. -/
 lemma hnw_gap_exactlyOne (β : ℝ) (J : Sym2 V → ℝ) (m : Current V)
     (hnd : ∀ e ∈ G.edgeFinset, ¬ e.IsDiag) (A : Finset V) (hm : Sharpness.sources G m = A)
     {o x y : V} (hox : o ≠ x) (hoy : o ≠ y) (hxy : x ≠ y)
@@ -222,8 +237,10 @@ lemma hnw_gap_exactlyOne (β : ℝ) (J : Sym2 V → ℝ) (m : Current V)
 /-! ## C. Inclusion–exclusion and the three-point inequality -/
 
 open Classical in
-/-- Inclusion–exclusion identity: summed over `M`, the gap equals the none-connected mass minus
-twice the all-connected mass. Conditional on `hcoh`. -/
+/-- Inclusion–exclusion identity: let `o, x, y` be distinct and let every current in the finite set
+`M` have source set `A` (`hm`) and satisfy `hnw_coherent` (`hcoh`). Then the gap summed over `M`
+equals the sum of `mass(A)` over the none-connected currents of `M` minus twice its sum over the
+all-connected currents of `M`. -/
 lemma hnw_inclusion_exclusion_decomp (β : ℝ) (J : Sym2 V → ℝ) (M : Finset (Current V))
     (hnd : ∀ m ∈ M, ∀ e ∈ G.edgeFinset, ¬ e.IsDiag) (A : Finset V)
     (hm : ∀ m ∈ M, Sharpness.sources G m = A)
@@ -269,7 +286,11 @@ lemma hnw_inclusion_exclusion_decomp (β : ℝ) (J : Sym2 V → ℝ) (M : Finset
   rw [hall, hrest]; ring
 
 open Classical in
-/-- The summed gap is nonnegative, conditional on `hcoh` and the domination inequality `hdom`. -/
+/-- Let `o, x, y` be distinct and let every current in the finite set `M` have source set `A` (`hm`)
+and satisfy `hnw_coherent` (`hcoh`). By `hnw_inclusion_exclusion_decomp` the summed gap is then
+`(none-connected mass) - 2 · (all-connected mass)`, so it is nonnegative exactly when the domination
+inequality `2 · (all-connected mass) ≤ (none-connected mass)` holds. This lemma derives the
+nonnegativity from that inequality, which it assumes (`hdom`). -/
 lemma hnw_closure_of_hdom (β : ℝ) (J : Sym2 V → ℝ) (M : Finset (Current V))
     (hnd : ∀ m ∈ M, ∀ e ∈ G.edgeFinset, ¬ e.IsDiag) (A : Finset V)
     (hm : ∀ m ∈ M, Sharpness.sources G m = A)
@@ -282,8 +303,13 @@ lemma hnw_closure_of_hdom (β : ℝ) (J : Sym2 V → ℝ) (M : Finset (Current V
   linarith
 
 open Classical in
-/-- **Three-point inequality** (GHS type) for split masses, conditional on `hcoh` and `hdom`:
-`∑ mass(A ∆ {x,y}) + ∑ mass(A ∆ {o,y}) + ∑ mass(A ∆ {o,x}) ≤ ∑ mass(A)` over `M`. -/
+/-- The three-point inequality from the domination inequality. Let `o, x, y` be distinct and let
+every current in the finite set `M` have source set `A` (`hm`) and satisfy `hnw_coherent`
+(`hcoh`). Under these hypotheses the three-point inequality
+`∑ mass(A ∆ {x,y}) + ∑ mass(A ∆ {o,y}) + ∑ mass(A ∆ {o,x}) ≤ ∑ mass(A)` over `M` is equivalent to
+the domination inequality `2 · (all-connected mass) ≤ (none-connected mass)`. This lemma derives
+the former from the latter, which it assumes (`hdom`) and does not prove: it is a reduction, not a
+proof of an inequality of GHS type. -/
 lemma hnw_ghs_distinct_site_of_hdom (β : ℝ) (J : Sym2 V → ℝ) (M : Finset (Current V))
     (hnd : ∀ m ∈ M, ∀ e ∈ G.edgeFinset, ¬ e.IsDiag) (A : Finset V)
     (hm : ∀ m ∈ M, Sharpness.sources G m = A)
@@ -312,7 +338,8 @@ lemma hnw_mass_eq_weight_mul_count (β : ℝ) (J : Sym2 V → ℝ) (m : Current 
   unfold hnw_mass
   rw [ising_two_point_switching G β J m 1 A, one_mul]
 
-/-- In the all-connected pattern the three shifted masses equal `mass(A)`. -/
+/-- For distinct sites `o, x, y` in the all-connected pattern, `mass(A ∆ {x,y})`, `mass(A ∆ {o,y})`
+and `mass(A ∆ {o,x})` all equal `mass(A)`, for every `A`. -/
 lemma hnw_allMass_eq_paired (β : ℝ) (J : Sym2 V → ℝ) (m : Current V) (A : Finset V)
     {o x y : V} (hox : o ≠ x) (hoy : o ≠ y) (hxy : x ≠ y)
     (hall : hnw_allConn G m o x y) :
@@ -342,7 +369,8 @@ lemma hnw_sources_indicator (P : Finset (Sym2 V)) (hP : P ⊆ G.edgeFinset) :
     rw [degP_as_sum G.edgeFinset P hP z]
   rw [key]
 
-/-- Adding the indicator of `P` to a current changes its sources by `srcP P`. -/
+/-- For a set `P` of edges of `G` (`P ⊆ E(G)`), the sources of `m + 1_P` are the symmetric
+difference of the sources of `m` and the set `srcP P` of sites of odd degree in `P`. -/
 lemma hnw_addBackbone_sources (m : Current V) (P : Finset (Sym2 V)) (hP : P ⊆ G.edgeFinset) :
     Sharpness.sources G (fun e => m e + (if e ∈ P then 1 else 0))
       = Sharpness.sources G m ∆ srcP P := by
@@ -350,7 +378,9 @@ lemma hnw_addBackbone_sources (m : Current V) (P : Finset (Sym2 V)) (hP : P ⊆ 
       = fun e => m e + (fun e => if e ∈ P then 1 else 0) e from rfl,
       Sharpness.sources_add, hnw_sources_indicator G P hP]
 
-/-- Weight of the current `m + 1_P`: `w(m) ∏_{e ∈ P} βJ_e / (m_e + 1)`. -/
+/-- Weight of the current `m + 1_P`, for any finite set `P` of pairs:
+`w(m) ∏_{e ∈ P ∩ E(G)} βJ_e / (m_e + 1)`. Pairs of `P` that are not edges of `G` contribute no
+factor. -/
 lemma hnw_addBackbone_weight (β : ℝ) (J : Sym2 V → ℝ) (m : Current V)
     (P : Finset (Sym2 V)) :
     Sharpness.weight G β J (fun e => m e + (if e ∈ P then 1 else 0))

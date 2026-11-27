@@ -14,22 +14,25 @@ public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.ABFiniteGraph
 /-!
 # The mean-field inequality on the graph with a ghost vertex
 
-For bond percolation with field `h` on a finite graph `G` (edges of `G` open with probability
-`1 - e^{-βJ_e}`, ghost edges with probability `1 - e^{-h}`): `m (1 - M) ≤ β ∂_β M`, where `M` is the
-probability that `o` reaches a target set and `m` bounds `φ(S)` from below.
+For bond percolation at `β ≥ 0` with field `h ≥ 0` on a finite graph `G` with couplings `J_e ≥ 0`
+(edges of `G` open with probability `1 - e^{-βJ_e}`, ghost edges with probability `1 - e^{-h}`):
+`m (1 - M) ≤ β ∂_β M`, where `M` is the probability that `o` reaches a target set and `m` bounds
+`φ(S)` from below. The edge parameters are not truncated, so they are probabilities only in this
+range.
 
 ## i. Overview
 
 The reassembly `mtr_meanfield_reassembly` with `D` the edges of `G` (ghost edges excluded) bounds
 `m (1 - M)` by `β ∑_e J_e P(e closed pivotal)`, and the `β`-derivative formula of `ABPhysicalDeriv`
 identifies the latter sum with `β ∂_β M`. `abmg_meanfield_target_finite` treats a general target
-set `B`, `abmg_meanfield_finite` the ghost target `{none}`. Both are proved; their content-carrying
-hypothesis is the lower bound `hm : m ≤ φ(S)` for every possible surface `S`.
+set `B`, `abmg_meanfield_finite` the ghost target `{none}`. Both are proved under `hJ` (`J_e ≥ 0`
+on the edges of `G`), `hbeta` (`β ≥ 0`) and `hh` (`h ≥ 0`); their content-carrying hypothesis is
+the lower bound `hm : m ≤ φ(S)` for every possible surface `S`.
 
 ## ii. Key results
 
 - `abmgPhi`, `abmgTargetPhi` : `φ(S)` over the edges of `G`
-- `abmgTargetMag` : the probability that `o` reaches the target set
+- `abmgTargetMag` : the probability that `o` reaches the target set (for `β, h ≥ 0`, `J_e ≥ 0`)
 - `abmg_meanfield_target_finite` : `m (1 - M_B) ≤ β ∂_β M_B`
 - `abmg_meanfield_finite` : the same with the ghost as target
 
@@ -66,7 +69,9 @@ noncomputable def abmgPhi (J : Sym2 V -> Real) (o : V)
   mtrPhi (withGhost G) (abfaParams G J beta h)
     (FieldGhostDict.origEdges G) (some o) S
 
-/-- The probability `M_B(β, h)` that `o` is connected to the target set `B` in the ghost graph. -/
+/-- `M_B(β, h)`: the `probV` weight, under `abfaParams G J β h`, of the event that `o` is connected
+to the target set `B` in the ghost graph. The parameters `1 - e^{-βJ_e}` and `1 - e^{-h}` are not
+truncated, so this is a probability when `β ≥ 0`, `h ≥ 0` and `J_e ≥ 0` on the edges of `G`. -/
 noncomputable def abmgTargetMag (J : Sym2 V -> Real) (o : V)
     (B : Set (Option V)) (beta h : Real) : Real :=
   probV (abfaParams G J beta h)
@@ -80,8 +85,8 @@ noncomputable def abmgTargetPhi (J : Sym2 V -> Real) (o : V)
 
 /-! ## B. The mean-field inequality -/
 
-/-- Mean-field inequality with a target set: if `m ≤ φ(S)` for every possible surface `S ∋ o`, then
-`m (1 - M_B) ≤ β ∂_β M_B`. -/
+/-- Mean-field inequality with a target set: for `J_e ≥ 0` on the edges of `G`, `β ≥ 0` and `h ≥ 0`,
+if `m ≤ φ(S)` for every possible surface `S ∋ o`, then `m (1 - M_B) ≤ β ∂_β M_B`. -/
 lemma abmg_meanfield_target_finite (J : Sym2 V -> Real) (o : V)
     (B : Set (Option V)) (beta h m : Real)
     (hJ : ∀ e ∈ G.edgeFinset, 0 <= J e)
@@ -127,8 +132,9 @@ lemma abmg_meanfield_target_finite (J : Sym2 V -> Real) (o : V)
           (connEvent (withGhost G) Set.univ (some o) B)) beta
       rw [abfa_deriv_beta_connTarget_eq_origEdges G J o B beta h]
 
-/-- Mean-field inequality for the magnetization: if `m ≤ φ(S)` for every possible surface `S ∋ o`,
-then `m (1 - M) ≤ β ∂_β M`, where `M` is the probability that `o` reaches the ghost. -/
+/-- Mean-field inequality for the magnetization: for `J_e ≥ 0` on the edges of `G`, `β ≥ 0` and
+`h ≥ 0`, if `m ≤ φ(S)` for every possible surface `S ∋ o`, then `m (1 - M) ≤ β ∂_β M`, where `M` is
+the probability that `o` reaches the ghost. -/
 lemma abmg_meanfield_finite (J : Sym2 V -> Real) (o : V)
     (beta h m : Real) (hJ : ∀ e ∈ G.edgeFinset, 0 <= J e)
     (hbeta : 0 <= beta) (hh : 0 <= h)

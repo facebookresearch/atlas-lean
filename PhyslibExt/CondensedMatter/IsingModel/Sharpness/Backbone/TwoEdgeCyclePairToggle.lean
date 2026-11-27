@@ -162,8 +162,10 @@ lemma activeSegmentFiber_congr_bits
   unfold shb_ActiveSegmentFiber
   rw [hsources, hselect]
 
-/-- A current completing the exhaustive two-edge run has the parity pattern of the two-unit flux on
-the path. -/
+/-- On the path-plus-triangle domain (the path `0 – 1 – 2` and the triangle `3 – 4 – 5`, with the
+head edge `01` and the suffix edge `12` active), a current that completes the exhaustive program's
+run on the word `[01, 12]` of their canonical segments has the parity pattern of the two-unit flux
+on `01` and `12`: its edges of odd multiplicity are exactly `01` and `12`. -/
 lemma complete_pair_bits_eq_twoUnit
     (p : domain.graph.edgeFinset → Nat)
     (hcomplete :
@@ -886,7 +888,15 @@ lemma exhaustive_cycle_pair_toggle
     exact ⟨exhaustive_full_of_twoUnit_bits T hfirst hpath htwo,
       residualVacuum_of_zero_bits (univ \ T) hzero⟩
 
-/-- A set of copies toggling the pair events exists, given `hfirst` and `hpath`. -/
+/-- On the path-plus-triangle domain, suppose that the scan of the two-edge program, started at the
+domain with nothing accepted, admits the head edge `01` first on the odd bits of the two-unit flux
+on `01` and `12` (`hfirst`), and that the canonical segments of `01` and `12` form a two-edge path
+(`hpath`). Then there is a set `path` of labeled copies of `superposition` such that, for every set
+`T` of labeled copies, the profile of `T` completes the exhaustive program's run on the word
+`[01, 12]` and the profile of the copies outside `T` lies in the residual vacuum after `01` iff the
+profile of `T ∆ path` lies in the active-segment fibre of `01` and the profile of the copies outside
+`T ∆ path` lies in the exhaustive program's lifted residual run `[12]`. The set `{suffixCopy}`
+works (`exhaustive_cycle_pair_toggle`). -/
 lemma exhaustive_cycle_pair_toggle_exists
     (hfirst : BackboneTwoEdgeBondProgram.scan.firstAdmissible
       (fun _ b => fluxBitConfig domain.graph oddBit

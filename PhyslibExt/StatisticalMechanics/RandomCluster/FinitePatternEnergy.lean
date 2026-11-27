@@ -608,8 +608,9 @@ lemma dependsOnOutside_preimage_setPattern
 
 /-! ## E. Conditional pattern bounds -/
 
-/-- Finite energy for patterns with boundary wiring: given the configuration `ψ` off `I`, the
-pattern `η` on `I` has conditional probability at least `cFE p q ^ |I|`. -/
+/-- For `0 < p < 1` and `q ≥ 1`, finite energy for patterns with any boundary wiring `C`: given the
+configuration `ψ` off `I`, the pattern `η` on `I` has conditional probability at least
+`cFE p q ^ |I|`. -/
 lemma cFE_pow_le_condBcProb_pattern
     (C : SimpleGraph V) [DecidableRel C.Adj]
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
@@ -793,8 +794,8 @@ lemma condFkProb_cross_outside
   by_cases hA : rho ∈ A <;> by_cases hBrho : rho ∈ B <;>
     simp [Set.indicator, hA, hBrho, hBeq, Set.mem_inter_iff]
 
-/-- Finite energy for the free measure: for an event `B` depending only on edges off `I`, `cFE ^
-|I| P(B) ≤ P(pattern η on I, B)`. -/
+/-- For `0 < p < 1` and `q ≥ 1`, finite energy for the free measure: for every event `B` depending
+only on edges off `I`, `cFE ^ |I| P(B) ≤ P(pattern η on I, B)`. -/
 lemma cFE_pow_mul_event_le_pattern_inter
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (I : Finset (Sym2 V)) (eta : ConfigSpace ↥I)
@@ -820,8 +821,8 @@ lemma cFE_pow_mul_event_le_pattern_inter
   · rw [Set.indicator_of_notMem hpsiB]
     simp
 
-/-- Finite energy with boundary wiring `C`: for an event `B` depending only on edges off `I`,
-`cFE ^ |I| P(B) ≤ P(pattern η on I, B)`. -/
+/-- For `0 < p < 1` and `q ≥ 1`, finite energy with boundary wiring `C`: for every event `B`
+depending only on edges off `I`, `cFE ^ |I| P(B) ≤ P(pattern η on I, B)`. -/
 lemma cFE_pow_mul_bcEvent_le_pattern_inter
     (C : SimpleGraph V) [DecidableRel C.Adj]
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
@@ -850,9 +851,9 @@ lemma cFE_pow_mul_bcEvent_le_pattern_inter
   · rw [Set.indicator_of_notMem hpsiB]
     simp
 
-/-- Finite-energy modification bound: replacing the edges of `I` by the pattern `η` changes
-event probabilities by at most a factor `cFE ^ |I|`, `cFE ^ |I| P(setPattern I η ⁻¹' A) ≤
-P(A)`. -/
+/-- For `0 < p < 1` and `q ≥ 1`, finite-energy modification bound with boundary wiring `C`: for
+every event `A`, `cFE ^ |I| P(setPattern I η ⁻¹' A) ≤ P(A)`, where `setPattern I η ⁻¹' A` is the
+event that forcing the pattern `η` on `I` gives a configuration in `A`. -/
 lemma cFE_pow_mul_bcPreimage_le_event
     (C : SimpleGraph V) [DecidableRel C.Adj]
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
