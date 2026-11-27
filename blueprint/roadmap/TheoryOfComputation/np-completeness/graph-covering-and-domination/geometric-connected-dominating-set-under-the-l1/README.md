@@ -6,5 +6,3 @@
 - [LInfinity Feasible](linfinity-feasible.md)
 - [GEOMETRIC CONNECTED DOMINATING SET under the $L_1$ metric as a decision problem](l1-dec.md)
 - [GEOMETRIC CONNECTED DOMINATING SET under the $L_\infty$ metric as a decision problem](l-infinity-dec.md)
-- [GEOMETRIC CONNECTED DOMINATING SET under the $L_1$ metric is NP-complete](l1-np-complete.md)
-- [GEOMETRIC CONNECTED DOMINATING SET under the $L_\infty$ metric is NP-complete](l-infinity-np-complete.md)

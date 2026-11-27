@@ -5,4 +5,3 @@
 - [Well-formed ELIMINATION DEGREE SEQUENCE instances](well-formed.md)
 - [Feasible ELIMINATION DEGREE SEQUENCE instances](elimination-degree-sequence-feasible.md)
 - [ELIMINATION DEGREE SEQUENCE as a decision problem](elimination-degree-sequence-dec.md)
-- [ELIMINATION DEGREE SEQUENCE is NP-complete](elimination-degree-sequence-np-complete.md)
