@@ -1,0 +1,33 @@
+# The domino problem of the hyperbolic plane is undecidable
+
+No algorithm decides whether a given finite set of tiles, all copies of the regular heptagon of the tiling $\{7,3\}$ with markings on
+their sides, tiles the hyperbolic plane with matching sides.
+
+**Theorem (Margenstern).** The domino problem of the hyperbolic plane is undecidable: there is no algorithm that, given a finite set of prototiles
+whose shape is the regular heptagon of the *heptagrid*, the regular tessellation $\{7,3\}$ of the hyperbolic plane, each side carrying a
+marking, decides whether the hyperbolic plane can be tiled by copies of the prototiles placed on the cells of the heptagrid so that any
+two tiles sharing a side carry matching markings on it.
+
+The question is the hyperbolic analogue of Wang's general tiling problem, with no fixed initial tile; Robinson had shown in 1978 that the
+origin-constrained version is undecidable in the hyperbolic plane and asked about the general one. The result was first proved by Margenstern in 2008 with a different tiling. The new proof also gives a non-periodic tiling of the heptagrid built from $157$ prototiles.
+
+## Depends on
+
+- [Wang tiles and valid tilings](../wang-tiles-and-valid-tilings.md)
+
+## Proof depends on
+
+- [The halting problem for single-tape machines is undecidable](../../../computability/halting-problem-for-single-tape-turing-machines/exists-not-tm2-decidable-tm0-halts-on.md)
+
+## Expansion
+
+The proof first builds an aperiodic tiling of the heptagrid with a small set of prototiles, organized into nested families of
+triangle-like regions ("trees") of all sizes, as Robinson's squares are in the Euclidean plane. Inside these regions the tiles simulate the
+space-time diagram of a Turing machine started on a finite initial configuration; for each machine $M$ with $I$ instructions and $\ell$
+letters, $240 + 7I + 12\ell + D$ prototiles suffice when the data uses $D$ letters. The set of tiles admits a tiling exactly when the machine never
+halts, so a decision procedure would solve the halting problem.
+
+## Sources
+
+- M. Margenstern, "The domino problem of the hyperbolic plane is undecidable: new proof", *Complex Systems* 32(1):19–56, 2023, doi:10.25088/complexsystems.32.1.19; read in arXiv:2205.07317v2: Theorem 1 (stated in the introduction), the non-periodic tiling theorem of Section 2, the counting lemma closing the proof, and the introduction (history and the heptagrid).
+- M. Margenstern, "The domino problem of the hyperbolic plane is undecidable", *Theoretical Computer Science* 407(1–3):29–84, 2008, doi:10.1016/j.tcs.2008.04.038 (the first proof).
