@@ -2,18 +2,26 @@
 
 Operational and denotational semantics of programming languages and correctness of compilation: the IMP language (syntax, big- and small-step, heap semantics, denotational semantics, stack-machine compilation), PCF with adequacy and contextual equivalence, models of the untyped λ-calculus in Scott's graph model, CPS translation and closure conversion.
 
+- [Abstract interpretation](abstract-interpretation/README.md)
+- [Abstract rewriting systems](abstract-rewriting-systems/README.md)
 - [An imperative language with arrays](an-imperative-language-with-arrays/README.md)
 - [Bounded symbolic execution for IMP](bounded-symbolic-execution-for-imp/README.md)
+- [CEK machine](cek-machine/README.md)
 - [Closure conversion](closure-conversion/README.md)
 - [Continuation-passing style translation](continuation-passing-style-translation/README.md)
 - [Dataflow analysis by Kleene iteration](dataflow-analysis-by-kleene-iteration/README.md)
 - [Liveness and dead-assignment elimination for IMP](liveness-and-dead-assignment-elimination-for-imp/README.md)
 - [Nominal sets](nominal-sets/README.md)
 - [Operational semantics of IMP](operational-semantics-of-imp/README.md)
+- [Coinductive big-step semantics](coinductive-big-step-semantics/README.md)
 - [Compiling IMP to a stack machine](compiling-imp-to-a-stack-machine/README.md)
+- [Constant folding for IMP](constant-folding-for-imp/README.md)
 - [Denotational semantics of IMP](denotational-semantics-of-imp/README.md)
+- [Embedding IMP in the imperative language with arrays](embedding-imp-in-the-imperative-language-with-ar/README.md)
+- [Fuelled interpreter for IMP](fuelled-interpreter-for-imp/README.md)
 - [Heap semantics of IMP](heap-semantics-of-imp/README.md)
 - [PCF and computational adequacy](pcf-and-computational-adequacy/README.md)
+- [Read-cost semantics of the imperative language with arrays](read-cost-semantics-of-the-imperative-language-w/README.md)
 - [Models of the untyped lambda calculus](models-of-the-untyped-lambda-calculus/README.md)
 
 - [Lexing and parsing](lexing-and-parsing/README.md)
