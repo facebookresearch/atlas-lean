@@ -21,6 +21,7 @@ public import MathlibExt.Combinatorics.Additive.PerfectCoverCoordinateOrders
 public import MathlibExt.Combinatorics.Additive.PerfectCoverPrescribedOddCoordinates
 public import MathlibExt.Combinatorics.Additive.PerfectSubsetSumCoverErase
 public import MathlibExt.Combinatorics.Additive.PerfectSubsetSumCoverInit
+public import MathlibExt.Combinatorics.Additive.PerfectSubsetSumCoverOddMultiple
 
 /-!
 # Perfect subset-sum covers of abelian groups of order a power of two
@@ -171,20 +172,6 @@ public theorem_wanted oddMultiple_iff_perfectCover_replace {G : Type*} [AddCommG
       ∀ S : Finset G, IsPerfectCover S → a ∈ S → IsPerfectCover (insert b (S.erase a))) ∧
     (a ≠ b → ((∃ j : ℤ, b = (2 * j + 1) • a) ↔
       ∀ S : Finset G, IsPerfectCover S → ¬ (a ∈ S ∧ b ∈ S)))
-
-/-- **Replacing an entry of a perfect $2^k$-cover by an odd multiple.** Let $G$ be an abelian
-group, let $k$ and $N$ be natural numbers, and let $a, b, s_1, \dots, s_N \in G$. If the family
-$(a, s_1, \dots, s_N)$ is a perfect $2^k$-cover of $G$ and $b = (2j + 1)a$ for some integer $j$,
-then the family $(b, s_1, \dots, s_N)$ is also a perfect $2^k$-cover of $G$.
-
-Source: John Greene and Clayton Higgins, *Maximal Subset Sums in a Group of Order a Power
-of 2*, Journal of Integer Sequences 28 (2025), Article 25.7.8, Lemma 11
-(`jis-2025-25.7.8-lem-11`). The paper's `|G| = 2^n` and length `n + k` are not needed. -/
-public theorem_wanted isPerfectMCover_cons_oddMultiple {G : Type*} [AddCommGroup G]
-    [DecidableEq G] {k N : ℕ} {a b : G} {s : Fin N → G}
-    (hs : IsPerfectMCover (2 ^ k) (Fin.cons a s : Fin (N + 1) → G))
-    (hab : ∃ j : ℤ, b = (2 * j + 1) • a) :
-    IsPerfectMCover (2 ^ k) (Fin.cons b s : Fin (N + 1) → G)
 
 /-- **Which families are perfect $m$-covers of $\mathbb{Z}_{2^n}$.** Let $s = (s_i)_{i \in \iota}$
 be a family in $\mathbb{Z}_{2^n}$ indexed by a finite type $\iota$ (a colored multiset). Then $s$

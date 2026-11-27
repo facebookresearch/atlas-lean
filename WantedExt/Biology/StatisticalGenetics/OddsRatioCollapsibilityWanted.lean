@@ -27,6 +27,7 @@ inference", Statist. Sci. 14 (1999) 29–46, pp. 37–39 and Tables 1–2, credi
 module
 
 public import Batteries.Util.ProofWanted
+public import Domains.Biology.StatisticalGenetics.AssociationTests.RiskEffectCollapsibility
 public import Mathlib.Algebra.BigOperators.Fin
 public import Mathlib.Basic.Real.Basic
 
@@ -80,22 +81,6 @@ public theorem_wanted crudeRisk_eq_mixture (p : Bool → Bool → Bool → ℝ) 
     (∀ x, crudeRisk p x = ∑ z, massZ p z * stratumRisk p x z) ∧
       (∑ z, massZ p z * stratumRisk p true z) / (∑ z, massZ p z * stratumRisk p false z) =
         crudeRisk p true / crudeRisk p false
-
-/-- **Constant risk differences and risk ratios collapse** (Greenland, Robins and Pearl 1999,
-pp. 37–38). Let `q ∈ [0, 1]` be `P(Z = 1)`, let `r x z` be the risk of response given `X = x`
-and `Z = z`, and let `m x = q r(x, 1) + (1 - q) r(x, 0)` be the marginal risk (the mixture that
-holds when `X` is independent of `Z`). If `r(1, z) - r(0, z) = δ` for both `z`, then
-`m 1 - m 0 = δ`; if `r(1, z) = ρ r(0, z)` for both `z`, then `m 1 = ρ m 0`.
-
-Source: Greenland, Robins and Pearl (1999), pp. 37–38, Table 1. -/
-public theorem_wanted riskDifference_riskRatio_collapse (q : ℝ) (hq₀ : 0 ≤ q) (hq₁ : q ≤ 1)
-    (r : Bool → Bool → ℝ) (δ ρ : ℝ) :
-    ((∀ z, r true z - r false z = δ) →
-        (q * r true true + (1 - q) * r true false) -
-          (q * r false true + (1 - q) * r false false) = δ) ∧
-      ((∀ z, r true z = ρ * r false z) →
-        q * r true true + (1 - q) * r true false =
-          ρ * (q * r false true + (1 - q) * r false false))
 
 /-- **Noncollapsibility of the odds ratio** (Greenland, Robins and Pearl 1999, p. 39; Gail 1986).
 Let `q ∈ (0, 1)` be `P(Z = 1)`, let every stratum risk `r x z` lie in `(0, 1)`, and let
