@@ -28,17 +28,6 @@ the Sources entry and omitted here. The Gilbert--Pollak conjecture
 (`GilbertPollakConjecture`) remains open and is not asserted.
 -/
 
-/-- **Gilbert–Pollak upper bound for the Steiner ratio.** The Steiner ratio constant, the infimum
-over finite sets $V$ of at least two points in the Euclidean plane of the length of a Steiner
-minimal tree for $V$ divided by the length of a minimum spanning tree of $V$, is at most
-$\sqrt{3}/2$.
-
-Source: Gilbert and Pollak, *Steiner minimal trees* (1968): the
-equilateral triangle gives the upper bound `√3 / 2`. Known literature
-result; the triangle computation is not supplied here. -/
-theorem_wanted gilbertPollakUpperBound_wanted :
-    steinerRatioConstant ≤ Real.sqrt 3 / 2
-
 /-- **Chung–Graham lower bound for the Steiner ratio.** The Steiner ratio constant, the infimum
 over finite sets $V$ of at least two points in the Euclidean plane of the length of a Steiner
 minimal tree for $V$ divided by the length of a minimum spanning tree of $V$, is at least $0.824$.
