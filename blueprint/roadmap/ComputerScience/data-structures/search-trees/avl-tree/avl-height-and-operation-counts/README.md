@@ -1,6 +1,9 @@
 # AVL height and operation counts
 
 - [Number of keys of an AVL tree](size.md)
+- [Size empty](size-empty.md)
+- [Size node](size-node.md)
+- [Size mk Node](size-mk-node.md)
 - [Correct height caches give the true height](height-eq-of-cache-correct.md)
 - [Fibonacci lower bound on the size of an AVL tree](fib-le-size-succ.md)
 - [Logarithmic height bound for AVL trees](height-le-log2.md)
@@ -11,6 +14,7 @@
 - [Counted leftmost-key search in an AVL tree](min-dt.md)
 - [Counted removal of the leftmost key of an AVL tree](erase-min-t.md)
 - [Counted AVL deletion](erase-t.md)
+- [Ret mk Node T](ret-mk-node-t.md)
 - [Counted rebalancing returns the AVL rebalanced tree](ret-balance-t.md)
 - [AVL rebalancing costs at most five units](time-balance-t-le.md)
 - [Counted AVL search returns the search result](ret-contains-t.md)
