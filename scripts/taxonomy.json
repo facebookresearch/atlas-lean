@@ -1686,6 +1686,7 @@
   "CSLibExt/Crypto/PublicKey/ElGamalCPA": {"to": "ComputerScience/cryptography/public-key", "title": "CPA security of ElGamal"},
   "CSLibExt/Crypto/PublicKey/GoldwasserMicali": {"to": "ComputerScience/cryptography/public-key", "title": "Goldwasser–Micali encryption"},
   "CSLibExt/Crypto/PublicKey/HardCoreEncryption": {"to": "ComputerScience/cryptography/public-key", "title": "Encryption from hard-core predicates"},
+  "CSLibExt/Crypto/PublicKey/HomomorphicEvaluation": {"to": "ComputerScience/cryptography/public-key", "title": "Homomorphic encryption"},
   "CSLibExt/Crypto/PublicKey/KEM": {"to": "ComputerScience/cryptography/public-key", "title": "Key encapsulation and hybrid encryption"},
   "CSLibExt/Crypto/PublicKey/RSA": {"to": "ComputerScience/cryptography/public-key", "title": "RSA cryptosystem"},
   "CSLibExt/Crypto/PublicKey/RSAInsecurity": {"to": "ComputerScience/cryptography/public-key", "title": "Insecurity of textbook RSA"},
