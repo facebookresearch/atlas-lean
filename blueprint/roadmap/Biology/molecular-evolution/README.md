@@ -22,6 +22,7 @@
 - [Last-one-out gene distributions under differential loss](last-one-out-gene-distributions/README.md)
 - [Multivariate Bernoulli epistasis measures](multivariate-bernoulli-epistasis-measures/README.md)
 - [Birth, death and innovation models of gene family size](birth-death-and-innovation-models-of-gene-family-size/README.md)
+- [Two-state intron gain and loss model](two-state-intron-gain-and-loss-model/README.md)
 - [Compositional diversity of prebiotic sequences](compositional-diversity-of-prebiotic-sequences/README.md)
 - [Context-dependent mutation and selection](context-dependent-mutation-and-selection/README.md)
 - [Distribution of simple repeat lengths](distribution-of-simple-repeat-lengths/README.md)
