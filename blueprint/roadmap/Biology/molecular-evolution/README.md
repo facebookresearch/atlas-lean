@@ -22,3 +22,8 @@
 - [Last-one-out gene distributions under differential loss](last-one-out-gene-distributions/README.md)
 - [Multivariate Bernoulli epistasis measures](multivariate-bernoulli-epistasis-measures/README.md)
 - [Birth, death and innovation models of gene family size](birth-death-and-innovation-models-of-gene-family-size/README.md)
+- [Two-state intron gain and loss model](two-state-intron-gain-and-loss-model/README.md)
+- [Drift analysis of adaptive walks](drift-analysis-of-adaptive-walks/README.md)
+- [Minimum epistasis interpolation](minimum-epistasis-interpolation/README.md)
+- [Rho statistic dating of lineages](rho-statistic-dating-of-lineages/README.md)
+- [Sparse Walsh approximation of fitness landscapes](sparse-walsh-approximation-of-fitness-landscapes/README.md)
