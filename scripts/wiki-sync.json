@@ -104397,6 +104397,7 @@
 "ProbabilityTheory.twoSample_t_one_sided_test_size_eq": "9669e0209a050924",
 "ProbabilityTheory.twoSample_t_test_size_eq": "20fe551237e7e80b",
 "ProbabilityTheory.twoStateRate_eq_equalInputRate": "66300029013b409d",
+"ProbabilityTheory.two_state_component_availability": "5c7d45a1f89c3175",
 "ProbabilityTheory.uStatistic": "43198a52cb3e88dc",
 "ProbabilityTheory.uniform_deviation_eq_iSup_rat": "6fe25f134bd353ae",
 "ProbabilityTheory.varianceRatio": "ab46ca057028b29c",

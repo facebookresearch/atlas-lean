@@ -1,14 +1,19 @@
 # Availability of a two-state repairable component
 
-A component alternates between up and down as a continuous-time Markov chain with failure rate $\lambda \ge 0$ (up to down) and repair rate $\mu \ge 0$ (down to up), started up with probability $p_0$. If $\lambda + \mu > 0$, the probability that it is up at time $t \ge 0$ is $A(t) = \frac{\mu}{\lambda + \mu} + \bigl(p_0 - \frac{\mu}{\lambda + \mu}\bigr)e^{-(\lambda + \mu)t}$, so $A(t) \to \mu/(\lambda + \mu)$ as $t \to \infty$; in particular $A(t) = 1$ for all $t$ when $\lambda = 0$ and $p_0 = 1$, and $A(t) \to 0$ when $\mu = 0 < \lambda$. If $\lambda = \mu = 0$, the generator is zero and the component keeps its initial state: $A(t) = p_0$ for every $t$.
+State $0$ is up and state $1$ is down. Let $\lambda\ge 0$ be the failure rate, $\mu\ge 0$ the repair rate, and $p_0\in[0,1]$ the initial probability of being up. The generator is
 
-Proof. For $\lambda + \mu > 0$ the transition function of the two-state generator is the sticky kernel $e^{tQ}(i, j) = e^{-(\lambda + \mu)t}[i = j] + (1 - e^{-(\lambda + \mu)t})\pi(j)$ with $\pi(\mathrm{up}) = \mu/(\lambda + \mu)$; average over the initial law. For $\lambda = \mu = 0$, $e^{tQ} = I$.
+$$Q=\begin{pmatrix}-\lambda&\lambda\\\mu&-\mu\end{pmatrix}.$$
 
-## Proof depends on
+For $t\ge 0$, the availability $A(t)$ is the up coordinate of the initial row vector $(p_0,1-p_0)$ multiplied by $e^{tQ}$. In particular, $A(0)=p_0$ and $A(t)\in[0,1]$.
 
-- [Transition function of the two-state chain](../../markov-chains/finite-continuous-time-markov-chains/the-sticky-equal-input-kernel-on-a-finite-state/ctmc-transition-two-state-rate.md): transition function of the two-state chain.
-- [Long-distance limit of the sticky kernel](../../markov-chains/finite-continuous-time-markov-chains/the-sticky-equal-input-kernel-on-a-finite-state/tendsto-sticky-kernel-at-top.md): long-time limit of the sticky kernel.
+If $\lambda+\mu>0$, put $r=\mu/(\lambda+\mu)$. Then
+
+$$A(t)=r+(p_0-r)e^{-(\lambda+\mu)t},\qquad \lim_{t\to\infty}A(t)=r.$$
+
+The formula follows by averaging the up column of the two-state transition matrix over the initial law. That transition matrix retains the initial state with weight $e^{-(\lambda+\mu)t}$ and uses the state probabilities $(r,1-r)$ with the remaining weight. The displayed identity also holds algebraically for negative $t$, where it is not a probability formula.
+
+If both rates vanish, $Q=0$ and $A(t)=p_0$ at every time. If $\lambda=0$ and $p_0=1$, then $A(t)=1$ at every time. If $\mu=0<\lambda$, availability tends to zero.
 
 ## Sources
 
-- The statement is derived on this page from its definitions and the linked results; no external source is followed.
+- The availability formula and its boundary cases are derived here from the finite-state continuous-time transition function and the two-state kernel.
