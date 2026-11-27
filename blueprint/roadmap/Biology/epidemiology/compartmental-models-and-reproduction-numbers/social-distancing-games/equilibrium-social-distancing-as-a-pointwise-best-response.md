@@ -25,7 +25,6 @@ A **Nash equilibrium** is a feedback strategy $\kappa^*$ that is a best response
 Properties:
 
 - the equilibrium investment is zero whenever prevalence $I/N$ or the value at stake $V_S - V_I$ is small, and increases with both, since $-\beta'$ is decreasing in $\kappa$;
-- in the equilibrium of the infinite-horizon problem (no vaccine), more susceptibles in the population mean less investment in distancing, and the largest investments occur when the susceptible fraction is smallest;
 - the equilibrium internalizes only the individual's own risk, not the externality of reduced onward transmission, so it differs from the community-optimal policy.
 
 ## Depends on
@@ -35,6 +34,9 @@ Properties:
 ## Expansion
 
 The value of the susceptible state changes at rate equal to the flow cost of distancing plus the hazard of infection times the jump in value $V_I - V_S$; choosing $\kappa$ to make this rate as favourable as possible at each instant is the maximum principle for the individual's control problem; the source states it as a necessary condition satisfied by every subgame perfect equilibrium, and the page claims no converse. The greedy (Isaacs) construction of the equilibrium applies it with the population strategy fed back into the epidemic. For a convex differentiable decreasing $\beta$, the function $\kappa \mapsto \kappa + \beta(\kappa)\Delta$ is convex with derivative $1 + \beta'(\kappa)\Delta$; it is minimized at $0$ if that derivative is non-negative at $0$, and otherwise at its unique zero, since strict convexity makes $\beta'$ strictly increasing. Existence and uniqueness of subgame perfect equilibria (finite-time blow-up of the associated Hamilton–Jacobi equation) are not proved, but numerical and analytical evidence supports uniqueness.
+
+
+In numerical computations for the specific working choice $\sigma(c) = 1/(1+mc)$ with $m = 10$ (Reluga 2010, Eq. (6) and Figure 1), Reluga observes that in the infinite-horizon problem without vaccination, equilibrium investment in social distancing decreases with the susceptible fraction and is largest when the susceptible fraction is smallest; this is a numerical finding for that choice of $\sigma$ rather than a general theorem for the class above.
 
 ## Sources
 
