@@ -114,7 +114,9 @@ that its folder page does not list, or whose folder page or row is missing. A se
 writes nothing at all, exits 1 unless the working tree is in step, naming the command that brings it in step, and says
 whether the wiki changes since REV are exactly what the run would write on REV's wiki, fresh ids aside (see
 sync_output). A duplicates list the changes leave unusable, or an entry they add or change whose duplicate or row's
-declaration the Lean lacks, stops the run as a held marker does.
+declaration the Lean lacks, stops the run as a held marker does. A declaration --withhold names gets no page, as a held
+one gets none, and is listed as withheld: a graph-sync batch withholds those that may state a planned page a merged pull
+request names (scripts/graph_batch.py).
 
 ids gives each annotation that has no id a fresh one, as declarations gives one
 to each annotation it adds: a row written by hand, say. The id goes right after
@@ -2393,13 +2395,15 @@ def records(text: str) -> tuple[list[str], list[str]]:
     return parts[0::2], parts[1::2] + [""]
 
 
-def insert_rows(path: Path, rows: list[dict]) -> None:
-    """Add *rows* to the links file *path*, each as declarations writes a row, right after the row whose page's path
-    comes last before its own (see row_order), or ahead of every row if none does; every other byte of the file stays
-    as it is. A file that is not there yet is made of the rows alone. A row's place depends on its page and the rows
-    already there, not on when it is added, so two pull requests that add pages in different places add lines in
-    different places, and neither adds them at the end, where every pull request would."""
-    lines, ends = records(path.read_bytes().decode("utf-8") if path.exists() else "")
+def inserted(text: str, rows: list[dict]) -> str:
+    """The links file *text* with *rows* added, each as declarations writes a row, right after the row whose page's path
+    comes last before its own (see row_order), wherever that row stands, as a links file need not be in path order, or
+    ahead of every row if none does; every other character of *text* stays as it is, and an empty *text* gives the rows
+    alone. It does not read or write the links file *text* comes from, nor change *text* or *rows*, so that a tool that
+    stages its writes, as import_mathgraph does, places rows as insert_rows does. Like insert_rows, it reads each row's
+    page with the links folder's current defaults (`_defaults.json`, see effective), from which a row may take its
+    subject: the same *text* and *rows* are placed otherwise under other defaults."""
+    lines, ends = records(text)
     placed = [(row_order(json.loads(line)), number) for number, line in enumerate(lines) if line.strip()]
     after: dict[int, list[str]] = defaultdict(list)
     for order, row in sorted(((row_order(row), json.dumps(row, ensure_ascii=False)) for row in rows),
@@ -2411,10 +2415,18 @@ def insert_rows(path: Path, rows: list[dict]) -> None:
     def separator(number: int) -> str:
         return ends[number] or next((end for end in reversed(ends[:number]) if end), "\n")
 
-    text = "".join(row + separator(0) for row in after[-1])
+    result = "".join(row + separator(0) for row in after[-1])
     for number, (line, end) in enumerate(zip(lines, ends)):
-        text += line + (end + "".join(row + end for row in after[number]) if end else
-                        "".join(separator(number) + row for row in after[number]))
+        result += line + (end + "".join(row + end for row in after[number]) if end else
+                          "".join(separator(number) + row for row in after[number]))
+    return result
+
+
+def insert_rows(path: Path, rows: list[dict]) -> None:
+    """Add *rows* to the links file *path* where inserted puts them; every other byte of the file stays as it is. A file
+    that is not there yet is made of the rows alone. Rows go where their page's path puts them, so pull requests that
+    add pages in different places add lines in different places."""
+    text = inserted(path.read_bytes().decode("utf-8") if path.exists() else "", rows)
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_bytes(text.encode("utf-8"))
 
@@ -3585,6 +3597,8 @@ class Plan:
     counts: dict[str, int]
     # Those of the own declarations with no page that a page's row lists as duplicates, which get none either.
     duplicates: list[str] = field(default_factory=list)
+    # Those of them the run was told to withhold (--withhold), which get none either.
+    withheld: list[str] = field(default_factory=list)
 
     def in_step(self) -> bool:
         return not (self.missing or self.digests or self.parts or self.blocking or self.problems)
@@ -3597,9 +3611,12 @@ class Plan:
 NOTHING = {"lean files": 0, "added": 0, "changed": 0, "removed": 0}
 
 
-def scoped_plan(base: dict, head: dict, index, targets: list, changed: frozenset[str]) -> Plan:
+def scoped_plan(base: dict, head: dict, index, targets: list, changed: frozenset[str],
+                withheld: frozenset[str] = frozenset()) -> Plan:
     """What a run scoped to the changes from a base has to do on the wiki at hand, given *base*, the base's views (see
-    lean_view, link_view and base_view), and *head*, the working tree's Lean view.
+    lean_view, link_view and base_view), and *head*, the working tree's Lean view. An own declaration that *withheld*
+    names gets no page, as one held back gets none, and is listed (Plan.withheld): a graph-sync batch withholds those
+    that may state a planned page a merged pull request names (scripts/graph_batch.py).
 
     The pull request's own declarations are those a page may be keyed by that the working tree has and the base has not,
     or that the base deprecates, and that the working tree does not deprecate: what its changes add, document, make
@@ -3677,7 +3694,8 @@ def scoped_plan(base: dict, head: dict, index, targets: list, changed: frozenset
             parts.update(stale)
     blocking += [f"{path} is a link: the sync writes through none; put what it links to in its place"
                  for path in links_in_wiki()]
-    return Plan(new=own, missing=[key for key in own if key not in named and key not in held and key not in twins],
+    return Plan(new=own, missing=[key for key in own if key not in named and key not in held and key not in twins
+                                  and key not in withheld],
                 held=[key for key in own if key not in named and key in held],
                 digests={key: value for key, value in sorted(entries.items())
                          if (key in state if value is None else state.get(key) != value)},
@@ -3686,7 +3704,9 @@ def scoped_plan(base: dict, head: dict, index, targets: list, changed: frozenset
                 counts={"lean files": len(changed), "added": len(now.keys() - old.keys()),
                         "changed": sum(old[key] != now[key] for key in now.keys() & old.keys()),
                         "removed": len(old.keys() - now.keys())},
-                duplicates=[key for key in own if key not in named and key not in held and key in twins])
+                duplicates=[key for key in own if key not in named and key not in held and key in twins],
+                withheld=[key for key in own if key not in named and key not in held and key not in twins
+                          and key in withheld])
 
 
 def page_problems(key: str, page: Path, folders: set[str], folder_rows: set[Path],
@@ -3801,7 +3821,7 @@ def apply_plan(plan: Plan, targets: list, index, generated: dict[Path, str], uni
                   parts={wiki.ROADMAP / part for part in plan.parts})
     report = apply_declarations(targets, index, generated, unindexed, scope)
     report.update({"changed": plan.changed, "unindexed": plan.unindexed, "held": plan.held,
-                   "duplicates": plan.duplicates, "gone": []})
+                   "duplicates": plan.duplicates, "withheld": plan.withheld, "gone": []})
     return report, scope.written
 
 
@@ -3814,6 +3834,7 @@ def print_plan(plan: Plan, base: str) -> None:
                         ("Of them, those with no page yet", plan.missing),
                         ("Of them, those held back, so with no page", plan.held),
                         ("Of them, those a page's row lists as duplicates, so with no page", plan.duplicates),
+                        ("Of them, those withheld, so with no page", plan.withheld),
                         ("Docstring baseline entries to write", [f"{key}: {'drop' if value is None else value}"
                                                                  for key, value in plan.digests.items()]),
                         ("Part lists whose copy lacks an entry of the changes, to refresh", plan.parts),
@@ -3912,7 +3933,11 @@ def run_scoped(argv: list[str]) -> int:
                         help="write nothing, exit 1 unless the working tree is in step, and say whether its wiki "
                              "changes are only what the run writes")
     parser.add_argument("--report", type=Path, metavar="FILE", help="also write the findings to FILE, as JSON")
+    parser.add_argument("--withhold", action="append", default=[], metavar="NAME",
+                        help="give the declaration NAME no page, as a held one gets none; a graph-sync batch withholds "
+                             "those that may state a planned page a merged pull request names (scripts/graph_batch.py)")
     options = parser.parse_args(argv)
+    withheld = frozenset(options.withhold)
     # A path whose bytes are not UTF-8 is printed escaped.
     for stream in (sys.stdout, sys.stderr):
         if hasattr(stream, "reconfigure"):
@@ -3980,8 +4005,8 @@ def run_scoped(argv: list[str]) -> int:
             options.report.write_text(json.dumps({
                 "schema": "atlas-graph-sync/v1", "base": base, "check": options.check, "fix": fix,
                 "lean_files": sorted(lean), "counts": {**NOTHING, "lean files": len(lean)}, "new": {}, "missing": [],
-                "held": [], "duplicates": [], "digests": {}, "parts": [], "changed": [], "errors": errors,
-                "unindexed": [],
+                "held": [], "duplicates": [], "withheld": [], "digests": {}, "parts": [], "changed": [],
+                "errors": errors, "unindexed": [],
                 "in_step": False, "wiki_changes": "other" if graph or staged_graph else "none", "written": [],
                 "differences": [f"{path}: the sync writes no link or other kind of file" for path in linked
                                 if path.replace(os.sep, "/") in graph]},
@@ -4000,7 +4025,7 @@ def run_scoped(argv: list[str]) -> int:
             else:
                 generated = wiki.generate(None, None, targets, index, unindexed)
             head, old = lean_view(index, targets, unindexed, lean), waiting()
-            plan = scoped_plan(old, head, index, targets, lean)
+            plan = scoped_plan(old, head, index, targets, lean, withheld)
         elif graph:
             # Only the wiki changed: one index serves both sides, and no declaration is the changes' own.
             index = index_project(wiki.ROOT, exclude_roots=EXCLUDED)
@@ -4009,7 +4034,7 @@ def run_scoped(argv: list[str]) -> int:
                 extract_tree(base, Path(folder).resolve(), lambda path: path.startswith("blueprint/links/"))
                 with relocated(vault=Path(folder).resolve() / "blueprint"):
                     old = {**head, **link_view(index), "folders": base_folders(base), "baseline": base_baseline(base)}
-            plan = scoped_plan(old, head, index, targets, lean)
+            plan = scoped_plan(old, head, index, targets, lean, withheld)
         else:
             # Nothing the sync reads changed, as in a pull request of documentation or tooling alone.
             plan = Plan(new={}, missing=[], held=[], digests={}, changed=[], blocking=[], parts=[], problems=[],
@@ -4019,7 +4044,8 @@ def run_scoped(argv: list[str]) -> int:
         return 2
     report: dict = {"schema": "atlas-graph-sync/v1", "base": base, "check": options.check, "fix": fix,
                     "lean_files": sorted(lean), "counts": plan.counts, "new": plan.new, "missing": plan.missing,
-                    "held": plan.held, "duplicates": plan.duplicates, "digests": plan.digests, "parts": plan.parts,
+                    "held": plan.held, "duplicates": plan.duplicates, "withheld": plan.withheld,
+                    "digests": plan.digests, "parts": plan.parts,
                     "changed": plan.changed, "errors": plan.blocking + plan.problems, "unindexed": plan.unindexed}
     if options.check:
         real = wiki.VAULT
@@ -4037,7 +4063,8 @@ def run_scoped(argv: list[str]) -> int:
             changes, differences = "other", [f"{path}: {disagree.get(path, 'the sync writes nothing when no Lean changes')}"
                                              for path in graph]
         else:
-            changes, differences = sync_output(base, graph, lambda: scoped_plan(old, head, index, targets, lean), apply)
+            changes, differences = sync_output(base, graph, lambda: scoped_plan(old, head, index, targets, lean,
+                                                                                  withheld), apply)
             differences += [f"{path}: {what}" for path, what in disagree.items()
                             if graph_file(path) and f"{path}: {what}" not in differences]
             changes = "other" if differences else changes

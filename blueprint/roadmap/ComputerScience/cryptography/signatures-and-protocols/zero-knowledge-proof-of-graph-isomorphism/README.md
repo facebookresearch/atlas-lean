@@ -34,6 +34,16 @@ simulator in expected polynomial time of their Theorem 2.
 - [One rewinding attempt for the graph-isomorphism protocol](win-prob-attempt-dist-half.md)
 - [Zero knowledge of the graph-isomorphism protocol against an arbitrary verifier, one round](abs-win-prob-simulator-k-sub-le-half-pow.md)
 
+## The Sigma protocol on adjacency functions
+
+A variant of the simple-graph protocol above, on **every** Boolean adjacency function $G : \{0, \dots, n-1\}^2 \to \mathrm{Bool}$, with no symmetry or loop restriction, so directed graphs and graphs with loops are included; simple graphs are the symmetric, irreflexive adjacency functions. A permutation $\sigma$ relabels $G$ to $\sigma \cdot G$ with $(\sigma \cdot G)(u, v) = G(\sigma^{-1} u, \sigma^{-1} v)$, and this is an action of the permutation group. With coins $\rho$ the prover commits to $\rho \cdot G_0$ and answers the challenge bit by $\rho^{-1}$ or $\varphi\rho^{-1}$; for every isomorphism witness, the honest prover is accepted for either challenge bit. The simple-graph relabeling results listed above concern a different domain.
+
+- [Relabeling a graph by a permutation](graph-act.md)
+- [Relabeling an adjacency function by a product of permutations](graph-act-mul.md)
+- [Relabeling an adjacency function by the identity permutation](graph-act-one.md)
+- [The graph-isomorphism Sigma protocol on Boolean adjacency functions](sigma-2.md)
+- [Completeness of the Sigma protocol on Boolean adjacency functions](sigma-complete-2.md)
+
 ## Related topics
 
 - [Zero-knowledge proofs](../zero-knowledge-proofs/README.md): the Sigma-protocol framework,

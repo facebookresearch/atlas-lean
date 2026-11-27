@@ -1,0 +1,3 @@
+# Expectation of a product of two distinct coordinates under a product weight
+
+Let $\alpha$ and $\iota$ be finite sets and $p$ a weight on $\alpha$ with $\sum_a p(a) = 1$. Under the product weight $\omega \mapsto \prod_k p(\omega_k)$ on samples $\omega \in \alpha^\iota$, for distinct coordinates $i \ne j$ and functions $f, g : \alpha \to \mathbb{R}$, $\mathbb{E}[f(\omega_i)\, g(\omega_j)] = \mathbb{E}_p[f]\, \mathbb{E}_p[g]$. The product weight $\omega \mapsto \prod_i p(\omega_i)$ is the law of an i.i.d. sample only when $p$ is a probability law ($p \ge 0$ and $\sum_a p(a) = 1$); the identity itself is algebraic and does not use nonnegativity.
