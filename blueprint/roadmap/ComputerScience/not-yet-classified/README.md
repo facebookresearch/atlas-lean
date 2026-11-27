@@ -13,7 +13,6 @@ Topics added since this subject's fields were last revised.
 - [Basic](basic/README.md)
 - [Bayes Net Gibbs](bayes-net-gibbs/README.md)
 - [Boolean Retrieval](boolean-retrieval/README.md)
-- [Calibrated Hallucination](calibrated-hallucination/README.md)
 - [Causal Witnesses](causal-witnesses/README.md)
 - [CComponent Factorization](ccomponent-factorization/README.md)
 - [Completeness](completeness/README.md)
