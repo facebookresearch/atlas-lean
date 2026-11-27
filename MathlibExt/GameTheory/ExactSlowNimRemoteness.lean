@@ -1323,12 +1323,6 @@ private theorem basic_of_critical {k m : ℕ} (hk : 0 < k) {x : Fin (k + 1) → 
   subst z
   exact hz
 
-private theorem sum_lt_sum_of_position_lt {k : ℕ} {z y : Fin (k + 1) → ℕ} (hz : z < y) :
-    ∑ i, z i < ∑ i, y i := by
-  apply Finset.sum_lt_sum (fun i _ => hz.le i)
-  by_contra! h
-  exact hz.not_ge (fun i => h i (Finset.mem_univ _))
-
 private theorem critical_of_a1 {k b : ℕ} (hk : 0 < k) {y : Fin (k + 1) → ℕ}
     (hy : IsExactSlowNimBasicA1 k b y) : IsExactSlowNimCritical k b y := by
   refine ⟨?_, ?_⟩
@@ -1337,7 +1331,7 @@ private theorem critical_of_a1 {k b : ℕ} (hk : 0 < k) {y : Fin (k + 1) → ℕ
     exact Nat.le_of_mul_le_mul_left (by simpa only [hy.1] using mul_value_le_sum hk y) hk
   · intro z hz
     rw [smith_eq_value hk]
-    have hsum := sum_lt_sum_of_position_lt hz
+    have hsum := Fintype.sum_strictMono hz
     exact (Nat.lt_of_mul_lt_mul_left ((mul_value_le_sum hk z).trans_lt (hsum.trans_eq hy.1))).ne
 end exactSlowNim_critical_of_even
 
@@ -1472,7 +1466,7 @@ public theorem exactSlowNim_critical_of_odd {k m : ℕ} (hk : 2 ≤ k) (hm : Odd
         rw [Nat.mul_sub_left_distrib, Nat.mul_one]
         omega
       have hlt := (mul_value_le_sum hk0 z).trans_lt
-        ((sum_lt_sum_of_position_lt hz).trans_eq hsum')
+        ((Fintype.sum_strictMono hz).trans_eq hsum')
       rw [smith_eq_value hk0]
       exact (Nat.lt_of_mul_lt_mul_left hlt).ne
     intro y hy

@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-import all MathlibExt.GameTheory.ExactSlowNimRemoteness
+import MathlibExt.GameTheory.ExactSlowNimCritical
 
 namespace MetaMathlibExt.exactSlowNimBasicValue_of_supports_basicB
 
@@ -137,27 +137,27 @@ end MetaMathlibExt.exactSlowNim_critical_of_even
 
 namespace MetaMathlibExt
 
-open exactSlowNim_critical_of_even (critical_of_a1)
-
 -- At m = 1 the legal M-move goes to the empty position.
 example : IsExactSlowNimCritical 2 0 (exactSlowNimMRuleMove ![1, 0, 1]) := by
-  have hx : IsExactSlowNimBasicA1 2 1 ![1, 0, 1] := by
-    refine ⟨by decide, by decide, by decide, 1, by decide, ?_⟩
+  have hx : IsExactSlowNimCritical 2 1 ![1, 0, 1] := by
+    apply (isExactSlowNimCritical_iff (by decide) _ _).mpr
+    refine Or.inl ⟨by decide, by decide, by decide, fun _ => ⟨1, by decide, ?_⟩⟩
     rw [Fin.forall_fin_succ, Fin.forall_fin_two]
     decide
   obtain ⟨i, -, -, hmove, hcrit, hM⟩ := exactSlowNim_critical_of_odd (by decide) (by decide)
-    ![1, 0, 1] (critical_of_a1 (by decide) hx)
+    ![1, 0, 1] hx
   rw [hM]
   exact (hcrit _ hmove).2 rfl
 
 -- With three legal options, the critical one keeps the even pile rather than the largest pile.
 example : IsExactSlowNimCritical 2 2 ![2, 0, 2] ∧ ¬ IsExactSlowNimCritical 2 2 ![1, 0, 3] := by
-  have hx : IsExactSlowNimBasicA1 2 3 ![2, 1, 3] := by
-    refine ⟨by decide, by decide, by decide, 0, by decide, ?_⟩
+  have hx : IsExactSlowNimCritical 2 3 ![2, 1, 3] := by
+    apply (isExactSlowNimCritical_iff (by decide) _ _).mpr
+    refine Or.inl ⟨by decide, by decide, by decide, fun _ => ⟨0, by decide, ?_⟩⟩
     rw [Fin.forall_fin_succ, Fin.forall_fin_two]
     decide
   obtain ⟨i, -, hu, -, hcrit, -⟩ := exactSlowNim_critical_of_odd (by decide) (by decide)
-    ![2, 1, 3] (critical_of_a1 (by decide) hx)
+    ![2, 1, 3] hx
   have hi : i = 0 := (hu 0 (by decide)).symm
   subst i
   exact ⟨(hcrit _ (by decide)).2 (by decide), fun h =>
