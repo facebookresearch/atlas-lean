@@ -33,10 +33,10 @@ The paper's Theorem (label `maintheoremboundwithkR`: some
 `p_i^{a_i+1} < 2kR`) is already proved in MathlibExt as
 `MetaMathlibExt.primitive_nondeficient_prime_power_bound` and is
 not restated. The statement
-`MathlibExt.NumberTheory.PrimitiveNondeficientWanted.max_primeFactor_lt_sqrt_radical_or_exists_pow_lt`
-is proved in `MathlibExt.NumberTheory.PrimitiveNondeficient` and is
-not restated either; this module states the paper's remaining numbered
-lemmas and propositions.
+`max_primeFactor_lt_sqrt_radical_or_exists_pow_lt` is proved in
+`MathlibExt.NumberTheory.PrimitiveNondeficient`. Grün's bound is
+proved in `MathlibExt.NumberTheory.PrimitiveNondeficientGrun`. This module
+states the remaining wanted lemmas.
 -/
 module
 
@@ -51,6 +51,7 @@ public import MathlibExt.NumberTheory.ArithmeticFunction.PrimitiveNondeficientRa
 public import MathlibExt.NumberTheory.ArithmeticFunction.PrimitiveNondeficientTwoPowMulPrime
 public import MathlibExt.NumberTheory.OddTwoPrimeFactorsDeficient
 public import MathlibExt.NumberTheory.PrimitiveNondeficient
+public import MathlibExt.NumberTheory.PrimitiveNondeficientGrun
 
 set_option autoImplicit false
 
@@ -71,19 +72,6 @@ theorem_wanted exists_pow_factorization_add_one_lt_two_mul_radical
     (hk : n.primeFactors.card = 3 ∨ n.primeFactors.card = 4) :
     ∃ p ∈ n.primeFactors,
       p ^ (n.factorization p + 1) < 2 * ∏ q ∈ n.primeFactors, q
-
-/-- **Grün's bound for non-deficient numbers.** Let $n$ be a non-deficient number with $k$
-distinct prime factors, the least of which is $p_1$. Then $\tfrac{3}{2} p_1 - 2 < k$, and if
-$p_1 \ge 5$ then $p_1 + 2 \le k$.
-
-Source: Joshua Zelinsky, "Must a Primitive Non-Deficient Number
-Always Have a Small Component?", Lemma (label `Grun`). -/
-theorem_wanted grun_bounds_of_isNondeficient
-    (n p₁ : ℕ) (hn : IsNondeficient n)
-    (hp₁ : p₁ ∈ n.primeFactors)
-    (hmin : ∀ q ∈ n.primeFactors, p₁ ≤ q) :
-    (3 : ℚ) / 2 * (p₁ : ℚ) - 2 < (n.primeFactors.card : ℚ) ∧
-      (5 ≤ p₁ → p₁ + 2 ≤ n.primeFactors.card)
 
 /-- **Generalized Puchta lemma.** Let $n$ be a primitive non-deficient number with $k$ distinct
 prime factors, the least of which is $p_1$, and suppose that $(p_1, k) \ne (3, 3)$. Let $\alpha$
