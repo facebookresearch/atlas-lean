@@ -29,9 +29,11 @@ lemma transitionMatrix_mem_rowStochastic (hM : M.Stochastic) (π : S → A) :
   rw [mem_rowStochastic_iff_sum]
   exact ⟨fun s y => hM.1 s (π s) y, fun s => hM.2 s (π s)⟩
 
-/-- The difference between a policy's value and an estimate `W` is the value of a Markov
-reward process with the same transition matrix and reward `Tπ W - W`. This expresses the
-resolvent identity without introducing a second matrix-inverse API. -/
+/-- For a stochastic MDP with finitely many states and discount `0 ≤ γ < 1`, let `π`
+be a deterministic stationary policy and `W` a real-valued function on the states.
+The difference `Vπ - W` between the policy value and `W` is the discounted value of
+the Markov reward process with `π`'s transition matrix and reward `Tπ W - W`, where
+`Tπ` is the Bellman operator for `π`. -/
 lemma policyValue_sub_eq_mrpValue_residual (hM : M.Stochastic) (hγ0 : 0 ≤ γ) (hγ1 : γ < 1)
     (π : S → A) (W : S → ℝ) :
     policyValue M γ hM hγ0 hγ1 π - W =
@@ -47,9 +49,12 @@ lemma policyValue_sub_eq_mrpValue_residual (hM : M.Stochastic) (hγ0 : 0 ≤ γ)
 
 variable [Fintype A] [Nonempty A]
 
-/-- The signed residual comparison. When `π` is greedy for `W` and `πstar` is optimal,
-write `e = T W - W`. The loss `V* - Vπ` is at most the difference between the two
-Markov reward process values for reward `e`, using their respective transitions. -/
+/-- For a stochastic MDP with finitely many states, a finite nonempty action set, and
+discount `0 ≤ γ < 1`, let the deterministic stationary policy `π` be greedy for `W` and let
+`πstar` be an optimal deterministic stationary policy. Write `e = T W - W`, where `T`
+is the optimal Bellman operator and `W` is a real-valued state function. Pointwise,
+`V* - Vπ ≤ Rπstar(e) - Rπ(e)`, where `V*` is the optimal value, `Vπ` is the value of `π`,
+and `Rσ(e)` is the discounted value for the transition matrix of policy `σ` and reward `e`. -/
 lemma optimalValue_sub_policyValue_le_signed_residual
     (hM : M.Stochastic) (hγ0 : 0 ≤ γ) (hγ1 : γ < 1) (W : S → ℝ) (π πstar : S → A)
     (hgreedy : policyBellman M γ π W = bellman M γ W)
@@ -76,9 +81,13 @@ lemma optimalValue_sub_policyValue_le_signed_residual
   change optimalValue M γ hM hγ0 hγ1 s - policyValue M γ hM hγ0 hγ1 π s ≤ _ - _
   linarith only [h₁, h₂]
 
-/-- **Componentwise Bellman residual bound for a greedy policy.** For any policy `π` greedy for
-`W` (ties allowed) and any optimal policy `πstar`, `V* - Vπ` lies between zero and the sum of
-both policies' Markov reward process values with reward `|T W - W|`, pointwise.
+/-- **Componentwise Bellman residual bound for a greedy policy.** In a stochastic MDP
+with finitely many states, a finite nonempty action set, and discount `0 ≤ γ < 1`, let
+`π` be any deterministic stationary policy greedy for a real-valued state function `W`
+(ties allowed), and `πstar` any optimal deterministic stationary policy. Let `T` be the
+optimal Bellman operator and `e = |T W - W|` the pointwise absolute residual. Then
+`0 ≤ V* - Vπ ≤ Rπstar(e) + Rπ(e)` pointwise, where `V*` and `Vπ` are the optimal and
+policy values and `Rσ(e)` is the discounted value for policy `σ`'s transitions and reward `e`.
 
 Source: R. Munos, *Performance Bounds in Lp-norm for Approximate Value Iteration*,
 SIAM J. Control Optim. 46(2), 2007, §4.2, Lemma 4.3, equation (4.6). -/
