@@ -48,23 +48,11 @@ public import MathlibExt.NumberTheory.CollatzArithmeticDerivative
 public import MathlibExt.NumberTheory.CollatzArithmeticDerivativeModFive
 public import MathlibExt.NumberTheory.CollatzArithmeticDerivativeBounds
 public import MathlibExt.NumberTheory.CollatzArithmeticDerivativeArithmeticDerivativeBounds
+public import MathlibExt.NumberTheory.CollatzArithmeticDerivativePrimeTetration
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Prime tetrations where the arithmetic derivative and the Collatz map commute.** Let $D$ be
-the arithmetic derivative and $C$ the accelerated Collatz map. For a prime $p$,
-$D(C(p^p)) = C(D(p^p))$ if and only if $C(p^p) = q^q$ for some prime $q$.
-
-Source: Zachary P. Bradshaw, *On a Family of Solutions to Arithmetic Differential Equations
-Involving the Collatz Map*, Journal of Integer Sequences 28 (2025), Article 25.1.8,
-Proposition 4 (`jis-2025-25.1.8-prop-4`). -/
-public theorem_wanted arithmeticDerivative_collatz_comm_prime_tetration_iff (p : ℕ)
-    (hp : p.Prime) :
-    arithmeticDerivative (collatzAccelerated (p ^ p)) =
-        collatzAccelerated (arithmeticDerivative (p ^ p)) ↔
-      ∃ q : ℕ, q.Prime ∧ collatzAccelerated (p ^ p) = q ^ q
 
 /-- **No special semiprime solves the derivative–Collatz equation.** Let $D$ be the arithmetic
 derivative and let $C$ be the accelerated Collatz map, $C(n) = n/2$ for even $n$ and
