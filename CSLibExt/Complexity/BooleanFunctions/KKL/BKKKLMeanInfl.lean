@@ -63,18 +63,13 @@ theorem mil_mean_nonneg {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) (φ : ConfigSp
     (Finset.prod_nonneg fun e _ => (OSSS.bernoulliWeight_isProbWeight hp0 hp1).nonneg e (ω e))
     (by positivity)
 
-omit [Fintype ι] [DecidableEq ι] in
-theorem mil_indicator_sq (φ : ConfigSpace ι → Bool) (ω : ConfigSpace ι) :
-    ((fun ω => if φ ω then (1 : ℝ) else 0) ω) ^ 2 = (fun ω => if φ ω then (1 : ℝ) else 0) ω := by
-  by_cases h : φ ω <;> simp [h]
-
 theorem mil_meanSq_eq_mean {p : ℝ} (φ : ConfigSpace ι → Bool) :
     OSSS.expect (OSSS.bernoulliWeight p) (fun ω => ((fun ω => if φ ω then (1 : ℝ) else 0) ω) ^ 2)
       = OSSS.expect (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0) := by
   unfold OSSS.expect
   apply Finset.sum_congr rfl
   intro ω _
-  simp only [mil_indicator_sq φ ω]
+  simp only [klo_indicator_sq φ ω]
 
 theorem mil_var_eq {p : ℝ} (φ : ConfigSpace ι → Bool) :
     OSSS.var (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0)
