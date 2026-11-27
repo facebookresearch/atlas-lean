@@ -9,7 +9,8 @@ LICENSE file in the root directory of this source tree.
 /-
 Portions of this file are adapted from:
 
-`Mathlib/RingTheory/DedekindDomain/Ideal/Basic.lean` (Mathlib):
+`Mathlib/RingTheory/DedekindDomain/Ideal/Basic.lean` and
+`Mathlib/RingTheory/DedekindDomain/Ideal/Lemmas.lean` (Mathlib):
 Copyright (c) 2020 Kenji Nakagawa. All rights reserved.
 Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
 Authors: Kenji Nakagawa, Anne Baanen, Filippo A. E. Nuccio
