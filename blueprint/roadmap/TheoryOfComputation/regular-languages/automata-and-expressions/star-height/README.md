@@ -15,6 +15,10 @@
 ## Language
 
 - [Bounded generalized star height](has-gen-height-le.md)
+
+## Planned results
+
+- [Generalized star height at most three over a finite alphabet](generalized-star-height-at-most-three.md)
 - [Languages of bounded generalized star height are regular](is-regular.md)
 - [A star raises the generalized star height by at most one](kstar.md)
 - [A regular expression bounds the generalized star height](has-gen-height-le-regex.md)

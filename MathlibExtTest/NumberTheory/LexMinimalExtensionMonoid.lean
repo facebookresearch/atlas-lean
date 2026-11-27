@@ -47,6 +47,23 @@ example {η : ℕ → ℕ} (hη : IsLexMinimalExtensionOf η 2) (h₀ : η 0 = 0
     ⟨2, by simp [hJ], heq.trans h₂.symm⟩
   simp [hJ] at hd
 
+/-- For the zero sequence even a single initial entry gives least period one. -/
+example : IsLeast {q : ℕ | 0 < q ∧ ∃ N, ∀ i, N ≤ i → (0 : ℕ → ℕ) (i + q) = (0 : ℕ → ℕ) i} 1 := by
+  simpa [maxAverageIndices_one] using
+    (isLexMinimalExtensionOf_zero 1).isLeast_period_gcd_maxAverageIndices le_rfl
+
+/-- The prefix `0, 0, 0, 4, 0, 2` attains its largest average at lengths four and six.
+Its lex-minimal extension has least eventual period two, although two is not a maximizer. -/
+example {η : ℕ → ℕ} (hη : IsLexMinimalExtensionOf η 6)
+    (hpre : ∀ i < 6, η i = if i = 3 then 4 else if i = 5 then 2 else 0) :
+    IsLeast {q : ℕ | 0 < q ∧ ∃ N, ∀ i, N ≤ i → η (i + q) = η i} 2 := by
+  have hI : Finset.Icc 1 6 = ({1, 2, 3, 4, 5, 6} : Finset ℕ) := by decide
+  have hJ : maxAverageIndices η 6 = {4, 6} := by
+    norm_num [maxAverageIndices, hI, Finset.filter_insert, Finset.filter_singleton,
+      binomidAverage, Finset.sum_range_succ, hpre]
+  simpa [hJ, show gcd (4 : ℕ) 6 = 2 by decide] using
+    hη.isLeast_period_gcd_maxAverageIndices (by decide)
+
 /-- The singleton containing zero generates the zero submonoid but fails independence. -/
 example : ¬ IsAddMonoidBasis ({0} : Set ℕ) {0} :=
   fun h => h.zero_notMem rfl

@@ -16,12 +16,17 @@ public import MathlibExt.LinearAlgebra.Matrix.SpecialLinearGroupTrace
 public import MathlibExt.NumberTheory.GeneralizedMarkovCharacteristic
 public import MathlibExt.NumberTheory.GeneralizedMarkovCongruence
 public import MathlibExt.NumberTheory.GeneralizedMarkovDiscriminant
+public import MathlibExt.NumberTheory.GeneralizedMarkovModuloFour
 public import MathlibExt.NumberTheory.GeneralizedMarkovEquation
+public import MathlibExt.NumberTheory.GeneralizedMarkovEvenParameter
 public import MathlibExt.NumberTheory.GeneralizedMarkovVietaEq
 public import MathlibExt.NumberTheory.GeneralizedSecondMarkovVieta
 public import MathlibExt.NumberTheory.GeneralizedMarkovUniquenessMulEMul
 public import MathlibExt.NumberTheory.GeneralizedMarkovUniquenessPairwiseCoprime
 public import MathlibExt.NumberTheory.GeneralizedMarkovUniquenessExistsUniqueMemGenCohnTree
+public import MathlibExt.NumberTheory.GeneralizedMarkovUniquenessStep
+public import MathlibExt.NumberTheory.GeneralizedMarkovUniquenessVieta
+public import MathlibExt.NumberTheory.GeneralizedMarkovUniquenessParent
 
 namespace MetaMathlibExt
 
@@ -121,25 +126,6 @@ public theorem_wanted card_maxGenMarkovTriples_le {k b : ℕ}
     ((range (b + 1) ×ˢ range (b + 1)).filter fun q =>
         q.1 ≤ q.2 ∧ IsGenMarkovTriple k q.1 b q.2).card ≤
       2 ^ ((b.primeFactors.filter (· ≠ 2)).card - 1)
-
-/-- **An even generalized Markov number forces $k$ to be even.** Let $k$ be a natural number. If
-some $k$-generalized Markov number $b$ is even, then $k$ is even.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Lemma 4.13. -/
-public theorem_wanted even_of_even_genMarkovNumber {k b : ℕ} (hb : IsGenMarkovNumber k b)
-    (he : Even b) : Even k
-
-/-- **Generalized Markov numbers divisible by $4$.** Let $k$ be a natural number. If some
-$k$-generalized Markov number is divisible by $4$, then $k \equiv 2 \pmod{4}$.
-
-Source: Only the first claim of Proposition 4.14 is stated; its "in particular" parity
-consequence is omitted because its displayed fraction is garbled in the record.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Proposition 4.14. -/
-public theorem_wanted mod_four_eq_two_of_four_dvd_genMarkovNumber {k b : ℕ}
-    (hb : IsGenMarkovNumber k b) (h4 : 4 ∣ b) : k % 4 = 2
 
 /-- **Discriminant condition for prime-power generalized Markov numbers.** Let $p$ be an odd
 prime and $m \ge 2$, and suppose that some $k$-generalized Markov number $b$ equals $p^m$ or
@@ -242,23 +228,6 @@ public theorem_wanted genMarkovTree_isGenMarkovTriple_and_once (k : ℕ) :
       (genMarkovTree k w).2.2) ∧
     ∀ a b c, IsGenMarkovTriple k a b c → a < b → c < b → ∃! w, genMarkovTree k w = (a, b, c)
 
-/-- **Induced solution of the generalized second Markov equation.** For a natural number $k$,
-a triple $(a, b, c)$ of integers is an induced positive solution of the $k$-generalized second
-Markov equation $\mathrm{GSME}(k)$ when $a, b, c > 0$,
-$$a^2 + b^2 + c^2 + (k^2 + 2k)(a + b + c) + 2k^3 + 3k^2 = abc,$$
-and $3 + 3k$ divides each of $a + k$, $b + k$ and $c + k$.
-
-Equivalently, $(a + k)/(3 + 3k)$, $(b + k)/(3 + 3k)$ and $(c + k)/(3 + 3k)$ are integers; they
-are automatically positive since $a, b, c > 0$.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Section 2. -/
-public def IsInducedGenSecondMarkovSolution (k : ℕ) (a b c : ℤ) : Prop :=
-  0 < a ∧ 0 < b ∧ 0 < c ∧
-    a ^ 2 + b ^ 2 + c ^ 2 + ((k : ℤ) ^ 2 + 2 * k) * (a + b + c) + 2 * (k : ℤ) ^ 3 +
-      3 * (k : ℤ) ^ 2 = a * b * c ∧
-    (3 + 3 * (k : ℤ)) ∣ a + k ∧ (3 + 3 * (k : ℤ)) ∣ b + k ∧ (3 + 3 * (k : ℤ)) ∣ c + k
-
 /-- **The root induced solution of the generalized second Markov equation.** For every natural
 number $k$, the triple $(3 + 2k, 3 + 2k, 3 + 2k)$, the image of $(1, 1, 1)$ under
 $x \mapsto (3 + 3k)x - k$, is an induced positive solution of the $k$-generalized second
@@ -270,17 +239,6 @@ public theorem isInducedGenSecondMarkovSolution_root (k : ℕ) :
     IsInducedGenSecondMarkovSolution k (3 + 2 * k) (3 + 2 * k) (3 + 2 * k) := by
   refine ⟨by positivity, by positivity, by positivity, by ring, ⟨1, by ring⟩, ⟨1, by ring⟩,
     ⟨1, by ring⟩⟩
-
-/-- **Vieta jumping preserves induced solutions of the generalized second Markov equation.** If
-$(a, b, c)$ is an induced solution of the $k$-generalized second Markov equation
-$\mathrm{GSME}(k)$, then so are $(a, ab - c - k^2 - 2k, b)$ and $(b, bc - a - k^2 - 2k, c)$.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Proposition 2.7. -/
-public theorem_wanted IsInducedGenSecondMarkovSolution.vieta {k : ℕ} {a b c : ℤ}
-    (h : IsInducedGenSecondMarkovSolution k a b c) :
-    IsInducedGenSecondMarkovSolution k a (a * b - c - (k : ℤ) ^ 2 - 2 * k) b ∧
-      IsInducedGenSecondMarkovSolution k b (b * c - a - (k : ℤ) ^ 2 - 2 * k) c
 
 /-- **Vertices of the second generalized Markov tree.** For a natural number $k$, let $SMT(k)$
 be the tree obtained from the $k$-generalized Markov tree $MT(k)$ by replacing each vertex
@@ -405,19 +363,6 @@ public theorem_wanted isGenCohnTriple_one_iff (k : ℕ) :
     ∀ P Q R, IsGenCohnTriple k P Q R 1 1 1 →
       ∃ ℓ, P = genCohnP1 k ℓ ∧ Q = genCohnQ1 k ℓ ∧ R = genCohnR1 k ℓ
 
-/-- **Children of a generalized Cohn triple.** Let $k$ be a natural number, let $S$ be the integer
-matrix with rows $(k, 0)$ and $(3k^2 + 3k, k)$, and let $(P, Q, R)$ be a $k$-generalized Cohn
-triple associated with $(a, b, c)$. Then $(P, PQ - S, Q)$ is a $k$-generalized Cohn triple
-associated with $(a, \lfloor (a^2 + kab + b^2)/c \rfloor, b)$, and $(Q, QR - S, R)$ is a
-$k$-generalized Cohn triple associated with $(b, \lfloor (b^2 + kbc + c^2)/a \rfloor, c)$.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Theorem 3.5. -/
-public theorem_wanted IsGenCohnTriple.step {k a b c : ℕ} {P Q R : Matrix (Fin 2) (Fin 2) ℤ}
-    (h : IsGenCohnTriple k P Q R a b c) :
-    IsGenCohnTriple k P (P * Q - genCohnS k) Q a ((a ^ 2 + k * a * b + b ^ 2) / c) b ∧
-      IsGenCohnTriple k Q (Q * R - genCohnS k) R b ((b ^ 2 + k * b * c + c ^ 2) / a) c
-
 /-- **Vertices of the wide generalized Cohn tree are generalized Cohn triples.** Let $k$ be a
 natural number. For every integer $\ell$ and every path $w$, the vertex of the wide
 $k$-generalized Cohn tree $\mathrm{WGCT}(k, \ell)$ at $w$ is a $k$-generalized Cohn triple
@@ -444,19 +389,6 @@ Are Prime Powers*, INTEGERS 26 (2026), Article A91, Proposition 3.10. -/
 public theorem_wanted IsGenCohnTriple.mem_wideGenCohnTree {k a b c : ℕ}
     {P Q R : Matrix (Fin 2) (Fin 2) ℤ} (h : IsGenCohnTriple k P Q R a b c) (hab : a ≤ b)
     (hcb : c ≤ b) : ∃ ℓ w, wideGenCohnTree k ℓ w = (P, Q, R)
-
-/-- **Parent triples of a generalized Cohn triple.** Let $k$ be a natural number and let $S$ be
-the integer matrix with rows $(k, 0)$ and $(3k^2 + 3k, k)$. Let $(P, Q, R)$ be a $k$-generalized
-Cohn triple associated with $(a, b, c)$, and let $b' = \lfloor (a^2 + kac + c^2)/b \rfloor$. Then
-$(P, R, P^{-1}(R + S))$ is a $k$-generalized Cohn triple associated with $(a, c, b')$, and
-$((P + S)R^{-1}, P, R)$ is a $k$-generalized Cohn triple associated with $(b', a, c)$.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Lemma 3.11. -/
-public theorem_wanted IsGenCohnTriple.parent {k a b c : ℕ} {P Q R : Matrix (Fin 2) (Fin 2) ℤ}
-    (h : IsGenCohnTriple k P Q R a b c) :
-    IsGenCohnTriple k P R (P⁻¹ * (R + genCohnS k)) a c ((a ^ 2 + k * a * c + c ^ 2) / b) ∧
-      IsGenCohnTriple k ((P + genCohnS k) * R⁻¹) P R ((a ^ 2 + k * a * c + c ^ 2) / b) a c
 
 /-- **Distinct paths give distinct middle matrices in the wide generalized Cohn tree.** For
 every natural number $k$ and every integer $\ell$, if the vertices $(P, Q, R)$ and $(P', Q', R')$
