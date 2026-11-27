@@ -39,14 +39,6 @@ Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
 public theorem_wanted ulamWordCount_sq_le_sum (n : ℕ) :
     ulamWordCount n ^ 2 ≤ ∑ i ∈ Finset.Icc n (2 * n), ulamWordCount i
 
-/-- **Linear lower bound on the number of Ulam words.** For every natural number $n \ge 6$, the
-number of Ulam words of length $n$ is at least $2n + 4$.
-
-Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
-*Distributions of Ulam Words up to Length 30*, INTEGERS 25 (2025), Article A102, Theorem 1. -/
-public theorem_wanted two_mul_add_four_le_ulamWordCount (n : ℕ) (hn : 6 ≤ n) :
-    2 * n + 4 ≤ ulamWordCount n
-
 /-- **Exponential lower bound for Ulam word counts along a subsequence.** Let $\#U_n$ be the
 number of Ulam words of length $n$ and $\alpha_0 = (\#U_{30} / (2 \cdot 31))^{1/30}$. For every
 real $\alpha$ with $1 < \alpha < \alpha_0$, every real $C$ and every natural number $N$, there
