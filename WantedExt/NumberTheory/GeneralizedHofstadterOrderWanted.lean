@@ -15,13 +15,16 @@ public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import Mathlib.Order.GaloisConnection.Basic
 public import Mathlib.SetTheory.Cardinal.Finite
+public import MathlibExt.NumberTheory.GeneralizedHofstadterOrderHofLEqAddHofCount
+public import MathlibExt.NumberTheory.GeneralizedHofstadterOrderHofLIterateBasic
 
 /-!
 # Pointwise order of generalized Hofstadter functions
 
 Statements from Pierre Letouzey, Shuo Li, and Wolfgang Steiner, *Pointwise Order of Generalized
 Hofstadter Functions G, H, and Beyond*, Journal of Integer Sequences 29 (2026), Article 26.3.3
-(arXiv:2410.00529; TeX source read for the definitions).
+(arXiv:2410.00529; TeX source read for the definitions). The theorem `hofL_iterate_basic` is
+proved in `MathlibExt.NumberTheory.GeneralizedHofstadterOrderHofLIterateBasic`.
 
 For `k ≥ 1`, `F_k(0) = 0` and `F_k(n) = n - F_k^k(n - 1)` (`hofstadterF`; exponents are
 iterates, written `f^[j]`). `F_2` is Hofstadter's `G` and `F_3` is `H`. The substitution
@@ -68,44 +71,6 @@ public theorem_wanted hofstadterF_iterate_basic {j k : ℕ} (hj : 1 ≤ j) (hk :
         (hofstadterF k)^[j] (n + 1) = (hofstadterF k)^[j] n + 1) ∧
       Monotone (hofstadterF k)^[j] ∧ Function.Surjective (hofstadterF k)^[j] ∧
       ¬ Function.Injective (hofstadterF k)^[j]
-
-/-- **Basic properties of the iterates of $L_k$.** Let $k \ge 1$, let $x_k$ be the fixed point of
-the substitution $\tau_k$, with letters $x_k[0], x_k[1], \dots$ and prefixes
-$x_k[0:n) = x_k[0] \cdots x_k[n-1]$, let $L_k(n) = |\tau_k(x_k[0:n))|$, and write $f^j$ for the
-$j$-fold iterate of a map $f$ (so $f^0$ is the identity). Then for every $j \ge 0$:
-(1) $L_k^j(n) = |\tau_k^j(x_k[0:n))|$ for every $n$;
-(2) $L_k^j(0) = 0$, and $L_k^j(n+1) = L_k^j(n) + |\tau_k^j(x_k[n])|$ for every $n$;
-(3) $L_k^j(1) = j + 1$ if $j \le k$, and $L_k^j(1) = L_k^{j-1}(1) + L_k^{j-k}(1)$ if $j \ge k$;
-(4) $n \mapsto L_k^j(n)$ is strictly increasing;
-(5) $L_k^j(n) \ge n$ for every $n$, with equality if and only if $j = 0$ or $n = 0$;
-(6) for every $n \ge 1$, the sequence $i \mapsto L_k^i(n)$ is strictly increasing.
-
-Source: Pierre Letouzey, Shuo Li, and Wolfgang Steiner, *Pointwise Order of Generalized
-Hofstadter Functions G, H, and Beyond*, Journal of Integer Sequences 29 (2026), Article 26.3.3,
-Proposition 4 (`jis-2026-26.3.3-prop-4`). -/
-public theorem_wanted hofL_iterate_basic {k : ℕ} (hk : 1 ≤ k) (j : ℕ) :
-    (∀ n, (hofL k)^[j] n = ((hofTauList k)^[j] (hofPrefix k n)).length) ∧
-      (hofL k)^[j] 0 = 0 ∧
-      (∀ n, (hofL k)^[j] (n + 1) =
-        (hofL k)^[j] n + ((hofTauList k)^[j] [hofWord k n]).length) ∧
-      (j ≤ k → (hofL k)^[j] 1 = j + 1) ∧
-      (k ≤ j → (hofL k)^[j] 1 = (hofL k)^[j - 1] 1 + (hofL k)^[j - k] 1) ∧
-      StrictMono (hofL k)^[j] ∧
-      (∀ n, n ≤ (hofL k)^[j] n ∧ ((hofL k)^[j] n = n ↔ j = 0 ∨ n = 0)) ∧
-      (∀ n, 1 ≤ n → StrictMono fun i => (hofL k)^[i] n)
-
-/-- **Bracketing by the iterates of $L_k$.** For $k \ge 1$, let $\tau_k$ be the substitution
-sending the letter $k$ to $k\,1$ and every other letter $i$ to $i + 1$, let $x_k$ be its fixed
-point starting with $k$, and let $L_k(n)$ be the length of the image under $\tau_k$ of the first
-$n$ letters of $x_k$; write $L_k^j$ for the $j$-fold iterate of $L_k$. For all $j \ge 0$ and
-$m \ge 1$ there is a unique $n \ge 1$ with $L_k^j(n - 1) < m \le L_k^j(n)$.
-
-Source: Pierre Letouzey, Shuo Li, and Wolfgang Steiner, *Pointwise Order of Generalized
-Hofstadter Functions G, H, and Beyond*, Journal of Integer Sequences 29 (2026), Article 26.3.3,
-Proposition 5 (`jis-2026-26.3.3-prop-5`). -/
-public theorem_wanted existsUnique_hofL_iterate_bracket {k m : ℕ} (hk : 1 ≤ k) (hm : 1 ≤ m)
-    (j : ℕ) :
-    ∃! n, 1 ≤ n ∧ (hofL k)^[j] (n - 1) < m ∧ m ≤ (hofL k)^[j] n
 
 /-- **Fibres of the iterated Hofstadter functions.** Let $k \ge 1$ and $j \ge 0$. Let $F_k$ be the
 generalized Hofstadter function, let $x_k[0]\,x_k[1] \cdots$ be the fixed point, beginning with
@@ -154,20 +119,6 @@ public theorem_wanted hofstadterF_iterate_eq_hofCount {k : ℕ} (hk : 1 ≤ k) (
     (hofstadterF k)^[k - 1] n = hofCount k (· = k) n ∧
       (∀ j < k, (hofstadterF k)^[j] n = hofCount k (j < ·) n) ∧
       (∀ i, 1 ≤ i → i < k → (hofstadterF k)^[k + i - 1] n = hofCount k (· = i) (n + i))
-
-/-- **The image length $L_k$ as a letter count.** Let $k \ge 1$. Let $F_k$ be the generalized
-Hofstadter function and $F_k^{k-1}$ its $(k-1)$-fold iterate, let $x_k[0]\,x_k[1] \cdots$ be the
-fixed point, beginning with $k$, of the substitution $\tau_k$ that sends $k$ to $k\,1$ and every
-other letter $i$ to $i + 1$, let $L_k(n)$ be the length of the word
-$\tau_k(x_k[0] \cdots x_k[n-1])$, and let $C_k^{(=k)}(n)$ be the number of indices $0 \le i < n$
-with $x_k[i] = k$. Then for every natural number $n$, $L_k(n) = n + C_k^{(=k)}(n)$ and
-$L_k(n) = n + F_k^{k-1}(n)$.
-
-Source: Pierre Letouzey, Shuo Li, and Wolfgang Steiner, *Pointwise Order of Generalized
-Hofstadter Functions G, H, and Beyond*, Journal of Integer Sequences 29 (2026), Article 26.3.3,
-Proposition 9 (`jis-2026-26.3.3-prop-9`). -/
-public theorem_wanted hofL_eq_add_hofCount {k : ℕ} (hk : 1 ≤ k) (n : ℕ) :
-    hofL k n = n + hofCount k (· = k) n ∧ hofL k n = n + (hofstadterF k)^[k - 1] n
 
 /-- **Generalized Hofstadter function as a letter count.** Let $k > 1$ and $n \ge 0$. Let $F_k$ be
 the generalized Hofstadter function, defined by $F_k(0) = 0$ and $F_k(m) = m - F_k^k(m - 1)$ for
