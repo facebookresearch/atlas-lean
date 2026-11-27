@@ -300,7 +300,10 @@ theorem integral_nearestNeighborCube_dist_le {d m : ℕ} [NeZero m]
     _ = _ := by
       rw [Real.rpow_neg (Nat.cast_nonneg m)]
 
-/-- The nearest-neighbor distance bound in sample-then-query integral form. -/
+/-- Let `m ≥ 1` sample points be drawn independently from a probability law `μ` on `[0, 1]^d`.
+For an independent query with law `μ`, the expected Euclidean distance to the nearest sample
+point is at most `4 √d m^(-1/(d+1))`. The expectation integrates over the query first and then
+over the sample. -/
 theorem integral_integral_nearestNeighborCube_dist_le {d m : ℕ} [NeZero m]
     (μ : Measure (NearestNeighborCube d)) [IsProbabilityMeasure μ] :
     (∫ points : Fin m → NearestNeighborCube d,

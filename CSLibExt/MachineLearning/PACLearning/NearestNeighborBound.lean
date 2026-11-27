@@ -475,7 +475,7 @@ public theorem integral_error_oneNearestNeighbor_le {d m : ℕ} [NeZero m]
 Theorem 19.3). For a probability law `D` on the Euclidean Borel unit cube and binary labels,
 let `η` be a `c`-Lipschitz version of the conditional probability of label `true`, specified
 by its integral over every measurable feature set. The expected 0-1 risk of the least-index
-1-nearest-neighbor rule on `m` independent draws from `D` is at most twice the risk of the
+1-nearest-neighbor rule on `m ≥ 1` independent draws from `D` is at most twice the risk of the
 binary Bayes threshold plus `4 c √d m^(-1/(d+1))`. The positive dimension and positive
 Lipschitz constant are the hypotheses of the textbook statement; the proof also allows
 zero in either case. -/
