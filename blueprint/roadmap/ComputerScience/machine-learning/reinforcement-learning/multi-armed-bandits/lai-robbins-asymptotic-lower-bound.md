@@ -20,7 +20,10 @@ This node states a precise result. A good expansion adds a page for the pending 
 
 ## Depends on
 
-- [Stochastic k-armed bandits: canonical history law and regret](stochastic-k-armed-bandits-canonical-history-law-and-regret.md)
+- [Stochastic k-armed bandits: canonical history law](stochastic-k-armed-bandits-canonical-history-law-and-regret.md)
+- [Regret of a bandit policy](canonical-bandit-model/regret.md)
+- [Pull count of an arm](canonical-bandit-model/pull-count.md)
+- [Bandits with finite means](canonical-bandit-model/has-finite-means.md)
 
 ## Proof depends on
 
