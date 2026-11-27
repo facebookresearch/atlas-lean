@@ -24,6 +24,10 @@ give `p ^ y.factorization p ≤ 2 ^ n` for each prime divisor `p`. Thus if `y` h
 than `l` distinct prime divisors, then `y ≤ (2 ^ (l - 1)) ^ n`. Taking `y` to be the
 qualifying neighbour of `x` bounds `x ^ 2` by an exponential, which `n!` eventually exceeds.
 
+The prime-power bound adapts the `hfactor` argument in
+`MathlibExt.NumberTheory.FactorialDivisorBound`, and the factorization `n! = m * (m + 2)`
+with its two divisor witnesses adapts `MathlibExt.NumberTheory.BrocardRamanujanPowerFree`.
+
 ## References
 
 * Abderrahim Makki Naciri, *On the Brocard–Ramanujan Equation with 7-Free Integers and Prime
