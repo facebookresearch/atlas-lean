@@ -9,8 +9,11 @@ identity on constants) maps $J$ to $C$ and none maps $J$ to a proper subinstance
 For every fixed data exchange setting in which $\Sigma_{st}$ is a set of tuple-generating dependencies and $\Sigma_t$
 is a set of equality-generating dependencies, there is a polynomial-time algorithm that, given a source instance $I$,
 decides whether $I$ has a solution and, if so, computes the core of its universal solutions (greedily for
-$\Sigma_t = \emptyset$, and in general by repeatedly applying useful endomorphisms of the canonical universal solution
-that move only a bounded set of nulls).
+$\Sigma_t = \emptyset$; in general, starting from the canonical universal solution as the current instance $K$, by
+repeatedly replacing $K$ by $h(K)$ for an endomorphism $h$ of $K$ with $h(K) \subsetneq K$ that moves only the nulls of
+a bounded number of blocks of the preuniversal instance, the target before the egds are chased, and stopping when no
+such map exists). Progress is measured on the current instance: for the canonical solution $\{R(a, u), R(a, v)\}$,
+folding $v$ onto $u$ leaves the core $\{R(a, u)\}$, on which the same map, still useful on the original, does nothing.
 
 ## Depends on
 
