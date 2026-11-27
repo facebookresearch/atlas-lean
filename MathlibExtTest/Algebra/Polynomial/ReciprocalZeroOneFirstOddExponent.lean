@@ -60,7 +60,7 @@ private theorem natDegree_cyclotomic_five : (cyclotomic 5 ℤ).natDegree = 2 * 2
 /- The fifth cyclotomic polynomial `1 + x + x^2 + x^3 + x^4` satisfies every hypothesis of the
 lemma except non-cyclotomicity, with `m = 2`, `l = 1`, `f_e = 1 + x + x^2` and `f_o = 1 + x`,
 while `2 * l < m` fails. So the lemma shows that it is not non-cyclotomic: that hypothesis
-cannot be dropped. -/
+cannot be dropped. This is the boundary case `m = 2 * l` of the proof. -/
 example : ¬ IsNoncyclotomic (cyclotomic 5 ℤ) := by
   intro hnc
   have hirr₅ := cyclotomic.irreducible (n := 5) (by norm_num)
@@ -91,6 +91,46 @@ example : ¬ IsNoncyclotomic (cyclotomic 5 ℤ) := by
         cyclotomic_expand_eq_cyclotomic_mul Nat.prime_two (n := 5) (by norm_num) ℤ
     exact (hirr.isUnit_or_isUnit hfactor).elim hirr₁₀.not_isUnit hirr₅.not_isUnit
   have h := (l_eq_min_support_and_lt _ _ _ 2 1 h01 hirr₅ hrec hnc natDegree_cyclotomic_five
+    hdecomp hfe hfo odd_one one_pos hred).2.2
+  omega
+
+private theorem natDegree_cyclotomic_three : (cyclotomic 3 ℤ).natDegree = 2 * 1 := by
+  rw [natDegree_cyclotomic, Nat.totient_prime Nat.prime_three]
+
+/- The third cyclotomic polynomial `1 + x + x^2` likewise satisfies every hypothesis of the
+lemma except non-cyclotomicity, with `m = l = 1`, `f_e = 1 + x` and the constant odd part
+`f_o = 1`, while `2 * l < m` fails. This is the other boundary case of the proof, `m = l`;
+here `f(x^2) = Φ₆(x) Φ₃(x)` is reducible. -/
+example : ¬ IsNoncyclotomic (cyclotomic 3 ℤ) := by
+  intro hnc
+  have hirr₃ := cyclotomic.irreducible (n := 3) (by norm_num)
+  have hirr₆ := cyclotomic.irreducible (n := 6) (by norm_num)
+  have h01 : IsZeroOnePoly (cyclotomic 3 ℤ) := by
+    intro n
+    rw [cyclotomic_three]
+    rcases n with _ | _ | _ | n <;> simp [coeff_X_pow, coeff_X, coeff_one]
+  have hrec : IsReciprocalPoly (cyclotomic 3 ℤ) := by
+    unfold IsReciprocalPoly
+    ext n
+    rw [coeff_reverse, natDegree_cyclotomic_three]
+    rcases le_or_gt n (2 * 1) with hn | hn
+    · rw [revAt_le hn, cyclotomic_three]
+      interval_cases n <;> simp [coeff_X_pow, coeff_X, coeff_one]
+    · rw [revAt_eq_self_of_lt hn]
+  have hdecomp : cyclotomic 3 ℤ =
+      (1 + X : ℤ[X]).comp (X ^ 2) + X ^ 1 * (1 : ℤ[X]).comp (X ^ 2) := by
+    rw [cyclotomic_three]
+    simp only [add_comp, one_comp, X_comp]
+    ring
+  have hfe : (1 + X : ℤ[X]).natDegree = 1 := by compute_degree!
+  have hfo : (1 : ℤ[X]).natDegree = 1 - 1 := natDegree_one
+  have hred : ¬ Irreducible ((cyclotomic 3 ℤ).comp (X ^ 2)) := by
+    intro hirr
+    have hfactor : (cyclotomic 3 ℤ).comp (X ^ 2) = cyclotomic 6 ℤ * cyclotomic 3 ℤ := by
+      simpa only [expand_eq_comp_X_pow] using
+        cyclotomic_expand_eq_cyclotomic_mul Nat.prime_two (n := 3) (by norm_num) ℤ
+    exact (hirr.isUnit_or_isUnit hfactor).elim hirr₆.not_isUnit hirr₃.not_isUnit
+  have h := (l_eq_min_support_and_lt _ _ _ 1 1 h01 hirr₃ hrec hnc natDegree_cyclotomic_three
     hdecomp hfe hfo odd_one one_pos hred).2.2
   omega
 
