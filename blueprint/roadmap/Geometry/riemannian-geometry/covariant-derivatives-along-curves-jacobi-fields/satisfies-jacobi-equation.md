@@ -1,0 +1,3 @@
+# Satisfies Jacobi Equation
+
+Let `M` be a finite-dimensional smooth Riemannian manifold and `u(s) = (γ(s), v(s))` a curve in its tangent bundle, defined on all of $\mathbb{R}$. A vector field `J` along `γ`, defined at every real time, satisfies the Jacobi equation if there is a vector field `J'` along `γ` such that, at every real time, `J'` is the covariant derivative of `J` and `-R(J, γ')γ'` is the covariant derivative of `J'`; that is, `D_t² J + R(J, γ')γ' = 0`. Here `R` is the Riemann curvature tensor with the sign convention of Lee, under which do Carmo's `R(γ', J)γ'` is `R(J, γ')γ'`. Each covariant-derivative condition includes the velocity-lift condition $\gamma'(t) = v(t)$, but the curve is not required to be a geodesic.

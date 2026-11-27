@@ -13,6 +13,8 @@ Probability.
 - [SKAT variance-component test](skat-variance-component-test/README.md)
 - [Testing Hardy–Weinberg equilibrium](testing-hardy-weinberg-equilibrium/README.md)
 - [Phenome-wide association scans](phenome-wide-association-scans/README.md)
+- [Multi-locus GWAS by screening and EM Bayesian LASSO](multi-locus-gwas-by-screening-and-em-bayesian-lasso/README.md)
+- [Phylogenetic association tests for microbial GWAS](phylogenetic-association-tests-for-microbial-gwas/README.md)
 - [Genotype data, annotations and genomic privacy](genotype-data-and-genomic-privacy/README.md)
 - [Compositional epistasis tests](compositional-epistasis-tests/README.md)
 - [Epistasis scoring of multi-locus models](epistasis-scoring-of-multi-locus-models/README.md)
