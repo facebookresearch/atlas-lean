@@ -750,24 +750,25 @@ give a page it gives none to those in the page's module or topic, or to any of
 them if none is there, of each pull request that names the page: it passes them
 to the sync's `--withhold`, which records their docstring digests as it does a
 held declaration's. Nothing in the wiki records that they were withheld: the
-batch's description lists the page and those declarations for an editor, and
-`verify` on the batch prints them again. The editor links the page to the one
-that states it, in a graph pull request, and a batch made after that with
-`--base` set to the base of the batch that withheld them gives the others their
-pages, as the page is no longer planned. When the one candidate in the page's
-topic is gone or deprecated on `main` by then, as a later pull request in the
-batch renamed it, the batch links nothing either: it lists the page for an
-editor and withholds what the pull requests that took the candidate away added
-to its module, in the page's topic and of its sort, one of which may be what it
-became. Until the editor does, a later batch, which sees only the pull requests
-merged after its own base, may link the page to a later pull request's one
-candidate in its topic: the declarations withheld before then get their pages
-only from such a batch. If none of them states the page, a graph pull request
-runs `python3 scripts/sync_wiki.py declarations --base <that base>` and keeps
-only what it writes for them. A run over the whole project, or from an older
-base, writes their pages too, with those of every other documented declaration
-that has none ([Maintaining articles](#maintaining-articles)): before it, link
-the pages still waiting for an editor, or leave out what it writes for their
+batch's description lists the page and those declarations for an editor, or how
+many there are when it is too long, and `verify` on the batch prints them all.
+The editor links the page to the one that states it, in a graph pull request,
+and a batch made after that with `--base` set to the base of the batch that
+withheld them gives the others their pages, as the page is no longer planned.
+When the one candidate in the page's topic is gone or deprecated on `main` by
+then, as a later pull request in the batch renamed it, the batch links nothing
+either: it lists the page for an editor and withholds what the pull requests
+that took the candidate away added to its module, in the page's topic and of its
+sort, one of which may be what it became. Until the editor does, a later batch,
+which sees only the pull requests merged after its own base, may link the page
+to a later pull request's one candidate in its topic: the declarations withheld
+before then get their pages only from such a batch. If none of them states the
+page, a graph pull request runs
+`python3 scripts/sync_wiki.py declarations --base <that base>` and keeps only
+what it writes for them. A run over the whole project, or from an older base,
+writes their pages too, with those of every other documented declaration that
+has none ([Maintaining articles](#maintaining-articles)): before it, link the
+pages still waiting for an editor, or leave out what it writes for their
 declarations. A planned page named with no candidate the batch would give a
 page, and any id that names no planned page or that several rows have, changes
 nothing, and the description lists it; the ids of pages linked already, the most
@@ -790,9 +791,12 @@ lines name, left as they are. GitHub takes a description of at most 65,536
 characters: while this one would pass 60,000, the list whose short form saves
 the most gives way to it, one list at a time, which says how many entries the
 list holds and that `verify` prints them all. The planned pages left for an
-editor never give way: that list is the only record of the declarations a batch
-withholds. Push the commit to a branch of its own and open the pull request with
-that description.
+editor give way last, once no other list can, and only to a line a page, with
+the pull requests that name it, the short names of its reason and how many
+declarations it withholds, whose names `verify` prints: that list is the only
+record of the declarations a batch withholds, so no page is left out of it. Push
+the commit to a branch of its own and open the pull request with that
+description.
 
 `python3 scripts/graph_batch.py verify <commit>`, run from an up-to-date
 checkout of `main` (it refuses to run from the batch itself, whose checkout's
