@@ -7,5 +7,8 @@
 - [Fitness landscapes and epistasis](fitness-landscapes-and-epistasis/README.md)
 - [Mutation rates and generation time](mutation-rates-and-generation-time/README.md)
 - [Accessible paths in random fitness landscapes](accessible-paths-in-random-fitness-landscapes/README.md)
+- [Evolutionary paths on fitness landscapes](evolutionary-paths-on-fitness-landscapes/README.md)
+- [Bak–Sneppen model](bak-sneppen-model/README.md)
+- [Stochastic models of viral evolution](stochastic-models-of-viral-evolution/README.md)
 - [Fitness–distance monotonicity and mutation-rate control](fitness-distance-monotonicity-and-mutation-rate-control/README.md)
 - [Genome size evolution under rearrangements](genome-size-evolution-under-rearrangements/README.md)

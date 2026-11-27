@@ -167,3 +167,43 @@ example : lastLetterDigits fibonacci 2 1 = [0, 1] ∧
   decide
 
 end MetaMathlibExt.seedAutomaton_neutral_padding.Tests
+
+namespace MetaMathlibExt.tail_injective_and_strictMono.Tests
+
+open morphIterate_getElem_eq_substitutionAutomaton_tail
+open substitutionAutomaton_admissibleSequence.Tests (path_isLetterAdmissible)
+
+private def smallerTop : ℕ → List Bool × Bool
+  | 0 => ([false], false)
+  | _ + 1 => ([], true)
+
+private def largerBottom : ℕ → List Bool × Bool := fun _ => ([true], false)
+
+-- The top digit decides even though the bottom digits compare the other way.
+example : ([0, 1] : List ℕ) < [1, 0] := by
+  have hs : IsLetterAdmissibleSequence letterMap false smallerTop 1 := by
+    refine ⟨fun i hi => ?_, ⟨[false], rfl⟩⟩
+    obtain rfl : i = 0 := by omega
+    exact ⟨[], rfl⟩
+  exact (tail_injective_and_strictMono letterMap letterMap_isSubstitution 2 (by decide)
+    false smallerTop path hs path_isLetterAdmissible).2.mp (by decide)
+
+-- With a shared top digit, the bottom digit breaks the tie: [1, 0] < [1, 1].
+example : (∑ j ∈ Finset.range 2, (morphIterate letterMap j (path j).1).length) <
+    ∑ j ∈ Finset.range 2, (morphIterate letterMap j (largerBottom j).1).length := by
+  have hs : IsLetterAdmissibleSequence letterMap false largerBottom 1 :=
+    ⟨fun _ _ => ⟨[], rfl⟩, ⟨[], rfl⟩⟩
+  exact (tail_injective_and_strictMono letterMap letterMap_isSubstitution 2 (by decide)
+    false path largerBottom path_isLetterAdmissible hs).2.mpr (by decide)
+
+-- At depth one, equality of the retained digit determines the weight, not the unused pairs.
+example : (∑ j ∈ Finset.range 1, (morphIterate letterMap j (path j).1).length) =
+    ∑ j ∈ Finset.range 1, (morphIterate letterMap j (path 0).1).length := by
+  have hs : IsLetterAdmissibleSequence letterMap false path 0 :=
+    ⟨isAdmissibleSequence_zero _ _, ⟨[false], rfl⟩⟩
+  have hs' : IsLetterAdmissibleSequence letterMap false (fun _ => path 0) 0 :=
+    ⟨isAdmissibleSequence_zero _ _, ⟨[false], rfl⟩⟩
+  exact (tail_injective_and_strictMono letterMap letterMap_isSubstitution 1 (by decide)
+    false path (fun _ => path 0) hs hs').1.mpr rfl
+
+end MetaMathlibExt.tail_injective_and_strictMono.Tests
