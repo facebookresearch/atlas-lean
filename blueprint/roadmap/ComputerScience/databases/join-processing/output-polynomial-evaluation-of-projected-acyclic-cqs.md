@@ -9,6 +9,12 @@ queries, and charges filtering, tuple comparison, active-domain operations and o
 explicitly. It is a sufficient output-polynomial bound; it claims neither time linear in the output nor a
 delay bound.
 
+## Expansion
+
+This page becomes ready once a published source states this prefix enumeration, its prefix invariant and its
+call count; the cited source gives output-polynomial evaluation of acyclic queries by Yannakakis' method, not this
+enumerator.
+
 ## Depends on
 
 - [Projected CQ prefix enumeration and correctness](projected-cq-prefix-enumeration-and-correctness.md)

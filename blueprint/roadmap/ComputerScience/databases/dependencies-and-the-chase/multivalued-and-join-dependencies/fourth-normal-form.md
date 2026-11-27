@@ -18,6 +18,7 @@ A database schema is in 4NF when each of its relation schemas is.
 
 - [Join dependencies and multivalued dependencies](join-dependencies-and-multivalued-dependencies.md)
 - [Functional dependency](../../functional-dependencies/fd.md)
+- [A functional dependency holds in a relation](../../functional-dependencies/holds-in.md)
 
 ## Sources
 

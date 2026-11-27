@@ -23,4 +23,4 @@ exactly when $q(D)$ is true. It is the $1$-consistency procedure of
 
 ## Sources
 
-- M. Arenas, P. Barceló, L. Libkin, W. Martens and A. Pieris, *Database Theory: Querying Data*, preliminary version of 19 August 2022, open access at <https://github.com/pdm-book/community>, Proposition 19.4, Algorithm 7 and Proposition 19.5 (pp. 163–165), the latter proved in Exercise 3.6.
+- M. Arenas, P. Barceló, L. Libkin, W. Martens and A. Pieris, *Database Theory: Querying Data*, preliminary version of 19 August 2022, open access at <https://github.com/pdm-book/community>, Proposition 19.4, Algorithm 7 and Proposition 19.5 (pp. 163–165), the latter left there as Exercise 3.6.

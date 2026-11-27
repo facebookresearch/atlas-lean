@@ -14,14 +14,15 @@ maps $x$ to $a$ and then fails on $a, b$.
 
 A chase sequence of $S$ under $\Sigma$ is a finite sequence $S = S_0, S_1, \dots, S_n$ in which each $S_{i+1}$ is obtained from
 $S_i$ by one application and which ends in failure or saturation: it is *failing* if $S_n = \bot$ and *successful* if no
-dependency of $\Sigma$ is applicable to $S_n$. A sequence that stops earlier is a partial run, not a chase sequence: for
+dependency of $\Sigma$ is applicable to $S_n$. A run is a finite or infinite sequence $S_0 = S, S_1, \dots$ in which each
+$S_{i+1}$ is obtained from $S_i$ by one application; a finite run that stops earlier is partial, not a chase sequence: for
 $R(k, x), R(k, y)$ and $1 \to 2$ the zero-step prefix is partial, and only the run that identifies $x$ and $y$ is a chase
 sequence.
 The composition of the replacement maps along a successful sequence is its chase homomorphism. When all finite chase
 sequences end in the same result (see [termination and uniqueness](the-fd-chase-terminates-with-a-unique-result.md)), that
 result is written $\mathrm{Chase}(S, \Sigma)$; $h_{S, \Sigma}$ denotes the chase homomorphism of a fixed successful
 sequence, and the statements that use it hold for every such choice, since all of them have the same image
-$h_{S, \Sigma}(S) = \mathrm{Chase}(S, \Sigma)$.
+$h_{S, \Sigma}(S) = \mathrm{Chase}(S, \Sigma)$; a use of $h_{S, \Sigma}$ on individual terms refers to that fixed choice.
 
 ## Depends on
 

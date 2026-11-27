@@ -4,7 +4,8 @@ A tuple-generating dependency (TGD) $\sigma$ is a formula $\forall \bar X \foral
 with conjunctions of atoms $\Phi$ (the body) and $\Psi$ (the head). Given a database $D$ and a set $\Sigma$ of TGDs, a Boolean
 conjunctive query $Q$ is entailed, $D \cup \Sigma \models Q$, when $Q$ holds in every finite or infinite instance that contains $D$
 and satisfies $\Sigma$; equivalently, when $Q$ holds in the result of a fair restricted chase of $D$ by $\Sigma$: a terminating chase sequence, or the
-union of an infinite one in which every applicable trigger is eventually applied.
+union of an infinite one in which every trigger active at some step is inactive at a later step, that is, its head is
+eventually satisfied, whether or not that trigger is applied (Definition 2.8 of the cited paper).
 
 - $\sigma$ is *guarded* if some body atom, a guard, contains all universally quantified variables of $\sigma$.
 - The set of positions *affected* with respect to $\Sigma$ is the least set containing every position $p[i]$ at which some
@@ -22,4 +23,4 @@ Every guarded set is weakly guarded. No labeled null of the chase occurs at a no
 
 ## Sources
 
-- A. Calì, G. Gottlob and M. Kifer, "Taming the infinite chase: query answering under expressive relational constraints", *J. Artificial Intelligence Research* 48 (2013) 115–174; arXiv:1212.3357 <https://arxiv.org/abs/1212.3357>, Definitions 2.1, 2.2, 3.1, 3.2 and 3.4, Example 3.3 and Theorem 2.10.
+- A. Calì, G. Gottlob and M. Kifer, "Taming the infinite chase: query answering under expressive relational constraints", *J. Artificial Intelligence Research* 48 (2013) 115–174; arXiv:1212.3357 <https://arxiv.org/abs/1212.3357>, Definitions 2.1, 2.2, 3.1, 3.2 and 3.4, Example 3.3 and Theorem 2.10; Definition 2.8 (fair chase sequences, p. 8).

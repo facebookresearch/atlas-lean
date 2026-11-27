@@ -1,7 +1,7 @@
 # Join trees of acyclic conjunctive queries can be computed in linear time
 
 A conjunctive query is acyclic when its hypergraph, with the variables as vertices and the variable sets of the atoms as
-hyperedges, has a [join tree](../../join-processing/characterizations-of-acyclic-database-schemas.md). There is an algorithm that, given a
+hyperedges, has a [join tree](../../join-processing/has-join-tree.md). There is an algorithm that, given a
 conjunctive query $q$, decides in time $O(\|q\|)$ whether $q$ is acyclic and, if it is, constructs a join tree of its hypergraph.
 
 ## Depends on

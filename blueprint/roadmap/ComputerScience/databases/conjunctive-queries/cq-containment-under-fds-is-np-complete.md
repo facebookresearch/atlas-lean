@@ -15,6 +15,7 @@ of conjunctive queries by taking $\Sigma$ empty.
 - [Answers of a conjunctive query](answers-of-a-conjunctive-query.md)
 - [Functional dependency](../functional-dependencies/fd.md)
 - [NP-complete decision problems](../../../TheoryOfComputation/complexity-classes/mahaney-s-theorem/npcomplete.md)
+- [A functional dependency holds in a relation](../functional-dependencies/holds-in.md)
 
 ## Proof depends on
 

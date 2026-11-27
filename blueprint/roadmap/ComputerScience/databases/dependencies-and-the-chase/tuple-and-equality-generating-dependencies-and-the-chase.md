@@ -6,8 +6,8 @@ x_i = x_j)$, where $\varphi$ and $\psi$ are conjunctions of atoms.
 
 A trigger for a dependency on an instance is a match of its body. A trigger for a tuple-generating
 dependency is active if no extension of the match satisfies the head; a restricted chase step applies one
-active trigger, adding the head atoms with fresh labelled nulls for $\bar{y}$. An equality step for an
-active equality-generating trigger replaces a null by the other term, and fails if both terms are distinct
+active trigger, adding the head atoms with fresh labelled nulls for $\bar{y}$. An equality-generating trigger is active when the two terms it equates differ; an equality step for an
+active one replaces a null by the other term, and fails if both terms are distinct
 constants. A chase sequence is successful and terminating if it is finite, never fails, and ends in an
 instance satisfying all dependencies.
 

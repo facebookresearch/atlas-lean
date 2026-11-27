@@ -3,7 +3,8 @@
 Deciding, given a conjunctive query $q$ and a Datalog query $(P, T)$, whether $q \subseteq (P, T)$ is complete for
 EXPTIME. When the arities of the relations of the programs are bounded by a constant, the problem is NP-complete. The
 upper bound follows from the [canonical-database test](containment-of-a-cq-in-a-datalog-query-via-the-canonical-database.md);
-this complexity is the expression complexity of evaluating Datalog programs.
+this complexity is the expression complexity of evaluating Datalog programs. The query and the program are constant-free:
+every argument of every atom is a variable, as in Chaudhuri and Vardi (§2.1).
 
 ## Depends on
 
@@ -19,4 +20,4 @@ this complexity is the expression complexity of evaluating Datalog programs.
 
 ## Sources
 
-- S. Chaudhuri and M. Y. Vardi, "On the equivalence of recursive and nonrecursive Datalog programs", *J. Comput. System Sci.* 54(1) (1997) 61–78; conference version PODS 1992; author copy <https://www.cs.rice.edu/~vardi/papers/pods92rj.pdf>, Section 1 (pp. 2–4 of the author copy): EXPTIME-complete, citing earlier work, and NP-complete for programs of bounded arity.
+- S. Chaudhuri and M. Y. Vardi, "On the equivalence of recursive and nonrecursive Datalog programs", *J. Comput. System Sci.* 54(1) (1997) 61–78; conference version PODS 1992; author copy <https://www.cs.rice.edu/~vardi/papers/pods92rj.pdf>, Section 1 (pp. 2–4 of the author copy): EXPTIME-complete, citing earlier work, and NP-complete for programs of bounded arity; §2.1 (p. 4 of the author copy: atoms have only variables as arguments).

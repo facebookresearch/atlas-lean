@@ -7,6 +7,12 @@ attempted extensions of each retained prefix at each of the $h$ depths, failed e
 term $1$ cannot be dropped: it accounts for the initial test, which is the only test when $R = 0$ or
 $h = 0$.
 
+## Expansion
+
+This page becomes ready once a published source states this prefix enumeration, its prefix invariant and its
+call count; the cited source gives output-polynomial evaluation of acyclic queries by Yannakakis' method, not this
+enumerator.
+
 ## Depends on
 
 - [Projected CQ prefix enumeration and correctness](projected-cq-prefix-enumeration-and-correctness.md)

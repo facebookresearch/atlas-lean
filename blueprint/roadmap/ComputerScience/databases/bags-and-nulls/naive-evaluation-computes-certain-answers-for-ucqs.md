@@ -7,8 +7,8 @@ null-free output tuples, yields exactly the certain answers of $q$ on $D$ under 
 infinite supply of constants is needed: with constants $1, 2$ only, $R = \{(\bot)\}$, $S = \{(1), (2)\}$
 and the Boolean query $\exists x\, (R(x) \wedge S(x))$, naive evaluation returns false although every
 valuation makes the query true. The theorem is distinct from Libkin's Proposition 3.2, which states that
-SQL's three-valued evaluation, in which every comparison involving a null is unknown, returns only
-certain answers on such queries.
+SQL's three-valued evaluation, in which every comparison involving a null is unknown, returns tuples of
+which every null-free one is a certain answer on such queries.
 
 ## Depends on
 

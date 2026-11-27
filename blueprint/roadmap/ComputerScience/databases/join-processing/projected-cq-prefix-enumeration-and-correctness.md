@@ -12,6 +12,12 @@ has length $0$, exactly when $Q$ is true; for example $\mathrm{Answer}(c) \mathr
 an original derivation from the acyclic Boolean evaluation result, not a theorem quoted from the cited
 source.
 
+## Expansion
+
+This page becomes ready once a published source states this prefix enumeration, its prefix invariant and its
+call count; the cited source gives output-polynomial evaluation of acyclic queries by Yannakakis' method, not this
+enumerator.
+
 ## Depends on
 
 - [Characterizations of acyclic database schemas](characterizations-of-acyclic-database-schemas.md)

@@ -3,7 +3,7 @@
 - [DBSP: incremental view maintenance as stream calculus](dbsp-incremental-view-maintenance-as-stream-calculus.md)
 - [K-relations and positive relational algebra over a semiring](k-relations-and-positive-relational-algebra-over-a-semiring.md)
 - [Universality of provenance polynomials](universality-of-provenance-polynomials.md)
-- [A map of annotations commutes with positive relational algebra exactly when it preserves zero, sums and products](annotation-maps-commuting-with-positive-relational-algebra.md)
+- [Semiring homomorphisms commute with positive relational algebra](annotation-maps-commuting-with-positive-relational-algebra.md)
 - [Datalog on K-relations over ω-continuous semirings](datalog-on-k-relations-over-omega-continuous-semirings.md)
 - [Positive relational algebra and nonrecursive Datalog agree on K-relations](positive-relational-algebra-and-nonrecursive-datalog-agree-on-k-relations.md)
 - [Datalog on Boolean-annotated relations is standard Datalog](datalog-on-boolean-annotated-relations-is-standard-datalog.md)

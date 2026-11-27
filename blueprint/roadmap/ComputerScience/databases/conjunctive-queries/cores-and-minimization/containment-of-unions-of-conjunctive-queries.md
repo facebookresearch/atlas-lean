@@ -19,5 +19,5 @@ homomorphism tests between their disjuncts.
 ## Sources
 
 - M. Arenas, P. Barceló, L. Libkin, W. Martens and A. Pieris, *Database Theory: Querying Data*, preliminary version of 19 August 2022, open access at <https://github.com/pdm-book/community>, Proposition 29.1 (p. 261).
-- Y. Sagiv and M. Yannakakis, "Equivalences among relational expressions with the union and difference operators", *J. ACM* 27(4) (1980) 633–655, as credited by the first source.
+- Y. Sagiv and M. Yannakakis, "Equivalences among relational expressions with the union and difference operators", *J. ACM* 27(4) (1980) 633–655, as credited by Abiteboul, Hull and Vianu, Exercise 6.14.
 - S. Abiteboul, R. Hull and V. Vianu, *Foundations of Databases*, Addison-Wesley, 1995; authors' web edition <http://webdam.inria.fr/Alice/pdfs/all.pdf>, Exercise 6.14.

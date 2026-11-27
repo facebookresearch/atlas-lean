@@ -8,7 +8,8 @@ definition and distributing conjunction over the resulting unions, is equivalent
 the views $V_R(x) \mathrel{:-} R(x)$ and $V_S(x) \mathrel{:-} S(x)$ it is $V_R(x) \vee V_S(x)$, which no single conjunctive
 query expresses. Deciding whether $Q$ has a complete rewriting using $\mathcal V$ is $\Pi_2^p$-complete, and it is
 $\Pi_2^p$-hard already when $Q$ is a single conjunctive query. The first source gives the $\Pi_2^p$ upper bound only for views
-of arity at most $2$; for views of unrestricted arity the cited sources do not give this bound. The expansion of one conjunctive query over union-valued
+of arity at most $2$; for views of unrestricted arity the conference table of the second source lists the same bound, which the journal version
+corrects to co-NEXPTIME-complete. The expansion of one conjunctive query over union-valued
 views can have exponentially many disjuncts: writing out the expansion can take exponential space, so the NP bound
 for containment of two explicitly given unions does not give an NP upper bound in the original input size. The 1995 paper that introduced the problem stated NP-completeness; the later analysis corrected
 this. When $Q$ and every view are conjunctive queries the problem is NP-complete,

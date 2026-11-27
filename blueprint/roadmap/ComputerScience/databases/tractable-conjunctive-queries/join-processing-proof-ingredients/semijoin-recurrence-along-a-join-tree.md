@@ -10,6 +10,9 @@ the variables of $s$. Then
 - if $s$ has children $s_1, \dots, s_p$, then $Q_s(D) = q_s(D) \ltimes Q_{s_1}(D) \ltimes \dots \ltimes Q_{s_p}(D)$, iterating semijoins.
 
 Hence $q(D)$ is true if and only if $Q_r(D) \ne \emptyset$ for the root $r$, which a bottom-up pass of semijoins computes.
+The source indexes the tree by distinct variable sets and groups the atoms of each set; replacing a group by a path of
+its atoms gives an atom-indexed join tree with the same recurrence, since atoms with equal variable sets semijoin as
+intersections.
 
 ## Depends on
 

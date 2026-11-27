@@ -1,10 +1,10 @@
 # Stratifications and the precedence graph of a Datalog program with negation
 
-A Datalog program with negation ($\mathrm{datalog}^\neg$) allows negated atoms $\neg R(\bar v)$ in rule bodies, under
+A Datalog program with negation ($\mathrm{datalog}^\neg$) allows negated atoms $\neg R(\bar v)$ and inequalities $x \ne y$ in rule bodies, under
 active-domain semantics. It is *semipositive* if every negated relation in a rule body is extensional. Its
 immediate consequence operator $T_P$ maps an instance $K$ over the schema of $P$ to the facts of $K$ over extensional
 relations together with the heads $A$ of the ground rule instances $A \leftarrow L_1, \dots, L_n$ over the constants of $P$
-and $K$ such that every positive relational literal $L_i$ is in $K$, every built-in equality literal holds, and every negative literal $L_i = \neg B$ has $B \notin K$; unlike
+and $K$ such that every positive relational literal $L_i$ is in $K$, every built-in equality or inequality literal holds as an equality or inequality of constants, and every negated relational literal $L_i = \neg B$ has $B \notin K$; unlike
 the operator of a program without negation it need not be monotone.
 
 A *stratification* of a $\mathrm{datalog}^\neg$ program $P$ is a sequence $P^1, \dots, P^n$ of programs, with a map $\sigma$

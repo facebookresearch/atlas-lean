@@ -2,7 +2,7 @@
 
 Let $S$ be a finite set of atoms and $\Sigma$ a finite set of functional dependencies, with the
 [chase for functional dependencies](the-chase-for-functional-dependencies-on-sets-of-atoms.md). Then there is no infinite
-chase sequence of $S$ under $\Sigma$, any two finite chase sequences end in the same result (the symbol $\bot$ or the same set
+run of applications from $S$, every partial run extends to a chase sequence, any two finite chase sequences end in the same result (the symbol $\bot$ or the same set
 of atoms), and the chase homomorphisms $h_s, h_{s'}$ of any two successful ones have the same image, $h_s(S) = h_{s'}(S)$. A non-failing step only identifies terms,
 so the number of distinct terms decreases at every step.
 

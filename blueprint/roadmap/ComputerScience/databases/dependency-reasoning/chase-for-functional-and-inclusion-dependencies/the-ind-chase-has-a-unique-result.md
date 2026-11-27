@@ -9,8 +9,9 @@ Let $S$ be a finite set of atoms and $\Sigma$ a finite set of inclusion dependen
 
 The fixed naming of new variables makes the atom added for a given dependency and tuple independent of when it is added;
 the result is the least set of atoms that contains $S$ and contains $\mathrm{new}(\sigma, \bar u)$ whenever it contains
-$R(\bar u)$ for $\sigma = R[\alpha] \subseteq P[\beta]$ in $\Sigma$, that is, the least fixpoint of
-$X \mapsto S \cup X \cup \{\mathrm{new}(\sigma, \bar u) : \sigma \in \Sigma,\ R(\bar u) \in X\}$.
+$R(\bar u)$ for $\sigma = R[\alpha] \subseteq P[\beta]$ in $\Sigma$. Every chase result is such a closed set (a
+finite one is saturated, and fairness closes an infinite union), and by induction along the sequence every atom it adds
+lies in each closed superset of $S$, so the result is the least one.
 
 ## Depends on
 
