@@ -114,12 +114,16 @@ private theorem modulus_eq_one_of_norm_eq_one {p : ℕ} [Fact p.Prime] {u : ℚ_
 
 /-- The measure `mulMeasure μ` gives the units of `ℤ_[p]` and their translate by the
 uniformizer `p` equal, positive and finite mass. The additive Haar measure does not: it scales
-the translate by the modulus of `p`, which is `p⁻¹`. -/
+the translate by the modulus of `p`, which is `p⁻¹`. The zeta integral of the indicator of the
+units, at the trivial character and `s = 0`, is that mass, so `localZeta` is not identically
+zero. -/
 example (p : ℕ) [Fact p.Prime] [MeasurableSpace ℚ_[p]] [BorelSpace ℚ_[p]]
     (μ : Measure ℚ_[p]) [μ.IsAddHaarMeasure] :
     let ϖ : ℚ_[p]ˣ := Units.mk0 (p : ℚ_[p]) (by exact_mod_cast (Fact.out : p.Prime).ne_zero)
     mulMeasure μ (ϖ • sphere (0 : ℚ_[p]) 1) = mulMeasure μ (sphere 0 1) ∧
-      0 < mulMeasure μ (sphere (0 : ℚ_[p]) 1) ∧ mulMeasure μ (sphere (0 : ℚ_[p]) 1) < ⊤ := by
+      0 < mulMeasure μ (sphere (0 : ℚ_[p]) 1) ∧ mulMeasure μ (sphere (0 : ℚ_[p]) 1) < ⊤ ∧
+      localZeta μ ((sphere (0 : ℚ_[p]) 1).indicator fun _ => (1 : ℂ)) 1 0 =
+        ((mulMeasure μ).real (sphere (0 : ℚ_[p]) 1) : ℂ) := by
   intro ϖ
   have hUo : IsOpen (sphere (0 : ℚ_[p]) 1) := IsUltrametricDist.isOpen_sphere _ one_ne_zero
   have hUm : MeasurableSet (sphere (0 : ℚ_[p]) 1) := hUo.measurableSet
@@ -147,11 +151,23 @@ example (p : ℕ) [Fact p.Prime] [MeasurableSpace ℚ_[p]] [BorelSpace ℚ_[p]]
     have hy1 : ‖y‖ = 1 := by simpa using hy
     simp only [smul_eq_mul, modulus_mul, modulus_coe_units, modulus_eq_one_of_norm_eq_one hy1,
       mul_one]
-  refine ⟨hmass'.trans hmass.symm, ?_, ?_⟩
+  refine ⟨hmass'.trans hmass.symm, ?_, ?_, ?_⟩
   · rw [hmass]
     exact hUo.measure_pos μ ⟨1, by simp⟩
   · rw [hmass]
     exact (isCompact_sphere (0 : ℚ_[p]) 1).measure_lt_top
+  · have hint : (fun x : ℚ_[p] => (sphere (0 : ℚ_[p]) 1).indicator (fun _ => (1 : ℂ)) x *
+        MulChar.ofUnitHom (1 : ℚ_[p]ˣ →* ℂˣ) x * ((modulus x : ℝ) : ℂ) ^ (0 : ℂ)) =
+        (sphere (0 : ℚ_[p]) 1).indicator fun _ => (1 : ℂ) := by
+      funext x
+      by_cases hx : x ∈ sphere (0 : ℚ_[p]) 1
+      · have hx0 : x ≠ 0 := hU0 hx
+        have h := MulChar.ofUnitHom_coe (1 : ℚ_[p]ˣ →* ℂˣ) (Units.mk0 x hx0)
+        rw [Units.val_mk0] at h
+        rw [Set.indicator_of_mem hx, h]
+        simp
+      · simp [Set.indicator_of_notMem hx]
+    rw [localZeta, hint, integral_indicator_const _ hUm, Complex.real_smul, mul_one]
 
 /-- On every field where the gamma factors are stated (totally disconnected, hence `T1`),
 `mulMeasure μ` gives `{0}` mass zero, with no further hypothesis. -/

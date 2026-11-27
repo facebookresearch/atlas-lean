@@ -65,9 +65,9 @@ character, takes the Fourier transform with its complex conjugate, and uses the 
 additive measure; its functional equation reads `ζ(f, c) = ρ(c) ζ(f̂, ĉ)`. When `ψ` is the
 conjugate of the thesis's character, so that `ψ (x * y)` is the thesis's kernel, and `μ` is the
 self-dual measure, the equation above for `c = χ |·| ^ s` is the thesis's with `γ = ρ(c)⁻¹`.
-For other data the two factors differ: replacing `μ` by `t • μ` for a real `t > 0` multiplies
-`γ` by `t`, while `ρ(c)` does not change. The local epsilon factor is normalized as in Tate's
-Corvallis article and in Theorem 4.18(e) of Poonen's notes:
+For other data the two factors need not agree: replacing `μ` by `t • μ` for a real `t > 0`
+multiplies `γ` by `t`, while `ρ(c)` does not change. The local epsilon factor is normalized as
+in Tate's Corvallis article and in Theorem 4.18(e) of Poonen's notes:
 `ε = γ * L(χ, s) / L(χ⁻¹, 1 - s)` for the same `ψ` and `μ`, so it depends on them too.
 
 ## References
@@ -248,9 +248,9 @@ module docstring). It is `NumberField.AdelicFourier.fourierIntegral`, whose kern
 `tateFourier ψ μ f y = fourierIntegral ψ μ f (-y)` (`tateFourier_eq_fourierIntegral_neg`).
 For any additive character and measure this is a Bochner integral, `0` where the integrand
 is not integrable. It is the classical Fourier transform when `K` is a local field, `μ` is an
-additive Haar measure and `ψ` is a nontrivial unitary character (`‖ψ x‖ = 1` for all `x`);
-for a continuous nontrivial `ψ` that is not unitary, such as `x ↦ exp x` on `ℝ`, it is a
-Laplace-type transform instead. -/
+additive Haar measure and `ψ` is a continuous, nontrivial unitary character (`‖ψ x‖ = 1` for
+all `x`); for a continuous nontrivial `ψ` that is not unitary, such as `x ↦ exp x` on `ℝ`, it
+is a Laplace-type transform instead. -/
 public def tateFourier (ψ : AddChar K ℂ) (μ : Measure K) (f : K → ℂ) (y : K) :
     ℂ :=
   NumberField.AdelicFourier.fourierIntegral ψ⁻¹ μ f y
@@ -326,13 +326,13 @@ character; `χ` is a continuous character of `Kˣ`; and for every test function 
 integrands of `Z(f, χ, s)` and `Z(f̂, χ⁻¹, 1 - s)`, with `f̂ = tateFourier ψ μ f`, are
 integrable for `mulMeasure μ`, so both zeta integrals converge absolutely. The classical theory
 takes `ψ` unitary; on a nonarchimedean local field every continuous additive character is. On
-a nonarchimedean local field, for a nontrivial unitary `ψ` and a unitary `χ`, both integrals
-converge for every test function when `0 < re s < 1` (Tate's thesis, §2.4; Theorem 4.18(a)
-of Poonen's notes, applied to `f` and to `f̂`). On other totally disconnected fields they
-can diverge, for instance on `ℚ` with the discrete topology. Outside the range of absolute
-convergence Tate's zeta integrals and gamma factor are defined by meromorphic continuation,
-which this API does not cover; there the Bochner integrals can be `0` although the integrals
-diverge, as for the trivial `χ` at `s = 0` and the indicator of the valuation ring. -/
+a nonarchimedean local field, for a continuous, nontrivial unitary `ψ` and a continuous unitary
+`χ`, both integrals converge for every test function when `0 < re s < 1` (Tate's thesis, §2.4;
+Theorem 4.18(a) of Poonen's notes, applied to `f` and to `f̂`). On other totally disconnected
+fields they can diverge, for instance on `ℚ` with the discrete topology. Outside the range of
+absolute convergence Tate's zeta integrals and gamma factor are defined by meromorphic
+continuation, which this API does not cover; there the Bochner integrals can be `0` although the
+integrals diverge, as for the trivial `χ` at `s = 0` and the indicator of the valuation ring. -/
 public structure IsLocalZetaAdmissible [BorelSpace K] [TotallyDisconnectedSpace K]
     (μ : Measure K) [μ.IsAddHaarMeasure] (ψ : AddChar K ℂ) (χ : Kˣ →* ℂˣ) (s : ℂ) :
     Prop where
@@ -355,9 +355,9 @@ absolutely convergent for every test function), and Tate's local functional equa
 `Z(f̂, χ⁻¹, 1 - s) = γ * Z(f, χ, s)`, with `f̂ = tateFourier ψ μ f` in the plus convention,
 holds for every test function `f`. By `IsLocalGammaFactor.eq_div` it does not depend on the
 test function. It does depend on `ψ` and `μ`: replacing `μ` by `t • μ` for a real `t > 0`
-multiplies it by `t`; the module docstring says when it is the reciprocal of the factor
-`ρ(c)` of Tate's thesis. Values of `s` outside the range of absolute convergence, where the
-gamma factor is defined by meromorphic continuation, are outside its scope. -/
+multiplies it by `t`; the module docstring gives data for which it is the reciprocal of the
+factor `ρ(c)` of Tate's thesis. Values of `s` outside the range of absolute convergence, where
+the gamma factor is defined by meromorphic continuation, are outside its scope. -/
 public structure IsLocalGammaFactor [BorelSpace K] [TotallyDisconnectedSpace K]
     (μ : Measure K) [μ.IsAddHaarMeasure] (ψ : AddChar K ℂ) (χ : Kˣ →* ℂˣ) (s γ : ℂ) :
     Prop extends IsLocalZetaAdmissible μ ψ χ s where
