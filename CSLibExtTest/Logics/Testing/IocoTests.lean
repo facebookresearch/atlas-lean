@@ -185,4 +185,30 @@ example : InputEnabled gatedInput 0 := by
     exact ⟨1, .tr hτ ⟨rfl, rfl⟩ .refl⟩
   · exact ⟨1, .single ⟨rfl, rfl⟩⟩
 
+-- The only input is accepted at the start, but its reachable target accepts no input.
+private def oneShotInput : LTS Bool Label where
+  Tr s a t := match a with
+    | .input _ => s = false ∧ t = true
+    | .tau | .output _ => False
+
+-- Against the very same specification, output inclusion is automatic. Rejection must come
+-- from checking input-enabledness beyond the start.
+example : (∃ t, oneShotInput.STr false (.input ()) t) ∧
+    ¬ InputEnabled oneShotInput false ∧ ¬ Conforms oneShotInput false oneShotInput false := by
+  have hstep : oneShotInput.Tr false (.input ()) true := ⟨rfl, rfl⟩
+  have hreach : oneShotInput.CanReach false true :=
+    ⟨[.input ()], LTS.MTr.single oneShotInput hstep⟩
+  have hτ {s t : Bool} (h : oneShotInput.τSTr s t) : s = t := by
+    induction h with
+    | refl => rfl
+    | tail _ h => exact h.elim
+  have hnot : ¬ InputEnabled oneShotInput false := by
+    intro h
+    obtain ⟨_, ht⟩ := h true hreach ()
+    cases ht with
+    | tr hpre hinput _ =>
+      obtain rfl := (hτ hpre).symm
+      cases hinput.1
+  exact ⟨⟨true, .single hstep⟩, hnot, fun h => hnot h.1⟩
+
 end Cslib.Testing.Ioco.Tests
