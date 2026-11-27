@@ -199,21 +199,6 @@ public theorem_wanted rectangularGrid_r2_odd {T : Type*} [Fintype T] [DecidableE
 -- Both width parities for reflection f are proved in
 -- `MathlibExt.Combinatorics.Enumerative.GridReflectionTilings`.
 
-/-- **Rectangular-grid tilings fixed by the reflection $r^2 f$, $m$ odd.** Let $n$ and $m$ be
-positive integers with $m$ odd, let $T$ be a finite set of tiles, let $\sigma$ be a permutation of
-$T$ with $\sigma^2 = 1$, and let $t$ be the number of tiles $d \in T$ with $\sigma(d) = d$. Let $g$
-be the reflection $r^2 f$ of $\mathbb{Z}/n \times \mathbb{Z}/m$, given by $g(x, y) = (x, -1 - y)$.
-Then the number of tilings $F : \mathbb{Z}/n \times \mathbb{Z}/m \to T$ with
-$F(g(c)) = \sigma(F(c))$ for every cell $c$ equals $|T|^{n(m-1)/2} \, t^n$.
-
-Source: Peter Kagey, William Keehn, *Counting Tilings of the n × m Grid, Cylinder, and Torus*,
-        Journal of Integer Sequences 27 (2024), Article 24.6.1, Theorem 22. -/
-public theorem_wanted rectangularGrid_r2f_odd {T : Type*} [Fintype T] [DecidableEq T]
-    (n m : ℕ) [NeZero n] [NeZero m] (σ : Equiv.Perm T) (hσ : σ ^ 2 = 1)
-    (hodd : Odd m) :
-    fixedTilingCount (cellR2F n m) σ =
-      Fintype.card T ^ (n * (m - 1) / 2) * tileFixedCount σ 1 ^ n
-
 -- The case of the identity, `squareGrid_identity`, is proved in
 -- `MathlibExt.Combinatorics.Enumerative.GridCylinderTorusTilings`, which this module imports.
 
@@ -231,20 +216,6 @@ Source: Peter Kagey, William Keehn, *Counting Tilings of the n × m Grid, Cylind
 public theorem_wanted squareGrid_f_even {T : Type*} [Fintype T] [DecidableEq T]
     (n : ℕ) [NeZero n] (σ : Equiv.Perm T) (hσ : σ ^ 2 = 1) (heven : Even n) :
     fixedTilingCount (cellF n n) σ = Fintype.card T ^ (n ^ 2 / 2)
-
-/-- **Square-grid tilings fixed by the reflection $f$ for odd $n$.** Let $n$ be an odd positive
-integer, let $T$ be a finite set, let $\sigma$ be a permutation of $T$ with $\sigma^2 = 1$, and
-write $t_\sigma$ for the number of elements $t \in T$ with $\sigma(t) = t$. Let $f$ be the
-reflection of the grid $(\mathbb{Z}/n\mathbb{Z})^2$ given by $f(x, y) = (-1 - x, y)$. Then the
-number of maps $F : (\mathbb{Z}/n\mathbb{Z})^2 \to T$ with $F(f(c)) = \sigma(F(c))$ for every
-cell $c$ is $|T|^{(n^2 - n)/2} \cdot t_\sigma^{\,n}$.
-
-Source: Peter Kagey, William Keehn, *Counting Tilings of the n × m Grid, Cylinder, and Torus*,
-        Journal of Integer Sequences 27 (2024), Article 24.6.1, Theorem 24. -/
-public theorem_wanted squareGrid_f_odd {T : Type*} [Fintype T] [DecidableEq T]
-    (n : ℕ) [NeZero n] (σ : Equiv.Perm T) (hσ : σ ^ 2 = 1) (hodd : Odd n) :
-    fixedTilingCount (cellF n n) σ =
-      Fintype.card T ^ ((n ^ 2 - n) / 2) * tileFixedCount σ 1 ^ n
 
 /-- **Square-grid tilings fixed by the reflection $r^2 f$ for even $n$.** Let $n$ be an even
 positive integer, let $T$ be a finite set and let $\sigma$ be a permutation of $T$ with

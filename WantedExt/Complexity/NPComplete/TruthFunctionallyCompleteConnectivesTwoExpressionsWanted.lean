@@ -40,8 +40,11 @@ substitution `s : U → {a, b}` for which `s(E) ≡ a θᵢ b` or `s(E) ≡ θ�
 
 This is the restriction of `TruthFunctionallyCompleteConnectivesWanted` to collections of two
 expressions: the instance, the expressions, the substitutions and the question are that
-module's, and `WellFormed` adds that `C` consists of two distinct expressions (a duplicate-free
-list of length `2`).
+module's, and `WellFormed` adds that `C` consists of two distinct expressions: a list of two
+token lists whose parsed expressions differ. Distinct token lists are not enough, because the
+reader ignores the second component of operator tokens: two encodings of one expression that
+differ only there (for example two spellings of NAND whose negation tokens differ) are one
+expression, and such a pair is malformed.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -55,9 +58,11 @@ reduction from every language in `NP`
 -/
 
 /-- Well-formedness of an instance: the general problem's well-formedness (every member of `C`
-is an expression over `u₀, …, u_{n-1}`), and `C` consists of two distinct expressions. -/
+is an expression over `u₀, …, u_{n-1}`), and `C` consists of two distinct expressions: two
+token lists whose parsed expressions differ, so two encodings of one expression count once. -/
 def WellFormed (i : TruthFunctionallyCompleteConnectivesInstance) : Prop :=
-  TruthFunctionallyCompleteConnectives.WellFormed i ∧ i.2.Nodup ∧ i.2.length = 2
+  TruthFunctionallyCompleteConnectives.WellFormed i ∧ (i.2.map NonTautology.parse).Nodup ∧
+    i.2.length = 2
 
 open Classical in
 /-- TRUTH-FUNCTIONALLY COMPLETE CONNECTIVES with `|C| = 2`, as a decision problem over
@@ -69,8 +74,8 @@ noncomputable def twoExpressionsDec :
   | some i => decide (WellFormed i ∧ TruthFunctionallyCompleteConnectivesFeasible i)
   | none => false
 
-/-- **TRUTH-FUNCTIONALLY COMPLETE CONNECTIVES with `|C| = 2` is NP-complete.** Source: Garey
-and Johnson (1979), [LO10], comment (Statman, 1976). -/
+/-- **TRUTH-FUNCTIONALLY COMPLETE CONNECTIVES with `|C| = 2` is NP-complete:** `C` consists of
+two distinct expressions. Source: Garey and Johnson (1979), [LO10], comment (Statman, 1976). -/
 public theorem_wanted twoExpressions_npComplete :
     twoExpressionsDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,
