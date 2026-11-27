@@ -10,7 +10,7 @@ $$
 
 where $N = 2^n$ is the input length, the yes-instances are the strings of Kt complexity at most $C n^2$, the no-instances are those of Kt complexity greater than $2^{(\alpha/2)n - 2}$, and formula size counts leaves. The constant $C$ depends exponentially on $1/\alpha$.
 
-## Expansion
+## Proof sketch
 
 The proof adapts the Hirahara–Santhanam lower bound for MCSP. A formula of sub-quadratic size shrinks under a pseudorandom restriction, generated from few random bits and still shrinking formulas, so the restricted formula depends on few of the remaining free variables. Because the restriction has a short description, it can be completed both to a string of Kt complexity at most $C n^2$ and to a string of Kt complexity above $2^{(\alpha/2)n-2}$ that the simplified formula cannot distinguish; composing several such restrictions lowers the yes-threshold to $C n^2$.
 

@@ -3,6 +3,7 @@
 Unconditional and conditional results showing that strong circuit and proof complexity lower bounds cannot be proved in bounded arithmetic, extended Frege or weaker proof systems.
 
 - [Circuit lower-bound tautologies and proof-size lower-bound formulas](circuit-lower-bound-tautologies.md)
+- [Rudich's conjecture](rudich-s-conjecture.md)
 - [Rudich's conjecture does not admit feasible propositional proofs](rudich-conjecture-has-no-feasible-proofs.md)
 - [Lose-lose theorem for extended Frege and circuit lower bounds](extended-frege-lose-lose-theorem.md)
 - [Average-case co-nondeterministic lower bounds for NP are unprovable in a fragment of APC1](conondeterministic-lower-bounds-unprovable-in-apc1.md)

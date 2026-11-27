@@ -10,7 +10,7 @@ $$
 
 where $\mathsf{Formula}(F, 1^n)$ checks that $F$ describes a formula on $n$ input bits and $\mathsf{Sat}(F, x)$ checks that $x$ satisfies it. Suppose there is a sequence $\{F_n\}_{n \ge 1}$ of propositional tautologies of size polynomial in $n$ that require $\mathsf{EF}$-proofs of size $n^{\omega(1)}$. Then there is no function symbol $g$ such that $\mathsf{PV} \vdash \mathsf{PNP}[g]$.
 
-## Expansion
+## Proof sketch
 
 Contrapositively, if $\mathsf{PV} \vdash \mathsf{PNP}[g]$, define the proof system $P_g$ accepting $\tilde\pi$ as a proof of $F$ iff $g(\neg F) = \tilde\pi$ and $\tilde\pi$ does not satisfy $\neg F$. Then $\mathsf{PV}$ proves the soundness of $P_g$, Cook's translation gives polynomial-size $\mathsf{EF}$-proofs of the translated soundness formulas, and instantiating them at an actual formula $F$ and its $P_g$-proof $g(\neg F)$, then using that $\mathsf{EF}$ proves $\|\mathsf{Sat}(\langle F\rangle, x)\| \rightarrow F(x)$ efficiently, gives a polynomial-size $\mathsf{EF}$-proof of every tautology. Since $\mathsf{PV}$ proves $\mathsf{P} = \mathsf{NP}$ iff it proves $\mathsf{NP} = \mathsf{coNP}$, such lower bounds also give the consistency of $\mathsf{NP} \ne \mathsf{coNP}$ with $\mathsf{PV}$.
 

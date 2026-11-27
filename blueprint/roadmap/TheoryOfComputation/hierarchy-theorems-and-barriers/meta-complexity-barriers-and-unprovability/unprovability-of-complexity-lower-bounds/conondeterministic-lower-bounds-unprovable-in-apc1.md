@@ -10,7 +10,7 @@ $$
 
 **Theorem.** Let $n_0$ be a positive integer, $\delta \in (0,1)$ rational and $M$ a nondeterministic polynomial-time machine. Then $\mathsf{T}'_{\mathsf{APC}_1} \nvdash \mathrm{LB}^{\mathrm{coN}}_{\mathrm{tt}}(M, 2^{n^\delta}, 2^n/n)$, where $\mathsf{T}'_{\mathsf{APC}_1}$ is the true universal theory $\mathsf{T}_{\mathsf{PV}}$ plus the parameter-free dual weak pigeonhole principle.
 
-## Expansion
+## Proof sketch
 
 The proof shows that provability implies falsity. From a proof, the KPT theorem for $\mathsf{T}'_{\mathsf{APC}_1}$ gives a constant-round interactive game, played by polynomial-size circuits, that witnesses errors of any co-nondeterministic circuit attempting $L(M)$. A Nisan–Wigderson generator based on a hardness-amplified version of $\neg M$ is itself such a circuit, so the game witnesses its errors, and Krajíček's reconstruction yields deterministic $2^{O(m)}$-size circuits approximating the amplified function. Hardness amplification then shows $L(M)$ is easy on most inputs, contradicting the lower bound; by soundness the statement is unprovable. The same method shows $\mathsf{T}'_{\mathsf{APC}_1}$ cannot prove that a polynomial-time injective map is a Rudich super-bit.
 
@@ -26,4 +26,4 @@ The proof shows that provability implies falsity. From a proof, the KPT theorem 
 
 ## Sources
 
-- Ján Pich and Rahul Santhanam, "Strong Co-Nondeterministic Lower Bounds for NP Cannot be Proved Feasibly", *STOC* 2021, DOI 10.1145/3406325.3451117 (Theorem 6, with Theorem 1 as its informal version and the formula of Section 3.2; Theorem 7 for super-bits; in the full version read).
+- Ján Pich and Rahul Santhanam, "Strong Co-Nondeterministic Lower Bounds for NP Cannot be Proved Feasibly", *STOC* 2021, DOI 10.1145/3406325.3451117 (Theorem 6, with Theorem 1 as its informal version and the formula of Section 3.2; Theorem 7 for super-bits; in the authors' full version of March 2021, <https://users.ox.ac.uk/~coml0742/papers/stoc-final.pdf>).

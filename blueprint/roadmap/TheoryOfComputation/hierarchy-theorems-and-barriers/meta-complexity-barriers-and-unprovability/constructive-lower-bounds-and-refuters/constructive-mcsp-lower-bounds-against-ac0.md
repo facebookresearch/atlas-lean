@@ -9,7 +9,7 @@ Let $s(n) \ge n^{\log(n)^{\omega(1)}}$ be time-constructive and super-quasipolyn
 3. for $s(n) \le o(2^n/n)$ there is, against every polylogtime-uniform $\mathsf{AC}^0$ algorithm, a polylogtime-uniform $\mathsf{AC}^0[2^{\mathrm{poly}(s(n))}]$ refuter for $\mathrm{MCSP}[s(n)]$;
 4. there is a polylogtime-uniform $\mathsf{AC}^0[\mathrm{quasipoly}]$ list-refuter for Parity against every polylogtime-uniform $\mathsf{AC}^0$ algorithm.
 
-## Expansion
+## Proof sketch
 
 Item 1 already holds for refuters against the constant-one algorithm: if $\mathsf{P} = \mathsf{NP}$, every string printed by a polylogtime-uniform quasi-polynomial-size $\mathsf{AC}^0$ refuter has circuit complexity $2^{(\log\log N)^{O(1)}}$, hence is a yes-instance of $\mathrm{MCSP}[s(n)]$ and cannot refute the algorithm that always accepts. Item 2 is a win-win: Nisan's generator $G$ fooling depth-$d$ $\mathsf{AC}^0$ has outputs of circuit complexity $\mathrm{polylog}(N)$, and its translate $G \oplus y_N$ by the truth table $y_N$ of a $\mathsf{PH}$ function outside $\mathsf{SIZE}(s(n)^2)$ has outputs of high circuit complexity; if the algorithm rejects a random input with probability at least $1/2$ the refuter finds a rejected output of $G$, and otherwise an accepted output of the translate. Item 3 replaces the translate by the sparsity of yes-instances, at the price of size $2^{\mathrm{poly}(s(n))}$, only slightly super-quasipolynomial in $N$. Together the items form a frontier for constructive lower bounds analogous to hardness magnification frontiers.
 
@@ -19,6 +19,10 @@ Item 1 already holds for refuters against the constant-one algorithm: if $\maths
 - [The Minimum Circuit Size Problem MCSP and Gap-MCSP](../../../circuit-complexity/minimum-circuit-size-problem/minimum-circuit-size-problem.md)
 - [The class AC^0](../../../complexity-classes/time-and-space-complexity-classes/ac0.md)
 - [The polynomial hierarchy](../../../complexity-classes/time-and-space-complexity-classes/ph.md)
+- [The P versus NP question](../../../complexity-classes/the-classes-p-np-and-conp/the-p-versus-np-problem.md)
+- [The class P](../../../complexity-classes/the-classes-p-np-and-conp/p.md)
+- [The complexity class NP](../../../complexity-classes/the-classes-p-np-and-conp/np.md)
+- [The parity language](../../../complexity-classes/time-and-space-complexity-classes/parity-dec.md)
 
 ## Proof depends on
 
@@ -26,4 +30,4 @@ None.
 
 ## Sources
 
-- Lijie Chen, Ce Jin, Rahul Santhanam and Ryan Williams, "Constructive Separations and Their Consequences", *TheoretiCS* 3, 2024 (conference version FOCS 2022), DOI 10.46298/theoretics.24.3, arXiv:2203.14379v5 (theorem labelled mag_refuter in Section 1.2; items proved as Propositions in Section 4).
+- Lijie Chen, Ce Jin, Rahul Santhanam and Ryan Williams, "Constructive Separations and Their Consequences", *TheoretiCS* 3, 2024 (conference version FOCS 2021), DOI 10.46298/theoretics.24.3, arXiv:2203.14379v5 (Theorem 1.7, Section 1.2; items 1 to 4 proved as Propositions 4.3, 4.4, 4.5 and 4.7, Section 4).

@@ -18,7 +18,7 @@ $$
 
 **Corollary.** For every $n_0$, rational $\delta \in (0,1)$ and $d \ge 1$, $\mathsf{APC}_1 \nvdash \mathrm{LB}^3(n^d, 2^{n^\delta}, 2^n/n, n_0)$. For $i = 1$ this recovers, in a stronger formalization quantifying over the circuit $C$ inside the sentence, the result that $\mathsf{PV}$ does not prove $\mathrm{LB}^1(n^d, 2^{n^\delta}, 2^n/n, n_0)$.
 
-## Expansion
+## Proof sketch
 
 Already $\mathrm{LB}^1$ is a $\forall\Sigma^b_4$-sentence, beyond the reach of KPT witnessing, so the proof uses the game-theoretic witnessing theorem for arbitrarily many quantifiers. A proof of the average-case lower bound yields a worst-case one; witnessing it with a fixed falsifier strategy and Krajíček's Nisan–Wigderson technique produces deterministic circuits of size $2^{m^{o(1)}}$ that approximate any polynomial-size $\Pi_i$-circuit with advantage $2^{-m^{o(1)}}$, and hardness amplification then shows every such circuit agrees with a small $\Sigma_i$-circuit on more than a $1 - 1/n$ fraction of inputs, contradicting the sentence. Since the theory is sound, the sentence is unprovable. The corollary follows because every axiom of $\mathsf{APC}_1$ follows from a true $\forall\Sigma^b_2$-sentence.
 

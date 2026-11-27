@@ -8,9 +8,9 @@ Let $N = 2^n$. The following hold.
 2. For every $\delta > 0$ and every oracle $\mathcal{O}$, $\mathsf{InnerProduct}$ on $N$ input bits cannot be computed by $\mathsf{Formula}\text{-}\mathcal{O}\text{-}\mathsf{XOR}$ circuits of size $N^{2 - 3\delta}$ with at most $N^{2-3\delta}$ oracle gates of fan-in $N^{\delta}$ in the layer right above the XOR leaves.
 3. There is a universal constant $c$ such that for all constants $\varepsilon > 0$ and $\alpha > 2$, $\mathrm{MCSP}[n^c, 2^{(\varepsilon/\alpha) n}]$ cannot be computed by oracle formulas $F$ with $\mathrm{Size}_3(F) \le N^{2 - \varepsilon}$ and adaptivity $o(\log N / \log\log N)$, where $\mathrm{Size}_t(F)$ is the size of the formula obtained by replacing every oracle gate of fan-in $\beta$ by a formula of size $\beta^t$ reading each input $\beta^{t-1}$ times.
 
-In contrast, the magnification theorem states that $\mathrm{MCSP}[2^{n^{1/3}}, 2^{n^{2/3}}] \notin \mathsf{Formula}\text{-}\mathsf{XOR}[N^{1.01}]$ implies $\mathsf{NQP} \not\subseteq \mathsf{NC}^1$.
+In contrast, the magnification theorem states that $\mathrm{MCSP}[2^{n^{1/3}}, 2^{n^{2/3}}] \notin \mathsf{Formula}\text{-}\mathsf{XOR}[N^{1.01}]$ implies $\mathsf{NQP} \not\subseteq \mathsf{NC}^1$, where $\mathsf{NC}^1$ is non-uniform: polynomial-size De Morgan formulas, equivalently polynomial-size fan-in-two circuits of depth $O(\log N)$.
 
-## Expansion
+## Proof sketch
 
 Item 1 is read off the magnification proof: it reduces an MCSP instance by parities to queries of length $N^{\varepsilon}$ to a fixed language and only afterwards uses a complexity collapse to replace the queries by small formulas; stopping before that step gives the oracle circuit unconditionally. Item 2 localizes Tal's argument: replacing each oracle gate by a new variable, a De Morgan formula of size $t$ is approximated by a real polynomial of degree $O(\sqrt{t})$, and expanding each oracle into its Fourier expansion over its $N^{\delta}$ parity inputs gives a sign representation with $s^{O(\sqrt{s})} 2^{N^{\delta} O(\sqrt{s})}$ monomials, below Forster's sign-rank bound $2^{N/2}$ for inner product. A reduction from inner product to this MCSP variant of the required form is therefore impossible as well.
 
