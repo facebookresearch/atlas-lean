@@ -31,6 +31,16 @@ example : ∑' n : ℕ, (-3 / 2 : ℝ) / (F (2 * n + 2) ^ 2 + 1) = -1 / 2 := by
   norm_num [generalizedFibonacciPolynomial] at h ⊢
   exact h
 
+-- The Catalan-constant form with the Fibonacci polynomials and `C = 1` gives the same sum.
+example : ∑' n : ℕ, (-3 / 2 : ℝ) / (F (2 * n + 2) ^ 2 + 1) = -1 / 2 := by
+  have h := tsum_gibonacciPoly_sq_sub_family_of_catalan (x := 3 / 2) (by norm_num)
+    (generalizedFibonacciPolynomial 0 1 X 1) 1 (Or.inl rfl) (by simp)
+    (k := 1) (p := 1) (r := 1) (t := 1) (by decide) (by decide) (by decide)
+    (by decide) (by decide)
+  rw [sqrt_discriminant] at h
+  norm_num [generalizedFibonacciPolynomial] at h ⊢
+  exact h
+
 -- At t = 2p the Lucas sum starts at L₂, with a shift of two in the initial ratio.
 example : ∑' n : ℕ, (-225 / 16 : ℝ) / (L (2 * n + 3) ^ 2 + 25 / 4) = -15 / 68 := by
   have h := (tsum_gibonacciPoly_sq_sub_family (x := 3 / 2) (by norm_num)

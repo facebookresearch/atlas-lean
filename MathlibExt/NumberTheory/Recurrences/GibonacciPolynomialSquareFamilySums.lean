@@ -20,6 +20,8 @@ import MathlibExt.NumberTheory.Recurrences.HoradamGeneralizedCatalanIdentity
 # Sums involving a family of Jacobsthal polynomial squares
 
 We prove the reciprocal sums of shifted Fibonacci and Lucas polynomial squares.
+`tsum_gibonacciPoly_sq_sub_family_of_catalan` states the sum for either sequence with its Catalan
+constant, and `tsum_gibonacciPoly_sq_sub_family` specializes it to the two sequences.
 
 Statements from Thomas Koshy and Zhenguang Gao, *Sums Involving a Family of Jacobsthal Polynomial
 Squares*, The Fibonacci Quarterly 62 (2024), Article koshy12202023.
@@ -42,11 +44,17 @@ local notation "𝔣" => generalizedFibonacciPolynomial 0 1 X 1
 /-- The Lucas polynomials `l_n(x)`. -/
 local notation "𝔩" => generalizedFibonacciPolynomial 2 X X 1
 
-namespace tsum_gibonacciPoly_sq_sub_family
-
-/-- The Catalan determinants identify the square summands with successive ratio differences. -/
-private theorem sum_family {x : ℝ} (hx : 0 < x) (g : ℕ → ℤ[X]) (C : ℝ)
-    (hg : g = 𝔣 ∨ g = 𝔩) (hC : aeval x (g 1) * aeval x (g 1) -
+/-- **Reciprocal sums of shifted squares of the Fibonacci or Lucas polynomials, with the Catalan
+constant.** Let `x > 0`, let `g` be the Fibonacci polynomials `f_n` or the Lucas polynomials
+`l_n`, and let `C = g_1(x)^2 - g_0(x) g_2(x)` (`C = 1` for `f` and `C = -(x^2 + 4)` for `l`).
+For positive integers `k`, `p`, `r`, `t` with `t ≤ 2p` and `α = (x + √(x^2 + 4))/2`,
+`∑_{n ≥ 0} (-1)^{tk} C f_r(x) f_{2pk}(x) / (g_{(2pn+p+t)k}(x)^2 - (-1)^{tk} C f_{pk}(x)^2)`
+equals `g_{tk+r}(x)/g_{tk}(x) - α^r`. The proof shows that `g_n(x) > 0` for `n ≥ 1`, factors
+each denominator as `g_{(2pn+t)k}(x) g_{(2p(n+1)+t)k}(x)` with the Catalan identity, and
+telescopes. `tsum_gibonacciPoly_sq_sub_family` is the case `g = f`, `C = 1` together with the
+case `g = l`, `C = -(x^2 + 4)`. -/
+public theorem tsum_gibonacciPoly_sq_sub_family_of_catalan {x : ℝ} (hx : 0 < x) (g : ℕ → ℤ[X])
+    (C : ℝ) (hg : g = 𝔣 ∨ g = 𝔩) (hC : aeval x (g 1) * aeval x (g 1) -
       aeval x (g 0) * aeval x (g 2) = C)
     {k p r t : ℕ} (hk : 0 < k) (hp : 0 < p) (hr : 0 < r) (ht₀ : 0 < t) (ht : t ≤ 2 * p) :
     ∑' n : ℕ, (-1) ^ (t * k) * C * aeval x (𝔣 r) * aeval x (𝔣 (2 * p * k)) /
@@ -111,8 +119,6 @@ private theorem sum_family {x : ℝ} (hx : 0 < x) (g : ℕ → ℤ[X]) (C : ℝ)
   rw [hnext, show e n + 2 * p * k + r = e n + r + 2 * p * k by omega, det, hsign]
   ring
 
-end tsum_gibonacciPoly_sq_sub_family
-
 /-- **Reciprocal sums of shifted squares of Fibonacci and Lucas polynomials (Koshy–Gao,
 Theorem 2.1).** Let $f_n(x)$ and $l_n(x)$ be the Fibonacci and Lucas polynomials, given by
 $z_{n+2} = x z_{n+1} + z_n$ with initial values $f_0 = 0$, $f_1 = 1$ and $l_0 = 2$, $l_1 = x$.
@@ -147,11 +153,11 @@ public theorem tsum_gibonacciPoly_sq_sub_family {x : ℝ} (hx : 0 < x) {k p r t 
       aeval x (𝔩 (t * k + r)) / aeval x (𝔩 (t * k)) - ((x + √(x ^ 2 + 4)) / 2) ^ r := by
   constructor
   · simpa only [mul_one] using
-      tsum_gibonacciPoly_sq_sub_family.sum_family hx 𝔣 1 (Or.inl rfl)
+      tsum_gibonacciPoly_sq_sub_family_of_catalan hx 𝔣 1 (Or.inl rfl)
         (by simp) hk hp hr ht₀ ht
   · simpa only [pow_succ (-1 : ℝ) (t * k), mul_neg, mul_neg_one, neg_mul, sub_neg_eq_add,
       mul_assoc, one_mul] using
-      tsum_gibonacciPoly_sq_sub_family.sum_family hx 𝔩 (-(x ^ 2 + 4)) (Or.inr rfl)
+      tsum_gibonacciPoly_sq_sub_family_of_catalan hx 𝔩 (-(x ^ 2 + 4)) (Or.inr rfl)
         (by norm_num [generalizedFibonacciPolynomial, map_ofNat]; ring) hk hp hr ht₀ ht
 
 end MetaMathlibExt
