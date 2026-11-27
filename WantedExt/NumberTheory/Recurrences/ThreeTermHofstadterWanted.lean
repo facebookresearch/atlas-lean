@@ -10,6 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Data.List.GetD
+public import MathlibExt.NumberTheory.Recurrences.ThreeTermHofstadterLinearDies
 public import MathlibExt.NumberTheory.Recurrences.ThreeTermHofstadterSevenCycle
 public import MathlibExt.NumberTheory.Recurrences.ThreeTermHofstadterSixteenCycleTwo
 public import MathlibExt.NumberTheory.Recurrences.ThreeTermHofstadterTwoCycle
@@ -17,19 +18,6 @@ public import MathlibExt.NumberTheory.Recurrences.ThreeTermHofstadterTwoCycle
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Death of the unpadded sequence from $1, \dots, N$ for $N = 3$, $4$ or $N \ge 10$.** Let
-$N$ be a natural number with $N = 3$, $N = 4$ or $N \ge 10$, and let $B_N$ be the sequence with
-initial conditions $B_N(i) = i$ for $1 \le i \le N$, continued without padding by the recurrence
-$B_N(n) = B_N(n - B_N(n-1)) + B_N(n - B_N(n-2)) + B_N(n - B_N(n-3))$. Then $B_N$ dies: there is
-a natural number $T$ such that $B_N(1), \dots, B_N(T)$ can be computed and $B_N(T + 1)$ cannot,
-because the recurrence refers to a nonpositive index or to an index not yet computed.
-
-Source: Nathan Fox, *The Behavior of a Three-Term Hofstadter-Like Recurrence with Linear
-Initial Conditions*, Journal of Integer Sequences 27 (2024), Article 24.7.4, Theorem 1
-(`jis-2024-24.7.4-thm-1`). -/
-public theorem_wanted threeTermHofstadter_linear_dies {N : ℕ} (hN : N = 3 ∨ N = 4 ∨ 10 ≤ N) :
-    ∃ T, ThreeTermHofstadterEndsAfter false ((List.range N).map fun i : ℕ => (i : ℤ) + 1) T
 
 /-- **Period-seven pattern of the padded sequence from $1, \dots, N$.** Let $N \ge 72$ be a
 natural number, and let $B$ be the sequence with $B(n) = 0$ for $n \le 0$ and $B(i) = i$ for

@@ -7,3 +7,8 @@
 - [Every hyperproperty is the intersection of a hypersafety and a hyperliveness property](every-hyperproperty-is-the-intersection-of-a.md)
 - [LTL translates into first-order logic of order](ltl-translates-into-first-order-logic-of-order.md)
 - [Hyperproperties, hypersafety and k-safety](hyperproperties-hypersafety-and-k-safety.md)
+- [HyperLTL](hyperltl.md)
+- [HyperCTL*](hyperctl-star.md)
+- [Complexity of HyperCTL* model checking](model-checking-hyperctl-star-by-alternation-depth.md)
+- [HyperLTL model checking is PSPACE-hard in the system size](hyperltl-model-checking-is-pspace-hard-in-the-system.md)
+- [HyperCTL* satisfiability is undecidable](hyperctl-star-satisfiability-is-undecidable.md)

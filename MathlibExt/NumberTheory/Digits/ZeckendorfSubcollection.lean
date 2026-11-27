@@ -9,16 +9,32 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Algebra.BigOperators.Finsupp.Basic
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.Finsupp.Basic
+public import Mathlib.Data.Set.Card
 public import Mathlib.Data.Set.Finite.Basic
 import Mathlib.Data.Finsupp.WellFounded
 import Mathlib.Data.Set.Finite.Lemmas
+import Mathlib.Order.Interval.Set.Nat
 
 /-!
 # Counting a Zeckendorf subcollection
 
 Replacing a nonzero expansion by the successor of its predecessor in a subcollection preserves
-the set of represented integers strictly below its value.
+the set of represented integers strictly below its value. The two evaluations then identify
+the same lower segment of coefficient functions with the counted set and with a natural interval.
+
+## References
+
+* Sungkon Chang, *Distribution of Zeckendorf Expressions*, INTEGERS 25 (2025), Article A25.
+  Section 2.2, Definition 6 and the order-preservation part of Theorem 5; Section 3.2,
+  Definitions 20–21, Lemma 7, and Theorem 8 (Duality Formula).
+  <https://math.colgate.edu/~integers/z25/z25.pdf>
+* Sungkon Chang, *The weak converse of Zeckendorf’s theorem*, Research in Number Theory 7
+  (2021), Article 48, Theorem 16 and Lemmas 3 and 37, credited in Theorem 5 above.
+* Édouard Zeckendorf, *Représentation des nombres naturels par une somme des nombres de
+  Fibonacci ou de nombres de Lucas*, Bulletin de la Société Royale des Sciences de Liège 41
+  (1972), pp. 179–182, for the classical representation theorem.
 -/
 
 namespace MetaMathlibExt
@@ -259,6 +275,58 @@ public theorem subcollectionLT_eval_eq_eval_bar {E E' : Set (ℕ →₀ ℕ)}
     exact ⟨(hcut z hz).mp hlt, z, hz, rfl⟩
   · rintro ⟨hlt, z, hz, rfl⟩
     exact ⟨(hcut z hz).mpr hlt, z, hz, rfl⟩
+
+/-- **Counting function of a subcollection.** For a set $E$ of finitely supported coefficient
+functions $\mu : \mathbb{N} \to \mathbb{N}$, a sequence $H : \mathbb{N} \to \mathbb{N}$ and a
+real number $x$, $z(x)$ is the number of natural numbers $n < x$ of the form
+$n = \sum_k \mu_k H_k$ for some $\mu \in E$.
+
+Source: Sungkon Chang, *Distribution of Zeckendorf Expressions*, INTEGERS 25 (2025), Article A25,
+Theorem 1 and Section 3 (arXiv:2308.12872v1, Sections 1 and 3.2). -/
+public noncomputable def subcollectionCount (E : Set (ℕ →₀ ℕ)) (H : ℕ → ℕ) (x : ℝ) : ℕ :=
+  {n : ℕ | (n : ℝ) < x ∧ ∃ μ ∈ E, zeckendorfEval H μ = n}.ncard
+
+open subcollectionLT_eval_eq_eval_bar in
+/-- **Duality formula.** Let $E \subseteq \tilde E$ be Zeckendorf collections. Let $H$ and
+$\tilde H$ be strictly increasing sequences of positive integers such that
+$\mu \mapsto \sum_k \mu_k H_k$ is a bijection from $E$ onto $\mathbb N$ and
+$\mu \mapsto \sum_k \mu_k \tilde H_k$ is a bijection from $\tilde E$ onto $\mathbb N$. For real
+$x$, let $z(x)$ be the number of natural numbers $n < x$ of the form $n = \sum_k \nu_k \tilde H_k$
+with $\nu \in E$. Let $\mu \in \tilde E$ be nonzero, let $\check\mu$ be the immediate predecessor
+of $\mu$ in $E$ (the largest element of $E$ below $\mu$ in the ascending lexicographic order), and
+let $\bar\mu$ be the immediate successor of $\check\mu$ in $E$. Then
+$z\left(\sum_k \mu_k \tilde H_k\right) = \sum_k \bar\mu_k H_k$.
+
+Source: Sungkon Chang, *Distribution of Zeckendorf Expressions*, INTEGERS 25 (2025), Article A25,
+Theorem 8 (`integers-2025-A25-thm-8`; arXiv:2308.12872v1, Section 3.2). -/
+public theorem subcollectionCount_eval_eq_eval_bar {E E' : Set (ℕ →₀ ℕ)}
+    (hE : IsZeckendorfCollection E) (hE' : IsZeckendorfCollection E') (hsub : E ⊆ E')
+    {H H' : ℕ → ℕ} (hmono : StrictMono H) (hpos : ∀ k, 0 < H k)
+    (hbij : Set.BijOn (zeckendorfEval H) E Set.univ) (hmono' : StrictMono H')
+    (hpos' : ∀ k, 0 < H' k) (hbij' : Set.BijOn (zeckendorfEval H') E' Set.univ)
+    {μ μc μb : ℕ →₀ ℕ} (hμ : μ ∈ E') (hμ0 : μ ≠ 0) (hc : IsImmediatePredecessor E μ μc)
+    (hb : IsImmediateSuccessor E μc μb) :
+    subcollectionCount E H' (zeckendorfEval H' μ) = zeckendorfEval H μb := by
+  unfold subcollectionCount
+  simp only [Nat.cast_lt]
+  rw [subcollectionLT_eval_eq_eval_bar hE hE' hsub hmono' hpos' hbij' hμ hμ0 hc hb]
+  let S : Set (ℕ →₀ ℕ) := {z | z ∈ E ∧ toColex z < toColex μb}
+  have hH := eval_order hE hmono hpos hbij μb hb.1
+  have hH' (z : ℕ →₀ ℕ) (hz : z ∈ E) :=
+    eval_order hE' hmono' hpos' hbij' μb (hsub hb.1) z (hsub hz)
+  have hsmall : Set.BijOn (zeckendorfEval H) S (Set.Iio (zeckendorfEval H μb)) := by
+    refine ⟨fun z hz ↦ (hH z hz.1).mp hz.2, hbij.injOn.mono (fun _ hz ↦ hz.1), ?_⟩
+    intro n hn
+    obtain ⟨z, hz, rfl⟩ := hbij.surjOn (Set.mem_univ n)
+    exact ⟨z, ⟨hz, (hH z hz).mpr hn⟩, rfl⟩
+  have hlarge : Set.BijOn (zeckendorfEval H') S
+      {n : ℕ | n < zeckendorfEval H' μb ∧ ∃ z ∈ E, zeckendorfEval H' z = n} := by
+    refine ⟨?_, hbij'.injOn.mono (fun _ hz ↦ hsub hz.1), ?_⟩
+    · intro z hz
+      exact ⟨(hH' z hz.1).mp hz.2, z, hz.1, rfl⟩
+    · rintro n ⟨hn, z, hz, rfl⟩
+      exact ⟨z, ⟨hz, (hH' z hz).mpr hn⟩, rfl⟩
+  rw [← hlarge.ncard_eq, hsmall.ncard_eq, Set.ncard_Iio_nat]
 
 end
 

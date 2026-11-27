@@ -12,3 +12,5 @@ Bernoulli bond and site percolation: percolation probability, critical points, n
 - [Random-cluster model](../../StatisticalMechanics/random-cluster-model/README.md): the dependent percolation model that contains Bernoulli percolation as the case $q = 1$ and is coupled to the Potts and Ising models.
 - [Random currents and sharpness](../../StatisticalMechanics/random-currents-and-sharpness/README.md): the sharpness of the Ising phase transition, the spin-model counterpart of the sharpness of percolation (Duminil-Copin and Tassion prove both with parallel arguments).
 - [OSSS inequality for decision trees](../../Combinatorics/boolean-functions/osss-inequality-for-decision-trees/README.md): the decision-tree route to sharpness of Duminil-Copin, Raoufi and Tassion.
+
+- [Planar first-passage percolation](planar-first-passage/README.md)
