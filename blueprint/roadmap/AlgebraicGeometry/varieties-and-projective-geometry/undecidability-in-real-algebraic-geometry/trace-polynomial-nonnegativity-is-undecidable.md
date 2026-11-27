@@ -10,7 +10,7 @@ For matrices of one fixed size the problem is decidable, by Artin's solution of 
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

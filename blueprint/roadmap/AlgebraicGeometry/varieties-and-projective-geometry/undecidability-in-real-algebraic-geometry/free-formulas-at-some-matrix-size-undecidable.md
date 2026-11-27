@@ -4,13 +4,13 @@ No algorithm decides, given a closed first-order formula built from positivity c
 
 **Setting (Drescher, Netzer and Thom).** Let $\mathbb{C}\langle x_1, \dots, x_n\rangle$ be the algebra of polynomials in non-commuting variables, with the involution fixing each $x_i$ and conjugating scalars, and let $\mathbb{M}_d(\mathbb{C}\langle x_1, \dots, x_n\rangle)_h$ be the Hermitian $d \times d$ matrix polynomials. Such a $p$ can be evaluated at any tuple $(A_1, \dots, A_n)$ of Hermitian $s \times s$ complex matrices, the result being a Hermitian $ds \times ds$ matrix; set $W_s(p) = \{A : p(A) \succeq 0\}$ and $O_s(p) = \{A : p(A) \succ 0\}$ (positive semidefinite, respectively positive definite). A *free formula* is a first-order formula whose atomic formulas are the conditions $A \in W(p)$ and $A \in O(p)$, combined by Boolean connectives and quantifiers over tuples of Hermitian matrices (the source uses this notion without a formal grammar); for a fixed size $s$ every quantified variable ranges over Hermitian $s \times s$ matrices, so a closed free formula $\varphi$ is either true or false at each size $s$.
 
-**Theorem (Drescher, Netzer and Thom).** The question whether a free closed formula holds for at least one size of matrices is undecidable: there is a recursively enumerable sequence of free closed formulas $(\varphi_i)_{i \in \mathbb{N}}$ for which no algorithm decides, given $i$, whether $\varphi_i$ holds for some size $s$ (Theorem 2.1 of arXiv:1709.08424v1).
+**Theorem (Drescher, Netzer and Thom).** The question whether a free closed formula holds for at least one size of matrices is undecidable (Theorem 2.1 of arXiv:1709.08424v1). Its proof exhibits a recursively enumerable sequence of free closed formulas $(\varphi_i)_{i \in \mathbb{N}}$ for which no algorithm decides, given $i$, whether $\varphi_i$ holds for some size $s$.
 
 For each fixed free closed formula $\varphi$, the set of sizes $s$ at which $\varphi$ holds is recursive, because at a fixed size the formula becomes a first-order formula over the real closed field $\mathbb{R}$, to which quantifier elimination applies (Remark 2.2 of the source). The theorem is an obstruction to a projection theorem for free semialgebraic sets: unlike in the commutative case, projections cannot in general be described algorithmically by quantifier-free free formulas.
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

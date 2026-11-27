@@ -4,17 +4,17 @@ No algorithm decides, given a smooth projective geometrically integral complex v
 
 **Setting (Poonen).** A *variety* over a field $k$ is a separated scheme of finite type over $k$, and it is *nice* if it is smooth, projective and geometrically integral. So that inputs are finite objects, a complex variety is given by equations whose coefficients lie in a finitely generated subfield $K \subseteq \mathbb{C}$, itself given as the fraction field of $\mathbb{Z}[x_1, \dots, x_n]/(f_1, \dots, f_m)$ for explicit $f_i \in \mathbb{Z}[x_1, \dots, x_n]$ generating a prime ideal, with elements of $K$ written as rational expressions in the generators. $\operatorname{Aut} X$ is the group of automorphisms of $X$ as a variety.
 
-**Theorem (Poonen).**
+**Theorem (Poonen).** There is no algorithm that, given a nice complex variety $X$, a closed point $x \in X$ and a nice subvariety $Z \subseteq X$, decides whether there is an automorphism of $X$ mapping $x$ into $Z$ (Theorem 1.1 of arXiv:0902.3571v1).
 
-1. There is no algorithm that, given a nice complex variety $X$, a closed point $x \in X$ and a nice subvariety $Z \subseteq X$, decides whether there is an automorphism of $X$ mapping $x$ into $Z$ (Theorem 1.1 of arXiv:0902.3571v1).
-2. There are a fixed nice $\mathbb{Q}$-variety $X$ and a fixed rational point $x \in X(\mathbb{Q})$ such that no algorithm decides, given a nice $\mathbb{Q}$-subvariety $Z \subseteq X$, whether $Z$ meets the orbit $\{\sigma x : \sigma \in \operatorname{Aut} X\}$ (Theorem 1.2 of arXiv:0902.3571v1). For this $X$, $\operatorname{Aut} X = \operatorname{Aut} X_{\mathbb{C}}$, so it does not matter whether automorphisms defined over $\mathbb{Q}$ or over $\mathbb{C}$ are allowed.
+The source also proves a uniform version: there are a fixed nice $\mathbb{Q}$-variety $X$ and a fixed rational point $x \in X(\mathbb{Q})$ such that no algorithm decides, given a nice $\mathbb{Q}$-subvariety $Z \subseteq X$, whether $Z$ meets the orbit $\{\sigma x : \sigma \in \operatorname{Aut} X\}$ (Theorem 1.2 of arXiv:0902.3571v1); for this $X$, $\operatorname{Aut} X = \operatorname{Aut} X_{\mathbb{C}}$, so it does not matter whether automorphisms defined over $\mathbb{Q}$ or over $\mathbb{C}$ are allowed.
 
-The source notes that both problems are decidable when $X$ is a nice variety of general type, since then $\operatorname{Aut} X$ is finite and computable. Along the way the source proves that Hilbert's tenth problem stays undecidable for systems $f_1, \dots, f_m \in \mathbb{Z}[x_1, \dots, x_n]$ whose affine $\mathbb{Q}$-variety has smooth, geometrically integral projective closure in $\mathbb{P}^n_{\mathbb{Q}}$ (Corollary 4.3 of arXiv:0902.3571v1).
+Both problems are decidable when $X$ is a nice variety of general type, since then $\operatorname{Aut} X$ is finite and computable (Remark 1.3 of the source). Along the way the source proves that Hilbert's tenth problem stays undecidable for systems $f_1, \dots, f_m \in \mathbb{Z}[x_1, \dots, x_n]$ whose affine $\mathbb{Q}$-variety has smooth, geometrically integral projective closure in $\mathbb{P}^n_{\mathbb{Q}}$ (Corollary 4.3 of arXiv:0902.3571v1).
 
 ## Depends on
 
 - [Geometrically reduced variety over a field](../../schemes-and-morphisms/varieties-over-a-field/is-variety.md)
 - [Smooth morphisms of schemes](../../schemes-and-morphisms/smooth-morphisms/smooth-morphism-of-schemes.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -1,17 +1,17 @@
 # Embeddability of the affine line in a real algebraic variety is undecidable
 
-No algorithm decides, given polynomial equations with integer coefficients defining an affine algebraic variety over $\mathbb{R}$, whether the affine line embeds in it; over $\mathbb{C}$, embeddability of $\mathbb{A}^s$ is undecidable for a suitable fixed $s$.
+No algorithm decides, given polynomial equations with integer coefficients defining an affine algebraic variety over $\mathbb{R}$, whether the affine line embeds in it.
 
 **Setting (Kanel-Belov, Chilikov, Ivanov-Pogodaev, Malev, Plotkin, Yu and Zhang).** An affine variety $\mathscr{B}$ over a field $K$ of characteristic zero is given by generators and relations, that is, as the zero set in affine space of an explicit finite system of polynomial equations; the input of the decision problem is this system. The *embeddability problem* for a variety $A$ asks whether there is an embedding of $A$ in $\mathscr{B}$. The varieties constructed in the proof are defined by polynomials with integer coefficients.
 
-**Theorem (Kanel-Belov and Chilikov).**
+**Theorem (Kanel-Belov and Chilikov).** Over $\mathbb{R}$, the problem of embeddability of the affine line $\mathbb{A}^1$ in an arbitrary algebraic variety $\mathscr{B}$ given by generators and relations is undecidable; hence the general embedding problem over $\mathbb{R}$ is undecidable (Theorem 3.5 of arXiv:2008.09788v2).
 
-1. Over $\mathbb{R}$, the problem of embeddability of the affine line $\mathbb{A}^1$ in an arbitrary algebraic variety $\mathscr{B}$ given by generators and relations is undecidable; hence the general embedding problem over $\mathbb{R}$ is undecidable (Theorem 3.5 of arXiv:2008.09788v2).
-2. Over $\mathbb{C}$, there is a positive integer $s$ for which the embeddability of the affine space $\mathbb{A}^s$ in an arbitrary algebraic variety $\mathscr{B}$ given by generators and relations is undecidable (Theorem 3.7 of arXiv:2008.09788v2).
+In the complex case the source shows that there is a positive integer $s$ for which the embeddability of the affine space $\mathbb{A}^s$ over $K$ in an arbitrary algebraic variety $\mathscr{B}$ given by generators and relations is undecidable (Theorem 3.7 of arXiv:2008.09788v2); the section treats $\mathbb{C}$, and the source notes that the proof is valid for any field $K$ of characteristic zero.
 
 ## Depends on
 
 - [Geometrically reduced variety over a field](../../schemes-and-morphisms/varieties-over-a-field/is-variety.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

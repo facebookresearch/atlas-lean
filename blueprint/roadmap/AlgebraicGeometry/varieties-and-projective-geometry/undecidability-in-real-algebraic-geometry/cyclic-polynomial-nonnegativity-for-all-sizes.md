@@ -17,11 +17,11 @@ a polynomial invariant under cyclic shifts of the copies. The input of the decis
 
 Both remain undecidable when $m, D \ge 7$ and every $p_{\alpha,\beta}$ has the form $\sum_{j=1}^m c_{\alpha,\beta,j} x_j^2$ with $c_{\alpha,\beta,j} \in \mathbb{Z}$.
 
-The source notes that the bounded version of these questions, with $n$ fixed, is NP-hard. Allowing rational coefficients does not change the result, since positive scaling preserves both properties.
+The source notes that the bounded version of these questions, with $n$ fixed, is NP-hard.
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
