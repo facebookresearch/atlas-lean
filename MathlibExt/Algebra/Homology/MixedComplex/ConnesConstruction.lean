@@ -69,7 +69,7 @@ theorem boundaryHomotopy_hom (n : ℕ) : (M.boundaryHomotopy).hom n (n + 1) = M.
   dsimp only [boundaryHomotopy, Homotopy.trans, Homotopy.ofEq,
     Homotopy.nullHomotopy', Homotopy.nullHomotopy]
   simp only [Pi.add_apply, Pi.zero_apply,
-    dif_pos (by rfl : (ComplexShape.down ℕ).Rel (n + 1) n),
+    dite_eq_left (by rfl : (ComplexShape.down ℕ).Rel (n + 1) n),
     operatorFamily, HomologicalComplex.XIsoOfEq_rfl, Iso.refl_hom,
     Category.comp_id, zero_add]
 
