@@ -20,21 +20,22 @@ A declaration counts as added when the change adds the line that declares it
 for a structure field, a constructor or a `where` or `let rec` helper, its own
 line), and no declaration of that name is in the files the change modifies,
 renames or deletes, as they are at the base. A private declaration (one marked
-`private`; in a `module` file, also one that is neither marked `public` nor in a
-`public section`, a `where` or `let rec` helper unless its declaration exposes
-its body, and the constructor of a structure with a private field) is the same
-only as one of its own file: another file's private declaration of that name is
-another declaration. An anonymous instance, whose name Lean generates, is known
-by its namespace and header. A wanted statement (`theorem_wanted`, `def_wanted`,
-`proof_wanted`, `instance_wanted`) elaborates to a private placeholder, so it is
-not the declaration that proves it later. So a change that only documents, tags
-or edits an existing declaration does not report it, nor does one that moves a
-public declaration between those files, but one that proves a wanted statement
-reports the proof. A finding that the linters print without a position (a
-declaration without a source range, such as a structure's `mk.injEq`) is placed
-on the nearest enclosing declaration of the changed files that has one, under
-the same rule. Like `runLinter`, the linters see the private declarations of the
-modules too.
+`private`, such as a field or a structure's constructor; in a `module` file,
+also one that is neither marked `public` nor in a `public section`, a `where` or
+`let rec` helper unless its declaration exposes its body, which an instance's
+helpers count as not doing, and the constructor of a structure with a private
+field) is the same only as one of its own file: another file's private
+declaration of that name is another declaration. An anonymous instance, whose
+name Lean generates, is known by its namespace and header. A wanted statement
+(`theorem_wanted`, `def_wanted`, `proof_wanted`, `instance_wanted`) elaborates
+to a private placeholder, so it is not the declaration that proves it later. So
+a change that only documents, tags or edits an existing declaration does not
+report it, nor does one that moves a public declaration between those files, but
+one that proves a wanted statement reports the proof. A finding that the linters
+print without a position (a declaration without a source range, such as a
+structure's `mk.injEq`) is placed on the nearest enclosing declaration of the
+changed files that has one, under the same rule. Like `runLinter`, the linters
+see the private declarations of the modules too.
 
     python3 scripts/check_env_linters.py --base origin/main [--report-only]
     python3 scripts/check_env_linters.py --check-nolints
@@ -397,35 +398,39 @@ def index_source(text: str) -> SourceIndex:
         index.add(declared, line, private)
         body = code[name_match.end():stop] if name_match else ""
         if kind in ("structure", "class"):
-            # A field marked `private` is private. In a `module` file such a field makes the
-            # constructor private too; elsewhere it does not.
-            constructors, any_private_field = [f"{declared}.mk"], False
+            # The constructor is `mk` unless one is named (`make ::`), and private if it is
+            # marked so. A field marked `private` is private, and in a `module` file it makes
+            # the constructor private too; elsewhere it does not.
+            constructor, constructor_private, any_private_field = f"{declared}.mk", False, False
             where = re.search(r"\bwhere\b", body)
             if where:
                 offset = name_match.end() + where.end()
                 for fields in FIELD.finditer(code, offset, stop):
                     for part in fields.group("names").split():
                         if code[fields.end() - 2: fields.end()] == "::":
-                            constructors.append(f"{declared}.{unquote_name(part)}")
+                            constructor = f"{declared}.{unquote_name(part)}"
+                            constructor_private = fields.group("visibility") == "private"
                         else:
                             field_private = private or fields.group("visibility") == "private"
                             any_private_field |= field_private
                             index.add(f"{declared}.{unquote_name(part)}",
                                       index.line_at(fields.start("names")), field_private)
-            for constructor in constructors:
-                index.add(constructor, line, private or (is_module and any_private_field))
+            index.add(constructor, line,
+                      private or constructor_private or (is_module and any_private_field))
         elif kind == "inductive":
             for constructor in CONSTRUCTOR.finditer(code, name_match.end(), stop):
                 index.add(f"{declared}.{unquote_name(constructor.group('name'))}",
                           index.line_at(constructor.start("name")), private)
         elif kind in HELPER_KINDS:
             # In a `module` file a `where` or `let rec` helper is public only if its
-            # declaration is and exposes its body: an `abbrev`, an instance, or a definition
-            # marked `@[expose]` or in an `@[expose]` section, unless it is marked
-            # `@[no_expose]`, but never a theorem's. (An instance of a class of propositions
-            # does not expose its body either; the index cannot tell such a class.)
-            exposed = (kind in ("abbrev", "instance") or exposes or exposed_scope) and \
-                not hides and kind not in ("theorem", "lemma")
+            # declaration is and exposes its body: an `abbrev`, or a definition marked
+            # `@[expose]` or in an `@[expose]` section, unless it is marked `@[no_expose]`, but
+            # never a theorem's. An instance of a class of propositions does not expose its
+            # body, and the index cannot tell such a class from the source, so an instance's
+            # helpers count as private: that can only report a moved helper as new, never
+            # hide a new declaration.
+            exposed = (kind == "abbrev" or exposes or exposed_scope) and not hides and \
+                kind not in ("theorem", "lemma", "instance")
             helper_private = private or (is_module and not exposed)
             for helper, offset in helpers(code, name_match.end(), stop):
                 index.add(f"{declared}.{unquote_name(helper)}", index.line_at(offset),

@@ -359,6 +359,37 @@ end
 """
 
 
+# A structure has one constructor: `mk` unless one is named, private if it is marked so; and an
+# instance's helpers count as private, since one of a class of propositions keeps them private.
+CONSTRUCTORS = """\
+module
+
+public section
+
+/-- A named constructor. -/
+structure Box where
+  pack ::
+  /-- The value. -/
+  value : Nat
+
+/-- A private named constructor. -/
+structure Crate where
+  private make ::
+  /-- The value. -/
+  value : Nat
+
+/-- A class of propositions. -/
+class P : Prop where
+  out : True
+
+instance instP : P := ⟨help⟩
+where
+  help : True := True.intro
+
+end
+"""
+
+
 class IndexTests(unittest.TestCase):
     def test_names_declarations_in_their_namespaces(self):
         index = check.index_source(SOURCE)
@@ -367,7 +398,7 @@ class IndexTests(unittest.TestCase):
             15: ["MetaMathlibExt.bar"],
             17: ["MetaMathlibExt.instNamed"],
             19: ["instance in MetaMathlibExt: : Inhabited Bool"],
-            23: ["MetaMathlibExt.Pt", "MetaMathlibExt.Pt.mk", "MetaMathlibExt.Pt.mk'"],
+            23: ["MetaMathlibExt.Pt", "MetaMathlibExt.Pt.mk'"],
             25: ["MetaMathlibExt.Pt.x"],
             26: ["MetaMathlibExt.Pt.y", "MetaMathlibExt.Pt.z"],
             31: ["MetaMathlibExt.Cls"],
@@ -435,6 +466,14 @@ class IndexTests(unittest.TestCase):
         # private field.
         plain = check.index_source(MODULE_CHILDREN.replace("module\n", "", 1))
         self.assertEqual(plain.private_names, {"S.b"})
+
+    def test_a_structure_has_one_constructor_with_its_own_visibility(self):
+        index = check.index_source(CONSTRUCTORS)
+        self.assertIn("Box.pack", index.public_names)
+        self.assertNotIn("Box.mk", index.names)
+        self.assertIn("Crate.make", index.private_names)
+        self.assertNotIn("Crate.mk", index.names)
+        self.assertIn("instP.help", index.private_names)
 
     def test_dotted_sections_open_and_close_one_scope_per_component(self):
         # `end Inner` closes only the inner of `section Outer.Inner`, so `Outer` stays public;
@@ -625,6 +664,29 @@ class PlaceTests(unittest.TestCase):
         head = {"MathlibExt/A.lean": (MODULE_CHILDREN, set()),
                 "MathlibExt/B.lean": (b_head, set(range(1, 8)))}
         for name, line in (("outer.aux", 3), ("withRec.loop", 6)):
+            finding = Finding(name, "unusedArguments", "", "MathlibExt.B", "MathlibExt/B.lean",
+                              line, 1)
+            self.assertTrue(self.place_in(finding, head, base).added, name)
+
+    def test_a_constructor_that_does_not_exist_hides_nothing(self):
+        # `Box` names its constructor `pack`, so a new `Box.mk` in the same file is new.
+        head = CONSTRUCTORS.replace("end\n", "/-- New. -/\ndef Box.mk (n unused : Nat) : Box := "
+                                    "Box.pack n\n\nend\n")
+        base = base_names(MathlibExt__A=CONSTRUCTORS)
+        line = head.splitlines().index("/-- New. -/") + 1
+        finding = Finding("Box.mk", "unusedArguments", "", "MathlibExt.A", "MathlibExt/A.lean",
+                          line, 1)
+        files = {"MathlibExt/A.lean": (head, {line, line + 1})}
+        self.assertTrue(self.place_in(finding, files, base).added)
+
+    def test_private_constructors_and_instance_helpers_hide_nothing_in_another_file(self):
+        # `Crate.make` and `instP.help` are private in A, so public ones in B are new.
+        b_head = ("module\n\n/-- New. -/\npublic def Crate.make (n unused : Nat) : Nat := n\n\n"
+                  "/-- New. -/\npublic def instP.help (n unused : Nat) : Nat := n\n")
+        base = base_names(MathlibExt__A=CONSTRUCTORS, MathlibExt__B="module\n")
+        head = {"MathlibExt/A.lean": (CONSTRUCTORS, set()),
+                "MathlibExt/B.lean": (b_head, set(range(1, 8)))}
+        for name, line in (("Crate.make", 3), ("instP.help", 6)):
             finding = Finding(name, "unusedArguments", "", "MathlibExt.B", "MathlibExt/B.lean",
                               line, 1)
             self.assertTrue(self.place_in(finding, head, base).added, name)
