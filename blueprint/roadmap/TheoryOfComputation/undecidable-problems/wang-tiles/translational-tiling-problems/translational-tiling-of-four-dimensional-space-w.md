@@ -17,6 +17,7 @@ remains open, while Greenfeld and Tao showed undecidability for a single tile wh
 ## Depends on
 
 - [Translational tilings by finitely many tiles](translational-tilings-by-finitely-many-tiles.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -30,4 +31,4 @@ tilings, which reduces the number of tiles by one.
 
 ## Sources
 
-- C. Yang and Z. Zhang, "Undecidability of translational tiling with three tiles", *Mathematics of Computation*, published online 2026, doi:10.1090/mcom/4290; read in arXiv:2412.10646v1: the main theorem (three tiles in dimension $4$) and the theorem on four tiles in dimension $3$, stated in Section 1 and proved in Sections 2 and 3, and the survey of known cases in Section 1.
+- C. Yang and Z. Zhang, "Undecidability of translational tiling with three tiles", *Mathematics of Computation*, published online 2026, doi:10.1090/mcom/4290; read in arXiv:2412.10646v1: Theorem 1 (three tiles in dimension $4$) and Theorem 2 (four tiles in dimension $3$), stated in Section 1 and proved in Sections 3 and 2 respectively, and the survey of known cases in Section 1, with the numbering of that version.

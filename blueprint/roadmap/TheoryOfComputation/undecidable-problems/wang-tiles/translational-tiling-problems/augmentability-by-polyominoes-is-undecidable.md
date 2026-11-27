@@ -13,6 +13,7 @@ For dominoes, an augmentable region must be balanced (equally many black and whi
 ## Depends on
 
 - [Translational tilings by finitely many tiles](translational-tilings-by-finitely-many-tiles.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

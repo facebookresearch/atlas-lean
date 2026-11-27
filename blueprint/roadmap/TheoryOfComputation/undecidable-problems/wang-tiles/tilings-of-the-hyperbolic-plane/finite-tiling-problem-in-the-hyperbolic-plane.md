@@ -11,6 +11,7 @@ In the Euclidean plane the finite tiling problem is undecidable as well ([the fi
 ## Depends on
 
 - [Wang tiles and valid tilings](../wang-tiles-and-valid-tilings.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -19,6 +19,7 @@ dimension $d + 2$; neither variant is stated here.
 ## Depends on
 
 - [Translational tilings by finitely many tiles](translational-tilings-by-finitely-many-tiles.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -28,8 +29,7 @@ dimension $d + 2$; neither variant is stated here.
 
 The undecidable problem in $\mathbb{Z}^2 \times G_0$ is pulled back to $\mathbb{Z}^d$: a tiling problem in
 $\mathbb{Z}^2 \times G_0$ for the region $\mathbb{Z}^2 \times E$ is turned into an equivalent monotiling problem in some
-$\mathbb{Z}^d$ for a periodic region and a finite tile. The source cites the pull-back theorem of Bhattacharya, Greenfeld
-and Ungar, or the argument of Section 9 of the earlier Greenfeld–Tao paper on tilings with two tiles.
+$\mathbb{Z}^d$ for a periodic region and a finite tile. The source cites the pull-back theorem of Meyerovitch, Sanadhya and Solomon (Theorem 1.1 of their note on reduction of tiling problems), or the argument of Section 9 of the earlier Greenfeld–Tao paper on tilings with two tiles.
 
 ## Sources
 

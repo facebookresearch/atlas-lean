@@ -9,11 +9,12 @@ decides whether the plane can be tiled by translated copies of polyominoes from 
 
 The number of polyominoes is fixed at $8$; their shapes are the input. For one polyomino the problem is decidable, since a
 polyomino that tiles the plane by translations tiles it periodically (Beauquier and Nivat). Ollinger proved undecidability
-for $11$ polyominoes, and the first author of the source earlier for $10$.
+for $11$ polyominoes, and the first author of the source earlier for $10$ and for $9$ polyominoes (the case of $9$ in a manuscript in Chinese).
 
 ## Depends on
 
 - [Translational tilings by finitely many tiles](translational-tilings-by-finitely-many-tiles.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

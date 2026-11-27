@@ -11,6 +11,7 @@ The rectangle is not part of the input: for a fixed rectangle the question is a 
 ## Depends on
 
 - [Translational tilings by finitely many tiles](translational-tilings-by-finitely-many-tiles.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

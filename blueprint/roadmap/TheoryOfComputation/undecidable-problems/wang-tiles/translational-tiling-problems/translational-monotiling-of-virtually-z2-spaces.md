@@ -22,6 +22,7 @@ conjecture for $\mathbb{Z}^2$).
 
 - [Translational tilings by finitely many tiles](translational-tilings-by-finitely-many-tiles.md)
 - [Abelian group](../../../../GroupTheory/group-basics/abelian-group.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

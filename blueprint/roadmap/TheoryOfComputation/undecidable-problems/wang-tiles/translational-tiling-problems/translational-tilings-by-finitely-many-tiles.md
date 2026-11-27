@@ -29,6 +29,7 @@ tiles match by shape only.
 ## Depends on
 
 - [Abelian group](../../../../GroupTheory/group-basics/abelian-group.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

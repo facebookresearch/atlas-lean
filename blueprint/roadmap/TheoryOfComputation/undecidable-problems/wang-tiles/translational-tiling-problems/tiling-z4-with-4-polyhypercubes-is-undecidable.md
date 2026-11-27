@@ -12,6 +12,7 @@ The number of tiles $k=4$ and the dimension $n=4$ are fixed; the shapes are the 
 
 - [Translational tilings by finitely many tiles](translational-tilings-by-finitely-many-tiles.md)
 - [Polycube](../../../../Combinatorics/tilings-board-placements/fixed-polycubes/is-polycube-cells.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

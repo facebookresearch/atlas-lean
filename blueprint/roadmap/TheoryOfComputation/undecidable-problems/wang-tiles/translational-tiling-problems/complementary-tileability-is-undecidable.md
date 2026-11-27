@@ -13,6 +13,7 @@ Simple connectivity in item 2 is needed: if $\Gamma$ has a hole of one unit squa
 ## Depends on
 
 - [Translational tilings by finitely many tiles](translational-tilings-by-finitely-many-tiles.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

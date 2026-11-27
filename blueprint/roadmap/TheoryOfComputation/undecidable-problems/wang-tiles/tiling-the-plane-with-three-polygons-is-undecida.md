@@ -19,6 +19,8 @@ Whether tiling with one or two given polygons is decidable remains open. Earlier
 ## Depends on
 
 - [Wang tiles and valid tilings](wang-tiles-and-valid-tilings.md)
+- [Co-recognizability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-co-recognizable.md)
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -32,4 +34,4 @@ universal Turing machine, such as Robinson's. A complete expansion links the red
 
 ## Sources
 
-- E. D. Demaine and S. Langerman, "Tiling with three polygons is undecidable", in *41st International Symposium on Computational Geometry (SoCG 2025)*, LIPIcs 332, paper 39, 2025, doi:10.4230/LIPIcs.SoCG.2025.39; read in arXiv:2409.11582v1: Theorems 1.1 and 1.5 and Corollaries 1.2 to 1.6 in Section 1, the construction of three tiles simulating signed Wang tiles in Section 3 with its main theorem and corollaries, and the theorem on computable pentagons.
+- E. D. Demaine and S. Langerman, "Tiling with three polygons is undecidable", in *41st International Symposium on Computational Geometry (SoCG 2025)*, LIPIcs 332, paper 39, 2025, doi:10.4230/LIPIcs.SoCG.2025.39; read in arXiv:2409.11582v1: Theorems 1.1 and 1.5 and Corollaries 1.2, 1.3, 1.4 and 1.6 in Section 1, the construction of three tiles simulating signed Wang tiles in Section 3 with its main theorem and corollaries, and Theorem 4.2 on computable pentagons.

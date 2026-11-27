@@ -10,6 +10,7 @@ The number of polyominoes is fixed at $7$ and their shapes are the input. A poly
 
 - [Translational tilings by finitely many tiles](translational-tilings-by-finitely-many-tiles.md)
 - [Polycube](../../../../Combinatorics/tilings-board-placements/fixed-polycubes/is-polycube-cells.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
