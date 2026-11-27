@@ -17000,7 +17000,6 @@
   "WantedExt/GraphTheory/ImplicitGraphConjectureUnsolvedMathGRAPH052Wanted": {"to": "GraphTheory/graph-families-and-operations", "title": "Implicit representations of graph families"},
   "WantedExt/GraphTheory/NonnegativelyCurvedExpandersAMR39Problem0020Wanted": {"to": "GraphTheory/graph-families-and-operations", "title": "Expander graphs"},
   "WantedExt/GraphTheory/OpenGardenProblem46634Wanted": {"to": "GraphTheory/graph-invariants-and-labelings", "title": "Induced forest number"},
-  "WantedExt/GraphTheory/RamanujanGraphsWanted": {"to": "GraphTheory/graph-families-and-operations", "title": "Expander graphs"},
   "WantedExt/GraphTheory/RandomGraphBipartitionNumberErdosProblem807Wanted": {"to": "GraphTheory/random-graphs", "title": "Bipartite decompositions of random graphs"},
   "WantedExt/GraphTheory/RandomGraphHamiltonCyclePackingOWR4791Problem008Wanted": {"to": "GraphTheory/random-graphs", "title": "Spanning structures in random graphs"},
   "WantedExt/GraphTheory/RandomGraphHamiltonianErdosProblem746Wanted": {"to": "GraphTheory/random-graphs", "title": "Spanning structures in random graphs"},

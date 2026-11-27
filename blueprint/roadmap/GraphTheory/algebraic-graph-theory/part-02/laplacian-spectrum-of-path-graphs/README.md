@@ -8,7 +8,6 @@
 - [Orthogonality of the path cosine modes](path-cosine-mode-dot-product-eq-zero.md)
 - [Eigenvalues of the half path Laplacian](half-path-laplacian-has-eigenvalue-iff.md)
 - [Cosine values are eigenvalues of the half path Laplacian](half-path-laplacian-has-eigenvalue.md)
-- [Cosine values lie in the spectrum of the half path Laplacian](half-path-laplacian-mem-spectrum.md)
 - [Spectral gap of the half path Laplacian on zero-sum vectors](half-path-laplacian-quad-form-ge.md)
 - [Smallest nonzero eigenvalue of the half path Laplacian](half-path-laplacian-eigenvalue-ge.md)
 - [Lower bound 2/n² for one minus the cosine of π/n](two-div-sq-le-one-sub-cos-pi-div.md)
