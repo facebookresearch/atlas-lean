@@ -1,5 +1,7 @@
 # No-wait flow-shop scheduling
 
+See also [Task lengths in FLOW-SHOP SCHEDULING](../flow-shop-scheduling/len.md), shared with this topic.
+
 - [Well-formed instances of NO-WAIT FLOW-SHOP SCHEDULING WITH m PROCESSORS](well-formed.md)
 - [NO-WAIT FLOW-SHOP SCHEDULING WITH m PROCESSORS as a decision problem](no-wait-flow-shop-fixed-processors-dec.md)
 - [NO-WAIT FLOW-SHOP SCHEDULING WITH m PROCESSORS is NP-complete](no-wait-flow-shop-fixed-processors-np-co.md)
