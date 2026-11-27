@@ -65,7 +65,9 @@ Ramos-Onsins, Marmorini, Achaz and Ferretti (2023, Sections 1, 2.1 and 2.2):
 * `sum_centredWeights`, `sum_normalizedWeights`: both forms of the weights sum to `0`.
 * `exists_abs_centredWeights_sub_le`, `exists_abs_mul_normalizedWeights_sub_le`,
   `exists_abs_mul_normalizedWeights_sub_centredWeights_le`: the `O(1 / n)` bounds.
-* `normalizedWeights_const_mul`: the normalized form ignores constant factors.
+* `normalizedWeights_const_mul`, `not_exists_centredWeights_three_eq_const_mul`: the normalized
+  form ignores constant factors, such as the cutoff of a divergent weight function, and the
+  centred form does not.
 * `linearNeutralityTest_fayWuH`: Fay and Wu's `H` in both forms.
 
 ## Implementation notes
@@ -83,7 +85,8 @@ Watterson's weight function `1 / (f log N)` is not of bounded variation on `[0, 
 proved for it is the invariance `normalizedWeights_const_mul`, through which the cutoff `N`
 drops out of the normalized weights. The centred weights of `w - c w'` have no such invariance:
 for `n = 3`, `w(f) = 2 (1 - f)` (Tajima's `θ_π`) and `w'(f) = 1 / f` (Watterson's estimator), the
-first of them is `1 / 3 - 3 c / 4`, whose sign depends on `c`.
+first of them is `1 / 3 - 3 c / 4` (`centredWeights_three_one`), whose sign depends on `c`
+(`not_exists_centredWeights_three_eq_const_mul`).
 
 ## References
 
@@ -291,8 +294,8 @@ theorem linearNeutralityTest_sub {L : ℝ} (hL : 0 < L) (w w' : ℕ → ℝ) :
 function `W` of the frequency `f ∈ (0, 1)`, the weights
 `W_i^{(n)} = W(i / n) - (n - 1)⁻¹ ∑_{j=1}^{n-1} W(j / n)`: the values of `W` at the sample
 frequencies `i / n`, minus their mean, so that they sum to `0` (`sum_centredWeights`). It is
-meaningful for `n ≥ 2`. When `∫₀¹ W = 0` the correction is small and `W_i^{(n)} ≃ W(i / n)`
-(`exists_abs_centredWeights_sub_le`). -/
+meaningful for `n ≥ 2`. When `W` has bounded variation on `[0, 1]` and `∫₀¹ W = 0`, the
+correction is `O(1 / n)`, so that `W_i^{(n)} ≃ W(i / n)` (`exists_abs_centredWeights_sub_le`). -/
 def centredWeights (W : ℝ → ℝ) (n i : ℕ) : ℝ :=
   W ((i : ℝ) / n) - (∑ j ∈ Ico 1 n, W ((j : ℝ) / n)) / ((n : ℝ) - 1)
 
@@ -301,8 +304,9 @@ weight functions `w`, `w'` of two estimators, the weights
 `W_i^{(n)} = w(i / n) / ∑_{j=1}^{n-1} w(j / n) - w'(i / n) / ∑_{j=1}^{n-1} w'(j / n)`: the
 difference of the weights of two estimators, each normalized to sum to `1`, so that they sum to
 `0` (`sum_normalizedWeights`). With Lean's `x / 0 = 0`, a term whose normalizing sum is `0` is
-`0`. When `∫₀¹ w = ∫₀¹ w' = 1`, `n W_i^{(n)} ≃ w(i / n) - w'(i / n)`
-(`exists_abs_mul_normalizedWeights_sub_le`). -/
+`0`. When `w` and `w'` have bounded variation on `[0, 1]` and `∫₀¹ w = ∫₀¹ w' = 1`,
+`n W_i^{(n)}` is within `O(1 / n)` of `w(i / n) - w'(i / n)`, so that
+`n W_i^{(n)} ≃ w(i / n) - w'(i / n)` (`exists_abs_mul_normalizedWeights_sub_le`). -/
 def normalizedWeights (w w' : ℝ → ℝ) (n i : ℕ) : ℝ :=
   w ((i : ℝ) / n) / ∑ j ∈ Ico 1 n, w ((j : ℝ) / n) -
     w' ((i : ℝ) / n) / ∑ j ∈ Ico 1 n, w' ((j : ℝ) / n)
@@ -333,6 +337,33 @@ theorem normalizedWeights_const_mul (w w' : ℝ → ℝ) {c c' : ℝ} (hc : c �
     normalizedWeights (fun f => c * w f) (fun f => c' * w' f) n = normalizedWeights w w' n := by
   funext i
   simp only [normalizedWeights, ← mul_sum, mul_div_mul_left _ _ hc, mul_div_mul_left _ _ hc']
+
+/-- For `n = 3`, the first centred weight of `2 (1 - f) - c / f`, Tajima's weight function
+`2 (1 - f)` (of `θ_π`) against Watterson's weight function `1 / f` scaled by `c`, is
+`1 / 3 - 3 c / 4`. With the cutoff at the inverse population size `1 / N`, Watterson's weight
+function is `1 / (f log N)`, so `c = 1 / log N`. -/
+theorem centredWeights_three_one (c : ℝ) :
+    centredWeights (fun f => 2 * (1 - f) - c / f) 3 1 = 1 / 3 - 3 * c / 4 := by
+  simp only [centredWeights, show (Ico 1 3 : Finset ℕ) = {1, 2} by decide]
+  rw [sum_pair (by norm_num)]
+  norm_num
+  ring
+
+/-- **The centred weights depend on the cutoff** (Ramos-Onsins et al. 2023, Section 2.2.2):
+for `n = 3`, the centred weights of `2 (1 - f) - c / f` for `c = 1 / 4` and for `c = 1` are
+related by no positive factor, which would leave the test unchanged
+(`linearNeutralityTest_const_mul`): their first entries `7 / 48` and `-5 / 12` have opposite
+signs (`centredWeights_three_one`). The normalized weights of `2 (1 - f)` and `c / f` do not
+depend on `c ≠ 0` (`normalizedWeights_const_mul`), so of the two forms only the normalized one
+avoids the dependence on the cutoff `N` in `c = 1 / log N`. -/
+theorem not_exists_centredWeights_three_eq_const_mul :
+    ¬ ∃ a : ℝ, 0 < a ∧ ∀ i ∈ Ico 1 3,
+      centredWeights (fun f => 2 * (1 - f) - 1 / f) 3 i =
+        a * centredWeights (fun f => 2 * (1 - f) - (1 / 4) / f) 3 i := by
+  rintro ⟨a, ha, h⟩
+  have h1 := h 1 (by decide)
+  rw [centredWeights_three_one, centredWeights_three_one] at h1
+  nlinarith
 
 /-! ### The `O(1 / n)` bounds -/
 

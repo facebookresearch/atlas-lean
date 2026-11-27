@@ -179,19 +179,30 @@ example (w' : ℝ → ℝ) (i : ℕ) :
 
 /-! ### The cutoff of a divergent weight function -/
 
-/-- For `n = 3`, the first centred weight of `2 (1 - f) - c / f` (Tajima's `θ_π` against
-Watterson's weight function scaled by `c`) is `1 / 3 - 3 c / 4`. -/
-lemma centredWeights_tajima_three (c : ℝ) :
-    centredWeights (fun f => 2 * (1 - f) - c / f) 3 1 = 1 / 3 - 3 * c / 4 := by
-  simp only [centredWeights, Ico_one_three]
-  rw [sum_pair (by norm_num)]
+/-- For `n = 3`, the first centred weights of `2 (1 - f) - c / f` for `c = 1 / 4` and `c = 1`
+(`centredWeights_three_one`). -/
+example : centredWeights (fun f => 2 * (1 - f) - (1 / 4) / f) 3 1 = 7 / 48 ∧
+    centredWeights (fun f => 2 * (1 - f) - 1 / f) 3 1 = -5 / 12 := by
+  rw [centredWeights_three_one, centredWeights_three_one]
   norm_num
-  ring
 
-/-- So its sign depends on `c`, for instance on the cutoff `N` in `c = 1 / log N`. -/
-example : 0 < centredWeights (fun f => 2 * (1 - f) - (1 / 4) / f) 3 1 ∧
-    centredWeights (fun f => 2 * (1 - f) - 1 / f) 3 1 < 0 := by
-  rw [centredWeights_tajima_three, centredWeights_tajima_three]
+/-- The second centred weight is the negative of the first, as for any centred weights with
+`n = 3`. -/
+example (c : ℝ) : centredWeights (fun f => 2 * (1 - f) - c / f) 3 2 =
+    -centredWeights (fun f => 2 * (1 - f) - c / f) 3 1 := by
+  have h := sum_centredWeights (fun f => 2 * (1 - f) - c / f) (n := 3) (by norm_num)
+  rw [Ico_one_three, sum_pair (by norm_num)] at h
+  linarith
+
+/-- So the weight vectors for `c = 1 / 4` and `c = 1` are related by no positive factor
+(`not_exists_centredWeights_three_eq_const_mul`), and in fact by the factor `-20 / 7`. -/
+example : (¬ ∃ a : ℝ, 0 < a ∧ ∀ i ∈ Ico 1 3,
+      centredWeights (fun f => 2 * (1 - f) - 1 / f) 3 i =
+        a * centredWeights (fun f => 2 * (1 - f) - (1 / 4) / f) 3 i) ∧
+    centredWeights (fun f => 2 * (1 - f) - 1 / f) 3 1 =
+      -20 / 7 * centredWeights (fun f => 2 * (1 - f) - (1 / 4) / f) 3 1 := by
+  refine ⟨not_exists_centredWeights_three_eq_const_mul, ?_⟩
+  rw [centredWeights_three_one, centredWeights_three_one]
   norm_num
 
 /-- The normalized weights do not depend on `c ≠ 0` (`normalizedWeights_const_mul`). -/
