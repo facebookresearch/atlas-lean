@@ -10,6 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.GameTheory.ExactSlowNimRemoteness
+public import MathlibExt.GameTheory.ExactSlowNimCritical
 public import WantedExt.Combinatorics.SlowANimWanted
 
 /-!
@@ -31,27 +32,6 @@ every `y < x`" is equivalent to the same condition for the componentwise (`Pi`) 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **$m$-critical positions of exact slow $k$-NIM with $k + 1$ piles (Theorem 1).** Let $k \ge 1$
-and $m$ be natural numbers, and let $x = (x_0, \dots, x_k)$ be a position of
-$\mathrm{NIM}(k + 1, k)$, the game on $k + 1$ piles in which a move removes one stone from each
-of exactly $k$ nonempty piles. Call $x$ $m$-critical when its Smith remoteness is $m$ and no
-position $y < x$ (that is, $y_i \le x_i$ for every $i$ and $y \ne x$) has remoteness $m$. Then
-$x$ is $m$-critical if and only if either
-(A) $x_0 + \dots + x_k = km$, $x_i \le m$ for every $i$, every $x_i$ is even if $m$ is even,
-and exactly one $x_i$ is even if $m$ is odd; or
-(B) $x_0 + \dots + x_k = km + k - 1$, $x_i < m$ for every $i$, $m$ is even, and every $x_i$ is
-odd.
-
-Source: Vladimir Gurvich, Denis Martynov, Vladislav Maximchuk, and Michael Vyalyi, *On
-Remoteness Functions of Exact Slow k-NIM with k+1 Piles*, INTEGERS 24 (2024), Article G1,
-Theorem 1. -/
-public theorem_wanted isExactSlowNimCritical_iff {k : ℕ} (hk : 0 < k) (m : ℕ)
-    (x : Fin (k + 1) → ℕ) :
-    IsExactSlowNimCritical k m x ↔
-      (∑ i, x i = k * m ∧ (∀ i, x i ≤ m) ∧ (Even m → ∀ i, Even (x i)) ∧
-          (Odd m → ∃! i, Even (x i))) ∨
-        (∑ i, x i = k * m + k - 1 ∧ (∀ i, x i < m) ∧ Even m ∧ ∀ i, Odd (x i))
 
 /-- **Unique critical-lowering move for odd parameter (Corollary 1 (ii)).** Let $k \ge 2$, let
 $m$ be odd, and let $x \in \mathbb{N}^{k+1}$ be an $m$-critical position of Slow$\{k\}$-Nim on
