@@ -14,3 +14,4 @@ Laws on countable sets, with their mass functions, moments and tails: discrete u
 - [Sums of independent Poisson variables](poisson-distribution/README.md)
 
 - [Finite probability distributions as probability measures](finite-distributions-as-probability-measures/README.md)
+- [Exact Sampling by Rank Decoding](exact-sampling-by-rank-decoding/README.md)
