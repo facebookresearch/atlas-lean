@@ -18,7 +18,7 @@ $$\varphi_{H^{(\infty)}}(s) = e^{i m\cdot s}\lim_{n\to\infty}\prod_{j=0}^{n-1}\B
 
 ## Proof depends on
 
-- [Lévy's continuity theorem](../../../../Probability/characteristic-functions/levy-continuity-theorem/levy-continuity-of-char-fun.md)
+- [Lévy's continuity theorem](../../../../../Probability/characteristic-functions/levy-continuity-theorem/levy-continuity-of-char-fun.md)
 
 ## Expansion
 

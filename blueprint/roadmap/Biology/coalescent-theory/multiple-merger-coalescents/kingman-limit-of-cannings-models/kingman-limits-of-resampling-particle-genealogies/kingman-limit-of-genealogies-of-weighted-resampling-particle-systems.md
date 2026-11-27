@@ -18,7 +18,7 @@ and $\mathbb{E}[\tau_N(t) - \tau_N(s)] \le C_{t,s}N$ for a constant independent 
 
 ## Depends on
 
-- [Holding times of Kingman's coalescent](../../kingman-s-coalescent-and-watterson-s-estimator/kingman-times.md)
+- [Holding times of Kingman's coalescent](../../../kingman-s-coalescent-and-watterson-s-estimator/kingman-times.md)
 
 ## Expansion
 

@@ -20,11 +20,11 @@ so the empty-box probability $\mathbb P(K^*_N=0)=z_c-(A^*_Nz_c^{-\theta}+B^*_N)^
 
 ## Depends on
 
-- [Generation-size law of a Galton–Watson process](../../../../Probability/branching-processes/galton-watson-process/law.md)
+- [Generation-size law of a Galton–Watson process](../../../../../Probability/branching-processes/galton-watson-process/law.md)
 
 ## Proof depends on
 
-- [Generating function of the n-th generation size](../../../../Probability/branching-processes/galton-watson-process/pgf-law.md)
+- [Generating function of the n-th generation size](../../../../../Probability/branching-processes/galton-watson-process/pgf-law.md)
 
 ## Expansion
 

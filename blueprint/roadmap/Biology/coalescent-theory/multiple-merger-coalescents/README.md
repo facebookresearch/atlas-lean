@@ -29,5 +29,3 @@ frequency spectrum under multiple mergers.
 - [Coming down from infinity of interacting particle systems](coming-down-from-infinity-of-interacting-particle-systems/README.md)
 - [Λ-asymmetric ancestral selection graph](lambda-asymmetric-ancestral-selection-graph/README.md)
 - [Sweepstakes reproduction coalescents](sweepstakes-reproduction-coalescents/README.md)
-- [Box-filling coalescence processes](box-filling-coalescence-processes/README.md)
-- [Kingman limits of resampling particle genealogies](kingman-limits-of-resampling-particle-genealogies/README.md)

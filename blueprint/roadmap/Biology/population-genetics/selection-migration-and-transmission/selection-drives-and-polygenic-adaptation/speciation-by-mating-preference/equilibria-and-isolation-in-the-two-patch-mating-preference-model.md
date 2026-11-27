@@ -24,7 +24,7 @@ Every solution starting in $\mathcal{D} = \{z_{A,1} > z_{a,1},\ z_{a,2} > z_{A,2
 
 ## Proof depends on
 
-- [Lyapunov's direct method and Lyapunov's instability theorem](../../../../Analysis/ordinary-differential-equations/lyapunov-s-direct-method/lyapunov-s-direct-method-and-lyapunov-s-instability-theorem.md)
+- [Lyapunov's direct method and Lyapunov's instability theorem](../../../../../Analysis/ordinary-differential-equations/lyapunov-s-direct-method/lyapunov-s-direct-method-and-lyapunov-s-instability-theorem.md)
 
 ## Expansion
 

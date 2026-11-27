@@ -27,11 +27,11 @@ which, applied with death rate $b\beta$ and $i$ of order $\varepsilon K$, gives 
 ## Depends on
 
 - [Equilibria and reproductive isolation in the two-patch mating-preference model](equilibria-and-isolation-in-the-two-patch-mating-preference-model.md)
-- [Kurtz's law of large numbers for density-dependent chains](../../../../Probability/markov-chains/density-dependent-markov-chains/kurtz-law-of-large-numbers-for-density-dependent.md)
+- [Kurtz's law of large numbers for density-dependent chains](../../../../../Probability/markov-chains/density-dependent-markov-chains/kurtz-law-of-large-numbers-for-density-dependent.md)
 
 ## Proof depends on
 
-- [Kendall's law of the linear birth–death process](../../../../Probability/branching-processes/linear-birth-death-process/prob.md)
+- [Kendall's law of the linear birth–death process](../../../../../Probability/branching-processes/linear-birth-death-process/prob.md)
 
 ## Expansion
 

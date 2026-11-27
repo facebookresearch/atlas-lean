@@ -20,11 +20,11 @@ So a fitness peak is reached even when the G-matrix changes over time or is sing
 
 ## Depends on
 
-- [Lande's gradient form of the response, genetic-covariance version](../lande-s-selection-gradient/selected-shift-breeding-eq-gradient-gene.md)
+- [Lande's gradient form of the response, genetic-covariance version](../../lande-s-selection-gradient/selected-shift-breeding-eq-gradient-gene.md)
 
 ## Proof depends on
 
-- [Lyapunov's direct method and Lyapunov's instability theorem](../../../Analysis/ordinary-differential-equations/lyapunov-s-direct-method/lyapunov-s-direct-method-and-lyapunov-s-instability-theorem.md)
+- [Lyapunov's direct method and Lyapunov's instability theorem](../../../../Analysis/ordinary-differential-equations/lyapunov-s-direct-method/lyapunov-s-direct-method-and-lyapunov-s-instability-theorem.md)
 
 ## Expansion
 

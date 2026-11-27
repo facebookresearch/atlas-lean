@@ -34,7 +34,7 @@ In particular $\rho^*=0$ when all $m$ shared spacers are consecutive in both arr
 
 ## Proof depends on
 
-- [Discrete factorization, sufficiency](../../../Probability/statistical-estimation/sufficient-statistics-and-the-factorization-theo/is-sufficient-pmf-of-factorization.md)
+- [Discrete factorization, sufficiency](../../../../Probability/statistical-estimation/sufficient-statistics-and-the-factorization-theo/is-sufficient-pmf-of-factorization.md)
 
 ## Expansion
 

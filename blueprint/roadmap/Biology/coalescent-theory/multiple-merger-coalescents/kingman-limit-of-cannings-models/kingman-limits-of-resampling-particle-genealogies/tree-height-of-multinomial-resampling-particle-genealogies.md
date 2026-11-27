@@ -13,7 +13,7 @@ So the genealogy of an SMC run has height of order $N$ generations, with constan
 ## Depends on
 
 - [Kingman limit of genealogies of weighted resampling particle systems](kingman-limit-of-genealogies-of-weighted-resampling-particle-systems.md)
-- [Variance of the time to the most recent common ancestor](../../kingman-s-coalescent-and-watterson-s-estimator/variance-tmrca.md)
+- [Variance of the time to the most recent common ancestor](../../../kingman-s-coalescent-and-watterson-s-estimator/variance-tmrca.md)
 
 ## Expansion
 

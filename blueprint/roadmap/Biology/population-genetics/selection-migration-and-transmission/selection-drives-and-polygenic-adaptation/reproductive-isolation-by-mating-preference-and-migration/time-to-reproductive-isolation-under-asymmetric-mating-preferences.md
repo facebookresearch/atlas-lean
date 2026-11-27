@@ -22,11 +22,11 @@ and the process then stays in the box enlarged by the factor $M$ for a time at l
 
 ## Depends on
 
-- [Kurtz's law of large numbers for density-dependent chains](../../../../Probability/markov-chains/density-dependent-markov-chains/kurtz-law-of-large-numbers-for-density-dependent.md)
+- [Kurtz's law of large numbers for density-dependent chains](../../../../../Probability/markov-chains/density-dependent-markov-chains/kurtz-law-of-large-numbers-for-density-dependent.md)
 
 ## Proof depends on
 
-- [Kendall's law of the linear birth–death process](../../../../Probability/branching-processes/linear-birth-death-process/prob.md)
+- [Kendall's law of the linear birth–death process](../../../../../Probability/branching-processes/linear-birth-death-process/prob.md)
 
 ## Expansion
 

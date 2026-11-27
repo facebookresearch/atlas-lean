@@ -27,5 +27,3 @@
 - [Minimum epistasis interpolation](minimum-epistasis-interpolation/README.md)
 - [Rho statistic dating of lineages](rho-statistic-dating-of-lineages/README.md)
 - [Sparse Walsh approximation of fitness landscapes](sparse-walsh-approximation-of-fitness-landscapes/README.md)
-- [Ordered independent loss model of CRISPR spacers](ordered-independent-loss-model-of-crispr-spacers/README.md)
-- [Parallel mutation and selection waiting times](parallel-mutation-and-selection-waiting-times/README.md)

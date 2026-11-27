@@ -12,3 +12,5 @@
 - [Stochastic models of viral evolution](stochastic-models-of-viral-evolution/README.md)
 - [Survival of the flattest in the quasispecies model](survival-of-the-flattest-in-the-quasispecies-model/README.md)
 - [Mutation-accumulation rate from allele frequencies](mutation-accumulation-rate-from-allele-frequencies/README.md)
+- [Ordered independent loss model of CRISPR spacers](ordered-independent-loss-model-of-crispr-spacers/README.md)
+- [Parallel mutation and selection waiting times](parallel-mutation-and-selection-waiting-times/README.md)

@@ -24,7 +24,7 @@ The last term is positive when $\gamma < 0$ and grows with the number of alleles
 
 ## Depends on
 
-- [Directional selection, overdominance and underdominance at one locus](../one-locus-selection-dynamics/one-locus-viability-selection-regimes.md)
+- [Directional selection, overdominance and underdominance at one locus](../../one-locus-selection-dynamics/one-locus-viability-selection-regimes.md)
 
 ## Expansion
 
