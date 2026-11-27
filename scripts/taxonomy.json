@@ -13453,6 +13453,7 @@
   "MathlibExt/NumberTheory/LocallyNilpotentPolynomials": {"to": "NumberTheory/integer-sequences/iterated-self-referential", "title": "Locally nilpotent polynomials"},
   "MathlibExt/NumberTheory/LogarithmicCompletion": {"to": "NumberTheory/exponential-sums", "title": "Incomplete exponential sums"},
   "MathlibExt/NumberTheory/LucasLehmerAcceptableSeed": {"to": "NumberTheory/primes-primality/primality-tests-pseudoprimes", "title": "Lucas–Lehmer test"},
+  "MathlibExt/NumberTheory/LucasLehmerInfiniteSeeds": {"to": "NumberTheory/primes-primality/primality-tests-pseudoprimes", "title": "Lucas–Lehmer test"},
   "MathlibExt/NumberTheory/LucasLeonardoPIdentity": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Leonardo p-numbers"},
   "MathlibExt/NumberTheory/LucasNumbersModuloM": {"to": "NumberTheory/linear-recurrences/recurrences-modulo-m", "title": "Residues of Lucas numbers"},
   "MathlibExt/NumberTheory/LucasLeonardoPStrideSum": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Leonardo p-numbers"},
