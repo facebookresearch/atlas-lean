@@ -22,22 +22,24 @@ import Mathlib.MeasureTheory.Integral.Lebesgue.DominatedConvergence
 import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 import Mathlib.MeasureTheory.Measure.Prod
 import Mathlib.Topology.UniformSpace.HeineCantor
+import MathlibExt.Probability.Quantile
 
 /-!
-# Cheeger's inequality for isotropic log-concave measures
+# Cheeger's inequality
 
-The main result, `poincare_cheeger_upper_bound`, is Cheeger's inequality: the smooth Poincaré
-constant of an isotropic log-concave probability measure on $\mathbb{R}^n$ is at most four times
-the square of its inverse Cheeger constant.
+The main result, `smoothPoincareConstant_le_four_mul_inverseCheegerConstant_sq`, is Cheeger's
+inequality: the smooth Poincaré constant of a probability measure on $\mathbb{R}^n$ is at most four
+times the square of its inverse Cheeger constant. Its special case `poincare_cheeger_upper_bound`
+states it for isotropic log-concave probability measures.
 
-The proof uses only that the measure is a probability measure. A coarea inequality for compactly
-supported $C^1$ functions $g$, obtained from the definition of the outer Minkowski boundary
-measure, Fatou's lemma and Tonelli's theorem, bounds
+A coarea inequality for compactly supported $C^1$ functions $g$, obtained from the definition of
+the outer Minkowski boundary measure, Fatou's lemma and Tonelli's theorem, bounds
 $\int_{\mathbb{R}} \mu^+(\{g > t\}) \, dt$ by $\int \lVert \nabla g \rVert \, d\mu$. With the
 isoperimetric inequality behind the Cheeger coefficient $h$ and the layer-cake formula this gives
 $h \int g \, d\mu \le \int \lVert \nabla g \rVert \, d\mu$ for nonnegative $g$ whose support has
 measure at most $1/2$; cutoff functions remove the compact support assumption. Applied to the
-squares of the positive and negative parts of $f - m$, for a median $m$ of $f$, it gives
+squares of the positive and negative parts of $f - m$, for a median $m$ of $f$ (the value at
+$1/2$ of the quantile function of the law of $f$), it gives
 $h^2 \int (f - m)^2 \, d\mu \le 4 \int \lVert \nabla f \rVert^2 \, d\mu$, and the variance of $f$
 is at most $\int (f - m)^2 \, d\mu$.
 
@@ -349,84 +351,39 @@ private theorem contDiff_max_zero_sq : ContDiff ℝ 1 fun s : ℝ => max s 0 ^ 2
   fun_prop
 
 /-- Every measurable real function on a probability space has a median `m`:
-`μ {m < f} ≤ 1/2` and `μ {f < m} ≤ 1/2`. -/
+`μ {m < f} ≤ 1/2` and `μ {f < m} ≤ 1/2`. The value at `1/2` of the quantile function of the law
+of `f` is one. -/
 private theorem exists_median {E : Type*} [MeasurableSpace E] (μ : Measure E)
     [IsProbabilityMeasure μ] {f : E → ℝ} (hf : Measurable f) :
     ∃ m : ℝ, μ {x | m < f x} ≤ 2⁻¹ ∧ μ {x | f x < m} ≤ 2⁻¹ := by
-  set F : ℝ → ℝ≥0∞ := fun t => μ {x | f x ≤ t} with hF
-  have hFmono : Monotone F := fun s t hst => measure_mono fun x (hx : f x ≤ s) => hx.trans hst
-  have hmeas : ∀ t, MeasurableSet {x | f x ≤ t} := fun t => measurableSet_le hf measurable_const
-  have hF1 : Tendsto (fun k : ℕ => F k) atTop (𝓝 1) := by
-    have h := tendsto_measure_iUnion_atTop (μ := μ) (s := fun k : ℕ => {x | f x ≤ k})
-      fun i j hij x (hx : f x ≤ i) => hx.trans (by exact_mod_cast hij)
-    have hU : (⋃ k : ℕ, {x | f x ≤ (k : ℝ)}) = univ := by
-      refine eq_univ_of_forall fun x => mem_iUnion.mpr ?_
-      obtain ⟨k, hk⟩ := exists_nat_ge (f x)
-      exact ⟨k, hk⟩
-    rw [hU, measure_univ] at h
-    exact h
-  have hF0 : Tendsto (fun k : ℕ => F (-k)) atTop (𝓝 0) := by
-    have h := tendsto_measure_iInter_atTop (μ := μ) (s := fun k : ℕ => {x | f x ≤ -(k : ℝ)})
-      (fun k => (hmeas _).nullMeasurableSet)
-      (fun i j hij x (hx : f x ≤ -(j : ℝ)) => hx.trans (by
-        have : (i : ℝ) ≤ j := by exact_mod_cast hij
-        linarith))
-      ⟨0, measure_ne_top _ _⟩
-    have hI : (⋂ k : ℕ, {x | f x ≤ -(k : ℝ)}) = ∅ := by
-      refine eq_empty_of_forall_notMem fun x hx => ?_
-      obtain ⟨k, hk⟩ := exists_nat_gt (-f x)
-      have : f x ≤ -(k : ℝ) := mem_iInter.mp hx k
-      linarith
-    rw [hI, measure_empty] at h
-    exact h
-  have hhalf : (2⁻¹ : ℝ≥0∞) < 1 := ENNReal.inv_lt_one.mpr (by norm_num)
-  obtain ⟨t₁, ht₁⟩ := (hF1.eventually (eventually_gt_nhds hhalf)).exists
-  obtain ⟨t₀, ht₀⟩ := (hF0.eventually (eventually_lt_nhds
-    (by norm_num : (0 : ℝ≥0∞) < 2⁻¹))).exists
-  set S := {t : ℝ | 2⁻¹ ≤ F t} with hS
-  have hne : S.Nonempty := ⟨t₁, ht₁.le⟩
-  have hbdd : BddBelow S := by
-    refine ⟨-(t₀ : ℝ), fun t (ht : 2⁻¹ ≤ F t) => ?_⟩
-    by_contra hlt
-    rw [not_le] at hlt
-    exact absurd (ht.trans (hFmono hlt.le)) (not_le.mpr ht₀)
-  set m := sInf S with hm
-  have hlow : ∀ t, t < m → F t < 2⁻¹ := fun t ht =>
-    not_le.mp fun h => absurd (csInf_le hbdd h) (not_le.mpr ht)
+  have hu : (2⁻¹ : ℝ) ∈ Ioo 0 1 := by norm_num
+  -- `t ↦ μ {f ≤ t}` is the cdf of the law of `f`
+  have hF : ∀ t, μ {x | f x ≤ t} = ENNReal.ofReal (ProbabilityTheory.cdf (μ.map f) t) := by
+    intro t
+    rw [ProbabilityTheory.ofReal_cdf, Measure.map_apply hf measurableSet_Iic]
+    rfl
+  have hhalf : ENNReal.ofReal 2⁻¹ = 2⁻¹ := by
+    rw [ENNReal.ofReal_inv_of_pos two_pos, ENNReal.ofReal_ofNat]
+  set m := ProbabilityTheory.cdfQuantile (μ.map f) 2⁻¹
   refine ⟨m, ?_, ?_⟩
-  · -- `F m ≥ 1/2` by continuity from above
-    have hFm : 2⁻¹ ≤ F m := by
-      have h := tendsto_measure_iInter_atTop (μ := μ)
-        (s := fun k : ℕ => {x | f x ≤ m + 1 / ((k : ℝ) + 1)})
-        (fun k => (hmeas _).nullMeasurableSet)
-        (fun i j hij x (hx : f x ≤ m + 1 / ((j : ℝ) + 1)) => hx.trans (by
-          have : (i : ℝ) ≤ j := by exact_mod_cast hij
-          gcongr))
-        ⟨0, measure_ne_top _ _⟩
-      have hI : (⋂ k : ℕ, {x | f x ≤ m + 1 / ((k : ℝ) + 1)}) = {x | f x ≤ m} := by
-        ext x
-        simp only [mem_iInter, mem_ofPred_eq]
-        refine ⟨fun hx => ?_, fun hx k => hx.trans (le_add_of_nonneg_right (by positivity))⟩
-        have := tendsto_const_nhds (x := m) |>.add
-          (tendsto_one_div_add_atTop_nhds_zero_nat (𝕜 := ℝ))
-        rw [add_zero] at this
-        exact ge_of_tendsto' this hx
-      rw [hI] at h
-      refine ge_of_tendsto' h fun k => ?_
-      obtain ⟨s, hs, hsm⟩ := exists_lt_of_csInf_lt hne
-        (show sInf S < m + 1 / ((k : ℝ) + 1) by
-          rw [← hm]; exact lt_add_of_pos_right _ (by positivity))
-      exact hs.trans (hFmono hsm.le)
-    have hcompl : μ {x | m < f x} = 1 - F m := by
-      rw [← prob_compl_eq_one_sub (hmeas m)]
+  · have hcompl : μ {x | m < f x} = 1 - μ {x | f x ≤ m} := by
+      rw [← prob_compl_eq_one_sub (measurableSet_le hf measurable_const)]
       congr 1
       ext x
       simp [not_le]
-    rw [hcompl]
-    refine tsub_le_iff_right.mpr ?_
+    have hFm : 2⁻¹ ≤ μ {x | f x ≤ m} := by
+      rw [hF, ← hhalf]
+      exact ENNReal.ofReal_le_ofReal (ProbabilityTheory.cdfQuantile_mem (μ.map f) hu)
+    rw [hcompl, tsub_le_iff_right]
     calc (1 : ℝ≥0∞) = 2⁻¹ + 2⁻¹ := ENNReal.inv_two_add_inv_two.symm
-      _ ≤ 2⁻¹ + F m := by gcongr
-  · -- `μ {f < m} ≤ 1/2` by continuity from below
+      _ ≤ 2⁻¹ + μ {x | f x ≤ m} := by gcongr
+  · have hlow : ∀ t, t < m → μ {x | f x ≤ t} ≤ 2⁻¹ := by
+      intro t ht
+      rw [hF, ← hhalf]
+      refine ENNReal.ofReal_le_ofReal (le_of_lt ?_)
+      rw [← not_le, ← ProbabilityTheory.cdfQuantile_le_iff (μ.map f) hu, not_le]
+      exact ht
+    -- `μ {f < m} ≤ 1/2` by continuity from below
     have h := tendsto_measure_iUnion_atTop (μ := μ)
       (s := fun k : ℕ => {x | f x ≤ m - 1 / ((k : ℝ) + 1)})
       (fun i j hij x (hx : f x ≤ m - 1 / ((i : ℝ) + 1)) => hx.trans (by
@@ -436,7 +393,7 @@ private theorem exists_median {E : Type*} [MeasurableSpace E] (μ : Measure E)
       intro x (hx : f x < m)
       obtain ⟨k, hk⟩ := exists_nat_one_div_lt (sub_pos.mpr hx)
       exact mem_iUnion.mpr ⟨k, show f x ≤ m - 1 / ((k : ℝ) + 1) by linarith⟩
-    refine (measure_mono hsub).trans (le_of_tendsto' h fun k => (hlow _ ?_).le)
+    refine (measure_mono hsub).trans (le_of_tendsto' h fun k => hlow _ ?_)
     exact sub_lt_self _ (by positivity)
 
 /-- The elementary inequality
@@ -611,18 +568,15 @@ private theorem lintegral_sub_integral_sq_le {E : Type*} [MeasurableSpace E] (μ
 
 /-! ### Cheeger's inequality -/
 
-set_option linter.unusedVariables false in
-/-- **Cheeger's inequality for isotropic log-concave measures.** Let $n \ge 1$, let $\mu$ be an
-isotropic log-concave probability measure on $\mathbb{R}^n$, and let $\psi_\mu \in [0, \infty]$ be
-the inverse Cheeger constant of $\mu$. Then the smooth Poincaré constant of $\mu$ is at most
-$4 \psi_\mu^2$.
+/-- **Cheeger's inequality.** Let $\mu$ be a probability measure on $\mathbb{R}^n$ and let
+$\psi_\mu \in [0, \infty]$ be the inverse Cheeger constant of $\mu$. Then the smooth Poincaré
+constant of $\mu$ is at most $4 \psi_\mu^2$.
 
-Source: optimizationproblems `constants/20c.md`, comparison display, and
-Klartag, arXiv:2303.14938v1, Introduction. -/
-public theorem poincare_cheeger_upper_bound {n : ℕ} (hn : 0 < n)
-    {μ : Measure (EuclideanSpace ℝ (Fin n))} (hμ : IsIsotropicLogConcave μ) :
+Source: Klartag, arXiv:2303.14938v1, Introduction, inequality (4), which attributes the
+inequality to Cheeger and states it for log-concave measures. -/
+public theorem smoothPoincareConstant_le_four_mul_inverseCheegerConstant_sq {n : ℕ}
+    (μ : Measure (EuclideanSpace ℝ (Fin n))) [IsProbabilityMeasure μ] :
     smoothPoincareConstant μ ≤ 4 * inverseCheegerConstant μ ^ 2 := by
-  have : IsProbabilityMeasure μ := hμ.1
   by_cases hψ : inverseCheegerConstant μ = ⊤
   · rw [hψ]
     simp
@@ -708,5 +662,19 @@ public theorem poincare_cheeger_upper_bound {n : ℕ} (hn : 0 < n)
       _ = 4 * inverseCheegerConstant μ ^ 2 * J := by
           rw [hψc, ← ENNReal.inv_pow, ← ENNReal.ofReal_pow hc.le]
           ring
+
+set_option linter.unusedVariables false in
+/-- **Cheeger's inequality for isotropic log-concave measures.** Let $n \ge 1$, let $\mu$ be an
+isotropic log-concave probability measure on $\mathbb{R}^n$, and let $\psi_\mu \in [0, \infty]$ be
+the inverse Cheeger constant of $\mu$. Then the smooth Poincaré constant of $\mu$ is at most
+$4 \psi_\mu^2$.
+
+Source: optimizationproblems `constants/20c.md`, comparison display, and
+Klartag, arXiv:2303.14938v1, Introduction. -/
+public theorem poincare_cheeger_upper_bound {n : ℕ} (hn : 0 < n)
+    {μ : Measure (EuclideanSpace ℝ (Fin n))} (hμ : IsIsotropicLogConcave μ) :
+    smoothPoincareConstant μ ≤ 4 * inverseCheegerConstant μ ^ 2 := by
+  have : IsProbabilityMeasure μ := hμ.1
+  exact smoothPoincareConstant_le_four_mul_inverseCheegerConstant_sq μ
 
 end MathlibExt.Probability.KLS

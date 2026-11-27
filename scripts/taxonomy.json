@@ -14256,7 +14256,6 @@
   "MathlibExt/Probability/Geometry/IsotropicCube": {"to": "Probability/high-dimensional-probability", "title": "Isotropic constant of log-concave laws"},
   "MathlibExt/Probability/Geometry/KLS": {"to": "Probability/high-dimensional-probability", "title": "Kannan–Lovász–Simonovits conjecture"},
   "MathlibExt/Probability/Geometry/KLSLowerBound": {"to": "Probability/high-dimensional-probability", "title": "Kannan–Lovász–Simonovits conjecture"},
-  "MathlibExt/Probability/Geometry/KLSPoincareCheeger": {"to": "Probability/high-dimensional-probability", "title": "Kannan–Lovász–Simonovits conjecture"},
   "MathlibExt/Probability/Geometry/LogConcaveUniform": {"to": "Probability/high-dimensional-probability", "title": "Isotropic constant of log-concave laws"},
   "MathlibExt/Probability/Geometry/ThinShell": {"to": "Probability/high-dimensional-probability", "title": "Thin-shell conjecture"},
   "MathlibExt/Probability/Geometry/ThinShellCubeBound": {"to": "Probability/high-dimensional-probability", "title": "Thin-shell conjecture"},

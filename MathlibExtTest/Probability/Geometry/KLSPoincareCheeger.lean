@@ -22,6 +22,21 @@ example : smoothPoincareConstant (uniformInterval (Real.sqrt 3)) ≤
     4 * inverseCheegerConstant (uniformInterval (Real.sqrt 3)) ^ 2 :=
   poincare_cheeger_upper_bound (hn := by decide) uniformInterval_sqrt_three_isIsotropicLogConcave
 
+-- Cheeger's inequality needs no isotropy: the uniform law on `[-1, 1]` has variance `1/3`.
+example : smoothPoincareConstant (uniformInterval 1) ≤
+    4 * inverseCheegerConstant (uniformInterval 1) ^ 2 :=
+  haveI := uniformInterval_probability one_pos
+  smoothPoincareConstant_le_four_mul_inverseCheegerConstant_sq _
+
+-- Nor log-concavity, nor a positive dimension: the average of the Dirac masses at two points of
+-- `ℝⁿ`, which is not log-concave when the points differ, in every dimension, including `n = 0`.
+example {n : ℕ} (x y : EuclideanSpace ℝ (Fin n)) :
+    smoothPoincareConstant ((2⁻¹ : ℝ≥0∞) • (Measure.dirac x + Measure.dirac y)) ≤
+      4 * inverseCheegerConstant ((2⁻¹ : ℝ≥0∞) • (Measure.dirac x + Measure.dirac y)) ^ 2 := by
+  have : IsProbabilityMeasure ((2⁻¹ : ℝ≥0∞) • (Measure.dirac x + Measure.dirac y)) :=
+    ⟨by simp [ENNReal.inv_two_add_inv_two]⟩
+  exact smoothPoincareConstant_le_four_mul_inverseCheegerConstant_sq _
+
 -- With the KLS constant, the smooth Poincaré constant of every isotropic log-concave measure is
 -- at most `4 ψ²`, where `ψ` is the KLS constant: a dimension-free Poincaré bound whenever the KLS
 -- conjecture holds.
