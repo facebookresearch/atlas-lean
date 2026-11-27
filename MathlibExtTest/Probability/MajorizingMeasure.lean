@@ -14,8 +14,8 @@ import MathlibExt.Probability.MajorizingMeasure
 # Tests for the majorizing measure theorem
 
 The family has one constant coordinate and two copies of a standard Gaussian coordinate. Its
-canonical distance vanishes between distinct indices, and its maximum is the positive part
-of the Gaussian variable.
+canonical distance vanishes between the two copies, so it is only a pseudo-distance, and its
+maximum is the positive part of the Gaussian variable.
 -/
 
 open MeasureTheory ProbabilityTheory MathlibExt.Probability.GenericChaining
