@@ -17,6 +17,7 @@ public import MathlibExt.Combinatorics.Enumerative.GaleShapleyOneRound
 public import MathlibExt.Combinatorics.Enumerative.StableMatchingDisjointProfiles
 public import MathlibExt.Combinatorics.Enumerative.GaleShapleySameTaste
 public import MathlibExt.Combinatorics.Enumerative.StableMatchingHellCouples
+public import MathlibExt.Combinatorics.Enumerative.StableMatchingLatinSoulmates
 public import MathlibExt.Combinatorics.Enumerative.StableMatchingOutcastProfiles
 public import MathlibExt.Combinatorics.Enumerative.StableMatchingSequences
 public import MathlibExt.Combinatorics.Enumerative.StableMatchingSoulmates
@@ -76,23 +77,6 @@ public theorem_wanted soulmate_profiles_card (n k : ℕ) :
         ∑ i ∈ range (n - k + 1),
           (-1 : ℤ) ^ i * ((n - k).choose i : ℤ) ^ 2 * ((n - 1)! : ℤ) ^ (2 * i) * (i ! : ℤ) *
             (n ! : ℤ) ^ (2 * n - 2 * k - 2 * i)
-
-/-- **Profiles with Latin-square men's preferences, counted by soulmate pairs.** For all
-$n, k \in \mathbb{N}$, the number of preference profiles of $n$ men and $n$ women in which, for
-every position $r$, different men rank different women at position $r$ (the men's rankings form
-a Latin square), and which have exactly $k$ soulmate pairs, is
-$$L_n \binom{n}{k} (n-1)^{n-k} ((n-1)!)^n,$$
-where $L_n$ is the number of Latin squares of order $n$.
-
-Here $n - 1$ and $n - k$ are truncated subtractions in $\mathbb{N}$.
-
-Source: Borodin et al., *Sequences of the Stable Matching Problem*, Journal of
-Integer Sequences 27 (2024), Article 24.2.2, Theorem 8
-(`jis-2024-24.2.2-thm-8`). -/
-public theorem_wanted men_latin_soulmate_profiles_card (n k : ℕ) :
-    Nat.card {P : PreferenceProfile n //
-        (∀ r : Fin n, Function.Injective fun i => P.1 i r) ∧ soulmatePairCount P = k} =
-      latinSquareCount n * n.choose k * (n - 1) ^ (n - k) * ((n - 1)!) ^ n
 
 /-- **Mutually Latin profiles with $k$ soulmate pairs.** Let $n$ and $k$ be natural numbers and
 let $L_n$ be the number of Latin squares of order $n$. Call the men's preferences of a preference
