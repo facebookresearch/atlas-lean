@@ -50,7 +50,7 @@ Each page states its result precisely, with its locator in those notes.
 
 ## Proof depends on
 
-- [Homothetic period pairs](../../../../Analysis/special-functions/elliptic-functions/homothetic-complex-period-lattices/is-homothetic.md), for lattices with the same $j$-invariant being homothetic
+- [Homothetic period pairs](../../../../Analysis/special-functions/elliptic-functions/homothetic-complex-period-lattices/is-homothetic.md), for homothety of lattices
 
 ## Sources
 
