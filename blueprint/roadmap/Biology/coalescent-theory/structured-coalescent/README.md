@@ -50,3 +50,7 @@
 - [IBD sharing under migration](ibd-sharing-under-migration/README.md)
 - [Semelparous age-structured coalescent](semelparous-age-structured-coalescent/README.md)
 - [Branch lengths of the seed-bank coalescent](branch-lengths-of-the-seed-bank-coalescent/README.md)
+
+- [The coalescent with partial self-fertilization](partial-selfing-coalescent.md)
+
+- [Duality between structured diffusions and the structured coalescent](structured-coalescent-duality.md)

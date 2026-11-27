@@ -12,3 +12,5 @@
 - [Kimura's fixation probability is below x for σ < 0 and 0 < x < 1](kimura-fixation-lt.md)
 - [Kimura's fixation probability increases strictly in σ for 0 < x < 1](strict-mono-kimura-fixation-in-sigma.md)
 - [Derivative of Kimura's fixation probability in σ at σ = 0](has-deriv-at-kimura-fixation-sigma-zero.md)
+
+- [Second-order expansion of Kimura's fixation probability in σ](neutral-perturbation-expansion.md)

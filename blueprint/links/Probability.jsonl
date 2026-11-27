@@ -6870,3 +6870,4 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/Probability/markov-chains/mixing-time-bounds/glauber-dynamics-for-proper-colorings/approximate-counting-of-colorings.md"}], "id": "af_9927054bfc42fb0c5e2ce654", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
 {"subject":[{"type":"generic","uri":"../roadmap/Probability/high-dimensional-probability/gaussian-partitions/README.md"}],"id":"af_af134ab57838602c8fc86752"}
 {"subject":[{"type":"generic","uri":"../roadmap/Probability/high-dimensional-probability/log-concave-sampling/README.md"}],"id":"af_93827cfde2b2265021638dbd"}
+{"subject": [{"type": "generic", "uri": "../roadmap/Probability/linear-models-multivariate/factor-analysis-and-structural-equation-models/wrights-method-of-path-coefficients.md"}], "id": "af_23c0199ed903eb2428abb538", "extensions": {"org.atlas-wiki": {"kind": "theorem"}, "org.autoform": {"not_ready": true}}}
