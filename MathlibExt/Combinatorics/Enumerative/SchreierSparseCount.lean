@@ -24,8 +24,8 @@ one for each unit by which the minimum exceeds the cardinality.
 For `k ≥ 2`, the sparse `ℓ`-strong Schreier sets with maximum `n + 1` and `k + 1` elements whose
 two largest gaps are equal are as many as the partitions of `n` into exactly `k` parts, all at
 least `ℓ + 1`. The bijection of Beanland and Chu adds `ℓ` to every gap, then adds the excess of
-the minimum over `ℓ k + 1` to one of the two largest parts. Summing over `k ≥ 2` and adding the
-one-part partition gives the total count.
+the minimum over `ℓ k + 1` to one of the two largest parts.
+When `n ≥ ℓ + 1`, summing over `k ≥ 2` and adding the one-part partition gives the total count.
 
 ## References
 
