@@ -20,6 +20,7 @@ public import MathlibExt.Combinatorics.Enumerative.CatalanBernstein
 public import MathlibExt.Combinatorics.Enumerative.CentralBinomialBernstein
 public import MathlibExt.Combinatorics.Enumerative.CosinePowerIntegral
 public import MathlibExt.Combinatorics.Enumerative.ParityWeightedBinomialSum
+public import MathlibExt.Combinatorics.Enumerative.TouchardCatalanIdentity
 public import MathlibExt.Combinatorics.KnuthEvenBinomialReciprocal
 
 /-!
@@ -167,16 +168,6 @@ public theorem_wanted integral_cos_pow_mul_sin_cpow (m : ℕ) (v : ℂ) (hv : -1
       else 0
 
 /-! ## Knuth's old sum and its generalizations -/
-
-/-- **Knuth's old sum (the Reed–Dawson identity).** For every natural number $n$, the sum
-$\sum_{k=0}^{n} (-1)^k \binom{n}{k} \binom{2k}{k} 2^{-k}$ equals $2^{-n} \binom{n}{n/2}$ if $n$
-is even and $0$ if $n$ is odd.
-
-Source: Kunle Adegoke, *A Short Proof of Knuth's Old Sum, Generalizations and Related
-Sums*, INTEGERS 26 (2026), Article A19, Theorem 1 (`integers-2026-A19-thm-1`). -/
-public theorem_wanted knuth_old_sum (n : ℕ) :
-    ∑ k ∈ range (n + 1), (-1 : ℚ) ^ k * (n.choose k : ℚ) * ((2 * k).choose k : ℚ) / 2 ^ k =
-      if Even n then (n.choose (n / 2) : ℚ) / 2 ^ n else 0
 
 /-- **Two-parameter generalization of Knuth's old sum.** For all natural numbers $m$ and $n$ and
 every real number $v > -1$,
@@ -946,17 +937,6 @@ public theorem_wanted sum_choose_even_centralBinom_div_succ (n : ℕ) :
     ∑ k ∈ range (n / 2 + 1),
         (n.choose (2 * k) : ℚ) / (k + 1) / 2 ^ (2 * k) * ((2 * k).choose k : ℚ) =
       2 / 2 ^ n / (n + 2) * (2 * n + 1) * catalan n
-
-/-- **Binomial transform of weighted Catalan numbers.** Write $C_m = \binom{2m}{m}/(m+1)$ for the
-$m$-th Catalan number. For every natural number $n$,
-$$\sum_{k=0}^{n} \binom{n}{k} \frac{2k+1}{k+2} \cdot \frac{2}{2^k} C_k =
-\sum_{k=0}^{\lfloor n/2 \rfloor} \binom{n}{2k} \frac{2^n}{2^{4k}} C_k.$$
-
-Source: Kunle Adegoke, *A Short Proof of Knuth's Old Sum, Generalizations and Related
-Sums*, INTEGERS 26 (2026), Article A19, Proposition 5 (`integers-2026-A19-prop-5`). -/
-public theorem_wanted sum_choose_two_mul_add_one_div_catalan (n : ℕ) :
-    ∑ k ∈ range (n + 1), (n.choose k : ℚ) * (2 * k + 1) / (k + 2) * 2 / 2 ^ k * catalan k =
-      ∑ k ∈ range (n / 2 + 1), (n.choose (2 * k) : ℚ) * 2 ^ n / 2 ^ (4 * k) * catalan k
 
 /-- **One-parameter extension of the alternating sum of $\binom{n}{k} \binom{2k}{k}$.**
 Write $\binom{u}{w} = \Gamma(u+1)/(\Gamma(w+1)\,\Gamma(u-w+1))$ for the generalized binomial

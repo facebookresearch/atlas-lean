@@ -138,8 +138,7 @@ theorem hom_ext {X Y Z : SumRelCat.{u}} {f g : Z ⟶ sum X Y}
   | inl x => simpa using congrArg (fun h : Z ⟶ X => (z, x) ∈ h.rel) hf
   | inr y => simpa using congrArg (fun h : Z ⟶ Y => (z, y) ∈ h.rel) hg
 
-/-- The chosen disjoint union has the binary product universal property.
-This is an abbreviation so the chosen tensor object reduces to its sum carrier. -/
+/-- The chosen disjoint union has the binary product universal property. -/
 abbrev binaryProduct (X Y : SumRelCat.{u}) : LimitCone (Limits.pair X Y) where
   cone := BinaryFan.mk (fst X Y) (snd X Y)
   isLimit := BinaryFan.IsLimit.mk _ (fun f g => pair f g)
@@ -287,12 +286,14 @@ theorem whiskerRight_rel {X Y : SumRelCat.{u}} (f : X ⟶ Y) (Z : SumRelCat.{u})
   rw [tensor_rel]
   cases x <;> cases y <;> rfl
 
-/-- The associator is determined by the three relational projections. -/
+/-- The associator is the pairing `⟨π₁ ≫ π₁, ⟨π₁ ≫ π₂, π₂⟩⟩` of the projections
+`(X ⊕ Y) ⊕ Z ⟶ X ⊕ (Y ⊕ Z)`. -/
 theorem associator_hom_eq_pair (X Y Z : SumRelCat.{u}) :
     (α_ X Y Z).hom = pair (fst (sum X Y) Z ≫ fst X Y)
       (pair (fst (sum X Y) Z ≫ snd X Y) (snd (sum X Y) Z)) := rfl
 
-/-- The inverse associator is determined by the same three projections. -/
+/-- The inverse associator is the pairing `⟨⟨π₁, π₂ ≫ π₁⟩, π₂ ≫ π₂⟩` of the projections
+`X ⊕ (Y ⊕ Z) ⟶ (X ⊕ Y) ⊕ Z`. -/
 theorem associator_inv_eq_pair (X Y Z : SumRelCat.{u}) :
     (α_ X Y Z).inv = pair (pair (fst X (sum Y Z)) (snd X (sum Y Z) ≫ fst Y Z))
       (snd X (sum Y Z) ≫ snd Y Z) := rfl
