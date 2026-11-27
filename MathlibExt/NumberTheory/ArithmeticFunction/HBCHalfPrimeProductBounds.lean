@@ -37,7 +37,20 @@ $2$, the prefix products of the tail are large, which forces $\kappa$ to be larg
 $d \alpha^{2^\kappa}$ with the constants of the statement then gives the four bounds.
 
 The same recursion gives Stone's $\sqrt{d}$ product bound for HBC-admissible tuples
-(`MetaMathlibExt.hbcAdmissible_prod_le_sqrt`).
+(`MetaMathlibExt.hbcAdmissible_prod_le_sqrt`). For $p_1 = 5$, splitting at $p_2 = 41$ gives
+Stone's sharper bound: use the tail after $p_1$ when $p_2 \ge 41$, and the tail after $p_2$
+otherwise.
+
+## References
+
+* Andrew Stone, *Improved Upper Bounds for Odd Perfect Numbers -- Part I*, INTEGERS 24 (2024),
+  Article A114, pp. 1–38, Theorem 1, Corollary 1, and Lemmas 7–8.
+* D. R. Heath-Brown, *Odd perfect numbers*, Mathematical Proceedings of the Cambridge
+  Philosophical Society 115 (2) (1994), pp. 191–196 (the original product-bound method).
+* R. J. Cook, *Bounds for odd perfect numbers*, in *Number Theory*, CRM Proceedings & Lecture
+  Notes 19 (1999), pp. 67–71 (prefix-product domination, Stone's Lemma 2).
+* P. P. Nielsen, *Odd perfect numbers, Diophantine equations, and upper bounds*, Mathematics of
+  Computation 84 (295) (2015), pp. 2549–2567, Lemma 1.2 (proof of Cook's inequality).
 -/
 
 namespace MetaMathlibExt
@@ -999,5 +1012,254 @@ public theorem hbcAdmissible_prod_le_sqrt (a d k : ℕ) (ha : 0 < a) (hd : 0 < d
     exact mul_le_mul_of_nonneg_left hds (pow_nonneg (by linarith) _)
   rw [hI (fun i => (y i : ℝ)) k]
   exact range_bound hκ1 hκm hd1 hα1 hκlt hκeq hc
+
+open hbcAdmissible_half_prime_prod_le_of_five_le in
+/-- **Product bound for prime tuples at $1/2$ starting at $5$.** Let $p_1 < p_2 < \dots < p_k$ be
+primes with $\prod_{i=1}^{k} (1 - 1/p_i) \le 1/2 < \prod_{i=1}^{k-1} (1 - 1/p_i)$ and $p_1 = 5$.
+Put $x = \sqrt{8/3^{31/32}}$. Then $\prod_{i=1}^{k} p_i \le x^{2^k} - x^{2^{k-1}}$.
+
+Source: Andrew Stone, *Improved Upper Bounds for Odd Perfect Numbers -- Part I*, INTEGERS 24
+(2024), Article A114, Lemma 8. -/
+public theorem hbcAdmissible_half_prime_prod_le_of_eq_five (k : ℕ) (y : ℕ → ℕ)
+    (hmono : ∀ i, 1 ≤ i → i < k → y i < y (i + 1))
+    (hprime : ∀ i ∈ Finset.Icc 1 k, (y i).Prime)
+    (hle : ∏ i ∈ Finset.Icc 1 k, (1 - 1 / (y i : ℝ)) ≤ 1 / 2)
+    (hlt : 1 / 2 < ∏ i ∈ Finset.Icc 1 (k - 1), (1 - 1 / (y i : ℝ)))
+    (h5 : y 1 = 5) :
+    ∏ i ∈ Finset.Icc 1 k, (y i : ℝ) ≤
+      Real.sqrt (8 / (3 : ℝ) ^ ((31 : ℝ) / 32)) ^ 2 ^ k -
+        Real.sqrt (8 / (3 : ℝ) ^ ((31 : ℝ) / 32)) ^ 2 ^ (k - 1) := by
+  have hk2 : 2 ≤ k := by
+    by_contra! hk
+    interval_cases k
+    · norm_num at hle
+    · rw [Icc_self, prod_singleton, h5] at hle
+      norm_num at hle
+  obtain ⟨m, rfl⟩ : ∃ m, k = m + 1 := ⟨k - 1, by omega⟩
+  have hm1 : 1 ≤ m := by omega
+  have hp (i : ℕ) (hi : 1 ≤ i) (him : i ≤ m + 1) : (y i).Prime :=
+    hprime i (mem_Icc.mpr ⟨hi, him⟩)
+  have gap (i : ℕ) (hi : 1 ≤ i) (him : i < m + 1) (hy : 5 ≤ y i) : y i + 2 ≤ y (i + 1) := by
+    have hlt' := hmono i hi him
+    have ho := Nat.odd_iff.mp ((hp i hi (by omega)).odd_of_ne_two (by omega))
+    have ho' := Nat.odd_iff.mp ((hp (i + 1) (by omega) (by omega)).odd_of_ne_two (by omega))
+    omega
+  have hq7 : 7 ≤ y 2 := by
+    have h : y 1 + 2 ≤ y 2 := gap 1 le_rfl (by omega) (by simp [h5])
+    omega
+  have hle' : ∏ i ∈ range m, (1 - 1 / (y (i + 2) : ℝ)) ≤ 5 / 8 := by
+    rw [prod_Icc_one_eq (fun i => 1 - 1 / (y i : ℝ)) m, h5] at hle
+    rw [Nat.cast_ofNat, show (1 - 1 / (5 : ℝ)) = 4 / 5 by norm_num] at hle
+    linarith
+  have hlt' : 5 / (8 : ℝ) < ∏ i ∈ range (m - 1), (1 - 1 / (y (i + 2) : ℝ)) := by
+    obtain ⟨n, hn⟩ : ∃ n, m = n + 1 := ⟨m - 1, by omega⟩
+    rw [Nat.add_sub_cancel, hn, prod_Icc_one_eq (fun i => 1 - 1 / (y i : ℝ)) n, h5] at hlt
+    rw [hn, Nat.add_sub_cancel]
+    rw [Nat.cast_ofNat, show (1 - 1 / (5 : ℝ)) = 4 / 5 by norm_num] at hlt
+    linarith
+  let c : ℝ := 8 / (3 : ℝ) ^ ((31 : ℝ) / 32)
+  have hc : 0 ≤ c := by dsimp [c]; positivity
+  have hc32 : c ^ 32 = 8 ^ 32 / 3 ^ 31 := by
+    dsimp [c]
+    rw [div_pow, ← Real.rpow_natCast ((3 : ℝ) ^ ((31 : ℝ) / 32)),
+      ← Real.rpow_mul (by norm_num)]
+    norm_num
+  have hcs : Real.sqrt c ^ 2 ^ m = c ^ 2 ^ (m - 1) := by
+    obtain ⟨n, rfl⟩ : ∃ n, m = n + 1 := ⟨m - 1, by omega⟩
+    rw [sqrt_pow_two_pow hc, Nat.add_sub_cancel]
+  change ∏ i ∈ Icc 1 (m + 1), (y i : ℝ) ≤
+    Real.sqrt c ^ 2 ^ (m + 1) - Real.sqrt c ^ 2 ^ (m + 1 - 1)
+  rw [prod_Icc_one_eq (fun i => (y i : ℝ)) m, h5, Nat.cast_ofNat, Nat.add_sub_cancel,
+    sqrt_pow_two_pow hc, hcs]
+  by_cases hq41 : 41 ≤ y 2
+  · -- At `p₂ ≥ 41`, the first four tail prefixes exceed their calibrating bounds.
+    let low : ℕ → ℝ
+      | 0 => 41
+      | 1 => 43
+      | 2 => 47
+      | 3 => 53
+      | _ => 0
+    have h43 (hm : 2 ≤ m) : 43 ≤ y 3 := by
+      have h : y 2 + 2 ≤ y 3 := gap 2 (by decide) (by omega) (by omega)
+      omega
+    have h47 (hm : 3 ≤ m) : 47 ≤ y 4 := by
+      have := h43 (by omega)
+      have hg : y 3 + 2 ≤ y 4 := gap 3 (by decide) (by omega) (by omega)
+      have hp4 := hp 4 (by decide) (by omega)
+      have ho := Nat.odd_iff.mp (hp4.odd_of_ne_two (by omega))
+      by_contra! h
+      have he : y 4 = 45 := by omega
+      rw [he] at hp4
+      norm_num at hp4
+    have h53 (hm : 4 ≤ m) : 53 ≤ y 5 := by
+      have := h47 (by omega)
+      have hg : y 4 + 2 ≤ y 5 := gap 4 (by decide) (by omega) (by omega)
+      have hp5 := hp 5 (by decide) (by omega)
+      have ho := Nat.odd_iff.mp (hp5.odd_of_ne_two (by omega))
+      by_contra! h
+      obtain he | he : y 5 = 49 ∨ y 5 = 51 := by omega
+      · rw [he] at hp5
+        norm_num at hp5
+      · rw [he] at hp5
+        norm_num at hp5
+    have hlow (j : ℕ) (hj : j ≤ m) :
+        ∏ i ∈ range j, low i ≤ ∏ i ∈ range j, (y (i + 2) : ℝ) := by
+      apply prod_le_prod₀
+      · intro i _
+        by_cases hi : i < 4
+        · interval_cases i <;> norm_num [low]
+        · obtain ⟨n, rfl⟩ : ∃ n, i = n + 4 := ⟨i - 4, by omega⟩
+          simp [low]
+      · intro i hi
+        rw [mem_range] at hi
+        by_cases hi4 : i < 4
+        · interval_cases i
+          · change (41 : ℝ) ≤ y 2
+            exact_mod_cast hq41
+          · change (43 : ℝ) ≤ y 3
+            exact_mod_cast h43 (by omega)
+          · change (47 : ℝ) ≤ y 4
+            exact_mod_cast h47 (by omega)
+          · change (53 : ℝ) ≤ y 5
+            exact_mod_cast h53 (by omega)
+        · obtain ⟨n, rfl⟩ : ∃ n, i = n + 4 := ⟨i - 4, by omega⟩
+          simp [low]
+    have hcheck : ∀ j, 1 ≤ j → j < 5 →
+        (3 : ℝ) * (8 / 3) ^ 2 ^ j < 5 * (∏ i ∈ range j, low i) + 3 := by
+      intro j hj1 hj5
+      interval_cases j <;> norm_num [prod_range_succ, low]
+    obtain ⟨κ, hκ1, hκm, hfirst, hκlt, hκeq⟩ := hbc_recursion m 5 3 (fun i => y (i + 2))
+      (by decide) (by decide) hm1 (fun i hi => hmono (i + 2) (by omega) (by omega))
+      (by change 0 < y 2; omega)
+      (by simpa only [Nat.cast_ofNat, show (5 : ℝ) + 3 = 8 by norm_num] using hle')
+      (by simpa only [Nat.cast_ofNat, show (5 : ℝ) + 3 = 8 by norm_num] using hlt')
+    norm_num at hfirst hκlt hκeq
+    have hκ5 : 5 ≤ κ := le_index (A := 8 / 3) hκ1 hκm (by norm_num) (by norm_num)
+      (by norm_num) le_rfl hlow hfirst hcheck
+    have hpow : (3 : ℝ) * (8 / 3) ^ 2 ^ κ ≤ c ^ 2 ^ κ := by
+      apply lift_pow hκ5 (by norm_num) (by norm_num)
+      change (3 : ℝ) * (8 / 3) ^ 32 ≤ c ^ 32
+      rw [hc32]
+      norm_num
+    exact range_bound hκ1 hκm (by norm_num) (by norm_num) hκlt hκeq hpow
+  · -- For `7 ≤ p₂ < 41`, remove the second prime before using the recursion.
+    have hq7R : (7 : ℝ) ≤ y 2 := by exact_mod_cast hq7
+    have hm2 : 2 ≤ m := by
+      by_contra! hm
+      interval_cases m
+      rw [prod_range_one] at hle'
+      have hinv : 1 / (y 2 : ℝ) ≤ 1 / 7 := one_div_le_one_div_of_le (by norm_num) hq7R
+      change 1 - 1 / (y 2 : ℝ) ≤ 5 / 8 at hle'
+      linarith
+    obtain ⟨n, rfl⟩ : ∃ n, m = n + 1 := ⟨m - 1, by omega⟩
+    have hn1 : 1 ≤ n := by omega
+    let q := y 2
+    have hq0 : 0 < (q : ℝ) := by dsimp [q]; linarith
+    have hq7' : (7 : ℝ) ≤ q := hq7R
+    have hq40 : (q : ℝ) ≤ 40 := by exact_mod_cast (show q ≤ 40 by omega)
+    let a : ℕ := 5 * q
+    let d : ℕ := 3 * q - 8
+    have ha0 : 0 < a := by dsimp [a, q]; omega
+    have hdpos : 0 < d := by dsimp [d, q]; omega
+    have haR : (a : ℝ) = 5 * (q : ℝ) := by simp [a]
+    have hdR : (d : ℝ) = 3 * (q : ℝ) - 8 := by
+      change ((3 * q - 8 : ℕ) : ℝ) = _
+      rw [Nat.cast_sub (by omega)]
+      push_cast
+      rfl
+    have ha0R : (0 : ℝ) < a := by exact_mod_cast ha0
+    have hd0R : (0 : ℝ) < d := by exact_mod_cast hdpos
+    have hd1 : (1 : ℝ) ≤ d := by exact_mod_cast hdpos
+    have hd112 : (d : ℝ) ≤ 112 := by rw [hdR]; linarith
+    have hfac : 0 < 1 - 1 / (q : ℝ) := by
+      rw [sub_pos, div_lt_one hq0]
+      linarith
+    have hcancel : (5 / 8 : ℝ) / (1 - 1 / (q : ℝ)) = (a : ℝ) / (a + d) := by
+      rw [haR, hdR]
+      rw [div_eq_div_iff hfac.ne' (by linarith)]
+      field_simp [hq0.ne']
+      ring
+    have hsplit (f : ℕ → ℝ) (j : ℕ) :
+        ∏ i ∈ range (j + 1), f (i + 2) = f 2 * ∏ i ∈ range j, f (i + 3) := by
+      simpa only [prod_range_one, Nat.add_sub_cancel, Nat.zero_add,
+        show ∀ i : ℕ, 1 + i + 2 = i + 3 by omega] using
+        prod_range_split (κ := 1) (m := j + 1) (fun i => f (i + 2)) (by omega)
+    have hle'' : ∏ i ∈ range n, (1 - 1 / (y (i + 3) : ℝ)) ≤ (a : ℝ) / (a + d) := by
+      rw [← hcancel, le_div_iff₀ hfac, mul_comm, ← hsplit (fun j => 1 - 1 / (y j : ℝ)) n]
+      exact hle'
+    have hlt'' : (a : ℝ) / (a + d) < ∏ i ∈ range (n - 1), (1 - 1 / (y (i + 3) : ℝ)) := by
+      obtain ⟨r, hr⟩ : ∃ r, n = r + 1 := ⟨n - 1, by omega⟩
+      rw [← hcancel, div_lt_iff₀ hfac, mul_comm, hr, Nat.add_sub_cancel,
+        ← hsplit (fun j => 1 - 1 / (y j : ℝ)) r]
+      simpa only [Nat.add_sub_cancel, hr] using hlt'
+    have h11 : 11 ≤ y 3 := by
+      have hg : y 2 + 2 ≤ y 3 := gap 2 (by decide) (by omega) (by omega)
+      have hp3 := hp 3 (by decide) (by omega)
+      have ho := Nat.odd_iff.mp (hp3.odd_of_ne_two (by omega))
+      by_contra! h
+      have he : y 3 = 9 := by omega
+      rw [he] at hp3
+      norm_num at hp3
+    have h13 (hn : 2 ≤ n) : 13 ≤ y 4 := by
+      have h : y 3 + 2 ≤ y 4 := gap 3 (by decide) (by omega) (by omega)
+      omega
+    let low : ℕ → ℝ
+      | 0 => 11
+      | 1 => 13
+      | _ => 0
+    have hlow0 (i : ℕ) : 0 ≤ low i := by
+      by_cases hi : i < 2
+      · interval_cases i <;> norm_num [low]
+      · obtain ⟨r, rfl⟩ : ∃ r, i = r + 2 := ⟨i - 2, by omega⟩
+        simp [low]
+    have hlow (j : ℕ) (hj : j ≤ n) :
+        ∏ i ∈ range j, low i ≤ ∏ i ∈ range j, (y (i + 3) : ℝ) := by
+      apply prod_le_prod₀ (fun i _ => hlow0 i)
+      intro i hi
+      rw [mem_range] at hi
+      by_cases hi2 : i < 2
+      · interval_cases i
+        · change (11 : ℝ) ≤ y 3
+          exact_mod_cast h11
+        · change (13 : ℝ) ≤ y 4
+          exact_mod_cast h13 (by omega)
+      · obtain ⟨r, rfl⟩ : ∃ r, i = r + 2 := ⟨i - 2, by omega⟩
+        simp [low]
+    have hcheck : ∀ j, 1 ≤ j → j < 3 →
+        (d : ℝ) * (48 / 13) ^ 2 ^ j < a * (∏ i ∈ range j, low i) + d := by
+      intro j hj1 hj3
+      have hnum : (48 / 13 : ℝ) ^ 2 ^ j < 5 / 3 * (∏ i ∈ range j, low i) + 1 := by
+        interval_cases j <;> norm_num [prod_range_succ, low]
+      have had : (5 / 3 : ℝ) * d ≤ a := by rw [haR, hdR]; linarith
+      have hprod0 : 0 ≤ ∏ i ∈ range j, low i := prod_nonneg (fun i _ => hlow0 i)
+      have hprod := mul_le_mul_of_nonneg_right had hprod0
+      nlinarith only [mul_lt_mul_of_pos_left hnum hd0R, hprod]
+    obtain ⟨κ, hκ1, hκn, hfirst, hκlt, hκeq⟩ := hbc_recursion n a d (fun i => y (i + 3))
+      ha0 hdpos hn1 (fun i hi => hmono (i + 3) (by omega) (by omega))
+      (by change 0 < y 3; omega) hle'' hlt''
+    let α : ℝ := (a + d) / d
+    have hα1 : 1 ≤ α := by dsimp [α]; rw [le_div_iff₀ hd0R]; linarith
+    have hα0 : 0 ≤ α := zero_le_one.trans hα1
+    have hαle : α ≤ 48 / 13 := by
+      dsimp [α]
+      rw [div_le_iff₀ hd0R, haR, hdR]
+      linarith
+    have hκ3 : 3 ≤ κ := le_index hκ1 hκn ha0R.le hd0R.le hα0 hαle hlow hfirst hcheck
+    have hc7 : (7 : ℝ) ≤ c ^ 2 := by
+      rw [← pow_le_pow_iff_left₀ (by norm_num) (pow_nonneg hc _) (by decide : (16 : ℕ) ≠ 0),
+        ← pow_mul, show 2 * 16 = 32 by norm_num, hc32]
+      norm_num
+    have hpow : (d : ℝ) * α ^ 2 ^ κ ≤ (c ^ 2) ^ 2 ^ κ := by
+      apply lift_pow hκ3 hd1 hα0
+      change (d : ℝ) * α ^ 8 ≤ (c ^ 2) ^ 8
+      calc
+        _ ≤ 112 * (48 / 13) ^ 8 :=
+          mul_le_mul hd112 (pow_le_pow_left₀ hα0 hαle _) (pow_nonneg hα0 _) (by norm_num)
+        _ ≤ 7 ^ 8 := by norm_num
+        _ ≤ _ := pow_le_pow_left₀ (by norm_num) hc7 _
+    rw [hsplit (fun j => (y j : ℝ)) n, ← mul_assoc, ← haR, Nat.add_sub_cancel]
+    have hres := range_bound hκ1 hκn hd1 hα1 hκlt hκeq hpow
+    rw [← pow_mul, ← pow_mul, ← pow_succ', ← pow_succ', Nat.sub_add_cancel hn1] at hres
+    exact hres
 
 end MetaMathlibExt
