@@ -18,13 +18,16 @@ name: Mathlib linters
 on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
-    # The Lean sources of the production libraries, and this job's own code.
+    # The Lean sources of the production libraries, the toolchain pins, and this
+    # job's own code.
     paths:
       - "MathlibExt/**.lean"
       - "CSLibExt/**.lean"
       - "PhyslibExt/**.lean"
       - "Domains/**.lean"
       - "WantedExt/**.lean"
+      - "lean-toolchain"
+      - "lake-manifest.json"
       - ".github/workflows/linters.yml"
       - "scripts/lean_changes.py"
       - "scripts/check_*_linters.py"
@@ -64,8 +67,9 @@ jobs:
 
       # A pull request that changes the toolchain or the manifest has no build
       # to restore, so its Lean files are linted by the pull requests after it.
-      # One that changes the checks also runs them end to end on a probe module,
-      # which needs only Mathlib's cache.
+      # It runs the checks end to end on a probe module instead, which needs
+      # only Mathlib's cache, so that a bump that changes what the tools print
+      # shows up on the bump itself; so does one that changes the checks.
       - name: Decide what to run
         id: scope
         run: |
@@ -81,7 +85,8 @@ jobs:
           fi
           self_test=false
           if ! git diff --quiet HEAD^1 HEAD -- .github/workflows/linters.yml scripts/lean_changes.py \
-              'scripts/check_*_linters.py' scripts/linters_self_test.py scripts/bump/pinned_bump.py; then
+              'scripts/check_*_linters.py' scripts/linters_self_test.py scripts/bump/pinned_bump.py \
+              lean-toolchain lake-manifest.json; then
             self_test=true
           fi
           setup=false
