@@ -183,88 +183,34 @@ theorem integralGalois_mul (σ τ : PadicAlgCl p ≃ₐ[ℚ_[p]] PadicAlgCl p) :
 theorem integralGalois_one : integralGalois p 1 = RingEquiv.refl _ :=
   RingEquiv.ext fun x => Subtype.ext (completionGalois_one_apply p x)
 
-/-- The map of adic completions induced by a composite of ring maps is the composite of their
-maps. -/
-private theorem mapRingHom_comp {A B C : Type*} [CommRing A] [CommRing B] [CommRing C]
-    (I : Ideal A) (J : Ideal B) (K : Ideal C) {f : A →+* B} {g : B →+* C} {k : A →+* C}
-    (hf : I.map f ≤ J) (hg : J.map g ≤ K) (hk : I.map k ≤ K) (hgf : k = g.comp f) :
-    AdicCompletion.mapRingHom I K k hk =
-      (AdicCompletion.mapRingHom J K g hg).comp (AdicCompletion.mapRingHom I J f hf) := by
-  subst hgf
-  refine RingHom.ext fun x => AdicCompletion.ext_evalₐ fun n => ?_
-  rw [RingHom.comp_apply, AdicCompletion.evalₐ_mapRingHom, AdicCompletion.evalₐ_mapRingHom,
-    AdicCompletion.evalₐ_mapRingHom]
-  obtain ⟨a, ha⟩ := Ideal.Quotient.mk_surjective (AdicCompletion.evalₐ I n x)
-  rw [← ha]
-  rfl
-
-/-- The map of adic completions induced by the identity is the identity. -/
-private theorem mapRingHom_id {A : Type*} [CommRing A] (I : Ideal A) {k : A →+* A}
-    (hk : I.map k ≤ I) (hk' : k = RingHom.id A) :
-    AdicCompletion.mapRingHom I I k hk = RingHom.id _ := by
-  subst hk'
-  refine RingHom.ext fun x => AdicCompletion.ext_evalₐ fun n => ?_
-  rw [AdicCompletion.evalₐ_mapRingHom, RingHom.id_apply]
-  obtain ⟨a, ha⟩ := Ideal.Quotient.mk_surjective (AdicCompletion.evalₐ I n x)
-  rw [← ha]
-  rfl
-
-/-- The map of `B_dR^+` induced by a composite of ring maps of `𝓞_ℂ_[p]` is the composite of
-their maps. -/
-private theorem bDeRhamPlus_map_comp (g f : 𝓞_ℂ_[p] →+* 𝓞_ℂ_[p]) :
-    BDeRhamPlus.map p (g.comp f) = (BDeRhamPlus.map p g).comp (BDeRhamPlus.map p f) :=
-  mapRingHom_comp _ _ _ _ _ _ <| by
-    rw [PreTilt.map_comp, WittVector.map_comp, Localization.awayMapNatCast_comp]
-
-/-- The map of `B_dR^+` induced by the identity of `𝓞_ℂ_[p]` is the identity. -/
-private theorem bDeRhamPlus_map_id : BDeRhamPlus.map p (RingHom.id 𝓞_ℂ_[p]) = RingHom.id 𝔹⁺ :=
-  mapRingHom_id _ _ <| by
-    rw [PreTilt.map_id, WittVector.map_id, Localization.awayMapNatCast_id]
-
 /-- The action on `B_dR^+` is multiplicative: `σ * τ` acts as `τ` followed by `σ`. -/
 theorem galoisBDeRhamPlus_mul (σ τ : PadicAlgCl p ≃ₐ[ℚ_[p]] PadicAlgCl p) :
     galoisBDeRhamPlus p (σ * τ) = (galoisBDeRhamPlus p σ).comp (galoisBDeRhamPlus p τ) :=
   AlgHom.toRingHom_injective <| by
     rw [AlgHom.comp_toRingHom, galoisBDeRhamPlus_toRingHom, galoisBDeRhamPlus_toRingHom,
       galoisBDeRhamPlus_toRingHom, integralGalois_mul]
-    exact bDeRhamPlus_map_comp p (integralGalois p σ).toRingHom (integralGalois p τ).toRingHom
+    exact BDeRhamPlus.map_comp p (integralGalois p σ).toRingHom (integralGalois p τ).toRingHom
 
 /-- The identity of `Gal(ℚ̄_p/ℚ_p)` acts trivially on `B_dR^+`. -/
 @[simp]
 theorem galoisBDeRhamPlus_one : galoisBDeRhamPlus p 1 = AlgHom.id ℚ_[p] _ :=
   AlgHom.toRingHom_injective <| by
     rw [galoisBDeRhamPlus_toRingHom, integralGalois_one, AlgHom.id_toRingHom]
-    exact bDeRhamPlus_map_id p
-
-/-- The map of `B_dR` induced by a composite of ring isomorphisms of `𝓞_ℂ_[p]` is the composite
-of their maps. -/
-private theorem mapOfRingEquiv_trans (e₁ e₂ : 𝓞_ℂ_[p] ≃+* 𝓞_ℂ_[p]) :
-    BDeRham.mapOfRingEquiv p (e₁.trans e₂) =
-      (BDeRham.mapOfRingEquiv p e₂).comp (BDeRham.mapOfRingEquiv p e₁) :=
-  IsLocalization.ringHom_ext (BDeRham.submonoid 𝓞_ℂ_[p] p) <| RingHom.ext fun x => by
-    simp only [RingHom.comp_apply, BDeRham.mapOfRingEquiv_algebraMap]
-    exact congrArg (algebraMap 𝔹⁺ 𝔹)
-      (RingHom.congr_fun (bDeRhamPlus_map_comp p e₂.toRingHom e₁.toRingHom) x)
-
-/-- The map of `B_dR` induced by the identity of `𝓞_ℂ_[p]` is the identity. -/
-private theorem mapOfRingEquiv_refl :
-    BDeRham.mapOfRingEquiv p (RingEquiv.refl 𝓞_ℂ_[p]) = RingHom.id 𝔹 :=
-  IsLocalization.ringHom_ext (BDeRham.submonoid 𝓞_ℂ_[p] p) <| RingHom.ext fun x => by
-    simp only [RingHom.comp_apply, BDeRham.mapOfRingEquiv_algebraMap, RingHom.id_apply]
-    exact congrArg (algebraMap 𝔹⁺ 𝔹) (RingHom.congr_fun (bDeRhamPlus_map_id p) x)
+    exact BDeRhamPlus.map_id p
 
 /-- The action on `B_dR` is multiplicative: `σ * τ` acts as `τ` followed by `σ`. -/
 theorem galoisBDeRham_mul (σ τ : PadicAlgCl p ≃ₐ[ℚ_[p]] PadicAlgCl p) :
     galoisBDeRham p (σ * τ) = (galoisBDeRham p σ).comp (galoisBDeRham p τ) :=
   AlgHom.toRingHom_injective <| by
     rw [AlgHom.comp_toRingHom, galoisBDeRham_toRingHom, galoisBDeRham_toRingHom,
-      galoisBDeRham_toRingHom, integralGalois_mul, mapOfRingEquiv_trans]
+      galoisBDeRham_toRingHom, integralGalois_mul, BDeRham.mapOfRingEquiv_trans]
 
 /-- The identity of `Gal(ℚ̄_p/ℚ_p)` acts trivially on `B_dR`. -/
 @[simp]
 theorem galoisBDeRham_one : galoisBDeRham p 1 = AlgHom.id ℚ_[p] _ :=
   AlgHom.toRingHom_injective <| by
-    rw [galoisBDeRham_toRingHom, integralGalois_one, mapOfRingEquiv_refl, AlgHom.id_toRingHom]
+    rw [galoisBDeRham_toRingHom, integralGalois_one, BDeRham.mapOfRingEquiv_refl,
+      AlgHom.id_toRingHom]
 
 /-! ### Equivariance of `θ` -/
 
