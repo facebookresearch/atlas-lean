@@ -102,20 +102,6 @@ public theorem_wanted tsum_catalan_mul_harmonic_div_four_pow_mul_binom {z : ℂ}
           (1 - z * (Complex.digamma (z + 1) + Real.eulerMascheroniConstant)) +
         2 * z * ∑' j : ℕ, (1 / ((j : ℂ) + z) ^ 2 - 1 / ((j : ℂ) + z + 1 / 2) ^ 2)
 
-/-- **Catalan series over powers of $4$ equal to $4\ln 2$ and $4\ln 2 - 2$.** Let $C_n$ be the
-$n$-th Catalan number. Then
-$$\sum_{n=0}^{\infty} \frac{2n+1}{n+1} \cdot \frac{C_n}{4^n} = 4\ln 2$$
-and
-$$\sum_{n=0}^{\infty} \frac{2n+1}{(n+1)(n+2)} \cdot \frac{C_n}{4^n} = 4\ln 2 - 2.$$
-
-Source: Kunle Adegoke and Robert Frontczak, *Series Associated with a Forgotten Identity of
-Nörlund*, INTEGERS 25 (2025), Article A18, Theorem 5, first two identities
-(`integers-2025-A18-thm-5`). -/
-public theorem_wanted tsum_odd_mul_catalan_div_four_pow_special :
-    ∑' n : ℕ, (2 * (n : ℝ) + 1) / ((n : ℝ) + 1) * catalan n / 4 ^ n = 4 * Real.log 2 ∧
-      ∑' n : ℕ, (2 * (n : ℝ) + 1) / (((n : ℝ) + 1) * ((n : ℝ) + 2)) * catalan n / 4 ^ n =
-        4 * Real.log 2 - 2
-
 /-- **Digamma evaluation of the $n$-weighted Catalan series with binomial denominators.** Let
 $C_n$ be the $n$-th Catalan number and $\psi$ the digamma function, and for complex $z$ write
 $\binom{n+z}{n} = \prod_{j=1}^{n} (z+j)/j$. For every complex number $z$ with

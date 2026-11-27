@@ -1,0 +1,3 @@
+# A Boolean function is a concatenation of its blocks
+
+Let $n$ and $k$ be natural numbers; for a finite list $W = (W_0, \dots, W_{m-1})$ of Boolean functions on $\{0,1\}^n$, its concatenation $W_0 \cdot W_1 \cdots W_{m-1}$ on $n + k$ variables sends $(x, y)$, with $x \in \{0,1\}^n$ and $y \in \{0,1\}^k$, to $W_{\iota(y)}(x)$, where $\iota(y) = \sum_{j < k} y_j 2^j$; here and below $W_i$ denotes the constant function $0$ when $i \ge m$. For a Boolean function $F$ on $\{0,1\}^{n+k}$ and a natural number $i$, let $F_i$ be the block $x \mapsto F(x_0, \dots, x_{n-1}, \beta_0(i), \dots, \beta_{k-1}(i))$, where $\beta_j(i)$ is bit $j$ of $i$. Then $F$ equals the concatenation of $W$ on $n + k$ variables if and only if $F_i = W_i$ for every $i < 2^k$.

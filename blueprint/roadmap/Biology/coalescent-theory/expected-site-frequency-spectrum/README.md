@@ -41,3 +41,4 @@
 - [Expected folded site frequency spectrum under Kingman's coalescent](integral-folded-count-kingman.md)
 
 - [Expected total age of mutations of a given size in Kingman's coalescent](expected-total-age-of-size-i-mutations-explicit.md)
+- [Simulation-based composite likelihood of the site frequency spectrum](simulation-based-sfs-composite-likelihood.md)
