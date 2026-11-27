@@ -14,8 +14,11 @@ public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.Data.Nat.Factorial.Basic
 public import Mathlib.Data.Rat.Defs
 public import MathlibExt.Combinatorics.Enumerative.GaleShapleyOneRound
+public import MathlibExt.Combinatorics.Enumerative.StableMatchingDisjointProfiles
+public import MathlibExt.Combinatorics.Enumerative.GaleShapleySameTaste
 public import MathlibExt.Combinatorics.Enumerative.StableMatchingHellCouples
 public import MathlibExt.Combinatorics.Enumerative.StableMatchingSequences
+public import MathlibExt.Combinatorics.Enumerative.StableMatchingSoulmates
 
 set_option autoImplicit false
 
@@ -28,33 +31,6 @@ namespace StableMatchingSequences
 open Finset Nat
 
 variable {n : ℕ}
-
-/-- **Gale–Shapley rounds when all men have the same preferences.** Let $P$ be a preference
-profile for $n$ men and $n$ women in which all men rank the women in the same order. Then the
-men-proposing Gale–Shapley algorithm on $P$ ends in exactly $n$ rounds.
-
-Source: Borodin, Duncan, Litchev, Liu, Moroz, Qian, Raghavan, Rastogi, Voigt,
-and Khovanova, *Sequences of the Stable Matching Problem*, Journal of Integer
-Sequences 27 (2024), Article 24.2.2, Proposition 1
-(`jis-2024-24.2.2-prop-1`). -/
-public theorem_wanted galeShapleyRounds_of_same_taste (P : PreferenceProfile n)
-    (h : ∀ i i' : Fin n, P.1 i = P.1 i') :
-    galeShapleyRounds P = n
-
-/-- **Counting disjoint preference profiles.** Call a preference profile for $n$ men and $n$ women
-disjoint if for every pair of positions $(r, s)$ there is exactly one man–woman pair in which the
-man ranks the woman at position $r$ and the woman ranks the man at position $s$. For every natural
-number $n$, the number of disjoint profiles is at most $(n^2)!$ and is divisible by $(n!)^2$.
-
-Source: Borodin et al., *Sequences of the Stable Matching Problem*, Journal of
-Integer Sequences 27 (2024), Article 24.2.2, Proposition 3
-(`jis-2024-24.2.2-prop-3`). -/
-public theorem_wanted disjoint_profiles_card_le_and_dvd (n : ℕ) :
-    Nat.card {P : PreferenceProfile n //
-        Function.Bijective fun ij : Fin n × Fin n => ((P.1 ij.1).symm ij.2, (P.2 ij.2).symm ij.1)} ≤
-        (n ^ 2)! ∧
-      (n ! ) ^ 2 ∣ Nat.card {P : PreferenceProfile n //
-        Function.Bijective fun ij : Fin n × Fin n => ((P.1 ij.1).symm ij.2, (P.2 ij.2).symm ij.1)}
 
 /-- **Outsiders without soulmate pairs.** Let $n$ and $k$ be natural numbers, where $n - k$ is
 read as $0$ when $k > n$. Consider the $n - k$ men $k, \dots, n - 1$ and the $n - k$ women
@@ -99,22 +75,6 @@ public theorem_wanted soulmate_profiles_card (n k : ℕ) :
         ∑ i ∈ range (n - k + 1),
           (-1 : ℤ) ^ i * ((n - k).choose i : ℤ) ^ 2 * ((n - 1)! : ℤ) ^ (2 * i) * (i ! : ℤ) *
             (n ! : ℤ) ^ (2 * n - 2 * k - 2 * i)
-
-/-- **Profiles with $n - 1$ soulmate pairs.** Let $P$ be a preference profile for $n$ men and $n$
-women with exactly $n - 1$ soulmate pairs (read as $0$ when $n = 0$). Then $P$ has exactly one
-stable matching. Moreover, for every stable matching $\mu$ of $P$ and every man $i$ who has no
-soulmate, the men-proposing Gale–Shapley algorithm on $P$ ends after $r + 1$ rounds, where $r$ is
-the zero-based position at which man $i$ ranks his wife $\mu(i)$.
-
-Source: Borodin et al., *Sequences of the Stable Matching Problem*, Journal of
-Integer Sequences 27 (2024), Article 24.2.2, Proposition 7
-(`jis-2024-24.2.2-prop-7`). -/
-public theorem_wanted unique_stable_matching_of_soulmatePairCount_eq_pred
-    (P : PreferenceProfile n) (h : soulmatePairCount P = n - 1) :
-    (∃! μ : Equiv.Perm (Fin n), IsStableMatching P μ) ∧
-      ∀ μ : Equiv.Perm (Fin n), IsStableMatching P μ →
-        ∀ i : Fin n, (∀ j : Fin n, ¬ IsSoulmatePair P i j) →
-          galeShapleyRounds P = manRank P i (μ i) + 1
 
 /-- **Profiles with Latin-square men's preferences, counted by soulmate pairs.** For all
 $n, k \in \mathbb{N}$, the number of preference profiles of $n$ men and $n$ women in which, for
