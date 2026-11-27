@@ -9,3 +9,7 @@
 - [Dynamic graph problems](dynamic-graph-problems.md)
 - [OMv-hardness of dynamic subgraph connectivity](omv-hardness-of-dynamic-subgraph-connectivity.md)
 - [The online matrix-vector multiplication conjecture](the-online-matrix-vector-multiplication.md)
+- [Binary CNF encodings on finite-stack Turing machines](binary-cnf-on-finite-stack-machines.md)
+- [Zero infimum of deterministic 3-SAT rates on finite-stack machines](three-sat-exponential-rate-on-finite-stack-machines.md)
+- [Uniform exact CNF counting on finite-stack Turing machines](exact-cnf-counting-on-finite-stack-machines.md)
+- [Sparse triangles and thin matrix products](sparse-triangles-and-thin-products/README.md)
