@@ -13908,6 +13908,7 @@
   "MathlibExt/NumberTheory/PrimeCounting/ArithmeticLargeSieve": {"to": "NumberTheory/distribution-of-primes/sieve-methods", "title": "Large sieve"},
   "MathlibExt/NumberTheory/PrimeCounting/AverageOmegaHFree": {"to": "NumberTheory/arithmetic-functions/special-integer-classes", "title": "Prime factors of h-free integers"},
   "MathlibExt/NumberTheory/PrimeCounting/AxlerEffectivePrimeEstimates": {"to": "NumberTheory/distribution-of-primes/prime-number-theorem", "title": "Explicit bounds for the prime-counting function"},
+  "MathlibExt/NumberTheory/PrimeCounting/AxlerMertensRemainder": {"to": "NumberTheory/distribution-of-primes/prime-number-theorem", "title": "Explicit bounds for the prime-counting function"},
   "MathlibExt/NumberTheory/PrimeCounting/BrunConstant": {"to": "NumberTheory/distribution-of-primes/prime-patterns", "title": "Brun's theorem"},
   "MathlibExt/NumberTheory/PrimeCounting/BrunTitchmarsh": {"to": "NumberTheory/distribution-of-primes/primes-in-progressions", "title": "Brun–Titchmarsh theorem"},
   "MathlibExt/NumberTheory/PrimeCounting/BrunTitchmarshUniform": {"to": "NumberTheory/distribution-of-primes/primes-in-progressions", "title": "Brun–Titchmarsh theorem"},
