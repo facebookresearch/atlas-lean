@@ -122,14 +122,6 @@ private theorem coprimePlusMinus (m n : ℤ) (h : Int.gcd m n = 1)
     have ht' := Int.emod_eq_zero_of_dvd ht
     rcases hp with hp | hp <;> omega
 
-private theorem squareModTwo (x : ℤ) : x ^ 2 % 2 = x % 2 := by
-  rcases Int.emod_two_eq_zero_or_one x with hx | hx <;>
-    simp [sq, Int.mul_emod, hx]
-
-private theorem oddSquareModFour (x : ℤ) (hx : x % 2 = 1) : x ^ 2 % 4 = 1 := by
-  have h : x % 4 = 1 ∨ x % 4 = 3 := by omega
-  rcases h with h | h <;> simp [sq, Int.mul_emod, h]
-
 private theorem primitiveDescent (a b c d : ℤ) (ha : 0 < a) (hb : 0 < b)
     (hc : 0 < c) (ht : PythagoreanTriple a b c) (hcop : Int.gcd a b = 1)
     (hao : a % 2 = 1) (harea : a * b = 2 * d ^ 2) :
@@ -164,17 +156,17 @@ private theorem primitiveDescent (a b c d : ℤ) (ha : 0 < a) (hb : 0 < b)
     (by omega) (by simpa [Int.gcd_comm] using hplus) (by linear_combination htSq)
   have hwo : w % 2 = 1 := by
     have h : (m + n) % 2 = 1 := by rcases hpar with h | h <;> omega
-    rwa [hw, squareModTwo] at h
+    rwa [hw, Int.sq_emod_two] at h
   have hzo : z % 2 = 1 := by
     have h : (m - n) % 2 = 1 := by rcases hpar with h | h <;> omega
-    rwa [hz, squareModTwo] at h
+    rwa [hz, Int.sq_emod_two] at h
   have hnEven : n % 2 = 0 := by
-    have hw4 := oddSquareModFour w hwo
-    have hz4 := oddSquareModFour z hzo
+    have hw4 := (Int.sq_emod_four w).trans hwo
+    have hz4 := (Int.sq_emod_four z).trans hzo
     rw [← hw] at hw4
     rw [← hz] at hz4
     omega
-  have hvEven : v % 2 = 0 := by rwa [hv, squareModTwo] at hnEven
+  have hvEven : v % 2 = 0 := by rwa [hv, Int.sq_emod_two] at hnEven
   let p := (w + z) / 2
   let q := (w - z) / 2
   let e := v / 2
@@ -281,9 +273,6 @@ private theorem quarticPlusOne (x y : ℤ) (hx : 1 < x) (hy : 0 ≤ y)
     ring
   · dsimp [b]
     linear_combination 2 * D ^ 2 * hprod
-private theorem oddSquareModEight (x : ℤ) (hx : x % 2 = 1) : x ^ 2 % 8 = 1 := by
-  have h : x % 8 = 1 ∨ x % 8 = 3 ∨ x % 8 = 5 ∨ x % 8 = 7 := by omega
-  rcases h with h | h | h | h <;> simp [sq, Int.mul_emod, h]
 
 private theorem quarticMinusOne (x y : ℤ) (hx : 1 < x)
     (h : x ^ 4 - 1 = 2 * y ^ 2) : False := by
@@ -293,7 +282,9 @@ private theorem quarticMinusOne (x y : ℤ) (hx : 1 < x)
     rcases hxmod with hxmod | hxmod
     · simp [pow_succ, Int.mul_emod, Int.sub_emod, hxmod] at hmod
     · exact hxmod
-  have hx8 := oddSquareModEight x hxo
+  have hx8 : x ^ 2 % 8 = 1 := by
+    obtain ⟨k, hk⟩ := Int.eight_dvd_sq_sub_one_of_odd (Int.odd_iff.mpr hxo)
+    omega
   let u := (x ^ 2 + 1) / 2
   have huEq : 2 * u = x ^ 2 + 1 := by dsimp [u]; omega
   have huo : u % 2 = 1 := by omega
