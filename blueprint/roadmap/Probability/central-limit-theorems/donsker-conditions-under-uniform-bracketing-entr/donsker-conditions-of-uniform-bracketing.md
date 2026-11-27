@@ -1,6 +1,6 @@
 # Donsker theorem under uniform bracketing entropy
 
-Let $(\Omega, P)$ be a probability space, $\mu$ a probability measure on a measurable space $S$, and $X_0, X_1, \dots : \Omega \to S$ mutually independent random variables, each with law $\mu$. Let $(F_i)_{i \in \iota}$ be measurable functions $S \to \mathbb{R}$ in $L^2(\mu)$ whose uniform bracketing entropy integral is finite,
+Let $(\Omega, P)$ be a probability space, $\mu$ a probability measure on a measurable space $S$, and $X_0, X_1, \dots : \Omega \to S$ mutually independent random variables, each with law $\mu$: almost everywhere measurable with pushforward $\mu$ under $P$, not necessarily measurable everywhere. $\mathbb{G}_n$ is the [empirical process](empirical-process.md), $0$ when $n = 0$. Let $(F_i)_{i \in \iota}$ be measurable functions $S \to \mathbb{R}$ in $L^2(\mu)$ whose uniform bracketing entropy integral is finite,
 
 $$\int_{(0,1]} H(\varepsilon) \, d\varepsilon < \infty,$$
 

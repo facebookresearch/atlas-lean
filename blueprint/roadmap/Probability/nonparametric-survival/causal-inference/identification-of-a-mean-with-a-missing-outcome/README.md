@@ -3,9 +3,9 @@
 ## Observed-data estimands
 
 - [Complete-case mean](complete-case-mean.md)
-- [Inverse-response-weighted mean](ipw-mean.md)
+- [Inverse-response-weighted integral](ipw-mean.md)
 - [The complete-case mean depends only on respondents](complete-case-mean-congr.md)
-- [The inverse-response-weighted mean depends only on respondents](ipw-mean-congr.md)
+- [The inverse-response-weighted integral depends only on respondents](ipw-mean-congr.md)
 - [No respondents](complete-case-mean-of-measure-real-eq-ze.md)
 - [The complete-case mean as an integral against the conditional measure](complete-case-mean-eq-integral-cond.md)
 

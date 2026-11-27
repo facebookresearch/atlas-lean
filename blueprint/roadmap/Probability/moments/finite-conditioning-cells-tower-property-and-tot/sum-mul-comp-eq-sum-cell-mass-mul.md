@@ -4,4 +4,4 @@ Let $\alpha$ and $C$ be finite sets, $p : \alpha \to \mathbb{R}$, $G : \alpha \t
 
 $$\sum_{x \in \alpha} p(x)\, f(G(x)) = \sum_{c \in C} m_p(c)\, f(c),$$
 
-the finite form of $E[f(G)] = \sum_c P(G = c) f(c)$. No sign or normalization condition on $p$ is needed.
+The regrouping needs no sign or normalization condition on $p$. When $p$ is a probability weight (nonnegative, summing to $1$) it is the finite form of $E[f(G)] = \sum_c P(G = c) f(c)$; for other weights it has no probability reading.

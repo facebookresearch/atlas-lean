@@ -6,8 +6,9 @@
 
 ## B. Sample mean and the Student-t pivot
 
+For identically distributed observations the sample mean is unbiased, a case of the [expectation of a sample mean with a common mean](../../../laws-of-large-numbers/variance-of-the-sample-mean/integral-sample-mean.md).
+
 - [Sample Mean fin eq sum range div](sample-mean-fin-eq-sum-range-div.md)
-- [Unbiasedness of the sample mean](integral-sample-mean.md)
 - [Variance of the sample mean](variance-sample-mean.md)
 - [Student TPivot](student-tpivot.md)
 - [Student-t interval from the first n observations](student-tinterval.md)
