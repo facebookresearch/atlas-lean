@@ -186,7 +186,7 @@ omit [DecidableEq K] in
 
 private theorem ΨSq_odd_eq_sq {n : ℕ} (hodd : Odd n) :
     (W.baseChange K).ΨSq n = ((W.baseChange K).preΨ' n) ^ 2 := by
-  rw [ΨSq_ofNat, if_neg (Nat.not_even_iff_odd.mpr hodd), mul_one]
+  rw [ΨSq_ofNat, ite_eq_right (Nat.not_even_iff_odd.mpr hodd), mul_one]
 
 private theorem smul_eq_zero_iff_preΨ'_eval [W.IsElliptic] {n : ℕ} (hodd : Odd n)
     (hn : 0 < n) {x y : K} (h : (W.baseChange K).toAffine.Nonsingular x y) :

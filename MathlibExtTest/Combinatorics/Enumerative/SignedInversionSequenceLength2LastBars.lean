@@ -10,7 +10,7 @@ module
 
 import MathlibExt.Combinatorics.Enumerative.SignedInversionSequenceLength2LastBars
 
-/-! # Tests for the two four-pattern Wilf-equivalences proved by retaining last bars -/
+/-! # Tests for signed inversion sequence Wilf-equivalences proved by retaining last bars -/
 
 namespace MetaMathlibExt.signedInvSeq_wilf_b1b0_b0b1_b0b0_1b0.Tests
 
@@ -50,6 +50,41 @@ example :
     signedInvAvoidCount {⟨.gt, true, true⟩, ⟨.eq, true, false⟩, ⟨.eq, false, true⟩,
       ⟨.gt, false, true⟩} 3 = 24 := by
   rw [← congrFun signedInvSeq_wilf_b1b0_b0b1_b0b0_1b0.2 3, count_eq_fintype_card]
+  decide
+
+private abbrev singleBarPatterns : Finset SignedPattern2 :=
+  {⟨.gt, true, true⟩, ⟨.eq, true, true⟩, ⟨.gt, false, true⟩}
+
+private abbrev prefixBarPatterns : Finset SignedPattern2 :=
+  {⟨.gt, true, true⟩, ⟨.eq, false, true⟩, ⟨.gt, false, true⟩}
+
+-- Enumerate the length-three avoiders of each triple independently and check the public
+-- equivalence at that length.
+example : signedInvAvoidCount singleBarPatterns 3 = 34 := by
+  rw [count_eq_fintype_card]
+  decide
+
+example : signedInvAvoidCount prefixBarPatterns 3 = 34 := by
+  rw [count_eq_fintype_card]
+  decide
+
+example : signedInvAvoidCount singleBarPatterns 3 = signedInvAvoidCount prefixBarPatterns 3 :=
+  congrFun signedInvSeq_wilf_b1b0_b0b0_1b0 3
+
+-- Copy the bar on magnitude 1 across a gap, but not past the larger entry.
+example :
+    let e : Fin 6 → ℕ × Bool :=
+      ![(0, false), (1, false), (0, false), (1, true), (2, false), (1, false)]
+    let f : Fin 6 → ℕ × Bool :=
+      ![(0, false), (1, true), (0, false), (1, true), (2, false), (1, false)]
+    let g : Fin 6 → ℕ × Bool :=
+      ![(0, false), (1, true), (0, false), (1, true), (2, false), (1, true)]
+    (∀ p ∈ singleBarPatterns, ¬ SignedInvSeqContains e p) ∧
+    SignedInvSeqContains e ⟨.eq, false, true⟩ ∧
+    (∀ p ∈ prefixBarPatterns, ¬ SignedInvSeqContains f p) ∧
+    SignedInvSeqContains f ⟨.eq, true, true⟩ ∧
+    SignedInvSeqContains g ⟨.gt, false, true⟩ := by
+  unfold SignedInvSeqContains
   decide
 
 end MetaMathlibExt.signedInvSeq_wilf_b1b0_b0b1_b0b0_1b0.Tests

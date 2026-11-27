@@ -5,6 +5,7 @@ Let $U_2 = \{1, a, b\}$ be the monoid with $aa = ba = a$ and $ab = bb = b$. Ever
 
 ## Depends on
 
+- [Semidirect and wreath products of transformation semigroups](wreath-products-of-transformation-semigroups.md)
 - [Aperiodic finite monoids](aperiodic-finite-monoids.md)
 - [Varieties of finite monoids](varieties-of-finite-monoids.md)
 
@@ -12,7 +13,6 @@ Let $U_2 = \{1, a, b\}$ be the monoid with $aa = ba = a$ and $ab = bb = b$. Ever
 
 This page becomes ready once:
 
-- Semidirect and wreath products of semigroups, from Section 6.3 of the cited chapter (statement prerequisite; not yet stated)
 - A proof source: the cited chapter states the theorem without proof; K. Krohn and J. Rhodes, "Algebraic theory of machines. I. Prime decomposition theorem for finite semigroups and machines", *Transactions of the American Mathematical Society* 116, 1965, needs a source check (source check)
 
 ## Sources

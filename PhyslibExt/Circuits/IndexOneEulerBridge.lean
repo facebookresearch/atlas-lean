@@ -20,6 +20,7 @@ import Mathlib.Analysis.ODE.ExistUnique
 import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 import Mathlib.Tactic.LinearCombination
 import MathlibExt.Analysis.ODE.ExplicitEuler
+import MathlibExt.Analysis.ODE.OneStepStability
 
 /-!
 # Explicit Euler error for an index-one linear descriptor system
@@ -52,15 +53,19 @@ coordinates: a positive diagonal rescaling is another instance of the same theor
 The proof feeds the reduced field to
 `MathlibExt.Analysis.ODE.ExplicitEulerWanted.explicit_euler_first_order_convergence`, which also
 supplies a solution on the horizon. Uniqueness of solutions of Lipschitz equations identifies every
-horizon solution through `x₀` with that one, a discrete Grönwall-type induction propagates the
-initial mismatch, and the reconstruction map, affine with linear part `-D⁻¹ C`, transfers the state
-bound to the algebraic component.
+horizon solution through `x₀` with that one, the one-step stability estimate
+`MathlibExt.Analysis.ODE.OneStepMethod.norm_sub_le_of_lipschitzWith` propagates the initial
+mismatch, and the reconstruction map, affine with linear part `-D⁻¹ C`, transfers the state bound
+to the algebraic component. Existence on the horizon only needs continuous forcing: it restricts
+the global solution of
+`PhyslibExt.Circuits.IndexOneDuhamel.descriptor_existsUnique_of_consistentPair`.
 
 ## ii. Key results
 
 - `solvesDescriptorOn_iff`: on the horizon, a pair solves the descriptor system exactly when its
   state solves the reduced equation and its algebraic component is the reconstruction.
-- `exists_solvesDescriptorOn`: a consistent initial pair is reached by a solution on the horizon.
+- `exists_solvesDescriptorOn`: with continuous forcing, a consistent initial pair is reached by a
+  solution on every horizon.
 - `norm_sub_le_of_isReducedEulerSequence`: Euler sequences of the reduced field separate at most by
   the factor `exp (L k h)`.
 - `indexOneEuler_error`: existence on the horizon, and the state and reconstructed algebraic error
@@ -246,92 +251,45 @@ theorem solvesDescriptorOn_iff {n m : Type*} [Fintype n] [Fintype m] [DecidableE
     rw [← heq] at hx
     exact ⟨hx, halg⟩
 
-/-- **Existence on the horizon.** With `C²` forcing and a consistent initial pair, the descriptor
-system has a solution on `[t₀, T]` through `(x₀, y₀)`. -/
-theorem exists_solvesDescriptorOn {n m : Type*} [Fintype n] [Fintype m] [DecidableEq n]
-    [DecidableEq m] (A : Matrix n n ℝ) (B : Matrix n m ℝ) (C : Matrix m n ℝ) (D : Matrix m m ℝ)
-    [Invertible D] (f : ℝ → n → ℝ) (g : ℝ → m → ℝ) (hf : ContDiff ℝ 2 f)
-    (hg : ContDiff ℝ 2 g) (t₀ T : ℝ) (hT : t₀ < T) (x₀ : n → ℝ) (y₀ : m → ℝ)
-    (hcons : consistentPair C D (g t₀) x₀ y₀) :
+/-- **Existence on the horizon.** With continuous forcing and a consistent initial pair, the
+descriptor system has a solution on `[t₀, T]` through `(x₀, y₀)`, for every horizon: the global
+solution of `PhyslibExt.Circuits.IndexOneDuhamel.descriptor_existsUnique_of_consistentPair`
+restricted to it. -/
+theorem exists_solvesDescriptorOn {n m : Type*} [Fintype n] [Fintype m] [DecidableEq m]
+    (A : Matrix n n ℝ) (B : Matrix n m ℝ) (C : Matrix m n ℝ) (D : Matrix m m ℝ) [Invertible D]
+    (f : ℝ → n → ℝ) (g : ℝ → m → ℝ) (hf : Continuous f) (hg : Continuous g) (t₀ T : ℝ)
+    (x₀ : n → ℝ) (y₀ : m → ℝ) (hcons : consistentPair C D (g t₀) x₀ y₀) :
     ∃ x : ℝ → n → ℝ, ∃ y : ℝ → m → ℝ,
       x t₀ = x₀ ∧ y t₀ = y₀ ∧ SolvesDescriptorOn A B C D f g t₀ T x y := by
-  have hfF : ContDiff ℝ 2 (Function.uncurry (reducedField A B C D f g)) :=
-    contDiff_reducedField A B C D f g hf hg
-  have hlipF : ∀ t ∈ Set.Icc t₀ T, LipschitzWith (reducedLipschitzConstant A B C D)
-      (reducedField A B C D f g t) :=
-    fun t _ => lipschitzWith_reducedField A B C D f g t
-  obtain ⟨x, hx0, hx, _⟩ :=
-    MathlibExt.Analysis.ODE.ExplicitEulerWanted.explicit_euler_first_order_convergence
-      (reducedField A B C D f g) t₀ T x₀ (reducedLipschitzConstant A B C D) hT hfF hlipF
-  refine ⟨x, fun t => algebraicReconstruction D C (x t) (g t), hx0, ?_, ?_⟩
-  · change algebraicReconstruction D C (x t₀) (g t₀) = y₀
-    rw [hx0]
-    exact ((consistentPair_iff_eq_algebraicReconstruction C D _ _ _).mp hcons).symm
-  · rw [solvesDescriptorOn_iff]
-    exact ⟨hx, fun t _ => rfl⟩
+  classical
+  obtain ⟨x, y, ⟨hd, hde, halg⟩, hx0, hy0, -⟩ :=
+    descriptor_existsUnique_of_consistentPair A B C D f g hf hg t₀ x₀ y₀ hcons
+  exact ⟨x, y, hx0, hy0, fun t _ => ⟨hde t ▸ (hd t).hasDerivAt, halg t⟩⟩
 
 /-! ### C. Error propagation and the error bound -/
 
 /-- **Initial-error propagation.** Two reduced Euler sequences with the same nonnegative step
 differ, after `k` steps, by at most `exp (L k h)` times their initial difference, where `L` is
-the reduced Lipschitz constant. -/
-theorem norm_sub_le_of_isReducedEulerSequence {n m : Type*} [Fintype n] [Fintype m]
+the reduced Lipschitz constant. This is the one-step stability estimate
+`MathlibExt.Analysis.ODE.OneStepMethod.norm_sub_le_of_lipschitzWith` on the grid `t₀ + j h`, with
+no perturbation. -/
+lemma norm_sub_le_of_isReducedEulerSequence {n m : Type*} [Fintype n] [Fintype m]
     [DecidableEq n] [DecidableEq m] (A : Matrix n n ℝ) (B : Matrix n m ℝ) (C : Matrix m n ℝ)
     (D : Matrix m m ℝ) [Invertible D] (f : ℝ → n → ℝ) (g : ℝ → m → ℝ) (t₀ h : ℝ) (hh : 0 ≤ h)
     (X X' : ℕ → n → ℝ) (hX : IsReducedEulerSequence A B C D f g t₀ h X)
     (hX' : IsReducedEulerSequence A B C D f g t₀ h X') (k : ℕ) :
     ‖X k - X' k‖ ≤
       Real.exp ((reducedLipschitzConstant A B C D : ℝ) * ((k : ℝ) * h)) * ‖X 0 - X' 0‖ := by
-  induction k with
-  | zero => simp
-  | succ k ih =>
-    have hF : ‖reducedField A B C D f g (t₀ + (k : ℝ) * h) (X k) -
-          reducedField A B C D f g (t₀ + (k : ℝ) * h) (X' k)‖ ≤
-        (reducedLipschitzConstant A B C D : ℝ) * ‖X k - X' k‖ := by
-      have hlip := lipschitzWith_reducedField A B C D f g (t₀ + (k : ℝ) * h)
-      simpa only [dist_eq_norm] using hlip.dist_le_mul (X k) (X' k)
-    have hsmul : ‖h • (reducedField A B C D f g (t₀ + (k : ℝ) * h) (X k) -
-          reducedField A B C D f g (t₀ + (k : ℝ) * h) (X' k))‖ ≤
-        h * ((reducedLipschitzConstant A B C D : ℝ) * ‖X k - X' k‖) := by
-      rw [norm_smul, Real.norm_eq_abs, abs_of_nonneg hh]
-      exact mul_le_mul_of_nonneg_left hF hh
-    have hdiff : X (k + 1) - X' (k + 1) = (X k - X' k) + h •
-        (reducedField A B C D f g (t₀ + (k : ℝ) * h) (X k) -
-          reducedField A B C D f g (t₀ + (k : ℝ) * h) (X' k)) := by
-      rw [hX k, hX' k, smul_sub]
-      abel
-    have hstep : ‖X (k + 1) - X' (k + 1)‖ ≤
-        (1 + (reducedLipschitzConstant A B C D : ℝ) * h) * ‖X k - X' k‖ := by
-      calc ‖X (k + 1) - X' (k + 1)‖
-          = ‖(X k - X' k) + h •
-            (reducedField A B C D f g (t₀ + (k : ℝ) * h) (X k) -
-              reducedField A B C D f g (t₀ + (k : ℝ) * h) (X' k))‖ := by rw [hdiff]
-        _ ≤ ‖X k - X' k‖ + ‖h •
-            (reducedField A B C D f g (t₀ + (k : ℝ) * h) (X k) -
-              reducedField A B C D f g (t₀ + (k : ℝ) * h) (X' k))‖ :=
-          norm_add_le _ _
-        _ ≤ ‖X k - X' k‖ + h *
-            ((reducedLipschitzConstant A B C D : ℝ) * ‖X k - X' k‖) :=
-          add_le_add_right hsmul _
-        _ = (1 + (reducedLipschitzConstant A B C D : ℝ) * h) * ‖X k - X' k‖ := by ring
-    have hexp : (1 : ℝ) + (reducedLipschitzConstant A B C D : ℝ) * h ≤
-        Real.exp ((reducedLipschitzConstant A B C D : ℝ) * h) := by
-      have h := Real.add_one_le_exp ((reducedLipschitzConstant A B C D : ℝ) * h)
-      linarith
-    have hcast : ((k + 1 : ℕ) : ℝ) = (k : ℝ) + 1 := by push_cast; ring
-    rw [hcast]
-    calc ‖X (k + 1) - X' (k + 1)‖
-        ≤ (1 + (reducedLipschitzConstant A B C D : ℝ) * h) * ‖X k - X' k‖ := hstep
-      _ ≤ Real.exp ((reducedLipschitzConstant A B C D : ℝ) * h) *
-          (Real.exp ((reducedLipschitzConstant A B C D : ℝ) * ((k : ℝ) * h)) *
-            ‖X 0 - X' 0‖) :=
-        mul_le_mul hexp ih (norm_nonneg _) (Real.exp_pos _).le
-      _ = Real.exp ((reducedLipschitzConstant A B C D : ℝ) * (((k : ℝ) + 1) * h)) *
-          ‖X 0 - X' 0‖ := by
-        rw [← mul_assoc, ← Real.exp_add]
-        congr 1
-        congr 1
-        ring
+  have hstep : ∀ j : ℕ, (t₀ + ((j + 1 : ℕ) : ℝ) * h) - (t₀ + (j : ℝ) * h) = h := fun j => by
+    push_cast
+    ring
+  have key := MathlibExt.Analysis.ODE.OneStepMethod.norm_sub_le_of_lipschitzWith
+    (Φ := fun s v _ => reducedField A B C D f g s v) (t := fun j : ℕ => t₀ + (j : ℝ) * h)
+    (δ := 0) (J := k) (fun j _ => by linarith [hstep j])
+    (fun j _ => lipschitzWith_reducedField A B C D f g _)
+    (fun j _ => by simpa only [hstep j] using hX j)
+    (fun j _ => by simpa only [hstep j, Pi.zero_apply, add_zero] using hX' j) k le_rfl
+  simpa using key
 
 /-- **Reconstruction error at a common time sample.** Reconstructing two states with the same
 algebraic forcing value gives algebraic values at distance at most `‖D⁻¹ * C‖` times the state
@@ -381,7 +339,8 @@ theorem indexOneEuler_error {n m : Type*} [Fintype n] [Fintype m] [DecidableEq n
                   reconstructionGain C D *
                     (Real.exp ((reducedLipschitzConstant A B C D : ℝ) * (T - t₀)) *
                       ‖X 0 - x₀‖ + K * h) := by
-  have hexists := exists_solvesDescriptorOn A B C D f g hf hg t₀ T hT x₀ y₀ hcons
+  have hexists :=
+    exists_solvesDescriptorOn A B C D f g hf.continuous hg.continuous t₀ T x₀ y₀ hcons
   have hfF : ContDiff ℝ 2 (Function.uncurry (reducedField A B C D f g)) :=
     contDiff_reducedField A B C D f g hf hg
   have hlipF : ∀ t ∈ Set.Icc t₀ T, LipschitzWith (reducedLipschitzConstant A B C D)
@@ -480,7 +439,7 @@ scalar iterates are a reduced Euler sequence of the fixture with initial mismatc
 reconstructed algebraic iterates are their negatives, and `(e^{-t}, -e^{-t})` is a solution on
 `[0, 1]` through the consistent pair `(1, -1)`; at the horizon `T = 1` the iterates take the
 values `11/40` (two steps of `1/2`) and `891/2560` (four steps of `1/4`). -/
-theorem scalarEuler_twoStepSizes (h : ℝ) (hh : h = 1 / 2 ∨ h = 1 / 4) :
+lemma scalarEuler_twoStepSizes (h : ℝ) (hh : h = 1 / 2 ∨ h = 1 / 4) :
     IsReducedEulerSequence (0 : Matrix (Fin 1) (Fin 1) ℝ) (1 : Matrix (Fin 1) (Fin 1) ℝ)
         (1 : Matrix (Fin 1) (Fin 1) ℝ) (1 : Matrix (Fin 1) (Fin 1) ℝ) (fun _ _ => 0) (fun _ _ => 0)
         0 h (scalarEulerIterates h) ∧
@@ -553,7 +512,7 @@ theorem scalarEuler_twoStepSizes (h : ℝ) (hh : h = 1 / 2 ∨ h = 1 / 4) :
 not consistent with `x₀` at `t₀`, then even with zero state error its distance to the exact
 algebraic value at `t₀` is a positive constant, so it is bounded by `K h` for no constant `K` and
 all steps `h ∈ (0, T - t₀]`. -/
-theorem not_forall_le_of_not_consistentPair {n m : Type*} [Fintype n] [Fintype m]
+lemma not_forall_le_of_not_consistentPair {n m : Type*} [Fintype n] [Fintype m]
     [DecidableEq m] (C : Matrix m n ℝ) (D : Matrix m m ℝ) [Invertible D] (g : ℝ → m → ℝ)
     (t₀ T : ℝ) (hT : t₀ < T) (x₀ : n → ℝ) (y₀' : m → ℝ)
     (hbad : ¬ consistentPair C D (g t₀) x₀ y₀') (K : ℝ) :
