@@ -2,7 +2,7 @@
 
 String constraints in which each variable must be a scattered subword of a shuffle of transductions of other variables, with pushdown or finite-automaton memberships, are decidable when the subword constraints are acyclic: 2NEXPTIME-complete in general and NEXPTIME-complete when all memberships are regular.
 
-Let $\Sigma$ be a finite alphabet. Write $u \preceq w$ when $u$ is a scattered subword of $w$, and for a finite multiset $\{\{u_1, \dots, u_n\}\}$ of words let $\mathrm{Shuffle}(\{\{u_1, \dots, u_n\}\})$ be the set of words whose positions split into $n$ disjoint sets spelling $u_1, \dots, u_n$. A *transducer* here is a nondeterministic finite automaton whose transitions read a letter or $\varepsilon$ and emit a word; it relates the input read to the output emitted along an accepting run.
+Let $\Sigma$ be a finite alphabet. Write $u \preceq w$ when $u$ is a scattered subword of $w$, and for a finite multiset $\{\{u_1, \dots, u_n\}\}$ of words let $\mathrm{Shuffle}(\{\{u_1, \dots, u_n\}\})$ be the set of words whose positions split into $n$ disjoint sets spelling $u_1, \dots, u_n$ (for two words this is the [shuffle of two words](../../regular-languages/automata-and-expressions/closure-properties-of-regular-languages/is-shuffle.md)). A *transducer* here is a nondeterministic finite automaton whose transitions read a letter or $\varepsilon$ and emit a word; it relates the input read to the output emitted along an accepting run.
 
 A *string constraint* $C = (\Sigma, V, \mathrm{Mem}, \mathrm{Rel})$ consists of a finite set $V$ of variables; a map $\mathrm{Mem}$ assigning to each variable a pushdown automaton or a nondeterministic finite automaton; and a finite set $\mathrm{Rel}$ of *subword-order constraints* $(x, Y)$, where $x \in V$ and $Y$ is a finite multiset of pairs $(y, T)$ with $y \in V$ and $T$ a transducer, written $x \preceq \mathrm{Shuffle}(Y)$. An assignment $\sigma : V \to \Sigma^*$ satisfies $C$ if $\sigma(v) \in L(\mathrm{Mem}(v))$ for every $v$, and for every $(x, \{\{(y_1, T_1), \dots, (y_n, T_n)\}\}) \in \mathrm{Rel}$ there are words $u_1, \dots, u_n$, one for each occurrence in the multiset, with $(\sigma(y_i), u_i) \in R(T_i)$, and a word $w \in \mathrm{Shuffle}(\{\{u_1, \dots, u_n\}\})$ with $\sigma(x) \preceq w$. $C$ is *regular* if every $\mathrm{Mem}(v)$ is a finite automaton. Writing $x < y$ when some $(x, Y) \in \mathrm{Rel}$ has a pair $(y, T)$ in $Y$, $C$ is *acyclic* if the directed graph of $<$ has no cycle. The input lists the automata, transducers and every multiset occurrence explicitly. Let 2NEXPTIME be the class of problems decided by nondeterministic Turing machines in time $2^{2^{p(n)}}$ for a polynomial $p$.
 
@@ -13,6 +13,7 @@ The upper bounds also hold with concatenation in place of shuffle, which shuffle
 
 ## Depends on
 
+- [Rational relations and transducers](../../regular-languages/automata-and-expressions/rational-relations-and-transductions/rational-relations-and-transducers.md)
 - [Language accepted by a pushdown automaton](../../context-free-languages/grammars-and-pushdown-automata/pushdown-automata/accepts.md)
 - [The complexity class NEXP](../../complexity-classes/time-and-space-complexity-classes/nexp.md)
 

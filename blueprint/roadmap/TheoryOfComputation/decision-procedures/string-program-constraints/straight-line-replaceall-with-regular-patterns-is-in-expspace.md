@@ -14,6 +14,7 @@ This page states only the upper bound. A matching lower bound is known for a dif
 ## Proof depends on
 
 - [Emptiness of NFAs is decidable](../encoded-finite-automata/tm2-decidable-language-eq-zero.md)
+- [Savitch's theorem](../../complexity-classes/savitch.md)
 
 ## Expansion
 

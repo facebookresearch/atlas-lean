@@ -19,6 +19,8 @@ where $\mathrm{replaceAll}_e(x, y)$ is the [leftmost-longest replaceAll](leftmos
 
 - [Backward propagation decides path feasibility](backward-propagation-decides-path-feasibility.md)
 - [Leftmost-longest replaceAll](leftmost-longest-replaceall.md)
+- [Two-way transducers and MSO-definable string transductions](../../regular-languages/automata-and-expressions/rational-relations-and-transductions/two-way-transducers-and-mso-transductions.md)
+- [Rational relations and transducers](../../regular-languages/automata-and-expressions/rational-relations-and-transductions/rational-relations-and-transducers.md)
 
 ## Proof depends on
 
@@ -32,5 +34,5 @@ Lower bound (Proposition 4.7, Appendix A): tiling problems over corridors of $n$
 
 ## Sources
 
-- T. Chen, M. Hague, A. W. Lin, P. Rümmer and Z. Wu, "Decision procedures for path feasibility of string-manipulating programs with complex operations", Proceedings of the ACM on Programming Languages 3 (POPL), Article 49, 2019, doi:[10.1145/3290362](https://doi.org/10.1145/3290362); full version arXiv:1811.03167v1, <https://arxiv.org/abs/1811.03167v1>: Section 4.1, Definitions 4.1 and 4.3 (end-marker conventions, runs and acceptance), Proposition 4.2, Example 4.4, Section 4.2 (the grammar (4) and the requirement $\varepsilon \notin L(e)$), Theorem 4.5, Proposition 4.6 with its proof, Proposition 4.7 with the sketch after it, and Appendix A (the full reduction).
+- T. Chen, M. Hague, A. W. Lin, P. Rümmer and Z. Wu, "Decision procedures for path feasibility of string-manipulating programs with complex operations", Proceedings of the ACM on Programming Languages 3 (POPL), Article 49, 2019, doi:[10.1145/3290362](https://doi.org/10.1145/3290362); full version arXiv:1811.03167v1, <https://arxiv.org/abs/1811.03167v1>: Section 4.1 (the requirement $\varepsilon \notin L(e)$; Definitions 4.1 and 4.3, end-marker conventions, runs and acceptance; Proposition 4.2; Example 4.4), Section 4.2 (the grammar (4)), Theorem 4.5, Proposition 4.6 with its proof, Proposition 4.7 with the sketch after it, and Appendix A (the full reduction).
 - T. Chen, Y. Chen, M. Hague, A. W. Lin and Z. Wu, "What is decidable about string constraints with the ReplaceAll function", Proceedings of the ACM on Programming Languages 2 (POPL), Article 3, 2018, doi:[10.1145/3158091](https://doi.org/10.1145/3158091); full version arXiv:1711.03363v1, <https://arxiv.org/abs/1711.03363v1>: Sections 6–8 (pre-images of regular constraints under replaceAll with regular patterns).

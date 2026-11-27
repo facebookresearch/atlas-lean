@@ -24,7 +24,7 @@ None.
 
 ## Expansion
 
-This is a definition. The source shows that concatenation is redundant (its Proposition 3.6) and then works with replaceAll-only formulas, defining the dependency graph for them; the guard $y \in \Sigma^*$ on original variables is needed because fresh letters alone do not constrain values: without it, $s_1 = b$, $s_2 = a$ would give $aa$ instead of $ba$. Likewise $x \in y^*$ is expressed as $x = \mathrm{replaceAll}(x', a, y) \wedge x' \in a^*$. When both pattern and replacement are constants, replaceAll is a finite-state transduction, so this logic covers that part of [straight-line string constraints](straight-line-string-constraints.md); with a variable replacement it does not.
+This is a definition. The source shows that concatenation is redundant (its Proposition 3.6) and then works with replaceAll-only formulas, defining the dependency graph for them; the guard $y \in \Sigma^*$ on original variables is added here (the source's proof of Proposition 3.6 prints the two replaceAll conjuncts without it) and is needed because fresh letters alone do not constrain values: without it, $s_1 = b$, $s_2 = a$ would give $aa$ instead of $ba$. Likewise $x \in y^*$ is expressed as $x = \mathrm{replaceAll}(x', a, y) \wedge x' \in a^*$. When both pattern and replacement are constants, replaceAll is a finite-state transduction, so this logic covers that part of [straight-line string constraints](straight-line-string-constraints.md); with a variable replacement it does not.
 
 ## Sources
 

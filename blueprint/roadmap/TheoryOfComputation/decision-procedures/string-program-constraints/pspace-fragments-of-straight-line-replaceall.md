@@ -22,11 +22,11 @@ The bounds refer to the replaceAll-only formula. A graph that ignored concatenat
 
 ## Proof depends on
 
-None.
+- [Savitch's theorem](../../complexity-classes/savitch.md)
 
 ## Expansion
 
-This node still needs its proof broken down. Path counting (Proposition 4.5): between two vertices of $G_C$ there are at most $(|\mathrm{Vars}| \cdot |E_C|)^{O(\mathrm{Idx}(G_C))}$ distinct paths. Single-letter case (Section 6, Proposition 6.4): in the backward elimination of replaceAll terms each regular constraint collected on a variable descends from an original constraint along one path, so with bounded diamond index each variable collects polynomially many constraints and the procedure runs in polynomial space. Constant-string case (Section 7 and Appendix D) and regular-expression case (Section 8 and Appendix E): each elimination step along an l-edge enlarges the automata through the parsing construction, so the bound on l-length controls the state count. Lower bound: nonemptiness of the intersection of regular expressions $e_1, \dots, e_n$ over $\{0, 1\}$ is PSPACE-complete and is the satisfiability of $x \in e_1 \wedge \dots \wedge x \in e_n$, which lies in every fragment. The expansion should reuse the pre-image constructions of the EXPSPACE procedure with these quantitative invariants, one page per pattern class if needed.
+This node still needs its proof broken down. Path counting (Proposition 4.5): between two vertices of $G_C$ there are at most $(|\mathrm{Vars}| \cdot |E_C|)^{O(\mathrm{Idx}(G_C))}$ distinct paths. Single-letter case (Section 6, Proposition 6.4): in the backward elimination of replaceAll terms each regular constraint collected on a variable descends from an original constraint along one path, so with bounded diamond index each variable collects polynomially many constraints and the procedure, which guesses its choices (such as the sets $T_z$ of state pairs) nondeterministically, runs in nondeterministic polynomial space, hence in polynomial space by Savitch's theorem. Constant-string case (Section 7 and Appendix D) and regular-expression case (Section 8 and Appendix E): each elimination step along an l-edge enlarges the automata through the parsing construction, so the bound on l-length controls the state count. Lower bound: nonemptiness of the intersection of regular expressions $e_1, \dots, e_n$ over $\{0, 1\}$ is PSPACE-complete and is the satisfiability of $x \in e_1 \wedge \dots \wedge x \in e_n$, which lies in every fragment. The expansion should reuse the pre-image constructions of the EXPSPACE procedure with these quantitative invariants, one page per pattern class if needed.
 
 ## Sources
 
