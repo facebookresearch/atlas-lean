@@ -5,4 +5,4 @@ For all real $\varepsilon, \delta > 0$ and all sufficiently large $n$, every tri
 ## Sources
 
 - T. F. Bloom, Erdős Problems, Problem #134, https://www.erdosproblems.com/134.
-- N. Alon, note on Erdős Problem 134 (Triangle-free graphs of diameter 2), Theorem 1.2, https://web.math.princeton.edu/~nalon/PDFS/remark1901.pdf.
+- N. Alon, Problems and results in extremal combinatorics – V, in Sum(m)it280: Surveys in Extremal Combinatorics and Combinatorial Geometry, Bolyai Society Mathematical Studies, Springer, 2026, Section 3; also N. Alon, note on Erdős Problem 134 (Triangle-free graphs of diameter 2), Theorem 1.2, https://web.math.princeton.edu/~nalon/PDFS/remark1901.pdf.

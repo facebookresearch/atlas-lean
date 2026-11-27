@@ -5,4 +5,4 @@ There is a real $c > 0$ such that every simple graph $G$ on a finite vertex set,
 ## Sources
 
 - T. F. Bloom, Erdős Problems, Problem #1008, https://www.erdosproblems.com/1008.
-- D. Conlon, J. Fox and B. Sudakov, Large subgraphs without complete bipartite graphs, arXiv:1401.6711 (2014), https://arxiv.org/abs/1401.6711.
+- D. Conlon, J. Fox and B. Sudakov, Short proofs of some extremal results II, J. Combin. Theory Ser. B 121 (2016), 173–196, Section 3, Theorem 3.1 (the case $r = 2$); preprint arXiv:1401.6711, https://arxiv.org/abs/1401.6711.

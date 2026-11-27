@@ -4,4 +4,4 @@ Let $n, m, k$ be natural numbers, let $\mathcal{R}$ be a finite family of sets o
 
 $$\sum_{R \in \mathcal{R}} \sum_{C \in \mathcal{C}} E_{|R|,|C|}(k),$$
 
-where $E_{a,b}(k)$ the number of $k$-element sets of cells of the $a \times b$ board that contain a cell in every row and a cell in every column.
+where $E_{a,b}(k)$ is the number of $k$-element sets of cells of the $a \times b$ board that contain a cell in every row and a cell in every column.

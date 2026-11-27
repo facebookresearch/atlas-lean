@@ -5,3 +5,4 @@ For every natural number $n \ge 1$, every simple graph $G$ on $\{0, \dots, n-1\}
 ## Sources
 
 - T. F. Bloom, Erdős Problems, Problem #1019, https://www.erdosproblems.com/1019.
+- M. Simonovits, PhD thesis, Chapter 9 (the graph contains $K_4$ or a double pyramid $C_l + 2K_1$ with $l \ge 3$), as reported at https://www.erdosproblems.com/1019 and its discussion thread.

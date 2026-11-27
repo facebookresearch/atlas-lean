@@ -11,6 +11,9 @@
 - [An isomorphic copy is a minor](of-iso.md)
 - [Robertson–Seymour theorem](robertson-seymour.md)
 - [Graph minor theorem (Robertson–Seymour)](graph-minor-theorem.md)
+- [Wood's question on cliques in $K_t$-minor-free graphs](cliques-minor-free.md)
+- [$K_t$-minor-free graphs have at most $c^t n$ cliques](cliques-minor-free-holds.md)
+- [Number of cliques of a graph](num-cliques.md)
 
 ## Related topics
 
@@ -18,9 +21,3 @@
   and the tree-width and grid theorems used to prove the graph minor theorem.
 - [Rank-width and vertex-minors](../rank-width-and-vertex-minors/README.md): vertex-minors play
   for rank-width the role that minors play for tree-width.
-
-- [Wood's question on cliques in $K_t$-minor-free graphs](cliques-minor-free.md)
-
-- [$K_t$-minor-free graphs have at most $c^t n$ cliques](cliques-minor-free-holds.md)
-
-- [Number of cliques of a graph](num-cliques.md)
