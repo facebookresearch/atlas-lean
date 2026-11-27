@@ -162,9 +162,12 @@ private lemma bettiEqZeroOfNoDegree {K : Type u} [Field K] {n : ℕ}
   unfold multigradedBettiNumber
   exact Module.finrank_zero_of_subsingleton
 
-/-- Finite support of the raw multigraded Poincaré-series coefficient
-function from a finite-rank terminating resolution: every homogeneous
-basis index type is finite, and those types are empty above `bound`.
+/-- **Finite support of the multigraded Poincaré coefficients.** Let $K$ be a field, let
+$R = K[x_1, \dots, x_n]$, let $M$ be a multigraded $R$-module, and let $D$ be base-change data
+for a multigraded free resolution $F_\bullet$ of $M$ in which $F_i$ has a homogeneous basis
+indexed by $\iota_i$. Suppose every $\iota_i$ is finite and, for some $b \in \mathbb{N}$,
+$\iota_i$ is empty for every $i > b$. Then the multigraded Poincaré coefficient family of $D$ is
+nonzero at only finitely many $(i, \alpha) \in \mathbb{N} \times \mathbb{Z}^n$.
 
 Source: Benjamin Braun and Brian Davis, “Antichain Simplices,”
 Journal of Integer Sequences 23 (2020),

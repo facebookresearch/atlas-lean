@@ -63,7 +63,8 @@ corollary needs a nonzero common speed `v ≠ 0`.
 
 namespace EarthScience
 
-/-- Straight segment: travel time `L / v` is nonnegative and `* v` recovers `L`. -/
+/-- Straight segment: for `v > 0` and `L ≥ 0`, travel time `L / v` is nonnegative and `* v`
+recovers `L`. -/
 theorem travel_time_segment {L v : ℝ} (hv : 0 < v) (hL : 0 ≤ L) :
     0 ≤ L / v ∧ L / v * v = L := by
   exact ⟨div_nonneg hL hv.le, div_mul_cancel₀ L hv.ne'⟩
@@ -71,8 +72,8 @@ theorem travel_time_segment {L v : ℝ} (hv : 0 < v) (hL : 0 ≤ L) :
 /-! ## B. Snell's law from stationarity -/
 
 set_option linter.unusedVariables false in
-/-- Snell's law from stationarity: if the two-layer travel-time functional
-is stationary at an interior refraction point, then
+/-- Snell's law from stationarity: for depths `a, b > 0` and speeds `v₁, v₂ > 0`, if the
+two-layer travel-time functional is stationary at an interior refraction point `0 < x < D`, then
 `sin θ₁ / v₁ = sin θ₂ / v₂`, with `sin θ₁ = x / √(a² + x²)` and
 `sin θ₂ = (D - x) / √(b² + (D - x)²)`. -/
 theorem snell_from_stationary {a b D v₁ v₂ x : ℝ} (ha : 0 < a) (hb : 0 < b)
@@ -109,8 +110,9 @@ theorem snell_from_stationary {a b D v₁ v₂ x : ℝ} (ha : 0 < a) (hb : 0 < b
   field_simp at hE0 ⊢
   linarith
 
-/-- Equal speeds: Snell's law gives equal ray parameters for a nonzero
-common speed `v`. -/
+/-- Equal speeds: for a nonzero common speed `v`, Snell's law gives equal sines
+`x / √(a² + x²) = (D - x) / √(b² + (D - x)²)`. A zero denominator comes with a zero numerator,
+and the quotient is then `0` by the convention `u / 0 = 0`. -/
 theorem snell_equal_speed {a b D v x : ℝ} (hv : v ≠ 0)
     (hsnell : x / (v * Real.sqrt (a ^ 2 + x ^ 2))
       = (D - x) / (v * Real.sqrt (b ^ 2 + (D - x) ^ 2))) :

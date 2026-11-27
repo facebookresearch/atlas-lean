@@ -749,14 +749,15 @@ private theorem ramanujanEleven_dvd_coeff_pentagonalSeries_pow_ten (m : ℕ) :
   rw [ramanujanElevenEuler, ← map_pow, PowerSeries.coeff_map] at hcoeff
   exact (ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mp hcoeff
 
-/-- Ramanujan's partition congruence modulo 11: the number of unordered partitions of
-`11 * m + 6` is divisible by 11 for every `m : ℕ`.
-Source: https://en.wikipedia.org/wiki/Ramanujan%27s_congruences
-
-Proves `Wanted` entry `ramanujan_partition_congruence_mod_eleven`.
+/-- **Ramanujan's congruence modulo 11.** For every natural number $m$, the number of partitions
+of $11m + 6$ is divisible by $11$.
 
 Proof: We follow Hirschhorn's Section 2 residue-section argument, using Euler's
 pentagonal number theorem and Jacobi's cube identity.
+
+Proves `Wanted` entry `ramanujan_partition_congruence_mod_eleven`.
+
+Source: https://en.wikipedia.org/wiki/Ramanujan%27s_congruences
 -/
 public theorem ramanujan_partition_congruence_mod_eleven (m : ℕ) :
     Fintype.card (Nat.Partition (11 * m + 6)) ≡ 0 [MOD 11] := by

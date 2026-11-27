@@ -15,14 +15,13 @@ namespace Nat
 
 @[expose] public section
 
-/-- Exact preperiod and primitive period of Fermat-number residues modulo an odd prime.
-
-This is the exact-preperiod/primitive-period expansion of Theorem `thm:5` in the section
-"A simpler formulation of Aigner's theorem": for an odd prime `p` with
-`orderOf (2 : ZMod p) = 2 ^ v * w` and `w` odd, writing `k := orderOf (2 : ZMod w)`, the
-shifted residue sequence `n ↦ (Nat.fermatNumber (v + n) : ZMod p)` is periodic with period
-`k`, no shift `h < v` admits any positive tail period, and every positive period of the
-tail from `v` is divisible by `k`.
+/-- **Preperiod and period of Fermat numbers modulo an odd prime.** Let $p$ be an odd prime
+and write the multiplicative order of $2$ modulo $p$ as $2^v w$ with $v, w$ natural numbers and
+$w$ odd. Let $k$ be the multiplicative order of $2$ modulo $w$ (so $k = 1$ when $w = 1$), and
+let $F_m = 2^{2^m} + 1$ be the $m$-th Fermat number. Then the sequence $n \mapsto F_{v+n} \bmod p$
+is periodic with period $k$; for every $h < v$, the sequence $n \mapsto F_{h+n} \bmod p$ has no
+positive period; and every positive period of the sequence $n \mapsto F_{v+n} \bmod p$ is
+divisible by $k$.
 
 Source: `https://cs.uwaterloo.ca/journals/JIS/VOL28/Klaska/klaska22.tex`,
 Theorem `thm:5`, lines 593--606 of

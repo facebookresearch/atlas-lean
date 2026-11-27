@@ -70,17 +70,24 @@ private theorem descartes_of_signed (c : Fin 4 → EuclideanSpace ℝ (Fin 2))
     hdist 1 2 (by decide), hdist 1 3 (by decide), hdist 2 3 (by decide)] at hplanar
   simpa only [hk] using descartes_signed_algebra s hs hplanar
 
-/-- Descartes' circle theorem (statement_id `descartes-kissing-s1`): four pairwise
-tangent circles in the plane, with tangency distance-encoded and with signed
-curvatures `k i` (curvature `1 / r i`, negative for the enclosing circle),
-satisfy `(∑ k) ^ 2 = 2 * ∑ k ^ 2`.
-Source: https://en.wikipedia.org/wiki/Descartes%27_theorem.
-
-Proves `Wanted` entry `descartes_circle_theorem`.
+/-- **Descartes' circle theorem.** Let four circles in the Euclidean plane have centers $c_i$ and
+radii $r_i > 0$ for $i = 1, 2, 3, 4$, let $d$ be the Euclidean distance, and let
+$k_1, k_2, k_3, k_4$ be real numbers. Suppose that either
+(a) any two of the circles are externally tangent, $d(c_i, c_j) = r_i + r_j$ for $i \ne j$, and
+$k_i = 1/r_i$ for every $i$; or
+(b) for some index $e$, each other circle is internally tangent to circle $e$, that is,
+$d(c_e, c_j) = r_e - r_j$ for $j \ne e$; any two circles other than circle $e$ are externally
+tangent, $d(c_i, c_j) = r_i + r_j$ for distinct $i, j \ne e$; and $k_e = -1/r_e$ and
+$k_j = 1/r_j$ for $j \ne e$.
+Then $(k_1 + k_2 + k_3 + k_4)^2 = 2(k_1^2 + k_2^2 + k_3^2 + k_4^2)$.
 
 Proof: Following the Cayley-Menger/Gram-determinant argument in Lagarias, Mallows, and Wilks,
 *Beyond the Descartes circle theorem*, Section 3, and Wikipedia's proof sketch, introduce signed
 radii, expand the planar Gram determinant in coordinates, and clear denominators.
+
+Proves `Wanted` entry `descartes_circle_theorem` (statement `descartes-kissing-s1`).
+
+Source: https://en.wikipedia.org/wiki/Descartes%27_theorem.
 -/
 theorem descartes_circle_theorem (c : Fin 4 → EuclideanSpace ℝ (Fin 2))
     (r k : Fin 4 → ℝ) :

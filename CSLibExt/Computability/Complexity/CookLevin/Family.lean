@@ -74,7 +74,9 @@ open Cslib.Complexity.CookLevin.CounterView
 
 /-! ## Draft C3 variable layout -/
 
-/-- Constant sizes derived from the verifier. -/
+/-- **Variable layout of the transition clauses.** A layout consists of four natural numbers
+derived from the verifier: the size $A$ of the label/state block of a row, the number $K$ of
+stacks, the number $g$ of symbol codes (code $0$ is the empty cell), and the window depth $d$. -/
 structure Layout where
   /-- Size of the label/state block of a row. -/
   A : ℕ
@@ -89,19 +91,32 @@ namespace Layout
 
 variable (L : Layout)
 
-/-- Variables per time step: the label/state block, then `KK · H · g` cell variables. -/
+/-- **Variables per time step.** For a layout with label/state block size $A$, $K$ stacks and $g$
+symbol codes, and a height $H$, the row width is $W = A + K \cdot (H \cdot g)$: the label/state
+block of $A$ variables, followed by $K \cdot H \cdot g$ cell variables. -/
 def rowW (H : ℕ) : ℕ := L.A + L.KK * (H * L.g)
 
-/-- Number of variables `V = (T + 1) · W`. -/
+/-- **Number of variables of the transition-clause formula.** For a layout $L$ and bounds $T$
+and $H$, the number of variables is $V = (T + 1) \cdot W$, where $W$ is the number of variables
+per time step at height $H$. -/
 def numVars (T H : ℕ) : ℕ := (T + 1) * L.rowW H
 
-/-- Label/state variable `a < A` at time `t`. -/
+/-- **Index of a label/state variable.** For height $H$, time $t$ and $a \in \mathbb{N}$, the
+index of label/state variable $a$ at time $t$ is $t \cdot W + a$, where $W$ is the row width
+(variables per time step) at height $H$. It is used for $a < A$, the size of the label/state
+block. -/
 def xIdx (H t a : ℕ) : ℕ := t * L.rowW H + a
 
-/-- Cell variable: stack `k`, depth `j < H` from the top, symbol code `x < g`, time `t`. -/
+/-- **Index of a cell variable in the transition-family layout.** For a layout $L$ with
+label/state block size $A$, $K$ stacks and $g$ symbol codes, and natural numbers $H$, $t$, $k$,
+$j$, $x$, the variable for stack $k$, depth $j$ from the top and symbol code $x$ at time $t$ has
+index $tW + A + (kH + j)g + x$, where $W = A + KHg$ is the number of variables per time step. It is
+meant for $k < K$, $j < H$ and $x < g$ but is defined for all values. -/
 def cIdx (H t k j x : ℕ) : ℕ := t * L.rowW H + L.A + (k * H + j) * L.g + x
 
-/-- Number of literals in a label-transition clause. -/
+/-- **Number of literals of a transition clause.** For a layout $L$ with $KK$ stacks and window
+depth $d$, a label-transition clause has $KK \cdot d + 2$ literals: the current label, the
+$KK \cdot d$ window cells and the next label. -/
 def nLits : ℕ := L.KK * L.d + 2
 
 end Layout
@@ -112,23 +127,47 @@ section Spec
 
 variable (L : Layout) (la na : ℕ → ℕ) (wa : ℕ → ℕ → ℕ → ℕ)
 
-/-- Position of literal `j` of clause `(t, i)`: `j = 0` the current label, `1 ≤ j ≤ KK·d` the
-window cells in `(k, j)`-lexicographic order, `j = KK·d + 1` the next label. -/
+/-- **Position of a literal in a transition clause.** Fix a layout with $K$ stacks and window
+depth $d$, a height bound $H$, and tables giving for each situation $i$ a current label $a(i)$, a
+next label $a'(i)$ and window symbol codes $w(i, k, r)$. The position of literal $j$ of clause
+$(t, i)$ is: for $j = 0$, the index of the label/state variable $a(i)$ at time $t$; for
+$1 \le j \le Kd$, writing $j - 1 = kd + r$ with $r < d$, the index of the cell variable for stack
+$k$, depth $r$ from the top and symbol code $w(i, k, r)$ at time $t$; for $j > Kd$, the index of
+the label/state variable $a'(i)$ at time $t + 1$.
+
+The literals of a clause are numbered $0, \dots, Kd + 1$, so the last case is the next label. -/
 def litPos (H t i j : ℕ) : ℕ :=
   if j = 0 then L.xIdx H t (la i)
   else if j ≤ L.KK * L.d then
     L.cIdx H t ((j - 1) / L.d) ((j - 1) % L.d) (wa i ((j - 1) / L.d) ((j - 1) % L.d))
   else L.xIdx H (t + 1) (na i)
 
-/-- Literals of clause `(t, i)`: all negative except the last (next label). -/
+/-- **Literals of a transition clause.** For a layout $L$ with $KK$ stacks and window depth $d$,
+tables $la$, $na$, $wa$, a height $H$, a time $t$ and a situation $i$, the literals of clause
+$(t, i)$ form the list of pairs $(p_j, b_j)$ for $j = 0, 1, \dots, n - 1$, where
+$n = KK \cdot d + 2$ is the number of literals, $p_j$ is the position of literal $j$ of clause
+$(t, i)$, and the polarity $b_j$ is true exactly when $j = n - 1$. So every literal is negative
+except the last one, the next label. -/
 def lits (H t i : ℕ) : List (ℕ × Bool) :=
   (List.range L.nLits).map fun j => (litPos L la na wa H t i j, decide (j = L.nLits - 1))
 
-/-- Dense clause over `V` variables with the given literals (slot `v` = `lits.lookup v`). -/
+/-- **Dense clause from a list of literals.** Given $V \in \mathbb{N}$ and a list $\ell$ of pairs
+$(p, b)$ of a variable index $p$ and a sign $b$, the dense clause over $V$ variables has, for each
+$v < V$, slot $v$ equal to the literal $x_v$ if the first pair in $\ell$ with index $v$ is
+$(v, \mathrm{true})$, the literal $\neg x_v$ if it is $(v, \mathrm{false})$, and empty if $\ell$
+has no pair with index $v$. Pairs with index at least $V$ are ignored. -/
 def denseClause (V : ℕ) (ls : List (ℕ × Bool)) : Clause :=
   (List.range V).map fun v => ls.lookup v
 
-/-- The family: clauses ordered by time, then situation. -/
+/-- **The transition clause family.** Fix a layout with label block size $A$, $K$ stacks, $g$
+symbol codes and window depth $d$, tables $\mathrm{la}, \mathrm{na} : \mathbb{N} \to \mathbb{N}$
+and $\mathrm{wa} : \mathbb{N} \to \mathbb{N} \to \mathbb{N} \to \mathbb{N}$, and
+$T, H, N \in \mathbb{N}$. Let $W = A + KHg$, let $X[t, a]$ be the variable $tW + a$, and let
+$C[t, k, j, x]$ be the variable $tW + A + (kH + j)g + x$. The family is the CNF formula that
+lists, for each time $t < T$ and within it each situation $i < N$, the dense clause over
+$(T + 1)W$ variables built from the literal list $\neg X[t, \mathrm{la}(i)]$, then
+$\neg C[t, k, j, \mathrm{wa}(i, k, j)]$ for $k < K$ and $j < d$ in lexicographic order, then
+$X[t + 1, \mathrm{na}(i)]$. -/
 def family (T H N : ℕ) : CNF :=
   (List.range T).flatMap fun t =>
     (List.range N).map fun i => denseClause (L.numVars T H) (lits L la na wa H t i)
@@ -137,13 +176,25 @@ end Spec
 
 /-! ## Block decomposition of a dense clause -/
 
-/-- Encoding of the slots `lo, …, V-1` of a dense clause whose literals (all at positions `≥ lo`)
-are `ls`: gaps of absent slots (`01`) between literal slots. -/
+/-- **Gap encoding of a dense clause.** For a starting slot $m$, a list $\ell$ of literals
+$(p, b)$ (variable index $p$, sign $b$) and a number of variables $V$, the gap encoding of $\ell$
+from slot $m$ to $V$ is defined by recursion on $\ell$. For the empty list it is $V - m$ copies of
+the absent-slot block $01$. For a list whose first literal is $(p, b)$ and whose remaining literals
+form the list $r$, it is $p - m$ copies of $01$, then the two-bit slot encoding of the literal
+with sign $b$ (the bit $1$ followed by the negation of $b$), then the gap encoding of $r$ from
+slot $p + 1$ to $V$. Subtraction is truncated at $0$.
+
+When the positions in $\ell$ are strictly increasing, at least $m$ and less than $V$, this is the
+encoding of the slots $m, \dots, V - 1$ of the dense clause over $V$ variables with literals
+$\ell$. -/
 def gapEnc : ℕ → List (ℕ × Bool) → ℕ → List Bool
   | lo, [], V => rep [false, true] (V - lo)
   | lo, (p, b) :: r, V => rep [false, true] (p - lo) ++ encodeSlot (some b) ++ gapEnc (p + 1) r V
 
-/-- Literal positions strictly increasing, starting at `≥ lo`, all `< V`. -/
+/-- **Increasing literal positions.** For $\mathit{lo}, V \in \mathbb{N}$, a list of literals
+$(p_1, b_1), \dots, (p_n, b_n)$ with positions $p_k \in \mathbb{N}$ and signs $b_k$ has increasing
+literal positions from $\mathit{lo}$ below $V$ when $\mathit{lo} \le p_1 < p_2 < \dots < p_n < V$;
+for the empty list ($n = 0$) the condition is $\mathit{lo} \le V$. -/
 def Inc : ℕ → List (ℕ × Bool) → ℕ → Prop
   | lo, [], V => lo ≤ V
   | lo, (p, _) :: r, V => lo ≤ p ∧ Inc (p + 1) r V
@@ -157,7 +208,10 @@ theorem lookup_cons_ne {p i : ℕ} {b : Bool} {r : List (ℕ × Bool)} (h : i �
   have : (i == p) = false := beq_eq_false_iff_ne.mpr h
   rw [List.lookup_cons, this]
 
-/-- Lowering the lower bound keeps a literal list increasing. -/
+/-- **Lowering the lower bound keeps a literal list increasing.** For natural numbers
+$lo' \le lo$ and $V$ and a list $ls$ of literals, if the positions in $ls$ are strictly
+increasing, at least $lo$ and below $V$ (with $lo \le V$ if $ls$ is empty), then the same holds
+with $lo'$ in place of $lo$. -/
 theorem Inc.mono_lo {lo lo' : ℕ} {ls : List (ℕ × Bool)} {V : ℕ} (h : lo' ≤ lo) (hi : Inc lo ls V) :
     Inc lo' ls V := by
   cases ls with
@@ -205,13 +259,20 @@ theorem gapEnc_eq : ∀ {lo : ℕ} {ls : List (ℕ × Bool)} {V : ℕ}, Inc lo l
         rw [lookup_cons_ne (by omega)]
         exact Inc.lookup_none h2 v (by omega)
 
-/-- A dense clause with increasing literals encodes as its gap/literal blocks. -/
+/-- **Encoding a dense clause block by block.** Let $\ell = [(p_1, b_1), \dots, (p_n, b_n)]$ be
+a list of literals with $p_1 < p_2 < \dots < p_n < V$. Then the bit encoding of the dense clause
+over $V$ variables with literals $\ell$ is the gap encoding of $\ell$ from slot $0$ to $V$,
+followed by the clause terminator $00$. -/
 theorem encodeClause_denseClause {ls : List (ℕ × Bool)} {V : ℕ} (h : Inc 0 ls V) :
     encodeClause (denseClause V ls) = gapEnc 0 ls V ++ [false, false] := by
   rw [encodeClause, denseClause, List.range_eq_range', ← gapEnc_eq h]
   rfl
 
-/-- Starting the gap encoding earlier just prepends absent slots. -/
+/-- **Shifting the start of a gap encoding.** Let $m \le m'$ and let
+$\ell = [(p_1, b_1), \dots, (p_n, b_n)]$ be a list of literals with
+$m' \le p_1 < \dots < p_n < V$ (if $\ell$ is empty, require $m' \le V$). Then the gap encoding
+of $\ell$ from slot $m$ to $V$ is $m' - m$ copies of the absent-slot block $01$ followed by the
+gap encoding of $\ell$ from slot $m'$ to $V$. -/
 theorem gapEnc_shift {lo lo' : ℕ} {ls : List (ℕ × Bool)} {V : ℕ} (hlo : lo ≤ lo')
     (h : Inc lo' ls V) : gapEnc lo ls V = rep [false, true] (lo' - lo) ++ gapEnc lo' ls V := by
   cases ls with
@@ -224,6 +285,9 @@ theorem gapEnc_shift {lo lo' : ℕ} {ls : List (ℕ × Bool)} {V : ℕ} (hlo : l
 
 /-! ## The literal positions are strictly increasing -/
 
+/-- **Successor of a number with a non-maximal remainder.** Let $c$ and $d$ be natural numbers
+with $0 < d$ and $(c \bmod d) + 1 < d$. Then $\lfloor (c + 1) / d \rfloor = \lfloor c / d \rfloor$
+and $(c + 1) \bmod d = (c \bmod d) + 1$. -/
 theorem div_mod_succ_of_lt {c d : ℕ} (hd : 0 < d) (h : c % d + 1 < d) :
     (c + 1) / d = c / d ∧ (c + 1) % d = c % d + 1 := by
   have hc := Nat.div_add_mod c d
@@ -239,7 +303,12 @@ theorem div_mod_succ_of_eq {c d : ℕ} (hd : 0 < d) (h : c % d + 1 = d) :
   rw [e, Nat.mul_div_cancel_left _ hd, Nat.mul_mod_right]
   exact ⟨rfl, rfl⟩
 
-/-- Generic: an increasing indexed family of literals satisfies `Inc`. -/
+/-- **Increasing literal sequences.** Let $f$ assign to each $j \in \mathbb{N}$ a literal
+$f(j) = (p_j, b_j)$ with position $p_j \in \mathbb{N}$, and let $m, V \in \mathbb{N}$. Suppose
+$p_j < p_{j+1}$ whenever $j + 1 < m$, and $p_j < V$ when $j + 1 = m$. Then for all
+$n, a, \mathit{lo} \in \mathbb{N}$ with $a + n = m$ such that $\mathit{lo} \le V$ if $n = 0$ and
+$\mathit{lo} \le p_a$ if $n > 0$, the list $f(a), f(a + 1), \dots, f(a + n - 1)$ has increasing
+literal positions from $\mathit{lo}$ below $V$. -/
 theorem inc_of_mono (f : ℕ → ℕ × Bool) (m V : ℕ)
     (hmono : ∀ j, j + 1 < m → (f j).1 < (f (j + 1)).1) (hlast : ∀ j, j + 1 = m → (f j).1 < V) :
     ∀ n a lo, a + n = m → (n = 0 → lo ≤ V) → (0 < n → lo ≤ (f a).1) →
@@ -257,7 +326,11 @@ section Sorted
 
 variable (L : Layout) (la na : ℕ → ℕ) (wa : ℕ → ℕ → ℕ → ℕ)
 
-/-- Well-formedness of the tables for situation `i` (codes in range, window within height). -/
+/-- **Well-formed situation tables for the transition clauses.** Given a layout with label/state
+block size $A$, $K$ stacks, $g$ symbol codes and window depth $d$, a current-code table $\ell$, a
+next-code table $\nu$ and a window table $w$, the tables are well formed for situation $i$ at
+height $H$ when $\ell(i) < A$, $\nu(i) < A$, $w(i, k, j) < g$ for all $k < K$ and $j < d$, and
+$d \le H$. -/
 structure WF (H i : ℕ) : Prop where
   la_lt : la i < L.A
   na_lt : na i < L.A
@@ -344,7 +417,11 @@ end Sorted
 
 /-! ## The generator machine -/
 
-/-- Unit-counter stacks of the generator. -/
+/-- **Counters of the transition-family generator.** The generator for the transition clause
+families keeps fifteen unit counters, each on its own stack: $\mathrm{Tn}$, $\mathrm{Ti}$,
+$\mathrm{Hs}$, $\mathrm{Gc}$, $\mathrm{HG}$, $\mathrm{Ka}$, $\mathrm{Wc}$, $\mathrm{Vc}$,
+$\mathrm{TW}$, $\mathrm{P}$, $\mathrm{Q}$, $\mathrm{tmp}$, $\mathrm{md}$, $\mathrm{c1}$ and
+$\mathrm{c2}$. -/
 inductive CK
   | Tn | Ti | Hs | Gc | HG | Ka | Wc | Vc | TW | P | Q | tmp | md | c1 | c2
   deriving DecidableEq
@@ -353,25 +430,43 @@ instance CK.instFintypeEnumFix : Fintype CK where
       CK.md, CK.c1, CK.c2], by decide⟩
   complete := fun x => by cases x <;> decide
 
-/-- All stacks: the Bool output and the counters. -/
+/-- **Stacks of the clause-family generator.** The stacks of the counter machine over the
+generator's counters: one stack of Booleans for the output and one unit counter for each of the
+generator's fifteen counters. -/
 abbrev GK := SK CK
 
-/-- Alphabets: Bool output, unit counters. -/
+/-- **Stack alphabets of the generator.** The generator has an output stack and one counter stack
+for each of its counter names; the output stack has the alphabet $\{\mathrm{false},
+\mathrm{true}\}$ and every counter stack has a one-element alphabet. -/
 abbrev GΓ := SΓ CK
 
 
-/-- Precomputation stages. -/
+/-- **Stages of the transition-clause generator's precomputation.** The control stages of the
+precomputation of the transition-clause generator. There are eight plain stages $eg$, $ew$,
+$ek$, $dk$, $cp_1$, $cp_2$, $inc$ and $dk_2$, and three families $hg(s)$, $w(s)$ and $v(s)$
+indexed by the four stages $s$ of a multiplication site. -/
 inductive PS
   | eg | hg (s : MS) | ew | ek | w (s : MS) | dk | cp1 | cp2 | inc | v (s : MS) | dk2
   deriving DecidableEq, Fintype
 
-/-- Stages of the routine emitting one literal. -/
+/-- **Stages of the transition-clause generator's literal routine.** The control stages of the
+routine of the transition-clause generator that emits one literal. There are thirteen plain
+stages: two copy stages $cp_1$, $cp_2$ and the stages $ea$, $da$, $eb$, $db$, $ec$, $dec$,
+$cmp$, $emL$, $bad$, $slot$ and $dq$; two families $ma(s)$ and $mb(s)$ indexed by the four
+stages $s$ of a multiplication site; and two families $r(o)$ and $rB(o)$ indexed by the three
+comparison outcomes $o$ (less, equal, greater). -/
 inductive LS
   | cp1 | cp2 | ea | ma (s : MS) | da | eb | mb (s : MS) | db | ec
   | dec | cmp | r (o : Ordering) | rB (o : Ordering) | emL | bad | slot | dq
   deriving DecidableEq, Fintype
 
-/-- Labels, finite: situation numbers are `Fin N`, literal numbers `Fin m` (`m = nLits`). -/
+/-- **Labels of the clause-family generator.** For $N, m \in \mathbb{N}$, a label is one of: a
+precomputation stage; the head or the tail of the time loop; a stage of the multiplication
+routine of a time step; for a situation $i < N$, one of three labels that start clause $i$, a
+stage of the routine emitting literal $j$ of clause $i$ for some $j < m$, or the label that
+finishes clause $i$; the label that ends a time step; or the final label $\mathsf{done}$, where a
+successful run halts. There are finitely many labels; the generator uses $m$ equal to the number
+of literals of a clause. -/
 inductive GL (N m : ℕ)
   | pre (s : PS)
   | tHead | tRest
@@ -386,16 +481,32 @@ namespace GL
 
 variable {N m : ℕ}
 
-/-- Literal routine `j` of situation `i` (`done` if `j` is out of range; never used then). -/
+/-- **Entry label of a literal routine (transition-clause generator).** Among the labels of the
+generator with $N$ situations and $m$ literal numbers, the entry label of literal $j \in \mathbb{N}$
+of situation $i < N$ is the first stage of the routine for literal $j$ of situation $i$ when
+$j < m$, and the halting label $\mathrm{done}$ when $j \ge m$.
+
+The generator never uses it with $j \ge m$. -/
 def litL (i : Fin N) (j : ℕ) : GL N m := if h : j < m then .lit i ⟨j, h⟩ .cp1 else .done
 
-/-- Where the routine goes after literal `j`: the previous literal, or the leading gap. -/
+/-- **Label after a literal routine in the transition-family generator.** Let $N$ be the number
+of situations and $m$ the number of literals per clause, let $i < N$ be a situation and $j$ a
+natural number. After the routine for literal $j$ of the clause of situation $i$, the generator
+moves to the label that emits the leading gap of that clause if $j = 0$. Otherwise it moves to the
+first label of the routine for literal $j - 1$ if $j - 1 < m$, and to the halting label if
+$j - 1 \ge m$. -/
 def after (i : Fin N) (j : ℕ) : GL N m := if j = 0 then .fin i else litL i (j - 1)
 
-/-- Clause `i` (`dtw` if out of range). -/
+/-- **Entry label of the clause routine for situation $i$.** For $i < N$, the generator label
+$\mathrm{e00}_i$ at which the routine emitting the clause of situation $i$ starts; for $i \ge N$,
+the end-of-time-step label $\mathrm{dtw}$. -/
 def sitL (i : ℕ) : GL N m := if h : i < N then .e00 ⟨i, h⟩ else .dtw
 
-/-- Where to go after situation `i`: the previous situation, or the end of the time step. -/
+/-- **Label after a situation clause in the transition-family generator.** Let $N$ be the number
+of situations. For a natural number $i$, the label the generator moves to after the clause of
+situation $i$ is the end-of-time-step label if $i = 0$. Otherwise it is the first label of the
+clause routine for situation $i - 1$ if $i - 1 < N$, and the end-of-time-step label again if
+$i - 1 \ge N$. -/
 def afterS (i : ℕ) : GL N m := if i = 0 then .dtw else sitL (i - 1)
 
 theorem litL_of_lt {i : Fin N} {j : ℕ} (h : j < m) : (litL i j : GL N m) = .lit i ⟨j, h⟩ .cp1 :=
@@ -409,20 +520,66 @@ section Machine
 
 variable (L : Layout) (la na : ℕ → ℕ) (wa : ℕ → ℕ → ℕ → ℕ) (N : ℕ)
 
-/-- Literal `j`'s position is `t·W + kA j · (H·g) + kB j · W + cst i j`. -/
+/-- **Stack index of a literal in a transition clause.** For a layout with $K$ stacks and window
+depth $d$, the stack index $k_A(j)$ of literal $j$ is $\lfloor (j - 1)/d \rfloor$ when
+$1 \le j \le Kd$, and $0$ when $j = 0$ or $j > Kd$.
+
+With the row offset $k_B$ and the constant offset $c_i$ of situation $i$, the position of literal
+$j$ of clause $(t, i)$ at height $H$ is $tW + k_A(j)\,Hg + k_B(j)\,W + c_i(j)$, where $g$ is the
+number of symbol codes and $W$ the number of variables per time step. -/
 def kA (j : ℕ) : ℕ := if j = 0 then 0 else if j ≤ L.KK * L.d then (j - 1) / L.d else 0
-/-- Row offset (in rows `W`) of literal `j`: `1` for the next-code literal, else `0`. -/
+/-- **Row offset of a literal in a transition clause.** For a layout with $K$ stacks and window
+depth $d$, the row offset $k_B(j)$ of literal $j$ is $0$ when $j \le Kd$ and $1$ when $j > Kd$.
+
+Among the literals $0, \dots, Kd + 1$ of a transition clause it is $1$ only for the last one,
+the next-label literal, which refers to the following time step. -/
 def kB (j : ℕ) : ℕ := if j = 0 then 0 else if j ≤ L.KK * L.d then 0 else 1
-/-- Constant part of literal `j`'s position for situation `i`. -/
+/-- **Constant offset of a literal position.** For a layout with label block size $A$, $K$
+stacks, $g$ symbol codes and window depth $d$, and tables $\mathrm{la}, \mathrm{na} : \mathbb{N}
+\to \mathbb{N}$ and $\mathrm{wa} : \mathbb{N} \to \mathbb{N} \to \mathbb{N} \to \mathbb{N}$, the
+constant part of the position of literal $j$ of situation $i$ is $\mathrm{la}(i)$ if $j = 0$, is
+$A + ((j - 1) \bmod d)\,g + \mathrm{wa}(i, \lfloor (j - 1)/d \rfloor, (j - 1) \bmod d)$ if
+$1 \le j \le Kd$, and is $\mathrm{na}(i)$ if $j > Kd$. -/
 def cst (i j : ℕ) : ℕ :=
   if j = 0 then la i
   else if j ≤ L.KK * L.d then L.A + (j - 1) % L.d * L.g + wa i ((j - 1) / L.d) ((j - 1) % L.d)
   else na i
-/-- Polarity of literal `j`: only the last (next-code) literal is positive. -/
+/-- **Polarity of a transition-clause literal.** For a layout with $K$ stacks and window depth
+$d$, a label-transition clause has $n = K d + 2$ literals, and literal $j$ is positive (polarity
+$\mathrm{true}$) exactly when $j = n - 1$: only the last (next-code) literal is positive. -/
 def sgn (j : ℕ) : Bool := decide (j = L.nLits - 1)
 
-/-- The routine for literal `j` of situation `i`: `Q := position`, emit the gap down from `P`,
-the literal slot, drain `Q`. -/
+/-- **Literal routine of the transition-clause generator.** Fix a layout with label/state block
+size $A$, $K$ stacks, $g$ symbol codes and window depth $d$, tables $\mathrm{la}$, $\mathrm{na}$,
+$\mathrm{wa}$ and a number $N$ of situations, and let $n = Kd + 2$ be the number of literals of a
+clause. For a situation $i < N$ and a literal number $j < n$, this assigns a generator instruction
+to each stage of the routine that emits literal $j$ of the clause of situation $i$; all stages
+named below are stages of this routine, and moving a counter onto targets means popping it until
+it is empty and pushing one unit onto every target for each unit popped. Stage $cp_1$ moves
+$\mathsf{TW}$ onto $\mathsf{Q}$ and $\mathsf{tmp}$ and goes to $cp_2$, which moves $\mathsf{tmp}$
+onto $\mathsf{TW}$ and goes to $ea$. Stage $ea$ pushes $k_A(j)$ units onto $\mathsf{Ka}$, where
+$k_A(j)$ is the stack index of literal $j$, and goes to $ma(\mathrm{head})$; the stages $ma(s)$
+run the multiplication routine, stage $s$ at $ma(s)$, with multiplier $\mathsf{Ka}$, index
+counter $\mathsf{md}$, multiplicand $\mathsf{HG}$, target $\mathsf{Q}$ and scratch
+$\mathsf{tmp}$, ending at $da$; and $da$ empties $\mathsf{Ka}$ and goes to $eb$. Stage $eb$
+pushes $k_B(j)$ units onto $\mathsf{Ka}$, where $k_B(j)$ is the row offset of literal $j$, and
+goes to $mb(\mathrm{head})$; the stages $mb(s)$ run the multiplication routine, stage $s$ at
+$mb(s)$, with multiplier $\mathsf{Ka}$, index counter $\mathsf{md}$, multiplicand
+$\mathsf{Wc}$, target $\mathsf{Q}$ and scratch $\mathsf{tmp}$, ending at $db$; and $db$ empties
+$\mathsf{Ka}$ and goes to $ec$. Stage $ec$ pushes $c_i(j)$ units onto $\mathsf{Q}$, where
+$c_i(j)$ is the constant offset of literal $j$ of situation $i$, and goes to $dec$. Stage $dec$
+pops $\mathsf{P}$ and goes to $bad$ if $\mathsf{P}$ was empty and to $cmp$ otherwise. Stage
+$cmp$ pops $\mathsf{P}$ and then $\mathsf{Q}$, pushing a unit onto $\mathsf{c1}$ if the pop of
+$\mathsf{P}$ found one and onto $\mathsf{c2}$ if the pop of $\mathsf{Q}$ found one; it returns
+to $cmp$ if both pops found a unit, and otherwise goes to $r(\mathrm{gt})$ if only $\mathsf{P}$
+had one, to $r(\mathrm{lt})$ if only $\mathsf{Q}$ had one, and to $r(\mathrm{eq})$ if neither
+had one. Stage $r(o)$ moves $\mathsf{c1}$ onto $\mathsf{P}$ and goes to $rB(o)$, which moves
+$\mathsf{c2}$ onto $\mathsf{Q}$ and goes to $slot$ if $o = \mathrm{eq}$ and to $emL$ otherwise.
+Stage $emL$ prepends $[\mathrm{false}, \mathrm{true}]$ to the output and goes to $dec$, and
+stage $bad$ halts. Stage $slot$ prepends the two-bit code $10$ to the output if $j = n - 1$ and
+$11$ otherwise, and goes to $dq$, which empties $\mathsf{Q}$ and then goes to the label that
+finishes the clause of situation $i$ if $j = 0$, and to the first stage of the routine for
+literal $j - 1$ otherwise. -/
 def litP (i : Fin N) (j : Fin L.nLits) : LS → TM2.Stmt GΓ (GL N L.nLits) Bool
   | .cp1 => xfer (.c .TW) [⟨.c .Q, ()⟩, ⟨.c .tmp, ()⟩] (.lit i j .cp1) (.lit i j .cp2)
   | .cp2 => xfer (.c .tmp) [⟨.c .TW, ()⟩] (.lit i j .cp2) (.lit i j .ea)
@@ -444,7 +601,32 @@ def litP (i : Fin N) (j : Fin L.nLits) : LS → TM2.Stmt GΓ (GL N L.nLits) Bool
   | .slot => emitR .out (encodeSlot (some (sgn L j))) (.lit i j .dq)
   | .dq => xfer (.c .Q) [] (.lit i j .dq) (GL.after i j)
 
-/-- The generator. Input: `T` on `Tn`, `H` on `Hs`, everything else empty. -/
+/-- **Generator machine for the transition clause families.** Fix a layout $L$ with label/state
+block size $A$, $K$ stacks and $g$ symbol codes, tables $\mathrm{la}$, $\mathrm{na}$,
+$\mathrm{wa}$, and a number $N$ of situations, and let $n = Kd + 2$ be the number of literals of
+a clause, where $d$ is the window depth. The generator is a multi-stack machine with a Boolean
+output stack, the unit counters of the generator, and a Boolean internal state; below, moving a
+counter onto targets means popping it until it is empty and pushing one unit onto every target
+for each unit popped, and each multiplication uses $\mathsf{md}$ as its index counter and
+$\mathsf{tmp}$ as scratch. Its precomputation pushes $g$ units on $\mathsf{Gc}$, adds
+$\mathsf{Hs} \cdot \mathsf{Gc}$ to $\mathsf{HG}$, pushes $A$ units on $\mathsf{Wc}$, pushes $K$
+units on $\mathsf{Ka}$, adds $\mathsf{Ka} \cdot \mathsf{HG}$ to $\mathsf{Wc}$, empties
+$\mathsf{Ka}$, moves $\mathsf{Tn}$ onto $\mathsf{Ka}$ and $\mathsf{tmp}$ and then $\mathsf{tmp}$
+onto $\mathsf{Tn}$, pushes one unit on $\mathsf{Ka}$, adds $\mathsf{Ka} \cdot \mathsf{Wc}$ to
+$\mathsf{Vc}$, empties $\mathsf{Ka}$ and goes to the loop head. At the loop head it pops
+$\mathsf{Tn}$; if a unit was popped it pushes a unit on $\mathsf{Ti}$, adds
+$\mathsf{Tn} \cdot \mathsf{Wc}$ to $\mathsf{TW}$ and goes to the clause routine of situation
+$N - 1$ (to the end of the time step if $N = 0$); if $\mathsf{Tn}$ was empty it moves
+$\mathsf{Ti}$ onto $\mathsf{Tn}$ and goes to its final label, where it halts. The clause routine
+of situation $i < N$ prepends $[\mathrm{false}, \mathrm{false}]$ to the output, moves
+$\mathsf{Vc}$ onto $\mathsf{P}$ and $\mathsf{tmp}$ and then $\mathsf{tmp}$ onto $\mathsf{Vc}$,
+runs the literal routines of situation $i$ for literals $n - 1, n - 2, \dots, 0$ in turn, drains
+$\mathsf{P}$ while prepending $[\mathrm{false}, \mathrm{true}]$ to the output once per unit, and
+goes to the clause routine of situation $i - 1$, or to the end of the time step if $i = 0$. At
+the end of a time step it empties $\mathsf{TW}$ and returns to the loop head.
+
+It is meant to be started with $T$ on $\mathsf{Tn}$, $H$ on $\mathsf{Hs}$ and every other
+counter empty. -/
 def prog : GL N L.nLits → TM2.Stmt GΓ (GL N L.nLits) Bool
   | .pre .eg => emitR (.c .Gc) (List.replicate L.g ()) (.pre (.hg .head))
   | .pre (.hg s) => mulS .Hs .md .Gc .HG .tmp (fun s => .pre (.hg s)) (.pre .ew) s
@@ -468,8 +650,14 @@ def prog : GL N L.nLits → TM2.Stmt GΓ (GL N L.nLits) Bool
   | .dtw => xfer (.c .TW) [] .dtw .tHead
   | .done => .halt
 
-/-- **The generator as a genuine `FinTM2`** (finite stacks, labels, states; input stack `Tn`).
-Only checks that the finiteness requirements are met; the run lemmas are about `prog`. -/
+/-- **The clause-family generator as a finite stack machine.** For a layout $L$, tables
+$\mathit{la}$, $\mathit{na}$, $\mathit{wa}$ and $N$ situations, the generator program for these
+data, bundled as a multi-stack Turing machine with finitely many stacks, labels and states: its
+stacks are the generator's stacks (the Boolean output stack and the counters), its input stack is
+the time counter and its output stack is the Boolean output stack, its alphabets are the
+generator's alphabets, its labels are the generator's labels for $N$ situations and literal
+numbers below the number of literals of a clause, execution starts at the first precomputation
+stage, and its internal state is a Boolean, initially false. -/
 def genTM : FinTM2 where
   K := GK
   k₀ := .c .Tn
@@ -499,7 +687,9 @@ section Correct
 
 variable (L : Layout) (la na : ℕ → ℕ) (wa : ℕ → ℕ → ℕ → ℕ) (N : ℕ)
 
-/-- All scratch counters are empty. -/
+/-- **Scratch counters at rest in the clause-family generator.** A counter assignment $F$ of the
+generator (a natural number for each of its counters) is at rest when its six scratch counters
+$Q$, $K_a$, $\mathit{tmp}$, $\mathit{md}$, $c_1$ and $c_2$ all hold $0$. -/
 structure Rest (F : CK → ℕ) : Prop where
   Q : F .Q = 0
   Ka : F .Ka = 0
@@ -508,8 +698,20 @@ structure Rest (F : CK → ℕ) : Prop where
   c1 : F .c1 = 0
   c2 : F .c2 = 0
 
-/-- One literal: from `P = q + gap + 1` (the previous boundary), compute `Q := q`, prepend the gap
-and the literal slot, and leave `P = q`, all scratch counters empty again. -/
+/-- **Run of one literal routine (transition-clause generator).** Let $i < N$ be a situation, $j$
+less than the number of literals, and $F$ a counter assignment whose scratch counters $Q$,
+$\mathrm{Ka}$, $\mathrm{tmp}$, $\mathrm{md}$, $c_1$, $c_2$ are $0$. Let
+$q = F(\mathrm{TW}) + k_A(j) F(\mathrm{HG}) + k_B(j) F(\mathrm{Wc}) + c_i(j)$, where $k_A$, $k_B$
+and $c_i(j)$ are the stack index, the row offset and the constant part of the position of literal
+$j$, and suppose $F(P) = q + m + 1$ for a natural number $m$. Let $K$ be the number of stacks of
+the layout. Then for every output $o$ and every state $v$, the generator runs in at most
+
+$$m(3q + 6) + 2F(\mathrm{TW}) + K(2F(\mathrm{HG}) + 3) + 2K + 2F(\mathrm{Wc}) + 4q + 22$$
+
+steps from the first stage of the routine for literal $j$ of situation $i$, with state $v$,
+counters $F$ and output $o$, to the label that follows literal $j$, with state false, counters $F$
+except that $P = q$, and output $s\,(01)^m\,o$, where $s$ is the slot code of a literal with
+polarity $\mathrm{sgn}(j)$. -/
 theorem lit_run (i : Fin N) (j : Fin L.nLits) (F : CK → ℕ) (hF : Rest F) (q gap : ℕ)
     (hq : q = F .TW + kA L j * F .HG + kB L j * F .Wc + cst L la na wa i j)
     (hp : F .P = q + gap + 1) (o : List Bool) (v : Bool) :
@@ -614,7 +816,11 @@ theorem lits_drop (H t i j : ℕ) :
         fun j => (litPos L la na wa H t i j, decide (j = L.nLits - 1)) := by
   rw [lits, ← List.map_drop, List.range_eq_range', List.drop_range']; simp
 
-/-- The boundary before literal `j`: its position, or `V` past the last literal. -/
+/-- **Boundary before a literal of a transition clause.** Let $L$ be a layout with $K$ stacks and
+window depth $d$, let $la$, $na$, $wa$ be the tables and $T$, $H$, $t$, $i$, $j$ natural numbers. If
+$j$ is less than the number $m = Kd + 2$ of literals of a transition clause, this is the position
+of literal $j$ of clause $(t, i)$; otherwise it is the number $V$ of variables of $L$ for $T$ and
+$H$. -/
 def bnd (L : Layout) (la na : ℕ → ℕ) (wa : ℕ → ℕ → ℕ → ℕ) (T H t i j : ℕ) : ℕ :=
   if j < L.nLits then litPos L la na wa H t i j else L.numVars T H
 
@@ -654,7 +860,13 @@ theorem bnd_lt {T H t i j : ℕ} (ht : t < T) (hwf : WF L la na wa H i) (hj : j 
     obtain ⟨-, h2⟩ := this
     exact h2
 
-/-- Resting counters inside the time loop at time `t`. -/
+/-- **Resting counter values in the transition-family time loop.** Let $L$ be a layout with
+label/state block size $A$, $K$ stacks and $g$ symbol codes, let $T$, $H$, $t$ be natural numbers,
+and write $W = A + KHg$ for the number of variables per time step and $V = (T + 1)W$ for the total
+number of variables. Counter values $F$ of the generator are at rest at time $t$ when the scratch
+counters $\mathrm{Q}$, $\mathrm{Ka}$, $\mathrm{tmp}$, $\mathrm{md}$, $\mathrm{c1}$, $\mathrm{c2}$
+are all $0$, $F(\mathrm{TW}) = tW$, $F(\mathrm{HG}) = Hg$, $F(\mathrm{Wc}) = W$ and
+$F(\mathrm{Vc}) = V$. -/
 structure Base (L : Layout) (T H t : ℕ) (F : CK → ℕ) : Prop extends Rest F where
   TW : F .TW = t * L.rowW H
   HG : F .HG = H * L.g
@@ -664,11 +876,19 @@ structure Base (L : Layout) (T H t : ℕ) (F : CK → ℕ) : Prop extends Rest F
 theorem Rest.update_P {F : CK → ℕ} (h : Rest F) (n : ℕ) : Rest (update F .P n) :=
   ⟨by simp [h.Q], by simp [h.Ka], by simp [h.tmp], by simp [h.md], by simp [h.c1], by simp [h.c2]⟩
 
-/-- Time bound: per-literal cost apart from the gap loop. -/
+/-- **Per-literal time bound of the transition-clause generator.** For a layout with label/state
+block size $A$, $K$ stacks and $g$ symbol codes, and for $T, H \in \mathbb{N}$, let
+$W = A + KHg$ be the number of variables per time step and $V = (T + 1)W$ the number of
+variables. The per-literal time bound is $6V + K(2Hg + 3) + 2K + 2W + 22$.
+
+It bounds the steps spent on one literal apart from the loop that emits the gap before it. -/
 def litE (L : Layout) (T H : ℕ) : ℕ :=
   6 * L.numVars T H + L.KK * (2 * (H * L.g) + 3) + 2 * L.KK + 2 * L.rowW H + 22
 
-/-- Time bound: one whole clause. -/
+/-- **Step bound for one clause of the transition-family generator.** Let $L$ be a layout with
+label/state block size $A$, $K$ stacks, $g$ symbol codes and window depth $d$, and let $T$, $H$ be
+natural numbers. With $W = A + KHg$, $V = (T + 1)W$, $m = Kd + 2$ and
+$E = 6V + K(2Hg + 3) + 2K + 2W + 22$, the bound is $V(3V + 6) + mE + 3V + 4$. -/
 def clauseB (L : Layout) (T H : ℕ) : ℕ :=
   L.numVars T H * (3 * L.numVars T H + 6) + L.nLits * litE L T H + 3 * L.numVars T H + 4
 
@@ -679,7 +899,22 @@ theorem bnd_le {T H t i : ℕ} (ht : t < T) (hwf : WF L la na wa H i) {j : ℕ} 
 theorem tW_le {T H t : ℕ} (ht : t < T) : t * L.rowW H ≤ L.numVars T H :=
   Nat.mul_le_mul_right _ (by omega)
 
-/-- All literals of clause `(t, i)`, from the one before position `j` down to the first. -/
+/-- **Run of the literal routines of a clause (transition-clause generator).** Let $t < T$, let
+the tables be well formed for situation $i < N$ at height $H$, and let $F$ be a counter assignment
+resting at time $t$: its scratch counters $Q$, $\mathrm{Ka}$, $\mathrm{tmp}$, $\mathrm{md}$, $c_1$,
+$c_2$ are $0$, $F(\mathrm{TW}) = tW$, $F(\mathrm{HG}) = Hg$, $F(\mathrm{Wc}) = W$ and
+$F(\mathrm{Vc}) = V$, where $g$ is the number of symbol codes of the layout, $W$ is the number of
+variables per time step and $V = (T + 1)W$. Let $n$ be the number of literals of a clause. For
+$j \le n$ let $b_j$ be the position of literal $j$ of clause $(t, i)$ when $j < n$, and $b_n = V$;
+let $e_j$ be the gap encoding of the slots $b_j, \dots, V - 1$ whose literals are those of clause
+$(t, i)$ numbered $j$ or more. Then for every output $o$, every $j \le n$ and every state $v$
+there is a state $v'$ such that the generator runs in at most $b_j(3V + 6) + jE$ steps, where $E$
+is the per-literal time bound, from the label that follows literal $j$ with state $v$, counters
+$F$ except that $P = b_j$, and output $e_j\,00\,o$, to the leading-gap stage of situation $i$
+with state $v'$, counters $F$ except that $P = b_0$, and output $e_0\,00\,o$.
+
+The label that follows literal $j$ is the routine for literal $j - 1$, or the leading-gap stage
+when $j = 0$. -/
 theorem lits_run {T H t : ℕ} {i : Fin N} (ht : t < T) (hwf : WF L la na wa H i) (F : CK → ℕ)
     (hF : Base L T H t F) (o : List Bool) :
     ∀ j, j ≤ L.nLits → ∀ v : Bool, ∃ v' : Bool,
@@ -734,7 +969,16 @@ theorem lits_run {T H t : ℕ} {i : Fin N} (ht : t < T) (hwf : WF L la na wa H i
       unfold litE
       omega
 
-/-- One whole clause: from `e00 i` to the next situation (or the end of the time step). -/
+/-- **Run of the transition-family generator on one clause.** Let $L$ be a layout with tables
+$la$, $na$, $wa$, let $N$ be the number of situations, let $T$, $H$, $t$ be natural numbers with
+$t < T$, and let $i < N$ be a situation whose tables are well formed at height $H$. Let $F$ be
+counter values at rest in the time loop at time $t$ (for $T$ and $H$) with $F(\mathrm{P}) = 0$,
+let $o$ be a bit string and $v$ a Boolean machine state. Started at the first label of the clause
+routine for situation $i$ with state $v$, counter values $F$ and output stack $o$, the generator
+reaches, in at most $C$ steps, the label after the clause of situation $i$ with state false,
+counter values $F$, and output stack the encoding of the dense clause over $V$ variables with the
+literals of clause $(t, i)$ followed by $o$. Here $V$ is the number of variables of $L$ for $T$
+and $H$, and $C$ is the step bound for one whole clause of $L$ for $T$ and $H$. -/
 theorem clause_run {T H t : ℕ} {i : Fin N} (ht : t < T) (hwf : WF L la na wa H i) (F : CK → ℕ)
     (hF : Base L T H t F) (hP : F .P = 0) (o : List Bool) (v : Bool) :
     RunLe (prog L la na wa N) (clauseB L T H) ⟨some (.e00 i), v, st F o⟩
@@ -791,7 +1035,12 @@ section Top
 
 variable {L : Layout} {la na : ℕ → ℕ} {wa : ℕ → ℕ → ℕ → ℕ} {N : ℕ}
 
-/-- Encoded clauses of time step `t`. -/
+/-- **Encoded transition clauses of one time step.** Given a layout $L$, tables
+$la, na : \mathbb{N} \to \mathbb{N}$ and
+$wa : \mathbb{N} \to \mathbb{N} \to \mathbb{N} \to \mathbb{N}$, and natural numbers $N$, $T$, $H$,
+$t$, this is the bit string obtained by concatenating, for $i = 0, 1, \dots, N - 1$ in this order,
+the encoding of the dense clause over $V$ variables whose literals are the literals of clause
+$(t, i)$, where $V$ is the number of variables of $L$ for $T$ and $H$. -/
 def blk (L : Layout) (la na : ℕ → ℕ) (wa : ℕ → ℕ → ℕ → ℕ) (N T H t : ℕ) : List Bool :=
   (List.range N).flatMap fun i => encodeClause (denseClause (L.numVars T H) (lits L la na wa H t i))
 
@@ -820,7 +1069,15 @@ theorem sits_run {T H t : ℕ} (ht : t < T) (hwf : ∀ i < N, WF L la na wa H i)
       refine this.bud (Bud.fin ?_ rfl)
       rw [Nat.succ_mul (i + 1)]; omega
 
-/-- Counter values at rest inside the time loop (all but `Tn`, `Ti`). -/
+/-- **Time-loop invariant of the transition-family generator.** Let $L$ be a layout with
+label/state block size $A$, $K$ stacks and $g$ symbol codes, let $T, H \in \mathbb{N}$, and write
+$W = A + KHg$ for the number of variables per time step and $V = (T + 1)W$ for the total number of
+variables. Counter values $f$ of the generator satisfy the time-loop invariant when the scratch
+counters $\mathrm{Q}$, $\mathrm{Ka}$, $\mathrm{tmp}$, $\mathrm{md}$, $\mathrm{c1}$, $\mathrm{c2}$
+are all $0$, $f(\mathrm{P}) = 0$, $f(\mathrm{TW}) = 0$, $f(\mathrm{HG}) = Hg$,
+$f(\mathrm{Wc}) = W$ and $f(\mathrm{Vc}) = V$.
+
+The counters $\mathrm{Tn}$, $\mathrm{Ti}$, $\mathrm{Hs}$ and $\mathrm{Gc}$ are not constrained. -/
 structure LoopP (L : Layout) (T H : ℕ) (f : CK → ℕ) : Prop extends Rest f where
   P : f .P = 0
   TW : f .TW = 0
@@ -828,20 +1085,39 @@ structure LoopP (L : Layout) (T H : ℕ) (f : CK → ℕ) : Prop extends Rest f 
   Wc : f .Wc = L.rowW H
   Vc : f .Vc = L.numVars T H
 
-/-- Time bound: one iteration of the time loop. -/
+/-- **Step bound for one time-loop iteration of the transition-family generator.** For a layout
+$L$ and natural numbers $N$, $T$, $H$, let $W$ be the number of variables per time step of $L$ at
+height $H$ and $C$ the step bound for one whole clause of $L$ for $T$ and $H$. The bound is
+$T(2W + 3) + TW + T + 3 + NC$. -/
 def bodyB (L : Layout) (N T H : ℕ) : ℕ :=
   T * (2 * L.rowW H + 3) + T * L.rowW H + T + 3 + N * clauseB L T H
 
-/-- Time bound: the precomputation. -/
+/-- **Step bound for the transition-clause generator's precomputation.** For a layout $L$ with
+$KK$ stacks and $g$ symbol codes and bounds $T$ and $H$, the bound is
+$H (2g + 3) + KK (2Hg + 3) + (T + 1)(2W + 3) + H + 2 KK + 4T + 16$, where $W$ is the number of
+variables per time step at height $H$. -/
 def preB (L : Layout) (T H : ℕ) : ℕ :=
   H * (2 * L.g + 3) + L.KK * (2 * (H * L.g) + 3) + (T + 1) * (2 * L.rowW H + 3) + H + 2 * L.KK +
     4 * T + 16
 
-/-- Time bound: the whole generator (explicit; its polynomial form is `genBound_le`). -/
+/-- **Time bound of the generator.** For a layout $L$ and $N, T, H \in \mathbb{N}$, the time
+bound of the whole generator is $P + T(B + 1) + T + 2$, where $P$ is the time bound of the
+precomputation for $L$, $T$ and $H$, and $B$ is the time bound of one iteration of the time loop
+for $L$, $N$, $T$ and $H$.
+
+The bound is explicit; that it is at most $C\,(T + H + 1)^5$ for a constant $C$ depending only
+on $L$ and $N$ is proved separately. -/
 def genBound (L : Layout) (N T H : ℕ) : ℕ :=
   preB L T H + (T * (bodyB L N T H + 1) + T + 2)
 
-/-- One iteration of the time loop, for time step `t`. -/
+/-- **One iteration of the time loop.** Let $t < T$, suppose the tables are well formed at height
+$H$ for every situation $i < N$, and let $f$ be a counter assignment that satisfies the time-loop
+invariant for $T$ and $H$ and has counter $T_n$ equal to $t$. Then for every output word $o$, the
+generator started at the head label of the time-step multiplication, with state $\mathrm{true}$,
+counters $f$ and output $o$, reaches the time-loop head label with state $\mathrm{false}$, the same
+counters $f$ and output $b_t o$ in at most $B$ steps. Here $b_t$ is the concatenation of the
+encoded clauses of time step $t$ for situations $0, \dots, N-1$, and $B$ is the time-loop body
+bound for $N$, $T$ and $H$. -/
 theorem time_body {T H t : ℕ} (ht : t < T) (hwf : ∀ i < N, WF L la na wa H i) (f : CK → ℕ)
     (hf : LoopP L T H f) (hTn : f .Tn = t) (o : List Bool) :
     RunLe (prog L la na wa N) (bodyB L N T H) ⟨some (.tw .head), Flag.tag true, st f o⟩
@@ -903,12 +1179,18 @@ theorem LoopP.congr {T H : ℕ} {f f' : CK → ℕ} (h : LoopP L T H f)
     Wc := by rw [e _ (by decide) (by decide), h.Wc], Vc := by rw [e _ (by decide) (by decide),
         h.Vc] }
 
-/-- Output after `ii` iterations of the time loop (time steps `T - ii, …, T - 1`). -/
+/-- **Generator output after part of the time loop.** For a layout $L$, tables $la$, $na$, $wa$,
+sizes $N$, $T$, $H$, a number $m$ of iterations and a Boolean list $o$, the output after $m$
+iterations is the concatenation, over the $m$ consecutive time steps $s$ starting at $T - m$ in
+increasing order, of the encoded clauses of time step $s$, followed by $o$. Here $T - m$ is
+truncated subtraction, so for $m \le T$ these are the time steps $T - m, \dots, T - 1$. -/
 def outAfter (L : Layout) (la na : ℕ → ℕ) (wa : ℕ → ℕ → ℕ → ℕ) (N T H ii : ℕ)
     (o : List Bool) : List Bool :=
   (List.range' (T - ii) ii).flatMap (blk L la na wa N T H) ++ o
 
-/-- Initial counters: `T` on `Tn`, `H` on `Hs`. -/
+/-- **Initial counters of the transition-clause generator.** For natural numbers $T$ and $H$,
+the initial counter assignment gives the counter $\mathrm{Tn}$ the value $T$, the counter
+$\mathrm{Hs}$ the value $H$, and every other counter of the generator the value $0$. -/
 def initF (T H : ℕ) : CK → ℕ
   | .Tn => T
   | .Hs => H
@@ -918,9 +1200,17 @@ theorem encodeCNF_family (T H : ℕ) :
     encodeCNF (family L la na wa T H N) = (List.range T).flatMap (blk L la na wa N T H) := by
   simp [encodeCNF, family, List.flatMap_assoc, List.flatMap_map]; rfl
 
-/-- **Correctness of the generator, with its explicit time bound**: started on `T`, `H` (in
-unary) with empty scratch stacks, it halts at `done` within `genBound` steps, with exactly the
-family's encoding prepended to the output stack. -/
+/-- **Correctness of the clause-family generator, with its explicit time bound.** Let $L$ be a
+layout, $\mathit{la}, \mathit{na} : \mathbb{N} \to \mathbb{N}$ and
+$\mathit{wa} : \mathbb{N}^3 \to \mathbb{N}$ tables, and $N, T, H \in \mathbb{N}$, and suppose the
+tables are well formed at height $H$ for every situation $i < N$. Start the generator for $L$,
+$\mathit{la}$, $\mathit{na}$, $\mathit{wa}$ and $N$ at its first precomputation stage, in state
+false, with $T$ on the time counter and $H$ on the height counter in unary, all other counters
+empty, and an arbitrary list $o$ of bits on the output stack. Then within $B(L, N, T, H)$ steps,
+where $B$ is the generator's explicit time bound, it reaches its final label $\mathsf{done}$ (not
+the error stage of the literal routine, which also halts), in some state, with stacks whose output
+stack holds the encoding of the clause family for $L$, $\mathit{la}$, $\mathit{na}$, $\mathit{wa}$,
+$T$, $H$ and $N$, followed by $o$. -/
 theorem gen_run (T H : ℕ) (hwf : ∀ i < N, WF L la na wa H i) (o : List Bool) :
     ∃ (v : Bool) (S : ∀ k, List (GΓ k)),
       RunLe (prog L la na wa N) (genBound L N T H)
@@ -1006,7 +1296,16 @@ theorem gen_run (T H : ℕ) (hwf : ∀ i < N, WF L la na wa H i) (o : List Bool)
   exact ⟨_, S', (Bud.start hpre).trans hloop, by rw [hout, outAfter, Nat.sub_self,
     ← List.range_eq_range', encodeCNF_family]⟩
 
-/-- Last session's statement (run existence only), now a corollary. -/
+/-- **Correctness of the clause-family generator.** Let $L$ be a layout,
+$\mathit{la}, \mathit{na} : \mathbb{N} \to \mathbb{N}$ and
+$\mathit{wa} : \mathbb{N}^3 \to \mathbb{N}$ tables, and $N, T, H \in \mathbb{N}$, and suppose the
+tables are well formed at height $H$ for every situation $i < N$. Start the generator for $L$,
+$\mathit{la}$, $\mathit{na}$, $\mathit{wa}$ and $N$ at its first precomputation stage, in state
+false, with $T$ on the time counter and $H$ on the height counter in unary, all other counters
+empty, and an arbitrary list $o$ of bits on the output stack. Then after finitely many steps it
+reaches its final label $\mathsf{done}$ (not the error stage of the literal routine, which also
+halts), in some state, with stacks whose output stack holds the encoding of the clause family for
+$L$, $\mathit{la}$, $\mathit{na}$, $\mathit{wa}$, $T$, $H$ and $N$, followed by $o$. -/
 theorem gen_correct (T H : ℕ) (hwf : ∀ i < N, WF L la na wa H i) (o : List Bool) :
     ∃ (v : Bool) (S : ∀ k, List (GΓ k)),
       Reach (prog L la na wa N) ⟨some (.pre .eg), false, st (initF T H) o⟩ ⟨some .done, v, S⟩ ∧
@@ -1019,7 +1318,8 @@ end Top
 
 section Poly
 
-/-- Layout with every constant equal to `k`. -/
+/-- **Uniform layout.** For $k \in \mathbb{N}$, the layout whose label/state block size, number of
+stacks, number of symbol codes and window depth are all equal to $k$. -/
 def Layout.uni (k : ℕ) : Layout := ⟨k, k, k, k⟩
 
 theorem genBound_mono {L L' : Layout} {N N' T T' H H' : ℕ} (hA : L.A ≤ L'.A) (hK : L.KK ≤ L'.KK)
@@ -1028,8 +1328,13 @@ theorem genBound_mono {L L' : Layout} {N N' T T' H H' : ℕ} (hA : L.A ≤ L'.A)
   unfold genBound preB bodyB clauseB litE Layout.numVars Layout.rowW Layout.nLits
   gcongr
 
-/-- With all constants `k ≥ 1` and `T = H = y ≥ 1`, every monomial is at most `k⁵ y⁵` and the
-coefficients sum to 323 (the value at `k = y = 1`). -/
+/-- **Uniform bound on the generator's time.** For natural numbers $k \ge 1$ and $y \ge 1$, the
+explicit time bound of the generator for the layout whose label block size, number of stacks,
+number of symbol codes and window depth all equal $k$, with $N = k$ situations and $T = H = y$, is
+at most $323\,k^5 y^5$.
+
+Every monomial of the bound is at most $k^5 y^5$, and its coefficients sum to $323$, its value at
+$k = y = 1$. -/
 theorem genBound_uni (k y : ℕ) (hk : 1 ≤ k) (hy : 1 ≤ y) :
     genBound (Layout.uni k) k y y ≤ 323 * k ^ 5 * y ^ 5 := by
   have m : ∀ a b, a ≤ 5 → b ≤ 5 → k ^ a * y ^ b ≤ k ^ 5 * y ^ 5 := fun a b ha hb =>
@@ -1047,7 +1352,9 @@ theorem genBound_uni (k y : ℕ) (hk : 1 ≤ k) (hy : 1 ≤ y) :
     m 5 2 (by norm_num) (by norm_num), m 5 3 (by norm_num) (by norm_num),
     m 5 4 (by norm_num) (by norm_num)]
 
-/-- The constant of the time bound: depends on the layout and `N` only. -/
+/-- **Constant of the generator's time bound.** For a layout $L$ with label/state block size $A$,
+$K$ stacks, $g$ symbol codes and window depth $d$, and for $N$ situations, the constant is
+$323\,(A + K + g + d + N + 1)^5$. -/
 def genC (L : Layout) (N : ℕ) : ℕ := 323 * (L.A + L.KK + L.g + L.d + N + 1) ^ 5
 
 theorem genBound_le (L : Layout) (N T H : ℕ) : genBound L N T H ≤ genC L N * (T + H + 1) ^ 5 := by
@@ -1059,14 +1366,29 @@ theorem genBound_le (L : Layout) (N T H : ℕ) : genBound L N T H ≤ genC L N *
   exact this.trans (genBound_uni _ _ (by omega) (by omega))
 
 open Polynomial in
-/-- The bound as a `Polynomial ℕ` in `T + H` (the form `TM2ComputableInPolyTime` uses). -/
+/-- **Time-bound polynomial of the clause-family generator.** For a layout $L$ and a number $N$
+of situations, this is the polynomial $c\,(X + 1)^5$ with natural-number coefficients, where $c$
+is the constant of the generator's time bound for $L$ and $N$.
+
+Evaluated at $T + H$ it is $c\,(T + H + 1)^5$, the generator's time bound, in the polynomial form
+that polynomial-time computability of a multi-stack machine uses. -/
 noncomputable def genPoly (L : Layout) (N : ℕ) : Polynomial ℕ := C (genC L N) * (X + 1) ^ 5
 
 theorem genPoly_eval (L : Layout) (N T H : ℕ) :
     (genPoly L N).eval (T + H) = genC L N * (T + H + 1) ^ 5 := by
   simp [genPoly]
 
-/-- **The time bound**: the generator emits the family within a polynomial number of steps. -/
+/-- **Polynomial time bound for the clause-family generator.** Let $L$ be a layout,
+$\mathit{la}, \mathit{na} : \mathbb{N} \to \mathbb{N}$ and
+$\mathit{wa} : \mathbb{N}^3 \to \mathbb{N}$ tables, and $N, T, H \in \mathbb{N}$, and suppose the
+tables are well formed at height $H$ for every situation $i < N$. Start the generator for $L$,
+$\mathit{la}$, $\mathit{na}$, $\mathit{wa}$ and $N$ at its first precomputation stage, in state
+false, with $T$ on the time counter and $H$ on the height counter in unary, all other counters
+empty, and an arbitrary list $o$ of bits on the output stack. Then within $c\,(T + H + 1)^5$
+steps, where $c$ is the constant of the generator's time bound for $L$ and $N$, it reaches its
+final label $\mathsf{done}$ (not the error stage of the literal routine, which also halts), in some
+state, with stacks whose output stack holds the encoding of the clause family for $L$,
+$\mathit{la}$, $\mathit{na}$, $\mathit{wa}$, $T$, $H$ and $N$, followed by $o$. -/
 theorem gen_time {L : Layout} {la na : ℕ → ℕ} {wa : ℕ → ℕ → ℕ → ℕ} {N : ℕ} (T H : ℕ)
     (hwf : ∀ i < N, WF L la na wa H i) (o : List Bool) :
     ∃ (v : Bool) (S : ∀ k, List (GΓ k)),

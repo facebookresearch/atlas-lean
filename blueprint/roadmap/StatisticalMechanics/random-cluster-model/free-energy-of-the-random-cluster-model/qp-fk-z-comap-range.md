@@ -1,0 +1,3 @@
+# Induced graphs with equal range have equal FK partition functions
+
+Let $K_0$ be a simple graph on a finite set $U$, $V, W$ finite sets and $f : V \to U$, $g : W \to U$ injective maps with the same range. Then for all $p, q \in \mathbb{R}$ the graphs pulled back from $K_0$ along $f$ and along $g$ have the same ambient normalizer $Z(p, q)$, where $Z_G(p, q)$ denotes the [ambient random-cluster normalizer](../random-cluster-measures-on-finite-graphs/fk-z.md) $Z_G(p, q) = \sum_\omega p^{o(\omega)}(1 - p)^{c(\omega)} q^{k(\omega)}$ (sum over all assignments $\omega$ of open/closed states to the unordered pairs of vertices, loops and non-edges included; $o, c$ count open and closed edges, $k$ the open clusters).

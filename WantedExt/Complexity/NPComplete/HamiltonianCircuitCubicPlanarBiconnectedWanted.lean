@@ -26,13 +26,13 @@ reference to Garey, Johnson and Tarjan (1976).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Combinatorics.SimpleGraph.Planarity
 public import MathlibExt.Combinatorics.SimpleGraph.VertexConnectivity
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Combinatorics.SimpleGraph.Finite
-public import WantedExt.Complexity.NPComplete.HamiltonianCycleUndirectedWanted
+public import CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs
 
 @[expose] public section
 
@@ -48,7 +48,7 @@ INSTANCE: a finite simple undirected graph `G = (V, E)` that is 2-connected, cub
 has degree 3) and planar. QUESTION: does `G` contain a Hamiltonian circuit?
 
 This is HAMILTONIAN CIRCUIT ([GT37], stated on `main` as
-`WantedExt.Complexity.NPComplete.HamiltonianCycleUndirectedWanted`) restricted to the ISGCI class
+`CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs`) restricted to the ISGCI class
 "2-connected ∩ cubic ∩ planar". The instance type, the graph, the parent's well-formedness (at
 least one vertex, simple edge list on `Fin n`) and the question (`3 ≤ n` and Mathlib's
 `SimpleGraph.IsHamiltonian`) are the parent's; the restriction adds to `WellFormed` that the graph

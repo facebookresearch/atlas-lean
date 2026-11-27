@@ -23,11 +23,11 @@ doi:10.1016/j.dam.2021.05.021, Table 1.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import MathlibExt.Combinatorics.SimpleGraph.PerfectGraph
-public import WantedExt.Complexity.NPComplete.DominatingSetWanted
+public import CSLibExt.Complexity.NPComplete.DominatingSetDefs
 
 @[expose] public section
 
@@ -44,7 +44,7 @@ QUESTION: is there a dominating set of size `K` or less for `G`, i.e. a subset `
 `|V'| ≤ K` such that every vertex `u ∈ V - V'` is joined to at least one member of `V'` by an
 edge?
 
-This is DOMINATING SET ([GT2], `DominatingSetWanted`) restricted to perfect graphs. Johnson's 1985
+This is DOMINATING SET ([GT2], `DominatingSetDefs`) restricted to perfect graphs. Johnson's 1985
 table and its 2022 revision by de Figueiredo, de Melo, Sasaki and Silva list the entry as
 NP-complete. Bertossi proves DOMINATING SET NP-complete for bipartite graphs
 (`DominatingSetBipartiteWanted`). Bipartite graphs are perfect (an induced subgraph with an edge has

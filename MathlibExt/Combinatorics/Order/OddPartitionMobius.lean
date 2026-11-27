@@ -7,9 +7,8 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-Ported from fairinternal/formal-math at `d42524e2f9c7007fe8cf94a2d60d2cc9916991d6`, where it was
-introduced by fairinternal/formal-math#3813. Original formalization by Adam Kiezun (@akiezun),
-with the proof found by a metacode agent (internal agent identity).
+Ported from fairinternal/formal-math at `d42524e2f9c7007fe8cf94a2d60d2cc9916991d6`.
+Original formalization by Adam Kiezun (@akiezun), with the proof found by an automated prover.
 -/
 
 module

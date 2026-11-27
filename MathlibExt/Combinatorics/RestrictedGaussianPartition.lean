@@ -13,22 +13,22 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- A Gaussian partition type, represented by its nonincreasing list of
-subspace dimensions. This small carrier is kept local to the substantive
-restricted-Gaussian-partition development rather than published as a
-standalone entry. -/
+/-- **Gaussian partition.** A Gaussian partition is represented by its list of subspace
+dimensions, which is a nonincreasing list of natural numbers. -/
 structure GaussianPartition where
   dims : List ℕ
   sorted_desc : List.Pairwise (· ≥ ·) dims
 
-/-- A descending block `(d, m)` of an integer partition of `n`. -/
+/-- **Block.** A block is a pair $(d, m)$ of natural numbers, read as a part size $d$ of an integer
+partition together with its multiplicity $m$. No condition is imposed on a single block. -/
 structure Block where
   d : Nat
   m : Nat
 deriving DecidableEq, Repr
 
-/-- One simultaneous split level: `c` copies of parent `a + b` become `c` copies
-of `a` and `c * q ^ a` copies of `b`. -/
+/-- **Branch step.** A branch step is a triple $(a, b, c)$ of natural numbers. It describes one
+simultaneous split level: for the ambient parameter $q$, $c$ copies of the parent dimension
+$a + b$ become $c$ copies of $a$ and $c q^a$ copies of $b$. -/
 structure BranchStep where
   a : Nat
   b : Nat
@@ -43,14 +43,19 @@ def prefixAt (blocks : List Block) (i : Nat) : Nat :=
 def blockAt (blocks : List Block) (i : Nat) : Block :=
   blocks[i]?.getD ⟨0, 0⟩
 
-/-- Computed basic Gaussian multiplicity of block `i`:
-`sum j < m_i, q ^ (prefix_i + j * d_i)`. -/
+/-- **Basic block multiplicity.** Let $q$ be a natural number and
+$(d_0, m_0), \dots, (d_{k-1}, m_{k-1})$ a list of blocks, and put $p_i = \sum_{j < i} m_j d_j$.
+The basic multiplicity of block $i$ is $N_i = \sum_{j=0}^{m_i - 1} q^{p_i + j d_i}$ when $i < k$,
+and $N_i = 0$ when $i \ge k$. -/
 def basicCount (q : Nat) (blocks : List Block) (i : Nat) : Nat :=
   match blocks[i]? with
   | none => 0
   | some B => ((List.range B.m).map (fun j => q ^ (prefixAt blocks i + j * B.d))).sum
 
-/-- First-split exponent `u = prefix_i + (m_i - 1) * d_i` for block `i`. -/
+/-- **First-split exponent.** Let $(d_0, m_0), \dots, (d_{k-1}, m_{k-1})$ be a list of blocks and
+put $p_i = \sum_{j < i} m_j d_j$. The first-split exponent of block $i$ is
+$u_i = p_i + (m_i - 1) d_i$ when $i < k$, where $m_i - 1$ is taken to be $0$ if $m_i = 0$, and
+$u_i = 0$ when $i \ge k$. -/
 def branchBoundExp (blocks : List Block) (i : Nat) : Nat :=
   match blocks[i]? with
   | none => 0
@@ -72,8 +77,12 @@ def chainAt (chains : List (List BranchStep)) (i : Nat) : List BranchStep :=
   | none => []
   | some ch => ch
 
-/-- Remove the first `c` occurrences of `x`, returning the kept prefix before the
-removal point and the remaining suffix. -/
+/-- **Removing the first occurrences of an entry.** Let $x$ and $c$ be natural numbers and let
+$l$ be a list of natural numbers. For $c = 0$ the result is the pair of the empty list and $l$.
+For $c \ge 1$, if $l$ has at least $c$ entries equal to $x$, the result is the pair of the list
+of entries different from $x$ that come before the $c$-th entry equal to $x$, in their order in
+$l$, and the part of $l$ after that entry. If $l$ has fewer than $c$ entries equal to $x$, there
+is no result. -/
 def removeFirstNPos (x c : Nat) : List Nat → Option (List Nat × List Nat)
   | [] => if c = 0 then some ([], []) else none
   | y :: ys =>
@@ -83,9 +92,14 @@ def removeFirstNPos (x c : Nat) : List Nat → Option (List Nat × List Nat)
       if y = x then removeFirstNPos x n ys
       else (removeFirstNPos x (n + 1) ys).map (fun p => (y :: p.1, p.2))
 
-/-- Exact split replacement on dimension lists: the last `c` copies of `a + b`
-are replaced in place by `c` copies of `a` followed by `c * q ^ a` copies of `b`.
-No sorting is performed; sortedness is checked separately at every stage. -/
+/-- **Split replacement in a dimension list.** For natural numbers $q, a, b, c$ and a list $l$ of
+natural numbers, the split replacement is defined exactly when $l$ has at least $c$ entries equal
+to $a + b$. It removes the last $c$ entries of $l$ equal to $a + b$ and, at the position of the
+first of these removed entries, inserts $c$ copies of $a$ followed by $c q^a$ copies of $b$; the
+entries of $l$ before that position stay in front, and the entries after it that were not removed
+follow in their original order. For $c = 0$ the list is unchanged.
+
+No sorting is performed. -/
 def applySplit (q a b c : Nat) (l : List Nat) : Option (List Nat) :=
   match removeFirstNPos (a + b) c l.reverse with
   | none => none
@@ -100,7 +114,14 @@ def applyChain (q : Nat) (l : List Nat) : List BranchStep → Option (List Nat)
     | none => none
     | some l' => applyChain q l' rest
 
-/-- Realize block `i` and its optional branch independently of all other blocks. -/
+/-- **Final dimensions of a block.** Let $q$ be a natural number,
+$(d_0, m_0), \dots, (d_{k-1}, m_{k-1})$ a list of blocks and $C$ a list of chains of branch steps.
+The final dimension list of block $i$ is defined when $C$ has an entry $s_1, \dots, s_r$ at index
+$i$: start from $N_i$ copies of $d_i$, where $N_i$ is the basic multiplicity of block $i$ (the
+empty list when $i \ge k$), and for $t = 1, \dots, r$ in order apply the split replacement of step
+$s_t = (a_t, b_t, c_t)$, which replaces $c_t$ copies of $a_t + b_t$ by $c_t$ copies of $a_t$ and
+$c_t q^{a_t}$ copies of $b_t$. It is undefined when $C$ has no entry at index $i$ or when one of
+these split replacements is undefined. -/
 def blockFinalDims (q : Nat) (blocks : List Block)
     (chains : List (List BranchStep)) (i : Nat) : Option (List Nat) :=
   match chains[i]? with
@@ -127,9 +148,21 @@ def sequenceOptSeg : List (Option (List Nat)) → Option (List (List Nat))
   | none :: _ => none
   | some x :: xs => (sequenceOptSeg xs).map (x :: ·)
 
-/-- Global dimensions after completing blocks before `i`, applying the first `k + 1`
-levels of block `i`, and leaving later blocks basic. Consecutive stages differ by
-exactly one split replacement inside one block segment. -/
+/-- **Stage segments of a restricted Gaussian partition.** Let $q$ be a natural number, let
+$(d_0, m_0), \dots, (d_{\ell-1}, m_{\ell-1})$ be blocks, let $C_0, C_1, \dots$ be chains of
+branch steps, let $F_0, F_1, \dots$ be lists of natural numbers, and let $i$ and $k$ be natural
+numbers; blocks, chains and lists are indexed from $0$. With $p_h = \sum_{g < h} m_g d_g$, the
+basic segment of block $h$ is the list of $\sum_{j=0}^{m_h - 1} q^{p_h + j d_h}$ copies of $d_h$.
+A step $(a, b, c)$ acts on a list by deleting its last $c$ entries equal to $a + b$ and putting
+$c$ copies of $a$ followed by $c q^a$ copies of $b$ where the first deleted entry was, after the
+entries before it and before the remaining entries after it (a step with $c = 0$ changes
+nothing); it fails if the list has fewer than $c$ entries equal to $a + b$.
+
+The stage segments at $(i, k)$ form the list of $\ell$ segments whose entry for block $h$ is
+$F_h$ if $h < i$; the result of applying the first $k + 1$ steps of $C_i$ in order to the basic
+segment of block $i$ if $h = i$ (all steps of $C_i$ if it has at most $k + 1$, and none if there
+is no chain $C_i$); and the basic segment of block $h$ if $h > i$. They are undefined if $F_h$ is
+missing for some block $h < i$ or one of these steps fails. -/
 def stageSegments (q : Nat) (blocks : List Block) (chains : List (List BranchStep))
     (finals : List (List Nat)) (i k : Nat) : Option (List (List Nat)) :=
   sequenceOptSeg ((List.range blocks.length).map fun h =>
@@ -162,9 +195,11 @@ instance decChainHeadValid (q : Nat) (blocks : List Block) (i : Nat)
   unfold ChainHeadValid
   exact inferInstance
 
-/-- Adjacent-level linkage only: each consecutive pair shares the left dimension
-and satisfies the count bound. Zipping with the tail relates consecutive levels,
-unlike `List.Pairwise`, which would relate every later pair. -/
+/-- **Adjacently valid chain.** A chain of branch steps
+$(a_1, b_1, c_1), \dots, (a_r, b_r, c_r)$ is adjacently valid when for every $j$ with
+$1 \le j < r$ we have $a_{j+1} + b_{j+1} = a_j$, $1 \le b_{j+1} \le a_{j+1}$ and
+$1 \le c_{j+1} \le c_j$. Only consecutive steps are related, and nothing is required of the first
+step alone; in particular every chain with at most one step is adjacently valid. -/
 def ChainAdjValid (ch : List BranchStep) : Prop :=
   ((ch.zip ch.tail).all (fun p =>
     decide (p.2.a + p.2.b = p.1.a ∧ 1 ≤ p.2.b ∧ p.2.b ≤ p.2.a ∧
@@ -175,9 +210,13 @@ instance decChainAdjValid (ch : List BranchStep) :
   unfold ChainAdjValid
   exact inferInstance
 
-/-- Branch validity: the root-specific head condition applies to the FIRST step
-only; every later step is constrained by the adjacent-chain condition over
-consecutive pairs. An empty chain means no branch and is valid. -/
+/-- **Valid branch.** Let $q$ be a natural number, $(d_0, m_0), \dots, (d_{k-1}, m_{k-1})$ a list
+of blocks and $i$ an index, and let $u_i$ and $N_i$ be the first-split exponent and the basic
+multiplicity of block $i$, with $d_i$ read as $0$ when $i \ge k$. A chain of branch steps
+$(a_1, b_1, c_1), \dots, (a_r, b_r, c_r)$ is a valid branch for block $i$ when either $r = 0$, or
+$r \ge 1$, the first step satisfies $1 \le b_1 \le a_1$, $a_1 + b_1 = d_i$ and
+$1 \le c_1 \le q^{u_i} - 1$ (subtraction truncated at $0$), $N_i \ne 1$, and the chain is
+adjacently valid. -/
 def BranchValid (q : Nat) (blocks : List Block) (i : Nat)
     (ch : List BranchStep) : Prop :=
   match ch with
@@ -192,11 +231,31 @@ instance decBranchValid (q : Nat) (blocks : List Block) (i : Nat)
     exact inferInstanceAs
       (Decidable (ChainHeadValid q blocks i s ∧ ChainAdjValid (s :: rest)))
 
-/-- A Gaussian partition `G` is a restricted Gaussian partition for prime power `q`
-and positive `n` when its dimensions arise from valid descending blocks, each
-realized independently with at most one nonempty simultaneous-split branch, every
-intermediate global list stays nonincreasing, and the target equals the realized
-final dimensions exactly. -/
+/-- **Restricted Gaussian partition.** Let $q$ and $n$ be natural numbers and let $G$ be a
+Gaussian partition. Then $G$ is a restricted Gaussian partition for $q$ and $n$ when $q$ is a
+prime power, $n > 0$, and there exist blocks $(d_1, m_1), \dots, (d_\ell, m_\ell)$ and, for each
+block $i$, a chain $C_i$ of branch steps $(a, b, c)$, with the following properties.
+
+The blocks satisfy $d_i \ge 1$ and $m_i \ge 1$ for every $i$, $d_1 > d_2 > \dots > d_\ell$ and
+$m_1 d_1 + \dots + m_\ell d_\ell = n$. With $p_i = \sum_{h < i} m_h d_h$, the basic segment of
+block $i$ is the list of $\beta_i = \sum_{j=0}^{m_i - 1} q^{p_i + j d_i}$ copies of $d_i$.
+
+Each chain $C_i$ is empty or satisfies the following: its first step $(a, b, c)$ has
+$1 \le b \le a$, $a + b = d_i$, $1 \le c \le q^{p_i + (m_i - 1) d_i} - 1$ and $\beta_i \ne 1$,
+and each pair of consecutive steps $(a, b, c), (a', b', c')$ has $a' + b' = a$,
+$1 \le b' \le a'$ and $1 \le c' \le c$.
+
+A step $(a, b, c)$ acts on a list of dimensions by deleting its last $c$ entries equal to
+$a + b$ and putting $c$ copies of $a$ followed by $c q^a$ copies of $b$ where the first deleted
+entry was, after the entries before it and before the remaining entries after it; it fails if
+the list has fewer than $c$ entries equal to $a + b$. Applying the steps of $C_i$ in order to the
+basic segment of block $i$ succeeds for every $i$, with final segment $F_i$.
+
+The concatenation of the basic segments is nonincreasing, the concatenation $F_1 \cdots F_\ell$
+is nonincreasing, and for every block $i$ and every $k$ smaller than the length of $C_i$, the
+concatenation of $F_1, \dots, F_{i-1}$, the result of applying the first $k + 1$ steps of $C_i$
+to the basic segment of block $i$, and the basic segments of blocks $i + 1, \dots, \ell$ is
+nonincreasing. Finally, the dimension list of $G$ is $F_1 \cdots F_\ell$. -/
 def IsRestrictedGaussianPartition (q n : Nat) (G : GaussianPartition) : Prop :=
   IsPrimePow q ∧ 0 < n ∧
     ∃ (blocks : List Block) (chains : List (List BranchStep)),
@@ -213,7 +272,15 @@ def IsRestrictedGaussianPartition (q n : Nat) (G : GaussianPartition) : Prop :=
               (fun g => decide (g.Pairwise (fun a b : Nat => a ≥ b))) = true) ∧
         G.dims = finals.flatten
 
-/-- Every valid basic ancestor (realized with no branches) is restricted. -/
+/-- **Basic ancestors are restricted.** Let $q$ be a prime power and $n > 0$. Let
+$(d_0, m_0), \dots, (d_{k-1}, m_{k-1})$ be blocks with $d_i \ge 1$ and $m_i \ge 1$ for all $i$,
+$d_0 > d_1 > \dots > d_{k-1}$ and $m_0 d_0 + \dots + m_{k-1} d_{k-1} = n$. Put
+$p_i = \sum_{j < i} m_j d_j$, and let the basic dimension list be the concatenation, for
+$i = 0, \dots, k - 1$ in order, of $\sum_{j=0}^{m_i - 1} q^{p_i + j d_i}$ copies of $d_i$. If this
+list is nonincreasing, then every Gaussian partition whose dimension list equals it is a
+restricted Gaussian partition for $q$ and $n$.
+
+The witness realizes every block with an empty branch. -/
 theorem basic_ancestor_is_restricted (q n : Nat) (blocks : List Block)
     (G : GaussianPartition) (hq : IsPrimePow q) (hn : 0 < n)
     (hvalid : BlocksStructValid blocks n)

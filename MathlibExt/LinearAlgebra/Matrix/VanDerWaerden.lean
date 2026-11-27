@@ -43,7 +43,7 @@ private noncomputable def vdw_ones (k : ℕ) : Fin k →₀ ℕ :=
 /-- The `T` operator: `∂q/∂x₀` at `x₀ = 0`. -/
 private noncomputable def vdw_T (k : ℕ) (q : MvPolynomial (Fin (k + 1)) ℝ) :
     MvPolynomial (Fin k) ℝ :=
-  Polynomial.coeff (MvPolynomial.finSuccEquiv ℝ k q) 1
+  (MvPolynomial.finSuccEquiv ℝ k q).coeff 1
 
 /-- The `D` operator: `∂q/∂x₀` in all variables, via `finSuccEquiv`. -/
 private noncomputable def vdw_D (k : ℕ) (q : MvPolynomial (Fin (k + 1)) ℝ) :
@@ -566,7 +566,7 @@ private lemma vdw_aeval_cons_zero_eq {R S : Type*} [CommSemiring R]
     [CommSemiring S] [Algebra R S] {k : ℕ} (q : MvPolynomial (Fin (k + 1)) R)
     (z : Fin k → S) :
     MvPolynomial.aeval (Fin.cons 0 z) q =
-      MvPolynomial.aeval z (Polynomial.coeff (MvPolynomial.finSuccEquiv R k q) 0) := by
+      MvPolynomial.aeval z ((MvPolynomial.finSuccEquiv R k q).coeff 0) := by
   rw [vdw_aeval_cons_eq_eval_map_finSuccEquiv, ← Polynomial.coeff_zero_eq_eval_zero,
     Polynomial.coeff_map]
   rfl
@@ -880,15 +880,15 @@ private lemma vdw_hstable_D {k : ℕ} {q : MvPolynomial (Fin (k + 1)) ℝ}
 private lemma vdw_hstable_coeff_zero {k : ℕ} {D : MvPolynomial (Fin (k + 1)) ℝ}
     (hH : vdw_HStable (k + 1) D)
     (hne : MvPolynomial.eval (fun _ => 1)
-      (Polynomial.coeff (MvPolynomial.finSuccEquiv ℝ k D) 0) ≠ 0) :
-    vdw_HStable k (Polynomial.coeff (MvPolynomial.finSuccEquiv ℝ k D) 0) := by
+      ((MvPolynomial.finSuccEquiv ℝ k D).coeff 0) ≠ 0) :
+    vdw_HStable k ((MvPolynomial.finSuccEquiv ℝ k D).coeff 0) := by
   intro z' hz'
   set U : Set ℂ := {lam : ℂ | ∀ i, 0 < ((1 + lam * (z' i - 1) : ℂ)).re} with hUdef
   set F : ℝ → ℂ → ℂ := fun ep lam => MvPolynomial.aeval
     (Fin.cons (α := fun _ => ℂ) ((ep : ℝ) : ℂ)
       (fun i => 1 + lam * (z' i - 1))) D with hFdef
   set f : ℂ → ℂ := fun lam => MvPolynomial.aeval (fun i => 1 + lam * (z' i - 1))
-    (Polynomial.coeff (MvPolynomial.finSuccEquiv ℝ k D) 0) with hfdef
+    ((MvPolynomial.finSuccEquiv ℝ k D).coeff 0) with hfdef
   have hU_open : IsOpen U := by
     change IsOpen {lam : ℂ | ∀ i, 0 < ((1 + lam * (z' i - 1) : ℂ)).re}
     have heq : {lam : ℂ | ∀ i, 0 < ((1 + lam * (z' i - 1) : ℂ)).re}
@@ -937,7 +937,7 @@ private lemma vdw_hstable_coeff_zero {k : ℕ} {D : MvPolynomial (Fin (k + 1)) �
         (Fin.cons (α := fun _ => ℂ) (((0 : ℝ)) : ℂ)
           (fun i => 1 + lam * (z' i - 1))) D
         = MvPolynomial.aeval (fun i => 1 + lam * (z' i - 1))
-          (Polynomial.coeff (MvPolynomial.finSuccEquiv ℝ k D) 0)
+          ((MvPolynomial.finSuccEquiv ℝ k D).coeff 0)
     rw [show (((0 : ℝ)) : ℂ) = (0 : ℂ) from by simp, vdw_aeval_cons_zero_eq]
   have hΦcont : Continuous (Function.uncurry F) := by
     have hcoord : Continuous fun pl : ℝ × ℂ => Fin.cons (α := fun _ => ℂ)
@@ -1040,30 +1040,30 @@ private lemma vdw_hstable_coeff_zero {k : ℕ} {D : MvPolynomial (Fin (k + 1)) �
     funext i
     ring
   have hwit0 : MvPolynomial.aeval (fun _ : Fin k => (1 : ℂ))
-      (Polynomial.coeff (MvPolynomial.finSuccEquiv ℝ k D) 0) ≠ 0 := by
+      ((MvPolynomial.finSuccEquiv ℝ k D).coeff 0) ≠ 0 := by
     have hw0 : (fun _ : Fin k => (1 : ℂ))
         = algebraMap ℝ ℂ ∘ (fun _ => (1 : ℝ)) := by
       funext i
       exact (map_one _).symm
     have hwit0 : MvPolynomial.aeval (fun _ : Fin k => (1 : ℂ))
-        (Polynomial.coeff (MvPolynomial.finSuccEquiv ℝ k D) 0)
+        ((MvPolynomial.finSuccEquiv ℝ k D).coeff 0)
         = algebraMap ℝ ℂ (MvPolynomial.eval (fun _ => (1 : ℝ))
-          (Polynomial.coeff (MvPolynomial.finSuccEquiv ℝ k D) 0)) := by
+          ((MvPolynomial.finSuccEquiv ℝ k D).coeff 0)) := by
       rw [hw0, MvPolynomial.aeval_algebraMap_apply, MvPolynomial.aeval_eq_eval]
     rw [hwit0]
     have hcast2 : algebraMap ℝ ℂ (MvPolynomial.eval (fun _ => (1 : ℝ))
-        (Polynomial.coeff (MvPolynomial.finSuccEquiv ℝ k D) 0))
+        ((MvPolynomial.finSuccEquiv ℝ k D).coeff 0))
         = ((MvPolynomial.eval (fun _ => (1 : ℝ))
-          (Polynomial.coeff (MvPolynomial.finSuccEquiv ℝ k D) 0) : ℝ) : ℂ) := by
+          ((MvPolynomial.finSuccEquiv ℝ k D).coeff 0) : ℝ) : ℂ) := by
       simp
     rw [hcast2]
     simpa using hne
   have hwit : ∃ lam ∈ U, f lam ≠ 0 := by
     refine ⟨0, h0U, ?_⟩
     have hfe : f 0 = MvPolynomial.aeval (fun _ : Fin k => (1 : ℂ))
-        (Polynomial.coeff (MvPolynomial.finSuccEquiv ℝ k D) 0) := by
+        ((MvPolynomial.finSuccEquiv ℝ k D).coeff 0) := by
       change MvPolynomial.aeval (fun i => 1 + (0 : ℂ) * (z' i - 1))
-          (Polynomial.coeff (MvPolynomial.finSuccEquiv ℝ k D) 0) = _
+          ((MvPolynomial.finSuccEquiv ℝ k D).coeff 0) = _
       rw [hw0eq]
     rw [hfe]
     exact hwit0
@@ -1077,9 +1077,9 @@ private lemma vdw_hstable_coeff_zero {k : ℕ} {D : MvPolynomial (Fin (k + 1)) �
     exact hz' i
   have h1 := hconc 1 h1U
   have f1_eq : f 1 = MvPolynomial.aeval z'
-      (Polynomial.coeff (MvPolynomial.finSuccEquiv ℝ k D) 0) := by
+      ((MvPolynomial.finSuccEquiv ℝ k D).coeff 0) := by
     change MvPolynomial.aeval (fun i => 1 + (1 : ℂ) * (z' i - 1))
-        (Polynomial.coeff (MvPolynomial.finSuccEquiv ℝ k D) 0) = _
+        ((MvPolynomial.finSuccEquiv ℝ k D).coeff 0) = _
     have hw1 : (fun i => 1 + (1 : ℂ) * (z' i - 1)) = z' := by
       funext i
       ring
@@ -1113,14 +1113,14 @@ private lemma vdw_gurvits_induction (k : ℕ) : ∀ (q : MvPolynomial (Fin k) �
     have hD : vdw_HStable (k + 1) (vdw_D k q) :=
       vdw_hstable_D hhom (ne_of_gt hsingle) hH
     have hTD : vdw_T k q =
-        Polynomial.coeff (MvPolynomial.finSuccEquiv ℝ k (vdw_D k q)) 0 := by
+        (MvPolynomial.finSuccEquiv ℝ k (vdw_D k q)).coeff 0 := by
       unfold vdw_D
       rw [AlgEquiv.apply_symm_apply]
       unfold vdw_T
       rw [Polynomial.coeff_derivative]
       simp
     have hne : MvPolynomial.eval (fun _ => 1)
-        (Polynomial.coeff (MvPolynomial.finSuccEquiv ℝ k (vdw_D k q)) 0)
+        ((MvPolynomial.finSuccEquiv ℝ k (vdw_D k q)).coeff 0)
         ≠ 0 := by
       rw [← hTD]
       exact ne_of_gt (vdw_eval_ones_pos hThom hTfp)
@@ -1451,7 +1451,10 @@ private lemma vdw_J_doublyStochastic {n : ℕ} (hn : 0 < n) :
       mul_inv_cancel₀ hnR]
 
 /--
-The permanent of a doubly stochastic matrix is at least n! / n^n.
+**The van der Waerden permanent bound.** For every integer $n \ge 1$ and every doubly stochastic
+real $n \times n$ matrix $A$ (nonnegative entries, every row and every column summing to $1$), the
+permanent of $A$ is at least $n!/n^n$.
+
 Source: G. P. Egorychev, Adv. Math. 42 (1981), 299-305, DOI 10.1016/0001-8708(81)90044-X; D. I.
 Falikman, Math. Notes 29 (1981), 475-479, DOI 10.1007/BF01163285.
 

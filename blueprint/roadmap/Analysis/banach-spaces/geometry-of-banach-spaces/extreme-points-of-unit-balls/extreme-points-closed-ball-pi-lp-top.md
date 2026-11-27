@@ -1,0 +1,3 @@
+# Extreme points of the unit ball of finite $\ell^\infty$
+
+Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$ and let $\iota$ be a finite nonempty set. The extreme points of the closed unit ball of $\mathbb{K}^\iota$ with the maximum norm, viewed as a real convex set, are exactly the vectors $x$ with $|x_i| = 1$ for every $i$. If some coordinate has modulus less than $1$, a small perturbation of that coordinate stays in the ball and exhibits $x$ as a midpoint; conversely, if every coordinate has modulus $1$ and $x$ is a convex combination of two points of the ball, those points agree with $x$ coordinatewise, by strict convexity of the closed unit disc of $\mathbb{K}$.

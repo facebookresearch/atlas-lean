@@ -54,18 +54,24 @@ variable {Γ : Type*}
 
 namespace StackTape
 
-/-- A `StackTape` read as a Mathlib half-tape of cells: the cells past the end of the list are
-blank, and the blank cell `none` is the default symbol. -/
+/-- **Half-tape view of a stack tape.** A stack tape $s$ over an alphabet $\Gamma$ is a finite list
+of cells, each a symbol of $\Gamma$ or the blank cell, that does not end in a blank cell. Its
+half-tape view is the half-tape of cells (a sequence of cells taken up to trailing blanks, the
+blank cell being the default) whose cells are those of $s$ in order, followed by blank cells. -/
 def toListBlank (s : StackTape Γ) : ListBlank (Option Γ) :=
   ListBlank.mk s.toList
 
-/-- The empty `StackTape` reads as the all-blank half-tape. -/
+/-- **Half-tape view of the empty stack tape.** The half-tape view of the empty stack tape over
+$\Gamma$ is the half-tape all of whose cells are blank. -/
 @[simp]
 theorem toListBlank_nil : (nil : StackTape Γ).toListBlank = ListBlank.mk [] :=
   rfl
 
-/-- Pushing a cell onto a `StackTape` pushes it onto the half-tape; for the blank cell this holds
-because the half-tape is blank beyond its end. -/
+/-- **Pushing a cell onto a stack tape.** For every cell $c$ (a symbol of $\Gamma$ or the blank
+cell) and every stack tape $s$ over $\Gamma$, the half-tape view of the stack tape obtained by
+pushing $c$ onto $s$ is the half-tape view of $s$ with $c$ pushed onto its front.
+
+For the blank cell this holds because the half-tape is blank beyond its end. -/
 @[simp]
 theorem toListBlank_cons (o : Option Γ) (s : StackTape Γ) :
     (cons o s).toListBlank = s.toListBlank.cons o := by
@@ -73,23 +79,34 @@ theorem toListBlank_cons (o : Option Γ) (s : StackTape Γ) :
   · exact (ListBlank.cons_head_tail (ListBlank.mk [])).symm
   all_goals rfl
 
-/-- The first cell of the half-tape is the first cell of the `StackTape`. -/
+/-- **First cell of the half-tape view of a stack tape.** For every stack tape $s$ over $\Gamma$
+(a finite list of cells, each a symbol of $\Gamma$ or the blank, that does not end in a blank), the
+first cell of the half-tape view of $s$ (its cells followed by infinitely many blanks) is the
+first cell of $s$, which is the blank if $s$ is empty. -/
 @[simp]
 theorem head_toListBlank (s : StackTape Γ) : s.toListBlank.head = s.head := by
   obtain ⟨_ | ⟨x, l⟩, hl⟩ := s <;> rfl
 
-/-- Dropping the first cell of a `StackTape` drops the first cell of the half-tape. -/
+/-- **Tail of the half-tape view of a stack tape.** For every stack tape $s$ over $\Gamma$ (a list
+of cells, each a symbol of $\Gamma$ or the blank cell, not ending in a blank cell), the tail of
+the half-tape view of $s$ is the half-tape view of the tail of $s$: dropping the first cell of
+$s$ drops the first cell of its half-tape. -/
 @[simp]
 theorem tail_toListBlank (s : StackTape Γ) : s.toListBlank.tail = s.tail.toListBlank := by
   obtain ⟨_ | ⟨x, l⟩, hl⟩ := s <;> rfl
 
-/-- The cell at position `n` of the half-tape is the `n`-th cell of the `StackTape`, blank past
-its end. -/
+/-- **Cells of the half-tape view of a stack tape.** For every stack tape $s$ over $\Gamma$ (a
+finite list of cells, each a symbol of $\Gamma$ or the blank, that does not end in a blank) and
+every $n \in \mathbb{N}$, the cell at position $n$ of the half-tape view of $s$ (its cells followed
+by infinitely many blanks) is the $n$-th cell of $s$, counting from $0$, if $n$ is less than the
+length of $s$, and the blank otherwise. -/
 theorem nth_toListBlank (s : StackTape Γ) (n : ℕ) :
     s.toListBlank.nth n = (s.toList[n]?).getD none :=
   List.getI_eq_getElem?_getD (l := s.toList) n
 
-/-- A word laid out as non-blank cells reads as its cells. -/
+/-- **Half-tape view of a word.** For every word $a_1 \cdots a_n$ over $\Gamma$, the half-tape
+view of the stack tape whose cells are the non-blank cells $a_1, \dots, a_n$ is the half-tape
+whose first $n$ cells are $a_1, \dots, a_n$ and whose later cells are blank. -/
 @[simp]
 theorem toListBlank_mapSome (l : List Γ) :
     (mapSome l).toListBlank = ListBlank.mk (l.map some) :=
@@ -106,8 +123,11 @@ private theorem eq_of_blankExtends {l₁ l₂ : List (Option Γ)} (h₂ : l₂.g
     simp [List.getLast?_append, List.getLast?_replicate]
     rfl
 
-/-- `toListBlank` is injective: a `StackTape` does not end in a blank, so trailing blanks of a
-half-tape do not come from cells. -/
+/-- **The half-tape view of stack tapes is injective.** If two stack tapes over $\Gamma$ have the
+same half-tape view, then they are equal.
+
+This holds because a stack tape does not end in a blank cell, so trailing blanks of a half-tape
+do not come from cells. -/
 theorem toListBlank_injective : Function.Injective (toListBlank (Γ := Γ)) := by
   rintro ⟨l₁, h₁⟩ ⟨l₂, h₂⟩ h
   rcases Quotient.exact h with h | h
@@ -118,30 +138,40 @@ end StackTape
 
 namespace BiTape
 
-/-- A `BiTape` read as a Mathlib tape of cells, the blank cell `none` being the default symbol:
-the cell at position `i` of the view (`Turing.Tape.nth`) is the cell `i` places to the right of
-the head (`BiTape.nth_toTape`). -/
+/-- **Cell view of a two-way tape.** A CSLib tape $t$ over an alphabet $\Gamma$ has a head cell
+and two halves, each a finite list of cells not ending in a blank, where a cell is a symbol of
+$\Gamma$ or the blank. Its cell view is the Mathlib tape over cells, with the blank as default
+symbol, whose head is the head cell of $t$ and whose left and right halves are the halves of $t$,
+blank past their ends. So the cell at position $i \in \mathbb{Z}$ of the view is the cell $i$
+places to the right of the head of $t$ (to the left when $i < 0$). -/
 def toTape (t : BiTape Γ) : Tape (Option Γ) :=
   ⟨t.head, t.left.toListBlank, t.right.toListBlank⟩
 
-/-- The head cell of the view is the head cell of the tape. -/
+/-- **Head cell of the view of a two-way tape.** For every two-way tape $t$ over $\Gamma$ (a head
+cell with a left and a right stack tape), the head cell of the view of $t$ as a tape of cells is
+the head cell of $t$. -/
 @[simp]
 theorem head_toTape (t : BiTape Γ) : t.toTape.head = t.head :=
   rfl
 
-/-- The left half of the view is the half-tape of the left half. -/
+/-- **Left half of the view of a two-way tape.** For every two-way tape $t$ over $\Gamma$ (a head
+cell with a left and a right stack tape), the left half of the view of $t$ as a tape of cells is
+the half-tape view of the left stack tape of $t$. -/
 @[simp]
 theorem left_toTape (t : BiTape Γ) : t.toTape.left = t.left.toListBlank :=
   rfl
 
-/-- The right half of the view is the half-tape of the right half. -/
+/-- **Right half of the tape view.** For every two-sided tape $t$ over $\Gamma$ (a head cell
+together with a left and a right stack tape), the right half of the tape view of $t$ is the
+half-tape view of the right half of $t$. -/
 @[simp]
 theorem right_toTape (t : BiTape Γ) : t.toTape.right = t.right.toListBlank :=
   rfl
 
-/-- **The cells of the view**: the head cell at position `0`, the cells of the right half at the
-positive positions, and the cells of the left half at the negative positions, blank past the ends
-of the halves. -/
+/-- **The cells of the view.** Let $t$ be a two-way tape over $\Gamma$ with head cell $h$, left
+stack tape $(\ell_0, \dots, \ell_{p-1})$ and right stack tape $(r_0, \dots, r_{q-1})$. For every
+integer $i$, the cell at position $i$ of the view of $t$ as a tape of cells is $h$ if $i = 0$,
+$r_{i-1}$ if $0 < i \le q$, $\ell_{-i-1}$ if $-p \le i < 0$, and the blank otherwise. -/
 theorem nth_toTape (t : BiTape Γ) (i : ℤ) :
     t.toTape.nth i =
       if i = 0 then t.head
@@ -160,40 +190,60 @@ theorem nth_toTape (t : BiTape Γ) (i : ℤ) :
     congr 3
     omega
 
-/-- The view turns writing a cell into writing it. -/
+/-- **The cell view commutes with writing.** For every tape $t$ and every cell $a$ (a symbol or
+the blank), the cell view of the tape obtained from $t$ by writing $a$ under the head equals the
+tape obtained from the cell view of $t$ by writing $a$ under its head. -/
 @[simp]
 theorem toTape_write (t : BiTape Γ) (a : Option Γ) : (t.write a).toTape = t.toTape.write a :=
   rfl
 
-/-- The view commutes with moving the head. -/
+/-- **The cell view commutes with head moves.** For every tape $t$ and each direction $d$ (left or
+right), the cell view of the tape obtained from $t$ by moving the head one cell in direction $d$
+equals the tape obtained from the cell view of $t$ by moving its head one cell in direction $d$. -/
 @[simp]
 theorem toTape_move (t : BiTape Γ) (d : Dir) : (t.move d).toTape = t.toTape.move d := by
   obtain ⟨a, L, R⟩ := t
   cases d <;> simp [toTape, move, moveLeft, moveRight, Tape.move]
 
-/-- The view commutes with an optional move of the head. -/
+/-- **The cell view commutes with optional head moves.** For every two-way tape $t$ over $\Gamma$
+and every optional head move $d$, which is either no move or a move one cell in a direction, the
+cell view of the tape obtained from $t$ by the optional move $d$ is the cell view of $t$ when $d$
+is no move, and the cell view of $t$ with its head moved one cell in direction $d$ when $d$ is a
+direction. -/
 theorem toTape_optionMove (t : BiTape Γ) (d : Option Dir) :
     (t.optionMove d).toTape = d.elim t.toTape fun d ↦ t.toTape.move d := by
   cases d <;> simp [optionMove]
 
-/-- The offset of an optional move: after the move, the cell at position `i` is the cell that was
-at position `i + optionMoveOffset d`. -/
+/-- **Offset of an optional head move.** The offset of an optional head move $d$ is $0$ if $d$ is
+no move, $-1$ if $d$ is a move to the left and $1$ if $d$ is a move to the right.
+
+After the move $d$, the cell at position $i$ relative to the head is the cell that was at
+position $i$ plus the offset of $d$. -/
 def optionMoveOffset : Option Dir → ℤ
   | none => 0
   | some .left => -1
   | some .right => 1
 
-/-- An optional move shifts by at most one cell. -/
+/-- **The offset of an optional move is at most one.** For every optional head move $d$ (no move,
+a move to the left, or a move to the right), the offset of $d$ lies between $-1$ and $1$, that is,
+$-1 \le \mathrm{offset}(d) \le 1$. -/
 theorem optionMoveOffset_bound (d : Option Dir) :
     -1 ≤ optionMoveOffset d ∧ optionMoveOffset d ≤ 1 := by
   rcases d with _ | _ | _ <;> simp [optionMoveOffset]
 
-/-- The cells after a write: the head cell is the written cell, the others are unchanged. -/
+/-- **Cells after a write.** For every two-way tape $t$ over $\Gamma$, every cell $a$ (a symbol of
+$\Gamma$ or the blank) and every integer $i$, the cell at position $i$ of the view of the tape
+obtained from $t$ by writing $a$ under the head is $a$ if $i = 0$, and the cell at position $i$
+of the view of $t$ otherwise. -/
 theorem nth_toTape_write (t : BiTape Γ) (a : Option Γ) (i : ℤ) :
     (t.write a).toTape.nth i = if i = 0 then a else t.toTape.nth i := by
   rw [toTape_write, Tape.write_nth]
 
-/-- The cells after an optional move are those before, shifted by `optionMoveOffset`. -/
+/-- **Cells after an optional move.** For an optional direction $d$, let $\delta(d)$ be $0$ if $d$
+is no move, $-1$ if $d$ is a move to the left and $1$ if $d$ is a move to the right. For every
+two-way tape $t$ over $\Gamma$ and every integer $i$, the cell at position $i$ of the view of the
+tape obtained from $t$ by the optional move $d$ is the cell at position $i + \delta(d)$ of the view
+of $t$. -/
 theorem nth_toTape_optionMove (t : BiTape Γ) (d : Option Dir) (i : ℤ) :
     (t.optionMove d).toTape.nth i = t.toTape.nth (i + optionMoveOffset d) := by
   rw [toTape_optionMove]
@@ -202,13 +252,21 @@ theorem nth_toTape_optionMove (t : BiTape Γ) (d : Option Dir) (i : ℤ) :
   · rw [Option.elim_some, Tape.move_left_nth, optionMoveOffset, Int.sub_eq_add_neg]
   · rw [Option.elim_some, Tape.move_right_nth, optionMoveOffset]
 
-/-- The cells after a write and an optional move, the form of a machine step. -/
+/-- **Cells after a write and an optional move.** For an optional direction $d$, let $\delta(d)$ be
+$0$ if $d$ is no move, $-1$ if $d$ is a move to the left and $1$ if $d$ is a move to the right. For
+every two-way tape $t$ over $\Gamma$, every cell $a$ (a symbol of $\Gamma$ or the blank) and every
+integer $i$, the cell at position $i$ of the view of the tape obtained from $t$ by writing $a$
+under the head and then performing the optional move $d$ is $a$ if $i + \delta(d) = 0$, and the
+cell at position $i + \delta(d)$ of the view of $t$ otherwise. -/
 theorem nth_toTape_write_optionMove (t : BiTape Γ) (a : Option Γ) (d : Option Dir) (i : ℤ) :
     ((t.write a).optionMove d).toTape.nth i =
       if i + optionMoveOffset d = 0 then a else t.toTape.nth (i + optionMoveOffset d) := by
   rw [nth_toTape_optionMove, nth_toTape_write]
 
-/-- The cells after `n` moves to the right are those before, shifted by `n`. -/
+/-- **Cells after $n$ moves to the right.** For every two-way tape $t$ over $\Gamma$, every
+$n \in \mathbb{N}$ and every integer $i$, the cell at position $i$ of the view of the tape obtained
+from $t$ by moving the head $n$ times to the right is the cell at position $i + n$ of the view
+of $t$. -/
 theorem nth_toTape_moveRight_iterate (t : BiTape Γ) (n : ℕ) (i : ℤ) :
     (moveRight^[n] t).toTape.nth i = t.toTape.nth (i + n) := by
   induction n generalizing i with
@@ -219,14 +277,19 @@ theorem nth_toTape_moveRight_iterate (t : BiTape Γ) (n : ℕ) (i : ℤ) :
     congr 1
     omega
 
-/-- The input tape of a word reads as the Mathlib input tape of its cells. -/
+/-- **The cell view of an input tape.** For every word $w = w_0 w_1 \cdots w_{n-1}$ over $\Gamma$,
+the cell view of the input tape of $w$ is the Mathlib input tape of the list of non-blank cells
+$w_0, \dots, w_{n-1}$: the head is on $w_0$, the letters $w_1, \dots, w_{n-1}$ lie to its right
+in order, and every other cell is blank (for the empty word, every cell is blank). -/
 @[simp]
 theorem toTape_mk₁ (l : List Γ) : (mk₁ l).toTape = Tape.mk₁ (l.map some) := by
   cases l with
   | nil => rfl
   | cons a l => simp [toTape, mk₁, Tape.mk₁, Tape.mk₂, Tape.mk']
 
-/-- The cells of an input tape: the word from position `0` on, blank elsewhere. -/
+/-- **Cells of an input tape.** For every word $w = w_0 \cdots w_{m-1}$ over $\Gamma$ and every
+integer $i$, the cell at position $i$ of the view of the input tape of $w$ is $w_i$ if
+$0 \le i < m$, and the blank otherwise. -/
 theorem nth_toTape_mk₁ (l : List Γ) (i : ℤ) :
     (mk₁ l).toTape.nth i = if 0 ≤ i then l[i.toNat]? else none := by
   rcases i with (_ | n) | n
@@ -241,7 +304,9 @@ theorem nth_toTape_mk₁ (l : List Γ) (i : ℤ) :
       cases r[n]? <;> rfl
   · cases l <;> rfl
 
-/-- The view is injective. -/
+/-- **The tape view is injective.** If two two-sided tapes $t$ and $t'$ over $\Gamma$ (each a head
+cell together with a left and a right stack tape) have the same tape view as a tape of cells,
+then $t = t'$. -/
 theorem toTape_injective : Function.Injective (toTape (Γ := Γ)) := by
   rintro ⟨a₁, L₁, R₁⟩ ⟨a₂, L₂, R₂⟩ h
   simp only [toTape, Tape.mk.injEq] at h

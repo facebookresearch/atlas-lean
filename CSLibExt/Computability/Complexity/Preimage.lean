@@ -25,7 +25,7 @@ The first-component machine and the output-length bound come from
 namespace MetaMathlibExt.ComplexityTheory
 
 open Cslib.Complexity Cslib.Complexity.Preimage
-open Cslib.CookLevin Cslib.Logic.PL
+open Cslib.CookLevin Cslib.Logic.LegacyPL
 
 private theorem satVerifier_sound {x w : List Bool}
     (h : (satVerifier (x, w)).ret = true) : satDec x = true := by
@@ -79,7 +79,7 @@ theorem comp_mem_coNP {L : DecisionProblem} {f : List Bool → List Bool}
 
 end MetaMathlibExt.ComplexityTheory
 
-namespace Cslib.CookLevin
+namespace Cslib.Complexity
 
 /-- The same reduction function reduces the complements. -/
 theorem PolyManyOneRed.compl
@@ -88,4 +88,10 @@ theorem PolyManyOneRed.compl
   obtain ⟨f, hf, he⟩ := h
   exact ⟨f, hf, fun x => congrArg Bool.not (he x)⟩
 
-end Cslib.CookLevin
+end Cslib.Complexity
+
+namespace Cslib.CookLevin.PolyManyOneRed
+
+export Cslib.Complexity.PolyManyOneRed (compl)
+
+end Cslib.CookLevin.PolyManyOneRed

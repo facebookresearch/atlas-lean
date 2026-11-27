@@ -21,7 +21,7 @@ doi:10.1016/0022-0000(78)90044-2, Theorem 2 and the remark after it.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.QuadraticCongruencesWanted

@@ -23,7 +23,8 @@ namespace MetaMathlibExt
 
 open scoped BigOperators
 
-/-- Lattice cells in ambient dimension `d`, as integer points `Fin d → ℤ`.
+/-- **Lattice cells.** For a natural number $d$, a lattice cell in dimension $d$ is a point of
+$\mathbb{Z}^d$, that is, a function assigning an integer to each of the $d$ coordinate axes.
 
 Source: Sebastian Luther and Stephan Mertens, *The Perimeter of Proper
 Polycubes*, Journal of Integer Sequences 20 (2017), Article 17.9.5,
@@ -32,16 +33,19 @@ a `d`-dimensional polycube is a set of face-connected cells in `ℤ^d`,
 lines 115–117 (also arXiv:1705.03688v1). -/
 def latticeCell (d : ℕ) : Type := Fin d → ℤ
 
-/-- Face adjacency of lattice cells: agreement in every coordinate except one
-axis `k`, where the coordinates differ by exactly one.
+/-- **Face adjacency of lattice cells.** Two lattice cells $x, y \in \mathbb{Z}^d$ are face
+adjacent when there is an axis $k$ such that $x_j = y_j$ for every axis $j \ne k$ and
+$|x_k - y_k| = 1$.
 
-This is the "neighbors in the polycube" relation underlying the adjacency graph
-in Luther–Mertens (JIS 20 (2017), Article 17.9.5, lines 277–279: two vertices
-are connected if the corresponding cells are neighbors). -/
+Source: Luther–Mertens, JIS 20 (2017), Article 17.9.5, lines 277–279: this is the
+"neighbors in the polycube" relation underlying the adjacency graph, in which two vertices
+are connected if the corresponding cells are neighbors. -/
 def faceAdjacent (d : ℕ) (x y : latticeCell d) : Prop :=
   ∃ k : Fin d, (∀ j : Fin d, j ≠ k → x j = y j) ∧ (y k = x k + 1 ∨ x k = y k + 1)
 
-/-- A polycube as a nonempty finite cell set connected through face adjacency.
+/-- **Polycube.** A finite set $S$ of lattice cells in $\mathbb{Z}^d$ is a polycube when it is
+nonempty and any two cells $x, y \in S$ are joined by a finite sequence of cells of $S$, starting
+at $x$ and ending at $y$, in which consecutive cells are face adjacent.
 
 Source: Luther–Mertens, JIS 20 (2017), Article 17.9.5, lines 115–117:
 a `d`-dimensional polycube is a set of face-connected cells in `ℤ^d`.
@@ -52,8 +56,9 @@ def isPolycubeCells (d : ℕ) (S : Finset (latticeCell d)) : Prop :=
     Relation.ReflTransGen
       (fun a b : latticeCell d => faceAdjacent d a b ∧ a ∈ S ∧ b ∈ S) x y
 
-/-- Canonical representative of a fixed translation class: every coordinate
-minimum is translated to zero.
+/-- **Canonical position of a cell set.** A finite set $S$ of lattice cells in $\mathbb{Z}^d$ is
+in canonical position when, for every axis $k$, every cell $x \in S$ has $x_k \ge 0$ and some
+cell $x \in S$ has $x_k = 0$; that is, the minimum of each coordinate over $S$ is $0$.
 
 Source: Luther–Mertens, JIS 20 (2017), Article 17.9.5, lines 115–117:
 fixed polycubes are identified up to translation. Each class has a unique
@@ -62,8 +67,9 @@ rotations and reflections stay distinct orientations. -/
 def isCanonicalCells (d : ℕ) (S : Finset (latticeCell d)) : Prop :=
   ∀ k : Fin d, (∃ x ∈ S, x k = 0) ∧ ∀ x ∈ S, 0 ≤ x k
 
-/-- Proper dimension: the number of coordinate axes on which the canonical cell
-set varies.
+/-- **Proper dimension.** The proper dimension of a finite set $S$ of lattice cells in
+$\mathbb{Z}^d$ is the number of axes $k$ on which $S$ varies, that is, for which there are
+cells $x, y \in S$ with $x_k \ne y_k$.
 
 Source: Luther–Mertens, JIS 20 (2017), Article 17.9.5, lines 160–162:
 a polycube spanning `i` dimensions is proper in `i` dimensions.
@@ -74,24 +80,31 @@ axis-aligned cells equals the count of varying axes. -/
 noncomputable def properDimension (d : ℕ) (S : Finset (latticeCell d)) : ℕ :=
   Nat.card { k : Fin d // ∃ x ∈ S, ∃ y ∈ S, x k ≠ y k }
 
-/-- Fixed `n`-cell polycubes in dimension `d`, as canonical representatives:
-nonempty finite face-connected sets of cardinality `n` with minima at zero. -/
+/-- **Fixed polycubes.** For natural numbers $d$ and $n$, the fixed $n$-cell polycubes in
+dimension $d$ are represented by the finite sets $S$ of lattice cells in $\mathbb{Z}^d$ that are
+polycubes (nonempty and connected through face adjacency), have exactly $n$ cells, and are in
+canonical position (the minimum of each coordinate over $S$ is $0$). -/
 def fixedPolycube (d n : ℕ) : Type :=
   { S : Finset (latticeCell d) // isPolycubeCells d S ∧ S.card = n ∧ isCanonicalCells d S }
 
-/-- `A_d(n)`: number of fixed `n`-cell polycubes in dimension `d`, counted as
-`Nat.card` of canonical representatives. -/
+/-- **Number of fixed polycubes.** For natural numbers $d$ and $n$, $A_d(n)$ is the number of
+fixed $n$-cell polycubes in dimension $d$, that is, the number of $n$-cell polycubes in
+$\mathbb{Z}^d$ that are in canonical position. -/
 noncomputable def fixedPolycubeCount (d n : ℕ) : ℕ :=
   Nat.card (fixedPolycube d n)
 
-/-- Proper fixed `n`-cell polycubes in proper dimension `i`: canonical
-representatives in host dimension `i` whose varying-axis count equals `i`. -/
+/-- **Proper fixed polycubes.** For natural numbers $n$ and $i$, the fixed $n$-cell polycubes
+proper in dimension $i$ are the fixed $n$-cell polycubes in dimension $i$ whose proper dimension
+is $i$, that is, which vary along each of the $i$ axes. -/
 def properFixedPolycube (n i : ℕ) : Type :=
   { P : fixedPolycube i n // properDimension i P.val = i }
 
-/-- `DX(n,i)`: number of fixed `n`-cell polycubes proper in dimension `i`,
-counted as `Nat.card` of canonical representatives. Asinowski et al., JIS 15
-(2012), Article 12.8.4, line 978, state `DX(n,0) = 0` for `n > 1`. -/
+/-- **Number of proper fixed polycubes.** For natural numbers $n$ and $i$, $\mathrm{DX}(n,i)$ is
+the number of fixed $n$-cell polycubes proper in dimension $i$, that is, of fixed $n$-cell
+polycubes in dimension $i$ whose proper dimension is $i$.
+
+Source: Asinowski et al., JIS 15 (2012), Article 12.8.4, line 978, state
+$\mathrm{DX}(n,0) = 0$ for $n > 1$. -/
 noncomputable def properFixedPolycubeCount (n i : ℕ) : ℕ :=
   Nat.card (properFixedPolycube n i)
 
@@ -923,8 +936,19 @@ private lemma sum_fiber_eq_range_aux (d n : ℕ) :
   intro m _
   rw [nsmul_eq_mul, Nat.cast_id]
 
-/-- Lunnon's dimension-decomposition formula for fixed polycubes, corrected
-domain `1 < n`: `A_d(n) = ∑_{i=1}^{n-1} C(d,i) * DX(n,i)`.
+/-- **Lunnon's dimension decomposition for fixed polycubes.** Let $d$ and $n$ be natural numbers
+with $n > 1$, let $A_d(n)$ be the number of fixed $n$-cell polycubes in dimension $d$, and for
+each $i$ let $\mathrm{DX}(n,i)$ be the number of fixed $n$-cell polycubes proper in dimension $i$.
+Then
+
+$$A_d(n) = \sum_{i=1}^{n-1} \binom{d}{i} \, \mathrm{DX}(n,i).$$
+
+The hypothesis $n > 1$ is needed: the printed formula omits its domain and fails at $n = 1$,
+where the single cell is a polycube proper in dimension $0$ and so is counted only by the
+$i = 0$ term, which the sum excludes. For $n > 1$ that term vanishes, since
+$\mathrm{DX}(n,0) = 0$.
+
+Proves `Wanted` entry `lunnon_fixed_polycube_dimension_decomposition`.
 
 Sources: Sebastian Luther and Stephan Mertens, *The Perimeter of Proper
 Polycubes*, Journal of Integer Sequences 20 (2017), Article 17.9.5,
@@ -936,14 +960,6 @@ multidimensional polyominoes*, Comput. J. 18 (1975), 366–367.
 `DX(n,0) = 0` for `n > 1` from Asinowski–Barequet–Barequet–Rote, JIS 15
 (2012), Article 12.8.4, line 978,
 <https://cs.uwaterloo.ca/journals/JIS/VOL15/Barequet/barequet2.tex>.
-
-The `1 < n` restriction is required because the printed display omits its
-`n`-domain and is false at `n = 1`: the one-cell polycube is zero-dimensional,
-so it is counted by the `i = 0` term, which the sum over `Ico 1 n` excludes.
-On `n > 1` the `i = 0` term vanishes by `DX(n,0) = 0`, making the omission
-valid exactly on this domain. No claim is made for `n = 1`.
-
-Proves `Wanted` entry `lunnon_fixed_polycube_dimension_decomposition`.
 -/
 theorem lunnon_fixed_polycube_dimension_decomposition
     (d n : ℕ) (hn : 1 < n) :

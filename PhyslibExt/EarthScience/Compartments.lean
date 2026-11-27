@@ -69,11 +69,11 @@ theorem sum_transfer_net_eq_zero {ι : Type*} (s : Finset ι) (q : ι → ι →
 
 /-! ## B. Derivative of the total stock -/
 
-/-- If every stock `m i` obeys the compartment balance
-`m i' t = ∑ j, (q j i t - q i j t) + src i t` at time `t`, where
+/-- If every stock `m i`, `i ∈ s`, has derivative
+`∑ j ∈ s, (q j i t - q i j t) + src i t` at time `t` (the compartment balance), where
 `q i j t` is the transfer rate from compartment `i` to compartment `j`
 and `src i t` is the external source rate into compartment `i`, then
-the total stock `∑ i, m i` has derivative `∑ i, src i t` at `t`:
+the total stock `∑ i ∈ s, m i` has derivative `∑ i ∈ s, src i t` at `t`:
 internal transfers cancel and only external sources change the total. -/
 theorem hasDerivAt_total_stock {ι : Type*} (s : Finset ι)
     (m : ι → ℝ → ℝ) (q : ι → ι → ℝ → ℝ) (src : ι → ℝ → ℝ) (t : ℝ)

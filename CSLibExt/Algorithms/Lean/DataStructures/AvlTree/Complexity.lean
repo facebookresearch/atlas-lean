@@ -32,11 +32,10 @@ These are operation counts, not CPU time or FinTM2/Turing complexity.
 
 ## Provenance and scope
 
-Adapted from the `avl-height-complexity` bank in `fairinternal/formal-math`,
+Adapted from the `avl-height-complexity` bank in formal-math,
 commit `1dda058818107a00c5aa4bc928e7d8fb1f584027`, original module blob
 `82a2fd2a79b2928e60f586ac6ca408eb189370a5` (Lean 4.34.1). Its Git trailer credits
-Codex `gpt-6.1-sol[1m]`, agentcloud session `004703a6-d776-4368-93bd-c52802f3ba6e`;
-that is preserved declared provenance, not independent runtime attestation.
+Codex; that is preserved declared provenance, not independent runtime attestation.
 This scoped Lean 4.35 adaptation retains the floor base-2 logarithmic height and counted-operation
 API over the current AVL implementation. The optional golden-ratio power and real-logarithm
 results from that bank are omitted; this is not a verbatim or full-bank import.
@@ -101,7 +100,7 @@ public theorem fib_le_size_succ {t : Tree α} (hc : CacheCorrect t) (hb : Balanc
       Nat.fib (height t + 2) ≤ size t + 1 from this (height t) t rfl hc hb
   intro n
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
     intro t ht hc hb
     cases t with
     | empty => simp [size]

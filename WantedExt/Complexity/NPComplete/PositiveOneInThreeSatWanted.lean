@@ -19,7 +19,7 @@ Theory of Computing (STOC 1978), 216-226, doi:10.1145/800133.804350.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.OneInThreeSatWanted
@@ -40,8 +40,8 @@ negated literals: Schaefer's ONE-IN-THREE SATISFIABILITY, "whether an arbitrary 
 clauses of the form `R(x, y, z)` is satisfiable", where `R(x, y, z)` holds iff exactly one of
 `x, y, z` is true. The instance type and the question are the parent's
 (`OneInThreeSat.OneInThreeSatInstance`, `OneInThreeSat.OneInThreeSatFeasible`); `WellFormed` is
-the parent's plus the restriction. In `Cslib.Logic.PL.CNF` a literal `(x, b)` is true under `t`
-iff `t x = b`, so a positive literal is `(x, true)`.
+the parent's plus the restriction. In `Cslib.Logic.LegacyPL.CNF` a literal `(x, b)` is true under
+`t` iff `t x = b`, so a positive literal is `(x, true)`.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and

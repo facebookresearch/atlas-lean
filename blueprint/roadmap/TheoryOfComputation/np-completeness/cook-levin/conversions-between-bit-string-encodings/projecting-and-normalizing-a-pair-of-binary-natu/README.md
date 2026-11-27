@@ -1,0 +1,18 @@
+# Projecting and normalizing a pair of binary naturals
+
+- [Stacks of the number-pair projector](k.md)
+- [Control labels of the number-pair projector](lab.md)
+- [Pair-frame splitter stack embedding in the number-pair projector](pair-emb.md)
+- [Field-normalizer stack embedding in the number-pair projector](norm-emb.md)
+- [Pair-frame splitter halt redirection in the number-pair projector](pair-label.md)
+- [Label map chaining the two field normalizers](norm-label.md)
+- [Program of the number-pair projector](prog.md)
+- [Six-stack invariant of the number-pair projector](st.md)
+- [Number-pair projector normalizes both fields of a raw pair frame](run-delimit.md)
+- [Decoding a pair of naturals fails exactly on a malformed first frame](decode-pair-nat.md)
+- [Number-pair projector yields both canonical payloads on success](run-some.md)
+- [Number-pair projector fails on malformed framing in linear time](run-none.md)
+- [Number-pair projector as a host component](component.md)
+- [Canonical payloads of a decoded pair are bounded by the raw input](decoded-payload-length-le.md)
+- [Number-pair projector reaches the decoding outcome](run.md)
+- [Embedded number-pair projector preserves outside stacks](run-embedded.md)

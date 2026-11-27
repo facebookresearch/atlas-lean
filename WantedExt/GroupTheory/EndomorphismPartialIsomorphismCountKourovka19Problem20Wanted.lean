@@ -36,18 +36,26 @@ itself counts once) and no empty partial map is added; for abelian groups of ord
 both sides agree, as the problem states for all abelian groups.
 -/
 
-/-- Kourovka 19.20 (P. J. Cameron): a finite group `G` with `|End(G)| = |PIso(G)|` is abelian,
-where `PIso(G)` is the set of partial isomorphisms of `G` (isomorphisms `H ≃ K` between subgroups
-`H`, `K` of `G`). -/
+/-- **Kourovka Problem 19.20 (Cameron).** The statement that every finite group $G$ with
+$|\mathrm{End}(G)| = |\mathrm{PIso}(G)|$ is abelian. Here $\mathrm{End}(G)$ is the set of
+endomorphisms of $G$, and $\mathrm{PIso}(G)$ is the set of partial isomorphisms of $G$: the triples
+$(H, K, f)$ of subgroups $H$, $K$ of $G$ and an isomorphism $f \colon H \to K$. -/
 def endPartialIsoCountImpliesAbelian : Prop :=
   ∀ (G : Type) [Group G] [Finite G],
     Nat.card (G →* G) = Nat.card (Σ H : Subgroup G, Σ K : Subgroup G, (H ≃* K)) →
       ∀ x y : G, x * y = y * x
 
 /--
-Resolved false: the Kourovka Notebook (21st issue) answers 19.20 "No, it is not" (K. Muliarchyk,
-2026): his Theorem 1.1 gives a non-abelian group of order `512` for which both counts equal
-`129·2²⁴`. Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The
+**Equal endomorphism and partial isomorphism counts do not force commutativity.** There is a
+finite non-abelian group $G$ with $|\mathrm{End}(G)| = |\mathrm{PIso}(G)|$. Here $\mathrm{End}(G)$
+is the set of endomorphisms of $G$, and $\mathrm{PIso}(G)$ is the set of partial isomorphisms of
+$G$: the triples $(H, K, f)$ of subgroups $H$, $K$ of $G$ and an isomorphism $f \colon H \to K$.
+This answers Kourovka Problem 19.20 (P. J. Cameron) in the negative.
+
+K. Muliarchyk's Theorem 1.1 (2026) gives a non-abelian group of order $512$ for which both counts
+equal $129 \cdot 2^{24}$; the Kourovka Notebook (21st issue) answers 19.20 "No, it is not".
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The
 Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 19.20 (P. J. Cameron); resolution:
 K. Muliarchyk, A nonabelian group with equally many endomorphisms and partial isomorphisms: a
 computer-assisted counterexample to Kourovka Problem 19.20, preprint, 2026, Theorem 1.1: a

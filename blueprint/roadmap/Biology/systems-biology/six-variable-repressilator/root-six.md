@@ -1,0 +1,3 @@
+# The primitive sixth root of unity 1/2 + i√3/2
+
+The complex number `c = 1/2 + i √3/2 = e^{iπ/3}`, a primitive sixth root of unity.

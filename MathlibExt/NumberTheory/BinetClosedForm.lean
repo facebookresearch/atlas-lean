@@ -19,10 +19,11 @@ namespace MetaMathlibExt
 
 variable {K : Type*} [Field K]
 
-/-- Generalized Binet closed form: a sequence satisfying
-`u (n + 2) = P * u (n + 1) - Q * u n` over a field, whose characteristic
-roots `α ≠ β` both satisfy `z ^ 2 - P * z + Q = 0`, is given by
-`u n = ((u 1 - β * u 0) * α ^ n - (u 1 - α * u 0) * β ^ n) / (α - β)`.
+/-- **Binet formula for second-order linear recurrences.** Let $K$ be a field, let
+$P, Q, \alpha, \beta \in K$ with $\alpha \ne \beta$, and suppose that $\alpha$ and $\beta$ are
+both roots of $z^2 - Pz + Q$. If a sequence $u : \mathbb{N} \to K$ satisfies
+$u_{n+2} = P u_{n+1} - Q u_n$ for all $n$, then for every natural number $n$,
+$$u_n = \frac{(u_1 - \beta u_0)\alpha^n - (u_1 - \alpha u_0)\beta^n}{\alpha - \beta}.$$
 
 Source: Hongshen Chua, "A Study of Second-Order Linear Recurrence
 Sequences via Continuants," Journal of Integer Sequences 26 (2023),

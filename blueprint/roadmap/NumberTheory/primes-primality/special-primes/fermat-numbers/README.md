@@ -1,0 +1,18 @@
+# Fermat numbers
+
+- [Fermat prime](is-fermat-prime.md)
+- [Preperiod and period of Fermat numbers modulo an odd prime](fermat-number-mod-prime-exact-preperiod.md)
+- [Two of $F_0, \dots, F_p$ are congruent modulo $p$](fermat-number-mod-eq-exists-repeat.md)
+- [Congruences between Fermat numbers propagate](fermat-number-mod-eq-add.md)
+- [Non-congruence of Fermat numbers passes to smaller indices](fermat-number-not-mod-eq-add-of-le.md)
+- [Coincidences among Fermat residues](fermat-number-mod-eq-iff-preperiod-perio.md)
+- [The index of a residue and its multiplicative order](gcd-card-sub-one-exponent-eq-div-order-o.md)
+- [Coprime representatives of a residue class](exists-coprime-mod-eq-of-coprime.md)
+- [A primitive root in which a residue has index $(p-1)/\operatorname{ord}_p(a)$](exists-primitive-root-pow-card-sub-one-d.md)
+- [Indices dividing $p - 1$](exponent-dvd-card-sub-one-iff.md)
+- [Uniqueness of the $2$-adic decomposition of the index of $2$](exists-unique-two-adic-index-of-two.md)
+- [Preperiod and period of Fermat residues from the index of $2$](fermat-number-mod-prime-preperiod-period.md)
+- [Prime divisors of Fermat numbers and the order of $2$](prime-dvd-fermat-number-iff-order-of-two.md)
+- [Prime divisors of Fermat numbers and the period of Fermat residues](exists-prime-dvd-fermat-number-iff-perio.md)
+- [The power of $2$ dividing the order of $2$ modulo a prime](order-of-two-two-adic-of-mod-eight.md)
+- [Every preperiod of Fermat residues occurs for a prime $p \equiv 1 \pmod 8$](exists-prime-one-mod-eight-fermat-preper.md)

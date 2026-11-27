@@ -1,0 +1,3 @@
+# Right numerical flux
+
+Fix gravity $g$ and a numerical flux function $\mathcal{F}$ on pairs of states $(h, hu)$. For a left cell with depth $h_L$, velocity $u_L$ and bed elevation $z_L$, and a right cell with $h_R$, $u_R$, $z_R$, let the face bed be $z^* = \max(z_L, z_R)$, the reconstructed depths $h_L' = \max(0, h_L + z_L - z^*)$ and $h_R' = \max(0, h_R + z_R - z^*)$, and the reconstructed states $(h_L', h_L' u_L)$ and $(h_R', h_R' u_R)$. The right numerical flux is the interface flux $\mathcal{F}\big((h_L', h_L' u_L), (h_R', h_R' u_R)\big)$ plus the hydrostatic correction $\big(0,\ g h_R^2/2 - g h_R'^2/2\big)$. The right cell uses it at its left face.

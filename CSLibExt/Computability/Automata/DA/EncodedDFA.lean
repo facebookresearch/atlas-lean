@@ -39,7 +39,10 @@ the first listed transition applies. It denotes a Mathlib DFA with states `ℕ`
 
 namespace Cslib.Automata
 
-/-- A deterministic finite automaton as data, with natural-number states. -/
+/-- **Encoded DFA.** An encoded deterministic finite automaton over an alphabet $\alpha$ is a
+deterministic finite automaton given as data with natural-number states: a start state in
+$\mathbb{N}$, a list of accepting states in $\mathbb{N}$, and a list of transitions $((s, a), t)$
+with $s, t \in \mathbb{N}$ and $a \in \alpha$, read as "on letter $a$, state $s$ moves to $t$". -/
 structure EncodedDFA (α : Type*) where
   /-- The start state. -/
   start : ℕ
@@ -59,17 +62,24 @@ section Semantics
 
 variable [DecidableEq α]
 
-/-- The transition function: the target of the first transition listed for `(s, a)`, or `s`. -/
+/-- **Transition function of an encoded DFA.** For an encoded DFA $D$, a state $s \in \mathbb{N}$
+and a letter $a$, the step of $D$ from $s$ on $a$ is the target of the first transition that $D$
+lists from $s$ on $a$, or $s$ itself when $D$ lists no such transition. -/
 def step (D : EncodedDFA α) (s : ℕ) (a : α) : ℕ :=
   D.trans.foldr (fun e r => if e.1 = (s, a) then e.2 else r) s
 
-/-- The Mathlib DFA an encoding denotes, with states `ℕ`. -/
+/-- **The automaton denoted by an encoded DFA.** An encoded DFA $D$ over an alphabet $\alpha$
+denotes the deterministic automaton over $\alpha$ with state set $\mathbb{N}$ whose start state is
+the start state of $D$, whose transition function is the transition function of $D$, and whose
+accepting states are the states in the accepting list of $D$. -/
 def toDFA (D : EncodedDFA α) : DFA α ℕ where
   step := D.step
   start := D.start
   accept := {s | s ∈ D.accept}
 
-/-- The language of an encoded DFA. -/
+/-- **Language of an encoded DFA.** The language of an encoded DFA $D$ is the set of words $w$
+such that the state reached by running $D$ on $w$ from its start state, following its transition
+function, is one of its accepting states. -/
 def language (D : EncodedDFA α) : Language α :=
   D.toDFA.accepts
 
@@ -81,11 +91,13 @@ theorem mem_language_iff {D : EncodedDFA α} {w : List α} :
 instance decidableMemLanguage (D : EncodedDFA α) (w : List α) : Decidable (w ∈ D.language) :=
   inferInstanceAs (Decidable (D.toDFA.eval w ∈ D.accept))
 
-/-- The letters with a listed transition. -/
+/-- **Letters of an encoded DFA.** The letters of an encoded DFA $D$ form the list of the letters
+$a$ of its listed transitions $((s, a), t)$, in the order the transitions are listed. -/
 def letters (D : EncodedDFA α) : List α :=
   D.trans.map fun e => e.1.2
 
-/-- The start state and the targets of the listed transitions. -/
+/-- **States of an encoded DFA.** The states of an encoded DFA $D$ form the list consisting of its
+start state followed by the targets of its listed transitions, in the order they are listed. -/
 def states (D : EncodedDFA α) : List ℕ :=
   D.start :: D.trans.map Prod.snd
 
@@ -107,14 +119,19 @@ private theorem foldr_step_cases (l : List ((ℕ × α) × ℕ)) (s : ℕ) (a : 
             · exact hall x hx⟩
         · exact Or.inr ⟨e', List.mem_cons_of_mem _ he', hkey, h⟩
 
-/-- Without a listed transition for `(s, a)`, state `s` stays put. -/
+/-- **Unlisted transitions fix the state.** Let $D$ be an encoded DFA, $s \in \mathbb{N}$ a state
+and $a$ a letter. If $D$ lists no transition from $s$ on $a$, then the transition function of $D$
+takes $s$ on $a$ to $s$. -/
 theorem step_eq_self {D : EncodedDFA α} {s : ℕ} {a : α} (h : ∀ e ∈ D.trans, e.1 ≠ (s, a)) :
     D.step s a = s := by
   rcases foldr_step_cases D.trans s a with ⟨h', -⟩ | ⟨e, he, hkey, -⟩
   · exact h'
   · exact absurd hkey (h e he)
 
-/-- If every transition listed for `(s, a)` has target `t` and there is one, the step is `t`. -/
+/-- **A step determined by its listed transitions.** Let $D$ be an encoded DFA, let
+$s, t \in \mathbb{N}$ be states and let $a$ be a letter. If $D$ lists at least one transition from
+$s$ on $a$, and every transition listed from $s$ on $a$ has target $t$, then the transition
+function of $D$ takes $s$ on $a$ to $t$. -/
 theorem step_eq_of_forall {D : EncodedDFA α} {s t : ℕ} {a : α}
     (hmem : ∃ e ∈ D.trans, e.1 = (s, a)) (huniq : ∀ e ∈ D.trans, e.1 = (s, a) → e.2 = t) :
     D.step s a = t := by
@@ -123,12 +140,17 @@ theorem step_eq_of_forall {D : EncodedDFA α} {s t : ℕ} {a : α}
     exact absurd hkey (hall e he)
   · exact h.trans (huniq e he hkey)
 
-/-- Letters without listed transitions fix every state. -/
+/-- **Letters without listed transitions fix every state.** Let $D$ be an encoded DFA and let $a$
+be a letter that is not among the letters of $D$, that is, no listed transition of $D$ is labelled
+$a$. Then for every state $s \in \mathbb{N}$ the transition function of $D$ takes $s$ on $a$ to
+$s$. -/
 theorem step_of_not_mem_letters {D : EncodedDFA α} {s : ℕ} {a : α} (h : a ∉ D.letters) :
     D.step s a = s :=
   step_eq_self fun e he hkey => h (List.mem_map.2 ⟨e, he, by rw [hkey]⟩)
 
-/-- A step is the target of a listed transition or stays put. -/
+/-- **Where a step can lead.** For every encoded DFA $D$, state $s \in \mathbb{N}$ and letter $a$,
+the transition function of $D$ takes $s$ on $a$ either to the target of some listed transition of
+$D$ or to $s$ itself. -/
 theorem step_mem_or_eq (D : EncodedDFA α) (s : ℕ) (a : α) :
     D.step s a ∈ D.trans.map Prod.snd ∨ D.step s a = s := by
   rcases foldr_step_cases D.trans s a with ⟨h, -⟩ | ⟨e, he, -, h⟩
@@ -138,7 +160,9 @@ theorem step_mem_or_eq (D : EncodedDFA α) (s : ℕ) (a : α) :
     rw [h]
     exact List.mem_map_of_mem he
 
-/-- The listed states are closed under transitions. -/
+/-- **The listed states are closed under transitions.** Let $D$ be an encoded DFA and let $s$ be
+one of its states, that is, its start state or the target of one of its listed transitions. Then
+for every letter $a$ the transition function of $D$ takes $s$ on $a$ to one of the states of $D$. -/
 theorem step_mem_states {D : EncodedDFA α} {s : ℕ} (hs : s ∈ D.states) (a : α) :
     D.step s a ∈ D.states := by
   rcases D.step_mem_or_eq s a with h | h
@@ -154,12 +178,14 @@ theorem evalFrom_mem_states {D : EncodedDFA α} {s : ℕ} (hs : s ∈ D.states) 
 theorem eval_mem_states (D : EncodedDFA α) (w : List α) : D.toDFA.eval w ∈ D.states :=
   evalFrom_mem_states List.mem_cons_self w
 
-/-- The complement: the same transitions, accepting exactly the listed states that `D` does not
-accept. -/
+/-- **Complement of an encoded DFA.** The complement of an encoded DFA $D$ has the same start
+state and the same transitions as $D$, and its accepting states are those states of $D$ (its
+start state and the targets of its listed transitions) that $D$ does not accept. -/
 def compl (D : EncodedDFA α) : EncodedDFA α :=
   ⟨D.start, D.states.filter fun s => decide (s ∉ D.accept), D.trans⟩
 
-/-- **The complement DFA accepts the complement language.** -/
+/-- **The complement DFA accepts the complement language.** For every encoded DFA $D$ and every
+word $w$, the complement of $D$ accepts $w$ if and only if $D$ does not accept $w$. -/
 theorem mem_language_compl {D : EncodedDFA α} {w : List α} :
     w ∈ D.compl.language ↔ w ∉ D.language := by
   have heval : D.compl.toDFA.eval w = D.toDFA.eval w := rfl
@@ -212,7 +238,11 @@ end Semantics
 
 section Primcodable
 
-/-- Encoded DFAs as triples. -/
+/-- **Encoded DFAs as triples.** Sending an encoded DFA over $\alpha$ to the triple of its start
+state, its list of accepting states and its list of transitions is an equivalence (a bijection
+with explicit inverse) between encoded DFAs over $\alpha$ and the set
+$\mathbb{N} \times \mathrm{List}\,\mathbb{N} \times \mathrm{List}((\mathbb{N} \times \alpha) \times
+\mathbb{N})$. -/
 def equivProd : EncodedDFA α ≃ ℕ × List ℕ × List ((ℕ × α) × ℕ) where
   toFun D := (D.start, D.accept, D.trans)
   invFun p := ⟨p.1, p.2.1, p.2.2⟩
@@ -236,14 +266,24 @@ theorem primrec_accept : Primrec (accept (α := α)) :=
 theorem primrec_trans : Primrec (trans (α := α)) :=
   Primrec.snd.comp (Primrec.snd.comp primrec_equivProd)
 
-/-- Building an encoded DFA from its three components is primitive recursive. -/
+/-- **Assembling an encoded DFA is primitive recursive.** Let $\alpha$ be an alphabet with a
+primitive recursive encoding, and encode encoded DFAs over $\alpha$ through their start state,
+accepting states and transitions. The map sending a triple $(s, F, T)$, where $s \in \mathbb{N}$,
+$F$ is a list of natural numbers and $T$ is a list of pairs $((q, a), t)$ with $q, t \in \mathbb{N}$
+and $a \in \alpha$, to the encoded DFA over $\alpha$ with start state $s$, accepting states $F$
+and transitions $T$ is primitive recursive. -/
 theorem primrec_mk : Primrec fun p : ℕ × List ℕ × List ((ℕ × α) × ℕ) => (⟨p.1, p.2.1, p.2.2⟩ :
     EncodedDFA α) :=
   (Primrec.of_equiv_symm (e := equivProd)).of_eq fun _ => rfl
 
 variable [DecidableEq α]
 
-/-- The transition function is primitive recursive. -/
+/-- **The transition function of encoded DFAs is primitive recursive.** Let $\alpha$ be an
+alphabet with a primitive recursive encoding and decidable equality, and encode encoded DFAs over
+$\alpha$ through their start state, accepting states and transitions. The map sending an encoded
+DFA $D$ over $\alpha$, a state $s \in \mathbb{N}$ and a letter $a \in \alpha$ to the state that
+$D$ moves to from $s$ on $a$ (the target of the first transition listed for $(s, a)$, or $s$ if
+there is none) is primitive recursive. -/
 theorem primrec_step : Primrec fun p : EncodedDFA α × ℕ × α => p.1.step p.2.1 p.2.2 :=
   Primrec.list_foldr (primrec_trans.comp Primrec.fst) (Primrec.fst.comp Primrec.snd)
     (Primrec.ite
@@ -252,7 +292,11 @@ theorem primrec_step : Primrec fun p : EncodedDFA α × ℕ × α => p.1.step p.
       (Primrec.snd.comp (Primrec.fst.comp Primrec.snd))
       (Primrec.snd.comp Primrec.snd)).to₂
 
-/-- Running an encoded DFA on a word is primitive recursive. -/
+/-- **Running an encoded DFA is primitive recursive.** Let $\alpha$ be an alphabet with a
+primitive recursive encoding and decidable equality, and encode encoded DFAs over $\alpha$
+through their start state, accepting states and transitions. The map sending an encoded DFA $D$
+and a word $w$ over $\alpha$ to the state reached by running $D$ on $w$ from its start state is
+primitive recursive. -/
 theorem primrec₂_eval : Primrec₂ fun (D : EncodedDFA α) (w : List α) => D.toDFA.eval w :=
   Primrec.list_foldl Primrec.snd (primrec_start.comp Primrec.fst)
     (primrec_step.comp (Primrec.pair (Primrec.fst.comp Primrec.fst)

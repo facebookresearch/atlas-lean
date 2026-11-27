@@ -69,7 +69,12 @@ local notation "𝔼" => EuclideanSpace ℝ (Fin 4)
 cannot be smoothed.
 
 Note the fact that `M` is boundaryless follows from `ModelWithCorners.instBoundarylessManifold`. -/
-/-- Source: see manifest Via leanprover/lean-eval@38361be, problem `four_manifold_not_smooth`. -/
+/-- **A closed simply connected topological 4-manifold with no smooth structure.** There
+exists a compact, Hausdorff, simply connected topological space $M$ that admits an atlas of
+charts modelled on $\mathbb{R}^4$, such that no atlas of charts on $M$ modelled on $\mathbb{R}^4$
+makes $M$ a smooth ($C^\infty$) manifold.
+
+Source: see manifest Via leanprover/lean-eval@38361be, problem `four_manifold_not_smooth`. -/
 public theorem_wanted four_manifold_not_smooth :
     ∃ (M : Type*) (_ : TopologicalSpace M) (_ : T2Space M) (_: CompactSpace M)
       (_ : SimplyConnectedSpace M) (_ : Nonempty (ChartedSpace 𝔼 M)),

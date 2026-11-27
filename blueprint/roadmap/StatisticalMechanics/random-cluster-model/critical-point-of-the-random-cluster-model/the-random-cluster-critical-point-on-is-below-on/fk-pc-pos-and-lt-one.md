@@ -1,0 +1,3 @@
+# $0 < p_c(q) < 1$ on $\mathbb{Z}^2$ for $q \ge 1$ under a Peierls bound
+
+Let $q \ge 1$ and suppose there is $p_0 < 1$ such that the [Peierls bound](fk-non-percolation-bound.md) $1 - \theta^1(p, q) \le$ the [Peierls series](fk-pc-upper-bound.md) $\sum_{\ell \ge 0} \ell\, 4^\ell (1 - p)^\ell$ (read as $0$ when it diverges) holds for every $p \in (0, 1)$ with $p > p_0$. Then $0 < p_c(q) < 1$, where $p_c(q)$ is the [critical point](../the-critical-point-of-the-random-cluster-model/fk-pc.md) $\sup\{p \in (0, 1) : \theta^1(p, q) = 0\}$ of $\mathbb{Z}^2$ and $\theta^1$ the [wired percolation probability](../the-critical-point-of-the-random-cluster-model/fk-theta.md).

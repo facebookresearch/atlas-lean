@@ -21,11 +21,11 @@ doi:10.1016/S0167-5060(08)70743-X, Theorem 4(b) (`n|1|L_max ≤ 0|Σw_jC_j`).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
-public import WantedExt.Complexity.NPComplete.SequencingToMinimizeWeightedTardinessWanted
+public import CSLibExt.Complexity.NPComplete.SequencingToMinimizeWeightedTardinessDefs
 
 @[expose] public section
 
@@ -44,7 +44,7 @@ This is Garey and Johnson's [SS4] with the partial order replaced by individual 
 meeting a deadline are those of [SS1]. The instance (task triples `(l(t), w(t), d(t))` and `K`),
 the task accessors, `WellFormed` (all lengths, weights, deadlines and `K` positive) and
 `IsOneProcessorSchedule` (a one-to-one `σ : T → ℤ₀⁺` with `σ(t) > σ(t')` implying
-`σ(t) ≥ σ(t') + l(t')`) are those of `SequencingToMinimizeWeightedTardinessWanted` ([SS5]),
+`σ(t) ≥ σ(t') + l(t')`) are those of `SequencingToMinimizeWeightedTardinessDefs` ([SS5]),
 whose instance class is the same. Lenstra, Rinnooy Kan and Brucker (1977) prove
 NP-completeness by a reduction from KNAPSACK; Garey and Johnson record strong
 NP-completeness. Binary encoding of all numbers.

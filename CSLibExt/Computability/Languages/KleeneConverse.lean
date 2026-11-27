@@ -135,7 +135,7 @@ def coeff {σ : Type*} [DecidableEq σ] [Fintype α] (M : DFA α σ) (q j : σ) 
   ∑ a ∈ Finset.univ.filter (fun a => M.step q a = j), ({[a]} : Language α)
 
 /-- The constant term of the equation for `X q`: `1` on accepting states, `0` otherwise. -/
-def constTerm {σ : Type*} (M : DFA α σ) (q : σ) : Language α := by
+noncomputable def constTerm {σ : Type*} (M : DFA α σ) (q : σ) : Language α := by
   classical
   exact if q ∈ M.accept then 1 else 0
 
@@ -481,7 +481,7 @@ is regular if and only if it is denoted by a regular expression. Source: M. Sips
 *Introduction to the Theory of Computation*, 3rd ed., Theorem 1.54. -/
 theorem isRegular_iff_exists_regex {α : Type*} [Finite α] {L : Language α} :
     L.IsRegular ↔ ∃ r : RegularExpression α, r.matches' = L :=
-  ⟨IsRegular.exists_regex, fun ⟨r, hr⟩ => by rw [← hr]; exact IsRegular.regex⟩
+  ⟨IsRegular.exists_regex, fun ⟨r, hr⟩ => by rw [← hr]; exact IsRegular.regex r⟩
 
 /-- **Sharpness of the finite-alphabet hypothesis**: over an infinite alphabet, the language
 of one-letter words is regular but is denoted by no regular expression, since a regular

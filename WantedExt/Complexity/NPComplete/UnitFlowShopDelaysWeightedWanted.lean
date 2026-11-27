@@ -20,7 +20,7 @@ transportation delays" (minimal NP-hard `F2|p_ij=1;t_i|Σw_iC_i`, Brucker et al.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs

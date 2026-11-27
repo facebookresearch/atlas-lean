@@ -1,0 +1,15 @@
+# Kleene algebra with tests
+
+- [A one-step simulation lifts to finite iteration](star-simulation.md)
+- [Tests preserved by one step are preserved by iteration](test-star-absorption.md)
+- [Diagonal test relation of an assertion](test-set.md)
+- [Membership in a diagonal test relation](mem-test-set.md)
+- [Diagonal tests are subidentities](test-set-le-one.md)
+- [Composing diagonal tests conjoins their assertions](test-set-mul-test-set.md)
+- [Verification inequality characterizes partial correctness](test-mul-le-mul-test-iff.md)
+- [Postcondition absorption characterizes partial correctness](test-mul-eq-test-mul-test-iff.md)
+- [Partial correctness as unreachability of the negated postcondition](test-mul-test-compl-eq-bot-iff.md)
+- [Test of the false assertion is the zero relation](test-set-empty.md)
+- [Test of the true assertion is the identity relation](test-set-univ.md)
+- [Test of a negated assertion is the complement within identity](test-set-compl.md)
+- [Test of a union of assertions is the union of tests](test-set-union.md)

@@ -14,7 +14,7 @@ public import Mathlib.Logic.Relation
 /-!
 # Conflict-driven clause learning
 
-An abstract CDCL transition system over the CNF representation `Cslib.Logic.PL.CNF`, in the
+An abstract CDCL transition system over the CNF representation `Cslib.Logic.LegacyPL.CNF`, in the
 style of the abstract DPLL and CDCL calculi of Nieuwenhuis, Oliveras, and Tinelli and of
 Weidenbach (as formalized by Blanchette, Fleury, Lammich, and Weidenbach). A state holds a
 trail of decided and propagated literals, the learned clauses, and the clause under conflict
@@ -29,7 +29,7 @@ analysis, if any. The current clause set is the input formula followed by the le
 - `backjump` learns the conflict clause, cuts the trail back, and propagates a literal of the
   learned clause.
 - `learn` adds a clause together with a resolution derivation of it from the current clause
-  set, a `Cslib.Logic.PL.CNF.ResolutionDerivable` certificate.
+  set, a `Cslib.Logic.LegacyPL.CNF.ResolutionDerivable` certificate.
 - `restart` clears the trail and keeps the learned clauses.
 
 No rule takes semantic entailment as a premise. Decision levels are not tracked: conflict
@@ -41,10 +41,10 @@ Soundness is an invariant of the reachable states (`Invariant`): the learned cla
 conflict clause, and every reason clause on the trail are resolution-derivable from the input;
 every propagated literal is forced by its reason and the older part of the trail; and the
 conflict clause is false on the trail. Resolution soundness
-(`Cslib.Logic.PL.CNF.ResolutionDerivable.satisfies`) turns this invariant into unsatisfiability
-of the input when a reachable state derives the empty clause or is in conflict without decisions
-on its trail. Only this direction is proved: termination, completeness, and the correctness of
-satisfiable answers are out of scope.
+(`Cslib.Logic.LegacyPL.CNF.ResolutionDerivable.satisfies`) turns this invariant into
+unsatisfiability of the input when a reachable state derives the empty clause or is in conflict
+without decisions on its trail. Only this direction is proved: termination, completeness, and the
+correctness of satisfiable answers are out of scope.
 
 ## Main definitions
 
@@ -74,7 +74,7 @@ satisfiable answers are out of scope.
 
 @[expose] public section
 
-namespace Cslib.Logic.PL.CNF
+namespace Cslib.Logic.LegacyPL.CNF
 
 /-- Resolution derivations compose: if every clause of `ψ` is derivable from `φ`, then so is
 every clause derivable from `ψ`. -/
@@ -84,11 +84,11 @@ theorem ResolutionDerivable.trans {φ ψ : CNF} {C : CNFClause} (h : ψ.Resoluti
   | ax hC => exact hψ _ hC
   | resolve x _ _ hxC hxD ihC ihD => exact .resolve x ihC ihD hxC hxD
 
-end Cslib.Logic.PL.CNF
+end Cslib.Logic.LegacyPL.CNF
 
 namespace Cslib.Algorithms.SAT.CDCL
 
-open Cslib.Logic.PL
+open Cslib.Logic.LegacyPL
 
 /-- A trail entry: a decision literal, or a literal propagated by its reason clause. -/
 inductive TrailEntry where

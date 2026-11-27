@@ -581,12 +581,15 @@ private theorem selberg_exists_subalgebra_inverting_prime {K : Type*} [Field K] 
   exact hm2.ne_top htop
 
 /--
-If `K` has characteristic zero, every finitely generated `G ≤ GL_n(K)` contains a finite-index
-subgroup `H` with globally unique roots. Source: A. Selberg, Contributions to Function Theory
-(1960) Selberg's
-lemma; Alperin, Proc. AMS 1969; Lean states char-zero case with H not required normal.
+**Selberg's lemma, unique-roots form.** Let $K$ be a field of characteristic zero and let $n$ be
+a natural number. Every finitely generated subgroup $G$ of $\mathrm{GL}_n(K)$ has a subgroup $H$
+of finite index in $G$ in which roots are unique: for all $a, b \in H$ and every natural number
+$m \ne 0$, $a^m = b^m$ implies $a = b$.
 
 Proves `Wanted` entry `selberg_finiteIndex_torsionFree`.
+
+Source: A. Selberg, Contributions to Function Theory (1960) Selberg's
+lemma; Alperin, Proc. AMS 1969; Lean states char-zero case with H not required normal.
 -/
 theorem selberg_finiteIndex_hasUniqueRoots
     {K : Type*} [Field K] [CharZero K] {n : ℕ}
@@ -650,7 +653,12 @@ theorem selberg_finiteIndex_hasUniqueRoots
       selberg_congruence_ker_pow_injective G B2 hm2 φ2 hφ2inj hpe haG.2 hbG.2 hstep1
     exact Subtype.ext hstep2
 
-/-- The finite-index subgroup supplied by Selberg's lemma is torsion-free. -/
+/-- **Selberg's lemma.** Let $K$ be a field of characteristic zero and let $n$ be a natural number.
+Every finitely generated subgroup $G$ of $\mathrm{GL}_n(K)$ has a subgroup $H$ of finite index in
+$G$ that is torsion-free: the identity is the only element of finite order in $H$.
+
+It follows from `selberg_finiteIndex_hasUniqueRoots`: a group in which roots are unique is
+torsion-free. -/
 theorem selberg_finiteIndex_torsionFree
     {K : Type*} [Field K] [CharZero K] {n : ℕ}
     (G : Subgroup (Matrix.GeneralLinearGroup (Fin n) K))

@@ -102,7 +102,8 @@ lemma si4_mfd_limit_passage (β infφ : ℝ) (hβ : 0 < β) (hinf : 1 ≤ infφ)
 lemma si4_meanfield_lower_bound_of_finiteVolume (β₀ : ℝ) (hβ₀ : 0 < β₀) (m : ℝ → ℝ)
     (infφ : ℝ) (hinf : 1 ≤ infφ)
     (un un' cn εn : ℝ → ℕ → ℝ)
-    (hdiff : ∀ β ∈ Ici β₀, DifferentiableAt ℝ (fun β => (m β) ^ 2) β)
+    (hcont : ContinuousOn (fun β => (m β) ^ 2) (Ici β₀))
+    (hdiff : ∀ β ∈ Ioi β₀, DifferentiableAt ℝ (fun β => (m β) ^ 2) β)
     (hzero : m β₀ = 0) (hnonneg : ∀ β ∈ Ici β₀, 0 ≤ m β)
     (hu : ∀ β ∈ Ioi β₀, Tendsto (un β) atTop (𝓝 ((m β) ^ 2)))
     (hderiv : ∀ β ∈ Ioi β₀, Tendsto (un' β) atTop (𝓝 (deriv (fun β => (m β) ^ 2) β)))
@@ -122,12 +123,14 @@ lemma si4_meanfield_lower_bound_of_finiteVolume (β₀ : ℝ) (hβ₀ : 0 < β�
       (deriv (fun β => (m β) ^ 2) β) (un β) (un' β) (cn β) (εn β)
       (hu β hβint) (hderiv β hβint) (hc β hβint) (hε β hβint)
       (hcnn β hβint) (hunle β hβint) (hfin β hβint)
-  exact meanfield_lower_bound β₀ hβ₀ m hdiff hineq hzero hnonneg hβ
+  exact meanfield_lower_bound β₀ hβ₀ m hcont hdiff hineq hzero hnonneg hβ
 
 /-! ## B. Integration -/
 
 /-- If `(m²)' ≥ (2/β)(1 - m²)` above `β₀ > 0` and `m ≥ 0`, then `m(β) ≥ √(1 - (β₀/β)²)` for `β ≥
-β₀`. This strengthens `meanfield_lower_bound` by dropping `m(β₀) = 0`. -/
+β₀`. Unlike `meanfield_lower_bound`, this does not require `m(β₀) = 0`; it retains
+differentiability of `β ↦ (m β) ^ 2` at `β₀` itself, which `meanfield_lower_bound` weakens to
+continuity on `Ici β₀`, so neither statement implies the other. -/
 lemma meanfield_lower_bound_of_initial_nonneg
     (β₀ : ℝ) (hβ₀ : 0 < β₀) (m : ℝ → ℝ)
     (hdiff : ∀ β ∈ Ici β₀, DifferentiableAt ℝ (fun β => (m β) ^ 2) β)
@@ -137,8 +140,11 @@ lemma meanfield_lower_bound_of_initial_nonneg
     {β : ℝ} (hβ : β₀ ≤ β) :
     Real.sqrt (1 - (β₀ / β) ^ 2) ≤ m β := by
   have hβpos : 0 < β := lt_of_lt_of_le hβ₀ hβ
+  have hcont : ContinuousOn (fun β => (m β) ^ 2) (Ici β₀) := by
+    intro β' hβ'
+    exact (hdiff β' hβ').continuousAt.continuousWithinAt
   have hgw := meanfield_one_minus_le β₀ hβ₀ (fun β => (m β) ^ 2)
-    hdiff hineq hβ
+    hcont (fun β' hβ' => hdiff β' (le_of_lt (mem_Ioi.mp hβ'))) hineq hβ
   have hinit0 := hnonneg β₀ (mem_Ici.mpr le_rfl)
   have hratio0 : 0 ≤ (β₀ / β) ^ 2 := sq_nonneg _
   have h2 : 1 - (β₀ / β) ^ 2 ≤ (m β) ^ 2 := by

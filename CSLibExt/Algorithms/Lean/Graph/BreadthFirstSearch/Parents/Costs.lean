@@ -210,7 +210,12 @@ private lemma bfsEvents_spec {V : Type u} [BEq V] [Hashable V] [LawfulBEq V]
   simp only [bfsEvents]
   omega
 
-/-- Exact selected BFS events: attempts, adjacency checks, enqueues and parent writes. -/
+/-- **Exact cost of BFS with parents.** Let $G$ be a finite directed graph with vertex list $V$
+and adjacency lists $\mathrm{adj}(u)$, let $s$ be a vertex, and let $L$ be the list of vertices in
+the order in which breadth-first search from $s$ discovers them. The cost of breadth-first search
+with parents from $s$, counting dequeue attempts, adjacency checks, enqueues and parent writes,
+equals $|V| + \sum_{u \in L} |\mathrm{adj}(u)| + |L| + (|L| - 1)$, where adjacency lists are
+counted with repetitions and $|L| - 1$ is truncated at $0$. -/
 public theorem bfsWithParents_time {V : Type u} [BEq V] [Hashable V] [LawfulBEq V]
     (graph : DirectedAdjacency V) (source : V) :
     (bfsWithParents graph source).time =
@@ -220,7 +225,11 @@ public theorem bfsWithParents_time {V : Type u} [BEq V] [Hashable V] [LawfulBEq 
   have events := bfsEvents_spec graph source
   omega
 
-/-- The selected event count is bounded by three vertex passes plus all adjacency entries. -/
+/-- **Linear bound on the cost of BFS with parents.** Let $G$ be a finite directed graph with
+vertex list $V$ and adjacency lists $\mathrm{adj}(u)$, and let $s$ be a vertex. The cost of
+breadth-first search with parents from $s$, counting dequeue attempts, adjacency checks, enqueues
+and parent writes, is at most $3|V| + \sum_{u \in V} |\mathrm{adj}(u)|$, where adjacency lists
+are counted with repetitions. -/
 public theorem bfsWithParents_time_le {V : Type u} [BEq V] [Hashable V] [LawfulBEq V]
     (graph : DirectedAdjacency V) (source : V) :
     (bfsWithParents graph source).time ≤

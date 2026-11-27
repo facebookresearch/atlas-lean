@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
+public import MathlibExt.NumberTheory.NumericalSemigroupsKthPowers
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Data.Set.Card
 public import Mathlib.NumberTheory.FrobeniusNumber
@@ -23,57 +24,21 @@ sequence `x : ℕ → ℕ` (indexed from `1`), `S_n = ⟨x_n, x_{n+1}, …⟩` i
 
 * the minimal generating set `β(S)` of a submonoid `S ⊆ ℕ`: its nonzero elements that are not a
   sum of two nonzero elements of `S`; the embedding dimension `e(S)` is `β(S).ncard`;
-* `r_k`: the least `n ≥ 1` with `x_k ∈ β(S_n)` (`sInf`);
 * the conductor `τ(A)` of `⟨A⟩`: the least `m` with every `j ≥ m` in `⟨A⟩` (`sInf`);
 * the Frobenius number via Mathlib's `FrobeniusNumber`.
+
+Lemma 1 and Proposition 1, on the first appearances `r_k` (the least `n ≥ 1` with
+`x_k ∈ β(S_n)`), are proved in `MathlibExt.NumberTheory.NumericalSemigroupsKthPowers`.
+That module also proves the conductor recursion for powers.
 -/
 
 namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- For a strictly increasing sequence `(x_n)` and positive integers `k`, `n`:
-`x_k ∈ β(S_n)` if and only if `r_k ≤ n ≤ k`, where `r_k` is the least `n ≥ 1` with
-`x_k ∈ β(S_n)`; hence `e(S_n) = |{k : r_k ≤ n ≤ k}|`. The paper's standing assumption
-`gcd(x_n, x_{n+1}, …) = 1` is not needed and is dropped.
-
-Source: Fabián Arias, Jerson Borja and Jaider Terán, *A Note on Numerical Semigroups Generated
-by k-th Powers*, INTEGERS 25 (2025), Article A11, Lemma 1 (`integers-2025-A11-lem-1`). -/
-public theorem_wanted mem_minimalGenerators_iff_firstAppearance_le (x : ℕ → ℕ) (hx : StrictMono x)
-    (k n : ℕ) (hk : 1 ≤ k) (hn : 1 ≤ n) :
-    (x k ∈ {s | s ∈ AddSubmonoid.closure (x '' Set.Ici n) ∧ s ≠ 0 ∧
-        ∀ a ∈ AddSubmonoid.closure (x '' Set.Ici n), ∀ b ∈ AddSubmonoid.closure (x '' Set.Ici n),
-          a + b = s → a = 0 ∨ b = 0} ↔
-      sInf {m : ℕ | 1 ≤ m ∧ x k ∈ {s | s ∈ AddSubmonoid.closure (x '' Set.Ici m) ∧ s ≠ 0 ∧
-        ∀ a ∈ AddSubmonoid.closure (x '' Set.Ici m), ∀ b ∈ AddSubmonoid.closure (x '' Set.Ici m),
-          a + b = s → a = 0 ∨ b = 0}} ≤ n ∧ n ≤ k) ∧
-    {s | s ∈ AddSubmonoid.closure (x '' Set.Ici n) ∧ s ≠ 0 ∧
-        ∀ a ∈ AddSubmonoid.closure (x '' Set.Ici n), ∀ b ∈ AddSubmonoid.closure (x '' Set.Ici n),
-          a + b = s → a = 0 ∨ b = 0}.ncard =
-      {j : ℕ | 1 ≤ j ∧ sInf {m : ℕ | 1 ≤ m ∧ x j ∈ {s | s ∈ AddSubmonoid.closure (x '' Set.Ici m) ∧
-          s ≠ 0 ∧ ∀ a ∈ AddSubmonoid.closure (x '' Set.Ici m),
-            ∀ b ∈ AddSubmonoid.closure (x '' Set.Ici m), a + b = s → a = 0 ∨ b = 0}} ≤ n ∧
-        n ≤ j}.ncard
-
-/-- For a strictly increasing sequence `(x_n)`, if `r_k ≥ α k` for all `k ≥ 1` with a real
-constant `α > 0`, then `e(S_n) ≤ ⌊n / α⌋ - n + 1` for all `n ≥ 1`. The paper's standing
-assumption `gcd(x_n, x_{n+1}, …) = 1` is not needed and is dropped.
-
-Source: Fabián Arias, Jerson Borja and Jaider Terán, *A Note on Numerical Semigroups Generated
-by k-th Powers*, INTEGERS 25 (2025), Article A11, Proposition 1 (`integers-2025-A11-prop-1`). -/
-public theorem_wanted embeddingDimension_le_of_firstAppearance_ge (x : ℕ → ℕ) (hx : StrictMono x)
-    (α : ℝ) (hα : 0 < α)
-    (hr : ∀ k : ℕ, 1 ≤ k → α * k ≤ ((sInf {m : ℕ | 1 ≤ m ∧
-      x k ∈ {s | s ∈ AddSubmonoid.closure (x '' Set.Ici m) ∧ s ≠ 0 ∧
-        ∀ a ∈ AddSubmonoid.closure (x '' Set.Ici m), ∀ b ∈ AddSubmonoid.closure (x '' Set.Ici m),
-          a + b = s → a = 0 ∨ b = 0}} : ℕ) : ℝ))
-    (n : ℕ) (hn : 1 ≤ n) :
-    ({s | s ∈ AddSubmonoid.closure (x '' Set.Ici n) ∧ s ≠ 0 ∧
-        ∀ a ∈ AddSubmonoid.closure (x '' Set.Ici n), ∀ b ∈ AddSubmonoid.closure (x '' Set.Ici n),
-          a + b = s → a = 0 ∨ b = 0}.ncard : ℤ) ≤ ⌊(n : ℝ) / α⌋ - n + 1
-
-/-- There is a constant `C > 0` such that every positive integer `n` is `a₁² + a₂² + a₃² + a₄²`
-with integers `aᵢ`, each `aᵢ = 0` or `aᵢ ≥ √n / C` (quoted by the paper from Moscariello).
+/-- **Four squares with large nonzero parts.** There is a real constant $C > 0$ such that every
+positive integer $n$ can be written as $n = a_1^2 + a_2^2 + a_3^2 + a_4^2$ with integers
+$a_1, a_2, a_3, a_4$, each of which is either $0$ or at least $\sqrt{n} / C$.
 
 Source: Fabián Arias, Jerson Borja and Jaider Terán, *A Note on Numerical Semigroups Generated
 by k-th Powers*, INTEGERS 25 (2025), Article A11, Lemma 2, quoting A. Moscariello
@@ -82,9 +47,13 @@ public theorem_wanted exists_four_squares_large_parts :
     ∃ C : ℝ, 0 < C ∧ ∀ n : ℕ, 1 ≤ n → ∃ a : Fin 4 → ℤ,
       (n : ℤ) = ∑ i, a i ^ 2 ∧ ∀ i, a i = 0 ∨ Real.sqrt n / C ≤ a i
 
-/-- For nonempty `A, B ⊆ ℕ` with `gcd(A ∪ B) = 1` and `t` dividing every element of `A`, with
-`C = {a / t : a ∈ A}`: `τ(A ∪ B) ≤ t · τ(C ∪ B) + τ(B ∪ {t})`, where `τ(X)` is the conductor
-of `⟨X⟩` (quoted by the paper from Dutch and Rickett).
+/-- **Dutch–Rickett conductor inequality for a union of generating sets.** For a set $X$ of
+natural numbers, let $\tau(X)$ be the conductor of the additive submonoid $\langle X \rangle$ of
+$\mathbb{N}$ generated by $X$, the least natural number $c$ such that every $j \ge c$ lies in
+$\langle X \rangle$. Let $A$ and $B$ be nonempty sets of natural numbers such that $1$ is the only
+natural number dividing every element of $A \cup B$, let $t$ be a natural number dividing every
+element of $A$, and let $C = \{a / t : a \in A\}$ (with $a / 0 = 0$). Then
+$$\tau(A \cup B) \le t \, \tau(C \cup B) + \tau(B \cup \{t\}).$$
 
 Source: Fabián Arias, Jerson Borja and Jaider Terán, *A Note on Numerical Semigroups Generated
 by k-th Powers*, INTEGERS 25 (2025), Article A11, Lemma 3, quoting K. Dutch and C. Rickett
@@ -95,21 +64,10 @@ public theorem_wanted conductor_union_le (A B : Set ℕ) (hA : A.Nonempty) (hB :
       t * sInf {m : ℕ | ∀ j ≥ m, j ∈ AddSubmonoid.closure ((fun a => a / t) '' A ∪ B)} +
         sInf {m : ℕ | ∀ j ≥ m, j ∈ AddSubmonoid.closure (B ∪ {t})}
 
-/-- For positive integers `n` and `k`, with `S_n = ⟨n^k, (n+1)^k, …⟩`:
-`τ(S_n) ≤ 2^k τ(S_{⌈n/2⌉}) + (2^k - 1)(2n)^k`, `τ` the conductor (quoted by the paper from
-Dutch and Rickett); `⌈n/2⌉ = (n + 1) / 2`.
-
-Source: Fabián Arias, Jerson Borja and Jaider Terán, *A Note on Numerical Semigroups Generated
-by k-th Powers*, INTEGERS 25 (2025), Article A11, Proposition 2, inequality (3), quoting K. Dutch
-and C. Rickett (`integers-2025-A11-prop-2`). -/
-public theorem_wanted conductor_powers_le (n k : ℕ) (hn : 1 ≤ n) (hk : 1 ≤ k) :
-    sInf {m : ℕ | ∀ j ≥ m, j ∈ AddSubmonoid.closure ((fun i => i ^ k) '' Set.Ici n)} ≤
-      2 ^ k * sInf {m : ℕ | ∀ j ≥ m,
-        j ∈ AddSubmonoid.closure ((fun i => i ^ k) '' Set.Ici ((n + 1) / 2))} +
-        (2 ^ k - 1) * (2 * n) ^ k
-
-/-- For `S_n = ⟨n², (n+1)², …⟩`, the embedding dimension satisfies `e(S_n) = O(n)`: there is
-`C` with `e(S_n) ≤ C n` for all `n ≥ 1`.
+/-- **Semigroups of squares have embedding dimension $O(n)$.** For $n \ge 1$ let $S_n$ be the
+additive submonoid of $\mathbb{N}$ generated by $n^2, (n+1)^2, (n+2)^2, \ldots$, and let $e(S_n)$
+be its embedding dimension, the number of nonzero elements of $S_n$ that are not the sum of two
+nonzero elements of $S_n$. There is a natural number $C$ with $e(S_n) \le C n$ for all $n \ge 1$.
 
 Source: Fabián Arias, Jerson Borja and Jaider Terán, *A Note on Numerical Semigroups Generated
 by k-th Powers*, INTEGERS 25 (2025), Article A11, Theorem 1 (`integers-2025-A11-thm-1`). -/
@@ -120,9 +78,13 @@ public theorem_wanted embeddingDimension_squares_isBigO :
           ∀ b ∈ AddSubmonoid.closure ((fun i => i ^ 2) '' Set.Ici n),
             a + b = s → a = 0 ∨ b = 0}.ncard ≤ C * n
 
-/-- For `k ≥ 2` and `S_n = ⟨n^k, (n+1)^k, …⟩`, the Frobenius number satisfies
-`F(S_n) = O(n^{k+ε})` for every `ε > 0`: there is `K` with `F(S_n) ≤ K n^{k+ε}` for all `n ≥ 1`
-(`S_1 = ℕ` has no Frobenius number, so `n = 1` is vacuous).
+/-- **Frobenius numbers of semigroups of $k$-th powers are $O(n^{k+\varepsilon})$.** Let $k \ge 2$
+be an integer and $\varepsilon > 0$ a real number. For $n \ge 1$ let $S_n$ be the additive
+submonoid of $\mathbb{N}$ generated by $n^k, (n+1)^k, (n+2)^k, \ldots$. Then there is a real
+constant $K$ such that for every $n \ge 1$, if $S_n$ has a Frobenius number $F$ (the largest
+natural number not in $S_n$), then $F \le K n^{k + \varepsilon}$.
+
+Since $S_1 = \mathbb{N}$ has no Frobenius number, the case $n = 1$ is vacuous.
 
 Source: Fabián Arias, Jerson Borja and Jaider Terán, *A Note on Numerical Semigroups Generated
 by k-th Powers*, INTEGERS 25 (2025), Article A11, Theorem 2 (`integers-2025-A11-thm-2`). -/

@@ -33,15 +33,17 @@ lines 283-290.
 Consecutive elements are a Farey pair. Mediant is `(a+c)/(b+d)`.
 -/
 
-/-- Finite carrier of Farey fractions of order `n`. Enumerates all
-`a/d` with `1 ≤ d ≤ n`, `0 ≤ a ≤ d`. Every `q` with `0 ≤ q ≤ 1`
-and `q.den ≤ n` equals `q.num/q.den` with `0 ≤ q.num ≤ q.den`,
-hence appears. -/
+/-- **Farey set.** For a natural number $n$, the Farey set $F_n$ of order $n$ is the finite set of
+rationals $a/d$ with $a$ and $d$ natural numbers, $1 \le d \le n$ and $0 \le a \le d$.
+
+Equivalently, $F_n$ consists of the rationals $q$ with $0 \le q \le 1$ whose denominator in lowest
+terms is at most $n$. In particular $F_0$ is empty. -/
 def fareyFinset (n : ℕ) : Finset ℚ :=
   ((Finset.Icc 1 n).biUnion fun d : ℕ =>
     ((Finset.Icc 0 d).image fun a : ℕ => ((a : ℤ) /. (d : ℤ) : ℚ)))
 
-/-- The Farey sequence of order `n`, listed in increasing order. -/
+/-- **Farey sequence.** For a natural number $n$, the Farey sequence of order $n$ is the list of the
+elements of the Farey set $F_n$ in increasing order. -/
 def fareySeq (n : ℕ) : List ℚ :=
   (fareyFinset n).sort (· ≤ ·)
 
@@ -55,7 +57,9 @@ lemma fareySeq_nodup (n : ℕ) : List.Nodup (fareySeq n) :=
     q ∈ fareySeq n ↔ q ∈ fareyFinset n := by
   simp [fareySeq, Finset.mem_sort]
 
-/-- Membership characterization: `q ∈ F_n` iff `0 ≤ q ≤ 1` and `q.den ≤ n`. -/
+/-- **Membership in the Farey set.** For a natural number $n$ and a rational number $q$, $q$
+belongs to the Farey set $F_n$ of order $n$ if and only if $0 \le q \le 1$ and the denominator of
+$q$ in lowest terms is at most $n$. -/
 @[simp] theorem mem_fareyFinset_iff (n : ℕ) (q : ℚ) :
     q ∈ fareyFinset n ↔ 0 ≤ q ∧ q ≤ 1 ∧ q.den ≤ n := by
   constructor
@@ -84,19 +88,22 @@ lemma fareySeq_nodup (n : ℕ) : List.Nodup (fareySeq n) :=
     have h_cast : ((q.num.natAbs : ℕ) : ℤ) = q.num := by omega
     rw [h_cast, Rat.num_divInt_den]
 
-/-- Farey carriers are monotone in their order. -/
+/-- **Farey sets grow with the order.** If $m \le n$ are natural numbers, then every element of the
+Farey set $F_m$ belongs to $F_n$, that is, $F_m \subseteq F_n$. -/
 theorem fareyFinset_mono {m n : ℕ} (hmn : m ≤ n) : fareyFinset m ⊆ fareyFinset n := by
   intro q hq
   rw [mem_fareyFinset_iff] at hq ⊢
   exact ⟨hq.1, hq.2.1, hq.2.2.trans hmn⟩
 
-/-- Ordered Farey neighbor: consecutive in `F_n` with no intermediate
-Farey fraction. -/
+/-- **Farey neighbors.** For a natural number $n$, rationals $x$ and $y$ are Farey neighbors of
+order $n$ when both lie in the Farey set $F_n$, $x < y$, and no element $z$ of $F_n$ satisfies
+$x < z < y$. -/
 def IsFareyNeighbor (n : ℕ) (x y : ℚ) : Prop :=
   x ∈ fareyFinset n ∧ y ∈ fareyFinset n ∧ x < y ∧
   ∀ z ∈ fareyFinset n, ¬(x < z ∧ z < y)
 
-/-- Canonical mediant `(a+c)/(b+d)` from reduced numerator/denominator data. -/
+/-- **Mediant.** For rational numbers $x = a/b$ and $y = c/d$ written in lowest terms with
+$b, d > 0$, the mediant of $x$ and $y$ is the rational number $(a + c)/(b + d)$. -/
 def mediant (x y : ℚ) : ℚ :=
   ((x.num + y.num) /. ((x.den + y.den : ℕ) : ℤ) : ℚ)
 
@@ -183,7 +190,10 @@ lemma neighbor_den_le (n : ℕ) (x y : ℚ) (h : IsFareyNeighbor n x y) :
     x.den ≤ n ∧ y.den ≤ n :=
   ⟨(mem_fareyFinset_iff n x |>.mp h.1).2.2, (mem_fareyFinset_iff n y |>.mp h.2.1).2.2⟩
 
-/-- Necessity of denominator sum exceeding `n` for neighbors. -/
+/-- **Farey neighbors have denominator sum exceeding the order.** Let $n$ be a natural number
+and let $F_n$ be the Farey set of order $n$. If $x < y$ are neighbors in $F_n$, meaning that
+$x, y \in F_n$ and no element of $F_n$ lies strictly between them, then the denominators $b$ of
+$x$ and $d$ of $y$ in lowest terms satisfy $b + d > n$. -/
 lemma neighbor_den_sum_gt (n : ℕ) (x y : ℚ) (h : IsFareyNeighbor n x y) :
     n < x.den + y.den := by
   by_contra hle
@@ -206,7 +216,10 @@ lemma neighbor_den_sum_gt (n : ℕ) (x y : ℚ) (h : IsFareyNeighbor n x y) :
       by linarith [(mem_fareyFinset_iff n y |>.mp hy).2.1], hden⟩
   exact h.2.2.2 (mediant x y) hmed_mem (mediant_between x y h.2.2.1)
 
-/-- Determinant one plus denominator sum exceeding `n` implies Farey neighbors. -/
+/-- **Determinant one and large denominator sum give Farey neighbors.** Let $n$ be a natural
+number and let $x = a/b$ and $y = c/d$ be elements of the Farey set $F_n$, written in lowest
+terms with $b, d > 0$. If $bc = ad + 1$ and $n < b + d$, then $x$ and $y$ are Farey neighbors of
+order $n$. -/
 theorem det_one_and_sum_gt_imp_neighbor (n : ℕ) (x y : ℚ)
     (hx : x ∈ fareyFinset n) (hy : y ∈ fareyFinset n)
     (hdet : y.num * (x.den : ℤ) = x.num * (y.den : ℤ) + 1)
@@ -238,7 +251,9 @@ theorem det_one_and_sum_gt_imp_neighbor (n : ℕ) (x y : ℚ)
 
 set_option maxHeartbeats 800000 in
 -- The constructive denominator argument requires several nonlinear integer normalizations.
-/-- Farey neighbors have determinant one. -/
+/-- **Consecutive Farey fractions have determinant one.** Let $n$ be a natural number. If $x$ and
+$y$ are Farey neighbors of order $n$, written in lowest terms as $x = a/b$ and $y = c/d$ with
+$b, d > 0$, then $bc = ad + 1$. -/
 theorem IsFareyNeighbor.det_eq_one {n : ℕ} {x y : ℚ}
     (h : IsFareyNeighbor n x y) :
     y.num * (x.den : ℤ) = x.num * (y.den : ℤ) + 1 := by
@@ -405,7 +420,10 @@ theorem IsFareyNeighbor.det_eq_one {n : ℕ} {x y : ℚ}
     _ = (a : ℤ) * d + 1 := by nlinarith
     _ = x.num * (y.den : ℤ) + 1 := by simp [d, ha_eq]
 
-/-- Arithmetic characterization of consecutive Farey fractions. -/
+/-- **Arithmetic characterization of Farey neighbors.** Let $n$ be a natural number and let
+$x = a/b$ and $y = c/d$ be elements of the Farey set $F_n$, written in lowest terms with
+$b, d > 0$. Then $x$ and $y$ are Farey neighbors of order $n$ if and only if $bc = ad + 1$ and
+$n < b + d$. -/
 theorem isFareyNeighbor_iff_det_and_sum {n : ℕ} {x y : ℚ}
     (hx : x ∈ fareyFinset n) (hy : y ∈ fareyFinset n) :
     IsFareyNeighbor n x y ↔
@@ -416,14 +434,17 @@ theorem isFareyNeighbor_iff_det_and_sum {n : ℕ} {x y : ℚ}
   · rintro ⟨hdet, hsum⟩
     exact det_one_and_sum_gt_imp_neighbor n x y hx hy hdet hsum
 
-/-- The mediant of a Farey pair is not already present at the same order. -/
+/-- **The mediant of Farey neighbors is not in the Farey set.** Let $n$ be a natural number. If
+$x$ and $y$ are Farey neighbors of order $n$, then the mediant of $x$ and $y$ does not belong to
+the Farey set $F_n$. -/
 theorem IsFareyNeighbor.mediant_not_mem {n : ℕ} {x y : ℚ}
     (h : IsFareyNeighbor n x y) : mediant x y ∉ fareyFinset n := by
   intro hmem
   exact h.2.2.2 _ hmem (mediant_between x y h.2.2.1)
 
-/-- If the denominators of a Farey pair sum to `n + 1`, its mediant is a new
-member of the next Farey sequence. -/
+/-- **Mediants that enter the next Farey set.** Let $n$ be a natural number and let $x$ and $y$
+be Farey neighbors of order $n$ whose denominators in lowest terms sum to $n + 1$. Then the
+mediant of $x$ and $y$ belongs to the Farey set $F_{n+1}$ and does not belong to $F_n$. -/
 theorem IsFareyNeighbor.mediant_mem_succ {n : ℕ} {x y : ℚ}
     (h : IsFareyNeighbor n x y) (hsum : x.den + y.den = n + 1) :
     mediant x y ∈ fareyFinset (n + 1) ∧ mediant x y ∉ fareyFinset n :=
@@ -431,8 +452,10 @@ theorem IsFareyNeighbor.mediant_mem_succ {n : ℕ} {x y : ℚ}
 
 set_option maxHeartbeats 800000 in
 -- The successor proof combines extremal finite-set choices with integer normalization.
-/-- `F_(n+1)` is `F_n` together with the mediants of the Farey pairs whose
-denominators sum to `n + 1`. -/
+/-- **Mediants generate the next Farey set.** Let $n \ge 1$ be a natural number. A rational
+number $q$ belongs to the Farey set $F_{n+1}$ if and only if $q$ belongs to $F_n$, or there are
+Farey neighbors $x$ and $y$ of order $n$ whose denominators in lowest terms sum to $n + 1$ such
+that $q$ is the mediant of $x$ and $y$. -/
 theorem farey_succ_generation {n : ℕ} (hn : 0 < n) (q : ℚ) :
     q ∈ fareyFinset (n + 1) ↔
       q ∈ fareyFinset n ∨

@@ -400,7 +400,6 @@ theorem hasLaw_count {T : ℕ → Ω → ℝ} {r : ℝ≥0} (hr : 0 < r)
       filter_upwards [hpos, hgood] with ω hω hg
       obtain ⟨j, hj⟩ := mem_iUnion.mp hg
       have hjc := count_of_gap T t ω hω j hj
-      apply propext
       simp only [mem_preimage, mem_singleton_iff]
       constructor
       · intro hk
@@ -1019,9 +1018,9 @@ private theorem lintegral_poisson_step {r : ℝ≥0} (hr : 0 < r) (u : ℝ≥0) 
         rw [← he, mul_pow, pow_succ]
         field_simp
       · rw [indicator_of_notMem (show a ∉ {a : ℝ | a ≤ u} from hau),
-          indicator_of_notMem (fun h ↦ hau h.2), mul_zero]
+          indicator_of_notMem (show a ∉ Icc 0 (u : ℝ) from fun h ↦ hau h.2), mul_zero]
     · rw [gammaPDF_of_neg (lt_of_not_ge ha), zero_mul,
-        indicator_of_notMem (fun h ↦ ha h.1)]
+        indicator_of_notMem (show a ∉ Icc 0 (u : ℝ) from fun h ↦ ha h.1)]
   rw [expMeasure, gammaMeasure, lintegral_withDensity_eq_lintegral_mul _
     (by unfold gammaPDF; fun_prop) hmeas]
   simp only [Pi.mul_apply]
@@ -1312,8 +1311,7 @@ private theorem expSeq_inGaps {r : ℝ≥0} (hr : 0 < r) (L : List (ℝ≥0 × �
           rfl
         · rw [indicator_of_notMem (show a ∉ Ioi (u : ℝ) from ha)]
           convert measure_empty (μ := expSeq r)
-          ext y
-          simp only [mem_ofPred_eq, mem_empty_iff_false, iff_false, not_and]
+          simp only [mem_ofPred_eq, Set.mem_eq_mem, mem_empty_iff_false, iff_false, not_and]
           exact fun h ↦ absurd h ha
       rw [hset, expSeq_eq_lintegral hr (by rw [← hset]; exact measurableSet_inGaps 0 0 _)]
       simp_rw [hint]
@@ -1333,7 +1331,6 @@ private theorem expSeq_inGaps {r : ℝ≥0} (hr : 0 < r) (L : List (ℝ≥0 × �
             expSeq r {y | a ≤ u ∧ InGaps y 0 0 ((Real.toNNReal (u - a), m) :: L)} := by
           apply measure_congr
           filter_upwards [ae_expSeq_nonneg hr] with y hy
-          apply propext
           rw [inGaps_seqCons_succ, inGaps_neg_offset hy]
         rw [hcongr]
         by_cases hau : a ≤ (u : ℝ)
@@ -1460,7 +1457,6 @@ private theorem measure_increments_eq {T : ℕ → Ω → ℝ} {r : ℝ≥0} (hr
       P (⋃ k₀, G k₀) := by
     apply measure_congr
     filter_upwards [hmem] with ω hω
-    apply propext
     simp only [mem_iUnion, hω]
     constructor
     · intro h

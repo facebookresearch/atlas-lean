@@ -16,7 +16,7 @@ doi:10.1002/(SICI)1097-0037(199810)32:3<199::AID-NET4>3.0.CO;2-F.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Computability.Complexity.Karp.Color
 public import MathlibExt.Combinatorics.SimpleGraph.Domination
 public import MathlibExt.Computability.BinaryNatEncoding

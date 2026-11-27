@@ -44,7 +44,11 @@ open Bitonic
 
 /-! ## Levels under relabeling and on interleaved wire sets -/
 
-/-- Relabeling by an injective map relabels the levels. -/
+/-- **Levels of a relabeled comparator list.** Let $e : \mathbb{N} \to \mathbb{N}$ be
+injective, let $p$ be a comparator list and let $\ell$ be an initial level assignment. For
+every wire $j$, the level of wire $e(j)$ after running $p$ with its wires relabeled by $e$,
+starting from $\ell$, equals the level of wire $j$ after running $p$ starting from
+$\ell \circ e$. -/
 theorem levels_relabel {e : ℕ → ℕ} (he : Function.Injective e) :
     ∀ (ps : List (ℕ × ℕ)) (lv : ℕ → ℕ) (j : ℕ),
       levels (relabel e ps) lv (e j) = levels ps (fun i => lv (e i)) j
@@ -59,7 +63,10 @@ theorem levels_relabel {e : ℕ → ℕ} (he : Function.Injective e) :
       funext i
       simp only [he.eq_iff]
 
-/-- A relabeled network leaves the levels outside the image of `e` alone. -/
+/-- **Relabeled comparator lists leave the other wires alone.** Let $p$ be a comparator list,
+let $e : \mathbb{N} \to \mathbb{N}$ be any map and let $\ell$ be an initial level assignment.
+For every wire $x$ outside the image of $e$, the level of $x$ after running $p$ with its
+wires relabeled by $e$, starting from $\ell$, is $\ell(x)$. -/
 theorem levels_relabel_of_not_mem {e : ℕ → ℕ} :
     ∀ (ps : List (ℕ × ℕ)) (lv : ℕ → ℕ) (x : ℕ), (∀ y, x ≠ e y) →
       levels (relabel e ps) lv x = lv x
@@ -73,7 +80,9 @@ theorem levels_relabel_of_not_mem {e : ℕ → ℕ} :
       have : ¬ (x = e c.1 ∨ x = e c.2) := fun h => h.elim (hx c.1) (hx c.2)
       simp only [this, ↓reduceIte]
 
-/-- Relabeling by an injective map keeps a depth bound. -/
+/-- **Relabeling wires preserves a depth bound.** If a comparator list has depth at most $d$
+and $e : \mathbb{N} \to \mathbb{N}$ is injective, then the comparator list obtained by
+relabeling its wires by $e$ also has depth at most $d$. -/
 theorem depthLE_relabel {ps : List (ℕ × ℕ)} {d : ℕ} (h : DepthLE ps d) {e : ℕ → ℕ}
     (he : Function.Injective e) : DepthLE (relabel e ps) d := fun x => by
   by_cases hx : ∃ y, x = e y
@@ -84,7 +93,10 @@ theorem depthLE_relabel {ps : List (ℕ × ℕ)} {d : ℕ} (h : DepthLE ps d) {e
     rw [levels_relabel_of_not_mem ps _ x hx]
     exact Nat.zero_le d
 
-/-- Levels of a relabeled network on wires of the form `e y` depend only on the levels there. -/
+/-- **Levels of a relabeled comparator list on the image wires.** Let $p$ be a comparator
+list and let $e : \mathbb{N} \to \mathbb{N}$ be injective. If two initial level assignments
+$\ell$ and $\ell'$ agree on every wire $e(y)$, then the levels after running $p$ with its
+wires relabeled by $e$, starting from $\ell$ and from $\ell'$, agree on every wire $e(y)$. -/
 theorem levels_relabel_congr {e : ℕ → ℕ} (he : Function.Injective e) (ps : List (ℕ × ℕ))
     {lv lv' : ℕ → ℕ} (h : ∀ y, lv (e y) = lv' (e y)) (y : ℕ) :
     levels (relabel e ps) lv (e y) = levels (relabel e ps) lv' (e y) := by
@@ -93,8 +105,11 @@ theorem levels_relabel_congr {e : ℕ → ℕ} (he : Function.Injective e) (ps :
   funext i
   exact h i
 
-/-- Two relabeled networks with disjoint images run in parallel: depth at most the common
-bound. -/
+/-- **Parallel composition of relabeled comparator lists.** Let $e$ and $e'$ be injective
+maps $\mathbb{N} \to \mathbb{N}$ with disjoint images, that is, $e(y) \ne e'(y')$ for all
+$y$ and $y'$. If the comparator lists $p$ and $q$ both have depth at most $d$, then $p$ with
+its wires relabeled by $e$, followed by $q$ with its wires relabeled by $e'$, has depth at
+most $d$. -/
 theorem depthLE_append_relabel {ps qs : List (ℕ × ℕ)} {d : ℕ} (hp : DepthLE ps d)
     (hq : DepthLE qs d) {e e' : ℕ → ℕ} (he : Function.Injective e) (he' : Function.Injective e')
     (hdis : ∀ y y', e y ≠ e' y') : DepthLE (relabel e ps ++ relabel e' qs) d := fun x => by
@@ -121,7 +136,9 @@ private theorem levels_finalLayer_aux : ∀ m x,
       simp only [levels, levels_finalLayer_aux m]
       split_ifs <;> omega
 
-/-- The last layer of the merger has depth at most `1`: its comparators are disjoint. -/
+/-- **The final layer of the odd-even merger has depth at most one.** For every $k$, the
+final layer of the odd-even merger on $2^{k+2}$ wires, which compares wires $2i + 1$ and
+$2i + 2$ for each $i < 2^{k+1} - 1$, has depth at most $1$: its comparators are disjoint. -/
 theorem depthLE_finalLayer (k : ℕ) : DepthLE (finalLayer k) 1 := fun x => by
   rw [finalLayer, levels_finalLayer_aux]
   split_ifs <;> omega
@@ -132,7 +149,8 @@ private theorem injective_double' : Function.Injective fun i : ℕ => 2 * i :=
 private theorem injective_double_add_one' : Function.Injective fun i : ℕ => 2 * i + 1 :=
   fun a b h => by simp only at h; omega
 
-/-- The odd-even merger on `2 ^ (k + 1)` wires has depth at most `k + 1`. -/
+/-- **Depth bound for Batcher's odd-even merger.** For every $k$, Batcher's odd-even merger on
+$2^{k+1}$ wires has depth at most $k + 1$. -/
 theorem depthLE_oddEvenMerge : ∀ k, DepthLE (oddEvenMerge k) (k + 1)
   | 0 => fun x => by
       simp only [oddEvenMerge, levels]
@@ -143,8 +161,10 @@ theorem depthLE_oddEvenMerge : ∀ k, DepthLE (oddEvenMerge k) (k + 1)
         injective_double' injective_double_add_one' fun y y' => by omega).append
         (depthLE_finalLayer k)
 
-/-- **Batcher's odd-even merge sort on `2 ^ k` wires has depth at most `k (k + 1) / 2`**
-(`2 * d ≤ k (k + 1)`). -/
+/-- **Depth bound for Batcher's odd-even merge sort as a comparator list.** For every $k$,
+there is a $d$ with $2d \le k(k+1)$ such that the comparator list of Batcher's odd-even merge
+sort on wires $0, \dots, 2^k - 1$ has depth at most $d$; that is, its depth is at most
+$k(k+1)/2$. -/
 theorem depthLE_oddEvenSortN : ∀ k, ∃ d, DepthLE (oddEvenSortN k) d ∧ 2 * d ≤ k * (k + 1)
   | 0 => ⟨0, fun x => by simp [oddEvenSortN, levels], le_refl _⟩
   | k + 1 => by
@@ -167,8 +187,9 @@ namespace Cslib.Algorithms.Lean.SortingNetworks
 
 open Bitonic OddEven
 
-/-- **Batcher's odd-even merge sort on `2 ^ k` wires has depth at most `k (k + 1) / 2`**, on the
-`Network` API. -/
+/-- **Depth bound for Batcher's odd-even merge sorting network.** For every $k$, there is a
+$d$ with $2d \le k(k+1)$ such that Batcher's odd-even merge sorting network on $2^k$ wires
+has depth at most $d$; that is, its depth is at most $k(k+1)/2$. -/
 theorem oddEvenSorter_depthLE (k : ℕ) :
     ∃ d, Network.DepthLE (oddEvenSorter k) d ∧ 2 * d ≤ k * (k + 1) := by
   obtain ⟨d, hd, hdk⟩ := depthLE_oddEvenSortN k
@@ -176,7 +197,9 @@ theorem oddEvenSorter_depthLE (k : ℕ) :
   rw [Network.DepthLE, oddEvenSorter, Network.toPairs_ofPairs (oddEvenSortN_within k)]
   exact hd
 
-/-- The general lower bound for the odd-even sorter: every depth bound `d` has `k ≤ d`. -/
+/-- **Lower bound for the depth of Batcher's odd-even merge sorting network.** For all $k$
+and $d$, if Batcher's odd-even merge sorting network on $2^k$ wires has depth at most $d$,
+then $k \le d$. -/
 theorem le_of_oddEvenSorter_depthLE {k d : ℕ} (hd : Network.DepthLE (oddEvenSorter k) d) :
     k ≤ d :=
   (Nat.pow_le_pow_iff_right (by decide)).1

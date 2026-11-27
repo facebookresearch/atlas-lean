@@ -64,8 +64,15 @@ universe u v
 
 variable {Atom : Type u}
 
-/-- The theorems of the normal modal logic `K ⊕ Λ`: the propositional axioms `A1`, `A2`, `DNE`,
-the distribution axiom `K` and the extra axioms `Λ`, closed under modus ponens and necessitation. -/
+/-- **Theorems of a normal modal logic.** Let $\Lambda$ be a set of modal formulas. The theorems of
+the normal modal logic $\mathbf{K} \oplus \Lambda$ form the least set of modal formulas that
+contains, for all modal formulas $\varphi$, $\psi$, $\chi$, the propositional axioms
+$\varphi \to (\psi \to \varphi)$,
+$(\varphi \to (\psi \to \chi)) \to ((\varphi \to \psi) \to (\varphi \to \chi))$ and
+$\neg\neg\varphi \to \varphi$ (where $\neg\varphi$ is $\varphi \to \bot$) and the distribution
+axiom $\Box(\varphi \to \psi) \to (\Box\varphi \to \Box\psi)$, that contains every member of
+$\Lambda$, and that is closed under modus ponens (from $\varphi \to \psi$ and $\varphi$ infer
+$\psi$) and necessitation (from $\varphi$ infer $\Box\varphi$). -/
 inductive Derivable (Λ : Set (Formula Atom)) : Formula Atom → Prop
   | ax1 (phi psi : Formula Atom) : Derivable Λ (.imp phi (.imp psi phi))
   | ax2 (phi psi chi : Formula Atom) :
@@ -76,8 +83,13 @@ inductive Derivable (Λ : Set (Formula Atom)) : Formula Atom → Prop
   | mp {phi psi : Formula Atom} : Derivable Λ (.imp phi psi) → Derivable Λ phi → Derivable Λ psi
   | nec {phi : Formula Atom} : Derivable Λ phi → Derivable Λ (.box phi)
 
-/-- Local consequence in `K ⊕ Λ`: `phi` follows from the hypotheses `Γ` and the theorems of
-`K ⊕ Λ` by modus ponens. Necessitation applies to theorems only, not to hypotheses. -/
+/-- **Local consequence in a normal modal logic.** Let $\Lambda$ and $\Gamma$ be sets of modal
+formulas. The local consequences of the hypotheses $\Gamma$ in the normal modal logic
+$\mathbf{K} \oplus \Lambda$ form the least set of modal formulas that contains every member of
+$\Gamma$ and every theorem of $\mathbf{K} \oplus \Lambda$ and is closed under modus ponens: whenever
+it contains $\varphi \to \psi$ and $\varphi$, it contains $\psi$.
+
+Necessitation applies to theorems only, not to hypotheses. -/
 inductive Deduces (Λ : Set (Formula Atom)) (Γ : Set (Formula Atom)) : Formula Atom → Prop
   | hyp {phi : Formula Atom} : phi ∈ Γ → Deduces Λ Γ phi
   | thm {phi : Formula Atom} : Derivable Λ phi → Deduces Λ Γ phi
@@ -87,16 +99,24 @@ inductive Deduces (Λ : Set (Formula Atom)) (Γ : Set (Formula Atom)) : Formula 
 
 namespace Axioms
 
-/-- K: no extra axioms. -/
+/-- **Extra axioms of the modal logic K.** The set of extra axioms of the normal modal logic K is
+the empty set of modal formulas over a given type of atoms; that is, K adds no axioms to the
+propositional axioms and the distribution axiom. -/
 def K : Set (Formula Atom) := ∅
 
-/-- T: `□φ → φ`. -/
+/-- **Extra axioms of T.** The extra axioms of the modal logic T are the formulas
+$\Box\varphi \to \varphi$ (axiom T), for all modal formulas $\varphi$. -/
 def T : Set (Formula Atom) := Set.range Formula.axiomT
 
-/-- S4: `□φ → φ` and `□φ → □□φ`. -/
+/-- **Extra axioms of S4.** The extra axioms of the modal logic S4 are the formulas
+$\Box\varphi \to \varphi$ (axiom T) and $\Box\varphi \to \Box\Box\varphi$ (axiom 4), for all
+modal formulas $\varphi$. -/
 def S4 : Set (Formula Atom) := Set.range Formula.axiomT ∪ Set.range Formula.axiomFour
 
-/-- S5: `□φ → φ` and `◇φ → □◇φ`. -/
+/-- **Extra axioms of S5.** For a modal formula $\varphi$, write $\Diamond\varphi$ for
+$\neg\Box\neg\varphi$. The extra axioms of the modal logic S5 are the formulas
+$\Box\varphi \to \varphi$ (axiom T) and $\Diamond\varphi \to \Box\Diamond\varphi$ (axiom 5), for
+all modal formulas $\varphi$. -/
 def S5 : Set (Formula Atom) := Set.range Formula.axiomT ∪ Set.range Formula.axiomFive
 
 theorem axiomT_mem_T (phi : Formula Atom) : Formula.axiomT phi ∈ (T : Set (Formula Atom)) :=
@@ -122,11 +142,15 @@ variable {Λ Λ' : Set (Formula Atom)}
 
 namespace Derivable
 
-/-- `φ → φ`. -/
+/-- **Self-implication is a theorem.** Let $\Lambda$ be a set of modal formulas. For every modal
+formula $\varphi$, the formula $\varphi \to \varphi$ is a theorem of the normal modal logic
+$\mathbf{K} \oplus \Lambda$. -/
 theorem imp_self (phi : Formula Atom) : Derivable Λ (.imp phi phi) :=
   .mp (.mp (.ax2 phi (.imp phi phi) phi) (.ax1 phi (.imp phi phi))) (.ax1 phi phi)
 
-/-- More extra axioms give more theorems. -/
+/-- **Monotonicity of theorems in the extra axioms.** Let $\Lambda \subseteq \Lambda'$ be sets of
+modal formulas. Every theorem of the normal modal logic $\mathrm{K} \oplus \Lambda$ is a theorem of
+$\mathrm{K} \oplus \Lambda'$. -/
 theorem mono (hΛ : Λ ⊆ Λ') {phi : Formula Atom} (h : Derivable Λ phi) : Derivable Λ' phi := by
   induction h with
   | ax1 => exact .ax1 _ _
@@ -143,21 +167,31 @@ namespace Deduces
 
 variable {Γ Δ : Set (Formula Atom)} {phi psi chi : Formula Atom}
 
-/-- More hypotheses give more consequences. -/
+/-- **Monotonicity of local consequence in the hypotheses.** Let $\Lambda$, $\Gamma$ and $\Delta$
+be sets of modal formulas with $\Gamma \subseteq \Delta$. If a formula $\varphi$ is a local
+consequence of the hypotheses $\Gamma$ in the normal modal logic $\mathrm{K} \oplus \Lambda$, then
+$\varphi$ is a local consequence of the hypotheses $\Delta$ in $\mathrm{K} \oplus \Lambda$. -/
 theorem mono (hΓ : Γ ⊆ Δ) (h : Deduces Λ Γ phi) : Deduces Λ Δ phi := by
   induction h with
   | hyp h => exact .hyp (hΓ h)
   | thm h => exact .thm h
   | mp _ _ ih₁ ih₂ => exact .mp ih₁ ih₂
 
-/-- Consequences of consequences are consequences. -/
+/-- **Transitivity of local consequence.** Let $\Lambda$ be a set of modal formulas and let
+$\Gamma$ and $\Delta$ be sets of formulas such that every formula of $\Delta$ is a local
+consequence of $\Gamma$ in the normal modal logic $\mathbf{K} \oplus \Lambda$. If a formula
+$\varphi$ is a local consequence of $\Delta$ in $\mathbf{K} \oplus \Lambda$, then $\varphi$ is a
+local consequence of $\Gamma$ in $\mathbf{K} \oplus \Lambda$. -/
 theorem trans (hΔ : ∀ psi ∈ Δ, Deduces Λ Γ psi) (h : Deduces Λ Δ phi) : Deduces Λ Γ phi := by
   induction h with
   | hyp h => exact hΔ _ h
   | thm h => exact .thm h
   | mp _ _ ih₁ ih₂ => exact .mp ih₁ ih₂
 
-/-- **The deduction theorem.** -/
+/-- **The deduction theorem for local modal consequence, forward direction.** Let $\Lambda$ and
+$\Gamma$ be sets of modal formulas and let $\varphi$, $\psi$ be modal formulas. If $\varphi$ is a
+local consequence of $\Gamma \cup \{\psi\}$ in the normal modal logic $\mathbf{K} \oplus \Lambda$,
+then $\psi \to \varphi$ is a local consequence of $\Gamma$ in $\mathbf{K} \oplus \Lambda$. -/
 theorem imp_of_insert (h : Deduces Λ (insert psi Γ) phi) : Deduces Λ Γ (.imp psi phi) := by
   induction h with
   | @hyp phi h =>
@@ -167,12 +201,18 @@ theorem imp_of_insert (h : Deduces Λ (insert psi Γ) phi) : Deduces Λ Γ (.imp
   | thm h => exact .mp (.thm (.ax1 _ _)) (.thm h)
   | mp _ _ ih₁ ih₂ => exact .mp (.mp (.thm (.ax2 _ _ _)) ih₁) ih₂
 
-/-- **The deduction theorem**, both directions. -/
+/-- **The deduction theorem for local modal consequence.** Let $\Lambda$ and $\Gamma$ be sets of
+modal formulas and let $\varphi$, $\psi$ be modal formulas. In the normal modal logic
+$\mathbf{K} \oplus \Lambda$, $\varphi$ is a local consequence of $\Gamma \cup \{\psi\}$ if and only
+if $\psi \to \varphi$ is a local consequence of $\Gamma$. -/
 theorem _root_.Cslib.Modal.deduces_insert_iff :
     Deduces Λ (insert psi Γ) phi ↔ Deduces Λ Γ (.imp psi phi) :=
   ⟨imp_of_insert, fun h ↦ .mp (h.mono (Set.subset_insert _ _)) (.hyp (Set.mem_insert _ _))⟩
 
-/-- A theorem is a consequence of no hypotheses, and conversely. -/
+/-- **Consequences of no hypotheses are the theorems.** Let $\Lambda$ be a set of modal formulas.
+A modal formula $\varphi$ is a local consequence of the empty set of hypotheses in the normal modal
+logic $\mathbf{K} \oplus \Lambda$ if and only if $\varphi$ is a theorem of
+$\mathbf{K} \oplus \Lambda$. -/
 theorem _root_.Cslib.Modal.deduces_empty_iff : Deduces Λ ∅ phi ↔ Derivable Λ phi := by
   refine ⟨fun h ↦ ?_, .thm⟩
   induction h with
@@ -180,7 +220,11 @@ theorem _root_.Cslib.Modal.deduces_empty_iff : Deduces Λ ∅ phi ↔ Derivable 
   | thm h => exact h
   | mp _ _ ih₁ ih₂ => exact .mp ih₁ ih₂
 
-/-- **Compactness**: a consequence follows from finitely many of the hypotheses. -/
+/-- **Compactness of local modal consequence.** Let $\Lambda$ and $\Gamma$ be sets of modal
+formulas. If a modal formula $\varphi$ is a local consequence of the hypotheses $\Gamma$ in the
+normal modal logic $\mathbf{K} \oplus \Lambda$, then there is a finite set
+$\Delta \subseteq \Gamma$ such that $\varphi$ is a local consequence of $\Delta$ in
+$\mathbf{K} \oplus \Lambda$. -/
 theorem exists_finset (h : Deduces Λ Γ phi) :
     ∃ Δ : Finset (Formula Atom), ↑Δ ⊆ Γ ∧ Deduces Λ ↑Δ phi := by
   classical
@@ -193,29 +237,47 @@ theorem exists_finset (h : Deduces Λ Γ phi) :
     refine ⟨Δ₁ ∪ Δ₂, by simpa [Set.union_subset_iff] using ⟨h₁, h₂⟩,
       Deduces.mp (d₁.mono ?_) (d₂.mono ?_)⟩ <;> simp
 
-/-- Ex falso quodlibet: `⊥` entails everything. -/
+/-- **Ex falso quodlibet.** Let $\Lambda$ be a set of modal formulas and $\Gamma$ a set of
+hypotheses. If $\bot$ is a local consequence of $\Gamma$ in the normal modal logic
+$\mathbf{K} \oplus \Lambda$, then every formula $\varphi$ is a local consequence of $\Gamma$ in
+$\mathbf{K} \oplus \Lambda$. -/
 theorem of_bot (h : Deduces Λ Γ .bot) : Deduces Λ Γ phi :=
   .mp (.thm (.dne phi)) (.mp (.thm (.ax1 _ _)) h)
 
-/-- From `φ` and `¬φ`, derive `⊥`. -/
+/-- **Contradiction yields falsity.** Let $\Lambda$ and $\Gamma$ be sets of modal formulas and let
+$\varphi$ be a modal formula. If both $\varphi$ and its negation $\neg\varphi$ are local
+consequences of the hypotheses $\Gamma$ in the normal modal logic $\mathbf{K} \oplus \Lambda$, then
+so is $\bot$. -/
 theorem bot_of_neg (h₁ : Deduces Λ Γ phi) (h₂ : Deduces Λ Γ phi.neg) : Deduces Λ Γ .bot :=
   .mp h₂ h₁
 
-/-- Proof by contradiction: if `¬φ` and `Γ` entail `⊥`, then `Γ` entails `φ`. -/
+/-- **Proof by contradiction.** Let $\Lambda$ be a set of modal formulas, $\Gamma$ a set of
+hypotheses and $\varphi$ a formula. If $\bot$ is a local consequence of
+$\Gamma \cup \{\neg\varphi\}$ in the normal modal logic $\mathbf{K} \oplus \Lambda$, then
+$\varphi$ is a local consequence of $\Gamma$ in $\mathbf{K} \oplus \Lambda$. -/
 theorem of_insert_neg (h : Deduces Λ (insert phi.neg Γ) .bot) : Deduces Λ Γ phi :=
   .mp (.thm (.dne phi)) (imp_of_insert h)
 
-/-- Negation introduction: if `φ` and `Γ` entail `⊥`, then `Γ` entails `¬φ`. -/
+/-- **Negation introduction.** Let $\Lambda$ and $\Gamma$ be sets of modal formulas and $\varphi$ a
+formula. If $\bot$ is a local consequence of the hypotheses $\Gamma \cup \{\varphi\}$ in the normal
+modal logic $\mathrm{K} \oplus \Lambda$, then $\neg\varphi$ is a local consequence of $\Gamma$ in
+$\mathrm{K} \oplus \Lambda$, where $\neg\varphi$ abbreviates $\varphi \to \bot$. -/
 theorem neg_of_insert (h : Deduces Λ (insert phi Γ) .bot) : Deduces Λ Γ phi.neg :=
   imp_of_insert h
 
-/-- Hypothetical syllogism. -/
+/-- **Hypothetical syllogism.** Let $\Lambda$ and $\Gamma$ be sets of modal formulas and let
+$\varphi$, $\psi$, $\chi$ be modal formulas. If $\varphi \to \psi$ and $\psi \to \chi$ are local
+consequences of the hypotheses $\Gamma$ in the normal modal logic $\mathbf{K} \oplus \Lambda$, then
+so is $\varphi \to \chi$. -/
 theorem imp_trans (h₁ : Deduces Λ Γ (.imp phi psi)) (h₂ : Deduces Λ Γ (.imp psi chi)) :
     Deduces Λ Γ (.imp phi chi) :=
   imp_of_insert <| .mp (h₂.mono (Set.subset_insert _ _))
     (.mp (h₁.mono (Set.subset_insert _ _)) (.hyp (Set.mem_insert _ _)))
 
-/-- Double-negation introduction. -/
+/-- **Double-negation introduction.** Let $\Lambda$ and $\Gamma$ be sets of modal formulas. If a
+formula $\varphi$ is a local consequence of the hypotheses $\Gamma$ in the normal modal logic
+$\mathrm{K} \oplus \Lambda$, then so is $\neg\neg\varphi$, where $\neg\psi$ abbreviates
+$\psi \to \bot$. -/
 theorem neg_neg (h : Deduces Λ Γ phi) : Deduces Λ Γ phi.neg.neg :=
   neg_of_insert <| bot_of_neg (h.mono (Set.subset_insert _ _)) (.hyp (Set.mem_insert _ _))
 
@@ -225,12 +287,17 @@ namespace Derivable
 
 variable {phi psi : Formula Atom}
 
-/-- Theorems are closed under any derivation from theorems. -/
+/-- **Local consequences of theorems are theorems.** Let $\Lambda$ be a set of modal formulas
+and let $\Gamma$ be a set of formulas each of which is a theorem of the normal modal logic
+$\mathbf{K} \oplus \Lambda$. If a formula $\varphi$ is a local consequence of $\Gamma$ in
+$\mathbf{K} \oplus \Lambda$, then $\varphi$ is a theorem of $\mathbf{K} \oplus \Lambda$. -/
 theorem of_deduces {Γ : Set (Formula Atom)} (hΓ : ∀ psi ∈ Γ, Derivable Λ psi)
     (h : Deduces Λ Γ phi) : Derivable Λ phi :=
   deduces_empty_iff.mp (Deduces.trans (fun psi hpsi ↦ .thm (hΓ psi hpsi)) h)
 
-/-- Necessitation commutes with implication: from `⊢ φ → ψ` derive `⊢ □φ → □ψ`. -/
+/-- **The monotonicity rule for necessity.** Let $\Lambda$ be a set of modal formulas and let
+$\varphi$, $\psi$ be modal formulas. If $\varphi \to \psi$ is a theorem of the normal modal logic
+$\mathbf{K} \oplus \Lambda$, then so is $\Box\varphi \to \Box\psi$. -/
 theorem box_imp_box (h : Derivable Λ (.imp phi psi)) : Derivable Λ (.imp (.box phi) (.box psi)) :=
   .mp (.distrib phi psi) (.nec h)
 
@@ -242,8 +309,11 @@ section Soundness
 
 variable {World : Type v} {M : KripkeModel World Atom}
 
-/-- **Soundness**: if every extra axiom is valid in a Kripke model, every theorem of `K ⊕ Λ` is
-valid there. -/
+/-- **Soundness of modal Hilbert systems for Kripke models.** Let $\Lambda$ be a set of modal
+formulas and $M$ a Kripke model in which every formula of $\Lambda$ is valid. Then every formula
+derivable in $K \oplus \Lambda$ (from the propositional axioms, the distribution axiom and the
+members of $\Lambda$ by modus ponens and necessitation) is valid in $M$, that is, it holds at
+every world of $M$. -/
 theorem Derivable.valid (hΛ : ∀ psi ∈ Λ, M.Valid psi) {phi : Formula Atom}
     (h : Derivable Λ phi) : M.Valid phi := by
   induction h with
@@ -258,7 +328,10 @@ theorem Derivable.valid (hΛ : ∀ psi ∈ Λ, M.Valid psi) {phi : Formula Atom}
   | mp _ _ ih₁ ih₂ => intro w; exact ih₁ w (ih₂ w)
   | nec _ ih => intro w next _; exact ih next
 
-/-- **Local soundness**: at a world satisfying every hypothesis, every consequence holds. -/
+/-- **Local soundness.** Let $M$ be a Kripke model and $\Lambda$ a set of modal formulas each
+of which is valid in $M$. If a formula $\varphi$ is a local consequence of a set $\Gamma$ of
+formulas in the normal modal logic $\mathbf{K} \oplus \Lambda$, then $\varphi$ holds at every
+world of $M$ at which every formula of $\Gamma$ holds. -/
 theorem Deduces.satisfies (hΛ : ∀ psi ∈ Λ, M.Valid psi) {Γ : Set (Formula Atom)}
     {phi : Formula Atom} (h : Deduces Λ Γ phi) {world : World}
     (hΓ : ∀ psi ∈ Γ, M.Satisfies world psi) : M.Satisfies world phi := by
@@ -267,18 +340,24 @@ theorem Deduces.satisfies (hΛ : ∀ psi ∈ Λ, M.Valid psi) {Γ : Set (Formula
   | thm h => exact h.valid hΛ world
   | mp _ _ ih₁ ih₂ => exact ih₁ ih₂
 
-/-- K-theorems are valid in every Kripke model. -/
+/-- **Soundness of K for Kripke models.** Every theorem of the modal logic K is valid in every
+Kripke model: if a formula $\varphi$ is derivable in K, then $\varphi$ holds at every world of
+every Kripke model $M$. -/
 theorem Derivable.valid_K {phi : Formula Atom} (h : Derivable Axioms.K phi) : M.Valid phi :=
   h.valid fun _ h ↦ absurd h (Set.notMem_empty _)
 
-/-- T-theorems are valid in every reflexive Kripke model. -/
+/-- **Soundness of T for reflexive Kripke models.** If the accessibility relation of a Kripke
+model $M$ is reflexive, then every formula derivable in the modal logic T is valid in $M$, that
+is, it holds at every world of $M$. -/
 theorem Derivable.valid_T (refl : ∀ world, M.rel world world) {phi : Formula Atom}
     (h : Derivable Axioms.T phi) : M.Valid phi :=
   h.valid fun _ hpsi ↦ by
     obtain ⟨psi, rfl⟩ := hpsi
     exact M.valid_axiomT refl psi
 
-/-- S4-theorems are valid in every reflexive transitive Kripke model. -/
+/-- **Soundness of S4 for reflexive transitive Kripke models.** If the accessibility relation of
+a Kripke model $M$ is reflexive and transitive, then every formula derivable in the modal logic
+S4 is valid in $M$, that is, it holds at every world of $M$. -/
 theorem Derivable.valid_S4 (refl : ∀ world, M.rel world world)
     (trans : ∀ {first second third}, M.rel first second → M.rel second third →
       M.rel first third)
@@ -288,7 +367,9 @@ theorem Derivable.valid_S4 (refl : ∀ world, M.rel world world)
   · exact M.valid_axiomT refl psi
   · exact M.valid_axiomFour trans psi
 
-/-- S5-theorems are valid in every Kripke model whose relation is an equivalence. -/
+/-- **Soundness of S5 for Kripke models with an equivalence relation.** If the accessibility
+relation of a Kripke model $M$ is an equivalence relation, then every formula derivable in the
+modal logic S5 is valid in $M$, that is, it holds at every world of $M$. -/
 theorem Derivable.valid_S5 (equiv : Equivalence M.rel) {phi : Formula Atom}
     (h : Derivable Axioms.S5 phi) : M.Valid phi := by
   refine h.valid fun _ hpsi ↦ ?_
@@ -298,34 +379,45 @@ theorem Derivable.valid_S5 (equiv : Equivalence M.rel) {phi : Formula Atom}
 
 end Soundness
 
-/-- The one-world model whose world sees itself, with every atom false. -/
+/-- **The one-world Kripke model.** For any type of atoms, the one-world Kripke model has a
+single world, which sees itself, and every atom is false at that world. -/
 def KripkeModel.unit : KripkeModel PUnit.{1} Atom where
   nonempty_world := ⟨PUnit.unit⟩
   rel _ _ := True
   valuation _ _ := False
 
-/-- The relation of the one-world model is an equivalence. -/
+/-- **The one-world model has an equivalence relation.** The accessibility relation of the
+one-world Kripke model, whose single world sees itself and at which every atom is false, is an
+equivalence relation. -/
 theorem KripkeModel.unit_equivalence : Equivalence (KripkeModel.unit (Atom := Atom)).rel :=
   ⟨fun _ ↦ trivial, fun _ ↦ trivial, fun _ _ ↦ trivial⟩
 
-/-- **Consistency**: `⊥` is not a theorem of `K ⊕ Λ` when every extra axiom is valid in the
-one-world reflexive model. -/
+/-- **Consistency of normal modal logics.** Let $\Lambda$ be a set of modal formulas each of which
+is valid in the one-world Kripke model whose world sees itself and in which every atom is false.
+Then $\bot$ is not a theorem of the normal modal logic $\mathrm{K} \oplus \Lambda$. -/
 theorem not_derivable_bot (hΛ : ∀ psi ∈ Λ, KripkeModel.unit.Valid psi) : ¬Derivable Λ .bot :=
   fun h ↦ (h.valid hΛ) PUnit.unit
 
-/-- S5 is consistent. -/
+/-- **Consistency of S5.** For every type of atoms, $\bot$ is not a theorem of the normal modal
+logic S5, whose extra axioms are the formulas $\Box\varphi \to \varphi$ and
+$\Diamond\varphi \to \Box\Diamond\varphi$, where $\Diamond\varphi$ abbreviates
+$\neg\Box\neg\varphi$ and $\neg\psi$ abbreviates $\psi \to \bot$. -/
 theorem not_derivable_bot_S5 : ¬Derivable (Axioms.S5 : Set (Formula Atom)) .bot := fun h ↦
   (h.valid_S5 KripkeModel.unit_equivalence) PUnit.unit
 
-/-- S4 is consistent. -/
+/-- **Consistency of S4.** For every type of atoms, $\bot$ is not a theorem of the normal modal
+logic S4, whose extra axioms are the formulas $\Box\varphi \to \varphi$ and
+$\Box\varphi \to \Box\Box\varphi$. -/
 theorem not_derivable_bot_S4 : ¬Derivable (Axioms.S4 : Set (Formula Atom)) .bot := fun h ↦
   (h.valid_S4 (M := KripkeModel.unit) (fun _ ↦ trivial) (fun _ _ ↦ trivial)) PUnit.unit
 
-/-- T is consistent. -/
+/-- **Consistency of T.** For every type of atoms, $\bot$ is not a theorem of the normal modal
+logic T, whose extra axioms are the formulas $\Box\varphi \to \varphi$. -/
 theorem not_derivable_bot_T : ¬Derivable (Axioms.T : Set (Formula Atom)) .bot := fun h ↦
   (h.valid_T (M := KripkeModel.unit) (fun _ ↦ trivial)) PUnit.unit
 
-/-- K is consistent. -/
+/-- **Consistency of K.** For every type of atoms, $\bot$ is not a theorem of the normal modal
+logic K, the logic with no extra axioms. -/
 theorem not_derivable_bot_K : ¬Derivable (Axioms.K : Set (Formula Atom)) .bot := fun h ↦
   (h.valid_K (M := KripkeModel.unit)) PUnit.unit
 

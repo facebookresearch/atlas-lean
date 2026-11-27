@@ -1,0 +1,163 @@
+/-
+Author: @toskua
+-/
+module
+
+public import MathlibExt.Analysis.CStarAlgebra.ContinuousMap.ZeroAtInfty.BoundedMultiplication
+public import Mathlib.Algebra.Star.StarAlgHom
+
+/-!
+# Bounded scalar functions as actual C0 multipliers
+
+The checked pointwise multiplication operators form a unital star algebra
+homomorphism into the existing double-centralizer multiplier algebra.
+The right component's reversed composition is handled in the coefficient
+field, not by altering the multiplier multiplication.
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+open scoped ZeroAtInfty MultiplierAlgebra
+
+namespace BoundedContinuousFunction
+
+universe u
+
+/-- Send a bounded scalar function to its two actual pointwise multiplier actions. -/
+noncomputable def toZeroAtInftyMultiplierHom
+    {X : Type u} [TopologicalSpace X] :
+    (X →ᵇ ℂ) →⋆ₐ[ℂ] 𝓜(ℂ, C₀(X, ℂ)) where
+  toFun := toZeroAtInftyMultiplier
+  map_one' := by
+    apply DoubleCentralizer.ext ℂ (C₀(X, ℂ))
+    apply Prod.ext
+    · apply ContinuousLinearMap.ext
+      intro f
+      apply ZeroAtInftyContinuousMap.ext
+      intro x
+      rw [DoubleCentralizer.one_fst]
+      change (1 : ℂ) * f x = f x
+      exact one_mul _
+    · apply ContinuousLinearMap.ext
+      intro f
+      apply ZeroAtInftyContinuousMap.ext
+      intro x
+      rw [DoubleCentralizer.one_snd]
+      change (1 : ℂ) * f x = f x
+      exact one_mul _
+  map_zero' := by
+    apply DoubleCentralizer.ext ℂ (C₀(X, ℂ))
+    apply Prod.ext
+    · apply ContinuousLinearMap.ext
+      intro f
+      apply ZeroAtInftyContinuousMap.ext
+      intro x
+      rw [DoubleCentralizer.zero_fst]
+      change (0 : ℂ) * f x = 0
+      exact zero_mul _
+    · apply ContinuousLinearMap.ext
+      intro f
+      apply ZeroAtInftyContinuousMap.ext
+      intro x
+      rw [DoubleCentralizer.zero_snd]
+      change (0 : ℂ) * f x = 0
+      exact zero_mul _
+  map_add' g h := by
+    apply DoubleCentralizer.ext ℂ (C₀(X, ℂ))
+    apply Prod.ext
+    · apply ContinuousLinearMap.ext
+      intro f
+      apply ZeroAtInftyContinuousMap.ext
+      intro x
+      rw [DoubleCentralizer.add_fst]
+      change (g x + h x) * f x = g x * f x + h x * f x
+      exact add_mul _ _ _
+    · apply ContinuousLinearMap.ext
+      intro f
+      apply ZeroAtInftyContinuousMap.ext
+      intro x
+      rw [DoubleCentralizer.add_snd]
+      change (g x + h x) * f x = g x * f x + h x * f x
+      exact add_mul _ _ _
+  map_mul' g h := by
+    apply DoubleCentralizer.ext ℂ (C₀(X, ℂ))
+    apply Prod.ext
+    · apply ContinuousLinearMap.ext
+      intro f
+      apply ZeroAtInftyContinuousMap.ext
+      intro x
+      rw [DoubleCentralizer.mul_fst, mul_apply_eq_comp]
+      simp only [toZeroAtInftyMultiplier_fst_apply, BoundedContinuousFunction.mul_apply]
+      exact mul_assoc _ _ _
+    · apply ContinuousLinearMap.ext
+      intro f
+      apply ZeroAtInftyContinuousMap.ext
+      intro x
+      rw [DoubleCentralizer.mul_snd, mul_apply_eq_comp]
+      simp only [toZeroAtInftyMultiplier_snd_apply, BoundedContinuousFunction.mul_apply]
+      calc
+        (g x * h x) * f x = (h x * g x) * f x :=
+          congrArg (fun z : ℂ => z * f x) (mul_comm _ _)
+        _ = h x * (g x * f x) := mul_assoc _ _ _
+  commutes' z := by
+    apply DoubleCentralizer.ext ℂ (C₀(X, ℂ))
+    apply Prod.ext
+    · apply ContinuousLinearMap.ext
+      intro f
+      apply ZeroAtInftyContinuousMap.ext
+      intro x
+      rw [DoubleCentralizer.algebraMap_fst, ContinuousLinearMap.algebraMap_apply]
+      simp only [toZeroAtInftyMultiplier_fst_apply, BoundedContinuousFunction.algebraMap_apply,
+        ZeroAtInftyContinuousMap.smul_apply, smul_eq_mul, mul_one]
+    · apply ContinuousLinearMap.ext
+      intro f
+      apply ZeroAtInftyContinuousMap.ext
+      intro x
+      rw [DoubleCentralizer.algebraMap_snd, ContinuousLinearMap.algebraMap_apply]
+      simp only [toZeroAtInftyMultiplier_snd_apply, BoundedContinuousFunction.algebraMap_apply,
+        ZeroAtInftyContinuousMap.smul_apply, smul_eq_mul, mul_one]
+  map_star' g := by
+    apply DoubleCentralizer.ext ℂ (C₀(X, ℂ))
+    apply Prod.ext
+    · apply ContinuousLinearMap.ext
+      intro f
+      apply ZeroAtInftyContinuousMap.ext
+      intro x
+      rw [DoubleCentralizer.star_fst]
+      simp only [toZeroAtInftyMultiplier_fst_apply, BoundedContinuousFunction.star_apply,
+        ZeroAtInftyContinuousMap.star_apply, toZeroAtInftyMultiplier_snd_apply,
+        star_mul, star_star]
+      exact mul_comm _ _
+    · apply ContinuousLinearMap.ext
+      intro f
+      apply ZeroAtInftyContinuousMap.ext
+      intro x
+      rw [DoubleCentralizer.star_snd]
+      simp only [toZeroAtInftyMultiplier_snd_apply, BoundedContinuousFunction.star_apply,
+        ZeroAtInftyContinuousMap.star_apply, toZeroAtInftyMultiplier_fst_apply,
+        star_mul, star_star]
+      exact mul_comm _ _
+
+/-- The homomorphism retains the checked double centralizer, without a new action. -/
+@[simp]
+theorem toZeroAtInftyMultiplierHom_apply
+    {X : Type u} [TopologicalSpace X] (g : X →ᵇ ℂ) :
+    toZeroAtInftyMultiplierHom g = toZeroAtInftyMultiplier g := rfl
+
+/-- Its left action has the literal scalar-function value. -/
+theorem toZeroAtInftyMultiplierHom_fst_apply
+    {X : Type u} [TopologicalSpace X]
+    (g : X →ᵇ ℂ) (f : C₀(X, ℂ)) (x : X) :
+    (toZeroAtInftyMultiplierHom g).fst f x = g x * f x := rfl
+
+/-- Its right action has the same literal scalar-function value. -/
+theorem toZeroAtInftyMultiplierHom_snd_apply
+    {X : Type u} [TopologicalSpace X]
+    (g : X →ᵇ ℂ) (f : C₀(X, ℂ)) (x : X) :
+    (toZeroAtInftyMultiplierHom g).snd f x = g x * f x := rfl
+
+
+end BoundedContinuousFunction

@@ -14,9 +14,10 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Extend a list of decimal digits by repeatedly appending the sum of the
-previous `digits.length` entries. This is the recurrence used for Keith
-numbers.
+/-- **Keith sequence prefix.** Given a list $d = (d_0, \dots, d_{k-1})$ of natural numbers and
+$j \in \mathbb{N}$, the Keith sequence prefix of $d$ at step $j$ is the list of length $k + j$
+obtained from $d$ by appending, $j$ times, the sum of the last $k$ entries of the current list.
+This is the recurrence used for Keith numbers.
 
 Source: Martin Klazar and Florian Luca, *Counting Keith Numbers*, Journal of
 Integer Sequences 10 (2007), Definition in the introduction. -/
@@ -26,16 +27,18 @@ def keithSequencePrefix (digits : List ℕ) : ℕ → List ℕ
     let values := keithSequencePrefix digits k
     values ++ [(values.drop (values.length - digits.length)).foldl (· + ·) 0]
 
-/-- The zero-indexed Keith sequence whose initial entries are `digits`.
-
-After the initial entries, each term is the sum of the preceding
-`digits.length` terms. -/
+/-- **Keith sequence.** Given a list $d = (d_0, \dots, d_{k-1})$ of natural numbers, the Keith
+sequence of $d$ is the sequence $(a_m)_{m \ge 0}$ with $a_m = d_m$ for $m < k$ and
+$a_m = \sum_{i=m-k}^{m-1} a_i$ for $m \ge k$: after the initial entries, each term is the sum of
+the preceding $k$ terms. -/
 def keithSequence (digits : List ℕ) (m : ℕ) : ℕ :=
   (keithSequencePrefix digits (m + 1 - digits.length)).getD m 0
 
-/-- `IsKeithNumberWithDigits N digits` says that `digits` is the ordinary
-decimal representation of `N` and that `N` occurs after those digits in its
-Keith sequence.
+/-- **Keith number with given digits.** A natural number $N$ is a Keith number with digit list
+$d = (d_0, \dots, d_{k-1})$ when $k \ge 2$, $d_i < 10$ for every $i$, $d_0 \ne 0$,
+$N = \sum_{i=0}^{k-1} d_i \cdot 10^{k-1-i}$ (so $d$ is the decimal representation of $N$, with at
+least two digits), and $N = a_m$ for some $m \ge k$, where $(a_m)_{m \ge 0}$ is the Keith sequence
+of $d$ indexed from $0$ (so $N$ occurs after the initial digits).
 
 Source: Martin Klazar and Florian Luca, *Counting Keith Numbers*, Journal of
 Integer Sequences 10 (2007), Definition in the introduction. -/
@@ -46,9 +49,11 @@ def IsKeithNumberWithDigits (N : ℕ) (digits : List ℕ) : Prop :=
     digits.foldl (fun acc d => acc * 10 + d) 0 = N ∧
     ∃ m, digits.length ≤ m ∧ keithSequence digits m = N
 
-/-- A Keith number is a positive integer with at least two decimal digits that
-occurs in the sequence initialized by those digits and continued by summing the
-preceding fixed-size window.
+/-- **Keith number.** A natural number $N$ is a Keith number when it is a Keith number with some
+digit list: that is, $N$ has a decimal representation $d_0 d_1 \cdots d_{k-1}$ with $k \ge 2$
+digits and leading digit $d_0 \ne 0$, and $N = a_j$ for some $j \ge k$, where $(a_m)_{m \ge 0}$ is
+the Keith sequence of $(d_0, \dots, d_{k-1})$: $a_m = d_m$ for $m < k$, and each later term is the
+sum of the preceding $k$ terms.
 
 Source: Martin Klazar and Florian Luca, *Counting Keith Numbers*, Journal of
 Integer Sequences 10 (2007), Definition in the introduction. -/

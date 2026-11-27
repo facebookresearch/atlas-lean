@@ -151,7 +151,7 @@ theorem exists_minimizer [Fintype m] [Fintype n] [Fintype k] (X : Matrix m n ℝ
     simp only [K, Set.mem_prod, Set.mem_pi, Set.mem_univ, forall_const]
   let φ : (m → k → ℝ) × (k → n → ℝ) → ℝ := fun q => objective X (Matrix.of q.1) (Matrix.of q.2)
   have hcont : Continuous φ := by
-    simp only [φ, objective, mul_apply, of_apply]
+    simp only [φ, objective, Matrix.mul_apply, of_apply]
     fun_prop
   have h0K : ((0 : m → k → ℝ), (0 : k → n → ℝ)) ∈ K :=
     (hmemK _).2 ⟨fun i a => by simp, fun a j => ⟨le_refl 0, by simpa using hBnn⟩⟩
@@ -169,7 +169,7 @@ theorem exists_minimizer [Fintype m] [Fintype n] [Fintype k] (X : Matrix m n ℝ
     let Hf : k → n → ℝ := fun a j => s a * H' a j
     have hprod : Matrix.of Wf * Matrix.of Hf = W' * H' := by
       ext i j
-      simp only [mul_apply, Wf, Hf, of_apply]
+      simp only [Matrix.mul_apply, Wf, Hf, of_apply]
       refine Finset.sum_congr rfl fun a _ => ?_
       by_cases hs : s a = 0
       · have : W' i a = 0 :=
@@ -276,7 +276,7 @@ private lemma sum_comm₃ {α β γ : Type*} [Fintype α] [Fintype β] [Fintype 
 private lemma sum_mul_mul_apply {l o p : Type*} [Fintype l] [Fintype o] [Fintype p]
     (A : Matrix l p ℝ) (W : Matrix l o ℝ) (δ : Matrix o p ℝ) :
     ∑ i, ∑ j, A i j * (W * δ) i j = ∑ a, ∑ j, (Wᵀ * A) a j * δ a j := by
-  simp only [mul_apply, transpose_apply, Finset.mul_sum, Finset.sum_mul]
+  simp only [Matrix.mul_apply, transpose_apply, Finset.mul_sum, Finset.sum_mul]
   rw [sum_comm₃]
   exact Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun j _ =>
     Finset.sum_congr rfl fun i _ => by ring
@@ -300,7 +300,7 @@ theorem objective_updateH_le [Fintype m] [Fintype n] [Fintype k]
     rw [← hD, ← hg]
     ring
   have hDi : ∀ a j, D a j = ∑ i, W i a * (W * H) i j := by
-    intro a j; rw [hD, Matrix.mul_assoc, mul_apply]; rfl
+    intro a j; rw [hD, Matrix.mul_assoc, Matrix.mul_apply]; rfl
   -- exact expansion of the objective
   have hexp : objective X W (H + δ) = objective X W H +
       ∑ a, ∑ j, 2 * (D a j - g a j) * δ a j + ∑ i, ∑ j, ((W * δ) i j) ^ 2 := by
@@ -316,7 +316,7 @@ theorem objective_updateH_le [Fintype m] [Fintype n] [Fintype k]
     rw [h2]
     refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun j _ => ?_
     congr 1
-    rw [hDi, hg, mul_apply, mul_apply, ← Finset.sum_sub_distrib, Finset.mul_sum]
+    rw [hDi, hg, Matrix.mul_apply, Matrix.mul_apply, ← Finset.sum_sub_distrib, Finset.mul_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     simp only [transpose_apply, of_apply]
     ring
@@ -324,7 +324,7 @@ theorem objective_updateH_le [Fintype m] [Fintype n] [Fintype k]
   have hquad : ∑ i, ∑ j, ((W * δ) i j) ^ 2 ≤ ∑ a, ∑ j, D a j * H a j * u a j ^ 2 := by
     have hcs : ∀ i j, ((W * δ) i j) ^ 2 ≤ (W * H) i j * ∑ a, W i a * H a j * u a j ^ 2 := by
       intro i j
-      rw [mul_apply, mul_apply]
+      rw [Matrix.mul_apply, Matrix.mul_apply]
       exact Finset.sum_sq_le_sum_mul_sum_of_sq_le_mul _
         (fun a _ => mul_nonneg (hW i a) (hH a j))
         (fun a _ => mul_nonneg (mul_nonneg (hW i a) (hH a j)) (sq_nonneg _))
@@ -360,7 +360,7 @@ theorem objective_updateH_le [Fintype m] [Fintype n] [Fintype k]
           exact pow_eq_zero_iff (two_ne_zero) |>.mp ((Finset.sum_eq_zero_iff_of_nonneg
             (fun i _ => sq_nonneg (W i a))).mp hsum i (Finset.mem_univ i))
         have : g a j = 0 := by
-          rw [hg, mul_apply]; simp [hcol]
+          rw [hg, Matrix.mul_apply]; simp [hcol]
         rw [this]; simp
       · rw [← hzero]; simp
     · have hDpos : 0 < D a j := lt_of_le_of_ne (by
@@ -468,7 +468,7 @@ theorem hasDerivAt_objective_H [Fintype m] [Fintype n] [Fintype k] [DecidableEq 
     Finset.sum_neg_distrib]
   change (2 : ℝ) * ((Wᵀ * W * H) a j - (Wᵀ * X) a j) = _
   rw [Matrix.mul_assoc]
-  simp only [mul_apply, transpose_apply]
+  simp only [Matrix.mul_apply, transpose_apply]
   rw [← Finset.sum_sub_distrib, Finset.mul_sum, ← Finset.sum_neg_distrib]
   refine Finset.sum_congr rfl fun i _ => ?_
   simp only [ite_true]
@@ -579,7 +579,7 @@ theorem exists_perm_of_mul_eq_one [Fintype k] [DecidableEq k] {G K : Matrix k k 
     by_contra h
     simp only [not_exists, not_and, not_lt] at h
     have h1 : (K * G) b b = 1 := by rw [hKG, one_apply_eq]
-    rw [mul_apply] at h1
+    rw [Matrix.mul_apply] at h1
     have : ∑ a, K b a * G a b ≤ 0 := Finset.sum_nonpos fun a _ => by
       rcases (hG a b).lt_or_eq with hp | hz
       · nlinarith [h a hp, hK b a]
@@ -590,7 +590,7 @@ theorem exists_perm_of_mul_eq_one [Fintype k] [DecidableEq k] {G K : Matrix k k 
       ∀ a a' c, a ≠ a' → A a c * B c a' = 0 := by
     intro A B hA hB hAB a a' c hne
     have h0 : (A * B) a a' = 0 := by rw [hAB, one_apply_ne hne]
-    rw [mul_apply] at h0
+    rw [Matrix.mul_apply] at h0
     exact (Finset.sum_eq_zero_iff_of_nonneg (fun c _ => mul_nonneg (hA a c) (hB c a'))).mp h0 c
       (Finset.mem_univ c)
   have huniq : ∀ a b, 0 < G a b → a = τ b := by
@@ -632,13 +632,13 @@ theorem eq_of_isSeparable [Fintype k] [DecidableEq k] {X : Matrix m n ℝ}
   -- a pure row of `W` reads off a row of `H`, a pure column of `H` a column of `W`
   have hrow : ∀ a jj, X (i a) jj = e a * H a jj := by
     intro a jj
-    rw [hX, mul_apply, Finset.sum_eq_single a]
+    rw [hX, Matrix.mul_apply, Finset.sum_eq_single a]
     · rw [hi, ite_eq_left rfl]
     · intro b _ hb; rw [hi, ite_eq_right hb, zero_mul]
     · intro h; exact absurd (Finset.mem_univ a) h
   have hcol : ∀ ii a, X ii (j a) = W ii a * c a := by
     intro ii a
-    rw [hX, mul_apply, Finset.sum_eq_single a]
+    rw [hX, Matrix.mul_apply, Finset.sum_eq_single a]
     · rw [hj, ite_eq_left rfl]
     · intro b _ hb; rw [hj, ite_eq_right hb, mul_zero]
     · intro h; exact absurd (Finset.mem_univ a) h
@@ -648,9 +648,9 @@ theorem eq_of_isSeparable [Fintype k] [DecidableEq k] {X : Matrix m n ℝ}
   have hAB : A * B = 1 := by
     ext a a'
     have h := hrow a (j a')
-    rw [hj, hX', mul_apply] at h
-    simp only [A, B, of_apply, mul_apply, ← mul_assoc]
-    rw [← Finset.sum_mul, h, one_apply]
+    rw [hj, hX', Matrix.mul_apply] at h
+    simp only [A, B, of_apply, Matrix.mul_apply, ← mul_assoc]
+    rw [← Finset.sum_mul, h, Matrix.one_apply]
     split_ifs with haa
     · subst haa
       exact mul_inv_cancel₀ (mul_pos (he a) (hc a)).ne'
@@ -662,7 +662,7 @@ theorem eq_of_isSeparable [Fintype k] [DecidableEq k] {X : Matrix m n ℝ}
   have hH'eq : ∀ b jj, H' b jj = (e (σ b) / δ b) * H (σ b) jj := by
     intro b jj
     have h := hrow (σ b) jj
-    rw [hX', mul_apply, Finset.sum_eq_single b] at h
+    rw [hX', Matrix.mul_apply, Finset.sum_eq_single b] at h
     · have hAσ : W' (i (σ b)) b = δ b := by
         have := hA (σ b) b
         simp only [A, of_apply] at this
@@ -678,7 +678,7 @@ theorem eq_of_isSeparable [Fintype k] [DecidableEq k] {X : Matrix m n ℝ}
   refine ⟨σ, fun b => δ b / e (σ b), fun b => div_pos (hδ b) (he _), fun ii b => ?_,
     fun b jj => ?_⟩
   · have h := hcol ii (σ b)
-    rw [hX', mul_apply, Finset.sum_eq_single b] at h
+    rw [hX', Matrix.mul_apply, Finset.sum_eq_single b] at h
     · rw [hH'eq, hj, ite_eq_left rfl] at h
       have hcpos := hc (σ b)
       have hepos := he (σ b)
@@ -708,7 +708,7 @@ private lemma exists_mul_eq_card [Fintype n] {X : Matrix m n ℝ} (hX : ∀ i j,
   refine ⟨Matrix.of fun i a => X i (e.symm a), Matrix.of fun a j => if e j = a then 1 else 0,
     fun i a => hX _ _, fun a j => by simp only [of_apply]; split_ifs <;> norm_num, ?_⟩
   ext i j
-  simp [mul_apply]
+  simp [Matrix.mul_apply]
 
 /-- A nonnegative factorization with inner dimension `r` bounds the nonnegative rank by `r`. -/
 theorem nonnegRank_le_of_mul_eq {r : ℕ} {X : Matrix m n ℝ} (W : Matrix m (Fin r) ℝ)
@@ -744,7 +744,7 @@ theorem rank_le_nonnegRank [Fintype n] {X : Matrix m n ℝ} (hX : ∀ i j, 0 ≤
 /-- Column sums of a product: `∑ i, (W H) i j = ∑ a, (∑ i, W i a) H a j`. -/
 theorem sum_mul_apply [Fintype m] [Fintype k] (W : Matrix m k ℝ) (H : Matrix k n ℝ) (j : n) :
     ∑ i, (W * H) i j = ∑ a, (∑ i, W i a) * H a j := by
-  simp only [mul_apply]
+  simp only [Matrix.mul_apply]
   rw [Finset.sum_comm]
   simp only [Finset.sum_mul]
 
@@ -765,7 +765,7 @@ theorem mul_apply_mem_Icc [Fintype k]
     {C : Matrix m k ℝ} {P : Matrix k n ℝ} {g : m} {j : n} {lo hi : ℝ}
     (hP : ∀ a, 0 ≤ P a j) (hsum : ∑ a, P a j = 1) (hC : ∀ a, C g a ∈ Set.Icc lo hi) :
     (C * P) g j ∈ Set.Icc lo hi := by
-  rw [mul_apply]
+  rw [Matrix.mul_apply]
   constructor
   · calc lo = ∑ a, lo * P a j := by rw [← Finset.mul_sum, hsum, mul_one]
       _ ≤ ∑ a, C g a * P a j :=

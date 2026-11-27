@@ -1,0 +1,17 @@
+# Sufficient statistics and the factorization theorem
+
+- [Sufficient sub-σ-algebra](is-sufficient.md)
+- [Common conditional expectation under a sufficient σ-algebra](exists-common-cond-exp.md)
+- [Factorization implies sufficiency](is-sufficient-of-with-density.md)
+- [Factorization implies sufficiency of a statistic](is-sufficient-comap-of-factorization-of.md)
+- [Bernoulli sample as a density family](bernoulli-family.md)
+- [Count of successes in a Bernoulli sample](bernoulli-count.md)
+- [The count is sufficient for a Bernoulli sample](bernoulli-family-count-sufficient.md)
+- [Sufficient statistic for a discrete family](is-sufficient-pmf.md)
+- [Discrete factorization, necessity](factorization.md)
+- [Discrete factorization, sufficiency](is-sufficient-pmf-of-factorization.md)
+- [The Fisher–Neyman factorization theorem](is-sufficient-pmf-iff-exists-factorizati.md)
+- [Discrete sufficiency is σ-algebra sufficiency](is-sufficient-comap.md)
+- [Rao–Blackwell risk decomposition for a discrete sufficient statistic](rao-blackwell-comap-sq.md)
+- [Halmos–Savage factorization for countable families](exists-factorization-of-is-sufficient-co-2.md)
+- [Halmos–Savage factorization, necessity](exists-factorization-of-is-sufficient-co.md)

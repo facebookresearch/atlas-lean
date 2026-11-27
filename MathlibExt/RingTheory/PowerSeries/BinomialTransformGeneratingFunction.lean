@@ -22,9 +22,12 @@ namespace MetaMathlibExt
 
 open scoped BigOperators
 
-/-- The ordinary generating function of the binomial transform `n ↦ ∑ k ≤ n, n.choose k * a k`
-of a sequence `a` over a field `K` is `(1 - X)⁻¹ * (mk a).subst (X * (1 - X)⁻¹)`.
-`ordinary_generating_function_binomial_transform` is the source-shaped form over `ℝ`. -/
+/-- **Generating function of the binomial transform over a field.** Let $K$ be a field and let
+$a : \mathbb{N} \to K$ be a sequence with ordinary generating function
+$A(X) = \sum_n a_n X^n \in K[[X]]$. Then the ordinary generating function of the binomial
+transform $n \mapsto \sum_{k=0}^{n} \binom{n}{k} a_k$ of $a$ equals
+$(1 - X)^{-1} \cdot A\big(X (1 - X)^{-1}\big)$ in $K[[X]]$, where $A\big(X (1 - X)^{-1}\big)$ is
+the power series obtained by substituting $X (1 - X)^{-1}$ for $X$ in $A$. -/
 theorem mk_sum_choose_mul_eq_inv_one_sub_mul_subst {K : Type*} [Field K]
     (a : ℕ → K) :
     PowerSeries.mk
@@ -195,16 +198,22 @@ theorem mk_sum_choose_mul_eq_inv_one_sub_mul_subst {K : Type*} [Field K]
   exact hfin
 
 /--
-The ordinary generating function of the binomial transform of a sequence is obtained by
-substituting `X / (1 - X)` into its ordinary generating function and multiplying by
-`1 / (1 - X)`.
+**Ordinary generating function of the binomial transform.** Let $a : \mathbb{N} \to \mathbb{R}$
+be a real sequence with ordinary generating function $A(X) = \sum_n a_n X^n \in \mathbb{R}[[X]]$.
+Then the ordinary generating function of the binomial transform
+$n \mapsto \sum_{k=0}^{n} \binom{n}{k} a_k$ of $a$ equals
+$(1 - X)^{-1} \cdot A\big(X (1 - X)^{-1}\big)$ in $\mathbb{R}[[X]]$, where
+$A\big(X (1 - X)^{-1}\big)$ is the power series obtained by substituting $X (1 - X)^{-1}$ for $X$
+in $A$.
 
-Ayhan Dil, Veli Kurt, and Mehmet Cenkci, "Algorithms for Bernoulli and Related Polynomials,"
+Proves `Wanted` entry `ordinary_generating_function_binomial_transform`.
+
+Source: Ayhan Dil, Veli Kurt, and Mehmet Cenkci,
+"Algorithms for Bernoulli and Related Polynomials,"
 Journal of Integer Sequences 10 (2007), Article 07.5.4,
 Proposition (label prop1), lines 205–218 (proof attributed to Euler there).
 `https://cs.uwaterloo.ca/journals/JIS/VOL10/Dil/dil11.tex`
 It is the case `K = ℝ` of `mk_sum_choose_mul_eq_inv_one_sub_mul_subst`.
-Proves `Wanted` entry `ordinary_generating_function_binomial_transform`.
 -/
 theorem ordinary_generating_function_binomial_transform
     (a : ℕ → ℝ) :

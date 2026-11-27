@@ -278,9 +278,10 @@ private theorem localDichotomy
     rw [hmapf, hmapEq]
     exact hle
 
-/-- Open mapping theorem for Riemann surfaces: a nonconstant `MDiff` map from a connected
-one-dimensional complex manifold without boundary to a one-dimensional complex manifold without
-boundary is an open map. `holomorphic_open_mapping_one_dim` is the source-shaped form. -/
+/-- **Open mapping theorem for one-dimensional complex manifolds.** Let $M$ and $N$ be complex
+manifolds without boundary modeled on complex normed spaces of dimension one, with complex $C^1$
+(that is, holomorphic) transition maps, and suppose $M$ is connected. Then every holomorphic
+(everywhere complex differentiable) map $f : M \to N$ that is not constant is an open map. -/
 theorem isOpenMap_of_finrank_eq_one
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] [FiniteDimensional ℂ E]
     {F : Type*} [NormedAddCommGroup F] [NormedSpace ℂ F] [FiniteDimensional ℂ F]
@@ -425,7 +426,11 @@ end MDifferentiable
 namespace MathlibExt.Geometry.Manifold.ComplexRigidityWanted
 
 /--
-A nonconstant `MDiff` map between connected `1`-dimensional complex manifolds is an open map.
+**Open mapping theorem for Riemann surfaces.** Let $M$ and $N$ be complex manifolds without
+boundary modeled on complex normed spaces of dimension one, with complex $C^1$ (that is,
+holomorphic) transition maps, and suppose $M$ is connected. Then every holomorphic (everywhere
+complex differentiable) map $f : M \to N$ that is not constant is an open map.
+
 Source: O. Forster, Lectures on Riemann Surfaces, open mapping theorem for Riemann surfaces; Lean
 states one-complex-dimensional specialization.
 It is `MDifferentiable.isOpenMap_of_finrank_eq_one`, kept under the source's name.

@@ -34,25 +34,32 @@ namespace Cslib.Algorithms.Lean
 
 universe u v
 
-/-- A key-value node together with the positive number of levels in its tower. -/
+/-- **Skip-list node.** A skip-list node consists of a key, a value and a natural number, the
+height of its tower. The node itself does not require the height to be positive; positivity is
+part of the validity invariant of skip lists. -/
 public structure SkipList.Entry (α : Type u) (β : Type v) where
   key : α
   value : β
   height : Nat
 deriving DecidableEq, Repr
 
-/-- A deterministic skip-list tower represented by its bottom-level nodes. -/
+/-- **Skip list.** A deterministic skip list with keys in $\alpha$ and values in $\beta$ is
+represented by the list of its bottom-level nodes, each node an entry carrying a key in $\alpha$,
+a value in $\beta$ and a tower height, a natural number. No ordering or height condition is
+imposed by this structure. -/
 public structure SkipList (α : Type u) (β : Type v) where
   entries : List (SkipList.Entry α β)
 deriving DecidableEq, Repr
 
 namespace SkipList
 
-/-- The empty skip list. -/
+/-- **Empty skip list.** The empty skip list is the skip list with no nodes. -/
 public def empty {α : Type u} {β : Type v} : SkipList α β :=
   ⟨[]⟩
 
-/-- Keys are strictly increasing and every stored tower has positive height. -/
+/-- **Valid skip list.** Let $\alpha$ be a linearly ordered type. A skip list with keys in
+$\alpha$ and values in $\beta$ is valid when the keys of its bottom-level nodes are strictly
+increasing along the list and every node has a tower of positive height. -/
 public def Valid {α : Type u} {β : Type v} [LinearOrder α] (list : SkipList α β) : Prop :=
   list.entries.Pairwise (fun left right => left.key < right.key) ∧
     ∀ entry ∈ list.entries, 0 < entry.height
@@ -61,23 +68,36 @@ private def entriesAtLevel {α : Type u} {β : Type v} (index : Nat) :
     List (Entry α β) → List (Entry α β) :=
   List.filter fun entry => index < entry.height
 
-/-- The ordered key-value association list visible at one zero-based level. -/
+/-- **Level of a skip list.** For a skip list and a level index $i$ (levels are numbered from $0$
+at the bottom), level $i$ is the list of key-value pairs $(k, v)$ of the stored nodes whose tower
+height $h$ satisfies $i < h$, in the order in which these nodes appear in the bottom-level list
+of the skip list. -/
 public def level {α : Type u} {β : Type v} (index : Nat) (list : SkipList α β) :
     List (α × β) :=
   (list.entries.filter fun entry => index < entry.height).map fun entry =>
     (entry.key, entry.value)
 
-/-- The canonical bottom-level association-list abstraction. -/
+/-- **Bottom-level abstraction of a skip list.** The bottom-level abstraction of a skip list is
+the association list obtained from its bottom-level nodes, in order, by keeping the key-value
+pair $(k, v)$ of each node and forgetting its tower height. -/
 public def abstraction {α : Type u} {β : Type v} (list : SkipList α β) :
     List (α × β) :=
   list.entries.map fun entry => (entry.key, entry.value)
 
-/-- The stored tower height of a key, when present. -/
+/-- **Stored tower height of a key.** For a key $k$ and a skip list $S$, the stored tower height
+of $k$ in $S$ is the tower height of the first bottom-level node of $S$ whose key equals $k$
+under the given Boolean equality test on keys; it is undefined when no node has key $k$. -/
 public def heightOf {α : Type u} {β : Type v} [BEq α]
     (key : α) (list : SkipList α β) : Option Nat :=
   (list.entries.map fun entry => (entry.key, entry.height)).lookup key
 
-/-- Advance one search level while retaining the suffix needed by every lower level. -/
+/-- **One level of skip-list search.** Let $k$ be a search key, $i$ a zero-based level and $L$
+a list of skip-list nodes. Let $P$ be the longest prefix of $L$ whose nodes all have keys less
+than $k$. If some node of $P$ has tower height greater than $i$ (so it is visible at level
+$i$), advancing at level $i$ returns the part of $L$ after the last such node; otherwise it
+returns $L$ unchanged.
+
+The returned suffix is the window that every lower level continues to scan. -/
 public def advanceAtLevel {α : Type u} {β : Type v} [LinearOrder α]
     (key : α) (index : Nat) (entries : List (Entry α β)) : List (Entry α β) :=
   (go entries).getD entries
@@ -91,7 +111,13 @@ where
           | none => if index < entry.height then some entries else none
         else none
 
-/-- The final suffix obtained by carrying navigation state from high levels to low levels. -/
+/-- **Skip-list search window.** Let $k$ be a key and let $H$ be the greatest tower height in a
+skip list ($H = 0$ if the list is empty or every tower has height $0$). Start with the full list
+of bottom-level nodes, and for each level $i$ from $H - 1$ down to $0$ in turn (no levels when
+$H = 0$) replace the current list by the result of advancing at level $i$: within the longest
+initial segment of the current list whose keys are all less than $k$, take the last node whose
+tower height exceeds $i$ and keep only the nodes after it, leaving the list unchanged if there is
+no such node. The search window for $k$ is the list that remains after these steps. -/
 public def searchWindow {α : Type u} {β : Type v} [LinearOrder α]
     (key : α) (list : SkipList α β) : List (Entry α β) :=
   let maximumHeight :=
@@ -103,12 +129,20 @@ where
     | index :: indices, entries =>
         go indices (advanceAtLevel key index entries)
 
-/-- Search tower levels from the greatest stored height down to the complete bottom level. -/
+/-- **Skip-list lookup.** The lookup of a key $k$ in a skip list computes the search window for
+$k$, the suffix of the bottom-level nodes reached by descending from the highest level to level
+$0$, and returns the value of the first node in the window whose key is $k$, or no value if the
+window has no such node. -/
 public def lookup {α : Type u} {β : Type v} [LinearOrder α]
     (key : α) (list : SkipList α β) : Option β :=
   ((searchWindow key list).map fun entry => (entry.key, entry.value)).lookup key
 
-/-- Insert a new key or replace an existing value while preserving an existing tower height. -/
+/-- **Skip-list insertion.** To insert key $k$ with value $v$ and requested height $h$ into a
+skip list, scan its bottom-level nodes in order, keeping every node whose key is less than $k$.
+At the first node whose key is not less than $k$: if its key equals $k$, its value is replaced
+by $v$ and its tower height is kept; if its key is greater than $k$, a new node with key $k$,
+value $v$ and tower height $\max(1, h)$ is placed before it. If every key is less than $k$, the
+new node is appended at the end. -/
 public def insert {α : Type u} {β : Type v} [LinearOrder α]
     (key : α) (value : β) (requestedHeight : Nat) (list : SkipList α β) : SkipList α β :=
   ⟨go list.entries⟩
@@ -123,12 +157,16 @@ where
         else
           { entry with value := value } :: entries
 
-/-- The empty skip list satisfies the representation invariant. -/
+/-- **The empty skip list is valid.** For every linearly ordered type $\alpha$ and every type
+$\beta$, the empty skip list with keys in $\alpha$ and values in $\beta$ is valid. -/
 public theorem valid_empty {α : Type u} {β : Type v} [LinearOrder α] :
     Valid (empty : SkipList α β) := by
   simp [Valid, empty]
 
-/-- Every derived level remains strictly ordered by key. -/
+/-- **Skip-list levels are sorted by key.** If a skip list is valid, then for every level index
+$i$ (levels are numbered from $0$ at the bottom), the keys in the list of key-value pairs visible
+at level $i$ are strictly increasing: every pair has a strictly smaller key than every pair after
+it. -/
 public theorem level_pairwise {α : Type u} {β : Type v} [LinearOrder α]
     {list : SkipList α β} (valid : Valid list) (index : Nat) :
     (level index list).Pairwise (fun left right => left.1 < right.1) := by
@@ -148,7 +186,10 @@ private theorem entriesAtLevel_succ_sublist {α : Type u} {β : Type v} (index :
         · simpa [entriesAtLevel, high, low] using ih.cons entry
         · simpa [entriesAtLevel, high, low] using ih
 
-/-- Each upper tower level is a subsequence of the level immediately below it. -/
+/-- **Each skip-list level is a subsequence of the level below.** For every skip list and every
+level index $i$ (levels are numbered from $0$ at the bottom), the list of key-value pairs visible
+at level $i + 1$ is a subsequence, not necessarily contiguous, of the list of key-value pairs
+visible at level $i$. -/
 public theorem level_succ_sublist_level {α : Type u} {β : Type v}
     (index : Nat) (list : SkipList α β) :
     (level (index + 1) list).Sublist (level index list) := by
@@ -156,7 +197,8 @@ public theorem level_succ_sublist_level {α : Type u} {β : Type v}
     (entriesAtLevel_succ_sublist index list.entries).map
       (fun entry => (entry.key, entry.value))
 
-/-- Valid bottom-level abstractions have no duplicate keys. -/
+/-- **Keys of a valid skip list are distinct.** If a skip list is valid, then the keys of the
+pairs in its bottom-level abstraction, read in order, form a list without duplicates. -/
 public theorem abstraction_keys_nodup {α : Type u} {β : Type v} [LinearOrder α]
     {list : SkipList α β} (valid : Valid list) :
     ((abstraction list).map Prod.fst).Nodup := by
@@ -171,7 +213,9 @@ public theorem abstraction_keys_nodup {α : Type u} {β : Type v} [LinearOrder �
   rw [functionEquality]
   exact keysOrdered.nodup
 
-/-- Every valid derived level has no duplicate keys. -/
+/-- **Keys on each skip-list level are distinct.** If a skip list is valid, then for every level
+index $i$ (levels are numbered from $0$ at the bottom), no key occurs twice in the list of
+key-value pairs visible at level $i$. -/
 public theorem level_keys_nodup {α : Type u} {β : Type v} [LinearOrder α]
     {list : SkipList α β} (valid : Valid list) (index : Nat) :
     ((level index list).map Prod.fst).Nodup := by
@@ -206,7 +250,8 @@ private theorem advanceAtLevel_go_some_suffix {α : Type u} {β : Type v}
             exact (ih scanned).trans (by simp)
       · simp [before] at found
 
-/-- Advancing one level returns a suffix of the supplied search window. -/
+/-- **One search step returns a suffix.** For every search key, every level $i$ and every list
+$L$ of skip-list nodes, advancing the search at level $i$ on $L$ returns a suffix of $L$. -/
 public theorem advanceAtLevel_suffix {α : Type u} {β : Type v} [LinearOrder α]
     (key : α) (index : Nat) (entries : List (Entry α β)) :
     advanceAtLevel key index entries <:+ entries := by
@@ -225,7 +270,8 @@ private theorem searchWindow_go_suffix {α : Type u} {β : Type v} [LinearOrder 
       exact (ih (advanceAtLevel key index entries)).trans
         (advanceAtLevel_suffix key index entries)
 
-/-- Top-down navigation returns a suffix of the complete bottom-level entries. -/
+/-- **The search window is a suffix of the bottom level.** For every skip list and every key $k$,
+the search window for $k$ is a suffix of the list of the skip list's bottom-level nodes. -/
 public theorem searchWindow_suffix {α : Type u} {β : Type v} [LinearOrder α]
     (key : α) (list : SkipList α β) :
     searchWindow key list <:+ list.entries := by
@@ -286,7 +332,10 @@ private theorem searchWindow_go_lookup_eq {α : Type u} {β : Type v}
       exact (ih (advanceAtLevel key index entries)).trans
         (advanceAtLevel_lookup_eq key index entries)
 
-/-- Top-down carried-window search agrees with canonical association-list lookup. -/
+/-- **Skip-list search agrees with bottom-level lookup.** For every skip list and every key $k$,
+the top-down skip-list lookup of $k$ returns the same result as looking up $k$ in the
+bottom-level abstraction, the list of key-value pairs of all stored nodes in order: the value of
+the first pair with key $k$, or no value if there is none. -/
 public theorem lookup_eq_abstraction {α : Type u} {β : Type v} [LinearOrder α]
     (key : α) (list : SkipList α β) :
     lookup key list = (abstraction list).lookup key := by
@@ -405,7 +454,11 @@ private theorem heights_positive_insert_go {α : Type u} {β : Type v}
           · exact headPositive
           · exact tailPositive entry member
 
-/-- Insertion and duplicate replacement preserve sortedness and positive tower heights. -/
+/-- **Insertion preserves skip-list validity.** Let $\alpha$ be a linearly ordered type and
+$\beta$ a type. If a skip list with keys in $\alpha$ and values in $\beta$ is valid, then for every
+key $k \in \alpha$, value $v \in \beta$ and requested height $h \in \mathbb{N}$ (including
+$h = 0$), inserting $k$ with value $v$ and requested height $h$ yields a valid skip list. This
+covers both a new key and a key already present, whose value is replaced. -/
 public theorem valid_insert {α : Type u} {β : Type v} [LinearOrder α]
     {key : α} {value : β} {requestedHeight : Nat} {list : SkipList α β}
     (valid : Valid list) : Valid (insert key value requestedHeight list) := by
@@ -515,14 +568,20 @@ private theorem height_lookup_insert_go_of_present {α : Type u} {β : Type v}
           simp only [key_head, ite_false, head_key, List.map_cons, List.lookup_cons, keys_match]
           exact congrArg some height_eq
 
-/-- Looking up an inserted key returns the replacement value. -/
+/-- **Lookup after insertion returns the inserted value.** For every skip list, key $k$, value
+$v$ and requested height $h$, looking up $k$ after inserting $k$ with value $v$ and requested
+height $h$ returns $v$. -/
 public theorem lookup_insert {α : Type u} {β : Type v} [LinearOrder α]
     (key : α) (value : β) (requestedHeight : Nat) (list : SkipList α β) :
     lookup key (insert key value requestedHeight list) = some value := by
   rw [lookup_eq_abstraction]
   exact abstraction_lookup_insert key value requestedHeight list.entries
 
-/-- Insertion leaves lookup of every distinct key unchanged. -/
+/-- **Skip-list insertion does not change lookup of other keys.** Let $\alpha$ be a linearly
+ordered type. For every skip list $S$ with keys in $\alpha$ and values in $\beta$, all keys $k$
+and $k'$ in $\alpha$ with $k' \ne k$, every value $v \in \beta$ and every requested height
+$h \in \mathbb{N}$, looking up $k'$ in the skip list obtained by inserting $k$ with value $v$ and
+requested height $h$ into $S$ gives the same result as looking up $k'$ in $S$. -/
 public theorem lookup_insert_of_ne {α : Type u} {β : Type v} [LinearOrder α]
     (key other : α) (value : β) (requestedHeight : Nat) (list : SkipList α β)
     (different : other ≠ key) :
@@ -562,7 +621,9 @@ private theorem height_lookup_insert_go_of_absent {α : Type u} {β : Type v}
           simp only [keys_match] at absent
           simp at absent
 
-/-- Replacing an existing key preserves the height of its tower. -/
+/-- **Reinsertion preserves tower height.** Let $S$ be a valid skip list in which the key $k$
+has stored tower height $h_0$. Then after inserting $k$ into $S$ with any value and any
+requested height, the stored tower height of $k$ is still $h_0$. -/
 public theorem heightOf_insert_of_present {α : Type u} {β : Type v} [LinearOrder α]
     (key : α) (value : β) (requestedHeight existingHeight : Nat)
     (list : SkipList α β) (valid : Valid list)
@@ -570,7 +631,9 @@ public theorem heightOf_insert_of_present {α : Type u} {β : Type v} [LinearOrd
     heightOf key (insert key value requestedHeight list) = some existingHeight := by
   exact height_lookup_insert_go_of_present key value requestedHeight existingHeight
     list.entries valid.1 present
-/-- Inserting an absent key stores the requested height, raised to at least one. -/
+/-- **Height of a newly inserted key.** If a key $k$ does not occur in a skip list $S$, then
+after inserting $k$ into $S$ with any value and requested height $h$, the stored tower height
+of $k$ is $\max(1, h)$. -/
 public theorem heightOf_insert_of_absent {α : Type u} {β : Type v} [LinearOrder α]
     (key : α) (value : β) (requestedHeight : Nat)
     (list : SkipList α β)

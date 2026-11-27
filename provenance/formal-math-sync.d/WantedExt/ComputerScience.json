@@ -1,0 +1,5 @@
+{
+  "rows": [
+    {"path": "WantedExt/ComputerScience/GraphIsomorphismQuasipolynomialWanted.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "f982f7783f4f2e9825642f7816a63344900455e8b1ce849bcde6a4925e80b4e5", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #992)", "upstream_sha256": "7205e5916d37bb5327d40821313ed14575f166deaedb23d972e3a30dddb6e270"}
+  ]
+}

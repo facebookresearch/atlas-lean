@@ -16,10 +16,11 @@ import Mathlib.Tactic.Ring
 
 namespace Nat
 
-/-- If `3 ^ (y + 1) + 1` is a square, then `y = 0`.
+/-- **Powers of three plus one that are perfect squares.** For natural numbers $y$ and $z$, if
+$3^{y+1} + 1 = z^2$, then $y = 0$.
 
-This is Lemma 2.1 of M. Buosi, G. S. Ferreira, and A. L. P. Porto,
-arXiv:2308.10043v1, `main.tex`, lines 128–131. The paper uses natural numbers including zero. -/
+Source: M. Buosi, G. S. Ferreira, and A. L. P. Porto, arXiv:2308.10043v1, Lemma 2.1
+(`main.tex`, lines 128–131). The paper uses natural numbers including zero. -/
 theorem eq_zero_of_three_pow_succ_add_one_eq_sq {y z : ℕ}
     (h : 3 ^ (y + 1) + 1 = z ^ 2) : y = 0 := by
   have hp : Nat.Prime 3 := by decide

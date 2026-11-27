@@ -33,33 +33,41 @@ bound. We bridge to it below without conflating the two notions.
 
 namespace Nat
 
-/-- A natural number `n` is `k`-rough if it is positive and has no prime factor
-at most `k`: every natural prime divisor `p` of `n` satisfies `k < p`.
-This is the footnote definition of Pandey (`2307.14890v1`, `hybrid.tex` line 91).
-Zero is not rough; `1` is rough for every bound by vacuity. -/
+/-- **Rough numbers.** Let $n$ and $k$ be natural numbers. Then $n$ is $k$-rough if $n \neq 0$
+and every prime $p$ dividing $n$ satisfies $k < p$; that is, $n$ is positive and has no prime
+factor at most $k$.
+
+In particular $0$ is not rough, and $1$ is $k$-rough for every $k$ by vacuity.
+
+Source: Pandey, arXiv 2307.14890v1, footnote definition (`hybrid.tex` line 91). -/
 def IsRough (n k : ℕ) : Prop :=
   n ≠ 0 ∧ ∀ p : ℕ, p.Prime → p ∣ n → k < p
 
-/-- Transparent characterization of roughness. -/
+/-- **Characterization of rough numbers.** For natural numbers $n$ and $k$, $n$ is $k$-rough
+if and only if $n \neq 0$ and every prime $p$ dividing $n$ satisfies $k < p$. -/
 theorem isRough_iff {n k : ℕ} :
     n.IsRough k ↔ n ≠ 0 ∧ ∀ p : ℕ, p.Prime → p ∣ n → k < p :=
   Iff.rfl
 
-/-- A rough number is nonzero. -/
+/-- **Rough numbers are nonzero.** For every natural number $k$, every $k$-rough natural number $n$
+satisfies $n \ne 0$. -/
 theorem IsRough.ne_zero {n k : ℕ} (h : n.IsRough k) : n ≠ 0 :=
   h.1
 
-/-- A rough number is positive. -/
+/-- **Rough numbers are positive.** For every natural number $k$, every $k$-rough natural number
+$n$ satisfies $n > 0$. -/
 theorem IsRough.pos {n k : ℕ} (h : n.IsRough k) : 0 < n :=
   Nat.pos_of_ne_zero h.ne_zero
 
-/-- Prime-divisor lower-bound projection: every prime divisor of a `k`-rough
-number exceeds `k`. -/
+/-- **Prime divisors of a rough number exceed the bound.** Let $n$, $k$ and $p$ be natural
+numbers. If $n$ is $k$-rough and $p$ is a prime dividing $n$, then $k < p$. -/
 theorem IsRough.lt_of_prime_dvd {n k p : ℕ} (h : n.IsRough k) (hp : p.Prime)
     (hdvd : p ∣ n) : k < p :=
   h.2 p hp hdvd
 
-/-- Equivalent finite characterization through the prime-factor list. -/
+/-- **Roughness through the list of prime factors.** For natural numbers $n$ and $k$, $n$ is
+$k$-rough if and only if $n \neq 0$ and every prime in the list of prime factors of $n$
+(with multiplicity) is greater than $k$. -/
 theorem isRough_iff_primeFactorsList {n k : ℕ} :
     n.IsRough k ↔ n ≠ 0 ∧ ∀ p ∈ primeFactorsList n, k < p := by
   constructor
@@ -75,11 +83,14 @@ theorem isRough_iff_primeFactorsList {n k : ℕ} :
 instance decidableIsRough (n k : ℕ) : Decidable (n.IsRough k) :=
   decidable_of_iff _ (isRough_iff_primeFactorsList (n := n) (k := k)).symm
 
-/-- The unit `1` is rough for every bound by vacuity. -/
+/-- **The number $1$ is rough.** For every natural number $k$, the number $1$ is $k$-rough.
+
+This holds vacuously, since $1$ has no prime divisors. -/
 theorem isRough_one (k : ℕ) : (1 : ℕ).IsRough k :=
   ⟨one_ne_zero, fun _ hp hdvd => (hp.ne_one (Nat.dvd_one.mp hdvd)).elim⟩
 
-/-- A prime `p` is `k`-rough exactly when `k < p`. -/
+/-- **A prime is rough exactly above the bound.** For natural numbers $p$ and $k$ with $p$
+prime, $p$ is $k$-rough if and only if $k < p$. -/
 theorem Prime.isRough_iff {p k : ℕ} (hp : p.Prime) : p.IsRough k ↔ k < p := by
   constructor
   · intro h
@@ -90,13 +101,14 @@ theorem Prime.isRough_iff {p k : ℕ} (hp : p.Prime) : p.IsRough k ↔ k < p := 
     rw [heq]
     exact hk
 
-/-- Positive divisors of a rough number are rough. -/
+/-- **Divisors of rough numbers are rough.** Let $k$ be a natural number. If a natural number $m$
+is $k$-rough and $d$ is a nonzero divisor of $m$, then $d$ is $k$-rough. -/
 theorem IsRough.of_dvd {m d k : ℕ} (h : m.IsRough k) (hdvd : d ∣ m) (hd : d ≠ 0) :
     d.IsRough k :=
   ⟨hd, fun _ hp hpd => h.lt_of_prime_dvd hp (hpd.trans hdvd)⟩
 
-/-- Multiplication closure as an if-and-only-if: a product is `k`-rough exactly
-when both factors are. -/
+/-- **A product is rough exactly when both factors are.** For natural numbers $m$, $n$ and
+$k$, the product $mn$ is $k$-rough if and only if both $m$ and $n$ are $k$-rough. -/
 theorem isRough_mul {m n k : ℕ} : (m * n).IsRough k ↔ m.IsRough k ∧ n.IsRough k := by
   constructor
   · intro h
@@ -111,17 +123,20 @@ theorem isRough_mul {m n k : ℕ} : (m * n).IsRough k ↔ m.IsRough k ∧ n.IsRo
     rw [hp.dvd_mul] at hdvd
     exact hdvd.elim (hm.lt_of_prime_dvd hp) (hn.lt_of_prime_dvd hp)
 
-/-- Multiplication closure, forward direction. -/
+/-- **Products of rough numbers are rough.** For natural numbers $m$, $n$ and $k$, if $m$ and
+$n$ are both $k$-rough, then $mn$ is $k$-rough. -/
 theorem IsRough.mul {m n k : ℕ} (hm : m.IsRough k) (hn : n.IsRough k) :
     (m * n).IsRough k :=
   isRough_mul.mpr ⟨hm, hn⟩
 
-/-- Antitonicity in the bound: a `k`-rough number is `l`-rough for `l ≤ k`. -/
+/-- **Roughness is antitone in the bound.** Let $k$ and $l$ be natural numbers with $l \le k$.
+Every $k$-rough natural number is $l$-rough. -/
 theorem IsRough.of_le {n k l : ℕ} (h : n.IsRough k) (hle : l ≤ k) : n.IsRough l :=
   ⟨h.ne_zero, fun _ hp hdvd => lt_of_le_of_lt hle (h.lt_of_prime_dvd hp hdvd)⟩
 
-/-- Bridge to `Nat.smoothNumbers` under Mathlib's strict-bound convention:
-a number that is both `k`-rough and `(k + 1)`-smooth must equal `1`. -/
+/-- **Only $1$ is rough and smooth at the same bound.** Let $n$ and $k$ be natural
+numbers. If $n$ is $k$-rough and $n$ is positive with every prime factor less than
+$k + 1$, then $n = 1$. -/
 theorem IsRough.eq_one_of_mem_smoothNumbers {n k : ℕ}
     (hrough : n.IsRough k) (hsmooth : n ∈ smoothNumbers (k + 1)) : n = 1 := by
   by_contra hn1
@@ -133,10 +148,14 @@ theorem IsRough.eq_one_of_mem_smoothNumbers {n k : ℕ}
   have hlt2 : p < k + 1 := hsmooth.2 p hmem
   omega
 
-/-- Bridge of nonunit source-rough numbers bounded by `N` into Mathlib's
-`Nat.roughNumbersUpTo N (k + 1)`. Note that the latter is only the positive
-complement of `(k + 1)`-smoothness (some prime factor is `≥ k + 1`), not the
-source predicate (every prime factor exceeds `k`). -/
+/-- **Rough numbers other than $1$ lie in Mathlib's rough numbers up to a bound.** Let $n$,
+$N$ and $k$ be natural numbers. If $n$ is $k$-rough, $n \le N$ and $n \ne 1$, then $n$ belongs
+to the set of natural numbers $m$ with $1 \le m \le N$ that are not $(k+1)$-smooth, where $m$ is
+$(k+1)$-smooth when $m > 0$ and every prime factor of $m$ is less than $k + 1$; for $m \ge 1$,
+not being $(k+1)$-smooth means having a prime factor $p \ge k + 1$.
+
+This set is Mathlib's set of rough numbers up to $N$ at bound $k + 1$. It asks only for some
+prime factor $p \ge k + 1$, while $k$-roughness asks that every prime factor exceed $k$. -/
 theorem IsRough.mem_roughNumbersUpTo {n N k : ℕ}
     (h : n.IsRough k) (hle : n ≤ N) (hn1 : n ≠ 1) :
     n ∈ roughNumbersUpTo N (k + 1) := by

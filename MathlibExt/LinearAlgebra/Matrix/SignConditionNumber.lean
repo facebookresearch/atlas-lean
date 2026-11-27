@@ -20,19 +20,27 @@ public import Mathlib.Data.Finset.Lattice.Fold
 
 namespace Matrix.SignConditionNumber
 
-/-- Finite encoding of all square sign matrices of order `n`. -/
+/-- **Boolean encoding of sign matrices.** For a natural number $n$, a sign matrix of order $n$ is
+encoded as an $n \times n$ matrix with entries in the Booleans $\{\mathrm{true}, \mathrm{false}\}$,
+whose rows and columns are indexed by $\{0, \dots, n - 1\}$. -/
 abbrev SignMatrix (n : ℕ) := Matrix (Fin n) (Fin n) Bool
 
-/-- Interpret each Boolean entry as a real sign. -/
+/-- **Real sign matrix of a Boolean matrix.** The realization of a Boolean $n \times n$ matrix $A$
+is the real $n \times n$ matrix whose $(i, j)$ entry is $-1$ if $A_{ij}$ is true and $1$ if
+$A_{ij}$ is false. -/
 def SignMatrix.realize {n : ℕ} (A : SignMatrix n) : Matrix (Fin n) (Fin n) ℝ :=
   fun i j => if A i j then -1 else 1
 
-/-- Realization produces only the two allowed entries. -/
+/-- **Realized sign matrices have entries $\pm 1$.** For every Boolean $n \times n$ matrix $A$ and
+all indices $i, j$, the $(i, j)$ entry of the real realization of $A$ is $1$ or $-1$. -/
 theorem SignMatrix.realize_entries {n : ℕ} (A : SignMatrix n) (i j : Fin n) :
     A.realize i j = 1 ∨ A.realize i j = -1 := by
   cases h : A i j <;> simp [SignMatrix.realize, h]
 
-/-- The finite Boolean encoding covers exactly all real sign matrices. -/
+/-- **Boolean matrices realize exactly the sign matrices.** Send each $n \times n$ Boolean
+matrix to the real matrix whose entry is $-1$ where the Boolean entry is true and $1$ where it
+is false. A real $n \times n$ matrix $M$ arises in this way if and only if every entry of $M$
+is $1$ or $-1$. -/
 theorem exists_realize_iff {n : ℕ} (M : Matrix (Fin n) (Fin n) ℝ) :
     (∃ A : SignMatrix n, A.realize = M) ↔ ∀ i j, M i j = 1 ∨ M i j = -1 := by
   classical
@@ -48,27 +56,39 @@ theorem exists_realize_iff {n : ℕ} (M : Matrix (Fin n) (Fin n) ℝ) :
       · simpa [SignMatrix.realize, hneg] using hpos.symm
       · exact (hneg hminus).elim
 
-/-- Largest singular value divided by the smallest of the first `n` singular
-values; a zero smallest singular value gives infinity. Zero order is outside
-the optimization domain. -/
+/-- **Condition number of a square real matrix.** For a real $n \times n$ matrix $A$, let
+$\sigma_0 \ge \sigma_1 \ge \dots$ be the singular values of $A$ acting on Euclidean space
+$\mathbb{R}^n$, indexed from $0$ and extended by $\sigma_i = 0$ for $i \ge n$. The condition
+number of $A$, an element of $[0, \infty]$, is $\infty$ if $\sigma_{n-1} = 0$ and
+$\sigma_0 / \sigma_{n-1}$ otherwise, where $n - 1$ is read as $0$ when $n = 0$.
+
+The minimum over sign matrices is only taken at positive order. -/
 noncomputable def conditionNumber {n : ℕ} (A : Matrix (Fin n) (Fin n) ℝ) : ENNReal :=
   let σ := (Matrix.toEuclideanLin A).singularValues
   if σ (n - 1) = 0 then ⊤ else ENNReal.ofReal (σ 0 / σ (n - 1))
 
-/-- Attained minimum over the nonempty finite set of all sign matrices, at a
-positive order. -/
+/-- **Minimum condition number of sign matrices.** For a positive integer $n$, the minimum
+condition number of order $n$ is the least condition number of a real $n \times n$ sign matrix,
+that is, a matrix all of whose entries are $1$ or $-1$; the minimum is taken over the finitely
+many such matrices. -/
 noncomputable def minimumConditionNumber (n : {n : ℕ // 0 < n}) : ENNReal :=
   (Finset.univ : Finset (SignMatrix n.1)).inf' Finset.univ_nonempty
     (fun A => conditionNumber A.realize)
 
-/-- A vanishing smallest singular value selects the infinite branch. -/
+/-- **Infinite condition number from a vanishing singular value.** Let $A$ be a real
+$n \times n$ matrix with singular values $\sigma_0 \ge \sigma_1 \ge \dots$ on Euclidean space
+$\mathbb{R}^n$, indexed from $0$ and extended by zeros, where $n - 1$ is read as $0$ when
+$n = 0$. If $\sigma_{n-1} = 0$, then the condition number of $A$ is $\infty$. -/
 theorem conditionNumber_eq_top_of_smallest_eq_zero {n : ℕ}
     (A : Matrix (Fin n) (Fin n) ℝ)
     (h : (Matrix.toEuclideanLin A).singularValues (n - 1) = 0) :
     conditionNumber A = ⊤ := by
   simp [conditionNumber, h]
 
-/-- On the nonsingular branch, the definition is exactly the singular-value ratio. -/
+/-- **Condition number as a singular-value ratio.** Let $A$ be a real $n \times n$ matrix with
+singular values $\sigma_0 \ge \sigma_1 \ge \dots$ on Euclidean space $\mathbb{R}^n$, indexed from
+$0$ and extended by zeros, where $n - 1$ is read as $0$ when $n = 0$. If $\sigma_{n-1} \ne 0$,
+then the condition number of $A$ equals $\sigma_0 / \sigma_{n-1}$. -/
 theorem conditionNumber_eq_ratio_of_smallest_ne_zero {n : ℕ}
     (A : Matrix (Fin n) (Fin n) ℝ)
     (h : (Matrix.toEuclideanLin A).singularValues (n - 1) ≠ 0) :
@@ -77,13 +97,16 @@ theorem conditionNumber_eq_ratio_of_smallest_ne_zero {n : ℕ}
         (Matrix.toEuclideanLin A).singularValues (n - 1)) := by
   simp [conditionNumber, h]
 
-/-- Zero matrices, including the isolated zero-order matrix, have infinite
-condition number under the singular convention. -/
+/-- **The zero matrix has infinite condition number.** For every natural number $n$, the
+condition number of the real $n \times n$ zero matrix is $\infty$; this includes the
+$0 \times 0$ matrix. -/
 @[simp] theorem conditionNumber_zero (n : ℕ) :
     conditionNumber (0 : Matrix (Fin n) (Fin n) ℝ) = ⊤ := by
   simp [conditionNumber]
 
-/-- The finite minimum is attained by an actual sign matrix. -/
+/-- **The minimum condition number is attained.** For every positive integer $n$, there is an
+$n \times n$ Boolean matrix whose realization as a real sign matrix ($-1$ for true, $1$ for
+false) has condition number equal to the minimum condition number of order $n$. -/
 theorem minimumConditionNumber_attained (n : {n : ℕ // 0 < n}) :
     ∃ A : SignMatrix n.1, minimumConditionNumber n = conditionNumber A.realize := by
   obtain ⟨A, _, hA⟩ := Finset.exists_mem_eq_inf'
@@ -91,7 +114,8 @@ theorem minimumConditionNumber_attained (n : {n : ℕ // 0 < n}) :
     (fun A => conditionNumber A.realize)
   exact ⟨A, hA⟩
 
-/-- Descending, nonnegative singular values make every defined ratio at least one. -/
+/-- **Condition numbers are at least one.** For every natural number $n$ and every real
+$n \times n$ matrix $A$, the condition number of $A$ is at least $1$. -/
 theorem one_le_conditionNumber {n : ℕ} (A : Matrix (Fin n) (Fin n) ℝ) :
     1 ≤ conditionNumber A := by
   unfold conditionNumber
@@ -102,14 +126,16 @@ theorem one_le_conditionNumber {n : ℕ} (A : Matrix (Fin n) (Fin n) ℝ) :
     have hle := (Matrix.toEuclideanLin A).singularValues_antitone (Nat.zero_le (n - 1))
     simpa using ENNReal.ofReal_le_ofReal ((one_le_div hp).mpr hle)
 
-/-- Every positive-order minimum is at least one. -/
+/-- **The minimum condition number is at least one.** For every positive integer $n$, the minimum
+condition number of the real $n \times n$ sign matrices is at least $1$. -/
 theorem one_le_minimumConditionNumber (n : {n : ℕ // 0 < n}) :
     1 ≤ minimumConditionNumber n := by
   apply Finset.le_inf'
   intro A _
   exact one_le_conditionNumber A.realize
 
-/-- The order-one identity is nonsingular and has condition number one. -/
+/-- **Condition number of the order-one identity.** The condition number of the $1 \times 1$
+real identity matrix is $1$. -/
 @[simp] theorem conditionNumber_one_order_one :
     conditionNumber (1 : Matrix (Fin 1) (Fin 1) ℝ) = 1 := by
   have hT : Matrix.toEuclideanLin (1 : Matrix (Fin 1) (Fin 1) ℝ) =
@@ -130,7 +156,8 @@ theorem one_le_minimumConditionNumber (n : {n : ℕ // 0 < n}) :
   rw [div_self (ne_of_gt hpos)]
   simp
 
-/-- The actual order-one sign-matrix minimum is one. -/
+/-- **Minimum condition number of order one.** The minimum condition number of order $1$ is $1$:
+the least condition number of a $1 \times 1$ real sign matrix is $1$. -/
 @[simp] theorem minimumConditionNumber_one :
     minimumConditionNumber ⟨1, Nat.zero_lt_one⟩ = 1 := by
   let A : SignMatrix 1 := fun _ _ => false

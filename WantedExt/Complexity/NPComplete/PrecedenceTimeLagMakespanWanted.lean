@@ -25,11 +25,11 @@ two references.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Order.Defs.Unbundled
-public import WantedExt.Complexity.NPComplete.SequencingToMinimizeWeightedTardinessWanted
+public import CSLibExt.Complexity.NPComplete.SequencingToMinimizeWeightedTardinessDefs
 
 @[expose] public section
 
@@ -54,7 +54,7 @@ of the input, we write `prec(l)`". The precedence relation is given by the list 
 a common lag `l ≥ 0` and unit processing times, the lag constraints for the pairs of an acyclic
 relation and for the pairs of its transitive closure are satisfied by the same schedules, so
 giving the closure loses nothing. Schedules are one-processor schedules in Garey and Johnson's
-sense ([SS1], reused from `SequencingToMinimizeWeightedTardinessWanted` as
+sense ([SS1], reused from `SequencingToMinimizeWeightedTardinessDefs` as
 `IsOneProcessorSchedule`: one-to-one start times `σ : J → ℤ₀⁺` such that a job starting later
 starts no earlier than the completion of the other). With integer lags and unit processing
 times, integer start times lose no generality. The jobs are listed explicitly, one processing

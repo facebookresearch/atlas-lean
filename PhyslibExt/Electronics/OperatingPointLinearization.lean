@@ -63,9 +63,6 @@ segment in question.
   remainder of the linearization.
 
 ## A. The small-signal remainder bound
-
-Discharges ECE roadmap leaf `ECE.EL.SMALLSIGNAL.L1` (small-signal
-operating-point linearization).
 -/
 
 @[expose] public section

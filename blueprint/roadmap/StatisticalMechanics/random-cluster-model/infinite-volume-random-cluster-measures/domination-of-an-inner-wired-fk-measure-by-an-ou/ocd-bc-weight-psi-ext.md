@@ -1,0 +1,7 @@
+# Factorization of the wired FK weight of a glued configuration
+
+Let $G_{\mathrm{in}}$ and $G_{\mathrm{out}}$ be simple graphs on finite sets $V_{\mathrm{in}}$ and $V_{\mathrm{out}}$, and $\iota : V_{\mathrm{in}} \to V_{\mathrm{out}}$ an injective map that [matches adjacency](ocd-adj-match.md) ($x \sim y$ in $G_{\mathrm{in}}$ if and only if $\iota x \sim \iota y$ in $G_{\mathrm{out}}$), and let $\partial_{\mathrm{out}} \subseteq V_{\mathrm{out}}$ be a set of boundary vertices, and let $p, q \in \mathbb{R}$. Configurations on $V$ are assignments of open/closed states to all unordered pairs of elements of $V$ (loops included); $\iota$ maps a pair $\{x, y\}$ to $\{\iota x, \iota y\}$, and the images of pairs of $V_{\mathrm{in}}$ are the [inner pairs](ocd-inner-edge-finset.md). For all configurations $\psi$ on $V_{\mathrm{out}}$ and $\omega$ on $V_{\mathrm{in}}$,
+
+$$w^K_{G_{\mathrm{out}}}(\psi \oplus \omega) = w^{W_\psi}_{G_{\mathrm{in}}}(\omega)\, s(\psi),$$
+
+where $w^C_G(\eta) = p^{o(\eta)}(1 - p)^{c(\eta)} q^{k_C(\eta)}$ is the [weight with boundary wiring $C$](../../fkg-inequality-and-monotonicity-of-random-cluste/bc-weight.md), $K$ is the clique on $\partial_{\mathrm{out}}$, $\psi \oplus \omega$ is the [glued configuration](ocd-psi-ext.md) (inner pairs take their state from $\omega$, other pairs from $\psi$), $W_\psi$ is the [induced wiring](ocd-induced-wiring.md) on $V_{\mathrm{in}}$ (distinct $x, y$ with $\iota x$ and $\iota y$ joined by a path in $O_\psi$), and $s(\psi)$ is the [outer factor](ocd-psi-shift.md).

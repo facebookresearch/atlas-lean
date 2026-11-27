@@ -1,0 +1,16 @@
+# Representations of finite abelian groups
+
+- [Simple finite-dimensional representations of a monoid are irreducible](is-irreducible-of-simple.md)
+- [Simple finite-dimensional representations of commutative monoids are one-dimensional](finrank-eq-one-of-is-mul-commutative.md)
+- [Simple representations of commutative monoids act by scalars](rho-eq-character-smul-of-simple.md)
+- [Characters of simple representations of commutative monoids are multiplicative](character-mul-of-simple.md)
+- [The character of a simple representation as a monoid homomorphism](character-monoid-hom.md)
+- [The character homomorphism has the character as its underlying function](coe-character-monoid-hom.md)
+- [The one-dimensional representation of a homomorphism](of-monoid-hom.md)
+- [The action in the one-dimensional representation of a homomorphism](of-monoid-hom-2.md)
+- [The representation of a homomorphism is one-dimensional](of-monoid-hom-finrank.md)
+- [The character of the representation of a homomorphism is the homomorphism](of-monoid-hom-character.md)
+- [The representation of a homomorphism is simple](of-monoid-hom-simple.md)
+- [Characters of simple representations of a finite abelian group are homomorphisms](abelian-simple-char-is-hom.md)
+- [Every homomorphism of a finite abelian group to the complex numbers is a simple character](abelian-hom-is-simple-char.md)
+- [Characters determine simple representations of a finite abelian group](abelian-simple-iso-of-char-eq.md)

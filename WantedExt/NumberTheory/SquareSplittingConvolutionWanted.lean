@@ -9,11 +9,19 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
+public import MathlibExt.NumberTheory.SquareSplittingConvolution.DivisorProperties
+public import MathlibExt.NumberTheory.SquareSplittingConvolution.MoebiusInversion
 public import Mathlib.Analysis.Asymptotics.AsymptoticEquivalent
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import Mathlib.NumberTheory.ArithmeticFunction.Moebius
 public import Mathlib.NumberTheory.Harmonic.EulerMascheroni
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
+public import MathlibExt.NumberTheory.SquareSplittingConvolutionSquareSplitDivisorCountLSeries
+public import MathlibExt.NumberTheory.SquareSplittingConvolutionSquareSplitMoebiusFormula
+public import MathlibExt.NumberTheory.SquareSplittingConvolutionSquareSplitConvCommRingAxioms
+public import MathlibExt.NumberTheory.SquareSplittingConvolutionSquareSplitTotientFormula
+public import MathlibExt.NumberTheory.SquareSplittingConvolutionSquareSplitConvInverseOfIsMultiplicative
+public import MathlibExt.NumberTheory.SquareSplittingConvolutionSquareSplitMoebiusSupportDensity
 
 namespace MetaMathlibExt
 
@@ -21,131 +29,18 @@ namespace MetaMathlibExt
 
 open Filter Topology Asymptotics
 
-/-- The squarefree part `u(n)` in the decomposition `n = u(n) v(n)²` with
-`u(n)` squarefree: the product of the primes dividing `n` to an odd power.
+/-- **Square-splitting convolution as a bivariate Dirichlet convolution.** Let $\star$ be the
+square-splitting convolution. For all complex arithmetic functions $f$ and $g$, every squarefree
+natural number $u$ and every natural number $v \ge 1$,
+$$(f \star g)(u v^2) = \sum_{u_1 \mid u} \sum_{v_1 \mid v} f(u_1 v_1^2)\, g((u/u_1)(v/v_1)^2).$$
+Moreover, for every function $F : \mathbb{N} \times \mathbb{N} \to \mathbb{C}$ there is exactly
+one complex arithmetic function $f$ with $f(u v^2) = F(u, v)$ for every squarefree $u$ and every
+$v \ge 1$.
 
-Source: Champak Talukdar and Helen K. Saikia, *A Square-Splitting
-A-Convolution of Narkiewicz Type*, INTEGERS 26 (2026), Article A56, Section 2
-(`n = u(n) v(n)²`, Theorems 2 and 3). -/
-public def squareSplitU (n : ℕ) : ℕ :=
-  n.factorization.prod fun p e => p ^ (e % 2)
-
-/-- The square root `v(n)` of the square part in `n = u(n) v(n)²`.
-
-Source: Champak Talukdar and Helen K. Saikia, *A Square-Splitting
-A-Convolution of Narkiewicz Type*, INTEGERS 26 (2026), Article A56, Section 2. -/
-public def squareSplitV (n : ℕ) : ℕ :=
-  n.factorization.prod fun p e => p ^ (e / 2)
-
-/-- `u(1) = 1`.
-
-Source: Champak Talukdar and Helen K. Saikia, *A Square-Splitting
-A-Convolution of Narkiewicz Type*, INTEGERS 26 (2026), Article A56, Section 2. -/
-public theorem squareSplitU_one : squareSplitU 1 = 1 := by
-  simp [squareSplitU]
-
-/-- `v(1) = 1`.
-
-Source: Champak Talukdar and Helen K. Saikia, *A Square-Splitting
-A-Convolution of Narkiewicz Type*, INTEGERS 26 (2026), Article A56, Section 2. -/
-public theorem squareSplitV_one : squareSplitV 1 = 1 := by
-  simp [squareSplitV]
-
-/-- The decomposition `n = u(n) v(n)²` for `n ≠ 0`.
-
-Source: Champak Talukdar and Helen K. Saikia, *A Square-Splitting
-A-Convolution of Narkiewicz Type*, INTEGERS 26 (2026), Article A56, Section 2. -/
-public theorem squareSplitU_mul_squareSplitV_sq {n : ℕ} (hn : n ≠ 0) :
-    squareSplitU n * squareSplitV n ^ 2 = n := by
-  unfold squareSplitU squareSplitV
-  rw [Finsupp.prod, Finsupp.prod, ← Finset.prod_pow, ← Finset.prod_mul_distrib]
-  conv_rhs => rw [← Nat.prod_factorization_pow_eq_self hn]
-  rw [Finsupp.prod]
-  refine Finset.prod_congr rfl fun p _ => ?_
-  rw [← pow_mul, ← pow_add]
-  congr 1
-  omega
-
-/-- The divisor system `A(n) = {u₁ v₁² : u₁ ∣ u(n), v₁ ∣ v(n)}`.
-
-Source: Champak Talukdar and Helen K. Saikia, *A Square-Splitting
-A-Convolution of Narkiewicz Type*, INTEGERS 26 (2026), Article A56, Theorem 1. -/
-public def squareSplitDivisors (n : ℕ) : Finset ℕ :=
-  ((squareSplitU n).divisors ×ˢ (squareSplitV n).divisors).image fun x => x.1 * x.2 ^ 2
-
-/-- `A(1) = {1}`.
-
-Source: Champak Talukdar and Helen K. Saikia, *A Square-Splitting
-A-Convolution of Narkiewicz Type*, INTEGERS 26 (2026), Article A56, Theorem 1. -/
-public theorem squareSplitDivisors_one : squareSplitDivisors 1 = {1} := by
-  simp [squareSplitDivisors, squareSplitU_one, squareSplitV_one]
-
-/-- The square-splitting `A`-convolution of Narkiewicz type,
-`(f ⋆ g)(n) = ∑_{d ∈ A(n)} f(d) g(n/d)` for `n ≥ 1` (and `0` at `0`, as for
-every `ArithmeticFunction`).
-
-Source: Champak Talukdar and Helen K. Saikia, *A Square-Splitting
-A-Convolution of Narkiewicz Type*, INTEGERS 26 (2026), Article A56, Section 2
-and Theorem 4 (`F = 1 ⋆ f` means `F(n) = ∑_{d ∈ A(n)} f(d)`). -/
-public noncomputable def squareSplitConv (f g : ArithmeticFunction ℂ) :
-    ArithmeticFunction ℂ :=
-  ⟨fun n => if n = 0 then 0 else ∑ d ∈ squareSplitDivisors n, f d * g (n / d), by simp⟩
-
-/-- Unfolding `f ⋆ g` at `n ≠ 0`.
-
-Source: Champak Talukdar and Helen K. Saikia, *A Square-Splitting
-A-Convolution of Narkiewicz Type*, INTEGERS 26 (2026), Article A56, Section 2. -/
-public theorem squareSplitConv_apply (f g : ArithmeticFunction ℂ) {n : ℕ} (hn : n ≠ 0) :
-    squareSplitConv f g n = ∑ d ∈ squareSplitDivisors n, f d * g (n / d) := by
-  simp [squareSplitConv, hn]
-
-/-- Corollary 1: if `f` and `g` are multiplicative, so is `f ⋆ g`.
-
-Source: Champak Talukdar and Helen K. Saikia, *A Square-Splitting
-A-Convolution of Narkiewicz Type*, INTEGERS 26 (2026), Article A56, Corollary 1
-(`integers-2026-A56-cor-1`). -/
-public theorem_wanted squareSplitConv_isMultiplicative {f g : ArithmeticFunction ℂ}
-    (hf : f.IsMultiplicative) (hg : g.IsMultiplicative) :
-    (squareSplitConv f g).IsMultiplicative
-
-/-- Theorem 1: `A(n)` is a divisor system (`1, n ∈ A(n)` and every element
-divides `n`), `A` is multiplicative in the strong sense
-(`A(mn) = A(m) A(n)` for coprime `m, n`), and
-`τ⋆(n) = |A(n)| = d(u(n)) d(v(n)) = 2^{ω(u(n))} d(v(n))`.
-
-Source: Champak Talukdar and Helen K. Saikia, *A Square-Splitting
-A-Convolution of Narkiewicz Type*, INTEGERS 26 (2026), Article A56, Theorem 1
-(`integers-2026-A56-thm-1`). -/
-public theorem_wanted squareSplitDivisors_properties :
-    (∀ n ≠ 0, 1 ∈ squareSplitDivisors n ∧ n ∈ squareSplitDivisors n ∧
-      ∀ d ∈ squareSplitDivisors n, d ∣ n) ∧
-    (∀ m n, Nat.Coprime m n → squareSplitDivisors (m * n) =
-      (squareSplitDivisors m ×ˢ squareSplitDivisors n).image fun x => x.1 * x.2) ∧
-    (∀ n ≠ 0, (squareSplitDivisors n).card =
-        (squareSplitU n).divisors.card * (squareSplitV n).divisors.card ∧
-      (squareSplitDivisors n).card =
-        2 ^ ArithmeticFunction.cardDistinctFactors (squareSplitU n) *
-          (squareSplitV n).divisors.card)
-
-/-- Theorem 2, ring part: `⋆` is commutative, associative, distributes over
-`+`, and has identity `ε` (the arithmetic function `1`), so arithmetic
-functions form a commutative ring under `+` and `⋆`.
-
-Source: Champak Talukdar and Helen K. Saikia, *A Square-Splitting
-A-Convolution of Narkiewicz Type*, INTEGERS 26 (2026), Article A56, Theorem 2
-(`integers-2026-A56-thm-2`). -/
-public theorem_wanted squareSplitConv_commRing_axioms (f g h : ArithmeticFunction ℂ) :
-    squareSplitConv f g = squareSplitConv g f ∧
-      squareSplitConv (squareSplitConv f g) h = squareSplitConv f (squareSplitConv g h) ∧
-      squareSplitConv f (g + h) = squareSplitConv f g + squareSplitConv f h ∧
-      squareSplitConv 1 f = f
-
-/-- Theorem 2, isomorphism part: `T f (u, v) = f(u v²)` (`u` squarefree,
-`v ≥ 1`) is a bijection from arithmetic functions onto functions on
-`{(u, v) : u squarefree, v ≥ 1}` (with `u ≥ 1` implied by squarefreeness), it
-turns `⋆` into the bivariate Dirichlet convolution
-`(F ⊙ G)(u, v) = ∑_{u₁ ∣ u} ∑_{v₁ ∣ v} F(u₁, v₁) G(u/u₁, v/v₁)`, and it is
-additive (immediate).
+Thus $f \mapsto \big((u, v) \mapsto f(u v^2)\big)$ is a bijection from complex arithmetic functions
+onto functions on $\{(u, v) : u \text{ squarefree},\ v \ge 1\}$, and it turns $\star$ into the
+bivariate Dirichlet convolution
+$(\Phi \odot \Psi)(u, v) = \sum_{u_1 \mid u} \sum_{v_1 \mid v} \Phi(u_1, v_1)\, \Psi(u/u_1, v/v_1)$.
 
 Source: Champak Talukdar and Helen K. Saikia, *A Square-Splitting
 A-Convolution of Narkiewicz Type*, INTEGERS 26 (2026), Article A56, Theorem 2
@@ -158,85 +53,14 @@ public theorem_wanted squareSplitConv_bivariate_iso :
     ∀ F : ℕ → ℕ → ℂ, ∃! f : ArithmeticFunction ℂ,
       ∀ u v, Squarefree u → 0 < v → f (u * v ^ 2) = F u v
 
-/-- Theorem 3: the `⋆`-inverse `μ⋆` of the constant function `1` satisfies
-`μ⋆(n) = μ(u(n)) μ(v(n))`; on prime powers `μ⋆(p) = μ⋆(p²) = -1`,
-`μ⋆(p³) = 1`, `μ⋆(p^k) = 0` for `k ≥ 4`; and for `Re s > 1`,
-`∑ μ⋆(n)/n^s = ∏_p (1 - p^{-s} - p^{-2s} + p^{-3s}) = 1/(ζ(s) ζ(2s))`.
-`μ⋆` enters as any `m` with `1 ⋆ m = ε` (Theorem 4's inversion relation).
-
-Source: Champak Talukdar and Helen K. Saikia, *A Square-Splitting
-A-Convolution of Narkiewicz Type*, INTEGERS 26 (2026), Article A56, Theorem 3
-(`integers-2026-A56-thm-3`). -/
-public theorem_wanted squareSplitMoebius_formula (m : ArithmeticFunction ℂ)
-    (hm : squareSplitConv (ArithmeticFunction.zeta : ArithmeticFunction ℂ) m = 1) :
-    (∀ n ≠ 0, m n = (ArithmeticFunction.moebius (squareSplitU n) : ℂ) *
-      ArithmeticFunction.moebius (squareSplitV n)) ∧
-    (∀ p : ℕ, p.Prime → m p = -1 ∧ m (p ^ 2) = -1 ∧ m (p ^ 3) = 1 ∧
-      ∀ k, 4 ≤ k → m (p ^ k) = 0) ∧
-    ∀ s : ℂ, 1 < s.re →
-      LSeries (fun n => m n) s = ∏' p : Nat.Primes,
-        (1 - ((p : ℕ) : ℂ) ^ (-s) - ((p : ℕ) : ℂ) ^ (-(2 * s)) + ((p : ℕ) : ℂ) ^ (-(3 * s))) ∧
-      LSeries (fun n => m n) s = 1 / (riemannZeta s * riemannZeta (2 * s))
-
-/-- Theorem 4 (Möbius inversion): `F = 1 ⋆ f` if and only if `f = μ⋆ ⋆ F`,
-i.e. `F(n) = ∑_{d ∈ A(n)} f(d)` for all `n` iff
-`f(n) = ∑_{d ∈ A(n)} μ⋆(d) F(n/d)` for all `n`; `μ⋆` enters as any `m` with
-`1 ⋆ m = ε`.
-
-Source: Champak Talukdar and Helen K. Saikia, *A Square-Splitting
-A-Convolution of Narkiewicz Type*, INTEGERS 26 (2026), Article A56, Theorem 4
-(`integers-2026-A56-thm-4`). -/
-public theorem_wanted squareSplit_moebius_inversion (m : ArithmeticFunction ℂ)
-    (hm : squareSplitConv (ArithmeticFunction.zeta : ArithmeticFunction ℂ) m = 1)
-    (f F : ArithmeticFunction ℂ) :
-    F = squareSplitConv (ArithmeticFunction.zeta : ArithmeticFunction ℂ) f ↔
-      f = squareSplitConv m F
-
-/-- Theorem 5: a multiplicative `f` has a unique `⋆`-inverse `g`, which is
-multiplicative and satisfies on prime powers
-`∑_{j ≤ ⌊k/2⌋} f(p^{2j}) g(p^{k-2j}) + 1_{k odd} ∑_{j ≤ ⌊k/2⌋} f(p^{2j+1}) g(p^{k-2j-1}) = ε(p^k)`,
-with `g(1) = 1/f(1)`, `g(p) = -f(p)/f(1)²`, `g(p²) = -f(p²)/f(1)²`,
-`g(p³) = (2 f(p) f(p²) - f(p³) f(1))/f(1)³`. The paper's hypothesis
-`f(1) ≠ 0` is part of Mathlib's `IsMultiplicative` (`f 1 = 1`).
-
-Source: Champak Talukdar and Helen K. Saikia, *A Square-Splitting
-A-Convolution of Narkiewicz Type*, INTEGERS 26 (2026), Article A56, Theorem 5
-(`integers-2026-A56-thm-5`). -/
-public theorem_wanted squareSplitConv_inverse_of_isMultiplicative {f : ArithmeticFunction ℂ}
-    (hf : f.IsMultiplicative) :
-    ∃ g : ArithmeticFunction ℂ, squareSplitConv f g = 1 ∧
-      (∀ g' : ArithmeticFunction ℂ, squareSplitConv f g' = 1 → g' = g) ∧
-      g.IsMultiplicative ∧
-      (∀ p k : ℕ, p.Prime → 1 ≤ k →
-        ∑ j ∈ Finset.range (k / 2 + 1), f (p ^ (2 * j)) * g (p ^ (k - 2 * j)) +
-          (if Odd k then ∑ j ∈ Finset.range (k / 2 + 1),
-            f (p ^ (2 * j + 1)) * g (p ^ (k - (2 * j + 1))) else 0) = 0) ∧
-      g 1 = 1 / f 1 ∧
-      ∀ p : ℕ, p.Prime →
-        g p = -f p / f 1 ^ 2 ∧ g (p ^ 2) = -f (p ^ 2) / f 1 ^ 2 ∧
-        g (p ^ 3) = (2 * f p * f (p ^ 2) - f (p ^ 3) * f 1) / f 1 ^ 3
-
-/-- Theorem 7: the Euler-type function `φ⋆`, defined by
-`∑_{d ∈ A(n)} φ⋆(d) = n` for all `n ≥ 1` (Theorem 8), is multiplicative with
-`φ⋆(1) = 1`, `φ⋆(p) = p - 1`, and for `b ≥ 1`,
-`φ⋆(p^{2b}) = (p² - 1) p^{2b-2}`, `φ⋆(p^{2b+1}) = (p - 1)(p² - 1) p^{2b-2}`;
-equivalently `φ⋆(n) = φ(u(n)) v(n)² ∏_{p ∣ v(n)} (1 - 1/p²)`.
-
-Source: Champak Talukdar and Helen K. Saikia, *A Square-Splitting
-A-Convolution of Narkiewicz Type*, INTEGERS 26 (2026), Article A56, Theorem 7
-(`integers-2026-A56-thm-7`). -/
-public theorem_wanted squareSplitTotient_formula (φ : ArithmeticFunction ℤ)
-    (hφ : ∀ n ≠ 0, ∑ d ∈ squareSplitDivisors n, φ d = n) :
-    φ.IsMultiplicative ∧ φ 1 = 1 ∧
-    (∀ p : ℕ, p.Prime → φ p = (p : ℤ) - 1 ∧
-      ∀ b, 1 ≤ b → φ (p ^ (2 * b)) = ((p : ℤ) ^ 2 - 1) * (p : ℤ) ^ (2 * b - 2) ∧
-        φ (p ^ (2 * b + 1)) = ((p : ℤ) - 1) * ((p : ℤ) ^ 2 - 1) * (p : ℤ) ^ (2 * b - 2)) ∧
-    ∀ n ≠ 0, (φ n : ℚ) = (squareSplitU n).totient * (squareSplitV n : ℚ) ^ 2 *
-      ∏ p ∈ (squareSplitV n).primeFactors, (1 - 1 / (p : ℚ) ^ 2)
-
-/-- Theorem 8: for `φ⋆` defined by `∑_{d ∈ A(n)} φ⋆(d) = n`, the product
-`M = ∏_p (1 - 1/p² + (p-1)²/p⁵)` converges absolutely, and for every
-`ε ∈ (0, 1/2)`, `∑_{n ≤ x} φ⋆(n) = (M/2) x² + O_ε(x^{1+ε})`.
+/-- **Average order of the square-splitting totient function.** Let $A(n)$ be the set of
+square-splitting divisors of $n$, and let $\varphi_\star$ be any integer-valued arithmetic function
+with $\sum_{d \in A(n)} \varphi_\star(d) = n$ for every $n \ge 1$. Then the product
+$M = \prod_p \left(1 - \frac{1}{p^2} + \frac{(p-1)^2}{p^5}\right)$ converges absolutely, that is,
+$\sum_p \left|\frac{(p-1)^2}{p^5} - \frac{1}{p^2}\right| < \infty$, and for every
+$0 < \varepsilon < 1/2$,
+$$\sum_{1 \le n \le x} \varphi_\star(n) = \frac{M}{2}\,x^2 + O(x^{1+\varepsilon})
+\quad (x \to \infty).$$
 
 Source: Champak Talukdar and Helen K. Saikia, *A Square-Splitting
 A-Convolution of Narkiewicz Type*, INTEGERS 26 (2026), Article A56, Theorem 8
@@ -251,34 +75,21 @@ public theorem_wanted squareSplitTotient_sum_asymptotic (φ : ArithmeticFunction
           (1 - 1 / ((p : ℕ) : ℝ) ^ 2 + (((p : ℕ) : ℝ) - 1) ^ 2 / ((p : ℕ) : ℝ) ^ 5)) / 2 * x ^ 2)
         =O[atTop] fun x => x ^ (1 + ε)
 
-/-- Theorem 9: for `Re s > 1`, with `τ⋆(n) = |A(n)|`,
-`∑ τ⋆(n)/n^s = ∏_p ∑_k τ⋆(p^k)/p^{ks} = ∏_p (1 + 2p^{-s})/(1 - p^{-2s})²
-= ζ(s)² ζ(2s)² H(s)`, where `H(s) = ∏_p (1 - 3p^{-2s} + 2p^{-3s})` converges
-absolutely and is holomorphic for `Re s > 1/2`, and `H(1) ≠ 0`.
+/-- **Partial-sum asymptotics for a Riemann zeta quotient times a Dirichlet series.** Let
+$f, g : \mathbb{N} \to \mathbb{C}$ and let $\sigma_0 < 1/2$ be a real number. Suppose that the
+Dirichlet series $G(s) = \sum_{n \ge 1} g(n) n^{-s}$ converges absolutely for
+$\operatorname{Re} s > \sigma_0$, that $G(1) \ne 0$, and that for every complex $s$ with
+$\operatorname{Re} s > 1$ the Dirichlet series $F(s) = \sum_{n \ge 1} f(n) n^{-s}$ converges
+absolutely and $F(s) = \zeta(s)^2 G(s) / \zeta(2s)$, where $\zeta$ is the Riemann zeta
+function. Then, as the real number $x$ tends to infinity,
+$$
+\sum_{1 \le n \le x} f(n) = \frac{G(1)}{\zeta(2)}\, x \log x +
+\frac{G(1)}{\zeta(2)} \left(2\gamma - 1 + \frac{G'(1)}{G(1)} -
+\frac{2\zeta'(2)}{\zeta(2)}\right) x + O\big(x^{1/2} (\log x)^3\big),
+$$
+where $\gamma$ is the Euler–Mascheroni constant and $G'$, $\zeta'$ are complex derivatives.
 
-Source: Champak Talukdar and Helen K. Saikia, *A Square-Splitting
-A-Convolution of Narkiewicz Type*, INTEGERS 26 (2026), Article A56, Theorem 9
-(`integers-2026-A56-thm-9`). -/
-public theorem_wanted squareSplitDivisorCount_LSeries :
-    let τ : ℕ → ℂ := fun n => ((squareSplitDivisors n).card : ℂ)
-    let H : ℂ → ℂ := fun s => ∏' p : Nat.Primes,
-      (1 - 3 * ((p : ℕ) : ℂ) ^ (-(2 * s)) + 2 * ((p : ℕ) : ℂ) ^ (-(3 * s)))
-    (∀ s : ℂ, 1 < s.re →
-      (∀ p : Nat.Primes, HasSum (fun k : ℕ => τ ((p : ℕ) ^ k) * ((p : ℕ) : ℂ) ^ (-(k * s)))
-        ((1 + 2 * ((p : ℕ) : ℂ) ^ (-s)) / (1 - ((p : ℕ) : ℂ) ^ (-(2 * s))) ^ 2)) ∧
-      LSeries (fun n => τ n) s = ∏' p : Nat.Primes,
-        (1 + 2 * ((p : ℕ) : ℂ) ^ (-s)) / (1 - ((p : ℕ) : ℂ) ^ (-(2 * s))) ^ 2 ∧
-      LSeries (fun n => τ n) s = riemannZeta s ^ 2 * riemannZeta (2 * s) ^ 2 * H s) ∧
-    (∀ s : ℂ, 1 / 2 < s.re → Summable (fun p : Nat.Primes =>
-      ‖-3 * ((p : ℕ) : ℂ) ^ (-(2 * s)) + 2 * ((p : ℕ) : ℂ) ^ (-(3 * s))‖)) ∧
-    DifferentiableOn ℂ H {s | 1 / 2 < s.re} ∧ H 1 ≠ 0
-
-/-- Lemma 1: if `F(s) = ∑_{n ≥ 1} f(n) n^{-s} = ζ(s)² / ζ(2s) · G(s)`, where `G` is a
-Dirichlet series absolutely convergent for `Re s > σ₀` with `σ₀ < 1/2`, then
-`∑_{n ≤ x} f(n) = G(1)/ζ(2) x log x + G(1)/ζ(2) (2γ - 1 + G'(1)/G(1) - 2 ζ'(2)/ζ(2)) x
-+ O(x^{1/2} (log x)³)`. `G` enters as the L-series of `g`; `F` is required to converge
-absolutely for `Re s > 1` (so `LSeries f` is not its junk value), and `G(1) ≠ 0` is added
-so that the printed quotient `G'(1)/G(1)` is meaningful.
+The hypothesis $G(1) \ne 0$ is added so that the quotient $G'(1)/G(1)$ is meaningful.
 
 Source: Champak Talukdar and Helen K. Saikia, *A Square-Splitting
 A-Convolution of Narkiewicz Type*, INTEGERS 26 (2026), Article A56, Lemma 1
@@ -294,12 +105,17 @@ public theorem_wanted sum_asymptotic_of_LSeries_eq_zeta_sq_div_zeta_two_mul (f g
             deriv (LSeries g) 1 / LSeries g 1 - 2 * deriv riemannZeta 2 / riemannZeta 2) * x))
       =O[atTop] fun x => x ^ (1 / 2 : ℝ) * Real.log x ^ 3
 
-/-- Theorem 10: with `τ⋆(n) = |A(n)|`, `A_τ = ∏_p (1 - 1/(p+1)²)` and
-`B_τ = 6 ∑_p log p / ((p-1)(p+1)(p+2))`,
-`∑_{n ≤ x} τ⋆(n) = A_τ x log x + A_τ (2γ - 1 - B_τ - 2 ζ'(2)/ζ(2)) x
-+ O(x^{1/2} (log x)³)`. The extracted text is partly garbled; this reading is
-the one consistent with Theorem 9 (`A_τ = ζ(2)² H(1)` and
-`-B_τ - 2ζ'(2)/ζ(2) = 4ζ'(2)/ζ(2) + H'(1)/H(1)`), and is confirmed numerically.
+/-- **Average order of the square-splitting divisor function.** Let $\tau^\star(n) = |A(n)|$ be
+the number of elements of the square-splitting divisor set $A(n)$, let $\gamma$ be the
+Euler–Mascheroni constant, and let $A_\tau = \prod_p (1 - 1/(p+1)^2)$ and
+$B_\tau = 6 \sum_p \log p / ((p-1)(p+1)(p+2))$, where $p$ runs over the primes. Then, as the real
+number $x$ tends to infinity,
+$\sum_{1 \le n \le x} \tau^\star(n) - A_\tau x \log x - A_\tau (2\gamma - 1 - B_\tau - c) x$ is
+$O(x^{1/2} (\log x)^3)$, where $c = 2\zeta'(2)/\zeta(2)$.
+
+These constants are the ones forced by the Dirichlet series of $\tau^\star$: with
+$H(s) = \prod_p (1 - 3p^{-2s} + 2p^{-3s})$, one has $A_\tau = \zeta(2)^2 H(1)$ and
+$-B_\tau - 2\zeta'(2)/\zeta(2) = 4\zeta'(2)/\zeta(2) + H'(1)/H(1)$.
 
 Source: Champak Talukdar and Helen K. Saikia, *A Square-Splitting
 A-Convolution of Narkiewicz Type*, INTEGERS 26 (2026), Article A56, Theorem 10
@@ -313,31 +129,22 @@ public theorem_wanted squareSplitDivisorCount_sum_asymptotic :
           2 * (deriv riemannZeta 2 / riemannZeta 2).re) * x))
       =O[atTop] fun x => x ^ (1 / 2 : ℝ) * Real.log x ^ 3
 
-/-- Theorem 11: `μ⋆(n) ≠ 0` if and only if every prime exponent of `n` is at
-most `3`; the set `S = {n : μ⋆(n) ≠ 0}` has natural density
-`∏_p (1 - p^{-4}) = 1/ζ(4)`, equivalently `∑_{n ≤ x} μ⋆(n)² ∼ x/ζ(4)`.
-`μ⋆` enters as any `m` with `1 ⋆ m = ε`.
+/-- **A square-splitting divisor function and its Euler product.** Let
+$\alpha \in \mathbb{C}$, let $\sigma_\beta(m) = \sum_{d \mid m} d^\beta$ for $\beta \in \mathbb{C}$
+(complex powers), and let $f(n) = \sigma_\alpha(u(n))\,\sigma_{2\alpha}(v(n))$, where $u(n)$ is
+the product of the primes dividing $n$ to an odd power and $v(n)$ is the positive integer with
+$n = u(n)\,v(n)^2$. Then $f(1) = 1$ and $f(mn) = f(m)\,f(n)$ for all coprime $m$ and $n$. For
+every prime $p$ and every $b \ge 0$, $f(p^{2b}) = \sum_{j=0}^{b} p^{2j\alpha}$ and
+$f(p^{2b+1}) = (1 + p^\alpha) \sum_{j=0}^{b} p^{2j\alpha}$. For every complex $s$ with
+$\operatorname{Re} s > \max(1, 1 + \operatorname{Re} \alpha)$, for every prime $p$
+$$\sum_{k \ge 0} \frac{f(p^k)}{p^{ks}}
+= \frac{1 + p^{-s} + p^{-(s-\alpha)}}{(1 - p^{-2s})(1 - p^{-(2s-2\alpha)})},$$
+the series $\sum_{n \ge 1} f(n)\,n^{-s}$ converges absolutely, and
+$$\sum_{n \ge 1} \frac{f(n)}{n^s}
+= \zeta(2s)\,\zeta(2s - 2\alpha) \prod_p \left(1 + p^{-s} + p^{-(s-\alpha)}\right).$$
 
-Source: Champak Talukdar and Helen K. Saikia, *A Square-Splitting
-A-Convolution of Narkiewicz Type*, INTEGERS 26 (2026), Article A56, Theorem 11
-(`integers-2026-A56-thm-11`). -/
-public theorem_wanted squareSplitMoebius_support_density (m : ArithmeticFunction ℂ)
-    (hm : squareSplitConv (ArithmeticFunction.zeta : ArithmeticFunction ℂ) m = 1) :
-    (∀ n ≠ 0, m n ≠ 0 ↔ ∀ p, n.factorization p ≤ 3) ∧
-    Tendsto (fun N : ℕ => (((Finset.Icc 1 N).filter fun n => m n ≠ 0).card : ℝ) / N) atTop
-      (𝓝 (∏' p : Nat.Primes, (1 - 1 / ((p : ℕ) : ℝ) ^ 4))) ∧
-    ((∏' p : Nat.Primes, (1 - 1 / ((p : ℕ) : ℝ) ^ 4) : ℝ) : ℂ) = 1 / riemannZeta 4 ∧
-    (fun x : ℝ => ∑ n ∈ Finset.Icc 1 ⌊x⌋₊, ‖m n‖ ^ 2) ~[atTop]
-      fun x => x / (riemannZeta 4).re
-
-/-- Theorem 6, the parts about the explicit function: for `α ∈ ℂ` let
-`f(n) = σ_α(u(n)) σ_{2α}(v(n))` with `n = u(n) v(n)²` and the classical divisor sum
-`σ_β(m) = ∑_{d ∣ m} d^β` (complex powers). Then `f` is multiplicative, for every prime `p`
-`f(p^{2b}) = 1 + p^{2α} + ⋯ + p^{2bα}` and `f(p^{2b+1}) = (1 + p^α)(1 + p^{2α} + ⋯ + p^{2bα})`,
-and for `Re s > max(1, 1 + Re α)` the local factors are
-`∑_k f(p^k)/p^{ks} = (1 + p^{-s} + p^{-(s-α)}) / ((1 - p^{-2s})(1 - p^{-(2s-2α)}))` and
-`∑ f(n)/n^s = ζ(2s) ζ(2s - 2α) ∏_p (1 + p^{-s} + p^{-(s-α)})`, absolutely convergent. The
-paper's identification of `f` with its `σ⋆,α` (defined only in the paper body) is not stated.
+The paper identifies $f$ with its divisor function $\sigma_{\star,\alpha}$; that identification is
+not part of this statement.
 
 Source: Champak Talukdar and Helen K. Saikia, *A Square-Splitting
 A-Convolution of Narkiewicz Type*, INTEGERS 26 (2026), Article A56, Theorem 6

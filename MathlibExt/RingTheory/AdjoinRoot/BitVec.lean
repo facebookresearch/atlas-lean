@@ -30,7 +30,8 @@ Copyright 2026 Anthropic, PBC. Licensed under Apache 2.0 (see LICENSE).
 
 namespace BitVec
 
-private theorem degree_toPolynomial_lt {s : Nat} (w : BitVec s) :
+/-- A width-`s` word encodes a polynomial of degree below `s`. -/
+theorem degree_toPolynomial_lt {s : Nat} (w : BitVec s) :
     w.toPolynomial.degree < (s : WithBot Nat) := by
   simpa [toPolynomial] using Polynomial.degree_ofCoeffList_lt
     (w.toBoolListLE.map fun b => if b then (1 : ZMod 2) else 0)
@@ -108,12 +109,9 @@ theorem adjoinRoot_root_pow {s : Nat} (g : BitVec s) :
       rw [← monicModulus]
       exact AdjoinRoot.mk_self
     simpa only [map_add, map_pow, AdjoinRoot.mk_X] using h
-  have hzero : (0#s).toPolynomial = 0 := by
-    ext i
-    simp [coeff_toPolynomial]
   have htwo : g.adjoinRootEquiv g + g.adjoinRootEquiv g = 0 := by
     rw [← adjoinRootEquiv_xor, BitVec.xor_self, adjoinRootEquiv_apply,
-      hzero, map_zero]
+      toPolynomial_zero, map_zero]
   calc
     AdjoinRoot.root g.monicModulus ^ s =
         AdjoinRoot.root g.monicModulus ^ s +

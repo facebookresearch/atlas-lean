@@ -29,11 +29,10 @@ public section
 
 namespace MathlibExtTest.Probability.KolmogorovCycleSufficiency
 
-/-- Both theorem halves apply to the same canonical matrix, giving the equivalence. -/
+/-- The named combined theorem applies to the same canonical matrix. -/
 example {M : ℕ} (P : StochasticMatrix M) (hirr : P.IsIrreducible) :
     P.IsReversible ↔ P.KolmogorovCycleCondition :=
-  ⟨StochasticMatrix.kolmogorov_cycle_necessity P hirr,
-    StochasticMatrix.kolmogorov_cycle_sufficiency P hirr⟩
+  StochasticMatrix.kolmogorov_cycle_theorem P hirr
 
 /-- The uniform two-state chain satisfies the hypotheses of the sufficiency
 theorem, and the reversible distribution it produces is `(1/2, 1/2)`:
@@ -319,7 +318,9 @@ theorem nonuniformTwo_sufficiency_masses :
 
 #check StochasticMatrix.kolmogorov_cycle_necessity
 #check StochasticMatrix.kolmogorov_cycle_sufficiency
+#check StochasticMatrix.kolmogorov_cycle_theorem
 #print axioms StochasticMatrix.kolmogorov_cycle_necessity
 #print axioms StochasticMatrix.kolmogorov_cycle_sufficiency
+#print axioms StochasticMatrix.kolmogorov_cycle_theorem
 
 end MathlibExtTest.Probability.KolmogorovCycleSufficiency

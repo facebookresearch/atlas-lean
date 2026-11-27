@@ -1,0 +1,387 @@
+name: Bump build cache
+
+# Warm CI's Lean build cache for a Lean/Mathlib bump before the bump is queued.
+#
+# ci.yml keys its cache of .lake/build on lean-toolchain and lake-manifest.json,
+# so a bump, which changes both, matches no cached build. Its pull request
+# build, its merge group, and every merge group queued behind it then build the
+# libraries from scratch. That took 316 minutes for the v4.36.0 bump (#6018),
+# against a 360-minute job limit and the queue's 360-minute check timeout, and
+# the libraries keep growing. Pull request runs never save a cache, and merge
+# groups read only caches saved from main, so the warm build has to be saved
+# from main.
+#
+# A maintainer dispatches this workflow from main with the bump's pull request
+# number and the head commit they reviewed. Before it checks out that commit,
+# the run checks that it is the pull request's current head. It then checks
+# that the head changes the contents of the pin files, so that its cache key
+# differs from main's, and runs main's bump guard on it against current main.
+# It builds and checks the head with ci.yml's `build` command (scripts/check.sh
+# build) and saves .lake/build under ci.yml's key for the new pins. The bump's
+# pull request runs, its merge group, the merge groups queued behind it and
+# main's first build after it merges find it through ci.yml's restore-keys
+# prefix. It does not run ci.yml's regression suites or lesson checks: it warms
+# the cache, it does not stand in for CI.
+#
+# It runs on a 64-core runner (64 vCPUs, about 250 GB of memory and 2 TB of
+# disk), which bills about $0.16 a minute. A cold build and check of main's
+# 21,500 modules took 49 minutes there on 24 November 2026; on the standard
+# 4-core runner, the 18,000 modules of a day earlier took about 4.5 hours. With
+# that memory the memory-heavy modules, which ci.yml builds one at a time on its
+# 16 GB runner, build alongside the others.
+#
+# Trust: the run executes the bump's code, and later builds on the new pins
+# restore what it saves, so dispatch it only for a head you reviewed. Only
+# builds on the new pins can restore it. The job's token can only read.
+#
+# A run that runs out of time, or whose head fails a check, saves what it built
+# as a checkpoint under its own prefix, which only a later dispatch for the same
+# head restores; ci.yml never sees it. Only a fully checked build gets ci.yml's
+# key. Main saves a new cache entry every 30 to 60 minutes and the repository
+# keeps about five, so a warm entry lasts a few hours unless a build restores
+# it: warm the cache right before queueing the bump.
+
+on:
+  workflow_dispatch:
+    inputs:
+      pull-request:
+        description: "Number of the bump pull request"
+        required: true
+        type: string
+      head-sha:
+        description: "Full SHA of the pull request's head commit, as you reviewed it"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  pull-requests: read
+
+# One run per pull request at a time: a later dispatch waits for the running
+# one instead of building the same commit alongside it.
+concurrency:
+  group: ${{ github.workflow }}-${{ inputs.pull-request }}
+  cancel-in-progress: false
+
+jobs:
+  warm:
+    name: warm the bump's build cache
+    runs-on: 64-core-ubuntu
+    timeout-minutes: 120
+    steps:
+      - name: Record the start time
+        id: start
+        run: echo "epoch=$(date +%s)" >> "$GITHUB_OUTPUT"
+
+      # A cache saved by a run on any other ref is scoped to that ref, where
+      # pull requests and merge groups cannot read it.
+      - name: Require main
+        run: |
+          if [ "$GITHUB_REF" != refs/heads/main ]; then
+            echo "::error::dispatch this workflow from main (got ${GITHUB_REF})"
+            exit 1
+          fi
+
+      # Before any of the pull request's code is checked out.
+      - name: Check the pull request and its head
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ inputs.pull-request }}
+          HEAD_SHA: ${{ inputs.head-sha }}
+        run: |
+          set -euo pipefail
+          if ! [[ "$PR" =~ ^[1-9][0-9]*$ ]]; then
+            echo "::error::pull-request must be a pull request number, got '$PR'"
+            exit 1
+          fi
+          if ! [[ "$HEAD_SHA" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "::error::head-sha must be a full 40-character lowercase commit SHA"
+            exit 1
+          fi
+          pr="$(gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR}" \
+            --jq '[.state, .base.ref, .base.repo.full_name, .head.sha] | @tsv')"
+          IFS=$'\t' read -r state base_ref base_repo head <<< "$pr"
+          if [ "$state" != open ] || [ "$base_ref" != main ] || [ "$base_repo" != "$GITHUB_REPOSITORY" ]; then
+            echo "::error::#${PR} must be an open pull request into main (state ${state}, base ${base_repo}:${base_ref})"
+            exit 1
+          fi
+          if [ "$head" != "$HEAD_SHA" ]; then
+            echo "::error::#${PR}'s head is ${head}, not ${HEAD_SHA}: review the new head and dispatch with it"
+            exit 1
+          fi
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.head-sha }}
+          persist-credentials: false
+
+      # ci.yml keys its cache on the contents of lean-toolchain and
+      # lake-manifest.json (hashFiles hashes contents, not modes or names).
+      # With main's contents this run would save under the prefix every pull
+      # request and merge group restores, so at least one file must differ.
+      - name: Compare the head with main
+        id: compare
+        run: |
+          set -euo pipefail
+          git fetch --quiet --no-tags --depth=1 origin main
+          main_sha="$(git rev-parse FETCH_HEAD)"
+          echo "main=${main_sha}" >> "$GITHUB_OUTPUT"
+          differs=0
+          for file in lean-toolchain lake-manifest.json; do
+            mode="$(git ls-tree HEAD -- "$file" | cut -d' ' -f1)"
+            if [ "$mode" != 100644 ] || [ -L "$file" ] || [ ! -f "$file" ]; then
+              echo "::error::${file} must be a regular file in the head (git mode '${mode:-missing}')"
+              exit 1
+            fi
+            git show "${main_sha}:${file}" > "${RUNNER_TEMP}/main-${file}"
+            rc=0
+            cmp -s "${RUNNER_TEMP}/main-${file}" "$file" || rc=$?
+            case "$rc" in
+              0) ;;
+              1) differs=1 ;;
+              *) echo "::error::could not compare ${file} with main's"; exit 1 ;;
+            esac
+          done
+          if [ "$differs" != 1 ]; then
+            echo "::error::the head has main's lean-toolchain and lake-manifest.json, so it is not a bump; ci.yml's cache already covers it"
+            exit 1
+          fi
+
+      # Main's bump guard, run on the head against current main the way the
+      # Bump guard workflow runs it on a pull request: the pin files of main,
+      # of the merge base and of the head go in as data, and only main's copy of
+      # the guard runs. It accepts a forward move to a final release that every
+      # pinned dependency has tagged, or a dependency added at the current
+      # release; both change ci.yml's key, so both can be warmed. It fails a
+      # pin change that also touches the guard code.
+      - name: Run main's bump guard on the head
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HEAD_SHA: ${{ inputs.head-sha }}
+          MAIN_SHA: ${{ steps.compare.outputs.main }}
+        run: |
+          set -euo pipefail
+          guard="${RUNNER_TEMP}/guard"
+          mkdir -p "${guard}/base" "${guard}/merge-base" "${guard}/pr" "${guard}/main/scripts/bump"
+          merge_base="$(gh api "repos/${GITHUB_REPOSITORY}/compare/${MAIN_SHA}...${HEAD_SHA}" --jq '.merge_base_commit.sha')"
+          if ! [[ "$merge_base" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "::error::could not find the merge base of main and ${HEAD_SHA}"
+            exit 1
+          fi
+          git fetch --quiet --no-tags --depth=1 --filter=blob:none origin "$merge_base"
+          # The guard reads its own configuration from beside itself, as it
+          # does in a checkout of main.
+          for file in pinned_bump.py pinned_deps.json; do
+            git show "${MAIN_SHA}:scripts/bump/${file}" > "${guard}/main/scripts/bump/${file}"
+          done
+          trees=("base:${MAIN_SHA}" "merge-base:${merge_base}" "pr:${HEAD_SHA}")
+          # Copy one file of one tree in, as data. An optional file that the
+          # tree does not have stays missing, and the guard decides what that
+          # means; any other failure stops the run.
+          put() {
+            local dir="$1" rev="$2" file="$3" required="$4" dest entry
+            dest="$(realpath -m "${guard}/${dir}/${file}")"
+            case "$dest" in
+              "${guard}/${dir}"/*) ;;
+              *) echo "::error::refusing to copy ${file}: it leaves ${guard}/${dir}"; exit 1 ;;
+            esac
+            if ! entry="$(git ls-tree "$rev" -- "$file")"; then
+              echo "::error::could not read the tree of ${rev}"
+              exit 1
+            fi
+            if [ -z "$entry" ]; then
+              if [ "$required" = true ]; then
+                echo "::error::${file} is missing at ${rev}"
+                exit 1
+              fi
+              return 0
+            fi
+            case "$entry" in
+              "100644 blob "*) ;;
+              *) echo "::error::${file} at ${rev} is not a regular file (${entry%%$'\t'*})"; exit 1 ;;
+            esac
+            mkdir -p "$(dirname "$dest")"
+            git show "${rev}:${file}" > "$dest"
+          }
+          for tree in "${trees[@]}"; do
+            dir="${tree%%:*}"
+            rev="${tree#*:}"
+            for file in lean-toolchain lakefile.toml lake-manifest.json; do
+              put "$dir" "$rev" "$file" true
+            done
+            if [ "$dir" = base ]; then
+              put "$dir" "$rev" scripts/bump/pinned_deps.json true
+            else
+              put "$dir" "$rev" scripts/bump/pinned_deps.json false
+            fi
+          done
+          for kind in policy doc ledger; do
+            paths="$(cd "${guard}/main" && python3 scripts/bump/pinned_bump.py config-paths --kind "$kind" \
+              --pr-config "${guard}/pr/scripts/bump/pinned_deps.json")"
+            for file in $paths; do
+              for tree in "${trees[@]}"; do
+                put "${tree%%:*}" "${tree#*:}" "$file" false
+              done
+            done
+          done
+          git -c core.quotePath=false diff --no-renames --name-only "$merge_base" "$HEAD_SHA" > "${guard}/changed.txt"
+          cd "${guard}/main"
+          python3 scripts/bump/pinned_bump.py guard --base "${guard}/base" --merge-base "${guard}/merge-base" \
+            --pr "${guard}/pr" --changed-files "${guard}/changed.txt"
+
+      - name: Name the cache entries
+        id: key
+        env:
+          NEW_PINS: ${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
+          OS: ${{ runner.os }}
+          HEAD_SHA: ${{ inputs.head-sha }}
+        run: |
+          set -euo pipefail
+          if ! [[ "$NEW_PINS" =~ ^[0-9a-f]{64}$ ]]; then
+            echo "::error::could not hash the pin files (got '${NEW_PINS}')"
+            exit 1
+          fi
+          prefix="lake-build-${OS}-${NEW_PINS}-"
+          checkpoints="bump-cache-checkpoint-${OS}-${NEW_PINS}-${HEAD_SHA}-"
+          {
+            echo "prefix=${prefix}"
+            echo "complete=${prefix}${HEAD_SHA}"
+            echo "checkpoints=${checkpoints}"
+            echo "checkpoint=${checkpoints}${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          } >> "$GITHUB_OUTPUT"
+
+      # From here to the build, the same steps as ci.yml's build job, without its
+      # swap, which the 64-core runner's memory makes unnecessary.
+      - name: Free disk space for Lean caches
+        run: |
+          set -euo pipefail
+          df -h / || true
+          # Unknown free space counts as too little: the second line of the
+          # report must be one decimal number.
+          free_kib="$(df --output=avail -k / | awk 'NR == 2 && NF == 1 && $1 ~ /^[0-9]+$/ { print $1 }')" || free_kib=""
+          if [[ -z "$free_kib" ]] || (( 10#$free_kib < 60 * 1024 * 1024 )); then
+            sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc
+            df -h / || true
+          fi
+
+      - name: Install elan v4.2.4
+        run: |
+          set -euo pipefail
+          installer_dir="${RUNNER_TEMP}/elan-installer"
+          archive="${installer_dir}/elan-x86_64-unknown-linux-gnu.tar.gz"
+          mkdir -p "$installer_dir"
+          curl --fail --silent --show-error --location \
+            --proto '=https' --tlsv1.2 \
+            https://github.com/leanprover/elan/releases/download/v4.2.4/elan-x86_64-unknown-linux-gnu.tar.gz \
+            --output "$archive"
+          echo "42b94d4244e8353142c456ec0e4ca6528fd898a6c604d4059f494e706e431f63  $archive" \
+            | sha256sum --check --strict
+          tar xzf "$archive" -C "$installer_dir"
+          "$installer_dir/elan-init" -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+
+      - name: Fetch Mathlib cache
+        run: lake exe cache get
+
+      # An exact hit means this head is already warm. Otherwise this resumes
+      # from an earlier dispatch's checkpoint for this head, or else starts
+      # from the newest complete build on the new pins.
+      - name: Restore an earlier build on the new pins
+        id: restore
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .lake/build
+          key: ${{ steps.key.outputs.complete }}
+          restore-keys: |
+            ${{ steps.key.outputs.checkpoints }}
+            ${{ steps.key.outputs.prefix }}
+
+      # ci.yml's `scripts/check.sh build`, given the time left before the
+      # deadline, which leaves room to save the build. The step's shell runs
+      # with -e, so each exit status is caught where it happens.
+      - name: Build and check the head
+        id: build
+        if: steps.restore.outputs.cache-hit != 'true'
+        env:
+          START: ${{ steps.start.outputs.epoch }}
+        run: |
+          set -uo pipefail
+          deadline=$(( START + 100 * 60 ))
+          status=ok
+          run_until_deadline() {
+            local minutes=$(( (deadline - $(date +%s)) / 60 ))
+            if [ "$minutes" -lt 1 ]; then
+              status=timeout
+              return 0
+            fi
+            local began rc=0
+            began=$(date +%s)
+            timeout --signal=TERM --kill-after=5m "${minutes}m" "$@" || rc=$?
+            # 124: the time ran out. 137: killed, either after the time ran
+            # out and the grace period passed, or by something else.
+            if [ "$rc" -eq 124 ]; then
+              status=timeout
+            elif [ "$rc" -eq 137 ] && [ $(( $(date +%s) - began )) -ge $(( minutes * 60 )) ]; then
+              status=timeout
+            elif [ "$rc" -ne 0 ]; then
+              status=failed
+            fi
+            return 0
+          }
+          run_until_deadline scripts/check.sh build
+          echo "status=${status}" >> "$GITHUB_OUTPUT"
+
+      - name: Save the build
+        id: save
+        if: ${{ !cancelled() && steps.build.outputs.status != '' }}
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .lake/build
+          key: ${{ steps.build.outputs.status == 'ok' && steps.key.outputs.complete || steps.key.outputs.checkpoint }}
+
+      # actions/cache/save only warns when an upload fails, so look the entry up.
+      - name: Confirm the save
+        id: confirm
+        if: ${{ !cancelled() && steps.build.outputs.status != '' }}
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .lake/build
+          key: ${{ steps.build.outputs.status == 'ok' && steps.key.outputs.complete || steps.key.outputs.checkpoint }}
+          lookup-only: true
+
+      - name: Report
+        if: ${{ !cancelled() }}
+        env:
+          HIT: ${{ steps.restore.outputs.cache-hit }}
+          STATUS: ${{ steps.build.outputs.status }}
+          SAVED: ${{ steps.confirm.outputs.cache-hit }}
+          COMPLETE: ${{ steps.key.outputs.complete }}
+          CHECKPOINT: ${{ steps.key.outputs.checkpoint }}
+        run: |
+          set -euo pipefail
+          say() { echo "$1" | tee -a "$GITHUB_STEP_SUMMARY"; }
+          if [ "$HIT" = true ]; then
+            say "Already warm: ${COMPLETE}"
+            exit 0
+          fi
+          if [ -n "$STATUS" ] && [ "$SAVED" != true ]; then
+            say "The build ran (${STATUS}) but its cache entry is missing: see the save step."
+            exit 1
+          fi
+          case "$STATUS" in
+            ok)
+              say "Saved ${COMPLETE}"
+              ;;
+            timeout)
+              say "Out of time: saved a checkpoint as ${CHECKPOINT}. Dispatch again with the same inputs to continue from it."
+              exit 1
+              ;;
+            failed)
+              say "The head does not build or check cleanly (see the build step): saved a checkpoint as ${CHECKPOINT}."
+              exit 1
+              ;;
+            *)
+              say "The build did not run; nothing was saved."
+              exit 1
+              ;;
+          esac

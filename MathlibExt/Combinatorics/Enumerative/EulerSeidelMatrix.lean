@@ -24,17 +24,18 @@ Source: Ayhan Dil and István Mező, *A Symmetric Algorithm for Hyperharmonic an
 
 namespace MetaMathlibExt
 
-/-- Euler-Seidel matrix of an initial sequence (concept `jis_sem_2d9f269b63b4ba3ecb7264dc`,
-required clause `jis_a4c0543f8c36d23dbc01b6aa`): given `a : ℕ → M`, the array `a_n^k`
-with `a_n^0 = a_n` for `n ≥ 0` and `a_n^k = a_n^{k-1} + a_{n+1}^{k-1}` for `n ≥ 0`,
-`k ≥ 1`. -/
+/-- **Euler–Seidel matrix.** Let $M$ be a type with an addition and let $(a_n)_{n \ge 0}$ be a
+sequence in $M$. The Euler–Seidel matrix of $a$ is the array $(a_n^k)_{n, k \ge 0}$, with entry
+$a_n^k$ in position $(n, k)$, defined by $a_n^0 = a_n$ and
+$a_n^k = a_n^{k-1} + a_{n+1}^{k-1}$ for $k \ge 1$. -/
 def eulerSeidelMatrix {M : Type*} [Add M] (a : ℕ → M) : ℕ → ℕ → M
   | n, 0 => a n
   | n, k + 1 => eulerSeidelMatrix a n k + eulerSeidelMatrix a (n + 1) k
 
 open scoped BigOperators in
-/-- Closed form of the Euler–Seidel matrix: the `(n, k)` entry is the binomial
-transform of the initial row. -/
+/-- **Closed form of the Euler–Seidel matrix.** Let $M$ be an additive commutative monoid and let
+$(a_n)_{n \ge 0}$ be a sequence in $M$. For all $n, k \ge 0$, the entry $a_n^k$ of the
+Euler–Seidel matrix of $a$ equals $\sum_{i=0}^{k} \binom{k}{i} a_{n+i}$. -/
 public theorem eulerSeidelMatrix_eq_sum {M : Type*} [AddCommMonoid M] (a : ℕ → M)
     (n k : ℕ) :
     eulerSeidelMatrix a n k = ∑ i ∈ Finset.range (k + 1), k.choose i • a (n + i) := by

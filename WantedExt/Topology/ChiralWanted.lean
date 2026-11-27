@@ -29,13 +29,14 @@ distributed under the Apache License, Version 2.0. lean-eval ships no
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
-and placed the declarations in the `MathlibExt.Topology.ChiralWanted` namespace. The shared knot-theory prelude is imported from `WantedExt.Topology.ConwayKnotShared` instead of being copied here. Mathematical
+and placed the declarations in the `MathlibExt.Topology.ChiralWanted` namespace. The shared
+knot-theory prelude is imported from `MathlibExt.Topology.ConwayKnotShared`. Mathematical
 statements are unchanged. Source: Classical; see https://en.wikipedia.org/wiki/Chirality_(mathematics) and https://en.wikipedia.org/wiki/Trefoil_knot.
 -/
 module
 
 public import Batteries.Util.ProofWanted
-public import WantedExt.Topology.ConwayKnotShared
+public import MathlibExt.Topology.ConwayKnotShared
 public import Mathlib.Analysis.InnerProductSpace.PiL2
 public import Mathlib.Analysis.Calculus.ContDiff.Basic
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
@@ -49,7 +50,7 @@ open MathlibExt.Topology.ConwayKnotShared.KnotTheory
 
 /-! The knot-theory model (`R3`, `Knot`, `TwoLink`, `AmbientIsotopy`,
 `CircleReparam`, isotopy, `reflectZ`, chirality) is shared with the other
-knot entries via `WantedExt.Topology.ConwayKnotShared` and is not copied
+knot entries via `MathlibExt.Topology.ConwayKnotShared` and is not copied
 here, so all knot entries speak about the same `Knot` type. -/
 
 /-!
@@ -92,7 +93,13 @@ Standard chirality-detecting invariants:
 
 See <https://en.wikipedia.org/wiki/Chirality_(mathematics)> and
 <https://en.wikipedia.org/wiki/Trefoil_knot>. -/
-/-- Source: Classical; see https://en.wikipedia.org/wiki/Chirality_(mathematics) and https://en.wikipedia.org/wiki/Trefoil_knot. Via leanprover/lean-eval@38361be, problem `exists_chiral_knot`. -/
+/-- **Existence of a chiral knot.** There exists an oriented smooth knot $K$ in $\mathbb{R}^3$
+that is chiral: it is not ambient-isotopic, as an oriented knot, to its mirror image $r \circ K$,
+where $r(x, y, z) = (x, y, -z)$ is the reflection through the $xy$-plane.
+
+Source: Classical; see https://en.wikipedia.org/wiki/Chirality_(mathematics) and
+https://en.wikipedia.org/wiki/Trefoil_knot. Via leanprover/lean-eval@38361be, problem
+`exists_chiral_knot`. -/
 public theorem_wanted exists_chiral_knot : ∃ K : Knot, K.Chiral
 
 end KnotTheory

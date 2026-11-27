@@ -27,18 +27,23 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- The data determining a Bell matrix: a power series `g` with invertible constant coefficient.
-The corresponding Riordan-array pair is `(g, X * g)`. -/
+/-- **Bell matrix.** Let $R$ be a commutative ring. A Bell matrix over $R$ is given by a formal
+power series $g \in R[[X]]$ whose constant coefficient is a unit of $R$. The corresponding
+Riordan-array pair is $(g, Xg)$. -/
 structure BellMatrix (R : Type*) [CommRing R] where
   g : PowerSeries R
   isUnit_const : IsUnit g.constantCoeff
 
-/-- The second component `X * g` of the Riordan-array pair represented by `M`. -/
+/-- **Second component of a Bell matrix.** For a Bell matrix over a commutative ring $R$ given by
+the power series $g$, the second component of its Riordan-array pair is the power series
+$h = Xg \in R[[X]]$. -/
 noncomputable def BellMatrix.h {R : Type*} [CommRing R] (M : BellMatrix R) :
     PowerSeries R :=
   PowerSeries.X * M.g
 
-/-- The entry in row `n` and column `k` of the Bell matrix represented by `M`. -/
+/-- **Entries of a Bell matrix.** For a Bell matrix over a commutative ring $R$ given by the
+power series $g$, and natural numbers $n$ and $k$, the entry in row $n$ and column $k$ is the
+coefficient of $X^n$ in $g \cdot (Xg)^k$. -/
 noncomputable def BellMatrix.entry {R : Type*} [CommRing R] (M : BellMatrix R)
     (n k : ℕ) : R :=
   (M.g * (PowerSeries.X * M.g) ^ k).coeff n

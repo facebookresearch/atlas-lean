@@ -30,6 +30,15 @@ example (R : Type u) [CommRing R] [IsDomain R] [UniqueFactorizationMonoid R]
     IsDomain Sₚ ∧ IsIntegrallyClosed Sₚ :=
   Algebra.Smooth.isDomain_and_isIntegrallyClosed_of_isLocalization_atPrime R S p Sₚ
 
+-- `exactSource` consumer with the original binders.
+example (R : Type u) [CommRing R] [IsDomain R] [IsIntegrallyClosed R]
+    (S : Type u) [CommRing S] [Algebra R S] [Algebra.Smooth R S]
+    (p : Ideal S) [p.IsPrime] (Sₚ : Type u) [CommRing Sₚ] [Algebra S Sₚ]
+    [IsLocalization.AtPrime Sₚ p] :
+    IsDomain Sₚ ∧ IsIntegrallyClosed Sₚ :=
+  Algebra.Smooth.isDomain_and_isIntegrallyClosed_of_isIntegrallyClosed_of_isLocalization_atPrime
+    R S p Sₚ
+
 example (k : Type*) [Field k] [IsAlgClosed k] (R : Type*) [CommRing R] [Algebra k R]
     [Algebra.Etale k R] :
     Nat.card (R →ₐ[k] k) = Module.finrank k R :=

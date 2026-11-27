@@ -1,0 +1,3 @@
+# CONNECTED VERTEX COVER ON PLANAR GRAPHS OF MAXIMUM DEGREE 4 as a decision problem
+
+The decision problem CONNECTED VERTEX COVER ON PLANAR GRAPHS OF MAXIMUM DEGREE 4 accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding of triples $(n, E, K)$ (a natural number, a list of pairs of natural numbers and a natural number), to an instance that is well-formed for CONNECTED VERTEX COVER ON PLANAR GRAPHS OF MAXIMUM DEGREE 4 and feasible for it: some nonempty set of at most $K$ vertices covers every edge and induces a connected subgraph. It rejects every bitstring that does not decode to such an instance.

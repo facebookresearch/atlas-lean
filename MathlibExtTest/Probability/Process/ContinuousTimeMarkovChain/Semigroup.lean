@@ -53,6 +53,13 @@ example (i j : Fin 2) : 0 ≤ ctmcTransition q2 1 i j :=
 example : ctmcTransition q2 (1 / 2) ∈ rowStochastic ℝ (Fin 2) :=
   isRateMatrix_q2.ctmcTransition_mem_rowStochastic (by norm_num)
 
+-- Metzler nonnegativity needs no row-sum condition: `!![-2, 1; 3, -1]` is not a rate matrix,
+-- but its off-diagonal entries are nonnegative.
+example (i j : Fin 2) : 0 ≤ ctmcTransition !![-2, 1; 3, -1] 1 i j :=
+  ctmcTransition_nonneg_of_offDiag_nonneg
+    (by intro a b hab; fin_cases a <;> fin_cases b <;> simp_all) zero_le_one i j
+
+
 -- Positivity at a positive time: both off-diagonal rates of `q2` are positive.
 example (i j : Fin 2) : 0 < ctmcTransition q2 1 i j :=
   isRateMatrix_q2.ctmcTransition_pos
@@ -96,6 +103,7 @@ example (t : ℝ) : ctmcTransition (0 : Matrix (Fin 3) (Fin 3) ℝ) t 0 1 = 0 :=
   simp [ctmcTransition]
 
 #print axioms ctmcTransition_add
+#print axioms ctmcTransition_nonneg_of_offDiag_nonneg
 #print axioms hasDerivAt_ctmcTransition_backward
 #print axioms hasDerivAt_ctmcTransition_forward
 #print axioms IsRateMatrix.ctmcTransition_mem_rowStochastic

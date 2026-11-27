@@ -57,9 +57,13 @@ namespace Projectivization
 
 variable {K : Type*} [Field K] [DecidableEq K]
 
-/-- The points orthogonal to two distinct points `v ≠ w` of `ℙ K (Fin 3 → K)` are exactly
-`cross v w`: two distinct lines meet exactly in their cross product, and dually two distinct points
-lie on exactly one line. -/
+/-- **Two distinct lines meet in their cross product.** Let $K$ be a field and let $v \ne w$ be
+two distinct points of the projective plane $\mathbb{P}(K^3)$. Call two points orthogonal when
+the dot product of representative vectors in $K^3$ vanishes, and let $v \times w$ be the point
+spanned by the cross product of representatives of $v$ and $w$, which is nonzero since
+$v \ne w$. Then a point $p$ equals $v \times w$ if and only if $p$ is orthogonal to both $v$
+and $w$. Reading points as coordinate vectors of lines, this says that two distinct lines meet
+exactly in their cross product, and dually that two distinct points lie on exactly one line. -/
 theorem eq_cross_iff {p v w : ℙ K (Fin 3 → K)} (h : v ≠ w) :
     p = cross v w ↔ p.orthogonal v ∧ p.orthogonal w := by
   refine ⟨fun hp => hp ▸ ⟨cross_orthogonal_left h, cross_orthogonal_right h⟩, fun hp => ?_⟩
@@ -68,8 +72,12 @@ theorem eq_cross_iff {p v w : ℙ K (Fin 3 → K)} (h : v ≠ w) :
 
 end Projectivization
 
-/-- A line arrangement in the projective plane over `K`: a finite set of at least two lines, each
-line recorded by its coordinate vector, a point of the dual plane `ℙ K (Fin 3 → K)`. -/
+/-- **Line arrangement.** A line arrangement in the projective plane over a field $K$ is a finite
+set of at least two lines, each line recorded by its coordinate vector, a point of the dual
+projective plane $\mathbb{P}(K^3)$.
+
+A point $p$ lies on the line with coordinate vector $\ell$ when the dot product of
+representatives of $p$ and $\ell$ vanishes. -/
 @[ext]
 structure LineArrangement (K : Type*) [Field K] where
   /-- The lines of the arrangement. -/
@@ -82,16 +90,24 @@ namespace LineArrangement
 variable {K : Type*} [Field K] (A : LineArrangement K)
 
 open Classical in
-/-- The multiplicity `m_p` of the point `p` in `A`: the number of lines of `A` through `p`. -/
+/-- **Multiplicity of a point in a line arrangement.** Let $A$ be a line arrangement in the
+projective plane over a field. The multiplicity $m_p$ of a point $p$ in $A$ is the number of
+lines of $A$ through $p$, that is, of lines of $A$ whose coordinate vector has zero dot product
+with a representative of $p$. -/
 noncomputable def multiplicity (p : ℙ K (Fin 3 → K)) : ℕ :=
   (A.lines.filter fun ℓ => p.orthogonal ℓ).card
 
 open Classical in
-/-- The singular points of `A`: the intersection points of pairs of distinct lines of `A`. -/
+/-- **Singular points of a line arrangement.** The singular points of a line arrangement $A$ in
+the projective plane over a field form the finite set of intersection points of pairs of distinct
+lines of $A$, where two distinct lines with coordinate vectors $\ell$ and $\ell'$ meet in the
+point spanned by the cross product $\ell \times \ell'$ of their representatives. -/
 noncomputable def singularPoints : Finset (ℙ K (Fin 3 → K)) :=
   A.lines.offDiag.image fun ℓ => Projectivization.cross ℓ.1 ℓ.2
 
-/-- A point is singular iff it lies on two distinct lines of the arrangement. -/
+/-- **Singular points lie on two distinct lines.** Let $A$ be a line arrangement in the projective
+plane over a field. A point $p$ is a singular point of $A$ if and only if there are two distinct
+lines of $A$ that both pass through $p$. -/
 theorem mem_singularPoints_iff_exists {p : ℙ K (Fin 3 → K)} :
     p ∈ A.singularPoints ↔
       ∃ ℓ ∈ A.lines, ∃ ℓ' ∈ A.lines, ℓ ≠ ℓ' ∧ p.orthogonal ℓ ∧ p.orthogonal ℓ' := by
@@ -103,7 +119,10 @@ theorem mem_singularPoints_iff_exists {p : ℙ K (Fin 3 → K)} :
   · rintro ⟨ℓ, hℓ, ℓ', hℓ', hne, h⟩
     exact ⟨ℓ, ℓ', ⟨hℓ, hℓ', hne⟩, ((Projectivization.eq_cross_iff hne).2 h).symm⟩
 
-/-- The singular points are the points of multiplicity at least two. -/
+/-- **Singular points are the points of multiplicity at least two.** Let $A$ be a line
+arrangement in the projective plane over a field. A point $p$ is a singular point of $A$ if and
+only if its multiplicity $m_p$ in $A$, the number of lines of $A$ through $p$, satisfies
+$m_p \ge 2$. -/
 theorem mem_singularPoints_iff {p : ℙ K (Fin 3 → K)} :
     p ∈ A.singularPoints ↔ 2 ≤ A.multiplicity p := by
   classical
@@ -115,12 +134,14 @@ theorem mem_singularPoints_iff {p : ℙ K (Fin 3 → K)} :
   · rintro ⟨ℓ, ⟨hℓ, h⟩, ℓ', ⟨hℓ', h'⟩, hne⟩
     exact ⟨ℓ, hℓ, ℓ', hℓ', hne, h, h'⟩
 
-/-- The multiplicity of a point is at most the number of lines. -/
+/-- **Multiplicity is at most the number of lines.** Let $A$ be an arrangement of $d$ lines in
+the projective plane over a field. Every point $p$ has multiplicity $m_p \le d$ in $A$. -/
 theorem multiplicity_le_card (p : ℙ K (Fin 3 → K)) : A.multiplicity p ≤ A.lines.card := by
   classical
   exact Finset.card_filter_le _ _
 
-/-- Every arrangement has a singular point: any two of its lines meet. -/
+/-- **Every line arrangement has a singular point.** Every line arrangement in the projective
+plane over a field has at least one singular point, since any two of its distinct lines meet. -/
 theorem singularPoints_nonempty : A.singularPoints.Nonempty := by
   classical
   obtain ⟨ℓ, hℓ, ℓ', hℓ', hne⟩ := Finset.one_lt_card.1 A.two_le_card
@@ -130,9 +151,15 @@ theorem singularPoints_nonempty : A.singularPoints.Nonempty := by
 theorem card_singularPoints_pos : 0 < A.singularPoints.card :=
   Finset.card_pos.2 A.singularPoints_nonempty
 
-/-- The Harbourne constant `H(A) = (d² - ∑_p m_p²) / s` of an arrangement of `d` lines with `s`
-singular points `p` of multiplicities `m_p`: the self-intersection of the strict transform of the
-arrangement on the blow-up of its singular points, divided by `s`. -/
+/-- **Harbourne constant of a line arrangement.** Let $A$ be an arrangement of $d$ lines in the
+projective plane over a field, let $S$ be its set of singular points, with $s$ elements, and let
+$m_p$ be the multiplicity of a point $p$ in $A$. The Harbourne constant of $A$ is the real number
+
+$$H(A) = \frac{d^2 - \sum_{p \in S} m_p^2}{s}.$$
+
+Every arrangement has a singular point, so $s \ge 1$. The number $H(A)$ is the self-intersection
+of the strict transform of the arrangement on the blow-up of its singular points, divided by $s$.
+-/
 noncomputable def hConstant : ℝ :=
   ((A.lines.card : ℝ) ^ 2 - ∑ p ∈ A.singularPoints, (A.multiplicity p : ℝ) ^ 2) /
     A.singularPoints.card

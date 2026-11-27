@@ -94,7 +94,7 @@ theorem hinfo_seq : ∀ η > 0, Tendsto (fun n : ℕ => Measure.dirac () {_ω : 
   refine tendsto_const_nhds.congr' ?_
   filter_upwards [eventually_gt_atTop 0] with n hn
   symm
-  convert measure_empty (μ := Measure.dirac ())
+  convert measure_empty (μ := Measure.dirac ()) using 2
   rw [Set.eq_empty_iff_forall_notMem]
   rintro ω ⟨b, -, hb⟩
   have hn' : (n : ℝ) ≠ 0 := by exact_mod_cast hn.ne'

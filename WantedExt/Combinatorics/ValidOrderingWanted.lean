@@ -29,41 +29,16 @@ module
 public import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.Order.Floor.Defs
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
-public import Mathlib.Combinatorics.Additive.FreimanHom
 public import Mathlib.Data.Finset.Basic
 public import Mathlib.Data.ZMod.Basic
+public import MathlibExt.Combinatorics.DistinctPartialSumsOrdering
+public import MathlibExt.Combinatorics.LevRectification
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.Combinatorics.ValidOrderingWanted
-
-/-- **Theorem 2**: every finite subset of `ℤ \ {0}` has
-a valid ordering, i.e., an ordering whose partial sums
-are pairwise distinct.
-
-Source: Noah Kravitz, "Rearranging Small Sets for
-Distinct Partial Sums", Theorem 2. -/
-theorem_wanted exists_distinct_partial_sums_ordering
-    (A : Finset ℤ) (h0 : 0 ∉ A) :
-    ∃ l : List ℤ, List.Perm l A.toList ∧
-      ((l.scanl (· + ·) 0).tail).Nodup
-
-/-- **Theorem 3** (Lev's rectification principle, as
-quoted in the paper): for `ℓ ≥ 2`, if `A ⊆ 𝔽_p`
-satisfies `|A| ≤ ⌈log p / log ℓ⌉`, then `A` is
-`ℓ`-Freiman isomorphic to a set of integers. (For
-`ℓ ≤ 1` the logarithmic bound is out of domain, hence
-the hypothesis `2 ≤ ℓ`.)
-
-Source: Noah Kravitz, "Rearranging Small Sets for
-Distinct Partial Sums", Theorem 3. -/
-theorem_wanted exists_freimanIso_to_int (ℓ p : ℕ)
-    (hℓ : 2 ≤ ℓ) (hp : p.Prime) (A : Finset (ZMod p))
-    (hA : A.card ≤ ⌈Real.log p / Real.log ℓ⌉₊) :
-    ∃ (B : Finset ℤ) (f : ZMod p → ℤ),
-      IsAddFreimanIso ℓ (A : Set (ZMod p)) (B : Set ℤ) f
 
 /-- **Theorem 1**: for a prime `p`, every `A ⊆ 𝔽_p \ {0}` with
 `|A| ≤ log p / log log p` has a valid ordering (pairwise distinct

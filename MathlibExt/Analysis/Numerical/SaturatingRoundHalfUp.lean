@@ -23,7 +23,8 @@ saturating analog-to-digital quantizer is
 `Q(x) = Delta * clamp(kmin, kmax, floor(x / Delta + 1 / 2))`, where
 rounding is to nearest with ties toward `+infinity`. This module proves
 the explicit quantization contract: `Q` is monotone, the error is at
-most `Delta / 2` on the full-scale interval `[Delta * kmin, Delta * kmax]`,
+most `Delta / 2` on every unclipped input, in particular on the
+full-scale interval `[Delta * kmin, Delta * kmax]`,
 and for arbitrary inputs the error is at most the distance to that
 interval plus `Delta / 2`. Clipping is exposed separately as
 `IsClipped`, and signed `w`-bit codes (`w >= 1`) are handled with the
@@ -48,9 +49,6 @@ some violate it (`Delta = 1`, singleton code range, `x = 10` has error
 `10`), while others still meet it (`x = 1 / 2` in the same range is
 clipped and has error exactly `Delta / 2`). No probabilistic model of
 the quantization error is asserted.
-
-Discharges ECE roadmap leaf `ECE.SIG.ADC.L1` (saturating ADC with an
-explicit quantization contract).
 -/
 
 @[expose] public section
@@ -192,13 +190,12 @@ theorem not_isClipped_of_mem_Icc {Δ : ℝ} (hΔ : 0 < Δ) {kmin kmax : ℤ} {x 
     have hcast : (kmax : ℝ) + 1 ≤ (round (x / Δ) : ℝ) := by exact_mod_cast h1
     linarith
 
-/-- In the full-scale interval the quantization error is at most `Δ / 2`. -/
-theorem abs_quantize_sub_le_of_mem_Icc {Δ : ℝ} (hΔ : 0 < Δ) {kmin kmax : ℤ}
-    {x : ℝ} (hx : x ∈ Set.Icc (Δ * (kmin : ℝ)) (Δ * (kmax : ℝ))) :
+/-- Away from clipping the quantization error is at most `Δ / 2`. -/
+theorem abs_quantize_sub_le_of_not_isClipped {Δ : ℝ} (hΔ : 0 < Δ) {kmin kmax : ℤ}
+    {x : ℝ} (hx : ¬ IsClipped Δ kmin kmax x) :
     |quantize Δ kmin kmax x - x| ≤ Δ / 2 := by
-  have hnc : ¬ IsClipped Δ kmin kmax x := not_isClipped_of_mem_Icc hΔ hx
   have hcode : code Δ kmin kmax x = round (x / Δ) :=
-    code_eq_round_of_not_isClipped hnc
+    code_eq_round_of_not_isClipped hx
   have habs := abs_sub_round (x / Δ)
   have hDx : Δ * (x / Δ) = x := mul_div_cancel₀ x (ne_of_gt hΔ)
   have h1 : Δ * (round (x / Δ) : ℝ) - x = Δ * ((round (x / Δ) : ℝ) - x / Δ) := by
@@ -211,6 +208,12 @@ theorem abs_quantize_sub_le_of_mem_Icc {Δ : ℝ} (hΔ : 0 < Δ) {kmin kmax : �
   calc Δ * |(round (x / Δ) : ℝ) - x / Δ| ≤ Δ * (1 / 2) :=
         mul_le_mul_of_nonneg_left habs2 hΔ.le
     _ = Δ / 2 := by ring
+
+/-- In the full-scale interval the quantization error is at most `Δ / 2`. -/
+theorem abs_quantize_sub_le_of_mem_Icc {Δ : ℝ} (hΔ : 0 < Δ) {kmin kmax : ℤ}
+    {x : ℝ} (hx : x ∈ Set.Icc (Δ * (kmin : ℝ)) (Δ * (kmax : ℝ))) :
+    |quantize Δ kmin kmax x - x| ≤ Δ / 2 :=
+  abs_quantize_sub_le_of_not_isClipped hΔ (not_isClipped_of_mem_Icc hΔ hx)
 
 /-- The Mathlib interval projection `Set.projIcc` is a nearest point:
 for real endpoints `a <= b`, `|x - (Set.projIcc a b hab x : ℝ)|` is at

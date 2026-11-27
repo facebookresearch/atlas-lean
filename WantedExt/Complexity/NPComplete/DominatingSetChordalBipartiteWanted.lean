@@ -19,13 +19,13 @@ NP-Completeness*, W. H. Freeman (1979), problem [GT2] DOMINATING SET.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Combinatorics.SimpleGraph.Bipartite
 public import Mathlib.Combinatorics.SimpleGraph.Copy
 public import Mathlib.Combinatorics.SimpleGraph.CycleGraph
-public import WantedExt.Complexity.NPComplete.DominatingSetWanted
+public import CSLibExt.Complexity.NPComplete.DominatingSetDefs
 
 @[expose] public section
 
@@ -42,7 +42,7 @@ QUESTION: is there a dominating set `V' ⊆ V` with `|V'| ≤ K`, that is, every
 has a neighbor in `V'`?
 
 The instance, its well-formedness and the question are those of
-`WantedExt.Complexity.NPComplete.DominatingSetWanted` ([GT2]: a simple graph on `Fin n` given by
+`CSLibExt.Complexity.NPComplete.DominatingSetDefs` ([GT2]: a simple graph on `Fin n` given by
 an edge list, and the bound `K`). The restriction adds that the graph is chordal bipartite:
 bipartite, as Mathlib's `SimpleGraph.IsBipartite` (`Colorable 2`), and without a chordless cycle of length at
 least `6`, that is, no cycle graph `Cₖ` with `k ≥ 6` is an induced subgraph (Mathlib's

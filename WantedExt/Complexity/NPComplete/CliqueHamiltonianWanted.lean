@@ -21,12 +21,12 @@ ISGCI, *Information System on Graph Classes and their Inclusions*, class "hamilt
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Combinatorics.SimpleGraph.Clique
 public import Mathlib.Combinatorics.SimpleGraph.Hamiltonian
-public import WantedExt.Complexity.NPComplete.GraphColoringWanted
+public import CSLibExt.Complexity.NPComplete.GraphColoringDefs
 
 @[expose] public section
 
@@ -50,7 +50,7 @@ count `n`, edge list, bound `K`), the graph (`GraphColoring.Graph`, the edge-lis
 (`CliqueClawFreeWanted`, `CliqueBOneVPGWanted`): a `Finset` of at least `K` vertices whose
 coercion is Mathlib's `SimpleGraph.IsClique`. Well-formedness adds `0 < K ≤ |V|` ([GT19]'s
 instance class) and Hamiltonicity: at least 3 vertices and Mathlib's `SimpleGraph.IsHamiltonian`
-(a Hamiltonian cycle exists), as in `HamiltonianCycleUndirectedWanted`; the bound excludes the
+(a Hamiltonian cycle exists), as in `HamiltonianCycleUndirectedDefs`; the bound excludes the
 one-vertex graph, which Mathlib counts as Hamiltonian although it has no simple cycle.
 The Hamiltonian cycle is not part of the instance; membership in NP takes the clique together
 with a Hamiltonian cycle as the certificate.

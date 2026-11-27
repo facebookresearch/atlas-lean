@@ -11,8 +11,14 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.NumberTheory.PrimeCounting
+public import MathlibExt.Analysis.SpecialFunctions.Exp.Zelinsky
+public import MathlibExt.Analysis.SpecialFunctions.Log.Zelinsky
+public import MathlibExt.NumberTheory.ArithmeticFunction.AbundancySupDivIndex
+public import MathlibExt.NumberTheory.ArithmeticFunction.OddPerfectPrimeProduct
 public import MathlibExt.NumberTheory.EulerPrime
 public import WantedExt.NumberTheory.PrimitiveNondeficientWanted
+public import MathlibExt.NumberTheory.ArithmeticFunction.OddPerfectPrimeReciprocalSum
+public import MathlibExt.NumberTheory.ArithmeticFunction.OddPerfectPrimeReciprocalSumNotIsEulerPrimeOfMod165Eq
 
 /-! # Prime reciprocal sums of odd perfect and primitive non-deficient numbers
 
@@ -33,8 +39,10 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- If `n` is an odd perfect number with least prime factor `p₁ ≥ 11`, then
-`T(n) < log 2 - 11/(50 p₁²)`.
+/-- **Zelinsky's upper bound on the prime reciprocal sum of an odd perfect number.** Let $n$ be an
+odd perfect number whose least prime factor $p_1$ satisfies $p_1 \ge 11$, and let
+$T(n) = \sum_{p \mid n} 1/p$, the sum over the primes $p$ dividing $n$. Then
+$T(n) < \log 2 - \frac{11}{50 p_1^2}$.
 
 Source: Joshua Zelinsky, *The Sum of the Reciprocals of the Prime Divisors of an Odd
 Perfect or Odd Primitive Non-deficient Number*, INTEGERS 25 (2025), Article A59,
@@ -43,8 +51,10 @@ public theorem_wanted oddPerfect_primeReciprocalSum_lt_log_two_sub
     (n : ℕ) (hodd : Odd n) (hperf : n.Perfect) (h11 : 11 ≤ n.minFac) :
     ∑ p ∈ n.primeFactors, (1 : ℝ) / p < Real.log 2 - 11 / (50 * (n.minFac : ℝ) ^ 2)
 
-/-- If `n` is an odd perfect number with least prime factor `p₁ ≥ 11`, then its surplus
-satisfies `S(n) = H(n) - 2 < 25/(8 p₁ log p₁)`.
+/-- **Surplus of an odd perfect number with least prime factor at least 11.** Let $n$ be an odd
+perfect number whose least prime factor $p_1$ satisfies $p_1 \ge 11$, and let
+$H(n) = \prod_{p \mid n} p/(p-1)$, the product over the primes $p$ dividing $n$. Then its surplus
+$H(n) - 2$ satisfies $H(n) - 2 < \frac{25}{8 p_1 \log p_1}$.
 
 Source: Joshua Zelinsky, *The Sum of the Reciprocals of the Prime Divisors of an Odd
 Perfect or Odd Primitive Non-deficient Number*, INTEGERS 25 (2025), Article A59,
@@ -53,17 +63,9 @@ public theorem_wanted oddPerfect_abundancySup_sub_two_lt
     (n : ℕ) (hodd : Odd n) (hperf : n.Perfect) (h11 : 11 ≤ n.minFac) :
     (abundancySup n : ℝ) - 2 < 25 / (8 * (n.minFac : ℝ) * Real.log n.minFac)
 
-/-- For `0 ≤ x ≤ 1/11`, `1 + x + x² ≥ exp(x + 2x²/5)`, with equality exactly at `x = 0`.
-
-Source: Joshua Zelinsky, *The Sum of the Reciprocals of the Prime Divisors of an Odd
-Perfect or Odd Primitive Non-deficient Number*, INTEGERS 25 (2025), Article A59,
-Lemma 3 (`integers-2025-A59-lem-3`). -/
-public theorem_wanted exp_add_two_fifths_sq_le_one_add_add_sq
-    (x : ℝ) (h0 : 0 ≤ x) (h1 : x ≤ 1 / 11) :
-    Real.exp (x + 2 * x ^ 2 / 5) ≤ 1 + x + x ^ 2 ∧
-      (Real.exp (x + 2 * x ^ 2 / 5) = 1 + x + x ^ 2 ↔ x = 0)
-
-/-- For every prime `p ≥ 19`, `π(p) ≥ p / log p + 1`.
+/-- **Lower bound for the prime-counting function at primes $p \ge 19$.** For every prime
+$p \ge 19$, the number $\pi(p)$ of primes at most $p$ satisfies $\pi(p) \ge p/\log p + 1$,
+where $\log$ is the natural logarithm.
 
 Source: Joshua Zelinsky, *The Sum of the Reciprocals of the Prime Divisors of an Odd
 Perfect or Odd Primitive Non-deficient Number*, INTEGERS 25 (2025), Article A59,
@@ -72,8 +74,10 @@ public theorem_wanted div_log_add_one_le_primeCounting
     (p : ℕ) (hp : p.Prime) (h19 : 19 ≤ p) :
     (p : ℝ) / Real.log p + 1 ≤ Nat.primeCounting p
 
-/-- For a prime `q ≥ 3`, `M(q) = ∑_{p ≥ q} 1/p²` over primes `p` satisfies
-`M(q) < (1/(q log q)) (1 + 2 log log q / log q)`.
+/-- **Tail bound for the sum of $1/p^2$ over primes.** Let $q \ge 3$ be a prime and let
+$M(q) = \sum_{p \ge q} 1/p^2$ be the sum over all primes $p \ge q$. Then
+$M(q) < \frac{1}{q \log q}\left(1 + \frac{2 \log \log q}{\log q}\right)$,
+where $\log$ is the natural logarithm.
 
 Source: Joshua Zelinsky, *The Sum of the Reciprocals of the Prime Divisors of an Odd
 Perfect or Odd Primitive Non-deficient Number*, INTEGERS 25 (2025), Article A59,
@@ -83,9 +87,11 @@ public theorem_wanted tsum_one_div_sq_primes_ge_lt
     ∑' p : {p : ℕ // p.Prime ∧ q ≤ p}, (1 : ℝ) / ((p : ℕ) : ℝ) ^ 2 <
       1 / ((q : ℝ) * Real.log q) * (1 + 2 * Real.log (Real.log q) / Real.log q)
 
-/-- For an odd prime `q`, `E = ∏_{p ≥ q} p²/(p²-1)` over primes `p` satisfies
-`log E ≤ (1/(q log q)) (1 + 2 log log q / log q) + 4/q³`. The infinite product is
-stated through its logarithm, `log E = ∑_{p ≥ q} log (p²/(p²-1))`.
+/-- **Bound on the tail of the prime product of $p^2/(p^2-1)$.** Let $q$ be an odd prime. Then
+$\sum_{p \ge q} \log \frac{p^2}{p^2-1} \le
+\frac{1}{q \log q}\left(1 + \frac{2 \log \log q}{\log q}\right) + \frac{4}{q^3}$,
+where the sum runs over the primes $p \ge q$. Equivalently, $\log E$ is at most this bound,
+where $E = \prod_{p \ge q} \frac{p^2}{p^2-1}$ is the product over the primes $p \ge q$.
 
 Source: Joshua Zelinsky, *The Sum of the Reciprocals of the Prime Divisors of an Odd
 Perfect or Odd Primitive Non-deficient Number*, INTEGERS 25 (2025), Article A59,
@@ -97,30 +103,8 @@ public theorem_wanted tsum_log_sq_div_sq_sub_one_primes_ge_le
       1 / ((q : ℝ) * Real.log q) * (1 + 2 * Real.log (Real.log q) / Real.log q) +
         4 / (q : ℝ) ^ 3
 
-/-- For an integer `x ≥ 2`, `log(1 + 1/(x-1)) ≤ 1/x + 25/(32 x²)`.
-
-Source: Joshua Zelinsky, *The Sum of the Reciprocals of the Prime Divisors of an Odd
-Perfect or Odd Primitive Non-deficient Number*, INTEGERS 25 (2025), Article A59,
-Lemma 8 (`integers-2025-A59-lem-8`). -/
-public theorem_wanted log_one_add_one_div_sub_one_le
-    (x : ℕ) (hx : 2 ≤ x) :
-    Real.log (1 + 1 / ((x : ℝ) - 1)) ≤ 1 / (x : ℝ) + 25 / (32 * (x : ℝ) ^ 2)
-
-/-- (Suryanarayana) Let `n` be odd with every prime exponent even except the exponent of
-a single prime `p_j`, which is odd. Then
-`H(n)/h(n) ≤ p_j²/(p_j²-1) · ∏_{i ≠ j} p_i³/(p_i³-1)`.
-
-Source: Joshua Zelinsky, *The Sum of the Reciprocals of the Prime Divisors of an Odd
-Perfect or Odd Primitive Non-deficient Number*, INTEGERS 25 (2025), Article A59,
-Lemma 9 (`integers-2025-A59-lem-9`). -/
-public theorem_wanted abundancySup_div_abundancyIndex_le_of_single_odd_exponent
-    (n j : ℕ) (hn : Odd n) (hj : j ∈ n.primeFactors) (hjodd : Odd (n.factorization j))
-    (heven : ∀ p ∈ n.primeFactors, p ≠ j → Even (n.factorization p)) :
-    abundancySup n / abundancyIndex n ≤
-      (j : ℚ) ^ 2 / ((j : ℚ) ^ 2 - 1) *
-        ∏ p ∈ n.primeFactors.erase j, (p : ℚ) ^ 3 / ((p : ℚ) ^ 3 - 1)
-
-/-- If `n` is an odd perfect number divisible by `165`, then `5` divides `n` exactly once.
+/-- **Odd perfect numbers divisible by 165 contain 5 exactly once.** If $n$ is an odd perfect
+number divisible by $165$, then $5$ divides $n$ exactly once: $5 \mid n$ but $25 \nmid n$.
 
 Source: Joshua Zelinsky, *The Sum of the Reciprocals of the Prime Divisors of an Odd
 Perfect or Odd Primitive Non-deficient Number*, INTEGERS 25 (2025), Article A59,
@@ -129,22 +113,13 @@ public theorem_wanted oddPerfect_factorization_five_eq_one_of_dvd
     (n : ℕ) (hodd : Odd n) (hperf : n.Perfect) (h165 : 165 ∣ n) :
     n.factorization 5 = 1
 
-/-- If `p₁, …, p_m` are distinct odd primes with `∏ pᵢ/(pᵢ-1) ≤ 2`, and `q` is an odd
-prime with `(∏ pᵢ/(pᵢ-1)) · q/(q-1) > 2`, then `q ≤ 2 ∏ (pᵢ - 1) - 1`.
+/-- **Cohen–Hagis–Suryanarayana bounds on the prime reciprocal sum of an odd perfect number.**
+Let $n$ be an odd perfect number and $T(n) = \sum_{p \mid n} 1/p$, the sum over the primes $p$
+dividing $n$. If $\gcd(15, n) = 1$ then $T(n) \le 0.693148$; if $\gcd(15, n) = 3$ then
+$T(n) \le 0.657304$; if $\gcd(15, n) = 5$ then $T(n) \le 0.678036$; and if $\gcd(15, n) = 15$
+then $T(n) \le 0.673770$.
 
-Source: Joshua Zelinsky, *The Sum of the Reciprocals of the Prime Divisors of an Odd
-Perfect or Odd Primitive Non-deficient Number*, INTEGERS 25 (2025), Article A59,
-Lemma 12 (`integers-2025-A59-lem-12`). -/
-public theorem_wanted le_two_mul_prod_sub_one_sub_one_of_two_lt
-    (s : Finset ℕ) (hs : ∀ p ∈ s, p.Prime ∧ Odd p)
-    (hle : ∏ p ∈ s, (p : ℚ) / ((p : ℚ) - 1) ≤ 2)
-    (q : ℕ) (hq : q.Prime) (hqodd : Odd q)
-    (hgt : 2 < (∏ p ∈ s, (p : ℚ) / ((p : ℚ) - 1)) * ((q : ℚ) / ((q : ℚ) - 1))) :
-    q ≤ 2 * ∏ p ∈ s, (p - 1) - 1
-
-/-- (Cohen, Hagis, Suryanarayana) Upper bounds for `T(n)` for an odd perfect number `n`,
-by `gcd(15, n)`: `0.693148` for `1`, `0.657304` for `3`, `0.678036` for `5`, and
-`0.673770` for `15`. The table's lower bounds are omitted.
+The source table also gives lower bounds, which are not stated here.
 
 Source: Joshua Zelinsky, *The Sum of the Reciprocals of the Prime Divisors of an Odd
 Perfect or Odd Primitive Non-deficient Number*, INTEGERS 25 (2025), Article A59,
@@ -156,9 +131,11 @@ public theorem_wanted oddPerfect_primeReciprocalSum_le_of_gcd_fifteen
       (Nat.gcd 15 n = 5 → ∑ p ∈ n.primeFactors, (1 : ℝ) / p ≤ 0.678036) ∧
       (Nat.gcd 15 n = 15 → ∑ p ∈ n.primeFactors, (1 : ℝ) / p ≤ 0.673770)
 
-/-- (Suryanarayana) Upper bounds for `H(n)` for an odd perfect number `n`, by
-`gcd(15, n)`: `2.014754` for `1`, `2.096234` for `3`, `2.031002` for `5`, and `2.165439`
-for `15`.
+/-- **Suryanarayana's bounds on the prime product of an odd perfect number.** Let $n$ be an odd
+perfect number and $H(n) = \prod_{p \mid n} p/(p-1)$, the product over the primes $p$ dividing $n$.
+If $\gcd(15, n) = 1$ then $H(n) \le 2.014754$; if $\gcd(15, n) = 3$ then $H(n) \le 2.096234$;
+if $\gcd(15, n) = 5$ then $H(n) \le 2.031002$; and if $\gcd(15, n) = 15$ then
+$H(n) \le 2.165439$.
 
 Source: Joshua Zelinsky, *The Sum of the Reciprocals of the Prime Divisors of an Odd
 Perfect or Odd Primitive Non-deficient Number*, INTEGERS 25 (2025), Article A59,
@@ -170,8 +147,11 @@ public theorem_wanted oddPerfect_abundancySup_le_of_gcd_fifteen
       (Nat.gcd 15 n = 5 → abundancySup n ≤ 2.031002) ∧
       (Nat.gcd 15 n = 15 → abundancySup n ≤ 2.165439)
 
-/-- If `n` is primitive non-deficient with least prime factor `p₁` and surplus
-`S = H(n) - 2`, then `T(n) ≥ log 2 - 25/(64 p₁) + S/2 - S²/4`.
+/-- **Lower bound on the prime reciprocal sum of a primitive non-deficient number.** Let $n$ be a
+primitive non-deficient number with least prime factor $p_1$, let $T(n) = \sum_{p \mid n} 1/p$
+and $H(n) = \prod_{p \mid n} p/(p-1)$, with the sum and product over the primes $p$ dividing $n$,
+and let $S = H(n) - 2$ be the surplus of $n$. Then
+$T(n) \ge \log 2 - \frac{25}{64 p_1} + \frac{S}{2} - \frac{S^2}{4}$.
 
 Source: Joshua Zelinsky, *The Sum of the Reciprocals of the Prime Divisors of an Odd
 Perfect or Odd Primitive Non-deficient Number*, INTEGERS 25 (2025), Article A59,
@@ -182,9 +162,12 @@ public theorem_wanted primitiveNondeficient_primeReciprocalSum_ge
         ((abundancySup n : ℝ) - 2) ^ 2 / 4 ≤
       ∑ p ∈ n.primeFactors, (1 : ℝ) / p
 
-/-- Let `n` be primitive non-deficient whose prime exponents are all even except that of
-one prime `p_t`, which is odd, and assume `(p_t + 2)/2 ≥ p₁ ≥ 11`. Then
-`T(n) < log 2 - 11/(50 p₁²)`.
+/-- **Upper bound on the prime reciprocal sum of a primitive non-deficient number with one odd
+exponent.** Let $n$ be a primitive non-deficient number with least prime factor $p_1 \ge 11$,
+and let $t$ be a prime factor of $n$ such that the exponent of $t$ in $n$ is odd and the exponent
+of every other prime factor of $n$ is even. Suppose $2 p_1 \le t + 2$, and let
+$T(n) = \sum_{p \mid n} 1/p$, the sum over the primes $p$ dividing $n$. Then
+$T(n) < \log 2 - \frac{11}{50 p_1^2}$.
 
 Source: Joshua Zelinsky, *The Sum of the Reciprocals of the Prime Divisors of an Odd
 Perfect or Odd Primitive Non-deficient Number*, INTEGERS 25 (2025), Article A59,
@@ -196,20 +179,14 @@ public theorem_wanted primitiveNondeficient_primeReciprocalSum_lt_of_single_odd_
     (h11 : 11 ≤ n.minFac) (hpt : 2 * n.minFac ≤ t + 2) :
     ∑ p ∈ n.primeFactors, (1 : ℝ) / p < Real.log 2 - 11 / (50 * (n.minFac : ℝ) ^ 2)
 
-/-- If `n` is an odd perfect number with least prime factor `p₁`, then
-`H(n) ≤ 2 + 9/(4 p₁²)`.
+/-- **Lower bound on the prime reciprocal sum of an odd primitive non-deficient number.** Let $n$
+be an odd primitive non-deficient number with least prime factor $p_1$, let
+$T(n) = \sum_{p \mid n} 1/p$ and $H(n) = \prod_{p \mid n} p/(p-1)$, with the sum and product over
+the primes $p$ dividing $n$, and let $S = H(n) - 2$ be the surplus of $n$. Then
+$T(n) \ge \log 2 - \frac{25}{32 p_1 \log p_1}
+\left(1 + \frac{2 \log \log p_1}{\log p_1}\right) + \frac{S}{2} - \frac{S^2}{4}$.
 
-Source: Joshua Zelinsky, *The Sum of the Reciprocals of the Prime Divisors of an Odd
-Perfect or Odd Primitive Non-deficient Number*, INTEGERS 25 (2025), Article A59,
-Proposition 5 (`integers-2025-A59-prop-5`). -/
-public theorem_wanted oddPerfect_abundancySup_le
-    (n : ℕ) (hodd : Odd n) (hperf : n.Perfect) :
-    abundancySup n ≤ 2 + 9 / (4 * (n.minFac : ℚ) ^ 2)
-
-/-- If `n` is an odd primitive non-deficient number with least prime factor `p₁` and
-surplus `S = H(n) - 2`, then
-`T(n) ≥ log 2 - (25/(32 p₁ log p₁)) (1 + 2 log log p₁ / log p₁) + S/2 - S²/4`.
-The hypothesis `Odd n` is added: the printed statement fails at `n = 6`.
+The hypothesis that $n$ is odd is added: the statement as printed fails at $n = 6$.
 
 Source: Joshua Zelinsky, *The Sum of the Reciprocals of the Prime Divisors of an Odd
 Perfect or Odd Primitive Non-deficient Number*, INTEGERS 25 (2025), Article A59,
@@ -222,51 +199,11 @@ public theorem_wanted odd_primitiveNondeficient_primeReciprocalSum_ge
         ((abundancySup n : ℝ) - 2) / 2 - ((abundancySup n : ℝ) - 2) ^ 2 / 4 ≤
       ∑ p ∈ n.primeFactors, (1 : ℝ) / p
 
-/-- There is a constant `C` such that every primitive non-deficient `n` with least prime
-factor `p₁` satisfies `H(n) ≤ 2 + C/p₁`.
-
-Source: Joshua Zelinsky, *The Sum of the Reciprocals of the Prime Divisors of an Odd
-Perfect or Odd Primitive Non-deficient Number*, INTEGERS 25 (2025), Article A59,
-Proposition 8 (`integers-2025-A59-prop-8`). -/
-public theorem_wanted exists_abundancySup_le_two_add_div_minFac :
-    ∃ C : ℝ, ∀ n : ℕ, IsPrimitiveNondeficient n →
-      (abundancySup n : ℝ) ≤ 2 + C / n.minFac
-
-/-- A prime `q ≡ -1 (mod 165)` is not the special (Euler) prime of any odd perfect
-number.
-
-Source: Joshua Zelinsky, *The Sum of the Reciprocals of the Prime Divisors of an Odd
-Perfect or Odd Primitive Non-deficient Number*, INTEGERS 25 (2025), Article A59,
-Proposition 9 (`integers-2025-A59-prop-9`). -/
-public theorem_wanted not_isEulerPrime_of_mod_165_eq
-    (n q : ℕ) (hq : q % 165 = 164) :
-    ¬ IsEulerPrime n q
-
-/-- There is no odd prime `q` with `H(odd(q+1)) < 2` and `H(q · odd(q+1)) > 2`, where
-`odd(m) = ordCompl[2] m` is the largest odd divisor of `m`. The hypothesis `q` odd is
-added: the printed statement fails at `q = 2`.
-
-Source: Joshua Zelinsky, *The Sum of the Reciprocals of the Prime Divisors of an Odd
-Perfect or Odd Primitive Non-deficient Number*, INTEGERS 25 (2025), Article A59,
-Proposition 10 (`integers-2025-A59-prop-10`). -/
-public theorem_wanted not_abundancySup_oddPart_succ_lt_two_and_two_lt
-    (q : ℕ) (hq : q.Prime) (hodd : Odd q) :
-    ¬ (abundancySup (ordCompl[2] (q + 1)) < 2 ∧
-      2 < abundancySup (q * ordCompl[2] (q + 1)))
-
-/-- If an odd perfect number has Euler form `n = q^e m²`, then `e = 1` or
-`q < 2^{1/5} m^{2/5}`, stated in the equivalent integer form `q⁵ < 2 m²`.
-
-Source: Joshua Zelinsky, *The Sum of the Reciprocals of the Prime Divisors of an Odd
-Perfect or Odd Primitive Non-deficient Number*, INTEGERS 25 (2025), Article A59,
-Proposition 11 (`integers-2025-A59-prop-11`). -/
-public theorem_wanted eulerianForm_exponent_eq_one_or_pow_five_lt
-    (n q e m : ℕ) (h : EulerianForm n q e m) :
-    e = 1 ∨ q ^ 5 < 2 * m ^ 2
-
-/-- If an odd perfect number has Euler form `n = q^e m²`, then `e = 1` or
-`q < (2/((3²)(5²)(11²)(13²)))^{1/5} m^{2/5}`, stated in the equivalent integer form
-`3² 5² 11² 13² q⁵ < 2 m²`.
+/-- **Refined fifth-power bound on the Euler prime of an odd perfect number.** If $(n, q, e, m)$
+is in Eulerian form, that is, $n$ is an odd perfect number, $q$ is a prime coprime to $m$,
+$n = q^e m^2$ and $q \equiv e \equiv 1 \pmod 4$, then $e = 1$ or
+$3^2 \cdot 5^2 \cdot 11^2 \cdot 13^2 \cdot q^5 < 2m^2$, that is,
+$q < \left(2/(3^2 \cdot 5^2 \cdot 11^2 \cdot 13^2)\right)^{1/5} m^{2/5}$.
 
 Source: Joshua Zelinsky, *The Sum of the Reciprocals of the Prime Divisors of an Odd
 Perfect or Odd Primitive Non-deficient Number*, INTEGERS 25 (2025), Article A59,

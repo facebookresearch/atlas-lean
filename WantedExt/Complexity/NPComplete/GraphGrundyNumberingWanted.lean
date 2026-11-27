@@ -20,7 +20,7 @@ Discrete Applied Mathematics 3 (1981), 257-262, doi:10.1016/0166-218X(81)90003-2
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Combinatorics.Digraph.Basic
 public import Mathlib.Order.Bounds.Defs
 public import MathlibExt.Computability.BinaryNatEncoding

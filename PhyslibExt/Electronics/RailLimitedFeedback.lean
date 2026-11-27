@@ -54,9 +54,6 @@ point is `vmin`, and above the upper rail it is `vmax`.
   solution, here composed with an ideal output limiter.
 
 ## A. The rail clamp and the fixed point
-
-Discharges ECE roadmap leaf `ECE.EL.AMPLIFIER.L2` (finite-gain,
-rail-limited amplifier model).
 -/
 
 @[expose] public section

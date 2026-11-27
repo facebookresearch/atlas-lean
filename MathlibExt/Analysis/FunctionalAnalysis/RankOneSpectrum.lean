@@ -75,7 +75,10 @@ variable {𝕜 : Type*} [RCLike 𝕜]
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace 𝕜 E] [CompleteSpace E]
 
 omit [CompleteSpace E] in
-/-- The quadratic identity for `T = f.smulRight y`: `T * T = (f y) • T`. -/
+/-- **Square of the operator $x \mapsto f(x)\,y$.** Let $\mathbb{K}$ be $\mathbb{R}$ or
+$\mathbb{C}$, let $E$ be a normed space over $\mathbb{K}$, let $f \colon E \to \mathbb{K}$ be a
+continuous linear functional, let $y \in E$, and let $T$ be the bounded operator on $E$ given by
+$T x = f(x)\,y$. Then $T^2 = f(y)\,T$. -/
 theorem smulRight_mul_self (f : E →L[𝕜] 𝕜) (y : E) :
     (f.smulRight y) * (f.smulRight y) = (f y) • (f.smulRight y) := by
   ext x
@@ -83,8 +86,15 @@ theorem smulRight_mul_self (f : E →L[𝕜] 𝕜) (y : E) :
     smul_smul, mul_comm]
 
 omit [CompleteSpace E] in
-/-- A scalar different from `0` and from `f y` is not in the spectrum of a
-`f.smulRight y`: the resolvent is `μ⁻¹ • 1 + (μ⁻¹ * (μ - f y)⁻¹) • T`. -/
+/-- **The spectrum of $x \mapsto f(x)\,y$ lies in $\{0, f(y)\}$.** Let $\mathbb{K}$ be
+$\mathbb{R}$ or $\mathbb{C}$, let $E$ be a normed space over $\mathbb{K}$, let
+$f \colon E \to \mathbb{K}$ be a continuous linear functional, let $y \in E$, and let $T$ be the
+bounded operator on $E$ given by $T x = f(x)\,y$. If $\mu \in \mathbb{K}$ satisfies $\mu \neq 0$
+and $\mu \neq f(y)$, then $\mu$ is not in the spectrum of $T$ in the algebra of bounded operators
+on $E$.
+
+Explicitly, the inverse of $\mu I - T$, where $I$ is the identity operator, is
+$\mu^{-1} I + \mu^{-1} (\mu - f(y))^{-1}\,T$. -/
 theorem not_mem_spectrum_smulRight {f : E →L[𝕜] 𝕜} {y : E} {μ : 𝕜} (hμ0 : μ ≠ 0)
     (hμ : μ ≠ f y) : μ ∉ spectrum 𝕜 (f.smulRight y) := by
   rw [spectrum.mem_iff, Algebra.algebraMap_eq_smul_one]
@@ -143,8 +153,12 @@ theorem not_mem_spectrum_smulRight {f : E →L[𝕜] 𝕜} {y : E} {μ : 𝕜} (
             smul_smul, sub_add_comm, ← sub_smul, hcoeff, zero_smul, zero_add]
 
 omit [CompleteSpace E] in
-/-- `f y` is an eigenvalue of `f.smulRight y`,
-with eigenvector `y`, whenever `y ≠ 0`. -/
+/-- **$f(y)$ is an eigenvalue of $x \mapsto f(x)\,y$.** Let $\mathbb{K}$ be $\mathbb{R}$ or
+$\mathbb{C}$, let $E$ be a normed space over $\mathbb{K}$, let $f \colon E \to \mathbb{K}$ be a
+continuous linear functional, and let $y \in E$ with $y \neq 0$. Then $f(y)$ is an eigenvalue of
+the linear operator $T x = f(x)\,y$ on $E$.
+
+An eigenvector is $y$ itself, since $T y = f(y)\,y$. -/
 theorem hasEigenvalue_smulRight {f : E →L[𝕜] 𝕜} {y : E} (hy : y ≠ 0) :
     Module.End.HasEigenvalue (f.smulRight y : E →ₗ[𝕜] E) (f y) := by
   refine Module.End.hasEigenvalue_of_hasEigenvector (x := y) ⟨?_, hy⟩
@@ -152,16 +166,23 @@ theorem hasEigenvalue_smulRight {f : E →L[𝕜] 𝕜} {y : E} (hy : y ≠ 0) :
   change (f.smulRight y) y = (f y) • y
   simp [ContinuousLinearMap.smulRight_apply]
 
-/-- `f y` lies in the spectrum of `f.smulRight y`
-when `y ≠ 0`. -/
+/-- **$f(y)$ lies in the spectrum of $x \mapsto f(x)\,y$.** Let $\mathbb{K}$ be $\mathbb{R}$ or
+$\mathbb{C}$, let $E$ be a Banach space over $\mathbb{K}$, let $f \colon E \to \mathbb{K}$ be a
+continuous linear functional, and let $y \in E$ with $y \neq 0$. Then $f(y)$ lies in the spectrum
+of the bounded operator $T x = f(x)\,y$ on $E$. -/
 theorem mem_spectrum_smulRight {f : E →L[𝕜] 𝕜} {y : E} (hy : y ≠ 0) :
     f y ∈ spectrum 𝕜 (f.smulRight y) := by
   rw [ContinuousLinearMap.spectrum_eq]
   exact (hasEigenvalue_smulRight hy).mem_spectrum
 
 omit [CompleteSpace E] in
-/-- `0` is an eigenvalue of `f.smulRight y`,
-with eigenvector `w`, whenever `w ≠ 0` lies in the kernel of `f`. -/
+/-- **$0$ is an eigenvalue of $x \mapsto f(x)\,y$ when $f$ has a nontrivial kernel.** Let
+$\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$, let $E$ be a normed space over $\mathbb{K}$, let
+$f \colon E \to \mathbb{K}$ be a continuous linear functional, and let $y \in E$. If some
+$w \in E$ with $w \neq 0$ satisfies $f(w) = 0$, then $0$ is an eigenvalue of the linear operator
+$T x = f(x)\,y$ on $E$.
+
+An eigenvector is $w$ itself, since $T w = f(w)\,y = 0$. -/
 theorem hasEigenvalue_zero_smulRight {f : E →L[𝕜] 𝕜} {y : E} {w : E} (hw : w ≠ 0)
     (hfw : f w = 0) :
     Module.End.HasEigenvalue (f.smulRight y : E →ₗ[𝕜] E) 0 := by
@@ -170,19 +191,25 @@ theorem hasEigenvalue_zero_smulRight {f : E →L[𝕜] 𝕜} {y : E} {w : E} (hw
   change (f.smulRight y) w = (0 : 𝕜) • w
   simp [ContinuousLinearMap.smulRight_apply, hfw]
 
-/-- `0` lies in the spectrum of `f.smulRight y`
-whenever `f` has a nonzero kernel vector. -/
+/-- **$0$ lies in the spectrum of $x \mapsto f(x)\,y$ when $f$ has a nontrivial kernel.** Let
+$\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$, let $E$ be a Banach space over $\mathbb{K}$, let
+$f \colon E \to \mathbb{K}$ be a continuous linear functional, and let $y \in E$. If some
+$w \in E$ with $w \neq 0$ satisfies $f(w) = 0$, then $0$ lies in the spectrum of the bounded
+operator $T x = f(x)\,y$ on $E$. -/
 theorem mem_spectrum_smulRight_zero {f : E →L[𝕜] 𝕜} {y : E} {w : E} (hw : w ≠ 0)
     (hfw : f w = 0) : (0 : 𝕜) ∈ spectrum 𝕜 (f.smulRight y) := by
   rw [ContinuousLinearMap.spectrum_eq]
   exact (hasEigenvalue_zero_smulRight hw hfw).mem_spectrum
 
-/-- The spectrum of `f.smulRight y` is exactly `{0, f y}`, provided
-`y ≠ 0` (so `y` is an eigenvector for `f y`) and `f` has a nonzero
-kernel vector (so `0` is an eigenvalue). The zero functional is allowed.
-Without the kernel hypothesis
-this fails: on a one-dimensional space a nonzero rank-one operator is a
-nonzero scalar multiple of the identity, whose spectrum is a singleton. -/
+/-- **Spectrum of the operator $x \mapsto f(x)\,y$.** Let $\mathbb{K}$ be
+$\mathbb{R}$ or $\mathbb{C}$, let $E$ be a Banach space over $\mathbb{K}$, let
+$f \colon E \to \mathbb{K}$ be a continuous linear functional, and let $y \in E$ with $y \neq 0$.
+If some $w \in E$ with $w \neq 0$ satisfies $f(w) = 0$, then the spectrum of the bounded
+operator $T x = f(x)\,y$ on $E$ is exactly $\{0, f(y)\}$.
+
+Here $y$ is an eigenvector for $f(y)$ and $w$ is an eigenvector for $0$; the zero functional is
+allowed. Without the kernel hypothesis this fails: on a one-dimensional space a nonzero operator
+of this form is a nonzero multiple of the identity, whose spectrum is a single point. -/
 theorem spectrum_smulRight {f : E →L[𝕜] 𝕜} {y : E} (hy : y ≠ 0) {w : E} (hw : w ≠ 0)
     (hfw : f w = 0) : spectrum 𝕜 (f.smulRight y) = {0, f y} := by
   apply Set.eq_of_subset_of_subset
@@ -201,15 +228,21 @@ theorem spectrum_smulRight {f : E →L[𝕜] 𝕜} {y : E} (hy : y ≠ 0) {w : E
       rw [hμ]
       exact mem_spectrum_smulRight hy
 
-/-- If `y ≠ 0` and `f y = 0`, the spectrum of `f.smulRight y` is just `{0}`.
-The vector `y` itself is the required nonzero kernel witness. -/
+/-- **Spectrum of $x \mapsto f(x)\,y$ when $f(y) = 0$.** Let $\mathbb{K}$ be $\mathbb{R}$ or
+$\mathbb{C}$, let $E$ be a Banach space over $\mathbb{K}$, let $f \colon E \to \mathbb{K}$ be a
+continuous linear functional, and let $y \in E$ with $y \neq 0$ and $f(y) = 0$. Then the
+spectrum of the bounded operator $T x = f(x)\,y$ on $E$ is $\{0\}$. -/
 theorem spectrum_smulRight_of_apply_eq_zero {f : E →L[𝕜] 𝕜} {y : E} (hy : y ≠ 0)
     (hfy : f y = 0) : spectrum 𝕜 (f.smulRight y) = {0} := by
   rw [spectrum_smulRight hy hy hfy, hfy]
   simp
 
-/-- If `x ≠ 0` and there is a nonzero `w` with `inner 𝕜 y w = 0`, the
-spectrum of `InnerProductSpace.rankOne 𝕜 x y` is `{0, inner 𝕜 y x}`. -/
+/-- **Spectrum of the operator $z \mapsto \langle y, z \rangle\,x$ on a Hilbert space.** Let
+$\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$, let $H$ be a Hilbert space over $\mathbb{K}$ whose
+inner product $\langle \cdot, \cdot \rangle$ is linear in the second argument, let $x, y \in H$
+with $x \neq 0$, and let $T$ be the bounded operator on $H$ given by
+$T z = \langle y, z \rangle\,x$. If some $w \in H$ with $w \neq 0$ satisfies
+$\langle y, w \rangle = 0$, then the spectrum of $T$ is $\{0, \langle y, x \rangle\}$. -/
 theorem spectrum_rankOne {H : Type*} [NormedAddCommGroup H] [InnerProductSpace 𝕜 H]
     [CompleteSpace H] {x y : H} (hx : x ≠ 0) {w : H} (hw : w ≠ 0)
     (hyw : inner 𝕜 y w = 0) :

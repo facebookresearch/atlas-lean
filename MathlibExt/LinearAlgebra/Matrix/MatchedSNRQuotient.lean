@@ -25,9 +25,6 @@ positive-definite Cauchy--Schwarz inequality specialized to the
 matched filter. The zero-signal case is included; concrete `R = diag(1, 4)`
 validation fixtures and the indefinite counterexample live in the
 test module.
-
-Discharges ECE roadmap leaf `ECE.DET.MATCHED.L1` (matched SNR
-bound).
 -/
 
 @[expose] public section

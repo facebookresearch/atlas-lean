@@ -30,8 +30,11 @@ universe u
 
 variable {Base : Type u}
 
-/-- Progress (TAPL Theorem 13.5.7): if `∅ | S ⊢ t : T` and `∅ | S ⊢ μ`, then
-`t` is a value or `t | μ → t' | μ'` for some `t'` and `μ'`. -/
+/-- **Progress.** Let $S$ be a store typing, $t$ a term of some type $T$ in the empty variable
+context under $S$, and $\mu$ a store that is well typed under $S$ in the empty context. Then $t$
+is a value, or the configuration $(t, \mu)$ takes an evaluation step to some $(t', \mu')$.
+
+Source: TAPL Theorem 13.5.7. -/
 theorem progress {S : List (Ty Base)} {μ : Store Base} {t : Term Base} {T : Ty Base}
     (ht : HasType [] S t T) (hμ : StoreTyped [] S μ) :
     t.Value ∨ ∃ t' μ', Step t μ t' μ' := by

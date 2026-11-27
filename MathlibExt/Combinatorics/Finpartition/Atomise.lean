@@ -8,8 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 /-
 Ported from fairinternal/formal-math at `306b05307ce5e07e232dc0c0f350c714e8df4107`.
-Original formalization by Tsutomu Okano (@toskua) with Avocado (internal agent
-identity); ported with permission.
+Original formalization by Tsutomu Okano (@toskua) with Meta Muse;
+ported with permission.
 -/
 
 module

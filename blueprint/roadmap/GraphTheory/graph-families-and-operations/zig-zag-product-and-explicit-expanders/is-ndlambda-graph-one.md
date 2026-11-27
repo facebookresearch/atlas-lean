@@ -1,0 +1,3 @@
+# Every rotation map gives an $(N, D, 1)$-graph
+
+Let $V$ and $L$ be finite sets and $\mathrm{rot}$ a [rotation map](rotation-map.md) on $V \times L$ with [adjacency matrix](adj-matrix.md) $A$. Then $\mathrm{rot}$ describes an [$(N, D, \lambda)$-graph](is-ndlambda-graph.md) with parameter $1$; in fact $\lVert A x\rVert \le \lvert L\rvert\, \lVert x\rVert$ for every $x$, by the Cauchy–Schwarz inequality and because the rotation map permutes $V \times L$ (O. Reingold, S. Vadhan and A. Wigderson, Ann. of Math. 155 (2002), Section 2.2: all eigenvalues of the normalised adjacency matrix have absolute value at most $1$).

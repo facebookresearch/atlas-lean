@@ -34,12 +34,18 @@ private lemma hzE (z : ℂ) (hz : ∀ n : ℕ, z ≠ -((n : ℂ) + 1)) (r : ℕ)
   apply hz r
   linear_combination h
 
-/-- Source: Berndt, Ramanujan's Notebooks Part I, Chapter 3, Entry 2, formula (2.3) and
-    Corollary 2, printed pp. 46--47 / PDF pp. 56--57.
-Proves `Wanted` entry `ramanujan_part1_ch3_entry2_formula23_series_pair`.
+/-- **Ramanujan's companion series transformation (Chapter 3, Entry 2, formula (2.3)).** Let $x$
+and $z$ be complex numbers with $z \ne -(n+1)$ for every natural number $n$. Then the series
+$\sum_{j \ge 0} \frac{(-1)^j x^{j+1}}{(z+j+1)\, j!}$ converges absolutely, say with sum $S$, and
+the series $\sum_{j \ge 0} \frac{x^{j+1}}{(z+1)(z+2)\cdots(z+j+1)}$ converges absolutely with sum
+$e^x S$.
 
-Derived from the Entry 2 API at `(-x, z + 1)`: both Entry 2 summands are the
-negatives of the summands here, and `exp x * exp (-x) = 1` identifies the value. -/
+The identity follows from Entry 2 applied with $-x$ and $z + 1$ in place of $x$ and $z$, using
+$e^x e^{-x} = 1$.
+
+Source: Berndt, Ramanujan's Notebooks Part I, Chapter 3, Entry 2, formula (2.3) and
+    Corollary 2, printed pp. 46--47 / PDF pp. 56--57.
+Proves `Wanted` entry `ramanujan_part1_ch3_entry2_formula23_series_pair`. -/
 theorem ramanujan_part1_ch3_entry2_formula23_series_pair
     (x z : ℂ) (hz : ∀ n : ℕ, z ≠ -((n : ℂ) + 1)) :
     HasSum (fun j : ℕ => (x ^ (j + 1) / ∏ i ∈ Finset.range (j + 1), (z + ((i : ℂ) + 1)),

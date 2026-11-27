@@ -75,7 +75,7 @@ noncomputable def solI {S : ℝ} (hS : S < 1 / 4) : LoewnerForwardSolution (fun 
   upper t ht := gI_mem_upper (by linarith [ht.2])
 
 /-- The domain family from the review counterexample: `ℍ` at zero and empty afterwards. -/
-def emptyAfterZeroDomain (t : ℝ) : Set ℂ := if t = 0 then upperHalfPlaneSet else ∅
+noncomputable def emptyAfterZeroDomain (t : ℝ) : Set ℂ := if t = 0 then upperHalfPlaneSet else ∅
 
 /-- The map family from the review counterexample. -/
 noncomputable def vacuousMaps (t : ℝ) (z : ℂ) : ℂ := z + t * (2 / z)

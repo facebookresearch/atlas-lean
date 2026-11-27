@@ -53,18 +53,11 @@ open Matrix BigOperators
 
 /-! ## A. Crossing the end internal edges -/
 
+@[deprecated "Use `neg_add_eq_iff_eq_add`." (since := "2026-11-12")]
 lemma ons_neg_one_add_eq_iff_eq_one_add
     {R : Type*} [CommRing R] (x y : R) :
-    -1 + x = y ↔ x = 1 + y := by
-  constructor
-  · intro h
-    calc
-      x = 1 + (-1 + x) := by ring
-      _ = 1 + y := by rw [h]
-  · intro h
-    calc
-      -1 + x = -1 + (1 + y) := by rw [h]
-      _ = y := by ring
+    -1 + x = y ↔ x = 1 + y :=
+  neg_add_eq_iff_eq_add
 
 lemma ons_one_add_eq_iff_eq_neg_one_add
     {R : Type*} [CommRing R] (x y : R) :
@@ -119,7 +112,7 @@ lemma ons_decChainCross_zero_iff
     simp_all [Prod.ext_iff] <;> ring_nf
   all_goals
     intro _
-    exact ons_neg_one_add_eq_iff_eq_one_add _ _
+    exact neg_add_eq_iff_eq_add
 
 lemma ons_decChainCross_two_iff
     (L : ℕ) [Fact (2 < L)] {n : ℕ} [NeZero n]

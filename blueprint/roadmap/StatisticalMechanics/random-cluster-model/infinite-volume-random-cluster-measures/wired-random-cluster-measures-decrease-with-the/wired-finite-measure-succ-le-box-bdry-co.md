@@ -1,0 +1,3 @@
+# Wired $q = 2$ probability of $0 \leftrightarrow \partial\Lambda_n$ in $\Lambda_{n+1}$ at most in $\Lambda_n$
+
+For $d, n \in \mathbb{N}$ and $0 < p < 1$, $\phi^1_{n+1}(0 \leftrightarrow \partial\Lambda_n) \le \phi^1_n(0 \leftrightarrow \partial\Lambda_n)$, where $\phi^1_{m}$ is the [wired box measure](../finite-and-infinite-volume-fk-measures-on-d/wired-finite-measure.md) on $\Lambda_m = \{-m, \dots, m\}^d$ at parameters $(p, 2)$ and $\{0 \leftrightarrow \partial\Lambda_n\}$ is the [box-boundary connection event](../box-boundary-connection-probabilities-for-the-wi/box-bdry-conn-event.md) (the origin joined to $\partial\Lambda_n = \Lambda_n \setminus \Lambda_{n-1}$ by open edges of $\Lambda_n$).

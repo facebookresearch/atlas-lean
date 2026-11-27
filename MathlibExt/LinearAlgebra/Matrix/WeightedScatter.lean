@@ -27,6 +27,13 @@ ones):
 * `dotProduct_weightedScatter_mulVec`, `weightedScatter_transpose`, `weightedScatter_posDef`:
   **with positive weights and points not all in an affine hyperplane, the scatter matrix is
   positive definite**.
+* `posDef_mul_diagonal_mul_transpose_iff`: for a real matrix `B` and nonnegative weights `w`,
+  the weighted Gram matrix `B * diagonal w * Bᵀ` (always positive semidefinite) is **positive
+  definite iff the columns of `B` with positive weight have full row rank**.
+* `sum_mul_diag_sub_dotProduct_mulVec_eq`: **quadratic diversity from pairwise
+  dissimilarities**. For weights summing to one, `∑ w Qᵢᵢ - wᵀ Q w` equals
+  `wᵀ δ w / 2 - ∑ w δᵢᵢ / 2` when `Qᵢⱼ = vᵢ + vⱼ - δᵢⱼ / 2`, and equals `wᵀ δQ w / 2` for the
+  canonical dissimilarity `δQᵢⱼ = Qᵢᵢ + Qⱼⱼ - 2 Qᵢⱼ`.
 
 These are the facts behind closed-form Gaussian maximum likelihood estimates (sample mean and
 sample covariance), used for full-covariance mixtures and probabilistic PCA in
@@ -44,26 +51,45 @@ open scoped RealInnerProductSpace
 
 variable {ι n : Type*} [Fintype ι] [Fintype n]
 
-/-- The weighted mean `(∑ i, w i xᵢ) / ∑ i, w i`. -/
+/-- **Weighted mean.** Let $I$ be a finite set and $J$ an index set, and let
+$x_i \in \mathbb{R}^J$ ($i \in I$) be points with real weights $w_i$. Their weighted mean is the
+point $\big(\sum_{i \in I} w_i\big)^{-1} \sum_{i \in I} w_i x_i$ of $\mathbb{R}^J$, that is
+$\sum_i w_i x_i / \sum_i w_i$, with the convention $0^{-1} = 0$ when the weights sum to $0$. -/
 noncomputable def weightedMean (w : ι → ℝ) (xs : ι → EuclideanSpace ℝ n) : EuclideanSpace ℝ n :=
   (∑ i, w i)⁻¹ • ∑ i, w i • xs i
 
-/-- The weighted scatter matrix about `μ`, `(∑ i, w i (xᵢ - μ)(xᵢ - μ)ᵀ) / ∑ i, w i`. At the
-weighted mean it is the weighted sample covariance. -/
+/-- **Weighted scatter matrix.** Let $I$ be a finite set and $J$ an index set, let
+$x_i \in \mathbb{R}^J$ ($i \in I$) be points with real weights $w_i$, and let
+$\mu \in \mathbb{R}^J$. The weighted scatter matrix of the $x_i$ about $\mu$ is the real
+$J \times J$ matrix
+$$
+C = \Big(\sum_{i \in I} w_i\Big)^{-1} \sum_{i \in I} w_i \, (x_i - \mu)(x_i - \mu)^{\mathsf T},
+$$
+with the convention $0^{-1} = 0$ when the weights sum to $0$. When $\mu$ is the weighted mean of
+the $x_i$, it is the weighted sample covariance. -/
 noncomputable def weightedScatter (w : ι → ℝ) (xs : ι → EuclideanSpace ℝ n)
     (μ : EuclideanSpace ℝ n) : Matrix n n ℝ :=
   (∑ i, w i)⁻¹ • ∑ i, w i • vecMulVec (ofLp (xs i - μ)) (ofLp (xs i - μ))
 
 omit [Fintype n] in
-/-- The weighted residuals about the weighted mean sum to zero. -/
+/-- **Weighted residuals sum to zero.** Let $I$ be a finite set and $J$ any index set, let
+$x_i \in \mathbb{R}^J$ ($i \in I$) be points with real weights $w_i$ such that $\sum_i w_i \ne 0$,
+and let $m$ be their weighted mean. Then $\sum_{i \in I} w_i (x_i - m) = 0$. -/
 theorem sum_smul_sub_weightedMean {w : ι → ℝ} (hw : ∑ i, w i ≠ 0)
     (xs : ι → EuclideanSpace ℝ n) : ∑ i, w i • (xs i - weightedMean w xs) = 0 := by
   simp only [smul_sub, Finset.sum_sub_distrib, ← Finset.sum_smul]
   rw [weightedMean, smul_smul, mul_inv_cancel₀ hw, one_smul, sub_self]
 
-/-- **The bias-variance split of a weighted quadratic form**: for symmetric `A`,
-`∑ w (x - μ)ᵀ A (x - μ) = ∑ w (x - m)ᵀ A (x - m) + (∑ w) (m - μ)ᵀ A (m - μ)` with `m` the
-weighted mean. -/
+/-- **The bias-variance split of a weighted quadratic form.** Let $I$ and $J$ be finite sets, let
+$x_i \in \mathbb{R}^J$ ($i \in I$) be points with real weights $w_i$ such that $\sum_i w_i \ne 0$,
+let $m$ be their weighted mean, let $A$ be a symmetric real $J \times J$ matrix, and let
+$\mu \in \mathbb{R}^J$. Then
+$$
+\sum_{i \in I} w_i \, (x_i - \mu)^{\mathsf T} A \, (x_i - \mu) =
+\sum_{i \in I} w_i \, (x_i - m)^{\mathsf T} A \, (x_i - m) +
+\Big(\sum_{i \in I} w_i\Big) (m - \mu)^{\mathsf T} A \, (m - \mu).
+$$
+-/
 theorem sum_mul_quad_sub_eq {w : ι → ℝ} (hw : ∑ i, w i ≠ 0) (xs : ι → EuclideanSpace ℝ n)
     {A : Matrix n n ℝ} (hA : Aᵀ = A) (μ : EuclideanSpace ℝ n) :
     ∑ i, w i * (ofLp (xs i - μ) ⬝ᵥ A *ᵥ ofLp (xs i - μ)) =
@@ -87,8 +113,15 @@ theorem sum_mul_quad_sub_eq {w : ι → ℝ} (hw : ∑ i, w i ≠ 0) (xs : ι �
   simp only [this, Finset.sum_add_distrib, ← Finset.mul_sum, hcross, ← Finset.sum_mul]
   ring
 
-/-- A weighted quadratic form is a trace against the weighted scatter matrix:
-`∑ w (x - μ)ᵀ A (x - μ) = (∑ w) tr (A C)`. -/
+/-- **Weighted quadratic forms as traces against the scatter matrix.** Let $I$ and $J$ be finite
+sets, let $x_i \in \mathbb{R}^J$ ($i \in I$) be points with real weights $w_i$ such that
+$\sum_i w_i \ne 0$, let $A$ be a real $J \times J$ matrix, let $\mu \in \mathbb{R}^J$, and let $C$
+be the weighted scatter matrix of the $x_i$ about $\mu$. Then
+$$
+\sum_{i \in I} w_i \, (x_i - \mu)^{\mathsf T} A \, (x_i - \mu) =
+\Big(\sum_{i \in I} w_i\Big) \operatorname{tr}(A C).
+$$
+-/
 theorem sum_mul_quad_eq_trace {w : ι → ℝ} (hw : ∑ i, w i ≠ 0) (xs : ι → EuclideanSpace ℝ n)
     (A : Matrix n n ℝ) (μ : EuclideanSpace ℝ n) :
     ∑ i, w i * (ofLp (xs i - μ) ⬝ᵥ A *ᵥ ofLp (xs i - μ)) =
@@ -98,8 +131,16 @@ theorem sum_mul_quad_eq_trace {w : ι → ℝ} (hw : ∑ i, w i ≠ 0) (xs : ι 
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [Matrix.mul_smul, trace_smul, mul_vecMulVec, trace_vecMulVec, smul_eq_mul, dotProduct_comm]
 
-/-- The quadratic form of a weighted scatter matrix:
-`uᵀ C u = (∑ w (u ⬝ (x - μ))²) / ∑ w`. -/
+/-- **Quadratic form of a weighted scatter matrix.** Let $I$ and $J$ be finite sets, let
+$x_i \in \mathbb{R}^J$ ($i \in I$) be points with real weights $w_i$, let $\mu \in \mathbb{R}^J$,
+and let $C$ be the weighted scatter matrix of the $x_i$ about $\mu$. Then for every
+$u \in \mathbb{R}^J$,
+$$
+u^{\mathsf T} C u =
+\Big(\sum_{i \in I} w_i\Big)^{-1} \sum_{i \in I} w_i \big(u \cdot (x_i - \mu)\big)^2,
+$$
+with the convention $0^{-1} = 0$.
+-/
 theorem dotProduct_weightedScatter_mulVec (w : ι → ℝ) (xs : ι → EuclideanSpace ℝ n)
     (μ : EuclideanSpace ℝ n) (u : n → ℝ) :
     u ⬝ᵥ weightedScatter w xs μ *ᵥ u =
@@ -115,9 +156,11 @@ theorem weightedScatter_transpose (w : ι → ℝ) (xs : ι → EuclideanSpace �
     (μ : EuclideanSpace ℝ n) : (weightedScatter w xs μ)ᵀ = weightedScatter w xs μ := by
   simp [weightedScatter, transpose_smul, transpose_sum, transpose_vecMulVec]
 
-/-- **Weighted scatter matrices of points in general position are positive definite**: with
-positive weights, and points not all in an affine hyperplane (for every nonzero direction `v` the
-projections `⟪v, xᵢ⟫` are not all equal). -/
+/-- **Weighted scatter matrices of points in general position are positive definite.** Let $I$
+and $J$ be finite sets and let $x_i \in \mathbb{R}^J$ ($i \in I$) be points with positive weights
+$w_i > 0$ that do not all lie in an affine hyperplane: for every nonzero $v \in \mathbb{R}^J$
+there are $i, j \in I$ with $\langle v, x_i \rangle \ne \langle v, x_j \rangle$. Then for every
+$\mu \in \mathbb{R}^J$ the weighted scatter matrix of the $x_i$ about $\mu$ is positive definite. -/
 theorem weightedScatter_posDef {w : ι → ℝ} (hw : ∀ i, 0 < w i) {xs : ι → EuclideanSpace ℝ n}
     (hspan : ∀ v : EuclideanSpace ℝ n, v ≠ 0 → ∃ i j, ⟪v, xs i⟫ ≠ ⟪v, xs j⟫)
     (μ : EuclideanSpace ℝ n) : (weightedScatter w xs μ).PosDef := by
@@ -145,5 +188,93 @@ theorem weightedScatter_posDef {w : ι → ℝ} (hw : ∀ i, 0 < w i) {xs : ι �
         (Finset.single_le_sum hnonneg (Finset.mem_univ i))
     · exact lt_of_lt_of_le (mul_pos (hw j) (by positivity))
         (Finset.single_le_sum hnonneg (Finset.mem_univ j))
+
+/-- **Positive definiteness of weighted Gram matrices.** For a real matrix `B` and nonnegative
+weights `w`, the matrix `B * diagonal w * Bᵀ` is positive definite if and only if every nonzero
+vector `v` has `(v ᵥ* B) e ≠ 0` for some column `e` with `0 < w e`, that is, the columns of `B`
+with positive weight have full row rank. (The matrix is always positive semidefinite, by
+`Matrix.PosSemidef.mul_mul_conjTranspose_same` applied to `Matrix.PosSemidef.diagonal`.) -/
+theorem posDef_mul_diagonal_mul_transpose_iff {m k : Type*} [Fintype m] [Fintype k]
+    [DecidableEq k] {B : Matrix m k ℝ} {w : k → ℝ} (hw : ∀ e, 0 ≤ w e) :
+    (B * diagonal w * Bᵀ).PosDef ↔ ∀ v : m → ℝ, v ≠ 0 → ∃ e, 0 < w e ∧ (v ᵥ* B) e ≠ 0 := by
+  have hq (v : m → ℝ) :
+      star v ⬝ᵥ ((B * diagonal w * Bᵀ) *ᵥ v) = ∑ e, w e * (v ᵥ* B) e ^ 2 := by
+    rw [star_trivial, ← mulVec_mulVec, ← mulVec_mulVec, dotProduct_mulVec, mulVec_transpose]
+    simp only [dotProduct, mulVec_diagonal]
+    exact Finset.sum_congr rfl fun e _ => by ring
+  have herm : (B * diagonal w * Bᵀ).IsHermitian := by
+    simp [IsHermitian, conjTranspose_eq_transpose_of_trivial, transpose_mul, Matrix.mul_assoc]
+  rw [posDef_iff_dotProduct_mulVec]
+  constructor
+  · rintro ⟨-, h⟩ v hv
+    by_contra! hcon
+    have hpos := h hv
+    rw [hq] at hpos
+    have hzero : ∑ e, w e * (v ᵥ* B) e ^ 2 = 0 := Finset.sum_eq_zero fun e _ => by
+      rcases (hw e).lt_or_eq with he | he
+      · rw [hcon e he]; ring
+      · rw [← he]; ring
+    linarith
+  · intro h
+    refine ⟨herm, fun v hv => ?_⟩
+    obtain ⟨e, he, hne⟩ := h v hv
+    rw [hq]
+    exact Finset.sum_pos' (fun i _ => mul_nonneg (hw i) (sq_nonneg _))
+      ⟨e, Finset.mem_univ _, mul_pos he (by positivity)⟩
+
+omit [Fintype n] in
+/-- **Quadratic diversity from pairwise dissimilarities.** Let `Q` be a real square matrix and
+`w` real weights with `∑ i, w i = 1`, and write `H_Q(w) = ∑ i, w i Q i i - wᵀ Q w` (Rao's quadratic
+entropy form). Then:
+
+* if `Q i j = v i + v j - δ i j / 2` for all `i j`, then
+  `H_Q(w) = wᵀ δ w / 2 - (∑ i, w i δ i i) / 2`;
+* for the canonical dissimilarity `δQ i j = Q i i + Q j j - 2 Q i j`, which has zero diagonal,
+  `H_Q(w) = wᵀ δQ w / 2`.
+
+A zero diagonal of `δ` is a sufficient condition for the short form `wᵀ δ w / 2`; for a given `w`
+the exact condition is that the weighted diagonal correction `∑ i, w i δ i i` vanish. These are
+algebraic identities: neither `Q` nor `δ` need be symmetric, and the weights may be negative, an
+extension, derived here, of the usual setting of a symmetric `Q` and weights in the simplex. They
+carry no positivity, metric or concavity claim; those interpretations need further hypotheses,
+such as nonnegative weights. -/
+theorem sum_mul_diag_sub_dotProduct_mulVec_eq {w : ι → ℝ} (hw : ∑ i, w i = 1)
+    (Q : Matrix ι ι ℝ) :
+    (∀ (δ : Matrix ι ι ℝ) (v : ι → ℝ), (∀ i j, Q i j = v i + v j - δ i j / 2) →
+      ∑ i, w i * Q i i - w ⬝ᵥ Q *ᵥ w = w ⬝ᵥ δ *ᵥ w / 2 - (∑ i, w i * δ i i) / 2) ∧
+    ∑ i, w i * Q i i - w ⬝ᵥ Q *ᵥ w =
+      w ⬝ᵥ (Matrix.of fun i j => Q i i + Q j j - 2 * Q i j) *ᵥ w / 2 := by
+  have key : ∀ (δ : Matrix ι ι ℝ) (v : ι → ℝ), (∀ i j, Q i j = v i + v j - δ i j / 2) →
+      ∑ i, w i * Q i i - w ⬝ᵥ Q *ᵥ w = w ⬝ᵥ δ *ᵥ w / 2 - (∑ i, w i * δ i i) / 2 := by
+    intro δ v hQ
+    have inner : ∀ i, (Q *ᵥ w) i = v i + ∑ j, v j * w j - (δ *ᵥ w) i / 2 := fun i => by
+      simp only [mulVec, dotProduct, hQ, add_mul, sub_mul, Finset.sum_add_distrib,
+        Finset.sum_sub_distrib, ← Finset.mul_sum, hw, mul_one, Finset.sum_div]
+      congr 1
+      exact Finset.sum_congr rfl fun j _ => by ring
+    have hdot : w ⬝ᵥ Q *ᵥ w = 2 * ∑ i, w i * v i - (w ⬝ᵥ δ *ᵥ w) / 2 := by
+      have hc : ∑ j, v j * w j = ∑ i, w i * v i :=
+        Finset.sum_congr rfl fun i _ => mul_comm _ _
+      have hmid : ∑ i, w i * ∑ j, v j * w j = ∑ i, w i * v i := by
+        rw [← Finset.sum_mul, hw, one_mul, hc]
+      have hlast : ∑ i, w i * ((δ *ᵥ w) i / 2) = (w ⬝ᵥ δ *ᵥ w) / 2 := by
+        rw [dotProduct, Finset.sum_div]
+        exact Finset.sum_congr rfl fun i _ => by ring
+      simp only [dotProduct, inner, mul_add, mul_sub, Finset.sum_add_distrib,
+        Finset.sum_sub_distrib] at hmid hlast ⊢
+      rw [hmid, hlast]
+      ring
+    have hdiag : ∑ i, w i * Q i i = 2 * ∑ i, w i * v i - (∑ i, w i * δ i i) / 2 := by
+      rw [Finset.mul_sum, Finset.sum_div, ← Finset.sum_sub_distrib]
+      exact Finset.sum_congr rfl fun i _ => by rw [hQ]; ring
+    rw [hdiag, hdot]
+    ring
+  refine ⟨key, ?_⟩
+  have h := key (Matrix.of fun i j => Q i i + Q j j - 2 * Q i j) (fun i => Q i i / 2)
+    (fun i j => by simp only [Matrix.of_apply]; ring)
+  rw [h]
+  simp only [Matrix.of_apply]
+  ring_nf
+  simp
 
 end MetaMathlibExt

@@ -46,19 +46,33 @@ open MetaMathlibExt
 def latticePolytope {d : ℕ} (S : Finset (Fin d → ℤ)) : Set (Fin d → ℝ) :=
   convexHull ℝ ((fun v : Fin d → ℤ => fun i => (v i : ℝ)) '' (S : Set (Fin d → ℤ)))
 
-/-- Hibi's conjecture (Conjecture 2 of C. A. Athanasiadis, Oberwolfach Report 39/2004, p. 2078): if
-a `d`-dimensional integral polytope `P` has `h*_i = h*_{d-i}` for all `0 ≤ i ≤ d`, then its
-`h*`-vector `(h*_0, …, h*_d)` is unimodal. Stated for full-dimensional lattice polytopes in `ℝ^d`
-(every `d`-dimensional integral polytope is lattice-equivalent to one); `h*` is the polynomial `h`
-with `∑_t #(tP ∩ ℤ^d) X^t · (1 - X)^{d+1} = h` (`MetaMathlibExt.IsHStarPolynomial`). -/
+/-- **Hibi's conjecture on symmetric $h^*$-vectors.** For every natural number $d$, every finite
+set $S \subseteq \mathbb{Z}^d$ whose convex hull $P \subseteq \mathbb{R}^d$ has nonempty interior,
+and every polynomial $h = \sum_i h^*_i z^i \in \mathbb{Z}[z]$ that is an $h^*$-polynomial of $P$,
+that is,
+$$\Big(\sum_{t \ge 0} \#(tP \cap \mathbb{Z}^d)\, z^t\Big) (1 - z)^{d+1} = h(z)$$
+as formal power series, if $h^*_i = h^*_{d-i}$ for all $0 \le i \le d$, then $h$ is unimodal.
+
+This is Hibi's conjecture, Conjecture 2 of C. A. Athanasiadis's Oberwolfach report (Oberwolfach
+Reports 1 (2004), no. 39, p. 2078), stated there for $d$-dimensional integral polytopes; every
+such polytope is lattice-equivalent to a full-dimensional lattice polytope in $\mathbb{R}^d$. -/
 def hibiSymmetricUnimodal : Prop :=
   ∀ (d : ℕ) (S : Finset (Fin d → ℤ)), (interior (latticePolytope S)).Nonempty →
     ∀ h : Polynomial ℤ, IsHStarPolynomial (latticePolytope S) h →
       (∀ i ≤ d, h.coeff i = h.coeff (d - i)) → IsUnimodal h
 
 /--
-Resolved false: Mustaţă and Payne (Example 1.1) give a reflexive `6`-dimensional lattice polytope
-with `h*`-vector `(1, 6, 8, 6, 8, 6, 1)`, which satisfies `h*_i = h*_{6-i}` and is not unimodal.
+**Hibi's conjecture on symmetric $h^*$-vectors is false.** There are a natural number $d$, a
+finite set $S \subseteq \mathbb{Z}^d$ whose convex hull $P \subseteq \mathbb{R}^d$ has nonempty
+interior, and a polynomial $h = \sum_i h^*_i z^i \in \mathbb{Z}[z]$ that is an $h^*$-polynomial
+of $P$, that is,
+$$\Big(\sum_{t \ge 0} \#(tP \cap \mathbb{Z}^d)\, z^t\Big) (1 - z)^{d+1} = h(z)$$
+as formal power series, such that $h^*_i = h^*_{d-i}$ for all $0 \le i \le d$ but $h$ is not
+unimodal.
+
+Mustaţă and Payne (Example 1.1) give a reflexive $6$-dimensional lattice polytope with
+$h^*$-vector $(1, 6, 8, 6, 8, 6, 1)$, which is symmetric and not unimodal.
+
 Source: C. A. Athanasiadis, On the unimodality of h*-vectors, in Ehrhart Quasipolynomials: Algebra,
 Combinatorics, and Geometry, Oberwolfach Reports 1 (2004), no. 39, p. 2078, Conjecture 2, DOI
 10.4171/OWR/2004/39; resolution: M. Mustaţă and S. Payne, Ehrhart polynomials and stringy Betti

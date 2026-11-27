@@ -207,4 +207,22 @@ example : deriv (fun y => cdf (gaussianReal 0 1) y) 0 = (Real.sqrt (2 * Real.pi)
 example (x : ℝ) : DifferentiableAt ℝ (cdf (gaussianReal 0 1)) x :=
   (hasDerivAt_stdNormal_cdf x).differentiableAt
 
+/-- Use: quantile symmetry at a concrete level, `Φ⁻¹(1 - Φ 1) = -1`. -/
+example : cdfQuantile (gaussianReal 0 1) (1 - cdf (gaussianReal 0 1) 1) = -1 := by
+  rw [cdfQuantile_gaussianReal_one_sub,
+    cdfQuantile_cdf_of_strictMono _ (strictMono_cdf_gaussianReal 0 one_ne_zero)]
+
+/-- Use: symmetry pins the median, `Φ⁻¹(1 / 2) = 0`. -/
+example : cdfQuantile (gaussianReal 0 1) (1 / 2) = 0 := by
+  have h := cdfQuantile_gaussianReal_one_sub (1 / 2)
+  norm_num at h
+  linarith
+
+/-- Boundary: at `p = 1` both sides are the junk value `0` (`Φ⁻¹ 0 = Φ⁻¹ 1 = 0`), not `∓∞`,
+which is why symmetry needs no hypothesis on `p`. -/
+example : cdfQuantile (gaussianReal 0 1) (1 - 1) = 0 ∧ -cdfQuantile (gaussianReal 0 1) 1 = 0 := by
+  simp [cdfQuantile]
+
 end MathlibExt.Probability.GaussianCdf
+
+#print axioms ProbabilityTheory.cdfQuantile_gaussianReal_one_sub

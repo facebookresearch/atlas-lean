@@ -19,7 +19,7 @@ Proposition 3.3 (reduction from 3SAT).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import CSLibExt.Databases.ConjunctiveQueries

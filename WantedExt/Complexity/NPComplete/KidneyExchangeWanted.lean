@@ -17,7 +17,7 @@ Commerce (EC 2007), 295-304, doi:10.1145/1250910.1250954, Theorem 1.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Combinatorics.Digraph.Basic

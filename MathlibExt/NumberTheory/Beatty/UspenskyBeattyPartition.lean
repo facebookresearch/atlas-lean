@@ -470,21 +470,20 @@ private theorem carry_unique (k : ℕ) (α : Fin k → ℝ)
   rw [Finset.sum_pair hab, ha, hb] at hsd
   omega
 
-/-- Uspensky's theorem on partitions into Beatty sequences: there exists no
-partition of the positive integers into three or more Beatty sequences.
+/-- **Uspensky's theorem on Beatty partitions.** For a real number $\alpha$ with
+$0 < \alpha < 1$, let $B_\alpha = \{\lfloor n/\alpha \rfloor : n \text{ an integer}, n \ge 1\}$
+be its Beatty sequence. Let $k \ge 3$ and let $\alpha_1, \dots, \alpha_k$ be real numbers with
+$0 < \alpha_i < 1$ for every $i$. Then $B_{\alpha_1}, \dots, B_{\alpha_k}$ do not partition the
+positive integers: it is not the case both that $B_{\alpha_i} \cap B_{\alpha_j} = \emptyset$
+for all $i \ne j$ and that $B_{\alpha_1} \cup \dots \cup B_{\alpha_k} = \{1, 2, 3, \dots\}$.
+
+No irrationality hypothesis is imposed on the $\alpha_i$.
 
 Source: A. J. Hildebrand, Xiaomin Li, Junxian Li, and Yun Xie, *Almost Beatty
 Partitions*, Journal of Integer Sequences 22 (2019), Article 19.4.6, Theorem B
 (Uspensky's theorem), lines 234–236,
 <https://cs.uwaterloo.ca/journals/JIS/VOL22/Hildebrand/hilde2.tex>;
 first proved by Uspensky in 1927 (lines 238–244).
-
-Beatty-sequence and partition conventions from the same source, lines 183–200:
-`B_α = (⌊n/α⌋)` with `0 < α < 1`, `ℕ = {1, 2, ...}`, and a partition means
-every element belongs to exactly one subset. The source statement carries no
-irrationality hypothesis. The complement version (Theorem B*, lines 260–263)
-is a source-declared equivalent and is not stated separately.
-Proves `Wanted` entry `uspensky_no_partition_into_three_or_more_beatty_sequences`.
 -/
 theorem uspensky_no_partition_into_three_or_more_beatty_sequences
     (k : ℕ) (hk : 3 ≤ k) (α : Fin k → ℝ)

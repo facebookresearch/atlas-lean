@@ -24,6 +24,7 @@ is a Dirac mass whose cdf jumps, so the nonzero hypothesis cannot be dropped.
 The cdf also standardizes: `cdf (gaussianReal μ v) x` is the standard normal cdf
 at `(x - μ) / √v`. The standard normal cdf is symmetric: `Φ(-x) = 1 - Φ(x)`,
 hence `Φ 0 = 1 / 2`. The cdf is strictly monotone at every nonzero variance.
+The standard normal quantile is odd about `1 / 2`: `Φ⁻¹(1 - p) = -Φ⁻¹ p`.
 The standard normal cdf is differentiable, with derivative the standard normal
 density: `Φ' = φ`.
 -/
@@ -174,6 +175,18 @@ theorem cdfQuantile_gaussianReal_pos {u : ℝ} (hu : u ∈ Set.Ioo (1 / 2) 1) :
     (cdfQuantile_le_iff (gaussianReal 0 1) hu01).mp h
   rw [cdf_gaussianReal_zero] at hle
   linarith [hu.1, hle]
+
+/-- Symmetry of the standard normal quantile: `Φ⁻¹(1 - p) = -Φ⁻¹ p`. Outside `(0, 1)` both
+sides are the junk value `0`. -/
+theorem cdfQuantile_gaussianReal_one_sub (p : ℝ) :
+    cdfQuantile (gaussianReal 0 1) (1 - p) = -cdfQuantile (gaussianReal 0 1) p := by
+  by_cases hp : p ∈ Set.Ioo (0 : ℝ) 1
+  · have h : cdf (gaussianReal 0 1) (-cdfQuantile (gaussianReal 0 1) p) = 1 - p := by
+      rw [cdf_gaussianReal_neg, cdf_cdfQuantile_eq_of_continuous _
+        (continuous_cdf_gaussianReal 0 one_ne_zero) hp]
+    rw [← h, cdfQuantile_cdf_of_strictMono _ (strictMono_cdf_gaussianReal 0 one_ne_zero)]
+  · have hp' : 1 - p ∉ Set.Ioo (0 : ℝ) 1 := fun h => hp ⟨by linarith [h.2], by linarith [h.1]⟩
+    simp [cdfQuantile, hp, hp']
 
 /-- Derivative of the standard normal cdf: `Φ' = φ`. Mathlib has no derivative of
 the Gaussian cdf; this follows from the integral representation of the cdf and the

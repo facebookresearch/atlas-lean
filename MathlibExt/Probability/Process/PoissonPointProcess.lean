@@ -12,6 +12,7 @@ public import Mathlib.MeasureTheory.Constructions.Pi
 public import Mathlib.MeasureTheory.Measure.GiryMonad
 public import Mathlib.Probability.Distributions.Poisson.Basic
 
+import Mathlib.MeasureTheory.Constructions.Cylinders
 import Mathlib.MeasureTheory.Integral.Pi
 import Mathlib.MeasureTheory.Integral.Bochner.SumMeasure
 import Mathlib.MeasureTheory.Function.Floor
@@ -46,21 +47,20 @@ which is the same measure because `e^{-μ(E)} μ(E)^n / n! • (μ/μ(E))^{⊗n}
   `E ∫ h(x, η) η(dx) = ∫ E h(x, η + δ_x) μ(dx)`.
 * `map_map`: **mapping theorem** — the image of `η` under a measurable map `T` is the Poisson
   point process with intensity `μ ∘ T⁻¹`.
+* `map_restrict_pi`: **restriction theorem** — the restrictions to a finite family of pairwise
+  disjoint measurable sets are independent Poisson point processes with the restricted intensities.
 
 ## Scope
 
 Only finite intensities are treated. Not covered: the σ-finite case (a countable superposition
-of independent finite pieces), the restriction theorem in its process-level form (the
-restrictions to disjoint sets are independent Poisson processes; recorded as wanted in
-`WantedExt.Probability.Process.PoissonPointProcessWanted`), and position-dependent marking,
-which needs a product of kernels. Uniqueness of the law of a Poisson process given its
-intensity (Last–Penrose Prop. 3.2) is not formalized, so the results are stated for this
-construction.
+of independent finite pieces) and position-dependent marking, which needs a product of kernels.
+Uniqueness of the law of a Poisson process given its intensity (Last–Penrose Prop. 3.2) is not
+formalized, so the results are stated for this construction.
 
 ## References
 
 * G. Last, M. Penrose, *Lectures on the Poisson Process*, IMS Textbooks, Cambridge University
-  Press (2017), Def. 3.1, Prop. 2.7, Prop. 3.5, Thm. 3.9, Thm. 4.1, Thm. 5.1.
+  Press (2017), Def. 3.1, Prop. 2.7, Prop. 3.5, Thm. 3.9, Thm. 4.1, Thm. 5.1, Thm. 5.2.
 * J. F. C. Kingman, *Poisson Processes*, Oxford University Press (1993).
 * J. Mecke, Stationäre zufällige Maße auf lokalkompakten Abelschen Gruppen,
   *Z. Wahrscheinlichkeitstheorie verw. Gebiete* 9 (1967), 36–58.
@@ -616,5 +616,128 @@ theorem map_map {T : E → F} (hT : Measurable T) :
     Measurable.of_eval fun i => hT.comp (measurable_pi_apply i)
   rw [hcomp, ← Measure.map_map (measurable_countingMeasure n) hTn,
     Measure.pi_map_pi (fun _ => hT.aemeasurable)]
+
+/-- Reindex a product of finite products by the disjoint union of the index types. -/
+private theorem map_pi_sigma {ι : Type*} [Fintype ι] {κ : ι → Type*} [∀ i, Fintype (κ i)]
+    (ν : (i : ι) → κ i → Measure ℝ≥0∞) [∀ i j, SigmaFinite (ν i j)] :
+    (Measure.pi fun i => Measure.pi (ν i)).map (fun x (j : Sigma κ) => x j.1 j.2) =
+      Measure.pi fun j => ν j.1 j.2 := by
+  have (j : Sigma κ) : SigmaFinite (ν j.1 j.2) := inferInstance
+  symm
+  refine Measure.pi_eq fun s hs => ?_
+  have hm : Measurable (fun (x : (i : ι) → κ i → ℝ≥0∞) (j : Sigma κ) => x j.1 j.2) :=
+    .of_eval fun j => (measurable_pi_apply j.2).comp (measurable_pi_apply j.1)
+  rw [Measure.map_apply hm (.univ_pi hs)]
+  have he : (fun (x : (i : ι) → κ i → ℝ≥0∞) (j : Sigma κ) => x j.1 j.2) ⁻¹' (univ.pi s) =
+      univ.pi (fun i => univ.pi fun j => s ⟨i, j⟩) := by
+    ext x
+    simp [Sigma.forall]
+  simp_rw [he, Measure.pi_pi, Fintype.prod_sigma]
+
+/-- **Restriction theorem.** The restrictions `η|_{A i}` of a Poisson point process with finite
+intensity `μ` to pairwise disjoint measurable sets `A i` are independent Poisson point processes
+with intensities `μ|_{A i}` (Last–Penrose Thm. 5.2). -/
+theorem map_restrict_pi {E : Type*} [MeasurableSpace E] (μ : Measure E)
+    [IsFiniteMeasure μ] {ι : Type*} [Fintype ι] (A : ι → Set E)
+    (hA : ∀ i, MeasurableSet (A i)) (hd : Pairwise (Disjoint on A)) :
+    (poissonPointProcess μ).map (fun η i => η.restrict (A i)) =
+      Measure.pi fun i => poissonPointProcess (μ.restrict (A i)) := by
+  classical
+  let Query := {B : Set E // MeasurableSet B}
+  let eval (η : Measure E) (B : Query) := η B.1
+  let C : Set (Set (Measure E)) :=
+    {U | ∃ V ∈ measurableCylinders (fun _ : Query => ℝ≥0∞), eval ⁻¹' V = U}
+  have hgen : MeasurableSpace.generateFrom C = Measure.instMeasurableSpace := by
+    change MeasurableSpace.generateFrom
+      ((preimage eval) '' measurableCylinders (fun _ : Query => ℝ≥0∞)) = _
+    rw [← MeasurableSpace.comap_generateFrom, generateFrom_measurableCylinders]
+    rw [MeasurableSpace.comap_process_pi]
+    exact (iSup_subtype' (α := MeasurableSpace (Measure E)) (p := MeasurableSet)
+      (f := fun s _ => (borel ℝ≥0∞).comap fun η => η s)).symm
+  have hC : IsPiSystem C := isPiSystem_measurableCylinders.comap eval
+  have hCu : univ ∈ C := ⟨univ, univ_mem_measurableCylinders _, preimage_univ⟩
+  have hrestrict : Measurable (fun (η : Measure E) i => η.restrict (A i)) := by
+    refine .of_eval fun i => Measure.measurable_measure.2 fun s hs => ?_
+    simpa only [Measure.restrict_apply hs] using Measure.measurable_coe (hs.inter (hA i))
+  symm
+  refine Measure.pi_eq_generateFrom (fun _ => hgen) (fun _ => hC)
+    (fun _ => ⟨fun _ => univ, fun _ => hCu, fun _ => measure_lt_top _ _, iUnion_const _⟩) ?_
+  intro U hU
+  have hUmeas (i : ι) : MeasurableSet (U i) := by
+    rw [← hgen]
+    exact MeasurableSpace.measurableSet_generateFrom (hU i)
+  have hUc (i : ι) : ∃ I : Finset Query, ∃ T : Set (I → ℝ≥0∞),
+      MeasurableSet T ∧ eval ⁻¹' cylinder I T = U i := by
+    obtain ⟨V, hV, hEq⟩ := hU i
+    obtain ⟨I, T, hT, rfl⟩ := (mem_measurableCylinders V).1 hV
+    exact ⟨I, T, hT, hEq⟩
+  choose I T hT hUeq using hUc
+  -- Partition each row's query sets by their membership patterns.
+  let tag (i : ι) (x : E) (b : I i) : Bool := decide (x ∈ (b.1 : Query).1)
+  let cell (i : ι) (p : I i → Bool) : Set E := tag i ⁻¹' {p}
+  have htag (i : ι) : Measurable (tag i) := by
+    refine .of_eval fun b => measurable_to_bool ?_
+    convert (b.1 : Query).2 using 1
+    ext x
+    simp [tag]
+  have hcell (i : ι) (p : I i → Bool) : MeasurableSet (cell i p) :=
+    (measurableSet_singleton p).preimage (htag i)
+  have hdcell (i : ι) : Pairwise (Disjoint on cell i) :=
+    fun p q hpq => pairwiseDisjoint_fiber (tag i) univ (mem_univ p) (mem_univ q) hpq
+  let selected (i : ι) (b : I i) : Finset (I i → Bool) :=
+    Finset.univ.filter fun p => p b = true
+  let regroup (i : ι) (n : (I i → Bool) → ℝ≥0∞) (b : I i) := ∑ p ∈ selected i b, n p
+  have hregroup (i : ι) : Measurable (regroup i) :=
+    .of_eval fun b => Finset.measurable_sum _ fun p _ => measurable_pi_apply p
+  have hrec (i : ι) (η : Measure E) :
+      regroup i (fun p => η (cell i p)) = (I i).restrict (eval η) := by
+    funext b
+    have he : tag i ⁻¹' ↑(selected i b) = (b.1 : Query).1 := by ext x; simp [selected, tag]
+    exact (sum_measure_preimage_singleton (selected i b) (fun p _ => hcell i p)).trans
+      (congrArg η he)
+  let D (i : ι) := regroup i ⁻¹' T i
+  have hD (i : ι) : MeasurableSet (D i) := (hT i).preimage (hregroup i)
+  -- The cells inside distinct restriction sets are disjoint as well.
+  let J := Sigma fun i => I i → Bool
+  let inside (j : J) := cell j.1 j.2 ∩ A j.1
+  have hin (j : J) : MeasurableSet (inside j) := (hcell _ _).inter (hA _)
+  have hdin : Pairwise (Disjoint on inside) := by
+    rintro ⟨i, p⟩ ⟨j, q⟩ hne
+    by_cases hij : i = j
+    · subst j
+      have hpq : p ≠ q := fun h => hne (by simp [h])
+      exact (hdcell i hpq).mono inter_subset_left inter_subset_left
+    · exact (hd hij).mono inter_subset_right inter_subset_right
+  let ν (i : ι) (p : I i → Bool) :=
+    (poissonMeasure (μ (cell i p ∩ A i)).toNNReal).map (Nat.cast : ℕ → ℝ≥0∞)
+  let flat (x : (i : ι) → (I i → Bool) → ℝ≥0∞) (j : J) := x j.1 j.2
+  let rows (x : J → ℝ≥0∞) (i : ι) (p : I i → Bool) := x ⟨i, p⟩
+  let V := rows ⁻¹' univ.pi D
+  have hV : MeasurableSet V := (MeasurableSet.univ_pi hD).preimage <|
+    .of_eval fun i => .of_eval fun p => measurable_pi_apply (⟨i, p⟩ : J)
+  have hm : Measurable (fun (η : Measure E) (j : J) => η (inside j)) :=
+    .of_eval fun j => Measure.measurable_coe (hin j)
+  have hflat : Measurable flat :=
+    .of_eval fun j => (measurable_pi_apply j.2).comp (measurable_pi_apply j.1)
+  have he : (fun (η : Measure E) (j : J) => η (inside j)) ⁻¹' V =
+      (fun (η : Measure E) i => η.restrict (A i)) ⁻¹' univ.pi U := by
+    ext η
+    simp only [mem_preimage, V, mem_univ_pi, rows, ← hUeq, mem_cylinder, D]
+    simp_rw [← hrec, Measure.restrict_apply (hcell _ _)]
+    rfl
+  have hflatV : flat ⁻¹' V = univ.pi D := rfl
+  have hrect (i : ι) : poissonPointProcess (μ.restrict (A i)) (U i) = Measure.pi (ν i) (D i) := by
+    have hi : (poissonPointProcess (μ.restrict (A i))).map (fun η p => η (cell i p)) =
+        Measure.pi (ν i) := by
+      simpa only [ν, Measure.restrict_apply (hcell i _)] using
+        map_apply_pi (μ.restrict (A i)) (cell i) (hcell i) (hdcell i)
+    rw [← hi, Measure.map_apply (.of_eval fun p => Measure.measurable_coe (hcell i p)) (hD i)]
+    congr 1
+    ext η
+    simp only [← hUeq, mem_preimage, mem_cylinder, D, hrec]
+  rw [Measure.map_apply hrestrict (.univ_pi hUmeas), ← he,
+    ← Measure.map_apply hm hV, map_apply_pi μ inside hin hdin,
+    ← map_pi_sigma ν, Measure.map_apply hflat hV, hflatV, Measure.pi_pi]
+  exact Finset.prod_congr rfl fun i _ => (hrect i).symm
 
 end MathlibExt.Probability.PoissonPointProcess

@@ -39,9 +39,11 @@ pointwise product of sets; sizes are compared in `ℝ` with `x ↦ x^δ` the rea
 
 open scoped Pointwise
 
-/-- Kourovka 20.23 (M. Garonzi, A. Maróti): there are `δ ∈ (0, 1)` and `N` such that whenever
-`n ≥ N` and `A`, `B`, `C` are conjugacy classes of `Alt(n)` each of size at least `|Alt(n)|^δ`,
-then `ABC = Alt(n)`. -/
+/-- **Products of three large conjugacy classes in alternating groups (Kourovka 20.23).** The
+statement that there are a real number $\delta$ with $0 < \delta < 1$ and a natural number $N$
+such that for every $n \ge N$ and all conjugacy classes $A$, $B$, $C$ of the alternating group
+$\mathrm{Alt}(n)$, each of size at least $|\mathrm{Alt}(n)|^{\delta}$, the product set $ABC$ is
+all of $\mathrm{Alt}(n)$. -/
 def productOfThreeLargeClassesIsAlternatingGroup : Prop :=
   ∃ δ : ℝ, 0 < δ ∧ δ < 1 ∧ ∃ N : ℕ, ∀ n : ℕ, N ≤ n →
     ∀ A B C : ConjClasses (alternatingGroup (Fin n)),
@@ -51,10 +53,16 @@ def productOfThreeLargeClassesIsAlternatingGroup : Prop :=
       A.carrier * B.carrier * C.carrier = Set.univ
 
 /--
-Resolved true: Dona (2025, Theorem 1.2) proves that for some `δ > 0` and `n₀`, any three conjugacy
-classes `C₁, C₂, C₃` of `G = Alt(n)`, `n ≥ n₀`, of size at least `|G|^{1-δ}` satisfy `C₁C₂C₃ = G`,
-which he states as the positive answer to Problem 20.23 (the problem's exponent is `1 - δ`, in `(0,
-1)` for small `δ`). Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group
+**Three large conjugacy classes multiply to the whole alternating group.** There are a real number
+$\delta$ with $0 < \delta < 1$ and a natural number $N$ such that for every $n \ge N$ and all
+conjugacy classes $A$, $B$, $C$ of the alternating group $\mathrm{Alt}(n)$, each of size at least
+$|\mathrm{Alt}(n)|^{\delta}$, the product set $ABC$ is all of $\mathrm{Alt}(n)$. This is the
+positive answer to Kourovka Problem 20.23.
+
+Dona (2025, Theorem 1.2) proves this with the size bound written as
+$|\mathrm{Alt}(n)|^{1-\varepsilon}$ for a small $\varepsilon > 0$.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group
 Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 20.23 (M. Garonzi, A.
 Maróti); resolution: D. Dona, Products of three conjugacy classes in the alternating group,
 preprint, arXiv:2505.06012 (2025), Theorem 1.2: there are δ > 0 and n₀ such that for n ≥ n₀ any

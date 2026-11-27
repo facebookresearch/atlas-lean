@@ -98,7 +98,18 @@ private def rkBoundaries : List Nat → Nat → List Nat
   | [], offset => [offset]
   | _ :: xs, offset => offset :: rkBoundaries xs (offset + 1)
 
-/-- All exact matching zero-based shifts, with executed arithmetic and equality operation cost. -/
+/-- **Rabin–Karp string matching.** Given a base $d$, a modulus $q > 0$, a pattern
+$P = p_0 \dots p_{m-1}$ and a text $T = t_0 \dots t_{n-1}$, both lists of natural numbers, this
+returns the list, in increasing order, of all shifts $s$ with $s + m \le n$ and $t_{s+k} = p_k$
+for every $k < m$. For $m \ge 1$ it computes by Horner's rule the residues modulo $q$ of $P$ and
+of the first length-$m$ window of $T$, read as base-$d$ numerals, and updates the window residue
+by a rolling hash; symbols are compared at a shift only when the two residues agree, from left to
+right. If $m > n$ it returns the empty list. The empty pattern returns every shift
+$0, 1, \dots, n$ at cost $0$.
+
+The cost counts each executed multiplication, addition, subtraction and modulus in computing
+the residues and $d^{m-1} \bmod q$, and each borrow test, residue equality test and symbol
+equality test; shift-offset arithmetic and all other operations are free. -/
 public def rabinKarpMatches (d q : Nat) (pattern text : List Nat) (_hq : 0 < q) :
     TimeM Nat (List Nat) :=
   match pattern with
@@ -327,7 +338,10 @@ private lemma rkBoundaries_eq (text : List Nat) (offset : Nat) :
   | nil => simp [rkBoundaries, List.range'_succ]
   | cons x xs ih => simp [rkBoundaries, ih, List.range'_succ]
 
-/-- Erasing cost gives the same all-occurrence result as canonical naive matching. -/
+/-- **Rabin–Karp and naive matching return the same offsets.** For every base $d$, modulus
+$q > 0$ and lists of natural numbers $P$ and $T$, the list of offsets returned by Rabin–Karp
+matching of $P$ in $T$ with base $d$ and modulus $q$ equals the list returned by naive matching
+of $P$ in $T$. -/
 theorem rabinKarpMatches_ret_eq_naiveMatches (d q : Nat) (pattern text : List Nat) (hq : 0 < q) :
     (rabinKarpMatches d q pattern text hq).ret = (naiveMatches pattern text).ret := by
   cases pattern with
@@ -435,7 +449,19 @@ private lemma rkMatches_time_phase (d q : Nat) (pattern text : List Nat) (hq : 0
       simp only [List.length_cons, Nat.add_sub_cancel]
       omega
 
-/-- Exact setup, hash tests, rolling work, borrow additions, and hit-verification cost. -/
+/-- **Exact cost of Rabin–Karp matching.** Let $d$ be a base, $q > 0$ a modulus and $P$, $T$
+lists of natural numbers with $0 < m \le |T|$, where $m = |P|$, and put $r = |T| - m$. Index
+lists from $0$, write $T_{s..}$ for the suffix of $T$ starting at position $s$, and for a list
+$S$ with at least $m$ entries put $h(S) = \bigl(\sum_{i<m} S_i\, d^{m-1-i}\bigr) \bmod q$. Let
+$B$ be the number of offsets $s < r$ with $h(T_{s..}) < (T_s \cdot (d^{m-1} \bmod q)) \bmod q$.
+For $s \le r$ let $c_s = m$ if $P$ is a prefix of $T_{s..}$, and otherwise $c_s = j + 1$ for the
+least $j$ with $P_j \ne T_{s+j}$. Then Rabin–Karp matching of $P$ in $T$ with base $d$ and
+modulus $q$ has counted cost exactly
+
+$$(8m - 1) + (r + 1) + 7r + B + \sum_{s \le r,\ h(P) = h(T_{s..})} c_s.$$
+
+The terms count the setup, one hash comparison per alignment, the rolling hash updates, one
+extra addition per borrow, and the symbol comparisons that verify hash hits. -/
 theorem rabinKarpMatches_time_eq (d q : Nat) (pattern text : List Nat) (hq : 0 < q)
     (hpos : 0 < pattern.length) (hlen : pattern.length ≤ text.length) :
     let m := pattern.length
@@ -462,18 +488,26 @@ theorem rabinKarpMatches_time_eq (d q : Nat) (pattern text : List Nat) (hq : 0 <
   omega
 
 
-/-- An offset is reported exactly when the canonical pattern match holds there. -/
+/-- **Correctness of Rabin–Karp matching.** For every base $d$, every modulus $q > 0$, all
+lists of natural numbers $P$ (the pattern) and $T$ (the text) and every natural number $s$,
+Rabin–Karp matching of $P$ in $T$ with base $d$ and modulus $q$ reports the offset $s$ if and
+only if $P$ matches $T$ at $s$, that is, $s \le |T|$ and $P$ is a prefix of the suffix of $T$
+that starts at position $s$ (counting from $0$). -/
 theorem mem_rabinKarpMatches_iff (d q : Nat) (pattern text : List Nat) (hq : 0 < q) (offset : Nat) :
     offset ∈ (rabinKarpMatches d q pattern text hq).ret ↔
       Cslib.Algorithms.Lean.StringMatching.MatchAt pattern text offset := by
   rw [rabinKarpMatches_ret_eq_naiveMatches]
   exact mem_naiveMatches_iff pattern text offset
-/-- Reported offsets are strictly increasing, so overlapping occurrences are never duplicated. -/
+/-- **Rabin–Karp reports offsets in increasing order.** For every base $d$, modulus $q > 0$ and
+lists of natural numbers $P$ and $T$, the offsets returned by Rabin–Karp matching of $P$ in $T$
+form a strictly increasing list; in particular no offset is reported twice. -/
 theorem rabinKarpMatches_pairwise (d q : Nat) (pattern text : List Nat) (hq : 0 < q) :
     (rabinKarpMatches d q pattern text hq).ret.Pairwise (· < ·) := by
   rw [rabinKarpMatches_ret_eq_naiveMatches]
   exact naiveMatches_pairwise pattern text
-/-- The empty pattern matches every bounded text boundary, with zero counted operations. -/
+/-- **Rabin–Karp matching with the empty pattern.** For every base $d$, modulus $q > 0$ and
+list of natural numbers $T$, Rabin–Karp matching of the empty pattern in $T$ returns the list
+$[0, 1, \dots, |T|]$ of all offsets from $0$ to $|T|$ in increasing order, at counted cost $0$. -/
 @[simp]
 theorem rabinKarpMatches_nil_pattern (d q : Nat) (text : List Nat) (hq : 0 < q) :
     rabinKarpMatches d q [] text hq = ⟨List.range (text.length + 1), 0⟩ := by
@@ -496,7 +530,13 @@ private lemma rkSum_hit_le {α : Type} (xs : List α) (p : α → Bool) (f : α 
       rw [List.sum_map_ite]
       simp [List.countP_eq_length_filter, Nat.mul_comm]
 
-/-- Setup plus matching work is bounded by the candidate count and the number of hash hits. -/
+/-- **Cost bound for Rabin–Karp matching.** Let $d$ be a base, $q > 0$ a modulus and $P$, $T$
+lists of natural numbers with $0 < m \le |T|$, where $m = |P|$, and put $r = |T| - m$. Index
+lists from $0$, write $T_{s..}$ for the suffix of $T$ starting at position $s$, and for a list
+$S$ with at least $m$ entries put $h(S) = \bigl(\sum_{i<m} S_i\, d^{m-1-i}\bigr) \bmod q$. Let
+$H$ be the number of hash hits, the offsets $s \le r$ with $h(P) = h(T_{s..})$. Then
+Rabin–Karp matching of $P$ in $T$ with base $d$ and modulus $q$ has counted cost at most
+$(8m - 1) + (9(r + 1) - 8) + mH$. -/
 theorem rabinKarpMatches_time_le (d q : Nat) (pattern text : List Nat) (hq : 0 < q)
     (hpos : 0 < pattern.length) (hlen : pattern.length ≤ text.length) :
     let m := pattern.length
@@ -531,7 +571,12 @@ theorem rabinKarpMatches_time_le (d q : Nat) (pattern text : List Nat) (hq : 0 <
   simp only [beq_iff_eq] at hv
   omega
 
-/-- Overlength patterns return no matches, retaining high-place and attempted Horner setup costs. -/
+/-- **Rabin–Karp matching with a pattern longer than the text.** For every base $d$, modulus
+$q > 0$ and lists of natural numbers $P$ and $T$ with $|T| < |P|$, Rabin–Karp matching of $P$ in
+$T$ returns no offsets, at counted cost exactly $1 + 2(|P| - 1) + 6|T|$.
+
+This cost is the work of computing the high-place power and the Horner setup steps attempted
+before the text runs out. -/
 @[simp]
 theorem rabinKarpMatches_of_length_lt (d q : Nat) (pattern text : List Nat) (hq : 0 < q)
     (hlen : text.length < pattern.length) :
@@ -617,7 +662,16 @@ private lemma rkReplicate_borrows (d q a m n : Nat) (hpos : 0 < m) (hlen : m ≤
   have hc : n - m ≤ n + 1 := by omega
   simpa [Nat.min_eq_left hc] using he
 
-/-- Repeated-symbol words execute exactly m comparisons at every alignment, plus setup and rolls. -/
+/-- **Exact cost of Rabin–Karp matching on repeated-symbol words.** Let $d$ be a base, $q > 0$ a
+modulus, $a$ a natural number and $m$, $n$ natural numbers with $0 < m \le n$. Put
+$t = \bigl(a \sum_{i<m} d^i\bigr) \bmod q$, and let $\beta = 1$ if
+$t < (a \cdot (d^{m-1} \bmod q)) \bmod q$ and $\beta = 0$ otherwise. Then Rabin–Karp matching
+with base $d$ and modulus $q$ of the pattern $a^m$ in the text $a^n$ (the lists of $m$ and of
+$n$ copies of $a$) has counted cost exactly
+
+$$(8m - 1) + (n - m + 1) + 7(n - m) + (n - m)\beta + m(n - m + 1).$$
+
+The last term is $m$ symbol comparisons at each of the $n - m + 1$ alignments. -/
 theorem rabinKarpMatches_time_replicate (d q a m n : Nat) (hq : 0 < q) (hpos : 0 < m)
     (hlen : m ≤ n) :
     let t := Nat.ofDigits d (List.replicate m a).reverse % q
@@ -631,14 +685,23 @@ theorem rabinKarpMatches_time_replicate (d q a m n : Nat) (hq : 0 < q) (hpos : 0
   simp only [List.length_replicate] at he
   rw [rkReplicate_borrows d q a m n hpos hlen, rkReplicate_verification d q a m n hlen] at he
   exact he
-/-- Repeated-symbol words report every possible shift, including overlaps. -/
+/-- **Rabin–Karp offsets on repeated-symbol words.** For every base $d$, modulus $q > 0$, symbol
+$a \in \mathbb{N}$ and natural numbers $m \le n$, Rabin–Karp matching of the pattern $a^m$ in the
+text $a^n$ (the lists of $m$ and of $n$ copies of $a$) returns $[0, 1, \dots, n - m]$, that is,
+every shift in increasing order, including overlapping ones. -/
 theorem rabinKarpMatches_ret_replicate (d q a m n : Nat) (hq : 0 < q) (hlen : m ≤ n) :
     (rabinKarpMatches d q (List.replicate m a) (List.replicate n a) hq).ret =
       List.range (n - m + 1) := by
   rw [rabinKarpMatches_ret_eq_naiveMatches]
   exact Cslib.Algorithms.Lean.TimeM.naiveMatches_ret_replicate a m n hlen
 
-/-- Repeated-symbol matching cost lies between mL and 10mL, independently of preprocessing. -/
+/-- **Matching cost of Rabin–Karp on repeated-symbol words.** Let $d$ be a base, $q > 0$ a
+modulus, $a$ a natural number and $m$, $n$ natural numbers with $0 < m \le n$. Let $C$ be the
+counted cost of Rabin–Karp matching with base $d$ and modulus $q$ of the pattern $a^m$ in the
+text $a^n$ (the lists of $m$ and of $n$ copies of $a$), minus $8m - 1$, with subtraction
+truncated at $0$. Then $m(n - m + 1) \le C \le 10\,m(n - m + 1)$.
+
+The subtracted $8m - 1$ is the preprocessing cost, so the bounds do not depend on it. -/
 theorem rabinKarpMatches_matching_time_replicate (d q a m n : Nat) (hq : 0 < q)
     (hpos : 0 < m) (hlen : m ≤ n) :
     let matchingCost := (rabinKarpMatches d q (List.replicate m a)

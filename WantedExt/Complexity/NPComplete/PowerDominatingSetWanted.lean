@@ -19,7 +19,7 @@ D. J. Brueni and L. S. Heath, "The PMU placement problem", SIAM Journal on Discr
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import CSLibExt.Computability.Complexity.Karp.Color

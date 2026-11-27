@@ -54,8 +54,13 @@ private theorem zpow_sub_mul_pow_aux (x : ℝ) (hx : x ≠ 0) (a : ℤ) (d : ℕ
     x ^ (a - (d : ℤ)) * x ^ d = x ^ a := by
   rw [← zpow_natCast x d, ← zpow_add₀ hx, sub_add_cancel]
 
-/-- The Stirling-number formula for the `d`th derivative of `y ↦ ∑ i ∈ Icc 1 k, mᵢ yⁱ` at
-nonzero `x`, for arbitrary `k`, `d` and multiplicities `m`. -/
+/-- **Stirling recursion for derivatives, for arbitrary multiplicities.** Let $k$ and $d$ be
+natural numbers, let $m \colon \mathbb{N} \to \mathbb{N}$, write $m_i = m(i)$, and let
+$f(y) = \sum_{i=1}^{k} m_i y^i$ for real $y$. Then for every real $x \ne 0$,
+$$f^{(d)}(x) = \sum_{i=1}^{k} i^d m_i x^{i-d} -
+\sum_{j=0}^{d-1} S(d, j)\, x^{j-d} f^{(j)}(x),$$
+where $S(d, j)$ are the Stirling numbers of the second kind and $f^{(j)}$ is the $j$th
+derivative of $f$. No relation between $d$ and $k$ is assumed. -/
 theorem partitionPolynomial_iteratedDeriv_eq_sum_stirlingSecond_general
     (k d : ℕ) (m : ℕ → ℕ) (x : ℝ) (hx : x ≠ 0) :
     let f : ℝ → ℝ := fun y => ∑ i ∈ Finset.Icc 1 k, (m i : ℝ) * y ^ i
@@ -187,20 +192,23 @@ theorem partitionPolynomial_iteratedDeriv_eq_sum_stirlingSecond_general
 
 set_option linter.unusedVariables false in
 /--
-The derivative formula for the partition polynomial, expressed using Stirling numbers of the
-second kind.
+**Derivatives of the partition polynomial via Stirling numbers.** Let $k \ge 1$, let
+$m \colon \mathbb{N} \to \mathbb{N}$, and write $m_i = m(i)$. Assume $m_k \ne 0$ and $m_i = 0$
+for every $i$ outside $\{1, \dots, k\}$, so that $m$ lists the part multiplicities of a
+partition $\lambda = \langle 1^{m_1}, \dots, k^{m_k} \rangle$ with largest part $k$. Let
+$f(y) = \sum_{i=1}^{k} m_i y^i$ for real $y$. Then for every natural number $d \le k$ and every
+real $x \ne 0$,
+$$f^{(d)}(x) = \sum_{i=1}^{k} i^d m_i x^{i-d} -
+\sum_{j=0}^{d-1} S(d, j)\, x^{j-d} f^{(j)}(x),$$
+where $S(d, j)$ are the Stirling numbers of the second kind and $f^{(j)}$ is the $j$th
+derivative of $f$; for $d = 0$ the second sum is empty.
+
+Proves `Wanted` entry `partitionPolynomial_iteratedDeriv_eq_sum_stirlingSecond`.
 
 Source: Madeline Locus Dawsey, Tyler Russell, and Dannie Urban, "Derivatives and Integrals
 of Polynomials Associated with Integer Partitions," Journal of Integer Sequences 25 (2022),
 Article 22.5.1, Theorem 1 (label `derivativethm`), lines 108–114,
 <https://cs.uwaterloo.ca/journals/JIS/VOL25/Dawsey/dawsey3.tex>.
-
-The partition `λ = ⟨1^m₁, …, k^mₖ⟩` in frequency notation has largest part `k`
-(`m k ≠ 0`, support in `Icc 1 k`) and partition polynomial `f(y) = ∑ mᵢ yⁱ`; the
-`d`th derivative at nonzero `x` is the displayed Stirling recursion, valid for
-`0 ≤ d ≤ k` (the second sum is empty for `d = 0`).
-
-Proves `Wanted` entry `partitionPolynomial_iteratedDeriv_eq_sum_stirlingSecond`.
 -/
 @[nolint unusedArguments]
 theorem partitionPolynomial_iteratedDeriv_eq_sum_stirlingSecond

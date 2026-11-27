@@ -1,0 +1,3 @@
+# The representer theorem, closed-span form
+
+Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$, let $V$ be a Hilbert space over $\mathbb{K}$, let $H$ be a reproducing kernel Hilbert space of functions $X \to V$, and let $x_1, \dots, x_n \in X$, $L : V^n \to \mathbb{R}$ and $\Omega : \mathbb{R} \to \mathbb{R}$ with $\Omega$ strictly increasing on $[0, \infty)$. Every global minimizer $f \in H$ of the [regularized risk](regularized-risk.md) $L(f(x_1), \dots, f(x_n)) + \Omega(\|f\|)$ lies in the closure of the range of the [kernel expansion map](kernel-expansion.md), the closed span of the kernel functions at the sample points.

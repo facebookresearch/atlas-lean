@@ -1,0 +1,3 @@
+# Boundary-preserving automorphism as an isomorphism of wired graphs
+
+Let $G = (V, E)$ be a simple graph on a finite set $V$, $\partial \subseteq V$, and let $\sigma$ be a permutation of $V$ with $\sigma(x) \sim \sigma(y) \iff x \sim y$ for all $x, y$ and $\sigma(x) \in \partial \iff x \in \partial$. For every configuration $\omega$, $\sigma$ is a graph isomorphism from the wired graph (the open edges of $G$ together with all pairs of distinct vertices of $\partial$) of $\omega^\sigma$ onto that of $\omega$, where $\omega^\sigma$ is the [relabelled configuration](re-cfg.md) $\omega^\sigma(e) = \omega(\sigma(e))$.

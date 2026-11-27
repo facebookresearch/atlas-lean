@@ -1,0 +1,3 @@
+# The Haar basis of $L^2[0,1)$
+
+The constant function $1$ together with the Haar functions $x \mapsto 2^{k/2} H(2^k x - j)$, $k \ge 0$, $0 \le j < 2^k$, supported in $[0,1)$ (DeVore's $H_{j,k}$), form an orthonormal basis of $L^2[0,1)$ (R. A. DeVore, *Nonlinear approximation*, Acta Numerica 7 (1998), Section 3.5, (3.44)–(3.47)). The statement asserts a Hilbert basis of $L^2([0,1))$ indexed by $\{\ast\} \sqcup \bigsqcup_k \{0, \dots, 2^k - 1\}$ whose elements are almost everywhere equal to these functions. DeVore's proof: the first $m$ levels are an orthonormal basis of the step functions on dyadic intervals of length $2^{-m}$, $S_m = S_0 \oplus W_0 \oplus \cdots \oplus W_{m-1}$, and $\operatorname{dist}(f, S_m) \to 0$ for every $f \in L^2[0,1)$.

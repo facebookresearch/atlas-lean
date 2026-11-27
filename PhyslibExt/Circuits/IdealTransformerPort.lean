@@ -52,9 +52,6 @@ current, core loss or dynamics is modeled.
   and the entering-current (passive sign) convention for port power.
 
 ## A. The ideal-transformer port model
-
-Discharges ECE roadmap leaf `ECE.POW.MACHINE.L1` (ideal transformer
-port model).
 -/
 
 @[expose] public section

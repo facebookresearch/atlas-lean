@@ -22,8 +22,7 @@ For convex differentiable `gₙ → g`, any limit point of `gₙ'(t)` lies in `[
 to `ivp2_ambientTiltLogZ` at `q = 2`, assuming its convergence and density collapse, the free
 infinite-volume density is bracketed by the one-sided derivatives of `g`. A function bracketed by
 `g'₋ ≤ a ≤ g'₊` that is left-continuous equals `g'₋`, and one that is right-continuous equals
-`g'₊`. This yields the two halves `fdd_FreeDensityIsLeftDeriv` and `fdd_WiredDensityIsRightDeriv`
-of `fpd_IVDensityIsOneSidedDeriv` and the uniqueness statement.
+`g'₊`.
 
 ## ii. Key results
 
@@ -31,16 +30,13 @@ of `fpd_IVDensityIsOneSidedDeriv` and the uniqueness statement.
 - `fdd_freeDensity_bracket` : `g'₋ ≤ free density ≤ g'₊` under density collapse.
 - `fdd_eq_leftDeriv_of_bracket_leftContinuous`, `fdd_eq_rightDeriv_of_bracket_rightContinuous` :
   one-sided continuity selects the derivative.
-- `fdd_fk_uniqueness_of_primitives` : countable-exception uniqueness from assumed ambient-log
-  limits,
-  density collapse, a wired upper bound, and one-sided continuity.
 
 ## iii. Table of contents
 
 - A. Limits of derivatives of convex functions
 - B. Brackets for edge densities
 - C. Selecting a one-sided derivative by continuity
-- D. Densities as one-sided derivatives and uniqueness
+- D. Wired densities and right derivatives
 
 ## iv. References
 
@@ -151,9 +147,9 @@ lemma fdd_freeDensity_le_rightDeriv (N : ℕ)
     (g : ℝ → ℝ) (hg : ConvexOn ℝ univ g)
     (hlim : ∀ t, Tendsto (fun n => ivp2_ambientTiltLogZ (Gn n) 2 t) atTop (𝓝 (g t)))
     (hcol : fpd_AvgDensityCollapse d N Gn)
-    (e' : Sym2 (boxVerts d N)) (t : ℝ) :
+    (e' : Sym2 (boxVerts d N)) (he' : e' ∈ (boxGraph d N).edgeFinset) (t : ℝ) :
     freeEdgeDensity d 2 (edgeIncl d N e') (fsc_logistic t) ≤ pressureRightDeriv g t :=
-  fdd_avgDensity_le_rightDeriv Gn hE g hg hlim t _ (hcol e' t)
+  fdd_avgDensity_le_rightDeriv Gn hE g hg hlim t _ (hcol e' he' t)
 
 lemma fdd_leftDeriv_le_freeDensity (N : ℕ)
     (Gn : ℕ → SimpleGraph (boxVerts d N)) [∀ n, DecidableRel (Gn n).Adj]
@@ -161,9 +157,9 @@ lemma fdd_leftDeriv_le_freeDensity (N : ℕ)
     (g : ℝ → ℝ) (hg : ConvexOn ℝ univ g)
     (hlim : ∀ t, Tendsto (fun n => ivp2_ambientTiltLogZ (Gn n) 2 t) atTop (𝓝 (g t)))
     (hcol : fpd_AvgDensityCollapse d N Gn)
-    (e' : Sym2 (boxVerts d N)) (t : ℝ) :
+    (e' : Sym2 (boxVerts d N)) (he' : e' ∈ (boxGraph d N).edgeFinset) (t : ℝ) :
     pressureLeftDeriv g t ≤ freeEdgeDensity d 2 (edgeIncl d N e') (fsc_logistic t) :=
-  fdd_leftDeriv_le_avgDensity Gn hE g hg hlim t _ (hcol e' t)
+  fdd_leftDeriv_le_avgDensity Gn hE g hg hlim t _ (hcol e' he' t)
 
 lemma fdd_freeDensity_bracket (N : ℕ)
     (Gn : ℕ → SimpleGraph (boxVerts d N)) [∀ n, DecidableRel (Gn n).Adj]
@@ -171,11 +167,11 @@ lemma fdd_freeDensity_bracket (N : ℕ)
     (g : ℝ → ℝ) (hg : ConvexOn ℝ univ g)
     (hlim : ∀ t, Tendsto (fun n => ivp2_ambientTiltLogZ (Gn n) 2 t) atTop (𝓝 (g t)))
     (hcol : fpd_AvgDensityCollapse d N Gn)
-    (e' : Sym2 (boxVerts d N)) (t : ℝ) :
+    (e' : Sym2 (boxVerts d N)) (he' : e' ∈ (boxGraph d N).edgeFinset) (t : ℝ) :
     pressureLeftDeriv g t ≤ freeEdgeDensity d 2 (edgeIncl d N e') (fsc_logistic t)
       ∧ freeEdgeDensity d 2 (edgeIncl d N e') (fsc_logistic t) ≤ pressureRightDeriv g t :=
-  ⟨fdd_leftDeriv_le_freeDensity N Gn hE g hg hlim hcol e' t,
-    fdd_freeDensity_le_rightDeriv N Gn hE g hg hlim hcol e' t⟩
+  ⟨fdd_leftDeriv_le_freeDensity N Gn hE g hg hlim hcol e' he' t,
+    fdd_freeDensity_le_rightDeriv N Gn hE g hg hlim hcol e' he' t⟩
 
 lemma fdd_free_is_leftDeriv_at_diff (N : ℕ)
     (Gn : ℕ → SimpleGraph (boxVerts d N)) [∀ n, DecidableRel (Gn n).Adj]
@@ -183,10 +179,10 @@ lemma fdd_free_is_leftDeriv_at_diff (N : ℕ)
     (g : ℝ → ℝ) (hg : ConvexOn ℝ univ g)
     (hlim : ∀ t, Tendsto (fun n => ivp2_ambientTiltLogZ (Gn n) 2 t) atTop (𝓝 (g t)))
     (hcol : fpd_AvgDensityCollapse d N Gn)
-    (e' : Sym2 (boxVerts d N)) (t : ℝ)
+    (e' : Sym2 (boxVerts d N)) (he' : e' ∈ (boxGraph d N).edgeFinset) (t : ℝ)
     (hdiff : pressureLeftDeriv g t = pressureRightDeriv g t) :
     freeEdgeDensity d 2 (edgeIncl d N e') (fsc_logistic t) = pressureLeftDeriv g t :=
-  fpd_freeDensity_at_diff_of_collapse d N Gn hE g hg hlim hcol e' t hdiff
+  fpd_freeDensity_at_diff_of_collapse d N Gn hE g hg hlim hcol e' he' t hdiff
 
 /-! ## C. Selecting a one-sided derivative by continuity -/
 
@@ -218,23 +214,15 @@ lemma fdd_free_is_leftDeriv_of_leftContinuous (N : ℕ)
     (g : ℝ → ℝ) (hg : ConvexOn ℝ univ g)
     (hlim : ∀ t, Tendsto (fun n => ivp2_ambientTiltLogZ (Gn n) 2 t) atTop (𝓝 (g t)))
     (hcol : fpd_AvgDensityCollapse d N Gn)
-    (e' : Sym2 (boxVerts d N)) (t : ℝ)
+    (e' : Sym2 (boxVerts d N)) (he' : e' ∈ (boxGraph d N).edgeFinset) (t : ℝ)
     (hlc : ContinuousWithinAt
       (fun s => freeEdgeDensity d 2 (edgeIncl d N e') (fsc_logistic s)) (Iio t) t) :
     freeEdgeDensity d 2 (edgeIncl d N e') (fsc_logistic t) = pressureLeftDeriv g t :=
   fdd_eq_leftDeriv_of_bracket_leftContinuous hg
-    (fun s => fdd_leftDeriv_le_freeDensity N Gn hE g hg hlim hcol e' s)
-    (fun s => fdd_freeDensity_le_rightDeriv N Gn hE g hg hlim hcol e' s) hlc
+    (fun s => fdd_leftDeriv_le_freeDensity N Gn hE g hg hlim hcol e' he' s)
+    (fun s => fdd_freeDensity_le_rightDeriv N Gn hE g hg hlim hcol e' he' s) hlc
 
-/-! ## D. Densities as one-sided derivatives and uniqueness -/
-
-/-- The free `q = 2` density of every edge of `Λ_N` at `p = logistic(t)` is the left derivative of
-`g`
-at `t`.
--/
-def fdd_FreeDensityIsLeftDeriv (N : ℕ) (g : ℝ → ℝ) : Prop :=
-  ∀ (e' : Sym2 (boxVerts d N)) (t : ℝ),
-    freeEdgeDensity d 2 (edgeIncl d N e') (fsc_logistic t) = pressureLeftDeriv g t
+/-! ## D. Wired densities and right derivatives -/
 
 /-- The wired `q = 2` density of every edge of `Λ_N` at `p = logistic(t)` is the right derivative
 of
@@ -257,9 +245,9 @@ lemma fdd_leftDeriv_le_wiredDensity (N : ℕ)
     (g : ℝ → ℝ) (hg : ConvexOn ℝ univ g)
     (hlim : ∀ t, Tendsto (fun n => ivp2_ambientTiltLogZ (Gn n) 2 t) atTop (𝓝 (g t)))
     (hcol : fpd_AvgDensityCollapse d N Gn)
-    (e' : Sym2 (boxVerts d N)) (t : ℝ) :
+    (e' : Sym2 (boxVerts d N)) (he' : e' ∈ (boxGraph d N).edgeFinset) (t : ℝ) :
     pressureLeftDeriv g t ≤ wiredEdgeDensity d 2 (edgeIncl d N e') (fsc_logistic t) :=
-  (fdd_leftDeriv_le_freeDensity N Gn hE g hg hlim hcol e' t).trans
+  (fdd_leftDeriv_le_freeDensity N Gn hE g hg hlim hcol e' he' t).trans
     (freeEdgeDensity_q2_le_wiredEdgeDensity d N e' (fsc_logistic_pos t) (fsc_logistic_lt_one t))
 
 lemma fdd_wired_is_rightDeriv_of_upperBound_rightContinuous (N : ℕ)
@@ -269,60 +257,13 @@ lemma fdd_wired_is_rightDeriv_of_upperBound_rightContinuous (N : ℕ)
     (hlim : ∀ t, Tendsto (fun n => ivp2_ambientTiltLogZ (Gn n) 2 t) atTop (𝓝 (g t)))
     (hcol : fpd_AvgDensityCollapse d N Gn)
     (hub : fdd_WiredDensityUpperBound (d := d) N g)
-    (e' : Sym2 (boxVerts d N)) (t : ℝ)
+    (e' : Sym2 (boxVerts d N)) (he' : e' ∈ (boxGraph d N).edgeFinset) (t : ℝ)
     (hrc : ContinuousWithinAt
       (fun s => wiredEdgeDensity d 2 (edgeIncl d N e') (fsc_logistic s)) (Ioi t) t) :
     wiredEdgeDensity d 2 (edgeIncl d N e') (fsc_logistic t) = pressureRightDeriv g t :=
   fdd_eq_rightDeriv_of_bracket_rightContinuous hg
-    (fun s => fdd_leftDeriv_le_wiredDensity N Gn hE g hg hlim hcol e' s)
+    (fun s => fdd_leftDeriv_le_wiredDensity N Gn hE g hg hlim hcol e' he' s)
     (fun s => hub e' s) hrc
-
-lemma fdd_IVDensityIsOneSidedDeriv_iff (N : ℕ) (g : ℝ → ℝ) :
-    fpd_IVDensityIsOneSidedDeriv d N g
-      ↔ fdd_WiredDensityIsRightDeriv (d := d) N g ∧ fdd_FreeDensityIsLeftDeriv (d := d) N g :=
-  Iff.rfl
-
-lemma fdd_IVDensityIsOneSidedDeriv_of_halves (N : ℕ) (g : ℝ → ℝ)
-    (hwired : fdd_WiredDensityIsRightDeriv (d := d) N g)
-    (hfree : fdd_FreeDensityIsLeftDeriv (d := d) N g) :
-    fpd_IVDensityIsOneSidedDeriv d N g :=
-  ⟨hwired, hfree⟩
-
-lemma fdd_fk_uniqueness (N : ℕ) (eb : Sym2 (boxVerts d N)) {g : ℝ → ℝ}
-    (hg : ConvexOn ℝ univ g)
-    (hwired : fdd_WiredDensityIsRightDeriv (d := d) N g)
-    (hfree : fdd_FreeDensityIsLeftDeriv (d := d) N g) :
-    {t : ℝ | ∃ A : Set (ConfigSpace (Sym2 (boxVerts d N))), IsIncreasing A ∧
-        eventMassProb (fuc_freeMass d N t) A
-          ≠ eventMassProb (fuc_wiredMass d N t) A}.Countable :=
-  fpd_fk_uniqueness d N eb hg (fdd_IVDensityIsOneSidedDeriv_of_halves N g hwired hfree)
-
-lemma fdd_fk_uniqueness_of_primitives (N : ℕ) (eb : Sym2 (boxVerts d N))
-    (Gn : ℕ → SimpleGraph (boxVerts d N)) [∀ n, DecidableRel (Gn n).Adj]
-    (hE : ∀ n, 0 < (Gn n).edgeFinset.card)
-    {g : ℝ → ℝ} (hg : ConvexOn ℝ univ g)
-    (hlim : ∀ t, Tendsto (fun n => ivp2_ambientTiltLogZ (Gn n) 2 t) atTop (𝓝 (g t)))
-    (hcol : fpd_AvgDensityCollapse d N Gn)
-    (hflc : ∀ (e' : Sym2 (boxVerts d N)) (t : ℝ), ContinuousWithinAt
-      (fun s => freeEdgeDensity d 2 (edgeIncl d N e') (fsc_logistic s)) (Iio t) t)
-    (hwub : fdd_WiredDensityUpperBound (d := d) N g)
-    (hwrc : ∀ (e' : Sym2 (boxVerts d N)) (t : ℝ), ContinuousWithinAt
-      (fun s => wiredEdgeDensity d 2 (edgeIncl d N e') (fsc_logistic s)) (Ioi t) t) :
-    {t : ℝ | ∃ A : Set (ConfigSpace (Sym2 (boxVerts d N))), IsIncreasing A ∧
-        eventMassProb (fuc_freeMass d N t) A
-          ≠ eventMassProb (fuc_wiredMass d N t) A}.Countable :=
-  fdd_fk_uniqueness N eb hg
-    (fun e' t =>
-      fdd_wired_is_rightDeriv_of_upperBound_rightContinuous N Gn hE hg hlim hcol hwub e' t
-        (hwrc e' t))
-    (fun e' t =>
-      fdd_free_is_leftDeriv_of_leftContinuous N Gn hE g hg hlim hcol e' t (hflc e' t))
-
-lemma fdd_halves_imp_fsc (N : ℕ) {g : ℝ → ℝ} (hg : ConvexOn ℝ univ g)
-    (hwired : fdd_WiredDensityIsRightDeriv (d := d) N g)
-    (hfree : fdd_FreeDensityIsLeftDeriv (d := d) N g) (e' : Sym2 (boxVerts d N)) :
-    fsc_FreeEnergyData d N e' :=
-  fpd_densityDeriv_imp_fsc d N hg (fdd_IVDensityIsOneSidedDeriv_of_halves N g hwired hfree) e'
 
 end FK
 

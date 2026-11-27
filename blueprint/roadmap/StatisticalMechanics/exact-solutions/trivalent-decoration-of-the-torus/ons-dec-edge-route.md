@@ -1,0 +1,3 @@
+# Four-step route of a decorated edge in the finer torus
+
+For $L > 2$ and adjacent darts $d, e$ of the [decorated graph](ons-dec-graph.md) $\mathcal{D}_L$, the route is the walk of four steps in the [finer torus graph](ons-dec-embed-graph.md) $T_{8L}$ from $\iota(d)$ to $\iota(e)$ following the [route directions](ons-dec-edge-route-dirs.md) of $(d, e)$; here $\iota(p, \mu) = (8\bar p_1 + o_1(\mu),\ 8\bar p_2 + o_2(\mu)) \in T_{8L}$ is the [embedded position](ons-dec-embed-vertex.md) of a dart, with $\bar p_i \in \{0, \dots, L - 1\}$ the standard representatives and $o(\mu)$ the [offset](ons-dec-embed-offset.md) (the four steps do end at $\iota(e)$ for adjacent darts).

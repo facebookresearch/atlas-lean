@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import CSLibExt.Computability.Complexity.Basic
 public import CSLibExt.Computability.Complexity.Karp.TokThen
 public import CSLibExt.Computability.Complexity.Karp.ThreeSatEmit
 public import CSLibExt.Computability.Complexity.Karp.ThreeSatCorrect
@@ -21,33 +22,24 @@ followed by the emitter `Emit3` (`TokThen.isPolyTime_out`). With `satDec_eq_sat3
 is a polynomial-time many-one reduction from `satDec`, so `sat3Dec` is NP-hard; with
 `SatVerifier.Machine.sat3Dec_mem_NP` it is NP-complete (`sat3Dec_npComplete`).
 
-`polyManyOneRed_trans` and `npHard_of_polyManyOneRed` are the general facts used to chain
-reductions.
+Generic reduction composition (`PolyManyOneRed.trans`) and hardness transfer
+(`NPHard.of_polyManyOneRed`) live in `Complexity/Basic.lean`; the old Karp names
+are deprecated compatibility aliases.
 -/
 
 @[expose] public section
 
 namespace Cslib.Complexity.Karp
 
-open Cslib.CookLevin Cslib.Logic.PL MetaMathlibExt.ComplexityTheory
+open Cslib.CookLevin Cslib.Logic.LegacyPL MetaMathlibExt.ComplexityTheory
 
-/-- **Transitivity of polynomial-time many-one reductions.** For decision problems $L_1$, $L_2$
-and $L_3$, if $L_1$ has a polynomial-time many-one reduction to $L_2$ and $L_2$ has one to $L_3$,
-then $L_1$ has a polynomial-time many-one reduction to $L_3$. -/
-theorem polyManyOneRed_trans {L₁ L₂ L₃ : DecisionProblem} (h₁ : PolyManyOneRed L₁ L₂)
-    (h₂ : PolyManyOneRed L₂ L₃) : PolyManyOneRed L₁ L₃ := by
-  obtain ⟨f, hf, e₁⟩ := h₁
-  obtain ⟨g, hg, e₂⟩ := h₂
-  exact ⟨g ∘ f, IsPolyTime.comp hf hg, fun x => (e₁ x).trans (e₂ (f x))⟩
+/-- Polynomial-time many-one reductions compose. -/
+@[deprecated (since := "2026-10-30")]
+alias polyManyOneRed_trans := Cslib.Complexity.PolyManyOneRed.trans
 
-/-- **NP-hardness transfers along reductions.** Let $L$ and $L'$ be decision problems. If every
-decision problem in NP has a polynomial-time many-one reduction to $L$, and $L$ has a
-polynomial-time many-one reduction to $L'$, then every decision problem in NP has a
-polynomial-time many-one reduction to $L'$. -/
-theorem npHard_of_polyManyOneRed {L L' : DecisionProblem}
-    (hL : ∀ A : DecisionProblem, A ∈ NP → PolyManyOneRed A L) (h : PolyManyOneRed L L') :
-    ∀ A : DecisionProblem, A ∈ NP → PolyManyOneRed A L' :=
-  fun A hA => polyManyOneRed_trans (hL A hA) h
+/-- NP-hardness transfers along a polynomial-time many-one reduction. -/
+@[deprecated (since := "2026-10-30")]
+alias npHard_of_polyManyOneRed := Cslib.Complexity.NPHard.of_polyManyOneRed
 
 instance (k : Emit3.K) : Fintype (Emit3.Γ k) := by cases k <;> infer_instance
 

@@ -14,14 +14,16 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Exponential generating function of the Genocchi numbers `Gₙ`:
-`2 * x / (exp x + 1) = ∑ₙ Gₙ * x ^ n / n!`.
+/-- **Generating function of the Genocchi numbers.** The Genocchi power series is the formal power
+series $\frac{2x}{e^x + 1} = 2x \cdot (e^x + 1)^{-1}$ in $\mathbb{Q}[[x]]$, where
+$e^x = \sum_{n \ge 0} x^n / n!$ is the exponential power series and $(e^x + 1)^{-1}$ is the inverse
+of $e^x + 1$ among formal power series. It is the exponential generating function of the Genocchi
+numbers $G_n$, that is, $\frac{2x}{e^x + 1} = \sum_{n \ge 0} G_n \frac{x^n}{n!}$.
 
-This retains the standard `2 * x / (exp x + 1)` convention stated by Chen and
-used independently by Kida; the sign-changed variant consumes only even-index
-terms, where the conventions agree.
+This retains the standard convention $\frac{2x}{e^x + 1}$ stated by Chen and used independently by
+Kida; the sign-changed variant consumes only even-index terms, where the conventions agree.
 
-Provenance:
+Source: Provenance:
 - phrase concept `jis_term_2151ebeb03d46b7f51d94f94`
 - source statements `jis_21afe12570e34775c299908d` and `jis_5d32bc9f1d45c583ec9b9547`
 - Chen, JIS VOL6 (`JIS VOL6/Chen/chen50.tex`, lines 296-300, duplicated in
@@ -31,11 +33,12 @@ Provenance:
 public noncomputable def genocchiPowerSeries : PowerSeries ℚ :=
   2 * PowerSeries.X * (PowerSeries.exp ℚ + 1)⁻¹
 
-/-- Genocchi number `Gₙ`: `n!` times coefficient `n` of `genocchiPowerSeries`,
-i.e. the exponential-generating-function normalization of
-`2 * x / (exp x + 1) = ∑ₙ Gₙ * x ^ n / n!`.
+/-- **Genocchi numbers.** For a natural number $n$, the Genocchi number $G_n \in \mathbb{Q}$ is
+$n!$ times the coefficient of $x^n$ in the Genocchi power series
+$\frac{2x}{e^x + 1} \in \mathbb{Q}[[x]]$, so that
+$\frac{2x}{e^x + 1} = \sum_{n \ge 0} G_n \frac{x^n}{n!}$.
 
-Provenance:
+Source: Provenance:
 - phrase concept `jis_term_2151ebeb03d46b7f51d94f94`
 - source statements `jis_21afe12570e34775c299908d` and `jis_5d32bc9f1d45c583ec9b9547`
 - Chen, JIS VOL6 (`JIS VOL6/Chen/chen50.tex`, lines 296-300, duplicated in
@@ -45,12 +48,17 @@ Provenance:
 public noncomputable def genocchiNumber (n : ℕ) : ℚ :=
   (n.factorial : ℚ) * (PowerSeries.coeff n) genocchiPowerSeries
 
-/-- Interface restatement of `genocchiPowerSeries`. -/
+/-- **The Genocchi power series is $2x/(e^x + 1)$.** The Genocchi power series equals
+$2x \cdot (e^x + 1)^{-1}$ in $\mathbb{Q}[[x]]$, where $e^x = \sum_{n \ge 0} x^n / n!$ is the
+exponential power series and $(e^x + 1)^{-1}$ is the inverse of $e^x + 1$ among formal power
+series. -/
 public theorem genocchiPowerSeries_eq :
     genocchiPowerSeries = 2 * PowerSeries.X * (PowerSeries.exp ℚ + 1)⁻¹ :=
   rfl
 
-/-- Interface restatement of `genocchiNumber`. -/
+/-- **Genocchi numbers from their generating function.** For every natural number $n$, the
+Genocchi number $G_n$ equals $n!$ times the coefficient of $x^n$ in the Genocchi power series
+$\frac{2x}{e^x + 1} \in \mathbb{Q}[[x]]$. -/
 public theorem genocchiNumber_eq (n : ℕ) :
     genocchiNumber n = (n.factorial : ℚ) * (PowerSeries.coeff n) genocchiPowerSeries :=
   rfl

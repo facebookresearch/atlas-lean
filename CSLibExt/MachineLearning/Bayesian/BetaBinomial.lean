@@ -53,8 +53,10 @@ namespace Cslib.MachineLearning.Bayesian
 open MeasureTheory ProbabilityTheory Set
 open scoped ENNReal unitInterval
 
-/-- The likelihood of `n` coin flips with success probability `θ`, as a law of the number of
-successes: `Bin(n, θ)`, with `θ` clipped to `[0, 1]`. -/
+/-- **Binomial likelihood kernel.** For a natural number $n$, the binomial kernel sends a real
+$\theta$ to the binomial distribution $\mathrm{Bin}(n, p)$ on $\mathbb{N}$, the law of the number of
+successes in $n$ independent coin flips with success probability $p$, where $p$ is $\theta$
+clipped to $[0, 1]$. -/
 noncomputable def binomialKernel (n : ℕ) : Kernel ℝ ℕ where
   toFun θ := binomial n (projIcc 0 1 zero_le_one θ)
   measurable' := by
@@ -80,7 +82,9 @@ theorem binomialKernel_apply_singleton (n k : ℕ) {θ : ℝ} (h0 : 0 ≤ θ) (h
 
 section Beta
 
-/-- `B(a + 1, b) = B(a, b) * a / (a + b)`. -/
+/-- **Recurrence for the beta function in the first argument.** For real $a > 0$ and $b > 0$, the
+beta function $B(a, b) = \Gamma(a)\Gamma(b)/\Gamma(a + b)$ satisfies
+$B(a + 1, b) = B(a, b) \cdot \frac{a}{a + b}$. -/
 theorem beta_add_one_left {a b : ℝ} (ha : 0 < a) (hb : 0 < b) :
     beta (a + 1) b = beta a b * (a / (a + b)) := by
   have hab : (0 : ℝ) < a + b := add_pos ha hb
@@ -100,8 +104,11 @@ theorem betaPDFReal_nonneg {a b : ℝ} (ha : 0 < a) (hb : 0 < b) (θ : ℝ) :
     positivity
   · exact le_rfl
 
-/-- **Conjugacy of the beta density**: multiplying the `Beta(a, b)` density by `θ ^ k (1 - θ) ^ m`
-gives `B(a + k, b + m) / B(a, b)` times the `Beta(a + k, b + m)` density. -/
+/-- **Conjugacy of the beta density.** Let $a, b > 0$ be real, $k, m$ natural numbers and
+$\theta$ real. Write $f_{a,b}$ for the $\mathrm{Beta}(a, b)$ density (zero outside $(0, 1)$) and
+$B(a, b) = \Gamma(a)\Gamma(b)/\Gamma(a + b)$ for the beta function. Then
+$f_{a,b}(\theta) \, \theta^k (1 - \theta)^m =
+\frac{B(a + k, b + m)}{B(a, b)} f_{a + k, b + m}(\theta)$. -/
 theorem betaPDFReal_mul_pow {a b : ℝ} (ha : 0 < a) (hb : 0 < b) (k m : ℕ) (θ : ℝ) :
     betaPDFReal a b θ * (θ ^ k * (1 - θ) ^ m) =
       beta (a + k) (b + m) / beta a b * betaPDFReal (a + k) (b + m) θ := by
@@ -124,7 +131,13 @@ section Conjugacy
 
 variable {a b : ℝ}
 
-/-- Prior density times likelihood of `k` successes in `n` trials, as an identity of densities. -/
+/-- **Beta prior times binomial likelihood.** Let $a, b > 0$ be real, $n, k$ natural numbers,
+$m = n - k$ if $k \le n$ and $m = 0$ otherwise, and $\theta$ real. Write $f_{a,b}$ for the
+$\mathrm{Beta}(a, b)$ density (zero outside $(0, 1)$) and $B$ for the beta function. Then the
+density $f_{a,b}(\theta)$ times the probability that the binomial kernel at $\theta$ gives exactly
+$k$ successes in $n$ trials equals
+$\binom{n}{k} \frac{B(a + k, b + m)}{B(a, b)} f_{a + k, b + m}(\theta)$, as an identity in
+$[0, \infty]$. -/
 theorem betaPDF_mul_binomialKernel (ha : 0 < a) (hb : 0 < b) {n k : ℕ} (θ : ℝ) :
     betaPDF a b θ * binomialKernel n θ {k} =
       ENNReal.ofReal (n.choose k * (beta (a + k) (b + (n - k : ℕ)) / beta a b)) *
@@ -159,8 +172,11 @@ theorem withDensity_binomialKernel (ha : 0 < a) (hb : 0 < b) (n k : ℕ) :
   funext θ
   exact betaPDF_mul_binomialKernel ha hb θ
 
-/-- **The beta-binomial distribution**: under a `Beta(a, b)` prior, the number of successes in
-`n` trials is `k` with probability `C(n, k) B(a + k, b + n - k) / B(a, b)` (the evidence). -/
+/-- **The beta-binomial distribution.** Let $a, b > 0$ be real, $n, k$ natural numbers and
+$B(x, y) = \Gamma(x)\Gamma(y)/\Gamma(x + y)$ the beta function. Under a $\mathrm{Beta}(a, b)$
+prior on the success probability, the marginal probability (the evidence) that the binomial kernel
+gives exactly $k$ successes in $n$ trials is $\binom{n}{k} \frac{B(a + k, b + n - k)}{B(a, b)}$,
+where $n - k$ is truncated at $0$. -/
 theorem binomialKernel_comp_betaMeasure (ha : 0 < a) (hb : 0 < b) {n k : ℕ} :
     (binomialKernel n ∘ₘ betaMeasure a b) {k} =
       ENNReal.ofReal (n.choose k * (beta (a + k) (b + (n - k : ℕ)) / beta a b)) := by
@@ -169,8 +185,9 @@ theorem binomialKernel_comp_betaMeasure (ha : 0 < a) (hb : 0 < b) {n k : ℕ} :
   rw [← withDensity_univ_eq_comp, withDensity_binomialKernel ha hb, Measure.smul_apply,
     measure_univ, smul_eq_mul, mul_one]
 
-/-- **Beta–binomial conjugacy.** After observing `k` successes in `n` trials, the posterior of a
-`Beta(a, b)` prior is `Beta(a + k, b + n - k)`. -/
+/-- **Beta–binomial conjugacy.** Let $a, b > 0$ be real and $k \le n$ natural numbers. For the
+binomial kernel and a $\mathrm{Beta}(a, b)$ prior, the posterior distribution (Mathlib's posterior
+kernel) after observing $k$ successes in $n$ trials is $\mathrm{Beta}(a + k, b + n - k)$. -/
 theorem posterior_binomialKernel_betaMeasure (ha : 0 < a) (hb : 0 < b) {n k : ℕ} (hk : k ≤ n) :
     haveI := isProbabilityMeasureBeta ha hb
     ((binomialKernel n)†(betaMeasure a b)) k = betaMeasure (a + k) (b + (n - k : ℕ)) := by
@@ -187,15 +204,21 @@ theorem posterior_binomialKernel_betaMeasure (ha : 0 < a) (hb : 0 < b) {n k : �
     binomialKernel_comp_betaMeasure ha hb, smul_smul,
     ENNReal.inv_mul_cancel (ENNReal.ofReal_pos.mpr hc).ne' ENNReal.ofReal_ne_top, one_smul]
 
-/-- The prior predictive probability of a success is the prior mean `a / (a + b)`. -/
+/-- **Prior predictive probability of a success.** Let $a, b > 0$ be real. Under a
+$\mathrm{Beta}(a, b)$ prior on the success probability, the probability that a single trial of the
+binomial kernel succeeds is the prior mean $a / (a + b)$. -/
 theorem binomialKernel_one_comp_betaMeasure (ha : 0 < a) (hb : 0 < b) :
     (binomialKernel 1 ∘ₘ betaMeasure a b) {1} = ENNReal.ofReal (a / (a + b)) := by
   rw [binomialKernel_comp_betaMeasure ha hb]
   simp only [Nat.choose_self, Nat.cast_one, Nat.sub_self, Nat.cast_zero, add_zero, one_mul]
   rw [beta_add_one_left ha hb, mul_div_cancel_left₀ _ (beta_pos ha hb).ne']
 
-/-- **Posterior predictive** (Laplace's rule of succession for `a = b = 1`): after `k` successes
-in `n` trials, the next trial succeeds with probability `(a + k) / (a + b + n)`. -/
+/-- **Posterior predictive of the beta-binomial model.** Let $a, b > 0$ be real and $k \le n$
+natural numbers. Under a $\mathrm{Beta}(a, b)$ prior on the success probability, after observing
+$k$ successes in $n$ trials of the binomial kernel, the posterior predictive probability that one
+further trial succeeds is $(a + k) / (a + b + n)$.
+
+For $a = b = 1$ this is Laplace's rule of succession, $(k + 1) / (n + 2)$. -/
 theorem posterior_predictive_betaMeasure (ha : 0 < a) (hb : 0 < b) {n k : ℕ} (hk : k ≤ n) :
     haveI := isProbabilityMeasureBeta ha hb
     (binomialKernel 1 ∘ₘ ((binomialKernel n)†(betaMeasure a b)) k) {1} =

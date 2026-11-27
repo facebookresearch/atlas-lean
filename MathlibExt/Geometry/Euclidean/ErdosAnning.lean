@@ -340,13 +340,14 @@ private theorem fiber_finite (A B C : EuclideanSpace ℝ (Fin 2))
         _ = (P2 -ᵥ A) +ᵥ A := by rw [d1, d2]
         _ = P2 := vsub_vadd P2 A
 
-/-- Erdős–Anning theorem: an infinite set of points in the plane with pairwise
+/-- **Erdős–Anning theorem.** An infinite set of points in the plane with pairwise
 integer distances is collinear.
+
+Proves `Wanted` entry `erdos_anning`.
+
 Sources: N. H. Anning and P. Erdős, "Integral distances," Bull. Amer. Math. Soc. 51 (1945),
 598–600; P. Erdős, "Integral distances," Bull. Amer. Math. Soc. 51 (1945), 996.
 Overview: https://en.wikipedia.org/wiki/Erd%C5%91s%E2%80%93Anning_theorem
-
-Proves `Wanted` entry `erdos_anning`.
 -/
 theorem erdos_anning :
     ∀ (S : Set (EuclideanSpace ℝ (Fin 2))), S.Infinite →

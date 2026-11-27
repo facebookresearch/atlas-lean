@@ -21,11 +21,11 @@ doi:10.1016/0196-6774(85)90012-4, Table 1 (split graphs: NP-complete, citing C. 
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.DominatingSetSplitGraphsWanted
-public import WantedExt.Complexity.NPComplete.HamiltonianCycleUndirectedWanted
+public import CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs
 
 @[expose] public section
 
@@ -47,7 +47,7 @@ NP-complete on split graphs. Johnson's Table 1 records the split-graph entry as 
 citing Colbourn and Stewart (1985), which was not available.
 
 The instance, its well-formedness and the question are those of
-`WantedExt.Complexity.NPComplete.HamiltonianCycleUndirectedWanted` ([GT37]: a simple graph on
+`CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs` ([GT37]: a simple graph on
 `Fin n` given by an edge list; a Hamiltonian circuit needs at least three vertices), as in
 `ChordalBipartiteHamiltonianCircuitWanted`. The restriction adds the split-graph predicate
 `DominatingSetSplitGraphs.IsSplitGraph` of `DominatingSetSplitGraphsWanted` (a vertex set that is

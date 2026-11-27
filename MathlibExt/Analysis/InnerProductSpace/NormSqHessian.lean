@@ -20,7 +20,9 @@ In a real inner product space, `D²(‖·‖²)(p)(u, v) = 2 ⟪u, v⟫` at ever
 
 variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
 
-/-- The second derivative of `x ↦ ‖x‖ ^ 2` is the constant bilinear form `2 ⟪·, ·⟫`. -/
+/-- **Second derivative of the squared norm.** Let $E$ be a real inner product space.
+For all $p, u, v \in E$, the second Fréchet derivative of $x \mapsto \|x\|^2$ at $p$,
+applied to $u$ and then to $v$, equals $2 \langle u, v \rangle$. -/
 theorem fderiv_fderiv_norm_sq_apply (p u v : E) :
     fderiv ℝ (fderiv ℝ (fun x : E ↦ ‖x‖ ^ 2)) p u v = 2 * inner ℝ u v := by
   have hL : fderiv ℝ (fun x : E ↦ ‖x‖ ^ 2) =

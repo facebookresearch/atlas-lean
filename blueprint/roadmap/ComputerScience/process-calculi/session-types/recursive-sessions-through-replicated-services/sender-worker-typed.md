@@ -1,0 +1,13 @@
+# The sender worker is runtime-typed
+
+Let $n$ be a natural number, $r$ a polarity and $b$ a name scoped at depth $n$ (a constant, or a
+variable with index $< n$) with $b \ne \mathrm{c}_{710}$ and $b \ne \mathrm{c}_{711}$. Then
+$\Gamma_r; \{b^{r} \mapsto \kappa\} \vdash_n W_s(b)$, where $W_s(b) = \overline{b}\langle
+\mathrm{c}_{712}\rangle.\overline{\mathrm{c}_{710}}\langle b\rangle.\mathbf{0}$.
+
+The service environment $\Gamma_r$ declares $710 \mapsto (0, r, \kappa)$ and $711 \mapsto (0, \bar
+r, \bar\kappa)$ (priority, polarity of the transferred endpoint, capability), where $\kappa =
+(7,R)$, $\bar\kappa = (7,\overline{R})$ and $R$ is the cursor at the single node of the one-node
+graph whose node sends a name and loops to itself. Finally $\Gamma; \Delta \vdash_n p$ denotes
+runtime typing with shared services at depth $n$, service environment $\Gamma$ and ownership context
+$\Delta$.

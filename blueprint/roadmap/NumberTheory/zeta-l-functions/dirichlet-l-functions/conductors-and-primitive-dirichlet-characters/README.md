@@ -1,0 +1,15 @@
+# Conductors and primitive Dirichlet characters
+
+- [Dirichlet character of a given modulus](is-dirichlet-character-modulus.md)
+- [Moduli of a character with a given least period](is-dirichlet-character-modulus-iff.md)
+- [A character is a Dirichlet character modulo its least period](is-dirichlet-character-modulus-self.md)
+- [Primitive characters at divisor levels](primitive-inducer.md)
+- [Equality of primitive characters at divisor levels](ext.md)
+- [Dirichlet characters correspond to primitive characters at divisor levels](equiv-primitive-inducer.md)
+- [Level of the primitive inducer attached to a character](equiv-primitive-inducer-level.md)
+- [Character of the primitive inducer attached to a character](equiv-primitive-inducer-char.md)
+- [Primitive characters at divisor levels correspond to unit-group characters](equiv-unit-hom.md)
+- [Values of the unit-group character of a primitive inducer](equiv-unit-hom-apply.md)
+- [The level of a primitive inducer is the conductor](conductor-eq-of-is-primitive-change-leve.md)
+- [An inducer at the conductor level is the primitive character](eq-primitive-character-of-change-level-e.md)
+- [Existence and uniqueness of the primitive character inducing a Dirichlet character](primitive-character-is-primitive-and-uni.md)

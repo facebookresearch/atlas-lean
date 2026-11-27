@@ -49,19 +49,26 @@ namespace EarthScience
 noncomputable def muskingumDenominator (K X dt : ℝ) : ℝ :=
   2 * K * (1 - X) + dt
 
-/-- Muskingum routing coefficient on the current inflow. -/
+/-- Muskingum routing coefficient on the current inflow,
+`(dt - 2 * K * X) / (2 * K * (1 - X) + dt)`. With the convention `x / 0 = 0` it is `0` when the
+denominator vanishes; the intended domain is `K > 0`, `0 ≤ X ≤ 1 / 2`, `dt > 0`. -/
 noncomputable def muskingumC0 (K X dt : ℝ) : ℝ :=
   (dt - 2 * K * X) / muskingumDenominator K X dt
 
-/-- Muskingum routing coefficient on the previous inflow. -/
+/-- Muskingum routing coefficient on the previous inflow,
+`(dt + 2 * K * X) / (2 * K * (1 - X) + dt)`. With the convention `x / 0 = 0` it is `0` when the
+denominator vanishes; the intended domain is `K > 0`, `0 ≤ X ≤ 1 / 2`, `dt > 0`. -/
 noncomputable def muskingumC1 (K X dt : ℝ) : ℝ :=
   (dt + 2 * K * X) / muskingumDenominator K X dt
 
-/-- Muskingum routing coefficient on the previous outflow. -/
+/-- Muskingum routing coefficient on the previous outflow,
+`(2 * K * (1 - X) - dt) / (2 * K * (1 - X) + dt)`. With the convention `x / 0 = 0` it is `0` when
+the denominator vanishes; the intended domain is `K > 0`, `0 ≤ X ≤ 1 / 2`, `dt > 0`. -/
 noncomputable def muskingumC2 (K X dt : ℝ) : ℝ :=
   (2 * K * (1 - X) - dt) / muskingumDenominator K X dt
 
-/-- The three Muskingum coefficients sum to one. -/
+/-- The three Muskingum coefficients sum to one when the denominator
+`2 * K * (1 - X) + dt` is nonzero. -/
 theorem muskingum_coefficients_sum {K X dt : ℝ}
     (hden : muskingumDenominator K X dt ≠ 0) :
     muskingumC0 K X dt + muskingumC1 K X dt + muskingumC2 K X dt = 1 := by

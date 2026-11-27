@@ -28,42 +28,58 @@ namespace SimpleGraph
 
 variable {V W : Type*} {G : SimpleGraph V} {H : SimpleGraph W}
 
-/-- Number of proper colorings of `G` with labeled colors `Fin k` in which
-each color occurs with exactly the prescribed multiplicity. These counts are
-the coefficients of the chromatic symmetric function. -/
+/-- **Chromatic profile count.** Let $G$ be a simple graph on a finite vertex set $V$, let $k$ be
+a natural number and let $m : \{0, \dots, k-1\} \to \mathbb{N}$. The chromatic profile count of
+$G$ at $k$ and $m$ is the number of proper colorings $c : V \to \{0, \dots, k-1\}$ of $G$ such
+that for every color $i$, exactly $m(i)$ vertices $v$ satisfy $c(v) = i$.
+
+These counts are the coefficients of the chromatic symmetric function. -/
 noncomputable def chromaticProfileCount [Finite V] (G : SimpleGraph V) (k : ℕ)
     (multiplicity : Fin k → ℕ) : ℕ :=
   Nat.card { c : G.Coloring (Fin k) //
     ∀ color, Nat.card { v : V // c v = color } = multiplicity color }
 
-/-- Equality of chromatic symmetric functions, represented transparently
-through the coefficient characterization: agreement of all coloring-profile
-counts for every finite palette and multiplicity profile. -/
+/-- **Graphs with the same chromatic symmetric function.** Let $G$ and $H$ be simple graphs on
+finite vertex sets. We say that $G$ and $H$ have the same chromatic symmetric function when, for
+every natural number $k$ and every $m : \{0, \dots, k-1\} \to \mathbb{N}$, the chromatic profile
+count of $G$ at $k$ and $m$ equals that of $H$: both graphs have equally many proper colorings
+with colors $\{0, \dots, k-1\}$ in which each color $i$ is used on exactly $m(i)$ vertices.
+
+This is equality of chromatic symmetric functions, expressed through their coefficients. -/
 def SameChromaticSymmetricFunction [Finite V] [Finite W]
     (G : SimpleGraph V) (H : SimpleGraph W) : Prop :=
   ∀ k multiplicity,
     chromaticProfileCount G k multiplicity = chromaticProfileCount H k multiplicity
 
-/-- Every graph has the same chromatic symmetric function as itself. -/
+/-- **Reflexivity of having the same chromatic symmetric function.** Every simple graph on a
+finite vertex set has the same chromatic symmetric function as itself. -/
 theorem SameChromaticSymmetricFunction.refl [Finite V] (G : SimpleGraph V) :
     SameChromaticSymmetricFunction G G :=
   fun _ _ => rfl
 
-/-- Symmetry of chromatic-symmetric-function equality. -/
+/-- **Symmetry of having the same chromatic symmetric function.** Let $G$ and $H$ be simple
+graphs on finite vertex sets. If $G$ has the same chromatic symmetric function as $H$, then $H$
+has the same chromatic symmetric function as $G$. -/
 theorem SameChromaticSymmetricFunction.symm
     [Finite V] [Finite W]
     (h : SameChromaticSymmetricFunction G H) : SameChromaticSymmetricFunction H G :=
   fun k multiplicity => (h k multiplicity).symm
 
-/-- Transitivity of chromatic-symmetric-function equality. -/
+/-- **Transitivity of having the same chromatic symmetric function.** Let $G$, $H$ and $K$ be
+simple graphs on finite vertex sets. If $G$ has the same chromatic symmetric function as $H$, and
+$H$ has the same chromatic symmetric function as $K$, then $G$ has the same chromatic symmetric
+function as $K$. -/
 theorem SameChromaticSymmetricFunction.trans [Finite V] [Finite W]
     {U : Type*} [Finite U] {K : SimpleGraph U}
     (hGH : SameChromaticSymmetricFunction G H)
     (hHK : SameChromaticSymmetricFunction H K) : SameChromaticSymmetricFunction G K :=
   fun k multiplicity => (hGH k multiplicity).trans (hHK k multiplicity)
 
-/-- Isomorphic graphs have equal chromatic symmetric functions: colorings and
-their color-class fibers transport along the isomorphism. -/
+/-- **Isomorphic graphs have the same chromatic symmetric function.** If $G$ and $H$ are
+isomorphic simple graphs on finite vertex sets, then $G$ and $H$ have the same chromatic
+symmetric function.
+
+The proof transports colorings and their color classes along the isomorphism. -/
 theorem SameChromaticSymmetricFunction.of_iso [Finite V] [Finite W] (e : G ≃g H) :
     SameChromaticSymmetricFunction G H := by
   intro k multiplicity

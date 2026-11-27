@@ -15,10 +15,11 @@ M. R. Garey and D. S. Johnson, *Computers and Intractability* (1979), DOMINATING
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import CSLibExt.Computability.Complexity.Karp.Color
+public import CSLibExt.Complexity.NPComplete.DominatingSetDefs
 
 @[expose] public section
 
@@ -41,34 +42,11 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- An instance: vertex count, edge list, bound. -/
-abbrev DominatingSetInstance := ℕ × List (ℕ × ℕ) × ℕ
 
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : DominatingSetInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
+/-- **DOMINATING SET is NP-complete.** The decision problem DOMINATING SET belongs to NP, and
+every decision problem in NP reduces to DOMINATING SET by a polynomial-time many-one reduction.
 
-
-/-- Well-formedness of an instance. -/
-def WellFormed (i : DominatingSetInstance) : Prop :=
-  i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1
-
-/-- A dominating set of at most `K` vertices. -/
-def DominatingSetFeasible
-    (i : DominatingSetInstance) : Prop :=
-  ∃ S : Finset (Fin i.1), S.card ≤ i.2.2 ∧
-    ∀ v : Fin i.1, v ∈ S ∨ ∃ u ∈ S, (Graph i).Adj u v
-
-open Classical in
-/-- DOMINATING SET as a decision problem over bitstrings. -/
-noncomputable def dominatingSetDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := DominatingSetInstance) x with
-  | some i => decide (WellFormed i ∧ DominatingSetFeasible i)
-  | none => false
-
-/-- **DOMINATING SET is NP-complete.** Source: M. R. Garey and D. S. Johnson, *Computers and
+Source: M. R. Garey and D. S. Johnson, *Computers and
 Intractability* (1979), DOMINATING SET. -/
 public theorem_wanted dominatingSet_npComplete :
     dominatingSetDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧

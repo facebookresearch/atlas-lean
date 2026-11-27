@@ -89,9 +89,13 @@ private lemma fold_fees {α : Type u} [LinearOrder α]
         simp only [time_bind, ret_bind, Prod.fst_add, Prod.snd_add, List.length_cons] at *
         omega
 
-/-- Interview candidates in order and hire only strict improvements.
-The manager and chronological hire indices are zero-based; the fee pair counts
-interviews and hires in the same indexed fold. -/
+/-- **The hire-assistant scan.** Given candidates $x_0, \dots, x_{n-1}$ in a linearly ordered type,
+the scan interviews them in order while keeping a current manager, initially none, which counts
+as below every candidate. Candidate $i$ is hired exactly when $x_i$ is strictly greater than the
+value of the current manager, and then becomes the new manager; ties keep the earlier manager.
+The scan returns the zero-based index of the final manager (none for the empty list) and the
+list of hired indices in the order they were hired, and its cost is the pair (number of
+interviews, number of hires). -/
 public def hireAssistant {α : Type u} [LinearOrder α] (xs : List α) :
     TimeM (Nat × Nat) (Option Nat × List Nat) :=
   let state : TimeM (Nat × Nat) (Option (α × Nat) × Array Nat) :=
@@ -119,7 +123,10 @@ private lemma indexed_argmax {α : Type u} [LinearOrder α] (xs : List α)
         · simp only [ha, lt_of_not_ge ha, ite_false, ite_true,
             max_eq_right (lt_of_not_ge ha).le]
 
-/-- The returned manager is the canonical earliest maximum index. -/
+/-- **The hire-assistant scan returns the earliest best candidate.** For every list
+$x_0, \dots, x_{n-1}$ in a linearly ordered type, the manager returned by the hire-assistant scan
+is none when the list is empty, and otherwise is the smallest index $i$ such that $x_i$ is a
+maximum of the list. -/
 public theorem hireAssistant_ret {α : Type u} [LinearOrder α] (xs : List α) :
     (hireAssistant xs).ret.1 = xs.maxIdxOn? id := by
   change Option.map Prod.snd
@@ -193,31 +200,41 @@ private lemma fold_history {α : Type u} [LinearOrder α] (xs : List α) :
       · have hc := mt (fresh_hire_iff xs a).mp h
         simp [hc, h, ih]
 
-/-- The actual chronological history consists exactly of strict prefix records. -/
+/-- **The hire-assistant scan hires exactly the strict prefix maxima.** For every list
+$x_0, \dots, x_{n-1}$ in a linearly ordered type, the list of indices hired by the hire-assistant
+scan, in chronological order, is the increasing list of all indices $i < n$ such that $x_j < x_i$
+for every $j < i$. -/
 public theorem hireAssistant_hires {α : Type u} [LinearOrder α] (xs : List α) :
     (hireAssistant xs).ret.2 =
       (xs.zipIdx.filter (fun p => (xs.take p.2).all (fun a => decide (a < p.1)))).map
         Prod.snd := by
   exact fold_history xs
 
-/-- The fee pair counts interviews and the actual chronological hiring history. -/
+/-- **Cost of the hire-assistant scan.** For every list of $n$ candidates in a linearly ordered
+type, the cost pair of the hire-assistant scan is $(n, h)$, where $h$ is the length of the list
+of hired indices that the scan returns. -/
 public theorem hireAssistant_time {α : Type u} [LinearOrder α] (xs : List α) :
     (hireAssistant xs).time = (xs.length, (hireAssistant xs).ret.2.length) := by
   have h := fold_fees xs.zipIdx (none, #[])
   simpa [hireAssistant, Prod.ext_iff] using h
 
-/-- Empty input interviews and hires nobody and returns no manager. -/
+/-- **Hire-assistant scan on no candidates.** On the empty list, the hire-assistant scan returns
+no manager and an empty list of hires, with cost pair $(0, 0)$. -/
 public theorem hireAssistant_nil {α : Type u} [LinearOrder α] :
     hireAssistant ([] : List α) = ⟨(none, []), (0, 0)⟩ := by
   simp [hireAssistant]
   rfl
 
-/-- The first candidate is hired regardless of its quality. -/
+/-- **Hire-assistant scan on one candidate.** For every element $a$ of a linearly ordered type,
+on the one-element list $[a]$ the hire-assistant scan returns manager index $0$ and hire list
+$[0]$, with cost pair $(1, 1)$: the single candidate is hired regardless of its quality. -/
 public theorem hireAssistant_singleton {α : Type u} [LinearOrder α] (a : α) :
     hireAssistant [a] = ⟨(some 0, [0]), (1, 1)⟩ := by
   simp [hireAssistant, List.zipIdx, List.foldlM, interview_eq, List.argAux]
 
-/-- A nonempty input makes at least one hire and at most one per interview. -/
+/-- **Hire-count bounds for the hire-assistant scan.** For every nonempty list of $n$ candidates
+in a linearly ordered type, the number of hires $h$ recorded in the cost pair of the
+hire-assistant scan satisfies $1 \le h \le n$. -/
 public theorem hireAssistant_hire_bounds {α : Type u} [LinearOrder α] (xs : List α)
     (h : xs ≠ []) :
     1 ≤ (hireAssistant xs).time.2 ∧ (hireAssistant xs).time.2 ≤ xs.length := by
@@ -256,7 +273,10 @@ private lemma increasing_records {α : Type u} [LinearOrder α] (xs : List α)
   · intro i hi hi'
     simp
 
-/-- Every candidate in a strictly increasing input is hired, including empty input. -/
+/-- **Strictly increasing input hires every candidate.** For every strictly increasing list
+$x_0 < x_1 < \dots < x_{n-1}$ in a linearly ordered type, including the empty list, the
+hire-assistant scan hires the indices $0, 1, \dots, n - 1$ in that order, and its cost pair is
+$(n, n)$. -/
 public theorem hireAssistant_increasing {α : Type u} [LinearOrder α] (xs : List α)
     (h : xs.Pairwise (· < ·)) :
     (hireAssistant xs).ret.2 = List.range xs.length ∧

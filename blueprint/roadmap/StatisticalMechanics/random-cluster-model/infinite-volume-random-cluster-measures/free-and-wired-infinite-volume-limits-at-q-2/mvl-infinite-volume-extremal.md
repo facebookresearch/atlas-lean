@@ -1,0 +1,7 @@
+# Convergence and ordering of free and wired limits at $q = 2$
+
+Let $d, N \in \mathbb{N}$, $0 < p < 1$, and let $S$ be an increasing set of configurations of $\Lambda_N$. For a set $S$ of configurations of $\Lambda_N = \{-N, \dots, N\}^d$ (assignments of states to the unordered pairs of vertices of $\Lambda_N$), $C_S$ denotes the cylinder event of the configurations of $\mathbb{Z}^d$ whose restriction to the pairs of vertices of $\Lambda_N$ lies in $S$. Then, along the full sequence $m \to \infty$,
+
+$$\phi^0_m(C_S) \to \phi^0_{p,2}(C_S), \qquad \phi^1_m(C_S) \to \phi^1_{p,2}(C_S),$$
+
+and $\phi^0_{p,2}(C_S) \le \phi^1_{p,2}(C_S)$. Here $\phi^0_{m}$ is the [free box measure](../finite-and-infinite-volume-fk-measures-on-d/free-finite-measure.md) on $\Lambda_m = \{-m, \dots, m\}^d$ at parameters $(p, 2)$, $\phi^1_{m}$ is the [wired box measure](../finite-and-infinite-volume-fk-measures-on-d/wired-finite-measure.md) on $\Lambda_m = \{-m, \dots, m\}^d$ at parameters $(p, 2)$, $\phi^0_{p,2}$ is the [free infinite-volume random-cluster measure](../finite-and-infinite-volume-fk-measures-on-d/free-infinite-volume.md) on $\mathbb{Z}^d$ (a chosen subsequential weak limit of the free box measures), and $\phi^1_{p,2}$ is the [wired infinite-volume random-cluster measure](../finite-and-infinite-volume-fk-measures-on-d/wired-infinite-volume.md) on $\mathbb{Z}^d$ (a chosen subsequential weak limit of the wired box measures).

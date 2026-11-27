@@ -86,11 +86,16 @@ private lemma betweenness_ratio {P Q R : EuclideanSpace ℝ (Fin 2)}
     rw [hmid]
     linarith
 
-/-- Intercept theorem (Thales) (intercept-s1): two transversals cut by parallel
-lines, i.e. a triangle cut by a line parallel to one side: points `A`, `B`, `C`
-with `D` on `AB` and `E` on `AC` with `DE` parallel to `BC` implies
-`AD / DB = AE / EC`. See https://en.wikipedia.org/wiki/Intercept_theorem.
+/-- **Intercept theorem.** Let $A, B, C, D, E$ be points of the Euclidean plane $\mathbb{R}^2$,
+and write $XY$ for the distance between points $X$ and $Y$. Suppose that $C - A$ is not a real
+multiple of $B - A$; that $AD + DB = AB$ with $AD > 0$ and $DB > 0$, so $D$ lies strictly
+between $A$ and $B$; that $AE + EC = AC$ with $AE > 0$ and $EC > 0$, so $E$ lies strictly
+between $A$ and $C$; and that $E - D = r(C - B)$ for some real $r \ne 0$, so $DE$ is parallel
+to $BC$. Then $AD / DB = AE / EC$.
+
 Proves `Wanted` entry `intercept_theorem`.
+
+Source: https://en.wikipedia.org/wiki/Intercept_theorem (statement intercept-s1).
 -/
 theorem intercept_theorem : ∀ (A B C D E : EuclideanSpace ℝ (Fin 2)),
   dist A D + dist D B = dist A B →

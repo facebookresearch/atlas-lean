@@ -47,19 +47,24 @@ namespace Acoustics
 
 /-- Sound intensity level of intensity `I` against reference intensity
 `Iref`, in decibels: `10 * log10 (I / Iref)`. Physically meaningful only
-for positive `Iref` and `I` in the same unit; the totalized `Real.logb`
-value outside that domain (for example at `I = 0`) is not a level. -/
+for positive `Iref` and `I` in the same unit. With `x / 0 = 0`,
+`log 0 = 0` and `log x = log |x|`, the value is `0` when `I = 0` or
+`Iref = 0`, and `10 * log10 |I / Iref|` for a negative ratio; such values
+are not levels. -/
 noncomputable def intensityLevel (Iref I : ℝ) : ℝ :=
   10 * Real.logb 10 (I / Iref)
 
 /-- Sound intensity level difference in decibels between intensities
 `I2` and `I1`: `10 * log10 (I2 / I1)`, for positive intensities in the
-same unit. -/
+same unit. With `x / 0 = 0`, `log 0 = 0` and `log x = log |x|`, the value
+is `0` when `I1 = 0` or `I2 = 0`, and `10 * log10 |I2 / I1|` for a
+negative ratio. -/
 noncomputable def intensityLevelDifference (I1 I2 : ℝ) : ℝ :=
   10 * Real.logb 10 (I2 / I1)
 
-/-- The referenced level difference is the difference of referenced
-levels, independent of the reference. -/
+/-- For positive `Iref`, `I1` and `I2`, the difference of referenced
+levels is the level difference `10 * log10 (I2 / I1)`, independent of
+the reference. -/
 theorem intensityLevel_sub_eq {Iref I1 I2 : ℝ}
     (hIref : 0 < Iref) (hI1 : 0 < I1) (hI2 : 0 < I2) :
     intensityLevel Iref I2 - intensityLevel Iref I1
@@ -74,8 +79,10 @@ theorem intensityLevel_sub_eq {Iref I1 I2 : ℝ}
   rw [← hdiv, Real.logb_div ha hb]
   ring
 
-/-- Level increase from `N` equal incoherent sources, where incoherent
-addition of the equal intensities is the stated total `Itot`. -/
+/-- Level increase from `N` equal incoherent sources: for `I > 0` and
+`N ≥ 1`, if the total `Itot` is the sum of `N` copies of `I` (incoherent
+addition, taken as a hypothesis), the level difference of `Itot` over `I`
+is `10 * log10 N`. -/
 theorem intensityLevelDifference_equal_sources {I Itot : ℝ} {N : ℕ}
     (hI : 0 < I) (hN : 0 < N)
     (hsum : Itot = ∑ _i ∈ Finset.range N, I) :

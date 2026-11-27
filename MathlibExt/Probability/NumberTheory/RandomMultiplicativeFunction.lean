@@ -48,7 +48,8 @@ open scoped ENNReal
 
 namespace MetaMathlibExt.RandomMultiplicativeFunction
 
-/-- The uniform probability measure on the two integer units `{-1, 1}`. -/
+/-- **Rademacher measure on the integer units.** The Rademacher measure is the uniform probability
+measure on the two integer units $\{-1, 1\}$. -/
 noncomputable def rademacherMeasure : Measure ℤˣ :=
   Measure.uniformOfFinset Finset.univ
 
@@ -57,7 +58,8 @@ noncomputable instance instIsProbabilityMeasureRademacherMeasure :
   rw [isProbabilityMeasure_iff]
   simp [rademacherMeasure, Measure.uniformOfFinset, ENNReal.inv_two_add_inv_two]
 
-/-- Every sign has probability `1 / 2` under `rademacherMeasure`. -/
+/-- **Each Rademacher sign has probability one half.** For each integer unit $x \in \{-1, 1\}$,
+the Rademacher measure of the singleton $\{x\}$ is $1/2$. -/
 theorem rademacherMeasure_singleton (x : ℤˣ) :
     rademacherMeasure {x} = (2 : ENNReal)⁻¹ := by
   have hs : MeasurableSet ({x} : Set ℤˣ) := by
@@ -73,13 +75,19 @@ theorem rademacherMeasure_singleton (x : ℤˣ) :
   simp_rw [Measure.smul_apply, Measure.dirac_apply' _ hs]
   rcases Int.units_eq_one_or x with rfl | rfl <;> simp [Set.indicator]
 
-/-- A measurable independent family of random variables, indexed by primes, each with the
-uniform law on the integer units. -/
+/-- **Rademacher family.** Let $\mu$ be a measure on a measurable space $\Omega$. A family
+$(X_p)$, indexed by the primes $p$, of maps $X_p \colon \Omega \to \{-1, 1\}$ into the units of
+$\mathbb{Z}$ is a Rademacher family for $\mu$ when every $X_p$ is measurable, every $X_p$ has
+law the Rademacher measure (the uniform measure on $\{-1, 1\}$) under $\mu$, and the family
+is mutually independent under $\mu$. -/
 def IsRademacherFamily {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
     (X : Nat.Primes → Ω → ℤˣ) : Prop :=
   (∀ p, Measurable (X p)) ∧ (∀ p, HasLaw (X p) rademacherMeasure μ) ∧ iIndepFun X μ
 
-/-- There exists a Rademacher family on a probability space. -/
+/-- **Existence of a Rademacher family.** There exist a measurable space $\Omega$, a probability
+measure $\mu$ on $\Omega$ and a family $(X_p)$, indexed by the primes $p$, of maps
+$X_p \colon \Omega \to \{-1, 1\}$ into the units of $\mathbb{Z}$ that is a Rademacher family
+for $\mu$. -/
 theorem exists_rademacherFamily :
     ∃ (Ω : Type) (_ : MeasurableSpace Ω) (μ : Measure Ω) (X : Nat.Primes → Ω → ℤˣ),
       IsRademacherFamily μ X ∧ IsProbabilityMeasure μ := by
@@ -87,7 +95,10 @@ theorem exists_rademacherFamily :
     exists_iid Nat.Primes rademacherMeasure
   exact ⟨Ω, hM, μ, X, ⟨hMeas, hLaw, hIndep⟩, hProb⟩
 
-/-- The sign assigned by `X` to a prime natural number, and the neutral value `1` on nonprimes. -/
+/-- **Prime sign of a natural number.** Let $X = (X_p)$ be a family, indexed by the primes $p$,
+of maps $X_p \colon \Omega \to \{-1, 1\}$ into the units of $\mathbb{Z}$. For a natural number
+$n$ and $\omega \in \Omega$, the prime sign of $n$ at $\omega$ is the integer $X_n(\omega)$ if
+$n$ is prime and $1$ otherwise. -/
 def primeSignNat {Ω : Type*} (X : Nat.Primes → Ω → ℤˣ) (n : ℕ) (ω : Ω) : ℤ :=
   if h : Nat.Prime n then (X ⟨n, h⟩ ω : ℤ) else 1
 
@@ -103,7 +114,10 @@ theorem primeSignNat_not_prime {Ω : Type*} {X : Nat.Primes → Ω → ℤˣ}
     primeSignNat X n ω = 1 := by
   simp [primeSignNat, hn]
 
-/-- Every prime-sign evaluation is measurable for a Rademacher family. -/
+/-- **Measurability of the prime signs.** Let $(X_p)$ be a Rademacher family for a measure
+$\mu$ on a measurable space $\Omega$. For every natural number $n$, the map
+$\omega \mapsto \varepsilon_n(\omega)$ from $\Omega$ to $\mathbb{Z}$ is measurable, where the
+prime sign $\varepsilon_n(\omega)$ is $X_n(\omega)$ if $n$ is prime and $1$ otherwise. -/
 theorem IsRademacherFamily.measurable_primeSignNat {Ω : Type*} [MeasurableSpace Ω]
     {μ : Measure Ω} {X : Nat.Primes → Ω → ℤˣ} (hX : IsRademacherFamily μ X) (n : ℕ) :
     Measurable (primeSignNat X n) := by
@@ -121,14 +135,25 @@ theorem IsRademacherFamily.measurable_primeSignNat {Ω : Type*} [MeasurableSpace
     rw [h_eq]
     exact measurable_const
 
-/-- The Rademacher random multiplicative function associated with a realization of the prime
-signs. It is the pointwise product of the square of the Möbius function and the product of the
-signs over the prime divisors. -/
+/-- **Rademacher random multiplicative function.** Let $(X_p)_p$ be a family of maps
+$X_p : \Omega \to \{-1, 1\}$ indexed by the primes, and let $\omega \in \Omega$. The Rademacher
+random multiplicative function at $\omega$ is the arithmetic function
+$f : \mathbb{N} \to \mathbb{Z}$ with $f(0) = 0$ and
+
+$$f(n) = \mu(n)^2 \prod_{p \mid n} X_p(\omega)$$
+
+for $n \ge 1$, where $\mu$ is the Möbius function and the product runs over the distinct primes
+$p$ dividing $n$. -/
 noncomputable def rademacherFunction {Ω : Type*} (X : Nat.Primes → Ω → ℤˣ) (ω : Ω) :
     ArithmeticFunction ℤ :=
   (moebius.pmul moebius).pmul (prodPrimeFactors fun p => primeSignNat X p ω)
 
-/-- The defining Möbius-square formula away from zero. -/
+/-- **Formula for the Rademacher random multiplicative function.** Let $X = (X_p)$ be a family,
+indexed by the primes $p$, of maps $X_p \colon \Omega \to \{-1, 1\}$, let $\omega \in \Omega$,
+and let $f$ be the Rademacher random multiplicative function of $X$ at $\omega$. For every
+natural number $n \neq 0$, $f(n) = \mu(n)^2 \prod_{p \mid n} \varepsilon_p(\omega)$, where
+$\mu$ is the Möbius function, the product runs over the distinct primes $p$ dividing $n$, and
+$\varepsilon_p(\omega)$ is the prime sign of $p$ at $\omega$. -/
 theorem rademacherFunction_apply {Ω : Type*} {X : Nat.Primes → Ω → ℤˣ} {ω : Ω}
     {n : ℕ} (hn : n ≠ 0) :
     rademacherFunction X ω n =
@@ -141,13 +166,22 @@ theorem rademacherFunction_one {Ω : Type*} {X : Nat.Primes → Ω → ℤˣ} {�
   have h1 : (1 : ℕ) ≠ 0 := by decide
   simp [rademacherFunction_apply h1]
 
-/-- On a squarefree positive integer, the function is the product of its prime signs. -/
+/-- **The Rademacher random multiplicative function on squarefree numbers.** Let $X = (X_p)$ be
+a family, indexed by the primes $p$, of maps $X_p \colon \Omega \to \{-1, 1\}$, let
+$\omega \in \Omega$, and let $f$ be the Rademacher random multiplicative function of $X$ at
+$\omega$. For every squarefree natural number $n$,
+$f(n) = \prod_{p \mid n} \varepsilon_p(\omega)$, the product of the prime signs
+$\varepsilon_p(\omega)$ at $\omega$ over the distinct primes $p$ dividing $n$. -/
 theorem rademacherFunction_eq_prod_of_squarefree {Ω : Type*}
     {X : Nat.Primes → Ω → ℤˣ} {ω : Ω} {n : ℕ} (hn : Squarefree n) :
     rademacherFunction X ω n = ∏ p ∈ n.primeFactors, primeSignNat X p ω := by
   rw [rademacherFunction_apply hn.ne_zero, moebius_sq_eq_one_of_squarefree hn, one_mul]
 
-/-- The function vanishes on every nonsquarefree natural number, including zero. -/
+/-- **The Rademacher random multiplicative function vanishes off squarefree numbers.** Let
+$X = (X_p)$ be a family, indexed by the primes $p$, of maps $X_p \colon \Omega \to \{-1, 1\}$,
+let $\omega \in \Omega$, and let $f$ be the Rademacher random multiplicative function of $X$ at
+$\omega$. Then $f(n) = 0$ for every natural number $n$ that is not squarefree, including
+$n = 0$. -/
 theorem rademacherFunction_eq_zero_of_not_squarefree {Ω : Type*}
     {X : Nat.Primes → Ω → ℤˣ} {ω : Ω} {n : ℕ} (hn : ¬Squarefree n) :
     rademacherFunction X ω n = 0 := by
@@ -155,14 +189,20 @@ theorem rademacherFunction_eq_zero_of_not_squarefree {Ω : Type*}
   · simp [hn0]
   · simp [rademacherFunction_apply hn0, moebius_eq_zero_of_not_squarefree hn]
 
-/-- The Rademacher arithmetic function is multiplicative on coprime inputs. -/
+/-- **The Rademacher random multiplicative function is multiplicative.** Let $X = (X_p)$ be a
+family, indexed by the primes $p$, of maps $X_p \colon \Omega \to \{-1, 1\}$, and let
+$\omega \in \Omega$. The Rademacher random multiplicative function $f$ of $X$ at $\omega$
+satisfies $f(1) = 1$ and $f(mn) = f(m) f(n)$ for all coprime natural numbers $m$ and $n$. -/
 theorem isMultiplicative_rademacherFunction {Ω : Type*}
     {X : Nat.Primes → Ω → ℤˣ} {ω : Ω} :
     IsMultiplicative (rademacherFunction X ω) :=
   (isMultiplicative_moebius.pmul isMultiplicative_moebius).pmul
     (IsMultiplicative.prodPrimeFactors _)
 
-/-- Evaluation at a prime is its assigned sign. -/
+/-- **Value of the Rademacher function at a prime.** Let $(X_p)_p$ be a family of maps
+$X_p : \Omega \to \{-1, 1\}$ indexed by the primes, let $\omega \in \Omega$, and let $f$ be the
+associated Rademacher random multiplicative function at $\omega$. For every prime $p$, the value
+$f(p)$ is the sign assigned to $p$, that is, $f(p) = X_p(\omega)$. -/
 @[simp]
 theorem rademacherFunction_prime {Ω : Type*} {X : Nat.Primes → Ω → ℤˣ} {ω : Ω}
     {p : ℕ} (hp : Nat.Prime p) :
@@ -171,7 +211,10 @@ theorem rademacherFunction_prime {Ω : Type*} {X : Nat.Primes → Ω → ℤˣ} 
     simpa using Nat.primeFactors_prime_pow (p := p) (k := 1) (by decide) hp
   rw [rademacherFunction_eq_prod_of_squarefree hp.squarefree, hpf, Finset.prod_singleton]
 
-/-- Evaluation at the square of a prime is zero. -/
+/-- **The Rademacher random multiplicative function vanishes at prime squares.** Let
+$X = (X_p)$ be a family, indexed by the primes $p$, of maps $X_p \colon \Omega \to \{-1, 1\}$,
+let $\omega \in \Omega$, and let $f$ be the Rademacher random multiplicative function of $X$ at
+$\omega$. Then $f(p^2) = 0$ for every prime $p$. -/
 @[simp]
 theorem rademacherFunction_prime_sq {Ω : Type*} {X : Nat.Primes → Ω → ℤˣ} {ω : Ω}
     {p : ℕ} (hp : Nat.Prime p) :
@@ -180,7 +223,11 @@ theorem rademacherFunction_prime_sq {Ω : Type*} {X : Nat.Primes → Ω → ℤ�
   rw [Nat.squarefree_pow_iff hp.ne_one (by decide : 2 ≠ 0)]
   simp
 
-/-- Each fixed evaluation of a Rademacher random multiplicative function is measurable. -/
+/-- **Measurability of the Rademacher random multiplicative function.** Let $(X_p)$ be a
+Rademacher family for a measure $\mu$ on a measurable space $\Omega$, and for $\omega \in \Omega$
+let $f_\omega$ be the Rademacher random multiplicative function of $(X_p)$ at $\omega$. For
+every natural number $n$, the map $\omega \mapsto f_\omega(n)$ from $\Omega$ to $\mathbb{Z}$ is
+measurable. -/
 theorem IsRademacherFamily.measurable_rademacherFunction {Ω : Type*} [MeasurableSpace Ω]
     {μ : Measure Ω} {X : Nat.Primes → Ω → ℤˣ} (hX : IsRademacherFamily μ X) (n : ℕ) :
     Measurable (fun ω => rademacherFunction X ω n) := by

@@ -21,9 +21,9 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Karp.Color
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MaxCutWanted
+public import CSLibExt.Complexity.NPComplete.MaxCutDefs
 public import Mathlib.Combinatorics.SimpleGraph.Bipartite
 
 @[expose] public section
@@ -42,7 +42,7 @@ endpoint in `A` and the other in `B`?
 
 This is SIMPLE MAX CUT (MAX CUT with all edge weights one) restricted to co-bipartite graphs,
 which Bodlaender and Jansen prove NP-complete. The instance, the simple-edge-list conditions and
-the question are those of MAXIMUM CUT (`WantedExt.Complexity.NPComplete.MaxCutWanted`, whose
+the question are those of MAXIMUM CUT (`CSLibExt.Complexity.NPComplete.MaxCutDefs`, whose
 question counts edges), reused as in `SimpleMaxCutDegreeThreeWanted`; the restriction adds to
 `WellFormed` that the complement of `Cslib.Complexity.Karp.edgeGraph` is bipartite (Mathlib's
 `SimpleGraph.IsBipartite`, as in `TreewidthCoBipartiteWanted`), i.e. the vertices split into two
