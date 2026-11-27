@@ -24,6 +24,7 @@ public import Mathlib.NumberTheory.Real.GoldenRatio
 public import Mathlib.Order.LiminfLimsup
 public import Mathlib.Topology.Algebra.InfiniteSum.Real
 public import MathlibExt.NumberTheory.Digits.BinaryFundamentalSequence
+public import MathlibExt.NumberTheory.Digits.ZeckendorfBinaryRank
 public import MathlibExt.NumberTheory.Digits.ZeckendorfBlockCountRecurrence
 public import MathlibExt.NumberTheory.Digits.ZeckendorfFundamentalSequence
 public import MathlibExt.NumberTheory.Digits.ZeckendorfMaxBlockScaling
@@ -54,21 +55,6 @@ note before `IsPeriodicZeckendorfPair`.
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Duality formula for binary expansions without adjacent ones.** For $x \in \mathbb{N}$ let
-$z(x)$ be the number of $n < x$ whose binary expansion has no two adjacent digits equal to $1$.
-For a finite set $A \subseteq \mathbb{N}$, put $\bar A = A$ if there is no $j$ with
-$j, j + 1 \in A$, and otherwise $\bar A = \{k \in A : k \ge j\}$, where $j$ is the largest index
-with $j, j + 1 \in A$. Then $z\bigl(\sum_{k \in A} 2^k\bigr) = \sum_{k \in \bar A} F_{k+2}$,
-where $F_0 = 0$, $F_1 = 1$ and $F_{n+2} = F_{n+1} + F_n$ are the Fibonacci numbers.
-
-Source: Sungkon Chang, *Distribution of Zeckendorf Expressions*, INTEGERS 25 (2025), Article A25,
-Lemma 2 (`integers-2025-A25-lem-2`). -/
-public theorem_wanted card_zeckendorfBinary_lt_sum_two_pow (A : Finset ℕ) :
-    let J := A.filter (fun j => j + 1 ∈ A)
-    let Abar := if h : J.Nonempty then A.filter (fun k => J.max' h ≤ k) else A
-    ((Finset.range (∑ k ∈ A, 2 ^ k)).filter (fun n => n &&& (n >>> 1) = 0)).card =
-      ∑ k ∈ Abar, Nat.fib (k + 2)
 
 /-- **Example of the ascending lexicographic order.** Write $(a_0, a_1, a_2, a_3, a_4)$ for the
 coefficient function with finite support whose entry at index $i \le 4$ is $a_i$ and whose other
