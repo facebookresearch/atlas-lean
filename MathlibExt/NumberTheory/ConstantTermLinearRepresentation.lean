@@ -207,6 +207,76 @@ public theorem laurentCartier_pow_mul_single_eq_sum {r p : ℕ} (hp : p.Prime)
       omega
     omega
 
+-- If a positive dilation is in the box, the undilated point is also in the box.
+private theorem gammaZero_mem_box_of_nsmul_mem {r m q : ℕ} (hq : q ≠ 0) {x : Fin r → ℤ}
+    (hx : q • x ∈ Fintype.piFinset fun _ : Fin r => Finset.Icc (-(m : ℤ)) m) :
+    x ∈ Fintype.piFinset fun _ : Fin r => Finset.Icc (-(m : ℤ)) m := by
+  refine Fintype.mem_piFinset.mpr fun t => Finset.mem_Icc.mpr ?_
+  have ht := Finset.mem_Icc.mp (Fintype.mem_piFinset.mp hx t)
+  simp only [Pi.smul_apply, nsmul_eq_mul] at ht
+  have habs : ((q : ℤ) * x t).natAbs ≤ m := by omega
+  have hle : (x t).natAbs ≤ ((q : ℤ) * x t).natAbs := by
+    rw [Int.natAbs_mul, Int.natAbs_natCast]
+    simpa using Nat.mul_le_mul_right (x t).natAbs (Nat.one_le_iff_ne_zero.mpr hq)
+  have := hle.trans habs
+  omega
+
+-- Each column of the power is the indicator of the corresponding iterated dilation.
+private theorem gammaZero_pow_apply {R : Type*} [Semiring R] {p r m : ℕ} (hp : p ≠ 0) (n : ℕ)
+    (i j : ↥(Fintype.piFinset fun _ : Fin r => Finset.Icc (-(m : ℤ)) m)) :
+    ((Matrix.of fun k l : ↥(Fintype.piFinset fun _ : Fin r => Finset.Icc (-(m : ℤ)) m) =>
+      if k.val = p • l.val then (1 : R) else 0) ^ n) i j =
+      if i.val = p ^ n • j.val then 1 else 0 := by
+  let T := Fintype.piFinset fun _ : Fin r => Finset.Icc (-(m : ℤ)) m
+  let A := Matrix.of fun k l : ↥T => if k.val = p • l.val then (1 : R) else 0
+  change (A ^ n) i j = _
+  induction n generalizing i j with
+  | zero => simp only [pow_zero, Matrix.one_apply, one_nsmul, Subtype.ext_iff]
+  | succ n ih =>
+    rw [pow_succ, Matrix.mul_apply, pow_succ, ← smul_smul]
+    by_cases hj : p • j.val ∈ T
+    · let k : ↥T := ⟨p • j.val, hj⟩
+      have hA (l : ↥T) : A l j = if l = k then 1 else 0 := by
+        simp [A, k, Subtype.ext_iff]
+      simp [hA, mul_ite, ih, k]
+    · have hA (l : ↥T) : A l j = 0 := by
+        have hne : l.val ≠ p • j.val := fun h => hj (h ▸ l.property)
+        simp only [A, Matrix.of_apply, ite_eq_right hne]
+      have hne : i.val ≠ p ^ n • (p • j.val) := fun h =>
+        hj (gammaZero_mem_box_of_nsmul_mem (pow_ne_zero n hp) (h ▸ i.property))
+      simp only [hA, mul_zero, Finset.sum_const_zero, ite_eq_right hne]
+
+private theorem exists_gammaZero_pow_eq_single_of_one_lt {R : Type*} [Semiring R] {p : ℕ}
+    (hp : 1 < p) (r m : ℕ) :
+    ∃ s : ℕ, ∀ s' ≥ s,
+      (Matrix.of fun i j : ↥(Fintype.piFinset fun _ : Fin r => Finset.Icc (-(m : ℤ)) m) =>
+        if i.val = p • j.val then (1 : R) else 0) ^ s' =
+        Matrix.single ⟨0, by simp⟩ ⟨0, by simp⟩ 1 := by
+  let T := Fintype.piFinset fun _ : Fin r => Finset.Icc (-(m : ℤ)) m
+  let z : ↥T := ⟨0, by simp [T]⟩
+  have hp₀ : p ≠ 0 := by omega
+  refine ⟨m, fun n hn => ?_⟩
+  change (Matrix.of fun i j : ↥T => if i.val = p • j.val then (1 : R) else 0) ^ n =
+    Matrix.single z z 1
+  ext i j
+  rw [gammaZero_pow_apply hp₀, Matrix.single_apply]
+  have heq : i.val = p ^ n • j.val ↔ z = i ∧ z = j := by
+    constructor
+    · intro h
+      have hi : i.val = 0 := by
+        funext t
+        have hbox := Finset.mem_Icc.mp (Fintype.mem_piFinset.mp i.property t)
+        have hc := congrFun h t
+        simp only [Pi.smul_apply, nsmul_eq_mul] at hc
+        apply Int.eq_zero_of_dvd_of_natAbs_lt_natAbs ⟨j.val t, hc⟩
+        exact (show (i.val t).natAbs ≤ m by omega).trans_lt (hn.trans_lt (n.lt_pow_self hp))
+      have hj : j.val = 0 := smul_right_injective (Fin r → ℤ) (pow_ne_zero n hp₀)
+        (by simpa only [smul_zero] using h.symm.trans hi)
+      exact ⟨Subtype.ext hi.symm, Subtype.ext hj.symm⟩
+    · rintro ⟨rfl, rfl⟩
+      simp [z]
+  simp only [heq]
+
 -- Keep the two proofs of origin membership inline in the matrix indices.
 set_option backward.proofsInPublic true in
 /-- **Powers of $\gamma(0)$ modulo $p$ stabilize at a matrix unit.** Let $p$ be a prime, let
@@ -222,52 +292,32 @@ public theorem exists_gammaZero_pow_eq_single {p : ℕ} (hp : p.Prime) (r m : �
     ∃ s : ℕ, ∀ s' ≥ s,
       (Matrix.of fun i j : ↥(Fintype.piFinset fun _ : Fin r => Finset.Icc (-(m : ℤ)) m) =>
         if (i : Fin r → ℤ) = p • (j : Fin r → ℤ) then (1 : ZMod p) else 0) ^ s' =
-        Matrix.single ⟨0, by simp⟩ ⟨0, by simp⟩ 1 := by
-  let T := Fintype.piFinset fun _ : Fin r => Finset.Icc (-(m : ℤ)) m
-  let A := Matrix.of fun i j : ↥T => if i.val = p • j.val then (1 : ZMod p) else 0
-  let z : ↥T := ⟨0, by simp [T]⟩
-  -- A nonzero entry of a power follows a chain of dilations inside the box.
-  have support (n : ℕ) (i j : ↥T) (h : (A ^ n) i j ≠ 0) : i.val = p ^ n • j.val := by
-    induction n generalizing i j with
-    | zero =>
-      by_contra hne
-      have hij : i ≠ j := by simpa using hne
-      simp [hij] at h
-    | succ n ih =>
-      rw [pow_succ, Matrix.mul_apply] at h
-      obtain ⟨k, _, hk⟩ := Finset.exists_ne_zero_of_sum_ne_zero h
-      have hkj : k.val = p • j.val := by
-        by_contra hne
-        simp only [A, Matrix.of_apply, ite_eq_right hne, mul_zero, ne_self_iff_false] at hk
-      rw [ih i k (left_ne_zero_of_mul hk), hkj, smul_smul, pow_succ]
-  have origin (n : ℕ) : (A ^ n) z z = 1 := by
-    induction n with
-    | zero => simp
-    | succ n ih =>
-      rw [pow_succ, Matrix.mul_apply]
-      have hz (k : ↥T) : A k z = if k = z then 1 else 0 := by
-        simp [A, z, Subtype.ext_iff]
-      simpa [hz, mul_ite] using ih
-  refine ⟨m, ?_⟩
-  change ∀ n ≥ m, A ^ n = Matrix.single z z 1
-  intro n hn
-  ext i j
-  by_cases hij : z = i ∧ z = j
-  · obtain ⟨rfl, rfl⟩ := hij
-    simpa using origin n
-  rw [Matrix.single_apply, ite_eq_right hij]
-  by_contra h
-  have heq := support n i j h
-  have hi : i.val = 0 := by
-    funext t
-    have hbox := Finset.mem_Icc.mp (Fintype.mem_piFinset.mp i.property t)
-    have hc := congrFun heq t
-    simp only [Pi.smul_apply, nsmul_eq_mul] at hc
-    apply Int.eq_zero_of_dvd_of_natAbs_lt_natAbs ⟨j.val t, hc⟩
-    exact (show (i.val t).natAbs ≤ m by omega).trans_lt (hn.trans_lt (n.lt_pow_self hp.one_lt))
-  have hj : j.val = 0 := smul_right_injective (Fin r → ℤ) (pow_ne_zero n hp.ne_zero)
-    (by simpa only [smul_zero] using heq.symm.trans hi)
-  exact hij ⟨Subtype.ext hi.symm, Subtype.ext hj.symm⟩
+        Matrix.single ⟨0, by simp⟩ ⟨0, by simp⟩ 1 :=
+  exists_gammaZero_pow_eq_single_of_one_lt hp.one_lt r m
+
+-- The semiring argument also covers `a = 0`; the statement retains the source's hypothesis.
+set_option linter.unusedVariables false in
+set_option backward.proofsInPublic true in
+/-- **Powers of $\tilde\gamma(0)$ modulo $p^a$ stabilize at a matrix unit.** Let $p$ be a prime,
+let $a \ge 1$, $r$ and $m$ be natural numbers, let $T = \{-m, \dots, m\}^r \subseteq \mathbb{Z}^r$,
+and let $\tilde\gamma(0)$ be the $T \times T$ matrix over $\mathbb{Z}/p^a\mathbb{Z}$ whose
+$(i, j)$ entry is $1$ if $i = p j$ and $0$ otherwise. Then there is $s \in \mathbb{N}$ such that for
+every $s' \ge s$, $\tilde\gamma(0)^{s'}$ is the matrix whose $(0, 0)$ entry is $1$ and whose other
+entries are $0$.
+
+Kohen's Lemma 30 prints $\tilde\gamma(0)^s$; as in Lemma 11, it is read for every exponent
+$s' \ge s$.
+
+Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
+Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
+Lemma 30 (`jis-2026-26.4.2-lem-30`). -/
+public theorem exists_gammaZero_pow_eq_single_zmod {p : ℕ} (hp : p.Prime)
+    (a : ℕ) (ha : 0 < a) (r m : ℕ) :
+    ∃ s : ℕ, ∀ s' ≥ s,
+      (Matrix.of fun i j : ↥(Fintype.piFinset fun _ : Fin r => Finset.Icc (-(m : ℤ)) m) =>
+        if (i : Fin r → ℤ) = p • (j : Fin r → ℤ) then (1 : ZMod (p ^ a)) else 0) ^ s' =
+        Matrix.single ⟨0, by simp⟩ ⟨0, by simp⟩ 1 :=
+  exists_gammaZero_pow_eq_single_of_one_lt hp.one_lt r m
 
 namespace constantTerm_pow_mul_modEq_tilde
 

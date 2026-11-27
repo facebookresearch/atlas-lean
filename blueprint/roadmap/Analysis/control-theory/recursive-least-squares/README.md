@@ -39,6 +39,10 @@ as well.
 - [Convergence rate of recursive least squares under martingale-difference noise](rls-error-sq-le-log-div-lambda-min.md)
 - [Logarithmic regret of the least-squares adaptive predictor](rls-regret-sum-le-log.md)
 
+## Shared stochastic energy estimate for recursive least squares
+
+- [Joint stochastic energy and prediction-error bound for recursive least squares](rls-energy-add-half-sum-le-log.md)
+
 ## Related topics
 
 - [Least squares, ridge and lasso regression](../../../ComputerScience/machine-learning/supervised-learning/least-squares-ridge-and-lasso-regression/README.md): the batch problem that the recursion solves; its ridge closed form is used by the identification with ridge regression.

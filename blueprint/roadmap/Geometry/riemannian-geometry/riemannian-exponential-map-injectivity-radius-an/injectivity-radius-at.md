@@ -1,0 +1,3 @@
+# Injectivity Radius At
+
+For a Riemannian manifold $M$, a supplied family of maps $e_x : T_x M \to M$ (one for each point $x$) and a point $x$, the injectivity radius at $x$ is the supremum, in $[0, \infty]$, of the radii $a$ such that $e_x$ restricted to the open ball of radius $a$ in $T_x M$ is injective and a smooth local diffeomorphism, hence a diffeomorphism onto its image. The definition applies to any family: on the Euclidean line the constant family $e_x(v) = x$ gives radius $0$. When the family is the Riemannian exponential map, this is the usual injectivity radius, which is $\infty$ on Euclidean space.

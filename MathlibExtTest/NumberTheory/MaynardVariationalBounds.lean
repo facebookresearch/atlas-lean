@@ -13,13 +13,28 @@ import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
 
 /-!
-# Tests for `M₁₀₅ > 4`
+# Tests for `M₅ > 2`, `M₁₀₅ > 4` and the growth bound
 -/
 
 namespace MathlibExtTest.NumberTheory.MaynardVariationalBounds
 
 open Filter Topology MathlibExt.NumberTheory.GPYMaynard
 open WantedExt.NumberTheory.MaynardVariationalBounds
+
+example : 2 < maynardM 5 := two_lt_maynardM_five
+
+/-- Maynard's strict bound leaves room for a level `θ = 1 - ε` below `1`, as required when
+applying the Elliott–Halberstam conjecture. The threshold `ρ = 1` is still satisfied. -/
+example : ∃ ε : ℝ, 0 < ε ∧ ε < 1 ∧ 1 < (1 - ε) * maynardM 5 / 2 := by
+  have hM : 0 < maynardM 5 := lt_trans (by norm_num) two_lt_maynardM_five
+  have h : (2 : ℝ) / maynardM 5 < 1 :=
+    (div_lt_iff₀ hM).2 (by simpa using two_lt_maynardM_five)
+  obtain ⟨θ, hθ, hθ1⟩ := exists_between h
+  have hθ0 : 0 < θ := (div_pos (by norm_num) hM).trans hθ
+  have hprod : (2 : ℝ) < θ * maynardM 5 := (div_lt_iff₀ hM).1 hθ
+  refine ⟨1 - θ, sub_pos.mpr hθ1, sub_lt_self _ hθ0, ?_⟩
+  rw [sub_sub_cancel]
+  linarith
 
 example : 4 < maynardM 105 := four_lt_maynardM_105
 
@@ -61,5 +76,12 @@ example (H : Finset ℕ) (δ₀ : ℝ) (hδ₀ : 0 < δ₀)
     {n : ℕ | (1 : ℝ) < primeShiftCount H n}.Infinite :=
   infinite_lt_primeShiftCount_of_lt_maynardM H 105 (1 / 2) 1 (by norm_num)
     (by linarith [four_lt_maynardM_105]) δ₀ hδ₀ hasym
+
+/-- The growth bound holds at an index at least `105`. -/
+example : ∃ k : ℕ, 105 ≤ k ∧
+    Real.log k - 2 * Real.log (Real.log k) - 2 < maynardM k := by
+  obtain ⟨K, hK⟩ :=
+    WantedExt.NumberTheory.MaynardVariationalBounds.eventually_log_sub_lt_maynardM
+  exact ⟨max K 105, le_max_right _ _, hK _ (le_max_left _ _)⟩
 
 end MathlibExtTest.NumberTheory.MaynardVariationalBounds

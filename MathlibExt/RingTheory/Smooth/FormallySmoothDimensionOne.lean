@@ -129,7 +129,7 @@ private theorem exists_ltSeries_of_forall_X_sub_C_mem {k : Type*} [Field k] (n :
       intro i
       rw [AlgHom.comp_apply, hφX j]
       split_ifs with h
-      · rw [hφC, hφX, if_pos (Nat.lt_succ_of_lt h)]
+      · rw [hφC, hφX, ite_eq_left (Nat.lt_succ_of_lt h)]
       · rfl
     exact congrArg (fun g => g p) (congrArg DFunLike.coe this)
   have hmono : ∀ j, P j ≤ P (j + 1) := by
@@ -145,7 +145,7 @@ private theorem exists_ltSeries_of_forall_X_sub_C_mem {k : Type*} [Field k] (n :
       MvPolynomial.X (⟨j, hj⟩ : Fin n) - MvPolynomial.C (a ⟨j, hj⟩) ∉ P j := by
     intro j hj h
     rw [hmemP, map_sub, hφX, hφC] at h
-    simp only [lt_self_iff_false, if_false] at h
+    simp only [lt_self_iff_false, ite_false] at h
     have := congrArg (MvPolynomial.eval (Function.update (fun _ : Fin n => (0 : k)) ⟨j, hj⟩ (a ⟨j,
       hj⟩ + 1))) h
     simp [MvPolynomial.eval_X, MvPolynomial.eval_C, Function.update_self] at this
@@ -168,21 +168,21 @@ private theorem exists_ltSeries_of_forall_X_sub_C_mem {k : Type*} [Field k] (n :
   have hstep : ∀ i : Fin n, f (Fin.castSucc i) < f i.succ := by
     intro i
     have hi : (i : ℕ) < n := i.2
-    simp only [f, Fin.val_castSucc, Fin.val_succ, dif_pos hi]
+    simp only [f, Fin.val_castSucc, Fin.val_succ, dite_eq_left hi]
     by_cases h : (i : ℕ) + 1 < n
-    · rw [dif_pos h]
+    · rw [dite_eq_left h]
       refine lt_of_le_of_ne (hmono i) fun heq => ?_
       have h1 := hmem_succ i hi
       have : P ((i : ℕ) + 1) = P i := (congrArg PrimeSpectrum.asIdeal heq).symm
       rw [this] at h1
       exact hnot_mem i hi h1
-    · rw [dif_neg h]
+    · rw [dite_eq_right h]
       refine lt_of_le_of_ne (hPle i) fun heq => ?_
       have : 𝔮 = P i := (congrArg PrimeSpectrum.asIdeal heq).symm
       exact hnot_mem i hi (this ▸ h𝔮 ⟨i, hi⟩)
   refine ⟨LTSeries.mk n f (Fin.strictMono_iff_lt_succ.mpr hstep), rfl, ?_⟩
   show f (Fin.last n) = _
-  simp only [f, Fin.val_last, lt_self_iff_false, dif_neg, not_false_eq_true]
+  simp only [f, Fin.val_last, lt_self_iff_false, dite_eq_right, not_false_eq_true]
 
 set_option maxHeartbeats 6400000 in
 set_option synthInstance.maxHeartbeats 800000 in
