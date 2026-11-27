@@ -46,3 +46,17 @@ example :
       (3 - j) ^ 2 = 18 := by
   rw [← nonIntersectingWordPairs_sameLength_card 3 2 (by decide)]
   decide
+
+-- The series excludes the unique pair of empty words.
+example (k : ℕ) :
+    coeff 0 (PowerSeries.mk fun n => ∑ j ∈ Icc 1 (k - 1),
+      (k.choose j : ℚ) * j.factorial * Nat.stirlingSecond n j * ((k - j : ℕ) : ℚ) ^ n) = 0 := by
+  rw [← nonIntersectingWordPairs_sameLength_generatingFunction, coeff_mk, ite_eq_left rfl]
+
+-- Over three letters, there are six ordered pairs of distinct single letters.
+example :
+    coeff 1 (PowerSeries.mk fun n => ∑ j ∈ Icc 1 (3 - 1),
+      (Nat.choose 3 j : ℚ) * j.factorial * Nat.stirlingSecond n j * ((3 - j : ℕ) : ℚ) ^ n) = 6 := by
+  rw [← nonIntersectingWordPairs_sameLength_generatingFunction, coeff_mk, ite_eq_right (by decide)]
+  exact_mod_cast (show ((univ : Finset ((Fin 1 → Fin 3) × (Fin 1 → Fin 3))).filter fun p =>
+    Disjoint (univ.image p.1) (univ.image p.2)).card = 6 by decide)
