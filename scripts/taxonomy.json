@@ -18229,7 +18229,7 @@
   "WantedExt/Probability/Statistics/NormalTheoryWanted": {"to": "Probability/linear-models-multivariate", "title": "Student's t and Snedecor's F distributions"},
   "WantedExt/Probability/StirlingEdgeworthExpansionWanted": {"to": "Probability/central-limit-theorems", "title": "Edgeworth expansion for the Ewens distribution"},
   "WantedExt/Probability/StudentTNormalTotalVariationAIMProbabilityProblem25Wanted": {"to": "Probability/distributions/continuous", "title": "Distance between Student t and normal laws"},
-  "WantedExt/Probability/SymmetricGroupRandomWalkShared": {"to": "Probability/markov-chains", "title": "Random walks on the symmetric group"},
+  "WantedExt/Probability/SymmetricGroupRandomWalkShared": {"to": "Probability/markov-chains", "title": "Card shuffling and cutoff"},
   "WantedExt/Probability/TalagrandTransportWanted": {"to": "Probability/concentration-inequalities", "title": "Transport-cost inequalities"},
   "WantedExt/Probability/ThinShellBoundsWanted": {"to": "Probability/high-dimensional-probability", "title": "Thin-shell conjecture"},
   "WantedExt/Probability/TracyWidomWanted": {"to": "Probability/high-dimensional-probability", "title": "Tracy–Widom limit for Wishart matrices"},

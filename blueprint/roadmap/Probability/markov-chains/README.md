@@ -29,4 +29,3 @@ Discrete-time Markov chains (construction, path measures, finite-dimensional dis
 - [Autoregressive processes](autoregressive-processes/README.md)
 
 - [Mixing-time bounds](mixing-time-bounds/README.md)
-- [Random walks on the symmetric group](random-walks-on-the-symmetric-group/README.md)
