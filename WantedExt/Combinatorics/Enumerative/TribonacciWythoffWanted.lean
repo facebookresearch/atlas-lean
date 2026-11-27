@@ -16,6 +16,7 @@ public import Mathlib.Data.Set.Card
 public import MathlibExt.Combinatorics.Enumerative.ExtraTribLeftExtension
 public import MathlibExt.Combinatorics.Enumerative.ExtraTribReversal
 public import MathlibExt.Combinatorics.Enumerative.FibternarySums
+public import MathlibExt.Combinatorics.Enumerative.TribDigitMultiples
 public import MathlibExt.Combinatorics.Enumerative.TrithoffPrecolumns
 public import MathlibExt.Combinatorics.Enumerative.TrithoffRowDifference
 public import MathlibExt.Combinatorics.Enumerative.TrithoffRowNumber
@@ -133,18 +134,6 @@ Tribonacci Numbers*, Journal of Integer Sequences 28 (2025), Article 25.5.4,
 Proposition 22 (`jis-2025-25.5.4-prop-22`). -/
 public theorem_wanted exists_fibternary_multiple (n : ℕ) (hn : 0 < n) :
     ∃ m, 0 < m ∧ n ∣ m ∧ (∀ e ∈ Nat.digits 3 m, e ≤ 1) ∧ ¬ [1, 1] <:+: Nat.digits 3 m
-
-/-- **Tribbinary and Tribternary multiples.** Every positive integer $n$ has a positive
-multiple whose binary digits contain no three consecutive $1$s (a Tribbinary number), and a
-positive multiple whose base-$3$ digits are all $0$ or $1$ with no three consecutive $1$s (a
-Tribternary number).
-
-Source: E. Chen et al., *Generalizing the Wythoff Array and Other Fibonacci Facts to
-Tribonacci Numbers*, Journal of Integer Sequences 28 (2025), Article 25.5.4,
-Corollary 23 (`jis-2025-25.5.4-cor-23`). -/
-public theorem_wanted exists_tribbinary_and_tribternary_multiple (n : ℕ) (hn : 0 < n) :
-    (∃ m, 0 < m ∧ n ∣ m ∧ ¬ [1, 1, 1] <:+: Nat.digits 2 m) ∧
-      ∃ m, 0 < m ∧ n ∣ m ∧ (∀ e ∈ Nat.digits 3 m, e ≤ 1) ∧ ¬ [1, 1, 1] <:+: Nat.digits 3 m
 
 /-! ## Tribonacci successor, Trithoff rows and precolumns -/
 

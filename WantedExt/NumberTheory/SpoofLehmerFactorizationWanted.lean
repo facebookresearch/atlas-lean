@@ -20,6 +20,7 @@ public import MathlibExt.NumberTheory.SpoofLehmerResidues
 public import MathlibExt.NumberTheory.SpoofLehmerFactorizationSpoofLehmerBaseNotModEqOnePrime
 public import MathlibExt.NumberTheory.SpoofLehmerFactorizationLehmerEquationSolutionsFinite
 public import MathlibExt.NumberTheory.SpoofLehmerFactorizationSpoofLehmerLowerLeLeUpper
+public import MathlibExt.NumberTheory.SpoofLehmerFactorizationSpoofLehmerExponentsEqOne
 
 /-!
 # Spoof Lehmer factorizations (wanted statements)
@@ -35,14 +36,6 @@ encoded as `Multiset.map (fun a => (a, 1)) x`.
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Nontrivial spoof Lehmer factorizations have all exponents $1$.** If $F$ is a nontrivial spoof
-$k$-Lehmer factorization for some integer $k$, then every exponent of $F$ is $1$.
-
-Source: Grant Molnar and Guntas Singh, *Spoof Lehmer Factorizations*, INTEGERS 26 (2026),
-Article A33, Theorem 3 (`integers-2026-A33-thm-3`). -/
-public theorem_wanted spoofLehmer_exponents_eq_one (F : Multiset (ℕ × ℕ))
-    (k : ℤ) (hL : IsSpoofLehmer k F) (hnt : ¬ IsTrivialSpoof F) : ∀ p ∈ F, p.2 = 1
 
 /-- **Bases of a nontrivial spoof Lehmer factorization are not $1$ modulo one another.** Let
 $x_1, \dots, x_r$ be natural numbers and let $F = x_1 \cdots x_r$ be the spoof factorization with
