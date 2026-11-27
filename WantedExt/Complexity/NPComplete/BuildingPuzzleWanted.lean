@@ -53,8 +53,9 @@ The grid part reuses `LatinSquareCompletion`: `n` and the partial square `S`, ro
 `0` for a blank cell. The Building numbers are four lists of length `n`, with `0` for no
 number: `top`/`bottom` entry `c` is written above/below column `c`, and `left`/`right` entry
 `r` to the left/right of row `r`. `WellFormed` asks for `LatinSquareCompletion.WellFormed`
-(`n ≥ 1`, an `n × n` grid with entries at most `n`), no integer repeated in a row or column of
-`S` (a partial Latin square), and Building numbers at most `n`.
+(`n ≥ 1`, an `n × n` grid with entries at most `n`), no nonzero integer repeated in a row or
+column of `S` (a partial Latin square; the blank `0` may repeat), and Building numbers at most
+`n`.
 
 A building is seen from an end of its line exactly when it is higher than every building
 between it and that end, so the number of buildings seen is the number of such cells.
@@ -83,9 +84,9 @@ def size (i : BuildingPuzzleInstance) : ℕ := i.1.1
 /-- The entry of `S` in row `r`, column `c` (`0` = blank). -/
 def entry (i : BuildingPuzzleInstance) (r c : ℕ) : ℕ := (i.1.2.getD r []).getD c 0
 
-/-- Well-formedness: `S` is an `n × n` grid with entries at most `n` and `n ≥ 1`, no integer
-appears twice in a row or column of `S`, and the four lists of Building numbers have length `n`
-and entries at most `n`. -/
+/-- Well-formedness: `S` is an `n × n` grid with entries at most `n` and `n ≥ 1`, no nonzero
+integer appears twice in a row or column of `S` (`0` is a blank and may repeat), and the four
+lists of Building numbers have length `n` and entries at most `n`. -/
 def WellFormed (i : BuildingPuzzleInstance) : Prop :=
   LatinSquareCompletion.WellFormed i.1 ∧
     (∀ r < size i, ∀ c < size i, ∀ c' < size i, c ≠ c' → entry i r c ≠ 0 →
