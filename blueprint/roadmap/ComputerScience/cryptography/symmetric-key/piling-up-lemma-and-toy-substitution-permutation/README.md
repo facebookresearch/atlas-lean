@@ -4,7 +4,6 @@
 
 - [Bias](bias.md)
 - [Correlation](correlation.md)
-- [Pmf bool to Real add](pmf-bool-to-real-add.md)
 - [Correlation eq two mul bias](correlation-eq-two-mul-bias.md)
 - [Joint PMF](joint-pmf.md)
 - [Joint PMF apply](joint-pmf-apply.md)
