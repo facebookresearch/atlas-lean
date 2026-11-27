@@ -34,6 +34,7 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.GCD.Basic
 public import Mathlib.Data.Nat.Prime.Defs
 public import Mathlib.NumberTheory.Divisors
+public import MathlibExt.NumberTheory.Recurrences.SylvesterModuloFour
 public import MathlibExt.NumberTheory.Recurrences.SylvesterSequence
 public import MathlibExt.NumberTheory.Recurrences.SylvesterSequenceMersenneSylvesterValuesEq
 
@@ -42,14 +43,6 @@ set_option autoImplicit false
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.Recurrences.SylvesterSequenceWanted
-
-/-- **Sylvester numbers modulo 4.** Let $(S_n)_{n \ge 0}$ be the Sylvester sequence,
-$S_0 = 2$ and $S_{n+1} = S_n^2 - S_n + 1$. For every $n \ge 1$, $S_n \equiv 3 \pmod 4$.
-
-Source: Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Proposition 1, congruence (5). -/
-theorem_wanted sylvester_modEq_three_mod_four
-    (n : ℕ) (hn : 1 ≤ n) :
-    sylvesterNumber n % 4 = 3
 
 /-- **Alternating divisibility for Sylvester numbers.** Let $(S_n)_{n \ge 0}$ be the Sylvester
 sequence, $S_0 = 2$ and $S_{n+1} = S_n^2 - S_n + 1$. For all natural numbers $k$ and $n$ with
@@ -99,15 +92,6 @@ Source: Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Corollary 1(c
 theorem_wanted sylvester_not_perfect
     (n : ℕ) :
     ¬ (sylvesterNumber n).Perfect
-
-/-- **Prime divisors congruent to 3 modulo 4 of Sylvester numbers.** Let $(S_n)_{n \ge 0}$ be the
-Sylvester sequence, $S_0 = 2$ and $S_{n+1} = S_n^2 - S_n + 1$. For every $n \ge 1$, $S_n$ has a
-prime divisor $p$ with $p \equiv 3 \pmod 4$.
-
-Source: Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Corollary 1(d). -/
-theorem_wanted sylvester_exists_prime_divisor_mod_four_eq_three
-    (n : ℕ) (hn : 1 ≤ n) :
-    ∃ p : ℕ, p.Prime ∧ p ∣ sylvesterNumber n ∧ p % 4 = 3
 
 /-- **Sylvester numbers are not perfect powers.** Let $(S_n)_{n \ge 0}$ be the Sylvester
 sequence, $S_0 = 2$ and $S_{n+1} = S_n^2 - S_n + 1$. For every $n$ there are no natural numbers

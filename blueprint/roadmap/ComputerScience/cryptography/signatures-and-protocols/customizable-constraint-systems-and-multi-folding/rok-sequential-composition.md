@@ -4,7 +4,7 @@ If $\Pi_1$ is a reduction of knowledge from $\mathcal{R}_1$ to $\mathcal{R}_2$ a
 
 ## Proof sketch
 
-Given a composed prover, the extractor of $\Pi_2$ yields an expected polynomial-time prover for $\Pi_1$ outputting valid $\mathcal{R}_2$ witnesses; feeding it to the extractor of $\Pi_1$ gives $\mathcal{R}_1$ witnesses. The success probabilities degrade additively by negligible terms and expected running times multiply, staying polynomial.
+Given a composed prover, public reducibility of $\Pi_1$ computes the intermediate statement $u_2$ from the transcript, so the extractor of $\Pi_2$ can be run on it; it yields an expected polynomial-time prover for $\Pi_1$ outputting valid $\mathcal{R}_2$ witnesses; feeding it to the extractor of $\Pi_1$ gives $\mathcal{R}_1$ witnesses. The success probabilities degrade additively by negligible terms and expected running times multiply, staying polynomial.
 
 ## Depends on
 
@@ -13,5 +13,5 @@ Given a composed prover, the extractor of $\Pi_2$ yields an expected polynomial-
 
 ## Sources
 
-- Abhiram Kothapalli, Bryan Parno, "Algebraic Reductions of Knowledge", CRYPTO (2023).
+- Abhiram Kothapalli, Bryan Parno, "Algebraic Reductions of Knowledge", CRYPTO (2023), IACR ePrint 2022/009, Theorem 5.
 - Abhiram Kothapalli, Srinath Setty, "HyperNova: Recursive Arguments for Customizable Constraint Systems", CRYPTO (2024), IACR ePrint 2023/573.
