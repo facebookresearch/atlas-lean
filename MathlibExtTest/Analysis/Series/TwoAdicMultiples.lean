@@ -35,3 +35,38 @@ example :
   exact tsum_ite_eq 5 (fun _ => (1 : ℂ))
 
 end MetaMathlibExt.tsum_twoAdic_high_regroup
+
+namespace MetaMathlibExt
+
+private noncomputable def dyadicEulerProduct (q : ℂ) (hq : ‖q‖ < 1) : ℂ :=
+  ∏' j : ℕ, QPochhammer.qPochhammerInf (q ^ 2 ^ j) (q ^ 2 ^ (j + 1))
+    (by rw [norm_pow]; exact pow_lt_one₀ (norm_nonneg q) hq (by positivity))
+
+-- The factorization includes q = 0; its value there is one.
+example : dyadicEulerProduct 0 (by simp) = 1 := by
+  rw [dyadicEulerProduct, tprod_qPochhammer_twoAdic_factorization 0 (by simp)]
+  exact QPochhammer.qPochhammerInf_zero_left _ _
+
+private theorem norm_halfI_lt_one : ‖Complex.I / 2‖ < 1 := by
+  norm_num [norm_div]
+
+-- At a nonreal point of the disk, none of the Euler factors vanish and the product is nonzero.
+example : dyadicEulerProduct (Complex.I / 2) norm_halfI_lt_one ≠ 0 := by
+  let q : ℂ := Complex.I / 2
+  have hq : ‖q‖ < 1 := norm_halfI_lt_one
+  change dyadicEulerProduct q hq ≠ 0
+  rw [dyadicEulerProduct, tprod_qPochhammer_twoAdic_factorization q hq]
+  change (∏' n : ℕ, (1 - q * q ^ n)) ≠ 0
+  simp only [sub_eq_add_neg]
+  refine tprod_one_add_ne_zero_of_summable (fun n => ?_) ?_
+  · rw [← sub_eq_add_neg]
+    apply sub_ne_zero.mpr
+    intro he
+    have ht : ‖q * q ^ n‖ < 1 := by
+      rw [← pow_succ', norm_pow]
+      exact pow_lt_one₀ (norm_nonneg q) hq (Nat.succ_ne_zero n)
+    exact (lt_irrefl (1 : ℝ)) (by simpa only [← he, norm_one] using ht)
+  · simpa only [norm_neg, norm_mul, norm_pow] using
+      (summable_geometric_of_lt_one (norm_nonneg q) hq).mul_left ‖q‖
+
+end MetaMathlibExt

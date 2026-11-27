@@ -6,11 +6,11 @@ $$
 w(e)=W(M_1)-W(M_2\setminus\{e\}).
 $$
 
-Hence, whenever the matching procedure finds that $W$ fails to isolate size $k+1$, the $\Theta(\log n)$ catalytic bits storing $w(e)$ can be zeroed and later recomputed from $W$ restricted to $E\setminus\{e\}$; this is a compression of the catalytic tape in the compress-or-random paradigm.
+Hence such a weight is redundant once the rest of the configuration is known, which is a compression of the catalytic tape in the compress-or-random paradigm. In the source it is used as follows. Suppose the weights $W$, stored on the catalytic tape with $5\log n$ bits each, isolate a minimum-weight matching $M^k$ of size $k$ but not of size $k+1$, and $5\log n$ further catalytic bits hold a reserve weight $r$. A $\mathsf{CLP}$ subroutine finds an edge $e = u \to v$ of the residual graph of $M^k$, with $e \notin M^k$, that lies on some but not all minimum-weight source-sink paths; it replaces $w(e)$ by $r$ and overwrites the reserve with $k$ and the endpoints $u, v$ of $e$, which take $\log n$ bits each, so $2\log n$ catalytic bits are freed. Recovery of $w(e)$ needs $k$ and $e$ besides the remaining weights: it works from $(G \setminus \{e\}, k, W|_{E\setminus\{e\}})$.
 
 ## Proof sketch
 
-Both matchings have the same minimum weight, so $W(M_1)=W(M_2)=W(M_2\setminus\{e\})+w(e)$. The matchings $M_1$ and $M_2\setminus\{e\}$ do not involve $w(e)$, and they are recomputable from the remaining weights by rerunning the same deterministic procedure, which makes the erasure reversible.
+Both matchings have the same minimum weight, so $W(M_1)=W(M_2)=W(M_2\setminus\{e\})+w(e)$. For the recovery, since $e \notin M^k$, the matching $M^k$ is still the isolated minimum-weight matching of size $k$ in $G \setminus \{e\}$, so it and its residual graph can be recomputed without $w(e)$. In the residual graph, whose cycles all have positive weight, write $\delta_{a,b}$ for the minimum weight of an $a$-$b$ path and $\delta'_{s,t}$ for the minimum weight of a source-sink path avoiding $e$. Since $e$ lies on some but not all minimum-weight source-sink paths, $\delta_{s,u} + w(e) + \delta_{v,t} = \delta_{s,t} = \delta'_{s,t}$, so $w(e) = \delta'_{s,t} - (\delta_{s,u} + \delta_{v,t})$, and none of these three quantities involves $w(e)$. Undoing the replacement then restores the catalytic tape.
 
 ## Depends on
 
@@ -18,4 +18,4 @@ Both matchings have the same minimum weight, so $W(M_1)=W(M_2)=W(M_2\setminus\{e
 
 ## Sources
 
-- Aryan Agarwala and Ian Mertz, "Bipartite Matching is in Catalytic Logspace", arXiv:2504.09991 (2025), ECCC TR25-048.
+- Aryan Agarwala and Ian Mertz, "Bipartite Matching is in Catalytic Logspace", FOCS (2025); arXiv:2504.09991, ECCC TR25-048 (Lemmas 5.4 and 5.5).

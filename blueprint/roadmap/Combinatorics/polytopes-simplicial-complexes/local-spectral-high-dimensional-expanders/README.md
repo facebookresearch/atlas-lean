@@ -10,7 +10,7 @@
 - [Garland's vanishing theorem for cohomology of high-dimensional expanders](garland-vanishing.md)
 - [Spectral gap of high-order walks on local spectral expanders](kaufman-oppenheim-walk-gap.md)
 - [Oppenheim's trickling-down theorem for spectral gaps](oppenheim-trickle-down.md)
-- [Ramanujan complexes of type A_d](ramanujan-complex.md)
+- [Ramanujan complexes of type Ã_{d-1}](ramanujan-complex.md)
 - [Spectral independence of a distribution on the hypercube](spectral-independence.md)
 - [Matroid independence complexes are 0-local spectral expanders](alov-matroid-complex.md)
 - [Kaufman–Oppenheim elementary bounded-degree local spectral expanders](kaufman-oppenheim-construction.md)

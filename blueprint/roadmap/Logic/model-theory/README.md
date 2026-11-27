@@ -19,4 +19,5 @@ Relations between formal theories and their structures: first-order languages of
 - [Downward Löwenheim–Skolem theorem](downward-lowenheim-skolem-theorem.md)
 - [Compactness theorem for first-order logic](compactness-theorem-for-first-order-logic.md)
 - [Quantifier elimination for Presburger arithmetic](quantifier-elimination-for-presburger-arithmetic.md)
+- [A CH obstruction at the countable Hanf threshold](ch-hanf-categoricity-threshold-obstruction.md)
 - [Ehrenfeucht–Fraïssé games on finite binary relations](ehrenfeucht-fra-ss-games-on-finite-binary-relati/README.md)

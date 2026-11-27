@@ -60,7 +60,7 @@ noncomputable def M (n : ℕ) : ℕ :=
     (_union : A ∪ B = Finset.Icc (1 : ℤ) (2 * n))
     (_same_card : A.card = B.card)}
 
- /-- **Overlaps are bounded by the maximum overlap.** For finite sets $A, B \subseteq \mathbb{Z}$
+/-- **Overlaps are bounded by the maximum overlap.** For finite sets $A, B \subseteq \mathbb{Z}$
 and every integer $k$, the overlap $\#\{(a, b) \in A \times B : a - b = k\}$ is at most the
 maximum overlap of $A$ and $B$. -/
 theorem Overlap_le_MaxOverlap (A B : Finset ℤ) (k : ℤ) :
