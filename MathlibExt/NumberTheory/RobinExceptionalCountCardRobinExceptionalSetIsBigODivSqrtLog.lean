@@ -19,8 +19,8 @@ public import MathlibExt.NumberTheory.RobinExceptionalCount
 /-!
 # Failures of Robin's inequality number `O(x / √log x)`
 
-This module defines the Robin exceptional set and proves that its counting function
-`N_R(x)` is `O(x / √log x)` as `x → ∞`.
+Using the Robin exceptional set defined in `MathlibExt.NumberTheory.RobinExceptionalCount`,
+this module proves that its counting function `N_R(x)` is `O(x / √log x)` as `x → ∞`.
 
 Source: Florian Luca and Patrick Solé, *On Robin's Inequality*, INTEGERS 25 (2025), Article A8,
 Theorem 2.
@@ -90,105 +90,28 @@ private theorem sigma_div_eq_sum_inv {n : ℕ} (hn : n ≠ 0) :
   field_simp
   linarith
 
-/-- Count of multiples of `d` in `Icc 1 N` is at most `N / d`. -/
-private theorem card_filter_dvd_le {N d : ℕ} (hd : 1 ≤ d) :
-    ((Finset.Icc 1 N).filter (fun n => d ∣ n)).card ≤ N / d := by
-  have hdpos : 0 < d := by omega
-  have hsub : (Finset.Icc 1 N).filter (fun n => d ∣ n)
-      ⊆ (Finset.Icc 1 (N / d)).image (fun k => k * d) := by
-    intro n hn
-    simp only [Finset.mem_filter, Finset.mem_Icc] at hn
-    obtain ⟨⟨hn1, hnN⟩, hdvd⟩ := hn
-    obtain ⟨k, hk⟩ := hdvd
-    have hk1 : 1 ≤ k := by
-      by_contra hcon
-      have hk0 : k = 0 := by omega
-      rw [hk0, mul_zero] at hk
-      omega
-    have hkdvd : k * d = n := by
-      rw [mul_comm]
-      exact hk.symm
-    have hkle : k ≤ N / d := by
-      rw [Nat.le_div_iff_mul_le hdpos]
-      omega
-    rw [Finset.mem_image]
-    exact ⟨k, Finset.mem_Icc.mpr ⟨hk1, hkle⟩, hkdvd⟩
-  calc ((Finset.Icc 1 N).filter (fun n => d ∣ n)).card
-      ≤ ((Finset.Icc 1 (N / d)).image (fun k => k * d)).card :=
-        Finset.card_le_card hsub
-    _ ≤ (Finset.Icc 1 (N / d)).card := Finset.card_image_le
-    _ = N / d := by rw [Nat.card_Icc]; simp
-
-/-- Divisors of `n` as a filter over `Icc 1 N`. -/
-private theorem divisors_eq_filter {N n : ℕ} (hn1 : 1 ≤ n) (hnN : n ≤ N) :
-    n.divisors = (Finset.Icc 1 N).filter (fun d => d ∣ n) := by
-  ext d
-  simp only [Finset.mem_filter, Finset.mem_Icc, Nat.mem_divisors]
-  constructor
-  · intro h
-    obtain ⟨hdvd, hn0⟩ := h
-    have hmem : d ∈ n.divisors := Nat.mem_divisors.mpr ⟨hdvd, hn0⟩
-    have hdpos : 0 < d := Nat.pos_of_mem_divisors hmem
-    have hdle : d ≤ n := Nat.divisor_le hmem
-    exact ⟨⟨hdpos, le_trans hdle hnN⟩, hdvd⟩
-  · intro h
-    obtain ⟨⟨_, _⟩, hdvd⟩ := h
-    exact ⟨hdvd, by omega⟩
-
+open Finset in
 /-- Sum of `τ` over `Icc 1 N` is at most `N * (1 + log N)`. -/
 private theorem sum_tau_le (N : ℕ) :
     ∑ n ∈ Finset.Icc 1 N, ((n.divisors.card : ℕ) : ℝ)
       ≤ (N : ℝ) * (1 + Real.log N) := by
-  have hcard : ∀ n ∈ Finset.Icc 1 N,
-      ((n.divisors.card : ℕ) : ℝ)
-        = ∑ d ∈ Finset.Icc 1 N, (if d ∣ n then (1 : ℝ) else 0) := by
-    intro n hn
-    simp only [Finset.mem_Icc] at hn
-    obtain ⟨hn1, hnN⟩ := hn
-    have hdiv := divisors_eq_filter hn1 hnN
-    have hsum : ((((Finset.Icc 1 N).filter (fun d => d ∣ n)).card : ℕ) : ℝ)
-        = ∑ _d ∈ (Finset.Icc 1 N).filter (fun d => d ∣ n), (1 : ℝ) := by
-      rw [Finset.card_eq_sum_ones]
-      simp
-    rw [hdiv, hsum, Finset.sum_filter]
-  have hrewrite : (∑ n ∈ Finset.Icc 1 N, ((n.divisors.card : ℕ) : ℝ))
-      = ∑ n ∈ Finset.Icc 1 N, ∑ d ∈ Finset.Icc 1 N,
-        (if d ∣ n then (1 : ℝ) else 0) :=
-    Finset.sum_congr rfl (fun n hn => hcard n hn)
-  rw [hrewrite, Finset.sum_comm]
-  have hinner : ∀ d ∈ Finset.Icc 1 N,
-      (∑ n ∈ Finset.Icc 1 N, (if d ∣ n then (1 : ℝ) else 0))
-        = ((((Finset.Icc 1 N).filter (fun n => d ∣ n)).card : ℕ) : ℝ) := by
-    intro d hd
-    have hsum : ((((Finset.Icc 1 N).filter (fun n => d ∣ n)).card : ℕ) : ℝ)
-        = ∑ _n ∈ (Finset.Icc 1 N).filter (fun n => d ∣ n), (1 : ℝ) := by
-      rw [Finset.card_eq_sum_ones]
-      simp
-    rw [hsum, Finset.sum_filter]
-  rw [Finset.sum_congr rfl hinner]
-  have hle : ∀ d ∈ Finset.Icc 1 N,
-      ((((Finset.Icc 1 N).filter (fun n => d ∣ n)).card : ℕ) : ℝ)
-        ≤ (N : ℝ) / (d : ℝ) := by
-    intro d hd
-    simp only [Finset.mem_Icc] at hd
-    obtain ⟨hd1, _⟩ := hd
-    have hnat := card_filter_dvd_le (N := N) hd1
-    have hcast : ((((Finset.Icc 1 N).filter (fun n => d ∣ n)).card : ℕ) : ℝ)
-        ≤ (((N / d : ℕ)) : ℝ) := by exact_mod_cast hnat
-    exact le_trans hcast Nat.cast_div_le
-  calc ∑ d ∈ Finset.Icc 1 N,
-          ((((Finset.Icc 1 N).filter (fun n => d ∣ n)).card : ℕ) : ℝ)
-        ≤ ∑ d ∈ Finset.Icc 1 N, ((N : ℝ) / (d : ℝ)) :=
-          Finset.sum_le_sum hle
-    _ = (N : ℝ) * ∑ d ∈ Finset.Icc 1 N, (1 / (d : ℝ)) := by
-          rw [Finset.mul_sum]
-          apply Finset.sum_congr rfl
+  have h : ∑ n ∈ Icc 1 N, n.divisors.card = ∑ d ∈ Icc 1 N, N / d := by
+    rw [show Icc 1 N = Ioc 0 N from Icc_add_one_left_eq_Ioc 0 N]
+    simpa only [ArithmeticFunction.sigma_zero_apply] using
+      ArithmeticFunction.sum_Ioc_sigma0_eq_sum_div N
+  have hR : ∑ n ∈ Icc 1 N, ((n.divisors.card : ℕ) : ℝ) = ∑ d ∈ Icc 1 N, ((N / d : ℕ) : ℝ) := by
+    exact_mod_cast h
+  rw [hR]
+  calc ∑ d ∈ Icc 1 N, ((N / d : ℕ) : ℝ)
+        ≤ ∑ d ∈ Icc 1 N, ((N : ℝ) / (d : ℝ)) :=
+          sum_le_sum fun _ _ => Nat.cast_div_le
+    _ = (N : ℝ) * ∑ d ∈ Icc 1 N, (1 / (d : ℝ)) := by
+          rw [mul_sum]
+          apply sum_congr rfl
           intro d _
           rw [mul_one_div]
-    _ ≤ (N : ℝ) * (1 + Real.log N) := by
-          have hN : (0 : ℝ) ≤ (N : ℝ) := Nat.cast_nonneg _
-          have hH := harmonic_real_le (K := N)
-          exact mul_le_mul_of_nonneg_left hH hN
+    _ ≤ (N : ℝ) * (1 + Real.log N) :=
+          mul_le_mul_of_nonneg_left harmonic_real_le (Nat.cast_nonneg _)
 
 /-- If `τ(n) < Y` then `σ(n) / n < 2 + (3 / 2) * log log x`. -/
 private theorem sigma_div_lt_of_tau_lt {x : ℝ} {n K : ℕ} {Y : ℝ}
