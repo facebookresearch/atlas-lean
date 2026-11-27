@@ -1,0 +1,16 @@
+# Folded Reed-Solomon and Multiplicity Codes up to List-Decoding Capacity
+
+- [Folded Reed-Solomon codes](folded-reed-solomon-codes.md)
+- [Univariate multiplicity codes](univariate-multiplicity-codes.md)
+- [Guruswami-Rudra: folded Reed-Solomon codes achieve list-decoding capacity](guruswami-rudra-folded-reed-solomon-capacity.md)
+- [Folded Wronskian criterion for linear independence](folded-wronskian-criterion-for-linear-independence.md)
+- [List recovery and relaxed generalized Singleton bounds](list-recovery-of-folded-codes.md)
+- [Subspace designs](subspace-designs.md)
+- [Guruswami-Wang: the list of folded RS and multiplicity codes lies in a low-dimensional subspace](linear-algebraic-list-decoding-into-a-subspace.md)
+- [Chen-Zhang: explicit FRS and multiplicity codes achieve relaxed generalized Singleton bounds](folded-reed-solomon-codes-achieve-relaxed-generalized-singleton-bounds.md)
+- [Kopparty-Ron-Zewi-Saraf-Wootters: constant list size up to capacity](constant-list-size-for-folded-reed-solomon-codes.md)
+- [Srivastava: folded Reed-Solomon codes with list size O(1/epsilon^2)](folded-reed-solomon-codes-with-quadratic-list-size.md)
+- [Tamo: improved list sizes and generalized Singleton for list size two](folded-reed-solomon-codes-attain-generalized-singleton-for-list-size-two.md)
+- [Explicit codes achieving list-decoding capacity with optimal list size O(1/epsilon)](explicit-codes-achieving-capacity-with-optimal-list-size.md)
+- [Limits on list recovery of folded Reed-Solomon codes](list-recovery-limits-of-folded-reed-solomon-codes.md)
+- [Goyal-Harsha-Kumar-Shankar: near-linear time list decoding up to capacity](near-linear-time-list-decoding-of-folded-reed-solomon-codes.md)
