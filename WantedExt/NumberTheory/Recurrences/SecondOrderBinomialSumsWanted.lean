@@ -13,6 +13,7 @@ public import Mathlib.Algebra.BigOperators.Intervals
 public import Mathlib.Combinatorics.Enumerative.Catalan.Basic
 public import MathlibExt.NumberTheory.LucasSequence
 public import MathlibExt.NumberTheory.Recurrences.LucasAlternatingSquaredBinomialSum
+public import MathlibExt.NumberTheory.Recurrences.LucasShiftedBinomialConvolution
 public import WantedExt.NumberTheory.SecondOrderGenFunIntegerValuesWanted
 public import MathlibExt.NumberTheory.Recurrences.SecondOrderBinomialSumsSecondOrderBiSeqSumCentralChooseMul
 public import MathlibExt.NumberTheory.Recurrences.LucasTripleBinomialConvolution
@@ -89,19 +90,6 @@ public theorem_wanted lucasU_lucasV_sum_catalan_shifted (p : ℤ) (n m : ℕ) (h
       2 * ((2 * m - 1).choose m : ℚ) *
           (((n + m + 2) * (n + 1) : ℚ) / ((n + 2 * m + 1) * (n + 2 * m + 2))) *
         catalan (n + m + 1) * lucasU ⟨p, -1, by decide⟩ n
-
-/-- **Convolution of U and V with shifted binomial weights.** Let $p$ be an integer and let $U$ and
-$V$ be the Lucas sequences $U(p, -1)$ and $V(p, -1)$, so that $U_0 = 0$, $U_1 = 1$, $V_0 = 2$,
-$V_1 = p$, and both satisfy $X_{j+2} = p X_{j+1} + X_j$. Then for every natural number $n$
-$$\sum_{k=0}^{n} \binom{2n}{k} \binom{2n}{n+k} U_k V_{n-k} = \binom{4n}{n} U_n.$$
-
-Source: John M. Campbell and Emrah Kılıç, *Binomial Sums Involving Second-Order Linearly Recurrent
-Sequences*, The Fibonacci Quarterly 62 (2024), Article 62-1/campbell10202023, Proposition 2.6. -/
-public theorem_wanted lucasU_lucasV_sum_choose_two_n (p : ℤ) (n : ℕ) :
-    ∑ k ∈ Finset.range (n + 1),
-        ((2 * n).choose k * (2 * n).choose (n + k) : ℤ) *
-          lucasU ⟨p, -1, by decide⟩ k * lucasV ⟨p, -1, by decide⟩ (n - k) =
-      ((4 * n).choose n : ℤ) * lucasU ⟨p, -1, by decide⟩ n
 
 /-- **Alternating sum of $\binom{2n}{k} \binom{4n}{2k}$ with Lucas sequences.** Let $p$ be an
 integer and let $U_n$ and $V_n$ be the Lucas sequences $U(p, -1)$ and $V(p, -1)$, so $U_0 = 0$,

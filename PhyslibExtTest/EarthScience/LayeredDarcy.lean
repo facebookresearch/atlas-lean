@@ -39,7 +39,7 @@ example : (4 : ℝ) = (3 - 1) / ((2 : ℝ) / 4) := by
     (L := fun _ => (2 : ℝ)) (K := fun _ => (4 : ℝ))
     (head := fun i => if i = 0 then (3 : ℝ) else 1) (q := 4)
     (by intro i _; norm_num) (by intro i _; norm_num)
-    (by intro i hi; interval_cases i <;> norm_num)
+    (by intro i hi; interval_cases i; norm_num)
   simpa [Finset.sum_range_one] using h
 
 /-- Boundary documentation of the totalization: the empty

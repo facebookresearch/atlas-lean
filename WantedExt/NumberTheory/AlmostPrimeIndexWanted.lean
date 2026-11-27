@@ -21,7 +21,7 @@ public import Mathlib.NumberTheory.Harmonic.EulerMascheroni
 public import Mathlib.NumberTheory.PrimeCounting
 public import MathlibExt.NumberTheory.AlmostPrimeIndex
 public import MathlibExt.NumberTheory.PrimeCounting.LandauAlmostPrimeAsymptotic
-public import WantedExt.NumberTheory.PrimeCounting.DusartMertensReciprocalSumWanted
+public import MathlibExt.NumberTheory.PrimeCounting.DusartMertensReciprocalSumDefs
 
 /-!
 # Almost primes of almost prime index

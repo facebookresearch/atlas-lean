@@ -1,0 +1,3 @@
+# Heapify Down eq of lt child
+
+Let $a$ be a vector of size $n$, $i < n$ an index, and $j$ the child of $i$ selected by the canonical maximum-child selector (so $i$ has at least one child). If $a_i$ compares less than $a_j$, the counted sift-down at $i$ swaps $a_i$ and $a_j$ and continues at $j$: its result is that of the counted sift-down of the swapped vector at $j$, and its cost, as a pair (comparisons, swaps), is the selector's cost, plus $(1, 1)$ for the parent comparison and the swap, plus the cost of the recursive sift-down. The selector's cost is $(1, 0)$ when $i$ has a right child and $(0, 0)$ when it has only a left child, so a node with one child is charged no sibling comparison.
