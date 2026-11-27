@@ -33,11 +33,11 @@ public import Mathlib.NumberTheory.ModularForms.Discriminant
 public import Mathlib.NumberTheory.ModularForms.EisensteinSeries.QExpansion
 public import Mathlib.RingTheory.PowerSeries.PiTopology
 public import Mathlib.RingTheory.PowerSeries.Expand
-public import MathlibExt.GroupTheory.CyclicSubgroupsZModSquare
 public import MathlibExt.NumberTheory.ModularForms.JCoefficientBound
 public import MathlibExt.NumberTheory.ModularForms.QParamProduct
 public import MathlibExt.NumberTheory.ModularForms.SturmBoundGamma0
 
+import MathlibExt.NumberTheory.ModularForms.Gamma0Index
 import Mathlib.NumberTheory.ModularForms.LevelOne.DimensionFormula
 import Mathlib.NumberTheory.ModularForms.NormTrace
 
@@ -113,10 +113,10 @@ private theorem coe_heckeDiagMatrix_smul {p : ℕ} (hp : p ≠ 0) (τ : UpperHal
   simp [UpperHalfPlane.num, UpperHalfPlane.denom, val_heckeDiagMatrix hp]
 
 private theorem σ_heckeMatrix (p j : ℕ) : UpperHalfPlane.σ (heckeMatrix p j) = .refl ℝ ℂ := by
-  rw [UpperHalfPlane.σ, if_pos (det_heckeMatrix_pos p j)]
+  rw [UpperHalfPlane.σ, ite_eq_left (det_heckeMatrix_pos p j)]
 
 private theorem σ_heckeDiagMatrix (p : ℕ) : UpperHalfPlane.σ (heckeDiagMatrix p) = .refl ℝ ℂ := by
-  rw [UpperHalfPlane.σ, if_pos (det_heckeDiagMatrix_pos p)]
+  rw [UpperHalfPlane.σ, ite_eq_left (det_heckeDiagMatrix_pos p)]
 
 private theorem slash_heckeMatrix_apply (k : ℤ) {p : ℕ} (hp : p ≠ 0) (j : ℕ) (f : UpperHalfPlane →
   ℂ)
@@ -240,245 +240,7 @@ end DegeneracyPort
 end ModularForm
 
 namespace ModularCurve
-private def borel (R : Type*) [CommRing R] : Subgroup SL(2, R) where
-  carrier := { M | M.1 1 0 = 0 }
-  one_mem' := by simp
-  mul_mem' := by
-    intro A B hA hB
-    show (A * B).1 1 0 = 0
-    rw [Matrix.SpecialLinearGroup.coe_mul, (Matrix.two_mul_expl A.1 B.1).2.2.1, hA, hB]
-    ring
-  inv_mem' := by
-    intro A hA
-    show (A⁻¹).1 1 0 = 0
-    have h : (A⁻¹).1 = !![A.1 1 1, -A.1 0 1; -A.1 1 0, A.1 0 0] :=
-      congrArg Subtype.val (Matrix.SpecialLinearGroup.SL2_inv_expl A)
-    rw [h]
-    exact neg_eq_zero.mpr hA
 
-private theorem mem_borel_iff {R : Type*} [CommRing R] {A : SL(2, R)} :
-    A ∈ borel R ↔ A.1 1 0 = 0 :=
-  Iff.rfl
-
-section ArithmeticLemmas
-
-private lemma natCast_dvd_int {p : ℕ} {z : ℤ} : (p : ℤ) ∣ z ↔ p ∣ z.natAbs :=
-  Int.natCast_dvd
-
-private def primeSel (c d : ℤ) : ℕ :=
-  ∏ p ∈ c.natAbs.primeFactors, if p ∣ d.natAbs then 1 else p
-
-private lemma dvd_primeSel {c d : ℤ} {p : ℕ} (hc : c ≠ 0) (hp : p.Prime)
-    (hpc : (p : ℤ) ∣ c) (hpd : ¬(p : ℤ) ∣ d) : p ∣ primeSel c d := by
-  have hmem : p ∈ c.natAbs.primeFactors :=
-    Nat.mem_primeFactors.mpr ⟨hp, natCast_dvd_int.mp hpc, Int.natAbs_ne_zero.mpr hc⟩
-  have h := Finset.dvd_prod_of_mem (fun q : ℕ => if q ∣ d.natAbs then 1 else q) hmem
-  simp only [if_neg (fun hcontra => hpd (natCast_dvd_int.mpr hcontra))] at h
-  exact h
-
-private lemma not_dvd_primeSel {c d : ℤ} {p : ℕ} (hp : p.Prime) (hpd : (p : ℤ) ∣ d) :
-    ¬p ∣ primeSel c d := by
-  intro hdvd
-  obtain ⟨q, hq, hpq⟩ := (Nat.Prime.prime hp).dvd_finsetProd_iff _ |>.mp hdvd
-  by_cases hqd : q ∣ d.natAbs
-  · rw [if_pos hqd] at hpq
-    exact hp.one_lt.ne' (Nat.dvd_one.mp hpq)
-  · rw [if_neg hqd] at hpq
-    have hq' : q.Prime := (Nat.mem_primeFactors.mp hq).1
-    exact hqd (((Nat.prime_dvd_prime_iff_eq hp hq').mp hpq) ▸ natCast_dvd_int.mp hpd)
-
-private theorem exists_coprime_lift (N : ℕ) [NeZero N] {c₀ d₀ : ℤ}
-    (H : ∀ p : ℕ, p.Prime → (p : ℤ) ∣ c₀ → (p : ℤ) ∣ d₀ → ¬(p : ℤ) ∣ (N : ℤ)) :
-    ∃ γ δ : ℤ, Int.gcd γ δ = 1 ∧
-      (γ : ZMod N) = (c₀ : ZMod N) ∧ (δ : ZMod N) = (d₀ : ZMod N) := by
-  set γ : ℤ := if c₀ = 0 then (N : ℤ) else c₀ with hγ_def
-  have hγ0 : γ ≠ 0 := by
-    rw [hγ_def]; split
-    · exact_mod_cast NeZero.ne N
-    · assumption
-  have hγc : (γ : ZMod N) = (c₀ : ZMod N) := by
-    rw [hγ_def]; split
-    · next h => simp [h]
-    · rfl
-  have Hγ : ∀ p : ℕ, p.Prime → (p : ℤ) ∣ γ → (p : ℤ) ∣ d₀ → ¬(p : ℤ) ∣ (N : ℤ) := by
-    intro p pp hpγ hpd
-    refine H p pp ?_ hpd
-    rw [hγ_def] at hpγ
-    by_cases h : c₀ = 0
-    · simp [h]
-    · rwa [if_neg h] at hpγ
-  refine ⟨γ, d₀ + (primeSel γ d₀ : ℤ) * (N : ℤ), ?_, hγc, ?_⟩
-  · by_contra hne
-    obtain ⟨p, pp, hpdvd⟩ := Nat.exists_prime_and_dvd hne
-    have h1 : (p : ℤ) ∣ γ :=
-      natCast_dvd_int.mpr (hpdvd.trans (Nat.gcd_dvd_left _ _))
-    have h2 : (p : ℤ) ∣ d₀ + (primeSel γ d₀ : ℤ) * (N : ℤ) :=
-      natCast_dvd_int.mpr (hpdvd.trans (Nat.gcd_dvd_right _ _))
-    by_cases hpd : (p : ℤ) ∣ d₀
-    · have h3 : (p : ℤ) ∣ (primeSel γ d₀ : ℤ) * (N : ℤ) := by
-        have := h2.sub hpd; rwa [add_sub_cancel_left] at this
-      have h3' : p ∣ primeSel γ d₀ * N := by
-        have : (p : ℤ) ∣ ((primeSel γ d₀ * N : ℕ) : ℤ) := by push_cast; exact h3
-        exact_mod_cast this
-      rcases (pp.prime.dvd_mul.mp h3') with h4 | h4
-      · exact not_dvd_primeSel pp hpd h4
-      · exact Hγ p pp h1 hpd (by exact_mod_cast h4)
-    · have h3 : (p : ℤ) ∣ (primeSel γ d₀ : ℤ) :=
-        natCast_dvd_int.mpr (dvd_primeSel hγ0 pp h1 hpd)
-      refine hpd ?_
-      have := h2.sub (h3.mul_right (N : ℤ)); rwa [add_sub_cancel_right] at this
-  · push_cast; simp
-
-private theorem exists_sl2_int_lift {N : ℕ} [NeZero N] {a b c d : ZMod N}
-    (h : a * d - b * c = 1) :
-    ∃ α β γ δ : ℤ, α * δ - β * γ = 1 ∧
-      (α : ZMod N) = a ∧ (β : ZMod N) = b ∧ (γ : ZMod N) = c ∧ (δ : ZMod N) = d := by
-  set a₀ : ℤ := ZMod.cast a with ha₀
-  set b₀ : ℤ := ZMod.cast b with hb₀
-  set c₀ : ℤ := ZMod.cast c with hc₀
-  set d₀ : ℤ := ZMod.cast d with hd₀
-  have hcasta : ((a₀ : ℤ) : ZMod N) = a := ZMod.intCast_zmod_cast a
-  have hcastb : ((b₀ : ℤ) : ZMod N) = b := ZMod.intCast_zmod_cast b
-  have hcastc : ((c₀ : ℤ) : ZMod N) = c := ZMod.intCast_zmod_cast c
-  have hcastd : ((d₀ : ℤ) : ZMod N) = d := ZMod.intCast_zmod_cast d
-  have hdvd : (N : ℤ) ∣ a₀ * d₀ - b₀ * c₀ - 1 := by
-    rw [← ZMod.intCast_zmod_eq_zero_iff_dvd]
-    push_cast
-    rw [hcasta, hcastb, hcastc, hcastd]
-    rw [sub_eq_zero]; exact h
-  have H : ∀ p : ℕ, p.Prime → (p : ℤ) ∣ c₀ → (p : ℤ) ∣ d₀ → ¬(p : ℤ) ∣ (N : ℤ) := by
-    intro p pp hpc hpd hpN
-    have hone : (p : ℤ) ∣ 1 := by
-      have h1 : (p : ℤ) ∣ a₀ * d₀ - b₀ * c₀ - 1 := hpN.trans hdvd
-      have h2 : (p : ℤ) ∣ a₀ * d₀ := hpd.mul_left a₀
-      have h3 : (p : ℤ) ∣ b₀ * c₀ := hpc.mul_left b₀
-      have key : (1 : ℤ) = a₀ * d₀ - b₀ * c₀ - (a₀ * d₀ - b₀ * c₀ - 1) := by ring
-      rw [key]; exact (h2.sub h3).sub h1
-    exact pp.one_lt.ne' (Nat.dvd_one.mp (by exact_mod_cast hone))
-  obtain ⟨γ, δ, hγδ, hγ, hδ⟩ := exists_coprime_lift N H
-  rw [hcastc] at hγ; rw [hcastd] at hδ
-  set α₀ : ℤ := Int.gcdB γ δ with hα₀
-  set β₀ : ℤ := -Int.gcdA γ δ with hβ₀
-  have hdet₀ : α₀ * δ - β₀ * γ = 1 := by
-    have hbez := Int.gcd_eq_gcd_ab γ δ
-    rw [hγδ] at hbez; push_cast at hbez
-    rw [hα₀, hβ₀]; linear_combination -hbez
-  have hdet₀' : (α₀ : ZMod N) * d - (β₀ : ZMod N) * c = 1 := by
-    have := congrArg (fun z : ℤ => (z : ZMod N)) hdet₀
-    push_cast at this; rwa [hγ, hδ] at this
-  set lam : ZMod N := b * (α₀ : ZMod N) - a * (β₀ : ZMod N) with hlam
-  set l : ℤ := ZMod.cast lam with hl
-  have hcastl : ((l : ℤ) : ZMod N) = lam := ZMod.intCast_zmod_cast lam
-  refine ⟨α₀ + l * γ, β₀ + l * δ, γ, δ, ?_, ?_, ?_, hγ, hδ⟩
-  · linear_combination hdet₀
-  · push_cast; rw [hcastl, hγ, hlam]
-    linear_combination (-(α₀ : ZMod N)) * h + a * hdet₀'
-  · push_cast; rw [hcastl, hδ, hlam]
-    linear_combination (-(β₀ : ZMod N)) * h + b * hdet₀'
-
-end ArithmeticLemmas
-
-private theorem sl2_surj (N : ℕ) [NeZero N] :
-    Function.Surjective
-      (Matrix.SpecialLinearGroup.map (n := Fin 2) (Int.castRingHom (ZMod N))) := by
-  intro M
-  have hdet : M 0 0 * M 1 1 - M 0 1 * M 1 0 = 1 := by
-    have hM := M.prop; rwa [Matrix.det_fin_two] at hM
-  obtain ⟨α, β, γ, δ, h1, ha, hb, hc, hd⟩ := exists_sl2_int_lift hdet
-  refine ⟨⟨!![α, β; γ, δ], by rw [Matrix.det_fin_two_of]; exact h1⟩, ?_⟩
-  ext i j
-  fin_cases i <;> fin_cases j <;>
-    simpa [Matrix.SpecialLinearGroup.map_apply_coe, RingHom.mapMatrix_apply, Matrix.map_apply]
-      using ‹_›
-
-section QuotientBorel
-variable {R : Type*} [CommRing R]
-
-private theorem isUnimodularRow_firstCol (A : SL(2, R)) :
-    IsUnimodularRow (A.1 0 0) (A.1 1 0) := by
-  refine ⟨A.1 1 1, -A.1 0 1, ?_⟩
-  have hdet : A.1 0 0 * A.1 1 1 - A.1 0 1 * A.1 1 0 = 1 := by
-    have h := A.2; rwa [Matrix.det_fin_two] at h
-  linear_combination hdet
-
-private def firstColumnClass (A : SL(2, R)) : ProjectiveLine R :=
-  ⟦⟨(A.1 0 0, A.1 1 0), isUnimodularRow_firstCol A⟩⟧
-
-private theorem firstColumnClass_eq_iff (A B : SL(2, R)) :
-    firstColumnClass A = firstColumnClass B ↔ A⁻¹ * B ∈ borel R := by
-  constructor
-  · intro hAB
-    obtain ⟨u, h1, h2⟩ := Quotient.exact hAB
-    have h1' : (u : R) * A.1 0 0 = B.1 0 0 := h1
-    have h2' : (u : R) * A.1 1 0 = B.1 1 0 := h2
-    show (A⁻¹ * B).1 1 0 = 0
-    have hinv : (A⁻¹).1 = !![A.1 1 1, -A.1 0 1; -A.1 1 0, A.1 0 0] :=
-      congrArg Subtype.val (Matrix.SpecialLinearGroup.SL2_inv_expl A)
-    have e10 : (A⁻¹).1 1 0 = -A.1 1 0 := by simp [hinv]
-    have e11 : (A⁻¹).1 1 1 = A.1 0 0 := by simp [hinv]
-    have hentry : (A⁻¹ * B).1 1 0 = -A.1 1 0 * B.1 0 0 + A.1 0 0 * B.1 1 0 := by
-      rw [Matrix.SpecialLinearGroup.coe_mul, Matrix.mul_apply, Fin.sum_univ_two, e10, e11]
-    rw [hentry, ← h1', ← h2']; ring
-  · intro hAB
-    have hB : B = A * (A⁻¹ * B) := (mul_inv_cancel_left A B).symm
-    have hC10 : (A⁻¹ * B).1 1 0 = 0 := hAB
-    have hCdet : (A⁻¹ * B).1 0 0 * (A⁻¹ * B).1 1 1 = 1 := by
-      have h := (A⁻¹ * B).2; rw [Matrix.det_fin_two, hC10] at h; linear_combination h
-    have hB00 : B.1 0 0 = A.1 0 0 * (A⁻¹ * B).1 0 0 + A.1 0 1 * (A⁻¹ * B).1 1 0 := by
-      conv_lhs => rw [hB, Matrix.SpecialLinearGroup.coe_mul]
-      exact (Matrix.two_mul_expl A.1 (A⁻¹ * B).1).1
-    have hB10 : B.1 1 0 = A.1 1 0 * (A⁻¹ * B).1 0 0 + A.1 1 1 * (A⁻¹ * B).1 1 0 := by
-      conv_lhs => rw [hB, Matrix.SpecialLinearGroup.coe_mul]
-      exact (Matrix.two_mul_expl A.1 (A⁻¹ * B).1).2.2.1
-    refine Quotient.sound ⟨⟨(A⁻¹ * B).1 0 0, (A⁻¹ * B).1 1 1, hCdet,
-      (mul_comm _ _).trans hCdet⟩, ?_, ?_⟩
-    · show (A⁻¹ * B).1 0 0 * A.1 0 0 = B.1 0 0; rw [hB00, hC10]; ring
-    · show (A⁻¹ * B).1 0 0 * A.1 1 0 = B.1 1 0; rw [hB10, hC10]; ring
-
-private theorem card_quotient_borel (R : Type*) [CommRing R] :
-    Nat.card (SL(2, R) ⧸ borel R) = Nat.card (ProjectiveLine R) := by
-  have hwd : ∀ A B : SL(2, R), QuotientGroup.leftRel (borel R) A B →
-      firstColumnClass A = firstColumnClass B := by
-    intro A B hAB
-    rw [QuotientGroup.leftRel_apply] at hAB
-    exact (firstColumnClass_eq_iff A B).mpr hAB
-  refine Nat.card_eq_of_bijective (fun q => Quotient.liftOn' q firstColumnClass hwd) ⟨?_, ?_⟩
-  · intro q q'
-    refine Quotient.inductionOn₂' q q' ?_
-    intro A B hAB
-    have hAB' : firstColumnClass A = firstColumnClass B := hAB
-    exact (QuotientGroup.eq).mpr ((firstColumnClass_eq_iff A B).mp hAB')
-  · intro q
-    obtain ⟨v, rfl⟩ := Quotient.exists_rep q
-    obtain ⟨x, y, hxy⟩ := v.2
-    refine ⟨QuotientGroup.mk ⟨!![v.1.1, -y; v.1.2, x], by
-      rw [Matrix.det_fin_two_of]; linear_combination hxy⟩, ?_⟩
-    show firstColumnClass _ = ⟦v⟧
-    refine Quotient.sound ⟨1, ?_, ?_⟩
-    · show (1 : R) * !![v.1.1, -y; v.1.2, x] 0 0 = v.1.1; simp
-    · show (1 : R) * !![v.1.1, -y; v.1.2, x] 1 0 = v.1.2; simp
-
-end QuotientBorel
-
-private theorem Gamma0_eq_comap_borel (N : ℕ) :
-    CongruenceSubgroup.Gamma0 N = (borel (ZMod N)).comap
-      (Matrix.SpecialLinearGroup.map (n := Fin 2) (Int.castRingHom (ZMod N))) := by
-  ext A
-  rw [CongruenceSubgroup.Gamma0_mem, Subgroup.mem_comap, mem_borel_iff]
-  constructor
-  · intro hA
-    show (Int.castRingHom (ZMod N)).mapMatrix A.1 1 0 = 0; simpa using hA
-  · intro hA
-    have hA' : (Int.castRingHom (ZMod N)).mapMatrix A.1 1 0 = 0 := hA; simpa using hA'
-
-set_option maxHeartbeats 800000 in
-private theorem gamma0_index (N : ℕ) [NeZero N] :
-    (CongruenceSubgroup.Gamma0 N).index = ArithmeticFunction.dedekindPsi N := by
-  have h1 : (CongruenceSubgroup.Gamma0 N).index = (borel (ZMod N)).index := by
-    rw [Gamma0_eq_comap_borel]
-    exact Subgroup.index_comap_of_surjective _ (sl2_surj N)
-  rw [h1, Subgroup.index_eq_card, card_quotient_borel,
-    card_projectiveLine_zmod N (NeZero.ne N)]
 namespace EtaQSeries
 
 open Filter Topology Polynomial
@@ -525,7 +287,7 @@ private theorem coeff_mul_of_cong {m : ℕ} {G : PowerSeries ℤ} (hG : Cong m G
   have : G = 1 + PowerSeries.X ^ (m + 1) * K := by rw [← hK]; ring
   rw [this, mul_add, mul_one, map_add, ← mul_assoc, mul_comm H, mul_assoc,
     PowerSeries.coeff_X_pow_mul',
-    if_neg (by omega), add_zero]
+    ite_eq_right (by omega), add_zero]
 
 private theorem coeff_prod_pow_eq (a m : ℕ) (s : Finset ℕ) (hs : Finset.range (m + 1) ⊆ s) :
     PowerSeries.coeff m ((∏ n ∈ s, ((1 : PowerSeries ℤ) - PowerSeries.X ^ (n + 1))) ^ a) =
@@ -1440,7 +1202,7 @@ private theorem one_mem_strictPeriods_Gamma0 (N : ℕ) :
   exact AddSubgroup.mem_zmultiples 1
 
 private theorem index_Gamma0_four : (CongruenceSubgroup.Gamma0 4).index = 6 := by
-  rw [gamma0_index, show (4 : ℕ) = 2 ^ 2 by norm_num,
+  rw [ModularCurve.Gamma0_index, show (4 : ℕ) = 2 ^ 2 by norm_num,
     ArithmeticFunction.dedekindPsi_prime_pow (p := 2) (k := 2) Nat.prime_two (by norm_num)]
   norm_num
 
@@ -1492,14 +1254,14 @@ private theorem hasSum_coeff_expand (k : ℕ) (hk : k ≠ 0) (G : PowerSeries �
   have hoff : ∀ n ∉ Set.range i,
       PowerSeries.coeff n (PowerSeries.expand k hk (G.map (Int.castRingHom ℂ))) * q ^ n = 0 := by
     intro n hn
-    rw [PowerSeries.coeff_expand, if_neg, zero_mul]
+    rw [PowerSeries.coeff_expand, ite_eq_right, zero_mul]
     rintro ⟨m, rfl⟩
     exact hn ⟨m, rfl⟩
   refine (hi.hasSum_iff hoff).mp ?_
   convert h using 1
   funext m
   simp only [Function.comp_apply, i]
-  rw [PowerSeries.coeff_expand, if_pos (dvd_mul_right k m), Nat.mul_div_cancel_left m
+  rw [PowerSeries.coeff_expand, ite_eq_left (dvd_mul_right k m), Nat.mul_div_cancel_left m
     (Nat.pos_of_ne_zero hk),
     PowerSeries.coeff_map, pow_mul]
   rfl
@@ -1656,7 +1418,7 @@ private theorem coeff_mul_of_cong {m : ℕ} {G : PowerSeries ℤ} (hG : Cong m G
   have : G = 1 + PowerSeries.X ^ (m + 1) * K := by rw [← hK]; ring
   rw [this, mul_add, mul_one, map_add, ← mul_assoc, mul_comm H, mul_assoc,
     PowerSeries.coeff_X_pow_mul',
-    if_neg (by omega), add_zero]
+    ite_eq_right (by omega), add_zero]
 
 private theorem coeff_prod_eq (m : ℕ) (s : Finset ℕ) (hs : Finset.range (m + 1) ⊆ s) :
     PowerSeries.coeff m (∏ n ∈ s, ((1 : PowerSeries ℤ) - PowerSeries.X ^ (n + 1))) =

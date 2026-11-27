@@ -38,9 +38,11 @@ not a proposition, and is not formalized. Equivalence is reachability by finitel
 undoes `μ_g`, as `g⁻¹ = 1 · g⁻¹` lies in the transformed set).
 -/
 
-/-- A regular subset of `GL(V) ∪ {0}` for `V = (ZMod p)^m` (matrices acting on row vectors): `|R| =
-|V|`, `0, 1 ∈ R`, every nonzero element of `R` is invertible, and `v x ≠ v y` for every nonzero
-`v ∈ V` and distinct `x, y ∈ R`. -/
+/-- A regular subset of `GL(V) ∪ {0}` for `V = (ZMod p)^m` (matrices acting on row vectors):
+`R.ncard = p ^ m` (natural-number cardinality, an infinite set counting as `0`; for prime `p` the
+set `R` is finite and this says `|R| = |V|`), `0, 1 ∈ R`, every nonzero element of `R` is
+invertible, and `v x ≠ v y` for every nonzero `v ∈ V` and distinct `x, y ∈ R`. Kourovka 10.48
+concerns prime `p`. -/
 def IsRegularSet (p m : ℕ) (R : Set (Matrix (Fin m) (Fin m) (ZMod p))) : Prop :=
   R.ncard = p ^ m ∧ 0 ∈ R ∧ 1 ∈ R ∧ (∀ x ∈ R, x ≠ 0 → IsUnit x) ∧
     ∀ v : Fin m → ZMod p, v ≠ 0 → ∀ x ∈ R, ∀ y ∈ R, x ≠ y → Matrix.vecMul v x ≠ Matrix.vecMul v y
