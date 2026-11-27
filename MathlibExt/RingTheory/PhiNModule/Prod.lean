@@ -19,12 +19,13 @@ and `N` act componentwise. For filtered `(φ, N)`-modules, the filtration of
 `(D₁ × D₂)_K = K ⊗_{K₀} (D₁ × D₂)` is the product filtration `Fil^i D₁_K × Fil^i D₂_K`,
 transported along the isomorphism `(D₁ × D₂)_K ≅ D₁_K × D₂_K` (`TensorProduct.prodRight`).
 
-The Hodge number `t_H` and the Newton number `t_N` are additive in direct sums, the inclusions
-and projections are morphisms of filtered `(φ, N)`-modules, and the direct sum of two weakly
-admissible filtered `(φ, N)`-modules is weakly admissible. This is the additive part of the
-statement that the weakly admissible filtered `(φ, N)`-modules form an abelian category
-(Fontaine–Ouyang, Proposition 8.41); kernels, images and cokernels are treated in
-`MathlibExt.RingTheory.PhiNModule.WeaklyAdmissible`.
+The Hodge number `t_H` is additive in direct sums of finite-dimensional modules, and so is the
+Newton number `t_N` for an additive valuation `v` of `K₀` with `v ∘ σ = v`; the inclusions and
+projections are morphisms of filtered `(φ, N)`-modules, and for such `v` the direct sum of two
+finite-dimensional weakly admissible filtered `(φ, N)`-modules is weakly admissible. This is
+the additive part of the statement that the weakly admissible filtered `(φ, N)`-modules form an
+abelian category (Fontaine–Ouyang, Proposition 8.41); kernels, images and cokernels are treated
+in `MathlibExt.RingTheory.PhiNModule.WeaklyAdmissible`.
 
 ## Main definitions
 
@@ -42,11 +43,11 @@ statement that the weakly admissible filtered `(φ, N)`-modules form an abelian 
 * `PhiNModule.Hom.isStable_comap`, `PhiNModule.Hom.isStable_map`: preimages and images of
   stable subspaces under morphisms are stable.
 * `DecreasingFiltration.hodgeNumber_prod`, `FilteredPhiNModule.hodgeNumber_prod`: additivity of
-  `t_H` in direct sums.
+  `t_H` in direct sums of finite-dimensional spaces.
 * `PhiNModule.newtonNumber_prod`, `FilteredPhiNModule.newtonNumber_prod`: additivity of `t_N` in
-  direct sums.
-* `FilteredPhiNModule.IsWeaklyAdmissible.prod`: the direct sum of two weakly admissible filtered
-  `(φ, N)`-modules is weakly admissible.
+  direct sums of finite-dimensional modules, for `v ∘ σ = v`.
+* `FilteredPhiNModule.IsWeaklyAdmissible.prod`: for `v ∘ σ = v`, the direct sum of two
+  finite-dimensional weakly admissible filtered `(φ, N)`-modules is weakly admissible.
 
 ## Implementation notes
 
