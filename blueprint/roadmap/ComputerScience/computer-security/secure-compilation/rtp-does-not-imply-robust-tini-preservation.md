@@ -15,6 +15,10 @@ secret it sees, but no single source context serves two executions with differen
 - [Robust hypersafety preservation](robust-hypersafety-preservation.md)
 - [Compilation chains and robust satisfaction](compilation-chains-and-robust-satisfaction.md)
 
+## Proof depends on
+
+- [Robust trace property preservation has a property-free characterization](rtp-has-a-property-free-characterization.md)
+
 ## Sources
 
-- C. Abate, R. Blanco, D. Garg, C. Hriţcu, M. Patrignani and J. Thibault, "Journey beyond full abstraction: exploring robust property preservation for secure compilation", *32nd IEEE Computer Security Foundations Symposium (CSF 2019)*, arXiv:1807.04603v6 (numbering of this extended version, whose appendices are not in the proceedings), <https://arxiv.org/abs/1807.04603v6>: Section 3.3 (the definition of TINI and RTINIP) and Section 3.4, Theorem 3.1 with the discussion before it.
+- C. Abate, R. Blanco, D. Garg, C. Hriţcu, M. Patrignani and J. Thibault, "Journey beyond full abstraction: exploring robust property preservation for secure compilation", *32nd IEEE Computer Security Foundations Symposium (CSF 2019)*, arXiv:1807.04603v6 (numbering of this extended version, whose appendices are not in the proceedings), <https://arxiv.org/abs/1807.04603v6>: Section 3.3 (the definition of TINI and RTINIP) and Section 3.4, Theorem 3.1 with the discussion before it, and Appendix E.2 (the per-trace source context, which establishes RTC).

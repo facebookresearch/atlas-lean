@@ -7,7 +7,8 @@ cover $\mathcal X$, as they do in all the cases below. Special cases:
 - *2-block gain functions*, with $\mathcal W = \{W, \mathcal X \setminus W\}$ for a property $W$ of the secret;
 - *partition gain functions* $g_\sim$, with $\mathcal W = \mathcal X/{\sim}$ for an equivalence relation $\sim$; the identity relation gives $g_{\mathrm{id}}$, and the universal relation gives
   the *happy* gain function with gain $1$ everywhere;
-- the *$k$-tries gain function* $g_{\mathcal W_k}$, with $\mathcal W_k = \{W \subseteq \mathcal X \mid |W| \le k\}$, modelling an adversary allowed $k$ guesses.
+- for $k \ge 1$, the *$k$-tries gain function* $g_{\mathcal W_k}$, with $\mathcal W_k = \{W \subseteq \mathcal X \mid |W| \le k\}$, modelling an adversary allowed $k$ guesses (for $k = 0$ the
+  family is $\{\emptyset\}$ and every gain is $0$, so that case is excluded).
 
 $G_2$ and $G_\sim$ denote the sets of 2-block and of partition gain functions. A gain function is *single-optimal* if every $x$ has a guess $w$ with $g(w, x) = 1$ and
 $g(w, x) = 1$, $x' \ne x$ imply $g(w, x') < 1$.

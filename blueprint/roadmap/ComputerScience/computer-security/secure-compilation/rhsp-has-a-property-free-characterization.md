@@ -1,8 +1,8 @@
 # RHSP has a property-free characterization
 
 **Theorem.** A compilation chain satisfies [robust hypersafety preservation](robust-hypersafety-preservation.md) if and only if for every source partial program $P$, target context
-$C_T$ and observation $o \le \mathrm{Behav}(C_T[P{\downarrow}])$ there is a source context $C_S$ with $o \le \mathrm{Behav}(C_S[P])$. Restricting $o$ to cardinality $K$ characterizes robust
-$K$-hypersafety preservation in the same way.
+$C_T$ and observation $o \le \mathrm{Behav}(C_T[P{\downarrow}])$ there is a source context $C_S$ with $o \le \mathrm{Behav}(C_S[P])$. Restricting $o$ to observations of cardinality at most $K$ (not exactly $K$: a
+behaviour may have fewer than $K$ distinct prefixes) characterizes robust $K$-hypersafety preservation in the same way.
 
 ## Depends on
 
