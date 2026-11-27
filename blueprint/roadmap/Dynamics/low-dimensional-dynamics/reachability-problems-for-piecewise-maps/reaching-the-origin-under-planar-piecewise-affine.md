@@ -18,7 +18,7 @@ Here both the map and the starting point are part of the input, and the dimensio
 
 ## Expansion
 
-The survey states the theorem without proof, under the observation that many nonlinear dynamical systems can simulate universal Turing machines and hence provide undecidable problems. The proof, in Moore's paper, simulates a universal Turing machine by a piecewise affine map of the plane, so that the orbit of the point encoding the initial configuration reaches the origin exactly when the machine halts; it reduces the halting problem for Turing machines, through a simulation that has no page.
+The survey states the theorem without proof, under the observation that many nonlinear dynamical systems can simulate universal Turing machines and hence provide undecidable problems. The proof, in Moore's paper, simulates a universal Turing machine by a piecewise affine map of the plane, so that the orbit of the point encoding the initial configuration reaches the origin exactly when the machine halts; it reduces the halting problem for Turing machines, through a simulation that is a prerequisite still to be added.
 
 ## Sources
 

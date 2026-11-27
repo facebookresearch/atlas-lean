@@ -9,7 +9,7 @@ h(\Sigma) = \lim_{n \to \infty} \frac{\log_2 \#\mathcal{L}_n(\Sigma)}{n^d} .
 $$
 
 - $\Sigma$ is *decidable* if $\mathcal{L}(\Sigma)$ is a decidable set of patterns; a decidable subshift is given to an algorithm by a decision procedure for its language.
-- For $f\colon \mathbb{N} \to \mathbb{N}$, $\Sigma$ is *$f$-irreducible* if for all finite $\mathbb{U}, \mathbb{V} \subset \mathbb{Z}^d$ with $d(\mathbb{U}, \mathbb{V}) \ge f(\max(\delta(\mathbb{U}), \delta(\mathbb{V})))$, where $d$ is the sup-distance between the sets and $\delta$ the sup-diameter, and all $u \in \mathcal{L}_{\mathbb{U}}(\Sigma)$, $v \in \mathcal{L}_{\mathbb{V}}(\Sigma)$, there is $x \in \Sigma$ with $x_{\mathbb{U}} = u$ and $x_{\mathbb{V}} = v$.
+- For $f\colon \mathbb{N} \to \mathbb{N}$, $\Sigma$ is *$f$-irreducible* if for all finite $\mathbb{U}, \mathbb{V} \subset \mathbb{Z}^d$ with $d(\mathbb{U}, \mathbb{V}) \ge f(\max(\delta(\mathbb{U}), \delta(\mathbb{V})))$, where $d(\mathbb{U}, \mathbb{V}) = \min_{u \in \mathbb{U},\, v \in \mathbb{V}} \|u - v\|_\infty$ and $\delta(\mathbb{U}) = \max_{u, u' \in \mathbb{U}} \|u - u'\|_\infty$, and all $u \in \mathcal{L}_{\mathbb{U}}(\Sigma)$, $v \in \mathcal{L}_{\mathbb{V}}(\Sigma)$, there is $x \in \Sigma$ with $x_{\mathbb{U}} = u$ and $x_{\mathbb{V}} = v$.
 - A real $\alpha$ is *$\Pi_1$-computable* (upper semi-computable) if $\alpha = \inf_n \varphi(n)$ for a computable $\varphi\colon \mathbb{N} \to \mathbb{Q}$, and *computable* if some computable $\varphi$ has $|\alpha - \varphi(n)| \le 2^{-n}$ for all $n$.
 
 **Theorem.** Let $d \ge 1$ and let $f\colon \mathbb{N} \to \mathbb{N}$ be computable and nondecreasing with

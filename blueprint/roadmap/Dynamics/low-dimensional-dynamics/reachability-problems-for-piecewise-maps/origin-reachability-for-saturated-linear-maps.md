@@ -24,7 +24,7 @@ The matrix, and hence the dimension, is fixed; only the starting point is the in
 
 ## Expansion
 
-Siegelmann and Sontag proved that finite recurrent networks of saturated-linear units with rational weights simulate Turing machines; applied to a universal machine, this gives a fixed network, that is a fixed matrix $A$, whose trajectories encode computations, with the halting of the machine on an input corresponding to the trajectory of an encoded rational starting point reaching $\vec{0}$. The undecidability of the halting problem of the universal machine then gives the statement. The simulation theorem has no page; the survey states the consequence without proof.
+Siegelmann and Sontag proved that finite recurrent networks of saturated-linear units with rational weights simulate Turing machines; applied to a universal machine, this gives a fixed network, that is a fixed matrix $A$, whose trajectories encode computations, with the halting of the machine on an input corresponding to the trajectory of an encoded rational starting point reaching $\vec{0}$. The undecidability of the halting problem of the universal machine then gives the statement. The simulation theorem is a prerequisite still to be added; the survey states the consequence without proof.
 
 ## Sources
 

@@ -5,7 +5,6 @@ Undecidable questions about subshifts of finite type, sofic and decidable subshi
 - [Subshifts of finite type on a finitely generated group](subshifts-of-finite-type-on-groups.md)
 - [Sofic subshifts on a finitely generated group](sofic-subshifts-on-groups.md)
 - [Domino problem of a finitely generated group](domino-problem-of-a-group.md)
-- [Emptiness of extremely expansive two-dimensional SFTs is undecidable](emptiness-of-extremely-expansive-sfts.md)
 - [The domino problem under horizontal constraints is undecidable exactly when the constraints allow a non-periodic row](domino-problem-under-horizontal-constraints.md)
 - [Berger properties of SFTs on a group with undecidable domino problem are undecidable](berger-properties-of-sfts-are-undecidable.md)
 - [Nontrivial dynamical properties of sofic subshifts on a group with undecidable domino problem are undecidable](dynamical-properties-of-sofic-subshifts.md)

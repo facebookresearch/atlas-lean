@@ -16,6 +16,7 @@ The same method gives a computable map $f\colon [0,1] \to [0,1]$ with a $\Pi_2$-
 
 ## Depends on
 
+- [Probability measure](../../../Probability/foundations/probability-measures/is-probability-measure.md)
 - [Lebesgue measure on the real line](../../../MeasureTheory/lebesgue-measure/lebesgue-measure-on-euclidean-spaces/lebesgue-measure-on-the-real-line/lebesgue-measure.md)
 - [Recognizability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
 
@@ -25,7 +26,7 @@ The same method gives a computable map $f\colon [0,1] \to [0,1]$ with a $\Pi_2$-
 
 ## Expansion
 
-First a computable map $T$ of the Cantor space $\{0,1\}^{\mathbb{N}}$ is built with an invariant closed set $A$ that is $\Pi_1$-complete, is the topological and metric attractor of $T$, carries a topologically mixing shift dynamics of positive entropy, attracts every point, and is the statistical attractor for every shift-ergodic reference measure of full support (Theorem 2). Completeness comes from encoding the complement of the halting set $\{i : M_i \text{ halts on the empty input}\}$, which is $\Pi_1$-complete, into which patterns are forbidden in $A$. Then $T$ is transported to the interval (Theorem 6): one builds a computable fat Cantor set $\mathcal{C} \subset [0,1]$ of Lebesgue measure $1/2$, a computable homeomorphism $\phi\colon \{0,1\}^{\mathbb{N}} \to \mathcal{C}$ and a computable map $f$ of $[0,1]$ preserving $\mathcal{C}$, conjugate to $T$ on $\mathcal{C}$ through $\phi$, such that Lebesgue almost every orbit accumulates only on $\mathcal{C}$ and metric or statistical attractors of $T$ are carried to attractors of $f$ of the same type. Applying this to $T$ gives $f$ and $\mathcal{A} = \phi(A)$. The construction of $T$ and the embedding theorem have no pages.
+First a computable map $T$ of the Cantor space $\{0,1\}^{\mathbb{N}}$ is built with an invariant closed set $A$ that is $\Pi_1$-complete, is the topological and metric attractor of $T$, carries a topologically mixing shift dynamics of positive entropy, attracts every point, and is the statistical attractor for every shift-ergodic reference measure of full support (Theorem 2). Completeness comes from encoding the complement of the halting set $\{i : M_i \text{ halts on the empty input}\}$, which is $\Pi_1$-complete, into which patterns are forbidden in $A$. Then $T$ is transported to the interval (Theorem 6): one builds a computable fat Cantor set $\mathcal{C} \subset [0,1]$ of Lebesgue measure $1/2$, a computable homeomorphism $\phi\colon \{0,1\}^{\mathbb{N}} \to \mathcal{C}$ and a computable map $f$ of $[0,1]$ preserving $\mathcal{C}$, conjugate to $T$ on $\mathcal{C}$ through $\phi$, such that Lebesgue almost every orbit accumulates only on $\mathcal{C}$ and metric or statistical attractors of $T$ are carried to attractors of $f$ of the same type. Applying this to $T$ gives $f$ and $\mathcal{A} = \phi(A)$. The construction of $T$ and the embedding theorem are prerequisites still to be added.
 
 ## Sources
 
