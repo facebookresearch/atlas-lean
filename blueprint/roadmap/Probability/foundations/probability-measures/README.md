@@ -16,4 +16,3 @@ variables, such as their expected values, depend only on their laws.
 
 - [Probability measure](is-probability-measure.md)
 - [Law of a random element](probability-measure-map.md): the law of a random element
-- [Probability mass functions: uniform distributions and coin fixing](probability-mass-functions-uniform-distributions/README.md)

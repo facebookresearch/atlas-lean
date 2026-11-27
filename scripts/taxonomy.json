@@ -2120,7 +2120,7 @@
   "CSLibExt/Privacy/PrivacyLoss": {"to": "ComputerScience/cryptography", "title": "Privacy-loss random variable and KL bound"},
   "CSLibExt/Privacy/RenyiDifferentialPrivacy": {"to": "ComputerScience/cryptography", "title": "Renyi differential privacy"},
   "CSLibExt/Security/AccessControl/HRU/Basic": {"to": "ComputerScience/computer-security", "title": "Access control"},
-  "CSLibExt/Probability/PMF": {"to": "Probability/foundations", "title": "Probability measures"},
+  "CSLibExt/Probability/PMF": {"to": "Probability/foundations", "title": "Laws of random variables and identical distribution"},
   "CSLibExt/Security/InformationFlow/LowEquivalence": {"to": "ComputerScience/computer-security", "title": "Information flow"},
   "CSLibExt/Security/Unwinding": {"to": "ComputerScience/computer-security", "title": "Information flow"},
   "CSLibExt/Security/Noninterference/Basic": {"to": "ComputerScience/program-logics-and-verification", "title": "Security judgments and confinement"},
