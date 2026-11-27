@@ -10,4 +10,4 @@ $\mathrm{vc}(c_q)[p]$ counts the events of $p$ in the causal past of $c_q$; the 
 
 ## Sources
 
-- Friedemann Mattern, "Virtual Time and Global States of Distributed Systems", Parallel and Distributed Algorithms, North-Holland, 1989.
+- Friedemann Mattern, "Virtual Time and Global States of Distributed Systems", Parallel and Distributed Algorithms, North-Holland, 1989; edited version at <https://www.vs.inf.ethz.ch/publ/papers/VirtTimeGlobStates.pdf>, whose numbering this follows: Section 7, Definition 5 and Theorem 6.
