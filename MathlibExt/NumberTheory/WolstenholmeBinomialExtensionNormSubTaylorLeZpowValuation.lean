@@ -10,26 +10,16 @@ module
 
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.NumberTheory.Padics.PadicNumbers
-import Mathlib.Data.Nat.Prime.Factorial
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.Ring
-import Mathlib.Tactic.FieldSimp
-import Mathlib.Data.Nat.Choose.Sum
-import Mathlib.Algebra.Polynomial.Coeff
 import Mathlib.Analysis.Normed.Group.Ultra
-import Mathlib.NumberTheory.Padics.PadicVal.Basic
-import Mathlib.RingTheory.Binomial
-import MathlibExt.NumberTheory.AlternatingChooseSums
-import MathlibExt.NumberTheory.HigherOrderHarmonic
-import MathlibExt.NumberTheory.WolstenholmeBinomialCongruence
-import MathlibExt.NumberTheory.WolstenholmeBinomialExtension
-import MathlibExt.NumberTheory.WolstenholmeCongruenceEquivalence
+import Mathlib.Tactic.Ring
+import MathlibExt.NumberTheory.WolstenholmeBinomialExtensionNormSubTaylorLeOfNormLe
 
 /-!
 # Congruence form of the higher p-adic mean value theorem
 
 `norm_sub_taylor_le_zpow_valuation` bounds a polynomial's Taylor remainder in an
-ultrametric normed space over the p-adic numbers using the valuation of the step.
+ultrametric normed space over the p-adic numbers using the valuation of the step. It restates
+the norm bound `MetaMathlibExt.norm_sub_taylor_le_of_norm_le` in terms of valuations.
 
 Source: Walid Kehila, *An Extension of Wolstenholme's Theorem by Binomial
 Coefficients*, INTEGERS 26 (2026), Article A32, Theorem 2
@@ -37,160 +27,6 @@ Coefficients*, INTEGERS 26 (2026), Article A32, Theorem 2
 -/
 
 namespace MetaMathlibExt
-
-private theorem factorial_valuation_le {p : ℕ} [Fact p.Prime] (q : ℕ) (hpq : p ≤ q) :
-    multiplicity p q.factorial ≤ q - p + 1 := by
-  have hp := (Fact.out : p.Prime).two_le
-  have hq : q ≠ 0 := by omega
-  have hv := sub_one_mul_multiplicity_factorial_lt_of_ne_zero p hq
-  have hp' : p - 1 + 1 = p := by omega
-  have hq' : q - p + p = q := Nat.sub_add_cancel hpq
-  by_contra! h
-  have hmul := Nat.mul_le_mul_left (p - 1) h
-  nlinarith [Nat.zero_le ((p - 2) * (q - p))]
-
-private theorem norm_div_factorial_le {p : ℕ} [Fact p.Prime] (h : ℚ_[p]) (m q : ℕ)
-    (d : ℝ) (hh : h ≠ 0) (hv : 1 ≤ (h.valuation : ℝ)) (hmq : m ≤ q)
-    (hf : (multiplicity p q.factorial : ℝ) ≤ (q : ℝ) - m + d) :
-    ‖h ^ q / (q.factorial : ℚ_[p])‖ ≤
-      (p : ℝ) ^ (-((m : ℝ) * h.valuation - d)) := by
-  have hp : 0 < (p : ℝ) := by exact_mod_cast (Fact.out : p.Prime).pos
-  have hp₁ : 1 ≤ (p : ℝ) := by exact_mod_cast (Fact.out : p.Prime).one_lt.le
-  have hn : (q.factorial : ℚ_[p]) ≠ 0 := by exact_mod_cast Nat.factorial_ne_zero q
-  rw [norm_div, norm_pow, Padic.norm_eq_zpow_neg_valuation hh,
-    Padic.norm_eq_zpow_neg_valuation hn, Padic.valuation_natCast,
-    ← Real.rpow_intCast, ← Real.rpow_intCast, ← Real.rpow_natCast,
-    ← Real.rpow_mul hp.le, ← Real.rpow_sub hp]
-  apply Real.rpow_le_rpow_of_exponent_le hp₁
-  simp only [Int.cast_neg, Int.cast_natCast]
-  have hmq' : (m : ℝ) ≤ q := by exact_mod_cast hmq
-  nlinarith [mul_nonneg (sub_nonneg.mpr hmq') (sub_nonneg.mpr hv)]
-
-private theorem taylor_term_eq {p : ℕ} [Fact p.Prime] {B : Type*}
-    [NormedAddCommGroup B] [NormedSpace ℚ_[p] B] (j m q : ℕ) (hmq : m ≤ q)
-    (t h : ℚ_[p]) (b : B) :
-    ((j.choose q : ℚ_[p]) * t ^ (j - q) * h ^ q) • b =
-      (t ^ (j - q) * (h ^ q / (q.factorial : ℚ_[p]))) •
-        ((j - m).descFactorial (q - m) • (j.descFactorial m • b)) := by
-  have hn : (q.factorial : ℚ_[p]) ≠ 0 := by exact_mod_cast Nat.factorial_ne_zero q
-  have hc : (q.factorial : ℚ_[p]) * (j.choose q : ℚ_[p]) =
-      ((j - m).descFactorial (q - m) : ℚ_[p]) * (j.descFactorial m : ℚ_[p]) := by
-    exact_mod_cast (Nat.descFactorial_eq_factorial_mul_choose j q).symm.trans
-      (Nat.descFactorial_mul_descFactorial hmq).symm
-  simp only [← Nat.cast_smul_eq_nsmul ℚ_[p], ← mul_smul]
-  congr 1
-  rw [← hc]
-  field_simp [hn]
-
-private theorem binomial_sum_eq {p : ℕ} [Fact p.Prime] {B : Type*}
-    [NormedAddCommGroup B] [NormedSpace ℚ_[p] B] (K j : ℕ) (hj : j < K)
-    (t h : ℚ_[p]) (b : B) :
-    (t + h) ^ j • b =
-      ∑ q ∈ Finset.range K, ((j.choose q : ℚ_[p]) * t ^ (j - q) * h ^ q) • b := by
-  classical
-  calc
-    (t + h) ^ j • b =
-        ∑ q ∈ Finset.range (j + 1),
-          ((j.choose q : ℚ_[p]) * t ^ (j - q) * h ^ q) • b := by
-      rw [add_comm t h, add_pow, Finset.sum_smul]
-      apply Finset.sum_congr rfl
-      intro q _
-      congr 1
-      ring
-    _ = _ := by
-      apply Finset.sum_subset (Finset.range_mono (by omega : j + 1 ≤ K))
-      intro q _ hq
-      simp only [Finset.mem_range] at hq
-      have hjq : j < q := by omega
-      simp [Nat.choose_eq_zero_of_lt hjq]
-
-private theorem sub_taylor_eq_sum {p : ℕ} [Fact p.Prime] {B : Type*}
-    [NormedAddCommGroup B] [NormedSpace ℚ_[p] B] (N m : ℕ) (a : ℕ → B)
-    (t h : ℚ_[p]) :
-    ∑ j ∈ Finset.range N, (t + h) ^ j • a j -
-        ∑ q ∈ Finset.range m, ∑ j ∈ Finset.range N,
-          ((j.choose q : ℚ_[p]) * t ^ (j - q) * h ^ q) • a j =
-      ∑ j ∈ Finset.range N, ∑ q ∈ Finset.Ico m (N + m),
-        ((j.choose q : ℚ_[p]) * t ^ (j - q) * h ^ q) • a j := by
-  classical
-  rw [Finset.sum_comm, ← Finset.sum_sub_distrib]
-  apply Finset.sum_congr rfl
-  intro j hj
-  have hj' : j < N + m := by
-    have := Finset.mem_range.mp hj
-    omega
-  rw [binomial_sum_eq (N + m) j hj' t h (a j),
-    ← Finset.sum_Ico_eq_sub _ (by omega : m ≤ N + m)]
-
-private theorem norm_taylor_term_le {p : ℕ} [Fact p.Prime] {B : Type*}
-    [NormedAddCommGroup B] [NormedSpace ℚ_[p] B] [IsUltrametricDist B]
-    (j m q : ℕ) (t h : ℚ_[p]) (b : B) (w d : ℝ) (ht : ‖t‖ ≤ 1)
-    (hh : h ≠ 0) (hv : 1 ≤ (h.valuation : ℝ)) (hmq : m ≤ q)
-    (hf : (multiplicity p q.factorial : ℝ) ≤ (q : ℝ) - m + d)
-    (hb : ‖j.descFactorial m • b‖ ≤ (p : ℝ) ^ (-w)) :
-    ‖((j.choose q : ℚ_[p]) * t ^ (j - q) * h ^ q) • b‖ ≤
-      (p : ℝ) ^ (-((m : ℝ) * h.valuation + w - d)) := by
-  have hp : 0 < (p : ℝ) := by exact_mod_cast (Fact.out : p.Prime).pos
-  rw [taylor_term_eq j m q hmq t h b, norm_smul, norm_mul]
-  have hb' := (IsUltrametricDist.norm_nsmul_le (j.descFactorial m • b)
-    ((j - m).descFactorial (q - m))).trans hb
-  have ht' : ‖t ^ (j - q)‖ ≤ 1 := by
-    rw [norm_pow]
-    exact pow_le_one₀ (norm_nonneg t) ht
-  have hs : ‖t ^ (j - q)‖ * ‖h ^ q / (q.factorial : ℚ_[p])‖ ≤
-      (p : ℝ) ^ (-((m : ℝ) * h.valuation - d)) := by
-    simpa only [one_mul] using mul_le_mul ht'
-      (norm_div_factorial_le h m q d hh hv hmq hf) (norm_nonneg _) zero_le_one
-  calc
-    _ ≤ (p : ℝ) ^ (-((m : ℝ) * h.valuation - d)) * (p : ℝ) ^ (-w) :=
-      mul_le_mul hs hb' (norm_nonneg _) (Real.rpow_pos_of_pos hp _).le
-    _ = _ := by
-      rw [← Real.rpow_add hp]
-      congr 1
-      ring
-
-private theorem norm_sub_taylor_le {p : ℕ} [Fact p.Prime] {B : Type*}
-    [NormedAddCommGroup B] [NormedSpace ℚ_[p] B] [IsUltrametricDist B]
-    (N m : ℕ) (a : ℕ → B) (t h : ℚ_[p]) (w d : ℝ) (ht : ‖t‖ ≤ 1)
-    (hv : 0 < (h.valuation : ℝ))
-    (hf : ∀ q, m ≤ q → (multiplicity p q.factorial : ℝ) ≤ (q : ℝ) - m + d)
-    (hC : ∀ j ∈ Finset.range N, ‖j.descFactorial m • a j‖ ≤ (p : ℝ) ^ (-w)) :
-    ‖∑ j ∈ Finset.range N, (t + h) ^ j • a j -
-        ∑ q ∈ Finset.range m, ∑ j ∈ Finset.range N,
-          ((j.choose q : ℚ_[p]) * t ^ (j - q) * h ^ q) • a j‖ ≤
-      (p : ℝ) ^ (-((m : ℝ) * h.valuation + w - d)) := by
-  have hp : 0 < (p : ℝ) := by exact_mod_cast (Fact.out : p.Prime).pos
-  have hh : h ≠ 0 := by
-    intro hh
-    simp [hh] at hv
-  have hv' : 1 ≤ h.valuation := by
-    have : 0 < h.valuation := by exact_mod_cast hv
-    omega
-  have hv'' : 1 ≤ (h.valuation : ℝ) := by exact_mod_cast hv'
-  rw [sub_taylor_eq_sum]
-  apply IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg
-    (Real.rpow_pos_of_pos hp _).le
-  intro j hj
-  apply IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg
-    (Real.rpow_pos_of_pos hp _).le
-  intro q hq
-  have hmq := (Finset.mem_Ico.mp hq).1
-  exact norm_taylor_term_le j m q t h (a j) w d ht hh hv'' hmq (hf q hmq) (hC j hj)
-
-private theorem factorial_valuation_bound {p : ℕ} [Fact p.Prime] (m q : ℕ)
-    (hmp : m ≤ p) (hne : m ≠ p) (hmq : m ≤ q) :
-    (multiplicity p q.factorial : ℝ) ≤ (q : ℝ) - m := by
-  by_cases hqp : q < p
-  · have hz : multiplicity p q.factorial = 0 :=
-      multiplicity_eq_zero_of_not_dvd (fun hd =>
-        (Nat.not_le.mpr hqp) ((Fact.out : p.Prime).dvd_factorial.mp hd))
-    rw [hz, Nat.cast_zero]
-    exact sub_nonneg.mpr (by exact_mod_cast hmq)
-  · have hv := factorial_valuation_le q (by omega : p ≤ q)
-    have hbound : multiplicity p q.factorial + m ≤ q := by omega
-    have hbound' : (multiplicity p q.factorial : ℝ) + m ≤ q := by
-      exact_mod_cast hbound
-    linarith
 
 @[expose] public section
 
@@ -225,37 +61,56 @@ public theorem norm_sub_taylor_le_zpow_valuation {p : ℕ} [Fact p.Prime] {B : T
         R ≤ (p : ℝ) ^ (-((p : ℝ) * h.valuation + w - 1))) ∧
       (h = 0 → R = 0) := by
   dsimp only
+  have hp1 : (1 : ℝ) < p := by exact_mod_cast (Fact.out : p.Prime).one_lt
+  have hp0 : (0 : ℝ) < p := zero_lt_one.trans hp1
+  have hC₀ : (0 : ℝ) ≤ (p : ℝ) ^ (-w) := Real.rpow_nonneg hp0.le _
+  have hnorm (hh : h ≠ 0) : ‖h‖ = (p : ℝ) ^ (-(h.valuation : ℝ)) := by
+    rw [Padic.norm_eq_zpow_neg_valuation hh, ← Real.rpow_intCast, Int.cast_neg]
+  have hle (hh : h ≠ 0) {r : ℝ} (hr : r ≤ h.valuation) : ‖h‖ ≤ (p : ℝ) ^ (-r) := by
+    rw [hnorm hh]
+    exact Real.rpow_le_rpow_of_exponent_le hp1.le (neg_le_neg hr)
+  have hpow (hh : h ≠ 0) (n : ℕ) : ‖h ^ n‖ = (p : ℝ) ^ (-((n : ℝ) * h.valuation)) := by
+    rw [norm_pow, hnorm hh, ← Real.rpow_natCast, ← Real.rpow_mul hp0.le]
+    ring_nf
   refine ⟨?_, ?_, ?_⟩
   · intro hmp' hv
     have hpden : 0 < (p : ℝ) - m := sub_pos.mpr (by exact_mod_cast hmp')
     have hv' : 0 < (h.valuation : ℝ) := (one_div_pos.mpr hpden).trans_le hv
-    simpa only [sub_zero] using norm_sub_taylor_le N m a t h w 0 ht hv'
-      (fun q hmq => by
-        simpa only [add_zero] using factorial_valuation_bound m q hmp (ne_of_lt hmp') hmq)
-      hC
+    have hh : h ≠ 0 := by
+      rintro rfl
+      simp at hv'
+    have hm1 : ‖(m : ℚ_[p])‖ = 1 :=
+      Padic.norm_natCast_eq_one_iff.mpr
+        (Nat.coprime_of_lt_prime (by omega) hmp' (Fact.out : p.Prime))
+    calc _ ≤ ‖h ^ m / (m : ℚ_[p])‖ * (p : ℝ) ^ (-w) :=
+          norm_sub_taylor_le_of_norm_le N m a t h _ ht hm hmp (fun _ => hle hh hv)
+            (fun hpm => absurd hpm (ne_of_lt hmp')) hC₀ hC
+      _ = (p : ℝ) ^ (-((m : ℝ) * h.valuation + w)) := by
+        rw [norm_div, hm1, div_one, hpow hh, ← Real.rpow_add hp0]
+        congr 1
+        ring
   · intro hmp' hv
     subst m
-    have hp : 0 < (p : ℝ) := by exact_mod_cast (Fact.out : p.Prime).pos
-    have hv' : 0 < (h.valuation : ℝ) := (one_div_pos.mpr hp).trans_le hv
-    apply norm_sub_taylor_le N p a t h w 1 ht hv' _ hC
-    intro q hpq
-    have hf := factorial_valuation_le q hpq
-    have hf' : (multiplicity p q.factorial : ℝ) ≤ ((q - p : ℕ) : ℝ) + 1 := by
-      exact_mod_cast hf
-    simpa only [Nat.cast_sub hpq] using hf'
+    have hv' : 0 < (h.valuation : ℝ) := (one_div_pos.mpr hp0).trans_le hv
+    have hh : h ≠ 0 := by
+      rintro rfl
+      simp at hv'
+    calc _ ≤ ‖h ^ p / (p : ℚ_[p])‖ * (p : ℝ) ^ (-w) :=
+          norm_sub_taylor_le_of_norm_le N p a t h _ ht hm hmp
+            (fun hpp => absurd hpp (lt_irrefl _)) (fun _ => hle hh hv) hC₀ hC
+      _ = (p : ℝ) ^ (-((p : ℝ) * h.valuation)) * (p : ℝ) ^ (1 : ℝ) * (p : ℝ) ^ (-w) := by
+        rw [norm_div, Padic.norm_p, hpow hh, div_inv_eq_mul, Real.rpow_one]
+      _ = (p : ℝ) ^ (-((p : ℝ) * h.valuation + w - 1)) := by
+        rw [← Real.rpow_add hp0, ← Real.rpow_add hp0]
+        congr 1
+        ring
   · intro hh
-    subst h
-    rw [sub_taylor_eq_sum]
-    have hz : (∑ j ∈ Finset.range N, ∑ q ∈ Finset.Ico m (N + m),
-        ((j.choose q : ℚ_[p]) * t ^ (j - q) * (0 : ℚ_[p]) ^ q) • a j) = 0 := by
-      apply Finset.sum_eq_zero
-      intro j _
-      apply Finset.sum_eq_zero
-      intro q hq
-      have hmq := (Finset.mem_Ico.mp hq).1
-      have hq' : q ≠ 0 := by omega
-      simp [zero_pow hq']
-    rw [hz, norm_zero]
+    subst hh
+    have hE := norm_sub_taylor_le_of_norm_le N m a t 0 _ ht hm hmp
+      (fun _ => by rw [norm_zero]; exact Real.rpow_nonneg hp0.le _)
+      (fun _ => by rw [norm_zero]; exact Real.rpow_nonneg hp0.le _) hC₀ hC
+    rw [zero_pow (by omega : m ≠ 0), zero_div, norm_zero, zero_mul] at hE
+    exact le_antisymm hE (norm_nonneg _)
 
 end
 
