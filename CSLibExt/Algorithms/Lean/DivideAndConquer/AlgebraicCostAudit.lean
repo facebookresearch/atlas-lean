@@ -20,9 +20,9 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Real
 /-!
 # Algebraic divide-and-conquer cost audit
 
-Value and cost results for Karatsuba multiplication, the radix-two FFT and Strassen's matrix
-accumulator, each in its provider's charged model. Every cost here is a total charge, summed over
-all recursive calls.
+Cost results for Karatsuba multiplication, the radix-two FFT and Strassen's matrix accumulator,
+each in its provider's charged model, and value results for Karatsuba and Strassen. Every cost
+here is a total charge, summed over all recursive calls.
 
 The Karatsuba, FFT and Strassen results are cited from the imported modules, not restated:
 
@@ -31,18 +31,22 @@ The Karatsuba, FFT and Strassen results are cited from the imported modules, not
   `1` for each call with `n ≤ 1` and `n` for each call with `n ≥ 2`; it is an accounting
   convention, not a count of digit operations.
 * `fft_time_add_one` gives the FFT's exact total charge,
-  `(fft d omega xs).time + 1 = (7 * d + 1) * 2 ^ d`; the charge counts scalar ring operations and
-  array element reads and writes.
+  `(fft d omega xs).time + 1 = (7 * d + 1) * 2 ^ d`, for every `omega` in a commutative ring; the
+  charge counts scalar ring operations and array element reads and writes. The FFT part of this
+  audit is cost-only.
 * `strassenMatrixAccumulate_time` gives the exact counts of Strassen's accumulator on `n × n`
-  matrices with `n = 2 ^ k`: `7 ^ k = n ^ logb 2 7` scalar multiplications and
-  `(25 * 7 ^ k - 22 * 4 ^ k) / 3` scalar additions and subtractions. `strassenMatrixAccumulate_ret`
-  gives its value `C + A * B` as Mathlib matrices.
+  matrices with `n = 2 ^ k`, over any type with a zero, an addition, a subtraction and a
+  multiplication: `7 ^ k = n ^ logb 2 7` scalar multiplications and
+  `(25 * 7 ^ k - 22 * 4 ^ k) / 3` scalar additions and subtractions. The value identity needs more:
+  over a non-unital, non-associative ring, `strassenMatrixAccumulate_ret` gives the value
+  `C + A * B` as Mathlib matrices.
 
 This module adds one bound, `strassen_ops_le`: those scalar multiplications, additions and
 subtractions together number at most `(28 / 3) * n ^ logb 2 7`.
 
-Not supplied here: a bound on Karatsuba's digit operations, and an FFT count of ring operations
-alone.
+Not supplied here: a bound on Karatsuba's digit operations, an FFT count of ring operations
+alone, and the FFT's returned coefficients (`fft_correct` gives them for complex inputs and a
+primitive `2 ^ d`-th root).
 -/
 
 universe u
