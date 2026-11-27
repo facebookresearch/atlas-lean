@@ -94,3 +94,64 @@ public theorem sum_choose_two_mul_add (n k : ℕ) :
         (show 2 * k + 1 + n - i = (k + 1 + n + i) + (k - 2 * i) by omega)]
 
 end MathlibExt.Combinatorics.HockeyStickWanted
+
+namespace MetaMathlibExt
+
+@[expose] public section
+
+/-- The sign `sgn(α) = (-1)^{|α| - ℓ(α)}` of a composition `α`, given as its list of parts.
+
+Source: Molly Lynch and Michael Weselcouch, *A Generalized Hockey Stick Theorem*, Journal of
+Integer Sequences 28 (2025), Article 25.7.7, Section 2.2. -/
+def hockeyCompositionSign (α : List ℕ) : ℤ :=
+  (-1) ^ (α.sum - α.length)
+
+/-- `sgn((2)) = -1` and `sgn((3, 1)) = 1`.
+
+Source: Molly Lynch and Michael Weselcouch, *A Generalized Hockey Stick Theorem*, Journal of
+Integer Sequences 28 (2025), Article 25.7.7, Section 2.2. -/
+theorem hockeyCompositionSign_small :
+    hockeyCompositionSign [2] = -1 ∧ hockeyCompositionSign [3, 1] = 1 := by
+  decide
+
+/-- For a composition `α = (a, t…)` with `a ≥ 2`, each of `α^→ = (a + 1, t…)`,
+`α^↑ = (2, a, t…)` and `α^↙` (`(a - 1, t…)` if `a > 2`, `(t…)` if `a = 2`) has sign `-sgn(α)`.
+
+Source: Molly Lynch and Michael Weselcouch, *A Generalized Hockey Stick Theorem*, Journal of
+Integer Sequences 28 (2025), Article 25.7.7, Proposition 1 (`jis-2025-25.7.7-prop-1`). -/
+theorem hockeyCompositionSign_ops (a : ℕ) (t : List ℕ) (ha : 2 ≤ a)
+    (ht : ∀ b ∈ t, 0 < b) :
+    hockeyCompositionSign ((a + 1) :: t) = -hockeyCompositionSign (a :: t) ∧
+      hockeyCompositionSign (2 :: a :: t) = -hockeyCompositionSign (a :: t) ∧
+      hockeyCompositionSign (if 2 < a then (a - 1) :: t else t) =
+        -hockeyCompositionSign (a :: t) := by
+  have hlen : t.length ≤ t.sum := by
+    induction t with
+    | nil => simp
+    | cons b s ih =>
+      have hb := ht b (by simp)
+      have hs := ih (fun c hc => ht c (List.mem_cons_of_mem _ hc))
+      simp only [List.length_cons, List.sum_cons]
+      omega
+  refine ⟨?_, ?_, ?_⟩
+  · simp only [hockeyCompositionSign, List.sum_cons, List.length_cons]
+    have h : a + 1 + t.sum - (t.length + 1) = (a + t.sum - (t.length + 1)) + 1 := by omega
+    simp [h, pow_succ]
+  · simp only [hockeyCompositionSign, List.sum_cons, List.length_cons]
+    have h : 2 + (a + t.sum) - (t.length + 1 + 1) =
+        (a + t.sum - (t.length + 1)) + 1 := by omega
+    simp [h, pow_succ]
+  · by_cases hlt : 2 < a
+    · rw [ite_eq_left hlt]
+      simp only [hockeyCompositionSign, List.sum_cons, List.length_cons]
+      have h : a + t.sum - (t.length + 1) =
+          (a - 1 + t.sum - (t.length + 1)) + 1 := by omega
+      simp [h, pow_succ]
+    · rw [ite_eq_right hlt]
+      simp only [hockeyCompositionSign, List.sum_cons, List.length_cons]
+      have h : a + t.sum - (t.length + 1) = (t.sum - t.length) + 1 := by omega
+      simp [h, pow_succ]
+
+end
+
+end MetaMathlibExt
