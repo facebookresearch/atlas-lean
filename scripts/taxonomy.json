@@ -13263,7 +13263,6 @@
   "MathlibExt/NumberTheory/GeneralizedFussCatalanNumbersFMNK": {"to": "NumberTheory/special-numbers/catalan-numbers", "title": "Fuss–Catalan numbers"},
   "MathlibExt/NumberTheory/GeneralizedHofstadterOrder": {"to": "NumberTheory/integer-sequences/iterated-self-referential", "title": "Generalized Hofstadter functions"},
   "MathlibExt/NumberTheory/GeneralizedHarmonicGamma": {"to": "NumberTheory/special-numbers/harmonic-numbers", "title": "Generalized harmonic numbers and the Gamma function"},
-  "MathlibExt/NumberTheory/GeneralizedHofstadterOrderHofLIterateBasic": {"to": "NumberTheory/integer-sequences/iterated-self-referential", "title": "Generalized Hofstadter functions"},
   "MathlibExt/NumberTheory/GeneralizedLucas": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "k-generalized Lucas numbers"},
   "MathlibExt/NumberTheory/GeneralizedLucasnomialFussCatalan": {"to": "NumberTheory/special-numbers/catalan-numbers", "title": "Lucasnomial Fuss–Catalan numbers"},
   "MathlibExt/NumberTheory/GeneralizedLucasnomialFussCatalanNumber": {"to": "NumberTheory/special-numbers/catalan-numbers", "title": "Lucasnomial Fuss–Catalan numbers"},
