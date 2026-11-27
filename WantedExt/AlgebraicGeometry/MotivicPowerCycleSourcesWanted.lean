@@ -12,6 +12,7 @@ public import MathlibExt.AlgebraicGeometry.MotivicPowerDescentModels
 public import MathlibExt.AlgebraicGeometry.MotivicBocksteinModels
 public import MathlibExt.AlgebraicGeometry.MotivicPowerCycleSourcesIntegralCoefficientSequenceExact
 public import MathlibExt.AlgebraicGeometry.MotivicPowerCycleSourcesBocksteinEqReducedIntegral
+public import MathlibExt.AlgebraicGeometry.MotivicPowerCycleSourcesModCoefficientSequenceExact
 
 /-!
 # Original finite-power quotient, cycle descent and coefficient requests
@@ -88,12 +89,6 @@ def_wanted relativePowerCycle (k H : Type) [Field k] [Group H] [Fintype H]
     (z : CoefficientCycles X (A.affine i) R) (E : ExternalSystem P)
     (B : CycleDescent P U r Q D G R A i V z E) (d : DiagonalDescent P U r Q)
     (W : PullbackPowerBundle P U r A i V (X := X)) : RelativePowerCycle P U r Q D G R A i V z B d W
-
-/-- For a prime ℓ, the sequence of $\mathbb{Z}$-modules
-$0 \to \mathbb{Z}/\ell \to \mathbb{Z}/\ell^2 \to \mathbb{Z}/\ell \to 0$, with first map
-$n \mapsto \ell n$ and second map reduction modulo ℓ, is short exact. -/
-theorem_wanted modCoefficientSequenceExact (ell : ℕ) [Fact ell.Prime] :
-  (modSequence ell).ShortExact
 
 variable {k : Type} [Field k]
   [HasSheafify (nisnevichTopology (k := k)) (ModuleCat.{1} ℤ)]
