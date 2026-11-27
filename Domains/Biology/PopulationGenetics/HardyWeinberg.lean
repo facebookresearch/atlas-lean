@@ -90,57 +90,6 @@ theorem gamete_apply [Fintype A] (G : PMF (A × A)) (a : A) :
   rw [Finset.sum_comm (f := fun x y => if (x, y).2 = a then G (x, y) * 2⁻¹ else 0)]
   simp [Finset.mul_sum, mul_comm]
 
-/-- **Hardy–Weinberg proportions** (Hardy 1908, Weinberg 1908): after one generation of random
-mating the genotype law is the product `p ⊗ p` of the parental allele frequencies
-`p = gamete G`. -/
-theorem offspring_apply (G : PMF (A × A)) (a b : A) :
-    offspring G (a, b) = gamete G a * gamete G b := by
-  classical
-  rw [offspring, PMF.bind_apply, tsum_eq_single a]
-  · rw [PMF.map_apply, tsum_eq_single b]
-    · simp
-    · intro c hc
-      simp [Ne.symm hc]
-  · intro c hc
-    rw [PMF.map_apply]
-    simp [Ne.symm hc]
-
-/-- **Allele frequencies are conserved** under random mating: the gamete law of the offspring
-equals that of the parents. -/
-theorem gamete_offspring (G : PMF (A × A)) : gamete (offspring G) = gamete G := by
-  set p := gamete G
-  have key : ∀ a b : A,
-      transmit (a, b) = (PMF.uniformFintype Bool).bind fun c => PMF.pure (cond c a b) := by
-    intro a b
-    rfl
-  have h1 : ∀ a : A, (p.bind fun b => (PMF.uniformFintype Bool).bind fun c =>
-      PMF.pure (cond c a b)) = (PMF.uniformFintype Bool).bind fun c =>
-        p.bind fun b => PMF.pure (cond c a b) := fun a => PMF.bind_comm _ _ _
-  calc gamete (offspring G)
-      = p.bind fun a => p.bind fun b => transmit (a, b) := by
-        change (p.bind fun a => p.map (Prod.mk a)).bind transmit = _
-        rw [PMF.bind_bind]
-        congr 1
-        funext a
-        rw [PMF.bind_map]
-        rfl
-    _ = (PMF.uniformFintype Bool).bind fun c =>
-          p.bind fun a => p.bind fun b => PMF.pure (cond c a b) := by
-        simp only [key, h1]
-        exact PMF.bind_comm _ _ _
-    _ = (PMF.uniformFintype Bool).bind fun _ => p := by
-        congr 1
-        funext c
-        cases c
-        · simp [PMF.bind_const, PMF.bind_pure]
-        · simp [PMF.bind_const, PMF.bind_pure]
-    _ = p := PMF.bind_const _ _
-
-/-- **Hardy–Weinberg equilibrium**: the Hardy–Weinberg proportions reached after one generation
-of random mating are a fixed point of random mating. -/
-theorem offspring_offspring (G : PMF (A × A)) : offspring (offspring G) = offspring G := by
-  rw [offspring, gamete_offspring, ← offspring]
-
 /-! ### Genotypes with independent alleles -/
 
 /-- The law of a genotype whose maternal and paternal alleles are drawn independently from the
@@ -195,6 +144,23 @@ theorem gamete_iidGenotype (p : PMF A) : gamete (iidGenotype p) = p := by
         · simp [PMF.bind_const, PMF.bind_pure]
         · simp [PMF.bind_const, PMF.bind_pure]
     _ = p := PMF.bind_const _ _
+
+/-- **Hardy–Weinberg proportions** (Hardy 1908, Weinberg 1908): after one generation of random
+mating the genotype law is the product `p ⊗ p` of the parental allele frequencies
+`p = gamete G`. -/
+theorem offspring_apply (G : PMF (A × A)) (a b : A) :
+    offspring G (a, b) = gamete G a * gamete G b :=
+  iidGenotype_apply (gamete G) a b
+
+/-- **Allele frequencies are conserved** under random mating: the gamete law of the offspring
+equals that of the parents. -/
+theorem gamete_offspring (G : PMF (A × A)) : gamete (offspring G) = gamete G :=
+  gamete_iidGenotype (gamete G)
+
+/-- **Hardy–Weinberg equilibrium**: the Hardy–Weinberg proportions reached after one generation
+of random mating are a fixed point of random mating. -/
+theorem offspring_offspring (G : PMF (A × A)) : offspring (offspring G) = offspring G := by
+  rw [offspring, gamete_offspring, ← offspring]
 
 /-! ### Two alleles
 
