@@ -10,9 +10,9 @@ and the forecaster spends $O(\log K)$ time per round on top of the gradient step
 
 ## Proof sketch
 
-Encode a round as the vector payoff $u(w_t, y_t)$; given the past, $c_T - \bar c_T$ is an average of martingale differences. Rounding to the nearest grid point puts $u$ in the $\ell_1$ ball of radius $1/(2K)$ for every outcome, which is the response condition. The $\ell_1$ distance to that ball equals $-\frac{1}{2K} - \min_{\|\theta\|_\infty \le 1}\langle -x, \theta\rangle$, so online gradient descent over the cube, together with a two-point distribution balancing the adjacent coordinates where the current iterate changes sign (which guarantees $\langle u(w, y), \theta\rangle \le \frac{1}{2K}$ for every $y$), bounds the distance of $\bar c_T$ by the average regret, $O(\sqrt{K/T})$.
+Encode a round as the vector payoff $u(w_t, y_t)$; given the past, $c_T - \bar c_T$ is an average of martingale differences. Rounding to the nearest grid point puts $u$ in the $\ell_1$ ball of radius $1/(2K)$ for every outcome, which is the response condition. The $\ell_1$ distance to that ball equals $\max\big(0,\ -\frac{1}{2K} - \min_{\|\theta\|_\infty \le 1}\langle -x, \theta\rangle\big)$, so online gradient descent over the cube, together with a two-point distribution balancing the adjacent coordinates where the current iterate changes sign (which guarantees $\langle u(w, y), \theta\rangle \le \frac{1}{2K}$ for every $y$), bounds the distance of $\bar c_T$ by the average regret, $O(\sqrt{K/T})$.
 
-Explicit constants (derived): the expected-distance form of Blackwell's theorem for payoffs of norm at most $1$, converted to $\ell_1$ by Cauchy-Schwarz over the $K+1$ coordinates, gives
+Explicit constants (derived, for the forecaster that follows Blackwell's approachability strategy instead of online gradient descent): the expected-distance form of Blackwell's theorem for payoffs of norm at most $1$, converted to $\ell_1$ by Cauchy-Schwarz over the $K+1$ coordinates, gives
 
 1. $\mathbb{E}[C_T] \le \frac{1}{2K} + 2\sqrt{(K+1)/T}$;
 2. $\Pr[C_T \ge \varepsilon] \le \frac{4(K+1)}{T(\varepsilon - 1/(2K))^2}$ whenever $\varepsilon > 1/(2K)$, by Markov's inequality on the squared distance.
@@ -23,11 +23,13 @@ Consequently, for all $\varepsilon, \delta > 0$ there are $K$ and $T_0 = O(K/(\d
 
 - [Asymptotic calibration](../../../../GameTheory/noncooperative-games/adaptive-heuristics/exists-calibrated-forecast.md)
 - [Calibration score](../../../../GameTheory/noncooperative-games/adaptive-heuristics/calibration-score.md)
+- [Online convex optimization protocol and projected online gradient descent](../online-convex-optimization-algorithms/online-convex-optimization-and-projected-ogd.md)
 
 ## Proof depends on
 
 - [Blackwell's approachability theorem, expected-payoff form](../../../../GameTheory/noncooperative-games/blackwell-approachability/blackwell-expected-approachability.md)
 - [Blackwell's characterization: response condition iff every containing halfspace is forceable](blackwell-response-halfspace-equivalence.md)
+- [Zinkevich's regret bound for projected online gradient descent](../online-convex-optimization-algorithms/zinkevich-ogd-regret-bound.md)
 
 ## Sources
 

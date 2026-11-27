@@ -1,10 +1,12 @@
 # Exact value-query count of submodular greedy
 
-On a ground set of $n$ elements with budget $k \le n$, the cardinality-constrained greedy algorithm, which in each of its $k$ rounds queries the value of the current set extended by each remaining candidate and adds a best one, makes $O(kn)$ value queries against every value oracle. With a matroid constraint, the matroid greedy algorithm for submodular maximization, which in each round tests every remaining candidate for independence and adds a feasible candidate of largest marginal value, makes $O(n^2)$ value queries and $O(n^2)$ independence queries.
+On a ground set of $n$ elements with budget $k \le n$, the cardinality-constrained greedy algorithm, which in each of its $k$ rounds queries the value of the current set extended by each remaining candidate and adds a best one, makes $O(kn)$ value queries against every value oracle.
 
 ## Proof sketch
 
-Round $t$ (counting from $0$) of the cardinality greedy has $n - t$ remaining candidates and queries each once, so it makes exactly $\sum_{t=0}^{k-1} (n - t) \le kn$ value queries. The matroid greedy runs at most $n$ rounds, and round $t$ makes one independence query and at most one value query for each of its at most $n - t$ remaining candidates, at most $\sum_{t=0}^{n-1} (n - t) = n(n+1)/2$ queries of each kind.
+Round $t$ (counting from $0$) of the cardinality greedy has $n - t$ remaining candidates and queries each once, so it makes exactly $\sum_{t=0}^{k-1} (n - t) \le kn$ value queries.
+
+Matroid constraint (derived; the cited sources give no query count): the matroid greedy algorithm for submodular maximization, which in each round tests every remaining candidate for independence and adds a feasible candidate of largest marginal value, makes $O(n^2)$ value queries and $O(n^2)$ independence queries. It runs at most $n$ rounds, and round $t$ makes one independence query and at most one value query for each of its at most $n - t$ remaining candidates, at most $\sum_{t=0}^{n-1} (n - t) = n(n+1)/2$ queries of each kind.
 
 ## Depends on
 

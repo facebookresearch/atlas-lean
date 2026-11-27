@@ -12,7 +12,7 @@ Let $K$ be a nonempty closed convex set with diameter at most $D > 0$, let the c
 
 ## Proof sketch
 
-Rerun the static one-step inequality with the comparator changing between rounds. The extra term from replacing $u_t$ by $u_{t+1}$ is bounded by $\|x - u_{t+1}\|^2 - \|x - u_t\|^2 \le 2D\|u_{t+1} - u_t\|$, so the telescoping sum picks up $D P_T/\eta$ (or a step-weighted version), and the dynamic regret is at most $(D^2 + 2DP_T)/(2\eta) + \eta G^2 T/2$, which implies item 1. Bounding the cross terms by $D$ times the path length plus boundary terms instead gives twice the dynamic regret at most $3D^2 P/\eta + \eta G^2 T$, and the step $\eta \approx \sqrt{P/T}$ gives item 2.
+Rerun the static one-step inequality with the comparator changing between rounds. The extra term from replacing $u_t$ by $u_{t+1}$ is bounded by $\|x - u_{t+1}\|^2 - \|x - u_t\|^2 \le 2D\|u_{t+1} - u_t\|$, so the telescoping sum picks up $D P_T/\eta$ (or a step-weighted version), and the dynamic regret is at most $(D^2 + 2DP_T)/(2\eta) + \eta G^2 T/2$, which implies item 1. For item 2, $D^2 + 2DP_T \le (D^2 + 2D)P$ with $P = P_T + 1$, so the step $\eta = c\sqrt{P/T}$ with a constant $c > 0$ gives dynamic regret at most $\big(\frac{D^2 + 2D}{2c} + \frac{cG^2}{2}\big)\sqrt{TP}$, which is $O(\sqrt{TP})$ for fixed $D$ and $G$.
 
 Explicit constants (derived from the same inequality): with the constant step $\eta = D/(G\sqrt T)$ the dynamic regret is at most $G(D + P_T)\sqrt{T}$; if $P_T \le P$, the step $\eta = \sqrt{D^2 + 2DP}/(G\sqrt{T})$ gives dynamic regret at most $G\sqrt{T(D^2 + 2DP)}$; and with $\eta_t = D/(G\sqrt{t+1})$ the dynamic regret is at most $(\tfrac32 D + P_T)\,G\sqrt{T}$. For a constant comparator ($P_T = 0$) these reduce to static bounds.
 
