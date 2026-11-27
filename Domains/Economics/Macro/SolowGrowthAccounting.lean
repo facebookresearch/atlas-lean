@@ -130,7 +130,7 @@ theorem growthAccounting {F : ℝ × ℝ → ℝ} {F' : ℝ × ℝ →L[ℝ] ℝ
   rw [capitalElasticity_eq_of_hasFDerivAt hF, labourElasticity_eq_of_hasFDerivAt hF,
     hderivY, hderivA, hderivK, hderivL, hlin, hYt]
   field_simp
-  try ring
+  ring
 
 /-- **Capital share = capital elasticity under competitive pricing.** Let
 `Y = A * F (K, L)` with `A ≠ 0` and `F (K, L) ≠ 0`, and let `F'` be
@@ -146,7 +146,6 @@ theorem competitiveShare_capital_eq_elasticity {F : ℝ × ℝ → ℝ}
   have hden : A * F (K, L) ≠ 0 := mul_ne_zero hA0 hF0
   rw [hY, capitalElasticity_eq_of_hasFDerivAt hF]
   field_simp
-  try ring
 
 /-- **Labour share = labour elasticity under competitive pricing.** Let
 `Y = A * F (K, L)` with `A ≠ 0` and `F (K, L) ≠ 0`, and let `F'` be
@@ -161,7 +160,6 @@ theorem competitiveShare_labour_eq_elasticity {F : ℝ × ℝ → ℝ}
   have hden : A * F (K, L) ≠ 0 := mul_ne_zero hA0 hF0
   rw [hY, labourElasticity_eq_of_hasFDerivAt hF]
   field_simp
-  try ring
 
 /-- **Competitive shares sum to one.** For `Y = A * F (K, L)` with `A ≠ 0` and
 `F (K, L) ≠ 0`, under competitive pricing (factor prices

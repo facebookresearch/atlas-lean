@@ -14,6 +14,10 @@ public import MathlibExt.NumberTheory.ReducedResidueLongestAP
 public import MathlibExt.NumberTheory.ReducedResiduePrimeBound
 public import MathlibExt.NumberTheory.ReducedResidueAverage
 public import MathlibExt.NumberTheory.ReducedResidueLongestAPAbsLeastAPLengthPrimeOfModFourEqOne
+public import MathlibExt.NumberTheory.ReducedResidueLongestAPIsLeastLongestAPLengthPrimeOfModFourEqOne
+public import MathlibExt.NumberTheory.ReducedResidueLongestAPLongestAPLengthMinOfNotSquarefreeOfNotIsPrimePow
+public import MathlibExt.NumberTheory.ReducedResidueLongestAPIsLeastLongestAPLengthPrimePow
+public import MathlibExt.NumberTheory.ReducedResidueLongestAPIsGreatestLongestAPLength
 
 /-!
 # Longest arithmetic progressions in the reduced residue systems `R_m(n)`
@@ -25,8 +29,8 @@ with common difference `d`, and `g(n) = f_{-⌈n/2⌉}(n)` for the system of abs
 reduced residues. Throughout, `gpf(n)` is written `n.primeFactors.sup id` (the largest prime
 factor of `n` for `n > 1`) and `rad(n)` is `UniqueFactorizationMonoid.radical n`.
 
-The definitions, the squarefree fixed-difference bound, the formula for twice an odd prime and
-the minimum for primes congruent to three modulo four are in
+The definitions, the squarefree fixed-difference bound, the formula for twice an odd prime, and
+the absolute least residue formula and minimum for primes congruent to three modulo four are in
 `MathlibExt.NumberTheory.ReducedResidueLongestAP`. The formula for `g(p)` for primes congruent
 to one modulo four is in
 `MathlibExt.NumberTheory.ReducedResidueLongestAPAbsLeastAPLengthPrimeOfModFourEqOne`.
@@ -40,16 +44,6 @@ namespace MetaMathlibExt
 @[expose] public section
 
 open UniqueFactorizationMonoid
-
-/-- **Longest progressions of absolute least residues: primes congruent to 3 mod 4.** For a
-prime $p \equiv 3 \pmod 4$, the length $g(p)$ of the longest arithmetic progression in the
-absolute least reduced residue system modulo $p$ is $(p + 1)/2$.
-
-Source: Chaninat Phothila, Natthakan Thoket and Narakorn Rompurk Kanasri, *Length of the Longest
-Arithmetic Progressions in a Certain Reduced Residue System*, INTEGERS 26 (2026), Article A6,
-Theorem 1 (`integers-2026-A6-thm-1`). -/
-public theorem_wanted absLeastAPLength_prime_of_mod_four_eq_three {p : ℕ} (hp : p.Prime)
-    (h4 : p % 4 = 3) : absLeastAPLength p = (p + 1) / 2
 
 /-- **Longest progressions of absolute least residues: prime powers.** Let $p$ be a prime and
 $r \ge 1$, with $r \ge 2$ when $p$ is odd. Then the length $g(p^r)$ of the longest arithmetic
@@ -107,65 +101,6 @@ public theorem_wanted absLeastAPLength_even_squarefree_bounds {n : ℕ} (heven :
       absLeastAPLength n ≤ n.primeFactors.sup id - 1) ∧
     (2 * n.primeFactors.sup id ≤ n / n.primeFactors.sup id →
       absLeastAPLength n = n.primeFactors.sup id - 1)
-
-/-- **Maximum longest progression length over all reduced residue windows.** Let $n > 1$ be a
-natural number, $\operatorname{rad}(n)$ the product of its distinct prime factors and
-$\operatorname{gpf}(n)$ its largest prime factor. For an integer $m$ let $f_m(n)$ be the length of
-the longest arithmetic progression with positive common difference contained in the set $R_m(n)$
-of integers $a$ with $m + 1 \le a \le m + n$ and $\gcd(a, n) = 1$. Then the largest value of
-$f_m(n)$ over all integers $m$ is $\max(n / \operatorname{rad}(n), \operatorname{gpf}(n) - 1)$.
-
-Source: Chaninat Phothila, Natthakan Thoket and Narakorn Rompurk Kanasri, *Length of the Longest
-Arithmetic Progressions in a Certain Reduced Residue System*, INTEGERS 26 (2026), Article A6,
-Theorem 2 (`integers-2026-A6-thm-2`). -/
-public theorem_wanted isGreatest_longestAPLength {n : ℕ} (hn : 1 < n) :
-    IsGreatest (Set.range fun m : ℤ => longestAPLength m n)
-      (max (n / radical n) (n.primeFactors.sup id - 1))
-
-/-- **Minimum longest progression length modulo a prime $p \equiv 1 \pmod 4$.** Let $p$ be a prime
-with $p \equiv 1 \pmod 4$. For an integer $m$ let $f_m(p)$ be the length of the longest arithmetic
-progression with positive common difference contained in the set $R_m(p)$ of integers $a$ with
-$m + 1 \le a \le m + p$ and $\gcd(a, p) = 1$. Then the least value of $f_m(p)$ over all integers
-$m$ is $(p - 1) / 2$.
-
-Source: Chaninat Phothila, Natthakan Thoket and Narakorn Rompurk Kanasri, *Length of the Longest
-Arithmetic Progressions in a Certain Reduced Residue System*, INTEGERS 26 (2026), Article A6,
-Theorem 3 (`integers-2026-A6-thm-3`). -/
-public theorem_wanted isLeast_longestAPLength_prime_of_mod_four_eq_one {p : ℕ} (hp : p.Prime)
-    (h4 : p % 4 = 1) :
-    IsLeast (Set.range fun m : ℤ => longestAPLength m p) ((p - 1) / 2)
-
-/-- **Minimum longest progression length modulo a prime power.** Let $p$ be a prime and $r > 1$ a
-natural number. For an integer $m$ let $f_m(p^r)$ be the length of the longest arithmetic
-progression with positive common difference contained in the set $R_m(p^r)$ of integers $a$ with
-$m + 1 \le a \le m + p^r$ and $\gcd(a, p^r) = 1$. Then the least value of $f_m(p^r)$ over all
-integers $m$ is $p^{r-1}$.
-
-Source: Chaninat Phothila, Natthakan Thoket and Narakorn Rompurk Kanasri, *Length of the Longest
-Arithmetic Progressions in a Certain Reduced Residue System*, INTEGERS 26 (2026), Article A6,
-Theorem 3 (`integers-2026-A6-thm-3`). -/
-public theorem_wanted isLeast_longestAPLength_prime_pow {p r : ℕ} (hp : p.Prime) (hr : 1 < r) :
-    IsLeast (Set.range fun m : ℤ => longestAPLength m (p ^ r)) (p ^ (r - 1))
-
-/-- **Minimum longest progression length when $n$ is neither squarefree nor a prime power.** Let
-$n > 1$ be a natural number that is neither squarefree nor a prime power, $\operatorname{rad}(n)$
-the product of its distinct prime factors and $\operatorname{gpf}(n)$ its largest prime factor.
-For an integer $m$ let $f_m(n)$ be the length of the longest arithmetic progression with positive
-common difference contained in the set $R_m(n)$ of integers $a$ with $m + 1 \le a \le m + n$ and
-$\gcd(a, n) = 1$. Then $f_m(n) \ge n / \operatorname{rad}(n)$ for every integer $m$, and
-$f_m(n) \le \max(n / \operatorname{rad}(n), \operatorname{gpf}(n) - 1)$ for some integer $m$.
-If moreover $\operatorname{gpf}(n) - 1 \le n / \operatorname{rad}(n)$, then the least value of
-$f_m(n)$ over all integers $m$ is $n / \operatorname{rad}(n)$.
-
-Source: Chaninat Phothila, Natthakan Thoket and Narakorn Rompurk Kanasri, *Length of the Longest
-Arithmetic Progressions in a Certain Reduced Residue System*, INTEGERS 26 (2026), Article A6,
-Theorem 3 (`integers-2026-A6-thm-3`). -/
-public theorem_wanted longestAPLength_min_of_not_squarefree_of_not_isPrimePow {n : ℕ}
-    (hn : 1 < n) (hsq : ¬ Squarefree n) (hpp : ¬ IsPrimePow n) :
-    ((∀ m : ℤ, n / radical n ≤ longestAPLength m n) ∧
-      ∃ m : ℤ, longestAPLength m n ≤ max (n / radical n) (n.primeFactors.sup id - 1)) ∧
-    (n.primeFactors.sup id - 1 ≤ n / radical n →
-      IsLeast (Set.range fun m : ℤ => longestAPLength m n) (n / radical n))
 
 end
 
