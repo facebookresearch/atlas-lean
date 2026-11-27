@@ -9,14 +9,18 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Algebra.Ring.Parity
+public import Mathlib.Analysis.Asymptotics.Defs
 public import Mathlib.Data.Finset.Sort
 public import Mathlib.Data.Fintype.Pi
 public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.Data.Nat.Digits.Defs
 public import Mathlib.Data.ZMod.Defs
 
+import Mathlib.Data.List.OfFn
+import Mathlib.Data.List.Pairwise
 import Mathlib.Data.Nat.Choose.Lucas
 import Mathlib.Logic.Equiv.Bool
+import Mathlib.Tactic.Linarith
 
 /-!
 # Binary Ulam words
@@ -1182,6 +1186,143 @@ public theorem two_mul_add_four_le_ulamWordCount (n : ℕ) (hn : 6 ≤ n) :
       (by change 4 < n; omega) (by change 8 < n; omega)
     rw [Finset.card_range, Finset.card_range] at h
     omega
+
+namespace ulamDensity_inv_isTheta_ulamGapMean
+
+private abbrev binaryDigits (w : List Bool) : List ℕ := w.reverse.map Bool.toNat
+
+private theorem binaryDigits_lt {w : List Bool} {d : ℕ} (hd : d ∈ binaryDigits w) : d < 2 := by
+  obtain ⟨b, _, rfl⟩ := List.mem_map.mp hd
+  cases b <;> decide
+
+private theorem length_values (n : ℕ) : (ulamValuesSorted n).length = ulamWordCount n := by
+  rw [ulamValuesSorted, Finset.length_sort, ulamWordCount, Finset.card_image_of_injective]
+  intro v w h
+  have hd := Nat.ofDigits_inj_of_len_eq (by decide : 1 < 2)
+    (by simp [binaryDigits] : (binaryDigits (List.ofFn v)).length =
+      (binaryDigits (List.ofFn w)).length) (fun _ => binaryDigits_lt) (fun _ => binaryDigits_lt) h
+  have hinj : Function.Injective Bool.toNat := by
+    intro a b hab
+    cases a <;> cases b <;> simp_all
+  exact List.ofFn_injective (List.reverse_inj.mp ((List.map_injective_iff.mpr hinj) hd))
+
+private theorem mem_values {n x : ℕ} :
+    x ∈ ulamValuesSorted n ↔ ∃ w : List Bool, w.length = n ∧
+      IsUlamWord w ∧ Nat.ofDigits 2 (binaryDigits w) = x := by
+  simp only [ulamValuesSorted, Finset.mem_sort, Finset.mem_image, Finset.mem_filter,
+    Finset.mem_univ, true_and]
+  constructor
+  · rintro ⟨v, hv, rfl⟩
+    exact ⟨List.ofFn v, List.length_ofFn, hv, rfl⟩
+  · rintro ⟨w, rfl, hw, rfl⟩
+    refine ⟨fun i => w[i.val], ?_, ?_⟩
+    · simpa only [List.ofFn_getElem] using hw
+    · rw [List.ofFn_getElem]
+
+private theorem endpoint_values {n : ℕ} (hn : 2 ≤ n) :
+    1 ∈ ulamValuesSorted n ∧ 2 ^ n - 2 ∈ ulamValuesSorted n := by
+  let w := List.replicate (n - 1) false ++ [true]
+  have hlen : w.length = n := by simp [w]; omega
+  have hw : IsUlamWord w := by
+    simpa [w] using (isUlamWord_zeros_one_zeros_iff (n - 1) 0).2 (by simp)
+  have hv : Nat.ofDigits 2 (binaryDigits w) = 1 := by
+    simp [binaryDigits, w, Nat.ofDigits_cons, Nat.ofDigits_replicate_zero]
+  obtain ⟨hw', hsum⟩ := isUlamWord_map_not_and_ulamResidueCount_eq.1 w hw
+  change Nat.ofDigits 2 (binaryDigits (w.map not)) + Nat.ofDigits 2 (binaryDigits w) =
+    2 ^ w.length - 1 at hsum
+  rw [hlen, hv] at hsum
+  exact ⟨mem_values.mpr ⟨w, hlen, hw, hv⟩,
+    mem_values.mpr ⟨w.map not, by simpa using hlen, hw', by omega⟩⟩
+
+-- The first gap adds to the span of the tail, with no truncation in the sorted list.
+private theorem sum_gaps (l : List ℕ) (hne : l ≠ []) (hl : l.Pairwise (· ≤ ·)) :
+    (List.zipWith (fun x y => y - x) l l.tail).sum = l.getLast hne - l.head hne := by
+  induction l with
+  | nil => contradiction
+  | cons a l ih =>
+    cases l with
+    | nil => simp
+    | cons b l =>
+      have ht := ih (by simp) hl.tail
+      simp only [List.tail_cons] at ht
+      rw [List.tail_cons, List.zipWith_cons_cons, List.sum_cons, ht, List.getLast_cons_cons]
+      have hab := (List.pairwise_cons.mp hl).1 b (by simp)
+      have hlast : b ≤ (b :: l).getLast (by simp) :=
+        hl.tail.rel_head (List.getLast_mem (l := b :: l) (by simp))
+      change b - a + ((b :: l).getLast (by simp) - b) = (b :: l).getLast (by simp) - a
+      omega
+
+private theorem gap_bounds {n : ℕ} (hn : 2 ≤ n) :
+    (1 / 4 : ℝ) * (2 ^ n / ulamWordCount n) ≤ (ulamGapMean n : ℝ) ∧
+      (ulamGapMean n : ℝ) ≤ 2 * (2 ^ n / ulamWordCount n) := by
+  have hpow : 4 ≤ (2 : ℕ) ^ n := Nat.pow_le_pow_right (by decide : 0 < 2) hn
+  obtain ⟨hone, hother⟩ := endpoint_values hn
+  have hcount : 2 ≤ ulamWordCount n := by
+    rw [← length_values, ulamValuesSorted, Finset.length_sort, ← Nat.lt_iff_add_one_le,
+      Finset.one_lt_card_iff]
+    exact ⟨1, 2 ^ n - 2, (Finset.mem_sort _).mp hone, (Finset.mem_sort _).mp hother, by omega⟩
+  let l := ulamValuesSorted n
+  have hne : l ≠ [] := List.ne_nil_of_mem hone
+  have hs : l.Pairwise (· ≤ ·) := Finset.pairwise_sort _ _
+  have hspan := sum_gaps l hne hs
+  have hhead : l.head hne ≤ 1 := hs.rel_head hone
+  have hlast : 2 ^ n - 2 ≤ l.getLast hne := hs.rel_getLast hother
+  obtain ⟨w, hwlen, _, hwval⟩ := mem_values.mp (List.getLast_mem hne)
+  have hlt : l.getLast hne < 2 ^ n := by
+    rw [← hwval, ← hwlen]
+    simpa [binaryDigits] using
+      (Nat.ofDigits_lt_base_pow_length (by decide : 1 < 2) (fun _ => binaryDigits_lt (w := w)))
+  let s := (List.zipWith (fun x y : ℕ => y - x) l l.tail).sum
+  have hspan_lo : 2 ^ n - 3 ≤ s := by dsimp only [s]; omega
+  have hspan_hi : s ≤ 2 ^ n - 1 := by dsimp only [s]; omega
+  have hslo : 2 ^ n ≤ 4 * s := by omega
+  have hshi : s ≤ 2 ^ n := hspan_hi.trans (Nat.sub_le _ _)
+  have hlo : (2 : ℝ) ^ n ≤ 4 * (s : ℝ) := by exact_mod_cast hslo
+  have hhi : (s : ℝ) ≤ 2 ^ n := by exact_mod_cast hshi
+  have hc : (2 : ℝ) ≤ ulamWordCount n := by exact_mod_cast hcount
+  have hc' : 0 < (ulamWordCount n : ℝ) - 1 := by linarith
+  rw [ulamGapMean, Rat.cast_div, Rat.cast_sub, Rat.cast_one, Rat.cast_natCast, Rat.cast_natCast,
+    length_values]
+  change _ ≤ (s : ℝ) / ((ulamWordCount n : ℝ) - 1) ∧ _
+  constructor
+  · calc
+      (1 / 4 : ℝ) * (2 ^ n / ulamWordCount n) = (2 ^ n / 4) / ulamWordCount n := by ring
+      _ ≤ (s : ℝ) / ulamWordCount n :=
+        div_le_div_of_nonneg_right ((div_le_iff₀ (by norm_num)).2 (by linarith)) (by positivity)
+      _ ≤ (s : ℝ) / ((ulamWordCount n : ℝ) - 1) :=
+        div_le_div_of_nonneg_left (by positivity) hc' (by linarith)
+  · calc
+      (s : ℝ) / ((ulamWordCount n : ℝ) - 1) ≤ 2 ^ n / ((ulamWordCount n : ℝ) - 1) :=
+        div_le_div_of_nonneg_right hhi hc'.le
+      _ ≤ 2 ^ n / ((ulamWordCount n : ℝ) / 2) :=
+        div_le_div_of_nonneg_left (by positivity) (by linarith) (by linarith)
+      _ = 2 * (2 ^ n / ulamWordCount n) := by ring
+
+end ulamDensity_inv_isTheta_ulamGapMean
+
+open ulamDensity_inv_isTheta_ulamGapMean in
+/-- **The inverse Ulam density has the order of the mean gap.** For $n \in \mathbb{N}$ let $U_n$
+be the set of Ulam words of length $n$, and let $\mu_g(n)$ be the mean gap of the binary values
+of the words in $U_n$. Then $2^n / |U_n|$ (the reciprocal of the density $|U_n| / 2^n$) and
+$\mu_g(n)$ have the same order of growth as $n \to \infty$: there are constants $c, C > 0$ such
+that $c \, \mu_g(n) \le 2^n / |U_n| \le C \, \mu_g(n)$ for all sufficiently large $n$.
+
+Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
+*Distributions of Ulam Words up to Length 30*, INTEGERS 25 (2025), Article A102, Theorem 4 (first
+sentence). -/
+public theorem ulamDensity_inv_isTheta_ulamGapMean :
+    (fun n : ℕ => (2 : ℝ) ^ n / ulamWordCount n) =Θ[Filter.atTop]
+      fun n => (ulamGapMean n : ℝ) := by
+  have h : ∀ᶠ n : ℕ in Filter.atTop,
+      (1 / 4 : ℝ) * ‖(2 : ℝ) ^ n / ulamWordCount n‖ ≤ ‖(ulamGapMean n : ℝ)‖ ∧
+        ‖(ulamGapMean n : ℝ)‖ ≤ 2 * ‖(2 : ℝ) ^ n / ulamWordCount n‖ := by
+    filter_upwards [Filter.eventually_ge_atTop (2 : ℕ)] with n hn
+    have hb := gap_bounds hn
+    have hd : 0 ≤ (2 : ℝ) ^ n / ulamWordCount n := by positivity
+    have hg : 0 ≤ (ulamGapMean n : ℝ) := le_trans (mul_nonneg (by norm_num) hd) hb.1
+    rwa [Real.norm_of_nonneg hd, Real.norm_of_nonneg hg]
+  exact ⟨Asymptotics.isBigO_iff''.2 ⟨1 / 4, by norm_num, h.mono fun _ hn => hn.1⟩,
+    Asymptotics.isBigO_iff.2 ⟨2, h.mono fun _ hn => hn.2⟩⟩
 
 end
 
