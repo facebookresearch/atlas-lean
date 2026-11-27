@@ -1,6 +1,6 @@
 # Rate of convergence of the power iterates
 
-Let $A$ be an $n \times n$ complex matrix with distinct eigenvalues $\lambda_1, \dots, \lambda_p$, where $\lambda_1$ is the only eigenvalue of largest modulus, $\lambda_1 \ne 0$, and $\lambda_1$ is semisimple, and let $P_1$ be its [spectral projector](spectral-projectors.md). Let $\rho = \max_{i \ge 2} |\lambda_i|/|\lambda_1| < 1$, and let $m + 1$ be the largest index $l_i$ among the eigenvalues $\lambda_i$, $i \ge 2$, with $|\lambda_i| = \rho |\lambda_1|$ (if $p = 1$, put $\rho = 0$ and $m = 0$). Then there is a constant $C$, depending on $A$ only, such that for every $v_0 \in \mathbb{C}^n$ and $k \ge n$
+Let $A$ be an $n \times n$ complex matrix with distinct eigenvalues $\lambda_1, \dots, \lambda_p$, where $\lambda_1$ is the only eigenvalue of largest modulus, $\lambda_1 \ne 0$, and $\lambda_1$ is semisimple, and let $P_1$ be its [spectral projector](spectral-projectors.md). Let $\rho = \max_{i \ge 2} |\lambda_i|/|\lambda_1| < 1$, and let $m + 1$ be the largest index $l_i$ among the eigenvalues $\lambda_i$, $i \ge 2$, with $|\lambda_i| = \rho |\lambda_1|$ (if $p = 1$, put $\rho = 0$ and $m = 0$). Then for every norm $\|\cdot\|$ on $\mathbb{C}^n$ there is a constant $C$, depending on $A$ and the norm, such that for every $v_0 \in \mathbb{C}^n$ and $k \ge n$
 
 $$\Big\| \frac{A^k v_0}{\lambda_1^k} - P_1 v_0 \Big\| \le C\, k^{m} \rho^{k}\, \|v_0\| .$$
 

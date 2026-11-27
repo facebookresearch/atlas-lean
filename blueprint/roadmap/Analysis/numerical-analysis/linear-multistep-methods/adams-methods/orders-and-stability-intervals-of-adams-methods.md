@@ -1,6 +1,6 @@
 # Orders, error constants and stability intervals of the Adams methods
 
-For $k = 1, 2, 3, 4$ the $k$-step [Adams methods](adams-methods.md) have the following orders $p$, error constants $C_{p+1}$ and intervals of absolute stability $(\alpha, 0)$.
+For $k = 1, 2, 3, 4$ the $k$-step [Adams methods](adams-methods.md) have the following orders $p$, error constants $C_{p+1}$ and intervals of absolute stability $(\alpha, 0)$. The error constants are for the coefficients as written, with $\alpha_k = 1$ and hence $\sigma(1) = 1$; multiplying all coefficients by $s$ multiplies $C_{p+1}$ by $s$.
 
 | $k$ | Adams–Bashforth | $p$ | $C_{p+1}$ | $\alpha$ | Adams–Moulton | $p$ | $C_{p+1}$ | $\alpha$ |
 |---|---|---|---|---|---|---|---|---|

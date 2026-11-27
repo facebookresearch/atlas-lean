@@ -18,6 +18,7 @@ A posteriori bounds for computed eigenvalues: for a Hermitian matrix, a unit vec
 - [Convergence of the power method with max-component normalization](normalized-power-method-converges.md)
 - [Convergence of subspace iteration](subspace-iteration-converges.md)
 - [Wielandt deflation](wielandt-deflation.md)
+- [Gerschgorin's circle theorem](gerschgorin-circle-theorem.md)
 
 ## Related topics
 

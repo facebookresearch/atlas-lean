@@ -4,7 +4,7 @@ For a unit vector $u \in \mathbb{R}^n$, the Householder reflection $H = I - 2uu^
 
 $$H x = c\, e_1 .$$
 
-The choice $c = -\operatorname{sign}(x_1)\|x\|_2$, with $\operatorname{sign}(0) = 1$, that is $y = (x_1 + \operatorname{sign}(x_1)\|x\|_2, x_2, \dots, x_n)$, avoids cancellation in forming $y$.
+The choice $c = -\operatorname{sign}(x_1)\|x\|_2$, with $\operatorname{sign}(0) = 1$, that is $y = (x_1 + \operatorname{sign}(x_1)\|x\|_2, x_2, \dots, x_n)$, avoids cancellation when $y$ is formed in floating-point arithmetic.
 
 ## Related topics
 
