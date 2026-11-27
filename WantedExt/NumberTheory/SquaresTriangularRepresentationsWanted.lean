@@ -65,19 +65,6 @@ public theorem_wanted sum_sumOfSquaresRepCount_window {n p : ℕ} (hn : 1 ≤ n)
     (hp2 : p ≠ 2) (hpn : n + 1 ≤ p - 1) {s : ℤ} (hs : (p : ℤ) ≤ s) :
     (p : ℤ) ∣ ∑ i ∈ Finset.range p, sumOfSquaresRepCount (s - i) n
 
-/-- **Window criterion for representability by triangular numbers.** For an integer $k$, let
-$t_k(n)$ be the coefficient of $q^n$ in $\psi(q)^k$, where $\psi(q) = \sum_{m \ge 0} q^{m(m+1)/2}$.
-Let $n \ge 1$ and let $p$ be an odd prime with $p - 1 \ge n + 1$. For every integer $s$, if $p$ does
-not divide $\sum_{i=1}^{p-1} t_{s-i}(n)$, then $t_s(n) \ne 0$.
-
-Source: Alegri and Christopher, *On Formulas, Recurrences, and Congruences for
-Representations of Integers as Sums of Squares and Triangular Numbers*, INTEGERS
-26 (2026), Article A93, Theorem 8 (`integers-2026-A93-thm-8`). -/
-public theorem_wanted sumOfTriangularRepCount_ne_zero_of_window {n p : ℕ} (hn : 1 ≤ n)
-    (hp : p.Prime) (hp2 : p ≠ 2) (hpn : n + 1 ≤ p - 1) (s : ℤ)
-    (h : ¬ (p : ℤ) ∣ ∑ i ∈ Finset.Icc 1 (p - 1), sumOfTriangularRepCount (s - i) n) :
-    sumOfTriangularRepCount s n ≠ 0
-
 /-- **Logarithmic coefficients of the triangular theta series.** For a natural number $n$, let
 $b_n$ be the rational number
 $b_n = \sum_{d \mid n,\ n/d \text{ odd}} 1/d - \sum_{d \mid n,\ n/d \text{ even}} 1/d$, where $d$
