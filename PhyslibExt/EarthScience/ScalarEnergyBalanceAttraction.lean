@@ -56,10 +56,12 @@ open scoped Topology
 
 /-! ## A. Local attraction -/
 
-/-- If the net flux is continuously differentiable near an equilibrium `Tstar` and has negative
-slope there, then sufficiently close initial temperatures give unique forward solutions of
-`C * T' = F(T)` with a uniform exponential decay bound. The derivative at zero is taken within
-`[0, ∞)` and uniqueness is agreement on that same half-line. -/
+/-- Fix a heat capacity `C > 0`. Suppose the net flux `F` is continuously differentiable near
+`Tstar`, with `F(Tstar) = 0` and `F′(Tstar) < 0`. There are constants `δ, K, α > 0` such that
+for every `T₀` with `|T₀ - Tstar| < δ`, the equation `C * T' = F(T)` has a solution on `[0, ∞)`
+with `T(0) = T₀` and `|T(t) - Tstar| ≤ K * exp(-α * t) * |T₀ - Tstar|` for every `t ≥ 0`.
+The derivative at zero is taken from the right. Any other forward solution with the same initial
+temperature agrees with `T` on `[0, ∞)`. -/
 lemma local_attraction_in_a_scalar_energy_balance_model {F : ℝ → ℝ} {C Tstar : ℝ}
     (hC : 0 < C) (hF : ContDiffAt ℝ 1 F Tstar) (heq : F Tstar = 0)
     (hneg : deriv F Tstar < 0) :
