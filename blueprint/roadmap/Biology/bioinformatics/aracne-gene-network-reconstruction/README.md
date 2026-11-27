@@ -5,3 +5,5 @@
 - [ARACNE keeps only edges of a tree network](aracne-le-of-is-tree.md)
 - [ARACNE recovers tree networks exactly](aracne-eq-of-is-tree.md)
 - [Chow–Liu trees survive ARACNE](le-aracne-of-is-max-weight-spanning-tree.md)
+
+- [Graphical lasso for sparse inverse covariance estimation](graphical-lasso-sparse-inverse-covariance/README.md)
