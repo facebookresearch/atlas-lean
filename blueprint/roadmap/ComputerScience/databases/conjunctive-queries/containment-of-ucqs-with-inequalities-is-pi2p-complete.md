@@ -15,10 +15,10 @@ $q'_j$ maps to $h(q_i^+)$.
 - [Conjunctive queries with inequalities](conjunctive-queries-with-inequalities.md)
 - [The universal levels of the polynomial hierarchy](../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/pi-k.md)
 - [Polynomial-time many-one reduction](../../../TheoryOfComputation/np-completeness/cook-levin/binary-encoding-of-cnf-formulas/poly-many-one-red.md)
+- [Homomorphism criterion for containment of conjunctive queries with inequalities](containment-of-cqs-with-inequalities-via-homomorphic-images.md)
 
 ## Proof depends on
 
-- [Homomorphism criterion for containment of conjunctive queries with inequalities](containment-of-cqs-with-inequalities-via-homomorphic-images.md)
 - [Containment of conjunctive queries with inequalities is Π2p-complete](containment-of-cqs-with-inequalities-is-pi2p-complete.md)
 
 ## Sources

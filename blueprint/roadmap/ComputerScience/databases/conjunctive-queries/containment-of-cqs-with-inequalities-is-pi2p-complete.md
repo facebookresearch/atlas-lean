@@ -18,10 +18,10 @@ inequalities, and links it under `## Proof depends on`; the truth of $\forall \b
 - [Conjunctive queries with inequalities](conjunctive-queries-with-inequalities.md)
 - [The universal levels of the polynomial hierarchy](../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/pi-k.md)
 - [Polynomial-time many-one reduction](../../../TheoryOfComputation/np-completeness/cook-levin/binary-encoding-of-cnf-formulas/poly-many-one-red.md)
+- [Homomorphism criterion for containment of conjunctive queries with inequalities](containment-of-cqs-with-inequalities-via-homomorphic-images.md)
 
 ## Proof depends on
 
-- [Homomorphism criterion for containment of conjunctive queries with inequalities](containment-of-cqs-with-inequalities-via-homomorphic-images.md)
 - [$\mathrm{QSAT}_k$ is $\Sigma_k^p$-complete, uniformly in $k$](../../../TheoryOfComputation/completeness-other-classes/quantified-boolean-formulas-with-bounded-alterna/qsat-k-sigma-k-complete.md)
 
 ## Sources

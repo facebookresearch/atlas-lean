@@ -14,11 +14,11 @@ unsound (Appendix A of the journal manuscript) and is not used here.
 - [$\#P$-complete functions](../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/sharp-pcomplete.md)
 - [The complexity class P](../../../TheoryOfComputation/complexity-classes/the-classes-p-np-and-conp/p.md)
 - [Minimizations and cores of conjunctive queries](../conjunctive-queries/cores-and-minimization/minimizations-and-cores-of-conjunctive-queries.md)
+- [Dichotomy for unions of conjunctive queries on tuple-independent probabilistic databases](dichotomy-for-ucqs-on-probabilistic-databases.md)
 
 ## Proof depends on
 
 - [Conjunctive queries whose minimal equivalent query is not hierarchical are #P-hard on probabilistic databases](non-hierarchical-conjunctive-queries-are-sharp-p-hard.md)
-- [Dichotomy for unions of conjunctive queries on tuple-independent probabilistic databases](dichotomy-for-ucqs-on-probabilistic-databases.md)
 
 ## Sources
 
