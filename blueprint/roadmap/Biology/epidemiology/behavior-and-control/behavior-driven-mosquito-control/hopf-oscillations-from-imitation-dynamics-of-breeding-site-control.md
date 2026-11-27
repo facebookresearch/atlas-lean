@@ -33,6 +33,10 @@ So sustained mosquito–behavior oscillations can arise from the feedback alone,
 
 - [Statement of the local Hopf bifurcation theorem on ℝᴺ](../../../systems-biology/three-variable-repressilator/hopf-bifurcation-theorem.md)
 
+## Proof depends on
+
+- [Routh–Hurwitz criterion for cubic polynomials](../../../../Analysis/control-theory/feedback-stability-and-classical-design/routh-hurwitz-criterion-for-cubic-polynomials.md)
+
 ## Expansion
 
 With $w$ frozen, the mosquito subsystem is a stage-structured logistic model with threshold $N$ and equilibrium $L_v^* = K_v(w)(1 - 1/N)$. The behavioral equation is a replicator equation whose payoff difference changes sign at $A_v = r_c/(r_d m)$; matching this level with the mosquito equilibrium determines $w^*$, which must lie in $[0,1]$. Linearizing at $E_{05}$ gives a cubic characteristic polynomial $\lambda^3 + a_2\lambda^2 + a_1\lambda + a_0$ with $a_0, a_2 > 0$, so stability is decided by the sign of $a_2a_1 - a_0$, and a simple pair of imaginary eigenvalues crosses the axis where it vanishes.
