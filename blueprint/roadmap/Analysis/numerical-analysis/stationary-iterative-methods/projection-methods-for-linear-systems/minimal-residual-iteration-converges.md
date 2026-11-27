@@ -13,6 +13,7 @@ so the iteration converges from every starting vector.
 ## Proof depends on
 
 - [Minimal residual projection minimizes the residual](minimal-residual-projection-minimizes-the-residual.md)
+- [Rayleigh form bound on a head of the eigenbasis](../../../operator-theory/eigenvalue-inequalities/courant-fischer-min-max-theorem/rayleigh-form-ge-of-mem-head.md)
 
 ## Sources
 

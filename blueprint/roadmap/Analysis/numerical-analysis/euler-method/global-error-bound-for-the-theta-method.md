@@ -10,6 +10,10 @@ So with $e_0 = 0$ the error is $O(h^2)$ for the trapezium rule $\theta = 1/2$ an
 
 - [The θ-method](theta-method.md)
 
+## Proof depends on
+
+- [Taylor's theorem with the Lagrange remainder](../../real-functions/differential-calculus/taylor-theorem-with-lagrange-remainder.md)
+
 ## Related topics
 
 - [First-order convergence of the explicit Euler method](explicit-euler-first-order-convergence.md): the case $\theta = 0$.

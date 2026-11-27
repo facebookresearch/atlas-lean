@@ -11,6 +11,12 @@ Widely varying weights therefore force ill-conditioned interpolation.
 - [Barycentric weights](barycentric-weights.md)
 - [Lebesgue function](../../../approximation-theory/lagrange-interpolation/lebesgue-function.md)
 
+## Expansion
+
+This page becomes ready once:
+
+- Proof prerequisite: Markov's inequality for polynomial derivatives, as a page of its own: a real polynomial $p$ of degree at most $n$ satisfies $\max_{[a,b]} |p'| \le \frac{2n^2}{b - a} \max_{[a,b]} |p|$. The proof applies it to the Lagrange basis polynomials, using $|w_i / w_j| = |x_j - x_i|\,|\ell_i'(x_j)|$ for $i \ne j$.
+
 ## Sources
 
 - J.-P. Berrut and L. N. Trefethen, "Barycentric Lagrange interpolation", *SIAM Review* 46(3):501–517, 2004, Section 9.1, the Lebesgue constant (9.1), its expression through the Lagrange polynomials, and the lower bound (9.2), derived there from Markov's inequality for derivatives of polynomials. <https://people.maths.ox.ac.uk/trefethen/barycentric.pdf>
