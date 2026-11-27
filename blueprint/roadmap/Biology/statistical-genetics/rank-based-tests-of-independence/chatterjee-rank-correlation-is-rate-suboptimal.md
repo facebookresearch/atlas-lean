@@ -23,7 +23,7 @@ In both families, $H_{1,n}(\Delta_0)$ takes $\Delta = \Delta_0 n^{-1/2}$ with $\
 1. for every fixed $\Delta_0 > 0$, $\lim_{n\to\infty}\mathrm{pr}\{T_\alpha^{\xi_n} = 1 \mid H_{1,n}(\Delta_0)\} = \alpha$;
 2. for each $\beta > 0$ there is $C_\beta$ such that for $\Delta_0 > C_\beta$ and $\mu_n \in \{D_n, R_n, \tau_n^*\}$, $\lim_{n\to\infty}\mathrm{pr}\{T_\alpha^{\mu_n} = 1 \mid H_{1,n}(\Delta_0)\} \ge 1-\beta$.
 
-**Proposition (detection boundary).** Under the same assumptions, for each $\beta$ with $\alpha + \beta < 1$ there is $c_\beta > 0$ such that every size-$\alpha$ test has type-II error at least $1 - \alpha - \beta$ under $H_{1,n}(c_\beta)$ for all large $n$.
+**Proposition (detection boundary).** Under the same assumptions, for each $\beta > 0$ with $\alpha + \beta < 1$ there is $c_\beta > 0$ such that every size-$\alpha$ test has type-II error at least $1 - \alpha - \beta$ under $H_{1,n}(c_\beta)$ for all large $n$.
 
 Hence the tests based on $D_n$, $R_n$, $\tau_n^*$ are rate-optimal (they detect at the $n^{-1/2}$ boundary), while the test based on $\xi_n$ has trivial power at that scale and is rate sub-optimal.
 

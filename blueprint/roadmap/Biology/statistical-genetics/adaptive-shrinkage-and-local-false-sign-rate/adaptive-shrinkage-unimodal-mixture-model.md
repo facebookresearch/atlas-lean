@@ -13,7 +13,7 @@ Then, with $\sigma_0 := 0$, the $\hat\beta_j$ are independent with marginal like
 
 $$L(\pi) = \prod_{j=1}^J \sum_{k=0}^K \pi_k\,\mathcal N\big(\hat\beta_j; 0, \sigma_k^2 + \hat s_j^2\big),$$
 
-which is a concave function of $\pi$ on the simplex, so $\hat\pi$ solves a convex optimization problem. Given $\hat\pi$, each posterior $p(\beta_j \mid \hat\beta_j, \hat s_j, \hat\pi)$ is a mixture of a point mass at $0$ and $K$ normal distributions. In practice $\hat\pi$ maximizes a penalized likelihood that keeps $\hat\pi_0$ as large as the data allow, to avoid underestimating the null proportion.
+which is log-concave on the simplex (its logarithm $\log L(\pi) = \sum_j \log \sum_k \pi_k \mathcal{N}(\hat{\beta}_j; 0, \sigma_k^2 + \hat{s}_j^2)$ is concave in $\pi$ on the simplex), so $\hat\pi$ solves a convex optimization problem. Given $\hat\pi$, each posterior $p(\beta_j \mid \hat\beta_j, \hat s_j, \hat\pi)$ is a mixture of a point mass at $0$ and $K$ normal distributions. In practice $\hat\pi$ maximizes a penalized likelihood that keeps $\hat\pi_0$ as large as the data allow, to avoid underestimating the null proportion.
 
 ## Expansion
 

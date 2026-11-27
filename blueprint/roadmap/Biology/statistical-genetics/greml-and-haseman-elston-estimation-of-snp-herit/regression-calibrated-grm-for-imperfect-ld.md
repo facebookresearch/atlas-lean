@@ -4,7 +4,7 @@ Let $G_{jk}$ be the genetic relationship between individuals $j, k$ at the (unob
 
 $$A^*_{jk} = \begin{cases} \beta A_{jk}, & j \ne k, \\ 1 + \beta (A_{jj} - 1), & j = k. \end{cases}$$
 
-Suppose the trait follows $y = \mu \mathbf 1 + g + e$ with $\mathrm{Var}(y) = G \sigma_g^2 + I \sigma_e^2$, so that for $j \ne k$ the pairwise squared difference satisfies $E[(y_j - y_k)^2 \mid G] = 2\sigma_P^2 - 2\sigma_g^2 G_{jk}$ with $\sigma_P^2 = \sigma_g^2 + \sigma_e^2$. If $E(G_{jk} \mid A^*_{jk}) = A^*_{jk}$ (which holds when the regression of $G$ on $A$ is linear), then
+Suppose the trait follows $y = \mu \mathbf 1 + g + e$ with $\mathrm{Var}(y) = G \sigma_g^2 + I \sigma_e^2$, so that for $j \ne k$ the pairwise squared difference satisfies $E[(y_j - y_k)^2 \mid G] = 2\sigma_P^2 - 2\sigma_g^2 G_{jk}$ with $\sigma_P^2 = \sigma_g^2 + \sigma_e^2$. If $E(G_{jk} \mid A^*_{jk}) = A^*_{jk}$ (which holds when the regression of $G$ on $A$ is linear), then Assuming $G_{jj} = 1$ for every $j$ (no inbreeding at the causal variants), for $j \neq k$:
 
 $$E[(y_j - y_k)^2 \mid A^*_{jk}] = 2\sigma_P^2 - 2\sigma_g^2 A^*_{jk},$$
 
