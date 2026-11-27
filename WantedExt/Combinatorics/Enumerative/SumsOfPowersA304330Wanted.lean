@@ -70,19 +70,6 @@ noncomputable def faulhaberC (k r : ℕ) : ℚ :=
     (2 ^ (r + 1) / ((Nat.factorial (2 * m + 2) : ℚ) * (m + 1))) *
       (arrayR (k + 1) (m + 1) : ℚ) * (MetaMathlibExt.legendreStirlingFirst (m + 1) (r + 1) : ℚ)
 
-/-- **Knuth's formula for even power sums.** For natural numbers $k \ge 1$ and $n$, write
-$S_{2k}(n) = 1^{2k} + 2^{2k} + \dots + n^{2k}$ and
-$R(k, m) = \sum_{j=0}^{m} (-1)^j \binom{2m}{j} (m - j)^{2k}$. Then
-$S_{2k}(n) = \sum_{m=1}^{k} R(k, m)\, \frac{2n+1}{2m+1} \binom{n+m}{2m}$.
-
-Source: José L. Cereceda, "Sums of Powers of Integers and the
-Sequence A304330", Proposition 3. -/
-theorem_wanted powerSum_even_eq_sum (k : ℕ) (hk : 1 ≤ k) (n : ℕ) :
-    powerSum (2 * k) n =
-      ∑ m ∈ Finset.Icc 1 k,
-        (arrayR k m : ℚ) * ((2 * (n : ℚ) + 1) / (2 * (m : ℚ) + 1)) *
-          (Nat.choose (n + m) (2 * m) : ℚ)
-
 /-- **Knuth's binomial formula for the odd power sums.** For all natural numbers $k \ge 1$ and
 $n$, the power sum $S_{2k-1}(n) = 1^{2k-1} + 2^{2k-1} + \cdots + n^{2k-1}$ satisfies
 $$S_{2k-1}(n) = \sum_{m=1}^{k} R(k, m) \cdot \frac{1}{m} \binom{n + m}{2m},$$
