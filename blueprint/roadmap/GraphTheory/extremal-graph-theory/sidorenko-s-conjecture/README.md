@@ -7,6 +7,9 @@ Sidorenko's conjecture that for every bipartite graph $F$ the density $t(F, W)$ 
 - [Four-cycle density as a sum](hom-density-cycle-graph-four.md)
 - [Sidorenko's inequality for the four-cycle](hom-density-cycle-graph-four-ge.md)
 - [Sidorenko's inequality for the four-cycle, graphon form](graphon-hom-density-cycle-graph-four-ge.md)
+- [Common graph](is-common.md)
+- [Do common graphs have bounded chromatic number?](common-graphs-bounded-chromatic.md)
+- [Common graphs have unbounded chromatic number](common-graphs-bounded-chromatic-refuted.md)
 
 ## Related topics
 
