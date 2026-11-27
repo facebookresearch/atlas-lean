@@ -26,6 +26,10 @@ import MathlibExt.NumberTheory.ModularForms.QParamProduct
 The congruence for $p \equiv 5, 7 \pmod{8}$ follows by reducing the generating function to
 $\psi(q) f_2^3 / f_{2p}$ modulo $p$. In the numerator, the exponents from Ramanujan's $\psi$
 and Jacobi's cube give a quadratic form whose only zero modulo $p$ is the trivial one.
+
+The Lean helpers `Represents` and `Represents.mul`, the coefficient cases in `represents_euler`,
+and the Euler expansion, uniqueness, and nonvanishing proofs are adapted from
+`OddDistinctsPentagonalRecurrence` in this directory.
 -/
 
 open PowerSeries

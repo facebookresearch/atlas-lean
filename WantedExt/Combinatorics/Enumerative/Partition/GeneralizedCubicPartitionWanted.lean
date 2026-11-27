@@ -19,10 +19,10 @@ Modulo Primes*, INTEGERS 25 (2025), Article A20.
 
 A generalized cubic partition of `n` (Amdeberhan, Sellers, and Singh) is a partition of `n`
 whose even parts may appear in `c ≥ 1` colors; `a_c(n)` counts them, with
-`∑ a_c(n) qⁿ = 1/(f_1 f_2^{c-1})`, where `f_k = (q^k; q^k)_∞` is `qEulerProduct k`, written
-`𝔣 k` below. We define `a_c(n)` as the `n`th coefficient of that quotient in `ℤ⟦X⟧` (the
-denominator has constant coefficient `1`, so it is a unit). `c = 1` gives the partition
-function and `c = 2` Chan's cubic partitions.
+`∑ a_c(n) qⁿ = 1/(f_1 f_2^{c-1})`, where `f_k = (q^k; q^k)_∞` is `qEulerProduct k`.
+The imported `GeneralizedCubicPartition` module defines `a_c(n)` as the `n`th coefficient of
+that quotient in `ℤ⟦X⟧` (the denominator has constant coefficient `1`, so it is a unit).
+`c = 1` gives the partition function and `c = 2` Chan's cubic partitions.
 -/
 
 namespace MetaMathlibExt
