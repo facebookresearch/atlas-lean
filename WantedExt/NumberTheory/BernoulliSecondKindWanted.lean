@@ -46,6 +46,8 @@ public import MathlibExt.NumberTheory.Bernoulli.BernoulliSecondKindStirling
 public import MathlibExt.NumberTheory.Bernoulli.BernoulliStirlingSum
 public import MathlibExt.NumberTheory.Bernoulli.StirlingInversion
 public import MathlibExt.NumberTheory.Bernoulli.WeightedStirlingSum
+public import MathlibExt.NumberTheory.BernoulliSecondKindBernoulliSecondEqNegSum
+public import MathlibExt.NumberTheory.Bernoulli.BernoulliSecondKindStirlingSum
 
 set_option autoImplicit false
 
@@ -68,19 +70,6 @@ theorem_wanted bernoulli_poly_eq (n : ℕ) :
         ∑ k ∈ Finset.Icc 1 n, Polynomial.C
           ((n : ℚ) / k * (Nat.stirlingSecond (n - 1) (k - 1) : ℚ)) *
           descPochhammer ℚ k
-
-/-- **Bernoulli numbers of the second kind in terms of Bernoulli numbers.** Let $B_m$ be the
-Bernoulli numbers (with $B_1 = -1/2$), $B_m^*$ the Bernoulli numbers of the second kind and
-$s(m, j)$ the signed Stirling numbers of the first kind. For every natural number $n \ge 1$,
-$$B_n^* = -\sum_{k=1}^{n} \frac{n}{k} \, s(n-1, k-1) \, B_k.$$
-
-Source: Bakir Farhi, "Formulas Involving Bernoulli and
-Stirling Numbers of Both Kinds", Theorem 4. -/
-theorem_wanted bernoulliSecond_eq_neg_sum (n : ℕ)
-    (hn : 1 ≤ n) :
-    MetaMathlibExt.bernoulliSecond n =
-      -∑ k ∈ Finset.Icc 1 n, (n : ℚ) / k *
-        (MetaMathlibExt.signedStirlingFirst (n - 1) (k - 1) : ℚ) * bernoulli k
 
 /-- **Falling factorials in the Bernoulli polynomial basis.** Let $B_m^*$ be the Bernoulli
 numbers of the second kind, $B_k(X)$ the Bernoulli polynomials over $\mathbb{Q}$ (so that
@@ -133,18 +122,6 @@ theorem_wanted sum_stirlingSecond_signed_div_delta (n k : ℕ)
           (MetaMathlibExt.signedStirlingFirst i k : ℚ) / i =
       (1 / (n : ℚ)) * (Nat.choose n k : ℚ) * bernoulli (n - k) +
         (if n - 1 = k then 1 else 0)
-
-/-- **Bernoulli numbers of the second kind via Stirling numbers of the first kind.** Let $B_m^*$
-be the Bernoulli numbers of the second kind and $s(m, j)$ the signed Stirling numbers of the
-first kind. For every natural number $n$,
-$$B_n^* = \sum_{i=0}^{n} \frac{s(n, i)}{i+1}.$$
-
-Source: Bakir Farhi, "Formulas Involving Bernoulli and
-Stirling Numbers of Both Kinds", Proposition 11. -/
-theorem_wanted bernoulliSecond_eq_sum (n : ℕ) :
-    MetaMathlibExt.bernoulliSecond n =
-      ∑ i ∈ Finset.range (n + 1),
-        (MetaMathlibExt.signedStirlingFirst n i : ℚ) / (i + 1)
 
 /-- **Shifted Stirling convolution as a Bernoulli number of the second kind.** Let $s(m, j)$ be
 the signed Stirling numbers of the first kind, $S(m, j)$ the Stirling numbers of the second kind

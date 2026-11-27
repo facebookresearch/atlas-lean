@@ -1,0 +1,21 @@
+# Trinets and cut-arc sets of a phylogenetic network
+
+Let $X$ be a finite set with $|X| \ge 2$. A **rooted phylogenetic network** on $X$ is a directed acyclic graph with a single vertex of in-degree $0$ (the root) whose out-degree-$0$ vertices (the leaves) are bijectively labelled by $X$, and which has no vertex of in-degree $1$ and out-degree $1$ (no subdivision vertices) and a root of out-degree at least $2$ (no unary root stem). These are the source's networks; a graph with a subdivision vertex or a root stem is not a network here, which matters because suppressing such vertices does not change any exhibited trinet. It is **binary** if every vertex has in-degree and out-degree at most $2$ and every vertex of in-degree $2$ (a reticulation) has out-degree $1$. Write $u \le_N v$ if there is a directed path from $u$ to $v$ (or $u = v$).
+
+**Biconnected components and recoverability.** An arc is a *cut-arc* if deleting it disconnects the underlying undirected graph; each cut-arc is a trivial biconnected component. A nontrivial biconnected component $B$ is *redundant* if it has exactly one outgoing arc, and *strongly redundant* if it has exactly one outgoing arc $(u, v)$ and every leaf lies below $v$. $N$ is **recoverable** if it has no strongly redundant biconnected component. The network is *level-$k$* if every biconnected component contains at most $k$ reticulations.
+
+**Exhibited trinets.** For $A \subseteq X$, the *lowest stable ancestor* $\mathrm{LSA}(A)$ is the vertex $w \notin A$ through which every root-to-$x$ path passes for all $x \in A$, chosen lowest. For $\{x, y, z\} \subseteq X$, the **trinet on $\{x, y, z\}$ exhibited by $N$** is obtained by deleting every vertex not on a path from $\mathrm{LSA}(\{x, y, z\})$ to $x$, $y$ or $z$, then repeatedly suppressing in-degree-$1$ out-degree-$1$ vertices and parallel arcs and deleting an in-degree-$0$ out-degree-$1$ root, so that the result is again a rooted phylogenetic network on $\{x, y, z\}$ in the above sense. Write $\mathrm{Tn}(N)$ for the set of all trinets exhibited by $N$.
+
+**Cut-arc sets.** $A \subseteq X$ is a **CA-set** of $N$ if there is a cut-arc $(u, v)$ with $A = \{x \in X : v \le_N x\}$.
+
+**Theorem (trinets detect cut-arcs).** Let $N$ be a recoverable binary phylogenetic network on $X$ and $\emptyset \ne A \subsetneq X$. Then $A$ is a CA-set of $N$ if and only if $|A| = 1$, or for all $z \in X \setminus A$ and all distinct $x, y \in A$, the pair $\{x, y\}$ is a CA-set of the trinet on $\{x, y, z\}$ exhibited by $N$.
+
+**Theorem (decomposition).** For each nontrivial biconnected component $B$ of $N$, let $N_B$ be the network obtained by keeping $B$ and replacing the part of $N$ below each outgoing cut-arc of $B$ by a single leaf. A recoverable binary phylogenetic network $N$ on $X$ with $|X| \ge 3$ is encoded by its trinets (no recoverable $N' \ne N$ has $\mathrm{Tn}(N') = \mathrm{Tn}(N)$, equality meaning a leaf-label-preserving graph isomorphism) if and only if, for every nontrivial biconnected component $B$ of $N$ with at least four outgoing cut-arcs, $N_B$ is encoded by $\mathrm{Tn}(N_B)$.
+
+## Expansion
+
+If $A$ is the leaf set below a cut-arc $(u, v)$, every trinet containing two leaves of $A$ and one outside leaf inherits the cut-arc (restriction preserves CA-sets), which gives the forward direction. Conversely, the trinet conditions force all leaves of $A$ to hang below a common arc whose removal separates them from every other leaf; recoverability rules out the strongly redundant components that could hide this arc. Once the cut-arcs, and hence the biconnected components and their outgoing leaf sets, are known from $\mathrm{Tn}(N)$, the network is reassembled component by component. A component with at most three outgoing cut-arcs is seen whole in a single trinet, so only components with four or more outgoing arcs need a separate argument. This reduces the encoding question to *simple* networks, whose only cut-arcs are pendant arcs.
+
+## Sources
+
+- L. van Iersel and V. Moulton, "Trinets encode tree-child and level-2 phylogenetic networks", Journal of Mathematical Biology 68 (2014), <https://doi.org/10.1007/s00285-013-0683-5>. Section 2 (definitions, Definition 1 of CA-sets) and Section 3, Theorems 1 and 2.
