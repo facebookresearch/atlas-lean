@@ -241,7 +241,7 @@ theorem cif_phMeasure_pos (β x : Fin p → ℝ) {t : ℝ} (ht : 0 < t) :
   have h3 := Real.exp_lt_exp.2 (neg_lt_zero.2 h2)
   rwa [Real.exp_zero] at h3
 
-/-- **The competing cause occurs**: `P(J = false) ≥ exp (-exp ⟪β, x⟫) > 0`. -/
+/-- **The competing cause occurs**: `P(J = false) > 0`. -/
 theorem measureReal_competing_pos (β x : Fin p → ℝ) :
     0 < (phMeasure β x).real {ω | phCause ω = false} := by
   have hs : {ω : ℝ | phCause ω = false} = (Iio 1)ᶜ := by

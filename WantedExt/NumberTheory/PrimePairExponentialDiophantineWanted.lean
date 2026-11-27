@@ -9,8 +9,9 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.Data.Nat.Prime.Defs
 public import Mathlib.Algebra.Order.Ring.Int
+public import Mathlib.Data.Nat.Prime.Defs
+public import MathlibExt.NumberTheory.PrimePairExponentialDiophantinePrimePairPowAddTwoPowOddMulPowNeSq
 public import MathlibExt.NumberTheory.PrimePairOneAddTwoPowMulPowEqSq
 public import MathlibExt.NumberTheory.PrimePairPowAddPowEqSq
 public import MathlibExt.NumberTheory.PrimePairPowAddTwoPowEvenMulPowEqSq
@@ -26,8 +27,10 @@ public import MathlibExt.NumberTheory.TwoAddSevenPowEqSqIff
 
 Statements from Jing Zhang and Yuan Li, *On the Equation
 (-1)^α p^x + (-1)^β (2^k(2p - 1))^y = z^2 for Prime Pairs (p, 2p - 1)*, INTEGERS 24 (2024),
-Article A64. All unknowns `x`, `y`, `z` are non-negative integers; equations with a
-subtraction are read in `ℤ`.
+Article A64. The statement `prime_pair_pow_add_two_pow_odd_mul_pow_ne_sq` is proved in
+`MathlibExt.NumberTheory.PrimePairExponentialDiophantinePrimePairPowAddTwoPowOddMulPowNeSq`.
+All unknowns `x`, `y`, `z` are non-negative integers; equations with a subtraction are read
+in `ℤ`.
 -/
 
 namespace MetaMathlibExt
@@ -68,17 +71,6 @@ Prime Pairs (p, 2p - 1)*, INTEGERS 24 (2024), Article A64, Lemma 9. -/
 theorem_wanted two_mul_sq_add_one_eq_three_pow_iff (x y : ℕ) :
     2 * x ^ 2 + 1 = 3 ^ y ↔
       (x, y) = (0, 0) ∨ (x, y) = (1, 1) ∨ (x, y) = (2, 2) ∨ (x, y) = (11, 5)
-
-/-- **No squares of the form $p^x + (2^{2k+1}(2p - 1))^y$ for prime pairs with
-$p \equiv 5, 7 \pmod 8$.** Let $p$ be a prime with $p \equiv 5 \pmod 8$ or $p \equiv 7 \pmod 8$
-such that $2p - 1$ is prime. Then for all non-negative integers $k$, $x$, $y$ and $z$,
-$p^x + (2^{2k+1}(2p - 1))^y \ne z^2$.
-
-Source: Jing Zhang and Yuan Li, *On the Equation (-1)^α p^x + (-1)^β (2^k(2p - 1))^y = z^2 for
-Prime Pairs (p, 2p - 1)*, INTEGERS 24 (2024), Article A64, Theorem 2. -/
-theorem_wanted prime_pair_pow_add_two_pow_odd_mul_pow_ne_sq {p : ℕ} (hp : p.Prime)
-    (hq : (2 * p - 1).Prime) (hp8 : p % 8 = 5 ∨ p % 8 = 7) (k x y z : ℕ) :
-    p ^ x + (2 ^ (2 * k + 1) * (2 * p - 1)) ^ y ≠ z ^ 2
 
 /-- **Squares of the form $(2p - 1)^x - p^y$ for prime pairs.** Let $p$ be a prime with
 $p \equiv 3 \pmod 4$ such that $2p - 1$ is prime. Then non-negative integers $x$, $y$ and $z$
