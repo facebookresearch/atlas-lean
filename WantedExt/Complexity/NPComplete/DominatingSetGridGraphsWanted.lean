@@ -21,7 +21,7 @@ public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.DominatingSetWanted
+public import CSLibExt.Complexity.NPComplete.DominatingSetDefs
 public import WantedExt.Complexity.NPComplete.GridGraphHamiltonianCircuitWanted
 
 @[expose] public section
@@ -40,7 +40,7 @@ when their distance is `1`), and a positive integer `K ≤ |V|`.
 QUESTION: is there a dominating set of size `K` or less for `G`, i.e. a subset `V' ⊆ V` with
 `|V'| ≤ K` such that every vertex not in `V'` is joined to at least one member of `V'`?
 
-This is the restriction of DOMINATING SET ([GT2], `DominatingSetWanted`) to grid graphs. The grid
+This is the restriction of DOMINATING SET ([GT2], `DominatingSetDefs`) to grid graphs. The grid
 graph is given by its finite vertex set `V ⊆ ℤ²`, exactly as in
 `GridGraphHamiltonianCircuitWanted`, whose definitions are reused: the points are listed without
 repetition (`GridGraphHamiltonianCircuit.WellFormed`), an integer coordinate is a pair `(a, b)` of

@@ -3697,6 +3697,53 @@ class ScopedRows(Vault):
         sync.insert_rows(path, [self.about("Algebra/a.md")])
         self.assertEqual(path.read_text(), json.dumps(self.about("Algebra/a.md")) + "\n" + last)
 
+    def test_inserted_gives_the_bytes_insert_rows_writes_without_touching_the_links_file(self) -> None:
+        # The placement as a function of the text, for a tool that stages its writes (import_mathgraph): insert_rows
+        # writes exactly what it gives, for every kind of file, a file that is not there being the empty text. It
+        # neither reads nor writes the links file, which here holds other bytes, nor changes the rows it is given.
+        sync.LINKS.mkdir(parents=True)
+        path = sync.LINKS / "Algebra.jsonl"
+        added = [self.about(f"Algebra/{name}.md") for name in ("e", "a", "c", "d/z")]
+        given = json.dumps(added)
+        rows = [json.dumps(self.about(f"Algebra/{name}.md")) for name in ("b", "d/README", "d")]
+        for text in ("", *(separator.join(rows) + last for separator, last in
+                           (("\n", "\n"), ("\n", ""), ("\r\n", "\r\n"), ("\r\n", ""), ("\r", "\r"), ("\n", "\n\n")))):
+            with self.subTest(text=text):
+                path.write_bytes(json.dumps(self.about("Algebra/other.md")).encode("utf-8") + b"\n")
+                before = path.read_bytes(), path.stat().st_mtime_ns
+                expected = sync.inserted(text, added)
+                self.assertEqual((path.read_bytes(), path.stat().st_mtime_ns), before)
+                self.assertEqual(json.dumps(added), given)
+                if text:
+                    path.write_bytes(text.encode("utf-8"))
+                else:
+                    path.unlink()
+                sync.insert_rows(path, added)
+                self.assertEqual(path.read_bytes(), expected.encode("utf-8"))
+
+    def test_a_row_that_takes_its_subject_from_the_folder_defaults_is_placed_by_it(self) -> None:
+        # A row may take its subject from the links folder's defaults (_defaults.json), as Autoform merges them over
+        # each row: it is placed by that page, as every reader of the row sees it, so other defaults place the same
+        # rows otherwise, and inserted and insert_rows agree for each.
+        sync.LINKS.mkdir(parents=True)
+        path = sync.LINKS / "Algebra.jsonl"
+        inherited = '{"id": "af_000000000000000000000001"}'
+        explicit = json.dumps(self.about("Algebra/x.md"))
+        text = inherited + "\n" + explicit + "\n"
+        new = self.about("Algebra/c.md")
+        for default, lines in (("Algebra/a.md", [inherited, json.dumps(new), explicit]),
+                               ("Algebra/zz.md", [json.dumps(new), inherited, explicit])):
+            with self.subTest(default=default):
+                (sync.LINKS / "_defaults.json").write_text(json.dumps(
+                    {**sync.DEFAULTS, "subject": [{"type": "generic", "uri": f"../roadmap/{default}"}]}) + "\n")
+                self.assertEqual(sync.page_key(json.loads(inherited)), default)
+                self.assertEqual(sync.page_key(json.loads(explicit)), "Algebra/x.md")
+                placed = sync.inserted(text, [new])
+                self.assertEqual(placed, "".join(line + "\n" for line in lines))
+                path.write_text(text)
+                sync.insert_rows(path, [new])
+                self.assertEqual(path.read_text(), placed)
+
 
 class ScopedLayout(Vault):
     def test_a_scoped_run_passes_over_generate_wikis_parts_in_the_folders_it_makes(self) -> None:
@@ -3730,8 +3777,8 @@ class ScopedLayout(Vault):
 
 
 class ScopedRun(unittest.TestCase):
-    """declarations --base, the run a pull request makes, on a repository of a few files with a git history: a base
-    commit, then the pull request's changes in the working tree."""
+    """declarations --base, the run a graph pull request or a graph-sync batch makes, on a repository of a few files
+    with a git history: a base commit, then the pull request's changes in the working tree."""
 
     TAXONOMY = {"schema": wiki.TAXONOMY_SCHEMA, "regions": {"Algebra & Number Theory": ["Algebra"]},
                 "subjects": {"Algebra": {"title": "Algebra", "description": "Operations.", "fields": [
@@ -3866,6 +3913,25 @@ class ScopedRun(unittest.TestCase):
         self.assertEqual(report["digests"], {"Ext.fresh": sync.digest("A new result.")})
         self.assertIn(f"  python3 scripts/sync_wiki.py declarations --base {self.base}\n", out)
         self.assertEqual(self.tree(), before)
+
+    def test_a_withheld_declaration_gets_no_page_and_keeps_its_digest(self) -> None:
+        # As a graph-sync batch withholds a declaration that may state a planned page a merged pull request names: no
+        # page, as for a held one, its digest written all the same; the check agrees only given the same list.
+        self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n"
+                         "/-- Another result. -/\ntheorem other : True := trivial\n\n")
+        status, out, err, report = self.run_sync("--withhold", "Ext.fresh", "--withhold", "Ext.lagrange")
+        self.assertEqual(status, 0, err)
+        self.assertEqual((report["missing"], report["withheld"]), (["Ext.other"], ["Ext.fresh"]))
+        self.assertIn("Of them, those withheld, so with no page: 1\n  Ext.fresh\n", out)
+        roadmap = self.root / "blueprint" / "roadmap"
+        self.assertEqual(list(roadmap.rglob("fresh.md")), [])
+        self.assertTrue((roadmap / "Algebra/groups/group-basics/other.md").is_file())
+        state = json.loads((self.root / "scripts/wiki-sync.json").read_text())["docstrings"]
+        self.assertEqual(state["Ext.fresh"], sync.digest("A new result."))
+        status, out, err, report = self.run_sync("--check", "--withhold", "Ext.fresh")
+        self.assertEqual((status, report["in_step"], report["wiki_changes"]), (0, True, "sync"), out + err)
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["missing"], report["wiki_changes"]), (1, ["Ext.fresh"], "other"))
 
     def test_a_docstring_edit_rewrites_its_digest_and_names_its_page(self) -> None:
         self.groups(lagrange="The order of a subgroup divides the order of a finite group.")
