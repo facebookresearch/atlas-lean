@@ -275,4 +275,80 @@ theorem tor_object_nonzero :
 theorem nonflat_coefficient : ¬ Module.Flat ℤ (ZMod 2) :=
   MathlibExtTest.BalancedTensorConnecting.nonflat_left_coefficient
 
+private def scaleChain (z : ℤ) : P ⟶ P := z • 𝟙 P
+
+private theorem scaleChain_f (z i : ℤ) :
+    (scaleChain z).f i = z • 𝟙 (P.X i) := by
+  simp only [scaleChain, HomologicalComplex.zsmul_f_apply, HomologicalComplex.id_f]
+
+private abbrev scaleImage (z : ℤ) :=
+  ((HomologicalComplex.boundariesCyclesHomologySequenceFunctor
+    (C := ModuleCat.{0} ℤᵐᵒᵖ) («c» := c) 0 (-1)).map (scaleChain z)).τ₁
+
+private theorem scaleImage_eq (z : ℤ) : scaleImage z = z • 𝟙 B := by
+  apply (cancel_mono (Abelian.image.ι f)).1
+  rw [HomologicalComplex.boundariesCyclesHomologySequenceFunctor_map_image_ι]
+  simp only [scaleChain_f, comp_zsmul, comp_id, zsmul_comp, id_comp]
+
+private abbrev tensorScaleImage (z : ℤ) :=
+  ((ModuleCat.BalancedTensor.groupBifunctor ℤ).map (scaleImage z)).app N
+
+private theorem tensorScaleImage_eq (z : ℤ) : tensorScaleImage z = z • 𝟙 T := by
+  let F : ModuleCat.{0} ℤᵐᵒᵖ ⥤ AddCommGrpCat.{0} :=
+    (ModuleCat.BalancedTensor.groupBifunctor ℤ).flip.obj N
+  let : F.Additive :=
+    Functor.LeftDerivedBalance.flippedObjAdditive (ModuleCat.BalancedTensor.groupBifunctor ℤ) N
+  change F.map (scaleImage z) = z • 𝟙 (F.obj B)
+  rw [scaleImage_eq, Functor.map_zsmul, Functor.map_id]
+
+private theorem tensorScaleImage_value (z : ℤ) :
+    sourceEvaluate.hom ((tensorScaleImage z).hom sourceOne) = (z : ZMod 2) := by
+  rw [tensorScaleImage_eq, AddCommGrpCat.hom_zsmul, AddCommGrpCat.hom_id]
+  change sourceEvaluate.hom (z • sourceOne) = _
+  rw [map_zsmul, sourceOne_value]
+  simp only [zsmul_eq_mul, mul_one]
+
+private abbrev torScale (z : ℤ) :=
+  ((ModuleCat.BalancedTensor.torFirst ℤ 1).map
+    (HomologicalComplex.homologyMap (scaleChain z) (-1))).app N
+
+private theorem torScale_boundary_value (z : ℤ) :
+    sourceEvaluate.hom
+      ((torBoundary ℤ P N 0 (-1) incoming).hom ((torScale z).hom torClass)) =
+        (z : ZMod 2) := by
+  have h := ConcreteCategory.congr_hom
+    (torBoundary_naturality ℤ N 0 (-1) incoming (scaleChain z)) torClass
+  change (torBoundary ℤ P N 0 (-1) incoming).hom ((torScale z).hom torClass) =
+    (tensorScaleImage z).hom
+      ((torBoundary ℤ P N 0 (-1) incoming).hom torClass) at h
+  rw [torClass_boundary] at h
+  exact (congrArg sourceEvaluate.hom h).trans (tensorScaleImage_value z)
+
+/-- At integral term zero, the multiply-by-three chain map sends `1` to `3`. -/
+example : ((scaleChain 3).f 0).hom (1 : ℤ) = 3 := by
+  rw [scaleChain_f, ModuleCat.hom_zsmul, ModuleCat.hom_id]
+  change (3 : ℤ) • (1 : ℤ) = 3
+  norm_num [zsmul_eq_mul]
+
+/-- The induced first-Tor map for multiplication by three retains the nonzero boundary value. -/
+example : sourceEvaluate.hom
+    ((torBoundary ℤ P N 0 (-1) incoming).hom ((torScale 3).hom torClass)) = 1 := by
+  have h := torScale_boundary_value 3
+  norm_num at h
+  exact h
+
+/-- Multiplication by two on the integral complex kills the detected tensor-boundary value. -/
+example : sourceEvaluate.hom
+    ((torBoundary ℤ P N 0 (-1) incoming).hom ((torScale 2).hom torClass)) = 0 := by
+  have h := torScale_boundary_value 2
+  norm_num at h
+  exact h
+
+/-- The first-Tor image under multiplication by three is nonzero. -/
+example : (torScale 3).hom torClass ≠ 0 := by
+  intro hz
+  have h := torScale_boundary_value 3
+  rw [hz, map_zero, map_zero] at h
+  norm_num at h
+
 end MathlibExtTest.BalancedTensorTorBoundary
