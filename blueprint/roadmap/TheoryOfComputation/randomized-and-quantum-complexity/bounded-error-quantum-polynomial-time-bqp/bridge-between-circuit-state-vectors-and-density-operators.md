@@ -28,6 +28,7 @@ A sound expansion has separate pages for:
 - [Positive-operator-valued measurements and the Born rule](../../../QuantumInformation/quantum-operations/povms-and-measurement-readout/povm-and-born-rule.md)
 - [Density matrices, pure states and reduced states](../../../QuantumInformation/quantum-states-distances-and-entropy/density-matrices-and-fidelity/density-matrices-and-reduced-states.md)
 - [Encoded 2-local quantum gate](../../complexity-classes/time-and-space-complexity-classes/qgate.md)
+- [Acceptance probability of a quantum state](../../complexity-classes/time-and-space-complexity-classes/accept-prob.md)
 
 ## Proof depends on
 

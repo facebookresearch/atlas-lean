@@ -3,9 +3,10 @@
 For Steane's $[[7, 1, 3]]$ code there are [fault-tolerant preparation gadgets](../fault-tolerance-and-threshold/fault-tolerant-preparation-gadget.md)
 for the encoded states $|\bar 0\rangle$ and $|\bar +\rangle$ and for the encoded magic state
 $|\bar 0\rangle + e^{i\pi/4} |\bar 1\rangle$. The encoded $|\bar 0\rangle$ comes from a non-fault-tolerant
-encoding circuit followed by verification against an independently prepared ancilla, which rejects the state when the
-code syndrome is nontrivial or when the decoded logical $\bar Z$ has eigenvalue $-1$ (a logical $X$ takes $|\bar 0\rangle$
-to $|\bar 1\rangle$ without changing the syndrome); $|\bar +\rangle$ is verified the same way with $\bar X$. Alternatively,
+encoding circuit followed by verification against an independently prepared ancilla, which the candidate controls by a transversal CNOT and which is then measured in the $Z$ basis; the state is rejected when
+the measured $Z$-type syndrome is nontrivial or when the decoded logical $\bar Z$ is $-1$ (a logical $X$ takes $|\bar 0\rangle$
+to $|\bar 1\rangle$ without changing the syndrome). This test does not see the $X$-type checks. For $|\bar +\rangle$ the roles
+of $X$ and $Z$ are exchanged (Aliferis, Gottesman and Preskill, Section 7.2.2, Fig. 7). Alternatively,
 Shor-style measurement of the generators of the augmented stabilizer $\langle S, \bar Z \rangle$ (respectively
 $\langle S, \bar X \rangle$), starting from any input, repeated and followed by the correction to the $+1$ eigenspace,
 prepares the same states. The magic state is the
@@ -23,6 +24,7 @@ the circuit and the proof of properties Prep A and Prep B for $t = 1$.
 
 - [Fault-tolerant preparation gadget](../fault-tolerance-and-threshold/fault-tolerant-preparation-gadget.md)
 - [Steane's seven-qubit code](../small-stabilizer-codes/steane-seven-qubit-code.md)
+- [Error syndrome of a stabilizer code](../stabilizer-formalism/error-syndrome.md)
 
 ## Sources
 

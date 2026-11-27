@@ -29,6 +29,7 @@ distance $3$, the least weight of a Hamming codeword outside $L_2$.
 
 - [Distance of a CSS code](../css-codes/distance-of-a-css-code.md)
 - [Weights in the shortened Reed–Muller codes of the fifteen-qubit code](weights-in-the-shortened-reed-muller-codes-of-the-fifteen-qubit-code.md)
+- [Dimension of a stabilizer code](../finrank-stabilizer-code.md): the number of encoded qubits
 
 ## Background
 

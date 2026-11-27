@@ -22,6 +22,7 @@ A sound expansion has separate pages for:
 ## Proof depends on
 
 - [Holevo–Helstrom theorem](../quantum-operations/holevohelstrom-theorem.md): the equal-prior operational form
+- [Trace norm and trace distance](density-matrices-and-fidelity/trace-norm-and-trace-distance.md): the trace norm is a norm
 
 ## Sources
 

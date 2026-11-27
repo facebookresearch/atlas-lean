@@ -17,6 +17,10 @@ of $O(n^2)$ gates each, $T$ costs $O(n^3)$ single-qubit gates and CNOTs.
 - [Two-level matrix](../../../LinearAlgebra/not-yet-classified/two-level/is-two-level.md)
 - [Multiply controlled unitaries from CNOT and single-qubit gates](multiply-controlled-unitary-from-cnot-and-single-qubit-gates.md)
 
+## Proof depends on
+
+- [Multiply controlled unitaries from CNOT and single-qubit gates](multiply-controlled-unitary-from-cnot-and-single-qubit-gates.md): the quadratic cost of each multiply controlled gate
+
 ## Sources
 
 - A. Barenco, C. H. Bennett, R. Cleve, D. P. DiVincenzo, N. Margolus, P. Shor, T. Sleator, J. Smolin and H. Weinfurter, *Elementary gates for quantum computation*, Phys. Rev. A 52 (1995), 3457–3467, arXiv:quant-ph/9503016, Section 8 (the Gray code $00111010, \dots, 00100111$, the permutations $(1,2), \dots, (m-2, m-1)$, the modified $\wedge_{n-1}(U)$ on states $m - 1$ and $m$, "Each $T(x_1, x_2)$ involves $2m - 3$ (modified) $\wedge_{n-1}$ gates ... $m$ ... cannot exceed $n + 1$").

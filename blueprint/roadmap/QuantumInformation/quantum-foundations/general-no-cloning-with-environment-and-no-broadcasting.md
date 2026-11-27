@@ -24,6 +24,7 @@ The pure-state unitary case of item 2 for two states is a separate page (see Rel
 ## Depends on
 
 - [Quantum channel](../quantum-operations/quantum-channel.md)
+- [Density matrices, pure states and reduced states](../quantum-states-distances-and-entropy/density-matrices-and-fidelity/density-matrices-and-reduced-states.md)
 
 ## Proof depends on
 

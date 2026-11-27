@@ -14,6 +14,10 @@ $AXBXC = W$.
 
 - [Euler decomposition of single-qubit unitaries](euler-decomposition-of-single-qubit-unitaries.md)
 
+## Proof depends on
+
+- [Euler decomposition of single-qubit unitaries](euler-decomposition-of-single-qubit-unitaries.md): angles for every special unitary
+
 ## Sources
 
 - A. Barenco, C. H. Bennett, R. Cleve, D. P. DiVincenzo, N. Margolus, P. Shor, T. Sleator, J. Smolin and H. Weinfurter, *Elementary gates for quantum computation*, Phys. Rev. A 52 (1995), 3457–3467, arXiv:quant-ph/9503016, Section 4, Lemma 4.3 and its proof.

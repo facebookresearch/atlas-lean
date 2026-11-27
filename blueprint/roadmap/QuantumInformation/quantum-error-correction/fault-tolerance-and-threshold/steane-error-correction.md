@@ -9,7 +9,9 @@ transversal CNOT from the data block to it, measuring every ancilla qubit and de
 phase flips by preparing $|\bar 0\rangle$, applying transversal CNOT from the ancilla to the data, measuring every ancilla
 qubit in the Hadamard basis and decoding in $C_2$; then it applies the deduced Pauli correction transversally. This
 gadget is a [fault-tolerant EC gadget](fault-tolerant-error-correction-gadget.md): it satisfies EC A and EC B. The key
-claim is that after the gadget the data block has errors only on qubits matching the positions of faults in the gadget;
+claim is that after the gadget the data block differs from a codeword, possibly a different one, only at positions where
+errors are present after the ancilla preparation or where faults occur in the transversal steps (Gottesman, Section 4.4,
+Claim 1); an encoder fault need not leave an error on the wire where it occurred;
 an error pattern that the classical decoders misidentify differs from the true one by a codeword, which acts as a logical
 operator and leaves a codeword. Transversal measurement of every qubit and classical decoding in the same way give a
 fault-tolerant measurement gadget.
@@ -20,6 +22,7 @@ fault-tolerant measurement gadget.
 - [Fault-tolerant error-correction gadget](fault-tolerant-error-correction-gadget.md)
 - [Fault-tolerant preparation gadget](fault-tolerant-preparation-gadget.md)
 - [Fault-tolerant measurement gadget](fault-tolerant-measurement-gadget.md)
+- [Transversal gate](../fault-tolerant-gates/transversal-gate.md)
 
 ## Proof depends on
 

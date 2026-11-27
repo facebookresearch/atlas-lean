@@ -30,6 +30,13 @@ Shor's nine-qubit code, with part of its stabilizer moved into the gauge group, 
 - [Quantum channel](../../quantum-operations/quantum-channel.md)
 - [Finite-family Kraus linear map](../../../Analysis/not-yet-classified/kraus/kraus-linear-map.md)
 - [The Knill–Laflamme conditions](../knill-laflamme-conditions/is-correctable-iff-knill-laflamme.md)
+- [The normalizer of a stabilizer group is its centralizer](../stabilizer-formalism/normalizer-of-a-stabilizer-group-equals-its-centralizer.md)
+- [Weight of a Pauli operator](../distance-of-a-quantum-code/pauli-weight.md)
+
+## Proof depends on
+
+- [The normalizer of a stabilizer group is its centralizer](../stabilizer-formalism/normalizer-of-a-stabilizer-group-equals-its-centralizer.md): a Pauli outside the normalizer anticommutes with a stabilizer element
+- [The Knill–Laflamme conditions](../knill-laflamme-conditions/is-correctable-iff-knill-laflamme.md): the case $\dim B = 1$
 
 ## Sources
 

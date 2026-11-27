@@ -23,6 +23,10 @@ singletons and $1/3 \le (2/3)^2$ on pairs), but that ExRec is bad on every draw.
 - [$[[n, k, d]]$ quantum code](../distance-of-a-quantum-code/n-k-d-quantum-code.md)
 - [Bad extended rectangles simulate faulty locations](bad-extended-rectangles-simulate-faulty-locations.md)
 
+## Proof depends on
+
+- [Bad extended rectangles simulate faulty locations](bad-extended-rectangles-simulate-faulty-locations.md): the replaced circuit has the same output distribution
+
 ## Sources
 
 - D. Gottesman, *An introduction to quantum error correction and fault-tolerant quantum computation*, Proceedings of Symposia in Applied Mathematics 68 (2010), arXiv:0904.2557, Section 5.2, Definitions 11 and 12, Theorem 9 and its proof, equations (84)–(85).

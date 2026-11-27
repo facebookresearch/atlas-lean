@@ -12,7 +12,8 @@ $L^2 (T + 1) \cdot e^{o(L)} \cdot (4\mu_3^2\, p(1 - p))^{L/2}$; for $T$ at most 
 $L$. The bound is in fact for the larger event that $E + E'$ contains a self-avoiding closed path that is homologically
 nontrivial in the spatial directions; such a path alone is not a failure, since two parallel winding paths together
 bound a strip. With the estimate $\mu_3 \approx 4.684$ that Dennis, Kitaev, Landahl and Preskill quote, the conditions
-read $p, q < 0.0114$; that decimal is an estimate, not a certified bound (it would need $\mu_3 < 4.7098$). A decoder that
+hold for $p, q < 0.0114$, slightly below the root $\approx 0.01153$ at $\mu_3 = 4.684$; that decimal is an estimate, not
+a certified bound (a certified bound $\mu_3 < 4.7098$ would suffice). A decoder that
 sees a finite record without the final error-free round needs its own rule at the last round, where a single wrong
 readout leaves an unpaired detection event; this page does not cover it.
 

@@ -1,6 +1,6 @@
 # The threshold theorem from fault-tolerant gadgets
 
-Fix an $[[n, 1, 2t + 1]]$ stabilizer code with $t \ge 1$ and a finite set of location types (preparations, measurements, waits and gates
+Fix an $[[n, 1, 2t + 1]]$ code with $t \ge 1$ and a finite set of location types (preparations, measurements, waits and gates
 of a gate set) such that every type has a fault-tolerant gadget for the code ([preparation](fault-tolerant-preparation-gadget.md),
 [measurement](fault-tolerant-measurement-gadget.md), [gate](fault-tolerant-gate-gadget.md)), there is a
 [fault-tolerant EC gadget](fault-tolerant-error-correction-gadget.md), and all these gadgets use only location types of the

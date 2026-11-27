@@ -19,6 +19,10 @@ correspondence between stabilizer codes and symplectic self-orthogonal binary co
 
 - [Qudit Pauli operators over a finite field](qudit-pauli-operators-over-a-finite-field.md)
 
+## Proof depends on
+
+- [Qudit Pauli operators over a finite field](qudit-pauli-operators-over-a-finite-field.md): the commutation criterion identifies the centralizer with the trace-symplectic dual
+
 ## Sources
 
-- A. Ketkar, A. Klappenecker, S. Kumar and P. K. Sarvepalli, *Nonbinary stabilizer codes over finite fields*, IEEE Trans. Inform. Theory 52 (2006), 4892–4914, arXiv:quant-ph/0508070, Section III, Lemmas 7–11 and Theorem 13 with its proof.
+- A. Ketkar, A. Klappenecker, S. Kumar and P. K. Sarvepalli, *Nonbinary stabilizer codes over finite fields*, IEEE Trans. Inform. Theory 52 (2006), 4892–4914, arXiv:quant-ph/0508070, Sections III–IV, Lemma 5, Lemma 11 and Theorem 13 with its proof; the fourth-root phase lift in characteristic two is a repair to the argument.

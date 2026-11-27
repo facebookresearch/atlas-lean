@@ -25,6 +25,7 @@ random-bond Ising model and quote the numerical value $p_c \approx 0.1094$; that
 - [The probability that a fixed cycle lies in the error plus the correction](probability-that-a-fixed-cycle-lies-in-the-error-plus-the-correction.md)
 - [Minimum-weight decoding fails only on a homologically nontrivial cycle](minimum-weight-decoding-fails-only-on-a-nontrivial-cycle.md)
 - [The toric code has distance $L$](toric-code-has-distance-l.md)
+- [Counting self-avoiding walks on the square lattice](counting-self-avoiding-walks-on-the-square-lattice.md): the bound $\mu^{\ell} e^{O(\sqrt{\ell})}$ on walks of each length
 
 ## Related topics
 

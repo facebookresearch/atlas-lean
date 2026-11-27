@@ -16,6 +16,10 @@ with the other single-qubit gates gives the count.
 - [Unitary evolution and elementary gates](../../quantum-foundations/unitary-evolution-and-elementary-gates.md)
 - [The $ABC$ decomposition of a special unitary matrix](abc-decomposition-of-special-unitary-matrices.md)
 
+## Proof depends on
+
+- [The $ABC$ decomposition of a special unitary matrix](abc-decomposition-of-special-unitary-matrices.md): existence of the three matrices
+
 ## Sources
 
 - A. Barenco, C. H. Bennett, R. Cleve, D. P. DiVincenzo, N. Margolus, P. Shor, T. Sleator, J. Smolin and H. Weinfurter, *Elementary gates for quantum computation*, Phys. Rev. A 52 (1995), 3457–3467, arXiv:quant-ph/9503016, Section 5, Lemma 5.1 (the network $A$, CNOT, $B$, CNOT, $C$, "if and only if $W \in SU(2)$"), Lemma 5.2 (the phase case) and Corollary 5.3 ("at most six basic gates: four 1-bit gates ... and two XOR gates").

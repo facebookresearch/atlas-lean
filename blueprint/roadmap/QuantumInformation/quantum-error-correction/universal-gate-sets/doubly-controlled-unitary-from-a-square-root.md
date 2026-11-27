@@ -14,6 +14,10 @@ $U = X$.
 
 - [A controlled single-qubit unitary from two CNOTs and four single-qubit gates](controlled-unitary-from-two-cnots-and-single-qubit-gates.md)
 
+## Proof depends on
+
+- [A controlled single-qubit unitary from two CNOTs and four single-qubit gates](controlled-unitary-from-two-cnots-and-single-qubit-gates.md): six gates per controlled unitary
+
 ## Sources
 
 - A. Barenco, C. H. Bennett, R. Cleve, D. P. DiVincenzo, N. Margolus, P. Shor, T. Sleator, J. Smolin and H. Weinfurter, *Elementary gates for quantum computation*, Phys. Rev. A 52 (1995), 3457–3467, arXiv:quant-ph/9503016, Section 6, Lemma 6.1 and the table of conditions after it.

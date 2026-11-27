@@ -11,7 +11,8 @@ $|G\rangle$ is its [stabilizer state](../../../TheoryOfComputation/randomized-an
 the joint $+1$ eigenvector of all $K_a$. Equivalently
 $|G\rangle = \prod_{\{a, b\} \in E} CZ_{ab}\, |+\rangle^{\otimes n}$, where $CZ_{ab}$ is the controlled-$Z$ gate on qubits
 $a, b$. The other joint eigenvectors of the $K_a$ are $Z$-flips of $|G\rangle$ and together form a basis. The stabilizer
-tableau of $|G\rangle$ is $(I \mid \Gamma)$, with $\Gamma$ the adjacency matrix.
+tableau of $|G\rangle$ is $(I \mid \Gamma)$, with $\Gamma$ the adjacency matrix, written by rows; Van den Nest, Dehaene and
+De Moor write the generators as columns, $\Gamma$ stacked above $I$.
 
 ## Depends on
 

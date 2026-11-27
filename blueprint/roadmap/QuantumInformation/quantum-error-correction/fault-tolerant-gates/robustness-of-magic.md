@@ -19,6 +19,10 @@ and submultiplicative, $\mathcal{R}(\rho_1 \otimes \rho_2) \le \mathcal{R}(\rho_
 - [Stabilizer groups and stabilizer states](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/stabilizer-groups-and-stabilizer-states.md)
 - [Density matrices, pure states and reduced states](../../quantum-states-distances-and-entropy/density-matrices-and-fidelity/density-matrices-and-reduced-states.md)
 
+## Proof depends on
+
+- [Stabilizer measurement rule](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/stabilizer-measurement-rule.md): each branch of a Pauli measurement on a stabilizer state is a stabilizer state
+
 ## Sources
 
 - M. Howard and E. Campbell, *Application of a resource theory for magic states to fault-tolerant quantum computing*, Phys. Rev. Lett. 118 (2017), 090501, arXiv:1609.07488, equations (1)–(4) and the discussion of the properties of the robustness of magic (proofs in the Supplementary Material).

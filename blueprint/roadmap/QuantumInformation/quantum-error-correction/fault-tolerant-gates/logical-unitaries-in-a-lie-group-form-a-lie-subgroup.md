@@ -15,6 +15,7 @@ of cosets of its identity component $B_0$, a connected Lie subgroup whose Lie al
 ## Proof depends on
 
 - [Lie groups: the exponential map, closed subgroups and maximal compact subgroups](../../../RepresentationTheory/lie-and-topological-representations/lie-groups-exponential-map-and-maximal-compact-subgroups.md): the closed subgroup theorem.
+- [The logical unitaries of a code form a group](logical-unitaries-of-a-code-form-a-group.md): the logical elements form a closed subgroup
 
 ## Sources
 

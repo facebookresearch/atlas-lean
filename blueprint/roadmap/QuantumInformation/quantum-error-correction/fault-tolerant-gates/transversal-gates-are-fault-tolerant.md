@@ -1,6 +1,6 @@
 # Transversal gates are fault tolerant
 
-Let a logical gate on $m$ blocks of an $[[n, 1, 2t + 1]]$ stabilizer code be implemented by a
+Let a logical gate on $m$ blocks of an $[[n, 1, 2t + 1]]$ code be implemented by a
 [transversal gate](transversal-gate.md) $U = \bigotimes_{i=1}^{n} U_i$, where $U_i$ acts on the $i$-th qubit of each of
 the $m$ blocks. Then the gadget is a [fault-tolerant gate gadget](../fault-tolerance-and-threshold/fault-tolerant-gate-gadget.md):
 it satisfies Gate A and Gate B. Conjugating an error on the $i$-th qubits through $U_i$ gives an error on the $i$-th qubits

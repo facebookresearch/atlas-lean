@@ -17,6 +17,10 @@ $\bar Z = Z^{\otimes n}$ (the number $n$ of qubits is odd).
 - [$[[n, k, d]]$ quantum code](../distance-of-a-quantum-code/n-k-d-quantum-code.md)
 - [Stabilizer groups and stabilizer states](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/stabilizer-groups-and-stabilizer-states.md)
 
+## Proof depends on
+
+- [Dimension of a stabilizer code](../finrank-stabilizer-code.md): the number of encoded qubits
+
 ## Sources
 
 - H. Bombin and M. A. Martin-Delgado, *Topological quantum distillation*, Phys. Rev. Lett. 97 (2006), 180501, arXiv:quant-ph/0605138, equations (1)–(3), Figures 1–4 and the construction of triangular codes.

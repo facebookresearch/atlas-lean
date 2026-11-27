@@ -1,7 +1,7 @@
 # The quantum MacWilliams identity
 
 Let $\mathcal{E}_d$ be the set of $n$-qubit Pauli products $\sigma_1 \otimes \cdots \otimes \sigma_n$,
-$\sigma_j \in \{I, X, Y, Z\}$, with exactly $d$ non-identity factors. For Hermitian operators $O_1, O_2$ on $n$ qubits with
+$\sigma_j \in \{I, X, Y, Z\}$, with exactly $d$ non-identity factors. For operators $O_1, O_2$ on $n$ qubits with
 $\operatorname{Tr} O_1, \operatorname{Tr} O_2, \operatorname{Tr}(O_1 O_2)$ nonzero define
 
 $$A_d = \frac{1}{\operatorname{Tr} O_1 \operatorname{Tr} O_2} \sum_{E \in \mathcal{E}_d} \operatorname{Tr}(E O_1) \operatorname{Tr}(E^{*} O_2), \qquad

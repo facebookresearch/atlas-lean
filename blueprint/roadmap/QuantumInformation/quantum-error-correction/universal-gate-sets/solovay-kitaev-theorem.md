@@ -35,6 +35,10 @@ arbitrary $n$-qubit unitary.
 
 - [Clifford plus $T$ is universal](clifford-plus-t-is-universal.md)
 
+## Related topics
+
+- [Solovay-Kitaev theorem](../../quantum-operations/solovay-kitaev-gate-compilation/solovay-kitaev-theorem.md): the single-unitary statement and running time
+
 ## Sources
 
 - C. M. Dawson and M. A. Nielsen, *The Solovay–Kitaev algorithm*, Quantum Inf. Comput. 6 (2006), 81–95, arXiv:quant-ph/0505030, Section 2, Theorem 1 and the discussion after it (running time with and without compressed output, compilation of an $m$-gate circuit), Section 3 (the algorithm, its recurrences and equation (9)), Section 4 and Section 5.

@@ -12,6 +12,10 @@ $\| F \|^2 \le \operatorname{tr}(F^2) \le \operatorname{tr}(H^2) \le d \| H \|^2
 rescaling $F \mapsto \lambda F$, $G \mapsto G / \lambda$ with $\lambda = \sqrt{\| G \| / \| F \|}$ makes both norms equal to
 $\sqrt{\| F \| \| G \|}$ and keeps both traces zero.
 
+## Proof depends on
+
+- [Spectral theorem for normal matrices](../../../LinearAlgebra/eigenvalues-and-canonical-forms/spectral-theorem-for-normal-matrices/exists-unitary-diagonal-of-is-star-norma.md): an eigenbasis of $H$
+
 ## Sources
 
 - C. M. Dawson and M. A. Nielsen, *The Solovay–Kitaev algorithm*, Quantum Inf. Comput. 6 (2006), 81–95, arXiv:quant-ph/0505030, Section 5.2, Lemma 2 and its proof, equations (24)–(31).

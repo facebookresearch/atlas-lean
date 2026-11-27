@@ -17,6 +17,10 @@ orthogonalization.
 
 - [Symplectic product of Pauli operators](symplectic-product-of-pauli-operators.md)
 
+## Proof depends on
+
+- [Symplectic product of Pauli operators](symplectic-product-of-pauli-operators.md): nondegeneracy of the symplectic form
+
 ## Sources
 
 - J. Preskill, *Lecture Notes for Physics 229: Quantum Information and Computation*, Chapter 7 "Quantum Error Correction" (Caltech, 1998; https://www.preskill.caltech.edu/ph229/notes/chap7.pdf), Section 7.9.4 ("By invoking a Gram-Schmidt orthonormalization procedure, we can choose these generators, denoted $\bar X_i$, to diagonalize the symplectic form", equation (7.145)).
