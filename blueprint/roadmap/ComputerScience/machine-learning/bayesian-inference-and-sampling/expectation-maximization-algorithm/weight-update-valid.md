@@ -1,0 +1,3 @@
+# The posterior-average update is a strictly positive weight vector
+
+Let $Z$ be a nonempty finite set, let $p_\theta(x, z)$ be real numbers indexed by parameters $\theta$, observations $x$ and latent values $z \in Z$, with $p_\theta(x, z) > 0$ for all $\theta$, $x$, $z$, and let $x_1, \dots, x_N$ be data with $N \ge 1$. Write $p_\theta(z \mid x) = p_\theta(x, z) / \sum_{z' \in Z} p_\theta(x, z')$ for the posterior. Then for every parameter $\theta$ the [posterior-average weights](weight-update.md) $u(z) = \frac{1}{N} \sum_{n=1}^N p_\theta(z \mid x_n)$ satisfy $u(z) > 0$ for every $z \in Z$ and $\sum_{z \in Z} u(z) = 1$.
