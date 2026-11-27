@@ -1,0 +1,17 @@
+# The polynomial Hochschild complex and coefficient differential forms
+
+- [Polynomial diagonal terms have coefficient-form coordinates](symmetric-coefficient-form-degree-equiv.md)
+- [The coefficient diagonal and form complexes are isomorphic](symmetric-coefficient-form-chain-iso.md)
+- [The forward diagonal-to-form component is the lifted coordinate map](symmetric-coefficient-form-chain-iso-hom.md)
+- [The inverse diagonal-to-form component recovers diagonal coordinates](symmetric-coefficient-form-chain-iso-inv.md)
+- [Symmetric diagonal antisymmetrization is a homotopy equivalence](symmetric-antisymmetric-coefficient-comp.md)
+- [Polynomial Hochschild chains are homotopy equivalent to coefficient forms](polynomial-differential-form-comparison.md)
+- [Forward polynomial form comparison factors through the diagonal complex](polynomial-differential-form-comparison-2.md)
+- [Inverse polynomial form comparison is signed antisymmetrization](polynomial-differential-form-comparison-3.md)
+- [Inverse polynomial form component on an arbitrary form](polynomial-differential-form-comparison-4.md)
+- [Inverse polynomial form comparison on a differential-variable word](polynomial-differential-form-comparison-5.md)
+- [Polynomial Hochschild homology is the coefficient-form term](polynomial-differential-form-homology-is.md)
+- [Forward polynomial homology comparison factors through diagonal degree coordinates](polynomial-differential-form-homology-is-2.md)
+- [Projecting the lifted form coordinate gives the polynomial linear equivalence](polynomial-differential-form-homology-is-3.md)
+- [The inverse polynomial homology map gives the signed form class](polynomial-differential-form-homology-is-4.md)
+- [Inverse polynomial homology comparison factors through a diagonal cycle class](polynomial-differential-form-homology-is-5.md)

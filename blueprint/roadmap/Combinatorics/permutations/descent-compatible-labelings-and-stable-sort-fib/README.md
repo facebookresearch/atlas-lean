@@ -1,0 +1,15 @@
+# Descent-compatible labelings and stable-sort fibers
+
+- [Descent rises before a position](descent-prefix.md)
+- [Labels that rise strictly at descents](descent-labeling.md)
+- [The initial descent prefix is zero](descent-prefix-zero.md)
+- [The descent prefix increments at a descent](descent-prefix-succ.md)
+- [Descent prefixes are nondecreasing](descent-prefix-monotone.md)
+- [The final prefix counts all descents](descent-prefix-last.md)
+- [Required descent rises bound every label](descent-prefix-le-label.md)
+- [Removing required rises leaves monotone labels](label-sub-descent-prefix-monotone.md)
+- [Descent labelings need a larger alphabet](descent-number-lt-label-alphabet.md)
+- [Removing descent rises is a labeling equivalence](descent-labeling-equiv-monotone.md)
+- [The descent-labeling binomial count](card-descent-labeling.md)
+- [Sorting fibers are descent labelings](sort-fiber-equiv-descent-labeling.md)
+- [The stable-sort fiber cardinality](card-sort-fiber.md)

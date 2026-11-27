@@ -1,0 +1,18 @@
+# The diagonal action on symmetric Hochschild coefficient chains
+
+- [The regular coefficient action in the Hochschild diagonal](diagonal-coefficient.md)
+- [The pure coefficient value of the Hochschild diagonal](diagonal-coefficient-tmul.md)
+- [Coordinatewise multiplication of two equal-length tensor tails](diagonal-tail.md)
+- [The equal-degree diagonal tail formula](diagonal-tail-tprod.md)
+- [The raw coefficient-and-tail diagonal in degree n](diagonal-raw.md)
+- [The complete pure-word formula for the raw Hochschild diagonal](diagonal-raw-tprod.md)
+- [A symmetric Hochschild face in raw tensor coordinates](raw-face.md)
+- [The three cases of a symmetric raw face on a tensor word](raw-face-tprod.md)
+- [The raw diagonal commutes with each equal-degree face](diagonal-raw-face.md)
+- [The coefficient-bar diagonal component in chain degree n](diagonal-component.md)
+- [The coefficient-bar diagonal component intertwines faces](diagonal-component-face.md)
+- [The symmetric target differential is the alternating sum of raw faces](target-differential.md)
+- [The chain map induced by the coefficient simplicial diagonal](diagonal-chain-map.md)
+- [The signed coefficient Hochschild chain pairing](pairing.md)
+- [The shuffle-and-diagonal formula for one coefficient pairing component](pairing-pair.md)
+- [The coefficient pairing in bidegree zero retains the head action](pairing-pair-zero-zero-tprod.md)

@@ -1,0 +1,15 @@
+# Exterior algebras of directed module limits
+
+- [Exterior-algebra maps of module transitions](direct-limit-transition.md)
+- [The directed limit of the stage exterior algebras](direct-limit-algebra.md)
+- [The limit-module generator map](direct-limit-generator.md)
+- [A stage generator has its algebra-limit image](direct-limit-generator-of.md)
+- [Every limit generator squares to zero](direct-limit-generator-sq-zero.md)
+- [From the exterior algebra of the limit to the algebra limit](to-direct-limit.md)
+- [From the algebra limit to the exterior algebra of the limit](from-direct-limit.md)
+- [The forward comparison on a stage algebra element](from-direct-limit-of.md)
+- [The reverse comparison on a stage generator](to-direct-limit-of.md)
+- [The comparisons compose to identity on the exterior algebra](from-direct-limit-comp-to-direct-limit.md)
+- [The comparisons compose to identity on the algebra limit](to-direct-limit-comp-from-direct-limit.md)
+- [Exterior algebras commute with the directed limit](direct-limit-equiv.md)
+- [The algebra equivalence preserves stage exterior maps](direct-limit-equiv-of.md)

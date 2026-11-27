@@ -1,0 +1,16 @@
+# A-linear Eulerian levels and normalized proper relation kernels
+
+- [The A-linear Eulerian projector on raw coefficient tensors](algebra-eulerian-operator.md)
+- [The A-linear Eulerian projector on normalized coefficient tensors](algebra-normalized-eulerian-operator.md)
+- [The ground restriction of a raw algebra-linear Eulerian operator](algebra-eulerian-operator-restrict-scala.md)
+- [The ground restriction of a normalized algebra-linear Eulerian operator](algebra-normalized-eulerian-operator-res.md)
+- [Normalization intertwines each algebra-linear Eulerian projector](algebra-normalization-level-map-eulerian.md)
+- [The raw algebra-linear zero-plus-first Eulerian projector](algebra-first-eulerian-operator.md)
+- [The normalized algebra-linear zero-plus-first Eulerian projector](algebra-normalized-first-eulerian-operat.md)
+- [Ground restriction of the raw zero-plus-first A-linear projector](algebra-first-eulerian-operator-restrict.md)
+- [The raw zero-plus-first A-linear Eulerian operator is idempotent](algebra-first-eulerian-operator-idempote.md)
+- [Normalization intertwines the two zero-plus-first projectors](algebra-normalization-level-map-first-eu.md)
+- [The raw A-linear proper-shuffle relations are the lowest-projector kernel](algebra-positive-relations-eq-first-eule.md)
+- [Normalized proper-shuffle relations are the normalized lowest-projector kernel](algebra-normalized-positive-relations-eq.md)
+- [The raw proper-shuffle quotient identifies with the lowest Eulerian image](algebra-first-eulerian-quotient-level-eq.md)
+- [The normalized proper-shuffle quotient identifies with the normalized lowest image](algebra-normalized-first-eulerian-quotie.md)

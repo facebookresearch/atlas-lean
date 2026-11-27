@@ -1,0 +1,16 @@
+# The proper-shuffle cotangent diagram over a coefficient algebra
+
+- [Action compatibility of the identity coefficient map](coefficient-compatibility.md)
+- [Proper-shuffle cotangent complex of an augmented algebra](complex.md)
+- [Cotangent chain map induced by an augmented-algebra morphism](map.md)
+- [Functor of proper-shuffle cotangent complexes over an algebra](functor.md)
+- [Tensor representative formula for an augmented cotangent map](map-mk-q.md)
+- [Coefficient Kähler module of an augmented algebra](cotangent-module.md)
+- [Kähler-module map induced over the augmentation algebra](cotangent-map.md)
+- [Scalar augmentation of an augmented proper-shuffle cotangent complex](scalar-augmentation.md)
+- [Scalar augmentation square for algebras over a fixed target](scalar-augmentation-naturality.md)
+- [Identity law for coefficient cotangent maps over an algebra](cotangent-map-id.md)
+- [Composition law for coefficient cotangent maps over an algebra](cotangent-map-comp.md)
+- [Functor of coefficient Kähler modules over an algebra](cotangent-functor.md)
+- [Natural augmentation from cotangent complexes to coefficient Kähler modules](augmentation-nat.md)
+- [Component of the augmented-algebra cotangent natural transformation](augmentation-nat-app.md)

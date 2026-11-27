@@ -1,0 +1,15 @@
+# Total cotangent comparison for simplicial polynomial presentations
+
+- [The first-quadrant bicomplex of proper-shuffle polynomial columns](simplicial-bicomplex.md)
+- [The bicomplex of cotangent modules concentrated in vertical degree zero](simplicial-cotangent-bicomplex.md)
+- [The augmentation between the two cotangent bicomplexes](simplicial-bicomplex-map.md)
+- [The column component of the cotangent bicomplex map](simplicial-bicomplex-map-f.md)
+- [The direct-sum total of the proper-shuffle cotangent bicomplex](simplicial-total-complex.md)
+- [The direct-sum total of the coefficient cotangent bicomplex](simplicial-cotangent-total-complex.md)
+- [The signed total map induced by the cotangent column augmentations](simplicial-total-map.md)
+- [Polynomial presentations of all columns give a total quasi-isomorphism](simplicial-total-map-quasi-iso-of-polyno.md)
+- [The homology isomorphism of the total polynomial cotangent comparison](simplicial-total-homology-iso-of-polynom.md)
+- [The alternating-face complex of simplicial coefficient cotangent modules](simplicial-cotangent-complex.md)
+- [The cotangent bicomplex total equals its alternating-face complex](simplicial-cotangent-total-iso.md)
+- [The chain comparison from the proper-shuffle total to the cotangent face complex](simplicial-cotangent-comparison.md)
+- [The cotangent face-complex comparison is a quasi-isomorphism for polynomial columns](simplicial-cotangent-comparison-quasi-is.md)

@@ -1,0 +1,17 @@
+# Algebra scalars and coefficient normalization data
+
+- [Coefficient scalar on a raw Hochschild tensor term](scalar-tensor-map.md)
+- [The tensor scalar map is the coefficient algebra action](scalar-tensor-map-apply.md)
+- [Coefficient scalar in a bar degree](scalar-bar-map-component.md)
+- [Coefficient scalars commute with every bar face](scalar-bar-map-component-face.md)
+- [Coefficient scalars commute with every bar degeneracy](scalar-bar-map-component-degeneracy.md)
+- [An algebra scalar gives a simplicial coefficient endomorphism](scalar-bar-map.md)
+- [Components of the simplicial scalar map](scalar-bar-map-app.md)
+- [Dold–Kan normalization projector in tensor coordinates](raw-native-normalization-projector.md)
+- [Dold–Kan homotopy component in tensor coordinates](raw-native-normalization-homotopy-compon.md)
+- [The normalization projector commutes with coefficient algebra scalars](raw-native-normalization-projector-smul.md)
+- [Every normalization homotopy component commutes with algebra scalars](raw-native-normalization-homotopy-compon-2.md)
+- [The normalization projector as a raw Hochschild chain map](raw-native-normalization-projector-compl.md)
+- [Tensor components of the normalization chain projector](raw-native-normalization-projector-compl-2.md)
+- [The raw normalization chain projector is homotopic to the identity](raw-native-normalization-homotopy.md)
+- [Components of the transported normalization homotopy](raw-native-normalization-homotopy-hom.md)

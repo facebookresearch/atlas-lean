@@ -1,0 +1,16 @@
+# The polynomial Connes class of x tensor y
+
+- [Exterior coordinate of a polynomial one-form](polynomial-connes-input-exterior.md)
+- [Exterior coordinate of a polynomial two-form](polynomial-connes-output-exterior.md)
+- [Normalized polynomial degree-one tensor](polynomial-connes-pair-input.md)
+- [Connes image of a normalized polynomial degree-one tensor](polynomial-connes-pair-output.md)
+- [The polynomial input is its normalized signed representative](polynomial-connes-pair-input-eq-signed.md)
+- [The Connes image is the signed two-form representative](polynomial-connes-pair-output-eq-signed.md)
+- [The normalized polynomial input is a Hochschild cycle](polynomial-connes-pair-input-cycle.md)
+- [The polynomial Connes output is a Hochschild cycle](polynomial-connes-pair-output-cycle.md)
+- [Hochschild class of the polynomial Connes input](polynomial-connes-pair-input-class.md)
+- [Hochschild class of the polynomial Connes output](polynomial-connes-pair-output-class.md)
+- [Connes homology sends the polynomial input class to its output class](regular-normalized-connes-homology-polyn.md)
+- [The Connes output class is the normalized exterior two-form class](polynomial-connes-pair-output-class-eq-e.md)
+- [The Connes input class is the normalized exterior one-form class](polynomial-connes-pair-input-class-eq-ex.md)
+- [Differential-form coordinate of the polynomial Connes image](polynomial-connes-pair-output-class-coor.md)

@@ -19,3 +19,4 @@ Group rings and group algebras: unit and zero-divisor questions (Kaplansky unit 
 - [Failure of direct finiteness in a prescribed odd characteristic](odd-characteristic-direct-finiteness-counterexample.md)
 - [Support of the complex Hattori–Stallings trace](complex-bass-trace-support.md)
 - [Trace and augmentation rank for torsion-free group rings](torsion-free-bass-trace-rank-and-idempotents.md)
+- [Grouping single-coordinate sums by finite fibers](sum-single-eq-sum-fiber.md)

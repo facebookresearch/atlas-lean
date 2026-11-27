@@ -8,3 +8,6 @@ Finite subsets and finite types: cardinality, lattice operations, products, powe
 - [An injective map from a finite set to itself is surjective](injective-self-map-finite-set-surjective.md)
 - [Number of elements of a type, with ∞ for infinite types](group-order.md)
 - [Overwriting a function on a finite set of indices](update-finset.md)
+- [Exact symmetric-power cardinality with an required submultiset](exact-symmetric-power-cardinality-with-an-requir/README.md)
+- [Successive stable sorting](successive-stable-sorting/README.md)
+- [Symmetric powers as monotone tuples](symmetric-powers-as-monotone-tuples/README.md)

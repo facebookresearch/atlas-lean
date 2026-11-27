@@ -1,0 +1,15 @@
+# The canonical exterior coalgebra over a commutative ring
+
+- [Signed insertion on two exterior factors](signed-insertion.md)
+- [Signed insertion squares to zero](signed-insertion-comp-self.md)
+- [The exterior coproduct](coproduct.md)
+- [The signed generator recursion for the coproduct](coproduct-mul.md)
+- [The exterior augmentation](augmentation.md)
+- [Grade involution on both tensor factors](tensor-parity.md)
+- [The coproduct preserves total parity](coproduct-involute.md)
+- [Coassociativity with the tensor associator](coproduct-coassoc-apply.md)
+- [The left counit tensor identity](augmentation-r-tensor-coproduct.md)
+- [The right counit tensor identity](augmentation-l-tensor-coproduct.md)
+- [Exterior generators are primitive](is-primitive.md)
+- [Exterior maps commute with the grade involution](involute-map-apply.md)
+- [Linear maps preserve exterior coproducts](coproduct-naturality.md)

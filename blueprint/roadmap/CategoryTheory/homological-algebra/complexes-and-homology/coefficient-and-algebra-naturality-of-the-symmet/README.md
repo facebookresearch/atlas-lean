@@ -1,0 +1,15 @@
+# Coefficient and algebra naturality of the symmetric shuffle
+
+- [Degreewise coefficient bar map](coefficient-bar-map-component.md)
+- [Coefficient bar components commute with every face](coefficient-bar-map-component-face.md)
+- [Coefficient bar components commute with every degeneracy](coefficient-bar-map-component-degeneracy.md)
+- [Simplicial map of symmetric coefficient bars](coefficient-bar-map.md)
+- [Components of the simplicial coefficient bar map](coefficient-bar-map-app-mk.md)
+- [Chain map for a compatible symmetric coefficient and algebra map](coefficient-chain-map.md)
+- [Tensor components of the symmetric coefficient chain map](coefficient-chain-map-f.md)
+- [The coefficient chain map commutes with bar chain coordinates](coefficient-chain-map-comp-chain-complex.md)
+- [Normalized chain map for compatible coefficient and algebra maps](normalized-coefficient-map.md)
+- [Normalization commutes with the coefficient chain map](normalization-projection-coefficient-map.md)
+- [The symmetric degreewise tensor diagonal is natural](diagonal-chain-map-naturality.md)
+- [The symmetric shuffle chain pairing is natural](pairing-naturality.md)
+- [The target-normalized shuffle pairing is natural](pairing-normalization-projection-natural.md)

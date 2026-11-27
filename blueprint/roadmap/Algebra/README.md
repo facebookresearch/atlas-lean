@@ -15,6 +15,7 @@ and [associative algebras](associative-algebras/README.md) include Frobenius's c
 finite-dimensional real division algebras and Jacobson's commutativity theorem.
 
 - [Associative rings and algebras](associative-algebras/README.md)
+- [Direct sums and graded structures](graded-structures/README.md)
 - [Lie algebras and nonassociative structures](nonassociative-algebras/README.md)
 - [Algebraic identities and operations](algebraic-identities/README.md)
 - [Polynomials and power series](polynomials/README.md)

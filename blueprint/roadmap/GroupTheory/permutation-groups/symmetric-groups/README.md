@@ -6,3 +6,5 @@ The symmetric group of a set as a group: support, cycles and cycle decomposition
 - [Cauchy's theorem: a finite group whose order is divisible by a prime p has an element of order p](cauchy-theorem-groups.md)
 - [Alternating group on a finite set](alternating-group.md)
 - [Full cycle type of a permutation of a finite set, fixed points included](permutation-cycle-type.md)
+- [Permutations grouped by their first or last value](permutations-grouped-by-their-first-or-last-valu/README.md)
+- [A full rotation cycle is the identity](fin-rotate-pow-succ.md)

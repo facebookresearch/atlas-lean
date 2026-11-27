@@ -2,6 +2,7 @@
 
 Vector spaces and modules, linear maps and their invariants such as trace, dual spaces, dual bases and perfect pairings, and exactness of sequences of linear maps.
 
+- [Canonical free coordinates after scalar extension](canonical-free-coordinates-after-scalar-extensio/README.md)
 - [Dual basis of a perfect pairing](dual-bases-of-perfect-pairings/README.md)
 - [Partial trace](partial-trace/README.md)
 - [Similarity invariants of linear maps](similarity-invariants-of-linear-maps/README.md)

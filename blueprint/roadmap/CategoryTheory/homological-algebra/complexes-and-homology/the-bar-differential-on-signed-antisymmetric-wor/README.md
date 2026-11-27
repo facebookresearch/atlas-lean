@@ -1,0 +1,17 @@
+# The bar differential on signed antisymmetric words
+
+- [Bar words with unit endpoints](unit-outer-word.md)
+- [Inserting two unit endpoints](unit-outer-linear.md)
+- [Unit insertion on a decomposable word](unit-outer-linear-tprod.md)
+- [The full signed sum of bar words](antisymmetric-bar-word.md)
+- [Exterior alternation followed by unit insertion](unit-outer-linear-exterior-antisymmetriz.md)
+- [The difference of the two outer multiplications](outer-difference.md)
+- [Left multiplication on a unit-outer word](unit-outer-word-left.md)
+- [Right multiplication on a unit-outer word](unit-outer-word-right.md)
+- [The first face of a unit-outer word](unit-outer-word-first-face.md)
+- [The last adjacent face of a unit-outer word](unit-outer-word-last-face.md)
+- [Interior faces multiply consecutive middle entries](unit-outer-word-inner-face.md)
+- [Cancellation of the interior antisymmetric faces](antisymmetric-bar-word-inner-faces.md)
+- [The ordered deletion signs at the first face](antisymmetric-bar-word-first-faces.md)
+- [The rotation sign at the last adjacent face](antisymmetric-bar-word-last-faces.md)
+- [The Koszul deletion formula for the bar boundary](antisymmetric-bar-word-boundary.md)

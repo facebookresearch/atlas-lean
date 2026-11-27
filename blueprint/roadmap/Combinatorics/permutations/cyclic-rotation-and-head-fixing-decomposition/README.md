@@ -1,0 +1,16 @@
+# Cyclic rotation and head-fixing decomposition
+
+- [Rotation powers are cyclic addition](rotation-power-apply.md)
+- [A finite rotation index adds to every position](rotation-power-at-fin-apply.md)
+- [Inverse rotation uses the negative finite index](rotation-power-inverse.md)
+- [The rotated first position is the rotation index](rotation-power-zero.md)
+- [The rotated closing position is last plus index](rotation-power-last.md)
+- [The closing-cut coordinate equivalence](closing-cut-equiv.md)
+- [Closing-cut coordinates are rotation values](closing-cut-equiv-apply.md)
+- [A tail permutation with a fixed zero head](head-fixing-permutation.md)
+- [Fixing the zero head preserves the sign](head-fixing-permutation-sign.md)
+- [The fixed-head permutation embedding](head-fixing-hom.md)
+- [Tail action determines a fixed-head permutation](head-fixing-hom-injective.md)
+- [Rotation and tail coordinates determine the permutation](rotation-head-uncurry-injective.md)
+- [Every permutation has rotation and tail coordinates](rotation-head-equiv.md)
+- [Summing in rotation and fixed-head coordinates](sum-rotation-head.md)

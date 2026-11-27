@@ -1,0 +1,17 @@
+# Normalized proper-shuffle quotient complexes over A
+
+- [Algebra-module relations in normalized proper shuffle chains](algebra-normalized-positive-relations.md)
+- [Normalized proper relations agree after scalar restriction](algebra-normalized-positive-relations-re.md)
+- [Normalized proper relations vanish in degrees zero and one](algebra-normalized-positive-relations-lo.md)
+- [Normalized boundaries preserve the algebra-module proper relations](algebra-normalized-positive-relations-bo.md)
+- [Differential of the normalized algebra-module proper quotient](algebra-normalized-positive-quotient-dif.md)
+- [Successive normalized proper quotient differentials compose to zero](algebra-normalized-positive-quotient-dif-2.md)
+- [Normalized proper shuffle quotient as an algebra-module complex](algebra-normalized-positive-quotient-com.md)
+- [Projection onto the normalized algebra-module proper quotient](algebra-normalized-positive-projection.md)
+- [Normalization map between algebra-module proper quotients](algebra-positive-normalization.md)
+- [Representative formula for algebra-linear proper normalization](algebra-positive-normalization-f-mk-q.md)
+- [Boundary formula in the ground-linear normalized proper quotient](normalized-positive-quotient-d-mk.md)
+- [Representative formula for ground-linear proper normalization](positive-quotient-normalization-f-mk-q.md)
+- [Scalar restriction isomorphism for normalized proper quotients](algebra-normalized-positive-quotient-res.md)
+- [Quotient-class formula for normalized scalar restriction](algebra-normalized-positive-quotient-res-2.md)
+- [Normalization commutes with proper-quotient scalar restriction](algebra-positive-normalization-restrict.md)

@@ -1,0 +1,16 @@
+# Antisymmetric Koszul-to-bar degree maps
+
+- [The left outer inclusion](left-outer-linear.md)
+- [The opposite right outer inclusion](right-outer-linear.md)
+- [The difference between outer inclusions](outer-difference-linear.md)
+- [Evaluating the outer-difference map](outer-difference-linear-apply.md)
+- [An enveloping functional from generator differences](generator-difference-functional.md)
+- [The functional on a scalar-extended generator](generator-difference-functional-tmul.md)
+- [Alternation along a generator map](exterior-antisymmetrization-along.md)
+- [The permutation formula for a generator wedge](exterior-antisymmetrization-along-multi.md)
+- [Reconstructing a bar word from its outer coordinate](enveloping-bar-degree-equiv-base-change.md)
+- [The exterior-to-bar comparison in each degree](koszul-antisymmetrization-level.md)
+- [Scalar multiples of generator wedges](koszul-antisymmetrization-level-smul-mul.md)
+- [Unit-extended generator wedges](koszul-antisymmetrization-level-multi.md)
+- [The two boundaries on scalar-extended generator wedges](koszul-antisymmetrization-level-boundary.md)
+- [Compatibility of the exterior and bar differentials](koszul-antisymmetrization-level-boundary-2.md)
