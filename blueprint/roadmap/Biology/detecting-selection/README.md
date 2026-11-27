@@ -17,6 +17,8 @@ Statistical tests of neutrality and genome scans for selection based on polymorp
 - [Codon-model likelihood ratio tests for positive selection](codon-model-tests-for-positive-selection/README.md)
 - [Latent factor mixed models](latent-factor-mixed-models/README.md)
 - [Linear and optimal neutrality tests](linear-and-optimal-neutrality-tests/README.md)
+- [Selective sweeps with arbitrary dominance](selective-sweeps-with-arbitrary-dominance/README.md)
+- [Sweeps in structured populations](sweeps-in-structured-populations/README.md)
 - [Maximal perfect haplotype blocks](maximal-perfect-haplotype-blocks/README.md)
 - [Time-series selection inference under population size change](time-series-selection-inference-under-population-size-change/README.md)
 - [Allele age proxies from linked variation](allele-age-proxies-from-linked-variation/README.md)
