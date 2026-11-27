@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.ZeckendorfOdometer
 public import MathlibExt.NumberTheory.ZeckendorfNewInformationZone
+public import MathlibExt.NumberTheory.ZeckendorfRenewal
 public import MathlibExt.Probability.MixingCoefficients
 public import Mathlib.Data.Nat.Fib.Zeckendorf
 public import Mathlib.NumberTheory.Real.GoldenRatio
@@ -177,91 +178,6 @@ public theorem zeckOdometer_of_forall {x : ℕ → Bool}
     rcases h k hk with h' | h' <;> simp_all
   · rfl
 
-/-- **Truncated variation of the Zeckendorf digit sum.** Let $T$ be the Zeckendorf odometer
-$x \mapsto x + 1$ on binary sequences, and write $x + r = T^r(x)$ for its $r$-th iterate. For
-$r, k \in \mathbb{N}$ and a binary sequence $x = (x_i)_{i \in \mathbb{N}}$, let
-$s_k(x) = x_2 + \dots + x_k$. The truncated variation is the integer
-$\Delta_k^{(r)}(x) = s_k(x + r) - s_k(x)$.
-
-Source: Yohan Hosten, *On the Variation of the Sum of Digits in the Zeckendorf Representation:
-An Algorithm to Compute the Distribution and Mixing Properties*, Journal of Integer Sequences 27
-(2024), Article 24.3.2, Section 4 (definition of `s_k` and `Δ_k^{(r)}`). -/
-public noncomputable def zeckAdicTruncVariation (r k : ℕ) (x : ℕ → Bool) : ℤ :=
-  ∑ i ∈ Finset.Icc 2 k, ((zeckOdometer^[r] x i).toNat : ℤ) -
-    ∑ i ∈ Finset.Icc 2 k, ((x i).toNat : ℤ)
-
-/-- **The truncated variation vanishes for zero steps.** Let $T$ be the Zeckendorf odometer and,
-for a binary sequence $x$, let $s_k(x) = x_2 + \dots + x_k$ and
-$\Delta_k^{(r)}(x) = s_k(T^r(x)) - s_k(x)$. Then $\Delta_k^{(0)}(x) = 0$ for every
-$k \in \mathbb{N}$ and every binary sequence $x$.
-
-Source: Yohan Hosten, *On the Variation of the Sum of Digits in the Zeckendorf Representation:
-An Algorithm to Compute the Distribution and Mixing Properties*, Journal of Integer Sequences 27
-(2024), Article 24.3.2, Section 4 (characteristic lemma for `Δ_k^{(r)}`). -/
-public theorem zeckAdicTruncVariation_zero (k : ℕ) (x : ℕ → Bool) :
-    zeckAdicTruncVariation 0 k x = 0 := by
-  simp [zeckAdicTruncVariation]
-
-/-- **The variation of the Zeckendorf digit sum.** For $r \in \mathbb{N}$ and a digit sequence
-$x : \mathbb{N} \to \{0, 1\}$, let $\Delta_k^{(r)}(x)$ be the truncated variation of order $k$. If
-the integer sequence $(\Delta_k^{(r)}(x))_k$ is eventually constant, the variation
-$\Delta^{(r)}(x) = \lim_{k \to \infty} \Delta_k^{(r)}(x)$ is its eventual value; otherwise
-$\Delta^{(r)}(x) = 0$.
-
-The value $0$ is a junk value. The paper shows that the Zeckendorf-adic integers at which the
-limit does not exist form a finite set.
-
-Source: Yohan Hosten, *On the Variation of the Sum of Digits in the Zeckendorf Representation:
-An Algorithm to Compute the Distribution and Mixing Properties*, Journal of Integer Sequences 27
-(2024), Article 24.3.2, Section 4 (definition of `Δ^{(r)}` on `𝕏`). -/
-public noncomputable def zeckAdicVariation (r : ℕ) (x : ℕ → Bool) : ℤ :=
-  open Classical in
-  if h : ∃ d, ∀ᶠ k in Filter.atTop, zeckAdicTruncVariation r k x = d then h.choose else 0
-
-/-- **The variation is the eventual value of the truncated variations.** Let $r \in \mathbb{N}$,
-let $x$ be a binary sequence and let $d \in \mathbb{Z}$. If the truncated variation
-$\Delta_k^{(r)}(x)$ equals $d$ for all sufficiently large $k$, then the variation
-$\Delta^{(r)}(x)$ equals $d$.
-
-Source: Yohan Hosten, *On the Variation of the Sum of Digits in the Zeckendorf Representation:
-An Algorithm to Compute the Distribution and Mixing Properties*, Journal of Integer Sequences 27
-(2024), Article 24.3.2, Section 4 (characteristic lemma for `Δ^{(r)}`). -/
-public theorem zeckAdicVariation_eq_of_eventually {r : ℕ} {x : ℕ → Bool} {d : ℤ}
-    (h : ∀ᶠ k in Filter.atTop, zeckAdicTruncVariation r k x = d) :
-    zeckAdicVariation r x = d := by
-  have hex : ∃ d, ∀ᶠ k in Filter.atTop, zeckAdicTruncVariation r k x = d := ⟨d, h⟩
-  unfold zeckAdicVariation
-  split
-  · rename_i hex'
-    obtain ⟨k, hk1, hk2⟩ := (hex'.choose_spec.and h).exists
-    rw [← hk1, hk2]
-  · exact absurd hex ‹_›
-
-/-- **The variation for $r = 0$ vanishes.** For every digit sequence $x : \mathbb{N} \to \{0, 1\}$,
-not only for Zeckendorf-adic integers, the variation satisfies $\Delta^{(0)}(x) = 0$.
-
-Source: Yohan Hosten, *On the Variation of the Sum of Digits in the Zeckendorf Representation:
-An Algorithm to Compute the Distribution and Mixing Properties*, Journal of Integer Sequences 27
-(2024), Article 24.3.2, Section 4 (characteristic lemma for `Δ^{(r)}`). -/
-public theorem zeckAdicVariation_zero (x : ℕ → Bool) : zeckAdicVariation 0 x = 0 :=
-  zeckAdicVariation_eq_of_eventually (Filter.Eventually.of_forall fun k =>
-    zeckAdicTruncVariation_zero k x)
-
-/-- **Adding a small $r$ leaves the high digits unchanged.** Write $F_j$ for the Fibonacci
-numbers ($F_1 = F_2 = 1$). Let $\mathbb{X} \subseteq \{0,1\}^{\mathbb{N}}$ be the set of
-Zeckendorf-adic integers (sequences with $x_0 = x_1 = 0$ and no two consecutive ones), and write
-$x + r = T^r(x)$ for the $r$-th iterate of the Zeckendorf odometer $T$. Let $x \in \mathbb{X}$,
-$\ell \ge 2$ and $r < F_{\ell+1}$, and suppose that $x_{\ell+2} = x_{\ell+3} = 0$. Then
-$(x + r)_k = x_k$ for every $k \ge \ell + 3$.
-
-Source: Yohan Hosten, *On the Variation of the Sum of Digits in the Zeckendorf Representation:
-An Algorithm to Compute the Distribution and Mixing Properties*, Journal of Integer Sequences 27
-(2024), Article 24.3.2, Lemma 10 (`jis-2024-24.3.2-lem-10`). -/
-public theorem_wanted zeckOdometer_iterate_high_digits {x : ℕ → Bool} (hx : x ∈ zeckAdic)
-    {ℓ r : ℕ} (hℓ : 2 ≤ ℓ) (hr : r < Nat.fib (ℓ + 1)) (hx2 : x (ℓ + 2) = false)
-    (hx3 : x (ℓ + 3) = false) :
-    ∀ k, ℓ + 3 ≤ k → zeckOdometer^[r] x k = x k
-
 /-- **Adding $r$ across a window of four zero digits.** Write $F_j$ for the Fibonacci numbers
 ($F_1 = F_2 = 1$). For $r \in \mathbb{N}$ let $Z(r)$ be the set of indices in the Zeckendorf
 representation $r = \sum_{j \in Z(r)} F_j$ (all indices $\ge 2$, no two consecutive), and let
@@ -342,35 +258,6 @@ public theorem_wanted zeckOdometer_invariant_measure_cylinder (μ : Measure (ℕ
     {ℓ : ℕ} (hℓ : 2 ≤ ℓ) {y : ℕ → Bool} (hy : y ∈ zeckAdic) :
     μ {x | ∀ i, 2 ≤ i → i ≤ ℓ → x i = y i} =
       ENNReal.ofReal (1 / Real.goldenRatio ^ (if y ℓ = true then ℓ else ℓ - 1))
-
-/-- **Renewal property of the invariant measure.** Let
-$\mathbb{X} \subseteq \{0,1\}^{\mathbb{N}}$ be the set of Zeckendorf-adic integers (sequences
-with $x_0 = x_1 = 0$ and no two consecutive ones) and let $T$ be the Zeckendorf odometer. Let
-$\mu$ be a probability measure on $\{0,1\}^{\mathbb{N}}$ with $\mu(\mathbb{X}^c) = 0$ that is
-preserved by $T$. Let $k \ge 2$, $\ell_0 \in \mathbb{N}$ and $y, z \in \mathbb{X}$, and let
-$C = \{x : x_i = z_i \text{ for } 2 \le i \le \ell_0\}$. Let
-$E_0 = \{x : x_{k+1} = 0 \text{ and } x_i = y_i \text{ for } 2 \le i \le k\}$ and
-$E_1 = \{x : x_{k+1} = 1 \text{ and } x_i = y_i \text{ for } 2 \le i \le k\}$. Then
-$\mu(\{x : x_{i+k} = z_i \text{ for } 2 \le i \le \ell_0\} \mid E_0) = \mu(C)$, and if
-$y_k = 0$, then also
-$\mu(\{x : x_{i+k+1} = z_i \text{ for } 2 \le i \le \ell_0\} \mid E_1) = \mu(C)$.
-
-With the shift $(\sigma x)_i = x_{i+1}$, the two conditioned events are $\sigma^k x \in C$ and
-$\sigma^{k+1} x \in C$.
-
-Source: Yohan Hosten, *On the Variation of the Sum of Digits in the Zeckendorf Representation:
-An Algorithm to Compute the Distribution and Mixing Properties*, Journal of Integer Sequences 27
-(2024), Article 24.3.2, Proposition 16 (`jis-2024-24.3.2-prop-16`). -/
-public theorem_wanted zeckOdometer_invariant_measure_renewal (μ : Measure (ℕ → Bool))
-    [IsProbabilityMeasure μ] (hX : μ zeckAdicᶜ = 0) (hT : MeasurePreserving zeckOdometer μ μ)
-    {k ℓ₀ : ℕ} (hk : 2 ≤ k) {y z : ℕ → Bool} (hy : y ∈ zeckAdic) (hz : z ∈ zeckAdic) :
-    ProbabilityTheory.cond μ {x | x (k + 1) = false ∧ ∀ i, 2 ≤ i → i ≤ k → x i = y i}
-        {x | ∀ i, 2 ≤ i → i ≤ ℓ₀ → x (i + k) = z i} =
-      μ {x | ∀ i, 2 ≤ i → i ≤ ℓ₀ → x i = z i} ∧
-    (y k = false →
-      ProbabilityTheory.cond μ {x | x (k + 1) = true ∧ ∀ i, 2 ≤ i → i ≤ k → x i = y i}
-          {x | ∀ i, 2 ≤ i → i ≤ ℓ₀ → x (i + (k + 1)) = z i} =
-        μ {x | ∀ i, 2 ≤ i → i ≤ ℓ₀ → x i = z i})
 
 /-- **Mixing of the Zeckendorf digits under the invariant measure.** Let
 $\mathbb{X} \subseteq \{0,1\}^{\mathbb{N}}$ be the set of Zeckendorf-adic integers (sequences
@@ -685,18 +572,6 @@ public theorem_wanted zeckNIZ_levels {r ℓ : ℕ} (hℓ : 2 ≤ ℓ) (hr : Nat.
     ∀ k, ℓ + 1 < k → (x ∈ zeckNIZ r k ↔
       Nat.fib k ≤ zeckAdicPrefixValue k x + r ∧ zeckAdicPrefixValue k x < Nat.fib k)
 
-/-- **Points of $\mathrm{NIZ}_k$ have leading digits $00$.** Let $r \ge 1$ and $k \ge 2$, and
-let $\mathrm{NIZ}_k$ be the new-information zone of order $k$ for $r$. Every Zeckendorf-adic
-integer $x = (x_i)_{i \ge 2}$ in $\mathrm{NIZ}_k$ has $x_{k+1} = x_k = 0$, that is, the name
-$x_{k+1} \cdots x_2$ of its cylinder of order $k$ starts with $00$.
-
-Source: Yohan Hosten, *On the Variation of the Sum of Digits in the Zeckendorf Representation:
-An Algorithm to Compute the Distribution and Mixing Properties*, Journal of Integer Sequences 27
-(2024), Article 24.3.2, Lemma 32 (`jis-2024-24.3.2-lem-32`). -/
-public theorem_wanted zeckNIZ_leading_zeros {r k : ℕ} (hr : 1 ≤ r) (hk : 2 ≤ k)
-    {x : ℕ → Bool} (hx : x ∈ zeckAdic) (h : x ∈ zeckNIZ r k) :
-    x (k + 1) = false ∧ x k = false
-
 /-- **Lifting a cylinder of $\mathrm{NIZ}_k$ to order $k + 2$ lowers the variation by $1$.**
 Let $\ell \ge 2$, let $r$ satisfy $F_\ell \le r < F_{\ell+1}$, where $F_1 = F_2 = 1, F_3 = 2,
 \dots$ are the Fibonacci numbers, and let $k \ge \ell$. Write $\Delta^{(r)}$ for the variation
@@ -775,25 +650,6 @@ An Algorithm to Compute the Distribution and Mixing Properties*, Journal of Inte
 (2024), Article 24.3.2, Lemma 40 (`jis-2024-24.3.2-lem-40`). -/
 public theorem_wanted zeckNIZ_fib_variation_order {ℓ : ℕ} (hℓ : 3 ≤ ℓ) :
     ∀ x ∈ zeckAdic ∩ zeckNIZ (Nat.fib ℓ) ℓ, zeckAdicVariation (Nat.fib ℓ) x = 1
-
-/-- **Values of the variation by $F_\ell$ on $\mathrm{NIZ}_{\ell+1}$.** Let $\ell \ge 3$, let
-$F_1 = F_2 = 1, F_3 = 2, \dots$ be the Fibonacci numbers, and let $\Delta^{(F_\ell)}$ be the
-variation of the Zeckendorf sum of digits under adding $F_\ell$ on the Zeckendorf-adic integers.
-For $v \in \mathbb{N}$ write $i(v)$ for the Zeckendorf-adic integer whose digits are the
-Zeckendorf digits of $v$. Among the $v < F_{\ell+3}$ with $i(v)$ in the new-information zone
-$\mathrm{NIZ}_{\ell+1}$ of order $\ell + 1$ for $r = F_\ell$, exactly $F_{\ell-1}$ satisfy
-$\Delta^{(F_\ell)}(i(v)) = 0$ and exactly $F_{\ell-2}$ satisfy $\Delta^{(F_\ell)}(i(v)) = 1$.
-
-Each such $v$ stands for the level (cylinder of order $\ell + 1$) whose name is its digits.
-
-Source: Yohan Hosten, *On the Variation of the Sum of Digits in the Zeckendorf Representation:
-An Algorithm to Compute the Distribution and Mixing Properties*, Journal of Integer Sequences 27
-(2024), Article 24.3.2, Proposition 41 (`jis-2024-24.3.2-prop-41`). -/
-public theorem_wanted zeckNIZ_fib_variation_order_succ {ℓ : ℕ} (hℓ : 3 ≤ ℓ) :
-    {v | v < Nat.fib (ℓ + 3) ∧ zeckAdicOfNat v ∈ zeckNIZ (Nat.fib ℓ) (ℓ + 1) ∧
-        zeckAdicVariation (Nat.fib ℓ) (zeckAdicOfNat v) = 0}.ncard = Nat.fib (ℓ - 1) ∧
-      {v | v < Nat.fib (ℓ + 3) ∧ zeckAdicOfNat v ∈ zeckNIZ (Nat.fib ℓ) (ℓ + 1) ∧
-        zeckAdicVariation (Nat.fib ℓ) (zeckAdicOfNat v) = 1}.ncard = Nat.fib (ℓ - 2)
 
 /-- **The variation by $F_\ell$ on $\mathrm{NIZ}_{\ell+2}$ is $0$.** Let $\ell \ge 3$, let
 $F_1 = F_2 = 1, F_3 = 2, \dots$ be the Fibonacci numbers, and let $\Delta^{(F_\ell)}$ be the

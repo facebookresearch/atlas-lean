@@ -95,7 +95,8 @@ extensions and read as a browser builds it. An edit that would lose a link, move
 a heading or its id, or show its new link elsewhere or not at all is left out
 and reported too, and a page keeps its line ends and bytes.
 
-declarations --base REV is the run a pull request makes, scoped to its own declarations: those its Lean changes since
+declarations --base REV is the run a graph pull request or a graph-sync batch makes (docs/BLUEPRINT.md, Maintaining
+articles), scoped to its own declarations: those its Lean changes since
 commit REV add, document, make public or undeprecate (see scoped_plan). Both sides are read with the working tree's
 tools and taxonomy, so that only the Lean's changes count. It writes only what they need: a page for each of them that
 has none, laid out as above but with none of the parts generate_wiki splits a folder into in a folder it makes (see
@@ -2392,13 +2393,15 @@ def records(text: str) -> tuple[list[str], list[str]]:
     return parts[0::2], parts[1::2] + [""]
 
 
-def insert_rows(path: Path, rows: list[dict]) -> None:
-    """Add *rows* to the links file *path*, each as declarations writes a row, right after the row whose page's path
-    comes last before its own (see row_order), or ahead of every row if none does; every other byte of the file stays
-    as it is. A file that is not there yet is made of the rows alone. A row's place depends on its page and the rows
-    already there, not on when it is added, so two pull requests that add pages in different places add lines in
-    different places, and neither adds them at the end, where every pull request would."""
-    lines, ends = records(path.read_bytes().decode("utf-8") if path.exists() else "")
+def inserted(text: str, rows: list[dict]) -> str:
+    """The links file *text* with *rows* added, each as declarations writes a row, right after the row whose page's path
+    comes last before its own (see row_order), wherever that row stands, as a links file need not be in path order, or
+    ahead of every row if none does; every other character of *text* stays as it is, and an empty *text* gives the rows
+    alone. It does not read or write the links file *text* comes from, nor change *text* or *rows*, so that a tool that
+    stages its writes, as import_mathgraph does, places rows as insert_rows does. Like insert_rows, it reads each row's
+    page with the links folder's current defaults (`_defaults.json`, see effective), from which a row may take its
+    subject: the same *text* and *rows* are placed otherwise under other defaults."""
+    lines, ends = records(text)
     placed = [(row_order(json.loads(line)), number) for number, line in enumerate(lines) if line.strip()]
     after: dict[int, list[str]] = defaultdict(list)
     for order, row in sorted(((row_order(row), json.dumps(row, ensure_ascii=False)) for row in rows),
@@ -2410,10 +2413,18 @@ def insert_rows(path: Path, rows: list[dict]) -> None:
     def separator(number: int) -> str:
         return ends[number] or next((end for end in reversed(ends[:number]) if end), "\n")
 
-    text = "".join(row + separator(0) for row in after[-1])
+    result = "".join(row + separator(0) for row in after[-1])
     for number, (line, end) in enumerate(zip(lines, ends)):
-        text += line + (end + "".join(row + end for row in after[number]) if end else
-                        "".join(separator(number) + row for row in after[number]))
+        result += line + (end + "".join(row + end for row in after[number]) if end else
+                          "".join(separator(number) + row for row in after[number]))
+    return result
+
+
+def insert_rows(path: Path, rows: list[dict]) -> None:
+    """Add *rows* to the links file *path* where inserted puts them; every other byte of the file stays as it is. A file
+    that is not there yet is made of the rows alone. Rows go where their page's path puts them, so pull requests that
+    add pages in different places add lines in different places."""
+    text = inserted(path.read_bytes().decode("utf-8") if path.exists() else "", rows)
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_bytes(text.encode("utf-8"))
 
@@ -3903,7 +3914,8 @@ def run_scoped(argv: list[str]) -> int:
 
     parser = argparse.ArgumentParser(
         prog="sync_wiki.py declarations",
-        description="Write only what the Lean changed since a commit needs: the run a pull request makes.")
+        description="Write only what the Lean changed since a commit needs: the run a graph pull request or a "
+                    "graph-sync batch makes.")
     parser.add_argument("--base", required=True, metavar="REV",
                         help="the commit the changes start from, such as `git merge-base origin/main HEAD`")
     parser.add_argument("--check", action="store_true",

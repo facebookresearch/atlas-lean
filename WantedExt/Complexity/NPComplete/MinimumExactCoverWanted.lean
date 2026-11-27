@@ -65,7 +65,9 @@ abbrev MinimumExactCoverInstance := ℕ × List (List ℕ) × ℕ
 def WellFormed (i : MinimumExactCoverInstance) : Prop :=
   ExactCover.WellFormed (i.1, i.2.1)
 
-/-- Some set `C'` of members covers every element of `S` and has total size at most `K`. -/
+/-- Some set `C'` of positions in the list of members covers every element of `S`, and the
+lengths of the selected list entries sum to at most `K` (a member listed with a repeated element
+counts it twice; for well-formed members the length is the size). -/
 def MinimumExactCoverFeasible (i : MinimumExactCoverInstance) : Prop :=
   ∃ C' : Finset (Fin i.2.1.length), (∀ x < i.1, ∃ j ∈ C', x ∈ i.2.1.get j) ∧
     ∑ j ∈ C', (i.2.1.get j).length ≤ i.2.2

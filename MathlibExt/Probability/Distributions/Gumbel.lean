@@ -58,8 +58,8 @@ def gumbelCDF (μ β x : ℝ) : ℝ :=
   exp (-exp (-(x - μ) / β))
 
 /-- The Gumbel quantile formula `μ - β log(-log q)`, defined for all real `μ`, `β` and `q`. For
-`β ≠ 0` and `0 < q < 1` it inverts `gumbelCDF μ β` (`gumbelCDF_gumbelQuantile`); for `β > 0` it
-is the `q`-quantile of the Gumbel law with location `μ` and scale `β`. -/
+`β ≠ 0` and `0 < q < 1` it inverts `gumbelCDF μ β` (`gumbelCDF_gumbelQuantile`); for `β > 0` and
+`0 < q < 1` it is the `q`-quantile of the Gumbel law with location `μ` and scale `β`. -/
 def gumbelQuantile (μ β q : ℝ) : ℝ :=
   μ - β * log (-log q)
 

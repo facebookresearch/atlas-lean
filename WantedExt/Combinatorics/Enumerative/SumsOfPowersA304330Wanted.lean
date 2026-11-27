@@ -70,38 +70,6 @@ noncomputable def faulhaberC (k r : ℕ) : ℚ :=
     (2 ^ (r + 1) / ((Nat.factorial (2 * m + 2) : ℚ) * (m + 1))) *
       (arrayR (k + 1) (m + 1) : ℚ) * (MetaMathlibExt.legendreStirlingFirst (m + 1) (r + 1) : ℚ)
 
-/-- **Knuth's correspondence between even and odd power sums.** Let $k \ge 1$ be a natural
-number, let $(a_m)_{m \ge 0}$ be a sequence of real numbers, and write
-$S_j(n) = 1^j + 2^j + \dots + n^j$. Then
-$\frac{S_{2k}(n)}{2n+1} = \sum_{m=1}^{k} a_m \binom{n+m}{2m}$ for every natural number $n$
-if and only if $S_{2k-1}(n) = \sum_{m=1}^{k} \frac{2m+1}{m}\, a_m \binom{n+m}{2m}$ for every
-natural number $n$.
-
-Source: José L. Cereceda, "Sums of Powers of Integers and the
-Sequence A304330", Proposition 2. -/
-theorem_wanted powerSum_even_div_iff_odd (k : ℕ) (hk : 1 ≤ k)
-    (a : ℕ → ℝ) :
-    (∀ n : ℕ, (powerSum (2 * k) n : ℝ) / (2 * (n : ℝ) + 1) =
-      ∑ m ∈ Finset.Icc 1 k,
-        a m * (Nat.choose (n + m) (2 * m) : ℝ)) ↔
-    (∀ n : ℕ, (powerSum (2 * k - 1) n : ℝ) =
-      ∑ m ∈ Finset.Icc 1 k,
-        ((2 * (m : ℝ) + 1) / (m : ℝ)) * a m *
-          (Nat.choose (n + m) (2 * m) : ℝ))
-
-/-- **Knuth's formula for even power sums.** For natural numbers $k \ge 1$ and $n$, write
-$S_{2k}(n) = 1^{2k} + 2^{2k} + \dots + n^{2k}$ and
-$R(k, m) = \sum_{j=0}^{m} (-1)^j \binom{2m}{j} (m - j)^{2k}$. Then
-$S_{2k}(n) = \sum_{m=1}^{k} R(k, m)\, \frac{2n+1}{2m+1} \binom{n+m}{2m}$.
-
-Source: José L. Cereceda, "Sums of Powers of Integers and the
-Sequence A304330", Proposition 3. -/
-theorem_wanted powerSum_even_eq_sum (k : ℕ) (hk : 1 ≤ k) (n : ℕ) :
-    powerSum (2 * k) n =
-      ∑ m ∈ Finset.Icc 1 k,
-        (arrayR k m : ℚ) * ((2 * (n : ℚ) + 1) / (2 * (m : ℚ) + 1)) *
-          (Nat.choose (n + m) (2 * m) : ℚ)
-
 /-- **Knuth's binomial formula for the odd power sums.** For all natural numbers $k \ge 1$ and
 $n$, the power sum $S_{2k-1}(n) = 1^{2k-1} + 2^{2k-1} + \cdots + n^{2k-1}$ satisfies
 $$S_{2k-1}(n) = \sum_{m=1}^{k} R(k, m) \cdot \frac{1}{m} \binom{n + m}{2m},$$
