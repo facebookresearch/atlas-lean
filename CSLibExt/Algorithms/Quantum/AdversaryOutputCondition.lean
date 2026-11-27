@@ -328,9 +328,9 @@ private theorem bilin_output_le {X E : Type*} [Fintype X] [DecidableEq X]
     intro x _
     split_ifs with h
     · simp only [ha0]
-      rw [if_pos h]
+      rw [ite_eq_left h]
     · simp only [ha0]
-      rw [if_neg h]
+      rw [ite_eq_right h]
       simp
   have n1 : (∑ x, ‖a1 x‖ ^ 2) =
       ∑ x, if f x = true then ‖a x‖ ^ 2 else 0 := by
@@ -338,9 +338,9 @@ private theorem bilin_output_le {X E : Type*} [Fintype X] [DecidableEq X]
     intro x _
     split_ifs with h
     · simp only [ha1]
-      rw [if_pos h]
+      rw [ite_eq_left h]
     · simp only [ha1]
-      rw [if_neg h]
+      rw [ite_eq_right h]
       simp
   have b1 := bilin_le A a0 a1
   have b2 := bilin_le A a1 a0

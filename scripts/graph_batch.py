@@ -1490,6 +1490,16 @@ def verify_commit(commit: str, bodies: dict[int, str], plan: PlacementPlan | Non
     return Verdict(base, through, plan, made, links)
 
 
+def reason_kind(why: str) -> str:
+    """*why*, the reason a page that a `Graph:` line names is left as it is, without what is that page's own, for
+    describe's short form to count the pages by the kind of reason: the pages its own dependency sections link, the
+    pages and declarations it names in code (a value with a `.` or a `/`; `main` or `instance` stays), and the numbers
+    of pull requests and of pages. No backtick stays, as in the full form."""
+    why = re.sub(r"link \d+ page\(s\), such as `[^`]*`", "link other pages", why)
+    why = re.sub(r"#\d+(?:, #\d+)*", "#N", re.sub(r"`[^`]*[./][^`]*`", "…", why))
+    return re.sub(r"\b\d+\b", "N", why).replace("`", "")
+
+
 def describe(commit: str, base: str, head: str, plan: PlacementPlan, report: dict,
              sections: dict[str, list[str]], links: LinkPlan | None = None, full: bool = False) -> str:
     """A description for the batch's pull request, in Markdown. Every value in it is the repository's, a description's
@@ -1602,8 +1612,8 @@ def describe(commit: str, base: str, head: str, plan: PlacementPlan, report: dic
             body += ([""] if body else []) + [f"Pages linked already, {len(links.linked)}, by the pull request that "
                                               "names them:", "", "```text"]
             body += [f"#{number}: {' '.join(articles)}" for number, articles in sorted(named.items())] + ["```"]
-        # The short form keeps how many ids each reason leaves as they are, the pull requests aside.
-        counted = Counter(re.sub(r"#\d+(?:, #\d+)*", "#N", why).replace("`", "") for _, _, why in links.unchanged)
+        # The short form keeps how many ids each kind of reason leaves as they are (reason_kind).
+        counted = Counter(reason_kind(why) for _, _, why in links.unchanged)
         part("Pages named on `Graph:` lines, left as they are", [], body,
              f"{len(links.linked)} ids name pages linked already"
              + "".join(f"; {count} ids: {why}" for why, count in sorted(counted.items())) + ", too many to list here:")
