@@ -11,7 +11,7 @@ The maximum pseudolikelihood estimator maximizes $\mathcal L$ over topologies wi
 **Detectability (generic, under $t \in (0, \infty)$ on tree edges and $\gamma \in (0,1)$).** Let $k$ be the number of nodes in a reticulation cycle.
 
 - $k = 2$: the hybrid edge is not detectable, for any $n$.
-- $k = 3$: detectable if and only if at least two of the three subtrees cut off by the cycle contain more than one taxon.
+- $k = 3$: detectable when at least two of the three subtrees cut off by the cycle contain more than one taxon. When the two non-hybrid subtrees are single taxa, so the cycle induces a $(1,1,n-2)$ partition: not detectable if the hybrid node has a single descendant taxon; if the hybrid node has the $n-2 \ge 2$ taxa below it, detectable on some positive-measure parameter sets and not on others. Solís-Lemus and Ané state the $k = 3$ case as "if and only if"; the last case is the later correction of Allman et al. (2024), Proposition 6(2) and Theorem 19(1), stated in [topological identifiability of a level-1 species network from quartet CFs](level-1-topological-identifiability-from-quartet-cfs.md), item 1.
 - $k \ge 4$ and $n \ge 5$: detectable, and with $n \ge 5$ the direction of the hybrid edge, which four taxa cannot resolve, becomes identifiable in the case studied.
 - For a fixed topology with $n \ge 5$: $(t, \gamma)$ is identifiable if $k \ge 5$ and not if $k \le 3$. For $k = 4$ it is identifiable in the "good diamond" configurations; in the two "bad diamond" cases some parameters must be reparametrized or fixed.
 
@@ -28,3 +28,4 @@ Each factor is an honest multinomial likelihood for one four-taxon subnetwork. T
 ## Sources
 
 - C. Solís-Lemus and C. Ané, "Inferring phylogenetic networks with maximum pseudolikelihood under incomplete lineage sorting", *PLoS Genetics* 12(3) (2016), e1005896, <https://doi.org/10.1371/journal.pgen.1005896> (PMC4780787), Equation (1) and the Models section ("Pseudolikelihood on a network", "Detecting the presence of a hybridization", "Identifiability of branch lengths and heritabilities", "Practical consequences"; Figures 4–5).
+- E. S. Allman, H. Baños, M. Garrote-López and J. A. Rhodes, "Identifiability of level-1 species networks from gene tree quartets", *Bulletin of Mathematical Biology* 86 (2024), 110, <https://doi.org/10.1007/s11538-024-01339-4> (PMC11272829), Proposition 6(2) and Theorem 19(1).

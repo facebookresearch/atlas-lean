@@ -12,6 +12,7 @@ analogously for $H_0, H_2$, normalized to posterior probabilities.
 ## Depends on
 
 - [Closed-form colocalization hypothesis scores](coloc-closed-form.md)
+- [Sum of Single Effects (SuSiE) model and factored variational family](../sum-of-single-effects-susie/sum-of-single-effects-model.md)
 ## Expansion
 
 The single-causal-variant assumption is what makes the variant-level events "variant $j$ is causal" mutually exclusive, so that log Bayes factors of global hypotheses are log-sums of variant-level ones. Marginal posterior inclusion probabilities from multi-variant fine-mapping are not mutually exclusive, so they cannot be plugged into coloc directly. Within one SuSiE single-effect component, however, exactly one variant is causal, so the component's variant-level Bayes factors again describe mutually exclusive events and coloc applies to each pair of components unchanged. This replaces the earlier conditional-regression approach, which peels off signals by stepwise conditioning and can mislabel weaker secondary signals. In simulations with one or two causal variants per trait, coloc-SuSiE matched single-variant coloc when there was one causal variant and was more accurate than conditioning when there were two. It runs fewer comparisons when SuSiE finds no credible set for a trait, which mostly happens at low power.

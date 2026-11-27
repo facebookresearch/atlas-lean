@@ -13,6 +13,7 @@ where $\lambda_b$ is the total merger rate of the Λ-coalescent with $b$ blocks.
 ## Depends on
 
 - [Time-changed Λ-coalescent limits of variable-size Cannings models](time-changed-lambda-coalescent-limits.md)
+- [Total merger rate of a Λ-coalescent](../../coalescents/total-merger-rate.md)
 
 ## Expansion
 
