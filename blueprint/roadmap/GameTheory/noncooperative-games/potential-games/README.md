@@ -29,8 +29,6 @@ A game has an exact potential when one function on strategy profiles tracks ever
 - [Exact potential of a finite game](is-exact-potential-2.md)
 - [Pure Nash equilibrium of a finite game](is-pure-nash-2.md)
 - [Pure equilibria of potential games as local search](pure-equilibria-of-potential-games-as-local-search.md)
-- [Pure Nash of min potential](pure-nash-of-min-potential.md)
-- [No infinite improvement path](no-infinite-improvement-path.md)
 - [Network Contagion and Influence](network-contagion-and-influence/README.md)
 - [Characterizations of Potential Games](potential-game-characterizations/README.md)
 - [Strong and Coalitional Equilibria](strong-and-coalitional-equilibria/README.md)

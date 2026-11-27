@@ -4,4 +4,4 @@ Let $A$ be an $m \times n$ real matrix, read as the zero-sum game in which the r
 
 $$\sup_{p \in \Delta_m} p^{\mathsf T} A q = \inf_{q' \in \Delta_n} \sup_{p \in \Delta_m} p^{\mathsf T} A q'.$$
 
-Infima and suprema are those of real numbers, totalised: over an empty or unbounded set, $\inf$ and $\sup$ take the value $0$. For $m \ge 1$ the inner supremum is over a nonempty bounded set, and it is the most the row player can get against $q$; the condition says $q$ concedes at most the minimax value. For $m = 0$ the row player has no strategy, both sides are $0$, and every column strategy is minimax, with no opponent strategy attaining the bound.
+Infima and suprema are those of real numbers, totalised: both are $0$ over the empty set, $\inf$ is $0$ over a set unbounded below, and $\sup$ is $0$ over a set unbounded above. For $m \ge 1$ the inner supremum is over a nonempty bounded set, and it is the most the row player can get against $q$; the condition says $q$ concedes at most the minimax value. For $m = 0$ the row player has no strategy, both sides are $0$, and every column strategy is minimax, with no opponent strategy attaining the bound.
