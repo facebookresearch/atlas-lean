@@ -30,6 +30,7 @@ public import Mathlib.Combinatorics.Enumerative.Catalan.Basic
 public import Mathlib.NumberTheory.Harmonic.Defs
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
 public import MathlibExt.Analysis.CatalanDigammaSeries
+public import MathlibExt.Analysis.CatalanDigammaNatSpecialization
 public import MathlibExt.Analysis.CatalanSeriesSpecialValues
 public import MathlibExt.Analysis.CentralBinomDigammaSeries
 public import MathlibExt.Analysis.HalfIntegerHarmonic
@@ -298,22 +299,6 @@ public theorem_wanted tsum_four_pow_mul_odd_harmonic_div_succ_mul_choose_mul_cen
         (7 * riemannZeta 3 - 8 * ∑ j ∈ Finset.range (m - 1), 1 / (2 * (j : ℂ) + 1) ^ 3 +
           (∑ j ∈ Finset.range (m - 1), 1 / (2 * (j : ℂ) + 1)) *
             (3 * riemannZeta 2 - 4 * ∑ j ∈ Finset.range (m - 1), 1 / (2 * (j : ℂ) + 1) ^ 2))
-
-/-- **Catalan numbers over binomial and central binomial coefficients.** Let $m$ be a positive
-integer, $C_n$ the $n$th Catalan number, $H_n = \sum_{j=1}^{n} \frac{1}{j}$ the $n$th harmonic
-number and $O_n = \sum_{j=1}^{n} \frac{1}{2j - 1}$. Then
-$$\sum_{n=0}^{\infty} \frac{C_n}{\binom{n+m}{n} \binom{2(n+m)}{n+m}} =
-\frac{m}{2} \cdot \frac{H_{m-1} - 2 O_{m-1} + 2 \log 2}{\binom{2(m-1)}{m-1}}.$$
-
-Source: Kunle Adegoke and Robert Frontczak, *Series Associated with a Forgotten Identity of
-Nörlund*, INTEGERS 25 (2025), Article A18, Theorem 12, identity (28)
-(`integers-2025-A18-thm-12`). -/
-public theorem_wanted tsum_catalan_div_choose_mul_centralBinom {m : ℕ} (hm : 0 < m) :
-    ∑' n : ℕ, (catalan n : ℝ) / (((n + m).choose n : ℝ) * ((n + m).centralBinom : ℝ)) =
-      (m : ℝ) / 2 *
-          ((harmonic (m - 1) : ℝ) - 2 * ∑ j ∈ Finset.range (m - 1), 1 / (2 * (j : ℝ) + 1) +
-            2 * Real.log 2) /
-        ((m - 1).centralBinom : ℝ)
 
 /-- **An odd harmonic Catalan series over central binomial coefficients.** Let $m$ be a positive
 integer and $C_n$ the $n$th Catalan number, and write $H_n = \sum_{j=1}^{n} \frac{1}{j}$,
