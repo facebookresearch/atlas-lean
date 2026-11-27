@@ -1099,7 +1099,7 @@ private theorem poc_aux_coord (p : CfLaw) (hp : IsCfLaw p) (i j k : Bool) :
         else (poc_aux_test2 x).2).1 = i ∧
         (if poc_aux_test0 x = true then (poc_aux_test2 x).1
         else (poc_aux_test2 x).2).2 = j ∧ poc_aux_test0 x = k
-    · rw [if_pos hP]
+    · rw [ite_eq_left hP]
       have hz := poc_aux_outside_zero p hp x hx
       simp only [poc_aux_noiseWeight] at hz
       exact hz

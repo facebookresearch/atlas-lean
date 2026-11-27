@@ -52,4 +52,6 @@
 - [The time-changed coalescent as the limit of a Wright–Fisher model of varying size](derivation-of-the-time-changed-coalescent-from-a.md)
 - [Two bounded size histories with equal first-coalescence times](perturbing-a-constant-history-by-g-gives-two-bou.md)
 - [Time-ordered product limit for near-identity matrices](time-ordered-product-limit-for-near-identity-mat.md)
+
+- [Coalescence manifold and step-function moments](coalescence-manifold-and-step-function-moments/README.md)
 - [Site frequency spectrum of sampled birth–death processes](site-frequency-spectrum-of-sampled-birth-death-processes/README.md)
