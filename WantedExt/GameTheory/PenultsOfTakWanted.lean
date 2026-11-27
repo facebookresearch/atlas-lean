@@ -97,18 +97,6 @@ public theorem_wanted impartialTak_penult_thickCross {n : ℕ} {S : Finset (Fin 
       (p.2 : ℕ) < c + 4 ∧
       ¬(((p.1 : ℕ) = r ∨ (p.1 : ℕ) = r + 3) ∧ ((p.2 : ℕ) = c ∨ (p.2 : ℕ) = c + 3))).card
 
-/-- **An $n^2/4$ lower bound for Impartial Tak penults.** Impartial Tak is the placement game on
-the $n \times n$ board whose play ends once the tokens contain a road. There is a real constant $C$
-such that for every natural number $n$, every Impartial Tak penult on the $n \times n$ board has at
-least $n^2/4 - Cn$ tokens; that is, every penult has at least $n^2/4 + O(n)$ tokens.
-
-Source: Boris Alexeev, Paul Ellis, Michael Richter, and Thotsaporn Aek Thanatipanonda, *The
-Penults of Tak: Adventures in Impartial, Normal-Play, Positional Games*, INTEGERS 25 (2025),
-Article G1, Proposition 12 (`integers-2025-G1-prop-12`). -/
-public theorem_wanted impartialTak_penult_card_ge_quarter :
-    ∃ C : ℝ, ∀ (n : ℕ) (S : Finset (Fin n × Fin n)), placementPenult takHasRoad S →
-      (n : ℝ) ^ 2 / 4 - C * n ≤ S.card
-
 /-- **Weighted Cross bound for Impartial Tak penults.** Let $S$ be a penult of Impartial Tak on
 the $n \times n$ board, with rows and columns numbered from $0$. For all natural numbers $r, c$
 with $r + 5 \le n$ and $c + 5 \le n$, consider the $5 \times 5$ window of rows $r, \dots, r + 4$
