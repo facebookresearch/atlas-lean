@@ -12,6 +12,11 @@
 2. Horn's global attractor conjecture holds for non-catalytic complex-balanced mass-action systems: each positive invariant polyhedron contains a complex-balanced equilibrium that attracts every positive trajectory in it.
 3. If the ideal $(\mathcal E_G)$ is prime, then $G$ is not catalytic, so the previous two conclusions apply.
 
+## Depends on
+
+- [Complex-balanced concentrations](../../complex-balancing-and-the-deficiency-zero-theore/is-complex-balanced.md)
+- [Horn–Jackson: one equilibrium per compatibility class](../../complex-balancing-and-the-deficiency-zero-theore/exists-unique-equilibrium-of-is-complex.md)
+
 ## Expansion
 
 If $Z$ is a critical siphon, take a boundary point $z$ with zero set $Z$ that is stoichiometrically compatible with a positive point $x$. Compatibility gives a linear relation between the monomials of $z$-supported and positive states, and weak reversibility turns it into a path in the event-graph between monomials $M, N$ that share all the non-$Z$ variables. Dividing out the common factor leaves monomials in the $Z$ species alone, which cannot be connected because the absence of $Z$ is forward invariant; so the shared factor acts as a catalyst. Contrapositively, non-catalytic networks have no critical siphons, and the Angeli–De Leenheer–Sontag theorem (no critical siphons implies persistence for weakly reversible networks) gives the corollaries. The definition captures pathways such as $x + y \to p$, $p + q \to x + z$, where $x$ is regenerated: synthetic DNA strand-displacement amplifiers are catalytic in this sense and do have critical siphons.

@@ -7,6 +7,11 @@
 2. *(Induction on species.)* If, for every confined weakly reversible system with at most $n$ species, the mass-action inclusion is persistent and repelled by the origin, then the global attractor conjecture holds for complex balanced systems with at most $n+1$ species. In particular, the conjecture follows from the statement that the mass-action inclusion of every confined weakly reversible system is repelled by the origin and has bounded trajectories.
 3. The mass-action differential inclusion of every confined strongly endotactic reaction system is permanent.
 
+## Depends on
+
+- [Complex-balanced concentrations](../../complex-balancing-and-the-deficiency-zero-theore/is-complex-balanced.md)
+- [Horn–Jackson: one equilibrium per compatibility class](../../complex-balancing-and-the-deficiency-zero-theore/exists-unique-equilibrium-of-is-complex.md)
+
 ## Expansion
 
 Near a boundary face of the hypercube where some coordinates are small, the dynamics of the remaining coordinates is approximated by the projected network, which belongs to the same family and lives in a lower-dimensional hypercube. Persistence can therefore be proved by induction on the number of species, with the only genuinely new input at each step being the behaviour near the corners (vertices) of the hypercube. For complex balanced systems, persistence implies global convergence because the pseudo-Helmholtz free energy is a strict Lyapunov function with a unique positive equilibrium per compatibility class, so boundary omega-limit points are the only obstruction.

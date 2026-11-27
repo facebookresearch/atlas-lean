@@ -10,6 +10,11 @@ and trajectories stay in the positive stoichiometric compatibility class $(x_0+S
 
 **Corollary (global attractor conjecture, one linkage class).** For a complex-balanced mass-action system whose reaction graph has one linkage class, the complex-balanced equilibrium in the interior of a positive compatibility class attracts every trajectory starting in that class.
 
+## Depends on
+
+- [Complex-balanced concentrations](../../complex-balancing-and-the-deficiency-zero-theore/is-complex-balanced.md)
+- [Horn–Jackson: one equilibrium per compatibility class](../../complex-balancing-and-the-deficiency-zero-theore/exists-unique-equilibrium-of-is-complex.md)
+
 ## Expansion
 
 For complex-balanced systems the pseudo-Helmholtz free energy $\sum_ix_i(\log(x_i/c_i)-1)$ is a Lyapunov function, so trajectories are bounded and their $\omega$-limit sets consist of equilibria; the only obstruction to global convergence is an $\omega$-limit point on the boundary. Suppose a trajectory approaches a boundary point $z$. Along a subsequence, the monomials $x_n^{y}$ of the complexes can be partitioned into *tiers* of comparable growth. A key lemma then produces a non-negative conservation relation $w$, supported exactly on the species vanishing at $z$, that is constant across complexes in the same tier. Projecting the dynamics onto the vanishing species gives a lower-dimensional (reduced) network that is again weakly reversible with one linkage class, and the dominant tier pushes mass back into the interior, contradicting $x_n\to z$. Persistence gives global attraction because the Lyapunov function leaves only the unique interior equilibrium as a possible limit.
