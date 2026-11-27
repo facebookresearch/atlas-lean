@@ -22,7 +22,9 @@ threshold corrected for the number of windows tested.
 
 ## Depends on
 
-- [Codon substitution models and dN/dS](../../phylogenetics/codon-substitution-models-and-dn-ds/README.md)
+- [Codon as a triple of nucleotides](../../phylogenetics/codon-substitution-models-and-dn-ds/codon.md)
+- [Codons differing at exactly one position](../../phylogenetics/codon-substitution-models-and-dn-ds/is-single-change.md)
+- [Site likelihood of a phylogenetic tree](../../phylogenetics/felsenstein-s-pruning-algorithm/likelihood.md)
 
 ## Remarks
 
