@@ -73,7 +73,9 @@ five production libraries once (`scripts/lean_changes.py build --base <ref>`), t
   the declarations the change adds. A declaration counts as added when the change adds the line
   that declares it, below its docstring and attributes, and no declaration of that name is in
   the changed files at the base (for a private declaration, in its own file), so documenting,
-  tagging, editing or moving an existing declaration does not report it;
+  tagging, editing or moving an existing declaration does not report it. A `theorem_wanted` or
+  `def_wanted` statement is not the declaration that proves it, so a proof's findings are
+  reported;
 - `scripts/check_text_linters.py`: Mathlib's `lint-style` errors on added lines, and the module
   names of added or renamed files;
 - `scripts/check_unused_imports.py`: the added import lines that
@@ -86,4 +88,5 @@ five production libraries once (`scripts/lean_changes.py build --base <ref>`), t
 
 Each takes `--base <ref>` and exits 1 on a finding, 0 with `--report-only` (as CI runs them),
 and 2 when it cannot run. `scripts/linters_self_test.py` runs them all on a probe module; CI
-runs it when a pull request changes them.
+runs it when a pull request changes them, `lean-toolchain` or `lake-manifest.json`, so that a
+bump that changes what the tools print shows up on the bump itself.
