@@ -2,8 +2,8 @@
 
 Let $p$ and $q$ be odd primes with $p \equiv 1 \pmod 4$ and $\left(\frac{q}{p}\right) = -1$, and
 let $M$ be a rational number. Then $2 + pqM^2 + pZ^2 = X^2 + qY^2$ has a solution in rational
-numbers $X, Y, Z$ if and only if the denominator of $M$ in lowest terms is divisible by neither $p$
-nor $q$.
+numbers $X, Y, Z$ if and only if the denominator of $M$ in lowest terms is prime to $p$ and to $q$.
+(That $p$ is odd follows from $p \equiv 1 \pmod 4$.)
 
 This is the instance $A = q$, $B = p$ of Robinson's formula
 $2 + ABM^2 + BZ^2 = X^2 + AY^2$.
@@ -16,16 +16,6 @@ $\left(\frac{k}{p}\right) = \left(\frac{qn^2}{p}\right) = \left(\frac{q}{p}\righ
 not represented. If $d = qs$, then $m = q \cdot k$ with $k = 2qs^2 + pn^2$ and
 $\left(\frac{k}{q}\right) = \left(\frac{pn^2}{q}\right) = \left(\frac{p}{q}\right) = \left(\frac{q}{p}\right) = -1$
 by quadratic reciprocity, so $m$ is not represented.
-
-## Depends on
-
-- [Legendre symbol](../../../NumberTheory/congruences/power-residues-reciprocity/legendre-symbol-and-euler-s-criterion/legendre-symbol.md), for the hypothesis $\left(\frac{q}{p}\right) = -1$
-- [Prime number](../../../NumberTheory/primes-primality/prime-number.md), for the primes $p$ and $q$
-
-## Proof depends on
-
-- [Robinson's Lemma 2](robinson-lemma-2.md), for the rational values of $X^2 + qY^2 - pZ^2$
-- [Quadratic reciprocity for a prime congruent to 1 modulo 4](../../../NumberTheory/congruences/power-residues-reciprocity/quadratic-reciprocity-one-mod-four.md), for $\left(\frac{p}{q}\right) = \left(\frac{q}{p}\right)$
 
 ## Sources
 
