@@ -288,12 +288,6 @@ private theorem shift_rec (C E : ℕ → ℂ) (x : ℂ)
 
 /-! ### Circle averages of a function with positive real part -/
 
-private theorem circleMap_zero_ne_zero {r : ℝ} (hr : 0 < r) (θ : ℝ) : circleMap 0 r θ ≠ 0 := by
-  intro h
-  have := norm_circleMap_zero r θ
-  rw [h, norm_zero, abs_of_pos hr] at this
-  exact hr.ne' this.symm
-
 /-- `∫_0^{2π} z^{j+1} p(z) dθ = 0` on the circle `z = r e^{iθ}` (Cauchy's theorem). -/
 private theorem integral_circleMap_pow_mul_eq_zero (p : ℂ → ℂ) {r : ℝ} (hr : 0 < r)
     (hp : DifferentiableOn ℂ p (closedBall 0 r)) (j : ℕ) :
@@ -323,7 +317,7 @@ private theorem integral_circleMap_div_pow (p : ℂ → ℂ) {r : ℝ} (hr : 0 <
   have : ∀ θ : ℝ, (circleMap 0 r θ * I) • ((1 / circleMap 0 r θ ^ (k + 1)) •
       p (circleMap 0 r θ)) = I * (p (circleMap 0 r θ) / circleMap 0 r θ ^ k) := by
     intro θ
-    have := circleMap_zero_ne_zero hr θ
+    have : circleMap 0 r θ ≠ 0 := circleMap_ne_center hr.ne'
     rw [smul_eq_mul, smul_eq_mul]
     field_simp
     ring
@@ -358,7 +352,7 @@ private theorem exists_sum_sq_le_sum_re (p : ℂ → ℂ) (hp : DifferentiableOn
     simp only
     rw [norm_circleMap_zero, abs_of_pos hr0]
     exact hr1
-  have hzne : ∀ θ, z θ ≠ 0 := circleMap_zero_ne_zero hr0
+  have hzne : ∀ θ, z θ ≠ 0 := fun _ ↦ circleMap_ne_center hr0.ne'
   have hzcont : Continuous z := continuous_circleMap 0 r
   have hPcont : Continuous fun θ ↦ p (z θ) := hp.continuousOn.comp_continuous hzcont hzball
   set S : ℝ → ℝ := fun θ ↦ ∑ k ∈ range n, (c (k + 1) * z θ ^ (k + 1)).re / (k + 1) with hS
