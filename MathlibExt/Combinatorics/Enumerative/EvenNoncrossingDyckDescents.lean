@@ -11,6 +11,7 @@ module
 public import MathlibExt.Combinatorics.Enumerative.DyckPeakDescents
 public import MathlibExt.Combinatorics.NoncrossingPartition.Basic
 import Mathlib.Data.Finset.Sort
+import all MathlibExt.Combinatorics.Enumerative.ColoredCompositionsDyckPolygons
 
 /-!
 # Noncrossing partitions and Dyck descents
@@ -260,9 +261,9 @@ private theorem fiber_close {n : ℕ} (p : EndMap n) (c : Finset ℕ) (hc : IsSt
   change (i < n + 1 ∧ (if i ∈ p.stack then _ else _) = n) ↔ i ∈ c
   by_cases hs : i ∈ p.stack
   · have hi := (mem_stack.mp hs).1
-    simp [hs, hi, Nat.lt_succ_iff]
+    simp [hs, hi]
   · have hnc : i ∉ c := fun h => hs (hc.1 h)
-    simp [hs, hnc, Nat.lt_succ_iff, ← mem_stack]
+    simp [hs, hnc, ← mem_stack]
 
 private theorem pending_close {n : ℕ} (p : EndMap n) (c : Finset ℕ)
     (hc : IsStackSuffix p.stack c) : (p.close c hc).fiber (n + 1) = p.stack \ c := by
@@ -271,7 +272,7 @@ private theorem pending_close {n : ℕ} (p : EndMap n) (c : Finset ℕ)
   change (i < n + 1 ∧ (if i ∈ p.stack then _ else _) = n + 1) ↔ _
   by_cases hs : i ∈ p.stack
   · have hi := (mem_stack.mp hs).1
-    simp [hs, hi, Nat.lt_succ_iff]
+    simp [hs, hi]
   · have h : i < n + 1 → p.label i ≤ n := by
       intro hi
       rcases (Nat.lt_succ_iff.mp hi).eq_or_lt with he | hl
@@ -316,27 +317,39 @@ private theorem count_D_appendDescent (l : List DyckStep) (k : ℕ) :
     (appendDescent l k).count D = l.count D + k := by
   simp [appendDescent, List.count_append]
 
-private theorem prefixOK_appendDescent {l : List DyckStep} {k : ℕ}
-    (hl : PrefixOK l) (hk : l.count D + k ≤ l.count U + 1) :
-    PrefixOK (appendDescent l k) := by
-  intro i
-  by_cases hi : i ≤ l.length
-  · simpa [appendDescent, List.take_append_of_le_length hi] using hl i
-  · rw [appendDescent, List.take_append, List.take_of_length_le (by omega)]
-    have hp : 0 < i - l.length := by omega
-    rw [show i - l.length = (i - l.length - 1) + 1 by omega, List.take_succ_cons]
-    simp [List.count_append, List.take_replicate, List.count_replicate]
+open choose_mul_coloredDyckPathCount_eq (StrictPath strict_block)
+
+-- Prepending one up step shifts weak prefix balance to strict prefix balance.
+private theorem prefixOK_iff_strictPath (l : List DyckStep) :
+    PrefixOK l ↔ StrictPath (U :: l) := by
+  constructor
+  · intro h
+    rintro (_ | i) hi _
+    · omega
+    · simpa [List.count_cons] using Nat.lt_succ_of_le (h i)
+  · intro h i
+    have htake : l.take (min i l.length) = l.take i := by
+      rw [← List.take_take, List.take_length]
+    have ht := h (min i l.length + 1) (Nat.succ_pos _) (by simp)
+    simp [htake] at ht
     omega
 
+private theorem prefixOK_appendDescent_iff (l : List DyckStep) (k : ℕ) :
+    PrefixOK (appendDescent l k) ↔ PrefixOK l ∧ l.count D + k ≤ l.count U + 1 := by
+  simp only [prefixOK_iff_strictPath]
+  change StrictPath ((U :: l) ++ (List.replicate 1 U ++ List.replicate k D)) ↔ _
+  rw [strict_block _ Nat.one_pos]
+  refine and_congr_right fun _ => ?_
+  simp
+
+private theorem prefixOK_appendDescent {l : List DyckStep} {k : ℕ}
+    (hl : PrefixOK l) (hk : l.count D + k ≤ l.count U + 1) :
+    PrefixOK (appendDescent l k) :=
+  (prefixOK_appendDescent_iff l k).2 ⟨hl, hk⟩
+
 private theorem prefixOK_of_appendDescent {l : List DyckStep} {k : ℕ}
-    (h : PrefixOK (appendDescent l k)) : PrefixOK l := by
-  intro i
-  have hi := h (min i l.length)
-  rw [appendDescent, List.take_append_of_le_length (min_le_right _ _)] at hi
-  by_cases hm : i ≤ l.length
-  · simpa [min_eq_left hm] using hi
-  · rw [min_eq_right (by omega), List.take_of_length_le le_rfl] at hi
-    simpa [List.take_of_length_le (by omega : l.length ≤ i)] using hi
+    (h : PrefixOK (appendDescent l k)) : PrefixOK l :=
+  ((prefixOK_appendDescent_iff l k).1 h).1
 
 private theorem exists_appendDescent (l : List DyckStep) (h : 0 < l.count U) :
     ∃ p k, l = appendDescent p k := by
