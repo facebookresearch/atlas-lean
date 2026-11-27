@@ -36,3 +36,4 @@ The finite statements use homomorphism-count normalisations ($n^2$, $n^3$). The 
 - [Maximal cliques and triangles](../../independence-and-domination/maximal-cliques-and-triangles/README.md): triangles through a given edge, the local quantity summed in Goodman's argument.
 - [Threshold for triangles](../../random-graphs/threshold-for-triangles/README.md): triangles in the random graph $G(n, p)$, whose triangle density is about $p^3$, against the minimum over all graphs of edge density $p$ studied here.
 - [Gowers uniformity norms](../../../Combinatorics/additive-combinatorics/progressions-dense-sets/gowers-uniformity-norms/README.md): cube densities in abelian groups, whose positivity and Gowers–Cauchy–Schwarz inequality come, like flag-algebra inequalities, from averaging identities and Cauchy–Schwarz.
+- [Homomorphism density inequalities](homomorphism-density-inequalities/README.md)
