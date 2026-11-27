@@ -39,7 +39,7 @@ So the continuously observed path attains the Hájek–Le Cam minimax bound for 
 ## Depends on
 
 - [Uniform local asymptotic normality of the Wright–Fisher diffusion with selection and mutation](uniform-local-asymptotic-normality-of-the-wright-fisher-diffusion-with-selection-and-mutation.md)
-- [Martingale problem for the Wright-Fisher diffusion with selection and two-way mutation](../../population-genetics/diffusion-theory/wright-fisher-diffusion-with-mutation/two-way-mutation-and-selection-wright-fisher-mar.md)
+- [Martingale problem for the Wright-Fisher diffusion with selection and two-way mutation](../../../population-genetics/diffusion-theory/wright-fisher-diffusion-with-mutation/two-way-mutation-and-selection-wright-fisher-mar.md)
 
 ## Expansion
 

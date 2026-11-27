@@ -35,7 +35,7 @@ The restriction to mutation parameters at least $1$ matters. If some $\theta_i<1
 
 ## Depends on
 
-- [Martingale problem for the Wright-Fisher diffusion with selection and two-way mutation](../../population-genetics/diffusion-theory/wright-fisher-diffusion-with-mutation/two-way-mutation-and-selection-wright-fisher-mar.md)
+- [Martingale problem for the Wright-Fisher diffusion with selection and two-way mutation](../../../population-genetics/diffusion-theory/wright-fisher-diffusion-with-mutation/two-way-mutation-and-selection-wright-fisher-mar.md)
 
 ## Expansion
 
