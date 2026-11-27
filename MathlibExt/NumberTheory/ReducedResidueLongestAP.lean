@@ -21,7 +21,8 @@ import Mathlib.Tactic.IntervalCases
 For a squarefree modulus, the largest prime factor bounds the length of a progression
 with fixed positive difference in any reduced residue window. For twice an odd prime `p`,
 the absolute least reduced residues form a progression of length `p - 1`. For a prime `p` congruent
-to three modulo four, the least value of the longest progression length is `(p + 1) / 2`.
+to three modulo four, the longest progression in the absolute least reduced residues has length
+`(p + 1) / 2`, which is also the minimum over all reduced residue windows.
 -/
 
 namespace MetaMathlibExt
@@ -300,6 +301,24 @@ private theorem centered_upper_bound {p k : ℕ} (hp : p.Prime) (hpk : p = 4 * k
   simpa [Int.toNat_of_nonneg (neg_nonneg.mpr hb)] using hzero
 
 end isLeast_longestAPLength_prime_of_mod_four_eq_three
+
+open isLeast_longestAPLength_prime_of_mod_four_eq_three in
+/-- **Longest progressions of absolute least residues: primes congruent to 3 mod 4.** For a
+prime $p \equiv 3 \pmod 4$, the length $g(p)$ of the longest arithmetic progression in the
+absolute least reduced residue system modulo $p$ is $(p + 1)/2$.
+
+Source: Chaninat Phothila, Natthakan Thoket and Narakorn Rompurk Kanasri, *Length of the Longest
+Arithmetic Progressions in a Certain Reduced Residue System*, INTEGERS 26 (2026), Article A6,
+Theorem 1 (`integers-2026-A6-thm-1`). -/
+public theorem absLeastAPLength_prime_of_mod_four_eq_three {p : ℕ} (hp : p.Prime)
+    (h4 : p % 4 = 3) : absLeastAPLength p = (p + 1) / 2 := by
+  let k := p / 4
+  have hpk : p = 4 * k + 3 := by dsimp [k]; omega
+  have hc : ⌈(p : ℚ) / 2⌉ = 2 * (k : ℤ) + 2 := by
+    rw [show (2 : ℚ) = ((2 : ℕ) : ℚ) by norm_num, Rat.ceil_natCast_div_natCast]
+    omega
+  rw [absLeastAPLength, hc, show (p + 1) / 2 = 2 * k + 2 by omega]
+  exact le_antisymm (centered_upper_bound hp hpk) (lower_bound _ hp hpk)
 
 open isLeast_longestAPLength_prime_of_mod_four_eq_three in
 /-- **Minimum longest progression length modulo a prime $p \equiv 3 \pmod 4$.** Let $p$ be a prime

@@ -685,18 +685,6 @@ public theorem_wanted zeckNIZ_levels {r ℓ : ℕ} (hℓ : 2 ≤ ℓ) (hr : Nat.
     ∀ k, ℓ + 1 < k → (x ∈ zeckNIZ r k ↔
       Nat.fib k ≤ zeckAdicPrefixValue k x + r ∧ zeckAdicPrefixValue k x < Nat.fib k)
 
-/-- **Points of $\mathrm{NIZ}_k$ have leading digits $00$.** Let $r \ge 1$ and $k \ge 2$, and
-let $\mathrm{NIZ}_k$ be the new-information zone of order $k$ for $r$. Every Zeckendorf-adic
-integer $x = (x_i)_{i \ge 2}$ in $\mathrm{NIZ}_k$ has $x_{k+1} = x_k = 0$, that is, the name
-$x_{k+1} \cdots x_2$ of its cylinder of order $k$ starts with $00$.
-
-Source: Yohan Hosten, *On the Variation of the Sum of Digits in the Zeckendorf Representation:
-An Algorithm to Compute the Distribution and Mixing Properties*, Journal of Integer Sequences 27
-(2024), Article 24.3.2, Lemma 32 (`jis-2024-24.3.2-lem-32`). -/
-public theorem_wanted zeckNIZ_leading_zeros {r k : ℕ} (hr : 1 ≤ r) (hk : 2 ≤ k)
-    {x : ℕ → Bool} (hx : x ∈ zeckAdic) (h : x ∈ zeckNIZ r k) :
-    x (k + 1) = false ∧ x k = false
-
 /-- **Lifting a cylinder of $\mathrm{NIZ}_k$ to order $k + 2$ lowers the variation by $1$.**
 Let $\ell \ge 2$, let $r$ satisfy $F_\ell \le r < F_{\ell+1}$, where $F_1 = F_2 = 1, F_3 = 2,
 \dots$ are the Fibonacci numbers, and let $k \ge \ell$. Write $\Delta^{(r)}$ for the variation
