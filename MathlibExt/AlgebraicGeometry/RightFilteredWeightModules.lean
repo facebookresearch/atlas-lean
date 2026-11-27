@@ -75,7 +75,7 @@ structure Hom (F G : FilteredWeightModule k M O) where
     InWeight k M O F p U s → InWeight k M O G p U ((map.val.app (op U)).hom s)
 
 @[ext] theorem Hom.ext {F G : FilteredWeightModule k M O} (a b : Hom k M O F G)
-    (e : a.map=b.map) : a=b := by
+    (e : a.map = b.map) : a=b := by
   cases a
   cases b
   cases e

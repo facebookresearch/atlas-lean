@@ -1065,7 +1065,7 @@ private theorem poc_aux_marg_cond (p : CfLaw) (hp : IsCfLaw p) (i j k : Bool) :
 
 private theorem poc_aux_prod_eq (a : Bool × Bool) (i j : Bool) :
     (a.1 = i ∧ a.2 = j) ↔ a = (i, j) := by
-  cases a <;> simp
+  cases a; simp
 
 private theorem poc_aux_coord (p : CfLaw) (hp : IsCfLaw p) (i j k : Bool) :
     ((poc_aux_M.cfLaw (poc_aux_mu p hp) 1 2) i j k) = p i j k := by
@@ -1099,7 +1099,7 @@ private theorem poc_aux_coord (p : CfLaw) (hp : IsCfLaw p) (i j k : Bool) :
         else (poc_aux_test2 x).2).1 = i ∧
         (if poc_aux_test0 x = true then (poc_aux_test2 x).1
         else (poc_aux_test2 x).2).2 = j ∧ poc_aux_test0 x = k
-    · rw [if_pos hP]
+    · rw [ite_eq_left hP]
       have hz := poc_aux_outside_zero p hp x hx
       simp only [poc_aux_noiseWeight] at hz
       exact hz
