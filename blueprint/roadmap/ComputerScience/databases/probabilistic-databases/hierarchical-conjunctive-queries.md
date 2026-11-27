@@ -13,6 +13,10 @@ $\mathrm{sg}(y) = \{S, T\}$.
 - [Answers of a conjunctive query](../conjunctive-queries/answers-of-a-conjunctive-query.md)
 - [Minimizations and cores of conjunctive queries](../conjunctive-queries/cores-and-minimization/minimizations-and-cores-of-conjunctive-queries.md)
 
+## Proof depends on
+
+- [Minimizations of a conjunctive query are isomorphic](../conjunctive-queries/cores-and-minimization/minimizations-of-a-conjunctive-query-are-isomorphic.md)
+
 ## Sources
 
 - N. Dalvi and D. Suciu, "The dichotomy of conjunctive queries on probabilistic structures", *Proceedings of the 26th ACM Symposium on Principles of Database Systems (PODS)*, 2007, pp. 293–302, the paragraph on hierarchical queries and Definition 1.2 (pp. 293–294).

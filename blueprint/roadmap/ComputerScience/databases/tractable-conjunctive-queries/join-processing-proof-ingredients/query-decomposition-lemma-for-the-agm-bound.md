@@ -9,12 +9,14 @@ attributes. Then for all $Y, Z \subseteq X$ with $Y \cup Z = X$ and $Y \cap Z = 
 
 $$\sum_{\bar a \in q_Y(D)} \ \prod_{R_i \in \mathcal R(Z)} \bigl|R_i^D \ltimes \{\bar a\}\bigr|^{f(S(R_i))} \le \prod_{i=1}^n \bigl|R_i^D\bigr|^{f(S(R_i))}.$$
 
+For $Y = \emptyset$ the join $q_\emptyset$ is $\{()\}$, and for $Z = \emptyset$ the product is empty and equals $1$.
 The proof moves one attribute at a time from $Y$ to $Z$ and applies Hölder's inequality; with $Y = X$ it gives the
 [AGM bound](../../join-processing/agm-output-size-bound-for-join-queries.md).
 
 ## Depends on
 
 - [Natural join queries, their hypergraphs and fractional edge covers](../../join-processing/natural-join-queries-their-hypergraphs-and-fractional-edge-c.md)
+- [One semijoin command](../../join-processing/semijoin-step.md)
 
 ## Sources
 

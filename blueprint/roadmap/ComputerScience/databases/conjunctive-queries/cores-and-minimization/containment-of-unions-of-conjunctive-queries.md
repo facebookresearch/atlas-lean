@@ -1,7 +1,8 @@
 # Containment of unions of conjunctive queries
 
 A union of conjunctive queries (UCQ) of arity $k$ is a finite union $q = q_1 \cup \dots \cup q_n$, $n \ge 1$, of
-conjunctive queries of arity $k$, possibly with constants, with $q(D) = q_1(D) \cup \dots \cup q_n(D)$; containment and
+conjunctive queries $q_i = \mathrm{Answer}(\bar x) \mathrel{:-} \beta_i$, possibly with constants, that share one head tuple
+$\bar x$ of length $k$ (after renaming the other variables apart), with $q(D) = q_1(D) \cup \dots \cup q_n(D)$; containment and
 equivalence of UCQs are defined as for conjunctive queries.
 
 **Theorem (Sagiv–Yannakakis).** For UCQs $q = q_1 \cup \dots \cup q_n$ and $q' = q'_1 \cup \dots \cup q'_m$ of the same

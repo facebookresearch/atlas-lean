@@ -5,7 +5,10 @@ Consider the [cooperative game](../../../GameTheory/cooperative-games/shapley-va
 facts $D_n$ and whose worth function is $v(E) = \alpha(E \cup D_x) - \alpha(D_x)$ for $E \subseteq D_n$. The *Shapley value* of an
 endogenous fact $f$ for $\alpha$, written $\mathrm{Shapley}(D, \alpha, f)$, is the value of player $f$ in this game given by
 [Shapley's formula](../../../GameTheory/cooperative-games/shapley-value/shapley-formula.md). A Boolean query $q$ is read as the
-numerical query with values $0$ and $1$; the value is then the Shapley–Shubik index of $f$.
+numerical query with values $0$ and $1$. If $q$ is monotone, $D_x \not\models q$ and $D \models q$, the game is a
+simple game (monotone, $\{0, 1\}$-valued, $v(\emptyset) = 0$, $v(D_n) = 1$), and the value is the Shapley–Shubik index of $f$;
+for a non-monotone $q$ a marginal contribution can be $-1$, as for "$R$ is empty" with the single endogenous fact $R(a)$ and
+no exogenous facts.
 
 ## Depends on
 

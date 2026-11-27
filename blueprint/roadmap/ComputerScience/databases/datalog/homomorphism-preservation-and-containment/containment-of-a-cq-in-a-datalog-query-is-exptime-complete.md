@@ -19,4 +19,4 @@ this complexity is the expression complexity of evaluating Datalog programs.
 
 ## Sources
 
-- S. Chaudhuri and M. Y. Vardi, "On the equivalence of recursive and nonrecursive Datalog programs", *J. Comput. System Sci.* 54(1) (1997) 61–78; conference version PODS 1992; author copy <https://www.cs.rice.edu/~vardi/papers/pods92rj.pdf>, Section 1 (pp. 2–3 of the author copy): EXPTIME-complete, citing earlier work, and NP-complete for programs of bounded arity.
+- S. Chaudhuri and M. Y. Vardi, "On the equivalence of recursive and nonrecursive Datalog programs", *J. Comput. System Sci.* 54(1) (1997) 61–78; conference version PODS 1992; author copy <https://www.cs.rice.edu/~vardi/papers/pods92rj.pdf>, Section 1 (pp. 2–4 of the author copy): EXPTIME-complete, citing earlier work, and NP-complete for programs of bounded arity.

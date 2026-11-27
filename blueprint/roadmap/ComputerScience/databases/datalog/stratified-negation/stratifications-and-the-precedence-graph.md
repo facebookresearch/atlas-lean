@@ -4,7 +4,7 @@ A Datalog program with negation ($\mathrm{datalog}^\neg$) allows negated atoms $
 active-domain semantics. It is *semipositive* if every negated relation in a rule body is extensional. Its
 immediate consequence operator $T_P$ maps an instance $K$ over the schema of $P$ to the facts of $K$ over extensional
 relations together with the heads $A$ of the ground rule instances $A \leftarrow L_1, \dots, L_n$ over the constants of $P$
-and $K$ such that every positive literal $L_i$ is in $K$ and every negative literal $L_i = \neg B$ has $B \notin K$; unlike
+and $K$ such that every positive relational literal $L_i$ is in $K$, every built-in equality literal holds, and every negative literal $L_i = \neg B$ has $B \notin K$; unlike
 the operator of a program without negation it need not be monotone.
 
 A *stratification* of a $\mathrm{datalog}^\neg$ program $P$ is a sequence $P^1, \dots, P^n$ of programs, with a map $\sigma$
@@ -14,8 +14,9 @@ intensional, then $\sigma(R') \le \sigma(R)$; and (iv) if $R(\bar u) \leftarrow 
 is intensional, then $\sigma(R') < \sigma(R)$. A program with a stratification is stratifiable.
 
 The *precedence graph* $G_P$ has the intensional relations as nodes, a positive edge $(R', R)$ for each rule with head
-relation $R$ and a positive body atom over $R'$, and a negative edge $(R', R)$ for each rule with head relation $R$ and a
-negated body atom over $R'$.
+relation $R$ and a positive body atom over an intensional relation $R'$, and a negative edge $(R', R)$ for each rule with head
+relation $R$ and a negated body atom over an intensional relation $R'$; atoms over extensional relations and built-in
+equalities give no edges.
 
 ## Depends on
 

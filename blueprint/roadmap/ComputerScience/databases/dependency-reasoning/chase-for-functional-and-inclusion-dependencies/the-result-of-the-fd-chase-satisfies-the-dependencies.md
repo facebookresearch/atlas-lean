@@ -7,6 +7,7 @@ variables as constants).
 ## Depends on
 
 - [The chase for functional dependencies on sets of atoms](the-chase-for-functional-dependencies-on-sets-of-atoms.md)
+- [A functional dependency holds in a relation](../../functional-dependencies/holds-in.md)
 
 ## Proof depends on
 

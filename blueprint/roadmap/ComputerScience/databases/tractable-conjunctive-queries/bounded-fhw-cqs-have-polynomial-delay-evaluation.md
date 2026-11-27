@@ -2,8 +2,8 @@
 
 For every $r \ge 1$ there is a polynomial-delay algorithm that, given a conjunctive query $Q$ of
 [fractional hypertree width](fractional-hypertree-decompositions-and-width.md) at most $r$ and a database $D$, computes $Q(D)$: it
-outputs the first answer within time polynomial in $\|Q\| + \|D\|$ and each further answer, or the end of the output, within
-polynomial time of the previous one. The same holds for listing all solutions of CSP instances of fractional hypertree width at
+outputs the first answer, or the end of the output if there is no answer, within time polynomial in $\|Q\| + \|D\|$, and
+each further answer and the final end of the output within polynomial time of the previous output. The same holds for listing all solutions of CSP instances of fractional hypertree width at
 most $r$.
 
 ## Depends on

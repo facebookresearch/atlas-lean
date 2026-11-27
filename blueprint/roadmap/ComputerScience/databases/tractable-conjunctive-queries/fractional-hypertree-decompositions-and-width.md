@@ -1,6 +1,7 @@
 # Fractional hypertree decompositions and width
 
-Let $H$ be a hypergraph. For $\gamma : E(H) \to [0, \infty)$ let $B(\gamma) = \{v \in V(H) : \sum_{e \ni v} \gamma(e) \ge 1\}$ and
+Let $H$ be a finite hypergraph with nonempty edges in which every vertex lies in some edge, as for the
+hypergraph of a CSP instance. For $\gamma : E(H) \to [0, \infty)$ let $B(\gamma) = \{v \in V(H) : \sum_{e \ni v} \gamma(e) \ge 1\}$ and
 $\mathrm{weight}(\gamma) = \sum_e \gamma(e)$. A *fractional hypertree decomposition* of $H$ is a triple
 $(T, (B_t)_{t \in V(T)}, (\gamma_t)_{t \in V(T)})$ where $(T, (B_t))$ is a tree decomposition of $H$ and each $\gamma_t$ is a
 map $E(H) \to [0, \infty)$ with $B_t \subseteq B(\gamma_t)$. Its width is $\max_t \mathrm{weight}(\gamma_t)$, and the

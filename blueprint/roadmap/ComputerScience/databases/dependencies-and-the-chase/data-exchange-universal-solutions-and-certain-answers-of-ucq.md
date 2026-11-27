@@ -4,7 +4,8 @@ Fix a data-exchange setting: source and target schemas, source-to-target tuple-g
 dependencies, and target dependencies consisting of weakly acyclic tuple-generating dependencies and
 equality-generating dependencies. Fix a union of conjunctive queries $q$ over the target. A solution for a source instance $I$ is a target
 instance $J$ such that $I$ and $J$ together satisfy all the dependencies, and the certain answers of $q$ on
-$I$ are the tuples of constants that belong to $q(J)$ for every solution $J$. For every source
+$I$ are the tuples over the active domain of $I$ that belong to $q(J)$ for every solution $J$ (so when $I$ has no
+solution they are all tuples over that active domain, not arbitrary constants). For every source
 instance $I$, the chase of $I$ either fails, in which case $I$ has no solution, or terminates in a number
 of steps polynomial in $\lvert I \rvert$ with a canonical universal solution $J$; in the latter case the
 certain answers of $q$ on $I$ are the null-free tuples of $q(J)$. Hence, for the fixed setting and query,

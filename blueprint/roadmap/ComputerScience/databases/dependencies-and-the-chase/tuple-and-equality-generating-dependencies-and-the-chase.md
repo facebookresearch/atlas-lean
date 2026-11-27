@@ -22,4 +22,4 @@ $S(x,y) \to R(y)$ and $R(x) \to T(x)$, a run can extend the $R$/$S$ chain foreve
 ## Sources
 
 - R. Fagin, Ph. G. Kolaitis, R. J. Miller and L. Popa, *Data exchange: semantics and query answering*, Theoret. Comput. Sci. 336 (2005) 89–124, Definitions 3.1 and 3.2 (chase steps for tgds and egds, chase sequences). <https://www.cis.upenn.edu/~val/CIS650/DataX-tcs.pdf>
-- Database Theory, Lecture 19: The Chase, TU Dresden, Definition 19.1 (dependencies). <https://iccl.inf.tu-dresden.de/w/images/5/54/Lecture-19-chase-4.pdf>
+- Database Theory, Lecture 19: The Chase, TU Dresden, slide 2, which reproduces Definition 18.7 (dependencies). <https://iccl.inf.tu-dresden.de/w/images/5/54/Lecture-19-chase-4.pdf>

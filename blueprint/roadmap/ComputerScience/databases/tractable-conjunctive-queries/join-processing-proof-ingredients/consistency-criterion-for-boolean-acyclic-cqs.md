@@ -14,6 +14,8 @@ exactly when $q(D)$ is true. It is the $1$-consistency procedure of
 - [Characterizations of acyclic database schemas](../../join-processing/characterizations-of-acyclic-database-schemas.md)
 - [One semijoin command](../../join-processing/semijoin-step.md)
 - [Pairwise consistency](../../join-processing/pairwise-consistent.md)
+- [The k-consistency procedure for Boolean conjunctive queries](../k-consistency-procedure.md)
+- [Join tree](../../join-processing/has-join-tree.md)
 
 ## Proof depends on
 

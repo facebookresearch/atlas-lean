@@ -1,6 +1,8 @@
 # Fourth normal form
 
-Let $U$ be a finite set of attributes and $\Sigma$ a set of functional and multivalued dependencies over $U$. The schema
+Let $U$ be a finite set of attributes and $\Sigma$ a set of functional, multivalued and join dependencies over $U$; the
+conditions below only test the functional and multivalued dependencies that $\Sigma$ implies, so they apply unchanged when
+$\Sigma$ contains join dependencies. The schema
 $(U, \Sigma)$ is in *fourth normal form* (4NF) when
 
 1. whenever $\Sigma \models X \to Y$ and $Y \not\subseteq X$, then $\Sigma \models X \to U$; and

@@ -12,15 +12,12 @@ whether a program is equivalent to some nonrecursive program, which is undecidab
 
 - [Datalog programs and the immediate consequence operator](../datalog-programs-and-the-immediate-consequence-operator.md)
 - [The class EXPSPACE](../../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/expspace.md)
+- [Boundedness of Datalog is undecidable](../boundedness-of-datalog-is-undecidable.md)
 
 ## Proof depends on
 
 - [Containment of a Datalog query in a nonrecursive program is 3EXPTIME-complete](containment-of-datalog-in-a-nonrecursive-program-is-3exptime-complete.md)
 - [Containment of a Datalog query in a union of conjunctive queries is 2EXPTIME-complete](containment-of-datalog-in-a-ucq-is-2exptime-complete.md)
-
-## Informally uses
-
-- [Boundedness of Datalog is undecidable](../boundedness-of-datalog-is-undecidable.md)
 
 ## Sources
 

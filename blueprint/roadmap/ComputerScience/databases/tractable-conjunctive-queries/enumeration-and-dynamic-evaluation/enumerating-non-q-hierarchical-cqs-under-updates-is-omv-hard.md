@@ -3,7 +3,8 @@
 A dynamic algorithm for a conjunctive query receives the query and an initial database, preprocesses them, and then
 processes single-tuple insertions and deletions; the preprocessing, update, delay, answer and counting times are measured on
 a random access machine as in [enumeration with constant delay](enumeration-with-linear-preprocessing-and-constant-delay.md),
-with $n$ the size of the active domain.
+with $n$ the size of the active domain. Here conjunctive queries are those of the source: every argument of every atom is a variable, and the output lists the
+free variables, each once; queries with constants in atoms are not covered.
 
 **Theorem.** Fix $\varepsilon > 0$ and a self-join free conjunctive query $\varphi$ that is not
 [q-hierarchical](q-hierarchical-conjunctive-queries.md). Unless the
@@ -18,6 +19,10 @@ dichotomy for self-join free conjunctive queries.
 - [Q-hierarchical conjunctive queries](q-hierarchical-conjunctive-queries.md)
 - [The online matrix-vector multiplication conjecture](../../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/the-online-matrix-vector-multiplication.md)
 - [Q-hierarchical conjunctive queries can be maintained under updates](q-hierarchical-cqs-can-be-maintained-under-updates.md)
+
+## Proof depends on
+
+- [Answering Boolean conjunctive queries under updates is OMv-hard unless the core is q-hierarchical](boolean-cqs-under-updates-are-omv-hard-unless-the-core-is-q-hierarchical.md)
 
 ## Sources
 

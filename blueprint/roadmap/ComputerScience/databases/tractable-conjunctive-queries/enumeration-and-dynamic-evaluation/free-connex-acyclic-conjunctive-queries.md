@@ -11,6 +11,7 @@ conjunctive query has a head-path if and only if it is not free-connex.
 
 - [Answers of a conjunctive query](../../conjunctive-queries/answers-of-a-conjunctive-query.md)
 - [Characterizations of acyclic database schemas](../../join-processing/characterizations-of-acyclic-database-schemas.md)
+- [Join tree](../../join-processing/has-join-tree.md)
 
 ## Sources
 

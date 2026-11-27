@@ -26,6 +26,7 @@ computed.
 
 - [Conjunctive queries of bounded generalized hypertreewidth are evaluable in polynomial time](bounded-ghw-cqs-are-evaluable-in-polynomial-time.md)
 - [Pairwise consistency](../join-processing/pairwise-consistent.md)
+- [Minimizations of a conjunctive query are isomorphic](../conjunctive-queries/cores-and-minimization/minimizations-of-a-conjunctive-query-are-isomorphic.md)
 
 ## Sources
 

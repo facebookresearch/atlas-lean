@@ -19,7 +19,11 @@ of the Boolean query $\mathrm{Answer} \mathrel{:-} R(x, y), R(x, z)$.
 
 - [Containment, equivalence and homomorphisms of conjunctive queries](containment-equivalence-and-homomorphisms-of-conjunctive-queries.md)
 
+## Proof depends on
+
+- [Homomorphism theorem for conjunctive queries with constants](homomorphism-theorem-for-conjunctive-queries-with-constants.md)
+
 ## Sources
 
 - M. Arenas, P. Barceló, L. Libkin, W. Martens and A. Pieris, *Database Theory: Querying Data*, preliminary version of 19 August 2022, open access at <https://github.com/pdm-book/community>, Definitions 16.1 and 16.2 and Example 16.3 (pp. 123–125).
-- S. Abiteboul, R. Hull and V. Vianu, *Foundations of Databases*, Addison-Wesley, 1995; authors' web edition <http://webdam.inria.fr/Alice/pdfs/all.pdf>, Section 6.2 (tableau minimization, Theorem 6.2.6, p. 119).
+- S. Abiteboul, R. Hull and V. Vianu, *Foundations of Databases*, Addison-Wesley, 1995; authors' web edition <http://webdam.inria.fr/Alice/pdfs/all.pdf>, Section 6.2 (tableau minimization, Theorem 6.2.6, p. 118).

@@ -10,6 +10,10 @@ to the ordinary relation $\mathrm{supp}(R)$.
 - [Datalog on K-relations over ω-continuous semirings](datalog-on-k-relations-over-omega-continuous-semirings.md)
 - [Datalog programs and the immediate consequence operator](../datalog/datalog-programs-and-the-immediate-consequence-operator.md)
 
+## Proof depends on
+
+- [Least model equals least fixpoint for Datalog](../datalog/least-model-equals-least-fixpoint-for-datalog.md)
+
 ## Sources
 
 - T. J. Green, G. Karvounarakis and V. Tannen, *Provenance semirings*, PODS 2007, <http://www.cs.ucdavis.edu/~green/papers/pods07.pdf>, Proposition 5.4.

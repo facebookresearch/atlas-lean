@@ -5,8 +5,8 @@ Let $q(\bar x)$ and $q'(\bar x')$ be conjunctive queries of the same arity over 
 Then $q$ is contained in $q'$, written $q \subseteq q'$, when $q(D) \subseteq q'(D)$ for every database $D$, and $q$ and
 $q'$ are equivalent, $q \equiv q'$, when $q \subseteq q'$ and $q' \subseteq q$.
 
-For finite sets of atoms $S, S'$ over constants and variables and tuples $\bar u, \bar v$ of the same length over their
-terms, a homomorphism from $(S, \bar u)$ to $(S', \bar v)$ is a map $h$ from the terms of $S$ and $\bar u$ to terms that is
+For sets of atoms $S, S'$ over constants and variables, finite or infinite, and tuples $\bar u, \bar v$ of the same length
+over their terms, a homomorphism from $(S, \bar u)$ to $(S', \bar v)$ is a map $h$ from the terms of $S$ and $\bar u$ to terms that is
 the identity on constants, sends every atom $R(\bar w) \in S$ to an atom $R(h(\bar w)) \in S'$, and satisfies
 $h(\bar u) = \bar v$; write $(S, \bar u) \to (S', \bar v)$ when one exists, and $(q', \bar x') \to (q, \bar x)$ for
 $(A_{q'}, \bar x') \to (A_q, \bar x)$. Two conjunctive queries $q(\bar x)$ and $q'(\bar x')$ are isomorphic when some

@@ -4,10 +4,11 @@ Write an [inclusion dependency](../../dependencies-and-the-chase/ind.md) as $\si
 the attributes of each relation with its positions, and read its [satisfaction](../../dependencies-and-the-chase/inclusion-dependencies-and-finite-implication.md)
 on sets of atoms and on databases whose relations may be infinite.
 
-For an atom $R(\bar u)$ in a set of atoms $S$, let $\mathrm{new}(\sigma, \bar u)$ be the atom $P(v_1, \dots, v_{\mathrm{ar}(P)})$
+Let $S$ be a finite set of atoms; the chase sequences below start from $S$, and their results may be infinite.
+For an atom $R(\bar u)$ in a set of atoms $X$, let $\mathrm{new}(\sigma, \bar u)$ be the atom $P(v_1, \dots, v_{\mathrm{ar}(P)})$
 with $v_{j_k} = u_{i_k}$ for $k \in [m]$ and, at every other position $\ell$, a fresh variable determined by $\sigma$, $\ell$ and
-$(u_{i_1}, \dots, u_{i_m})$ alone. The dependency $\sigma$ is *applicable* to $S$ with $\bar u$ when $R(\bar u) \in S$ and
-$\mathrm{new}(\sigma, \bar u) \notin S$; applying it adds $\mathrm{new}(\sigma, \bar u)$.
+$(u_{i_1}, \dots, u_{i_m})$ alone. The dependency $\sigma$ is *applicable* to $X$ with $\bar u$ when $R(\bar u) \in X$ and
+$\mathrm{new}(\sigma, \bar u) \notin X$; applying it adds $\mathrm{new}(\sigma, \bar u)$.
 
 A finite chase sequence of $S$ under a set $\Sigma$ of inclusion dependencies is $S = S_0, \dots, S_n$ where each step applies an
 applicable dependency and none is applicable to $S_n$; its result is $S_n$. An infinite chase sequence $S_0, S_1, \dots$ applies

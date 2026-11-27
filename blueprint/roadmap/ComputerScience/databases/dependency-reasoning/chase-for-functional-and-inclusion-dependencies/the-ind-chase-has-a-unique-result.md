@@ -8,7 +8,9 @@ Let $S$ be a finite set of atoms and $\Sigma$ a finite set of inclusion dependen
 3. any two infinite chase sequences have the same result.
 
 The fixed naming of new variables makes the atom added for a given dependency and tuple independent of when it is added;
-the result is the least fixpoint of the one-step operator on sets of atoms.
+the result is the least set of atoms that contains $S$ and contains $\mathrm{new}(\sigma, \bar u)$ whenever it contains
+$R(\bar u)$ for $\sigma = R[\alpha] \subseteq P[\beta]$ in $\Sigma$, that is, the least fixpoint of
+$X \mapsto S \cup X \cup \{\mathrm{new}(\sigma, \bar u) : \sigma \in \Sigma,\ R(\bar u) \in X\}$.
 
 ## Depends on
 

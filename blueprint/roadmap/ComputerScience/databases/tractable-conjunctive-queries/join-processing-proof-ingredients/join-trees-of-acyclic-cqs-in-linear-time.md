@@ -8,6 +8,7 @@ conjunctive query $q$, decides in time $O(\|q\|)$ whether $q$ is acyclic and, if
 
 - [Answers of a conjunctive query](../../conjunctive-queries/answers-of-a-conjunctive-query.md)
 - [Characterizations of acyclic database schemas](../../join-processing/characterizations-of-acyclic-database-schemas.md)
+- [Join tree](../../join-processing/has-join-tree.md)
 
 ## Sources
 

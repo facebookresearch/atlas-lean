@@ -14,6 +14,7 @@ proofs credited in that book's bibliographic notes for Chapter 8 and cites them 
 
 - [Join dependencies and multivalued dependencies](../dependencies-and-the-chase/multivalued-and-join-dependencies/join-dependencies-and-multivalued-dependencies.md)
 - [NP-complete decision problems](../../../TheoryOfComputation/complexity-classes/mahaney-s-theorem/npcomplete.md)
+- [Functional dependency](../functional-dependencies/fd.md)
 
 ## Proof depends on
 

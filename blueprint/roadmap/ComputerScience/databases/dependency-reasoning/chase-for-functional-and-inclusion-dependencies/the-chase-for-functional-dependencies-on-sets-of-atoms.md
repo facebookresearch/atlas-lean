@@ -1,17 +1,27 @@
 # The chase for functional dependencies on sets of atoms
 
-Fix a strict total order on constants and variables in which every constant precedes every variable. Let $S$ be a finite set
+Fix a strict total order on constants and variables in which every constant precedes every variable and which is
+decidable in polynomial time on the encodings of the terms (for example, constants before variables, and lexicographic
+order on encodings within each kind). Let $S$ be a finite set
 of atoms over a schema, with constants and variables, and $\Sigma$ a set of functional dependencies $R : U \to V$ over it,
 where $U, V$ are sets of positions of $R$. A dependency $R : U \to V$ is *applicable* to $S$ with atoms $R(\bar u), R(\bar v) \in S$
-when $\pi_U(\bar u) = \pi_U(\bar v)$ and $\pi_V(\bar u) \ne \pi_V(\bar v)$. Applying it fails, with result $\bot$, if some position
-of $V$ carries two distinct constants; otherwise it replaces, everywhere in $S$, the larger of each pair of distinct terms
-$u_i, v_i$ at positions of $V$ by the smaller one.
+and a position $i \in V$ when $\pi_U(\bar u) = \pi_U(\bar v)$ and $u_i \ne v_i$. Applying it fails, with result $\bot$, if $u_i$
+and $v_i$ are distinct constants; otherwise it replaces every occurrence in $S$ of the larger of $u_i, v_i$ by the smaller
+one. Applying $R : U \to V$ one position at a time is applying the functional dependencies $R : U \to \{i\}$, $i \in V$,
+which together are equivalent to it; a step on several positions at once need not be a function: for
+$R(k, a, b), R(k, x, x)$ and $\{1\} \to \{2, 3\}$ it would send $x$ to both $a$ and $b$, whereas position by position it
+maps $x$ to $a$ and then fails on $a, b$.
 
-A finite chase sequence of $S$ under $\Sigma$ is a sequence $S = S_0, S_1, \dots, S_n$ in which each $S_{i+1}$ is obtained from
-$S_i$ by one application; it is *failing* if $S_n = \bot$ and *successful* if no dependency of $\Sigma$ is applicable to $S_n$.
+A chase sequence of $S$ under $\Sigma$ is a finite sequence $S = S_0, S_1, \dots, S_n$ in which each $S_{i+1}$ is obtained from
+$S_i$ by one application and which ends in failure or saturation: it is *failing* if $S_n = \bot$ and *successful* if no
+dependency of $\Sigma$ is applicable to $S_n$. A sequence that stops earlier is a partial run, not a chase sequence: for
+$R(k, x), R(k, y)$ and $1 \to 2$ the zero-step prefix is partial, and only the run that identifies $x$ and $y$ is a chase
+sequence.
 The composition of the replacement maps along a successful sequence is its chase homomorphism. When all finite chase
 sequences end in the same result (see [termination and uniqueness](the-fd-chase-terminates-with-a-unique-result.md)), that
-result is written $\mathrm{Chase}(S, \Sigma)$ and the chase homomorphism $h_{S, \Sigma}$.
+result is written $\mathrm{Chase}(S, \Sigma)$; $h_{S, \Sigma}$ denotes the chase homomorphism of a fixed successful
+sequence, and the statements that use it hold for every such choice, since all of them have the same image
+$h_{S, \Sigma}(S) = \mathrm{Chase}(S, \Sigma)$.
 
 ## Depends on
 

@@ -9,7 +9,9 @@ let $S_\sigma = \{R(x_1, \dots, x_{\mathrm{ar}(R)})\}$ with distinct variables. 
 
 $$\Sigma \models_\infty \sigma \iff \mathrm{Chase}(S_\sigma, \Sigma) \models \sigma .$$
 
-Since finite and unrestricted implication coincide for inclusion dependencies, the same test decides finite implication.
+Since finite and unrestricted implication coincide for inclusion dependencies, the same criterion characterizes finite
+implication; since the chase may be infinite, the terminating decision procedure is the search for
+[compact witnesses](implication-of-inds-via-compact-witnesses.md).
 
 ## Depends on
 

@@ -3,13 +3,20 @@
 Let $(U, \Sigma)$ be a relation schema whose dependencies $\Sigma$ are functional, multivalued and join dependencies. If
 $(U, \Sigma)$ is in [project-join normal form](project-join-normal-form.md) then it is in
 [fourth normal form](fourth-normal-form.md), and if it is in fourth normal form then it is in Boyce–Codd normal form: for
-every nontrivial functional dependency $X \to Y$ implied by $\Sigma$, the set $X$ is a superkey.
+every nontrivial functional dependency $X \to Y$ implied by $\Sigma$, the set $X$ is a superkey. Both normal forms are
+tested on the functional and multivalued dependencies implied by $\Sigma$, join dependencies included, so a premise such as
+$\bowtie[AB, BC, AC]$ is allowed.
 
 ## Depends on
 
 - [Fourth normal form](fourth-normal-form.md)
 - [Project-join normal form](project-join-normal-form.md)
 - [BCNF](../../lossless-decomposition-and-normal-forms/is-bcnf.md)
+
+## Proof depends on
+
+- [Heath's theorem](../../lossless-decomposition-and-normal-forms/join-project-eq-of-holds-in.md)
+- [Lossless binary decompositions](../../lossless-decomposition-and-normal-forms/lossless-join-iff.md)
 
 ## Sources
 

@@ -12,6 +12,7 @@ $S$. The tableau version for functional and join dependencies is the [tableau ch
 
 - [The chase for functional dependencies on sets of atoms](the-chase-for-functional-dependencies-on-sets-of-atoms.md)
 - [Containment, equivalence and homomorphisms of conjunctive queries](../../conjunctive-queries/cores-and-minimization/containment-equivalence-and-homomorphisms-of-conjunctive-queries.md)
+- [A functional dependency holds in a relation](../../functional-dependencies/holds-in.md)
 
 ## Proof depends on
 

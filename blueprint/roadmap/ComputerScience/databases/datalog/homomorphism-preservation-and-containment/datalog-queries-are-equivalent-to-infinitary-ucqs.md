@@ -8,7 +8,7 @@ a database $D$ as the union of the answer sets $\varphi_i(D)$; the empty disjunc
 
 **Proposition.** For every Datalog query $q = (P, R)$ over a schema $\mathbf S$ whose rule heads contain only variables,
 each occurring in the rule body (Definition 35.1 of the first source), there is an infinitary union of conjunctive
-queries $q' = \varphi(\bar x)$ over $\mathbf S$ whose constants are those of $P$ and with $q \equiv q'$. The disjuncts can be
+queries $q' = \varphi(\bar x)$ over $\mathbf S$ that uses only constants of $P$ and with $q \equiv q'$. The disjuncts can be
 taken to be the conjunctive queries over $\mathbf S$ obtained from the rules for $R$ by repeatedly unfolding intensional
 atoms with rules of $P$, that is, the expansion trees of $P$; when there is none, as for $Q() \mathrel{:-} Q()$, the union is empty. Both kinds of equality atom are needed: for the head-safe
 rules $T(x, x) \mathrel{:-} E(x)$ and $Q(x) \mathrel{:-} T(x, c)$ the unfolding of $Q$ is $E(x) \wedge x = c$, and for
@@ -22,6 +22,8 @@ $Q(x, x) \mathrel{:-} E(x)$ and $Q(x, y) \mathrel{:-} S(x, y)$ it is $(E(x) \wed
 ## Proof depends on
 
 - [A Datalog program has a minimum model containing its input](../fixpoint-semantics/a-datalog-program-has-a-minimum-model-containing-its-input.md)
+- [Least model equals least fixpoint for Datalog](../least-model-equals-least-fixpoint-for-datalog.md)
+- [Conjunctive queries are monotone](../../conjunctive-queries/conjunctive-queries-are-monotone.md)
 
 ## Sources
 

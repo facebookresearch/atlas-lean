@@ -14,10 +14,12 @@ $w$, let $D$ be a database and $Q$ a Boolean conjunctive query. Deciding $D \cup
 - [The complexity class NP](../../../../TheoryOfComputation/complexity-classes/the-classes-p-np-and-conp/np.md)
 - [The class EXP](../../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/exp.md)
 - [The complexity class P](../../../../TheoryOfComputation/complexity-classes/the-classes-p-np-and-conp/p.md)
+- [NP-complete decision problems](../../../../TheoryOfComputation/complexity-classes/mahaney-s-theorem/npcomplete.md)
 
 ## Proof depends on
 
 - [Query answering under weakly guarded tuple-generating dependencies is decidable](query-answering-under-weakly-guarded-tgds-is-decidable.md)
+- [GRAPH HOMOMORPHISM is NP-complete](../../../../TheoryOfComputation/np-completeness/graph-coloring-and-partitioning/graph-homomorphism/graph-homomorphism-np-complete.md)
 
 ## Sources
 

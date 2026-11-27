@@ -8,8 +8,11 @@ $D$ to a fact of $D'$ and satisfies $h(\bar a) = \bar b$. Then $q$ is preserved 
 
 $$(D, \bar a) \to_C (D', \bar b) \text{ and } \bar a \in q(D) \implies \bar b \in q(D').$$
 
-The converse direction for first-order queries on finite databases, that every first-order query preserved under
-homomorphisms is equivalent to such a union, is a deep theorem stated without proof in the source.
+For Boolean first-order queries without constants the converse holds on finite databases: such a query preserved under
+homomorphisms is equivalent to a union of conjunctive queries (Rossman's homomorphism preservation theorem). The source's
+Theorem 28.11 states the converse also for queries with constants, without proof; with answer tuples drawn only from
+$\mathrm{Dom}(D)$, as in the test above, it fails there: $\varphi(x) = (x = c \wedge \neg R(c))$ passes the test, since no tuple
+of the active domain witnesses a violation, but returns $c$ on the empty database and not after adding $R(c)$.
 
 ## Depends on
 
@@ -23,3 +26,4 @@ homomorphisms is equivalent to such a union, is a deep theorem stated without pr
 ## Sources
 
 - M. Arenas, P. Barceló, L. Libkin, W. Martens and A. Pieris, *Database Theory: Querying Data*, preliminary version of 19 August 2022, open access at <https://github.com/pdm-book/community>, Proposition 28.10 and the discussion of Theorem 28.11 (pp. 257–258).
+- B. Rossman, "Homomorphism preservation theorems", *Journal of the ACM* 55(3), Article 15, 2008.

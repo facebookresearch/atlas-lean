@@ -14,7 +14,12 @@ multivalued dependency $X \twoheadrightarrow Y$; for decompositions justified by
 - [Join dependencies and multivalued dependencies](join-dependencies-and-multivalued-dependencies.md)
 - [Functional dependency](../../functional-dependencies/fd.md)
 
+## Proof depends on
+
+- [Heath's theorem](../../lossless-decomposition-and-normal-forms/join-project-eq-of-holds-in.md)
+- [Lossless binary decompositions](../../lossless-decomposition-and-normal-forms/lossless-join-iff.md)
+
 ## Sources
 
-- S. Abiteboul, R. Hull and V. Vianu, *Foundations of Databases*, Addison-Wesley, 1995; authors' web edition <http://webdam.inria.fr/Alice/pdfs/all.pdf>, Definitions 8.3.1 and 8.3.2 (p. 170), Proposition 8.2.2 (p. 164) and rule FMVD1 of Theorem 8.3.5 (p. 171).
+- S. Abiteboul, R. Hull and V. Vianu, *Foundations of Databases*, Addison-Wesley, 1995; authors' web edition <http://webdam.inria.fr/Alice/pdfs/all.pdf>, Definitions 8.3.1 and 8.3.2 (p. 170), Proposition 8.2.2 (p. 164) and rule FMVD1 of Theorem 8.3.5 (p. 172).
 - R. Fagin, "Multivalued dependencies and a new normal form for relational databases", *ACM Trans. Database Syst.* 2(3) (1977) 262–278, where multivalued dependencies are introduced as the condition for a lossless decomposition into two projections.

@@ -10,6 +10,7 @@ multivalued dependencies.
 ## Depends on
 
 - [Relational algebra queries](../../relational-algebra/expr.md)
+- [Join of the projections of a relation](../../lossless-decomposition-and-normal-forms/join-projections.md)
 
 ## Sources
 

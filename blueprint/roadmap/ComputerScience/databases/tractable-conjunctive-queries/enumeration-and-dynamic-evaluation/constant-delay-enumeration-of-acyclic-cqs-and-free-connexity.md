@@ -6,6 +6,7 @@
    $\mathrm{DelayC}_{\mathrm{lin}}$: the answers can be enumerated with constant delay after linear preprocessing.
 2. If $Q$ is not free-connex and is self-join free, then $\mathrm{Enum}\langle Q\rangle$ is not in $\mathrm{DelayC}_{\mathrm{lin}}$,
    assuming that the product of two $n \times n$ Boolean matrices cannot be computed in time $O(n^2)$.
+Here, as in the sources, every argument of every atom is a variable; queries with constants in atoms are not covered.
 
 ## Depends on
 

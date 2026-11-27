@@ -13,6 +13,10 @@ bound.
 
 - [Answers of a conjunctive query](../conjunctive-queries/answers-of-a-conjunctive-query.md)
 
+## Proof depends on
+
+- [Strong linear programming duality](../../../Geometry/convex-geometry/linear-programming/strong-linear-programming-duality.md)
+
 ## Sources
 
 - Communication Steps for Parallel Query Processing (Beame, Koutris, Suciu, PODS 2013) — Beame, Koutris, Suciu; ACM PODS, author copy, Section 2, "Vertex Cover and Edge Packing" and Figure 1. <https://homes.cs.washington.edu/~beame/papers/mpcpods.pdf>

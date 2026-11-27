@@ -1,8 +1,8 @@
 # Query answering under weakly guarded tuple-generating dependencies is decidable
 
 Given a database $D$, a [weakly guarded](guarded-and-weakly-guarded-tgds.md) set $\Sigma$ of TGDs and a Boolean conjunctive query
-$Q$, it is decidable whether $D \cup \Sigma \models Q$. The proof shows that the chase has bounded treewidth on its guarded part
-and applies Courcelle's decidability of satisfiability for theories with the finite-treewidth model property.
+$Q$, it is decidable whether $D \cup \Sigma \models Q$. The proof bounds the treewidth of the whole chase by $|\mathrm{dom}(D)| + w$, where $w$ is the maximum
+arity (Lemma 3.13 of the cited paper), and applies Courcelle's decidability of satisfiability for theories with the finite-treewidth model property.
 
 ## Depends on
 
