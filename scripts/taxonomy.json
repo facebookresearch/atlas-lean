@@ -13459,6 +13459,7 @@
   "MathlibExt/NumberTheory/GcdPowAddNegOnePow": {"to": "NumberTheory/special-numbers/binomial-coefficients", "title": "Greatest common divisors of radical-expansion coefficients"},
   "MathlibExt/NumberTheory/GelfondSchneider": {"to": "NumberTheory/diophantine-approximation/transcendence-irrationality", "title": "Gelfond–Schneider theorem"},
   "MathlibExt/NumberTheory/GenLeonardo": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Leonardo numbers"},
+  "MathlibExt/NumberTheory/GenLeonardoGenLeonardoBinomialSteps": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Leonardo numbers"},
   "MathlibExt/NumberTheory/GeneralArithmeticalEulerianPolynomial": {"to": "Combinatorics/stirling-bell-eulerian/eulerian-numbers", "title": "General arithmetical Eulerian polynomials"},
   "MathlibExt/NumberTheory/GeneralConditionalSequence": {"to": "NumberTheory/linear-recurrences/recurrence-theory", "title": "General conditional sequences"},
   "MathlibExt/NumberTheory/GeneralPellBisectors": {"to": "NumberTheory/diophantine-equations/pell-quadratic-equations", "title": "Negative Pell equation and angle bisectors"},
