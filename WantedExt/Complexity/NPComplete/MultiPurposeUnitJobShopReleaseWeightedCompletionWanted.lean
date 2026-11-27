@@ -25,7 +25,7 @@ public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
-public import WantedExt.Complexity.NPComplete.MultiPurposeJobShopThreeJobsWanted
+public import CSLibExt.Complexity.NPComplete.MultiPurposeJobShopThreeJobsDefs
 
 @[expose] public section
 
@@ -47,7 +47,7 @@ cannot start before `r_j`. QUESTION: is there a schedule whose total weighted co
 operation)?
 
 This is the job shop with multi-purpose machines (MPM) of Brucker (2004), Chapter 10, as stated in
-`MultiPurposeJobShopThreeJobsWanted` (instance, operations, eligible machine sets, schedules and
+`MultiPurposeJobShopThreeJobsDefs` (instance, operations, eligible machine sets, schedules and
 `MPMWellFormed` are reused from there), with `m = 2` machines, every operation of length `1`,
 release dates, and the total weighted completion time criterion. Brucker and Knust's
 classification lists `JMPM2|r_i;p_ij=1|Σw_iC_i` as minimal NP-hard in the strong sense, citing
