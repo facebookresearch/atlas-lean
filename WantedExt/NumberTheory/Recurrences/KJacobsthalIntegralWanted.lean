@@ -34,6 +34,7 @@ public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.RingTheory.PowerSeries.Basic
 public import MathlibExt.NumberTheory.Recurrences.JacobsthalOffsetIntegral
 public import MathlibExt.NumberTheory.Recurrences.KJacobsthal
+public import MathlibExt.NumberTheory.Recurrences.KJacobsthalGeneratingFunction
 
 namespace MetaMathlibExt
 
@@ -234,22 +235,6 @@ Theorem 9 (`integers-2025-A74-thm-9`). -/
 public theorem_wanted two_mul_companionKJacobsthal (k : ℕ) (a b : ℤ) (n : ℕ) :
     2 * companionKJacobsthal k a b n =
       a * lucasV (kJacobsthalParams k) n + (2 * b - a * k) * lucasU (kJacobsthalParams k) n
-
-/-- **Generating function of the companion $k$-Jacobsthal numbers.** For every natural number $k$
-and all integers $a, b$, the companion $k$-Jacobsthal numbers $\mathcal{J}_{k,n} =
-\mathcal{J}_{k,n}(a, b)$ satisfy, in the ring $\mathbb{Z}[[x]]$ of formal power series,
-$$\Bigl(\sum_{n \ge 0} \mathcal{J}_{k,n} x^n\Bigr)(1 - kx - 2x^2) = a + (b - ak)x.$$
-
-This is the identity $\sum_{n \ge 0} \mathcal{J}_{k,n} x^n = \frac{a + (b - ak)x}{1 - kx - 2x^2}$
-with the denominator cleared.
-
-Source: Weerayuth Nilsrakoo and Achariya Nilsrakoo, *An Integral Representation of k-Jacobsthal and
-k-Jacobsthal-Lucas Numbers*, INTEGERS 25 (2025), Article A74,
-Theorem 10 (`integers-2025-A74-thm-10`). -/
-public theorem_wanted companionKJacobsthal_generatingFunction (k : ℕ) (a b : ℤ) :
-    PowerSeries.mk (companionKJacobsthal k a b) *
-        (1 - PowerSeries.C (k : ℤ) * PowerSeries.X - PowerSeries.C 2 * PowerSeries.X ^ 2) =
-      PowerSeries.C a + PowerSeries.C (b - a * k) * PowerSeries.X
 
 /-- **Catalan's identity for the companion $k$-Jacobsthal numbers.** Let $k$ be a natural number,
 $a, b$ integers, $\mathcal{J}_{k,m} = \mathcal{J}_{k,m}(a, b)$ the companion $k$-Jacobsthal numbers

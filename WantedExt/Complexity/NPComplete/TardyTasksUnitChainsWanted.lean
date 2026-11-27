@@ -26,7 +26,7 @@ public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Data.Fintype.Card
 public import Mathlib.Order.Defs.Unbundled
-public import WantedExt.Complexity.NPComplete.SequencingToMinimizeWeightedTardinessWanted
+public import CSLibExt.Complexity.NPComplete.SequencingToMinimizeWeightedTardinessDefs
 
 @[expose] public section
 
@@ -48,7 +48,7 @@ This is SEQUENCING TO MINIMIZE TARDY TASKS ([SS2]) restricted to unit lengths an
 precedence, the case Lenstra and Rinnooy Kan prove NP-hard (`1|chains, pⱼ = 1|∑ Uⱼ`). Since
 every length is `1`, the instance lists only the deadlines; the tasks are `Fin n`, one per
 listed deadline. A one-processor schedule is Garey and Johnson's [SS1] notion, reused from
-`SequencingToMinimizeWeightedTardinessWanted` (`IsOneProcessorSchedule`, a one-to-one
+`SequencingToMinimizeWeightedTardinessDefs` (`IsOneProcessorSchedule`, a one-to-one
 `σ : T → ℤ₀⁺` with `σ(t) > σ(t')` implying `σ(t) ≥ σ(t') + l(t')`). The partial order is
 given by the list of its pairs `(t, t')` with `t < t'`, required to be a strict order
 (Mathlib's `IsStrictOrder`). The chain condition is the source's parenthetical definition:

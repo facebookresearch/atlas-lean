@@ -4,8 +4,10 @@ Evaluations and bounds of sums of products of binomial coefficients: Chu–Vande
 
 - [Binomial sums involving absolute values](binomial-sums-involving-absolute-values/README.md)
 - [Bounds on partial sums of binomial coefficients](bounds-on-partial-sums-of-binomial-coefficients/README.md)
+- [Chu–Vandermonde identity](chu-vandermonde-identity/README.md)
 - [Dixon's identity](dixon-s-identity/README.md)
 - [Filipponi's binomial sum](filipponi-s-binomial-sum/README.md)
+- [Hockey-stick identity](hockey-stick-identity/README.md)
 - [Knuth's old sum](knuth-s-old-sum/README.md)
 - [Partition-sum expansion of binomial coefficients](partition-sum-expansion-of-binomial-coefficients/README.md)
 - [Rationally weighted binomial sums](rationally-weighted-binomial-sums/README.md)
