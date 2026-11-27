@@ -25,7 +25,7 @@ import os
 import re
 import subprocess
 import sys
-from collections.abc import Iterator, Sequence
+from collections.abc import Callable, Iterator, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -75,6 +75,10 @@ class ChangedFile:
 
 class AggregatorError(Exception):
     """An aggregator module cannot be written, because a file of that name exists."""
+
+
+class GitError(Exception):
+    """git cannot read the change, for example because the base ref does not exist."""
 
 
 def unquote(path: str) -> str:
@@ -160,9 +164,12 @@ def parse_name_status(text: str) -> dict[str, tuple[str, str | None]]:
 
 
 def git(args: Sequence[str], cwd: Path) -> str:
-    """Run git with paths printed as they are (core.quotePath=false)."""
-    return subprocess.run(["git", "-c", "core.quotePath=false", *args], cwd=cwd, check=True,
-                          capture_output=True, text=True).stdout
+    """Run git with paths printed as they are (core.quotePath=false); raise GitError if it fails."""
+    result = subprocess.run(["git", "-c", "core.quotePath=false", *args], cwd=cwd,
+                            capture_output=True, text=True)
+    if result.returncode != 0:
+        raise GitError(f"`git {args[0]}` failed: {result.stderr.strip()}")
+    return result.stdout
 
 
 def specs(libraries: Sequence[str]) -> list[str]:
@@ -258,9 +265,13 @@ def in_actions() -> bool:
 
 
 def write_summary(markdown: str) -> None:
-    """Append to the job summary in GitHub Actions; elsewhere, do nothing."""
+    """Append to the job summary in GitHub Actions; elsewhere, do nothing.
+
+    Like the annotations, the summary is written only when GITHUB_ACTIONS is true, so that a
+    run that sets it false (the self-test's runs of the checks) never reaches the job's summary.
+    """
     summary = os.environ.get("GITHUB_STEP_SUMMARY")
-    if summary:
+    if in_actions() and summary:
         with open(summary, "a", encoding="utf-8") as out:
             out.write(markdown)
 
@@ -271,6 +282,18 @@ def add_common_arguments(parser: argparse.ArgumentParser) -> None:
                         help="git ref to compare HEAD with (its merge base with HEAD is used)")
     parser.add_argument("--report-only", action="store_true",
                         help="report findings without failing; failures to run still exit 2")
+
+
+def guarded(main: Callable[[], int]) -> Callable[[], int]:
+    """`main`, returning 2 when git cannot read the change, for example for an unknown --base."""
+    @functools.wraps(main)
+    def run() -> int:
+        try:
+            return main()
+        except GitError as error:
+            print(f"Cannot read the change: {error}", file=sys.stderr)
+            return 2
+    return run
 
 
 def build(base: str, cwd: Path = ROOT) -> int:
@@ -288,6 +311,7 @@ def build(base: str, cwd: Path = ROOT) -> int:
         return 2
 
 
+@guarded
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)

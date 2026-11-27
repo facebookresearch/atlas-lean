@@ -70,8 +70,8 @@ five production libraries once (`scripts/lean_changes.py build --base <ref>`), t
 - `scripts/check_env_linters.py`: the findings of `#lint`'s environment linters (`runLinter`) on
   the declarations the change adds. A declaration counts as added when the change adds the line
   that declares it, below its docstring and attributes, and no declaration of that name is in
-  the changed files at the base, so documenting, tagging, editing or moving an existing
-  declaration does not report it;
+  the changed files at the base (for a private declaration, in its own file), so documenting,
+  tagging, editing or moving an existing declaration does not report it;
 - `scripts/check_text_linters.py`: Mathlib's `lint-style` errors on added lines, and the module
   names of added or renamed files.
 

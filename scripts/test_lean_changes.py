@@ -19,7 +19,8 @@ from unittest.mock import patch
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import lean_changes
-from lean_changes import AggregatorError, ChangedFile
+import linters_self_test
+from lean_changes import AggregatorError, ChangedFile, GitError
 
 DIFF = """\
 diff --git a/MathlibExt/A.lean b/MathlibExt/A.lean
@@ -211,6 +212,58 @@ class GitTests(unittest.TestCase):
             ChangedFile("MathlibExt/Café.lean", "M", frozenset({2})),
             ChangedFile("MathlibExt/Ñame.lean", "R", frozenset({3}), "MathlibExt/Ünï.lean"),
         ])
+
+
+class FailureTests(unittest.TestCase):
+    def test_an_unknown_base_is_a_git_error_that_names_it(self):
+        with repository({"MathlibExt/A.lean": "a\n"}) as tmp:
+            with self.assertRaises(GitError) as raised:
+                lean_changes.changed_files("no-such-base", cwd=Path(tmp))
+        self.assertIn("no-such-base", str(raised.exception))
+
+    def test_guarded_turns_a_git_error_into_exit_2(self):
+        def main() -> int:
+            raise GitError("`git diff` failed: unknown revision no-such-base")
+
+        err = io.StringIO()
+        with redirect_stderr(err):
+            self.assertEqual(lean_changes.guarded(main)(), 2)
+        self.assertIn("no-such-base", err.getvalue())
+        self.assertEqual(lean_changes.guarded(lambda: 1)(), 1)
+
+
+class SummaryTests(unittest.TestCase):
+    def test_the_summary_is_written_only_in_github_actions(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            summary = Path(tmp, "summary.md")
+            summary.write_text("")
+            with patch.dict("os.environ", {"GITHUB_STEP_SUMMARY": str(summary),
+                                           "GITHUB_ACTIONS": "false"}):
+                lean_changes.write_summary("outside\n")
+            with patch.dict("os.environ", {"GITHUB_STEP_SUMMARY": str(summary),
+                                           "GITHUB_ACTIONS": "true"}):
+                lean_changes.write_summary("inside\n")
+            self.assertEqual(summary.read_text(), "inside\n")
+
+    def test_the_check_tests_leave_the_job_summary_alone(self):
+        # The tests run the checks on fixtures with GITHUB_ACTIONS set; none may write here.
+        with tempfile.TemporaryDirectory() as tmp:
+            summary = Path(tmp, "summary.md")
+            summary.write_text("")
+            env = {**os.environ, "GITHUB_ACTIONS": "true", "GITHUB_STEP_SUMMARY": str(summary)}
+            scripts = str(lean_changes.ROOT / "scripts")
+            result = subprocess.run(
+                [sys.executable, "-m", "unittest", "discover", "-s", scripts,
+                 "-p", "test_check_*.py"], env=env, capture_output=True, text=True)
+            self.assertEqual(result.returncode, 0, result.stderr[-2000:])
+            self.assertEqual(summary.read_text(), "")
+
+    def test_the_self_test_runs_the_checks_outside_github_actions(self):
+        outer = {"GITHUB_STEP_SUMMARY": "/summary", "GITHUB_ACTIONS": "true"}
+        with patch.dict("os.environ", outer):
+            env = linters_self_test.child_env()
+        self.assertNotIn("GITHUB_STEP_SUMMARY", env)
+        self.assertEqual(env["GITHUB_ACTIONS"], "false")
 
 
 class AggregatorTests(unittest.TestCase):

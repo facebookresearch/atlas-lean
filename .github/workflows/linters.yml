@@ -53,6 +53,8 @@ jobs:
       - name: Test the checks
         run: |
           set -euo pipefail
+          # The fixtures' findings must not reach this job's summary.
+          unset GITHUB_STEP_SUMMARY
           for tests in test_lean_changes.py test_check_syntax_linters.py \
               test_check_env_linters.py test_check_text_linters.py; do
             python3 -m unittest discover -s scripts -p "$tests"
@@ -166,4 +168,5 @@ jobs:
 
       - name: Check the checks end to end
         if: ${{ !cancelled() && steps.scope.outputs.self_test == 'true' }}
-        run: python3 scripts/linters_self_test.py
+        # As for the unit tests: the probe's findings must not reach this job's summary.
+        run: env -u GITHUB_STEP_SUMMARY python3 scripts/linters_self_test.py

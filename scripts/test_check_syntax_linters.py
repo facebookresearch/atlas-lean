@@ -10,6 +10,7 @@ import contextlib
 import io
 import subprocess
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -17,7 +18,7 @@ from unittest.mock import patch
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import check_syntax_linters as check
-from lean_changes import ROOT, AggregatorError, ChangedFile
+from lean_changes import ROOT, AggregatorError, ChangedFile, GitError
 
 A = f"{ROOT}/MathlibExt/A.lean"
 B = f"{ROOT}/MathlibExt/B.lean"
@@ -51,8 +52,19 @@ FILES = [ChangedFile("MathlibExt/A.lean", "M", frozenset({65})),
          ChangedFile("MathlibExt/B.lean", "M", frozenset({205}))]
 
 
-def run_main(output: str, returncode: int, files=FILES, extra=(), aggregator_error=False
-             ) -> tuple[int, str]:
+@contextlib.contextmanager
+def job_summary():
+    """A job summary of the test's own, so that the fixtures' findings never reach the real one."""
+    with tempfile.TemporaryDirectory() as tmp:
+        path = Path(tmp, "summary.md")
+        path.write_text("")
+        with patch.dict("os.environ", {"GITHUB_ACTIONS": "true", "GITHUB_STEP_SUMMARY": str(path)}):
+            yield path
+
+
+def run_main(output: str, returncode: int, files=FILES, extra=(), aggregator_error=False,
+             summary: list[str] | None = None) -> tuple[int, str]:
+    """Run main() on fixture output; append the job summary it wrote to `summary`."""
     @contextlib.contextmanager
     def fake_aggregators(changed):
         if aggregator_error:
@@ -61,13 +73,15 @@ def run_main(output: str, returncode: int, files=FILES, extra=(), aggregator_err
 
     result = subprocess.CompletedProcess([], returncode, stdout=output, stderr="")
     out = io.StringIO()
-    with patch.object(check, "changed_files", return_value=files), \
+    with job_summary() as summary_path, \
+            patch.object(check, "changed_files", return_value=files), \
             patch.object(check, "aggregators", fake_aggregators), \
             patch.object(check.subprocess, "run", return_value=result) as run, \
-            patch.dict("os.environ", {"GITHUB_ACTIONS": "true"}), \
             patch.object(sys, "argv", ["check_syntax_linters.py", "--base", "HEAD^1", *extra]), \
             contextlib.redirect_stdout(out), contextlib.redirect_stderr(io.StringIO()):
         code = check.main()
+        if summary is not None:
+            summary.append(summary_path.read_text())
     if files and not aggregator_error:
         args = run.call_args.args[0]
         assert args[:4] == ["lake", "lint", "--builtin-only",
@@ -99,16 +113,28 @@ class MainTests(unittest.TestCase):
         self.assertNotIn("B.lean", out)
 
     def test_report_only_annotates_and_passes(self):
-        code, out = run_main(OUTPUT, 1, extra=["--report-only"])
+        summary: list[str] = []
+        code, out = run_main(OUTPUT, 1, extra=["--report-only"], summary=summary)
         self.assertEqual(code, 0)
+        self.assertIn("| `linter.style.longLine` | 1 |", summary[0])
         self.assertIn("::warning file=MathlibExt/A.lean,line=65,col=101,", out)
 
     def test_passes_when_no_warning_is_on_an_added_line(self):
         files = [ChangedFile("MathlibExt/A.lean", "M", frozenset({1})),
                  ChangedFile("MathlibExt/B.lean", "M", frozenset({2}))]
-        code, out = run_main(OUTPUT, 1, files)
+        summary: list[str] = []
+        code, out = run_main(OUTPUT, 1, files, summary=summary)
         self.assertEqual(code, 0)
         self.assertNotIn("::", out)
+        self.assertEqual(summary, [""])
+
+    def test_an_unreadable_base_is_a_failure_to_run(self):
+        out = io.StringIO()
+        with patch.object(check, "changed_files", side_effect=GitError("no such ref: nope")), \
+                patch.object(sys, "argv", ["check_syntax_linters.py", "--base", "nope"]), \
+                contextlib.redirect_stdout(out), contextlib.redirect_stderr(out):
+            self.assertEqual(check.main(), 2)
+        self.assertIn("no such ref: nope", out.getvalue())
 
     def test_fails_when_lake_lint_does_not_reach_the_lint(self):
         code, _ = run_main("error: MathlibExt/A.lean:3:0: unknown identifier\nerror: build failed\n",

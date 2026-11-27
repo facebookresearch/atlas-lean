@@ -10,6 +10,7 @@ import contextlib
 import io
 import subprocess
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -17,7 +18,7 @@ from unittest.mock import patch
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import check_text_linters as check
-from lean_changes import AggregatorError, ChangedFile
+from lean_changes import AggregatorError, ChangedFile, GitError
 
 # What `lake exe lint-style` prints (paths relative to the repository).
 OUTPUT = """\
@@ -37,14 +38,31 @@ error: MathlibExt/Moved.lean:1: This line contains a windows line ending
 error: MathlibExt/Moved.lean:1: This line contains a unicode character that is not on the allowlist 'ž' (U+017e).
 """
 
+# A new file whose module name holds an apostrophe, which lint-style quotes with backticks;
+# with this error alone, lint-style prints no count and exits 1.
+APOSTROPHE_OUTPUT = """\
+error: module name `MathlibExt.Prime'` contains non-ASCII-alphanumeric character `'`.
+"""
+
 FILES = [ChangedFile("MathlibExt/A.lean", "M", frozenset({72})),
          ChangedFile("MathlibExt/B.lean", "M", frozenset({9})),
          ChangedFile("MathlibExt/New_Name.lean", "A", frozenset({1, 2})),
          ChangedFile("MathlibExt/Old_Name.lean", "M", frozenset({4}))]
 
 
-def run_main(output: str, returncode: int, files=FILES, extra=(), aggregator_error=False
-             ) -> tuple[int, str]:
+@contextlib.contextmanager
+def job_summary():
+    """A job summary of the test's own, so that the fixtures' findings never reach the real one."""
+    with tempfile.TemporaryDirectory() as tmp:
+        path = Path(tmp, "summary.md")
+        path.write_text("")
+        with patch.dict("os.environ", {"GITHUB_ACTIONS": "true", "GITHUB_STEP_SUMMARY": str(path)}):
+            yield path
+
+
+def run_main(output: str, returncode: int, files=FILES, extra=(), aggregator_error=False,
+             summary: list[str] | None = None) -> tuple[int, str]:
+    """Run main() on fixture output; append the job summary it wrote to `summary`."""
     @contextlib.contextmanager
     def fake_aggregators(changed):
         if aggregator_error:
@@ -53,13 +71,15 @@ def run_main(output: str, returncode: int, files=FILES, extra=(), aggregator_err
 
     result = subprocess.CompletedProcess([], returncode, stdout="", stderr=output)
     out = io.StringIO()
-    with patch.object(check, "changed_files", return_value=files), \
+    with job_summary() as summary_path, \
+            patch.object(check, "changed_files", return_value=files), \
             patch.object(check, "aggregators", fake_aggregators), \
             patch.object(check.subprocess, "run", return_value=result), \
-            patch.dict("os.environ", {"GITHUB_ACTIONS": "true"}), \
             patch.object(sys, "argv", ["check_text_linters.py", "--base", "HEAD^1", *extra]), \
             contextlib.redirect_stdout(out), contextlib.redirect_stderr(io.StringIO()):
         code = check.main()
+        if summary is not None:
+            summary.append(summary_path.read_text())
     return code, out.getvalue()
 
 
@@ -72,6 +92,17 @@ class ParseTests(unittest.TestCase):
             ("MathlibExt/A.lean", 72, False), ("MathlibExt/A.lean", 12, False),
             ("MathlibExt/B.lean", 3, False), ("MathlibExt/New_Name.lean", 1, True)])
         self.assertTrue(errors[3].message.startswith("Module name is not in 'UpperCamelCase'"))
+
+    def test_parses_both_quotings_of_a_module_name_with_an_apostrophe(self):
+        paths = {"MathlibExt.Prime'": "MathlibExt/Prime'.lean", "MathlibExt.prime'": "x.lean"}
+        errors, reported = check.parse_lint_style(
+            APOSTROPHE_OUTPUT + "error: module name 'MathlibExt.prime'' is not in 'UpperCamelCase':"
+            " it should be 'MathlibExt.Prime'' instead\n", paths)
+        self.assertTrue(reported)
+        self.assertEqual([(e.path, e.line, e.module_name) for e in errors],
+                         [("MathlibExt/Prime'.lean", 1, True), ("x.lean", 1, True)])
+        self.assertEqual(errors[0].message,
+                         "Module name contains non-ASCII-alphanumeric character `'`.")
 
     def test_nothing_reported(self):
         self.assertEqual(check.parse_lint_style("", {}), ([], False))
@@ -98,6 +129,25 @@ class MainTests(unittest.TestCase):
         code, out = run_main(OUTPUT, 5, extra=["--report-only"])
         self.assertEqual(code, 0)
         self.assertIn("::warning file=MathlibExt/A.lean,line=72,title=lint-style::", out)
+
+    def test_a_module_name_with_an_apostrophe_is_a_finding_not_a_failure(self):
+        files = [ChangedFile("MathlibExt/Prime'.lean", "A", frozenset({1, 2, 3}))]
+        summary: list[str] = []
+        code, out = run_main(APOSTROPHE_OUTPUT, 1, files, extra=["--report-only"],
+                             summary=summary)
+        self.assertEqual(code, 0)
+        self.assertIn("::warning file=MathlibExt/Prime'.lean,line=1,title=lint-style::"
+                      "Module name contains non-ASCII-alphanumeric character", out)
+        self.assertIn("MathlibExt/Prime'.lean:1", summary[0])
+        self.assertEqual(run_main(APOSTROPHE_OUTPUT, 1, files)[0], 1)
+
+    def test_an_unreadable_base_is_a_failure_to_run(self):
+        out = io.StringIO()
+        with patch.object(check, "changed_files", side_effect=GitError("no such ref: nope")), \
+                patch.object(sys, "argv", ["check_text_linters.py", "--base", "nope"]), \
+                contextlib.redirect_stdout(out), contextlib.redirect_stderr(out):
+            self.assertEqual(check.main(), 2)
+        self.assertIn("no such ref: nope", out.getvalue())
 
     def test_passes_without_errors(self):
         self.assertEqual(run_main("", 0)[0], 0)
