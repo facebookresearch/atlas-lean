@@ -21,13 +21,16 @@ For complex s,z with Re(s)>0, the convergent Mellin integral satisfies
 
 ∫₀∞ t^(s-1) exp(-t²/2-zt) dt = exp(z²/4) Γ(s) U(s-1/2,z).
 
-Equivalently, for Re(a)>-1/2, U(a,z) is exp(-z²/4)/Γ(a+1/2) times
-the integral with exponent t^(a-1/2). The complex argument z is arbitrary.
-Splitting the Gaussian moment series into even and odd terms gives the
-two confluent series in the defining normalization.
+Equivalently, for Re(a)>-1/2, U(a,z) is exp(-z²/4)/Γ(a+1/2) times the integral with exponent
+t^(a-1/2). The complex argument z is arbitrary. Splitting the Gaussian moment series into even
+and odd terms gives the two confluent series in the defining normalization.
 
-Source: Helfgott, *Major arcs for Goldbach's problem*,
-arXiv:1305.2897v4, §3.2.
+## References
+
+The integral representation is DLMF §12.5(i), equation 12.5.1. Its Mellin formulation is used in
+Helfgott, *Major arcs for Goldbach's problem*, arXiv:1305.2897v4, §3.2, equation (3.8), with
+`z=-2πiδ` for the oscillatory Gaussian. The complex argument `z` here is unrestricted; the
+integral is asserted only for `Re(s)>0`.
 -/
 
 public section
@@ -35,11 +38,6 @@ public section
 noncomputable section
 
 open Complex MeasureTheory Set
-
-private lemma gamma_half_sqrt : Gamma (1 / 2 : ℂ) = (Real.sqrt Real.pi : ℂ) := by
-  have h := Gamma_mul_Gamma_add_half (1 / 2 : ℂ)
-  norm_num at h
-  exact h
 
 private lemma gamma_three_halves : Gamma (3 / 2 : ℂ) = (1 / 2 : ℂ) * Gamma (1 / 2) := by
   simpa only [show (1 / 2 : ℂ) + 1 = 3 / 2 by ring] using
@@ -52,8 +50,11 @@ private lemma factorial_even (k : ℕ) :
   have htwice : 2 * ((k : ℂ) + 1 / 2) = ((2 * k : ℕ) : ℂ) + 1 := by push_cast; ring
   have hexponent : 1 - 2 * ((k : ℂ) + 1 / 2) = -((2 * k : ℕ) : ℂ) := by push_cast; ring
   have h := Gamma_mul_Gamma_add_half ((k : ℂ) + 1 / 2)
+  have hhalfGamma : Gamma (1 / 2 : ℂ) = (Real.sqrt Real.pi : ℂ) := by
+    simpa only [ofReal_div, ofReal_one, ofReal_ofNat, Real.Gamma_one_half_eq] using
+      Gamma_ofReal (1 / 2 : ℝ)
   rw [hhalf, hexponent, htwice, Gamma_nat_eq_factorial k, Gamma_nat_eq_factorial (2 * k),
-    ← gamma_half_sqrt, cpow_neg, cpow_natCast] at h
+    ← hhalfGamma, cpow_neg, cpow_natCast] at h
   have htwo : (2 : ℂ) ^ (2 * k) ≠ 0 := pow_ne_zero _ (by norm_num)
   calc
     ((2 * k).factorial : ℂ) * Gamma (1 / 2) =
@@ -108,11 +109,6 @@ private lemma mellin_gaussian_half (s : ℂ) (hs : 0 < s.re) :
 private def coefficient (s z : ℂ) (n : ℕ) : ℂ :=
   (-z) ^ n / (n.factorial : ℂ) * ((2 : ℂ) ^ ((s + n) / 2 - 1) * Gamma ((s + n) / 2))
 
-private lemma confluent_coefficient_eq (a b : ℂ) (k : ℕ) :
-    regularizedHGFunCoeff ({a} : Multiset ℂ) ({b} : Multiset ℂ) k =
-      (ascPochhammer ℂ k).eval a / ((k.factorial : ℂ) * Gamma (b + k)) := by
-  simp [regularizedHGFunCoeff]
-
 private lemma coefficient_even (s z : ℂ) (hs : 0 < s.re) (k : ℕ) :
     coefficient s z (2 * k) =
       ((2 : ℂ) ^ (s / 2 - 1) * Gamma (s / 2) * Gamma (1 / 2)) *
@@ -147,7 +143,7 @@ private lemma coefficient_even (s z : ℂ) (hs : 0 < s.re) (k : ℕ) :
       _ = ((2 * k).factorial : ℂ) * Gamma (1 / 2) := hfactorial.symm
       _ = _ := by ring
   rw [coefficient, hz, hexponent, cpow_add _ _ (by norm_num), cpow_natCast, hhalf, hratio,
-    confluent_coefficient_eq, show (1 / 2 : ℂ) + k = (k : ℂ) + 1 / 2 by ring, div_pow]
+    regularizedHGFunCoeff_singleton_eq, show (1 / 2 : ℂ) + k = (k : ℂ) + 1 / 2 by ring, div_pow]
   calc
     (z ^ 2) ^ k / ((2 * k).factorial : ℂ) *
         (((2 : ℂ) ^ (s / 2 - 1) * (2 : ℂ) ^ k) *
@@ -200,7 +196,7 @@ private lemma coefficient_odd (s z : ℂ) (hs : 0 < s.re) (k : ℕ) :
       _ = ((2 * k + 1).factorial : ℂ) * Gamma (3 / 2) := hfactorial.symm
       _ = _ := by ring
   rw [coefficient, hz, hexponent, cpow_add _ _ (by norm_num), cpow_natCast, hhalf, hratio,
-    confluent_coefficient_eq, show (3 / 2 : ℂ) + k = (k : ℂ) + 3 / 2 by ring, div_pow]
+    regularizedHGFunCoeff_singleton_eq, show (3 / 2 : ℂ) + k = (k : ℂ) + 3 / 2 by ring, div_pow]
   calc
     -(z * (z ^ 2) ^ k) / ((2 * k + 1).factorial : ℂ) *
         (((2 : ℂ) ^ (s / 2 - 1 / 2) * (2 : ℂ) ^ k) *
@@ -213,17 +209,6 @@ private lemma coefficient_odd (s z : ℂ) (hs : 0 < s.re) (k : ℕ) :
           (Gamma (3 / 2) / ((k.factorial : ℂ) * Gamma ((k : ℂ) + 3 / 2) * (2 : ℂ) ^ k)) := by
       rw [hdenominator]
     _ = _ := by simp only [div_eq_mul_inv, mul_inv]; ring
-
-private lemma hasSum_confluent (a b w : ℂ) :
-    HasSum (fun k : ℕ =>
-      regularizedHGFunCoeff ({a} : Multiset ℂ) ({b} : Multiset ℂ) k * w ^ k)
-      (regularizedHGFun ({a} : Multiset ℂ) ({b} : Multiset ℂ) w) := by
-  have hr : (regularizedHGFunSeries ({a} : Multiset ℂ) ({b} : Multiset ℂ)).radius = ⊤ :=
-    radius_regularizedHGFunSeries_eq_top (by simp)
-  have h := (regularizedHGFunSeries ({a} : Multiset ℂ) ({b} : Multiset ℂ)).hasSum
-    (x := w) (by simp [hr])
-  simpa only [FormalMultilinearSeries.apply_eq_pow_smul_coeff, regularizedHGFunSeries_coeff,
-    smul_eq_mul, mul_comm, regularizedHGFun] using h
 
 private lemma even_normalization (s : ℂ) (hs : 0 < s.re) :
     Gamma s * (2 : ℂ) ^ (-s / 2) * ((Real.sqrt Real.pi : ℂ) / Gamma ((s + 1) / 2)) =
@@ -299,7 +284,7 @@ private lemma mellin_two_series (s z : ℂ) (hs : 0 < s.re) :
           (regularizedHGFunCoeff ({s / 2} : Multiset ℂ) ({1 / 2} : Multiset ℂ) k *
             (z ^ 2 / 2) ^ k) := funext (coefficient_even s z hs)
     rw [hf]
-    exact (hasSum_confluent (s / 2) (1 / 2) (z ^ 2 / 2)).mul_left _
+    exact (hasSum_regularizedHGFun_singleton (s / 2) (1 / 2) (z ^ 2 / 2)).mul_left _
   have hodd : HasSum (fun k : ℕ => coefficient s z (2 * k + 1))
       (-((2 : ℂ) ^ (s / 2 - 1 / 2) * Gamma ((s + 1) / 2) * z * Gamma (3 / 2)) *
         regularizedHGFun ({(s + 1) / 2} : Multiset ℂ) ({3 / 2} : Multiset ℂ) (z ^ 2 / 2)) := by
@@ -308,7 +293,7 @@ private lemma mellin_two_series (s z : ℂ) (hs : 0 < s.re) :
           (regularizedHGFunCoeff ({(s + 1) / 2} : Multiset ℂ) ({3 / 2} : Multiset ℂ) k *
             (z ^ 2 / 2) ^ k) := funext (coefficient_odd s z hs)
     rw [hf]
-    exact (hasSum_confluent ((s + 1) / 2) (3 / 2) (z ^ 2 / 2)).mul_left _
+    exact (hasSum_regularizedHGFun_singleton ((s + 1) / 2) (3 / 2) (z ^ 2 / 2)).mul_left _
   exact (hasSum_coefficient s z hs).unique (HasSum.even_add_odd heven hodd)
 
 namespace Complex

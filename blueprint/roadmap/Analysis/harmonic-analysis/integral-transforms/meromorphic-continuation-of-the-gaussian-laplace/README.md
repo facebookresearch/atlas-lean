@@ -1,4 +1,4 @@
-# Gaussian Continuation
+# Meromorphic continuation of the Gaussian Laplace Mellin transform
 
 - [Gaussian Laplace Mellin Continuation](gaussian-laplace-mellin-continuation.md)
 - [Meromorphic NFOn gaussian Laplace Mellin Continuation](meromorphic-nfon-gaussian-laplace-mellin.md)

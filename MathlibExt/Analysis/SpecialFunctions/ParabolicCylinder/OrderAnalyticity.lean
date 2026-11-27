@@ -102,25 +102,13 @@ private lemma norm_coefficient_le (a : ℂ) (b M : ℝ)
         push_cast
         field_simp
 
-private lemma coefficient_eq (a : ℂ) (b : ℝ) (n : ℕ) :
-    coefficient a b n = (ascPochhammer ℂ n).eval a /
-      ((n.factorial : ℂ) * Gamma ((b : ℂ) + n)) := by
-  simp [coefficient, regularizedHGFunCoeff]
-
 private lemma coefficient_differentiable (b : ℝ) (n : ℕ) (a : ℂ) :
     DifferentiableAt ℂ (fun x : ℂ => coefficient x b n) a := by
   have hfun : (fun x : ℂ => coefficient x b n) = fun x : ℂ =>
       (ascPochhammer ℂ n).eval x / ((n.factorial : ℂ) * Gamma ((b : ℂ) + n)) :=
-    funext fun x => coefficient_eq x b n
+    funext fun x => regularizedHGFunCoeff_singleton_eq x (b : ℂ) n
   rw [hfun]
   exact (ascPochhammer ℂ n).differentiableAt.div_const _
-
-private lemma regularized_eq_sum (a : ℂ) (b : ℝ) (w : ℂ) :
-    regularizedHGFun ({a} : Multiset ℂ) ({(b : ℂ)} : Multiset ℂ) w =
-      ∑' n : ℕ, coefficient a b n * w ^ n := by
-  change FormalMultilinearSeries.ofScalarsSum (fun n => coefficient a b n) w = _
-  simpa only [smul_eq_mul] using
-    FormalMultilinearSeries.ofScalars_sum_eq (fun n => coefficient a b n) w
 
 private lemma norm_term_le (a w : ℂ) (b M : ℝ) (hb : 1 / 2 ≤ b)
     (hM : 0 ≤ M) (ha : ‖a‖ ≤ M) (n : ℕ) :
@@ -163,7 +151,7 @@ private lemma differentiableAt_regularized_order (b : ℝ) (hb : 1 / 2 ≤ b) (w
   have hfun : (fun x : ℂ => ∑' n : ℕ, f n x) =
       (fun x : ℂ => regularizedHGFun ({x} : Multiset ℂ) ({(b : ℂ)} : Multiset ℂ) w) := by
     funext x
-    exact (regularized_eq_sum x b w).symm
+    exact (hasSum_regularizedHGFun_singleton x (b : ℂ) w).tsum_eq
   rw [hfun] at hda
   exact hda
 

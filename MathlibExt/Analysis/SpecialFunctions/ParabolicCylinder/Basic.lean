@@ -14,20 +14,22 @@ public import Mathlib.Analysis.SpecialFunctions.RegularizedHypergeometric
 /-!
 # The normalized parabolic-cylinder function U
 
-For complex a,z, use U(a,z)=D_(-a-1/2)(z). Writing M(α,β,w) for the ordinary
-confluent hypergeometric function at β=1/2 or 3/2, the definition is
+For complex a,z, use U(a,z)=D_(-a-1/2)(z). Writing M(α,β,w) for the ordinary confluent
+hypergeometric function at β=1/2 or 3/2, the definition is
 
-U(a,z)=2^(-a/2-1/4) exp(-z²/4) [
-  sqrt(π)/Γ(a/2+3/4) M(a/2+1/4,1/2,z²/2)
-  - z sqrt(2π)/Γ(a/2+1/4) M(a/2+3/4,3/2,z²/2)].
+U(a,z)=2^(-a/2-1/4) exp(-z²/4) [ sqrt(π)/Γ(a/2+3/4) M(a/2+1/4,1/2,z²/2) - z sqrt(2π)/Γ(a/2+1/4)
+M(a/2+3/4,3/2,z²/2)].
 
-Each M is Γ(β) times its regularized confluent series. Powers of 2 use
-the principal logarithm; reciprocal Gamma factors vanish at Gamma poles.
-For every a, U is entire in z and satisfies U''=(z²/4+a)U, with the
-specified initial values at z=0.
+Each M is Γ(β) times its regularized confluent series. Powers of 2 use the principal logarithm;
+reciprocal Gamma factors vanish at Gamma poles. For every a, U is entire in z and satisfies
+U''=(z²/4+a)U, with the specified initial values at z=0.
 
-This normalization is used in Helfgott, *Major arcs for Goldbach's problem*,
-arXiv:1305.2897v4, §3.2, equation (3.8), and DLMF §12.2.
+## References
+
+The confluent-hypergeometric expression is DLMF §12.4 together with §12.7(iv), and the initial
+values at `z=0` are in §12.2. Helfgott, *Major arcs for Goldbach's problem*, arXiv:1305.2897v4,
+§3.2, equation (3.8), uses this normalization in the Gaussian Mellin formulation; its integral
+representation is proved in the companion module.
 -/
 
 @[expose] public section
@@ -38,16 +40,43 @@ noncomputable section
 
 open Complex
 
+namespace Complex
+
+/-- **Coefficient of a regularized confluent hypergeometric series.** For `a,b∈ℂ` and `n∈ℕ`,
+the coefficient with singleton numerator and denominator multisets is `(a)_n / [n!
+Γ(b+n)]`, where `(a)_n` is the ascending Pochhammer polynomial evaluated at `a`. Division
+and Gamma are totalized; no exclusion of Gamma poles is assumed. -/
+theorem regularizedHGFunCoeff_singleton_eq (a b : ℂ) (n : ℕ) :
+    regularizedHGFunCoeff ({a} : Multiset ℂ) ({b} : Multiset ℂ) n =
+      (ascPochhammer ℂ n).eval a / ((n.factorial : ℂ) * Gamma (b + n)) := by
+  simp [regularizedHGFunCoeff]
+
+/-- **Global sum of a regularized confluent hypergeometric series.** For all `a,b,z∈ℂ`, the
+series `∑_{n≥0} regularizedHGFunCoeff({a},{b},n) z^n` has sum
+`regularizedHGFun({a},{b},z)`. One numerator and one denominator parameter give infinite
+convergence radius. The regularized coefficients retain the reciprocal-Gamma convention at
+poles. -/
+theorem hasSum_regularizedHGFun_singleton (a b z : ℂ) :
+    HasSum (fun n : ℕ =>
+      regularizedHGFunCoeff ({a} : Multiset ℂ) ({b} : Multiset ℂ) n * z ^ n)
+      (regularizedHGFun ({a} : Multiset ℂ) ({b} : Multiset ℂ) z) := by
+  have hr : (regularizedHGFunSeries ({a} : Multiset ℂ) ({b} : Multiset ℂ)).radius = ⊤ :=
+    radius_regularizedHGFunSeries_eq_top (by simp)
+  have h := (regularizedHGFunSeries ({a} : Multiset ℂ) ({b} : Multiset ℂ)).hasSum
+    (x := z) (by simp [hr])
+  simpa only [FormalMultilinearSeries.apply_eq_pow_smul_coeff, regularizedHGFunSeries_coeff,
+    smul_eq_mul, mul_comm, regularizedHGFun] using h
+
+end Complex
+
 private def cf (a b : ℂ) (n : ℕ) : ℂ :=
   regularizedHGFunCoeff ({a} : Multiset ℂ) ({b} : Multiset ℂ) n
 
-private lemma cf_eq (a b : ℂ) (n : ℕ) :
-    cf a b n = (ascPochhammer ℂ n).eval a / ((n.factorial : ℂ) * Gamma (b + n)) := by
-  simp [cf, regularizedHGFunCoeff]
-
 private lemma cf_succ (a b : ℂ) (n : ℕ) :
     (n + 1 : ℂ) * cf a b (n + 1) = a * cf (a + 1) (b + 1) n := by
-  rw [cf_eq, cf_eq, ascPochhammer_succ_left, Nat.factorial_succ]
+  unfold cf
+  rw [regularizedHGFunCoeff_singleton_eq, regularizedHGFunCoeff_singleton_eq,
+    ascPochhammer_succ_left, Nat.factorial_succ]
   simp only [Polynomial.eval_mul, Polynomial.eval_X, Polynomial.eval_comp,
     Polynomial.eval_add, Polynomial.eval_one, Nat.cast_mul, Nat.cast_add, Nat.cast_one]
   rw [show b + 1 + (n : ℂ) = b + ((n : ℂ) + 1) by ring]
@@ -58,16 +87,6 @@ private lemma cf_succ (a b : ℂ) (n : ℕ) :
         (a * (ascPochhammer ℂ n).eval (a + 1) *
           (n.factorial : ℂ)⁻¹ * (Gamma (b + (n + 1)))⁻¹) := by ring
     _ = _ := by rw [mul_inv_cancel₀ hn]; ring
-
-private lemma cf_hasSum (a b z : ℂ) :
-    HasSum (fun n : ℕ => cf a b n * z ^ n)
-      (regularizedHGFun ({a} : Multiset ℂ) ({b} : Multiset ℂ) z) := by
-  have hr : (regularizedHGFunSeries ({a} : Multiset ℂ) ({b} : Multiset ℂ)).radius = ⊤ :=
-    radius_regularizedHGFunSeries_eq_top (by simp)
-  have h := (regularizedHGFunSeries ({a} : Multiset ℂ) ({b} : Multiset ℂ)).hasSum
-    (x := z) (by simp [hr])
-  simpa only [FormalMultilinearSeries.apply_eq_pow_smul_coeff, regularizedHGFunSeries_coeff,
-    smul_eq_mul, mul_comm, cf, regularizedHGFun] using h
 
 private lemma hasDerivAt_regularizedConfluent (a b z : ℂ) :
     HasDerivAt (regularizedHGFun ({a} : Multiset ℂ) ({b} : Multiset ℂ))
@@ -94,14 +113,16 @@ private lemma hasDerivAt_regularizedConfluent (a b z : ℂ) :
     funext n
     exact hcf n
   rw [heq] at hs
-  have he := hs.unique ((cf_hasSum (a + 1) (b + 1) z).mul_left a)
+  have he := hs.unique ((hasSum_regularizedHGFun_singleton (a + 1) (b + 1) z).mul_left a)
   change (p.derivSeries.sum z) 1 = _ at he
   rw [he] at hd
   exact hd
 
 private lemma cf_kummer (a b : ℂ) (n : ℕ) :
     (n + 1 : ℂ) * (n + b) * cf a b (n + 1) = (n + a) * cf a b n := by
-  rw [cf_eq, cf_eq, ascPochhammer_succ_eval, Nat.factorial_succ]
+  unfold cf
+  rw [regularizedHGFunCoeff_singleton_eq, regularizedHGFunCoeff_singleton_eq,
+    ascPochhammer_succ_eval, Nat.factorial_succ]
   simp only [Nat.cast_mul, Nat.cast_add, Nat.cast_one, div_eq_mul_inv, mul_inv]
   rw [show b + ((n : ℂ) + 1) = b + (n : ℂ) + 1 by ring]
   rw [one_div_Gamma_eq_self_mul_one_div_Gamma_add_one (b + n)]
@@ -130,19 +151,21 @@ private lemma cf_succ_succ (a b : ℂ) (n : ℕ) :
 private lemma cf_deriv_hasSum (a b z : ℂ) :
     HasSum (fun n : ℕ => (n + 1 : ℂ) * cf a b (n + 1) * z ^ n)
       (a * regularizedHGFun ({a + 1} : Multiset ℂ) ({b + 1} : Multiset ℂ) z) := by
-  have h := (cf_hasSum (a + 1) (b + 1) z).mul_left a
+  have h := (hasSum_regularizedHGFun_singleton (a + 1) (b + 1) z).mul_left a
   convert h using 1
   funext n
   rw [cf_succ]
+  dsimp only [cf]
   ring
 
 private lemma cf_deriv_deriv_hasSum (a b z : ℂ) :
     HasSum (fun n : ℕ => (n + 2 : ℂ) * (n + 1) * cf a b (n + 2) * z ^ n)
       (a * (a + 1) * regularizedHGFun ({a + 2} : Multiset ℂ) ({b + 2} : Multiset ℂ) z) := by
-  have h := (cf_hasSum (a + 2) (b + 2) z).mul_left (a * (a + 1))
+  have h := (hasSum_regularizedHGFun_singleton (a + 2) (b + 2) z).mul_left (a * (a + 1))
   convert h using 1
   funext n
   rw [cf_succ_succ]
+  dsimp only [cf]
   ring
 
 private lemma regularizedConfluent_ode (a b z : ℂ) :
@@ -172,7 +195,7 @@ private lemma regularizedConfluent_ode (a b z : ℂ) :
   have hvC : vC 0 = 0 := by simp [vC]
   rw [hvC, zero_add] at hC
   have hB := (cf_deriv_hasSum a b z).mul_left b
-  have hD := (cf_hasSum a b z).mul_left a
+  have hD := (hasSum_regularizedHGFun_singleton a b z).mul_left a
   have h := ((hA.add hB).sub hC).sub hD
   have heq : (fun n : ℕ =>
       (vA n + b * ((n + 1 : ℂ) * cf a b (n + 1) * z ^ n) - vC n) -
@@ -183,6 +206,7 @@ private lemma regularizedConfluent_ode (a b z : ℂ) :
       _ = ((n + 1 : ℂ) * (n + b) * cf a b (n + 1) - (n + a) * cf a b n) * z ^ n := by
         ring
       _ = 0 := by rw [cf_kummer]; ring
+  simp only [cf] at heq h
   rw [heq] at h
   have hzero := h.unique hasSum_zero
   convert hzero using 1; ring
@@ -231,7 +255,8 @@ private lemma analyticAt_gaussianFactor (z : ℂ) : AnalyticAt ℂ gaussianFacto
   unfold gaussianFactor
   fun_prop
 
-private lemma deriv_gaussianFactor (z : ℂ) : deriv gaussianFactor z = -(z / 2) * gaussianFactor z := by
+private lemma deriv_gaussianFactor (z : ℂ) :
+    deriv gaussianFactor z = -(z / 2) * gaussianFactor z := by
   have h := (Complex.hasDerivAt_exp (-(z ^ 2) / 4)).comp z
     (((hasDerivAt_id z).pow 2).neg.div_const 4)
   have hd := h.deriv
@@ -537,12 +562,13 @@ theorem deriv_parabolicCylinderU_zero (a : ℂ) :
 private lemma regularizedConfluent_zero_parameter (b z : ℂ) :
     regularizedHGFun ({0} : Multiset ℂ) ({b} : Multiset ℂ) z = (Gamma b)⁻¹ := by
   calc
-    _ = ∑' n : ℕ, cf 0 b n * z ^ n := (cf_hasSum 0 b z).tsum_eq.symm
+    _ = ∑' n : ℕ, cf 0 b n * z ^ n := (hasSum_regularizedHGFun_singleton 0 b z).tsum_eq.symm
     _ = cf 0 b 0 * z ^ 0 := by
       apply tsum_eq_single 0
       intro n hn
-      simp only [cf_eq, ascPochhammer_ne_zero_eval_zero ℂ hn, zero_div, zero_mul]
-    _ = _ := by simp [cf_eq]
+      simp only [cf, regularizedHGFunCoeff_singleton_eq,
+        ascPochhammer_ne_zero_eval_zero ℂ hn, zero_div, zero_mul]
+    _ = _ := by simp [cf, regularizedHGFunCoeff_singleton_eq]
 
 private lemma m_zero_parameter (b z : ℂ) (hb : Gamma b ≠ 0) : m 0 b z = 1 := by
   rw [m, regularizedConfluent_zero_parameter, mul_inv_cancel₀ hb]
@@ -553,13 +579,8 @@ private lemma evenWeber_zero_parameter (z : ℂ) : evenWeber 0 z = gaussianFacto
 private lemma oddWeber_zero_parameter (z : ℂ) : oddWeber 0 z = gaussianFactor z * z := by
   rw [oddWeber, m_zero_parameter (3 / 2) _ gamma_three_halves_ne_zero, mul_one]
 
-private lemma gamma_half_sqrt : Gamma (1 / 2 : ℂ) = (Real.sqrt Real.pi : ℂ) := by
-  rw [Gamma_one_half_eq]
-  exact cpow_half_ofReal Real.pi Real.pi_pos.le
-
 private lemma sqrt_pi_ne_zero : (Real.sqrt Real.pi : ℂ) ≠ 0 := by
-  rw [← gamma_half_sqrt]
-  exact gamma_half_ne_zero
+  exact_mod_cast (Real.sqrt_pos.mpr Real.pi_pos).ne'
 
 private lemma gamma_neg_half : Gamma (-1 / 2 : ℂ) = -2 * (Real.sqrt Real.pi : ℂ) := by
   have h := Gamma_add_one (-1 / 2 : ℂ) (by norm_num)
@@ -567,14 +588,16 @@ private lemma gamma_neg_half : Gamma (-1 / 2 : ℂ) = -2 * (Real.sqrt Real.pi : 
   calc
     _ = -2 * ((-1 / 2 : ℂ) * Gamma (-1 / 2)) := by ring
     _ = -2 * Gamma (1 / 2) := by rw [← h]
-    _ = _ := by rw [gamma_half_sqrt]
+    _ = _ := by
+      rw [Gamma_one_half_eq, cpow_half_ofReal Real.pi Real.pi_pos.le]
 
 /-- For every complex z, U(-1/2,z)=exp(-z²/4), the Hermite case D_0(z). -/
 theorem parabolicCylinderU_neg_one_half (z : ℂ) :
     parabolicCylinderU (-1 / 2) z = exp (-(z ^ 2) / 4) := by
   rw [parabolicCylinderU_eq_fun]
   norm_num
-  rw [evenWeber_zero_parameter, gamma_half_sqrt, div_self sqrt_pi_ne_zero, one_mul]
+  rw [evenWeber_zero_parameter, Gamma_one_half_eq,
+    cpow_half_ofReal Real.pi Real.pi_pos.le, div_self sqrt_pi_ne_zero, one_mul]
 
 /-- For every complex z, U(-3/2,z)=z exp(-z²/4), the Hermite case D_1(z). -/
 theorem parabolicCylinderU_neg_three_halves (z : ℂ) :

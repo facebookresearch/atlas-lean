@@ -1,0 +1,110 @@
+{
+  "schema": "atlas.mathlibext-source-snapshot.v1",
+  "library": "MathlibExt",
+  "encoding": "UTF-8 JSON Lines with literal source_text strings; standard JSON escaping only",
+  "source_version": "Versioned eight-source projection of the immutable original residual-analysis snapshot. Original source_text, source hashes and attribution are unchanged; current export adaptations are recorded separately.",
+  "adaptation_scope": "Archive source_text bytes are exact. Copyright and mathematical documentation adaptations apply only to exported Lean modules and are recorded separately.",
+  "file_count": 8,
+  "original_source_lines": 1584,
+  "original_bytes": 77651,
+  "chunks": [
+    {
+      "file": "part-0001.jsonl",
+      "sha256": "4dbffeaa265ef52ea1f32bc9855541a566514ae109ddfa4238ba68463cd3c1fd",
+      "bytes": 80921,
+      "rows": 8
+    }
+  ],
+  "files": [
+    {
+      "original_path": "MathlibExt/Analysis/MellinTransform/Gaussian.lean",
+      "original_sha256": "c592b17b04abbf2efe21e482164892746bb2ce77d790657ca478eca1916acfaf",
+      "original_bytes": 2079,
+      "original_lines": 47,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 1,
+      "snapshot_adaptations": [],
+      "preceding_archive_snapshot_file": "part-0002.jsonl",
+      "preceding_archive_snapshot_line": 9
+    },
+    {
+      "original_path": "MathlibExt/Analysis/MellinTransform/GaussianLaplace.lean",
+      "original_sha256": "68169b25cf19189ec6e2a02ca8e0434309e18e57c579420ca0599037f62f88da",
+      "original_bytes": 2366,
+      "original_lines": 50,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 2,
+      "snapshot_adaptations": [],
+      "preceding_archive_snapshot_file": "part-0002.jsonl",
+      "preceding_archive_snapshot_line": 11
+    },
+    {
+      "original_path": "MathlibExt/Analysis/SpecialFunctions/ParabolicCylinder/Basic.lean",
+      "original_sha256": "a4d843b545583c4f18c0f4e3cf0be18c14b47b841d5cf49244b09467f488d04c",
+      "original_bytes": 26830,
+      "original_lines": 575,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 3,
+      "snapshot_adaptations": [],
+      "preceding_archive_snapshot_file": "part-0003.jsonl",
+      "preceding_archive_snapshot_line": 9
+    },
+    {
+      "original_path": "MathlibExt/Analysis/MellinTransform/GaussianLaplaceSeries.lean",
+      "original_sha256": "646058390d15395265f97bdbf4551f676c7ce44326d2c3e0b3237e798cefefeb",
+      "original_bytes": 6538,
+      "original_lines": 119,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 4,
+      "snapshot_adaptations": [],
+      "preceding_archive_snapshot_file": "part-0002.jsonl",
+      "preceding_archive_snapshot_line": 12
+    },
+    {
+      "original_path": "MathlibExt/Analysis/SpecialFunctions/ParabolicCylinder/GammaProduct.lean",
+      "original_sha256": "0185e5f87c5b65edd68c1f788c678028c49142167df86258432008420bf4f4c3",
+      "original_bytes": 3162,
+      "original_lines": 74,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 5,
+      "snapshot_adaptations": [],
+      "preceding_archive_snapshot_file": "part-0003.jsonl",
+      "preceding_archive_snapshot_line": 10
+    },
+    {
+      "original_path": "MathlibExt/Analysis/SpecialFunctions/ParabolicCylinder/OrderAnalyticity.lean",
+      "original_sha256": "4369e1d5df90eba42027b8480f91be2fe5d4aaf01ef4bcba5d68f72bff2b48dd",
+      "original_bytes": 11265,
+      "original_lines": 228,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 6,
+      "snapshot_adaptations": [],
+      "preceding_archive_snapshot_file": "part-0003.jsonl",
+      "preceding_archive_snapshot_line": 12
+    },
+    {
+      "original_path": "MathlibExt/Analysis/SpecialFunctions/ParabolicCylinder/IntegralRepresentation.lean",
+      "original_sha256": "13b1bee3931745b8159133b1c929b7aa64d882b1d789927d0cbd1b1c5b4c40db",
+      "original_bytes": 17826,
+      "original_lines": 334,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 7,
+      "snapshot_adaptations": [],
+      "preceding_archive_snapshot_file": "part-0003.jsonl",
+      "preceding_archive_snapshot_line": 11
+    },
+    {
+      "original_path": "MathlibExt/Analysis/MellinTransform/GaussianContinuation.lean",
+      "original_sha256": "bff1b6dcea3d558aaccf9af653ad3986e200ad100778cbfcf974ac0f03e32321",
+      "original_bytes": 7585,
+      "original_lines": 157,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 8,
+      "snapshot_adaptations": [],
+      "preceding_archive_snapshot_file": "part-0002.jsonl",
+      "preceding_archive_snapshot_line": 10
+    }
+  ],
+  "preceding_full_archive_manifest_sha256": "cae502bcd32c04c264f5a42b033354ef5abc4786a569bc662d7dc69994940143",
+  "projection_scope": "Only the eight original sources installed by the Gaussian Mellin and parabolic-cylinder slice."
+}
