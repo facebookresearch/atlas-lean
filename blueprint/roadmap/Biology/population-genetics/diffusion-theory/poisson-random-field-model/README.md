@@ -21,3 +21,4 @@
 - [Expected joint allele-frequency spectrum and its Poisson likelihood](expected-joint-allele-frequency-spectrum-and-poisson-likelihood.md)
 - [Multi-population diffusion for the joint allele-frequency density](multipopulation-diffusion-with-migration-and-admixture.md)
 - [Time-dependent Poisson random fields](time-dependent-poisson-random-fields/README.md)
+- [Two-locus frequency spectrum and its composite likelihood](two-locus-frequency-spectrum-and-its-composite-likelihood.md)
