@@ -12,6 +12,7 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import MathlibExt.NumberTheory.Height.SchurSiegelSmyth.AbsoluteTrace
 public import MathlibExt.NumberTheory.Height.SchurSiegelSmyth.ClassicalUpperBound
+public import MathlibExt.NumberTheory.Height.SchurSiegelSmyth.SchurLowerBound
 
 @[expose] public section
 
@@ -36,13 +37,6 @@ bounds between Smyth (1984) and Orloski--Sardari--Smith (2025) are
 omitted as superseded by the best row. Decimal bounds are exact rationals
 at the catalogue's displayed digits.
 -/
-
-/-- **Schur's lower bound for the Schur–Siegel–Smyth constant.** The Schur–Siegel–Smyth trace
-constant $C_{86}$, an extended real number, satisfies $\sqrt{e} \le C_{86}$.
-
-Source: Schur (1918), lower bound `√e ≤ C₈₆`. -/
-theorem_wanted schur1918LowerBound_wanted :
-    ((Real.sqrt (Real.exp 1) : ℝ) : EReal) ≤ schurSiegelSmythConstant
 
 /-- **Smyth's lower bound for the Schur–Siegel–Smyth constant.** The Schur–Siegel–Smyth trace
 constant $C_{86}$, an extended real number, satisfies $1.7719 \le C_{86}$.

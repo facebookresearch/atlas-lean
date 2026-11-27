@@ -1,0 +1,3 @@
+# Joint central limit theorem for Kaplan–Meier and Aalen–Johansen
+
+Let competing-risks subjects $W_i = ((T_i, J_i), C_i)$ on a finite grid be independent and identically distributed with law $\mu$, and $P(\min(T, C) \ge m) \ne 0$; consider the joint vector of the Kaplan–Meier survival and the Aalen–Johansen cumulative incidences at grid indices $j \le m$. Then $\sqrt n$ times the joint estimator minus its plug-in limit converges in distribution to the derivative of the Aalen–Johansen map at the mean cell vector applied to the Gaussian limit of the cell means; no independence of event and censoring is assumed.

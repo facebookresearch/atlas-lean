@@ -22,8 +22,9 @@ domination of that literal form current, rather than a free positivity label
 or a numeric oracle.
 
 `CurrentDifferentialTheory` (the differential of a current is again bounded) is
-a hypothesis class; its instance is requested in
-`WantedExt/AlgebraicGeometry/AnalyticCurrentsWanted.lean`.
+a hypothesis class; `currentDifferentialTheory` in
+`MathlibExt/AlgebraicGeometry/AnalyticCurrentsCurrentDifferentialTheory.lean`
+proves it.
 
 Reference: J.-P. Demailly and M. Păun, *Numerical characterization of the
 Kähler cone of a compact Kähler manifold*, Ann. of Math. 159 (2004),
