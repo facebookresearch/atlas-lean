@@ -46,6 +46,7 @@ public import Mathlib.Combinatorics.SimpleGraph.Hasse
 public import Mathlib.Combinatorics.SimpleGraph.Metric
 public import Mathlib.Combinatorics.SimpleGraph.Prod
 public import Mathlib.Data.Fintype.Pi
+public import MathlibExt.Combinatorics.SimpleGraph.CompatibleOppositionProducts
 public import MathlibExt.Combinatorics.SimpleGraph.RookGraph
 public import MathlibExt.Combinatorics.SimpleGraph.SnortOppositions
 public import MathlibExt.GameTheory.SnortOppositionStrategy
@@ -83,20 +84,6 @@ pair). -/
 def IsSnortResponsePair [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]
     (u v : V) : Prop :=
   u ≠ v ∧ ¬ G.Adj u v ∧ snortMoverWins G (Fintype.card V - 2) {u} {v} = false
-
-/-- **Compatibly almost opposable graphs.** A graph $G$ is compatibly almost opposable if there
-are a vertex $u$, a set $S$ of vertices with $u \in S \subseteq N[u]$ (the closed neighbourhood
-of $u$), an automorphism $\alpha$ of $G$ with $\alpha(\alpha(v)) = v$ for every vertex $v$, and
-an opposition $f$ of the subgraph $G - S$ induced on the vertices outside $S$, such that
-$\alpha(x) = f(x)$ for every vertex $x \notin S$.
-
-Source: Ashmore, Austin, Davies, Dyer, Kellough, *On Graph Automorphisms
-Related to SNORT*, INTEGERS 26 (2026), Article G2, Section 4 (compatibly almost opposable
-graphs). -/
-def IsCompatiblyAlmostOpposable (G : SimpleGraph V) : Prop :=
-  ∃ u : V, ∃ S : Set V, u ∈ S ∧ S ⊆ insert u (G.neighborSet u) ∧
-    ∃ α : G ≃g G, (∀ v, α (α v) = v) ∧
-      ∃ f : G.induce Sᶜ ≃g G.induce Sᶜ, IsOpposition _ f ∧ ∀ x : ↥Sᶜ, α x = (f x : V)
 
 /-- **Strong grid.** For $k \in \mathbb{N}$ and natural numbers $n_0, \dots, n_{k-1}$, the
 $k$-dimensional strong grid $P_{n_0} \boxtimes \cdots \boxtimes P_{n_{k-1}}$ is the simple
@@ -231,17 +218,6 @@ Source: Ashmore, Austin, Davies, Dyer, Kellough, *On Graph Automorphisms
 Related to SNORT*, INTEGERS 26 (2026), Article G2, Lemma 3. -/
 public theorem_wanted snortFirstPlayerWins_of_isAlmostOpposable [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (h : IsAlmostOpposable G) : SnortFirstPlayerWins G
-
-/-- **Strong products of compatibly almost opposable graphs.** If $G$ and $H$ are compatibly
-almost opposable graphs, then their strong product $G \boxtimes H$ is compatibly almost
-opposable.
-
-Source: Ashmore, Austin, Davies, Dyer, Kellough, *On Graph Automorphisms
-Related to SNORT*, INTEGERS 26 (2026), Article G2, Theorem 5. -/
-public theorem_wanted isCompatiblyAlmostOpposable_strongProd [DecidableEq V] [DecidableEq W]
-    (G : SimpleGraph V) (H : SimpleGraph W) [DecidableRel G.Adj] [DecidableRel H.Adj]
-    (hG : IsCompatiblyAlmostOpposable G) (hH : IsCompatiblyAlmostOpposable H) :
-    IsCompatiblyAlmostOpposable (strongProd G H)
 
 /-- **Cartesian products of compatibly almost opposable graphs.** Let $G$ and $H$ be compatibly
 almost opposable graphs. Suppose that for some vertex $u$ of $G$ there are an involutive
