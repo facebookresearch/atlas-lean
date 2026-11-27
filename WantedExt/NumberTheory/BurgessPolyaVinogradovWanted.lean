@@ -13,8 +13,9 @@ public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
 public import MathlibExt.Analysis.SpecialFunctions.DickmanDeBruijn
 public import MathlibExt.NumberTheory.ArithmeticFunction.CompletelyMultiplicative
+public import MathlibExt.NumberTheory.LSeries.RiemannZetaLogDeriv
 public import MathlibExt.NumberTheory.PrimeCounting.PrimeZetaTailBound
-public import WantedExt.NumberTheory.PrimeCounting.DusartMertensReciprocalSumWanted
+public import MathlibExt.NumberTheory.PrimeCounting.DusartMertensReciprocalSumDefs
 
 /-!
 # Explicit prime-sum and mean-value estimates from Bordignon--Francis
@@ -39,21 +40,6 @@ Pólya--Vinogradov*, INTEGERS 24 (2024), Article A66, Lemma 2 (`integers-2024-A6
 public theorem_wanted dickman_ge_rpow_neg_mul {ρ : ℝ → ℝ} (hρ : Real.IsDickmanDeBruijn ρ)
     {x : ℝ} (hx : 1 ≤ x) :
     x ^ (-(1.42 : ℝ) * x) ≤ ρ x
-
-/-- **Logarithmic derivative of the zeta function near its pole.** Let $\zeta$ be the Riemann zeta
-function. There are real numbers $C$ and $\alpha_0 > 0$ such that for all real $\alpha$ and $\tau$
-with $0 < \alpha < \alpha_0$ and $|\tau| \le 1/2$, the point $s = 1 + \alpha + i\tau$ satisfies
-$|\zeta'(s)/\zeta(s)| \le 1/|s - 1| + C$.
-
-This is the estimate $|\zeta'(s)/\zeta(s)| \le 1/|s - 1| + O(1)$ as $\alpha \to 0^+$, uniformly
-in $|\tau| \le 1/2$.
-
-Source: Matteo Bordignon and Forrest J. Francis, *Explicit Improvements to the Burgess Bound via
-Pólya--Vinogradov*, INTEGERS 24 (2024), Article A66, Lemma 3 (`integers-2024-A66-lem-3`). -/
-public theorem_wanted exists_norm_logDeriv_riemannZeta_le_inv_norm_add :
-    ∃ C α₀ : ℝ, 0 < α₀ ∧ ∀ α τ : ℝ, 0 < α → α < α₀ → |τ| ≤ 1 / 2 →
-      ‖deriv riemannZeta (1 + α + τ * Complex.I) / riemannZeta (1 + α + τ * Complex.I)‖ ≤
-        1 / ‖(α : ℂ) + τ * Complex.I‖ + C
 
 /-- **Mertens' second theorem with the Rosser–Schoenfeld error term.** Let $M$ be the
 Meissel–Mertens constant. Then $0.2614 \le M < 0.2615$, and for every real $x > 1$,

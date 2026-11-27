@@ -1,6 +1,6 @@
 # Chemical kinetics and reactors
 
-Rates of chemical reactions and reactors: integrated rate laws and half-lives, the Arrhenius law, conservation laws, deficiency and stochastic dynamics of reaction networks, Turing patterns of the Brusselator, and stirred-tank and box reactors. Biochemical reaction networks are under Biology.
+Rates of chemical reactions and reactors: integrated rate laws and half-lives, the Arrhenius law, conservation laws, deficiency and stochastic dynamics of reaction networks, Turing patterns of the Brusselator, stirred-tank and box reactors, and diffusion-controlled rate constants of bimolecular reactions (Smoluchowski, Debye). Biochemical reaction networks are under Biology.
 
 - [Arrhenius law](arrhenius-law/README.md)
 - [Conservation laws of reaction networks](conservation-laws-of-reaction-networks/README.md)
