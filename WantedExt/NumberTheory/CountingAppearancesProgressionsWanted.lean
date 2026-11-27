@@ -50,12 +50,12 @@ public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.Nat.Nth
 public import Mathlib.Data.Nat.Prime.Basic
 public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
-public import MathlibExt.NumberTheory.CountingAppearancesProgressionsAvailableCountDistinctPrimes
 public import MathlibExt.NumberTheory.CountingAppearancesProgressionsAvailableRecurrence
 public import MathlibExt.NumberTheory.CountingAppearancesProgressionsFirstPrimes
 public import MathlibExt.NumberTheory.CountingAppearancesProgressionsFreeCount
-public import MathlibExt.NumberTheory.CountingAppearancesProgressionsFreeCountSucc
+public import MathlibExt.NumberTheory.CountingAppearancesProgressionsAvailableCountDistinctPrimes
 public import MathlibExt.NumberTheory.CountingAppearancesProgressionsOccupiedRecurrence
+public import MathlibExt.NumberTheory.CountingAppearancesProgressionsFreeCountSucc
 
 set_option autoImplicit false
 
