@@ -1,6 +1,7 @@
 # Replication and consistency
 
 - [Strong eventual consistency](strong-eventual-consistency.md)
+- [An update directly precedes another, by delivery](directly-before.md)
 - [Causal delivery of updates](causal-delivery-of-updates.md)
 - [Happened-before between updates, by delivery](happens-before-iff-trans-gen-delivered.md)
 - [Convergence of operation-based CRDTs](convergence-of-operation-based-crdts.md)

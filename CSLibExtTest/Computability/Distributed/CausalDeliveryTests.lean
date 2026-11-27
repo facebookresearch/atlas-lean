@@ -14,22 +14,25 @@ public import CSLibExt.Computability.Distributed.CausalDelivery
 # Tests for causal delivery of updates
 
 * `tr`, over three replicas: replica `0` issues an update `u` (position `0`); replica `1`
-  delivers `u` and then issues an update `v` (position `2`), so `u` happened before `v`; replica
-  `2` delivers `u` and then `v`, and replica `0` delivers `v`. This execution provides causal
-  delivery. Replica `0` never delivers `u`: it issued it.
+  delivers `u` and then issues an update `v` (position `2`), so `u` directly precedes `v`;
+  replica `2` delivers `u` and then `v`, and replica `0` delivers `v`. This execution provides
+  causal delivery. Replica `0` never delivers `u`: it issued it.
 * `bad`: replica `2` delivers `v` without having delivered `u`, and causal delivery fails.
 * `conc`: replicas `0` and `1` issue concurrent updates, which replica `2` delivers in the
   opposite order to replica `0`. Causal delivery holds, as it does not order concurrent updates.
 * The empty execution provides causal delivery.
-* In `tr`, replica `1` delivers `u` before it issues `v`, so `u` precedes `v` directly, and
-  `happensBefore_iff_transGen_delivered` relates this to happened-before.
+* In `tr`, `happensBefore_iff_transGen_delivered` relates direct precedence to Lamport's
+  happened-before, and on every execution whose receipts name earlier issues causal delivery is
+  the same as the condition stated with Lamport's happened-before (`LamportCausalDelivery`).
 * `relay`, over four replicas: a well-formed execution in which replica `2` receives from the
-  delivery at position `1`. That receipt delivers nothing, but it makes the update issued at `0`
-  happen before the update issued at `3`, although no chain of direct precedence joins them; so
-  causal delivery fails when replica `3` delivers the update issued at `3`.
-* `early`: a receipt that names a later issue is a delivery of that update but is unrelated to
-  that issue by happened-before; delivering an update before the earlier update of the same
-  replica breaks causal delivery.
+  delivery at position `1`. That receipt delivers nothing, so no chain of direct precedence joins
+  the update issued at `0` to the update issued at `3`, and causal delivery holds; but the
+  receipt makes the issue at `0` happen before the issue at `3` in Lamport's sense, and the
+  condition stated with Lamport's happened-before fails.
+* `early`: a receipt that names a later issue is a delivery of that update; delivering an update
+  before the earlier update of the same replica breaks causal delivery.
+* `backward`: a receipt that names a later issue makes that update directly precede an earlier
+  one, which Lamport's happened-before never does; so the bridge theorem needs well-formedness.
 -/
 
 @[expose] public section
@@ -38,18 +41,28 @@ namespace Cslib.Distributed.Replication.CausalDeliveryTests
 
 open LamportClock
 
+theorem exists_of_transGen {α : Type*} {r : α → α → Prop} {a b : α}
+    (h : Relation.TransGen r a b) : ∃ c, r c b := by
+  cases h with
+  | single h => exact ⟨_, h⟩
+  | tail _ h => exact ⟨_, h⟩
+
 /-- An execution with causal delivery. -/
 def tr : List (Event (Fin 3)) :=
   [⟨0, none⟩, ⟨1, some 0⟩, ⟨1, none⟩, ⟨2, some 0⟩, ⟨2, some 2⟩, ⟨0, some 2⟩]
 
-/-- `u` happened before `v`: `u` is delivered at replica `1`, which then issues `v`. -/
-theorem hb02 : HappensBefore tr 0 2 :=
-  .tail (b := 1) (.single ⟨by decide, _, _, rfl, rfl, Or.inr rfl⟩)
-    ⟨by decide, _, _, rfl, rfl, Or.inl rfl⟩
+theorem tr_wellFormed : WellFormed tr := by
+  intro j ej i hj hr
+  rcases j with _ | _ | _ | _ | _ | _ | j <;> simp [tr] at hj <;> subst hj <;> simp at hr <;>
+    omega
+
+/-- `u` directly precedes `v`: `u` is delivered at replica `1`, which then issues `v`. -/
+theorem db02 : DirectlyBefore tr 0 2 :=
+  ⟨_, _, rfl, rfl, rfl, rfl, 1, by decide, _, rfl, rfl, Or.inr rfl⟩
 
 example : CausalDelivery tr := by
   intro j i₁ i₂ ej e₁ e₂ hj hr h₂ hn₂ h₁ hn₁ hhb
-  have hlt := hhb.lt
+  have hlt := lt_of_transGen_directlyBefore tr_wellFormed hhb
   rcases j with _ | _ | _ | _ | _ | _ | j <;> simp [tr] at hj <;> subst hj <;>
     simp at hr <;> subst hr
   all_goals first
@@ -68,10 +81,8 @@ def bad : List (Event (Fin 3)) :=
 /-- Replica `2` delivers `v` although it has not delivered `u`, which happened before `v`. -/
 example : ¬ CausalDelivery bad := by
   intro h
-  have hb : HappensBefore bad 0 2 :=
-    .tail (b := 1) (.single ⟨by decide, _, _, rfl, rfl, Or.inr rfl⟩)
-      ⟨by decide, _, _, rfl, rfl, Or.inl rfl⟩
-  obtain ⟨k, hk, ek, hek, hp, -⟩ := h 3 0 2 _ _ _ rfl rfl rfl rfl rfl rfl hb
+  obtain ⟨k, hk, ek, hek, hp, -⟩ := h 3 0 2 _ _ _ rfl rfl rfl rfl rfl rfl
+    (.single ⟨_, _, rfl, rfl, rfl, rfl, 1, by decide, _, rfl, rfl, Or.inr rfl⟩)
   rcases k with _ | _ | _ | k
   · simp [bad] at hek; subst hek; simp at hp
   · simp [bad] at hek; subst hek; simp at hp
@@ -82,42 +93,53 @@ example : ¬ CausalDelivery bad := by
 def conc : List (Event (Fin 3)) :=
   [⟨0, none⟩, ⟨1, none⟩, ⟨2, some 1⟩, ⟨2, some 0⟩, ⟨0, some 1⟩, ⟨1, some 0⟩]
 
+/-- Nothing directly precedes the two updates of `conc`. -/
+theorem conc_not_directlyBefore {a b : ℕ} (hb : b ≤ 1) : ¬ DirectlyBefore conc a b := by
+  rintro ⟨-, eb, -, -, heb, -, k, hk, ek, hek, hp, -⟩
+  rcases b with _ | _ | b
+  · omega
+  · obtain rfl : k = 0 := by omega
+    simp [conc] at heb hek; subst heb hek; simp at hp
+  · omega
+
 /-- The two updates of `conc` are concurrent. -/
-theorem not_hb01 : ¬ HappensBefore conc 0 1 ∧ ¬ HappensBefore conc 1 0 := by
-  refine ⟨fun h => ?_, fun h => absurd h.lt (by decide)⟩
-  cases h with
-  | single hs =>
-      obtain ⟨-, ei, ej, hi, hj, hp | hr⟩ := hs <;> simp [conc] at hi hj <;> subst hi hj <;>
-        simp at *
-  | tail h hs => have := HappensBefore.lt (tr := conc) h; have := hs.1; omega
+example : ¬ Relation.TransGen (DirectlyBefore conc) 0 1 ∧
+    ¬ Relation.TransGen (DirectlyBefore conc) 1 0 :=
+  ⟨fun h => (exists_of_transGen h).elim fun _ h => conc_not_directlyBefore le_rfl h,
+    fun h => (exists_of_transGen h).elim fun _ h => conc_not_directlyBefore (by decide) h⟩
 
 example : CausalDelivery conc := by
   intro j i₁ i₂ ej e₁ e₂ hj hr h₂ hn₂ h₁ hn₁ hhb
-  have hlt := hhb.lt
+  obtain ⟨c, hc⟩ := exists_of_transGen hhb
   rcases j with _ | _ | _ | _ | _ | _ | j <;> simp [conc] at hj <;> subst hj <;>
     simp at hr <;> subst hr
-  all_goals first
-    | omega
-    | (obtain rfl : i₁ = 0 := by omega
-       exact absurd hhb not_hb01.1)
+  all_goals exact absurd hc (conc_not_directlyBefore (by decide))
 
 example : CausalDelivery ([] : List (Event (Fin 3))) := by
   intro j _ _ _ _ _ hj
   simp at hj
 
-/-! ## Happened-before between updates, by delivery -/
+/-! ## Lamport's happened-before -/
 
-/-- An update `a` directly precedes an update `b` when the replica issuing `b` has issued or
-delivered `a` before; this is the relation of `happensBefore_iff_transGen_delivered`. -/
-def DirectlyBefore {R : Type*} (tr : List (Event R)) (a b : ℕ) : Prop :=
-  ∃ ea eb : Event R, tr[a]? = some ea ∧ ea.recvFrom = none ∧ tr[b]? = some eb ∧
-    eb.recvFrom = none ∧ ∃ k < b, ∃ ek : Event R, tr[k]? = some ek ∧ ek.proc = eb.proc ∧
-      (k = a ∨ ek.recvFrom = some a)
+/-- Causal delivery stated with Lamport's happened-before between the issues in place of
+happened-before by delivery. -/
+def LamportCausalDelivery {R : Type*} (tr : List (Event R)) : Prop :=
+  ∀ (j i₁ i₂ : ℕ) (ej e₁ e₂ : Event R), tr[j]? = some ej → ej.recvFrom = some i₂ →
+    tr[i₂]? = some e₂ → e₂.recvFrom = none → tr[i₁]? = some e₁ → e₁.recvFrom = none →
+    HappensBefore tr i₁ i₂ →
+    ∃ k < j, ∃ ek : Event R, tr[k]? = some ek ∧ ek.proc = ej.proc ∧
+      (k = i₁ ∨ ek.recvFrom = some i₁)
 
-theorem tr_wellFormed : WellFormed tr := by
-  intro j ej i hj hr
-  rcases j with _ | _ | _ | _ | _ | _ | j <;> simp [tr] at hj <;> subst hj <;> simp at hr <;>
-    omega
+/-- When every receipt names an earlier issue, the two conditions agree. -/
+theorem causalDelivery_iff_lamport {R : Type*} {tr : List (Event R)} (hwf : WellFormed tr)
+    (hiss : ∀ (j i : ℕ) (ej : Event R), tr[j]? = some ej → ej.recvFrom = some i →
+      ∃ ei : Event R, tr[i]? = some ei ∧ ei.recvFrom = none) :
+    CausalDelivery tr ↔ LamportCausalDelivery tr := by
+  constructor <;> intro h j i₁ i₂ ej e₁ e₂ hj hr h₂ hn₂ h₁ hn₁ hhb
+  · exact h j i₁ i₂ ej e₁ e₂ hj hr h₂ hn₂ h₁ hn₁
+      ((happensBefore_iff_transGen_delivered hwf hiss h₁ hn₁ h₂ hn₂).mp hhb)
+  · exact h j i₁ i₂ ej e₁ e₂ hj hr h₂ hn₂ h₁ hn₁
+      ((happensBefore_iff_transGen_delivered hwf hiss h₁ hn₁ h₂ hn₂).mpr hhb)
 
 theorem tr_receipts : ∀ (j i : ℕ) (ej : Event (Fin 3)), tr[j]? = some ej →
     ej.recvFrom = some i → ∃ ei : Event (Fin 3), tr[i]? = some ei ∧ ei.recvFrom = none := by
@@ -128,10 +150,15 @@ theorem tr_receipts : ∀ (j i : ℕ) (ej : Event (Fin 3)), tr[j]? = some ej →
 /-- Replica `1` delivers `u` before it issues `v`, so `u` happened before `v`. -/
 example : HappensBefore tr 0 2 :=
   (happensBefore_iff_transGen_delivered tr_wellFormed tr_receipts (i₁ := 0) (i₂ := 2) rfl rfl rfl
-    rfl).mpr (.single ⟨_, _, rfl, rfl, rfl, rfl, 1, by decide, _, rfl, rfl, Or.inr rfl⟩)
+    rfl).mpr (.single db02)
 
 example : Relation.TransGen (DirectlyBefore tr) 0 2 :=
-  (happensBefore_iff_transGen_delivered tr_wellFormed tr_receipts rfl rfl rfl rfl).mp hb02
+  (happensBefore_iff_transGen_delivered tr_wellFormed tr_receipts rfl rfl rfl rfl).mp
+    (.tail (b := 1) (.single ⟨by decide, _, _, rfl, rfl, Or.inr rfl⟩)
+      ⟨by decide, _, _, rfl, rfl, Or.inl rfl⟩)
+
+example : LamportCausalDelivery tr ↔ CausalDelivery tr :=
+  (causalDelivery_iff_lamport tr_wellFormed tr_receipts).symm
 
 /-! ## Unusual executions -/
 
@@ -146,34 +173,44 @@ example : WellFormed relay := by
     omega
 
 /-- The receipt from the delivery at position `1` makes the issue at `0` happen before the issue
-at `3`. -/
+at `3` in Lamport's sense. -/
 theorem relay_hb03 : HappensBefore relay 0 3 :=
   .tail (b := 2) (.tail (b := 1) (.single ⟨by decide, _, _, rfl, rfl, Or.inr rfl⟩)
     ⟨by decide, _, _, rfl, rfl, Or.inr rfl⟩) ⟨by decide, _, _, rfl, rfl, Or.inl rfl⟩
 
-/-- No chain of direct precedence leads from the update issued at `0` to the one issued at `3`:
-replica `2` never delivers the update issued at `0`. -/
-example : ¬ Relation.TransGen (DirectlyBefore relay) 0 3 := by
-  have h3 : ∀ b, ¬ DirectlyBefore relay b 3 := by
-    rintro b ⟨ea, eb, ha, hna, hb, -, k, hk, ek, hek, hp, hkb⟩
-    simp only [relay] at hb
-    obtain rfl := Option.some.inj hb
-    rcases k with _ | _ | _ | k
-    · simp [relay] at hek; subst hek; simp at hp
-    · simp [relay] at hek; subst hek; simp at hp
-    · simp [relay] at hek; subst hek
-      rcases hkb with rfl | hkb
-      · simp [relay] at ha; subst ha; simp at hna
-      · simp at hkb; subst hkb; simp [relay] at ha; subst ha; simp at hna
-    · omega
-  intro h
-  cases h with
-  | single h => exact h3 0 h
-  | tail _ h => exact h3 _ h
+/-- No update directly precedes the update issued at `3`: replica `2` never delivers the update
+issued at `0`. -/
+theorem relay_not_directlyBefore (b : ℕ) : ¬ DirectlyBefore relay b 3 := by
+  rintro ⟨ea, eb, ha, hna, hb, -, k, hk, ek, hek, hp, hkb⟩
+  simp only [relay] at hb
+  obtain rfl := Option.some.inj hb
+  rcases k with _ | _ | _ | k
+  · simp [relay] at hek; subst hek; simp at hp
+  · simp [relay] at hek; subst hek; simp at hp
+  · simp [relay] at hek; subst hek
+    rcases hkb with rfl | hkb
+    · simp [relay] at ha; subst ha; simp at hna
+    · simp at hkb; subst hkb; simp [relay] at ha; subst ha; simp at hna
+  · omega
 
-/-- Causal delivery fails: replica `3` delivers the update issued at `3` without having delivered
-the update issued at `0`. -/
-example : ¬ CausalDelivery relay := by
+example : ¬ Relation.TransGen (DirectlyBefore relay) 0 3 := fun h =>
+  (exists_of_transGen h).elim fun b h => relay_not_directlyBefore b h
+
+/-- Causal delivery holds: the receipt at position `2` delivers nothing, and nothing happened
+before the updates delivered at positions `1` and `4`. -/
+example : CausalDelivery relay := by
+  intro j i₁ i₂ ej e₁ e₂ hj hr h₂ hn₂ h₁ hn₁ hhb
+  obtain ⟨c, hc⟩ := exists_of_transGen hhb
+  rcases j with _ | _ | _ | _ | _ | j <;> simp [relay] at hj <;> subst hj <;>
+    simp at hr <;> subst hr
+  all_goals first
+    | (obtain ⟨-, -, -, -, -, -, k, hk, -⟩ := hc; omega)
+    | exact absurd hc (relay_not_directlyBefore c)
+    | (simp [relay] at h₂; subst h₂; simp at hn₂)
+
+/-- The condition stated with Lamport's happened-before fails: replica `3` delivers the update
+issued at `3` without having delivered the update issued at `0`. -/
+example : ¬ LamportCausalDelivery relay := by
   intro h
   obtain ⟨k, hk, ek, hek, hp, -⟩ := h 4 0 3 _ _ _ rfl rfl rfl rfl rfl rfl relay_hb03
   rcases k with _ | _ | _ | _ | k
@@ -190,34 +227,23 @@ def early : List (Event (Fin 2)) :=
 
 example : ¬ WellFormed early := fun h => absurd (h 0 _ 2 rfl rfl) (by decide)
 
-/-- The receipt at position `0` and the issue at position `2` that it names are unrelated by
-happened-before: no chain leads from the receipt to the issue, and none leads back, as steps go
-forward in the execution. -/
-example : ¬ HappensBefore early 0 2 ∧ ¬ HappensBefore early 2 0 := by
-  have h01 : ¬ HappensBefore early 0 1 := by
-    intro h
-    cases h with
-    | single hs =>
-        obtain ⟨-, ei, ej, hi, hj, hp | hr⟩ := hs <;> simp [early] at hi hj <;> subst hi hj <;>
-          simp at *
-    | tail h hs => have := HappensBefore.lt (tr := early) h; have := hs.1; omega
-  refine ⟨fun h => ?_, fun h => absurd h.lt (by decide)⟩
-  cases h with
-  | single hs =>
-      obtain ⟨-, ei, ej, hi, hj, hp | hr⟩ := hs <;> simp [early] at hi hj <;> subst hi hj <;>
-        simp at *
-  | @tail b _ h hs =>
-      have := HappensBefore.lt (tr := early) h
-      have := hs.1
-      obtain rfl : b = 1 := by omega
-      exact h01 h
-
-/-- It is still a delivery: the update issued at `1` happened before the one issued at `2`, and
-replica `1` has delivered nothing before position `0`. -/
+/-- The receipt at position `0` is a delivery: the update issued at `1` happened before the one
+issued at `2`, and replica `1` has delivered nothing before position `0`. -/
 example : ¬ CausalDelivery early := by
   intro h
   obtain ⟨k, hk, -⟩ := h 0 1 2 _ _ _ rfl rfl rfl rfl rfl rfl
-    (.single ⟨by decide, _, _, rfl, rfl, Or.inl rfl⟩)
+    (.single ⟨_, _, rfl, rfl, rfl, rfl, 1, by decide, _, rfl, rfl, Or.inl rfl⟩)
   omega
+
+/-- An execution that is not well formed: replica `0` delivers the update issued at position `2`
+by replica `1` before it issues the update at position `1`. -/
+def backward : List (Event (Fin 2)) :=
+  [⟨0, some 2⟩, ⟨0, none⟩, ⟨1, none⟩]
+
+/-- The update issued at `2` directly precedes the update issued at `1`, but its issue does not
+happen before the issue at `1` in Lamport's sense. -/
+example : DirectlyBefore backward 2 1 ∧ ¬ HappensBefore backward 2 1 :=
+  ⟨⟨_, _, rfl, rfl, rfl, rfl, 0, by decide, _, rfl, rfl, Or.inr rfl⟩,
+    fun h => absurd h.lt (by decide)⟩
 
 end Cslib.Distributed.Replication.CausalDeliveryTests
