@@ -8,3 +8,4 @@
 - [The cut polytope has exponential extension complexity](cut-polytope-lower-bound.md)
 - [Stable set polytopes with extension complexity 2^Omega(sqrt n)](stable-set-polytope-lower-bound.md)
 - [The TSP polytope has extension complexity 2^Omega(sqrt n)](tsp-polytope-lower-bound.md)
+- [Extension Complexity of the Matching Polytope](matching-polytope-extension-complexity/README.md)

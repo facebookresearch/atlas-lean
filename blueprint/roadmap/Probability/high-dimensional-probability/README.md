@@ -28,5 +28,3 @@ Probability in high dimension and on geometric objects: log-concave and uniform 
 - [Gaussian partitions](gaussian-partitions/README.md)
 - [First-order sampling of log-concave laws](log-concave-sampling/README.md)
 - [Noiseless Gaussian regression](noiseless-gaussian-regression/README.md)
-- [Statistical Query Lower Bounds for Planted Problems](statistical-query-lower-bounds-for-planted-problems/README.md)
-- [Low-Degree Likelihood Ratio Method](low-degree-likelihood-ratio-method/README.md)

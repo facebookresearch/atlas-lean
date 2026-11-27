@@ -27,7 +27,7 @@ Argue by contradiction: assume no degree-$2D$ matrix polynomial distinguishes $\
 ## Depends on
 
 - [The Lasserre / sum-of-squares hierarchy for Boolean polynomial optimization](lasserre-hierarchy.md)
-- [Low-degree likelihood ratio and low-degree advantage](../../../Probability/high-dimensional-probability/low-degree-likelihood-ratio-method/low-degree-likelihood-ratio.md)
+- [Low-degree likelihood ratio and low-degree advantage](../../../Probability/statistical-estimation/minimax-lower-bounds/low-degree-likelihood-ratio-method/low-degree-likelihood-ratio.md)
 
 ## Sources
 
