@@ -20,7 +20,7 @@ $$
 \Big\lVert \sum_{i=1}^t x_i \eta_i \Big\rVert_{Z_t^{-1}} \le \beta_t, \qquad \lVert \mu_t - \mu^\ast \rVert_{Z_t} \le \beta_t + \sqrt\lambda\, \lVert \mu^\ast \rVert_2 .
 $$
 
-Compared with the [sub-Gaussian self-normalized bound](self-normalized-bound-for-vector-martingales.md), which with $R$-sub-Gaussian noise gives a radius of order $R\sqrt{d\log((1 + tL^2/\lambda)/\delta)}$, the dominant term here depends on the conditional standard deviation $\sigma$, while $R$ enters only through a lower-order logarithmic term. Applied to inputs divided by a per-round variance upper bound $\bar\sigma_t$ (weighted ridge regression), it handles heteroscedastic noise.
+Compared with the [sub-Gaussian self-normalized bound](self-normalized-bound-for-vector-martingales.md), which with $R$-sub-Gaussian noise gives a radius of order $R\sqrt{d\log((1 + tL^2/\lambda)/\delta)}$, the dominant term here depends on the conditional standard deviation $\sigma$, while $R$ enters only through a lower-order logarithmic term. Applied to inputs and responses divided by $\bar\sigma_t$, a per-round upper bound on the conditional standard deviation (so squared residuals are divided by $\bar\sigma_t^2$, which is weighted ridge regression), it handles heteroscedastic noise.
 
 ## Depends on
 

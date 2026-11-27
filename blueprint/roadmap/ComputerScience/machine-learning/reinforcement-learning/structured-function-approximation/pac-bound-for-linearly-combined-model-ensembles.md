@@ -26,13 +26,14 @@ trajectories and returns a policy whose value is at least $v^\ast - \varepsilon 
 
 ## Proof depends on
 
+- [Matrix Bernstein inequality, Hermitian case](../../../../Probability/concentration-inequalities/matrix-concentration-inequalities/matrix-bernstein.md)
 - [Two-sided Hoeffding inequality for averages of bounded variables](../../../../Probability/concentration-inequalities/hoeffding-s-inequality/measure-real-abs-avg-sub-ge-le.md)
 
 ## Expansion
 
-Explore or terminate: if the test in step 2 fails, a value decomposition shows that the true model and $W_t$ disagree substantially on the projected data. Because predictions are linear in $W$ through $\langle W, \hat Z_t\rangle$, the new constraint cuts deeply through the version space. A volume argument bounds the number of iterations by $O(dK\log(\sqrt K H/\varepsilon))$ (the source's Lemma A.7). It uses the volume reduction for minimum-volume enclosing ellipsoids (Lemma A.6, adapted from Jiang et al. 2017). Hoeffding bounds for the Monte Carlo value estimates and the matrix estimates give the per-iteration sample sizes. The additive $(3\sqrt{dK}+2)H\theta$ term includes a value loss of at most $2H\theta$ for the policy of the best model in the class (Corollary A.4).
+Explore or terminate: if the test in step 2 fails, a value decomposition shows that the true model and $W_t$ disagree substantially on the projected data. Because predictions are linear in $W$ through $\langle W, \hat Z_t\rangle$, the new constraint cuts deeply through the version space. A volume argument bounds the number of iterations by $O(dK\log(\sqrt K H/\varepsilon))$ (the source's Lemma A.7). It uses the volume reduction for minimum-volume enclosing ellipsoids (Lemma A.6, adapted from Jiang et al. 2017). The per-iteration sample sizes come from Hoeffding's inequality for the Monte Carlo value estimate $\hat v_t$ and for the return estimate $\hat y_t$ (Lemmas A.8 and A.9), and from Bernstein's inequality for each entry of $\hat Z_t$ with a union bound over its $dK$ entries (Lemma A.9). The additive $(3\sqrt{dK}+2)H\theta$ term includes a value loss of at most $2H\theta$ for the policy of the best model in the class (Corollary A.4).
 
-A complete expansion adds pages for the episodic simulation lemma between two models (the source's Lemma A.2), the value decomposition behind explore-or-terminate (Lemmas A.1 and A.5), the volume reduction for minimum-volume enclosing ellipsoids (Lemma A.6, from Jiang et al. 2017), and the iteration bound it yields (Lemma A.7).
+A complete expansion adds pages for the episodic simulation lemma between two models (the source's Lemma A.2), the value decomposition behind explore-or-terminate (Lemmas A.1 and A.5), the volume reduction for minimum-volume enclosing ellipsoids (Lemma A.6, from Jiang et al. 2017), and the iteration bound it yields (Lemma A.7). The dimension-one case of the matrix Bernstein inequality, applied to centered summands divided by the sample size and to their negatives, gives the two-sided bound for each entry of $\hat Z_t$.
 
 ## Sources
 

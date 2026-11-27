@@ -1,6 +1,6 @@
 # Low-rank MDP
 
-A low-rank MDP has transition operators that admit a factorization $T_h(x' \mid x,a) = \langle \phi^\star_h(x,a), \mu^\star_h(x') \rangle$ of dimension $d$, with both embeddings unknown. The dimension need not be the minimal rank, and the factorization need not be unique. Representation learning means identifying $\phi^\star$ from given candidate classes $\Phi$ and $\Upsilon$ that contain the true embeddings.
+A low-rank MDP has transition operators that admit a factorization $T_h(x' \mid x,a) = \langle \phi^\star_h(x,a), \mu^\star_h(x') \rangle$ of dimension $d$, with both embeddings unknown. The dimension need not be the minimal rank, and the factorization need not be unique.
 
 **Setting.** An episodic MDP with horizon $H$, state space $\mathcal{X}$ of arbitrary size, finite action set $\mathcal{A} = \{1, \dots, K\}$, a fixed starting state $x_0$ with a single available action at time $0$, and non-stationary transition operators $T_h : \mathcal{X}\times\mathcal{A} \to \Delta(\mathcal{X})$ for $h \in \{0, \dots, H-1\}$. Policies map states to distributions over actions.
 
@@ -14,7 +14,7 @@ normalized by $\lVert\phi^\star(x,a)\rVert_2 \le 1$ for all $(x,a)$ and $\big\lV
 
 **Realizability (Assumption 1).** The learner is given finite classes $\Phi \subset \{\mathcal{X}\times\mathcal{A} \to \mathbb{R}^d\}$ and $\Upsilon \subset \{\mathcal{X} \to \mathbb{R}^d\}$ with $\phi^\star_h \in \Phi$ and $\mu^\star_h \in \Upsilon$ for every $h$. The source shows that the low-rank assumption without such classes does not allow guarantees independent of the number of states.
 
-**Relation to linear MDPs.** The source notes that the same transition structure has been called a linear MDP, and that linear-MDP algorithms assume the feature maps $\phi^\star_h$ known (see [linear MDP](linear-mdp.md)); here the embeddings are unknown. No linear reward structure is assumed: the source works in a reward-free formulation and plans afterwards for an explicitly given reward. By Lemma 1 of the source, an accurate learned model $(\hat\phi_h, \hat\mu_h)$ makes Bellman backups of every bounded value function approximately linear in $\hat\phi_h$ on the state-action distributions of all policies. That is the sense in which a learned representation supports linear methods downstream.
+**Relation to linear MDPs.** Representation learning here means learning, from given candidate classes $\Phi$ and $\Upsilon$ that contain the true embeddings, features that predict the transition law; it need not identify $\phi^\star$ itself. The source notes that the same transition structure has been called a linear MDP, and that linear-MDP algorithms assume the feature maps $\phi^\star_h$ known (see [linear MDP](linear-mdp.md)); here the embeddings are unknown. No linear reward structure is assumed: the source works in a reward-free formulation and plans afterwards for an explicitly given reward. By Lemma 1 of the source, an accurate learned model $(\hat\phi_h, \hat\mu_h)$ makes Bellman backups of every bounded value function approximately linear in $\hat\phi_h$ on the state-action distributions of all policies. That is the sense in which a learned representation supports linear methods downstream.
 
 ## Depends on
 

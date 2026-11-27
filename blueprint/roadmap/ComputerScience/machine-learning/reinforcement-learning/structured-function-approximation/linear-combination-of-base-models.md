@@ -1,6 +1,6 @@
 # Linear combination of base models
 
-Given $K$ base MDPs and a feature map into the simplex $\Delta_{d-1}$, the linearly combined model with parameter $W$ mixes the base transition and reward laws with state-action dependent weights $W\phi(s,a) \in \Delta_{K-1}$. The true environment is assumed to be such a mixture, exactly or up to an $\ell_1$ error $\theta$.
+Given $K$ base MDPs and a feature map into the simplex $\Delta_{d-1}$, the linearly combined model with parameter $W$ mixes the base transition and reward laws with state-action dependent weights $W\phi(s,a) \in \Delta_{K-1}$. The true environment is assumed to be such a mixture, exactly or up to a total-variation ($\ell_1$) error $\theta$.
 
 **Setting.** Episodic MDPs $(\mathcal{S}, \mathcal{A}, P, R, H, P_1)$ with transition kernel $P : \mathcal{S}\times\mathcal{A} \to \Delta(\mathcal{S})$, reward law $R : \mathcal{S}\times\mathcal{A} \to \Delta([0,1])$, horizon $H$, initial distribution $P_1$, and total reward $\sum_{h=1}^H r_h \in [0,1]$ almost surely under every policy. The learner is given base models $M_1, \dots, M_K$ sharing $\mathcal{S}, \mathcal{A}, H, P_1$ and differing in $(P^k, R^k)$, and a feature map $\phi : \mathcal{S} \times \mathcal{A} \to \Delta_{d-1}$, the probability simplex in $\mathbb{R}^d$.
 
@@ -22,13 +22,14 @@ $$
 \theta = \min_{W \in \mathcal{W}_0} \sup_{(s,a)} \Big( \lVert P^\ast(\cdot\mid s,a) - P^W(\cdot\mid s,a) \rVert_1 + \lVert R^\ast(\cdot\mid s,a) - R^W(\cdot\mid s,a) \rVert_1 \Big),
 $$
 
-attained at $W^\ast$; $\theta = 0$ is the realizable case $M^\ast = M(W^\ast)$. The source writes the minimum over an undefined $\mathcal{W}$; its parameter set is $\mathcal{W}_0$.
+attained at $W^\ast$; $\theta = 0$ is the realizable case $M^\ast = M(W^\ast)$. For a difference of two probability measures, $\lVert \nu_1 - \nu_2 \rVert_1 = 2\sup_B |\nu_1(B) - \nu_2(B)| = 2\,d_{TV}(\nu_1,\nu_2)$ is the total variation norm, which is $\sum_x |\nu_1(x) - \nu_2(x)|$ for discrete laws; the source writes $\lVert\cdot\rVert_1$ also for reward laws on $[0,1]$, which may be continuous. The source writes the minimum over an undefined $\mathcal{W}$; its parameter set is $\mathcal{W}_0$.
 
 **Special cases.** With $d = 1$ and $\phi \equiv 1$ the class is the set of global convex combinations of the base models. With $\phi$ the indicator vector of a partition $\{\mathcal{X}_i\}$ of $\mathcal{S}\times\mathcal{A}$, the mixing weights are constant on each cell.
 
 ## Depends on
 
 - [Probability measure](../../../../Probability/foundations/probability-measures/is-probability-measure.md)
+- [Total variation distance between finite measures](../../../../Probability/convergence-of-measures/total-variation-distance/total-variation-dist.md)
 
 ## Proof depends on
 
