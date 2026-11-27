@@ -6,7 +6,7 @@ $$
 \Bigl|\Pr_{k}\bigl[\mathcal{D}(|\phi_k\rangle^{\otimes t})=1\bigr]-\Pr_{|\psi\rangle\sim\mu}\bigl[\mathcal{D}(|\psi\rangle^{\otimes t})=1\bigr]\Bigr|\le\mathrm{negl}(\lambda).
 $$
 
-*Pseudorandom function-like state (PRFS)* generators additionally take an input $x$ and output $|\phi_{k,x}\rangle$ indistinguishable (given polynomially many copies for adaptively chosen inputs) from independent Haar-random states. *Single-copy* PRS require indistinguishability only for $t=1$ with $n>\lambda$.
+*Pseudorandom function-like state (PRFS)* generators additionally take an input $x$ and output $|\phi_{k,x}\rangle$ indistinguishable (given polynomially many copies for adaptively chosen inputs) from independent Haar-random states. *Single-copy* PRS require indistinguishability only for $t=1$ with $n>\lambda$. Complexity-theoretic lower bounds such as $\mathsf{BQP} \ne \mathsf{PP}$ apply to superlogarithmic output lengths $n(\lambda) = \omega(\log \lambda)$ (for $n(\lambda) = c\log\lambda$ with $c < 1$, statistically secure PRS exist unconditionally).
 
 ## Depends on
 

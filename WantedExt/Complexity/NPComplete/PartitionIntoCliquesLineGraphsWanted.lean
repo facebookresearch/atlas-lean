@@ -26,7 +26,7 @@ public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import MathlibExt.Combinatorics.SimpleGraph.LineGraph
-public import WantedExt.Complexity.NPComplete.PartitionIntoCliquesWanted
+public import CSLibExt.Complexity.NPComplete.PartitionIntoCliquesDefs
 
 @[expose] public section
 
@@ -42,7 +42,7 @@ INSTANCE: a graph `G = (V, E)` that is an edge (line) graph, and a positive inte
 QUESTION: can the vertices of `G` be partitioned into `k ≤ K` disjoint sets `V₁, ..., V_k` such
 that, for `1 ≤ i ≤ k`, the subgraph induced by `Vᵢ` is a complete graph?
 
-This is PARTITION INTO CLIQUES ([GT15], `PartitionIntoCliquesWanted`) restricted to line graphs,
+This is PARTITION INTO CLIQUES ([GT15], `PartitionIntoCliquesDefs`) restricted to line graphs,
 the restriction recorded in the entry's comment. The instance type, `PartitionIntoCliques.Graph`,
 `PartitionIntoCliques.WellFormed` (simple edge list, `0 < K ≤ |V|`) and
 `PartitionIntoCliques.PartitionIntoCliquesFeasible` are the parent's, unchanged; `WellFormed` adds
