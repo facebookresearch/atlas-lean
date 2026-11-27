@@ -65,7 +65,6 @@ Topics added since this subject's fields were last revised.
 - [Query Oracle](query-oracle/README.md)
 - [Randomized Smoothing](randomized-smoothing/README.md)
 - [Recall At](recall-at/README.md)
-- [Risk ERMBridge](risk-ermbridge/README.md)
 - [Simulated Annealing](simulated-annealing/README.md)
 - [Soundness](soundness/README.md)
 - [Summation](summation/README.md)
