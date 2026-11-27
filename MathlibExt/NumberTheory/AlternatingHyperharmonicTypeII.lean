@@ -103,8 +103,11 @@ $d(m, j)$ is $\frac{1}{m+1} \sum_{k} \binom{m+1}{m-k} B_{m-k} \binom{1+k}{j} (-1
 running over the natural numbers $k$ with $\max(j - 1, 0) \le k \le m$ (so $d(m, j) = 0$ when
 $j > m + 1$), where $B_i$ denotes the Bernoulli numbers with the convention $B_1 = +\frac{1}{2}$.
 
+For $j \ge 1$ this agrees with Definition 4 as printed. At $j = 0$ it uses the nonnegative-index
+convention of Lemma 3, omitting the $k = -1$ term $B_{m+1}/(m+1)$.
+
 Source: Rusen Li, *Sums over Primes II*, Journal of Integer Sequences 27 (2024),
-Article 24.4.1, Definition 4. -/
+Article 24.4.1, Definition 4 and Lemma 3. -/
 public def liCoeffD (m j : ℕ) : ℚ :=
   1 / ((m + 1 : ℕ) : ℚ) * ∑ k ∈ Icc (j - 1) m,
     ((m + 1).choose (m - k) : ℚ) * bernoulli' (m - k) * ((1 + k).choose j : ℚ) * (-1) ^ (1 + k - j)
@@ -238,6 +241,8 @@ private theorem powerSum_expand (j R : ℕ) (h : j + 1 < R) (x : ℚ) :
       rw [mem_Ico] at hl hl'
       simp [powerCoeff, liCoeffC, show ¬ l ≤ j + 1 by omega]
 
+-- At degree zero, `liCoeffD` uses Lemma 3's nonnegative-index convention: the shift uses only
+-- the positive powers of `powerSum` and does not add Definition 4's `k = -1` term.
 private theorem powerSum_shift (j R : ℕ) (h : j + 1 < R) (x : ℚ) :
     powerSum j (x - 1) = ∑ d ∈ range R, liCoeffD j d * x ^ d := by
   calc
