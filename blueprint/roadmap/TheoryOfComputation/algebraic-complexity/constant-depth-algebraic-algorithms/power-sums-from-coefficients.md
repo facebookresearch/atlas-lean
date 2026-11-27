@@ -8,7 +8,7 @@ Both directions use the logarithmic derivative identity $t f'(t)/f(t) = \sum_k p
 
 ## Depends on
 
-- [Constant-depth arithmetic formulas with unbounded fan-in (arithmetic AC0)](constant-depth-arithmetic-formula.md)
+- [Arithmetic AC0: constant-depth arithmetic circuits with division and piecewise computation](constant-depth-arithmetic-formula.md)
 
 ## Sources
 
