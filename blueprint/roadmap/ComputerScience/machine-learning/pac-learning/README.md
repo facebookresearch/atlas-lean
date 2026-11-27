@@ -26,3 +26,7 @@ Valiant's model of learning from random examples (error, learners, version space
 - [DS dimension characterizes multiclass PAC learnability](ds-dimension-characterizes-multiclass-pac-learnability.md)
 - [Exact learning from queries](exact-learning-from-queries/README.md)
 - [Universal learning rates trichotomy](universal-learning-rates-trichotomy.md)
+- [Sample complexity and combinatorial dimensions](sample-complexity-and-combinatorial-dimensions/README.md)
+- [Replicable Learning](replicable-learning/README.md)
+- [Sample Compression Schemes](sample-compression-schemes/README.md)
+- [Statistical Query Learning and SQ Dimension](statistical-query-dimension/README.md)
