@@ -1,0 +1,5 @@
+# Recoded group A mean in the reversal example
+
+In the reversal example, the pooled sample is $x = (0, 3, 1, 1)$, with groups $A = \{0, 1\}$ and
+$B = \{2, 3\}$ of indices; the order-preserving recoding fixes $0$ and $3$ and sends $1$ to $2$.
+After recoding, the mean on group $A$ is $3/2$.

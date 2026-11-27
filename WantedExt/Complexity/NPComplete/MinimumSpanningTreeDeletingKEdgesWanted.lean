@@ -90,8 +90,9 @@ def WellFormed (i : MinimumSpanningTreeDeletingKEdgesInstance) : Prop :=
       (e.2.1, e.1) ∉ i.2.1.map fun e => (e.1, e.2.1)) ∧
     (edgesGraph i.1 i.2.1).Connected ∧ 0 < i.2.2.2
 
-/-- Some `k` edges `E'` can be deleted so that the remaining edges have a minimum spanning tree
-of weight at least `K`. -/
+/-- Some sublist `D` of `k` edge records can be chosen so that, after removing every record equal
+to a member of `D`, the remaining records have a minimum spanning tree of weight at least `K`.
+On a well-formed instance, with no parallel records, this deletes exactly `k` edges. -/
 def MinimumSpanningTreeDeletingKEdgesFeasible
     (i : MinimumSpanningTreeDeletingKEdgesInstance) : Prop :=
   ∃ D : List (ℕ × ℕ × ℕ), D.Sublist i.2.1 ∧ D.length = i.2.2.1 ∧

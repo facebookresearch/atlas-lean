@@ -13,3 +13,8 @@ Functions from {0,1}^n to {0,1}: counting monotone, self-dual and unate Boolean 
 - [Self-dual monotone Boolean functions](self-dual-monotone-boolean-functions/README.md)
 - [Unate and monotone Boolean functions](unate-and-monotone-boolean-functions/README.md)
 - [Structure theorems for Boolean functions](structure-theorems-for-boolean-functions/README.md)
+- [Average sensitivity of multilinear polynomial thresholds](polynomial-threshold-average-sensitivity.md)
+- [Quantitative separation of block sensitivity and sensitivity](quantitative-block-sensitivity-separation.md)
+- [Unbounded signed violations of the square-root Fourier-degree bound](unbounded-square-root-fourier-degree-violations.md)
+- [Unbounded absolute Fourier singleton sums relative to square-root degree](unbounded-absolute-fourier-singleton-ratios.md)
+- [Global Hypercontractivity and Sharp Thresholds](global-hypercontractivity-and-sharp-thresholds/README.md)

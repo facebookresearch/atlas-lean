@@ -80,4 +80,47 @@ example : ∀ r ≥ 1,
   rcases h.2 r hr with ⟨_, _, _, _, _, _, hc, hb⟩
   exact ⟨hc, hb⟩
 
+-- Conway's set with the modulus 17 from the example after Theorem 1.
+private def conway : Finset ℤ := {0, 2, 3, 4, 7, 11, 12, 14}
+
+private def copySequence : ℕ → Finset ℤ
+  | 0 => ∅
+  | 1 => conway
+  | j + 2 =>
+      if (j + 2) % 2 = 0 then
+        copySequence (j + 1) ∪ {(((j + 2) / 2 : ℕ) : ℤ) * 17}
+      else
+        copySequence j ∪ (conway + {(((j + 1) / 2 : ℕ) : ℤ) * 17})
+
+private theorem copySequence_even (l : ℕ) (hl : 1 ≤ l) :
+    copySequence (2 * l) = copySequence (2 * l - 1) ∪ {(l : ℤ) * 17} := by
+  cases l with
+  | zero => omega
+  | succ l =>
+    rw [show 2 * (l + 1) = 2 * l + 2 by omega, copySequence,
+      ite_eq_left (show (2 * l + 2) % 2 = 0 by omega),
+      show (2 * l + 2) / 2 = l + 1 by omega, show 2 * l + 2 - 1 = 2 * l + 1 by omega]
+
+private theorem copySequence_odd (l : ℕ) (hl : 1 ≤ l) :
+    copySequence (2 * l + 1) = copySequence (2 * l - 1) ∪ (conway + {(l : ℤ) * 17}) := by
+  cases l with
+  | zero => omega
+  | succ l =>
+    rw [show 2 * (l + 1) + 1 = (2 * l + 1) + 2 by omega, copySequence,
+      ite_eq_right (show ((2 * l + 1) + 2) % 2 ≠ 0 by omega),
+      show ((2 * l + 1) + 1) / 2 = l + 1 by omega,
+      show 2 * (l + 1) - 1 = 2 * l + 1 by omega]
+
+-- The construction switches bias and makes strict insertions at every stage, not just the first.
+set_option maxRecDepth 4096 in
+example : ∀ l ≥ 1,
+    (copySequence (2 * l) + copySequence (2 * l)).card <
+      (copySequence (2 * l) - copySequence (2 * l)).card ∧
+    (copySequence (2 * l + 1) - copySequence (2 * l + 1)).card <
+      (copySequence (2 * l + 1) + copySequence (2 * l + 1)).card ∧
+    copySequence (2 * l - 1) ⊂ copySequence (2 * l) ∧
+    copySequence (2 * l) ⊂ copySequence (2 * l + 1) :=
+  MetaMathlibExt.alternating_sequence_of_copies conway 17 (by decide) (by decide) (by decide)
+    (by decide) (by decide) copySequence rfl copySequence_even copySequence_odd
+
 end MathlibExtTest.Combinatorics.Additive.AlternatingSumDifferenceDominated
