@@ -8,6 +8,8 @@ Modules over rings and semirings: linear maps and equivalences, submodules and t
 - [Localization of a module at a multiplicatively closed subset](module-localization.md)
 - [Exact pair of maps and exact sequences of groups](exact-sequence-groups.md)
 - [Baer's criterion for injective modules](baer-criterion.md)
+- [Range of a linear map as a subspace of its target](range-linear-map.md)
+- [Quotient module](quotient-module.md)
 - [Commutation of the native lifted actions](commutation-of-the-native-lifted-actions/README.md)
 - [Compatibility with explicitly supplied integer module dictionaries](compatibility-with-explicitly-supplied-integer-m/README.md)
 - [Opposite scalar actions for modules with commuting left actions](opposite-scalar-actions-for-modules-with-commuti/README.md)

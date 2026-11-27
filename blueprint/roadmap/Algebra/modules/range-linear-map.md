@@ -1,0 +1,9 @@
+# Range of a linear map as a subspace of its target
+
+The range of a linear map $T \colon V \to W$ between vector spaces over a field $F$ is the set $\{T(x) : x \in V\}$ of the values it attains, which is a subspace of $W$; for a matrix $A$ it is the column space, the set of vectors $Ax$. Mathlib defines the range more generally, for semilinear maps, and packages it as a submodule of the target. Let $R$ and $R_2$ be semirings, $M$ an $R$-module and $M_2$ an $R_2$-module, let $\tau \colon R \to R_2$ be a ring homomorphism and let $f \colon M \to M_2$ be $\tau$-semilinear: $f(x + y) = f(x) + f(y)$ and $f(rx) = \tau(r) f(x)$ for all $x, y \in M$ and $r \in R$. Suppose that $\tau$ is surjective. The *range* of $f$ is then the $R_2$-submodule of $M_2$ whose elements are exactly the values $f(x)$ for $x \in M$. It is the scalar map $\tau$ that must be surjective, not $f$: every $s \in R_2$ is some $\tau(r)$, so $s f(x) = f(rx)$ is again a value. Without this hypothesis the values need not be closed under the scalars of $M_2$; for example, the image of the real-linear inclusion $\mathbb{R} \to \mathbb{C}$ is not a complex subspace. Taking $R = R_2 = F$ and $\tau$ the identity gives the familiar definition.
+
+## Sources
+
+- Stephen H. Friedberg, Arnold J. Insel and Lawrence E. Spence, Linear Algebra, 4th ed., Prentice Hall, 2003.
+- The mathlib Community, *mathlib4* at revision fc4f59e577feb1a4956671bc04ac18aaaf8cd842, for surjective ring homomorphisms: `RingHomSurjective`, https://github.com/leanprover-community/mathlib4/blob/fc4f59e577feb1a4956671bc04ac18aaaf8cd842/Mathlib/Algebra/Ring/CompTypeclasses.lean#L158-L162.
+- The mathlib Community, *mathlib4* at revision fc4f59e577feb1a4956671bc04ac18aaaf8cd842, for membership in the range: the values of the map: `LinearMap.mem_range`, https://github.com/leanprover-community/mathlib4/blob/fc4f59e577feb1a4956671bc04ac18aaaf8cd842/Mathlib/Algebra/Module/Submodule/Range.lean#L67-L69.

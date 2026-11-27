@@ -14,10 +14,12 @@ public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.RingTheory.PowerSeries.Basic
 public import MathlibExt.Combinatorics.Enumerative.GaussianBinomial
 public import MathlibExt.NumberTheory.NegRFibonacciGeneratingFunction
+public import MathlibExt.NumberTheory.NegRFibonacciPolynomialSum
 public import MathlibExt.NumberTheory.RFibonacciPolynomial
 public import MathlibExt.NumberTheory.RFibonacciPolynomialSum
 public import MathlibExt.NumberTheory.RLucasPolynomial
 public import MathlibExt.NumberTheory.RLucasPolynomialAlternatingSum
+public import MathlibExt.NumberTheory.RFibonacciPolynomialNegRFibonacciEqSumRoots
 
 namespace MetaMathlibExt
 
@@ -602,23 +604,6 @@ public theorem negRLucas_succ_of_le {A : Type*} [CommRing A] {r n : ℕ} (x : A)
   rw [negRLucas]
   simp [show r ≠ 0 by omega, show ¬n + 1 < r by omega, show n + 1 ≠ r by omega]
 
-/-- **Explicit sum for the (-r)-Fibonacci polynomials.** Let $A$ be a commutative ring,
-$r \ge 2$, $x \in A$ and $y$ a unit of $A$, and write $U_n = U^{(-r)}_n(x, y)$. For every
-$n \ge 0$,
-$$U_{n+1} = \sum_{k=0}^{\lfloor n/r \rfloor} \binom{k}{n - rk} y^{-k} (-x)^{n-rk},$$
-where $\binom{a}{b} = 0$ for $b > a$, so the terms with $(r+1) k < n$ vanish.
-
-The paper states $n \ge 1$ and $x$ a unit; the identity holds for $n = 0$ and every $x$.
-
-Source: Abbad and Belbachir, *The r-Fibonacci Polynomial and Its Companion
-Sequences Linked with Some Classical Sequences*, INTEGERS 25 (2025),
-Article A38, Theorem 6 (`integers-2025-A38-thm-6`). -/
-public theorem_wanted negRFibonacci_succ_eq_sum {A : Type*} [CommRing A] {r : ℕ}
-    (hr : 2 ≤ r) (x : A) (y : Aˣ) (n : ℕ) :
-    negRFibonacci r x y (n + 1)
-      = ∑ k ∈ Finset.range (n / r + 1),
-          ((k.choose (n - r * k) : ℕ) : A) * (↑y⁻¹ : A) ^ k * (-x) ^ (n - r * k)
-
 /-- **The companion sequence in terms of the $(-r)$-Fibonacci polynomials.** Let $A$ be a
 commutative ring, $r \ge 2$ a natural number, $x \in A$ and $y$ a unit of $A$, and let
 $U^{(-r)}_n(x, y)$ be the $(-r)$-Fibonacci polynomials and $V^{(-r)}_n(x, y)$ their companion
@@ -697,27 +682,6 @@ public theorem_wanted negRLucas_generatingFunction {A : Type*} [CommRing A] {r :
         + PowerSeries.C (x * ↑y⁻¹) * PowerSeries.X ^ (r + 1)) *
       PowerSeries.mk (fun n => negRLucas r x y n)
       = PowerSeries.C ((r : A) + 1) - PowerSeries.C (↑y⁻¹ : A) * PowerSeries.X ^ r
-
-/-- **Binet formula for the (-r)-Fibonacci polynomials.** Let $K$ be a field, $r \ge 2$,
-$x \in K$ and $y \in K$ nonzero, and write $U_n = U^{(-r)}_n(x, y)$. Suppose that
-$\beta_0, \dots, \beta_r \in K$ are pairwise distinct and that
-$t^{r+1} - y^{-1} t + x y^{-1} = \prod_{k=0}^{r} (t - \beta_k)$ as polynomials over $K$. Then for
-every $n \ge 0$,
-$$U_{n+1} = \sum_{k=0}^{r} \frac{\beta_k^{n+r+1}}{r \beta_k^{r+1} - x y^{-1}},$$
-where a term whose denominator vanishes is read as $0$.
-
-The paper's hypothesis $x \ne \frac{r}{r+1} ((r+1) y)^{-1/r}$ is replaced by the distinctness of
-the zeros (compare Lemma 1).
-
-Source: Abbad and Belbachir, *The r-Fibonacci Polynomial and Its Companion
-Sequences Linked with Some Classical Sequences*, INTEGERS 25 (2025),
-Article A38, Theorem 9 (`integers-2025-A38-thm-9`). -/
-public theorem_wanted negRFibonacci_eq_sum_roots {K : Type*} [Field K] {r : ℕ} (hr : 2 ≤ r)
-    (x : K) (y : Kˣ) (β : Fin (r + 1) → K) (hβ : Function.Injective β)
-    (hP : (Polynomial.X ^ (r + 1) - Polynomial.C (↑y⁻¹ : K) * Polynomial.X
-      + Polynomial.C (x * ↑y⁻¹) : Polynomial K) = ∏ k, (Polynomial.X - Polynomial.C (β k)))
-    (n : ℕ) :
-    negRFibonacci r x y (n + 1) = ∑ k, β k ^ (n + r + 1) / (r * β k ^ (r + 1) - x * ↑y⁻¹)
 
 /-- **Binet formula for the companion sequence $V^{(-r)}$.** Let $K$ be a field, $r \ge 2$ a
 natural number, $x \in K$ and $y$ a unit of $K$, and let $V^{(-r)}_n(x, y)$ be the companion

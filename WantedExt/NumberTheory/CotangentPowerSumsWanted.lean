@@ -14,6 +14,7 @@ public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import Mathlib.NumberTheory.BernoulliPolynomials
 public import Mathlib.NumberTheory.DirichletCharacter.Basic
 public import MathlibExt.NumberTheory.CotangentPowerSums
+public import MathlibExt.NumberTheory.CotangentPowerSumsBernoulli
 
 namespace MetaMathlibExt
 
@@ -100,25 +101,6 @@ public theorem_wanted sum_conj_dirichletCharacter_mul_I_mul_cot_pow_of_even {n :
               ((χ.conductor : ℂ) ^ (j - 1) * ∑ k ∈ Finset.Icc 1 χ.conductor,
                 (((Polynomial.bernoulli j).eval ((k : ℚ) / χ.conductor) : ℚ) : ℂ) *
                   χ.primitiveCharacter k))
-
-/-- **Cotangent power coefficients through even Bernoulli numbers.** Let $c_{r,j}$ be
-Girstmair's cotangent power coefficients and $B_m$ the $m$-th Bernoulli number. For natural
-numbers $j$ and $r$ with $1 \le j \le r$ and $j \equiv r \pmod 2$,
-$$c_{r,j} = \frac{(-1)^{r+1} 2^{r-j}}{(j-1)!} \, d_{r,j},$$
-where
-$$d_{r,j} = \sum_{(j_1, \dots, j_r)} \prod_{t=1}^{r} \frac{B_{2 j_t}}{(2 j_t)!}$$
-and the sum runs over all $r$-tuples $(j_1, \dots, j_r)$ of natural numbers with
-$j + 2 j_1 + \dots + 2 j_r = r$. This is Theorem 2 of the source, relating $c_{r,j}$ to the
-coefficients $d_{r,j}$ of the earlier literature (Equations (13) and (15)).
-
-Source: Kurt Girstmair, *Cotangent Power Sums and Character Coordinates*, INTEGERS 25 (2025),
-Article A63, Theorem 2 with Equations (13) and (15) (`integers-2025-A63-thm-2`). -/
-public theorem_wanted cotangentPowerCoeff_eq_bernoulli_tuple_sum {r j : ℕ} (hj : 1 ≤ j)
-    (hjr : j ≤ r) (hpar : j % 2 = r % 2) :
-    cotangentPowerCoeff r j =
-      (-1) ^ (r + 1) * 2 ^ (r - j) / ((j - 1).factorial : ℚ) *
-        ∑ a ∈ Finset.Nat.antidiagonalTuple r ((r - j) / 2),
-          ∏ t, bernoulli (2 * a t) / ((2 * a t).factorial : ℚ)
 
 end
 

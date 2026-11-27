@@ -1,0 +1,3 @@
+# Feasible COVERING INTEGER PROGRAMMING instances
+
+An instance $(n, C, c, K)$ of COVERING INTEGER PROGRAMMING is feasible when some list $x$ of $n$ nonnegative integers satisfies $b_i \le A_i \cdot x$ for every constraint row $(A_i, b_i)$ of $C$ and $c \cdot x \le K$. On raw input the scalar product $a \cdot x = \sum_k (p_k / q_k)\, x_k$ runs only over the positions present in both lists, so it stops at the shorter list, and an encoded rational $(p, q)$ with $q = 0$ counts as $0$ (as does $b_i$ with denominator $0$). For a [well-formed](well-formed.md) instance, where every row and $c$ have $n$ entries and every denominator is positive, this is the usual reading: some $x \in \mathbb{Z}_{\ge 0}^n$ with $A x \ge b$ and $c \cdot x \le K$.
