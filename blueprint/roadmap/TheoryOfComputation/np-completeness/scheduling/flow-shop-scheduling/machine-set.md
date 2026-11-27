@@ -1,0 +1,3 @@
+# Machine set of a stage of a multi-purpose machine flow shop
+
+An instance of a multi-purpose machine flow shop is a pair of a FLOW-SHOP SCHEDULING instance $(r, T, K)$, read as $r$ stages, one list of natural numbers per job (its operation processing times, of any length), and a bound $K$, and a list $M$ of lists of machine indices. For a stage $p \in \{0, \dots, r-1\}$, the machine set $\mu_p$ is the list at position $p$ of $M$, and the empty list when $M$ has no entry at position $p$. That there is exactly one nonempty machine set per stage, with machines among $0, \dots, m-1$, and that every job lists one processing time per stage, are conditions of a well-formed instance, not of this definition.

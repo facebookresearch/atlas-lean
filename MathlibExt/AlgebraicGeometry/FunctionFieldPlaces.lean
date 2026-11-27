@@ -11,28 +11,31 @@ Portions of this file are adapted from:
 
 `LeanEval/AlgebraicGeometry/Faltings.lean` (leanprover/lean-eval), at commit
 38361be884302c7edce1908c4aef8296eb2cb27e, problem `faltings`: the function field
-and place definitions and instances, and the statement of finiteness of poles.
+and place definitions and instances, the adele ring and its principal map, and the
+statement of finiteness of poles.
 Copyright 2026 Lean FRO, LLC.
 Authors: Junyan Xu
 Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
 For the adapted portions, see the Apache 2.0 terms and disclaimer of warranties.
 Modification notice (Apache License 2.0, Section 4). The declarations retain their ATLAS
-namespace. The statement has a proof in this module.
+namespace. Finiteness of poles is proved here and used in the principal adele map.
 -/
 
 module
 
 public import Mathlib.NumberTheory.FunctionField
+public import Mathlib.Topology.Algebra.RestrictedProduct.Basic
 import Mathlib.RingTheory.DedekindDomain.AdicValuation.Valuation
 import Mathlib.RingTheory.Valuation.LocalSubring
 import MathlibExt.RingTheory.DedekindDomain.FiniteSupport
 import MathlibExt.RingTheory.KrullAkizuki
 
 /-!
-# Places of one-variable function fields
+# Places and adeles of one-variable function fields
 
 This file defines places as proper valuation subalgebras and proves that each element
-of a one-variable function field has only finitely many poles.
+of a one-variable function field has only finitely many poles. It defines the adele ring
+and the diagonal ring homomorphism from the function field into it.
 -/
 
 @[expose] public section
@@ -203,6 +206,49 @@ theorem finite_setOf_place_notMem [BundledFunctionField K F] (x : F) :
   · refine (finite_nonunits_of_transcendental K (y := x⁻¹)
       (fun h ↦ hx (IsAlgebraic.inv_iff.mp h))).subset fun v hv ↦ ?_
     exact v.toValuationSubring.inv_mem_nonunits_iff.mpr (Or.inr hv)
+
+open scoped RestrictedProduct
+
+variable (F)
+
+set_option linter.dupNamespace false in
+/-- **Adele ring.** Let $F$ be a field and $K$ a field with $F$ a $K$-algebra. The adele ring
+$\mathcal{A}_F$ of $F/K$ is the restricted product of copies of $F$ indexed by the places $P$
+of $F/K$, with respect to their valuation rings $\mathcal{O}_P$ and the cofinite filter: its
+elements are the families $\alpha = (\alpha_P)_P$ with $\alpha_P \in F$ for every place $P$
+and $\alpha_P \in \mathcal{O}_P$ for all but finitely many $P$. See [Stichtenoth, Definition
+1.5.2]. -/
+abbrev Adele : Type _ :=
+  RestrictedProduct (fun _ ↦ F) (fun v : Place K F ↦ (v : Set F)) Filter.cofinite
+
+set_option linter.dupNamespace false in
+instance : CommRing (Adele K F) := RestrictedProduct.instCommRingCoeOfSubringClass ..
+
+variable {F}
+
+set_option linter.dupNamespace false in
+/-- **Principal adele map.** Let $F$ be a function field over a field $K$, that is, a finite
+extension of the rational function field $K(t)$. The principal adele map is a ring homomorphism
+from $F$ to the adele ring $\mathcal{A}_F$ of $F/K$. It is the diagonal embedding sending $x \in F$
+to the adele whose coordinate at every place $P$ of $F/K$ is $x$. This is well defined since $x$
+has only finitely many poles. See `Adele.principal_apply` for the coordinate formula.
+
+Source: see manifest Via leanprover/lean-eval@38361be, problem `faltings`. -/
+def Adele.principal [BundledFunctionField K F] : F →+* Adele K F where
+  toFun x := ⟨fun _ ↦ x, Filter.eventually_cofinite.mpr (finite_setOf_place_notMem K x)⟩
+  map_one' := rfl
+  map_mul' _ _ := rfl
+  map_zero' := rfl
+  map_add' _ _ := rfl
+
+set_option linter.dupNamespace false in
+/-- **Coordinates of a principal adele.** Let $F$ be a function field over a field $K$, that is,
+a finite extension of the rational function field $K(t)$. For every $x \in F$ and every place
+$P$ of $F/K$, the coordinate at $P$ of the principal adele of $x$ is $x$.
+
+Source: see manifest Via leanprover/lean-eval@38361be, problem `faltings`. -/
+theorem Adele.principal_apply [BundledFunctionField K F] (x : F)
+    (v : Place K F) : (Adele.principal K x) v = x := rfl
 
 end AlgebraicGeometry.Faltings
 
