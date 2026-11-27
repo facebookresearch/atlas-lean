@@ -23,12 +23,13 @@ at `l < 2` never enter the definitions.
 module
 
 import Batteries.Util.ProofWanted
-public import MathlibExt.Combinatorics.Additive.VanDerWaerdenSumProductEightMul
 public import MathlibExt.Combinatorics.Additive.VanDerWaerdenNonvanishingAlternating
 public import MathlibExt.Combinatorics.Additive.VanDerWaerdenSumProductFourEight
+public import MathlibExt.Combinatorics.Additive.VanDerWaerdenSumProductNine
 public import MathlibExt.Combinatorics.Additive.VanDerWaerdenSumProductPrimeOneModFour
 public import MathlibExt.Combinatorics.Additive.VanDerWaerdenSumProductThree
 public import MathlibExt.Combinatorics.Additive.VanDerWaerdenTransformationSums
+public import MathlibExt.Combinatorics.Additive.VanDerWaerdenSumProductEightMul
 
 namespace MetaMathlibExt
 
@@ -64,17 +65,6 @@ to Some Symmetric Functions*, INTEGERS 26 (2026), Article A25, Lemma 7
 public theorem_wanted not_isMVanishingFamily_sumAddMulProd_one_prime_three_mod_four
     {n : ℕ} (hp : n.Prime) (h3 : 3 < n) (h4 : n % 4 = 3) {m : ℕ} (hm : 0 < m) :
     ¬ IsMVanishingFamily m (sumAddMulProdFamily (1 : ZMod n))
-
-/-- **$F_1$ modulo $9u$ with $u > 0$ is not $m$-vanishing for $m > 0$.** Let $u > 0$ be a natural
-number and $n = 9u$. Then for every $m > 0$ the sum-plus-product family $F_1$ over $\mathbb{Z}/n$,
-$F_1(b_1, \dots, b_l) = b_1 + \dots + b_l + b_1 \cdots b_l$, is not $m$-vanishing.
-
-Source: Arie Bialostocki and Vladyslav Oles, *On Generalizing the Van Der Waerden Theorem
-to Some Symmetric Functions*, INTEGERS 26 (2026), Article A25, Lemma 9
-(`integers-2026-A25-lem-9`). -/
-public theorem_wanted not_isMVanishingFamily_sumAddMulProd_one_nine_mul {u : ℕ}
-    (hu : 0 < u) {m : ℕ} (hm : 0 < m) :
-    ¬ IsMVanishingFamily m (sumAddMulProdFamily (1 : ZMod (9 * u)))
 
 /-- **The sum-minus-product family is vanishing modulo prime powers.** Let $p$ be a prime,
 $k > 0$ and $n = p^k$, and let $F_{-1}$ be the family over $\mathbb{Z}/n\mathbb{Z}$ sending a
