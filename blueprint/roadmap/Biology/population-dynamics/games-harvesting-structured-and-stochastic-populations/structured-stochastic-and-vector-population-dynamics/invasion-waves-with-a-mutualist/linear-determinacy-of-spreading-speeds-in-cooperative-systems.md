@@ -19,7 +19,7 @@ $$
 
 ## Depends on
 
-- [Fisher–KPP travelling waves](../../../pattern-formation/fisher-kpp-travelling-waves/README.md)
+- [Fisher–KPP travelling waves](../../../../pattern-formation/fisher-kpp-travelling-waves/README.md)
 
 ## Expansion
 

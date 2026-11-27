@@ -14,7 +14,7 @@ so $\mathbf{x}$ follows replicator dynamics under $P^{\mathbf{w}}$, while $\math
 
 ## Depends on
 
-- [Solution of the replicator equation](../../replicator-dynamics/is-solution.md)
+- [Solution of the replicator equation](../../../replicator-dynamics/is-solution.md)
 
 ## Expansion
 

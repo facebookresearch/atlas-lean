@@ -1,0 +1,42 @@
+# Games, harvesting, structured and stochastic populations
+
+Evolutionary games and the control of exploited and cultivated populations, together with structured, stochastic and vector population dynamics.
+
+## [Evolutionary games, harvesting and chemostats](evolutionary-games-harvesting-and-chemostats/README.md)
+
+- [Adaptive dynamics with phenotypic plasticity](evolutionary-games-harvesting-and-chemostats/adaptive-dynamics-with-phenotypic-plasticity/README.md)
+- [Adaptive prey switching with a linear preference tradeoff](evolutionary-games-harvesting-and-chemostats/adaptive-prey-switching-with-a-linear-preference-tradeoff/README.md)
+- [Continual evolution from fast and slow feedbacks](evolutionary-games-harvesting-and-chemostats/continual-evolution-from-fast-and-slow-feedbacks/README.md)
+- [Cooperation on arbitrary population structures](evolutionary-games-harvesting-and-chemostats/cooperation-on-arbitrary-population-structures/README.md)
+- [Multilevel replicator dynamics with solvable games](evolutionary-games-harvesting-and-chemostats/multilevel-replicator-dynamics-with-solvable-games/README.md)
+- [Noncooperative fishery games](evolutionary-games-harvesting-and-chemostats/noncooperative-fishery-games/README.md)
+- [Persistence of random evolutionary game polynomials](evolutionary-games-harvesting-and-chemostats/persistence-of-random-evolutionary-game-polynomials/README.md)
+- [Rock–paper–scissors coevolution of payoffs](evolutionary-games-harvesting-and-chemostats/rock-paper-scissors-coevolution-of-payoffs/README.md)
+- [Stochastic evolutionary games in random environments](evolutionary-games-harvesting-and-chemostats/stochastic-evolutionary-games-in-random-environments/README.md)
+- [Age-structured chemostat with actuator dynamics](evolutionary-games-harvesting-and-chemostats/age-structured-chemostat-with-actuator-dynamics/README.md)
+- [Chemostat with aggregated biomass](evolutionary-games-harvesting-and-chemostats/chemostat-with-aggregated-biomass/README.md)
+- [Harvested predator–prey with species-dependent refuge](evolutionary-games-harvesting-and-chemostats/harvested-predator-prey-with-species-dependent-refuge/README.md)
+- [Mixed regular–singular harvesting of stochastic populations](evolutionary-games-harvesting-and-chemostats/mixed-regular-singular-harvesting-of-stochastic-populations/README.md)
+- [Optimal harvesting of age-structured populations](evolutionary-games-harvesting-and-chemostats/optimal-harvesting-of-age-structured-populations/README.md)
+- [Stochastic optimal harvesting with quadratic effort cost](evolutionary-games-harvesting-and-chemostats/stochastic-optimal-harvesting-with-quadratic-effort-cost/README.md)
+- [Sustainable singular harvesting in random environments](evolutionary-games-harvesting-and-chemostats/sustainable-singular-harvesting-in-random-environments/README.md)
+
+## [Structured, stochastic and vector population dynamics](structured-stochastic-and-vector-population-dynamics/README.md)
+
+- [Density-dependent age-structured populations on patches](structured-stochastic-and-vector-population-dynamics/density-dependent-age-structured-populations-on-patches/README.md)
+- [Discretely observed linear birth–death processes](structured-stochastic-and-vector-population-dynamics/discretely-observed-linear-birth-death-processes/README.md)
+- [Malthus parameter under individual variability](structured-stochastic-and-vector-population-dynamics/malthus-parameter-under-individual-variability/README.md)
+- [Positive density dependence in stochastic structured populations](structured-stochastic-and-vector-population-dynamics/positive-density-dependence-in-stochastic-structured-populations/README.md)
+- [Power-law-decaying growth-rate models](structured-stochastic-and-vector-population-dynamics/power-law-decaying-growth-rate-models/README.md)
+- [Tree–grass coexistence under random fires](structured-stochastic-and-vector-population-dynamics/random-fire-tree-grass-coexistence/README.md)
+- [Randomly switched Lotka–Volterra predator-prey systems](structured-stochastic-and-vector-population-dynamics/randomly-switched-lotka-volterra-predator-prey-systems/README.md)
+- [Stochastic Lotka–Volterra food chains](structured-stochastic-and-vector-population-dynamics/stochastic-lotka-volterra-food-chains/README.md)
+- [Stochastic Lotka–Volterra food chains without predator self-limitation](structured-stochastic-and-vector-population-dynamics/stochastic-lotka-volterra-food-chains-without-predator-self-limitation/README.md)
+- [Separatrix of strong Lotka–Volterra competition](structured-stochastic-and-vector-population-dynamics/separatrix-of-strong-lotka-volterra-competition/README.md)
+- [Stage-structured models of partial migration](structured-stochastic-and-vector-population-dynamics/stage-structured-models-of-partial-migration/README.md)
+- [Invasion waves with a mutualist](structured-stochastic-and-vector-population-dynamics/invasion-waves-with-a-mutualist/README.md)
+- [Periodic eco-epidemic predator–prey models](structured-stochastic-and-vector-population-dynamics/periodic-eco-epidemic-predator-prey-models/README.md)
+- [Aedes life-cycle dynamics](structured-stochastic-and-vector-population-dynamics/aedes-life-cycle-dynamics/README.md)
+- [Honey bee–Varroa virus transmission](structured-stochastic-and-vector-population-dynamics/honey-bee-varroa-virus-transmission/README.md)
+- [Two-sex Wolbachia transmission model](structured-stochastic-and-vector-population-dynamics/two-sex-wolbachia-transmission-model/README.md)
+- [Wolbachia replacement with imperfect maternal transmission](structured-stochastic-and-vector-population-dynamics/wolbachia-replacement-with-imperfect-maternal-transmission/README.md)

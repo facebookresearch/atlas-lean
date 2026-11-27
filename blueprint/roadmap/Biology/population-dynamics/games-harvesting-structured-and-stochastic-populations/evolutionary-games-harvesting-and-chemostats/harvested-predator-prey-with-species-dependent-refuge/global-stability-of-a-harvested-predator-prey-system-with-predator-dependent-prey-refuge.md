@@ -16,7 +16,7 @@ $$4\,r\,m\,e\,(1 + ak)(1 + ax^*) > p\,m^2\,y^{*2}.$$
 
 ## Depends on
 
-- [Positive solutions lie on level curves](../../lotka-volterra-predator-prey-model/first-integral-eq.md)
+- [Positive solutions lie on level curves](../../../lotka-volterra-predator-prey-model/first-integral-eq.md)
 
 ## Expansion
 

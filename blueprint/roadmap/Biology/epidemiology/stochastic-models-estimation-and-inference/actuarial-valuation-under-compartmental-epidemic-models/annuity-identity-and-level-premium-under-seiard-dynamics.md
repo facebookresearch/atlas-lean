@@ -22,7 +22,7 @@ $$\bar P=\frac{\delta\,\bar a^{\,i+a}_{\overline\infty|}}{1-(\delta+\gamma_I+\de
 
 ## Expansion
 
-Adding the first four equations, the infection terms cancel and $(s+e+i+a)'=-(\gamma_I+\delta_I)(i+a)$ under equal removal rates. Integrating from $0$ gives $s+e+i+a-1=-(\gamma_I+\delta_I)\int_0^t(i+a)$. Multiplying by $e^{-\delta t}$, integrating over $(0,\infty)$ and using $\int_0^\infty e^{-\delta t}\int_0^tf\,d\tau\,dt=\frac1\delta\int_0^\infty e^{-\delta\tau}f(\tau)\,d\tau$ yields the identity. It is the epidemic analogue of the life-insurance relation $\bar a+\bar A/\delta\cdot\delta=1/\delta$: money not yet paid as premiums is accounted for by time spent infected, discounted at the removal-plus-interest rate. Unlike multiple-decrement life tables, the decrements here are coupled through the force of infection $\beta\frac{N}{N_L}(i+\kappa a)$, so premiums and reserves depend on the epidemic trajectory.
+Adding the first four equations, the infection terms cancel and $(s+e+i+a)'=-(\gamma_I+\delta_I)(i+a)$ under equal removal rates. Integrating from $0$ gives $s+e+i+a-1=-(\gamma_I+\delta_I)\int_0^t(i+a)$. Multiplying by $e^{-\delta t}$, integrating over $(0,\infty)$ and using $\int_0^\infty e^{-\delta t}\int_0^tf\,d\tau\,dt=\frac1\delta\int_0^\infty e^{-\delta\tau}f(\tau)\,d\tau$ yields the identity. It is the epidemic analogue of the life-insurance relation $\bar A+\delta\bar a=1$: money not yet paid as premiums is accounted for by time spent infected, discounted at the removal-plus-interest rate. Unlike multiple-decrement life tables, the decrements here are coupled through the force of infection $\beta\frac{N}{N_L}(i+\kappa a)$, so premiums and reserves depend on the epidemic trajectory.
 
 ## Sources
 

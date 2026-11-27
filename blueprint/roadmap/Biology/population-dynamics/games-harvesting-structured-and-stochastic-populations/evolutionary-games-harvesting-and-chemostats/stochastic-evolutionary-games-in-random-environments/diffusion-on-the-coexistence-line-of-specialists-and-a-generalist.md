@@ -18,7 +18,7 @@ where $\bar y$ solves $\dot{\bar y} = b(\bar y)$. The line $\Gamma = \{d = 2q - 
 
 ## Depends on
 
-- [Moran model fixation probability](../../../population-genetics/moran-model/moran-fixation.md)
+- [Moran model fixation probability](../../../../population-genetics/moran-model/moran-fixation.md)
 
 ## Expansion
 

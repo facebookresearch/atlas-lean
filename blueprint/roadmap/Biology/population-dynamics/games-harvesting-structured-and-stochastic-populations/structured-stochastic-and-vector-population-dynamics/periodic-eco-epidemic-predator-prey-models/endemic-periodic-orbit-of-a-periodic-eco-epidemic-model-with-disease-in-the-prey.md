@@ -19,7 +19,7 @@ This proves the existence part of the conjecture that permanence of the infected
 
 ## Depends on
 
-- [Threshold dynamics of compartmental epidemic models in periodic environments](../../../epidemiology/next-generation-matrix-and-the-basic-reproductio/threshold-dynamics-in-periodic-environments.md)
+- [Threshold dynamics of compartmental epidemic models in periodic environments](../../../../epidemiology/next-generation-matrix-and-the-basic-reproductio/threshold-dynamics-in-periodic-environments.md)
 
 ## Expansion
 

@@ -18,7 +18,7 @@ These quantities are computed by solving a linear system of size $O(N^2)$, so th
 
 ## Depends on
 
-- [Coalescing random walks dual to the voter model on a finite graph](../../../coalescent-theory/structured-coalescent/coalescing-random-walks-dual-to-the-voter-moran.md)
+- [Coalescing random walks dual to the voter model on a finite graph](../../../../coalescent-theory/structured-coalescent/coalescing-random-walks-dual-to-the-voter-moran.md)
 
 ## Expansion
 

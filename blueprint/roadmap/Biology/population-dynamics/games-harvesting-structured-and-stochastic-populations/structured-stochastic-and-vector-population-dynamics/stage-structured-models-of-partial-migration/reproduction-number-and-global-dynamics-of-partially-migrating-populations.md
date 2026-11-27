@@ -15,7 +15,7 @@ $$R^{c2}_0(\phi_s,\phi_r) = \rho\begin{pmatrix}\phi_s R^s_0 & (1 - \phi_r)R^r_0\
 
 ## Depends on
 
-- [Basic reproduction number of the next-generation matrix](../../../epidemiology/next-generation-matrix-and-the-basic-reproductio/r0.md)
+- [Basic reproduction number of the next-generation matrix](../../../../epidemiology/next-generation-matrix-and-the-basic-reproductio/r0.md)
 
 ## Expansion
 

@@ -34,7 +34,7 @@ At the steady state the two prey equations force the predator's effective attack
 
 ## Depends on
 
-- [Lotka–Volterra predator–prey model](../../lotka-volterra-predator-prey-model/README.md)
+- [Lotka–Volterra predator–prey model](../../../lotka-volterra-predator-prey-model/README.md)
 
 ## Sources
 

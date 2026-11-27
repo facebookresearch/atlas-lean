@@ -45,14 +45,14 @@ if $R \le 1$, then $I(t) \to 0$ and $S(t) \to P_\alpha / M(\alpha)$.
 **Proposition (monotonicity of the total population).** Let $S_0, I_0 > 0$. If $R > 1$ and $0 < I_0 < E_\alpha$, then $N(t)$ increases strictly to $N_\alpha = \frac{\beta}{\beta - \gamma}E_\alpha$. If $R > 1$ and $I_0 > E_\alpha$, or if $R \le 1$, then $N(t)$ decreases strictly to its limit. In particular the long-run total population determines the fractional order: for $M \equiv 1$, $N_0 = S_0 + I_0$ and $N(t) \to N_\infty$ with $R > 1$,
 
 $$
-\alpha = 1 - \frac{(N_\infty - N_0)N_0\beta}{\beta I_0 S_0 - \beta N_0(I_0 + \gamma I_0 - N_\infty) - \gamma N_0 N_\infty},
+\alpha = 1 - \frac{(N_\infty - N_0)N_0\beta}{\beta^2 I_0 S_0 - \beta N_0(I_0 + \gamma I_0 - N_\infty) - \gamma N_0 N_\infty},
 $$
 
-and $\alpha = 1$ if and only if $N_\infty = N_0$.
+obtained by solving $\beta P_\alpha/(\alpha(\beta - \gamma) + \gamma) = N_\infty$ for $\alpha$, and $\alpha = 1$ if and only if $N_\infty = N_0$.
 
 ## Expansion
 
-The kernel is exponential, so $\frac{d}{dt}{}^{\mathrm{CF}}D_t^{\alpha}u = \frac{M(\alpha)}{1-\alpha}u' - \frac{\alpha}{1-\alpha}{}^{\mathrm{CF}}D_t^{\alpha}u$. Differentiating the $S$ equation therefore gives an ordinary differential system with the first integral above. Solving it for $S$ (the discriminant of the quadratic is negative, so $g_\alpha$ is defined on all of $\mathbb{R}$) reduces the problem to a scalar autonomous equation, whose positive equilibrium is found by solving $\beta g_\alpha(I) = \gamma(g_\alpha(I) + I)$ together with the conservation law. The function $(I - x_R)^2$, with $x_R$ the relevant equilibrium, is a Lyapunov function on $[0, \infty)$. Since $N' = I'(1 + g_\alpha'(I))$ and convexity of $g_\alpha$ controls the sign of $1 + g_\alpha'$ along the trajectory, $N$ moves in the same direction as $I$.
+The kernel is exponential, so $\frac{d}{dt}{}^{\mathrm{CF}}D_t^{\alpha}u = \frac{M(\alpha)}{1-\alpha}u' - \frac{\alpha}{1-\alpha}{}^{\mathrm{CF}}D_t^{\alpha}u$. Differentiating the $S$ equation therefore gives an ordinary differential system with the first integral above. Solving it for $S$ (the discriminant of the quadratic is negative, so $g_\alpha$ is defined on all of $\mathbb{R}$) reduces the problem to a scalar autonomous equation, whose positive equilibrium is found by solving $\beta g_\alpha(I) = \gamma(g_\alpha(I) + I)$ together with the conservation law. The function $(I - x_R)^2$, with $x_R$ the relevant equilibrium, is a Lyapunov function on $[0, \infty)$. Since $N' = I'(1 + g_\alpha'(I))$ and convexity of $g_\alpha$ controls the sign of $1 + g_\alpha'$ along the trajectory, $N$ moves in the same direction as $I$. Both the arXiv and the published versions print the first term of the denominator in the formula for $\alpha$ as $\beta I_0S_0$; solving the limit equation gives $\beta^2 I_0S_0$, which is what the page states (with the single $\beta$, computing $N_\infty$ from $N_\alpha$ and inserting it does not return $\alpha$).
 
 ## Sources
 

@@ -19,10 +19,6 @@ $$\beta \le \gamma + \frac{\rho(\gamma - \delta)}{1 - \rho}.$$
 
 3. *(Population fate.)* When the endemic state is globally stable, the total population asymptotically follows $N' = (b - \delta I_e - \mu(N))N$, so the disease drives the host to extinction if $b \le \delta I_e + \mu(0)$.
 
-## Depends on
-
-- [Solution of the Kermack–McKendrick SIR system](../../kermack-mckendrick-sir-model/is-solution.md)
-
 ## Proof depends on
 
 - [LaSalle's invariance principle](../../../../Dynamics/smooth-dynamics/lasalle-s-invariance-principle/lasalle.md)

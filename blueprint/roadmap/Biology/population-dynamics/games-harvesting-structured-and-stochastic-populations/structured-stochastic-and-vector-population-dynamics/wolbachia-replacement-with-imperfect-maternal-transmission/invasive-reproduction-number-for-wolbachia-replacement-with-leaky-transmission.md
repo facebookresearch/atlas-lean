@@ -26,7 +26,7 @@ The WI-only equilibrium $E_3 = \big(0, K(1 - 1/R_{0w}), 0, \tfrac{\psi K}{2\mu_w
 
 ## Depends on
 
-- [Basic reproduction number from the next-generation matrix](../../../epidemiology/next-generation-matrix-and-the-basic-reproductio/r0.md)
+- [Basic reproduction number from the next-generation matrix](../../../../epidemiology/next-generation-matrix-and-the-basic-reproductio/r0.md)
 
 ## Expansion
 

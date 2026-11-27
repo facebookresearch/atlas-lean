@@ -19,10 +19,6 @@ $$\lambda(t) - \mu(t) = \alpha(1 + t)^{-(\beta + 1)}, \qquad t \ge 0.$$
 
 3. For a pure birth process ($\mu \equiv 0$) the mean equals $N(t)$ if and only if $\lambda(t) = \alpha(1 + t)^{-(\beta + 1)}$.
 
-## Depends on
-
-- [Explicit solution of the logistic equation](../../logistic-growth-equation/logistic.md)
-
 ## Expansion
 
 The growth law is linear in $N$, so $N(t) = y\exp\int_0^t \xi$, and $\int_0^t \alpha(1 + s)^{-(\beta+1)}\, ds = \frac{\alpha}{\beta}[1 - (1 + t)^{-\beta}]$. Differentiating $N' = \xi N$ gives $N'' = (\xi' + \xi^2)N$, whose sign change locates the inflection point. For the linear birth–death process the probability generating function solves a first-order linear PDE whose characteristics give the classical Kendall solution in terms of $\psi$ and $\phi$; the mean satisfies $m' = (\lambda - \mu)m$, so it equals $N(t)$ exactly when the net rate equals $\xi(t)$, leaving the individual birth and death rates free to tune variability and extinction risk. Since $\int_0^\infty \xi < \infty$, $\tilde\psi = e^{-\alpha/\beta} > 0$, so with suitable death rates the stochastic population has positive probability of escaping extinction while its mean saturates at $C$.

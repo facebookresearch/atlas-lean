@@ -10,17 +10,15 @@ and any removed sub-compartment with rate $\beta < \gamma$ (for example recoveri
 
 $$I(t) = I(0)\Big(\frac{1 + C e^{-(\lambda - \gamma)t}}{1 + C}\Big)^{-\frac{\lambda}{\lambda - \gamma}} e^{-\gamma t}, \qquad S(t) = S(0)\Big(\frac{e^{(\lambda - \gamma)t} + C}{1 + C}\Big)^{-\frac{\lambda}{\lambda - \gamma}},$$
 
-and the infected curve peaks at
+and, for $\lambda > \gamma$, the infected curve peaks at
 
-$$T_{\max} = \frac{\Big(\log\Big[C\,\dfrac{\lambda - \gamma}{\gamma}\Big]\Big)^+}{\lambda - \gamma}.$$
+$$T_{\max} = \frac{\Big(\log\Big[C\,\dfrac{\lambda - \gamma}{\gamma}\Big]\Big)^+}{\lambda - \gamma},$$
+
+while for $\lambda < \gamma$ the infected curve decreases from the start and $T_{\max} = 0$.
 
 For time-dependent rates $\lambda(t), \gamma(t)$, $I(t) = I(0)\exp\Big(\int_0^t \Big[\frac{\lambda(s)\, C e^{-\int_0^s(\lambda - \gamma)}}{1 + C e^{-\int_0^s(\lambda - \gamma)}} - \gamma(s)\Big] ds\Big)$, and $T_{\max}$ solves $\int_0^{T_{\max}} (\lambda - \gamma)\,dt = \big(\log[C(\lambda(T_{\max}) - \gamma(T_{\max}))/\gamma(T_{\max})]\big)^+$.
 
 With a constant import rate $\nu$ of infections from susceptibles, the solution remains explicit up to one convolution integral.
-
-## Depends on
-
-- [Solution of the Kermack–McKendrick SIR system](../../kermack-mckendrick-sir-model/is-solution.md)
 
 ## Expansion
 
