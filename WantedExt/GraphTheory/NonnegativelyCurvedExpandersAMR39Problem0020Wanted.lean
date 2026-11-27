@@ -40,13 +40,19 @@ every laziness variant of `κ`.
 
 variable {V : Type} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]
 
-/-- The transition matrix of the lazy simple random walk on `G`: stay with probability `1/2`,
-otherwise move to a uniform random neighbour. -/
+/-- The kernel of the lazy simple random walk on `G`: `1/2` on the diagonal and `1 / (2 deg x)`
+from `x` to each neighbour, so the walk stays with probability `1/2` and otherwise moves to a
+uniform random neighbour. It is a transition matrix (every row sums to `1`) exactly when `G` has no
+isolated vertex: at an isolated vertex the row is `1/2` on the diagonal and `0` elsewhere. -/
 noncomputable def lazyWalk (x y : V) : ℝ :=
   if x = y then 1 / 2 else if G.Adj x y then 1 / (2 * G.degree x) else 0
 
-/-- `W₁(P(x, ·), P(y, ·)) ≤ 1` for the graph distance: some coupling of the two lazy-walk steps has
-expected distance at most `1` (on a finite graph the infimum over couplings is attained). -/
+/-- A coupling inequality for the lazy-walk rows at `x` and `y`: some nonnegative `π` with row
+sums `lazyWalk G x` and column sums `lazyWalk G y` has `∑ u, ∑ v, π u v * G.dist u v ≤ 1`.
+Unreachable pairs have distance `0` (`SimpleGraph.dist`) and the rows need not be probability
+vectors (at an isolated vertex the row sums to `1/2`), so this means `W₁(P(x, ·), P(y, ·)) ≤ 1`
+for the graph distance only when `x` and `y` lie in one component that has no isolated vertices,
+as the two ends of an edge do (on a finite graph the infimum over couplings is attained). -/
 def WassersteinStepAtMostOne (x y : V) : Prop :=
   ∃ π : V → V → ℝ, (∀ u v, 0 ≤ π u v) ∧ (∀ u, ∑ v, π u v = lazyWalk G x u) ∧
     (∀ v, ∑ u, π u v = lazyWalk G y v) ∧ ∑ u, ∑ v, π u v * G.dist u v ≤ 1
@@ -56,9 +62,11 @@ edge. -/
 def IsNonnegativelyCurved : Prop :=
   ∀ x y, G.Adj x y → WassersteinStepAtMostOne G x y
 
-/-- The second largest eigenvalue of the lazy walk (self-adjoint for the degree measure) is at most
-`ρ`, in Rayleigh-quotient form: `⟨f, P f⟩_deg ≤ ρ ⟨f, f⟩_deg` for every `f` orthogonal to the
-constants in `ℓ²(deg)`. -/
+/-- A degree-weighted quadratic-form bound for the lazy walk `P`: `⟨f, P f⟩_deg ≤ ρ ⟨f, f⟩_deg`
+for every `f` orthogonal to the constants in `ℓ²(deg)`. For a connected graph on at least two
+vertices, where `P` is a transition matrix that is self-adjoint for the degree measure, this is
+the Rayleigh-quotient form of `λ₂(P) ≤ ρ` for the second largest eigenvalue. Vertices of degree
+`0` drop out of every sum, so on an edgeless graph it holds for every `ρ`. -/
 def SecondEigenvalueAtMost (ρ : ℝ) : Prop :=
   ∀ f : V → ℝ, ∑ x, (G.degree x : ℝ) * f x = 0 →
     ∑ x, (G.degree x : ℝ) * f x * ∑ y, lazyWalk G x y * f y ≤ ρ * ∑ x, (G.degree x : ℝ) * f x ^ 2
