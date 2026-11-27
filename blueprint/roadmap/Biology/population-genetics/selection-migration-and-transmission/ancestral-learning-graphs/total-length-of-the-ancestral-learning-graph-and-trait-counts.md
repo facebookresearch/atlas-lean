@@ -16,7 +16,7 @@ $$\zeta_{nj} = \sum_{\ell=1}^{\min\{n,j\}}\frac{1}{uj}\Big(\frac{s}{Nu}\Big)^{j-
 
 with $(x)_k$ the falling factorial, so $\mathbb{E}[L_n^m] = m!\sum_{j_1,\dots,j_m}\zeta_{nj_1}\zeta_{j_1j_2}\cdots\zeta_{j_{m-1}j_m}\,j_1\cdots j_m$ (in particular $\mathbb{E}L_n = \sum_j j\,\zeta_{nj}$). Since innovations fall as a Poisson process of rate $\mu$ on the lines of the ALG, conditionally on the genealogy $C_n \sim \operatorname{Poi}(\mu L_n)$, so the factorial moments of $C_n$ are $\mathbb{E}[(C_n)_m] = \mu^m\,\mathbb{E}[L_n^m]$.
 
-Viewed forward in time, $L_n$ grows linearly and collapses to near zero at random times, a sawtooth reflecting the metastability of the logistic chain near its quasi-stationary level $N(1 - u/s)$ when $s > u$.
+In the source's forward simulations of the supercritical regime ($s > u$), the full-population genealogy length $L_N$ exhibits a sawtooth reflecting the metastability of the logistic chain near its quasi-stationary level $N(1 - u/s)$ when $s > u$.
 
 ## Proof idea
 
