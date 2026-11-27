@@ -11,4 +11,4 @@ A subsuming clause absorbs the clauses it subsumes, adding clauses to $\Delta$ n
 
 ## Sources
 
-- K. Pipatsrisawat and A. Darwiche, "On the power of clause-learning SAT solvers with restarts", revised version of the paper in *Principles and Practice of Constraint Programming (CP 2009)*, LNCS 5732, Springer, 2009, pp. 654–668, <http://reasoning.cs.ucla.edu/fetch.php?id=101&type=pdf>, Section 4: Definition 6 (1-empowerment), Definition 7 (1-provability), and the remarks after Definition 6.
+- K. Pipatsrisawat and A. Darwiche, "On the power of clause-learning SAT solvers with restarts", revised version of the paper in *Principles and Practice of Constraint Programming (CP 2009)*, LNCS 5732, Springer, 2009, pp. 654–668, <http://reasoning.cs.ucla.edu/fetch.php?id=101&type=pdf>, Section 4: Definition 6 (1-empowerment), Definition 7 (1-provability), and the remarks after Definition 6, which state that every asserting clause is 1-empowering at the time of its derivation, citing earlier work of the authors; the justification from the assignment trail is written out here.

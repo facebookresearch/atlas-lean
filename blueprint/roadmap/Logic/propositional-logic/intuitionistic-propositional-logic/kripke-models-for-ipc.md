@@ -1,6 +1,6 @@
 # Kripke models for intuitionistic propositional logic
 
-A *Kripke model* is a triple $\mathcal{C} = (C, \le, \Vdash)$ of a nonempty set $C$ of states, a partial order $\le$ on $C$ and a relation $\Vdash$ between states and propositional variables that is *persistent*: if $c \le c'$ and $c \Vdash p$, then $c' \Vdash p$. Forcing extends to all formulas of [IPC](natural-deduction-for-intuitionistic-propositional-logic.md):
+A *Kripke model* is a triple $\mathcal{C} = (C, \le, \Vdash)$ of a nonempty set $C$ of states, a [partial order](../../../Order/ordered-sets/partial-order.md) $\le$ on $C$ and a relation $\Vdash$ between states and propositional variables that is *persistent*: if $c \le c'$ and $c \Vdash p$, then $c' \Vdash p$. Forcing extends to all formulas of [IPC](natural-deduction-for-intuitionistic-propositional-logic.md):
 
 - $c \Vdash \bot$ never holds;
 - $c \Vdash \varphi \wedge \psi$ iff $c \Vdash \varphi$ and $c \Vdash \psi$;
@@ -11,6 +11,7 @@ Hence $c \Vdash \neg\varphi$ iff no $c' \ge c$ forces $\varphi$. Write $\mathcal
 
 ## Depends on
 
+- [Partial order](../../../Order/ordered-sets/partial-order.md)
 - [Natural deduction for intuitionistic propositional logic](natural-deduction-for-intuitionistic-propositional-logic.md)
 
 ## Sources

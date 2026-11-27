@@ -1,11 +1,12 @@
 # Kripke models on preorders reduce to partial orders
 
-Let $(C, \preceq, \Vdash)$ be like a [Kripke model](kripke-models-for-ipc.md) except that $\preceq$ is only a preorder (reflexive and transitive), with forcing of atoms persistent along $\preceq$ and extended to formulas by the same clauses. Let $c \sim c'$ when $c \preceq c'$ and $c' \preceq c$, and order the classes by $[c] \le [c']$ iff $c \preceq c'$. Then forcing of every formula is constant on classes, $(C/{\sim}, \le, \Vdash)$ with $[c] \Vdash p$ iff $c \Vdash p$ is a Kripke model, and $[c] \Vdash \varphi$ iff $c \Vdash \varphi$ for every formula $\varphi$. So forcing over preorders and over partial orders gives the same consequence relation.
+Let $(C, \preceq, \Vdash)$ be like a [Kripke model](kripke-models-for-ipc.md) except that $\preceq$ is only a preorder (reflexive and transitive), with forcing of atoms persistent along $\preceq$ and extended to formulas by the same clauses. Let $c \sim c'$ when $c \preceq c'$ and $c' \preceq c$, and order the [classes](../../../SetTheory/sets-functions-relations/quotient-set.md) by $[c] \le [c']$ iff $c \preceq c'$. Then forcing of every formula is constant on classes, $(C/{\sim}, \le, \Vdash)$ with $[c] \Vdash p$ iff $c \Vdash p$ is a Kripke model, and $[c] \Vdash \varphi$ iff $c \Vdash \varphi$ for every formula $\varphi$. So forcing over preorders and over partial orders gives the same consequence relation.
 
 **Proof.** Persistence, proved by induction on formulas exactly as for partial orders, shows that $\sim$-equivalent states force the same formulas; then induction on $\varphi$ compares the two forcing relations, the clause for $\to$ quantifying over the same states.
 
 ## Depends on
 
+- [Quotient set](../../../SetTheory/sets-functions-relations/quotient-set.md)
 - [Kripke models for intuitionistic propositional logic](kripke-models-for-ipc.md)
 
 ## Proof depends on

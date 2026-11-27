@@ -1,6 +1,6 @@
 # The multiset extension of a strict order is a strict order
 
-Let $\succ$ be a binary relation on a set $M$ and $\succ_{\mathrm{mul}}$ its [multiset extension](multiset-extension-of-an-ordering.md).
+Let $\succ$ be a binary relation on a nonempty set $M$ and $\succ_{\mathrm{mul}}$ its [multiset extension](multiset-extension-of-an-ordering.md).
 
 1. If $\succ$ is transitive, then $\succ_{\mathrm{mul}}$ is transitive.
 2. If $\succ$ is irreflexive and transitive, then $\succ_{\mathrm{mul}}$ is irreflexive.
