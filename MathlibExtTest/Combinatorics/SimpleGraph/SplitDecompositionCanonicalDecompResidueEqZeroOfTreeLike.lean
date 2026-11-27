@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-import Domains.Biology.ComputationalBiology.SplitDecompositionCanonicalDecompResidueEqZeroOfTreeLike
+import MathlibExt.Combinatorics.SimpleGraph.SplitDecompositionCanonicalDecompResidueEqZeroOfTreeLike
 import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.NormNum
 
@@ -19,7 +19,7 @@ Canonical decompositions reconstruct a four-point star from their split summands
 when two labels share a zero-distance class.
 -/
 
-namespace DomainsTest.Biology.ComputationalBiology
+namespace MathlibExtTest.Combinatorics.SimpleGraph
 namespace SplitDecompositionCanonicalDecompResidueEqZeroOfTreeLike
 
 open WantedExt.Biology.ComputationalBiology.SplitDecompositionWanted
@@ -80,4 +80,4 @@ example : (0 : Fin 4) ≠ 1 ∧ repeatedStar 0 1 = 0 ∧ repeatedStar 0 2 = 2 �
   norm_num [repeatedStar, label, star]
 
 end SplitDecompositionCanonicalDecompResidueEqZeroOfTreeLike
-end DomainsTest.Biology.ComputationalBiology
+end MathlibExtTest.Combinatorics.SimpleGraph

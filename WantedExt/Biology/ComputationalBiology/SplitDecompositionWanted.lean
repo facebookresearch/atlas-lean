@@ -29,7 +29,7 @@ is tree-like the residue `d₀` vanishes. Tree-like is expressed by Buneman's fo
 (`isTreeMetric_iff_fourPointCondition`).
 
 In `IsCoherent` (defined in
-`Domains.Biology.ComputationalBiology.SplitDecompositionCanonicalDecompResidueEqZeroOfTreeLike`) the
+`MathlibExt.Combinatorics.SimpleGraph.SplitDecompositionCanonicalDecompResidueEqZeroOfTreeLike`) the
 coherence condition includes the requirement `f = f₁ + ⋯ + f_k`, which the survey's
 paraphrase omits but which the original definition (`P(d) = ∑ P(dᵢ)`) requires.
 Not recorded here: the characterization of the split summands as the split metrics `d'` with
@@ -54,7 +54,7 @@ public import Mathlib.Data.Fintype.Card
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Basic.Real.Basic
 public import MathlibExt.Combinatorics.SimpleGraph.TreeMetric
-public import Domains.Biology.ComputationalBiology.SplitDecompositionCanonicalDecompResidueEqZeroOfTreeLike
+public import MathlibExt.Combinatorics.SimpleGraph.SplitDecompositionCanonicalDecompResidueEqZeroOfTreeLike
 
 @[expose] public section
 
