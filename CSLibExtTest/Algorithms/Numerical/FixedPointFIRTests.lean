@@ -76,3 +76,23 @@ example : decode 0 (firCode 0 (-8) 7 ![5, 5] ![1, 1])
     MathlibExt.Analysis.Numerical.OrderedDotProductError.productPerturbed,
     MathlibExt.Analysis.Numerical.OrderedDotProductError.coeffPerturbed,
     MathlibExt.Analysis.Numerical.OrderedDotProductError.inputPerturbed]
+
+-- Overflow only removes the guarantee: on the product fixture above,
+-- only the product `9` leaves the range, both running sums fit, and both
+-- sides equal 3.
+example : decode 0 (firCode 0 (-8) 7 ![-1, 3] ![6, 3])
+    = MathlibExt.Analysis.Numerical.OrderedDotProductError.outputPerturbed 2
+      (fun _ => 0) (fun k => decode 0 (![-1, 3] k) - 0)
+      (fun _ => 0) (fun k => decode 0 (![6, 3] k) - 0)
+      (fun k => decode 0 (roundHalfUpShift 0 (![-1, 3] k * ![6, 3] k))
+        - decode 0 (![-1, 3] k) * decode 0 (![6, 3] k))
+      (fun _ => 0) := by
+  have h : firCode 0 (-8) 7 ![-1, 3] ![6, 3] = 3 := by decide
+  rw [h]
+  norm_num [decode, roundHalfUpShift,
+    MathlibExt.Analysis.Numerical.OrderedDotProductError.outputPerturbed,
+    MathlibExt.Analysis.Numerical.OrderedDotProductError.accumulator,
+    MathlibExt.Analysis.Numerical.OrderedDotProductError.extend,
+    MathlibExt.Analysis.Numerical.OrderedDotProductError.productPerturbed,
+    MathlibExt.Analysis.Numerical.OrderedDotProductError.coeffPerturbed,
+    MathlibExt.Analysis.Numerical.OrderedDotProductError.inputPerturbed]

@@ -27,6 +27,14 @@ product is rounded half up back to the working scale, each accumulation
 saturates to the signed code range, and any saturation is recorded in
 an explicit overflow flag.
 
+The flag covers the computed values only: it is set when a rounded
+product or a running sum leaves the code range, and it does not check
+the coefficient and input codes themselves. The results below hold for
+any integer codes, so callers that need signed `w`-bit coefficients and
+inputs must check that each code lies between
+`SaturatingRoundHalfUp.signedMinCode w` and
+`SaturatingRoundHalfUp.signedMaxCode w`.
+
 When no overflow occurs and the real inputs and coefficients are within
 half a step of their codes, the decoded output obeys the ordered
 dot-product error bound with the coefficient, input and product errors
@@ -53,7 +61,8 @@ def saturate (kmin kmax n : ℤ) : ℤ :=
   max kmin (min kmax n)
 
 /-- One fold step: rounded product, saturating accumulation, and an
-overflow flag recording whether either value left the code range. -/
+overflow flag recording whether either value left the code range. The
+codes `hk` and `xk` themselves are not checked. -/
 def firStep (s : ℕ) (kmin kmax : ℤ) (acc : ℤ) (flag : Bool) (hk xk : ℤ) :
     ℤ × Bool :=
   let prod := roundHalfUpShift s (hk * xk)
@@ -73,7 +82,10 @@ def firCode {m : ℕ} (s : ℕ) (kmin kmax : ℤ) (h x : Fin m → ℤ) : ℤ :=
   (firFold s kmin kmax (fun i => if hlt : i < m then h ⟨i, hlt⟩ else 0)
     (fun i => if hlt : i < m then x ⟨i, hlt⟩ else 0) m).1
 
-/-- Overflow flag of the `m`-tap filter. -/
+/-- Overflow flag of the `m`-tap filter: set when a rounded product or a
+running sum leaves the code range. The coefficient and input codes `h`
+and `x` themselves are not checked; callers that need them in range must
+check them. -/
 def firOverflow {m : ℕ} (s : ℕ) (kmin kmax : ℤ) (h x : Fin m → ℤ) : Bool :=
   (firFold s kmin kmax (fun i => if hlt : i < m then h ⟨i, hlt⟩ else 0)
     (fun i => if hlt : i < m then x ⟨i, hlt⟩ else 0) m).2
@@ -306,9 +318,10 @@ theorem firOverflow_eq_false_of_range_bounds {m : ℕ} (s : ℕ) (kmin kmax : �
 /-- Refinement: with no overflow, the decoded output is exactly the
 perturbed fold whose coefficient, input and product perturbations are
 the actual decoding and rounding errors of the integer computation and
-whose accumulation errors are zero. A saturating step would need a
-nonzero accumulation error, so this equation fails on overflowing
-traces. -/
+whose accumulation errors are zero. Overflow only removes this
+guarantee: the equation fails on a trace whose running sum saturates at
+exactly one step, and still holds on a trace where only a rounded
+product leaves the code range. -/
 theorem decode_fir_eq_outputPerturbed_of_no_overflow {m : ℕ} (s w : ℕ) (hw : 1 ≤ w)
     (h x : Fin m → ℝ) (hc xc : Fin m → ℤ)
     (hno : firOverflow s (SaturatingRoundHalfUp.signedMinCode w)
@@ -386,7 +399,11 @@ theorem decode_fir_eq_outputPerturbed_of_no_overflow {m : ℕ} (s w : ℕ) (hw :
 /-- Headline bound: the decoded fixed-point output satisfies the
 ordered dot-product bound with the coefficient, input and product errors
 at half a step and no accumulation error, since a clean trace adds
-exactly. -/
+exactly. The bound holds for any integer codes `hc` and `xc`: the
+hypotheses do not ask them to be signed `w`-bit codes, so a caller
+certifying a signed `w`-bit filter must check that each code lies
+between `SaturatingRoundHalfUp.signedMinCode w` and
+`SaturatingRoundHalfUp.signedMaxCode w`. -/
 theorem fixed_point_fir_error_bound (s w m : ℕ) (hw : 1 ≤ w)
     (h x : Fin m → ℝ) (hc xc : Fin m → ℤ)
     (hdx : ∀ k : Fin m, |decode s (xc k) - x k| ≤ (1 : ℝ) / (2 * (2 : ℝ) ^ s))
