@@ -15,3 +15,4 @@ Hash tables (chaining, open addressing, cuckoo, perfect), universal hash familie
 - [Hash-table erasure and scan-event bounds](hash-table-erasure-and-scan-event-bounds/README.md)
 - [Sequential idempotent requests to a hash table](sequential-idempotent-requests-to-a-hash-table/README.md)
 - [Universal hashing bounds for actual chain scans](universal-hashing-bounds-for-actual-chain-scans/README.md)
+- [Constructing FKS Perfect Hash Tables](fks-table-construction/README.md)

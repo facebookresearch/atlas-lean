@@ -60,6 +60,7 @@ public import Mathlib.RingTheory.PowerSeries.Substitution
 public import Mathlib.RingTheory.Polynomial.Pochhammer
 public import Mathlib.Order.Interval.Finset.Nat
 public import MathlibExt.NumberTheory.EulerPolynomialFormulasEulerPolyGenRecurrence
+public import MathlibExt.NumberTheory.EulerPolynomialFormulasEulerPolyHalfEqSum
 
 set_option autoImplicit false
 
@@ -68,21 +69,6 @@ set_option autoImplicit false
 open Polynomial
 
 namespace MathlibExt.NumberTheory.EulerPolynomialFormulasWanted
-
-/-- **Euler polynomials at (x + 1)/2 via generalized Stirling polynomials.** Let $E_n(x)$ denote
-the Euler polynomial, $\alpha_k$ the Taylor coefficients of $(2 + 2z)/(2 + 2z + z^2)$, and
-$S(n, k, x) = \frac{1}{k!} \sum_{j=0}^{k} \binom{k}{j} (-1)^{k-j} (x + j)^n$ the generalized
-Stirling polynomial. For every $n \ge 0$, as polynomials in $x$ with rational coefficients,
-$2^n E_n\left(\frac{x + 1}{2}\right) = \sum_{k=0}^{n} k! \, \alpha_k \, S(n, k, x)$.
-
-Source: Nouara Mokhtari, Rachid Boumahdi, and Farid
-Bencherif, "Generalizations of Several Explicit Formulas
-for Euler Polynomials", Proposition 3.1. -/
-theorem_wanted eulerPoly_half_eq_sum (n : ℕ) :
-    (2 : ℚ) ^ n • (eulerPoly n).comp (C (1 / 2) * (X + 1)) =
-      ∑ k ∈ Finset.range (n + 1),
-        ((Nat.factorial k : ℚ) * eulerAlpha k) •
-          genStirlingPoly n k
 
 /-- **Euler polynomials via generalized Stirling polynomials.** Let $E_n(x)$ denote the Euler
 polynomial, $\alpha_k$ the Taylor coefficients of $(2 + 2z)/(2 + 2z + z^2)$, and
