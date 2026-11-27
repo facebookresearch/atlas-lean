@@ -95,8 +95,9 @@ that upstream statement**: the migrated statement is a different one, inherited
 from the Atlas development, which quantifies the witness existentially and
 strengthens the last conjunct from `¬ ∀ᶠ N, Property25 ..` to
 `∀ᶠ N, ¬ Property25 ..`; the test file derives the upstream (weaker) conjunct
-from it. The underlying mathematics — that the best-known upper bound can be
-lowered — is recorded upstream for the explicit witness `k N = ⌈N ^ (23/40)⌉` by
+from it. That the least failing admissible `k` (`1 ≤ k ≤ N`) is `o(N / log N)`, below
+the `N / log N` scale of the historical [ESS89] upper bound, is recorded upstream for
+the explicit witness `k N = ⌈N ^ (23/40)⌉` by
 the separate theorem `green_25.variants.upper_pow_23_40`, which *is*
 `research solved` there; that is a different declaration from the value question
 `green_25.upper`.

@@ -49,12 +49,14 @@ public import MathlibExt.Combinatorics.Additive.RestrictedSumset
 `Green25.Property25 k N` says that `1 ≤ k ≤ N` and that every partition of
 `{1, ..., N}` into exactly `k` parts has `10 * |⋃ᵢ (Aᵢ +̂ Aᵢ)| ≥ N`, where `S +̂ S`
 is the restricted sumset. Green's open problem 25 asks for which `k` this holds.
-Splitting a part cannot enlarge the union of restricted sumsets, so once the property
-fails at some `k ≤ N` it fails at every larger `k ≤ N`; the question is where the least
-failing `k` lies. The comparison function `bestUpper N = N / log N` records the scale of
-the upper bound of [ESS89] on it. This file builds, for all large `N`, a partition into
-`k(N) = o(N / log N)` parts whose restricted sumsets cover fewer than `N / 10` points, so
-the least failing `k` is `o(N / log N)`.
+For `N ≥ 1` the admissible values are `1 ≤ k ≤ N`; outside them the property is false
+by definition. Splitting a part cannot enlarge the union of restricted sumsets, so once
+the property fails at an admissible `k` it fails at every larger admissible `k`; the
+question is where the least failing admissible `k` lies. The comparison function
+`bestUpper N = N / log N` records the scale of the upper bound of [ESS89] on it. This
+file builds, for all large `N`, a partition into `k(N) = o(N / log N)` parts whose
+restricted sumsets cover fewer than `N / 10` points, so the least failing admissible `k`
+is `o(N / log N)`.
 
 ## Source and provenance
 
@@ -85,7 +87,7 @@ about the fixed function `green_25.upper.answer`, so it is a different statement
 the upstream value question, and proving it here does not prove the upstream
 `green_25.upper`, which is still
 `@[category research open, question value, AMS 5 11]` at commit
-`d8d031d4998c78575159ccab9a7a9e95ce043883`. That the least failing `k` is
+`d8d031d4998c78575159ccab9a7a9e95ce043883`. That the least failing admissible `k` is
 `o(N / log N)` is also recorded upstream, for the explicit witness
 `k N = ⌈N ^ (23 / 40)⌉`, by the separate theorem
 `green_25.variants.upper_pow_23_40`, which is `research solved` there.
@@ -123,7 +125,8 @@ def Property25 (k N : ℕ) : Prop :=
 
 
 /-- The comparison function `N / log N`, as a real number, from the upper bound of [ESS89]
-on the least `k` for which `Property25 k N` fails. With Lean's conventions
+on the least admissible `k` (`1 ≤ k ≤ N`) for which `Property25 k N` fails. With Lean's
+conventions
 `Real.log 0 = Real.log 1 = 0` and division by zero giving `0`, its value at `N = 0, 1`
 is `0`. -/
 noncomputable def bestUpper (N : ℕ) : ℝ := (N : ℝ) / Real.log N

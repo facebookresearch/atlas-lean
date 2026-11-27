@@ -177,7 +177,9 @@ def powerloopNatSpec (s1 n1 n2 n : PySSize) : PowerloopNatState :=
 def powerloopQuotientBit (a n k : Nat) : Nat :=
   ((2 ^ k * a) / n) % 2
 
-/-- `k` is the first zero-based quotient-bit position at which `a / n` and `b / n` differ. -/
+/-- `k` is the first zero-based position at which the quotient bits
+`powerloopQuotientBit a n k = ((2 ^ k * a) / n) % 2` of `a` and of `b` differ: the bit is `0`
+for `a` and `1` for `b` at `k`, and the two bits agree at every earlier position. -/
 def IsFirstDifferingQuotientBit (a b n k : Nat) : Prop :=
   powerloopQuotientBit a n k = 0 ∧
     powerloopQuotientBit b n k = 1 ∧

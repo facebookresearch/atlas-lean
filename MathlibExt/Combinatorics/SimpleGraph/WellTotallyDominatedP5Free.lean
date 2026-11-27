@@ -93,8 +93,9 @@ A subset $s \subseteq V(G)$ is an *induced path* when the induced subgraph
 `G.induce s` is a tree in which every vertex has degree at most $2$
 (equivalently: a tree that is itself a path graph). We define
 `largestInducedPathSize G` as the supremum in `ℕ` of `s.card` over all such finite subsets
-of the finite vertex type. A single vertex is an induced path, so this is a maximum when `G`
-has a vertex; a graph with no vertices has no induced path, and the value is then `0`.
+`s`. A single vertex is an induced path, so the sizes form a nonempty set when `G` has a
+vertex, and the value is their maximum when they are bounded, as on a finite vertex type.
+Lean's `sSup` on `ℕ` gives `0` when they are unbounded and when `G` has no vertices.
 
 This is *not* the `SimpleGraph.path` invariant of Mathlib, which is the floor of
 the average distance. -/

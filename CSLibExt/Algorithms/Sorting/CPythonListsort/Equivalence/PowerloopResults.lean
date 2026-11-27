@@ -452,8 +452,9 @@ theorem powerloopNatLoop_add (first second n : Nat) (state : PowerloopNatState) 
 
 /-- For `0 < n ≤ PY_LIST_MAX`, `a < b < 2 * n`, and `b - a ≥ 2`, the arbitrary-precision
 recurrence started at `a`, `b` has stopped within its 64-step budget, and its result is `k + 1`
-for some `k < 60` that is the first zero-based quotient-bit position at which `a / n` and `b / n`
-differ. -/
+for some `k < 60` that is the first zero-based position at which the quotient bits
+`((2 ^ k * a) / n) % 2` and `((2 ^ k * b) / n) % 2` differ (`IsFirstDifferingQuotientBit`:
+`0` for `a`, `1` for `b`, equal at every earlier position). -/
 theorem powerloopNatResult_of_gap_two (a b n : Nat)
     (hn : 0 < n)
     (hab : a < b)
@@ -495,7 +496,9 @@ theorem powerloopNatResult_of_gap_two (a b n : Nat)
 
 /-- For `0 < n ≤ PY_LIST_MAX` and any `a < b < 2 * n`, the arbitrary-precision recurrence started
 at `a`, `b` has stopped within its 64-step budget, and its result is `k + 1` for some `k < 61`
-that is the first zero-based quotient-bit position at which `a / n` and `b / n` differ. -/
+that is the first zero-based position at which the quotient bits `((2 ^ k * a) / n) % 2` and
+`((2 ^ k * b) / n) % 2` differ (`IsFirstDifferingQuotientBit`: `0` for `a`, `1` for `b`, equal
+at every earlier position). -/
 theorem powerloopNatResult (a b n : Nat)
     (hn : 0 < n)
     (hab : a < b)
@@ -552,9 +555,10 @@ theorem powerloopNatResult (a b n : Nat)
 
 /-- Under `ValidPowerloopInput` (nonnegative words, nonempty adjacent runs ending within `n`, and
 `n ≤ PY_LIST_MAX`), the traced 64-bit transcription has stopped within its 64-step budget, and
-`powerloop s1 n1 n2 n = k + 1` for some `k < 60` that is the first zero-based quotient-bit
-position at which `a / n` and `b / n` differ, for the doubled run midpoints `a = 2 * s1 + n1` and
-`b = a + n1 + n2`. -/
+`powerloop s1 n1 n2 n = k + 1` for some `k < 60` that is the first zero-based position at which
+the quotient bits `((2 ^ k * a) / n) % 2` and `((2 ^ k * b) / n) % 2` differ
+(`IsFirstDifferingQuotientBit`: `0` for `a`, `1` for `b`, equal at every earlier position), for
+the doubled run midpoints `a = 2 * s1 + n1` and `b = a + n1 + n2`. -/
 theorem powerloopResult (s1 n1 n2 n : PySSize)
     (hvalid : ValidPowerloopInput s1 n1 n2 n) :
     let a := 2 * s1.toNat + n1.toNat

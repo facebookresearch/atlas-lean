@@ -306,8 +306,8 @@ def q5CutMatrix (A : Finset (Fin 10)) (hA : A.card = 5) :
 def q5Indices (mask : Fin 10 → Bool) (b : Bool) : List (Fin 10) :=
   (List.finRange 10).filter (fun i => mask i == b)
 
-/-- The `k`-th vertex (zero-based, as a natural number) whose mask value is `b`, or the
-fallback vertex `0` when fewer than `k + 1` vertices have mask value `b`. -/
+/-- For `k : Fin 5`, the `k`-th vertex (zero-based, as a natural number) whose mask value is
+`b`, or the fallback vertex `0` when fewer than `k + 1` vertices have mask value `b`. -/
 def q5Select (mask : Fin 10 → Bool) (b : Bool) (k : Fin 5) : ℕ :=
   ((q5Indices mask b)[k.1]?.getD 0).1
 
