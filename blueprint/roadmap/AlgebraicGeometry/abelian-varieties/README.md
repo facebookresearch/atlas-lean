@@ -9,6 +9,7 @@ Abelian varieties over fields and abelian schemes over general bases: duals and 
 - [Abelian varieties are projective](abelian-varieties-are-projective.md)
 - [Flatness and étaleness criteria for homomorphisms of group schemes](flatness-and-etaleness-criteria-for-group-schemes.md)
 - [Isogenies of abelian schemes](isogenies-of-abelian-schemes.md)
+- [Quotient of an abelian variety by an abelian subvariety](quotient-by-an-abelian-subvariety.md)
 - [Representability of relative Picard functors](representability-of-picard-functors.md)
 - [Dual abelian variety](dual-abelian-variety.md)
 - [Dual abelian scheme](dual-abelian-scheme.md)
