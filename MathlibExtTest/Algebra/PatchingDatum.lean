@@ -53,7 +53,7 @@ example (x : (D.level n).N) : (D.level n).π x = 0 ↔
   rw [← LinearMap.mem_ker, (D.level n).ker_π]
 
 -- The coefficient map's recorded surjectivity supplies the standard range API instance.
-local instance : RingHomSurjective (D.level n).ψ.toRingHom :=
+private local instance : RingHomSurjective (D.level n).ψ.toRingHom :=
   ⟨(D.level n).ψ_surjective⟩
 
 example : LinearMap.range (D.level n).π = ⊤ :=

@@ -18,17 +18,21 @@ public import Mathlib.NumberTheory.PrimeCounting
 public import Mathlib.NumberTheory.Harmonic.Defs
 public import Mathlib.NumberTheory.Bernoulli
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
-public import WantedExt.NumberTheory.GeneralizedHarmonicGammaWanted
+public import MathlibExt.NumberTheory.GeneralizedHarmonicGamma
+public import MathlibExt.NumberTheory.Harmonic.HyperharmonicAsymptotic
 
 /-!
 # Sums over primes II (statements)
 
-Statement-only targets from Rusen Li, *Sums over Primes II*: the asymptotic of hyperharmonic
-numbers, the asymptotics of the `n`-th (squarefree) number with
-exactly `k` prime factors, two power-log summation asymptotics, the explicit formulas and
-asymptotics of the generalized (alternating) hyperharmonic numbers `H_n^{(p,r)}` and
-`H_n^{(p,r,i)}` (`i = 1, 2, 3`), and the asymptotics of sums over primes and over squarefree
-numbers with `k` prime factors weighted by powers of these numbers.
+Statement-only targets from Rusen Li, *Sums over Primes II*: the asymptotics of the `n`-th
+(squarefree) number with exactly `k` prime factors, two power-log summation asymptotics, the
+explicit formulas and asymptotics of the generalized (alternating) hyperharmonic numbers
+`H_n^{(p,r)}` and `H_n^{(p,r,i)}` (`i = 1, 2, 3`), and the asymptotics of sums over primes and over
+squarefree numbers with `k` prime factors weighted by powers of these numbers.
+
+The asymptotic of the type III
+numbers `H_n^{(p,r,3)}`, `alternatingHyperharmonic_typeIII_isEquivalent`, is not a target here:
+it is proved in `MathlibExt.NumberTheory.AlternatingHyperharmonicTypeIIISquarefree`.
 -/
 
 namespace MetaMathlibExt
@@ -36,41 +40,6 @@ namespace MetaMathlibExt
 open Asymptotics Filter Finset
 
 @[expose] public section
-
-/-- **Hyperharmonic numbers.** The hyperharmonic numbers $h_n^{(r)} \in \mathbb{Q}$ of order $r$
-and index $n$, for natural numbers $r$ and $n$, are defined by recursion on $r$:
-$h_n^{(0)} = 1/n$ for $n \ge 1$, $h_0^{(0)} = 0$, and
-$$h_n^{(r+1)} = \sum_{k=1}^{n} h_k^{(r)}.$$
-Thus $h_0^{(r)} = 0$ for every order $r$, and $h_n^{(1)} = 1 + 1/2 + \dots + 1/n$ is the $n$-th
-harmonic number $H_n$. This is the definition of Conway and Guy.
-
-Source: Rusen Li, *Sums over Primes II*, Journal of Integer Sequences 27 (2024),
-Article 24.4.1, Lemma 1 (hyperharmonic numbers `h_n^{(r)}`, after Mező). -/
-public def hyperharmonic : ℕ → ℕ → ℚ
-  | 0, n => 1 / n
-  | r + 1, n => ∑ k ∈ Icc 1 n, hyperharmonic r k
-
-/-- **Recursion for the hyperharmonic numbers.** For all natural numbers $r$ and $n$, the
-hyperharmonic numbers $h_m^{(s)}$ (of order $s$ and index $m$) satisfy
-$$h_n^{(r+1)} = \sum_{k=1}^{n} h_k^{(r)}.$$
-
-Source: Rusen Li, *Sums over Primes II*, Journal of Integer Sequences 27 (2024),
-Article 24.4.1, Lemma 1 (hyperharmonic numbers `h_n^{(r)}`, after Mező). -/
-public theorem hyperharmonic_succ (r n : ℕ) :
-    hyperharmonic (r + 1) n = ∑ k ∈ Icc 1 n, hyperharmonic r k := rfl
-
-/-- **Hyperharmonic numbers of order one are the harmonic numbers.** For every natural number $n$,
-the hyperharmonic number $h_n^{(1)}$ of order $1$ and index $n$ equals the $n$-th harmonic number
-$H_n = \sum_{k=1}^{n} 1/k$ (in particular $h_0^{(1)} = H_0 = 0$).
-
-Source: Rusen Li, *Sums over Primes II*, Journal of Integer Sequences 27 (2024),
-Article 24.4.1, Lemma 1 (hyperharmonic numbers `h_n^{(r)}`, after Mező). -/
-public theorem hyperharmonic_one (n : ℕ) : hyperharmonic 1 n = harmonic n := by
-  induction n with
-  | zero => simp [hyperharmonic]
-  | succ n ih =>
-    rw [harmonic_succ, ← ih, hyperharmonic, hyperharmonic, Finset.sum_Icc_succ_top (by omega)]
-    simp [hyperharmonic]
 
 /-- **The hyperharmonic number $h_2^{(2)}$.** The hyperharmonic number of order $2$ and index $2$
 is $h_2^{(2)} = 5/2$.
@@ -83,17 +52,6 @@ Article 24.4.1, Lemma 1 (hyperharmonic numbers `h_n^{(r)}`, after Mező). -/
 public theorem hyperharmonic_two_two : hyperharmonic 2 2 = 5 / 2 := by
   simp [hyperharmonic, Finset.sum_Icc_succ_top]
   norm_num
-
-/-- **Asymptotic of the hyperharmonic numbers (Mező).** For every natural number $r \ge 1$, the
-hyperharmonic numbers $h_n^{(r)}$ of order $r$ are asymptotically equivalent, as $n \to \infty$,
-to $n^{r-1} \log n / (r-1)!$, where $\log$ is the natural logarithm:
-$$h_n^{(r)} \sim \frac{n^{r-1} \log n}{(r-1)!} \qquad (n \to \infty).$$
-
-Source: Rusen Li, *Sums over Primes II*, Journal of Integer Sequences 27 (2024),
-Article 24.4.1, Lemma 1 (`jis-2024-24.4.1-lem-1`). -/
-public theorem_wanted hyperharmonic_isEquivalent (r : ℕ) (hr : 1 ≤ r) :
-    (fun n : ℕ => (hyperharmonic r n : ℝ)) ~[atTop]
-      fun n : ℕ => (n : ℝ) ^ (r - 1) * Real.log n / (r - 1).factorial
 
 /-- **Asymptotics of the $n$-th number with $k$ prime factors.** Let $k \ge 1$. For $n \ge 1$ let
 $p_{n,k}$ be the $n$-th squarefree natural number with exactly $k$ distinct prime factors, and let
@@ -449,36 +407,6 @@ public theorem_wanted alternatingHyperharmonic_typeI_isEquivalent {y p : ℕ} (h
       fun n : ℕ => -((n : ℝ) ^ (y - 1) * (ζp - alternatingZeta p) /
         ((2 * (y - 1).factorial : ℕ) : ℝ))) ∧
     ((fun n : ℕ => HI p (2 * y) (2 * n - 1)) ~[atTop]
-      fun n : ℕ => (n : ℝ) ^ (y - 1) * (ζp + alternatingZeta p) /
-        ((2 * (y - 1).factorial : ℕ) : ℝ))
-
-/-- **Asymptotics of type III alternating hyperharmonic numbers.** For real $s$ let
-$\overline{H}_n^{(s)} = \sum_{i=1}^{n} (-1)^{i-1}/i^s$ be the alternating generalized harmonic
-numbers, and let the type III generalized alternating hyperharmonic numbers be
-$H_n^{(s,1,3)} = \overline{H}_n^{(s)}$ and
-$H_n^{(s,r+1,3)} = \sum_{k=1}^{n} (-1)^{k-1} H_k^{(s,r,3)}$. Let $y \ge 1$ and $p \ge 1$ be natural
-numbers and let $\bar\zeta(p)$ be the alternating zeta value at $p$. Then, as $n \to \infty$,
-$H_n^{(p,2y+1,3)} \sim n^y \bar\zeta(p) / (2^y\, y!)$ and
-$H_n^{(1,2y,3)} \sim n^{y-1} \log n / (2^y (y-1)!)$. If moreover $p \ge 2$, then, with
-$\zeta(p) = \sum_{i \ge 1} 1/i^p$, as $n \to \infty$,
-$H_{2n}^{(p,2y,3)} \sim n^{y-1} (\zeta(p) - \bar\zeta(p)) / (2\,(y-1)!)$ and
-$H_{2n-1}^{(p,2y,3)} \sim n^{y-1} (\zeta(p) + \bar\zeta(p)) / (2\,(y-1)!)$.
-
-Source: Rusen Li, *Sums over Primes II*, Journal of Integer Sequences 27 (2024),
-Article 24.4.1, Lemma 16 (`jis-2024-24.4.1-lem-16`). -/
-public theorem_wanted alternatingHyperharmonic_typeIII_isEquivalent {y p : ℕ} (hy : 1 ≤ y)
-    (hp : 1 ≤ p) :
-    let HIII := fun (s : ℝ) (r n : ℕ) =>
-      signedIteratedPartialSum true (alternatingGeneralizedHarmonic s) r n
-    let ζp : ℝ := ∑' i : ℕ, 1 / (i : ℝ) ^ p
-    ((fun n : ℕ => HIII p (2 * y + 1) n) ~[atTop]
-      fun n : ℕ => (n : ℝ) ^ y * alternatingZeta p / ((2 ^ y * y.factorial : ℕ) : ℝ)) ∧
-    ((fun n : ℕ => HIII 1 (2 * y) n) ~[atTop]
-      fun n : ℕ => (n : ℝ) ^ (y - 1) * Real.log n / ((2 ^ y * (y - 1).factorial : ℕ) : ℝ)) ∧
-    (2 ≤ p → (fun n : ℕ => HIII p (2 * y) (2 * n)) ~[atTop]
-      fun n : ℕ => (n : ℝ) ^ (y - 1) * (ζp - alternatingZeta p) /
-        ((2 * (y - 1).factorial : ℕ) : ℝ)) ∧
-    (2 ≤ p → (fun n : ℕ => HIII p (2 * y) (2 * n - 1)) ~[atTop]
       fun n : ℕ => (n : ℝ) ^ (y - 1) * (ζp + alternatingZeta p) /
         ((2 * (y - 1).factorial : ℕ) : ℝ))
 

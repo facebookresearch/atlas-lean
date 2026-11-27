@@ -13,3 +13,7 @@
 - [Orthonormal normalization of shifted Jacobi polynomials](jacobi-and-gegenbauer-polynomials-on-0-1.md)
 
 - [Jacobi series of the Wright–Fisher transition density with mutation](jacobi-series-of-the-mutation-transition-density.md)
+
+- [Dual-process filtering of Wright–Fisher hidden Markov models](dual-process-filtering-of-wright-fisher-hidden-markov-models/README.md)
+- [Filtering Fleming–Viot population frequencies](filtering-fleming-viot-population-frequencies/README.md)
+- [Exact likelihood inference for the Wright–Fisher diffusion](exact-likelihood-inference-for-the-wright-fisher-diffusion/README.md)
