@@ -933,6 +933,51 @@ class GitHubReadTests(unittest.TestCase):
         gh.logs = {}
         self.assertIn("could not be read", preflight.ci_run(gh, self.runs, self.head)["base_error"])
 
+    def test_only_a_pull_request_run_of_ci_can_skip_build(self):
+        actions = {"id": preflight.ACTIONS_APP_ID}
+        associated = [{"number": 6650, "base": {"ref": "main"}}]
+        gh = FakeGitHub({f"/repos/{REPO}/actions/runs/{run}": {"event": event, "path": path, "pull_requests": associated}
+                         for run, event, path in ((1, "pull_request", ".github/workflows/ci.yml"),
+                                                  (2, "pull_request", ".github/workflows/source-diagnostics.yml"),
+                                                  (3, "pull_request_target", ".github/workflows/ci.yml"))})
+
+        def scoped(name: str, run: int, provenance=preflight.Provenance(gh, 6650, "main"), **changes) -> bool:
+            check = dict({"id": run * 10, "name": name, "app": actions, "status": "completed", "conclusion": "skipped",
+                          "details_url": f"https://github.com/{REPO}/actions/runs/{run}/job/{run * 10}"}, **changes)
+            required = [{"context": name, "integration_id": preflight.ACTIONS_APP_ID}]
+            return bool(preflight.summarize_checks([check], required, [], provenance)["required"][0].get("scoped"))
+        self.assertTrue(scoped("build", 1))
+        self.assertFalse(scoped("build", 1, conclusion="success"))  # not a skip
+        self.assertFalse(scoped("repository integrity", 1))  # CI skips only build
+        self.assertFalse(scoped("build", 2))  # a job named build in another workflow
+        self.assertFalse(scoped("build", 3))  # not a pull_request run
+        self.assertFalse(scoped("build", 1, provenance=None))  # a run it does not read
+        self.assertFalse(scoped("build", 1, app={"id": 99}))  # another app
+
+    def test_ci_base_from_the_scope_job_when_build_is_skipped(self):
+        actions = {"id": preflight.ACTIONS_APP_ID}
+        head, base = "1" * 40, "2" * 40
+
+        def check(name: str, run: int, job: int, conclusion: str) -> dict:
+            return {"id": job, "name": name, "app": actions, "status": "completed", "conclusion": conclusion,
+                    "details_url": f"https://github.com/{REPO}/actions/runs/{run}/job/{job}"}
+        build, scope = check("build", 5, 51, "skipped"), check(preflight.SCOPE_JOB, 5, 52, "success")
+        responses = {f"/repos/{REPO}/actions/runs/5": {"event": "pull_request", "path": ".github/workflows/ci.yml",
+                                                      "head_sha": head, "created_at": "2026-11-23T17:00:00Z",
+                                                      "pull_requests": [{"number": 7000, "base": {"ref": "main"}}]},
+                     f"/repos/{REPO}/actions/jobs/51": {"run_id": 5, "name": "build"},
+                     f"/repos/{REPO}/actions/jobs/52": {"run_id": 5, "name": preflight.SCOPE_JOB}}
+        logs = {52: f"2026-11-23T17:00:05Z HEAD is now at abcdef0 Merge {head} into {base}\n"}
+        ci = preflight.ci_run(FakeGitHub(responses, logs), [build, scope], head, 7000, "main")
+        self.assertEqual((ci["base"], ci["base_error"]), (base, None))
+        # Another run's job, or a check run that points at another run's job, says nothing about this run.
+        other = check(preflight.SCOPE_JOB, 6, 62, "success")
+        self.assertIn(f"run 5 has no {preflight.SCOPE_JOB} job",
+                      preflight.ci_run(FakeGitHub(responses, logs), [build, other], head, 7000, "main")["base_error"])
+        responses[f"/repos/{REPO}/actions/jobs/52"] = {"run_id": 6, "name": preflight.SCOPE_JOB}
+        self.assertIn(f"run 5 has no {preflight.SCOPE_JOB} job",
+                      preflight.ci_run(FakeGitHub(responses, logs), [build, scope], head, 7000, "main")["base_error"])
+
     def test_a_heavy_rebuild_is_a_warning(self):
         def warned(built):
             result = preflight.evaluate(dict(ready_facts(), build_time=built), NOW)
@@ -1498,13 +1543,50 @@ class GitTests(unittest.TestCase):
         left = r.pull(241, {"MathlibExt/A.lean": "namespace Foo\ndef a := 1\nend Foo\n-- left\n"})
         right = r.pull(242, {"MathlibExt/A.lean": "-- right\nnamespace Foo\ndef a := 1\nend Foo\n"})
         self.fetch(241, 242)
-        self.git.size_oracle = lambda wanted: {o: preflight.MAX_BLOB_BYTES + 1 for o in wanted}
+        self.git.size_oracle = lambda wanted: {o: preflight.MAX_MERGE_BLOB_BYTES + 1 for o in wanted}
         with self.assertRaises(preflight.Failure):  # its inputs are too large: no merge, and nothing downloaded
             self.git.merge_tree(left, right)
         sides = {self.git.out("rev-parse", f"{c}:MathlibExt/A.lean") for c in (left, right)}
         self.assertFalse(any(self.git.present(o) for o in sides))
         self.git.size_oracle = lambda wanted: {o: 50 for o in wanted}
         self.assertTrue(self.git.merge_tree(left, right)["clean"])  # admitted by size, then merged
+
+    @NEEDS_GIT_245
+    def test_a_merge_of_a_file_larger_than_preflight_reads(self):
+        """Git merges a graph data file that both sides change, however much larger than the files that
+        preflight parses it is (a 9 MB links file): only MAX_MERGE_BLOB_BYTES bounds its download. A
+        .gitattributes stays within MAX_BLOB_BYTES, even when both sides change it."""
+        r = self.remote
+        lines = [f'{{"n": {i}}}' for i in range(40)]
+        r.write({"blueprint/links/Combinatorics.jsonl": "\n".join(lines) + "\n"})
+        base = r.commit("Merge pull request #384 from x")
+        left = r.pull(385, {"blueprint/links/Combinatorics.jsonl": "\n".join(["{\"left\": 1}"] + lines) + "\n"}, base=base)
+        right = r.pull(386, {"blueprint/links/Combinatorics.jsonl": "\n".join(lines + ["{\"right\": 1}"]) + "\n"}, base=base)
+        self.fetch(385, 386)
+        sizes = lambda oids: {o: int(git(r.path, "cat-file", "-s", o)) for o in oids}  # noqa: E731  as GitHub reports
+        self.git.size_oracle = sizes
+        with mock.patch.object(preflight, "MAX_BLOB_BYTES", 100):  # each side is over what preflight reads
+            merged = self.git.merge_tree(left, right)
+            self.assertTrue(merged["clean"], merged)  # but git merges it
+            with self.assertRaisesRegex(preflight.Failure, "more than"):  # and preflight still does not read it
+                self.git.blobs({self.git.out("rev-parse", f"{left}:blueprint/links/Combinatorics.jsonl")})
+        fresh = preflight.Git(Path(self.tmp.name) / "fresh" / "repo.git", self.git.url)  # nothing downloaded yet
+        fresh.ensure()
+        fresh.fetch(["+refs/pull/385/head:refs/preflight/pr/385", "+refs/pull/386/head:refs/preflight/pr/386"])
+        fresh.size_oracle = sizes
+        with mock.patch.object(preflight, "MAX_MERGE_BLOB_BYTES", 100), \
+                self.assertRaisesRegex(preflight.Failure, "merge-tree"):
+            fresh.merge_tree(left, right)  # over the merge limit too: no merge, closed
+        attributes = "*.jsonl merge=union\n" + "# " * 70 + "\n"
+        ours = r.pull(387, {".gitattributes": attributes + "# ours\n"}, base=base)
+        theirs = r.pull(388, {".gitattributes": "# theirs\n" + attributes}, base=base)
+        cold = preflight.Git(Path(self.tmp.name) / "cold" / "repo.git", self.git.url)
+        cold.ensure()
+        cold.fetch(["+refs/pull/387/head:refs/preflight/pr/387", "+refs/pull/388/head:refs/preflight/pr/388"])
+        cold.size_oracle = sizes
+        with mock.patch.object(preflight, "MAX_BLOB_BYTES", 100), mock.patch.object(preflight, "MAX_MERGE_BLOB_BYTES", 1000), \
+                self.assertRaisesRegex(preflight.Failure, "gitattributes"):
+            cold.merge_tree(ours, theirs)  # an attribute file both sides change is a side too: still refused
 
     def test_files_the_checks_read(self):
         r = self.remote
@@ -1588,6 +1670,35 @@ class GitTests(unittest.TestCase):
         self.assertLessEqual(len(self.git.listings), 2)  # whole listings: the last two only
         self.assertEqual(set(self.git.signatures[heads[0]]), {"docs/h0.md", "glob:docs/*.md"})  # watched entries only
 
+    @NEEDS_GIT_245
+    def test_a_file_over_the_blob_limit_is_an_input_not_followed(self):
+        r = self.remote
+        big = "#" * 300
+        r.write({"scripts/g.py": "open('scripts/map.json')\n", "scripts/map.json": '["scripts/named.py"]' + " " * 300,
+                 "scripts/named.py": "pass\n", "scripts/h.py": "run('scripts/big.py')\nopen('scripts/same.txt')\n",
+                 "scripts/big.py": big, "scripts/same.txt": big,  # one blob under two names
+                 ".github/actions/a/action.yml": "runs:\n  using: composite\n" + "#" * 300})
+        main = r.commit("Merge pull request #380 from x")
+        self.git.ensure()
+        self.git.fetch(["+refs/heads/main:refs/preflight/main"])
+        sizes = lambda oids: {o: int(git(r.path, "cat-file", "-s", o)) for o in oids}  # noqa: E731  as GitHub reports
+        self.git.size_oracle = sizes
+        self.assertIn("scripts/named.py", preflight._code_closure(self.git, main, {"scripts/g.py"}))
+        cold = preflight.Git(Path(self.tmp.name) / "cold" / "repo.git", self.git.url)  # nothing downloaded yet
+        cold.ensure()
+        cold.fetch(["+refs/heads/main:refs/preflight/main"])
+        cold.size_oracle = sizes
+        with mock.patch.object(preflight, "MAX_BLOB_BYTES", 200):  # the map has grown past what preflight reads
+            code = preflight._code_closure(cold, main, {"scripts/g.py"})
+            self.assertIn("scripts/map.json", code)  # still an input: its changes count
+            self.assertNotIn("scripts/named.py", code)  # but it is not opened
+            self.assertNotIn("?incomplete", code)
+            unread = git(r.path, "rev-parse", f"{main}:scripts/map.json")
+            self.assertFalse(cold.present(unread))  # nor downloaded
+            for start in ({"scripts/h.py"}, {".github/actions/a/action.yml"}):
+                with self.assertRaises(preflight.Failure):  # a script, or an action that large, is not skipped
+                    preflight._code_closure(self.git, main, start)
+
     def test_the_repositorys_own_checks_can_be_followed(self):
         """The code and inputs of this repository's required workflows, at its own HEAD, stay within the
         limit: an incomplete closure would make every pull request NOT READY."""
@@ -1606,6 +1717,25 @@ class GitTests(unittest.TestCase):
             named = (root / workflow).read_text()  # a module the workflow names itself is its input; others are not
             self.assertFalse([c for c in code if c.endswith(".lean") and c.split("/", 1)[0] in preflight.LIBRARIES
                               and c not in named], workflow)
+        # The paths that scripts/ci_scope.py and its test name are rules and examples, not inputs (NAMES_ONLY).
+        self.assertEqual(preflight._code_closure(own, head, {"scripts/test_ci_scope.py"}),
+                         {"scripts/test_ci_scope.py", "scripts/ci_scope.py"})
+
+    def test_a_script_that_only_names_paths(self):
+        r = self.remote
+        ci = ".github/workflows/ci.yml"
+        r.write({ci: WORKFLOWS[ci] + "    steps:\n      - run: python3 -I scripts/ci_scope.py x\n"
+                                     "      - run: python3 scripts/other.py\n",
+                 "scripts/ci_scope.py": "import sys\nimport helper\nDATA = {'scripts/data.json'}\n",
+                 "scripts/helper.py": "x = 1\n", "scripts/other.py": "open('scripts/read.json')\n",
+                 "scripts/data.json": "{}\n", "scripts/read.json": "{}\n"})
+        base = r.commit("Merge pull request #300 from x")
+        self.git.ensure()
+        self.git.fetch(["+refs/heads/main:refs/preflight/main"])
+        code = preflight.workflow_code(self.git, base, [ci])
+        self.assertTrue({"scripts/ci_scope.py", "scripts/helper.py", "scripts/other.py", "scripts/read.json"} <= set(code),
+                        code)  # its imports are followed, and another script's names still count
+        self.assertNotIn("scripts/data.json", code)
 
     def test_a_local_action(self):
         r = self.remote
@@ -2863,6 +2993,14 @@ class EvaluateTests(unittest.TestCase):
         result = preflight.evaluate(facts, NOW)
         self.assertTrue(result["ready"])
         self.assertIn("Blueprint Pages", result["warnings"][0])
+        facts = ready_facts()
+        facts["checks"]["required"][1].update(conclusion="skipped", scoped=True)  # see scoped_skip
+        result = preflight.evaluate(facts, NOW)
+        self.assertTrue(result["ready"])
+        passed = next(c for c in result["checks"] if c["name"] == "required checks")["detail"]
+        self.assertIn("build (skipped: the pull request does not need it)", passed)
+        facts["checks"]["required"][0].update(conclusion="skipped")  # any other skip does not pass
+        self.assertIn("repository integrity (skipped)", self.failed(facts)["required checks"]["detail"])
 
     def test_freshness(self):
         facts = ready_facts()

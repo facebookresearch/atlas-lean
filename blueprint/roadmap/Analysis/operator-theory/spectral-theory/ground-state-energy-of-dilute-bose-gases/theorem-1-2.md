@@ -1,6 +1,6 @@
 # Lee–Huang–Yang lower bound for dilute Bose gases
 
-There are a real number $\eta$ and a
+Fix the [error exponent](untitled-2.md) $\eta = 1/1615$. There is a
 function $\mathcal{C}$ of two real variables such that the following holds. Let
 $v : \mathbb{R}^3 \to \mathbb{R}$ be a non-negative, radial, integrable potential that is not
 almost everywhere zero, and let $R > 0$ be such that the closed support of $v$ lies in the open
@@ -21,7 +21,8 @@ $$
 
 The source takes the limit $\rho a^3 \to 0^+$; for fixed $v$ this is the same as $\rho \to 0^+$.
 Although the wording of Theorem 1.2 in the source suggests that $\eta$ may depend on
-$\mathcal{R}(v)$ and $R/a$, Theorem 6.8 there shows that $\eta$ is a universal constant.
+$\mathcal{R}(v)$ and $R/a$, equation (6.30) in Theorem 6.8 and the proof of Theorem 1.2 give
+$1/1615$ as a universal choice.
 
 ## Sources
 
