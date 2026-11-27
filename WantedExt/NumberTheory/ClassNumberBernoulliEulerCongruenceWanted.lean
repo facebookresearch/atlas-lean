@@ -22,6 +22,7 @@ public import Mathlib.NumberTheory.Cyclotomic.Basic
 public import Mathlib.NumberTheory.JacobiSum.Basic
 public import Mathlib.NumberTheory.LegendreSymbol.QuadraticChar.Basic
 public import Mathlib.RingTheory.Trace.Defs
+public import MathlibExt.NumberTheory.ArcSlSubstSl
 public import MathlibExt.NumberTheory.SlHurwitzNumbers
 public import MathlibExt.NumberTheory.ClassNumberBernoulliEulerCongruenceEisensteinRealPeriodEqBetaGamma
 
@@ -151,29 +152,6 @@ public theorem_wanted sl_rescale_int_expansion (S C : PowerSeries ℚ)
       (∀ n, ∃ (a : ℤ) (j k : ℕ), PowerSeries.coeff n h = a / ((r : ℚ) ^ j * 3 ^ k)) ∧
       (r : ℚ) • S = PowerSeries.rescale (r : ℚ) S +
         (r : ℚ) • (S ^ 3 * PowerSeries.rescale (r : ℚ) S * h.subst (S ^ 3)))
-
-/-- **Power series inverse of $\mathrm{Sl}$.** Let $S, C \in \mathbb{Q}[[u]]$ be formal power
-series with $S' = C^2$, $C' = -S^2$, $S(0) = 0$ and $C(0) = 1$. Then
-$$\sum_{n \ge 0} (-1)^n \binom{-2/3}{n} \frac{S^{3n+1}}{3n+1} = u$$
-in $\mathbb{Q}[[u]]$, where $\binom{-2/3}{n} = \frac{1}{n!} \prod_{j=0}^{n-1} (-2/3 - j)$ is the
-generalized binomial coefficient.
-
-These conditions determine $S$ and $C$ uniquely: they are the Taylor series at $0$ of the
-Eisenstein elliptic functions $\mathrm{Sl}$ and $\mathrm{Cl}$. The statement says that
-$\mathrm{ArcSl}(t) = \sum_{n \ge 0} (-1)^n \binom{-2/3}{n} t^{3n+1}/(3n+1)$ is the inverse of
-$\mathrm{Sl}$ near $0$.
-
-Source: Akihiro Goto, *Congruence Relations Connecting Tate-Shafarevich Groups with
-Bernoulli-Hurwitz Numbers by Elliptic Gauss Sums in the Eisenstein Integers Case*, INTEGERS 26
-(2026), Article A112, Corollary 1
-(`integers-2026-A112-cor-1`). -/
-public theorem_wanted arcSl_subst_sl (S C : PowerSeries ℚ)
-    (hS : PowerSeries.derivative (R := ℚ) S = C ^ 2)
-    (hC : PowerSeries.derivative (R := ℚ) C = -(S ^ 2))
-    (hS0 : PowerSeries.constantCoeff S = 0) (hC0 : PowerSeries.constantCoeff C = 1) :
-    (PowerSeries.mk fun k => if k % 3 = 1 then
-        (-1 : ℚ) ^ (k / 3) * Ring.choose (-2 / 3 : ℚ) (k / 3) / k else 0).subst S =
-      PowerSeries.X
 
 /-- **The Hurwitz-normalized coefficients of 1/Sl.** Let $\mathrm{Sl}, \mathrm{Cl}$ be formal power
 series in $\mathbb{Q}[[u]]$ with $\mathrm{Sl}' = \mathrm{Cl}^2$, $\mathrm{Cl}' = -\mathrm{Sl}^2$,

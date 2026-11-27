@@ -9,9 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.Combinatorics.Enumerative.Partition.Basic
-public import Mathlib.Combinatorics.Enumerative.Pentagonal.PowerSeries
-public import MathlibExt.Combinatorics.Enumerative.Partition.QEulerProduct
+public import MathlibExt.Combinatorics.Enumerative.Partition.PondPendPartitions
 public import Mathlib.Data.Nat.ModEq
 
 /-!
@@ -34,76 +32,7 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **The POND condition.** A multiset $s$ of natural numbers (the parts of a partition)
-satisfies the POND condition when no odd number occurs in $s$ exactly once; equivalently,
-every odd part that occurs in $s$ has multiplicity at least $2$, so the odd parts are not
-distinct.
-
-Source: James A. Sellers, *Elementary Proofs of Congruences for POND and PEND Partitions*,
-Journal of Integer Sequences 27 (2024), Article 24.4.7, Section 1. -/
-def IsPondParts (s : Multiset ℕ) : Prop :=
-  ∀ i ∈ s, Odd i → s.count i ≠ 1
-
-/-- **The PEND condition.** A multiset $s$ of natural numbers (the parts of a partition)
-satisfies the PEND condition when no even number occurs in $s$ exactly once; equivalently,
-every even part that occurs in $s$ has multiplicity at least $2$, so the even parts are not
-distinct.
-
-Source: James A. Sellers, *Elementary Proofs of Congruences for POND and PEND Partitions*,
-Journal of Integer Sequences 27 (2024), Article 24.4.7, Section 1. -/
-def IsPendParts (s : Multiset ℕ) : Prop :=
-  ∀ i ∈ s, Even i → s.count i ≠ 1
-
-instance : DecidablePred IsPondParts := fun s => by unfold IsPondParts; infer_instance
-
-instance : DecidablePred IsPendParts := fun s => by unfold IsPendParts; infer_instance
-
-/-- **Number of POND partitions.** For a natural number $n$, $\mathrm{pond}(n)$ is the number of
-partitions of $n$ that are POND, that is, in which every odd part that occurs has multiplicity
-at least $2$ (OEIS A265256).
-
-Source: James A. Sellers, *Elementary Proofs of Congruences for POND and PEND Partitions*,
-Journal of Integer Sequences 27 (2024), Article 24.4.7, Section 1. -/
-def pondCount (n : ℕ) : ℕ :=
-  ((Finset.univ : Finset n.Partition).filter fun p => IsPondParts p.parts).card
-
-/-- **The PEND partition function.** For a natural number $n$, $\mathrm{pend}(n)$ is the number
-of PEND partitions of $n$: partitions of $n$ in which every even part that occurs appears at
-least twice (OEIS A265254).
-
-Source: James A. Sellers, *Elementary Proofs of Congruences for POND and PEND Partitions*,
-Journal of Integer Sequences 27 (2024), Article 24.4.7, Section 1. -/
-def pendCount (n : ℕ) : ℕ :=
-  ((Finset.univ : Finset n.Partition).filter fun p => IsPendParts p.parts).card
-
 local notation "𝔣" => qEulerProduct
-
-/-- **The number of POND partitions of zero.** The number $\mathrm{pond}(0)$ of POND
-partitions of $0$ equals $1$: the only partition of $0$ is the empty partition, and it is POND.
-
-Source: James A. Sellers, *Elementary Proofs of Congruences for POND and PEND Partitions*,
-Journal of Integer Sequences 27 (2024), Article 24.4.7, Section 1 (OEIS A265256). -/
-theorem pondCount_zero : pondCount 0 = 1 := by
-  decide
-
-/-- **PEND partitions of zero.** The number of PEND partitions of $0$ is $1$, that is,
-$\mathrm{pend}(0) = 1$.
-
-Source: James A. Sellers, *Elementary Proofs of Congruences for POND and PEND Partitions*,
-Journal of Integer Sequences 27 (2024), Article 24.4.7, Section 1 (OEIS A265254). -/
-theorem pendCount_zero : pendCount 0 = 1 := by
-  decide
-
-/-- **Examples of POND and PEND parts.** The multisets of parts $\{1, 1\}$ and $\{2\}$ satisfy
-the POND condition, while $\{1\}$ and $\{2, 1\}$ do not; the multisets $\{1\}$ and $\{2, 2\}$
-satisfy the PEND condition, while $\{2\}$ and $\{2, 4\}$ do not.
-
-Source: James A. Sellers, *Elementary Proofs of Congruences for POND and PEND Partitions*,
-Journal of Integer Sequences 27 (2024), Article 24.4.7, Section 1. -/
-theorem isPondParts_isPendParts_examples :
-    IsPondParts {1, 1} ∧ ¬ IsPondParts {1} ∧ ¬ IsPondParts {2, 1} ∧ IsPondParts {2} ∧
-      IsPendParts {1} ∧ IsPendParts {2, 2} ∧ ¬ IsPendParts {2} ∧ ¬ IsPendParts {2, 4} := by
-  decide
 
 /-- **Congruences modulo 2, 3 and 4 for POND partitions.** Let $\mathrm{pond}(m)$ be the number
 of POND partitions of $m$. For every natural number $n$, $\mathrm{pond}(3n + 2) \equiv 0 \pmod{2}$,
@@ -311,18 +240,6 @@ Journal of Integer Sequences 27 (2024), Article 24.4.7, Theorem 17
 public theorem_wanted pondCount_generatingFunction :
     𝔣 2 ^ 2 * 𝔣 3 * 𝔣 12 * (PowerSeries.mk fun n => (pondCount n : ℤ)) =
       𝔣 4 * 𝔣 6 ^ 2
-
-/-- **Generating function for PEND partitions.** Let $\mathrm{pend}(n)$ be the number of PEND
-partitions of $n$, and let $f_k = \prod_{m \ge 1} (1 - q^{km})$. Then, as integer power series
-in $q$, $f_1 f_4 f_6 \sum_{n \ge 0} \mathrm{pend}(n) q^n = f_2 f_{12}$. This is the identity
-$\sum_{n \ge 0} \mathrm{pend}(n) q^n = f_2 f_{12} / (f_1 f_4 f_6)$ with the denominator cleared.
-
-Source: James A. Sellers, *Elementary Proofs of Congruences for POND and PEND Partitions*,
-Journal of Integer Sequences 27 (2024), Article 24.4.7, Theorem 18
-(`jis-2024-24.4.7-thm-18`). -/
-public theorem_wanted pendCount_generatingFunction :
-    𝔣 1 * 𝔣 4 * 𝔣 6 * (PowerSeries.mk fun n => (pendCount n : ℤ)) =
-      𝔣 2 * 𝔣 12
 
 end
 

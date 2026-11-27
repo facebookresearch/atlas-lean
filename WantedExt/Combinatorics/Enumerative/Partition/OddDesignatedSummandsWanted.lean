@@ -9,8 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.RingTheory.PowerSeries.Inverse
-public import MathlibExt.Combinatorics.Enumerative.Partition.QEulerProduct
+public import MathlibExt.Combinatorics.Enumerative.Partition.OddDesignatedSummands
 
 /-!
 # Congruences modulo powers of 2 for 2-regular partitions with designated summands
@@ -46,64 +45,6 @@ namespace MetaMathlibExt
 @[expose] public section
 
 local notation "𝔣" => qEulerProduct
-
-/-- **Generating function of odd designated-summand partitions.** For $k \ge 1$ let
-$f_k = \prod_{m \ge 1} (1 - q^{km})$ be the Euler product. This is the integer power series
-$f_4 f_6^2 / (f_1 f_3 f_{12})$ in $q$, where the denominator $f_1 f_3 f_{12}$ is invertible
-because its constant coefficient is $1$. It is the generating function
-$\sum_{n \ge 0} \mathrm{PD}_2(n) q^n$ of the numbers $\mathrm{PD}_2(n)$ of partitions of $n$ with
-designated summands into odd parts.
-
-Source: James A. Sellers, *New Infinite Families of Congruences Modulo Powers of 2 for 2-Regular
-Partitions with Designated Summands*, INTEGERS 24 (2024), Article A16, Section 2, eq. (1)
-(quoting G. E. Andrews, R. P. Lewis, and J. Lovejoy, *Partitions with designated summands*,
-Acta Arith. 105 (2002)). -/
-noncomputable def oddDesignatedSummandsSeries : ℤ⟦X⟧ :=
-  𝔣 4 * 𝔣 6 ^ 2 * invOfUnit (𝔣 1 * 𝔣 3 * 𝔣 12) 1
-
-/-- **The odd designated-summand partition function.** For a natural number $n$, the integer
-$\mathrm{PD}_2(n)$ is defined as the coefficient of $q^n$ in the integer power series
-$f_4 f_6^2 / (f_1 f_3 f_{12})$, where $f_k = \prod_{m \ge 1} (1 - q^{km})$ is the Euler product
-(the denominator has constant coefficient $1$, so it is invertible). It counts the partitions of
-$n$ with designated summands in which all parts are odd.
-
-Source: James A. Sellers, *New Infinite Families of Congruences Modulo Powers of 2 for 2-Regular
-Partitions with Designated Summands*, INTEGERS 24 (2024), Article A16, Sections 1-2, eq. (1). -/
-noncomputable def oddDesignatedSummandsCount (n : ℕ) : ℤ :=
-  coeff n oddDesignatedSummandsSeries
-
-/-- **Generating function for partitions with designated summands into odd parts.** Let
-$f_k = \prod_{m \ge 1} (1 - q^{km})$ in the ring of integer power series in $q$, and let $PD_2(n)$
-be the number of partitions of $n$ with designated summands in which every part is odd, defined as
-the coefficient of $q^n$ in $f_4 f_6^2 / (f_1 f_3 f_{12})$. Then
-$f_1 f_3 f_{12} \sum_{n \ge 0} PD_2(n) q^n = f_4 f_6^2$.
-
-Source: James A. Sellers, *New Infinite Families of Congruences Modulo Powers of 2 for 2-Regular
-Partitions with Designated Summands*, INTEGERS 24 (2024), Article A16, Section 2, eq. (1). -/
-theorem oddDesignatedSummandsCount_generatingFunction :
-    𝔣 1 * 𝔣 3 * 𝔣 12 * PowerSeries.mk oddDesignatedSummandsCount = 𝔣 4 * 𝔣 6 ^ 2 := by
-  have hmk : PowerSeries.mk oddDesignatedSummandsCount = oddDesignatedSummandsSeries := by
-    ext n
-    simp [oddDesignatedSummandsCount]
-  have hc : constantCoeff (𝔣 1 * 𝔣 3 * 𝔣 12) = ((1 : ℤˣ) : ℤ) := by
-    simp [constantCoeff_qEulerProduct (le_refl 1),
-      constantCoeff_qEulerProduct (by norm_num : 1 ≤ 3),
-      constantCoeff_qEulerProduct (by norm_num : 1 ≤ 12)]
-  rw [hmk, oddDesignatedSummandsSeries, mul_left_comm, mul_invOfUnit _ _ hc, mul_one]
-
-/-- **Odd designated-summand partitions of zero.** The odd designated-summand partition function
-satisfies $\mathrm{PD}_2(0) = 1$.
-
-Source: James A. Sellers, *New Infinite Families of Congruences Modulo Powers of 2 for 2-Regular
-Partitions with Designated Summands*, INTEGERS 24 (2024), Article A16, Section 2, eq. (1). -/
-theorem oddDesignatedSummandsCount_zero : oddDesignatedSummandsCount 0 = 1 := by
-  have h := congrArg (coeff 0) oddDesignatedSummandsCount_generatingFunction
-  simp only [coeff_zero_eq_constantCoeff, map_mul, map_pow,
-    constantCoeff_qEulerProduct (le_refl 1), constantCoeff_qEulerProduct (by norm_num : 1 ≤ 3),
-    constantCoeff_qEulerProduct (by norm_num : 1 ≤ 12),
-    constantCoeff_qEulerProduct (by norm_num : 1 ≤ 4),
-    constantCoeff_qEulerProduct (by norm_num : 1 ≤ 6), one_pow, one_mul] at h
-  simpa using h
 
 /-- **The 2-dissection of $f_1 f_3$.** Let $f_k = \prod_{m \ge 1} (1 - q^{km})$ denote the Euler
 products in the ring of integer power series in $q$. Then
@@ -207,19 +148,6 @@ public theorem_wanted oddDesignatedSummandsCount_two_dissection_mod_four (n : �
         PowerSeries.mk (fun k => oddDesignatedSummandsCount (2 * k))) ≡
       coeff n (𝔣 4 ^ 2) [ZMOD 4] ∧
     oddDesignatedSummandsCount (2 * n + 1) ≡ coeff n (𝔣 6 ^ 2) [ZMOD 4]
-
-/-- **Congruences modulo 4 for $\mathrm{PD}_2$ at $4n + 3$, $6n + 3$ and $6n + 5$.** Write
-$\mathrm{PD}_2(m)$ for the number of partitions of $m$ with designated summands in which every part
-is odd. For every natural number $n$, $\mathrm{PD}_2(4n + 3)$, $\mathrm{PD}_2(6n + 3)$ and
-$\mathrm{PD}_2(6n + 5)$ are all congruent to $0$ modulo $4$.
-
-Source: James A. Sellers, *New Infinite Families of Congruences Modulo Powers of 2 for 2-Regular
-Partitions with Designated Summands*, INTEGERS 24 (2024), Article A16, Corollary 1
-(`integers-2024-A16-cor-1`). -/
-public theorem_wanted oddDesignatedSummandsCount_odd_args_mod_four (n : ℕ) :
-    oddDesignatedSummandsCount (4 * n + 3) ≡ 0 [ZMOD 4] ∧
-      oddDesignatedSummandsCount (6 * n + 3) ≡ 0 [ZMOD 4] ∧
-      oddDesignatedSummandsCount (6 * n + 5) ≡ 0 [ZMOD 4]
 
 /-- **$PD_2(4n)$ and $PD_2(4n+2)$ modulo 4.** Let $f_k = \prod_{m \ge 1} (1 - q^{km})$ in the ring
 of integer power series in $q$, and let $PD_2(n)$ be the number of partitions of $n$ with

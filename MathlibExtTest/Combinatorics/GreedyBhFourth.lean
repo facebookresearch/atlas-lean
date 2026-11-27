@@ -29,6 +29,11 @@ example : fourthValue 5 = 108 := by decide
 -- The floor-function form `⌊(h + 3)/2⌋ h² + ⌊3h/2⌋ + 1` of the same quasipolynomial, for `h < 40`.
 example : ∀ h < 40, fourthValue h = (h + 3) / 2 * h ^ 2 + 3 * h / 2 + 1 := by decide
 
+-- Apply the formula at the endpoint and at the first nontrivial even and odd orders.
+example : IsFourthGreedyBh 1 4 := isFourthGreedyBh_fourthValue 1 one_pos
+example : IsFourthGreedyBh 2 12 := isFourthGreedyBh_fourthValue 2 two_pos
+example : IsFourthGreedyBh 3 32 := isFourthGreedyBh_fourthValue 3 (by decide)
+
 -- Test section: the upper bound. For the greedy Sidon set (`h = 2`) the fourth term is at most
 -- `12`, so `13` is never the fourth greedy term.
 example (a : ℕ) (ha : IsFourthGreedyBh 2 a) : a ≤ 12 :=

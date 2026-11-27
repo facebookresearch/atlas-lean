@@ -147,7 +147,7 @@ theorem arndtComposition_total_eq_fib :
         rw [h, ih (n + 2) (by omega) (by omega), ih (n + 1) (by omega) (by omega),
           Nat.fib_add_two (n := n + 1), Nat.add_comm]
 
-namespace arndtCompositionCount_isEquivalent
+namespace arndtCompositionCount
 
 open Finset
 
@@ -185,10 +185,16 @@ private lemma valid_cons {k a b : ℕ} {c : Fin k → ℕ} :
         exact hd i j (by simp only [Fin.val_succ] at hi; omega)
           (by simp only [Fin.val_succ] at hj; omega)
 
--- Removing the leading descending pair `(s - j - 1, j + 1)`, `j < ⌊(s - 1)/2⌋`, of weight `s`.
--- `valid_cons` and this bijection follow the private lemmas of the same names in
--- `MathlibExt/Combinatorics/Enumerative/ColoredArndt.lean`, which count weighted compositions.
-private lemma count_pair (n k : ℕ) :
+-- The bijection is the unweighted version of the one in ColoredArndt.
+/-- **Leading-pair recurrence for Arndt compositions.** Let $a(n,k)$ count Arndt compositions
+of $n$ with $k$ parts. For all natural numbers $n,k$,
+$$a(n,k+2)=\sum_{s+t=n}\left\lfloor\frac{\max(s-1,0)}2\right\rfloor a(t,k),$$
+where $s,t$ range over natural numbers. For a leading descending pair of weight $s$, its
+smaller part can be any integer from $1$ to $\lfloor(s-1)/2\rfloor$.
+
+Source: D. F. Checa and J. L. Ramírez, *Arndt compositions: a generating functions approach*,
+arXiv:2311.15388v1, proof of Theorem 2.1 (decomposition into descending pairs). -/
+theorem add_two (n k : ℕ) :
     arndtCompositionCount (fun _ => True) n (k + 2) =
       ∑ p ∈ antidiagonal n, (p.1 - 1) / 2 * arndtCompositionCount (fun _ => True) p.2 k := by
   let tails (t : ℕ) := (Nat.antidiagonalTuple k t).filter valid
@@ -235,6 +241,12 @@ private lemma count_pair (n k : ℕ) :
     refine Fin.cases ?_ (fun i ↦ Fin.cases ?_ (fun _ ↦ rfl) i) i <;>
       simp [join, split] <;> omega
 
+end arndtCompositionCount
+
+namespace arndtCompositionCount_isEquivalent
+
+open Finset
+
 private lemma count_zero (n : ℕ) :
     arndtCompositionCount (fun _ => True) n 0 = if n = 0 then 1 else 0 := by
   cases n <;> simp [arndtCompositionCount]
@@ -245,7 +257,7 @@ private lemma count_one (n : ℕ) :
     filter_singleton]
 
 private lemma count_two (n : ℕ) : arndtCompositionCount (fun _ => True) n 2 = (n - 1) / 2 := by
-  rw [count_pair, sum_eq_single (n, 0)]
+  rw [arndtCompositionCount.add_two, sum_eq_single (n, 0)]
   · simp [count_zero]
   · rintro ⟨s, t⟩ hp hne
     have ht : t ≠ 0 := by
@@ -297,7 +309,7 @@ private lemma bounds_two : Bounds 2 := by
 private lemma bounds_step {m : ℕ} (hm : 1 ≤ m) (ih : Bounds m) : Bounds (m + 2) := by
   intro n
   have hH : (m + 2) / 2 = m / 2 + 1 := by omega
-  rw [hH, count_pair, ← freeCount_pair hm, mul_sum, pow_succ]
+  rw [hH, arndtCompositionCount.add_two, ← freeCount_pair hm, mul_sum, pow_succ]
   constructor
   · apply sum_le_sum
     intro p _

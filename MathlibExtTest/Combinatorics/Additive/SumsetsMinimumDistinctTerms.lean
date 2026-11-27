@@ -40,3 +40,11 @@ example : (3 • ({0, 1} : Finset (ZMod 2))).card = 2 := by
   · exact (card_le_univ (s := 3 • ({0, 1} : Finset (ZMod 2)))).trans_eq (ZMod.card 2)
   · exact cauchy_davenport_nsmul Nat.prime_two ({0, 1} : Finset (ZMod 2))
       (by decide) 3 (by decide)
+
+-- Both the summand size and the number of summands can be two.
+example : (({0, 1} : Finset (ZMod 5)) : Set (ZMod 5)).IsAPOfLength 2 := by
+  exact vosper_nsmul Nat.prime_five {0, 1} (by decide) 2 (by decide) (by decide) (by decide)
+
+-- A fourfold sumset of a progression wrapping around zero attains the p - 2 boundary.
+example : (({9, 0, 2} : Finset (ZMod 11)) : Set (ZMod 11)).IsAPOfLength 3 := by
+  exact vosper_nsmul (by decide) {9, 0, 2} (by decide) 4 (by decide) (by decide) (by decide)

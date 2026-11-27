@@ -9,10 +9,9 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.Data.Int.Interval
 public import Mathlib.NumberTheory.LegendreSymbol.Basic
-public import Mathlib.RingTheory.PowerSeries.Inverse
 public import MathlibExt.Combinatorics.Enumerative.Partition.QEulerProduct
+public import MathlibExt.NumberTheory.MockThetaCoefficients
 
 /-!
 # Coefficients of the mock theta functions `v(q)`, `σ(q)`, `λ(q)`
@@ -35,144 +34,6 @@ namespace MetaMathlibExt
 @[expose] public section
 
 local notation "𝔣" => qEulerProduct
-
-/-- **The eighth-order mock theta function $v(q)$.** The mock theta function
-$v(q) = \sum_{n \ge 0} q^{(n+1)^2} (-q; q^2)_n / (q; q^2)_{n+1}$, where
-$(-q; q^2)_n = \prod_{k=0}^{n-1} (1 + q^{2k+1})$ and
-$(q; q^2)_{n+1} = \prod_{k=0}^{n} (1 - q^{2k+1})$, is taken as a power series in $q$ with integer
-coefficients.
-
-The $n$th summand has order $(n+1)^2$, so the coefficient of $q^m$ only involves the summands
-with $n \le m$.
-
-Source: Sabi Biswas and Nipen Saikia, *Arithmetic Properties of the Coefficients of Some Mock
-Theta Functions*, INTEGERS 25 (2025), Article A72, Equation (4). -/
-public noncomputable def mockThetaV : ℤ⟦X⟧ :=
-  PowerSeries.mk fun m => coeff m (∑ n ∈ Finset.range (m + 1),
-    X ^ ((n + 1) ^ 2) * (∏ k ∈ Finset.range n, (1 + X ^ (2 * k + 1))) *
-      invOfUnit (∏ k ∈ Finset.range (n + 1), (1 - X ^ (2 * k + 1))) 1)
-
-/-- **The sixth-order mock theta function $\sigma(q)$.** The mock theta function
-$\sigma(q) = \sum_{n \ge 0} q^{(n+1)(n+2)/2} (-q; q)_n / (q; q^2)_{n+1}$, where
-$(-q; q)_n = \prod_{k=1}^{n} (1 + q^k)$ and $(q; q^2)_{n+1} = \prod_{k=0}^{n} (1 - q^{2k+1})$, is
-taken as a power series in $q$ with integer coefficients.
-
-The $n$th summand has order $(n+1)(n+2)/2 > n$, so the coefficient of $q^m$ only involves the
-summands with $n \le m$.
-
-Source: Sabi Biswas and Nipen Saikia, *Arithmetic Properties of the Coefficients of Some Mock
-Theta Functions*, INTEGERS 25 (2025), Article A72, Equation (2). -/
-public noncomputable def mockThetaSigma : ℤ⟦X⟧ :=
-  PowerSeries.mk fun m => coeff m (∑ n ∈ Finset.range (m + 1),
-    X ^ ((n + 1) * (n + 2) / 2) * (∏ k ∈ Finset.range n, (1 + X ^ (k + 1))) *
-      invOfUnit (∏ k ∈ Finset.range (n + 1), (1 - X ^ (2 * k + 1))) 1)
-
-/-- **The sixth-order mock theta function $\lambda$.** With
-$(a; b)_n = \prod_{k=0}^{n-1} (1 - a b^k)$, the mock theta function $\lambda$ is the integer
-power series
-$$
-\lambda(q) = \sum_{n \ge 0} \frac{(-1)^n q^n (q; q^2)_n}{(-q; q)_n}.
-$$
-The $n$th summand has order $n$, so the coefficient of $q^m$ only involves the summands with
-$n \le m$.
-
-Source: Sabi Biswas and Nipen Saikia, *Arithmetic Properties of the Coefficients of Some Mock
-Theta Functions*, INTEGERS 25 (2025), Article A72, Equation (3). -/
-public noncomputable def mockThetaLambda : ℤ⟦X⟧ :=
-  PowerSeries.mk fun m => coeff m (∑ n ∈ Finset.range (m + 1),
-    (-1) ^ n * X ^ n * (∏ k ∈ Finset.range n, (1 - X ^ (2 * k + 1))) *
-      invOfUnit (∏ k ∈ Finset.range n, (1 + X ^ (k + 1))) 1)
-
-/-- **First coefficients of the mock theta function $v$.** Write
-$v(q) = \sum_{n \ge 0} P_v(n) q^n$ for the eighth-order mock theta function $v$. Then
-$P_v(0) = 0$ and $P_v(1) = 1$.
-
-Source: Sabi Biswas and Nipen Saikia, *Arithmetic Properties of the Coefficients of Some Mock
-Theta Functions*, INTEGERS 25 (2025), Article A72, Equation (4). -/
-public theorem coeff_mockThetaV_zero_one :
-    coeff 0 mockThetaV = 0 ∧ coeff 1 mockThetaV = 1 := by
-  constructor
-  · simp [mockThetaV]
-  · simp [mockThetaV, Finset.sum_range_succ, coeff_X_pow_mul', pow_succ, mul_assoc]
-
-/-- **First coefficients of the mock theta function $\sigma$.** Write
-$\sigma(q) = \sum_{n \ge 0} P_\sigma(n) q^n$ for the sixth-order mock theta function $\sigma$.
-Then $P_\sigma(0) = 0$ and $P_\sigma(1) = 1$.
-
-Source: Sabi Biswas and Nipen Saikia, *Arithmetic Properties of the Coefficients of Some Mock
-Theta Functions*, INTEGERS 25 (2025), Article A72, Equation (2). -/
-public theorem coeff_mockThetaSigma_zero_one :
-    coeff 0 mockThetaSigma = 0 ∧ coeff 1 mockThetaSigma = 1 := by
-  constructor
-  · simp [mockThetaSigma]
-  · simp [mockThetaSigma, Finset.sum_range_succ, coeff_X_pow_mul', mul_assoc]
-
-/-- **First coefficients of the mock theta function $\lambda$.** Write
-$\lambda(q) = \sum_{n \ge 0} P_\lambda(n) q^n$ for the sixth-order mock theta function $\lambda$.
-Then $P_\lambda(0) = 1$ and $P_\lambda(1) = -1$.
-
-Source: Sabi Biswas and Nipen Saikia, *Arithmetic Properties of the Coefficients of Some Mock
-Theta Functions*, INTEGERS 25 (2025), Article A72, Equation (3). -/
-public theorem coeff_mockThetaLambda_zero_one :
-    coeff 0 mockThetaLambda = 1 ∧ coeff 1 mockThetaLambda = -1 := by
-  constructor
-  · simp [mockThetaLambda]
-  · have h1 : invOfUnit (1 : ℤ⟦X⟧) 1 = 1 := by
-      simpa using mul_invOfUnit (1 : ℤ⟦X⟧) 1 (by simp)
-    simp [mockThetaLambda, Finset.sum_range_succ, mul_assoc, coeff_succ_X_mul, h1]
-
-/-- **Ramanujan's theta function at monomial arguments.** For an integer $\varepsilon$ and natural
-numbers $a$ and $b$, $f(\varepsilon q^a, \varepsilon q^b)$ is the integer power series in $q$
-whose coefficient of $q^n$ is the sum of $\varepsilon^{m^2}$ over the integers $m$ with
-$|m| \le n + 1$ and $a \cdot m(m+1)/2 + b \cdot m(m-1)/2 = n$.
-
-When $a + b \ge 1$ the exponent $a \cdot m(m+1)/2 + b \cdot m(m-1)/2$ is at least
-$|m|(|m|-1)/2$, so the bound $|m| \le n + 1$ excludes no term and this is Ramanujan's
-$f(c, d) = \sum_{m \in \mathbb{Z}} c^{m(m+1)/2} d^{m(m-1)/2}$ at $c = \varepsilon q^a$ and
-$d = \varepsilon q^b$; the definition is meant for $a + b \ge 1$. Special cases are
-$\psi(q) = f(q, q^3)$ and $f(-q) = f(-q, -q^2)$, which equals
-$(q; q)_\infty = \prod_{k \ge 1} (1 - q^k)$.
-
-Source: Sabi Biswas and Nipen Saikia, *Arithmetic Properties of the Coefficients of Some Mock
-Theta Functions*, INTEGERS 25 (2025), Article A72, Section 2 (definition of `f(c, d)`,
-Equations (10) and (11)). -/
-public def ramanujanThetaMonomial (ε : ℤ) (a b : ℕ) : ℤ⟦X⟧ :=
-  PowerSeries.mk fun n => ∑ m ∈ Finset.Icc (-(n : ℤ) - 1) ((n : ℤ) + 1),
-    if (a : ℤ) * (m * (m + 1) / 2) + (b : ℤ) * (m * (m - 1) / 2) = n then
-      ε ^ (m.natAbs ^ 2) else 0
-
-/-- **First coefficients of Ramanujan's theta function $\psi$.** Let
-$\psi(q) = f(q, q^3) = \sum_{m \in \mathbb{Z}} q^{m(m+1)/2 + 3m(m-1)/2}$, where $f$ is
-Ramanujan's general theta function. The coefficients of $q^0$, $q^1$, $q^2$, $q^3$ in $\psi(q)$
-are $1$, $1$, $0$, $1$.
-
-Source: Sabi Biswas and Nipen Saikia, *Arithmetic Properties of the Coefficients of Some Mock
-Theta Functions*, INTEGERS 25 (2025), Article A72, Equation (10). -/
-public theorem coeff_ramanujanThetaMonomial_one_one_three :
-    coeff 0 (ramanujanThetaMonomial 1 1 3) = 1 ∧ coeff 1 (ramanujanThetaMonomial 1 1 3) = 1 ∧
-      coeff 2 (ramanujanThetaMonomial 1 1 3) = 0 ∧
-      coeff 3 (ramanujanThetaMonomial 1 1 3) = 1 := by
-  simp only [ramanujanThetaMonomial, coeff_mk]
-  decide
-
-/-- **The p-dissection of Ramanujan's psi function.** Let $p$ be an odd prime, let $f(c, d)$ be
-Ramanujan's theta function and $\psi(q) = f(q, q^3)$. Then, as integer power series,
-$\psi(q) = \sum_{m=0}^{(p-3)/2} q^{(m^2+m)/2} f(q^{(p^2+(2m+1)p)/2}, q^{(p^2-(2m+1)p)/2}) +
-q^{(p^2-1)/8} f(q^{p^2}, q^{3p^2})$, where the last factor is $\psi(q^{p^2})$. Moreover
-$(m^2+m)/2 \not\equiv (p^2-1)/8 \pmod p$ for every integer $m$ with $0 \le m \le (p-3)/2$.
-
-The paper quotes this from Cui and Gu, Theorem 2.1.
-
-Source: Sabi Biswas and Nipen Saikia, *Arithmetic Properties of the Coefficients of Some Mock
-Theta Functions*, INTEGERS 25 (2025), Article A72, Lemma 1 (`integers-2025-A72-lem-1`). -/
-public theorem_wanted ramanujanPsi_p_dissection (p : ℕ) (hp : p.Prime) (hp2 : p ≠ 2) :
-    ramanujanThetaMonomial 1 1 3 =
-        ∑ m ∈ Finset.range ((p - 3) / 2 + 1),
-          X ^ ((m ^ 2 + m) / 2) *
-            ramanujanThetaMonomial 1 ((p ^ 2 + (2 * m + 1) * p) / 2)
-              ((p ^ 2 - (2 * m + 1) * p) / 2) +
-          X ^ ((p ^ 2 - 1) / 8) * ramanujanThetaMonomial 1 (p ^ 2) (3 * p ^ 2) ∧
-      ∀ m ≤ (p - 3) / 2, ¬ (m ^ 2 + m) / 2 ≡ (p ^ 2 - 1) / 8 [MOD p]
 
 /-- **The $p$-dissection of $f_1$.** Let $p \ge 5$ be a prime, let
 $f_k = \prod_{m \ge 1} (1 - q^{km})$ for $k \ge 1$, and let

@@ -28,6 +28,7 @@ public import Mathlib.RingTheory.Binomial
 public import MathlibExt.Combinatorics.Enumerative.ArndtCompositions
 public import MathlibExt.Combinatorics.Enumerative.ArndtLastPartBounds
 public import MathlibExt.Combinatorics.Enumerative.ArndtPositiveSum
+public import MathlibExt.Combinatorics.Enumerative.BlockArndtGeneratingFunction
 public import MathlibExt.Combinatorics.Enumerative.KArndtTotalGFNeg
 public import MathlibExt.Combinatorics.Enumerative.KArndtTotalGFNonneg
 public import WantedExt.Combinatorics.Enumerative.ArndtCompositionsWanted
@@ -35,32 +36,6 @@ public import WantedExt.Combinatorics.Enumerative.ArndtCompositionsWanted
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Bivariate generating function of a two-index count.** For a function $a$ assigning a natural
-number $a(n, m)$ to every pair of natural numbers $n, m$, its bivariate generating function is the
-power series $\sum_{n \ge 0} \bigl(\sum_{m = 0}^{n} a(n, m)\, y^m\bigr) x^n$ in
-$\mathbb{Z}[y][[x]]$, where $x$ marks the first index (the weight) and $y$ the second. Only the
-terms with $m \le n$ enter; for counts with $a(n, m) = 0$ whenever $m > n$ it equals
-$\sum_{n, m} a(n, m)\, x^n y^m$.
-
-Source: Daniel F. Checa and José L. Ramírez, *Arndt Compositions: A Generating Functions
-Approach*, INTEGERS 24 (2024), Article A35, Section 2 (the series `A(x, y)`, `Ap(x, y)`,
-`Bp(x, y)`, `B(x, y)`, `A_k(x, y)` and `A^{(k)}(x, y)`). -/
-noncomputable def bivariateCountGF (a : ℕ → ℕ → ℕ) : PowerSeries (Polynomial ℤ) :=
-  PowerSeries.mk fun n =>
-    ∑ m ∈ Finset.range (n + 1), (a n m : Polynomial ℤ) * Polynomial.X ^ m
-
-/-- **Coefficients of a bivariate generating function.** For every function $a$ assigning a natural
-number $a(n, m)$ to each pair of natural numbers and every $n \ge 0$, the coefficient of $x^n$ in
-the bivariate generating function of $a$ is the polynomial
-$\sum_{m = 0}^{n} a(n, m)\, y^m \in \mathbb{Z}[y]$.
-
-Source: Daniel F. Checa and José L. Ramírez, *Arndt Compositions: A Generating Functions
-Approach*, INTEGERS 24 (2024), Article A35, Section 2. -/
-theorem coeff_bivariateCountGF (a : ℕ → ℕ → ℕ) (n : ℕ) :
-    PowerSeries.coeff n (bivariateCountGF a) =
-      ∑ m ∈ Finset.range (n + 1), (a n m : Polynomial ℤ) * Polynomial.X ^ m := by
-  simp [bivariateCountGF]
 
 /-- **The Arndt generating function as a bivariate count series.** For a set $S$ of natural
 numbers, let $a_S(n, m)$ be the number of Arndt compositions of $n$ with $m$ parts, all parts in
@@ -129,35 +104,6 @@ Source: Daniel F. Checa and José L. Ramírez, *Arndt Compositions: A Generating
 Approach*, INTEGERS 24 (2024), Article A35, Section 2.1 (each class has `2^{⌊ℓ/2⌋}` members). -/
 theorem antiPalindromicCompositionCount_six_four :
     antiPalindromicCompositionCount 6 4 = 4 ∧ reducedAntiPalindromicCompositionCount 6 4 = 1 := by
-  decide
-
-/-- **Number of $k$-block Arndt compositions.** For $k \ge 1$ and $n, m \ge 0$, $a^{(k)}(n, m)$ is
-the number of $k$-block Arndt compositions of $n$ with $m$ parts: sequences
-$(c_0, \ldots, c_{m-1})$ of positive integers with $c_0 + \cdots + c_{m-1} = n$ that strictly
-decrease inside each block of $k$ consecutive positions $ki, ki + 1, \ldots, ki + k - 1$ (the last
-block may be shorter), that is, $c_i > c_{i+1}$ for every $i$ with $i + 1 < m$ and
-$i \not\equiv k - 1 \pmod{k}$. For $k = 2$ these are the Arndt compositions.
-
-The definition is meant for $k \ge 1$; its value at $k = 0$ has no combinatorial meaning.
-
-Source: Daniel F. Checa and José L. Ramírez, *Arndt Compositions: A Generating Functions
-Approach*, INTEGERS 24 (2024), Article A35, Section 5 (definition of `k`-block Arndt
-compositions). -/
-def blockArndtCompositionCount (k n m : ℕ) : ℕ :=
-  ((Finset.Nat.antidiagonalTuple m n).filter fun c =>
-    (∀ i, 0 < c i) ∧
-      ∀ i j : Fin m, (i : ℕ) % k ≠ k - 1 → (j : ℕ) = i + 1 → c j < c i).card
-
-/-- **Four-part 3-block Arndt compositions of 10.** There are exactly $7$ three-block Arndt
-compositions of $10$ with $4$ parts, that is, $a^{(3)}(10, 4) = 7$.
-
-They are $(6,2,1,1)$, $(5,3,1,1)$, $(5,2,1,2)$, $(4,3,2,1)$, $(4,3,1,2)$, $(4,2,1,3)$ and
-$(3,2,1,4)$.
-
-Source: Daniel F. Checa and José L. Ramírez, *Arndt Compositions: A Generating Functions
-Approach*, INTEGERS 24 (2024), Article A35, Section 5 (list of the compositions counted by
-`a^{(3)}(10) = 18`). -/
-theorem blockArndtCompositionCount_three_ten_four : blockArndtCompositionCount 3 10 4 = 7 := by
   decide
 
 /-- **Alternating sum and recurrence for Arndt compositions.** Let $a(n, m)$ be the number of
@@ -327,25 +273,6 @@ public theorem_wanted bivariateCountGF_kArndt_neg (k' : ℕ) (hk' : 0 < k') :
           PowerSeries.C (1 - Polynomial.X ^ 2) * PowerSeries.X ^ 3 +
             PowerSeries.C (Polynomial.X ^ 2) * PowerSeries.X ^ (2 + k')) =
       (1 - PowerSeries.X ^ 2) * (1 - PowerSeries.X + PowerSeries.C Polynomial.X * PowerSeries.X)
-
-/-- **Generating function of block Arndt compositions.** Let $k \ge 1$, let $a^{(k)}(n, m)$ be
-the number of $k$-block Arndt compositions of $n$ with $m$ parts, and let
-$A^{(k)}(x, y) = \sum_{n \ge 0} \sum_{m=0}^{n} a^{(k)}(n, m)\, x^n y^m \in \mathbb{Z}[y][[x]]$.
-Then
-$A^{(k)}(x, y) \bigl(\prod_{\ell=1}^{k} (1 - x^\ell) - x^{\binom{k+1}{2}} y^k\bigr) =
-\sum_{j=0}^{k-1} x^{\binom{j+1}{2}} y^j \prod_{\ell=j+1}^{k} (1 - x^\ell)$.
-Equivalently, with $J_j(x, y) = x^{\binom{j+1}{2}} y^j \prod_{\ell=1}^{j} (1 - x^\ell)^{-1}$,
-$A^{(k)}(x, y) = \bigl(\sum_{j=0}^{k-1} J_j(x, y)\bigr) / (1 - J_k(x, y))$.
-
-Source: Daniel F. Checa and José L. Ramírez, *Arndt Compositions: A Generating Functions
-Approach*, INTEGERS 24 (2024), Article A35, Theorem 12 (`integers-2024-A35-thm-12`). -/
-public theorem_wanted bivariateCountGF_blockArndt (k : ℕ) (hk : 1 ≤ k) :
-    bivariateCountGF (blockArndtCompositionCount k) *
-        ((∏ ℓ ∈ Finset.Icc 1 k, (1 - PowerSeries.X ^ ℓ)) -
-          PowerSeries.C (Polynomial.X ^ k) * PowerSeries.X ^ Nat.choose (k + 1) 2) =
-      ∑ j ∈ Finset.range k,
-        PowerSeries.C (Polynomial.X ^ j) * PowerSeries.X ^ Nat.choose (j + 1) 2 *
-          ∏ ℓ ∈ Finset.Ioc j k, (1 - PowerSeries.X ^ ℓ)
 
 end
 

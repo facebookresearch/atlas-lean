@@ -11,7 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.NumberTheory.LegendreSymbol.Basic
 public import Mathlib.RingTheory.PowerSeries.Inverse
-public import MathlibExt.Combinatorics.Enumerative.Partition.QEulerProduct
+public import MathlibExt.Combinatorics.Enumerative.Partition.RegularCubicOverlined
 
 /-!
 # Congruences for `ℓ`-regular cubic partitions with odd parts overlined (statements)
@@ -19,11 +19,9 @@ public import MathlibExt.Combinatorics.Enumerative.Partition.QEulerProduct
 Statements from Pujashree Buragohain and Nipen Saikia, *Some New Congruences for l-Regular
 Cubic Partitions with Odd Parts Overlined*, INTEGERS 24 (2024), Article A101.
 
-Naika and Harishkumar's `a_ℓ(n)` counts the `ℓ`-regular cubic partitions of `n` in which the
-first occurrence of each distinct odd part may be overlined; for `ℓ > 2` its generating
-function is `∑ a_ℓ(n) qⁿ = f_2 f_ℓ² f_{4ℓ} / (f_1² f_4 f_{2ℓ})` (paper, eq. (2)), where
-`f_k = (q^k; q^k)_∞` is `qEulerProduct k`, written `𝔣 k` below. We define `a_ℓ(n)` as the
-`n`th coefficient of that quotient in `ℤ⟦X⟧` (the denominator has constant coefficient `1`).
+Here `a_ℓ(n)` is the coefficient of `qⁿ` in the Euler quotient
+`f_2 f_ℓ² f_{4ℓ} / (f_1² f_4 f_{2ℓ})` of Eq. (2), where `f_k = (q^k; q^k)_∞` is
+`qEulerProduct k`, written `𝔣 k` below. For `ℓ ≥ 1` the denominator has constant term one.
 Ramanujan's `ψ(q^k) = f_{2k}² / f_k` (paper, eq. (3)); congruences between power series are
 stated coefficientwise, with a unit denominator `f_k` cleared by multiplying both sides
 (this preserves congruences, since `f_k` and its inverse have integer coefficients).
@@ -46,73 +44,6 @@ namespace MetaMathlibExt
 @[expose] public section
 
 local notation "𝔣" => qEulerProduct
-
-/-- **Generating function of ℓ-regular cubic partitions with odd parts overlined.** For a natural
-number $\ell$, this is the integer power series
-$$\frac{f_2 f_\ell^2 f_{4\ell}}{f_1^2 f_4 f_{2\ell}}, \qquad f_k = \prod_{m \ge 1} (1 - q^{km}).$$
-It is meaningful for $\ell \ge 1$, where the denominator has constant term $1$ and so is
-invertible. For $\ell > 2$, the range the paper considers, its coefficient of $q^n$ is the number
-of $\ell$-regular cubic partitions of $n$ with odd parts overlined.
-
-Source: Pujashree Buragohain and Nipen Saikia, *Some New Congruences for l-Regular Cubic
-Partitions with Odd Parts Overlined*, INTEGERS 24 (2024), Article A101, Section 1, eq. (2). -/
-public noncomputable def regularCubicOverlinedSeries (l : ℕ) : ℤ⟦X⟧ :=
-  𝔣 2 * 𝔣 l ^ 2 * 𝔣 (4 * l) * invOfUnit (𝔣 1 ^ 2 * 𝔣 4 * 𝔣 (2 * l)) 1
-
-/-- **ℓ-regular cubic partitions with odd parts overlined.** For natural numbers $\ell$ and $n$,
-$a_\ell(n)$ is the coefficient of $q^n$ in the integer power series
-$$\frac{f_2 f_\ell^2 f_{4\ell}}{f_1^2 f_4 f_{2\ell}}, \qquad f_k = \prod_{m \ge 1} (1 - q^{km}).$$
-The quotient is meaningful for $\ell \ge 1$, where the denominator has constant term $1$. For
-$\ell > 2$, the range the paper considers, $a_\ell(n)$ is the number of $\ell$-regular cubic
-partitions of $n$ in which the first occurrence of each distinct odd part may be overlined; for
-example, $a_3(5) = 18$.
-
-Source: Pujashree Buragohain and Nipen Saikia, *Some New Congruences for l-Regular Cubic
-Partitions with Odd Parts Overlined*, INTEGERS 24 (2024), Article A101, Section 1, eq. (2). -/
-public noncomputable def regularCubicOverlinedCount (l n : ℕ) : ℤ :=
-  coeff n (regularCubicOverlinedSeries l)
-
-/-- **Generating function for $\ell$-regular cubic partitions with odd parts overlined.** Let
-$\ell \ge 1$, write $f_k = \prod_{m \ge 1} (1 - q^{km})$ for the Euler products in the ring of
-integer power series in $q$, and let $a_\ell(n)$ be the $n$th coefficient of
-$f_2 f_\ell^2 f_{4\ell} / (f_1^2 f_4 f_{2\ell})$ (the denominator has constant term $1$, so it
-is invertible). Then
-$$
-f_1^2 f_4 f_{2\ell} \sum_{n \ge 0} a_\ell(n) q^n = f_2 f_\ell^2 f_{4\ell}.
-$$
-
-For $\ell > 2$ the paper identifies $a_\ell(n)$ with the number of $\ell$-regular cubic
-partitions of $n$ with odd parts overlined.
-
-Source: Pujashree Buragohain and Nipen Saikia, *Some New Congruences for l-Regular Cubic
-Partitions with Odd Parts Overlined*, INTEGERS 24 (2024), Article A101, Section 1, eq. (2). -/
-public theorem regularCubicOverlinedCount_generatingFunction {l : ℕ} (hl : 1 ≤ l) :
-    𝔣 1 ^ 2 * 𝔣 4 * 𝔣 (2 * l) * PowerSeries.mk (regularCubicOverlinedCount l) =
-      𝔣 2 * 𝔣 l ^ 2 * 𝔣 (4 * l) := by
-  have hmk : PowerSeries.mk (regularCubicOverlinedCount l) = regularCubicOverlinedSeries l := by
-    ext n
-    simp [regularCubicOverlinedCount]
-  have hc : constantCoeff (𝔣 1 ^ 2 * 𝔣 4 * 𝔣 (2 * l)) = ((1 : ℤˣ) : ℤ) := by
-    simp [constantCoeff_qEulerProduct (le_refl 1),
-      constantCoeff_qEulerProduct (by norm_num : 1 ≤ 4),
-      constantCoeff_qEulerProduct (by omega : 1 ≤ 2 * l)]
-  rw [hmk, regularCubicOverlinedSeries, mul_comm, mul_assoc, invOfUnit_mul _ _ hc, mul_one]
-
-/-- **Constant term of the overlined ℓ-regular cubic partition numbers.** For every natural number
-$\ell \ge 1$, the coefficient $a_\ell(0)$ of $q^0$ in the generating function of $\ell$-regular
-cubic partitions with odd parts overlined equals $1$.
-
-Source: Pujashree Buragohain and Nipen Saikia, *Some New Congruences for l-Regular Cubic
-Partitions with Odd Parts Overlined*, INTEGERS 24 (2024), Article A101, Section 1, eq. (2). -/
-public theorem regularCubicOverlinedCount_zero {l : ℕ} (hl : 1 ≤ l) :
-    regularCubicOverlinedCount l 0 = 1 := by
-  have h := congrArg (coeff 0) (regularCubicOverlinedCount_generatingFunction hl)
-  simp only [coeff_zero_eq_constantCoeff, map_mul, map_pow,
-    constantCoeff_qEulerProduct (le_refl 1), constantCoeff_qEulerProduct (by norm_num : 1 ≤ 2),
-    constantCoeff_qEulerProduct (by norm_num : 1 ≤ 4), constantCoeff_qEulerProduct hl,
-    constantCoeff_qEulerProduct (by omega : 1 ≤ 2 * l),
-    constantCoeff_qEulerProduct (by omega : 1 ≤ 4 * l), one_pow, one_mul, mul_one] at h
-  simpa using h
 
 /-- **Four 2-dissections of quotients of Euler products.** Write
 $f_k = \prod_{m \ge 1} (1 - q^{km})$ for the Euler products in the ring of integer power series
@@ -150,11 +81,10 @@ public theorem_wanted f3_f5_quotients_two_dissection :
       𝔣 1 * 𝔣 4 * 𝔣 8 * 𝔣 10 ^ 3 * 𝔣 40 =
         𝔣 5 * (𝔣 2 * 𝔣 8 ^ 2 * 𝔣 20 ^ 3 - X * 𝔣 4 ^ 3 * 𝔣 10 * 𝔣 40 ^ 2)
 
-/-- **Congruences modulo 4 for regular cubic partitions with odd parts overlined.** Write
+/-- **Congruences modulo 4 for coefficients of the regular cubic Euler quotient.** Write
 $f_k = \prod_{m \ge 1} (1 - q^{km})$ for the Euler products in the ring of integer power series
 in $q$. For $\ell \ge 1$ let $a_\ell(n)$ be the $n$th coefficient of
-$f_2 f_\ell^2 f_{4\ell} / (f_1^2 f_4 f_{2\ell})$; for $\ell > 2$ this is the number of
-$\ell$-regular cubic partitions of $n$ with odd parts overlined. Then for all natural numbers
+$f_2 f_\ell^2 f_{4\ell} / (f_1^2 f_4 f_{2\ell})$ in Eq. (2). Then for all natural numbers
 $k$ and $n$: (i) if $k > 1$, then $4$ divides $a_{2k}(4n + 3)$; (ii) if $k \ge 1$, then $4$
 divides $a_{2k+1}(4n + 2)$; (iii) if $k > 0$, then $4$ divides $a_{4k}(4n + 2)$; (iv) if
 $k > 0$, then $4$ divides $a_{4k+1}(4n + 3)$.
@@ -225,34 +155,8 @@ public theorem_wanted regularCubicOverlinedCount_three_prime_mod_six (p : ℕ) [
         regularCubicOverlinedCount 3 (8 * p ^ (2 * δ + 2) * n + 8 * p ^ (2 * δ + 1) * t +
           (4 * p ^ (2 * δ + 2) - 1) / 3) ≡ 0 [ZMOD 6]
 
-/-- **Congruences modulo 4 for 4-regular cubic partitions with odd parts overlined.** Write
-$f_k = \prod_{m \ge 1} (1 - q^{km})$ for the Euler products in the ring of integer power series
-in $q$, and $a_4(n)$ for the $n$th coefficient of $f_2 f_4^2 f_{16} / (f_1^2 f_4 f_8)$, the
-number of $4$-regular cubic partitions of $n$ with odd parts overlined. Let $p \ge 5$ be a prime
-with Legendre symbol $\left(\frac{-2}{p}\right) = -1$ and let $\delta \ge 0$. Then for every
-$n \ge 0$, $a_4(4p^{2\delta} n + (3p^{2\delta} - 1)/2)$ is congruent modulo $4$ to twice the
-coefficient of $q^n$ in $f_1 f_8$, and for all $n \ge 0$ and $1 \le t \le p - 1$,
-$$
-a_4\left(4p^{2\delta+2} n + 4p^{2\delta+1} t + \frac{3p^{2\delta+2} - 1}{2}\right) \equiv 0
-\pmod{4}.
-$$
-
-The divisions by $2$ are exact.
-
-Source: Pujashree Buragohain and Nipen Saikia, *Some New Congruences for l-Regular Cubic
-Partitions with Odd Parts Overlined*, INTEGERS 24 (2024), Article A101, Theorem 8, eq. (49)
-and the unnumbered congruence after it (`integers-2024-A101-thm-8`). -/
-public theorem_wanted regularCubicOverlinedCount_four_prime_mod_four (p : ℕ) [Fact p.Prime]
-    (hp : 5 ≤ p) (hleg : legendreSym p (-2) = -1) (δ : ℕ) :
-    (∀ n : ℕ, regularCubicOverlinedCount 4 (4 * p ^ (2 * δ) * n + (3 * p ^ (2 * δ) - 1) / 2) ≡
-        2 * coeff n (𝔣 1 * 𝔣 8) [ZMOD 4]) ∧
-      ∀ n t : ℕ, 1 ≤ t → t ≤ p - 1 →
-        regularCubicOverlinedCount 4 (4 * p ^ (2 * δ + 2) * n + 4 * p ^ (2 * δ + 1) * t +
-          (3 * p ^ (2 * δ + 2) - 1) / 2) ≡ 0 [ZMOD 4]
-
-/-- **Congruences modulo 8, 56 and 24 for 4-regular cubic partitions with odd parts overlined.**
-Let $a_4(n)$ be the number of $4$-regular cubic partitions of $n$ with odd parts overlined, that
-is, the $n$th coefficient of $f_2 f_4^2 f_{16} / (f_1^2 f_4 f_8)$, where
+/-- **Congruences modulo 8, 56 and 24 for the regular cubic Euler quotient at $\ell=4$.**
+Let $a_4(n)$ be the $n$th coefficient of $f_2 f_4^2 f_{16} / (f_1^2 f_4 f_8)$, where
 $f_k = \prod_{m \ge 1} (1 - q^{km})$. Then for every $n \ge 0$, $8$ divides $a_4(4n + 3)$, $56$
 divides $a_4(28n + 4j + 3)$ for each $j = 1, \ldots, 6$, and $24$ divides $a_4(36n + 19)$.
 
@@ -360,10 +264,10 @@ public theorem_wanted regularCubicOverlinedCount_five_prime_mod_four (p : ℕ) [
         regularCubicOverlinedCount 5 (16 * p ^ (2 * δ + 2) * n + 16 * p ^ (2 * δ + 1) * t +
           (122 * p ^ (2 * δ + 2) - 2) / 3) ≡ 0 [ZMOD 4]
 
-/-- **Congruences modulo 4 and 8 for 8-regular cubic partitions with odd parts overlined.** Write
+/-- **Congruences modulo 4 and 8 for the regular cubic Euler quotient at $\ell=8$.** Write
 $f_k = \prod_{m \ge 1} (1 - q^{km})$ for the Euler products in the ring of integer power series
-in $q$, and $a_8(n)$ for the $n$th coefficient of $f_2 f_8^2 f_{32} / (f_1^2 f_4 f_{16})$, the
-number of $8$-regular cubic partitions of $n$ with odd parts overlined. Let $p \ge 5$ be a prime
+in $q$, and $a_8(n)$ for the $n$th coefficient of $f_2 f_8^2 f_{32} / (f_1^2 f_4 f_{16})$
+in Eq. (2). Let $p \ge 5$ be a prime
 with Legendre symbol $\left(\frac{-3}{p}\right) = -1$, let $s = (p - 1)/6$ if $p \equiv 1 \pmod 6$
 and $s = (-p - 1)/6$ otherwise, and let $\delta \ge 0$. Then, comparing coefficients of power
 series in $q$,
@@ -409,10 +313,10 @@ public theorem_wanted regularCubicOverlinedCount_eight_prime_mod_four_eight (p :
         regularCubicOverlinedCount 8 (4 * p ^ (2 * δ + 2) * n + 4 * p ^ (2 * δ + 1) * t +
           (19 * p ^ (2 * δ + 2) - 7) / 6) ≡ 0 [ZMOD 8]
 
-/-- **Congruences modulo 16 for 8-regular cubic partitions with odd parts overlined.** Write
+/-- **Congruences modulo 16 for the regular cubic Euler quotient at $\ell=8$.** Write
 $f_k = \prod_{m \ge 1} (1 - q^{km})$ for the Euler products in the ring of integer power series
-in $q$, and $a_8(n)$ for the $n$th coefficient of $f_2 f_8^2 f_{32} / (f_1^2 f_4 f_{16})$, the
-number of $8$-regular cubic partitions of $n$ with odd parts overlined. Let $p \ge 5$ be a prime
+in $q$, and $a_8(n)$ for the $n$th coefficient of $f_2 f_8^2 f_{32} / (f_1^2 f_4 f_{16})$
+in Eq. (2). Let $p \ge 5$ be a prime
 with Legendre symbol $\left(\frac{-6}{p}\right) = -1$, let $s = (p - 1)/6$ if $p \equiv 1 \pmod 6$
 and $s = (-p - 1)/6$ otherwise, and let $\delta \ge 0$. Then, comparing coefficients of power
 series in $q$,
@@ -475,9 +379,9 @@ eq. (118) (`integers-2024-A101-cor-4`). -/
 public theorem_wanted regularCubicOverlinedCount_nine_four_mul_add_three (n : ℕ) :
     (8 : ℤ) ∣ regularCubicOverlinedCount 9 (4 * n + 3)
 
-/-- **Congruences modulo 16 for 16-regular cubic partitions with odd parts overlined.** Let
-$a_{16}(n)$ be the number of $16$-regular cubic partitions of $n$ with odd parts overlined, and
-let $f_k = \prod_{m \ge 1} (1 - q^{km})$. Let $p \ge 5$ be a prime with Legendre symbol
+/-- **Congruences modulo 16 for the regular cubic Euler quotient at $\ell=16$.** Let
+$a_{16}(n)$ be the $n$th coefficient of $f_2 f_{16}^2 f_{64} / (f_1^2 f_4 f_{32})$ in Eq. (2),
+where $f_k = \prod_{m \ge 1} (1 - q^{km})$. Let $p \ge 5$ be a prime with Legendre symbol
 $\left(\frac{-2}{p}\right) = -1$, and let $\delta \ge 0$. Then for every $n \ge 0$,
 $$a_{16}\left(4p^{2\delta} n + \frac{11p^{2\delta} - 5}{2}\right) \equiv 8c_n \pmod{16},$$
 where $c_n$ is the coefficient of $q^n$ in $f_1 f_{32}$, and for all $n \ge 0$ and all $t$ with

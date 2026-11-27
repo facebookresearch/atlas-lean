@@ -15,19 +15,13 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.Data.Finset.Card
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Order.Filter.AtTopBot.Basic
+public import MathlibExt.Combinatorics.Additive.SumFreeFinset
 
 @[expose] public section
 
 namespace MathlibExt.Combinatorics.GreenProblem1LargeSumFreeWanted
 
 /-! Source record `GREEN-001__92`. -/
-
-/-- **Sum-free sets of natural numbers.** A finite set $S$ of natural numbers is sum-free if
-$x + y \notin S$ for all $x, y \in S$, where $x = y$ is allowed.
-
-Source: [GREEN-001]. -/
-def IsSumFree (s : Finset ℕ) : Prop :=
-  ∀ x ∈ s, ∀ y ∈ s, x + y ∉ s
 
 /-- **Green's Problem 1 on large sum-free subsets.** The statement that there is a function
 $\omega$ from the natural numbers to the real numbers with $\omega(n) \to \infty$ as

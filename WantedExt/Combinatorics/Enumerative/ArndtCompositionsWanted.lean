@@ -41,6 +41,7 @@ public import Mathlib.RingTheory.MvPowerSeries.Substitution
 public import Mathlib.RingTheory.PowerSeries.Basic
 public import MathlibExt.Combinatorics.Enumerative.ArndtCompositions
 public import MathlibExt.Combinatorics.Enumerative.ArndtSmallPartCounts
+public import MathlibExt.Combinatorics.Enumerative.ArndtSumProd
 public import MathlibExt.Combinatorics.Enumerative.ColoredArndt
 public import MathlibExt.Combinatorics.Enumerative.NarayanaSequence
 public import MathlibExt.NumberTheory.PadovanSequence
@@ -120,28 +121,6 @@ public theorem_wanted arndtGF_univ_mul :
           PowerSeries.C (Polynomial.X ^ 2) * PowerSeries.X ^ 3) =
       (1 - PowerSeries.X + PowerSeries.C Polynomial.X * PowerSeries.X) *
         (1 - PowerSeries.X ^ 2)
-
-/-- **Arndt compositions with a given number of parts as a sum of products.** For all natural
-numbers $n$ and $\ell$, the number of Arndt compositions of $n$ with $2\ell$ parts is
-$$\sum_{(a_1, \dots, a_\ell)} \prod_{i=1}^{\ell} \left\lfloor \frac{a_i - 1}{2} \right\rfloor,$$
-the sum running over the $\ell$-tuples of natural numbers with $a_1 + \dots + a_\ell = n$ and
-every $a_i \ge 3$; and the number of Arndt compositions of $n$ with $2\ell + 1$ parts is the same
-sum of products $\prod_{i=1}^{\ell} \lfloor (a_i - 1)/2 \rfloor$, now running over the
-$(\ell + 1)$-tuples $(a_1, \dots, a_{\ell+1})$ of natural numbers with
-$a_1 + \dots + a_{\ell+1} = n$, $a_1, \dots, a_\ell \ge 3$ and $a_{\ell+1} \ge 1$.
-
-Source: Mohammed L. Nadji, Moussa Ahmia, Daniel F. Checa, and José L. Ramírez, *Arndt
-Compositions with Restricted Parts, Palindromes, and Colored Variants*, Journal of Integer
-Sequences 28 (2025), Article 25.3.6, Theorem 10 (`jis-2025-25.3.6-thm-10`). -/
-public theorem_wanted arndtCompositionCount_eq_sum_prod (n ℓ : ℕ) :
-    arndtCompositionCount (fun _ => True) n (2 * ℓ) =
-        (∑ a ∈ (Finset.Nat.antidiagonalTuple ℓ n).filter (fun a => ∀ i, 3 ≤ a i),
-          ∏ i, (a i - 1) / 2) ∧
-      arndtCompositionCount (fun _ => True) n (2 * ℓ + 1) =
-        (∑ a ∈ (Finset.Nat.antidiagonalTuple (ℓ + 1) n).filter
-            (fun a => (∀ i : Fin ℓ, 3 ≤ a i.castSucc) ∧ 1 ≤ a (Fin.last ℓ)),
-          ∏ i : Fin ℓ, (a i.castSucc - 1) / 2)
-
 
 /-- **Arndt compositions with parts at most 3 and the Padovan numbers.** For every $n \ge 0$, the
 number of Arndt compositions of $n$ (compositions $(\sigma_1, \dots, \sigma_k)$ with
