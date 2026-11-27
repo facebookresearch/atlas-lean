@@ -1,0 +1,28 @@
+# Petri nets
+
+Place/transition Petri nets and vector addition systems: reachability, boundedness and liveness, the coverability tree, the complexity of covering, boundedness and reachability, linear-algebraic invariants, and the structure theory of state machines, marked graphs and free-choice nets.
+
+- [Place/transition Petri nets](place-transition-petri-nets.md)
+- [Reachability set and reachability graph](reachability-set-and-reachability-graph.md)
+- [Boundedness and safeness of Petri nets](boundedness-and-safeness.md)
+- [Liveness and deadlock-freedom of Petri nets](liveness-and-deadlock-freedom.md)
+- [Vector addition systems](vector-addition-systems.md)
+- [Unbounded vector addition systems have self-covering paths](unbounded-vector-addition-systems-have-self-covering-paths.md)
+- [Boundedness of Petri nets is decidable](boundedness-is-decidable.md)
+- [Rackoff's exponential-space bound for covering and boundedness](rackoff-s-exponential-space-bound.md)
+- [Lipton's exponential-space lower bound](lipton-s-exponential-space-lower-bound.md)
+- [Reachability in Petri nets is decidable](reachability-is-decidable.md)
+- [Problems recursively equivalent to Petri-net reachability](problems-equivalent-to-reachability.md)
+- [Decision procedures for Petri nets](decision-procedures/README.md)
+- [The state equation of a Petri net](state-equation.md)
+- [S-invariants of a Petri net](s-invariants.md)
+- [Structural boundedness of Petri nets](structural-boundedness.md)
+- [Linear invariants, siphons and traps](invariants-siphons-and-traps/README.md)
+- [State machines, marked graphs and free-choice nets](subclasses-of-petri-nets.md)
+- [Liveness and safeness of state machines](liveness-of-state-machines.md)
+- [Token count on circuits of a marked graph is invariant](token-count-on-circuits-of-marked-graphs.md)
+- [Liveness of marked graphs](liveness-of-marked-graphs.md)
+- [Safeness of live marked graphs](safeness-of-live-marked-graphs.md)
+- [Siphons and traps](siphons-and-traps.md)
+- [Commoner's theorem for free-choice nets](commoner-s-theorem.md)
+- [Structure theory of state machines, marked graphs and free-choice nets](state-machines-marked-graphs-and-free-choice-nets/README.md)

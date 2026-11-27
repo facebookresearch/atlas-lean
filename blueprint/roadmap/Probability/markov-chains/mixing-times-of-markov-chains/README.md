@@ -17,6 +17,10 @@
 - [A Poincaré inequality makes a lazy reversible chain contract mean-zero functions](sum-mul-sq-mul-vec-le-of-poincare.md)
 - [Mixing from a Poincaré inequality, for a lazy reversible chain](sq-two-mul-tv-dist-pow-le.md)
 - [A Poincaré inequality bounds the mixing time of the lazy chain](is-mixed-at-of-poincare.md)
+- [Markov chains: contraction of total variation](markov-chains-contraction-of-total-variation/README.md)
+- [Path coupling](path-coupling/README.md)
+- [Glauber dynamics for proper colorings](glauber-dynamics-for-proper-colorings/README.md)
+- [Iterating a variance contraction](variance-iterate-le.md)
 
 ## Related topics
 
