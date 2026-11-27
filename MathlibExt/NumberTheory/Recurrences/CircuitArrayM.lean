@@ -69,7 +69,14 @@ theorem circuitArrayM_diagonal :
 
 namespace circuitArrayM_row_one
 
-private theorem front_nonsingular (k : ℕ) : 1 - circuitVar 1 ≠ 3 * 9 ^ k := by
+/-- **The row-one front value is nonsingular.** For every natural number $k$, the element
+$1 - X_1$ of the field of rational functions over $\mathbb{Q}$ in the variables $X_0, X_1, \dots$
+is not equal to $3 \cdot 9^k$.
+
+Source: Emily J. Evans and Russell Jay Hendel, *Recursions and Characteristic Polynomials of the
+Rows of the Circuit Array*, Fibonacci Quarterly 62 (2024), Article 62-4/hendel08232024rev2,
+Definition 2.5. -/
+theorem front_nonsingular (k : ℕ) : 1 - circuitVar 1 ≠ 3 * 9 ^ k := by
   intro h
   have hp : 1 - MvPolynomial.X 1 = (3 : MvPolynomial ℕ ℚ) * 9 ^ k := by
     apply IsFractionRing.injective (MvPolynomial ℕ ℚ) (FractionRing (MvPolynomial ℕ ℚ))
@@ -77,7 +84,15 @@ private theorem front_nonsingular (k : ℕ) : 1 - circuitVar 1 ≠ 3 * 9 ^ k := 
   have he := congrArg (MvPolynomial.eval (fun _ => (1 : ℚ))) hp
   simp at he
 
-private theorem rightEdge_value {K : Type*} [Field K] [CharZero K] (x q : K)
+/-- **Right edge on the left front.** Let $K$ be a field of characteristic zero and let
+$x, q \in K$ with $q \ne 0$ and $x + 3q - 1 \ne 0$. Then the wye-delta value
+`circuitY` of the delta-wye values $\Delta(1, 1, 1)$, $\Delta(1, 1, 1 - (1 - x)/q)$ and
+$\Delta(1, 1, 1)$ is $(9q - 1 + x)/(3(x + 3q - 1))$.
+
+Source: Emily J. Evans and Russell Jay Hendel, *Recursions and Characteristic Polynomials of the
+Rows of the Circuit Array*, Fibonacci Quarterly 62 (2024), Article 62-4/hendel08232024rev2,
+Section 2 and the proof of Corollary 4.10. -/
+theorem rightEdge_value {K : Type*} [Field K] [CharZero K] (x q : K)
     (hq : q ≠ 0) (hd : x + 3 * q - 1 ≠ 0) :
     circuitY (circuitDelta 1 1 1) (circuitDelta 1 1 (1 - (1 - x) / q)) (circuitDelta 1 1 1) =
       (9 * q - 1 + x) / (3 * (x + 3 * q - 1)) := by
