@@ -17,6 +17,7 @@ public import Mathlib.RingTheory.Localization.FractionRing
 public import Mathlib.RingTheory.Polynomial.Basic
 public import MathlibExt.NumberTheory.Recurrences.CircuitArray
 public import MathlibExt.NumberTheory.Recurrences.CircuitArrayM
+public import MathlibExt.NumberTheory.Recurrences.CircuitArrayMRowZero
 public import MathlibExt.NumberTheory.Recurrences.CircuitArrayRecursionsCircuitArrayMRowTwo
 
 /-!
@@ -137,16 +138,6 @@ public theorem_wanted circuitArrayX_row_two (s : ℕ) (hs : 2 ≤ s) :
       ((27 * 9 ^ ((s : ℤ) - 3) - 1) - 24 * (2 * (s : RatFunc ℚ) - 3) * 9 ^ ((s : ℤ) - 3) * RatFunc.X +
           (81 * 81 ^ ((s : ℤ) - 3) - 3 * 9 ^ ((s : ℤ) - 3)) * RatFunc.X ^ 2) /
         (9 ^ ((s : ℤ) - 2) * RatFunc.X - 1) ^ 2
-
-/-- **Row 0 of the multivariable circuit array.** Let $C^M$ be the multivariable circuit array, with
-values in the field of rational functions over $\mathbb{Q}$ in the variables $X_0, X_1, \dots$.
-For every integer $s \ge 1$, $C^M_{0,s} = (9^{s-1} - 1 + X_1)/9^{s-1}$.
-
-Source: Emily J. Evans and Russell Jay Hendel, *Recursions and Characteristic Polynomials of the
-Rows of the Circuit Array*, Fibonacci Quarterly 62 (2024), Article 62-4/hendel08232024rev2,
-Corollary 4.8 (`fq-2024-hendel08232024rev2-cor-4.8`). -/
-public theorem_wanted circuitArrayM_row_zero (s : ℕ) (hs : 1 ≤ s) :
-    circuitArrayM 0 s = (9 ^ (s - 1) - 1 + circuitVar 1) / 9 ^ (s - 1)
 
 end
 
