@@ -2,7 +2,6 @@
 
 Lamport one-time signatures, Schnorr identification and Sigma protocols, and zero-knowledge proofs, among them the protocols for graph isomorphism and quadratic residuosity.
 
-- [BGW secret sharing and protocol correctness](bgw-secret-sharing-and-protocol-correctness/README.md)
 - [Commitment schemes](commitment-schemes/README.md)
 - [Lamport signature](lamport-signature/README.md)
 - [Merkle signature scheme](merkle-signature-scheme/README.md)
