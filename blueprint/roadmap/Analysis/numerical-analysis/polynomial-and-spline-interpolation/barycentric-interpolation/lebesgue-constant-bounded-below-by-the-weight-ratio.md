@@ -1,6 +1,6 @@
 # The Lebesgue constant is bounded below by the ratio of the barycentric weights
 
-Let $x_0, \dots, x_n$ be distinct nodes in $[a, b]$ with [barycentric weights](barycentric-weights.md) $w_j$, and let $\Lambda_n = \max_{x \in [a, b]} \sum_{j=0}^n |\ell_j(x)|$ be the Lebesgue constant, the norm on $C[a, b]$ of the map that sends $f$ to its interpolating polynomial, where $\ell_j$ are the Lagrange basis polynomials. Then
+Let $n \ge 1$, let $a < b$, and let $x_0, \dots, x_n$ be distinct nodes in $[a, b]$ with [barycentric weights](barycentric-weights.md) $w_j$, and let $\Lambda_n = \max_{x \in [a, b]} \sum_{j=0}^n |\ell_j(x)|$ be the Lebesgue constant, the norm on $C[a, b]$ of the map that sends $f$ to its interpolating polynomial, where $\ell_j$ are the Lagrange basis polynomials. Then
 
 $$\Lambda_n \ge \frac{1}{2n^2}\, \frac{\max_j |w_j|}{\min_j |w_j|} .$$
 

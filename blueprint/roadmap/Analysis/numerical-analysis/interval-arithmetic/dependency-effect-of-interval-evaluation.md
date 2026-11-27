@@ -4,7 +4,7 @@ When a variable occurs more than once in an expression, [interval evaluation](in
 
 $$E(I) = [a, b] - [a, b] = [a - b,\ b - a] \supsetneq \{0\},$$
 
-so the enclosure has width $2(b - a)$ while the range is a point. Rewriting an expression so that each variable occurs once removes the effect, by [exactness for single occurrences](interval-evaluation-is-exact-for-single-occurrences.md).
+so the enclosure has width $2(b - a)$ while the range is a point.
 
 ## Depends on
 
@@ -14,8 +14,7 @@ so the enclosure has width $2(b - a)$ while the range is a point. Rewriting an e
 ## Related topics
 
 - [Interval evaluation encloses the range](interval-evaluation-encloses-the-range.md)
-- [Interval evaluation is exact when each variable occurs once](interval-evaluation-is-exact-for-single-occurrences.md)
 
 ## Sources
 
-- M. H. van Emden and B. Moa, *The fundamental theorems of interval analysis*, arXiv:cs/0701141v2, 2009, Section 1, the remark after display (1) that the enclosing interval is typically considerably wider than the range, and Section 4, where the occurrences of a variable shared between subexpressions are tracked by the distribution function. <https://arxiv.org/abs/cs/0701141>
+- T. Hickey, Q. Ju and M. H. van Emden, "Interval arithmetic: from principles to implementation", *Journal of the ACM* 48(5):1038–1068, 2001, Section 1: the main cause of wide intervals is that interval arithmetic does not identify different occurrences of the same variable, and treats them as if they were unique occurrences. <https://doi.org/10.1145/502102.502106>

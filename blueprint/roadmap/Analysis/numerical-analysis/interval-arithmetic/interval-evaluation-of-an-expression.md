@@ -9,4 +9,4 @@ Let $e$ be an arithmetic expression built from variables $x_1, \dots, x_n$, each
 
 ## Sources
 
-- M. H. van Emden and B. Moa, *The fundamental theorems of interval analysis*, arXiv:cs/0701141v2, 2009, Section 4, Definitions 8–11 (variable sequences, distribution functions, interpretations, and the function computed by an expression under an interpretation, here the interpretation by interval operations). <https://arxiv.org/abs/cs/0701141>
+- T. Hickey, Q. Ju and M. H. van Emden, "Interval arithmetic: from principles to implementation", *Journal of the ACM* 48(5):1038–1068, 2001, Section 3, the evaluation $E|V$ of an expression $E$ in an environment $V$ that assigns values to its variables and functions to its function symbols, with intervals for the variables and the interval operations for the function symbols. <https://doi.org/10.1145/502102.502106>

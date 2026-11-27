@@ -1,15 +1,10 @@
 # First barycentric formula
 
-Let $x_0, \dots, x_n$ be distinct nodes with node polynomial $\ell$ and [barycentric weights](barycentric-weights.md) $w_j$, and let $p$ be the polynomial of degree at most $n$ with $p(x_j) = f_j$ for all $j$. Then for every $x$ that is not a node
+Let $F$ be a field, $s$ a finite set of indices, $v : s \to F$ the nodes and $r : s \to F$ the values, let $p = \sum_{i \in s} r_i L_i$ be the Lagrange interpolant with the Lagrange basis polynomials $L_i$ of the nodes, let $\ell(x) = \prod_{i \in s}(x - v_i)$ be the node polynomial and $w_i$ the [barycentric weights](barycentric-weights.md). Then for every $x \in F$ that is not a node
 
-$$p(x) = \ell(x) \sum_{j=0}^n \frac{w_j}{x - x_j}\, f_j .$$
+$$p(x) = \ell(x) \sum_{i \in s} \frac{w_i}{x - v_i}\, r_i .$$
 
-This is the Lagrange formula with the common factor $\ell(x)$ taken out of the basis polynomials $\ell_j(x) = \ell(x)\, w_j/(x - x_j)$; it evaluates $p(x)$ in $O(n)$ operations once the weights are known.
-
-## Depends on
-
-- [Barycentric weights](barycentric-weights.md)
-- [Lagrange interpolation](../../../approximation-theory/lagrange-interpolation/eval-interpolant.md)
+For distinct real nodes $p$ is the polynomial of degree at most $|s| - 1$ with $p(v_i) = r_i$.
 
 ## Sources
 

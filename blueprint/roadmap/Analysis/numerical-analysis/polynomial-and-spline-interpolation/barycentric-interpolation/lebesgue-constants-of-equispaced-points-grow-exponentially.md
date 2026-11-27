@@ -1,10 +1,14 @@
 # Lebesgue constants of equispaced points grow exponentially
 
-For the $n + 1$ equispaced nodes $x_j = a + j(b - a)/n$ on $[a, b]$, the Lebesgue constant satisfies
+For $n \ge 1$, $a < b$ and the $n + 1$ equispaced nodes $x_j = a + j(b - a)/n$ on $[a, b]$, the Lebesgue constant $\Lambda_n = \max_{x \in [a, b]} \lambda(x)$, the maximum of the [Lebesgue function](../../../approximation-theory/lagrange-interpolation/lebesgue-function.md) $\lambda$ of these nodes, satisfies
 
 $$\Lambda_n \ge \frac{1}{2n^2}\binom{n}{\lfloor n/2 \rfloor},$$
 
 which grows like $2^n/n^{5/2}$. So polynomial interpolation in equispaced points is exponentially ill-conditioned, the source of the Runge phenomenon.
+
+## Depends on
+
+- [Lebesgue function](../../../approximation-theory/lagrange-interpolation/lebesgue-function.md)
 
 ## Proof depends on
 

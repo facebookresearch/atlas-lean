@@ -4,15 +4,12 @@ Let $a, b \in \mathbb{R}^n$ and let $\hat y$ be the value of $y = a^T b$ compute
 
 $$\hat y = (a + \Delta a)^T b = a^T (b + \Delta b), \qquad |\Delta a| \le \tilde\gamma_n(\lambda) |a|, \quad |\Delta b| \le \tilde\gamma_n(\lambda) |b|$$
 
-(componentwise), with probability at least $Q(\lambda, n) = 1 - n(1 - P(\lambda))$, where $\tilde\gamma_n$ and $P$ are as in the [probabilistic bound for products](probabilistic-bound-for-products-of-rounding-errors.md). The deterministic analysis gives the same statement with $\gamma_n = nu/(1 - nu)$ in place of $\tilde\gamma_n(\lambda) = \lambda\sqrt n\,u + O(u^2)$, and with certainty.
+(componentwise), with probability at least $Q(\lambda, n) = 1 - n(1 - P(\lambda))$, where $\tilde\gamma_n$ and $P$ are as in the [probabilistic bound for products](probabilistic-bound-for-products-of-rounding-errors.md). When $nu < 1$, the deterministic analysis gives the same statement with $\gamma_n = nu/(1 - nu)$ in place of $\tilde\gamma_n(\lambda) = \lambda\sqrt n\,u + O(u^2)$, and with certainty; the probabilistic statement needs no such condition.
 
 ## Depends on
 
 - [Probabilistic model of rounding errors](probabilistic-model-of-rounding-errors.md)
 - [Floating-point dot product](../dot-fl.md)
-
-## Proof depends on
-
 - [Probabilistic bound for products of rounding errors](probabilistic-bound-for-products-of-rounding-errors.md)
 
 ## Sources

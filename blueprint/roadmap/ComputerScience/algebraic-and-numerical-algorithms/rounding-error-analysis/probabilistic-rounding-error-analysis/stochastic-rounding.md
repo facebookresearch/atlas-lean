@@ -4,7 +4,7 @@ Let $F$ be a set of floating-point numbers. For a real $x$ in the range of $F$, 
 
 $$\mathrm{fl}(x) = \begin{cases} \lceil x \rceil & \text{with probability } p = (x - \lfloor x \rfloor)/(\lceil x \rceil - \lfloor x \rfloor), \\ \lfloor x \rfloor & \text{with probability } 1 - p, \end{cases}$$
 
-and $\mathrm{fl}(x) = x$ when $x \in F$. In a computation each operation is rounded this way, with fresh randomness. The rounded value satisfies $\mathrm{fl}(x) = x(1 + \delta)$ with $|\delta| \le 2u$, twice the bound for round to nearest. The other form, which rounds up or down with probability $1/2$ each, is not unbiased.
+and $\mathrm{fl}(x) = x$ when $x \in F$. In a computation each operation is rounded this way, with fresh randomness. If $F$ is the set of binary floating-point numbers of precision $t$ with unbounded exponent range, $u = 2^{-t}$, then the rounded value satisfies $\mathrm{fl}(x) = x(1 + \delta)$ with $|\delta| \le 2u$, twice the bound for round to nearest; in a format with bounded exponents the same holds for $x$ in the normal range, but not below it: for $x$ half the smallest positive subnormal number $\eta$, both outcomes $0$ and $\eta$ have $|\delta| = 1$. The other form, which rounds up or down with probability $1/2$ each, is not unbiased.
 
 ## Depends on
 

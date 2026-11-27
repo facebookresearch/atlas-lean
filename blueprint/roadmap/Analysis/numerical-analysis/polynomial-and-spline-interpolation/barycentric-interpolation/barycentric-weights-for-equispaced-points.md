@@ -1,6 +1,6 @@
 # Barycentric weights for equispaced points
 
-For the equispaced nodes $x_j = a + j(b - a)/n$, $j = 0, \dots, n$, on an interval $[a, b]$, the [barycentric weights](barycentric-weights.md) are a common factor times
+For $n \ge 1$ and the equispaced nodes $x_j = a + j(b - a)/n$, $j = 0, \dots, n$, on an interval $[a, b]$ with $a < b$, the [barycentric weights](barycentric-weights.md) are a common factor times
 
 $$w_j = (-1)^j \binom{n}{j},$$
 

@@ -8,4 +8,4 @@ Its *width* is $w([a,b]) = b - a$; a *point interval* $[a, a]$ has width $0$. In
 
 ## Sources
 
-- M. H. van Emden and B. Moa, *The fundamental theorems of interval analysis*, arXiv:cs/0701141v2, 2009, Section 3: intervals are the closed connected sets of reals, with the notations $[a, b]$ for $\{x \in \mathbb{R} \mid a \le x \le b\}$; this page keeps the bounded nonempty ones. <https://arxiv.org/abs/cs/0701141>
+- T. Hickey, Q. Ju and M. H. van Emden, "Interval arithmetic: from principles to implementation", *Journal of the ACM* 48(5):1038–1068, 2001, Section 2, Definition 2 (a real interval is a closed connected set of reals) and Theorem 1 (the closed connected sets of reals, of which the bounded nonempty ones are the sets $[a, b]$ with $a \le b$). <https://doi.org/10.1145/502102.502106>

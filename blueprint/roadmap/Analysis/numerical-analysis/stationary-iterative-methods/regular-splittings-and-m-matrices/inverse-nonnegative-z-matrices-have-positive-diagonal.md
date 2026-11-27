@@ -1,14 +1,16 @@
 # Inverse-nonnegative Z-matrices have positive diagonal
 
-Let $A$ be a real $n \times n$ matrix with $a_{ij} \le 0$ for $i \ne j$, nonsingular, with $A^{-1} \ge 0$ entrywise. Then $a_{ii} > 0$ for every $i$, so $A$ is an [M-matrix](m-matrix.md), and $\rho(I - D^{-1}A) < 1$ for its diagonal $D$. Condition 1 of the definition of an M-matrix is therefore implied by the other three.
+Let $A$ be a real $n \times n$ [Z-matrix](../../../../LinearAlgebra/special-matrices/m-matrices-and-hurwitz-stability/nonsingular-m-matrices/is-zmatrix.md), $a_{ij} \le 0$ for $i \ne j$, nonsingular, with $A^{-1} \ge 0$ entrywise. Then $a_{ii} > 0$ for every $i$, since $1 = (AA^{-1})_{ii} = a_{ii}(A^{-1})_{ii} + \sum_{j \ne i} a_{ij}(A^{-1})_{ji} \le a_{ii}(A^{-1})_{ii}$, and the [Jacobi iteration matrix](../jacobi-and-gauss-seidel-iteration-matrices.md) satisfies $\rho(I - D^{-1}A) < 1$ for the diagonal $D$ of $A$, since the Jacobi splitting is then regular.
 
 ## Depends on
 
-- [M-matrix](m-matrix.md)
+- [Z-matrix](../../../../LinearAlgebra/special-matrices/m-matrices-and-hurwitz-stability/nonsingular-m-matrices/is-zmatrix.md)
+- [Jacobi and Gauss–Seidel iteration matrices](../jacobi-and-gauss-seidel-iteration-matrices.md)
 
 ## Proof depends on
 
-- [M-matrices are characterized by their Jacobi iteration matrices](m-matrix-iff-jacobi-spectral-radius-below-one.md)
+- [Convergence of regular splittings](regular-splitting-convergence.md)
+- [Regular splitting](regular-splitting.md)
 
 ## Sources
 

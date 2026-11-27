@@ -6,7 +6,7 @@ $$Q = \begin{pmatrix} a_1 & a_3 & a_5 & \cdots & a_{2k-1} \\ a_0 & a_2 & a_4 & \
 
 Then every root of $q$ lies in the open left half-plane $\Re z < 0$ if and only if all leading principal minors of $Q$ are positive.
 
-Under the map $z = (r - 1)/(r + 1)$, which takes the open unit disc onto the open left half-plane, $(1 - z)^k \pi\big(\tfrac{1+z}{1-z}; \bar h\big)$ is, for real $\bar h$, a real polynomial whose roots lie in the left half-plane exactly when those of $\pi(\cdot\,; \bar h)$ lie in the unit disc; when it has degree $k$, multiplying it by $-1$ if necessary to make $a_0 > 0$, the criterion decides absolute stability of a linear multistep method.
+To decide absolute stability of a linear multistep method for a real $\bar h$, first check that the stability polynomial $\pi(\cdot\,; \bar h)$ has degree $k$ (otherwise the method is not absolutely stable for $\bar h$) and that $\pi(-1; \bar h) \ne 0$ (otherwise $-1$ is a root and the method is not absolutely stable). Then $q(z) = (1 - z)^k \pi\big(\tfrac{1+z}{1-z}; \bar h\big)$ is a real polynomial whose coefficient of $z^k$ is $(-1)^k \pi(-1; \bar h) \ne 0$, and under the map $z = (r - 1)/(r + 1)$, which takes the open unit disc onto the open left half-plane, its roots are the images of the roots of $\pi(\cdot\,; \bar h)$. So, after multiplying $q$ by $-1$ if necessary to make $a_0 > 0$, the criterion applied to $q$ decides absolute stability. The check at $-1$ is needed: explicit Euler at $\bar h = -2$ has $\pi(r) = r + 1$, which is not absolutely stable, while $q = 2$ is a constant.
 
 ## Depends on
 

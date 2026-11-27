@@ -1,6 +1,6 @@
 # Nonlinear stability of multistep methods
 
-Linear stability theory studies $y' = \lambda y$. For a nonlinear system $y' = f(y)$ whose vector field is dissipative, $\langle f(u) - f(v), u - v \rangle \le 0$, any two solutions approach each other. Dahlquist's G-stability asks the same of a multistep method: a G-stable one-leg method applied to a dissipative system produces numerical solutions that are contractive in a weighted norm on blocks of $k$ consecutive values, and the one-leg twin transfers the result to the linear multistep method.
+Linear stability theory studies $y' = \lambda y$. For a nonlinear system $y' = f(y)$ whose vector field is dissipative, $\langle f(u) - f(v), u - v \rangle \le 0$, the distance between any two solutions does not increase. Dahlquist's G-stability asks the same of a multistep method: a G-stable one-leg method applied to a dissipative system produces numerical solutions that are contractive in a weighted norm on blocks of $k$ consecutive values. The one-leg twin maps solutions of the one-leg method to solutions of the linear multistep method, but it does not carry that contractivity over.
 
 - [Contractive solutions](contractive-solutions.md)
 - [Dissipative system](dissipative-system.md)

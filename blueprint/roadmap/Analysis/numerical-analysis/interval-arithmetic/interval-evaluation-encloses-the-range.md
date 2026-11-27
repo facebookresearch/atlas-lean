@@ -17,4 +17,4 @@ This is the fundamental theorem of interval arithmetic: a computable interval co
 
 ## Sources
 
-- M. H. van Emden and B. Moa, *The fundamental theorems of interval analysis*, arXiv:cs/0701141v2, 2009, Section 1 (display (1), the enclosure property) and Section 4, Lemma 2 with its proof by induction on the depth of the expression, and the remark after it that in the case of reals and intervals the lemma plays the role of the fundamental theorem of interval arithmetic. <https://arxiv.org/abs/cs/0701141>
+- T. Hickey, Q. Ju and M. H. van Emden, "Interval arithmetic: from principles to implementation", *Journal of the ACM* 48(5):1038–1068, 2001, Section 3.1, the inclusion property and its attribution to Moore as the "Fundamental Theorem of Interval Arithmetic", and Section 3, Lemma 2 (if $E|V$ exists then $E|V \in E|\tilde V$ for the set-valued environment $\tilde V$). <https://doi.org/10.1145/502102.502106>

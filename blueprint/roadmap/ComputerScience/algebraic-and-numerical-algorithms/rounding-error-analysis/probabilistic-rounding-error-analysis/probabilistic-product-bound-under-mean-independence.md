@@ -4,7 +4,7 @@ Let $u \in (0, 1)$, let $\delta_1, \dots, \delta_n$ be random variables of mean 
 
 $$\prod_{i=1}^n (1 + \delta_i)^{\rho_i} = 1 + \theta_n, \qquad |\theta_n| \le \exp\Big(\frac{\lambda\sqrt n\,u + n u^2}{1 - u}\Big) - 1,$$
 
-with probability at least $1 - 2\exp(-\lambda^2/2)$. The partial sums $E_k = \sum_{i \le k} \rho_i \delta_i$ form a martingale with increments bounded by $u$, so the Azuma–Hoeffding inequality gives $|E_n| \le \lambda\sqrt n\,u$ with that probability. Since [stochastic rounding errors are mean independent](stochastic-rounding-errors-are-mean-independent.md), the bound holds for stochastic rounding with $u$ replaced by $2u$, without any modelling assumption.
+with probability at least $1 - 2\exp(-\lambda^2/2)$. The partial sums $E_k = \sum_{i \le k} \rho_i \delta_i$ form a martingale with increments bounded by $u$, so the Azuma–Hoeffding inequality gives $|E_n| \le \lambda\sqrt n\,u$ with that probability. Since [stochastic rounding errors are mean independent](stochastic-rounding-errors-are-mean-independent.md), the bound holds for stochastic rounding with $u$ replaced by $2u$, provided $2u < 1$ and every rounded result satisfies $|\delta| \le 2u$, as it does with unbounded exponents or when no result underflows or overflows; no further modelling assumption is needed.
 
 ## Depends on
 
