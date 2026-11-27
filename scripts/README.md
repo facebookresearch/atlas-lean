@@ -74,10 +74,11 @@ changed Lean files of the five production libraries once
   the declarations the change adds. A declaration counts as added when the change adds the line
   that declares it, below its docstring and attributes, and no declaration of that name is in the
   changed files at the base (for a private declaration, in its own file: in a `module` file that
-  includes the declarations outside a `public section` that are not marked `public`, and the
-  `where` and `let rec` helpers of a declaration that does not expose its body), so documenting,
-  tagging, editing or moving an existing declaration does not report it. A `theorem_wanted` or
-  `def_wanted` statement is not the declaration that proves it, so a proof's findings are reported;
+  includes the declarations outside a `public section` that are not marked `public`, the `where`
+  and `let rec` helpers of a declaration that does not expose its body, and those of an instance),
+  so documenting, tagging, editing or moving an existing declaration does not report it. A
+  `theorem_wanted` or `def_wanted` statement is not the declaration that proves it, so a proof's
+  findings are reported;
 - `scripts/check_text_linters.py`: Mathlib's `lint-style` errors on added lines, and the module
   names of added or renamed files.
 
