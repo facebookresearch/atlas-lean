@@ -13,8 +13,11 @@ when a cast goes between a more precise and a less precise type, the less precis
 
 The source states the hypothesis as "a subterm $\langle T \Leftarrow S \rangle^p\, s$ containing the only occurrences of $p$", which also admits occurrences inside $s$: with
 $N = \{x : \mathrm{Int} \mid x \ge 0\}$, the term $\langle N \Leftarrow N \rangle^p\, (\langle N \Leftarrow \mathrm{Int} \rangle^p\, (-4))$ has $N <: N$ at its outer cast and still reduces to $\Uparrow p$, from the inner
-subset test. The proof shows that the property of being *safe for $p$* (every cast labeled $p$ is a positive subtyping, every cast labeled $\bar p$ a negative one, and every
-subset test labeled $p$ succeeds) is preserved by reduction and that a term safe for $p$ does not step to $\Uparrow p$.
+subset test. The source proves the theorem by showing that the property of being *safe for $p$* (every cast labeled $p$ is a positive subtyping, every cast labeled
+$\bar p$ a negative one, and every subset test labeled $p$ succeeds; its Figure 7) is preserved by reduction and that a term safe for $p$ does not step to $\Uparrow p$. As
+printed, that relation is not preserved: it has no rule for the checked subset value $v_{\{x:B \mid t\}}$ that a successful test returns, it does not look inside the
+predicates of the target types of casts, which the cast rule for subset types then exposes as tests, and after that rule its encoding of $\mathrm{let}$ requires an open
+test to reduce to $\mathrm{true}$.
 
 The corresponding result for the cast calculus of the gradually typed λ-calculus is [the blame-subtyping theorem for the GTLC](blame-subtyping-theorem-for-the-gtlc.md).
 
@@ -26,6 +29,12 @@ The corresponding result for the cast calculus of the gradually typed λ-calculu
 
 - [Type safety of the blame calculus](type-safety-of-the-blame-calculus.md)
 - [Factoring subtyping into positive and negative subtyping](factoring-subtyping-into-positive-and-negative.md)
+
+## Expansion
+
+This page becomes ready once:
+
+- A safety invariant for the blame label that is preserved by reduction, covering checked subset values, the predicates in the target types of casts and the tests that are pending under a $\mathrm{let}$, with its progress property (proof prerequisite; not yet stated)
 
 ## Sources
 

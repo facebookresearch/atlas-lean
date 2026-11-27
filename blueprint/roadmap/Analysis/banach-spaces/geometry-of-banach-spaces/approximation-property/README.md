@@ -8,3 +8,6 @@
 - [Hilbert spaces with a Hilbert basis indexed by $\mathbb{N}$ have the approximation property](has-approximation-property-of-hilbert-ba.md)
 - [Mazur's Problem 153](scottish-book-problem153-claim.md)
 - [Negative answer to Mazur's Problem 153](mazur153-refuted.md)
+- [Cotype of a Banach space and its dual under the approximation property](cotype-of-a-space-and-its-dual-characterizes-k-convexity.md)
+- [Bounded approximation obstructions for discrete Lipschitz-free spaces](discrete-lipschitz-free-obstructions.md)
+- [Quantitative bounded-approximation renorming of real ℓ¹](quantitative-l-one-renorming.md)
