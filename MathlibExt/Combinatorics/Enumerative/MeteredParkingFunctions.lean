@@ -42,6 +42,94 @@ public def meteredOutcome (t n : ℕ) (prefs : List ℕ) : List (Option ℕ) :=
       (fun s => decide (s ∉ (out.drop (out.length - t)).filterMap id))])
     []
 
+private theorem foldl_append_singleton_suffix {α β : Type*} (next : List β → α → β)
+    (prefs : List α) (out : List β) :
+    ∃ tail, prefs.foldl (fun out a => out ++ [next out a]) out = out ++ tail ∧
+      tail.length = prefs.length := by
+  induction prefs generalizing out with
+  | nil => exact ⟨[], by simp, rfl⟩
+  | cons a prefs ih =>
+    obtain ⟨tail, h, hlen⟩ := ih (out ++ [next out a])
+    exact ⟨next out a :: tail, by simpa [List.append_assoc] using h, by simp [hlen]⟩
+
+private theorem getElem?_meteredOutcome {t n i : ℕ} (prefs : List ℕ) (hi : i < prefs.length) :
+    let out := meteredOutcome t n (prefs.take i)
+    (meteredOutcome t n prefs)[i]? = some ((List.range' prefs[i] (n - prefs[i])).find?
+      (fun s => decide (s ∉ (out.drop (out.length - t)).filterMap id))) := by
+  dsimp only
+  let out := meteredOutcome t n (prefs.take i)
+  let next (out : List (Option ℕ)) (a : ℕ) :=
+    (List.range' a (n - a)).find? (fun s => decide (s ∉ (out.drop (out.length - t)).filterMap id))
+  obtain ⟨tail, hout, hlen⟩ := foldl_append_singleton_suffix next (prefs.take i) []
+  have hi' : out.length = i := by
+    change out = [] ++ tail at hout
+    simpa [hout, List.length_take, Nat.min_eq_left (Nat.le_of_lt hi)] using hlen
+  have hsplit : (prefs.take i ++ [prefs[i]]) ++ prefs.drop (i + 1) = prefs := by
+    rw [← List.take_succ_eq_append_getElem hi, List.take_append_drop]
+  obtain ⟨rest, hrest, _⟩ :=
+    foldl_append_singleton_suffix next (prefs.drop (i + 1)) (out ++ [next out prefs[i]])
+  have hwhole : meteredOutcome t n prefs = (out ++ [next out prefs[i]]) ++ rest := by
+    conv_lhs => rw [← hsplit]
+    simp only [meteredOutcome, List.foldl_append, List.foldl_cons, List.foldl_nil]
+    exact hrest
+  change (meteredOutcome t n prefs)[i]? = some (next out prefs[i])
+  rw [hwhole, List.append_assoc, List.getElem?_append_right (by omega : out.length ≤ i),
+    show i - out.length = 0 by omega]
+  rfl
+
+/-- **Displacement bound in the metered scheme.** Let $t$, $m$, $n$ be natural numbers, let
+$f : \{0, \dots, m - 1\} \to \{0, \dots, n - 1\}$ be a preference function and let $i < m$ be a
+car. Under the $t$-metered parking scheme on $n$ spots, if car $i$ parks in spot $s$ then
+$s \le f(i) + t$, that is, its displacement is at most $t$; and if car $i$ fails to park then
+$f(i) + t \ge n$.
+
+In the source's one-based numbering, with preference $a_i = f(i) + 1$, a car that fails to park
+has $a_i \ge n - t + 1$.
+
+Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
+Functions*, INTEGERS 25 (2025), Article A73, Proposition 5 (`integers-2025-A73-prop-5`). -/
+public theorem meteredOutcome_displacement_le {m n t : ℕ} (f : Fin m → Fin n) (i : Fin m) :
+    (∀ s, (meteredOutcome t n (List.ofFn fun i => (f i : ℕ)))[(i : ℕ)]? = some (some s) →
+        s ≤ (f i : ℕ) + t) ∧
+      ((meteredOutcome t n (List.ofFn fun i => (f i : ℕ)))[(i : ℕ)]? = some none →
+        n ≤ (f i : ℕ) + t) := by
+  let a := (f i : ℕ)
+  let out := meteredOutcome t n ((List.ofFn fun i => (f i : ℕ)).take i)
+  let occupied := (out.drop (out.length - t)).filterMap id
+  let free (s : ℕ) := decide (s ∉ occupied)
+  have hentry : (meteredOutcome t n (List.ofFn fun i => (f i : ℕ)))[(i : ℕ)]? =
+      some ((List.range' a (n - a)).find? free) := by
+    simpa [a, out, occupied, free] using getElem?_meteredOutcome (t := t) (n := n)
+      (List.ofFn fun i => (f i : ℕ)) (i := (i : ℕ)) (by simp)
+  rw [hentry]
+  simp only [Option.some.injEq]
+  change (∀ s, (List.range' a (n - a)).find? free = some s → s ≤ a + t) ∧
+    ((List.range' a (n - a)).find? free = none → n ≤ a + t)
+  by_cases h : a + t < n
+  · -- If the first `t + 1` spots exist, at least one is free.
+    have hcap : occupied.length ≤ t :=
+      (List.length_filterMap_le id _).trans (by simp only [List.length_drop]; omega)
+    obtain ⟨s, hs⟩ : ∃ s, (List.range' a (t + 1)).find? free = some s := by
+      apply Option.ne_none_iff_exists'.mp
+      intro hnone
+      have hsub : List.range' a (t + 1) ⊆ occupied := by
+        intro x hx
+        simpa [free] using List.find?_eq_none.mp hnone x hx
+      have hlen := (List.nodup_range' 1).length_le_of_subset hsub
+      simp only [List.length_range'] at hlen
+      omega
+    have hpref : List.range' a (t + 1) <+: List.range' a (n - a) := by
+      refine ⟨List.range' (a + (t + 1)) (n - a - (t + 1)), ?_⟩
+      rw [List.range'_append_1, Nat.add_sub_of_le (by omega : t + 1 ≤ n - a)]
+    have hs' := hpref.find?_eq_some hs
+    have hmem := List.mem_range'_1.mp (List.mem_of_find?_eq_some hs)
+    simp only [hs', Option.some.injEq, reduceCtorEq, false_implies, and_true]
+    rintro _ rfl
+    omega
+  · refine ⟨fun s hs => ?_, fun _ => by omega⟩
+    have hmem := List.mem_range'_1.mp (List.mem_of_find?_eq_some hs)
+    omega
+
 /-- **A 1-metered example in which every car parks.** In the $1$-metered parking scheme on two
 spots $\{0, 1\}$, if three cars arrive all preferring spot $0$, then they park in spots $0$, $1$
 and $0$, in that order.

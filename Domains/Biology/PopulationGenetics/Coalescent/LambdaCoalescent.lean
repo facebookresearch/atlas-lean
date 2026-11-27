@@ -60,8 +60,8 @@ This file is about these rates; it does not construct the partition-valued proce
 * `eq_of_mergerRate_eq`: `Λ` is determined by its rates (indeed by the `λ_{k,k}`, which are
   the moments of `Λ`): the uniqueness half of Pitman's representation theorem. The existence
   half (every consistent family of nonnegative rates comes from some `Λ`, a Hausdorff moment
-  problem) is recorded as wanted in
-  `WantedExt.Biology.PopulationGenetics.Coalescent.LambdaCoalescentWanted`.
+  problem) is proved in
+  `MathlibExt.MeasureTheory.Measure.UnitIntervalMomentRepresentation`.
 
 ## References
 

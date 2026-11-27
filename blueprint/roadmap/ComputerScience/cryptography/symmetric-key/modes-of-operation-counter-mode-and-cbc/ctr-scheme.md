@@ -1,0 +1,3 @@
+# Counter mode
+
+Let $N > 0$, let the key space $K$ be finite and nonempty, let $Y$ be an additive commutative group, and let $F \colon K \to \mathbb{Z}/N \to Y$. Counter mode with $\ell$-block messages draws a key $k$ uniformly from $K$; to encrypt $m \in Y^\ell$ it draws an initial counter $\mathrm{ctr}$ uniformly from $\mathbb{Z}/N$ and outputs the [counter-mode encryption](ctr-encrypt.md) $(\mathrm{ctr}, \mathrm{keystream}(F(k, \cdot), \mathrm{ctr}) + m)$; it decrypts $(\mathrm{ctr}, c)$ to `some` $(c - \mathrm{keystream}(F(k, \cdot), \mathrm{ctr}))$, using the returned counter, so decryption never fails (Katz and Lindell, Section 3.6.2). The condition $N > 0$ makes $\mathbb{Z}/N$ finite, so that the uniform counter exists.
