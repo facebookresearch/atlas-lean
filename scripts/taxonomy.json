@@ -9402,7 +9402,6 @@
   "MathlibExt/Algebra/Lie/PoissonBracket": {"to": "Algebra/nonassociative-algebras", "title": "Poisson algebras and Poisson ideals"},
   "MathlibExt/Algebra/Lie/WittMultigradedDimension": {"to": "Algebra/nonassociative-algebras", "title": "Witt's formula for free Lie algebras"},
   "MathlibExt/Algebra/Lie/WittMultigradedValue": {"to": "Algebra/nonassociative-algebras", "title": "Witt's formula for free Lie algebras"},
-  "MathlibExt/Algebra/LocallyIntegerPolynomialCircuitCoeffDen": {"to": "RingTheory/ideals-and-constructions", "title": "Locally integer polynomial functions"},
   "MathlibExt/Algebra/Module/InvertibleRankOne": {"to": "RingTheory/modules", "title": "Invertible modules"},
   "MathlibExt/Algebra/Module/KaplanskyProjective": {"to": "RingTheory/modules", "title": "Kaplansky's theorem on projective modules over local rings"},
   "MathlibExt/Algebra/Module/QuillenSuslin": {"to": "RingTheory/modules", "title": "Quillen–Suslin theorem"},
