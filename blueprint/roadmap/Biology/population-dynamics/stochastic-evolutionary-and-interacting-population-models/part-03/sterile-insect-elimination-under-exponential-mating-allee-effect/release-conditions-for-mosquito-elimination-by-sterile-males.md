@@ -9,7 +9,13 @@ $$
 \end{aligned}
 $$
 
-Let $M_i^{\mathrm{crit}}$ be the critical constant sterile density above which the system with constant $M_i$ has no positive steady state, and let $\tau(M_i)$ denote the time needed, under constant density $M_i>M_i^{\mathrm{crit}}$, for the solution started at the wild equilibrium $\mathbf E_+$ to enter the basin of attraction of extinction.
+Let $M_i^{\mathrm{crit}}$ be the critical constant sterile density above which the system with constant $M_i$ has no positive steady state, and assume $M_i^{\mathrm{crit}}>0$, so that the system without releases ($M_i=0$) is bistable with wild equilibrium $\mathbf E_+(M_i=0)$ and with $\Sigma_-(M_i=0)$ the basin of $(0,0,0)$ (notation of the page this one depends on). For a constant density $M_i>M_i^{\mathrm{crit}}$, let $(E,M,F)$ solve the system with that constant $M_i$, started at $(E,M,F)(0)=\mathbf E_+(M_i=0)$, and let
+
+$$
+\tau(M_i) := \inf\{t\ge 0 : (E,M,F)(t)\in\Sigma_-(M_i=0)\}
+$$
+
+be the first time at which it enters the basin of extinction of the system without releases.
 
 **Theorem.**
 
