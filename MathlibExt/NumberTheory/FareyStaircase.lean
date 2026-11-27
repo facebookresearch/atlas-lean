@@ -23,8 +23,16 @@ import Mathlib.Analysis.SumIntegralComparisons
 
 The Farey staircase averages the lower rational approximations of a real number.
 Harmonic blocks in its zoomed form can be compared with the integral of the reciprocal.
-This comparison gives the logarithmic limit of the rescaled staircase increment.
+This comparison gives logarithmic limits for the zoom and the rescaled staircase increment.
 The dilation derivative of a differentiable function at `x` is `x * f' - f x`.
+
+## References
+
+* David Harry Richman, *Lower Rational Approximations and Farey Staircases*, INTEGERS 24
+  (2024), Article A37, pp. 1–18. Equations (2) and (4) define the staircases; the zoom limit is
+  Theorem 1 (Section 3.1, Equation (13) in the proof), using the harmonic comparison in Lemma 9.
+  Proposition 7 and Theorem 4 give the increment formulas, and Proposition 12 gives the
+  dilation derivative.
 -/
 
 namespace MetaMathlibExt
@@ -210,6 +218,29 @@ private theorem tendsto_block {r : ℝ} (hr : 0 < r) (hr₁ : r ≤ 1) :
 end tendsto_sq_mul_fareyStaircase_sub
 
 open Filter tendsto_sq_mul_fareyStaircase_sub in
+/-- **Limit of the Farey staircase zoomed at the origin.** Let $B_n$ be the zoomed Farey staircase
+of order $n$. For every real $x \ge 0$, $B_n(x) \to \sum_{k=1}^{\lfloor x \rfloor} \log(x/k)$ as
+$n \to \infty$.
+
+Source: David Harry Richman, *Lower Rational Approximations and Farey Staircases*, INTEGERS 24
+(2024), Article A37, Theorem 1 (`integers-2024-A37-thm-1`). -/
+public theorem tendsto_fareyZoom {x : ℝ} (hx : 0 ≤ x) :
+    Filter.Tendsto (fun n : ℕ => fareyZoom n x) Filter.atTop
+      (nhds (∑ k ∈ Finset.Icc 1 ⌊x⌋₊, Real.log (x / k))) := by
+  have hblocks : Tendsto
+      (fun n : ℕ => ∑ j ∈ Finset.Icc 1 ⌊x⌋₊, ∑ k ∈ Finset.Icc ⌈(j : ℝ) / x * n⌉₊ n, (1 / k : ℝ))
+      atTop (nhds (∑ j ∈ Finset.Icc 1 ⌊x⌋₊, Real.log (x / j))) := by
+    apply tendsto_finsetSum
+    intro j hj
+    have hj' : (0 : ℝ) < j := by exact_mod_cast (Finset.mem_Icc.mp hj).1
+    have hjx := (Nat.le_floor_iff hx).mp (Finset.mem_Icc.mp hj).2
+    have hx' := hj'.trans_le hjx
+    simpa only [inv_div] using tendsto_block (div_pos hj' hx') ((div_le_one hx').mpr hjx)
+  apply hblocks.congr'
+  filter_upwards [eventually_ge_atTop 1] with n hn
+  exact (zoom_eq_sum_blocks hx hn).symm
+
+open Filter in
 /-- **Limit of the rescaled Farey staircase increment.** Let $A_n$ be the Farey staircase of order
 $n$ and $D_n = A_n - A_{n-1}$. For every real $x \ge 0$,
 $n^2 D_n(x/n) \to \sum_{k=1}^{\lfloor x \rfloor} (1 - \log(x/k))$ as $n \to \infty$.
@@ -220,25 +251,16 @@ public theorem tendsto_sq_mul_fareyStaircase_sub {x : ℝ} (hx : 0 ≤ x) :
     Filter.Tendsto
       (fun n : ℕ => (n : ℝ) ^ 2 * (fareyStaircase n (x / n) - fareyStaircase (n - 1) (x / n)))
       Filter.atTop (nhds (∑ k ∈ Finset.Icc 1 ⌊x⌋₊, (1 - Real.log (x / k)))) := by
-  have hblocks : Tendsto
-      (fun n : ℕ => ∑ j ∈ Finset.Icc 1 ⌊x⌋₊, ∑ k ∈ Finset.Icc ⌈(j : ℝ) / x * n⌉₊ n, (1 / k : ℝ))
-      atTop (nhds (∑ j ∈ Finset.Icc 1 ⌊x⌋₊, Real.log (x / j))) := by
-    apply tendsto_finsetSum
-    intro j hj
-    have hj' : (0 : ℝ) < j := by exact_mod_cast (Finset.mem_Icc.mp hj).1
-    have hjx := (Nat.le_floor_iff hx).mp (Finset.mem_Icc.mp hj).2
-    have hx' := hj'.trans_le hjx
-    simpa only [inv_div] using tendsto_block (div_pos hj' hx') ((div_le_one hx').mpr hjx)
   have hlim := (tendsto_natCast_div_add_atTop (-1 : ℝ)).mul
-    ((tendsto_const_nhds (x := (⌊x⌋₊ : ℝ))).sub hblocks)
+    ((tendsto_const_nhds (x := (⌊x⌋₊ : ℝ))).sub (tendsto_fareyZoom hx))
   rw [Finset.sum_sub_distrib]
   simp only [Finset.sum_const, Nat.card_Icc, Nat.add_sub_cancel, nsmul_one]
   simp only [one_mul] at hlim
   apply hlim.congr'
   filter_upwards [eventually_ge_atTop 2] with n hn
   have hn' : (n : ℝ) ≠ 0 := by positivity
-  rw [← zoom_eq_sum_blocks hx (by omega), (fareyStaircase_sub_eq hn _).2,
-    mul_div_cancel₀ x hn', ← natCast_floor_eq_intCast_floor hx, fareyZoom, ← sub_eq_add_neg]
+  rw [(fareyStaircase_sub_eq hn _).2, mul_div_cancel₀ x hn',
+    ← natCast_floor_eq_intCast_floor hx, fareyZoom, ← sub_eq_add_neg]
   field_simp [hn']
 
 /-- **Dilation derivative of a differentiable function.** Let $f : \mathbb{R} \to \mathbb{R}$ have

@@ -173,4 +173,30 @@ theorem le_of_klNearPerfectWith_prime_pow (p a k l d : ℕ) (hp : p.Prime) (hk :
     (hl : 1 ≤ l) (h : KLNearPerfectWith k l (p ^ a) d) : a ≤ k :=
   ((klNearPerfectWith_prime_pow_iff p a k l d hp hk hl).mp h).2.1
 
+-- `3 * 5` is not near `F₂`-perfect: both exponents are odd.
+example : ¬ MathlibExt.NumberTheory.FkPerfectWanted.IsNearFkPerfect 2 (3 * 5) := by
+  have h := MathlibExt.NumberTheory.FkPerfectWanted.not_isNearFkPerfect_pow_mul_pow
+    2 3 5 1 1 (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)
+    le_rfl le_rfl (Or.inr ⟨by decide, by decide⟩)
+  simpa using h
+
+-- `3 * 5 ^ 2` is not near `F₂`-perfect: the exponent sum is odd.
+example : ¬ MathlibExt.NumberTheory.FkPerfectWanted.IsNearFkPerfect 2 (3 * 5 ^ 2) :=
+  MathlibExt.NumberTheory.FkPerfectWanted.not_isNearFkPerfect_pow_mul_pow
+    2 3 5 1 2 (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)
+    le_rfl (by decide) (Or.inl (by decide))
+
+-- With `p₁ = p₂` the conclusion fails: `9 = 3 ^ 1 * 3 ^ 1` is near `F_3`-perfect with `d = 1`.
+example : MathlibExt.NumberTheory.FkPerfectWanted.IsNearFkPerfect 3 (3 ^ 1 * 3 ^ 1) :=
+  ⟨1, by decide, by decide, by decide⟩
+
+-- Twice three is not `[k,ℓ]`-near-perfect.
+example (k l : ℕ) (hl : 1 ≤ l) : ¬ IsKLNearPerfect k l 6 :=
+  not_isKLNearPerfect_two_mul_prime (k := k) (l := l) (p := 3)
+    (hl := hl) (hp := by decide) (hpo := ⟨1, rfl⟩)
+
+example : ¬ IsKLNearPerfect 2 1 10 :=
+  not_isKLNearPerfect_two_mul_prime (k := 2) (l := 1) (p := 5)
+    (hl := by decide) (hp := by decide) (hpo := ⟨2, rfl⟩)
+
 end MathlibExtTest.NumberTheory.FkPerfect

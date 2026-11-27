@@ -193,7 +193,7 @@ theorem asgStationary_detailed_balance (σ : ℝ) (k : ℕ) :
   · cases k with
     | zero => simp [asgStationary, hσ]
     | succ k =>
-      simp only [asgStationary, hσ, if_false, Nat.succ_ne_zero, ↓reduceIte]
+      simp only [asgStationary, hσ, ite_false, Nat.succ_ne_zero, ↓reduceIte]
       rw [Nat.cast_choose_two]
       simp only [Nat.factorial_succ, Nat.cast_mul, Nat.cast_add, Nat.cast_one, pow_succ]
       have hf : (k.factorial : ℝ) ≠ 0 := by positivity
@@ -242,7 +242,7 @@ theorem hasSum_asgStationary_mul_pow {σ : ℝ} (hσ : 0 < σ) (y : ℝ) :
   cases k with
   | zero => simp [asgStationary, ne_of_gt hσ]
   | succ k =>
-    simp only [asgStationary, ne_of_gt hσ, if_false, Nat.succ_ne_zero, ↓reduceIte, sub_zero,
+    simp only [asgStationary, ne_of_gt hσ, ite_false, Nat.succ_ne_zero, ↓reduceIte, sub_zero,
       mul_pow]
     field_simp [hd]
 
