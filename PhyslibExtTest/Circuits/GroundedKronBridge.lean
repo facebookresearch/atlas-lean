@@ -24,9 +24,10 @@ node `2` the port and node `1` interior:
 - a disconnected resistor graph (only branch `0 → 1`) fails the
   connectivity hypothesis, and its grounded matrix is not positive
   definite;
-- a zero conductance (resistance value `0`, stamped as `0⁻¹ = 0`)
-  fails the positivity hypothesis, and its grounded matrix is not
-  positive definite.
+- a resistance value `0` fails the positivity hypothesis, and its
+  grounded matrix is not positive definite: the totalized stamp gives
+  that branch conductance `0⁻¹ = 0`, an open branch, whereas a
+  physical zero-ohm short would force equal endpoint potentials.
 
 These are elaboration and non-vacuity checks, not new results.
 -/
@@ -138,9 +139,11 @@ theorem disconnected_counterexample :
     simp [portInteriorConductance, seriesLabel, nodalConductance_apply, physicalIncidence,
       incidenceMatrix, seriesTail, seriesHead] at h
 
-/-- A zero conductance on branch `1` (resistance value `0`, stamped as `0⁻¹ = 0`) fails the
-positivity hypothesis, and its grounded matrix is not positive definite. -/
-theorem zeroConductance_counterexample :
+/-- A resistance value `0` on branch `1` fails the positivity hypothesis, and its grounded matrix
+is not positive definite. The totalized stamp gives that branch conductance `0⁻¹ = 0`, an open
+branch; a physical zero-ohm short would instead force equal endpoint potentials, which no
+conductance stamp expresses. -/
+theorem zeroResistance_counterexample :
     ¬ (∀ e ∈ (Finset.univ : Finset (Fin 2)), 0 < (![1, 0] : Fin 2 → ℝ) e) ∧
       ¬ (portInteriorConductance seriesTail seriesHead Finset.univ ![1, 0] seriesLabel).PosDef := by
   refine ⟨fun h => ?_, fun hpd => ?_⟩

@@ -56,9 +56,13 @@ time-varying element is claimed.
   matrix is the symmetric block matrix `[[A, B], [Bᵀ, D]]`.
 - `portInteriorConductance_posDef`: the grounded network provider,
   relabelled.
-- `resistorDissipation_eq_blockQuadratic`,
-  `groundedKCL_iff_blocks`: dissipation and grounded KCL in block
-  form, for any resistance values.
+- `stampQuadratic_eq_blockQuadratic`, `groundedKCL_iff_blocks`: the
+  stamped quadratic form `Σ (Δφ)² / R` and the stamped grounded nodal
+  equations in block form, for any resistance values. These are
+  totalized stamp identities: a resistance value `0` is stamped with
+  conductance `0⁻¹ = 0`, an open branch rather than a short, so the
+  quadratic form is the resistor dissipation, and the equations are
+  Kirchhoff's current law, only when every resistance is positive.
 - `groundedKron_correct`: positive definiteness of `K`, the reduced
   port law, reconstruction, and the corrected dissipation split.
 - `groundedKCL_iff_reduced`: the converse, a grounded network
@@ -74,7 +78,7 @@ time-varying element is claimed.
 
 - G. Kron, "Numerical solution of ordinary and partial differential
   equations by means of equivalent circuits", *Journal of Applied
-  Physics* 15(4), 1944, pp. 273-291.
+  Physics* 16(3), 1945, pp. 172-186, DOI 10.1063/1.1707568.
 - F. Zhang (ed.), *The Schur Complement and Its Applications*,
   Springer, 2005.
 - F. Dörfler and F. Bullo, "Kron reduction of graphs with
@@ -123,7 +127,10 @@ noncomputable def interiorBlock {nN nB : ℕ} {m p : Type*} {ground : Fin nN}
     (σ : m ⊕ p ≃ {v // v ≠ ground}) : Matrix p p ℝ :=
   (portInteriorConductance tail head Rset Rval σ).toBlocks₂₂
 
-/-- The Kron-reduced port conductance matrix `K = A - B D⁻¹ Bᵀ`. -/
+/-- The Kron-reduced port conductance matrix `K = A - B D⁻¹ Bᵀ`. It is defined for any
+resistance values, with Mathlib's matrix inverse, which is `0` on a singular matrix; it is the
+Kron elimination of the interior nodes only when the interior block `D` is invertible, as it is
+for positive resistances on a connected resistor graph (`groundedKron_correct`). -/
 noncomputable def kronConductance {nN nB : ℕ} {m p : Type*} [Fintype m] [Fintype p]
     [DecidableEq p] {ground : Fin nN} (tail head : Fin nB → Fin nN) (Rset : Finset (Fin nB))
     (Rval : Fin nB → ℝ) (σ : m ⊕ p ≃ {v // v ≠ ground}) : Matrix m m ℝ :=
@@ -196,9 +203,13 @@ theorem portInteriorConductance_posDef {nN nB : ℕ} {m p : Type*} [Fintype m] [
 
 /-! ## B. Dissipation and the grounded network equations in block form -/
 
-/-- Total resistor dissipation of a grounded potential is the block quadratic form of the
-relabelled grounded conductance matrix, for any resistance values. -/
-theorem resistorDissipation_eq_blockQuadratic {nN nB : ℕ} {m p : Type*} [Fintype m]
+/-- **Totalized stamp identity for the dissipation.** For any resistance values, the stamped
+quadratic form `Σ_{e ∈ Rset} (φ(tail e) - φ(head e))² / R e` of a grounded potential is the block
+quadratic form of the relabelled grounded conductance matrix. Division is Lean's, so a branch
+with resistance value `0` contributes `0`, as an open branch would, while a physical short would
+force equal endpoint potentials; the sum is the resistor dissipation only when every resistance
+in `Rset` is positive, as in `groundedKron_correct`. -/
+theorem stampQuadratic_eq_blockQuadratic {nN nB : ℕ} {m p : Type*} [Fintype m]
     [Fintype p] (tail head : Fin nB → Fin nN) (Rset : Finset (Fin nB)) (Rval : Fin nB → ℝ)
     (ground : Fin nN) (σ : m ⊕ p ≃ {v // v ≠ ground}) (φ : Fin nN → ℝ)
     (hground : φ ground = 0) :
@@ -224,8 +235,10 @@ theorem resistorDissipation_eq_blockQuadratic {nN nB : ℕ} {m p : Type*} [Finty
   rw [div_eq_inv_mul]
   ring
 
-/-- Kirchhoff's current law at every non-ground node of a grounded potential is the block system
-`A φP + B φI = jP`, `Bᵀ φP + D φI = jI`, for any resistance values. -/
+/-- The stamped nodal equations `(G φ) v = j v` at every non-ground node of a grounded potential
+are the block system `A φP + B φI = jP`, `Bᵀ φP + D φI = jI`, for any resistance values. They are
+Kirchhoff's current law for the resistor network when every resistance is positive; a
+resistance value `0` is stamped with conductance `0⁻¹ = 0`, as an open branch. -/
 theorem groundedKCL_iff_blocks {nN nB : ℕ} {m p : Type*} [Fintype m] [Fintype p]
     (tail head : Fin nB → Fin nN) (Rset : Finset (Fin nB)) (Rval : Fin nB → ℝ)
     (ground : Fin nN) (σ : m ⊕ p ≃ {v // v ≠ ground}) (φ j : Fin nN → ℝ)
@@ -283,7 +296,7 @@ theorem groundedKron_correct {nN nB : ℕ} {m p : Type*} [Fintype m] [Fintype p]
   obtain ⟨hP, hI⟩ := (groundedKCL_iff_blocks tail head Rset Rval ground σ φ j hground).mp hKCL
   obtain ⟨hK, hred, hrec, hdiss⟩ := kron_reduction_correct _ _ _ hG _ _ _ _ hP hI
   refine ⟨hK, hred, hrec, ?_⟩
-  rw [resistorDissipation_eq_blockQuadratic tail head Rset Rval ground σ φ hground]
+  rw [stampQuadratic_eq_blockQuadratic tail head Rset Rval ground σ φ hground]
   exact hdiss
 
 /-- Converse direction: for positive resistances and a connected resistor graph, a grounded
