@@ -36,14 +36,18 @@ Encoding. Solutions are taken in integral (Carathéodory) form, and the open-loo
 solution maps are given as data with their defining properties (existence, invariance of `X`
 and uniqueness), as the source assumes. Global asymptotic stability within `X` is Lyapunov
 stability together with attraction of every solution from `X`. The correspondence of equilibria
-is `u ↦ k_X(u)`; the closed loop requires `h(X) ⊆ U`. "Almost all initial conditions" is
-Lebesgue-almost every point of `X`. Convergence to the set of stable equilibria is stated as
-convergence of the trajectory to one of them, `k_X(u)` for a fixed point `u` with `k_Y'(u) < 1`;
-this is what the source's argument through the generic convergence theorem for strongly monotone
-systems yields, and unlike a distance to the set it does not hold trivially when the set is
-empty. Strong monotonicity of the closed loop is a hypothesis of the second part, as in the
-source. This is the theorem used by Angeli, Ferrell and Sontag (PNAS 2004) for bistable positive
-feedback loops.
+is `u ↦ k_X(u)`; the closed loop requires `h(X) ⊆ U`. The characteristic `k_X` is a function on
+`ℝ` constrained only on `U`, so, as for the source's `k_Y : U → U`, the derivative `k_Y'(u)` is
+taken within `U` (`derivWithin`), and the second part assumes that `U` has no isolated points
+(`Preperfect U`), so that `k_Y'(u)` is determined by the values of `k_Y` on `U`; a two-sided
+derivative would depend on the unconstrained values of `k_X` off `U`. "Almost all initial
+conditions" is Lebesgue-almost every point of `X`. Convergence to the set of stable equilibria
+is stated as convergence of the trajectory to one of them, `k_X(u)` for a fixed point `u` with
+`k_Y'(u) < 1`; this is what the source's argument through the generic convergence theorem for
+strongly monotone systems yields, and unlike a distance to the set it does not hold trivially
+when the set is empty. Strong monotonicity of the closed loop is a hypothesis of the second part,
+as in the source. This is the theorem used by Angeli, Ferrell and Sontag (PNAS 2004) for bistable
+positive feedback loops.
 
 Sources: D. Angeli, E. D. Sontag, "Multi-stability in monotone input/output systems", Systems
 Control Lett. 51 (2004) 185–202, Sections 2–3, Definitions of monotone systems and static
@@ -63,6 +67,7 @@ public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.MeasureTheory.Function.EssSup
 public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 public import Mathlib.Topology.Algebra.Module.FiniteDimension
+public import Mathlib.Topology.Perfect
 
 @[expose] public section
 
@@ -152,9 +157,9 @@ def IsNondegenerateCharacteristic (kX : ℝ → Fin n → ℝ) : Prop :=
 end IOSystem
 
 /-- A map `k` has non-degenerate fixed points on `U`: at every `u ∈ U` with `k u = u`, `k` is
-differentiable and `k'(u) ≠ 1`. -/
+differentiable within `U` and its derivative `k'(u)` within `U` is not `1`. -/
 def HasNondegenerateFixedPoints (U : Set ℝ) (k : ℝ → ℝ) : Prop :=
-  ∀ u ∈ U, k u = u → DifferentiableAt ℝ k u ∧ deriv k u ≠ 1
+  ∀ u ∈ U, k u = u → DifferentiableWithinAt ℝ k U u ∧ derivWithin k U u ≠ 1
 
 /-- **Equilibria of the positive feedback loop** (Angeli–Sontag 2004, Theorem 3, first part). Let
 `sys` be a single-input single-output system (positivity cone `K`, state space `X` equal to the
@@ -178,18 +183,21 @@ part). Let `sys` be a single-input single-output system (positivity cone `K`, st
 to the closure of its interior, `C¹` vector field `f` and output map `h`, and a solution map `φ`
 giving, for every `ξ ∈ X` and every input `u`, the unique solution from `ξ` on `[0, ∞)` that stays
 in `X`) that is monotone, with a non-degenerate input-to-state characteristic `kX` on `U`; assume
-`h(X) ⊆ U`, and let `ψ t ξ` be the solution map of the closed loop `ẋ = f(x, h(x))`: for `ξ ∈ X`,
-`t ↦ ψ t ξ` is a solution on `[0, ∞)` that stays in `X`. Suppose the input/output characteristic
-`kY = h ∘ kX` has non-degenerate fixed points on `U`, the closed loop is strongly monotone
-(`ξ₁ - ξ₂ ∈ K` and `ξ₁ ≠ ξ₂` imply `ψ t ξ₁ - ψ t ξ₂ ∈ int K` for every `t > 0`), and every
-closed-loop trajectory from `X` is bounded. Then for Lebesgue-almost every `ξ ∈ X` there is a fixed
-point `u ∈ U` of `kY` with `kY'(u) < 1` such that `ψ t ξ → kX u` as `t → ∞`.
+`h(X) ⊆ U` and that `U` has no isolated points, so that the derivative `kY'(u)` of `kY = h ∘ kX`
+within `U` is determined by `kY` on `U`, and let `ψ t ξ` be the solution map of the closed loop
+`ẋ = f(x, h(x))`: for `ξ ∈ X`, `t ↦ ψ t ξ` is a solution on `[0, ∞)` that stays in `X`. Suppose
+`kY` has non-degenerate fixed points on `U` (derivatives within `U`), the closed loop is strongly
+monotone (for `ξ₁, ξ₂ ∈ X`, `ξ₁ - ξ₂ ∈ K` and `ξ₁ ≠ ξ₂` imply `ψ t ξ₁ - ψ t ξ₂ ∈ int K` for every
+`t > 0`), and every closed-loop trajectory from `X` is bounded. Then for Lebesgue-almost every
+`ξ ∈ X` there is a fixed point `u ∈ U` of `kY` with `kY'(u) < 1` such that `ψ t ξ → kX u` as
+`t → ∞`.
 
 Source: D. Angeli, E. D. Sontag, Systems Control Lett. 51 (2004) 185–202, Theorem 3
 (arXiv:q-bio/0309002). -/
 theorem_wanted ae_tendsto_stableEquilibrium (sys : IOSystem n) (hmono : sys.IsMonotone)
     {kX : ℝ → Fin n → ℝ} (hk : sys.IsNondegenerateCharacteristic kX)
-    (hhU : ∀ x ∈ sys.X, sys.h x ∈ sys.U) (ψ : ℝ → (Fin n → ℝ) → Fin n → ℝ)
+    (hhU : ∀ x ∈ sys.X, sys.h x ∈ sys.U) (hU : Preperfect sys.U)
+    (ψ : ℝ → (Fin n → ℝ) → Fin n → ℝ)
     (hψ : ∀ ξ ∈ sys.X, IsSolution (fun x _ => sys.f x (sys.h x)) ξ (fun t => ψ t ξ) ∧
       ∀ t, 0 ≤ t → ψ t ξ ∈ sys.X)
     (hfix : HasNondegenerateFixedPoints sys.U (sys.h ∘ kX))
@@ -197,6 +205,6 @@ theorem_wanted ae_tendsto_stableEquilibrium (sys : IOSystem n) (hmono : sys.IsMo
       ∀ t, 0 < t → ψ t ξ₁ - ψ t ξ₂ ∈ interior sys.K)
     (hbdd : ∀ ξ ∈ sys.X, Bornology.IsBounded (Set.range fun t : Set.Ici (0 : ℝ) => ψ t ξ)) :
     ∀ᵐ ξ ∂(volume.restrict sys.X), ∃ u ∈ sys.U, sys.h (kX u) = u ∧
-      deriv (sys.h ∘ kX) u < 1 ∧ Tendsto (fun t => ψ t ξ) atTop (𝓝 (kX u))
+      derivWithin (sys.h ∘ kX) sys.U u < 1 ∧ Tendsto (fun t => ψ t ξ) atTop (𝓝 (kX u))
 
 end WantedExt.Biology.Biophysics.MonotoneFeedbackMultistabilityWanted
