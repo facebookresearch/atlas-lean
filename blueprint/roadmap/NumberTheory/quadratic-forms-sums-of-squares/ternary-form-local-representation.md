@@ -22,8 +22,7 @@ $K^\times / K^{\times 2}$ other than that of $-d$.
 
 ## Expansion
 
-A good expansion has pages, each with a precise statement and a locator read in the source it
-cites, for:
+A good expansion states and links:
 
 - the bilinearity and nondegeneracy of the Hilbert symbol on $K^\times / K^{\times 2}$, which follow
   from its formula (Serre, Chapter III, §1);

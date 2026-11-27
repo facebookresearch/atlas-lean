@@ -15,8 +15,7 @@ quadratic form in any number of variables.
 
 ## Expansion
 
-A good expansion has pages, each with a precise statement and a locator read in the source it
-cites, for:
+A good expansion states and links:
 
 - the Hasse–Minkowski theorem for representations of $0$ (Serre, Chapter IV, §3.2), with its proof
   by the number of variables $n = 2$, $n = 3$, $n = 4$ and $n \geq 5$;
@@ -25,10 +24,17 @@ cites, for:
 - Hilbert's product formula $\prod_v (a, b)_v = 1$ for nonzero rationals $a, b$ (Serre, Chapter III,
   §2.1), which rests on quadratic reciprocity and the values of $\left(\frac{-1}{p}\right)$
   and $\left(\frac{2}{p}\right)$;
-- the approximation theorem for finitely many places of $\mathbb{Q}$ (Serre, Chapter III, §2.1);
-- the existence of a rational number with prescribed Hilbert symbols at finitely many places
-  (Serre, Chapter III, §2.2), whose proof uses Dirichlet's theorem on primes in arithmetic
-  progressions (Serre, Chapter VI, §4.1; in Mathlib as `Nat.forall_exists_prime_gt_and_eq_mod`);
+- the approximation theorem: for a finite set $S$ of places of $\mathbb{Q}$, the image of $\mathbb{Q}$
+  in $\prod_{v \in S} \mathbb{Q}_v$ is dense (J. S. Milne, *Algebraic Number Theory*, Theorem 7.20, for
+  finitely many inequivalent nontrivial absolute values on any field);
+- the existence of a rational number with prescribed Hilbert symbols at every place (Serre,
+  Chapter III, §2.2): for a finite family $(a_i)_{i \in I}$ of nonzero rationals and signs
+  $\varepsilon_{i,v} \in \{\pm 1\}$ for $i \in I$ and every place $v$ of $\mathbb{Q}$, there is
+  $x \in \mathbb{Q}^\times$ with $(a_i, x)_v = \varepsilon_{i,v}$ for all $i$ and all $v$ if and only if
+  almost all $\varepsilon_{i,v}$ equal $1$, $\prod_v \varepsilon_{i,v} = 1$ for each $i$, and for each
+  $v$ there is $x_v \in \mathbb{Q}_v^\times$ with $(a_i, x_v)_v = \varepsilon_{i,v}$ for all $i$. Its
+  proof uses the approximation theorem and Dirichlet's theorem on primes in arithmetic progressions
+  (Serre, Chapter VI, §4.1; in Mathlib as `Nat.forall_exists_prime_gt_and_eq_mod`);
 - the invariants $d$ and $\varepsilon$ of a form over $\mathbb{Q}_p$ (Serre, Chapter IV, §2.1), the
   criteria for representing $0$ in four and more variables (Serre, Chapter IV, §2), and the real case
   by signature (Serre, Chapter IV, §2.4); the ternary case is a node of its own.
@@ -49,9 +55,12 @@ The rest of its proof is that of the sources below, as the Expansion describes.
 - J.-P. Serre, *A Course in Arithmetic*, Graduate Texts in Mathematics 7, Springer, 1973: Chapter IV,
   §3.2 (the Hasse–Minkowski theorem), in §3, pp. 41–45; Chapter IV, §1.6 (represented elements), in §1,
   pp. 27–35, and §2 (quadratic forms over $\mathbb{Q}_p$), pp. 35–41; Chapter III, §2 (global properties of the
-  Hilbert symbol: product formula and approximation theorem in §2.1, existence theorem in §2.2),
-  pp. 23–27; Chapter VI, §4 (density and Dirichlet's theorem), pp. 73–77. The preface, p. v, notes
+  Hilbert symbol: product formula in §2.1, existence theorem in §2.2), pp. 23–27; Chapter VI, §4
+  (density and Dirichlet's theorem), pp. 73–77. The preface, p. v, notes
   that Dirichlet's theorem "is used at a critical point in the first part (Chapter III, no. 2.2)".
+- J. S. Milne, *Algebraic Number Theory*, course notes, version 3.08 (2020),
+  <https://www.jmilne.org/math/CourseNotes/ANT.pdf>: Theorem 7.20 (weak approximation), p. 114, in
+  the section "The weak approximation theorem", pp. 113–114.
 - H. Hasse, "Über die Darstellbarkeit von Zahlen durch quadratische Formen im Körper der rationalen
   Zahlen", *J. Reine Angew. Math.* 152 (1923), 129–148, as cited by J. Robinson (reference [5],
   p. 114).
