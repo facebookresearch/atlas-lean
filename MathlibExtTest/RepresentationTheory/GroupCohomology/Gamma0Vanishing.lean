@@ -44,8 +44,9 @@ example : Subsingleton (groupCohomology (Rep.trivial (ZMod 5) ↥(Gamma0 0) (ZMo
 
 At level `0` with trivial coefficients in `ZMod 2`, where `6 = 0`, the upper-left entry `±1` of
 an element of `Γ₀(0)` is a homomorphism onto `{±1}`, split by `{±I}`. The cup square of the
-corresponding sign is a 2-cocycle whose class is nonzero: a coboundary `d ψ` takes the value
-`ψ(-I) - ψ(I) + ψ(-I) = ψ(I) = 0` at `(-I, -I)`, while the cup square takes the value `1`. -/
+corresponding sign is a 2-cocycle whose class is nonzero: every coboundary `d ψ` takes the same
+value `ψ(I)` at `(I, I)` and at `(-I, -I)`, namely `ψ(I) - ψ(I) + ψ(I)` and
+`ψ(-I) - ψ(I) + ψ(-I)` in `ZMod 2`, whereas the cup square takes the values `0` and `1` there. -/
 
 /-- The sign of the upper-left entry of an element of `Γ₀(0)`, written additively in `ZMod 2`:
 `0` when the entry is `1`, and `1` otherwise. -/
