@@ -13,6 +13,7 @@ public import Mathlib.Algebra.Squarefree.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.NumberTheory.NumberField.ClassNumber
 public import Mathlib.NumberTheory.Pell
+public import MathlibExt.NumberTheory.Diophantine.BisectorEquationIntZero
 public import MathlibExt.NumberTheory.Diophantine.NegativePellGcd
 public import MathlibExt.NumberTheory.Diophantine.NegativePellRational
 public import MathlibExt.NumberTheory.GeneralPellBisectors
@@ -50,16 +51,6 @@ public theorem_wanted bisector_equation_symm (a b c : ℝ)
     (c ≠ 0 → (a - -c⁻¹) ^ 2 * (b ^ 2 + 1) = (b - -c⁻¹) ^ 2 * (a ^ 2 + 1)) ∧
       (-a - -c) ^ 2 * ((-b) ^ 2 + 1) = (-b - -c) ^ 2 * ((-a) ^ 2 + 1) ∧
       (b - c) ^ 2 * (a ^ 2 + 1) = (a - c) ^ 2 * (b ^ 2 + 1)
-
-/-- **No nontrivial integer solutions of the bisector equation with $a = 0$ or $b = 0$.** Let
-$a, b, c$ be integers with $a = 0$ or $b = 0$ and
-$(a - c)^2 (b^2 + 1) = (b - c)^2 (a^2 + 1)$. Then $|a| = |b|$.
-
-Source: Takashi Hirotsu, *General Pell's Equations and Angle Bisectors between Planar Lines with
-Rational Slopes*, INTEGERS 24 (2024), Article A111, Proposition 2(b)
-(`integers-2024-A111-prop-2`). -/
-public theorem_wanted bisector_equation_int_zero (a b c : ℤ) (h0 : a = 0 ∨ b = 0)
-    (h : (a - c) ^ 2 * (b ^ 2 + 1) = (b - c) ^ 2 * (a ^ 2 + 1)) : |a| = |b|
 
 /-- **Integer solutions of the bisector equation.** For a natural number $d > 1$ such that
 $x^2 - d y^2 = -1$ has an integer solution, let $(X, Y)$ be its solution in positive integers

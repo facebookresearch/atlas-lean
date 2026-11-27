@@ -28,8 +28,12 @@ The statements already proved, such as the oddness of every positive `n` with
 `D(C(n)) = C(D(n))` and the prime gap bound for semiprime solutions, live in
 `MathlibExt/NumberTheory/CollatzArithmeticDerivative.lean`, except
 `IsCompatibleSemiprimePair.mod_five`, which lives in
-`MathlibExt/NumberTheory/CollatzArithmeticDerivativeModFive.lean`; this module imports both
-publicly.
+`MathlibExt/NumberTheory/CollatzArithmeticDerivativeModFive.lean`,
+`IsCompatibleSemiprimePair.bounds`, which lives in
+`MathlibExt/NumberTheory/CollatzArithmeticDerivativeBounds.lean`, and
+`arithmeticDerivative_bounds`, which lives in
+`MathlibExt/NumberTheory/CollatzArithmeticDerivativeArithmeticDerivativeBounds.lean`; this
+module imports all four publicly.
 -/
 module
 
@@ -42,28 +46,12 @@ public import Mathlib.Topology.Algebra.InfiniteSum.Defs
 public import MathlibExt.NumberTheory.ArithmeticDerivative
 public import MathlibExt.NumberTheory.CollatzArithmeticDerivative
 public import MathlibExt.NumberTheory.CollatzArithmeticDerivativeModFive
+public import MathlibExt.NumberTheory.CollatzArithmeticDerivativeBounds
+public import MathlibExt.NumberTheory.CollatzArithmeticDerivativeArithmeticDerivativeBounds
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Bounds for the arithmetic derivative.** Let $n \ge 2$ be a natural number, let $p$ be the
-least prime factor of $n$, and let $\Omega(n)$ be the number of prime factors of $n$ counted with
-multiplicity. Then the arithmetic derivative $D(n)$ satisfies
-$$\Omega(n) \, n^{(\Omega(n) - 1)/\Omega(n)} \le D(n) \le \frac{n \log_p n}{p},$$
-and each of the two inequalities is an equality if and only if $n$ is a prime power.
-
-Source: Zachary P. Bradshaw, *On a Family of Solutions to Arithmetic Differential Equations
-Involving the Collatz Map*, Journal of Integer Sequences 28 (2025), Article 25.1.8, Lemma 1
-(`jis-2025-25.1.8-lem-1`). -/
-public theorem_wanted arithmeticDerivative_bounds (n : ℕ) (hn : 2 ≤ n) :
-    let om : ℝ := n.primeFactorsList.length
-    let p : ℝ := n.minFac
-    let lower : ℝ := om * (n : ℝ) ^ ((om - 1) / om)
-    let upper : ℝ := n * Real.logb p n / p
-    lower ≤ arithmeticDerivative n ∧ (arithmeticDerivative n : ℝ) ≤ upper ∧
-      (lower = arithmeticDerivative n ↔ IsPrimePow n) ∧
-      ((arithmeticDerivative n : ℝ) = upper ↔ IsPrimePow n)
 
 /-- **Prime tetrations where the arithmetic derivative and the Collatz map commute.** Let $D$ be
 the arithmetic derivative and $C$ the accelerated Collatz map. For a prime $p$,
@@ -126,16 +114,6 @@ Involving the Collatz Map*, Journal of Integer Sequences 28 (2025), Article 25.1
 public theorem_wanted IsCompatibleSemiprimePair.odd {p q r s : ℕ}
     (h : IsCompatibleSemiprimePair p q r s) :
     Odd p ∧ Odd q ∧ Odd r ∧ Odd s
-
-/-- **Bounds on the factors of compatible semiprimes.** Suppose the semiprimes $pq$ and $rs$ are
-compatible, where $q < p$. Then $r \ge 241$, $s \ge 241$, $3q < r < 3p$ and $3q < s < 3p$.
-
-Source: Zachary P. Bradshaw, *On a Family of Solutions to Arithmetic Differential Equations
-Involving the Collatz Map*, Journal of Integer Sequences 28 (2025), Article 25.1.8, Lemma 11
-(`jis-2025-25.1.8-lem-11`). -/
-public theorem_wanted IsCompatibleSemiprimePair.bounds {p q r s : ℕ}
-    (h : IsCompatibleSemiprimePair p q r s) (hqp : q < p) :
-    241 ≤ r ∧ 241 ≤ s ∧ 3 * q < r ∧ 3 * q < s ∧ r < 3 * p ∧ s < 3 * p
 
 /-- **Compatible semiprimes modulo 10.** Let $p, q, r, s$ be primes with $2(r + s) = p + q$ and
 $2rs = 3pq + 1$, so that the semiprimes $pq$ and $rs$ are compatible. Then one of $p, q$ is
