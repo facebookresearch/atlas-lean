@@ -12,3 +12,4 @@ The scheme-theoretic foundations of algebraic geometry: points, immersions, smoo
 - [Flat morphisms of schemes](flat-morphism-of-schemes.md)
 - [Étale morphisms of schemes](etale-morphism-of-schemes.md)
 - [Affine group schemes and Hopf algebras](affine-group-schemes-and-hopf-algebras/README.md)
+- [Compact normalized weight families of closed-chart field valuations](compactness-normalized-etale-chart-valuations.md)
