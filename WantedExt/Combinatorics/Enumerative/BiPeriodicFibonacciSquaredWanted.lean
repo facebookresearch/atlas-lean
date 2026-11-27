@@ -47,94 +47,6 @@ open Finset
 
 @[expose] public section
 
-/-- **Bi-periodic Fibonacci numbers squared.** For elements $a$ and $b$ of a field $K$, the
-sequence $q^2_n \in K$ ($n \ge 0$) is defined by $q^2_0 = 0$, $q^2_1 = 1$, $q^2_2 = a^2$ and, for
-$n \ge 3$,
-$$
-q^2_n = \frac{a}{b}(ab+1)\,q^2_{n-1} + (ab+1)\,q^2_{n-2} - \frac{a}{b}\,q^2_{n-3}
-$$
-if $n$ is even, and
-$$
-q^2_n = \frac{b}{a}(ab+1)\,q^2_{n-1} + (ab+1)\,q^2_{n-2} - \frac{b}{a}\,q^2_{n-3}
-$$
-if $n$ is odd. For nonzero $a$ and $b$, $q^2_n$ is the square of the $n$th bi-periodic Fibonacci
-number.
-
-Division by zero gives $0$, so the sequence is defined for all $a$ and $b$; when $a = 0$ or
-$b = 0$ its terms need not be squares of bi-periodic Fibonacci numbers.
-
-Source: Nassima Belaggoun and Hacène Belbachir, *Combinatorial Identities for the Bi-Periodic
-Fibonacci Numbers Squared*, The Fibonacci Quarterly 62 (2024), Article belaggoun01132024,
-Definition 1.1. -/
-def biPeriodicFibonacciSq {K : Type*} [Field K] (a b : K) : ℕ → K
-  | 0 => 0
-  | 1 => 1
-  | 2 => a ^ 2
-  | n + 3 =>
-    if Even (n + 3) then
-      a / b * (a * b + 1) * biPeriodicFibonacciSq a b (n + 2) +
-        (a * b + 1) * biPeriodicFibonacciSq a b (n + 1) - a / b * biPeriodicFibonacciSq a b n
-    else
-      b / a * (a * b + 1) * biPeriodicFibonacciSq a b (n + 2) +
-        (a * b + 1) * biPeriodicFibonacciSq a b (n + 1) - b / a * biPeriodicFibonacciSq a b n
-
-/-- **Zeroth bi-periodic Fibonacci number squared.** For elements $a$ and $b$ of a field $K$, the
-bi-periodic Fibonacci number squared $q^2_0$ equals $0$.
-
-Source: Nassima Belaggoun and Hacène Belbachir, *Combinatorial Identities for the Bi-Periodic
-Fibonacci Numbers Squared*, The Fibonacci Quarterly 62 (2024), Article belaggoun01132024,
-Definition 1.1. -/
-@[simp]
-theorem biPeriodicFibonacciSq_zero {K : Type*} [Field K] (a b : K) :
-    biPeriodicFibonacciSq a b 0 = 0 := rfl
-
-/-- **First bi-periodic Fibonacci number squared.** For elements $a$ and $b$ of a field $K$, the
-bi-periodic Fibonacci number squared $q^2_1$ equals $1$.
-
-Source: Nassima Belaggoun and Hacène Belbachir, *Combinatorial Identities for the Bi-Periodic
-Fibonacci Numbers Squared*, The Fibonacci Quarterly 62 (2024), Article belaggoun01132024,
-Definition 1.1. -/
-@[simp]
-theorem biPeriodicFibonacciSq_one {K : Type*} [Field K] (a b : K) :
-    biPeriodicFibonacciSq a b 1 = 1 := rfl
-
-/-- **Second bi-periodic Fibonacci number squared.** For elements $a$ and $b$ of a field $K$, the
-bi-periodic Fibonacci number squared $q^2_2$ equals $a^2$.
-
-Source: Nassima Belaggoun and Hacène Belbachir, *Combinatorial Identities for the Bi-Periodic
-Fibonacci Numbers Squared*, The Fibonacci Quarterly 62 (2024), Article belaggoun01132024,
-Definition 1.1. -/
-@[simp]
-theorem biPeriodicFibonacciSq_two {K : Type*} [Field K] (a b : K) :
-    biPeriodicFibonacciSq a b 2 = a ^ 2 := rfl
-
-/-- **Recurrence for the bi-periodic Fibonacci numbers squared.** For elements $a$ and $b$ of a
-field $K$ and every $n \ge 0$, the recursively defined sequence $q^2_m$ (for nonzero $a$ and $b$,
-the squares of the bi-periodic Fibonacci numbers) satisfies
-$$
-q^2_{n+3} = \frac{a}{b}(ab+1)\,q^2_{n+2} + (ab+1)\,q^2_{n+1} - \frac{a}{b}\,q^2_n
-$$
-if $n + 3$ is even, and
-$$
-q^2_{n+3} = \frac{b}{a}(ab+1)\,q^2_{n+2} + (ab+1)\,q^2_{n+1} - \frac{b}{a}\,q^2_n
-$$
-if $n + 3$ is odd.
-
-Division by zero gives $0$, so this holds for all $a$ and $b$.
-
-Source: Nassima Belaggoun and Hacène Belbachir, *Combinatorial Identities for the Bi-Periodic
-Fibonacci Numbers Squared*, The Fibonacci Quarterly 62 (2024), Article belaggoun01132024,
-Definition 1.1, (1.1). -/
-theorem biPeriodicFibonacciSq_add_three {K : Type*} [Field K] (a b : K) (n : ℕ) :
-    biPeriodicFibonacciSq a b (n + 3) =
-      if Even (n + 3) then
-        a / b * (a * b + 1) * biPeriodicFibonacciSq a b (n + 2) +
-          (a * b + 1) * biPeriodicFibonacciSq a b (n + 1) - a / b * biPeriodicFibonacciSq a b n
-      else
-        b / a * (a * b + 1) * biPeriodicFibonacciSq a b (n + 2) +
-          (a * b + 1) * biPeriodicFibonacciSq a b (n + 1) - b / a * biPeriodicFibonacciSq a b n :=
-  rfl
-
 /-- **Weighted fence tilings of the empty board.** For elements $a$ and $b$ of a commutative
 semiring $R$, the weighted number $S_0$ of tilings of the $0$-board by half-squares and
 $(1/2, 1/2)$-fences equals $1$: the only tiling is the empty one.
@@ -222,38 +134,6 @@ theorem noFreeBifenceTilingSum_one {R : Type*} [CommSemiring R] (a b : R) :
     noFreeBifenceTilingSum a b 1 = a ^ 2 := by
   simp [noFreeBifenceTilingSum, fenceTilings, fenceTilingWeight, filter_singleton, prod_range_succ,
     sq]
-
-/-- **Recurrence for weighted fence tilings of odd boards.** Let $a$ and $b$ be elements of a
-commutative semiring $R$, and let $S_m$ be the weighted number of tilings of an $m$-board, with
-cells numbered $1, \dots, m$, by half-squares and $(1/2, 1/2)$-fences, a half-square weighing $a$
-in an odd cell and $b$ in an even cell. Then for every odd $n \ge 3$,
-$$
-S_n = a^2 S_{n-1} + (2ab+1) S_{n-2} +
-2ab \sum_{j=2}^{(n-1)/2} S_{n-2j} + 2a^2 \sum_{j=1}^{(n-1)/2} S_{n-2j-1}.
-$$
-
-Source: Nassima Belaggoun and Hacène Belbachir, *Combinatorial Identities for the Bi-Periodic
-Fibonacci Numbers Squared*, The Fibonacci Quarterly 62 (2024), Article belaggoun01132024,
-Lemma 2.1, (2.1) (`fq-2024-belaggoun01132024-lem-2.1`). -/
-public theorem_wanted fenceTilingSum_odd {R : Type*} [CommSemiring R] (a b : R) {n : ℕ}
-    (hn : 2 ≤ n) (ho : Odd n) :
-    fenceTilingSum a b n =
-      a ^ 2 * fenceTilingSum a b (n - 1) + (2 * a * b + 1) * fenceTilingSum a b (n - 2) +
-        2 * a * b * ∑ j ∈ Icc 2 ((n - 1) / 2), fenceTilingSum a b (n - 2 * j) +
-        2 * a ^ 2 * ∑ j ∈ Icc 1 ((n - 1) / 2), fenceTilingSum a b (n - 2 * j - 1)
-
-/-- **Fence tilings and the bi-periodic Fibonacci numbers squared.** Let $a$ and $b$ be nonzero
-elements of a field $K$. For every $n \ge 0$, let $S_n$ be the weighted number of tilings of an
-$n$-board, with cells numbered $1, \dots, n$, by half-squares and $(1/2, 1/2)$-fences, a
-half-square weighing $a$ in an odd cell and $b$ in an even cell. Then $S_n$ equals the
-bi-periodic Fibonacci number squared $q^2_{n+1}$.
-
-Source: Nassima Belaggoun and Hacène Belbachir, *Combinatorial Identities for the Bi-Periodic
-Fibonacci Numbers Squared*, The Fibonacci Quarterly 62 (2024), Article belaggoun01132024,
-Theorem 2.2 (`fq-2024-belaggoun01132024-thm-2.2`). -/
-public theorem_wanted fenceTilingSum_eq_biPeriodicFibonacciSq {K : Type*} [Field K] {a b : K}
-    (ha : a ≠ 0) (hb : b ≠ 0) (n : ℕ) :
-    fenceTilingSum a b n = biPeriodicFibonacciSq a b (n + 1)
 
 /-- **Recurrence for weighted tilings with no free bifence.** Let $a$ and $b$ be nonzero elements
 of a field, and let $R_n$ be the weighted number of tilings of an $n$-board by half-squares and
