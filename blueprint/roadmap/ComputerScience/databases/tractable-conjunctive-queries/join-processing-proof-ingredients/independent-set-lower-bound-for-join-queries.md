@@ -1,7 +1,7 @@
 # Independent-set lower bound for join queries
 
 Let $q = R_1 \bowtie \dots \bowtie R_n$ be a join query and $V$ an [independent set](fractional-independent-sets-of-a-hypergraph.md)
-of its hypergraph. Then for every $k \in \mathbb N$ there is a database $D$ in which every relation has at most $k$ tuples and
+of its hypergraph. Then for every integer $k \ge 1$ there is a database $D$ in which every relation has at most $k$ tuples and
 
 $$k^{|V|} \le |q(D)|.$$
 

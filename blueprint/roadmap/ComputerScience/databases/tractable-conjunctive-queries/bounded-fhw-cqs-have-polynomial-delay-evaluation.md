@@ -10,6 +10,7 @@ most $r$.
 
 - [Answers of a conjunctive query](../conjunctive-queries/answers-of-a-conjunctive-query.md)
 - [Fractional hypertree decompositions and width](fractional-hypertree-decompositions-and-width.md)
+- [Constraint satisfaction instances and their hypergraphs](constraint-satisfaction-instances-and-their-hypergraphs.md)
 
 ## Proof depends on
 

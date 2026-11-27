@@ -1,8 +1,8 @@
 # Semijoin recurrence along a join tree for Boolean acyclic queries
 
 Let $q$ be a Boolean acyclic conjunctive query with atoms $R_1(\bar u_1), \dots, R_n(\bar u_n)$, let $T$ be a rooted
-[join tree](../../join-processing/characterizations-of-acyclic-database-schemas.md) of its hypergraph, whose nodes are the variable sets $X_i$ of the
-atoms, and let $D$ be a database. For a node $s$ let $q_s$ be the conjunctive query with the single atom of $s$ whose output
+[join tree](../../join-processing/characterizations-of-acyclic-database-schemas.md) of its hypergraph, whose nodes are the atoms, each labeled by its
+variable set $X_i$ (two atoms with the same variables are distinct nodes), and let $D$ be a database. For a node $s$ let $q_s$ be the conjunctive query with the single atom $s$, whose output
 tuple lists its variables, and let $Q_s$ be the conjunctive query with all atoms in the subtree of $T$ rooted at $s$ and output
 the variables of $s$. Then
 

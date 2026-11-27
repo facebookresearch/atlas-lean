@@ -17,6 +17,7 @@ dichotomy for self-join free conjunctive queries.
 - [Enumeration with linear preprocessing and constant delay](enumeration-with-linear-preprocessing-and-constant-delay.md)
 - [Q-hierarchical conjunctive queries](q-hierarchical-conjunctive-queries.md)
 - [The online matrix-vector multiplication conjecture](../../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/the-online-matrix-vector-multiplication.md)
+- [Q-hierarchical conjunctive queries can be maintained under updates](q-hierarchical-cqs-can-be-maintained-under-updates.md)
 
 ## Sources
 
