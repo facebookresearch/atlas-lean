@@ -9,6 +9,7 @@ Here a C\*-algebra is residually finite-dimensional if for every nonzero element
 ## Depends on
 
 - [Free hypergraph C*-algebras](free-hypergraph-c-star-algebra.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -20,6 +21,6 @@ If residual finite-dimensionality were decidable, one could decide $C^*(H) = 0$:
 
 ## Sources
 
-- Tobias Fritz, "Curious properties of free hypergraph C*-algebras", *Journal of Operator Theory* 83(2), 2020, pp. 423–445, <https://doi.org/10.7900/jot.2018oct18.2240>; read as arXiv:1808.09220v3, <https://arxiv.org/abs/1808.09220v3>: Theorem 3.4 and its proof in Section 3.2 ("Residual finite-dimensionality") of that version.
+- Tobias Fritz, "Curious properties of free hypergraph C*-algebras", *Journal of Operator Theory* 83(2), 2020, pp. 423–445, <https://doi.org/10.7900/jot.2018oct18.2240>; read as arXiv:1808.09220v3, <https://arxiv.org/abs/1808.09220v3>: Theorem 3.4 and its proof, in the paragraph "Residual finite-dimensionality" of Section 3 of that version.
 - Tobias Fritz, Tim Netzer and Andreas Thom, "Can you compute the operator norm?", *Proceedings of the American Mathematical Society* 142(12), 2014, pp. 4265–4276, <https://doi.org/10.1090/S0002-9939-2014-12170-8> (cited after the paper above, for the norm algorithm).
 - Zhengfeng Ji, Anand Natarajan, Thomas Vidick, John Wright and Henry Yuen, "MIP* = RE", *Communications of the ACM* 64(11), 2021, pp. 131–138, <https://doi.org/10.1145/3485628> (cited after the paper above, for the negative answer to the Connes embedding problem).

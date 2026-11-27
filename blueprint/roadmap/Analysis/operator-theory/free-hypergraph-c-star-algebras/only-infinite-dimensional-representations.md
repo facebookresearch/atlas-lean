@@ -9,6 +9,7 @@ So there are finite configurations of closed subspaces, pairwise orthogonal and 
 ## Depends on
 
 - [Free hypergraph C*-algebras](free-hypergraph-c-star-algebra.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -20,5 +21,5 @@ The proof follows the one for residual finite-dimensionality: given an oracle fo
 
 ## Sources
 
-- Tobias Fritz, "Curious properties of free hypergraph C*-algebras", *Journal of Operator Theory* 83(2), 2020, pp. 423–445, <https://doi.org/10.7900/jot.2018oct18.2240>; read as arXiv:1808.09220v3, <https://arxiv.org/abs/1808.09220v3>: Theorem 3.5 and its proof in Section 3.3 ("Infinite-dimensional representations") of that version.
+- Tobias Fritz, "Curious properties of free hypergraph C*-algebras", *Journal of Operator Theory* 83(2), 2020, pp. 423–445, <https://doi.org/10.7900/jot.2018oct18.2240>; read as arXiv:1808.09220v3, <https://arxiv.org/abs/1808.09220v3>: Theorem 3.5 and its proof, in the paragraph "Infinite-dimensional representations" of Section 3 of that version.
 - Tobias Fritz, Tim Netzer and Andreas Thom, "Can you compute the operator norm?", *Proceedings of the American Mathematical Society* 142(12), 2014, pp. 4265–4276, <https://doi.org/10.1090/S0002-9939-2014-12170-8> (cited after the paper above).
