@@ -11,20 +11,32 @@ comparison.
   permutation, and given it the algorithm returns the [LCP array](lcp-array.md) of $s$
   ([Kasai's algorithm computes the LCP array](kasai-suffix-array.md)). So the LCP array of a list
   of length $n$ can be computed from its suffix array at cost at most $4n$.
-- Finding the rank of a position in $sa$, indexing, arithmetic and building lists are not counted;
-  cp-algorithms tabulates the ranks in one pass over the suffix array before the main loop.
-- The bound does not use the order of the suffixes, so it holds for every permutation $sa$; the
-  result is the LCP array only for the suffix array.
+- The bound does not use the order of the suffixes, so it holds for every permutation $sa$. The
+  output is guaranteed to be the LCP array when $sa$ is the suffix array, and it can be for other
+  permutations too: for `ab` and $sa = [1, 0]$ it is $[0]$, the LCP array of `ab`.
+- Finding the rank of a position in $sa$, indexing, arithmetic and building lists are not counted.
+  On a word RAM with $s$ and $sa$ stored in arrays, as in cp-algorithms, the inverse array of $sa$
+  is tabulated in one pass before the main loop and each recorded value is written directly into
+  the output array; each visit and each comparison then takes constant time, and the algorithm runs
+  in $O(n)$ time.
+- Given the suffix array in reverse order, the algorithm compares each suffix with its predecessor
+  in suffix-array order instead, and the bound $4n$ holds for that order too.
+  [Kasai et al.: the LCP array in linear time](../../../string-algorithms/palindromes-lcp-arrays-and-multipattern-matching/kasai-linear-time-lcp.md)
+  states the correctness and the word-RAM bound of that predecessor variant.
 
 ## Proof sketch
 
-When the algorithm reaches position $i$, its carried length $k$ is at most $n - i$: it is one less
-than a common-prefix length of the suffix starting at $i - 1$, which has $n - i + 1$ symbols, or
-$0$. A position with a successor in $sa$ makes at most $\ell + 1$ comparisons, where $\ell$ is the
-number of matched symbols, and its new carried length is at least $k + \ell - 1$; so its comparisons
-are at most $2$ plus the increase of the carried length. Only the last entry of $sa$ has no
-successor; it makes no comparison and resets the carried length, losing at most $n$. The carried
-length starts and ends at $0$, so the comparisons number at most $2(n - 1) + n$, and the visits $n$.
+If $n = 0$ the algorithm visits no position and its cost is $0$; let $n \ge 1$. By induction on $i$,
+the carried length $k$ at position $i$ is at most $n - i$. It is $0$ at $i = 0$. If $i$ has a
+successor $j$ in $sa$, the algorithm matches some number $\ell$ of symbols of the suffixes starting
+at $i + k$ and $j + k$, with at most $\ell + 1$ comparisons, and $\ell \le n - (i + k)$, the length
+of the suffix starting at $i + k$; so it records $k + \ell \le n - i$ and carries
+$k' = \max(k + \ell - 1, 0) \le n - (i + 1)$. Otherwise it carries $0$. This uses only the length
+of the text, not that the recorded values are common-prefix lengths, so it holds for every
+permutation $sa$. The comparisons at a position with a successor number at most
+$\ell + 1 \le k' - k + 2$. Exactly one position, the last entry of $sa$, has no successor; it makes
+no comparison and resets the carried length to $0$, lowering it by at most $n$. The carried length
+starts and ends at $0$, so the comparisons number at most $2(n - 1) + n$, and the visits $n$.
 
 ## Comparison with the source
 

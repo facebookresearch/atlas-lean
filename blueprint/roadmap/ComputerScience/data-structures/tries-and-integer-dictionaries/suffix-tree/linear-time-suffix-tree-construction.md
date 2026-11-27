@@ -10,10 +10,13 @@ which is $O(|T|)$ when the letters are integers in $\{0, 1, \dots, |T|\}$.
 ## Proof sketch
 
 The DC3 algorithm computes the suffix array of $T$ in $O(|T| + \mathrm{sort}(\Sigma))$ time.
-Kasai's algorithm then computes the LCP array from the suffix array in $O(|T|)$ time, and the
-Cartesian tree of the LCP array, with the suffix-array entries inserted as leaves, gives the suffix
-tree in $O(|T|)$ time. Integers in $\{0, 1, \dots, |T|\}$ are sorted in $O(|T|)$ time by counting
-sort.
+Kasai's algorithm then computes the LCP array from the suffix array with at most $4|T|$ position
+visits and letter comparisons. On the word RAM, with $T$ and the suffix array stored in arrays, the
+inverse array of the suffix array computed in one pass beforehand, and each LCP entry written
+directly into an array, each visit and each comparison takes constant time, so this step takes
+$O(|T|)$ time. The Cartesian tree of the LCP array, with the suffix-array entries inserted as
+leaves, gives the suffix tree in $O(|T|)$ time. Integers in $\{0, 1, \dots, |T|\}$ are sorted in
+$O(|T|)$ time by counting sort.
 
 ## Depends on
 
