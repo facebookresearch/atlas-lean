@@ -9,11 +9,11 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.RingTheory.Binomial
-public import MathlibExt.NumberTheory.ModifiedDegenerateBernoulliConvolution
-public import MathlibExt.NumberTheory.ModifiedDegenerateBernoulliMiki
-public import MathlibExt.NumberTheory.ModifiedDegenerateBernoulliModifiedDegenerateBernoulliSymmetricIdentity
 public import MathlibExt.NumberTheory.ModifiedDegenerateBernoulliThreeTerm
+public import MathlibExt.NumberTheory.ModifiedDegenerateBernoulliMiki
+public import Mathlib.RingTheory.Binomial
+public import MathlibExt.NumberTheory.ModifiedDegenerateBernoulliModifiedDegenerateBernoulliSymmetricIdentity
+public import MathlibExt.NumberTheory.ModifiedDegenerateBernoulliConvolution
 
 /-!
 # Symmetric identities on modified degenerate Bernoulli polynomials
