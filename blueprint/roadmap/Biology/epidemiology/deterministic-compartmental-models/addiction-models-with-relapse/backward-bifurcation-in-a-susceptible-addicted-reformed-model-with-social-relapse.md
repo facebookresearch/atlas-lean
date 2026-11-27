@@ -20,7 +20,7 @@ For $R_0 > 1$ there is exactly one positive root. With
 
 $$R_c = R_\mu R_\phi\,\frac{1 + R_\phi + 2\sqrt{R_\phi(1 - R_\mu)}}{(R_\phi - 1)^2 + 4R_\mu R_\phi},$$
 
-there is no endemic equilibrium for $R_0 < R_c$ and, when relapse is strong ($R_\phi > 1$), two endemic equilibria for $R_c < R_0 < 1$: a backward bifurcation, in which addiction can persist below $R_0 = 1$.
+there is no endemic equilibrium for $R_0 < R_c$ and, when relapse is strong in the sense $R_\phi(1 - R_\mu) > 1$ (equivalently $\phi\gamma > (\mu + \gamma)^2$), two endemic equilibria for $R_c < R_0 < 1$: a backward bifurcation, in which addiction can persist below $R_0 = 1$. If $R_\phi(1 - R_\mu) \le 1$ there is no endemic equilibrium for $R_0 < 1$. (Section 3.2.1 of arXiv:2210.15481 states the two equilibria on $(R_c, 1)$ without this condition; it is needed: for $R_\phi = 1.5$, $R_\mu = 0.5$, $R_0 = 0.99$ one has $R_c \approx 0.977 < R_0 < 1$, but all three coefficients of the quadratic are positive.)
 3. *With willingness factor* ($0 < \nu \le 1$). Endemic equilibria are $s^* = \mu D/(\beta\kappa a + \mu D)$ with $D = 1 + \nu\gamma a/(\phi a + \mu)$, $\tilde s^* = \gamma a/(\phi a + \mu)$, with $a > 0$ a root of the cubic
 
 $$f(a) = R_\phi^2R_0\,a^3 + R_\phi\big[R_0(1 - R_\phi) + R_\mu(R_0 + R_\phi) + \nu R_\mu(1 - R_\mu)\big]a^2 + R_\mu\big[\nu(1 - R_\mu) + R_0(1 - R_\phi) + R_\phi(1 - R_0) + R_\mu R_\phi\big]a + R_\mu^2(1 - R_0).$$
@@ -29,7 +29,7 @@ $$f(a) = R_\phi^2R_0\,a^3 + R_\phi\big[R_0(1 - R_\phi) + R_\mu(R_0 + R_\phi) + \
 
 ## Proof sketch
 
-At an endemic state the addicted equation reduces to $R_0 s^* g(\tilde s^*)/\kappa + R_\phi\tilde s^* = 1$; inserting the equilibrium expressions for $s^*$ and $\tilde s^*$ gives the polynomial in $a$. By Descartes' rule, for $\nu = 0$ the constant term changes sign at $R_0 = 1$ while the linear coefficient can be negative only if $R_\phi > 1$, so two positive roots below threshold require strong relapse, and $R_c$ is where the discriminant vanishes. Relapse acts as a positive feedback: each reformed individual is a susceptible with higher per-contact "infection" rate, the classic mechanism behind backward bifurcations in drinking and opioid-use models.
+At an endemic state the addicted equation reduces to $R_0 s^* g(\tilde s^*)/\kappa + R_\phi\tilde s^* = 1$; inserting the equilibrium expressions for $s^*$ and $\tilde s^*$ gives the polynomial in $a$. By Descartes' rule, for $\nu = 0$ the constant term changes sign at $R_0 = 1$ while the linear coefficient is negative only for $R_0 > R_\mu R_\phi/(R_\phi - 1)$ (with $R_\phi > 1$). For $R_0 < 1$ two positive roots need both this and a positive discriminant; $R_c$ is where the discriminant vanishes, and both hold on $(R_c, 1)$ exactly when $R_\phi(1 - R_\mu) > 1$. Relapse acts as a positive feedback: each reformed individual is a susceptible with higher per-contact "infection" rate, the classic mechanism behind backward bifurcations in drinking and opioid-use models.
 
 ## Sources
 

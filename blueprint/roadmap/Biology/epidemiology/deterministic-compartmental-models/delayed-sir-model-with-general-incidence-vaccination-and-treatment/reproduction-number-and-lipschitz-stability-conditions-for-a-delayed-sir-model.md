@@ -8,7 +8,7 @@ y' &= b_1 f(x(t-\tau), y) - r\,p(y) - d_1 y,\\
 z' &= r\,p(y(t-\delta)) - \alpha z,
 \end{aligned}$$
 
-with positive constants. The incidence $f$, vaccination $v$ and treatment $p$ are nonnegative and $C^1$, $f(0,y) = f(x,0) = 0$, $f$ is increasing in each argument, $v$ and $p$ are increasing, and they satisfy the Lipschitz bounds
+with positive constants. The incidence $f$, vaccination $v$ and treatment $p$ are nonnegative and $C^1$, $f(0,y) = f(x,0) = 0$, $v(0) = p(0) = 0$, $f$ is increasing in each argument, $v$ and $p$ are increasing, and they satisfy the Lipschitz bounds
 
 $$|f(x,y) - f(\bar x,\bar y)| \le K_3|x-\bar x| + K_4|y-\bar y|,$$
 
@@ -16,7 +16,7 @@ $$M_1|x-\bar x| \le |v(x) - v(\bar x)| \le M_2|x-\bar x|, \qquad L_1|y-\bar y| \
 
 No lower bound of the same form can hold for $f$: since $f(0,y)=f(x,0)=0$, it would force both of its constants to vanish. Typical choices are $f = xy$, $xy/(1+bx)$, $xy/(1+ay)$, $p(y) = y$ or $y/(a+y)$, $v(x) = x$.
 
-**Reproduction number.** With disease-free susceptible level $x^*$, the next-generation matrix is scalar and
+**Reproduction number.** The disease-free equilibrium is $(x^*, 0, 0)$, with $x^* > 0$ the disease-free susceptible level defined by $a = dx^* + c\,v(x^*)$ (an equilibrium because $f(x,0) = p(0) = 0$). The next-generation matrix is scalar and
 
 $$R_0 = \frac{b_1 f_y(x^*, 0)}{r\,p'(0) + d_1}.$$
 

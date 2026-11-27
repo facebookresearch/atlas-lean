@@ -8,7 +8,12 @@
 3. If $2a_0 b < (V_F - V_R)^2 V_R$ and $b > V_F - V_R$, there are at least two steady states.
 4. If $b > \max\big(2(V_F - V_R),\ 2V_F I(0)\big)$ (high connectivity), there is no steady state.
 
-With $a(N) = a_0 + a_1 N$, $a_0, a_1 > 0$, analogous statements hold with $2a_0 b + 2a_1 V_R < (V_F - V_R)^2 V_R$ in place of the second condition.
+**Corollary (linear noise $a(N) = a_0 + a_1 N$, $a_0, a_1 > 0$).**
+1. If $b < V_F - V_R$, or if $b > 0$ and $2a_0 b + 2a_1 V_R < (V_F - V_R)^2 V_R$, there is at least one steady state.
+2. If $2a_0 b + 2a_1 V_R < (V_F - V_R)^2 V_R$ and $b > V_F - V_R$, there are at least two steady states.
+3. If $b > \max\big(2(V_F - V_R),\ 2V_F I(0)\big)$, there is no steady state.
+
+No uniqueness is claimed for linear noise: the source notes that the number of steady states is hard to settle here, and that for $b < 0$ the function $I(N)$ may have a minimum.
 
 **Relaxation in the linear case.** For $b = 0$ and $a = a_0$, fast-decaying solutions satisfy, for every smooth convex $G$, a relative-entropy dissipation identity, and there is $\nu > 0$ (a Poincaré constant for the weight $p_\infty$) such that
 

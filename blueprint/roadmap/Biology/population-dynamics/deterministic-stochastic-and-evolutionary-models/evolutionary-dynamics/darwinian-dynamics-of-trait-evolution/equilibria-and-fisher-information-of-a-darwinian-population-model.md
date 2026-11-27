@@ -1,4 +1,4 @@
-# Equilibria and Fisher information of a Darwinian (evolutionary game) population model
+# Equilibria and information index of a Darwinian (evolutionary game) population model
 
 **Model.** A population of density $x_t$ carries a mean trait $\theta_t$ that evolves by Darwinian (adaptive) dynamics:
 
@@ -13,25 +13,27 @@ where $b_0 > 0$ is the maximal birth rate at the optimum trait $0$, $w > 0$ the 
 **Proposition (equilibria).** Let $\xi_1 = \frac{1}{\kappa^2} + 2w^2\ln b_0$.
 1. If $\xi_1 < 0$ there is no nontrivial equilibrium.
 2. If $\xi_1 = 0$ there is exactly one, with $\theta_* = -1/\kappa$.
-3. If $\xi_1 > 0$ there are two, with $\theta_{*\pm} = -\frac1\kappa \pm \sqrt{\xi_1}$.
+3. If $\xi_1 > 0$ and $b_0 \ne 1$ there are two, with $\theta_{*\pm} = -\frac1\kappa \pm \sqrt{\xi_1}$. If $b_0 = 1$ (so $\xi_1 = 1/\kappa^2 > 0$) there is one, $\theta_{*-} = -2/\kappa$, since $\theta_{*+} = 0$ gives $x_* = 0$.
 
 In each case $x_* = \ln b(\theta_*)/c_u(\theta_*) = \theta_*\big/\big(\kappa w^2 c_u(\theta_*)\big)$, which is positive iff $\theta_* > 0$. Hence $\theta_{*-} < 0$ and the equilibrium with $\xi_1 = 0$ have $x_* < 0$, and a biologically meaningful equilibrium with $x_* > 0$ exists iff $b_0 > 1$; it is then unique, with $\theta_* = \theta_{*+}$.
 
-**Theorem (Fisher information).** Treating $G(\cdot,\theta)$ as the trait-indexed density of the population process, the Fisher information about the trait parameter is
+**Definition and proposition (the source's information index).** Define
 
 $$I(\theta) = \frac{1}{w^2} + \kappa^2\,\Gamma_u(\theta), \qquad \Gamma_u(\theta) = \frac{b(\theta)}{c_u(\theta)} = \frac{b_0}{c_0}\exp\Big(-\frac{\theta^2}{2w^2} + \kappa(\theta - u)\Big).$$
 
-It is maximal at $\theta_{\max} = w^2\kappa$, with
+This is the expression $1/w^2 + \kappa^2c_u(\theta)\int_0^\infty xG(x,\theta)\,dx$ that the source calls the Fisher information of $G$; it is not the Fisher information of a probability law. Since $\int_0^\infty G(x,\theta)\,dx = \Gamma_u(\theta)$, $G(\cdot,\theta)$ is a density only where $\Gamma_u(\theta) = 1$; the normalized density $c_u(\theta)e^{-c_u(\theta)x}$ has Fisher information $\kappa^2$ (no maximizer), and $-\int_0^\infty \partial_\theta^2\ln G\cdot G\,dx = (1/w^2 + \kappa^2)\Gamma_u(\theta)$. The index $I$ is maximal at $\theta_{\max} = w^2\kappa$, with
 
-$$I_{\max} = \frac{1}{w^2} + \kappa^2\,\frac{b_0}{c_0}\,e^{\frac12(w\kappa)^2 - \kappa u},$$
+$$I_{\max} = \frac{1}{w^2} + \kappa^2\,\frac{b_0}{c_0}\,e^{\frac12(w\kappa)^2 - \kappa u}.$$
 
-so the asymptotic (Cramér–Rao) error in estimating $\theta$ is smallest there. For $n$ traits with $b(\Theta) = b_0\exp(-\sum_i \theta_i^2/(2w_i^2))$ and $c_{\mathbf U}(\Theta) = c_0\exp(-\sum_i \kappa_i(\theta_i - u_i))$, the Fisher information matrix is
+For $n$ traits with $b(\Theta) = b_0\exp(-\sum_i \theta_i^2/(2w_i^2))$ and $c_{\mathbf U}(\Theta) = c_0\exp(-\sum_i \kappa_i(\theta_i - u_i))$, the corresponding index matrix is
 
-$$I(\Theta) = \mathrm{diag}\big(w_1^{-2},\dots,w_n^{-2}\big) + \Gamma_{\mathbf U}(\Theta)\,\boldsymbol{\kappa}\boldsymbol{\kappa}^{\top}, \qquad \Gamma_{\mathbf U} = b/c_{\mathbf U}.$$
+$$I(\Theta) = \mathrm{diag}\big(w_1^{-2},\dots,w_n^{-2}\big) + \Gamma_{\mathbf U}(\Theta)\,\boldsymbol{\kappa}\boldsymbol{\kappa}^{\top}, \qquad \Gamma_{\mathbf U} = b/c_{\mathbf U},$$
+
+which is positive definite.
 
 ## Proof sketch
 
-From $G = 1$, $c_u(\theta)x = \ln b(\theta)$; from $\partial_\theta \ln G = -\theta/w^2 + \kappa c_u(\theta)x = 0$, $\kappa \ln b(\theta) = \theta/w^2$, i.e. $\theta^2 + \frac{2}{\kappa}\theta - 2w^2\ln b_0 = 0$, whose discriminant is $4\xi_1$. The information is the sum of a curvature term $1/w^2$ from the Gaussian birth profile and a term $\kappa^2 b/c_u$ from the trait dependence of competition; maximising $\ln\Gamma_u = -\theta^2/(2w^2) + \kappa\theta + \text{const}$ gives $\theta_{\max}$. The multi-trait matrix is a diagonal plus rank-one update, so it is positive definite.
+From $G = 1$, $c_u(\theta)x = \ln b(\theta)$; from $\partial_\theta \ln G = -\theta/w^2 + \kappa c_u(\theta)x = 0$, $\kappa \ln b(\theta) = \theta/w^2$, i.e. $\theta^2 + \frac{2}{\kappa}\theta - 2w^2\ln b_0 = 0$, whose discriminant is $4\xi_1$. The index is the sum of a curvature term $1/w^2$ from the Gaussian birth profile and a term $\kappa^2 b/c_u$ from the trait dependence of competition. The normalized law has score $-\kappa + \kappa c_u x$, whose second moment is $\kappa^2$; for the unnormalized $G$, $-\partial_\theta^2\ln G = 1/w^2 + \kappa^2c_ux$, which integrates against $G$ to $(1/w^2+\kappa^2)\Gamma_u$. Maximising $\ln\Gamma_u = -\theta^2/(2w^2) + \kappa\theta + \text{const}$ gives $\theta_{\max}$. The multi-trait matrix is a diagonal plus rank-one update, so it is positive definite.
 
 ## Sources
 

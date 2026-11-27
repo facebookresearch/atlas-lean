@@ -20,7 +20,11 @@ so $S_\infty = [1 + (1/s_0 - 1)e^{H_\infty}]^{-1}$ is determined by $H_\infty \i
 
 $$\mathbb E[e^{\lambda H_t}\mid P_0 = p_0] = \exp\{A(t,\lambda) + B(t,\lambda)p_0\},$$
 
-with $A, B$ explicit solutions of Riccati equations (written with $\gamma = \sqrt{\kappa^2 - 2\sigma^2\lambda}$). Hence, for the time $\tau$ at which $H$ first reaches a threshold $M$ (equivalently, the infected fraction reaches a prescribed level),
+where, with $\gamma = \sqrt{\kappa^2 - 2\sigma^2\lambda}$,
+
+$$B(t,\lambda) = \frac{2\lambda\,(e^{\gamma t} - 1)}{(\gamma+\kappa)(e^{\gamma t} - 1) + 2\gamma}, \qquad A(t,\lambda) = \frac{2\kappa\eta}{\sigma^2}\ln\frac{2\gamma\,e^{(\gamma+\kappa)t/2}}{(\gamma+\kappa)(e^{\gamma t} - 1) + 2\gamma},$$
+
+the solutions of the Riccati system $\partial_tB = \tfrac12\sigma^2B^2 - \kappa B + \lambda$, $\partial_tA = \kappa\eta B$, $A(0,\lambda) = B(0,\lambda) = 0$. Hence, for the time $\tau$ at which $H$ first reaches a threshold $M$ (equivalently, the infected fraction reaches a prescribed level),
 
 $$\mathbb P(\tau \le t) \le \inf_{0<\lambda<\lambda_c}\exp\{-\lambda M + A(t,\lambda) + B(t,\lambda)p_0\}.$$
 

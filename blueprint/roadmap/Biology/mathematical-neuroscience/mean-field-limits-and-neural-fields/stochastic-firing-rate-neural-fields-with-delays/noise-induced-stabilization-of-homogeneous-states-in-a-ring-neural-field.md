@@ -20,7 +20,7 @@ $$
 \operatorname{Re}\Big(-\frac1\theta+a_M\,\frac{g}{\sqrt{2\pi(1+g^2v_0)}}\Big)<0 .
 $$
 
-Hence: if $-1/\theta+\operatorname{Re}(a_M)\,g/\sqrt{2\pi}<0$ the state is stable for every noise level; otherwise it is unstable for small $\Lambda,\sigma$ and becomes stable once $v_0$ (which increases with $\Lambda^2$ and $\tilde\sigma^2$) is large enough, since the leading root tends to $-1/\theta$ as $v_0\to\infty$.
+Hence: if $-1/\theta+\operatorname{Re}(a_M)\,g/\sqrt{2\pi}<0$ the state is stable for every noise level; if $-1/\theta+\operatorname{Re}(a_M)\,g/\sqrt{2\pi}>0$ it is unstable for small $\Lambda,\sigma$ and becomes stable once $v_0$ (which increases with $\Lambda^2$ and $\tilde\sigma^2$) is large enough, since the leading root tends to $-1/\theta$ as $v_0\to\infty$.
 
 **Non-delayed homogeneous system.** Without delays, for large gain $g$ the homogeneous equilibrium undergoes a pitchfork bifurcation as the noise is decreased, along the curve
 

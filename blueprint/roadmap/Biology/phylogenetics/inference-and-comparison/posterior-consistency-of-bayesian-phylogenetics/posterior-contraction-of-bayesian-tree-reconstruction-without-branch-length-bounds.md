@@ -8,7 +8,7 @@ $$B_n = \frac{4\gamma\, w!\,\|\partial\psi^{(n)}\|_\infty (n-1)\,|H|^{n-1}}{\min
 
 Let $L_f(T)$ be the set of branch-length vectors whose external branches all have length greater than $f$ and $U_g(T)$ the set whose branches all have length less than $g$. Assume identifiability, and that either $n$ stays bounded or the data-generating trees are nested restrictions of one infinite-leaf tree. If there are $\varepsilon_k, \zeta_k \to 0$ with $\zeta_k \le \varepsilon_k$, $k\zeta_k^2 \to \infty$, sieve levels $f_k \to 0$, $g_k \to \infty$, and $C > 0$ such that
 
-$$\text{(i)}\ \ \frac{g_k^{m^*_n}e^{-k\varepsilon_k^2}}{\varepsilon_k^2 f_k^{nw}} \le \frac{1}{|\mathcal T_n|(4B_n)^{m^*_n}}, \qquad \text{(ii)}\ \ \Pi^{(n)}\Big(\bigcup_{T\in\mathcal T_n}\{L^c_{f_k}(T) \cup U^c_{g_k}(T)\}\Big) \le e^{-(C+4)k\zeta_k^2},$$
+$$\text{(i)}\ \ \Big(\frac{g_k}{\varepsilon_k^2 f_k^{nw}}\Big)^{m^*_n}e^{-k\varepsilon_k^2} \le \frac{1}{|\mathcal T_n|(4B_n)^{m^*_n}}, \qquad \text{(ii)}\ \ \Pi^{(n)}\Big(\bigcup_{T\in\mathcal T_n}\{L^c_{f_k}(T) \cup U^c_{g_k}(T)\}\Big) \le e^{-(C+4)k\zeta_k^2},$$
 
 $$\text{(iii)}\ \ \Pi^{(n)}(T_0)\,\Pi^{(n)}\big(\mathbf x \in L_{\tilde f_n}(T_0) : \|\mathbf x - \mathbf x_0\|_2 \le B_n^{-1}\tilde f_n^{\,nw}\zeta_k^2 \bigm| T_0\big) \ge e^{-Ck\zeta_k^2},$$
 

@@ -29,7 +29,12 @@ $$
 \mathcal{R}_0 = \frac{\mu N_0}{p + \mu}\Bigl(1 + \frac{p(1-\epsilon)}{\zeta\epsilon + \mu}\Bigr)(\mathcal{R}_A + \mathcal{R}_I).
 $$
 
-If $\mathcal{R}_0 \le 1$ the only steady state is disease free; if $\mathcal{R}_0 > 1$ there is in addition an endemic steady state, whose force of infection $\beta^* > 0$ solves an explicit quadratic equation.
+If $\mathcal{R}_0 \le 1$ the only steady state is disease free; if $\mathcal{R}_0 > 1$ there is in addition an endemic steady state, whose force of infection $\beta^*$ is the unique positive root of
+
+$$
+b_2\beta^2 + b_1\beta + b_0 = 0,\qquad b_2 = 1-\epsilon,\quad b_1 = (p+\mu)(1-\epsilon) + \zeta\epsilon + \mu - \mu N_0(1-\epsilon)(\mathcal{R}_A + \mathcal{R}_I),\quad b_0 = (p+\mu)(\zeta\epsilon+\mu)(1-\mathcal{R}_0).
+$$
+
 3. *(Global stability.)* If $\mathcal{R}_0 \le 1$, the disease-free steady state
 
 $$

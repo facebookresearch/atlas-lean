@@ -12,7 +12,7 @@ Inputs are taken with covariance
 
 $$\mathbf C = \begin{pmatrix} v+\delta_1 & \pm c & \cdots & \pm c\\ \pm c & v+\delta_2 & \cdots & \pm c\\ \vdots & & \ddots & \vdots\\ \pm c & \pm c & \cdots & v+\delta_n\end{pmatrix}, \qquad \delta_1 \ge \delta_2 \ge \dots \ge \delta_n \ge 0,$$
 
-where the $\delta_j$ are input biases (some inputs more variable than others) and $\pm c$ the background correlations; the input has *bias loss of order $k$* if $\delta_1 = \dots = \delta_k$.
+where the $\delta_j$ are input biases (some inputs more variable than others) and $\pm c$ the background correlations; for $2 \le k \le n$ the input has *bias loss of order $k$* if $\delta_1 = \dots = \delta_k$.
 
 **Equilibria.** $\mathbf w$ is an equilibrium iff $\mathbf E\mathbf C\mathbf w = (\mathbf w^\top\mathbf C\mathbf w)\mathbf w$, i.e. $\mathbf w$ is an eigenvector of $\mathbf E\mathbf C$ normalized in the $\mathbf C$-norm $\|\mathbf w\|_{\mathbf C} = \sqrt{\mathbf w^\top\mathbf C\mathbf w}$, with eigenvalue $\lambda_{\mathbf w} = \|\mathbf w\|_{\mathbf C}^2$. Without crosstalk ($q = 1$) these are the principal components of the input, and learning extracts the leading one.
 
@@ -22,8 +22,8 @@ where the $\delta_j$ are input biases (some inputs more variable than others) an
 
 $$\epsilon_j^* = \frac{-c}{v + \delta_j - c}, \qquad 0 < \epsilon_1^* < \epsilon_2^* < \dots < \epsilon_n^*,$$
 
-are where the auxiliary functions $f_j(\epsilon)$ locating the eigenvalues of $\mathbf E\mathbf C$ change sign ($f_j > 0$ iff $\epsilon > \epsilon_j^*$); as $\epsilon$ increases from $0$ to $1/n$ it crosses them in order, and between consecutive critical values the eigenvalues interlace differently with the diagonal values $(q-\epsilon)(v + \delta_j - c)$.
-3. For $\epsilon < \epsilon_1^*$, a bias loss of order $k$ ($\delta_1 = \dots = \delta_k$) produces a leading eigenvalue of multiplicity $k-1$ for $\mathbf E\mathbf C$, so the learned direction is no longer unique.
+are where the auxiliary functions $f_j(\epsilon)$ locating the eigenvalues of $\mathbf E\mathbf C$ change sign ($f_j > 0$ iff $\epsilon > \epsilon_j^*$). If moreover $v + \delta_n > (n-1)|c|$, so that $\epsilon_n^* < 1/n$, then as $\epsilon$ increases from $0$ to $1/n$ it crosses all of them in order (without this condition it crosses, in order, those $\epsilon_j^*$ that lie below $1/n$), and between consecutive critical values the eigenvalues interlace differently with the diagonal values $(q-\epsilon)(v + \delta_j - c)$.
+3. For $\epsilon < \epsilon_1^*$ and $2 \le k \le n$, a bias loss of order $k$ ($\delta_1 = \dots = \delta_k$) produces a leading eigenvalue of multiplicity $k-1$ for $\mathbf E\mathbf C$, so the learned direction is no longer unique.
 
 ## Proof sketch
 
