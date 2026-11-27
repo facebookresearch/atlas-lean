@@ -55,23 +55,27 @@ Resolved true: Tashkinov proved that every `4`-regular graph contains a `3`-regu
 erdosproblems.com/715 lists the problem as proved. Source: T. F. Bloom, Erdős Problems, Problem
 #715, https://www.erdosproblems.com/715 (status PROVED); resolution: V. A. Tashkinov, Regular
 subgraphs of regular graphs, Soviet Math. Dokl. 26 (1982), 37-38; N. Alon, S. Friedland and G.
-Kalai, Every 4-regular graph plus an edge contains a 3-regular subgraph, J. Combin. Theory Ser. B 36
-(1984), 92-93, erdosproblems.com/715: 'The answer is yes, proved by Tashkinov'; Alon, Friedland and
-Kalai showed that every r-regular graph with r ≥ 5 contains a 3-regular subgraph,
-https://www.erdosproblems.com/715.
+Kalai, Every 4-regular graph plus an edge contains a 3-regular subgraph, J. Combin. Theory Ser. B 37
+(1984), 92-93; for `r ≥ 5`: N. Alon, S. Friedland and G. Kalai, Regular subgraphs of almost
+regular graphs, J. Combin. Theory Ser. B 37 (1984), 79-91, Theorem 4.3; erdosproblems.com/715:
+'The answer is yes, proved by Tashkinov'; Alon, Friedland and Kalai showed that every r-regular
+graph with r ≥ 5 contains a 3-regular subgraph, https://www.erdosproblems.com/715.
 -/
 public theorem_wanted fourRegularContainsCubicSubgraph_holds : fourRegularContainsCubicSubgraph
 
 /--
-Resolved true: for `r = 4` this is Tashkinov's theorem, and Alon, Friedland and Kalai proved that
-every `4`-regular graph plus an edge contains a `3`-regular subgraph, hence every `r`-regular graph
-with `r ≥ 5` contains one (erdosproblems.com/715); so every `r ≥ 4` answers the second question.
+Resolved true: for `r = 4` this is Tashkinov's theorem, and for `r ≥ 5` Alon, Friedland and Kalai
+proved that every `r`-regular graph contains a `3`-regular subgraph (Theorem 4.3 of their paper on
+regular subgraphs of almost regular graphs; their note shows that every `4`-regular graph plus an
+edge contains one) (erdosproblems.com/715); so every `r ≥ 4` answers the second question.
 Source: T. F. Bloom, Erdős Problems, Problem #715, https://www.erdosproblems.com/715 (status
 PROVED); resolution: V. A. Tashkinov, Regular subgraphs of regular graphs, Soviet Math. Dokl. 26
-(1982), 37-38; N. Alon, S. Friedland and G. Kalai, Every 4-regular graph plus an edge contains a
-3-regular subgraph, J. Combin. Theory Ser. B 36 (1984), 92-93, erdosproblems.com/715: 'The answer is
-yes, proved by Tashkinov'; Alon, Friedland and Kalai showed that every r-regular graph with r ≥ 5
-contains a 3-regular subgraph, https://www.erdosproblems.com/715.
+(1982), 37-38; N. Alon, S. Friedland and G. Kalai, Regular subgraphs of almost regular graphs, J.
+Combin. Theory Ser. B 37 (1984), 79-91, Theorem 4.3 (the case `r ≥ 5`); N. Alon, S. Friedland and
+G. Kalai, Every 4-regular graph plus an edge contains a 3-regular subgraph, J. Combin. Theory Ser.
+B 37 (1984), 92-93; erdosproblems.com/715: 'The answer is yes, proved by Tashkinov'; Alon,
+Friedland and Kalai showed that every r-regular graph with r ≥ 5 contains a 3-regular subgraph,
+https://www.erdosproblems.com/715.
 -/
 public theorem_wanted regularDegreeAtLeastFourContainsCubicSubgraph_holds :
     regularDegreeAtLeastFourContainsCubicSubgraph

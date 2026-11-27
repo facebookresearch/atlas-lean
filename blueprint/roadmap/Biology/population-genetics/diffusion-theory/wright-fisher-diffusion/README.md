@@ -56,3 +56,6 @@
 - [Generalized Kimura diffusions on manifolds with corners](generalized-kimura-diffusions-on-manifolds-with-corners/README.md)
 - [Excursion theory of the Wright–Fisher diffusion](excursion-theory-of-the-wright-fisher-diffusion/README.md)
 - [Jacobi flows](jacobi-flows/README.md)
+- [Two-size Wright–Fisher model](two-size-wright-fisher-model/README.md)
+- [Diffusion hidden Markov models and filtering](diffusion-hidden-markov-models/README.md)
+- [Substitutions and frequency-spectrum dynamics](substitutions-and-frequency-spectrum-dynamics/README.md)
