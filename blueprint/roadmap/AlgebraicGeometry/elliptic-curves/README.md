@@ -17,3 +17,6 @@ Elliptic curves given by Weierstrass equations, their points over finite fields 
 - [A positive integer n is congruent iff the curve y^2 = x^3 − n^2 x has a rational point with y ≠ 0](congruent-number-elliptic-curve.md)
 - [Frey curves, modularity and level lowering](frey-curves-and-modularity/README.md)
 - [Modularity of elliptic curves over $\mathbb{Q}$](modularity-of-elliptic-curves-over-q.md)
+- [Automorphism groups of elliptic curves](automorphism-group-of-an-elliptic-curve.md)
+- [Isogenies of elliptic curves](isogenies-of-elliptic-curves/README.md)
+- [Isogeny chains and supersingular isogeny graphs](isogeny-chains-and-supersingular-graphs/README.md)
