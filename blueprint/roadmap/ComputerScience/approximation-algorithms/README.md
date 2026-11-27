@@ -18,3 +18,7 @@ Polynomial-time algorithms with proved approximation ratios for NP-hard optimiza
 
 - [Approximation ratio of the greedy superstring algorithm](approximation-ratio-of-the-greedy-superstring-algorithm.md)
 - [A fully polynomial-time approximation scheme for knapsack](fptas-for-the-knapsack-problem.md)
+- [Extended Formulations and Extension Complexity](extended-formulations-and-extension-complexity/README.md)
+- [Metric k-Center, Steiner Tree and TSP Approximation](metric-k-center-steiner-tree-and-tsp/README.md)
+- [Moser-Tardos Algorithmic Local Lemma](moser-tardos-algorithmic-local-lemma/README.md)
+- [Semidefinite Rounding for MAX-2SAT and MAX-DICUT](semidefinite-rounding-for-two-variable-csps/README.md)
