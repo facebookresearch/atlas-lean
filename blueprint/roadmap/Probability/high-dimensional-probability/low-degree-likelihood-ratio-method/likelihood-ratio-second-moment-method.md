@@ -16,11 +16,11 @@ By Cauchy–Schwarz, $2 d_{\mathrm{TV}} = \mathbb{E}_{\mathbb{Q}}|L - 1| \le \sq
 
 - [Low-degree likelihood ratio and low-degree advantage](low-degree-likelihood-ratio.md)
 - [Total variation distance between finite measures](../../convergence-of-measures/total-variation-distance/total-variation-dist.md)
-- [Contiguity of sequences of measures](../contiguity-and-le-cam-s-lemmas/is-contiguous.md)
+- [Contiguity of sequences of measures](../../statistical-estimation/contiguity-and-le-cam-s-lemmas/is-contiguous.md)
 
 ## Proof depends on
 
-- [Le Cam's first lemma](../contiguity-and-le-cam-s-lemmas/is-contiguous-with-density-exp.md)
+- [Le Cam's first lemma](../../statistical-estimation/contiguity-and-le-cam-s-lemmas/is-contiguous-with-density-exp.md)
 - [Neyman–Pearson lemma](../../hypothesis-testing/neyman-pearson-dominated-two-simple.md)
 
 ## Sources

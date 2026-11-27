@@ -26,4 +26,3 @@ Point estimation theory and confidence sets: bias, risk and mean squared error, 
 - [Capture–recapture and species richness](capture-recapture-and-species-richness/README.md)
 - [Ratios and tolerance distributions](ratio-and-tolerance-estimators/README.md)
 - [Item response models](item-response-models/README.md)
-- [Low-Degree Likelihood Ratio Method](low-degree-likelihood-ratio-method/README.md)

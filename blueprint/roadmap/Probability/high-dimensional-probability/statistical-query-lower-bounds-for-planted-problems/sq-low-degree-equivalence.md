@@ -8,13 +8,13 @@ A statistical query of $m$-sample tolerance corresponds to a low-degree polynomi
 
 ## Depends on
 
-- [Low-degree likelihood ratio and low-degree advantage](../../statistical-estimation/low-degree-likelihood-ratio-method/low-degree-likelihood-ratio.md)
+- [Low-degree likelihood ratio and low-degree advantage](../low-degree-likelihood-ratio-method/low-degree-likelihood-ratio.md)
 - [VSTAT oracle and statistical dimension with average correlation](vstat-oracle-statistical-dimension.md)
 
 ## Proof depends on
 
 - [Statistical dimension lower bounds statistical query complexity](statistical-dimension-query-lower-bound.md)
-- [Low-degree threshold of the spiked Wigner model](../../statistical-estimation/low-degree-likelihood-ratio-method/spiked-wigner-low-degree-threshold.md)
+- [Low-degree threshold of the spiked Wigner model](../low-degree-likelihood-ratio-method/spiked-wigner-low-degree-threshold.md)
 
 ## Sources
 
