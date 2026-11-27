@@ -13373,6 +13373,7 @@
   "MathlibExt/NumberTheory/GibonacciNumber": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Gibonacci numbers"},
   "MathlibExt/NumberTheory/GibonacciPowerSeries": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Integer values of recurrence generating functions"},
   "MathlibExt/NumberTheory/GibonacciPolynomialPowerSums": {"to": "NumberTheory/linear-recurrences/fibonacci-polynomials", "title": "Sums of powers of gibonacci polynomials"},
+  "MathlibExt/NumberTheory/FibonacciPolynomialOddPowerSub": {"to": "NumberTheory/linear-recurrences/fibonacci-polynomials", "title": "Sums of powers of gibonacci polynomials"},
   "MathlibExt/NumberTheory/GibonacciPolynomialInverseRatio": {"to": "NumberTheory/linear-recurrences/fibonacci-polynomials", "title": "Sums of powers of gibonacci polynomials"},
   "MathlibExt/NumberTheory/GibonacciPolynomialOddRatioSum": {"to": "NumberTheory/linear-recurrences/fibonacci-polynomials", "title": "Sums of powers of gibonacci polynomials"},
   "MathlibExt/NumberTheory/GibonacciPolynomialSquareSum": {"to": "NumberTheory/linear-recurrences/fibonacci-polynomials", "title": "Sums of powers of gibonacci polynomials"},
