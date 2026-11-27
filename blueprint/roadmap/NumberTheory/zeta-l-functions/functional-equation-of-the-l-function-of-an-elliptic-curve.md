@@ -11,7 +11,9 @@ $L(f, s) = L(E, s)$ that the modularity theorem provides.
     $$\Lambda(E, s) = (2\pi)^{-s} \Gamma(s) N^{s/2} L(E, s)$$
 
     satisfies $\Lambda(E, s) = w(E) \, \Lambda(E, 2 - s)$ for a sign $w(E) \in \{1, -1\}$, the **root number** of $E$.
-2. **The sign.** Let $w_N$ be the Fricke involution of the modular curve $X_0(N)$, which sends a cyclic $N$-isogeny
+2. **The sign.** Let $w_N$ be the Fricke involution of the
+   [modular curve](../modular-forms-q-series/modular-forms/modular-curve-of-a-group-of-level-n.md)
+   $X_0(N) = X_{\Gamma_0(N)}$ over $\mathbb{Q}$, which sends a cyclic $N$-isogeny
    $\varphi \colon A \to A'$ to its dual $\varphi' \colon A' \to A$, and let $\varepsilon \in \{1, -1\}$ be its
    eigenvalue on the differential $\omega_f = 2\pi i f(z) \, dz$, that is, $w_N^* \omega_f = \varepsilon \omega_f$.
    Then $w(E) = -\varepsilon$.
@@ -33,6 +35,7 @@ This node is still to be broken down. A good expansion states and links:
 ## Depends on
 
 - [Modularity of elliptic curves over $\mathbb{Q}$](../../AlgebraicGeometry/elliptic-curves/modularity-of-elliptic-curves-over-q.md), for $L(E, s)$ and the newform $f$ of item 2
+- [Modular curve of a group of level $N$ and its standard model over $\mathbb{Q}$](../modular-forms-q-series/modular-forms/modular-curve-of-a-group-of-level-n.md), for $X_0(N) = X_{\Gamma_0(N)}$ over $\mathbb{Q}$, on which $w_N$ acts in item 2
 
 ## Proof depends on
 

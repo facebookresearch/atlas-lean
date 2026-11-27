@@ -3,8 +3,9 @@
 Let $E$ be an elliptic curve over $\mathbb{Q}$ of conductor $N$, let $f$ be the
 newform of weight $2$ and level $N$ with $L(f, s) = L(E, s)$ given by
 [modularity of elliptic curves over $\mathbb{Q}$](../../../AlgebraicGeometry/elliptic-curves/modularity-of-elliptic-curves-over-q.md),
-and let $X_0(N)$ be the modular curve over $\mathbb{Q}$ classifying elliptic curves with a cyclic $N$-isogeny, with
-its cusp $\infty$, a rational point. Then there is a nonconstant morphism
+and let $X_0(N)$ be the [modular curve](modular-curve-of-a-group-of-level-n.md) $X_\Gamma$ over $\mathbb{Q}$ for
+$\Gamma = \Gamma_0(N)$, with its cusp $\infty$, a rational point; Gross and Zagier describe its points as elliptic
+curves with a cyclic $N$-isogeny. Then there is a nonconstant morphism
 
 $$\pi \colon X_0(N) \to E$$
 
@@ -30,6 +31,7 @@ Darmon (p. 21) gives the same map as a complex uniformisation $\Phi_N$ of $E(\ma
 
 ## Depends on
 
+- [Modular curve of a group of level $N$ and its standard model over $\mathbb{Q}$](modular-curve-of-a-group-of-level-n.md), for $X_0(N) = X_{\Gamma_0(N)}$ over $\mathbb{Q}$
 - [Modularity of elliptic curves over $\mathbb{Q}$](../../../AlgebraicGeometry/elliptic-curves/modularity-of-elliptic-curves-over-q.md), for the newform $f$
 
 ## Proof depends on

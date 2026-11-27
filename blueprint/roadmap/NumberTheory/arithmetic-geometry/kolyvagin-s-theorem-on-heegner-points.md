@@ -30,9 +30,9 @@ This node is still to be broken down. A good expansion states and links:
   density theorem;
 - what the partial result leaves to the full theorem. For $E$ without complex multiplication it applies to all but
   finitely many $p$, by Serre's theorem (Darmon, Remark 10.3 and Theorem 10.4), and one such $p$ already gives
-  item 1 (Darmon, Remark 10.5). It gives $\text{Ш}(E/K)_p = 0$ only for those $p$; and the vanishing of the
-  $p$-torsion does not bound the $p$-primary part, which may be divisible. Item 2 needs Kolyvagin's refinement at the
-  remaining primes: at the primes dividing $y_K$, an argument with powers $p^n$, using that $p^n$ does not divide $y_K$
+  item 1 (Darmon, Remark 10.5). For those $p$ the $p$-primary part vanishes; at the remaining primes a bound on
+  $\text{Ш}(E/K)_p$ does not bound the $p$-primary part, which may contain a divisible group, and item 2 needs
+  Kolyvagin's refinement: at the primes dividing $y_K$, an argument with powers $p^n$, using that $p^n$ does not divide $y_K$
   for large $n$; at the primes where the Galois group of $\mathbb{Q}(E_p)$ is smaller, Serre's theorem that the image of
   $\operatorname{Gal}(\overline{\mathbb{Q}}/\mathbb{Q})$ in $\mathrm{GL}_2(\mathbb{Z}/p^n\mathbb{Z})$ has bounded
   index; the bound on the $p$-primary part of $\text{Ш}(E/K)$ by Kolyvagin's techniques on ideal class groups (Gross,
@@ -46,6 +46,7 @@ This node is still to be broken down. A good expansion states and links:
 
 ## Proof depends on
 
+- [Selmer groups and the torsion of the Shafarevich–Tate group of an abelian variety](cassels-tate-pairing/selmer-groups-of-abelian-varieties.md), for its item 2, the exact sequence $0 \to E(K)/pE(K) \to S^{(p)}(K, E) \to \text{Ш}(K, E)[p] \to 0$, which is Gross's (2.2) for $A = E$ and $m = p$
 - [Complex conjugation on the Heegner point](complex-conjugation-on-the-heegner-point.md), for the eigenvalue of complex conjugation on $y_K$, the case $n = 1$ of the classes $c(n)$
 - [Local Tate duality](../algebraic-number-theory/galois-representations/galois-cohomology-of-local-fields/local-tate-duality.md), for the perfect pairing between $H^1(K_\lambda, A)$ and $H^1(K_\lambda, A')$ for the finite module $A = E_p$ over the completions $K_\lambda$, whose dual $A' = \operatorname{Hom}(E_p, \mu)$ the Weil pairing identifies with $E_p$; Gross uses this duality to control the local components of Selmer classes (p. 238)
 - [Chebotarev density theorem](../algebraic-number-theory/adeles-class-field-theory/chebotarev-density-theorem.md), for the infinitely many Kolyvagin primes $\ell$ with $\mathrm{Frob}(\ell) = \mathrm{Frob}(\infty)$ in $\operatorname{Gal}(K(E_p)/\mathbb{Q})$

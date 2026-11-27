@@ -16,7 +16,11 @@ $U_p$ for the primes $p \mid N$, normalised by $a_1(f) = 1$, such that
 $$L(E, s) = L(f, s) = \sum_{n \ge 1} a_n(f) n^{-s},$$
 
 that is, $a_n(f) = a_n$ for every $n \ge 1$. Furthermore, $E$ is isogenous over $\mathbb{Q}$ to the elliptic curve
-$E_f$ over $\mathbb{Q}$ that the Eichler–Shimura construction attaches to $f$, the curve with $L(E_f, s) = L(f, s)$.
+$E_f$ over $\mathbb{Q}$ that the Eichler–Shimura construction attaches to $f$, the curve with $L(E_f, s) = L(f, s)$:
+the abelian variety $A$ of
+[Shimura's construction](../../NumberTheory/modular-forms-q-series/modular-forms/shimura-abelian-variety-of-an-eigenform.md)
+for $\Gamma = \Gamma_0(N)$ and $f$, of dimension $[\mathbb{Q}(a_n(f) : n \ge 1) : \mathbb{Q}] = 1$ as the $a_n(f) = a_n$
+are integers.
 
 ## Expansion
 
@@ -31,6 +35,7 @@ This node is still to be broken down. A good expansion states and links:
 
 ## Depends on
 
+- [Shimura's abelian variety attached to a weight-two eigenform](../../NumberTheory/modular-forms-q-series/modular-forms/shimura-abelian-variety-of-an-eigenform.md), for $E_f$
 - [Hecke TLin](../../NumberTheory/not-yet-classified/hecke-operator/hecke-tlin-2.md), for the Hecke operators $T_p$, $p \nmid N$, on cusp forms of weight $2$ for $\Gamma_0(N)$, of which $f$ is an eigenvector
 - [Hecke ULin](../../NumberTheory/not-yet-classified/hecke-operator/hecke-ulin-2.md), for the Hecke operators $U_p$, $p \mid N$, on the same space, of which $f$ is an eigenvector
 

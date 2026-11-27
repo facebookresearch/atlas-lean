@@ -16,18 +16,25 @@ of $D_K$ and $L(E/K, s) = L(E, s) \, L(E, \varepsilon_K, s)$ the $L$-function of
 $L(E, \varepsilon_K, s) = \sum_{n \ge 1} \varepsilon_K(n) a_n n^{-s}$ for $L(E, s) = \sum_{n \ge 1} a_n n^{-s}$. Then
 
 $$L'(E/K, 1) = \frac{2 \lVert\omega\rVert^2 \, \hat h(y_K)}{c^2 \, \lvert D_K \rvert^{1/2}}, \qquad
-\lVert\omega\rVert^2 = \int_{E(\mathbb{C})} \omega \wedge \overline{i\omega},$$
+\lVert\omega\rVert^2 = \iint_{E(\mathbb{C})} \lvert \omega \wedge \bar\omega \rvert,$$
 
 where $\hat h$ is the absolute Néron–Tate height on $E(K)$, normalised by
 $\hat h(P) = \frac{1}{2[K : \mathbb{Q}]} \lim_{n \to \infty} 4^{-n} \log H_K(x(2^n P))$ with
-$H_K(x) = \prod_v \lvert x \rvert_v^{[K_v : \mathbb{Q}_v]}$ over the places $v$ of $K$; like the
+$H_K(x) = \prod_v \max(1, \lvert x \rvert_v)^{[K_v : \mathbb{Q}_v]}$ over the places $v$ of $K$, with the convention
+$\hat h(O) = 0$ at the origin; like the
 [Néron–Tate height](../../AlgebraicGeometry/not-yet-classified/abelian-arithmetic-heights/neron-tate-height.md), it
 vanishes on $E(K)$ exactly at the torsion points. In particular, $y_K$ has infinite order in $E(K)$ if and only if
 $L'(E/K, 1) \ne 0$.
 
 Miller states the formula for every imaginary quadratic field in which the prime factors of $N$ split, with a factor
 $u_K^2$ in the denominator, where $2u_K$ is the number of roots of unity of $K$; this page is the case
-$D_K \ne -3, -4$, where $u_K = 1$, which covers the fields of the Heegner point page.
+$D_K \ne -3, -4$, where $u_K = 1$, which covers the fields of the Heegner point page. Two normalisations differ from
+Miller's displays. Miller prints $H_K(x) = \prod_v \lvert x \rvert_v^{[K_v : \mathbb{Q}_v]}$, which is $1$ for every
+$x \in K^\times$ by the product formula; the $\max(1, \cdot)$ above corrects that display, and the limit is taken
+along $2^n P$ where Miller prints $2^N P$. Miller writes
+$\lVert\omega\rVert^2 = \int_{E(\mathbb{C})} \omega \wedge \overline{i\omega}$ and calls it twice the area of a
+fundamental domain of the period lattice of $\omega$; the integral $\iint_{E(\mathbb{C})} \lvert \omega \wedge \bar\omega \rvert$
+above is that positive quantity, as on the Gross–Zagier page.
 
 ## Expansion
 
@@ -64,7 +71,8 @@ The rest of its proof is that of the sources below, as the Expansion describes.
   $\lVert\omega\rVert^2 = \int_{E(\mathbb{C})} \omega \wedge \overline{i\omega}$ and the quadratic imaginary number field
   $K$ has $2u_K$ roots of unity and discriminant $\Delta(K)$."), its proof ("Gross and Zagier first proved this in [29]
   when $D$ is odd and Zhang generalized it in [62].") and the paragraph after it, p. 336, on $u_K$ and on the
-  normalisation of $\hat h$.
+  normalisation of $\hat h$ (the displays of $\hat h$ and $H_K$ there, with the misprints corrected above); §1, p. 327,
+for $\lVert\omega\rVert^2$ as "twice the area of the fundamental domain of $\Lambda$".
 - S.-W. Zhang, *Gross–Zagier formula for $\mathrm{GL}(2)$ II*, in *Heegner points and Rankin $L$-series*, Math. Sci.
   Res. Inst. Publ. 49, Cambridge Univ. Press, 2004, 191–214. Not read here; cited as Miller cites it (p. 336 and his
   reference [62]).
