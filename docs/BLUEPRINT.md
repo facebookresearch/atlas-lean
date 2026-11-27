@@ -868,7 +868,10 @@ page is kept small. Readers with JavaScript browse with the explorer, which
 hides Material's header, sidebars and footer; the theme's layout serves readers
 without JavaScript and the explorer's fallback. `theme/partials/nav.html` lists
 Home, the sections above the page, the page's siblings and its own entries;
-each folder page lists its children too. `hooks/trim_pages.py` publishes the
+each folder page lists its children too. In a folder of more than 50 entries, a
+page's sidebar lists only the 50 entries around it, then a link to the folder
+page, which lists them all, so that a page's sidebar stops growing with its
+folder. `hooks/trim_pages.py` publishes the
 renderer's notices for moved explorer URLs as bare redirects and collapses the
 theme's indentation, `hooks/title_only_search.py` keeps one title record per
 page in the search index, and `hooks/card_pages.py` shows each card on its
