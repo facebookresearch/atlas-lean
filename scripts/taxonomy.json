@@ -13229,6 +13229,7 @@
   "MathlibExt/NumberTheory/GaussKuzminCharacterization": {"to": "NumberTheory/continued-fractions-expansions", "title": "Gauss–Kuzmin masses of continued fraction strings"},
   "MathlibExt/NumberTheory/GaussKuzminFundamentalIntervals": {"to": "NumberTheory/continued-fractions-expansions", "title": "Gauss–Kuzmin masses of continued fraction strings"},
   "MathlibExt/NumberTheory/GaussKuzminSymmetry": {"to": "NumberTheory/continued-fractions-expansions", "title": "Gauss–Kuzmin masses of continued fraction strings"},
+  "MathlibExt/NumberTheory/GaussKuzminSymmetryExistsReverseSymmetricDensityNeGaussKuzmin": {"to": "NumberTheory/continued-fractions-expansions", "title": "Gauss–Kuzmin masses of continued fraction strings"},
   "MathlibExt/NumberTheory/GaussKuzminSymmetryNontrivialSymmetryLengthThreeAndInfinite": {"to": "NumberTheory/continued-fractions-expansions", "title": "Gauss–Kuzmin masses of continued fraction strings"},
   "MathlibExt/NumberTheory/GaussKuzminSymmetryStablePlusNontrivialSymmetry": {"to": "NumberTheory/continued-fractions-expansions", "title": "Gauss–Kuzmin masses of continued fraction strings"},
   "MathlibExt/NumberTheory/GaussWantzel": {"to": "FieldTheory/galois-theory", "title": "Gauss–Wantzel theorem on constructible polygons"},
