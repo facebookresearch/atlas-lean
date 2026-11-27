@@ -44,6 +44,7 @@ public import MathlibExt.NumberTheory.Recurrences.FloorPowBinomialSum
 public import MathlibExt.NumberTheory.Recurrences.GFPFibSumChoose
 public import MathlibExt.NumberTheory.Recurrences.GFPLucasCatalan
 public import MathlibExt.NumberTheory.Recurrences.OddBinomialAlternatingSum
+public import MathlibExt.NumberTheory.Recurrences.WebbParberryBinomial
 
 namespace MetaMathlibExt
 
@@ -71,17 +72,7 @@ public theorem_wanted gfp_lucas_eq_sum_choose {α p₀ : ℤ} (hα : α * p₀ =
       ∑ i ∈ range (n / 2 + 1),
         ((n * (n - i).choose i / (n - i) : ℕ) : ℤ[X]) * d ^ (n - 2 * i) * g ^ i
 
-/-- **Webb–Parberry binomial identity.** For natural numbers $m < n$,
-$$\binom{n-m-1}{m} = 2^{2m-n+1} \sum_{j=m}^{\lfloor (n-1)/2 \rfloor} \binom{j}{m} \binom{n}{2j+1},$$
-an identity of rational numbers in which the exponent $2m-n+1$ may be negative.
-
-Source: Maribel Diaz Noguera, Rigoberto Flórez, José L. Ramírez, and Martha Romero Rojas,
-*Catalan Identities for Generalized Fibonacci Polynomials*, The Fibonacci Quarterly 62 (2024),
-Article florez11012023, Lemma 3.2 (1) (`fq-2024-florez11012023-lem-3.2`). -/
-public theorem_wanted choose_sub_sub_one_eq_two_zpow_mul_sum {m n : ℕ} (hmn : m < n) :
-    ((n - m - 1).choose m : ℚ) =
-      (2 : ℚ) ^ (2 * (m : ℤ) - n + 1) *
-        ∑ j ∈ Icc m ((n - 1) / 2), (j.choose m : ℚ) * (n.choose (2 * j + 1) : ℚ)
+-- The Webb–Parberry identity is proved in the imported `WebbParberryBinomial` module.
 
 /-- **Catalan identity for Fibonacci-type generalized Fibonacci polynomials.** Let $d$ and $g$ be
 polynomials with integer coefficients, and let $F_n$ be the generalized Fibonacci polynomials
