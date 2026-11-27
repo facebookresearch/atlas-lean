@@ -11350,6 +11350,7 @@
   "MathlibExt/Combinatorics/Enumerative/Partition/OverpartitionMexSum": {"to": "Combinatorics/integer-partitions/counting-partitions", "title": "Minimal excludant of overpartitions"},
   "MathlibExt/Combinatorics/Enumerative/Partition/PartitionPolynomial": {"to": "Combinatorics/integer-partitions/counting-partitions", "title": "Partition polynomials"},
   "MathlibExt/Combinatorics/Enumerative/Partition/PartitionPolynomialDerivatives": {"to": "Combinatorics/integer-partitions/counting-partitions", "title": "Partition polynomials"},
+  "MathlibExt/Combinatorics/Enumerative/Partition/PartsNotTwoModFourTriangularSumEven": {"to": "Combinatorics/integer-partitions/counting-partitions", "title": "Overpartitions into odd parts"},
   "MathlibExt/Combinatorics/Enumerative/Partition/PeakGeneratingFunction": {"to": "Combinatorics/set-partitions", "title": "Peaks in set partitions"},
   "MathlibExt/Combinatorics/Enumerative/Partition/PentagonalRecurrenceParity": {"to": "Combinatorics/integer-partitions/counting-partitions", "title": "Parity of Euler's pentagonal recurrence"},
   "MathlibExt/Combinatorics/Enumerative/Partition/QEulerProduct": {"to": "NumberTheory/modular-forms-q-series/theta-q-series-partitions", "title": "q-Pochhammer symbol"},
