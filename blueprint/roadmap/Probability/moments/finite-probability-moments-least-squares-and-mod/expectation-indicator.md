@@ -1,0 +1,3 @@
+# Expectation of an indicator is the weight of the event
+
+For a finite set $\alpha$, any weight $p$ and an event $E \subseteq \alpha$, the weighted expectation $\sum_x p(x)\,\mathbf 1_E(x)$ of the indicator of $E$ is the event weight $P(E) = \sum_{x \in E} p(x)$. Here a weight $p : \alpha \to \mathbb{R}$ may take negative values and need not sum to one; $P(s) = \sum_{x \in s} p(x)$ is the weight of the event $s$, and it is a probability only when $p$ is a probability law: $p \ge 0$ and $\sum_x p(x) = 1$. For example, the weights $(-1, 2)$ on two points have total one, yet the first singleton has weight $-1$.

@@ -138,6 +138,10 @@ API = "https://api.github.com"
 PIN_FILES = ("lean-toolchain", "lake-manifest.json", "lakefile.toml")
 CI_CHECK = "build"
 CI_WORKFLOW = ".github/workflows/ci.yml"
+# The job of CI_WORKFLOW that, on a pull request, decides whether CI_CHECK runs (scripts/ci_scope.py). Only a
+# pull_request run of CI_WORKFLOW may skip CI_CHECK, which then counts as passed; the skipped job has no log,
+# so this job's checkout of the same merge commit says which main CI merged the head into.
+SCOPE_JOB = "decide which checks to run"
 ACTIONS_APP_ID = 15368  # GitHub Actions
 CODEX_WORKFLOW = ".github/workflows/codex.yml"
 CODEX_LOGIN = "github-actions[bot]"
@@ -153,6 +157,10 @@ MAX_QUEUE_PAGES = 5  # of 100 entries
 MAX_MAIN_CHANGES = 3000
 MAX_LEFT_OUT = 5  # queued entries left out for a conflict whose alternatives are explored
 MAX_BLOB_BYTES = 8 << 20  # the largest Lean file in the libraries is about 0.4 MB
+# What a simulated merge downloads for git alone to merge, which preflight never reads: graph data files
+# that both sides change, such as a 9.3 MB scripts/wiki-sync.json or a links file, are larger than what it
+# parses. A bound on downloads: a blob the clone already has is merged whatever its size.
+MAX_MERGE_BLOB_BYTES = 64 << 20
 MAX_FILES_READ = 20000  # library files whose declarations one change set may need
 MAX_BLOBS_BYTES = 512 << 20
 # The libraries that CI's declaration-collision check imports together (scripts/list_v2_modules.sh).
@@ -698,6 +706,11 @@ def workflow_code(git: "Git", commit: str, paths: list[str]) -> list[str]:
 
 _SCRIPT = r"\.(?:py|sh|bash|js|mjs|cjs|ts|rb|pl|lua)$"
 _CONFIG = r"\.(?:json|toml|ya?ml|txt|cfg|ini)$"  # files that name the paths a check reads: followed, not run
+# Scripts the checks run whose path names are rules or examples, not files they read: only their imports
+# lead to more code. scripts/ci_scope.py compares a pull request's changed paths with the graph's data
+# files, and its test names such paths; as inputs, those files would make every check stale whenever main
+# changes one of them.
+NAMES_ONLY = frozenset({"scripts/ci_scope.py", "scripts/test_ci_scope.py"})
 
 
 def code_signature(git: "Git", commit: str, entry: str) -> str | None:
@@ -741,7 +754,10 @@ def _code_closure(git: "Git", commit: str, start: set[str], limit: int = 500) ->
     file names next to the script, and Python modules it imports from its own directory. A directory
     that it names below the top level (`unittest discover -s scripts/queue`), or that a glob selects
     from (`scripts/checks/*.sh`), counts whole, as `dir/`: what runs there is whatever it holds. Past
-    `limit` files, `?incomplete` says the rest was not followed."""
+    `limit` files, `?incomplete` says the rest was not followed. A file it reads that is larger than
+    MAX_BLOB_BYTES (a map that has grown, such as scripts/wiki-sync.json) is an input that is not
+    opened: it still counts, but the paths inside it are not followed. A script, or anything under
+    .github/ (a local action's manifest runs code), that large fails."""
     listing = set(git.out("ls-tree", "-r", "-z", "--name-only", commit).split("\0"))
     folders = {path.rsplit("/", 1)[0] for path in listing if "/" in path}
     folders |= {f.rsplit("/", i)[0] for f in list(folders) for i in range(1, f.count("/") + 1)}
@@ -761,11 +777,16 @@ def _code_closure(git: "Git", commit: str, start: set[str], limit: int = 500) ->
     while frontier:
         oids = {path: git.out("rev-parse", f"{commit}:{path}") for path in frontier
                 if re.search(_SCRIPT, path) or re.search(_CONFIG, path)}
+        inputs = {path for path in oids if not re.search(_SCRIPT, path) and not path.startswith(".github/")}
+        large = git.oversized({oids[path] for path in inputs})
+        oids = {path: oid for path, oid in oids.items() if path not in inputs or oid not in large}  # not opened
         git.prefetch(set(oids.values()))
         texts = git.blobs(set(oids.values()))
         found = set()
         for path, oid in oids.items():
             text, here = texts.get(oid, ""), path.rsplit("/", 1)[0] if "/" in path else ""
+            if path in NAMES_ONLY:  # only its imports lead to more code
+                text = "\n".join(re.findall(r"^\s*(?:from|import)\s+[A-Za-z_]\w*", text, re.M))
             text = re.sub(r"\$\{?\w+\}?/", "", text).replace('"', " ").replace("'", " ")  # "$REPO_ROOT/scripts/x" is scripts/x
             for ref in (re.sub(r"^(?:\./)+", "", r) for r in re.findall(r"(?<![\w/-])((?:\./)*[\w.-]+(?:/[\w.*-]+)+)", text)):
                 if "*" in ref and ref.split("/", 1)[0] not in LIBRARIES and ".." not in ref.split("/") \
@@ -868,6 +889,17 @@ class Provenance:
         return None, "none"
 
 
+def scoped_skip(check: dict, provenance: Provenance | None) -> bool:
+    """Whether a check run is CI_CHECK skipped by a pull_request run of CI_WORKFLOW (see SCOPE_JOB), the one
+    skip of a required check that counts as passed. Without a provenance to read the run, it is not."""
+    found = DETAILS_URL.search(check.get("details_url") or "")
+    if (check.get("name") != CI_CHECK or check.get("status") != "completed" or check.get("conclusion") != "skipped"
+            or (check.get("app") or {}).get("id") != ACTIONS_APP_ID or not found or provenance is None):
+        return False
+    run = provenance.run(int(found.group(1))) or {}
+    return run.get("event") == "pull_request" and (run.get("path") or "").split("@", 1)[0] == CI_WORKFLOW
+
+
 def summarize_checks(runs: list[dict], required: list[dict], statuses: list[dict] | None = None,
                      provenance: Provenance | None = None) -> dict:
     """The latest run of each required check from the app that must report it, skipping the runs of other
@@ -896,7 +928,8 @@ def summarize_checks(runs: list[dict], required: list[dict], statuses: list[dict
             result.append({"name": context, "status": run.get("status"), "conclusion": run.get("conclusion"),
                            "run": int(found.group(1)) if found else None,
                            "url": run.get("html_url") or run.get("details_url"),
-                           "started_at": run.get("started_at"), "completed_at": run.get("completed_at")})
+                           "started_at": run.get("started_at"), "completed_at": run.get("completed_at"),
+                           "scoped": scoped_skip(run, provenance)})
             continue
         # A commit status names no app, so it can only stand in for a check that requires none.
         status = None if app_id else next((s for s in statuses or [] if s.get("context") == context), None)
@@ -944,6 +977,15 @@ def ci_run(gh: GitHub, runs: list[dict], head: str, number: int | None = None, b
     if not job_of(gh, job_id, run_id, CI_CHECK):
         info["base_error"] = f"its job {job_id} is not the {CI_CHECK} job of run {run_id}"
         return info
+    if build.get("conclusion") == "skipped":  # no log: the job that skipped it checked out the same merge
+        scopes = sorted((int(m.group(2)) for r in runs if r.get("name") == SCOPE_JOB
+                         and (r.get("app") or {}).get("id") == ACTIONS_APP_ID
+                         and (m := DETAILS_URL.search(r.get("details_url") or "")) and int(m.group(1)) == run_id),
+                        reverse=True)
+        if not scopes or not job_of(gh, scopes[0], run_id, SCOPE_JOB):
+            info["base_error"] = f"its {CI_CHECK} job was skipped, and run {run_id} has no {SCOPE_JOB} job to read"
+            return info
+        job_id = scopes[0]
     associated = run.get("pull_requests") or []  # empty for a fork: GitHub does not say whose run it is
     if associated and number is not None:
         tested = {(pr.get("base") or {}).get("ref") for pr in associated if pr.get("number") == number}
@@ -1088,10 +1130,11 @@ class Git:
             for old, new, path in self.diff_raw(base, theirs, ()):
                 if path in ours_changes:
                     sides |= {old, new, *ours_changes[path]}
-        self.prefetch(attributes | sides)
-        unread = [oid for oid in attributes if not self.present(oid)]
+        self.prefetch(attributes)
+        unread = [oid for oid in attributes if not self.present(oid)]  # before the sides: their limit is larger
         if unread:
             raise Failure(f"{short(ours)} has a .gitattributes that preflight could not download ({unread[0]})")
+        self.prefetch(sides, MAX_MERGE_BLOB_BYTES)  # merged by git alone, never read here
         for _ in range(50):  # anything else a merge reads (renamed files): admitted by size, then merged again
             process = self.run(*guard, *prefix, "merge-tree", "--write-tree", "--name-only",
                                "--no-messages", "-z", ours, theirs, check=False)
@@ -1099,7 +1142,7 @@ class Git:
             if process.returncode in (0, 1) or not needed:
                 break
             before = set(self.admitted)
-            self.prefetch(needed)
+            self.prefetch(needed, MAX_MERGE_BLOB_BYTES)
             if not set(self.admitted) - before and self.size_oracle is not None:
                 break  # nothing more admitted: fail below
         if process.returncode not in (0, 1):
@@ -1185,11 +1228,12 @@ class Git:
                                "cat-file", "-e", oid], capture_output=True,
                               env=dict(self.env, GIT_NO_LAZY_FETCH="1")).returncode == 0
 
-    def prefetch(self, oids: set[str]) -> None:
+    def prefetch(self, oids: set[str], limit: int | None = None) -> None:
         """Download the missing blobs in one request instead of one request per blob. A pull request
         chooses these files: with `size_oracle` (the sizes GitHub reports, before anything is downloaded),
-        none over MAX_BLOB_BYTES is fetched and the distinct files of the run may not pass
-        MAX_BLOBS_BYTES."""
+        none over `limit` (MAX_BLOB_BYTES, or MAX_MERGE_BLOB_BYTES for what only git merges) is fetched
+        and the distinct files of the run may not pass MAX_BLOBS_BYTES."""
+        limit = MAX_BLOB_BYTES if limit is None else limit
         if not set(oids) - {ZERO_OID}:
             return
         wanted = sorted(set(oids) - {ZERO_OID})
@@ -1204,7 +1248,7 @@ class Git:
         if missing and self.size_oracle is not None:
             sizes = self.size_oracle(missing)
             # A size GitHub does not report is not downloaded either: what needs it then fails, closed.
-            missing = [oid for oid in missing if sizes.get(oid) is not None and sizes[oid] <= MAX_BLOB_BYTES]
+            missing = [oid for oid in missing if sizes.get(oid) is not None and sizes[oid] <= limit]
             planned = dict(self.admitted, **{oid: sizes[oid] for oid in missing})
             if sum(planned.values()) > MAX_BLOBS_BYTES:  # over every download of this run, reserved before it
                 raise Failure(f"the files to download would add up to {sum(planned.values())} bytes, more than the "
@@ -1214,6 +1258,26 @@ class Git:
             self.run("-c", "fetch.negotiationAlgorithm=noop", "fetch", "--quiet", "--no-tags",
                      "--no-write-fetch-head", "--recurse-submodules=no", "--filter=blob:none", "--stdin",
                      "origin", input="\n".join(missing[start:start + 5000]) + "\n")
+
+    def oversized(self, oids: set[str]) -> set[str]:
+        """Those of `oids` known to be larger than MAX_BLOB_BYTES, by the size the clone has or GitHub
+        reports (see prefetch), downloading none of them. A size neither knows is not known to be
+        larger: such a file is read as before, and fails if it is."""
+        wanted = sorted(set(oids) - {ZERO_OID})
+        if not wanted:
+            return set()
+        if self.guarded():  # the wanted objects alone, none fetched to answer
+            checked = subprocess.run(["git", "--git-dir", str(self.dir), "cat-file", "--batch-check=%(objectname) %(objectsize)"],
+                                     input="\n".join(wanted) + "\n", text=True, capture_output=True,
+                                     env=dict(self.env, GIT_NO_LAZY_FETCH="1")).stdout
+        else:  # an older git would fetch each missing object to answer: read what the clone has
+            checked = self.out("cat-file", "--batch-check=%(objectname) %(objectsize)", "--batch-all-objects")
+        sizes = {line.split()[0]: int(line.split()[1]) for line in checked.splitlines()
+                 if len(line.split()) == 2 and line.split()[1].isdigit() and line.split()[0] in wanted}
+        missing = [oid for oid in wanted if oid not in sizes]
+        if missing and self.size_oracle is not None:
+            sizes.update({oid: size for oid, size in self.size_oracle(missing).items() if size is not None})
+        return {oid for oid, size in sizes.items() if size > MAX_BLOB_BYTES}
 
     def blobs(self, oids: set[str]) -> dict[str, str]:
         """The texts of `oids`. A pull request chooses these files, so their sizes are checked before
@@ -3365,7 +3429,8 @@ def evaluate(facts: dict, now: dt.datetime, max_age_hours: float = DEFAULT_MAX_A
 
     # 3. Required checks
     required = facts["checks"]["required"]
-    failed = [c for c in required if c["status"] == "completed" and c["conclusion"] != "success"]
+    failed = [c for c in required if c["status"] == "completed" and c["conclusion"] != "success"
+              and not c.get("scoped")]
     unknown = [c for c in required if c.get("provenance") == "unknown" or c["status"] == "unknown"]
     pending = [c for c in required if c["status"] not in ("completed", "unknown")]
     untied = (None if facts.get("fork") else  # the fork check says what to do
@@ -3393,7 +3458,8 @@ def evaluate(facts: dict, now: dt.datetime, max_age_hours: float = DEFAULT_MAX_A
             c["name"] + ("" if c["status"] else " (not reported)") for c in pending),
             "wait for the required checks; advisory checks such as Blueprint Pages need no waiting")
     else:
-        check("required checks", True, ", ".join(c["name"] for c in required) + " passed")
+        check("required checks", True, ", ".join(c["name"] + (" (skipped: the pull request does not need it)"
+                                                         if c.get("scoped") else "") for c in required) + " passed")
     for name in facts["checks"]["advisory_failed"]:
         warnings.append(f"the advisory check `{name}` failed on this head")
 
