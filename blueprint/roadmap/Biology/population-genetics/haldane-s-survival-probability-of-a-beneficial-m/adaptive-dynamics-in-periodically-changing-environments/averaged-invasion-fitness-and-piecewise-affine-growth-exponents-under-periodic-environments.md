@@ -18,7 +18,7 @@ $$f^{\mathrm{av}}_{w,v}=\frac{\sum_{i=1}^{\ell}T_if^i_{w,v}}{\sum_{i=1}^{\ell}T_
 
 $$\bar\beta_w(t)=\max_{u\in V}\Big[\bar\beta_u(s_{k-1})+(t-t_{u,k})_+\,f^{\mathrm{av}}_{u,v_{k-1}}-\frac{d(u,w)}{\alpha}\Big]\vee 0,$$
 
-where $t_{u,k}$ is the time trait $u$ first appears (a neighbour reaches exponent $1/\alpha$), up to a stopping time $T_0$ at which the construction ceases to be monomorphic or unambiguous. Then for every $T\le T_0$, $(\beta^K_w)_{w\in V}\to(\bar\beta_w)_{w\in V}$ in probability in $L^\infty([0,T])$. Moreover, the point measure on traits of size above $\varepsilon K$ at time $s\ln K$ converges in $L^p([0,T])$ to $\sum_k\mathbf{1}_{[s_k,s_{k+1})}(s)\,\delta_{v_k}$: a substitution sequence of residents driven by averaged, not instantaneous, fitness.
+where $t_{u,k}$ is the time trait $u$ first appears (a neighbour reaches exponent $1/\alpha$), up to a stopping time $T_0$ at which the construction ceases to be monomorphic or unambiguous. Then for every $T\le T_0$, $(\beta^K_w)_{w\in V}\to(\bar\beta_w)_{w\in V}$ in probability in $L^\infty([0,T])$. Moreover, there is $\varepsilon_0>0$ such that for every $\varepsilon\in(0,\varepsilon_0)$ and every $p\in[1,\infty)$, the point measure on traits of size above $\varepsilon K$ at time $s\ln K$ converges in $L^p([0,T])$ to $\sum_k\mathbf{1}_{[s_k,s_{k+1})}(s)\,\delta_{v_k}$: a substitution sequence of residents driven by averaged, not instantaneous, fitness.
 
 ## Expansion
 

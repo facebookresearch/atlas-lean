@@ -24,4 +24,4 @@ The Dirichlet law is characterized by $\mathbb{E}\,\mathcal{G}_Zf(Z)=0$ for the 
 
 ## Sources
 
-- Anton Braverman and Han L. Gan, "Steady-state Dirichlet approximation of the Wright-Fisher model using the prelimit generator comparison approach of Stein’s method", Adv. Appl. Probab. 57 (2025), 1321–1359, <https://doi.org/10.1017/apr.2025.13>. Numbering follows the arXiv version, arXiv:2312.10831 (2023): Section 2 (model, assumption $p_i=\beta_i/(2N)$ and Theorem 2.1), Section 3 and Appendix A (interpolation operator), <https://doi.org/10.48550/arXiv.2312.10831>.
+- Anton Braverman and Han L. Gan, "Steady-state Dirichlet approximation of the Wright-Fisher model using the prelimit generator comparison approach of Stein’s method", Adv. Appl. Probab. 57 (2025), 1321–1359, <https://doi.org/10.1017/apr.2025.13>. Numbering follows the arXiv version, arXiv:2312.10831 (2023): Section 1 (model (1.1), assumption (1.3) and Theorem 1.1), Section 2 (proof) and Appendix A (the interpolator $A$), <https://doi.org/10.48550/arXiv.2312.10831>.
