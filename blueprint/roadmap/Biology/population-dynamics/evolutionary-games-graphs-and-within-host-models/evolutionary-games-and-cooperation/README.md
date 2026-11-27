@@ -16,3 +16,4 @@ Evolutionary game theory of cooperation: direct and indirect reciprocity, memory
 - [Density games](density-games/README.md)
 - [Evolution of homophilic interaction preferences](evolution-of-homophilic-interaction-preferences/README.md)
 - [Snowdrift game coexistence](snowdrift-game-coexistence/README.md)
+- [Evolution of cooperation](evolution-of-cooperation/README.md)

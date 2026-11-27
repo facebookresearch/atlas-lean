@@ -38,3 +38,7 @@ Algorithms and statistical models on biological sequences and data: sequence ali
 - [Statistical models of genomic data](statistical-models-of-genomic-data/README.md)
 - [Sequence design and binding prediction](sequence-design-and-binding-prediction/README.md)
 - [Variant edges in bidirected pangenome graphs](variant-edges-in-bidirected-pangenome-graphs/README.md)
+- [Single-cell genomics](single-cell-genomics/README.md)
+- [Statistics of sequencing and omics data](sequencing-and-omics-statistics/README.md)
+- [Gene network inference](gene-network-inference/README.md)
+- [Phylogenetic stochastic context-free grammars](phylogenetic-stochastic-context-free-grammars/README.md)

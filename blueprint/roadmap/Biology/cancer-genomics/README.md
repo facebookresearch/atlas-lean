@@ -22,3 +22,7 @@ Mathematical models for tumour sequencing data: purity and copy number, cancer c
 - [Excess-mutation tests for regulatory elements](excess-mutation-tests-for-regulatory-elements/README.md)
 - [Recurrent mutation in regulatory elements](recurrent-mutation-in-regulatory-elements/README.md)
 - [Regional somatic mutation burden](regional-somatic-mutation-burden/README.md)
+- [Copy number, purity and structural variants](copy-number-purity-and-structural-variants/README.md)
+- [Tumour evolution and clonal dynamics](tumour-evolution-and-clonal-dynamics/README.md)
+- [Evolution of drug resistance in tumours](evolution-of-drug-resistance/README.md)
+- [Somatic mutations, driver genes and tumour subtypes](somatic-mutations-drivers-and-subtypes/README.md)
