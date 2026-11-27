@@ -178,7 +178,7 @@ theorem wwit_cornerCell_mem (K : Set (Site 2)) (e : Dart) (hturn : turnZ K e = 1
   by_contra hmem
   rw [ite_eq_right hmem] at hturn
   split_ifs at hturn with hb
-  all_goals simp_all
+  simp_all
 
 /-- The site diagonally ahead of the dart `e`: `e.head` moved a quarter turn clockwise from
 `e.dir`. -/
