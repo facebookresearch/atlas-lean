@@ -302,8 +302,10 @@ def index_source(text: str) -> SourceIndex:
         return index
     index.line_starts = [0] + [i + 1 for i, char in enumerate(code) if char == "\n"]
     is_module = MODULE_HEADER.match(code) is not None
-    # Each scope's namespace components, and whether it is public: a `public section`, or a
-    # scope inside one, as Lean's scopes inherit `isPublic`.
+    # Lean's scopes, innermost last: each one's namespace component (if it opens one), and
+    # whether it is public, as in a `public section` or a scope inside one (Lean's scopes
+    # inherit `isPublic`). As `addScopes` does, `namespace A.B` and `section A.B` open one
+    # scope per component, and `end A.B` closes as many.
     scopes: list[tuple[list[str], bool]] = []
     commands = list(COMMAND.finditer(code))
     for number, command in enumerate(commands):
@@ -314,16 +316,17 @@ def index_source(text: str) -> SourceIndex:
         name = name_match.group("name") if name_match else None
         modifiers = command.group("modifiers").split()
         public_scope = bool(scopes) and scopes[-1][1]
+        components = name.split(".") if name else []
         if kind == "namespace":
-            scopes.append(([unquote_name(part) for part in name.split(".")] if name else [],
-                           public_scope))
+            scopes.extend(([unquote_name(part)], public_scope) for part in components or [""])
             continue
         if kind in ("section", "mutual"):
-            scopes.append(([], public_scope or "public" in modifiers))
+            public = public_scope or "public" in modifiers
+            opened = len(components) if kind == "section" and components else 1
+            scopes.extend(([], public) for _ in range(opened))
             continue
         if kind == "end":
-            if scopes:
-                scopes.pop()
+            del scopes[len(scopes) - min(len(scopes), max(len(components), 1)):]
             continue
         prefix = [part for components, _ in scopes for part in components]
         line = index.line_at(command.start("kind"))
