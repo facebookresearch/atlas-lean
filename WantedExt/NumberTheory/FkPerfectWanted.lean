@@ -153,19 +153,6 @@ theorem_wanted not_klNearPerfectWith_two_pow_mul
     ¬ KLNearPerfectWith k l (2 ^ a * p) 1 ∧
       ¬ KLNearPerfectWith k l (2 ^ a * p) p
 
-/-- **No deficient $F_k$-perfect number $p_1^a p_2$ with distinct odd primes.** Let $k > 1$ be
-a natural number, let $p_1 \ne p_2$ be odd primes and let $a$ be a natural number. Then
-$p_1^a p_2$ is not deficient $F_k$-perfect.
-
-Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
-and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
-`F_k`-Perfect Numbers", Theorem 16. -/
-theorem_wanted not_isDeficientFkPerfect_prime_pow_mul
-    (k p₁ p₂ a : ℕ) (hk : 1 < k) (hp₁ : p₁.Prime)
-    (hp₂ : p₂.Prime) (ho₁ : Odd p₁) (ho₂ : Odd p₂)
-    (hne : p₁ ≠ p₂) :
-    ¬ IsDeficientFkPerfect k (p₁ ^ a * p₂)
-
 /-- **No near $F_k$-perfect number $p_1^a p_2^b$ with $a + b$ odd or $a, b$ both odd.** Let
 $k > 1$, let $p_1 \ne p_2$ be odd primes and let $a, b \ge 1$ be natural numbers such that
 $a + b$ is odd or both $a$ and $b$ are odd. Then $p_1^a p_2^b$ is not near $F_k$-perfect.
