@@ -9,16 +9,16 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.Data.Fintype.Pi
-public import Mathlib.Data.Nat.Totient
 public import Mathlib.Data.ZMod.Defs
 public import Mathlib.GroupTheory.Perm.Basic
-public import Mathlib.GroupTheory.SpecificGroups.Dihedral
 public import Mathlib.NumberTheory.Divisors
+public import Mathlib.Data.Nat.Totient
+public import Mathlib.Data.Fintype.Pi
+public import Mathlib.GroupTheory.SpecificGroups.Dihedral
 public import Mathlib.SetTheory.Cardinal.Finite
 public import MathlibExt.Combinatorics.Enumerative.GridReflectionTilings
-public import MathlibExt.Combinatorics.Enumerative.GridSecondReflectionTilings
 public import MathlibExt.Combinatorics.Enumerative.SquareGridR2Odd
+public import MathlibExt.Combinatorics.Enumerative.GridSecondReflectionTilings
 public import MathlibExt.Combinatorics.Enumerative.SquareGridSecondReflectionEven
 
 namespace MetaMathlibExt
