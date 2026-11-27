@@ -11,7 +11,9 @@ $$
 ## Depends on
 
 - [Haar-random states and t-copy indistinguishability](haar-random-states.md)
+- [Density matrices, pure states and reduced states](../../../QuantumInformation/quantum-states-distances-and-entropy/density-matrices-and-fidelity/density-matrices-and-reduced-states.md)
 - [BQP](../../complexity-classes/time-and-space-complexity-classes/bqp.md)
+- [Negligible functions](../../complexity-classes/time-and-space-complexity-classes/negligible.md)
 
 ## Sources
 

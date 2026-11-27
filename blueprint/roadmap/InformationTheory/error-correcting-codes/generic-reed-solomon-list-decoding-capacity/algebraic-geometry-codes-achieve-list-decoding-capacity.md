@@ -9,7 +9,9 @@ Generalize the GM-MDS machinery from polynomials to Riemann-Roch spaces of divis
 ## Depends on
 
 - [List-decodable code](../list-decoding/is-list-decodable.md)
+- [Linear code](../linear-codes/linear-code.md)
 - [Genus](../../../AlgebraicGeometry/not-yet-classified/coherent-curve-linear-series/genus.md)
+- [Prime number](../../../NumberTheory/primes-primality/prime-number.md)
 
 ## Proof depends on
 
