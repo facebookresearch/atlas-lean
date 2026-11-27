@@ -55,12 +55,14 @@ def IsPolytopeVertexSet {d : ℕ} (V : Finset (EuclideanSpace ℝ (Fin d))) : Pr
   affineSpan ℝ (V : Set (EuclideanSpace ℝ (Fin d))) = ⊤ ∧
     ConvexIndependent ℝ ((↑) : ↥(V : Set (EuclideanSpace ℝ (Fin d))) → EuclideanSpace ℝ (Fin d))
 
-/-- `F` is the vertex set of a facet of the polytope with vertex set `V`: the points of `V` on
-which some nonzero linear functional attains its maximum over `V`, spanning an affine subspace of
-dimension `d - 1`. -/
+/-- `F` is the vertex set of a facet of the polytope with vertex set `V`: a nonempty set of points
+of `V` on which some nonzero linear functional attains its maximum over `V`, spanning an affine
+subspace of dimension `d - 1`. Nonemptiness says that the functional attains its bound `c` on `V`;
+without it the empty set would pass for a facet of a segment. In dimension `0` there are no
+facets. -/
 def IsFacetVertexSet {d : ℕ} (V F : Finset (EuclideanSpace ℝ (Fin d))) : Prop :=
-  F ⊆ V ∧ (∃ (ℓ : EuclideanSpace ℝ (Fin d) →L[ℝ] ℝ) (c : ℝ), ℓ ≠ 0 ∧ (∀ v ∈ V, ℓ v ≤ c) ∧
-    ∀ v ∈ V, (v ∈ F ↔ ℓ v = c)) ∧
+  F ⊆ V ∧ F.Nonempty ∧ (∃ (ℓ : EuclideanSpace ℝ (Fin d) →L[ℝ] ℝ) (c : ℝ), ℓ ≠ 0 ∧
+    (∀ v ∈ V, ℓ v ≤ c) ∧ ∀ v ∈ V, (v ∈ F ↔ ℓ v = c)) ∧
     Module.finrank ℝ (vectorSpan ℝ (F : Set (EuclideanSpace ℝ (Fin d)))) + 1 = d
 
 /-- `f` is a combinatorial equivalence between the polytopes with vertex sets `V` and `W`: a
