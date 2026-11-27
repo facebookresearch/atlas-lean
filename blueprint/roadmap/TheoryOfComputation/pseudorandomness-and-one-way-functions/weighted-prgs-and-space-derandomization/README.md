@@ -1,0 +1,15 @@
+# Weighted PRGs and Derandomization of Small Space
+
+- [Ahmadinejad–Kelner–Murtagh–Peebles–Sidford–Vadhan: Eulerian random-walk probabilities in deterministic space Õ(log N)](eulerian-random-walk-probabilities-in-near-logspace.md)
+- [Regular and permutation ROBPs with one accept vertex, and hitting set generators](regular-permutation-robps-and-hitting-set-generators.md)
+- [Weighted pseudorandom generators (pseudorandom pseudodistributions)](weighted-pseudorandom-generators.md)
+- [Bogdanov–Hoza–Prakriya–Pyne: hitting sets with seed Õ(log n · log(1/ε)) for unbounded-width regular ROBPs](hitting-sets-for-unbounded-width-regular-robps.md)
+- [Cheng–Hoza: logspace hitting sets for ROBPs give L = BPL, and constant-width ROBPs are estimated in space O(log^2 n + log(1/ε))](cheng-hoza-hitting-sets-two-sided-derandomization.md)
+- [Cohen–Doron–Renard–Sberlo–Ta-Shma: black-box error reduction from PRGs to weighted PRGs via Richardson iteration](error-reduction-prg-to-weighted-prg.md)
+- [Braverman–Cohen–Garg: the generator of a weighted PRG is a hitting set generator](weighted-prg-generator-is-hitting-set-generator.md)
+- [Chen–Hoza–Lyu–Tal–Wu: weighted PRGs with seed Õ(log n · sqrt(log(1/ε)) + log(1/ε)) via shortcut graphs](weighted-prgs-via-inverse-analysis-and-shortcutting.md)
+- [Hoza: explicit weighted PRGs for width-n length-n ROBPs with seed length O(log^2 n + log(1/ε))](hoza-weighted-prg-seed-log-squared-plus-log-inverse-error.md)
+- [Pyne–Vadhan: weighted PRGs for unbounded-width permutation ROBPs with seed Õ(log^{3/2} n), impossible for PRGs](pyne-vadhan-pseudodistributions-beat-prgs.md)
+- [Braverman–Cohen–Garg: weighted PRGs and hitting sets with near-optimal error dependence for ROBPs](braverman-cohen-garg-near-optimal-error.md)
+- [Doron–Hoza: better PRGs for width-6 permutation ROBPs would give hitting sets for width-4 ROBPs](doron-hoza-permutation-prgs-imply-width-four-hitting-sets.md)
+- [Hoza: randomized space S is in deterministic space O(S^{3/2} / sqrt(log S))](hoza-bpspace-in-dspace-s-three-halves-over-sqrt-log.md)

@@ -31,3 +31,17 @@ example : (∏ n ∈ Finset.Icc 1 2, n.centralBinom) = 12 ∧
     (∏ n ∈ Finset.Icc 1 2, catalan n) = 2 := by
   simp_rw [catalan_eq_centralBinom_div]
   decide
+
+-- The Pascal-row limit can also be used directly in terms of the Glaisher–Kinkelin constant.
+example : Tendsto (fun n : ℕ => (∏ k ∈ Finset.range (n + 1), (n.choose k : ℝ)) /
+    (Real.exp ((n : ℝ) ^ 2 / 2 + n) /
+      ((2 * Real.pi) ^ ((n : ℝ) / 2) * (n : ℝ) ^ ((n : ℝ) / 2 + 1 / 3))))
+    atTop (𝓝 (glaisherKinkelinConstant ^ 2 / ((2 * Real.pi) ^ ((1 : ℝ) / 2) *
+      Real.exp (1 / 12)))) := by
+  obtain ⟨h, hc⟩ := tendsto_prod_choose_row_div
+  rwa [hc] at h
+
+-- A singleton row and a row with nontrivial interior entries.
+example : (∏ k ∈ Finset.range (0 + 1), (0 : ℕ).choose k) = 1 ∧
+    (∏ k ∈ Finset.range (4 + 1), (4 : ℕ).choose k) = 96 := by
+  decide
