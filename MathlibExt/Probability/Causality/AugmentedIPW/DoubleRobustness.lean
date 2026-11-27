@@ -212,7 +212,8 @@ theorem integrable_aipwScoreOfSigma (hT : MeasurableSet[mΩ] T)
 and `ε ≤ e ≤ 1 - ε`, for fixed `m`-measurable candidates `e, g₀, g₁`,
 `E[ψ] - E[Y₁ - Y₀] = E[(e* - e) ((μ₁* - g₁) / e + (μ₀* - g₀) / (1 - e))]`.
 This is a population identity at fixed nuisances, not a finite-sample statement about fitted
-nuisances. -/
+nuisances. It holds for any finite measure `μ`, with `E` the integral against `μ`; the left side
+is a bias only when `μ` is a probability measure. -/
 theorem integral_aipwScoreOfSigma_sub (hm : m ≤ mΩ) (hT : MeasurableSet[mΩ] T)
     (hcons : Y =ᵐ[μ] observed T Y₀ Y₁) (hY₀ : Integrable Y₀ μ) (hY₁ : Integrable Y₁ μ)
     (hex₁ : μ[T.indicator Y₁ | m] =ᵐ[μ] μ[T.indicator 1 | m] * μ[Y₁ | m])
@@ -239,9 +240,15 @@ theorem integral_aipwScoreOfSigma_sub (hm : m ≤ mΩ) (hT : MeasurableSet[mΩ] 
   rw [h]
   ring
 
-/-- **Double robustness, propensity correct**: if the candidate propensity is the true one,
-`e = P(T | m)` a.e., the AIPW score is unbiased for the average treatment effect for *any*
-candidate outcome regressions `g₀, g₁` (population level, fixed nuisances). -/
+/-- **Double robustness, propensity correct**: under the hypotheses of
+`integral_aipwScoreOfSigma_sub` (consistency, mean exchangeability, integrable potential
+outcomes, an `m`-measurable `e` with `ε ≤ e ≤ 1 - ε` a.e. for some `ε > 0`), if the candidate
+propensity is the true one, `e = P(T | m)` a.e., the integral of the AIPW score against `μ`
+equals that of `Y₁ - Y₀` for any `m`-measurable, integrable candidate outcome regressions
+`g₀, g₁` (population level, fixed nuisances). The overlap bound is needed: a correct propensity
+alone does not give the identity. This is an identity for the finite measure `μ`; it says that
+the AIPW score is unbiased for the average treatment effect only when `μ` is a probability
+measure. -/
 theorem integral_aipwScoreOfSigma_of_propensity (hm : m ≤ mΩ) (hT : MeasurableSet[mΩ] T)
     (hcons : Y =ᵐ[μ] observed T Y₀ Y₁) (hY₀ : Integrable Y₀ μ) (hY₁ : Integrable Y₁ μ)
     (hex₁ : μ[T.indicator Y₁ | m] =ᵐ[μ] μ[T.indicator 1 | m] * μ[Y₁ | m])
@@ -257,11 +264,16 @@ theorem integral_aipwScoreOfSigma_of_propensity (hm : m ≤ mΩ) (hT : Measurabl
   filter_upwards [hprop] with ω h
   simp [h]
 
-/-- **Double robustness, outcome regressions correct**: if `g₀ = E[Y₀ | m]` and
-`g₁ = E[Y₁ | m]` a.e., the AIPW score is unbiased for the average treatment effect for *any*
-candidate propensity `e` with `ε ≤ e ≤ 1 - ε` (population level, fixed nuisances). The true
-propensity `e*` may reach `0` or `1` here, but then the correct regression `g₁ = μ₁*` (on
-`{e* = 0}`) or `g₀ = μ₀*` (on `{e* = 1}`) is not identified from the law of the observed data. -/
+/-- **Double robustness, outcome regressions correct**: under the hypotheses of
+`integral_aipwScoreOfSigma_sub` (consistency, mean exchangeability, integrable potential
+outcomes, `m`-measurable and integrable regressions `g₀, g₁`), if `g₀ = E[Y₀ | m]` and
+`g₁ = E[Y₁ | m]` a.e., the integral of the AIPW score against `μ` equals that of `Y₁ - Y₀` for
+any `m`-measurable candidate propensity `e` with `ε ≤ e ≤ 1 - ε` a.e. for some `ε > 0`
+(population level, fixed nuisances); this is unbiasedness for the average treatment effect only
+when the finite measure `μ` is a probability measure. The true propensity `e*` may reach `0` or
+`1` here, but then the correct regression
+`g₁ = μ₁*` (on `{e* = 0}`) or `g₀ = μ₀*` (on `{e* = 1}`) is not identified from the law of the
+observed data. -/
 theorem integral_aipwScoreOfSigma_of_outcome (hm : m ≤ mΩ) (hT : MeasurableSet[mΩ] T)
     (hcons : Y =ᵐ[μ] observed T Y₀ Y₁) (hY₀ : Integrable Y₀ μ) (hY₁ : Integrable Y₁ μ)
     (hex₁ : μ[T.indicator Y₁ | m] =ᵐ[μ] μ[T.indicator 1 | m] * μ[Y₁ | m])

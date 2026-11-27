@@ -12,6 +12,7 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Complex
 public import Mathlib.Algebra.Polynomial.Roots
 public import Mathlib.RingTheory.Binomial
 public import Mathlib.Topology.Algebra.InfiniteSum.Defs
+import Mathlib.Analysis.Complex.Polynomial.Basic
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 import Mathlib.Analysis.SpecificLimits.Basic
 
@@ -20,6 +21,11 @@ import Mathlib.Analysis.SpecificLimits.Basic
 
 The terms of an ℓ-generalized Fibonacci sequence grow at least geometrically every two steps
 when ℓ ≥ 2. Consequently its zeta series converges absolutely on the open right half-plane.
+
+The complex roots of the characteristic polynomial, counted with multiplicity, multiply to
+$(-1)^{\ell+1}$. Consequently, when $\ell - 1$ divides $k$ and $q = k/(\ell - 1)$, the points
+$-(k + q) + i\pi(2n + q)/\log \alpha$ for even $\ell$ and $-(k + q) + 2\pi i n/\log \alpha$ for odd
+$\ell$ belong to the set of possible poles of the ℓ-generalized Fibonacci zeta function.
 -/
 
 namespace MetaMathlibExt
@@ -260,6 +266,145 @@ public theorem lGeneralizedFibonacciZeta_summable
   · apply Summable.of_nonneg_of_le (fun _ => norm_nonneg _) _ hgeom
     intro k
     simpa [add_assoc] using hbound _ k (lGeneralizedFibonacciZeta_summable.pow_le_pair hℓ hF k).2
+
+namespace lGeneralizedFibonacciZeta_corollaryPole_mem
+
+open Polynomial
+
+variable {ℓ : ℕ}
+
+private theorem degree_sum_lt (ℓ : ℕ) : (∑ i ∈ Finset.range ℓ, (X : ℂ[X]) ^ i).degree < ℓ := by
+  refine (degree_sum_le _ _).trans_lt ((Finset.sup_lt_iff (WithBot.bot_lt_natCast ℓ)).mpr ?_)
+  intro i hi
+  rw [degree_X_pow]
+  exact_mod_cast Finset.mem_range.mp hi
+
+private theorem monic (ℓ : ℕ) : (lGeneralizedFibonacciCharacteristic ℓ).Monic :=
+  monic_X_pow_sub (degree_sum_lt ℓ)
+
+private theorem natDegree_eq (ℓ : ℕ) : (lGeneralizedFibonacciCharacteristic ℓ).natDegree = ℓ := by
+  apply natDegree_eq_of_degree_eq_some
+  rw [lGeneralizedFibonacciCharacteristic, degree_sub_eq_left_of_degree_lt] <;>
+    simp [degree_sum_lt ℓ]
+
+private theorem coeff_zero (hℓ : 0 < ℓ) : (lGeneralizedFibonacciCharacteristic ℓ).coeff 0 = -1 := by
+  simp [lGeneralizedFibonacciCharacteristic, coeff_X_pow, hℓ, hℓ.ne]
+
+private theorem card_roots (ℓ : ℕ) : (lGeneralizedFibonacciCharacteristic ℓ).roots.card = ℓ :=
+  (splits_iff_card_roots.mp (IsAlgClosed.splits _)).trans (natDegree_eq ℓ)
+
+/-- Vieta's formula: the roots, counted with multiplicity, multiply to `(-1) ^ (ℓ + 1)`. -/
+private theorem prod_roots (hℓ : 0 < ℓ) :
+    (lGeneralizedFibonacciCharacteristic ℓ).roots.prod = (-1) ^ (ℓ + 1) := by
+  have h := (IsAlgClosed.splits _).coeff_zero_eq_prod_roots_of_monic (monic ℓ)
+  rw [coeff_zero hℓ, natDegree_eq ℓ] at h
+  calc (lGeneralizedFibonacciCharacteristic ℓ).roots.prod
+      = ((-1) ^ ℓ * (-1) ^ ℓ) * (lGeneralizedFibonacciCharacteristic ℓ).roots.prod := by
+        rw [← pow_add, ← two_mul, pow_mul]
+        simp
+    _ = (-1) ^ (ℓ + 1) := by rw [mul_assoc, ← h, pow_succ]
+
+private theorem ne_zero_of_mem_roots (hℓ : 0 < ℓ) {β : ℂ}
+    (hβ : β ∈ (lGeneralizedFibonacciCharacteristic ℓ).roots) : β ≠ 0 := by
+  rintro rfl
+  rw [mem_roots (monic ℓ).ne_zero, IsRoot.def, ← coeff_zero_eq_eval_zero, coeff_zero hℓ] at hβ
+  norm_num at hβ
+
+private theorem ofReal_mem_roots {α : ℝ} (hαroot : α ^ ℓ = ∑ i ∈ Finset.range ℓ, α ^ i) :
+    (α : ℂ) ∈ (lGeneralizedFibonacciCharacteristic ℓ).roots := by
+  rw [mem_roots (monic ℓ).ne_zero, IsRoot.def]
+  simp only [lGeneralizedFibonacciCharacteristic, eval_sub, eval_pow, eval_X, eval_finsetSum]
+  exact_mod_cast sub_eq_zero.mpr hαroot
+
+end lGeneralizedFibonacciZeta_corollaryPole_mem
+
+/-- **Explicit possible poles of the ℓ-generalized Fibonacci zeta function.** Let $\ell \ge 2$, let
+$\alpha > 1$ be a real number with $\alpha^\ell = \sum_{i=0}^{\ell-1} \alpha^i$, and let $k$ be a
+natural number divisible by $\ell - 1$; write $q = k/(\ell - 1)$. Then for every integer $n$, the
+point $-(k + q) + i\pi(2n + q)/\log \alpha$ if $\ell$ is even, and $-(k + q) + 2\pi i n/\log \alpha$
+if $\ell$ is odd, belongs to the set $S$ of possible poles of the $\ell$-generalized Fibonacci
+zeta function determined by $\ell$ and $\alpha$.
+
+A witnessing exponent tuple takes the constant value $q$ at every root of the characteristic
+polynomial other than $\alpha$.
+
+Source: Nabin Kumar Meher and Dilip Kumar Sahoo, *Analytic Continuation of the
+ℓ-Generalized Fibonacci Zeta Function*, INTEGERS 24 (2024), Article A85, Corollary 1. -/
+public theorem lGeneralizedFibonacciZeta_corollaryPole_mem
+    (ℓ : ℕ) (hℓ : 2 ≤ ℓ) (α : ℝ) (hα : 1 < α)
+    (hαroot : α ^ ℓ = ∑ i ∈ Finset.range ℓ, α ^ i)
+    (k : ℕ) (hk : ℓ - 1 ∣ k) (n : ℤ) :
+    lGeneralizedFibonacciZetaCorollaryPole ℓ k α n ∈
+      lGeneralizedFibonacciZetaPoleSet ℓ α := by
+  have hℓ0 : 0 < ℓ := by omega
+  have hkq : k + k / (ℓ - 1) = ℓ * (k / (ℓ - 1)) := by
+    obtain ⟨m, rfl⟩ := hk
+    rw [Nat.mul_div_cancel_left m (by omega)]
+    obtain ⟨j, rfl⟩ : ∃ j, ℓ = j + 1 := ⟨ℓ - 1, by omega⟩
+    simp only [Nat.add_sub_cancel]
+    ring
+  have hαmem := Multiset.mem_toFinset.mpr
+    (lGeneralizedFibonacciZeta_corollaryPole_mem.ofReal_mem_roots hαroot)
+  have hcard := lGeneralizedFibonacciZeta_corollaryPole_mem.card_roots ℓ
+  have hroots := lGeneralizedFibonacciZeta_corollaryPole_mem.prod_roots hℓ0
+  have hne := @lGeneralizedFibonacciZeta_corollaryPole_mem.ne_zero_of_mem_roots ℓ hℓ0
+  -- The witness is `q` times the root multiplicity. Since the roots are simple, this is the
+  -- constant `q` on the other roots, but the argument below does not need simplicity: with
+  -- multiplicities, Vieta's formula applies to the product over the roots directly.
+  set P := lGeneralizedFibonacciCharacteristic ℓ
+  set q := k / (ℓ - 1) with hq
+  set c := P.roots.count (α : ℂ)
+  set κ : ℂ → ℕ := fun β => q * P.roots.count β with hκ
+  have hR : lGeneralizedFibonacciOtherRoots ℓ α = P.roots.toFinset.erase (α : ℂ) := rfl
+  have hK : ∑ β ∈ lGeneralizedFibonacciOtherRoots ℓ α, κ β + q * c = ℓ * q := by
+    have h := Finset.add_sum_erase P.roots.toFinset (fun β => P.roots.count β) hαmem
+    rw [Multiset.toFinset_sum_count_eq, hcard] at h
+    rw [hR, hκ, ← Finset.mul_sum, ← mul_add, add_comm, h, mul_comm]
+  have hprod : (∏ β ∈ lGeneralizedFibonacciOtherRoots ℓ α, β ^ P.roots.count β) *
+      (α : ℂ) ^ c = (-1) ^ (ℓ + 1) := by
+    have h := Finset.mul_prod_erase P.roots.toFinset (fun β => β ^ P.roots.count β) hαmem
+    rw [← Finset.prod_multiset_count, hroots] at h
+    rw [hR, mul_comm, h]
+  have hlog : ∀ β ∈ lGeneralizedFibonacciOtherRoots ℓ α,
+      Complex.exp ((κ β : ℂ) * Complex.log β) = (β ^ P.roots.count β) ^ q := by
+    intro β hβ
+    rw [Complex.exp_nat_mul, Complex.exp_log (hne
+      (Multiset.mem_toFinset.mp (Finset.mem_of_mem_erase hβ))), ← pow_mul, mul_comm]
+  have hα0 : (α : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr (by linarith)
+  have hlogα : Complex.log (α : ℂ) ≠ 0 := by
+    rw [← Complex.ofReal_log (by linarith)]
+    exact Complex.ofReal_ne_zero.mpr (Real.log_pos hα).ne'
+  have hexp : Complex.exp ((∑ β ∈ lGeneralizedFibonacciOtherRoots ℓ α,
+        (κ β : ℂ) * Complex.log β) + ((q * c : ℕ) : ℂ) * Complex.log (α : ℂ)) =
+      ((-1) ^ (ℓ + 1)) ^ q := by
+    rw [Complex.exp_add, Complex.exp_sum, Finset.prod_congr rfl hlog, Complex.exp_nat_mul,
+      Complex.exp_log hα0, Finset.prod_pow, pow_mul', ← mul_pow, hprod]
+  have hS : ((∑ β ∈ lGeneralizedFibonacciOtherRoots ℓ α, κ β : ℕ) : ℂ) =
+      (ℓ : ℂ) * q - q * c := by
+    rw [eq_sub_iff_add_eq]
+    exact_mod_cast hK
+  rcases Nat.even_or_odd ℓ with hev | hodd
+  · have h1 : ((-1 : ℂ) ^ (ℓ + 1)) ^ q = Complex.exp (q * (Real.pi * Complex.I)) := by
+      rw [Complex.exp_nat_mul, Complex.exp_pi_mul_I, pow_succ, hev.neg_one_pow, one_mul]
+    obtain ⟨M, hM⟩ := Complex.exp_eq_exp_iff_exists_int.mp (hexp.trans h1)
+    refine ⟨κ, n - M, ?_⟩
+    simp only [lGeneralizedFibonacciZetaCorollaryPole, lGeneralizedFibonacciZetaPole, hev,
+      ite_true]
+    rw [← hq, hkq, hS, eq_sub_of_add_eq hM]
+    push_cast
+    field_simp
+    ring
+  · have h1 : ((-1 : ℂ) ^ (ℓ + 1)) ^ q = Complex.exp 0 := by
+      rw [Complex.exp_zero, (Nat.even_add_one.mpr (Nat.not_even_iff_odd.mpr hodd)).neg_one_pow,
+        one_pow]
+    obtain ⟨M, hM⟩ := Complex.exp_eq_exp_iff_exists_int.mp (hexp.trans h1)
+    refine ⟨κ, n - M, ?_⟩
+    simp only [lGeneralizedFibonacciZetaCorollaryPole, lGeneralizedFibonacciZetaPole,
+      Nat.not_even_iff_odd.mpr hodd, ite_false]
+    rw [← hq, hkq, hS, eq_sub_of_add_eq hM]
+    push_cast
+    field_simp
+    ring
 
 end
 

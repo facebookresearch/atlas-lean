@@ -17,10 +17,10 @@ public import Mathlib.MeasureTheory.Constructions.BorelSpace.Real
 open scoped RestrictedProduct
 
 /-- The Borel σ-algebra on the concrete restricted product used below. -/
-instance : MeasurableSpace (Πʳ _ : ℕ, [ℝ, Set.Icc 0 1]) := borel _
+private instance : MeasurableSpace (Πʳ _ : ℕ, [ℝ, Set.Icc 0 1]) := borel _
 
 /-- The Borel σ-algebra on the concrete restricted product used below. -/
-instance : BorelSpace (Πʳ _ : ℕ, [ℝ, Set.Icc 0 1]) := ⟨rfl⟩
+private instance : BorelSpace (Πʳ _ : ℕ, [ℝ, Set.Icc 0 1]) := ⟨rfl⟩
 
 /-- `exactSource` consumer with the original binders. -/
 private theorem exactSource {ι : Type*} [Countable ι] {R : ι → Type*}

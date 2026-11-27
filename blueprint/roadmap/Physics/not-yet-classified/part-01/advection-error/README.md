@@ -14,6 +14,16 @@
 - [Upwind step conserves mass](upwind-step-mass-eq.md)
 - [Upwind step preserves nonnegativity](upwind-step-nonneg.md)
 
+## D. The traveling wave and its derivatives
+
+- [Spatial derivative of the traveling wave](traveling-wave-has-deriv-at-space.md)
+- [Second spatial derivative of the traveling wave](traveling-wave-has-deriv-at-space-two.md)
+
+## E. Advection, periodicity and positivity
+
+- [Traveling wave is spatially periodic](traveling-wave-periodic.md)
+- [Traveling wave is positive when the amplitude is below the mean](traveling-wave-pos.md)
+
 ## J. Local truncation error at the nodes
 
 - [Truncation error of the upwind scheme for a traveling sine wave](upwind-truncation-le.md)

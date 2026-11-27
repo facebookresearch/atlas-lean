@@ -10,7 +10,7 @@ LICENSE file in the root directory of this source tree.
 # Shared notions for formations of finite groups
 
 Inclusion of classes, local (saturated) formations and residuals, on top of `FiniteGroupClass` and
-`IsFormation` from the WantedExt entry for Kourovka Notebook Problem 13.51. Shared by the WantedExt
+`IsFormation` from the MathlibExt module on Kourovka Notebook Problem 13.51. Shared by WantedExt
 entries for Kourovka Notebook Problems 9.58, 9.59, 9.60 and 9.73 so that they speak about the same
 notions. The residual and saturation predicates of the 12.97 and 11.91 entries are stated for other
 carriers (the `GroupClass` structure of 12.97, and isomorphism-closed classes of finite soluble
@@ -19,7 +19,7 @@ groups in 11.91), so they do not apply to `FiniteGroupClass`.
 
 module
 
-public import WantedExt.GroupTheory.FiniteModularLatticeFormationsKourovka13Problem51Wanted
+public import MathlibExt.GroupTheory.FiniteModularLatticeFormationsKourovka13Problem51
 public import Mathlib.Algebra.Group.PUnit
 public import Mathlib.GroupTheory.Frattini
 public import Mathlib.GroupTheory.QuotientGroup.Defs

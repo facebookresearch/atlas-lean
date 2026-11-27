@@ -1,0 +1,3 @@
+# TWO-MACHINE UNIT-TIME MULTI-PURPOSE JOB SHOP, WEIGHTED TARDINESS as a decision problem
+
+The decision problem TWO-MACHINE UNIT-TIME MULTI-PURPOSE JOB SHOP, WEIGHTED TARDINESS accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding of pairs of a multi-purpose machine job-shop instance $(m, J, K)$ and a list of pairs, to an instance that is well-formed (the job-shop instance is well-formed with $2$ machines (nonempty jobs, nonempty eligible lists in $\{1, 2\}$) and every operation has length $1$, one pair per job) and feasible for TWO-MACHINE UNIT-TIME MULTI-PURPOSE JOB SHOP, WEIGHTED TARDINESS. It rejects every bitstring that does not decode to such an instance.
