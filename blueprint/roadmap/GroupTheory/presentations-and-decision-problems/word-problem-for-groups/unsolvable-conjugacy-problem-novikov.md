@@ -12,6 +12,7 @@ Conventions: the group is fixed and the pair of words is the input. The word pro
 
 - [Solvable conjugacy problem for a quotient of a free group](../decision-problems-in-free-abelianized-extensions/conjugacy-problem-solvable.md)
 - [Group](../../group-basics/group.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -23,5 +24,5 @@ The statement follows from the unsolvability of the word problem: the word probl
 
 ## Sources
 
-- Bjorn Poonen, *Undecidable problems: a sampler*, in: Interpreting Gödel: Critical Essays (J. Kennedy, ed.), Cambridge University Press, 2014, pp. 211–241, https://doi.org/10.1017/CBO9780511756306.015, read in the copy arXiv:1204.0299v2, where the definition and the statement, with its priority over the word problem, are in the subsection "The conjugacy problem" of its section on group theory.
+- Bjorn Poonen, *Undecidable problems: a sampler*, in: Interpreting Gödel: Critical Essays (J. Kennedy, ed.), Cambridge University Press, 2014, pp. 211–241, https://doi.org/10.1017/CBO9780511756306.015, read in the copy arXiv:1204.0299v2, where the definition and the statement, with its priority over the word problem, are in Section 6.3 ("The conjugacy problem").
 - P. S. Novikov, *Unsolvability of the conjugacy problem in the theory of groups* (in Russian), Izv. Akad. Nauk SSSR Ser. Mat. 18 (1954), 485–524, the original source, cited beside the survey read above.

@@ -7,12 +7,13 @@ Let $N(p, q)$ be the free nilpotent group of step (class) $p \ge 2$ and rank $q 
 1. $\mathcal{EP}$ is undecidable in $N(2, q)$ for every $q \ge 2$, in particular in $H(\mathbb{Z})$ (Theorem 4);
 2. $\mathcal{EP}$ is undecidable in every free nilpotent group of step at least $3$ (Proposition 6).
 
-By contrast, there is an algorithm deciding any single equation in $H(\mathbb{Z})$, and more generally in every two-step nilpotent group with rank-one commutator subgroup. Earlier results recalled in the source: Roman'kov exhibited a four-step nilpotent group of rank six with undecidable $\mathcal{EP}$, and $\mathcal{EP}$ is undecidable in $N(2, q)$ for $q$ large (Durnev) and in $N(3, 2)$ (Truss).
+By contrast, there is an algorithm deciding any single equation in $H(\mathbb{Z})$, and more generally in every two-step nilpotent group with rank-one commutator subgroup (Theorem 3). Earlier results recalled in the source: Roman'kov exhibited a four-step nilpotent group of rank six with undecidable $\mathcal{EP}$, and $\mathcal{EP}$ is undecidable in $N(2, q)$ for $q$ large (Durnev) and in $N(3, 2)$ (Truss).
 
 ## Depends on
 
 - [Group](../../group-basics/group.md)
 - [Free group of a variety on a finite set](../automorphisms-of-categories-of-relatively-free-g/relatively-free-group.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -24,4 +25,4 @@ A system of quadratic Diophantine equations $\alpha_i + \sum_j \beta_{ij} x_j + 
 
 ## Sources
 
-- M. Duchin, H. Liang and M. Shapiro, "Equations in nilpotent groups", Proceedings of the American Mathematical Society 143 (2015), no. 11, 4723–4731, https://doi.org/10.1090/proc/12630; read in arXiv:1401.2471v1, whose numbering is used here (Theorem 4 and Proposition 6 of arXiv:1401.2471v1).
+- M. Duchin, H. Liang and M. Shapiro, "Equations in nilpotent groups", Proceedings of the American Mathematical Society 143 (2015), no. 11, 4723–4731, https://doi.org/10.1090/proc/12630; read in arXiv:1401.2471v1, whose numbering is used here (Theorems 3 and 4 and Proposition 6 of arXiv:1401.2471v1).

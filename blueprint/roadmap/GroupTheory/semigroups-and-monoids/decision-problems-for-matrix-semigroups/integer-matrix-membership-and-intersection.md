@@ -2,7 +2,7 @@
 
 No algorithm decides whether a given integer matrix of size at least six is a product of given matrices of that size, nor whether two finitely generated semigroups of integer matrices of size at least four meet; these are Markov's 1947 results.
 
-Use the [decision problems for finitely generated matrix semigroups](decision-problems-for-matrix-semigroups.md) with integer entries.
+Use the [membership problem](matrix-semigroup-membership-problem.md) and the [semigroup intersection problem](matrix-semigroup-intersection-problem.md) for integer matrices.
 
 **Theorem (Markov).**
 
@@ -13,7 +13,9 @@ Clause 1 is described in the source as the first undecidability result obtained 
 
 ## Depends on
 
-- [Decision problems for finitely generated matrix semigroups](decision-problems-for-matrix-semigroups.md)
+- [Membership problem for matrix semigroups](matrix-semigroup-membership-problem.md)
+- [Semigroup intersection problem for matrix semigroups](matrix-semigroup-intersection-problem.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

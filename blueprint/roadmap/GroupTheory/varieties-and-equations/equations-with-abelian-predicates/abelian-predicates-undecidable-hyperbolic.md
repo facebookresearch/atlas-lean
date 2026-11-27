@@ -14,6 +14,9 @@ When the abelianization of a hyperbolic group is finite the problem is decidable
 - [Commutator subgroup of a group](../../commutators-and-engel-conditions/commutator-subgroup.md)
 - [Quotient group by a normal subgroup](../../group-basics/quotient-group.md)
 - [Abelian group](../../group-basics/abelian-group.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Abelianization of a group](../../commutators-and-engel-conditions/abelianization.md)
+- [Solution set of a system of equations](../equationally-noetherian-groups/solutions-2.md)
 
 ## Proof depends on
 

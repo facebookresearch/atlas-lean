@@ -7,6 +7,7 @@ Let $F$ be a free group of infinite rank $\varkappa$. The source proves that the
 ## Depends on
 
 - [Group](../../group-basics/group.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

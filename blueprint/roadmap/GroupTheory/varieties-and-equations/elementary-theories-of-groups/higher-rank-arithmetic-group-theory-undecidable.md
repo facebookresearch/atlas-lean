@@ -10,6 +10,7 @@ By contrast, the first-order theory of non-abelian free groups is decidable (Kha
 
 - [Group](../../group-basics/group.md)
 - [Center of a group](../../group-basics/group-center.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

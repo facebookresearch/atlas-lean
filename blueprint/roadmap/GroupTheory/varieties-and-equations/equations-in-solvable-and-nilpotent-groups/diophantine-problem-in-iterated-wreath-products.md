@@ -16,6 +16,8 @@ The case $m = n = 1$ of clause 1 is the undecidability of [systems of equations 
 
 - [Group](../../group-basics/group.md)
 - [Restricted wreath product](../../soluble-finite-groups/solubility-nilpotency-and-subnormality/restricted-wreath.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Solution set of a system of equations](../equationally-noetherian-groups/solutions-2.md)
 
 ## Proof depends on
 

@@ -10,6 +10,9 @@ For a finite simple graph $\Gamma$ let $G\Gamma$ be the right-angled Artin group
 - [Group](../../group-basics/group.md)
 - [Artin group](../../presentations-and-decision-problems/braid-and-artin/artin-groups/artin-group.md)
 - [Commutator subgroup of a group](../../commutators-and-engel-conditions/commutator-subgroup.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Abelianization of a group](../../commutators-and-engel-conditions/abelianization.md)
+- [Solution set of a system of equations](../equationally-noetherian-groups/solutions-2.md)
 
 ## Proof depends on
 

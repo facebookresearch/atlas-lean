@@ -15,6 +15,7 @@ Conventions: the word problem of any finitely presented group is Turing reducibl
 - [Group](../../group-basics/group.md)
 - [Turing degree of a predicate](../../../TheoryOfComputation/degrees-and-hierarchies/turing-degrees-and-the-turing-jump/turing-degree-of.md)
 - [Turing reducibility of predicates](../../../TheoryOfComputation/degrees-and-hierarchies/turing-degrees-and-the-turing-jump/turing-reducible-pred.md)
+- [Recognizability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
 
 ## Proof depends on
 

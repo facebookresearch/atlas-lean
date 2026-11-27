@@ -15,6 +15,8 @@ whether some solution $\phi$ of the system satisfies $\Theta$ when each $\mathrm
 - [Commutator subgroup of a group](../../commutators-and-engel-conditions/commutator-subgroup.md)
 - [Quotient group by a normal subgroup](../../group-basics/quotient-group.md)
 - [Abelian group](../../group-basics/abelian-group.md)
+- [Abelianization of a group](../../commutators-and-engel-conditions/abelianization.md)
+- [Solution set of a system of equations](../equationally-noetherian-groups/solutions-2.md)
 
 ## Proof depends on
 
@@ -26,4 +28,4 @@ Without the constraints this is the Diophantine problem of $G$, decidable for fr
 
 ## Sources
 
-- L. Ciobanu and A. Garreta, "Group equations with abelian predicates", International Mathematics Research Notices 2024 (2024), no. 5, 4119–4159, https://doi.org/10.1093/imrn/rnad179; read in arXiv:2204.13946v1 (Sections 2.3 and 2.4 of arXiv:2204.13946v1, the Diophantine problem in groups and with constraints).
+- L. Ciobanu and A. Garreta, "Group equations with abelian predicates", International Mathematics Research Notices 2024 (2024), no. 5, 4119–4159, https://doi.org/10.1093/imrn/rnad179; read in arXiv:2204.13946v1 (Sections 2.1 and 2.2 of arXiv:2204.13946v1, the Diophantine problem in groups and with constraints).

@@ -17,6 +17,8 @@ Clause 1 recovers the undecidability of the Diophantine problem in every non-abe
 - [Group](../../group-basics/group.md)
 - [Center of a group](../../group-basics/group-center.md)
 - [Centralizer subgroups](../../subgroup-embedding/lattices-of-centralizers/is-centralizer.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Solution set of a system of equations](../equationally-noetherian-groups/solutions-2.md)
 
 ## Proof depends on
 

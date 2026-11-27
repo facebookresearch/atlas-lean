@@ -13,6 +13,7 @@ For the class of all finite groups the undecidability was proved by Slobodskoi.
 
 - [Group](../../group-basics/group.md)
 - [Abelian group](../../group-basics/abelian-group.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

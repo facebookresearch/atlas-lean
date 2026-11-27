@@ -15,6 +15,7 @@ For the loop groups $E^{\Phi}_{ad}(K[t, t^{-1}])$ with $\mathrm{rank}\, \Phi \ge
 - [Group](../../group-basics/group.md)
 - [Center of a group](../../group-basics/group-center.md)
 - [Laurent polynomials](../../../AlgebraicGeometry/varieties-and-projective-geometry/tropical-varieties/laurent-poly.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
