@@ -66,3 +66,5 @@
 
 - [Growth holding time at index n is the time change of T_n](growth-times-top.md)
 - [Mean time to the first coalescence under exponential growth](integral-growth-times-top.md)
+
+- [Coalescent trees of density-dependent branching processes](coalescent-trees-of-density-dependent-branching-processes/README.md)

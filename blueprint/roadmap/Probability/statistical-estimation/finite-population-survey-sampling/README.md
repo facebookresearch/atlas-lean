@@ -13,3 +13,4 @@
 - [Unbiasedness of the Sen–Yates–Grundy variance estimator](integral-sen-yates-grundy-estimate-eq-va.md)
 - [Unbiasedness of the sample mean under simple random sampling](rand-exp-sample-mean.md)
 - [Variance of the sample mean under simple random sampling](rand-exp-sq-sample-mean-sub-pop-mean.md)
+- [Inclusion-weighted graph totals under a known sampling design](inclusion-weighted-graph-totals-under-a-known-sa/README.md)

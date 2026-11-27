@@ -24,6 +24,7 @@ public import MathlibExt.NumberTheory.PrimeDvdChoose
 public import MathlibExt.NumberTheory.BinomidIndexAdd
 public import MathlibExt.NumberTheory.BinomidIndexBinomidUpperAverageEqISup
 public import MathlibExt.NumberTheory.BinomidIndexApplyPeriodEqApplyZero
+public import MathlibExt.NumberTheory.BinomidIndexBinomidShiftImageInterEqZero
 public import MathlibExt.NumberTheory.BinomidIndexBinomidAverageCondition
 
 namespace MetaMathlibExt
@@ -54,20 +55,6 @@ Binomid Index*, INTEGERS 24 (2024), Article A53, Proposition 5
 public theorem_wanted isLexMinimalExtension_of_periodic {η : ℕ → ℕ}
     (hη : IsBinomidIndex η) {p : ℕ} (hp : 0 < p) (hper : ∀ i, η (i + p) = η i) :
     IsLexMinimalExtension η
-
-/-- **Distinct shifts of lex-minimal extensions meet only in zero.** Let $L$ be the set of
-lex-minimal extensions, and for a natural number $l$ let $\sigma^l$ be the right shift that
-prepends $l$ zeros to a sequence. For natural numbers $l \neq m$,
-$\sigma^l(L) \cap \sigma^m(L) = \{(0, 0, 0, \dots)\}$: the only sequence in both images is
-the zero sequence.
-
-Source: Caalim and Tanaka, *Lexicographically Minimal Extension of a Finite
-Binomid Index*, INTEGERS 24 (2024), Article A53, Proposition 6
-(`integers-2024-A53-prop-6`). -/
-public theorem_wanted binomidShift_image_inter_eq_zero {l m : ℕ} (hlm : l ≠ m) :
-    binomidShift l '' {η | IsLexMinimalExtension η}
-        ∩ binomidShift m '' {η | IsLexMinimalExtension η}
-      = {fun _ => 0}
 
 /-- **Primes divide all inner Fibonomial coefficients of infinitely many rows.** Let $F_n$ be
 the Fibonacci numbers and $F_n! = F_1 F_2 \cdots F_n$ the Fibonacci factorial. For every prime
