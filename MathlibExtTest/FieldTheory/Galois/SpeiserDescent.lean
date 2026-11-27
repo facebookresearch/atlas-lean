@@ -38,8 +38,8 @@ example {Γ : Type*} [Group Γ] [MulSemiringAction Γ L] [DistribMulAction Γ W]
     (hw : ∀ g ∈ N, g • w = w) : w ∈ Submodule.span L (MulAction.fixedPoints Γ W) :=
   FixedPoints.mem_span_of_finiteIndex (Field.toIsField L) hsl N hNL hw
 
--- Invariant vectors linearly independent over the fixed field `K` are linearly independent over
--- `L`, for any group with fixed field `K`.
+-- Invariant vectors linearly independent over `K` are linearly independent over `L`, for any
+-- group whose fixed elements of `L` lie in the image of `K`.
 example {Γ : Type*} [Group Γ] [MulSemiringAction Γ L] [Algebra.IsInvariant K L Γ]
     [DistribMulAction Γ W] [SMulCommClass Γ K W]
     (hsl : ∀ (g : Γ) (a : L) (w : W), g • a • w = (g • a) • g • w) {ι : Type*}

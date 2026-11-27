@@ -40,8 +40,8 @@ lemma in the form of `MathlibExt.FieldTheory.Galois.SpeiserDescent` gives:
   `Representation.IsAdmissible`);
 * for a ring `S` that is `(F, H')`-regular (`Representation.IsRegularPeriodRing`; J.-M. Fontaine
   and Y. Ouyang, *Theory of p-adic Galois representations*, §3.1, Definition 3.9), and hence
-  `(F, H)`-regular (`Representation.IsRegularPeriodRing.mono`), the same holds for the basis form
-  and for the comparison map `α_V`
+  `(F, H)`-regular (`Representation.IsRegularPeriodRing.mono`), and a finite-dimensional `V`, the
+  same holds for the basis form and for the comparison map `α_V`
   (`Representation.IsRegularPeriodRing.hasFixedBasis_iff_of_normal`,
   `Representation.IsRegularPeriodRing.comparison_bijective_iff_of_normal`).
 
@@ -272,9 +272,11 @@ theorem rank_periods_eq_of_normal (ρ : Representation F G V) (hle : H' ≤ H)
   let b := Module.Free.chooseBasis (fixedSubalgebra S act H) (ρ.periods act H)
   rw [← b.mk_eq_rank'', ← (periodsBasisOfNormal ρ hle hN hL hfaithful b).mk_eq_rank'']
 
-/-- **Galois descent for the dimension of `D_S(V)`**: `dim_{S^H} D_{S,H}(V) =
-dim_{S^{H'}} D_{S,H'}(V)`, for `H' ≤ H` normal in `H` and of finite index such that `S^{H'}` is a
-field on which `H/H'` acts faithfully (every `h ∈ H` fixing `S^{H'}` pointwise lies in `H'`). -/
+/-- **Galois descent for the dimension of `D_S(V)`, natural-number form**:
+`finrank_{S^H} D_{S,H}(V) = finrank_{S^{H'}} D_{S,H'}(V)` (zero at infinite rank;
+`rank_periods_eq_of_normal` is the equality of ranks), for `H' ≤ H` normal in `H` and of finite
+index such that `S^{H'}` is a field on which `H/H'` acts faithfully (every `h ∈ H` fixing `S^{H'}`
+pointwise lies in `H'`). -/
 theorem finrank_periods_eq_of_normal (ρ : Representation F G V) (hle : H' ≤ H)
     (hN : (H'.subgroupOf H).Normal) [(H'.subgroupOf H).FiniteIndex]
     (hL : IsField (fixedSubalgebra S act H'))
@@ -283,9 +285,9 @@ theorem finrank_periods_eq_of_normal (ρ : Representation F G V) (hle : H' ≤ H
       Module.finrank (fixedSubalgebra S act H') (ρ.periods act H') :=
   congrArg Cardinal.toNat (rank_periods_eq_of_normal ρ hle hN hL hfaithful)
 
-/-- **Galois descent for admissibility, dimension form** (Fontaine, Exposé III, §1.8.6 p. 135):
-`V` is admissible for `S` as a representation of `H` if and only if it is admissible as a
-representation of `H'`, for `H' ≤ H` normal in `H` and of finite index such that `S^{H'}` is a
+/-- **Galois descent for admissibility, dimension form** (Fontaine, Exposé III, §1.8.5–1.8.6
+p. 135): `V` is admissible for `S` as a representation of `H` if and only if it is admissible as
+a representation of `H'`, for `H' ≤ H` normal in `H` and of finite index such that `S^{H'}` is a
 field on which `H/H'` acts faithfully (every `h ∈ H` fixing `S^{H'}` pointwise lies in `H'`). -/
 theorem isAdmissible_iff_of_normal (ρ : Representation F G V) (hle : H' ≤ H)
     (hN : (H'.subgroupOf H).Normal) [(H'.subgroupOf H).FiniteIndex]

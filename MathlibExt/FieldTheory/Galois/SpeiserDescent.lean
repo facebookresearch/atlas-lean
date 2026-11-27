@@ -27,7 +27,9 @@ fixed by `Γ` (`MulAction.fixedPoints Γ W`) and `L^Γ` for the ring of invarian
 
 * `FixedPoints.linearIndependent_of_linearIndependent_subring`: vectors of `W^Γ` that are
   linearly independent over `L^Γ` are linearly independent over `L`. This holds for every group
-  `Γ`; the proof is the minimal relation argument.
+  `Γ`; the proof is the minimal relation argument, adapted from the proof of
+  `Representation.IsRegularPeriodRing.linearIndependent` in
+  `MathlibExt.RepresentationTheory.AdmissibleRepresentation.Regular`.
 * `FixedPoints.mem_span_of_finiteIndex`: if `Γ` acts on `L` through a finite quotient, that is,
   the kernel `N` of the action on `L` has finite index, then every vector `w` fixed by `N` is an
   `L`-linear combination of vectors of `W^Γ`. Indeed the traces `∑_{q ∈ Γ/N} q • (b • w)` lie in
@@ -40,7 +42,8 @@ For a finite Galois group `Γ` of a field extension `L/K` (`IsGaloisGroup Γ K L
 `Γ = Gal(L/K)` for a finite Galois extension `L/K`) acting semilinearly and `K`-linearly on `W`,
 these give **Speiser's lemma**: the natural map `L ⊗_K W^Γ → W`, `a ⊗ w ↦ a • w`, is an
 isomorphism (`IsGaloisGroup.bijective_liftBaseChange_invariants`,
-`IsGaloisGroup.baseChangeInvariantsEquiv`), so that `dim_K W^Γ = dim_L W`
+`IsGaloisGroup.baseChangeInvariantsEquiv`), so that `W^Γ` and `W` have the same dimension
+over `K` and `L`; in natural-number form, `finrank K W^Γ = finrank L W`
 (`IsGaloisGroup.finrank_invariants`). Here `W^Γ` is the `K`-subspace of invariants of the
 representation `Representation.ofDistribMulAction K Γ W`. J.-M. Fontaine,
 *Représentations p-adiques semi-stables*, Astérisque 223 (1994), Exposé III, §4.3.1 p. 148,
@@ -68,7 +71,8 @@ namespace FixedPoints
 group `Γ` act by ring automorphisms on a commutative ring `L` that is a field, and semilinearly on
 an `L`-module `W` (`g • (a • w) = (g • a) • (g • w)`). Then a family of vectors of `W` fixed by
 `Γ` that is linearly independent over the ring of invariants `L^Γ = FixedPoints.subring L Γ` is
-linearly independent over `L`. -/
+linearly independent over `L`. The minimal relation proof is adapted from that of
+`Representation.IsRegularPeriodRing.linearIndependent`. -/
 theorem linearIndependent_of_linearIndependent_subring (hL : IsField L)
     (hsl : ∀ (g : Γ) (a : L) (w : W), g • a • w = (g • a) • g • w) {ι : Type*} {v : ι → W}
     (hv : ∀ i (g : Γ), g • v i = v i) (hli : LinearIndependent (FixedPoints.subring L Γ) v) :
@@ -226,8 +230,9 @@ variable {Γ K L W : Type*} [Group Γ] [Field K] [Field L] [Algebra K L] [MulSem
 namespace Algebra.IsInvariant
 
 /-- **Invariant vectors linearly independent over `K` are linearly independent over `L`**: let
-`Γ` act on the field `L` by ring automorphisms with fixed field `K` (`Algebra.IsInvariant K L Γ`),
-and semilinearly and `K`-linearly on an `L`-vector space `W`
+`Γ` act on the field `L` by ring automorphisms such that every element of `L` fixed by `Γ` lies in
+the image of `K` (`Algebra.IsInvariant K L Γ`), and semilinearly and `K`-linearly on an
+`L`-vector space `W`
 (`g • (a • w) = (g • a) • (g • w)`). Then a family of vectors of
 `W^Γ = (Representation.ofDistribMulAction K Γ W).invariants` that is linearly independent over
 `K` is linearly independent over `L`. -/
@@ -306,7 +311,9 @@ theorem baseChangeInvariantsEquiv_tmul [Finite Γ] [IsGaloisGroup Γ K L]
 
 /-- **Speiser's lemma, dimension form**: for a finite Galois group `Γ` of `L/K` acting
 semilinearly and `K`-linearly on an `L`-vector space `W` (`g • (a • w) = (g • a) • (g • w)`),
-`dim_K W^Γ = dim_L W`, where `W^Γ = (Representation.ofDistribMulAction K Γ W).invariants`. -/
+`finrank K W^Γ = finrank L W` (natural-number dimensions, zero for infinite rank; the
+isomorphism `baseChangeInvariantsEquiv` gives the equality of dimensions in general), where
+`W^Γ = (Representation.ofDistribMulAction K Γ W).invariants`. -/
 theorem finrank_invariants [Finite Γ] [IsGaloisGroup Γ K L]
     (hsl : ∀ (g : Γ) (a : L) (w : W), g • a • w = (g • a) • g • w) :
     finrank K (Representation.ofDistribMulAction K Γ W).invariants = finrank L W := by
