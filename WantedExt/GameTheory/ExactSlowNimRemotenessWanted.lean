@@ -34,20 +34,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Proposition 1 (odd P-positions of exact slow k-NIM).** Let $0 < k$ and let
-$\mathrm{NIM}(k + 1, k)$ be Slow$A$-Nim on $k + 1$ stacks with $A = \{k\}$. A position
-$x = (x_0, \dots, x_k)$ of $\mathrm{NIM}(k + 1, k)$ all of whose entries are odd is a P-position if
-and only if there is a natural number $m$ such that $x_0 + \dots + x_k = km + k - 1$, $x_i < m$
-for every $i$, and $m$ is even.
-
-Source: Vladimir Gurvich, Denis Martynov, Vladislav Maximchuk, and Michael Vyalyi, *On
-Remoteness Functions of Exact Slow k-NIM with k+1 Piles*, INTEGERS 24 (2024), Article G1,
-Proposition 1. -/
-public theorem_wanted exactSlowNim_odd_isP_iff {k : ℕ} (hk : 0 < k) (x : Fin (k + 1) → ℕ)
-    (hx : ∀ i, Odd (x i)) :
-    SpragueGrundy.IsP (slowANimGame (k + 1) {k}) x ↔
-      ∃ m, ∑ i, x i = k * m + k - 1 ∧ (∀ i, x i < m) ∧ Even m
-
 /-- **Theorem 2 (the M-rule realizes Smith's remoteness).** Let $0 < k$ and let
 $\mathrm{NIM}(k + 1, k)$ be exact slow $k$-NIM on $k + 1$ piles, that is, Slow$A$-Nim on $k + 1$
 stacks with $A = \{k\}$, where a move removes one stone from each of exactly $k$ nonempty piles.
