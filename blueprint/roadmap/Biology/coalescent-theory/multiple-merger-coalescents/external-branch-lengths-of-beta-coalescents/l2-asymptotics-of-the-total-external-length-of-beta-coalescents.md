@@ -15,7 +15,7 @@ $$\mathbb E[T] = \frac{\alpha-1}{C_0\Gamma(2-\alpha)}, \qquad \Delta(\alpha) = \
 
 For the Beta$(2-\alpha,\alpha)$-coalescent, $\mathbb E[T] = \alpha(\alpha-1)\Gamma(\alpha)$ and
 
-$$\lim_{n\to\infty} n^{3\alpha-5}\,\mathbb E\Big[\big(L_{ext}^{(n)} - n^{2-\alpha}\mathbb E[T]\big)^2\Big] = \frac{\big((\alpha-1)\Gamma(\alpha+1)\big)^2\,\Gamma(4-\alpha)}{2(3-\alpha)\,\Gamma(4-2\alpha)}.$$
+$$\lim_{n\to\infty} n^{3\alpha-5}\,\mathbb E\Big[\big(L_{ext}^{(n)} - n^{2-\alpha}\mathbb E[T]\big)^2\Big] = \frac{\big((\alpha-1)\Gamma(\alpha+1)\big)^2}{2(3-\alpha)}\left(\frac{\Gamma(4-\alpha)}{\Gamma(4-2\alpha)} - \frac{2}{\Gamma(2-\alpha)}\right) = \frac{\Delta(\alpha)}{2}$$ (correcting Theorem 1.1 of arXiv:1202.5859, which omits the $-\frac{2}{\Gamma(2-\alpha)}$ term).
 
 **Moments of one external branch.** If moreover $\zeta > 1 - 1/\alpha$, then for $0 \le \beta < \alpha/(\alpha-1)$ with $\beta(\alpha-1) < \omega^{(1)}$, $\mathbb E\big[(n^{\alpha-1}T_1^{(n)})^\beta\big] \to \mathbb E[T^\beta]$, while for $\beta \ge \alpha/(\alpha-1)$ these moments diverge.
 

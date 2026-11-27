@@ -11,7 +11,7 @@ Let $x^* \approx 0.797$ be the survival probability of a Galton–Watson tree wi
 
 **Corollary.** With high probability the simple random walk on $\mathrm{WCM}_N$ (the ancestral lineage) has a unique stationary distribution, supported on $S^N$.
 
-So about $20\%$ of individuals lie outside the giant component, every lineage enters the giant component within about $\log_2\log N$ generations, and lineages started in distinct small strongly connected components can fail to coalesce, which explains the non-coalescing runs observed in simulations of the cyclical model.
+So about $20\%$ of individuals lie outside the giant component, and every individual has an ancestral line entering $S^N$ within about $\log_2\log N$ generations (whereas a random ancestral lineage takes $O(\log N)$ generations, Remark 3.4, and still eventually enters the unique closed class $S^N$).
 
 ## Expansion
 
