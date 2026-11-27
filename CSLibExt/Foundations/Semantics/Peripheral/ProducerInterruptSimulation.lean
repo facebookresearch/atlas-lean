@@ -90,7 +90,8 @@ structure SystemState (σ : Type v) (α : Type u) where
   slot : Slot α
 
 /-- A producer interrupt handler: a transition relation over the whole closed-system state, so
-that a handler which writes driver-local state or the slot is expressible; `Rely` restricts slot writes to publications. -/
+that a handler which writes driver-local state or the slot is expressible; `Rely` restricts
+slot writes to publications. -/
 abbrev InterruptHandler (σ : Type v) (α : Type u) :=
   Cslib.LTS (SystemState σ α) (InterruptAction α)
 
@@ -222,39 +223,6 @@ theorem isSimulation_systemRefinement {σ : Type v} {α : Type u} (H : Interrupt
       | publish n v =>
           exact Cslib.LTS.STr.tr Relation.ReflTransGen.refl ⟨_, rfl, DriverStep.env _ hs⟩
             Relation.ReflTransGen.refl
-
-/-- A `τ`-closure step of the protocol never moves: the protocol has no internal steps. -/
-private theorem protocolLTS_τSTr_eq {α : Type u} {y y' : Phase α × Slot α}
-    (hy : (protocolLTS α).τSTr y y') : y = y' := by
-  induction hy with
-  | refl => rfl
-  | tail _ hst _ =>
-      obtain ⟨μ, hμ, -⟩ := hst
-      cases hμ
-
-/-- A saturated protocol step is either a stutter on `τ` or one visible protocol step. -/
-private theorem protocolLTS_saturate_tr {α : Type u} {y y' : Phase α × Slot α}
-    {l : StepLabel α} (hy : (protocolLTS α).saturate.Tr y l y') :
-    (l = .internal ∧ y = y') ∨ ∃ μ, l = .visible μ ∧ (driverLTS α).Tr y μ y' := by
-  change (protocolLTS α).STr y l y' at hy
-  cases hy with
-  | refl => exact Or.inl ⟨rfl, rfl⟩
-  | tr h1 h2 h3 =>
-      obtain ⟨μ, rfl, h2⟩ := h2
-      obtain rfl := protocolLTS_τSTr_eq h1
-      obtain rfl := protocolLTS_τSTr_eq h3
-      exact Or.inr ⟨μ, rfl, h2⟩
-
-/-- A saturated protocol trace erases to a protocol trace between the same states. -/
-private theorem driverLTS_mtr_of_saturate_mtr {α : Type u} {y y' : Phase α × Slot α}
-    {ms : List (StepLabel α)} (hy : (protocolLTS α).saturate.MTr y ms y') :
-    (driverLTS α).MTr y (visibleLabels ms) y' := by
-  induction hy with
-  | refl => exact .refl
-  | stepL h1 _ ih =>
-      rcases protocolLTS_saturate_tr h1 with ⟨rfl, rfl⟩ | ⟨μ, rfl, h2⟩
-      · exact ih
-      · exact .stepL h2 ih
 
 /-- **Trace erasure.** Under the rely condition, every finite system trace from an initial state
 erases, by dropping driver-internal and interrupt-local steps, to a protocol trace from the idle
