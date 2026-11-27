@@ -15,7 +15,8 @@ recognition site `c` with a correct substrate `C` and an incorrect substrate `D`
 
 * Scheme [1]: `S + c ⇌ Sc` (on `k'_S`, off `k_S`) and `Sc → product` (rate `W`), for
   `S ∈ {C, D}`. With `k'_C = k'_D` the steady-state error fraction is
-  `f = (W + k_C) / (W + k_D)` (Eq. [3]), at least `f₀ = k_C / k_D`.
+  `f = (W + k_C) / (W + k_D)` (Eq. [3]); when `k_C ≤ k_D` it is at least `f₀ = k_C / k_D`, the
+  source's minimum error fraction, which it approaches as `W → 0`.
 * Scheme [4]: `S + c ⇌ Sc` (on `k'_S`, off `k_S`), `Sc ⇌ Sc*` (forward `m'`, backward `m`,
   nonspecific), `Sc* → S + c` (rate `l_S`) with reverse `S + c → Sc*` (rate `l'_S`), and
   `Sc* → product` (rate `W`). The steady-state error fraction is Eq. [5]; under the equilibrium
@@ -25,8 +26,9 @@ recognition site `c` with a correct substrate `C` and an incorrect substrate `D`
   `f = f₀² (1 + m'/k_C)(1 + W/l_C) / ((1 + m'/k_D)(1 + W/l_D))`,
 
   so `f₀² ≤ f ≤ f₀² (1 + m'/k_C)(1 + W/l_C)`: the error fraction approaches `f₀²` when
-  `m' ≪ k_C` and `W ≪ l_C` (Eqs. [9]–[10]). Multi-stage proofreading (`f₀^{n+1}`) is not
-  stated.
+  `m' ≪ k_C` and `W ≪ l_C`. The source states this as `f ≈ f₀²` for the driven scheme [9],
+  with Eq. [10] its condition on the driving; the closed form and the bounds are Eq. [5]
+  evaluated in scheme [9]. Multi-stage proofreading (`f₀^{n+1}`) is not stated.
 
 Sources: J. J. Hopfield, "Kinetic proofreading: a new mechanism for reducing errors in
 biosynthetic processes requiring high specificity", Proc. Natl. Acad. Sci. USA 71 (1974)
@@ -94,13 +96,17 @@ theorem_wanted le_errorFraction_of_equilibrium (kOn kC kD m' lC lD l' W : ℝ) (
     (hW : 0 < W) (hratio : lC / lD = kC / kD) (hf₀ : kC / kD < 1) :
     kC / kD ≤ errorFraction kC kD kOn kOn m' (m' * lC * kOn / (l' * kC)) lC lD l' l' W
 
-/-- **Error squaring under driving** (Hopfield 1974, Eqs. [9]–[10]). Let
-`k' , k_C, k_D, m', l_C, l_D, W > 0` with `k'_C = k'_D = k'`, `m = 0`, `l'_C = l'_D = 0`, and
+/-- **Error squaring under driving** (Hopfield 1974, Eqs. [5] and [9]). Let
+`k' , k_C, k_D, m', l_C, l_D, W > 0` with `k'_C = k'_D = k'`, `m = 0`, `l'_C = l'_D = 0` (the
+driven scheme [9], where the back reaction `m` and the rates `l'_C = l'_D` are negligible), and
 `l_C / l_D = k_C / k_D = f₀ < 1`. Then the error fraction of Eq. [5] is exactly
 `f₀² (1 + m'/k_C)(1 + W/l_C) / ((1 + m'/k_D)(1 + W/l_D))`, and
-`f₀² ≤ f ≤ f₀² (1 + m'/k_C)(1 + W/l_C)`.
+`f₀² ≤ f ≤ f₀² (1 + m'/k_C)(1 + W/l_C)`. The source states only the approximation `f ≈ f₀²`
+for `m' ≲ k_C` and `W ≲ l_C` (text after Eq. [9]); the exact form and the bounds are Eq. [5]
+evaluated in scheme [9]. Its Eq. [10], `m'/m ≳ (1/f₀)(m'/m)_equilib.`, is the driving this
+regime needs when `m > 0`.
 
-Source: Hopfield (1974), Eqs. [9]–[10]. -/
+Source: Hopfield (1974), Eqs. [5] and [9], and Eq. [10] for the driving condition. -/
 theorem_wanted errorFraction_driven (kOn kC kD m' lC lD W : ℝ) (hkOn : 0 < kOn) (hkC : 0 < kC)
     (hkD : 0 < kD) (hm' : 0 < m') (hlC : 0 < lC) (hlD : 0 < lD) (hW : 0 < W)
     (hratio : lC / lD = kC / kD) (hf₀ : kC / kD < 1) :
