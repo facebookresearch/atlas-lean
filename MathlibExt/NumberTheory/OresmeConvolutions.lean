@@ -16,6 +16,7 @@ public import Mathlib.Data.Rat.Defs
 public import MathlibExt.NumberTheory.JacobsthalLucasNumber
 public import MathlibExt.NumberTheory.LucasSequence
 public import MathlibExt.NumberTheory.PellLucasSequence
+public import MathlibExt.NumberTheory.PellNumberSequence
 import Mathlib.Algebra.BigOperators.Field
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Ring
@@ -145,6 +146,39 @@ public theorem lucasNumber_oresme_convolution (n : ℕ) :
   | more n ih₀ ih₁ =>
     rw [step, ih₀, ih₁]
     simp only [O, lucasNumber, Nat.cast_add, Nat.cast_ofNat, Nat.cast_one, pow_succ]
+    field_simp
+    ring
+
+/-- **Pell–Oresme convolution.** Let $P_m$ denote the Pell numbers and let $O_m = m/2^m$ denote
+the Oresme numbers. For every natural number $n$,
+$\sum_{k=0}^{n} P_k O_{n-k} = \frac{2}{49}(5 P_{n+1} - 4 P_n) - \frac{2(7n + 5)}{49 \cdot 2^n}$.
+
+Source: Michael R. Bacon and Charles K. Cook, *Some Properties of Oresme Numbers and
+Convolutions with Various Second Order Sequences*, The Fibonacci Quarterly 62 (2024), no. 3,
+Article cookbacon061124, Proposition 5.2 (`fq-2024-cookbacon061124-prop-5.2`). -/
+public theorem pellNumber_oresme_convolution (n : ℕ) :
+    ∑ k ∈ Finset.range (n + 1), (pellNumber k : ℚ) * (((n - k : ℕ) : ℚ) / 2 ^ (n - k)) =
+      2 / 49 * (5 * (pellNumber (n + 1) : ℚ) - 4 * pellNumber n) -
+        2 / 49 * ((7 * (n : ℚ) + 5) / 2 ^ n) := by
+  let O (m : ℕ) : ℚ := m / 2 ^ m
+  let S (m : ℕ) := ∑ k ∈ Finset.range (m + 1), (pellNumber k : ℚ) * O (m - k)
+  -- The initial term vanishes because `pellNumber 0 = 0`.
+  have shift (m : ℕ) :
+      S (m + 1) = ∑ k ∈ Finset.range (m + 1), (pellNumber (k + 1) : ℚ) * O (m - k) := by
+    dsimp only [S]
+    rw [Finset.sum_range_succ']
+    simp [pellNumber]
+  -- The convolution follows the Pell recurrence with an extra `O (m + 1)` from `pellNumber 1`.
+  have step (m : ℕ) : S (m + 2) = 2 * S (m + 1) + S m + O (m + 1) := by
+    rw [shift (m + 1), Finset.sum_range_succ', shift m]
+    simp [S, pellNumber, add_mul, Finset.sum_add_distrib, Finset.mul_sum, mul_assoc]
+  change S n = _
+  induction n using Nat.twoStepInduction with
+  | zero => norm_num [S, O, pellNumber]
+  | one => norm_num [S, O, pellNumber, Finset.sum_range_succ]
+  | more n ih₀ ih₁ =>
+    rw [step, ih₀, ih₁]
+    simp only [O, pellNumber, Nat.cast_add, Nat.cast_mul, Nat.cast_ofNat, Nat.cast_one, pow_succ]
     field_simp
     ring
 
