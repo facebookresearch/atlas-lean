@@ -42,3 +42,7 @@
 - [Count of significant axes decreases with the threshold](num-significant-antitone.md)
 - [Significant-axis count for decreasing statistics](num-significant-eq-card-of-antitone.md)
 - [Conditional error bound for the count of significant axes](measure-lt-num-significant-le.md)
+
+## Further topics
+
+- [Principal component correction for population structure](principal-component-correction-for-population-structure/README.md)

@@ -16,6 +16,7 @@ Relative entropy is the Legendre transform of the logarithmic moment generating 
 - [Donsker–Varadhan inequality in extended nonnegative reals](of-real-integral-sub-log-integral-exp-le.md)
 - [Convergence of the Donsker–Varadhan gain](tendsto-clamp-log-gain.md)
 - [Relative entropy of a tilted measure](to-real-kl-div-tilted.md)
+- [Lower semicontinuity of the Kullback–Leibler divergence](lower-semicontinuity-of-the-kl-divergence.md)
 
 ## Related topics
 
