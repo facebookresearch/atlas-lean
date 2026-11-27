@@ -4,11 +4,6 @@ Let $S$ be a fixed finite sequence of nonempty Boolean relations, each of positi
 
 The relations must be nonempty. For the sequence of the empty unary relation and the ternary relation $\{FFF, FTT, TFT\}$, none of the six alternatives holds, yet every instance that uses the empty relation is unsatisfiable and every other instance is satisfied by the all-false assignment, so the problem over this sequence is in polynomial time.
 
-## Depends on
-
-- [GENERALIZED SATISFIABILITY OVER A FIXED SEQUENCE OF RELATIONS as a decision problem](generalized-satisfiability-fixed-dec.md)
-- [Schaefer's six alternatives](schaefer-condition.md)
-
 ## Sources
 
 - T. J. Schaefer, "The complexity of satisfiability problems", Proceedings of the Tenth Annual ACM Symposium on Theory of Computing (STOC 1978), 216-226, doi:10.1145/800133.804350, Theorem 2.1 and the nonemptiness condition of Lemma 4.3.

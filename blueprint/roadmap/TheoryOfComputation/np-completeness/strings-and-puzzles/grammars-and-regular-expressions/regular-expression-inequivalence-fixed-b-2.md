@@ -1,3 +1,3 @@
-# Feasible instances of REGULAR EXPRESSION INEQUIVALENCE WITH A FIXED INFINITE BOUNDED EXPRESSION
+# Feasible instances of REGULAR EXPRESSION INEQUIVALENCE WITH A FIXED EXPRESSION
 
-For a fixed expression $E_2$, an instance is feasible when the spelled expression $E_1$ and $E_2$ represent different languages.
+For **any** fixed expression $E_2$, including one for the empty language, an instance is feasible when its token list parses to an expression $E_1$ whose language differs from the language of $E_2$.

@@ -1,12 +1,8 @@
 # TRUTH-FUNCTIONALLY COMPLETE CONNECTIVES for two distinct expressions is NP-complete
 
-TRUTH-FUNCTIONALLY COMPLETE CONNECTIVES restricted to instances whose set $C$ consists of exactly two distinct Boolean expressions belongs to NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
+The decision problem TRUTH-FUNCTIONALLY COMPLETE CONNECTIVES restricted to instances whose set $C$ consists of exactly two distinct Boolean expressions belongs to NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
 
-The [problem on two distinct encodings](two-expressions-dec.md) is a different language: it compares token lists before decoding them, so two different encodings of the same expression count as two members.
-
-## Depends on
-
-- [TRUTH-FUNCTIONALLY COMPLETE CONNECTIVES FOR TWO DISTINCT ENCODINGS as a decision problem](two-expressions-dec.md)
+Here two distinct expressions means two token lists whose parsed expressions differ; this is the [decision problem](two-expressions-dec.md) for two expressions, whose [well-formedness](well-formed-2-6.md) rejects two encodings of one expression.
 
 ## Sources
 

@@ -41,7 +41,7 @@
 - [k-CONSTRAINT SATISFACTION as a decision problem](k-constraint-satisfaction-dec.md)
 - [k-CONSTRAINT SATISFACTION is NP-complete](k-constraint-satisfaction-np-complete.md)
 - [Feasible instances of k-CONSTRAINT SATISFACTION](kconstraint-satisfaction-feasible.md)
-- [Instances of k-CONSTRAINT SATISFACTION](kconstraint-satisfaction-instance.md)
+- [Instances given by a variable count, conjunctive terms and a threshold](kconstraint-satisfaction-instance.md)
 - [Satisfied literals](literal-holds.md)
 - [Literals over term nodes](literal.md)
 - [Value of a term node](node-value.md)

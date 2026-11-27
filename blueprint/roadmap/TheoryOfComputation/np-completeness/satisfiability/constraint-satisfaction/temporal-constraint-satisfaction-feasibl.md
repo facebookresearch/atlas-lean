@@ -1,3 +1,3 @@
 # Feasible instances of TEMPORAL CONSTRAINT SATISFACTION
 
-An instance is feasible when some real assignment $X$ puts each $X_i$ in one of its unary intervals and each difference $X_j - X_i$ in one of its binary intervals.
+An instance is feasible when some real assignment $X$ satisfies, for **each listed** unary entry $(i, A)$, that $X_i$ lies in some closed interval of $A$, and, independently for **each listed** binary entry $(i, j, B)$, that $X_j - X_i$ lies in some interval of $B$. No entry is required for an unlisted variable or pair, and the intervals of separate entries are not pooled: one variable with no constraints is feasible, while two separate unary entries on one variable with the singleton intervals $[0, 0]$ and $[1, 1]$ are infeasible, although their union is nonempty.

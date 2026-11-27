@@ -4,12 +4,6 @@
 
 - [Second Order Copeland Manipulation](part-03/second-order-copeland-manipulation/README.md)
 
-## [Part 4 of 20](part-04/README.md)
-
-
-## [Part 7 of 20](part-07/README.md)
-
-
 ## [Part 9 of 20](part-09/README.md)
 
 - [Sum Check](part-09/sum-check/README.md)

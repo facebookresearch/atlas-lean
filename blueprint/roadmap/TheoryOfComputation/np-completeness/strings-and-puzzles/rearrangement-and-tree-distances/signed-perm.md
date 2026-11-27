@@ -1,3 +1,3 @@
-# Signed permutations (reversal median)
+# Signed gene lists (reversal median)
 
-A signed permutation is a list of (gene, orientation) pairs, orientation true meaning $-$.
+A signed gene list is a list of pairs (a natural gene label, a Boolean orientation), orientation true meaning $-$. The type allows repeated and missing genes; a signed permutation of $n$ genes is the validated case ([signed permutations of n genes](is-signed-perm-2.md)).

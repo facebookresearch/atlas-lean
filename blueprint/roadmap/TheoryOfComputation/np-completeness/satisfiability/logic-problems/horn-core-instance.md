@@ -1,3 +1,3 @@
-# Instances of HORN CORE
+# Instances given by a variable count, Boolean rows and a budget
 
-An instance is a triple of a number $n$ of variables, a list $M$ of lists of Booleans, meant as truth assignments on the $n$ variables, and a bound $K$. The instance type allows repeated entries and entries of other lengths; that $M$ has no repetitions and only entries of length $n$ is part of well-formedness.
+An instance is a triple $(n, M, K)$: a natural number $n$, an ordered list $M$ of lists of Booleans, and a natural budget $K$. The rows may repeat and may have any length, including lengths other than $n$; read in variable order, a row of length $n$ is a truth assignment on the $n$ variables. The same triples are the instances of HORN CORE and of MINIMUM DISJUNCTIVE NORMAL FORM; that $M$ has no repetitions and only rows of length $n$ is part of the respective well-formedness, and the Horn-sublist and DNF-size tests are separate predicates.

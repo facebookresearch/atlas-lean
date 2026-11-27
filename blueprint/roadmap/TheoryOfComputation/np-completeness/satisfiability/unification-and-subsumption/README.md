@@ -3,7 +3,6 @@
 - [AC-UNIFICATION as a decision problem](ac-unification-dec.md)
 - [AC-UNIFICATION is NP-complete](ac-unification-np-complete.md)
 - [Feasible instances of AC-UNIFICATION](acunification-feasible.md)
-- [Instances of AC-UNIFICATION](acunification-instance.md)
 - [Equality modulo commutativity](comm-equiv.md)
 - [Congruence modulo defining relations](congruent.md)
 - [Defining relations of an instance](defining-relations.md)

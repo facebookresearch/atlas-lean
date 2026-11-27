@@ -70,7 +70,6 @@
 - [Solutions of the (c, r)-tree puzzle](solves.md)
 - [Feasible instances of PARKS PUZZLE](parks-puzzle-feasible.md)
 - [PARKS PUZZLE as a decision problem](parks-puzzle-dec.md)
-- [PARKS PUZZLE is NP-complete](parks-puzzle-np-complete.md)
 - [Instances of SATOGAERI](satogaeri-instance.md)
 - [Cells of a Satogaeri grid](cell.md)
 - [Grid graph of a Satogaeri instance](grid.md)
