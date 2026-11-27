@@ -48,4 +48,20 @@ example : ∑ k ∈ Finset.range 5, (rascalGen 1 k 4 : ℤ) = 15 := by
   rw [sum_rascalGen_row 1 4]
   decide
 
+-- The first odd row cancels at every ascent bound.
+example (j : ℕ) :
+    ∑ k ∈ Finset.range 2, (-1 : ℤ) ^ k * (rascalGen j k 1 : ℤ) = 0 := by
+  simpa using sum_rascalGen_alternating_odd j 0
+
+-- At cutoff one, 00110 and its reverse-complement 10011 are both admitted,
+-- but 01010 has two ascents and is excluded.
+example : RascalWord 1 2 5 := ⟨[0, 0, 1, 1, 0], by decide⟩
+
+example : RascalWord 1 3 5 := ⟨[1, 0, 0, 1, 1], by decide⟩
+
+example : ¬ (wordAscents [0, 1, 0, 1, 0] ≤ 1) := by decide
+
+example : ∑ k ∈ Finset.range 6, (-1 : ℤ) ^ k * (rascalGen 1 k 5 : ℤ) = 0 := by
+  simpa using sum_rascalGen_alternating_odd 1 2
+
 end MathlibExt.Combinatorics.Enumerative.RascalNumbersWanted
