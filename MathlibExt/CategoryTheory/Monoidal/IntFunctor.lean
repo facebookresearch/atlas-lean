@@ -37,7 +37,9 @@ def mapCrossed {A B U V : C} (f : A ⊗ V ⟶ B ⊗ U) :
     mapCrossed F (𝟙 (A ⊗ U)) = 𝟙 (F.obj A ⊗ F.obj U) := by
   simp [mapCrossed]
 
-/-- Trace preservation makes the crossed-morphism map compatible with feedback composition. -/
+/-- For a braided strong monoidal functor `F` that preserves the traces, `hF : T.Preserves S F`,
+the crossed map `mapCrossed F f = μ F A V ≫ F.map f ≫ δ F B U` sends feedback composition for
+`T` to feedback composition for `S`. -/
 theorem mapCrossed_compose (hF : T.Preserves S F) {A B E U V W : C}
     (f : A ⊗ V ⟶ B ⊗ U) (g : B ⊗ W ⟶ E ⊗ V) :
     mapCrossed F (compose T f g) = compose S (mapCrossed F f) (mapCrossed F g) := by
@@ -51,7 +53,10 @@ theorem mapCrossed_compose (hF : T.Preserves S F) {A B E U V W : C}
     μ_δ_assoc, whiskerLeft_μ_δ_assoc, whiskerRight_μ_δ_assoc,
     whiskerRight_μ_δ, tensorHom_id, Category.comp_id]
 
-/-- The functor induced on Int by a trace-preserving strong symmetric monoidal functor. -/
+/-- The functor `IntConstruction T ⥤ IntConstruction S` induced by a braided strong monoidal
+functor `F` that preserves the traces, `hF : T.Preserves S F`. It sends an object `(A, U)` to
+`(F.obj A, F.obj U)` and a crossed morphism `f : A ⊗ V ⟶ B ⊗ U` from `(A, U)` to `(B, V)` to
+`mapCrossed F f = μ F A V ≫ F.map f ≫ δ F B U`. -/
 def map (hF : T.Preserves S F) : IntConstruction T ⥤ IntConstruction S where
   obj X := ⟨F.obj X.positive, F.obj X.negative⟩
   map f := ofHom S (mapCrossed F (hom T f))

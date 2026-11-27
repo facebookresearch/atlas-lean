@@ -63,7 +63,10 @@ private theorem mapIso_natural {X Y : IntConstruction T} (f : X ⟶ Y) :
   rw [← tensorHom_def, ← tensorHom_def'_assoc]
   exact mapCrossed_naturality i (hom T f)
 
-/-- Lift a monoidal natural isomorphism, using its inverse on the negative component. -/
+/-- Lift a monoidal natural isomorphism `i : F ≅ G` between trace-preserving braided strong
+monoidal functors to an isomorphism `map T S F hF ≅ map T S G hG`. Its component at `X` is
+`pairIso S (i.app X.positive) (i.app X.negative).symm`, whose whole crossed forward map is
+`i.hom.app X.positive ⊗ₘ i.inv.app X.negative`. -/
 def mapIso : map T S F hF ≅ map T S G hG :=
   NatIso.ofComponents (fun X => pairIso S (i.app X.positive) (i.app X.negative).symm)
     (by intro X Y f; exact mapIso_natural T S hF hG i f)
@@ -97,7 +100,9 @@ instance mapIso_hom_isMonoidal : NatTrans.IsMonoidal (mapIso T S hF hG i).hom wh
     · exact NatTrans.IsMonoidal.tensor X.positive Y.positive
     · exact inv_tensor i Y.negative X.negative
 
-/-- The lifted forward component uses the inverse on its negative wire. -/
+/-- The crossed morphism of the lifted forward component at `X` is the whole tensor
+`i.hom.app X.positive ⊗ₘ i.inv.app X.negative`: the forward component of the monoidal natural
+isomorphism `i` on the positive wire and its inverse component on the negative wire. -/
 @[simp] theorem hom_mapIso_hom_app (X : IntConstruction T) :
     hom S ((mapIso T S hF hG i).hom.app X) =
       i.hom.app X.positive ⊗ₘ i.inv.app X.negative := rfl
@@ -125,7 +130,9 @@ set_option backward.defeqAttrib.useBackward true in
   simp
 
 set_option backward.defeqAttrib.useBackward true in
-/-- Lifting commutes with composition of monoidal natural isomorphisms. -/
+/-- Lifting commutes with composition of monoidal natural isomorphisms `i : F ≅ G` and
+`j : G ≅ H`: `mapIso (i ≪≫ j) = mapIso i ≪≫ mapIso j`, where each lift has crossed component
+`i.hom.app X.positive ⊗ₘ i.inv.app X.negative` at `X`. -/
 theorem mapIso_trans (hH : T.Preserves S H) (j : G ≅ H) [NatTrans.IsMonoidal j.hom] :
     mapIso T S hF hH (i ≪≫ j) = mapIso T S hF hG i ≪≫ mapIso T S hG hH j := by
   apply Iso.ext

@@ -32,7 +32,8 @@ namespace IntConstruction
 variable (T : SymmetricTrace C) (S : SymmetricTrace D) (F : C ⥤ D) [F.Braided]
 variable (hF : T.Preserves S F)
 
-/-- The induced functor acts componentwise on separated morphisms. -/
+/-- The lift `map T S F hF` of a trace-preserving braided strong monoidal functor `F` acts
+componentwise on separated morphisms: `mapPair a b ↦ mapPair (F.map a) (F.map b)`. -/
 @[simp] theorem map_mapPair {X Y : IntConstruction T}
     (f : X.positive ⟶ Y.positive) (g : Y.negative ⟶ X.negative) :
     (map T S F hF).map (mapPair T f g) = mapPair S (F.map f) (F.map g) := by
@@ -42,11 +43,16 @@ variable (hF : T.Preserves S F)
   simp only [Category.assoc, μ_δ_assoc, μ_δ, Category.comp_id]
   rfl
 
-/-- The unit comparison uses the unit isomorphism in opposite directions. -/
+/-- The unit comparison of the lift `map T S F hF` is the pair isomorphism
+`pairIso S (εIso F) (εIso F).symm`: the unit isomorphism of `F` on the positive component and
+its inverse on the negative component. -/
 def mapUnitIso : 𝟙_ (IntConstruction S) ≅ (map T S F hF).obj (𝟙_ (IntConstruction T)) :=
   pairIso S (εIso F) (εIso F).symm
 
-/-- The negative tensor comparison reverses the factors and its direction. -/
+/-- The tensor comparison `L X ⊗ L Y ≅ L (X ⊗ Y)` of the lift `L = map T S F hF` is the pair
+isomorphism `pairIso S (μIso F X⁺ Y⁺) (μIso F Y⁻ X⁻).symm`, writing `X⁺` and `X⁻` for
+`X.positive` and `X.negative`. The negative component is the inverse of `μIso F` at the
+reversed factors `Y⁻` and `X⁻`; it is not an extra braiding. -/
 def mapTensorIso (X Y : IntConstruction T) :
     (map T S F hF).obj X ⊗ (map T S F hF).obj Y ≅ (map T S F hF).obj (X ⊗ Y) :=
   pairIso S (μIso F X.positive Y.positive) (μIso F Y.negative X.negative).symm
@@ -88,7 +94,8 @@ def mapTensorIso (X Y : IntConstruction T) :
     Functor.mapIso_inv, μIso_inv, μIso_hom, Category.assoc] using congrArg Iso.inv h
 
 set_option backward.defeqAttrib.useBackward true in
-/-- Tensor comparison is natural in arbitrary crossed morphisms. -/
+/-- For the trace-preserving lift `L = map T S F hF`, the forward map `μ` of `mapTensorIso` is
+natural in arbitrary crossed morphisms `f` and `g`: `(L f ⊗ L g) ≫ μ = μ ≫ L (f ⊗ g)`. -/
 theorem mapTensorIso_hom_natural {X₁ X₂ Y₁ Y₂ : IntConstruction T}
     (f : X₁ ⟶ Y₁) (g : X₂ ⟶ Y₂) :
     ((map T S F hF).map f ⊗ₘ (map T S F hF).map g) ≫ (mapTensorIso T S F hF Y₁ Y₂).hom =
@@ -112,7 +119,9 @@ theorem mapTensorIso_hom_natural {X₁ X₂ Y₁ Y₂ : IntConstruction T}
     whisker_exchange_assoc]
 
 set_option backward.defeqAttrib.useBackward true in
-/-- Strong monoidal comparison maps for the induced Int functor. -/
+/-- The strong monoidal structure on the trace-preserving lift `map T S F hF`: the unit
+isomorphism `mapUnitIso` and the tensor isomorphism `mapTensorIso`, with forward maps
+`mapPair S (ε F) (η F)` and `mapPair S (μ F X⁺ Y⁺) (δ F Y⁻ X⁻)`. -/
 def mapCoreMonoidal : (map T S F hF).CoreMonoidal where
   εIso := mapUnitIso T S F hF
   μIso := mapTensorIso T S F hF
@@ -152,12 +161,16 @@ def mapCoreMonoidal : (map T S F hF).CoreMonoidal where
 instance mapMonoidal : (map T S F hF).Monoidal :=
   Functor.CoreMonoidal.toMonoidal (mapCoreMonoidal T S F hF)
 
-/-- The induced tensor comparison acts covariantly on positives and contravariantly on negatives. -/
+/-- The tensor comparison of the lift at `X` and `Y` is
+`mapPair S (μ F X.positive Y.positive) (δ F Y.negative X.negative)`: `μ F` on the positive
+components, and on the negative components `δ F Y.negative X.negative`, the inverse
+comparison at the reversed factors. -/
 @[simp] theorem map_μ (X Y : IntConstruction T) :
     μ (map T S F hF) X Y = mapPair S (μ F X.positive Y.positive)
       (δ F Y.negative X.negative) := rfl
 
-/-- The induced unit comparison uses the unit map and its inverse. -/
+/-- The unit comparison of the lift is `mapPair S (ε F) (η F)`: the unit map `ε F` on the
+positive component and its inverse `η F` on the negative component. -/
 @[simp] theorem map_ε : ε (map T S F hF) = mapPair S (ε F) (η F) := rfl
 
 set_option backward.defeqAttrib.useBackward true in
@@ -172,7 +185,9 @@ instance mapBraided : (map T S F hF).Braided where
     congr 1 <;> simp [Functor.map_braiding]
 
 set_option backward.defeqAttrib.useBackward true in
-/-- Applying a functor before or after the canonical embedding gives isomorphic functors. -/
+/-- Applying `F` before or after the canonical embedding gives isomorphic functors,
+`embedding T ⋙ map T S F hF ≅ F ⋙ embedding S`, with components
+`pairIso S (Iso.refl (F.obj X)) (εIso F)`. -/
 def embeddingMapIso : embedding T ⋙ map T S F hF ≅ F ⋙ embedding S :=
   NatIso.ofComponents (fun X => pairIso S (Iso.refl (F.obj X)) (εIso F)) (by
     intro X Y f

@@ -66,26 +66,33 @@ theorem rightDualIso_hom_unique {X Y₁ Y₂ : C} (p₁ : ExactPairing X Y₁)
 namespace Functor
 variable (F : C ⥤ D) [F.Monoidal]
 
-/-- The image of a chosen right dual is canonically isomorphic to the chosen image dual. -/
+/-- For a strong monoidal functor `F` and chosen right duals `Xᘁ` of `X` and `(F.obj X)ᘁ` of
+`F.obj X`, the canonical isomorphism `F.obj (Xᘁ) ≅ (F.obj X)ᘁ` between the image of the chosen
+dual and the chosen dual of the image. -/
 def mapRightDualIso (X : C) [HasRightDual X] [HasRightDual (F.obj X)] :
     F.obj (Xᘁ) ≅ (F.obj X)ᘁ :=
   rightDualIso (ExactPairing.map F X (Xᘁ)) HasRightDual.exact
 
-/-- The canonical comparison preserves the mapped coevaluation. -/
+/-- The comparison `F.mapRightDualIso X` carries the image under `F` of the coevaluation of
+`X`, `ε F ≫ F.map (η_ X Xᘁ) ≫ δ F X Xᘁ`, to the chosen coevaluation `η_ (F.obj X) (F.obj X)ᘁ`.
+-/
 @[reassoc] theorem mapRightDualIso_coevaluation (X : C) [HasRightDual X]
     [HasRightDual (F.obj X)] :
     (ε F ≫ F.map (η_ X (Xᘁ)) ≫ δ F X (Xᘁ)) ≫ F.obj X ◁ (F.mapRightDualIso X).hom =
       η_ (F.obj X) ((F.obj X)ᘁ) :=
   coevaluation_comp_rightDualIso (ExactPairing.map F X (Xᘁ)) HasRightDual.exact
 
-/-- The canonical comparison preserves the mapped evaluation. -/
+/-- The comparison `F.mapRightDualIso X` carries the chosen evaluation of `F.obj X` back to the
+image under `F` of the evaluation of `X`, `μ F Xᘁ X ≫ F.map (ε_ X Xᘁ) ≫ η F`. -/
 @[reassoc] theorem mapRightDualIso_evaluation (X : C) [HasRightDual X]
     [HasRightDual (F.obj X)] :
     (F.mapRightDualIso X).hom ▷ F.obj X ≫ ε_ (F.obj X) ((F.obj X)ᘁ) =
       μ F (Xᘁ) X ≫ F.map (ε_ X (Xᘁ)) ≫ η F :=
   rightDualIso_comp_evaluation (ExactPairing.map F X (Xᘁ)) HasRightDual.exact
 
-/-- Coevaluation compatibility uniquely characterizes the dual comparison map. -/
+/-- Uniqueness of the comparison: a map `f : F.obj (Xᘁ) ⟶ (F.obj X)ᘁ` with
+`(ε F ≫ F.map (η_ X Xᘁ) ≫ δ F X Xᘁ) ≫ F.obj X ◁ f = η_ (F.obj X) (F.obj X)ᘁ` is the forward
+map `(F.mapRightDualIso X).hom`. -/
 theorem mapRightDualIso_hom_unique (X : C) [HasRightDual X] [HasRightDual (F.obj X)]
     (f : F.obj (Xᘁ) ⟶ (F.obj X)ᘁ)
     (h : (ε F ≫ F.map (η_ X (Xᘁ)) ≫ δ F X (Xᘁ)) ≫ F.obj X ◁ f =
@@ -103,7 +110,10 @@ private theorem map_coevaluation_mate {X Y : C} [HasRightDual X] [HasRightDual Y
   simpa only [Functor.map_comp, map_whiskerLeft, map_whiskerRight,
     Category.assoc, δ_μ_assoc, μ_δ, Category.comp_id] using h
 
-/-- The dual comparison is natural for the contravariant dual maps. -/
+/-- Naturality of the comparison: for `f : X ⟶ Y` between objects with chosen right duals whose
+images also have chosen right duals,
+`F.map fᘁ ≫ (F.mapRightDualIso X).hom = (F.mapRightDualIso Y).hom ≫ (F.map f)ᘁ`, where
+`fᘁ : Yᘁ ⟶ Xᘁ` is the right dual map. -/
 @[reassoc] theorem mapRightDualIso_naturality {X Y : C} [HasRightDual X] [HasRightDual Y]
     [HasRightDual (F.obj X)] [HasRightDual (F.obj Y)] (f : X ⟶ Y) :
     F.map (fᘁ) ≫ (F.mapRightDualIso X).hom =
