@@ -26,3 +26,12 @@ example (q : ℕ) (hq : q.Prime) (hd : q ∣ 59293) : q % 4 = 1 := by
   apply (h hd).resolve_left
   rintro rfl
   exact (by decide : ¬2 ∣ 59293) hd
+
+-- The length-nine sum is 9841 = 60² + 79².
+example : (∑ j ∈ Finset.range (3 ^ 2), (3 : ℤ) ^ (1 * j)) = 60 ^ 2 + 79 ^ 2 := by
+  decide
+
+example : ∃ a b : ℤ, 9841 = a ^ 2 + b ^ 2 := by
+  have hs : (∑ j ∈ Finset.range (3 ^ 2), (3 : ℤ) ^ (1 * j)) = 9841 := by decide
+  rw [← hs]
+  exact geomSumPow_eq_sq_add_sq 3 1 2 Nat.prime_three rfl ⟨0, rfl⟩ (by decide) (by decide)
