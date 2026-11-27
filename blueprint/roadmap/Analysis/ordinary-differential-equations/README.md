@@ -31,5 +31,3 @@ Existence and uniqueness (Cauchy–Peano, Picard, maximal solutions), linear sys
 - [Traveling front of the Fisher–KPP equation](is-front.md)
 
 - [Gronwall inequality](gronwall-inequality/README.md)
-
-## Asymptotics of linear second-order equations
