@@ -81,8 +81,7 @@ variable {g}
 /-- The matrix `γ · τ = (α τ + β)(λ τ + μ)⁻¹`, for an integral `2g × 2g` matrix `γ` with blocks
 `α, β, λ, μ` and a `g × g` complex matrix `τ`. For `γ ∈ Sp_{2g}(ℤ)` and `τ ∈ 𝔖_g` this is the
 action of `Sp_{2g}(ℤ)` on `𝔖_g` (Pazuki, §2.1); the definition is the formula for all `γ` and
-`τ`, with Mathlib's `Matrix.inv` (zero for a singular matrix), and that it preserves `𝔖_g` is not
-proved here. -/
+`τ`, with Mathlib's `Matrix.inv` (zero for a singular matrix). -/
 noncomputable def smul (γ : Matrix (Fin g ⊕ Fin g) (Fin g ⊕ Fin g) ℤ)
     (τ : Matrix (Fin g) (Fin g) ℂ) : Matrix (Fin g) (Fin g) ℂ :=
   ((γ.toBlocks₁₁.map (Int.cast : ℤ → ℂ)) * τ + γ.toBlocks₁₂.map (Int.cast : ℤ → ℂ)) *

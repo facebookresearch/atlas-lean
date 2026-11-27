@@ -44,4 +44,9 @@ example : SiegelS2 !![Complex.I] := by
   fin_cases i; fin_cases j
   norm_num
 
+-- The translation `γ = (1 1; 0 1)` sends `τ` to `τ + 1`.
+example (g : ℕ) (τ : Matrix (Fin g) (Fin g) ℂ) :
+    smul (fromBlocks (1 : Matrix (Fin g) (Fin g) ℤ) 1 0 1) τ = τ + 1 := by
+  simp [smul]
+
 end Siegel

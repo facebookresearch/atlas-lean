@@ -90,7 +90,7 @@ def discriminantOrds (v : HeightOneSpectrum (𝓞 L)) : Set ℕ :=
     v.valuation L (C • W).Δ = exp (-(n : ℤ))}
 
 /-- A nonzero element `x` of `L` with `v(x) ≤ 1` has `v(x) = exp(-n)` for some `n : ℕ`. -/
-theorem exists_valuation_eq_exp_neg {v : HeightOneSpectrum (𝓞 L)} {x : L} (hx : x ≠ 0)
+private theorem exists_valuation_eq_exp_neg {v : HeightOneSpectrum (𝓞 L)} {x : L} (hx : x ≠ 0)
     (h : v.valuation L x ≤ 1) : ∃ n : ℕ, v.valuation L x = exp (-(n : ℤ)) := by
   have h0 : v.valuation L x ≠ 0 := (Valuation.ne_zero_iff _).mpr hx
   refine ⟨(-(v.valuation L x).log).toNat, ?_⟩

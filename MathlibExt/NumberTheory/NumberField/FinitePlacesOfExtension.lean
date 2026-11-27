@@ -19,14 +19,14 @@ public import MathlibExt.NumberTheory.NumberField.Completion.FinitePlacesOver
 /-!
 # The finite places of a finite extension and the size of an element
 
-Let `L'/L` be a finite extension of number fields. For a finite place `v` of `L` (a maximal ideal
-`𝔭_v` of `𝓞 L`, a `HeightOneSpectrum`) let `‖x‖_v = Nv ^ (-ord_v x)` with `Nv = #(𝓞 L / 𝔭_v)`
-and `‖0‖_v = 0`; this is Mathlib's `NumberField.HeightOneSpectrum.adicAbv L v`. For every
-`x ∈ L`,
+Let `L/K` be a finite extension of number fields. For a finite place `v` of `K` (a maximal ideal
+`𝔭_v` of `𝓞 K`, a `HeightOneSpectrum`) let `‖x‖_v = Nv ^ (-ord_v x)` with `Nv = #(𝓞 K / 𝔭_v)`
+and `‖0‖_v = 0`; this is Mathlib's `NumberField.HeightOneSpectrum.adicAbv K v`. For every
+`x ∈ K`,
 
-* `∑_{w ∣ v} log max(1, ‖x‖_w) = [L' : L] log max(1, ‖x‖_v)`, the sum over the finite places
-  `w` of `L'` above `v` (`NumberField.sum_log_max_one_adicAbv_liesOver`);
-* `∑_w log max(1, ‖x‖_w) = [L' : L] ∑_v log max(1, ‖x‖_v)`, over all finite places
+* `∑_{w ∣ v} log max(1, ‖x‖_w) = [L : K] log max(1, ‖x‖_v)`, the sum over the finite places
+  `w` of `L` above `v` (`NumberField.sum_log_max_one_adicAbv_liesOver`);
+* `∑_w log max(1, ‖x‖_w) = [L : K] ∑_v log max(1, ‖x‖_v)`, over all finite places
   (`NumberField.finsum_log_max_one_adicAbv`).
 
 The proof combines Mathlib's comparison of absolute values along the extension
@@ -68,8 +68,8 @@ the sum running over the finite places `w` of `L` above `v` (those with
 
 The normalization of `‖·‖_v` is that of P. Deligne, "Preuve des conjectures de Tate et de
 Shafarevitch [d'après G. Faltings]", Séminaire Bourbaki, exposé 616, Astérisque 121–122 (1985),
-25–41, §1.1, p. 26. The identity is proved here from `w(x) = e(w ∣ v) v(x)`, `Nw = Nv ^ f(w ∣ v)`
-and `∑_{w ∣ v} e(w ∣ v) f(w ∣ v) = [L : K]`. -/
+25–41, §1.1, p. 26. The identity follows from `w(x) = e(w ∣ v) v(x)`, `Nw = Nv ^ f(w ∣ v)` and
+`∑_{w ∣ v} e(w ∣ v) f(w ∣ v) = [L : K]`. -/
 theorem sum_log_max_one_adicAbv_liesOver (v : HeightOneSpectrum (𝓞 K)) (x : K) :
     ∑ᶠ (w : HeightOneSpectrum (𝓞 L)) (_ : w.asIdeal.LiesOver v.asIdeal),
         log (max 1 (HeightOneSpectrum.adicAbv L w (algebraMap K L x))) =
@@ -105,9 +105,8 @@ many terms are nonzero), with `‖x‖_v = Nv ^ (-ord_v x)`, `‖0‖_v = 0`
 (`NumberField.HeightOneSpectrum.adicAbv`).
 
 The normalization of `‖·‖_v` is that of P. Deligne, Séminaire Bourbaki, exposé 616, Astérisque
-121–122 (1985), §1.1, p. 26. The identity is proved here: each finite place of `L` lies above
-exactly one finite place of `K`, and `NumberField.sum_log_max_one_adicAbv_liesOver` sums the
-places above each. -/
+121–122 (1985), §1.1, p. 26. Each finite place of `L` lies above exactly one finite place of `K`,
+and `NumberField.sum_log_max_one_adicAbv_liesOver` sums the places above each. -/
 theorem finsum_log_max_one_adicAbv (x : K) :
     ∑ᶠ w : HeightOneSpectrum (𝓞 L),
         log (max 1 (HeightOneSpectrum.adicAbv L w (algebraMap K L x))) =
