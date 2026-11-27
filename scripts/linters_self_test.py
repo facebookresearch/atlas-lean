@@ -298,10 +298,16 @@ def main() -> int:
               file=sys.stderr)
         return 1
     start = git("rev-parse", "HEAD")
+    if (ROOT / NOLINTS).is_symlink():
+        print(f"{NOLINTS} is a link, which the self-test would write through; not running.",
+              file=sys.stderr)
+        return 1
     had_nolints = (ROOT / NOLINTS).exists()
     nolints = json.loads((ROOT / NOLINTS).read_text()) if had_nolints else []
-    if not reserve(PROBES):
-        print(f"A file or link is at {' or '.join(map(str, PROBES))}; not running.",
+    # The exceptions file is created anew too when it is absent, as on main.
+    created = PROBES + (() if had_nolints else (NOLINTS,))
+    if not reserve(created):
+        print(f"A file or link is at {' or '.join(map(str, created))}; not running.",
               file=sys.stderr)
         return 1
     try:
