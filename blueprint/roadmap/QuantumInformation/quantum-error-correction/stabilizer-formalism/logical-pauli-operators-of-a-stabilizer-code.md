@@ -34,4 +34,4 @@ maximal commuting set and choose $\bar X_i$ by symplectic Gram–Schmidt, so tha
 
 - D. Gottesman, *Stabilizer codes and quantum error correction*, PhD thesis, California Institute of Technology (1997), arXiv:quant-ph/9705052, Section 3.2, equations (3.10)–(3.13).
 - J. Preskill, *Lecture Notes for Physics 229: Quantum Information and Computation*, Chapter 7 "Quantum Error Correction" (Caltech, 1998; https://www.preskill.caltech.edu/ph229/notes/chap7.pdf), Section 7.9.4, equation (7.145).
-- D. Gottesman, *An introduction to quantum error correction and fault-tolerant quantum computation*, Proceedings of Symposia in Applied Mathematics 68 (2010), arXiv:0904.2557, Section 3.4 ("We can in fact identify $N(S)/S$ with the logical Pauli group $P_k$").
+- D. Gottesman, *An introduction to quantum error correction and fault-tolerant quantum computation*, Proceedings of Symposia in Applied Mathematics 68 (2010), arXiv:0904.2557, Section 3.4 ("We can in fact identify $N(S)/S$ with the logical Pauli group $\mathcal{P}_k$").
