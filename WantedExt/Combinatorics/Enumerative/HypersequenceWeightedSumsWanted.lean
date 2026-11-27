@@ -19,6 +19,7 @@ public import MathlibExt.Combinatorics.Enumerative.HypersequenceAbelSummation
 public import MathlibExt.Combinatorics.Enumerative.HypersequenceBinomial
 public import MathlibExt.Combinatorics.Enumerative.HypersequenceRecurrence
 public import MathlibExt.Combinatorics.Enumerative.HypersequenceWeightedSums
+public import MathlibExt.Combinatorics.Enumerative.PowerSumRisingStirling
 public import MathlibExt.Combinatorics.Enumerative.RingChooseSub
 public import MathlibExt.Combinatorics.Enumerative.SuccPowStirlingSecond
 public import MathlibExt.NumberTheory.LucasSequence
@@ -216,21 +217,6 @@ public theorem_wanted carlitzSum_deriv_and_recurrence {ℓ m : ℕ} (hℓ : 1 �
       alternatingBinomialPowerSum ℓ m 1 (n + 1) =
         (m + n + 1) * alternatingBinomialPowerSum (ℓ - 1) m 1 (n + 1) -
           m * alternatingBinomialPowerSum (ℓ - 1) (m - 1) 1 (n + 1)
-
-/-- **Sums of $m$th powers via Stirling numbers of the second kind.** For all natural numbers
-$n$ and $m$,
-$$\sum_{k=1}^{n} k^m = \sum_{k=0}^{m} (-1)^{m-k}\, k!\, \binom{n + k}{k + 1}\, S(m, k),$$
-where $S(m, k)$ denotes the Stirling numbers of the second kind.
-
-The paper takes $n \ge 1$; for $n = 0$ both sides vanish, so that case is included.
-
-Source: Daniele Parisse, *On Hypersequences of an Arbitrary Sequence and Their Weighted Sums*,
-INTEGERS 24 (2024), Article A70, Corollary 5, Equation (4.4) (`integers-2024-A70-cor-5`). -/
-public theorem_wanted sum_pow_eq_sum_stirlingSecond (n m : ℕ) :
-    ∑ k ∈ Icc 1 n, (k : ℤ) ^ m =
-      ∑ k ∈ range (m + 1),
-        (-1) ^ (m - k) * (k.factorial : ℤ) * ((n + k).choose (k + 1) : ℤ) *
-          (Nat.stirlingSecond m k : ℤ)
 
 /-- **Power-weighted sums of Fibonacci numbers.** Let $F_k$ denote the Fibonacci numbers and let
 $p_{\ell,m}(x, y) = \sum_{i=0}^{m} (-1)^i \binom{m}{i} (ix + y)^\ell$ be the alternating binomial
