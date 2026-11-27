@@ -40,6 +40,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib
+public import MathlibExt.Analysis.HausdorffAbsoluteContinuity
 
 @[expose] public section
 
@@ -110,28 +111,6 @@ density with respect to $\nu$. -/
 def UniformlyAbsolutelyContinuous {d : ℕ}
     (μ ν : Measure (EuclideanSpace ℝ (Fin d))) : Prop :=
   ∃ C : ℝ≥0, μ ≤ C • ν
-
-/- **Absolute continuity criterion (Hausdorff moment problem).** A positive
-probability measure `μ` on the cube is uniformly absolutely continuous w.r.t.
-Lebesgue measure iff there is `C` with `(Δᵏμ)ₙ ≤ C·(Δᵏν)ₙ` for all `k ≤ n`. -/
-/-- **Hausdorff's absolute continuity criterion.** Let $\mu$ be a probability measure on
-$\mathbb{R}^d$ with $\mu(\mathbb{R}^d \setminus I^d) = 0$, where $I^d = [0,1]^d$ is the closed
-unit cube, and let $\lambda$ be Lebesgue measure restricted to $I^d$. For a measure $\rho$ write
-$m_\rho(n) = \int_{I^d} x^n \, d\rho(x)$ for its moments, indexed by multi-indices
-$n \in \mathbb{N}^d$. Then $\mu$ is uniformly absolutely continuous with respect to $\lambda$ if
-and only if there is a real constant $C$ such that
-$(\Delta^k m_\mu)_n \le C \, (\Delta^k m_\lambda)_n$ for all multi-indices $k \le n$
-(coordinatewise), where $\Delta^k$ is the iterated backward difference.
-
-Source: F. Hausdorff (1921–1923); see Shohat–Tamarkin, *The Problem of Moments*.
-Knill, *Some fundamental theorems in mathematics*, §115. Via leanprover/lean-eval@38361be, problem
-`hausdorff_absolute_continuity`. -/
-public theorem_wanted hausdorff_absolute_continuity {d : ℕ}
-    (μ : Measure (EuclideanSpace ℝ (Fin d)))
-    [IsProbabilityMeasure μ] (hμ : μ ((cube d)ᶜ) = 0) :
-    UniformlyAbsolutelyContinuous μ (volume.restrict (cube d)) ↔
-      ∃ C : ℝ, ∀ k n : Fin d → ℕ, k ≤ n →
-        diff (momentOf μ) k n ≤ C * diff (momentOf (volume.restrict (cube d))) k n
 
 end Analysis.HausdorffAbsoluteContinuity
 
