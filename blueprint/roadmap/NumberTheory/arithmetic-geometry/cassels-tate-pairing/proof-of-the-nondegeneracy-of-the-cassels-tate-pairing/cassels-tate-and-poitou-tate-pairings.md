@@ -35,6 +35,9 @@ This node is still to be broken down. A good expansion states and links:
 - [The Cassels–Tate pairing of an abelian variety](../cassels-tate-pairing-of-an-abelian-variety.md)
 - [Poitou–Tate duality](../../../algebraic-number-theory/galois-representations/galois-cohomology-of-number-fields/poitou-tate-duality.md)
 - [Elements of the Shafarevich–Tate group divisible by m over G_S](elements-divisible-by-m-over-g-s.md), for $\delta$
+- [Local classes orthogonal to the Selmer group](local-classes-orthogonal-to-the-selmer-group.md), for $S$ and the notation $G_S$, $A_m$, $A^\vee_m$
+- [Selmer groups and the torsion of the Shafarevich–Tate group of an abelian variety](../selmer-groups-of-abelian-varieties.md), for the local triviality of $a'$ outside $S$ (its item 5, applied to $A^\vee$)
+- [Dual abelian scheme](../../../../AlgebraicGeometry/abelian-varieties/dual-abelian-scheme.md), for the good reduction of $A^\vee$ outside $S$
 
 ## Proof depends on
 

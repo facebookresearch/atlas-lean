@@ -1,6 +1,6 @@
 # Selmer groups and the torsion of the Shafarevich–Tate group of an abelian variety
 
-This node is still to be broken down. It covers the first results on the Selmer and Shafarevich–Tate groups of an
+This node covers the first results on the Selmer and Shafarevich–Tate groups of an
 abelian variety over a number field, which the proof of the
 [nondegeneracy of the Cassels–Tate pairing](nondegeneracy-of-the-cassels-tate-pairing.md) uses, following Milne's
 *Arithmetic Duality Theorems*, Chapter I, §6.

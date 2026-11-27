@@ -38,6 +38,7 @@ This node is still to be broken down. A good expansion states and links:
 ## Depends on
 
 - [The Weil pairing through a Poincaré divisor](../construction-of-the-cassels-tate-pairing/weil-pairing-through-a-poincare-divisor.md), for Poincaré divisors and the values $\mathcal{P}(\mathfrak{b}, \mathfrak{b}')$
+- [The Albanese–Picard definition of the Cassels–Tate pairing](albanese-picard-definition-of-the-cassels-tate-pairing.md), whose steps the definition follows
 - [Selmer groups and the torsion of the Shafarevich–Tate group of an abelian variety](../selmer-groups-of-abelian-varieties.md), for $\text{Ш}(K, A)$ and $\text{Ш}(K, A^\vee)$
 - [Vanishing of the third cohomology of the multiplicative group of a number field](../../../algebraic-number-theory/galois-representations/galois-cohomology-of-number-fields/vanishing-of-h3-of-the-multiplicative-group.md), for $\epsilon$
 - [Local class field theory: cohomology and the existence theorem](../../../p-adic-numbers/local-class-field-theory-cohomology.md), for the local invariant maps (its item 2)

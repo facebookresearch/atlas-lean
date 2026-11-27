@@ -43,6 +43,11 @@ This node is still to be broken down. A good expansion states and links:
 
 - [Abelian scheme](../../../../AlgebraicGeometry/abelian-varieties/abelian-scheme.md), for abelian varieties over a field and their group law
 
+## Proof depends on
+
+- [Theorem of the cube, theorem of the square and the seesaw principle](../../../../AlgebraicGeometry/abelian-varieties/theorem-of-the-cube.md), for the theorem of the square, through which $D(\mathfrak{a})$ is principal for $\mathfrak{a} \in Y^0(V_{\bar k})$
+- [Weil Reciprocity](../../../../AlgebraicGeometry/algebraic-curves/divisors-on-curves/evaluation-at-rational-places/weil-reciprocity.md), for the case of curves
+
 ## Sources
 
 - B. Poonen and M. Stoll, *The Cassels-Tate pairing on polarized abelian varieties*, Ann. of Math. (2) 150 (1999),

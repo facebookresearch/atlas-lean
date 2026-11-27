@@ -35,6 +35,7 @@ divisible group, such an element lies in its maximal divisible subgroup.
 
 ## Proof depends on
 
+- [Local classes orthogonal to the Selmer group](local-classes-orthogonal-to-the-selmer-group.md), for the choice of $S$
 - [Elements of the Shafarevich–Tate group divisible by m over G_S](elements-divisible-by-m-over-g-s.md), for the top row
 - [The key lemma: divisibility by m in the Shafarevich–Tate group](key-lemma-on-divisibility-by-m.md), for the injectivity of the left arrow
 - [The Cassels–Tate pairing on a class divisible by m](cassels-tate-pairing-on-classes-divisible-by-m.md), for the left arrow

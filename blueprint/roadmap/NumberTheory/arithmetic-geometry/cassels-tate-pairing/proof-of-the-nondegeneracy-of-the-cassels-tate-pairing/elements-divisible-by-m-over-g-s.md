@@ -23,6 +23,7 @@ the elements of $\text{Ш}(K, A)(m)$ that become divisible by $m$ over $G_S$.
 ## Depends on
 
 - [Selmer groups and the torsion of the Shafarevich–Tate group of an abelian variety](../selmer-groups-of-abelian-varieties.md), for $G_S$, $A_m$ and $\text{Ш}_S(K, A)$ (its item 4)
+- [Local classes orthogonal to the Selmer group](local-classes-orthogonal-to-the-selmer-group.md), for the choice of $S$ and the notation $K_S$, $G_S$, $A_m$
 - [Tate–Shafarevich groups of Galois modules](../../../algebraic-number-theory/galois-representations/galois-cohomology-of-number-fields/tate-shafarevich-groups.md), for $\text{Ш}^2(G_S, A_m)$
 - [Cohomology of profinite groups](../../../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for the connecting maps
 

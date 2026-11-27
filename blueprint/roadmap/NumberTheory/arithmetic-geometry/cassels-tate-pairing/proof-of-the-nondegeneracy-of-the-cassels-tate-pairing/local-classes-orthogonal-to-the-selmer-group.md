@@ -43,6 +43,7 @@ This node is still to be broken down. A good expansion states and links:
 
 - [Selmer groups and the torsion of the Shafarevich–Tate group of an abelian variety](../selmer-groups-of-abelian-varieties.md), for $G_S$, $A_m$ and $S_S(K, A^\vee)_m$ (its item 4)
 - [Dual abelian variety](../../../../AlgebraicGeometry/abelian-varieties/dual-abelian-variety.md), for the Cartier duality of $A[m]$ and $A^\vee[m]$ (its item 3)
+- [Dual abelian scheme](../../../../AlgebraicGeometry/abelian-varieties/dual-abelian-scheme.md), for the good reduction of $A^\vee$ outside $S$, needed to apply item 4 of the Selmer page to $A^\vee$
 - [Local class field theory: cohomology and the existence theorem](../../../p-adic-numbers/local-class-field-theory-cohomology.md), for the local invariant maps (its item 2)
 - [Cohomology of profinite groups](../../../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for cup products and Tate cohomology
 
