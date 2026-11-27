@@ -27,4 +27,7 @@ example : complexityL 3 90 = 5 :=
 example : complexityL 2 40 = 6 :=
   complexityL_pow_add_pow 2 5 3 (by decide) (by decide) (by decide)
 
+example : complexityL 2 4 = 2 ∧ complexityL 2 6 = 3 :=
+  complexityL_two_pow_and_add 2 1 (by decide) (by decide)
+
 end MathlibExtTest.NumberTheory.TwoComplexityComplexityLPowAddPow

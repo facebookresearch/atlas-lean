@@ -190,4 +190,13 @@ example : ¬ MathlibExt.NumberTheory.FkPerfectWanted.IsNearFkPerfect 2 (3 * 5 ^ 
 example : MathlibExt.NumberTheory.FkPerfectWanted.IsNearFkPerfect 3 (3 ^ 1 * 3 ^ 1) :=
   ⟨1, by decide, by decide, by decide⟩
 
+-- Twice three is not `[k,ℓ]`-near-perfect.
+example (k l : ℕ) (hl : 1 ≤ l) : ¬ IsKLNearPerfect k l 6 :=
+  not_isKLNearPerfect_two_mul_prime (k := k) (l := l) (p := 3)
+    (hl := hl) (hp := by decide) (hpo := ⟨1, rfl⟩)
+
+example : ¬ IsKLNearPerfect 2 1 10 :=
+  not_isKLNearPerfect_two_mul_prime (k := 2) (l := 1) (p := 5)
+    (hl := by decide) (hp := by decide) (hpo := ⟨2, rfl⟩)
+
 end MathlibExtTest.NumberTheory.FkPerfect
