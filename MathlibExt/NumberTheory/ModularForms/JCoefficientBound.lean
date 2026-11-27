@@ -133,7 +133,7 @@ public theorem jq_ne_zero : jq ≠ 0 := fun h => by simpa [h] using coeff_jq_neg
 
 private theorem coeff_one_sub_X_pow_of_lt {R : Type*} [CommRing R] {e m : ℕ} (h : m < e) :
     PowerSeries.coeff m ((1 : PowerSeries R) - X ^ e) = if m = 0 then 1 else 0 := by
-  rw [map_sub, PowerSeries.coeff_one, PowerSeries.coeff_X_pow, if_neg (Nat.ne_of_lt h),
+  rw [map_sub, PowerSeries.coeff_one, PowerSeries.coeff_X_pow, ite_eq_right (Nat.ne_of_lt h),
     sub_zero]
 
 private theorem coeff_prod_one_sub_X_pow_eq_coeff_one {R : Type*} [CommRing R]
@@ -158,18 +158,18 @@ private theorem coeff_prod_one_sub_X_pow_eq_coeff_one {R : Type*} [CommRing R]
       have hp1 : p.1 ≤ m := Finset.HasAntidiagonal.antidiagonal.fst_le hp
       rw [coeff_one_sub_X_pow_of_lt (lt_of_le_of_lt (le_trans hp1 hm) hea)]
       by_cases h0 : p.1 = 0
-      · rw [if_pos h0, if_pos h0, one_mul]
-      · rw [if_neg h0, if_neg h0, zero_mul]
+      · rw [ite_eq_left h0, ite_eq_left h0, one_mul]
+      · rw [ite_eq_right h0, ite_eq_right h0, zero_mul]
     rw [Finset.sum_congr rfl hsum]
     rw [Finset.sum_eq_single_of_mem (0, m) (by simp)]
-    · rw [if_pos rfl]
+    · rw [ite_eq_left rfl]
       exact ih (fun i hi => he i (Finset.mem_insert_of_mem hi)) m hm
     · rintro ⟨b₁, b₂⟩ hb hne
       have hb' : b₁ + b₂ = m := Finset.HasAntidiagonal.mem_antidiagonal.mp hb
       have : b₁ ≠ 0 := by
         rintro rfl
         exact hne (by simp [← hb'])
-      rw [if_neg this]
+      rw [ite_eq_right this]
 
 private theorem coeff_prod_one_sub_pow_le {R : Type*} [CommRing R] (k n : ℕ) (h : n ≤ k) :
     PowerSeries.coeff n
@@ -193,14 +193,14 @@ private theorem coeff_prod_one_sub_pow_le {R : Type*} [CommRing R] (k n : ℕ) (
     have : n + 1 ≤ i := (Finset.mem_Ico.mp hi).1
     omega
   rw [Finset.sum_eq_single_of_mem (n, 0) (by simp)]
-  · rw [htail 0 (Nat.zero_le n), if_pos rfl, mul_one]
+  · rw [htail 0 (Nat.zero_le n), ite_eq_left rfl, mul_one]
   · rintro ⟨b₁, b₂⟩ hb hne
     have hb' : b₁ + b₂ = n := Finset.HasAntidiagonal.mem_antidiagonal.mp hb
     have hb₂ : b₂ ≤ n := Finset.HasAntidiagonal.antidiagonal.snd_le hb
     have : b₂ ≠ 0 := by
       rintro rfl
       exact hne (by simp [← hb'])
-    rw [htail b₂ hb₂, if_neg this, mul_zero]
+    rw [htail b₂ hb₂, ite_eq_right this, mul_zero]
 
 private theorem coeff_etaProd_eq_coeff_partialProd (n : ℕ) :
     PowerSeries.coeff n etaProd =
@@ -233,14 +233,14 @@ private theorem coeff_etaProd_eq_coeff_partialProd (n : ℕ) :
     have hi' : ¬ i < n + 1 := fun h => (Finset.mem_sdiff.mp hi).2 (Finset.mem_range.mpr h)
     omega
   rw [Finset.sum_eq_single_of_mem (n, 0) (by simp)]
-  · rw [htail 0 (Nat.zero_le n), if_pos rfl, mul_one]
+  · rw [htail 0 (Nat.zero_le n), ite_eq_left rfl, mul_one]
   · rintro ⟨b₁, b₂⟩ hb hne
     have hb' : b₁ + b₂ = n := Finset.HasAntidiagonal.mem_antidiagonal.mp hb
     have hb₂ : b₂ ≤ n := Finset.HasAntidiagonal.antidiagonal.snd_le hb
     have h2 : b₂ ≠ 0 := by
       rintro rfl
       exact hne (by simp [← hb'])
-    rw [htail b₂ hb₂, if_neg h2, mul_zero]
+    rw [htail b₂ hb₂, ite_eq_right h2, mul_zero]
 
 private theorem coeff_jq_eq_coeff_jNum (n : ℕ) :
     jq.coeff ((n : ℤ) - 1) = ((PowerSeries.coeff n jNum : ℤ) : ℚ) := by
@@ -260,7 +260,7 @@ private theorem coeff_geomSeries (d k : ℕ) :
 @[scoped simp]
 private theorem constantCoeff_geomSeries (d : ℕ) :
     PowerSeries.constantCoeff (geomSeries d) = 1 := by
-  rw [← PowerSeries.coeff_zero_eq_constantCoeff, coeff_geomSeries, if_pos (dvd_zero d)]
+  rw [← PowerSeries.coeff_zero_eq_constantCoeff, coeff_geomSeries, ite_eq_left (dvd_zero d)]
 
 private theorem coeff_geomSeries_nonneg (d k : ℕ) :
     0 ≤ PowerSeries.coeff k (geomSeries d) := by
@@ -269,7 +269,7 @@ private theorem coeff_geomSeries_nonneg (d k : ℕ) :
 
 private theorem coeff_geomSeries_one (k : ℕ) :
     PowerSeries.coeff k (geomSeries 1) = 1 := by
-  rw [coeff_geomSeries, if_pos (one_dvd k)]
+  rw [coeff_geomSeries, ite_eq_left (one_dvd k)]
 
 private theorem one_sub_X_pow_mul_geomSeries {d : ℕ} (hd : d ≠ 0) :
     ((1 : PowerSeries ℤ) - X ^ d) * geomSeries d = 1 := by
@@ -279,7 +279,7 @@ private theorem one_sub_X_pow_mul_geomSeries {d : ℕ} (hd : d ≠ 0) :
   by_cases hdn : d ≤ n
   ·
     have hn0 : ¬ (n = 0) := by omega
-    rw [if_pos hdn, coeff_geomSeries, if_neg hn0]
+    rw [ite_eq_left hdn, coeff_geomSeries, ite_eq_right hn0]
     have hiff : d ∣ n ↔ d ∣ n - d := by
       constructor
       · intro h; exact Nat.dvd_sub h dvd_rfl
@@ -287,13 +287,13 @@ private theorem one_sub_X_pow_mul_geomSeries {d : ℕ} (hd : d ≠ 0) :
         have := Nat.dvd_add h (dvd_refl d)
         rwa [Nat.sub_add_cancel hdn] at this
     by_cases h : d ∣ n
-    · rw [if_pos h, if_pos (hiff.mp h), sub_self]
-    · rw [if_neg h, if_neg (fun hc => h (hiff.mpr hc)), sub_self]
+    · rw [ite_eq_left h, ite_eq_left (hiff.mp h), sub_self]
+    · rw [ite_eq_right h, ite_eq_right (fun hc => h (hiff.mpr hc)), sub_self]
   ·
-    rw [if_neg hdn, sub_zero]
+    rw [ite_eq_right hdn, sub_zero]
     by_cases hn : n = 0
-    · subst hn; rw [if_pos (dvd_zero d), if_pos rfl]
-    · rw [if_neg hn, if_neg (fun hc => hdn (Nat.le_of_dvd (Nat.pos_of_ne_zero hn) hc))]
+    · subst hn; rw [ite_eq_left (dvd_zero d), ite_eq_left rfl]
+    · rw [ite_eq_right hn, ite_eq_right (fun hc => hdn (Nat.le_of_dvd (Nat.pos_of_ne_zero hn) hc))]
 
 private theorem coeff_mul_nonneg {f g : PowerSeries ℤ}
     (hf : ∀ k, 0 ≤ PowerSeries.coeff k f) (hg : ∀ k, 0 ≤ PowerSeries.coeff k g) (n : ℕ) :
@@ -403,14 +403,14 @@ private theorem coeff_inv_congr {A B C D : PowerSeries ℤ}
     rw [← mul_assoc, mul_comm D C, hCD, one_mul]
   rw [key, PowerSeries.coeff_mul]
   rw [Finset.sum_eq_single_of_mem (k, 0) (by simp)]
-  · rw [hCB 0 (Nat.zero_le n), PowerSeries.coeff_one, if_pos rfl, mul_one]
+  · rw [hCB 0 (Nat.zero_le n), PowerSeries.coeff_one, ite_eq_left rfl, mul_one]
   · rintro ⟨b₁, b₂⟩ hb hne
     have hb' : b₁ + b₂ = k := Finset.HasAntidiagonal.mem_antidiagonal.mp hb
     have hb₂ : b₂ ≤ k := Finset.HasAntidiagonal.antidiagonal.snd_le hb
     have h2 : b₂ ≠ 0 := by
       rintro rfl
       exact hne (by simp [← hb'])
-    rw [hCB b₂ (le_trans hb₂ hk), PowerSeries.coeff_one, if_neg h2, mul_zero]
+    rw [hCB b₂ (le_trans hb₂ hk), PowerSeries.coeff_one, ite_eq_right h2, mul_zero]
 
 private abbrev partialEta (N : ℕ) : PowerSeries ℤ :=
   ∏ i ∈ Finset.range N, ((1 : PowerSeries ℤ) - X ^ (i + 1))
