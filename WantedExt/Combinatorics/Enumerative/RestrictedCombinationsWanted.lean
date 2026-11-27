@@ -39,17 +39,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Number of subsets avoiding a set of differences.** For a finite set $Q$ of natural numbers
-and $n \ge 0$, $S^Q_n$ is the number of subsets of $\{1, \dots, n\}$ in which no two distinct
-elements differ by an element of $Q$. That is, $S^Q_n = \sum_{k=0}^{n} S^Q_{n,k}$, where
-$S^Q_{n,k}$ is the number of such subsets with $k$ elements.
-
-Source: Michael A. Allen, *Connections Between Combinations Without Specified Separations and
-Strongly Restricted Permutations, Compositions, and Bit Strings*, Journal of Integer
-Sequences 28 (2025), Article 25.3.7, Section 1. -/
-public def restrictedCombinationTotal (Q : Finset ℕ) (n : ℕ) : ℕ :=
-  ∑ k ∈ Finset.range (n + 1), restrictedCombinationCount Q n k
-
 /-- **Restricted combinations with no forbidden differences.** For all natural numbers $n$ and
 $k$, the number $S^{\emptyset}_{n,k}$ of $k$-subsets of $\{1, \dots, n\}$ in which no two
 elements differ by an element of the empty set is the binomial coefficient $\binom{n}{k}$.
@@ -101,46 +90,6 @@ public theorem_wanted restrictedCombinationCount_one_q_eq_card_windowedAdjacentS
         (∀ i₀ < n + 2 - q, ∀ i j : Fin (n + 1), i₀ ≤ (i : ℕ) → (i : ℕ) < i₀ + q →
           i₀ ≤ (j : ℕ) → (j : ℕ) < i₀ + q → (π i : ℕ) ≤ π j + q) ∧
         excedanceCount (n + 1) π = k}
-
-/-- **Generating function for subsets avoiding differences 1 and 4.** Let $S^{\{1,4\}}_n$ be the
-number of subsets of $\{1, \dots, n\}$ in which no two elements differ by $1$ or by $4$. Then,
-in the ring $\mathbb{Z}[[x]]$ of formal power series,
-$$\Bigl(\sum_{n \ge 0} S^{\{1,4\}}_n x^n\Bigr)(1 - x - x^3 + x^4 - 2x^5 + x^6 - x^7) =
-1 + x + x^2 + x^3 + 2x^4 + x^6.$$
-
-This is the paper's formula for $\sum_{n \ge 0} S^{\{1,4\}}_n x^n$ as a quotient of the two
-polynomials, with the denominator cleared.
-
-Source: Michael A. Allen, *Connections Between Combinations Without Specified Separations and
-Strongly Restricted Permutations, Compositions, and Bit Strings*, Journal of Integer
-Sequences 28 (2025), Article 25.3.7, Proposition 9. -/
-public theorem_wanted restrictedCombinationTotal_one_four_genFun :
-    PowerSeries.mk (fun n => (restrictedCombinationTotal {1, 4} n : ℤ)) *
-        (1 - PowerSeries.X - PowerSeries.X ^ 3 + PowerSeries.X ^ 4 - 2 * PowerSeries.X ^ 5 +
-          PowerSeries.X ^ 6 - PowerSeries.X ^ 7) =
-      1 + PowerSeries.X + PowerSeries.X ^ 2 + PowerSeries.X ^ 3 + 2 * PowerSeries.X ^ 4 +
-        PowerSeries.X ^ 6
-
-/-- **Generating function for subsets avoiding differences 1 and 5.** Let $S^{\{1,5\}}_n$ be the
-number of subsets of $\{1, \dots, n\}$ in which no two elements differ by $1$ or by $5$. Then,
-in the ring $\mathbb{Z}[[x]]$ of formal power series,
-$$\Bigl(\sum_{n \ge 0} S^{\{1,5\}}_n x^n\Bigr)
-(1 - x^2 - x^3 - x^4 + x^5 - x^6 - x^7 - x^8 - x^{10}) =
-1 + 2x + 2x^2 + 2x^3 + 2x^4 + 4x^5 + 3x^6 + 2x^7 + x^8 + x^9.$$
-
-This is the paper's formula for $\sum_{n \ge 0} S^{\{1,5\}}_n x^n$ as a quotient of the two
-polynomials, with the denominator cleared.
-
-Source: Michael A. Allen, *Connections Between Combinations Without Specified Separations and
-Strongly Restricted Permutations, Compositions, and Bit Strings*, Journal of Integer
-Sequences 28 (2025), Article 25.3.7, Proposition 10. -/
-public theorem_wanted restrictedCombinationTotal_one_five_genFun :
-    PowerSeries.mk (fun n => (restrictedCombinationTotal {1, 5} n : ℤ)) *
-        (1 - PowerSeries.X ^ 2 - PowerSeries.X ^ 3 - PowerSeries.X ^ 4 + PowerSeries.X ^ 5 -
-          PowerSeries.X ^ 6 - PowerSeries.X ^ 7 - PowerSeries.X ^ 8 - PowerSeries.X ^ 10) =
-      1 + 2 * PowerSeries.X + 2 * PowerSeries.X ^ 2 + 2 * PowerSeries.X ^ 3 +
-        2 * PowerSeries.X ^ 4 + 4 * PowerSeries.X ^ 5 + 3 * PowerSeries.X ^ 6 +
-        2 * PowerSeries.X ^ 7 + PowerSeries.X ^ 8 + PowerSeries.X ^ 9
 
 /-- **Generating function for subsets avoiding differences 1 and 6.** Let $S^{\{1,6\}}_n$ be the
 number of subsets of $\{1, \dots, n\}$ in which no two elements differ by $1$ or by $6$. Then,
