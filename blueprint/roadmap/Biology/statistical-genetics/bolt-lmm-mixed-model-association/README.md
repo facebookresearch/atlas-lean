@@ -43,3 +43,4 @@
 - [Grid-based Bayesian mixed model for longitudinal traits](grid-based-bayesian-mixed-model-for-longitudinal-traits/README.md)
 - [Spike-and-slab variational ELBO for genome-wide regression](spike-and-slab-variational-elbo-for-genome-wide-regression.md)
 - [Effective sample size of mixed-model association tests](effective-sample-size-of-mixed-model-association/README.md)
+- [REGENIE: stacked block ridge regression and LOCO association testing](regenie-stacked-block-ridge-regression.md)
