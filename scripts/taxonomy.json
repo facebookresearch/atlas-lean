@@ -14031,6 +14031,7 @@
   "MathlibExt/NumberTheory/Recurrences/KFibonacciBrousseauSums": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Brousseau sums of k-Fibonacci numbers"},
   "MathlibExt/NumberTheory/Recurrences/KFibonacciShiftedBrousseauSum": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Brousseau sums of k-Fibonacci numbers"},
   "MathlibExt/NumberTheory/Recurrences/LucasAlternatingSquaredBinomialSum": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Binomial sums with second-order recurrences"},
+  "MathlibExt/NumberTheory/Recurrences/LucasShiftedBinomialConvolution": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Binomial sums with second-order recurrences"},
   "MathlibExt/NumberTheory/Recurrences/LucasBinetFormula": {"to": "NumberTheory/linear-recurrences/lucas-sequences-primitive-divisors", "title": "Lucas sequences"},
   "MathlibExt/NumberTheory/Recurrences/LucasNumberGeneratingFunctionValues": {"to": "NumberTheory/linear-recurrences/fibonacci-polynomials", "title": "Integer values of Fibonacci polynomial generating functions"},
   "MathlibExt/NumberTheory/Recurrences/LucasPeriodAverageDegenerateSecondOrderSums": {"to": "NumberTheory/linear-recurrences/recurrences-modulo-m", "title": "Periods and averages of Lucas sequences modulo n"},
