@@ -15,13 +15,13 @@ public import Mathlib.Data.Rat.Defs
 public import MathlibExt.NumberTheory.JacobsthalLucasNumber
 public import MathlibExt.NumberTheory.LucasSequence
 public import MathlibExt.NumberTheory.OresmeConvolutions
-public import MathlibExt.NumberTheory.OresmeConvolutionsJacobsthalOresmeConvolution
-public import MathlibExt.NumberTheory.OresmeConvolutionsPellLucasSequenceOresmeConvolution
 public import MathlibExt.NumberTheory.OresmeJacobsthalLucasCongruence
 public import MathlibExt.NumberTheory.OresmeLucasModuloFive
 public import MathlibExt.NumberTheory.OresmePellCongruence
 public import MathlibExt.NumberTheory.PellLucasSequence
 public import MathlibExt.NumberTheory.PellNumberSequence
+public import MathlibExt.NumberTheory.OresmeConvolutionsPellLucasSequenceOresmeConvolution
+public import MathlibExt.NumberTheory.OresmeConvolutionsJacobsthalOresmeConvolution
 
 /-!
 # Cauchy convolutions with Oresme numbers
