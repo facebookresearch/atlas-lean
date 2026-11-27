@@ -30,7 +30,7 @@ makes that result true by construction. The forced depth-64 push is
 theorem-pinned to record 65 at
 `Assembly/AccessTrace.lean:990`; the admitted top-level bound is
 theorem-pinned by `listsort_safe` at
-`Assembly/ListSortSafety.lean:25`.
+`Assembly/ListSortSafety.lean:31`.
 
 As a standing review rule, a source fact that is only implicit in C pointer
 identity, control flow, or helper construction does not count as discharged.

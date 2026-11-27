@@ -41,7 +41,7 @@ assembly did not retrofit any conclusion into the approved
 corollaries of this same theorem. Neither adds a values-mode or liveness
 premise; each obtains those facts from the corresponding validated
 `ListSortInput` constructor
-(`Assembly/ListSortSafety.lean:41` and `:54`).
+(`Assembly/ListSortSafety.lean:48` and `:62`).
 
 ## Depends on
 

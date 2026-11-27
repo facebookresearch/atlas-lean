@@ -14,11 +14,17 @@ import Mathlib
 
 This file discharges the input bounds, trace-safety, termination, quotient-bit,
 and concrete range obligations for CPython's 64-bit `powerloop` transcription.
+The transcription results assume `ValidPowerloopInput`, which includes the
+platform list-length bound `n ≤ PY_LIST_MAX = 2 ^ 60 - 1`; the natural-number
+termination results assume the same bound on `n`.
 -/
 
 namespace CPythonListsort
 
-/-- The C preconditions for two adjacent, nonempty runs inside a list. -/
+/-- The C preconditions for two adjacent, nonempty runs inside a list, together with the
+selected platform's list-length bound: all four words are nonnegative as signed 64-bit values,
+`0 < n1`, `0 < n2`, the runs `[s1, s1 + n1)` and `[s1 + n1, s1 + n1 + n2)` end within `n`
+(`s1 + n1 + n2 ≤ n`), and `n ≤ PY_LIST_MAX`. -/
 def ValidPowerloopInput (s1 n1 n2 n : PySSize) : Prop :=
   s1.Nonnegative ∧ n1.Nonnegative ∧ n2.Nonnegative ∧ n.Nonnegative ∧
     0 < n1.toNat ∧ 0 < n2.toNat ∧
@@ -28,7 +34,8 @@ def ValidPowerloopInput (s1 n1 n2 n : PySSize) : Prop :=
 theorem pyListMax_eq : PY_LIST_MAX = 2 ^ 60 - 1 := by
   norm_num [PY_LIST_MAX, PY_SSIZE_T_MAX, PY_OBJECT_PTR_BYTES]
 
-/-- Exact doubled-midpoint bounds, including every signed-width bound used by the loop. -/
+/-- Under `ValidPowerloopInput`, the doubled run midpoints `a = 2 * s1 + n1` and
+`b = a + n1 + n2` satisfy `0 < n`, `a < b < 2 * n`, and `a`, `b`, `2 * a`, `2 * b < 2 ^ 63`. -/
 theorem powerloopInputBounds (s1 n1 n2 n : PySSize)
     (hvalid : ValidPowerloopInput s1 n1 n2 n) :
     let a := 2 * s1.toNat + n1.toNat
@@ -41,11 +48,13 @@ theorem powerloopInputBounds (s1 n1 n2 n : PySSize)
   norm_num at hnmax ⊢
   omega
 
-/-- The interval invariant for the arbitrary-precision recurrence. -/
+/-- The interval invariant for the arbitrary-precision recurrence: `0 < n` and
+`a < b < 2 * n`. -/
 def PowerloopNatBounds (n : Nat) (state : PowerloopNatState) : Prop :=
   0 < n ∧ state.a < state.b ∧ state.b < 2 * n
 
-/-- A non-stopping natural step preserves the interval and doubles its positive gap. -/
+/-- From an unstopped state satisfying `PowerloopNatBounds`, one natural step either stops, or
+leaves the state unstopped, preserves `PowerloopNatBounds`, and doubles the gap `b - a`. -/
 theorem powerloopNatStep_bounds (n : Nat) (state : PowerloopNatState)
     (hstopped : state.stopped = false)
     (hbounds : PowerloopNatBounds n state) :
@@ -78,7 +87,9 @@ theorem powerloopNatStep_result (n : Nat) (state : PowerloopNatState)
     powerloopNatLoop fuel n state = state := by
   cases fuel <;> simp [powerloopNatLoop, hstopped]
 
-/-- If a bounded execution has not stopped, every supplied iteration doubled the gap. -/
+/-- Starting from an unstopped state satisfying `PowerloopNatBounds`, if `fuel` iterations leave
+the loop unstopped, then the final state satisfies `PowerloopNatBounds`, its result is the initial
+result plus `fuel`, and its gap `b - a` is `2 ^ fuel` times the initial gap. -/
 theorem powerloopNatLoop_unstopped_gap (fuel n : Nat) (state : PowerloopNatState)
     (hstopped : state.stopped = false)
     (hbounds : PowerloopNatBounds n state) :
@@ -125,7 +136,8 @@ theorem powerloopNatLoop_result_le (fuel n : Nat) (state : PowerloopNatState) :
           have hstep := powerloopNatStep_result n state hstopped
           omega
 
-/-- Sixty iterations suffice for doubled midpoints whose initial gap is at least two. -/
+/-- Sixty iterations stop the loop from an unstopped state satisfying `PowerloopNatBounds`
+(`0 < n`, `a < b < 2 * n`) whose gap `b - a` is at least two, provided `n ≤ PY_LIST_MAX`. -/
 theorem powerloopNatLoop_stops_by_sixty (n : Nat) (state : PowerloopNatState)
     (hstopped : state.stopped = false)
     (hbounds : PowerloopNatBounds n state)
@@ -151,7 +163,9 @@ private theorem pySSize_nonnegative_of_double_lt (x : PySSize)
   norm_num at hfit ⊢
   omega
 
-/-- Interval bounds below `PY_LIST_MAX` discharge every finite-width safety premise. -/
+/-- For a nonnegative `n` with `n ≤ PY_LIST_MAX` and an unstopped state whose natural projection
+satisfies `PowerloopNatBounds`, the `fuel`-step trace meets every finite-width safety premise
+(`PowerloopTraceSafe`), for every `fuel`. -/
 theorem powerloopTraceSafe_of_bounds (fuel : Nat) (n : PySSize) (state : PowerloopState)
     (hn : n.Nonnegative)
     (hnmax : n.toNat ≤ PY_LIST_MAX)
@@ -193,7 +207,9 @@ theorem powerloopTraceSafe_of_bounds (fuel : Nat) (n : PySSize) (state : Powerlo
         rw [heq]
         exact hnextBounds
 
-/-- The finite-width doubled-midpoint initialization has its intended natural values. -/
+/-- Under `ValidPowerloopInput`, the 64-bit doubled-midpoint initialization does not wrap: the
+words `a := 2 * s1 + n1` and `b := a + n1 + n2` satisfy `a.toNat = 2 * s1.toNat + n1.toNat`
+and `b.toNat = 2 * s1.toNat + n1.toNat + n1.toNat + n2.toNat`. -/
 theorem powerloopInitial_toNat (s1 n1 n2 n : PySSize)
     (hvalid : ValidPowerloopInput s1 n1 n2 n) :
     let a : PySSize := 2 * s1 + n1
@@ -228,7 +244,7 @@ theorem powerloopInitial_toNat (s1 n1 n2 n : PySSize)
         BitVec.toNat_add_of_lt (by rw [habNat]; norm_num at hb ⊢; omega)
       _ = 2 * s1.toNat + n1.toNat + n1.toNat + n2.toNat := by rw [habNat]
 
-/-- Valid adjacent runs make all 64 transcribed loop iterations representation-safe. -/
+/-- Under `ValidPowerloopInput`, all 64 transcribed loop iterations are representation-safe. -/
 private theorem powerloopTraceSafetyCore (s1 n1 n2 n : PySSize)
     (hvalid : ValidPowerloopInput s1 n1 n2 n) :
     let a := 2 * s1 + n1
@@ -333,7 +349,8 @@ theorem powerloopNatQuotientInvariant_init (a b n : Nat)
   simp [PowerloopNatQuotientInvariant, powerloopResidue, Nat.mod_eq_of_lt ha,
     Nat.mod_eq_of_lt hb]
 
-/-- One active natural step preserves the quotient-bit interpretation. -/
+/-- One natural step from an unstopped state satisfying `PowerloopNatBounds` preserves the
+quotient-bit interpretation. -/
 theorem powerloopNatQuotientInvariant_step (a b n : Nat) (state : PowerloopNatState)
     (hstopped : state.stopped = false)
     (hbounds : PowerloopNatBounds n state)
@@ -396,7 +413,8 @@ theorem powerloopNatQuotientInvariant_step (a b n : Nat) (state : PowerloopNatSt
           subst j
           rw [haBit, hbBit]
 
-/-- Iteration preserves the quotient-bit invariant as long as the interval invariant is supplied. -/
+/-- From an unstopped state satisfying `PowerloopNatBounds` and the quotient-bit invariant,
+any number of iterations preserves the quotient-bit invariant. -/
 theorem powerloopNatQuotientInvariant_loop (fuel a b n : Nat)
     (state : PowerloopNatState)
     (hstopped : state.stopped = false)
@@ -432,8 +450,10 @@ theorem powerloopNatLoop_add (first second n : Nat) (state : PowerloopNatState) 
           simp only [Nat.succ_add, powerloopNatLoop, hstopped, Bool.false_eq_true, ite_false]
           exact ih (powerloopNatStep n state)
 
-/-- The arbitrary-precision recurrence for exact run midpoints stops within 60 steps and returns
-one plus the first zero-based quotient-bit position where they differ. -/
+/-- For `0 < n ≤ PY_LIST_MAX`, `a < b < 2 * n`, and `b - a ≥ 2`, the arbitrary-precision
+recurrence started at `a`, `b` has stopped within its 64-step budget, and its result is `k + 1`
+for some `k < 60` that is the first zero-based quotient-bit position at which `a / n` and `b / n`
+differ. -/
 theorem powerloopNatResult_of_gap_two (a b n : Nat)
     (hn : 0 < n)
     (hab : a < b)
@@ -473,8 +493,9 @@ theorem powerloopNatResult_of_gap_two (a b n : Nat)
     simpa [initial] using powerloopNatLoop_result_le 60 n initial
   exact ⟨hstop64, k, by omega, hresult, hfirst⟩
 
-/-- Arbitrary points `a < b < 2*n` stop within the 64-step bound and return one plus their first
-differing quotient-bit position. -/
+/-- For `0 < n ≤ PY_LIST_MAX` and any `a < b < 2 * n`, the arbitrary-precision recurrence started
+at `a`, `b` has stopped within its 64-step budget, and its result is `k + 1` for some `k < 61`
+that is the first zero-based quotient-bit position at which `a / n` and `b / n` differ. -/
 theorem powerloopNatResult (a b n : Nat)
     (hn : 0 < n)
     (hab : a < b)
@@ -529,7 +550,11 @@ theorem powerloopNatResult (a b n : Nat)
     simpa [initial] using powerloopNatLoop_result_le 61 n initial
   exact ⟨hstop64, k, by omega, hresult, hfirst⟩
 
-/-- The complete 64-bit transcription terminates and has the mathematical quotient-bit result. -/
+/-- Under `ValidPowerloopInput` (nonnegative words, nonempty adjacent runs ending within `n`, and
+`n ≤ PY_LIST_MAX`), the traced 64-bit transcription has stopped within its 64-step budget, and
+`powerloop s1 n1 n2 n = k + 1` for some `k < 60` that is the first zero-based quotient-bit
+position at which `a / n` and `b / n` differ, for the doubled run midpoints `a = 2 * s1 + n1` and
+`b = a + n1 + n2`. -/
 theorem powerloopResult (s1 n1 n2 n : PySSize)
     (hvalid : ValidPowerloopInput s1 n1 n2 n) :
     let a := 2 * s1.toNat + n1.toNat
@@ -566,8 +591,9 @@ theorem powerloopResult (s1 n1 n2 n : PySSize)
   · unfold powerloop
     exact hresultEq.trans hnatResult
 
-/-- Valid adjacent runs have a representation-safe 64-step trace and stop before fuel is
-exhausted. -/
+/-- Under `ValidPowerloopInput`, the 64-step trace from the 64-bit initialization meets every
+finite-width safety premise (`PowerloopTraceSafe`), and the traced execution has stopped within
+that budget. -/
 theorem powerloopTraceSafety (s1 n1 n2 n : PySSize)
     (hvalid : ValidPowerloopInput s1 n1 n2 n) :
     let a := 2 * s1 + n1
@@ -583,8 +609,9 @@ def POWER_BOUND : Nat := 60
 theorem powerBound_relation : POWER_BOUND + 1 = 61 ∧ 61 < MAX_MERGE_PENDING := by
   decide
 
-/-- Every valid `powerloop` result is in `[1, 60]`; reserving one additional unpowered top run
-still remains strictly below CPython's 64-entry pending-run capacity. -/
+/-- Under `ValidPowerloopInput` (which includes `n ≤ PY_LIST_MAX`), the `powerloop` result is in
+`[1, POWER_BOUND] = [1, 60]`; reserving one additional unpowered top run still remains strictly
+below CPython's 64-entry pending-run capacity. -/
 theorem powerRange (s1 n1 n2 n : PySSize)
     (hvalid : ValidPowerloopInput s1 n1 n2 n) :
     1 ≤ powerloop s1 n1 n2 n ∧

@@ -60,7 +60,7 @@ The first claim is pinned by `forcedPushAtCapacity_records65` at
 `CSLibExtTest/Algorithms/Sorting/CPythonListsort/Assembly/AccessTrace.lean:35`;
 the admitted-execution bound is
 pinned by `listsort_safe` at
-`Assembly/ListSortSafety.lean:25`.
+`Assembly/ListSortSafety.lean:31`.
 
 Trace composition preserves chronological order, disjoins fuel exhaustion,
 takes the exact maximum of component push depths, appends merge-memory events,

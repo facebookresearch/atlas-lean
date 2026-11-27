@@ -60,8 +60,8 @@ Neither public top-level theorem exposes a values-mode premise; it is carried
 by the input. An explicit unkeyed `Array` corollary is required for each
 user-facing result. Named keyed corollaries are also exported for direct API
 discovery; they specialize the same general theorems and add no premise
-(`Correctness/ListSortCorrectness.lean:346` and
-`Assembly/ListSortSafety.lean:41`).
+(`Correctness/ListSortCorrectness.lean:358` and
+`Assembly/ListSortSafety.lean:48`).
 
 ## Functional correctness
 

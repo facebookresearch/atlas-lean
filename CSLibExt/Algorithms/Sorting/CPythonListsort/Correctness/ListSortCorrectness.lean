@@ -17,6 +17,9 @@ This module packages correctness at the proof-carrying `ListSortInput`
 boundary.  The implementation sorts occurrence-tagged keys so origins travel
 through every modeled movement; the final post exposes requested-order
 sortedness, occurrence-level stability, and the whole key/payload snapshot.
+The whole-sort correctness theorems assume at most `PY_LIST_MAX = 2 ^ 60 - 1`
+input entries; all of them except `listSort_small_correct` also assume that
+the comparator is a strict weak order (`BoolStrictWeakOrder`).
 -/
 
 namespace CPythonListsort
@@ -90,8 +93,10 @@ theorem sorted_of_size_lt_two
       | nil => simp
       | cons next rest => simp at hlist
 
-/-- Inputs of length zero or one bypass the scan, but still return the exact
-tagged input snapshot and satisfy the full correctness post in either mode. -/
+/-- Inputs of length zero or one (and at most `PY_LIST_MAX`) bypass the scan,
+but still return the exact tagged input snapshot and satisfy the full
+correctness post in either mode, for every Boolean comparator, without an
+ordering premise. -/
 theorem listSort_small_correct
     (lt : BoolComparator alpha) (reverse : Bool)
     (input : ListSortInput alpha nu)
@@ -174,8 +179,9 @@ theorem listSort_small_correct
     exact EntrySnapshotPermutation.with_occurrence_keys input
 
 /-- Forward mode composes initialization, the complete scan/collapse theorem,
-and cleanup without adding any premise beyond the signed input, size, and
-strict-weak-order contract. -/
+and cleanup without adding any premise beyond the signed input, the size bound
+`input.slice.entries.size ≤ PY_LIST_MAX`, and the strict-weak-order contract
+`BoolStrictWeakOrder lt`. -/
 theorem listSort_forward_correct
     (lt : BoolComparator alpha) (horder : BoolStrictWeakOrder lt)
     (input : ListSortInput alpha nu)
@@ -239,7 +245,9 @@ theorem listSort_forward_correct
     · simpa [hresultOccurrences] using hwhole.2
 
 /-- Reverse mode uses the actual initial paired-entry reversal, the
-reverse-oriented scan theorem, and the actual final reversal. -/
+reverse-oriented scan theorem, and the actual final reversal.  It assumes the
+size bound `input.slice.entries.size ≤ PY_LIST_MAX` and the strict-weak-order
+contract `BoolStrictWeakOrder lt`. -/
 theorem listSort_reverse_correct
     (lt : BoolComparator alpha) (horder : BoolStrictWeakOrder lt)
     (input : ListSortInput alpha nu)
@@ -328,7 +336,9 @@ theorem listSort_reverse_correct
         stable := by simpa [requestedComparator] using hreverse.stable
         entrySnapshot := hreverse.entrySnapshot }
 
-/-- The validated implementation-level theorem for either public direction. -/
+/-- The validated implementation-level theorem for either public direction:
+for a strict weak order `lt` and an input of at most `PY_LIST_MAX` entries,
+some result satisfies `ListSortCorrectnessPost`. -/
 theorem listSort_correct
     (lt : BoolComparator alpha) (horder : BoolStrictWeakOrder lt)
     (reverse : Bool) (input : ListSortInput alpha nu)
@@ -338,7 +348,8 @@ theorem listSort_correct
   · exact listSort_forward_correct lt horder input hmax
   · exact listSort_reverse_correct lt horder input hmax
 
-/-- Keyed-array specialization of `listSort_correct`.  The returned
+/-- Keyed-array specialization of `listSort_correct`, for a strict weak order
+`lt` and at most `PY_LIST_MAX` entries.  The returned
 `ListSortCorrectnessPost` exposes requested-order key sortedness,
 occurrence-level stability, and permutation of complete key/payload entries.
 The first conjunct connects that certificate to the ordinary untagged public
@@ -360,11 +371,15 @@ theorem listsort_correct_keyed
     ⟨result, hresult⟩
   exact ⟨result, hresult.untaggedResultEq, hresult⟩
 
-/-- Required ordinary-array corollary.  The first equation exposes the actual
+/-- Required ordinary-array corollary, for a strict weak order `lt` and an
+array of at most `PY_LIST_MAX` elements.  The first equation exposes the actual
 untagged evaluator result; the second exposes the occurrence-enriched
 execution whose carried origins witness stability.  Exact erasure connects
 the two, so origins are neither inspected by execution nor manufactured after
-sorting. -/
+sorting.  The remaining conjuncts state that the output values are sorted under
+`requestedComparator lt reverse` (`lt`, with its arguments swapped when
+`reverse`), that the tagged output is a stable rearrangement of `xs` under that
+comparator, and that the output values are a permutation of `xs`. -/
 theorem listsort_correct
     (lt : BoolComparator alpha) (horder : BoolStrictWeakOrder lt)
     (reverse : Bool) (xs : Array alpha)

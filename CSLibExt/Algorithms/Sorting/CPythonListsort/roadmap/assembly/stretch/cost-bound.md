@@ -65,7 +65,7 @@ vector and not a claim that those leaves equal the balanced minrun target
 cycle.  It also does not transfer Theorem 6's comparison-count conclusion:
 CPython adds binary insertion extension and uses different run discovery,
 galloping, and directional merges.  The concrete `listsort_safe` theorem at
-`Assembly/ListSortSafety.lean:25-27` already proves the recorded
+`Assembly/ListSortSafety.lean:31-33` already proves the recorded
 stack-depth bound and owns implementation stack capacity; this node need not
 restate the paper's asymptotic space result.
 

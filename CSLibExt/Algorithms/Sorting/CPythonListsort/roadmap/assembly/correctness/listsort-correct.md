@@ -31,21 +31,21 @@ The implementation-level result packet is `ListSortCorrectnessPost`. Its first
 field is an exact equation to the occurrence-enriched `listSort?` execution,
 followed by successful return, fuel non-exhaustion, requested-order sortedness,
 occurrence-level stability, and whole-entry snapshot preservation
-(`Correctness/ListSortCorrectness.lean:34`). Completion is
+(`Correctness/ListSortCorrectness.lean:38`). Completion is
 therefore exported as an actual `some result`; it is not inferred merely from
 `fuelExhausted = false`. The public companion
 `ListSortCorrectnessPost.untaggedResultEq` uses structural erasure to pin the
 same certificate to the ordinary untagged execution
-(`Correctness/ListSortCorrectness.lean:55`).
+(`Correctness/ListSortCorrectness.lean:59`).
 
 The zero/one-element bypass is proved for an arbitrary Boolean comparator,
 without an order-law premise
-(`Correctness/ListSortCorrectness.lean:95`). The nontrivial
+(`Correctness/ListSortCorrectness.lean:101`). The nontrivial
 forward and reverse branches are proved separately and then selected on the
 public Boolean flag
-(`Correctness/ListSortCorrectness.lean:179`,
-`Correctness/ListSortCorrectness.lean:243`, and
-`Correctness/ListSortCorrectness.lean:332`). The public
+(`Correctness/ListSortCorrectness.lean:186`,
+`Correctness/ListSortCorrectness.lean:252`, and
+`Correctness/ListSortCorrectness.lean:343`). The public
 ordinary-array corollary has exactly the signed assumptions—one
 `BoolStrictWeakOrder`, the reverse flag, an input array, and
 `xs.size ≤ PY_LIST_MAX`. It exports both exact execution equations: ordinary
@@ -53,7 +53,7 @@ ordinary-array corollary has exactly the signed assumptions—one
 `listSort? (occurrenceComparator lt)` returns the tag-carrying result used for
 stability. Requested-order sortedness, ordinary stability, and value
 permutation are then stated on that connected result
-(`Correctness/ListSortCorrectness.lean:368`). Thus tags cannot
+(`Correctness/ListSortCorrectness.lean:383`). Thus tags cannot
 be manufactured after execution, and correctness and safety concern the same
 ordinary evaluator.
 
@@ -64,7 +64,7 @@ ordinary evaluator equation together with the complete
 are respectively the key-order, equal-key occurrence-order, and complete
 key/origin/payload permutation guarantees. This is a convenience corollary,
 not a new correctness premise or roadmap obligation
-(`Correctness/ListSortCorrectness.lean:346`).
+(`Correctness/ListSortCorrectness.lean:358`).
 
 Two kernel-checked inhabited semantic witnesses guard the public boundary.  A
 keyed reverse input with duplicate keys produces an actual `listSort?` result whose
