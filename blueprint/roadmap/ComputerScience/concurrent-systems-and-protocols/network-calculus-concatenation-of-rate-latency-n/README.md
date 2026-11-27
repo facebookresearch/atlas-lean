@@ -6,6 +6,6 @@
 - [Conv Curve mono](conv-curve-mono.md)
 - [Min Plus Conv assoc](min-plus-conv-assoc.md)
 - [Conv Curve comm](conv-curve-comm.md)
-- [Service Curve concat](service-curve-concat.md)
+- [Concatenation of finite-valued service curves](service-curve-concat.md)
 - [Conv Curve rate Latency](conv-curve-rate-latency.md)
 - [Delay concat rate Latency](delay-concat-rate-latency.md)
