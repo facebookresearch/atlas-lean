@@ -13081,6 +13081,7 @@
   "MathlibExt/NumberTheory/Digits/ReverseDivisorFourDigits": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Reverse multiples"},
   "MathlibExt/NumberTheory/Digits/ReverseDivisorHasPropertyPStarIffDvd": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Reverse multiples"},
   "MathlibExt/NumberTheory/Digits/ReverseDivisorHasPropertyPStarOfDvd": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Reverse multiples"},
+  "MathlibExt/NumberTheory/Digits/ReverseDivisorInfiniteDvdReverseDigitsMul": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Reverse multiples"},
   "MathlibExt/NumberTheory/Digits/ReverseDivisorQuotientFour": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Reverse multiples"},
   "MathlibExt/NumberTheory/Digits/SloaneCompleteYoungGraphCharacterization": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Reverse multiples"},
   "MathlibExt/NumberTheory/Digits/SloaneReverseMultiple": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Reverse multiples"},
