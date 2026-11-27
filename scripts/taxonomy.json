@@ -204,14 +204,22 @@
     ]},
     {"slug": "cancer-genomics", "title": "Cancer genomics", "description": "Mathematical models for tumour sequencing data: purity and copy number, cancer cell fractions, mutation detection power, mutational signatures and the timing of genomic events.", "msc": ["92C50", "62P10"], "subfields": []},
     {"slug": "bioinformatics", "title": "Bioinformatics", "description": "Algorithms and statistical models on biological sequences and data: sequence alignment, genome assembly, motifs, RNA secondary structure, clustering and network reconstruction.", "msc": ["92D20", "68W32"], "subfields": [
-     {"slug": "sequence-alignment", "title": "Sequence alignment", "description": "Pairwise and multiple alignment of biological sequences: Needleman–Wunsch and Smith–Waterman, affine gaps, banded, linear-space, semi-global and wavefront algorithms."}
+     {"slug": "sequence-alignment", "title": "Sequence alignment", "description": "Pairwise and multiple alignment of biological sequences: Needleman–Wunsch and Smith–Waterman, affine gaps, banded, linear-space, semi-global and wavefront algorithms."},
+     {"slug": "statistical-models-of-genomic-data", "title": "Statistical models of genomic data", "description": "Statistical models, scores and significance tests for functional-genomics measurements: allelic imbalance and allele-specific reporter assays, overdispersed read counts, splicing levels, expression programs and tissue specificity, chromatin accessibility, reproducibility of replicate experiments, protein interaction scoring and the significance of causal-network predictions."},
+     {"slug": "sequence-design-and-binding-prediction", "title": "Sequence design and binding prediction", "description": "Models that score, predict or select biological sequences for experiments and vaccines: factorizable sequence libraries, likelihoods for measured binding affinities and population coverage of peptide vaccines."}
     ]},
     {"slug": "systems-biology", "title": "Systems biology", "description": "Dynamics of biochemical reaction networks and gene regulatory circuits: mass-action kinetics, enzyme kinetics, ultrasensitivity, feedback, metabolic flux analysis and gene expression noise.", "msc": ["92C42", "92C45", "80A30"], "subfields": []},
     {"slug": "pharmacokinetics", "title": "Pharmacokinetics and pharmacodynamics", "description": "Compartment models of drug absorption, distribution and elimination, linear and saturable, under bolus, infusion and repeated dosing; dose–response laws, reference models for drug combinations and models of concentration measurements. Enzyme kinetics as such is under Systems biology.", "msc": ["92C45", "92C50", "62P10"], "subfields": []},
-    {"slug": "population-dynamics", "title": "Population and evolutionary dynamics", "description": "Differential-equation and matrix models of population growth, structure, species interaction and evolutionary change, such as logistic growth, predator–prey systems, metapopulations, replicator dynamics, quasispecies and Leslie matrices, and the life tables and direct standardization of demography.", "msc": ["92D25", "92D15", "91A22"], "subfields": []},
+    {"slug": "population-dynamics", "title": "Population and evolutionary dynamics", "description": "Differential-equation and matrix models of population growth, structure, species interaction and evolutionary change, such as logistic growth, predator–prey systems, metapopulations, replicator dynamics, quasispecies and Leslie matrices, and the life tables and direct standardization of demography.", "msc": ["92D25", "92D15", "91A22"], "subfields": [
+     {"slug": "evolutionary-games-graphs-and-within-host-models", "title": "Evolutionary games, graph dynamics and within-host models", "description": "Stochastic and game-theoretic models of evolution and of populations inside hosts: Moran processes and games on graphs, with amplifiers of selection and fixation probabilities and times; repeated games and the evolution of cooperation; and models of viruses and tumours within a host, of competing microbes and of replicators in protocells."}
+    ]},
     {"slug": "pattern-formation", "title": "Reaction–diffusion and pattern formation", "description": "Reaction–diffusion models of biological spread and spatial patterning, including travelling waves, morphogen gradients and Turing instabilities.", "msc": ["92C15", "35K57", "35C07"], "subfields": []},
     {"slug": "mathematical-neuroscience", "title": "Mathematical neuroscience", "description": "Models of excitable membranes and neurons: the Nernst potential and passive cable theory, the Hodgkin–Huxley and FitzHugh–Nagumo equations, integrate-and-fire neurons and Wilson–Cowan models of neural populations.", "msc": ["92C20", "92C05", "92B20"], "subfields": []},
-    {"slug": "epidemiology", "title": "Mathematical epidemiology", "description": "Compartmental, renewal and branching-process models of infectious disease transmission and their reproduction numbers, the reporting of incidence, and the accuracy of diagnostic tests.", "msc": ["92D30"], "subfields": []}
+    {"slug": "epidemiology", "title": "Mathematical epidemiology", "description": "Compartmental, renewal and branching-process models of infectious disease transmission and their reproduction numbers, the reporting of incidence, and the accuracy of diagnostic tests.", "msc": ["92D30"], "subfields": [
+     {"slug": "parasite-relatedness-and-genomic-epidemiology", "title": "Parasite relatedness and genomic epidemiology", "description": "Identity by descent between malaria parasites: expected relatedness of parasite genealogies, classification of genealogical relationships, relatedness of cotransmitted parasites and the heterozygosity of polygenomic infections."},
+     {"slug": "treatment-resistance-and-immune-escape", "title": "Treatment, drug resistance and immune escape", "description": "Transmission and within-host models under treatment and vaccination: competition between drug-sensitive and resistant strains, escape from regional vaccination, and viral dynamics under antiviral therapy."},
+     {"slug": "chronic-disease-and-social-contagion", "title": "Chronic disease and social contagion", "description": "Models of non-communicable health states: multistate and lifetime risks of chronic disease, latent signatures of multimorbidity, and contagion with spontaneous adoption of behaviours and health states."}
+    ]}
    ]
   },
   "CategoryTheory": {
@@ -10844,6 +10852,7 @@
   "MathlibExt/Combinatorics/Additive/BhSet": {"to": "Combinatorics/additive-combinatorics/sidon-sets-difference-sets", "title": "B_h-sets"},
   "MathlibExt/Combinatorics/Additive/BoseChowlaSubgroup": {"to": "Combinatorics/additive-combinatorics/sidon-sets-difference-sets", "title": "Difference bases"},
   "MathlibExt/Combinatorics/Additive/BoundedSubsequenceSums": {"to": "Combinatorics/additive-combinatorics/zero-sum-subset-sums", "title": "Subset sums with a bounded number of terms"},
+  "MathlibExt/Combinatorics/Additive/BoundedSubsequenceSumsPositive": {"to": "Combinatorics/additive-combinatorics/zero-sum-subset-sums", "title": "Subset sums with a bounded number of terms"},
   "MathlibExt/Combinatorics/Additive/CapSetDimFour": {"to": "Combinatorics/additive-combinatorics/progressions-dense-sets", "title": "Small values of cap set sizes and Roth numbers"},
   "MathlibExt/Combinatorics/Additive/BoundedSubsetSums": {"to": "Combinatorics/additive-combinatorics/zero-sum-subset-sums", "title": "Subset sums with a bounded number of terms"},
   "MathlibExt/Combinatorics/Additive/CapSetDimThree": {"to": "Combinatorics/additive-combinatorics/progressions-dense-sets", "title": "Small values of cap set sizes and Roth numbers"},
@@ -11043,6 +11052,7 @@
   "MathlibExt/Combinatorics/Enumerative/AlzerRichardsReciprocalSum": {"to": "Combinatorics/stirling-bell-eulerian/stirling-lah-numbers", "title": "Alzer–Richards identities for Stirling numbers"},
   "MathlibExt/Combinatorics/Enumerative/AlzerRichardsSabarIdentity": {"to": "Combinatorics/stirling-bell-eulerian/stirling-lah-numbers", "title": "Alzer–Richards identities for Stirling numbers"},
   "MathlibExt/Combinatorics/Enumerative/AlzerRichardsSignedStirlingSum": {"to": "Combinatorics/stirling-bell-eulerian/stirling-lah-numbers", "title": "Alzer–Richards identities for Stirling numbers"},
+  "MathlibExt/Combinatorics/Enumerative/AlzerRichardsVanishingStirlingSum": {"to": "Combinatorics/stirling-bell-eulerian/stirling-lah-numbers", "title": "Alzer–Richards identities for Stirling numbers"},
   "MathlibExt/Combinatorics/Enumerative/AlternatingBinomialPowerSum": {"to": "FieldTheory/finite-fields", "title": "Permutation polynomials"},
   "MathlibExt/Combinatorics/Enumerative/AntiBonacci": {"to": "Combinatorics/combinatorics-on-words/self-describing-sequences", "title": "Anti-recurrence and greedy subsum-free sequences"},
   "MathlibExt/Combinatorics/Enumerative/AntiTribonacci": {"to": "Combinatorics/combinatorics-on-words/self-describing-sequences", "title": "Anti-recurrence and greedy subsum-free sequences"},
@@ -12253,6 +12263,7 @@
   "MathlibExt/FieldTheory/Finite/OrderedPartitionCongruence": {"to": "FieldTheory/finite-fields", "title": "Permutation polynomials"},
   "MathlibExt/FieldTheory/Finite/PermutationPolynomial": {"to": "FieldTheory/finite-fields", "title": "Permutation polynomials"},
   "MathlibExt/FieldTheory/Finite/PolynomialSumIdentity": {"to": "FieldTheory/finite-fields", "title": "Permutation polynomials"},
+  "MathlibExt/FieldTheory/Finite/PowerSumCriterion": {"to": "FieldTheory/finite-fields", "title": "Permutation polynomials"},
   "MathlibExt/FieldTheory/Finite/PrimitivePolynomial": {"to": "FieldTheory/finite-fields", "title": "Primitive polynomials over finite fields"},
   "MathlibExt/FieldTheory/Finite/ShiftedPowerSumPermutationPolynomial": {"to": "FieldTheory/finite-fields", "title": "Permutation polynomials"},
   "MathlibExt/FieldTheory/Galois/Abelian": {"to": "FieldTheory/galois-theory", "title": "Intermediate fields of abelian extensions"},
@@ -12961,6 +12972,7 @@
   "MathlibExt/NumberTheory/AlternatingFloorSqrtSum": {"to": "NumberTheory/diophantine-approximation/uniform-distribution-metric", "title": "Floor and ceiling function sums"},
   "MathlibExt/NumberTheory/AlternatingGeometricSumDifferenceOfSquares": {"to": "NumberTheory/quadratic-forms-sums-of-squares/sums-of-squares", "title": "Alternating geometric sums as differences of squares"},
   "MathlibExt/NumberTheory/AlternatingHyperharmonic": {"to": "NumberTheory/special-numbers/harmonic-numbers", "title": "Hyperharmonic numbers and sums over primes"},
+  "MathlibExt/NumberTheory/AlternatingHyperharmonicTypeII": {"to": "NumberTheory/special-numbers/harmonic-numbers", "title": "Hyperharmonic numbers and sums over primes"},
   "MathlibExt/NumberTheory/AlternatingHyperharmonicTypeIIISquarefree": {"to": "NumberTheory/special-numbers/harmonic-numbers", "title": "Hyperharmonic numbers and sums over primes"},
   "MathlibExt/NumberTheory/AlternatingReciprocalIntegral": {"to": "NumberTheory/arithmetic-functions/divisor-totient-functions", "title": "Residues of rounded quotients n/k"},
   "MathlibExt/NumberTheory/AlternatingSeriesContinuedFraction": {"to": "NumberTheory/continued-fractions-expansions", "title": "Continued fractions of alternating series"},
@@ -13637,6 +13649,7 @@
   "MathlibExt/NumberTheory/LargeZsigmondyPrimesHomogenizedCyclotomicMemIcc": {"to": "NumberTheory/linear-recurrences/lucas-sequences-primitive-divisors", "title": "Large Zsigmondy primes"},
   "MathlibExt/NumberTheory/LaurentCartierCongruence": {"to": "NumberTheory/digits-numeration/numeration-automatic", "title": "Constant terms of powers of Laurent polynomials"},
   "MathlibExt/NumberTheory/LaurentSeriesBoundedPartialQuotients": {"to": "NumberTheory/continued-fractions-expansions", "title": "Continued fractions of Laurent series"},
+  "MathlibExt/NumberTheory/LaurentSeriesBoundedPartialQuotientsFrobenius": {"to": "NumberTheory/continued-fractions-expansions", "title": "Continued fractions of Laurent series"},
   "MathlibExt/NumberTheory/LaurentSeriesBoundedPartialQuotientsLaurentSubConvergentOrder": {"to": "NumberTheory/continued-fractions-expansions", "title": "Continued fractions of Laurent series"},
   "MathlibExt/NumberTheory/LaurentSeriesConvergentProperties": {"to": "NumberTheory/continued-fractions-expansions", "title": "Continued fractions of Laurent series"},
   "MathlibExt/NumberTheory/LcmDenseSets": {"to": "NumberTheory/additive-number-theory", "title": "Reciprocal lcm sums of integer sets"},
@@ -13682,6 +13695,7 @@
   "MathlibExt/NumberTheory/MobiusFermatThreeSeven": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Möbius–Fermat function"},
   "MathlibExt/NumberTheory/ModInverseSwitching": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Modular inverses from the Euclidean algorithm"},
   "MathlibExt/NumberTheory/ModifiedDegenerateBernoulli": {"to": "NumberTheory/special-numbers/euler-genocchi-poly-bernoulli", "title": "Degenerate Bernoulli polynomials"},
+  "MathlibExt/NumberTheory/ModifiedDegenerateBernoulliConvolution": {"to": "NumberTheory/special-numbers/euler-genocchi-poly-bernoulli", "title": "Degenerate Bernoulli polynomials"},
   "MathlibExt/NumberTheory/ModifiedDegenerateBernoulliMiki": {"to": "NumberTheory/special-numbers/euler-genocchi-poly-bernoulli", "title": "Degenerate Bernoulli polynomials"},
   "MathlibExt/NumberTheory/ModifiedDegenerateBernoulliThreeTerm": {"to": "NumberTheory/special-numbers/euler-genocchi-poly-bernoulli", "title": "Degenerate Bernoulli polynomials"},
   "MathlibExt/NumberTheory/ModularForms/CongruenceSubgroupReduction": {"to": "NumberTheory/modular-forms-q-series/modular-forms", "title": "Modular group and congruence subgroups"},
@@ -13907,6 +13921,7 @@
   "MathlibExt/NumberTheory/PrimeCounting/ArithmeticLargeSieve": {"to": "NumberTheory/distribution-of-primes/sieve-methods", "title": "Large sieve"},
   "MathlibExt/NumberTheory/PrimeCounting/AverageOmegaHFree": {"to": "NumberTheory/arithmetic-functions/special-integer-classes", "title": "Prime factors of h-free integers"},
   "MathlibExt/NumberTheory/PrimeCounting/AxlerEffectivePrimeEstimates": {"to": "NumberTheory/distribution-of-primes/prime-number-theorem", "title": "Explicit bounds for the prime-counting function"},
+  "MathlibExt/NumberTheory/PrimeCounting/AxlerMertensRemainder": {"to": "NumberTheory/distribution-of-primes/prime-number-theorem", "title": "Explicit bounds for the prime-counting function"},
   "MathlibExt/NumberTheory/PrimeCounting/BrunConstant": {"to": "NumberTheory/distribution-of-primes/prime-patterns", "title": "Brun's theorem"},
   "MathlibExt/NumberTheory/PrimeCounting/BrunTitchmarsh": {"to": "NumberTheory/distribution-of-primes/primes-in-progressions", "title": "Brun–Titchmarsh theorem"},
   "MathlibExt/NumberTheory/PrimeCounting/BrunTitchmarshUniform": {"to": "NumberTheory/distribution-of-primes/primes-in-progressions", "title": "Brun–Titchmarsh theorem"},
@@ -14271,6 +14286,7 @@
   "MathlibExt/NumberTheory/RunLengthTransformLinearRecurrence": {"to": "NumberTheory/special-numbers/binomial-coefficients", "title": "Binomial coefficient sums modulo 2"},
   "MathlibExt/NumberTheory/SCullenNumber": {"to": "NumberTheory/primes-primality/special-primes", "title": "Cullen numbers"},
   "MathlibExt/NumberTheory/SDiophantineSystemFour": {"to": "NumberTheory/diophantine-equations/diophantine-tuples-egyptian", "title": "S-Diophantine tuples"},
+  "MathlibExt/NumberTheory/SDiophantineTuples": {"to": "NumberTheory/diophantine-equations/diophantine-tuples-egyptian", "title": "S-Diophantine tuples"},
   "MathlibExt/NumberTheory/SZumkeller": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Zumkeller numbers"},
   "MathlibExt/NumberTheory/SZumkellerHarmonicMeanSqLeOfIsSZumkeller": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Zumkeller numbers"},
   "MathlibExt/NumberTheory/SZumkellerNotIsUnitarySZumkellerOfOdd": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Zumkeller numbers"},
@@ -14450,6 +14466,7 @@
   "MathlibExt/NumberTheory/WolstenholmeBinomialCongruence": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Wolstenholme's theorem"},
   "MathlibExt/NumberTheory/WolstenholmeBinomialExtension": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Wolstenholme's theorem"},
   "MathlibExt/NumberTheory/WolstenholmeCongruenceEquivalence": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Wolstenholme's theorem"},
+  "MathlibExt/NumberTheory/WolstenholmePairedBinomialCongruence": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Wolstenholme's theorem"},
   "MathlibExt/NumberTheory/WolstenholmePolynomialParts": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Wolstenholme's theorem"},
   "MathlibExt/NumberTheory/WolstenholmePowerSums": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Wolstenholme's theorem"},
   "MathlibExt/NumberTheory/X2Y2Count": {"to": "NumberTheory/quadratic-forms-sums-of-squares/sums-of-squares", "title": "Representations by x² + 2y²"},
