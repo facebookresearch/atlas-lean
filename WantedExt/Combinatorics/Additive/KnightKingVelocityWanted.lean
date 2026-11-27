@@ -8,8 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-import Batteries.Util.ProofWanted
-public import MathlibExt.Combinatorics.Additive.KnightDistance
+public import MathlibExt.Combinatorics.Additive.KnightVelocity
 public import Mathlib.Data.Int.Interval
 public import Mathlib.Order.Lattice.Nat
 public import Mathlib.Topology.Instances.Real.Lemmas
@@ -34,17 +33,6 @@ Source: Christian Táfula, *Knights Are 24/13 Times Faster than the King*, The F
 -/
 public def kingMoves : Finset (ℤ × ℤ) :=
   {(1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0), (-1, -1), (0, -1), (1, -1)}
-
-/--
-**Max-norm ball.** For a natural number $h$, the max-norm ball $B_h \subset \mathbb{Z}^2$ is the
-product of two copies of the integer interval $\{-h, \dots, h\}$, that is, the set of lattice
-points $(x, y)$ with $\max(|x|, |y|) \le h$.
-
-Source: Christian Táfula, *Knights Are 24/13 Times Faster than the King*, The Fibonacci Quarterly
-62(3) (2024), definition of `B_h`.
--/
-public def maxNormBall (h : ℕ) : Finset (ℤ × ℤ) :=
-  Finset.Icc (-(h : ℤ)) h ×ˢ Finset.Icc (-(h : ℤ)) h
 
 /--
 **Piece distance from a minimal fold.** Let $A \subset \mathbb{Z}^2$ be a finite set, let
@@ -301,46 +289,6 @@ Source: Christian Táfula, *Knights Are 24/13 Times Faster than the King*, The F
 public theorem pieceDistance_knightMoves_zero_zero :
     pieceDistance (knightMoves 1 2) (0, 0) = 0 := by
   simp [pieceDistance]
-
-/--
-**Number of points in the max-norm ball.** For every natural number $h$, the max-norm ball
-$B_h = \{(x, y) \in \mathbb{Z}^2 : \max(|x|, |y|) \le h\}$ has exactly $(2h+1)^2$ points.
-
-Source: Christian Táfula, *Knights Are 24/13 Times Faster than the King*, The Fibonacci Quarterly
-62(3) (2024), definition of `B_h`.
--/
-public theorem card_maxNormBall (h : ℕ) : (maxNormBall h).card = (2 * h + 1) ^ 2 := by
-  have hcard : (Finset.Icc (-(h : ℤ)) h).card = 2 * h + 1 := by
-    rw [Int.card_Icc]
-    omega
-  simp [maxNormBall, Finset.card_product, hcard, pow_two]
-
-/--
-**Velocity formula for the (a, b)-knight.** Let $a$ and $b$ be natural numbers with
-$1 \le a < b$, $\gcd(a, b) = 1$ and $a + b$ odd, let
-$N_{a,b} = \{(\pm a, \pm b), (\pm b, \pm a)\}$ be the $(a,b)$-knight's move set, and for
-$p \in \mathbb{Z}^2$ let $d_{a,b}(p)$ be the piece distance of $p$ for $N_{a,b}$. For a natural
-number $h$, let $B_h = \{(x, y) \in \mathbb{Z}^2 : \max(|x|, |y|) \le h\}$ be the max-norm
-ball and let $\bar{d}(h) = |B_h|^{-1} \sum_{p \in B_h} d_{a,b}(p)$ be the average of $d_{a,b}$
-over $B_h$. Then
-$$\lim_{h \to \infty} \frac{2h}{3} \, \bar{d}(h)^{-1} = \frac{2(a+b)b^2}{a^2 + 3b^2}.$$
-
-Source: Christian Táfula, *Knights Are 24/13 Times Faster than the King*, The Fibonacci Quarterly
-62(3) (2024), Theorem 1.3.
--/
-public theorem_wanted knight_velocity_formula (a b : ℕ)
-    (ha : 1 ≤ a) (hab : a < b) (hcoprime : Nat.Coprime a b)
-    (hodd : Odd (a + b)) :
-    Filter.Tendsto
-      (fun h : ℕ =>
-        (2 * (h : ℝ) / 3) *
-          (((∑ p ∈ maxNormBall h,
-              (pieceDistance (knightMoves (a : ℤ) (b : ℤ)) p : ℝ)) /
-            ((maxNormBall h).card : ℝ))⁻¹))
-      Filter.atTop
-      (nhds
-        (2 * ((a : ℝ) + (b : ℝ)) * (b : ℝ) ^ 2 /
-          ((a : ℝ) ^ 2 + 3 * (b : ℝ) ^ 2)))
 
 end
 

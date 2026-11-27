@@ -21,5 +21,6 @@
 - [Selection hypothesis S_fin](sfin.md)
 - [The property (U V) of contained subcovers](choose.md)
 - [The function space C_p(X)](cp.md)
+- [The zero function in C_p(X)](cp-zero.md)
 - [Reznichenko property](has-reznichenko-property.md)
 - [Weak sequence selection property of C_p(X)](has-weak-ssp.md)
