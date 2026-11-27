@@ -4,3 +4,4 @@
 - [Partial derivative of the Lagrangian in velocity](lagrangian-partial-v.md)
 - [Variational extremum](is-variational-extremum.md)
 - [Euler–Lagrange equation](euler-lagrange-equation.md)
+- [Rank-one convexity and quasiconvexity](rank-one-convexity-and-quasiconvexity/README.md)

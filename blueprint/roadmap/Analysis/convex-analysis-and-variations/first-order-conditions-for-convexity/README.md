@@ -9,6 +9,7 @@ A differentiable function is convex exactly when each of its first-order Taylor 
 - [Stationary points of convex functions are global minimizers](is-min-on-of-has-fderiv-at-eq-zero.md)
 - [Convexity is monotonicity of the gradient](convex-iff-monotone-gradient.md)
 - [Supporting gradients](supporting-gradient/README.md)
+- [Karush–Kuhn–Tucker conditions with mixed constraints under LICQ](karush-kuhn-tucker-mixed.md)
 
 The MA-ProofBench formulation for $C^2$ functions on an open convex subset of a Banach space is the article [Convexity via the tangent-plane inequality](../convex-on-iff-forall-le-add-fderiv-withi.md), proved as a corollary.
 

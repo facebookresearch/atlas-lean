@@ -29,11 +29,6 @@ Convex functions and sets in analysis and optimization: first-order and second-o
 - [Karush–Kuhn–Tucker conditions for inequality constraints](karush-kuhn-tucker-inequality.md)
 - [Convex KKT conditions are sufficient](is-min-on-of-karush-kuhn-tucker-convex.md)
 - [Finite sums of convex functions are convex](convex-on-finset-sum.md)
-- [Linear programming](linear-programming/README.md)
-- [Online convex optimization](online-convex-optimization/README.md)
-- [Rank-one convexity and quasiconvexity](rank-one-convexity-and-quasiconvexity/README.md)
-- [Karush–Kuhn–Tucker conditions with mixed constraints under LICQ](karush-kuhn-tucker-mixed.md)
-- [Convergence rate of the projected subgradient method](sgd-rate.md)
 - [Subdifferential calculus](subdifferential-calculus/README.md)
 
 ## Related topics

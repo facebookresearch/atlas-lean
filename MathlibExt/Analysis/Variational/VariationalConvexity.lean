@@ -99,6 +99,9 @@ one has
 
 For nonempty Ω, |Ω| > 0 and this is the average form W(A)≤1/(|Ω|) ∫_Ω W(A+Dφ(x)) dx; for Ω = ∅
 the unnormalized condition reads 0 ≤ 0 and the average form is undefined.
+
+The integral is a Bochner integral, read as 0 when x ↦ W(A+Dφ(x)) is not integrable on Ω,
+which cannot happen for locally bounded Borel W.
 -/
 noncomputable def IsMorreyQuasiconvex
     (W : Matrix (Fin 2) (Fin 2) ℝ → ℝ) : Prop :=

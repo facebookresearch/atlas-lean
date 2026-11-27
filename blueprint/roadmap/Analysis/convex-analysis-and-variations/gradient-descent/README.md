@@ -16,6 +16,7 @@
 - [Gradient norm bound for smooth lower-bounded functions](gradient-descent-norm-gradient-sq-le.md)
 - [Convergence of the subgradient method](subgradient-method-rate.md)
 - [Convergence of stochastic gradient descent](integral-sgd-average-sub-le.md)
+- [Online convex optimization](online-convex-optimization/README.md)
 
 ## Strongly convex functions
 
