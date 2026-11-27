@@ -9,13 +9,12 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.NumberTheory.TruncatedLogDiscriminant
+import all MathlibExt.NumberTheory.TruncatedLogDiscriminant
 import Mathlib.RingTheory.Polynomial.Resultant.Basic
 import Mathlib.NumberTheory.Chebyshev
 import Mathlib.FieldTheory.Finite.Basic
 import Mathlib.Analysis.Complex.Polynomial.Basic
 import Mathlib.NumberTheory.Harmonic.Defs
-import Mathlib.NumberTheory.Padics.PadicVal.Basic
-import MathlibExt.NumberTheory.TruncatedLogResultantPos
 
 /-!
 # Finiteness of square discriminants of truncated logarithmic polynomials
@@ -28,6 +27,10 @@ Statements from Cullinan and Gajek-Leonard, *On the Discriminants of Truncated
 Logarithmic Polynomials*, INTEGERS 25 (2025), Article A39 (arXiv:2401.14138).
 `F_n(x) = 1 + x + x²/2 + ⋯ + xⁿ/n` and the discriminant is Mathlib's
 `Polynomial.discr`.
+
+The reduction modulo `q` specializes the private lemmas of
+`MathlibExt.NumberTheory.TruncatedLogDiscriminant` (the exponent-one case of its reduction modulo
+a prime power), which this module imports with `import all`.
 -/
 
 namespace MetaMathlibExt
@@ -38,331 +41,11 @@ open Polynomial
 
 namespace finite_primes_isSquare_discr_truncatedLog
 
-private noncomputable def geomPoly {R : Type*} [Semiring R] (n : ℕ) : R[X] :=
-  ∑ j ∈ Finset.range n, X ^ j
+open not_isSquare_discr_truncatedLog_three_five_seven_mul
 
-private lemma geomPoly_coeff {R : Type*} [Semiring R] (n j : ℕ) :
-    (geomPoly n : R[X]).coeff j = if j < n then 1 else 0 := by
-  classical
-  simp [geomPoly, coeff_X_pow, Finset.mem_range]
-
-private lemma geomPoly_degree {R : Type*} [Semiring R] [Nontrivial R] {n : ℕ} (hn : 0 < n) :
-    (geomPoly n : R[X]).natDegree = n - 1 := by
-  apply natDegree_eq_of_le_of_coeff_ne_zero
-  · exact natDegree_le_iff_coeff_eq_zero.mpr fun j hj => by
-      simp [geomPoly_coeff, show ¬j < n by omega]
-  · simp [geomPoly_coeff, show n - 1 < n by omega]
-
-private lemma trunc_coeff (n j : ℕ) :
-    (truncatedLogPolynomial n).coeff j =
-      if j = 0 then 1 else if j ≤ n then (j : ℚ)⁻¹ else 0 := by
-  classical
-  by_cases h0 : j = 0
-  · subst j
-    simp [truncatedLogPolynomial, coeff_X_pow, mul_ite, Finset.mem_Icc]
-  · have hj : 1 ≤ j := by omega
-    simp only [truncatedLogPolynomial, coeff_add, coeff_one, h0, ↓reduceIte, zero_add,
-      finsetSum_coeff, coeff_C_mul, coeff_X_pow, mul_ite, mul_one, mul_zero,
-      Finset.sum_ite_eq, Finset.mem_Icc, hj, true_and]
-
-private lemma trunc_degree {n : ℕ} (hn : 0 < n) :
-    (truncatedLogPolynomial n).natDegree = n := by
-  apply natDegree_eq_of_le_of_coeff_ne_zero
-  · exact natDegree_le_iff_coeff_eq_zero.mpr fun j hj => by
-      simp [trunc_coeff, show j ≠ 0 by omega, hj.not_ge]
-  · simp [trunc_coeff, hn.ne']
-
-private lemma trunc_derivative (n : ℕ) : (truncatedLogPolynomial n).derivative = geomPoly n := by
-  ext j
-  rw [coeff_derivative, trunc_coeff, geomPoly_coeff]
-  have hj : (j + 1 : ℕ) ≠ 0 := by omega
-  simp only [hj, ↓reduceIte]
-  by_cases h : j < n
-  · simp [h, Nat.succ_le_of_lt h, show (j : ℚ) + 1 ≠ 0 by positivity]
-  · simp [h, show ¬j + 1 ≤ n by omega]
-
-private lemma lcm_ne_zero (n : ℕ) : truncatedLogLcm n ≠ 0 :=
-  Nat.lcmUpto_ne_zero n
-
-private lemma geomPoly_map {R S : Type*} [Semiring R] [Semiring S] (f : R →+* S) (n : ℕ) :
-    (geomPoly n).map f = geomPoly n := by
-  simp [geomPoly, Polynomial.map_sum]
-
-private lemma scaled_degree {n : ℕ} (hn : 0 < n) :
-    (scaledTruncatedLogPolynomial n).natDegree = n := by
-  have hinj : Function.Injective (Int.castRingHom ℚ) := Int.cast_injective
-  rw [← natDegree_map_eq_of_injective hinj,
-    map_scaledTruncatedLogPolynomial, natDegree_C_mul, trunc_degree hn]
-  exact_mod_cast lcm_ne_zero n
-
-private lemma discr_mul_lcm {n : ℕ} (hn : 0 < n) :
-    (truncatedLogPolynomial n).discr * (truncatedLogLcm n : ℚ) ^ (n - 1) =
-      (-1 : ℚ) ^ (n * (n - 1) / 2) * (n : ℚ) *
-        (truncatedLogResultantProduct n : ℚ) := by
-  have hd : 0 < (truncatedLogPolynomial n).natDegree := by rwa [trunc_degree hn]
-  have hres := resultant_deriv (natDegree_pos_iff_degree_pos.mp hd)
-  rw [resultant_comm, trunc_derivative, leadingCoeff, trunc_degree hn,
-    trunc_coeff, ite_eq_right hn.ne', ite_eq_left le_rfl] at hres
-  have hpar : Even (n * (n - 1)) := by
-    obtain ⟨k, hk | hk⟩ := Nat.even_or_odd' n
-    · exact hk ▸ Even.mul_right (even_two_mul k) _
-    · have : n - 1 = 2 * k := by omega
-      rw [this]
-      exact Even.mul_left (even_two_mul k) _
-  rw [hpar.neg_one_pow, one_mul] at hres
-  have hprod : (truncatedLogResultantProduct n : ℚ) =
-      (truncatedLogLcm n : ℚ) ^ (n - 1) * resultant (geomPoly n) (truncatedLogPolynomial n)
-        (n - 1) n := by
-    change (↑(resultant (geomPoly n : ℤ[X]) (scaledTruncatedLogPolynomial n)) : ℚ) = _
-    rw [geomPoly_degree hn, scaled_degree hn]
-    change Int.castRingHom ℚ (resultant _ _ _ _) = _
-    rw [← resultant_map_map, geomPoly_map, map_scaledTruncatedLogPolynomial, resultant_C_mul_right]
-  rw [hprod, hres]
-  have hs : (-1 : ℚ) ^ (n * (n - 1) / 2) * (-1) ^ (n * (n - 1) / 2) = 1 := by
-    rw [← mul_pow]; simp
-  have hnQ : (n : ℚ) ≠ 0 := by exact_mod_cast hn.ne'
-  calc
-    _ = _ := by
-      symm
-      calc
-        _ = ((-1 : ℚ) ^ (n * (n - 1) / 2) * (-1) ^ (n * (n - 1) / 2)) *
-            ((n : ℚ) * (n : ℚ)⁻¹) *
-            ((truncatedLogPolynomial n).discr * (truncatedLogLcm n : ℚ) ^ (n - 1)) := by ring
-        _ = _ := by simp [hs, hnQ]
-
-private lemma val_nat_cast {q n : ℕ} (hq : q.Prime) :
-    padicValRat q (n : ℚ) = (n.factorization q : ℤ) := by
-  rw [padicValRat.of_nat, ← Nat.factorization_def n hq]
-
-private lemma factorization_mul_self {m q : ℕ} (hq : q.Prime) (hm : m ≠ 0)
-    (hdvd : ¬ q ∣ m) : (m * q).factorization q = 1 := by
-  have h := congrArg (fun f => f q) (Nat.factorization_mul hm hq.ne_zero)
-  simp only [Finsupp.add_apply] at h
-  rw [Nat.factorization_eq_zero_of_not_dvd hdvd, Nat.Prime.factorization_self hq] at h
-  simpa using h
-
-private lemma factorization_lcm {m q : ℕ} (hq : q.Prime) (hm : 1 ≤ m) (hlt : m < q) :
-    (truncatedLogLcm (m * q)).factorization q = 1 := by
-  change (Nat.lcmUpto (m * q)).factorization q = 1
-  rw [Nat.factorization_lcmUpto _ hq, (Nat.log_eq_iff (Or.inl one_ne_zero)).2 ⟨?_, ?_⟩]
-  · rw [pow_one]
-    calc q = 1 * q := (one_mul q).symm
-    _ ≤ m * q := by rw [mul_comm (1 : ℕ) q, mul_comm m q]; exact mul_le_mul_right hm q
-  · have hqq : q ^ (1 + 1) = q * q := by ring
-    rw [hqq]
-    exact mul_lt_mul_of_pos_right hlt hq.pos
-
-private lemma dvd_resultantProduct_of_isSquare {m q : ℕ} (hq : q.Prime) (hm : 1 ≤ m)
-    (hlt : m < q) (h4 : m * q % 4 = 1)
-    (hsq : IsSquare (truncatedLogPolynomial (m * q)).discr) :
-    (truncatedLogResultantProduct (m * q) : ZMod q) = 0 := by
-  have : Fact (Nat.Prime q) := ⟨hq⟩
-  set n := m * q with hn_def
-  have hm0 : 0 < m := by omega
-  have hn : 0 < n := Nat.mul_pos hm0 hq.pos
-  have hn1 : 1 ≤ n := hn
-  have hnpos : 0 < truncatedLogResultantProduct n :=
-    truncatedLogResultantProduct_pos hn1
-  have hP : ((truncatedLogResultantProduct n : ℤ) : ℚ) ≠ 0 := by exact_mod_cast hnpos.ne'
-  have hL : (truncatedLogLcm n : ℚ) ≠ 0 := by exact_mod_cast lcm_ne_zero n
-  have hnQ : (n : ℚ) ≠ 0 := by exact_mod_cast hn.ne'
-  obtain ⟨t, ht⟩ : ∃ t, n = 4 * t + 1 := ⟨n / 4, by omega⟩
-  have hexp : n * (n - 1) / 2 = (4 * t + 1) * (2 * t) := by
-    have e0 : 4 * t + 1 - 1 = 4 * t := by omega
-    have e2 : (4 * t + 1) * (4 * t) = ((4 * t + 1) * (2 * t)) * 2 := by ring
-    rw [ht, e0, e2]
-    omega
-  have heven_exp : Even (n * (n - 1) / 2) := by
-    rw [hexp]
-    exact ⟨(4 * t + 1) * t, by ring⟩
-  have hsign : (-1 : ℚ) ^ (n * (n - 1) / 2) = 1 := heven_exp.neg_one_pow
-  have heq := discr_mul_lcm hn
-  rw [hsign, one_mul] at heq
-  have hdisc : (truncatedLogPolynomial n).discr ≠ 0 :=
-    left_ne_zero_of_mul (heq.symm ▸ mul_ne_zero hnQ hP)
-  have hval := congrArg (padicValRat q) heq
-  rw [padicValRat.mul hdisc (pow_ne_zero _ hL), padicValRat.mul hnQ hP,
-    padicValRat.pow] at hval
-  have hdvd : ¬ q ∣ m := fun h => hlt.not_ge (Nat.le_of_dvd hm0 h)
-  have vn : padicValRat q (n : ℚ) = 1 := by
-    rw [hn_def, val_nat_cast hq, factorization_mul_self hq hm0.ne' hdvd]
-    rfl
-  have vL : padicValRat q ((truncatedLogLcm n : ℕ) : ℚ) = 1 := by
-    rw [hn_def, val_nat_cast hq, factorization_lcm hq hm hlt]
-    rfl
-  rw [vn, vL] at hval
-  have hPcast : ((truncatedLogResultantProduct n : ℤ) : ℚ) =
-      (((truncatedLogResultantProduct n).natAbs : ℕ) : ℚ) := by
-    have h := Int.natAbs_of_nonneg (le_of_lt hnpos)
-    conv_lhs => rw [← h]
-    simp
-  have vP_nonneg : 0 ≤ padicValRat q ((truncatedLogResultantProduct n : ℤ) : ℚ) := by
-    rw [hPcast, padicValRat.of_nat]
-    exact_mod_cast Nat.zero_le _
-  have heven_disc : Even (padicValRat q (truncatedLogPolynomial n).discr) :=
-    (Rat.isSquare_iff_even_factorization.mp hsq).2 q hq
-  have heven_sub : Even (n - 1) := ⟨2 * t, by omega⟩
-  obtain ⟨a, ha⟩ := heven_disc
-  obtain ⟨b, hb⟩ := heven_sub
-  have hbZ : ((n - 1 : ℕ) : ℤ) = (b : ℤ) + (b : ℤ) := by exact_mod_cast hb
-  have hodd : Odd (padicValRat q ((truncatedLogResultantProduct n : ℤ) : ℚ)) :=
-    ⟨a + b - 1, by linarith [hval, ha, hbZ]⟩
-  have h1vP : 1 ≤ padicValRat q ((truncatedLogResultantProduct n : ℤ) : ℚ) := by
-    obtain ⟨k, hk⟩ := hodd
-    omega
-  have hfact : 1 ≤ (truncatedLogResultantProduct n).natAbs.factorization q := by
-    have e : padicValRat q ((truncatedLogResultantProduct n : ℤ) : ℚ) =
-        (((truncatedLogResultantProduct n).natAbs.factorization q : ℕ) : ℤ) := by
-      rw [hPcast, padicValRat.of_nat, ← Nat.factorization_def _ hq]
-    omega
-  have hne : (truncatedLogResultantProduct n).natAbs ≠ 0 := by
-    simpa [Int.natAbs_eq_zero] using ne_of_gt hnpos
-  have hdvdP : q ∣ (truncatedLogResultantProduct n).natAbs :=
-    (hq.dvd_iff_one_le_factorization hne).mpr hfact
-  have hdvdZ : (q : ℤ) ∣ (truncatedLogResultantProduct n) := by
-    rw [← Int.natAbs_dvd_natAbs, Int.natAbs_natCast]
-    exact hdvdP
-  exact (ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mpr hdvdZ
-
-private noncomputable def redPoly (q m : ℕ) : (ZMod q)[X] :=
-  ∑ i ∈ Finset.Icc 1 m, C ((i : ZMod q)⁻¹) * X ^ i
-
-private lemma redPoly_coeff (q m j : ℕ) :
-    (redPoly q m).coeff j =
-      if j = 0 then 0 else if j ≤ m then (j : ZMod q)⁻¹ else 0 := by
-  classical
-  by_cases h0 : j = 0
-  · subst j
-    simp [redPoly, coeff_X_pow, mul_ite, Finset.mem_Icc]
-  · have hj : 1 ≤ j := by omega
-    simp [redPoly, coeff_X_pow, mul_ite, Finset.mem_Icc, h0, hj]
-
-private lemma scaled_coeff (n j : ℕ) :
-    (scaledTruncatedLogPolynomial n).coeff j =
-      if j = 0 then (truncatedLogLcm n : ℤ) else
-        if j ≤ n then (↑(truncatedLogLcm n / j) : ℤ) else 0 := by
-  classical
-  by_cases h0 : j = 0
-  · subst j
-    simp [scaledTruncatedLogPolynomial, coeff_X_pow, mul_ite, Finset.mem_Icc]
-  · have hj : 1 ≤ j := by omega
-    simp [scaledTruncatedLogPolynomial, coeff_X_pow, mul_ite, Finset.mem_Icc, h0, hj]
-
-private lemma lcm_dvd {n j : ℕ} (hj : 1 ≤ j) (hjn : j ≤ n) : j ∣ truncatedLogLcm n :=
-  Finset.dvd_lcm (s := Finset.Icc 1 n) (f := id) (Finset.mem_Icc.mpr ⟨hj, hjn⟩)
-
-private lemma prime_dvd_lcm {m q : ℕ} (hq : q.Prime) (hm : 1 ≤ m) :
-    q ∣ truncatedLogLcm (m * q) := by
-  apply lcm_dvd hq.one_le
-  calc q = 1 * q := (one_mul q).symm
-  _ ≤ m * q := by rw [mul_comm (1 : ℕ) q, mul_comm m q]; exact mul_le_mul_right hm q
-
-private lemma not_dvd_lcm_div {m q : ℕ} (hq : q.Prime) (hm : 1 ≤ m) (hlt : m < q) :
-    ¬ q ∣ truncatedLogLcm (m * q) / q := by
-  intro h
-  have hqL := prime_dvd_lcm hq hm
-  have h2 : q * q ∣ truncatedLogLcm (m * q) := by
-    have hmul := Nat.mul_dvd_mul h (dvd_refl q)
-    rwa [Nat.div_mul_cancel hqL] at hmul
-  have h3 : q ^ 2 ∣ truncatedLogLcm (m * q) := by simpa [pow_two] using h2
-  have h4 := (hq.pow_dvd_iff_le_factorization (lcm_ne_zero _)).mp h3
-  rw [factorization_lcm hq hm hlt] at h4
-  omega
-
-private lemma scaled_mod {m q : ℕ} (hq : q.Prime) (hm : 1 ≤ m) (hlt : m < q) :
-    (scaledTruncatedLogPolynomial (m * q)).map (Int.castRingHom (ZMod q)) =
-      C ((truncatedLogLcm (m * q) / q : ℕ) : ZMod q) * (redPoly q m) ^ q := by
-  have : Fact (Nat.Prime q) := ⟨hq⟩
-  have hqpos : 0 < q := hq.pos
-  have hm0 : 0 < m := by omega
-  have hn : 0 < m * q := Nat.mul_pos hm0 hq.pos
-  have hqL := prime_dvd_lcm hq hm
-  ext j
-  rw [coeff_map, scaled_coeff, coeff_C_mul, ← ZMod.expand_card, coeff_expand hqpos]
-  by_cases hj0 : j = 0
-  · subst j
-    simp only [↓reduceIte, dvd_zero, Nat.zero_div, redPoly_coeff, Int.coe_castRingHom,
-      Int.cast_natCast]
-    rw [(ZMod.natCast_eq_zero_iff _ _).mpr hqL, mul_zero]
-  · simp only [hj0, ↓reduceIte, apply_ite, map_zero, Int.coe_castRingHom, Int.cast_natCast]
-    by_cases hj : j ≤ m * q
-    · rw [ite_eq_left hj]
-      have hjL := lcm_dvd (by omega : 1 ≤ j) hj
-      by_cases hdiv : q ∣ j
-      · rw [ite_eq_left hdiv, redPoly_coeff]
-        have hjq : 0 < j / q :=
-          Nat.div_pos (Nat.le_of_dvd (Nat.pos_of_ne_zero hj0) hdiv) hqpos
-        have hjm : j / q ≤ m := by
-          have hle : j / q ≤ m * q / q := Nat.div_le_div_right hj
-          rwa [Nat.mul_div_cancel _ hqpos] at hle
-        have hz : ((j / q : ℕ) : ZMod q) ≠ 0 := by
-          rw [ne_eq, ZMod.natCast_eq_zero_iff]
-          exact fun h => (Nat.lt_of_le_of_lt hjm hlt).not_ge (Nat.le_of_dvd hjq h)
-        rw [ite_eq_right hjq.ne', ite_eq_left hjm, ← div_eq_mul_inv, eq_div_iff hz,
-          ← Nat.cast_mul]
-        congr 1
-        apply mul_right_cancel₀ hqpos.ne'
-        rw [mul_assoc, Nat.div_mul_cancel hdiv, Nat.div_mul_cancel hjL,
-          Nat.div_mul_cancel hqL]
-      · rw [ite_eq_right hdiv, mul_zero, ZMod.natCast_eq_zero_iff]
-        have hqL' : q ∣ truncatedLogLcm (m * q) / j * j := by
-          rwa [Nat.div_mul_cancel hjL]
-        exact (hq.dvd_mul.mp hqL').resolve_right hdiv
-    · rw [ite_eq_right hj]
-      by_cases hdiv : q ∣ j
-      · rw [ite_eq_left hdiv, redPoly_coeff]
-        have hjq : 0 < j / q :=
-          Nat.div_pos (Nat.le_of_dvd (Nat.pos_of_ne_zero hj0) hdiv) hqpos
-        have hlt' : ¬ j / q ≤ m := by
-          intro h
-          have hm' : j / q * q ≤ m * q := by gcongr
-          rw [Nat.div_mul_cancel hdiv] at hm'
-          exact hj hm'
-        simp [hjq.ne', hlt']
-      · simp [hdiv]
-
-private lemma redPoly_ne_zero {m q : ℕ} (hq : q.Prime) (hm : 1 ≤ m) (hlt : m < q) :
-    redPoly q m ≠ 0 := by
-  have : Fact (Nat.Prime q) := ⟨hq⟩
-  have hm0 : 0 < m := by omega
-  have hmz : (m : ZMod q) ≠ 0 := by
-    rw [ne_eq, ZMod.natCast_eq_zero_iff]
-    exact fun h => hlt.not_ge (Nat.le_of_dvd hm0 h)
-  intro h
-  have hc : (redPoly q m).coeff m = (m : ZMod q)⁻¹ := by
-    rw [redPoly_coeff, ite_eq_right hm0.ne', ite_eq_left le_rfl]
-  rw [h, coeff_zero] at hc
-  exact inv_ne_zero hmz hc.symm
-
-private lemma redPoly_degree_le {m q : ℕ} : (redPoly q m).natDegree ≤ m := by
-  apply natDegree_le_iff_coeff_eq_zero.mpr
-  intro j hj
-  rw [redPoly_coeff, ite_eq_right (by omega : j ≠ 0), ite_eq_right (by omega : ¬ j ≤ m)]
-
-private lemma mod_resultant {m q : ℕ} (hq : q.Prime) (hm : 1 ≤ m) (hlt : m < q) :
-    (truncatedLogResultantProduct (m * q) : ZMod q) =
-      ((truncatedLogLcm (m * q) / q : ℕ) : ZMod q) ^ (m * q - 1) *
-        resultant (geomPoly (m * q)) (redPoly q m) ^ q := by
-  have : Fact (Nat.Prime q) := ⟨hq⟩
-  have hm0 : 0 < m := by omega
-  have hn : 0 < m * q := Nat.mul_pos hm0 hq.pos
-  have hf : (geomPoly (m * q) : (ZMod q)[X]).Monic := monic_geom_sum_X hn.ne'
-  have hle : ((redPoly q m) ^ q).natDegree ≤ m * q := by
-    rw [natDegree_pow]
-    have hdeg := redPoly_degree_le (m := m) (q := q)
-    calc q * (redPoly q m).natDegree ≤ q * m := by gcongr
-    _ = m * q := mul_comm q m
-  change Int.castRingHom (ZMod q)
-    (resultant (geomPoly (m * q)) (scaledTruncatedLogPolynomial (m * q))) = _
-  rw [geomPoly_degree hn, scaled_degree hn, ← resultant_map_map, geomPoly_map,
-    scaled_mod hq hm hlt, resultant_C_mul_right]
-  have hpad := resultant_add_right_deg (geomPoly (m * q)) ((redPoly q m) ^ q) (m * q - 1)
-    (((redPoly q m) ^ q).natDegree) (m * q - (((redPoly q m) ^ q).natDegree)) le_rfl
-  rw [Nat.add_sub_of_le hle, ← geomPoly_degree (R := ZMod q) hn,
-    coeff_natDegree, hf.leadingCoeff, one_pow, one_mul] at hpad
-  rw [← geomPoly_degree (R := ZMod q) hn, hpad,
-    resultant_pow_right _ _ _ _ le_rfl
-      (pow_ne_zero _ (leadingCoeff_ne_zero.mpr (redPoly_ne_zero hq hm hlt)))]
+private lemma reducedPoly_false (q m : ℕ) :
+    reducedPoly q m false = ∑ i ∈ Finset.Icc 1 m, C ((i : ZMod q)⁻¹) * X ^ i := by
+  simp [reducedPoly]
 
 private lemma pow_pred_mul {R : Type*} [Monoid R] (a : R) {n : ℕ} (hn : 1 ≤ n) :
     a ^ n = a * a ^ (n - 1) := by
@@ -396,9 +79,9 @@ private lemma geom_factor {m q : ℕ} (hq : q.Prime) :
     rw [hgeom, h1, ← hgeom_m, mul_pow, hqpow, mul_assoc]
   exact mul_left_cancel₀ hX1 hfactor
 
-private lemma resultant_geom_factor {m q : ℕ} (hq : q.Prime) (hm : 1 ≤ m) :
-    resultant (geomPoly (m * q) : (ZMod q)[X]) (redPoly q m) =
-      (redPoly q m).eval 1 ^ (q - 1) * resultant (geomPoly m) (redPoly q m) ^ q := by
+private lemma resultant_geom_factor {m q : ℕ} (hq : q.Prime) (hm : 1 ≤ m) (g : (ZMod q)[X]) :
+    resultant (geomPoly (m * q) : (ZMod q)[X]) (g) =
+      (g).eval 1 ^ (q - 1) * resultant (geomPoly m) (g) ^ q := by
   have : Fact (Nat.Prime q) := ⟨hq⟩
   have hm0 : 0 < m := by omega
   have hXC : ((X : (ZMod q)[X]) - 1) = X - C (1 : ZMod q) := by simp
@@ -411,13 +94,13 @@ private lemma resultant_geom_factor {m q : ℕ} (hq : q.Prime) (hm : 1 ≤ m) :
   have hdeg2 : (((geomPoly m : (ZMod q)[X])) ^ q).natDegree = q * (m - 1) := by
     rw [natDegree_pow, geomPoly_degree hm0]
   have hmul := resultant_mul_left ((X - 1 : (ZMod q)[X]) ^ (q - 1)) ((geomPoly m) ^ q)
-    (redPoly q m) ((redPoly q m).natDegree) le_rfl
+    (g) ((g).natDegree) le_rfl
   rw [hdeg1, hdeg2] at hmul
-  have h1 := resultant_X_sub_C_pow_left (1 : ZMod q) (redPoly q m) (q - 1)
-    ((redPoly q m).natDegree) le_rfl
+  have h1 := resultant_X_sub_C_pow_left (1 : ZMod q) (g) (q - 1)
+    ((g).natDegree) le_rfl
   rw [← hXC] at h1
-  have h2 := resultant_pow_left (f := (geomPoly m : (ZMod q)[X])) (g := redPoly q m)
-    (m := q) (n := (redPoly q m).natDegree)
+  have h2 := resultant_pow_left (f := (geomPoly m : (ZMod q)[X])) (g := g)
+    (m := q) (n := (g).natDegree)
     (by rw [hmonic_m.leadingCoeff, one_pow]; exact one_ne_zero) le_rfl
   rw [hdeg2] at h2
   have hdegmul : (((X - 1 : (ZMod q)[X]) ^ (q - 1)) * (geomPoly m) ^ q).natDegree =
@@ -458,16 +141,16 @@ private lemma cast_div_factorial {m q : ℕ} (hq : q.Prime) (hlt : m < q)
   exact Nat.div_mul_cancel hdiv
 
 private lemma eval_one_eq (q m : ℕ) :
-    (redPoly q m).eval 1 = ∑ i ∈ Finset.Icc 1 m, ((i : ZMod q)⁻¹) := by
-  rw [redPoly, eval_finsetSum]
+    (reducedPoly q m false).eval 1 = ∑ i ∈ Finset.Icc 1 m, ((i : ZMod q)⁻¹) := by
+  rw [reducedPoly_false, eval_finsetSum]
   apply Finset.sum_congr rfl
   intro i _
   simp [eval_mul, eval_pow, eval_C, eval_X]
 
 private lemma dvd_excA_of_eval_eq_zero {m q : ℕ} (hq : q.Prime) (hlt : m < q)
-    (h0 : (redPoly q m).eval 1 = 0) : (q : ℤ) ∣ excA m := by
+    (h0 : (reducedPoly q m false).eval 1 = 0) : (q : ℤ) ∣ excA m := by
   have hcast : ((excA m : ℤ) : ZMod q) =
-      ((Nat.factorial m : ℕ) : ZMod q) * (redPoly q m).eval 1 := by
+      ((Nat.factorial m : ℕ) : ZMod q) * (reducedPoly q m false).eval 1 := by
     rw [excA, Int.cast_sum, eval_one_eq, Finset.mul_sum]
     apply Finset.sum_congr rfl
     intro i hi
@@ -498,20 +181,10 @@ private lemma excG_natDegree {m : ℕ} (hm : 1 ≤ m) : (excG m).natDegree = m :
       (by omega : 0 < m)
     exact_mod_cast hpos.ne'
 
-private lemma redPoly_natDegree {m q : ℕ} (hq : q.Prime) (hm : 1 ≤ m) (hlt : m < q) :
-    (redPoly q m).natDegree = m := by
-  have : Fact (Nat.Prime q) := ⟨hq⟩
-  apply natDegree_eq_of_le_of_coeff_ne_zero redPoly_degree_le
-  rw [redPoly_coeff, ite_eq_right (by omega : m ≠ 0), ite_eq_left le_rfl]
-  have hmz : (m : ZMod q) ≠ 0 := by
-    rw [ne_eq, ZMod.natCast_eq_zero_iff]
-    exact fun h => hlt.not_ge (Nat.le_of_dvd (by omega : 0 < m) h)
-  exact inv_ne_zero hmz
-
 private lemma excG_map {m q : ℕ} (hq : q.Prime) (hlt : m < q) :
     (excG m).map (Int.castRingHom (ZMod q)) =
-      C (((Nat.factorial m : ℕ)) : ZMod q) * redPoly q m := by
-  rw [excG, redPoly, Polynomial.map_sum, Finset.mul_sum]
+      C (((Nat.factorial m : ℕ)) : ZMod q) * reducedPoly q m false := by
+  rw [excG, reducedPoly_false, Polynomial.map_sum, Finset.mul_sum]
   apply Finset.sum_congr rfl
   intro i hi
   rw [Polynomial.map_mul, map_C, Polynomial.map_pow, map_X, Int.coe_castRingHom,
@@ -522,22 +195,23 @@ private lemma excG_map {m q : ℕ} (hq : q.Prime) (hlt : m < q) :
 
 private lemma dvd_excR_of_resultant_eq_zero {m q : ℕ} (hq : q.Prime) (hm : 1 ≤ m)
     (hlt : m < q)
-    (h0 : resultant (geomPoly m : (ZMod q)[X]) (redPoly q m) = 0) : (q : ℤ) ∣ excR m := by
+    (h0 : resultant (geomPoly m : (ZMod q)[X]) (reducedPoly q m false) = 0) : (q : ℤ) ∣ excR m := by
   have : Fact (Nat.Prime q) := ⟨hq⟩
   have hm0 : 0 < m := by omega
   have hR : ((excR m : ℤ) : ZMod q) =
       (((Nat.factorial m : ℕ)) : ZMod q) ^ (m - 1) *
-        resultant (geomPoly m : (ZMod q)[X]) (redPoly q m) (m - 1) (excG m).natDegree := by
+        resultant (geomPoly m : (ZMod q)[X]) (reducedPoly q m false) (m - 1)
+          (excG m).natDegree := by
     rw [excR]
     change Int.castRingHom (ZMod q) (resultant (geomPoly m : ℤ[X]) (excG m)) = _
     rw [geomPoly_degree hm0, ← resultant_map_map, geomPoly_map, excG_map hq hlt,
       resultant_C_mul_right]
-  have hdegeq : resultant (geomPoly m : (ZMod q)[X]) (redPoly q m) (m - 1)
+  have hdegeq : resultant (geomPoly m : (ZMod q)[X]) (reducedPoly q m false) (m - 1)
       (excG m).natDegree =
-      resultant (geomPoly m : (ZMod q)[X]) (redPoly q m) := by
+      resultant (geomPoly m : (ZMod q)[X]) (reducedPoly q m false) := by
     have e1 : m - 1 = (geomPoly m : (ZMod q)[X]).natDegree := (geomPoly_degree hm0).symm
-    have e2 : (excG m).natDegree = (redPoly q m).natDegree := by
-      rw [excG_natDegree hm, redPoly_natDegree hq hm hlt]
+    have e2 : (excG m).natDegree = (reducedPoly q m false).natDegree := by
+      rw [excG_natDegree hm, reducedPoly_degree (by omega) hlt false]
     rw [e1, e2]
   rw [hdegeq, h0, mul_zero] at hR
   exact (ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mp hR
@@ -848,24 +522,34 @@ private lemma key_nonsquare {m q : ℕ} (hq : q.Prime) (hm : 1 ≤ m) (hlt : m <
     (h4 : m * q % 4 = 1) (hA : ¬ (q : ℤ) ∣ excA m) (hR : ¬ (q : ℤ) ∣ excR m) :
     ¬ IsSquare (truncatedLogPolynomial (m * q)).discr := by
   have : Fact (Nat.Prime q) := ⟨hq⟩
-  intro hsq
-  have hP0 := dvd_resultantProduct_of_isSquare hq hm hlt h4 hsq
-  rw [mod_resultant hq hm hlt] at hP0
-  have hu : (((truncatedLogLcm (m * q) / q : ℕ)) : ZMod q) ≠ 0 := by
+  have hlo : q ^ 1 ≤ m * q := by
+    rw [pow_one]
+    exact Nat.le_mul_of_pos_left q (by omega)
+  have hhi : m * q < q ^ (1 + 1) := by
+    rw [pow_two]
+    exact Nat.mul_lt_mul_of_pos_right hlt hq.pos
+  have hmz : (m : ZMod q) ≠ 0 := by
     rw [ne_eq, ZMod.natCast_eq_zero_iff]
-    exact not_dvd_lcm_div hq hm hlt
-  have hres0 : resultant (geomPoly (m * q) : (ZMod q)[X]) (redPoly q m) ^ q = 0 :=
+    exact fun h => hlt.not_ge (Nat.le_of_dvd (by omega) h)
+  refine nonsquare_of_odd_mul (Nat.odd_iff.mpr (by omega)) hmz fun hP0 => ?_
+  have hu := lcm_quotient_ne_zero hlo hhi
+  have hg : reducedPoly q (m * q / q ^ 1) (1 == 0) = reducedPoly q m false := by
+    rw [pow_one, Nat.mul_div_cancel _ hq.pos]
+    rfl
+  rw [mod_resultant hlo hhi, hg, pow_one] at hP0
+  rw [pow_one] at hu
+  have hres0 : resultant (geomPoly (m * q) : (ZMod q)[X]) (reducedPoly q m false) ^ q = 0 :=
     (mul_eq_zero.mp hP0).resolve_left (pow_ne_zero _ hu)
-  have hres0' : resultant (geomPoly (m * q) : (ZMod q)[X]) (redPoly q m) = 0 := by
+  have hres0' : resultant (geomPoly (m * q) : (ZMod q)[X]) (reducedPoly q m false) = 0 := by
     by_contra hne
     exact pow_ne_zero q hne hres0
   rw [resultant_geom_factor hq hm] at hres0'
   rcases mul_eq_zero.mp hres0' with h | h
-  · have heval0 : (redPoly q m).eval 1 = 0 := by
+  · have heval0 : (reducedPoly q m false).eval 1 = 0 := by
       by_contra hne
       exact pow_ne_zero (q - 1) hne h
     exact hA (dvd_excA_of_eval_eq_zero hq hlt heval0)
-  · have hresm0 : resultant (geomPoly m : (ZMod q)[X]) (redPoly q m) = 0 := by
+  · have hresm0 : resultant (geomPoly m : (ZMod q)[X]) (reducedPoly q m false) = 0 := by
       by_contra hne
       exact pow_ne_zero q hne h
     exact hR (dvd_excR_of_resultant_eq_zero hq hm hlt hresm0)
