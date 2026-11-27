@@ -3932,6 +3932,15 @@ class ScopedRun(unittest.TestCase):
         self.assertEqual((status, report["in_step"], report["wiki_changes"]), (0, True, "sync"), out + err)
         status, out, err, report = self.run_sync("--check")
         self.assertEqual((status, report["missing"], report["wiki_changes"]), (1, ["Ext.fresh"], "other"))
+        # A check that is not in step names the command that brings it there, withholding what it withholds.
+        self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n"
+                         "/-- Another result. -/\ntheorem other : True := trivial\n\n"
+                         "/-- A third result. -/\ntheorem third : True := trivial\n\n")
+        status, out, err, report = self.run_sync("--check", "--withhold", "Ext.lagrange", "--withhold", "Ext.fresh")
+        fix = (f"python3 scripts/sync_wiki.py declarations --base {self.base} --withhold=Ext.fresh "
+               "--withhold=Ext.lagrange")
+        self.assertEqual((status, report["missing"], report["fix"]), (1, ["Ext.third"], fix), out + err)
+        self.assertIn(f"  {fix}\n", out)
 
     def test_a_docstring_edit_rewrites_its_digest_and_names_its_page(self) -> None:
         self.groups(lagrange="The order of a subgroup divides the order of a finite group.")

@@ -55,6 +55,7 @@ import textwrap
 from collections import Counter
 from dataclasses import dataclass, field
 from pathlib import Path
+from types import SimpleNamespace
 
 if __package__:
     from . import generate_wiki as wiki
@@ -83,7 +84,7 @@ ANY_CASE_GRAPH = re.compile(r"(?i:graph):[ \t]*(.*?)[ \t]*")
 # kind (sync_wiki.KINDS) states a definition, and links only a definition.
 RESULT_KINDS = frozenset({"theorem", "lemma"})
 # What the wiki's own extension on a planned page's row may hold for a batch to link the page: its kind and its
-# counterparts, which a linked row does not carry (docs/cards.md), and its origin, which it keeps.
+# counterparts, which a linked row does not carry (docs/cards.md), and its seed, which it keeps.
 LINKABLE = frozenset({"kind", "counterpart", "seed"})
 # The opening of a fenced code block: at most three spaces, then a run of three or more backticks or tildes.
 FENCE = re.compile(r" {0,3}(`{3,}|~{3,})")
@@ -301,8 +302,9 @@ def place_lines(text: str, pattern: re.Pattern = PLACE) -> list[str]:
     their own, as Markdown ends lines (at a line feed or a carriage return only), indented by less than four columns,
     outside fenced code blocks and HTML comments, which the rendered description does not show as text, possibly after
     the markers of a list item, a quotation, a heading or a table row (BLOCK_MARKERS), a table row's closing pipe
-    aside, and with emphasis or code around the label (LABEL_MARKUP). A fence closes only on a line of at most three spaces, a run of its own character at least as long, and
-    nothing after it but spaces and tabs; a line holding `<!--` anywhere opens a comment that runs to the next `-->`."""
+    aside, and with emphasis or code around the label (LABEL_MARKUP). A fence closes only on a line of at most three
+    spaces, a run of its own character at least as long, and nothing after it but spaces and tabs; a line holding `<!--`
+    anywhere opens a comment that runs to the next `-->`."""
     found, fence, comment = [], None, False
     for line in re.split(r"\r\n|\r|\n", text):
         if comment:
@@ -812,8 +814,8 @@ def graph_claims(base: str, head: str, bodies: dict[int, str]) -> tuple[dict[str
             notes.append(f"#{number}: {len(hidden)} article id(s) of a `Graph:` line left out: GitHub does not show "
                          "them on a line of plain text")
         if odd:
-            notes.append(f"#{number}: {len(odd)} word(s) of its `Graph:` line left out, such as `{odd[0][:40]}`: an "
-                         "article id is `af_` and 24 lower-case hexadecimal digits")
+            notes.append(f"#{number}: {len(odd)} word(s) of its `Graph:` line that start like an article id left out: "
+                         "an article id is `af_` and 24 lower-case hexadecimal digits")
         if cased:
             notes.append(f"#{number}: {cased} line(s) labelled as a `Graph:` line in another case left out: only "
                          "`Graph:` counts")
@@ -835,6 +837,98 @@ def article_rows(head: str) -> dict[str, list[tuple[str, dict]]]:
         for row in rows:
             if isinstance(row, dict) and isinstance(row.get("id"), str):
                 found.setdefault(row["id"], []).append((path, row))
+    return found
+
+
+def page_rows(rows: dict[str, list[tuple[str, dict]]]) -> dict[str, list[dict]]:
+    """The rows of article_rows by the page each names, by path from the roadmap."""
+    found: dict[str, list[dict]] = {}
+    for entries in rows.values():
+        for _, row in entries:
+            try:
+                found.setdefault(sync.page_name(row), []).append(row)
+            except (ValueError, TypeError, AttributeError, KeyError):
+                continue
+    return found
+
+
+@dataclass(frozen=True)
+class Folder:
+    """A folder past autoform audit's limit (folder_sizes): its folder page, by path from the roadmap, how many
+    articles it directly contains, its limit, and how many it contained on the commit the batch was made on."""
+    page: str
+    count: int
+    limit: int
+    before: int
+
+
+def folder_sizes(commit: str) -> dict[str, tuple[int, int]]:
+    """How many articles each article of *commit*'s roadmap that contains any directly contains, with the limit
+    autoform audit sets for it (`overfull-container`), by its path from the roadmap. They are counted as Autoform's
+    graph loader counts them (autoform_cli.graph._discover_nodes and _article_parents): the articles are the roadmap's
+    regular `.md` files, hidden ones aside; an article's parent is the README.md of its own folder or of the nearest
+    folder above it, and a README.md's that of the nearest folder above its own. So a subfolder with a README.md counts
+    once, and the pages of a subfolder without one count in the folder above. The limits are autoform audit's own
+    (autoform_cli.audit): one for the roadmap's own README.md when it contains only folder pages, one for a
+    `navigation: module` page and one for any other. A page's navigation is read as the graph loader reads it: from its
+    annotations (autoform_cli.annotations.read_links: each key's first value, in the links files' order), or from its
+    frontmatter if it has none, in any case, and none on a page that names a declaration."""
+    from autoform_cli.annotations import read_links
+    from autoform_cli.audit import _MAX_DIRECT_CHILDREN, _MAX_MODULE_CHILDREN, _MAX_ROOT_CHILDREN
+    from autoform_cli.graph import _article_parents, _node_id, _normalize_value, _parse_node
+
+    root = Path("/roadmap")
+    paths: dict[str, str] = {}
+    for entry in git("ls-tree", "-r", "-z", "--full-tree", commit, "--", "blueprint/roadmap/").split(b"\0"):
+        if not entry:
+            continue
+        meta, name = entry.split(b"\t", 1)
+        mode, kind, _ = meta.split()
+        path = os.fsdecode(name).removeprefix("blueprint/roadmap/")
+        if (kind == b"blob" and mode in (b"100644", b"100755") and path.endswith(".md")
+                and not any(part.startswith(".") for part in path.split("/"))):
+            paths.setdefault(_node_id(root / path, root), path)
+    parents = _article_parents([SimpleNamespace(id=node, path=root / path) for node, path in paths.items()], root)
+    children: dict[str, list[str]] = {}
+    for node, parent in parents.items():
+        if parent is not None:
+            children.setdefault(parent, []).append(node)
+    with tempfile.TemporaryDirectory(prefix="atlas-batch-folders-") as folder:
+        blueprint = Path(folder).resolve() / "blueprint"
+        sync.extract_tree(commit, blueprint.parent, lambda path: path.startswith("blueprint/links/"))
+        spots = {node: blueprint / "roadmap" / paths[node] for node in children}
+        links = read_links(blueprint, {spot: node for node, spot in spots.items()})
+    sizes = {}
+    for node, contained in children.items():
+        page = paths[node]
+        if node == "roadmap" and parents[node] is None and all(paths[child].endswith("/README.md")
+                                                                for child in contained):
+            sizes[page] = (len(contained), _MAX_ROOT_CHILDREN)
+            continue
+        facts = links.facts.get(spots[node]) if links is not None else None
+        if facts is None:
+            text = (blob(commit, f"blueprint/roadmap/{page}") or b"").decode("utf-8", "replace")
+            parsed, _ = _parse_node(node, root / page, text)
+            facts = parsed.metadata if parsed is not None else {}
+            navigation = facts.get("navigation")
+        else:
+            navigation, problem = _normalize_value(node, 0, "navigation", facts.get("navigation", "topic"))
+            navigation = None if problem else navigation
+        if "declaration" in facts:
+            navigation = None
+        sizes[page] = (len(contained), _MAX_MODULE_CHILDREN if navigation == "module" else _MAX_DIRECT_CHILDREN)
+    return sizes
+
+
+def overfull_folders(head: str, commit: str) -> list[Folder]:
+    """The folders that the batch *commit*, made on *head*, leaves with more articles directly in them than autoform
+    audit allows (folder_sizes): those it takes past their limit, and those past it already that it adds articles to."""
+    before = folder_sizes(head)
+    found = []
+    for page, (count, limit) in sorted(folder_sizes(commit).items()):
+        old, old_limit = before.get(page, (0, limit))
+        if count > limit and (old <= old_limit or count > old):
+            found.append(Folder(page, count, limit, old))
     return found
 
 
@@ -1027,10 +1121,11 @@ def link_plan(base: str, head: str, bodies: dict[int, str], taxonomy: dict, inde
     sections link any page (own_prerequisites): the batch cannot tell whether the declaration's Lean records that
     prerequisite, as a linked page's must (docs/BLUEPRINT.md, "Leave no gaps"). Otherwise it links nothing, and gives
     no page to the pageless candidates in the page's topic, or to all the pageless candidates if none is there, of
-    every pull request that names it: they are left for an editor (LinkPlan.left, LinkPlan.withheld). When the one
-    candidate in the page's topic is gone or deprecated at *head*, the page is left for an editor too, with what the
-    merges that took it away added to its module (successors). A planned page with no such candidate, and any other
-    page a `Graph:` line names, is left as it is, and listed (LinkPlan.unchanged, LinkPlan.linked).
+    every pull request that names it: they are left for an editor (LinkPlan.left, LinkPlan.withheld). For a candidate
+    gone or deprecated at *head*, it withholds as well what the merges that took it away added in the page's topic
+    (successors), whatever else keeps the page from being linked; when that candidate was the page's one candidate in
+    its topic, the page is left for an editor even with nothing to withhold. A planned page with no such candidate, and
+    any other page a `Graph:` line names, is left as it is, and listed (LinkPlan.unchanged, LinkPlan.linked).
     *indexes* gives the Lean indexes of *base* and *head* (see lean_index), read otherwise."""
     plan = LinkPlan()
     claims, plan.notes = graph_claims(base, head, bodies)
@@ -1050,7 +1145,7 @@ def link_plan(base: str, head: str, bodies: dict[int, str], taxonomy: dict, inde
             text = blob(head, f"blueprint/roadmap/{page}").decode("utf-8")
             prerequisites = own_prerequisites(text, page)
             if prerequisites is None:
-                state, why = "keep", "Autoform cannot read its dependency sections: linking it is an editor's call"
+                state, why = "keep", "Autoform cannot read the page: linking it is an editor's call"
             elif targets := list(dict.fromkeys([*prerequisites[0], *prerequisites[1]])):
                 state, why = "keep", (f"its own dependency sections link {len(targets)} page(s), such as "
                                       f"`{targets[0].replace('`', '')}`, and the batch cannot tell whether the "
@@ -1097,19 +1192,24 @@ def link_plan(base: str, head: str, bodies: dict[int, str], taxonomy: dict, inde
 
     def successors(gone: str, number: int, page: str, kind: str | None) -> list[str]:
         """What later merges made of *gone*, the candidate #*number* added, which main no longer has as it was: of the
-        declarations that the merges that took it out of its module or deprecated it added to that module, those the
-        batch gives a page, in the page's topic and of its sort."""
+        declarations that the merges that took it out of its module or deprecated it added, in any library file they
+        changed (a rename may move it to another module too), those the batch gives a page, in the page's topic and of
+        its sort."""
         module = "/".join(added[number][gone].module) + ".lean"
         found: set[str] = set()
         later = [commit for merged, commit in merges][[merged for merged, _ in merges].index(number) + 1:]
         for commit in later:
-            if module not in changed_between(f"{commit}^1", commit):
+            changed = changed_between(f"{commit}^1", commit)
+            if module not in changed:
                 continue
-            after, before = keyed_targets(commit, {module}, taxonomy), keyed_targets(f"{commit}^1", {module}, taxonomy)
+            files = {path for path in changed if library_module(path)}
+            after, before = keyed_targets(commit, files, taxonomy), keyed_targets(f"{commit}^1", files, taxonomy)
             if gone in before and not before[gone][1] and (gone not in after or after[gone][1]):
                 found.update(key for key, (_, old) in after.items() if not old and (key not in before or before[key][1]))
-        at_head = keyed_targets(head, {module}, taxonomy, index) if found else {}
-        at_base = keyed_targets(base, {module}, taxonomy, old_index) if found else {}
+        at_head = keyed_targets(head, {index.declarations[key].path.as_posix() for key in found
+                                       if key in index.declarations}, taxonomy, index)
+        at_base = keyed_targets(base, {old_index.declarations[key].path.as_posix() for key in found
+                                       if key in old_index.declarations}, taxonomy, old_index)
         return sorted(key for key in found if key in at_head and not at_head[key][1] and key not in taken
                       and (key not in at_base or at_base[key][1]) and fits(at_head[key][0], kind)
                       and in_its_topic(at_head[key][0], page))
@@ -1142,7 +1242,7 @@ def link_plan(base: str, head: str, bodies: dict[int, str], taxonomy: dict, inde
                 vanished, candidates = True, successors(near[0], number, page, kind)
                 why = (f"`{near[0]}`, the one declaration in its topic that #{number} adds and that could state it, is "
                        "gone or deprecated on `main` now" + (", and the pull requests that took it away add these in "
-                                                            "its module" if candidates else
+                                                            "its topic" if candidates else
                                                             ": compare what replaced it, if anything, with the page"))
             elif len(near) == 1:
                 why = (f"#{number} adds one documented declaration in its topic that could state it, `{near[0]}`, which "
@@ -1156,6 +1256,18 @@ def link_plan(base: str, head: str, bodies: dict[int, str], taxonomy: dict, inde
                 why = f"#{number} adds no documented declaration in its topic that could state it, only elsewhere"
             else:
                 why = f"#{number} adds no documented declaration that could state it"
+        if target is None and not vanished:
+            # What later merges made of a candidate that main no longer has as it was, which may state the page too.
+            renamed: dict[str, list[str]] = {}
+            for number, mine, near in each:
+                for key in near or mine:
+                    if (key not in now or now[key][1]) and (found := successors(key, number, page, kind)):
+                        renamed[key] = found
+            if renamed:
+                candidates = sorted(set(candidates).union(*renamed.values()))
+                why += "".join(f"; `{key}` is gone or deprecated on `main` now, and the pull requests that took it away "
+                               "add " + ", ".join(f"`{name}`" for name in found) + " in its topic"
+                               for key, found in sorted(renamed.items()))
         decided[article] = (path, row, page, numbers, target, why, candidates, vanished, state)
     # A declaration that may state two pages states neither for sure.
     shared = Counter(key for *_, candidates, _, _ in decided.values() for key in candidates)
@@ -1379,9 +1491,17 @@ def make(options) -> int:
     except BatchError as error:
         raise BatchError(f"{error}\nThe batch does not check: `git reset --hard HEAD^` takes the commit away") from None
     if options.body:
-        text = describe(commit, base, head, plan, report, report_sections(output), links)
+        folders = overfull_folders(head, commit)
+        text = describe(commit, base, head, plan, report, report_sections(output), links, folders=folders)
         options.body.write_text(text, encoding="utf-8")
-        if text != describe(commit, base, head, plan, report, report_sections(output), links, full=True):
+        if folders:
+            print(f"The batch leaves {len(folders)} folders past autoform audit's size limit: the description lists "
+                  "them for an editor.")
+        if warning := body_warning(text):
+            sys.stdout.flush()
+            print(warning, file=sys.stderr)
+        elif text != describe(commit, base, head, plan, report, report_sections(output), links, full=True,
+                              folders=folders):
             print(f"The description gives its longest lists as counts, to stay within GitHub's limit ({len(text)} "
                   "characters): `verify` prints them in full.")
     return 0
@@ -1490,18 +1610,22 @@ def verify_commit(commit: str, bodies: dict[int, str], plan: PlacementPlan | Non
     return Verdict(base, through, plan, made, links)
 
 
+# The words a reason gives in code that are no page's own (reason_kind): the branch, and a kind.
+FIXED_WORDS = frozenset({"main", "instance"})
+
+
 def reason_kind(why: str) -> str:
     """*why*, the reason a page that a `Graph:` line names is left as it is, without what is that page's own, for
-    describe's short form to count the pages by the kind of reason: the pages its own dependency sections link, the
-    pages and declarations it names in code (a value with a `.` or a `/`; `main` or `instance` stays), and the numbers
-    of pull requests and of pages. No backtick stays, as in the full form."""
+    describe's short form to count the pages by the kind of reason: the pages its own dependency sections link, what it
+    names in code but FIXED_WORDS (a page, a declaration), and every number. No backtick stays, as in the full form."""
     why = re.sub(r"link \d+ page\(s\), such as `[^`]*`", "link other pages", why)
-    why = re.sub(r"#\d+(?:, #\d+)*", "#N", re.sub(r"`[^`]*[./][^`]*`", "…", why))
-    return re.sub(r"\b\d+\b", "N", why).replace("`", "")
+    why = re.sub(r"`([^`]*)`", lambda match: match.group(1) if match.group(1) in FIXED_WORDS else "…", why)
+    return re.sub(r"\b\d+\b", "N", re.sub(r"#\d+(?:, #\d+)*", "#N", why)).replace("`", "")
 
 
 def describe(commit: str, base: str, head: str, plan: PlacementPlan, report: dict,
-             sections: dict[str, list[str]], links: LinkPlan | None = None, full: bool = False) -> str:
+             sections: dict[str, list[str]], links: LinkPlan | None = None, full: bool = False,
+             folders: list[Folder] = ()) -> str:
     """A description for the batch's pull request, in Markdown. Every value in it is the repository's, a description's
     line that parse_place checked, or an article id of a `Graph:` line, which ARTICLE matched.
 
@@ -1513,8 +1637,8 @@ def describe(commit: str, base: str, head: str, plan: PlacementPlan, report: dic
     modules: dict[str, int] = {}
     for key in missing:
         modules[report["new"][key]] = modules.get(report["new"][key], 0) + 1
-    folders = sum(1 for path in changed_between(head, commit)
-                  if path.startswith("blueprint/roadmap/") and path.endswith("/README.md"))
+    folder_pages = sum(1 for path in changed_between(head, commit)
+                       if path.startswith("blueprint/roadmap/") and path.endswith("/README.md"))
     digests = report.get("digests", {})
     recorded = sum(1 for value in digests.values() if value is not None)
     unrecorded = [page for page in report.get("changed", []) if page.split(" (", 1)[0] in digests]
@@ -1523,14 +1647,16 @@ def describe(commit: str, base: str, head: str, plan: PlacementPlan, report: dic
              f"Pages for the documented declarations that the Lean merged into `main` after `{base}`, up to `{head}`, "
              "left without one, made by `scripts/graph_batch.py make` "
              "([Graph-sync batches](docs/BLUEPRINT.md#graph-sync-batches)).", "",
-             f"- {len(missing)} new pages, for declarations of {len(modules)} modules; {folders} folder pages written "
-             f"or extended; {recorded} docstring digests written and {len(digests) - recorded} dropped.",
+             f"- {len(missing)} new pages, for declarations of {len(modules)} modules; {folder_pages} folder pages "
+             f"written or extended; {recorded} docstring digests written and {len(digests) - recorded} dropped.",
              f"- {len(plan.added)} modules placed in `scripts/taxonomy.json`, {len(plan.dropped)} placements of modules "
              "that no longer exist dropped."]
     if links.links or links.left:
         lines.append(f"- {len(links.links)} planned pages that merged pull requests' `Graph:` lines name linked to a "
                      f"declaration; {len(links.left)} left for an editor, and {len(links.withheld)} declarations that "
                      "may state them given no page.")
+    if folders:
+        lines.append(f"- {len(folders)} folders left past `autoform audit`'s size limit, for an editor to regroup.")
     lines.append("")
     # Each list: its lines in full, and the lines that stand for it in a description too long for GitHub.
     parts: list[tuple[list[str], list[str]]] = []
@@ -1591,6 +1717,15 @@ def describe(commit: str, base: str, head: str, plan: PlacementPlan, report: dic
         if kind in EDITOR_ITEMS and sections.get(kind):
             part(title, [], ["```text"] + sections[kind] + ["```"],
                  f"{len(sections[kind])} lines, too many to list here:")
+    if folders:
+        part("Folders past Autoform's size limit", [
+            "The batch takes these folders past the number of articles `autoform audit` allows directly in one "
+            "(`overfull-container`), or adds to them while they are past it already, counted as Autoform counts them. "
+            "A batch is exactly what `make` writes, so an editor regroups each in a graph pull request "
+            "([Graph-sync batches](docs/BLUEPRINT.md#graph-sync-batches)):", ""],
+            [f"- `{folder.page}`: {folder.count} articles, past its limit of {folder.limit} ({folder.before} before)"
+             for folder in folders],
+            f"{len(folders)} folders past Autoform's size limit, too many to list here:")
     if unrecorded:
         part("Pages to check", ["Their declaration's docstring changed, and no pull request recorded the new digest:",
                                 ""], ["```text"] + unrecorded + ["```"],
@@ -1622,7 +1757,9 @@ def describe(commit: str, base: str, head: str, plan: PlacementPlan, report: dic
     tail = ["## Validation", "",
             f"- `python3 scripts/graph_batch.py verify {commit}`, from a checkout of `main` that has `{head}`: the "
             "taxonomy is main's with the placement plan applied, and the scoped check finds the wiki in step, "
-            "exactly what the sync writes" + (" once the planned pages above are linked" if links.links else "") + "."]
+            "exactly what the sync writes"
+            + (f" once the {len(links.links)} planned pages of the link plan are linked" if links.links else "")
+            + (f", withholding {len(links.withheld)} declarations" if links.withheld else "") + "."]
     chosen = [whole for whole, _ in parts]
     while not full and len("\n".join(lines + [line for block in chosen for line in block] + tail)) >= BODY_LIMIT:
         # The list whose short form saves the most, the earlier one on a tie.
@@ -1632,6 +1769,16 @@ def describe(commit: str, base: str, head: str, plan: PlacementPlan, report: dic
             break
         chosen[-max(savings)[1]] = parts[-max(savings)[1]][1]
     return "\n".join(lines + [line for block in chosen for line in block] + tail) + "\n"
+
+
+def body_warning(text: str) -> str | None:
+    """A warning for a description that describe leaves past BODY_LIMIT, as it measures it (without the final line
+    feed), once every list that can give way has; None for any other."""
+    if len(text.removesuffix("\n")) < BODY_LIMIT:
+        return None
+    return (f"warning: the description still has {len(text)} characters, more than a batch's description may hold "
+            f"({BODY_LIMIT}), with every list that can give way given as a count: make the batch on an earlier commit "
+            "of main, and the rest in a batch after it")
 
 
 def run_verify(options) -> int:
@@ -1651,8 +1798,11 @@ def run_verify(options) -> int:
     verdict = verify_commit(commit, bodies_for(*found, options.bodies), onto=onto, recompute=True)
     # What the reviewer reads: recomputed here, not taken from the pull request's description, which can be edited.
     report, sections = verdict.made
-    whole = describe(commit, verdict.base, verdict.through, verdict.plan, report, sections, verdict.links, full=True)
-    text = describe(commit, verdict.base, verdict.through, verdict.plan, report, sections, verdict.links)
+    folders = overfull_folders(verdict.through, commit)
+    whole = describe(commit, verdict.base, verdict.through, verdict.plan, report, sections, verdict.links, full=True,
+                     folders=folders)
+    text = describe(commit, verdict.base, verdict.through, verdict.plan, report, sections, verdict.links,
+                    folders=folders)
     print("\nWhat the batch does, as verify recomputes it from main, every list in full (read this, not the pull "
           "request's description):\n")
     print(whole)

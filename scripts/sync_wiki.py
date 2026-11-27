@@ -147,6 +147,7 @@ import multiprocessing
 import os
 import re
 import secrets
+import shlex
 import stat
 import subprocess
 import sys
@@ -3953,7 +3954,9 @@ def run_scoped(argv: list[str]) -> int:
         return 2
     lean = frozenset(path for path in paths if lean_source(path))
     graph = sorted(path for path in paths if graph_file(path))
-    fix = f"python3 scripts/sync_wiki.py declarations --base {base}"
+    # The command that brings the tree in step: this run's, the declarations it withholds included.
+    fix = f"python3 scripts/sync_wiki.py declarations --base {base}" + "".join(
+        f" --withhold={shlex.quote(name)}" for name in sorted(withheld))
     # A link among the files the run reads, or the changes' own, staged ones included, stops it before it reads any of
     # them: one could lead anywhere, to a file that has no end among others.
     linked = links_in_wiki(sorted(set(paths) | restaged))

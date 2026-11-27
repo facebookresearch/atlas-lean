@@ -731,8 +731,8 @@ result, as its card says); none that records the kind `instance`, as an instance
 gets no page and so is never a candidate; none whose own `## Depends on` or
 `## Proof depends on` links any page, as the declaration's Lean must record the
 page's prerequisites ([Writing pages](#writing-pages), "Leave no gaps") and the
-batch cannot tell whether it does; none whose dependency sections Autoform
-cannot read, or that the batch cannot drop exactly as Autoform reads them, such
+batch cannot tell whether it does; none that Autoform cannot read, or whose
+dependency sections the batch cannot drop exactly as Autoform reads them, such
 as one under a heading in another case; none that its folder page does not list;
 none whose row holds more than its subject, its id, its kind, its counterparts
 and its seed (`seed`); and none when no row it can write credits the candidate,
@@ -754,12 +754,13 @@ batch's description lists the page and those declarations for an editor, and
 `verify` on the batch prints them again. The editor links the page to the one
 that states it, in a graph pull request, and a batch made after that with
 `--base` set to the base of the batch that withheld them gives the others their
-pages, as the page is no longer planned. When the one candidate in the page's
-topic is gone or deprecated on `main` by then, as a later pull request in the
-batch renamed it, the batch links nothing either: it lists the page for an
-editor and withholds what the pull requests that took the candidate away added
-to its module, in the page's topic and of its sort, one of which may be what it
-became. Until the editor does, a later batch, which sees only the pull requests
+pages, as the page is no longer planned. When a candidate is gone or deprecated
+on `main` by then, as a later pull request in the batch renamed it, the batch
+also withholds what the pull requests that took it away added in the page's
+topic, in any module, and of its sort, one of which may be what it became,
+whatever else keeps the page from being linked; when it was the page's one
+candidate in its topic, the batch links nothing either and lists the page for an
+editor. Until the editor does, a later batch, which sees only the pull requests
 merged after its own base, may link the page to a later pull request's one
 candidate in its topic: the declarations withheld before then get their pages
 only from such a batch. If none of them states the page, a graph pull request
@@ -778,21 +779,27 @@ PRs](../CONTRIBUTING.md#graph-prs)). `--body FILE` writes it: the placements,
 each with where it comes from; the placements dropped; the planned pages linked,
 each with its declaration, the kind the page recorded, the declaration's own and
 the pull request whose `Graph:` line names it ("linked `af_…` (kind `k`) to
-`Decl` (a Lean `kw`), from #N's `Graph:` line: `page`", then the targets of the
-dependency sections the page loses); the planned pages left for an editor, each
-with why, the pull requests that name it and the declarations given no page; the
-new modules left unplaced, and the changed ones that get no pages, in a folder
-with no subject; what `make` left for an editor (lines it could not follow,
-modules it could not place); the sync's own items for an editor, such as
-part-list lines its refresh replaced; the pages whose declaration's docstring
-changed while no pull request recorded its digest; and the other pages `Graph:`
-lines name, left as they are. GitHub takes a description of at most 65,536
-characters: while this one would pass 60,000, the list whose short form saves
-the most gives way to it, one list at a time, which says how many entries the
-list holds and that `verify` prints them all. The planned pages left for an
-editor never give way: that list is the only record of the declarations a batch
-withholds. Push the commit to a branch of its own and open the pull request with
-that description.
+`Decl` (a Lean `kw`), from #N's `Graph:` line: `page`"); the planned pages left
+for an editor, each with why, the pull requests that name it and the
+declarations given no page; the new modules left unplaced, and the changed ones
+that get no pages, in a folder with no subject; what `make` left for an editor
+(lines it could not follow, modules it could not place); the sync's own items
+for an editor, such as part-list lines its refresh replaced; the folders it
+leaves with more articles directly in them than `autoform audit` allows
+(`overfull-container`: 24, or 120 for a `navigation: module` page and 64 for the
+roadmap's subject index, counted as Autoform counts them), those it takes past
+their limit and those past it already that it adds to, which an editor regroups
+in a graph pull request, as a batch is exactly what `make` writes; the pages
+whose declaration's docstring changed while no pull request recorded its digest;
+and the other pages `Graph:` lines name, left as they are. GitHub takes a
+description of at most 65,536 characters: while this one would pass 60,000, the
+list whose short form saves the most gives way to it, one list at a time, which
+says how many entries the list holds and that `verify` prints them all. The
+planned pages left for an editor never give way: that list is the only record of
+the declarations a batch withholds. If the description still holds 60,000
+characters or more once every other list has given way, `make` warns: make the
+batch on an earlier commit of `main`, and the rest in the next batch. Push the
+commit to a branch of its own and open the pull request with that description.
 
 `python3 scripts/graph_batch.py verify <commit>`, run from an up-to-date
 checkout of `main` (it refuses to run from the batch itself, whose checkout's
