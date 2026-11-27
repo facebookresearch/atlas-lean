@@ -18,7 +18,8 @@ every $t \in [0, T]$ is given by this equation. Then:
 2. For every $C_{\mathrm{crit}}$, if $C(0) \ge C_{\mathrm{crit}}$ and
    $K_L a\,(C^* - C_{\mathrm{crit}}) \ge u(t) + D(t)\,C_{\mathrm{crit}}$ for every $t \in [0, T]$, then
    $C(t) \ge C_{\mathrm{crit}}$ for every $t \in [0, T]$.
-3. If $T \ge 0$ and $u = u_0$ and $D = D_0$ are constant on $[0, T]$, the condition of 2 holds if and only if
+3. If $T \ge 0$ and $u = u_0$ and $D = D_0$ are constant on $[0, T]$, the pointwise condition of 2,
+   $K_L a\,(C^* - C_{\mathrm{crit}}) \ge u(t) + D(t)\,C_{\mathrm{crit}}$ for every $t \in [0, T]$, holds if and only if
    $C_{\mathrm{eq}} = (K_L a\,C^* - u_0)/(K_L a + D_0) \ge C_{\mathrm{crit}}$.
 
 In applications $C_{\mathrm{crit}}$ is a critical oxygen concentration with $0 \le C_{\mathrm{crit}} < C^*$, and

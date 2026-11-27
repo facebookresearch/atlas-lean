@@ -44,7 +44,8 @@ All in the namespace `Chemistry.Bioreactors.DissolvedOxygen`:
   `K_L a (C* - C_crit) ≥ u(t) + D(t) C_crit` on `[0, T]`, then `C ≥ C_crit` on `[0, T]`.
 * `mem_Icc_of_uptake_le_transfer`: if `u ≤ K_L a C*` on `[0, T]` and `C(0) ∈ [0, C*]`, then `C`
   stays in `[0, C*]` on `[0, T]`.
-* `uptake_add_dilution_le_transfer_iff`: for constant inputs `u₀` and `D₀` that condition is
+* `uptake_add_dilution_le_transfer_iff`: for `K_L a > 0` and constant inputs `u₀` and `D₀ ≥ 0`,
+  `K_L a (C* - C_crit) ≥ u₀ + D₀ C_crit` holds if and only if
   `C_eq = (K_L a C* - u₀) / (K_L a + D₀) ≥ C_crit`.
 * `balance`: the three statements together.
 
@@ -162,8 +163,10 @@ differentiable on $[0, T]$, with one-sided derivatives at the endpoints. Then:
 2. For every $C_{\mathrm{crit}}$, if $C(0) \ge C_{\mathrm{crit}}$ and
    $K_L a\,(C^* - C_{\mathrm{crit}}) \ge u(t) + D(t)\,C_{\mathrm{crit}}$ for every $t \in [0, T]$,
    then $C(t) \ge C_{\mathrm{crit}}$ for every $t \in [0, T]$.
-3. If $T \ge 0$ and $u = u_0$ and $D = D_0$ are constant on $[0, T]$, the condition of 2 holds if
-   and only if $C_{\mathrm{eq}} = (K_L a\,C^* - u_0)/(K_L a + D_0) \ge C_{\mathrm{crit}}$.
+3. If $T \ge 0$ and $u = u_0$ and $D = D_0$ are constant on $[0, T]$, the pointwise condition of
+   2, $K_L a\,(C^* - C_{\mathrm{crit}}) \ge u(t) + D(t)\,C_{\mathrm{crit}}$ for every
+   $t \in [0, T]$, holds if and only if
+   $C_{\mathrm{eq}} = (K_L a\,C^* - u_0)/(K_L a + D_0) \ge C_{\mathrm{crit}}$.
 
 No continuity of $u$ or $D$ is needed. -/
 theorem balance {kLa Cstar T : ℝ} {u D C : ℝ → ℝ} (hkLa : 0 < kLa)
