@@ -12,3 +12,6 @@
 - [Williams: NEXP is not computed by ACC0 circuits with a layer of threshold gates](williams-acc-thr.md)
 - [Chen: NQP is average-case hard for ACC0](chen-nqp-average-case.md)
 - [Chen–Lyu–Williams: almost-everywhere ACC0 lower bounds for E^NP](clw-almost-everywhere.md)
+- [High-probability shrinkage of formulas under greedy random restrictions](high-probability-shrinkage-under-greedy-restrictions.md)
+- [Compression of truth tables of small formulas, AC0 circuits and read-once branching programs](compression-of-truth-tables-of-small-circuits.md)
+- [Compression algorithms imply NEXP circuit lower bounds](compression-algorithms-imply-nexp-circuit-lower-bounds.md)

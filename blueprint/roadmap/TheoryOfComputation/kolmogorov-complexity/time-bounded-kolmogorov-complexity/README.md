@@ -12,3 +12,5 @@
 - [MKtP is in E and in EXP](mktp-is-in-exp.md)
 - [Outputs of polynomial-time functions have small K^t](outputs-of-polynomial-time-functions-have-small-kt.md)
 - [Hirahara: MINKT* is NP-hard under randomized reductions](hirahara-minkt-star-np-hard.md)
+- [Randomized non-adaptive reductions to approximating Kolmogorov complexity](randomized-nonadaptive-reductions-to-approximating-kolmogorov-complexity.md)
+- [Randomized reductions from SAT to approximating time-bounded Kolmogorov complexity](randomized-reductions-from-sat-to-approximating-kt.md)

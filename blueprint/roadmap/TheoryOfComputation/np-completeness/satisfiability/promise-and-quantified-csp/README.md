@@ -13,3 +13,5 @@
 - [Zhuk–Martin: the Chen Conjecture holds for finite conservative constraint languages](zhuk-martin-chen-conjecture-conservative.md)
 - [Zhuk–Martin: QCSP monsters refute the Chen Conjecture (P, NP, coNP, PSPACE on three elements; DP and Θ2P on larger domains)](zhuk-martin-qcsp-monsters.md)
 - [Krokhin–Opršal–Wrochna–Živný: adjunction reductions for approximate graph colouring](kowz-adjunction-approximate-colouring.md)
+- [Minion characterization of promise CSPs decided by the basic SDP](basic-sdp-minion-characterization-of-promise-csps.md)
+- [Robust algorithms for promise CSPs with majority or alternating-threshold polymorphisms](robust-algorithms-for-promise-csps-with-majority-or-alternating-threshold-polymorphisms.md)

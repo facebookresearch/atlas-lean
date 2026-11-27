@@ -13,3 +13,5 @@
 - [Oliveira–Santhanam: infinitely-often pseudodeterministic construction of primes in subexponential time](oliveira-santhanam-subexponential-primes.md)
 - [Chen–Lu–Oliveira–Ren–Santhanam: infinitely-often polynomial-time pseudodeterministic constructions for every dense easy property](polynomial-time-pseudodeterministic-construction-dense-properties.md)
 - [Chen–Lu–Oliveira–Ren–Santhanam: polynomial-time pseudodeterministic construction of n-bit primes for infinitely many n](polynomial-time-pseudodeterministic-primes.md)
+- [Heavy element avoidance problem](heavy-element-avoidance-problem.md)
+- [Unconditional pseudodeterministic algorithms for Heavy Avoid](pseudodeterministic-algorithms-for-heavy-avoid.md)
