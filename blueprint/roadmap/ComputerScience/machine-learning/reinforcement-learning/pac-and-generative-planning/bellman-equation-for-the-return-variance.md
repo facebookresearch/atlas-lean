@@ -18,11 +18,11 @@ so that $\Sigma^\pi = (I - \gamma^2 P^\pi)^{-1}\sigma_{V^\pi}$.
 
 - [Bellman values are expected discounted returns](../bellman-values-are-expected-discounted-returns.md)
 - [Q-value of an action](../../../heuristic-search-and-planning/value-iteration/q-value.md)
-- [Empirical MDP from a generative model](empirical-mdp-from-a-generative-model.md)
+- [Value of a policy](../../../heuristic-search-and-planning/value-iteration/policy-value.md)
 
 ## Proof depends on
 
-None.
+- [Bellman values are expected discounted returns](../bellman-values-are-expected-discounted-returns.md)
 
 ## Expansion
 

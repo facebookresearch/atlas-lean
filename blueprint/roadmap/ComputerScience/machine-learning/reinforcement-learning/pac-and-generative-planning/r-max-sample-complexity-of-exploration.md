@@ -8,7 +8,7 @@ $$Q(s, a) = \hat R(s, a) + \gamma\sum_{s'}\hat T(s' \mid s, a)\max_{a'}Q(s', a')
 
 recomputed whenever some $n(s, a)$ reaches $m$, and it always acts greedily with respect to $Q$.
 
-**Theorem.** Suppose $0 \le \varepsilon < 1/(1-\gamma)$ and $0 \le \delta < 1$, and let $M$ be any such MDP. There are inputs $m = m(1/\varepsilon, 1/\delta)$ and $\varepsilon_1$ with
+**Theorem.** Suppose $0 < \varepsilon < 1/(1-\gamma)$ and $0 < \delta < 1$, and let $M$ be any such MDP. There are inputs $m = m(1/\varepsilon, 1/\delta)$ and $\varepsilon_1$ with
 
 $$m = O\Big(\frac{(S + \ln(SA/\delta))V_{\max}^2}{\varepsilon^2(1-\gamma)^2}\Big), \qquad \frac{1}{\varepsilon_1} = O\Big(\frac{1}{\varepsilon}\Big),$$
 
@@ -16,7 +16,7 @@ such that, if R-max runs on $M$ with these inputs and $\mathcal A_t$, $s_t$ deno
 
 $$O\Big(\frac{|\{(s, a) \in S \times A : U(s, a) \ge V^*(s) - \varepsilon\}|}{\varepsilon^3(1-\gamma)^3}\Big(S + \ln\frac{SA}{\delta}\Big)V_{\max}^3\ln\frac{1}{\delta}\ln\frac{1}{\varepsilon(1-\gamma)}\Big)$$
 
-time steps $t$. The bound is informative for $\varepsilon > 0$ and $\delta > 0$. With $U(s, a) = V_{\max} = 1/(1-\gamma)$ the counted set has at most $SA$ pairs and the bound is $\tilde O(S^2 A/(\varepsilon^3(1-\gamma)^6))$, where $\tilde O$ hides logarithmic factors.
+time steps $t$; the constants in the $O(\cdot)$ terms are absolute. The source prints $0 \le \varepsilon$ and $0 \le \delta$, but $m$ is defined only for positive values. With $U(s, a) = V_{\max} = 1/(1-\gamma)$ the counted set has at most $SA$ pairs and the bound is $\tilde O(S^2 A/(\varepsilon^3(1-\gamma)^6))$, where $\tilde O$ hides logarithmic factors.
 
 ## Depends on
 

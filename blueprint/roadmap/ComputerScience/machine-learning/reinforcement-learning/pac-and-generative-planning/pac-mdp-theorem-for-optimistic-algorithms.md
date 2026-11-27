@@ -10,15 +10,18 @@ A greedy learning algorithm whose action values stay optimistic and accurate on 
 2. (accuracy) $V_t(s) - V^{\pi_t}_{M_{K_t}}(s) \le \varepsilon$;
 3. (learning complexity) the total number of updates of action values plus the number of escape events is at most $\zeta(\varepsilon, \delta)$.
 
-Then, when $\mathcal A(\varepsilon, \delta)$ is run on any MDP $M$, with probability at least $1-2\delta$ it follows a $4\varepsilon$-optimal policy from its current state, that is $V^{\mathcal A_t}_M(s_t) \ge V^*_M(s_t) - 4\varepsilon$, on all but
+Then there is an absolute constant $C$ such that, when $\mathcal A(\varepsilon, \delta)$ is run on $M$, with probability at least $1-2\delta$ it follows a $4\varepsilon$-optimal policy from its current state, that is $V^{\mathcal A_t}_M(s_t) \ge V^*_M(s_t) - 4\varepsilon$, on all but
 
-$$O\Big(\frac{V_{\max}\,\zeta(\varepsilon, \delta)}{\varepsilon(1-\gamma)}\ln\frac{1}{\delta}\ln\frac{1}{\varepsilon(1-\gamma)}\Big)$$
+$$C\,\frac{V_{\max}\,\zeta(\varepsilon, \delta)}{\varepsilon(1-\gamma)}\ln\frac{1}{\delta}\ln\frac{1}{\varepsilon(1-\gamma)}$$
 
-time steps.
+time steps, for $0 < \varepsilon < 1/(1-\gamma)$ and $0 < \delta < 1$.
+
+The source concludes "when run on any MDP $M$"; since the hypotheses refer to the optimal values of a given MDP, the conclusion is stated for that MDP, which is how the theorem is applied to R-max and Delayed Q-learning, whose hypotheses hold on every MDP.
 
 ## Depends on
 
 - [Sample complexity of exploration](sample-complexity-of-exploration.md)
+- [Value of a policy](../../../heuristic-search-and-planning/value-iteration/policy-value.md)
 
 ## Proof depends on
 

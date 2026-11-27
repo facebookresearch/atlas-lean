@@ -2,7 +2,7 @@
 
 In a discounted MDP with payoffs in $[0, R_{\max}]$, the expected discounted return of any policy over the first $T \ge (1/(1-\gamma))\log(R_{\max}/(\varepsilon(1-\gamma)))$ steps is within $\varepsilon$ below its infinite-horizon return. This $T$ is the $\varepsilon$-horizon time.
 
-**Lemma.** Let $M$ be a Markov decision process whose payoff at each state $i$ has mean $R_M(i)$ with $0 \le R_M(i) \le R_{\max}$, let $0 \le \gamma < 1$ and $\varepsilon > 0$, and let $\pi$ be any policy in $M$. For a path visiting states $i_1, i_2, \dots$ write $V_M(p) = R_M(i_1) + \gamma R_M(i_2) + \dots + \gamma^{T-1} R_M(i_T)$ for the discounted return of its first $T$ steps, $V^\pi_M(i, T)$ for the expectation of this quantity over the paths of $\pi$ started at $i$, and $V^\pi_M(i) = \lim_{T \to \infty} V^\pi_M(i, T)$. If
+**Lemma.** Let $M$ be a Markov decision process whose payoff at each state $i$ has mean $R_M(i)$ with $0 \le R_M(i) \le R_{\max}$, let $0 \le \gamma < 1$ and $\varepsilon > 0$, and let $\pi$ be any policy in $M$. When $R_{\max} \le \varepsilon(1-\gamma)$ the condition below is read as $T \ge 0$. For a path visiting states $i_1, i_2, \dots$ write $V_M(p) = R_M(i_1) + \gamma R_M(i_2) + \dots + \gamma^{T-1} R_M(i_T)$ for the discounted return of its first $T$ steps, $V^\pi_M(i, T)$ for the expectation of this quantity over the paths of $\pi$ started at $i$, and $V^\pi_M(i) = \lim_{T \to \infty} V^\pi_M(i, T)$. If
 
 $$T \ge \frac{1}{1-\gamma}\log\Big(\frac{R_{\max}}{\varepsilon(1-\gamma)}\Big),$$
 

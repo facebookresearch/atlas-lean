@@ -23,9 +23,10 @@ Theory of reinforcement learning in finite discounted Markov decision processes,
 - [Single-cue error-correction learning and zero-discount TD(0)](td0-with-zero-discount-is-error-correction-learning.md)
 
 
+- [PAC exploration and generative planning](pac-and-generative-planning/README.md)
+
 ## Related topics
 
 - [Value iteration](../../heuristic-search-and-planning/value-iteration/README.md)
 - [Policy iteration](../../heuristic-search-and-planning/policy-iteration/README.md)
 - [Hedge algorithm](../online-learning-and-boosting/hedge-algorithm/README.md)
-- [PAC exploration and generative planning](pac-and-generative-planning/README.md)

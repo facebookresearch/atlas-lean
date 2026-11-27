@@ -4,15 +4,15 @@ For discount factors $\gamma \in [0.4, 1)$, every algorithm that estimates the o
 
 **Setting.** Discounted MDPs with finite state and action sets, $N$ state-action pairs, deterministic rewards in $[0, 1]$, discount $\gamma$ with $0.4 \le \gamma < 1$, and $\beta = 1/(1-\gamma)$. An algorithm $\mathcal A$ observes state-transition samples and outputs $Q^{\mathcal A} : S \times A \to \mathbb R$; it is $(\varepsilon, \delta)$-correct on a class $\mathcal M$ of MDPs if $\|Q^* - Q^{\mathcal A}\|_\infty \le \varepsilon$ with probability at least $1-\delta$ for every $M \in \mathcal M$.
 
-**Theorem.** Let $0.4 \le \gamma < 1$. There exist constants $\varepsilon_0, \delta_0, c_1, c_2 > 0$ and a class of MDPs $\mathcal M$ with discount $\gamma$ such that for all $\varepsilon \in (0, \varepsilon_0)$ and $\delta \in (0, \delta_0)$, every $(\varepsilon, \delta)$-correct algorithm on $\mathcal M$ uses a total number of state-transition samples of at least
+**Theorem.** There exist absolute constants $\varepsilon_0, \delta_0, c_1, c_2 > 0$ such that for every $\gamma \in [0.4, 1)$ and every number of state-action pairs $N$ of the form $3KL$ there is a class $\mathcal M_\gamma$ of MDPs with discount $\gamma$ and $N$ state-action pairs for which, for all $\varepsilon \in (0, \varepsilon_0)$ and $\delta \in (0, \delta_0)$, every $(\varepsilon, \delta)$-correct algorithm on $\mathcal M_\gamma$ uses a total number of state-transition samples of at least
 
 $$T = \frac{\beta^3 N}{c_1\varepsilon^2}\log\frac{N}{c_2\delta}.$$
 
-The authors note that the argument does not depend on how samples are collected, so it also bounds online algorithms. The range $0.4 \le \gamma < 1$ is the one for which the source's proof establishes the bound (its Section 4.2 fixes $\gamma_0 = 0.4 \le \gamma < 1$); the statement of its Theorem 3 leaves this restriction implicit. In the proof the hard class has $N = 3KL$ pairs and the constants can be taken as $c_1 = 8100$ and $c_2 = 72$.
+The authors note that the argument does not depend on how samples are collected, so it also bounds online algorithms. The range $0.4 \le \gamma < 1$ is the one for which the source's proof establishes the bound (its Section 4.2 fixes $\gamma_0 = 0.4 \le \gamma < 1$); the statement of its Theorem 3 leaves this restriction implicit. The source's constants are numerical ($c_1 = 8100$ and $c_2 = 72$ in its proof), which is what makes the bound informative about $\beta^3$. Its proof also needs $\varepsilon$ small enough that the perturbed transition probability $p + \alpha$ below stays a probability, a condition that holds uniformly for $\gamma \ge 0.4$ once $\varepsilon$ is below an absolute constant; the source's printed range $\varepsilon \in (0, 3]$ is not used here.
 
 ## Depends on
 
-- [Empirical MDP from a generative model](empirical-mdp-from-a-generative-model.md)
+- [Generative model of an MDP](generative-model-of-an-mdp.md)
 - [Q-value of an action](../../../heuristic-search-and-planning/value-iteration/q-value.md)
 
 ## Proof depends on

@@ -11,8 +11,6 @@ Let $M$ be a discounted MDP with finite state and action sets, transition kernel
 
 $$\|Q^\star_{s,u} - Q^\star_{s,u'}\|_\infty \le |u - u'| \quad\text{and}\quad \|Q^\pi_{s,u} - Q^\pi_{s,u'}\|_\infty \le |u - u'|.$$
 
-The same holds for the empirical version $\hat M_{s,u}$, which uses the empirical kernel $\hat P$ at every state other than $s$; for fixed $u$ it does not depend on the generative-model samples drawn at $s$.
-
 ## Depends on
 
 - [Optimal value of a discounted Markov decision process](../../../heuristic-search-and-planning/value-iteration/optimal-value.md)
@@ -31,7 +29,7 @@ For part 1, $V^\star_M$ satisfies the Bellman optimality equation of $M_{s,u^\st
 
 $$Q^\star_{s,u} - Q^\star_{s,u'} \le (I - \gamma P^{\pi_{s,u}}_{s,u'})^{-1}(r_{s,u} - r_{s,u'}) \le \frac{1}{1-\gamma}\|r_{s,u} - r_{s,u'}\|_\infty = |u - u'|,$$
 
-where the first inequality uses that no deterministic stationary policy beats the optimal value of $M_{s,u'}$, and symmetrically. In the minimax analysis, $\hat P(\cdot \mid s, a)$ is independent of $\hat V^\star_{s,u}$ for each fixed $u$, so Bernstein's inequality applies to $(P - \hat P)(\cdot \mid s, a)\cdot\hat V^\star_{s,u}$ for every $u$ in a finite grid, and part 2 transfers the bound to $\hat V^\star = \hat V^\star_{s,\hat V^\star(s)}$. Later work uses state-action-absorbing variants of the same construction.
+where the first inequality uses that no deterministic stationary policy beats the optimal value of $M_{s,u'}$, and symmetrically. In the minimax analysis the lemma is applied to the empirical version $\hat M_{s,u}$, which uses the empirical kernel $\hat P$ at every state other than $s$; for fixed $u$ it does not depend on the generative-model samples drawn at $s$. So $\hat P(\cdot \mid s, a)$ is independent of $\hat V^\star_{s,u}$ for each fixed $u$, so Bernstein's inequality applies to $(P - \hat P)(\cdot \mid s, a)\cdot\hat V^\star_{s,u}$ for every $u$ in a finite grid, and part 2 transfers the bound to $\hat V^\star = \hat V^\star_{s,\hat V^\star(s)}$. Later work uses state-action-absorbing variants of the same construction.
 
 ## Sources
 

@@ -2,7 +2,7 @@
 
 Planning in the empirical MDP with slightly randomly perturbed rewards finds an $\varepsilon$-optimal policy from $N \ge c_0\log(|S||A|/((1-\gamma)\varepsilon\delta))/((1-\gamma)^3\varepsilon^2)$ samples per state-action pair, for every $\varepsilon \in (0, 1/(1-\gamma)]$, removing earlier restrictions on the accuracy range.
 
-**Setting.** Let $M = (S, A, P, r, \gamma)$ be a discounted MDP with finite state and action sets, rewards $r : S \times A \to [0, 1]$ and $\gamma \in (0, 1)$, and let $\hat P$ be the empirical kernel from $N$ independent generative-model samples per state-action pair. Perturb the rewards as
+**Setting.** Let $M = (S, A, P, r, \gamma)$ be a discounted MDP with finite state and action sets, rewards $r : S \times A \to [0, 1]$ and $\gamma \in (0, 1)$, and let $\hat P(s' \mid s, a) = \frac1N\sum_{i=1}^N \mathbf 1\{s^i_{s,a} = s'\}$ be the empirical transition probabilities of $N \ge 1$ samples per pair from [uniform sampling](generative-model-of-an-mdp.md). Perturb the rewards as
 
 $$r_p(s, a) = r(s, a) + \zeta(s, a), \qquad \zeta(s, a) \overset{\text{i.i.d.}}{\sim} \mathrm{Unif}(0, \xi),$$
 
@@ -20,14 +20,16 @@ In addition, empirical Q-value iteration recovers $\hat\pi^\star_p$ exactly with
 
 ## Depends on
 
-- [Empirical MDP from a generative model](empirical-mdp-from-a-generative-model.md)
+- [Generative model of an MDP](generative-model-of-an-mdp.md)
+- [Value of a policy](../../../heuristic-search-and-planning/value-iteration/policy-value.md)
 - [Optimal value of a discounted Markov decision process](../../../heuristic-search-and-planning/value-iteration/optimal-value.md)
 
 ## Proof depends on
 
 - [Simulation lemma](../simulation-lemma/stoch-value-sub-stoch-value-eq.md)
 - [Total-variance bound](total-variance-bound.md)
-- [Bernstein's inequality for bounded variables, two-sided](../../../../Probability/concentration-inequalities/sub-exponential-variables-and-bernstein-s-inequa/measure-real-abs-ge-le-bernstein.md)
+- [Bennett's one-step moment generating function bound](../../../../Probability/concentration-inequalities/adaptive-martingale-tail-bounds/bennett-one-step-mgf-bound.md)
+- [Bennett's inequality and its Bernstein relaxation](../../../../Probability/concentration-inequalities/adaptive-martingale-tail-bounds/bennett-inequality.md)
 
 ## Expansion
 

@@ -10,11 +10,9 @@ Let $M$ be a Markov decision process on states $1, \dots, N$ with actions $a_1, 
 - transitions $P^a_{M_S}(s_0 s_0) = 1$ for every action $a$, so $s_0$ is absorbing;
 - $P^a_{M_S}(ij) = P^a_M(ij)$ for $i, j \in S$, and $P^a_{M_S}(i s_0) = \sum_{j \notin S} P^a_M(ij)$ for $i \in S$.
 
-**Known states.** In the E3 algorithm a state $i$ is known once each action has been executed from $i$ at least
+**Known states.** In the E3 algorithm a state $i$ is known once each action has been executed from $i$ at least $m_{\mathrm{known}}$ times, where the visit threshold $m_{\mathrm{known}}$ meets the accuracy of the source's Lemma 5: except with probability $\delta/(3N)$ for each state, the empirical transition probabilities and the empirical payoff mean of a known state are within $O((\varepsilon/(N T G^T_{\max}))^2)$ of their true values. Here $T$ is the mixing or horizon time being targeted, $G^T_{\max}$ the largest possible $T$-step return ($G^T_{\max} \le R_{\max}$ for average returns and $G^T_{\max} \le T R_{\max}$ for discounted returns) and $\mathrm{Var}_{\max}$ the largest payoff variance.
 
-$$m_{\mathrm{known}} = O\Big(\Big(\frac{N T G^T_{\max}}{\varepsilon}\Big)^4 \mathrm{Var}_{\max} \log(1/\delta)\Big)$$
-
-times, where $T$ is the mixing or horizon time being targeted, $G^T_{\max}$ the largest possible $T$-step return ($G^T_{\max} \le R_{\max}$ for average returns and $G^T_{\max} \le T R_{\max}$ for discounted returns) and $\mathrm{Var}_{\max}$ the largest payoff variance. The algorithm works with the empirical approximation $\hat M_S$ of $M_S$ built from the observed frequencies at known states.
+The source's Lemma 5 prints the choice $m_{\mathrm{known}} = O((N T G^T_{\max}/\varepsilon)^4\,\mathrm{Var}_{\max}\log(1/\delta))$. A count logarithmic in $1/\delta$ is what Hoeffding-type bounds give for bounded quantities such as the transition indicators; for payoffs whose variance alone is bounded the source's derivation does not give it, so the threshold is specified by the accuracy it must meet rather than by that formula. The algorithm works with the empirical approximation $\hat M_S$ of $M_S$ built from the observed frequencies at known states.
 
 Since $M_S$ agrees with $M$ on paths inside $S$, payoffs are nonnegative and $s_0$ pays nothing, every policy's $T$-step return in $M_S$ from a state of $S$ is at most its $T$-step return in $M$ (the source's Lemma 7).
 
@@ -28,7 +26,7 @@ None.
 
 ## Expansion
 
-The source chooses $m_{\mathrm{known}}$ (its Lemma 5) so that the estimated transition probabilities and payoff of a known state are within $O((\varepsilon/(N T G^T_{\max}))^2)$ of their true values, the accuracy its simulation lemma needs for $T$-step returns in $\hat M_S$ and $M_S$ to differ by at most $\varepsilon$. Its derivation of the payoff part from a variance bound alone through a Chernoff-type bound is not reproduced here: a variance bound does not by itself give deviation probabilities logarithmic in $1/\delta$. R-max uses the same construction with an optimistic payoff $R_{\max}$ at the absorbing state instead of $0$, and the PAC-MDP framework generalizes it to known state-action pairs.
+The accuracy in Lemma 5 is the one the source's simulation lemma needs for $T$-step returns in $\hat M_S$ and $M_S$ to differ by at most $\varepsilon$. The source derives the payoff part from the variance bound through a Chernoff-type bound; that step is not reproduced here, since a variance bound does not by itself give deviation probabilities logarithmic in $1/\delta$. Chebyshev's inequality meets the payoff accuracy with a count polynomial in $N$, $T$, $G^T_{\max}/\varepsilon$, $\mathrm{Var}_{\max}$ and $1/\delta$. R-max uses the same construction with an optimistic payoff $R_{\max}$ at the absorbing state instead of $0$, and the PAC-MDP framework generalizes it to known state-action pairs.
 
 ## Sources
 

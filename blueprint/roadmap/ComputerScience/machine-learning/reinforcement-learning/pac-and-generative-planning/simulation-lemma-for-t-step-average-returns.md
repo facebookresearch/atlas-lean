@@ -2,7 +2,7 @@
 
 If two stochastic games share their stage games and every transition probability of one is within $\varepsilon/(N T R_{\max})$ of the other's, then every pair of agent and adversary policies has $T$-step average rewards within $\varepsilon$ in the two games. MDPs are the case of a one-action adversary.
 
-**Lemma.** Let $M$ and $\bar M$ be fixed-sum two-player stochastic games (as defined on the R-max algorithm page) over the same $N$ states and the same actions, with payoffs in $[0, R_{\max}]$. Call $\bar M$ an $\alpha$-approximation of $M$ if every state carries the same stage game (hence the same rewards) in both, and for all states $s, t$ and joint actions $(a, a')$
+**Lemma.** Let $M$ and $\bar M$ be fixed-sum two-player stochastic games over the same $N$ states and the same actions, with payoffs in $[0, R_{\max}]$ for some $R_{\max} > 0$, and let $T \ge 1$ and $\varepsilon > 0$. Call $\bar M$ an $\alpha$-approximation of $M$ if every state carries the same stage game (hence the same rewards) in both, and for all states $s, t$ and joint actions $(a, a')$
 
 $$P_M(s, t, a, a') - \alpha \le P_{\bar M}(s, t, a, a') \le P_M(s, t, a, a') + \alpha.$$
 
@@ -14,8 +14,7 @@ where $U(s, \pi, \rho, T)$ is the expected undiscounted average reward of the fi
 
 ## Depends on
 
-- [Markov decision process](../../../heuristic-search-and-planning/value-iteration/mdp.md)
-- [R-max algorithm](r-max-algorithm.md)
+- [Fixed-sum stochastic game](fixed-sum-stochastic-game.md)
 
 ## Proof depends on
 

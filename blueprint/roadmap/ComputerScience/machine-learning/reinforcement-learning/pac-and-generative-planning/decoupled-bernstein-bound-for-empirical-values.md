@@ -2,7 +2,7 @@
 
 Although the empirical optimal value $\hat V^\star$ depends on the samples, the one-step error $(P - \hat P)\hat V^\star$ obeys a Bernstein-type bound with the variance of $\hat V^\star$ and a lower-order remainder, uniformly over state-action pairs. The proof uses absorbing-state MDPs on a grid of values.
 
-Let $M$ be a discounted MDP with finite state and action sets, rewards in $[0, 1]$ and discount $\gamma \in (0, 1)$, and let $\hat M$ be the empirical MDP built from $N$ generative-model samples per state-action pair. Let $\pi^\star$ be an optimal policy of $M$ and $\hat V^{\pi^\star}$ its value in $\hat M$, and let $0 < \delta < 1$ and
+Let $M$ be a discounted MDP with finite state and action sets, rewards in $[0, 1]$ and discount $\gamma \in (0, 1)$, and let $\hat M$ be the empirical MDP, which keeps the rewards and the discount of $M$ and has transition probabilities $\hat P(s' \mid s, a) = \frac1N\sum_{i=1}^N \mathbf 1\{s^i_{s,a} = s'\}$ for the samples $s^i_{s,a}$ of [uniform sampling](generative-model-of-an-mdp.md), with $N \ge 1$; write $\hat V^\star$ for its optimal value. For $V : S \to \mathbb R$ write $(PV)(s, a) = \sum_{s'}P(s' \mid s, a)V(s')$ and $\mathrm{Var}_P(V) = P(V^2) - (PV)^2$, with squares, square roots and absolute values of vectors taken entrywise and $\mathbf 1$ the all-ones vector. Let $\pi^\star$ be an optimal policy of $M$ and $\hat V^{\pi^\star}$ its value in $\hat M$, and let $0 < \delta < 1$ and
 
 $$L = \log\Big(\frac{8|S||A|}{(1-\gamma)\delta}\Big).$$
 
@@ -18,18 +18,19 @@ for an absolute constant $c$.
 
 ## Depends on
 
-- [Empirical MDP from a generative model](empirical-mdp-from-a-generative-model.md)
+- [Generative model of an MDP](generative-model-of-an-mdp.md)
 
 ## Proof depends on
 
 - [Absorbing-state MDP lemma](absorbing-state-mdp-lemma.md)
-- [Bernstein's inequality for bounded variables, two-sided](../../../../Probability/concentration-inequalities/sub-exponential-variables-and-bernstein-s-inequa/measure-real-abs-ge-le-bernstein.md)
+- [Bennett's one-step moment generating function bound](../../../../Probability/concentration-inequalities/adaptive-martingale-tail-bounds/bennett-one-step-mgf-bound.md)
+- [Bennett's inequality and its Bernstein relaxation](../../../../Probability/concentration-inequalities/adaptive-martingale-tail-bounds/bennett-inequality.md)
 - [Two-sided Hoeffding inequality for averages of bounded variables](../../../../Probability/concentration-inequalities/hoeffding-s-inequality/measure-real-abs-avg-sub-ge-le.md)
 - [Simulation lemma](../simulation-lemma/stoch-value-sub-stoch-value-eq.md)
 
 ## Expansion
 
-First, the simulation-lemma identity, Hoeffding's inequality and a union bound give the crude bound $\|Q^\star - \hat Q^\star\|_\infty \le \Delta_{\delta,N} = \frac{\gamma}{(1-\gamma)^2}\sqrt{2\log(2|S||A|/\delta)/N}$, so $\hat V^\star(s)$ lies in $[V^\star(s) - \Delta_{\delta/2,N}, V^\star(s) + \Delta_{\delta/2,N}]$ for all $s$ with probability $1 - \delta/2$. Cover this interval by a grid $U_s$ of $1/(1-\gamma)^2$ evenly spaced points. For each fixed $u \in U_s$, the row $\hat P(\cdot \mid s, a)$ is independent of $\hat V^\star_{s,u}$, so Bernstein's inequality and a union bound over $U_s$ give, with probability $1 - \delta$, for all $u \in U_s$
+First, the simulation-lemma identity, Hoeffding's inequality and a union bound give the crude bound $\|Q^\star - \hat Q^\star\|_\infty \le \Delta_{\delta,N} = \frac{\gamma}{(1-\gamma)^2}\sqrt{2\log(2|S||A|/\delta)/N}$, so $\hat V^\star(s)$ lies in $[V^\star(s) - \Delta_{\delta/2,N}, V^\star(s) + \Delta_{\delta/2,N}]$ for all $s$ with probability $1 - \delta/2$. Cover this interval by a grid $U_s$ of evenly spaced points including its endpoints. The source takes $|U_s| = 1/(1-\gamma)^2$, which need not be an integer and is at least $2$ only when $\gamma \ge 1 - 1/\sqrt 2$; any grid of at least two and at most of order $1/(1-\gamma)^2$ points, such as $\lceil 1/(1-\gamma)^2 \rceil + 1$, serves, since only $\log|U_s| = O(L)$ and the spacing enter. For each fixed $u \in U_s$, the row $\hat P(\cdot \mid s, a)$ is independent of $\hat V^\star_{s,u}$, so Bernstein's inequality for the average of the $N$ independent samples at $(s, a)$ and a union bound over $U_s$ give, with probability $1 - \delta$, for all $u \in U_s$
 
 $$|(P - \hat P)(\cdot \mid s, a)\cdot\hat V^\star_{s,u}| \le \sqrt{\frac{2\log(4|U_s|/\delta)}{N}}\sqrt{\mathrm{Var}_{P(\cdot \mid s,a)}(\hat V^\star_{s,u})} + \frac{2\log(4|U_s|/\delta)}{3(1-\gamma)N}.$$
 
