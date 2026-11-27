@@ -1047,8 +1047,13 @@ jobs:
             # contain the base SHA if main advanced since the PR opened.
             # Fetch it from the trusted base repo (public read, no
             # credentials). Best-effort: git show below is the gate, and
-            # the object is already present for same-repo PRs.
-            git fetch --no-tags "https://github.com/${{ github.repository }}.git" "$BASE_SHA" || true
+            # the fetch is a no-op when the head already contains the base
+            # SHA. --filter=blob:none, as in the checkout: with no local
+            # ref to negotiate from, an unfiltered fetch downloads every
+            # blob in the base's history. git show then fetches only
+            # REVIEWING.md's blob if it is missing, and git checks it
+            # against the object ID in the base's tree.
+            git fetch --no-tags --filter=blob:none "https://github.com/${{ github.repository }}.git" "$BASE_SHA" || true
             git show "$BASE_SHA:REVIEWING.md" > "$guide"
           else
             git show "HEAD:REVIEWING.md" > "$guide"
@@ -1061,7 +1066,8 @@ jobs:
           set -euo pipefail
           # Fail closed before any secret-holding step runs if the
           # materialized checkout is far beyond a normal one (a .git of
-          # ~50 MiB plus a ~240 MiB working tree today). This counts both
+          # ~300 MiB plus a ~1.05 GiB working tree in late November 2026;
+          # the tree was ~240 MiB a month earlier). This counts both
           # object storage and the working tree, where checkout duplicates
           # materialized blobs. The time bound is the 40-minute job timeout.
           # It deliberately runs after fetch/checkout rather than as a
@@ -1069,9 +1075,9 @@ jobs:
           # single-use, so exhaustion during fetch/checkout only fails
           # this job (those steps fail before Codex runs), while a tmpfs
           # remount of the workspace would risk breaking every review if
-          # the runner environment ever denies the mount. 2 GiB leaves
-          # ample headroom for legitimate growth.
-          max_kib=2097152
+          # the runner environment ever denies the mount. 4 GiB, about
+          # three times a normal checkout, leaves headroom for growth.
+          max_kib=4194304
           total_kib="$(du -sk . | cut -f1)"
           git_kib="$(du -sk .git | cut -f1)"
           echo "Materialized checkout: ${total_kib} KiB total (${git_kib} KiB .git), limit ${max_kib} KiB"
