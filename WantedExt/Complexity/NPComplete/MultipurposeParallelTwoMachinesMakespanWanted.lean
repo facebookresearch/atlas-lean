@@ -27,7 +27,7 @@ public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MultiPurposeJobShopThreeJobsWanted
+public import CSLibExt.Complexity.NPComplete.MultiPurposeJobShopThreeJobsDefs
 
 @[expose] public section
 
@@ -55,7 +55,7 @@ Knust list `PMPM2||C_max` as minimal NP-hard (in the ordinary sense), citing Len
 
 As in the other `PMPM` modules (e.g. `MultipurposeParallelTwoMachinesChainsMakespanWanted`), an
 instance is an MPM job-shop instance (`MPMJobShopInstance` and `MPMWellFormed` of
-`WantedExt.Complexity.NPComplete.MultiPurposeJobShopThreeJobsWanted`: the number `m` of
+`CSLibExt.Complexity.NPComplete.MultiPurposeJobShopThreeJobsDefs`: the number `m` of
 machines, numbered `1, …, m`, the jobs as lists of operations `(pᵢ, μᵢ)` with nonempty machine
 sets, and the bound `K`) in which every job has exactly one operation. A schedule is an MPM
 job-shop schedule (`IsMPMJobShopSchedule`: every job on a machine `a i ∈ μᵢ` during
