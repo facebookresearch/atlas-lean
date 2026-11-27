@@ -13,8 +13,6 @@ Probability.
 - [SKAT variance-component test](skat-variance-component-test/README.md)
 - [Testing Hardy–Weinberg equilibrium](testing-hardy-weinberg-equilibrium/README.md)
 - [Phenome-wide association scans](phenome-wide-association-scans/README.md)
-Probability. Two procedures act on the results of a genome-wide scan: differentially private
 selection of associated SNPs, and false discovery rate control after one representative is selected
-per cluster of correlated SNPs.
 - [Differentially private GWAS](differentially-private-gwas/README.md)
 - [FDR control after selecting cluster representatives](fdr-control-after-selecting-cluster-representatives/README.md)
