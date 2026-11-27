@@ -9,9 +9,12 @@ $$
 
 converge to $\zeta(t + 1)$ as $N \to \infty$, where $\zeta$ is the Riemann zeta function.
 
-The series converges only conditionally, since $S_{q,t}(n)$ does not tend to $0$, which is why it is
-stated through its partial sums. The second expression in equation (9) and the general identity (8)
-involve a further quantity $A^{(t)}$ and are not part of this statement.
+The series converges only conditionally, which is why it is stated through its partial sums.
+On the subsequence $n = 1 + mq$, reversing the alternating sum gives a magnitude
+$|S_{q,t}(n)| \ge 1 - (1 + q)^{-t}$; the weight is at least $1/n$, yielding a divergent harmonic
+lower bound for the series of absolute values. The second expression in equation (9) and the
+general identity (8) use a quantity $A^{(t)}$ that the record does not define and are not stated
+here.
 
 ## Sources
 

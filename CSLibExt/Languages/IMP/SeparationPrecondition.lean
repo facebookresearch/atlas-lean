@@ -124,15 +124,16 @@ theorem true_iff {c : HeapCmd} {s : State} {h : Heap} :
     safePre c (fun _ _ => True) s h ↔ Safe (c, s, h) :=
   ⟨And.left, fun hs => ⟨hs, fun {_t _k} _ => trivial⟩⟩
 
-/-- A disjoint frame gives a sufficient precondition for the framed
-postcondition, provided the command preserves its store dependence. -/
+/-- If `R` does not depend on the variables that `c` modifies (`c.modVars`), then
+`safePre c Q ⋆ R` entails `safePre c (Q ⋆ R)`. -/
 theorem frame {c : HeapCmd} {Q R : HAssertion}
     (hR : ∀ ⦃s h s'⦄, R s h →
       (∀ x, x ∉ c.modVars → s' x = s x) → R s' h) :
     (safePre c Q ⋆ R).Entails (safePre c (Q ⋆ R)) :=
   valid_iff.mp (SepValid.frame (valid c Q) hR)
 
-/-- The frame inequality expressed by separating implication. -/
+/-- If `R` does not depend on the variables that `c` modifies (`c.modVars`), then
+`safePre c Q` entails `wand R (safePre c (Q ⋆ R))`. -/
 theorem frame_wand {c : HeapCmd} {Q R : HAssertion}
     (hR : ∀ ⦃s h s'⦄, R s h →
       (∀ x, x ∉ c.modVars → s' x = s x) → R s' h) :

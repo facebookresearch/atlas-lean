@@ -46,46 +46,14 @@ public import Mathlib.LinearAlgebra.Matrix.Trace
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import MathlibExt.Analysis.SpecialFunctions.Gamma.BetaPowerProduct
 public import MathlibExt.LinearAlgebra.PowerSumMatrix
+public import MathlibExt.LinearAlgebra.PowerSumMatrixOddTrace
+public import MathlibExt.LinearAlgebra.PowerSumMatrixPairTrace
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.LinearAlgebra.PowerSumMatrixWanted
-
-/-- **Lemma 1**: for a positive integer `k` and an even
-positive integer `n = 2s`,
-`1^k + ⋯ + n^k = ∑_{i=1}^s Tr (M_i^k)` with
-`M_i = diag(i, 2s + 1 - i)`. Stated for all `n, k ∈ ℕ`
-with `n` even (it also holds at `k = 0` and `n = 0`).
-
-Source: Peiran Ding, Yanjun Zhu and Lei Wang, "A New
-Formula for the Sum of Integer Powers Based on
-Elementary Matrix Theory", INTEGERS 25 (2025), Article A98, Lemma 1 (`integers-2025-A98-lem-1`). -/
-theorem_wanted sum_pow_eq_sum_trace_of_even (n k : ℕ)
-    (hn : Even n) :
-    ∑ i ∈ Finset.Icc 1 n, (i : ℝ) ^ k =
-      ∑ i ∈ Finset.Icc 1 (n / 2),
-        Matrix.trace
-          (Matrix.diagonal ![(i : ℝ), 2 * (n / 2 : ℕ) + 1 - i] ^ k)
-
-/-- **Lemma 2**: for a positive integer `k` and an odd
-positive integer `n = 2s + 1`,
-`1^k + ⋯ + n^k = ∑_{i=1}^s Tr (M_i^k) + n^k`, with the
-matrices `M_i = diag(i, 2s + 1 - i)` of the paper's proof
-(the statement leaves `M_i` unspecified). Stated for all
-`k ∈ ℕ` (it also holds at `k = 0`).
-
-Source: Peiran Ding, Yanjun Zhu and Lei Wang, "A New
-Formula for the Sum of Integer Powers Based on
-Elementary Matrix Theory", INTEGERS 25 (2025), Article A98, Lemma 2 (`integers-2025-A98-lem-2`). -/
-theorem_wanted sum_pow_eq_sum_trace_add_of_odd (n k : ℕ)
-    (hn : Odd n) :
-    ∑ i ∈ Finset.Icc 1 n, (i : ℝ) ^ k =
-      ∑ i ∈ Finset.Icc 1 (n / 2),
-          Matrix.trace
-            (Matrix.diagonal ![(i : ℝ), 2 * (n / 2 : ℕ) + 1 - i] ^ k) +
-        (n : ℝ) ^ k
 
 /-- **Theorem 2**: for positive integers `k` and `n`,
 `S(n, k) = k (n+1)^k / 2 * ∑_{r=0}^{⌊k/2⌋}

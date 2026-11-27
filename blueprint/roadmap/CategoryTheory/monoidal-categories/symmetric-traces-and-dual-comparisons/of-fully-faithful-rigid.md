@@ -1,0 +1,3 @@
+# Pullback of the canonical trace between rigid categories
+
+Let $C$ and $D$ be symmetric monoidal categories and $F : C \to D$ a fully faithful braided strong monoidal functor, with tensor comparison $\mu$ and inverse $\delta$. For a symmetric trace $S$ on $D$, write $F^* S$ for the trace on $C$ pulled back along $F$: the trace of $f : X \otimes U \to Y \otimes U$ is the preimage under $F$ of $S(\mu_{X,U} ; F(f) ; \delta_{Y,U})$. This is the symmetric case of Joyal–Street–Verity, Proposition 2.4. If $C$ and $D$ are also right rigid, with their canonical traces, then $F^*(\mathrm{canonical}_D) = \mathrm{canonical}_C$.

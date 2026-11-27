@@ -80,6 +80,6 @@ A good expansion has pages for:
   and Theorem 1.3.5, p. 106, with its proof 1.3.6–1.3.9, pp. 106–109; 2.1.3 and Theorem 2.1.4 (star
   product), pp. 111–113; Corollaries 2.2.9–2.2.11 and Theorem 2.2.14, pp. 121–123.
 - J.-B. Bost, H. Gillet and C. Soulé, "Heights of projective varieties and positive Green forms", J.
-  Amer. Math. Soc. 7 (1994), 903–1027, archived publisher scan
-  <https://web.archive.org/web/20170815232351id_/https://www.ams.org/journals/jams/1994-07-04/S0894-0347-1994-1260106-X/S0894-0347-1994-1260106-X.pdf>:
+  Amer. Math. Soc. 7 (1994), 903–1027,
+  <https://doi.org/10.1090/S0894-0347-1994-1260106-X>:
   Proposition-Definition 1.3.1 and Theorem 1.3.2, pp. 919–920.

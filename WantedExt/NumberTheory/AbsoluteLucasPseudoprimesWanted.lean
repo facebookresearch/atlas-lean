@@ -14,6 +14,7 @@ public import Mathlib.Data.Nat.Squarefree
 public import Mathlib.NumberTheory.LegendreSymbol.JacobiSymbol
 public import MathlibExt.Algebra.Polynomial.PrimeValueConditions
 public import MathlibExt.NumberTheory.AbsoluteLucasPseudoprimes
+public import MathlibExt.NumberTheory.JacobiSymbolDiscriminant
 public import MathlibExt.NumberTheory.LucasSequence
 public import MathlibExt.NumberTheory.ThreePrimeDCarmichael
 public import MathlibExt.NumberTheory.ThreePrimeDCarmichaelDivisibility
@@ -23,21 +24,6 @@ public import MathlibExt.NumberTheory.AbsoluteLucasPseudoprimesInfinitePrimaryCa
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Jacobi symbols of a discriminant $D$ agree at odd primes congruent modulo $D$.** Let $p$ and
-$p'$ be odd primes and let $D$ be an integer with $D \equiv 0$ or $1 \pmod 4$ that is coprime to
-$p$. If $p' = p + D x$ for some integer $x$, then the Jacobi symbols agree:
-$\left(\frac{D}{p'}\right) = \left(\frac{D}{p}\right)$.
-
-For an odd prime $p$ the Jacobi symbol $\left(\frac{D}{p}\right)$ is the Legendre symbol and agrees
-with the Kronecker symbol.
-
-Source: Christian Ballot, *On Absolute Lucas Pseudoprimes*, INTEGERS 26 (2026), Article A102,
-Lemma 1 (`integers-2026-A102-lem-1`). -/
-public theorem_wanted jacobiSym_prime_add_mul_eq {p p' : ℕ} (hp : p.Prime) (hp2 : p ≠ 2)
-    (hp' : p'.Prime) (hp'2 : p' ≠ 2) {D : ℤ} (hD : D % 4 = 0 ∨ D % 4 = 1)
-    (hDp : IsCoprime D p) {x : ℤ} (hx : (p' : ℤ) = p + D * x) :
-    jacobiSym D p' = jacobiSym D p
 
 /-! ## Absolute Lucas pseudoprimes -/
 

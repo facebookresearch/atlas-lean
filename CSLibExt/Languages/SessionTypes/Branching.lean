@@ -1125,30 +1125,30 @@ theorem BranchingType.Branches.PermEquiv.lookup_rel {S L : Type}
         by_cases e1 : label = l1
         · by_cases e2 : label = l2
           · exact absurd (e1.symm.trans e2) hne
-          · simp only [BranchingType.Branches.lookup, if_pos e1, if_neg e2]
+          · simp only [BranchingType.Branches.lookup, ite_eq_left e1, ite_eq_right e2]
             exact Option.Rel.some (BranchingType.PermEquiv.refl h1)
         · by_cases e2 : label = l2
-          · simp only [BranchingType.Branches.lookup, if_neg e1, if_pos e2]
+          · simp only [BranchingType.Branches.lookup, ite_eq_right e1, ite_eq_left e2]
             exact Option.Rel.some (BranchingType.PermEquiv.refl h2)
-          · simp only [BranchingType.Branches.lookup, if_neg e1, if_neg e2]
+          · simp only [BranchingType.Branches.lookup, ite_eq_right e1, ite_eq_right e2]
             cases ht : t.lookup label with
             | none => exact Option.Rel.none
             | some v =>
               exact Option.Rel.some (BranchingType.PermEquiv.refl v)
       · intro lb hd hd' tail h _ih
         by_cases e : label = lb
-        · simp only [BranchingType.Branches.lookup, if_pos e]
+        · simp only [BranchingType.Branches.lookup, ite_eq_left e]
           exact Option.Rel.some (Relation.EqvGen.rel _ _ h)
-        · simp only [BranchingType.Branches.lookup, if_neg e]
+        · simp only [BranchingType.Branches.lookup, ite_eq_right e]
           cases ht : tail.lookup label with
           | none => exact Option.Rel.none
           | some v =>
             exact Option.Rel.some (BranchingType.PermEquiv.refl v)
       · intro lb hd tail tail' _h ih
         by_cases e : label = lb
-        · simp only [BranchingType.Branches.lookup, if_pos e]
+        · simp only [BranchingType.Branches.lookup, ite_eq_left e]
           exact Option.Rel.some (BranchingType.PermEquiv.refl hd)
-        · simp only [BranchingType.Branches.lookup, if_neg e]
+        · simp only [BranchingType.Branches.lookup, ite_eq_right e]
           exact ih
     intro h
     induction h with
@@ -2432,7 +2432,9 @@ theorem Split.dual {S L : Type} (Γ Δ Θ : BranchingContext S L)
       | none => exact Option.Rel.none
       | some v => exact Option.Rel.some (BranchingType.PermEquiv.refl _)
   exact ⟨(PermEquiv.dual hpe).trans hunion, disjoint_dual Δ Θ hdisj⟩
-/-- Advancement leaves other channels unchanged. -/
+/-- Advancement preserves every other channel up to permutation equivalence:
+for `b ≠ a` the lookups are both absent or both present with `PermEquiv`
+types. -/
 theorem Advances.lookup_of_ne {S L : Type} (Γ Δ : BranchingContext S L)
     (a b : Nat) (act : BranchingType.Action L)
     (h : Advances Γ a act Δ) (hne : b ≠ a) :
@@ -2478,7 +2480,8 @@ theorem Advances.disjoint_left {S L : Type} (Γ Γ' Θ : BranchingContext S L)
         exact hdisj a hmemA (heq ▸ hx2)
       | inr hmemG =>
         exact hdisj x hmemG hx2
-/-- Advancing the left side of a split advances the whole. -/
+/-- If `Γ` splits into `Δ` and `Θ` and `Δ` advances at channel `a` by `act` to `Δ'`, then `Γ`
+advances at `a` by `act` to `Δ' ∪ Θ`, and `Δ' ∪ Θ` splits into `Δ'` and `Θ`. -/
 theorem Split.advance_left {S L : Type} (Γ Δ Δ' Θ : BranchingContext S L)
     (a : Nat) (act : BranchingType.Action L) (h : Split Γ Δ Θ)
     (hadv : Advances Δ a act Δ') :

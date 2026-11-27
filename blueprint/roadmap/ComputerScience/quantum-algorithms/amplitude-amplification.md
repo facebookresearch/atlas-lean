@@ -17,15 +17,10 @@ $I - 2\Pi$ and $I - 2\lvert 0 \rangle\langle 0 \rvert$.
    $1 < c < 2$, and stops at the first good outcome, finds a good state using an expected $\Theta(1/\sqrt p)$ applications of
    $\mathcal{A}$ and $\mathcal{A}^{-1}$, as a separate statement.
 
-## Expansion
-
-A good expansion adds a page for each pending prerequisite below and links it under the dependency sections.
-
-- Statement prerequisite: Measurements (POVM, projective) and the Born rule.
-
 ## Depends on
 
 - [Unitary evolution and elementary gates](../../QuantumInformation/quantum-foundations/unitary-evolution-and-elementary-gates.md)
+- [Positive-operator-valued measurements and the Born rule](../../QuantumInformation/quantum-operations/povms-and-measurement-readout/povm-and-born-rule.md)
 
 ## Related topics
 
