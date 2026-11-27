@@ -84,26 +84,15 @@ variable {R F j}
 public theorem exists_pow_mul_mem_adjoin {S : Set F} {s : F} (hs : s ∈ S) (hs0 : s ≠ 0) {x : F}
     (hx : x ∈ Algebra.adjoin R (insert s⁻¹ S)) : ∃ n : ℕ, s ^ n * x ∈ Algebra.adjoin R S := by
   have hsA : s ∈ Algebra.adjoin R S := Algebra.subset_adjoin hs
-  induction hx using Algebra.adjoin_induction with
-  | mem y hy =>
-    rcases hy with rfl | hy
-    · exact ⟨1, by rw [pow_one, mul_inv_cancel₀ hs0]; exact one_mem _⟩
-    · exact ⟨0, by rw [pow_zero, one_mul]; exact Algebra.subset_adjoin hy⟩
-  | algebraMap a => exact ⟨0, by rw [pow_zero, one_mul]; exact Subalgebra.algebraMap_mem _ a⟩
-  | add y z _ _ hy hz =>
-    obtain ⟨m, hm⟩ := hy
-    obtain ⟨n, hn⟩ := hz
-    refine ⟨m + n, ?_⟩
-    have : s ^ (m + n) * (y + z) = s ^ n * (s ^ m * y) + s ^ m * (s ^ n * z) := by ring
-    rw [this]
-    exact add_mem (mul_mem (pow_mem hsA n) hm) (mul_mem (pow_mem hsA m) hn)
-  | mul y z _ _ hy hz =>
-    obtain ⟨m, hm⟩ := hy
-    obtain ⟨n, hn⟩ := hz
-    refine ⟨m + n, ?_⟩
-    have : s ^ (m + n) * (y * z) = (s ^ m * y) * (s ^ n * z) := by ring
-    rw [this]
-    exact mul_mem hm hn
+  obtain ⟨n, hn⟩ := Algebra.pow_smul_mem_of_smul_subset_of_mem_adjoin s (insert s⁻¹ S)
+    (Algebra.adjoin R S) (by
+      rintro _ ⟨y, hy, rfl⟩
+      rcases hy with rfl | hy
+      · change s * s⁻¹ ∈ Algebra.adjoin R S
+        rw [mul_inv_cancel₀ hs0]
+        exact one_mem _
+      · exact mul_mem hsA (Algebra.subset_adjoin hy)) hx hsA
+  exact ⟨n, hn n le_rfl⟩
 
 public theorem isLocalization_away_adjoin {S T : Set F} {s : F} (hs : s ∈ S) (hs0 : s ≠ 0)
     (hST : S ⊆ T) (hsT : s⁻¹ ∈ T) (hTS : T ⊆ insert s⁻¹ S) :
