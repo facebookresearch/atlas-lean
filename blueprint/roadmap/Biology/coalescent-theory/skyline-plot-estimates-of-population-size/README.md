@@ -21,4 +21,8 @@
 - [Canonical probability space for the skyline model](skyline-pi-measure.md)
 - [Coordinate projections form a skyline model](of-pi.md)
 - [Bayesian skyline coalescent prior](bayesian-skyline-coalescent-prior.md)
+
+## Further topics
+
+- [Limits of inference on population-size histories](limits-of-inference-on-population-size-histories/README.md)
 - [IBD-based estimation of recent effective population size](ibd-based-estimation-of-recent-effective-size/README.md)
