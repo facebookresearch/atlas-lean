@@ -4,7 +4,7 @@ Let $X_1, X_2, \dots$ and $Y_1, Y_2, \dots$ be independent sequences with the sa
 
 $$\frac{M_n - 2\log_{1/p} n}{\log_{1/p}\log_{1/p} n} \in (-4 - \varepsilon,\ 1 + \varepsilon) \quad \text{eventually};$$
 
-in particular $P(\lim_n M_n/\log_{1/p} n = 2) = 1$, twice the Erdős–Rényi growth of the longest head run without shifts. Theorem 3 gives the analogous result for independent irreducible aperiodic Markov chains on a finite alphabet, with $p$ the largest eigenvalue of the matrix of squared transition probabilities. Corollary 1, deduced from the result for deletions only (Theorem 4), shows that the longest match allowing shifts and at most $k$ deletions, insertions, substitutions or transpositions, divided by $\log_{1/p} n$, still tends to $2$ in probability when $k = o(\log n/\log\log n)$; Section 4 treats sequences of unequal lengths.
+in particular $P(\lim_n M_n/\log_{1/p} n = 2) = 1$, twice the Erdős–Rényi growth of the longest head run without shifts. Theorem 3 gives the analogous result for independent irreducible aperiodic Markov chains on a finite alphabet, with $p$ the largest eigenvalue (the Perron root) of the matrix of squared transition probabilities, again assuming $0 < p < 1$. Corollary 1, deduced from the result for deletions only (Theorem 4), shows that the longest match allowing shifts and at most $k$ deletions, insertions, substitutions or transpositions, divided by $\log_{1/p} n$, still tends to $2$ in probability when $k = o(\log n/\log\log n)$; Section 4 treats sequences of unequal lengths.
 
 ## Depends on
 

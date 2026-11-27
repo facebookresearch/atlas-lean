@@ -11,7 +11,7 @@ Masek and Paterson (1980) show that the edit distance between strings $A$ and $B
 1. Nonnegative costs and their normalization to minimum effective costs (Section 1), the Wagner–Fischer recurrence with the normalized costs (Theorems 1 and 2 of the source) and its restatement in terms of steps (Corollary 1).
 2. Lemma 3: steps are bounded by the maximal insertion and deletion costs; Lemma 4: under discreteness there are finitely many possible steps.
 3. Algorithm Y: enumeration of all pairs of substrings and step vectors of length $t$, and the cost $O(c^t t^2\log t)$ of precomputing their final step vectors.
-4. Algorithm Z: assembly with $O(nm/t^2)$ fetches of length-$t$ vectors at cost $O(t + \log n)$ each, and the choice of $t$ of order $\log n$ giving $O(nm/\log n)$; padding when $t$ does not divide the lengths.
+4. Algorithm Z (Section 2.2): assembly with $\lceil n/t\rceil\lceil m/t\rceil$ block fetches of length-$t$ vectors at cost $O(t + \log n)$ each, covering both $m \ge t$ and $m < t$, and the choice of $t$ of order $\log n$ giving the bound $O(n\max(1, m/\log n))$; padding when $t$ does not divide the lengths.
 5. Recovery of an optimal edit path (Section 2.3), and the role of the discreteness and finite-alphabet conditions.
 
 ## Sources
