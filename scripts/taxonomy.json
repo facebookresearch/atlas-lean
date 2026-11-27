@@ -15302,6 +15302,7 @@
   "PhyslibExt/Chemistry/GasEquations": {"to": "Chemistry/chemical-thermodynamics", "title": "Equations of state of gases"},
   "PhyslibExt/Chemistry/KineticTheory": {"to": "Chemistry/chemical-thermodynamics", "title": "Kinetic theory of gases"},
   "PhyslibExt/Chemistry/Kinetics/RateLaws": {"to": "Chemistry/chemical-kinetics", "title": "Rate laws"},
+  "PhyslibExt/Chemistry/PlugFlow": {"to": "Chemistry/chemical-kinetics", "title": "Plug-flow reactors"},
   "PhyslibExt/Chemistry/QuantitativeNMR": {"to": "Chemistry/quantum-chemistry-and-spectroscopy", "title": "Nuclear magnetic resonance"},
   "PhyslibExt/Chemistry/QuantityCalculus": {"to": "Physics/quantities-and-measurement", "title": "Quantity calculus and dimensionless groups"},
   "PhyslibExt/Chemistry/Quantum/FinitePostulates": {"to": "Physics/quantum-mechanics", "title": "Postulates of finite-dimensional quantum mechanics"},

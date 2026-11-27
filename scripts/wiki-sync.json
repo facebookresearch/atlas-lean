@@ -10803,6 +10803,7 @@
 "Chemistry.Kinetics.zeroOrderSol_zero": "48e1dea3c278d7a4",
 "Chemistry.ParticleBalances.hasDerivAt_moment_of_sizeIndependentGrowth": "4ab0dcd988f9b00b",
 "Chemistry.ParticleBalances.mass_conservation_and_particle_count_monotonicity": "7268d085903f4ebc",
+"Chemistry.PlugFlow.batch_in_residence_time": "650b794d921e91d1",
 "Chemistry.ProcessBalances.processedAmount_and_idleEnergy": "bb2e47044cabd473",
 "Chemistry.QuantitativeNMR.abEnergyAlphaAlpha": "c3c4bfc5b35c8b3b",
 "Chemistry.QuantitativeNMR.abEnergyBetaBeta": "a8921025d01e6ec0",
