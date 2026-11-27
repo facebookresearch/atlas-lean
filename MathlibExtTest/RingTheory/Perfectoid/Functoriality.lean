@@ -60,6 +60,19 @@ example {A B : Type*} [CommRing A] [CommRing B] (I : Ideal A) (J : Ideal B) (f :
     AdicCompletion.mapRingHom I J f h (AdicCompletion.of I A x) = AdicCompletion.of J B (f x) := by
   simp
 
+/-- The map of adic completions induced by the identity fixes every element. -/
+example {A : Type*} [CommRing A] (I : Ideal A) (h : I.map (RingHom.id A) ≤ I)
+    (x : AdicCompletion I A) : AdicCompletion.mapRingHom I I (RingHom.id A) h x = x := by
+  simp
+
+/-- The map of adic completions induced by a composite is the composite of the maps. -/
+example {A B C : Type*} [CommRing A] [CommRing B] [CommRing C] (I : Ideal A) (J : Ideal B)
+    (K : Ideal C) (g : B →+* C) (f : A →+* B) (hg : J.map g ≤ K) (hf : I.map f ≤ J)
+    (hgf : I.map (g.comp f) ≤ K) (x : AdicCompletion I A) :
+    AdicCompletion.mapRingHom I K (g.comp f) hgf x =
+      AdicCompletion.mapRingHom J K g hg (AdicCompletion.mapRingHom I J f hf x) := by
+  rw [AdicCompletion.mapRingHom_comp I J K g f hg hf, RingHom.comp_apply]
+
 /-- An action of an endomorphism `f` on `W(R♭)[1/p]` written with `Localization.awayLift` from
 the coordinatewise action `Perfection.map p (Ideal.quotientMap _ f h)` on the tilt is, by
 definition, `awayMapNatCast (WittVector.map (PreTilt.map p f)) p`. -/
@@ -121,6 +134,21 @@ example (f : R →+* S) (x : Localization.Away (p : WittVector p (PreTilt R p)))
       algebraMap _ (BDeRhamPlus S p) (awayMapNatCast (WittVector.map (PreTilt.map p f)) p x) := by
   simp
 
+/-- The map on `B_dR^+` of the identity fixes every element. -/
+example (x : BDeRhamPlus R p) : BDeRhamPlus.map p (RingHom.id R) x = x := by
+  simp
+
+/-- The map on `B_dR^+` of a composite is the composite of the maps. -/
+example (g : S →+* R) (f : R →+* S) (x : BDeRhamPlus R p) :
+    BDeRhamPlus.map p (g.comp f) x = BDeRhamPlus.map p g (BDeRhamPlus.map p f x) := by
+  rw [BDeRhamPlus.map_comp, RingHom.comp_apply]
+
+/-- The maps on `B_dR^+` of a ring isomorphism and of its inverse are inverse to each other. -/
+example (e : R ≃+* S) (x : BDeRhamPlus R p) :
+    BDeRhamPlus.map p e.symm.toRingHom (BDeRhamPlus.map p e.toRingHom x) = x := by
+  rw [← RingHom.comp_apply, ← BDeRhamPlus.map_comp, RingEquiv.symm_toRingHom_comp_toRingHom,
+    BDeRhamPlus.map_id, RingHom.id_apply]
+
 /-- A ring isomorphism maps generators of `ker θ[1/p]` to generators. -/
 example (e : R ≃+* S) (a : Localization.Away (p : WittVector p (PreTilt R p)))
     (ha : RingHom.ker (fontaineThetaInvertP R p) = Ideal.span {a}) :
@@ -143,3 +171,19 @@ example (a : Localization.Away (p : WittVector p (PreTilt R p)))
     IsUnit (algebraMap (BDeRhamPlus R p) (BDeRham R p) (algebraMap _ (BDeRhamPlus R p) a)) :=
   IsLocalization.map_units (BDeRham R p)
     (⟨_, BDeRham.algebraMap_mem_submonoid p ha⟩ : BDeRham.submonoid R p)
+
+/-- The map on `B_dR` of the identity isomorphism fixes every element. -/
+example (x : BDeRham R p) : BDeRham.mapOfRingEquiv p (RingEquiv.refl R) x = x := by
+  simp
+
+/-- The map on `B_dR` of a composite of ring isomorphisms is the composite of their maps. -/
+example (e₁ : R ≃+* S) (e₂ : S ≃+* R) (x : BDeRham R p) :
+    BDeRham.mapOfRingEquiv p (e₁.trans e₂) x =
+      BDeRham.mapOfRingEquiv p e₂ (BDeRham.mapOfRingEquiv p e₁ x) := by
+  rw [BDeRham.mapOfRingEquiv_trans, RingHom.comp_apply]
+
+/-- The maps on `B_dR` of a ring isomorphism and of its inverse are inverse to each other. -/
+example (e : R ≃+* S) (x : BDeRham R p) :
+    BDeRham.mapOfRingEquiv p e.symm (BDeRham.mapOfRingEquiv p e x) = x := by
+  rw [← RingHom.comp_apply, ← BDeRham.mapOfRingEquiv_trans, RingEquiv.self_trans_symm,
+    BDeRham.mapOfRingEquiv_refl, RingHom.id_apply]
