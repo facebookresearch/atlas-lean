@@ -10,7 +10,6 @@ Abelian varieties over fields and abelian schemes over general bases: duals and 
 - [Flatness and étaleness criteria for homomorphisms of group schemes](flatness-and-etaleness-criteria-for-group-schemes.md)
 - [Isogenies of abelian schemes](isogenies-of-abelian-schemes.md)
 - [Quotient of an abelian variety by an abelian subvariety](quotient-by-an-abelian-subvariety.md)
-- [Shimura's construction of the abelian variety of a weight-two eigenform](shimura-construction-of-the-abelian-variety/README.md)
 - [Representability of relative Picard functors](representability-of-picard-functors.md)
 - [Dual abelian variety](dual-abelian-variety.md)
 - [Dual abelian scheme](dual-abelian-scheme.md)

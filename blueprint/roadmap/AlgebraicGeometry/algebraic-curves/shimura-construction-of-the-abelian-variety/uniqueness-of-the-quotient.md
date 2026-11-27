@@ -2,7 +2,7 @@
 
 Let $N$, $\Gamma$, $J$, $\xi_n$, $f = \sum a_n e^{2 \pi i n z}$ and $K$ be as in
 [multiplicity one and the dimension](multiplicity-one-and-the-dimension.md), and let $(A, \nu, \theta)$ and
-$(A', \nu', \theta')$ be two triples, each formed by a [quotient](../quotient-by-an-abelian-subvariety.md) of $J$ by an
+$(A', \nu', \theta')$ be two triples, each formed by a [quotient](../../abelian-varieties/quotient-by-an-abelian-subvariety.md) of $J$ by an
 abelian subvariety rational over $\mathbb{Q}$ and an injective ring homomorphism of $K$ into the endomorphisms tensored
 with $\mathbb{Q}$ of that quotient, with $\nu \circ \xi_n = \theta(a_n) \circ \nu$ and $\nu' \circ \xi_n = \theta'(a_n) \circ \nu'$ for
 all $n$. Then $\mathrm{Ker}(\nu) = \mathrm{Ker}(\nu')$, and there is an isomorphism $\varphi \colon A \to A'$ over $\mathbb{Q}$ with
@@ -20,14 +20,14 @@ $\mathrm{Ker}(\nu')$ are both the annihilator of $\mu(\sum_{\sigma \in I} \mathb
 - [Modular curve of a group of level $N$ and its standard model over $\mathbb{Q}$](../../../NumberTheory/modular-forms-q-series/modular-forms/modular-curve-of-a-group-of-level-n.md), for $J$ over $\mathbb{Q}$
 - [Hecke endomorphisms $\xi_n$ of the Jacobian of a modular curve](../../../NumberTheory/modular-forms-q-series/modular-forms/hecke-endomorphisms-of-the-modular-jacobian.md)
 - [Hecke operators $T_n$ on weight-two cusp forms for a group of level $N$](../../../NumberTheory/modular-forms-q-series/modular-forms/hecke-operators-of-level-n.md), for the eigenfunction $f$
-- [Quotient of an abelian variety by an abelian subvariety](../quotient-by-an-abelian-subvariety.md)
-- [Homomorphisms of abelian schemes and commutativity](../homomorphisms-of-abelian-schemes.md)
+- [Quotient of an abelian variety by an abelian subvariety](../../abelian-varieties/quotient-by-an-abelian-subvariety.md)
+- [Homomorphisms of abelian schemes and commutativity](../../abelian-varieties/homomorphisms-of-abelian-schemes.md)
 
 ## Proof depends on
 
 - [Multiplicity one and the dimension of Shimura's quotient](multiplicity-one-and-the-dimension.md)
 - [Tangent space of the kernel of a quotient of abelian varieties](tangent-space-of-the-kernel-of-a-quotient.md)
-- [Quotient of an abelian variety by an abelian subvariety](../quotient-by-an-abelian-subvariety.md), for the uniqueness of a quotient up to isomorphism over $\mathbb{Q}$
+- [Quotient of an abelian variety by an abelian subvariety](../../abelian-varieties/quotient-by-an-abelian-subvariety.md), for the uniqueness of a quotient up to isomorphism over $\mathbb{Q}$
 
 ## Expansion
 

@@ -1,7 +1,7 @@
 # Holomorphic $1$-forms of an abelian variety over $\mathbb{Q}$ with an action of a number field
 
-Let $A'$ be an [abelian variety](../abelian-scheme.md) over $\mathbb{Q}$, with $\mathrm{End}(A')$ the ring of
-[endomorphisms](../homomorphisms-of-abelian-schemes.md) of $A'_{\mathbb{C}}$, let $K$ be a subfield of $\mathbb{C}$ of finite
+Let $A'$ be an [abelian variety](../../abelian-varieties/abelian-scheme.md) over $\mathbb{Q}$, with $\mathrm{End}(A')$ the ring of
+[endomorphisms](../../abelian-varieties/homomorphisms-of-abelian-schemes.md) of $A'_{\mathbb{C}}$, let $K$ be a subfield of $\mathbb{C}$ of finite
 degree over $\mathbb{Q}$ and $I$ the set of its embeddings into $\mathbb{C}$, and let
 $\theta' \colon K \to \mathrm{End}(A') \otimes \mathbb{Q}$ be a ring homomorphism with $\theta'(1) = \mathrm{id}_{A'}$ such that every
 element of $\theta'(K) \cap \mathrm{End}(A')$ is defined over $\mathbb{Q}$. Then the representation $a \mapsto \delta\theta'(a)$ of $K$
@@ -15,8 +15,8 @@ In particular $\dim A' = m\,[K : \mathbb{Q}]$.
 
 ## Depends on
 
-- [Abelian scheme](../abelian-scheme.md)
-- [Homomorphisms of abelian schemes and commutativity](../homomorphisms-of-abelian-schemes.md)
+- [Abelian scheme](../../abelian-varieties/abelian-scheme.md)
+- [Homomorphisms of abelian schemes and commutativity](../../abelian-varieties/homomorphisms-of-abelian-schemes.md)
 - [Holomorphic $1$-forms and tangent space of a complex abelian variety](holomorphic-one-forms-and-tangent-space.md)
 
 ## Proof depends on

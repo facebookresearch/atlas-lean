@@ -1,6 +1,6 @@
 # Holomorphic $1$-forms and tangent space of a complex abelian variety
 
-For an [abelian variety](../abelian-scheme.md) $B$ over $\mathbb{C}$, let $D_B$, or $D(B)$, be the complex vector
+For an [abelian variety](../../abelian-varieties/abelian-scheme.md) $B$ over $\mathbb{C}$, let $D_B$, or $D(B)$, be the complex vector
 space of all holomorphic $1$-forms on $B$, and $Y_B$, or $Y(B)$, the tangent space of $B$ at the origin.
 Evaluating a holomorphic $1$-form at the origin identifies $D_B$ with the dual of $Y_B$, and
 
@@ -8,7 +8,7 @@ $$( \ , \ )_B \colon D_B \times Y_B \to \mathbb{C}$$
 
 denotes the resulting perfect $\mathbb{C}$-bilinear pairing.
 
-For a [homomorphism](../homomorphisms-of-abelian-schemes.md) $\alpha \colon B \to B'$ of abelian varieties over
+For a [homomorphism](../../abelian-varieties/homomorphisms-of-abelian-schemes.md) $\alpha \colon B \to B'$ of abelian varieties over
 $\mathbb{C}$, let $d\alpha \colon Y_B \to Y_{B'}$ be its differential at the origin and
 $\delta\alpha \colon D_{B'} \to D_B$ the pullback of holomorphic $1$-forms. They satisfy Shimura's relation (1.1):
 
@@ -20,8 +20,8 @@ $\mathbb{C}$-linearly to $\mathrm{Hom}(B, B') \otimes \mathbb{C}$. If $\alpha$ i
 
 ## Depends on
 
-- [Abelian scheme](../abelian-scheme.md), for abelian varieties over $\mathbb{C}$
-- [Homomorphisms of abelian schemes and commutativity](../homomorphisms-of-abelian-schemes.md), for homomorphisms of abelian varieties
+- [Abelian scheme](../../abelian-varieties/abelian-scheme.md), for abelian varieties over $\mathbb{C}$
+- [Homomorphisms of abelian schemes and commutativity](../../abelian-varieties/homomorphisms-of-abelian-schemes.md), for homomorphisms of abelian varieties
 
 ## Proof depends on
 

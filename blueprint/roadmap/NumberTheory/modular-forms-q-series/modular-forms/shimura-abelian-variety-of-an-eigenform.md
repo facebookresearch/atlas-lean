@@ -62,11 +62,11 @@ $\prod_\sigma \sum_n a_n^\sigma n^{-s}$ up to finitely many Euler factors; neith
 
 ## Proof depends on
 
-- [Shimura's abelian subvariety $C$ and the quotient $(A, \nu, \theta)$](../../../AlgebraicGeometry/abelian-varieties/shimura-construction-of-the-abelian-variety/abelian-subvariety-c-and-the-quotient.md), for a triple
+- [Shimura's abelian subvariety $C$ and the quotient $(A, \nu, \theta)$](../../../AlgebraicGeometry/algebraic-curves/shimura-construction-of-the-abelian-variety/abelian-subvariety-c-and-the-quotient.md), for a triple
   satisfying (i) and the relation of (ii)
-- [Nontriviality of Shimura's quotient](../../../AlgebraicGeometry/abelian-varieties/shimura-construction-of-the-abelian-variety/nontriviality-of-the-quotient.md), for the injectivity of $\theta$
-- [Multiplicity one and the dimension of Shimura's quotient](../../../AlgebraicGeometry/abelian-varieties/shimura-construction-of-the-abelian-variety/multiplicity-one-and-the-dimension.md), for (iii)
-- [Uniqueness of Shimura's quotient](../../../AlgebraicGeometry/abelian-varieties/shimura-construction-of-the-abelian-variety/uniqueness-of-the-quotient.md), for the uniqueness under (i) and (ii)
+- [Nontriviality of Shimura's quotient](../../../AlgebraicGeometry/algebraic-curves/shimura-construction-of-the-abelian-variety/nontriviality-of-the-quotient.md), for the injectivity of $\theta$
+- [Multiplicity one and the dimension of Shimura's quotient](../../../AlgebraicGeometry/algebraic-curves/shimura-construction-of-the-abelian-variety/multiplicity-one-and-the-dimension.md), for (iii)
+- [Uniqueness of Shimura's quotient](../../../AlgebraicGeometry/algebraic-curves/shimura-construction-of-the-abelian-variety/uniqueness-of-the-quotient.md), for the uniqueness under (i) and (ii)
 
 ## Sources
 

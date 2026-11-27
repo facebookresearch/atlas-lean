@@ -2,10 +2,10 @@
 
 Let $N$ be a positive integer and $\Gamma$ a group of level $N$, that is,
 $\Gamma_1(N) \subset \Gamma \subset \Gamma_0(N)$, let $\mathfrak{H}^* = \mathfrak{H} \cup \mathbb{Q} \cup \{\infty\}$, and let $J$ be the
-[Jacobian](../../algebraic-curves/jacobians-of-compact-riemann-surfaces/jacobian.md) of the compact Riemann surface $\mathfrak{H}^*/\Gamma$, a complex abelian variety, with
+[Jacobian](../jacobians-of-compact-riemann-surfaces/jacobian.md) of the compact Riemann surface $\mathfrak{H}^*/\Gamma$, a complex abelian variety, with
 $D_J$ its space of [holomorphic $1$-forms](holomorphic-one-forms-and-tangent-space.md). Let
 $\psi \colon \mathfrak{H}^* \to J$ be the composite of the natural map $\mathfrak{H}^* \to \mathfrak{H}^*/\Gamma$ with an
-[Abel–Jacobi map](../../algebraic-curves/jacobians-of-compact-riemann-surfaces/of-curve.md) $\mathfrak{H}^*/\Gamma \to J$, and let $S_2(\Gamma)$ be the space of weight-two
+[Abel–Jacobi map](../jacobians-of-compact-riemann-surfaces/of-curve.md) $\mathfrak{H}^*/\Gamma \to J$, and let $S_2(\Gamma)$ be the space of weight-two
 [cusp forms](../../../NumberTheory/modular-forms-q-series/modular-forms/cusp-form.md) for $\Gamma$.
 
 There is an isomorphism $\mu \colon S_2(\Gamma) \to D_J$ of complex vector spaces determined by
@@ -18,8 +18,8 @@ coordinate on $\mathfrak{H}$.
 ## Depends on
 
 - [Modular curve of a group of level $N$ and its standard model over $\mathbb{Q}$](../../../NumberTheory/modular-forms-q-series/modular-forms/modular-curve-of-a-group-of-level-n.md), for the compact Riemann surface $\mathfrak{H}^*/\Gamma$ and the Jacobian $J$ of $X_\Gamma$
-- [Jacobian of a compact Riemann surface](../../algebraic-curves/jacobians-of-compact-riemann-surfaces/jacobian.md), for $J$
-- [Abel–Jacobi map](../../algebraic-curves/jacobians-of-compact-riemann-surfaces/of-curve.md), for $\psi$
+- [Jacobian of a compact Riemann surface](../jacobians-of-compact-riemann-surfaces/jacobian.md), for $J$
+- [Abel–Jacobi map](../jacobians-of-compact-riemann-surfaces/of-curve.md), for $\psi$
 - [Holomorphic $1$-forms and tangent space of a complex abelian variety](holomorphic-one-forms-and-tangent-space.md), for $D_J$
 - [Cusp form](../../../NumberTheory/modular-forms-q-series/modular-forms/cusp-form.md), for $S_2(\Gamma)$
 - [Congruence subgroup $\Gamma_0(N)$](../../../NumberTheory/modular-forms-q-series/modular-forms/congruence-subgroup-gamma0.md)
@@ -27,7 +27,7 @@ coordinate on $\mathfrak{H}$.
 
 ## Proof depends on
 
-- [Abel–Jacobi map](../../algebraic-curves/jacobians-of-compact-riemann-surfaces/of-curve.md), for the map along which $D_J$ is pulled back
+- [Abel–Jacobi map](../jacobians-of-compact-riemann-surfaces/of-curve.md), for the map along which $D_J$ is pulled back
 
 ## Expansion
 

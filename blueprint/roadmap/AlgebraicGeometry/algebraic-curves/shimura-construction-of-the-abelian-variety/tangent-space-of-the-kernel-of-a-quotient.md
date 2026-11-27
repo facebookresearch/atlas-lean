@@ -1,7 +1,7 @@
 # Tangent space of the kernel of a quotient of abelian varieties
 
-Let $B$ be an [abelian variety](../abelian-scheme.md) over $\mathbb{C}$, $C$ an abelian subvariety of $B$, and
-$(A, \nu)$ a [quotient](../quotient-by-an-abelian-subvariety.md) of $B$ by $C$, so that $C = \mathrm{Ker}(\nu)$. Identify the
+Let $B$ be an [abelian variety](../../abelian-varieties/abelian-scheme.md) over $\mathbb{C}$, $C$ an abelian subvariety of $B$, and
+$(A, \nu)$ a [quotient](../../abelian-varieties/quotient-by-an-abelian-subvariety.md) of $B$ by $C$, so that $C = \mathrm{Ker}(\nu)$. Identify the
 tangent space $Y_C$ of $C$ at the origin with its image in $Y_B$ under the differential of the inclusion, and use
 the notation of [holomorphic $1$-forms and tangent spaces](holomorphic-one-forms-and-tangent-space.md). Then
 
@@ -12,12 +12,12 @@ This is Shimura's (1.2), introduced with "We see easily that".
 ## Depends on
 
 - [Holomorphic $1$-forms and tangent space of a complex abelian variety](holomorphic-one-forms-and-tangent-space.md)
-- [Quotient of an abelian variety by an abelian subvariety](../quotient-by-an-abelian-subvariety.md)
+- [Quotient of an abelian variety by an abelian subvariety](../../abelian-varieties/quotient-by-an-abelian-subvariety.md)
 
 ## Proof depends on
 
 - [Holomorphic $1$-forms and tangent space of a complex abelian variety](holomorphic-one-forms-and-tangent-space.md), for (1.1) and the perfect pairing
-- [Quotient of an abelian variety by an abelian subvariety](../quotient-by-an-abelian-subvariety.md), for $C = \mathrm{Ker}(\nu)$ with $\nu$ surjective
+- [Quotient of an abelian variety by an abelian subvariety](../../abelian-varieties/quotient-by-an-abelian-subvariety.md), for $C = \mathrm{Ker}(\nu)$ with $\nu$ surjective
 
 ## Expansion
 
