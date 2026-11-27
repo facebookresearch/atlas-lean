@@ -8,7 +8,9 @@ $$1 - e^{-\mu} \le P \le -\ln(1-\mu).$$
 
 Consequently, for $P \ge 1/2$ the minimal required diversity satisfies
 
-$$\frac{1 - e^{-1/2}}{p} \le N \le \frac{\ln 2}{p}.$$
+$$\frac{1 - e^{-1/2}}{p} \le N \le \Big\lceil\frac{\ln 2}{p}\Big\rceil.$$
+
+(The source writes the upper bound as $\ln 2/p$, a continuous approximation; for $p = 0.4$ the minimal $N$ is $2 > \ln 2/0.4$.)
 
 **Comparison with the binary polymer model.** In the binary polymer model with polymers up to length $n$ (about $2^{n+1}$ molecule types and many more reactions than molecules), RAFs appear with high probability once $p(n-2)2^{n+1} = Cn$ for a constant $C$, so the required length is $n = \log_2 C - \log_2 p - 1 + o(1)$; the Erdős–Rényi giant-component heuristic underestimates this only by $\log_2(n-2) + O(1)$.
 

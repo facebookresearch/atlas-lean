@@ -7,6 +7,7 @@ $$Se(c) = P(X > c \mid D = 1), \qquad Sp(c) = P(X \le c \mid D = 0),$$
 $PPV = P(D=1 \mid X > c)$ and $NPV = P(D = 0 \mid X \le c)$. The ROC curve is the curve $c \mapsto (1 - Sp(c), Se(c))$ from $(0,0)$ to $(1,1)$. Assume (1) $X$ has a continuous distribution and (2) $R$ is strictly increasing.
 
 **Theorem.**
+
 1. The ROC curve is concave. Hence $Se - (1 - Sp) \ge 0$ at every cut-off: the test result is non-negatively correlated with disease, $PPV \ge p$ and $NPV \ge 1 - p$, with equality exactly when the result is independent of $D$.
 2. As the cut-off varies, sensitivity and specificity move in opposite directions; $PPV$ decreases as $Se$ increases, and $NPV$ decreases as $Sp$ increases. Consequently $PPV$ and $Sp$ move together, as do $NPV$ and $Se$.
 

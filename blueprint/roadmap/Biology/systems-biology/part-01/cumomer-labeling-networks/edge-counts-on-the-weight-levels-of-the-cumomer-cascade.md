@@ -5,8 +5,9 @@
 **Width (Definition 4).** A unimolecular reaction $A\to B$ moving all $s$ positions has width $s$; a bimolecular reaction $A+B\rightleftharpoons C$ with $q+r=s$ positions has widths $q$ (between $A$ and $C$) and $r$ (between $B$ and $C$). A reaction sequence through pools $P_0,\dots,P_\ell$ has the width of the largest fragment it transports end to end.
 
 **Lemma 2 (edges per level).** On weight level $k$ of the cascade,
+
 - a unimolecular reaction $A\to B$ of width $s$ induces $\binom{s}{k}$ edges;
-- a bimolecular reaction $A+B\rightleftharpoons C$ with widths $q$ and $r$ induces $\binom{q}{k}+\binom{r}{k}$ edges.
+- a bimolecular assembly $A+B\to C$, or splitting $C\to A+B$, with widths $q$ and $r$ induces $\binom{q}{k}+\binom{r}{k}$ edges; a reversible reaction induces this many in each direction.
 
 A pool with $s$ labelable positions contributes $\binom{s}{k}$ cumomer nodes to level $k$. Since $\binom{q}{k}+\binom{r}{k}\le\binom{q+r}{k}$ (Vandermonde's convolution), on every level an assembly product $C$ has at least as many cumomers as there are weight-conserving transitions into it from $A$ and $B$; the remaining cumomers of $C$ are fed only by assembly transitions from lower levels.
 

@@ -8,7 +8,7 @@
 
 **Kamke's theorem.** Let $\sigma$ be consistent, let $x(t)$ be a solution, and let $z(t)$ be the solution from the initial state obtained by increasing only coordinate $i$, with $\sigma_i = +1$: $z_i(0) > x_i(0)$ and $z_j(0) = x_j(0)$ for $j \neq i$. Then for all $t \ge 0$, $z_j(t) \ge x_j(t)$ for every $j$ with $\sigma_j = +1$ and $z_j(t) \le x_j(t)$ for every $j$ with $\sigma_j = -1$, with at least one inequality strict.
 
-**Convergence.** Continuous-time monotone systems admit no attracting periodic orbits. If the Jacobian is irreducible at every state (the graph is strongly connected and every non-identically-zero entry is nonzero everywhere), the system is strongly monotone, and by Hirsch's generic convergence theorem almost every bounded solution converges to the set of steady states. When the steady state is unique, under mild conditions on the state space and boundedness of solutions, every solution converges to it.
+**Convergence.** Continuous-time monotone systems admit no attracting periodic orbits. If the Jacobian is irreducible at every state (the graph is strongly connected and every non-identically-zero entry is nonzero everywhere), the system is strongly monotone, and by Hirsch's generic convergence theorem almost every bounded solution converges to the set of steady states. If all solutions are bounded and any two states have a least upper bound and a greatest lower bound in the state space (for example, a box for the order), a unique steady state is globally asymptotically stable (Dancer).
 
 ## Expansion
 
@@ -18,4 +18,4 @@ Kamke's theorem formalizes predictable responses: an up-perturbation of one spec
 
 ## Sources
 
-- E. D. Sontag, "Monotone and near-monotone biochemical networks", Systems and Synthetic Biology 1 (2007) 59 to 87, sections "The graph associated to a system", "Spin assignments and consistency" (balance criterion, quoting Theorem 3 of Harary 1953), "Monotone systems", "Consistent response to perturbations" (Kamke's theorem) and "Dynamical behavior of monotone systems" (planar argument, Hirsch generic convergence, Dancer's unique-equilibrium result), <https://doi.org/10.1007/s11693-007-9005-9>, PMCID PMC2533521.
+- E. D. Sontag, "Monotone and near-monotone biochemical networks", Systems and Synthetic Biology 1 (2007) 59 to 87, sections "The graph associated to a system", "Spin assignments and consistency" (balance criterion, quoting Theorem 3 of Harary 1953), "Monotone systems", "Consistent response to perturbations" (Kamke's theorem) and "Dynamical behavior of monotone systems" (planar argument, Hirsch generic convergence, Dancer's unique-equilibrium result) and "Step-input steady-state responses (characteristics) of open-loop systems", <https://doi.org/10.1007/s11693-007-9005-9>, PMCID PMC2533521.

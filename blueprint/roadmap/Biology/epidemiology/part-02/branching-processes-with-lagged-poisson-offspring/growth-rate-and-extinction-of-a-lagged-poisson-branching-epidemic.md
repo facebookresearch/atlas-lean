@@ -16,9 +16,9 @@ and offspring generating functions $f^{(h)}(s) = s_{h+1}\exp\big(-\Psi_h(1-s_1)\
 2. Almost surely $I_n \to 0$ or $I_n \to \infty$. If $R_\infty > 1$ then $I_n/(I_0\rho^n) \to W$ a.s. for a nonnegative integrable $W$ with $\{W > 0\} = \{I_n \to \infty\}$ a.s.; if $R_\infty \le 1$ the epidemic dies out a.s.
 3. The extinction probability from initial vector $(I_0, I_{-1},\dots,I_{-(d-1)})$ is $q = q_1^{I_0}q_2^{I_{-1}}\cdots q_d^{I_{-(d-1)}}$ with
 
-$$q_h = \exp\Big(-\sum_{l=h}^{d}\Psi_l\,(1-q_1)\Big),$$
+    $$q_h = \exp\Big(-\sum_{l=h}^{d}\Psi_l\,(1-q_1)\Big),$$
 
-so $q_1$ is the smallest root in $[0,1]$ of $q_1 = e^{-R_\infty(1-q_1)}$: $q_1 = 1$ if $R_\infty \le 1$, and $q_1 < 1$, decreasing in $R_\infty$, if $R_\infty > 1$.
+    so $q_1$ is the smallest root in $[0,1]$ of $q_1 = e^{-R_\infty(1-q_1)}$: $q_1 = 1$ if $R_\infty \le 1$, and $q_1 < 1$, decreasing in $R_\infty$, if $R_\infty > 1$.
 
 ## Expansion
 

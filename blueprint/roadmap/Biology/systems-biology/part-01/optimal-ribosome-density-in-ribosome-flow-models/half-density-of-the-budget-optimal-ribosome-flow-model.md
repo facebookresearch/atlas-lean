@@ -9,6 +9,7 @@ with the conventions $x_0\equiv1$ and $x_{n+1}\equiv0$. The RFM has a unique glo
 **Problem 1 with homogeneous budget (Eqs. 11–12).** Maximize $R(\lambda_0,\dots,\lambda_n)$ over $\lambda_0,\dots,\lambda_n\ge0$ subject to $\sum_{i=0}^n\lambda_i\le1$.
 
 **Proposition 4.** The optimal steady-state occupancies $e^*$ satisfy $e_i^*=1-e_{n+1-i}^*$ for $i=1,\dots,n$. They decrease strictly along the chain and cross $1/2$ at the center:
+
 - for even $n$: $e_1^*>\cdots>e_{n/2}^*>\tfrac12>e_{n/2+1}^*>\cdots>e_n^*$;
 - for odd $n$: $e_1^*>\cdots>e_{(n-1)/2}^*>e_{(n+1)/2}^*=\tfrac12>\cdots>e_n^*$.
 

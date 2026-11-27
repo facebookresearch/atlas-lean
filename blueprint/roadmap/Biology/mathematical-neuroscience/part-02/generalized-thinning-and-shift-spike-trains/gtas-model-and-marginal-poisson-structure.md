@@ -15,6 +15,7 @@ $$Q_i = \frac{\sum_{D\ni i} p_D\, Q_D^{\{i\}}}{\sum_{D\ni i} p_D},$$
 where $Q_D^{\{i\}}$ is the $i$-th marginal of $Q_D$.
 
 **Special cases.** With all $Q_D$ equal to the point mass at $0$:
+
 - the *single interaction process* $X_i = Z_i + Z_c$ ($Z_i, Z_c$ independent Poisson with rates $\lambda_i, \lambda_c$) is GTaS with $\lambda = \lambda_c + \sum_i \lambda_i$, $p_{\{i\}} = \lambda_i/\lambda$, $p_{\mathbb{D}} = \lambda_c/\lambda$ and $p_D = 0$ otherwise;
 - the *multiple interaction process*, obtained by independently retaining each mother event in each daughter with probability $\epsilon$, is GTaS with $p_D = \epsilon^{|D|}(1-\epsilon)^{N-|D|}$.
 

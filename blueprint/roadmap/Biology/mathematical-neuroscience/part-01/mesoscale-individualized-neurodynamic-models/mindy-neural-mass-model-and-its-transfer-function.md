@@ -22,4 +22,4 @@ Oddness follows by swapping the two square roots when $x \mapsto -x$. Writing $u
 
 ## Sources
 
-- Singh MF, Braver TS, Cole MW, Ching S, "Estimation and validation of individualized dynamic brain models with resting state fMRI", Neuroimage (2020), Section 2.1, Eqs. (1)–(3), <https://doi.org/10.1016/j.neuroimage.2020.117046>, PMCID PMC7875185.
+- Singh MF, Braver TS, Cole MW, Ching S, "Estimation and validation of individualized dynamic brain models with resting state fMRI", Neuroimage (2020), Sections 2.1–2.2, Eqs. (1)–(3), <https://doi.org/10.1016/j.neuroimage.2020.117046>, PMCID PMC7875185.

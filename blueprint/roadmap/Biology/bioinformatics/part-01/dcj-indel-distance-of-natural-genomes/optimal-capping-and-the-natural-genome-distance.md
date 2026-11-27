@@ -14,7 +14,7 @@ $$p^* = \max\{\kappa_A,\kappa_B\} \text{ caps and } a^* = |\kappa_A - \kappa_B| 
 
 $$d_{\mathrm{DCJ}}^{\mathrm{id}}(A,B) = n^* + p^* - \max_{S, P} w(Q[S,P]), \qquad w(Q) = c_Q - \sum_{C \in Q}\lambda(C),$$
 
-with $c_Q$ the number of cycles of $Q$. Writing $\aleph(C)$ for the number of *transitions* of a cycle (indel-free subpaths flanked by an indel edge of $A$ and one of $B$) and $r(C) = 1$ iff $\Lambda(C) \ge 1$,
+with $c_Q$ the number of $AB$-cycles of $Q$ (circular singletons, counted by $s_Q$, are not cycles of this count). Writing $\aleph(C)$ for the number of *transitions* of a cycle (indel-free subpaths flanked by an indel edge of $A$ and one of $B$) and $r(C) = 1$ iff $\Lambda(C) \ge 1$,
 
 $$\lambda(C) = \frac{\aleph(C)}{2} + r(C), \qquad w(Q) = \tilde c^{\,r}_Q - \frac{\aleph_Q}{2} - s_Q,$$
 

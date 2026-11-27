@@ -1,12 +1,12 @@
 # Predicted information gain of an action
 
-In a controllable Markov chain with unknown kernel $\boldsymbol\Theta$ (prior $f$, data $\vec d$, Bayesian estimate $\hat\Theta = \mathbb{E}[\boldsymbol\Theta\mid\vec d]$), let $\hat\Theta^{a,s\to s^*}$ be the Bayesian estimate after additionally observing the transition $s\to s^*$ under action $a$.
+In a controllable Markov chain with unknown kernel $\boldsymbol\Theta$ (prior $f$ under which the rows $\boldsymbol\Theta_{as\cdot}$ are independent, for example independent Dirichlet rows, so that the posterior stays a product; data $\vec d$; Bayesian estimate $\hat\Theta = \mathbb{E}[\boldsymbol\Theta\mid\vec d]$), let $\hat\Theta^{a,s\to s^*}$ be the Bayesian estimate after additionally observing the transition $s\to s^*$ under action $a$.
 
 **Information gain** of that observation is the decrease in missing information:
 
 $$\mathrm{IG}(a,s,s^*) = I_M(\Theta\,\|\,\hat\Theta) - I_M(\Theta\,\|\,\hat\Theta^{a,s\to s^*}) = \sum_{s'}\Theta_{ass'}\log_2\frac{\hat\Theta^{a,s\to s^*}_{ass'}}{\hat\Theta_{ass'}},$$
 
-which the agent cannot compute because it depends on the true $\Theta$ and on the unknown outcome $s^*$.
+which the agent cannot compute because it depends on the true $\Theta$ and on the unknown outcome $s^*$. The second equality uses the row independence: the observation then changes no row of the estimate other than $(a,s)$. (The source draws its rows independently but does not state this hypothesis; for a prior tying rows together the gain is the sum of the KL terms over all rows that move.)
 
 **Theorem (predicted information gain).** If the agent is in state $s$ with data $\vec d$, the expected information gain of action $a$ over the posterior of $\boldsymbol\Theta$ and the outcome $s^*$ is
 

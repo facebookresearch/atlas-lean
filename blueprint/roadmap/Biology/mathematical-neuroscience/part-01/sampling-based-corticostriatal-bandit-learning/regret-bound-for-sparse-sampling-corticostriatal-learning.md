@@ -3,15 +3,16 @@
 **Task.** In a static $A$-alternative forced-choice task ($A$-armed Bernoulli bandit), choosing action $a$ yields reward $r \in \{0,1\}$ with probability $\mu_a$; the regret after $T$ trials is the expected total reward of always choosing the best action minus that of the algorithm, $\sum_{t=1}^{T}(\mu_{a^*} - \mu_{a_t})$ in expectation.
 
 **Algorithm (basic CogLink).** Action $a$ is represented by $M$ corticostriatal weights $v_{t,a,1}, \dots, v_{t,a,M}$, initialized to $\bar V_{a,m}$. At trial $t$:
+
 1. for each $a$, sparse premotor activity selects a uniformly random $K$-subset $\{i_1 < \dots < i_K\} \subseteq \{1,\dots,M\}$ and forms the sample $\hat v_{t,a} = \frac1K\sum_{j=1}^{K} v_{t,a,i_j}$ (so the value belief $V_{t,a}$ is the uniform distribution over $K$-subset averages);
 2. the motor stage picks $a_t = \arg\max_a \hat v_{t,a}$ (winner-take-all) and reward $r_t$ is received;
-3. each weight of the chosen ensemble is updated by its own (distributional) reward prediction error, $v_{t+1,a_t,m} = v_{t,a_t,m} + \eta(N_{t,a_t})\,(r_t - v_{t,a_t,m})$, where $N_{t,a}$ counts previous choices of $a$; other ensembles are unchanged.
+3. each weight of the chosen ensemble is updated by its own (distributional) reward prediction error, $v_{t+1,a_t,m} = v_{t,a_t,m} + \eta(N_{t,a_t})\,(r_t - v_{t,a_t,m})$, where $N_{t,a}$ is $1$ plus the number of previous choices of $a$ (so the $k$-th update of an ensemble uses $\eta(k) = 1/(k+1)$); other ensembles are unchanged.
 
-**Theorem.** If the sparsity $K$, the learning rates $\eta$ and the initial weights $\bar V_{a,m}$ are chosen appropriately, the regret after $T$ trials is at most
+**Theorem.** Assume a unique best action (gap $\Delta_2 > 0$ between the best and second-best mean), $T \ge 2$ and $2ATD\Delta_2^2\log T > 1$, with $D$ the ratio of reward gaps. If the sparsity $K$, the learning rates $\eta$ and the initial weights $\bar V_{a,m}$ are chosen appropriately, the regret after $T$ trials is at most
 
 $$C\sqrt{A\,T\,\log(AT)}$$
 
-for a constant $C$. In the formal version, $K = 1$, $\eta(n) = 1/(1+n)$ and the initial weights are $\bar V_{a,m} = c\,m/M$, with $c$ an explicit logarithmic factor in $A$, $T$ and the reward gaps, divided by the gap between the best and second-best action; the constant then depends on the ratio of reward gaps. Since every algorithm suffers regret of order $\sqrt{AT}$ in the worst case, the circuit is minimax-optimal up to a logarithmic factor.
+for a constant $C$. In the formal version, $K = 1$, $\eta(n) = 1/(1+n)$ and the initial weights are $\bar V_{a,m} = c\,m/M$, with $c$ an explicit logarithmic factor in $A$, $T$ and the reward gaps, divided by the gap between the best and second-best action; the constant then depends on the ratio of reward gaps. Every algorithm suffers regret of order $\sqrt{AT}$ in the worst case, so for a fixed gap ratio the bound is within a logarithmic factor of that lower bound (the source calls it close to optimal); it is not a uniform worst-case guarantee, since the constant grows with $D$ and the tuning of $c$ uses the unknown gaps.
 
 ## Expansion
 

@@ -12,11 +12,12 @@ $$\{\mathrm{id}\} \subsetneq \Gamma_{\Omega(z_0)} \subsetneq \Gamma\qquad\text{f
 
 **Properties.**
 
-1. For an invariant set $A$ with instantaneous symmetry group $T(A)$ and setwise symmetry group $\Sigma(A)$, carrying an ergodic invariant measure,
+1. Let $A$ be a compact invariant set with instantaneous symmetry group $T(A)$ and setwise symmetry group $\Sigma(A)$, carrying a unique ergodic invariant measure $\mu$, and write $\Omega(A) = \int_A \operatorname{Im}F\,d\mu$. Then
 
-$$\{\mathrm{id}\} \subseteq T(A) \subseteq \Sigma(A) \subseteq \Gamma_{\Omega(A)} \subseteq \Gamma,$$
+    $$\{\mathrm{id}\} \subseteq T(A) \subseteq \Sigma(A) \subseteq \Gamma_{\Omega(A)} \subseteq \Gamma,$$
 
-so any nontrivial symmetry of a solution forces some frequency synchrony.
+    so any nontrivial symmetry of a solution forces some frequency synchrony.
+
 2. If $A$ is a weak chimera then so is $\gamma A$ for every $\gamma \in \Gamma$.
 3. If along a solution the winding of one coordinate stays bounded while another winds at a positive linear rate, then $\Gamma_{\Omega} \ne \Gamma$; this covers amplitude-mediated and pure amplitude chimeras.
 

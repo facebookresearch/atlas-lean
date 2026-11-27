@@ -8,14 +8,16 @@ Fix a bin width $h>0$ and let $X=(X_1,\dots,X_N)$ be the spike counts of the $N$
 
 **Correlation order.** For a multi-index $J \in \mathbb{N}^N$ let $n_J$ be the number of its nonzero entries and $\kappa_J[X]$ the corresponding mixed cumulant, i.e. the coefficient of $(iu)^J/J!$ in $\log \mathbb{E}\,e^{i u\cdot X}$. The components of $X$ have *correlations of order $m$* if $\kappa_J[X] \neq 0$ for some $J$ with $n_J = m$.
 
-**Theorem.** The components of $X$ have correlations of order $m$ if and only if $f_A$ assigns positive probability to some amplitude $\ge m$, i.e. iff $\nu'_M>0$ for some $M$ with $|M| \ge m$.
+**Theorem.** For every $m \ge 1$, the components of $X$ have correlations of order $m$ if and only if $f_A$ assigns positive probability to some amplitude $\ge m$, i.e. iff $\nu'_M>0$ for some $M$ with $|M| \ge m$.
 
 **Corollaries.**
+
 1. The population count is compound Poisson with
 
-$$\kappa_m[Z] = \nu\,h\,\mu_m[A] = h\sum_{l=1}^{N} l^m\,\nu_l, \qquad \nu_l = \nu f_A(l),$$
+    $$\kappa_m[Z] = \nu\,h\,\mu_m[A] = h\sum_{l=1}^{N} l^m\,\nu_l, \qquad \nu_l = \nu f_A(l),$$
 
-so $\kappa_1[Z] \le \kappa_2[Z] \le \kappa_3[Z] \le \cdots$, since the moments of a positive integer variable are nondecreasing in the order.
+    so $\kappa_1[Z] \le \kappa_2[Z] \le \kappa_3[Z] \le \cdots$, since the moments of a positive integer variable are nondecreasing in the order.
+
 2. Events of amplitude $\xi$ create correlations of every order $\le \xi$; correlations of order exactly $m$ cannot be present without those of all lower orders, and the CPP produces only nonnegative cumulant correlations.
 3. The correlation order does not depend on $h$: it is a property of the injected coincidences, not of the binning.
 

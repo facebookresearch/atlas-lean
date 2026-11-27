@@ -6,13 +6,13 @@ $$\frac{dM}{dt}=\tau(t)-\delta_m M,\qquad \frac{dP}{dt}=\alpha M-\delta_p P.$$
 
 **Scaling invariance.** If only $\tilde M=s_M M$ and $\tilde P=s_P P$ are observed for unknown factors $s_M,s_P>0$, then $(\tilde M,\tilde P)$ solves the same system with $\tilde\tau=s_M\tau$ and $\tilde\alpha=(s_P/s_M)\alpha$ and unchanged $\delta_m,\delta_p$. Hence from proportional measurements the degradation rates are invariant under the rescaling, while $\tau$ and $\alpha$ are determined only up to the measurement scales.
 
-**Diffusion approximation (Eq. 2).** Treating transcription, translation and degradation as birth and death events of individual molecules, measured in units proportional to molecule numbers, gives the Itô system
+**Reporter diffusion model (Eq. 2, definition).** Treating transcription, translation and degradation as birth and death events of individual molecules, measured in units proportional to molecule numbers, the source models the reporter by the Itô system
 
 $$dM=\zeta_M\,dt+\sigma_M\,dW_M,\qquad dP=\zeta_P\,dt+\sigma_P\,dW_P,$$
 
-with drifts $\zeta_M=\tau(t)-\delta_m M$, $\zeta_P=\alpha M-\delta_p P$, volatilities $\sigma_M=s_M^{1/2}(\tau(t)+\delta_m M)^{1/2}$, $\sigma_P=s_P^{1/2}(\alpha M+\delta_p P)^{1/2}$, and independent Wiener processes $W_M,W_P$. The noise scale therefore carries information about the conversion factors $s_M,s_P$ that the mean model cannot identify.
+with drifts equal to the net jump rates, $\zeta_M=\tau(t)-\delta_m M$, $\zeta_P=\alpha M-\delta_p P$, squared volatilities equal to the measurement scale times the total jump rates, $\sigma_M=s_M^{1/2}(\tau(t)+\delta_m M)^{1/2}$, $\sigma_P=s_P^{1/2}(\alpha M+\delta_p P)^{1/2}$, and independent Wiener processes $W_M,W_P$. The noise scale therefore carries information about the conversion factors $s_M,s_P$ that the mean model cannot identify.
 
-**Euler likelihood (Eq. 4).** For observations $y_i=(M(t_i),P(t_i))$ with small $\Delta t_i=t_{i+1}-t_i$, the transition density is approximated by a bivariate normal with mean $y_i+(\zeta_M,\zeta_P)\Delta t_i$ and covariance $\mathrm{diag}(\sigma_M^2,\sigma_P^2)\Delta t_i$, all evaluated at $y_i$, and the likelihood is the product of these densities over $i$.
+**Euler likelihood (Eq. 4, definition).** For observations $y_i=(M(t_i),P(t_i))$ with small $\Delta t_i=t_{i+1}-t_i$, the transition density is approximated by a bivariate normal with mean $y_i+(\zeta_M,\zeta_P)\Delta t_i$ and covariance $\mathrm{diag}(\sigma_M^2,\sigma_P^2)\Delta t_i$, all evaluated at $y_i$, and the approximate likelihood is defined as the product of these densities over $i$. These two displays define the model and its likelihood (the source motivates them by moment matching and small sampling intervals, without a limit theorem); the result of the page is the scaling invariance of the mean model.
 
 ## Expansion
 

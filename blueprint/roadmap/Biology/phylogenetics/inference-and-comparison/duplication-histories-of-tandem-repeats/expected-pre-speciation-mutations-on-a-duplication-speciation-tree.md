@@ -1,6 +1,6 @@
 # Expected pre-speciation mutations on a four-leaf duplication–speciation tree
 
-**F-tree.** A duplication creates paralogous sites $x, y$; a later speciation yields orthologs $x_1, x_2$ and $y_1, y_2$. The *F-tree* has a root (the duplication), a left child with leaves $A, C$ and a right child with leaves $B, D$, where $A, B, C, D \subseteq \{a,c,g,t\}$ are the leaf label sets of $x_1, y_1, x_2, y_2$; the two internal edges below the root precede speciation. Fitch sets are $L = A\cap C$ if nonempty, else $A \cup C$; $R = B \cap D$ if nonempty, else $B\cup D$; $X = L\cap R$ if nonempty, else $L\cup R$. The number $N$ of unions used is the minimum number of mutations. A *labeling* assigns one nucleotide from its set to each leaf and any nucleotides to the internal nodes so that exactly $N$ edges change label. Let $N_b$ be the average, over all labelings, of the number of mutations on the two edges below the root, and $N_a = N - N_b$.
+**F-tree.** A duplication creates paralogous sites $x, y$; a later speciation yields orthologs $x_1, x_2$ and $y_1, y_2$. The *F-tree* has a root (the duplication), a left child with leaves $A, C$ and a right child with leaves $B, D$, where $A, B, C, D$ are nonempty subsets of $\{a,c,g,t\}$, the leaf label sets of $x_1, y_1, x_2, y_2$; the two internal edges below the root precede speciation. Fitch sets are $L = A\cap C$ if nonempty, else $A \cup C$; $R = B \cap D$ if nonempty, else $B\cup D$; $X = L\cap R$ if nonempty, else $L\cup R$. The number $N$ of unions used is the minimum number of mutations (Fitch's rule in its set-valued form for ambiguous leaves, Fitch 1971 and Hartigan 1973). A *labeling* assigns one nucleotide from its set to each leaf and any nucleotides to the internal nodes so that exactly $N$ edges change label. Let $N_b$ be the average, over all labelings, of the number of mutations on the two edges below the root, and $N_a = N - N_b$.
 
 **Singleton leaves.** When $A, B, C, D$ are singletons, every motif $x_1 y_1 x_2 y_2$ falls into one of seven classes, represented by $aaaa$, $aaat$, $atta$, $caat$, $tata$, $acat$, $actg$:
 
@@ -24,6 +24,7 @@ Each class contributes its number of minimal labelings, weighted by how many of 
 ## Depends on
 
 - [Fitch's algorithm](../../small-parsimony-problem/fitch.md)
+- [Fitch's algorithm computes the small-parsimony score](../../small-parsimony-problem/fitch-score-eq.md)
 
 ## Sources
 

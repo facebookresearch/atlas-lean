@@ -26,7 +26,7 @@ where $\mathbf x_{j,\ell}$ is the part of $\mathbf x_j$ matching block $\ell$ an
 
 $$J(\mathbf b^{(k)}) - J(\mathbf b^{(k+1)}) \ge 2\gamma\,\|\mathbf b^{(k)} - \mathbf b^{(k+1)}\|_2^2,$$
 
-and the sequence converges to the minimum point of $J$.
+successive differences tend to $\mathbf 0$, and every limit point of $(\mathbf b^{(k)})$ minimizes $J$; the whole sequence converges when $J$ has a unique minimizer. (The source concludes convergence to the minimum point without uniqueness, which can fail: two genes with identical expression profiles give a continuum of minimizers.)
 
 ## Expansion
 

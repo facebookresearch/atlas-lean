@@ -9,12 +9,14 @@ and $d(a,b) = \infty$ otherwise.
 **Chaining graph.** For an integer $k \ge 1$ let $G_k$ be the directed graph on anchors with an arc $ab$ whenever $a_r < b_r$, $d(a,b) \le k$, and either $a_o < b_o$ with both orientations positive, or $a_o > b_o$ with both orientations negative.
 
 **Conflicts.**
+
 - Type I: arcs $ab$ and $cd$ in the same connected component of $G_k$ conflict if the markers of $a,b,c,d$ do not appear in the same order in both genomes.
 - Type II: an arc $ab$ in component $C$ conflicts if some anchor $x$ whose marker lies between those of $a$ and $b$ in one genome belongs to a different component with at least $k$ vertices.
 
 Let $H_k$ be the subgraph of $G_k$ keeping only non-conflicting arcs. A *$k$-block* is a connected component of $H_k$ with more than $k$ vertices; its extreme genomic coordinates define a synteny block.
 
 **Properties.**
+
 1. Synteny blocks from distinct $k$-blocks never intersect, in either genome (no type II conflicts).
 2. Within a $k$-block the markers are totally ordered consistently in both genomes (no type I conflicts), so each end of a block is a single anchor and the block ends are orthologous.
 3. With $n$ anchors and fixed $k$, the $k$-blocks are computed in $O(nk^2 + n\log n)$ time: sorting gives the ranks, $G_k$ has at most $kn$ arcs, and each arc is checked for conflicts against at most $k$ other arcs or vertices.

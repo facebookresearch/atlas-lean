@@ -1,15 +1,17 @@
 # Elementary vectors of flux polyhedra are the minimal conformal generators
 
-**Setting.** Let $P = \{x \in \mathbb{R}^r : Ax \ge b\}$ be a polyhedron with recession cone $C_r = \{x : Ax \ge 0\}$; a flux polyhedron arises from a flux cone by adding flux bounds such as $f_1 \le 2$. Sign vectors and conformal sums are as for polyhedral cones. A point $x \in P$ is **convex-conformally non-decomposable** (ccND) if $x = \lambda x_1 + (1-\lambda) x_2$ with $x_1, x_2 \in P$, $0 < \lambda < 1$ and $\operatorname{sign}(x_1), \operatorname{sign}(x_2) \le \operatorname{sign}(x)$ forces $x_1 = x_2$. The **elementary vectors** of $P$ are the conformally non-decomposable vectors of $C_r$ together with the ccND points of $P$. A set $G \subseteq C$ is a **conformal generating set** of a polyhedral cone $C$ if it is closed under positive scaling and every nonzero $x \in C$ is a conformal sum of finitely many elements of $G$.
+**Setting.** Let $P = \{x \in \mathbb{R}^r : Ax \ge b\}$ be a polyhedron with recession cone $C_r = \{x : Ax \ge 0\}$; a flux polyhedron arises from a flux cone by adding flux bounds such as $f_1 \le 2$. Sign vectors and conformal sums are as for polyhedral cones. A point $x \in P$ is **convex-conformally non-decomposable** (ccND) if $x = \lambda x_1 + (1-\lambda) x_2$ with $x_1, x_2 \in P$, $0 < \lambda < 1$ and $\operatorname{sign}(x_1), \operatorname{sign}(x_2) \le \operatorname{sign}(x)$ forces $x_1 = x_2$. The **elementary vectors** of $P$ are the conformally non-decomposable vectors of $C_r$ together with the ccND points of $P$. A set $G \subseteq C$ is a **conformal generating set** of a polyhedral cone $C$ if it is closed under positive scaling and every nonzero $x \in C$ is a conformal sum of finitely many elements of $G$. A **conformal generating set** of $P$ is a pair $(G_0, G_1)$ with $G_0$ a conformal generating set of $C_r$ and $G_1 \subseteq P$ such that every $x \in P$ is a conformal sum of finitely many elements of $G_0$ plus a conformal convex combination of finitely many elements of $G_1$.
 
 **Theorem.**
+
 1. *(Conformal decomposition.)* Every $x \in P$ can be written as
 
-$$x = \sum_{e \in E_0} e + \sum_{e \in E_1} \lambda_e\, e, \qquad \operatorname{sign}(e) \le \operatorname{sign}(x),\quad \lambda_e \ge 0,\quad \sum_{e \in E_1} \lambda_e = 1,$$
+    $$x = \sum_{e \in E_0} e + \sum_{e \in E_1} \lambda_e\, e, \qquad \operatorname{sign}(e) \le \operatorname{sign}(x),\quad \lambda_e \ge 0,\quad \sum_{e \in E_1} \lambda_e = 1,$$
 
-with $E_0$ a finite set of elementary vectors of $C_r$ and $E_1$ a nonempty finite set of ccND points of $P$; one can take $|E_0 \cup E_1| \le \dim P + 1$ and $|E_0 \cup E_1| \le |\operatorname{supp}(x)| + |\operatorname{supp}(Ax)| + 1$. There are finitely many ccND points.
+    with $E_0$ a finite set of elementary vectors of $C_r$ and $E_1$ a nonempty finite set of ccND points of $P$; one can take $|E_0 \cup E_1| \le \dim P + 1$ and $|E_0 \cup E_1| \le |\operatorname{supp}(x)| + |\operatorname{supp}(Ax)| + 1$. There are finitely many ccND points.
+
 2. *(Orthant characterization.)* For $x$ in a closed orthant $O$, $x$ is ccND in $P$ if and only if $x$ is a vertex of $P \cap O$.
-3. *(Minimality.)* For a polyhedral cone $C$ with set of elementary vectors $E$, every conformal generating set $G$ satisfies $E \subseteq G$. Hence the elementary vectors form the unique minimal conformal generating set, and likewise for a polyhedron.
+3. *(Minimality.)* For a polyhedral cone $C$ with set of elementary vectors $E$, every conformal generating set $G$ satisfies $E \subseteq G$. Hence the elementary vectors form the unique minimal conformal generating set. For a polyhedron $P$, every conformal generating set $(G_0, G_1)$ has the elementary vectors of $C_r$ in $G_0$ and the ccND points of $P$ in $G_1$. (The source asserts the polyhedron case "analogously", without defining generating sets of polyhedra.)
 
 ## Expansion
 

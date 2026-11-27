@@ -6,7 +6,7 @@
 
 ## Expansion
 
-Indexing the segments of $b$ by $\{1,\dots,n\}\setminus\{j\}$, removing $c_j$ aligns every $b_k$ with $c_k$, while removing $c_i$ with $i < j$ shifts the alignment between positions $i$ and $j$ so that $b_k$ is compared with $c_{k+1}$ there; each such comparison costs at least $H(b_k, c_k)$ by hypothesis, and similarly for $i > j$. The hypothesis says that orthologous segments are closer than paralogous ones, which holds when the duplications that created the segments preceded the speciation. Without fixed segment boundaries, the same principle is applied by deleting every window of length equal to the length difference and taking the minimizing position.
+Indexing the segments of $b$ by $\{1,\dots,n\}\setminus\{j\}$, removing $c_j$ aligns every $b_k$ with $c_k$, while removing $c_i$ with $i < j$ shifts the alignment between positions $i$ and $j$ so that $b_k$ is compared with $c_{k+1}$ there; each such comparison costs at least $H(b_k, c_k)$ by hypothesis, and similarly for $i > j$. The hypothesis says that orthologous segments are closer than paralogous ones, which is expected on average (not for every pair) when the duplications that created the segments preceded the speciation. Without fixed segment boundaries, the same principle is applied by deleting every window of length equal to the length difference and taking the minimizing position.
 
 ## Sources
 

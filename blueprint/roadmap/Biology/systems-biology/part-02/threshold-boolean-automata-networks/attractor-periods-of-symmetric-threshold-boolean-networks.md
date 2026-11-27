@@ -20,4 +20,4 @@ Both theorems follow from Lyapunov (energy) functionals. For the sequential mode
 
 ## Sources
 
-- J. Demongeot, E. Goles, M. Morvan, M. Noual, S. Sené, *Attraction basins as gauges of robustness against boundary conditions in biological complex systems*, PLoS ONE 5 (2010), e11793, "Preliminary definitions", "Threshold Boolean automata networks as a model of regulation networks dynamics" (Theorems 1–2, Proposition 1). <https://doi.org/10.1371/journal.pone.0011793> (PMCID: PMC2916819)
+- J. Demongeot, E. Goles, M. Morvan, M. Noual, S. Sené, *Attraction basins as gauges of robustness against boundary conditions in biological complex systems*, PLoS ONE 5 (2010), e11793, "Preliminary definitions", "Threshold Boolean automata networks as a model of regulation networks dynamics", "Original Mendoza & Alvarez-Buylla Network" (Theorems 1–2, Proposition 1, reduced network) and "Variation around the Original Mendoza & Alvarez-Buylla Network: the Toy Model". <https://doi.org/10.1371/journal.pone.0011793> (PMCID: PMC2916819)

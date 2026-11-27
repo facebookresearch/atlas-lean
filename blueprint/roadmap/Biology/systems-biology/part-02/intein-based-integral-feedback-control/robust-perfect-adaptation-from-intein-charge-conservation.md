@@ -4,7 +4,7 @@
 
 $$\varnothing \xrightarrow{\ \mu_i + \theta_i x_L\ } Z_i\qquad (i = 1,\dots,M),$$
 
-with $\mu = (\mu_i)$, $\theta = (\theta_i)$, at least one $\mu_i > 0$ and one $\theta_i > 0$, and all other controller reactions (splicing of complementary intein halves, binding, conversion, actuation of $X_1$) conserve the net charge $q^\top z$; there is no dilution of controller species.
+with $\mu = (\mu_i) \ge 0$, $\theta = (\theta_i) \ge 0$, such that $q^\top\mu$ and $q^\top\theta$ are nonzero and of opposite signs (for example $q^\top\mu > 0 > q^\top\theta$, as in the antithetic case), and all other controller reactions (splicing of complementary intein halves, binding, conversion, actuation of $X_1$) conserve the net charge $q^\top z$; there is no dilution of controller species.
 
 **Theorem.** If the closed loop is stable (converges to a steady state), then
 
@@ -18,7 +18,7 @@ In the stochastic setting, if the closed-loop Markov chain is ergodic, the stati
 
 ## Expansion
 
-Because every reaction other than setpoint and sensing leaves $q^\top z$ unchanged, $\frac{d}{dt}q^\top z = q^\top\mu + (q^\top\theta)\,x_L$. At a steady state the left side is zero, which fixes $x_L$ independently of everything downstream; this is the integral-feedback mechanism behind [perfect adaptation](../../integral-feedback-and-perfect-adaptation/has-perfect-adaptation.md). The antithetic integral motif is the special case $\mu_1, \theta_2 > 0$, all other $\mu_i, \theta_j = 0$, and $q = (1,-1,\dots)^\top$, which gives the setpoint $\mu_1/\theta_2$. In the stochastic case the same identity holds for expectations of the reaction propensities, so ergodicity gives the stationary mean. With dilution of controller species the adaptation is no longer exact but remains close when dilution is slow compared with the controller reactions.
+Because every reaction other than setpoint and sensing leaves $q^\top z$ unchanged, $\frac{d}{dt}q^\top z = q^\top\mu + (q^\top\theta)\,x_L$. At a steady state the left side is zero, which fixes $x_L$ independently of everything downstream; this is the integral-feedback mechanism behind [perfect adaptation](../../integral-feedback-and-perfect-adaptation/has-perfect-adaptation.md). The antithetic integral motif is the special case $\mu_1, \theta_2 > 0$, all other $\mu_i, \theta_j = 0$, and $q = (1,-1,\dots)^\top$, which gives the setpoint $\mu_1/\theta_2$. Without the sign condition the setpoint formula breaks down: if setpoint and sensing act only on an intein-free species, $q^\top\mu = q^\top\theta = 0$ and there is no integral action (the source's proof divides by $q^\top\theta$ without assuming it nonzero). In the stochastic case the same identity holds for expectations of the reaction propensities, so ergodicity gives the stationary mean. With dilution of controller species the adaptation is no longer exact but remains close when dilution is slow compared with the controller reactions.
 
 ## Depends on
 

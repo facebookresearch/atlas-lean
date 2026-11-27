@@ -1,6 +1,6 @@
 # Local degree rules for critical and redundant MDS nodes
 
-**Setting.** Let $G = (V, E)$ be a finite simple undirected graph, for example a protein interaction network. A set $M \subseteq V$ is *dominating* if every node is in $M$ or adjacent to a node of $M$; a *minimum dominating set* (MDS) is a dominating set of least cardinality. Over the family of all MDSs of $G$, a node $v$ is
+**Setting.** Let $G = (V, E)$ be a finite simple undirected graph, for example a protein interaction network. A set $M \subseteq V$ is *dominating* if every node is in $M$ or adjacent to a node of $M$; a *minimum dominating set* (MDS) is a dominating set whose size is the domination number of $G$. Over the family of all MDSs of $G$, a node $v$ is
 
 - *critical* if $v$ belongs to every MDS,
 - *redundant* if $v$ belongs to no MDS,
@@ -11,6 +11,11 @@
 **Proposition B (a node surrounded by critical nodes is redundant).** If a node $v$ has at least one neighbour and every neighbour of $v$ is critical, then $v$ is redundant.
 
 **Pre-processing scheme.** Apply Proposition A to every node, then Proposition B to every remaining node. The nodes so labeled are fixed in (critical) or out of (redundant) the integer linear program for the MDS, and only the remaining nodes need the exact per-node test: solve the MDS ILP once, then for each MDS node not yet labeled decide criticality, and for each non-MDS node not yet labeled decide redundancy, each by a further ILP with the node forced out or in. In scale-free graphs, where many nodes have degree $1$ and hubs tend to be critical, this removes most ILP solves and constraints.
+
+## Depends on
+
+- [Dominating set](../../../../GraphTheory/independence-and-domination/dominating-sets/is-dominating.md)
+- [Domination number](../../../../GraphTheory/independence-and-domination/dominating-sets/domination-number.md)
 
 ## Expansion
 

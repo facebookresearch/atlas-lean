@@ -14,15 +14,21 @@ The computation for $m$ series takes $O(m^2 n D)$ time.
 
 **Lemma (reflected walk).** If $Z_1, Z_2,\dots$ are i.i.d., $S_0 = 0$, $S_k = Z_1+\cdots+Z_k$, and $q_0 = 0$, $q_{k} = \max\{0, q_{k-1} + Z_k\}$, then $q_k$ has the same distribution as $\max\{S_0,\dots,S_k\}$.
 
-**Theorem.** Assume, under the null hypothesis of no association, that the products $X_iY_j$ entering each recursion are independent with mean $0$ and variance $\sigma^2 = \operatorname{Var}(X_1Y_1)$. Let $G(y) = \sqrt{2/\pi}\int_0^{y} e^{-t^2/2}\,dt$ for $y \ge 0$ be the distribution function of $|Z|$, $Z$ standard normal. Then, asymptotically as $n\to\infty$,
+**Theorem.** (1) (Boole bound) For every $x$,
 
-$$P\bigl(|\mathrm{LSA}| > x\bigr) \;\lesssim\; 2\,\bigl[n^2 - (n-D-1)(n-D)\bigr]\Bigl(1 - G\bigl(x\sqrt{n}/\sigma\bigr)\Bigr),$$
+$$P\bigl(|\mathrm{LSA}| > x\bigr) \le \sum_{|i-j|\le D}\Bigl[P\bigl(P_{i,j} > xn\bigr) + P\bigl(N_{i,j} > xn\bigr)\Bigr].$$
 
-where $n^2 - (n-D-1)(n-D)$ is the number of index pairs with $|i-j|\le D$; for standardized products ($\sigma = 1$) the bound is $2\,\bigl[n^2-(n-D-1)(n-D)\bigr]\bigl(1-G(x\sqrt n)\bigr)$.
+(2) (Limit of each term) Let $G(y) = \sqrt{2/\pi}\int_0^{y} e^{-t^2/2}\,dt$ for $y \ge 0$ be the distribution function of $|Z|$, $Z$ standard normal. If $Z_1, Z_2, \dots$ are i.i.d. with mean $0$ and variance $\sigma^2 \in (0,\infty)$ and $S_k = Z_1 + \cdots + Z_k$, then $P(\max_{k\le m} S_k \le \sigma\sqrt{m}\,y) \to G(y)$ uniformly in $y \ge 0$ as $m \to \infty$.
+
+Under the null hypothesis of no association, taking the products $X_iY_j$ along each diagonal to be i.i.d. with mean $0$ and variance $\sigma^2 = \operatorname{Var}(X_1Y_1)$ and replacing each term of (1) by the limit in (2) with $m = n$ gives the approximate p-value
+
+$$P\bigl(|\mathrm{LSA}| > x\bigr) \approx 2\,\bigl[n^2 - (n-D-1)(n-D)\bigr]\Bigl(1 - G\bigl(x\sqrt{n}/\sigma\bigr)\Bigr),$$
+
+where $n^2 - (n-D-1)(n-D)$ is the number of index pairs with $|i-j|\le D$. This is an approximation, not an asymptotic inequality: for fixed $x$ the true tail can decay more slowly in $n$ than the right-hand side (for i.i.d. standard normal $X_i, Y_i$ and $x = 1/2$, Cramér's theorem gives $P(|\mathrm{LSA}| > 1/2) \ge e^{-(0.1130 + o(1))n}$, while the right-hand side is $e^{-(0.125 + o(1))n}$). The source states it as an inequality (Theorem 4).
 
 ## Expansion
 
-The tail-event lemma is the definition of $\mathrm{LSA}$ rewritten: $|\mathrm{LSA}| > x$ iff $\max(\hat P,\hat N) > xn$ iff some $P_{i,j}$ or $N_{i,j}$ exceeds $xn$. Along each diagonal, $P_{i,j}$ is a Lindley (reflected random walk) recursion, so by the reflected-walk lemma it has the law of the running maximum of partial sums of at most $\min(i,j) \le n$ products. The Erdős–Kac (Nevzorov–Petrov) invariance principle for maxima of partial sums under the Lindeberg condition gives $P(\max_{k\le m} S_k \le \sigma\sqrt{m}\,y) \to G(y)$ uniformly in $y$, so $P(P_{i,j} > xn) \approx 1 - G(xn/(\sigma\sqrt{m})) \le 1 - G(x\sqrt n/\sigma)$ since $m \le n$. The same holds for $N_{i,j}$. Boole's inequality over the $2[n^2-(n-D-1)(n-D)]$ events gives the bound. It is conservative and asymptotic; the authors recommend at least about 30 time points.
+The tail-event lemma is the definition of $\mathrm{LSA}$ rewritten: $|\mathrm{LSA}| > x$ iff $\max(\hat P,\hat N) > xn$ iff some $P_{i,j}$ or $N_{i,j}$ exceeds $xn$. Along each diagonal, $P_{i,j}$ is a Lindley (reflected random walk) recursion, so by the reflected-walk lemma it has the law of the running maximum of partial sums of at most $\min(i,j) \le n$ products. Boole's inequality over the $2[n^2-(n-D-1)(n-D)]$ events gives (1). The Erdős–Kac invariance principle for maxima of partial sums of i.i.d. variables gives (2), and $1 - G(xn/(\sigma\sqrt{m})) \le 1 - G(x\sqrt n/\sigma)$ for $m \le n$. The invariance principle has an additive $o(1)$ error, so substituting the limit is a heuristic for each term, not a bound that tends to $0$; the authors recommend at least about 30 time points.
 
 ## Sources
 

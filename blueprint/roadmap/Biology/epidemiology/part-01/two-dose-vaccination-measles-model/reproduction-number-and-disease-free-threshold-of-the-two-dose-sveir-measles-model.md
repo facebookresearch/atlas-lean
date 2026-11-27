@@ -28,11 +28,11 @@ $$
 
 **Theorem.** The disease-free equilibrium is locally asymptotically stable if $\mathcal R_0 < 1$ and unstable if $\mathcal R_0 > 1$.
 
-Increasing either dose rate $\eta$ or $\sigma$ lowers $S^0$ and hence $\mathcal R_0$. With the parameters fitted to measles case data in Bangladesh for 2000 to 2019, $\mathcal R_0 \approx 1.44$; the normalized sensitivity index of $\mathcal R_0$ with respect to $\beta$ is $1$, the largest in magnitude, and with respect to $\eta$ it is the second largest.
+Increasing the first-dose rate $\eta$ lowers $S^0$ and hence $\mathcal R_0$, and so does increasing the second-dose rate $\sigma$ when $\rho > 0$ ($\partial S^0/\partial\sigma$ has the sign of $-\rho\eta$). With the parameters fitted to measles case data in Bangladesh for 2000 to 2019, the formula gives $\mathcal R_0 \approx 2.2$ (the source prints $\approx 1.44$, although its own displayed arithmetic evaluates to $2.22$); the normalized sensitivity index of $\mathcal R_0$ with respect to $\beta$ is $1$, the largest in magnitude, and with respect to $\eta$ it is the second largest.
 
 ## Depends on
 
-- [Next-generation matrix and the basic reproduction number](../../next-generation-matrix-and-the-basic-reproductio/README.md)
+- [Basic reproduction number of the next-generation matrix](../../next-generation-matrix-and-the-basic-reproductio/r0.md)
 - [$R_0$ as a threshold for the linearized infected subsystem](../../next-generation-matrix-and-the-basic-reproductio/is-hurwitz-sub-iff-r0-lt-one.md)
 
 ## Expansion

@@ -11,6 +11,7 @@ so $P_0$ is the Boltzmann distribution and $D_0$ the expected distance of the un
 $$P_\beta(S) > P_0(S) \iff d(S,q) < d_0, \qquad P_\beta(S) < P_0(S) \iff d(S,q) > d_0 .$$
 
 **Theorem.**
+
 1. $D_\beta \le D_0$ for every $\beta > 0$.
 2. More generally, $\beta \mapsto D_\beta$ is nonincreasing on $[0,\infty)$, strictly decreasing unless $d(\cdot,q)$ is constant on all secondary structures; in fact $\frac{d}{d\beta}D_\beta = -\operatorname{Var}_{P_\beta}\bigl(d(S,q)\bigr)$.
 

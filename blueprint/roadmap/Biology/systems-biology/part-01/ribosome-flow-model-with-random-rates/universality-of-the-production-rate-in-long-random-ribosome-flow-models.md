@@ -16,7 +16,7 @@ Consequently $R$ is concave in the rates and $\partial R/\partial\lambda_i > 0$ 
 
 $$\lambda_{\max}(T_n)\to 2\,\|X^{-1/2}\|_\infty\qquad\text{and}\qquad R_n\to\big(2\,\|X^{-1/2}\|_\infty\big)^{-2}\qquad (n\to\infty).$$
 
-The limit depends on the rate distribution only through $\|X^{-1/2}\|_\infty = (\operatorname{ess\,inf}X)^{-1/2}$, the slowest rate that occurs with positive probability.
+The limit depends on the rate distribution only through $\|X^{-1/2}\|_\infty = (\operatorname{ess\,inf}X)^{-1/2}$, where the essential infimum is the largest $\delta$ with $P(X < \delta) = 0$.
 
 **Finite-$n$ bound.** For $\epsilon > 0$ let $a(\epsilon) = P\big(X^{-1/2}\ge\|X^{-1/2}\|_\infty - \epsilon\big)\in(0,1]$. For integers $k < n$,
 

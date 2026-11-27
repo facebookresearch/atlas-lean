@@ -11,14 +11,15 @@ $$\dot L = \xi\beta(M+C)L - \varphi\gamma PL - \mu L^2,\qquad \dot P = \theta L 
 1. $E_0 = (0,0,0,0)$, unstable since its Jacobian has the eigenvalue $r - \sigma > 0$.
 2. The locust-free equilibrium
 
-$$E_1 = \Big(\frac{hEK(r-\sigma)}{hEr + \sigma^2},\ \frac{K\sigma^2(r-\sigma)}{r(hEr+\sigma^2)},\ 0,\ 0\Big),$$
+    $$E_1 = \Big(\frac{hEK(r-\sigma)}{hEr + \sigma^2},\ \frac{K\sigma^2(r-\sigma)}{r(hEr+\sigma^2)},\ 0,\ 0\Big),$$
 
-with total crop $C+M = K(r-\sigma)/r$. It is always unstable: the locust direction has eigenvalue $\xi\beta K(r-\sigma)/r > 0$, so locusts invade any locust-free crop.
+    with total crop $C+M = K(r-\sigma)/r$. It is always unstable: the locust direction has eigenvalue $\xi\beta K(r-\sigma)/r > 0$, so locusts invade any locust-free crop.
+
 3. The coexistence equilibrium $E_2 = (C^*, M^*, L^*, P^*)$ with
 
-$$L^* = \frac{\beta\theta_0K\xi(r-\sigma)}{\beta^2\theta_0K\xi + \gamma\theta r\varphi + \theta_0\mu r},\qquad P^* = \frac{\theta}{\theta_0}L^*,\qquad C^* + M^* = \frac{K}{r}(r - \sigma - \beta L^*),$$
+    $$L^* = \frac{\beta\theta_0K\xi(r-\sigma)}{\beta^2\theta_0K\xi + \gamma\theta r\varphi + \theta_0\mu r},\qquad P^* = \frac{\theta}{\theta_0}L^*,\qquad C^* + M^* = \frac{K}{r}(r - \sigma - \beta L^*),$$
 
-which is positive whenever $r > \sigma$; its local stability is decided by the Routh–Hurwitz conditions on the quartic characteristic polynomial of the Jacobian.
+    which is positive whenever $r > \sigma$; its local stability is decided by the Routh–Hurwitz conditions on the quartic characteristic polynomial of the Jacobian.
 
 ## Expansion
 

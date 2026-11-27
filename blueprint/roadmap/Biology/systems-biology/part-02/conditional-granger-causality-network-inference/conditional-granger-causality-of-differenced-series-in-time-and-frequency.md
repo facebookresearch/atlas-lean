@@ -7,16 +7,15 @@
 
 **Definition.** The conditional Granger causality from $Y$ to $X$ given $Z$ is
 
-$$F_{Y \to X \mid Z} = \ln \frac{\operatorname{var}(\varepsilon_{1t})}{\operatorname{var}(\varepsilon_{3t})} .$$
+$$F_{Y \to X \mid Z} = \ln \frac{\det \Sigma_1}{\det \Sigma_3},$$
 
-**Properties.**
-1. $F_{Y\to X\mid Z} \ge 0$, because the second model nests the first; $F_{Y\to X\mid Z} = 0$ iff the past of $Y$ does not improve the linear prediction of $X$ once the pasts of $X$ and $Z$ are known, in particular when the influence of $Y$ on $X$ is entirely mediated by $Z$ (all coefficients of past $Y$ in the $X$ equation vanish).
-2. **Spectral decomposition.** After normalizing both models so that their noise covariance matrices become block diagonal and Fourier transforming, one obtains a frequency-resolved conditional causality $f_{Y\to X\mid Z}(\lambda)$, $\lambda \in [-\pi,\pi]$. The transfer functions of the differenced models differ from those of the corresponding ARMA models by the common factor $\Delta(\lambda,k)$, the Fourier transform of $\Delta^k$, which cancels; hence the ARIMA and ARMA formulations give the same frequency-domain causality.
-3. **Kolmogorov identity.** Under the usual conditions for Geweke's decomposition, integrating the spectral measure over all frequencies returns the time-domain value, $F_{Y\to X\mid Z} = \frac{1}{2\pi}\int_{-\pi}^{\pi} f_{Y\to X\mid Z}(\lambda)\,d\lambda$.
+where $\Sigma_1$ and $\Sigma_3$ are the covariance matrices of the prediction errors $\varepsilon_{1t}$ and $\varepsilon_{3t}$ (for scalar $X$, the ratio of their variances).
+
+**Property.** $F_{Y\to X\mid Z} \ge 0$, because the second model nests the first; $F_{Y\to X\mid Z} = 0$ iff the past of $Y$ does not improve the linear prediction of $X$ once the pasts of $X$ and $Z$ are known, in particular when the influence of $Y$ on $X$ is entirely mediated by $Z$ (all coefficients of past $Y$ in the $X$ equation vanish).
 
 ## Expansion
 
-Granger's notion is predictive: $Y$ causes $X$ if past $Y$ reduces the variance of the one-step prediction error of $X$. Pairwise analysis cannot distinguish direct from mediated influence, which motivates conditioning on $Z$: the ratio of residual variances compares the best predictions of $X$ with and without the past of $Y$, both already using the past of $Z$. Differencing removes polynomial trends and unit roots, so the measure applies to non-stationary expression series without changing which interactions are present. In practice the statistic is evaluated with bootstrap confidence intervals, and an interaction is declared when the interval excludes zero; the frequency-domain version reveals at which time scales an interaction acts.
+Granger's notion is predictive: $Y$ causes $X$ if past $Y$ reduces the variance of the one-step prediction error of $X$. Pairwise analysis cannot distinguish direct from mediated influence, which motivates conditioning on $Z$: the ratio of residual variances compares the best predictions of $X$ with and without the past of $Y$, both already using the past of $Z$. Differencing removes polynomial trends and unit roots, so the measure applies to non-stationary expression series without changing which interactions are present. In practice the statistic is evaluated with bootstrap confidence intervals, and an interaction is declared when the interval excludes zero; the frequency-domain version reveals at which time scales an interaction acts. The source also normalizes both models so that their noise covariance matrices become block diagonal and Fourier transforms them (its Eqs. (13)–(14)), leading to Geweke's frequency-resolved conditional causality; the transfer functions of the differenced models differ from those of the corresponding ARMA models by the common factor $\Delta(\lambda,k)$, the Fourier transform of $\Delta^k$, which cancels, so the ARIMA and ARMA formulations give the same frequency-domain causality, whose integral over $[-\pi,\pi]$ divided by $2\pi$ returns the time-domain value under the usual conditions for Geweke's decomposition. The source gives no formula for that spectral measure, so these remarks are not part of the statement.
 
 ## Sources
 

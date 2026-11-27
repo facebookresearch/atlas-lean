@@ -9,6 +9,7 @@ $$\sum_{v \in V} f_v\Big(\Big|\mathrm{cov}(v) - \sum_{P \ni v} e(P)\Big|\Big) + 
 The arc-only variant (UTEJC) drops the node terms. Replacing each node $v$ by an arc $(v_{\mathrm{in}}, v_{\mathrm{out}})$ with coverage $\mathrm{cov}(v)$ and penalty $f_v$, and each arc $(u,v)$ by $(u_{\mathrm{out}}, v_{\mathrm{in}})$, puts the optimal solutions of UTEC on $G$ in bijection with those of UTEJC on the new graph.
 
 **Offset network.** For UTEJC on $G$ build a flow network $N^*$ (flows satisfy, at each node $w$, out-flow minus in-flow $= q_w$, and $0 \le x \le$ capacity):
+
 1. keep every arc $(u,v) \in E$ with infinite capacity and cost $f_{uv}$, and add the reverse arc $(v,u)$ with capacity $\mathrm{cov}(u,v)$ and cost $f_{uv}$;
 2. add a super-source $s_0$ and super-sink $t_0$, arcs $(s_0, s)$ for $s \in S$, $(t, t_0)$ for $t \in T$ and $(t_0, s_0)$, all of infinite capacity and zero cost;
 3. for each $v \in V$ let $d_v = \sum_{w} \mathrm{cov}(v,w) - \sum_{u} \mathrm{cov}(u,v)$; if $d_v > 0$ add an arc $(v, t^*)$ of capacity $d_v$ and zero cost, if $d_v < 0$ add an arc $(s^*, v)$ of capacity $-d_v$ and zero cost; give all original nodes supply $0$ and set the supplies of $s^*$ and $t^*$ to $-\sum_{d_v<0} d_v$ and $-\sum_{d_v > 0} d_v$ respectively, so these arcs must be saturated.
@@ -21,7 +22,7 @@ $$x_{uv} = \mathrm{cov}(u,v) + x^*_{uv} - x^*_{vu} \ \ (\ge 0).$$
 
 Then (1) $x$ is conserved at every node of $V \setminus (S \cup T)$; (2) the total flow leaving $S$ equals the total flow entering $T$; and (3) every decomposition of $x$ into weighted source-to-sink paths is an optimal solution of UTEJC on $G$. Consequently UTEC is solvable in polynomial time by convex-cost minimum-cost flow, and a decomposition into at most $|E|$ paths can be found in $O(|V|\,|E|)$ time.
 
-Minimizing the number of paths in a flow decomposition is NP-hard in the strong sense even on DAGs, while every flow on $G$ decomposes into at most $|E| - |V| + 2$ paths; any decomposition heuristic (for example repeatedly removing a path of maximum bottleneck) keeps optimality of the coverage fit.
+Minimizing the number of paths in a flow decomposition is NP-hard in the strong sense even on DAGs, while every flow on $G$ decomposes into at most $|E| - |V| + |S| + |T|$ paths (the single-source, single-sink bound $|E| - |V| + 2$ applied to the network with the super-source and super-sink); any decomposition heuristic (for example repeatedly removing a path of maximum bottleneck) keeps optimality of the coverage fit.
 
 ## Expansion
 

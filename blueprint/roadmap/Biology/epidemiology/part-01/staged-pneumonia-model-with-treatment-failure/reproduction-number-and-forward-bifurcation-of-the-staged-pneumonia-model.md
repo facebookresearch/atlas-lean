@@ -14,12 +14,21 @@ The nonnegative orthant is forward invariant, and $N$ satisfies $\dot N = \Lambd
 
 1. The pneumonia-free equilibrium is $E_0 = (\Lambda/\mu, 0, 0, 0, 0)$, and the next-generation reproduction number is
 
-$$R_0 = R_1 + R_2, \qquad R_1 = \frac{\beta_1 \alpha}{(\alpha+\mu) k_1}, \qquad R_2 = \frac{\beta_2\, \alpha\, \big((1-p)u\delta + (1-u)\xi\big)}{(\alpha+\mu)\, k_1\, k_2},$$
+    $$R_0 = R_1 + R_2, \qquad R_1 = \frac{\beta_1 \alpha}{(\alpha+\mu) k_1}, \qquad R_2 = \frac{\beta_2\, \alpha\, \big((1-p)u\delta + (1-u)\xi\big)}{(\alpha+\mu)\, k_1\, k_2},$$
 
-where $R_1$ and $R_2$ are the secondary infections produced while in stage 1 and stage 2.
+    where $R_1$ and $R_2$ are the secondary infections produced while in stage 1 and stage 2.
+
 2. $E_0$ is locally asymptotically stable if $R_0 < 1$ and unstable if $R_0 > 1$.
 3. At $R_0 = 1$ the system undergoes a forward (transcritical) bifurcation: no endemic equilibrium bifurcates into $R_0 < 1$, and for $R_0 > 1$ close to $1$ the endemic equilibrium is positive and locally asymptotically stable. Backward bifurcation does not occur for any parameter values.
 4. $R_0$ is nonincreasing in the treatment success probability $p$, strictly decreasing when $\beta_2 u \delta > 0$.
+
+## Depends on
+
+- [Basic reproduction number of the next-generation matrix](../../next-generation-matrix-and-the-basic-reproductio/r0.md)
+
+## Proof depends on
+
+- [$R_0$ as a threshold for the linearized infected subsystem](../../next-generation-matrix-and-the-basic-reproductio/is-hurwitz-sub-iff-r0-lt-one.md)
 
 ## Expansion
 

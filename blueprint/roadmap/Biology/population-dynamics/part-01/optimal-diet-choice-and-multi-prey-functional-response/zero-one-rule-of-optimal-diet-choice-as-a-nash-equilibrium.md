@@ -1,6 +1,6 @@
 # Zero-one rule of optimal diet choice as a Nash equilibrium
 
-**Model.** A predator repeatedly searches microhabitats. Each search takes time $\tau_s > 0$ and finds a prey of type $1$ with probability $p_1$, of type $2$ with probability $p_2$, and nothing otherwise ($p_1 + p_2 \le 1$, probabilities constant in time). On encountering type $i$ the predator attacks with probability $q_i\in[0,1]$; an attack costs handling time $h_i > 0$ and yields energy $e_i > 0$. By renewal theory the long-run energy intake rate is mean energy per cycle over mean cycle length:
+**Model.** A predator repeatedly searches microhabitats. Each search takes time $\tau_s > 0$ and finds a prey of type $1$ with probability $p_1$, of type $2$ with probability $p_2$, and nothing otherwise ($p_1, p_2 > 0$, $p_1 + p_2 \le 1$, probabilities constant in time). On encountering type $i$ the predator attacks with probability $q_i\in[0,1]$; an attack costs handling time $h_i > 0$ and yields energy $e_i > 0$. By renewal theory the long-run energy intake rate is mean energy per cycle over mean cycle length:
 
 $$R(q_1, q_2) = \frac{p_1q_1e_1 + p_2q_2e_2}{\tau_s + p_1q_1h_1 + p_2q_2h_2},$$
 

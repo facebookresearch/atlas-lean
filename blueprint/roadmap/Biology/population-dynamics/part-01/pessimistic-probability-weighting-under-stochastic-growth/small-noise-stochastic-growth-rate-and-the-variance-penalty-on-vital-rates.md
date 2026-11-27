@@ -6,15 +6,15 @@ $$a = \lim_{n \to \infty} \frac{1}{n} \log \big\lvert \mathbf A_n \cdots \mathbf
 
 for any nonnegative nonzero initial age vector $\zeta$; under weak ergodicity the limit does not depend on $\zeta$, and a resident homozygote resists invasion by a mutant allele when its $a$ exceeds that of the heterozygote.
 
-**Small-noise approximation.** For fluctuations of the matrix entries that are small relative to their means and serially uncorrelated,
+**Small-noise approximation.** For serially independent environments, as the scale of the fluctuations of the matrix entries tends to $0$, up to an error $o(\sigma^2)$ in the noise variance $\sigma^2$,
 
 $$a \approx \log \tilde\lambda - \frac{1}{2 \tilde\lambda^2 (\tilde\nu^{\mathsf T} \tilde\omega)^2}\, (\tilde\nu \otimes \tilde\nu)^{\mathsf T}\, \mathbf C\, (\tilde\omega \otimes \tilde\omega),$$
 
-where $\mathbf C$ is the covariance matrix of the vectorized entries of $\mathbf A$. If only one entry $A_{ij}$ fluctuates, with variance $\sigma_{ij}^2$,
+where $\mathbf C = \mathbb E\big[(\mathbf A - \tilde{\mathbf A}) \otimes (\mathbf A - \tilde{\mathbf A})\big]$, whose entry in row $(i,k)$ and column $(j,l)$ is $\operatorname{Cov}(A_{ij}, A_{kl})$, so that $(\tilde\nu\otimes\tilde\nu)^{\mathsf T}\mathbf C(\tilde\omega\otimes\tilde\omega) = \mathbb E\big[(\tilde\nu^{\mathsf T}(\mathbf A - \tilde{\mathbf A})\tilde\omega)^2\big]$. (The source describes $\mathbf C$ loosely; with $\mathbf C$ the covariance matrix of $\operatorname{vec}\mathbf A$ the quadratic form would instead be $(\tilde\omega\otimes\tilde\nu)^{\mathsf T}\mathbf C(\tilde\omega\otimes\tilde\nu)$.) If only one entry $A_{ij}$ fluctuates, with variance $\sigma_{ij}^2$, the approximation reads
 
 $$a \approx \log \tilde\lambda - \frac{1}{2 \tilde\lambda^2} \Big( \frac{\partial \tilde\lambda}{\partial A_{ij}} \Big)^2 \sigma_{ij}^2, \qquad \frac{\partial \tilde\lambda}{\partial A_{ij}} = \tilde\nu_i \tilde\omega_j \quad (\tilde\nu^{\mathsf T}\tilde\omega = 1).$$
 
-**Variance penalty.** Hold the mean matrix fixed. Since the correction term is nonpositive and vanishes only when $\sigma_{ij} = 0$ (given $\partial\tilde\lambda/\partial A_{ij} \ne 0$), among strategies with the same mean value of a vital rate, fitness strictly decreases with its variance. For example, three fertility lotteries with common mean $1.5$ and standard deviations $0$, $0.5$ and $1$ have strictly decreasing fitness in that order.
+**Variance penalty.** Hold the mean matrix fixed. Since the correction term is nonpositive and vanishes only when $\sigma_{ij} = 0$ (given $\partial\tilde\lambda/\partial A_{ij} \ne 0$), among strategies with the same mean value of a vital rate, the small-noise approximation of the fitness strictly decreases with its variance. For example, the fertility lotteries of the source's Table 1 (a point mass at $1.5$, equal chances of $1$ and $2$, equal chances of $0.5$ and $2.5$; standard deviations $0$, $0.5$ and $1$) have strictly decreasing approximate fitness in that order, each being a mean-preserving spread of the previous one. The exact $a$ depends on the whole distribution, not only on its variance: for the Leslie matrix with first row $(F, 0.5)$ and subdiagonal $0.5$, a fertility with mean $1.5$ and standard deviation $1$ concentrated near $1.468$ with a rare large value can give a larger $a$ than equal chances of $1$ and $2$.
 
 ## Expansion
 

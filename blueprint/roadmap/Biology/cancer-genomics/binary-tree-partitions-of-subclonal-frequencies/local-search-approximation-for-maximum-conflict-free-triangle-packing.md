@@ -6,7 +6,7 @@
 
 **Theorem.** For every $\delta > 0$ there is a constant $t$ such that the local search above runs in polynomial time and returns a conflict-free set of size at least $(2/3 - \delta)\,\mathrm{OPT}$, where $\mathrm{OPT}$ is the maximum size of a conflict-free set of triangles of $L$.
 
-Moreover, if a max-BTP solution on $m$ elements has $\Delta$ triangles, a binary tree partition of $L$ augmented by $m - 1 - 2\Delta$ additional (auxiliary) nodes can be constructed.
+Moreover, if a conflict-free set of triangles of $L$ ($|L| = n$) has $\Delta$ triangles, these extend to a complete rooted binary tree satisfying CSP whose nodes are the elements of $L$ plus $n - 1 - 2\Delta$ auxiliary nodes of positive weight (possibly above $1$); it is a binary tree partition of $L$ together with the auxiliary weights when the roots of the triangle forest's components sum to at most $1$. (For $L = \{0.6, 0.6\}$ the only auxiliary node would weigh $1.2$; the source states the claim without this condition.)
 
 ## Depends on
 

@@ -3,6 +3,7 @@
 **Models.** A PWM of width $m$ is a matrix $M = [M(\alpha,i)]$ over the alphabet $\{A,C,G,T\}$; a word $\omega = \omega_1\cdots\omega_m$ scores $S(\omega,M) = \sum_{i=1}^m M(\omega_i, i)$. A threshold $t$ defines the binding-site model (word set) $\Omega(M,t) = \{\omega : S(\omega,M) \ge t\}$, with P-value $P(M,t) = \sum_{\omega\in\Omega(M,t)}P(\omega)$ under an i.i.d. background model.
 
 **Invariances.**
+
 1. Appending zero columns to either end of a PWM changes neither its score distribution nor any P-value.
 2. If the background satisfies $p(A) = p(T)$ and $p(C) = p(G)$, the reverse-complement PWM $\tilde M$ ($\tilde M(A,i) = M(T,m-i+1)$, $\tilde M(C,i) = M(G,m-i+1)$, etc.) has the same score distribution and P-values.
 
@@ -16,7 +17,9 @@ $$J_2(\Omega_1,\Omega_2) = \max_{\text{shifts } i}\max\big\{J_1^{(i)}(\Omega_1,\
 
 over all relative shifts and both orientations of the second model.
 
-**Theorem.** $D_2(\Omega_1,\Omega_2) = 1 - J_2(\Omega_1,\Omega_2)$ is a metric on the space of binding-site models given by PWMs with thresholds at fixed P-value levels.
+**Theorem.** Assume an i.i.d. background with $p(A) = p(T)$, $p(C) = p(G)$ and every letter of positive probability. Then $D_2(\Omega_1,\Omega_2) = 1 - J_2(\Omega_1,\Omega_2)$ is a pseudometric on PWM-threshold pairs (with thresholds at fixed P-value levels), and a metric on binding-site models identified up to zero-column padding and reverse complement.
+
+Without the strand-symmetry condition $D_2$ need not be symmetric: with $p(A) = 0.7$, $p(C) = p(G) = p(T) = 0.1$, $\Omega_1 = \{AA, AC\}$ and $\Omega_2 = \{TT\}$, one gets $D_2(\Omega_1,\Omega_2) = 0.125$ but $D_2(\Omega_2,\Omega_1) = 0.5$. The source states the theorem without this hypothesis.
 
 ## Depends on
 

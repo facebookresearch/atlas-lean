@@ -2,7 +2,7 @@
 
 Work in a dynamical causal network with transition $v_{t-1}\prec v_t$ and cause/effect repertoires $\pi$ obtained by causal marginalization.
 
-**Partitions.** A partition of an occurrence $x_{t-1}$ together with the nodes $Y_t$ it constrains is $\psi = \{(x_{1,t-1}, Y_{1,t}),\dots,(x_{m,t-1}, Y_{m,t})\}$ where the $x_{j,t-1}$ partition $x_{t-1}$ and the $Y_{j,t}\subseteq Y_t$ are disjoint (possibly empty). The partitioned effect repertoire is
+**Partitions.** A permissible partition of an occurrence $x_{t-1}$ together with the nodes $Y_t$ it constrains is either $\psi = \{(x_{1,t-1}, Y_{1,t}),\dots,(x_{m,t-1}, Y_{m,t})\}$ with $2 \le m \le \lvert x_{t-1}\rvert$, where the $x_{j,t-1}$ partition $x_{t-1}$ into nonempty parts and the $Y_{j,t}\subseteq Y_t$ are disjoint (possibly empty), or the single cut $\psi = \{(x_{t-1}, \varnothing)\}$. For cause repertoires the roles are exchanged: $2 \le m \le \lvert y_t\rvert$ parts of $y_t$, or the single cut $\{(\varnothing, y_t)\}$. The partitioned effect repertoire is
 
 $$\pi(Y_t\mid x_{t-1})_\psi = \prod_{j=1}^m \pi(Y_{j,t}\mid x_{j,t-1})\times \pi\Big(Y_t\setminus \textstyle\bigcup_j Y_{j,t}\Big),$$
 
@@ -20,11 +20,9 @@ $$\alpha_e^{\max}(x_{t-1}) = \max_{y_t\subseteq v_t}\alpha_e(x_{t-1}, y_t),\qqua
 
 including the empty set, so $\alpha^{\max}\ge 0$. If $\alpha^{\max} = 0$ the occurrence is reducible and has no actual cause or effect. Otherwise the **actual effect** of $x_{t-1}$ is a $y_t$ attaining $\alpha_e^{\max}(x_{t-1})$ that is minimal (no proper subset attains the same value), and the **actual cause** of $y_t$ is a minimal $x_{t-1}$ attaining $\alpha_c^{\max}(y_t)$. If several minimal maximisers exist the actual cause (or effect) is undetermined among them. The *causal account* of the transition is the set of all such causal links, in both directions, with strength $\alpha^{\max}$; a link $x_{t-1}\to y_t$ does not imply $x_{t-1}\leftarrow y_t$.
 
-**Linear threshold units.** If $Y_t$ is a binary unit with $n$ equivalent inputs that turns on iff at least $k$ inputs are on, then for the occurrence $\{Y_t = 1\}$ the actual cause is a set of exactly $k$ inputs in state $1$ (a minimally sufficient set); when more than $k$ inputs are on, which such set is the actual cause is undetermined by symmetry. Inputs in state $0$ lower the probability of $\{Y_t = 1\}$ and are part of no actual cause or effect.
-
 ## Expansion
 
-The five requirements are realization (only occurrences in a transition of positive probability qualify), composition (all sub-occurrences are evaluated), information ($\rho > 0$), integration ($\alpha > 0$: a joint occurrence must constrain its target beyond what its parts do independently), and exclusion (one maximal, minimal cause and effect). For a majority gate on four inputs with transition $ABCD = 1110 \to M = 1$, each on input and every combination of them has an actual effect on $\{M = 1\}$, but the only actual cause of $\{M = 1\}$ is $\{ABC = 111\}$; $\{D = 0\}$ contributes nothing.
+The five requirements are realization (only occurrences in a transition of positive probability qualify), composition (all sub-occurrences are evaluated), information ($\rho > 0$), integration ($\alpha > 0$: a joint occurrence must constrain its target beyond what its parts do independently), and exclusion (one maximal, minimal cause and effect). For a majority gate on four inputs with transition $ABCD = 1110 \to M = 1$, each on input and every combination of them has an actual effect on $\{M = 1\}$, but the only actual cause of $\{M = 1\}$ is $\{ABC = 111\}$; $\{D = 0\}$ contributes nothing. More generally (the source's Theorem 1, proved in its Appendix B, a result about this definition rather than part of it): if $V_t = \{Y_t\}$ is a binary unit whose $n$ equivalent inputs form $V_{t-1}$, and $Y_t$ turns on iff at least $k$ inputs are on, with $1 \le k \le n$ and at least $k$ inputs on, then the actual cause of $\{Y_t = 1\}$ is a set of exactly $k$ inputs in state $1$ (a minimally sufficient set), undetermined among such sets by symmetry when more than $k$ inputs are on; inputs in state $0$ lower the probability of $\{Y_t = 1\}$ and are part of no actual cause or effect. For $k = 0$ the unit is always on and $\{Y_t = 1\}$ has no actual cause.
 
 ## Depends on
 

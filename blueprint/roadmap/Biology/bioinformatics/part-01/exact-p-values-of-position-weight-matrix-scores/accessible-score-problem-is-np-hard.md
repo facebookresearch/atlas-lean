@@ -6,7 +6,7 @@
 
 **Theorem 1.** ACCESSIBLE SCORE is NP-hard, already over a two-letter alphabet.
 
-Consequently the support of the background score distribution, on which every exact p-value algorithm works, can have size up to $|\Sigma|^m$, and exact p-value computation is in general only pseudo-polynomial (polynomial in $m$ and in the range of attainable scores).
+Hence, unless P = NP, neither the score-to-P-value problem (when every word has positive probability) nor the P-value-to-threshold problem (under a uniform background) has a polynomial-time algorithm. The known dynamic programmes take time proportional to $m$ times the number of attainable scores, which can be as large as $|\Sigma|^m$.
 
 ## Depends on
 

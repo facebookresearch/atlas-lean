@@ -8,7 +8,7 @@ E' &= \lambda_c S + (1-\varepsilon)\lambda_c V - (\sigma_c + \mu) E, & I_a' &= \
 I_s' &= \sigma_c \psi E - (\mu + \delta_c + \gamma_2) I_s, & R' &= \gamma_1 I_a + \gamma_2 I_s - (\mu + \kappa_c) R.
 \end{aligned}$$
 
-Vaccination at rate $\nu$ with waning rate $\omega$ gives a **leaky** vaccine of efficacy $\varepsilon \in [0,1]$; $\psi$ is the symptomatic fraction and $\eta$ the relative infectiousness of asymptomatics. Write $k_3 = \mu + \sigma_c$, $k_4 = 1 - \psi$, $k_5 = \mu + \delta_c + \gamma_1$, $k_6 = \mu + \delta_c + \gamma_2$.
+Vaccination at rate $\nu$ with waning rate $\omega$ gives a **leaky** vaccine of efficacy $0 < \varepsilon < 1$, with $\pi, \mu, \beta_c, \sigma_c > 0$, the other rates $\ge 0$ and $\psi \in [0,1]$; $\psi$ is the symptomatic fraction and $\eta$ the relative infectiousness of asymptomatics. Write $k_3 = \mu + \sigma_c$, $k_4 = 1 - \psi$, $k_5 = \mu + \delta_c + \gamma_1$, $k_6 = \mu + \delta_c + \gamma_2$.
 
 **Theorem.** The COVID-free equilibrium is
 
@@ -24,11 +24,16 @@ $$\vartheta_c = \frac{1}{\varepsilon}\left(1 - \frac{1}{R_\triangle}\right),$$
 
 which is achievable only if $\varepsilon \ge 1 - 1/R_\triangle$.
 
-**Endemic equilibria.** The endemic force of infection $\lambda_c^{**}$ solves $m_2 \lambda^2 + m_1 \lambda + m_0 = 0$ with $m_2 > 0$ and $m_0 = k_3 k_5 k_6 (\mu + \omega + \nu)(1 - R_C)$. So there is a unique endemic equilibrium when $R_C > 1$, while for $R_C < 1$ two endemic equilibria exist when $m_1 < 0$ and the discriminant is positive: the leaky vaccine together with loss of immunity can produce a backward bifurcation, in which case $R_C < 1$ alone does not guarantee elimination. For the TB-only sub-model the analogous threshold is $R_T = \beta_t \sigma_t / \big((\mu + \delta_t + \gamma_3)(\mu + \delta_t + \gamma_4)\big)$.
+**Endemic equilibria.** The endemic force of infection $\lambda_c^{**}$ solves $m_2 \lambda^2 + m_1 \lambda + m_0 = 0$ with $m_2 > 0$ and $m_0 = k_3 k_5 k_6 (\mu + \omega + \nu)(1 - R_C)$. So there is a unique endemic equilibrium when $R_C > 1$, while for $R_C < 1$ two endemic equilibria exist when $m_1 < 0$ and the discriminant is positive: the leaky vaccine together with loss of immunity can produce a backward bifurcation, in which case $R_C < 1$ alone does not guarantee elimination. For the TB-only sub-model, with latent $L$ and active $A$ tuberculosis, $L' = \lambda_t S - (\sigma_t + \mu + \gamma_3)L$ and $A' = \sigma_t L - (\mu + \delta_t + \gamma_4)A$ (transmission rate $\beta_t$, progression rate $\sigma_t$, TB death rate $\delta_t$, treatment rates $\gamma_3, \gamma_4$), the analogous threshold is $R_T = \beta_t \sigma_t / \big((\sigma_t + \mu + \gamma_3)(\mu + \delta_t + \gamma_4)\big)$; the source prints $\mu + \delta_t + \gamma_3$ as the first factor, a misprint its own proof of Theorem 6 does not use.
 
 ## Depends on
 
 - [Basic reproduction number of the next-generation matrix](../../next-generation-matrix-and-the-basic-reproductio/r0.md)
+
+## Proof depends on
+
+- [$R_0$ as a threshold for the linearized infected subsystem](../../next-generation-matrix-and-the-basic-reproductio/is-hurwitz-sub-iff-r0-lt-one.md)
+- [Unstable mode of the infected subsystem exactly when $R_0 > 1$](../../next-generation-matrix-and-the-basic-reproductio/exists-re-pos-iff-one-lt-r0.md)
 
 ## Expansion
 

@@ -4,18 +4,26 @@
 
 **Edge score.** For an edge between contigs $c_i, c_j$ with estimated gap $d$ (a maximum likelihood gap estimate from the observed links), define two scores in $[0,1]$:
 
-- *Link variation score* $\pi_\sigma$: compares the observed standard deviation of the link-implied distances with its theoretical value $\sigma_{o\mid d}$, the standard deviation of observations given gap $d$, which depends on $\mu,\sigma,d$, the read length and the lengths of the shorter and longer contig. Agreement gives $\pi_\sigma$ near $1$.
+- *Link variation score*
+
+    $$\pi_\sigma = \min\Big\{\frac{\hat\sigma_{o\mid d}}{\sigma_{o\mid d}},\ \frac{\sigma_{o\mid d}}{\hat\sigma_{o\mid d}}\Big\},$$
+
+    where $\hat\sigma_{o\mid d}$ is the observed standard deviation of the link observations and $\sigma_{o\mid d}$ is the theoretical standard deviation of an observation given gap $d$ (Theorem 1 of the source),
+
+    $$\sigma_{o\mid d} = \sqrt{\sigma^2 + \frac{q(d)\,\sigma^4}{g(d)} - \frac{g'(d)^2\,\sigma^4}{g(d)^2}},$$
+
+    with $g$ and $q$ the functions of $d$ defined in the source's Additional file 1 from $\mu$, $\sigma$, the read length and the lengths of the shorter and longer contig. Agreement gives $\pi_\sigma$ near $1$.
 - *Link dispersity score* $\pi_\zeta = 1 - D_n$: after translating and reflecting the $n$ link positions on each contig into a common coordinate, let $F_{1,n}$ and $F_{2,n}$ be the empirical distribution functions of the two samples, and
 
-$$D_n = \sup_x \big|F_{1,n}(x) - F_{2,n}(x)\big| \in [0,1],$$
+    $$D_n = \sup_x \big|F_{1,n}(x) - F_{2,n}(x)\big| \in [0,1],$$
 
-the two-sample Kolmogorov–Smirnov statistic.
+    the two-sample Kolmogorov–Smirnov statistic.
 
 The total edge score is
 
 $$\pi = \pi_\sigma + \pi_\zeta \in [0,2],$$
 
-and an edge is discarded (score set to $0$) if either component falls below $1/2$, i.e. if either observed quantity deviates from its expected value by more than a factor of two.
+with $\pi = \pi_\sigma + \pi_\zeta$ if $\pi_\sigma > 1/2$ and $\pi_\zeta > 1/2$, and $\pi = 0$ otherwise; so an edge is discarded when either component is at most $1/2$.
 
 **Use on long contigs.** If every contig longer than $\mu + 4\sigma$ can be linked by the library to at most one such contig on each side, then in the subgraph of long contigs a vertex of degree greater than one signals a linking error (for example a repeat). In such regions the highest-scoring edge is chosen, and no decision is made if the ratio of the two highest scores exceeds a threshold (0.9). Correct regions are simple paths found in $O(|E|)$ time.
 

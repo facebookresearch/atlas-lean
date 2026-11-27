@@ -4,9 +4,9 @@
 
 - $X, Y \in \{L, R\}$ record whether the left or right side of the red loop ($X$) and of the green loop ($Y$) lies in front of the blue arc after threading;
 - $\varepsilon \in \{+, -\}$ is the sign of the red-black crossing at the bottom ($+$ exactly when the black arc goes over the red arc), using the convention that a crossing is $+$ when its overcrossing has positive slope;
-- $a, b \in \{0, \pm 1, \pm 2\}$ give the number and slope sign of the vertical twists in the red and green loops.
+- $a, b \in \mathbb{Z}$ give the number and slope sign of the vertical twists in the red and green loops: $|a|$ twists whose crossings have slope sign $\operatorname{sign}(a)$, and similarly for $b$.
 
-This gives $4 \cdot 2 \cdot 25 = 200$ configurations. Write $-K$ for the mirror image of a knot type $K$ and $-XY(\varepsilon, a, b)$ for the mirror image of a configuration.
+The census of the model takes $a, b \in \{0, \pm 1, \pm 2\}$, which gives $4 \cdot 2 \cdot 25 = 200$ configurations. Write $-K$ for the mirror image of a knot type $K$ and $-XY(\varepsilon, a, b)$ for the mirror image of a configuration.
 
 **Lemma 1 (mirror images).** For all integers $a, b$,
 

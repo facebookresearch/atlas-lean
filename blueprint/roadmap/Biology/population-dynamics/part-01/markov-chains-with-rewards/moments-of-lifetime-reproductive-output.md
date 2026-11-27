@@ -16,7 +16,7 @@ Consequently the variance, coefficient of variation and Crow's opportunity for s
 
 $$V = \tilde\rho_2 - \tilde\rho_1 \circ \tilde\rho_1, \qquad \mathrm{CV} = D(\tilde\rho_1)^{-1} \sqrt{V}, \qquad I = \mathrm{CV} \circ \mathrm{CV},$$
 
-with $D(x)$ the diagonal matrix of $x$ and the square root taken entrywise, and the skewness is $\mathrm{Sk} = (\tilde\rho_3 - 3\tilde\rho_2\circ\tilde\rho_1 + 2\tilde\rho_1^{\circ 3}) \circ V^{\circ(-3/2)}$, entrywise. The first moment of LRO from the newborn state is the net reproductive rate $R_0$.
+with $D(x)$ the diagonal matrix of $x$ and the square root taken entrywise, and the skewness is $\mathrm{Sk} = (\tilde\rho_3 - 3\tilde\rho_2\circ\tilde\rho_1 + 2\tilde\rho_1^{\circ 3}) \circ V^{\circ(-3/2)}$, entrywise. If the life cycle has a single offspring stage, state $1$ ($A = U + F$ with $F = e_1 f^{\mathsf T}$), and the rewards count offspring, $R_1 = \mathbf 1_s (f^{\mathsf T}\ \ 0_{1 \times \alpha})$, then the first moment of LRO from the newborn state is the net reproductive rate $R_0 = \rho\big(F(I - U)^{-1}\big)$: $\tilde\rho_1 = N^{\mathsf T} f$ and $(\tilde\rho_1)_1 = f^{\mathsf T} N e_1 = \rho(FN)$. With several offspring stages, or rewards in another currency, the two differ in general.
 
 ## Expansion
 

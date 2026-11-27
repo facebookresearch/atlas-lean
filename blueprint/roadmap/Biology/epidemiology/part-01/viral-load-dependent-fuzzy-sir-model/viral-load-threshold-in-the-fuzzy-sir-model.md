@@ -14,15 +14,20 @@ Write $K(\Omega) = \theta + \mu_C(\Omega) + \gamma(\Omega) + \mu$. For each fixe
 
 1. The disease-free equilibrium is $E_0 = \left(\frac{\mu}{\pi+\tau+\mu},\, 0,\, \frac{\pi+\tau}{\pi+\tau+\mu}\right)$ and the next-generation reproduction number is
 
-$$\mathfrak{R}_0(\Omega) = \frac{c\,\beta(\Omega)\,\mu}{(\pi+\tau+\mu)\,K(\Omega)}.$$
+    $$\mathfrak{R}_0(\Omega) = \frac{c\,\beta(\Omega)\,\mu}{(\pi+\tau+\mu)\,K(\Omega)}.$$
 
 2. $E_0$ is locally asymptotically stable if $\mathfrak{R}_0(\Omega) < 1$ and unstable if $\mathfrak{R}_0(\Omega) > 1$.
 3. If $\mathfrak{R}_0(\Omega) > 1$ there is a unique endemic equilibrium with
 
-$$S^* = \frac{K(\Omega)}{c\,\beta(\Omega)}, \qquad I^* = \frac{(\pi+\tau+\mu)\big(\mathfrak{R}_0(\Omega) - 1\big)}{c\,\beta(\Omega)}, \qquad R^* = \frac{(\theta+\gamma(\Omega)) I^* + (\pi+\tau) S^*}{\mu},$$
+    $$S^* = \frac{K(\Omega)}{c\,\beta(\Omega)}, \qquad I^* = \frac{(\pi+\tau+\mu)\big(\mathfrak{R}_0(\Omega) - 1\big)}{c\,\beta(\Omega)}, \qquad R^* = \frac{(\theta+\gamma(\Omega)) I^* + (\pi+\tau) S^*}{\mu},$$
 
-and it is locally asymptotically stable.
+    and it is locally asymptotically stable.
+
 4. (Viral-load threshold.) If, on an interval of viral loads, $\Omega \mapsto \mathfrak{R}_0(\Omega)$ is continuous and strictly increasing and crosses $1$ at $\Omega^*$, i.e. $c\,\beta(\Omega^*)\,\mu = (\pi+\tau+\mu) K(\Omega^*)$, then on that interval the disease-free equilibrium is locally asymptotically stable for $\Omega < \Omega^*$ and the endemic equilibrium is locally asymptotically stable for $\Omega > \Omega^*$.
+
+## Depends on
+
+- [Basic reproduction number of the next-generation matrix](../../next-generation-matrix-and-the-basic-reproductio/r0.md)
 
 ## Expansion
 

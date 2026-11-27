@@ -6,11 +6,14 @@ $$\dot x_i=\lambda_{i-1}x_{i-1}(1-x_i)-\lambda_i x_i(1-x_{i+1}),\qquad i=1,\dots
 
 The total density $s=\sum_i x_i$ is conserved; for each $s\in[0,n]$ the RFMR has a unique steady state $e(s)$ with $\sum_i e_i=s$, attracting all solutions on that level set, and the steady-state translation rate is $R(s)=\lambda_ie_i(1-e_{i+1})$ (the same for every $i$).
 
-**Propositions 3 and 6.** Suppose the rates satisfy $\lambda_i=\lambda_{n-i}$ for all $i$ (indices modulo $n$), or this holds after a cyclic relabeling of the sites. Then
+**Propositions 3 and 6.** Suppose the rates satisfy $\lambda_i=\lambda_{n-i}$ for all $i$ (indices modulo $n$). Then
+
 - $e_i(s)=1-e_{n+1-i}(n-s)$ for all $i$ and $s$, $R(s)=R(n-s)$ for all $s\in[0,n]$, and $R$ is strictly increasing on $[0,n/2]$;
 - hence the optimal total density is $s^*=n/2$, the optimal mean occupancy is $\rho^*=s^*/n=1/2$, and $e_i^*=1-e_{n+1-i}^*$.
 
-The condition holds automatically for $n=2$, and for $n=3$ whenever two of the three rates are equal. This is the mean-field counterpart of the half-filling optimum of the homogeneous TASEP with periodic boundary conditions.
+If the condition holds only after a cyclic relabeling of the sites, the site identities hold for the relabeled indices, while $R(s)=R(n-s)$, $s^*=n/2$ and $\rho^*=1/2$, which are invariant under relabeling, hold as stated.
+
+The condition holds automatically for $n=2$, and for $n=3$ whenever two of the three rates are equal (up to relabeling). This is the mean-field counterpart of the half-filling optimum of the homogeneous TASEP with periodic boundary conditions.
 
 ## Depends on
 

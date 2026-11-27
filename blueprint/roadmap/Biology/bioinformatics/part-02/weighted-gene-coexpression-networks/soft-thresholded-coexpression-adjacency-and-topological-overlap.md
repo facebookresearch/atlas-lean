@@ -4,18 +4,18 @@
 
 - The **unsigned soft-thresholded adjacency** with power $\beta \ge 1$ is
 
-$$a_{ij} = |\mathrm{cor}(x_i, x_j)|^{\beta} \in [0,1] \quad (i \neq j), \qquad a_{ii} = 0 .$$
+    $$a_{ij} = |\mathrm{cor}(x_i, x_j)|^{\beta} \in [0,1] \quad (i \neq j), \qquad a_{ii} = 0 .$$
 
 - The **connectivity** of gene $i$ is $k_i = \sum_{u} a_{iu}$.
 - The **topological overlap** of genes $i \neq j$ is
 
-$$\omega_{ij} = \frac{l_{ij} + a_{ij}}{\min(k_i, k_j) + 1 - a_{ij}}, \qquad l_{ij} = \sum_{u \neq i, j} a_{iu}a_{uj},$$
+    $$\omega_{ij} = \frac{l_{ij} + a_{ij}}{\min(k_i, k_j) + 1 - a_{ij}}, \qquad l_{ij} = \sum_{u \neq i, j} a_{iu}a_{uj},$$
 
-and $1 - \omega_{ij}$ is the topological-overlap dissimilarity, which is clustered hierarchically; modules are branches of the dendrogram cut by a dynamic tree-cut procedure.
+    and $1 - \omega_{ij}$ is the topological-overlap dissimilarity, which is clustered hierarchically; modules are branches of the dendrogram cut by a dynamic tree-cut procedure.
 
 **Proposition.** For every $i \neq j$, $0 \le \omega_{ij} \le 1$; $\omega_{ij} = 0$ if and only if $a_{ij} = 0$ and $i, j$ share no neighbor of positive weight.
 
-**Effect of the power.** Since $a_{ij}/a_{i'j'} = (|\mathrm{cor}_{ij}|/|\mathrm{cor}_{i'j'}|)^{\beta}$, raising $\beta$ suppresses weak correlations relative to strong ones without discarding them (a soft rather than hard threshold). Larger $\beta$ leaves fewer genes with strong adjacencies and so assigns fewer genes to fewer modules; smaller $\beta$ yields more and larger modules with less coherent expression within modules. A common choice of $\beta$ is the smallest power at which the connectivity distribution approximately follows a power law (scale-free topology fit). Unsigned correlations place positively and negatively correlated genes in the same module.
+**Effect of the power.** Since $a_{ij}/a_{i'j'} = (|\mathrm{cor}_{ij}|/|\mathrm{cor}_{i'j'}|)^{\beta}$, raising $\beta$ suppresses weak correlations relative to strong ones without discarding them (a soft rather than hard threshold). Larger $\beta$ leaves fewer genes with strong adjacencies and so assigns fewer genes to fewer modules; smaller $\beta$ assigns more genes to more modules, with less coherent expression within modules. A common choice of $\beta$ is the smallest power at which the connectivity distribution approximately follows a power law (scale-free topology fit). Unsigned correlations place positively and negatively correlated genes in the same module.
 
 ## Expansion
 

@@ -4,13 +4,13 @@
 
 Below, inputs and outputs are scalar, and two such systems with characteristics $k$ and $g$ are interconnected by feeding the output of each into the input of the other.
 
-**Theorem (positive feedback).** Let both systems be monotone with increasing characteristics $k$ (first system, $y = k(u)$) and $g$ (second system, $u = g(y)$). Steady states of the closed loop correspond bijectively to intersection points of the graphs of $k$ and $g^{-1}$. Label a non-tangential intersection $S$ if the slope of $k$ there is smaller than that of $g^{-1}$, and $U$ if it is larger. Under mild transversality, controllability and observability conditions, almost every bounded solution of the closed loop converges to a steady state labeled $S$.
+**Theorem (positive feedback).** Let both systems be monotone with increasing characteristics $k$ (first system, $y = k(u)$) and $g$ (second system, $u = g(y)$). Steady states of the closed loop correspond bijectively to intersection points of the graphs of $k$ and $g^{-1}$. Label a non-tangential intersection $S$ if the slope of $k$ there is smaller than that of $g^{-1}$, and $U$ if it is larger. Assume that each system has, for every constant input, a unique globally asymptotically stable steady state with nonsingular state Jacobian, that no intersection is tangential, that the closed loop is strongly monotone and that all its solutions are bounded. Then the solution from almost every initial state converges to a steady state labeled $S$ (Angeli and Sontag 2004, Theorem 3).
 
 **Theorem (negative feedback; small-gain theorem).** Let the first system be monotone with characteristic $k$ and the second be anti-monotone (inhibition included in its output) with characteristic $g$. If all closed-loop solutions are bounded and the scalar iteration
 
 $$u_{j+1} = g\bigl(k(u_j)\bigr)$$
 
-has a globally attractive fixed point (equivalently, it has no nontrivial period-two orbit), then the closed loop has a globally attracting steady state. The conclusion persists with arbitrary, even time-varying, delays in the feedback, and for the reaction-diffusion version with Neumann boundary conditions, whose solutions all converge to a unique spatially uniform state.
+has a globally attractive fixed point (equivalently, it has no nontrivial period-two orbit), then the closed loop has a globally attracting steady state. The conclusion persists with constant delays, $u(t) = y(t - h)$, and with time-varying or state-dependent delays $h(t)$ such that $t - h(t) \to \infty$, and for the reaction-diffusion version with Neumann boundary conditions, whose solutions all converge to a unique spatially uniform state.
 
 ## Expansion
 
@@ -24,4 +24,5 @@ Both theorems need only the monotonicity of each block and the plots of their st
 
 ## Sources
 
-- E. D. Sontag, "Monotone and near-monotone biochemical networks", Systems and Synthetic Biology 1 (2007) 59 to 87, section "I/O monotone systems" (Equation 1, definitions and graphical orthant test), section "Positive feedback and possible multistability" (Equations 2 and 3, $S$ and $U$ labels, "A cautionary counterexample", "A general theorem", MAPK example) and section "Negative feedback and possible oscillations" (small-gain theorem with delays and diffusion, testosterone and circadian examples), <https://doi.org/10.1007/s11693-007-9005-9>, PMCID PMC2533521.
+- E. D. Sontag, "Monotone and near-monotone biochemical networks", Systems and Synthetic Biology 1 (2007) 59 to 87, section "I/O monotone systems" (Equation 1, definitions and graphical orthant test), section "Positive feedback and possible multistability" (characteristics), section "Positive feedback and multistability in monotone I/O systems" (Equations 2 and 3, $S$ and $U$ labels, "A cautionary counterexample", "A general theorem", MAPK example) and section "Negative feedback and possible oscillations" (small-gain theorem with delays and diffusion, testosterone and circadian examples), <https://doi.org/10.1007/s11693-007-9005-9>, PMCID PMC2533521.
+- D. Angeli, E. D. Sontag, "Multi-stability in monotone input/output systems", Systems & Control Letters 51 (2004) 185–202, Theorem 3.

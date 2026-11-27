@@ -18,6 +18,10 @@ $$P_\beta(i,j) = \frac{1}{Z_\beta}\sum_{S \ni (i,j)} e^{-E(S)/RT}\,W_\beta(S)$$
 
 at the same asymptotic cost as the unweighted algorithm. Replacing sums by minima, products by sums and weights by the corresponding pseudo-energies yields a minimum free energy algorithm with probing soft constraints.
 
+## Depends on
+
+- [McCaskill partition function](../../mccaskill-partition-function-for-rna-folding/partition-function.md)
+
 ## Expansion
 
 The weights act as an exponential tilt of the Boltzmann ensemble toward structures whose pairing pattern agrees with the reactivities. Because the tilt factorizes over nucleotides, it can be attached to the elementary decisions of the folding recursion (a nucleotide left unpaired or opened as a pair) without changing the recursion's structure. Unlike pseudo-energy schemes that reward only nucleotides in stacked pairs, the weights use the data at unpaired positions as well. The parameter $\beta$ sets the trust in the data and is tuned to maximize prediction accuracy.

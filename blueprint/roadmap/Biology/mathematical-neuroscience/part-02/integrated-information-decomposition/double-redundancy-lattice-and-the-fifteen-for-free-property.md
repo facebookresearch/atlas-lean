@@ -5,6 +5,7 @@
 **Product lattice.** For a two-component process with past $X = (X_t^1, X_t^2)$ and future $Y = (X_{t+1}^1, X_{t+1}^2)$, the nodes are $\alpha \to \beta$ with $\alpha, \beta \in \mathcal A$, ordered by $\alpha\to\beta \preceq \alpha'\to\beta'$ iff $\alpha \preceq \alpha'$ and $\beta \preceq \beta'$; this is a lattice with $16$ nodes.
 
 **Double redundancy.** A double-redundancy function assigns $I_\cap^{\alpha\to\beta}$, the information common to the sources in $\alpha$ that is seen in the targets in $\beta$, subject to:
+
 - **Axiom 1 (compatibility).** For $\alpha = \{\alpha_1, \dots, \alpha_J\}$, $\beta = \{\beta_1, \dots, \beta_K\}$: if $K = 1$, $I_\cap^{\alpha\to\beta} = \mathrm{Red}(X^{\alpha_1}, \dots, X^{\alpha_J}; Y^{\beta_1})$; if $J = 1$, $I_\cap^{\alpha\to\beta} = \mathrm{Red}(Y^{\beta_1}, \dots, Y^{\beta_K}; X^{\alpha_1})$; if $J = K = 1$, $I_\cap^{\alpha\to\beta} = I(X^{\alpha_1}; Y^{\beta_1})$, where $\mathrm{Red}$ is a single-target PID redundancy function.
 - **Axiom 2 (subset equality).** Adding to $\alpha$ (or $\beta$) a superset of one of its elements does not change $I_\cap^{\alpha\to\beta}$.
 

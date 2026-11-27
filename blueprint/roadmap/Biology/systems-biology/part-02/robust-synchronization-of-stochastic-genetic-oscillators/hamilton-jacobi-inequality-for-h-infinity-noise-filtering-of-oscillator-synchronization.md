@@ -10,13 +10,15 @@ $$de = \big[\mathcal F(x,s) + (C\otimes I_m)\,\mathcal G(x,s) + \mathcal H v\big
 
 where $\mathcal F, \mathcal G$ stack the differences $f(x_i) - f(s)$, $g(x_i) - g(s)$, $\mathcal H = \mathrm{diag}(h_i - h_s)$ and $\Sigma = \mathcal F_W + (C\otimes I_m)\mathcal G_W$ collects the block-diagonal diffusion differences. For a symmetric positive semidefinite weight $R$ and a level $\rho > 0$, the **$H_\infty$ noise-filtering property** is
 
-$$\mathbb E\int_0^{t_f} e^{\top}Re\,dt \ \le\ \mathbb E\,V(e(0)) + \rho^2\,\mathbb E\int_0^{t_f} v^{\top}v\,dt \qquad\text{for all } v .$$
+$$\mathbb E\int_0^{t_f} e^{\top}Re\,dt \ \le\ \mathbb E\,V(e(0)) + \rho^2\,\mathbb E\int_0^{t_f} v^{\top}v\,dt \qquad\text{for all } v \text{ and } t_f,$$
+
+with $V$ the function of the Proposition below (or with $e(0) = 0$, so that the first term vanishes).
 
 **Proposition.** Suppose $V \in C^2$, $V \ge 0$, $V(0) = 0$, satisfies the Hamilton–Jacobi inequality (HJI)
 
 $$e^{\top}Re + \nabla V^{\top}\big(\mathcal F + (C\otimes I_m)\mathcal G\big) + \frac{1}{4\rho^2}\nabla V^{\top}\mathcal H\mathcal H^{\top}\nabla V + \frac12\,\mathrm{tr}\big(\Sigma^{\top}\nabla^2V\,\Sigma\big) \ \le\ 0$$
 
-along the error dynamics. Then the $H_\infty$ noise-filtering property holds with level $\rho$: intrinsic parameter fluctuations do not destroy synchronization, and the effect of extrinsic noise on the synchronization error is at most $\rho$ in the mean-energy sense. The best achievable level is $\rho_0 = \inf\{\rho : \text{the HJI has a solution } V \ge 0\}$, which can be lowered by tuning kinetic parameters or by adding an external control input.
+along the error dynamics. Then the $H_\infty$ noise-filtering property holds with level $\rho$: the effect of extrinsic noise on the synchronization error is at most $\rho$ in the mean-energy sense. If moreover $R$ is positive definite, the case $v = 0$ gives $\mathbb E\int_0^{t_f} e^{\top}Re\,dt \le \mathbb E V(e(0))$ for every $t_f$: intrinsic parameter fluctuations do not destroy synchronization in this mean-square sense. The smallest level the HJI certifies, $\rho_0 = \inf\{\rho : \text{the HJI has a solution } V \ge 0\}$, is an upper bound on the optimal noise-filtering level (the HJI is only sufficient), and can be lowered by tuning kinetic parameters or by adding an external control input.
 
 Approximating the nonlinear error dynamics by a fuzzy interpolation of local linear systems turns the HJI, for quadratic $V(e) = e^{\top}Pe$, into a family of linear matrix inequalities in $P > 0$, giving a computable design criterion.
 

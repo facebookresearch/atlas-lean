@@ -4,7 +4,7 @@
 
 $$\begin{aligned}\dot S_C&=\Lambda+\theta_CR_C-\beta_CS_CI_A-(\mu+g)S_C, & \dot S_A&=gS_C+\theta_AR_A-\beta_AS_AI_A-\mu S_A,\\ \dot E_C&=\beta_CS_CI_A-(\alpha_C+\mu+g)E_C, & \dot E_A&=\beta_AS_AI_A+gE_C-(\alpha_A+\mu)E_A,\\ \dot I_C&=\alpha_CE_C-(\gamma_C+\mu+g+d_C)I_C, & \dot I_A&=\alpha_AE_A+gI_C-(\gamma_A+\mu+d_A)I_A,\\ \dot R_C&=\gamma_CI_C-(\mu+g+\theta_C)R_C, & \dot R_A&=\gamma_AI_A+gR_C-(\mu+\theta_A)R_A,\end{aligned}$$
 
-with non-negative constant parameters. The feasible region $\{0\le N\le\Lambda/\mu\}$ is positively invariant, and the disease-free equilibrium has $S_C=\Lambda/(g+\mu)$, $S_A=g\Lambda/(\mu(g+\mu))$.
+with constant parameters $\Lambda, \mu > 0$, $\beta_A, \beta_C > 0$ and the other rates $\ge 0$. The feasible region $\{0\le N\le\Lambda/\mu\}$ is positively invariant, and the disease-free equilibrium has $S_C=\Lambda/(g+\mu)$, $S_A=g\Lambda/(\mu(g+\mu))$.
 
 **Reproduction ratio (Eq. 4).** With $\eta_1=g+\mu$, $\eta_2=\alpha_C+\mu+g$, $\eta_3=\alpha_A+\mu$, $\eta_4=\gamma_C+\mu+g+d_C$, $\eta_5=\gamma_A+\mu+d_A$,
 
@@ -17,6 +17,11 @@ For a single unstructured population (Eq. 1) the corresponding ratio is $R_0^s=\
 ## Depends on
 
 - [Basic reproduction number of the next-generation matrix](../../next-generation-matrix-and-the-basic-reproductio/r0.md)
+
+## Proof depends on
+
+- [$R_0$ as a threshold for the linearized infected subsystem](../../next-generation-matrix-and-the-basic-reproductio/is-hurwitz-sub-iff-r0-lt-one.md)
+- [Unstable mode of the infected subsystem exactly when $R_0 > 1$](../../next-generation-matrix-and-the-basic-reproductio/exists-re-pos-iff-one-lt-r0.md)
 
 ## Expansion
 

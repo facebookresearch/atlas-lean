@@ -1,12 +1,13 @@
 # Connectivity of transitively closed DAGs under edge moves
 
 **Setting.** Let $\mathcal{T}_n$ be the set of transitively closed directed acyclic graphs on $n$ labelled nodes. For $G\in\mathcal{T}_n$ define two moves (Definition 1):
+
 - $\mathrm{add}(G,i,j)$: for a pair $(i,j)$ that is not an edge of $G$ and whose insertion keeps the graph acyclic, insert $i\to j$ and take the transitive closure;
 - $\mathrm{del}(G,i,j)$: for an edge $i\to j$ of the (unique) transitive reduction $G^*$ of $G$, delete it from $G^*$ and take the transitive closure.
 
 Both moves map $\mathcal{T}_n$ to itself.
 
-**Theorem 3.** For any $A,B\in\mathcal{T}_n$, $B$ can be reached from $A$ by a finite sequence of add and del moves. Hence a Markov chain or simulated-annealing search on nested effects network hypotheses that proposes these moves can visit every transitively closed hypothesis.
+**Theorem 3.** For any $A,B\in\mathcal{T}_n$, $B$ can be reached from $A$ by a finite sequence of add and del moves. Hence a Markov chain or simulated-annealing search on nested effects network hypotheses that proposes these moves can visit every transitively closed acyclic hypothesis (every element of $\mathcal{T}_n$).
 
 ## Depends on
 

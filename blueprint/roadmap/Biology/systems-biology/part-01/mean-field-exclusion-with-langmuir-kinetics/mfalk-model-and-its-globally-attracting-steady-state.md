@@ -14,9 +14,9 @@ The output rate is $R = (\lambda_n + \alpha_n)x_n - (\gamma_n + \beta_n)(1-x_n)$
 
 **Results.** Assume
 
-$$\text{(P)}\quad \lambda_i + \beta_{i+1} > 0\ \ \forall i \in\{0,\dots,n\}\quad\text{or}\quad \gamma_i + \alpha_{i+1} > 0\ \ \forall i\in\{0,\dots,n\},$$
+$$\text{(P)}\quad \big(\lambda_i + \beta_{i+1} > 0 \text{ and } \gamma_i + \alpha_{i+1} > 0\ \ \forall i \in\{0,\dots,n\}\big)\quad\text{or}\quad \lambda_i > 0\ \ \forall i\quad\text{or}\quad \gamma_i > 0\ \ \forall i,$$
 
-with $\alpha_{n+1} = \beta_{n+1} = 0$.
+with $\alpha_{n+1} = \beta_{n+1} = 0$. One of the source's one-sided conditions, $\lambda_i + \beta_{i+1} > 0$ for all $i$ or $\gamma_i + \alpha_{i+1} > 0$ for all $i$ (its Proposition 1), is not enough: for $n = 2$, $\lambda_0 = \lambda_2 = \gamma_1 = \beta_2 = 1$ and all other rates $0$, the first holds, $\lambda_1 + \gamma_1 > 0$, yet $x_1 = 1$ is invariant and every solution tends to the boundary steady state $(1, 1/2)$.
 
 1. (Persistence.) Under (P), for every $\tau > 0$ there is $d \in (0, 1/2]$ with $d \le x_i(t+\tau, a) \le 1-d$ for all $a \in C^n$, all $i$ and all $t \ge 0$.
 2. ($\ell_1$ contraction.) With $\eta = \max\{-\lambda_0-\gamma_0-\alpha_1-\beta_1,\ -\alpha_2-\beta_2,\ \dots,\ -\alpha_{n-1}-\beta_{n-1},\ -\lambda_n-\gamma_n-\alpha_n-\beta_n\} \le 0$, every two solutions satisfy $|x(t,a) - x(t,b)|_1 \le e^{\eta t}|a-b|_1$.

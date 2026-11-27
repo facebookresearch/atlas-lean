@@ -14,7 +14,7 @@ with centered response and standardized covariates. Network inference is then $m
 
 $$\mathrm{WL}(\lambda_1,\lambda_2,w,\boldsymbol\beta) = \tfrac12\|\mathbf z - X\boldsymbol\beta\|_2^2 + \lambda_1\sum_{k=1}^{m} w_k|\beta_k| + \tfrac{\lambda_2}{2}\|\boldsymbol\beta\|_2^2 .$$
 
-With all $w_k = 1$ this is the elastic net loss; its minimizer is the naive elastic net, and $(1+\lambda_2)$ times it is the (bias-corrected) elastic net. The oracle weights $w_k = 1/|\beta_k^*|$ for $\beta_k^*\ne0$ and $w_k = L$ (large) for $\beta_k^* = 0$ would select the true support.
+With all $w_k = 1$ this is the elastic net loss; its minimizer is the naive elastic net, and $(1+\lambda_2)$ times it is the (bias-corrected) elastic net. The oracle weights $w_k = 1/|\beta_k^*|$ for $\beta_k^*\ne0$ and $w_k = L$ (large) for $\beta_k^* = 0$ motivate the reweighting: for suitable $\lambda_1, \lambda_2$ they can recover the true support (a heuristic; the source proves no recovery result).
 
 **Recursive elastic net.** Start from the naive elastic net $\hat{\boldsymbol\beta}^{(0)}$ and, for $l = 1,2,\dots,M$, iterate
 
@@ -22,7 +22,7 @@ $$w_k^{(l)} = \frac{1}{|\hat\beta_k^{(l-1)}| + \delta}, \qquad \hat{\boldsymbol\
 
 with a small $\delta > 0$ (here $10^{-5}$) so that zero coefficients get a finite weight. The corrected version starts from the elastic net and multiplies each minimizer by $(1+\lambda_2)$.
 
-**Computation.** Rescaling the columns, $X^* = [y_{i,k}/w_k]$, turns the weighted problem into an ordinary elastic net in $\boldsymbol\beta^*$, solved along its whole path by LARS-EN, and $\hat\beta_k = \hat\beta^*_k / w_k$ (the LARS-WEN algorithm; $u$ steps cost $O(u^3 + mu^2)$).
+**Computation.** Augmenting the data, $\tilde{\mathbf z} = (\mathbf z; \mathbf 0)$ and $\tilde X = (X; \sqrt{\lambda_2}\,I)$, turns the weighted elastic net into the weighted lasso $\tfrac12\|\tilde{\mathbf z} - \tilde X\boldsymbol\beta\|_2^2 + \lambda_1\sum_k w_k|\beta_k|$; rescaling the columns of $\tilde X$ by $1/w_k$ gives an ordinary lasso in $\beta^*_k = w_k\beta_k$, solved along its whole path by LARS, and $\hat\beta_k = \hat\beta^*_k/w_k$. The source's LARS-WEN instead rescales the columns of $X$ and runs LARS-EN ($u$ steps cost $O(u^3 + mu^2)$); that computes the minimizer of the problem whose ridge term is $\tfrac{\lambda_2}{2}\sum_k w_k^2\beta_k^2$, which differs from the recursive step unless all weights are equal.
 
 **Tuning by degrees of freedom.** On the active set $\hat{\mathcal A}^{(l)}$ the degrees of freedom are estimated by
 

@@ -1,6 +1,6 @@
 # Disease-free equilibrium and threshold of the multipatch dengue model
 
-On patches $i = 1, \dots, n$ humans are $S_i^h, E_i^h, I_i^h, R_i^h$ (total $N_i^h$) and mosquitoes $S_i^v, E_i^v, I_i^v$. Humans of class $C \in \{S, E, I, R\}$ move from patch $j$ to patch $i$ at rate $m_{ij}^C \ge 0$; mosquitoes do not move. With biting rate $b_i$, transmission probabilities $\beta_i^h$ (vector to host) and $\beta_i^v$ (host to vector), recruitment $A_i^h, A_i^v > 0$, death rates $d_i^h, d_i^v$, incubation rates $\nu_i^h, \nu_i^v$ and recovery rate $\gamma_i^h$:
+On patches $i = 1, \dots, n$ humans are $S_i^h, E_i^h, I_i^h, R_i^h$ (total $N_i^h$) and mosquitoes $S_i^v, E_i^v, I_i^v$. Humans of class $C \in \{S, E, I, R\}$ move from patch $j$ to patch $i$ at rate $m_{ij}^C \ge 0$; mosquitoes do not move. With biting rate $b_i$, transmission probabilities $\beta_i^h$ (vector to host) and $\beta_i^v$ (host to vector), recruitment $A_i^h, A_i^v > 0$, death rates $d_i^h, d_i^v > 0$, incubation rates $\nu_i^h, \nu_i^v > 0$, recovery rate $\gamma_i^h > 0$ and $b_i, \beta_i^h, \beta_i^v \ge 0$:
 
 $$\begin{aligned}
 \dot S_i^h &= A_i^h - \frac{b_i \beta_i^h}{N_i^h} S_i^h I_i^v + \sum_{j} m_{ij}^S S_j^h - \sum_{j} m_{ji}^S S_i^h - d_i^h S_i^h,\\

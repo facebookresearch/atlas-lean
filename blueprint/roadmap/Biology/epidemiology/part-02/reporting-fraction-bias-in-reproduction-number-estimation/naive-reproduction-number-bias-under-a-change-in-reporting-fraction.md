@@ -13,6 +13,7 @@ assuming all denominators are positive.
 $$\tilde R_0 - \hat R_0 = \frac{(1-r)\,\left(M_T A + M_0 B\right)}{(C+D)(rC+D)}.$$
 
 Hence, whenever $M_T A + M_0 B > 0$:
+
 - if $q_1 < q_2$ (reporting improves), $\hat R_0 > \tilde R_0$: the naive estimate overestimates $R_0$;
 - if $q_1 > q_2$ (reporting deteriorates, or early over-reporting), $\hat R_0 < \tilde R_0$: the naive estimate underestimates $R_0$.
 

@@ -13,15 +13,21 @@ $$R_0=\frac{\rho\beta\Lambda\bigl(\varepsilon_a(\nu_s+\delta+\mu)+\varepsilon_s\
 where $p=\bar V/(\bar S+\bar V)=\varphi_0/(\mu+\varphi_0)$ is the vaccinated fraction at the disease-free equilibrium. Thus $R_V\le R_0$, with equality only if $\varphi_0=0$ or $\sigma=1$.
 
 **Proposition 5 (critical vaccination).** Let $\varphi_0^c=\mu(R_0-1)/(1-\sigma R_0)$.
-- If $0\le\sigma<1/R_0$ and $\varphi_0\ge\varphi_0^c$, the disease is eliminated (the disease-free equilibrium is globally asymptotically stable).
+
+- If $0\le\sigma<1/R_0$ and $\varphi_0>\varphi_0^c$, the disease is eliminated (the disease-free equilibrium is globally asymptotically stable).
 - If $\sigma\ge1/R_0$, no constant vaccination rate prevents an outbreak.
 - If $0<\varphi_0<\varphi_0^c$, the disease-free equilibrium is unstable.
 
-Equivalently, elimination requires $p>p_c=\dfrac{1}{1-\sigma}\Bigl(1-\dfrac{1}{R_0}\Bigr)$. The information-dependent term $\varphi_1$ does not enter $R_V$ because $M=0$ at the disease-free equilibrium.
+For $\sigma<1/R_0$, $R_V<1 \iff \varphi_0>\varphi_0^c \iff p>p_c=\dfrac{1}{1-\sigma}\Bigl(1-\dfrac{1}{R_0}\Bigr)$, and then the disease is eliminated. (The source states the first item with $\varphi_0\ge\varphi_0^c$, but its global stability result covers only $R_V<1$, that is $\varphi_0>\varphi_0^c$.) The information-dependent term $\varphi_1$ does not enter $R_V$ because $M=0$ at the disease-free equilibrium.
 
 ## Depends on
 
 - [Basic reproduction number of the next-generation matrix](../../next-generation-matrix-and-the-basic-reproductio/r0.md)
+
+## Proof depends on
+
+- [$R_0$ as a threshold for the linearized infected subsystem](../../next-generation-matrix-and-the-basic-reproductio/is-hurwitz-sub-iff-r0-lt-one.md)
+- [Unstable mode of the infected subsystem exactly when $R_0 > 1$](../../next-generation-matrix-and-the-basic-reproductio/exists-re-pos-iff-one-lt-r0.md)
 
 ## Expansion
 

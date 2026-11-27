@@ -12,13 +12,13 @@ $$S_\infty = -\frac{1}{\bar{\mathcal R}}\,W_0\!\big(-\bar{\mathcal R}\,S_0\,e^{-
 
 with $W_0$ the principal branch of the Lambert $W$ function, and $S_\infty < S^*$. If $S(\tau_0) > S^*$, the infectious peak is $I_{\max} = I(\tau_0) + S(\tau_0) - \bar{\mathcal R}^{-1}\big(1 + \ln(\bar{\mathcal R}S(\tau_0))\big)$.
 
-**Lemma 2.1.** For $\delta \in (0,1]$, the maximum of $S_\infty$ over initial states in $X$ with $I_0 \ge \delta$ is attained at $(S^*, \delta)$ and equals $-W_0(-\bar{\mathcal R}S^*e^{-\bar{\mathcal R}(S^*+\delta)})/\bar{\mathcal R}$; as $(S_0, I_0) \to (S^*, 0)$, $S_\infty \to S^*$.
+**Lemma 2.1.** For $\delta \in (0,1]$, let $m_\delta = \min\{S^*, 1 - \delta\}$. The maximum of $S_\infty$ over initial states in $X$ with $I_0 \ge \delta$ is attained at $(m_\delta, \delta)$ and equals $-W_0(-\bar{\mathcal R}m_\delta e^{-\bar{\mathcal R}(m_\delta+\delta)})/\bar{\mathcal R}$ (so at $(S^*, \delta)$ when $\delta \le 1 - S^*$, which forces $\bar{\mathcal R} > 1$; the source states the maximizer $(S^*, \delta)$ without this condition, which lies outside $X$ when $S^* + \delta > 1$); as $(S_0, I_0) \to (S^*, 0)$, $S_\infty \to S^*$.
 
 **Theorem 1.** For $\mathcal R \equiv \bar{\mathcal R}$ the set
 
 $$X_{\mathrm{st}} = \{(\bar S, 0) : 0 \le \bar S \le S^*\}$$
 
-is the unique asymptotically stable set of the system, and every trajectory starting in $X$ with $I > 0$ converges to a point of $X_{\mathrm{st}}$.
+is the set of Lyapunov-stable equilibria and the smallest closed asymptotically stable set (the unique asymptotically stable set of equilibria: larger forward-invariant sets such as $\{(S,I) \in X : S \le S^*,\ I \le \eta\}$ are asymptotically stable too), and every trajectory starting in $X$ with $I > 0$ converges to a point of $X_{\mathrm{st}}$.
 
 **Corollary 2.1.** $X_{\mathrm{st}}$ does not depend on the initial state; its subsets are stable but not attractive (only the segment as a whole is asymptotically stable), including the state $(S^*, 0)$; if $\bar{\mathcal R} < 1$, then $S^* = 1$ and $X_{\mathrm{st}}$ is the whole disease-free segment.
 

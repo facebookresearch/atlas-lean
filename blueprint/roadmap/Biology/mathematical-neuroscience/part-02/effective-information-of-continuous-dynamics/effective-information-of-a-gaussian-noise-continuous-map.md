@@ -8,11 +8,11 @@ The **effective information** at scale $L$ is the mutual information between inp
 
 $$\mathrm{EI}_L(\mu) = I\big(do(X \sim U([-L,L]^n));\,Y\big).$$
 
-**Theorem.** (i) If $\det \partial\mu(X) \neq 0$ (in the regime where $L$ is large and the noise is small compared with the scale on which $\mu$ varies, with $\mu$ injective on the cube),
+**Theorem.** (i) If $\mu$ is injective on $[-L,L]^n$ and $\det \partial\mu(X) \neq 0$ for all $X \in [-L,L]^n$, then for fixed $L$, as $\max_i \sigma_i \to 0$ (the difference of the two sides tending to $0$),
 
 $$\mathrm{EI}_L(\mu) \ \approx\ n\ln(2L) + \mathbb E_{X \sim U([-L,L]^n)}\ln\big|\det \partial\mu(X)\big| - \frac{n}{2}\big(1 + \ln(2\pi)\big) - \sum_{i=1}^{n}\ln\sigma_i .$$
 
-(ii) If $\det\partial\mu(X) = 0$ for all $X$, then $\mathrm{EI}_L(\mu) \approx 0$ in the same regime.
+(ii) If $\mu$ is constant, then $\mathrm{EI}_L(\mu) = 0$ exactly. (The source states (ii) for every $\mu$ with everywhere singular Jacobian, but its proof covers only constant $\mu$; for $n \ge 2$ and $\mu(x) = (x_1, 0, \dots, 0)$, $\mathrm{EI}_L(\mu) = I(X_1; X_1 + \varepsilon_1)$ grows without bound in $L$.)
 
 **Dimension-averaged quantities.** The dimension-averaged effective information $\mathrm{dEI}_L(\mu) = \mathrm{EI}_L(\mu)/n$ removes the explicit dependence on $n$:
 
@@ -22,7 +22,7 @@ and the dimension-averaged causal emergence, the difference of $\mathrm{dEI}$ be
 
 ## Expansion
 
-$I(X;Y) = H(Y) - H(Y \mid X)$. The conditional entropy of a Gaussian with covariance $\Sigma$ is $\frac n2\ln(2\pi e) + \sum_i\ln\sigma_i$, independent of $X$. For small noise, $Y \approx \mu(X)$ with $X$ uniform of entropy $n\ln(2L)$, and the change-of-variables formula for an injective differentiable map gives $H(\mu(X)) = H(X) + \mathbb E\ln|\det\partial\mu(X)|$. Subtracting yields (i). If the Jacobian is everywhere singular, $\mu$ maps the cube onto a lower-dimensional set and the differential-entropy approximation degenerates; the source treats this case as carrying no effective information. Dividing by $n$ and taking differences of macro- and micro-level values removes the dependence on dimension and on $L$.
+$I(X;Y) = H(Y) - H(Y \mid X)$. The conditional entropy of a Gaussian with covariance $\Sigma$ is $\frac n2\ln(2\pi e) + \sum_i\ln\sigma_i$, independent of $X$. For small noise, $Y \approx \mu(X)$ with $X$ uniform of entropy $n\ln(2L)$, and the change-of-variables formula for an injective differentiable map gives $H(\mu(X)) = H(X) + \mathbb E\ln|\det\partial\mu(X)|$. Subtracting yields (i). If $\mu$ is constant, $Y$ is independent of $X$ and the mutual information vanishes; for a nonconstant $\mu$ with everywhere singular Jacobian the differential-entropy approximation degenerates and the effective information need not vanish. Dividing by $n$ and taking differences of macro- and micro-level values removes the dependence on dimension and on $L$.
 
 ## Sources
 

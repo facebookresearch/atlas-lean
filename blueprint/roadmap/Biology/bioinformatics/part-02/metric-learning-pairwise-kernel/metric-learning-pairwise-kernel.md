@@ -5,6 +5,7 @@
 $$K_{\mathrm{MLPK}}\bigl((x_1,x_2),(x_3,x_4)\bigr)=\bigl(K(x_1,x_3)-K(x_1,x_4)-K(x_2,x_3)+K(x_2,x_4)\bigr)^2=\bigl\langle\Phi(x_1)-\Phi(x_2),\Phi(x_3)-\Phi(x_4)\bigr\rangle^2.$$
 
 **Properties.**
+
 - $K_{\mathrm{MLPK}}$ is positive definite: it is the Frobenius inner product $\langle D_{12},D_{34}\rangle_{\mathrm{Fro}}$ of the rank-one operators $D_{ab}=(\Phi(x_a)-\Phi(x_b))(\Phi(x_a)-\Phi(x_b))^\top$.
 - It is invariant under swapping the elements of either pair, so it is a positive definite kernel on unordered pairs, as needed for undirected interaction networks.
 - Training an SVM on pairs with $K_{\mathrm{MLPK}}$, without the constraint $M\succeq0$, is the relaxation of positive semidefinite metric learning: by the representer theorem the learned metric is $d_M(x,x')=\sum_{(i,j)}\alpha_{ij}\langle\Phi(x)-\Phi(x'),\Phi(x_i)-\Phi(x_j)\rangle^2$, and an edge is predicted for pairs at small learned distance.

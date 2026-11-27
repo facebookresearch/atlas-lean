@@ -23,30 +23,30 @@ $$
 1. An optimal control exists.
 2. The problem is normal (the cost multiplier in Pontryagin's principle can be taken equal to $1$), and every optimal control is bang-bang: there are no singular arcs, and $\sigma^*(t) = \sigma_m$ where the switching function
 
-$$
-\phi(t) = \kappa + \beta + \gamma\, x^*(t)\, y^*(t)\, \big(\lambda_2(t) - \lambda_1(t)\big)
-$$
+    $$
+    \phi(t) = \kappa + \beta + \gamma\, x^*(t)\, y^*(t)\, \big(\lambda_2(t) - \lambda_1(t)\big)
+    $$
 
-is positive and $\sigma^*(t) = \sigma_s$ where it is negative. Here $\beta \ge 0$ is the constant multiplier of the budget constraint and $(\lambda_1, \lambda_2)$ solve
+    is positive and $\sigma^*(t) = \sigma_s$ where it is negative. Here $\beta \ge 0$ is the constant multiplier of the budget constraint and $(\lambda_1, \lambda_2)$ solve
 
-$$
-\lambda_1' = (\lambda_1 - \lambda_2)\, \gamma \sigma y, \qquad \lambda_2' = (\lambda_1 - \lambda_2)\, \gamma \sigma x + \gamma \lambda_2,
-$$
+    $$
+    \lambda_1' = (\lambda_1 - \lambda_2)\, \gamma \sigma y, \qquad \lambda_2' = (\lambda_1 - \lambda_2)\, \gamma \sigma x + \gamma \lambda_2,
+    $$
 
-with terminal values given by the partial derivatives of the final size,
+    with terminal values given by the partial derivatives of the final size,
 
-$$
-\lambda_1(T) = \frac{\partial x_\infty}{\partial x(T)} = \frac{1 - \sigma_f x(T)}{x(T)} \cdot \frac{x_\infty}{1 - \sigma_f x_\infty}, \qquad \lambda_2(T) = \frac{\partial x_\infty}{\partial y(T)} = -\frac{\sigma_f x_\infty}{1 - \sigma_f x_\infty} < 0 .
-$$
+    $$
+    \lambda_1(T) = \frac{\partial x_\infty}{\partial x(T)} = \frac{1 - \sigma_f x(T)}{x(T)} \cdot \frac{x_\infty}{1 - \sigma_f x_\infty}, \qquad \lambda_2(T) = \frac{\partial x_\infty}{\partial y(T)} = -\frac{\sigma_f x_\infty}{1 - \sigma_f x_\infty} < 0 .
+    $$
 
 3. $\phi$ changes sign at most twice on $[0, T]$.
 4. Consequently every optimal control is mild, then strict, then mild:
 
-$$
-\sigma^*(t) = \begin{cases} \sigma_m, & 0 \le t < t_1, \\ \sigma_s, & t_1 \le t < t_1 + \eta, \\ \sigma_m, & t_1 + \eta \le t \le T, \end{cases} \qquad 0 \le \eta \le \tau,
-$$
+    $$
+    \sigma^*(t) = \begin{cases} \sigma_m, & 0 \le t < t_1, \\ \sigma_s, & t_1 \le t < t_1 + \eta, \\ \sigma_m, & t_1 + \eta \le t \le T, \end{cases} \qquad 0 \le \eta \le \tau,
+    $$
 
-so the strict quarantine is switched on at most once, and the problem reduces to maximizing a function of the two numbers $(t_1, \eta)$ over $\{0 \le \eta \le \tau,\ 0 \le t_1 \le T - \eta\}$.
+    so the strict quarantine is switched on at most once, and the problem reduces to maximizing a function of the two numbers $(t_1, \eta)$ over $\{0 \le \eta \le \tau,\ 0 \le t_1 \le T - \eta\}$.
 
 ## Depends on
 

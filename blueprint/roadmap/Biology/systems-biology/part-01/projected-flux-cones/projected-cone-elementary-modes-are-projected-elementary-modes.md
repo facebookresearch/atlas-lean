@@ -1,6 +1,6 @@
 # Projected cone elementary modes are projected elementary modes
 
-**Setting.** A metabolic network with stoichiometric matrix $S \in \mathbb{R}^{m\times n}$ and irreversible reactions $\mathrm{Irr} \subseteq \{1,\dots,n\}$ has steady-state flux cone $C = \{v \in \mathbb{R}^n : Sv = 0,\ v_i \ge 0 \ (i \in \mathrm{Irr})\}$. An *elementary mode* (EM) is $e \in C$ such that no $v \in C\setminus\{0\}$ has $\operatorname{supp}(v) \subsetneq \operatorname{supp}(e)$; up to positive scaling the EMs generate $C$ as a cone. Split the coordinates into $p$ "interesting" reactions $X$ and $q$ others $Y$ ($C \subseteq X \times Y$) and let
+**Setting.** A metabolic network with stoichiometric matrix $S \in \mathbb{R}^{m\times n}$ and irreversible reactions $\mathrm{Irr} \subseteq \{1,\dots,n\}$ has steady-state flux cone $C = \{v \in \mathbb{R}^n : Sv = 0,\ v_i \ge 0 \ (i \in \mathrm{Irr})\}$. An *elementary mode* (EM) is $e \in C \setminus \{0\}$ such that no $v \in C\setminus\{0\}$ has $\operatorname{supp}(v) \subsetneq \operatorname{supp}(e)$; up to positive scaling the EMs generate $C$ as a cone. Split the coordinates into $p$ "interesting" reactions $X$ and $q$ others $Y$ ($C \subseteq X \times Y$) and let
 
 $$P_X(C) = \{x \in X : \exists y,\ (x,y) \in C\}$$
 

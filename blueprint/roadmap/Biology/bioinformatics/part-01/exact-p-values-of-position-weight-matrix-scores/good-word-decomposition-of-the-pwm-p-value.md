@@ -7,15 +7,17 @@ $$\mathrm{BS}(M[i..j])=\sum_{k=i}^{j}\max_{x\in\Sigma} M(k,x),\qquad \mathrm{WS}
 with empty slices scoring $0$. Let $Q(M[1..i],s)$ be the probability that a random word of length $i$ has score $s$ under $M[1..i]$, and $\mathrm{P\text{-}value}(M,\alpha)=\Pr[\mathrm{Score}(u,M)\ge\alpha]$.
 
 **Good words (Definition 2).** A word $u=u_1\cdots u_i$ is good for $\alpha$ if
+
 1. $\mathrm{Score}(u,M[1..i])\ge \alpha-\mathrm{WS}(M[i+1..m])$, and
 2. $\mathrm{Score}(u_1\cdots u_{i-1},M[1..i-1])<\alpha-\mathrm{WS}(M[i..m])$.
 
 **Lemmas 3–5.**
+
 - Every extension of a good word to length $m$ scores at least $\alpha$.
 - Every word of length $m$ scoring at least $\alpha$ has exactly one good prefix.
 - Hence
 
-$$\mathrm{P\text{-}value}(M,\alpha)=\sum_{\substack{1\le i\le m,\ x\in\Sigma,\ s<\alpha-\mathrm{WS}(M[i..m])\\ s+M(i,x)\ge\alpha-\mathrm{WS}(M[i+1..m])}} Q(M[1..i-1],s)\,p(x).$$
+    $$\mathrm{P\text{-}value}(M,\alpha)=\sum_{\substack{1\le i\le m,\ x\in\Sigma,\ s<\alpha-\mathrm{WS}(M[i..m])\\ s+M(i,x)\ge\alpha-\mathrm{WS}(M[i+1..m])}} Q(M[1..i-1],s)\,p(x).$$
 
 **Useful scores (Lemma 2).** To obtain the distribution on a score range $[\alpha,\beta]$, the only prefix values needed are $Q(M[1..i],s)$ with $\alpha-\mathrm{BS}(M[i+1..m])\le s\le\beta-\mathrm{WS}(M[i+1..m])$.
 

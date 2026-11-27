@@ -12,7 +12,7 @@ and the observed read depth vector $r = (r_1,\dots,r_m) \in \mathbb{N}^m$ with $
 
 $$\mathcal{L}_r(C,\mu) = -\sum_{i=1}^m r_i \log\big(\widehat{C\mu}\big)_i .$$
 
-Over the whole simplex $p \in \Delta_{m-1}$ the unique minimiser is $p^*_i = r_i/N$.
+For $N \ge 1$ (with $0 \log 0 = 0$), the unique minimiser over the whole simplex $p \in \Delta_{m-1}$ is $p^*_i = r_i/N$.
 
 **Identifiability and reduction to convex problems.** Only $p = \widehat{C\mu}$ is identifiable from $r$: pairs $(C,\mu) \neq (C',\mu')$ with $\widehat{C\mu} = \widehat{C'\mu'}$ have identical likelihood for every $r$. Moreover, if $p = \widehat{C\mu}$ then there is $\mu' \in \Delta_{n-1}$ with
 

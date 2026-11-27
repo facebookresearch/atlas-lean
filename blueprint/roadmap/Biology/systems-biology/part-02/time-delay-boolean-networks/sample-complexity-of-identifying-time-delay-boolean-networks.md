@@ -1,8 +1,8 @@
 # Sample complexity of identifying time-delay Boolean networks
 
-**Setting.** A time-delay Boolean network on $n$ genes $V$ assigns to each target gene $z$ a Boolean function $g$ of at most $K$ input genes together with one relation: similarity $g\sim z$, prerequisite $g\prec z$, or prerequisite $g \prec \bar z$. Data are input/output pairs: an input expression pattern on $V$ and the resulting output pattern, where under a prerequisite with $g = 1$ either output value of $z$ may occur.
+**Setting.** A time-delay Boolean network on $n$ genes $V$ assigns to each target gene $z$ a Boolean function $g$ of at most $K$ input genes together with one relation: similarity $g\sim z$, prerequisite $g\prec z$, or prerequisite $g \prec \bar z$. Data are input/output pairs: an input expression pattern on $V$ and the resulting output pattern, where under a prerequisite with $g = 1$ the output of $z$ is $0$ or $1$ with probability $1/2$ each, independently of the inputs and of the other samples. A network is *consistent* with the data if, for each observed input assignment, the set of target outputs it allows is exactly the set observed (both values where the relation allows both).
 
-**Proposition 1 (uniqueness condition).** Suppose that for every subset of $2K$ genes, all $2^{2K}$ assignments of Boolean values appear among the input patterns, each together with all of its possible output values of the target gene. Then the network consistent with the data, if one exists, is unique.
+**Proposition 1 (uniqueness condition).** Suppose that for every subset of $2K$ genes, all $2^{2K}$ assignments of Boolean values appear among the input patterns, each together with all of its possible output values of the target gene. Then a network consistent with the data, if one exists, is unique as a map from input assignments to allowed target outputs (regulators and function determined up to inessential variables).
 
 **Proposition 2 (one sub-assignment is missed rarely).** For uniformly random input patterns, the probability that one fixed sub-assignment of $2K$ genes, together with all of its possible target outputs, fails to appear among $m$ patterns is at most
 
@@ -22,9 +22,9 @@ input/output pairs are required for identification in the worst case.
 
 ## Expansion
 
-Proposition 1: for similarity this is the classical argument for deterministic Boolean networks. For a prerequisite $g\prec z$ some input value of $g$'s genes yields both outputs $0$ and $1$ of $z$. When all assignments of every $2K$-subset appear with all outputs, any candidate regulator set other than the true one meets an input on which $z$ is visibly non-deterministic, so it cannot reproduce the data.
+Proposition 1: for similarity this is the classical argument for deterministic Boolean networks. For a prerequisite $g\prec z$ some input value of $g$'s genes yields both outputs $0$ and $1$ of $z$. When all assignments of every $2K$-subset appear with all outputs, any candidate regulator set other than the true one meets an input on which $z$ is visibly non-deterministic, so it cannot reproduce the data. (Under the weaker reading of consistency, every observed pair merely allowed, uniqueness fails: if $g \sim z$ holds, $g \prec z$ also allows every sample.)
 
-Proposition 2: write $q = 2^{-2K}$. The sub-assignment appears exactly $t$ times with probability $\binom{m}{t}q^{t}(1-q)^{m-t}$. With $t \ge 1$ appearances, the chance that the two possible outputs do not both occur is at most $(1/2)^{t-1}$, and with $t = 0$ it is $1$. Summing,
+Proposition 2: write $q = 2^{-2K}$. The sub-assignment appears exactly $t$ times with probability $\binom{m}{t}q^{t}(1-q)^{m-t}$. With $t \ge 1$ appearances, the chance that the two possible outputs do not both occur is at most $(1/2)^{t-1}$ by the fair independent outputs (for output probability $r$ the same argument gives the bound $2(1 - 2^{-2K}\min(r, 1-r))^m$), and with $t = 0$ it is $1$. Summing,
 
 $$(1-q)^m + \sum_{t=1}^{m}\binom{m}{t}q^t(1-q)^{m-t}\Big(\tfrac12\Big)^{t-1} = 2\Big(1-\frac q2\Big)^m - (1-q)^m \le 2\Big(1 - \frac{1}{2^{2K+1}}\Big)^m .$$
 

@@ -12,9 +12,9 @@ where $D_{pq}$ are diagonal $n\times n$ matrices of local (intra-areal) coupling
 
 **Proposition (disconnected areas).** Let $D = \begin{pmatrix} D_{EE} & D_{EI}\\ D_{IE} & D_{II}\end{pmatrix}$ with diagonal blocks satisfying
 
-$$D_{II} = O(1),\quad D_{IE} = O(1),\quad D_{EI} = O(\epsilon),\quad D_{EE} = O(\epsilon)$$
+$$D_{II},\ D_{IE} \text{ of exact order one},\quad D_{EI} = O(\epsilon),\quad D_{EE} = O(\epsilon)$$
 
-for a small parameter $\epsilon$ (in the cortical model $\epsilon = (\beta_E/\tau_E)/(\beta_I/\tau_I)$, small because inhibitory cells have steeper gain and faster membranes). Then $D$ has $n$ eigenvalues of order $O(\epsilon)$ and $n$ eigenvalues of order $O(1)$. Explicitly, $D = P\Lambda P^{-1}$ with
+(that is, $D_{II}$ and $D_{IE}$ have diagonal entries bounded and bounded away from $0$ uniformly in $\epsilon$), with $D_{II}$ having strictly negative diagonal entries (as in the cortical model), for a small parameter $\epsilon$ (in the cortical model $\epsilon = (\beta_E/\tau_E)/(\beta_I/\tau_I)$, small because inhibitory cells have steeper gain and faster membranes). Then $D$ has $n$ eigenvalues of order $O(\epsilon)$ and $n$ eigenvalues of order $O(1)$. Explicitly, $D = P\Lambda P^{-1}$ with
 
 $$P = \begin{pmatrix} I + AB & -A \\ -B & I\end{pmatrix},\qquad \Lambda = \begin{pmatrix}\Lambda_U & 0\\ 0 & \Lambda_L\end{pmatrix},$$
 
@@ -22,7 +22,7 @@ where $A = -D_{EI}D_{II}^{-1} + O(\epsilon^2)$, $B = D_{IE}D_{II}^{-1} + O(\epsi
 
 $$\Lambda_U = D_{EE} - D_{EI}D_{II}^{-1}D_{IE} + O(\epsilon^2) = O(\epsilon),\qquad \Lambda_L = D_{II} + D_{EI}D_{II}^{-1}D_{IE} + O(\epsilon^2) = O(1).$$
 
-**Interpretation.** The $O(1)$ eigenvalues give a fast timescale pool (a few milliseconds) that barely depends on the area's hierarchy level, because $D_{II}$ does not. The $O(\epsilon)$ eigenvalues give slow timescales; since $D_{EE}$ and $D_{IE}$ scale with the hierarchy value $h_i$, a gradient of synaptic excitation across areas spreads the slow pool. Without long-range coupling the slow eigenvectors are coordinate vectors, so each area has its own slow timescale.
+**Interpretation.** The $O(1)$ eigenvalues give a fast timescale pool (a few milliseconds) that barely depends on the area's hierarchy level, because $D_{II}$ does not. The $O(\epsilon)$ eigenvalues give slow timescales; since $D_{EE}$ and $D_{IE}$ scale with the hierarchy value $h_i$, a gradient of synaptic excitation across areas spreads the slow pool. Without long-range coupling each slow eigenvector is supported on a single area (its excitatory part is a multiple of $e_k$; its inhibitory part $-B_k e_k$ is of order one), so each area has its own slow timescale.
 
 ## Expansion
 
@@ -30,11 +30,7 @@ Because all four blocks are diagonal, the problem decouples into $n$ independent
 
 $$A = \tfrac12 D_{IE}^{-1}\Big[D_{II} - D_{EE} + \sqrt{(D_{II}-D_{EE})^2 + 4D_{IE}D_{EI}}\Big]$$
 
-and expanding in $\epsilon$ gives the stated orders. $\Lambda_U$ is a Schur complement: the slow mode is excitation with inhibition slaved to it.
-
-## Depends on
-
-- [Wilson–Cowan neural population model](../../wilson-cowan-neural-population-model/README.md)
+and expanding in $\epsilon$ gives the stated orders; this root is the $O(\epsilon)$ one because $D_{II} - D_{EE} < 0$ for small $\epsilon$ (for $D_{II} > 0$ it would be the $O(1)$ root and $\Lambda_U$, $\Lambda_L$ would swap orders). $\Lambda_U$ is a Schur complement: the slow mode is excitation with inhibition slaved to it.
 
 ## Sources
 

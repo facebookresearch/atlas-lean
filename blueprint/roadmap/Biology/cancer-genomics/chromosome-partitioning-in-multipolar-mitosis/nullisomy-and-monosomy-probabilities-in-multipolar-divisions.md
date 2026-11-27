@@ -12,7 +12,7 @@ $$P(\text{at least one nullisomy}) = 1 - \left(1 - \left(\frac{p-2}{p}\right)^{k
 
 and analogously for monosomy and for nullisomy-or-monosomy.
 
-For a bipolar division ($p = 2$) both probabilities vanish for every $k$ (each daughter receives exactly one chromatid of every pair). For a tetraploid cell ($k = 4$, $M = 23$) the per-chromosome nullisomy probability is $1/81$ for $p = 3$ and $1/16$ for $p = 4$, so a tripolar division produces a daughter lacking some chromosome with probability $1 - (80/81)^{23} \approx 0.25$ and a tetrapolar one with probability $1 - (15/16)^{23} \approx 0.77$, which explains the rapid loss of highly aneuploid progeny of multipolar divisions.
+For a bipolar division ($p = 2$) each daughter receives exactly one chromatid of every pair, so nullisomy is impossible for every $k \ge 1$ and monosomy for every $k \ge 2$ (for $k = 1$ it is certain). For a tetraploid cell ($k = 4$, $M = 23$) the per-chromosome nullisomy probability is $1/81$ for $p = 3$ and $1/16$ for $p = 4$, so a given daughter of a tripolar division lacks some chromosome with probability $1 - (80/81)^{23} \approx 0.25$, and a given daughter of a tetrapolar division with probability $1 - (15/16)^{23} \approx 0.77$ (these are per daughter, not per division), which explains the rapid loss of highly aneuploid progeny of multipolar divisions.
 
 ## Expansion
 

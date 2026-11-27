@@ -4,9 +4,9 @@
 
 **NJMerge.** The input is a distance (dissimilarity) matrix $D$ on $S = \{s_1, \dots, s_n\}$ and a set $\mathcal T = \{T_1, \dots, T_k\}$ of unrooted binary trees on pairwise disjoint leaf sets $S_1, \dots, S_k$ with $S = \bigcup_i S_i$. NJMerge runs neighbor joining with the usual Saitou–Nei updates of $D$ and of the $Q$-matrix, but at each iteration scans the candidate pairs in increasing order of $Q$ and accepts the first pair $(x, y)$ such that (i) if $x$ and $y$ lie in a common constraint tree they are siblings there, and (ii) replacing $x$ and $y$ by a new leaf $z = (x, y)$ in every constraint tree keeps every pair of constraint trees compatible. After a join the constraint trees are relabeled. If NJMerge returns a tree, that tree agrees with every $T_i$ (it is a compatibility supertree of $\mathcal T$); the pairwise-compatibility heuristic can, however, fail to return a tree.
 
-**Nearly additive matrix.** Let $T$ be a tree with positive edge weights and leaves $1, \dots, n$. A matrix $M$ is nearly additive for $T$ if $|M[i,j] - d_T(i,j)| < \tfrac12 \min_e w_e$ for all $i, j$, where $d_T$ is the path-length metric of $T$ and the minimum is over the branch lengths of $T$.
+**Nearly additive matrix.** Let $T$ be an unrooted binary tree with positive edge weights and leaves $1, \dots, n$. A matrix $M$ is nearly additive for $T$ if $|M[i,j] - d_T(i,j)| < \tfrac12 \min_e w_e$ for all $i, j$, where $d_T$ is the path-length metric of $T$ and the minimum is over the branch lengths of $T$.
 
-**Theorem 3.** Let $T^*$ be a tree on $S$, let $D$ be nearly additive for $T^*$, and let every $T_i \in \mathcal T$ agree with $T^*$. Then NJMerge applied to $(\mathcal T, D)$ returns $T^*$.
+**Theorem 3.** Let $T^*$ be an unrooted binary tree on $S$ with positive branch lengths, let $D$ be nearly additive for $T^*$, and let every $T_i \in \mathcal T$ agree with $T^*$. Then NJMerge applied to $(\mathcal T, D)$ returns $T^*$. (The source says only "a tree on leaf set $S$"; neighbor joining always outputs a binary tree, so the theorem fails when $T^*$ has a polytomy.)
 
 ## Depends on
 

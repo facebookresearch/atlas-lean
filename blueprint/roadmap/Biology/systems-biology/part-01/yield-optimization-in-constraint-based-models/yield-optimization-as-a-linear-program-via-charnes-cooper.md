@@ -1,6 +1,6 @@
 # Yield optimization as a linear program via the Charnes–Cooper transformation
 
-Let $P = \{ x \in \mathbb{R}^n : A x \le b \}$ be a flux polyhedron (steady state $Sx = 0$, irreversibilities and any further linear constraints such as uptake bounds, written as inequalities) and let $c, d \in \mathbb{R}^n$. The **yield**
+Let $P = \{ x \in \mathbb{R}^n : A x \le b \}$ be a nonempty flux polyhedron (steady state $Sx = 0$, irreversibilities and any further linear constraints such as uptake bounds, written as inequalities) and let $c, d \in \mathbb{R}^n$. The **yield**
 
 $$Y(x) = \frac{c^{\mathsf T} x}{d^{\mathsf T} x}$$
 
@@ -15,11 +15,12 @@ in contrast to rate optimization $\max_{x \in P} c^{\mathsf T} x$ (flux balance 
 $$P' = \{ (x', t) \in \mathbb{R}^n \times \mathbb{R} : A x' \le t\, b,\ d^{\mathsf T} x' = 1,\ t \ge 0 \}$$
 
 and the LP $\max_{(x', t) \in P'} c^{\mathsf T} x'$. Then:
+
 1. the LFP is feasible iff the LP is feasible, the LFP is unbounded iff the LP is unbounded, and both have the same optimal value (supremum);
 2. $x \in P_{>}$ maps to $(x/d^{\mathsf T}x,\ 1/d^{\mathsf T}x) \in P'$ with equal objective, and $(x', t) \in P'$ with $t > 0$ maps back to $x'/t \in P_{>}$ with equal objective;
 3. a feasible point $(x', 0)$ is a recession direction of $P$ with $d^{\mathsf T} x' = 1$, and for any $x_0 \in P_{>}$, $Y(x_0 + \lambda x') \to c^{\mathsf T} x'$ as $\lambda \to \infty$. If every optimal LP solution has $t = 0$, the optimal yield is approached but not attained at finite fluxes.
 
-Because $Y(\lambda x) = Y(x)$ for $\lambda > 0$, rate and yield optima differ: if $x_r^*$ and $x_y^*$ are rate- and yield-optimal with positive objective, then $d^{\mathsf T} x_y^* \le d^{\mathsf T} x_r^*$, i.e. yield-optimal states never take up more substrate than rate-optimal ones. With only steady-state and irreversibility constraints the rate LP is unbounded while the maximal yield is finite.
+Because $Y(\lambda x) = Y(x)$ for $\lambda > 0$, rate and yield optima differ: if $x_r^*$ and $x_y^*$ are rate- and yield-optimal with positive objective, then $d^{\mathsf T} x_y^* \le d^{\mathsf T} x_r^*$, i.e. yield-optimal states never take up more substrate than rate-optimal ones. With only steady-state and irreversibility constraints the rate LP is unbounded as soon as some flux has $c^{\mathsf T}x > 0$, while the maximal yield is finite unless some flux has $d^{\mathsf T}x = 0 \ne c^{\mathsf T}x$.
 
 ## Depends on
 

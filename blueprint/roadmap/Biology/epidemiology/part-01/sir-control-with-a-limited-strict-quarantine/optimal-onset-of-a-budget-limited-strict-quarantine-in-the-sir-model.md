@@ -11,9 +11,9 @@ Let $\hat x(t)$ denote the susceptible fraction of the uncontrolled epidemic, th
 3. if $1/\sigma_f < \hat x(T - \tau) \le \dfrac{1}{\sigma_f (1 - e^{-\gamma\tau})}$: $t^* = T - \tau$ and $\eta = \tau$;
 4. if $\hat x(T - \tau) > \dfrac{1}{\sigma_f (1 - e^{-\gamma\tau})}$: $\eta = T - \tilde t$, where $\tilde t$ is the unique time in $[T - \tau, T]$ with
 
-$$
-\hat x(\tilde t) = \frac{1}{\sigma_f\big(1 - e^{-\gamma (T - \tilde t)}\big)} .
-$$
+    $$
+    \hat x(\tilde t) = \frac{1}{\sigma_f\big(1 - e^{-\gamma (T - \tilde t)}\big)} .
+    $$
 
 In case 2 the complete quarantine starts exactly at the peak of infections of the uncontrolled epidemic, where $\hat x = 1/\sigma_f$ and $y' = 0$, and uses its whole budget. In case 4 the epidemic is still far from herd immunity late in the window, so the quarantine is started late and runs to $T$; its length $T - \tilde t$ is strictly shorter than the budget $\tau$ when $\tilde t > T - \tau$, so using less than the allowed strict quarantine can be optimal. With $\tau = T$ the regimes collapse to $t^* = 0$ when $x_0 \le 1/(\sigma_f(1 - e^{-\gamma T}))$ and $t^* = \tilde t$ otherwise, which is the single-switch optimal intervention of the finite-window SIR problem without a budget.
 
@@ -23,7 +23,7 @@ $$
 z(t) = \int_t^{t + \tau} \frac{\sigma_f\, x_{t,\tau}(r) - 1}{y_{t,\tau}(r)}\, dr ,
 $$
 
-where $(x_{t,\tau}, y_{t,\tau})$ is the trajectory under strict quarantine on $[t, t + \tau]$; $z$ changes sign at most once, from positive to negative, on $[0, T - \tau]$. For $\kappa > 0$ and $0 \le \sigma_s < \sigma_m \le \sigma_f$, if $\kappa$ is small enough that lengthening the strict phase always increases $J$, the optimal control is again unique with the analogous four regimes; if $\kappa$ is so large that lengthening always decreases $J$, the optimal control is $\sigma^* \equiv \sigma_m$ with no strict quarantine at all.
+where $(x_{t,\tau}, y_{t,\tau})$ is the trajectory under strict quarantine on $[t, t + \tau]$; $z$ changes sign at most once, from positive to negative, on $[0, T - \tau]$. For $\kappa > 0$ and $0 \le \sigma_s < \sigma_m \le \sigma_f$ with $\sigma_s < 1$, if $\kappa$ is small enough that lengthening the strict phase always increases $J$, the optimal control is again unique with the analogous four regimes; if $\kappa$ is so large that lengthening always decreases $J$, the optimal control is $\sigma^* \equiv \sigma_m$ with no strict quarantine at all.
 
 ## Depends on
 

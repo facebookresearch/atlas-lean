@@ -13,8 +13,9 @@ i.e. the internal and external concentrations for which the current sensor value
 $$\dot x_i=\sum_jN_{ij}e_jf_j(x_I;x_E),\qquad \dot e_j=E_j(x_S)-\mu e_j,\qquad E_j(x_S)=\mu\,\frac{V_j/f_j(\xi(x_S))}{\sum_lV_l/f_l(\xi(x_S))}.$$
 
 **Properties.**
-- $\xi(x_S)$ is well defined by the implicit function theorem only if the number of sensors equals the number of independently varying external parameters (nutrient levels, temperature, pH and the like) to which the optimum must adapt.
-- At any steady state, $e_j\propto V_j/f_j(\xi(x_S))$ and the predicted optimum coincides with the actual state, so a qORAC steady state is the specific-flux optimum for the current environment; the source proves that this steady state is unique for linear enzyme chains (Supporting Information, Theorem 3).
+
+- $\xi(x_S)$ is locally well defined by the implicit function theorem when the matrix of second derivatives $\partial^2 O/\partial\xi_j\partial\xi_i$ (rows $i$: internal metabolites; columns $j$: the non-sensor internal and the inferred external variables) is nonsingular; this requires the matrix to be square, i.e. as many sensors as inferred external variables.
+- For a linear enzyme chain with reversible Michaelis–Menten kinetics and sensor $x_1$ (more generally under the conditions of the source's Supporting Information, Corollary 1: unique metabolic steady states for each enzyme vector and sensors joined to the external concentrations by linear chains of reversible reactions), the qORAC system has a unique steady state, and it is the specific-flux optimum for the current environment (Supporting Information, Theorem 3). In general a steady state only gives $f_j(x)/f_j(\xi(x_S))$ equal for all $j$; the source's argument that only the optimal state is self-consistent is a heuristic outside these cases.
 
 ## Depends on
 

@@ -5,7 +5,7 @@
 1. $p = p(n) = O(n^a)$ for some $a > 0$ and $|\mathrm{pa}_i| = O(n^b)$ with $s\,n^{2b-1}\log n = o(1)$;
 2. there is $\nu > 0$ with $\operatorname{Var}(X^T_i \mid X^{T-d:T-1}_{1:p}) \ge \nu$ for all $n$ and $i$;
 3. there are $\delta > 0$ and $\xi > b$ such that every partial correlation $\pi_{ij}$ between $X_i$ and a true regulator $X_j$ satisfies $|\pi_{ij}| \ge \delta n^{-(1-\xi)/2}$;
-4. $\lambda \asymp n^{-(1-\zeta)/2}$ for some $b < \zeta < \xi$, the adaptive weights come from an initial lasso fit, and $\Psi^t = g\exp\big(n\,\mathbb{1}\{\|A^{(t-1)}\|_0 < p^2\beta/(T-t)\}\big)$ for a large constant $g$ (that is, $M = g e^n$);
+4. $\lambda \asymp n^{-(1-\zeta)/2}$ for some $b < \zeta < \xi$, the adaptive weights come from an initial lasso fit with penalty $\lambda^0 = O(\sqrt{\log p / n})$, and $\Psi^t = (g e^n)^{\mathbb{1}\{\|A^{(t-1)}\|_0 < p^2\beta/(T-t)\}}$ for a large constant $g$ (that is, $M = g e^n$);
 5. the number of true causal effects diminishes with the lag.
 
 **Theorem.** Then (i) with probability tending to $1$ no false Granger-causal effect is included and the signs of the included effects are correct; (ii) with probability asymptotically at least $1 - \beta$ the true Granger-causal effects and the order of the autoregression are correctly determined.

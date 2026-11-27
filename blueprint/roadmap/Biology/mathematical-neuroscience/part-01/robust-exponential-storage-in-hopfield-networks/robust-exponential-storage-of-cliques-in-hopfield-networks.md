@@ -1,6 +1,6 @@
 # Robust exponential storage of cliques in Hopfield networks
 
-**Hopfield network.** On states $x \in \{0,1\}^n$ take a real symmetric weight matrix $W$ with zero diagonal and thresholds $\theta \in \mathbb{R}^n$, with energy $E_x = -\tfrac12 x^\top W x + \theta^\top x$. The asynchronous dynamics replaces, neuron by neuron, $x_e$ by $1$ if $\sum_{f\neq e} W_{ef}x_f > \theta_e$ and by $0$ otherwise. With $I_e = \sum_f W_{ef}x_f$, each update changes energy by $\Delta E_e = -\Delta x_e\,(I_e - \theta_e) \le 0$, so every initial state converges in finitely many steps to a fixed point (attractor).
+**Hopfield network.** On states $x \in \{0,1\}^n$ take a real symmetric weight matrix $W$ with zero diagonal and thresholds $\theta \in \mathbb{R}^n$, with energy $E_x = -\tfrac12 x^\top W x + \theta^\top x$. The asynchronous dynamics runs through the neurons in a fixed order (a fair schedule), replacing $x_e$ by $1$ if $\sum_{f\neq e} W_{ef}x_f > \theta_e$ and by $0$ otherwise (a tie sets the state to $0$). With $I_e = \sum_f W_{ef}x_f$, each update changes energy by $\Delta E_e = -\Delta x_e\,(I_e - \theta_e) \le 0$, and zero-change flips can only go from $1$ to $0$, so every initial state converges in finitely many steps to a fixed point (attractor).
 
 **Robustness.** For $p \in [0,\tfrac12]$ the $p$-corruption $x^{p}$ of $x$ flips each bit independently with probability $p$. An attractor $x^*$ is $(1-\varepsilon)$-tolerant to $p$-corruption if the dynamics started at $(x^*)^{p}$ returns to $x^*$ with probability at least $1-\varepsilon$; $\alpha(X,\varepsilon)$ is the largest $p$ that every state of $X$ tolerates in this sense. A sequence of networks $H_n$ storing $X_n$ has robustness index
 
@@ -16,7 +16,7 @@ with $S_1, S_0$ the numbers of edge pairs of $G$ sharing exactly one, respective
 
 $$x = \frac{3+2p}{4k(1+2p)} .$$
 
-Then a $p$-corrupted $k$-clique is restored with probability tending to $1$ as $k \to \infty$, in a single parallel update. Hence there are Hopfield networks on $n=\binom{2k}{2}$ neurons that robustly store all
+Then a $p$-corrupted $k$-clique is restored with probability tending to $1$ as $k \to \infty$, in a single parallel update, so for fixed $p$ the family has robustness index at least $p$. Taking $p = p(k) \sim \tfrac12 - k^{\delta - 1/2}$ for some $0 < \delta < \tfrac12$ in $x$ gives Hopfield networks on $n=\binom{2k}{2}$ neurons that robustly store all
 
 $$\binom{2k}{k} \sim \frac{2^{\sqrt{2n}+\frac34}}{n^{1/4}\sqrt{\pi}}$$
 
@@ -26,7 +26,12 @@ $k$-cliques with the maximal robustness index $\alpha = \tfrac12$. The source pr
 
 $$K(W,\theta) = \frac{1}{|X|}\sum_{x\in X}\sum_{x' \in N(x)} \exp\Bigl(\frac{E_x - E_{x'}}{2}\Bigr),$$
 
-with $N(x)$ the states at Hamming distance one from $x$, is convex in $(W,\theta)$, and $X$ consists of attractors iff $K$ can be made arbitrarily small. Over all $k$-cliques with $v = 2k-2$ and the three-parameter family with fixed $z>0$, $K$ is minimized uniquely at $(x,0,z)$ with $x = 2z/(3k-5)$; this network stores all $k$-cliques with robustness index $\tfrac14$. Gradient descent on $K$ for one pattern gives the local learning rule $\Delta W_{ef} \propto -x_f\,\Delta x_e\,e^{-\Delta E_e/2}$, $\Delta\theta_e \propto \Delta x_e\,e^{-\Delta E_e/2}$.
+with $N(x)$ the states at Hamming distance one from $x$, is convex in $(W,\theta)$, and $X$ consists of attractors iff $K$ can be made arbitrarily small. Over all $k$-cliques with $v = 2k-2$, restricted to the sparse subfamily $(x,0,z)$ with fixed $z>0$, $K$ is minimized uniquely at $x = 2z/(3k-5)$ (over the full three-parameter family $K$ has infimum $0$ and no minimizer); this network stores all $k$-cliques with robustness index $\tfrac14$. Gradient descent on $K$ for one pattern gives the local learning rule $\Delta W_{ef} \propto -x_f\,\Delta x_e\,e^{-\Delta E_e/2}$, $\Delta\theta_e \propto \Delta x_e\,e^{-\Delta E_e/2}$, where $\Delta x_e = 1 - 2x_e$ and $\Delta E_e = E_{x^{(e)}} - E_x$ are the single-flip quantities ($x^{(e)}$ is $x$ with bit $e$ flipped), not the changes produced by the update.
+
+## Depends on
+
+- [The one-coordinate energy identity with thresholds](../../../../ComputerScience/not-yet-classified/hopfield/energy-with-threshold-update.md)
+- [Convergence under a fair schedule](../../../../ComputerScience/not-yet-classified/hopfield/exists-stable-tail.md)
 
 ## Expansion
 

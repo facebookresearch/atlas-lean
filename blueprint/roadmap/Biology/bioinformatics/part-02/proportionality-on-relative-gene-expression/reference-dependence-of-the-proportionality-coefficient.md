@@ -10,7 +10,7 @@ $$\rho(Y_i, Y_j) - \rho(A_i, A_j) = \frac{1 - \rho(A_i, A_j)}{1 + 2/F(A_d)},$$
 
 and $\rho(Y_i, Y_j) = \rho(A_i, A_j)$ when $F(A_d) = 0$. In particular a reference that is unchanged on the absolute data ($\operatorname{var}(A_d) = 0$) reproduces the absolute coefficient exactly.
 
-**Corollary 1.** $\rho(Y_i, Y_j) \ge \rho(A_i, A_j)$ if and only if $\operatorname{corr}(A_i + A_j, A_d) \le \sqrt{\operatorname{var}(A_d)/\operatorname{var}(A_i + A_j)}$. Hence relative data inflate the coefficient whenever the reference is negatively correlated with the pair, or whenever $\operatorname{var}(A_d) \ge \operatorname{var}(A_i + A_j) = 4\operatorname{var}((A_i + A_j)/2)$.
+**Corollary 1.** Assume $\rho(A_i, A_j) < 1$, $\operatorname{var}(A_d) > 0$ and $\operatorname{var}(A_i + A_j) > 0$. Then $\rho(Y_i, Y_j) \ge \rho(A_i, A_j)$ if and only if $\operatorname{corr}(A_i + A_j, A_d) \le \sqrt{\operatorname{var}(A_d)/\operatorname{var}(A_i + A_j)}$. Hence relative data inflate the coefficient whenever the reference is negatively correlated with the pair, or whenever $\operatorname{var}(A_d) \ge \operatorname{var}(A_i + A_j) = 4\operatorname{var}((A_i + A_j)/2)$.
 
 **Corollary 2 (classification at a cut-off).** Fix $0 < K < 1$ and call a pair proportional on absolute (relative) data when $\rho(A_i, A_j) \ge K$ ($\rho(Y_i, Y_j) \ge K$). With $\tilde K = 2(K - \rho(A_i, A_j))/(1 - K)$, the pair is a true positive iff $F(A_d) \ge \tilde K$ and $\tilde K \le 0$; a false positive iff $F(A_d) \ge \tilde K > 0$; a true negative iff $F(A_d) < \tilde K$ and $\tilde K > 0$; a false negative iff $F(A_d) < \tilde K \le 0$.
 

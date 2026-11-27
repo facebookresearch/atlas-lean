@@ -11,10 +11,11 @@
 ## Depends on
 
 - [NJMerge returns the true tree on nearly additive input](njmerge-returns-the-true-tree-on-nearly-additive-input.md)
+- [The multispecies coalescent](../../../coalescent-theory/multispecies-coalescent/gene-tree-prob.md)
 
 ## Expansion
 
-Fix $\epsilon$ and choose $\epsilon_D, \epsilon_T > 0$ with $\epsilon_D + k\epsilon_T < \epsilon$. For enough data, neighbor joining on $D$ returns $T^*$ with probability at least $1 - \epsilon_D$, which in the proof is the event that $D$ is good enough for neighbor joining to recover $T^*$, and each of the $k$ subset trees agrees with $T^*$ with probability at least $1 - \epsilon_T$. The probability that all these events hold is at least $(1 - \epsilon_D)(1 - \epsilon_T)^k \ge (1-\epsilon_D)(1 - k\epsilon_T) > 1 - \epsilon$ by Bernoulli's inequality, and on that event Theorem 3 makes NJMerge return $T^*$. In simulations with 100 and 1000 taxa NJMerge failed to return a tree in under 1% of runs and let SVDquartets and concatenated maximum likelihood finish on 1000-taxon, 1000-gene data sets within 64 GB of memory.
+Fix $\epsilon$ and choose $\epsilon_D, \epsilon_T > 0$ with $\epsilon_D + k\epsilon_T < \epsilon$. For enough data, neighbor joining on $D$ returns $T^*$ with probability at least $1 - \epsilon_D$, and each of the $k$ subset trees agrees with $T^*$ with probability at least $1 - \epsilon_T$. These events are dependent (they come from the same data, and the subsets are chosen from $D$), but the union bound gives probability at least $1 - \epsilon_D - k\epsilon_T > 1 - \epsilon$ that all of them hold. On that event NJMerge returns $T^*$, by the form of Theorem 3 its proof establishes: NJMerge reproduces neighbor joining whenever neighbor joining returns $T^*$ and every constraint tree agrees with $T^*$. (The source multiplies the probabilities as if the events were independent.) In simulations with 100 and 1000 taxa NJMerge failed to return a tree in under 1% of runs and let SVDquartets and concatenated maximum likelihood finish on 1000-taxon, 1000-gene data sets within 64 GB of memory.
 
 ## Sources
 

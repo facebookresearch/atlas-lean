@@ -5,12 +5,13 @@ A metabolic network is a pair $(S, \mathrm{Irr})$ with stoichiometric matrix $S 
 $$C = \{ v \in \mathbb{R}^n : S v = 0,\ v_i \ge 0 \text{ for all } i \in \mathrm{Irr} \}.$$
 
 A reaction $i$ is **blocked** if $v_i = 0$ for all $v \in C$. For unblocked reactions $i, j$:
+
 - $i \xrightarrow{=0} j$ (**directional coupling**) if $v_i = 0 \Rightarrow v_j = 0$ for all $v \in C$;
 - $i \xleftrightarrow{=0} j$ (**partial coupling**) if $v_i = 0 \Leftrightarrow v_j = 0$ for all $v \in C$;
 - $i \backsim j$ (**full coupling**) if there is $\lambda \ne 0$ with $v_j = \lambda v_i$ for all $v \in C$;
 - $i \mapsto j$ (**uncoupling witness**) if some $v \in C$ has $v_i = 0$ and $v_j \ne 0$.
 
-Full coupling implies partial coupling, which is the conjunction of the two directional couplings; directional coupling is transitive. A reversible reaction $i$ is **fully reversible** if some $v \in C$ has $v_i \ne 0$ and $v_k = 0$ for all $k \in \mathrm{Irr}$, and **pseudo-irreversible** otherwise; together with the irreversible-and-unblocked and the blocked reactions these classes partition $\{1, \dots, n\}$.
+Full coupling implies partial coupling, which is the conjunction of the two directional couplings; directional coupling is transitive. A reversible reaction $i$ is **fully reversible** if some $v \in C$ has $v_i \ne 0$ and $v_k = 0$ for all $k \in \mathrm{Irr}$, and **pseudo-irreversible** otherwise. Let $\mathrm{Frev}$ be the fully reversible reactions, $\mathrm{Prev}$ the pseudo-irreversible reactions $i$ with $v^+_i > 0 > v^-_i$ for some $v^+, v^- \in C$, $\mathrm{Irev}$ the other unblocked reactions (the unblocked irreversible ones and the reversible ones whose flux has constant sign on $C$), and $\mathrm{Blk}$ the blocked ones; these four sets partition $\{1, \dots, n\}$.
 
 **Lemma (kernel test).** Suppose no reaction of $(S, \mathrm{Irr})$ is blocked. Then $i \backsim j$ if and only if there is $\lambda \ne 0$ with $v_i = \lambda v_j$ for every $v \in \ker S$.
 

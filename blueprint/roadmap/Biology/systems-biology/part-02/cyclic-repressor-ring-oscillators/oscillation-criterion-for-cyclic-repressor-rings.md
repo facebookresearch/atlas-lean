@@ -16,15 +16,15 @@ $$Q = \frac{\sqrt{(a+d)(b+d)}}{(a+b+2d)/2} \in (0, 1], \qquad W(n, Q) = \frac{2\
 
 Then the proteins oscillate if both
 
-$$\nu > W(n, Q) \qquad \text{and} \qquad c\beta > \left(\frac{W(n,Q)}{\nu - W(n,Q)}\right)^{1/\nu} \frac{\nu}{\nu - W(n,Q)}\, K\, (a+d)(b+d)$$
+$$\nu > W(n, Q) \qquad \text{and} \qquad c\beta g > \left(\frac{W(n,Q)}{\nu - W(n,Q)}\right)^{1/\nu} \frac{\nu}{\nu - W(n,Q)}\, K\, (a+d)(b+d)$$
 
 hold.
 
 ## Expansion
 
-The first inequality says the Hill coefficient must exceed a threshold that depends only on the ring length and on the ratio $Q$ of the geometric to the arithmetic mean of the two total decay rates $a+d$ and $b+d$; the second says the maximal production gain $c\beta$ must beat the product of the decay rates by a factor fixed by $\nu$ and $W$. Both are sufficient conditions for the linearization at the unique equilibrium to have an unstable eigenvalue, after which the instability-implies-oscillation statement gives a periodic orbit. With equal decay rates ($a = b$, so $Q = 1$) the threshold is $W(n,1) = 2/(1 + \cos(\pi/n))$, which for $n = 3$ is $4/3$.
+The first inequality says the Hill coefficient must exceed a threshold that depends only on the ring length and on the ratio $Q$ of the geometric to the arithmetic mean of the two total decay rates $a+d$ and $b+d$; the second says the maximal production gain $c\beta g$ must beat the product of the decay rates by a factor fixed by $\nu$ and $W$. Both are sufficient conditions for the linearization at the unique equilibrium to have an unstable eigenvalue, after which the instability-implies-oscillation statement gives a periodic orbit. With equal decay rates ($a = b$, so $Q = 1$) the threshold is $W(n,1) = 2/(1 + \cos(\pi/n))$, which for $n = 3$ is $4/3$.
 
-On units: $\beta$ is a rate per unit template concentration, so in the second inequality the dimensionally consistent maximal transcription rate is $\beta g$ (the transcription term of the model); the source writes the product as $c\beta$.
+On units: $\beta$ is a rate per unit template concentration, so the maximal transcription rate is $\beta g$ (the transcription term of the model) and the threshold is on $c\beta g$; the source's Eq. (10) writes $c\beta$, with the template concentration absorbed into $\beta$.
 
 For the repressilator with $n = 3$, mRNA half-life $8$ min, protein half-life $90$ min, $\beta = 0.4$, $c = 0.5$, $K = 5$ nM and $\nu = 2$, the first inequality holds for every dilution time $T_d$ between $5$ and $80$ min, and the second inequality traces the region of transcription and translation rates that support oscillations as $T_d$ varies. Weakening one repressor (raising its threshold $K$, as in an operator point mutation) shrinks the range of dilution times with an unstable equilibrium, matching the narrower oscillatory range observed in a cell-free microfluidic reactor. Simulated periods grow monotonically with $T_d$, and $5$-node rings oscillate with longer periods than $3$-node rings, as measured.
 

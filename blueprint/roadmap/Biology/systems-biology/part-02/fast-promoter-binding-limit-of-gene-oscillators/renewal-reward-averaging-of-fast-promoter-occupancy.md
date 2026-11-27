@@ -8,15 +8,19 @@ so binding is proportional to the dimer concentration and the mean bound time $\
 
 $$R_1' = k_{13}\,(1 - X_1) - k_{14} R_1, \qquad P_1' = k_{15} R_1 - k_{16} P_1 - 2k_{17} P_1^2 + 2k_{18} D_1, \qquad D_1' = k_{17} P_1^2 - k_{18} D_1,$$
 
-and symmetrically for gene $2$ (site $Y_1$ occupied by $D_1$, unbinding rate $s/\varepsilon$). Let $(R_1^\varepsilon, P_1^\varepsilon, D_1^\varepsilon, \dots)$ be a sample path of this piecewise-deterministic process and $(R_1, P_1, D_1, \dots)$ the solution, from the same initial data, of the **averaged system** in which each site indicator is replaced by its quasi-stationary mean:
+while gene $2$ is activated by $D_1$: its site is occupied ($Y_1 = 1$) by $D_1$, with binding rate $D_1(t)/\varepsilon$ and unbinding rate $s/\varepsilon$, and it is transcribed while occupied, $R_2' = k_{13}\,Y_1 - k_{14} R_2$, with analogous equations for $P_2, D_2$. Let $(R_1^\varepsilon, P_1^\varepsilon, D_1^\varepsilon, \dots)$ be a sample path of this piecewise-deterministic process and $(R_1, P_1, D_1, \dots)$ the solution, from the same initial data, of the **averaged system** in which each site indicator is replaced by its quasi-stationary mean:
 
-$$R_1' = k_{13}\,\frac{r}{r + D_2} - k_{14} R_1, \qquad R_2' = k_{13}\,\frac{s}{s + D_1} - k_{14} R_2,$$
+$$R_1' = k_{13}\,\frac{r}{r + D_2} - k_{14} R_1, \qquad R_2' = k_{13}\,\frac{D_1}{s + D_1} - k_{14} R_2,$$
 
 the remaining equations unchanged.
 
 **Proposition.** Almost surely, for every $t > 0$, $R_1^\varepsilon(t) \to R_1(t)$, $P_1^\varepsilon(t) \to P_1(t)$, $D_1^\varepsilon(t) \to D_1(t)$, $R_2^\varepsilon(t) \to R_2(t)$, and so on for all continuous variables, as $\varepsilon \to 0$.
 
 The averaged repression term $r/(r + D_2)$ is a hyperbolic (Michaelis–Menten type) occupancy function; an activating site occupied by a heterodimer $D_{13}$ with unbinding rate $q/\varepsilon$ averages to $D_{13}/(q + D_{13})$.
+
+## Proof depends on
+
+- [Long-run fraction of up time of an alternating renewal process](../../../../Probability/nonparametric-survival/reliability-and-monitoring/long-run-fraction-of-up-time-of-an-alternating-renewal-process.md)
 
 ## Expansion
 

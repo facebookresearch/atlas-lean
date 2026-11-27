@@ -3,6 +3,7 @@
 **Definitions.** A rooted tree $T$ has edges directed from parent to child, written $x \to y$. A tree is *planted* if its root has exactly one child. Given a rooted tree $T$ on $n$ vertices labelled $1,\dots,n$ (any of which may be the root), **Algorithm A** builds a tree $U$: add a new root labelled $0$ with an edge $0 \to \mathrm{root}(T)$; label each edge $v \to w$ by the label $w$ of its child; erase the vertex labels. **Algorithm B** reverses this for a planted tree $U$ with $n$ edges labelled $1,\dots,n$: label each non-root vertex by the label of its parent edge, erase edge labels, and delete the root $r$ and its edge $r \to s$, making $s$ the root.
 
 **Theorem.** Algorithms A and B are mutually inverse bijections between
+
 1. rooted trees on $n$ vertices labelled $1,\dots,n$ (node-based trees), and
 2. planted trees on $n+1$ vertices with edges labelled $1,\dots,n$ (stem-based trees).
 The algorithms work unchanged in the presence of polytomies. Under this bijection, the vertex sets of subtrees of $T$ correspond exactly to the edge sets of **planted** subtrees of $U$ (and proper subtrees to proper planted subtrees); the edge set of a non-planted subtree of $U$ does not, in general, correspond to a subtree of $T$.

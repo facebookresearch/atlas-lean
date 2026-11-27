@@ -12,7 +12,9 @@ Let $P_q$ be this function for the power transducer $f(x) = x^q$, $q > 0$, and $
 
 $$\lim_{q\to 0}P_q(\Delta x) = P_{\log}(\Delta x) = G\!\left(G^{-1}(p_\theta)\,\frac{\ln(1 + \Delta x/x)}{\ln(1 + \Delta x_\theta/x)}\right),$$
 
-and the corresponding estimate of the best-fitting Weibull slope converges to its value for the logarithmic transducer.
+and, with the transducer factor $\beta^{\mathrm{Transducer}} = f'(x+\Delta x_\theta)\,\Delta x_\theta/\big(f(x+\Delta x_\theta) - f(x)\big)$ of the best-fitting Weibull slope (the source's Eq. (17)) and the Weber fraction $W = \Delta x_\theta/x$,
+
+$$\beta^{\mathrm{Transducer}}_q = \frac{W(1+W)^{q-1}}{\big((1+W)^q - 1\big)/q} \ \to\ \frac{W}{(1+W)\ln(1+W)} = \beta^{\mathrm{Transducer}}_{\log} \qquad (q \to 0).$$
 
 ## Depends on
 

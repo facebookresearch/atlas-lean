@@ -17,6 +17,7 @@ with $Q_{\mathrm{obj}} = 0$ for pure feasibility; the redundant entrywise constr
 $$\max\ \gamma \quad \text{s.t.} \quad Q_{\mathrm{obj}} \succeq \gamma\, e_1 e_1^{\mathsf T} + \sum_i \lambda_i Q_i + e_1 r^{\mathsf T} L + L^{\mathsf T} r\, e_1^{\mathsf T} + L^{\mathsf T} S L, \qquad r \ge 0,\ S \ge 0,\ S_{ii} = 0.$$
 
 **Proposition.**
+
 1. The feasible set of the relaxation is convex and contains $x x^{\mathsf T}$ for every consistent steady state $x = (1, y)$.
 2. If the relaxation has a feasible solution of rank one, $X = x x^{\mathsf T}$ with $x_1 = 1$, then $y$ is a steady state consistent with the data.
 3. (Infeasibility certificate.) For $Q_{\mathrm{obj}} = 0$, any dual feasible point with $\gamma > 0$ proves that the relaxation, and hence the original problem, is infeasible: the parameters $k$ are inconsistent with the data.

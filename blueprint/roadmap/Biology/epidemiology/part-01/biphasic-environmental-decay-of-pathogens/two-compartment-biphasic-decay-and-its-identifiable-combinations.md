@@ -1,12 +1,12 @@
 # Two-compartment biphasic decay and its identifiable combinations
 
-**Model.** Let $E_1(t)$ and $E_2(t)$ be the labile and resistant pathogen populations in an environmental compartment, $E = E_1 + E_2$, and $u(t) \ge 0$ a known input (shedding). With decay rates $\theta_1, \theta_2$, dormancy rate $\delta_1$ (labile to resistant), resuscitation rate $\delta_2$ (resistant to labile), labile fraction $\eta$ of the input, and initial conditions $E_1(0) = \rho\omega$, $E_2(0) = (1-\rho)\omega$,
+**Model.** Let $E_1(t)$ and $E_2(t)$ be the labile and resistant pathogen populations in an environmental compartment, $E = E_1 + E_2$, and $u(t) \ge 0$ a known input (shedding). With decay rates $\theta_1, \theta_2$, dormancy rate $\delta_1$ (labile to resistant), resuscitation rate $\delta_2$ (resistant to labile), labile fraction $\eta$ of the input, and initial conditions (with $\theta_1, \theta_2 > 0$, $\delta_1, \delta_2 \ge 0$, $\omega > 0$, $0 < \rho \le 1$, and $0 < \eta \le 1$ when $E_1$ is observed with input) $E_1(0) = \rho\omega$, $E_2(0) = (1-\rho)\omega$,
 
 $$\dot E_1 = -(\theta_1 + \delta_1)E_1 + \delta_2E_2 + \eta u, \qquad \dot E_2 = \delta_1E_1 - (\theta_2 + \delta_2)E_2 + (1-\eta)u .$$
 
 Three submodels correspond to biological hypotheses: population heterogeneity ($\delta_1 = \delta_2 = 0$, $E$ observed), hardening-off ($\delta_2 = 0$, $\eta = 1$, $E$ observed) and viable-but-not-culturable ($\eta = 1$, $\theta_1 = \theta_2$, only the culturable $E_1$ observed).
 
-**Proposition 1 (biphasic form).** Outside degenerate parameter values ($\theta_1 = \theta_2$ when $E$ is observed; $\delta_2 = 0$ when $E_1$ is observed), each observed curve $Y \in \{E, E_1\}$ has the form
+**Proposition 1 (biphasic form).** Assume the system matrix has distinct eigenvalues, $(\theta_1 + \delta_1 - \theta_2 - \delta_2)^2 + 4\delta_1\delta_2 > 0$, and $\theta_1 \ne \theta_2$ when $E$ is observed, $\delta_2 \ne 0$ when $E_1$ is observed. Then each observed curve $Y \in \{E, E_1\}$ has the form
 
 $$Y(t) = d\big(c\,e^{-at} + (1-c)\,e^{-bt}\big) + \int_0^t\big(h\,e^{-a(t-s)} + (1-h)\,e^{-b(t-s)}\big)\upsilon(s)\,ds,$$
 

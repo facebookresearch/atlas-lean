@@ -15,11 +15,18 @@ $$\begin{aligned}
 \dot Q &= \delta I - (\theta+\rho+\eta)Q, & \dot R &= \theta Q - \rho R, & \dot P &= \mu S - \rho P,
 \end{aligned}$$
 
-($\Lambda$ inflow, $\beta_1,\beta_2$ transmission by exposed and infectious individuals, $\mu$ protection, $\rho$ natural death, $\gamma^{-1}$ latency, $\delta$ quarantine, $\theta$ recovery, $\eta$ disease death) has basic reproduction number
+with all parameters positive ($\Lambda$ inflow, $\beta_1,\beta_2$ transmission by exposed and infectious individuals, $\mu$ protection, $\rho$ natural death, $\gamma^{-1}$ latency, $\delta$ quarantine, $\theta$ recovery, $\eta$ disease death) has basic reproduction number
 
 $$R_0 = \frac{\Lambda\big(\beta_1(\delta+\rho) + \beta_2\gamma\big)}{(\gamma+\rho)(\delta+\rho)(\mu+\rho)} .$$
 
-Its two-sided fractional version replaces the derivatives by Caputo derivatives with compartment-dependent orders. Solutions from nonnegative data are unique, nonnegative and remain in $\{S+E+I+Q+R+P \le \Lambda/\rho\}$. In the commensurate case the disease-free equilibrium $P_F = (\Lambda/(\mu+\rho),0,0,0,0,\mu\Lambda/(\rho(\mu+\rho)))$ is locally asymptotically stable if $R_0 < 1$ and unstable if $R_0 > 1$; an endemic equilibrium exists iff $R_0 > 1$, and in the incommensurate cases stability of each equilibrium holds whenever the roots of the corresponding factors of the characteristic equation satisfy $|\arg\lambda| > \pi/(2M)$.
+Its two-sided fractional version (the source's model (8)) takes rational orders $0 < \alpha_1, \alpha_2 < 1$, puts the Caputo derivative ${}^C D^{\alpha_1}$ on every compartment, and replaces the recovery flow $\theta Q$ in the $Q$ and $R$ equations by $\theta D^{\alpha_1-\alpha_2}Q$, where $D^{\alpha_1-\alpha_2} = {}^C D^{\alpha_1} I^{\alpha_2}$ with $I^{\alpha_2}$ the Riemann–Liouville integral (a fractional integral of order $\alpha_2 - \alpha_1$ when $\alpha_1 < \alpha_2$, a Caputo derivative of order $\alpha_1 - \alpha_2$ when $\alpha_1 > \alpha_2$):
+
+$$\begin{aligned}
+{}^C D^{\alpha_1} S &= \Lambda - \beta_1 SE - \beta_2 SI - (\mu+\rho)S, & {}^C D^{\alpha_1} E &= \beta_1 SE + \beta_2 SI - (\gamma+\rho)E, & {}^C D^{\alpha_1} I &= \gamma E - (\delta+\rho)I,\\
+{}^C D^{\alpha_1} Q &= \delta I - \theta D^{\alpha_1-\alpha_2}Q - (\rho+\eta)Q, & {}^C D^{\alpha_1} R &= \theta D^{\alpha_1-\alpha_2}Q - \rho R, & {}^C D^{\alpha_1} P &= \mu S - \rho P.
+\end{aligned}$$
+
+The commensurate case is $\alpha_1 = \alpha_2$. Introducing auxiliary variables for the fractional integrals of $Q$ (and of $R$) turns model (8) into equivalent incommensurate systems (the source's systems (12) and (26)) whose components carry the orders $\alpha_1$ and $\alpha_2$; the characteristic factors of the stability results, such as $\lambda^{M\alpha_2} + (\rho+\eta)\lambda^{M(\alpha_2-\alpha_1)} + \theta$, come from those systems. Solutions from nonnegative data are unique and nonnegative, and the set $\{S+E+I+Q+R+P \le \Lambda/\rho\}$ is positively invariant and attracts every nonnegative solution. In the commensurate case the disease-free equilibrium $P_F = (\Lambda/(\mu+\rho),0,0,0,0,\mu\Lambda/(\rho(\mu+\rho)))$ is locally asymptotically stable if $R_0 < 1$ and unstable if $R_0 > 1$; an endemic equilibrium exists iff $R_0 > 1$, and in the incommensurate cases stability of each equilibrium holds whenever the roots of the corresponding factors of the characteristic equation satisfy $|\arg\lambda| > \pi/(2M)$.
 
 ## Depends on
 

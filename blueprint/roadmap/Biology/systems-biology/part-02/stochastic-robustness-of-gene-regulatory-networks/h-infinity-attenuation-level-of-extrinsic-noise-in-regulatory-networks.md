@@ -4,7 +4,7 @@
 
 $$dx = (Nx + H\upsilon)\,dt + Mx\,d\omega, \qquad Z = Cx,$$
 
-where $H$ couples the input to the genes and $C$ selects the observed genes ($C = e_i^{\mathsf T}$ for gene $i$, $C = I$ for the whole network); the nonlinear version has $N(x)$, $H(x)$, $M(x)$. With $\|\upsilon\|_2^2 = \mathbb{E}\int_0^\infty \upsilon^{\mathsf T}\upsilon\,dt$, the network has attenuation level $\rho$ from $\upsilon$ to $Z$ if, for $x(0) = 0$, $\|Z\|_2 \le \rho\,\|\upsilon\|_2$ for all $\upsilon \in L^2$ (with an initial-state term $\mathbb{E}\,V(x(0))$ added to $\|Z\|_2^2$ otherwise). The input is attenuated at $Z$ if $\rho < 1$ and amplified if $\rho > 1$.
+where $H$ couples the input to the genes and $C$ selects the observed genes ($C = e_i^{\mathsf T}$ for gene $i$, $C = I$ for the whole network); the nonlinear version has $N(x)$, $H(x)$, $M(x)$. With $\|\upsilon\|_2^2 = \mathbb{E}\int_0^\infty \upsilon^{\mathsf T}\upsilon\,dt$, the network has attenuation level $\rho$ from $\upsilon$ to $Z$ if, for $x(0) = 0$, $\|Z\|_2 \le \rho\,\|\upsilon\|_2$ for all $\upsilon \in L^2$ (with an initial-state term $\mathbb{E}\,V(x(0))$ added to the right-hand side, $\|Z\|_2^2 \le \mathbb{E}\,V(x(0)) + \rho^2\|\upsilon\|_2^2$, otherwise). With $\rho_o$ the smallest attenuation level, the input is attenuated at $Z$ if $\rho_o < 1$ and amplified if $\rho_o > 1$.
 
 **Theorem 3 (linear network).** The attenuation level $\rho$ is guaranteed if some $P = P^{\mathsf T} > 0$ satisfies
 
@@ -16,9 +16,9 @@ $$\begin{pmatrix} PN + N^{\mathsf T}P + M^{\mathsf T}PM + C^{\mathsf T}C & PH \\
 
 The optimal level is $\rho_o = \min\rho$ over $\rho > 0$, $P > 0$ satisfying this LMI.
 
-**Theorem 4 (nonlinear network).** The attenuation level $\rho$ is guaranteed if some $V(x) > 0$ satisfies the Hamilton–Jacobi inequality
+**Theorem 4 (nonlinear network).** The attenuation level $\rho$ is guaranteed if some $C^2$ function $V$ with $V(x) > 0$ for $x \ne 0$ and $V(0) = 0$ satisfies the Hamilton–Jacobi inequality
 
-$$x^{\mathsf T}C^{\mathsf T}Cx + \Big(\frac{\partial V}{\partial x}\Big)^{\mathsf T}N(x) + \frac12M(x)^{\mathsf T}\frac{\partial^2V}{\partial x^2}M(x) + \frac{1}{4\rho^2}\Big(\frac{\partial V}{\partial x}\Big)^{\mathsf T}HH^{\mathsf T}\frac{\partial V}{\partial x} \le 0 .$$
+$$x^{\mathsf T}C^{\mathsf T}Cx + \Big(\frac{\partial V}{\partial x}\Big)^{\mathsf T}N(x) + \frac12M(x)^{\mathsf T}\frac{\partial^2V}{\partial x^2}M(x) + \frac{1}{4\rho^2}\Big(\frac{\partial V}{\partial x}\Big)^{\mathsf T}H(x)H(x)^{\mathsf T}\frac{\partial V}{\partial x} \le 0 .$$
 
 Under a polytopic global linearization with vertices $(N_i, H_i, M_i)$, $\rho_o$ is approximated by the smallest $\rho$ for which one $P > 0$ satisfies the LMI of Theorem 3 at every vertex.
 

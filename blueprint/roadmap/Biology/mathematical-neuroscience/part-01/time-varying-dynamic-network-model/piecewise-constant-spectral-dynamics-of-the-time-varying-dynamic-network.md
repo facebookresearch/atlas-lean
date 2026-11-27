@@ -8,25 +8,25 @@ where $U$ is a fixed invertible (possibly complex) matrix and $\Lambda(t)$ is di
 
 $$\Lambda(t) = \Lambda_k \quad \text{for } \tau_{k-1} < t \le \tau_k, \qquad \Lambda_k \ne \Lambda_{k+1},$$
 
-and $\operatorname{rank} A(t) = \operatorname{rank} \Lambda(t) \le r \ll d$ for all $t$. Columns of $U$ are stationary spatial modes; the switching times are brain-state switches. With $\Lambda$ constant the model is dynamic mode decomposition, and with $A = -\beta \mathcal L$ for a structural graph Laplacian $\mathcal L$ it is the network diffusion model.
+and $\operatorname{rank} A(t) = \operatorname{rank} \Lambda(t) \le r \ll d$ for all $t$, with the diagonal ordered so that $\lambda_{r+1}(t) = \dots = \lambda_d(t) = 0$ for all $t$ (the active modes are the same $r$ columns of $U$ in every segment). Columns of $U$ are stationary spatial modes; the switching times are brain-state switches. With $\Lambda$ constant the model is dynamic mode decomposition, and with $A = -\beta \mathcal L$ for a structural graph Laplacian $\mathcal L$ the unconstrained ODE $X' = AX$ is the network diffusion model (before the rank constraint, which a connected graph's Laplacian violates).
 
 **Solution within a segment.** On segment $k$ with initial value $X_{0k} = X(\tau_{k-1})$, writing the $j$-th eigenvalue as $\lambda_j = \gamma_j + i\, 2\pi f_j$,
 
-$$X(t) = U e^{\Lambda_k (t - \tau_{k-1})} U^{-1} X_{0k} = \sum_{j=1}^{r} U_j\, e^{(\gamma_j + i 2\pi f_j)(t - \tau_{k-1})}\, (U^{-1})_{j\cdot}\, X_{0k},$$
+$$X(t) = U e^{\Lambda_k (t - \tau_{k-1})} U^{-1} X_{0k} = \sum_{j=1}^{r} U_j\, e^{(\gamma_j + i 2\pi f_j)(t - \tau_{k-1})}\, (U^{-1})_{j\cdot}\, X_{0k} + \sum_{j=r+1}^{d} U_j\, (U^{-1})_{j\cdot}\, X_{0k},$$
 
-summing over the modes with nonzero eigenvalues (the remaining modes are constant on the segment). The real part $\gamma_j$ is the growth or decay rate of mode $j$ on the segment and $f_j$ its oscillation frequency, in cycles per sampling interval.
+the last sum collecting the zero-eigenvalue modes, which are constant on the segment (the source's Eq. (3) omits it). The real part $\gamma_j$ is the growth or decay rate of mode $j$ on the segment and $f_j$ its oscillation frequency, in cycles per unit of $t$ (cycles per sampling interval when time is measured in sampling intervals).
 
-**Solution across segments.** With $A_k = U \Lambda_k U^{-1}$, for $\tau_{k} < t \le \tau_{k+1}$,
+**Solution across segments.** With $A_k = U \Lambda_k U^{-1}$, for $\tau_{k-1} < t \le \tau_k$,
 
-$$X(t) = \exp\Big\{ \sum_{l=0}^{k-1} A_l (\tau_{l+1} - \tau_l) + A_k (t - \tau_k) \Big\} X(0),$$
+$$X(t) = \exp\Big\{ \sum_{l=1}^{k-1} A_l (\tau_l - \tau_{l-1}) + A_k (t - \tau_{k-1}) \Big\} X(0).$$
 
-with segments indexed from $0$. This holds because all $A_l$ share the eigenvectors $U$ and therefore commute, so the product of the segment propagators is the exponential of the sum.
+This holds because all $A_l$ share the eigenvectors $U$ and therefore commute, so the product of the segment propagators is the exponential of the sum.
 
 **Mode coordinates.** Let $\tilde X(t) = (U^{-1})_{r\cdot} X(t)$ be the coordinates of $X$ on the $r$ active modes. Then
 
 $$\tilde X'(t) = \Lambda_{r \times r}(t)\, \tilde X(t),$$
 
-a system of $r$ decoupled scalar equations $\tilde X_j' = \lambda_j(t) \tilde X_j$ with only $r$ unknown parameters per segment. Each coordinate is continuous in $t$ and its log-modulus is piecewise linear, with a slope change at each switch.
+a system of $r$ decoupled scalar equations $\tilde X_j' = \lambda_j(t) \tilde X_j$ with only $r$ unknown parameters per segment. Each coordinate is continuous in $t$; when $\tilde X_j(0) \ne 0$, $\log\lvert\tilde X_j\rvert$ is piecewise linear with slope $\operatorname{Re}\lambda_j(t)$, changing at $\tau_k$ exactly when $\operatorname{Re}\lambda_j$ changes there.
 
 ## Expansion
 

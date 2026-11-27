@@ -7,8 +7,9 @@
 $$Z_j = p_j \prod_{i:\, e_j \in H_i} x_i + q_j,$$
 
 and the x-polynomial $Z_{s,t} = \prod_j Z_j$, whose $2^{|E'|}$ monomials ($E'$ the edges on some path) correspond to the presence/absence patterns of those edges, with coefficient equal to the pattern's probability. In each monomial $\alpha \prod_i x_i^{c_i}$:
+
 - the *collapse* operator replaces $x_i$ by $t_{l_i}$ if $c_i = l_i$ (all edges of $H_i$ present) and by $1$ otherwise, giving monomials $\alpha \prod_\ell t_\ell^{c_\ell}$ where $c_\ell$ counts present paths of length $\ell$;
-- the *select* operator replaces the variable $t_r$ of smallest index present by $y$ and deletes all other $t_\ell$, giving $\alpha\,y^{c_r}$.
+- the *select* operator replaces the variable $t_r$ of smallest index present by $y$ and deletes all other $t_\ell$ and any remaining $x_i$, giving $\alpha\,y^{c_r}$.
 
 **Theorem.** After multiplying all edge polynomials, collapsing and selecting,
 

@@ -17,6 +17,10 @@ $$R^\ast = \sigma^{-2},\qquad e_i^\ast = \lambda_i^{-1/2}\sigma^{-1}\frac{\zeta_
 - Homogeneous rates $\lambda_i\equiv\lambda_c$: $\sigma = 2\lambda_c^{-1/2}$, $\zeta = \mathbf{1}$, hence $R^\ast = \lambda_c/4$ and $e_i^\ast = 1/2$.
 - Letting $\lambda_n\to\infty$, $A$ tends to the tridiagonal matrix of an open-chain ribosome flow model with $n-2$ sites and rates $\lambda_1,\dots,\lambda_{n-1}$; the optimal RFMR steady state then yields the open-chain steady state, so the open model is an RFMR initialised at its optimal total density.
 
+## Depends on
+
+- [Optimal total density of the ribosome flow model on a ring](../optimal-ribosome-density-in-ribosome-flow-models/optimal-total-density-of-the-ribosome-flow-model-on-a-ring.md)
+
 ## Expansion
 
 The formulas satisfy the steady-state flow equations directly. Row $i+1$ of $A\zeta = \sigma\zeta$ reads $\lambda_i^{-1/2}\zeta_i + \lambda_{i+1}^{-1/2}\zeta_{i+2} = \sigma\zeta_{i+1}$, so $1 - e^\ast_{i+1} = \lambda_i^{-1/2}\zeta_i/(\sigma\zeta_{i+1})$ and therefore $\lambda_ie^\ast_i(1 - e^\ast_{i+1}) = \sigma^{-2}$ for every $i$. Positivity of the Perron vector keeps every $e^\ast_i$ in $(0,1)$, and the proof shows that the optimal total density corresponds to this positive eigenvector. Monotonicity in the rates follows because raising $\lambda_i$ lowers an entry of the irreducible non-negative matrix $A$, which strictly lowers $\sigma$. Example: rates $(0.7, 1.6, 2.2)$ give $\sigma\approx 1.7940$, hence $R^\ast\approx 0.3107$ and $s^\ast\approx 1.4948$.

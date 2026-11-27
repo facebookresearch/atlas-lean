@@ -3,12 +3,14 @@
 **Setting.** Use the network $(S, \mathrm{Irr})$, its steady-state flux cone $C$, the coupling relations $\xrightarrow{=0}$, $\xleftrightarrow{=0}$, $\backsim$ and the reversibility classes of [flux coupling relations](flux-coupling-relations-and-kernel-test-for-full-coupling.md): $i \xrightarrow{=0} j$ means $v_i = 0 \Rightarrow v_j = 0$ for all $v \in C$. Assume blocked reactions have been deleted and every reversible reaction whose flux has constant sign on $C$ has been made irreversible (flipping its column if needed), so that $\mathrm{Irev}$ is the set of irreversible reactions, every reaction of $\mathrm{Prev}$ (pseudo-irreversible) takes both signs on $C$, and $\mathrm{Frev}$ is the set of fully reversible reactions.
 
 **Proposition (feasibility characterization).** Consider the linear systems, each including $Sv = 0$:
+
 - (P1) $v_k \ge 0$ for $k\in\mathrm{Irr}$, $v_i = 1$, $v_j = 0$;
 - (P2) $v_k \ge 0$ for $k\in\mathrm{Irr}$, $v_i = 0$, $v_j = 1$;
 - (P3) $v_k \ge 0$ for $k\in\mathrm{Irr}$, $v_i = 0$, $v_j = -1$;
 - (P4) $v_i = 0$, $v_j = 1$ (no sign constraints).
 
 Then:
+
 - for $i,j \in \mathrm{Irev}$, $j \xrightarrow{=0} i$ iff (P1) is infeasible and $i \xrightarrow{=0} j$ iff (P2) is infeasible, so both infeasible means $i \xleftrightarrow{=0} j$;
 - for $i \in\mathrm{Irev}$ and $j\in\mathrm{Prev}$, $i \xrightarrow{=0} j$ iff (P2) and (P3) are both infeasible;
 - for $i,j$ both in $\mathrm{Prev}$ or both in $\mathrm{Frev}$, $i \backsim j$ iff (P4) is infeasible.
@@ -22,6 +24,10 @@ For $i\in\mathrm{Irev}$, $j \xrightarrow{=0} i$ fails iff some $v \in C$ has $v_
 ## Depends on
 
 - [Flux coupling relations and the kernel test for full coupling](flux-coupling-relations-and-kernel-test-for-full-coupling.md)
+
+## Proof depends on
+
+- [Linear programming tests and reduction rules for flux coupling](linear-programming-tests-and-reduction-rules-for-flux-coupling.md)
 
 ## Sources
 

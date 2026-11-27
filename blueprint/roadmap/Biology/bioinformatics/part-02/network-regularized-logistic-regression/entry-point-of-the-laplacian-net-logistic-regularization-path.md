@@ -14,13 +14,11 @@ It reduces to lasso logistic regression at $\alpha = 1$ and to the elastic net w
 
 $$\lambda \ \ge\ \lambda_0 := \frac{\|X^{\top}(y - \tfrac12\mathbf 1)\|_\infty}{\alpha}.$$
 
-In particular the largest penalty at which the path has a nonzero coefficient satisfies
+In particular $\lambda_0$ is the entry point of the path: $\hat\beta = 0$ for $\lambda \ge \lambda_0$ and $\hat\beta \ne 0$ for $0 < \lambda < \lambda_0$, and
 
-$$\lambda_{\max} = \lambda_0 \ \le\ \frac{1}{2\alpha}\Big(2\|X^{\top}y\|_\infty + \Big\|\sum_{i=1}^{n}X_i^{\top}\Big\|_\infty\Big),$$
+$$\lambda_0 \ \le\ \frac{1}{2\alpha}\Big(2\|X^{\top}y\|_\infty + \Big\|\sum_{i=1}^{n}X_i^{\top}\Big\|_\infty\Big),$$
 
 so the path must start at larger penalties as $\alpha$ decreases toward the pure Laplacian penalty.
-
-The same source also states a grouping effect: for adjacent genes whose estimated coefficients have the same sign, the coefficient difference is bounded by a quantity that vanishes as their sample correlation tends to one and grows as $\lambda(1-\alpha) \to 0$, whereas lasso logistic regression selects only one of two identical predictors.
 
 ## Expansion
 
@@ -28,4 +26,4 @@ The criterion is convex because the logistic loss is convex, $\|\cdot\|_1$ is co
 
 ## Sources
 
-- W. Zhang, Y.-W. Wan, G. I. Allen, K. Pang, M. L. Anderson, Z. Liu, "Molecular pathway identification using biological network-regularized logistic models", BMC Genomics (2013), Methods: Eqs. (1)–(4) (Logit-Lapnet criterion), Lemma 1, Theorem 1 (grouping effect) and Lemma 2 (bound on the maximal penalty), <https://doi.org/10.1186/1471-2164-14-S8-S7>, PMCID PMC4046566.
+- W. Zhang, Y.-W. Wan, G. I. Allen, K. Pang, M. L. Anderson, Z. Liu, "Molecular pathway identification using biological network-regularized logistic models", BMC Genomics (2013), Methods: Eqs. (1)–(4) (Logit-Lapnet criterion), and Lemma 2 (bound on the maximal penalty), <https://doi.org/10.1186/1471-2164-14-S8-S7>, PMCID PMC4046566.

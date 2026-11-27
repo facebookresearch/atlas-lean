@@ -10,7 +10,7 @@ $$n^{(j)}_{t,l} \sim \mathrm{Bernoulli}\big(\lambda^{(j)}_{t,l}\big), \qquad \la
 
 where $d_j \in \mathbb{R}^M$ is the receptive-field kernel of neuron $j$ and the latent trial-dependent covariates are $x_{t,l} \sim \mathcal N(\mu_x, \Sigma_x)$.
 
-**Correlations.** The *noise covariance* is $\Sigma_x$ and the *signal covariance* is $\Sigma_s = D^\top\operatorname{cov}(s_t,s_t)D$ with $D = [d_1,\dots,d_N]$. The signal and noise correlation matrices are their normalizations
+**Correlations.** The *noise covariance* is $\Sigma_x$ and the *signal covariance* is $\Sigma_s = D^\top\operatorname{cov}(s_t,s_t)D$ with $D = [d_1,\dots,d_N]$. Here $\operatorname{cov}(u_t,v_t) = \frac1T\sum_{t=1}^T\big(u_t - \frac1T\sum_{t'}u_{t'}\big)\big(v_t - \frac1T\sum_{t'}v_{t'}\big)^\top$ is the empirical covariance over the $T$ frames (the stimulus is a fixed, repeated sequence). When the diagonal entries of $\Sigma_s$ and $\Sigma_x$ are positive, the signal and noise correlation matrices are their normalizations
 
 $$S_{ij} = \frac{(\Sigma_s)_{ij}}{\sqrt{(\Sigma_s)_{ii}(\Sigma_s)_{jj}}}, \qquad N_{ij} = \frac{(\Sigma_x)_{ij}}{\sqrt{(\Sigma_x)_{ii}(\Sigma_x)_{jj}}} .$$
 

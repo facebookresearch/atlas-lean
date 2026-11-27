@@ -1,6 +1,6 @@
 # Hidden-layer targets from apical plateau potentials reduce the output loss
 
-**Setting.** A network has a hidden layer of two-compartment neurons (basal dendrites receive feedforward input, apical dendrites receive feedback through fixed random weights $Y$) and an output layer receiving the hidden spikes through weights $W^1$. Learning alternates a **forward phase** (input only) and a **target phase** (output neurons additionally driven by a teaching current). Write $\bar\phi^{0f}$ for the time-averaged hidden firing rates in the forward phase, $\bar\phi^{1f}, \bar\phi^{1t}$ for the output rates in the two phases, and set the output target $\phi^{1*} = \bar\phi^{1t}$. Let $\sigma$ be a differentiable sigmoid, $\phi_{\max}$ the maximal rate, $k_d$ a dendrite-to-soma gain, and
+**Setting.** A network has a hidden layer of three-compartment neurons (soma, basal dendrites receiving feedforward input, and apical dendrites receiving feedback through fixed random weights $Y$) and an output layer of two-compartment neurons receiving the hidden spikes through weights $W^1$. Learning alternates a **forward phase** (input only) and a **target phase** (output neurons additionally driven by a teaching current). Write $\bar\phi^{0f}$ for the time-averaged hidden firing rates in the forward phase, $\bar\phi^{1f}, \bar\phi^{1t}$ for the output rates in the two phases, and set the output target $\phi^{1*} = \bar\phi^{1t}$. Let $\sigma$ be a differentiable sigmoid, $\phi_{\max}$ the maximal rate, $k_d$ a dendrite-to-soma gain, and
 
 $$\beta(u) = \phi_{\max}\,\sigma(k_dW^1u), \qquad \gamma(u) = \sigma(Yu),$$
 
@@ -20,7 +20,7 @@ $$\big\|\phi^{1*} - \beta(\tilde\phi^{0*})\big\|_2^2 \ \le\ \|e\|_2^2 ,$$
 
 with strict inequality when $e \neq 0$: moving the hidden layer to its target moves the output closer to its target.
 
-**Lemma (rates from filtered spikes).** For a spike train filtered by the synaptic kernel $\kappa(t) = \big(e^{-t/\tau_L} - e^{-t/\tau_s}\big)/(\tau_L - \tau_s)$, the time average of the filtered train over a window of length $\Delta t$ approaches the firing rate as $\Delta t$ grows relative to $\tau_L, \tau_s$; this justifies replacing the expected output drive $\phi_{\max}\sigma(\mathbb E[\bar V^{1f}])$ by $\beta(\bar\phi^{0f})$.
+**Lemma (rates from filtered spikes).** Let the spike times on $[t_0, t_1]$, $\Delta t = t_1 - t_0$, form an inhomogeneous Poisson process, and filter the train by the synaptic kernel $\kappa(t) = \big(e^{-t/\tau_L} - e^{-t/\tau_s}\big)\Theta(t)/(\tau_L - \tau_s)$, with $\Theta$ the Heaviside step. Then the expected window average $\mathbb E[\bar s]$ of the filtered train is at most the window-averaged rate $\bar\phi$, and close to it for $\Delta t \gg \tau_L, \tau_s$. Together with the assumption $\bar V^{1f} \approx k_d\bar V^{1bf}$ of the source's Theorem 1 (Eq. 26), where $\bar V^{1f}$ and $\bar V^{1bf}$ are the time-averaged somatic and basal voltages of the output units in the forward phase, this justifies replacing the expected output drive $\phi_{\max}\sigma(\mathbb E[\bar V^{1f}])$ by $\beta(\bar\phi^{0f})$, the output bias $b^1$ being absorbed into $\beta$.
 
 ## Expansion
 
@@ -28,4 +28,4 @@ By Taylor expansion, $\tilde\phi^{0*} = \bar\phi^{0f} + J_\gamma e + o(\|e\|)$, 
 
 ## Sources
 
-- J. Guerguiev, T. P. Lillicrap, B. A. Richards, "Towards deep learning with segregated dendrites", eLife (2017), Results Eqs. (5)–(10), Materials and methods Eqs. (21)–(43), and the Proofs section (Theorem 1 with proof, Lemma 1), <https://doi.org/10.7554/eLife.22901>, PMCID PMC5716677.
+- J. Guerguiev, T. P. Lillicrap, B. A. Richards, "Towards deep learning with segregated dendrites", eLife (2017), Results Eqs. (5)–(10), Materials and methods Eqs. (21)–(43), Materials and methods: Proofs (Theorem 1 and its proof) and Lemma for firing rates (Lemma 1), <https://doi.org/10.7554/eLife.22901>, PMCID PMC5716677.

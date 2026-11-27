@@ -4,7 +4,7 @@
 
 Replace each symbol $A_{ij}$ by the pair $(A_{ij}, j) \in \Sigma \times \{1,\dots,|C|\}$ and build the generalized suffix tree $\mathcal{T}$ of the $|R|$ transformed rows. An internal node $v$ of $\mathcal{T}$ is a *MaxNode* if it has no incoming suffix links, or if every node $u$ with a suffix link to $v$ has fewer leaves in its subtree than $v$.
 
-**Theorem.** (a) Right- and row-maximal CCC-biclusters with at least two rows are in bijection with internal nodes of $\mathcal{T}$: the rows are the string terminators below $v$, and the columns are read off the string depth of $v$ and the column index in the first symbol of its path label. (b) Such a node gives a left-maximal bicluster if and only if it is a MaxNode. Consequently, maximal CCC-biclusters with at least two rows are in bijection with MaxNodes, and all of them can be reported in $O(|R||C|)$ time.
+**Theorem.** (a) Right- and row-maximal CCC-biclusters with at least two rows are in bijection with the internal nodes of $\mathcal{T}$ other than the root: the rows are the string terminators below $v$, and the columns are read off the string depth of $v$ and the column index in the first symbol of its path label. (b) Such a non-root node gives a left-maximal bicluster if and only if it is a MaxNode. Consequently, maximal CCC-biclusters with at least two rows are in bijection with non-root MaxNodes, and all of them can be reported in $O(|R||C|)$ time.
 
 ## Expansion
 

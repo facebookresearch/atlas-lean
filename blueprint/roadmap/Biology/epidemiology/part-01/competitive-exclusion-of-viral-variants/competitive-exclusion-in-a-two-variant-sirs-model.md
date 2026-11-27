@@ -16,6 +16,7 @@ $$R_{0i} = \frac{\beta_i}{\gamma_i + \rho_i + d_{I_i}}\cdot\frac{\Lambda}{d_S}\q
 The single-variant equilibrium $P_1 = (\bar S, \bar I_1, 0, \bar R)$, with $\bar S = (\gamma_1 + \rho_1 + d_{I_1})/\beta_1$, lies in the nonnegative orthant iff $R_{01} \ge 1$ (and equals $P_0$ when $R_{01}=1$); symmetrically for $P_2 = (\bar{\bar S}, 0, \bar{\bar I}_2, \bar{\bar R})$.
 
 **Theorem.** On the positively invariant feasible region:
+
 1. If $R_0 < 1$, $P_0$ is the only equilibrium and it is asymptotically stable.
 2. If $R_0 > 1$, $P_0$ is unstable, and
    - if $R_{02} < 1 < R_{01}$, $P_1$ is the asymptotically stable equilibrium and $P_2$ is infeasible; if $1 < R_{02} < R_{01}$, both exist, $P_1$ is asymptotically stable and $P_2$ is unstable in the direction pointing into the interior;

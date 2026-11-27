@@ -1,6 +1,6 @@
 # Elementary flux patterns are supports of projected cone elementary modes
 
-**Setting.** As for [projected cone elementary modes](projected-cone-elementary-modes-are-projected-elementary-modes.md), consider a metabolic network with irreversible reactions only, its flux cone $C$, and the projection $P_X(C)$ onto a subnetwork of interesting reactions. A *flux pattern* is a set of subnetwork reactions that equals the support (restricted to the subnetwork) of some steady-state flux vector of the whole network; an *elementary flux pattern* (EFP) is a flux pattern that is not the union of two or more different flux patterns.
+**Setting.** As for [projected cone elementary modes](projected-cone-elementary-modes-are-projected-elementary-modes.md), consider a metabolic network with irreversible reactions only, its flux cone $C$, and the projection $P_X(C)$ onto a subnetwork of interesting reactions. A *flux pattern* is a nonempty set of subnetwork reactions that equals the support (restricted to the subnetwork) of some steady-state flux vector of the whole network; an *elementary flux pattern* (EFP) is a flux pattern that is not a union of flux patterns each different from it.
 
 **Theorem.** If $\mathcal{E}$ is the set of EFPs and $\mathcal{J}$ the set of ProCEMs, then
 

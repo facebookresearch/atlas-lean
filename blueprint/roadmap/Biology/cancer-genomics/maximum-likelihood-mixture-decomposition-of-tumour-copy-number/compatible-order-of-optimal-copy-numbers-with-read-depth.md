@@ -1,21 +1,21 @@
 # Compatible order of optimal copy numbers with read depth
 
-Two vectors $a, b \in \mathbb{R}^m$ have **compatible order** if for all $1 \le i,j \le m$,
+Two vectors $a, b \in \mathbb{R}^m$ have **compatible order** if no pair of coordinates is in strictly opposite order, that is, for all $1 \le i,j \le m$,
 
-$$a_i \le a_j \iff b_i \le b_j .$$
+$$(a_i - a_j)(b_i - b_j) \ge 0 .$$
 
 (A constant vector has compatible order with every vector.)
 
-In the multinomial read-depth model of a tumour mixture, let $\Omega_{m,n,k}$ be the set of pairs $(C,\mu)$ with $C \in \{0,\dots,k\}^{m\times n}$, first column $c_1 = (2,\dots,2)$ (normal genome), and $\mu \in \Delta_{n-1}$. Let
+In the multinomial read-depth model of a tumour mixture, let $\Omega_{m,n,k}$ be the set of pairs $(C,\mu)$ with $C \in \{0,\dots,k\}^{m\times n}$, first column $c_1 = (2,\dots,2)$ (normal genome), and $\mu \in \Delta_{n-1}$. Let $p^* = \widehat{C^*\mu^*}$ be any minimizer
 
-$$p^* = \widehat{C^*\mu^*} = \arg\min_{p \in \{\widehat{C\mu} : (C,\mu)\in\Omega_{m,n,k}\}} \Big(-\sum_i r_i \log p_i\Big)$$
+$$p^* \in \arg\min_{p \in \{\widehat{C\mu} : (C,\mu)\in\Omega_{m,n,k}\}} \Big(-\sum_i r_i \log p_i\Big)$$
 
-for an observed read depth vector $r \in \mathbb{N}^m$. Then:
+for an observed read depth vector $r \in \mathbb{N}^m$. Then, for every such minimizer:
 
 1. $p^*$ and $r$ have compatible order.
 2. If $n = 2$ (one tumour clone plus normal admixture) and $\mu^*_2 > 0$, then $r$ and the tumour count vector $c^*_2$ have compatible order.
 
-**Consequence.** For $n = 2$ one only needs to enumerate count vectors $c_2 \in \{0,\dots,k\}^m$ whose order agrees with that of $r$. There are $O(m^k)$ such vectors, and they can be enumerated in $O(m^{k+1})$ time, so the maximum likelihood mixture decomposition is solvable in time polynomial in $m$ for fixed $k$, each candidate requiring a one-dimensional convex optimisation over $\mu_2$.
+**Consequence.** For $n = 2$, fix a permutation $\pi$ sorting $r$ in non-decreasing order. Some optimal $c_2$ is non-decreasing along $\pi$ (ties of $r$ can be broken in its favour), and there are $\binom{m+k}{k} = O(m^k)$ such vectors in $\{0,\dots,k\}^m$, enumerable in $O(m^{k+1})$ time, so the maximum likelihood mixture decomposition is solvable in time polynomial in $m$ for fixed $k$, each candidate requiring a one-dimensional convex optimisation over the segment $H(C)$, i.e. over the reparametrised weight of the read-depth model. The source prints compatible order with an "iff", under which the theorem fails when the optimum ties two intervals that $r$ separates (for $m = 3$, $k = 2$, $r = (1,2,100)$ the unique optimum is $p^* = (3,3,200)/206$); its proof establishes the weak notion used here.
 
 ## Expansion
 

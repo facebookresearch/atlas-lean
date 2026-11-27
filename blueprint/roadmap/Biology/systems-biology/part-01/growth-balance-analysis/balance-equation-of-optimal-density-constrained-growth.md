@@ -7,17 +7,18 @@ $$\eta_i = \frac{1}{\mu}\frac{\partial \mu}{\partial x_i} \quad\text{(marginal n
 $$u_{\alpha j} = -\frac{1}{P}\Big(\frac{\partial p_j}{\partial a_\alpha}\Big)_{v_j} = \frac{p_j}{P}\,\frac{1}{k_j}\frac{\partial k_j}{\partial a_\alpha} \quad\text{(marginal kinetic benefit)}.$$
 
 **Theorem.**
+
 1. *(Net benefits.)* $\eta_P = \dfrac{1}{P} - \sum_j q_{Pj}$ and $\eta_\alpha = \sum_j \big(u_{\alpha j} - q_{\alpha j}\big)$. Equivalently, $\eta_i = -\sum_j \big(\partial \phi_j / \partial x_i\big)_{\mu}$: at fixed growth rate, raising $x_i$ by $\Delta x_i$ lowers the total proteome fraction needed by $\eta_i\,\Delta x_i$.
 2. *(Optimal states are elementary.)* Impose the dry-mass density limit $\rho \ge P + \sum_\alpha a_\alpha$. A density-constrained balanced growth state with maximal growth rate is an elementary growth state, and the density constraint is active at the optimum.
 3. *(Balance equation.)* Let $\mu^*(\rho)$ be the maximal growth rate and $\eta_\rho = \dfrac{1}{\mu^*}\dfrac{d\mu^*}{d\rho}$. At an optimal density-constrained state,
 
-$$\eta_i = \eta_\rho \qquad \text{for every } i \in \{P, 1, \dots, m\}.$$
+    $$\eta_i = \eta_\rho \qquad \text{for every } i \in \{P, 1, \dots, m\}.$$
 
-With dependent reactants $c_\gamma = D_{\gamma P} P + \sum_\beta D_{\gamma\beta} b_\beta$, this becomes $\eta_i = \kappa_i\,\eta_\rho$ for each independent concentration, with density factor $\kappa_i = 1 + \sum_\gamma D_{\gamma i}$ and $\eta_i$ the total marginal net benefit.
+    With dependent reactants $c_\gamma = D_{\gamma P} P + \sum_\beta D_{\gamma\beta} b_\beta$, this becomes $\eta_i = \kappa_i\,\eta_\rho$ for each independent concentration, with density factor $\kappa_i = 1 + \sum_\gamma D_{\gamma i}$ and $\eta_i$ the total marginal net benefit.
 
 ## Expansion
 
-Part 1 differentiates the growth equation $\mu = P / \sum_j \sum_i (A^{-1})_{ji} x_i / k_j(a)$: increasing a concentration raises the dilution flux every upstream protein must offset (cost $q$) and, for a reactant, speeds the reactions it saturates (benefit $u$); total protein also accelerates every reaction linearly, contributing $1/P$. Part 2 compares the nonlinear optimum with the protein-constrained flux balance problem at the optimal composition, whose optima are elementary flux modes. Part 3 is the Lagrange condition for maximizing $\mu(x)$ on the hyperplane $P + \sum_\alpha a_\alpha = \rho$: if one concentration had a higher marginal benefit than another, shifting density towards it would raise growth. The $n+1$ balance equations plus the density constraint determine the $n+1$ unknown concentrations, so growth optimization reduces to solving them. Applied to the ribosome reaction with its ternary-complex substrate, the condition $\eta_T = \eta_P$ predicts the growth-rate dependence of ribosomal proteome fractions in *E. coli* and yeast without fitted parameters, and a minimal transporter-plus-ribosome cell gives $\rho\,\eta_\rho \approx 0.66$.
+Part 1 differentiates the growth equation $\mu = P / \sum_j \sum_i (A^{-1})_{ji} x_i / k_j(a)$: increasing a concentration raises the dilution flux every upstream protein must offset (cost $q$) and, for a reactant, speeds the reactions it saturates (benefit $u$); total protein also accelerates every reaction linearly, contributing $1/P$. Part 2 compares the nonlinear optimum with the protein-constrained flux balance problem at the optimal composition, whose optima are elementary flux modes. Part 3 is the Lagrange condition for maximizing $\mu(x)$ on the hyperplane $P + \sum_\alpha a_\alpha = \rho$: if one concentration had a higher marginal benefit than another, shifting density towards it would raise growth. The $n = m + 1$ balance equations and the active density constraint form $n + 1$ equations for the $n$ concentrations and $\eta_\rho$, so growth optimization reduces to solving them. Applied to the ribosome reaction with its ternary-complex substrate, the condition $\eta_T = \eta_P$ predicts the growth-rate dependence of ribosomal proteome fractions in *E. coli* and yeast without fitted parameters, and a minimal transporter-plus-ribosome cell gives $\rho\,\eta_\rho \approx 0.66$.
 
 ## Depends on
 

@@ -6,14 +6,16 @@
 
 $$\lambda(C) = \begin{cases} 0, & \Lambda(C) = 0,\\ \big\lceil (\Lambda(C)+1)/2 \big\rceil, & \Lambda(C) \ge 1.\end{cases}$$
 
-**Theorem.** Let $c$ be the number of cycles (all of which are $AB$-cycles) and $i$ the number of $AB$-paths of $R(A,B)$.
+**Theorem.** Let $c$ be the number of $AB$-cycles (cycles with at least two extremity edges; circular singletons, cycles made only of indel and adjacency edges of one genome, are not counted) and $i$ the number of $AB$-paths of $R(A,B)$.
+
 1. (Upper bound) $d_{\mathrm{DCJ}}^{\mathrm{id}}(A,B) \le |\mathcal{G}| - c - \tfrac{i}{2} + \sum_{C}\lambda(C)$.
 2. (Circular genomes) If $A, B$ are circular, the bound is tight: $d_{\mathrm{DCJ}}^{\mathrm{id}}(A,B) = |\mathcal{G}| - c + \sum_C \lambda(C)$.
 3. (Linear genomes) In general
 
-$$d_{\mathrm{DCJ}}^{\mathrm{id}}(A,B) = |\mathcal{G}| - c - \frac{i}{2} + \sum_C\lambda(C) - \delta,$$
+    $$d_{\mathrm{DCJ}}^{\mathrm{id}}(A,B) = |\mathcal{G}| - c - \frac{i}{2} + \sum_C\lambda(C) - \delta,$$
 
-where $\delta = 2P + 3Q + 2T + S + 2M + N$ counts the deductions achieved by greedily maximizing six families $P, Q, T, S, M, N$ of chained *deducting recombinations* (DCJs acting on two paths whose DCJ-indel cost $\Delta d$ is negative).
+    where $\delta = 2P + 3Q + 2T + S + 2M + N$ counts the deductions achieved by greedily maximizing six families $P, Q, T, S, M, N$ of chained *deducting recombinations* (DCJs acting on two paths whose DCJ-indel cost $\Delta d$ is negative).
+
 4. (Canonical genomes) With no exclusive markers, $\lambda \equiv 0$ and $d_{\mathrm{DCJ}}^{\mathrm{id}}(A,B) = |\mathcal{G}| - c - i/2$, the classical DCJ distance.
 
 For a cycle, $\Lambda(C) \in \{0, 1\} \cup 2\mathbb{N}$, so $\lambda(C) = \Lambda(C)$ if $\Lambda(C) \le 1$ and $\lambda(C) = \Lambda(C)/2 + 1$ if $\Lambda(C) \ge 2$.

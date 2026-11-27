@@ -12,9 +12,10 @@ a product of multinomial coefficients over the multinomial count of all labeling
 
 - Enrichment score (unsigned edges only): $ES(T) = n_{r+} + n_{r-}$. By Vandermonde's identity
 
-$$P(ES = S_0) = \frac{\binom{q_r}{S_0}\binom{q_0}{n_+ + n_- - S_0}}{\binom{N}{n_+ + n_-}},$$
+    $$P(ES = S_0) = \frac{\binom{q_r}{S_0}\binom{q_0}{n_+ + n_- - S_0}}{\binom{N}{n_+ + n_-}},$$
 
-the hypergeometric law of Fisher's exact test.
+    the hypergeometric law of Fisher's exact test.
+
 - Correctness (ternary) score (signed edges only, $q_r = 0$): $CS(T) = n_{++} + n_{--} - (n_{+-} + n_{-+})$.
 - Quaternary score (mixed networks): $QS(T) = n_{++} + n_{--} + n_{r+} + n_{r-} - (n_{+-} + n_{-+})$.
 

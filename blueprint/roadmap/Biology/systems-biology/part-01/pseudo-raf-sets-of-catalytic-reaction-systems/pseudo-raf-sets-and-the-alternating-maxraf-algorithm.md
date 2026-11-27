@@ -12,7 +12,7 @@ $$f(\mathcal R') = \{ r \in \mathcal R' : \exists (x,r) \in C,\ \rho(r) \cup \{x
 
 and let $\mathrm{fix}_p(\mathcal R')$ be the result of iterating $p$ from $\mathcal R'$ until a fixed point (possibly $\emptyset$).
 
-**Lemma.** (i) The RAFs of $Q$ are exactly its $F$-generated pRAFs. (ii) A union of pRAFs is a pRAF; hence, if $Q$ has a pRAF, it has a unique maximum pRAF. (iii) $f$ and $p$ are monotone: $\mathcal R_1 \subseteq \mathcal R_2$ implies $f(\mathcal R_1) \subseteq f(\mathcal R_2)$ and $p(\mathcal R_1) \subseteq p(\mathcal R_2)$.
+**Lemma.** (i) The RAFs of $Q$ are exactly its nonempty $F$-generated pRAFs. (ii) A union of pRAFs is a pRAF; hence, if $Q$ has a pRAF, it has a unique maximum pRAF. (iii) $f$ and $p$ are monotone: $\mathcal R_1 \subseteq \mathcal R_2$ implies $f(\mathcal R_1) \subseteq f(\mathcal R_2)$ and $p(\mathcal R_1) \subseteq p(\mathcal R_2)$.
 
 **Theorem (alternating algorithm).** Set $\mathcal R_0 = \mathcal R$ and, for $k \ge 0$, $\mathcal R_{k+1} = f(\mathrm{fix}_p(\mathcal R_k))$, stopping at the first $k$ with $f(\mathcal R_k) = \mathcal R_k$ or $\mathcal R_k = \emptyset$. The output is the maximum RAF (maxRAF) of $Q$ if $Q$ contains an RAF, and $\emptyset$ otherwise.
 

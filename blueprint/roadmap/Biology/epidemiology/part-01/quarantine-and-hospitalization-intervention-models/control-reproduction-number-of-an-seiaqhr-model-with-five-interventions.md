@@ -1,6 +1,6 @@
 # Control reproduction number of an SEIAQHR model with five interventions
 
-**Model.** Compartments: susceptible $S$, quarantined susceptible $S_q$, exposed $E$, symptomatic infectious $I$, asymptomatic infectious $A$, quarantined infected $Q$, hospitalized $H$, recovered $R$. Constant controls $\phi_1,\dots,\phi_5\in[0,1]$ represent personal protection ($\phi_1$), contact tracing and testing of exposed individuals ($\phi_2$), treatment of timely diagnosed ($\phi_3$, acting on $A$) and delayed diagnosed ($\phi_4$, acting on $I$) infected individuals, and treatment of hospitalized individuals ($\phi_5$). With force of infection $\lambda=\beta(1-\phi_1)(I+\eta A+\rho H)$ and $\theta_3=1-\theta_1-\theta_2$,
+**Model.** Compartments: susceptible $S$, quarantined susceptible $S_q$, exposed $E$, symptomatic infectious $I$, asymptomatic infectious $A$, quarantined infected $Q$, hospitalized $H$, recovered $R$. Constant controls $\phi_1,\dots,\phi_5\in[0,1]$ represent personal protection ($\phi_1$), contact tracing and testing of exposed individuals ($\phi_2$), treatment of timely diagnosed ($\phi_3$, acting on $A$) and delayed diagnosed ($\phi_4$, acting on $I$) infected individuals, and treatment of hospitalized individuals ($\phi_5$). Assume $\Lambda, \beta, \sigma, \mu > 0$, the other rates $\ge 0$, and $\theta_1, \theta_2 \ge 0$ with $\theta_1 + \theta_2 \le 1$. With force of infection $\lambda=\beta(1-\phi_1)(I+\eta A+\rho H)$ and $\theta_3=1-\theta_1-\theta_2$,
 
 $$\begin{aligned}\dot S&=\Lambda-\lambda S-(\omega+\mu)S+\varepsilon S_q, & \dot S_q&=\omega S-(\varepsilon+\mu)S_q,\\ \dot E&=\lambda S-(\sigma+\mu+\phi_2)E, & \dot I&=\theta_1\sigma E-(\alpha_i+\gamma_i+d+\mu+\phi_4)I,\\ \dot A&=\theta_2\sigma E-(\gamma_a+\mu+\phi_3)A, & \dot Q&=(\theta_3\sigma+\phi_2)E-(\alpha_q+\gamma_q+\mu)Q,\\ \dot H&=(\alpha_i+\phi_4)I+\phi_3A+\alpha_qQ-(\gamma_h+d+\mu+\phi_5)H, & \dot R&=(\gamma_h+\phi_5)H+\gamma_qQ+\gamma_iI+\gamma_aA-\mu R.\end{aligned}$$
 
@@ -13,6 +13,11 @@ The disease-free equilibrium is locally asymptotically stable if $R_c<1$ and uns
 ## Depends on
 
 - [Basic reproduction number of the next-generation matrix](../../next-generation-matrix-and-the-basic-reproductio/r0.md)
+
+## Proof depends on
+
+- [$R_0$ as a threshold for the linearized infected subsystem](../../next-generation-matrix-and-the-basic-reproductio/is-hurwitz-sub-iff-r0-lt-one.md)
+- [Unstable mode of the infected subsystem exactly when $R_0 > 1$](../../next-generation-matrix-and-the-basic-reproductio/exists-re-pos-iff-one-lt-r0.md)
 
 ## Expansion
 

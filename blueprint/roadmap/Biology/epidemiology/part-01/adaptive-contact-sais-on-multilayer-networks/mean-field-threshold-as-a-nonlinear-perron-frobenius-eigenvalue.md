@@ -6,7 +6,7 @@ $$\dot p_i = -\delta p_i + \beta(1 - q_i - p_i)\sum_j w^S_{ij} p_j + \beta q_i \
 
 $$\dot q_i = \kappa(1 - q_i - p_i)\sum_j w^S_{ij} p_j - \beta q_i \sum_j w^A_{ij} p_j.$$
 
-Write $\tau = \beta/\delta$ (effective infection rate) and $\bar\kappa = \kappa/\beta$ (relative alerting rate).
+Assume $\beta, \delta > 0$ and $\kappa \ge 0$, and write $\tau = \beta/\delta$ (effective infection rate) and $\bar\kappa = \kappa/\beta$ (relative alerting rate).
 
 **M-connectivity.** Let $\boldsymbol G^1$ be the directed graph on singletons with a link $j \to i$ when $w^S_{ij} > 0$ and $w^A_{ij} > 0$. Given $\boldsymbol G^k$, let $\boldsymbol G^{k+1}$ have the strongly connected components of $\boldsymbol G^k$ as hypernodes, with a link $J \to I$ when some $i \in I$ has $w^S_{ij_1} > 0$ and $w^A_{ij_2} > 0$ for some $j_1, j_2 \in J$. The two-layer network is *M-connected* if some $\boldsymbol G^{k}$ is strongly connected. Strong connectivity of the intersection graph is sufficient; strong connectivity of both layers is necessary.
 
@@ -14,16 +14,17 @@ Write $\tau = \beta/\delta$ (effective infection rate) and $\bar\kappa = \kappa/
 
 1. Every equilibrium of the mean-field system has either $p^*_i = 0$ for all $i$ or $p^*_i > 0$ for all $i$, and a positive equilibrium satisfies
 
-$$\frac{p^*_i}{1 - p^*_i} = \tau\,\frac{(\bar\kappa + 1)\sum_j w^A_{ij}p^*_j \sum_j w^S_{ij}p^*_j}{\bar\kappa \sum_j w^S_{ij}p^*_j + \sum_j w^A_{ij}p^*_j}.$$
+    $$\frac{p^*_i}{1 - p^*_i} = \tau\,\frac{(\bar\kappa + 1)\sum_j w^A_{ij}p^*_j \sum_j w^S_{ij}p^*_j}{\bar\kappa \sum_j w^S_{ij}p^*_j + \sum_j w^A_{ij}p^*_j}.$$
 
 2. Define the map $F$ on the nonnegative cone by
 
-$$F(z)_i = \frac{\sum_j w^A_{ij} z_j \,\sum_j w^S_{ij} z_j}{\bar\kappa \sum_j w^S_{ij} z_j + \sum_j w^A_{ij} z_j}$$
+    $$F(z)_i = \frac{\sum_j w^A_{ij} z_j \,\sum_j w^S_{ij} z_j}{\bar\kappa \sum_j w^S_{ij} z_j + \sum_j w^A_{ij} z_j}$$
 
-(and $F(z)_i = 0$ when both sums vanish). $F$ is positively homogeneous of degree one and concave, and the nonlinear eigenproblem $F(z) = \mu z$ has a unique solution $z_* \succ 0$ with $\|z_*\|_2 = 1$, with eigenvalue $\mu_* > 0$.
+    for $\bar\kappa > 0$ (with $F(z)_i = 0$ when both sums vanish, the only case in which the denominator vanishes), and set $F(z) = W_S z$ for $\bar\kappa = 0$. $F$ is positively homogeneous of degree one and concave, and the nonlinear eigenproblem $F(z) = \mu z$ has a unique solution $z_* \succ 0$ with $\|z_*\|_2 = 1$, with eigenvalue $\mu_* > 0$.
+
 3. The mean-field epidemic threshold, the value $\tau_c$ at which a positive endemic equilibrium bifurcates from the disease-free one, is characterized by $z = \tau_c(\bar\kappa + 1) F(z)$ having a solution $z \succ 0$, so
 
-$$\tau_c = \frac{1}{(\bar\kappa + 1)\,\mu_*}.$$
+    $$\tau_c = \frac{1}{(\bar\kappa + 1)\,\mu_*}.$$
 
 4. For any $c > 0$ and $z_0 \succ 0$ with $\|z_0\|_2 = 1$, the iteration $z_{k+1} = (F(z_k) + c z_k)/\|F(z_k) + c z_k\|_2$ converges to $z_*$.
 

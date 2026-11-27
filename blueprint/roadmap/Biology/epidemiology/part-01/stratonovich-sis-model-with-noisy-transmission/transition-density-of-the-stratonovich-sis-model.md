@@ -1,6 +1,6 @@
 # Transition density of the Stratonovich SIS model with noisy transmission
 
-**Model.** In a population of constant size $N$ (recruitment balancing natural death rate $\mu$), with transmission rate $\beta$, recovery rate $\gamma$ and the transmission perturbed as $\beta\,dt \mapsto \beta\,dt + \sigma\,dW(t)$, the number infected solves the Stratonovich equation
+**Model.** In a population of constant size $N$ (recruitment balancing natural death rate $\mu$), with transmission rate $\beta$, recovery rate $\gamma$ and the transmission perturbed as $\beta\,dt \mapsto \beta\,dt + \sigma\,dW(t)$ with noise intensity $\sigma > 0$, the number infected solves the Stratonovich equation
 
 $$dI = \Big(\frac{\beta}{N}(N-I)I - (\mu+\gamma)I\Big)dt + \frac{\sigma}{N}(N-I)I\circ dW(t), \qquad S = N - I,$$
 
@@ -25,8 +25,9 @@ $$p^s_X(x) = \frac{x^{\bar A}e^{-x}}{\Gamma(\bar A+1)}, \qquad x > 0,$$
 $$p^s_I(I) = \frac{N\,\bar C^{\bar A+1}}{\Gamma(\bar A+1)}\,\frac{I^{\bar A}}{(N-I)^{\bar A+2}}\exp\!\Big(-\frac{\bar C I}{N-I}\Big), \qquad 0 < I < N,$$
 
 with distribution function $\gamma(\bar A+1, \bar C I/(N-I))/\Gamma(\bar A+1)$. The transition density $p_X(x\mid t, x_0)$ is the eigenfunction expansion of the Fokker–Planck operator consisting of
+
 - a discrete part with eigenvalues $r_n = \frac{\sigma^2}{2}n(\bar A+1-n)$ for the integers $0 \le n \le M$, where $\frac{\bar A+1}{2} - 1 \le M < \frac{\bar A+1}{2}$, with eigenfunctions built from $x^{-n}L_n^{(\alpha_n)}(x)$, $\alpha_n = \bar A + 1 - 2n$, $L_n^{(\alpha)}$ the generalized Laguerre polynomials; the $n = 0$ term is the stationary density;
-- a continuous part with eigenvalues $r(\eta) = \frac{\sigma^2}{2}\big(\big(\frac{\bar A+1}{2}\big)^2 + \eta^2\big)$, $\eta \ge 0$, with eigenfunctions proportional to $x^{-(1+\bar A)/2}e^{x/2}W_{(1+\bar A)/2,\,i\eta}(x)$, where $W_{k,\theta}$ is the Whittaker function.
+- a continuous part with eigenvalues $r(\eta) = \frac{\sigma^2}{2}\big(\big(\frac{\bar A+1}{2}\big)^2 + \eta^2\big)$, $\eta \ge 0$, with backward-operator eigenfunctions proportional to $x^{-1-\bar A/2}e^{x/2}W_{1+\bar A/2,\,i\eta}(x)$, where $W_{k,\theta}$ is the Whittaker function; the corresponding density modes are $x^{\bar A}e^{-x}$ times them.
 All modes other than $n = 0$ decay, so $p_I(I\mid t,I_0) \to p^s_I(I)$ as $t \to \infty$; the densities of $I$ and $S$ follow by the change of variables.
 
 ## Depends on
