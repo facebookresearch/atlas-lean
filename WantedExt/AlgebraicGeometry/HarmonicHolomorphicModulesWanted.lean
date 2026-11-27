@@ -11,6 +11,9 @@ public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.HarmonicHolomorphicFrameModels
 public import MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesHolomorphicCoefficientSheafCondition
 public import MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesHolomorphicBarMultiplication
+public import MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesHolomorphicCotangentSheafCondition
+public import MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesHarmonicHolomorphicKernelSheafCondition
+public import MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesPluriharmonicHiggsIntegrable
 
 /-!
 # Wanted native holomorphic-kernel, cotangent and Higgs constructions
@@ -19,8 +22,14 @@ All ordinary support requests concern the fixed public section formulas.
 The holomorphic coefficient sheaf condition
 `holomorphic_coefficient_sheaf_condition` is proved in
 `MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesHolomorphicCoefficientSheafCondition`,
-and `holomorphic_bar_multiplication` is proved in
-`MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesHolomorphicBarMultiplication`.
+`holomorphic_bar_multiplication` is proved in
+`MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesHolomorphicBarMultiplication`,
+`holomorphic_cotangent_sheaf_condition` is proved in
+`MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesHolomorphicCotangentSheafCondition`,
+`harmonic_holomorphic_kernel_sheaf_condition` is proved in
+`MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesHarmonicHolomorphicKernelSheafCondition`,
+and `pluriharmonic_higgs_integrable` is proved in
+`MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesPluriharmonicHiggsIntegrable`.
 Integrability produces new holomorphic frames and the actual O-linear
 Higgs map; it does not declare the original smooth frames holomorphic.
 Polystability, Chern vanishing and the full correspondence are separate
@@ -43,18 +52,6 @@ variable {n : ℕ} {M : Type} [TopologicalSpace M] [ChartedSpace (Coordinates n)
 /-- Actual holomorphic tangent covectors satisfy ordinary local multiplication and restriction calculus. -/
 theorem_wanted holomorphic_cotangent_section_calculus [IsManifold 𝓘(ℂ, Coordinates n) ∞ M] :
   CotangentSectionCalculus (n := n) (M := M)
-
-/-- The same actual cotangent-form presheaves satisfy the ordinary gluing condition. -/
-theorem_wanted holomorphic_cotangent_sheaf_condition [IsManifold 𝓘(ℂ, Coordinates n) ∞ M]
-    [CotangentSectionCalculus (n := n) (M := M)] : CotangentSheafCondition (n := n) (M := M)
-
-/-- The kernel of this same local PDE glues, without an integrability assumption. -/
-theorem_wanted harmonic_holomorphic_kernel_sheaf_condition
-    [IsManifold 𝓘(ℝ, Coordinates n) ∞ M] [IsManifold 𝓘(ℂ, Coordinates n) ∞ M]
-    (B : SmoothComplexBundle n M r)
-    (h : HermitianMetric B) (A : SmoothConnection B)
-    [SectionCalculus B (unitaryPart B h A)] [BarMultiplicationCalculus B h A] :
-  KernelSheafCondition B h A
 
 /-- The actual integrable bar connection admits new local holomorphic frames. -/
 def_wanted pluriharmonic_local_holomorphic_frame [T2Space M] [SecondCountableTopology M]
@@ -90,7 +87,3 @@ def_wanted pluriharmonic_holomorphic_higgs_model [T2Space M] [SecondCountableTop
 
 /-- Construct the actual exterior-square map of this same normalized Higgs field. -/
 def_wanted harmonic_higgs_exterior_square (H : HarmonicHiggsModel B h A) : HiggsExteriorSquare B h A H
-
-/-- The third pluriharmonic equation makes that actual O-linear exterior square zero. -/
-theorem_wanted pluriharmonic_higgs_integrable (hh : IsPluriharmonic B h A)
-    (H : HarmonicHiggsModel B h A) (S : HiggsExteriorSquare B h A H) : IsIntegrable B h A S

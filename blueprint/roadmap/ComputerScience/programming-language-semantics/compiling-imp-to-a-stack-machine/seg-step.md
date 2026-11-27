@@ -1,0 +1,3 @@
+# Stack-machine steps starting in a code segment
+
+The stack machine runs a program $P$, a list of instructions, on configurations $(pc, \sigma, s)$ consisting of a program counter $pc \in \mathbb{N}$, a stack $\sigma$ (a list of natural numbers, top first) and an IMP state $s$; a configuration steps by executing the instruction at position $pc$ of $P$ (counted from $0$), and there is no step when $pc \ge |P|$. The machine is deterministic. For a program $P$ and natural numbers $lo$ and $hi$, a segment step of $P$ in $[lo, hi)$ from a configuration $x$ to a configuration $y$ is a machine step of $P$ from $x$ to $y$ whose source program counter $pc(x)$ satisfies $lo \le pc(x) < hi$. Only the source of the step is constrained; its target may lie outside the segment.
