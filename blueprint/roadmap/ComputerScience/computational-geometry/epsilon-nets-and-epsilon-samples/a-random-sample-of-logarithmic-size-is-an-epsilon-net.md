@@ -8,7 +8,7 @@ Let $(x, R)$ be a finite range space with $n = |x| \ge 1$ points and VC dimensio
 
 ## Proof depends on
 
-- [Sauer-Shelah bound on traces](../../not-yet-classified/growth/card-trace-family-le-sum-vc-dim.md)
+- [Sauer-Shelah bound on traces](../../machine-learning/pac-learning/sample-complexity-and-combinatorial-dimensions/finite-traces-of-a-concept-class/card-trace-family-le-sum-vc-dim.md)
 
 ## Sources
 
