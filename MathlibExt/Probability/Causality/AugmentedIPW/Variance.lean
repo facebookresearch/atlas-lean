@@ -156,10 +156,11 @@ theorem measurable_aipwScore [MeasurableSpace 𝒳] {T : Set Ω₁} (hT : Measur
   · exact (hY.sub (hm₁.comp hX)).div (he.comp hX)
   · exact (hY.sub (hm₀.comp hX)).div (measurable_const.sub (he.comp hX))
 
-/-- The variance of the AIPW score is the second moment of the centered score
-`φ = ψ - τ`, where `τ = E[ψ]`: `Var(ψ) = Var(φ) = E[φ²]`. Here `Var` is the real part of the
-extended variance and `E[φ²]` a Bochner integral, so both sides are `0` when the extended
-variance is infinite. -/
+/-- The variance of the AIPW score `ψ` is the integral of the square of `ψ - τ`, where `τ` is
+the integral of `ψ` against `μ₁`: `Var(ψ) = ∫ (ψ - τ)² ∂μ₁`. This holds for any measure `μ₁`, with
+no probability normalisation, so the centered score `ψ - τ` need not have integral `0` and its
+own variance can differ from both sides. Here `Var` is the real part of the extended variance and
+the right side a Bochner integral, so both sides are `0` when the extended variance is infinite. -/
 theorem variance_aipwScore_eq_integral_sq {μ₁ : Measure Ω₁} {T : Set Ω₁} {X : Ω₁ → 𝒳}
     {Y : Ω₁ → ℝ} {e m₀ m₁ : 𝒳 → ℝ} (hψ : AEMeasurable (aipwScore T X Y e m₀ m₁) μ₁) {τ : ℝ}
     (hτ : ∫ ω, aipwScore T X Y e m₀ m₁ ω ∂μ₁ = τ) :

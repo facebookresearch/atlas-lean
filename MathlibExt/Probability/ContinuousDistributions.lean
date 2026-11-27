@@ -376,8 +376,8 @@ theorem ae_tendsto_sampleMean {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
 
 /-- The Weibull survival-function formula with shape `k` and scale `lam`: `1` for `x < 0` and
 `exp (-(x / lam) ^ k)` for `0 ≤ x`, defined for all real `k` and `lam`, intended for `0 < k`
-and `0 < lam`. Its cumulative hazard
-`(x / lam) ^ k` (`neg_log_weibullSurvival`) is the power-law form. For `0 < k` and `0 < lam` it is
+and `0 < lam`. Its cumulative hazard `-log S(x)` is `0` for `x < 0` and the power law
+`(x / lam) ^ k` for `0 ≤ x` (`neg_log_weibullSurvival`). For `0 < k` and `0 < lam` it is
 the survival function `x ↦ P(X > x)` of ATLAS's Weibull law `ProbabilityTheory.weibullMeasure k lam`
 (`weibullSurvival_eq_weibullMeasure_real_Ioi`). -/
 noncomputable def weibullSurvival (k lam : ℝ) (x : ℝ) : ℝ :=
