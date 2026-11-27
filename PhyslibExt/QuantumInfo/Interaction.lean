@@ -46,7 +46,8 @@ degenerate `value_of_isEmpty` artifact.
 ## ii. Key results
 
 * `value_zero`: with no prover turns, the value is the verifier's
-acceptance of its initial state.
+acceptance of its initial state; `acceptProb_zero` states the same for
+each prover.
 * `value_le_iff`: the value is the least upper bound of the acceptance
 probabilities.
 * `run_succ_apply`: the action of `run` on a state is the last round
@@ -60,7 +61,8 @@ after the earlier rounds.
 * `finalState`, `acceptProb`, and `value`: final state, acceptance
 probability, and the value.
 * `le_value` and `value_le_iff`: the value as least upper bound.
-* `value_zero`: the zero-message value.
+* `acceptProb_zero` and `value_zero`: the zero-message acceptance and
+value.
 * `value_of_isEmpty`: the empty-index artifact.
 
 ## iv. References
@@ -171,27 +173,28 @@ lemma value_le_iff {k : ℕ} (V : Verifier k dV dM) (p : Prob) :
     unfold value
     exact ciSup_le' h
 
-/-- **Zero-message nonvacuity:** with no prover turns, the value is the
-verifier's acceptance of its initial state. -/
-lemma value_zero [Nonempty dP] (V : Verifier 0 dV dM) :
-    value V dP = V.accept.measure V.init true := by
-  have hfinal : ∀ P : Prover 0 dM dP, finalState V P = V.init := by
-    intro P
+/-- With no prover turns, every prover's acceptance is the verifier's acceptance of its
+initial state. -/
+lemma acceptProb_zero (V : Verifier 0 dV dM) (P : Prover 0 dM dP) :
+    acceptProb V P = V.accept.measure V.init true := by
+  unfold acceptProb
+  have hfinal : finalState V P = V.init := by
     unfold finalState
     have hrun : run 0 V.step P.step = CPTPMap.id := rfl
     simp only [hrun, CPTPMap.compose_eq, CPTPMap.id_MState,
       CPTPMap.assoc'_eq_MState_assoc', MState.assoc'_assoc,
       CPTPMap.traceRight_eq_MState_traceRight, MState.traceRight_prod_eq]
-  have hconst : ∀ P : Prover 0 dM dP,
-      acceptProb V P = V.accept.measure V.init true := by
-    intro P
-    unfold acceptProb
-    rw [hfinal P]
+  rw [hfinal]
+
+/-- **Zero-message nonvacuity:** with no prover turns, the value is the
+verifier's acceptance of its initial state. -/
+lemma value_zero [Nonempty dP] (V : Verifier 0 dV dM) :
+    value V dP = V.accept.measure V.init true := by
   haveI hne : Nonempty (Prover 0 dM dP) := by
     haveI : Nonempty (MState dP) := inferInstance
     exact ⟨⟨Classical.choice inferInstance, fun i => i.elim0⟩⟩
   unfold value
-  simp only [hconst, ciSup_const]
+  simp only [acceptProb_zero, ciSup_const]
 
 /-- Zero-dimensional artifact: with an empty index type there is no
 density operator at all, so there are no prover strategies and the value

@@ -18,7 +18,7 @@ set_option backward.isDefEq.respectTransparency false
 open scoped Pointwise
 
 /-- A nonnegative cone in an actual abelian group. -/
-def nonnegativeIntegers : Submonoid (Multiplicative ℤ) where
+private def nonnegativeIntegers : Submonoid (Multiplicative ℤ) where
   carrier := {x | 0 ≤ x.toAdd}
   one_mem' := by change (0 : ℤ) ≤ 0; exact le_rfl
   mul_mem' := by

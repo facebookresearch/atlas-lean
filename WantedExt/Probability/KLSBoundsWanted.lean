@@ -12,7 +12,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import MathlibExt.Probability.Geometry.KLS
+public import MathlibExt.Probability.Geometry.KLSLowerBound
+public import MathlibExt.Probability.Geometry.KLSPoincareCheeger
 public import Mathlib.Probability.Distributions.Gaussian.Multivariate
 
 @[expose] public section
@@ -109,15 +110,6 @@ public theorem_wanted stdGaussian_inverseCheeger (n : ℕ) (hn : 0 < n) :
       (ProbabilityTheory.stdGaussian (EuclideanSpace ℝ (Fin n))) =
         ENNReal.ofReal (Real.sqrt (Real.pi / 2))
 
-/-- **A lower bound for the KLS constant.** The KLS constant is at least $\sqrt{\pi/2}$.
-
-The bound comes from the standard Gaussian measure in any dimension $n \ge 1$, whose inverse Cheeger
-constant is $\sqrt{\pi/2}$.
-
-Source: optimizationproblems `constants/20c.md`, classical Gaussian lower-bound row. -/
-public theorem_wanted sqrtPiDivTwo_le_klsConstant :
-    ENNReal.ofReal (Real.sqrt (Real.pi / 2)) ≤ klsConstant
-
 /-- **Lower Poincaré–Cheeger comparison with coefficient 1/π.** Let $n \ge 1$ and let $\mu$ be an
 isotropic log-concave probability measure on $\mathbb{R}^n$, with inverse Cheeger constant
 $\psi(\mu) \in [0, \infty]$ and smooth Poincaré constant $C_P(\mu) \in [0, \infty]$. Then
@@ -141,17 +133,6 @@ public theorem_wanted klartag2023_poincare_lower_bound {n : ℕ} (hn : 0 < n)
     {μ : Measure (EuclideanSpace ℝ (Fin n))} (hμ : IsIsotropicLogConcave μ) :
     ENNReal.ofReal (1 / 9) * inverseCheegerConstant μ ^ 2 ≤
       smoothPoincareConstant μ
-
-/-- **Cheeger's inequality for isotropic log-concave measures.** Let $n \ge 1$, let $\mu$ be an
-isotropic log-concave probability measure on $\mathbb{R}^n$, and let $\psi_\mu \in [0, \infty]$ be
-the inverse Cheeger constant of $\mu$. Then the smooth Poincaré constant of $\mu$ is at most
-$4 \psi_\mu^2$.
-
-Source: optimizationproblems `constants/20c.md`, comparison display, and
-Klartag, arXiv:2303.14938v1, Introduction. -/
-public theorem_wanted poincare_cheeger_upper_bound {n : ℕ} (hn : 0 < n)
-    {μ : Measure (EuclideanSpace ℝ (Fin n))} (hμ : IsIsotropicLogConcave μ) :
-    smoothPoincareConstant μ ≤ 4 * inverseCheegerConstant μ ^ 2
 
 /-- **Dimensional KLS constant versus thin-shell variance, up to a squared logarithm.** Let
 $\Sigma \in [0, \infty]$ be the thin-shell variance constant: the supremum, over all dimensions

@@ -53,7 +53,7 @@ def fcc : FracColouring K2 where
     have hdisj : s = {0} ∨ s = {1} := by
       by_contra hc
       unfold fccW at hs
-      rw [if_neg hc] at hs
+      rw [ite_eq_right hc] at hs
       exact hs rfl
     rcases hdisj with rfl | rfl <;>
       rw [Finset.mem_singleton.mp ha, Finset.mem_singleton.mp hb] at hab <;>
@@ -73,16 +73,16 @@ def fcc : FracColouring K2 where
 theorem fcc_weight : fcc.weight = 2 := by
   have e0 : fccW (∅ : Finset (Fin 2)) = 0 := by
     change (if ∅ = ({0} : Finset (Fin 2)) ∨ ∅ = {1} then (1 : ℝ) else 0) = 0
-    exact if_neg (by decide)
+    exact ite_eq_right (by decide)
   have e1 : fccW ({0} : Finset (Fin 2)) = 1 := by
     change (if ({0} : Finset (Fin 2)) = {0} ∨ {0} = {1} then (1 : ℝ) else 0) = 1
-    exact if_pos (Or.inl rfl)
+    exact ite_eq_left (Or.inl rfl)
   have e2 : fccW ({1} : Finset (Fin 2)) = 1 := by
     change (if ({1} : Finset (Fin 2)) = {0} ∨ {1} = {1} then (1 : ℝ) else 0) = 1
-    exact if_pos (Or.inr rfl)
+    exact ite_eq_left (Or.inr rfl)
   have e3 : fccW ({0, 1} : Finset (Fin 2)) = 0 := by
     change (if ({0, 1} : Finset (Fin 2)) = {0} ∨ {0, 1} = {1} then (1 : ℝ) else 0) = 0
-    exact if_neg (by decide)
+    exact ite_eq_right (by decide)
   have huniv : (Finset.univ : Finset (Finset (Fin 2))) = {∅, {0}, {1}, {0, 1}} := by
     decide
   change (∑ s ∈ Finset.univ, fccW s) = 2
@@ -122,7 +122,7 @@ theorem fcc_regular : fcc.IsRegular := by
     · exact absurd (by rw [Finset.mem_singleton.mp hmem']) hbne
     · exact absurd (by rw [Finset.mem_singleton.mp hmem']) hbne
   · change (if b = ({0} : Finset (Fin 2)) ∨ b = {1} then (1 : ℝ) else 0) = 0
-    exact if_neg h
+    exact ite_eq_right h
 
 end MathlibExtTest.Combinatorics.SimpleGraph.AlgebraicGraphTheory.LPRelaxations.FractionalColouring
 

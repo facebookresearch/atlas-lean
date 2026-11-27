@@ -17,8 +17,9 @@ public import Mathlib.Data.Set.Card
 # Sums of consecutive squares and arithmetic polygons
 
 This module proves strict bounds on the ratio of the spans of a solution to the
-sum of consecutive squares equation, and bounds the number of solutions with a
-fixed span. It also records the corresponding 3-4-5 triangle.
+sum of consecutive squares equation, bounds the number of solutions with a
+fixed span, and shows that there are infinitely many solutions with even span. It also records
+the corresponding 3-4-5 triangle.
 -/
 
 namespace MetaMathlibExt
@@ -270,6 +271,80 @@ public theorem soCS_card_le (N : ℤ) (hN : 1 < N)
         congr 1
         congr 1
         ring
+
+/-! ### Infinitely many solutions with even span -/
+
+/-- One step of an integral automorphism of the conic cut out of the sum of consecutive squares
+equation by the plane through $(59, 110, 135)$ and the line $x = y = z$, written in the
+coordinates $(t, s) \mapsto (t, t + 51s, t + 76s)$. The coefficients come from a solution of the
+Pell equation $u^2 - 14287893 v^2 = 1$. -/
+private def soCSEvenSpanStep (p : ℤ × ℤ) : ℤ × ℤ :=
+  (6052950562499485481929700671665308279 * p.1 +
+      226514830209397059371802358488562591920 * p.2 +
+      3026475281249742740964850335832654139,
+    101731731614018048936516599848612240 * p.1 +
+      3807026949174625478485064967315176519 * p.2 +
+      50865865807009024468258299924306120)
+
+/-- The orbit of $(59, 1)$, corresponding to the solution $(59, 110, 135)$, under
+`soCSEvenSpanStep`. -/
+private def soCSEvenSpanSeq : ℕ → ℤ × ℤ
+  | 0 => (59, 1)
+  | n + 1 => soCSEvenSpanStep (soCSEvenSpanSeq n)
+
+/-- Every point of the orbit has nonnegative first coordinate, positive second coordinate, and
+lies on the conic. -/
+private theorem soCSEvenSpanSeq_spec (n : ℕ) :
+    0 ≤ (soCSEvenSpanSeq n).1 ∧ 1 ≤ (soCSEvenSpanSeq n).2 ∧
+      13 * (6 * (soCSEvenSpanSeq n).1 ^ 2 + 6 * (soCSEvenSpanSeq n).1 + 1) -
+        287 * (soCSEvenSpanSeq n).2 * (6 * (soCSEvenSpanSeq n).1 + 3) -
+        173674 * (soCSEvenSpanSeq n).2 ^ 2 = 0 := by
+  induction n with
+  | zero => norm_num [soCSEvenSpanSeq]
+  | succ n ih =>
+    obtain ⟨ht, hs, hP⟩ := ih
+    simp only [soCSEvenSpanSeq, soCSEvenSpanStep]
+    refine ⟨by positivity, by nlinarith, ?_⟩
+    linear_combination hP
+
+/-- The second coordinate of the orbit is strictly increasing. -/
+private theorem soCSEvenSpanSeq_snd_strictMono :
+    StrictMono fun n => (soCSEvenSpanSeq n).2 := by
+  refine strictMono_nat_of_lt_succ fun n => ?_
+  obtain ⟨ht, hs, -⟩ := soCSEvenSpanSeq_spec n
+  simp only [soCSEvenSpanSeq, soCSEvenSpanStep]
+  nlinarith
+
+/-- **Infinitely many solutions with $c - a$ even.** There are infinitely many solutions
+$(a, b, c)$ of the sum of consecutive squares problem with $c - a$ even.
+
+The proof starts from the solution $(59, 110, 135)$. Every integer point of the plane through it
+and the line $x = y = z$ has the form $(t, t + 51s, t + 76s)$, so its span $76s$ is even, and the
+sum of consecutive squares equation cuts out a conic in $(t, s)$. An integral automorphism of
+this conic, coming from the Pell equation $u^2 - 14287893 v^2 = 1$, maps solutions with $t \ge 0$
+and $s \ge 1$ to solutions with larger $s$.
+
+Source: Anderson, Woodall and Zaharescu, *Arithmetic Polygons and Sums of
+Consecutive Squares*, INTEGERS 26 (2026), Article A1, Theorem 3
+(`integers-2026-A1-thm-3`). -/
+public theorem soCS_even_span_infinite :
+    {t : ℤ × ℤ × ℤ | IsSoCSSolution t.1 t.2.1 t.2.2 ∧ Even (t.2.2 - t.1)}.Infinite := by
+  let f : ℕ → ℤ × ℤ × ℤ := fun n =>
+    ((soCSEvenSpanSeq n).1, (soCSEvenSpanSeq n).1 + 51 * (soCSEvenSpanSeq n).2,
+      (soCSEvenSpanSeq n).1 + 76 * (soCSEvenSpanSeq n).2)
+  refine Set.infinite_of_injective_forall_mem (f := f) ?_ fun n => ?_
+  · intro m n hmn
+    apply soCSEvenSpanSeq_snd_strictMono.injective
+    have h := congrArg (fun p : ℤ × ℤ × ℤ => p.2.2 - p.1) hmn
+    simp only [f] at h
+    change (soCSEvenSpanSeq m).2 = (soCSEvenSpanSeq n).2
+    omega
+  · obtain ⟨ht, hs, hP⟩ := soCSEvenSpanSeq_spec n
+    refine ⟨⟨by simp only [f]; omega, by simp only [f]; omega, by simp only [f]; omega, ?_⟩,
+      ⟨38 * (soCSEvenSpanSeq n).2, by simp only [f]; ring⟩⟩
+    unfold SoCSEq
+    simp only [f]
+    linear_combination (2 * (soCSEvenSpanSeq n).2) * hP
 
 /-! ### Arithmetic polygons -/
 
