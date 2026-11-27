@@ -35,13 +35,22 @@ from lean_changes import (ROOT, AggregatorError, add_common_arguments, aggregato
 
 ENTRY = re.compile(r"^(?P<file>\S.*?\.lean):(?P<line>\d+):(?P<col>\d+): "
                    r"(?P<severity>warning|error|information): (?P<text>.*)$")
-# A Bool linter prints `false`, a Nat one (`linter.haveLet`) `0`.
-NOTE = re.compile(r"^Note: This linter can be disabled with `set_option (?P<linter>\S+) \S+`$")
+# A Bool linter prints `false`, a Nat one (`linter.haveLet`) `0`; an option that turns a warning
+# off, such as `linter.deprecated.deprecatedTarget`, says "This warning".
+NOTE = re.compile(r"^Note: This (?:linter|warning) can be disabled with "
+                  r"`set_option (?P<linter>\S+) \S+`$")
 # `lake lint` prints one of these for each target that it lints.
 LINTED = re.compile(r"^-- (?:No environment linters were run|Environment linting passed) for ")
-# How `lake build` prints a message, when it builds a file or replays the file's log.
+# How `lake build` prints a message, when it builds a file or replays the file's log; the
+# message's other lines follow, until the next message or line of Lake's progress.
 BUILD_ENTRY = re.compile(r"^(?P<severity>warning|error|info): (?P<file>\S.*?\.lean):(?P<line>\d+):"
                          r"(?P<col>\d+): (?P<text>.*)$")
+BUILD_OTHER = re.compile(r"^(?:(?:warning|error|info|trace): |[✔⚠✖ℹ] \[|Build completed |"
+                         r"Some required targets )")
+# The forms of Lean's deprecation warnings: of a declaration, parameter, option or module ("has
+# been deprecated"), of a deprecated replacement ("is itself deprecated"), and of syntax that a
+# macro produces ("produces deprecated syntax"). A module's comes on the message's second line.
+DEPRECATED = re.compile(r"has been deprecated|is itself deprecated|produces deprecated syntax")
 DEPRECATION = "linter.deprecated"
 
 
@@ -56,6 +65,18 @@ class LintWarning:
     message: str
 
 
+def split_note(lines: list[str]) -> tuple[str, list[str]]:
+    """The option that a message's note says turns it off, if any, and its other lines."""
+    linter = ""
+    rest = []
+    for line in lines:
+        if note := NOTE.match(line):
+            linter = note.group("linter")
+        else:
+            rest.append(line)
+    return linter, rest
+
+
 def parse_lint_output(text: str, cwd: Path = ROOT) -> list[LintWarning]:
     """The linter warnings that `lake lint --builtin-only` prints, without repeats."""
     warnings: list[LintWarning] = []
@@ -65,14 +86,7 @@ def parse_lint_output(text: str, cwd: Path = ROOT) -> list[LintWarning]:
         if current is None:
             return
         match, body = current
-        linter = ""
-        lines = []
-        for line in body:
-            note = NOTE.match(line)
-            if note:
-                linter = note.group("linter")
-            else:
-                lines.append(line)
+        linter, lines = split_note(body)
         message = "\n".join([match.group("text"), *lines]).strip()
         warnings.append(LintWarning(relative(match.group("file"), cwd), int(match.group("line")),
                                     int(match.group("col")), linter, message))
@@ -92,20 +106,47 @@ def parse_lint_output(text: str, cwd: Path = ROOT) -> list[LintWarning]:
 
 
 def parse_deprecations(text: str, cwd: Path = ROOT) -> list[LintWarning]:
-    """The deprecation warnings in `lake build` output, without repeats.
+    """The deprecation warnings in `lake build` output, read as whole messages, without repeats.
 
-    Only the first line of each is kept: it names the deprecated declaration and,
-    when there is one, its replacement.
+    A warning's linter is the option that its note names, or `linter.deprecated`. Its message
+    leaves out the paragraphs of notes and hints.
     """
     warnings = []
+    current: tuple[re.Match[str], list[str]] | None = None
+
+    def finish() -> None:
+        if current is None:
+            return
+        match, body = current
+        linter, lines = split_note(body)
+        paragraphs = re.split(r"\n\s*\n", "\n".join([match.group("text"), *lines]).strip())
+        message = "\n\n".join(p.strip() for p in paragraphs
+                               if p.strip() and not p.strip().startswith(("Note:", "Hint:")))
+        if match.group("severity") == "warning" and DEPRECATED.search(message):
+            warnings.append(LintWarning(relative(match.group("file"), cwd),
+                                        int(match.group("line")), int(match.group("col")),
+                                        linter or DEPRECATION, message))
+
     for line in text.splitlines():
-        match = BUILD_ENTRY.match(line)
-        if match and match.group("severity") == "warning" and \
-                " has been deprecated" in match.group("text"):
-            warnings.append(LintWarning(relative(match.group("file"), cwd), int(match.group("line")),
-                                        int(match.group("col")), DEPRECATION,
-                                        match.group("text").strip()))
+        if match := BUILD_ENTRY.match(line):
+            finish()
+            current = (match, [])
+        elif BUILD_OTHER.match(line):
+            finish()
+            current = None
+        elif current is not None:
+            current[1].append(line)
+    finish()
     return list(dict.fromkeys(warnings))
+
+
+def merge(lint: list[LintWarning], build: list[LintWarning]) -> list[LintWarning]:
+    """`lint`, and the warnings of `build` that it does not already have: a warning that a linter
+    logs is in both, and Lake's replay of the build log names it less precisely."""
+    seen = {(w.path, w.line, w.col, w.message.splitlines()[0] if w.message else "") for w in lint}
+    return lint + [w for w in build
+                   if (w.path, w.line, w.col, w.message.splitlines()[0] if w.message else "")
+                   not in seen]
 
 
 @guarded
@@ -145,7 +186,7 @@ def main() -> int:
         print("`lake lint` did not run.", file=sys.stderr)
         return 2
 
-    warnings = parse_lint_output(output) + parse_deprecations(build.stdout + build.stderr)
+    warnings = merge(parse_lint_output(output), parse_deprecations(build.stdout + build.stderr))
     kept = [w for w in warnings if w.line in added.get(w.path, ())]
     level = "warning" if args.report_only else "error"
     for w in kept:

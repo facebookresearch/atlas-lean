@@ -69,6 +69,55 @@ warning: MathlibExt/A.lean:65:100: This line exceeds the 100 character limit, pl
 Build completed successfully (2671 jobs).
 """
 
+# Every form of deprecation warning, as `lake build` replays them: a deprecated replacement and
+# the use of a deprecated name, which only the build log has, and `let_fun` and deprecated
+# syntax, which linters log and so `lake lint` prints too (each twice); and a deprecated module,
+# whose deprecation is on the second line. One more warning is not a deprecation.
+DEPRECATIONS_BUILD = f"""\
+⚠ [1538/1541] Replayed MathlibExt.D
+warning: MathlibExt/D.lean: imports `Mathlib.Tactic.Ring` from package `mathlib`, which is designed for use with the module system; consider adding `module` to the start of this file
+warning: MathlibExt/D.lean:12:2: `D.old` is itself deprecated in favor of `D.new`; consider deprecating `D.older` in favor of `D.new` instead
+
+Note: This warning can be disabled with `set_option linter.deprecated.deprecatedTarget false`
+
+Hint: Deprecate in favor of `D.new` instead:
+  o̵l̵d̵n̲e̲w̲
+warning: MathlibExt/D.lean:15:29: `D.old` has been deprecated: Use `D.new` instead
+
+Hint: Replace the deprecated name:
+  o̵l̵d̵n̲e̲w̲
+warning: MathlibExt/D.lean:17:23: `let_fun` has been deprecated in favor of `have`
+
+Note: This linter can be disabled with `set_option linter.deprecated false`
+warning: MathlibExt/D.lean:30:27: syntax 'D.oldSyntax' has been deprecated: write 0
+
+Note: This linter can be disabled with `set_option linter.deprecated.syntax false`
+warning: MathlibExt/D.lean:3:0: Use the new module instead
+'MathlibExt.Old' has been deprecated: please replace this import by
+
+import MathlibExt.New
+warning: MathlibExt/D.lean:40:0: unused variable `x`
+⚠ [1539/1541] Ran MathlibExt.D:irArts
+Build completed successfully (1541 jobs).
+"""
+
+DEPRECATIONS_LINT = f"""\
+-- Text linter diagnostics in MathlibExt.D:
+{ROOT}/MathlibExt/D.lean:17:23: warning: `let_fun` has been deprecated in favor of `have`
+
+Note: This linter can be disabled with `set_option linter.deprecated false`
+{ROOT}/MathlibExt/D.lean:17:23: warning: `let_fun` has been deprecated in favor of `have`
+
+Note: This linter can be disabled with `set_option linter.deprecated false`
+{ROOT}/MathlibExt/D.lean:30:27: warning: syntax 'D.oldSyntax' has been deprecated: write 0
+
+Note: This linter can be disabled with `set_option linter.deprecated.syntax false`
+{ROOT}/MathlibExt/D.lean:30:27: warning: syntax 'D.oldSyntax' has been deprecated: write 0
+
+Note: This linter can be disabled with `set_option linter.deprecated.syntax false`
+-- No environment linters were run for MathlibExt.LintChanged.
+"""
+
 FILES = [ChangedFile("MathlibExt/A.lean", "M", frozenset({65})),
          ChangedFile("MathlibExt/B.lean", "M", frozenset({205}))]
 
@@ -135,6 +184,51 @@ class ParseTests(unittest.TestCase):
             ("MathlibExt/A.lean", 70, 4, "linter.deprecated",
              "`Nat.le_step` has been deprecated: Use `Nat.le_succ_of_le` instead"),
         ])
+
+
+class DeprecationTests(unittest.TestCase):
+    def test_reads_every_form_of_deprecation_as_a_whole_message(self):
+        warnings = check.parse_deprecations(DEPRECATIONS_BUILD)
+        self.assertEqual([(w.line, w.col, w.linter, w.message.splitlines()[0]) for w in warnings], [
+            (12, 2, "linter.deprecated.deprecatedTarget",
+             "`D.old` is itself deprecated in favor of `D.new`; consider deprecating `D.older` in "
+             "favor of `D.new` instead"),
+            (15, 29, "linter.deprecated", "`D.old` has been deprecated: Use `D.new` instead"),
+            (17, 23, "linter.deprecated", "`let_fun` has been deprecated in favor of `have`"),
+            (30, 27, "linter.deprecated.syntax",
+             "syntax 'D.oldSyntax' has been deprecated: write 0"),
+            (3, 0, "linter.deprecated", "Use the new module instead"),
+        ])
+        self.assertNotIn("Hint:", warnings[0].message)
+        self.assertIn("import MathlibExt.New", warnings[4].message)
+
+    def test_reports_each_deprecation_once(self):
+        files = [ChangedFile("MathlibExt/D.lean", "A", frozenset(range(1, 41)))]
+        summary: list[str] = []
+        code, out = run_main(DEPRECATIONS_LINT, 1, files=files, build=DEPRECATIONS_BUILD,
+                             summary=summary)
+        self.assertEqual(code, 1)
+        annotations = [line for line in out.splitlines() if line.startswith("::error ")]
+        self.assertEqual(sorted(line.split("::")[1] for line in annotations), [
+            "error file=MathlibExt/D.lean,line=12,col=3,title=linter.deprecated.deprecatedTarget",
+            "error file=MathlibExt/D.lean,line=15,col=30,title=linter.deprecated",
+            "error file=MathlibExt/D.lean,line=17,col=24,title=linter.deprecated",
+            "error file=MathlibExt/D.lean,line=3,col=1,title=linter.deprecated",
+            "error file=MathlibExt/D.lean,line=30,col=28,title=linter.deprecated.syntax",
+        ])
+        self.assertIn("| `linter.deprecated` | 3 |", summary[0])
+        self.assertIn("| `linter.deprecated.syntax` | 1 |", summary[0])
+        self.assertIn("| `linter.deprecated.deprecatedTarget` | 1 |", summary[0])
+
+    def test_tool_output_cannot_command_the_runner(self):
+        # A deprecation's text is the author's, and can hold a line that reads as a command.
+        build = ("warning: MathlibExt/D.lean:15:29: `D.old` has been deprecated: see below\n"
+                 "::error file=MathlibExt/Other.lean,line=1::forged\n")
+        files = [ChangedFile("MathlibExt/D.lean", "A", frozenset({15}))]
+        _, out = run_main("-- No environment linters were run for MathlibExt.LintChanged.\n", 0,
+                          files=files, build=build)
+        self.assertNotIn("\n::error file=MathlibExt/Other.lean", out)
+        self.assertIn(": :error file=MathlibExt/Other.lean", out)
 
 
 class MainTests(unittest.TestCase):

@@ -58,6 +58,20 @@ theorem lintersProbeNew : True := trivial
 theorem lintersProbeOld : True := trivial
 
 theorem lintersProbeUsesOld : True := lintersProbeOld
+
+@[deprecated lintersProbeOld (since := "2026-11-27")]
+theorem lintersProbeOlder : True := trivial
+
+def lintersProbeLetFun : Nat := let_fun x := 1; x
+
+syntax (name := lintersProbeOldSyntax) "linters_probe_old_syntax" : term
+
+macro_rules
+  | `(linters_probe_old_syntax) => `(0)
+
+deprecated_syntax lintersProbeOldSyntax "write 0" (since := "2026-11-27")
+
+def lintersProbeUsesSyntax : Nat := linters_probe_old_syntax
 """
 # Only documents an existing declaration, whose unused argument stays.
 DOCUMENTED = PROBE_TEXT.replace("def lintersProbeUnused",
@@ -67,7 +81,12 @@ DOCUMENTED = PROBE_TEXT.replace("def lintersProbeUnused",
 EXPECTED = {
     "check_syntax_linters.py": ([r"linter\.style\.longLine", r"linter\.style\.cdot",
                                  r"linter\.unusedSimpArgs",
-                                 r"linter\.deprecated: `lintersProbeOld` has been deprecated"],
+                                 r"linter\.deprecated: `lintersProbeOld` has been deprecated",
+                                 r"linter\.deprecated\.deprecatedTarget: `lintersProbeOld` is "
+                                 r"itself deprecated",
+                                 r"linter\.deprecated: `let_fun` has been deprecated",
+                                 r"linter\.deprecated\.syntax: syntax 'lintersProbeOldSyntax' has "
+                                 r"been deprecated"],
                                 [r"No linter or deprecation warning on the added lines"]),
     "check_text_linters.py": ([r"space before a semicolon"],
                               [r"No text-lint error on the added lines"]),
@@ -77,6 +96,12 @@ EXPECTED = {
                               r"unusedArguments: lintersProbeUnused"],
                              [r" 0 on declarations the change adds, [1-9]\d* on declarations it "
                               r"keeps", r"No environment-linter finding on the added declarations"]),
+}
+# Patterns that the output must match exactly once after the first commit: a warning that a
+# linter logs is in both the lint log and the build log.
+ONCE = {
+    "check_syntax_linters.py": [r"`let_fun` has been deprecated",
+                                r"syntax 'lintersProbeOldSyntax' has been deprecated"],
 }
 # Exit codes after the first and the second commit.
 EXIT_CODES = (1, 0)
@@ -119,6 +144,8 @@ def run_checks(base: str, round_: int) -> bool:
         output = result.stdout + result.stderr
         want_code = EXIT_CODES[round_]
         missing = [pattern for pattern in expected[round_] if not re.search(pattern, output)]
+        missing += [f"{pattern} (once)" for pattern in ONCE.get(script, []) if round_ == 0
+                    and len(re.findall(pattern, output)) != 1]
         if result.returncode != want_code or missing:
             ok = False
             print(inert(f"FAIL {script} (round {round_ + 1}): exit {result.returncode}, wanted "
