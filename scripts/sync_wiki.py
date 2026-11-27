@@ -160,9 +160,11 @@ from pathlib import Path, PurePosixPath
 from typing import NamedTuple
 
 if __package__:
+    from . import card_moves
     from . import extract_v2_lean_dependencies as extract
     from . import generate_wiki as wiki
 else:
+    import card_moves
     import extract_v2_lean_dependencies as extract
     import generate_wiki as wiki
 
@@ -2337,17 +2339,25 @@ def kept_layout(folder: Path, created: dict[Path, str], flat: bool = False) -> t
 
 
 def retired_addresses() -> set[str]:
-    """Every address the card move ledger (scripts/card-moves.jsonl, docs/cards.md) records as left: a moved page's
-    or folder's old path, a retired card's folder and a retired statement's page. Each leads to its article, or to
-    what replaced it, through the ledger, so no new page takes it."""
-    path = wiki.ROOT / "scripts" / "card-moves.jsonl"
-    if not path.is_file():
+    """Every address the card move ledger (the frozen scripts/card-moves.jsonl and the fragments of
+    scripts/card-moves.d/, read as one logical ledger by scripts/card_moves.py; docs/cards.md) records as left: a
+    moved page's or folder's old path, a retired card's folder and a retired statement's page. Each leads to its
+    article, or to what replaced it, through the ledger, so no new page takes it. A ledger that cannot be read is a
+    ValueError, never one that retires nothing: a fragment that is no fragment, a row that is no JSON, or fragments
+    without the frozen file; a checkout without either has no ledger."""
+    scripts = wiki.ROOT / "scripts"
+    try:
+        files, problems = card_moves.read_ledger(scripts)
+    except FileNotFoundError:
+        if os.path.lexists(scripts / "card-moves.d"):
+            raise ValueError(f"{card_moves.FROZEN} is missing, and its fragments are no ledger without it") from None
         return set()
+    if problems:
+        raise ValueError("; ".join(problems))
     found = set()
-    for line in path.read_text().splitlines():
-        if line.strip():
-            row = json.loads(line)
-            found.update(value for key, value in row.items() if key in ("page", "folder") and isinstance(value, str))
+    for _, _, line in card_moves.ledger_rows(files):
+        row = json.loads(line)
+        found.update(value for key, value in row.items() if key in ("page", "folder") and isinstance(value, str))
     return found
 
 
@@ -3154,9 +3164,11 @@ def run_declarations() -> int:
 
 # What the Lean index leaves out (see run_declarations): the archived release and the standalone developments.
 EXCLUDED = ("v1", "Atlas")
-# The graph's files outside blueprint/ (docs/BLUEPRINT.md, Graph rules).
+# The graph's files outside blueprint/ (docs/BLUEPRINT.md, Graph rules), and the folders of them: the move ledger's
+# fragments, each of which a pull request adds (docs/cards.md#move-ledger).
 GRAPH_FILES = ("scripts/taxonomy.json", "scripts/wiki-sync.json", "scripts/card-moves.jsonl",
                "scripts/mathgraph-map.jsonl")
+GRAPH_FOLDERS = ("scripts/card-moves.d/",)
 LINKS_FILE = re.compile(r"blueprint/links/[^/]+\.jsonl")
 UPSTREAM = "https://github.com/facebookresearch/atlas-lean.git"
 
@@ -3260,8 +3272,10 @@ def lean_source(path: str) -> bool:
 
 
 def graph_file(path: str) -> bool:
-    """Whether *path* is one of the wiki's files: anything under blueprint/, or a graph file outside it."""
-    return path.startswith("blueprint/") or path in GRAPH_FILES
+    """Whether *path* is one of the wiki's files: anything under blueprint/, or a graph file outside it, a fragment of
+    the move ledger among them, at any depth of its folder (an entry there that is no fragment is still the wiki's,
+    and refused by the card checks)."""
+    return path.startswith(("blueprint/", *GRAPH_FOLDERS)) or path in GRAPH_FILES
 
 
 def written_by_sync(path: str) -> bool:
@@ -3770,25 +3784,28 @@ def copied(readme: Path, part: str, entry: str) -> bool:
 
 def read_by_sync(path: str) -> bool:
     """Whether a run reads the file at *path*, from the repository's root: the Lean (see lean_source), the wiki, the
-    taxonomy, the card move ledger, the baseline, and the site configuration, theme and hooks its renderer reads."""
-    return bool(lean_source(path) or path.startswith(("blueprint/", "theme/", "hooks/")) or path in GRAPH_FILES
-                or path == "mkdocs.yml")
+    taxonomy, the card move ledger and its fragments, the baseline, and the site configuration, theme and hooks its
+    renderer reads."""
+    return bool(lean_source(path) or path.startswith(("blueprint/", "theme/", "hooks/", *GRAPH_FOLDERS))
+                or path in GRAPH_FILES or path == "mkdocs.yml")
 
 
 def links_in_wiki(changed: list[str] = ()) -> list[str]:
     """The links the sync could read or write through, by their path in the repository, as the working tree has
     them: among the wiki's files (all of blueprint/: pages, links files, sources and the rest), at the baseline, the
-    taxonomy, the card move ledger and the site configuration, in the theme, the hooks and the Lean libraries the
-    pages are generated from (see wiki.LIBRARIES), or the folders they are reached through; and the files of *changed*,
-    the changes' own, that a run reads (see read_by_sync). A read through one could lead anywhere, and a write leave
-    the repository."""
+    taxonomy, the card move ledger, its folder of fragments and every entry of it, and the site configuration, in the
+    theme, the hooks and the Lean libraries the pages are generated from (see wiki.LIBRARIES), or the folders they are
+    reached through; and the files of *changed*, the changes' own, that a run reads (see read_by_sync). A read through
+    one could lead anywhere, and a write leave the repository."""
     libraries = [wiki.ROOT / library for library in wiki.LIBRARIES]
+    fragments = wiki.ROOT / "scripts" / "card-moves.d"
     inputs = (wiki.VAULT, wiki.ROADMAP, LINKS, STATE.parent, STATE, wiki.TAXONOMY,
-              wiki.ROOT / "scripts" / "card-moves.jsonl", SITE, wiki.ROOT / "theme", wiki.ROOT / "hooks", *libraries,
-              *(wiki.ROOT / path for path in changed if read_by_sync(path)))
+              wiki.ROOT / "scripts" / "card-moves.jsonl", fragments, SITE, wiki.ROOT / "theme", wiki.ROOT / "hooks",
+              *libraries, *(wiki.ROOT / path for path in changed if read_by_sync(path)))
     found = [path for path in inputs if path.is_symlink() or path.exists() and os.path.realpath(path) != str(path)]
-    pending = [(folder, folder in libraries) for folder in (wiki.VAULT, wiki.ROOT / "theme", wiki.ROOT / "hooks",
-                                                            *libraries) if folder.is_dir() and folder not in found]
+    pending = [(folder, folder in libraries) for folder in (wiki.VAULT, fragments, wiki.ROOT / "theme",
+                                                            wiki.ROOT / "hooks", *libraries)
+               if folder.is_dir() and folder not in found]
     while pending:
         folder, library = pending.pop()
         with os.scandir(folder) as entries:
