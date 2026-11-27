@@ -2,15 +2,15 @@
 
 With batch data whose distribution has concentrability coefficient $C$ and a finite value-function class that is approximately closed under the Bellman optimality operator, the greedy policy of fitted Q-iteration after $k$ iterations is within $O\big(\frac{V_{\max}}{(1-\gamma)^2}\sqrt{C\ln(|\mathcal F|/\delta)/n}\big)$ of optimal, up to completeness-error and $\gamma^k$ terms.
 
-**Setting.** Use the MDP $M=(S,A,P,R,\gamma,\eta_1)$ of the [concentrability coefficient over admissible distributions](concentrability-over-admissible-distributions.md): finite $S$ and $A$, deterministic rewards $R(s,a)\in[0,R_{\max}]$, $\gamma\in[0,1)$, $V_{\max}=R_{\max}/(1-\gamma)$. For a policy $\pi$, $v^\pi=\mathbb E[\sum_{h\ge1}\gamma^{h-1}r_h\mid s_1\sim\eta_1,\pi]$, and $v^\star$ is the largest value, attained by a deterministic optimal policy. For $f:S\times A\to\mathbb R$ let $V_f(s)=\max_a f(s,a)$, let $\pi_f$ be a policy greedy for $f$ (any maximizing action), and let
+**Setting.** Use the MDP $M=(S,A,P,R,\gamma,\eta_1)$ of the [concentrability coefficient over admissible distributions](concentrability-over-admissible-distributions.md): finite nonempty $S$ and $A$, deterministic rewards $R(s,a)\in[0,R_{\max}]$, $\gamma\in[0,1)$, $V_{\max}=R_{\max}/(1-\gamma)$. For a policy $\pi$, $v^\pi=\mathbb E[\sum_{h\ge1}\gamma^{h-1}r_h\mid s_1\sim\eta_1,\pi]$, and $v^\star$ is the largest value, attained by a deterministic optimal policy. For $f:S\times A\to\mathbb R$ let $V_f(s)=\max_a f(s,a)$, let $\pi_f$ be a policy greedy for $f$ (any maximizing action), and let
 
 $$
 (\mathcal Tf)(s,a)=R(s,a)+\gamma\,\mathbb E_{s'\sim P(s,a)}\big[V_f(s')\big].
 $$
 
-The data $D$ are $n$ tuples $(s,a,r,s')$ with $(s,a)$ drawn independently from a distribution $\mu$ on $S\times A$, $r=R(s,a)$ and $s'\sim P(s,a)$. Write $\|g\|_{2,\mu}^2=\mathbb E_{\mu}[g^2]$.
+The data $D$ are $n\ge1$ tuples $(s,a,r,s')$ with $(s,a)$ drawn independently from a distribution $\mu$ on $S\times A$, $r=R(s,a)$ and $s'\sim P(s,a)$. Write $\|g\|_{2,\mu}^2=\mathbb E_{\mu}[g^2]$.
 
-**Fitted Q-iteration.** Given a finite class $\mathcal F$ of functions $S\times A\to[0,V_{\max}]$, start from any $f_0\in\mathcal F$ and for $k\ge1$ let $f_k$ be any minimizer over $f\in\mathcal F$ of the regression loss
+**Fitted Q-iteration.** Given a finite nonempty class $\mathcal F$ of functions $S\times A\to[0,V_{\max}]$, start from any $f_0\in\mathcal F$ and for $k\ge1$ let $f_k$ be any minimizer over $f\in\mathcal F$ of the regression loss
 
 $$
 \mathcal L_D(f;f_{k-1})=\frac{1}{n}\sum_{(s,a,r,s')\in D}\big(f(s,a)-r-\gamma V_{f_{k-1}}(s')\big)^2 .

@@ -24,6 +24,7 @@ When $C^\star=1$ the data distribution equals $d^{\pi^\star}$, the imitation-lea
 
 - [Discounted state-action occupancy of a row-stochastic policy](../stochastic-policies-and-discounted-occupancy/occupancy.md)
 - [Stochastic Markov decision process](../../../heuristic-search-and-planning/value-iteration/stochastic.md)
+- [Optimal value of a discounted Markov decision process](../../../heuristic-search-and-planning/value-iteration/optimal-value.md)
 
 ## Proof depends on
 

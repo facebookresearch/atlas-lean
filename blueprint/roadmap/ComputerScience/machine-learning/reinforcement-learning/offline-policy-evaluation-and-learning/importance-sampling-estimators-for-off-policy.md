@@ -8,7 +8,7 @@ $$
 v^{\pi,H}=\mathbb E_{\tau\sim(\mu,\pi)}\Big[\sum_{t=1}^{H}\gamma^{t-1}r_t\Big].
 $$
 
-The data $D$ are $|D|$ trajectories drawn independently from $(\mu,\pi_0)$ for a fixed behavior policy $\pi_0$, and the goal is $v^{\pi_1,H}$ for a given target policy $\pi_1$. Precup, Sutton and Singh take the behavior policy to be soft, $\pi_0(a\mid s)>0$ for every $s$ and $a$, so that every ratio below is defined.
+The data $D$ are $|D|\ge1$ trajectories drawn independently from $(\mu,\pi_0)$ for a fixed behavior policy $\pi_0$, and the goal is $v^{\pi_1,H}$ for a given target policy $\pi_1$. Precup, Sutton and Singh take the behavior policy to be soft, $\pi_0(a\mid s)>0$ for every $s$ and $a$, so that every ratio below is defined.
 
 **Ratios.** On a trajectory, the per-step importance ratio is $\rho_t=\pi_1(a_t\mid s_t)/\pi_0(a_t\mid s_t)$ and the cumulative ratio is $\rho_{1:t}=\prod_{t'=1}^{t}\rho_{t'}$.
 

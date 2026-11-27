@@ -10,15 +10,15 @@ $$
 
 and the normalized discounted occupancy is $d_{\pi,\gamma}=(1-\gamma)\sum_{t\ge 0}\gamma^{t}d_{\pi,t}$, where $d_{\pi,t}$ is the law of $(s_t,a_t)$, and $R_\pi=\mathbb E_{(s,a)\sim d_{\pi,\gamma},\,r\sim\mathcal R(s,a)}[r]$.
 
-**Data.** The data are $n$ independent tuples $(s,a,r,s')$ with $s\sim d_{\pi_b}$, $a\sim\pi_b(\cdot\mid s)$, $r\sim\mathcal R(s,a)$ and $s'\sim P(\cdot\mid s,a)$, for a behavior policy $\pi_b$ and some state distribution $d_{\pi_b}$, which need not be the occupancy of $\pi_b$. Write $d_{\pi_b}(s,a)=d_{\pi_b}(s)\pi_b(a\mid s)$ for the law of $(s,a)$ and $\mathbb E_{d_{\pi_b}}$ for expectations over one tuple.
+**Data.** The data are $n\ge1$ independent tuples $(s,a,r,s')$ with $s\sim d_{\pi_b}$, $a\sim\pi_b(\cdot\mid s)$, $r\sim\mathcal R(s,a)$ and $s'\sim P(\cdot\mid s,a)$, for a behavior policy $\pi_b$ and some state distribution $d_{\pi_b}$, which need not be the occupancy of $\pi_b$. Write $d_{\pi_b}(s,a)=d_{\pi_b}(s)\pi_b(a\mid s)$ for the law of $(s,a)$ and $\mathbb E_{d_{\pi_b}}$ for expectations over one tuple.
 
 **Definition.** For a target (evaluation) policy $\pi_e$, the state-action density ratio is
 
 $$
-w_{\pi_e/\pi_b}(s,a)=\frac{d_{\pi_e,\gamma}(s,a)}{d_{\pi_b}(s,a)} .
+w_{\pi_e/\pi_b}(s,a)=\frac{d_{\pi_e,\gamma}(s,a)}{d_{\pi_b}(s,a)}\quad\text{at pairs with }d_{\pi_b}(s,a)>0 .
 $$
 
-Uehara, Huang and Jiang assume a constant $C_w<\infty$ with $w_{\pi_e/\pi_b}(s,a)\le C_w$ for all $(s,a)$ (their Assumption 2); in particular $d_{\pi_b}(s,a)>0$ wherever $d_{\pi_e,\gamma}(s,a)>0$. Values of $w$ at pairs with $d_{\pi_b}(s,a)=0$ do not affect any expectation under $d_{\pi_b}$. Under this coverage condition
+The source works with densities and does not discuss pairs with $d_{\pi_b}(s,a)=0$; set $w_{\pi_e/\pi_b}(s,a)=0$ there. Its values at those pairs do not affect any expectation under $d_{\pi_b}$. Uehara, Huang and Jiang assume a constant $C_w<\infty$ with $w_{\pi_e/\pi_b}(s,a)\le C_w$ for all $(s,a)$ (their Assumption 2), which on a finite $\mathcal X$ is read as the *coverage condition* $d_{\pi_e,\gamma}(s,a)\le C_w\,d_{\pi_b}(s,a)$ for all $(s,a)$; in particular $d_{\pi_b}(s,a)>0$ wherever $d_{\pi_e,\gamma}(s,a)>0$. Because of the zero extension, a bound on $w_{\pi_e/\pi_b}$ alone does not imply coverage, so the pages that use properties of the true ratio assume the coverage condition explicitly. Under this coverage condition
 
 $$
 R_{\pi_e}=\mathbb E_{d_{\pi_b}}\big[w_{\pi_e/\pi_b}(s,a)\,r\big],

@@ -13,7 +13,7 @@ $$
 \varepsilon_r=\frac{139\,V_{\max}^2\log\frac{|\mathcal F||\Pi|}{\delta}}{n}+39\,\varepsilon_{\mathcal F}.
 $$
 
-**Theorem (Xie, Cheng, Jiang, Mineiro and Agarwal, Theorem 3.1).** Let $\varepsilon=\varepsilon_r$ and let $\hat\pi$ be the output of Bellman-consistent pessimism. Then for any policy $\pi\in\Pi$ and any constant $C_2\ge1$, with probability at least $1-\delta$,
+**Theorem (Xie, Cheng, Jiang, Mineiro and Agarwal, Theorem 3.1).** Let $\varepsilon=\varepsilon_r$ and let $\hat\pi$ be the output of Bellman-consistent pessimism. Then for any policy $\pi\in\Pi$ and any constant $C_2\ge1$, with probability at least $1-\delta$, every version space $\mathcal F_{\pi',\varepsilon_r}$, $\pi'\in\Pi$, is nonempty, so that $\hat\pi$ is defined, and
 
 $$
 J(\pi)-J(\hat\pi)\le O\!\left(\frac{V_{\max}\sqrt{C_2}}{1-\gamma}\sqrt{\frac{\log\frac{|\mathcal F||\Pi|}{\delta}}{n}}+\frac{\sqrt{C_2(\varepsilon_{\mathcal F,\mathcal F}+\varepsilon_{\mathcal F})}}{1-\gamma}\right)
@@ -21,6 +21,8 @@ J(\pi)-J(\hat\pi)\le O\!\left(\frac{V_{\max}\sqrt{C_2}}{1-\gamma}\sqrt{\frac{\lo
 $$
 
 where $(d_\pi\setminus\nu)(s,a)=\max(d_\pi(s,a)-\nu(s,a),0)$ and the minimum is over distributions $\nu$ on $S\times A$.
+
+The nonemptiness is part of the source's argument, not an added assumption: its proof works on the event of its Theorem A.1, built from Bernstein's inequality with a union bound over $\mathcal F\times\mathcal F$ and $\mathcal F\times\Pi$, on which each $\mathcal F_{\pi',\varepsilon_r}$ contains the function $f_{\pi'}$ of that theorem (their Lemma B.1). Outside that event, of probability at most $\delta$, the theorem claims nothing: some version space may be empty, leaving $\hat\pi$ undefined, or the bound may fail.
 
 The first term is the on-support error, the second the off-support error. The threshold $C_2$ is a device of the analysis, not an input of the algorithm; the source describes the bound as selecting the best bias-variance split in hindsight. The off-support error vanishes when $\mathscr C(d_\pi;\mu,\mathcal F,\pi)\le C_2$ (take $\nu=d_\pi$) or when $\Delta f_\pi-\gamma\mathcal P^\pi\Delta f_\pi\equiv0$ (their Corollary 1); the first case gives the [single-policy coverage guarantee](bellman-consistent-pessimism-single-policy-coverage.md). The threshold requires knowing $\varepsilon_{\mathcal F}$.
 
@@ -44,4 +46,4 @@ Bernstein's inequality with a union bound over $\mathcal F\times\mathcal F$ and 
 
 ## Sources
 
-- T. Xie, C.-A. Cheng, N. Jiang, P. Mineiro and A. Agarwal, *Bellman-consistent Pessimism for Offline Reinforcement Learning*, Advances in Neural Information Processing Systems 34 (NeurIPS 2021), pp. 6683–6694. [arXiv:2106.06926v6](https://arxiv.org/abs/2106.06926v6), §2, Assumptions 1–2; §3, Eq. (3.3), Theorem 3.1, Corollary 1 and the proof sketch; Appendix A (concentration of the empirical Bellman error, Bernstein with union bounds) and Appendix B (proof of Theorem 3.1); these numbers, including the appendix letters, match the [conference version](https://proceedings.neurips.cc/paper/2021/file/34f98c7c5d7063181da890ea8d25265a-Paper.pdf) and its [supplement](https://papers.nips.cc/paper_files/paper/2021/file/34f98c7c5d7063181da890ea8d25265a-Supplemental.pdf).
+- T. Xie, C.-A. Cheng, N. Jiang, P. Mineiro and A. Agarwal, *Bellman-consistent Pessimism for Offline Reinforcement Learning*, Advances in Neural Information Processing Systems 34 (NeurIPS 2021), pp. 6683–6694. [arXiv:2106.06926v6](https://arxiv.org/abs/2106.06926v6), §2, Assumptions 1–2; §3, Eq. (3.3), Theorem 3.1, Corollary 1 and the proof sketch; Appendix A (Theorem A.1 and the concentration of the empirical Bellman error, Bernstein with union bounds) and Appendix B (Lemmas B.1–B.3 and the proof of Theorem 3.1); these numbers, including the appendix letters, match the [conference version](https://proceedings.neurips.cc/paper/2021/file/34f98c7c5d7063181da890ea8d25265a-Paper.pdf) and its [supplement](https://papers.nips.cc/paper_files/paper/2021/file/34f98c7c5d7063181da890ea8d25265a-Supplemental.pdf).

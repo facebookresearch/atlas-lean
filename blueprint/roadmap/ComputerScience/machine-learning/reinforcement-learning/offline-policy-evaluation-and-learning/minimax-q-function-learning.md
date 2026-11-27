@@ -12,19 +12,27 @@ L_{\mathrm q}(q,g)=\mathbb E_{d_{\pi_b}}\Big[g(s,a)\big(r+\gamma\,q(s',\pi_e)-q(
 R_{\mathrm q}[q]=(1-\gamma)\,\mathbb E_{s\sim d_0}\big[q(s,\pi_e)\big],
 $$
 
-and $L_{\mathrm q,n}$ is $L_{\mathrm q}$ with $\mathbb E_{d_{\pi_b}}$ replaced by the empirical average over the $n$ tuples. $R_{\mathrm q}[q]$ is the normalized return that $q$ would give if it were $Q^{\pi_e}$; it needs only $d_0$.
+and $L_{\mathrm q,n}$ is $L_{\mathrm q}$ with $\mathbb E_{d_{\pi_b}}$ replaced by the empirical average over the $n\ge1$ tuples. $R_{\mathrm q}[q]$ is the normalized return that $q$ would give if it were $Q^{\pi_e}$; it needs only $d_0$.
 
-**Estimator.** Given classes $\mathcal Q$ and $\mathcal G$ of functions $\mathcal X\to\mathbb R$,
+**Estimator.** Given nonempty classes $\mathcal Q$ and $\mathcal G$ of functions $\mathcal X\to\mathbb R$, the worst squared violations
 
 $$
-\hat q=\operatorname*{arg\,min}_{q\in\mathcal Q}\max_{g\in\mathcal G}L_{\mathrm q}(q,g)^{2},
+\Psi(q)=\sup_{g\in\mathcal G}L_{\mathrm q}(q,g)^{2},
 \qquad
-\hat q_n=\operatorname*{arg\,min}_{q\in\mathcal Q}\max_{g\in\mathcal G}L_{\mathrm q,n}(q,g)^{2},
+\Psi_n(q)=\sup_{g\in\mathcal G}L_{\mathrm q,n}(q,g)^{2}
 $$
 
-and the off-policy estimate is $R_{\mathrm q}[\hat q_n]$. The estimator does not use $\pi_b$.
+are extended nonnegative reals, possibly $+\infty$. The population estimator $\hat q$ is any minimizer of $\Psi$ over $\mathcal Q$, and the sample estimator $\hat q_n$ any minimizer of $\Psi_n$ over $\mathcal Q$ for the given data; the off-policy estimate is $R_{\mathrm q}[\hat q_n]$. The estimator does not use $\pi_b$.
 
-When $g$ is the density ratio from $d_{\pi_b}$ to a distribution $\nu$, $L_{\mathrm q}(q,g)$ is the average Bellman error $\mathbb E_\nu[r+\gamma q(s',\pi_e)-q(s,a)]$. The action value $Q^{\pi_e}$ satisfies $L_{\mathrm q}(Q^{\pi_e},g)=0$ for every $g$, and if $d_{\pi_b}(s,a)>0$ for all $(s,a)$ it is the only function that does (Uehara, Huang and Jiang, Lemma 4). With $\mathcal G=\{g:\mathbb E_{d_{\pi_b}}[g^2]\le 1\}$, $\max_g L_{\mathrm q}(q,g)^2$ is the squared Bellman error $\mathbb E_{d_{\pi_b}}[((B^{\pi_e}q)(s,a)-q(s,a))^2]$ (their Example 5), and with linear $\mathcal Q$ and $\mathcal G$ on common features $\hat q$ is LSTDQ.
+The source writes these as $\operatorname{arg\,min}_{q}\max_{g}$ without discussing existence. The page uses the supremum because the maximum over $\mathcal G$ need not be attained, and $\hat q$ (or $\hat q_n$) is defined when the infimum of $\Psi$ (of $\Psi_n$) over $\mathcal Q$ is attained and finite. This holds, for example, when $\mathcal Q$ and $\mathcal G$ are finite and nonempty, and in the linear case below.
+
+When $g$ is the density ratio from $d_{\pi_b}$ to a distribution $\nu$ that charges only pairs charged by $d_{\pi_b}$, $L_{\mathrm q}(q,g)$ is the average Bellman error $\mathbb E_\nu[r+\gamma q(s',\pi_e)-q(s,a)]$. The action value $Q^{\pi_e}$ satisfies $L_{\mathrm q}(Q^{\pi_e},g)=0$ for every $g$, and if $d_{\pi_b}(s,a)>0$ for all $(s,a)$ it is the only function that does (Uehara, Huang and Jiang, Lemma 4). With $\mathcal G=\{g:\mathbb E_{d_{\pi_b}}[g^2]\le 1\}$, $\Psi(q)$ is the squared Bellman error $\mathbb E_{d_{\pi_b}}[((B^{\pi_e}q)(s,a)-q(s,a))^2]$ (their Example 5), where $B^{\pi_e}$ is the policy Bellman operator
+
+$$
+(B^{\pi_e}q)(s,a)=\mathbb E_{r\sim\mathcal R(s,a),\,s'\sim P(\cdot\mid s,a)}\big[r+\gamma\,q(s',\pi_e)\big],
+$$
+
+whose unique fixed point is $Q^{\pi_e}$; here the supremum is attained, by the Cauchy–Schwarz inequality in $L^2(d_{\pi_b})$. With linear $\mathcal Q$ and $\mathcal G$ on common features $\phi$ (their Example 7), $\Psi_n(\phi^{\top}\alpha)$ is $0$ when $\mathbb E_n[\phi(s,a)\phi(s,a)^{\top}-\gamma\phi(s,a)\phi(s',\pi_e)^{\top}]\,\alpha=\mathbb E_n[r\,\phi(s,a)]$ and $+\infty$ otherwise, so when that matrix is nonsingular the closed-form $\alpha$ gives the unique minimizer, which is LSTDQ.
 
 ## Depends on
 
@@ -37,7 +45,7 @@ None. This page is a definition.
 
 ## Expansion
 
-The loss swaps the roles of the two function classes in [minimax weight learning](minimax-weight-learning.md): there the unknown $Q^{\pi_e}$ is replaced by discriminators, here the unknown $w_{\pi_e/\pi_b}$ is. Taking $g=w_{\pi_e/\pi_b}$ turns $L_{\mathrm q}(q,g)$ into the average Bellman error under $d_{\pi_e,\gamma}$, which equals $R_{\pi_e}-R_{\mathrm q}[q]$ by a telescoping argument over the discounted occupancy.
+The loss swaps the roles of the two function classes in [minimax weight learning](minimax-weight-learning.md): there the unknown $Q^{\pi_e}$ is replaced by discriminators, here the unknown $w_{\pi_e/\pi_b}$ is. Under the coverage condition $d_{\pi_e,\gamma}(s,a)\le C_w\,d_{\pi_b}(s,a)$ of the [discounted state-action density ratio](discounted-state-action-density-ratio.md), taking $g=w_{\pi_e/\pi_b}$ turns $L_{\mathrm q}(q,g)$ into the average Bellman error under $d_{\pi_e,\gamma}$, which equals $R_{\pi_e}-R_{\mathrm q}[q]$ by a telescoping argument over the discounted occupancy.
 
 ## Sources
 

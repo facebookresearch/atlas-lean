@@ -2,7 +2,7 @@
 
 In a linear MDP with $d$-dimensional features, pessimistic value iteration with ridge-regression backups and the penalty $\Gamma_h(x,a)=\beta(\phi(x,a)^{\top}\Lambda_h^{-1}\phi(x,a))^{1/2}$, $\beta=c\,dH\sqrt{\log(2dHK/\xi)}$, has, with probability at least $1-\xi$, suboptimality at most $2\beta\sum_h\mathbb E_{\pi^*}[(\phi^{\top}\Lambda_h^{-1}\phi)^{1/2}]$.
 
-Use the episodic setting, the compliance condition on the dataset $\mathcal D$ of $K$ trajectories, and the meta-algorithm of [pessimistic value iteration](pessimistic-value-iteration.md), with rewards $r_h\in[0,1]$.
+Use the episodic setting, the compliance condition on the dataset $\mathcal D$ of $K$ trajectories, and the meta-algorithm of [pessimistic value iteration](pessimistic-value-iteration.md), with rewards $r_h\in[0,1]$. Assume that the estimated quantities and chosen maximizers are jointly measurable in the state and the data, and that the maximization in the algorithm has a solution for every $h$, every $x$ and every dataset, so that the output policy is a measurable kernel and $\widehat V_{h+1}$ and $\mathrm{Pess}(\mathcal D)$ are defined; also assume that the event $\mathcal E$ of statement (i) is measurable. The source discusses neither existence nor measurability; a solution exists when $A$ is finite and nonempty, and a fixed tie-breaking order among actions then makes the choice jointly measurable whenever the estimated values are.
 
 **Linear MDP (Jin, Yang and Wang, Definition 4.3).** The episodic MDP $(S,A,H,\mathcal P,r)$ is a linear MDP with a known feature map $\phi:S\times A\to\mathbb R^{d}$ if for each $h\in[H]$ there are $d$ unknown signed measures $\mu_h=(\mu^{(1)}_h,\ldots,\mu^{(d)}_h)$ over $S$ and an unknown vector $\theta_h\in\mathbb R^{d}$ with
 
@@ -30,7 +30,7 @@ $$
 \mathrm{SubOpt}\big(\mathrm{Pess}(\mathcal D);x\big)\le2\beta\sum_{h=1}^{H}\mathbb E_{\pi^*}\Big[\big(\phi(s_h,a_h)^{\top}\Lambda_h^{-1}\phi(s_h,a_h)\big)^{1/2}\,\Big|\,s_1=x\Big],
 $$
 
-where $\mathbb E_{\pi^*}$ is over the trajectory of $\pi^*$ in the true MDP with the data-dependent matrices $\Lambda_h$ held fixed.
+where $\mathbb E_{\pi^*}$ is over the trajectory of $\pi^*$ in the true MDP with the data-dependent matrices $\Lambda_h$ held fixed. Off $\mathcal E$ no bound is claimed.
 
 No coverage assumption is made: the bound depends on the data only through how well $\Lambda_h$ covers the features along the optimal policy's trajectory. In the tabular case, with indicator features and deterministic transitions, the $h$-th term is $(N_h(s^*_h,a^*_h)+\lambda)^{-1/2}$ for the count of the optimal pair at step $h$. If $\Lambda_h\succeq I+c^{\dagger}K\,\mathbb E_{\pi^*}[\phi\phi^{\top}\mid s_1=x]$ for all $x$ and $h$ with probability at least $1-\xi/2$, then, with $\lambda=1$ and $\beta=c\,dH\sqrt{\zeta'}$ for $\zeta'=\log(4dHK/\xi)$, with probability at least $1-\xi$ the suboptimality is at most $c'\,d^{3/2}H^2K^{-1/2}\sqrt{\zeta'}$ for all $x$, with $c'$ depending only on $c^{\dagger}$ and $c$ (their Corollary 4.5). The rate also has a matching information-theoretic lower bound up to $\beta$ and constants (their Theorem 4.7, Theorem 4.6 of the conference version).
 

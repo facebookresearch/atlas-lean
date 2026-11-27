@@ -4,7 +4,7 @@ If the data distribution covers the optimal policy in the Bellman-consistent sen
 
 Use the setting, assumptions and threshold $\varepsilon=\varepsilon_r$ of the [regret bound for Bellman-consistent pessimism](bellman-consistent-pessimism-regret-bound.md): finite classes $\Pi$ and $\mathcal F$, realizability error $\varepsilon_{\mathcal F}$ (Assumption 1), completeness error $\varepsilon_{\mathcal F,\mathcal F}$ under $\mu$ (Assumption 2), and $n$ independent tuples from $\mu$. Let $\pi^\star$ be an optimal policy, and assume $\pi^\star\in\Pi$, since the regret bound compares with policies in $\Pi$.
 
-**Theorem (Xie, Cheng, Jiang, Mineiro and Agarwal, Corollary 2).** If $\mathscr C(d_{\pi^\star};\mu,\mathcal F,\pi^\star)\le C_2$ for a constant $C_2\ge 1$, then with probability at least $1-\delta$
+**Theorem (Xie, Cheng, Jiang, Mineiro and Agarwal, Corollary 2).** If $\mathscr C(d_{\pi^\star};\mu,\mathcal F,\pi^\star)\le C_2$ for a constant $C_2\ge 1$, then with probability at least $1-\delta$ every version space $\mathcal F_{\pi,\varepsilon_r}$, $\pi\in\Pi$, is nonempty, so that $\hat\pi$ is defined, and
 
 $$
 J(\pi^\star)-J(\hat\pi)\le O\!\left(\frac{V_{\max}\sqrt{C_2}}{1-\gamma}\sqrt{\frac{\log\frac{|\mathcal F||\Pi|}{\delta}}{n}}+\frac{\sqrt{C_2(\varepsilon_{\mathcal F,\mathcal F}+\varepsilon_{\mathcal F})}}{1-\gamma}\right).
@@ -16,14 +16,17 @@ Classical analyses that compete with $\pi^\star$ often require $\|\nu/\mu\|_\inf
 
 - [Bellman-consistent pessimism](bellman-consistent-pessimism.md)
 - [Bellman-consistent distribution-shift coefficient](bellman-consistent-distribution-shift.md)
+- [Regret bound for Bellman-consistent pessimism](bellman-consistent-pessimism-regret-bound.md)
+- [Discounted state-action occupancy of a row-stochastic policy](../stochastic-policies-and-discounted-occupancy/occupancy.md)
+- [Optimal value of a discounted Markov decision process](../../../heuristic-search-and-planning/value-iteration/optimal-value.md)
 
 ## Proof depends on
 
-- [Regret bound for Bellman-consistent pessimism](bellman-consistent-pessimism-regret-bound.md)
+None beyond the statement prerequisites: the proof applies the regret bound listed above.
 
 ## Expansion
 
-Apply the regret bound with $\pi=\pi^\star$ and choose $\nu=d_{\pi^\star}$ in the minimum. This $\nu$ satisfies the constraint by hypothesis and makes $d_{\pi^\star}\setminus\nu=0$, so the off-support term vanishes and only the on-support term remains.
+Apply the regret bound, on its event of probability at least $1-\delta$, with $\pi=\pi^\star$ and choose $\nu=d_{\pi^\star}$ in the minimum. This $\nu$ satisfies the constraint by hypothesis and makes $d_{\pi^\star}\setminus\nu=0$, so the off-support term vanishes and only the on-support term remains.
 
 ## Sources
 

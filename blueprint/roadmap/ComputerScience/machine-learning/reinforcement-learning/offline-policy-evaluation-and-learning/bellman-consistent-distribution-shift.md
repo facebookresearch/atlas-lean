@@ -16,7 +16,7 @@ $$
 \mathscr C(\nu;\mu,\mathcal F,\pi)=\max_{f\in\mathcal F}\frac{\|f-\mathcal T^\pi f\|_{2,\nu}^2}{\|f-\mathcal T^\pi f\|_{2,\mu}^2}.
 $$
 
-The source gives no convention for a vanishing denominator; read a ratio $u/0$ as $0$ when $u=0$ and as $+\infty$ when $u>0$, so that the coefficient is an extended nonnegative real.
+Xie et al. take $\mathcal F$ finite in their general results, so the maximum exists; for an infinite class read it as a supremum. The source gives no convention for a vanishing denominator; read a ratio $u/0$ as $0$ when $u=0$ and as $+\infty$ when $u>0$, so that the coefficient is an extended nonnegative real.
 
 For every $\pi$ and $\mathcal F$ the source observes
 
