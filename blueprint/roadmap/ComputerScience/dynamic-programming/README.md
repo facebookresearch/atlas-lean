@@ -21,6 +21,9 @@ Optimization problems solved by tabulated recurrences: knapsack variants, subset
 - [Subset sum](subset-sum/README.md)
 - [Weighted interval scheduling](weighted-interval-scheduling/README.md)
 - [Zero-one knapsack problem](zero-one-knapsack-problem/README.md)
+- [Dynamic Programming over Tree Decompositions](tree-decomposition-dynamic-programming/README.md)
+- [Exact Exponential and Parameterized Algorithms](exact-exponential-and-fpt-algorithms/README.md)
+- [The Knuth-Yao Quadrangle-Inequality Speedup](knuth-yao-quadrangle-inequality-speedup/README.md)
 
 ## Related topics
 
