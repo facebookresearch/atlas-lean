@@ -4,8 +4,10 @@ For a set $\Sigma$ of integrity constraints and conjunctive queries $q, q'$, wri
 $q(D) \subseteq q'(D)$ for every (finite) database $D$ that satisfies $\Sigma$. The problem of deciding, for conjunctive queries $q, q'$ and a set $\Sigma$ of
 functional dependencies, whether $q \subseteq_\Sigma q'$ is NP-complete. Chasing $q$ with $\Sigma$ identifies terms as the
 dependencies dictate, computes in polynomial time and either fails (then $q \subseteq_\Sigma q'$ holds trivially) or
-yields a query whose atoms satisfy $\Sigma$; in that case a witness is a homomorphism from $q'$ to the chased query that
-maps the head tuple of $q'$ to the head tuple of $q$ as rewritten by the chase. NP-hardness is inherited from containment
+yields a set of atoms that satisfies $\Sigma$ together with the head tuple of $q$ as rewritten by the chase, which may
+contain constants, so the pair is a tableau rather than a query of the linked syntax; in that case a witness is a map
+that is the identity on constants, sends every atom of $q'$ to a chased atom and maps the head tuple of $q'$ to the
+rewritten head tuple. NP-hardness is inherited from containment
 of conjunctive queries by taking $\Sigma$ empty.
 
 ## Depends on
