@@ -4,3 +4,5 @@ Principal–agent formulations of epidemic control in which a government (princi
 
 - [Stochastic SIS–SIR model with testing and controlled contact rate](stochastic-sis-sir-model-with-testing-and-contact-control.md)
 - [Representation of incentive-compatible epidemic taxes](representation-of-incentive-compatible-epidemic-taxes.md)
+
+- [Spatial, control, and behavioral epidemiology](spatial-and-behavioral-epidemiology/README.md)
