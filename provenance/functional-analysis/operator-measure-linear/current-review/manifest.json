@@ -1,6 +1,6 @@
 {
   "schema": "atlas.mathlibext-current-export-provenance.v1",
-  "file_count": 338,
+  "file_count": 332,
   "original_source_lines": 54889,
   "snapshot_manifest": "provenance/functional-analysis/operator-measure-linear/source-snapshot/manifest.json",
   "historical_ledgers_retained": [
@@ -91,8 +91,21 @@
     "MathlibExt/LinearAlgebra/TensorProduct/Balanced.lean",
     "MathlibExt/LinearAlgebra/TensorProduct/Balanced/Actions.lean"
   ],
-  "installed_source_files": 338,
+  "installed_source_files": 332,
   "historical_original_source_files": 348,
-  "transferred_source_files": 10,
-  "transfer_custody_file": "provenance/functional-analysis/operator-measure-linear/aggregate-transfer-custody/fourier-transferred-exports.jsonl"
+  "transferred_source_files": 16,
+  "transfer_custody_file": "provenance/functional-analysis/operator-measure-linear/aggregate-transfer-custody/transferred-exports.jsonl",
+  "transfer_component_custody_files": [
+    "provenance/functional-analysis/operator-measure-linear/aggregate-transfer-custody/fourier-transferred-exports.jsonl",
+    "provenance/functional-analysis/operator-measure-linear/aggregate-transfer-custody/quadratic-transferred-exports.jsonl"
+  ],
+  "quadratic_graph_identity_custody": {
+    "original_statement_IDs": 35,
+    "original_navigation_IDs": 5,
+    "private_retention_only": true,
+    "destination_graph_assignment": false,
+    "future_identity_mapping_must_be_explicit": true
+  },
+  "installed_original_source_lines": 51187,
+  "transferred_original_source_lines": 3702
 }
