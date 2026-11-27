@@ -6,9 +6,9 @@ $U \in SU(d)$ with $\| I - U \| < \varepsilon \le \varepsilon_1$ has unitaries $
 $$\| V W V^{*} W^{*} - U \| < c' \varepsilon^{3/2} \qquad\text{and}\qquad \| I - V \|, \| I - W \| < c'' \sqrt{\varepsilon} .$$
 
 Proof: write $U = e^{-iH}$ with $H$ traceless Hermitian and $\| H \| = \| I - U \| + O(\| I - U \|^3)$. By the
-[commutator lemma](traceless-hermitian-matrix-as-a-commutator.md) applied to $H$ there are Hermitian $F, G$ with
+[commutator lemma](traceless-hermitian-matrix-as-a-commutator.md) applied to $H$ there are traceless Hermitian $F, G$ with
 $[F, G] = iH$ and norms at most $c'' \sqrt{\varepsilon}$, where $c'' \approx d^{1/4} ((d - 1)/2)^{1/2}$. With
-$V = e^{iF}$ and $W = e^{iG}$, the [exponential estimate](group-commutator-of-exponentials-approximates-the-exponential-of-the-commutator.md)
+$V = e^{iF}$ and $W = e^{iG}$, which lie in $SU(d)$ because $\det e^{iF} = e^{i \operatorname{tr} F} = 1$ and likewise for $G$, the [exponential estimate](group-commutator-of-exponentials-approximates-the-exponential-of-the-commutator.md)
 gives $\| V W V^{*} W^{*} - e^{-[F, G]} \| \le c_1 (c'' \sqrt{\varepsilon})^3$, and $e^{-[F, G]} = e^{-iH} = U$.
 
 ## Proof depends on

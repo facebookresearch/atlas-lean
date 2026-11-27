@@ -8,6 +8,7 @@ left through every gate and wait ExRec by correctness, and remove them at the pr
 ## Depends on
 
 - [Fault-tolerant simulation of a circuit and extended rectangles](fault-tolerant-simulation-and-extended-rectangles.md)
+- [Correct, good and bad extended rectangles](correct-good-and-bad-extended-rectangles.md)
 
 ## Proof depends on
 

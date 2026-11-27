@@ -8,11 +8,10 @@ H–C–P–C–P–C–H–P–C–P–C (H for Hadamard, C for CNOT, P for pha
 destabilizer and stabilizer rows of the circuit's action to the identity by a fixed sequence of such rounds, using that a
 binary symmetric matrix can be made a Gram matrix $M M^T$ by phase gates.
 
-Two consequences: since the reduction uses only the commutation relations of the tableau rows (the first $n$ rows commute pairwise, rows $n + 1, \dots, 2n$ commute
+A consequence: since the reduction uses only the commutation relations of the tableau rows (the first $n$ rows commute pairwise, rows $n + 1, \dots, 2n$ commute
 pairwise, row $h$ anticommutes with row $h + n$, and row $i$ commutes with row $h + n$ for $i \ne h$), every tableau with
 these relations, that is every binary symplectic matrix together with any choice of signs, is the tableau of some
-Clifford circuit; and every Clifford circuit is equivalent to one with $O(n^2 / \log n)$ gates, which is optimal up to
-constants.
+Clifford circuit.
 
 ## Depends on
 

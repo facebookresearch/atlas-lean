@@ -12,8 +12,10 @@ planar patches with only nearest-neighbour checks.
 
 ## Expansion
 
-A sound expansion states the merge and split as maps on the encoded state: after a rough merge with outcome $m$ the logical
-state is projected by $(I + (-1)^m \bar X_1 \bar X_2)/2$, with the Pauli frame corrections for the measured new checks and
+A sound expansion states the merge and split as maps on the encoded state: after a rough merge with outcome $m$ the
+two-qubit logical state is projected by $(I + (-1)^m \bar X_1 \bar X_2)/2$, and the observed sector is then identified,
+in the tracked Pauli frame, with the one logical qubit of the merged patch, which together give the one-qubit output
+map (Horsman et al., equations (2), (4) and (5)); this needs the Pauli frame corrections for the measured new checks and
 an odd number of unreliable syndromes along the join; it needs the stabilizer measurement rule for the new checks and the
 logical operators of the planar code. Horsman et al. derive these maps in the stabilizer formalism (Sections 3.1–3.4) and
 build CNOT from them (Section 4); each step is a page to write and check.

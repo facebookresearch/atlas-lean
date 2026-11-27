@@ -37,6 +37,10 @@ theorem; the corollary stated here follows from it, and the factor-two statement
 - [Fidelity of positive semidefinite matrices](../../quantum-states-distances-and-entropy/density-matrices-and-fidelity/root-fidelity.md)
 - [The Knill–Laflamme conditions](is-correctable-iff-knill-laflamme.md)
 
+## Proof depends on
+
+- [Uhlmann's theorem](../../quantum-states-distances-and-entropy/uhlmann-s-theorem.md)
+
 ## Sources
 
 - C. Bény and O. Oreshkov, *General conditions for approximate quantum error correction and near-optimal recovery channels*, Phys. Rev. Lett. 104 (2010), 120501, arXiv:0907.5391, Definition 1, equation (5), Theorem 1 and Corollaries 2 and 3.

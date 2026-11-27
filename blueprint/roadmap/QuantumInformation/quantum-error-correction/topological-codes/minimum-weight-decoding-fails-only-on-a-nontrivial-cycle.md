@@ -3,7 +3,7 @@
 In the setting of [minimum-weight decoding](minimum-weight-decoding-of-the-toric-code.md) of bit flips on the
 $L \times L$ [toric code](toric-code.md), the edge set $E + E_{\min}$ has empty boundary on the dual lattice (every face
 meets it in an even number of edges), so it is a cycle of the dual lattice and decomposes into edge-disjoint
-self-avoiding closed dual paths. Decoding succeeds (the correction returns the encoded state) exactly when the total
+self-avoiding closed dual paths. Decoding succeeds (the correction returns every encoded state) exactly when the total
 homology class of $E + E_{\min}$ is zero: a trivial dual cycle is the coboundary of a set of vertices, so $X^{E + E_{\min}}$
 is a product of vertex operators $A_s$, which act as the identity on the code, while a dual cycle with nonzero class is a
 logical operator. (For phase flips the roles are exchanged: a trivial cycle of the primal lattice is a product of face

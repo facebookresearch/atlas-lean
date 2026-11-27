@@ -4,9 +4,10 @@ Let $\rho = (1 - \varepsilon) |A_0\rangle\langle A_0| + \varepsilon |A_1\rangle\
 $|A_0\rangle = (|0\rangle + e^{i\pi/4} |1\rangle)/\sqrt{2}$ is an $H$-type [magic state](magic-state.md) up to a Clifford
 unitary and $|A_1\rangle = Z|A_0\rangle$; any one-qubit state can be brought to this form by Clifford operations and
 twirling. Bravyi and Kitaev's subroutine takes $\rho^{\otimes 15}$, measures the syndrome of the
-[fifteen-qubit code](../small-stabilizer-codes/fifteen-qubit-quantum-reed-muller-code.md) (with the stabilizer $X$-part
-rotated by $A = (X + Y)/\sqrt{2}$, which can be measured with Clifford operations, Pauli measurements and the correction
-of the $Z$-syndrome), accepts when the $A$-syndrome is trivial, and decodes. It accepts with probability
+[fifteen-qubit code](../small-stabilizer-codes/fifteen-qubit-quantum-reed-muller-code.md) with each $X$-type stabilizer generator $X(u)$ replaced by
+$A(u) = \bigotimes_{i \in u} A_i$, where $A = (X + Y)/\sqrt{2} = W X W^{*}$ for a Clifford unitary $W$: after the
+$Z$-syndrome is measured and the correction $A(w)^{*}$ applied, ordinary $X$-type checks read the $A$-syndrome. It accepts
+when the $A$-syndrome is trivial, and decodes. It accepts with probability
 
 $$p_s = \frac{1 + 15 (1 - 2\varepsilon)^8}{16} ,$$
 

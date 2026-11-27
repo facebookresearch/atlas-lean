@@ -11,8 +11,7 @@ $$\Lambda_{\mathrm{tw}}(\rho) = \frac{1}{4^n} \sum_{Q} Q\, \Lambda(Q \rho Q)\, Q
 So the twirl is a Pauli channel: the probabilities $p_P$ are nonnegative and sum to $1$ by trace preservation, and the
 cross terms $P \rho P'$ with $P \ne P'$ cancel because $Q P Q = (-1)^{\omega(P, Q)} P$, so such a term picks up the sign
 $(-1)^{\omega(P, Q) + \omega(P', Q)}$, which averages to zero over $Q$ unless $P = P'$, where $\omega$ is the
-[symplectic product](../stabilizer-formalism/symplectic-product-of-pauli-operators.md). Twirling by the Clifford group
-instead yields a depolarizing channel.
+[symplectic product](../stabilizer-formalism/symplectic-product-of-pauli-operators.md).
 
 ## Depends on
 

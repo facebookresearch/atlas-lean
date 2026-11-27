@@ -8,8 +8,9 @@ phase, and applying $U Q U^{*}$ to it gives $U |\psi\rangle$. If $U$ lies in lev
 [Clifford hierarchy](../clifford-group/clifford-hierarchy.md), then $U Q U^{*}$ lies in level $k - 1$; in particular, for a
 Clifford $U$ the correction is a Pauli operator, and for $U$ in the third level (such as $T$) it is a Clifford operator.
 So a gate of level $k \ge 2$ is implemented by gates of level $k - 1$, Bell measurements and the prepared resource state
-$|\Phi_U\rangle$, and the same holds for multi-qubit $U$ with several Bell pairs. Applied to encoded blocks, this reduces
-fault-tolerant implementation of $U$ to fault-tolerant preparation of the encoded resource state.
+$|\Phi_U\rangle$, and the same holds for multi-qubit $U$ with several Bell pairs. Applied to encoded blocks, when the encoded Bell measurement
+and every correction $U Q U^{*}$ already have fault-tolerant implementations, this reduces fault-tolerant implementation of
+$U$ to fault-tolerant preparation of the encoded resource state.
 
 ## Depends on
 

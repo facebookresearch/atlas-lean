@@ -12,8 +12,10 @@ $\gamma \cap E$ and of $\gamma \cap E_{\min}$ have the same boundary, so minimal
 $|\gamma \cap E| \ge \ell / 2$. There are at most $2^{\ell}$ ways to split $\gamma$, and each split with $e \ge \ell/2$
 error edges on $\gamma$ has probability at most $p^{e} (1 - p)^{\ell - e} \le (p(1 - p))^{\ell/2}$ of being realized.
 With noisy syndrome measurements, on the finite record and with the weighted minimal chain of the decoding page, the same argument on the
-three-dimensional spacetime lattice applies to the weighted length: the error edges on a fixed path with $H$ space-like
-and $V$ time-like edges carry at least half of its weight, which gives $2^{H + V} \tilde p^{H/2} \tilde q^{V/2}$ with
+three-dimensional spacetime lattice applies to the weighted length: for a fixed self-avoiding closed path in the spacetime lattice
+with $H$ space-like and $V$ time-like edges, on the event that the path is contained in the residual chain $E + E'$, its
+edges in $E$ and in $E'$ have the same boundary and can be exchanged, so the error edges on it carry at least half of its
+weight; this bounds the probability of that event by $2^{H + V} \tilde p^{H/2} \tilde q^{V/2}$ with
 $\tilde p = p(1 - p)$, $\tilde q = q(1 - q)$ (equations (47)–(52)).
 
 ## Depends on

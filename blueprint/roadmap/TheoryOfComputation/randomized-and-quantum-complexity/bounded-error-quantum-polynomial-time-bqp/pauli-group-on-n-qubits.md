@@ -25,4 +25,4 @@ $\pm I$, and an element is Hermitian exactly when it squares to $I$.
 
 - R. de Wolf, *Quantum Computing: Lecture Notes*, arXiv:1907.09415v6, Section 20.1 ("$\mathcal{P}_n = \{+1, -1, +i, -i\} \cdot \{I, X, Y, Z\}^{\otimes n}$ ... which has $4^{n+1}$ elements").
 - D. Gottesman, *Stabilizer codes and quantum error correction*, PhD thesis, California Institute of Technology (1997), arXiv:quant-ph/9705052, Section 3.4 (the binary representation of the Pauli group).
-- S. Aaronson and D. Gottesman, *Improved simulation of stabilizer circuits*, Phys. Rev. A 70 (2004), 052328, arXiv:quant-ph/0406196, Section II (tableau representation).
+- S. Aaronson and D. Gottesman, *Improved simulation of stabilizer circuits*, Phys. Rev. A 70 (2004), 052328, arXiv:quant-ph/0406196, Section III (the tableau algorithm, whose rows are Hermitian Pauli operators recorded by their $x$ and $z$ bits and one real sign bit, in contrast with a general list of Pauli group elements with fourth-root phases).

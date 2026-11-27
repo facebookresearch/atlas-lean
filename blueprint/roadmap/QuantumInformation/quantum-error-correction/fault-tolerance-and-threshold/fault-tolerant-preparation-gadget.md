@@ -13,6 +13,8 @@ type.
 ## Depends on
 
 - [The $r$-filter and the ideal decoder](r-filter-and-ideal-decoder.md)
+- [$[[n, k, d]]$ quantum code](../distance-of-a-quantum-code/n-k-d-quantum-code.md)
+- [Locations of a quantum circuit](locations-of-a-quantum-circuit.md)
 
 ## Sources
 

@@ -1,20 +1,12 @@
 # Quantum channel
 
-For finite sets $\Sigma, \Gamma$ let $L(\mathbb{C}^\Sigma)$ be the space of linear operators on $\mathbb{C}^\Sigma$. A linear
-map $\Phi : L(\mathbb{C}^\Sigma) \to L(\mathbb{C}^\Gamma)$ is *positive* if it maps positive semidefinite operators to
-positive semidefinite operators, *completely positive* if $\mathrm{id}_{L(\mathbb{C}^k)} \otimes \Phi$ is positive for every
-$k \ge 1$, and *trace preserving* if $\operatorname{Tr} \Phi(X) = \operatorname{Tr} X$ for all $X$. A *quantum channel* is a
-completely positive, trace-preserving linear map.
-
-A channel maps [density operators](../quantum-states-distances-and-entropy/density-matrices-and-fidelity/density-matrices-and-reduced-states.md) to density
-operators, and so does $\mathrm{id} \otimes \Phi$ on any larger system. Examples are the unitary channel
-$\rho \mapsto U \rho U^*$, the partial trace, the preparation of a fixed state, and the Pauli channel
-$\rho \mapsto \sum_{P} p_P\, P \rho P^{*}$ over Pauli operators $P$ with probabilities $p_P$ (for the Hermitian tensor products
-of $I, X, Y, Z$ this is $P \rho P$; for $P = iI$ the map $\rho \mapsto P \rho P = -\rho$ is not a channel).
-
-## Depends on
-
-- [Density matrices, pure states and reduced states](../quantum-states-distances-and-entropy/density-matrices-and-fidelity/density-matrices-and-reduced-states.md)
+For nonempty finite index sets $\Sigma$ and $\Gamma$, a linear map $\Phi$ from complex $\Sigma \times \Sigma$ matrices to complex
+$\Gamma \times \Gamma$ matrices underlies a *quantum channel* exactly when it is completely positive, meaning that
+$\Phi \otimes \mathrm{id}_{M_Z(\mathbb{C})}$ maps positive semidefinite matrices to positive semidefinite matrices for every finite
+index set $Z$, and trace preserving, meaning that $\operatorname{Tr} \Phi(X) = \operatorname{Tr} X$ for every $X$. Examples are the
+unitary channel $\rho \mapsto U \rho U^{*}$, the partial trace, the preparation of a fixed state, and the Pauli channel
+$\rho \mapsto \sum_{P} p_P\, P \rho P^{*}$ over Pauli operators $P$ with probabilities $p_P$ (for the Hermitian tensor products of
+$I, X, Y, Z$ this is $P \rho P$; for $P = iI$ the map $\rho \mapsto P \rho P = -\rho$ is not a channel).
 
 ## Sources
 

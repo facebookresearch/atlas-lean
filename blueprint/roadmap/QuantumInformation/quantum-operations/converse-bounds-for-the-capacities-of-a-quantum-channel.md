@@ -12,12 +12,12 @@ $$C(\Phi) \le \lim_{n \to \infty} \frac{\chi(\Phi^{\otimes n})}{n}.$$
 This node states a precise result. A good expansion adds a page for each of the following
 prerequisites and links it under the dependency sections below:
 
-- Statement prerequisite: Operational definitions of channel capacities.
 - Proof prerequisite: Fano's inequality for joint distributions with zero-probability outcomes (the linked version assumes strictly positive probabilities).
 
 ## Depends on
 
 - [Quantum channel](quantum-channel.md)
+- [Operational classical and quantum capacities](../quantum-shannon-theory/remaining-clauses-of-operational-capacity-definitions.md)
 
 ## Proof depends on
 

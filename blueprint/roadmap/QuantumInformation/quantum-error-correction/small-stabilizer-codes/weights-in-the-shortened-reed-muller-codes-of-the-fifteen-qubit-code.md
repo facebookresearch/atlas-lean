@@ -1,7 +1,6 @@
 # Weights in the shortened Reed–Muller codes of the fifteen-qubit code
 
-Let $L_1 \subseteq L_2 \subseteq \mathbb{F}_2^{15}$ be the shortened first- and second-order Reed–Muller codes of the
-[fifteen-qubit code](fifteen-qubit-quantum-reed-muller-code.md): $[f]$ is the table of values of
+Let $L_1 \subseteq L_2 \subseteq \mathbb{F}_2^{15}$ be the shortened first- and second-order Reed–Muller codes: $[f]$ is the table of values of
 $f : \mathbb{F}_2^4 \to \mathbb{F}_2$ at the fifteen nonzero points, $L_1$ is spanned by $[x_1], \dots, [x_4]$ and $L_2$ by
 these and the six $[x_i x_j]$. Write $|u|$ for the Hamming weight, $u \cdot v$ for the coordinatewise product and $[1]$ for
 the all-ones word. Then
@@ -19,11 +18,16 @@ $|u \cdot ([1] + w)| = |u| - |u \cdot w|$.
 
 ## Depends on
 
-- [The fifteen-qubit quantum Reed–Muller code](fifteen-qubit-quantum-reed-muller-code.md)
+- [Linear code](../../../InformationTheory/error-correcting-codes/linear-codes/linear-code.md)
+- [Dual code](../../../InformationTheory/error-correcting-codes/linear-codes/dual.md)
 
 ## Proof depends on
 
 - [Dimension and distance of binary Reed–Muller codes](../../../InformationTheory/error-correcting-codes/reed-muller-codes-dimension-and-distance.md)
+
+## Related topics
+
+- [The fifteen-qubit quantum Reed–Muller code](fifteen-qubit-quantum-reed-muller-code.md): the quantum code built from these two codes
 
 ## Sources
 

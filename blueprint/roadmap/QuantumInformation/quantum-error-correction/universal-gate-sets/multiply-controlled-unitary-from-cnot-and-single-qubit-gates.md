@@ -9,7 +9,7 @@ The recursion: with $n = m + 1$ and a unitary $V$ with $V^2 = U$, $\wedge_{n-1}(
 qubit $n - 1$, then $\wedge_{n-2}(X)$ from qubits $1, \dots, n-2$ onto qubit $n - 1$, then $\wedge_1(V^{*})$ controlled by
 qubit $n - 1$, then the same $\wedge_{n-2}(X)$, then $\wedge_{n-2}(V)$ controlled by qubits $1, \dots, n-2$, all
 $\wedge(V)$ gates targeting qubit $n$. The target receives $V^{y} (V^{*})^{y \oplus c} V^{c}$, where $c$ is the AND of the
-first $n - 2$ bits and $y$ is bit $n - 1$, which is $U$ exactly when $c = y = 1$. The two $\wedge_{n-2}(X)$ gates cost
+first $n - 2$ bits and $y$ is bit $n - 1$, which is $U$ if $c = y = 1$ and $I$ otherwise. The two $\wedge_{n-2}(X)$ gates cost
 $O(n)$ each, by the [Toffoli chain with a borrowed qubit](multiply-controlled-not-with-one-borrowed-qubit.md) using
 qubit $n$, so the cost satisfies $C_{n-1} = C_{n-2} + \Theta(n)$.
 

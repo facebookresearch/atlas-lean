@@ -18,12 +18,12 @@ random-bond Ising model and quote the numerical value $p_c \approx 0.1094$; that
 
 - [Toric code](toric-code.md)
 - [Minimum-weight decoding of the toric code](minimum-weight-decoding-of-the-toric-code.md)
+- [Counting self-avoiding walks on the square lattice](counting-self-avoiding-walks-on-the-square-lattice.md)
 
 ## Proof depends on
 
 - [The probability that a fixed cycle lies in the error plus the correction](probability-that-a-fixed-cycle-lies-in-the-error-plus-the-correction.md)
 - [Minimum-weight decoding fails only on a homologically nontrivial cycle](minimum-weight-decoding-fails-only-on-a-nontrivial-cycle.md)
-- [Counting self-avoiding walks on the square lattice](counting-self-avoiding-walks-on-the-square-lattice.md)
 - [The toric code has distance $L$](toric-code-has-distance-l.md)
 
 ## Related topics

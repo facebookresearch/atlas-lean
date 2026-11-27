@@ -18,7 +18,8 @@ readout leaves an unpaired detection event; this page does not cover it.
 
 ## Expansion
 
-The bound for a fixed spacetime path is already a page (linked below). A good expansion adds the spacetime versions of the remaining two steps of the
+The proof uses the weighted bound for a fixed self-avoiding closed spacetime path contained in $E + E'$ (linked below). A
+good expansion adds the spacetime versions of the remaining two steps of the
 [perfect-syndrome threshold](threshold-for-minimum-weight-decoding-of-the-toric-code.md): a failure, a nonzero total spatial homology class of
 $E + E'$, needs a self-avoiding closed path in the spacetime slab of length at least $L$ that is homologically
 nontrivial in the spatial directions; and the count of
@@ -33,7 +34,7 @@ history, counting walks between two time slices; the expansion checks that it ap
 
 ## Proof depends on
 
-- [The probability that a fixed cycle lies in the error plus the correction](probability-that-a-fixed-cycle-lies-in-the-error-plus-the-correction.md): the weighted bound for a fixed spacetime path on the finite record.
+- [The probability that a fixed cycle lies in the error plus the correction](probability-that-a-fixed-cycle-lies-in-the-error-plus-the-correction.md): the weighted bound for a fixed self-avoiding closed spacetime path contained in $E + E'$ on the finite record.
 
 ## Related topics
 

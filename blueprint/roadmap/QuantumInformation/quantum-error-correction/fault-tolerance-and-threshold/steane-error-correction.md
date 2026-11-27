@@ -1,6 +1,7 @@
 # Steane error correction
 
-Let $Q$ be a CSS code built from classical codes with $C_2^{\perp} \subseteq C_1$, where $C_1$ corrects $t_1$ errors and
+Let $Q$ be a CSS code built from classical codes with $C_2^{\perp} \subseteq C_1$ and $\dim C_1 - \dim C_2^{\perp} = 1$, so
+that each block encodes one logical qubit as in Gottesman's Section 4.2, where $C_1$ corrects $t_1$ errors and
 $C_2$ corrects $t_2$ errors, with $t \le \min(t_1, t_2)$, and suppose there are
 [fault-tolerant preparation gadgets](fault-tolerant-preparation-gadget.md) for the encoded states $|\bar 0\rangle$ and
 $|\bar +\rangle$. *Steane error correction* corrects bit flips by preparing an ancilla block in $|\bar +\rangle$, applying
@@ -18,12 +19,12 @@ fault-tolerant measurement gadget.
 - [Distance of a CSS code](../css-codes/distance-of-a-css-code.md)
 - [Fault-tolerant error-correction gadget](fault-tolerant-error-correction-gadget.md)
 - [Fault-tolerant preparation gadget](fault-tolerant-preparation-gadget.md)
+- [Fault-tolerant measurement gadget](fault-tolerant-measurement-gadget.md)
 
 ## Proof depends on
 
 - [Transversal CNOT and CSS codes](../fault-tolerant-gates/transversal-cnot-and-css-codes.md)
 - [Transversal gates are fault tolerant](../fault-tolerant-gates/transversal-gates-are-fault-tolerant.md)
-- [Fault-tolerant measurement gadget](fault-tolerant-measurement-gadget.md)
 
 ## Sources
 

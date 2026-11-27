@@ -12,18 +12,12 @@ $\mathcal{R}(\rho) \ge 1$, with equality exactly for mixtures of stabilizer stat
 measurement, $\sum_a p_a \mathcal{R}(\rho_a) \le \mathcal{R}(\rho)$ for outcome probabilities $p_a$ and post-measurement states
 $\rho_a$, but not on each outcome separately (measuring the flag of an equal mixture of a flagged stabilizer state and a
 flagged magic state $M$ yields $M$ on one outcome, while the input has robustness at most $(1 + \mathcal{R}(M))/2 < \mathcal{R}(M)$),
-and submultiplicative, $\mathcal{R}(\rho_1 \otimes \rho_2) \le \mathcal{R}(\rho_1) \mathcal{R}(\rho_2)$, and
-estimating a Pauli expectation value of a Clifford circuit on input $\rho$ by sampling costs a number of samples quadratic in
-$\mathcal{R}(\rho)$.
+and submultiplicative, $\mathcal{R}(\rho_1 \otimes \rho_2) \le \mathcal{R}(\rho_1) \mathcal{R}(\rho_2)$.
 
 ## Depends on
 
 - [Stabilizer groups and stabilizer states](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/stabilizer-groups-and-stabilizer-states.md)
 - [Density matrices, pure states and reduced states](../../quantum-states-distances-and-entropy/density-matrices-and-fidelity/density-matrices-and-reduced-states.md)
-
-## Informally uses
-
-- [Clifford computations with mixtures of stabilizer states are classically simulable](mixtures-of-stabilizer-states-give-no-quantum-advantage.md)
 
 ## Sources
 

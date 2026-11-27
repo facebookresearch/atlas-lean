@@ -2,9 +2,13 @@
 
 For Steane's $[[7, 1, 3]]$ code there are [fault-tolerant preparation gadgets](../fault-tolerance-and-threshold/fault-tolerant-preparation-gadget.md)
 for the encoded states $|\bar 0\rangle$ and $|\bar +\rangle$ and for the encoded magic state
-$|\bar 0\rangle + e^{i\pi/4} |\bar 1\rangle$. The encoded $|\bar 0\rangle$ and $|\bar +\rangle$ come from a non-fault-tolerant
-encoding circuit followed by verification against independently prepared ancillas, discarding the state when the
-syndromes disagree, or by Shor-style measurement of the extra stabilizer $\bar Z$ or $\bar X$. The magic state is the
+$|\bar 0\rangle + e^{i\pi/4} |\bar 1\rangle$. The encoded $|\bar 0\rangle$ comes from a non-fault-tolerant
+encoding circuit followed by verification against an independently prepared ancilla, which rejects the state when the
+code syndrome is nontrivial or when the decoded logical $\bar Z$ has eigenvalue $-1$ (a logical $X$ takes $|\bar 0\rangle$
+to $|\bar 1\rangle$ without changing the syndrome); $|\bar +\rangle$ is verified the same way with $\bar X$. Alternatively,
+Shor-style measurement of the generators of the augmented stabilizer $\langle S, \bar Z \rangle$ (respectively
+$\langle S, \bar X \rangle$), starting from any input, repeated and followed by the correction to the $+1$ eigenspace,
+prepares the same states. The magic state is the
 unique codeword in the $+1$ eigenspace of the Clifford operator $e^{i\pi/4} \bar X \bar S^{*}$, which can be measured
 fault-tolerantly with verified cat states and repetition.
 

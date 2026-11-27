@@ -20,4 +20,4 @@ orthogonalization.
 ## Sources
 
 - J. Preskill, *Lecture Notes for Physics 229: Quantum Information and Computation*, Chapter 7 "Quantum Error Correction" (Caltech, 1998; https://www.preskill.caltech.edu/ph229/notes/chap7.pdf), Section 7.9.4 ("By invoking a Gram-Schmidt orthonormalization procedure, we can choose these generators, denoted $\bar X_i$, to diagonalize the symplectic form", equation (7.145)).
-- D. Gottesman, *Stabilizer codes and quantum error correction*, PhD thesis, California Institute of Technology (1997), arXiv:quant-ph/9705052, Section 3.5 (the standard form and the encoded $\bar X$ and $\bar Z$ operators).
+- D. Gottesman, *Stabilizer codes and quantum error correction*, PhD thesis, California Institute of Technology (1997), arXiv:quant-ph/9705052, Section 4.1, equations (4.3)–(4.6) (the standard form and the encoded $\bar X$ and $\bar Z$ operators).

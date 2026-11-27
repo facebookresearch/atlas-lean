@@ -1,7 +1,7 @@
 # Tableau simulation of Clifford circuits
 
 A state of $n$ qubits obtained from $|0\rangle^{\otimes n}$ by CNOT, Hadamard and phase gates and computational-basis
-measurements is a [stabilizer state](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/stabilizer-groups-and-stabilizer-states.md),
+measurements, conditioned on the sampled outcomes, is a [stabilizer state](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/stabilizer-groups-and-stabilizer-states.md),
 and it can be represented by a tableau of $2n$ rows of $2n + 1$ bits each: the $n$ stabilizer generators and $n$
 "destabilizer" Pauli operators that together with them generate the Pauli group modulo scalar phases (their binary labels are independent, so a product of rows equal to a
 scalar uses each row an even number of times and reduces to $\pm I$ by the real commutation signs; it cannot be $iI$,

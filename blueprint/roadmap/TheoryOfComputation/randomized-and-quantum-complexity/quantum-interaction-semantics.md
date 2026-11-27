@@ -10,10 +10,11 @@ dimensions), of the probability of acceptance. A classical-message protocol embe
 completely dephasing channel to the message register before and after each use, so that the prover's messages are
 effectively computational-basis states.
 
-## Depends on
+## Expansion
 
-- [Positive-operator-valued measurements and the Born rule](../../QuantumInformation/quantum-operations/povms-and-measurement-readout/povm-and-born-rule.md)
-- [Quantum channel](../../QuantumInformation/quantum-operations/quantum-channel.md)
+A good expansion adds a page for each pending prerequisite below and links it under the dependency sections.
+
+- Statement prerequisite: Quantum channels (CPTP maps).
 
 ## Sources
 

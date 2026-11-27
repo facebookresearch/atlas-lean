@@ -10,6 +10,7 @@ of cosets of its identity component $B_0$, a connected Lie subgroup whose Lie al
 ## Depends on
 
 - [The logical unitaries of a code form a group](logical-unitaries-of-a-code-form-a-group.md)
+- [Lie group](../../../Geometry/differential-topology/lie-group.md)
 
 ## Proof depends on
 

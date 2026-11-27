@@ -28,6 +28,7 @@ instance $t = 1$, $p = p_T/16$ and $\varepsilon = |C| p_T / 2$ give $\lceil \log
 - [Fault-tolerant measurement gadget](fault-tolerant-measurement-gadget.md)
 - [Fault-tolerant gate gadget](fault-tolerant-gate-gadget.md)
 - [Fault-tolerant error-correction gadget](fault-tolerant-error-correction-gadget.md)
+- [$[[n, k, d]]$ quantum code](../distance-of-a-quantum-code/n-k-d-quantum-code.md)
 
 ## Proof depends on
 

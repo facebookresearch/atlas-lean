@@ -29,6 +29,11 @@ A sound expansion has separate pages for:
 - [Density matrices, pure states and reduced states](../../../QuantumInformation/quantum-states-distances-and-entropy/density-matrices-and-fidelity/density-matrices-and-reduced-states.md)
 - [Encoded 2-local quantum gate](../../complexity-classes/time-and-space-complexity-classes/qgate.md)
 
+## Proof depends on
+
+- [A gate-list channel acts as the circuit](../../../QuantumInformation/quantum-operations/quantum-circuits-as-unitary-channels/circuit-channel-vec-state.md): the unitary-compatibility clause for a well-formed gate list on a unit vector
+- [Born rule for the output qubit](../../../QuantumInformation/quantum-operations/quantum-circuits-as-unitary-channels/output-povm-measure-vec-state.md): the qubit-0 acceptance identity
+
 ## Sources
 
 - J. Watrous, *The Theory of Quantum Information*, Cambridge University Press, 2018, Section 2.1

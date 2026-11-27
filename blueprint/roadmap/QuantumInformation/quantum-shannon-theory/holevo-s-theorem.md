@@ -6,17 +6,15 @@ $\chi(\eta) = S\big(\sum_a p(a)\rho_a\big) - \sum_a p(a) S(\rho_a)$. For every m
 mutual information between the label $a$ and the measurement outcome is at most $\chi(\eta)$; that is, the
 accessible information satisfies $I_{\mathrm{acc}}(\eta) \le \chi(\eta)$.
 
-## Expansion
-
-This node states a precise result. A good expansion adds a page for each of the following
-prerequisites and links it under the dependency sections below:
-
-- Proof prerequisite: Monotonicity of relative entropy and strong subadditivity.
-
 ## Depends on
 
 - [Mutual information of a finite joint law](../../InformationTheory/entropy-and-mutual-information/conditional-mutual-information/finite-mutual-information.md)
 - [Positive-operator-valued measurements and the Born rule](../quantum-operations/povms-and-measurement-readout/povm-and-born-rule.md)
+- [Von Neumann entropy and Holevo information](classical-quantum-information/von-neumann-entropy-and-holevo-information.md)
+
+## Proof depends on
+
+- [Data processing for quantum relative entropy under Kraus channels](../quantum-states-distances-and-entropy/quantum-relative-entropy/relative-entropy-kraus-data-processing.md): data processing for the measurement channel
 
 ## Sources
 

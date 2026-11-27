@@ -17,6 +17,7 @@ trailing EC step per block involved. Adjacent ExRecs overlap in a shared EC step
 - [Fault-tolerant measurement gadget](fault-tolerant-measurement-gadget.md)
 - [Fault-tolerant gate gadget](fault-tolerant-gate-gadget.md)
 - [Fault-tolerant error-correction gadget](fault-tolerant-error-correction-gadget.md)
+- [$[[n, k, d]]$ quantum code](../distance-of-a-quantum-code/n-k-d-quantum-code.md)
 
 ## Sources
 
