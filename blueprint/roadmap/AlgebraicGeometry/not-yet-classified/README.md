@@ -1204,3 +1204,4 @@ Topics added since this subject's fields were last revised.
 - [Segre](segre/README.md)
 - [Semistable Model](semistable-model/README.md)
 - [QMIsogeny](qmisogeny/README.md)
+- [The ℓ-adic H¹ of an abelian variety is the dual of its Tate module, Galois-equivariantly](h1-linear-equiv-dual-tate-module.md)
