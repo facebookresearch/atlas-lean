@@ -25,4 +25,5 @@ Manifolds with smoothly varying inner products or norms on tangent spaces: conne
 - [The unit tangent bundle](the-unit-tangent-bundle/README.md)
 - [Variational Laplace eigenvalues on Riemannian manifolds](variational-laplace-eigenvalues-on-riemannian-ma/README.md)
 - [Existence of Riemannian metrics](riemannian-metric-existence.md)
-- [Manifolds admitting a metric of positive scalar curvature](admits-positive-scalar-curvature-metric.md)
+
+- [Hyperboloidal end replacement](hyperboloidal-end-replacement/README.md)

@@ -25,6 +25,7 @@ public import MathlibExt.NumberTheory.PartitionConvolutionModThree
 public import MathlibExt.NumberTheory.RamanujanTauModNineteen
 public import MathlibExt.NumberTheory.RamanujanTauModSeventeen
 public import MathlibExt.NumberTheory.RamanujanTauModThree
+public import MathlibExt.NumberTheory.GeneralizedTauRegularPartitionCardPrimeRegularModEqGeneralizedTauPred
 
 /-!
 # Regular partition functions and a generalized tau function
@@ -310,18 +311,6 @@ Article A39, Theorem 19 (`integers-2024-A39-thm-19`). -/
 public theorem_wanted card_nine_regular_four_mul_add_one_modEq (n : ℕ) (hn : 0 < n) :
     ((Nat.Partition.restricted (4 * n + 1) (¬ 9 ∣ ·)).card : ℤ)
     ≡ ((Nat.Partition.restricted (n) (¬ 9 ∣ ·)).card : ℤ) [ZMOD 3]
-
-/-- **Prime-regular partitions and the generalized tau function.** Let $p$ be a prime and $n$ a
-natural number. Let $R_p(n)$ be the number of partitions of $n$ in which no part is divisible by
-$p$, and let $\tau_k(m)$ be the generalized tau function, the coefficient of $q^m$ in
-$q \prod_{j \ge 1} (1 - q^j)^k$. Then $R_p(n) \equiv \tau_{p-1}(n + 1) \pmod p$.
-
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
-Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
-Article A39, Theorem 20 (`integers-2024-A39-thm-20`). -/
-public theorem_wanted card_prime_regular_modEq_generalizedTau_pred (p : ℕ) (hp : p.Prime) (n : ℕ) :
-    ((Nat.Partition.restricted (n) (¬ p ∣ ·)).card : ℤ)
-        ≡ generalizedTau ((p : ℤ) - 1) (n + 1) [ZMOD p]
 
 /-- **$\tau_{-k}$ and partition convolutions modulo a prime.** Let $l$ be an odd prime, let $k$ be a
 natural number with $2 \le k < l$, let $n$ be a natural number, and write $p(s)$ for the number of

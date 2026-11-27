@@ -5,7 +5,7 @@ There are constants $c, d > 0$ and a polynomial-time map $G$ from $3$-CNF formul
 - if $F$ is satisfiable, then $s < r^{c}$ (in particular $G(F)$ is unsatisfiable);
 - if $F$ is unsatisfiable, then $s > 2^{r^{1/d}}$.
 
-There is no promise that $G(F)$ is unsatisfiable on the second side: it may be satisfiable, with $s = \infty$. The constants $c$ and $d$ can be chosen arbitrarily close to $1$ and $2$. For $F$ on $n$ variables, $G(F) = \mathrm{RREF}(F, 13n^2)$, the relativization (in the style of Dantchev and Riis, with a built-in linear order on the indices) of the formula $\mathrm{REF}(F, t)$ whose satisfying assignments are exactly the resolution refutations of $F$ of length $t$.
+There is no promise that $G(F)$ is unsatisfiable on the second side: it may be satisfiable, with $s = \infty$. For $F$ on $n$ variables, $n$ large enough, the map $G(F) = \mathrm{RREF}(F, 13n^2)$ proves this for some constants $c, d > 0$, where $\mathrm{RREF}(F, t)$ is the relativization (in the style of Dantchev and Riis, with a built-in linear order on the indices) of the formula $\mathrm{REF}(F, t)$ whose satisfying assignments are exactly the resolution refutations of $F$ of length $t$. The constants can be chosen arbitrarily close to $1$ and $2$, but with a different map: for $c = 1 + \epsilon$ and $d = 2 + \epsilon$ one takes $G(F) = \mathrm{RREF}'(F, 13n^{u+1})$ for a large enough integer $u$ depending only on $\epsilon$, where $\mathrm{RREF}'$ is $\mathrm{RREF}$ with the clauses of types (A7) and (A8) of the source deleted.
 
 ## Proof sketch
 
@@ -19,4 +19,4 @@ If $F$ is unsatisfiable, the lower bound goes through **index-width**, the numbe
 
 ## Sources
 
-- A. Atserias, M. Müller, "Automating resolution is NP-hard", FOCS (2019); Journal of the ACM 67 (2020), arXiv:1904.02991 (Theorem 2, Lemmas 4, 10 and 11).
+- A. Atserias, M. Müller, "Automating resolution is NP-hard", FOCS (2019); Journal of the ACM 67 (2020), arXiv:1904.02991 (Theorem 2, Lemmas 4, 10 and 11, Sections 6 and 7).

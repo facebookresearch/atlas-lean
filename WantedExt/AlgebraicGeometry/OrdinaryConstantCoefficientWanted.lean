@@ -18,7 +18,11 @@ The constant simplicial ring, all native module complexes, scalar
 actions, homogeneous maps and balanced Tor tests are fixed before
 these requests. No Perf descent statement is a source hypothesis.
 
-Sources: Keller Section2; Bhatt--Mathew1807.04725v4, Section5.4.
+Source for the degree-zero DG comparison: Bernhard Keller, *Deriving DG categories*,
+Sections 1.2 and 2.1.
+Motivation only, since it concerns arc-hyperdescent rather than this comparison:
+Bhargav Bhatt and Akhil Mathew, *The arc-topology*, arXiv:1807.04725v4, Section 5.4
+(Theorem 5.16).
 -/
 
 set_option autoImplicit false
