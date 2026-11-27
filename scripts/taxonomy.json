@@ -11171,6 +11171,7 @@
   "MathlibExt/Combinatorics/Enumerative/GeneralizedBuchstabTaylor": {"to": "Combinatorics/permutations/permutation-statistics", "title": "Smallest cycle of a random permutation"},
   "MathlibExt/Combinatorics/Enumerative/GeneralizedCatalanSchroeder": {"to": "Combinatorics/catalan-numbers-lattice-paths/catalan-numbers", "title": "Generalized Catalan–Schröder numbers"},
   "MathlibExt/Combinatorics/Enumerative/GeneralizedCentralBinomialArcsin": {"to": "Combinatorics/binomial-coefficients/central-binomial-harmonic-sums", "title": "Series of reciprocal central binomial coefficients"},
+  "MathlibExt/Combinatorics/Enumerative/GeneralizedCentralBinomialArcsinSeries": {"to": "Combinatorics/binomial-coefficients/central-binomial-harmonic-sums", "title": "Series of reciprocal central binomial coefficients"},
   "MathlibExt/Combinatorics/Enumerative/GeneralizedEulerianGamma": {"to": "Combinatorics/stirling-bell-eulerian/eulerian-numbers", "title": "Generalized Eulerian polynomials and gamma-positivity"},
   "MathlibExt/Combinatorics/Enumerative/GeneralizedEulerianUnimodal": {"to": "Combinatorics/stirling-bell-eulerian/eulerian-numbers", "title": "Generalized Eulerian polynomials and gamma-positivity"},
   "MathlibExt/Combinatorics/Enumerative/GeneralizedLeonardoLogBehavior": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Leonardo numbers"},
