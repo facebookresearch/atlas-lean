@@ -10,7 +10,7 @@ module
 
 public import Domains.Biology.PopulationGenetics.HardyWeinberg
 public import CSLibExt.MachineLearning.Bayesian.Basic
-public import MathlibExt.Probability.Statistics.LinearModel.Inference
+public import MathlibExt.Probability.Statistics.LinearModel.CoefficientT
 public import Mathlib.Probability.ConditionalProbability
 
 /-!
@@ -42,9 +42,9 @@ Both are the linear mean `γ + α p + τ 1(g = AA)` with `γ = 1`, `τ = -1` and
 `BAF = γ + α p + τ 1(g = AA) + ε` by least squares. `contaminationEstimate` is the least-squares
 slope `α̂`, the `α` coordinate of the ordinary least-squares estimate for the design matrix with
 rows `(1, p, 1(g = AA))` (`designMatrix`), and `contaminationTStatistic` is the `t` statistic of
-`α = 0`. For a full-rank design, `α̂` recovers `α` from noiseless data
-(`contaminationEstimate_mulVec`), in particular from the conditional means above
-(`contaminationEstimate_integral_baf_cond`), and is unbiased under mean-zero errors
+`α = 0`, the coefficient `t` statistic of the slope. For a full-rank design, `α̂` recovers `α`
+from noiseless data (`contaminationEstimate_mulVec`), in particular from the conditional means
+above (`contaminationEstimate_integral_baf_cond`), and is unbiased under mean-zero errors
 (`integral_contaminationEstimate`). Under `α = 0` with i.i.d. Gaussian errors and `n > 3`, the
 `t` statistic has Student's `t` law with `n - 3` degrees of freedom
 (`hasLaw_contaminationTStatistic`), so the one-sided test that rejects `α = 0` in favour of
@@ -144,6 +144,18 @@ theorem iidGenotype_apply (p : PMF Bool) (g : Bool × Bool) :
 alleles drawn from the parental allele frequencies. -/
 theorem offspring_eq_iidGenotype (G : PMF (Bool × Bool)) :
     offspring G = iidGenotype (gamete G) := rfl
+
+/-- The allele frequencies of a genotype with independent alleles of law `p` are `p`: the gamete
+law of `iidGenotype p` is `p`. -/
+theorem gamete_iidGenotype (p : PMF Bool) (a : Bool) : gamete (iidGenotype p) a = p a := by
+  have hs : p true + p false = 1 := by
+    have := p.tsum_coe
+    rwa [tsum_fintype, Fintype.sum_bool] at this
+  have h1 : p a * p true + p a * p false = p a := by rw [← mul_add, hs, mul_one]
+  have h2 : p true * p a + p false * p a = p a := by rw [← add_mul, hs, one_mul]
+  rw [gamete_apply]
+  simp only [iidGenotype_apply, Fintype.sum_bool]
+  rw [h1, h2, ← add_mul, ENNReal.inv_two_add_inv_two, one_mul]
 
 /-- The joint law of the target's genotype `g₁` and the contaminant's genotype `g₂` at a marker:
 `g₁` has law `T`, and the contaminant's two alleles are drawn independently of `g₁`, and of each
@@ -333,10 +345,11 @@ noncomputable def contaminationEstimate (c : ι → Bool) (pB y : ι → ℝ) : 
 
 /-- The `t` statistic of the null hypothesis `α = 0` in the regression of Equation 4: the
 least-squares slope `α̂` divided by its estimated standard error `√((‖y - X β̂‖² / (n - 3)) · v)`,
-where `n` is the number of markers and `v` is the diagonal entry of `(Xᵀ X)⁻¹` at the slope. The
-one-sided test of `α = 0` against `α > 0` rejects for large values. -/
+where `n` is the number of markers and `v` is the diagonal entry of `(Xᵀ X)⁻¹` at the slope; the
+coefficient `t` statistic of the slope at the value `0`. The one-sided test of `α = 0` against
+`α > 0` rejects for large values. -/
 noncomputable def contaminationTStatistic (c : ι → Bool) (pB y : ι → ℝ) : ℝ :=
-  tStatistic (designMatrix c pB) (Pi.single 1 1) 0 y
+  coefficientTStatistic (designMatrix c pB) 1 0 y
 
 /-- **The regression recovers `α` from noiseless data**: for a full-rank design, if every BAF lies
 on the regression line `γ + α p + τ 1(g = AA)`, as the conditional means do
@@ -388,16 +401,14 @@ theorem hasLaw_contaminationTStatistic {Ω : Type*} [MeasurableSpace Ω] {μ : M
     (hε : HasLaw (fun ω => σ⁻¹ • ε ω) (Measure.pi fun _ : ι => gaussianReal 0 1) μ) :
     HasLaw (fun ω => contaminationTStatistic c pB (designMatrix c pB *ᵥ ![γ, 0, τ] + ε ω))
       (studentTMeasure (Fintype.card ι - 3)) μ := by
-  have ha : (Pi.single 1 1 : Fin 3 → ℝ) ≠ 0 := by
-    simp [Pi.single_eq_zero_iff]
-  have h := hasLaw_tStatistic hX (by simpa using hn) ![γ, 0, τ] hσ hε ha
-  have key : ∀ y, tStatistic (designMatrix c pB) (Pi.single 1 1) 0 y =
-      tStatistic (designMatrix c pB) (Pi.single 1 1) ![γ, 0, τ] y := by
+  have key : ∀ y, coefficientTStatistic (designMatrix c pB) 1 0 y =
+      coefficientTStatistic (designMatrix c pB) 1 ![γ, 0, τ] y := by
     intro y
-    simp only [tStatistic, dotProduct_sub, single_dotProduct]
-    simp
+    simp [coefficientTStatistic]
+  have h := hasLaw_coefficientTStatistic hX (by simpa using hn) ![γ, 0, τ] hσ hε 1
+  rw [Fintype.card_fin] at h
   simp only [contaminationTStatistic, key]
-  simpa using h
+  exact h
 
 /-- **Level of the one-sided contamination test**: under the null hypothesis `α = 0` of
 `hasLaw_contaminationTStatistic`, the probability that the `t` statistic exceeds a threshold `t₀`

@@ -16,7 +16,7 @@ import Mathlib.Tactic.NormNum
 
 * BAF values of clean and contaminated samples.
 * The conditional mean `α p_B` at `AA` markers for population frequency `p_B = 1/4`, and the
-  source's warning: when `B` is always the minor allele, with `f = 1/4`, the conditional mean is
+  page's remark: when `B` is always the minor allele, with `f = 1/4`, the conditional mean is
   `α / 4`, not the minor-allele value `3 α / 10`.
 * Under the minor-allele model with `f = 1/4`: the likelihoods `9/16` and `1/16` of a called `AA`,
   the posterior probability `9/10` that `B` is the minor allele, and the conditional mean
@@ -78,7 +78,7 @@ example (α : ℝ) (T : PMF (Bool × Bool)) (hAA : T (false, false) ≠ 0)
     quarterB_true, quarterB_false]
   constructor <;> ring
 
-/-- **The minor-allele formula needs its assumptions** (the source's warning): if `B` is always
+/-- **The minor-allele formula needs its assumptions** (the page's remark): if `B` is always
 the minor allele, with frequency `f = 1/4`, then at an `AA` marker the conditional mean is
 `α p_B = α / 4`, which differs from the minor-allele value
 `α f (1 - f) / ((1 - f)² + f²) = 3 α / 10` whenever `α ≠ 0`. -/
@@ -96,17 +96,6 @@ example (α : ℝ) (hα : α ≠ 0) :
 
 /-- A population in Hardy–Weinberg proportions whose minor allele (`true`) has frequency `1/4`. -/
 noncomputable def quarterMinor : PMF (Bool × Bool) := iidGenotype quarterB
-
-/-- The allele frequencies of a genotype with independent alleles of law `p` are `p`. -/
-theorem gamete_iidGenotype (p : PMF Bool) (a : Bool) : gamete (iidGenotype p) a = p a := by
-  have hs : p true + p false = 1 := by
-    have := p.tsum_coe
-    rwa [tsum_fintype, Fintype.sum_bool] at this
-  have h1 : p a * p true + p a * p false = p a := by rw [← mul_add, hs, mul_one]
-  have h2 : p true * p a + p false * p a = p a := by rw [← add_mul, hs, one_mul]
-  rw [gamete_apply]
-  simp only [iidGenotype_apply, Fintype.sum_bool]
-  rw [h1, h2, ← add_mul, ENNReal.inv_two_add_inv_two, one_mul]
 
 theorem gamete_quarterMinor_true : (gamete quarterMinor true).toReal = 1 / 4 := by
   rw [quarterMinor, gamete_iidGenotype, quarterB_true]
