@@ -27,6 +27,10 @@ so the oscillation frequency near onset is tuned by the coordinator intensities 
 
 - [Statement of the local Hopf bifurcation theorem on ℝᴺ](../../three-variable-repressilator/hopf-bifurcation-theorem.md)
 
+## Proof depends on
+
+- [Routh–Hurwitz: a real 2 × 2 matrix is Hurwitz iff tr M < 0 < det M](../../../../Analysis/ordinary-differential-equations/linear-systems-and-fundamental-matrices/is-hurwitz-iff-trace-neg-and-det-pos.md)
+
 ## Expansion
 
 Projecting onto the Laplacian eigenfunctions reduces $L$ to the $2\times2$ matrices $M(k_i) = -k_i^2D + A + F$, whose characteristic polynomial is the quadratic above with $c_1 = -\operatorname{tr}M$ and $c_0 = \det M$. A purely imaginary pair requires $c_1 = 0 < c_0$ for some mode, and stability of all other modes forces $c_0 > 0$ everywhere and, since $c_1(k)$ increases with $k^2$, the critical mode to be $k_0$. The Hopf condition $\operatorname{tr}M(k_0) = 0$ is unchanged by $F$ exactly when $F$ is traceless. For a $2\times2$ matrix, $\omega^2 = \det M - (\tfrac12\operatorname{tr}M)^2 = -m_{12}m_{21} - \tfrac14(m_{11} - m_{22})^2$, which with $f_{22} = -f_{11}$ gives the stated formula. Numerically, energy-optimal coordinators strengthen all four endogenous linear interactions (in the same direction as $a_{ij}$) to raise frequency or amplitude and weaken them to lower it.

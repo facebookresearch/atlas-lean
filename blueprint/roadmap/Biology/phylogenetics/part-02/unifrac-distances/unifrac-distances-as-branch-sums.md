@@ -6,15 +6,15 @@
 
 - *Unweighted UniFrac*, the fraction of total branch length unique to one of the two communities:
 
-$$d_u(i,j) = \frac{\sum_{b=1}^B l_b \,\bigl|\mathbf 1(p_{ib} > 0) - \mathbf 1(p_{jb} > 0)\bigr|}{\sum_{b=1}^B l_b}.$$
+    $$d_u(i,j) = \frac{\sum_{b=1}^B l_b \,\bigl|\mathbf 1(p_{ib} > 0) - \mathbf 1(p_{jb} > 0)\bigr|}{\sum_{b=1}^B l_b}.$$
 
 - *Raw weighted UniFrac* and its normalized version:
 
-$$d_w(i,j) = \sum_{b=1}^B l_b\, |p_{ib} - p_{jb}|, \qquad d_{wn}(i,j) = \frac{\sum_b l_b\, |p_{ib} - p_{jb}|}{\sum_b l_b\,(p_{ib} + p_{jb})}.$$
+    $$d_w(i,j) = \sum_{b=1}^B l_b\, |p_{ib} - p_{jb}|, \qquad d_{wn}(i,j) = \frac{\sum_b l_b\, |p_{ib} - p_{jb}|}{\sum_b l_b\,(p_{ib} + p_{jb})}.$$
 
 - *Generalized UniFrac* with $\alpha \in [0,1]$:
 
-$$d_g(i,j,\alpha) = \frac{\sum_b l_b\,(p_{ib} + p_{jb})^\alpha \left|\dfrac{p_{ib} - p_{jb}}{p_{ib} + p_{jb}}\right|}{\sum_b l_b\,(p_{ib} + p_{jb})^\alpha},$$
+    $$d_g(i,j,\alpha) = \frac{\sum_b l_b\,(p_{ib} + p_{jb})^\alpha \left|\dfrac{p_{ib} - p_{jb}}{p_{ib} + p_{jb}}\right|}{\sum_b l_b\,(p_{ib} + p_{jb})^\alpha},$$
 
 with terms having $p_{ib} + p_{jb} = 0$ omitted; $\alpha = 1$ gives $d_{wn}$.
 

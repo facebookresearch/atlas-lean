@@ -14,6 +14,10 @@ where $L_0 = \operatorname{diag}(l_1,\dots,l_p)$ with $l_i > 0$, $S(x) = (S(\sig
 3. Only finitely many characteristic values satisfy $\Re\lambda > -\min_i l_i$.
 4. $(T(t))$ is norm continuous for $t > \tau_m$, and $0$ is asymptotically stable for the linearized equation if and only if $\max\Re\,\Sigma_p(\mathcal A) < 0$; in that case the persistent state $V_f$ is asymptotically stable for the nonlinear equation.
 
+## Proof depends on
+
+- [Essential Spectrum add compact](../../../../Analysis/not-yet-classified/essential-spectrum/essential-spectrum-add-compact.md)
+
 ## Expansion
 
 The spectrum of $\mathcal A$ is linked to that of the family $L_\lambda = -L_0 + J(\lambda)$ on the Hilbert space $L^2$: $\lambda \in \Sigma_{\mathrm{ess}}(\mathcal A)$ iff $\lambda \in \Sigma_{\mathrm{ess}}(L_\lambda)$, and the essential spectrum is invariant under the compact perturbation $J(\lambda)$, giving part 1. Analytic Fredholm theory then makes the remaining spectrum discrete, and for $\Re\lambda$ large $\|(\lambda+L_0)^{-1}J(\lambda)\| < 1$, which confines characteristic values with $\Re\lambda > -\min l_i$ to a bounded set. Because the generator is neither sectorial nor of pure point spectrum, the step from spectrum to semigroup decay uses eventual norm continuity: for such semigroups the growth bound equals the spectral bound, and the spectral bound is a maximum by part 3. Linear stability passes to the nonlinear equation by a variation-of-constants estimate inside the bounded absorbing set of trajectories.
