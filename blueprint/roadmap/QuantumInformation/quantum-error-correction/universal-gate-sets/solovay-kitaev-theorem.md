@@ -36,7 +36,7 @@ giving the exponents. The [commutator approximation lemma](approximating-a-group
 ## Proof depends on
 
 - [Approximating a group commutator](approximating-a-group-commutator.md)
-- [Telescoping bound for products of contractions](../../not-yet-classified/part-01/unitary-error-budget/norm-list-of-fn-prod-sub-le.md)
+- [Telescoping bound for products of contractions](../../../ComputerScience/quantum-algorithms/unitary-error-budgets/norm-list-of-fn-prod-sub-le.md)
 
 ## Background
 
