@@ -14,11 +14,12 @@ public import Mathlib.Combinatorics.Enumerative.Composition
 public import Mathlib.Data.Int.Interval
 public import Mathlib.NumberTheory.Divisors
 public import Mathlib.RingTheory.PowerSeries.Inverse
+
 public import MathlibExt.NumberTheory.SquareRepresentationCongruences
 public import MathlibExt.NumberTheory.SquareTriangularRepresentationDivisibility
-public import MathlibExt.NumberTheory.SquaresTriangularRepresentationsRepCountNeZeroOfWindow
-public import MathlibExt.NumberTheory.SquaresTriangularRepresentationsSumOfSquaresRepCountIntegerRoot
 public import MathlibExt.NumberTheory.TriangularRepresentationWindow
+public import MathlibExt.NumberTheory.SquaresTriangularRepresentationsSumOfSquaresRepCountIntegerRoot
+public import MathlibExt.NumberTheory.SquaresTriangularRepresentationsRepCountNeZeroOfWindow
 
 /-!
 # Congruences for representations as sums of squares and triangular numbers
