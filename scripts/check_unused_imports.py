@@ -27,8 +27,9 @@ only be modules that agitate keeps wherever they were reachable, such as those
 that declare simp sets or attributes.
 
 Exit 1 if a finding is kept (0 with --report-only), 0 if none, 2 if agitate
-cannot run. In GitHub Actions each finding also annotates its line and the job
-summary counts them.
+cannot run or skips a changed file whose header it cannot read (whatever it
+found in the others). In GitHub Actions each finding also annotates its line
+and the job summary counts them.
 
 Run the tests with: python3 -m unittest discover -s scripts -p test_check_unused_imports.py
 """
@@ -59,6 +60,11 @@ ADD = re.compile(r"^  add #\[(?P<imports>.*)\]$")
 # agitate exits 1 both when it suggests edits and when it fails, for example on a
 # missing .olean file; a failure prints one of these to stderr.
 FAILED = re.compile(r"^(?:uncaught exception|error|PANIC|INTERNAL PANIC)\b", re.MULTILINE)
+# What agitate prints to stdout when it cannot read a changed file's header: Lean's parse errors
+# and "parse errors in file", "error: failed to find source file for M", or an I/O error. It then
+# skips that file, and can exit 0.
+SKIPPED = re.compile(r"^(?:error: .*|\S.*?:\d+:\d+: error: .*|parse errors in file)$"
+                     r"|^.*\(error code: \d+\).*$", re.MULTILINE)
 
 # Keep every public import that other public imports do not already export, so
 # that no importer can break; keep imports that other imports imply, and a parent
@@ -70,19 +76,26 @@ NONMODULE_FLAGS = ("--keep-implied", "--keep-prefix")
 
 @dataclass
 class Header:
-    """Whether a file uses the module system, and its import statements by line."""
+    """Whether a file uses the module system, and its import statements by the 1-based line and
+    column at which each starts (Lean accepts several on one line)."""
 
     is_module: bool = False
-    imports: dict[int, str] = field(default_factory=dict)
+    imports: dict[tuple[int, int], str] = field(default_factory=dict)
+
+    @property
+    def lines(self) -> set[int]:
+        return {line for line, _ in self.imports}
 
 
 def tokens(text: str):
-    """The (token, line) pairs of a Lean file's start, without comments."""
-    i, n, line = 0, len(text), 1
+    """The (token, line, column) triples of a Lean file's start, without comments; line and
+    column are 1-based."""
+    i, n, line, line_start = 0, len(text), 1, 0
     while i < n:
         if text[i] == "\n":
             line += 1
             i += 1
+            line_start = i
         elif text[i].isspace():
             i += 1
         elif text.startswith("--", i):
@@ -96,34 +109,35 @@ def tokens(text: str):
                 elif text.startswith("-/", i):
                     depth, i = depth - 1, i + 2
                 else:
-                    line += text[i] == "\n"
+                    if text[i] == "\n":
+                        line, line_start = line + 1, i + 1
                     i += 1
         else:
             start = i
             while i < n and not text[i].isspace() and not text.startswith(("--", "/-"), i):
                 i += 1
-            yield text[start:i], line
+            yield text[start:i], line, start - line_start + 1
 
 
 def header(text: str) -> Header:
     """The `module` keyword and the `[public] [meta] import [all] M` lines of a file."""
     result = Header()
     words: list[str] = []
-    start = 0
-    for tok, line in tokens(text):
+    start: tuple[int, int] | None = None
+    for tok, line, col in tokens(text):
         if not words and not result.imports and not result.is_module and tok == "module":
             result.is_module = True
         elif not words and not result.imports and tok == "prelude":
             continue
         elif tok in ("public", "meta") and "import" not in words:
-            words, start = words + [tok], start or line
+            words, start = words + [tok], start or (line, col)
         elif tok == "import" and "import" not in words:
-            words, start = words + [tok], start or line
+            words, start = words + [tok], start or (line, col)
         elif tok == "all" and words and words[-1] == "import":
             words.append(tok)
-        elif words and words[-1] in ("import", "all"):
+        elif words and words[-1] in ("import", "all") and start is not None:
             result.imports[start] = " ".join([*words, tok])
-            words, start = [], 0
+            words, start = [], None
         else:
             break
     return result
@@ -199,7 +213,7 @@ def main() -> int:
     targets: dict[str, tuple[ChangedFile, Header]] = {}
     for file in files:
         head = header(read_source(file.path))
-        if set(head.imports) & file.added_lines:
+        if head.lines & file.added_lines:
             targets[file.path] = (file, head)
     if not targets:
         print("No changed Lean file of the production libraries adds an import.")
@@ -216,6 +230,7 @@ def main() -> int:
     print(f"Checking the imports that {len(targets)} changed Lean file(s) add.")
     removals: list[Removal] = []
     adds: dict[str, list[str]] = {}
+    skipped: list[str] = []
     for tool, is_module, flags in (("agitate", True, MODULE_FLAGS),
                                    ("agitate-nonmodule", False, NONMODULE_FLAGS)):
         modules = [file.module for file, head in targets.values() if head.is_module == is_module]
@@ -226,6 +241,7 @@ def main() -> int:
             print(result.stdout + result.stderr, file=sys.stderr)
             print(f"{tool} did not run on the changed files.", file=sys.stderr)
             return 2
+        skipped += [match.group(0) for match in SKIPPED.finditer(result.stdout)]
         found, added = parse_output(result.stdout)
         removals += found
         adds.update(added)
@@ -234,7 +250,7 @@ def main() -> int:
     level = "warning" if args.report_only else "error"
     titles: Counter[str] = Counter()
     for r in kept:
-        statement = targets[r.path][1].imports.get(r.line, "this import")
+        statement = targets[r.path][1].imports.get((r.line, r.col), "this import")
         title = "unused import"
         message = (f"agitate finds `{statement}` unused here. Remove it, or mark it "
                    f"`-- shake: keep` if it is needed in a way that .olean files do not "
@@ -253,6 +269,13 @@ def main() -> int:
         write_summary(f"### Imports on added lines that agitate would remove\n\n"
                       f"| Finding | Imports |\n|---|---:|\n{rows}\n")
         print(f"{len(kept)} added import(s) that agitate would remove.")
+    if skipped:
+        # agitate checked the other files, but not this one: the check is incomplete.
+        print("\n".join(skipped), file=sys.stderr)
+        print("agitate could not read the header of a changed file and skipped it, so the check "
+              "is incomplete.", file=sys.stderr)
+        return 2
+    if kept:
         return 0 if args.report_only else 1
     print("agitate would remove none of the added imports.")
     return 0

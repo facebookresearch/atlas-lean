@@ -5,10 +5,11 @@
 or the toolchain pins. It needs a checkout with the Mathlib cache fetched, and
 for the unused-imports check a built agitate in $AGITATE_DIR (without one, that
 check is skipped, and the script says so). It commits a probe module with known
-findings on top of HEAD, builds it as CI does, runs each check against HEAD,
-then commits a second change that only documents an existing probe declaration,
-builds it and runs the checks against the first commit. It then moves HEAD back
-and deletes the probe, leaving the working tree as it was.
+findings, and a `module` probe with an unused import, on top of HEAD, builds
+them as CI does, runs each check against HEAD, then commits a second change that
+only documents an existing probe declaration, builds it and runs the checks
+against the first commit. It then moves HEAD back and deletes the probes,
+leaving the working tree as it was.
 
     python3 scripts/linters_self_test.py      # in GitHub Actions, or with --local
 
@@ -27,6 +28,20 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 SCRIPTS = Path(__file__).resolve().parent
 PROBE = Path("MathlibExt/LintersSelfTestProbe.lean")
+# A `module` file as well, so that agitate runs with the module flags too; the first commit adds
+# it, with an import that it does not use.
+MODULE_PROBE = Path("MathlibExt/LintersSelfTestModuleProbe.lean")
+MODULE_PROBE_TEXT = """\
+module
+
+import Mathlib.Tactic.Ring
+
+/-! Module probe of scripts/linters_self_test.py, which deletes it again. -/
+
+/-- Needs nothing from its import. -/
+public theorem lintersModuleProbe : True := trivial
+"""
+PROBES = (PROBE, MODULE_PROBE)
 
 LONG = "a + b = b + a ∧ a * b = b * a ∧ a + 0 = a ∧ b + 0 = b ∧ a * 1 = a ∧ b * 1 = b"
 PROBE_TEXT = f"""\
@@ -77,8 +92,10 @@ EXPECTED = {
                              [r" 0 on declarations the change adds, [1-9]\d* on declarations it "
                               r"keeps", r"No environment-linter finding on the added declarations"]),
     # Nothing records that the probe needs Mathlib.Tactic.Ring for Mathlib's linters.
-    "check_unused_imports.py": ([r"unused import[^:]*: agitate finds `import Mathlib\.Tactic\.Ring` "
-                                 r"unused here"],
+    "check_unused_imports.py": ([r"LintersSelfTestProbe\.lean:1: unused import[^:]*: agitate "
+                                 r"finds `import Mathlib\.Tactic\.Ring` unused here",
+                                 r"LintersSelfTestModuleProbe\.lean:3: unused import[^:]*: "
+                                 r"agitate finds `import Mathlib\.Tactic\.Ring` unused here"],
                                 [r"No changed Lean file of the production libraries adds an import"]),
 }
 # Exit codes after the first and the second commit.
@@ -91,10 +108,15 @@ def git(*args: str) -> str:
                           text=True).stdout.strip()
 
 
-def commit(text: str, message: str) -> str:
+def commit(text: str, message: str, module_text: str | None = None) -> str:
+    """Commit the probe module, and the `module` probe too if `module_text` is given."""
     (ROOT / PROBE).write_text(text, encoding="utf-8")
-    git("add", "--", str(PROBE))
-    git("commit", "-q", "--no-verify", "-m", message, "--", str(PROBE))
+    paths = [str(PROBE)]
+    if module_text is not None:
+        (ROOT / MODULE_PROBE).write_text(module_text, encoding="utf-8")
+        paths.append(str(MODULE_PROBE))
+    git("add", "--", *paths)
+    git("commit", "-q", "--no-verify", "-m", message, "--", *paths)
     return git("rev-parse", "HEAD")
 
 
@@ -142,19 +164,20 @@ def main() -> int:
     args = parser.parse_args()
     if os.environ.get("GITHUB_ACTIONS") != "true" and not args.local:
         parser.error("this commits to the checkout; pass --local to run it outside GitHub Actions")
-    if (ROOT / PROBE).exists() or git("diff", "--cached", "--name-only"):
-        print(f"{PROBE} exists or changes are staged; not running.", file=sys.stderr)
+    if any((ROOT / probe).exists() for probe in PROBES) or git("diff", "--cached", "--name-only"):
+        print("A probe module exists or changes are staged; not running.", file=sys.stderr)
         return 1
     start = git("rev-parse", "HEAD")
     try:
-        first = commit(PROBE_TEXT, "linters self-test: probe module")
+        first = commit(PROBE_TEXT, "linters self-test: probe modules", MODULE_PROBE_TEXT)
         ok = run_checks(start, 0)
         commit(DOCUMENTED, "linters self-test: document an existing declaration")
         ok = run_checks(first, 1) and ok
     finally:
         git("reset", "-q", "--soft", start)
-        git("rm", "-q", "--cached", "--ignore-unmatch", "--", str(PROBE))
-        (ROOT / PROBE).unlink(missing_ok=True)
+        git("rm", "-q", "--cached", "--ignore-unmatch", "--", *map(str, PROBES))
+        for probe in PROBES:
+            (ROOT / probe).unlink(missing_ok=True)
     print("The checks report what they should." if ok else "A check reported something else.")
     return 0 if ok else 1
 

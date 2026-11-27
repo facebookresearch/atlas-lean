@@ -195,7 +195,16 @@ jobs:
           set -euo pipefail
           dir="${RUNNER_TEMP}/agitate"
           git init --quiet "$dir"
-          git -C "$dir" fetch --quiet --depth 1 https://github.com/thorimur/agitate.git "$AGITATE_COMMIT"
+          # Retry, as the elan download does, so that a flaky fetch does not fail the job.
+          for attempt in 1 2 3 4 5; do
+            if git -C "$dir" fetch --quiet --depth 1 https://github.com/thorimur/agitate.git "$AGITATE_COMMIT"; then
+              break
+            fi
+            if [ "$attempt" = 5 ]; then
+              exit 1
+            fi
+            sleep 10
+          done
           git -C "$dir" -c advice.detachedHead=false checkout --quiet FETCH_HEAD
           test "$(git -C "$dir" rev-parse HEAD)" = "$AGITATE_COMMIT"
           if ! cmp -s lean-toolchain "$dir/lean-toolchain"; then

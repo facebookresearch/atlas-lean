@@ -67,7 +67,10 @@ merge of main a few minutes. A maintainer decides when to queue the bump.
 3. **Open the bump** when every pinned dependency has tagged `vX.Y.Z`. Commit
    the output of `python3 scripts/bump/pinned_bump.py prepare vX.Y.Z` unchanged,
    so that `guard` accepts it. Put the remaining fixes in separate commits after
-   it.
+   it. If the bump changes `lean-toolchain` and agitate has a commit for the new
+   toolchain, point `AGITATE_COMMIT` in `.github/workflows/linters.yml` at it in
+   one of those commits; until then the advisory `mathlib linters` job warns and
+   skips its unused-imports check.
 
 4. **Keep it close to main.** Merge main in, never rebase, so the first commit
    stays exactly what `pinned_bump.py` produced:

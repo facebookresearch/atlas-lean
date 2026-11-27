@@ -53,6 +53,13 @@ import MathlibExt.Marked.Iso
 
 open CategoryTheory
 """,
+    # Lean's header is `many import`, so imports can share a line.
+    "MathlibExt/F.lean": """\
+import Mathlib.Tactic.Ring import Mathlib.Data.Nat.Basic
+/- -/ import Mathlib.Order.Basic
+
+/-! Not a module. -/
+""",
 }
 
 # What `agitate --gh-style` prints: for A, two removals of which the change adds
@@ -104,13 +111,14 @@ def job_summary():
 
 
 def run_main(results, files=FILES, extra=(), toolchain=None, agitate_dir=True,
-             summary: list[str] | None = None):
+             summary: list[str] | None = None, errors: list[str] | None = None):
     """Run main() with `results` as the agitate runs, in order; return code, output, calls.
 
-    The job summary that main() writes is appended to `summary`."""
+    The job summary that main() writes is appended to `summary`, and its stderr to `errors`."""
     if not isinstance(results, list):
         results = [results]
     out = io.StringIO()
+    err = io.StringIO()
     with agitate_build(toolchain) as tmp, job_summary() as summary_path, \
             patch.object(check, "changed_files", return_value=files), \
             patch.object(check, "read_source", side_effect=SOURCES.__getitem__), \
@@ -118,10 +126,12 @@ def run_main(results, files=FILES, extra=(), toolchain=None, agitate_dir=True,
             patch.object(sys, "argv", ["check_unused_imports.py", "--base", "HEAD^1",
                                        *(["--agitate-dir", tmp] if agitate_dir else []),
                                        *extra]), \
-            contextlib.redirect_stdout(out), contextlib.redirect_stderr(io.StringIO()):
+            contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
         code = check.main()
         if summary is not None:
             summary.append(summary_path.read_text())
+    if errors is not None:
+        errors.append(err.getvalue())
     return code, out.getvalue(), [call.args[0] for call in run.call_args_list]
 
 
@@ -134,21 +144,28 @@ class HeaderTests(unittest.TestCase):
         head = check.header(SOURCES["MathlibExt/A.lean"])
         self.assertTrue(head.is_module)
         self.assertEqual(head.imports, {
-            8: "public import Mathlib.Order.Basic",
-            9: "import Mathlib.Tactic.Ring",
-            10: "import Mathlib.Tactic.Linarith",
-            11: "public meta import MathlibExt.C",
-            12: "import all MathlibExt.E",
+            (8, 1): "public import Mathlib.Order.Basic",
+            (9, 1): "import Mathlib.Tactic.Ring",
+            (10, 1): "import Mathlib.Tactic.Linarith",
+            (11, 1): "public meta import MathlibExt.C",
+            (12, 1): "import all MathlibExt.E",
         })
 
     def test_non_module_file(self):
         head = check.header(SOURCES["MathlibExt/B.lean"])
         self.assertFalse(head.is_module)
-        self.assertEqual(sorted(head.imports), [1, 2])
+        self.assertEqual(sorted(head.imports), [(1, 1), (2, 1)])
 
     def test_header_ends_at_the_first_command(self):
         head = check.header("module\n\npublic import A\npublic section\nimport B\n")
-        self.assertEqual(head.imports, {3: "public import A"})
+        self.assertEqual(head.imports, {(3, 1): "public import A"})
+
+    def test_two_imports_on_one_line_keep_their_columns(self):
+        head = check.header(SOURCES["MathlibExt/F.lean"])
+        self.assertEqual(head.imports, {(1, 1): "import Mathlib.Tactic.Ring",
+                                        (1, 28): "import Mathlib.Data.Nat.Basic",
+                                        (2, 7): "import Mathlib.Order.Basic"})
+        self.assertEqual(head.lines, {1, 2})
 
 
 class ParseTests(unittest.TestCase):
@@ -238,6 +255,39 @@ class MainTests(unittest.TestCase):
     def test_a_missing_agitate_build_is_a_failure_to_run(self):
         code, _, calls = run_main([], agitate_dir=False)
         self.assertEqual((code, calls), (2, []))
+
+    def test_names_the_import_at_the_removal_s_column(self):
+        files = [ChangedFile("MathlibExt/F.lean", "A", frozenset(range(1, 5)))]
+        first = done(f"{ROOT}/MathlibExt/F.lean:\n  remove #[import Mathlib.Tactic.Ring]\n"
+                     f"{ROOT}/MathlibExt/F.lean:1:1: warning: unused import\n")
+        _, out, _ = run_main([first], files)
+        self.assertIn("agitate finds `import Mathlib.Tactic.Ring` unused here", out)
+        self.assertNotIn("Mathlib.Data.Nat.Basic", out)
+        second = done(f"{ROOT}/MathlibExt/F.lean:1:28: warning: unused import\n")
+        _, out, _ = run_main([second], files)
+        self.assertIn("agitate finds `import Mathlib.Data.Nat.Basic` unused here", out)
+
+    def test_a_skipped_file_is_a_failure_to_run(self):
+        # agitate prints the parse errors of a header it cannot read to stdout, skips the file,
+        # and exits 0 when it suggests nothing else.
+        skipped = (f"{B}:1:7: error: unexpected token 'at'; expected identifier\n"
+                   "parse errors in file\n")
+        errors: list[str] = []
+        code, out, _ = run_main([done("", 0), done(skipped, 0)], extra=["--report-only"],
+                                errors=errors)
+        self.assertEqual(code, 2)
+        self.assertNotIn("would remove none", out)
+        self.assertIn("unexpected token 'at'", errors[0])
+        self.assertIn("check is incomplete", errors[0])
+
+    def test_a_skipped_file_next_to_findings_is_still_a_failure_to_run(self):
+        missing = "error: failed to find source file for MathlibExt.B\n"
+        errors: list[str] = []
+        code, out, _ = run_main([done(MODULE_OUTPUT), done(missing, 0)], extra=["--report-only"],
+                                errors=errors)
+        self.assertEqual(code, 2)
+        self.assertIn("::warning file=MathlibExt/A.lean,line=9,col=1,", out)  # still reported
+        self.assertIn("failed to find source file for MathlibExt.B", errors[0])
 
     def test_nothing_to_check(self):
         code, out, calls = run_main([], files=[])
