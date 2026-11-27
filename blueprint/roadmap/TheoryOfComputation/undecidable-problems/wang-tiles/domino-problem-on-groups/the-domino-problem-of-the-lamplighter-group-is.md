@@ -13,6 +13,8 @@ Previously only the seeded tiling problem of $\mathcal L$, which also prescribes
 - [Group](../../../../GroupTheory/group-basics/group.md)
 - [Lamplighter group](../../../../GroupTheory/group-rings/ore-condition-for-group-algebras/lamplighter.md)
 - [Wang tilings of finitely generated groups and the domino problem](wang-tilings-of-finitely-generated-groups-and-th.md)
+- [The arithmetical class $\Pi_n$](../../../degrees-and-hierarchies/arithmetical-hierarchy/is-pi.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

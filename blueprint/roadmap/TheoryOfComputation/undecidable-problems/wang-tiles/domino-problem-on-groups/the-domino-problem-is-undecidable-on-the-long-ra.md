@@ -20,6 +20,7 @@ of the graph, and in particular its domino problem, is decidable.
 ## Depends on
 
 - [Wang tilings of finitely generated groups and the domino problem](wang-tilings-of-finitely-generated-groups-and-th.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

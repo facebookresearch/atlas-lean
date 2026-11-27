@@ -2,18 +2,21 @@
 
 No algorithm decides whether a given set of Wang tiles with color deficiency $25$ tiles the plane.
 
-**Corollary.** The tiling problem restricted to finite sets $T$ of
-[Wang tiles](wang-tiles-and-valid-tilings.md) with color deficiency $cd(T) = n(T) - c(T) = 25$, in the sense of
-[Wang bars and the tiling problem for k Wang bars](wang-bars-and-the-tiling-problem-for-k-wang-bars.md), is undecidable.
+For a finite set $T$ of [Wang tiles](wang-tiles-and-valid-tilings.md), let $n(T) = |T|$ and let $c(T)$ be the maximum, over the four
+sides, of the number of different colors that the tiles of $T$ carry on that side; the *color deficiency* of $T$ is
+$cd(T) = n(T) - c(T) \ge 0$ (Definition 2 of the source).
 
-Here $n(T)$ is the number of tiles and $c(T)$ the largest number of colors on one side, so the color deficiency is fixed while
+**Corollary.** The tiling problem restricted to finite sets $T$ of Wang tiles with color deficiency $cd(T) = 25$ is undecidable
+(Corollary 1 of the source).
+
+The color deficiency is fixed while
 the number of tiles and colors grows; fixing the number of tiles alone, or of colors alone, would leave only finitely many
 instances. This improves the color deficiency $43$ of Jeandel and Rolin.
 
 ## Depends on
 
 - [Wang tiles and valid tilings](wang-tiles-and-valid-tilings.md)
-- [Wang bars and the tiling problem for k Wang bars](wang-bars-and-the-tiling-problem-for-k-wang-bars.md)
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -30,4 +33,4 @@ the plane exactly when the bars do.
 
 ## Sources
 
-- C. Yang and Z. Zhang, "Undecidability of tiling the plane with a fixed number of Wang bars", *Journal of the Operations Research Society of China*, published online 2026, doi:10.1007/s40305-025-00666-0; Corollary 1 of the version arXiv:2404.04504v1 with its proof, and Theorem 3 (the transfer of Jeandel and Rolin).
+- C. Yang and Z. Zhang, "Undecidability of tiling the plane with a fixed number of Wang bars", *Journal of the Operations Research Society of China*, published online 2026, doi:10.1007/s40305-025-00666-0; Definition 2 and Corollary 1 of the version arXiv:2404.04504v1 with its proof, and Theorem 3 (the transfer of Jeandel and Rolin).

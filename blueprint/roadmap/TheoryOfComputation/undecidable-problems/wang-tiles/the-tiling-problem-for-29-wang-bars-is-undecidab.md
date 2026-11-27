@@ -11,6 +11,7 @@ of Jeandel and Rolin, who also claimed without proof that $35$ suffice.
 ## Depends on
 
 - [Wang bars and the tiling problem for k Wang bars](wang-bars-and-the-tiling-problem-for-k-wang-bars.md)
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

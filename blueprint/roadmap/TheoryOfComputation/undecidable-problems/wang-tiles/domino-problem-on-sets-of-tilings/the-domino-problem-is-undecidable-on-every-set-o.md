@@ -17,6 +17,7 @@ tilings. The theorem assumes only that $X$ is nonempty and has finite local comp
 - [Geometric tilings and the domino problem on a set of tilings](geometric-tilings-and-the-domino-problem-on-a-se.md)
 - [The arithmetical class $\Pi_n$](../../../degrees-and-hierarchies/arithmetical-hierarchy/is-pi.md)
 - [The arithmetical class $\Sigma_n$](../../../degrees-and-hierarchies/arithmetical-hierarchy/is-sigma.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -32,4 +33,4 @@ the Robinson tiles modified by Gurevich and Koryakov, which tile periodically wh
 
 ## Sources
 
-- B. Hellouin de Menibus, V. H. Lutfalla and P. Vanier, "Decision problems on geometric tilings", *Theoretical Computer Science* 1067, article 115756, 2026, doi:10.1016/j.tcs.2026.115756; read in arXiv:2409.11739v2: the main theorem of Section 3 (The domino problem is undecidable on every set of tilings) with its proof, and the theorem of Section 4 (Finite local complexity is undecidable for geometric tilings) with its two lemmas.
+- B. Hellouin de Menibus, V. H. Lutfalla and P. Vanier, "Decision problems on geometric tilings", *Theoretical Computer Science* 1067, article 115756, 2026, doi:10.1016/j.tcs.2026.115756; read in arXiv:2409.11739v2: Theorem 13 of Section 3 (The domino problem is undecidable on every set of tilings) with its proof, and Theorem 22 of Section 4 (Finite local complexity is undecidable for geometric tilings) with Lemmas 23 and 24, with the numbering of that version.

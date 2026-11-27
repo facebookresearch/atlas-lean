@@ -11,6 +11,7 @@ For tile sets that are deterministic in only one pair of directions, undecidabil
 ## Depends on
 
 - [Wang tiles and valid tilings](wang-tiles-and-valid-tilings.md)
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

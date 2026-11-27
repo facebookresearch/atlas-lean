@@ -15,6 +15,7 @@ This extends to every dimension $d \ge 2$ the planar results for rhombus tilings
 ## Depends on
 
 - [Geometric tilings and the domino problem on a set of tilings](geometric-tilings-and-the-domino-problem-on-a-se.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

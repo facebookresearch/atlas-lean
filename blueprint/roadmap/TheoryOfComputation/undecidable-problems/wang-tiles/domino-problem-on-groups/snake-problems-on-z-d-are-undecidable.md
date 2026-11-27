@@ -7,6 +7,7 @@ For every $d\ge2$ and every finite generating set of $\mathbb Z^d$, the infinite
 ## Depends on
 
 - [Domino snake problems on finitely generated groups](domino-snake-problems-on-groups.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -18,4 +19,4 @@ A *snake embedding* of $(G,S)$ into $(H,T)$ is a map $G\to H$ computed on words 
 
 ## Sources
 
-- Nathalie Aubrun and Nicolas Bitar, "Domino Snake Problems on Groups", in *Fundamentals of Computation Theory (FCT 2023)*, Lecture Notes in Computer Science 14292, Springer, 2023, pp. 46–59, doi:[10.1007/978-3-031-43587-4_4](https://doi.org/10.1007/978-3-031-43587-4_4); read in arXiv:2307.12655v1 ([arXiv](https://arxiv.org/abs/2307.12655v1)), cited by section because its theorem counters are not recoverable from the source files: Section 5 (snake embeddings): the definition of snake embeddings, the reduction proposition, and the proposition on $\mathbb Z^d$ for all generating sets; Section 3 for the recalled results on $\mathbb Z^2$.
+- Nathalie Aubrun and Nicolas Bitar, "Domino Snake Problems on Groups", in *Fundamentals of Computation Theory (FCT 2023)*, Lecture Notes in Computer Science 14292, Springer, 2023, pp. 46–59, doi:[10.1007/978-3-031-43587-4_4](https://doi.org/10.1007/978-3-031-43587-4_4); read in arXiv:2307.12655v1 ([arXiv](https://arxiv.org/abs/2307.12655v1)), whose numbering is used: Section 5 (Snake Embeddings): Definitions 7 and 8, Proposition 7 (the reduction) and Proposition 8 ($\mathbb Z^d$ for all generating sets); Theorem 1 in Section 3 for the recalled results on $\mathbb Z^2$.

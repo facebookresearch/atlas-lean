@@ -28,6 +28,7 @@ and a group with undecidable word problem has an undecidable one.
 ## Depends on
 
 - [Group](../../../../GroupTheory/group-basics/group.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -35,4 +36,4 @@ None.
 
 ## Sources
 
-- N. Aubrun and J. Kari, "Tiling problems on Baumslag-Solitar groups", in *Machines, Computations and Universality (MCU 2013)*, Electronic Proceedings in Theoretical Computer Science 128, pp. 35–46, 2013, doi:10.4204/EPTCS.128.12; numbering of the version arXiv:1309.1266v1: Section 2 (Cayley graphs, Wang tiles on a finite subset of a group, valid tilings, the domino problem, Theorem 1 on the choice of generators) and Section 1 (virtually free groups, word problem).
+- N. Aubrun and J. Kari, "Tiling problems on Baumslag-Solitar groups", in *Machines, Computations and Universality (MCU 2013)*, Electronic Proceedings in Theoretical Computer Science 128, pp. 35–46, 2013, doi:10.4204/EPTCS.128.12; numbering of the version arXiv:1309.1266v1: Section 1 (Cayley graphs, Wang tiles on a finite subset of a group, valid tilings, the domino problem in Section 1.3, Theorem 1 on the choice of generators) and the unnumbered introduction (virtually free groups, word problem).

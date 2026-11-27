@@ -23,6 +23,7 @@ low-complexity conjecture, which the same source settles for uniformly recurrent
 ## Depends on
 
 - [Wang tiles and valid tilings](wang-tiles-and-valid-tilings.md)
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

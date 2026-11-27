@@ -25,6 +25,7 @@ valid tilings but no computable one.
 - [Wang tilings of finitely generated groups and the domino problem](wang-tilings-of-finitely-generated-groups-and-th.md)
 - [Group](../../../../GroupTheory/group-basics/group.md)
 - [One-relator group](../../../../GroupTheory/presentations-and-decision-problems/coherence-of-one-relator-groups/one-relator-group.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -43,4 +44,4 @@ $BS(m, n)$ exactly when the piecewise affine map has an immortal point.
 
 ## Sources
 
-- N. Aubrun and J. Kari, "Tiling problems on Baumslag-Solitar groups", in *Machines, Computations and Universality (MCU 2013)*, Electronic Proceedings in Theoretical Computer Science 128, pp. 35–46, 2013, doi:10.4204/EPTCS.128.12; numbering of the version arXiv:1309.1266v1: Theorem 9 (undecidability) and Theorem 10 (arecursive tile sets) of Section 5, Theorem 8 (weakly aperiodic tile sets) of Section 4, and Section 3 (Baumslag–Solitar groups and their Cayley graphs).
+- N. Aubrun and J. Kari, "Tiling problems on Baumslag-Solitar groups", in *Machines, Computations and Universality (MCU 2013)*, Electronic Proceedings in Theoretical Computer Science 128, pp. 35–46, 2013, doi:10.4204/EPTCS.128.12; numbering of the version arXiv:1309.1266v1: Theorem 9 (undecidability) and Theorem 10 (arecursive tile sets) of Section 4, Theorem 8 (weakly aperiodic tile sets) of Section 3, and Section 2 (Baumslag–Solitar groups and their Cayley graphs).

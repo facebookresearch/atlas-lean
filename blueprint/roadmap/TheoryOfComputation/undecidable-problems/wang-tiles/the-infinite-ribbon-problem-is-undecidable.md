@@ -4,16 +4,16 @@ No algorithm decides whether a finite set of Wang tiles admits an infinite ribbo
 
 **Ribbons.** A *tile* is a quadruple $t=(t_N,t_E,t_S,t_W)$ of glues from a finite set, and a *tile system* $T$ is a finite set of tiles, which cannot be rotated (see [Wang tiles and valid tilings](wang-tiles-and-valid-tilings.md)); $t$ *sticks* on the north to $t'$ if $t_N=t'_S$, and similarly for the other sides. A *path* is a map $P:I\to\mathbb Z^2$ on a set $I$ of consecutive integers such that $P(i)$ and $P(i+1)$ are adjacent for all $i,i+1\in I$. A *$T$-ribbon* is a pair $(P,r)$ of a one-to-one path $P$ and a map $r:\mathrm{range}(P)\to T$ such that whenever $P(i+1)$ abuts $P(i)$ on the north (south, east, west), $r(P(i+1))$ sticks to $r(P(i))$ on the north (south, east, west); it is *infinite* if $I$ is infinite. Only consecutive tiles of the path have to match, not all adjacent ones.
 
-**Theorem (Adleman, Kari, Kari, Reishus and Sosík).**
+**Theorem (Adleman, Kari, Kari, Reishus and Sosík).** The set of tile systems $T$ for which there exists an infinite $T$-ribbon is undecidable (Theorem 4.2).
 
-1. The set of tile systems $T$ for which there exists an infinite $T$-ribbon is undecidable (Theorem 4.2).
-2. The sets of tile systems that admit an infinite supertile, and of tile systems that admit infinitely many pairwise non-equivalent finite supertiles, are undecidable (Theorem 5.1). Here a $T$-supertile is a connected set of positions, filled with tiles of $T$, that can be built from one tile by adding tiles one at a time, each sticking to some tile placed before, and supertiles are equivalent if they differ by a translation.
+As a consequence, the same paper shows that the sets of tile systems that admit an infinite supertile, and of tile systems that admit infinitely many pairwise non-equivalent finite supertiles, are undecidable (Theorem 5.1), because both coincide with the set of tile systems that admit an infinite ribbon. Here a $T$-supertile is a connected set of positions, filled with tiles of $T$, that can be built from one tile by adding tiles one at a time, each sticking to some tile placed before, and supertiles are equivalent if they differ by a translation.
 
 With a prescribed seed tile, the existence of an infinite ribbon or snake through it was known to be undecidable; the theorem settles the unseeded version, posed as the unlimited infinite snake problem. In a ribbon no position is visited twice, while the infinite snakes of the snake problem may cross themselves at sites carrying identical tiles; the theorem also shows that the existence of infinite non-self-crossing snakes is undecidable.
 
 ## Depends on
 
 - [Wang tiles and valid tilings](wang-tiles-and-valid-tilings.md)
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -21,7 +21,7 @@ With a prescribed seed tile, the existence of an infinite ribbon or snake throug
 
 ## Expansion
 
-The proof constructs a directed tile system with the strong plane-filling property (Theorem 3.1): in a *directed* tile system each tile carries an arrow to a neighbor, a *directed zipper* is a ribbon following the arrows in which all adjacent tiles match, and the property forces every infinite directed zipper to fill the plane while guaranteeing that one exists. Combining this system with a given tile set reduces the tiling problem to the existence of an infinite directed zipper (Theorem 4.1). Each directed tile is then replaced by a ribbon motif, a short ribbon entering on one side and leaving towards its arrow, whose glues force any infinite ribbon to be a sequence of motifs, so infinite directed zippers correspond to infinite ribbons (Theorem 4.2). For part 2, both sets of tile systems coincide with the set of tile systems that admit an infinite ribbon. A complete expansion links a page for the existence of a directed tile system with the strong plane-filling property (Theorem 3.1 of the source), the main construction of the proof, which has none.
+The proof constructs a directed tile system with the strong plane-filling property (Theorem 3.1): in a *directed* tile system each tile carries an arrow to a neighbor, a *directed zipper* is a ribbon following the arrows in which all adjacent tiles match, and the property forces every infinite directed zipper to fill the plane while guaranteeing that one exists. Combining this system with a given tile set reduces the tiling problem to the existence of an infinite directed zipper (Theorem 4.1). Each directed tile is then replaced by a ribbon motif, a short ribbon entering on one side and leaving towards its arrow, whose glues force any infinite ribbon to be a sequence of motifs, so infinite directed zippers correspond to infinite ribbons (Theorem 4.2). A complete expansion links a page for the existence of a directed tile system with the strong plane-filling property (Theorem 3.1 of the source), the main construction of the proof, which has none.
 
 ## Sources
 

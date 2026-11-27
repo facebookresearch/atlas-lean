@@ -10,6 +10,7 @@ The same holds for the seeded tiling problem of every Diestel–Leader graph $\m
 
 - [Group](../../../../GroupTheory/group-basics/group.md)
 - [Lamplighter group](../../../../GroupTheory/group-rings/ore-condition-for-group-algebras/lamplighter.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -17,7 +18,7 @@ The same holds for the seeded tiling problem of every Diestel–Leader graph $\m
 
 ## Expansion
 
-The proof reduces the seeded tiling problem of $\mathbb Z^2$, undecidable by Kahr, Moore and Wang (Theorem 3.7 of the source). Tiling problems are treated as problems about labeled graphs, and a graph $\mathcal G$ *simulates* a graph $\mathcal H$ when the edges of $\mathcal H$ are realized by regular expressions in the edges of $\mathcal G$, under an auxiliary labeling of $\mathcal G$ by a "pheromone" tileset; if $\mathcal G$ simulates $\mathcal H$ and $\mathcal G$ has a solvable tiling problem, so does $\mathcal H$ (Theorems 3.4 and 3.6). Although $\mathbb Z^2$ does not embed geometrically in $L$, the decorated Cayley graph of $L$ simulates the quadrant or the plane, using a "comb" (Proposition 5.2) or a "sea level" (Proposition 6.10). Combining the pheromone tileset with the instance, and using a seed tile to fix the decoration, gives the undecidability of the seeded tiling problem of $L$.
+The proof reduces the seeded tiling problem of $\mathbb Z^2$, undecidable by Kahr, Moore and Wang (Theorem 3.7 of the source); it also follows from the undecidability of the unseeded tiling problem, linked above, by trying every seed color. Tiling problems are treated as problems about labeled graphs, and a graph $\mathcal G$ *simulates* a graph $\mathcal H$ when the edges of $\mathcal H$ are realized by regular expressions in the edges of $\mathcal G$, under an auxiliary labeling of $\mathcal G$ by a "pheromone" tileset; if $\mathcal G$ simulates $\mathcal H$ and $\mathcal G$ has a solvable tiling problem, so does $\mathcal H$ (Theorems 3.4 and 3.6). Although $\mathbb Z^2$ does not embed geometrically in $L$, the decorated Cayley graph of $L$ simulates the quadrant or the plane, using a "comb" (Proposition 5.2) or a "sea level" (Proposition 6.10). Combining the pheromone tileset with the instance, and using a seed tile to fix the decoration, gives the undecidability of the seeded tiling problem of $L$.
 
 ## Sources
 

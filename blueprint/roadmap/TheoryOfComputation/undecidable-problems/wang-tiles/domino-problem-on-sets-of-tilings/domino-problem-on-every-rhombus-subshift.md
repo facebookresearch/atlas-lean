@@ -10,6 +10,7 @@ No computability assumption on $X$ is needed for hardness. When the forbidden pa
 
 - [The domino problem on a rhombus subshift](domino-problem-on-a-rhombus-subshift.md)
 - [Co-recognizability by single-tape machines](../../../turing-machines/single-tape/decidable-and-recognizable-predicates-on-single/single-tape-co-recognizable.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -21,4 +22,4 @@ Membership in $\Pi^0_1$ for effective $X$: by compactness a tiling exists iff, f
 
 ## Sources
 
-- Benjamin Hellouin de Menibus, Victor H. Lutfalla and Camille Noûs, "The Domino Problem Is Undecidable on Every Rhombus Subshift", in *Developments in Language Theory (DLT 2023)*, Lecture Notes in Computer Science 13911, Springer, 2023, pp. 100–112, doi:[10.1007/978-3-031-33264-7_9](https://doi.org/10.1007/978-3-031-33264-7_9); numbering of arXiv:2302.12086v1 ([arXiv](https://arxiv.org/abs/2302.12086v1)): the main theorem of Section 1; Section 3: the proposition that $\mathrm{Domino}(X)$ is in $\Pi^0_1$ for effective $X$ (Section 3.1), the hardness for subshifts with a uniformly recurrent shape (Section 3.2), and the theorem of Section 3.3 (every nonempty rhombus subshift) with the remarks after it.
+- Benjamin Hellouin de Menibus, Victor H. Lutfalla and Camille Noûs, "The Domino Problem Is Undecidable on Every Rhombus Subshift", in *Developments in Language Theory (DLT 2023)*, Lecture Notes in Computer Science 13911, Springer, 2023, pp. 100–112, doi:[10.1007/978-3-031-33264-7_9](https://doi.org/10.1007/978-3-031-33264-7_9); numbering of arXiv:2302.12086v1 ([arXiv](https://arxiv.org/abs/2302.12086v1)): Theorem 1 in Section 1; Section 3: Proposition 16 ($\mathrm{Domino}(X)$ is in $\Pi^0_1$ for effective $X$, Section 3.1), Proposition 22 (hardness for subshifts with a uniformly recurrent shape, Section 3.2), and Theorem 26 in Section 3.3 (every nonempty rhombus subshift) with the remarks after it.

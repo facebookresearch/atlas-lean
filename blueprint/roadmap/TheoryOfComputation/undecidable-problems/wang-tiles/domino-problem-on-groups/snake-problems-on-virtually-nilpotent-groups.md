@@ -11,6 +11,7 @@ The statement is existential in the generating set: the source does not claim un
 ## Depends on
 
 - [Domino snake problems on finitely generated groups](domino-snake-problems-on-groups.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -22,4 +23,4 @@ If $G$ has an element $g$ of infinite order in its center and $G/\langle g\rangl
 
 ## Sources
 
-- Nathalie Aubrun and Nicolas Bitar, "Domino Snake Problems on Groups", in *Fundamentals of Computation Theory (FCT 2023)*, Lecture Notes in Computer Science 14292, Springer, 2023, pp. 46–59, doi:[10.1007/978-3-031-43587-4_4](https://doi.org/10.1007/978-3-031-43587-4_4); read in arXiv:2307.12655v1 ([arXiv](https://arxiv.org/abs/2307.12655v1)), cited by section because its theorem counters are not recoverable from the source files: Section 6 (virtually nilpotent groups): the lemma on central elements of infinite order, the propositions preceding the theorem, the theorem on nilpotent groups and its corollary on virtually nilpotent groups.
+- Nathalie Aubrun and Nicolas Bitar, "Domino Snake Problems on Groups", in *Fundamentals of Computation Theory (FCT 2023)*, Lecture Notes in Computer Science 14292, Springer, 2023, pp. 46–59, doi:[10.1007/978-3-031-43587-4_4](https://doi.org/10.1007/978-3-031-43587-4_4); read in arXiv:2307.12655v1 ([arXiv](https://arxiv.org/abs/2307.12655v1)), whose numbering is used: Section 6 (Virtually Nilpotent Groups): Lemma 2, Propositions 9 and 10, Theorem 4 and Corollary 2.

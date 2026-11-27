@@ -28,4 +28,4 @@ None.
 
 ## Sources
 
-- B. Hellouin de Menibus, V. H. Lutfalla and P. Vanier, "Decision problems on geometric tilings", *Theoretical Computer Science* 1067, article 115756, 2026, doi:10.1016/j.tcs.2026.115756; read in arXiv:2409.11739v2: Section 2 (geometric tilings, patterns, geometric subshifts, valid tilings, finite local complexity, symbolic-geometric tilings and the domino problem on a set of tilings).
+- B. Hellouin de Menibus, V. H. Lutfalla and P. Vanier, "Decision problems on geometric tilings", *Theoretical Computer Science* 1067, article 115756, 2026, doi:10.1016/j.tcs.2026.115756; read in arXiv:2409.11739v2: Section 2 (Definitions 3 and 7–12: geometric tilings, patterns, geometric subshifts, valid tilings, finite local complexity, symbolic-geometric tilings and the domino problem on a set of tilings), with the numbering of that version.
