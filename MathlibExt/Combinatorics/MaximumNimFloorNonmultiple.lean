@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Combinatorics.MaximumNimJosephus
+import all MathlibExt.Combinatorics.MaximumNimJosephus
 
 /-!
 # Maximum Nim Grundy numbers at non-multiples
@@ -17,8 +18,9 @@ For the rule $f(x) = \lfloor x/k \rfloor$ with $k \ge 2$, the closed window from
 has Grundy numbers $0, \dots, f(x)$, each occurring once. The left endpoint never decreases:
 when the rule increases it stays put, and otherwise it advances by one. The new right endpoint
 has a different Grundy number from every retained position because it can move to each one.
-At a non-multiple of $k$, the next option window therefore omits just the oldest value,
-which becomes the new mex. The floor identity identifies the discarded position.
+At a non-multiple $x$ of $k$, the legal options are exactly the preceding closed window with its
+leftmost position removed. The discarded value becomes the new mex, and the floor identity
+identifies its position.
 
 ## References
 
@@ -49,15 +51,8 @@ private theorem floorGrundy_eq_mex_window (k x : ℕ) :
     exact ⟨⟨x - y, Finset.mem_Icc.mpr ⟨by omega, by omega⟩⟩,
       congrArg (maximumNimGrundy (· / k)) hxy⟩
 
-private theorem floorGrundy_le_div (k x : ℕ) : maximumNimGrundy (· / k) x ≤ x / k := by
-  have h := (maximumNimMex_eq_iff _ _).mp (floorGrundy_eq_mex_window k x).symm
-  calc
-    maximumNimGrundy (· / k) x = (Finset.range (maximumNimGrundy (· / k) x)).card :=
-      (Finset.card_range _).symm
-    _ ≤ ((Finset.Ico (x - x / k) x).image (maximumNimGrundy (· / k))).card :=
-      Finset.card_le_card fun n hn => h.2 n (Finset.mem_range.mp hn)
-    _ ≤ (Finset.Ico (x - x / k) x).card := Finset.card_image_le
-    _ = x / k := by rw [Nat.card_Ico, Nat.sub_sub_self (Nat.div_le_self x k)]
+private theorem floorGrundy_le_div (k x : ℕ) : maximumNimGrundy (· / k) x ≤ x / k :=
+  (maximumNimGrundy_le_min_rule (· / k) x).trans (min_le_left _ _)
 
 private theorem floorGrundy_injOn_window (k x : ℕ) :
     Set.InjOn (maximumNimGrundy (· / k)) (↑(Finset.Icc (x - x / k) x) : Set ℕ) := by
@@ -73,9 +68,10 @@ private theorem floorGrundy_injOn_window (k x : ℕ) :
       split <;> omega
     have hne (a : ℕ) (ha : (x + 1) - (x + 1) / k ≤ a) (hal : a < x + 1) :
         maximumNimGrundy (· / k) a ≠ maximumNimGrundy (· / k) (x + 1) := by
-      intro heq
-      have h := (maximumNimMex_eq_iff _ _).mp (floorGrundy_eq_mex_window k (x + 1)).symm
-      exact h.1 (Finset.mem_image.mpr ⟨a, Finset.mem_Ico.mpr ⟨ha, hal⟩, heq⟩)
+      have hmove : x + 1 - a ≤ min ((x + 1) / k) (x + 1) :=
+        le_min (by omega) (Nat.sub_le _ _)
+      simpa only [Nat.sub_sub_self hal.le] using
+        maximumNimGrundy_sub_ne_of_move (· / k) (x + 1) (x + 1 - a) (by omega) hmove
     intro a ha b hb hab
     simp only [Finset.mem_coe, Finset.mem_Icc] at ha hb
     by_cases ha' : a = x + 1
