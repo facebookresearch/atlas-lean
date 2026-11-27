@@ -27,7 +27,6 @@ maximal commuting set and choose $\bar X_i$ by symplectic Gram–Schmidt, so tha
 ## Proof depends on
 
 - [Pauli operators commute exactly when their symplectic product vanishes](pauli-operators-commute-iff-symplectic-product-vanishes.md)
-- [Order of the normalizer of a stabilizer group](order-of-the-normalizer-of-a-stabilizer-group.md)
 - [Symplectic Gram–Schmidt over $\mathbb{F}_2$](symplectic-gram-schmidt-over-f2.md)
 
 ## Sources

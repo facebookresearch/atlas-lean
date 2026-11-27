@@ -23,7 +23,6 @@ prerequisites and links it under the dependency sections below:
 ## Proof depends on
 
 - [Polar decomposition of a complex square matrix](../../LinearAlgebra/matrix-decompositions/polar-decomposition/polar-decomposition-theorem/exists-unitary-group-pos-semidef.md)
-- [Purification and unitary equivalence of purifications](../quantum-foundations/purification-and-unitary-equivalence-of-purifications.md): unitary equivalence of purifications
 - [Trace norm and trace distance](density-matrices-and-fidelity/trace-norm-and-trace-distance.md): isometry invariance and the unitary variational formula, with the maximising unitary rotated by a scalar to pass from the real part to the absolute value
 
 ## Sources

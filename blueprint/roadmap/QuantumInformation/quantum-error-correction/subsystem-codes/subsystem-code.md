@@ -31,10 +31,6 @@ Shor's nine-qubit code, with part of its stabilizer moved into the gauge group, 
 - [Finite-family Kraus linear map](../../../Analysis/not-yet-classified/kraus/kraus-linear-map.md)
 - [The Knill–Laflamme conditions](../knill-laflamme-conditions/is-correctable-iff-knill-laflamme.md)
 
-## Proof depends on
-
-- [The Knill–Laflamme conditions](../knill-laflamme-conditions/is-correctable-iff-knill-laflamme.md)
-
 ## Sources
 
 - D. Poulin, *Stabilizer formalism for operator quantum error correction*, Phys. Rev. Lett. 95 (2005), 230504, arXiv:quant-ph/0508131, equations (1)–(3), the construction of $G$ and $L$, "a stabilizer OQEC code therefore has 4 parameters, $[[n, k, r, d]]$", and Table II (the $[[9, 1, 4, 3]]$ version of Shor's code).
