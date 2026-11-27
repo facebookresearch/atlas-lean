@@ -42,22 +42,11 @@ public import MathlibExt.NumberTheory.SZumkellerIsUnitarySZumkellerBounds
 public import MathlibExt.NumberTheory.SZumkellerEightLeCardPrimeFactorsOfIsSZumkellerOdd
 public import MathlibExt.NumberTheory.SZumkellerTwelveLeCardDivisorsOfIsSZumkeller
 public import MathlibExt.NumberTheory.SZumkellerIsSquareOfIsSZumkellerOdd
+public import MathlibExt.NumberTheory.SZumkellerIsSZumkellerEvenProps
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Properties of even s-Zumkeller numbers.** Let $n$ be an even s-Zumkeller number and let
-$\sigma_2(n)$ be the sum of the squares of the positive divisors of $n$. Then $\sigma_2(n)$ is
-even, some odd prime $p$ divides $n$ with an odd exponent in the prime factorization of $n$, and
-$3n^2 \le 2\sigma_2(n)$.
-
-Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
-Numbers*, INTEGERS 24 (2024), Article A95, Proposition 1. -/
-public theorem_wanted isSZumkeller_even_props (n : ℕ) (h : IsSZumkeller n) (he : Even n) :
-    Even (ArithmeticFunction.sigma 2 n) ∧
-      (∃ p ∈ n.primeFactors, Odd p ∧ Odd (n.factorization p)) ∧
-      3 * n ^ 2 ≤ 2 * ArithmeticFunction.sigma 2 n
 
 /-- **A prime-factor product bound for s-Zumkeller numbers.** Let $n$ be an s-Zumkeller number
 and let $p_1$ be its least prime factor. Then
