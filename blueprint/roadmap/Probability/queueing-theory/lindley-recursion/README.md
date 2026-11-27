@@ -4,3 +4,4 @@
 - [Stationary workload for stationary ergodic increments](loynes-stationary-workload-for-ergodic-increments.md)
 - [The supremum of the random walk is a stationary law of Lindley's recursion](stationary-law-of-the-lindley-recursion.md)
 - [Pollaczek–Khinchine mean waiting time](pollaczek-khinchine-mean-value-formula.md)
+- [Kingman's bound for the GI/G/1 queue](kingman-s-bound-for-the-gi-g-1-queue.md)
