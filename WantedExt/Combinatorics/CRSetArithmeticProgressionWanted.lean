@@ -12,6 +12,8 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Data.PNat.Basic
 public import MathlibExt.Combinatorics.EssentialSetSequence
 public import MathlibExt.Combinatorics.RamseyFamily
+public import MathlibExt.Combinatorics.RamseyFamilyIdempotent
+public import MathlibExt.Combinatorics.RamseyFamilyDecreasingSequenceIdempotent
 
 /-!
 # Arithmetic progressions in CR-sets
@@ -163,59 +165,6 @@ end Largeness
 section Families
 
 variable {S : Type*}
-
-/-- **β(F) contains an idempotent when it is a subsemigroup.** Let $S$ be a semigroup and
-$\mathcal F$ a family of subsets of $S$ with the Ramsey property, and multiply ultrafilters on
-$S$ by $E \in pq$ iff $\{x \in S : \{y \in S : xy \in E\} \in q\} \in p$. If
-$pq \in \beta(\mathcal F)$ for all $p, q \in \beta(\mathcal F)$, then there is
-$p \in \beta(\mathcal F)$ with $pp = p$.
-
-Source: De and Debnath, *Abundance of Arithmetic Progressions in CR-Sets*, INTEGERS
-25 (2025), Article A4, Theorem 3 (`integers-2025-A4-thm-3`). -/
-public theorem_wanted exists_idempotent_mem_betaFamily [Semigroup S] {F : Set (Set S)}
-    (hF : IsRamseyFamily F) (hsub : ∀ p ∈ betaFamily F, ∀ q ∈ betaFamily F, p * q ∈ betaFamily F) :
-    ∃ p ∈ betaFamily F, p * p = p
-
-/-- **Subsemigroup criterion for β(F).** Let $S$ be a semigroup and $\mathcal F$ a family of
-subsets of $S$ with the Ramsey property. For $x \in S$ and $E \subseteq S$ write
-$x^{-1}E = \{y \in S : xy \in E\}$, and multiply ultrafilters on $S$ by $E \in pq$ iff
-$\{x \in S : x^{-1}E \in q\} \in p$. Then $pq \in \beta(\mathcal F)$ for all
-$p, q \in \beta(\mathcal F)$ if and only if every $E \subseteq S$ has the following property: if
-there is $A \in \mathcal F$ such that $\bigcap_{x \in H} x^{-1}E \in \mathcal F$ for every finite
-$H \subseteq A$, then $E \in \mathcal F$.
-
-The source's intersection $\bigcap_{q \in H} x^{-1}E$ is read as $\bigcap_{x \in H} x^{-1}E$.
-
-Source: De and Debnath, *Abundance of Arithmetic Progressions in CR-Sets*, INTEGERS
-25 (2025), Article A4, Theorem 5 (`integers-2025-A4-thm-5`). -/
-public theorem_wanted betaFamily_isSubsemigroup_iff [Semigroup S] {F : Set (Set S)}
-    (hF : IsRamseyFamily F) :
-    (∀ p ∈ betaFamily F, ∀ q ∈ betaFamily F, p * q ∈ betaFamily F) ↔
-      ∀ E : Set S, (∃ A ∈ F, ∀ H : Finset S, ↑H ⊆ A →
-        (⋂ x ∈ H, {y : S | x * y ∈ E}) ∈ F) → E ∈ F
-
-/-- **Decreasing shift-closed sequences give essential sets.** Let $S$ be a semigroup and let $F$
-be a family of subsets of $S$ with the Ramsey property, and write $\beta(F)$ for the set of
-ultrafilters on $S$ all of whose members lie in $F$. For $x \in S$ and $E \subseteq S$ write
-$x^{-1}E = \{y \in S : xy \in E\}$, and multiply ultrafilters on $S$ by the rule that
-$E \in p \cdot q$ if and only if $\{x \in S : x^{-1}E \in q\} \in p$. Suppose that
-$p \cdot q \in \beta(F)$ whenever $p, q \in \beta(F)$. Let $A \subseteq S$, and let
-$C_0 \supseteq C_1 \supseteq C_2 \supseteq \cdots$ be members of $F$ contained in $A$ such that
-for every $n$ and every $x \in C_n$ there is an $m$ with $C_m \subseteq x^{-1}C_n$. Then some
-$p \in \beta(F)$ satisfies $p \cdot p = p$ and $A \in p$; that is, $A$ is an essential $F$-set.
-
-This is the implication (d) ⇒ (a) of the paper's Theorem 6; statements (b) (trees of functions)
-and (c) (downward directed families) are omitted. The sequence is indexed from $0$ rather
-than $1$.
-
-Source: De and Debnath, *Abundance of Arithmetic Progressions in CR-Sets*, INTEGERS
-25 (2025), Article A4, Theorem 6 (`integers-2025-A4-thm-6`). -/
-public theorem_wanted exists_idempotent_mem_of_decreasing_sequence [Semigroup S]
-    {F : Set (Set S)} (hF : IsRamseyFamily F)
-    (hsub : ∀ p ∈ betaFamily F, ∀ q ∈ betaFamily F, p * q ∈ betaFamily F) {A : Set S}
-    (C : ℕ → Set S) (hanti : Antitone C) (hCA : ∀ n, C n ⊆ A)
-    (hshift : ∀ n, ∀ x ∈ C n, ∃ m, C m ⊆ {y : S | x * y ∈ C n}) (hCF : ∀ n, C n ∈ F) :
-    ∃ p ∈ betaFamily F, p * p = p ∧ A ∈ p
 
 end Families
 

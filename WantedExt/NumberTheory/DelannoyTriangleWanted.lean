@@ -53,8 +53,10 @@ public import MathlibExt.LinearAlgebra.Matrix.OrdinaryRiordanPascalLikeMatrix
 public import MathlibExt.NumberTheory.BinomialHarmonicExpansion
 public import MathlibExt.NumberTheory.DelannoyBinomialSum
 public import MathlibExt.NumberTheory.DelannoyBinomialCongruence
+public import MathlibExt.NumberTheory.DelannoyHarmonicCongruence
 public import MathlibExt.NumberTheory.DelannoyPrimeCube
 public import MathlibExt.NumberTheory.FermatQuotient
+public import MathlibExt.NumberTheory.DelannoyTriangle
 
 set_option autoImplicit false
 
@@ -99,37 +101,6 @@ theorem_wanted sum_two_pow_div (p : ℕ) (hp : p.Prime)
       (∑ k ∈ Finset.Icc 1 (p - 1),
           (2 : ZMod p) ^ k * ((k : ZMod p) ^ 2)⁻¹) =
         -((Int.fermatQuotient p hp 2 h2p : ZMod p)) ^ 2
-
-/-- **Sum of $H_k 2^k / k$ over $1 \le k \le p - 1$ modulo $p$.** Let $p \ge 5$ be a prime, let
-$q_p(2) = (2^{p-1} - 1)/p$ be the Fermat quotient of $2$, and let $H_k = \sum_{i=1}^{k} 1/i$
-be the harmonic number modulo $p$, where $1/i$ is the inverse of $i$ modulo $p$. Then
-$$\sum_{k=1}^{p-1} \frac{H_k\, 2^k}{k} \equiv -q_p(2)^2 \pmod{p}.$$
-
-Source: Chahinaze Djadi and Hacène Belbachir,
-"Congruence Properties for the Delannoy Triangle
-Coefficients", Lemma 7. -/
-theorem_wanted sum_harmonic_two_pow_div (p : ℕ)
-    (hp : p.Prime) (hp5 : 5 ≤ p)
-    (h2p : IsCoprime (2 : ℤ) (p : ℤ)) :
-    (∑ k ∈ Finset.Icc 1 (p - 1),
-        harmonicMod p k * (2 : ZMod p) ^ k * (k : ZMod p)⁻¹) =
-      -((Int.fermatQuotient p hp 2 h2p : ZMod p)) ^ 2
-
-/-- **Sum of the Delannoy triangle entries in rows $0$ to $p - 1$ modulo $p$.** Let $p$ be an
-odd prime and let $T(n, k; 1)$ denote the entry of the ordinary Riordan Pascal-like triangle
-with $r = 1$ (the Delannoy triangle). Then
-$$\sum_{n=0}^{p-1} \sum_{k=0}^{n} T(n, k; 1) \equiv \left(\frac{2}{p}\right) \pmod{p},$$
-where $\left(\frac{2}{p}\right)$ is the Legendre symbol.
-
-Source: Chahinaze Djadi and Hacène Belbachir,
-"Congruence Properties for the Delannoy Triangle
-Coefficients", Theorem 9. -/
-theorem_wanted sum_delannoy (p : ℕ) [Fact p.Prime]
-    (hp2 : p ≠ 2) :
-    (∑ n ∈ Finset.range p, ∑ k ∈ Finset.range (n + 1),
-        (MetaMathlibExt.ordinaryRiordanPascalLikeMatrix
-            n k 1 : ZMod p)) =
-      (legendreSym p 2 : ZMod p)
 
 /-- Bridge to the existing symmetric-case API: the constant
 term of `(a x⁻¹ + b + a x)ⁿ`

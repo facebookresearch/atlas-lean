@@ -7,7 +7,8 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# On a conjecture of Talagrand on selector processes and a consequence on positive empirical processes
+# On a conjecture of Talagrand on selector processes and a consequence on positive empirical
+processes
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -23,14 +24,21 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Analysis.SupremumOfSelectorProcesses` — annals_supremum_of_selector_processes (manifest `manifests/problems/annals_supremum_of_selector_processes.toml`, rev 1, submitter David Ledvinka, status active) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Analysis.SupremumOfSelectorProcesses` —
+annals_supremum_of_selector_processes (manifest
+`manifests/problems/annals_supremum_of_selector_processes.toml`, rev 1, submitter David Ledvinka,
+status active) —
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
-and placed the declarations in the `MathlibExt.Analysis.SupremumOfSelectorProcessesWanted` namespace. Mathematical
-statements are unchanged. Source: J. Park and H. T. Pham, `On a conjecture of Talagrand on selector processes and a consequence on positive empirical processes`, Annals of Math, 199 (3) 2024. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2024-199-3-SupremumOfSelectorProcesses.lean
+and placed the declarations in the `MathlibExt.Analysis.SupremumOfSelectorProcessesWanted`
+namespace. Mathematical
+statements are unchanged. Source: J. Park and H. T. Pham, `On a conjecture of Talagrand on
+selector processes and a consequence on positive empirical processes`, Annals of Math, 199 (3)
+2024. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0,
+e32eb14), AnnalsChallenge/AnnalsOfMathematics/2024-199-3-SupremumOfSelectorProcesses.lean
 -/
 module
 
@@ -38,6 +46,7 @@ module
 public import Batteries.Util.ProofWanted
 public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 public import Mathlib.Probability.Distributions.SetBernoulli
+public import MathlibExt.Analysis.SupremumOfSelectorProcesses
 open ProbabilityTheory
 
 @[expose] public section
@@ -113,44 +122,6 @@ namespace SupremumOfSelectorProcesses
 open MeasureTheory ProbabilityTheory Measure unitInterval Finset
 
 open scoped NNReal ENNReal
-
-/-- **Binomial random subset.** For a type $X$ and $p \in [0, 1]$, the binomial random subset
-distribution on $X$ with parameter $p$ is the probability measure on the subsets of $X$ under
-which each element of $X$ belongs to the random subset independently with probability $p$. A
-random subset with this law is denoted $X_p$. -/
-noncomputable def binomialSetDistribution (X : Type*) (p : I) : Measure (Set X) :=
-  setBernoulli Set.univ p
-
-open Classical in
-/-- **$p$-small families of sets.** Let $X$ be a finite type and $p \in [0, 1]$. A family
-$\mathcal{F}$ of subsets of $X$ is $p$-small when there is a family $\mathcal{G}$ of subsets of
-$X$ such that every member of $\mathcal{F}$ contains some member of $\mathcal{G}$ and
-$\sum_{S \in \mathcal{G}} p^{|S|} \le 1/2$. -/
-def IsSmall {X : Type*} [Fintype X] (p : I) (𝓕 : Set (Set X)) : Prop :=
-  ∃ 𝓖 : Set (Set X), 𝓕 ⊆ ⋃ s ∈ 𝓖, {t | s ⊆ t} ∧ (∑ s ∈ 𝓖, (p : ℝ) ^ s.ncard ≤ 2⁻¹)
-
-open Classical in
-/--
-**Park–Pham theorem on selector processes (Talagrand's selector process conjecture).** There is
-a real number $L > 0$ with the following property. Let $0 < p < 1$, let $X$ be a finite type,
-let $\Lambda$ be a set of functions from $X$ to $[0, \infty)$, and let $X_p$ be a binomial random
-subset of $X$ with parameter $p$. Write
-$E = \mathbb{E}\bigl[\sup_{f \in \Lambda} \sum_{i \in X_p} f(i)\bigr]$, computed in
-$[0, \infty]$. If $0 < E < \infty$, then the family of subsets $s \subseteq X$ with
-$\sup_{f \in \Lambda} \sum_{i \in s} f(i) \ge L E$ is $p$-small.
-
-The hypothesis $0 < E < \infty$ is not stated explicitly in the paper's theorem, but it is used
-in the last step of the proof, which derives a contradiction from an inequality $E \ge c E$
-with a constant $c > 1$.
-
-Source: J. Park and H. T. Pham, `On a conjecture of Talagrand on selector processes and a consequence on positive empirical processes`, Annals of Math, 199 (3) 2024. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2024-199-3-SupremumOfSelectorProcesses.lean Via leanprover/lean-eval@38361be, problem `annals_supremum_of_selector_processes`.
--/
-public theorem_wanted theorem_1_2 : ∃ L : ℝ≥0, 0 < L ∧ ∀ (p : I), 0 < p → p < 1 →
-    ∀ (X : Type*) [Fintype X] (Λ : Set (X → ℝ≥0)),
-    0 < 𝔼⁻[⨆ f ∈ Λ, ∑ i ∈ Xp, (f i : ℝ≥0∞); Xp ∼ binomialSetDistribution X p] →
-    𝔼⁻[⨆ f ∈ Λ, ∑ i ∈ Xp, (f i : ℝ≥0∞); Xp ∼ binomialSetDistribution X p] < ∞ →
-    IsSmall p {s : Set X | ⨆ f ∈ Λ, ∑ i ∈ s, (f i : ℝ≥0∞) ≥
-        L * 𝔼⁻[⨆ f ∈ Λ, ∑ i ∈ Xp, (f i : ℝ≥0∞); Xp ∼ binomialSetDistribution X p]}
 
 /-- **Empirical averages.** Given random variables $Y_1, \dots, Y_N$ on $\Omega$ with values in
 $\mathbb{T}$ and a function $f : \mathbb{T} \to [0, \infty)$, $Z_N(f)$ is the random variable

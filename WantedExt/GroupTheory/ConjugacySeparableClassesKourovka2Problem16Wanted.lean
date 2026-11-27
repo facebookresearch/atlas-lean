@@ -22,7 +22,7 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.GroupTheory.Finiteness
 public import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Defs
 public import WantedExt.GroupTheory.FreeSolubleNormalClosureConjugacyKourovka1Problem89Wanted
-public import WantedExt.GroupTheory.GroupClassesShared
+public import MathlibExt.GroupTheory.GroupClassesShared
 public import WantedExt.GroupTheory.KourovkaNotebookShared
 
 @[expose] public section
