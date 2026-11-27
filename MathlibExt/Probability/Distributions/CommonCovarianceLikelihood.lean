@@ -54,8 +54,10 @@ private theorem pdf_pos {ι : Type} [Fintype ι] [DecidableEq ι]
   have h2 : 0 < √R.det := Real.sqrt_pos.2 hR.det_pos
   positivity
 
-/-- The common-covariance Gaussian log-likelihood ratio statistic
-`(s1 - s0)ᵀ R⁻¹ y - (s1ᵀ R⁻¹ s1 - s0ᵀ R⁻¹ s0) / 2`. -/
+/-- The affine statistic `(s1 - s0)ᵀ R⁻¹ y - (s1ᵀ R⁻¹ s1 - s0ᵀ R⁻¹ s0) / 2`, defined for every
+matrix `R`. For positive definite `R` it is the log of the ratio of the Gaussian density with
+mean `s1` to the one with mean `s0`, common covariance `R`
+(`multivariateGaussianPDFReal_div_eq_exp`); for singular `R`, Mathlib's `R⁻¹` is `0`. -/
 noncomputable def commonCovarianceLogLR {ι : Type} [Fintype ι] [DecidableEq ι]
     (s1 s0 : EuclideanSpace ℝ ι) (R : Matrix ι ι ℝ) (y : EuclideanSpace ℝ ι) : ℝ :=
   ofLp (s1 - s0) ⬝ᵥ R⁻¹ *ᵥ ofLp y -

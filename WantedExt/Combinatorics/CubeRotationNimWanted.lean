@@ -14,6 +14,7 @@ public import Mathlib.Data.Fintype.Fin
 public import Mathlib.Order.Basic
 public import Mathlib.Data.Fin.VecNotation
 public import MathlibExt.Combinatorics.MisereCubeRotationNim
+public import MathlibExt.Combinatorics.MisereCubeFaceNim
 public import MathlibExt.Combinatorics.SlowCubeEdgeNim
 public import MathlibExt.Combinatorics.SlowCubeFaceNim
 public import MathlibExt.Combinatorics.SlowCubeVertexNim
@@ -65,25 +66,6 @@ public theorem_wanted cubeVertexNim_misere_pPositions (P : Set (Fin 6 → ℕ))
     (p : Fin 6 → ℕ) (hC : ∀ k, p k ≤ p 5) (ha : p 0 ≤ p 3) (hb : p 1 ≤ p 4) (hab : p 0 ≤ p 1) :
     p ∈ P ↔ (p 0 = p 3 ∧ p 1 = p 4 ∧ p 2 = p 5 ∧ 2 ≤ p 5) ∨ p = ![0, 0, 0, 0, 0, 1] ∨
       p = ![0, 1, 1, 0, 1, 1] ∨ p = ![1, 1, 1, 1, 1, 1]
-
-/-- **Misère P-positions of face Nim on a cube.** Write positions of the game $C_F$ (Nim with six
-heaps) as tuples $p = (a, b, c, A, B, C)$ of numbers of tokens on the faces
-$f_a, f_b, f_c, f_A, f_B, f_C$, where $f_A$, $f_B$, $f_C$ are opposite $f_a$, $f_b$, $f_c$, and let
-$\oplus$ be the Nim-sum (bitwise exclusive or) of natural numbers. Let $\mathcal P$ be any set
-of positions such that a position lies in $\mathcal P$ if and only if it has a face move and
-every face move from it leads to a position outside $\mathcal P$; this is the set of
-P-positions under misère play, where the player making the last move loses. Let $p$ be a
-position in which every entry is at most $C$, and $a \le A$, $b \le B$ and $a \le b$. Then
-$p \in \mathcal P$ if and only if either $C \ge 2$ and $a \oplus b \oplus c \oplus A \oplus B
-\oplus C = 0$, or $C < 2$ and $a \oplus b \oplus c \oplus A \oplus B \oplus C = 1$.
-
-Source: Balaji R. Kadam and A. J. Shaiju, *Variations of the Nim Game Played on a Cube*,
-INTEGERS 25 (2025), Article G2, Theorem 9 (`integers-2025-G2-thm-9`). -/
-public theorem_wanted cubeFaceNim_misere_pPositions (P : Set (Fin 6 → ℕ))
-    (hP : ∀ p, p ∈ P ↔ (∃ q, CubeFaceMove p q) ∧ ∀ q, CubeFaceMove p q → q ∉ P)
-    (p : Fin 6 → ℕ) (hC : ∀ k, p k ≤ p 5) (ha : p 0 ≤ p 3) (hb : p 1 ≤ p 4) (hab : p 0 ≤ p 1) :
-    p ∈ P ↔ (2 ≤ p 5 ∧ p 0 ^^^ p 1 ^^^ p 2 ^^^ p 3 ^^^ p 4 ^^^ p 5 = 0) ∨
-      (p 5 < 2 ∧ p 0 ^^^ p 1 ^^^ p 2 ^^^ p 3 ^^^ p 4 ^^^ p 5 = 1)
 
 /-- **P-positions of slow rotation Nim on a cube.** Write a position of the cube game as
 $p = (a, b, c, A, B, C)$, the numbers of tokens on the six faces of a cube, where the faces

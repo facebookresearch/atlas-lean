@@ -10,6 +10,7 @@ module
 public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.CanonicalKoszulDeterminants
 public import MathlibExt.AlgebraicGeometry.CanonicalKoszulDeterminantsTorsionIndependent
+public import MathlibExt.AlgebraicGeometry.CanonicalKoszulDeterminantsEvaluationIndependent
 
 /-!
 # Direct construction and independence of actual acyclic torsion
@@ -43,11 +44,5 @@ public def_wanted canonicalEvaluation (R : CommRingCat.{0}) (I : DeterminantSour
     (T : TermAssembly R C Q)
     (acyclic : ∀ i : ℤ, Function.Surjective (boundaryMap R C i)) :
     CanonicalEvaluation I Q C T
-
-/-- Independence retains the same fixed source assembly and every scalar/cochain input. -/
-public theorem_wanted evaluation_independent (R : CommRingCat.{0}) (I : DeterminantSources)
-    (C : BoundedProjectiveDeterminants.Complex R) (m : ℕ)
-    (Q : Finset (Fin m) → BoundedProjectiveDeterminants.Complex R)
-    (T : TermAssembly R C Q) (E F : CanonicalEvaluation I Q C T) : E.value = F.value
 
 end WantedExt.AlgebraicGeometry.CanonicalKoszulDeterminants
