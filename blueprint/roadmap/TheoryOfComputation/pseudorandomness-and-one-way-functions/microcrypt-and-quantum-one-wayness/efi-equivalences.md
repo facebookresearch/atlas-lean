@@ -2,7 +2,7 @@
 
 The following are equivalent, by relativizing reductions (which may use the next-message functions of the protocols, not only oracle access to the ideal functionality): (i) EFI pairs exist; (ii) quantum bit commitments exist (in canonical form, computationally hiding and statistically binding, or the dual flavor); (iii) quantum oblivious transfer (computationally secure against malicious parties, possibly with quantum communication) exists; (iv) general secure multiparty computation for classical functionalities exists in the quantum world.
 
-Zero knowledge is related one way at a time. If EFI pairs exist, then $\mathsf{QCZK}=\mathsf{QIP}$ (Theorem 6.4). Conversely, if some language with an honest-verifier $\mathsf{QCZK}$ proof is hard on average for $\mathsf{BQP}$ over a $\mathsf{BQP}$-samplable distribution, then EFI pairs exist (Theorem 6.5); the worst-case assumption $\mathsf{BQP}\neq\mathsf{QCZK}$ yields only auxiliary-input EFI pairs (Theorem 6.8). In particular EFI is a minimal assumption for a large class of quantum cryptography.
+Zero knowledge is related one way at a time. If EFI pairs exist, then $\mathsf{QCZK}=\mathsf{QIP}$ (Theorem 6.4). Conversely, if some language with an honest-verifier $\mathsf{QCZK}$ proof is hard on average for $\mathsf{BQP}$ over a $\mathsf{BQP}$-samplable distribution, then EFI pairs secure against uniform $\mathsf{BQP}$ adversaries (not against the quantum-advice adversaries of the default definition) exist (Theorem 6.5); the worst-case assumption $\mathsf{BQP}\neq\mathsf{QCZK}$ yields only auxiliary-input EFI pairs (Theorem 6.8). In particular EFI is a minimal assumption for a large class of quantum cryptography.
 
 ## Proof sketch
 

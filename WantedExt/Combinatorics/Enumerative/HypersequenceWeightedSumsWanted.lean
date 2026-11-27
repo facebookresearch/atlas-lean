@@ -17,6 +17,7 @@ public import MathlibExt.Combinatorics.Enumerative.AlternatingBinomialPowerSumSt
 public import MathlibExt.Combinatorics.Enumerative.Hypersequence
 public import MathlibExt.Combinatorics.Enumerative.HypersequenceAbelSummation
 public import MathlibExt.Combinatorics.Enumerative.HypersequenceBinomial
+public import MathlibExt.Combinatorics.Enumerative.HypersequenceLucasClosedForm
 public import MathlibExt.Combinatorics.Enumerative.HypersequenceRecurrence
 public import MathlibExt.Combinatorics.Enumerative.HypersequenceWeightedSums
 public import MathlibExt.Combinatorics.Enumerative.PowerSumRisingStirling
@@ -91,18 +92,6 @@ public theorem_wanted hyperFibonacci_recurrence (r n : ℕ) :
     hyperFibonacci r 0 = 0 ∧ hyperFibonacci r 1 = 1 ∧
       hyperFibonacci (r + 1) (n + 2) =
         hyperFibonacci (r + 1) (n + 1) + hyperFibonacci (r + 1) n + (n + r + 1).choose r
-
-/-- **Hyperlucas numbers in terms of Lucas numbers.** Let $L_n$ denote the Lucas numbers and
-let $L^{(r)}_n$ denote the hyperlucas numbers, the hypersequence of generation $r$ of $(L_n)$.
-For all natural numbers $r$ and $n$, in the integers,
-$$L^{(r)}_n = L_{n+2r} - \sum_{k=0}^{r-1} \binom{n+k}{k} L_{2(r-k)-1}.$$
-
-Source: Daniele Parisse, *On Hypersequences of an Arbitrary Sequence and Their Weighted Sums*,
-INTEGERS 24 (2024), Article A70, Theorem 5, Equation (2.12) (`integers-2024-A70-thm-5`). -/
-public theorem_wanted hyperLucas_eq_lucas_sub_sum (r n : ℕ) :
-    ((hypersequence lucasNumber r n : ℕ) : ℤ) =
-      lucasNumber (n + 2 * r) -
-        ∑ k ∈ range r, ((n + k).choose k * lucasNumber (2 * (r - k) - 1) : ℕ)
 
 /-- **Recurrence for the hyperlucas numbers.** Let $L^{(r)}_n$ denote the hyperlucas numbers,
 the hypersequence of generation $r$ of the Lucas numbers. For all natural numbers $r$ and $n$,

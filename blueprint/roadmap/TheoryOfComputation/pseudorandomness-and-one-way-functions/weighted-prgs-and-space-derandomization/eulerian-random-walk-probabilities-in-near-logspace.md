@@ -12,7 +12,7 @@ Powering the random-walk matrix is reduced to inverting Eulerian Laplacians of c
 
 ## Proof depends on
 
-- [Spectral approximation of graphs](../../../ComputerScience/graph-algorithms/graph-algorithm-bounds/spectral-approximation-of-graphs.md)
+- [Spectral approximation of graphs](../../../GraphTheory/algebraic-graph-theory/part-02/spectral-sparsification/spectral-approximation-of-graphs.md)
 
 ## Sources
 
