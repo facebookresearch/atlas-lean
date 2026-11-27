@@ -60,6 +60,7 @@
 - [Sorted prefix carries the most posterior mass](sum-le-sum-sorted-prefix.md)
 - [The shortest credible prefix has minimum size](le-card-of-is-credible-set.md)
 - [A minimum-size credible set exists and is a sorted prefix](exists-minimal-credible-prefix.md)
+- [Hierarchical SNP–mark–expression causal-path fine-mapping](hierarchical-snp-mark-expression-causal-path-fine-mapping.md)
 - [Conditional posterior of association with a second disease](conditional-posterior-of-association-with-a-second-disease.md)
 - [Functionally informed prior causal probabilities (PolyFun)](functionally-informed-prior-causal-probabilities-polyfun.md)
 - [PAINTOR: annotation-informed fine-mapping of causal variants across loci](paintor-annotation-informed-fine-mapping.md)

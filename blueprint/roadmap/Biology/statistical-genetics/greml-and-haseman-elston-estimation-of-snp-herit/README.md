@@ -77,6 +77,8 @@
 ## Further topics
 
 - [Sparse two-stage SNP heritability estimation](sparse-two-stage-snp-heritability-estimation/README.md)
+- [ARG-based variance-component analysis](arg-based-variance-component-analysis/README.md)
+- [Pleiotropic shared heritability](pleiotropic-shared-heritability/README.md)
 - [LD-weighted genetic relationship matrix (LDAK)](ld-weighted-relationship-matrix-ldak.md)
 - [Thresholded-relatedness variance-component model for total and SNP heritability](../../quantitative-genetics/covariance-between-relatives/heritability-from-relatedness-classes/thresholded-relatedness-model-for-total-and-snp-heritability.md)
 - [Polygenicity bounds from regional heritability](polygenicity-bounds-from-regional-heritability/README.md)

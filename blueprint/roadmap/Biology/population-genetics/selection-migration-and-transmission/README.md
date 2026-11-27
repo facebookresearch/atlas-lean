@@ -12,6 +12,7 @@ These topics distinguish one-locus deterministic recurrences, spatial selection,
 - [Prestige-biased cultural transmission](prestige-biased-cultural-transmission/README.md)
 - [Adaptive introgression with linked deleterious alleles](adaptive-introgression-with-linked-deleterious-alleles/README.md)
 - [Fitness-class dynamics with mutation](fitness-class-dynamics-with-mutation/README.md)
+- [Dynamical limits to adaptation](dynamical-limits-to-adaptation/README.md)
 - [CRISPR homing drive invasion and stability](crispr-homing-drive-invasion-and-stability/README.md)
 - [Daisy-chain gene drives](daisy-chain-gene-drives/README.md)
 - [Stochastic homing gene-drive dynamics](stochastic-homing-gene-drive-dynamics/README.md)

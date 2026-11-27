@@ -8,4 +8,10 @@
 - [Forward](forward.md)
 - [The Kronecker form and stochasticity of the transition](transition-kronecker-stochastic.md)
 - [The Lander–Green forward recursion](likelihood-eq-forward.md)
+
+## Inheritance states in trios and families
+
+- [De novo mutation calling in trios](de-novo-mutation-calling-in-trios/README.md)
+- [Minimum-recombinant haplotyping](minimum-recombinant-haplotyping/README.md)
+- [Phase-aware fetal aneuploidy detection](phase-aware-fetal-aneuploidy-detection/README.md)
 - [IBD detection from imputed haplotype dosages](ibd-detection-from-imputed-haplotype-dosages/README.md)
