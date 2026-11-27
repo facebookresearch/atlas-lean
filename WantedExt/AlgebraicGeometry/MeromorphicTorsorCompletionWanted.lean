@@ -13,6 +13,7 @@ public import MathlibExt.AlgebraicGeometry.ReductiveGroupSchemeModels
 public import MathlibExt.AlgebraicGeometry.AnalyticProObjectSites
 public import MathlibExt.AlgebraicGeometry.MeromorphicTorsorCompletionGenericRefinementComp
 public import MathlibExt.AlgebraicGeometry.MeromorphicTorsorCompletionGenericRefinementIdentity
+public import MathlibExt.AlgebraicGeometry.MeromorphicTorsorCompletionPositiveRefinementComp
 
 /-!
 # Source constructions for actual meromorphic torsor completion
@@ -206,22 +207,5 @@ public theorem_wanted positiveRefinement_identity (p : ℕ) [Fact p.Prime]
     (r : PoleRefinement p E d U Q Q) (hr : r.map = 𝟙 Q.space)
     (R : CoefficientRefinement p E d U Q Q r) :
     positiveMap p E d U Q Q r R.powers R.finite = RingHom.id _
-
-/-- Refinement maps of completed rings compose: for a prime $p$, a field $E$, a map $d : D \to X$ of
-$E$-spaces with a puncture `U` and refinements $r$ of a pole chart `Q` by `Q'`, $s$ of `Q'` by `Q''`
-and $t$ of `Q` by `Q''` whose maps of chart spaces satisfy $t = r \circ s$, and coefficient
-refinements `R`, `S`, `T` for them, the induced map of completed chart rings (`positiveMap`) for $t$
-is the one for $r$ followed by the one for $s$. -/
-public theorem_wanted positiveRefinement_comp (p : ℕ) [Fact p.Prime]
-    (E : Type) [Field E] {X D : ESpace p E}
-    (d : D ⟶ X) (U : Puncture p E d) (Q Q' Q'' : PoleChart p E d U)
-    (r : PoleRefinement p E d U Q Q') (s : PoleRefinement p E d U Q' Q'')
-    (t : PoleRefinement p E d U Q Q'') (ht : t.map = s.map ≫ r.map)
-    (R : CoefficientRefinement p E d U Q Q' r)
-    (S : CoefficientRefinement p E d U Q' Q'' s)
-    (T : CoefficientRefinement p E d U Q Q'' t) :
-    positiveMap p E d U Q Q'' t T.powers T.finite =
-      (positiveMap p E d U Q' Q'' s S.powers S.finite).comp
-        (positiveMap p E d U Q Q' r R.powers R.finite)
 
 end WantedExt.AlgebraicGeometry.MeromorphicTorsorCompletion
