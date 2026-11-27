@@ -1,5 +1,3 @@
 # Lamport one-time forger as a signature forger
 
-A Lamport one-time forger `A`, given as a function of its coins, viewed as a
-signature forger with uniformly distributed coins: it makes exactly one
-signing query, on the message `A.choose pk r`.
+Let $R$ be finite and nonempty. A Lamport one-time forger $A = (\mathrm{choose}, \mathrm{forge})$ with coins in $R$ becomes a signature forger: the embedded signature forger draws its coins $r$ uniformly from $R$; on public key $pk$ it makes one signing query, on the message $\mathrm{choose}(pk, r)$, and on the answer $\sigma$ outputs $\mathrm{forge}(pk, \sigma, r)$ with the same coins $r$.

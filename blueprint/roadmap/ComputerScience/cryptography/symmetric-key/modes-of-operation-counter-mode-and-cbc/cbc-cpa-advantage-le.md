@@ -1,9 +1,3 @@
 # CBC mode, the PRP step
 
-Let the key space `K`, the block group `X` (with decidable equality) and the
-adversary coins `R` be finite and nonempty, and let `E` be a block cipher. For
-every CPA adversary against CBC mode with `ℓ`-block messages whose coins are
-uniform on `R` and which makes at most `q` encryption queries, the CPA
-advantage is at most the PRP advantage against `E` of the reduction
-`cbcReduction`, plus the deviation from `1/2` of the success probability of
-the same reduction against a uniformly random permutation.
+Let the key space $K$, the block space $X$ and the adversary's coin space $R$ be finite and nonempty, let $X$ be an additive commutative group with decidable equality, and let $E$ be a [block cipher](block-cipher.md). For every CPA adversary against [CBC mode](cbc-scheme.md) with $\ell$-block messages whose coins are uniform on $R$ and which makes at most $q$ encryption queries in total along every path, the CPA advantage $|\Pr[\mathrm{PrivK}^{\mathrm{cpa}} = 1] - 1/2|$ is at most the PRP advantage against $E$ of the CBC reduction with tape length $q$, plus $|\Pr[\text{the same reduction outputs true}] - 1/2|$ when it is run against a uniformly random permutation of $X$ with uniform coins. Bounding this ideal-world term is not part of the statement.

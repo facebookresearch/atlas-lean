@@ -2,11 +2,11 @@
 
 ## Structural lemmas: a leading full block
 
-- [Pad Tail](pad-tail.md)
-- [Pad append](pad-append.md)
+- [Padding behind a prefix](pad-tail.md)
+- [Padding a concatenation](pad-append.md)
 - [Splitting off a leading block](blocks-append.md)
-- [Hash cons](hash-cons.md)
-- [Cont Hash](cont-hash.md)
+- [Moving the first block into the chaining value](hash-cons.md)
+- [Continuation hash](cont-hash.md)
 - [Hashing a one-block prefix](full-hash-vector-append.md)
 
 ## The construction
@@ -28,11 +28,11 @@
 ## The Framework forgery experiment of HMAC
 
 - [HMAC forgery experiment for forgers with arbitrary coins](mac-game-hmac-scheme-on.md)
-- [HMAC is a secure MAC if it is a PRF](hmac-scheme-on-mac-advantage-le.md)
+- [Forgery bound for HMAC on finite encoded messages](hmac-scheme-on-mac-advantage-le.md)
 - [HMAC forgery experiment for forgers with uniform coins](mac-game-hmac-scheme-on-of-uniform.md)
-- [MAC security of HMAC for forgers with uniform coins](hmac-scheme-on-mac-advantage-le-of-unifo.md)
+- [Forgery bound for HMAC against forgers with uniform coins](hmac-scheme-on-mac-advantage-le-of-unifo.md)
 
 ## Forgers against `hmacScheme` with length-bounded messages
 
 - [HMAC forgery is invariant under injective message encodings](mac-game-hmac-scheme-relabel.md)
-- [HMAC on bounded-length bit strings is a secure MAC if it is a PRF](hmac-scheme-mac-advantage-le.md)
+- [Forgery bound for HMAC on length-bounded bit strings](hmac-scheme-mac-advantage-le.md)

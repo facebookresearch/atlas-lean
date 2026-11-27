@@ -1,4 +1,3 @@
-# Bsgs
+# Baby-step giant-step algorithm
 
-Let `1 < q`. Baby-step giant-step discrete logarithm: baby table, one inversion for the giant
-factor, then giant steps with check-then-step.
+Let $q > 1$. Labels are elements of $\mathbb{Z}/q$, compared by decidable equality, and a query either multiplies two labels or inverts one. Put $m = \lfloor \sqrt{q - 1} \rfloor + 1$ ([the step count](bsgs-m.md)). On labels $e$, $g$, $t$, the baby-step giant-step algorithm runs the [baby steps](babies-aux.md) with fuel $m$ from current label $e$, step label $g$ and an empty accumulator, obtaining a table and a last label $\lambda$; it queries the inverse of $\lambda$, obtaining the giant factor $\gamma$; then it runs the [giant steps](giants-aux.md) with fuel $m$, index $0$, step count $m$, current label $t$, that table and $\gamma$, and returns their result. Each giant step checks the table before stepping.

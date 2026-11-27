@@ -1,4 +1,3 @@
 # Consistency of repeated queries
 
-**Consistency of repeated queries** (Katz and Lindell, Section 5.5.1): for a lazily sampled random function with
-a finite nonempty range, querying `x` twice is the same as querying it once and reusing the answer.
+Let the input type $X$ have decidable equality (it need not be finite) and let the range $Y$ be finite and nonempty. A table is a partial function from $X$ to $Y$. For every $x \in X$, every continuation $k$ taking two answers $y_1, y_2 \in Y$ to an oracle algorithm, and every initial table $T$: running against the [lazy random function](lazy-rf.md) from $T$ the algorithm that queries $x$, receives $y_1$, queries $x$ again, receives $y_2$ and continues with $k(y_1, y_2)$ has the same joint distribution of output and final table as the algorithm that queries $x$ once, receives $y$ and continues with $k(y, y)$ (Katz and Lindell, Section 5.5.1). This holds whether or not $T$ already records $x$.

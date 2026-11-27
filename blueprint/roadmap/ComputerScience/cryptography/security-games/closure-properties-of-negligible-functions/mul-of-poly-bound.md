@@ -1,4 +1,3 @@
-# Mul of poly bound
+# Products of negligible advantages with polynomially bounded real sequences
 
-The product of a negligible advantage with a function that is eventually nonnegative and
-eventually bounded by `n ^ d` is negligible (Katz and Lindell, Proposition 3.6).
+Let $\varepsilon, g : \mathbb{N} \to \mathbb{R}$, let $\varepsilon$ be a negligible advantage, and suppose there are a fixed $d \in \mathbb{N}$ and $N$ with $0 \le g(n) \le n^d$ for all $n \ge N$. Then $n \mapsto g(n) \, \varepsilon(n)$ is a negligible advantage. Here a real sequence $\varepsilon : \mathbb{N} \to \mathbb{R}$ is a negligible advantage when it is bounded above pointwise by a negligible rational sequence; this is a one-sided bound, and $\varepsilon$ itself need not be nonnegative. An eventually polynomially bounded multiplier extends the polynomial case of Katz and Lindell, Proposition 3.6.

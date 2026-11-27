@@ -1,3 +1,3 @@
 # Embedding a signature forger with explicit coins
 
-Embedding a signature forger $A$ with explicit coins into the monadic framework, where its coins are drawn by a sampling operation after it receives the public key, does not change its forgery game: for every signature scheme, the monadic forgery game of the embedded forger has the same outcome distribution as the forgery game of $A$.
+Let messages have decidable equality. For every signature scheme and every coin signature forger $A$, the [monadic forgery game](m-sig-game.md) of its [monadic form](of-coins-5.md), which draws its coins by one sampling operation after receiving the public key, equals the coin signature forgery game of $A$ as a distribution on Booleans. Both accept if and only if the output verifies and its message was never a signing query.

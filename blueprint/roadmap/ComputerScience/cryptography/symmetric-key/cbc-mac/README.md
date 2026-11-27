@@ -4,7 +4,7 @@
 - [Cbc Mac From succ eq cbc Chain](cbc-mac-from-succ-eq-cbc-chain.md)
 - [Basic CBC-MAC](cbc-mac.md)
 - [Fixed-length CBC-MAC](cbc-mac-scheme.md)
-- [Correctness](cbc-mac-scheme-correct.md)
+- [Correctness of fixed-length CBC-MAC](cbc-mac-scheme-correct.md)
 - [Cbc Mac List](cbc-mac-list.md)
 - [Cbc Mac Var Scheme](cbc-mac-var-scheme.md)
 - [Length Ext Forger](length-ext-forger.md)

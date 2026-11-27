@@ -1,5 +1,3 @@
 # A free operation consumes no budget
 
-If the operation `a` is not costly (`costly a = false`), then `liftBind a k`
-is cost-bounded with budget `q` if and only if every continuation `k b` is
-cost-bounded with budget `q`.
+Fix a free-monad signature, a Boolean predicate $\mathrm{costly}$ on its operations, and write $B(P, q, c)$ for the [two-phase cost bound](cost-bounded-with.md) with that predicate: along every path of $c$ at most $q$ costly operations occur (the others are free), and at each output $x$, reached with $j$ units of budget unused, the predicate $P(x, j)$ holds. Let $a$ be an operation with $\mathrm{costly}(a)$ false and $k$ a continuation from the answers of $a$. For every predicate $P$ on results and residual budgets and every budget $q$, including $q = 0$, the computation that performs $a$ and continues with $k$ satisfies $B(P, q, \cdot)$ if and only if, for every answer $b$ to $a$, $B(P, q, k(b))$ holds. Both sides use the same arbitrary predicate $P$ and the same budget $q$.

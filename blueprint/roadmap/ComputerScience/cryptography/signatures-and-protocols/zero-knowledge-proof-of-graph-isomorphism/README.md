@@ -36,11 +36,11 @@ simulator in expected polynomial time of their Theorem 2.
 
 ## The Sigma protocol on adjacency functions
 
-The same protocol, with graphs on $\{0, \dots, n-1\}$ given as Boolean adjacency functions $G(u, v)$ and relabelling as an action of permutations, and its completeness.
+A variant of the simple-graph protocol above, on **every** Boolean adjacency function $G : \{0, \dots, n-1\}^2 \to \mathrm{Bool}$, with no symmetry or loop restriction, so directed graphs and graphs with loops are included; simple graphs are the symmetric, irreflexive adjacency functions. A permutation $\sigma$ relabels $G$ to $\sigma \cdot G$ with $(\sigma \cdot G)(u, v) = G(\sigma^{-1} u, \sigma^{-1} v)$, and this is an action of the permutation group. With coins $\rho$ the prover commits to $\rho \cdot G_0$ and answers the challenge bit by $\rho^{-1}$ or $\varphi\rho^{-1}$; only completeness is proved for this variant. The simple-graph relabeling results listed above concern a different domain.
 
 - [Relabelling a graph by a permutation](graph-act.md)
-- [Relabelling by a product of permutations](graph-act-mul.md)
-- [Relabelling by the identity permutation](graph-act-one.md)
+- [Relabeling an adjacency function by a product of permutations](graph-act-mul.md)
+- [Relabeling an adjacency function by the identity permutation](graph-act-one.md)
 - [The graph-isomorphism Sigma protocol on Boolean adjacency functions](sigma-2.md)
 - [Completeness of the Sigma protocol on Boolean adjacency functions](sigma-complete-2.md)
 

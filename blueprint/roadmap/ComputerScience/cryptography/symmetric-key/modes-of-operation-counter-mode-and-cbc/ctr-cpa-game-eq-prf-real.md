@@ -1,8 +1,3 @@
 # The real world of the counter-mode reduction
 
-Let `N ≠ 0`, `Y` an additive group, and the key space `K` and adversary coins
-`R` finite and nonempty. For `F : K → ZMod N → Y` and every CPA adversary
-against counter mode whose coins are uniform on `R` and which makes at most
-`q` encryption queries, the CPA game of counter mode equals the real-world PRF
-game of `F` against the reduction `ctrReduction`: with the oracle `F k`, the
-reduction runs the CPA game exactly.
+Let $N > 0$, let $Y$ be an additive commutative group, and let the key space $K$ and the adversary's coin space $R$ be finite and nonempty. For every keyed function $F \colon K \to \mathbb{Z}/N \to Y$ and every CPA adversary against [counter mode](ctr-scheme.md) with $\ell$-block messages whose coins are uniform on $R$ and which makes at most $q$ encryption queries in total along every path, the CPA game of counter mode equals the real-world PRF game of $F$ against the [counter-mode reduction](ctr-reduction.md) with tape length $q$. The real world draws a key $k$ and the reduction's coins uniformly and independently and runs the reduction with oracle $F(k, \cdot)$.

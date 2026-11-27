@@ -13,14 +13,14 @@
 
 ## PRF encryption
 
-- [Prf Enc](prf-enc.md)
+- [PRF-based encryption scheme](prf-enc.md)
 - [PRF-based encryption is correct](prf-enc-correct.md)
 - [CPA adversary with uniform coins from a coin-indexed adversary](to-cpaadversary.md)
 - [Up-front encryption randomness under sequential composition](run-enc-bind.md)
 - [Dropping the first entry of the up-front randomness](run-enc-succ.md)
 - [Up-front versus fresh randomness](map-uniform-run-enc.md)
-- [Cpa Guess eq](cpa-guess-eq.md)
-- [Cpa Reorder](cpa-reorder.md)
+- [The fixed-tape PRF-encryption guess as one run](cpa-guess-eq.md)
+- [Reordering the CPA sample space](cpa-reorder.md)
 - [Up-front and fresh randomness give the same CPA experiment](prf-cpa-game-eq.md)
 - [CPA security of PRF-based encryption](prf-cpa-advantage-le.md)
 
@@ -33,6 +33,6 @@
 - [Lamport one-time signature scheme](lamport.md)
 - [Lamport signatures are correct](lamport-correct.md)
 - [Lamport one-time forger as a signature forger](to-sig-forger.md)
-- [To Sig Forger query Bounded](to-sig-forger-query-bounded.md)
+- [The embedded Lamport forger makes at most one query](to-sig-forger-query-bounded.md)
 - [Lamport forgery experiment as a signature-forgery experiment](lamport-forge-game-eq.md)
 - [Lamport one-time signature security bound](lamport-sig-advantage-le.md)

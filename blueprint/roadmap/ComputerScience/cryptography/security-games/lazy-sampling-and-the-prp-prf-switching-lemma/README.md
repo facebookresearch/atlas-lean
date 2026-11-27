@@ -36,8 +36,8 @@
 - [Lazy random function](lazy-rf.md)
 - [Fresh answers of the lazy random function are uniform](rf-step-map-fst-of-none.md)
 - [The lazy random function repeats recorded answers](rf-step-of-some.md)
-- [Rf Step of none](rf-step-of-none.md)
-- [Mem support rf Step](mem-support-rf-step.md)
+- [A fresh lazy query samples a uniform answer and records it](rf-step-of-none.md)
+- [Every lazy answer is recorded and the table grows](mem-support-rf-step.md)
 - [Consistency of repeated queries](lazy-rf-query-query.md)
 - [Lazy random functions are random functions](lazy-rf-map-fst.md)
 

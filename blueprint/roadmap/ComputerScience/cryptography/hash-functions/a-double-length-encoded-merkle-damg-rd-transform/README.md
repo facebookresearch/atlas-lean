@@ -2,15 +2,15 @@
 
 ## Cutting a bit string into blocks
 
-- [Blocks Fuel](blocks-fuel.md)
-- [Blocks](blocks.md)
+- [Cutting at most k blocks off a bit string](blocks-fuel.md)
+- [Cutting a bit string into blocks](blocks.md)
 - [Unblocks](unblocks.md)
 - [Cutting loses nothing](unblocks-blocks.md)
-- [Length blocks le](length-blocks-le.md)
+- [Number of blocks of a bit string](length-blocks-le.md)
 
 ## Padding into blocks
 
-- [Pad Blocks](pad-blocks.md)
+- [Padded blocks of a message](pad-blocks.md)
 - [Padding into blocks is injective](pad-blocks-injective.md)
 - [Unpadding recovers the message](unpad-unblocks-pad-blocks.md)
 - [Short messages have few padded blocks](length-pad-blocks-lt.md)
@@ -28,8 +28,8 @@
 
 - [Msg](msg.md)
 - [Keyed full Merkle-Damgård hash family](md-family.md)
-- [Md Reduction](md-reduction.md)
+- [Compression-collision reduction](md-reduction.md)
 - [Collision resistance of the full Merkle-Damgård hash family](coll-advantage-md-family-le.md)
-- [Block Count Len Block](block-count-len-block.md)
+- [Block-count length block](block-count-len-block.md)
 - [Block Count Len Block inj On](block-count-len-block-inj-on.md)
 - [Collision resistance of Merkle-Damgård with n-bit length fields](coll-advantage-block-count-le.md)

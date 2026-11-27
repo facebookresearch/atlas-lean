@@ -1,11 +1,11 @@
 # The CPA game, eagerly sampled
 
-Let the key space `K`, the adversary coins `R` and the encryption randomness
-`Rnd` be finite and nonempty. Suppose the scheme `S` generates a uniform key
-and encrypts by applying a deterministic algorithm `e k m` to uniform
-randomness, and the adversary `A` has uniform coins and makes at most `q`
-encryption queries. Then the CPA game of `S` against `A` is the probability
-that a deterministic test succeeds on one uniform sample `(k, b, r, ρ, rs)` of
-a key, a challenge bit, the adversary's coins, `q` encryption randomness
-values and the challenge randomness: the guess of `A` computed with this
-sample equals `b`.
+Let the key space $K$, the adversary's coin space $R$ and the encryption randomness space $\mathsf{Rnd}$ be finite and nonempty. Let $S$ be a private-key encryption scheme whose key generation is uniform on $K$ and whose encryption of $m$ under $k$ is the image of the uniform distribution on $\mathsf{Rnd}$ under a deterministic map $u \mapsto e(k, m, u)$. Let $A$ be a CPA adversary whose coins are uniform on $R$ and which makes at most $q$ encryption queries in total along every path.
+
+Then the CPA game of $S$ against $A$, a distribution on Booleans, equals the pushforward of the uniform distribution on $K \times \mathrm{Bool} \times R \times \mathsf{Rnd}^q \times \mathsf{Rnd}$ under the test
+
+$$
+(k, b, r, \rho, r_s) \mapsto \bigl[\mathrm{guess}(e(k, \cdot, \cdot), A.\mathrm{run}(r), q, \rho, r_s, b) = b\bigr],
+$$
+
+where $\mathrm{guess}$ is the [fixed-tape guess](cpa-tape-guess.md). Only the mass of this distribution at `true` is the probability that $A$ wins.

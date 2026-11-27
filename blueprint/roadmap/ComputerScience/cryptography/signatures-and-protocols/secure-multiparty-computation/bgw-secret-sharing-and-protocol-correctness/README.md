@@ -2,7 +2,7 @@
 
 ## Share algebra: product degree and recombination
 
-- [Nat Degree mul le two mul](nat-degree-mul-le-two-mul.md)
+- [Degree of a product of two polynomials of degree at most t](nat-degree-mul-le-two-mul.md)
 - [Recombination vector for degree-2t sharings](exists-recombination-vector.md)
 - [Too few evaluation points do not determine the secret](exists-ambiguous-sharings.md)
 - [No recombination vector with too few points](no-recombination-vector-of-le.md)

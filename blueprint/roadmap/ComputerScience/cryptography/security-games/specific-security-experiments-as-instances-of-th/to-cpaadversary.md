@@ -1,4 +1,3 @@
 # CPA adversary with uniform coins from a coin-indexed adversary
 
-A CPA adversary `A` for the PRF-encryption CPA game, given as a function of
-its coins, viewed as a CPA adversary with uniformly distributed coins.
+Let $R$ be finite and nonempty. A CPA adversary of the PRF file, given as a map from coins $r \in R$ to a two-stage oracle computation against the encryption oracle (messages in $Y$, ciphertexts in $X \times Y$), becomes a Framework CPA adversary whose coins are uniform on $R$ and whose program on coins $r$ is that same computation.

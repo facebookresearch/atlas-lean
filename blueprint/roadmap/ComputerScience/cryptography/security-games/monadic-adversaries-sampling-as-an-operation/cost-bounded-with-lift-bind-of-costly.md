@@ -1,3 +1,3 @@
-# Cost Bounded With lift Bind of costly
+# A costly operation consumes one unit of budget
 
-A costly operation consumes one unit of budget.
+Fix a free-monad signature, a Boolean predicate $\mathrm{costly}$ on its operations, and write $B(P, q, c)$ for the [two-phase cost bound](cost-bounded-with.md) with that predicate: along every path of $c$ at most $q$ costly operations occur (the others are free), and at each output $x$, reached with $j$ units of budget unused, the predicate $P(x, j)$ holds. Let $a$ be an operation with $\mathrm{costly}(a)$ true and $k$ a continuation from the answers of $a$. For every predicate $P$ on results and residual budgets and every $q \in \mathbb{N}$, the computation that performs $a$ and continues with $k$ satisfies $B(P, q+1, \cdot)$ if and only if, for every answer $b$ to $a$, $B(P, q, k(b))$ holds. The same predicate $P$ appears on both sides. At budget $0$ a costly operation is never allowed ([no budget left](not-cost-bounded-with-zero-of-costly.md)).

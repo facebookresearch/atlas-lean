@@ -1,6 +1,5 @@
 # Lamport forgery experiment as a signature-forgery experiment
 
-For every one-query Lamport forger `A` with uniform coins, the Lamport
-one-time forgery experiment for `f` equals the signature-forgery experiment
-`Sig-forge` of `lamport f` against the embedded forger `A.toSigForger` (Katz
-and Lindell, Definition 12.2 and Section 12.6.1).
+Let $X$ be finite and nonempty, $Y$ a type with decidable equality, $f \colon X \to Y$, $\ell \in \mathbb{N}$ (including $\ell = 0$), and $R$ finite and nonempty. Let $A = (\mathrm{choose}, \mathrm{forge})$ be a Lamport one-time forger with coins in $R$, and let $A'$ be its [embedding as a signature forger](to-sig-forger.md): the embedded signature forger draws its coins $r$ uniformly from $R$; on public key $pk$ it makes one signing query, on the message $\mathrm{choose}(pk, r)$, and on the answer $\sigma$ outputs $\mathrm{forge}(pk, \sigma, r)$ with the same coins $r$.
+
+Then the Lamport one-time forgery game for $f$ against $A$, which draws $sk$ and $r$ uniformly and independently and tests whether the forged message differs from the requested one and its signature verifies, equals the signature-forgery game $\mathrm{Sig\text{-}forge}$ of the [Lamport scheme](lamport.md) against $A'$, which accepts when the forgery verifies and its message was never a signing query (Katz and Lindell, Definition 12.2 and Section 12.6.1).

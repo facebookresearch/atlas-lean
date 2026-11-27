@@ -1,3 +1,3 @@
-# Of Coins
+# Coin CPA adversary as a monadic adversary
 
-A coin adversary as a monadic one: sample the coins once, then run.
+Let $A$ be a coin CPA adversary: a coin distribution $\mu$ on a type $R$ and, for each $r \in R$, a first stage $A_r$ over the encryption oracle returning $(m_0, m_1)$ and a second stage $g_r$ from ciphertexts to guesses. Its monadic form uses the one-operation [sampling family](coin-fam.md) drawing from $\mu$. It draws $r$ from $\mu$ once, then runs the [embedding](embed.md) of $A_r$ and maps its output $((m_0, m_1), g_r)$ to $((m_0, m_1),\ c \mapsto \mathrm{embed}(g_r(c)))$. For each challenge ciphertext $c$ the second stage is the embedding of $A$'s second stage with the **same** $r$; there is no resampling. $R$ lives in the same universe as $M$ and $C$.

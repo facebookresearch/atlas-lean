@@ -1,5 +1,3 @@
 # Collision experiment in the random-oracle model
 
-For points `xs : Fin q → D`, query them in order from a lazily sampled random
-oracle and output whether two of the answers coincide. The points need not be
-distinct; repeated points get equal answers.
+Let the domain $D$ have decidable equality and the range be a finite nonempty type. For a list of points $x_0, \dots, x_{q-1} \in D$, the experiment queries them in order from the lazily sampled random oracle started at the empty table ([output distribution in the random-oracle model](eval.md)) and returns true if and only if two of the $q$ answers coincide, that is, if the answer vector is not injective. The points need not be distinct; a repeated point gets the same answer twice, which counts as a collision.

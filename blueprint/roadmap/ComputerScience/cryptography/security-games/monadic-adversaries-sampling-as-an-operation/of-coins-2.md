@@ -1,3 +1,3 @@
-# Of Coins
+# Coin CCA adversary as a monadic adversary
 
-A coin CCA adversary as a monadic one: sample the coins once, then run.
+Let $A$ be a coin chosen-ciphertext adversary: a coin distribution $\mu$ on $R$ and, for each $r \in R$, a first stage $A_r$ with encryption and decryption queries returning $(m_0, m_1)$ and a second stage $g_r$ from ciphertexts to guesses. Its monadic form uses the one-operation [sampling family](coin-fam.md) drawing from $\mu$. It draws $r$ from $\mu$ once, runs the [embedding](embed.md) of $A_r$, and maps its output $((m_0, m_1), g_r)$ to $((m_0, m_1),\ c \mapsto \mathrm{embed}(g_r(c)))$. The second stage reuses the same $r$ for every challenge ciphertext; there is no resampling.

@@ -14,7 +14,7 @@
 - [Target collision resistance](tcr-game.md)
 - [Tcr Advantage](tcr-advantage.md)
 - [Tcr To Coll](tcr-to-coll.md)
-- [Collision resistance implies target collision resistance](tcr-advantage-eq-coll-advantage.md)
+- [Target-collision advantage as a collision advantage](tcr-advantage-eq-coll-advantage.md)
 - [Coll Advantage eq zero of injective](coll-advantage-eq-zero-of-injective.md)
 - [Coll Advantage eq one of forall](coll-advantage-eq-one-of-forall.md)
 

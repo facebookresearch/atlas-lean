@@ -1,7 +1,5 @@
 # Running a generic-group program with a fixed encoding
 
-Let `1 < q` and `enc` a permutation of `ZMod q` encoding group elements as
-labels. `runProg enc inputs p` compiles the generic-group program `p` into an
-oracle computation and runs it against the oracle of `enc` on the input
-labels. Only program syntax is accepted, so a literal label cannot be
-supplied.
+Let $q > 1$ and let $\mathrm{enc}$ be a permutation of $\mathbb{Z}/q$ encoding exponents as labels. For input labels $\mathit{inputs} : \{0, \dots, n-1\} \to \mathbb{Z}/q$ and a generic-group program $p$ over $n$ indices, the run [compiles](compile.md) $p$ in the environment $\mathit{inputs}$ and runs the resulting oracle computation against the [oracle of $\mathrm{enc}$](oracle-of.md).
+
+The input labels are arbitrary. The program syntax cannot manufacture a literal label: every label it uses is an initial input or a previous oracle answer.
