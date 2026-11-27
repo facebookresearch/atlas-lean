@@ -18,3 +18,8 @@
 - [Conformance of finite-state machines and fault domains](conformance-of-finite-state-machines-and-fault.md)
 - [The ioco conformance relation](the-ioco-conformance-relation.md)
 - [Soundness of ioco test generation](soundness-of-ioco-test-generation.md)
+- [Prefix Verdict eq satisfied iff](prefix-verdict-eq-satisfied-iff.md)
+- [Prefix Verdict eq violated iff](prefix-verdict-eq-violated-iff.md)
+- [Prefix Verdict eq inconclusive iff](prefix-verdict-eq-inconclusive-iff.md)
+- [Persistence of definite verdicts](prefix-verdict-append-of-definite.md)
+- [Mem after nil](mem-after-nil.md)

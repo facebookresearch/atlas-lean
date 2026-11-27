@@ -25,3 +25,8 @@ Place/transition Petri nets and vector addition systems: reachability, boundedne
 - [Safeness of live marked graphs](safeness-of-live-marked-graphs.md)
 - [Siphons and traps](siphons-and-traps.md)
 - [Commoner's theorem for free-choice nets](commoner-s-theorem.md)
+- [Not Mem postset iff](not-mem-postset-iff.md)
+- [Enabled iff preset](enabled-iff-preset.md)
+- [Fire? eq some iff](fire-eq-some-iff.md)
+- [Run? append](run-append.md)
+- [Run? eq some iff](run-eq-some-iff.md)
