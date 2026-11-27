@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.NumberTheory.Rayleigh
 public import Mathlib.Data.Set.Card
 public import MathlibExt.NumberTheory.Beatty.ComplBetween
+public import MathlibExt.NumberTheory.Beatty.ComplementaryIff
 public import MathlibExt.NumberTheory.Beatty.CountIncrement
 public import MathlibExt.NumberTheory.Beatty.FloorFiber
 public import MathlibExt.NumberTheory.Beatty.FloorFiberIndicator
@@ -40,23 +41,6 @@ namespace MetaMathlibExt
 @[expose] public section
 
 open Set
-
-/-- **Beatty's theorem and its converse.** Let $\alpha$ and $\beta$ be positive real numbers. The
-set of the numbers $\lfloor k\alpha\rfloor$ for positive integers $k$ and the set of the numbers
-$\lfloor k\beta\rfloor$ for positive integers $k$ are disjoint and their union is the set of
-positive integers if and only if $\alpha$ is irrational and $\alpha^{-1} + \beta^{-1} = 1$.
-
-The hypothesis $\beta > 0$ cannot be dropped: for irrational $0 < \alpha < 1$ the number $\beta$
-with $\alpha^{-1} + \beta^{-1} = 1$ is negative, and the two sets do not partition the positive
-integers.
-
-Source: Geremias Polanco, *Decomposition of Beatty and Complementary Sequences*,
-INTEGERS 25 (2025), Article A104, Theorem 1 (Beatty–Rayleigh) (`integers-2025-A104-thm-1`). -/
-public theorem_wanted beatty_complementary_iff_irrational_inv_add_inv {α β : ℝ}
-    (hα : 0 < α) (hβ : 0 < β) :
-    (Disjoint {beattySeq α k | k > 0} {beattySeq β k | k > 0} ∧
-        {beattySeq α k | k > 0} ∪ {beattySeq β k | k > 0} = {n : ℤ | 0 < n}) ↔
-      (Irrational α ∧ α⁻¹ + β⁻¹ = 1)
 
 /-- **The $\beta$-Beatty counts between $\lfloor n\alpha\rfloor$ and $\lfloor n\beta\rfloor$ form a
 Beatty sequence.** Let $\alpha$ be an irrational number with $1 < \alpha < 2$, let $\beta$ be a
