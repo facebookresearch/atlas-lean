@@ -1,6 +1,6 @@
 # Self-normalized bound for vector-valued martingales
 
-For conditionally $R$-sub-Gaussian noise $\eta_t$ and predictable vectors $X_t$, the martingale $S_t = \sum_{s \le t} \eta_s X_s$ measured in the norm of the inverse regularized Gram matrix stays below $2R^2 \log(\det(\bar V_t)^{1/2} \det(V)^{-1/2} / \delta)$ for all $t$ at once, with probability $1-\delta$.
+For conditionally $R$-sub-Gaussian noise $\eta_t$ and predictable vectors $X_t$, the squared norm of the noise sum $S_t = \sum_{s \le t} \eta_s X_s$ in the inverse regularized Gram matrix stays below $2R^2 \log(\det(\bar V_t)^{1/2} \det(V)^{-1/2} / \delta)$ for all $t$ at once, with probability $1-\delta$.
 
 **Statement.** Let $(\mathcal{F}_t)_{t \ge 0}$ be a filtration. Let $(\eta_t)_{t \ge 1}$ be real-valued with $\eta_t$ $\mathcal{F}_t$-measurable and conditionally $R$-sub-Gaussian for some $R \ge 0$:
 
@@ -22,11 +22,12 @@ $$
 
 where $\lVert u \rVert_A^2 = u^{\mathsf T} A u$. At $t = 0$ both sides are consistent ($S_0 = 0$ and the right side is $2R^2 \log(1/\delta)$, nonnegative for $\delta \le 1$; for $\delta > 1$ the claim is vacuous).
 
-The conditional sub-Gaussian condition implies $\mathbb{E}[\eta_t \mid \mathcal{F}_{t-1}] = 0$. The bound is uniform in time; no independence between $X_t$ and past noise is needed beyond predictability.
+The conditional sub-Gaussian condition implies $\mathbb{E}[\eta_t \mid \mathcal{F}_{t-1}] = 0$. The bound is uniform in time; no independence between $X_t$ and past noise is needed beyond predictability. No integrability of $X_t$ is assumed, so $S_t$ need not be an integrable martingale (for example when $X_1$ has infinite mean); the title follows the source, which calls $S_t$ a martingale.
 
 ## Depends on
 
-None.
+- [Filtrations and stopping times](../../../../Probability/martingales/stopping-times-and-martingale-problems/filtrations-and-stopping-times.md)
+- [Conditional expectation given a σ-field](../../../../Probability/foundations/conditional-expectation/conditional-expectation-given-a-sigma-field/conditional-expectation.md)
 
 ## Proof depends on
 

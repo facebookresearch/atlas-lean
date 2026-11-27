@@ -19,7 +19,7 @@ with probability greater than $0.1$.
 
 ## Depends on
 
-None.
+- [Probability measure](../../../../Probability/foundations/probability-measures/is-probability-measure.md)
 
 ## Proof depends on
 

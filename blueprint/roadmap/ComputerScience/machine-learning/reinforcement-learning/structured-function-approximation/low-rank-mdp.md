@@ -1,6 +1,6 @@
 # Low-rank MDP
 
-A low-rank MDP has transition operators $T_h(x' \mid x,a) = \langle \phi^\star_h(x,a), \mu^\star_h(x') \rangle$ of rank $d$, with both embeddings unknown. Representation learning means identifying $\phi^\star$ from given candidate classes $\Phi$ and $\Upsilon$ that contain the true embeddings.
+A low-rank MDP has transition operators that admit a factorization $T_h(x' \mid x,a) = \langle \phi^\star_h(x,a), \mu^\star_h(x') \rangle$ of dimension $d$, with both embeddings unknown. The dimension need not be the minimal rank, and the factorization need not be unique. Representation learning means identifying $\phi^\star$ from given candidate classes $\Phi$ and $\Upsilon$ that contain the true embeddings.
 
 **Setting.** An episodic MDP with horizon $H$, state space $\mathcal{X}$ of arbitrary size, finite action set $\mathcal{A} = \{1, \dots, K\}$, a fixed starting state $x_0$ with a single available action at time $0$, and non-stationary transition operators $T_h : \mathcal{X}\times\mathcal{A} \to \Delta(\mathcal{X})$ for $h \in \{0, \dots, H-1\}$. Policies map states to distributions over actions.
 
@@ -18,7 +18,7 @@ normalized by $\lVert\phi^\star(x,a)\rVert_2 \le 1$ for all $(x,a)$ and $\big\lV
 
 ## Depends on
 
-None.
+- [Probability measure](../../../../Probability/foundations/probability-measures/is-probability-measure.md)
 
 ## Proof depends on
 

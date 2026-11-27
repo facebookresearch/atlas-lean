@@ -1,6 +1,6 @@
 # Planning lower bound under linear realizability of the optimal state values
 
-In infinite-horizon total-cost planning with local simulator access, exact linear realizability of $v^\star$ with $O(1)$ features and $O(\sqrt d)$ parameter norm does not prevent an exponential query cost: with $\Theta(d)$ actions, constant suboptimality needs $\Omega(2^{\min\{d, A/2\}}/d)$ queries per call.
+In infinite-horizon total-cost planning with local simulator access, exact linear realizability of $v^\star$ with $d+1$ features of $2$-norm $O(1)$ and parameter norm $O(\sqrt d)$ does not prevent an exponential query cost: with $\Theta(d)$ actions, constant suboptimality needs $\Omega(2^{\min\{d, A/2\}}/d)$ queries per call.
 
 **Setting.** An MDP with states $\mathcal{S}$, finite actions and a simulator; in the infinite-horizon setting a policy's value is its total expected reward (here rewards are nonpositive costs), and $v^\star$ is the best value over admissible policies. A featurized MDP adds a feature map $\varphi : \mathcal{S} \to \mathbb{R}^d$ (no stage dependence), and $v^\star$ is *linearly realizable* if $v^\star(s) = \langle \varphi(s), \theta^\star \rangle$ for all $s$. Access is *local*: a planner called at a state may query the simulator only at states it was given or has received from the simulator, and sees features only of those states; each query returns a fresh next state, reward and next feature. The *worst-case per-state query cost* is the largest number of simulator calls made in one call of the planner. The planner, called at every visited state, induces a policy whose suboptimality $\delta$ is its gap to $v^\star$.
 
@@ -18,7 +18,7 @@ The source's Theorem 3.1 states the result for $d$-dimensional features with $2d
 
 ## Depends on
 
-None.
+- [Probability measure](../../../../Probability/foundations/probability-measures/is-probability-measure.md)
 
 ## Proof depends on
 

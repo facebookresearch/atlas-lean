@@ -19,16 +19,16 @@ $$
 Since the columns of $W$ and the vector $\phi(s,a)$ are probability vectors, $W\phi(s,a) \in \Delta_{K-1}$ and $M(W)$ is again an MDP. The *approximation error* of the class for the true environment $M^\ast = (P^\ast, R^\ast)$ is
 
 $$
-\theta = \min_{W \in \mathcal{W}} \sup_{(s,a)} \Big( \lVert P^\ast(\cdot\mid s,a) - P^W(\cdot\mid s,a) \rVert_1 + \lVert R^\ast(\cdot\mid s,a) - R^W(\cdot\mid s,a) \rVert_1 \Big),
+\theta = \min_{W \in \mathcal{W}_0} \sup_{(s,a)} \Big( \lVert P^\ast(\cdot\mid s,a) - P^W(\cdot\mid s,a) \rVert_1 + \lVert R^\ast(\cdot\mid s,a) - R^W(\cdot\mid s,a) \rVert_1 \Big),
 $$
 
-attained at $W^\ast$; $\theta = 0$ is the realizable case $M^\ast = M(W^\ast)$.
+attained at $W^\ast$; $\theta = 0$ is the realizable case $M^\ast = M(W^\ast)$. The source writes the minimum over an undefined $\mathcal{W}$; its parameter set is $\mathcal{W}_0$.
 
 **Special cases.** With $d = 1$ and $\phi \equiv 1$ the class is the set of global convex combinations of the base models. With $\phi$ the indicator vector of a partition $\{\mathcal{X}_i\}$ of $\mathcal{S}\times\mathcal{A}$, the mixing weights are constant on each cell.
 
 ## Depends on
 
-None.
+- [Probability measure](../../../../Probability/foundations/probability-measures/is-probability-measure.md)
 
 ## Proof depends on
 

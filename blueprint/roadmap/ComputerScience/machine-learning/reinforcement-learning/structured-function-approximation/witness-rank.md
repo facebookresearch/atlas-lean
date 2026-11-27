@@ -10,23 +10,23 @@ $$
 \mathcal{W}(M, M', h; \mathcal{F}) = \sup_{f\in\mathcal{F}} \mathbb{E}_{x_h \sim \pi_M,\ a_h \sim \pi_{M'}} \Big[ \mathbb{E}_{(r,x') \sim M'_h} f(x_h,a_h,r,x') - \mathbb{E}_{(r,x') \sim M^\star_h} f(x_h,a_h,r,x') \Big].
 $$
 
-That is, the IPM between the two conditional laws of $(r, x')$, averaged over contexts from $\pi_M$ and actions from $\pi_{M'}$ in the true environment. With $\mathcal{F} = \{\lVert f\rVert_\infty \le 1\}$ it is an averaged total variation distance between $M'$ and $M^\star$, in the source's convention $\lVert P_1 - P_2\rVert_{\mathrm{TV}} = \sum_x |P_1(x) - P_2(x)|$ (twice the usual one).
+That is, one test function $f$ is chosen for all contexts: $\mathcal{W}$ is the IPM between two joint laws of $(x_h, a_h, r, x')$ that share the marginal of $(x_h,a_h)$ (contexts from $\pi_M$ and actions from $\pi_{M'}$ in the true environment) and have conditionals $M'_h$ and $M^\star_h$. It is not the average of per-context IPMs, which can be larger. When $\mathcal{F} = \{\lVert f\rVert_\infty \le 1\}$ is the class of all measurable test functions bounded by $1$, a test function can be chosen separately at each $(x_h,a_h)$, the two coincide, and $\mathcal{W}$ is an averaged total variation distance between $M'$ and $M^\star$ (the source's Eq. (3)), in the source's convention $\lVert P_1 - P_2\rVert_{\mathrm{TV}} = \sum_x |P_1(x) - P_2(x)|$ (twice the usual one).
 
 **Average Bellman error.** $\mathcal{E}_B(M, M', h) = \mathbb{E}\big[Q_{M'}(x_h,a_h) - r_h - Q_{M'}(x_{h+1},a_{h+1}) \mid x_h \sim \pi_M,\ a_{h:h+1} \sim \pi_{M'}\big]$ in the true environment.
 
 **Bellman domination (Assumption 2).** $\mathcal{F}$ is symmetric ($f \in \mathcal{F} \Rightarrow -f \in \mathcal{F}$), finite, $\lVert f\rVert_\infty \le 2$, and $\mathcal{W}(M,M',h;\mathcal{F}) \ge \mathcal{E}_B(M,M',h)$ for all $M, M' \in \mathcal{M}$. A sufficient condition is that $\mathcal{F}$ contains the functions $r + V_M(x')$ for $M \in \mathcal{M}$.
 
-**Definition.** For $\beta > 0$ and $B \in \mathbb{R}^{n\times n}$, $\mathrm{rank}(B,\beta)$ is the least $k$ with $B = UV^{\mathsf T}$, $U, V \in \mathbb{R}^{n\times k}$ and $\lVert u_i\rVert_2\lVert v_j\rVert_2 \le \beta$ for all rows. For a finite model class $\mathcal{M}$, test functions $\mathcal{F}$, $\kappa \in (0,1]$ and $h \in [H]$, let $\mathcal{N}_{\kappa,h}$ be the set of matrices $A \in \mathbb{R}^{|\mathcal{M}|\times|\mathcal{M}|}$ with
+**Definition.** For $\beta > 0$ and $B \in \mathbb{R}^{n\times n}$, $\mathrm{rank}(B,\beta)$ is the least nonnegative integer $k$ with $B = UV^{\mathsf T}$, $U, V \in \mathbb{R}^{n\times k}$ and $\lVert u_i\rVert_2\lVert v_j\rVert_2 \le \beta$ for all rows, and $+\infty$ if no such factorization exists (for example $B = [2]$ and $\beta = 1$, since $|u_1^{\mathsf T}v_1| \le \lVert u_1\rVert_2\lVert v_1\rVert_2$). The source says "smallest integer" and leaves the infeasible case implicit; the value $+\infty$ is this page's convention. For a finite model class $\mathcal{M}$, test functions $\mathcal{F}$, $\kappa \in (0,1]$ and $h \in [H]$, let $\mathcal{N}_{\kappa,h}$ be the set of matrices $A \in \mathbb{R}^{|\mathcal{M}|\times|\mathcal{M}|}$ with
 
 $$
 \kappa\, \mathcal{E}_B(M, M', h) \le A(M, M') \le \mathcal{W}(M, M', h) \qquad \text{for all } M, M' \in \mathcal{M}.
 $$
 
-The witness rank is $\mathrm{W}(\kappa, \beta, \mathcal{M}, \mathcal{F}, h) = \min_{A \in \mathcal{N}_{\kappa,h}} \mathrm{rank}(A, \beta)$, and $\mathrm{W}_\kappa = \max_{h\in[H]} \mathrm{W}(\kappa,\beta,\mathcal{M},\mathcal{F},h)$.
+The witness rank is $\mathrm{W}(\kappa, \beta, \mathcal{M}, \mathcal{F}, h) = \min_{A \in \mathcal{N}_{\kappa,h}} \mathrm{rank}(A, \beta) \in \mathbb{Z}_{\ge 0} \cup \{+\infty\}$, and $\mathrm{W}_\kappa = \max_{h\in[H]} \mathrm{W}(\kappa,\beta,\mathcal{M},\mathcal{F},h)$. Under Bellman domination with a symmetric $\mathcal{F}$ the set $\mathcal{N}_{\kappa,h}$ contains $\mathcal{W}$ itself (as $\mathcal{W} \ge 0$ and $\mathcal{W} \ge \mathcal{E}_B$), so the minimum is over a nonempty set and is attained.
 
 ## Depends on
 
-None.
+- [Probability measure](../../../../Probability/foundations/probability-measures/is-probability-measure.md)
 
 ## Proof depends on
 

@@ -6,7 +6,7 @@ LSVI-UCB (least-squares value iteration with upper confidence bounds) is the epi
 
 **Procedure.** For each episode $k = 1, \dots, K$:
 
-1. Set $Q^k_{H+1} \equiv 0$. For $h = H, H-1, \dots, 1$ compute
+1. Receive $x^k_1$. Set $Q^k_{H+1} \equiv 0$. For $h = H, H-1, \dots, 1$ compute
 
 $$
 \Lambda^k_h = \lambda I + \sum_{\tau=1}^{k-1} \phi^\tau_h (\phi^\tau_h)^{\mathsf T}, \qquad w^k_h = (\Lambda^k_h)^{-1} \sum_{\tau=1}^{k-1} \phi^\tau_h \Big[ r_h(x^\tau_h, a^\tau_h) + \max_{a \in \mathcal{A}} Q^k_{h+1}(x^\tau_{h+1}, a) \Big],
@@ -16,15 +16,18 @@ $$
 Q^k_h(\cdot,\cdot) = \min\Big\{ (w^k_h)^{\mathsf T} \phi(\cdot,\cdot) + \beta \big[\phi(\cdot,\cdot)^{\mathsf T} (\Lambda^k_h)^{-1} \phi(\cdot,\cdot)\big]^{1/2},\ H \Big\}.
 $$
 
-2. Receive $x^k_1$; for $h = 1, \dots, H$ take $a^k_h \in \arg\max_{a} Q^k_h(x^k_h, a)$ and observe $x^k_{h+1}$ (and the reward).
+2. For $h = 1, \dots, H$ take $a^k_h \in \arg\max_{a} Q^k_h(x^k_h, a)$ and observe $x^k_{h+1}$ (and the reward).
 
-For $k = 1$ the sums are empty, so $\Lambda^1_h = \lambda I$ and $w^1_h = 0$. The vector $w^k_h$ is the minimizer of the ridge objective $\sum_{\tau < k} \big(r_h(x^\tau_h,a^\tau_h) + \max_a Q^k_{h+1}(x^\tau_{h+1},a) - w^{\mathsf T}\phi^\tau_h\big)^2 + \lambda \lVert w \rVert_2^2$. The function $Q^k_h$ is represented by $(w^k_h, \Lambda^k_h)$ and only evaluated where needed.
+The source's Algorithm 1 receives $x^k_1$ before the backward sweep, which does not use it.
+
+For $k = 1$ the sums are empty, so $\Lambda^1_h = \lambda I$ and $w^1_h = 0$. The vector $w^k_h$ is the ridge estimate for the rows $(\phi^\tau_h)^{\mathsf T}$, $\tau < k$, with the bracketed responses, that is, the minimizer of the ridge objective $\sum_{\tau < k} \big(r_h(x^\tau_h,a^\tau_h) + \max_a Q^k_{h+1}(x^\tau_{h+1},a) - w^{\mathsf T}\phi^\tau_h\big)^2 + \lambda \lVert w \rVert_2^2$. The function $Q^k_h$ is represented by $(w^k_h, \Lambda^k_h)$ and only evaluated where needed.
 
 **Cost.** The algorithm stores $\Lambda_h$, $w_h$, the observed rewards and the features $\{\phi(x^k_h, a)\}_{a \in \mathcal{A}}$, which is $O(d^2 H + dAT)$ space with $T = KH$ and $A = |\mathcal{A}|$. With Sherman–Morrison updates of $(\Lambda^k_h)^{-1}$, the source's count is $O(d^2 A K)$ time per step, dominated by the maxima over $a$ in the regression targets, so $O(d^2 A K T)$ in total. The running time does not depend on $|\mathcal{S}|$.
 
 ## Depends on
 
-None.
+- [Ridge estimate](../../supervised-learning/least-squares-ridge-and-lasso-regression/ridge-estimate.md)
+- [Ridge objective](../../supervised-learning/least-squares-ridge-and-lasso-regression/ridge.md)
 
 ## Proof depends on
 
@@ -32,7 +35,7 @@ None.
 
 ## Expansion
 
-The procedure is least-squares value iteration (replace the unknown Bellman backup by ridge regression on sampled next states) with a linear-bandit style bonus $\beta \lVert \phi \rVert_{(\Lambda^k_h)^{-1}}$; truncation at $H$ keeps the estimates in the range of true values. The guarantee of the algorithm is on the [regret page](regret-of-lsvi-ucb-in-linear-mdps.md); there the source sets $\lambda = 1$ and $\beta = c\,dH\sqrt{\log(2dT/p)}$.
+The procedure is least-squares value iteration (replace the unknown Bellman backup by ridge regression on sampled next states) with a linear-bandit style bonus $\beta \lVert \phi \rVert_{(\Lambda^k_h)^{-1}}$; truncation at $H$ keeps the estimates at most $H$ (it does not make them nonnegative). The guarantee of the algorithm is on the [regret page](regret-of-lsvi-ucb-in-linear-mdps.md); there the source sets $\lambda = 1$ and $\beta = c\,dH\sqrt{\log(2dT/p)}$.
 
 ## Sources
 

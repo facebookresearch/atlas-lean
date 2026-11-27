@@ -24,7 +24,7 @@ Choosing $\eta = \frac12 - \frac{2}{\log_2(d-1)}$ gives $C(\mathcal{P},H,d) = \m
 
 ## Depends on
 
-None.
+- [Probability measure](../../../../Probability/foundations/probability-measures/is-probability-measure.md)
 
 ## Proof depends on
 
@@ -32,9 +32,9 @@ None.
 
 ## Expansion
 
-Soundness and "transition soundness" (playing a $\delta$-suboptimal action with probability at most $\zeta$) are interchangeable up to constants, so it suffices to defeat transition-sound planners. The construction has $k$ MDPs $M_a$ sharing states, actions and features, with $a$ the optimal action everywhere in $M_a$ and an action gap of at least $1/4$ at $s_1$. The features are built from nearly orthogonal unit vectors: the source's Lemma 12 (from Du et al.) gives, for $\gamma > 0$ and $d_0 \ge \lceil 8\log k/\gamma^2 \rceil$, $k$ unit vectors in $\mathbb{R}^{d_0}$ with pairwise $|\langle v_a, v_b\rangle| \le \gamma$, and the constant $8$ there is what appears in the exponent $e^{(d-1)^{2\eta}/8}$. States form a tree of action sequences without repetition, and the optimal action exits to a reward-free chain. This keeps $q^\star$ realizable while the value signal is amplified by a factor of about $d^{1/2-\eta}$ per stage backwards from noisy last-stage rewards. A symmetric test MDP $M_0$ satisfies $\Pr_{M_a}(a \notin A_{1:n}) \ge \frac34 \Pr_{M_0}(a \notin A_{1:n})$. With $n \le k/4$ queries some action is rarely tried under $M_0$, so the planner fails on that $M_a$ unless it uses $\Omega(n)$ queries.
+It suffices to defeat "transition-sound" planners, which at every reachable state play an action with optimality gap at least $\delta$ with probability at most $\zeta$ (the source's Definition 5). For $\delta > 0$ and $\zeta \in (0,1]$, a $\delta$-sound planner is $(\delta/\zeta, \zeta)$-transition-sound (Proposition 6). Conversely, a $(\delta,\zeta)$-transition-sound planner is $(H\delta + H(H+1)\zeta/2)$-sound, a conversion that depends on the horizon. The construction has $k$ MDPs $M_a$ sharing states, actions and features, with $a$ the optimal action everywhere in $M_a$ and an action gap of at least $1/4$ at $s_1$. The features are built from nearly orthogonal unit vectors: the source's Lemma 12 (from Du et al.) gives, for $\gamma > 0$ and $d_0 \ge \lceil 8\log k/\gamma^2 \rceil$, $k$ unit vectors in $\mathbb{R}^{d_0}$ with pairwise $|\langle v_a, v_b\rangle| \le \gamma$, and the constant $8$ there is what appears in the exponent $e^{(d-1)^{2\eta}/8}$. States form a tree of action sequences without repetition, and the optimal action exits to a reward-free chain. This keeps $q^\star$ realizable while the value signal is amplified by a factor of about $d^{1/2-\eta}$ per stage backwards from noisy last-stage rewards. A symmetric test MDP $M_0$ satisfies $\Pr_{M_a}(a \notin A_{1:n}) \ge \frac34 \Pr_{M_0}(a \notin A_{1:n})$. With $n \le k/4$ queries some action is rarely tried under $M_0$, so the planner fails on that $M_a$ unless it uses $\Omega(n)$ queries.
 
-A complete expansion adds pages for that near-orthogonal-vectors lemma with its explicit constant (a Johnson–Lindenstrauss-type statement), for the equivalence of soundness and transition soundness up to constants (Proposition 6), and for the comparison of a planner's action frequencies on $M_a$ and on the symmetric test MDP (Eq. (6) and Lemma 11).
+A complete expansion adds pages for that near-orthogonal-vectors lemma with its explicit constant (a Johnson–Lindenstrauss-type statement), for the two conversions between soundness and transition soundness (Proposition 6), and for the comparison of a planner's action frequencies on $M_a$ and on the symmetric test MDP (Eq. (6) and Lemma 11).
 
 ## Sources
 

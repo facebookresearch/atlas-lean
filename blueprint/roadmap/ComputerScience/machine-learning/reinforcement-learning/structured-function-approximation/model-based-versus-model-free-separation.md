@@ -11,11 +11,11 @@ There are families of at most $2^H$ deterministic factored MDPs, sharing one rew
 
 Here $v^\pi$ is the expected total reward with $\sum_h r_h \le 1$, and the true process belongs to $\mathcal{M}$, so $Q^\star \in \mathcal{G}$ and $\pi^\star \in \mathcal{G}$.
 
-**Scope.** The hard family consists of deterministic factored MDPs with $2^d$ members, $d = H - 2$ state variables in the appendix construction (the main text summarizes it as $d = H$), $|\mathcal{O}| = 4$ values per variable, one parent per variable and two actions. For factored MDPs with known structure, the source's algorithm needs $\tilde O(d^2L^3HK^2\log(1/\delta)/\varepsilon^2)$ trajectories, where $L$ is the number of transition parameters (Theorem 8). The separation is information-theoretic, about samples, not computation. It concerns model-free methods that see states only through $\mathrm{OP}(\mathcal{M})$; a more expressive $\mathcal{G}$ may reveal the state and avoid the lower bound. Model-based realizability ($M^\star \in \mathcal{M}$) is in general a much stronger assumption than $Q^\star \in \mathcal{G}$.
+**Scope.** The hard family consists of deterministic factored MDPs with $2^d$ members, $d = H - 2$ state variables in the appendix construction (the main text summarizes it as $d = H$), $|\mathcal{O}| = 4$ values per variable, one parent per variable and two actions. For factored MDPs with known structure and known reward, the source's algorithm needs $\tilde O(d^2L^3HK^2\log(1/\delta)/\varepsilon^2)$ trajectories, where $L$ is the number of transition parameters (Theorem 8). The separation is information-theoretic, about samples, not computation. It concerns model-free methods that see states only through $\mathrm{OP}(\mathcal{M})$; a more expressive $\mathcal{G}$ may reveal the state and avoid the lower bound. Model-based realizability ($M^\star \in \mathcal{M}$) is in general a much stronger assumption than $Q^\star \in \mathcal{G}$.
 
 ## Depends on
 
-None.
+- [Probability measure](../../../../Probability/foundations/probability-measures/is-probability-measure.md)
 
 ## Proof depends on
 

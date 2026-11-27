@@ -14,13 +14,13 @@ $$
 \mathbb{P}_h(x' \mid x, a) = \langle \phi(x,a), \mu_h(x') \rangle \quad \text{for all } x, x' \in \mathcal{S},\ a \in \mathcal{A},
 $$
 
-that is, the transitions at step $h$ are those of a [linear MDP](linear-mdp.md) (the statement makes no claim about the normalization of $\mu_h$).
+that is, the transition kernel at step $h$ factors through the features as in a [linear MDP](linear-mdp.md). The conclusion is this factorization only; it makes no claim about the normalization of $\mu_h$ or the reward.
 
 The hypothesis quantifies over all policies. It is a completeness condition on the whole linear class, much stronger than linear realizability of $Q^\star$ alone.
 
 ## Depends on
 
-- [Linear MDP](linear-mdp.md)
+- [Expectation under a probability mass function](../../../../Probability/distributions/discrete/expectation-under-a-probability-mass-function/expect.md)
 
 ## Proof depends on
 

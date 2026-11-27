@@ -23,14 +23,14 @@ which is how Agarwal, Kakade, Krishnamurthy and Sun normalize the second embeddi
 **Remarks recorded in the source.**
 
 - Since each $\mathbb{P}_h(\cdot \mid x,a)$ is a probability measure, $\phi(x,a)^{\mathsf T} \mu_h(\mathcal{S}) = 1$ and $\phi(x,a)^{\mathsf T} \mu_h(B) \ge 0$ for every measurable $B$; in particular the image of $\phi$ lies in an affine hyperplane.
-- Tabular MDPs are the case $d = |\mathcal{S}||\mathcal{A}|$ with $\phi(x,a) = e_{(x,a)}$. Features in the probability simplex, with arbitrary probability measures $e_i^{\mathsf T} \mu_h$ and $\lVert \theta_h \rVert_\infty \le 1$, also give linear MDPs (rewards in $[0,1]$ need $\theta_h \in [0,1]^d$).
+- Tabular MDPs are the case $d = |\mathcal{S}||\mathcal{A}|$ with $\phi(x,a) = e_{(x,a)}$. Features whose image is a subset of the probability simplex, with arbitrary probability measures $e_i^{\mathsf T} \mu_h$, also give linear MDPs; the source states this with $\lVert \theta_h \rVert_\infty \le 1$. That bound alone allows negative rewards. Rewards lie in $[0,1]$ exactly when $0 \le \langle \phi(x,a), \theta_h \rangle \le 1$ on the feature image, which $\theta_h \in [0,1]^d$ guarantees; the coordinate box is also necessary when the feature image contains every vertex $e_i$, in particular when it is the whole simplex.
 - The measures $\mu_h$ are unknown and may have infinitely many degrees of freedom, so a linear MDP is not a finite-parameter model of the dynamics.
 
 **Scope.** The assumption constrains the transition model itself. Linear realizability of the optimal action-value function alone (some $\theta$ with $Q^\star_h = \langle \phi, \theta \rangle$) does not imply it; later work gives exponential lower bounds in that realizability-only setting, for example the [planning lower bound under linear realizability of the optimal action values](planning-lower-bound-under-q-star-realizability.md).
 
 ## Depends on
 
-None.
+- [Probability measure](../../../../Probability/foundations/probability-measures/is-probability-measure.md)
 
 ## Proof depends on
 

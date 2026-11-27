@@ -18,13 +18,13 @@ $$
 
 The feature map is known; the parameters $\Theta^\star = (\theta^\star_h)_{h \in [H]}$ are unknown. In the *discounted* version (discount $\gamma \in [0,1)$) a single $\theta$ with $\lVert\theta\rVert_2 \le B$ gives $P(s' \mid s,a) = \langle \phi(s'\mid s,a), \theta \rangle$.
 
-**Consequences used by algorithms.** For any $V$, $(P_h V)(s,a) = \langle \phi_V(s,a), \theta_h \rangle$, so one-step expectations of any value function are linear in the known vector $\phi_V(s,a)$; regressing observed $V(s_{h+1})$ on $\phi_V(s_h,a_h)$ ("value-targeted regression") estimates $\theta_h$. The same identity with $V^2$ gives linear estimates of the conditional variance $[P_hV^2] - [P_hV]^2$.
+**Consequences used by algorithms.** For every $V : \mathcal{S} \to [0,1]$, and by linearity every bounded $V$, $(P_h V)(s,a) = \sum_{s'} P_h(s' \mid s,a)V(s') = \langle \phi_V(s,a), \theta_h \rangle$, so one-step expectations of bounded value functions are linear in the known vector $\phi_V(s,a)$; regressing observed $V(s_{h+1})$ on $\phi_V(s_h,a_h)$ ("value-targeted regression") estimates $\theta_h$. The same identity with $V^2$ makes the second moment $[P_hV^2]$ linear as well. The conditional variance $[P_hV^2] - [P_hV]^2$ is not linear in $\theta_h$; algorithms estimate the two moments separately and combine the estimates.
 
 **Contrast with linear MDPs.** In a [linear MDP](linear-mdp.md), $P_h(\cdot \mid s,a) = \langle \phi(s,a), \mu_h(\cdot) \rangle$ with known $(s,a)$-features and unknown, possibly infinite-dimensional measures; here the unknown is a $d$-dimensional vector and the features also depend on the next state.
 
 ## Depends on
 
-None.
+- [Expectation under a probability mass function](../../../../Probability/distributions/discrete/expectation-under-a-probability-mass-function/expect.md)
 
 ## Proof depends on
 

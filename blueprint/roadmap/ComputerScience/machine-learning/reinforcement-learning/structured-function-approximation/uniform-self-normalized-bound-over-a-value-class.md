@@ -8,11 +8,12 @@ $$
 \Big\lVert \sum_{\tau=1}^{k} \phi_\tau \big\{ V(x_\tau) - \mathbb{E}[V(x_\tau) \mid \mathcal{F}_{\tau-1}] \big\} \Big\rVert^2_{\Lambda_k^{-1}} \le 4H^2 \Big[ \frac{d}{2} \log\Big(\frac{k+\lambda}{\lambda}\Big) + \log \frac{\mathcal{N}_\varepsilon}{\delta} \Big] + \frac{8 k^2 \varepsilon^2}{\lambda}.
 $$
 
-The function $V$ may be chosen after seeing the data (for example $V = V^k_{h+1}$ computed from all episodes up to $k$), which is exactly why a fixed-$V$ martingale bound does not suffice.
+For each fixed $V$ the centred terms use the conditional expectation of that fixed $V$. Because the bound holds for all $V \in \mathcal{V}$ at once, the family of these sums may then be evaluated at a data-dependent choice such as $V = V^k_{h+1}$, computed from all episodes up to $k$; the choice is not moved inside the conditional expectation. That is why a bound for one fixed $V$ does not suffice.
 
 ## Depends on
 
-None.
+- [Filtrations and stopping times](../../../../Probability/martingales/stopping-times-and-martingale-problems/filtrations-and-stopping-times.md)
+- [Conditional expectation given a σ-field](../../../../Probability/foundations/conditional-expectation/conditional-expectation-given-a-sigma-field/conditional-expectation.md)
 
 ## Proof depends on
 
@@ -20,9 +21,11 @@ None.
 
 ## Expansion
 
-Take an $\varepsilon$-cover $\{\tilde V\}$ of $\mathcal{V}$ and write $V = \tilde V + \Delta V$ with $\sup |\Delta V| \le \varepsilon$. By $\lVert u + v \rVert^2 \le 2\lVert u \rVert^2 + 2\lVert v \rVert^2$, the left side is at most twice the same expression for $\tilde V$ plus twice that for $\Delta V$. For each fixed $\tilde V$ the centred terms $\tilde V(x_\tau) - \mathbb{E}[\tilde V(x_\tau) \mid \mathcal{F}_{\tau-1}]$ lie in an interval of length $2H$ and are conditionally $H$-sub-Gaussian, so the self-normalized bound with $V = \lambda I$ and $\det \Lambda_k \le (\lambda + k)^d$ applies, and a union bound over the $\mathcal{N}_\varepsilon$ cover elements gives the first term. The $\Delta V$ term has entries bounded by $2\varepsilon$ and is bounded crudely by $8k^2\varepsilon^2/\lambda$.
+Take an $\varepsilon$-cover $\{\tilde V\}$ of $\mathcal{V}$ and write $V = \tilde V + \Delta V$ with $\sup |\Delta V| \le \varepsilon$. By $\lVert u + v \rVert^2 \le 2\lVert u \rVert^2 + 2\lVert v \rVert^2$, the left side is at most twice the same expression for $\tilde V$ plus twice that for $\Delta V$. For each fixed $\tilde V$ the centred terms $\tilde V(x_\tau) - \mathbb{E}[\tilde V(x_\tau) \mid \mathcal{F}_{\tau-1}]$ lie in the $\mathcal{F}_{\tau-1}$-measurable interval $[-H - m_\tau, H - m_\tau]$, $m_\tau = \mathbb{E}[\tilde V(x_\tau) \mid \mathcal{F}_{\tau-1}]$, of length $2H$, and are therefore conditionally $H$-sub-Gaussian, so the self-normalized bound with $V = \lambda I$ and $\det \Lambda_k \le (\lambda + k)^d$ applies, and a union bound over the $\mathcal{N}_\varepsilon$ cover elements gives the first term. The $\Delta V$ term has entries bounded by $2\varepsilon$ and is bounded crudely by $8k^2\varepsilon^2/\lambda$.
 
-The source applies this to the class of LSVI-UCB value functions $V(\cdot) = \min\{\max_a w^{\mathsf T}\phi(\cdot,a) + \beta \sqrt{\phi(\cdot,a)^{\mathsf T}\Lambda^{-1}\phi(\cdot,a)}, H\}$ with $\lVert w \rVert \le L$, $\beta \in [0,B]$, $\lambda_{\min}(\Lambda) \ge \lambda$, whose log-covering number it bounds by $d \log(1 + 4L/\varepsilon) + d^2 \log(1 + 8 d^{1/2} B^2/(\lambda \varepsilon^2))$ (Lemma D.6, via the covering number $(1 + 2R/\varepsilon)^d$ of a Euclidean ball of radius $R$, Lemma D.5).
+The source applies this to the class of LSVI-UCB value functions $V(\cdot) = \min\{\max_a [w^{\mathsf T}\phi(\cdot,a) + \beta \sqrt{\phi(\cdot,a)^{\mathsf T}\Lambda^{-1}\phi(\cdot,a)}], H\}$ with $\lVert w \rVert \le L$, $\beta \in [0,B]$, $\lambda_{\min}(\Lambda) \ge \lambda$, whose log-covering number it bounds by $d \log(1 + 4L/\varepsilon) + d^2 \log(1 + 8 d^{1/2} B^2/(\lambda \varepsilon^2))$ (Lemma D.6, via the upper bound $(1 + 2R/\varepsilon)^d$ on the covering number of a Euclidean ball of radius $R$, Lemma D.5).
+
+A complete expansion adds a page for the centred conditional Hoeffding lemma: if $X \in [a,b]$ almost surely, then $X - \mathbb{E}[X \mid m]$ is conditionally sub-Gaussian given $m$ with variance proxy $(b-a)^2/4$. The [conditional Hoeffding lemma](../../../../Probability/concentration-inequalities/has-cond-subgaussian-mgf-of-mem-icc-of-c.md) on main assumes a fixed interval and a vanishing conditional mean. Applied to the centred term, which lies only in $[-2H, 2H]$, it gives proxy $4H^2$ and would turn the constant $4H^2$ above into $16H^2$, so it does not support the stated bound.
 
 ## Sources
 
