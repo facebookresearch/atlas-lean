@@ -246,7 +246,7 @@ private lemma pointPure_kernel (N : ModuleCat.{2} ℤ) (n : N) (hn : (2 : ℤ) �
 private abbrev I : AddCommGrpCat.{2} := AddCommGrpCat.of Z2
 
 private def pointMap (N : ModuleCat.{2} ℤ) (n : N) : I ⟶ (G.obj B).obj N :=
-  AddCommGrpCat.ofHom ((zmultiplesHom (pointPure N n)).comp
+  AddCommGrpCat.ofHom ((zmultiplesHom _ (pointPure N n)).comp
     (ULift.moduleEquiv : Z2 ≃ₗ[ℤ] ℤ).toAddEquiv.toAddMonoidHom)
 
 private lemma pointMap_apply (N : ModuleCat.{2} ℤ) (n : N) (x : I) :
@@ -254,7 +254,7 @@ private lemma pointMap_apply (N : ModuleCat.{2} ℤ) (n : N) (x : I) :
 
 private lemma pointMap_zero (N : ModuleCat.{2} ℤ) (n : N) (hn : (2 : ℤ) • n = 0) :
     pointMap N n ≫ tensorInclusion N = 0 := by
-  apply AddCommGrpCat.hom_ext
+  apply AddCommGrpCat.ext
   intro x
   change (tensorInclusion N).hom ((pointMap N n).hom x) = 0
   rw [pointMap_apply, map_zsmul, pointPure_kernel N n hn, smul_zero]
