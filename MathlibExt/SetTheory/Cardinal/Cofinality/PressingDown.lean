@@ -206,7 +206,7 @@ theorem cof_Iio_ord_of_isRegular.{u} {lam : Cardinal.{u}} (hlam : lam.IsRegular)
 
 theorem sSup_lt_ord_of_isRegular.{u} {lam : Cardinal.{u}} (hlam : lam.IsRegular)
     {S : Set Ordinal.{u}} (hS : S ⊆ Set.Iio lam.ord)
-    (hcard : #(↥S) < Cardinal.lift.{u+1} lam) :
+    (hcard : #(↥S) < Cardinal.lift.{u + 1} lam) :
     sSup S < lam.ord := by
   have hcof : Order.cof ↥(Set.Iio lam.ord) = Cardinal.lift.{u+1} lam :=
     cof_Iio_ord_of_isRegular hlam
