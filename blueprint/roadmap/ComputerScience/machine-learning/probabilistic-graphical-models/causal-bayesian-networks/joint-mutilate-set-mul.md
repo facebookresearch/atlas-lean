@@ -10,10 +10,3 @@ $$P_W(x) = P_{W'}(x) \prod_{j \in W' \setminus W} p_j(x_j \mid x_{\mathrm{pa}(j)
 
 With $W = \emptyset$ this writes the joint law, on the event $X_{W'} = w_{W'}$, as the
 interventional law of $\mathrm{do}(X_{W'} = w_{W'})$ times the tables of $W'$.
-
-## Depends on
-
-- [Mutilated network of a set intervention](mutilate-set.md)
-- [Parent values of a node](pa-val.md)
-- [Bayesian network](../bayesian-networks/bayes-net.md)
-- [Joint distribution of a Bayesian network](../bayesian-networks/joint-2.md)

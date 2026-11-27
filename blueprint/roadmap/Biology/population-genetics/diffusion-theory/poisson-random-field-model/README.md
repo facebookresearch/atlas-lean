@@ -15,3 +15,8 @@
 - [Expected number of sites derived in the whole neutral sample](expected-sfs-neutral-self.md)
 - [Expected number of segregating sites in a neutral sample](sum-expected-sfs-neutral.md)
 - [Expected pairwise diversity of a neutral sample is θ](sum-pairwise-diversity-expected-sfs-neut.md)
+
+- [The Poisson random field as the stationary limit of immigrating Wright–Fisher diffusions](poisson-random-field-as-the-stationary-limit-of.md)
+- [Diffusion observables averaged over a distribution of fitness effects](averages-over-a-distribution-of-fitness-effects.md)
+- [Expected joint allele-frequency spectrum and its Poisson likelihood](expected-joint-allele-frequency-spectrum-and-poisson-likelihood.md)
+- [Multi-population diffusion for the joint allele-frequency density](multipopulation-diffusion-with-migration-and-admixture.md)

@@ -87,7 +87,15 @@ def geometricRootValue {X : Scheme.{0}} {Ω : Type} [Field Ω]
   Units.map (((Scheme.ΓSpecIso (.of Ω)).hom.hom.comp t.left.appTop.hom).toMonoidHom)
     (rootUnit S U a)
 
-/-- Source-complete rank-one Tate stalk comparison, fixed on every actual root word. -/
+/-- Coordinates on the geometric stalks of the Tate twists, normalized by a unit $\zeta$: for a
+geometric point $p : \operatorname{Spec} \Omega \to X$ ($\Omega$ algebraically closed) and
+$\zeta \in \Omega^\times$, isomorphisms from the stalks at $p$ of the Tate twists
+$\mu_l^{\otimes j}$ of the cohomology data `S` (`S.coefficient X j`, $j \ge 0$, with
+$\mu_l^{\otimes 0} = \mathbb{Z}/l$) to $\mathbb{Z}/l$, such that for every étale $U \to X$, lift
+$t$ of $p$ to $U$, sections $a_1, \dots, a_j$ of $\mu_l$ over $U$ and integers $r_1, \dots, r_j$
+with $a_i(t) = \zeta^{r_i}$ in $\Omega^\times$ for all $i$, the germ at $t$ of the tensor
+$a_1 \otimes \dots \otimes a_j$ (`tateWord`; the unit section for $j = 0$) is sent to
+$r_1 \cdots r_j \bmod l$. -/
 structure TateCoordinates {X : Scheme.{0}} {Ω : Type} [Field Ω] [IsAlgClosed Ω]
     (p : Spec (.of Ω) ⟶ X) (ζ : Ωˣ) where
   comparison : ∀ j : ℕ, stalk p (S.coefficient X j) ≅ ModuleCat.of Scalar (FiniteCoefficient l)
@@ -126,7 +134,14 @@ def fibreMultiplicity {Y X : Scheme.{0}} (f : Y ⟶ X) [IsFinite f] {Ω : Type} 
   let R := B.presheaf.stalk (b default)
   exact (Module.length R R).toNat
 
-/-- Completed source point, finite-fibre and root-coordinate comparisons. -/
+/-- Stalk data for the cohomology data `S`, where $\Omega$ ranges over algebraically closed fields:
+for every scheme $X$, geometric point $p : \operatorname{Spec} \Omega \to X$ and primitive $l$-th
+root of unity $\zeta \in \Omega^\times$, with $l$ invertible in $\Omega$, Tate coordinates at $p$
+for $\zeta$ (`TateCoordinates`); for every morphism $f : Y \to X$, geometric point $p$ of $X$, lift
+$s$ of $p$ to $Y$ and étale sheaf $F$ on $Y$, a map from the stalk of $f_*F$ at $p$ to the stalk of
+$F$ at $s$ sending the germ at a lift $t$ of $p$ to an étale $U \to X$ of each section of $F$ over
+$U \times_X Y$ to its germ at the induced lift $(t, s)$ (`StalkProjection`); and, for $f$ finite,
+finiteness of the set of lifts of $p$ to $Y$. -/
 structure StalkSources where
   coordinates : ∀ (X : Scheme.{0}) (Ω : Type) [Field Ω] [IsAlgClosed Ω]
     (p : Spec (.of Ω) ⟶ X) (ζ : Ωˣ), IsUnit (l : Ω) →

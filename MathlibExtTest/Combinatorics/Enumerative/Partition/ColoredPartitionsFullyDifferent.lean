@@ -29,3 +29,26 @@ example :
   decide
 
 end MetaMathlibExt.card_coloredPartitions_fullyDifferent
+
+namespace MetaMathlibExt.card_coloredPartitions_fullyDifferent_le
+
+private def boundedCount (n : ℕ) : ℕ :=
+  (((Finset.Icc 1 n ×ˢ Finset.Icc 1 n).filter (fun p : ℕ × ℕ => p.2 ≤ p.1)).powerset.filter
+    (fun T => T.Nonempty ∧ (T.image Prod.fst).card = T.card ∧
+      (T.image Prod.snd).card = T.card)).card
+
+-- The empty placement is excluded, even when the board is empty.
+example : boundedCount 0 = 0 :=
+  (card_coloredPartitions_fullyDifferent_le (n := 0)).trans (by decide +kernel)
+
+example : boundedCount 2 = 4 :=
+  (card_coloredPartitions_fullyDifferent_le (n := 2)).trans (by decide +kernel)
+
+example : boundedCount 3 = 14 :=
+  (card_coloredPartitions_fullyDifferent_le (n := 3)).trans (by decide +kernel)
+
+-- Independently enumerate the 3-row board: six singletons, seven pairs, and one triple.
+set_option maxRecDepth 4096 in
+example : boundedCount 3 = 14 := by decide
+
+end MetaMathlibExt.card_coloredPartitions_fullyDifferent_le

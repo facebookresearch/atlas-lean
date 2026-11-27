@@ -38,6 +38,7 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.IsPrimePow
 public import Mathlib.Combinatorics.SimpleGraph.CycleGraph
 public import Mathlib.Combinatorics.SimpleGraph.Extremal.Basic
+public import MathlibExt.Combinatorics.SimpleGraph.FourCycleProjectivePlaneExtremal
 
 @[expose] public section
 
@@ -62,20 +63,5 @@ listed in leansolving/SqueezeBench `SqueezeBench/Problems/ExC4/README.md`. -/
 public theorem_wanted extremalNumber_cycleGraph_four_one_to_twenty :
     (List.range 20).map (fun i => extremalNumber (i + 1) (cycleGraph 4)) =
       [0, 1, 3, 4, 6, 7, 9, 11, 13, 16, 18, 21, 24, 27, 30, 33, 36, 39, 42, 46]
-
-/-- **Füredi's theorem on four-cycle-free graphs.** For a natural number $n$, let
-$\mathrm{ex}(n; C_4)$ be the largest number of edges of a simple graph on $n$ vertices that
-contains no four-cycle $C_4$ as a (not necessarily induced) subgraph. For every prime power
-$q > 13$, $\mathrm{ex}(q^2 + q + 1; C_4) = q (q + 1)^2 / 2$; the division is exact because
-$q (q + 1)$ is even.
-
-The bound is attained by the polarity graph of the projective plane of order $q$.
-
-Source: Z. Füredi, *On the number of edges of quadrilateral-free graphs*,
-J. Combin. Theory Ser. B 68 (1996), 1–6; listed in SqueezeBench
-`SqueezeBench/Problems/ExC4/README.md`. -/
-public theorem_wanted extremalNumber_cycleGraph_four_projectivePlane_order
-    (q : ℕ) (hq : IsPrimePow q) (h13 : 13 < q) :
-    extremalNumber (q ^ 2 + q + 1) (cycleGraph 4) = q * (q + 1) ^ 2 / 2
 
 end MathlibExt.Combinatorics.SimpleGraph.FourCycleExtremalValuesWanted

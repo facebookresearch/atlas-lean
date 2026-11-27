@@ -204,7 +204,9 @@ def perfPullback {N : ShuffleAlgebraFunctor k} {S : AffineScalarSystem N}
       exact isPerfectGlobal_pullback M f a.val
         ((SSet.mem_fullEnhancedSubcategory_obj_zero_iff (IsPerfectGlobal M Y) a.val).mp a.property))
 
-/-- A native quasicategory QCoh model gives the completed source law for its full Perf. -/
+/-- If the simplicial set `qcoh M X` of quasi-coherent modules on a prestack $X$, for the affine
+module fibration `M`, is a quasicategory, then so is its full simplicial subset `perf M X` spanned
+by the perfect objects. -/
 theorem perf_quasicategory {N : ShuffleAlgebraFunctor k} {S : AffineScalarSystem N}
     (M : AffineModuleFibration N S) (X : Prestack k) [SSet.Quasicategory (qcoh M X)] :
     SSet.Quasicategory (perf M X) := by

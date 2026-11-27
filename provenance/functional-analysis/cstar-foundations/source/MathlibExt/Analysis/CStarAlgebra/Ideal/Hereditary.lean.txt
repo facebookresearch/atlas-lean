@@ -1,0 +1,35 @@
+/-
+Author: @toskua
+-/
+module
+
+public import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Basic
+
+/-!
+# Hereditary nonunital star subalgebras
+
+The predicate records only downward closure among positive elements in the
+canonical spectral order. Closedness and fullness are separate properties.
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+noncomputable section
+
+namespace NonUnitalStarSubalgebra
+
+universe uA
+
+/-- A star subalgebra is hereditary when it is downward closed among positive
+elements in the canonical spectral order. This predicate does not include
+topological closedness or fullness. -/
+def IsHereditary
+    {A : Type uA} [NonUnitalCStarAlgebra A]
+    (S : NonUnitalStarSubalgebra ℂ A) : Prop :=
+  let _ : PartialOrder A := CStarAlgebra.spectralOrder A
+  ∀ {x y : A}, 0 ≤ x → 0 ≤ y → y ∈ S → x ≤ y → x ∈ S
+
+end NonUnitalStarSubalgebra

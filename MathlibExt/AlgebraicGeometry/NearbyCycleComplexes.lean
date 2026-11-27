@@ -64,8 +64,10 @@ abbrev QSheaf (Z : TopCat.{0}) := RationalSheaf Z
 abbrev QCochain (Z : TopCat.{0}) := CochainComplex (QSheaf Z) ℤ
 abbrev QDerived (Z : TopCat.{0}) := RationalDerived Z
 
-/-- The existing functorial K-injective resolution toolbox, on actual
-cochain complexes of rational sheaves. -/
+/-- A functorial K-injective resolution of cochain complexes of sheaves of $\mathbb{Q}$-vector
+spaces on $Z$: an endofunctor $I$ of the category of such complexes with a natural transformation
+$K \to I(K)$ from the identity that is a quasi-isomorphism for every complex $K$, and such that
+every $I(K)$ is K-injective. -/
 structure FunctorialResolution (Z : TopCat.{0}) where
   functor : QCochain Z ⥤ QCochain Z
   inclusion : 𝟭 (QCochain Z) ⟶ functor

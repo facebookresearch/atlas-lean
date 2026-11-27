@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.MachineLearning.GraphicalModels.GlobalMarkov
+import Mathlib.Data.Finset.Update
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
 
@@ -55,12 +56,9 @@ Both formulas are stated for a single outcome node. The three rules of the do-ca
 namespace Cslib.MachineLearning.GraphicalModels
 
 open Finset Convexity MetaMathlibExt.FiniteWeight
+open Function (updateFinset)
 
 variable {α : Type*}
-
-/-- The assignment equal to `t` on `T` and to `x'` elsewhere. -/
-private def fill {n : ℕ} (T : Finset (Fin n)) (x' : Fin n → α) (t : T → α) : Fin n → α :=
-  fun i => if h : i ∈ T then t ⟨i, h⟩ else x' i
 
 /-- Splitting a sum against `P` by the values `t` of the variables in `T` (disjoint from the
 fixed set `S`), for a weight `g` depending only on the variables in `T ∪ S`. -/
@@ -68,30 +66,30 @@ private lemma sum_filter_mul_eq_sum_marginal {n : ℕ} [Fintype α] [DecidableEq
     (P : (Fin n → α) → ℝ) {S T : Finset (Fin n)} (hTS : Disjoint T S) (x' : Fin n → α)
     (g : (Fin n → α) → ℝ) (hg : ∀ x y, (∀ i ∈ T ∪ S, x i = y i) → g x = g y) :
     ∑ x with ∀ i ∈ S, x i = x' i, P x * g x =
-      ∑ t : T → α, g (fill T x' t) * marginal P ↑(T ∪ S) (fill T x' t) := by
+      ∑ t : T → α, g (updateFinset x' T t) * marginal P ↑(T ∪ S) (updateFinset x' T t) := by
   rw [← Finset.sum_fiberwise (univ.filter fun x : Fin n → α => ∀ i ∈ S, x i = x' i)
     (fun x => fun i : T => x i)]
   refine sum_congr rfl fun t _ => ?_
   rw [filter_filter, marginal_coe, mul_sum]
   have hiff : ∀ x : Fin n → α, ((∀ i ∈ S, x i = x' i) ∧ (fun i : T => x i) = t) ↔
-      ∀ i ∈ T ∪ S, x i = fill T x' t i := by
+      ∀ i ∈ T ∪ S, x i = updateFinset x' T t i := by
     intro x
     constructor
     · rintro ⟨h1, h2⟩ i hi
       by_cases hiT : i ∈ T
-      · simp only [fill, hiT, dite_true]
+      · simp only [updateFinset, hiT, dite_true]
         exact congrFun h2 ⟨i, hiT⟩
-      · simp only [fill, hiT, dite_false]
+      · simp only [updateFinset, hiT, dite_false]
         exact h1 i ((mem_union.1 hi).resolve_left hiT)
     · intro h
       refine ⟨fun i hi => ?_, funext fun i => ?_⟩
       · have hiT : i ∉ T := fun hiT => disjoint_left.1 hTS hiT hi
         rw [h i (mem_union_right _ hi)]
-        simp [fill, hiT]
+        simp [updateFinset, hiT]
       · rw [h i (mem_union_left _ i.2)]
-        simp [fill]
+        simp [updateFinset]
   refine sum_congr (filter_congr fun x _ => hiff x) fun x hx => ?_
-  rw [mul_comm, hg x (fill T x' t) (mem_filter.1 hx).2]
+  rw [mul_comm, hg x (updateFinset x' T t) (mem_filter.1 hx).2]
 
 namespace BayesNet
 
@@ -218,7 +216,8 @@ private lemma marginal_reweight [Fintype α] {L L' : (Fin n → α) → ℝ}
     marginal L ↑(Ys ∪ C) xb * marginal L' ↑C xb = marginal L ↑C xb * marginal L' ↑(Ys ∪ C) xb := by
   classical
   have e : ∀ S, C ⊆ S → Disjoint T S →
-      marginal L ↑S xb = ∑ t : T → α, h (fill T xb t) * marginal L' ↑(T ∪ S) (fill T xb t) := by
+      marginal L ↑S xb =
+        ∑ t : T → α, h (updateFinset xb T t) * marginal L' ↑(T ∪ S) (updateFinset xb T t) := by
     intro S hCS hTS
     rw [← sum_filter_mul_eq_sum_marginal L' hTS xb h fun x y hxy => hh x y fun i hi => hxy i
       (by rcases mem_union.1 hi with hi | hi
@@ -226,14 +225,15 @@ private lemma marginal_reweight [Fintype α] {L L' : (Fin n → α) → ℝ}
           · exact mem_union_right _ (hCS hi))]
     simp only [marginal_coe]
     exact sum_congr rfl fun x hx => hL x fun i hi => (mem_filter.1 hx).2 i (hCS hi)
-  have agree : ∀ S, Disjoint T S → ∀ t, marginal L' ↑S (fill T xb t) = marginal L' ↑S xb :=
+  have agree : ∀ S, Disjoint T S → ∀ t,
+      marginal L' ↑S (updateFinset xb T t) = marginal L' ↑S xb :=
     fun S hS t => marginal_congr_of_eqOn L' S fun i hi => by
       have hi' : i ∉ T := fun h => disjoint_left.1 hS h hi
-      simp [fill, hi']
+      simp [updateFinset, hi']
   have hTYC : Disjoint T (Ys ∪ C) := disjoint_union_right.2 ⟨hTY, hTC⟩
   rw [e (Ys ∪ C) subset_union_right hTYC, e C subset_rfl hTC, sum_mul, sum_mul]
   refine sum_congr rfl fun t _ => ?_
-  have := condIndep_coe_iff.1 hci (fill T xb t)
+  have := condIndep_coe_iff.1 hci (updateFinset xb T t)
   rw [agree C hTC t, agree (Ys ∪ C) hTYC t, union_assoc] at this
   rw [mul_assoc, this, mul_assoc]
 
@@ -313,10 +313,18 @@ private lemma not_isDescendant_of_blocked {k m : Fin n} (hkm' : m ≠ k)
     exact absurd (h1'.1.trans this.1) (lt_irrefl _)
   · exact h2'
 
-/-- Relating two interventions `do(X_W = w)` and `do(X_{W'} = w)` for `W ⊆ W'` on assignments
-agreeing with `w` on `W'`: the larger one drops the tables of `W' \ W`. -/
-private lemma joint_mutilateSet_mul {W W' : Finset (Fin n)} (hWW' : W ⊆ W')
-    (w : Fin n → α) {x : Fin n → α} (hx : ∀ j ∈ W', x j = w j) :
+/-- **Relating two nested interventions.** Let $B$ be a Bayesian network on the nodes
+$0, \dots, n - 1$ with values in a nonempty type $\alpha$, write $p_j(\cdot \mid z)$ for the table
+of node $j$, and let $P_W$ be the joint distribution of the mutilated network of
+$\mathrm{do}(X_W = w_W)$. For finite sets $W \subseteq W'$ of nodes, $w \in \alpha^n$ and every
+$x \in \alpha^n$ that agrees with $w$ on $W'$,
+$P_W(x) = P_{W'}(x) \prod_{j \in W' \setminus W} p_j(x_j \mid x_{\mathrm{pa}(j)})$.
+
+With $W = \emptyset$ (`BayesNet.joint_mutilateSet_empty`) this writes the joint law, on the
+event $X_{W'} = w_{W'}$, as the interventional law of $\mathrm{do}(X_{W'} = w_{W'})$ times the
+tables of $W'$. -/
+theorem joint_mutilateSet_eq_mul_prod_sdiff {W W' : Finset (Fin n)} {w x : Fin n → α}
+    (hWW' : W ⊆ W') (hx : ∀ j ∈ W', x j = w j) :
     (b.mutilateSet W w).joint x = (b.mutilateSet W' w).joint x *
       ∏ j ∈ W' \ W, (b.cpt j (b.paVal j x)).weights (x j) := by
   classical
@@ -467,10 +475,10 @@ theorem backdoor_adjustment [Fintype α] [DecidableEq α] (k y : Fin n) (Z : Fin
   refine sum_congr rfl fun z _ => ?_
   rw [filter_filter]
   obtain ⟨a₀⟩ := (inferInstance : Nonempty α)
-  set xb : Fin n → α := fill Z (Function.update (Function.update (fun _ => a₀) y v) k a) z
-    with hxb
-  have hxk : xb k = a := by simp [hxb, fill, hkZ]
-  have hxy : xb y = v := by simp [hxb, fill, hyZ, Ne.symm hky]
+  set xb : Fin n → α :=
+    updateFinset (Function.update (Function.update (fun _ => a₀) y v) k a) Z z with hxb
+  have hxk : xb k = a := by simp [hxb, updateFinset, hkZ]
+  have hxy : xb y = v := by simp [hxb, updateFinset, hyZ, Ne.symm hky]
   have hres : ∀ x : Fin n → α, (fun i : Z => x i) = z ↔ ∀ i ∈ Z, x i = xb i := by
     intro x
     constructor
@@ -478,11 +486,11 @@ theorem backdoor_adjustment [Fintype α] [DecidableEq α] (k y : Fin n) (Z : Fin
       have := congrFun h ⟨i, hi⟩
       simp only at this
       rw [this]
-      simp [hxb, fill, hi]
+      simp [hxb, updateFinset, hi]
     · intro h
       funext i
       rw [h i i.2]
-      simp [hxb, fill]
+      simp [hxb, updateFinset]
   have c1 : ∑ x with x y = v ∧ (fun i : Z => x i) = z, Q x = marginal Q ↑(insert y Z) xb := by
     simp only [marginal_coe]
     refine sum_congr (filter_congr fun x _ => ?_) fun _ _ => rfl
@@ -627,10 +635,10 @@ theorem frontdoor_adjustment [Fintype α] [DecidableEq α] (k y : Fin n) (M : Fi
     (fun x => fun i : M => x i)]
   refine sum_congr rfl fun m _ => ?_
   rw [filter_filter]
-  set xb : Fin n → α := fill M (Function.update (Function.update (fun _ => a₀) y v) k a) m
-    with hxb
-  have hxk : xb k = a := by simp [hxb, fill, hkM]
-  have hxy : xb y = v := by simp [hxb, fill, hyM, Ne.symm hky]
+  set xb : Fin n → α :=
+    updateFinset (Function.update (Function.update (fun _ => a₀) y v) k a) M m with hxb
+  have hxk : xb k = a := by simp [hxb, updateFinset, hkM]
+  have hxy : xb y = v := by simp [hxb, updateFinset, hyM, Ne.symm hky]
   have hxa : Function.update xb k a = xb := by rw [← hxk, Function.update_eq_self]
   have hres : ∀ x : Fin n → α, (fun i : M => x i) = m ↔ ∀ i ∈ M, x i = xb i := by
     intro x
@@ -639,11 +647,11 @@ theorem frontdoor_adjustment [Fintype α] [DecidableEq α] (k y : Fin n) (M : Fi
       have := congrFun h ⟨i, hi⟩
       simp only at this
       rw [this]
-      simp [hxb, fill, hi]
+      simp [hxb, updateFinset, hi]
     · intro h
       funext i
       rw [h i i.2]
-      simp [hxb, fill]
+      simp [hxb, updateFinset]
   have hxaM : ∀ a', ∀ i ∈ M, Function.update xb k a' i = xb i := fun a' i hi =>
     Function.update_of_ne (fun h => hkM (by rw [← h]; exact hi)) _ _
   have hresa : ∀ a' (x : Fin n → α), (fun i : M => x i) = m ↔
@@ -713,8 +721,8 @@ theorem frontdoor_adjustment [Fintype α] [DecidableEq α] (k y : Fin n) (M : Fi
           simp [Ne.symm hky, hyM])
         (hPaMs (insert k M) (subset_insert _ _)))
   have hC := marginal_reweight (L := Q) (L' := R') hPaMy hPaMC xb hM hhM (fun x hx => by
-      rw [← hJ1, b.joint_mutilateSet_mul (singleton_subset_iff.2 (mem_insert_self k M)) xb hx,
-        hsd]) hciC
+      rw [← hJ1, b.joint_mutilateSet_eq_mul_prod_sdiff
+        (singleton_subset_iff.2 (mem_insert_self k M)) hx, hsd]) hciC
   have hR'1 : marginal R' ↑(insert k M) xb = 1 := b.marginal_mutilateSet_self _ xb fun _ _ => rfl
   have hR'y : marginal R' ↑({y} ∪ insert k M) xb = marginal R' ↑({y} : Finset (Fin n)) xb :=
     b.marginal_mutilateSet_union _ xb {y} fun _ _ => rfl
@@ -777,8 +785,9 @@ theorem frontdoor_adjustment [Fintype α] [DecidableEq α] (k y : Fin n) (M : Fi
     have hxaM' : ∀ j ∈ M, xa j = xb j := hxaM a'
     have h2 := marginal_reweight (L := P) (L' := R) hPaMy hPaMC xa hM hhM (fun x hx => by
         change b.joint x = _
-        rw [← b.joint_mutilateSet_empty xb, b.joint_mutilateSet_mul (empty_subset M) xb
-          (fun j hj => (hx j (mem_insert_of_mem hj)).trans (hxaM' j hj)), sdiff_empty]) hciE
+        rw [← b.joint_mutilateSet_empty xb, b.joint_mutilateSet_eq_mul_prod_sdiff (empty_subset M)
+          (w := xb) (fun j hj => (hx j (mem_insert_of_mem hj)).trans (hxaM' j hj)), sdiff_empty])
+      hciE
     have hRk : marginal R ↑(insert k M) xa = marginal P ↑({k} : Finset (Fin n)) xa := by
       rw [← hMk, union_comm, ← hkN a']
       exact b.marginal_mutilateSet_union M xb {k} hxaM'

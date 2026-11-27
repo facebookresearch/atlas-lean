@@ -77,8 +77,12 @@ def metricValue {M : VerticalModel P L} (C : ModelCartierEquations M)
   order E.valuation
     (C.atlas.functions (Classical.choose (C.atlas.covers E.valuation.center))) / M.exponent
 
-/-- Actual compactification and dominating model of a normalized test configuration.
-Existence is completed-source geometric integration, separate from the model-value formula. -/
+/-- A compactification of the normalized test configuration `T` dominated by the model `M`: a scheme
+proper over the projective parameter line of `M`, with an open subscheme identified with the total
+space of `T` compatibly with the maps to the line (through its affine chart), a line bundle whose
+restriction to this open corresponds to the polarization of `T`, and a proper birational map to it
+from the model of `M`, compatible with the maps to the parameter line, along which the line bundle
+pulls back to `modelPolarization M`; the exponents of `M` and `T` agree. -/
 structure CompatibleCompactification (T : NormalizedTestConfiguration k P.variety.X L)
     (M : VerticalModel P L) where
   compact : Over (Base k)
@@ -100,8 +104,13 @@ structure CompatibleCompactification (T : NormalizedTestConfiguration k P.variet
   exponent : M.exponent = T.exponent
   lineComparison : modelPolarization M ≅ (Scheme.Modules.pullback modelMap.left).obj polarization
 
-/-- Actual common-model comparison; both polarizations are fixed geometric pullbacks.
-The comparison is source-integration data for projection-formula descent, not a free number. -/
+/-- A refinement of the vertical model $M_1$ by the vertical model $M_2$: a proper birational
+morphism $\mu$ from the model of $M_2$ to the model of $M_1$ and an isomorphism from the parameter
+line of $M_2$ to that of $M_1$ compatible with their affine charts, such that $\mu$ commutes with
+the maps of the models to the product of the base variety with the parameter line (through this
+isomorphism on the second factor) and the exponents of $M_1$ and $M_2$ agree, together with an
+isomorphism from the pullback along $\mu$ of the model polarization of $M_1$ to the model
+polarization of $M_2$ (`modelPolarization`). -/
 structure ModelRefinement (M₁ M₂ : VerticalModel P L) where
   map : M₂.model.X ⟶ M₁.model.X
   [proper : IsProper map.left]

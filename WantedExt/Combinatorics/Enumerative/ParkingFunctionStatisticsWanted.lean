@@ -141,21 +141,6 @@ public theorem_wanted parkingFunction_descent_genFun (n : ℕ) (hn : 1 ≤ n) :
         (fun w : Fin n → Fin n => Finset.univ.val.map w = Finset.univ.val.map β),
           (Polynomial.X : Polynomial ℕ) ^ (desSet w).card
 
-/-- **Reflection symmetry of descent sets of parking functions.** Write a parking function $f$ of
-length $n$ as the sequence $(a_1, \dots, a_n)$ with $a_j = f(j-1) + 1$. Its descent set is the set
-of $j \in \{1, \dots, n-1\}$ with $a_j > a_{j+1}$. For every $n$ and every
-$I \subseteq \{1, \dots, n-1\}$, let $J = \{n - i : i \in I\}$. Then the number of parking
-functions of length $n$ with descent set $I$ equals the number with descent set $J$.
-
-Source: Ari Cruz, Pamela E. Harris, Kimberly J. Harry, Jan Kretschmann, Matt McClinton,
-Alex Moon, John O. Museus and Eric Redmon, *On Some Discrete Statistics of Parking
-Functions*, Journal of Integer Sequences 27 (2024), Article 24.8.6, Theorem 16
-(`jis-2024-24.8.6-thm-16`). -/
-public theorem_wanted parkingFunction_descentSet_card_reflect (n : ℕ) (I : Finset ℕ)
-    (hI : I ⊆ Finset.Ico 1 n) :
-    ((pfSet n).filter (fun f => desSet f = I)).card =
-      ((pfSet n).filter (fun f => desSet f = I.image (fun i => n - i))).card
-
 /-- **Recursion for parking functions with a given descent set.** The descent set of a word
 $w = (w_1, \dots, w_\ell)$ is $\{i : 1 \le i \le \ell - 1,\ w_i > w_{i+1}\}$, and $d(J; n)$ denotes
 the number of parking functions of length $n$ with descent set $J$. Let $n \in \mathbb{N}$, let

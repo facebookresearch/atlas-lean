@@ -4,3 +4,4 @@ Context-free grammars and derivations, normal forms, parsing algorithms, pushdow
 
 - [Grammars, parsing and pushdown automata](grammars-and-pushdown-automata/README.md)
 - [Closure properties and pumping lemmas](closure-and-pumping/README.md)
+- [Probabilistic context-free grammars](probabilistic-context-free-grammars/README.md)

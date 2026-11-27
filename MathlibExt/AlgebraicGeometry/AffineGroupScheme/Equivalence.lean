@@ -41,11 +41,12 @@ open CategoryTheory AlgebraicGeometry Opposite
 
 universe u
 
-/-- `Spec` as an anti-equivalence from commutative `S`-Hopf algebras onto affine group
-schemes over `Spec S`. The underlying functor is Mathlib's `AlgebraicGeometry.hopfSpec`,
-which is fully faithful with essential image the affine group schemes; the isomorphism
-`commHopfAlgCatOpEquivAffineGroupSchemeCat.functorCompιIso` records this on the level
-of functors, and is the intended interface for computing with the equivalence. -/
+/-- For a commutative ring `S`, `Spec` as an anti-equivalence from commutative `S`-Hopf algebras
+onto affine group schemes over `Spec S`: the equivalence
+`(CommHopfAlgCat S)ᵒᵖ ≌ AffineGroupSchemeCat S` induced by the Hopf spectrum functor
+`AlgebraicGeometry.hopfSpec`, which is fully faithful with essential image the affine group
+schemes. Its forward functor followed by the inclusion into group schemes over `Spec S` is
+isomorphic to `hopfSpec` (`commHopfAlgCatOpEquivAffineGroupSchemeCat.functorCompιIso`). -/
 noncomputable def commHopfAlgCatOpEquivAffineGroupSchemeCat (S : CommRingCat.{u}) :
     (CommHopfAlgCat S)ᵒᵖ ≌ AffineGroupSchemeCat S :=
   (hopfSpec S).toEssImage.asEquivalence.trans (ObjectProperty.fullSubcategoryCongr

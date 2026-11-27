@@ -90,9 +90,11 @@ along `fromSpecFunctionField`. -/
 def rationalFunctions (X : Scheme.{u}) [IrreducibleSpace X] : X.Modules :=
   (Scheme.Modules.pushforward (fromSpecFunctionField X)).obj (SheafOfModules.unit _)
 
-/-- The module sheaf and ring sheaf constructions of `𝒦_X` have canonically identified
-sections. Their underlying additive presheaves are definitionally equal because both constructions
-use Mathlib's pushforward of the structure sheaf. -/
+/-- For an open $U$ of the irreducible scheme $X$, the additive identification of the sections over
+$U$ of the module sheaf $\mathcal{K}_X$ (`rationalFunctions`) with those of the ring sheaf
+`rationalFunctionsRing`: both are the sections over $U$ of the pushforward of the structure sheaf
+of $\operatorname{Spec} K(X)$ along $\operatorname{Spec} K(X) \to X$, and the identification is
+the identity. -/
 def rationalFunctionsSectionsEquiv (X : Scheme.{u}) [IrreducibleSpace X] (U : X.Opens) :
     (Γ(rationalFunctions X, U) : Type u) ≃+
       ((rationalFunctionsRing X).presheaf.obj (.op U) : Type u) :=

@@ -64,3 +64,5 @@ In the probabilistic treatment of R. Lyons and Y. Peres, *Probability on Trees a
 - [Canonical paths and multicommodity flow](../../../../Probability/markov-chains/canonical-paths-and-multicommodity-flow/README.md): Sinclair's flows in the network of a reversible chain, the multicommodity counterpart of the unit flows of Thomson's principle.
 - [Random walks on finite groups](../../../../Probability/random-walks/random-walks-on-finite-groups/README.md): Diaconis's random walks; on a Cayley graph the network random walk with unit conductances is simple random walk on the group.
 - [Max-flow min-cut theorem](../../../matchings-and-flows/max-flow-min-cut-theorem/README.md): flows with capacity constraints, as opposed to the energy-minimising flows here.
+
+- [Terminal currents of a conducting box as nodal injections](terminal-currents-of-a-conducting-box-as-nodal-injections.md)

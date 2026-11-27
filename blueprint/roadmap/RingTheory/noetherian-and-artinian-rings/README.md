@@ -4,4 +4,8 @@ Rings and modules with chain conditions: Noetherian and Artinian rings and modul
 
 - [Hilbert basis theorem: a polynomial ring over a commutative Noetherian ring is Noetherian](hilbert-basis-theorem.md)
 - [Associated primes of modules](associated-primes-of-modules/README.md)
+- [Artinian rings and modules](artinian-rings-and-modules/README.md)
 - [Finitely generated modules over a Noetherian ring are Noetherian](finitely-generated-module-noetherian.md)
+- [Lasker–Noether theorem: primary decomposition in a Noetherian module](lasker-noether-theorem.md)
+- [A module is Noetherian iff every increasing chain of submodules stabilizes](noetherian-acc.md)
+- [Maximal condition for Noetherian modules](noetherian-maximal-condition.md)

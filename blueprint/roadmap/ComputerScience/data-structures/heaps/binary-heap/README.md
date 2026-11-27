@@ -74,3 +74,4 @@
 - [Sift-down from a node without children costs nothing](time-sift-down-of-smaller-child-none.md)
 - [Sift-down from a leaf costs nothing](time-sift-down-of-heap-left-ge.md)
 - [Sift-down from an invalid index costs nothing](time-sift-down-of-size-le.md)
+- [Bottom-up heap construction takes linear time](bottom-up-heap-construction-takes-linear-time.md)

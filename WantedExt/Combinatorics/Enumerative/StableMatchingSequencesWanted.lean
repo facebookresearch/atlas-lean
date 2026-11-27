@@ -14,7 +14,10 @@ public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.Data.Nat.Factorial.Basic
 public import Mathlib.Data.Rat.Defs
 public import MathlibExt.Combinatorics.Enumerative.GaleShapleyOneRound
+public import MathlibExt.Combinatorics.Enumerative.GaleShapleySameTaste
+public import MathlibExt.Combinatorics.Enumerative.StableMatchingHellCouples
 public import MathlibExt.Combinatorics.Enumerative.StableMatchingSequences
+public import MathlibExt.Combinatorics.Enumerative.StableMatchingSoulmates
 
 set_option autoImplicit false
 
@@ -27,18 +30,6 @@ namespace StableMatchingSequences
 open Finset Nat
 
 variable {n : ℕ}
-
-/-- **Gale–Shapley rounds when all men have the same preferences.** Let $P$ be a preference
-profile for $n$ men and $n$ women in which all men rank the women in the same order. Then the
-men-proposing Gale–Shapley algorithm on $P$ ends in exactly $n$ rounds.
-
-Source: Borodin, Duncan, Litchev, Liu, Moroz, Qian, Raghavan, Rastogi, Voigt,
-and Khovanova, *Sequences of the Stable Matching Problem*, Journal of Integer
-Sequences 27 (2024), Article 24.2.2, Proposition 1
-(`jis-2024-24.2.2-prop-1`). -/
-public theorem_wanted galeShapleyRounds_of_same_taste (P : PreferenceProfile n)
-    (h : ∀ i i' : Fin n, P.1 i = P.1 i') :
-    galeShapleyRounds P = n
 
 /-- **Counting disjoint preference profiles.** Call a preference profile for $n$ men and $n$ women
 disjoint if for every pair of positions $(r, s)$ there is exactly one man–woman pair in which the
@@ -99,22 +90,6 @@ public theorem_wanted soulmate_profiles_card (n k : ℕ) :
           (-1 : ℤ) ^ i * ((n - k).choose i : ℤ) ^ 2 * ((n - 1)! : ℤ) ^ (2 * i) * (i ! : ℤ) *
             (n ! : ℤ) ^ (2 * n - 2 * k - 2 * i)
 
-/-- **Profiles with $n - 1$ soulmate pairs.** Let $P$ be a preference profile for $n$ men and $n$
-women with exactly $n - 1$ soulmate pairs (read as $0$ when $n = 0$). Then $P$ has exactly one
-stable matching. Moreover, for every stable matching $\mu$ of $P$ and every man $i$ who has no
-soulmate, the men-proposing Gale–Shapley algorithm on $P$ ends after $r + 1$ rounds, where $r$ is
-the zero-based position at which man $i$ ranks his wife $\mu(i)$.
-
-Source: Borodin et al., *Sequences of the Stable Matching Problem*, Journal of
-Integer Sequences 27 (2024), Article 24.2.2, Proposition 7
-(`jis-2024-24.2.2-prop-7`). -/
-public theorem_wanted unique_stable_matching_of_soulmatePairCount_eq_pred
-    (P : PreferenceProfile n) (h : soulmatePairCount P = n - 1) :
-    (∃! μ : Equiv.Perm (Fin n), IsStableMatching P μ) ∧
-      ∀ μ : Equiv.Perm (Fin n), IsStableMatching P μ →
-        ∀ i : Fin n, (∀ j : Fin n, ¬ IsSoulmatePair P i j) →
-          galeShapleyRounds P = manRank P i (μ i) + 1
-
 /-- **Profiles with Latin-square men's preferences, counted by soulmate pairs.** For all
 $n, k \in \mathbb{N}$, the number of preference profiles of $n$ men and $n$ women in which, for
 every position $r$, different men rank different women at position $r$ (the men's rankings form
@@ -150,17 +125,6 @@ public theorem_wanted mutually_latin_soulmate_profiles_card (n k : ℕ) :
           (∀ r : Fin n, Function.Injective fun j => P.2 j r) ∧ soulmatePairCount P = k} : ℚ) =
       (latinSquareCount n : ℚ) ^ 2 / (n ! : ℚ) * (n.choose k : ℚ) *
         ∑ i ∈ range (n - k + 1), (-1 : ℚ) ^ i * ((n - k)! : ℚ) / (i ! : ℚ)
-
-/-- **At most one hell-couple in a stable matching.** Let $P$ be a preference profile of $n$
-men and $n$ women, and let $\mu$ be a stable matching for $P$, in which man $i$ marries woman
-$\mu(i)$. Then at most one man $i$ forms a hell-couple with his wife $\mu(i)$.
-
-Source: Borodin et al., *Sequences of the Stable Matching Problem*, Journal of
-Integer Sequences 27 (2024), Article 24.2.2, Proposition 12
-(`jis-2024-24.2.2-prop-12`). -/
-public theorem_wanted hellCouple_subsingleton (P : PreferenceProfile n)
-    (μ : Equiv.Perm (Fin n)) (hμ : IsStableMatching P μ) :
-    {i : Fin n | IsHellCouple P μ i}.Subsingleton
 
 /-- **Profiles with a pair of outcasts.** In a preference profile for $n$ men and $n$ women, a man
 $i$ and a woman $j$ form a pair of outcasts when every man other than $i$ ranks $j$ last and every

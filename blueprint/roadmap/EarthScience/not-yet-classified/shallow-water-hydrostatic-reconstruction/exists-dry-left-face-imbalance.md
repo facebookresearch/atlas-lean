@@ -1,0 +1,3 @@
+# Dry state excluded
+
+Strict wetness cannot be relaxed to a free surface that touches the higher bed when the numerical flux is assumed consistent only on wet states. For every $g$ and every bed step $z_L < z_R$, consider the lake at rest with $\eta = z_R$: a left cell of depth $z_R - z_L$ at rest beside a dry right cell. There is a numerical flux $\mathcal F$ that is consistent on every wet state, that is $\mathcal F((h, hu), (h, hu)) = (hu,\ hu^2 + g h^2/2)$ for all $h > 0$ and all $u$, for which the hydrostatically reconstructed left momentum flux differs from $g (z_R - z_L)^2 / 2$. Both reconstructed states at the face are the dry state $(0, 0)$, where consistency on wet states imposes nothing.

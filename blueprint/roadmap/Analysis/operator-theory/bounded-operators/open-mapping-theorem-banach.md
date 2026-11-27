@@ -1,0 +1,9 @@
+# Open mapping theorem for Banach spaces
+
+A surjective bounded linear operator between Banach spaces over $\mathbb{R}$ or $\mathbb{C}$ is an open map: it takes open sets to open sets, though it need not take open balls to balls. Mathlib proves this for semilinear maps. Let $\mathbb{K}$ and $\mathbb{K}'$ be nontrivially normed fields and let $\sigma \colon \mathbb{K} \to \mathbb{K}'$ and $\sigma' \colon \mathbb{K}' \to \mathbb{K}$ be ring homomorphisms that preserve absolute values and are mutually inverse: $\sigma' \circ \sigma$ and $\sigma \circ \sigma'$ are the identity maps. Let $X$ be a complete normed space over $\mathbb{K}$, let $Y$ be a complete normed space over $\mathbb{K}'$, and let $T \colon X \to Y$ be a continuous $\sigma$-semilinear map, that is, an additive map with $T(cx) = \sigma(c)\,T(x)$, which is surjective. Then $T$ is an open map: $T(U)$ is open in $Y$ for every open set $U \subseteq X$. $T$ need not be injective. Taking $\mathbb{K} = \mathbb{K}'$, equal to $\mathbb{R}$ or $\mathbb{C}$, and $\sigma$ and $\sigma'$ the identity gives the familiar theorem for bounded linear operators.
+
+## Sources
+
+- John B. Conway, A Course in Functional Analysis, 2nd ed., Graduate Texts in Mathematics 96, Springer, 1990.
+- The mathlib Community, *mathlib4* at revision fc4f59e577feb1a4956671bc04ac18aaaf8cd842, for mutually inverse scalar homomorphisms: `RingHomInvPair`, https://github.com/leanprover-community/mathlib4/blob/fc4f59e577feb1a4956671bc04ac18aaaf8cd842/Mathlib/Algebra/Ring/CompTypeclasses.lean#L81-L87.
+- The mathlib Community, *mathlib4* at revision fc4f59e577feb1a4956671bc04ac18aaaf8cd842, for the hypotheses that both scalar homomorphisms preserve absolute values: `RingHomIsometric`, https://github.com/leanprover-community/mathlib4/blob/fc4f59e577feb1a4956671bc04ac18aaaf8cd842/Mathlib/Analysis/Normed/Operator/Banach.lean#L65.

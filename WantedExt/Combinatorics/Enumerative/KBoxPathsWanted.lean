@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import MathlibExt.Combinatorics.Enumerative.KBoxPaths
+public import MathlibExt.Combinatorics.Enumerative.KBoxReturnGF
 
 /-!
 # `k`-box paths: a subfamily of skew Dyck paths related to `k`-ary trees
@@ -101,21 +101,6 @@ public theorem_wanted card_tailed_kBoxPaths {k n : ℕ} (hk : 1 ≤ k) (hn : 1 �
     (2 ≤ n → (n - 1) * ((kBoxPaths k n).filter fun w =>
           List.replicate (k + 1) U ++ List.replicate k D ++ [L] <:+ w).card =
       ((k + 2) * (n - 1)).choose (n - 2))
-
-/-- **Functional equation for the returns generating function.** Let $k \ge 1$, let
-$F_k(t, x) \in \mathbb{Z}[t][[x]]$ be the generating function of $k$-box paths of size at least
-$1$ by number of returns (exponent of $t$) and size (exponent of $x$), and let $G_{k+1}(x)$ be
-the generating function of augmented $(k+1)$-Dyck paths by size, viewed in $\mathbb{Z}[t][[x]]$.
-Then
-$$\bigl(1 - t x G_{k+1}^{k+1}\bigr) F_k = t x G_{k+1}^k.$$
-
-Source: Zhang and Zhuang, *A Subfamily of Skew Dyck Paths Related to `k`-ary
-Trees*, Journal of Integer Sequences 27 (2024), Article 24.2.4, Lemma 8
-(`jis-2024-24.2.4-lem-8`). -/
-public theorem_wanted kBoxReturnGF_eq {k : ℕ} (hk : 1 ≤ k) :
-    (1 - 𝒕 * 𝒙 * PowerSeries.map Polynomial.C (augmentedKDyckGF (k + 1)) ^ (k + 1)) *
-        kBoxReturnGF k =
-      𝒕 * 𝒙 * PowerSeries.map Polynomial.C (augmentedKDyckGF (k + 1)) ^ k
 
 /-- **Number of $k$-box paths with $j$ returns.** Let $k \ge 1$ and $1 \le j \le n$, and let
 $r_{k,n,j}$ be the number of $k$-box paths of size $n$ with exactly $j$ returns. Then

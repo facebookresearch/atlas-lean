@@ -16,3 +16,6 @@ Convergence in law of normalized sums and their error terms: central limit theor
 - [Local Edgeworth expansion for the Ewens distribution](ewens-edgeworth-expansion/README.md)
 - [Mean absolute sum over the unit cube](mean-absolute-sum-on-the-cube/README.md)
 - [Converse of Poisson's law of large numbers for urns (Scottish Book Problem 17)](scottish-book-problem-17/README.md)
+
+- [Central limit theorem for additive functionals of finite Markov chains](central-limit-theorem-for-finite-markov-chains.md)
+- [Martingale central limit theorem for bounded increments](martingale-central-limit-theorem.md)

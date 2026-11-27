@@ -31,3 +31,17 @@ example :
     constantTermLinearCombination_small_last_digit 1 2 2 (by decide) (fun _ => 1)
       1 3 0 1 1 1 16 (by decide) (by decide) (by decide) (by decide) (by decide)
       (by decide) (by decide)
+
+-- Zero has no digits, even when the Laurent polynomial itself is zero.
+example (p : ℕ) (hp : p.Prime) :
+    (linearLaurent 0 0 0 ^ 0).coeff 0 ≡ 1 [ZMOD p] ∧ centralTrinomial 0 0 0 ≡ 1 [ZMOD p] := by
+  simpa only [Nat.digits_zero, List.map_nil, List.prod_nil] using
+    constantTerm_linearLaurent_pow_digits 0 0 0 0 0 p 0 hp
+
+-- In base three, 11 is 102. Its digit 2 contributes the factor T₂ = 3.
+example : centralTrinomial 1 1 11 ≡ 0 [ZMOD 3] := by
+  have h₂ : centralTrinomial 1 1 2 = 3 :=
+    congrArg (fun values : List ℤ => values[2]!) centralTrinomial_one_one_values
+  refine (constantTerm_linearLaurent_pow_digits 1 1 1 1 1 3 11 (by decide)).2.trans ?_
+  rw [show Nat.digits 3 11 = [2, 0, 1] by decide]
+  simp [h₂, Int.ModEq]

@@ -44,16 +44,25 @@ open CategoryTheory _root_.AlgebraicGeometry
 open MathlibExt.AlgebraicGeometry.ShtukaPartialFrobenius
 open MathlibExt.AlgebraicGeometry.CurveVectorBundles
 
-/-- The Frobenius pullback of the pole modification stays injective, and its cokernel is the line
-bundle on the graph of the shifted pole: for a separated curve the graph is closed, so the cokernel
-of the original pole modification is a line bundle on a closed graph, hence flat over the base, and
-base change along the partial Frobenius preserves the injection and the graph-line cokernel (the
-base-change step of the source shtuka API, which assumes separatedness). -/
+/-- Frobenius pullback of the pole modification: let $p$ be a prime, $X$ and $S$ schemes over
+$\mathbb{F}_p$ with $X$ separated, and $A$ a right shtuka of rank $r$ on $X \times S$ (rank-$r$
+vector bundles $E$, $E'$ with injections $j : E \to E'$ and
+$t : (\mathrm{id} \times \mathrm{Frob}_S)^* E \to E'$ whose cokernels are pushforwards of line
+bundles on $S$ along the graphs of the pole and the zero). Then the pullback of $j$ along
+$\mathrm{id}_X \times \mathrm{Frob}_S$ is injective, and its cokernel is the pushforward of a line
+bundle on $S$ along the graph of the shifted pole $\mathrm{Frob}_X \circ \mathrm{pole}$. -/
 public theorem_wanted pullbackConditions
     (p : ℕ) [Fact p.Prime] (X S : PrimeFieldScheme p) [IsSeparated X.hom] (r : ℕ)
     (A : Shtuka p X S r) : A.PullbackConditions
 
-/-- The normalized pole rotation is a shtuka on the disjoint-leg open. -/
+/-- Partial Frobenius at the pole: let $p$ be a prime, $X$ an $\mathbb{F}_p$-scheme that is proper,
+smooth of relative dimension one and geometrically connected, $S$ a smooth $\mathbb{F}_p$-scheme,
+$r > 0$, and $A$ a right shtuka of rank $r$ on $X \times S$ (rank-$r$ vector bundles $E$, $E'$ with
+injections $j : E \to E'$ and $t : (\mathrm{id} \times \mathrm{Frob}_S)^* E \to E'$ whose cokernels
+are pushforwards of line bundles on $S$ along the graphs of the pole and the zero), such that the
+graphs of the shifted pole $\mathrm{Frob}_X \circ \mathrm{pole}$ and of the zero are disjoint. Then
+the pushout of $t$ and of $(\mathrm{id} \times \mathrm{Frob}_S)^* j$, the second bundle of the
+rotated shtuka, is a vector bundle of rank $r$. -/
 public theorem_wanted partialFrobeniusModification
     (p : ℕ) [Fact p.Prime] (X S : PrimeFieldScheme p)
     [IsProper X.hom] [SmoothOfRelativeDimension 1 X.hom]

@@ -13,6 +13,10 @@ When a game is played repeatedly and every player uses a no-regret learning algo
 - [Smooth game](is-smooth.md)
 - [Extension theorem for coarse correlated equilibria](expected-social-cost-le.md)
 - [Robust price of anarchy for no-regret dynamics](average-social-cost-le.md)
+- [No-swap-regret dynamics converge to correlated equilibria](no-swap-regret-dynamics-converge-to-correlated-equilibria.md)
+- [Price of anarchy and price of stability](remaining-clauses-of-social-cost-price-of-anarchy-and-stabil.md)
+- [Equilibrium classes order the prices of anarchy](equilibrium-classes-order-the-prices-of-anarchy.md)
+- [Learning Dynamics in Games](learning-dynamics-in-games/README.md)
 
 ## Unconditional regret matching
 

@@ -10,8 +10,12 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Basic.Real.Basic
-public import Mathlib.Order.Bounds.Defs
+public import MathlibExt.GameTheory.PenultsOfTak.CrossNonempty
+public import MathlibExt.GameTheory.PenultsOfTak.DualPenultBound
+public import MathlibExt.GameTheory.PenultsOfTak.FifthBound
+public import MathlibExt.GameTheory.PenultsOfTak.LargestPenult
 public import MathlibExt.GameTheory.PenultsOfTak.WeightedCrossBound
+public import MathlibExt.GameTheory.PenultsOfTakImpartialTakNotFirstPlayerWinsOfEven
 
 namespace MetaMathlibExt
 
@@ -27,18 +31,6 @@ Article G1, Proposition 1 (`integers-2025-G1-prop-1`). -/
 public theorem_wanted impartialTic_firstPlayerWins_iff_odd (n : ℕ) :
     placementFirstPlayerWins (ticEnded n) ∅ ↔ Odd n
 
-/-- **The second player wins Impartial Tak on even boards.** Impartial Tak is the impartial
-placement game on the $n \times n$ board in which the players alternately place a token on an
-empty cell, play ends once the tokens contain a road, and the player unable to move loses. If $n$
-is even, the first player does not win from the empty $n \times n$ board, that is, the second
-player wins.
-
-Source: Boris Alexeev, Paul Ellis, Michael Richter, and Thotsaporn Aek Thanatipanonda, *The
-Penults of Tak: Adventures in Impartial, Normal-Play, Positional Games*, INTEGERS 25 (2025),
-Article G1, Proposition 2 (`integers-2025-G1-prop-2`). -/
-public theorem_wanted impartialTak_not_firstPlayerWins_of_even {n : ℕ} (hn : Even n) :
-    ¬ placementFirstPlayerWins takHasRoad (∅ : Finset (Fin n × Fin n))
-
 /-- **The first player wins Impartial Tak on the $5 \times 5$ board.** Impartial Tak is the
 impartial placement game on the $n \times n$ board in which the players alternately place a token
 on an empty cell, play ends once the tokens contain a road, and the player unable to move loses.
@@ -49,21 +41,6 @@ Penults of Tak: Adventures in Impartial, Normal-Play, Positional Games*, INTEGER
 Article G1, Proposition 3 (`integers-2025-G1-prop-3`). -/
 public theorem_wanted impartialTak_five_firstPlayerWins :
     placementFirstPlayerWins takHasRoad (∅ : Finset (Fin 5 × Fin 5))
-
-/-- **Token bound for dual Impartial Tic penults.** Let $n \ge 5$. If $S$ is a penult of
-Impartial Tic on the $n \times n$ board, then at most $4(n - 2)$ cells of the board lie outside
-$S$.
-
-In the dual of Impartial Tic, tokens are removed from a full board and play ends once some row or
-column is empty; its penults are the sets of empty cells of Impartial Tic penults, so this says
-that a penult of the dual game on the $n \times n$ board has at most $4(n - 2)$ tokens.
-
-Source: Boris Alexeev, Paul Ellis, Michael Richter, and Thotsaporn Aek Thanatipanonda, *The
-Penults of Tak: Adventures in Impartial, Normal-Play, Positional Games*, INTEGERS 25 (2025),
-Article G1, Proposition 4 (`integers-2025-G1-prop-4`). -/
-public theorem_wanted impartialTic_dual_penult_card_le {n : ℕ} (hn : 5 ≤ n)
-    {S : Finset (Fin n × Fin n)} (hS : placementPenult (ticEnded n) S) :
-    (Finset.univ \ S).card ≤ 4 * (n - 2)
 
 /-- **Token counts of dual Impartial Tic penults.** Let $n \ge 5$ and let $x$ be a natural number
 with $2n \le x \le 4(n - 2)$. Then there is a penult $S$ of Impartial Tic on the $n \times n$
@@ -92,18 +69,6 @@ public theorem_wanted impartialTak_exists_penult_card {n x : ℕ} (hn : 4 ≤ n)
     (hlo : n ^ 2 - 4 * (n - 2) - 2 ≤ x) (hhi : x ≤ n ^ 2 - 2 * n) :
     ∃ S : Finset (Fin n × Fin n), placementPenult takHasRoad S ∧ S.card = x
 
-/-- **The largest Impartial Tak penult.** Impartial Tak is the placement game on the $n \times n$
-board whose play ends once the tokens contain a road. For every $n \ge 2$, the largest number of
-tokens in an Impartial Tak penult on the $n \times n$ board is $U(n) = n^2 - 2n$: some penult has
-exactly $n^2 - 2n$ tokens and no penult has more.
-
-Source: Boris Alexeev, Paul Ellis, Michael Richter, and Thotsaporn Aek Thanatipanonda, *The
-Penults of Tak: Adventures in Impartial, Normal-Play, Positional Games*, INTEGERS 25 (2025),
-Article G1, Corollary 1 (`integers-2025-G1-cor-1`). -/
-public theorem_wanted impartialTak_isGreatest_penult_card {n : ℕ} (hn : 2 ≤ n) :
-    IsGreatest {x | ∃ S : Finset (Fin n × Fin n), placementPenult takHasRoad S ∧ S.card = x}
-      (n ^ 2 - 2 * n)
-
 /-- **Impartial Tak penults with about $n^2/3$ tokens.** Impartial Tak is the placement game on
 the $n \times n$ board whose play ends once the tokens contain a road. For every $n \ge 6$ there
 is an Impartial Tak penult $S$ on the $n \times n$ board whose number of tokens $|S|$ satisfies
@@ -123,33 +88,6 @@ public theorem_wanted impartialTak_exists_snake_penult {n : ℕ} (hn : 6 ≤ n) 
       (n % 6 = 2 ∨ n % 6 = 3 → 3 * S.card + 12 = n ^ 2 + 4 * n) ∧
       (n % 6 = 5 → 3 * S.card + 16 = n ^ 2 + 6 * n) ∧
       (n % 6 = 0 → 3 * S.card + 18 = n ^ 2 + 6 * n)
-
-/-- **Every Cross meets an Impartial Tak penult.** Impartial Tak is the placement game on the
-$n \times n$ board whose play ends once the tokens contain a road. Let $S$ be an Impartial Tak
-penult on the $n \times n$ board and let $c$ be an interior cell, that is, a cell in neither the
-first nor the last row and in neither the first nor the last column. Then $S$ contains $c$ or a
-cell orthogonally adjacent to $c$: every Cross (an interior cell together with its four
-orthogonal neighbours) contains a token.
-
-Source: Boris Alexeev, Paul Ellis, Michael Richter, and Thotsaporn Aek Thanatipanonda, *The
-Penults of Tak: Adventures in Impartial, Normal-Play, Positional Games*, INTEGERS 25 (2025),
-Article G1, Proposition 8 (`integers-2025-G1-prop-8`). -/
-public theorem_wanted impartialTak_penult_cross_nonempty {n : ℕ} {S : Finset (Fin n × Fin n)}
-    (hS : placementPenult takHasRoad S) (c : Fin n × Fin n) (hr : 1 ≤ (c.1 : ℕ))
-    (hr' : (c.1 : ℕ) + 1 < n) (hc : 1 ≤ (c.2 : ℕ)) (hc' : (c.2 : ℕ) + 1 < n) :
-    ∃ p ∈ S, p = c ∨ takAdjacent p c
-
-/-- **An $n^2/5$ lower bound for Impartial Tak penults.** Impartial Tak is the placement game on
-the $n \times n$ board whose play ends once the tokens contain a road. There is a real constant $C$
-such that for every natural number $n$, every Impartial Tak penult on the $n \times n$ board has at
-least $n^2/5 - Cn$ tokens; that is, every penult has at least $n^2/5 + O(n)$ tokens.
-
-Source: Boris Alexeev, Paul Ellis, Michael Richter, and Thotsaporn Aek Thanatipanonda, *The
-Penults of Tak: Adventures in Impartial, Normal-Play, Positional Games*, INTEGERS 25 (2025),
-Article G1, Proposition 9 (`integers-2025-G1-prop-9`). -/
-public theorem_wanted impartialTak_penult_card_ge_fifth :
-    ∃ C : ℝ, ∀ (n : ℕ) (S : Finset (Fin n × Fin n)), placementPenult takHasRoad S →
-      (n : ℝ) ^ 2 / 5 - C * n ≤ S.card
 
 /-- **Every Thick Cross holds three tokens of an Impartial Tak penult.** Impartial Tak is the
 placement game on the $n \times n$ board whose play ends once the tokens contain a road. Index the

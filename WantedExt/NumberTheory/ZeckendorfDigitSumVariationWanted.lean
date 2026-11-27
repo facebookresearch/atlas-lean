@@ -9,6 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
+public import MathlibExt.NumberTheory.ZeckendorfOdometer
+public import MathlibExt.NumberTheory.ZeckendorfNewInformationZone
 public import MathlibExt.Probability.MixingCoefficients
 public import Mathlib.Data.Nat.Fib.Zeckendorf
 public import Mathlib.NumberTheory.Real.GoldenRatio
@@ -121,48 +123,6 @@ public theorem_wanted zeckendorf_variation_density_tail (r : ℕ) (μ : ℤ → 
 
 
 /-! ### The Zeckendorf-adic odometer -/
-
-/-- **The Zeckendorf-adic integers.** The Zeckendorf-adic integers $\mathbb{X}$ are the digit
-sequences $x = (x_k)_{k \ge 0}$ with $x_k \in \{0, 1\}$ such that $x_0 = x_1 = 0$ and no two
-consecutive digits are both $1$, that is, $x_k x_{k+1} = 0$ for every $k$.
-
-Digit $k \ge 2$ carries the weight $F_k$ (with $F_1 = F_2 = 1$). The unused digits $x_0$ and
-$x_1$ keep the paper's indexing, in which
-$\mathbb{X} = \{x \in \{0,1\}^{\mathbb{N}_{\ge 2}} : x_k x_{k+1} = 0 \text{ for all } k \ge 2\}$.
-
-Source: Yohan Hosten, *On the Variation of the Sum of Digits in the Zeckendorf Representation:
-An Algorithm to Compute the Distribution and Mixing Properties*, Journal of Integer Sequences 27
-(2024), Article 24.3.2, Section 2.2 (arXiv:2309.14285v2). -/
-public def zeckAdic : Set (ℕ → Bool) :=
-  {x | x 0 = false ∧ x 1 = false ∧ ∀ k, x k = false ∨ x (k + 1) = false}
-
-/-- **Zeckendorf digit sequence of a natural number.** Let $F_k$ be the Fibonacci numbers
-($F_0 = 0$, $F_1 = F_2 = 1$). Every $n \in \mathbb{N}$ has a unique Zeckendorf representation
-$n = F_{k_1} + \dots + F_{k_m}$ with $k_1 > \dots > k_m \ge 2$ and no two consecutive indices.
-The Zeckendorf digit sequence of $n$ is the binary sequence $(x_k)_{k \in \mathbb{N}}$ with
-$x_k = 1$ if $k$ is one of the indices $k_1, \dots, k_m$ and $x_k = 0$ otherwise.
-
-Source: Yohan Hosten, *On the Variation of the Sum of Digits in the Zeckendorf Representation:
-An Algorithm to Compute the Distribution and Mixing Properties*, Journal of Integer Sequences 27
-(2024), Article 24.3.2, Section 2.2 (the map `i`). -/
-public def zeckAdicOfNat (n : ℕ) : ℕ → Bool := fun k => decide (k ∈ Nat.zeckendorf n)
-
-/-- **The Zeckendorf odometer.** The odometer is the map $T$ on digit sequences
-$x = (x_k)_{k \in \mathbb{N}}$ with $x_k \in \{0, 1\}$ defined as follows. If $x_k = x_{k+1} = 0$
-for some $k \ge 2$, let $k$ be the least such index; then $T(x)_j = 0$ for $j < k$, $T(x)_k = 1$
-and $T(x)_j = x_j$ for $j > k$. If there is no such $k$, then $T(x)$ is the zero sequence.
-
-On a Zeckendorf-adic integer, where digit $k \ge 2$ carries the weight of the Fibonacci number
-$F_k$, the map $T$ is addition of $1$, and $x + r$ denotes $T^r(x)$ for $r \in \mathbb{N}$.
-
-Source: Yohan Hosten, *On the Variation of the Sum of Digits in the Zeckendorf Representation:
-An Algorithm to Compute the Distribution and Mixing Properties*, Journal of Integer Sequences 27
-(2024), Article 24.3.2, Section 2.2 (definition of `T`). -/
-public noncomputable def zeckOdometer (x : ℕ → Bool) : ℕ → Bool :=
-  open Classical in
-  if h : ∃ k, 2 ≤ k ∧ x k = false ∧ x (k + 1) = false then
-    fun j => if j < Nat.find h then false else if j = Nat.find h then true else x j
-  else fun _ => false
 
 /-- **Zeckendorf digit sequence of zero.** The Zeckendorf digit sequence of $0$ is the zero
 sequence: all of its digits are $0$, because the Zeckendorf representation of $0$ is empty.
@@ -287,24 +247,6 @@ public theorem zeckAdicVariation_zero (x : ℕ → Bool) : zeckAdicVariation 0 x
   zeckAdicVariation_eq_of_eventually (Filter.Eventually.of_forall fun k =>
     zeckAdicTruncVariation_zero k x)
 
-/-- **Adding $r$ without low digits leaves the low digits unchanged.** Write $F_j$ for the
-Fibonacci numbers ($F_1 = F_2 = 1$). For $r \in \mathbb{N}$ let $Z(r)$ be the set of indices in
-the Zeckendorf representation $r = \sum_{j \in Z(r)} F_j$ (all indices $\ge 2$, no two
-consecutive), and let $r_j = 1$ if $j \in Z(r)$ and $r_j = 0$ otherwise. Let
-$\mathbb{X} \subseteq \{0,1\}^{\mathbb{N}}$ be the set of Zeckendorf-adic integers (sequences
-with $x_0 = x_1 = 0$ and no two consecutive ones), and write $x + n = T^n(x)$ for the $n$-th
-iterate of the Zeckendorf odometer $T$. Let $x \in \mathbb{X}$ and $\ell \ge 2$ with
-$x_\ell = x_{\ell+1} = 0$, and let $r$ satisfy $r_j = 0$ for $2 \le j \le \ell + 1$. Then
-$(x + r)_n = x_n$ for every $n$ with $2 \le n \le \ell - 2$.
-
-Source: Yohan Hosten, *On the Variation of the Sum of Digits in the Zeckendorf Representation:
-An Algorithm to Compute the Distribution and Mixing Properties*, Journal of Integer Sequences 27
-(2024), Article 24.3.2, Corollary 9 (`jis-2024-24.3.2-cor-9`). -/
-public theorem_wanted zeckOdometer_iterate_low_digits {x : ℕ → Bool} (hx : x ∈ zeckAdic)
-    {ℓ r : ℕ} (hℓ : 2 ≤ ℓ) (hx0 : x ℓ = false) (hx1 : x (ℓ + 1) = false)
-    (hr : ∀ j, 2 ≤ j → j ≤ ℓ + 1 → j ∉ Nat.zeckendorf r) :
-    ∀ n, 2 ≤ n → n ≤ ℓ - 2 → zeckOdometer^[r] x n = x n
-
 /-- **Adding a small $r$ leaves the high digits unchanged.** Write $F_j$ for the Fibonacci
 numbers ($F_1 = F_2 = 1$). Let $\mathbb{X} \subseteq \{0,1\}^{\mathbb{N}}$ be the set of
 Zeckendorf-adic integers (sequences with $x_0 = x_1 = 0$ and no two consecutive ones), and write
@@ -364,35 +306,6 @@ public theorem_wanted zeckOdometer_stopping_block_one {x : ℕ → Bool} (hx : x
         zeckOdometer^[rt] x k = x k) ∧
       ∀ k, 2 ≤ k → k ≤ ℓ + 2 → zeckOdometer^[r] x k = zeckOdometer^[rt + Nat.fib (ℓ + 3)] x k ∧
         zeckOdometer^[rt + Nat.fib (ℓ + 3)] x k = zeckOdometer^[rt] x k
-
-/-- **Stopping condition for a block of size $m + 2$.** Write $F_j$ for the Fibonacci numbers
-($F_1 = F_2 = 1$). For $r \in \mathbb{N}$ let $Z(r)$ be the set of indices in the Zeckendorf
-representation $r = \sum_{j \in Z(r)} F_j$ (all indices $\ge 2$, no two consecutive), and let
-$r_j = 1$ if $j \in Z(r)$ and $r_j = 0$ otherwise. Let $\mathbb{X} \subseteq \{0,1\}^{\mathbb{N}}$
-be the set of Zeckendorf-adic integers (sequences with $x_0 = x_1 = 0$ and no two consecutive
-ones), and write $x + n = T^n(x)$ for the $n$-th iterate of the Zeckendorf odometer $T$. Let
-$x \in \mathbb{X}$, $\ell \ge 2$ and $m \in \mathbb{N}$ with $x_i = 0$ for
-$i \in \{\ell, \ell+1, \ell+2, \ell+3, \ell+2m+4, \ell+2m+5, \ell+2m+6, \ell+2m+7\}$, and let
-$r$ satisfy $r_{\ell+1} = r_{\ell+2m+7} = 0$ and $r_{\ell+2i+3} = 1$ for $i = 0, \dots, m+1$.
-Let $\tilde r = \sum_{j \in Z(r),\, j \le \ell} F_j$ be the part of $r$ of index at most $\ell$,
-and let $S = \sum_{i=0}^{m+1} F_{\ell+2i+3}$. Then
-$(x + \tilde r + S)_k = (x + \tilde r)_k = x_k$ for every $k \ge \ell + 2m + 7$, and
-$(x + r)_k = (x + \tilde r + S)_k$ for every $k$ with $2 \le k \le \ell + 2m + 2$.
-
-Source: Yohan Hosten, *On the Variation of the Sum of Digits in the Zeckendorf Representation:
-An Algorithm to Compute the Distribution and Mixing Properties*, Journal of Integer Sequences 27
-(2024), Article 24.3.2, Corollary 14 (`jis-2024-24.3.2-cor-14`). -/
-public theorem_wanted zeckOdometer_stopping_block {x : ℕ → Bool} (hx : x ∈ zeckAdic)
-    {ℓ m r : ℕ} (hℓ : 2 ≤ ℓ)
-    (hx0 : ∀ i ∈ ({ℓ, ℓ + 1, ℓ + 2, ℓ + 3, ℓ + 2 * m + 4, ℓ + 2 * m + 5, ℓ + 2 * m + 6,
-      ℓ + 2 * m + 7} : Finset ℕ), x i = false)
-    (hr1 : ℓ + 1 ∉ Nat.zeckendorf r) (hr7 : ℓ + 2 * m + 7 ∉ Nat.zeckendorf r)
-    (hrb : ∀ i ≤ m + 1, ℓ + 2 * i + 3 ∈ Nat.zeckendorf r) :
-    let rt := (((Nat.zeckendorf r).filter (· ≤ ℓ)).map Nat.fib).sum
-    let S := ∑ i ∈ Finset.range (m + 2), Nat.fib (ℓ + 2 * i + 3)
-    (∀ k, ℓ + 2 * m + 7 ≤ k → zeckOdometer^[rt + S] x k = zeckOdometer^[rt] x k ∧
-        zeckOdometer^[rt] x k = x k) ∧
-      ∀ k, 2 ≤ k → k ≤ ℓ + 2 * m + 2 → zeckOdometer^[r] x k = zeckOdometer^[rt + S] x k
 
 open MeasureTheory
 
@@ -707,22 +620,6 @@ public theorem_wanted zeckAdicVariation_ergodic_average (μ : Measure (ℕ → B
 
 /-! ### Rokhlin towers and new-information zones -/
 
-/-- **Prefix value of a digit sequence.** For $k \in \mathbb{N}$ and a binary sequence
-$x = (x_i)_{i \in \mathbb{N}}$, the prefix value of order $k$ is the natural number
-$v_k(x) = \sum_{i=2}^{k+1} x_i F_i$, where $F_i$ is the $i$-th Fibonacci number
-($F_1 = F_2 = 1$). It is the value of the block $x_{k+1} \cdots x_2$ of the $k$ rightmost digits
-of $x$, the name of the cylinder of order $k$ that contains $x$.
-
-In the paper the levels of the two Rokhlin towers of order $k$ are level sets of $v_k$: the
-large tower has levels $\{v_k = j - 1\}$ for $1 \le j \le F_{k+1}$, and the small tower has
-levels $\{v_k = F_{k+1} + j - 1\}$ for $1 \le j \le F_k$.
-
-Source: Yohan Hosten, *On the Variation of the Sum of Digits in the Zeckendorf Representation:
-An Algorithm to Compute the Distribution and Mixing Properties*, Journal of Integer Sequences 27
-(2024), Article 24.3.2, Section 3.1 (cylinders of order `k` and the two towers). -/
-public def zeckAdicPrefixValue (k : ℕ) (x : ℕ → Bool) : ℕ :=
-  ∑ i ∈ Finset.Icc 2 (k + 1), if x i = true then Nat.fib i else 0
-
 /-- **Prefix value of order one.** For every binary sequence $x = (x_i)_{i \in \mathbb{N}}$, the
 prefix value of order $1$ is $v_1(x) = x_2 F_2$, where $F_2 = 1$ is the second Fibonacci number.
 It equals $x_2$: it is $1$ if $x_2 = 1$ and $0$ otherwise.
@@ -733,22 +630,6 @@ An Algorithm to Compute the Distribution and Mixing Properties*, Journal of Inte
 public theorem zeckAdicPrefixValue_one (x : ℕ → Bool) :
     zeckAdicPrefixValue 1 x = if x 2 = true then 1 else 0 := by
   simp [zeckAdicPrefixValue]
-
-/-- **The sets $\mathrm{CST}_k$.** Fix $r, k \in \mathbb{N}$. For a digit sequence
-$x = (x_i)_{i \in \mathbb{N}}$ in $\{0, 1\}$ let $v_k(x) = \sum_{i=2}^{k+1} x_i F_i$, where $F_i$
-is the $i$-th Fibonacci number ($F_1 = F_2 = 1$). The set $\mathrm{CST}_k$ (for the shift $r$)
-consists of the digit sequences $x$ such that either $v_k(x) + r < F_{k+1}$, or both
-$F_{k+1} \le v_k(x)$ and $v_k(x) + r < F_{k+2}$.
-
-In terms of the Rokhlin towers of order $k$, this is the union of the levels of the large and the
-small tower except the $r$ highest levels of each tower.
-
-Source: Yohan Hosten, *On the Variation of the Sum of Digits in the Zeckendorf Representation:
-An Algorithm to Compute the Distribution and Mixing Properties*, Journal of Integer Sequences 27
-(2024), Article 24.3.2, Section 5.1 (definition of `CST_k`). -/
-public def zeckCST (r k : ℕ) : Set (ℕ → Bool) :=
-  {x | zeckAdicPrefixValue k x + r < Nat.fib (k + 1) ∨
-    (Nat.fib (k + 1) ≤ zeckAdicPrefixValue k x ∧ zeckAdicPrefixValue k x + r < Nat.fib (k + 2))}
 
 /-- **$\mathrm{CST}_1$ is empty for every positive shift.** For every $r \ge 1$, the set
 $\mathrm{CST}_1$ for the shift $r$ is empty.
@@ -764,19 +645,6 @@ public theorem zeckCST_one {r : ℕ} (hr : 1 ≤ r) : zeckCST r 1 = ∅ := by
   show ¬(_ ∨ _)
   rw [h2, h3]
   omega
-
-/-- **New-information zone.** Let $F_1 = F_2 = 1, F_3 = 2, \dots$ be the Fibonacci numbers, and
-for a digit sequence $x = (x_i)_{i \ge 0}$ with $x_i \in \{0, 1\}$ and $j \in \mathbb{N}$ let
-$v_j(x) = \sum_{i=2}^{j+1} x_i F_i$. For $r \in \mathbb{N}$ let $\mathrm{CST}_j$ be the
-set of digit sequences $x$ with $v_j(x) + r < F_{j+1}$, or with $F_{j+1} \le v_j(x)$ and
-$v_j(x) + r < F_{j+2}$. For $k \in \mathbb{N}$, the new-information zone of order $k$
-for $r$ is $\mathrm{NIZ}_k = \mathrm{CST}_k \setminus \mathrm{CST}_{k-1}$, where $k - 1$ is read
-as $0$ when $k = 0$ (so $\mathrm{NIZ}_0 = \emptyset$).
-
-Source: Yohan Hosten, *On the Variation of the Sum of Digits in the Zeckendorf Representation:
-An Algorithm to Compute the Distribution and Mixing Properties*, Journal of Integer Sequences 27
-(2024), Article 24.3.2, Section 5.1 (definition of `NIZ_k`). -/
-public def zeckNIZ (r k : ℕ) : Set (ℕ → Bool) := zeckCST r k \ zeckCST r (k - 1)
 
 /-- **New-information zones lie in $\mathrm{CST}_k$.** For all $r, k \in \mathbb{N}$, the
 new-information zone $\mathrm{NIZ}_k$ of order $k$ for the shift $r$ is contained in the set
@@ -816,40 +684,6 @@ public theorem_wanted zeckNIZ_levels {r ℓ : ℕ} (hℓ : 2 ≤ ℓ) (hr : Nat.
       zeckAdicPrefixValue (ℓ + 1) x + r < Nat.fib (ℓ + 2)) ∧
     ∀ k, ℓ + 1 < k → (x ∈ zeckNIZ r k ↔
       Nat.fib k ≤ zeckAdicPrefixValue k x + r ∧ zeckAdicPrefixValue k x < Nat.fib k)
-
-/-- **Points of $\mathrm{NIZ}_k$ have leading digits $00$.** Let $r \ge 1$ and $k \ge 2$, and
-let $\mathrm{NIZ}_k$ be the new-information zone of order $k$ for $r$. Every Zeckendorf-adic
-integer $x = (x_i)_{i \ge 2}$ in $\mathrm{NIZ}_k$ has $x_{k+1} = x_k = 0$, that is, the name
-$x_{k+1} \cdots x_2$ of its cylinder of order $k$ starts with $00$.
-
-Source: Yohan Hosten, *On the Variation of the Sum of Digits in the Zeckendorf Representation:
-An Algorithm to Compute the Distribution and Mixing Properties*, Journal of Integer Sequences 27
-(2024), Article 24.3.2, Lemma 32 (`jis-2024-24.3.2-lem-32`). -/
-public theorem_wanted zeckNIZ_leading_zeros {r k : ℕ} (hr : 1 ≤ r) (hk : 2 ≤ k)
-    {x : ℕ → Bool} (hx : x ∈ zeckAdic) (h : x ∈ zeckNIZ r k) :
-    x (k + 1) = false ∧ x k = false
-
-/-- **Shifting a new-information cylinder by two orders.** Let $\mathbb{X}$ be the set of
-Zeckendorf-adic integers: the digit sequences $x = (x_i)_{i \in \mathbb{N}}$ in $\{0, 1\}$ with
-$x_0 = x_1 = 0$ and no two consecutive digits equal to $1$. Let $r \ge 1$, $k \ge 2$ and
-$y \in \mathbb{X}$. Suppose that every $x \in \mathbb{X}$ with $x_{k+1} = x_k = 0$ and $x_i = y_i$
-for $2 \le i \le k - 1$ lies in the new-information zone $\mathrm{NIZ}_k$ (for the shift $r$).
-Then every $x \in \mathbb{X}$ with $x_{k+3} = x_{k+2} = 0$, $x_{k+1} = 1$, $x_k = 0$ and
-$x_i = y_i$ for $2 \le i \le k - 1$ lies in $\mathrm{NIZ}_{k+2}$.
-
-In the paper's cylinder notation, where $C_w$ is the set of points of $\mathbb{X}$ whose digits
-ending at $x_2$ read $w$, and with $n_i = y_i$: $C_{00 n_{k-1} \cdots n_2} \subseteq \mathrm{NIZ}_k$
-implies $C_{0010 n_{k-1} \cdots n_2} \subseteq \mathrm{NIZ}_{k+2}$.
-
-Source: Yohan Hosten, *On the Variation of the Sum of Digits in the Zeckendorf Representation:
-An Algorithm to Compute the Distribution and Mixing Properties*, Journal of Integer Sequences 27
-(2024), Article 24.3.2, Lemma 33 (`jis-2024-24.3.2-lem-33`). -/
-public theorem_wanted zeckNIZ_cylinder_shift {r k : ℕ} (hr : 1 ≤ r) (hk : 2 ≤ k)
-    {y : ℕ → Bool} (hy : y ∈ zeckAdic)
-    (h : zeckAdic ∩ {x | x (k + 1) = false ∧ x k = false ∧
-      ∀ i, 2 ≤ i → i ≤ k - 1 → x i = y i} ⊆ zeckNIZ r k) :
-    zeckAdic ∩ {x | x (k + 3) = false ∧ x (k + 2) = false ∧ x (k + 1) = true ∧ x k = false ∧
-      ∀ i, 2 ≤ i → i ≤ k - 1 → x i = y i} ⊆ zeckNIZ r (k + 2)
 
 /-- **Lifting a cylinder of $\mathrm{NIZ}_k$ to order $k + 2$ lowers the variation by $1$.**
 Let $\ell \ge 2$, let $r$ satisfy $F_\ell \le r < F_{\ell+1}$, where $F_1 = F_2 = 1, F_3 = 2,

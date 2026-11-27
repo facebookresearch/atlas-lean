@@ -56,6 +56,18 @@ example : maximumNimGrundy (· / 3) 2 = 0 := by
   rw [maximumNimGrundy_eq, maximumNimMex_eq_iff]
   simp
 
+-- For the smallest divisor and `j = 1`, the largest pile below the divisor is terminal.
+example : maximumNimGrundy (· / 2) 1 = 0 :=
+  maximumNimGrundy_sub_eq_zero 2 1 (by decide) (by decide) (by decide)
+
+-- An interior value of `j` gives a positive pile strictly below `k`.
+example : maximumNimGrundy (· / 7) 4 = 0 :=
+  maximumNimGrundy_sub_eq_zero 7 3 (by decide) (by decide) (by decide)
+
+-- At `j = k`, the theorem also covers the empty pile for any permitted divisor.
+example (k : ℕ) (hk : 2 ≤ k) : maximumNimGrundy (· / k) 0 = 0 := by
+  simpa only [Nat.sub_self] using maximumNimGrundy_sub_eq_zero k k hk (by omega) le_rfl
+
 -- Test section: Grundy numbers at multiples of the divisor. For `k = 3`, the piles `3`, `6` and
 -- `9` have Grundy numbers `1`, `2` and `3`.
 example : maximumNimGrundy (· / 3) 3 = 1 :=
@@ -90,6 +102,40 @@ example : maximumNimGrundy (· / 2) 3 ≠ 3 / 2 := by
 example (k : ℕ) : maximumNimGrundy (· / k) 0 = 0 / k := by
   rw [maximumNimGrundy_eq, maximumNimMex_eq_iff]
   simp
+
+-- At the last allowed step and largest index, the pile size can be just one above a multiple.
+example : ¬(7 : ℕ) ∣ 15 :=
+  maximumNim_not_dvd_mul_sub_of_lt 7 3 2 1 1 3 (by decide) rfl (by decide) (by decide)
+    (by decide) (by decide)
+
+-- At the excluded step `s = t`, the index `i = h` gives a multiple of the same divisor.
+example : (7 : ℕ) ∣ 3 * (7 - 2) - 1 := by decide
+
+-- With `8 = 3 * 2 + 2`, the offsets from `16` are positive for `i = 1` and negative for `i = 3`.
+example : ¬(8 : ℕ) ∣ 3 * (8 - 2) - 1 :=
+  maximumNim_not_dvd_mul_sub_of_ne 8 3 2 2 1 (by decide) (by decide) rfl (by decide)
+    (by decide) (by decide) (by decide)
+
+example : ¬(8 : ℕ) ∣ 3 * (8 - 2) - 3 :=
+  maximumNim_not_dvd_mul_sub_of_ne 8 3 2 2 3 (by decide) (by decide) rfl (by decide)
+    (by decide) (by decide) (by decide)
+
+-- At step three, the quotient stays at zero from input zero to one and rises at input two.
+example : maximumNimH 3 0 < maximumNimH 3 1 ∧ maximumNimH 3 1 < maximumNimH 3 2 :=
+  ⟨maximumNimH_strictMono 3 0 1 (by decide) (by decide),
+   maximumNimH_strictMono 3 1 2 (by decide) (by decide)⟩
+
+-- At `x = 0` the bound is attained, including at the smallest permitted step.
+example : 0 < 1 ∧ 1 ≤ maximumNimH 2 0 :=
+  maximumNimH_succ_le (k := 2) (x := 0) (hk := le_rfl)
+
+example : maximumNimH 2 0 = 1 := by decide
+
+-- At `k = 3` and `x = 2`, the quotient contributes an additional unit.
+example : 2 < 3 ∧ 3 ≤ maximumNimH 3 2 :=
+  maximumNimH_succ_le 3 2 (by decide)
+
+example : 3 < maximumNimH 3 2 := by decide
 
 -- Zero iterations leave both real maps at the starting position.
 example (x : ℕ) :

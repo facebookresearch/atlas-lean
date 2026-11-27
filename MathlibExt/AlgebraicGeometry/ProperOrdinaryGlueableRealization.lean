@@ -209,7 +209,10 @@ def realizedEdgeIso {x y : ((underivedModuliFunctor FF PP).obj AA) _⦋0⦌}
   eqToIso (congrArg (realizedVertex O L J C D B SB UL T FF PP Q FB AA G R M)
     (moduliEdgeTarget FF PP AA e))
 
-/-- The unresolved triangle proof concerns these computed module/unit images of the native two-simplex. -/
+/-- Compatibility of the realized edge isomorphisms with composition: for every 2-simplex of the
+underived moduli space at the given commutative algebra `AA`, with edges $e_{01}$, $e_{12}$ and
+$e_{02}$, the composite of `realizedEdgeIso` of $e_{01}$ and of $e_{12}$ is `realizedEdgeIso` of
+$e_{02}$. -/
 structure OrdinaryRealizationTriangles where
   triangle : ∀ {x₀ x₁ x₂ : ((underivedModuliFunctor FF PP).obj AA) _⦋0⦌}
     {e₀₁ : SSet.Edge x₀ x₁} {e₁₂ : SSet.Edge x₁ x₂} {e₀₂ : SSet.Edge x₀ x₂},

@@ -63,7 +63,13 @@ def completedLeft : Hecke p E G H P d U ⥤ FormalTorsors p E G d U Q :=
 def completedRight : Hecke p E G H P d U ⥤ FormalTorsors p E G d U Q :=
   MeromorphicHeckeModels.rightLeg p E G H P d U ⋙ completedTorsors p E G H P d U Q A B
 
-/-- Evaluate an actual punctured action comparison in the source-completed frames. -/
+/-- The value of an isomorphism $e$ between the generic action sheaves of the completed left and
+right torsors of a Hecke modification $M$, read in frames: given integral frames of the left and
+right bundles of $M$, a test object $T$ over the punctured spectrum `genericScheme` of the
+completed ring and a section $a$ of $G$ over $T$, it is the section of $G$ over $T$ obtained by
+applying to $a$ the inverse of the generic frame of the left torsor, then $e$, then the generic
+frame of the right torsor. The generic frames are those of the algebraized frames that $F$ assigns
+to the two integral frames. -/
 def framedValue (M : Hecke p E G H P d U)
     (e : (genericActions p E G d U Q).obj
       ((completedLeft p E G H P d U Q A B).obj M) ≅

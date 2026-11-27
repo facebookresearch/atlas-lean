@@ -8,8 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-import Batteries.Util.ProofWanted
-public import Mathlib.Algebra.Group.Pointwise.Finset.Basic
+public import MathlibExt.Combinatorics.Additive.KnightVelocity
 public import Mathlib.Data.Int.Interval
 public import Mathlib.Order.Lattice.Nat
 public import Mathlib.Topology.Instances.Real.Lemmas
@@ -25,18 +24,6 @@ open Pointwise
 @[expose] public section
 
 /--
-**Knight moves.** For integers $a$ and $b$, the $(a,b)$-knight's move set is
-$$N_{a,b} = \{(\pm a, \pm b), (\pm b, \pm a)\} \subset \mathbb{Z}^2,$$
-the finite set of the points $(a, b)$, $(-a, b)$, $(a, -b)$, $(-a, -b)$, $(b, a)$, $(-b, a)$,
-$(b, -a)$ and $(-b, -a)$.
-
-Source: Christian Táfula, *Knights Are 24/13 Times Faster than the King*, The Fibonacci Quarterly
-62(3) (2024), definition of `N_{a,b}`.
--/
-public def knightMoves (a b : ℤ) : Finset (ℤ × ℤ) :=
-  {(b, a), (a, b), (-a, b), (-b, a), (-b, -a), (-a, -b), (a, -b), (b, -a)}
-
-/--
 **King moves.** The king's move set $K \subset \mathbb{Z}^2$ consists of the eight unit
 horizontal, vertical and diagonal steps:
 $$K = \{(1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0), (-1, -1), (0, -1), (1, -1)\}.$$
@@ -46,32 +33,6 @@ Source: Christian Táfula, *Knights Are 24/13 Times Faster than the King*, The F
 -/
 public def kingMoves : Finset (ℤ × ℤ) :=
   {(1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0), (-1, -1), (0, -1), (1, -1)}
-
-/--
-**Piece distance on the integer lattice.** Let $A \subseteq \mathbb{Z}^2$ be a finite set of
-moves and, for $h \ge 1$, let $hA = \{a_1 + \dots + a_h : a_1, \dots, a_h \in A\}$ be its
-$h$-fold sumset. The piece distance of a point $p \in \mathbb{Z}^2$ for $A$ is the natural
-number that is $0$ if $p = (0,0)$ and otherwise the infimum of the set of integers $h \ge 1$
-with $p \in hA$, where the infimum of the empty set is taken to be $0$.
-
-Points other than the origin that are not a sum of moves from $A$ therefore have distance $0$.
-
-Source: Christian Táfula, *Knights Are 24/13 Times Faster than the King*, The Fibonacci Quarterly
-62(3) (2024), definition of `A(x,y)`.
--/
-public noncomputable def pieceDistance (A : Finset (ℤ × ℤ)) (p : ℤ × ℤ) : ℕ :=
-  if p = 0 then 0 else sInf {h : ℕ | 1 ≤ h ∧ p ∈ h • A}
-
-/--
-**Max-norm ball.** For a natural number $h$, the max-norm ball $B_h \subset \mathbb{Z}^2$ is the
-product of two copies of the integer interval $\{-h, \dots, h\}$, that is, the set of lattice
-points $(x, y)$ with $\max(|x|, |y|) \le h$.
-
-Source: Christian Táfula, *Knights Are 24/13 Times Faster than the King*, The Fibonacci Quarterly
-62(3) (2024), definition of `B_h`.
--/
-public def maxNormBall (h : ℕ) : Finset (ℤ × ℤ) :=
-  Finset.Icc (-(h : ℤ)) h ×ˢ Finset.Icc (-(h : ℤ)) h
 
 /--
 **Piece distance from a minimal fold.** Let $A \subset \mathbb{Z}^2$ be a finite set, let
@@ -328,86 +289,6 @@ Source: Christian Táfula, *Knights Are 24/13 Times Faster than the King*, The F
 public theorem pieceDistance_knightMoves_zero_zero :
     pieceDistance (knightMoves 1 2) (0, 0) = 0 := by
   simp [pieceDistance]
-
-/--
-**Number of points in the max-norm ball.** For every natural number $h$, the max-norm ball
-$B_h = \{(x, y) \in \mathbb{Z}^2 : \max(|x|, |y|) \le h\}$ has exactly $(2h+1)^2$ points.
-
-Source: Christian Táfula, *Knights Are 24/13 Times Faster than the King*, The Fibonacci Quarterly
-62(3) (2024), definition of `B_h`.
--/
-public theorem card_maxNormBall (h : ℕ) : (maxNormBall h).card = (2 * h + 1) ^ 2 := by
-  have hcard : (Finset.Icc (-(h : ℤ)) h).card = 2 * h + 1 := by
-    rw [Int.card_Icc]
-    omega
-  simp [maxNormBall, Finset.card_product, hcard, pow_two]
-
-/--
-**Uniform bound for knight distance on a box.** There is an absolute constant $M \in \mathbb{R}$
-such that for all natural numbers $a$ and $b$ with $1 \le a < b$, $\gcd(a, b) = 1$ and $a + b$
-odd, every lattice point $(x, y) \in \mathbb{Z}^2$ with $\max(|x|, |y|) \le a + b$ has piece
-distance at most $Mb$ for the $(a,b)$-knight's move set
-$N_{a,b} = \{(\pm a, \pm b), (\pm b, \pm a)\}$.
-
-Source: Christian Táfula, *Knights Are 24/13 Times Faster than the King*, The Fibonacci Quarterly
-62(3) (2024), Lemma 2.1.
--/
-public theorem_wanted knight_distance_uniform_on_box :
-    ∃ M : ℝ, ∀ a b : ℕ,
-      1 ≤ a → a < b → Nat.Coprime a b → Odd (a + b) →
-      ∀ p : ℤ × ℤ,
-        max |p.1| |p.2| ≤ ((a + b : ℕ) : ℤ) →
-        (pieceDistance (knightMoves (a : ℤ) (b : ℤ)) p : ℝ) ≤ M * b
-
-/--
-**Knight distance asymptotics.** There is an absolute constant $M \in \mathbb{R}$ with the
-following property. Let $a$ and $b$ be natural numbers with $1 \le a < b$, $\gcd(a, b) = 1$ and
-$a + b$ odd, let $N_{a,b} = \{(\pm a, \pm b), (\pm b, \pm a)\}$ be the $(a,b)$-knight's move set,
-and for $p \in \mathbb{Z}^2$ let $d_{a,b}(p)$ be the piece distance of $p$ for $N_{a,b}$. Then
-for all integers $x$ and $y$ with $0 \le y \le x$: if $by \le ax$, then
-$|d_{a,b}(x, y) - x/b| \le Mb$; and if $ax < by$, then
-$|d_{a,b}(x, y) - (x + y)/(a + b)| \le Mb$.
-
-Source: Christian Táfula, *Knights Are 24/13 Times Faster than the King*, The Fibonacci Quarterly
-62(3) (2024), Theorem 1.1.
--/
-public theorem_wanted knight_distance_asymptotics :
-    ∃ M : ℝ, ∀ (a b : ℕ) (x y : ℤ),
-      1 ≤ a → a < b → Nat.Coprime a b → Odd (a + b) →
-      0 ≤ y → y ≤ x →
-      (((b : ℤ) * y ≤ (a : ℤ) * x →
-          |(pieceDistance (knightMoves (a : ℤ) (b : ℤ)) (x, y) : ℝ) -
-              (x : ℝ) / (b : ℝ)| ≤ M * b) ∧
-        ((a : ℤ) * x < (b : ℤ) * y →
-          |(pieceDistance (knightMoves (a : ℤ) (b : ℤ)) (x, y) : ℝ) -
-              ((x : ℝ) + (y : ℝ)) / ((a : ℝ) + (b : ℝ))| ≤ M * b))
-
-/--
-**Velocity formula for the (a, b)-knight.** Let $a$ and $b$ be natural numbers with
-$1 \le a < b$, $\gcd(a, b) = 1$ and $a + b$ odd, let
-$N_{a,b} = \{(\pm a, \pm b), (\pm b, \pm a)\}$ be the $(a,b)$-knight's move set, and for
-$p \in \mathbb{Z}^2$ let $d_{a,b}(p)$ be the piece distance of $p$ for $N_{a,b}$. For a natural
-number $h$, let $B_h = \{(x, y) \in \mathbb{Z}^2 : \max(|x|, |y|) \le h\}$ be the max-norm
-ball and let $\bar{d}(h) = |B_h|^{-1} \sum_{p \in B_h} d_{a,b}(p)$ be the average of $d_{a,b}$
-over $B_h$. Then
-$$\lim_{h \to \infty} \frac{2h}{3} \, \bar{d}(h)^{-1} = \frac{2(a+b)b^2}{a^2 + 3b^2}.$$
-
-Source: Christian Táfula, *Knights Are 24/13 Times Faster than the King*, The Fibonacci Quarterly
-62(3) (2024), Theorem 1.3.
--/
-public theorem_wanted knight_velocity_formula (a b : ℕ)
-    (ha : 1 ≤ a) (hab : a < b) (hcoprime : Nat.Coprime a b)
-    (hodd : Odd (a + b)) :
-    Filter.Tendsto
-      (fun h : ℕ =>
-        (2 * (h : ℝ) / 3) *
-          (((∑ p ∈ maxNormBall h,
-              (pieceDistance (knightMoves (a : ℤ) (b : ℤ)) p : ℝ)) /
-            ((maxNormBall h).card : ℝ))⁻¹))
-      Filter.atTop
-      (nhds
-        (2 * ((a : ℝ) + (b : ℝ)) * (b : ℝ) ^ 2 /
-          ((a : ℝ) ^ 2 + 3 * (b : ℝ) ^ 2)))
 
 end
 

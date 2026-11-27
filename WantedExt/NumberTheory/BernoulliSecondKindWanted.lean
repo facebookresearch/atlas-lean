@@ -43,6 +43,9 @@ public import Mathlib.RingTheory.Polynomial.Pochhammer
 public import Mathlib.RingTheory.PowerSeries.Log
 public import MathlibExt.Combinatorics.Enumerative.SignedStirlingFirst
 public import MathlibExt.NumberTheory.Bernoulli.BernoulliSecondKindStirling
+public import MathlibExt.NumberTheory.Bernoulli.BernoulliStirlingSum
+public import MathlibExt.NumberTheory.Bernoulli.StirlingInversion
+public import MathlibExt.NumberTheory.Bernoulli.WeightedStirlingSum
 
 set_option autoImplicit false
 
@@ -65,21 +68,6 @@ theorem_wanted bernoulli_poly_eq (n : ℕ) :
         ∑ k ∈ Finset.Icc 1 n, Polynomial.C
           ((n : ℚ) / k * (Nat.stirlingSecond (n - 1) (k - 1) : ℚ)) *
           descPochhammer ℚ k
-
-/-- **Stirling inversion.** Let $s(m, j)$ be the signed Stirling numbers of the first kind and
-$S(m, j)$ the Stirling numbers of the second kind. For all sequences $(u_n)_{n \ge 0}$ and
-$(v_n)_{n \ge 0}$ of rational numbers, $u_n = \sum_{k=0}^{n} s(n, k) \, v_k$ for every natural
-number $n$ if and only if $v_n = \sum_{k=0}^{n} S(n, k) \, u_k$ for every natural number $n$.
-
-The paper states this for sequences of complex numbers.
-
-Source: Bakir Farhi, "Formulas Involving Bernoulli and
-Stirling Numbers of Both Kinds", Lemma 3. -/
-theorem_wanted stirling_inversion_iff (u v : ℕ → ℚ) :
-    (∀ n, u n = ∑ k ∈ Finset.range (n + 1),
-      (MetaMathlibExt.signedStirlingFirst n k : ℚ) * v k) ↔
-    (∀ n, v n = ∑ k ∈ Finset.range (n + 1),
-      (Nat.stirlingSecond n k : ℚ) * u k)
 
 /-- **Bernoulli numbers of the second kind in terms of Bernoulli numbers.** Let $B_m$ be the
 Bernoulli numbers (with $B_1 = -1/2$), $B_m^*$ the Bernoulli numbers of the second kind and
@@ -126,19 +114,6 @@ theorem_wanted sum_stirlingSecond_signed_div (n k : ℕ)
         (Nat.stirlingSecond (n - 1) (i - 1) : ℚ) *
           (MetaMathlibExt.signedStirlingFirst i k : ℚ) / i =
       (1 / (n : ℚ)) * (Nat.choose n k : ℚ) * bernoulli (n - k)
-
-/-- **Bernoulli numbers via Stirling numbers of the second kind.** Let $B_m$ be the Bernoulli
-numbers (with $B_1 = -1/2$) and $S(m, j)$ the Stirling numbers of the second kind. For every
-natural number $n$,
-$$B_n = \sum_{i=0}^{n} (-1)^i \, \frac{i!}{i+1} \, S(n, i).$$
-
-Source: Bakir Farhi, "Formulas Involving Bernoulli and
-Stirling Numbers of Both Kinds", Corollary 9. -/
-theorem_wanted bernoulli_eq_sum_stirlingSecond (n : ℕ) :
-    bernoulli n =
-      ∑ i ∈ Finset.range (n + 1), (-1 : ℚ) ^ i *
-        ((i.factorial : ℚ) / (i + 1)) *
-        (Nat.stirlingSecond n i : ℚ)
 
 /-- **Unshifted Stirling convolution formula for Bernoulli numbers.** For natural numbers $k$
 and $n$ with $1 \le k \le n$, write $S(m,j)$ for the Stirling numbers of the second kind,
@@ -205,25 +180,6 @@ theorem_wanted sum_signed_stirlingSecond_div_eq (n k : ℕ)
         ((n - 1).factorial : ℚ) / k.factorial *
         ∑ l ∈ Finset.range (n - k + 1),
           ((-1 : ℚ) ^ l / l.factorial) * MetaMathlibExt.bernoulliSecond l
-
-/-- **Weighted alternating sums of Stirling numbers of the second kind.** For natural numbers
-$r \ge 1$ and $n$, write $S(n,k)$ for the Stirling numbers of the second kind, $c(r,j)$ for the
-unsigned Stirling numbers of the first kind, and $B_m$ for the Bernoulli numbers with
-$B_1 = -\tfrac12$. Then, in $\mathbb{Q}$,
-$$
-\sum_{k=0}^{n} (-1)^k \frac{k!}{k+r} S(n,k) = \frac{1}{(r-1)!} \sum_{k=0}^{r-1} c(r,k+1) B_{n+k}.
-$$
-
-Source: Bakir Farhi, "Formulas Involving Bernoulli and
-Stirling Numbers of Both Kinds", Theorem 17. -/
-theorem_wanted sum_stirlingSecond_div_add (r n : ℕ)
-    (hr : 1 ≤ r) :
-    ∑ k ∈ Finset.range (n + 1), (-1 : ℚ) ^ k *
-        ((k.factorial : ℚ) / (k + r)) *
-        (Nat.stirlingSecond n k : ℚ) =
-      (1 / ((r - 1).factorial : ℚ)) *
-        ∑ k ∈ Finset.range r,
-          (Nat.stirlingFirst r (k + 1) : ℚ) * bernoulli (n + k)
 
 /-- **Sums of signed Stirling numbers of the first kind with shifted reciprocal weights.** Let
 $s(m, j)$ be the signed Stirling numbers of the first kind, $S(m, j)$ the Stirling numbers of

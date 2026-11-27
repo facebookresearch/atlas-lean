@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Batteries.Util.ProofWanted
-public import MathlibExt.Combinatorics.SimpleGraph.Ramsey
+public import MathlibExt.Combinatorics.SimpleGraph.RamseyThreeUpper
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Analysis.Asymptotics.Theta
@@ -60,13 +60,6 @@ theorem_wanted exists_cliqueFree_three_chromaticNumber_ge :
 of Theorem 1.1 stated after Corollary 1.2). -/
 theorem_wanted graphRamsey_three_lower (ε : ℝ) (hε : 0 < ε) :
     ∀ᶠ t : ℕ in atTop, (1 - ε) * ((t : ℝ) ^ 2 / (162 * Real.log t)) ≤ (graphRamsey 3 t : ℝ)
-
-/-- **Upper bound for `R(3, t)` (Ajtai–Komlós–Szemerédi, Shearer).** For every `ε > 0` and all
-sufficiently large `t`, `R(3, t) ≤ (1 + ε) t² / log t` (J. B. Shearer, "A note on the
-independence number of triangle-free graphs", *Discrete Math.* 46 (1983); as stated in J. H.
-Kim, *Random Structures & Algorithms* 7 (1995), equation (1)). -/
-theorem_wanted graphRamsey_three_upper (ε : ℝ) (hε : 0 < ε) :
-    ∀ᶠ t : ℕ in atTop, (graphRamsey 3 t : ℝ) ≤ (1 + ε) * ((t : ℝ) ^ 2 / Real.log t)
 
 /-- **`R(3, t)` has order of magnitude `t² / log t`.** `R(3, t) = Θ(t² / log t)` as `t → ∞`
 (J. H. Kim, "The Ramsey number R(3,t) has order of magnitude t²/log t", *Random Structures &

@@ -24,7 +24,12 @@ f-statistics, admixture graphs, ancestry models and linkage-disequilibrium metho
 - [Negative f3 as a test of admixture](negative-f3-as-a-test-of-admixture/README.md)
 - [Rank of the f4 matrix of left and right populations](rank-of-the-f4-matrix-of-left-and-right-populati/README.md)
 - [Tree-shaped admixture graphs and the four-point condition](tree-shaped-admixture-graphs-and-the-four-point/README.md)
+- [Wright's F-statistics](wright-s-f-statistics/README.md)
 
 ## Related topics
 
 - [Chi-square law of Gaussian projection residuals](../../Probability/linear-models-multivariate/chi-square-law-of-gaussian-projection-residuals/README.md): the chi-square law of whitened projection residuals, which motivates qpAdm-style tests of admixture models.
+- [Ancestry-adjusted linkage disequilibrium](ancestry-adjusted-linkage-disequilibrium/README.md)
+- [Chromosome-painting coancestry and fineSTRUCTURE](chromopainter-coancestry-and-finestructure/README.md)
+- [STRUCTURE Bayesian clustering of multilocus genotypes](structure-bayesian-clustering/README.md)
+- [Population structure and eigenanalysis](eigenanalysis-of-population-structure/README.md)

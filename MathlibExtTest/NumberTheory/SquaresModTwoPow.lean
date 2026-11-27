@@ -35,3 +35,21 @@ example : IsSquare (17 : ZMod 32) := by
   have hs : IsSquare (17 : ZMod 16) := ⟨1, rfl⟩
   exact (by decide : (17 : ℕ) ≠ 20)
     ((isSquare_mod_two_pow_even_not_odd_iff 2 17 (by decide)).mp ⟨hs, hn⟩)
+
+-- At k = 0 both moduli are 1, and the only representative is 0.
+example : ¬(IsSquare (0 : ZMod 1) ∧ ¬IsSquare (0 : ZMod 1)) := by
+  intro h
+  have := (isSquare_mod_two_pow_odd_not_even_iff 0 0 (by decide)).mp h
+  exact (by decide : ¬((0 : ℕ) = 1 ∨ 0 = 2)) this
+
+-- Modulo 4, the two exceptional residues reduce to 0 and 1 modulo 2.
+example : IsSquare (2 : ZMod 2) ∧ ¬IsSquare (2 : ZMod 4) :=
+  (isSquare_mod_two_pow_odd_not_even_iff 1 2 (by decide)).mpr (Or.inl rfl)
+
+example : IsSquare (3 : ZMod 2) ∧ ¬IsSquare (3 : ZMod 4) :=
+  (isSquare_mod_two_pow_odd_not_even_iff 1 3 (by decide)).mpr (Or.inr rfl)
+
+-- Multiplication by four carries the exceptional pair to 8 and 12 modulo 16.
+example (x : ℕ) (hx : x < 16) :
+    (IsSquare (x : ZMod 8) ∧ ¬IsSquare (x : ZMod 16)) ↔ x = 8 ∨ x = 12 :=
+  isSquare_mod_two_pow_odd_not_even_iff 2 x hx

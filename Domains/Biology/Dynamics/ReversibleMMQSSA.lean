@@ -19,9 +19,10 @@ import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 /-!
 # Reversible Michaelis–Menten: a uniform quasi-steady-state error bound
 
-For the reversible mechanism `E + S ⇌ C ⇌ E + P` (`ReversibleMichaelisMenten.IsSolution k₁ kb
-k₂ kb₂ s c e p`, with `k₁, k₂ > 0` and `kb, kb₂ ≥ 0`), write `e_T = e(0) + c(0)` for the total
-enzyme, `M = s(0) + c(0) + p(0)` for the total mass, `D = kb + k₂`, and `A = k₁ s + kb₂ p`. The
+For the reversible mechanism `E + S ⇌ C ⇌ E + P`
+(`ReversibleMichaelisMenten.IsSolution k₁ kb k₂ kb₂ s c e p`, with `k₁, k₂ > 0` and
+`kb, kb₂ ≥ 0`), write `e_T = e(0) + c(0)` for the total enzyme, `M = s(0) + c(0) + p(0)` for the
+total mass, `D = kb + k₂`, and `A = k₁ s + kb₂ p`. The
 quasi-steady-state complex is `q(s, p) = e_T A / (A + D)` (`revQSSComplex`), and the reversible
 Michaelis–Menten rate law is
 
@@ -41,8 +42,8 @@ scalar equation `dS̄/dτ = -v(S̄, M - S̄)` (`reducedRate`), with `P̄ = M - S
 * `reduced_mem_Icc`: every solution of the reduced equation starting in `[0, M]` stays there.
 * `IsSolution.abs_substrate_sub_reduced_le` (real time, all `t ≥ 0`): the substrate tracks
   the reduced solution on the slow clock,
-  `|s(t) - S̄(e_T t)| ≤ |s(0) - S̄(0)| + (k₁ M + kb) (|c(0) - q(s(0), p(0))| / (kb + k₂)
-  + (e_T² F / (kb + k₂)² + e_T² kb₂ / (kb + k₂)) t)`.
+  `|s(t) - S̄(e_T t)| ≤ |s(0) - S̄(0)| + (k₁ M + kb) (|c(0) - q(s(0), p(0))| / (kb + k₂)`
+  `+ (e_T² F / (kb + k₂)² + e_T² kb₂ / (kb + k₂)) t)`.
 * `abs_substrate_sub_reduced_le_mul`, `abs_product_sub_reduced_le_mul`: for the standard data
   `s(0) = s₀ = S̄(0)`, `c(0) = 0`, `e(0) = ε`, `p(0) = p₀`, on the slow window `τ ∈ [0, T]`
   (**including** `τ = 0`), `|s(τ/ε) - S̄(τ)| ≤ revSubstrateErrorConst k₁ kb k₂ kb₂ (s₀ + p₀) T · ε`
@@ -72,11 +73,9 @@ hence nondecreasing on `[0, M]`, so the difference `d = s - S̄(e_T ·)` satisfi
 `d' ≤ (k₁ M + kb) |w| + e_T² kb₂ (k₁ M + kb) / D` wherever `d ≥ 0` (and symmetrically); `|d|`
 grows at most by the integral of that bound, with no Gronwall factor.
 
-## Source receipt (API-00)
+## Reused results
 
-Reuse search (2026-11-15, base `origin/main` ca1b9e8001): `grep` for `QSSA`, `qss`,
-`quasi-steady`, `reducedRate`, `revMMRate` over `MathlibExt`, `WantedExt`, `MathlibExtTest`.
-Reused: `ReversibleMichaelisMenten.IsSolution`, `IsSolution.enzyme_conservation`,
+From other files: `ReversibleMichaelisMenten.IsSolution`, `IsSolution.enzyme_conservation`,
 `IsSolution.substrate_conservation`, `IsSolution.nonneg`, `revComplexRate`, `revProductRate`
 (`Domains.Biology.Dynamics.ReversibleMichaelisMenten`); `substrateRate`, `qssComplex`,
 `mmRate`, `michaelisConstant` (`Domains.Biology.Dynamics.MichaelisMenten`); Mathlib
@@ -116,12 +115,16 @@ open MathlibExt.Analysis.ODE.ComparisonBounds
 /-! ### Definitions -/
 
 /-- The quasi-steady-state complex of the reversible mechanism with total enzyme `eT`,
-`q(s, p) = eT (k₁ s + kb₂ p) / (k₁ s + kb₂ p + kb + k₂)`. -/
+`q(s, p) = eT (k₁ s + kb₂ p) / (k₁ s + kb₂ p + kb + k₂)`, read as `0` when the denominator
+vanishes. For `k₁, k₂ > 0`, `kb, kb₂ ≥ 0` and `s, p ≥ 0` the denominator is at least
+`kb + k₂ > 0`. -/
 noncomputable def revQSSComplex (k₁ kb k₂ kb₂ eT s p : ℝ) : ℝ :=
   eT * (k₁ * s + kb₂ * p) / (k₁ * s + kb₂ * p + (kb + k₂))
 
 /-- The reversible Michaelis–Menten rate law (per unit total enzyme),
-`v(s, p) = (k₁ k₂ s - kb kb₂ p) / (k₁ s + kb₂ p + kb + k₂)`. -/
+`v(s, p) = (k₁ k₂ s - kb kb₂ p) / (k₁ s + kb₂ p + kb + k₂)`, read as `0` when the denominator
+vanishes. For `k₁, k₂ > 0`, `kb, kb₂ ≥ 0` and `s, p ≥ 0` the denominator is at least
+`kb + k₂ > 0`. -/
 noncomputable def revMMRate (k₁ kb k₂ kb₂ s p : ℝ) : ℝ :=
   (k₁ * k₂ * s - kb * kb₂ * p) / (k₁ * s + kb₂ * p + (kb + k₂))
 
@@ -134,14 +137,15 @@ def complexForcingConst (k₁ kb k₂ kb₂ M : ℝ) : ℝ :=
   k₁ * (k₁ * M + kb) + kb₂ * (k₂ + kb₂ * M)
 
 /-- The constant of the substrate estimate on the slow window `[0, T]`:
-`(k₁ M + kb) (1 / (kb + k₂) + (F / (kb + k₂)² + kb₂ / (kb + k₂)) T)`. -/
+`(k₁ M + kb) (1 / (kb + k₂) + (F / (kb + k₂)² + kb₂ / (kb + k₂)) T)`, with quotients by zero read as
+zero: it is `0` for every `T` when `kb + k₂ = 0`. -/
 noncomputable def revSubstrateErrorConst (k₁ kb k₂ kb₂ M T : ℝ) : ℝ :=
   (k₁ * M + kb) * (1 / (kb + k₂) +
     (complexForcingConst k₁ kb k₂ kb₂ M / (kb + k₂) ^ 2 + kb₂ / (kb + k₂)) * T)
 
 /-! ### Bridges to the irreversible mechanism -/
 
-/-- For `kb₂ = 0` the QSS complex is the irreversible `qssComplex`. -/
+/-- For `kb₂ = 0` and `k₁ > 0` the QSS complex is the irreversible `qssComplex`. -/
 theorem revQSSComplex_zero {k₁ kb k₂ eT s p : ℝ} (hk₁ : 0 < k₁) :
     revQSSComplex k₁ kb k₂ 0 eT s p = qssComplex k₁ kb k₂ eT s := by
   unfold revQSSComplex qssComplex michaelisConstant at *
@@ -150,7 +154,7 @@ theorem revQSSComplex_zero {k₁ kb k₂ eT s p : ℝ} (hk₁ : 0 < k₁) :
   field_simp
   ring
 
-/-- For `kb₂ = 0` the reduced rate is the irreversible rate law `mmRate k₂ K_M`. -/
+/-- For `kb₂ = 0` and `k₁ > 0` the reduced rate is the irreversible rate law `mmRate k₂ K_M`. -/
 theorem reducedRate_zero {k₁ kb k₂ M x : ℝ} (hk₁ : 0 < k₁) :
     reducedRate k₁ kb k₂ 0 M x = mmRate k₂ (michaelisConstant k₁ kb k₂) x := by
   unfold reducedRate revMMRate mmRate michaelisConstant at *
@@ -193,7 +197,7 @@ private lemma hasDerivAt_revQSSComplex_comp {k₁ kb k₂ kb₂ eT : ℝ} {s p :
   field_simp
   ring
 
-/-- The reduced rate is nondecreasing on `[0, M]`. -/
+/-- For `k₁, kb, kb₂ ≥ 0` and `k₂ > 0`, the reduced rate is nondecreasing on `[0, M]`. -/
 theorem reducedRate_mono {k₁ kb k₂ kb₂ M : ℝ} (hk₁ : 0 ≤ k₁) (hkb : 0 ≤ kb) (hk₂ : 0 < k₂)
     (hkb₂ : 0 ≤ kb₂) {x y : ℝ} (hy : 0 ≤ y) (hyx : y ≤ x) (hx : x ≤ M) :
     reducedRate k₁ kb k₂ kb₂ M y ≤ reducedRate k₁ kb k₂ kb₂ M x := by
@@ -261,8 +265,9 @@ private lemma IsSolution.region (h : IsSolution k₁ kb k₂ kb₂ s c e p) (hk�
 
 /-! ### The complex estimate (real time) -/
 
-/-- **The complex is slaved to the QSS manifold**, for all `t ≥ 0`: with `e_T = e(0) + c(0)`,
-`M = s(0) + c(0) + p(0)` and `F = complexForcingConst k₁ kb k₂ kb₂ M`,
+/-- **The complex is slaved to the QSS manifold**: for `k₁, kb, kb₂ ≥ 0`, `k₂ > 0` and nonnegative
+initial data, for all `t ≥ 0`, with `e_T = e(0) + c(0)`, `M = s(0) + c(0) + p(0)` and
+`F = complexForcingConst k₁ kb k₂ kb₂ M`,
 `|c(t) - q(s(t), p(t))| ≤ |c(0) - q(s(0), p(0))| e^{-(kb + k₂) t} + e_T² F / (kb + k₂)²`. -/
 theorem IsSolution.abs_complex_sub_qss_le (h : IsSolution k₁ kb k₂ kb₂ s c e p)
     (hk₁ : 0 ≤ k₁) (hkb : 0 ≤ kb) (hk₂ : 0 < k₂) (hkb₂ : 0 ≤ kb₂) (hs0 : 0 ≤ s 0)
@@ -358,8 +363,8 @@ private lemma exists_small_delta {k₁ k₂ kb₂ ε : ℝ} (hk₁ : 0 ≤ k₁)
     have h2 : 0 < min ε (k₂ / m) := lt_min hε (div_pos hk₂ hmpos)
     nlinarith
 
-/-- **The reduced equation keeps `[0, M]` invariant**: a solution of `S̄' = -v(S̄, M - S̄)` with
-`S̄(0) ∈ [0, M]` stays in `[0, M]` for all `τ ≥ 0`. -/
+/-- **The reduced equation keeps `[0, M]` invariant**: for `k₁, k₂ > 0`, `kb, kb₂ ≥ 0` and `M ≥ 0`,
+a solution of `S̄' = -v(S̄, M - S̄)` with `S̄(0) ∈ [0, M]` stays in `[0, M]` for all `τ ≥ 0`. -/
 theorem reduced_mem_Icc (hk₁ : 0 < k₁) (hkb : 0 ≤ kb) (hk₂ : 0 < k₂) (hkb₂ : 0 ≤ kb₂)
     {M : ℝ} (hM : 0 ≤ M) {S : ℝ → ℝ}
     (hS : ∀ τ, 0 ≤ τ → HasDerivAt S (-reducedRate k₁ kb k₂ kb₂ M (S τ)) τ)
@@ -406,11 +411,12 @@ theorem reduced_mem_Icc (hk₁ : 0 < k₁) (hkb : 0 ≤ kb) (hk₂ : 0 < k₂) (
 
 /-! ### The substrate estimate (real time) -/
 
-/-- **The substrate tracks the reduced solution on the slow clock**, for all `t ≥ 0`: with
-`e_T = e(0) + c(0)`, `M = s(0) + c(0) + p(0)`, `F = complexForcingConst k₁ kb k₂ kb₂ M`, and
+/-- **The substrate tracks the reduced solution on the slow clock**: for `k₁, k₂ > 0`,
+`kb, kb₂ ≥ 0` and nonnegative initial data, for all `t ≥ 0`, with `e_T = e(0) + c(0)`,
+`M = s(0) + c(0) + p(0)`, `F = complexForcingConst k₁ kb k₂ kb₂ M`, and
 `S̄` a solution of `S̄' = -v(S̄, M - S̄)` with `S̄(0) ∈ [0, M]`,
-`|s(t) - S̄(e_T t)| ≤ |s(0) - S̄(0)| + (k₁ M + kb) (|c(0) - q(s(0), p(0))| / (kb + k₂) +
-(e_T² F / (kb + k₂)² + e_T² kb₂ / (kb + k₂)) t)`. -/
+`|s(t) - S̄(e_T t)| ≤ |s(0) - S̄(0)| + (k₁ M + kb) (|c(0) - q(s(0), p(0))| / (kb + k₂) +`
+`(e_T² F / (kb + k₂)² + e_T² kb₂ / (kb + k₂)) t)`. -/
 theorem IsSolution.abs_substrate_sub_reduced_le (h : IsSolution k₁ kb k₂ kb₂ s c e p)
     (hk₁ : 0 < k₁) (hkb : 0 ≤ kb) (hk₂ : 0 < k₂) (hkb₂ : 0 ≤ kb₂) (hs0 : 0 ≤ s 0)
     (hc0 : 0 ≤ c 0) (he0 : 0 ≤ e 0) (hp0 : 0 ≤ p 0) {S : ℝ → ℝ}
@@ -539,11 +545,10 @@ private lemma revQSSComplex_le {k₁ kb k₂ kb₂ ε s p : ℝ} (hk₁ : 0 ≤ 
   rw [zero_sub, abs_neg, abs_of_nonneg (by positivity), div_le_iff₀ hAD]
   nlinarith [mul_nonneg hε (by linarith : 0 ≤ kb + k₂)]
 
-/-- **Uniform QSSA for the substrate on a slow window, including `τ = 0`.** For the standard
-data `s(0) = s₀ = S̄(0)`, `c(0) = 0`, `e(0) = ε > 0`, `p(0) = p₀ ≥ 0`, with `S̄` a solution of the
-reduced equation `S̄' = -v(S̄, s₀ + p₀ - S̄)`,
-`|s(τ/ε) - S̄(τ)| ≤ revSubstrateErrorConst k₁ kb k₂ kb₂ (s₀ + p₀) T · ε` for all
-`τ ∈ [0, T]`. -/
+/-- **Uniform QSSA for the substrate on a slow window, including `τ = 0`.** For `k₁, k₂ > 0`,
+`kb, kb₂ ≥ 0`, `s₀ ≥ 0` and the standard data `s(0) = s₀ = S̄(0)`, `c(0) = 0`, `e(0) = ε > 0`,
+`p(0) = p₀ ≥ 0`, with `S̄` a solution of the reduced equation `S̄' = -v(S̄, s₀ + p₀ - S̄)`,
+`|s(τ/ε) - S̄(τ)| ≤ revSubstrateErrorConst k₁ kb k₂ kb₂ (s₀ + p₀) T · ε` for all `τ ∈ [0, T]`. -/
 theorem abs_substrate_sub_reduced_le_mul (hk₁ : 0 < k₁) (hkb : 0 ≤ kb) (hk₂ : 0 < k₂)
     (hkb₂ : 0 ≤ kb₂) {s₀ p₀ ε T : ℝ} (hs₀ : 0 ≤ s₀) (hp₀ : 0 ≤ p₀) (hε : 0 < ε)
     (h : IsSolution k₁ kb k₂ kb₂ s c e p) (hs0 : s 0 = s₀) (hc0 : c 0 = 0) (he0 : e 0 = ε)
@@ -586,8 +591,8 @@ theorem abs_substrate_sub_reduced_le_mul (hk₁ : 0 < k₁) (hkb : 0 ≤ kb) (hk
 
 /-- **Uniform QSSA for the product on a slow window, including `τ = 0`.** For the standard data
 of `abs_substrate_sub_reduced_le_mul`, the product tracks the reduced product
-`P̄ = s₀ + p₀ - S̄`: `|p(τ/ε) - (s₀ + p₀ - S̄(τ))| ≤
-(revSubstrateErrorConst k₁ kb k₂ kb₂ (s₀ + p₀) T + 1) · ε` for all `τ ∈ [0, T]`. -/
+`P̄ = s₀ + p₀ - S̄`: `|p(τ/ε) - (s₀ + p₀ - S̄(τ))| ≤`
+`(revSubstrateErrorConst k₁ kb k₂ kb₂ (s₀ + p₀) T + 1) · ε` for all `τ ∈ [0, T]`. -/
 theorem abs_product_sub_reduced_le_mul (hk₁ : 0 < k₁) (hkb : 0 ≤ kb) (hk₂ : 0 < k₂)
     (hkb₂ : 0 ≤ kb₂) {s₀ p₀ ε T : ℝ} (hs₀ : 0 ≤ s₀) (hp₀ : 0 ≤ p₀) (hε : 0 < ε)
     (h : IsSolution k₁ kb k₂ kb₂ s c e p) (hs0 : s 0 = s₀) (hc0 : c 0 = 0) (he0 : e 0 = ε)

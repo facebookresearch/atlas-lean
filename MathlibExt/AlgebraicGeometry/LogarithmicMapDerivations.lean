@@ -45,9 +45,10 @@ def derivationLinear : Derivation k B M →ₗ[A] (B →ₗ[k] M) where
   map_add' _ _ := rfl
   map_smul' _ _ := rfl
 
-/-- The literal image of native derivations in their linear-map carrier.
-Using the linear-map carrier also avoids Mathlib's separate monoid/group
-instances on derivations when taking submodule quotients. -/
+/-- For commutative rings `k`, `A`, `B` with `B` a `k`-algebra, and a module `M` over `k`, `A` and
+`B` whose `A`-action commutes with the `k`- and `B`-actions: the `A`-submodule of `k`-linear maps
+`B → M` formed by the `k`-derivations, the maps `d` with `d (b * c) = b • d c + c • d b` (the image
+of `Derivation k B M` in `B →ₗ[k] M`). -/
 def derivationSubmodule : Submodule A (B →ₗ[k] M) := LinearMap.range (derivationLinear (k := k))
 
 def parameterCondition {m : ℕ} (t : Fin m → B) (base : I →ₗ[A] M)

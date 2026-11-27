@@ -9,3 +9,4 @@
 - [No other feasible portfolio attains the minimum variance](eq-min-variance-portfolio-of-portfolio-v.md)
 - [Existence and uniqueness of the minimum-variance portfolio](exists-unique-min-variance.md)
 - [Mean-variance frontier in closed form](portfolio-variance-min-variance-portfoli-2.md)
+- [The global minimum-variance portfolio](global-minimum-variance-portfolio.md)

@@ -30,7 +30,6 @@ open AlgebraicGeometry CategoryTheory CategoryTheory.Limits
 open MathlibExt.AlgebraicGeometry
 open MathlibExt.AlgebraicGeometry.PerverseSheaves
 open MathlibExt.AlgebraicGeometry.RelativeLefschetz
-open MathlibExt.AlgebraicGeometry.DeCataldoMiglioriniDecompositionWanted (projectiveSpace)
 
 namespace MathlibExtTest.AlgebraicGeometry.RelativeLefschetz
 
@@ -66,7 +65,7 @@ example (Y : PerverseSheaves.ComplexScheme) (n : ℕ) :
 
 /-- Its projection to `ℙⁿ` is compatible with the structure maps. -/
 example (Y : PerverseSheaves.ComplexScheme) (n : ℕ) :
-    (toProjectiveSpace Y n).left ≫ (projectiveSpace n).hom =
+    (toProjectiveSpace Y n).left ≫ (ProjectiveSpace.projectiveSpace ℂ n).hom =
       (relativeProjectiveSpace Y n).hom :=
   (toProjectiveSpace Y n).w
 
@@ -84,7 +83,7 @@ section Pipeline
 
 variable {X Y : PerverseSheaves.ComplexScheme} {f : X ⟶ Y} {n : ℕ}
   (E : RelativeProjectiveEmbedding f n) (d : ℕ)
-  (η : unitComplex (projectiveSpace n) ⟶ (unitComplex (projectiveSpace n))⟦(2 : ℤ)⟧)
+  (η : unitComplex (ProjectiveSpace.projectiveSpace ℂ n) ⟶ (unitComplex (ProjectiveSpace.projectiveSpace ℂ n))⟦(2 : ℤ)⟧)
   (C : HyperplaneComparisons E d 0)
 
 /-- For `k = 0` the pulled-back power is a composite of identifications, hence an

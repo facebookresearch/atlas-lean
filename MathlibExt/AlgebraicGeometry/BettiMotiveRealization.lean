@@ -51,8 +51,6 @@ open _root_.AlgebraicGeometry
 open MathlibExt.AlgebraicGeometry
 open PerverseSheaves ComplexAnalytification GeometricChow
 open BettiRealization CompactSupportBetti ProperBettiFunctoriality BettiFunctoriality BettiGysin
-open _root_.MathlibExt.AlgebraicGeometry.DeCataldoMiglioriniDecompositionWanted
-  (IsProjectiveOverC)
 attribute [local instance] HasDerivedCategory.standard
 
 structure SmoothObject where
@@ -62,7 +60,7 @@ structure SmoothObject where
   [smooth : SmoothOfRelativeDimension dimension scheme.hom]
   [proper : IsProper scheme.hom]
   [noetherian : IsNoetherian scheme.left]
-  projective : IsProjectiveOverC scheme
+  projective : ProjectiveSpace.IsProjective scheme
 attribute [instance] SmoothObject.variety SmoothObject.smooth SmoothObject.proper
   SmoothObject.noetherian
 
@@ -77,7 +75,7 @@ class ProductGeometry (X Y : SmoothObject) : Prop where
   [variety : IsComplexVariety (product X Y)]
   [smooth : SmoothOfRelativeDimension (X.dimension + Y.dimension) (product X Y).hom]
   [proper : IsProper (product X Y).hom]
-  projective : IsProjectiveOverC (product X Y)
+  projective : ProjectiveSpace.IsProjective (product X Y)
 attribute [instance] ProductGeometry.variety ProductGeometry.smooth ProductGeometry.proper
 
 instance firstProjectionProper (X Y : SmoothObject) : IsProper (firstProjection X Y).left :=

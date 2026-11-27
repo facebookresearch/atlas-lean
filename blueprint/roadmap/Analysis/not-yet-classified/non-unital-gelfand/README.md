@@ -1,0 +1,18 @@
+# Non Unital Gelfand
+
+- [Characters preserve the involution](character-apply-star-of-nonunital.md)
+- [Nonunital Gelfand star transform](non-unital-gelfand-star-transform.md)
+- [Algebra map of the nonunital Gelfand star transform](non-unital-gelfand-star-transform-to-non.md)
+- [Evaluation of the nonunital Gelfand transform](non-unital-gelfand-star-transform-apply.md)
+- [Norm bound on character evaluation](norm-apply-le.md)
+- [Norm of a nonunital character](norm-le-one.md)
+- [Compactness of characters together with zero](union-zero-is-compact.md)
+- [Local compactness of the character space](locally-compact-space-non-unital.md)
+- [Compact superlevels of character evaluation](is-compact-norm-superlevel.md)
+- [Character evaluation vanishes at infinity](eval-zero-at-infty.md)
+- [Nonunital Banach-algebra Gelfand transform](non-unital-gelfand-transform.md)
+- [Evaluation of the nonunital Gelfand transform](non-unital-gelfand-transform-apply.md)
+- [Contractivity of the nonunital Gelfand transform](norm-non-unital-gelfand-transform-le.md)
+- [Continuous linear Gelfand transform](non-unital-gelfand-transform-clm.md)
+- [Values of the continuous linear Gelfand transform](non-unital-gelfand-transform-clm-apply.md)
+- [Continuity of the nonunital Gelfand transform](continuous-non-unital-gelfand-transform.md)

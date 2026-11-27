@@ -83,8 +83,9 @@ structure SingularModel (F : AdditiveTransferPresheaves D G) where
         (NatTrans.op (C.tensor.map (show (⟨A.simplex.obj m.unop⟩ : CorrespondenceObject D G) ⟶
           ⟨A.simplex.obj n.unop⟩ from graphCycle G (A.simplex.map a.unop)))) F.obj
 
-/-- Chain complexes indexed by `ℕ` placed in nonpositive cohomological degrees, `n ↦ -n`
-(Mathlib's `ComplexShape.embeddingUpIntLE 0`, with its `IsRelIff` and `IsTruncLE` instances). -/
+/-- The embedding of complex shapes `n ↦ -n` from `ComplexShape.down ℕ` to `ComplexShape.up ℤ`
+(`ComplexShape.embeddingUpIntLE 0`): it places a chain complex indexed by `ℕ` in nonpositive
+cohomological degrees. -/
 abbrev negativeEmbedding : ComplexShape.Embedding (ComplexShape.down ℕ) (ComplexShape.up ℤ) :=
   ComplexShape.embeddingUpIntLE 0
 

@@ -139,21 +139,21 @@ example :
           (encodeFrame 2 0b11#2 [true]))
         FrameToken.start =
       (freshState 1 2, []) :=
-  step_start 1 2 0b11#2 _
+  frame_step_start 1 2 0b11#2 _
 
 /-- A two-bit body closed by `endTok` is rejected after any prefix. -/
 example (pfx : List FrameToken) (out : List Bool) :
     ¬ (frameParser 1 2 0b11#2).Translates
       (pfx ++ (FrameToken.start :: [true, true].map FrameToken.bit ++ [FrameToken.endTok]))
       out :=
-  rejects_early_end 1 2 0b11#2 pfx [true, true] (by decide) out
+  wrongLengthBody_rejected 1 2 0b11#2 pfx [true, true] (by decide) out
 
 /-- A four-bit body closed by `endTok` is rejected after any prefix. -/
 example (pfx : List FrameToken) (out : List Bool) :
     ¬ (frameParser 1 2 0b11#2).Translates
       (pfx ++ (FrameToken.start :: [true, true, true, false].map FrameToken.bit ++
         [FrameToken.endTok])) out :=
-  rejects_extra_bit 1 2 0b11#2 pfx [true, true, true, false] (by decide) out
+  wrongLengthBody_rejected 1 2 0b11#2 pfx [true, true, true, false] (by decide) out
 
 /-- The clean body of payload `1`, left unclosed, is rejected. -/
 example (out : List Bool) :

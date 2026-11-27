@@ -140,7 +140,11 @@ def parameterDerivative (C V T : Over (Spec (.of k))) (F : FixedMap C.hom V.hom 
     (Scheme.Modules.pullback F.map).obj (forms k V 1) ⟶
       (Scheme.Modules.pullback (fixedProjection C T)).obj (forms k T 1) := E.map ≫ P.map
 
-/-- Source-covered dual pullback, fixed on every actual local pairing. -/
+/-- A comparison isomorphism $f^*(M^\vee) \cong (f^* M)^\vee$ for a morphism of schemes
+$f : Y \to X$ and an $\mathcal{O}_X$-module $M$, where $M^\vee = \mathcal{H}om(M, \mathcal{O}_X)$,
+compatible with evaluation: for opens $U \subseteq X$ and $W \subseteq f^{-1}(U)$ and sections
+$\varphi$ of $M^\vee$ and $s$ of $M$ over $U$, the image of the pullback of $\varphi$ to $W$,
+evaluated on the pullback of $s$ to $W$, is the pullback $f^\#(\varphi(s))$ to $W$. -/
 structure DualPullback {X Y : Scheme.{0}} (f : Y ⟶ X) (M : X.Modules) where
   comparison : (Scheme.Modules.pullback f).obj (dual M) ≅
     dual ((Scheme.Modules.pullback f).obj M)

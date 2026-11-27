@@ -1469,4 +1469,173 @@ theorem transcript_approxMaxDivLE_advanced_composition_pair {C Y : Type*}
   · exact approxMaxDivLE_of_isApproxDP hmain (by decide : false ≠ true)
   · exact approxMaxDivLE_of_isApproxDP hmain (by decide : true ≠ false)
 
+private theorem nonempty_of_pmf {T : Type*} (P : PMF T) : Nonempty T := by
+  by_contra hcon
+  rw [not_nonempty_iff] at hcon
+  let : IsEmpty T := hcon
+  have h1 := P.tsum_coe
+  simp only [tsum_empty] at h1
+  exact zero_ne_one h1
+
+private theorem composition_budget_le (delta delta' : ℝ) (k : ℕ)
+    (hdelta : 0 ≤ delta) (hdelta_one : delta ≤ 1)
+    (hdelta' : 0 ≤ delta') :
+    (1 - delta) ^ k * delta' + 1 - (1 - delta) ^ k
+      ≤ (k : ℝ) * delta + delta' := by
+  have hnn : (0 : ℝ) ≤ 1 - delta := by linarith
+  have hle1 : (1 : ℝ) - delta ≤ 1 := by linarith
+  have hpow1 : ∀ m : ℕ, (1 - delta) ^ m ≤ 1 :=
+    fun m => pow_le_one₀ hnn hle1
+  have hgap : (1 : ℝ) - (1 - delta) ^ k ≤ (k : ℝ) * delta := by
+    induction k with
+    | zero => simp
+    | succ n ih =>
+        rw [pow_succ, Nat.cast_add, Nat.cast_one]
+        have h3 : (1 - delta) ^ n * delta ≤ 1 * delta :=
+          mul_le_mul_of_nonneg_right (hpow1 n) hdelta
+        have hring : (1 : ℝ) - (1 - delta) ^ n * (1 - delta)
+            = (1 - (1 - delta) ^ n) + (1 - delta) ^ n * delta := by ring
+        have hcast : ((n : ℝ) + 1) * delta = (n : ℝ) * delta + delta := by ring
+        rw [hring, hcast]
+        linarith [ih, h3]
+  have h2 : (1 - delta) ^ k * delta' ≤ 1 * delta' :=
+    mul_le_mul_of_nonneg_right (hpow1 k) hdelta'
+  linarith [hgap, h2]
+
+private theorem approxMaxDivLE_mono_delta {Outcome : Type*} [Fintype Outcome]
+    [Nonempty Outcome] (P Q : PMF Outcome) {E b₁ b₂ : ℝ}
+    (h : approxMaxDivLE P Q E b₁) (hle : b₁ ≤ b₂) :
+    approxMaxDivLE P Q E b₂ := by
+  intro s
+  have hs := h s
+  linarith [hs, hle]
+
+/-- full Dwork-Roth 2014 Theorem 3.20 form for (eps, delta)-DP stages. -/
+theorem transcript_isApproxDP_advanced_composition {C Y Database : Type*}
+    [Fintype C] [Fintype Y] (R : PMF C)
+    (K : (n : ℕ) → Hist C Y n → Database → PMF Y)
+    (adj : Database → Database → Prop) (eps delta : ℝ) (k : ℕ)
+    (delta' : ℝ)
+    (hK : ∀ n h, IsApproxDP (fun d => K n h d) adj eps delta)
+    (heps : 0 ≤ eps) (hdelta : 0 ≤ delta)
+    (hadj_symm : ∀ d d', adj d d' → adj d' d)
+    (hdelta'pos : 0 < delta') (hdelta'lt : delta' < 1) :
+    IsApproxDP (fun d => transcript R K k d) adj
+      (eps * Real.sqrt (2 * (k : ℝ) * Real.log (1 / delta')) +
+        (k : ℝ) * (eps * (Real.exp eps - 1)))
+      ((k : ℝ) * delta + delta') := by
+  have hC : Nonempty C := nonempty_of_pmf R
+  let : Nonempty C := hC
+  have hexp1 : (1 : ℝ) ≤ Real.exp eps := Real.one_le_exp heps
+  have hdrift : (0 : ℝ) ≤ eps * (Real.exp eps - 1) :=
+    mul_nonneg heps (sub_nonneg.mpr hexp1)
+  have hE : (0 : ℝ) ≤ eps * Real.sqrt (2 * (k : ℝ) * Real.log (1 / delta')) +
+      (k : ℝ) * (eps * (Real.exp eps - 1)) :=
+    add_nonneg (mul_nonneg heps (Real.sqrt_nonneg _))
+      (mul_nonneg (Nat.cast_nonneg k) hdrift)
+  have hD : (0 : ℝ) ≤ (k : ℝ) * delta + delta' :=
+    add_nonneg (mul_nonneg (Nat.cast_nonneg k) hdelta) hdelta'pos.le
+  by_cases hDB : Nonempty Database
+  · obtain ⟨d0⟩ := hDB
+    obtain ⟨c⟩ := hC
+    let : Nonempty Y := nonempty_of_pmf (K 0 (histZeroMk c) d0)
+    refine isApproxDP_of_forall_approxMaxDivLE (fun d => transcript R K k d)
+      adj hE hD fun d d' hadj => ?_
+    show approxMaxDivLE (transcript R K k d) (transcript R K k d') _ _
+    by_cases hk0 : k = 0
+    · subst hk0
+      intro s
+      have h0 : ∀ d, transcript R K 0 d = R.map histZeroMk := fun d => rfl
+      rw [h0 d, h0 d']
+      have hx : (0 : ℝ) ≤ ∑ w ∈ s, ((R.map histZeroMk) w).toReal :=
+        Finset.sum_nonneg fun w _ => ENNReal.toReal_nonneg
+      have hmul := mul_le_mul_of_nonneg_right (Real.one_le_exp hE) hx
+      linarith [hmul, hD]
+    · by_cases hlt : delta < 1
+      · have hadj' : adj d' d := hadj_symm d d' hadj
+        have hstage : ∀ (n : ℕ) (h : Hist C Y n), ∃ P0 Q0 : PMF Y,
+            maxDivLE P0 Q0 eps ∧ maxDivLE Q0 P0 eps ∧
+            (∀ w, (1 - delta) * (P0 w).toReal ≤ ((K n h d) w).toReal) ∧
+            (∀ w, (1 - delta) * (Q0 w).toReal ≤ ((K n h d') w).toReal) := by
+          intro n h
+          exact exists_dominated_pure_pair_of_approxMaxDivLE_both
+            (K n h d) (K n h d') eps delta heps hdelta hlt
+            (approxMaxDivLE_of_isApproxDP (hK n h) hadj)
+            (approxMaxDivLE_of_isApproxDP (hK n h) hadj')
+        choose P0 Q0 hmaxPQ hmaxQP hdomP hdomQ using hstage
+        let L : (n : ℕ) → Hist C Y n → Bool → PMF Y :=
+          fun n h b => if b = false then P0 n h else Q0 n h
+        have hLfalse : ∀ n h, L n h false = P0 n h := fun n h => rfl
+        have hLtrue : ∀ n h, L n h true = Q0 n h := fun n h => rfl
+        have hL : ∀ n h, maxDivLE (L n h false) (L n h true) eps ∧
+            maxDivLE (L n h true) (L n h false) eps := by
+          intro n h
+          rw [hLfalse n h, hLtrue n h]
+          exact ⟨hmaxPQ n h, hmaxQP n h⟩
+        have hpair := transcript_approxMaxDivLE_advanced_composition_pair R L
+          eps k delta' heps hL hdelta'pos hdelta'lt
+        have hm : (0 : ℝ) ≤ 1 - delta := sub_nonneg.mpr hlt.le
+        have hm1 : (1 : ℝ) - delta ≤ 1 := by linarith
+        have hdomTK : ∀ w, (1 - delta) ^ k
+            * ((transcript R L k false) w).toReal
+            ≤ ((transcript R K k d) w).toReal :=
+          transcript_domination R K L d false k (1 - delta) hm hm1 (by
+            intro n _ h y
+            rw [hLfalse n h]
+            exact hdomP n h y)
+        have hdomTK' : ∀ w, (1 - delta) ^ k
+            * ((transcript R L k true) w).toReal
+            ≤ ((transcript R K k d') w).toReal :=
+          transcript_domination R K L d' true k (1 - delta) hm hm1 (by
+            intro n _ h y
+            rw [hLtrue n h]
+            exact hdomQ n h y)
+        have hcommon := approxMaxDivLE_of_common_mass
+          (transcript R K k d) (transcript R K k d')
+          (transcript R L k false) (transcript R L k true)
+          ((1 - delta) ^ k)
+          (eps * Real.sqrt (2 * (k : ℝ) * Real.log (1 / delta')) +
+            (k : ℝ) * (eps * (Real.exp eps - 1))) delta'
+          (pow_nonneg hm k) hdomTK hdomTK' hpair.1
+        have hbudget := composition_budget_le delta delta' k hdelta hlt.le
+          hdelta'pos.le
+        exact approxMaxDivLE_mono_delta _ _ hcommon hbudget
+      · have hge : (1 : ℝ) ≤ delta := le_of_not_gt hlt
+        have hnpos : 0 < k := Nat.pos_of_ne_zero hk0
+        have h1k : (1 : ℝ) ≤ (k : ℝ) := by
+          have h1n : 1 ≤ k := hnpos
+          calc (1 : ℝ) = ((1 : ℕ) : ℝ) := (Nat.cast_one).symm
+            _ ≤ (k : ℝ) := Nat.cast_le.mpr h1n
+        have hDlo : (1 : ℝ) ≤ (k : ℝ) * delta + delta' := by
+          have hkd : (1 : ℝ) ≤ (k : ℝ) * delta := by
+            calc (1 : ℝ) = 1 * 1 := (mul_one 1).symm
+              _ ≤ (k : ℝ) * delta :=
+                mul_le_mul h1k hge zero_le_one (Nat.cast_nonneg k)
+          linarith [hkd, hdelta'pos.le]
+        intro s
+        have hsum1 : ∑ w ∈ s, ((transcript R K k d) w).toReal ≤ 1 := by
+          have hsub : ∑ w ∈ s, ((transcript R K k d) w).toReal ≤
+              ∑ w, ((transcript R K k d) w).toReal :=
+            Finset.sum_le_sum_of_subset_of_nonneg (Finset.subset_univ s)
+              (fun w _ _ => ENNReal.toReal_nonneg)
+          have htot : ∑ w, ((transcript R K k d) w).toReal = 1 := by
+            have h1' : (∑ w, transcript R K k d w) = 1 := by
+              have htsum := (transcript R K k d).tsum_coe
+              rwa [tsum_fintype] at htsum
+            have h2 : (∑ w, transcript R K k d w).toReal
+                = (1 : ENNReal).toReal := by rw [h1']
+            rw [ENNReal.toReal_sum
+              (fun a _ => (transcript R K k d).apply_ne_top a)] at h2
+            simpa using h2
+          linarith [hsub, htot]
+        have hnn : (0 : ℝ) ≤ Real.exp
+            (eps * Real.sqrt (2 * (k : ℝ) * Real.log (1 / delta')) +
+              (k : ℝ) * (eps * (Real.exp eps - 1))) *
+            ∑ w ∈ s, ((transcript R K k d') w).toReal :=
+          mul_nonneg (Real.exp_nonneg _)
+            (Finset.sum_nonneg fun w _ => ENNReal.toReal_nonneg)
+        linarith [hsum1, hDlo, hnn]
+  · refine ⟨hE, hD, fun d _ _ _ => ?_⟩
+    exact (hDB ⟨d⟩).elim
+
 end CSLibExt.Privacy.DifferentialPrivacy

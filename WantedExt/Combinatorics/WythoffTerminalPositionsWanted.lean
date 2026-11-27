@@ -14,6 +14,9 @@ public import Mathlib.Order.Filter.AtTopBot.Basic
 public import Mathlib.Topology.Instances.Real.Lemmas
 public import Mathlib.Data.Set.Card
 public import MathlibExt.Combinatorics.BlockingWythoff
+public import MathlibExt.Combinatorics.WythoffMexGoldenRatio
+public import MathlibExt.Combinatorics.WythoffTerminalOneMorphic
+public import MathlibExt.Combinatorics.WythoffTerminalOnePPositions
 public import MathlibExt.Combinatorics.WythoffTerminalPositions
 public import WantedExt.NumberTheory.GeneralizedHofstadterOrderWanted
 
@@ -51,25 +54,6 @@ public theorem_wanted wythoffTerminal_pPositions (ℓ : ℕ) (hℓ : 1 ≤ ℓ) 
         y ∉ wythoffTerminalPSet ℓ) ∧
       ∀ x, x ∉ wythoffTerminalPSet ℓ →
         ∃ y, wythoffTerminalMove ℓ x y ∧ y ∈ wythoffTerminalPSet ℓ
-
-/-- **P-positions of $K^1$.** Let $a_n$ be the least natural number $m > 1$ with $m \ne a_i$ and
-$m \ne b_i$ for all $i < n$, where $b_i = a_i + i + 2$; so $(a_0, b_0) = (2, 4)$. Let $P$ be the
-set of positions $(x, y)$ with $x + y \le 1$, together with the pairs $(a_n, b_n)$ and
-$(b_n, a_n)$ for $n \ge 0$. Then $P$ is stable, meaning no move of $K^1$ leads from a position
-of $P$ to a position of $P$, and absorbing, meaning from every position outside $P$ some move
-of $K^1$ leads into $P$.
-
-This is the case $\ell = 1$ of Theorem 17. Since the move relation is well founded, a stable
-and absorbing set is the set of P-positions, so $P$ is the set of P-positions of $K^1$.
-
-Source: Antoine Renard and Michel Rigo, *Variants of Wythoff Game With Terminal Positions
-or Blocking Maneuvers*, Journal of Integer Sequences 29 (2026), Article 26.1.6,
-Proposition 15 (`jis-2026-26.1.6-prop-15`). -/
-public theorem_wanted wythoffTerminal_one_pPositions :
-    (∀ x y, x ∈ wythoffTerminalPSet 1 → wythoffTerminalMove 1 x y →
-        y ∉ wythoffTerminalPSet 1) ∧
-      ∀ x, x ∉ wythoffTerminalPSet 1 →
-        ∃ y, wythoffTerminalMove 1 x y ∧ y ∈ wythoffTerminalPSet 1
 
 /-- **P-positions of Wythoff's game when positions of total at most 2 are terminal.** In the game
 $K^2$ on two piles, a move from a position $(x, y)$ with $x + y > 2$ removes a positive number
@@ -109,22 +93,6 @@ public theorem_wanted wythoffMex_properties (ℓ : ℕ) (hℓ : 1 ≤ ℓ) :
       wythoffMexB ℓ (n + 1) - wythoffMexB ℓ n ∈ ({2, 3} : Set ℕ) ∧
       wythoffMexB ℓ (n + 1) - wythoffMexB ℓ n =
         wythoffMexA ℓ (n + 1) - wythoffMexA ℓ n + 1)
-
-/-- **Golden-ratio formula for the mex sequences.** Let $\ell \ge 1$, let $\varphi$ be the golden
-ratio, let $K^\ell$ be Wythoff's game in which the positions $(x, y)$ with $x + y \le \ell$ are
-terminal, and let $(a_n)$ be the mex sequence of $K^\ell$ and $(b_n)$ its companion sequence.
-Then there are integers $\lambda_n$ for $n \ge 0$ and an integer $C$ with $|\lambda_n| \le C$
-for all $n$ such that, for every natural number $n$,
-$a_n = \lfloor (n + \ell)\varphi \rfloor + \lambda_n$ and
-$b_n = \lfloor (n + \ell)\varphi^2 \rfloor + \lambda_n + 1$.
-
-Source: Antoine Renard and Michel Rigo, *Variants of Wythoff Game With Terminal Positions
-or Blocking Maneuvers*, Journal of Integer Sequences 29 (2026), Article 26.1.6,
-Corollary 19 (`jis-2026-26.1.6-cor-19`). -/
-public theorem_wanted wythoffMex_floor_goldenRatio (ℓ : ℕ) (hℓ : 1 ≤ ℓ) :
-    ∃ lam : ℕ → ℤ, (∃ C : ℤ, ∀ n, |lam n| ≤ C) ∧ ∀ n,
-      (wythoffMexA ℓ n : ℤ) = ⌊((n + ℓ : ℕ) : ℝ) * Real.goldenRatio⌋ + lam n ∧
-      (wythoffMexB ℓ n : ℤ) = ⌊((n + ℓ : ℕ) : ℝ) * Real.goldenRatio ^ 2⌋ + lam n + 1
 
 /-- **Growth of the mex sequences of $K^\ell$.** Let $\ell \ge 1$. Let $a_n$ be the least natural
 number $m > \ell$ with $m \ne a_i$ and $m \ne b_i$ for all $i < n$, where
@@ -234,31 +202,6 @@ public theorem_wanted exists_fibonacciAutomatic_wythoffTerminal_four :
     ∃ g₄ : ℕ → ℕ, IsFibonacciAutomatic g₄ ∧ (∀ n, g₄ n ≤ 2) ∧ ∀ n,
       (wythoffMexA 4 n : ℤ) = ⌊((n + 2 : ℕ) : ℝ) * Real.goldenRatio⌋ + g₄ (n + 1) ∧
       (wythoffMexB 4 n : ℤ) = ⌊((n + 2 : ℕ) : ℝ) * Real.goldenRatio ^ 2⌋ + g₄ (n + 1) + 3
-
-/-- **Morphic coding of the Wythoff mex pairs at level one.** Let $a_n$ be the least natural
-number $m > 1$ that differs from $a_i$ and $b_i$ for every $i < n$, and let $b_n = a_n + n + 2$,
-so that $(a_0, b_0) = (2, 4)$. Let $f_1$ be the morphism on the alphabet $\{0, 1, 2, 3, 4\}$
-given by $0 \mapsto 0\,1$, $1 \mapsto 2$, $2 \mapsto 3\,4$, $3 \mapsto 3\,1$, $4 \mapsto 2$ and
-extended to finite words by concatenation, and let $g_1$ send the letters $0, 1, 3$ to $a$ and
-the letters $2, 4$ to $b$. Then there is an infinite word $w = w(0)\,w(1)\,w(2) \cdots$ over this
-alphabet that is the limit of the iterates $f_1^k(0)$ (each $f_1^k(0)$ is a prefix of $w$, and
-their lengths are unbounded), and for every such $w$ and every $n \ge 0$, $g_1(w(a_n - 2)) = a$
-and $g_1(w(b_n - 2)) = b$.
-
-By Theorem 17 of the source, the pairs $(a_n, b_n)$ and $(b_n, a_n)$ are the non-terminal
-P-positions of $K^1$, Wythoff's game in which no move is allowed from a position $(x, y)$ with
-$x + y \le 1$; indexing the letters of $w$ from $2$, the letter at $a_n$ is coded $a$ and the
-letter at $b_n$ is coded $b$.
-
-Source: Antoine Renard and Michel Rigo, *Variants of Wythoff Game With Terminal Positions
-or Blocking Maneuvers*, Journal of Integer Sequences 29 (2026), Article 26.1.6,
-Proposition 22 (`jis-2026-26.1.6-prop-22`). -/
-public theorem_wanted wythoffTerminal_one_morphic (n : ℕ) :
-    let f₁ : Fin 5 → List (Fin 5) := ![[0, 1], [2], [3, 4], [3, 1], [2]]
-    let g₁ : Fin 5 → Bool := fun c => decide (c ∈ ({0, 1, 3} : Finset (Fin 5)))
-    (∃ w : ℕ → Fin 5, IsOmegaLimit f₁ 0 w) ∧
-      ∀ w : ℕ → Fin 5, IsOmegaLimit f₁ 0 w →
-        g₁ (w (wythoffMexA 1 n - 2)) = true ∧ g₁ (w (wythoffMexB 1 n - 2)) = false
 
 /-- **Morphic coding of the Wythoff mex pairs at level two.** Let $a_n$ be the least integer
 $m > 2$ that differs from $a_i$ and $b_i$ for every $i < n$, and let $b_n = a_n + n + 3$, so that

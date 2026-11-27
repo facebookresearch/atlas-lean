@@ -47,8 +47,9 @@ open scoped Matrix
 /-- The actual rational function field of the complex affine line. -/
 abbrev RationalFunctions := RatFunc ℂ
 
-/-- A derivation of `ℂ(t)` normalized by the actual rational coordinate.
-This is characterized toolbox data, not an existence axiom. -/
+/-- A $\mathbb{C}$-linear derivation $\delta$ of the rational function field $\mathbb{C}(t)$
+(`derivation`) normalized by $\delta(t) = 1$ (`coordinate`); it is therefore the derivative
+$d/dt$. -/
 structure RationalDerivative where
   derivation : Derivation ℂ RationalFunctions RationalFunctions
   coordinate : derivation (RatFunc.X : RationalFunctions) = 1

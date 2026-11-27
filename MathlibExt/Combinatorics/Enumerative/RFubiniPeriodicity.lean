@@ -10,6 +10,7 @@ module
 
 public import Mathlib.NumberTheory.ArithmeticFunction.Carmichael
 public import Mathlib.SetTheory.Cardinal.Finite
+public import MathlibExt.Combinatorics.Enumerative.FubiniNumber
 
 import Mathlib.Data.Fin.Tuple.Sort
 import Mathlib.Data.Finite.Perm
@@ -27,12 +28,19 @@ is the Carmichael function and `R` is the largest exponent in the prime factoriz
 The paper's `r`-Fubini number `F_r(n)` (Definition 3: weak orderings of an `n`-element set in
 which `r` distinguished elements are pairwise untied) is the number of surjections
 `f : Fin n → Fin k`, summed over `k`, that are injective on the elements of value `< r`.
+It also proves Schreyer's Corollary 10, `fubiniNumber_add_carmichael_modEq`, the case of the
+Fubini numbers themselves: `F(n + λ(K)) ≡ F(n) (mod K)` for every `n ≥ R`.
+Schreyer's Proposition 4, `pow_add_carmichael_modEq_of_lt`, is proved here as well: every residue
+`a < K` satisfies `a ^ R ≡ a ^ (λ(K) + R) (mod K)`.
 
 The proof follows the source. Sorting the values of the first `r` points identifies the
 `r`-Fubini count with `r!` times the `r`-horse count, so Schreyer's Fubini formula for `r`-horse
 numbers (`rHorseNumber_eq_stirlingFirst_sum_fubini`) writes `F_r(n)` as an integer combination of
 the Fubini numbers `F(n - j)` with `j < r`. Each Fubini number is an integer combination of the
-powers `i ^ (n - j)`, and `i ^ (e + λ(K)) ≡ i ^ e (mod K)` as soon as `e ≥ R`.
+powers `i ^ (n - j)`, and `i ^ (e + λ(K)) ≡ i ^ e (mod K)` as soon as `e ≥ R`. That congruence,
+Proposition 4 when `e = R` and `i < K`, is checked modulo each prime power `p ^ k` dividing `K`:
+both sides vanish when `p ∣ i`, and otherwise `i` is a unit modulo `p ^ k`, so
+`i ^ λ(K) ≡ 1 (mod p ^ k)` because `λ(p ^ k)` divides `λ(K)`.
 -/
 
 namespace MetaMathlibExt
@@ -88,6 +96,24 @@ private theorem rFubini_pow_modEq {K : ℕ} (hK : 2 ≤ K) (x e : ℕ)
     exact (Nat.modEq_iff_dvd' (Nat.one_le_pow _ _ hx)).mp
       ((ZMod.natCast_eq_natCast_iff _ _ _).mp hcast).symm
 
+/-- **A Carmichael congruence for all residues modulo $K$.** Let $K$ be a natural number, let
+$\lambda(K)$ be the value of the Carmichael function at $K$, and let $R$ be the largest exponent
+in the prime factorization of $K$ ($R = 0$ for $K \le 1$). Then
+$a^R \equiv a^{\lambda(K) + R} \pmod K$ for every natural number $a < K$.
+
+Source: Benjamin Schreyer, *Rigged Horse Numbers and their Modular Periodicity*, Journal of
+Integer Sequences 28 (2025), Article 25.4.1, Proposition 4 (`jis-2025-25.4.1-prop-4`). -/
+public theorem pow_add_carmichael_modEq_of_lt (K a : ℕ) (ha : a < K) :
+    let R := K.factorization.support.sup K.factorization
+    a ^ R ≡ a ^ (carmichael K + R) [MOD K] := by
+  intro R
+  rcases Nat.lt_or_ge K 2 with hK | hK
+  · interval_cases K
+    · exact absurd ha (Nat.not_lt_zero a)
+    · exact Nat.modEq_one
+  rw [add_comm (carmichael K)]
+  exact rFubini_pow_modEq hK a R le_rfl
+
 /-- `rFubini_pow_modEq` in `ZMod K`. -/
 private theorem rFubini_natCast_pow_add_carmichael {K : ℕ} (hK : 2 ≤ K) (x e : ℕ)
     (he : K.factorization.support.sup K.factorization ≤ e) :
@@ -125,6 +151,23 @@ private theorem rFubini_fubiniNumber_add_carmichael {K : ℕ} (hK : 2 ≤ K) (e 
   push_cast
   refine Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun j _ => ?_
   rw [rFubini_natCast_pow_add_carmichael hK j e he]
+
+/-- **Eventual periodicity of the Fubini numbers modulo $K$.** Let $K$ be a natural number, let
+$\lambda(K)$ be the value of the Carmichael function at $K$, and let $R$ be the largest exponent
+in the prime factorization of $K$ ($R = 0$ for $K \le 1$). Then the Fubini numbers $F(n)$
+satisfy $F(n + \lambda(K)) \equiv F(n) \pmod K$ for every natural number $n \ge R$.
+
+Source: Benjamin Schreyer, *Rigged Horse Numbers and their Modular Periodicity*, Journal of
+Integer Sequences 28 (2025), Article 25.4.1, Corollary 10 (`jis-2025-25.4.1-cor-10`). -/
+public theorem fubiniNumber_add_carmichael_modEq (K n : ℕ)
+    (hn : K.factorization.support.sup K.factorization ≤ n) :
+    fubiniNumber (n + carmichael K) ≡ fubiniNumber n [MOD K] := by
+  rcases Nat.lt_or_ge K 2 with hK | hK
+  · interval_cases K
+    · rw [ArithmeticFunction.map_zero, add_zero]
+    · exact Nat.modEq_one
+  rw [← ZMod.natCast_eq_natCast_iff]
+  exact rFubini_fubiniNumber_add_carmichael hK n hn
 
 /-! ### `r`-Fubini numbers through `r`-horse numbers -/
 

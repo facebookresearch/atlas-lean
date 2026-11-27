@@ -15,6 +15,7 @@ public import Mathlib.Probability.CDF
 public import Mathlib.Probability.Distributions.Gaussian.Real
 public import MathlibExt.Algebra.Polynomial.RealRooted
 public import MathlibExt.Combinatorics.Enumerative.MinusculePolynomial
+public import MathlibExt.Combinatorics.Enumerative.MinusculePolynomialClosedForm
 public import MathlibExt.LinearAlgebra.Matrix.NonnegativeMinors
 
 /-!
@@ -86,22 +87,6 @@ Integer Sequences 28 (2025), Article 25.1.2, Corollary 8. -/
 public theorem_wanted minusculePolynomialA_gamma_positive (n : ℕ) :
     ∃ γ : ℕ → ℕ, minusculePolynomialA n =
       ∑ k ∈ Finset.range (n / 2 + 1), C (γ k : ℚ) * X ^ k * (1 + X) ^ (n - 2 * k)
-
-/-- **Binomial closed form of the minuscule polynomials.** For every natural number $n$, the
-type-A minuscule polynomial $N_n$ satisfies the identity of polynomials with rational
-coefficients
-$16x\, N_n(x^2) = 2(n+1)x \bigl((1+x)^{2n} + (1-x)^{2n}\bigr) -
-\bigl((1+x)^{2n+2} - (1-x)^{2n+2}\bigr)$.
-
-Dividing by $16x$ gives $N_n(x^2) = \frac{n+1}{8} \bigl((1+x)^{2n} + (1-x)^{2n}\bigr) -
-\frac{1}{16x} \bigl((1+x)^{2n+2} - (1-x)^{2n+2}\bigr)$; both sides vanish at $n = 0$.
-
-Source: Ding and Zeng, *Some New Results on the Minuscule Polynomials of Type A*, Journal of
-Integer Sequences 28 (2025), Article 25.1.2, Proposition 9. -/
-public theorem_wanted minusculePolynomialA_comp_sq (n : ℕ) :
-    C 16 * X * (minusculePolynomialA n).comp (X ^ 2) =
-      C (2 * ((n : ℚ) + 1)) * X * ((1 + X) ^ (2 * n) + (1 - X) ^ (2 * n)) -
-        ((1 + X) ^ (2 * n + 2) - (1 - X) ^ (2 * n + 2))
 
 /-- **Bourn–Erickson formula for the minuscule polynomials at one.** For every integer $n \ge 1$,
 the type-A minuscule polynomial $N_n$ satisfies $N_n(1) = (n - 1)\, 2^{2n-3}$.

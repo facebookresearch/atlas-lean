@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
+public import MathlibExt.Combinatorics.Additive.SmallCrossNumberZeroSum
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Algebra.Order.Field.Rat
 public import Mathlib.Analysis.Asymptotics.Defs
@@ -52,31 +53,6 @@ public theorem_wanted ZMod.exists_zero_sum_cross_number_le_one {n : ℕ} (hn : 0
     (g : Fin n → ZMod n) :
     ∃ s : Finset (Fin n), s.Nonempty ∧ ∑ i ∈ s, g i = 0 ∧
       ∑ i ∈ s, (1 : ℚ) / addOrderOf (g i) ≤ 1
-
-/-- **Good sequences in a finite abelian group.** Let $\Gamma$ be a finite abelian group, written
-additively, and let $g = (g_1, \dots, g_t)$ be a sequence of $t$ elements of $\Gamma$. The
-sequence $g$ is *good* if there is a nonempty set $S \subseteq \{1, \dots, t\}$ of indices with
-$\sum_{i \in S} g_i = 0$ whose cross number $\sum_{i \in S} 1/|g_i|$ is at most $1$, where
-$|g_i|$ is the order of $g_i$.
-
-Source: Neal Bushaw and Glenn Hurlbert, *Thresholds for Zero-Sums with Small Cross Numbers in
-Abelian Groups*, INTEGERS 24 (2024), Article A93, Section 1 (definition of good sequences). -/
-def IsGoodSequence {Γ : Type*} [AddCommGroup Γ] [Finite Γ] {t : ℕ} (g : Fin t → Γ) : Prop :=
-  ∃ s : Finset (Fin t), s.Nonempty ∧ ∑ i ∈ s, g i = 0 ∧
-    ∑ i ∈ s, (1 : ℚ) / addOrderOf (g i) ≤ 1
-
-/-- **Probability that a random sequence is good.** Let $\Gamma$ be a finite abelian group and
-$t \ge 0$ an integer. A sequence $g_1, \dots, g_t$ in $\Gamma$ is good if some nonempty set
-$S \subseteq \{1, \dots, t\}$ of indices has $\sum_{i \in S} g_i = 0$ and
-$\sum_{i \in S} 1/\operatorname{ord}(g_i) \le 1$, where $\operatorname{ord}(g_i)$ is the order
-of $g_i$. The good-sequence probability of $\Gamma$ at length $t$ is the number of good sequences
-of length $t$ in $\Gamma$ divided by $|\Gamma|^t$, that is, the probability that a uniformly
-random sequence of length $t$ in $\Gamma$ is good.
-
-Source: Neal Bushaw and Glenn Hurlbert, *Thresholds for Zero-Sums with Small Cross Numbers in
-Abelian Groups*, INTEGERS 24 (2024), Article A93, Section 1.1 (the event `E_Γ(t)`). -/
-noncomputable def goodSequenceProb (Γ : Type*) [AddCommGroup Γ] [Finite Γ] (t : ℕ) : ℝ :=
-  ({g : Fin t → Γ | IsGoodSequence g}.ncard : ℝ) / (Nat.card Γ : ℝ) ^ t
 
 /-- **Good-sequence probability at length zero.** For every finite abelian group $\Gamma$, the
 probability that a uniformly random sequence of length $0$ in $\Gamma$ is good equals $0$: the
@@ -137,26 +113,6 @@ theorem halfGoodThreshold_eq_one_of_card_le_two (Γ : Type*) [AddCommGroup Γ] [
   · exact h0 h
   · rw [h] at h1
     exact h1
-
-/-- **Threshold functions.** Let $P : \mathbb{N} \times \mathbb{N} \to \mathbb{R}$, where
-$P(k, s)$ is read as the probability of an event in the $k$-th space when $s$ random elements
-are chosen. A function $t : \mathbb{N} \to \mathbb{R}$ is a *threshold function* for $P$ if
-$t(k) > 0$ for all sufficiently large $k$ and, for every function $f : \mathbb{N} \to \mathbb{N}$,
-$P(k, f(k)) \to 1$ as $k \to \infty$ whenever $t = o(f)$, and $P(k, f(k)) \to 0$ as
-$k \to \infty$ whenever $f = o(t)$.
-
-The source's thresholds are positive functions; since little-o ignores sign, without the
-positivity condition $-t$ would be a threshold function whenever $t$ is.
-
-Source: Neal Bushaw and Glenn Hurlbert, *Thresholds for Zero-Sums with Small Cross Numbers in
-Abelian Groups*, INTEGERS 24 (2024), Article A93, Section 1.1 (definition of a threshold and of
-`τ(G)`). -/
-def IsThresholdFunction (P : ℕ → ℕ → ℝ) (t : ℕ → ℝ) : Prop :=
-  (∀ᶠ k in Filter.atTop, 0 < t k) ∧ ∀ f : ℕ → ℕ,
-    (t =o[Filter.atTop] (fun k => (f k : ℝ)) →
-        Filter.Tendsto (fun k => P k (f k)) Filter.atTop (nhds 1)) ∧
-      ((fun k => (f k : ℝ)) =o[Filter.atTop] t →
-        Filter.Tendsto (fun k => P k (f k)) Filter.atTop (nhds 0))
 
 /-- **Positive multiples of threshold functions.** Let $P : \mathbb{N} \times \mathbb{N} \to
 \mathbb{R}$ and $t : \mathbb{N} \to \mathbb{R}$. If $t$ is a threshold function for $P$ and
@@ -378,25 +334,6 @@ public theorem_wanted zmod_two_pi_good_threshold_isBigO (ε : ℝ) (hε : 0 < ε
     (ht : IsThresholdFunction (fun d s => goodSequenceProb (Fin d → ZMod 2) s) t) :
     t =O[Filter.atTop]
       fun d : ℕ => (2 : ℝ) ^ d / Real.logb 2 (Real.logb 2 ((2 : ℝ) ^ d)) ^ (1 - ε)
-
-/-- **Threshold for good sequences in $\mathbb{Z}/35^k\mathbb{Z}$.** Write $\lg = \log_2$. Let $t$
-be a threshold function, in $k$, for the probability that a uniformly random sequence of $s$
-elements of $\mathbb{Z}/35^k\mathbb{Z}$ is good. Then there is a real constant $C$ such that for
-all sufficiently large $k$,
-$$t(k) \le k^2 \exp\left((3 \lg 5 \lg 7 \lg k)^{1/3} - \tfrac{2}{3} \lg \lg k + C\right).$$
-
-The source writes the prefactor as $n$; here $n = k^2$, the factor $k^d$ of the source's
-Theorem 4 at $d = 2$, since $\mathbb{Z}/35^k\mathbb{Z} \cong \mathbb{Z}/5^k\mathbb{Z} \times
-\mathbb{Z}/7^k\mathbb{Z}$. The constant $C$ depends on $t$: thresholds are only determined up to
-constant factors, so no single $C$ serves every threshold.
-
-Source: Neal Bushaw and Glenn Hurlbert, *Thresholds for Zero-Sums with Small Cross Numbers in
-Abelian Groups*, INTEGERS 24 (2024), Article A93, Corollary 2 (`integers-2024-A93-cor-2`). -/
-public theorem_wanted zmod_thirtyFive_pow_good_threshold_le (t : ℕ → ℝ)
-    (ht : IsThresholdFunction (fun k s => goodSequenceProb (ZMod (35 ^ k)) s) t) :
-    ∃ C : ℝ, ∀ᶠ k : ℕ in Filter.atTop,
-      t k ≤ (k : ℝ) ^ 2 * Real.exp ((3 * Real.logb 2 5 * Real.logb 2 7 * Real.logb 2 k) ^
-          ((1 : ℝ) / 3) - 2 / 3 * Real.logb 2 (Real.logb 2 k) + C)
 
 end
 

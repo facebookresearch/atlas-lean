@@ -4,6 +4,15 @@ Cooperative game theory studies games in which coalitions of players can make bi
 
 - [Shapley value](shapley-value/README.md)
 - [Bondareva–Shapley theorem](bondareva-shapley-theorem/README.md)
+- [Solution concepts of graph games (Deng-Papadimitriou)](solution-concepts-of-graph-games.md)
+- [Fair division of indivisible goods](fair-division-of-indivisible-goods/README.md)
+- [Nash bargaining solution](nash-bargaining-solution/README.md)
+- [Cores and Approximate Cores](approximate-cores/README.md)
+- [Cross-Monotonic Cost Sharing and Moulin Mechanisms](cross-monotonic-cost-sharing/README.md)
+- [Exchange Economies and Welfare Theorems](exchange-economies/README.md)
+- [Fisher Markets and Gross Substitutes](fisher-markets-and-gross-substitutes/README.md)
+- [Multicast Cost Sharing](multicast-cost-sharing/README.md)
+- [The Nucleolus and NTU Games](nucleolus-and-ntu-games/README.md)
 
 ## Related topics
 

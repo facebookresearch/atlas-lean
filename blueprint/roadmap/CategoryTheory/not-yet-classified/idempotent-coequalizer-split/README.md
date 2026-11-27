@@ -1,0 +1,17 @@
+# Idempotent Coequalizer Split
+
+- [Obj](obj.md)
+- [Projection](projection.md)
+- [Cofork](cofork.md)
+- [Is Colimit Cofork](is-colimit-cofork.md)
+- [Split](split.md)
+- [Inclusion](inclusion.md)
+- [Projection inclusion](projection-inclusion.md)
+- [Idempotent projection](idempotent-projection.md)
+- [Inclusion projection](inclusion-projection.md)
+- [Hom ext](hom-ext.md)
+- [Map](map.md)
+- [Projection map](projection-map.md)
+- [Map inclusion](map-inclusion.md)
+- [Map id](map-id.md)
+- [Map comp](map-comp.md)

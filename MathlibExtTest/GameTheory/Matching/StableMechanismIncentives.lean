@@ -10,7 +10,7 @@ module
 
 public import MathlibExt.GameTheory.Matching.StableMechanismIncentives
 
-/-! # Tests for weak Pareto optimality in stable matching markets -/
+/-! # Tests for incentives in stable matching markets -/
 
 namespace MathlibExtTest.GameTheory.Matching.StableMechanismIncentives
 
@@ -45,5 +45,15 @@ example :
     (∀ m, m ≠ 2 → (rothMenPrefs m).lt (ν m) m) ∧ ν 2 = 2 ∧
       ¬ ∀ m, (rothMenPrefs m).lt (ν m) m :=
   ⟨by decide, by decide, not_forall_lt_of_isManOptimalStable _ _ identity_optimal _⟩
+
+-- Man 0 prefers woman 1 to his truthful partner 0. No report can secure that improvement.
+example (h : MatchingMechanism (Fin 3) (Fin 3))
+    (hh : ∀ mp wp, IsManOptimalStable mp wp (h mp wp)) (T : StrictTotalOrder (Fin 3)) :
+    h (Function.update rothMenPrefs 0 T) womenPrefs 0 ≠ 1 := by
+  intro hreport
+  have htruth := (hh rothMenPrefs womenPrefs).eq identity_optimal
+  have hdom := isTruthfulDominantForMan_of_isManOptimalStable h hh 0 rothMenPrefs womenPrefs T
+  rw [hreport, htruth] at hdom
+  exact hdom (by decide)
 
 end MathlibExtTest.GameTheory.Matching.StableMechanismIncentives

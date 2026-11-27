@@ -1,0 +1,408 @@
+/-
+Author: @toskua, Avocado
+-/
+module
+
+public import MathlibExt.Analysis.CStarAlgebra.Module.Right
+public import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Basic
+import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Order
+import Mathlib.Tactic.Ring
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.Linarith
+import Mathlib.Algebra.Order.Group.Opposite
+import Mathlib.Analysis.SpecificLimits.Basic
+import Mathlib.Topology.MetricSpace.Cauchy
+import Mathlib.Topology.Algebra.GroupWithZero
+
+/-!
+# Weighted norm estimates and right Hilbert-module factorization
+
+This module combines the existing right-module Gram formula with
+real nonunital functional calculus. It supplies a weighted norm identity
+and private scalar bounds, followed by a written factorization argument
+for an actual complete right Hilbert module with its canonical spectral
+order and unchanged normed-space dictionaries. No approximate-unit
+hierarchy, tensor completion or new norm is constructed.
+-/
+
+@[expose] public section
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+noncomputable section
+open scoped RightActions
+
+namespace CStarModule
+
+universe uB uE
+variable {B : Type uB} {E : Type uE}
+variable [NonUnitalCStarAlgebra B] [PartialOrder Bᵐᵒᵖ]
+variable [AddCommGroup E] [Module ℂ E] [SMul Bᵐᵒᵖ E] [Norm E]
+variable [CStarModule Bᵐᵒᵖ E]
+
+/-- The actual norm of a right coefficient obtained by real nonunital CFC
+is the weighted scalar square on the coefficient-inner spectrum.
+No completeness or commuting-coefficient hypothesis is needed. -/
+theorem norm_right_smul_cfc_sq (x : E) (f : ℝ → ℝ)
+    (hf : ContinuousOn f (quasispectrum ℝ (CStarModule.rightInner (B := B) x x)))
+    (hf0 : f 0 = 0) :
+    ‖x <• cfcₙ f (CStarModule.rightInner (B := B) x x)‖ ^ 2 =
+      ‖cfcₙ (fun s : ℝ => s * (f s) ^ 2) (CStarModule.rightInner (B := B) x x)‖ := by
+  let a : B := CStarModule.rightInner (B := B) x x
+  have ha : IsSelfAdjoint a := by
+    change star (CStarModule.rightInner (B := B) x x) = _
+    exact CStarModule.star_rightInner x x
+  have hc : star (cfcₙ f a) = cfcₙ f a := by
+    simpa only [star_trivial] using (cfcₙ_star f a).symm
+  have hformula :
+      cfcₙ (fun s : ℝ => f s * s * f s) a =
+        cfcₙ f a * a * cfcₙ f a := by
+    rw [cfcₙ_mul (fun s : ℝ => f s * s) f a
+      (hf.fun_mul continuousOn_id) (by simp [hf0]) hf hf0]
+    rw [cfcₙ_mul f (fun s : ℝ => s) a hf hf0 continuousOn_id rfl,
+      cfcₙ_id' ℝ a (ha := ha)]
+  calc
+    ‖x <• cfcₙ f a‖ ^ 2 =
+        ‖CStarModule.rightInner (B := B) (x <• cfcₙ f a) (x <• cfcₙ f a)‖ :=
+      (CStarModule.norm_rightInner_self (B := B) _).symm
+    _ = ‖star (cfcₙ f a) * a * cfcₙ f a‖ := by
+      rw [CStarModule.rightInner_right_smul_self]
+    _ = ‖cfcₙ f a * a * cfcₙ f a‖ := by rw [hc]
+    _ = ‖cfcₙ (fun s : ℝ => f s * s * f s) a‖ :=
+      congrArg (fun z : B => ‖z‖) hformula.symm
+    _ = ‖cfcₙ (fun s : ℝ => s * (f s) ^ 2) a‖ := by
+      congr 1
+      apply cfcₙ_congr
+      intro s hs
+      ring
+
+/-- Scalar weighted regularizer error; private support for right factorization. -/
+private theorem regularizer_weighted_error (s ε : ℝ)
+    (hε : 0 < ε) :
+    |Real.sqrt s * (Real.sqrt (Real.sqrt s) / (Real.sqrt s + ε)) -
+        Real.sqrt (Real.sqrt s)| ≤ Real.sqrt ε / 2 := by
+  let u : ℝ := Real.sqrt s
+  have hu : 0 ≤ u := Real.sqrt_nonneg s
+  have hden : 0 < u + ε := add_pos_of_nonneg_of_pos hu hε
+  change |u * (Real.sqrt u / (u + ε)) - Real.sqrt u| ≤ Real.sqrt ε / 2
+  have hid : u * (Real.sqrt u / (u + ε)) - Real.sqrt u =
+      -(ε * Real.sqrt u / (u + ε)) := by
+    field_simp [ne_of_gt hden]
+    ring
+  have hnonneg : 0 ≤ ε * Real.sqrt u / (u + ε) :=
+    div_nonneg (mul_nonneg hε.le (Real.sqrt_nonneg u)) hden.le
+  rw [hid, abs_neg, abs_of_nonneg hnonneg]
+  apply (div_le_iff₀ hden).2
+  have hamgm : 2 * Real.sqrt u * Real.sqrt ε ≤ u + ε := by
+    nlinarith [sq_nonneg (Real.sqrt u - Real.sqrt ε),
+      Real.sq_sqrt hu, Real.sq_sqrt hε.le]
+  have hmul := mul_le_mul_of_nonneg_left hamgm (Real.sqrt_nonneg ε)
+  ring_nf at hmul
+  rw [Real.sq_sqrt hε.le] at hmul
+  nlinarith
+
+/-- Weighted differences needed for the actual Cauchy coefficient norm. -/
+private theorem regularizer_weighted_difference (s ε η : ℝ)
+    (hε : 0 < ε) (hη : 0 < η) :
+    |Real.sqrt s *
+        (Real.sqrt (Real.sqrt s) / (Real.sqrt s + ε) -
+          Real.sqrt (Real.sqrt s) / (Real.sqrt s + η))| ≤
+      (Real.sqrt ε + Real.sqrt η) / 2 := by
+  calc
+    |Real.sqrt s *
+        (Real.sqrt (Real.sqrt s) / (Real.sqrt s + ε) -
+          Real.sqrt (Real.sqrt s) / (Real.sqrt s + η))| =
+        |(Real.sqrt s * (Real.sqrt (Real.sqrt s) / (Real.sqrt s + ε)) -
+            Real.sqrt (Real.sqrt s)) -
+          (Real.sqrt s * (Real.sqrt (Real.sqrt s) / (Real.sqrt s + η)) -
+            Real.sqrt (Real.sqrt s))| := by
+      congr 1
+      ring
+    _ ≤ |Real.sqrt s * (Real.sqrt (Real.sqrt s) / (Real.sqrt s + ε)) -
+          Real.sqrt (Real.sqrt s)| +
+        |Real.sqrt s * (Real.sqrt (Real.sqrt s) / (Real.sqrt s + η)) -
+          Real.sqrt (Real.sqrt s)| := by
+      simpa only [Real.norm_eq_abs] using
+        (norm_sub_le
+          (Real.sqrt s * (Real.sqrt (Real.sqrt s) / (Real.sqrt s + ε)) -
+            Real.sqrt (Real.sqrt s))
+          (Real.sqrt s * (Real.sqrt (Real.sqrt s) / (Real.sqrt s + η)) -
+            Real.sqrt (Real.sqrt s)))
+    _ ≤ Real.sqrt ε / 2 + Real.sqrt η / 2 :=
+      add_le_add (regularizer_weighted_error s ε hε)
+        (regularizer_weighted_error s η hη)
+    _ = (Real.sqrt ε + Real.sqrt η) / 2 := by ring
+
+/-- Weighted residual needed for x - yε b; no nonzero s hypothesis. -/
+private theorem regularizer_residual_error (s ε : ℝ)
+    (hε : 0 < ε) :
+    Real.sqrt s *
+        |1 - (Real.sqrt (Real.sqrt s) / (Real.sqrt s + ε)) *
+          Real.sqrt (Real.sqrt s)| ≤ ε := by
+  let u : ℝ := Real.sqrt s
+  have hu : 0 ≤ u := Real.sqrt_nonneg s
+  have hden : 0 < u + ε := add_pos_of_nonneg_of_pos hu hε
+  change u * |1 - (Real.sqrt u / (u + ε)) * Real.sqrt u| ≤ ε
+  have hprod : (Real.sqrt u / (u + ε)) * Real.sqrt u = u / (u + ε) := by
+    calc
+      (Real.sqrt u / (u + ε)) * Real.sqrt u =
+          (Real.sqrt u * Real.sqrt u) / (u + ε) := by ring
+      _ = u / (u + ε) := by rw [← pow_two, Real.sq_sqrt hu]
+  have hid : 1 - u / (u + ε) = ε / (u + ε) := by
+    field_simp [ne_of_gt hden]
+    ring
+  rw [hprod, hid, abs_of_nonneg (div_nonneg hε.le hden.le), ← mul_div_assoc]
+  apply (div_le_iff₀ hden).2
+  nlinarith
+
+end CStarModule
+
+namespace CStarModule
+
+universe uB uE
+
+section NonnegInnerFactorization
+
+open Filter
+open scoped Topology
+
+/-- Canonical positivity of a vector's actual coefficient inner square is
+sufficient for factorization, independently of the opposite-order presentation. -/
+theorem exists_right_factor_of_nonneg_inner {B : Type uB} {E : Type uE}
+    [NonUnitalCStarAlgebra B] [PartialOrder Bᵐᵒᵖ]
+    [NormedAddCommGroup E] [NormedSpace ℂ E] [SMul Bᵐᵒᵖ E]
+    [CStarModule Bᵐᵒᵖ E] [CompleteSpace E]
+    (x : E)
+    (hpos : @LE.le B (CStarAlgebra.spectralOrder B).toLE
+      0 (CStarModule.rightInner (B := B) x x)) :
+    ∃ y : E, ∃ b : B, x = y <• b := by
+  let _ : PartialOrder B := CStarAlgebra.spectralOrder B
+  let _ : StarOrderedRing B := CStarAlgebra.spectralOrderedRing B
+  let a : B := CStarModule.rightInner (B := B) x x
+  have ha : IsSelfAdjoint a := by
+    change star (CStarModule.rightInner (B := B) x x) = _
+    exact CStarModule.star_rightInner x x
+  have ha0 : (0 : B) ≤ a := hpos
+  have hs0 (s : ℝ) (hs : s ∈ quasispectrum ℝ a) : 0 ≤ s :=
+    quasispectrum_nonneg_of_nonneg a ha0 s hs
+  let v : ℝ → ℝ := fun s => Real.sqrt (Real.sqrt s)
+  have hv : Continuous v := Real.continuous_sqrt.comp' Real.continuous_sqrt
+  have hv0 : v 0 = 0 := by simp [v]
+  let r : ℝ → ℝ → ℝ :=
+    fun ε s => Real.sqrt (Real.sqrt s) / (Real.sqrt s + ε)
+  have hr (ε : ℝ) (hε : 0 < ε) : Continuous (r ε) := by
+    change Continuous fun s : ℝ => v s / (Real.sqrt s + ε)
+    exact hv.div₀ (Real.continuous_sqrt.add_const ε)
+      (fun s => ne_of_gt (add_pos_of_nonneg_of_pos (Real.sqrt_nonneg s) hε))
+  have hr0 (ε : ℝ) : r ε 0 = 0 := by simp [r]
+  let b : B := cfcₙ v a
+  let c : ℝ → B := fun ε => cfcₙ (r ε) a
+  let Y : ℝ → E := fun ε => x <• c ε
+  have hdiff (ε η : ℝ) (hε : 0 < ε) (hη : 0 < η) :
+      ‖Y ε - Y η‖ ≤ (Real.sqrt ε + Real.sqrt η) / 2 := by
+    let q : ℝ := (Real.sqrt ε + Real.sqrt η) / 2
+    have hq : 0 ≤ q :=
+      div_nonneg (add_nonneg (Real.sqrt_nonneg ε) (Real.sqrt_nonneg η)) zero_le_two
+    have hΔ : Y ε - Y η =
+        x <• cfcₙ (fun s : ℝ => r ε s - r η s) a := by
+      calc
+        Y ε - Y η = x <• (c ε - c η) :=
+          ((CStarModule.rightSMulLinear (B := B) x).map_sub _ _).symm
+        _ = x <• cfcₙ (fun s : ℝ => r ε s - r η s) a :=
+          congrArg (fun z : B => x <• z)
+            (cfcₙ_sub (r ε) (r η) a
+              (hr ε hε).continuousOn (hr0 ε)
+              (hr η hη).continuousOn (hr0 η)).symm
+    apply (sq_le_sq₀ (norm_nonneg (Y ε - Y η)) hq).mp
+    rw [hΔ, norm_right_smul_cfc_sq x (fun s : ℝ => r ε s - r η s)
+      ((hr ε hε).continuousOn.fun_sub (hr η hη).continuousOn)
+      (by simp [hr0])]
+    apply norm_cfcₙ_le
+    intro s hs
+    have hs' := hs0 s hs
+    have hscalar : |Real.sqrt s * (r ε s - r η s)| ≤ q := by
+      simpa only [r, q] using regularizer_weighted_difference s ε η hε hη
+    calc
+      ‖s * (r ε s - r η s) ^ 2‖ =
+          s * (r ε s - r η s) ^ 2 := by
+        rw [Real.norm_eq_abs, abs_of_nonneg (mul_nonneg hs' (sq_nonneg _))]
+      _ = (Real.sqrt s * (r ε s - r η s)) ^ 2 := by
+        rw [mul_pow, Real.sq_sqrt hs']
+      _ = |Real.sqrt s * (r ε s - r η s)| ^ 2 := (sq_abs _).symm
+      _ ≤ q ^ 2 := (sq_le_sq₀ (abs_nonneg _) hq).2 hscalar
+  have hres (ε : ℝ) (hε : 0 < ε) : ‖x - Y ε <• b‖ ≤ ε := by
+    let h : ℝ → ℝ := fun s => r ε s * v s
+    have hh : ContinuousOn h (quasispectrum ℝ a) :=
+      (hr ε hε).continuousOn.fun_mul hv.continuousOn
+    have hh0 : h 0 = 0 := by simp [h, hr0]
+    let d : B := c ε * b
+    have hd : d = cfcₙ h a :=
+      (cfcₙ_mul (r ε) v a
+        (hr ε hε).continuousOn (hr0 ε) hv.continuousOn hv0).symm
+    have hdstar : star d = d := by
+      rw [hd]
+      simpa only [star_trivial] using (cfcₙ_star h a).symm
+    have hsh : ContinuousOn (fun s : ℝ => s * h s) (quasispectrum ℝ a) :=
+      continuousOn_id.fun_mul hh
+    have hhs : ContinuousOn (fun s : ℝ => h s * s) (quasispectrum ℝ a) :=
+      hh.fun_mul continuousOn_id
+    have hhsh : ContinuousOn (fun s : ℝ => h s * s * h s) (quasispectrum ℝ a) :=
+      hhs.fun_mul hh
+    have had : cfcₙ (fun s : ℝ => s * h s) a = a * d := by
+      rw [cfcₙ_mul (fun s : ℝ => s) h a continuousOn_id rfl hh hh0,
+        cfcₙ_id' ℝ a (ha := ha), ← hd]
+    have hda : cfcₙ (fun s : ℝ => h s * s) a = d * a := by
+      rw [cfcₙ_mul h (fun s : ℝ => s) a hh hh0 continuousOn_id rfl,
+        cfcₙ_id' ℝ a (ha := ha), ← hd]
+    have hdad : cfcₙ (fun s : ℝ => h s * s * h s) a = d * a * d := by
+      rw [cfcₙ_mul (fun s : ℝ => h s * s) h a hhs (by simp) hh hh0, hda, ← hd]
+    let p : ℝ → ℝ :=
+      fun s => (s - s * h s) - (h s * s - h s * s * h s)
+    have hleft : ContinuousOn (fun s : ℝ => s - s * h s) (quasispectrum ℝ a) :=
+      continuousOn_id.fun_sub hsh
+    have hright : ContinuousOn
+        (fun s : ℝ => h s * s - h s * s * h s) (quasispectrum ℝ a) :=
+      hhs.fun_sub hhsh
+    have hp : cfcₙ p a = (a - a * d) - (d * a - d * a * d) := by
+      change cfcₙ (fun s : ℝ => (s - s * h s) - (h s * s - h s * s * h s)) a = _
+      rw [cfcₙ_sub (fun s : ℝ => s - s * h s)
+        (fun s : ℝ => h s * s - h s * s * h s) a
+        hleft (by simp) hright (by simp)]
+      rw [cfcₙ_sub (fun s : ℝ => s) (fun s : ℝ => s * h s)
+        a continuousOn_id rfl hsh (by simp)]
+      rw [cfcₙ_sub (fun s : ℝ => h s * s) (fun s : ℝ => h s * s * h s)
+        a hhs (by simp) hhsh (by simp)]
+      rw [cfcₙ_id' ℝ a (ha := ha), had, hda, hdad]
+    have hgram :
+        CStarModule.rightInner (B := B) (x - x <• d) (x - x <• d) =
+          (a - a * d) - (d * a - d * a * d) := by
+      rw [CStarModule.rightInner_sub_left, CStarModule.rightInner_sub_right,
+        CStarModule.rightInner_sub_right]
+      rw [CStarModule.rightInner_right_smul, CStarModule.rightInner_left_smul,
+        CStarModule.rightInner_right_smul_self]
+      simp only [a, hdstar]
+    have hnorm : ‖x - Y ε <• b‖ ^ 2 = ‖cfcₙ p a‖ := by
+      change ‖x - (x <• c ε) <• b‖ ^ 2 = _
+      rw [CStarModule.right_smul_mul]
+      change ‖x - x <• d‖ ^ 2 = _
+      rw [← CStarModule.norm_rightInner_self (B := B) (x - x <• d)]
+      rw [hgram, ← hp]
+    apply (sq_le_sq₀ (norm_nonneg (x - Y ε <• b)) hε.le).mp
+    rw [hnorm]
+    apply norm_cfcₙ_le
+    intro s hs
+    have hs' := hs0 s hs
+    have hpScalar : p s = s * (1 - h s) ^ 2 := by
+      dsimp [p]
+      ring
+    have hscalar : Real.sqrt s * |1 - h s| ≤ ε := by
+      simpa only [h, r, v] using regularizer_residual_error s ε hε
+    calc
+      ‖p s‖ = s * (1 - h s) ^ 2 := by
+        rw [Real.norm_eq_abs, hpScalar, abs_of_nonneg (mul_nonneg hs' (sq_nonneg _))]
+      _ = (Real.sqrt s * |1 - h s|) ^ 2 := by
+        rw [mul_pow, Real.sq_sqrt hs', sq_abs]
+      _ ≤ ε ^ 2 :=
+        (sq_le_sq₀ (mul_nonneg (Real.sqrt_nonneg s) (abs_nonneg _)) hε.le).2 hscalar
+  let εseq : ℕ → ℝ := fun n => 1 / ((n : ℝ) + 1)
+  have hεseq (n : ℕ) : 0 < εseq n :=
+    one_div_pos.mpr (add_pos_of_nonneg_of_pos (Nat.cast_nonneg n) zero_lt_one)
+  have hεlim : Tendsto εseq atTop (𝓝 (0 : ℝ)) :=
+    tendsto_one_div_add_atTop_nhds_zero_nat
+  have hsqrtlim : Tendsto (fun n : ℕ => Real.sqrt (εseq n)) atTop (𝓝 (0 : ℝ)) := by
+    simpa only [Function.comp_def, Real.sqrt_zero] using
+      Real.continuous_sqrt.continuousAt.tendsto.comp hεlim
+  let yseq : ℕ → E := fun n => Y (εseq n)
+  have hCauchy : CauchySeq yseq := by
+    apply Metric.cauchySeq_iff.2
+    intro δ hδ
+    obtain ⟨N, hN⟩ := Filter.eventually_atTop.1 (hsqrtlim.eventually (gt_mem_nhds hδ))
+    refine ⟨N, ?_⟩
+    intro m hm n hn
+    calc
+      dist (yseq m) (yseq n) = ‖yseq m - yseq n‖ := dist_eq_norm _ _
+      _ ≤ (Real.sqrt (εseq m) + Real.sqrt (εseq n)) / 2 :=
+        hdiff (εseq m) (εseq n) (hεseq m) (hεseq n)
+      _ < δ := by linarith [hN m hm, hN n hn]
+  obtain ⟨y, hy⟩ := cauchySeq_tendsto_of_complete hCauchy
+  have hToX : Tendsto (fun n : ℕ => yseq n <• b) atTop (𝓝 x) := by
+    apply Metric.tendsto_nhds.2
+    intro δ hδ
+    exact (hεlim.eventually (gt_mem_nhds hδ)).mono fun n hn => by
+      calc
+        dist (yseq n <• b) x = ‖x - yseq n <• b‖ := by
+          rw [dist_eq_norm, norm_sub_rev]
+        _ ≤ εseq n := hres (εseq n) (hεseq n)
+        _ < δ := hn
+  have hToY : Tendsto (fun n : ℕ => yseq n <• b) atTop (𝓝 (y <• b)) := by
+    simpa only [Function.comp_def] using
+      (CStarModule.continuous_right_smul_const b).continuousAt.tendsto.comp hy
+  exact ⟨y, b, tendsto_nhds_unique hToX hToY⟩
+
+end NonnegInnerFactorization
+
+section StarOrderedFactorization
+
+/-- A valid caller opposite star order gives factorization without a
+separate canonical-Gram positivity premise or a replacement module dictionary. -/
+theorem exists_right_factor_of_starOrderedRing {B : Type uB} {E : Type uE}
+    [NonUnitalCStarAlgebra B] [PartialOrder Bᵐᵒᵖ] [StarOrderedRing Bᵐᵒᵖ]
+    [NormedAddCommGroup E] [NormedSpace ℂ E] [SMul Bᵐᵒᵖ E]
+    [CStarModule Bᵐᵒᵖ E] [CompleteSpace E] (x : E) :
+    ∃ y : E, ∃ b : B, x = y <• b := by
+  let a : Bᵐᵒᵖ := inner Bᵐᵒᵖ x x
+  have ha : 0 ≤ a :=
+    CStarModule.inner_self_nonneg (A := Bᵐᵒᵖ) (E := E) (x := x)
+  let r : Bᵐᵒᵖ := CFC.sqrt a
+  have hs : star r = r :=
+    (IsSelfAdjoint.of_nonneg (CFC.sqrt_nonneg a)).star_eq
+  have hr : star r * r = a := by
+    rw [hs]
+    exact CFC.sqrt_mul_sqrt_self a ha
+  have hGram :
+      CStarModule.rightInner (B := B) x x =
+        MulOpposite.unop r * star (MulOpposite.unop r) := by
+    simpa only [CStarModule.rightInner, a, MulOpposite.unop_mul,
+      MulOpposite.unop_star] using (congrArg MulOpposite.unop hr).symm
+  have hpos : @LE.le B (CStarAlgebra.spectralOrder B).toLE
+      0 (CStarModule.rightInner (B := B) x x) := by
+    let : PartialOrder B := CStarAlgebra.spectralOrder B
+    let : StarOrderedRing B := CStarAlgebra.spectralOrderedRing B
+    change (0 : B) ≤ CStarModule.rightInner (B := B) x x
+    rw [hGram]
+    exact mul_star_self_nonneg (MulOpposite.unop r)
+  exact CStarModule.exists_right_factor_of_nonneg_inner (B := B) (E := E) x hpos
+
+end StarOrderedFactorization
+
+section CanonicalFactorization
+
+attribute [local instance] CStarAlgebra.spectralOrder CStarAlgebra.spectralOrderedRing
+
+open Filter
+open scoped Topology
+
+/-- Every vector in an actual complete right Hilbert C-star module factors
+through a coefficient of its original nonunital algebra.
+
+This wrapper uses the canonical order on `B` and the induced opposite order.
+For a module with a separately installed canonical order on `Bᵐᵒᵖ`, use
+`exists_right_factor_of_nonneg_inner` with the spectral-order unop bridge.
+The two order dictionaries are not silently identified. -/
+theorem exists_right_factor {B : Type uB} {E : Type uE}
+    [NonUnitalCStarAlgebra B]
+    [NormedAddCommGroup E] [NormedSpace ℂ E] [SMul Bᵐᵒᵖ E]
+    [CStarModule Bᵐᵒᵖ E] [CompleteSpace E]
+    (x : E) : ∃ y : E, ∃ b : B, x = y <• b := by
+  have hpos : @LE.le B (CStarAlgebra.spectralOrder B).toLE
+      0 (CStarModule.rightInner (B := B) x x) := by
+    have h : (0 : Bᵐᵒᵖ) ≤ inner Bᵐᵒᵖ x x :=
+      CStarModule.inner_self_nonneg (A := Bᵐᵒᵖ) (E := E) (x := x)
+    change @LE.le B (CStarAlgebra.spectralOrder B).toLE
+      0 (MulOpposite.unop (inner Bᵐᵒᵖ x x))
+    -- This is the induced opposite order, so the stock unop iff applies.
+    exact (MulOpposite.unop_nonneg).2 h
+  exact exists_right_factor_of_nonneg_inner (B := B) (E := E) x hpos
+
+end CanonicalFactorization
+
+end CStarModule

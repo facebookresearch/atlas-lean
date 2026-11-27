@@ -45,7 +45,8 @@ For `k₋₂ = 0` this is the irreversible system `MichaelisMenten.IsSolution`
   `k₁ e s = k₋₁ c` and `k₂ c = k₋₂ e p`; `isSolution_const_iff` and
   `IsSolution.eq_of_equilibrium`: a solution started at an equilibrium stays there.
 * `haldane_of_revField_eq_zero`, `haldane_div`: the **Haldane relation**: at an equilibrium with
-  `e ≠ 0`, `k₁ k₂ s = k₋₁ k₋₂ p`, so `p / s = K_eq = k₁ k₂ / (k₋₁ k₋₂)`.
+  `e ≠ 0`, `k₁ k₂ s = k₋₁ k₋₂ p`, so `p / s = K_eq = k₁ k₂ / (k₋₁ k₋₂)` when also `s ≠ 0` and
+  `k₋₁, k₋₂ ≠ 0`.
 * `existsUnique_equilibrium`: for positive rate constants and positive totals `E_T`, `S_T`,
   the compatibility class `{e + c = E_T, s + c + p = S_T}` contains exactly one nonnegative
   equilibrium; `pos_of_equilibrium` shows it is positive.
@@ -57,22 +58,7 @@ Convergence of every solution to the equilibrium of its class is proved in
 using LaSalle's principle (`MathlibExt.Analysis.ODE.LaSalle`) with the pseudo-Helmholtz function.
 It lives there, not here, because that file imports this one.
 
-## Source receipt (API-00 reuse gate)
-
-Reused, not redefined: `substrateRate`, `complexRate`, `MichaelisMenten.IsSolution` from
-`Domains.Biology.Dynamics.MichaelisMenten`; `mmField` (bridge `revField_zero`) and the
-state-packing curve `mmCurve` from `Domains.Biology.Dynamics.MichaelisMenten.Trajectories`;
-the maximal-solution exit theorem
-`MathlibExt.Analysis.ODE.MaximalSolutionWanted.ode_maximal_solution_exit_compact`; the
-orthant-invariance theorem `MetaMathlibExt.orthant_invariant_of_boundary_nonneg`; Mathlib's
-`ODE_solution_unique_of_mem_Icc_right` and `intermediate_value_Icc`. The global-existence proof
-follows `MichaelisMenten.exists_isSolution_nonneg` (whose helpers are private there). No
-reversible Michaelis–Menten statement existed in MathlibExt, WantedExt, CSLibExt or PhyslibExt
-before this file. The general Horn–Jackson uniqueness
-(`MathlibExt.Biology.Dynamics.ComplexBalanced.existsUnique_equilibrium_of_isComplexBalanced`)
-would need this network encoded as a `Fin 4` reaction network plus an identification of its
-stoichiometric subspace with the two conservation laws; the two-line monotonicity argument used
-here is shorter, and covers nonnegative (not only positive) equilibria.
+## Sources
 
 Mathematical source: Keener–Sneyd, *Mathematical Physiology I*, §1.4 (enzyme kinetics: the
 mass-action system of the Michaelis–Menten mechanism and its conservation laws); Cornish-Bowden,
@@ -147,13 +133,13 @@ private lemma eq_of_hasDerivAt_zero {f : ℝ → ℝ} (hf : ∀ t, 0 ≤ t → H
   constant_of_has_deriv_right_zero (fun x hx => (hf x hx.1).continuousAt.continuousWithinAt)
     (fun x hx => (hf x hx.1).hasDerivWithinAt) t ⟨ht, le_rfl⟩
 
-/-- **Enzyme conservation**: `e(t) + c(t) = e(0) + c(0)`. -/
+/-- **Enzyme conservation**: `e(t) + c(t) = e(0) + c(0)` for `t ≥ 0`. -/
 theorem IsSolution.enzyme_conservation (h : IsSolution k₁ kb k₂ kb₂ s c e p) {t : ℝ}
     (ht : 0 ≤ t) : e t + c t = e 0 + c 0 := by
   refine eq_of_hasDerivAt_zero (f := fun t => e t + c t) (fun x hx => ?_) ht
   simpa using (h.hasDerivAt_enzyme x hx).fun_add (h.hasDerivAt_complex x hx)
 
-/-- **Mass conservation**: `s(t) + c(t) + p(t) = s(0) + c(0) + p(0)`. -/
+/-- **Mass conservation**: `s(t) + c(t) + p(t) = s(0) + c(0) + p(0)` for `t ≥ 0`. -/
 theorem IsSolution.substrate_conservation (h : IsSolution k₁ kb k₂ kb₂ s c e p) {t : ℝ}
     (ht : 0 ≤ t) : s t + c t + p t = s 0 + c 0 + p 0 := by
   refine eq_of_hasDerivAt_zero (f := fun t => s t + c t + p t) (fun x hx => ?_) ht

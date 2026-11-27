@@ -1,0 +1,3 @@
+# TWO-PROCESSOR NO-WAIT JOB-SHOP SCHEDULING as a decision problem
+
+The decision problem TWO-PROCESSOR NO-WAIT JOB-SHOP SCHEDULING accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding of triples $(m, J, D)$ (a natural number, a list of lists of pairs of natural numbers and a natural number), to an instance that is well-formed for JOB-SHOP SCHEDULING ($m > 0$, every job has at least one task, every task's processor lies in $\{1, \dots, m\}$, consecutive tasks of a job use different processors, and the last component is positive) with $m = 2$ and feasible for TWO-PROCESSOR NO-WAIT JOB-SHOP SCHEDULING. It rejects every bitstring that does not decode to such an instance.

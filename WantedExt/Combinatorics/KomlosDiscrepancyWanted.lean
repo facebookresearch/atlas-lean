@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import MathlibExt.Combinatorics.KuniskyKomlosLowerBound
 public import MathlibExt.Combinatorics.VectorDiscrepancy
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
@@ -96,17 +97,6 @@ def bansalJiang2025LittleSqrtLogUpperBound : Prop :=
   ∀ ε : ℝ, 0 < ε → ∃ N : ℕ, 3 ≤ N ∧ ∀ n : ℕ, N ≤ n →
     dimensionConstant n ≤ ENNReal.ofReal (ε * Real.sqrt (Real.log n))
 
-/-- **Kunisky's lower bound for the Komlós constant (statement).** The statement that the Komlós
-constant is at least $1 + \sqrt{2}$.
-
-The bound concerns the supremum over all dimensions; it does not assert that any single
-dimension attains $1 + \sqrt{2}$.
-
-Source: optimization catalogue C24a, line 45, and retained Kunisky
-arXiv2111.02974v1, Theorem 1.1. -/
-def kunisky2023LowerBound : Prop :=
-  ENNReal.ofReal (1 + Real.sqrt 2) ≤ komlosConstant
-
 /-- Kunisky's finite lower bound in every dyadic dimension `2 ^ k`.
 
 Source: Kunisky, SIAM J. Discrete Math. 37 (2023), arXiv:2111.02974,
@@ -193,13 +183,6 @@ logarithm. In other words, the Komlós constant in dimension $n$ is $o(\sqrt{\lo
 Source: BJ2025, arXiv2508.03961, the improvement reported in its abstract. -/
 theorem_wanted bansalJiang2025LittleSqrtLogUpperBound_holds :
   bansalJiang2025LittleSqrtLogUpperBound
-
-/-- **Kunisky's lower bound for the Komlós constant.** The Komlós constant (the supremum over all
-$n \ge 1$ of the discrepancy of real $n \times n$ matrices whose columns all have Euclidean norm
-at most $1$, taken in $[0, \infty]$) is at least $1 + \sqrt{2}$.
-
-Source: Kunisky, arXiv2111.02974v1, Theorem 1.1; catalogue C24a, line 45. -/
-theorem_wanted kunisky2023LowerBound_holds : kunisky2023LowerBound
 
 /-- Source: Kunisky, SIAM J. Discrete Math. 37 (2023), arXiv:2111.02974,
 Theorem 1.1, at each dyadic dimension `2 ^ k`. -/

@@ -11,6 +11,7 @@ public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.ClassicalComplexCoefficientMaps
 public import MathlibExt.AlgebraicGeometry.NativeIdentityComplexesStack
 public import MathlibExt.AlgebraicGeometry.DerivedNativeComplexTruncation
+public import MathlibExt.AlgebraicGeometry.DerivedClassicalComplexComparisonClassicalCoefficientFamilyUnit
 
 /-!
 # Wanted native classical comparison for the universally glueable DG moduli locus
@@ -18,9 +19,11 @@ public import MathlibExt.AlgebraicGeometry.DerivedNativeComplexTruncation
 Every source construction below has fixed coefficient, sheaf, interval,
 adjunction or localization maps in its public contract. The actual
 groupoid comparison, its equivalence, scalar naturality and coherent
-unit/composition assertions are separate results. No equivalence is
-asserted for unrestricted ordinary-coefficient M_k or for a general
-T-action after forgetting that action.
+composition assertions are separate results; the coherent unit assertion
+`classical_coefficient_family_unit` is proved in
+`MathlibExt.AlgebraicGeometry.DerivedClassicalComplexComparisonClassicalCoefficientFamilyUnit`.
+No equivalence is asserted for unrestricted ordinary-coefficient M_k or
+for a general T-action after forgetting that action.
 
 References: Toën--Vaquié math/0503269v5 §3.1 pp36--37 and p8;
 Stacks 03G8, 06YY, 0D6D, 0DLD/0DLE. The native ordinary-stack source
@@ -49,7 +52,9 @@ open scoped Simplicial
 
 universe u
 
-/-- Prove the sheaf axiom for the actual global-section presheaf on the small étale site. -/
+/-- For every scheme $X$, the presheaf of rings on the small étale site of $X$ that sends an étale
+$X$-scheme $U$ to its ring of global sections $\Gamma(U, \mathcal{O}_U)$
+(`etaleStructurePresheaf`) is a sheaf for the étale topology (`EtaleStructureSource`). -/
 theorem_wanted classical_etale_structure_source (X : Scheme.{u}) : EtaleStructureSource X
 
 /-- Assemble actual ringed inverse images and their native total left derivations. -/
@@ -161,18 +166,6 @@ theorem_wanted classical_coefficient_family_map_isIso (k : Type u) [CommRing k]
     (L : EtalePullbackSystem O) (Z : OrdinaryComplexSourceSystem r P O L) (D : CoefficientMapSystem Z)
     (A B : CommAlgCat.{u} k) (f : A ⟶ B) (E : ((underivedModuliFunctor R P).obj A) _⦋0⦌) :
   IsIso (coefficientFamilyMap D f E)
-
-/-- Identity coefficients give the exact native derived unit, with actual functor-law transports. -/
-theorem_wanted classical_coefficient_family_unit (k : Type u) [CommRing k]
-    (N : ShuffleAlgebraFunctor k) (S : AffineScalarSystem N)
-    (R : DGFrame k (oppositeCategory (scalarCategory k))) (r : ScalarFramePoint R)
-    (P : StrictPerfectSystem N S) (O : ∀ X : Scheme.{u}, EtaleStructureSource X)
-    (L : EtalePullbackSystem O) (Z : OrdinaryComplexSourceSystem r P O L) (D : CoefficientMapSystem Z)
-    (C : EtalePushforwardCoherence L) (A : CommAlgCat.{u} k)
-    (E : ((underivedModuliFunctor R P).obj A) _⦋0⦌) :
-  HEq (coefficientFamilyMap D (𝟙 A) E)
-    ((etaleDerivedId C (Spec (ordinaryRing A))).hom.app
-      (vertexEtaleDerived r P A (Z.module A) (Z.etale A) E))
 
 /-- Composite coefficients give the exact native derived composition mate and the two actual unit maps. -/
 theorem_wanted classical_coefficient_family_composition (k : Type u) [CommRing k]

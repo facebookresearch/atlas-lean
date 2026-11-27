@@ -87,10 +87,11 @@ lemma angularFrequency_frequency (ω : ℝ) :
 
 /-! ## B. Wavenumber and wavelength -/
 
-/-- Wavenumber `k = 2π / λ` (physics convention; NOT the crystallographic `1/λ`). -/
+/-- Wavenumber `k = 2π / λ` (physics convention; NOT the crystallographic `1/λ`).
+With the convention `x / 0 = 0` it is `0` at `lam = 0`. -/
 def wavenumber (lam : ℝ) : ℝ := 2 * Real.pi / lam
 
-/-- Wavelength `λ = 2π / k`. -/
+/-- Wavelength `λ = 2π / k`. With the convention `x / 0 = 0` it is `0` at `k = 0`. -/
 def wavelength (k : ℝ) : ℝ := 2 * Real.pi / k
 
 /-- Round-trip: `wavenumber (wavelength k) = k` for `k ≠ 0`. -/

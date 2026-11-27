@@ -47,8 +47,6 @@ namespace WantedExt.AlgebraicGeometry.DeCataldoMiglioriniDecompositionWanted
 open CategoryTheory CategoryTheory.Limits
 open _root_.AlgebraicGeometry MathlibExt.AlgebraicGeometry
 open ComplexAnalytification PerverseSheaves
-open MathlibExt.AlgebraicGeometry.DeCataldoMiglioriniDecompositionWanted
-  (IsProjectiveOverC normalizedDirectImage)
 
 noncomputable section
 
@@ -59,8 +57,8 @@ Source: de Cataldo–Migliorini (2005), §§3.2–3.3. -/
 public theorem_wanted normalizedDirectImage_boundedConstructible
     (X Y : ComplexScheme) [IsComplexVariety X] [IsComplexVariety Y]
     (f : X ⟶ Y) (n : ℕ) [SmoothOfRelativeDimension n X.hom]
-    (hX : IsProjectiveOverC X) (hY : IsProjectiveOverC Y) :
-    boundedConstructible Y (normalizedDirectImage X Y f n)
+    (hX : ProjectiveSpace.IsProjective X) (hY : ProjectiveSpace.IsProjective Y) :
+    boundedConstructible Y (ConstructibleComplexes.normalizedDirectImage ℚ X Y f n)
 
 /-- De Cataldo–Migliorini's decomposition theorem for a smooth projective
 source and a projective target. The finite set includes every nonzero perverse
@@ -70,9 +68,9 @@ public theorem_wanted deCataldoMigliorini_decomposition
     (X Y : ComplexScheme) [IsComplexVariety X] [IsComplexVariety Y]
     [PerverseSheafTheory Y]
     (f : X ⟶ Y) (n : ℕ) [SmoothOfRelativeDimension n X.hom]
-    (hX : IsProjectiveOverC X) (hY : IsProjectiveOverC Y) :
+    (hX : ProjectiveSpace.IsProjective X) (hY : ProjectiveSpace.IsProjective Y) :
     let K : (boundedConstructible Y).FullSubcategory :=
-      ⟨normalizedDirectImage X Y f n,
+      ⟨ConstructibleComplexes.normalizedDirectImage ℚ X Y f n,
         ❰normalizedDirectImage_boundedConstructible❱ X Y f n hX hY⟩
     ∃ degrees : Finset ℤ,
       (∀ j : ℤ, j ∉ degrees →
@@ -89,9 +87,9 @@ public theorem_wanted deCataldoMigliorini_semisimplicity
     (X Y : ComplexScheme) [IsComplexVariety X] [IsComplexVariety Y]
     [PerverseSheafTheory Y]
     (f : X ⟶ Y) (n : ℕ) [SmoothOfRelativeDimension n X.hom]
-    (hX : IsProjectiveOverC X) (hY : IsProjectiveOverC Y) :
+    (hX : ProjectiveSpace.IsProjective X) (hY : ProjectiveSpace.IsProjective Y) :
     let K : (boundedConstructible Y).FullSubcategory :=
-      ⟨normalizedDirectImage X Y f n,
+      ⟨ConstructibleComplexes.normalizedDirectImage ℚ X Y f n,
         ❰normalizedDirectImage_boundedConstructible❱ X Y f n hX hY⟩
     ∀ j : ℤ, IsSemisimplePerverse (perverseTStructure Y)
       (perverseCohomology Y j K)

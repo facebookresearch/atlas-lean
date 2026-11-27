@@ -536,9 +536,9 @@ structure RefinementSpan {C E : LiFamilyDeformationMaps.Point O P D R S a B} (f 
   leftSource : SourceRefinement left
   rightSource : SourceRefinement right
 
-/-- A genuine etale source chart over an actual affine atlas point.
-Descent.cover requests these on the noetherian finite-type atlas;
-Descent.baseChange controls all other affine coefficient tests. -/
+/-- An étale cover of an affine point `p` of the rubber moduli stack by a chart: a chart point
+`point` (`LiFamilyDeformationMaps.Point`) and a morphism `arrow` from its affine stack point to `p`
+whose underlying morphism of schemes is étale (`etale`) and surjective (`covering`). -/
 structure SourceCover (p : AffinePoint B.stack) where
   point : LiFamilyDeformationMaps.Point O P D R S a B
   arrow : point.native ⟶ p

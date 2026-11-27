@@ -61,42 +61,7 @@ namespace AlgebraicGeometry.Faltings
 variable (K F : Type*) [Field K] [Field F] [Algebra K F]
 
 open scoped RestrictedProduct
-
-/-- **Adele ring.** Let $F$ be a field and $K$ a field with $F$ a $K$-algebra. The adele ring
-$\mathcal{A}_F$ of $F/K$ is the restricted product of copies of $F$ indexed by the places $P$
-of $F/K$, with respect to their valuation rings $\mathcal{O}_P$ and the cofinite filter: its
-elements are the families $\alpha = (\alpha_P)_P$ with $\alpha_P \in F$ for every place $P$
-and $\alpha_P \in \mathcal{O}_P$ for all but finitely many $P$. See [Stichtenoth, Definition
-1.5.2]. -/
-abbrev Adele : Type _ :=
-  RestrictedProduct (fun _ ↦ F) (fun v : Place K F ↦ (v : Set F)) Filter.cofinite
-
-instance : CommRing (Adele K F) := RestrictedProduct.instCommRingCoeOfSubringClass ..
-
 open RestrictedProduct
-
-variable {F}
-
-/-- **Principal adele map.** Let $F$ be a function field over a field $K$, that is, a finite
-extension of the rational function field $K(t)$. The principal adele map is a ring homomorphism
-from $F$ to the adele ring $\mathcal{A}_F$ of $F/K$. It is meant to be the diagonal embedding
-sending $x \in F$ to the adele whose coordinate at every place $P$ of $F/K$ is $x$, which is
-well defined since $x$ has only finitely many poles; this coordinate formula is stated
-separately.
-
-Source: see manifest Via leanprover/lean-eval@38361be, problem `faltings`. -/
-public def_wanted Adele.principal [BundledFunctionField K F] : F →+* Adele K F
-
-/- The coordinates of a principal adele are constant. -/
-/-- **Coordinates of a principal adele.** Let $F$ be a function field over a field $K$, that is,
-a finite extension of the rational function field $K(t)$. For every $x \in F$ and every place
-$P$ of $F/K$, the coordinate at $P$ of the principal adele of $x$ is $x$.
-
-Source: see manifest Via leanprover/lean-eval@38361be, problem `faltings`. -/
-public theorem_wanted Adele.principal_apply [BundledFunctionField K F] (x : F)
-    (v : Place K F) : (❰Adele.principal❱ K x) v = x
-
-variable (F)
 
 /-- The `F`-algebra structure on the adeles, specified by `instAlgebraAdele_algebraMap`
 below to be the one whose algebra map is the principal embedding.
@@ -110,10 +75,10 @@ principal adele map $F \to \mathcal{A}_F$.
 
 Source: see manifest Via leanprover/lean-eval@38361be, problem `faltings`. -/
 public theorem_wanted instAlgebraAdele_algebraMap [BundledFunctionField K F] :
-    algebraMap F (Adele K F) = ❰Adele.principal❱ K
+    algebraMap F (Adele K F) = Adele.principal K
 
 -- TODO: generalize this to RestrictedProduct
-instance : Algebra K (Adele K F) where
+instance instAlgebraAdele_1 : Algebra K (Adele K F) where
   __ := RestrictedProduct.instModuleCoeOfSMulMemClass ..
   algebraMap.toFun x := ⟨fun _ ↦ algebraMap K F x, .of_forall fun _ ↦ algebraMap_mem ..⟩
   algebraMap.map_one' := by ext; exact (algebraMap K F).map_one

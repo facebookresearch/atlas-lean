@@ -1,0 +1,3 @@
+# Weight of a job in TWO MULTI-PURPOSE PARALLEL MACHINES WITH CHAINS AND UNIT TIMES, WEIGHTED COMPLETION TIME
+
+An instance of TWO MULTI-PURPOSE PARALLEL MACHINES WITH CHAINS AND UNIT TIMES, WEIGHTED COMPLETION TIME is a pair of an instance of TWO MULTI-PURPOSE PARALLEL MACHINES WITH CHAINS AND UNIT TIMES, MAKESPAN, which lists the jobs $0, \dots, n-1$ of a multi-purpose machine job shop together with precedence arcs, and a list $w$ of natural numbers. The weight $w_j$ of job $j$ is the entry of $w$ at position $j$, and $0$ when $w$ has no entry at that position. That $w$ has exactly one entry per job is a condition of a well-formed instance, not of this definition.

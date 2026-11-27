@@ -16,3 +16,5 @@ Foundations of point-set topology: open and closed sets, closure and interior, n
 - [The closure of a subset of a topological space is closed](closure-is-closed.md)
 - [The composite of two quotient maps is a quotient map](composition-quotient-maps-quotient.md)
 - [A set closed in a closed subspace is closed in the whole space](closed-in-closed-subspace-closed.md)
+- [In a pseudometrizable space, compact sets are exactly the sequentially compact sets](compact-iff-sequentially-compact.md)
+- [Compact space](compact-space.md)

@@ -10,6 +10,9 @@ module
 public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.MotivicPowerDescentModels
 public import MathlibExt.AlgebraicGeometry.MotivicBocksteinModels
+public import MathlibExt.AlgebraicGeometry.MotivicPowerCycleSourcesIntegralCoefficientSequenceExact
+public import MathlibExt.AlgebraicGeometry.MotivicPowerCycleSourcesBocksteinEqReducedIntegral
+public import MathlibExt.AlgebraicGeometry.MotivicPowerCycleSourcesModCoefficientSequenceExact
 
 /-!
 # Original finite-power quotient, cycle descent and coefficient requests
@@ -87,14 +90,6 @@ def_wanted relativePowerCycle (k H : Type) [Field k] [Group H] [Fintype H]
     (B : CycleDescent P U r Q D G R A i V z E) (d : DiagonalDescent P U r Q)
     (W : PullbackPowerBundle P U r A i V (X := X)) : RelativePowerCycle P U r Q D G R A i V z B d W
 
-/-- Exactness belongs to the original integral coefficient maps. -/
-theorem_wanted integralCoefficientSequenceExact (ell : ℕ) [Fact ell.Prime] :
-  (integralSequence ell).ShortExact
-
-/-- Exactness belongs to the native additive times-ell injection, not a ring-map injection. -/
-theorem_wanted modCoefficientSequenceExact (ell : ℕ) [Fact ell.Prime] :
-  (modSequence ell).ShortExact
-
 variable {k : Type} [Field k]
   [HasSheafify (nisnevichTopology (k := k)) (ModuleCat.{1} ℤ)]
   {D : CompositionSystem k} {G : GraphSystem k}
@@ -107,18 +102,13 @@ variable {k : Type} [Field k]
   (B : CoefficientComplexSystem (D := D) (G := G) (P := P) (E := E)
     (C := C) (A := A) (R := R) (S := S) T N)
 
-/-- Construct exactness of the two computed coefficient-cone comparisons on every original Tate weight. -/
+/-- For a prime ℓ, a weight $q \in \mathbb{Z}$ and the given coefficient complex system `B` (over a
+field $k$, with Nisnevich sheafification and the correspondence laws and additivity): both
+coefficient sequences $\mathbb{Z} \to \mathbb{Z} \to \mathbb{Z}/\ell$ (multiplication by ℓ,
+reduction) and $\mathbb{Z}/\ell \to \mathbb{Z}/\ell^2 \to \mathbb{Z}/\ell$ ($n \mapsto \ell n$,
+reduction) induce maps of weight-$q$ motivic complexes with zero composite, and the comparison map
+from the mapping cone of the first map to the complex of the third term is a quasi-isomorphism. -/
 theorem_wanted motivicCoefficientSequenceCones (ell : ℕ) [Fact ell.Prime] (q : ℤ) :
   CoefficientConeSource B (integralSequence ell) q ∧ CoefficientConeSource B (modSequence ell) q
-
-/-- The two separately defined native boundaries agree through the original integer reduction map. -/
-theorem_wanted bockstein_eq_reduced_integral (ell : ℕ) [Fact ell.Prime]
-    (F : ReducedFreeNisSystem k) (X : PointedSpaces (k := k)) (p q : ℤ)
-    (I : CoefficientConeSource B (integralSequence ell) q)
-    (M : CoefficientConeSource B (modSequence ell) q)
-    (u : ReducedCohomology B F X p q (ModCoefficients ell)) :
-    bockstein B ell F X p q M u =
-      ReducedMotivicCohomologyModels.coefficientMap B F X (p + 1) q
-        (integralReduction ell) (integralBockstein B ell F X p q I u)
 
 end WantedExt.AlgebraicGeometry.MotivicPowerCycleSourcesWanted

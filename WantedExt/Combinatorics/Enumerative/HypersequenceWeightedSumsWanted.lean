@@ -11,13 +11,18 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Analysis.Complex.Basic
+public import MathlibExt.Combinatorics.Enumerative.AlternatingBinomialPowerSmallCases
 public import MathlibExt.Combinatorics.Enumerative.AlternatingBinomialPowerSumRecurrences
 public import MathlibExt.Combinatorics.Enumerative.AlternatingBinomialPowerSumStirling
 public import MathlibExt.Combinatorics.Enumerative.Hypersequence
+public import MathlibExt.Combinatorics.Enumerative.HypersequenceAbelSummation
 public import MathlibExt.Combinatorics.Enumerative.HypersequenceBinomial
+public import MathlibExt.Combinatorics.Enumerative.HypersequenceRecurrence
+public import MathlibExt.Combinatorics.Enumerative.HypersequenceWeightedSums
 public import MathlibExt.Combinatorics.Enumerative.RingChooseSub
 public import MathlibExt.Combinatorics.Enumerative.SuccPowStirlingSecond
 public import MathlibExt.NumberTheory.LucasSequence
+public import MathlibExt.NumberTheory.Recurrences.HyperFibonacciBinomial
 public import WantedExt.NumberTheory.HyperLeonardoWanted
 
 /-!
@@ -55,26 +60,6 @@ public theorem hyperFibonacci_eq_hypersequence (r n : ℕ) :
   induction r generalizing n with
   | zero => rfl
   | succ r ih => simp [hyperFibonacci, hypersequence, ih]
-
-/-- **Recurrence between consecutive hypersequence generations.** Let $(a_n)$ be a sequence of
-complex numbers and let $a^{(r)}_n$ denote its hypersequence of generation $r$. For all natural
-numbers $r$ and $n$, $a^{(r+1)}_{n+1} = a^{(r+1)}_n + a^{(r)}_{n+1}$.
-
-Source: Daniele Parisse, *On Hypersequences of an Arbitrary Sequence and Their Weighted Sums*,
-INTEGERS 24 (2024), Article A70, Theorem 2, Equation (2.2) (`integers-2024-A70-thm-2`). -/
-public theorem_wanted hypersequence_succ_succ (a : ℕ → ℂ) (r n : ℕ) :
-    hypersequence a (r + 1) (n + 1) = hypersequence a (r + 1) n + hypersequence a r (n + 1)
-
-/-- **Hyperfibonacci numbers in terms of Fibonacci numbers.** Let $F_k$ denote the $k$th Fibonacci
-number and $F^{(r)}_n$ the hyperfibonacci numbers, given by $F^{(0)}_n = F_n$ and
-$F^{(r+1)}_n = \sum_{k=0}^{n} F^{(r)}_k$. For all natural numbers $r$ and $n$,
-$$F^{(r)}_n = F_{n+2r} - \sum_{k=0}^{r-1} \binom{n + k - 1}{k} F_{2(r-k)}.$$
-
-Source: Daniele Parisse, *On Hypersequences of an Arbitrary Sequence and Their Weighted Sums*,
-INTEGERS 24 (2024), Article A70, Theorem 3, Equation (2.8) (`integers-2024-A70-thm-3`). -/
-public theorem_wanted hyperFibonacci_eq_fib_sub_sum (r n : ℕ) :
-    (hyperFibonacci r n : ℤ) =
-      Nat.fib (n + 2 * r) - ∑ k ∈ range r, ((n + k - 1).choose k * Nat.fib (2 * (r - k)) : ℕ)
 
 /-- **Fibonacci numbers as binomially weighted sums.** Let $F_k$ denote the $k$th Fibonacci
 number. For every natural number $r \ge 1$ and every natural number $n$,
@@ -118,24 +103,6 @@ public theorem_wanted hyperLucas_eq_lucas_sub_sum (r n : ℕ) :
       lucasNumber (n + 2 * r) -
         ∑ k ∈ range r, ((n + k).choose k * lucasNumber (2 * (r - k) - 1) : ℕ)
 
-/-- **Lucas numbers as binomial sums.** Let $L_n$ denote the Lucas numbers. For every $r \ge 1$
-and every natural number $n$,
-$$L_{n+2r} = \sum_{k=0}^{n} \binom{n+r-1-k}{r-1} L_k +
-\sum_{k=0}^{r-1} \binom{n+k}{k} L_{2(r-k)-1}$$
-and
-$$L_{n+2r} = \sum_{k=0}^{n} \binom{r+k-1}{k} L_{n-k} +
-\sum_{k=0}^{r-1} \binom{n+k}{k} L_{2(r-k)-1}.$$
-
-Source: Daniele Parisse, *On Hypersequences of an Arbitrary Sequence and Their Weighted Sums*,
-INTEGERS 24 (2024), Article A70, Corollary 2 (`integers-2024-A70-cor-2`). -/
-public theorem_wanted lucas_add_two_mul_eq_sum_choose {r : ℕ} (hr : 1 ≤ r) (n : ℕ) :
-    lucasNumber (n + 2 * r) =
-        ∑ k ∈ range (n + 1), (n + r - 1 - k).choose (r - 1) * lucasNumber k +
-          ∑ k ∈ range r, (n + k).choose k * lucasNumber (2 * (r - k) - 1) ∧
-      lucasNumber (n + 2 * r) =
-        ∑ k ∈ range (n + 1), (r + k - 1).choose k * lucasNumber (n - k) +
-          ∑ k ∈ range r, (n + k).choose k * lucasNumber (2 * (r - k) - 1)
-
 /-- **Recurrence for the hyperlucas numbers.** Let $L^{(r)}_n$ denote the hyperlucas numbers,
 the hypersequence of generation $r$ of the Lucas numbers. For all natural numbers $r$ and $n$,
 $L^{(r)}_0 = 2$, $L^{(r)}_1 = 2r + 1$, and, in the rational numbers,
@@ -152,32 +119,6 @@ public theorem_wanted hyperLucas_recurrence (r n : ℕ) :
         ((hypersequence lucasNumber (r + 1) (n + 1) : ℕ) : ℚ) +
           ((hypersequence lucasNumber (r + 1) n : ℕ) : ℚ) +
           ((n + 2 * (r + 1) : ℕ) : ℚ) / (n + 2) * ((n + r + 1).choose r : ℚ)
-
-/-- **Abel summation by parts.** Let $a$ and $b$ be sequences of complex numbers and let
-$a^{(1)}_k = \sum_{i=0}^{k} a_i$ be the first hypersequence (the partial sums) of $a$. Then for
-every natural number $n$,
-$$\sum_{k=0}^{n} a_k b_k = a^{(1)}_n b_{n+1} + \sum_{k=0}^{n} a^{(1)}_k (b_k - b_{k+1}).$$
-
-Source: Daniele Parisse, *On Hypersequences of an Arbitrary Sequence and Their Weighted Sums*,
-INTEGERS 24 (2024), Article A70, Theorem 7 (`integers-2024-A70-thm-7`). -/
-public theorem_wanted sum_mul_eq_hypersequence_one_mul_add_sum (a b : ℕ → ℂ) (n : ℕ) :
-    ∑ k ∈ range (n + 1), a k * b k =
-      hypersequence a 1 n * b (n + 1) + ∑ k ∈ range (n + 1), hypersequence a 1 k * (b k - b (k + 1))
-
-/-- **Recurrence for power-weighted sums of hypersequences.** Let $a$ be a sequence of complex
-numbers, let $a^{(r)}_k$ denote its hypersequence of generation $r$, and for natural numbers
-$\ell$, $r$ and $n$ let $t^{(r)}_\ell(n) = \sum_{k=0}^{n} k^\ell a^{(r)}_k$, with the convention
-$0^0 = 1$. Then for all natural numbers $\ell$, $r$ and $n$,
-$$t^{(r)}_\ell(n) = (n + 1)^\ell a^{(r+1)}_n - \sum_{j=0}^{\ell-1} \binom{\ell}{j} t^{(r+1)}_j(n),$$
-where the sum over $j$ is empty when $\ell = 0$.
-
-Source: Daniele Parisse, *On Hypersequences of an Arbitrary Sequence and Their Weighted Sums*,
-INTEGERS 24 (2024), Article A70, Theorem 8, Equation (3.5) (`integers-2024-A70-thm-8`). -/
-public theorem_wanted sum_pow_mul_hypersequence_recurrence (a : ℕ → ℂ) (ℓ r n : ℕ) :
-    ∑ k ∈ range (n + 1), (k : ℂ) ^ ℓ * hypersequence a r k =
-      ((n : ℂ) + 1) ^ ℓ * hypersequence a (r + 1) n -
-        ∑ j ∈ range ℓ, (ℓ.choose j : ℂ) *
-          ∑ k ∈ range (n + 1), (k : ℂ) ^ j * hypersequence a (r + 1) k
 
 /-- **Power-weighted sums of hypersequences.** Let $a$ be a sequence of complex numbers, let
 $a^{(r)}_n$ denote its hypersequence of generation $r$, let
@@ -247,30 +188,6 @@ public theorem_wanted alternatingBinomialPowerSum_special_values (x y : ℂ) (�
       alternatingBinomialPowerSum (m + 1) m 1 0 =
         (-1) ^ m * (m.factorial : ℂ) * ((m + 1).choose 2 : ℂ) ∧
       alternatingBinomialPowerSum ℓ m (-1) m = (m.factorial : ℂ) * (Nat.stirlingSecond ℓ m : ℂ)
-
-/-- **Small cases of alternating binomial power sums.** Let
-$p_{\ell,m}(x, y) = \sum_{k=0}^{m} (-1)^k \binom{m}{k} (kx + y)^\ell$, with $0^0 = 1$. For all
-complex numbers $x, y$ and natural numbers $\ell, m$:
-(i) $p_{\ell,0}(x, y) = y^\ell$;
-(ii) $p_{\ell,1}(x, y) = y^\ell - (x + y)^\ell$;
-(iii) $p_{\ell,2}(x, y) = y^\ell - 2(x + y)^\ell + (2x + y)^\ell$;
-(iv) if $\ell \ge 1$, then
-$p_{\ell,\ell-1}(x, y) = (-1)^{\ell-1} \ell!\, x^{\ell-1} \left(y + \frac{\ell - 1}{2} x\right)$;
-(v) $p_{\ell,\ell}(x, y) = (-1)^\ell \ell!\, x^\ell$;
-(vi) $p_{0,m}(x, y) = 0^m$;
-(vii) $\sum_{m=0}^{\ell} p_{\ell,m}(x, y) = (y - x)^\ell$.
-
-Source: Daniele Parisse, *On Hypersequences of an Arbitrary Sequence and Their Weighted Sums*,
-INTEGERS 24 (2024), Article A70, Proposition 3 (`integers-2024-A70-prop-3`). -/
-public theorem_wanted alternatingBinomialPowerSum_small_cases (x y : ℂ) (ℓ m : ℕ) :
-    alternatingBinomialPowerSum ℓ 0 x y = y ^ ℓ ∧
-      alternatingBinomialPowerSum ℓ 1 x y = y ^ ℓ - (x + y) ^ ℓ ∧
-      alternatingBinomialPowerSum ℓ 2 x y = y ^ ℓ - 2 * (x + y) ^ ℓ + (2 * x + y) ^ ℓ ∧
-      (1 ≤ ℓ → alternatingBinomialPowerSum ℓ (ℓ - 1) x y =
-        (-1) ^ (ℓ - 1) * (ℓ.factorial : ℂ) * x ^ (ℓ - 1) * (y + ((ℓ : ℂ) - 1) / 2 * x)) ∧
-      alternatingBinomialPowerSum ℓ ℓ x y = (-1) ^ ℓ * (ℓ.factorial : ℂ) * x ^ ℓ ∧
-      alternatingBinomialPowerSum 0 m x y = 0 ^ m ∧
-      ∑ m ∈ range (ℓ + 1), alternatingBinomialPowerSum ℓ m x y = (y - x) ^ ℓ
 
 /-- **Derivative and recurrence of the shifted alternating binomial power sums.** Let
 $p_{\ell,m}(x, y) = \sum_{k=0}^{m} (-1)^k \binom{m}{k} (kx + y)^\ell$ and, for a complex number

@@ -38,3 +38,11 @@ example : IsMotherGraphEdge 4 10 9 9 ∧
       9 9 :=
   isPermutipleString_inputs_isUnion_motherGraphCycles 4 10 (by decide) (by decide)
     isPermutipleString_87912 (9, 9) (by decide)
+
+-- The maximal incoming carry cancels a negative digit difference, leaving zero outgoing carry.
+example : IsHoeySloaneStep 4 5 3 0 (3, 0) :=
+  isHoeySloaneStep_hoeySloaneTransition 4 5 (by decide) (by decide) (3, 0) (by decide)
+
+-- In the same machine the largest second digit can take zero to the maximal outgoing carry.
+example : IsHoeySloaneStep 4 5 0 3 (1, 4) :=
+  isHoeySloaneStep_hoeySloaneTransition 4 5 (by decide) (by decide) (1, 4) (by decide)

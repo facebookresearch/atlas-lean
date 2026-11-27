@@ -66,9 +66,13 @@ public def_wanted bundle_stack_pullback (k : Type) [Field k]
     (T X : Stack (Spec (.of k))) (hT : FiniteTypeArtin k T) (hX : FiniteTypeArtin k X)
     (p : StackHom T X) (E : VectorBundleStack X) : BundleStackPullback p E
 
-/-- The global O-linear quotient model, with no global two-term hypothesis
-imposed on arbitrary bundle stacks: the bundle stack of a global two-term complex, whose linear
-model is coherently equivalent to the strict diagram of the complex. -/
+/-- **The bundle stack of a two-term complex of vector bundles.** For a field $k$, a finite-type
+Artin stack $X$ over $k$ (`FiniteTypeArtin k X`: representable, separated and quasi-compact
+diagonal, and a smooth atlas locally of finite type and quasi-compact over $k$) and a map of vector
+bundles $d : E \to F$ on $X$: a vector bundle stack $B$ on $X$ of virtual rank
+$\operatorname{rk} F - \operatorname{rk} E$ that is the quotient of $d$ (`IsQuotientOf B d`: its
+linear model is equivalent, coherently over all affine points of $X$, to the strict linear diagram
+of $d$). -/
 public def_wanted bundle_stack_from_quotient (k : Type) [Field k]
     (X : Stack (Spec (.of k))) (hX : FiniteTypeArtin k X)
     (E F : VectorBundle X) (d : BundleMap E F) :

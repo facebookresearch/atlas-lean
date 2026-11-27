@@ -1,0 +1,18 @@
+# Jet Arc Functors
+
+- [Is Finite Type Over Base](is-finite-type-over-base.md)
+- [Augmentation Ideal](augmentation-ideal.md)
+- [Truncated Ring](truncated-ring.md)
+- [Truncation Ring](truncation-ring.md)
+- [Thickening](thickening.md)
+- [Disc Tower](disc-tower.md)
+- [Jet Tower](jet-tower.md)
+- [Jet Functor](jet-functor.md)
+- [Truncate](truncate.md)
+- [Jet Map](jet-map.md)
+- [Arc Functor](arc-functor.md)
+- [Jet Model](jet-model.md)
+- [Arc Model](arc-model.md)
+- [Represented Truncation](represented-truncation.md)
+- [Parameter](parameter.md)
+- [Affine Contact](affine-contact.md)

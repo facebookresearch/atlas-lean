@@ -45,6 +45,113 @@ def maximalSchreierCount (p q n : ℕ) : ℕ :=
   ((Finset.Icc 1 n).powerset.filter fun F =>
     n ∈ F ∧ (∀ x ∈ F, p * F.card ≤ q * x) ∧ ∃ x ∈ F, q * x = p * F.card).card
 
+open Finset in
+/-- **Counting $(p, 1)$-Schreier sets by maximal $(p, 1)$-Schreier sets.** Fix a positive integer
+$p$. For each $m$, let $|S^{p/1}_m|$ be the number of sets $F \subseteq \{1, \dots, m\}$ with
+$m \in F$ and $\min F \ge p |F|$, and let $|M^{p/1}_m|$ be the number of those with
+$\min F = p |F|$. Then $|S^{p/1}_n| = |M^{p/1}_{n+p+1}|$ for every natural number $n$.
+
+The paper states this for $n \ge 1$; at $n = 0$ both sides are $0$.
+
+Source: Hùng Việt Chu and Zachary Louis Vasseur, *Linear Recurrences of Generalized Schreier
+Sets Revisited*, Journal of Integer Sequences 29 (2026), Article 26.2.2, Theorem 8
+(`jis-2026-26.2.2-thm-8`). -/
+theorem schreierCount_eq_maximalSchreierCount_add {p : ℕ} (hp : 1 ≤ p) (n : ℕ) :
+    schreierCount p 1 n = maximalSchreierCount p 1 (n + p + 1) := by
+  let shift : ℕ ↪ ℕ := ⟨(· + (p + 1)), fun _ _ h => Nat.add_right_cancel h⟩
+  let lift (F : Finset ℕ) := insert (p * (F.card + 1)) (F.map shift)
+  have hlt (F : Finset ℕ) (hF : ∀ x ∈ F, p * F.card ≤ x) {y : ℕ}
+      (hy : y ∈ F.map shift) : p * (F.card + 1) < y := by
+    obtain ⟨x, hx, rfl⟩ := mem_map.mp hy
+    have := hF x hx
+    change p * (F.card + 1) < x + (p + 1)
+    rw [Nat.mul_succ]
+    omega
+  have hnew (F : Finset ℕ) (hF : ∀ x ∈ F, p * F.card ≤ x) :
+      p * (F.card + 1) ∉ F.map shift := fun h => (hlt F hF h).false
+  have hcard (F : Finset ℕ) (hF : ∀ x ∈ F, p * F.card ≤ x) :
+      (lift F).card = F.card + 1 := by
+    dsimp only [lift]
+    rw [card_insert_of_notMem (hnew F hF), card_map]
+  simp only [schreierCount, maximalSchreierCount, one_mul]
+  apply card_nbij lift
+  · -- The inserted element is the new minimum and attains the cardinality bound.
+    intro F hF
+    obtain ⟨hsub, hn, hF⟩ := mem_filter.mp hF
+    have hm : n + p + 1 ∈ F.map shift := by
+      simpa only [shift, Function.Embedding.coeFn_mk, ← Nat.add_assoc] using mem_map_of_mem shift hn
+    refine mem_filter.mpr ⟨mem_powerset.mpr ?_, mem_insert_of_mem hm, ?_, ?_⟩
+    · intro y hy
+      rcases mem_insert.mp hy with rfl | hy
+      · exact mem_Icc.mpr ⟨Nat.mul_pos hp (Nat.succ_pos _), (hlt F hF hm).le⟩
+      · obtain ⟨x, hx, rfl⟩ := mem_map.mp hy
+        have hxn := (mem_Icc.mp (mem_powerset.mp hsub hx)).2
+        apply mem_Icc.mpr
+        change 1 ≤ x + (p + 1) ∧ x + (p + 1) ≤ n + p + 1
+        omega
+    · rw [hcard F hF]
+      intro y hy
+      rcases mem_insert.mp hy with rfl | hy
+      · exact le_rfl
+      · exact (hlt F hF hy).le
+    · exact ⟨_, mem_insert_self .., by rw [hcard F hF]⟩
+  · -- Erasing the inserted element recovers the translated set.
+    intro F hF G hG h
+    have hFs := (mem_filter.mp hF).2.2
+    have hGs := (mem_filter.mp hG).2.2
+    have heq := congrArg (fun E : Finset ℕ => E.erase (p * E.card)) h
+    change (lift F).erase (p * (lift F).card) = (lift G).erase (p * (lift G).card) at heq
+    rw [hcard F hFs, hcard G hGs] at heq
+    dsimp only [lift] at heq
+    rw [erase_insert (hnew F hFs), erase_insert (hnew G hGs)] at heq
+    exact map_injective shift heq
+  · intro E hE
+    obtain ⟨hsub, hm, hE, a, ha, rfl⟩ := mem_filter.mp hE
+    let R := E.erase (p * E.card)
+    -- If the minimum were the maximum, E would be a singleton with maximum p.
+    have hne : n + p + 1 ≠ p * E.card := by
+      intro he
+      have hle : E.card ≤ 1 := card_le_one.mpr fun x hx y hy => by
+        have hx' := (mem_Icc.mp (mem_powerset.mp hsub hx)).2
+        have hy' := (mem_Icc.mp (mem_powerset.mp hsub hy)).2
+        have hxl := hE x hx
+        have hyl := hE y hy
+        omega
+      have hpos := card_pos.mpr ⟨_, hm⟩
+      rw [show E.card = 1 by omega, Nat.mul_one] at he
+      omega
+    have hmR : n + p + 1 ∈ R := mem_erase.mpr ⟨hne, hm⟩
+    have hRcard : R.card + 1 = E.card := card_erase_add_one ha
+    have hRpos : 0 < p * R.card := Nat.mul_pos hp (card_pos.mpr ⟨_, hmR⟩)
+    have hdown (x : ℕ) (hx : x ∈ R) : 1 ≤ x - (p + 1) ∧ p * R.card ≤ x - (p + 1) := by
+      obtain ⟨hxa, hxE⟩ := mem_erase.mp hx
+      have hgt := lt_of_le_of_ne (hE x hxE) hxa.symm
+      rw [← hRcard, Nat.mul_succ] at hgt
+      omega
+    let F := R.image (· - (p + 1))
+    have hmap : F.map shift = R := by
+      dsimp only [F]
+      rw [map_eq_image, image_image]
+      refine (image_congr (g := id) ?_).trans image_id
+      intro x hx
+      have := (hdown x hx).1
+      change x - (p + 1) + (p + 1) = x
+      omega
+    have hFcard : F.card = R.card := by rw [← hmap, card_map]
+    refine ⟨F, mem_filter.mpr ⟨mem_powerset.mpr ?_, ?_, ?_⟩, ?_⟩
+    · intro x hx
+      obtain ⟨y, hy, rfl⟩ := mem_image.mp hx
+      have hymax := (mem_Icc.mp (mem_powerset.mp hsub (mem_erase.mp hy).2)).2
+      exact mem_Icc.mpr ⟨(hdown y hy).1, by omega⟩
+    · exact mem_image.mpr ⟨_, hmR, by omega⟩
+    · intro x hx
+      obtain ⟨y, hy, rfl⟩ := mem_image.mp hx
+      rw [hFcard]
+      exact (hdown y hy).2
+    · dsimp only [lift]
+      rw [hmap, hFcard, hRcard]
+      exact insert_erase ha
+
 /-- **Padovan-like sequence for Schreier sets.** For natural numbers $p$ and $q$, the sequence
 $a_{p,q,n}$, $n \ge 0$, is defined as follows. If $q \ge 1$ and $n \ge p + q$, then
 $a_{p,q,n} = a_{p,q,n-q} + a_{p,q,n-p-q}$. Otherwise, if $p \ge q$, then $a_{p,q,n} = 0$ for

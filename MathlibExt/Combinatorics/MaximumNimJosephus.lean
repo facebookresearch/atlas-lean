@@ -47,6 +47,8 @@ rule function $f(x) = \lfloor x/k \rfloor$.
   $x - f(x) - 1$ with $\lfloor (k-1)x/k \rfloor$.
 * `MetaMathlibExt.maximumNimGrundy_div_eq_of_dvd`: for $k \ge 2$ and the rule function
   $f(y) = \lfloor y/k \rfloor$, every positive multiple $x$ of $k$ has Grundy number $x/k$.
+* `MetaMathlibExt.maximumNimGrundy_sub_eq_zero`: for $k \ge 2$ and the same rule, every pile below
+  $k$ has Grundy number zero.
 
 ## Proof outline
 
@@ -81,6 +83,10 @@ the hypotheses $k \ge 2$ and $1 \le x$ of its wanted statement. Its proof uses t
 through $k \ge 1$, and the conclusion also holds for $x = 0$, whose Grundy number is $0$.
 
 ## References
+
+* Shoei Takahashi, Hikaru Manabe, and Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
+  INTEGERS 24 (2024), Article G5, pp. 1–16 (<https://math.colgate.edu/~integers/yg5/yg5.pdf>).
+  Lemma 6(ii), p. 11, gives the growth bound `maximumNimH_succ_le`.
 
 * Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and Josephus Problem*,
   arXiv:2403.19308v1 (2024) (<https://arxiv.org/abs/2403.19308>). Definition 2.1 in Section 2
@@ -345,6 +351,88 @@ theorem maximumNimGrundy_div_eq_of_dvd (k x : ℕ) (hk : 2 ≤ k)
   rw [Finset.eq_of_subset_of_card_le hsub (by rw [hcard, Finset.card_range])]
   exact ⟨Finset.notMem_range_self, fun n hn => Finset.mem_range.mpr hn⟩
 
+-- The hypothesis `2 ≤ k` matches the source statement; the bounds on `j` suffice for the proof.
+set_option linter.unusedVariables false in
+/-- **Floor-rule Maximum Nim: positions below k have Grundy number zero.** For every natural
+number $k \ge 2$ and every natural number $j$ with $1 \le j \le k$, a pile of $k - j$ stones has
+Grundy number $0$ in Maximum Nim with rule function $f(y) = \lfloor y/k \rfloor$.
+
+Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
+        INTEGERS 24 (2024), Article G5, Lemma 3(iii) (`integers-2024-G5-lem-3`). -/
+public theorem maximumNimGrundy_sub_eq_zero (k j : ℕ) (hk : 2 ≤ k)
+    (hj : 1 ≤ j) (hjk : j ≤ k) :
+    maximumNimGrundy (· / k) (k - j) = 0 := by
+  have hdiv : (k - j) / k = 0 := Nat.div_eq_of_lt (by omega)
+  have hempty : (Finset.Icc 1 (min ((k - j) / k) (k - j))).attach = ∅ := by
+    simp [hdiv]
+  rw [maximumNimGrundy_eq, maximumNimMex_eq_iff, hempty, Finset.image_empty]
+  simp
+
+/-- **A Maximum Nim non-divisibility lemma for $s < t$.** Let $k, n, t, h, s, i$ be natural
+numbers with $h \ge 1$, $k = nt + h$, $h \le n$ and $s < t$. If $1 \le i \le n$, then $k$ does
+not divide $n(k - s) - i$.
+
+The hypotheses force $n \ge 1$, $s < k$ and $i \le n(k - s)$, so both subtractions are ordinary
+differences of natural numbers.
+
+Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
+        INTEGERS 24 (2024), Article G5, Lemma 4(i) (`integers-2024-G5-lem-4`). -/
+public theorem maximumNim_not_dvd_mul_sub_of_lt (k n t h s i : ℕ)
+    (hh : 1 ≤ h)
+    (hdecomp : k = n * t + h) (hhn : h ≤ n) (hst : s < t)
+    (hi : 1 ≤ i) (hin : i ≤ n) :
+    ¬k ∣ n * (k - s) - i := by
+  have hoffset : n * s + i < k := calc
+    n * s + i ≤ n * (s + 1) := by rw [Nat.mul_succ]; exact Nat.add_le_add_left hin _
+    _ ≤ n * t := Nat.mul_le_mul_left n hst
+    _ < k := by omega
+  have hle : n * s + i ≤ n * k :=
+    hoffset.le.trans (Nat.le_mul_of_pos_left k (hh.trans hhn))
+  rw [Nat.mul_sub, Nat.sub_sub, Nat.dvd_sub_iff_right hle (Nat.dvd_mul_left k n)]
+  exact Nat.not_dvd_of_pos_of_lt (by omega) hoffset
+
+/-- **A Maximum Nim non-divisibility lemma for $i \ne h$.** Let $k, n, t, h, i$ be natural numbers
+with $t \ge 1$, $h \ge 1$, $k = nt + h$ and $h \le n$. If $1 \le i \le n$ and $i \ne h$, then $k$
+does not divide $n(k - t) - i$.
+
+The hypotheses force $n \ge 1$, $t \le k$ and $i \le n(k - t)$, so both subtractions are ordinary
+differences of natural numbers.
+
+Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
+        INTEGERS 24 (2024), Article G5, Lemma 4(ii) (`integers-2024-G5-lem-4`). -/
+public theorem maximumNim_not_dvd_mul_sub_of_ne (k n t h i : ℕ)
+    (ht : 1 ≤ t) (hh : 1 ≤ h)
+    (hdecomp : k = n * t + h) (hhn : h ≤ n)
+    (hi : 1 ≤ i) (hin : i ≤ n) (hih : i ≠ h) :
+    ¬k ∣ n * (k - t) - i := by
+  have htk : t < k := by
+    have htn : t ≤ n * t := Nat.le_mul_of_pos_left t (hh.trans hhn)
+    omega
+  have hik : i ≤ n * (k - t) :=
+    hin.trans (Nat.le_mul_of_pos_right n (Nat.sub_pos_of_lt htk))
+  have hnk : n < k := by
+    have hnt : n ≤ n * t := Nat.le_mul_of_pos_right n ht
+    omega
+  have hdecompZ : (k : ℤ) = (n : ℤ) * t + h := by exact_mod_cast hdecomp
+  -- Over the integers the offset from the multiple `k * (n - 1)` is `h - i`.
+  have hmul : (n : ℤ) * ((k : ℤ) - t) - i = (k : ℤ) * ((n : ℤ) - 1) + ((h : ℤ) - i) := by
+    have hnt : (n : ℤ) * t = k - h := by omega
+    rw [mul_sub, hnt, mul_sub, mul_one, mul_comm (n : ℤ) (k : ℤ)]
+    omega
+  intro hdvd
+  have hdvdZ := Int.natCast_dvd_natCast.mpr hdvd
+  rw [Nat.cast_sub hik, Nat.cast_mul, Nat.cast_sub htk.le, hmul] at hdvdZ
+  have hoffset : (k : ℤ) ∣ (h : ℤ) - i := by
+    simpa only [add_sub_cancel_left] using
+      Int.dvd_sub hdvdZ (dvd_mul_right (k : ℤ) ((n : ℤ) - 1))
+  have hsmall : ((h : ℤ) - i).natAbs < (k : ℤ).natAbs := by
+    rcases le_or_gt i h with hle | hlt
+    · exact Int.natAbs_lt_natAbs_of_nonneg_of_lt (by omega) (by omega)
+    · rw [← Int.natAbs_neg ((h : ℤ) - i)]
+      exact Int.natAbs_lt_natAbs_of_nonneg_of_lt (by omega) (by omega)
+  have hzero := Int.eq_zero_of_dvd_of_natAbs_lt_natAbs hoffset hsmall
+  exact hih (by omega)
+
 /-- **The Maximum Nim map $h_k$.** For natural numbers $k$ and $x$, let
 $h_k(x) = x + \lfloor x/(k-1) \rfloor + 1$. The paper takes $k \ge 2$; for $k \le 1$ the definition
 gives $h_k(x) = x + 1$, because $k - 1$ is truncated to $0$ and $\lfloor x/0 \rfloor$ is taken to
@@ -353,6 +441,33 @@ be $0$.
 Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
         INTEGERS 24 (2024), Article G5, Definition 3.1. -/
 public def maximumNimH (k x : ℕ) : ℕ := x + x / (k - 1) + 1
+
+/-- **The Maximum Nim map $h_k$ is strictly increasing.** Let $k \ge 2$ be a natural number and
+let $h_k$ be the map $x \mapsto x + \lfloor x/(k-1) \rfloor + 1$ on the natural numbers. For all
+natural numbers $x$ and $x'$ with $x < x'$, we have $h_k(x) < h_k(x')$.
+
+Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
+        INTEGERS 24 (2024), Article G5, Lemma 6(i) (`integers-2024-G5-lem-6`). -/
+public theorem maximumNimH_strictMono (k x x' : ℕ) (hk : 2 ≤ k) (hxx' : x < x') :
+    maximumNimH k x < maximumNimH k x' := by
+  have hdiv : x / (k - 1) ≤ x' / (k - 1) :=
+    Nat.div_le_div hxx'.le le_rfl (by omega)
+  exact Nat.succ_lt_succ (Nat.add_lt_add_of_lt_of_le hxx' hdiv)
+
+-- Keep the source's hypothesis and its binder name even though the bound holds for every `k`.
+set_option linter.unusedVariables false in
+/-- **The Maximum Nim map $h_k$ exceeds its argument.** Let $k \ge 2$ be a natural number and let
+$h_k$ be the map $x \mapsto x + \lfloor x/(k-1) \rfloor + 1$ on the natural numbers. Every natural
+number $x$ satisfies $x < x + 1 \le h_k(x)$.
+
+Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
+        INTEGERS 24 (2024), Article G5, Lemma 6(ii) (`integers-2024-G5-lem-6`). -/
+public theorem maximumNimH_succ_le (k x : ℕ) (hk : 2 ≤ k) :
+    x < x + 1 ∧ x + 1 ≤ maximumNimH k x := by
+  refine ⟨Nat.lt_succ_self x, ?_⟩
+  unfold maximumNimH
+  generalize x / (k - 1) = q
+  omega
 
 /-- **Linear bounds on h_k and their iterates.** Let $k \ge 2$ be a natural number, let
 $h_k(x) = x + \lfloor x/(k-1) \rfloor + 1$ on natural numbers, and define the real maps

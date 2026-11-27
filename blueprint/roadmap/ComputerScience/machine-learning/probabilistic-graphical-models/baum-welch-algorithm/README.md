@@ -32,3 +32,6 @@
 
 - [Expectation–maximization algorithm](../../bayesian-inference-and-sampling/expectation-maximization-algorithm/README.md): the general EM monotonicity theorem that the Baum–Welch iteration instantiates.
 - [Hidden Markov models](../hidden-markov-models/README.md): the forward–backward recursions that compute the E-step.
+
+- [Stationary-kernel discretization for pairwise SMC hidden Markov models](pairwise-smc-hmm-psmc-discretized-tmrca-hidden-s.md)
+- [Constant-size TMRCA discretization: atomic and density embedding errors](psmc-discretization-correct-embedding-bounds-for.md)

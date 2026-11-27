@@ -42,10 +42,6 @@ variable (X : ComplexScheme) (d : ℕ) [AnalyticManifold X d]
 instance pullback_isLeftAdjoint : (pullback X d).IsLeftAdjoint :=
   (pullbackPushforwardAdjunction X d).isLeftAdjoint
 
-/-- The actual pullback preserves colimits by its defining adjunction. -/
-instance pullback_preservesFiniteColimits :
-    PreservesFiniteColimits (pullback X d) := by infer_instance
-
 /-- The canonical identification of the pulled-back structure module. -/
 def pullbackUnitIso :
     (pullback X d).obj (SheafOfModules.unit X.left.ringCatSheaf) ≅
@@ -61,8 +57,8 @@ variable [PreservesFiniteLimits (pullback X d)]
 
 /-- Exactness of this specified pullback entails additivity. -/
 instance pullback_additive : (pullback X d).Additive :=
-  leftExactFunctor_le_additiveFunctor _ _ _
-    ((leftExactFunctor_iff _).2 inferInstance)
+  preservesFiniteLimits_le_additiveFunctor _ _ _
+    ((ObjectProperty.preservesFiniteLimits_iff _).2 inferInstance)
 
 /-- The actual exact analytic pullback on derived categories. -/
 abbrev derivedPullback :
