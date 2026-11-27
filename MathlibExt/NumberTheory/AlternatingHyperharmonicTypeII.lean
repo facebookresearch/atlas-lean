@@ -78,22 +78,53 @@ Article 24.4.1, Lemma 3. -/
 public theorem liCoeffA_two_one_zero : liCoeffA 2 1 0 = -1 := by
   simp [liCoeffA]
 
-end
+/-- **Li's coefficients $c(m, j)$.** For natural numbers $m$ and $j$, the rational number
+$c(m, j)$ is $\frac{1}{m+1} \binom{m+1}{m+1-j} B_{m+1-j}$ when $j \le m + 1$ and $0$ otherwise,
+where $B_i$ denotes the Bernoulli numbers with the convention $B_1 = +\frac{1}{2}$.
 
--- The coefficients of the power-sum polynomial and of its translate by -1.
-private def powerCoeff (j l : ℕ) : ℚ :=
-  if 1 ≤ l ∧ l ≤ j + 1 then
-    (1 / ((j + 1 : ℕ) : ℚ)) * ((j + 1).choose (j + 1 - l) : ℚ) * bernoulli' (j + 1 - l)
+Source: Rusen Li, *Sums over Primes II*, Journal of Integer Sequences 27 (2024),
+Article 24.4.1, Definition 4. -/
+public def liCoeffC (m j : ℕ) : ℚ :=
+  if j ≤ m + 1 then
+    1 / ((m + 1 : ℕ) : ℚ) * ((m + 1).choose (m + 1 - j) : ℚ) * bernoulli' (m + 1 - j)
   else 0
 
-private def shiftedCoeff (j d : ℕ) : ℚ :=
-  ∑ i ∈ Icc (d - 1) j, powerCoeff j (i + 1) * ((i + 1).choose d : ℚ) * (-1) ^ (i + 1 - d)
+/-- **Li's coefficients $d(m, j)$.** For natural numbers $m$ and $j$, the rational number
+$d(m, j)$ is $\frac{1}{m+1} \sum_{k} \binom{m+1}{m-k} B_{m-k} \binom{1+k}{j} (-1)^{1+k-j}$, the sum
+running over the natural numbers $k$ with $\max(j - 1, 0) \le k \le m$ (so $d(m, j) = 0$ when
+$j > m + 1$), where $B_i$ denotes the Bernoulli numbers with the convention $B_1 = +\frac{1}{2}$.
 
-private theorem shiftedCoeff_zero {j d : ℕ} (h : j + 1 < d) : shiftedCoeff j d = 0 := by
-  rw [shiftedCoeff, Icc_eq_empty_of_lt (by omega : j < d - 1), sum_empty]
+Source: Rusen Li, *Sums over Primes II*, Journal of Integer Sequences 27 (2024),
+Article 24.4.1, Definition 4. -/
+public def liCoeffD (m j : ℕ) : ℚ :=
+  1 / ((m + 1 : ℕ) : ℚ) * ∑ k ∈ Icc (j - 1) m,
+    ((m + 1).choose (m - k) : ℚ) * bernoulli' (m - k) * ((1 + k).choose j : ℚ) * (-1) ^ (1 + k - j)
 
-private theorem shiftedCoeff_top (j : ℕ) : shiftedCoeff j (j + 1) = 1 / ((j + 1 : ℕ) : ℚ) := by
-  simp [shiftedCoeff, powerCoeff]
+end
+
+-- The power-sum polynomial has no constant term, unlike Li's general coefficient array.
+private def powerCoeff (j l : ℕ) : ℚ :=
+  if 1 ≤ l then liCoeffC j l else 0
+
+private theorem powerCoeff_of_le {j l : ℕ} (hl : 1 ≤ l) (h : l ≤ j + 1) :
+    powerCoeff j l = 1 / ((j + 1 : ℕ) : ℚ) * ((j + 1).choose (j + 1 - l) : ℚ) *
+      bernoulli' (j + 1 - l) := by
+  simp [powerCoeff, liCoeffC, hl, h]
+
+private theorem liCoeffD_eq_sum (j d : ℕ) :
+    liCoeffD j d = ∑ i ∈ Icc (d - 1) j,
+      powerCoeff j (i + 1) * ((i + 1).choose d : ℚ) * (-1) ^ (i + 1 - d) := by
+  rw [liCoeffD, mul_sum]
+  refine sum_congr rfl fun i hi => ?_
+  rw [powerCoeff_of_le (by omega) (by have := (mem_Icc.mp hi).2; omega),
+    show j + 1 - (i + 1) = j - i by omega, Nat.add_comm 1 i]
+  ring
+
+private theorem liCoeffD_zero_of_lt {j d : ℕ} (h : j + 1 < d) : liCoeffD j d = 0 := by
+  rw [liCoeffD, Icc_eq_empty_of_lt (by omega : j < d - 1), sum_empty, mul_zero]
+
+private theorem liCoeffD_top (j : ℕ) : liCoeffD j (j + 1) = 1 / ((j + 1 : ℕ) : ℚ) := by
+  simp [liCoeffD, Nat.add_comm 1]
 
 private theorem liCoeffA_zero_of_le_add {r m j : ℕ} (h : r ≤ m + j) :
     liCoeffA r m j = 0 := by
@@ -111,41 +142,41 @@ private theorem liCoeffA_succ_pos (r m l : ℕ) (hl : 1 ≤ l) :
     calc
       _ = ∑ j ∈ Icc (l - 1) (r - m), liCoeffA (r + 1) m j * powerCoeff j l := by
         refine sum_congr rfl fun j hj => ?_
-        rw [powerCoeff, ite_eq_left ⟨hl, by have := (mem_Icc.mp hj).1; omega⟩]
+        rw [powerCoeff_of_le hl (by have := (mem_Icc.mp hj).1; omega)]
         ring
       _ = _ := by
         refine sum_subset (fun j hj => mem_range.mpr (by have := (mem_Icc.mp hj).2; omega)) ?_
         intro j _ hj
         by_cases hd : l ≤ j + 1
         · rw [liCoeffA_zero_of_le_add (by rw [mem_Icc] at hj; omega), zero_mul]
-        · simp [powerCoeff, hd]
+        · simp [powerCoeff, liCoeffC, hd]
   · rw [ite_eq_right h, ite_eq_right (by omega)]
     symm
     apply sum_eq_zero
     intro j _
     by_cases hd : l ≤ j + 1
     · rw [liCoeffA_zero_of_le_add (by omega), zero_mul]
-    · simp [powerCoeff, hd]
+    · simp [powerCoeff, liCoeffC, hd]
 
 private theorem liCoeffA_succ_zero (r m : ℕ) (hm : m < r + 2) :
     liCoeffA (r + 2) m 0 = -∑ y ∈ range (m + 1), ∑ j ∈ range (r + 2),
-      liCoeffA (r + 1) y j * shiftedCoeff j (m - y) := by
+      liCoeffA (r + 1) y j * liCoeffD j (m - y) := by
   rw [liCoeffA]
   by_cases ht : m = r + 1
   · subst m
     rw [ite_eq_left ⟨rfl, rfl⟩]
     congr 1
     have hlast : ∀ y ∈ range (r + 2),
-        (∑ j ∈ range (r + 2), liCoeffA (r + 1) y j * shiftedCoeff j (r + 1 - y)) =
+        (∑ j ∈ range (r + 2), liCoeffA (r + 1) y j * liCoeffD j (r + 1 - y)) =
           if y < r + 1 then liCoeffA (r + 1) y (r - y) / ((r + 1 - y : ℕ) : ℚ) else 0 := by
       intro y hy
       by_cases hy' : y < r + 1
       · rw [ite_eq_left hy', sum_eq_single_of_mem (r - y) (mem_range.mpr (by omega))]
-        · rw [show r + 1 - y = (r - y) + 1 by omega, shiftedCoeff_top]
+        · rw [show r + 1 - y = (r - y) + 1 by omega, liCoeffD_top]
           ring
         · intro j _ hj
           by_cases h : j < r - y
-          · rw [shiftedCoeff_zero (by omega), mul_zero]
+          · rw [liCoeffD_zero_of_lt (by omega), mul_zero]
           · rw [liCoeffA_zero_of_le_add (by omega), zero_mul]
       · rw [ite_eq_right hy']
         exact sum_eq_zero fun j _ => by rw [liCoeffA_zero_of_le_add (by omega), zero_mul]
@@ -158,19 +189,19 @@ private theorem liCoeffA_succ_zero (r m : ℕ) (hm : m < r + 2) :
     refine sum_congr rfl fun y hy => ?_
     have hy' : y ≤ m := by simpa using hy
     calc
-      _ = ∑ j ∈ Icc (m - y - 1) (r - y), liCoeffA (r + 1) y j * shiftedCoeff j (m - y) := by
+      _ = ∑ j ∈ Icc (m - y - 1) (r - y), liCoeffA (r + 1) y j * liCoeffD j (m - y) := by
         refine sum_congr rfl fun j _ => congrArg (_ * ·) ?_
+        rw [liCoeffD_eq_sum]
         refine sum_congr rfl fun i hi => ?_
-        have hi₁ := (mem_Icc.mp hi).1
-        have hi₂ := (mem_Icc.mp hi).2
-        rw [powerCoeff, ite_eq_left (by omega), show j + 1 - (i + 1) = j - i by omega,
+        rw [powerCoeff_of_le (by omega) (by have := (mem_Icc.mp hi).2; omega),
+          show j + 1 - (i + 1) = j - i by omega,
           show i + 1 - (m - y) = 1 + i + y - m by omega]
       _ = _ := by
         refine sum_subset (fun j hj => mem_range.mpr (by have := (mem_Icc.mp hj).2; omega)) ?_
         intro j _ hj
         rw [mem_Icc] at hj
         by_cases hd : j + 1 < m - y
-        · rw [shiftedCoeff_zero hd, mul_zero]
+        · rw [liCoeffD_zero_of_lt hd, mul_zero]
         · rw [liCoeffA_zero_of_le_add (by omega), zero_mul]
 
 private def powerSum (j : ℕ) (x : ℚ) : ℚ :=
@@ -182,7 +213,7 @@ private theorem powerSum_nat (n j : ℕ) :
   refine sum_congr rfl fun i hi => ?_
   have hi' := mem_range.mp hi
   have h₁ : j + 1 - 1 - i + 1 = j + 1 - i := by omega
-  rw [h₁, powerCoeff, ite_eq_left (by omega), show j + 1 - (j + 1 - i) = i by omega]
+  rw [h₁, powerCoeff_of_le (by omega) (by omega), show j + 1 - (j + 1 - i) = i by omega]
   push_cast
   ring
 
@@ -196,10 +227,10 @@ private theorem powerSum_expand (j R : ℕ) (h : j + 1 < R) (x : ℚ) :
       refine sum_subset (Ico_subset_Ico_right (by omega)) ?_
       intro l hl hl'
       rw [mem_Ico] at hl hl'
-      simp [powerCoeff, show ¬ l ≤ j + 1 by omega]
+      simp [powerCoeff, liCoeffC, show ¬ l ≤ j + 1 by omega]
 
 private theorem powerSum_shift (j R : ℕ) (h : j + 1 < R) (x : ℚ) :
-    powerSum j (x - 1) = ∑ d ∈ range R, shiftedCoeff j d * x ^ d := by
+    powerSum j (x - 1) = ∑ d ∈ range R, liCoeffD j d * x ^ d := by
   calc
     _ = ∑ i ∈ range (j + 1), ∑ d ∈ range R,
         (powerCoeff j (i + 1) * ((i + 1).choose d : ℚ) * (-1) ^ (i + 1 - d)) * x ^ d := by
@@ -218,7 +249,7 @@ private theorem powerSum_shift (j R : ℕ) (h : j + 1 < R) (x : ℚ) :
     _ = _ := by
       rw [sum_comm]
       refine sum_congr rfl fun d _ => ?_
-      rw [shiftedCoeff, sum_mul]
+      rw [liCoeffD_eq_sum, sum_mul]
       symm
       refine sum_subset (fun i hi => mem_range.mpr (by have := (mem_Icc.mp hi).2; omega)) ?_
       intro i hi hi'
@@ -271,19 +302,19 @@ private theorem upper_eval (r m : ℕ) (x : ℚ) :
 private theorem lower_eval (r : ℕ) (x : ℚ) :
     ∑ y ∈ range (r + 2), (∑ j ∈ range (r + 2), liCoeffA (r + 1) y j * powerSum j (x - 1)) * x ^ y =
       -(∑ m ∈ range (r + 2), liCoeffA (r + 2) m 0 * x ^ m) := by
-  let u (y d : ℕ) := ∑ j ∈ range (r + 2), liCoeffA (r + 1) y j * shiftedCoeff j d
+  let u (y d : ℕ) := ∑ j ∈ range (r + 2), liCoeffA (r + 1) y j * liCoeffD j d
   have hu (y d : ℕ) (h : r + 2 ≤ y + d) : u y d = 0 := by
     apply sum_eq_zero
     intro j _
     by_cases hj : j + 1 < d
-    · rw [shiftedCoeff_zero hj, mul_zero]
+    · rw [liCoeffD_zero_of_lt hj, mul_zero]
     · rw [liCoeffA_zero_of_le_add (by omega), zero_mul]
   have hshift (y : ℕ) :
       ∑ j ∈ range (r + 2), liCoeffA (r + 1) y j * powerSum j (x - 1) =
         ∑ d ∈ range (r + 2), u y d * x ^ d := by
     calc
       _ = ∑ j ∈ range (r + 2), ∑ d ∈ range (r + 2),
-          liCoeffA (r + 1) y j * shiftedCoeff j d * x ^ d := by
+          liCoeffA (r + 1) y j * liCoeffD j d * x ^ d := by
         refine sum_congr rfl fun j _ => ?_
         by_cases h : j + 1 < r + 2
         · rw [powerSum_shift j (r + 2) h, mul_sum]

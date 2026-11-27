@@ -142,17 +142,6 @@ public theorem_wanted sum_pow_mul_log_pow_isEquivalent (m n k : ℕ) :
       fun x : ℕ => (x : ℝ) ^ (m + 1) * Real.log x ^ n /
         ((m + 1) * Real.log (Real.log x) ^ k))
 
-/-- **Li's coefficients $c(m, j)$.** For natural numbers $m$ and $j$, the rational number
-$c(m, j)$ is $\frac{1}{m+1} \binom{m+1}{m+1-j} B_{m+1-j}$ when $j \le m + 1$ and $0$ otherwise,
-where $B_i$ denotes the Bernoulli numbers with the convention $B_1 = +\frac{1}{2}$.
-
-Source: Rusen Li, *Sums over Primes II*, Journal of Integer Sequences 27 (2024),
-Article 24.4.1, Definition 4. -/
-public def liCoeffC (m j : ℕ) : ℚ :=
-  if j ≤ m + 1 then
-    1 / ((m + 1 : ℕ) : ℚ) * ((m + 1).choose (m + 1 - j) : ℚ) * bernoulli' (m + 1 - j)
-  else 0
-
 /-- **Li's coefficient $c(0, 0)$.** Li's coefficient $c(0, 0)$ equals $\frac{1}{2}$ (this is the
 Bernoulli number $B_1$ in the convention $B_1 = +\frac{1}{2}$).
 
@@ -160,17 +149,6 @@ Source: Rusen Li, *Sums over Primes II*, Journal of Integer Sequences 27 (2024),
 Article 24.4.1, Definition 4. -/
 public theorem liCoeffC_zero_zero : liCoeffC 0 0 = 1 / 2 := by
   simp [liCoeffC]
-
-/-- **Li's coefficients $d(m, j)$.** For natural numbers $m$ and $j$, the rational number
-$d(m, j)$ is $\frac{1}{m+1} \sum_{k} \binom{m+1}{m-k} B_{m-k} \binom{1+k}{j} (-1)^{1+k-j}$, the sum
-running over the natural numbers $k$ with $\max(j - 1, 0) \le k \le m$ (so $d(m, j) = 0$ when
-$j > m + 1$), where $B_i$ denotes the Bernoulli numbers with the convention $B_1 = +\frac{1}{2}$.
-
-Source: Rusen Li, *Sums over Primes II*, Journal of Integer Sequences 27 (2024),
-Article 24.4.1, Definition 4. -/
-public def liCoeffD (m j : ℕ) : ℚ :=
-  1 / ((m + 1 : ℕ) : ℚ) * ∑ k ∈ Icc (j - 1) m,
-    ((m + 1).choose (m - k) : ℚ) * bernoulli' (m - k) * ((1 + k).choose j : ℚ) * (-1) ^ (1 + k - j)
 
 /-- **Li's coefficient $d(0, 1)$.** Li's coefficient $d(0, 1)$ equals $1$.
 
