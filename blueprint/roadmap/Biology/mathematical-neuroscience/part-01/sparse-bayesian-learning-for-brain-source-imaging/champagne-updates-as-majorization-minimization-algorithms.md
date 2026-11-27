@@ -23,6 +23,7 @@ with $C_y$ the sample covariance; it is non-convex in $\gamma$.
 ## Depends on
 
 - [Gaussian conditioning (Schur complement)](../../../../Probability/distributions/continuous/gaussian-conditioning/cond-distrib-multivariate-gaussian.md)
+- [Jensen's inequality](../../../../MeasureTheory/integration/jensen-s-inequality-for-integrals/jensen-s-inequality/jensen-inequality.md)
 
 ## Expansion
 

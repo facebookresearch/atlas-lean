@@ -12,7 +12,7 @@ Fix $k$ and the alphabet $\Sigma = \{A, C, G, T\}$. Let $U$ be the compacted de 
 
 ## Expansion
 
-Each $k$-mer $s$ of the dBG has at most $|\Sigma| = 4$ possible successors and $4$ predecessors in any sequence. A DFK adjacent to $s$ must lie in $D$ but not in the dBG, and if $s$ is extended at all within the dBG on that side, at most $|\Sigma| - 1 = 3$ of the $4$ neighbours can be DFKs; two sides give at most $6$ per dBG $k$-mer, while every DFK is also a distinct $k$-mer of $D$. Because a read from outside the targets that shares only part of its sequence with a transcript must cross one of these boundaries, its $k$-mers hit a DFK, which blocks the mismapping that a transcript-only index would produce, while the index stays far smaller than including the whole genome as a decoy.
+Each $k$-mer $s$ of the dBG has at most $|\Sigma| = 4$ possible successors and $4$ predecessors in any sequence. A DFK adjacent to $s$ must lie in $D$ but not in the dBG, so at most $4$ neighbours on each side can be DFKs, and at most $|\Sigma| - 1 = 3$ on a side where $s$ has a dBG neighbour; two sides give at most $8$ per dBG $k$-mer, while every DFK is also a distinct $k$-mer of $D$. Because a read from outside the targets that shares only part of its sequence with a transcript must cross one of these boundaries, its $k$-mers hit a DFK, which blocks the mismapping that a transcript-only index would produce, while the index stays far smaller than including the whole genome as a decoy.
 
 ## Sources
 

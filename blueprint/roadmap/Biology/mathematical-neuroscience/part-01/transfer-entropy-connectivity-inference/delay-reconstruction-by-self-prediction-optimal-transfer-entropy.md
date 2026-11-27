@@ -15,6 +15,8 @@ Conditioning instead on the target state at the same lag as the source, $I(Y_t ;
 ## Depends on
 
 - [Conditional mutual information of a finite joint law](../../../../InformationTheory/entropy-and-mutual-information/conditional-mutual-information/finite-conditional-mutual-information.md)
+- [Data-processing inequality](../../../../InformationTheory/entropy-and-mutual-information/conditional-mutual-information/finite-mutual-information-le-left-of-mar.md)
+- [Chain rule for mutual information](../../../../InformationTheory/entropy-and-mutual-information/conditional-mutual-information/finite-mutual-information-chain-rule.md)
 
 ## Expansion
 

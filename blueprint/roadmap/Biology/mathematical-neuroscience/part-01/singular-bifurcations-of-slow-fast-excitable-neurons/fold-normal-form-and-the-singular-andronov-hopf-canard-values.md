@@ -16,6 +16,10 @@ $$H_1^a = \frac{\sigma c}{2}, \qquad K_1^a = -\frac{c}{4}\Big(\sigma + \frac{3}{
 
 the bifurcation is supercritical if $K_1^a > 0$ and subcritical if $K_1^a < 0$. Criticality changes at $c_{\mathrm{bautin}} = -2\sigma/(3\beta)$, where for $0 < \varepsilon \ll 1$ a codimension-two Bautin point occurs; for $0 < c < c_{\mathrm{bautin}}$ the subcritical Hopf branch is accompanied by a saddle-node of canard cycles exponentially close to $a_c$.
 
+## Depends on
+
+- [Statement of the local Hopf bifurcation theorem on ℝᴺ](../../../systems-biology/three-variable-repressilator/hopf-bifurcation-theorem.md)
+
 ## Expansion
 
 The proof straightens the $v$-nullcline by dividing by a positive factor of $f$, translates the fold to the origin, and uses near-identity changes of variables to remove the $y^2$ term from the slow equation, then rescales so that the coefficient of $x$ is $\pm 1$. The equilibrium near the fold sits at $y \approx \varepsilon H_1^a/c$ and the trace of the linearization is $-\sigma + 2H_1^a/c + O(\varepsilon^2)$, which vanishes at $H_1^a = \sigma c/2$. The canard value is where the slow manifold admits a smooth expansion $x = \varphi_0(y) + \varepsilon\varphi_1(y) + \varepsilon^2\varphi_2(y) + \cdots$ through the fold; requiring $\varphi_2$ to have no pole at $y = 0$ fixes $K_1^a$, which doubles as the first Lyapunov coefficient. The cusp values come from a triple root of the equilibrium equation $\sigma(y^2 + \beta y^3) - c y + a = 0$. In the canonical neuron model of the paper, $\sigma = 1$, $\beta = -1/d^2$ and $c_{\mathrm{bautin}} = 2d^2/3$.

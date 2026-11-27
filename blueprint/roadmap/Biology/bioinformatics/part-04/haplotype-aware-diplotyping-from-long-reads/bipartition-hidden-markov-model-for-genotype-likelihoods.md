@@ -19,6 +19,9 @@ and the likelihood of a genotype at site $j$ is the sum of these posteriors over
 ## Depends on
 
 - [Diploid path graph of read bipartitions](diploid-path-graph-of-read-bipartitions.md)
+- [Forward variables of a hidden Markov model](../../../../ComputerScience/machine-learning/probabilistic-graphical-models/hidden-markov-models/forward.md)
+- [Backward variables of a hidden Markov model](../../../../ComputerScience/machine-learning/probabilistic-graphical-models/hidden-markov-models/backward.md)
+- [Forward-backward identity](../../../../ComputerScience/machine-learning/probabilistic-graphical-models/hidden-markov-models/state-marg-eq.md)
 
 ## Expansion
 

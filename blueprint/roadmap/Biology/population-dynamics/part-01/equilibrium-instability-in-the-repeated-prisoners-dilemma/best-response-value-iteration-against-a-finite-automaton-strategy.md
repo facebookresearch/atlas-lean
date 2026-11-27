@@ -13,6 +13,10 @@ Then $0 \le \max_i \bigl(V_S^*(i) - V_{S,n+1}(i)\bigr) \le \delta \max_i \bigl(V
 ## Depends on
 
 - [Indirect invasions destabilize every equilibrium of the repeated prisoner's dilemma](indirect-invasions-destabilize-every-equilibrium-of-the-repeated-prisoners-dilemma.md)
+- [Bellman optimality operator](../../../../ComputerScience/heuristic-search-and-planning/value-iteration/bellman.md)
+- [The Bellman optimality operator is monotone](../../../../ComputerScience/heuristic-search-and-planning/value-iteration/bellman-mono.md)
+- [Bellman's operator is a contraction](../../../../ComputerScience/heuristic-search-and-planning/value-iteration/bellman-contracting.md)
+- [Value iteration converges](../../../../ComputerScience/heuristic-search-and-planning/value-iteration/tendsto-value-iteration.md)
 
 ## Expansion
 

@@ -10,6 +10,12 @@
 
 **Uniqueness.** If two restricted LGT networks with one secondary arc each have the same reduced principal subtree and the same reduced secondary subtree, they are equal. More generally, if $T, T'_1, \dots, T'_k$ are pairwise different and some restricted LGT network has reduced principal subtree $T$ and reduced secondary subtrees $T'_1,\dots,T'_k$, then this network is unique up to isomorphism and is constructed by combining the single-transfer networks $N(T, T'_i)$, each of which it contains.
 
+## Depends on
+
+- [Rooted SPR distance](../../../not-yet-classified/rooted-spragreement-forest/rspr-dist.md)
+- [Rooted triplet](../../splits-compatibility-ultrametrics-and-upgma/triplet.md)
+- [Cluster system displaying a triplet](../../splits-compatibility-ultrametrics-and-upgma/displays-triplet.md)
+
 ## Expansion
 
 Condition (c) makes the principal clusters of $u$ and $h$ disjoint, and condition (d) supplies a node $w$ on $z \leadsto h$ with a principal child outside that path. Taking $x_1$ below $u$, $x_2$ below $h$ and $x_3$ below that child, $T_0$ induces the triple $((x_2,x_3),x_1)$ while $T_e$ induces $((x_1,x_2),x_3)$, so the reduced trees differ. Replacing the principal arc into $h$ by $e$ is exactly one prune-and-regraft of the subtree at $h$, giving $d_{rSPR} = 1$; conversely, from such an rSPR one adds the arc $(w,h)$ (splitting an arc above $w$ when the regraft is onto an arc) and conditions (1)–(2) translate back into (c)–(d). Conditions (a) and (b) are needed for uniqueness: without them two transfers from adjacent elementary nodes can be swapped without changing any secondary subtree.
