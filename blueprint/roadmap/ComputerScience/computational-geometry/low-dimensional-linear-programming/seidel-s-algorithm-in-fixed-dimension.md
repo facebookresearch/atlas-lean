@@ -12,6 +12,7 @@ Seidel's randomized incremental algorithm inserts $h_{d+1}, \dots, h_n$ in unifo
 ## Proof depends on
 
 - [A violated constraint contains the new optimum](a-violated-constraint-contains-the-new-optimum.md)
+- [The optimum changes with probability at most d/i](the-optimum-changes-with-probability-at-most-d-over-i.md)
 
 ## Informally uses
 

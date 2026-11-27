@@ -31,19 +31,6 @@ statement about `S` up to translation.
 
 namespace MetaMathlibExt
 
-/-- **Golden mean flips connect all expansions to the Bergman expansion.** Let $N$ be a natural
-number, let $S$ be a Bergman expansion of $N$ and let $T$ be any finite base phi expansion of
-$N$ with digits $0$ and $1$. Then $T$ is obtained from $S$ by finitely many (possibly zero)
-golden mean flips $100 \to 011$.
-
-Source: Michel Dekking and Ad van Loon, *Counting Base Phi Representations*,
-Fibonacci Quarterly 62 (2024), Article 62-2/dekking11102023, Theorem 2.1
-(`fq-2024-dekking11102023-thm-2.1`). -/
-public theorem_wanted reflTransGen_isGoldenMeanFlip_of_isBergmanExpansion (N : ℕ)
-    {S T : Finset ℤ} (hS : IsBergmanExpansion S) (hSN : basePhiValue S = N)
-    (hTN : basePhiValue T = N) :
-    Relation.ReflTransGen IsGoldenMeanFlip S T
-
 /-- **Recursion for the number of Knott expansions.** Let $\varphi$ be the golden ratio, let
 $N \ge 2$ and $n$ be natural numbers, and let $p_0, \dots, p_n$ be integers with
 $p_{k+1} \ge p_k + 2$ for all $k < n$ and $\sum_{k=0}^{n} \varphi^{p_k} = N$. Thus $N$ has the
