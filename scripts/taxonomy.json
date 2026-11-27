@@ -508,7 +508,7 @@
    "fields": [
     {"slug": "type-theoretic-foundations", "title": "Type-theoretic foundations", "description": "Propositional reasoning and constructions of dependent type theory: empty and inhabited types, unique existence, subtypes, quotients, universes and inductive and coinductive types. Formal propositional and first-order systems as objects of study have their own fields.", "msc": ["03B15", "03B40", "03B70"], "subfields": []},
     {"slug": "propositional-logic", "title": "Propositional logic and satisfiability", "description": "Classical propositional logic: truth-table semantics, natural deduction and its completeness, functional completeness, normal forms and CNF transformations, resolution, interpolation, SAT-solving procedures (Davis–Putnam, DPLL, 2-SAT, Horn-SAT) and binary decision diagrams.", "msc": ["03B05", "03B35", "68V15"], "subfields": [
-     {"slug": "sat-solving", "title": "SAT solving", "description": "Algorithms that decide propositional satisfiability: DPLL search with learning and its correspondence with tree-like resolution, conflict-driven clause learning with its soundness and termination, soundness of unit-propagation conflicts, and the one-half and seven-eighths bounds for MAX-SAT."}
+     {"slug": "sat-solving", "title": "SAT solving", "description": "Algorithms that decide propositional satisfiability: DPLL search with learning and its correspondence with tree-like resolution, the soundness of conflict-driven clause learning, termination of CDCL without restarts or clause deletion within fixed finite variable and clause sets, soundness of unit-propagation conflicts, and the one-half and seven-eighths bounds for MAX-SAT."}
     ]},
     {"slug": "first-order-logic", "title": "First-order logic", "description": "Syntax, proof calculi and semantics of first-order predicate logic, including soundness and Gödel's completeness theorem.", "msc": ["03B10", "03C07", "03F07"], "subfields": []},
     {"slug": "proof-theory", "title": "Proof theory", "description": "Structural study of formal proofs and provability: sequent calculi, linear logic and translations into it, and Gödel's incompleteness theorems.", "msc": ["03F03", "03F40", "03F52"], "subfields": []},
@@ -1271,7 +1271,7 @@
   "CSLibExt/Algorithms/Quantum/Shor/OrderToFactor": {"to": "ComputerScience/quantum-algorithms", "title": "Shor's reduction of factoring to order finding"},
   "CSLibExt/Algorithms/Quantum/Shor/OrderToFactorProbability": {"to": "ComputerScience/quantum-algorithms", "title": "Shor's reduction of factoring to order finding"},
   "CSLibExt/Algorithms/SAT/CDCL/Basic": {"to": "Logic/propositional-logic/sat-solving", "title": "Conflict-driven clause learning"},
-  "CSLibExt/Algorithms/SAT/CDCL/Termination": {"to": "Logic/propositional-logic/sat-solving", "title": "CDCL termination within fixed finite variable and clause sets"},
+  "CSLibExt/Algorithms/SAT/CDCL/Termination": {"to": "Logic/propositional-logic/sat-solving", "title": "Termination of CDCL without restarts or clause deletion"},
   "CSLibExt/Algorithms/SAT/DPLL": {"to": "Logic/propositional-logic", "title": "DPLL algorithm"},
   "CSLibExt/Algorithms/SAT/DavisPutnam/Basic": {"to": "Logic/propositional-logic", "title": "Davis–Putnam algorithm"},
   "CSLibExt/Algorithms/SAT/Horn/Basic": {"to": "Logic/propositional-logic", "title": "Horn satisfiability"},

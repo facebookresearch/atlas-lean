@@ -1,3 +1,3 @@
-# Group Elem
+# Ordered subset product of the generators
 
-The product of the generators indexed by `T`, in index order.
+For [generators](generator.md) $g_j = c_j X^{a_j} Z^{b_j}$ ($j = 1, \dots, r$) and $T \subseteq \{1, \dots, r\}$, $g_T$ is the product of the $g_j$ with $j \in T$ in increasing order of $j$; $g_\emptyset = I$.

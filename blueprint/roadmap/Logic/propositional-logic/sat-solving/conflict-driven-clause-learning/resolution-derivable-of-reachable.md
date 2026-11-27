@@ -1,4 +1,3 @@
-# Resolution Derivable of reachable
+# Clauses of reachable states are resolution-derivable
 
-Every current clause of a reachable state, input or learned, is resolution-derivable from
-the input formula.
+Let $F$ be a CNF formula. For every state reachable from the [initial state](initial.md) by [CDCL transitions](step.md) for $F$, every current clause, input or learned, is resolution-derivable from $F$.

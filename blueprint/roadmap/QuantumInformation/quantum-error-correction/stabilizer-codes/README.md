@@ -1,9 +1,9 @@
 # Stabilizer codes
 
 - [Signed Pauli generator](generator.md)
-- [Group Elem](group-elem.md)
+- [Ordered subset product of the generators](group-elem.md)
 - [Subset products of the generators](stabilizer-group.md)
-- [Code Space](code-space.md)
+- [Code space of the generators](code-space.md)
 - [Code projector](code-projector.md)
 - [Subset products multiply by symmetric difference](group-elem-mul.md)
 - [Independent generators give 2^r stabilizer elements](card-stabilizer-group.md)

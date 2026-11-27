@@ -1,4 +1,3 @@
-# Trans
+# Transitivity of resolution derivability
 
-Resolution derivations compose: if every clause of `ψ` is derivable from `φ`, then so is
-every clause derivable from `ψ`.
+Let $\varphi$ and $\psi$ be CNF formulas such that every clause of $\psi$ is resolution-derivable from $\varphi$. Then every clause resolution-derivable from $\psi$ is resolution-derivable from $\varphi$.

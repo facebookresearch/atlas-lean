@@ -1,3 +1,3 @@
-# Falsifies
+# Literal false on a trail
 
-The trail sets `literal` false: it sets the complementary literal true.
+A trail falsifies a literal $(x, b)$ when $(x, \lnot b)$ is the literal of some decided or propagated entry of the trail.

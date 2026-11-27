@@ -1,6 +1,6 @@
 # Lossless codec instances
 
-## Lean
+## Huffman codes
 
 - [Lifting symbols to leaf symbols](to-leaf-symbols.md)
 - [Lifting the symbols of a leaf-symbol message](to-leaf-symbols-map-val.md)

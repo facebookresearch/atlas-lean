@@ -1,3 +1,3 @@
-# Refl Trans Gen
+# The soundness invariant is preserved along runs
 
-The invariant holds along every run from a state that satisfies it.
+Let $F$ be a CNF formula, with the [soundness invariant](invariant.md) of [CDCL transitions](step.md) for $F$. If a state satisfies the invariant, so does every state reachable from it by finitely many transitions.

@@ -1,6 +1,6 @@
 # SAT solving
 
-Algorithms that decide propositional satisfiability: DPLL search with learning and its correspondence with tree-like resolution, conflict-driven clause learning with its soundness and termination, soundness of unit-propagation conflicts, and the one-half and seven-eighths bounds for MAX-SAT.
+Algorithms that decide propositional satisfiability: DPLL search with learning and its correspondence with tree-like resolution, the soundness of conflict-driven clause learning, termination of CDCL without restarts or clause deletion within fixed finite variable and clause sets, soundness of unit-propagation conflicts, and the one-half and seven-eighths bounds for MAX-SAT.
 
 - [Failing DPLL search trees give tree-like resolution refutations](failing-dpll-search-trees-give-tree-like.md)
 - [DPLL search trees and tree-like resolution simulate each other](dpll-search-trees-and-tree-like-resolution.md)
@@ -12,4 +12,4 @@ Algorithms that decide propositional satisfiability: DPLL search with learning a
 - [Conflict-driven clause learning](conflict-driven-clause-learning/README.md)
 - [MAX-SAT: the one-half and seven-eighths bounds](max-sat-the-one-half-and-seven-eighths-bounds/README.md)
 - [Soundness of unit-propagation conflicts](soundness-of-unit-propagation-conflicts/README.md)
-- [CDCL termination within fixed finite variable and clause sets](termination-of-cdcl-without-restarts-or-clause-d/README.md)
+- [Termination of CDCL without restarts or clause deletion](termination-of-cdcl-without-restarts-or-clause-d/README.md)

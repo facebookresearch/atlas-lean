@@ -1,3 +1,3 @@
-# Of append
+# Justified propagations after dropping newest entries
 
-Justified propagations stay justified when newer trail entries are dropped.
+Let $F$ be a CNF formula. If every propagation on a trail is [justified](reasons-valid.md) for $F$, so is every propagation on the trail left after dropping any number of its newest entries.
