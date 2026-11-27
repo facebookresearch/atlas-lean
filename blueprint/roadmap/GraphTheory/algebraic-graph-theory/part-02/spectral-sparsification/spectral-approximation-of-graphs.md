@@ -7,7 +7,9 @@ $\varepsilon \in (0, 1)$. Then $H$ is an $\varepsilon$-*spectral approximation* 
 
 $$(1 - \varepsilon)\, x^{\mathsf T} L_G x \le x^{\mathsf T} L_H x \le (1 + \varepsilon)\, x^{\mathsf T} L_G x \qquad \text{for all } x \in \mathbb{R}^V.$$
 
-The error is relative to $G$, the graph that $H$ approximates.
+The error is relative to $G$, the graph that $H$ approximates. Scaling the weights of $H$ by $1/(1 - \varepsilon)$
+gives a graph $H'$ with $L_G \preceq L_{H'} \preceq \kappa L_G$ in the Loewner order, where
+$\kappa = (1 + \varepsilon)/(1 - \varepsilon)$: the form in which the spectral sparsification results are stated.
 
 ## Sources
 

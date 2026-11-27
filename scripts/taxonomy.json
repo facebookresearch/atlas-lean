@@ -10861,7 +10861,7 @@
   "MathlibExt/Combinatorics/EndpointMapMultigraph/EffectiveResistance": {"to": "GraphTheory/algebraic-graph-theory", "title": "Effective resistance and electrical networks"},
   "MathlibExt/Combinatorics/EndpointMapMultigraph/NashWilliams": {"to": "GraphTheory/algebraic-graph-theory", "title": "Effective resistance and electrical networks"},
   "MathlibExt/Combinatorics/EndpointMapMultigraph/OrientedIncidence": {"to": "GraphTheory/algebraic-graph-theory", "title": "Oriented incidence matrices"},
-  "MathlibExt/Combinatorics/EndpointMapMultigraph/SpectralApproximation": {"to": "ComputerScience/graph-algorithms", "title": "Graph algorithm bounds"},
+  "MathlibExt/Combinatorics/EndpointMapMultigraph/SpectralApproximation": {"to": "GraphTheory/algebraic-graph-theory", "title": "Spectral sparsification"},
   "MathlibExt/Combinatorics/EndpointMapMultigraph/SpectralDrawing": {"to": "GraphTheory/algebraic-graph-theory", "title": "Graph Laplacians and Cheeger's inequality"},
   "MathlibExt/Combinatorics/EndpointMapMultigraph/SpectralSparsification": {"to": "GraphTheory/algebraic-graph-theory", "title": "Spectral sparsification"},
   "MathlibExt/Combinatorics/EndpointMapMultigraph/ThomsonPrinciple": {"to": "GraphTheory/algebraic-graph-theory", "title": "Effective resistance and electrical networks"},

@@ -11,8 +11,9 @@ as produced by modified nodal analysis of a linear circuit. A pair $(x, y)$ solv
 $t \in [t_0, T]$ the function $x$ has derivative $A x(t) + B y(t) + f(t)$ and $C x(t) + D y(t) + g(t) = 0$; no
 regularity is asked of $y$.
 
-The norms are the sup norms of $\mathbb R^n$ and $\mathbb R^m$ in these coordinates, $|v| = \max_i |v_i|$, and
-$\|\cdot\|$ is the operator norm they induce. Put $\hat A = A - B D^{-1} C$ and $L = \|\hat A\|$. Eliminating
+The norms are the sup norms of $\mathbb R^n$ and $\mathbb R^m$ in these coordinates: $|v| = \max_i |v_i|$, the largest
+absolute coordinate, when the index set is nonempty, and $|v| = 0$ when it is empty; $\|\cdot\|$ is the operator norm
+they induce. Put $\hat A = A - B D^{-1} C$ and $L = \|\hat A\|$. Eliminating
 $y = -D^{-1}(C x + g)$ gives the reduced equation $x' = \hat A x + f(t) - B D^{-1} g(t)$. For a step $h > 0$, an
 explicit Euler sequence of the reduced equation is a sequence $(X_k)$, from an arbitrary $X_0 \in \mathbb R^n$, with
 $X_{k+1} = X_k + h\,\bigl(\hat A X_k + f(t_0 + k h) - B D^{-1} g(t_0 + k h)\bigr)$; the algebraic values are
