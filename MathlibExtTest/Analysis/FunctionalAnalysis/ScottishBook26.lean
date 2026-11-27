@@ -42,3 +42,32 @@ example : ¬ (∀ (E : Type) [TopologicalSpace E] [AddCommGroup E] [Module ℝ E
       ∃ U : Set E, IsOpen U ∧ (0 : E) ∈ U ∧
         ∀ ε > 0, ∃ N, ∀ n ≥ N, ∀ x ∈ U, |F n x| < ε) :=
   foBoundedUniformNeighborhood_refuted
+
+-- The same unfolding for the continuous claim: its functionals are continuous linear maps.
+example : ¬ (∀ (E : Type) [TopologicalSpace E] [AddCommGroup E] [Module ℝ E], IsTypeFo E →
+    ∀ F : ℕ → E →L[ℝ] ℝ,
+      (∀ R : Set E, IsBoundedSet E R →
+        ∀ ε > 0, ∃ N, ∀ n ≥ N, ∀ x ∈ R, |F n x| < ε) →
+      ∃ U : Set E, IsOpen U ∧ (0 : E) ∈ U ∧
+        ∀ ε > 0, ∃ N, ∀ n ≥ N, ∀ x ∈ U, |F n x| < ε) :=
+  foBoundedUniformNeighborhood_continuous_refuted
+
+-- Apply the continuous refutation: some space of type {F_o} carries continuous linear
+-- functionals that tend to zero uniformly on every bounded set, but on no open set containing 0.
+example : ∃ (E : Type) (_ : TopologicalSpace E) (_ : AddCommGroup E) (_ : Module ℝ E),
+    IsTypeFo E ∧ ∃ F : ℕ → E →L[ℝ] ℝ,
+      (∀ R : Set E, IsBoundedSet E R → ∀ ε > 0, ∃ N, ∀ n ≥ N, ∀ x ∈ R, |F n x| < ε) ∧
+      ∀ U : Set E, IsOpen U → (0 : E) ∈ U →
+        ∃ ε > 0, ∀ N, ∃ n ≥ N, ∃ x ∈ U, ε ≤ |F n x| := by
+  by_contra h
+  refine foBoundedUniformNeighborhood_continuous_refuted fun E _ _ _ hE F hF => ?_
+  by_contra hU
+  refine h ⟨E, _, _, _, hE, F, hF, fun U hUo h0 => ?_⟩
+  by_contra hne
+  push Not at hne
+  exact hU ⟨U, hUo, h0, hne⟩
+
+-- The claim for all linear functionals implies the continuous claim, so refuting the latter is
+-- the stronger result.
+example : ScottishBookProblem26Claim → ScottishBookProblem26ContinuousClaim :=
+  fun h E _ _ _ hE F hF => h E hE (fun n => (F n).toLinearMap) hF

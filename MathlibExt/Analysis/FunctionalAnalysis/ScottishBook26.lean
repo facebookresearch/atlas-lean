@@ -19,6 +19,7 @@ public import Mathlib.Topology.Instances.Real.Lemmas
 public import Mathlib.Order.Filter.AtTopBot.Defs
 public import Mathlib.Algebra.Module.LinearMap.Defs
 public import Mathlib.Topology.Algebra.InfiniteSum.Basic
+public import Mathlib.Topology.Algebra.Module.ContinuousLinearMap.Basic
 
 import Mathlib.Analysis.LocallyConvex.Bounded
 import Mathlib.Analysis.Normed.Lp.lpSpace
@@ -27,6 +28,11 @@ import Mathlib.Topology.MetricSpace.PiNat
 
 /-!
 # Mazur and Orlicz's Scottish Book Problem 26
+
+`foBoundedUniformNeighborhood_continuous_refuted` answers Problem 26 in the negative for
+continuous linear functionals (`ScottishBookProblem26ContinuousClaim`), and
+`foBoundedUniformNeighborhood_refuted` follows for the formally stronger claim about all linear
+functionals (`ScottishBookProblem26Claim`).
 
 A closed subspace of a countable product of Banach spaces provides a sequence of continuous linear
 functionals converging uniformly to zero on bounded sets but on no neighborhood of zero.
@@ -74,7 +80,7 @@ def IsTypeFo (E : Type) [TopologicalSpace E] [AddCommGroup E] [Module ℝ E] : P
     ∃ y, Filter.Tendsto (fun N => ∑ n ∈ Finset.range N, t n • x n)
       Filter.atTop (nhds y)
 
-/-- **Scottish Book Problem 26 (Mazur and Orlicz's claim).** The claim that for every real vector
+/-- **Scottish Book Problem 26 for all linear functionals.** The claim that for every real vector
 space $E$ with a topology that is of type $\{F_o\}$ and every sequence $(F_n)_{n \ge 0}$ of
 linear functionals $E \to \mathbb{R}$, if $F_n \to 0$ uniformly on every bounded set
 $R \subseteq E$, then there is an open set $U \subseteq E$ containing $0$ on which
@@ -82,11 +88,34 @@ $F_n \to 0$ uniformly.
 
 Here $F_n \to 0$ uniformly on a set $S$ means that for every $\varepsilon > 0$ there is $N$
 with $|F_n(x)| < \varepsilon$ for all $n \ge N$ and all $x \in S$. The $F_n$ are only assumed
-linear, not continuous. -/
+linear, not continuous, so this claim is formally stronger than Mazur and Orlicz's claim
+(`ScottishBookProblem26ContinuousClaim`), whose functionals are continuous. -/
 def ScottishBookProblem26Claim : Prop :=
   ∀ (E : Type) [TopologicalSpace E] [AddCommGroup E] [Module ℝ E],
     IsTypeFo E →
     ∀ (F : ℕ → E →ₗ[ℝ] ℝ),
+      (∀ R : Set E, IsBoundedSet E R →
+        ∀ ε > 0, ∃ N, ∀ n, n ≥ N → ∀ x ∈ R, |F n x| < ε) →
+      ∃ U : Set E, IsOpen U ∧ (0 : E) ∈ U ∧
+        ∀ ε > 0, ∃ N, ∀ n, n ≥ N → ∀ x ∈ U, |F n x| < ε
+
+/-- **Scottish Book Problem 26 (Mazur and Orlicz's claim).** The claim that for every real vector
+space $E$ with a topology that is of type $\{F_o\}$ and every sequence $(F_n)_{n \ge 0}$ of
+continuous linear functionals $E \to \mathbb{R}$, if $F_n \to 0$ uniformly on every bounded set
+$R \subseteq E$, then there is an open set $U \subseteq E$ containing $0$ on which
+$F_n \to 0$ uniformly.
+
+Here $F_n \to 0$ uniformly on a set $S$ means that for every $\varepsilon > 0$ there is $N$
+with $|F_n(x)| < \varepsilon$ for all $n \ge N$ and all $x \in S$. The source's linear
+functionals are read as continuous; dropping continuity gives the formally stronger claim
+`ScottishBookProblem26Claim`.
+
+Source: S. Mazur and W. Orlicz, Problem 26 of the Scottish Book (prize: one small beer);
+S. M. Ulam, *The Scottish Book*, Los Alamos report LA-6832 (1977), Problem 26, p. 8. -/
+def ScottishBookProblem26ContinuousClaim : Prop :=
+  ∀ (E : Type) [TopologicalSpace E] [AddCommGroup E] [Module ℝ E],
+    IsTypeFo E →
+    ∀ (F : ℕ → E →L[ℝ] ℝ),
       (∀ R : Set E, IsBoundedSet E R →
         ∀ ε > 0, ∃ N, ∀ n, n ≥ N → ∀ x ∈ R, |F n x| < ε) →
       ∃ U : Set E, IsOpen U ∧ (0 : E) ∈ U ∧
@@ -235,21 +264,20 @@ private theorem spikes_tendsto (m : ℕ → ℕ) :
     simp [spike, block, hk.ne]
 
 /--
-**Mazur and Orlicz's Problem 26 has a negative answer.** The claim of Scottish Book Problem 26
-is false: there are a real vector space $E$ with a topology, of type $\{F_o\}$, and a sequence
-$(F_n)_{n \ge 0}$ of linear functionals $E \to \mathbb{R}$ that converges to $0$ uniformly on
-every bounded subset of $E$ but does not converge to $0$ uniformly on any open set containing
-$0$.
+**Mazur and Orlicz's Problem 26 has a negative answer for continuous functionals.** Mazur and
+Orlicz's claim is false: there are a real vector space $E$ with a topology, of type $\{F_o\}$,
+and a sequence $(F_n)_{n \ge 0}$ of continuous linear functionals $E \to \mathbb{R}$ that
+converges to $0$ uniformly on every bounded subset of $E$ but does not converge to $0$ uniformly
+on any open set containing $0$.
 
-Source: S. Mazur and
-W. Orlicz, Problem 26 of the Scottish Book (prize: one small beer); the
-typescript itself records the answer on the same page: "Ad 26, The answer is
-negative. M. Eidelheit, June 4, 1938."
+Source: S. Mazur and W. Orlicz, Problem 26 of the Scottish Book (prize: one small beer);
+S. M. Ulam, *The Scottish Book*, Los Alamos report LA-6832 (1977), Problem 26, p. 8, which
+records the answer "Ad 26. The answer is negative." (M. Eidelheit, June 4, 1938).
 -/
-theorem foBoundedUniformNeighborhood_refuted : ¬ ScottishBookProblem26Claim := by
+theorem foBoundedUniformNeighborhood_continuous_refuted :
+    ¬ ScottishBookProblem26ContinuousClaim := by
   intro claim
-  obtain ⟨U, hU, h0, hu⟩ :=
-    claim space space_typeFo (fun n => (functional n).toLinearMap) uniform_on_bounded
+  obtain ⟨U, hU, h0, hu⟩ := claim space space_typeFo functional uniform_on_bounded
   let a (k : ℕ) : ℝ := 1 / (k + 1 : ℝ)
   have ha (k : ℕ) : 0 < a k := by
     dsimp [a]
@@ -258,8 +286,25 @@ theorem foBoundedUniformNeighborhood_refuted : ¬ ScottishBookProblem26Claim := 
   choose N hN using fun k => hu (a k / (k + 1 : ℝ)) (div_pos (ha k) (by positivity))
   obtain ⟨k, hk⟩ := ((spikes_tendsto N).eventually_mem (hU.mem_nhds h0)).exists
   have h := hN k (Nat.pair k (N k)) (Nat.right_le_pair ..) _ hk
-  rw [ContinuousLinearMap.coe_coe, abs_functional] at h
+  rw [abs_functional] at h
   simp (disch := positivity) [spike, block, a, abs_of_pos] at h
+
+/--
+**Mazur and Orlicz's Problem 26 has a negative answer.** The claim of Scottish Book Problem 26
+is false: there are a real vector space $E$ with a topology, of type $\{F_o\}$, and a sequence
+$(F_n)_{n \ge 0}$ of linear functionals $E \to \mathbb{R}$ that converges to $0$ uniformly on
+every bounded subset of $E$ but does not converge to $0$ uniformly on any open set containing
+$0$.
+
+Source: S. Mazur and
+W. Orlicz, Problem 26 of the Scottish Book (prize: one small beer); S. M. Ulam,
+*The Scottish Book*, Los Alamos report LA-6832 (1977), Problem 26, p. 8, which records the
+answer "Ad 26. The answer is negative." (M. Eidelheit, June 4, 1938).
+-/
+theorem foBoundedUniformNeighborhood_refuted : ¬ ScottishBookProblem26Claim :=
+  -- Continuous linear maps are linear maps, so the claim for all linear maps covers them.
+  fun claim => foBoundedUniformNeighborhood_continuous_refuted fun E _ _ _ hE F hF =>
+    claim E hE (fun n => (F n).toLinearMap) hF
 
 end
 end MathlibExt.Analysis.FunctionalAnalysis.ScottishBook26Wanted
