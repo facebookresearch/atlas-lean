@@ -14062,7 +14062,6 @@
   "MathlibExt/NumberTheory/Recurrences/FibonacciSumDivisibility": {"to": "NumberTheory/linear-recurrences/recurrences-modulo-m", "title": "Pisano periods"},
   "MathlibExt/NumberTheory/Recurrences/FibonacciQuadraticCoefficients": {"to": "NumberTheory/linear-recurrences/fibonacci-lucas-numbers", "title": "Fibonacci representations with polynomial coefficients"},
   "MathlibExt/NumberTheory/Recurrences/FibonacciQuadraticLinearCoefficients": {"to": "NumberTheory/linear-recurrences/fibonacci-lucas-numbers", "title": "Fibonacci representations with polynomial coefficients"},
-  "MathlibExt/NumberTheory/Recurrences/FibonacciSumDivisibilitySumFibModPrimeEqAndNotDvd": {"to": "NumberTheory/linear-recurrences/recurrences-modulo-m", "title": "Pisano periods"},
   "MathlibExt/NumberTheory/Recurrences/FloorPowBinomialSum": {"to": "NumberTheory/linear-recurrences/fibonacci-polynomials", "title": "Catalan identities for generalized Fibonacci polynomials"},
   "MathlibExt/NumberTheory/Recurrences/FultonMorrisPisanoFixedPoint": {"to": "NumberTheory/linear-recurrences/recurrences-modulo-m", "title": "Pisano periods"},
   "MathlibExt/NumberTheory/Recurrences/GFPFibSumChoose": {"to": "NumberTheory/linear-recurrences/fibonacci-polynomials", "title": "Catalan identities for generalized Fibonacci polynomials"},
