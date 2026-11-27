@@ -10,3 +10,4 @@ Work-span models, Brent's theorem and greedy scheduling, parallel prefix sums (B
 - [Window indistinguishability for one-round ring coloring](window-colors-differ.md)
 
 - [PRAM and work stealing](pram-and-work-stealing/README.md)
+- [Precedence-Constrained List Scheduling](precedence-constrained-list-scheduling/README.md)

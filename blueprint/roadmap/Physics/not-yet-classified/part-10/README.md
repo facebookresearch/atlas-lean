@@ -1,5 +1,6 @@
 # Part 10 of 10
 
+- [Porous Storage](porous-storage/README.md)
 - [Zone Quadratic Dissipation](zone-quadratic-dissipation/README.md)
 - [Zone Thermal Plant](zone-thermal-plant/README.md)
 - [Capped Triangular Secant](capped-triangular-secant-bounds.md)

@@ -128,8 +128,8 @@ example {m : ℝ} (hm : 0 < m) :
   · simp [baseExcitedB]
   · intro ag
     funext i
-    fin_cases i <;> simp [baseExcitedB, Matrix.mulVec, dotProduct, Fin.sum_univ_two] <;>
-      field_simp [hm.ne'] <;> ring
+    fin_cases i <;> simp [baseExcitedB, Matrix.mulVec, dotProduct, Fin.sum_univ_two];
+      field_simp [hm.ne']; ring
   · intro h
     have h1 := congrFun h 1
     simp [Matrix.mulVec, dotProduct, Fin.sum_univ_two] at h1
@@ -151,7 +151,7 @@ example (m F Ω t : ℝ) :
         (baseExcitedB m *ᵥ ![F * Real.cos (Ω * t), 0]) 1) := by
   refine Prod.ext ?_ ?_ <;>
     simp [PhyslibExt.Mechanics.OscillatorResponse.phaseForcing, baseExcitedB, Matrix.mulVec,
-      dotProduct, Fin.sum_univ_two] <;> ring
+      dotProduct, Fin.sum_univ_two]; ring
 
 /-- Nonzero initial velocity: the undamped free oscillation with `q (0) = q₀` and
 `q' (0) = v₀` is a plant trajectory from the initial state `(q₀, v₀)`. -/
