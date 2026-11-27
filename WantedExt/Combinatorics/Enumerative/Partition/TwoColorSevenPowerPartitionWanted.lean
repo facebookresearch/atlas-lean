@@ -110,16 +110,6 @@ public theorem_wanted huffing_eta_quotients_eq_sum_garvanM (i : ℕ) (hi : 1 ≤
         ∑ j ∈ Finset.Icc 1 (7 * i + 4), (garvanM (4 * i) (i + j) : ℚ⟦X⟧) *
           (X ^ (7 * j) * f 49 ^ (4 * j) * (f 7 ^ (4 * j))⁻¹)
 
-/-- **7-adic bounds for the vectors $y^{(2k-1)}_\beta$.** Let $y^{(2k-1)}_\beta$ be the
-coefficient vectors for odd powers of $7$, built from Garvan's vectors and matrix. For all
-$k, j \ge 1$ and $\beta \ge 0$, $7^{k + \lfloor (7j-7)/4 \rfloor}$ divides $y^{(2k-1)}_{\beta+1,j}$.
-
-Source: D. S. Gireesh, C. Shivashankar, and B. Hemanthkumar, *On 2-Color Partitions in Which
-the Parts of One Color Are Restricted to Multiples of 7^k*, INTEGERS 26 (2026), Article A94,
-Lemma 6 (`integers-2026-A94-lem-6`). -/
-public theorem_wanted seven_pow_dvd_garvanYOdd (k β j : ℕ) (hk : 1 ≤ k) (hj : 1 ≤ j) :
-    7 ^ (k + (7 * j - 7) / 4) ∣ garvanYOdd k (β + 1) j
-
 /-- **Generating functions for $p_{1,7^{2k-1}}$ on progressions.** Let $p_{1,\ell}(n)$ be the
 number of 2-color partitions of $n$ in which the parts of the second color are multiples of
 $\ell$, let $f_k = \prod_{n \ge 1} (1 - q^{kn})$ in $\mathbb{Q}[[q]]$, and let $y^{(2k-1)}_\beta$
