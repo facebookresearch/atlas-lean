@@ -8,4 +8,4 @@ A *splitter* is the following procedure over two atomic registers, $\mathit{race
 
 ## Sources
 
-- J. Aspnes, *Notes on Theory of Distributed Systems*, arXiv:2001.04235, <https://arxiv.org/abs/2001.04235>, Section 18.5.2 ("Fast mutual exclusion"), Algorithm 18.6 and the paragraphs after it, pp. 160–161.
+- J. Aspnes, *Notes on Theory of Distributed Systems*, arXiv:2001.04235v6 (18 May 2026), <https://arxiv.org/abs/2001.04235v6>, Section 18.5.2 ("Fast mutual exclusion"), Algorithm 18.6 and the paragraphs after it, pp. 160–161.

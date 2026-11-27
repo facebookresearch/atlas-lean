@@ -20,3 +20,4 @@ This page becomes ready once the rest of its proof is linked:
 
 - J. Leroux, "The general vector addition system reachability problem by Presburger inductive invariants", *Logical Methods in Computer Science* 6(3:22), 2010, <https://arxiv.org/abs/1009.1076>, the abstract and Section 1 (semilinear sets, "a.k.a. the sets definable in Presburger arithmetic").
 - J. Esparza, *Petri Nets*, lecture notes, Technical University of Munich, version of 18 June 2019, <https://archive.model.in.tum.de/um/courses/petri/SS2019/PNSkript.pdf>, the paragraph after Theorem 3.2.24 (checking that a semilinear set is an inductive invariant reduces to Presburger arithmetic), p. 66.
+- S. Ginsburg and E. H. Spanier, "Semigroups, Presburger formulas, and languages", *Pacific Journal of Mathematics* 16(2):285–296, 1966, Theorem 1.3 (p. 288): the Presburger sets of $\mathbb{N}^n$ are exactly the semilinear sets, and each description is effectively calculable from the other.

@@ -6,6 +6,7 @@ Let $\mathcal{M}$ be an [upward-closed set of markings](upward-closed-sets-of-ma
 
 - [Upward-closed sets of markings](upward-closed-sets-of-markings.md)
 - [Predecessor sets of markings](predecessor-sets-of-markings.md)
+- [Reachability set and reachability graph](../reachability-set-and-reachability-graph.md)
 
 ## Proof depends on
 

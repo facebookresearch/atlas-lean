@@ -10,6 +10,10 @@ The problem that asks, given a [live](../liveness-and-deadlock-freedom.md) and [
 - [Reachability set and reachability graph](../reachability-set-and-reachability-graph.md)
 - [NP-complete decision problems](../../../../TheoryOfComputation/complexity-classes/mahaney-s-theorem/npcomplete.md)
 
+## Proof depends on
+
+- [Cook–Levin theorem: SAT is NP-complete](../../../../TheoryOfComputation/np-completeness/cook-levin/cook-levin-sat-np-complete.md)
+
 ## Sources
 
 - J. Esparza, *Petri Nets*, lecture notes, Technical University of Munich, version of 18 June 2019, <https://archive.model.in.tum.de/um/courses/petri/SS2019/PNSkript.pdf>, Theorem 5.3.16 with its proof, a reduction from satisfiability through the modules of Figures 5.7–5.9, pp. 115–117.

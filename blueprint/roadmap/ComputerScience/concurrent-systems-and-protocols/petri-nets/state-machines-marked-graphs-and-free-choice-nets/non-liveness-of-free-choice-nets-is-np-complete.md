@@ -12,6 +12,7 @@ The problem that asks, given a net $(N, M_0)$ that is [extended free-choice](ext
 
 - [The siphon–trap property implies liveness for free-choice nets](siphon-trap-property-implies-liveness-for-free-choice-nets.md)
 - [Live free-choice nets have the siphon–trap property](live-free-choice-nets-have-the-siphon-trap-property.md)
+- [Cook–Levin theorem: SAT is NP-complete](../../../../TheoryOfComputation/np-completeness/cook-levin/cook-levin-sat-np-complete.md)
 
 ## Sources
 

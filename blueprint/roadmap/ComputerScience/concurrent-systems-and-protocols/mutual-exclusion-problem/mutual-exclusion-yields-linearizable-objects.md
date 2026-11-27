@@ -9,4 +9,4 @@ Let an object be given by a sequential implementation in which an operation read
 
 ## Sources
 
-- J. Aspnes, *Notes on Theory of Distributed Systems*, arXiv:2001.04235, <https://arxiv.org/abs/2001.04235>, Section 18.4 ("Mutual exclusion and linearizability"), Algorithm 18.4 and the argument after it, pp. 155–156.
+- J. Aspnes, *Notes on Theory of Distributed Systems*, arXiv:2001.04235v6 (18 May 2026), <https://arxiv.org/abs/2001.04235v6>, Section 18.4 ("Mutual exclusion and linearizability"), Algorithm 18.4 and the argument after it, pp. 155–156.

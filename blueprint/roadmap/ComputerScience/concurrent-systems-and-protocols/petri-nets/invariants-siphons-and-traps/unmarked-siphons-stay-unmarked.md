@@ -5,6 +5,7 @@ Let $N$ be an ordinary [Petri net](../place-transition-petri-nets.md), let $S$ b
 ## Depends on
 
 - [Siphons and traps](../siphons-and-traps.md)
+- [Reachability set and reachability graph](../reachability-set-and-reachability-graph.md)
 
 ## Sources
 

@@ -8,4 +8,4 @@ In any execution of [splitter](splitters.md) calls in which each process calls t
 
 ## Sources
 
-- J. Aspnes, *Notes on Theory of Distributed Systems*, arXiv:2001.04235, <https://arxiv.org/abs/2001.04235>, Lemma 18.5.3 and its proof, pp. 161–162.
+- J. Aspnes, *Notes on Theory of Distributed Systems*, arXiv:2001.04235v6 (18 May 2026), <https://arxiv.org/abs/2001.04235v6>, Lemma 18.5.3 and its proof, pp. 161–162.

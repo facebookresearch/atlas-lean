@@ -8,4 +8,4 @@ If a process runs the [splitter](splitters.md) by itself, from a configuration i
 
 ## Sources
 
-- J. Aspnes, *Notes on Theory of Distributed Systems*, arXiv:2001.04235, <https://arxiv.org/abs/2001.04235>, Lemma 18.5.4 and its proof, p. 162.
+- J. Aspnes, *Notes on Theory of Distributed Systems*, arXiv:2001.04235v6 (18 May 2026), <https://arxiv.org/abs/2001.04235v6>, Lemma 18.5.4 and its proof, p. 162.

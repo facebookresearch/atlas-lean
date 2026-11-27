@@ -8,4 +8,4 @@ In the asynchronous shared-memory model with a read-modify-write register $V$ ho
 
 ## Sources
 
-- J. Aspnes, *Notes on Theory of Distributed Systems*, arXiv:2001.04235, <https://arxiv.org/abs/2001.04235>, Section 18.3.2 (the queue-based algorithm, Algorithm 18.2, and its invariants for mutual exclusion, deadlock freedom, starvation-freedom and bounded bypass) and Section 18.3.2.1 ("Replacing the queue with RMW", Algorithm 18.3), pp. 153–155.
+- J. Aspnes, *Notes on Theory of Distributed Systems*, arXiv:2001.04235v6 (18 May 2026), <https://arxiv.org/abs/2001.04235v6>, Section 18.3.2 (the queue-based algorithm, Algorithm 18.2, and its invariants for mutual exclusion, deadlock freedom, starvation-freedom and bounded bypass) and Section 18.3.2.1 ("Replacing the queue with RMW", Algorithm 18.3), pp. 153–155.

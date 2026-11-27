@@ -8,4 +8,4 @@ In the asynchronous shared-memory model with a test-and-set bit $\mathit{lock}$,
 
 ## Sources
 
-- J. Aspnes, *Notes on Theory of Distributed Systems*, arXiv:2001.04235, <https://arxiv.org/abs/2001.04235>, Section 18.3.1 ("Test and set") and Algorithm 18.1, with the arguments for mutual exclusion and progress and the failure of starvation-freedom, pp. 152–153.
+- J. Aspnes, *Notes on Theory of Distributed Systems*, arXiv:2001.04235v6 (18 May 2026), <https://arxiv.org/abs/2001.04235v6>, Section 18.3.1 ("Test and set") and Algorithm 18.1, with the arguments for mutual exclusion and progress and the failure of starvation-freedom, pp. 152–153.

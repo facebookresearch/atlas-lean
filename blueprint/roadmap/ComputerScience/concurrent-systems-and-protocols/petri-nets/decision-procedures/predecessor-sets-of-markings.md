@@ -5,6 +5,7 @@ Let $N$ be an ordinary [Petri net](../place-transition-petri-nets.md) with trans
 ## Depends on
 
 - [Place/transition Petri nets](../place-transition-petri-nets.md)
+- [Reachability set and reachability graph](../reachability-set-and-reachability-graph.md)
 
 ## Sources
 
