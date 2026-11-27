@@ -1,7 +1,15 @@
 # Identification of a one-factor model from three indicators
 
-Let $X_j = \lambda_j F + \varepsilon_j$ for $j = 1, \dots, p$ with $p \ge 3$, square-integrable $F$ and $\varepsilon_j$, $\operatorname{Var}(F) = 1$, all $\lambda_j \ne 0$, and errors uncorrelated with each other and with $F$, with variances $\omega_j \ge 0$. Then $\sigma_{jk} = \lambda_j\lambda_k$ for $j \ne k$, so $\lambda_1^2 = \sigma_{12}\sigma_{13}/\sigma_{23}$ and similarly for each loading using any two other indicators; the loadings are determined up to one common sign, fixed by declaring the sign of one loading, and then $\omega_j = \sigma_{jj} - \lambda_j^2$. A zero loading can break this: with $p = 3$, loadings $(0, 1, 1)$ with error variances $(1, 4, 1)$ and loadings $(0, 2, \tfrac12)$ with error variances $(1, 1, \tfrac74)$ give the same covariance matrix.
+Let $X_j=\lambda_j F+\varepsilon_j$ for a finite collection of indicators. Assume that $F$ and the errors $\varepsilon_j$ are square-integrable, that $\operatorname{Var}(F)=1$, and that the errors are pairwise uncorrelated and uncorrelated with $F$. Write $\omega_j=\operatorname{Var}(\varepsilon_j)$ and let $\Sigma$ be the covariance matrix of the observations. Then $\Sigma=\lambda\lambda^{\mathsf T}+\operatorname{diag}(\omega)$, so $\sigma_{jk}=\lambda_j\lambda_k$ for $j\ne k$.
+
+If there are at least three indicators and every loading is nonzero, then for any distinct $i,j,k$,
+
+$$\lambda_i^2=\frac{\sigma_{ij}\sigma_{ik}}{\sigma_{jk}},\qquad \omega_i=\sigma_{ii}-\lambda_i^2.$$
+
+Under these same assumptions, any other one-factor parameters with the same covariance have the same error variances and either the same loadings or their common negation. Fixing the sign of any one loading removes this ambiguity. Neither Gaussianity nor independence is needed for this covariance result.
+
+The [three-indicator counterexample](one-factor-zero-loading-counterexample.md) shows that a zero loading can break identification.
 
 ## Sources
 
-- J. Brunner, *Confirmatory factor analysis, part 1*, STA 431 lecture slides, University of Toronto, 2023, slides 3–4 and 13, <http://utstat.utoronto.ca/brunner/oldclass/431s23/lectures/431s23CFA1.pdf>
+- J. Brunner, *Confirmatory factor analysis, part 1*, STA 431 lecture slides, University of Toronto, 2023, slides 3–4 and 13, <https://utstat.utoronto.ca/brunner/oldclass/431s23/lectures/431s23CFA1.pdf>.

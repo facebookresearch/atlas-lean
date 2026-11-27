@@ -14762,6 +14762,7 @@
   "MathlibExt/Probability/Statistics/MLEAsymptoticNormality": {"to": "Probability/statistical-estimation", "title": "Asymptotic normality of maximum likelihood"},
   "MathlibExt/Probability/Statistics/MallowsMetric": {"to": "Probability/statistical-estimation", "title": "Bootstrap and the Mallows metric"},
   "MathlibExt/Probability/Statistics/MannWhitneyAUC": {"to": "Probability/hypothesis-testing", "title": "Mann–Whitney statistic and ROC area"},
+  "MathlibExt/Probability/Statistics/Measurement/OneFactorIdentification": {"to": "Probability/linear-models-multivariate", "title": "Factor analysis and structural equation models"},
   "MathlibExt/Probability/Statistics/MetaAnalysis": {"to": "Probability/hypothesis-testing", "title": "Meta-analysis"},
   "MathlibExt/Probability/Statistics/MixedModelEquations": {"to": "Probability/linear-models-multivariate", "title": "Generalized least squares"},
   "MathlibExt/Probability/Statistics/MonotoneLikelihoodRatio": {"to": "Probability/hypothesis-testing", "title": "Monotone likelihood ratio"},

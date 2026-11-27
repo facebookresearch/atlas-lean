@@ -7,3 +7,4 @@
 - [Identification of a correlated two-factor model](identification-of-a-correlated-two-factor-model.md)
 - [Latent mean differences are not identified without invariance constraints](nonidentification-of-latent-mean-differences.md)
 - [Reduced form and covariance of a linear structural equation model](reduced-form-covariance-of-a-linear-sem.md)
+- [A zero loading can destroy one-factor identification](one-factor-zero-loading-counterexample.md)
