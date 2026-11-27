@@ -28,7 +28,7 @@ equivalently, since $d\langle Z\rangle_t=\Xi\,dt$, in Itô form
 
 $$dq_t=\mathcal{L}^*q_t\,dt-\tfrac12\big[r-(r-s)^2\big]h^\top\Xi^{-1}h\,q_t\,dt+(r-s)\,q_t\,h^\top\Xi^{-1}dZ_t,$$
 
-with $q_0=\mu^d_0=f$ a bounded smooth probability density having finite second moment $\int |x|^2 f(x)\,dx < \infty$, and let $\mu^d$ solve the linear equation above. Fix a realised reference signal path $x^*_t$ on $[0,T]$, and let $\mathbb{E}_B$ denote expectation with respect to the observation noise $B$ alone (with $x^*$ held fixed). Then for every $T>0$ and $p\ge1$,
+with $q_0=\mu^d_0=f$ a bounded smooth probability density, and let $\mu^d$ solve the linear equation above. Fix a realised reference signal path $x^*_t$ on $[0,T]$, and let $\mathbb{E}_B$ denote expectation with respect to the observation noise $B$ alone (with $x^*$ held fixed). Then for every $T>0$ and $p\ge1$ such that $\int |x|^{\max(2,p)} f(x)\,dx < \infty$ (finite second moment for (5.9) and finite $p$-th moment when $p>2$),
 
 $$\lim_{d\to\infty}\mathbb{E}_B\Big[\sup_{0\le t\le T}|\mu^d_t(x)-q_t(x)|^p\Big]=0\qquad\text{for all }x,$$
 
