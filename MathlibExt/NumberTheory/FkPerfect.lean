@@ -934,6 +934,22 @@ private theorem sigma_prod_eq (k : ℕ) (s : Finset ℕ) (hs : ∀ p ∈ s, p.Pr
         ArithmeticFunction.sigma_apply, ArithmeticFunction.sigma_apply,
         hprime, ih hs', Finset.prod_insert hq]
 
+private theorem nonempty_of_proper_dvd_prod {s : Finset ℕ} {d : ℕ}
+    (hdvd : d ∣ ∏ p ∈ s, p) (hlt : d < ∏ p ∈ s, p) : s.Nonempty := by
+  rcases s.eq_empty_or_nonempty with rfl | hs
+  · have hd : d ∈ (1 : ℕ).properDivisors :=
+      Nat.mem_properDivisors.mpr (by simpa only [Finset.prod_empty] using And.intro hdvd hlt)
+    simp [Nat.properDivisors_one] at hd
+  · exact hs
+
+private theorem even_sigma_prod_of_nonempty (k : ℕ) (s : Finset ℕ)
+    (hs : ∀ p ∈ s, p.Prime ∧ Odd p) (hne : s.Nonempty) :
+    Even (∑ e ∈ (∏ p ∈ s, p).divisors, e ^ k) := by
+  obtain ⟨q, hq⟩ := hne
+  rw [sigma_prod_eq k s (fun p hp => (hs p hp).1),
+    ← Finset.mul_prod_erase s (fun p => 1 + p ^ k) hq]
+  exact ((hs q hq).2.pow.one_add).mul_right _
+
 /-- **No product of distinct odd primes is deficient $F_k$-perfect.** Let $k > 1$ and let $s$ be a
 finite set of odd primes. Then $\prod_{p \in s} p$ is not deficient $F_k$-perfect.
 
@@ -948,29 +964,22 @@ theorem not_isDeficientFkPerfect_prod_primes
   have _ : k ≠ 0 := by omega
   have hn : Odd (∏ p ∈ s, p) :=
     odd_prod_of_odd s (fun p hp => (hs p hp).2)
-  rcases s.eq_empty_or_nonempty with rfl | ⟨q, hq⟩
-  · simp only [Finset.prod_empty] at hdvd hlt
-    exact (Nat.ne_of_lt hlt) (Nat.dvd_one.mp hdvd)
-  · have hσ : Even (∑ e ∈ (∏ p ∈ s, p).divisors, e ^ k) := by
-      rw [sigma_prod_eq k s (fun p hp => (hs p hp).1)]
-      have hqeven : Even (1 + q ^ k) := ((hs q hq).2.pow).one_add
-      rw [← Finset.mul_prod_erase s (fun p => 1 + p ^ k) hq]
-      exact hqeven.mul_right _
-    have hd : Odd d := by
-      rcases Nat.even_or_odd d with hev | hod
-      · exfalso
-        have h2n : Even (∏ p ∈ s, p) :=
-          even_iff_two_dvd.mpr ((even_iff_two_dvd.mp hev).trans hdvd)
-        have h0 : (∏ p ∈ s, p) % 2 = 0 := Nat.even_iff.mp h2n
-        have h1 : (∏ p ∈ s, p) % 2 = 1 := Nat.odd_iff.mp hn
-        omega
-      · exact hod
-    have hσ0 : (∑ e ∈ (∏ p ∈ s, p).divisors, e ^ k) % 2 = 0 := Nat.even_iff.mp hσ
-    have hd1 : d ^ k % 2 = 1 := Nat.odd_iff.mp hd.pow
-    have hn1 : (∏ p ∈ s, p) ^ k % 2 = 1 := Nat.odd_iff.mp hn.pow
-    have h31 : (3 * ∏ p ∈ s, p) % 2 = 1 :=
-      Nat.odd_iff.mp ((by decide : Odd 3).mul hn)
-    omega
+  have hσ := even_sigma_prod_of_nonempty k s hs (nonempty_of_proper_dvd_prod hdvd hlt)
+  have hd : Odd d := by
+    rcases Nat.even_or_odd d with hev | hod
+    · exfalso
+      have h2n : Even (∏ p ∈ s, p) :=
+        even_iff_two_dvd.mpr ((even_iff_two_dvd.mp hev).trans hdvd)
+      have h0 : (∏ p ∈ s, p) % 2 = 0 := Nat.even_iff.mp h2n
+      have h1 : (∏ p ∈ s, p) % 2 = 1 := Nat.odd_iff.mp hn
+      omega
+    · exact hod
+  have hσ0 : (∑ e ∈ (∏ p ∈ s, p).divisors, e ^ k) % 2 = 0 := Nat.even_iff.mp hσ
+  have hd1 : d ^ k % 2 = 1 := Nat.odd_iff.mp hd.pow
+  have hn1 : (∏ p ∈ s, p) ^ k % 2 = 1 := Nat.odd_iff.mp hn.pow
+  have h31 : (3 * ∏ p ∈ s, p) % 2 = 1 :=
+    Nat.odd_iff.mp ((by decide : Odd 3).mul hn)
+  omega
 
 /-- **No deficient $F_k$-perfect number $p_1^a p_2^b$ with $a + b$ odd or $a, b$ both odd.** Let
 $k > 1$ be a natural number, let $p_1 \ne p_2$ be odd primes and let $a, b \ge 1$ be natural

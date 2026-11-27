@@ -52,6 +52,7 @@ public import MathlibExt.NumberTheory.FkPerfectNotKlNearPerfectWithTwoPowMul
 public import MathlibExt.NumberTheory.FkPerfectNotIsNearFPerfectTwoPowMulPrime
 public import MathlibExt.NumberTheory.FkPerfectNotKlDeficientPerfectWithTwoPowMul
 public import MathlibExt.NumberTheory.FkPerfectIsDeficientFPerfectTwoPowMulPrimeImp
+public import MathlibExt.NumberTheory.FkPerfectSquarefreeOdd
 
 set_option autoImplicit false
 
@@ -69,16 +70,5 @@ and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
 theorem_wanted isKLDeficientPerfect_prime_pow_imp
     (p a k l : ℕ) (hp : p.Prime) (hk : 2 ≤ k) :
     IsKLDeficientPerfect k l (p ^ a) → p = 2 ∧ a = 1
-
-/-- **No product of distinct odd primes is near $F_k$-perfect.** Let $k > 1$ and let $s$ be a
-finite set of odd primes. Then $\prod_{p \in s} p$ is not near $F_k$-perfect.
-
-Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
-and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
-`F_k`-Perfect Numbers", Theorem 22. -/
-theorem_wanted not_isNearFkPerfect_prod_primes
-    (k : ℕ) (hk : 1 < k) (s : Finset ℕ)
-    (hs : ∀ p ∈ s, p.Prime ∧ Odd p) :
-    ¬ IsNearFkPerfect k (∏ p ∈ s, p)
 
 end MathlibExt.NumberTheory.FkPerfectWanted
