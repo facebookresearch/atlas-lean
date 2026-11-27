@@ -18,7 +18,7 @@ $$\delta H(x; A') = -r_{A'}(x) \log r_{A'}(x) + \sum_{y \in Y_x} \delta H(y; A')
 
 which allows a single bottom-up pass over the tree.
 
-**Proposition.** For every $A$ and $\alpha > \tfrac12$ there is a taxon $\hat x$ and a consistent reduction $A \to^\ast A''$ such that (i) $A''$ has an $\alpha$-majority, (ii) $A''$ minimizes the entropy change among all consistent reductions with that property, and (iii) $A''$ differs from $A$ only in entries that become $\hat x$; that is, an optimal reduction collapses exactly the annotations in one subtree onto its root.
+**Proposition.** For every consistent $A$ (no entry of $A$ is a strict ancestor of another) and every $\alpha > \tfrac12$ there is a taxon $\hat x$ and a consistent reduction $A \to^\ast A''$ such that (i) $A''$ has an $\alpha$-majority, (ii) $A''$ minimizes the entropy change among all consistent reductions with that property, and (iii) $A''$ differs from $A$ only in entries that become $\hat x$; that is, an optimal reduction collapses exactly the annotations in one subtree onto its root.
 
 ## Expansion
 

@@ -24,7 +24,13 @@ The adherence equation is the two-strategy replicator equation for the fitnesses
 
     which exists iff $0 < x^*_m < 1$. All three quantities depend on $c$ and $\xi$ only through the cost-to-risk ratio $c/\xi$. Whenever it exists it is locally stable, and the no- and full-adherence endemic equilibria are then unstable. In particular, if $\mathcal{R}_0 > 1$, no adherence is stable exactly when $c/\xi \ge (\mathcal{R}_0 - 1)(1-p)(\gamma+\mu)(\mu+\delta)/(\gamma+\mu+\delta)$, i.e. when $x^*_m \le 0$.
 
-**With vaccination** (fraction $q$ of births vaccinated, susceptibles vaccinated at rate $\nu$), the disease-free susceptible fraction becomes $S^0 = \frac{\mu(1-q) + \delta}{\mu + \nu + \delta}$ and the reproduction number $\mathcal{R}_0(\nu) = \mathcal{R}_0 S^0$, with analogous endemic equilibria in which $\mu + \delta$ is replaced by $\mu(1-q) + \delta$ in the infected fractions.
+**With vaccination** (fraction $q$ of births vaccinated, susceptibles vaccinated at rate $\nu$, vaccinated hosts joining $R = 1 - S - I$), the $S$-equation becomes
+
+$$\dot S = \mu(1-q) - b(x)\beta S I - (\mu + \nu) S + \delta(1 - S - I),$$
+
+with the $I$- and $x$-equations unchanged. The disease-free susceptible fraction is $S^0 = \frac{\mu(1-q) + \delta}{\mu + \nu + \delta}$ and the reproduction number $\mathcal{R}_0(\nu) = \mathcal{R}_0 S^0$. The no-adherence endemic equilibrium has $S^* = 1/\mathcal{R}_0$ and $I^* = \big[\mu(1-q) + \delta - (\mu + \nu + \delta)/\mathcal{R}_0\big]/(\gamma + \mu + \delta)$, the full-adherence one the same with $\mathcal{R}_0$ replaced by $p\mathcal{R}_0$, and the partial-adherence one has $S^*_m = \frac{(1-p)(\gamma+\mu)\,\xi}{c}\, I^*_m$, $x^*_m$ as above and
+
+$$I^*_m = \frac{\mu(1-q) + \delta}{(1-p)(\gamma + \mu)(\mu + \nu + \delta)\,\xi/c + \gamma + \mu + \delta}.$$
 
 ## Depends on
 

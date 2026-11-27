@@ -21,14 +21,14 @@ for the reproduction number of an isolated city.
 
 **Theorem.** Let $R_0$ be the spectral radius of the next-generation matrix of the infected compartments $(I_T, I_1, \dots, I_N)$. The disease-free equilibrium is locally asymptotically stable if $R_0 < 1$ and unstable if $R_0 > 1$. Moreover:
 
-1. (fast transit) if $\beta_T(y)/y \to 0$ as $y \to 0^+$, then $R_0 \to R^{*}$ as $p \to \infty$, so for large $p$ stability is decided by $R^{*}$;
-2. (few travellers) $R_0 \to R^{*}$ as $\phi \to 0^+$;
+1. (fast transit) if $y\,\beta_T(y) \to 0$ as $y \to 0^+$, then $R_0 \to R^{*}$ as $p \to \infty$, so for large $p$ stability is decided by $R^{*}$;
+2. (few travellers) if $y\,\beta_T(y) \to 0$ as $y \to 0^+$, then $R_0 \to R^{*}$ as $\phi \to 0^+$;
 3. (no infected travellers) as $\alpha \to 0^+$, $R_0 \to \max\big\{R^{*},\ \beta_T A N \phi / (\mu p(\gamma_T + p))\big\}$, so transmission in transit alone can sustain spread even when $R^{*} < 1$;
 4. (clean transit) as $\beta_T \to 0$,
 
-    $$R_0 \to \frac{\beta A}{\mu}\cdot \frac{1}{\mu + \gamma + \alpha\phi\,\gamma_T/(\gamma_T + p)} < R^{*},$$
+    $$R_0 \to \frac{\beta A}{\mu}\cdot \frac{1}{\mu + \gamma + \alpha\phi\,\gamma_T/(\gamma_T + p)} \le R^{*},$$
 
-    so a transportation system with little internal transmission lowers the reproduction number below its isolated-city value.
+    with strict inequality when $\alpha > 0$ (for $\alpha = 0$ the limit is $R^{*}$), so a transportation system with little internal transmission and some infected travellers lowers the reproduction number below its isolated-city value.
 
 ## Depends on
 
@@ -36,7 +36,7 @@ for the reproduction number of an isolated city.
 
 ## Expansion
 
-The threshold statement is the van den Driessche–Watmough theorem. For identical cities the inverse next-generation structure is an arrow matrix: one eigenvalue $\mu(\mu + \gamma + \alpha\phi)/(\beta A)$ of multiplicity $N - 1$ (antisymmetric modes across cities) and two roots of a quadratic for the symmetric city–hub mode, which gives $R_0$ in closed form. The limit 4 has a random-walk reading: an infective in a city infects at rate $\beta A/\mu$ for an expected time $1/(\mu + \gamma + \alpha\phi)$ per visit, leaves for the hub with probability $\alpha\phi/(\mu+\gamma+\alpha\phi)$ and returns still infectious with probability $p/(\gamma_T + p)$; summing the geometric series of visits gives the formula, and recovery during transit is what makes it smaller than $R^{*}$. Limits 1 and 2 hold because transmission in transit vanishes when time in transit or the number of travellers goes to zero. With non-identical cities only bounds on $R_0$ are available, and city sizes enter through travellers being distributed in proportion to $A_k$.
+The threshold statement is the van den Driessche–Watmough theorem. For identical cities the inverse next-generation structure is an arrow matrix: one eigenvalue $\mu(\mu + \gamma + \alpha\phi)/(\beta A)$ of multiplicity $N - 1$ (antisymmetric modes across cities) and two roots of a quadratic for the symmetric city–hub mode, which gives $R_0$ in closed form. The limit 4 has a random-walk reading: an infective in a city infects at rate $\beta A/\mu$ for an expected time $1/(\mu + \gamma + \alpha\phi)$ per visit, leaves for the hub with probability $\alpha\phi/(\mu+\gamma+\alpha\phi)$ and returns still infectious with probability $p/(\gamma_T + p)$; summing the geometric series of visits gives the formula, and recovery during transit is what makes it smaller than $R^{*}$. Limits 1 and 2 hold because transmission in transit vanishes when time in transit or the number of travellers goes to zero: the transit population at the disease-free equilibrium is $y = \phi N A/(p\mu) \to 0$, and the transit term of the next-generation matrix is of order $y\,\beta_T(y)$, which the hypothesis sends to zero (with standard incidence $\beta_T(y) = c/y$ it does not, and as $\phi \to 0$ the limit is $\max\{R^{*}, c/(\gamma_T + p)\}$). With non-identical cities only bounds on $R_0$ are available, and city sizes enter through travellers being distributed in proportion to $A_k$.
 
 ## Sources
 

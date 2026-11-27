@@ -18,9 +18,9 @@ where $0 < r \le 1$ is the asymptomatic fraction, $\varphi_s$ the hospitalizatio
 
 2. *(Global stability.)* If $R_0 \le 1$ (computed with $S^\ast/N^\ast = 1$), every solution in the invariant region $\{S + E + I_a + I_s + I_h + R \le N(0)\}$ converges to a disease-free equilibrium of the continuum.
 
-3. *(Final size.)* With $S(\infty) = \lim_{t\to\infty} S(t)$ and $R_0$ computed at $S^\ast = N^\ast = S(0)$,
+3. *(Final size.)* With $S(\infty) = \lim_{t\to\infty} S(t)$ and $R_0$ computed with $S^\ast/N^\ast = 1$,
 
-    $$\ln\frac{S(0)}{S(\infty)} \ \ge\ \frac{R_0}{S(0)}\big(S(0) - S(\infty) + E(0)\big) + \frac{1}{S(0)}\left[\frac{\beta_a}{\gamma_a} I_a(0) + \Big(\beta_s + \frac{\varphi_s\beta_h}{\gamma_h + \delta_h}\Big)\frac{I_s(0)}{\varphi_s + \gamma_s + \delta_s} + \frac{\beta_h}{\gamma_h + \delta_h} I_h(0)\right],$$
+    $$\ln\frac{S(0)}{S(\infty)} \ \ge\ \frac{R_0}{N(0)}\big(S(0) - S(\infty) + E(0)\big) + \frac{1}{N(0)}\left[\frac{\beta_a}{\gamma_a} I_a(0) + \Big(\beta_s + \frac{\varphi_s\beta_h}{\gamma_h + \delta_h}\Big)\frac{I_s(0)}{\varphi_s + \gamma_s + \delta_s} + \frac{\beta_h}{\gamma_h + \delta_h} I_h(0)\right],$$
 
     with equality when there is no disease-induced mortality ($\delta_s = \delta_h = 0$).
 

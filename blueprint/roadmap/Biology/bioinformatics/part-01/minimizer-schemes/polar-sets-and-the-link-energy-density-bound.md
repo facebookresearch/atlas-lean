@@ -12,7 +12,7 @@ $$1 + E_0(S) - X(S) - L(S, A) \;\le\; \mathbb{E}[\#\text{selected}] \;\le\; 1 + 
 
 Since $D(S)$ and $X(S)$ are negligible for most sequences, $L(S, A)$ is almost exactly the reduction in selected positions relative to a random minimizer; with $s = 0$ each link contributes $1 - 2/(w+1) \approx 1$.
 
-**Perfect minimizers on short random sequences.** If $S$ is uniformly random with $|S| < \epsilon w \sigma^k / 2$, then with probability at least $1 - \epsilon$ the $k$-mers at every $w$-th position form a set whose compatible minimizers have density exactly $1/w$.
+**Perfect minimizers on short random sequences.** If $S$ is uniformly random with $|S| < (\epsilon w)^{1/2} \sigma^{k/2}$, then with probability at least $1 - \epsilon$ the $k$-mers at every $w$-th position form a set whose compatible minimizers have density exactly $1/w$.
 
 ## Depends on
 

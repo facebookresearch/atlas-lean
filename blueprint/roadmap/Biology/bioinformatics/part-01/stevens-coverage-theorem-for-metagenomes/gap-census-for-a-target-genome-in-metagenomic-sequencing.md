@@ -12,7 +12,7 @@ $$P(G = 0) = \sum_{k=0}^{K} (-1)^k \binom{n}{k} (1 - k a)^{n-1}.$$
 
 $$P(G = g) = \sum_{k=g}^{K} (-1)^{k-g} \binom{k}{g} \binom{N}{k}\, p^{k}\, (1 - k a)^{k-1} (1 - p k a)^{N-k},$$
 
-and the probability that the target receives at least one read and is completely covered is $1 - \sum_{g \ge 1} P(G = g)$. For $p = 1$ this reduces to Stevens' theorem with $n = N$.
+and the probability that the target receives at least one read and is completely covered is $1 - (1-p)^N - \sum_{g \ge 1} P(G = g)$ (the event that no read comes from the target, of probability $(1-p)^N$, contributes to no term with $g \ge 1$). For $p = 1$ this reduces to Stevens' theorem with $n = N$.
 
 ## Expansion
 

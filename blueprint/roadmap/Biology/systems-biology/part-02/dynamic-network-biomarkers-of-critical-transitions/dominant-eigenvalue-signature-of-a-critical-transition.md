@@ -10,7 +10,7 @@ Write $\Delta Y(t) = S^{-1}\big(Z(t) - \bar Z\big)$ for the eigen-coordinates, s
 
 $$\Delta Y(t+1) = \Lambda(P)\,\Delta Y(t) + \zeta(t), \qquad \Lambda(P) = \operatorname{diag}\big(\lambda_1(P), \dots, \lambda_n(P)\big),$$
 
-with $\zeta(t)$ zero-mean Gaussian noise with covariances $\kappa_{ij} = \operatorname{Cov}(\zeta_i, \zeta_j)$, independent over time.
+with $\zeta(t)$ zero-mean Gaussian noise with covariances $\kappa_{ij} = \operatorname{Cov}(\zeta_i, \zeta_j)$, independent over time, and assume the noise excites the dominant mode, $\kappa_{11} = \operatorname{Var}(\zeta_1) > 0$ (with $\kappa_{11} = 0$ the coordinate $y_1$ tends to $0$ and every variance stays bounded).
 
 **Statement (dominant group).** The *dominant group*, or *dynamic network biomarker* (DNB), is the set of molecules $i$ whose coordinates load on the dominant eigen-direction (row $i$ of $S$ has a nonzero first entry). As $P \to P_c$:
 

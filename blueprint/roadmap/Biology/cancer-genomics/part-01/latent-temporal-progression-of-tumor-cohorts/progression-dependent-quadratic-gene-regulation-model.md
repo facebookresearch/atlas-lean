@@ -16,7 +16,7 @@ $$\pi(A_i, \sigma_i^2 \mid Y_i, X^{(i)}) \propto \pi(A_i \mid \sigma_i^2, \lambd
 
 is sampled by Gibbs MCMC, and an edge $j \to i$ is declared present when the 95% credible interval of $a_{ij}$ excludes $0$.
 
-**Stability statement.** If two progression trajectories $s(r)$ and $\tilde s(r)$, $r \in [0, 1]$, share the same root and the coefficients $(a_{ij}, d_i)$ and $(\tilde a_{ij}, \tilde d_i)$ make the model hold along each, then $\sum_{i,j} |\tilde a_{ij} - a_{ij}|^2 \to 0$ as $\|\tilde s - s\|_{L^2[0,1]} \to 0$: small perturbations of the inferred ordering perturb the inferred network only slightly.
+**Stability statement.** If two progression trajectories $s(r)$ and $\tilde s(r)$, $r \in [0, 1]$, share the same root and the coefficients $(a_{ij}, d_i)$ and $(\tilde a_{ij}, \tilde d_i)$ make the model hold along each, and if for every $i$ the functions $X_i X_j$ ($j \ne i$) and $X_i$ are linearly independent along the trajectory $s$ (so the coefficients are identifiable), then $\sum_{i,j} |\tilde a_{ij} - a_{ij}|^2 \to 0$ as $\|\tilde s - s\|_{L^2[0,1]} \to 0$: small perturbations of the inferred ordering perturb the inferred network only slightly.
 
 ## Depends on
 

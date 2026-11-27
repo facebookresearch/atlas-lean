@@ -17,7 +17,7 @@ $$\min_{\theta,\, x_s^1, \dots, x_s^E} J(\theta, x_s^1, \dots, x_s^E) \quad \tex
 
     $$\frac{d\theta}{dr} = -g(\theta, x_s^1, \dots, x_s^E), \qquad \frac{dx_s^e}{dr} = \hat S(\theta, x_s^e, u_c^e)\,\frac{d\theta}{dr} + \lambda f(x_s^e, \theta, u_c^e), \tag{17}$$
 
-    with $\hat S = -(\partial f/\partial x)^{+}\, \partial f/\partial \theta$ (Moore–Penrose pseudoinverse), which equals $S$ on the manifold. Along trajectories on the manifold $J$ decreases. For the gradient direction and suitable $\lambda$, local optima of the constrained problem are locally exponentially stable equilibria of (17), so the problem can be solved with adaptive stiff ODE solvers. Initial points need not satisfy the steady-state constraint.
+    with $\hat S = -(\partial f/\partial x)^{+}\, \partial f/\partial \theta$ (Moore–Penrose pseudoinverse), which equals $S$ on the manifold. Along trajectories on the manifold $J$ decreases. For the gradient direction and suitable $\lambda$, if $J$ is locally strictly convex in $\theta$ at a local optimum of the constrained problem, that optimum is a locally asymptotically stable equilibrium of (17) (if $J$ does not depend on some parameter, optima form a continuum of equilibria and none is asymptotically stable), so the problem can be solved with adaptive stiff ODE solvers. Initial points need not satisfy the steady-state constraint.
 
 ## Proof depends on
 

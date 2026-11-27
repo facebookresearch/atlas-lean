@@ -15,13 +15,13 @@ R' &= \eta_a A + \eta_i I + \eta_{H_m} H_m + \eta_{H_s} H_s,
 
 with $D' = \delta_i I + \delta_{H_s} H_s$, $q_1 = \eta_i + \tau + \rho + \delta_i$, $q_2 = \eta_{H_m} + \varphi$, $q_3 = \eta_{H_s} + \psi + \delta_{H_s}$. Hospitalized individuals are isolated and do not transmit.
 
-**Disease-free equilibrium.** Since unaware susceptibles convert to aware at rate $v$, the only infection-free equilibrium is $S_a = N$, with every other compartment zero.
+**Infection-free equilibria.** Since the model has no demography, every point with $E = A = I = H_m = H_s = S_u = 0$ and $S_a + R + D = N$ is an equilibrium, so infection-free equilibria form a family, not a single point (unaware susceptibles convert to aware at rate $v$, which is why $S_u = 0$ on it). The disease-free equilibrium of the source is the member $S_a = N$, $R = D = 0$.
 
 **Proposition.** The basic reproduction number given by the next-generation matrix is
 
 $$\mathcal{R}_0 = \alpha \beta \left( \frac{\sigma k}{\eta_a} + \frac{1 - k}{q_1} \right),$$
 
-and the disease-free equilibrium is locally asymptotically stable if $\mathcal{R}_0 < 1$ and unstable if $\mathcal{R}_0 > 1$.
+and, with $F$ and $V$ the new-infection and transition matrices of the infected subsystem $(E, A, I)$ linearized at $S_a = N$, the spectral abscissa of $F - V$ is negative if $\mathcal{R}_0 < 1$ and positive if $\mathcal{R}_0 > 1$. Hence the disease-free equilibrium is unstable if $\mathcal{R}_0 > 1$; for $\mathcal{R}_0 < 1$ it is linearly stable in the infected directions but not asymptotically stable, since the nearby infection-free equilibria $S_a = N - r$, $R = r$ do not converge to it.
 
 ## Depends on
 
@@ -29,7 +29,7 @@ and the disease-free equilibrium is locally asymptotically stable if $\mathcal{R
 
 ## Expansion
 
-Take infected states $(E, A, I)$; $H_m, H_s$ receive inflow but cannot infect, so they do not affect $\mathcal{R}_0$. At the equilibrium $(\alpha S_a + S_u)/N = \alpha$, so new infections are $F = \begin{pmatrix} 0 & \alpha\beta\sigma & \alpha\beta \\ 0 & 0 & 0 \\ 0 & 0 & 0 \end{pmatrix}$ and transitions are $V = \begin{pmatrix} \theta & 0 & 0 \\ -k\theta & \eta_a & 0 \\ -(1-k)\theta & 0 & q_1 \end{pmatrix}$. $F V^{-1}$ has rank one, and its only non-zero eigenvalue is the first row of $F$ applied to the first column of $V^{-1}$, namely $\alpha\beta\sigma \cdot k/\eta_a + \alpha\beta \cdot (1-k)/q_1$; stability follows from the van den Driessche–Watmough theorem. The awareness rate $v$ does not appear: at the equilibrium the population is already fully aware, so $v$ shapes the transient (how fast the effective susceptibility falls from $1$ towards $\alpha$ during an outbreak seeded in an unaware population) but not the invasion threshold. A threshold computed with $S_u(0) = N$ instead, $\beta(\sigma k/\eta_a + (1-k)/q_1)$, describes initial growth only while awareness spreads slowly compared with transmission ($v$ small).
+Take infected states $(E, A, I)$; $H_m, H_s$ receive inflow but cannot infect, so they do not affect $\mathcal{R}_0$. At the equilibrium $(\alpha S_a + S_u)/N = \alpha$, so new infections are $F = \begin{pmatrix} 0 & \alpha\beta\sigma & \alpha\beta \\ 0 & 0 & 0 \\ 0 & 0 & 0 \end{pmatrix}$ and transitions are $V = \begin{pmatrix} \theta & 0 & 0 \\ -k\theta & \eta_a & 0 \\ -(1-k)\theta & 0 & q_1 \end{pmatrix}$. $F V^{-1}$ has rank one, and its only non-zero eigenvalue is the first row of $F$ applied to the first column of $V^{-1}$, namely $\alpha\beta\sigma \cdot k/\eta_a + \alpha\beta \cdot (1-k)/q_1$; the sign of the spectral abscissa of $F - V$ follows from the van den Driessche–Watmough lemma ($s(F - V) < 0$ iff $\rho(FV^{-1}) < 1$), but their asymptotic-stability conclusion does not apply, since the infection-free subsystem has a continuum of equilibria. The awareness rate $v$ does not appear: at the equilibrium the population is already fully aware, so $v$ shapes the transient (how fast the effective susceptibility falls from $1$ towards $\alpha$ during an outbreak seeded in an unaware population) but not the invasion threshold. A threshold computed with $S_u(0) = N$ instead, $\beta(\sigma k/\eta_a + (1-k)/q_1)$, describes initial growth only while awareness spreads slowly compared with transmission ($v$ small).
 
 ## Sources
 

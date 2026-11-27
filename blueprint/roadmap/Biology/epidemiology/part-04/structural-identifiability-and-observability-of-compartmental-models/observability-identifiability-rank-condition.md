@@ -16,7 +16,7 @@ $$L^i_{\tilde f} h(\tilde x, u) = \frac{\partial L^{i-1}_{\tilde f} h}{\partial 
 
 $$\mathcal{OI}(\tilde x, u) = \frac{\partial}{\partial \tilde x}\begin{pmatrix} L^0_{\tilde f}h \\ L^1_{\tilde f}h \\ \vdots \\ L^{n_{\tilde x}-1}_{\tilde f}h \end{pmatrix} \in \mathbb R^{m n_{\tilde x} \times n_{\tilde x}} .$$
 
-If $\operatorname{rank}\mathcal{OI}(\tilde x_0, u) = n_{\tilde x}$ at a generic point $\tilde x_0$, the model is structurally locally observable and identifiable (FISPO). If the rank is smaller, the coordinates whose columns are not in the span of the others (equivalently, those whose removal does not lower the rank) are the unidentifiable parameters and unobservable states.
+If $\operatorname{rank}\mathcal{OI}(\tilde x_0, u) = n_{\tilde x}$ at a generic point $\tilde x_0$, the model is structurally locally observable and identifiable (FISPO). If the rank is smaller, the coordinates whose removal does not lower the rank (equivalently, whose columns lie in the span of the other columns) are unidentifiable parameters or unobservable states.
 
 **Consequences for epidemic models.** A compartment such as the recovered class, which feeds back into no other equation and is not measured, never appears in the output's Lie derivatives and is unobservable. Treating a parameter as time-varying (moving it from $\theta$ into $w$) can break symmetries of the model: a Lie symmetry such as $\mu \mapsto \mu + \epsilon\rho$ that renders two constant parameters unidentifiable disappears when one of them varies in time, and the model can gain identifiability and observability.
 

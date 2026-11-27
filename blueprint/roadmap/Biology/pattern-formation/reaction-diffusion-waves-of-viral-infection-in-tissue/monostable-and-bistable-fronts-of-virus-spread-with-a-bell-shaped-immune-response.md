@@ -20,7 +20,7 @@ so $c_1 > 0$ (high-level infection invades) if and only if $\int_{v_1}^{v_3} F(w
 
 $$\int_{v_1}^{v_3} v f(v)\, dv < \tfrac12 (v_3^2 - v_1^2) - \tfrac13 (v_3^3 - v_1^3).$$
 
-**Regimes.** Two-step waves connecting $v_3$ to $0$ exist only if $c_0 < c_1$. For a localized initial load with maximum $v^*$: if $v^* < v_2$, infection spreads at speed $c_0$ to the level $v_1$; if $v^* > v_2$, $\int_{v_1}^{v_3} F > 0$ and $c_1 \le c_0$, a low-level front moving at $c_0$ is followed by a slower front at $c_1$ raising the load to $v_3$; if $c_1 > c_0$, a single high-level front spreads.
+**Regimes.** Two-step waves connecting $v_3$ to $0$ exist only if $c_0 < c_1$. For the step initial datum $v(x, 0) = v^*$ on $x < 0$ and $v(x, 0) = 0$ on $x \ge 0$: if $v^* < v_2$, infection spreads at speed $c_0$ to the level $v_1$; if $v^* > v_2$, $\int_{v_1}^{v_3} F > 0$ and $c_1 \le c_0$, a low-level front moving at $c_0$ is followed by a slower front at $c_1$ raising the load to $v_3$; if $v^* > v_2$ and $c_1 > c_0$, a single high-level front spreads. (For a localized initial bump the bistable part has a width-dependent nucleation threshold, so $v^* > v_2$ alone does not give the high-level front.)
 
 ## Depends on
 

@@ -12,7 +12,7 @@ so $\varphi(S) \in (0, 1]$ is the fittest phenotype (low $S$ favours $x \to 1$) 
 
 **Gaussian reduction.** For Gaussian initial data, $n_i(\cdot, t)$ stays Gaussian with mass $\rho_i$, mean $\mu_i$ and inverse variance $v_i = 1/\sigma_i^2$ solving
 
-$$\dot v_i = 2(\gamma - \beta_i v_i^2), \qquad \dot\mu_i = \frac{2\gamma}{v_i}(\varphi(t) - \mu_i), \qquad \dot\rho_i = \Big(\gamma g(t) - \beta_i v_i - \gamma(\mu_i - \varphi(t))^2 - d\rho\Big)\rho_i .$$
+$$\dot v_i = 2(\gamma - \beta_i v_i^2), \qquad \dot\mu_i = \frac{2\gamma}{v_i}(\varphi(t) - \mu_i), \qquad \dot\rho_i = \Big(\gamma g(t) - \frac{\gamma}{v_i} - \gamma(\mu_i - \varphi(t))^2 - d\rho\Big)\rho_i .$$
 
 Thus $\sigma_i^2(t) \to \sqrt{\beta_i/\gamma}$ exponentially fast.
 
@@ -28,7 +28,7 @@ If $\min\{\Lambda_H, \Lambda_L\} \ge \frac{\gamma}{T}\int_0^T g$, both populatio
 
 ## Expansion
 
-Substituting $n_i \propto \exp(-v_i(x-\mu_i)^2/2)$ into the PDE and matching powers of $x - \mu_i$ gives the ODEs: diffusion contributes $\beta_i(v_i^2(x-\mu_i)^2 - v_i)$ and the quadratic landscape contributes $-\gamma(x - \varphi)^2$. $\Lambda_i$ is the long-run fitness cost of population $i$: $\sqrt{\gamma\beta_i}$ is the variance load of maintaining phenotypic spread, and the integral is the lag load from tracking the oscillating optimum with response rate $2\sqrt{\gamma\beta_i}$. In a constant environment the lag load vanishes and lower variability always wins; under fast or large fluctuations, the more variable population lags less and can win, a form of bet-hedging. The competitive exclusion follows from comparing $\frac{d}{dt}\ln\rho_i$ for the two populations, which differ only by $\Lambda_i$ in time average.
+Substituting $n_i \propto \exp(-v_i(x-\mu_i)^2/2)$ into the PDE and matching powers of $x - \mu_i$ gives the ODEs: diffusion contributes $\beta_i(v_i^2(x-\mu_i)^2 - v_i)$ and the quadratic landscape contributes $-\gamma(x - \varphi)^2$. Integrating the PDE over $x$ gives the mass equation: diffusion integrates to zero and $\int (x - \varphi)^2 n_i\,dx = \rho_i\big((\mu_i - \varphi)^2 + 1/v_i\big)$; at the limiting variance $1/v_i = \sqrt{\beta_i/\gamma}$ the variance term $\gamma/v_i$ equals $\sqrt{\gamma\beta_i}$. $\Lambda_i$ is the long-run fitness cost of population $i$: $\sqrt{\gamma\beta_i}$ is the variance load of maintaining phenotypic spread, and the integral is the lag load from tracking the oscillating optimum with response rate $2\sqrt{\gamma\beta_i}$. In a constant environment the lag load vanishes and lower variability always wins; under fast or large fluctuations, the more variable population lags less and can win, a form of bet-hedging. The competitive exclusion follows from comparing $\frac{d}{dt}\ln\rho_i$ for the two populations, which differ only by $\Lambda_i$ in time average.
 
 ## Sources
 

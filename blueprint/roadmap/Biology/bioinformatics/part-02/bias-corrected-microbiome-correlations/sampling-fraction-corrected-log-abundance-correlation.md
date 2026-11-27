@@ -14,13 +14,13 @@ With $d(i) = \{ j : M_{ij} = 1 \}$, the sampling-fraction difference is estimate
 
 $$\widehat{s_i - \bar s_{\cdot}} = \sum_{j \in d(i)} w_j\, (o_{ij} - \bar o_{\cdot j}), \qquad w_j \propto \frac{1}{\operatorname{Var}(o_{ij} - \bar o_{\cdot j})}, \ \ \sum_{j\in d(i)} w_j = 1,$$
 
-and $\hat y_{ij} = (o_{ij} - \bar o_{\cdot j}) - \widehat{s_i - \bar s_{\cdot}}$ converges in probability to $y_{ij} = (a_{ij} - \bar a_{\cdot j}) + (e_{ij} - \bar e_{\cdot j})$ as $|d(i)| \to \infty$, provided the covariance matrix $\Sigma^0$ is approximately sparse (each row has bounded absolute sum, Assumption 1).
+and $\hat y_{ij} = (o_{ij} - \bar o_{\cdot j}) - \widehat{s_i - \bar s_{\cdot}}$ converges in probability to $y_{ij} = (a_{ij} - \bar a_{\cdot j}) + (e_{ij} - \bar e_{\cdot j})$ as $|d(i)| \to \infty$, provided the covariance matrix $\Sigma^0$ lies in the class $U(K) = \{\Sigma : \sigma_{jj} < K \text{ for all } j,\ d^{-2}\sum_{l \ne m} \sigma_{lm} = o(1)\}$ for some constant $K$ (Assumption 1).
 
 **Correlation of the corrected values.** The covariance of the $y$'s has $\sigma_{lm} = (1 - \tfrac1n)\sigma^0_{lm}$ off the diagonal and $\sigma_{ll} = (1 - \tfrac1n)(\sigma^0_{ll} + \sigma_e^2)$ on it, so
 
 $$\rho_{lm} = \frac{\sigma^0_{lm}}{\sqrt{(\sigma^0_{ll} + \sigma_e^2)(\sigma^0_{mm} + \sigma_e^2)}} \ \approx \ \rho^0_{lm} \qquad \text{when } \sigma_e^2 \ll \sigma^0_{ll}.$$
 
-**Theorem (concentration).** Let $R_n$ be the matrix of pairwise-complete Pearson correlations of the $\hat y_{ij}$, computed for each pair $(l,m)$ over the samples where both taxa are present. If $\Sigma^0$ satisfies the sparsity assumption and every taxon and every pair of taxa is present with probability bounded below by some $\delta_{\min} > 0$, then
+**Theorem (concentration).** Let $R_n$ be the matrix of pairwise-complete Pearson correlations of the $\hat y_{ij}$, computed for each pair $(l,m)$ over the samples where both taxa are present. If $\Sigma^0 \in U(K)$ and the presence probabilities averaged over samples are bounded below by some $\delta_{\min} > 0$, that is $\delta_l = \frac1n \sum_{i=1}^n P(M_{il} = 1) > \delta_{\min}$ for every taxon $l$ and $\delta_{l,m} = \frac1n \sum_{i=1}^n P(M_{il} = 1, M_{im} = 1) > \delta_{\min}$ for every pair $l \ne m$ (Assumption 3), then
 
 $$\| R_n - R \|_{\max} = O_p\!\left(\sqrt{\frac{\log d}{n}}\right).$$
 

@@ -15,7 +15,7 @@ $$\frac{\mathbb V[X_P]}{\mathbb E[X_P]} \approx \frac{\mathbb V[U]}{v_P^*} = -\f
 
 independent of $N$.
 
-**Limits of noise.** Compared with the unregulated gene with the same mean protein level, negative feedback makes $F'(v_P^*)$ more negative and reduces the Fano factor, but by at most a factor of $2$; in the limit of strong repression with low protein abundance the Fano factor tends to $1/2$ of its Poisson value. Positive feedback flattens $F$ at the equilibrium ($F'(v_P^*) \to 0^-$), so the Fano factor is potentially unbounded.
+**Limits of noise.** Compared with the unregulated gene with the same mean protein level, negative feedback makes $F'(v_P^*)$ more negative and reduces the Fano factor, but under the abundant-protein scaling ($X_P = O(N)$) by at most a factor of $2$: the Fano factor is at least $1/2$ (Eq. 14), approached under strong repression when mRNA noise is negligible. These results assume abundant protein; for small amounts of protein under strong repression the source shows that the Fano factor can become arbitrarily small. Positive feedback flattens $F$ at the equilibrium ($F'(v_P^*) \to 0^-$), so the Fano factor is potentially unbounded.
 
 ## Expansion
 

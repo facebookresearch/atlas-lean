@@ -18,7 +18,7 @@ Since $\Omega_D$ has positive volume, selectivity is robust to small perturbatio
 
 **Corollary (memory capacity).** For reliability $\phi \in (0,1)$, the largest number $\bar M$ of background items for which the first bound is at least $\phi$ satisfies
 
-$$\bar M > -\ln\phi\,\big(2e^{\alpha n} - 1\big), \qquad \alpha = \ln\frac{\|w\|}{\sqrt{\|w\|^2 - \theta^2}} > 0,$$
+$$\bar M \ge \big\lfloor -\ln\phi\,\big(2e^{\alpha n} - 1\big) \big\rfloor, \qquad \alpha = \ln\frac{\|w\|}{\sqrt{\|w\|^2 - \theta^2}} > 0,$$
 
 so it grows at least exponentially in the neuronal dimension $n$.
 

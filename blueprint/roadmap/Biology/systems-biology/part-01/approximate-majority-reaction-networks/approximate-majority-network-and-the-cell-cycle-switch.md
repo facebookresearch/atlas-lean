@@ -9,7 +9,7 @@ i.e. $x$ catalyses $y \to b \to x$ and $y$ catalyses $x \to b \to y$.
 **Stochastic (population-protocol) behaviour.** Interpreting each reaction as a random pairwise interaction among $N$ agents:
 
 1. *Fast:* with high probability the population reaches a single species after $O(N \log N)$ interactions, i.e. $O(\log N)$ parallel time; this is asymptotically optimal, since $\Omega(N \log N)$ interactions are needed for every agent to be influenced, directly or indirectly, by every other.
-2. *Reliable:* if the initial margin $|x_0 - y_0|$ exceeds a threshold of order $\sqrt{N \log N}$, the initial majority wins with high probability.
+2. *Reliable:* if the initial margin satisfies $|x_0 - y_0| = \omega(\sqrt{N} \log N)$, the initial majority wins with high probability.
 3. *Robust:* correctness persists when a subpopulation of order $o(\sqrt N)$ behaves arbitrarily (adversarially).
 
 **Deterministic behaviour.** The mass-action ODE
@@ -22,7 +22,7 @@ on the simplex $x + y + b = N$ has stable equilibria $(N, 0, 0)$ and $(0, N, 0)$
 
 ## Expansion
 
-The undecided state $b$ is what makes AM fast: a single $x$–$y$ encounter turns one agent undecided, and undecided agents are recruited by whichever species is more abundant, so the majority's lead grows multiplicatively, the same positive feedback visible in $\frac{d}{dt}(x - y) = k\,b\,(x - y)$. The deterministic picture captures only the bistable switching; the $O(\log N)$ time, the $\sqrt{N \log N}$ reliability threshold and robustness are statements about the stochastic kinetics (a continuous-time Markov chain on counts). The "pinched arrow" structure, where a catalyst drives a two-step conversion through an intermediate, is suggestive of multisite phosphorylation, which is how the transformed network maps onto Cdk regulation by Wee1 and Cdc25. The argument is that the cell-cycle switch is shaped by an algorithm (approximate majority) subject to biochemical constraints, not by chance.
+The undecided state $b$ is what makes AM fast: a single $x$–$y$ encounter turns one agent undecided, and undecided agents are recruited by whichever species is more abundant, so the majority's lead grows multiplicatively, the same positive feedback visible in $\frac{d}{dt}(x - y) = k\,b\,(x - y)$. The deterministic picture captures only the bistable switching; the $O(\log N)$ time, the $\omega(\sqrt{N} \log N)$ reliability margin and robustness are statements about the stochastic kinetics (a continuous-time Markov chain on counts). The "pinched arrow" structure, where a catalyst drives a two-step conversion through an intermediate, is suggestive of multisite phosphorylation, which is how the transformed network maps onto Cdk regulation by Wee1 and Cdc25. The argument is that the cell-cycle switch is shaped by an algorithm (approximate majority) subject to biochemical constraints, not by chance.
 
 ## Sources
 

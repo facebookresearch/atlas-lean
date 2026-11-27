@@ -11,7 +11,7 @@ $$\mathcal X_{s} = \{(U, 0, 0) : U \ge 0\}, \qquad \mathcal X_{s1} = \{(U, 0, 0)
 **Theorem.**
 1. (Linearization) At $(U_s,0,0)$ the Jacobian has eigenvalues $0$ and $\lambda_{2,3} = \tfrac12\big(-(c+\delta) \pm \sqrt{(c+\delta)^2 + 4c\delta(U_s/U_c - 1)}\big)$, so the transverse eigenvalues are both negative when $U_s < U_c$ and one is positive when $U_s > U_c$.
 2. (Convergence) From any initial state with $U(0) > 0$, $V(0) > 0$, $U(t)$ decreases to a limit $U_\infty < U(0)$ and $I(t), V(t) \to 0$; thus $\mathcal X_s$ is attractive.
-3. (Asymptotic stability of the set) Each point of $\mathcal X_{s1}$ is Lyapunov stable, and $\mathcal X_{s1}$ is the smallest asymptotically stable equilibrium set, with domain of attraction $\mathcal X$. No single equilibrium is asymptotically stable.
+3. (Asymptotic stability of the set) Each point of $\mathcal X_{s1}$ is Lyapunov stable, and $\mathcal X_{s1}$ is the smallest asymptotically stable equilibrium set, with domain of attraction $\{(U, I, V) \in \mathcal X : U > 0,\ V > 0\}$ (the equilibria $(U_s, 0, 0)$ with $U_s \ge U_c$ lie outside $\mathcal X_{s1}$ and are not attracted to it). No single equilibrium is asymptotically stable.
 4. (Viral spread) Starting from $U(0) = U_0 > 0$, $I(0) = 0$, $V(0) = V_0 > 0$, if the viral load ever increases then $R_0 > 1$; equivalently $R_0 < 1$ is sufficient for $V$ to decrease monotonically from the infection time.
 
 ## Expansion

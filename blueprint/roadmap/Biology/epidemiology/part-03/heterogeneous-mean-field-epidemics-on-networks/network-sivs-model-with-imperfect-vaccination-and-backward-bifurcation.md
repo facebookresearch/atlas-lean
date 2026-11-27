@@ -15,9 +15,9 @@ The disease-free equilibrium is $S_k^0 = \phi/(\varphi_k + \phi)$, $I_k^0 = 0$, 
 $$R_0 = \frac{1}{\gamma\langle k\rangle}\sum_{k=1}^{n} \frac{k P(k)\big[\phi\beta_S(k) + \varphi_k \beta_V(k)\big]}{\varphi_k + \phi}, \qquad R_1(k) = \frac{\gamma\varphi_k\beta_V(k)\big[\beta_S(k) - \beta_V(k)\big]}{\big[\phi\beta_S(k) + \varphi_k\beta_V(k)\big]^2}.$$
 
 1. The disease-free equilibrium is locally asymptotically stable if $R_0 < 1$.
-2. If $R_0 > 1$ there is exactly one endemic equilibrium.
+2. If $R_1(k) \le 1$ for every $k$ and $R_0 > 1$, there is exactly one endemic equilibrium.
 3. If $R_1(k) \le 1$ for every $k$, there is no endemic equilibrium when $R_0 \le 1$ (forward bifurcation at $R_0 = 1$).
-4. If $R_1(k) > 1$ (with the further conditions of the source on $R_2$ and $R_3 = f(\Theta_2) + 1$), there can be two endemic equilibria with $R_0 < 1$: imperfect vaccination produces a backward bifurcation, so reducing $R_0$ just below $1$ need not eradicate the infection.
+4. If $R_1(k) > 1$ for some $k$, the model can have two endemic equilibria with $R_0 < 1$ (the source gives sufficient conditions for this in terms of further thresholds): imperfect vaccination produces a backward bifurcation, so reducing $R_0$ just below $1$ need not eradicate the infection.
 
 Endemic equilibria are in bijection with roots $\Theta \in (0, 1)$ of $f(\Theta) = 0$, where
 
@@ -29,7 +29,7 @@ $$f(\Theta) = \frac{1}{\langle k\rangle}\sum_{k} \frac{k P(k)\big\{\beta_S(k)[\b
 
 ## Expansion
 
-New infections at the disease-free state enter class $k$ at rate $[\beta_S(k) S_k^0 + \beta_V(k) V_k^0]\Theta$, a rank-one next-generation matrix, so $R_0$ is its trace. Solving the stationary equations for fixed $\Theta$ gives $S_k, I_k, V_k$ as rational functions of $\Theta$, and $\Theta = \langle k\rangle^{-1}\sum k P(k) I_k$ reduces to $\Theta f(\Theta) = 0$. The sign of $f'$ is that of $h_k(\Theta) = -[\beta_S\beta_V]^2\Theta^2 - 2\beta_S\beta_V[\phi\beta_S + \varphi_k\beta_V]\Theta + g_k$ summed with positive weights, where a direct computation gives $g_k = \gamma\varphi_k\beta_V(\beta_S - \beta_V) - [\phi\beta_S + \varphi_k\beta_V]^2$; thus $g_k \le 0$ iff $R_1(k) \le 1$. When every $g_k \le 0$, $f$ is decreasing on $(0, 1)$, giving items 2–3; when $g_k > 0$, $f$ first increases and then decreases, so $f$ can cross zero twice even though $f(0) < 0$. The mechanism is that vaccinated nodes become infectable at the reduced rate $\beta_V$ and, once infected, return to the fully susceptible class, which feeds the infection when prevalence is high. Setting $\beta_S(k) = \beta k$, $\beta_V(k) = \sigma\beta k$ and $\varphi_k = \varphi$ recovers the constant-rate network vaccination model the source generalizes.
+New infections at the disease-free state enter class $k$ at rate $[\beta_S(k) S_k^0 + \beta_V(k) V_k^0]\Theta$, a rank-one next-generation matrix, so $R_0$ is its trace. Solving the stationary equations for fixed $\Theta$ gives $S_k, I_k, V_k$ as rational functions of $\Theta$, and $\Theta = \langle k\rangle^{-1}\sum k P(k) I_k$ reduces to $\Theta f(\Theta) = 0$. The sign of $f'$ is that of $h_k(\Theta) = -[\beta_S\beta_V]^2\Theta^2 - 2\beta_S\beta_V[\phi\beta_S + \varphi_k\beta_V]\Theta + g_k$ summed with positive weights, where a direct computation gives $g_k = \gamma\varphi_k\beta_V(\beta_S - \beta_V) - [\phi\beta_S + \varphi_k\beta_V]^2$; thus $g_k \le 0$ iff $R_1(k) \le 1$. When every $g_k \le 0$, $f$ is decreasing on $(0, 1)$, giving items 2–3; when some $g_k > 0$, $f$ need not be monotone and can cross zero twice even though $f(0) < 0$ (with several degree classes it can even have three roots in $(0,1)$ when $R_0 > 1$, which is why item 2 needs $R_1(k) \le 1$). The mechanism is that vaccinated nodes become infectable at the reduced rate $\beta_V$ and, once infected, return to the fully susceptible class, which feeds the infection when prevalence is high. Setting $\beta_S(k) = \beta k$, $\beta_V(k) = \sigma\beta k$ and $\varphi_k = \varphi$ recovers the constant-rate network vaccination model the source generalizes.
 
 ## Sources
 

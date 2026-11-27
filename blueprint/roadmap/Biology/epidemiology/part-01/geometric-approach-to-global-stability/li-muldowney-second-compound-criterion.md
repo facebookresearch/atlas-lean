@@ -25,7 +25,7 @@ $$
 \dot S=\Lambda-\gamma SI-d_0S,\qquad \dot I=\gamma SI-(d_0+k+\eta)I+\sigma Q,\qquad \dot Q=\eta I-(d_0+\mu+\sigma)Q,
 $$
 
-whose basic reproduction number is $R_0=\dfrac{\Lambda\gamma(d_0+\mu+\sigma)}{d_0\big[(d_0+k)(d_0+\mu+\sigma)+\eta(d_0+\mu)\big]}$. For $R_0>1$ the endemic equilibrium $E_2^*$ is the unique interior equilibrium and $\Omega=\{S+I+Q\le\Lambda/d_0\}$ is absorbing; with $P=(S/I)\,\mathrm{Id}_3$ and the norm $\|(X_1,X_2,X_3)\|=\max\{|X_1|,|X_2|+|X_3|\}$ the source's estimate gives $\bar q_2\le-2d_0<0$ under $\mu+\sigma>\eta$, so $E_2^*$ is globally asymptotically stable (Theorem 3).
+whose basic reproduction number is $R_0=\dfrac{\Lambda\gamma(d_0+\mu+\sigma)}{d_0\big[(d_0+k)(d_0+\mu+\sigma)+\eta(d_0+\mu)\big]}$. For $R_0>1$ the endemic equilibrium $E_2^*$ is the unique interior equilibrium and $\Omega=\{S+I+Q\le\Lambda/d_0\}$ is absorbing. The source takes $P=(S/I)\,\mathrm{Id}_3$ and the norm $\|(X_1,X_2,X_3)\|=\max\{|X_1|,|X_2|+|X_3|\}$ and prints the estimate $\bar q_2\le-2d_0$ under $\mu+\sigma>\eta$ (Theorem 3). That printed estimate does not hold in general: $E_2^*\in\Omega$, and at $E_2^*$ one has $P_f=0$ and $B=J^{[2]}$, so $\bar q_2\ge\mu\big(J^{[2]}(E_2^*)\big)$, which is at least the largest sum of two eigenvalues of $J(E_2^*)$; for $\Lambda=0.1037$, $\eta=0.1522$, $\gamma=0.1931$, $d_0=0.09856$, $\mu=0.1567$, $k=0.001187$, $\sigma=0.1255$ one has $R_0\approx1.007$ and $\mu+\sigma>\eta$, while that sum is about $-0.0993>-2d_0$. The criterion therefore gives global stability of $E_2^*$ only where $\bar q_2<0$ is verified directly.
 
 ## Expansion
 

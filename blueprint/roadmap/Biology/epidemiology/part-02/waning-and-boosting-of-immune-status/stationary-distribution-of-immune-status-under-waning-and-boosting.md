@@ -4,9 +4,17 @@
 
 $$(K b)(\Gamma) = \int_{(0,\infty)} \int_0^\infty \Lambda e^{-\Lambda \sigma}\, \mathbf 1_\Gamma\bigl(f(\pi(\sigma, z))\bigr)\, d\sigma\; b(dz).$$
 
-**Fixed point.** Suppose there exist $0 < \rho < 1$ and $z \ge f(f(y_c))$ such that $f(\pi(\rho/\Lambda, y)) < y$ for all large $y$ (precisely, for $y \ge f_+^{-1}(z)$, with $f_+^{-1}$ the branch of the inverse above $y_c$) together with an integrability condition on the low-level branch. Then $K$ has a unique fixed point, with a density that is strictly positive on $(f(y_c), \infty)$. For $g(y) = -wy$ the first condition holds for any $\delta \ge 0$ and $\rho \in (0,1)$; with $f(y) = y(1 + \sigma_2 y^{-\sigma_1})$, the integrability condition holds, and also holds if $g(y) = -wy$ only near zero provided $\Lambda > w(\sigma_1 - 1)$.
+**Fixed point.** Suppose there exist $0 < \rho < 1$ and $z \ge f(f(y_c))$ such that $f(\pi(\rho/\Lambda, y)) < y$ for all large $y$ (precisely, for $y \ge f_+^{-1}(z)$, with $f_+^{-1}$ the branch of the inverse above $y_c$) and such that, with $\mathcal T(y) = \int_{y_c}^{y} d\eta/g(\eta)$ the waning-time primitive ($g < 0$ the waning rate) and $\alpha(y) = -\Lambda/\big(g(f_+^{-1}(y))\, f'(f_+^{-1}(y))\big) > 0$,
 
-**Correspondence.** If $m$ is a stationary distribution of the process, then $b(\Gamma) = m(f^{-1}(\Gamma))$ is a fixed point of $K$; conversely, if $b$ is a fixed point of $K$, then $m(\Gamma) = b(f(\Gamma))$ is a stationary distribution. Hence there is a unique normalized stationary distribution of immune status; it has a density, strictly positive on $(0, \infty)$.
+$$\int_z^y \alpha(\xi)\, e^{-\Lambda \mathcal T(f_-^{-1}(\xi))}\, d\xi \ \text{ is bounded for } y \in [z, \infty),$$
+
+with $f_-^{-1}$ the branch of the inverse below $y_c$. Then $K$ has a unique fixed point, with a density that is strictly positive on $(f(y_c), \infty)$. For $g(y) = -wy$ the first condition holds for any $\delta \ge 0$ and $\rho \in (0,1)$; with $f(y) = y(1 + \sigma_2 y^{-\sigma_1})$, $\sigma_1 > 1$, $\sigma_2 > 0$, and $g(y) = -wy$ the integrability condition holds, and also holds if $g(y) = -wy$ only near zero provided $\Lambda > w(\sigma_1 - 1)$.
+
+**Correspondence.** If $m$ is a stationary distribution of the process, then $b(\Gamma) = m(f^{-1}(\Gamma))$ is a fixed point of $K$; conversely, if $b$ is a fixed point of $K$, then
+
+$$m(\Gamma) = \int_{(0,\infty)} \int_0^\infty \Lambda e^{-\Lambda \sigma}\, \mathbf 1_\Gamma\bigl(\pi(\sigma, z)\bigr)\, d\sigma\; b(dz)$$
+
+is a stationary distribution (it satisfies $m(f^{-1}(\Gamma)) = (Kb)(\Gamma) = b(\Gamma)$). The source prints the converse as $m(\Gamma) = b(f(\Gamma))$, which is not a measure, since $f$ maps both $(0, y_c)$ and $(y_c, \infty)$ onto $(f(y_c), \infty)$. Hence there is a unique normalized stationary distribution of immune status; it has a density, strictly positive on $(0, \infty)$.
 
 **Stability.** If moreover $f'(y)\, g(y) / g(f(y)) < 1$ for all $y > 0$, then for every initial distribution with density $\phi$, the density $T(t)\phi$ of $Q_t \times m$ satisfies
 

@@ -16,13 +16,11 @@ $$f(S) = \bigcup_{i=1}^{|S| - (k+q-1) + 1} f\big(S[i, k+q-1]\big)$$
 
 **Densities.** Assuming no window of $w + 1$ consecutive $k$-mers contains duplicates, a random minimizer has density $2/(w+1)$. Open and closed syncmers have densities $1/(k-s+1)$ and $2/(k-s+1)$, up to an error $o\big((k-s+1)^2/|\Sigma|^s\big)$ from repeated $s$-mers.
 
-**Uniqueness trade-off.** If a $1$-local method $f_1$ and an $n$-local method $f_n$ ($n > 1$) have equal density, then on a long uniformly random string $f_n$ selects strictly more unique $k$-mers in expectation than $f_1$.
-
 ## Expansion
 
-For minimizers, the number of selected $k$-mers equals one plus the number of window shifts at which the selected position changes. Consecutive windows starting at $i$ and $i+1$ select different $k$-mers exactly when the smallest $k$-mer of the combined window of $w + 1$ $k$-mers is its first or last element (a *charged context*); under a random order and no duplicates the minimum is uniform over the $w+1$ positions, so this has probability $2/(w+1)$, which is the density. The same argument with $s$-mers inside a $k$-mer gives the syncmer densities, the minimum of $k - s + 1$ distinct $s$-mers falling at a prescribed position with probability $1/(k-s+1)$. A $1$-local method must select every copy of a chosen $k$-mer wherever it recurs, so repeated $k$-mers are selected as often as unique ones; a method with wider context can decline to pick a repeat in some of its occurrences, which yields the uniqueness advantage.
+For minimizers, the number of selected $k$-mers equals one plus the number of window shifts at which the selected position changes. Consecutive windows starting at $i$ and $i+1$ select different $k$-mers exactly when the smallest $k$-mer of the combined window of $w + 1$ $k$-mers is its first or last element (a *charged context*); under a random order and no duplicates the minimum is uniform over the $w+1$ positions, so this has probability $2/(w+1)$, which is the density. The same argument with $s$-mers inside a $k$-mer gives the syncmer densities, the minimum of $k - s + 1$ distinct $s$-mers falling at a prescribed position with probability $1/(k-s+1)$.
 
 ## Sources
 
-- J. Shaw, Y. W. Yu, "Theory of local k-mer selection with applications to long-read alignment", Bioinformatics 38 (2022) 4659–4669, Section 2 (Definitions 1–7, Theorems 1–2, Table 2) and Section 3.4 (Theorem 5), <https://doi.org/10.1093/bioinformatics/btab790>.
+- J. Shaw, Y. W. Yu, "Theory of local k-mer selection with applications to long-read alignment", Bioinformatics 38 (2022) 4659–4669, Section 2 (Definitions 1–7, Theorems 1–2, Table 2), <https://doi.org/10.1093/bioinformatics/btab790>.
 - S. Schleimer, D. S. Wilkerson, A. Aiken, "Winnowing: local algorithms for document fingerprinting", Proceedings of ACM SIGMOD (2003) 76–85, <https://doi.org/10.1145/872757.872770>.

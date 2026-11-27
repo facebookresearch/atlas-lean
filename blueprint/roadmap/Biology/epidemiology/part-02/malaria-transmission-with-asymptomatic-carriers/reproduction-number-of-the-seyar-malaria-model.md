@@ -6,7 +6,9 @@ $$\dot u = (u_{\mathrm{high}} - u)\,\dot\varepsilon, \qquad u(0) = u_{\mathrm{lo
 
 Hence $u$ is a function of $\varepsilon$ alone,
 
-$$u(\varepsilon) = u_{\mathrm{high}} + (u_{\mathrm{low}} - u_{\mathrm{high}})\,e^{\varepsilon_0 - \varepsilon}, \qquad \varepsilon_0 = \varepsilon(0).$$
+$$u(\varepsilon) = u_{\mathrm{high}} + (u_{\mathrm{low}} - u_{\mathrm{high}})\,e^{\varepsilon_0 - \varepsilon}, \qquad \varepsilon_0 = \varepsilon(0),$$
+
+where the initial exposed proportion satisfies $0 \le \varepsilon_0 \le \ln\big(u_{\mathrm{high}}/(u_{\mathrm{high}} - u_{\mathrm{low}})\big)$, so that $u(\varepsilon) \ge 0$ for every $\varepsilon \ge 0$.
 
 **Model.** Humans $S, E, Y$ (symptomatic), $A$ (asymptomatic), $R$ with $N_H = S+E+Y+A+R$, and mosquitoes $M_S, M_E, M_I$:
 
@@ -23,7 +25,7 @@ $$\begin{aligned}
 
 with biting rate $\sigma$, transmission probabilities $\beta_M$ (mosquito to human), $\beta_Y, \beta_A$ (symptomatic and asymptomatic human to mosquito), recruitment $\Omega_H, \Omega_M$, natural mortalities $\xi_H, \xi_M$, disease death $\delta$, progression rates $\gamma, \tau$ and recovery rates $\lambda_{YR}, \lambda_{AR}$. The disease-free equilibrium is $(\Omega_H/\xi_H, 0,0,0,0, \Omega_M/\xi_M, 0, 0)$.
 
-**Proposition.** With $U_{\mathrm{low}} = u(0) = e^{\varepsilon_0}(u_{\mathrm{low}} - u_{\mathrm{high}}) + u_{\mathrm{high}}$, the asymptomatic share of new infections at the disease-free state, the basic reproduction number is
+**Proposition.** With $U_{\mathrm{low}} = u(\varepsilon)|_{\varepsilon = 0} = e^{\varepsilon_0}(u_{\mathrm{low}} - u_{\mathrm{high}}) + u_{\mathrm{high}}$, the asymptomatic share of new infections at the disease-free state (so $0 \le U_{\mathrm{low}} \le u_{\mathrm{low}}$ by the constraint on $\varepsilon_0$), the basic reproduction number is
 
 $$\mathcal R_0 = \sqrt{\frac{\sigma^2\,\tau\,\gamma\,\Omega_M\,\xi_H\,\beta_M}{\xi_M^2(\gamma + \xi_H)(\tau + \xi_M)\,\Omega_H}\left(\frac{\beta_A U_{\mathrm{low}}}{\lambda_{AR} + \xi_H} + \frac{\beta_Y(1 - U_{\mathrm{low}})}{\lambda_{YR} + \xi_H + \delta}\right)},$$
 

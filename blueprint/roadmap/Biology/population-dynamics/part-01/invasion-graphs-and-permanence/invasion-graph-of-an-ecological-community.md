@@ -30,7 +30,7 @@ contains $\emptyset$). The **invasion scheme** is the sign table $\{ r_i(S) \}_{
 $$S \neq T, \qquad r_j(S) > 0 \ \text{for all } j \in T \setminus S, \qquad r_i(T) < 0 \ \text{for all } i \in S \setminus T .$$
 
 If some trajectory in $\Gamma_0$ has its $\alpha$-limit set in $F(S)$ and its $\omega$-limit set in
-$F(T)$, then $S \to T$ is an edge.
+$F(T)$ with $T \ne S$, then $S \to T$ is an edge.
 
 ## Expansion
 

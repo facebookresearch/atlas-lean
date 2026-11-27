@@ -10,7 +10,7 @@ the expected density $d(A,k)$ is its expectation over sequences whose letters ar
 
 $$d(A,k) = \frac{2}{w+1}, \qquad df(A,k) = 2 .$$
 
-A *local scheme* is any rule that picks a position in a window as a function of the window content alone. Every local scheme has expected density at least $1.5/(w+1)$, so random-order minimizers are within a factor $4/3$ of this bound.
+A *local scheme* is any rule that picks a position in a window as a function of the window content alone.
 
 ## Expansion
 
@@ -18,4 +18,4 @@ Say that window $W_i$ is *charged* if it selects a position different from the o
 
 ## Sources
 
-- G. Marçais, D. Pellow, D. Bork, Y. Orenstein, R. Shamir, C. Kingsford, "Improving the performance of minimizers and winnowing schemes", *Bioinformatics* (2017), Section 1 (Eq. (1), local schemes and the $1.5/(w+1)$ lower bound), Section 2 (Hypothesis 1, Eq. (2)), Section 3.1 (Theorem 1 and proof) and Section 3.2, <https://doi.org/10.1093/bioinformatics/btx235> (PMC5870760).
+- G. Marçais, D. Pellow, D. Bork, Y. Orenstein, R. Shamir, C. Kingsford, "Improving the performance of minimizers and winnowing schemes", *Bioinformatics* (2017), Section 1 (Eq. (1) and local schemes), Section 2 (Hypothesis 1, Eq. (2)), Section 3.1 (Theorem 1 and proof) and Section 3.2, <https://doi.org/10.1093/bioinformatics/btx235> (PMC5870760).

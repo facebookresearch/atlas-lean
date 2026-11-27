@@ -10,7 +10,7 @@ $$\frac{(1-\rho)\big(1 - (1-\rho)^{n-1}\big)^{k}}{\rho + (1-\rho)\big(1 - (1-\rh
 
 $$k \;\ge\; \frac{\ln\frac{\epsilon_{\mathrm{fp}}}{1-\epsilon_{\mathrm{fp}}} + \ln\frac{\rho}{1-\rho}}{\ln\big(1 - (1-\rho)^{n-1}\big)},$$
 
-then in every $(N, n, k)$-multipool strategy the probability that a positive result is a false positive is at most $\epsilon_{\mathrm{fp}}$. The right-hand side is increasing in $\rho$ on $(0, \tfrac12]$, so an upper bound on the incidence suffices.
+then in every $(N, n, k)$-multipool strategy the probability that a positive result is a false positive is at most $\epsilon_{\mathrm{fp}}$.
 
 The design uses $Nk/n$ tests, a saving of a factor $n/k$ over individual testing; with $n\rho \approx C$ fixed the required $k$ grows only logarithmically in $1/\rho$.
 

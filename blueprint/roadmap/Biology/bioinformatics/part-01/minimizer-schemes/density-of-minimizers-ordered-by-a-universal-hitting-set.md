@@ -10,7 +10,7 @@ $$df = 2\bigl(1 - SP(U_{k,w})\bigr). \tag{3}$$
 
 $$U_{k,w} = \bigl(V(G_k) \setminus C'\bigr) \cup \{c_i' : w \mid i\}$$
 
-is a universal hitting set with $SP(U_{k,w}) > 0$. Taking $C$ to be a Hamiltonian cycle of $G_{k-1}$ gives, for every $k$ and every $w \le 2(\sigma^{k-1}-1)$, local schemes with density factor strictly below $2$. This refutes the conjecture that $2/(w+1)$ is the least expected density of a local scheme.
+is a universal hitting set with $SP(U_{k,w}) > 0$. Taking $C$ to be a Hamiltonian cycle of $G_{k-1}$ gives, for every $k$ and every $w \le 2(\sigma^{k-1}-1)$, a universal hitting set with positive sparsity; under the Theorem's equal-likelihood assumption, the minimizer scheme ordered by it has density factor strictly below $2$ by (3).
 
 ## Depends on
 

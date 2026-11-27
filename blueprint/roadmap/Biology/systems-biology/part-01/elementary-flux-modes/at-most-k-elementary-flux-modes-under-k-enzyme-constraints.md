@@ -22,12 +22,16 @@ the fraction of pool $k$ used per unit of objective flux through $\mathrm{EFM}_i
 **equivalent** if their cost vectors coincide.
 
 **Theorem (extremum principle).** Maximize the objective flux $v_r$ over $v \in P$, $x_I$ and $e$
-subject to the $K$ constraints. Then an optimum is attained by a flux vector that is a nonnegative
-combination of at most $K$ non-equivalent EFMs; more EFMs can carry flux at an optimum only by
-substituting EFMs with identical cost vectors.
+subject to the $K$ constraints. Then, at the optimal internal concentrations, an optimum is attained
+at a vertex of the linear program below, and every vertex optimum is a nonnegative combination of at
+most $K$ EFMs, which are non-equivalent. If the optimal combination of EFMs is unique, every optimal
+flux uses at most $K$ non-equivalent EFMs. At a degenerate (non-unique) optimum, a non-vertex optimal
+flux can use more than $K$ non-equivalent EFMs (for $K = 2$ and cost vectors $(1, 0)$, $(0, 1)$,
+$(\tfrac12, \tfrac12)$, the weights $(\tfrac12, \tfrac12, 1)$ are optimal).
 
-**Corollary.** If an optimized flux uses $K$ non-equivalent EFMs, at least $K$ enzyme constraints
-are active.
+**Corollary.** If a vertex optimum uses $K$ EFMs, all $K$ enzyme constraints are active. (This can
+fail away from vertices: for $K = 2$ and cost vectors $(1, 0)$, $(1, \tfrac12)$, the weights
+$(\tfrac12, \tfrac12)$ are optimal and use two non-equivalent EFMs with only one constraint active.)
 
 ## Depends on
 

@@ -17,9 +17,11 @@ $$\mathcal{R}_0 = \frac{\Pi \beta k_1}{\mu_1 \mu_2 \mu_3}.$$
 
 $E_0$ is locally asymptotically stable if $\mathcal{R}_0 < 1$ and unstable if $\mathcal{R}_0 > 1$.
 
-**Immune-free persistence.** For $\mathcal{R}_0 > 1$ there is an equilibrium without immune activity,
+**Immune-free subsystem.** For $\mathcal{R}_0 > 1$ the $(H, I, V)$ subsystem with all immune variables set to zero ($C = N = T = B = A = 0$) has the endemic equilibrium
 
-$$E_1:\quad H_1 = \frac{\Pi}{\mu_1\mathcal{R}_0}, \quad I_1 = \frac{\mu_1\mu_3}{\beta k_1}(\mathcal{R}_0 - 1), \quad V_1 = \frac{\mu_1}{\beta}(\mathcal{R}_0 - 1), \quad C = N = T = B = A = 0 .$$
+$$E_1:\quad H_1 = \frac{\Pi}{\mu_1\mathcal{R}_0}, \quad I_1 = \frac{\mu_1\mu_3}{\beta k_1}(\mathcal{R}_0 - 1), \quad V_1 = \frac{\mu_1}{\beta}(\mathcal{R}_0 - 1).$$
+
+It is not an equilibrium of the full model, which has none with $I > 0$ and $C = 0$: there $\dot C = k_2 I/(1 + \gamma V) > 0$. (The source lists $E_1$ as an equilibrium of the full model.)
 
 Further equilibria with innate immunity only ($T = B = A = 0$) and with full innate and adaptive responses exist under additional threshold conditions; at the full equilibrium $C^* = \mu_6/\lambda_1$ and $T^* = \mu_7/\lambda_2$, fixed by the T- and B-cell equations.
 
