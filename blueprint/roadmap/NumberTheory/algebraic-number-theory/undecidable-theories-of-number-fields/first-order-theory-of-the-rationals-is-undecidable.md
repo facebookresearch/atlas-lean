@@ -15,6 +15,7 @@ Conventions: the language has no parameters and no further constants; quantifier
 ## Proof depends on
 
 - [Robinson's definition of `ℤ` in `ℚ`](../../../Logic/model-theory/defining-the-integers-in-the-rationals/mem-range-int-cast-iff-robinson.md)
+- [The first-order theory of the ring of integers is undecidable](../../../Logic/proof-theory/g-del-s-incompleteness-theorems/first-order-theory-of-the-integers-is-undecidable.md)
 
 ## Expansion
 

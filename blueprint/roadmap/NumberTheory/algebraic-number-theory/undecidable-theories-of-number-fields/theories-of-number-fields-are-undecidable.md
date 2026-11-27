@@ -18,7 +18,7 @@ The case $K = \mathbb{Q}$ includes the undecidability of the theory of $\mathbb{
 
 ## Proof depends on
 
-None.
+- [The first-order theory of the ring of integers is undecidable](../../../Logic/proof-theory/g-del-s-incompleteness-theorems/first-order-theory-of-the-integers-is-undecidable.md)
 
 ## Expansion
 
@@ -29,6 +29,8 @@ $$
 $$
 
 an element $n \in \mathcal{O}_K$ is a natural number exactly when there are $f, g, h$ with $\rho(0, f, g, h)$ such that every $a$ with $\rho(a, f, g, h)$ has $\rho(a + 1, f, g, h)$ or $a = n$. For $n \in \mathbb{N}$ one takes $f = (n + l)!$, a large natural number $g$ separating the finitely many candidates, and $h = (1 + g)(1 + 2g) \cdots (1 + ng)$. Since $\mathbb{Z} = \mathbb{N} \cup (-\mathbb{N})$ is then definable, sentences about $(\mathbb{Z}, +, \cdot, 0, 1)$ translate computably into sentences about $\mathcal{O}_K$, and by composing the definitions into sentences about $K$; the theory of $\mathbb{Z}$ is undecidable, so both theories are.
+
+A good expansion adds and links pages for the Hasse–Minkowski principle for quadratic forms over number fields, for Robinson's first-order definition of $\mathcal{O}_K$ in $K$, and for the definition of $\mathbb{N}$ in $\mathcal{O}_K$ given above.
 
 ## Sources
 

@@ -13,15 +13,17 @@ Conventions: the number of variables $n$ and the field of constants are arbitrar
 
 ## Depends on
 
-- [Hilbert's tenth problem over a ring](../../diophantine-equations/hilbert-s-tenth-problem-over-number-rings/hilbert-s-tenth-problem-over-a-ring.md)
+- [Hilbert's tenth problem over a ring](../../../TheoryOfComputation/undecidable-problems/diophantine-sets-and-hilbert-s-tenth-problem/hilbert-s-tenth-problem-over-a-ring.md)
 
 ## Proof depends on
 
 - [Davis–Putnam–Robinson–Matiyasevich theorem](../../../TheoryOfComputation/undecidable-problems/diophantine-sets-and-hilbert-s-tenth-problem/dprm-theorem.md)
+- [The halting problem is recognizable by multi-stack machines](../../../TheoryOfComputation/computability/halting-problem-and-rice-s-theorem/tm2-recognizable-halting.md)
+- [The halting problem is undecidable by multi-stack machines](../../../TheoryOfComputation/computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halting.md)
 
 ## Expansion
 
-For a prime $p$ and positive integers $n, m$, write $n \mid_p m$ when $m = n p^s$ for some $s \ge 0$. Pheidas proved that the existential theory of $(\mathbb{Z}_{>0}, +, \mid_p)$ is undecidable, by defining multiplication of positive integers existentially from $+$ and $\mid_p$, which reduces Hilbert's original problem to it. The reduction to $K$ needs existential definitions over $K$ of the set $P(K) = \{(x, x^{p^s}) : x \in K,\ s \ge 0\}$ and of a set $\mathrm{INT}(K, \mathfrak{p}, t)$ of elements integral at a prime $\mathfrak{p}$ of $K$, for a nonconstant $t$ with $\operatorname{ord}_{\mathfrak{p}} t > 0$, that contains every element of $k_0(t)$ integral at $\mathfrak{p}$, where $k_0$ is the algebraic closure of a finite field in $K$. A positive integer $n$ is represented by the elements of $\mathrm{INT}(K, \mathfrak{p}, t)$ of order $n$ at $\mathfrak{p}$, so addition of integers becomes multiplication in $K$, and $\mid_p$ is expressed through $P(K)$. The new part of the source is an existential definition of $P(K)$ in every function field of positive characteristic, including those with algebraically closed constant field; the hypothesis that $K$ does not contain $\overline{\mathbb{F}}_p$ is used to define $\mathrm{INT}(K, \mathfrak{p}, t)$.
+For a prime $p$ and positive integers $n, m$, write $n \mid_p m$ when $m = n p^s$ for some $s \ge 0$. Pheidas proved that the existential theory of $(\mathbb{Z}_{>0}, +, \mid_p)$ is undecidable, by defining multiplication of positive integers existentially from $+$ and $\mid_p$, which reduces Hilbert's original problem to it. The reduction to $K$ needs existential definitions over $K$ of the set $P(K) = \{(x, x^{p^s}) : x \in K,\ s \ge 0\}$ and of a set $\mathrm{INT}(K, \mathfrak{p}, t)$ of elements integral at a prime $\mathfrak{p}$ of $K$, for a nonconstant $t$ with $\operatorname{ord}_{\mathfrak{p}} t > 0$, that contains every element of $k_0(t)$ integral at $\mathfrak{p}$, where $k_0$ is the algebraic closure of a finite field in $K$. A positive integer $n$ is represented by the elements of $\mathrm{INT}(K, \mathfrak{p}, t)$ of order $n$ at $\mathfrak{p}$, so addition of integers becomes multiplication in $K$, and $\mid_p$ is expressed through $P(K)$. The new part of the source is an existential definition of $P(K)$ in every function field of positive characteristic, including those with algebraically closed constant field; the hypothesis that $K$ does not contain $\overline{\mathbb{F}}_p$ is used to define $\mathrm{INT}(K, \mathfrak{p}, t)$. A good expansion adds and links pages for Pheidas's theorem on $(\mathbb{Z}_{>0}, +, \mid_p)$ and for the existential definitions of $P(K)$ and $\mathrm{INT}(K, \mathfrak{p}, t)$.
 
 ## Sources
 

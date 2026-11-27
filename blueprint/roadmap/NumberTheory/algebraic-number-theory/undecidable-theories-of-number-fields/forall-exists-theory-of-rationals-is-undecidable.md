@@ -22,6 +22,8 @@ Equivalently, by negation, the set of true $\exists\forall$-sentences is not com
 
 - [Koenigsmann: `ℚ ∖ ℤ` is Diophantine over `ℚ`](../../../Logic/model-theory/defining-the-integers-in-the-rationals/not-mem-range-int-cast-iff-exists-eval-e.md)
 - [Davis–Putnam–Robinson–Matiyasevich theorem](../../../TheoryOfComputation/undecidable-problems/diophantine-sets-and-hilbert-s-tenth-problem/dprm-theorem.md)
+- [The halting problem is recognizable by multi-stack machines](../../../TheoryOfComputation/computability/halting-problem-and-rice-s-theorem/tm2-recognizable-halting.md)
+- [The halting problem is undecidable by multi-stack machines](../../../TheoryOfComputation/computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halting.md)
 
 ## Expansion
 
@@ -31,7 +33,7 @@ $$
 \exists t_1 \cdots \exists t_n \, \forall \bar x^{(1)} \cdots \forall \bar x^{(n)} \; \Bigl( f(t_1, \dots, t_n) = 0 \wedge \bigwedge_{i=1}^{n} g(t_i; \bar x^{(i)}) \neq 0 \Bigr)
 $$
 
-holds in $\mathbb{Q}$, an $\exists\forall$-sentence computable from $f$, where the integer coefficients are written as sums of $1$ and their negatives moved across the equation. Hilbert's tenth problem over $\mathbb{Z}$ is undecidable by the Davis–Putnam–Robinson–Matiyasevich theorem, so the true $\exists\forall$-sentences, and with them by negation the true $\forall\exists$-sentences, form an undecidable set.
+holds in $\mathbb{Q}$, an $\exists\forall$-sentence computable from $f$, where the integer coefficients are written as sums of $1$ and their negatives moved across the equation. Hilbert's tenth problem over $\mathbb{Z}$ is undecidable by the Davis–Putnam–Robinson–Matiyasevich theorem applied to a listable undecidable set such as the halting set, so the true $\exists\forall$-sentences, and with them by negation the true $\forall\exists$-sentences, form an undecidable set.
 
 ## Sources
 

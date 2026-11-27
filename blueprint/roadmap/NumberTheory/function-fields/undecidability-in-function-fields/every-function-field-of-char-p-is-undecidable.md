@@ -21,7 +21,9 @@ Conventions: the field of constants is arbitrary, possibly algebraically closed 
 
 The earlier paper reduces first-order undecidability of a function field $K$ of characteristic $p$ to the first-order definability of the set $P(K, t) = \{t^{p^s} : s \ge 0\}$ for an element $t \in K$ with simple zeros and poles: definability of $P(K, t)$ gives a model of $(\mathbb{Z}, \mid, +)$ in $K$ with finitely many parameters, and the parameters are then removed using Robinson's arithmetic Q, a step that does not depend on the field. That paper covered every function field except those of characteristic $2$ and transcendence degree at least $2$ over $\mathbb{F}_2$. The new paper defines $p$-th powers existentially over every function field of positive characteristic, so the same argument covers every such $K$.
 
+A good expansion adds and links pages for the existential definition of $p$-th powers over every function field of positive characteristic and the essential undecidability of Robinson's arithmetic Q.
+
 ## Sources
 
 - Kirsten Eisenträger (Eisentraeger) and Alexandra Shlapentokh, *Hilbert's tenth problem over function fields of positive characteristic not containing the algebraic closure of a finite field*, J. Eur. Math. Soc. 19 (2017), no. 7, 2103–2138, https://doi.org/10.4171/JEMS/714; Theorem 1.3 of arXiv:1306.2669v1, with the proof in its final section.
-- Kirsten Eisenträger (Eisentraeger) and Alexandra Shlapentokh, *Undecidability in function fields of positive characteristic*, Int. Math. Res. Not. IMRN 2009, 4051–4086, https://doi.org/10.1093/imrn/rnp079 (version read: arXiv:0709.1739v2, Section 2 and Corollary 4.1), for the reduction to definability of $p$-th powers and the removal of parameters.
+- Kirsten Eisenträger (Eisentraeger) and Alexandra Shlapentokh, *Undecidability in function fields of positive characteristic*, Int. Math. Res. Not. IMRN 2009, 4051–4086, https://doi.org/10.1093/imrn/rnp079 (version read: arXiv:0709.1739v2, Section 2 and Corollary 5.1), for the reduction to definability of $p$-th powers and the removal of parameters.
