@@ -7,6 +7,8 @@ These articles concern inference of evolutionary trees, networks and recorded ce
 - [Admissibility of maximum-likelihood tree estimation](admissibility-of-maximum-likelihood-tree-estimation.md)
 - [Sample complexity of maximum parsimony](sample-complexity-of-maximum-parsimony.md)
 - [NP-hardness of maximum parsimony and maximum likelihood tree reconstruction](np-hardness-of-maximum-parsimony-and-maximum-likelihood-tree.md)
+- [Bayesian species delimitation under the multispecies coalescent](bayesian-species-delimitation/README.md)
+- [SNP-based divergence-time estimation under the multispecies coalescent](snp-based-divergence-time-estimation-under-the-msc/README.md)
 - [Consistency of maximum likelihood for the general Markov model on trees](identifiability-of-the-general-markov-model-on-trees.md)
 - [Short quartet methods reconstruct almost all trees from polylogarithmically many sites](short-quartet-methods-reconstruct-trees-from-polynomially-many-sites.md)
 - [The duplication-optimal reconciliations form an interval above the LCA reconciliation](lca-reconciliation-minimizes-duplication-and-loss-costs-over-all-recon.md)
@@ -16,6 +18,7 @@ These articles concern inference of evolutionary trees, networks and recorded ce
 
 - [Identifiability of phylogenetic networks under the multispecies coalescent](identifiability-of-phylogenetic-networks-under-the-coalescent.md)
 - [Information requirements for CRISPR lineage tracing](information-requirements-for-crispr-lineage-tracing.md)
+- [Multispecies network coalescent with branch lengths](multispecies-network-coalescent-with-branch-lengths/README.md)
 
 ## Tree comparison
 
