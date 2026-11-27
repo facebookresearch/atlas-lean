@@ -1,19 +1,22 @@
 # The consistency problem for modular lattices is unsolvable
 
-No algorithm decides, for a conjunction of lattice equations, whether it has a non-trivial solution in some modular lattice, or in some finite modular lattice, or in the subspace lattice of some finite-dimensional vector space over a fixed field of characteristic zero; five variables already suffice.
+No algorithm decides, for a conjunction of lattice equations, whether it has a non-trivial solution in some modular lattice, or in some finite modular lattice, or in the subspace lattice of some finite-dimensional vector space over a fixed field of characteristic zero.
 
 **Setting (Herrmann, Tsukamoto and Ziegler).** For a class $\mathcal C$ of algebraic structures, an assignment of the variables $\bar x$ in some $A \in \mathcal C$ is *trivial* if it lies in a one-element subalgebra; for bounded lattices this means $0 = 1$. The *consistency problem* for $\mathcal C$ asks, given a finite conjunction $\pi(\bar x)$ of equations, whether some $A \in \mathcal C$ has a non-trivial assignment satisfying $\pi$. For a class $\mathcal C$ of lattices, write $\mathcal Q\mathcal C$ for the quasivariety it generates and $\mathcal M_f$ for the class of finite modular lattices, and consider the *richness conditions*:
 
 - (I) $\mathrm L(V) \in \mathcal Q\mathcal C$ for some vector space $V$ of infinite dimension;
 - (II) for every $0 < d < \aleph_0$ there are a division ring $F$ of characteristic not dividing $d + 1$ and an $F$-vector space $V$ of dimension $4d$ with $\mathrm L(V) \in \mathcal Q\mathcal C$.
 
-**Theorem (Herrmann, Tsukamoto and Ziegler).** The consistency problem is unsolvable for every class $\mathcal C$ of [modular lattices](modular-lattices-and-subspace-lattices.md), with or without bounds, that satisfies (I), or that is contained in $\mathcal Q\mathcal M_f$ and satisfies (II). In the bounded case unsolvability persists in every expansion of $\mathcal C$ by further operations. The problem remains unsolvable when restricted to conjunctions of equations in $5$ variables.
+**Theorem (Herrmann, Tsukamoto and Ziegler).** The consistency problem is unsolvable for every class $\mathcal C$ of [modular lattices](modular-lattices-and-subspace-lattices.md), with or without bounds, that satisfies (I), or that is contained in $\mathcal Q\mathcal M_f$ and satisfies (II). In the bounded case unsolvability persists in every expansion of $\mathcal C$ by further operations (Theorem 8 of the source).
+
+The problem remains unsolvable when restricted to conjunctions of equations in $5$ variables (Corollary 9).
 
 This applies to the class of all modular lattices, to the class of all finite modular lattices, and to the class of all lattices $\mathrm L(V)$ for $V$ finite-dimensional over a fixed field of characteristic $0$, such as $\mathbb R$ or $\mathbb C$, and more generally to any class $\mathcal V$ of finite-dimensional vector spaces over division rings finite-dimensional over their centers containing, for every $0 < d < \aleph_0$, a space of dimension $4d$ whose characteristic does not divide $d + 1$. Consequently there is no recursive bound on the dimension needed to satisfy a conjunction of lattice equations in $\mathrm L(F^d)$ for $F = \mathbb R$ or $\mathbb C$. The same paper transfers unsolvability to (finite) rings, (finite) representable relation algebras, Grassmann–Cayley algebra and database dependencies.
 
 ## Depends on
 
 - [Modular lattices and lattices of subspaces](modular-lattices-and-subspace-lattices.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

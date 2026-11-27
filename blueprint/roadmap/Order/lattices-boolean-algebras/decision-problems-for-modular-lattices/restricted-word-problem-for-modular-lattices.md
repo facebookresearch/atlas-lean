@@ -2,9 +2,9 @@
 
 There is a finite lattice presentation for which no algorithm decides which relations it implies in all modular lattices, and no algorithm decides whether a finite presentation forces a trivial model; five generators suffice.
 
-Let $\mathcal{C}$ be a class of lattices closed under sublattices. A finite *presentation* $(\Pi, \bar c)$ consists of generator symbols $\bar c = (c_1, \dots, c_n)$ and finitely many relations $t(\bar c) = s(\bar c)$ between lattice terms. A *model* of $\Pi$ in a lattice $A$ is a tuple $\bar a$ in $A$ satisfying all relations of $\Pi$, and a relation $\rho(\bar c)$ is a *consequence* of $\Pi$ in $\mathcal{C}$ if every model of $\Pi$ in a member of $\mathcal{C}$ satisfies $\rho$. The *restricted word problem* for $\mathcal{C}$ is *unsolvable* if there is one finite presentation $\Pi$ such that no algorithm decides, for every relation $\rho(\bar c)$, whether $\rho$ is a consequence of $\Pi$ in $\mathcal{C}$. The *triviality problem* asks, given a finite presentation, whether all its models in members of $\mathcal{C}$ are trivial (all generators equal); the source names this problem without spelling out the definition, and this is the usual meaning for presentations.
+Let $\mathcal{C}$ be a class of lattices. A finite *presentation* $(\Pi, \bar c)$ consists of generator symbols $\bar c = (c_1, \dots, c_n)$ and finitely many relations $t(\bar c) = s(\bar c)$ between lattice terms. A *model* of $\Pi$ in a lattice $A$ is a tuple $\bar a$ in $A$ satisfying all relations of $\Pi$, and a relation $\rho(\bar c)$ is a *consequence* of $\Pi$ in $\mathcal{C}$ if every model of $\Pi$ in a member of $\mathcal{C}$ satisfies $\rho$. The *restricted word problem* for $\mathcal{C}$ is *unsolvable* if there is one finite presentation $\Pi$ such that no algorithm decides, for every relation $\rho(\bar c)$, whether $\rho$ is a consequence of $\Pi$ in $\mathcal{C}$. The *triviality problem* asks, given a finite presentation, whether all its models in members of $\mathcal{C}$ are trivial (all generators equal); the source names this problem without spelling out the definition, and this is the usual meaning for presentations.
 
-**Theorem (Hutchinson; Lipshitz).** Let $\mathcal{C}$ be a class of [modular lattices](modular-lattices-and-subspace-lattices.md), closed under sublattices, that contains the subspace lattice of some infinite-dimensional vector space; for example, the class of all modular lattices. Then:
+**Theorem (Hutchinson; Lipshitz).** Let $\mathcal{C}$ be a class of [modular lattices](modular-lattices-and-subspace-lattices.md) that contains the subspace lattice of some infinite-dimensional vector space; for example, the class of all modular lattices. Then:
 
 1. the restricted word problem for $\mathcal{C}$ is unsolvable, already for a presentation with $5$ generators;
 2. the triviality problem for $\mathcal{C}$ is unsolvable.
@@ -14,6 +14,7 @@ Equivalently, for $\mathcal{C}$ the class of all modular lattices, there is a fi
 ## Depends on
 
 - [Modular lattices and lattices of subspaces](modular-lattices-and-subspace-lattices.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -2,14 +2,17 @@
 
 The first-order theory of Young's lattice, as an ordered set, is undecidable and inherently non-finitely axiomatizable; with the constant [1]+[1] added, already its Σ₄ part is undecidable.
 
-**Theorem (Wires).** The elementary (first-order) theory of [Young's lattice](young-s-lattice.md) $\mathbf Y = \langle \mathcal P, \le \rangle$ in the language of the order relation is undecidable and inherently non-finitely axiomatizable. Moreover, let $\mathbf Y^\ast = \langle \mathcal P, \le, [1] + [1] \rangle$ be Young's lattice with a constant for the partition $(1, 1)$; then the set of $\Sigma_4$ sentences true in $\mathbf Y^\ast$ is undecidable.
+**Theorem (Wires).** The elementary (first-order) theory of [Young's lattice](young-s-lattice.md) $\mathbf Y = \langle \mathcal P, \le \rangle$ in the language of the order relation is undecidable and inherently non-finitely axiomatizable (Theorem 3.16 of the source).
 
-Here a $\Sigma_n$ sentence is one equivalent to a prenex sentence with $n$ alternating blocks of quantifiers beginning with an existential block. The constant is needed to break the symmetry of conjugation, since $[2]^\partial = [1] + [1]$. The same paper shows that $\mathbf Y^\ast$ has the maximal definability property: its definable relations are exactly the arithmetically definable ones under a suitable coding of partitions by natural numbers. It conjectures that the $\Sigma_1$ theory of $\mathbf Y$ is NP-complete and that the $\Sigma_1$ theory with constants for all partitions is undecidable.
+The proof goes through a sharper result: with $\mathbf Y^\ast = \langle \mathcal P, \le, [1] + [1] \rangle$, Young's lattice with a constant for the partition $(1, 1)$, the set of $\Sigma_4$ sentences true in $\mathbf Y^\ast$ is undecidable (Theorem 3.15).
+
+Here a $\Sigma_n$ sentence is one equivalent to a prenex sentence with $n$ alternating blocks of quantifiers beginning with an existential block. The constant is needed to break the symmetry of conjugation, since $[2]^\partial = [1] + [1]$. The same paper shows that $\mathbf Y^\ast$ has the maximal definability property: its definable relations are exactly the arithmetically definable ones under a suitable coding of partitions by natural numbers (Theorem 4.4). It conjectures that the $\Sigma_1$ theory of $\mathbf Y$ is NP-complete (Conjecture 5.1) and that the $\Sigma_1$ theory with constants for all partitions is undecidable (Conjecture 5.3).
 
 ## Depends on
 
 - [Young's lattice](young-s-lattice.md)
 - [Complete theory of a first-order structure](../../../Logic/first-order-logic/theory-of-structure.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

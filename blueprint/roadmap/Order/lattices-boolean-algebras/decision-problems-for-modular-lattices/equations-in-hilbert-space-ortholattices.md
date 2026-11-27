@@ -4,13 +4,14 @@ No algorithm decides, for a term in five variables in the language of ortholatti
 
 **Setting (Herrmann, Tsukamoto and Ziegler).** An *ortholattice* is a bounded lattice with a dual automorphism $x \mapsto x^\perp$ of order $2$ such that $x \vee x^\perp = 1$ and $x \wedge x^\perp = 0$. If $V$ is a finite-dimensional vector space over a division ring $F$ with involution, with an anisotropic hermitian form $\Phi$, then $U \mapsto U^\perp = \{v \in V : \Phi(v, u) = 0 \text{ for all } u \in U\}$ turns the [subspace lattice](modular-lattices-and-subspace-lattices.md) $\mathrm L(V)$ into an ortholattice $\mathrm L^\perp(V)$.
 
-**Theorem (Herrmann, Tsukamoto and Ziegler).** Let $\mathcal V$ be a class of such spaces whose underlying vector spaces consist of finite-dimensional spaces over division rings finite-dimensional over their centers and contain, for every $0 < d < \aleph_0$, a space of dimension $4d$ whose characteristic does not divide $d + 1$. There is no algorithm that, given a $5$-variable term $t(\bar x)$ in the language of ortholattices, decides whether $\exists \bar x\, t(\bar x) = 1$ holds in $\mathrm L^\perp(V)$ for some $V \in \mathcal V$ with $\dim V > 0$.
+**Theorem (Herrmann, Tsukamoto and Ziegler).** Let $\mathcal V$ be a class of such spaces whose underlying vector spaces consist of finite-dimensional spaces over division rings finite-dimensional over their centers and contain, for every $0 < d < \aleph_0$, a space of dimension $4d$ whose characteristic does not divide $d + 1$. There is no algorithm that, given a $5$-variable term $t(\bar x)$ in the language of ortholattices, decides whether $\exists \bar x\, t(\bar x) = 1$ holds in $\mathrm L^\perp(V)$ for some $V \in \mathcal V$ with $\dim V > 0$ (Corollary 25 of the source).
 
 Examples of $\mathcal V$ are the classes of all finite-dimensional real, complex and quaternionic Hilbert spaces. This answers negatively the question of deciding "quantum satisfiability in indefinite (yet finite) dimension". In contrast, deciding whether $\exists \bar x\, t(\bar x) > 0$ holds in some $\mathrm L^\perp(V)$ is decidable.
 
 ## Depends on
 
 - [Modular lattices and lattices of subspaces](modular-lattices-and-subspace-lattices.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

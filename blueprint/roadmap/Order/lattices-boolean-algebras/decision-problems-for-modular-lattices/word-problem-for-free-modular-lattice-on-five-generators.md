@@ -6,11 +6,12 @@ The *free modular lattice* $\mathrm{FM}(n)$ on generators $x_1, \dots, x_n$ is t
 
 **Theorem (Freese).** The word problem for $\mathrm{FM}(5)$ is unsolvable.
 
-Conventions: lattices here have no constants $0, 1$. By the definition of $\mathrm{FM}(5)$, the theorem says that the set of lattice identities in five variables valid in all modular lattices is not decidable. Freese's proof associates a projective modular lattice with each finitely presented group, and his result holds for every variety of modular lattices that contains all infinite modular lattices of height $6$. Herrmann later proved that the word problem for $\mathrm{FM}(4)$ is unsolvable as well. For three generators the word problem is solvable, by Dedekind's description of $3$-generated modular lattices; the jump is from three to four generators.
+Conventions: lattices here have no constants $0, 1$. By the definition of $\mathrm{FM}(5)$, the theorem says that the set of lattice identities in five variables valid in all modular lattices is not decidable. Freese's proof associates a projective modular lattice with each finitely presented group, and his result holds for every variety of modular lattices that contains all infinite modular lattices of height $6$. Herrmann later proved that the word problem for $\mathrm{FM}(4)$ is unsolvable as well. For three generators the word problem is solvable, since the free modular lattice on three generators is finite (Dedekind).
 
 ## Depends on
 
 - [Modular lattices and lattices of subspaces](modular-lattices-and-subspace-lattices.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
