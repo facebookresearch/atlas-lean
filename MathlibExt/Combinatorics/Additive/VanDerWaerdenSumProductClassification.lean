@@ -21,8 +21,21 @@ import MathlibExt.Combinatorics.Additive.VanDerWaerdenAP
 /-!
 # Vanishing classification for the sum-plus-product family
 
-The family is vanishing modulo 2, 3, 4 and 8, only 1-vanishing modulo 6,
-and fails to be 1-vanishing at every other modulus greater than 1.
+The family with coefficient $+1$ is vanishing modulo 2, 3, 4 and 8, only 1-vanishing modulo 6,
+and fails to be 1-vanishing at every other modulus greater than 1. Modulo 6, neither sign is
+2-vanishing: on the repeating word $(1,3,5,3)$, every block of length at least two has product 3,
+so both signs have the same block values, and no two adjacent equal-length blocks both vanish.
+
+## References
+
+* Arie Bialostocki and Vladyslav Oles, *On Generalizing the Van Der Waerden Theorem to Some
+  Symmetric Functions*, INTEGERS 26 (2026), Article A25, pp. 1–12, Theorem 3 and Lemma 4
+  (<https://math.colgate.edu/~integers/aa25/aa25.pdf>). We use the periodic word of Lemma 4
+  and check adjacent blocks by reduction to a finite table rather than by a parity argument.
+* Arie Bialostocki and Paul Dierker, *Zero sum Ramsey theorems*, Congressus Numerantium 70
+  (1990), pp. 119–130, Theorems 3.5(a) and 3.6. Bialostocki and Oles credit Noga Alon's
+  coloring idea via Theorem 3.5(a) in their treatment of modulus 3, and cite Theorem 3.6
+  for the prime moduli congruent to 1 modulo 4 in their classification.
 -/
 
 namespace MetaMathlibExt
@@ -159,29 +172,65 @@ private theorem not_one_twelve : ¬ IsMVanishingFamily 1 (sumAddMulProdFamily (1
 private theorem not_one_sixteen : ¬ IsMVanishingFamily 1 (sumAddMulProdFamily (1 : ZMod 16)) := by
   apply not_one_of_period ![(3 : ZMod 16), -3, 3, -3] (b := 0) (by decide) <;> decide +kernel
 
-private theorem not_two_six : ¬ IsMVanishingFamily 2 (sumAddMulProdFamily (1 : ZMod 6)) := by
-  let w : Fin 4 → ZMod 6 := ![1, 3, 5, 3]
-  let a := repeatWord w
-  have hperiod := blockValue_add_period w 2 (by decide +kernel) (by decide +kernel)
+private def sixWord : Fin 4 → ZMod 6 := ![1, 3, 5, 3]
+
+-- On this word, two adjacent blocks of the same length cannot both have value zero.
+private theorem sixWord_no_adjacent_zeros (s l : ℕ) (hl : 2 ≤ l)
+    (h0 : blockValue (repeatWord sixWord) s l = 0) :
+    blockValue (repeatWord sixWord) (s + l) l ≠ 0 := by
+  let a := repeatWord sixWord
+  have hperiod := blockValue_add_period sixWord 2 (by decide +kernel) (by decide +kernel)
   have htable : ∀ i j : Fin 4,
       blockValue a i (j.val + 2) = 0 → blockValue a (i.val + j.val + 2) (j.val + 2) ≠ 0 := by
     decide +kernel
-  intro h
-  obtain ⟨l, hl, s, hs⟩ := h a
-  have h0 : blockValue a s l = 0 := by simpa [family_eq_blockValue] using hs 0 (by decide)
-  have h1 : blockValue a (s + l) l = 0 := by simpa [family_eq_blockValue] using hs 1 (by decide)
+  intro h1
   let r := (l - 2) % 4 + 2
   have hr : l % 4 = r % 4 := by
     dsimp [r]
     rw [Nat.mod_add_mod, Nat.sub_add_cancel hl]
-  rw [reduce_block_length a hperiod hl, blockValue_mod_start w] at h0 h1
+  rw [reduce_block_length a hperiod hl, blockValue_mod_start sixWord] at h0 h1
   have hstart : (s + l) % 4 = (s % 4 + r) % 4 := by
     rw [Nat.mod_add_mod]
     simp [Nat.add_mod, hr]
   have h1' : blockValue a (s % 4 + r) r = 0 := by
-    rw [blockValue_mod_start w, ← hstart]
+    rw [blockValue_mod_start sixWord, ← hstart]
     exact h1
   exact htable (Fin.ofNat 4 s) (Fin.ofNat 4 (l - 2)) h0 (by simpa [Nat.add_assoc] using h1')
+
+private theorem not_two_six : ¬ IsMVanishingFamily 2 (sumAddMulProdFamily (1 : ZMod 6)) := by
+  intro h
+  obtain ⟨l, hl, s, hs⟩ := h (repeatWord sixWord)
+  exact sixWord_no_adjacent_zeros s l hl
+    (by simpa only [zero_mul, add_zero, family_eq_blockValue] using hs 0 (by decide))
+    (by simpa only [one_mul, family_eq_blockValue] using hs 1 (by decide))
+
+-- The first two entries of any block multiply to 3, and each later entry fixes 3.
+private theorem sixWord_prod (s l : ℕ) (hl : 2 ≤ l) :
+    blockProd (repeatWord sixWord) s l = 3 := by
+  obtain ⟨t, rfl⟩ := Nat.exists_eq_add_of_le hl
+  clear hl
+  induction t with
+  | zero =>
+    have h : ∀ i : Fin 4, blockProd (repeatWord sixWord) i 2 = 3 := by decide +kernel
+    simpa only [Nat.add_zero, blockProd, Fin.val_ofNat, repeatWord_add sixWord s] using
+      h (Fin.ofNat 4 s)
+  | succ t ih =>
+    change blockProd (repeatWord sixWord) s (2 + t + 1) = 3
+    rw [blockProd_add, ih]
+    have h : ∀ i : Fin 4, (3 : ZMod 6) * blockProd (repeatWord sixWord) i 1 = 3 := by
+      decide +kernel
+    simpa only [blockProd, Fin.val_ofNat, repeatWord_add sixWord (s + (2 + t))] using
+      h (Fin.ofNat 4 (s + (2 + t)))
+
+-- Only blocks of length at least two on this word are compared.
+private theorem sixWord_neg_eq_blockValue (s l : ℕ) (hl : 2 ≤ l) :
+    sumAddMulProdFamily (-1) l (fun i => repeatWord sixWord (s + i)) =
+      blockValue (repeatWord sixWord) s l := by
+  unfold sumAddMulProdFamily blockValue
+  rw [Fin.sum_univ_eq_sum_range (fun i => repeatWord sixWord (s + i)),
+    Fin.prod_univ_eq_prod_range (fun i => repeatWord sixWord (s + i))]
+  change blockSum (repeatWord sixWord) s l + (-1 : ZMod 6) * blockProd (repeatWord sixWord) s l = _
+  rw [sixWord_prod s l hl, show (-1 : ZMod 6) * 3 = 3 by decide]
 
 -- The period (2, 1/2, -2, -1/2) has sum 0 and product 1.
 -- Twice the block value for every remaining starting point and length is a small nonzero integer.
@@ -472,5 +521,23 @@ public theorem sumAddMulProd_one_classification {n : ℕ} (hn : 1 < n) :
   · rintro rfl
     exact ⟨isMVanishingFamily_one_sumAddMulProd_one_six,
       fun m hm h => not_two_six (h.mono hm)⟩
+
+open sumAddMulProd_one_classification in
+/-- **$F_{\pm 1}$ over $\mathbb{Z}/6$ is not $m$-vanishing for $m > 1$.** For every $m > 1$,
+neither of the sum-plus-product families $F_{-1}$ and $F_1$ over $\mathbb{Z}/6$, where
+$F_c(b_1, \dots, b_l) = b_1 + \dots + b_l + c\, b_1 \cdots b_l$, is $m$-vanishing.
+
+Source: Arie Bialostocki and Vladyslav Oles, *On Generalizing the Van Der Waerden Theorem
+to Some Symmetric Functions*, INTEGERS 26 (2026), Article A25, Lemma 4
+(`integers-2026-A25-lem-4`). -/
+public theorem not_isMVanishingFamily_sumAddMulProd_six {m : ℕ} (hm : 1 < m) :
+    ¬ IsMVanishingFamily m (sumAddMulProdFamily (-1 : ZMod 6)) ∧
+      ¬ IsMVanishingFamily m (sumAddMulProdFamily (1 : ZMod 6)) := by
+  refine ⟨?_, ((sumAddMulProd_one_classification (n := 6) (by decide)).2.2 rfl).2 m hm⟩
+  intro h
+  obtain ⟨l, hl, s, hs⟩ := (h.mono (show 2 ≤ m from hm)) (repeatWord sixWord)
+  exact sixWord_no_adjacent_zeros s l hl
+    (by simpa only [zero_mul, add_zero, sixWord_neg_eq_blockValue _ _ hl] using hs 0 (by decide))
+    (by simpa only [one_mul, sixWord_neg_eq_blockValue _ _ hl] using hs 1 (by decide))
 
 end MetaMathlibExt
