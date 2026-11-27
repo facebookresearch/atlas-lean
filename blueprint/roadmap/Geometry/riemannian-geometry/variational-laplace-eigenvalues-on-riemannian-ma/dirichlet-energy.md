@@ -1,0 +1,3 @@
+# Dirichlet energy
+
+For a manifold $M$ with a Riemannian bundle, a measure $\mu$ and any function $u : M \to \mathbb{R}$, the Dirichlet energy is the lower Lebesgue integral $E(u) = \int \|du_x\|^2\, d\mu(x)$, a value in $[0, \infty]$, where $\infty$ means infinite energy. Here $du_x$ is the differential of $u$ at $x$, taken as $0$ where $u$ is not differentiable, and $\|du_x\|$ is its operator norm for the inner product on $T_x M$. When the tangent spaces are finite-dimensional (or complete), $du_x$ is represented by a gradient vector and $\|du_x\| = |\nabla u(x)|$; in an incomplete infinite-dimensional model a bounded functional need not have a representing gradient.
