@@ -19,23 +19,27 @@ public import MathlibExt.Probability.CorrelationInequalities.Pivotal
 /-!
 # Deviations of the number of open edges in the random-cluster model
 
-For `q ≥ 1`, the number of open edges of the finite-volume random-cluster measure falls below `(p +
-ε) |E|`, and exceeds `(p / (p + q (1 - p)) - ε) |E|`, with probability at least `ε`.
+For `q ≥ 1` and `0 < p < 1`, under the random-cluster measure on a finite graph with at least one
+edge, the number of open edges is at most `(p + ε) |E|` with probability at least `ε` for
+`0 < ε ≤ 1 - p`, and at least `(p / (p + q (1 - p)) - ε) |E|` with probability at least `ε` for
+`0 < ε ≤ p / (p + q (1 - p))`.
 
 ## i. Overview
 
 By the edge-marginal bounds `p / (p + q (1 - p)) ≤ φ(ω(e) = 1) ≤ p`, the mean number of open edges
 lies between `p / (p + q (1 - p)) |E|` and `p |E|`. A reverse Markov inequality for a nonnegative
-variable bounded by `|E|` converts each mean bound into a lower bound on the probability of the
-corresponding one-sided deviation. Both deviation bounds are proved unconditionally, under `0 < p <
-1`, `1 ≤ q`, `0 < ε`, the natural range condition on `ε`, and a nonempty edge set.
+variable bounded by `|E|` converts each mean bound into a lower bound on the probability that the
+count stays at most `(p + ε) |E|` (at least `(p / (p + q (1 - p)) - ε) |E|`). Both deviation bounds
+are proved unconditionally, under `0 < p < 1`, `1 ≤ q`, a nonempty edge set, and `0 < ε ≤ 1 - p`
+(upper bound) or `0 < ε ≤ p / (p + q (1 - p))` (lower bound).
 
 ## ii. Key results
 
 - `den_openCount_upper_deviation` : the open-edge count is at most `(p + ε) |E|` with probability
-  at least `ε`.
+  at least `ε`, for `0 < ε ≤ 1 - p`.
 - `den_openCount_lower_deviation` : the open-edge count is at least
-  `(p / (p + q (1 - p)) - ε) |E|` with probability at least `ε`.
+  `(p / (p + q (1 - p)) - ε) |E|` with probability at least `ε`, for
+  `0 < ε ≤ p / (p + q (1 - p))`.
 - `reverse_markov_upper`, `reverse_markov_lower` : reverse Markov inequalities on a finite
   probability space.
 
@@ -66,7 +70,8 @@ variable {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableR
 
 /-! ## A. The mean number of open edges -/
 
-/-- The expected number of open edges under the random-cluster measure `φ_{G,p,q}`. -/
+/-- The expected number of open edges under the random-cluster measure `φ_{G,p,q}`. It is an
+expectation for `0 < p < 1` and `0 < q`, where `fkProb` is a probability mass function. -/
 noncomputable def fkMeanOpenCount (p q : ℝ) : ℝ :=
   ∑ ω : ConfigSpace (Sym2 V), (chOpenCount G ω : ℝ) * fkProb G p q ω
 
@@ -132,7 +137,8 @@ lemma fkMeanOpenCount_le_card {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q
 
 /-! ## B. Reverse Markov inequalities -/
 
-/-- Reverse Markov inequality: if a nonnegative variable has mean at most `μ M`, it is at most
+/-- Reverse Markov inequality on a finite probability space (weights `w ≥ 0` summing to `1`): if a
+nonnegative variable has mean at most `μ M`, with `0 ≤ μ`, `0 < ε` and `0 < M`, it is at most
 `(μ + ε) M` with probability at least `ε / (μ + ε)`. -/
 lemma reverse_markov_upper {Ω : Type*} [Fintype Ω] (w X : Ω → ℝ)
     (hw : ∀ ω, 0 ≤ w ω) (hsum : ∑ ω, w ω = 1)
@@ -167,8 +173,9 @@ lemma reverse_markov_upper {Ω : Type*} [Fintype Ω] (w X : Ω → ℝ)
   have hcompl : ε / (μ + ε) + μ / (μ + ε) = 1 := by field_simp; ring
   linarith [hmassA, hsplit, hcompl]
 
-/-- Reverse Markov inequality: if a variable bounded by `M` has mean at least `ν M`, it is at
-least `(ν - ε) M` with probability at least `ε / (1 - ν + ε)`. -/
+/-- Reverse Markov inequality on a finite probability space (weights `w ≥ 0` summing to `1`): if a
+variable bounded by `M` has mean at least `ν M`, with `ν ≤ 1`, `0 < ε` and `0 < M`, it is at least
+`(ν - ε) M` with probability at least `ε / (1 - ν + ε)`. -/
 lemma reverse_markov_lower {Ω : Type*} [Fintype Ω] (w X : Ω → ℝ) {M : ℝ}
     (hw : ∀ ω, 0 ≤ w ω) (hsum : ∑ ω, w ω = 1)
     (hXM : ∀ ω, X ω ≤ M) {ν ε : ℝ}
@@ -215,18 +222,20 @@ lemma reverse_markov_lower {Ω : Type*} [Fintype Ω] (w X : Ω → ℝ) {M : ℝ
 
 /-! ## C. Deviation bounds -/
 
-/-- The random-cluster probability that the number of open edges is at most `s`. -/
+/-- The random-cluster probability that the number of open edges is at most `s`. It is a
+probability for `0 < p < 1` and `0 < q`. -/
 noncomputable def fkOpenCountLeProb (p q : ℝ) (s : ℝ) : ℝ :=
   ∑ ω ∈ Finset.univ.filter (fun ω : ConfigSpace (Sym2 V) => (chOpenCount G ω : ℝ) ≤ s),
     fkProb G p q ω
 
-/-- The random-cluster probability that the number of open edges is at least `s`. -/
+/-- The random-cluster probability that the number of open edges is at least `s`. It is a
+probability for `0 < p < 1` and `0 < q`. -/
 noncomputable def fkOpenCountGeProb (p q : ℝ) (s : ℝ) : ℝ :=
   ∑ ω ∈ Finset.univ.filter (fun ω : ConfigSpace (Sym2 V) => s ≤ (chOpenCount G ω : ℝ)),
     fkProb G p q ω
 
-/-- For `q ≥ 1`, the number of open edges is at most `(p + ε) |E|` with probability at least
-`ε`. -/
+/-- For `q ≥ 1` and `0 < p < 1`, if `G` has an edge, the number of open edges is at most
+`(p + ε) |E|` with probability at least `ε`, for `0 < ε ≤ 1 - p`. -/
 lemma den_openCount_upper_deviation {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     {ε : ℝ} (hε : 0 < ε) (hεa : ε ≤ 1 - p)
     (hEpos : 0 < (G.edgeFinset.card : ℝ)) :
@@ -247,8 +256,8 @@ lemma den_openCount_upper_deviation {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq :
     nlinarith
   exact le_trans hε_le hrm
 
-/-- For `q ≥ 1`, the number of open edges is at least `(p / (p + q (1 - p)) - ε) |E|` with
-probability at least `ε`. -/
+/-- For `q ≥ 1` and `0 < p < 1`, if `G` has an edge, the number of open edges is at least
+`(p / (p + q (1 - p)) - ε) |E|` with probability at least `ε`, for `0 < ε ≤ p / (p + q (1 - p))`. -/
 lemma den_openCount_lower_deviation {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     {ε : ℝ} (hε : 0 < ε) (hεb : ε ≤ p / (p + q * (1 - p)))
     (hEpos : 0 < (G.edgeFinset.card : ℝ)) :

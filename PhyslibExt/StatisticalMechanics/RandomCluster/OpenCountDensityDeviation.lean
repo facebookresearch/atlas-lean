@@ -19,25 +19,31 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.FreeTranslationInvar
 /-!
 # Open-edge count deviations from edge densities in a box
 
-For the `q = 2` random-cluster model in the box `Λₙ ⊂ ℤᵈ`, the number of open edges exceeds (falls
-below) the average free (wired) edge density by `ε` with probability at least `ε`.
+For the `q = 2` random-cluster model on the box `Λₙ = [-n, n]ᵈ ⊆ ℤᵈ` with `0 < p < 1` and at least
+one edge, write `|E|` for its number of edges and `a` (`b`) for the average over its edges of the
+infinite-volume free (wired) edge density on `ℤᵈ`. Under the free (boundary-wired) box measure, the
+number of open edges is at most `(a + ε) |E|` (at least `(b - ε) |E|`) with probability at least
+`ε`, for `0 < ε ≤ 1 - a` (`0 < ε ≤ b`).
 
 ## i. Overview
 
-The infinite-volume free and wired edge densities bound the finite-box edge marginals from above and
-below, so the mean open-edge count under the free (wired) box measure is at most (at least) the
-average free (wired) density times the number of edges. A reverse Markov inequality for a variable
-bounded by the number of edges then turns these mean bounds into lower bounds on the probability of
-a one-sided deviation. All results are proved unconditionally, under `0 < p < 1`, `0 < ε`, the
-natural range condition on `ε`, and a nonempty edge set; the non-averaged versions additionally
-assume that all edge densities in the box equal a common value.
+For `q = 2`, the infinite-volume free (wired) edge densities bound the finite-box free (wired) edge
+marginals from above (below), so the mean open-edge count under the free (wired) box measure is at
+most (at least) the average free (wired) density times the number of edges. A reverse Markov
+inequality for a count bounded by the number of edges then turns each mean bound into a lower bound
+on the probability that the count stays at most `(a + ε) |E|` (at least `(b - ε) |E|`). All results
+are proved unconditionally, under `0 < p < 1` and, where they are used, a nonempty edge set and
+`0 < ε ≤ 1 - a` (free) or `0 < ε ≤ b` (wired); the non-averaged versions instead assume that every
+free (wired) edge density of the box equals a common value `a ≥ 0` (`b ≤ 1`).
 
 ## ii. Key results
 
 - `free_openCount_le_avgDensity_add_prob_ge` : under the free measure, the open-edge count is at
-  most `(a + ε) |E|` with probability at least `ε`, where `a` is the average free density.
+  most `(a + ε) |E|` with probability at least `ε` for `0 < ε ≤ 1 - a`, where `a` is the average
+  free density.
 - `wired_openCount_ge_avgDensity_sub_prob_ge` : under the wired measure, the open-edge count is at
-  least `(b - ε) |E|` with probability at least `ε`, where `b` is the average wired density.
+  least `(b - ε) |E|` with probability at least `ε` for `0 < ε ≤ b`, where `b` is the average wired
+  density.
 - `den_openCount_upper_deviation_iv`, `den_openCount_lower_deviation_iv` : the same bounds when all
   edge densities equal a common value.
 
@@ -122,7 +128,9 @@ lemma ivd_wiredMeanOpenCount_ge (n : ℕ) {p b : ℝ} (hp : 0 < p) (hp1 : p < 1)
         rw [bdp_innerEdgeLE_refl n e] at h1
         rw [← hhom e he]; exact h1
 
-/-- The wired-measure probability that the open-edge count in the box `Λₙ` is at least `s`. -/
+/-- The probability that at least `s` edges of the box `Λₙ = [-n, n]ᵈ` are open, under the `q = 2`
+random-cluster measure on `Λₙ` with edge parameter `p`, wired along its vertex boundary. The sum is
+a probability for `0 < p < 1`. -/
 noncomputable def ivd_wiredOpenCountGeProb (d n : ℕ) (p : ℝ) (s : ℝ) : ℝ :=
   ∑ ω ∈ Finset.univ.filter
       (fun ω : ConfigSpace (Sym2 (boxVerts d n)) => s ≤ (chOpenCount (boxGraph d n) ω : ℝ)),
@@ -130,8 +138,10 @@ noncomputable def ivd_wiredOpenCountGeProb (d n : ℕ) (p : ℝ) (s : ℝ) : ℝ
 
 /-! ## B. Deviation bounds under a common edge density -/
 
-/-- If every free edge density in the box equals `a`, the free open-edge count is at most
-`(a + ε) |E|` with probability at least `ε`. -/
+/-- For the `q = 2` random-cluster model on `Λₙ` with `0 < p < 1`: if every edge of `Λₙ` has
+infinite-volume free edge density `a ≥ 0` on `ℤᵈ`, then under the free box measure the number of
+open edges is at most `(a + ε) |E|` with probability at least `ε`, for `0 < ε ≤ 1 - a`, provided
+`Λₙ` has an edge (`|E|` is its number of edges). -/
 lemma den_openCount_upper_deviation_iv (n : ℕ) {p a : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (ha0 : 0 ≤ a)
     (hhom : ∀ e ∈ (boxGraph d n).edgeFinset, freeEdgeDensity d 2 (edgeIncl d n e) p = a)
@@ -152,8 +162,10 @@ lemma den_openCount_upper_deviation_iv (n : ℕ) {p a : ℝ} (hp : 0 < p) (hp1 :
     nlinarith
   exact le_trans hε_le hrm
 
-/-- If every wired edge density in the box equals `b`, the wired open-edge count is at least
-`(b - ε) |E|` with probability at least `ε`. -/
+/-- For the `q = 2` random-cluster model on `Λₙ` with `0 < p < 1`: if every edge of `Λₙ` has
+infinite-volume wired edge density `b ≤ 1` on `ℤᵈ`, then under the box measure wired along the
+vertex boundary the number of open edges is at least `(b - ε) |E|` with probability at least `ε`,
+for `0 < ε ≤ b`, provided `Λₙ` has an edge (`|E|` is its number of edges). -/
 lemma den_openCount_lower_deviation_iv (n : ℕ) {p b : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (hb1 : b ≤ 1)
     (hhom : ∀ e ∈ (boxGraph d n).edgeFinset, wiredEdgeDensity d 2 (edgeIncl d n e) p = b)
@@ -197,12 +209,16 @@ lemma ivd_wiredEdgeDensity_le_one (n : ℕ) (e : Sym2 (boxVerts d n)) {p : ℝ}
       ubd_edgeMargProb_wiredFkProb_le_one (boxGraph d (n + k)) (boxBoundary d (n + k))
         hp hp1 (by norm_num) _)
 
-/-- The average over the edges of the box `Λₙ` of the infinite-volume free edge density. -/
+/-- The average over the edges `e` of the box `Λₙ = [-n, n]ᵈ` of the free infinite-volume `q = 2`
+edge density `φ⁰_{p,2}(e open)` on `ℤᵈ`. It is `0` if `Λₙ` has no edge, and `0` unless
+`0 < p < 1` (the convention of `freeEdgeDensity`). -/
 noncomputable def ivd_freeAvgDensity (d n : ℕ) (p : ℝ) : ℝ :=
   (∑ e ∈ (boxGraph d n).edgeFinset, freeEdgeDensity d 2 (edgeIncl d n e) p)
     / ((boxGraph d n).edgeFinset.card : ℝ)
 
-/-- The average over the edges of the box `Λₙ` of the infinite-volume wired edge density. -/
+/-- The average over the edges `e` of the box `Λₙ = [-n, n]ᵈ` of the wired infinite-volume `q = 2`
+edge density `φ¹_{p,2}(e open)` on `ℤᵈ`. It is `0` if `Λₙ` has no edge, and `0` unless
+`0 < p < 1` (the convention of `wiredEdgeDensity`). -/
 noncomputable def ivd_wiredAvgDensity (d n : ℕ) (p : ℝ) : ℝ :=
   (∑ e ∈ (boxGraph d n).edgeFinset, wiredEdgeDensity d 2 (edgeIncl d n e) p)
     / ((boxGraph d n).edgeFinset.card : ℝ)
@@ -258,8 +274,9 @@ lemma ivd_wiredMeanOpenCount_ge_avg (n : ℕ) {p : ℝ} (hp : 0 < p) (hp1 : p < 
 
 /-! ## D. Deviation bounds for the average density -/
 
-/-- Under the free `q = 2` box measure, the open-edge count is at most `(a + ε) |E|` with
-probability at least `ε`, where `a` is the average free edge density. -/
+/-- Under the free `q = 2` box measure on `Λₙ` with `0 < p < 1`, the open-edge count is at most
+`(a + ε) |E|` with probability at least `ε`, for `0 < ε ≤ 1 - a`, where `a` is the average free
+edge density, provided `Λₙ` has an edge. -/
 lemma free_openCount_le_avgDensity_add_prob_ge (n : ℕ) {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     {ε : ℝ} (hε : 0 < ε) (hεa : ε ≤ 1 - ivd_freeAvgDensity d n p)
     (hEpos : 0 < ((boxGraph d n).edgeFinset.card : ℝ)) :
@@ -280,8 +297,9 @@ lemma free_openCount_le_avgDensity_add_prob_ge (n : ℕ) {p : ℝ} (hp : 0 < p) 
     rw [le_div_iff₀ (by linarith : (0:ℝ) < a + ε)]; nlinarith
   exact le_trans hε_le hrm
 
-/-- Under the wired `q = 2` box measure, the open-edge count is at least `(b - ε) |E|` with
-probability at least `ε`, where `b` is the average wired edge density. -/
+/-- Under the wired `q = 2` box measure on `Λₙ` with `0 < p < 1`, the open-edge count is at least
+`(b - ε) |E|` with probability at least `ε`, for `0 < ε ≤ b`, where `b` is the average wired edge
+density, provided `Λₙ` has an edge. -/
 lemma wired_openCount_ge_avgDensity_sub_prob_ge (n : ℕ) {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     {ε : ℝ} (hε : 0 < ε) (hεb : ε ≤ ivd_wiredAvgDensity d n p)
     (hEpos : 0 < ((boxGraph d n).edgeFinset.card : ℝ)) :

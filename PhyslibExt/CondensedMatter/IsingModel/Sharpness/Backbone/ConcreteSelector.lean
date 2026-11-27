@@ -30,8 +30,10 @@ event for a word is "the encoded word is selected by the scan and the terminal c
 A complete bondwise selector specification (functionality of complete events, sources determined
 by the word, the empty word iff no sources, active first segment) yields a partial current dynamic
 selector whose fibers are the complete events (`CompleteBondwiseSelectorSpec.toPartialSelector`,
-`fiber_iff_completeEvent`). Under freshness and a locality hypothesis on the terminal event, its
-fibers are events outside the determined cut.
+`fiber_iff_completeEvent`). If the program starts at the state reached from `x` by accepting
+`accepted` (`hstate`), the encoded word is fresh for that acceptance (`hfresh`) and the terminal
+event lies outside the determined cut of `accepted` at `x` (`hterminal`), its fibers lie outside
+that cut.
 
 A bondwise coordinate certificate packages two fresh suffixes, a contributing-path selector in the
 determined cut with the right sources, and normal forms of both pair fibers as products of suffix
@@ -184,8 +186,9 @@ noncomputable instance terminalEventDecidable
     (word : List (shb_ExplorationSegment V)) :
     DecidablePred (P.TerminalEvent d word) := Classical.decPred _
 
-/-- Under freshness and locality of the terminal event, the complete event is an event outside the
-determined cut. -/
+/-- If the program starts at the state reached from `x` by accepting `accepted` (`hstate`), the
+encoded word is fresh for that acceptance (`hfresh`), and the terminal event lies outside the
+determined cut of `accepted` at `x` (`hterminal`), then so does the complete event. -/
 lemma completeEvent_fluxEventOutsideCut
     (P : BondwiseSegmentProgram V)
     (d : shb_ExplorationDomain V) (word : List (shb_ExplorationSegment V))
@@ -327,8 +330,9 @@ lemma CompleteBondwiseSelectorSpec.fiber_iff_bondwiseSuffixEvent
   rw [R.fiber_iff_completeEvent]
   simp [BondwiseSegmentProgram.CompleteEvent, hterminal]
 
-/-- Under freshness and locality of the terminal event, fibers are events outside the determined
-cut. -/
+/-- If the program starts at the state reached from `x` by accepting `accepted` (`hstate`), the
+encoded word is fresh for that acceptance (`hfresh`), and the terminal event lies outside the
+determined cut of `accepted` at `x` (`hterminal`), then so does the selector's fiber of `word`. -/
 lemma CompleteBondwiseSelectorSpec.fiber_fluxEventOutsideCut
     {P : BondwiseSegmentProgram V} (R : CompleteBondwiseSelectorSpec P)
     (d : shb_ExplorationDomain V)

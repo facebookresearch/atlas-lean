@@ -15,7 +15,8 @@ public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.P2Coordin
 
 The coordinate toggle data of `P2CoordinateReindex` imply the active cut resummation identity, so
 they cannot exist when its left side vanishes and its right side does not. For the vacuum partial
-selector this happens at every active segment with nonzero numerator.
+selector this happens on the one-segment word `[s]`, at every active segment `s` with nonzero
+numerator.
 
 ## i. Overview
 
@@ -24,8 +25,10 @@ transport equivalence used by `actualMass_active_of_coordinateToggle`. Since the
 identity `fiber(s :: ss) × Z(residual) = N(s) × fiber(ss)`, the type is empty whenever the left
 side is zero and the right side nonzero (`coordinateToggleData_isEmpty_of_left_zero_right_ne`).
 The vacuum selector `shb_vacuumPartialSelector` selects only the empty word, so its fiber of a
-nonempty word is empty, while its fiber of the empty word has mass `Z`; hence
-`vacuumCoordinateToggleData_isEmpty`.
+nonempty word is empty (`vacuumActualMass_cons_eq_zero`), while its fiber of the empty word has
+mass `Z`. On the one-segment word `[s]` the identity therefore fails when `N(s) ≠ 0`, hence
+`vacuumCoordinateToggleData_isEmpty`; on longer words both sides vanish and no emptiness is
+claimed.
 
 All results are proved unconditionally (the emptiness results under their stated numeric
 hypotheses).
@@ -34,8 +37,8 @@ hypotheses).
 
 - `CoordinateToggleData` : the data of a coordinate toggle
 - `coordinateToggleData_isEmpty_of_left_zero_right_ne` : no data when the identity fails
-- `vacuumCoordinateToggleData_isEmpty` : no data for the vacuum selector at a segment with nonzero
-  numerator
+- `vacuumCoordinateToggleData_isEmpty` : no data for the vacuum selector on the one-segment word
+  `[s]` at a segment with nonzero numerator
 
 ## iii. Table of contents
 
@@ -151,8 +154,8 @@ lemma vacuumActualMass_cons_eq_zero
       simp [shb_vacuumPartialSelector, hsrc]]
   exact tsum_zero
 
-/-- There are no coordinate toggle data for the vacuum selector at an active segment with nonzero
-numerator. -/
+/-- There are no coordinate toggle data for the vacuum selector on the one-segment word `[s]`
+(`ss = []`), at an active segment `s` with nonzero numerator. -/
 lemma vacuumCoordinateToggleData_isEmpty
     (beta : Real) (J : Sym2 V -> Real)
     (d : shb_ExplorationDomain V) (s : shb_ExplorationSegment V)

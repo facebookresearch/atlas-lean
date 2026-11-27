@@ -39,14 +39,14 @@ example : bcMean G2 ⊥ (1 / 2) 2 (fun _ => 7) = 7 := bcMean_const G2 ⊥ _ _ bc
 
 -- The `p`-derivative of an expectation.
 example : HasDerivAt (fun p => bcMean G2 ⊥ p 2 (fun _ => 1))
-    ((∑ e ∈ G2.edgeFinset, bcCov G2 ⊥ (1 / 2) 2 (fun _ => 1) (coord e)) /
+    ((∑ e ∈ G2.edgeFinset, bcCov G2 ⊥ (1 / 2) 2 (fun _ => 1) (coordR e)) /
       (1 / 2 * (1 - 1 / 2))) (1 / 2) :=
   hasDerivAt_bcMean G2 ⊥ (by norm_num) (by norm_num) (by norm_num) _
 
 -- Russo's formula for the sure event.
 example : HasDerivAt (fun p => bcProbOf G2 ⊥ p 2 Set.univ)
     ((∑ e ∈ G2.edgeFinset, bcCov G2 ⊥ (1 / 2) 2 (Set.univ.indicator fun _ => (1 : ℝ))
-      (coord e)) / (1 / 2 * (1 - 1 / 2))) (1 / 2) :=
+      (coordR e)) / (1 / 2 * (1 - 1 / 2))) (1 / 2) :=
   hasDerivAt_bcProbOf G2 ⊥ (by norm_num) (by norm_num) (by norm_num) _
 
 end PhyslibExtTest.StatisticalMechanics.RandomCluster.BoundaryRusso

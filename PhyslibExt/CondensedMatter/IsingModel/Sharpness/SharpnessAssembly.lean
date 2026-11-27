@@ -14,22 +14,25 @@ public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.BetaReparam
 /-!
 # Sharpness of the phase transition in the `β`-parametrization
 
-The Duminil-Copin–Tassion sharpness theorem for bond percolation, stated for the parameter
-`p(β) = 1 - e^{-βJ}`.
+A witness-set form of the Duminil-Copin–Tassion sharpness theorem for bond percolation, stated
+for the parameter `p(β) = 1 - e^{-βJ}`: exponential decay is stated on the witness set
+`tildePcSet d`, not for every `p(β) < p_c`.
 
 ## i. Overview
 
 For `d > 0`, `J > 0` and `p_c(d) < 1`, `sas_sharpness_betaForm` collects four facts: `p̃_c = p_c`;
 `β > β̃_c` iff `p(β) > p̃_c`; exponential decay of the one-arm probability when `p(β)` lies in the
-subcritical set `tildePcSet`; and the mean-field bound `θ(p(β)) ≥ (β - β̃_c)/β` above `β̃_c`. It is
-proved with no hypotheses beyond `d > 0`, `J > 0` and `p_c(d) < 1`; `SharpnessBetaFormDimTwo`
-discharges the last one for `d ≥ 2`.
+witness set `tildePcSet d` (some finite `S ∋ 0` has `φ_{p(β)}(S) < 1`); and the mean-field bound
+`θ(p(β)) ≥ (β - β̃_c)/β` above `β̃_c`. Decay for every `p(β) < p_c` is not part of this statement
+(for `p < p_c` see `StatMech.Percolation.sharp_phase_transition_pc`). It is proved with no
+hypotheses beyond `d > 0`, `J > 0` and `p_c(d) < 1`; `SharpnessBetaFormDimTwo` discharges the last
+one for `d ≥ 2`.
 
 ## ii. Key results
 
 - `sas_betaTildeC_lt_iff`, `sas_lt_betaTildeC_iff` : comparing `β` with `β̃_c` is comparing
   `p(β)` with `p̃_c`
-- `sas_sharpness_betaForm` : sharpness of the phase transition in the `β`-parametrization
+- `sas_sharpness_betaForm` : the four facts above, with decay on the witness set `tildePcSet d`
 
 ## iii. Table of contents
 
@@ -57,7 +60,8 @@ variable {d : ℕ}
 
 /-! ## A. Comparison of `β` with `β̃_c` -/
 
-/-- `β > β̃_c` iff `p(β) > p̃_c`, when `p_c(d) < 1`. -/
+/-- For `J > 0`, `d > 0` and `p_c(d) < 1`, with `p(β) = 1 - e^{-βJ}` and
+`β̃_c = -log(1 - p̃_c)/J`: `β > β̃_c` iff `p(β) > p̃_c`. -/
 lemma sas_betaTildeC_lt_iff {J β : ℝ} (hJ : 0 < J) (hd : 0 < d) (hpc : pc d < 1) :
     betaTildeC d J < β ↔ (tildePc d : ℝ) < pBeta J β := by
   have htc1 : (tildePc d : ℝ) < 1 := sh1_tildePc_lt_one_of_pc_lt_one hd hpc
@@ -70,7 +74,8 @@ lemma sas_betaTildeC_lt_iff {J β : ℝ} (hJ : 0 < J) (hd : 0 < d) (hpc : pc d <
     rw [← hval] at h
     exact (pBeta_strictMono hJ).lt_iff_lt.mp h
 
-/-- `β < β̃_c` iff `p(β) < p̃_c`, when `p_c(d) < 1`. -/
+/-- For `J > 0`, `d > 0` and `p_c(d) < 1`, with `p(β) = 1 - e^{-βJ}` and
+`β̃_c = -log(1 - p̃_c)/J`: `β < β̃_c` iff `p(β) < p̃_c`. -/
 lemma sas_lt_betaTildeC_iff {J β : ℝ} (hJ : 0 < J) (hd : 0 < d) (hpc : pc d < 1) :
     β < betaTildeC d J ↔ pBeta J β < (tildePc d : ℝ) := by
   have htc1 : (tildePc d : ℝ) < 1 := sh1_tildePc_lt_one_of_pc_lt_one hd hpc
@@ -85,10 +90,14 @@ lemma sas_lt_betaTildeC_iff {J β : ℝ} (hJ : 0 < J) (hd : 0 < d) (hpc : pc d <
 
 /-! ## B. The sharpness theorem -/
 
-/-- **Sharpness of the phase transition** (Duminil-Copin–Tassion 2016) in the `β`-parametrization:
-for `d > 0`, `J > 0` and `p_c(d) < 1`, `p̃_c = p_c`, `β > β̃_c ↔ p(β) > p̃_c`, the one-arm
-probability decays exponentially when `p(β) ∈ tildePcSet d`, and `θ(p(β)) ≥ (β - β̃_c)/β` for
-`β > β̃_c`. -/
+/-- **Witness-set form of the sharpness of the phase transition** in the `β`-parametrization: for
+`d > 0`, `J > 0` and `p_c(d) < 1`, with `p(β) = 1 - e^{-βJ}` and `β̃_c = -log(1 - p̃_c)/J`:
+`p̃_c = p_c`; `β > β̃_c ↔ p(β) > p̃_c`; the one-arm probability decays exponentially when
+`p(β) ∈ tildePcSet d` (some finite `S ∋ 0` has `φ_{p(β)}(S) < 1`); and `θ(p(β)) ≥ (β - β̃_c)/β`
+for `β > β̃_c` (Duminil-Copin–Tassion 2016, Theorem 1.1, items 1 and 3 in the form proved there).
+Decay for every `β < β̃_c` and finite susceptibility are not part of this statement; see
+`StatMech.Percolation.sharp_phase_transition_pc` and `finite_susceptibility_of_lt_tildeBetaCPerco`.
+-/
 lemma sas_sharpness_betaForm {J : ℝ} (hJ : 0 < J) (hd : 0 < d) (hpc : pc d < 1) :
     tildePc d = pc d
       ∧ (∀ β : ℝ, (betaTildeC d J < β ↔ (tildePc d : ℝ) < pBeta J β))
