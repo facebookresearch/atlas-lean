@@ -4,6 +4,16 @@ In a stochastic linear bandit the learner chooses in each round an action $A_t \
 
 The lemma's page numbers the actions from $1$, as the book does. The pages on the Gram matrix and its potentials number them from $0$: their $a_k$ is the action of round $k + 1$, and their $V_k = V_0 + \sum_{j < k} a_j a_j^{\mathsf T}$ is the Gram matrix of the actions before $a_k$.
 
+- [Gram matrix of the actions](elliptical-gram.md)
+- [Quadratic form of an action in the inverse Gram matrix](elliptical-quadratic.md)
+- [Capped elliptical potential](elliptical-potential.md)
+- [The Gram matrix starts at the initial matrix](elliptical-gram-zero.md)
+- [Outer-product update of the Gram matrix](elliptical-gram-succ.md)
+- [Trace of the Gram matrix](elliptical-gram-trace.md)
+- [The quadratic form is nonnegative](elliptical-quadratic-nonneg.md)
+- [From the determinant gain to the capped potential](sum-elliptical-potential-le-of-gain.md)
+- [Capped elliptical potential and the determinant ratio](sum-elliptical-potential-le-two-log-det.md)
+- [Determinant ratio of the Gram matrix](log-det-elliptical-gram-ratio-le.md)
 - [Elliptical potential lemma](elliptical-potential-lemma.md)
 - [Stochastic linear bandits and LinUCB regret](stochastic-linear-bandits-and-linucb-regret.md)
 
