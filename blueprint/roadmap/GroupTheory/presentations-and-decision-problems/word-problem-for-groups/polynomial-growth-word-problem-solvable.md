@@ -1,0 +1,3 @@
+# Kourovka 5.68: word problem of finitely presented groups of polynomial growth
+
+For a surjective homomorphism $\varphi : F_n \to G$ from the free group on $n$ generators, the word problem of $G$ with respect to $\varphi$ is solvable when the set of words $w \in F_n$ with $\varphi(w) = 1$ is computable (decidable). Kourovka problem 5.68 (P. E. Schupp) asks whether every group $G$ with a finite presentation $\varphi : F_n \to G$ (a surjective homomorphism whose kernel is the normal closure of a finite set) that has polynomial growth with respect to some finite generating family has solvable word problem with respect to $\varphi$.

@@ -1,0 +1,3 @@
+# Tensor comparison of the powerset verification functor
+
+For state spaces $X$ and $Y$, let $s : \wp(X) \times \wp(Y) \to \wp(X \sqcup Y)$ be the order isomorphism $s(P, Q) = \mathrm{inl}[P] \cup \mathrm{inr}[Q]$, with inverse restricting an assertion $R$ to the two summands. The tensor comparison of the powerset verification functor is the isomorphism of monotone relations from $\wp(X) \times \wp(Y)$ to $\wp(X \sqcup Y)$ induced by $s$, as for [order isomorphisms](../preorders-and-monotone-relations/iso-of-order-iso.md): its forward relation relates $(P, Q)$ to $R$ exactly when $s(P, Q) \subseteq R$, and its inverse is induced by the restriction to the two summands.

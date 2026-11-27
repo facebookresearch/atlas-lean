@@ -11,7 +11,8 @@ Let $(V, \Phi)$ be a definite Hermitian space over $E$ of rank $m$. An $\mathcal
 $\mathcal{O}$-submodule $L$ that contains an $E$-basis of $V$; its dual is $L^\# = \{x \in V : \Phi(x, L) \subseteq \mathcal{O}\}$,
 and $L$ is integral if $L \subseteq L^\#$ and unimodular if $L = L^\#$. For a prime ideal $\mathfrak{p}$ of $\mathfrak{o}$, $L_{\mathfrak{p}}$
 is the completion of $L$ at $\mathfrak{p}$, a lattice over $\mathcal{O}_{\mathfrak{p}} = \mathcal{O} \otimes_{\mathfrak{o}} \mathfrak{o}_{\mathfrak{p}}$, and
-$L_{\mathfrak{p}}$ is unimodular if $L^\#_{\mathfrak{p}} = L_{\mathfrak{p}}$.
+$L_{\mathfrak{p}}$ is unimodular if $L^\#_{\mathfrak{p}} = L_{\mathfrak{p}}$ inside the completed
+ambient space. Here $L^\#_{\mathfrak{p}}$ is the completion of the global integral dual.
 
 **Mass.** The genus of $L$ is the set of $\mathcal{O}$-lattices $L'$ in $V$ with $L'_{\mathfrak{p}}$ isometric to $L_{\mathfrak{p}}$ for
 every prime ideal $\mathfrak{p}$ of $\mathfrak{o}$; it is a union of isometry classes. Let $\mathrm{Aut}(L')$ be the group of
@@ -26,29 +27,25 @@ $\varphi$ of $L_{\mathfrak{p}} \otimes R$ with $\Phi(\varphi x, \varphi y) = \Ph
 
 $$\beta(L_{\mathfrak{p}}) = \lim_{N \to \infty} \frac{\# H(\mathfrak{o}/\mathfrak{p}^N)}{q^{N m^2}}.$$
 
+The limit is used when it exists; the endomorphisms counted above need not be
+invertible. At precision $N$, the integral pairing is base changed directly from
+$\mathfrak{o}$ to $\mathfrak{o}/\mathfrak{p}^N$.
+
 **Local factors.** The reference coefficient at $\mathfrak{p}$ is
 
 $$c_{\mathfrak{p}} = \prod_{j=1}^{m} (1 - q^{-j}) \text{ if } \mathfrak{p} \text{ splits in } E, \qquad c_{\mathfrak{p}} = \prod_{j=1}^{m} \bigl(1 - (-q)^{-j}\bigr) \text{ if } \mathfrak{p} \text{ is inert}, \qquad c_{\mathfrak{p}} = \prod_{j=1}^{\lfloor m/2 \rfloor} (1 - q^{-2j}) \text{ if } \mathfrak{p} \text{ ramifies}.$$
 
 Let $t_{\mathfrak{p}}$ be the length of the $\mathfrak{o}_{\mathfrak{p}}$-module $L^\#_{\mathfrak{p}} / L_{\mathfrak{p}}$, and let
 $a_{\mathfrak{p}} = \operatorname{ord}_{\mathfrak{p}}(\mathfrak{d}_{E/K}) \, m/2$ if $\mathfrak{p}$ ramifies in $E$ and $m$ is even and $a_{\mathfrak{p}} = 0$
-otherwise. The local factor of $L$ at $\mathfrak{p}$ is
+otherwise. When this length is finite and the density limit is nonzero,
+the local factor of $L$ at $\mathfrak{p}$ is
 
 $$\lambda(L_{\mathfrak{p}}) = \frac{q^{t_{\mathfrak{p}} m/2 + a_{\mathfrak{p}}} \, c_{\mathfrak{p}}}{\beta(L_{\mathfrak{p}})}.$$
-
-## Depends on
-
-- [Discriminant ideal of a Dedekind extension](../../RingTheory/ramification/different-and-discriminant-ideals/discriminant-ideal.md), for the relative discriminant $\mathfrak{d}_{E/K}$
-- [Absolute norm of an ideal](../../RingTheory/dedekind-domains/ideal-absolute-norm.md), for the norm $q$ of a prime ideal $\mathfrak{p}$
-
-## Proof depends on
-
-This node has no prerequisites.
 
 ## Sources
 
 - M. Kirschmer, *Definite quadratic and hermitian forms with small class number*, Habilitationsschrift,
-  RWTH Aachen University (2016), <http://www.math.rwth-aachen.de/~Markus.Kirschmer/papers/herm.pdf>:
+  RWTH Aachen University (2016), <https://www.math.rwth-aachen.de/~Markus.Kirschmer/papers/herm.pdf>:
   Definitions 2.1.1–2.1.3 (Hermitian spaces), 2.2.2 (lattices), 2.3.3 and 2.3.5 (dual, integral and unimodular
   lattices), item 1 of Section 2.4 (definite spaces), Definition 2.4.2 (genus); Chapter 4: the relative discriminant
   $\mathfrak{d}_{E/K} = N(\mathfrak{D})$ at the start of the chapter, Definition 4.2.1 (mass), Definition 4.2.2 (local density),

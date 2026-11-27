@@ -28,7 +28,7 @@ public import MathlibExt.Computability.Complexity
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Fintype.Defs
 public import Mathlib.Order.Defs.Unbundled
-public import WantedExt.Complexity.NPComplete.SequencingToMinimizeWeightedTardinessWanted
+public import CSLibExt.Complexity.NPComplete.SequencingToMinimizeWeightedTardinessDefs
 
 @[expose] public section
 
@@ -51,7 +51,7 @@ This is SEQUENCING TO MINIMIZE WEIGHTED TARDINESS ([SS5]) with precedence constr
 all lengths and weights equal to `1` (`1|prec, pⱼ = 1|∑ Tⱼ`, the case Lenstra and Rinnooy Kan
 prove). The [SS5] instance (tasks as `(l(t), w(t), d(t))` triples and the bound `K`), its
 well-formedness, the task accessors and the one-processor schedule predicate are reused from
-`SequencingToMinimizeWeightedTardinessWanted`. The partial order is given by the list of its
+`SequencingToMinimizeWeightedTardinessDefs`. The partial order is given by the list of its
 pairs `(t, t')` with `t < t'`, required to be a strict order (Mathlib's `IsStrictOrder`:
 irreflexive and transitive). Binary encoding of all numbers.
 
@@ -66,7 +66,7 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- An instance: the [SS5] instance of `SequencingToMinimizeWeightedTardinessWanted` (task
+/-- An instance: the [SS5] instance of `SequencingToMinimizeWeightedTardinessDefs` (task
 triples `(l(t), w(t), d(t))` and the bound `K`), and the pairs `(t, t')` with `t < t'`. -/
 abbrev PrecedenceUnitTaskTardinessInstance :=
   SequencingToMinimizeWeightedTardiness.SequencingToMinimizeWeightedTardinessInstance ×

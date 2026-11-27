@@ -9,6 +9,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.AnalyticCurrents
+public import MathlibExt.AlgebraicGeometry.AnalyticCurrentsCurrentDifferentialTheory
 
 /-!
 # A nef class of positive volume contains an actual Kähler current
@@ -19,7 +20,8 @@ actual Kähler cone in real de Rham cohomology. Volume, representation,
 closedness, type and domination use the actual forms, distributional
 differential and coordinate integrals. No bigness/current oracle is input.
 The boundedness of the distributional differential, a hypothesis class in
-`MathlibExt`, is requested here too.
+`MathlibExt`, is proved in
+`MathlibExt.AlgebraicGeometry.AnalyticCurrentsCurrentDifferentialTheory`.
 -/
 
 @[expose] public noncomputable section
@@ -58,13 +60,5 @@ public theorem_wanted nef_positiveVolume_kahlerCurrent
     ∃ T : Current n M 2, IsTypeOneOneCurrent n M T ∧ IsClosedCurrent n M T ∧
       Represents n M R A hn T alpha ∧
       ∃ epsilon : ℝ, 0 < epsilon ∧ Dominates n M R A hn T eta.form.val epsilon
-
-/-- The distributional differential of a current is again a current: the
-exterior derivative is continuous for the chart seminorms. -/
-public theorem_wanted currentDifferentialTheory (n : ℕ) (M : Type) [TopologicalSpace M]
-    [CompactSpace M] [ChartedSpace (Coordinates n) M]
-    [IsManifold 𝓘(ℝ, Coordinates n) ∞ M] [IsManifold 𝓘(ℂ, Coordinates n) ∞ M]
-    [ExteriorTheory ℝ (Coordinates n) M] :
-    CurrentDifferentialTheory n M
 
 end WantedExt.AlgebraicGeometry.AnalyticCurrentsWanted

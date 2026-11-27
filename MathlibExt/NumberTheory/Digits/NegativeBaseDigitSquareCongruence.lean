@@ -9,14 +9,16 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Algebra.Ring.Int.Parity
+public import Mathlib.Data.Finset.Image
 public import Mathlib.Data.Int.ModEq
+public import Mathlib.Logic.Function.Iterate
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
 
 /-!
-# A congruence for the negative-base digit-square sum
+# Negative-base digit-square sums
 
-We prove Lemma 3.1 of Grundman's *Closing an Open Problem on Negative Base Happy Numbers*.
+We prove Lemmas 2.1 and 3.1 of Grundman's *Closing an Open Problem on Negative Base Happy Numbers*.
 -/
 
 namespace MetaMathlibExt
@@ -52,12 +54,40 @@ Quarterly 62 (2024), Article 62-2/grundman11162023, Section 2. -/
 def negBaseSqDigitSum (b a : ℤ) : ℤ :=
   negBaseSqDigitSumAux b (2 * a.natAbs + 2) a
 
+/-- **Cycles of the negative-base digit-square map.** For an integer $b$, let $S_{2,b}$ be the
+base-$b$ digit-square sum, which for $b \le -2$ sends an integer to the sum of the squares of its
+base-$b$ digits. Then $U_{2,b}$ is the set of positive integers $u$ such that $S_{2,b}^m(u) = u$
+for some $m \ge 1$, that is, the positive integers lying on a cycle of $S_{2,b}$.
+
+Source: Helen G. Grundman, *Closing an Open Problem on Negative Base Happy Numbers*, The Fibonacci
+Quarterly 62 (2024), Article 62-2/grundman11162023, Section 2. -/
+def negBaseSqDigitCycles (b : ℤ) : Set ℤ :=
+  {u | 0 < u ∧ ∃ m : ℕ, 0 < m ∧ (negBaseSqDigitSum b)^[m] u = u}
+
+/-- **Good sets for the digit-square map.** For an integer $b$, let $S_{2,b}$ be the base-$b$
+digit-square map, which for $b \le -2$ sends an integer to the sum of the squares of its base-$b$
+digits; write $S_{2,b}^k$ for its $k$-fold iterate, and let $U_{2,b}$ be the set of positive
+integers $u$ with $S_{2,b}^m(u) = u$ for some $m \ge 1$. A finite set $T$ of integers is
+$(2, b)$-good if for each $u \in U_{2,b}$ there are integers $n \ge 1$ and $k \ge 1$ such that
+$S_{2,b}^k(t + n) = u$ for every $t \in T$.
+
+Source: Helen G. Grundman, *Closing an Open Problem on Negative Base Happy Numbers*, The Fibonacci
+Quarterly 62 (2024), Article 62-2/grundman11162023, Section 2. -/
+def IsNegBaseGood (b : ℤ) (T : Finset ℤ) : Prop :=
+  ∀ u ∈ negBaseSqDigitCycles b, ∃ n : ℤ, 0 < n ∧ ∃ k : ℕ, 0 < k ∧
+    ∀ t ∈ T, (negBaseSqDigitSum b)^[k] (t + n) = u
+
 end
 
--- The extra unit on negative inputs handles the step from `-1` to `1`.
-private def digitRank (a : ℤ) : ℕ := 2 * a.natAbs + if a < 0 then 1 else 0
+/-- **Rank for the negative-base digit recursion.** For an integer $a$, the rank of $a$ is
+$2|a| + 1$ if $a < 0$ and $2|a|$ otherwise. The extra unit on negative inputs makes the rank
+decrease in the step from $-1$ to its quotient $1$. -/
+@[expose] public def digitRank (a : ℤ) : ℕ := 2 * a.natAbs + if a < 0 then 1 else 0
 
-private theorem digitRank_lt {B q d : ℤ} (hB : 2 ≤ B) (hd0 : 0 ≤ d) (hd : d < B)
+/-- **The rank decreases along the negative-base digit recursion.** Let $B \ge 2$, $d$ and $q$ be
+integers with $0 \le d < B$ and $-Bq + d \ne 0$. Then the rank of $q$ is less than the rank of
+$-Bq + d$. -/
+public theorem digitRank_lt {B q d : ℤ} (hB : 2 ≤ B) (hd0 : 0 ≤ d) (hd : d < B)
     (ha : -B * q + d ≠ 0) : digitRank q < digitRank (-B * q + d) := by
   set a := -B * q + d with ea
   have haq : (a.natAbs : ℤ) = |a| := Int.natCast_natAbs a
@@ -128,7 +158,10 @@ private theorem digitSumAux_stable {B : ℤ} (hB : 2 ≤ B) {f g : ℕ} {a : ℤ
     simp only [negBaseSqDigitSumAux, ite_eq_right ha]
     rw [ih (show digitRank q ≤ f by omega) (show digitRank q ≤ g by omega)]
 
-private theorem digitSum_cons {B q d : ℤ} (hB : 2 ≤ B) (hd0 : 0 ≤ d) (hd : d < B) :
+/-- **Digit recurrence for the negative-base digit-square sum.** Let $B \ge 2$, $d$ and $q$ be
+integers with $0 \le d < B$. Then the sum of the squares of the base-$(-B)$ digits of $-Bq + d$ is
+$d^2$ plus the sum of the squares of the base-$(-B)$ digits of $q$. -/
+public theorem digitSum_cons {B q d : ℤ} (hB : 2 ≤ B) (hd0 : 0 ≤ d) (hd : d < B) :
     negBaseSqDigitSum (-B) (-B * q + d) = d ^ 2 + negBaseSqDigitSum (-B) q := by
   let a := -B * q + d
   have hb : -B ≠ 0 := by omega
@@ -426,5 +459,158 @@ public theorem exists_negBaseSqDigitSum_congr (b : ℤ) (hb : b ≤ -12) (heven 
       (by omega) (by omega) (by omega) (by omega) (by omega) (by omega) ?_ hbad
     rw [hvqr]
     ring
+
+/-- **The digit-square sum of zero.** For every integer $b$, the base-$b$ digit-square sum $S_{2,b}$
+satisfies $S_{2,b}(0) = 0$.
+
+Source: Helen G. Grundman, *Closing an Open Problem on Negative Base Happy Numbers*, The Fibonacci
+Quarterly 62 (2024), Article 62-2/grundman11162023, Section 2. -/
+public theorem negBaseSqDigitSum_zero (b : ℤ) : negBaseSqDigitSum b 0 = 0 := by
+  simp [negBaseSqDigitSum, negBaseSqDigitSumAux]
+
+private theorem digitSum_pos {B : ℤ} (hB : 2 ≤ B) (a : ℤ) (ha : a ≠ 0) :
+    0 < negBaseSqDigitSum (-B) a := by
+  induction h : digitRank a using Nat.strong_induction_on generalizing a with
+  | ind n ih =>
+    have hd₀ := Int.emod_nonneg a (show -B ≠ 0 by omega)
+    have hdB : a % (-B) < B := by
+      rw [Int.emod_neg]
+      exact Int.emod_lt_of_pos _ (by omega)
+    have he := Int.mul_ediv_add_emod a (-B)
+    have hs : negBaseSqDigitSum (-B) a = (a % (-B)) ^ 2 + negBaseSqDigitSum (-B) (a / (-B)) :=
+      (congrArg (negBaseSqDigitSum (-B)) he.symm).trans (digitSum_cons hB hd₀ hdB)
+    rw [hs]
+    by_cases hq : a / (-B) = 0
+    · rw [hq, negBaseSqDigitSum_zero, add_zero]
+      apply sq_pos_of_ne_zero
+      intro hd
+      simp [hq, hd] at he
+      exact ha he.symm
+    · have hlt := digitRank_lt hB hd₀ hdB (he ▸ ha)
+      rw [he, h] at hlt
+      exact add_pos_of_nonneg_of_pos (sq_nonneg _) (ih _ hlt _ hq rfl)
+
+-- Once the low part has terminated, all remaining digits come from `x`.
+private theorem digitSum_append {B : ℤ} (hB : 2 ≤ B) (m : ℕ) (a x : ℤ)
+    (ha : digitRank a ≤ m) :
+    negBaseSqDigitSum (-B) (a + (-B) ^ m * x) =
+      negBaseSqDigitSum (-B) a + negBaseSqDigitSum (-B) x := by
+  induction m generalizing a with
+  | zero =>
+    have haz : a = 0 := by
+      have := Int.natAbs_eq_zero (a := a)
+      unfold digitRank at ha
+      omega
+    simp [haz, negBaseSqDigitSum_zero]
+  | succ m ih =>
+    let q := a / (-B)
+    let d := a % (-B)
+    have hd₀ : 0 ≤ d := Int.emod_nonneg _ (by omega)
+    have hdB : d < B := by
+      dsimp [d]
+      rw [Int.emod_neg]
+      exact Int.emod_lt_of_pos _ (by omega)
+    have he : -B * q + d = a := Int.mul_ediv_add_emod a (-B)
+    have hq : digitRank q ≤ m := by
+      by_cases haz : a = 0
+      · simp [q, haz, digitRank]
+      · have hlt := digitRank_lt hB hd₀ hdB (he ▸ haz)
+        rw [he] at hlt
+        omega
+    rw [show a + (-B) ^ (m + 1) * x = -B * (q + (-B) ^ m * x) + d by
+      rw [pow_succ, ← he]; ring]
+    rw [digitSum_cons hB hd₀ hdB, ih q hq, ← add_assoc, ← digitSum_cons hB hd₀ hdB, he]
+
+-- Use `n` digits equal to one in the even positions, and zero in the odd positions.
+private theorem exists_digitSum_eq_nat {B : ℤ} (hB : 2 ≤ B) (n : ℕ) :
+    ∃ x : ℤ, 0 ≤ x ∧ negBaseSqDigitSum (-B) x = n := by
+  induction n with
+  | zero => exact ⟨0, le_rfl, negBaseSqDigitSum_zero (-B)⟩
+  | succ n ih =>
+    obtain ⟨x, hx, hs⟩ := ih
+    refine ⟨(-B) ^ 2 * x + 1, add_nonneg (mul_nonneg (sq_nonneg _) hx) zero_le_one, ?_⟩
+    rw [show (-B) ^ 2 * x + 1 = -B * (-B * x + 0) + 1 by ring,
+      digitSum_cons hB zero_le_one (by omega : 1 < B),
+      digitSum_cons hB le_rfl (by omega : 0 < B), hs]
+    simp [add_comm]
+
+private theorem isNegBaseGood_of_image_digitSum {B : ℤ} (hB : 2 ≤ B) (T : Finset ℤ)
+    (hgood : IsNegBaseGood (-B) (T.image (negBaseSqDigitSum (-B)))) : IsNegBaseGood (-B) T := by
+  obtain ⟨m, hm⟩ := Finset.exists_nat_subset_range (T.image digitRank)
+  intro u hu
+  obtain ⟨n, hn, k, _, hk⟩ := hgood u hu
+  obtain ⟨x, hx, hs⟩ := exists_digitSum_eq_nat hB n.toNat
+  rw [Int.toNat_of_nonneg hn.le] at hs
+  have hxpos : 0 < x := by
+    by_contra! hx'
+    rw [show x = 0 by omega, negBaseSqDigitSum_zero] at hs
+    omega
+  -- Take an even number of low digits so that the common shift is positive.
+  have hpow : 0 < (-B) ^ (2 * m) := by
+    rw [pow_mul]
+    exact pow_pos (sq_pos_of_ne_zero (by omega)) _
+  refine ⟨(-B) ^ (2 * m) * x, mul_pos hpow hxpos, k + 1, by omega, ?_⟩
+  intro t ht
+  have ht' : digitRank t < m := Finset.mem_range.mp (hm (Finset.mem_image_of_mem _ ht))
+  rw [Function.iterate_succ_apply, digitSum_append hB _ _ _ (by omega : digitRank t ≤ 2 * m), hs]
+  exact hk _ (Finset.mem_image_of_mem _ ht)
+
+private theorem isNegBaseGood_of_image_succ {b : ℤ} (T : Finset ℤ)
+    (hgood : IsNegBaseGood b (T.image fun t => t + 1)) : IsNegBaseGood b T := by
+  intro u hu
+  obtain ⟨n, hn, k, hk, h⟩ := hgood u hu
+  refine ⟨n + 1, by omega, k, hk, ?_⟩
+  intro t ht
+  simpa only [add_assoc, add_comm 1 n] using h (t + 1) (Finset.mem_image_of_mem _ ht)
+
+/-- **Goodness pulls back along compositions of the digit-square map and the successor map.**
+Let $b \le -2$ be an integer, let $S_{2,b}$ be the map sending an integer to the sum of the
+squares of its base-$b$ digits, and let $I(t) = t + 1$. Let $T$ be a finite set of positive
+integers and let $F$ be a composition $F = f_1 \circ \dots \circ f_m$ with $m \ge 0$ (the empty
+composition being the identity), where each $f_i$ is $S_{2,b}$ or $I$. If the image $F(T)$ is
+$(2, b)$-good, then $T$ is $(2, b)$-good.
+
+Source: Helen G. Grundman, *Closing an Open Problem on Negative Base Happy Numbers*, The Fibonacci
+Quarterly 62 (2024), Article 62-2/grundman11162023, Lemma 2.1. -/
+public theorem isNegBaseGood_of_image_comp (b : ℤ) (hb : b ≤ -2) (T : Finset ℤ)
+    (hT : ∀ t ∈ T, 0 < t) (ops : List Bool)
+    (hgood : IsNegBaseGood b (T.image
+      ((ops.map fun op => if op then negBaseSqDigitSum b else fun t => t + 1).foldr (· ∘ ·) id))) :
+    IsNegBaseGood b T := by
+  have hB : 2 ≤ -b := by omega
+  let step : Bool → ℤ → ℤ := fun op => if op then negBaseSqDigitSum b else fun t => t + 1
+  have step_pos (op : Bool) {t : ℤ} (ht : 0 < t) : 0 < step op t := by
+    cases op
+    · change 0 < t + 1
+      omega
+    · simpa only [step, ite_true, neg_neg] using digitSum_pos hB t ht.ne'
+  have foldr_comp (l : List Bool) (f : ℤ → ℤ) :
+      (l.map step).foldr (· ∘ ·) f = ((l.map step).foldr (· ∘ ·) id) ∘ f := by
+    induction l with
+    | nil => rfl
+    | cons op l ih =>
+      simp only [List.map_cons, List.foldr_cons, ih]
+      rfl
+  change IsNegBaseGood b (T.image ((ops.map step).foldr (· ∘ ·) id)) at hgood
+  -- Peel off the innermost operation so the induction applies to its image of `T`.
+  induction ops using List.reverseRecOn generalizing T with
+  | nil => simpa using hgood
+  | append_singleton ops op ih =>
+    let U := T.image (step op)
+    have hU : ∀ u ∈ U, 0 < u := by
+      intro u hu
+      obtain ⟨t, ht, rfl⟩ := Finset.mem_image.mp hu
+      exact step_pos op (hT t ht)
+    have h : IsNegBaseGood b U := by
+      apply ih U hU
+      simpa only [U, Finset.image_image, List.map_append, List.foldr_append, List.map_cons,
+        List.map_nil, List.foldr_cons, List.foldr_nil, Function.comp_id, foldr_comp ops (step op)]
+        using hgood
+    cases op
+    · exact isNegBaseGood_of_image_succ T h
+    · change IsNegBaseGood b (T.image (negBaseSqDigitSum b)) at h
+      have h' : IsNegBaseGood (-(-b)) (T.image (negBaseSqDigitSum (-(-b)))) := by
+        simpa only [neg_neg] using h
+      simpa only [neg_neg] using isNegBaseGood_of_image_digitSum hB T h'
 
 end MetaMathlibExt
