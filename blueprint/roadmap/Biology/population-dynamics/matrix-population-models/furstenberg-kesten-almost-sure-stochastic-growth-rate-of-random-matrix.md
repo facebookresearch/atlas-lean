@@ -19,5 +19,5 @@ exists almost surely and is deterministic: almost every realization gives the sa
 
 ## Sources
 
-- D. Steinsaltz, S. Tuljapurkar and C. Horvitz, Derivatives of the stochastic growth rate, 2010, Sections 1–2. <https://arxiv.org/abs/1002.1424>
+- D. Steinsaltz, S. Tuljapurkar and C. Horvitz, Derivatives of the stochastic growth rate, Theor. Popul. Biol. 80 (2011), 1–15; Sections 1–2 in the numbering of the arXiv version, arXiv:1002.1424. <https://doi.org/10.1016/j.tpb.2011.03.004>
 - Original result: H. Furstenberg and H. Kesten, Products of random matrices, Ann. Math. Statist. 31 (1960), 457–469. <https://doi.org/10.1214/aoms/1177705909> The existence of the stochastic growth rate as the leading Lyapunov exponent follows Steinsaltz, Tuljapurkar and Horvitz.

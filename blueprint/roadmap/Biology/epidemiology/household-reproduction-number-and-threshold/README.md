@@ -9,3 +9,4 @@
 - [`R₀` as the root of the characteristic equation](exists-unique-root-eq-spectral-radius.md)
 - [`R₀` and `R*` have the same threshold](spectral-radius-threshold.md)
 - [Survival of the household process iff `R₀ > 1`](extinction-prob-lt-one-iff.md)
+- [Stochastic epidemic thresholds](stochastic-epidemic-thresholds/README.md)

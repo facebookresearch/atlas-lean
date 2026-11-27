@@ -8,7 +8,7 @@ The proof is a computation with Feller's accessibility and enterability integral
 - If $0 < \theta_1 < 1$, $S(0)$ is finite and $m$ is integrable at $0$, so both $\int_0^c(S(y) - S(0))m(y)\,dy$ and the enterability integral are finite: $0$ is regular.
 - If $\theta_1 = 0$, $S(y) - S(0)$ is of order $y$ and $m(y)$ of order $1/y$, so the accessibility integral is finite, while $S(c) - S(y)$ tends to $S(c) - S(0) > 0$ and $\int_0m(y)\,dy = \infty$: $0$ is an exit boundary.
 
-This agrees with Jenkins and Spanò (2017, Section 1), who note that the boundaries of the Wright–Fisher diffusion can be exit, regular reflecting or entrance depending on the drift parameters, and with Sineokiy and Veretennikov (2023, Lemma 1), who prove, after Feller, that a generalised Wright–Fisher diffusion with diffusion coefficient at most $x(1 - x)$ and drift at least $b_0$ near $0$ never reaches $0$ when $2b_0 - 1 > 0$; here $b_0$ can be taken arbitrarily close to $\theta_1/2$, giving the sufficient condition $\theta_1 > 1$. Song and Steinrücken (2012, section on the neutral diffusion with recurrent mutation) likewise note that under recurrent mutation the boundaries are regular or entrance.
+This agrees with Jenkins and Spanò (2017, Section 1), who note that the boundaries of the Wright–Fisher diffusion can be exit, regular reflecting or entrance depending on the drift parameters. Song and Steinrücken (2012, section on the neutral diffusion with recurrent mutation) likewise note that under recurrent mutation the boundaries are regular or entrance.
 
 ## Depends on
 
@@ -26,6 +26,5 @@ This agrees with Jenkins and Spanò (2017, Section 1), who note that the boundar
 
 ## Sources
 
-- P. A. Jenkins and D. Spanò, Exact simulation of the Wright–Fisher diffusion, arXiv:1506.06998, Section 1. <https://arxiv.org/abs/1506.06998>
-- R. Yu. Sineokiy and A. Yu. Veretennikov, On recurrence and convergence rate of generalised Fisher–Wright diffusion with mutation, arXiv:2211.06098 (2023), Section 2, Lemma 1. <https://arxiv.org/abs/2211.06098>
+- P. A. Jenkins and D. Spanò, Exact simulation of the Wright–Fisher diffusion, Ann. Appl. Probab. 27 (2017), 1478–1509, Section 1. <https://doi.org/10.1214/16-AAP1236>
 - Y. S. Song and M. Steinrücken, A simple method for finding explicit analytic transition densities of diffusion processes with general diploid selection, Genetics 190 (2012), 1117–1129, section on diffusions with recurrent mutation. <https://doi.org/10.1534/genetics.111.136929>

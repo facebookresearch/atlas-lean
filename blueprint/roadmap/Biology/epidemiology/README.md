@@ -24,6 +24,8 @@ Compartmental, renewal and branching-process models of infectious disease transm
 - [Superspreading and negative-binomial offspring](superspreading-and-negative-binomial-offspring/README.md)
 
 - [Epidemics on networks](epidemics-on-networks/README.md)
-- [Global stability of compartmental models](global-stability-of-compartmental-models/README.md)
-- [Stochastic epidemic thresholds](stochastic-epidemic-thresholds/README.md)
-- [Case-control studies](case-control-studies/README.md)
+- [Age-of-infection epidemic models and the McKendrick–von Foerster equation](age-of-infection-mckendrick-von-foerster-models/README.md)
+- [Incentive design for epidemic control](incentive-design-for-epidemic-control/README.md)
+- [Seasonally forced SIRS model](seasonally-forced-sirs-model/README.md)
+- [Two-strain competition with delayed cross-immunity](two-strain-competition-with-delayed-cross-immunity/README.md)
+- [Two-variant logistic replacement and the selection coefficient](two-variant-logistic-replacement-and-the-selection-coefficient.md)

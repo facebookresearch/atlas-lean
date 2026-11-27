@@ -5,3 +5,4 @@
 - [The Nussinov recursion](nussinov.md)
 - [Every secondary structure has at most the Nussinov number of pairs](card-le-nussinov.md)
 - [The Nussinov number of pairs is attained](exists-is-structure-card-eq.md)
+- [RNA secondary structure](rna-secondary-structure/README.md)

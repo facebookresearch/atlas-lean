@@ -15,6 +15,6 @@ $$s = h - \int_0^a w(x)\, dx$$
 
 ## Sources
 
-- V. Kostrykin and A. Oleynik, On the existence of unstable bumps in neural networks, 2011, Section 1. <https://arxiv.org/abs/1112.2941>
+- V. Kostrykin and A. Oleynik, On the existence of unstable bumps in neural networks, Integral Equations Operator Theory 75 (2013), 445–458, Section 1. <https://doi.org/10.1007/s00020-013-2045-5>
 - W. Gerstner, W. M. Kistler, R. Naud and L. Paninski, *Neuronal Dynamics*, Cambridge University Press, 2014, Section 18.3.1. <https://doi.org/10.1017/CBO9781107447615>
 - Original result: S. Amari, Dynamics of pattern formation in lateral-inhibition type neural fields, Biol. Cybern. 27 (1977), 77–87. <https://doi.org/10.1007/bf00337259> The existence of stable and unstable bumps under these hypotheses, for inputs in the range stated above, follows Kostrykin and Oleynik, Section 1.

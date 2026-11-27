@@ -22,7 +22,7 @@ so the endpoint is accessible exactly when $S(x_m) > -\infty$ and this integral 
 
 ## Sources
 
-- L. Döring and A. E. Kyprianou, Entrance and exit at infinity for stable jump diffusions, arXiv:1802.01672 (2020), Section 1. <https://arxiv.org/abs/1802.01672>
+- L. Döring and A. E. Kyprianou, Entrance and exit at infinity for stable jump diffusions, Ann. Probab. 48 (2020), 1220–1265, Section 1. <https://doi.org/10.1214/19-AOP1389>
 - S. Karlin and H. M. Taylor, *A Second Course in Stochastic Processes*, Academic Press, New York (1981), Chapter 15 (exit probabilities from the scale function and Feller's accessibility test).
 - W. Feller, Diffusion processes in one dimension, Trans. Amer. Math. Soc. 77 (1954), 1–31, Section 2.
 - Original result: W. Feller, The parabolic differential equations and the associated semi-groups of transformations, Ann. of Math. 55 (1952), 468–519. <https://doi.org/10.2307/1969644> The four boundary types and their definition by accessibility and enterability follow Döring and Kyprianou (2020, Section 1).

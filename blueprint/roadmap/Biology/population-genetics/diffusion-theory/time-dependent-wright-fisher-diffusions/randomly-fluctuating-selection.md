@@ -1,6 +1,6 @@
 # Randomly fluctuating selection
 
-Biswas, Etheridge and Klimek (arXiv 2018, Section 1, equation (1.1)) consider two alleles in an environment that switches between two states, each favouring one allele, with selection strong enough that either allele would fix quickly in a constant environment but balanced between the two states, and fluctuations fast on evolutionary time scales. Over large time scales the frequency $p$ of one allele follows
+Biswas, Etheridge and Klimek (2021, Section 1, equation (1.1)) consider two alleles in an environment that switches between two states, each favouring one allele, with selection strong enough that either allele would fix quickly in a constant environment but balanced between the two states, and fluctuations fast on evolutionary time scales. Over large time scales the frequency $p$ of one allele follows
 
 $$dp = s^2p(1 - p)(1 - 2p)\,dt + \sqrt{p(1 - p)}\,dB^1 + \sqrt2\,sp(1 - p)\,dB^2,$$
 
@@ -16,5 +16,5 @@ with independent Brownian motions $B^1$ for genetic drift and $B^2$ for the envi
 
 ## Sources
 
-- N. Biswas, A. M. Etheridge and A. Klimek, The spatial Lambda-Fleming-Viot process with fluctuating selection, arXiv:1802.08188, Sections 1 and 3. <https://arxiv.org/abs/1802.08188>
+- N. Biswas, A. M. Etheridge and A. Klimek, The spatial Lambda-Fleming-Viot process with fluctuating selection, Electron. J. Probab. 26 (2021), 1–51; Sections 1 and 3 and equation (1.1) in the numbering of the arXiv version, arXiv:1802.08188v2. <https://doi.org/10.1214/21-EJP593>
 - B. Øksendal, *Stochastic Differential Equations: An Introduction with Applications*, 6th ed., Springer, 2003, Section 3.3, comparison of Itô and Stratonovich integrals.

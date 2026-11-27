@@ -4,6 +4,7 @@ In diffusion methods for demographic inference, a history made of epochs with co
 
 ## Depends on
 
+- [Expected joint allele-frequency spectrum and its Poisson likelihood](../../diffusion-theory/poisson-random-field-model/expected-joint-allele-frequency-spectrum-and-poisson-likelihood.md)
 - [Multi-population diffusion for the joint allele-frequency density](../../diffusion-theory/poisson-random-field-model/multipopulation-diffusion-with-migration-and-admixture.md)
 - [Piecewise-constant population-size history](../../../coalescent-theory/site-frequency-spectrum-under-variable-populatio/piecewise-history.md)
 

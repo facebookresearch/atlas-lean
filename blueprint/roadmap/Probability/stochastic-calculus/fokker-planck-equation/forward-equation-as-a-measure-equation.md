@@ -4,7 +4,7 @@ For a diffusion on $[0, 1]$ with drift $\mu$ and infinitesimal variance $\sigma^
 
 $$\mu_t(dy) = P_x(X_t = 0)\,\delta_0(dy) + p(t, x, y)\,dy + P_x(X_t = 1)\,\delta_1(dy),$$
 
-with an interior density of total mass $P_x(\tau > t)$, where $\tau$ is the absorption time. The forward equation is then an equation for $\mu_t$: the density form holds on $(0, 1)$, and, from the weak form with $f$ approximating the indicators of $\{0\}$ and $\{1\}$, the masses of the two atoms grow at the rates at which probability leaves the interior through each endpoint. Epstein and Pop (2017, Theorem 1.7 and Section 3) prove for generalized Kimura operators that the Dirichlet heat kernel is a weak solution of the forward equation in its final point.
+with an interior density of total mass $P_x(\tau > t)$, where $\tau$ is the absorption time. The forward equation is then an equation for $\mu_t$: the density form holds on $(0, 1)$, and, from the weak form with $f$ approximating the indicators of $\{0\}$ and $\{1\}$, the masses of the two atoms grow at the rates at which probability leaves the interior through each endpoint. Epstein and Pop (2019, Theorem 1.7 and Section 3) prove for generalized Kimura operators that the Dirichlet heat kernel is a weak solution of the forward equation in its final point.
 
 ## Depends on
 
@@ -21,4 +21,4 @@ with an interior density of total mass $P_x(\tau > t)$, where $\tau$ is the abso
 
 - S. Karlin and H. M. Taylor, *A Second Course in Stochastic Processes*, Academic Press, New York (1981), Chapter 15 (the forward equation).
 - S. Zhao, M. Lascoux, A. D. J. Overall and D. Waxman, The characteristic trajectory of a fixing allele: a consequence of fictitious selection that arises from conditioning, Genetics 195 (2013), 993–1006, Appendix A. <https://doi.org/10.1534/genetics.113.156059>
-- C. L. Epstein and C. A. Pop, Transition probabilities for degenerate diffusions arising in population genetics, arXiv:1608.02119 (2017), Theorem 1.7 and Section 3. <https://arxiv.org/abs/1608.02119>
+- C. L. Epstein and C. A. Pop, Transition probabilities for degenerate diffusions arising in population genetics, Probab. Theory Related Fields 173 (2019), 537–603; Theorem 1.7 and Section 3 in the numbering of the arXiv version, arXiv:1608.02119v2. <https://doi.org/10.1007/s00440-018-0840-2>

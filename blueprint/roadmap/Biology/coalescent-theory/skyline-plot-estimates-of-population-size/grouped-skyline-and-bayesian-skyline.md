@@ -16,4 +16,3 @@ For a known genealogy whose intercoalescent intervals $u_k$ carry $k$ lineages, 
 ## Sources
 
 - V. N. Minin, E. W. Bloomquist and M. A. Suchard, Smooth skyride through a rough skyline: Bayesian coalescent-based inference of population dynamics, Mol. Biol. Evol. 25 (2008), 1459–1471, sections "Piecewise demographic model for isochronous data" and "Piecewise demographic model for heterochronous data", equations (2)–(5). <https://doi.org/10.1093/molbev/msn090>
-- Original result: A. J. Drummond, A. Rambaut, B. Shapiro and O. G. Pybus, Bayesian coalescent inference of past population dynamics from molecular sequences, Mol. Biol. Evol. 22 (2005), 1185–1192. <https://doi.org/10.1093/molbev/msi103>

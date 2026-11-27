@@ -22,9 +22,15 @@ Differential-equation and matrix models of population growth, structure, species
 
 - [Matrix population models](matrix-population-models/README.md)
 - [Stability of evolutionarily stable states](stability-of-evolutionarily-stable-states/README.md)
-- [Discrete-time population models](discrete-population-models/README.md)
-- [Stable population theory](stable-population-theory/README.md)
-- [Competition and coexistence](competition-and-coexistence/README.md)
-- [Optimal foraging and life history](optimal-foraging-and-life-history/README.md)
 - [Zero-determinant strategies in iterated games](zero-determinant-strategies-in-iterated-games/README.md)
 - [Life tables](life-tables/README.md)
+- [Nonlocal selection–mutation equations](nonlocal-selection-mutation-equations/README.md)
+- [Phase-field models of tumor growth](phase-field-models-of-tumor-growth/README.md)
+- [Phenotype-structured population models](phenotype-structured-population-models/README.md)
+
+## [Part 1](part-01/README.md)
+
+- [Competition and coexistence](part-01/competition-and-coexistence/README.md)
+- [Discrete-time population models](part-01/discrete-population-models/README.md)
+- [Optimal foraging and life history](part-01/optimal-foraging-and-life-history/README.md)
+- [Stable population theory](part-01/stable-population-theory/README.md)

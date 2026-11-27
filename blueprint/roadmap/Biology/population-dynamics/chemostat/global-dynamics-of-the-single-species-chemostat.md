@@ -20,5 +20,5 @@ For the chemostat with dilution rate $D > 0$, feed concentration $S_f > 0$, yiel
 
 ## Sources
 
-- A. Rapaport and M. Veruete, A new proof of the competitive exclusion principle in the chemostat, 2017, Section 2, Definition 1, Proposition 1, Lemma 1. <https://arxiv.org/abs/1711.06928>
-- Original result: S. B. Hsu, S. Hubbell and P. Waltman, A mathematical theory for single-nutrient competition in continuous cultures of micro-organisms, SIAM J. Appl. Math. 32 (1977), 366–383. <https://doi.org/10.1137/0132030> The global statements for Monod growth follow Rapaport and Veruete (2017), who attribute the first proof to this paper.
+- A. Rapaport and M. Veruete, A new proof of the competitive exclusion principle in the chemostat, Discrete Contin. Dyn. Syst. Ser. B 24 (2019), 3755–3764, Section 2, Definition 1, Proposition 1, Lemma 1. <https://doi.org/10.3934/dcdsb.2018314>
+- Original result: S. B. Hsu, S. Hubbell and P. Waltman, A mathematical theory for single-nutrient competition in continuous cultures of micro-organisms, SIAM J. Appl. Math. 32 (1977), 366–383. <https://doi.org/10.1137/0132030> The global statements for Monod growth follow Rapaport and Veruete (2019), who attribute the first proof to this paper.

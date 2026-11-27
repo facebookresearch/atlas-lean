@@ -27,9 +27,9 @@ Mathematical models of allele frequencies in populations under random mating, se
 - [Selection, migration and transmission](selection-migration-and-transmission/README.md)
 - [Effective population size](effective-population-size/README.md)
 
-- [Bernstein's law for the ABO blood groups](bernstein-s-law-for-the-abo-blood-groups/README.md)
 - [Gene drive spread with demographic feedback](gene-drive-spread-with-demographic-feedback/README.md)
 - [Polyploid continuum](polyploid-continuum/README.md)
+
 ## [Part 1](part-01/README.md)
 
 - [Bernstein's law for the ABO blood groups](part-01/bernstein-s-law-for-the-abo-blood-groups/README.md)
