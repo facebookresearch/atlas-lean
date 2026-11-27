@@ -1,13 +1,13 @@
 # Expected truncated lifetime as a survival integral
 
-Let $L$ be an almost surely nonnegative real-valued random variable, and let $T\ge 0$ be a finite horizon. Then
+Let $\mu$ be a finite measure, let $L$ be an almost everywhere measurable and nonnegative real-valued function, and let $T\ge 0$. Then
 
-$$E[\min(L,T)] = \int_0^T P(L>t)\,dt.$$
+$$\int \min(L,T)\,d\mu = \int_0^T \mu(\{L>t\})\,dt.$$
 
-The uncapped mean is $E[L]=\int_0^\infty P(L>t)\,dt$, where both sides are extended nonnegative integrals and may be infinite. No density assumption is needed.
+For a probability measure, this gives the expected capped lifetime $E[\min(L,T)]$. It includes $T=0$ and requires no density or absence of atoms.
 
-Proof. Almost surely, $\min(L,T)=\int_0^T \mathbf 1\{L>t\}\,dt$. Taking expectations and exchanging integrals by Tonelli's theorem gives the first formula. The same argument over $t>0$ gives the uncapped formula. The strict inequality in the survival event also applies when the law of $L$ has atoms.
+Proof. Replacing $L$ by a measurable representative does not change either side. Almost everywhere, $\min(L,T)=\int_0^T \mathbf 1\{L>t\}\,dt$. Integrating and exchanging the two integrals by Tonelli's theorem gives the formula.
 
 ## Sources
 
-- C. M. Grinstead and J. L. Snell, *Introduction to Probability*, 2nd rev. ed., American Mathematical Society, 1997, Section 6.3, Exercise 13, <https://math.dartmouth.edu/~prob/prob/prob.pdf>. The source states a special case or part of the statement; the rest is derived on this page.
+- C. M. Grinstead and J. L. Snell, *Introduction to Probability*, online version dated 4 July 2006, §6.3, Exercise 13 (p. 280), <https://math.dartmouth.edu/~prob/prob/prob.pdf>. The exercise gives the related uncapped expectation identity; the argument above applies the same idea to the capped lifetime.
