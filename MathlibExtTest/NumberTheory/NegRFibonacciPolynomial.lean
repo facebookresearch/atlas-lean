@@ -10,8 +10,9 @@ module
 
 import MathlibExt.NumberTheory.NegRFibonacciPolynomial
 import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Ring
 
-/-! # Tests for the binomial sum for negative-order Fibonacci polynomials -/
+/-! # Tests for negative-order Fibonacci polynomials and their companion sequence -/
 
 open MetaMathlibExt
 
@@ -30,3 +31,23 @@ example : negRFibonacci 2 x y 2 = 0 := by
 example : negRFibonacci 2 x y 9 = (↑y⁻¹ : A) ^ 4 + 3 * (↑y⁻¹ : A) ^ 3 * x ^ 2 := by
   rw [negRFibonacci_succ_eq_sum' (r := 2) (by decide) x y 8]
   norm_num [Finset.sum_filter, Finset.sum_range_succ, Nat.choose]
+
+-- At n = r the correction term is zero.
+example {r : ℕ} (hr : 2 ≤ r) : negRLucas r x y r = (r : A) * ↑y⁻¹ := by
+  rw [negRLucas_eq hr le_rfl, negRFibonacci_succ_of_le x y (by omega : 1 ≤ r) le_rfl]
+  simp [negRFibonacci_zero, negRFibonacci_one]
+
+-- At n = r + 1 the correction contributes one of the three copies of -x / y.
+example : negRLucas 2 x y 3 = -(3 * x * ↑y⁻¹) := by
+  rw [negRLucas_eq (r := 2) (n := 3) (by decide) (by decide),
+    negRFibonacci_succ_of_le (r := 2) (n := 3) x y (by decide) (by decide),
+    negRFibonacci_succ_of_lt (r := 2) (n := 1) x y (by decide) (by decide)]
+  simp [negRFibonacci_one]
+  ring
+
+-- The formula applies without any invertibility assumption on x, including x = 0.
+example : negRLucas 2 (0 : A) y 4 = 2 * (↑y⁻¹ : A) ^ 2 := by
+  rw [negRLucas_eq (r := 2) (n := 4) (by decide) (by decide),
+    negRFibonacci_succ_of_le (r := 2) (n := 4) (0 : A) y (by decide) (by decide),
+    negRFibonacci_succ_of_le (r := 2) (n := 2) (0 : A) y (by decide) (by decide)]
+  simp [negRFibonacci_one, pow_two]
