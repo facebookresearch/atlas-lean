@@ -13,8 +13,9 @@ public import MathlibExt.Combinatorics.MaximumNimJosephus
 /-!
 # One-step floor reduction in Maximum Nim
 
-For $k = nt + h$ with $t \ge 1$ and $1 \le h \le n$, the pile size $nk - i$ has quotient $n-1$
-and nonzero remainder modulo $k$. The flat-rule recurrence moves this position to $n(k-1)-i$.
+For $k = nt + h$ with $t \ge 1$, $1 \le h \le n$, and $1 \le i \le n$, the pile size $nk - i$
+has quotient $n-1$ and nonzero remainder modulo $k$. The flat-rule recurrence identifies the
+Grundy values at $nk - i$ and $n(k-1)-i$.
 
 ## References
 
