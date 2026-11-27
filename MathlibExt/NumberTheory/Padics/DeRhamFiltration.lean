@@ -36,13 +36,13 @@ we show:
   `x ↦ θ(t^{-i} x)` (`PadicComplexInt.grBDeRhamEquiv`).
 
 For `K` finite over `ℚ_p` inside `ℚ̄_p`, `B_dR^{G_K} = K`
-(`PadicComplexInt.deRhamFixedSubalgebraEquiv`). For a `ℚ_p`-linear representation `ρ` of `G` on
-`V`, with `D_dR(V) = (B_dR ⊗_{ℚ_p} V)^{G_K}` (`Representation.periods`), following J.-M. Fontaine,
-*Représentations p-adiques semi-stables*, Astérisque 223 (1994), Exposé III, §3.7 pp. 141–142, we
-define
+(`PadicComplexInt.deRhamFixedSubalgebraEquiv`). For such `K` and a `ℚ_p`-linear representation `ρ`
+of `G` on `V`, with `D_dR(V) = (B_dR ⊗_{ℚ_p} V)^{G_K}` (`Representation.periods`), following
+J.-M. Fontaine, *Représentations p-adiques semi-stables*, Astérisque 223 (1994), Exposé III, §3.7
+pp. 141–142, we define
 
 * `Fil^i D_dR(V) = (Fil^i B_dR ⊗_{ℚ_p} V)^{G_K}` (`Representation.deRhamFiltration`), the
-  `K`-subspaces of `D_dR(V)` of the invariants lying in the image of
+  subspaces of `D_dR(V)` over `B_dR^{G_K} = K` of the invariants lying in the image of
   `Fil^i B_dR ⊗_{ℚ_p} V ⊆ B_dR ⊗_{ℚ_p} V` (`PadicComplexInt.filBDeRhamTensor`);
 * `gr^i D_dR(V) = Fil^i D_dR(V) / Fil^{i+1} D_dR(V)` (`Representation.deRhamGraded`),
 
@@ -624,8 +624,8 @@ abbrev deRhamFiltration (i : ℤ) :
   ρ.periodsFiltration (galoisBDeRham p) K.fixingSubgroup
     (fun i => (filBDeRham p i).restrictScalars ℚ_[p]) (fixedSubalgebra_mul_mem_filBDeRham p K) i
 
-/-- **`gr^i D_dR(V) = Fil^i D_dR(V) / Fil^{i+1} D_dR(V)`**, a vector space over
-`B_dR^{G_K} = K` (`Representation.periodsGraded`). -/
+/-- **`gr^i D_dR(V) = Fil^i D_dR(V) / Fil^{i+1} D_dR(V)`**, for `K` finite over `ℚ_p` inside
+`ℚ̄_p`: a vector space over `B_dR^{G_K} = K` (`Representation.periodsGraded`). -/
 abbrev deRhamGraded (i : ℤ) : Type _ :=
   ρ.periodsGraded (galoisBDeRham p) K.fixingSubgroup
     (fun i => (filBDeRham p i).restrictScalars ℚ_[p]) (fixedSubalgebra_mul_mem_filBDeRham p K) i

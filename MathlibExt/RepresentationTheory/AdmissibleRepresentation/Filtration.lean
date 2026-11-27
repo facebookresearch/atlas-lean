@@ -309,7 +309,8 @@ variable [IsDomain S] {act : G →* (S →ₐ[F] S)} {H : Subgroup G} (hS : IsRe
 
 include hS
 
-/-- For a regular ring `S`, a nonzero element of `D_S(V)` gives `dim_{S^H} D_S(V) ≥ 1`. -/
+/-- For a regular ring `S` and a finite-dimensional `V`, a nonzero element of `D_S(V)` gives
+`dim_{S^H} D_S(V) ≥ 1`. -/
 theorem one_le_finrank_periods [FiniteDimensional F V] {x : S ⊗[F] V} (hx : x ∈ ρ.periods act H)
     (hx0 : x ≠ 0) : 1 ≤ Module.finrank (fixedSubalgebra S act H) (ρ.periods act H) := by
   have := hS.finite_periods ρ
@@ -319,9 +320,9 @@ theorem one_le_finrank_periods [FiniteDimensional F V] {x : S ⊗[F] V} (hx : x 
   exact Module.finrank_pos (R := fixedSubalgebra S act H) (M := ρ.periods act H)
 
 /-- **The filtration of `D_S(V)` is exhaustive** (Fontaine, *Représentations p-adiques
-semi-stables*, Exposé III, §3.7 p. 141): for a decreasing exhaustive filtration of a regular ring
-`S` and a finite-dimensional `V`, `Fil^i D_S(V) = D_S(V)` for `i` small enough, since `D_S(V)` is
-finitely generated over `S^H`. -/
+semi-stables*, Exposé III, §3.7 p. 141, for `S = B_dR`): for a decreasing exhaustive filtration of
+a regular ring `S` and a finite-dimensional `V`, `Fil^i D_S(V) = D_S(V)` for `i` small enough,
+since `D_S(V)` is finitely generated over `S^H`. -/
 theorem exists_periodsFiltration_eq_periods [FiniteDimensional F V] (hanti : Antitone fil)
     (hexh : ∀ s : S, ∃ i, s ∈ fil i) :
     ∃ a, ∀ i ≤ a, ρ.periodsFiltration act H fil hfil i = ρ.periods act H := by
@@ -340,7 +341,8 @@ theorem exists_periodsFiltration_eq_periods [FiniteDimensional F V] (hanti : Ant
   rw [← LinearMap.comp_apply, ← LinearMap.rTensor_comp, Submodule.subtype_comp_inclusion]
   exact hy
 
-/-- `Fil^i D_S(V)` is finite-dimensional over `F` when `S^H` is. -/
+/-- For a regular ring `S` and a finite-dimensional `V`, `Fil^i D_S(V)` is finite-dimensional over
+`F` when `S^H` is. -/
 theorem finiteDimensional_periodsFiltration [FiniteDimensional F V]
     [Module.Finite F (fixedSubalgebra S act H)] (i : ℤ) :
     FiniteDimensional F ((ρ.periodsFiltration act H fil hfil i).restrictScalars F) := by
@@ -433,7 +435,8 @@ private theorem finrank_periods_eq_finsum_aux [FiniteDimensional F V]
   refine ⟨(Set.finite_Ico a b).subset hsupp, ?_⟩
   rw [hsum, ha a le_rfl]
 
-/-- `dim_F gr^i D_S(V) = [S^H : F] · dim_{S^H} gr^i D_S(V)`. -/
+/-- `dim_F gr^i D_S(V) = [S^H : F] · dim_{S^H} gr^i D_S(V)`, for a regular ring `S` with `S^H`
+finite over `F`. -/
 theorem finrank_mul_finrank_periodsGraded [Module.Finite F (fixedSubalgebra S act H)] (i : ℤ) :
     Module.finrank F (fixedSubalgebra S act H) *
         Module.finrank (fixedSubalgebra S act H) (ρ.periodsGraded act H fil hfil i) =
@@ -443,7 +446,9 @@ theorem finrank_mul_finrank_periodsGraded [Module.Finite F (fixedSubalgebra S ac
     exact Module.Free.of_divisionRing _ _
   exact Module.finrank_mul_finrank F (fixedSubalgebra S act H) _
 
-/-- **The graded pieces `gr^i D_S(V)` vanish for all but finitely many `i`.** -/
+/-- **The graded pieces `gr^i D_S(V)` vanish for all but finitely many `i`**, for a decreasing,
+exhaustive and separated filtration of a regular ring `S` with `S^H` finite over `F`, and a
+finite-dimensional `V`: `dim_{S^H} gr^i D_S(V) = 0` for all but finitely many `i`. -/
 theorem finite_support_finrank_periodsGraded [FiniteDimensional F V]
     [Module.Finite F (fixedSubalgebra S act H)] (hanti : Antitone fil)
     (hexh : ∀ s : S, ∃ i, s ∈ fil i) (hsep : ∀ s : S, (∀ i, s ∈ fil i) → s = 0) :
@@ -453,11 +458,11 @@ theorem finite_support_finrank_periodsGraded [FiniteDimensional F V]
   rw [Function.mem_support, ← ρ.finrank_mul_finrank_periodsGraded hS hfil i]
   exact mul_ne_zero Module.finrank_pos.ne' hi
 
-/-- **`dim_{S^H} D_S(V) = Σᵢ dim_{S^H} gr^i D_S(V)`** (Fontaine, *Représentations p-adiques
-semi-stables*, Exposé III, §3.7 p. 142, for `S = B_dR`): for a decreasing, exhaustive and
-separated filtration of a regular ring `S` with `S^H` finite over `F`, and a finite-dimensional
-`V`, the filtration of `D_S(V)` is finite and the dimension of `D_S(V)` is the sum of the dimensions
-of its graded pieces. -/
+/-- **`dim_{S^H} D_S(V) = Σᵢ dim_{S^H} gr^i D_S(V)`**: for a decreasing, exhaustive and separated
+filtration of a regular ring `S` with `S^H` finite over `F`, and a finite-dimensional `V`, the
+filtration of `D_S(V)` is finite and the dimension of `D_S(V)` is the sum of the dimensions of its
+graded pieces. For `S = B_dR`, `D_S(V)` is the filtered vector space `D_dR(V)` of Fontaine,
+*Représentations p-adiques semi-stables*, Exposé III, §3.4 p. 140 and §3.7 p. 141. -/
 theorem finrank_periods_eq_finsum_finrank_periodsGraded [FiniteDimensional F V]
     [Module.Finite F (fixedSubalgebra S act H)] (hanti : Antitone fil)
     (hexh : ∀ s : S, ∃ i, s ∈ fil i) (hsep : ∀ s : S, (∀ i, s ∈ fil i) → s = 0) :

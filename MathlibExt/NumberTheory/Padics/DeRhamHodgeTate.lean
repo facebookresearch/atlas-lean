@@ -14,7 +14,11 @@ public import MathlibExt.NumberTheory.Padics.HodgeTate.Decomposition
 # De Rham representations are Hodge–Tate
 
 Let `K` be finite over `ℚ_p` inside `ℚ̄_p`, `G_K = Gal(ℚ̄_p/K)` and `ρ` a finite-dimensional
-`ℚ_p`-linear representation of `Gal(ℚ̄_p/ℚ_p)` on `V`. With the filtration
+`ℚ_p`-linear representation of `Gal(ℚ̄_p/ℚ_p)` on `V`. The statements take dimensions over the
+rings of invariants `B_dR^{G_K}`, `B_HT^{G_K}` and `ℂ_p^{G_K}`; each of them is `K`, since `K` is
+finite over `ℚ_p` (`PadicComplexInt.deRhamFixedSubalgebraEquiv`,
+`PadicComplex.fixedSubalgebra_hodgeTateAction`, `PadicComplex.fixedSubalgebra_galoisAlgHom`), and
+`dim_K` below denotes these dimensions. With the filtration
 `Fil^i D_dR(V) = (Fil^i B_dR ⊗_{ℚ_p} V)^{G_K}` (`Representation.deRhamFiltration`) and its graded
 pieces `gr^i D_dR(V)` (`Representation.deRhamGraded`), following J.-M. Fontaine,
 *Représentations p-adiques semi-stables*, Astérisque 223 (1994), Exposé III, §3.4 p. 140,
@@ -85,8 +89,8 @@ private theorem finite_fixedSubalgebra_galoisBDeRhamHom :
   Module.Finite.equiv (deRhamFixedSubalgebraEquiv p K).toLinearEquiv
 
 /-- **The filtration of `D_dR(V)` is exhaustive** (Fontaine, *Représentations p-adiques
-semi-stables*, Exposé III, §3.4 p. 140 and §3.7 p. 141): `Fil^i D_dR(V) = D_dR(V)` for `i` small
-enough. -/
+semi-stables*, Exposé III, §3.4 p. 140 and §3.7 p. 141): for `K` finite over `ℚ_p` inside `ℚ̄_p`
+and a finite-dimensional `V`, `Fil^i D_dR(V) = D_dR(V)` for `i` small enough. -/
 theorem exists_deRhamFiltration_eq_periods [FiniteDimensional ℚ_[p] V] :
     ∃ a, ∀ i ≤ a,
       ρ.deRhamFiltration K i = ρ.periods (galoisBDeRham p) K.fixingSubgroup :=
@@ -95,8 +99,8 @@ theorem exists_deRhamFiltration_eq_periods [FiniteDimensional ℚ_[p] V] :
     (exists_mem_filBDeRham p)
 
 /-- **The filtration of `D_dR(V)` is separated** (Fontaine, *Représentations p-adiques
-semi-stables*, Exposé III, §3.4 p. 140 and §3.7 p. 141): `Fil^i D_dR(V) = 0` for `i` large
-enough. -/
+semi-stables*, Exposé III, §3.4 p. 140 and §3.7 p. 141): for `K` finite over `ℚ_p` inside `ℚ̄_p`
+and a finite-dimensional `V`, `Fil^i D_dR(V) = 0` for `i` large enough. -/
 theorem exists_deRhamFiltration_eq_bot [FiniteDimensional ℚ_[p] V] :
     ∃ b, ∀ i, b ≤ i → ρ.deRhamFiltration K i = ⊥ := by
   have := finite_fixedSubalgebra_galoisBDeRhamHom K
@@ -104,7 +108,9 @@ theorem exists_deRhamFiltration_eq_bot [FiniteDimensional ℚ_[p] V] :
     (fixedSubalgebra_mul_mem_filBDeRham p K) (restrictScalars_filBDeRham_antitone p)
     (eq_zero_of_forall_mem_filBDeRham p)
 
-/-- Only finitely many graded pieces `gr^i D_dR(V)` are nonzero. -/
+/-- Only finitely many graded pieces `gr^i D_dR(V)` are nonzero, for `K` finite over `ℚ_p` inside
+`ℚ̄_p` and a finite-dimensional `V`: the dimension of `gr^i D_dR(V)` over `B_dR^{G_K} = K` vanishes
+for all but finitely many `i`. -/
 theorem finite_support_finrank_deRhamGraded [FiniteDimensional ℚ_[p] V] :
     (Function.support fun i => Module.finrank
       (fixedSubalgebra 𝔹 (galoisBDeRham p) K.fixingSubgroup) (ρ.deRhamGraded K i)).Finite := by
@@ -114,10 +120,11 @@ theorem finite_support_finrank_deRhamGraded [FiniteDimensional ℚ_[p] V] :
     (fixedSubalgebra_mul_mem_filBDeRham p K) (restrictScalars_filBDeRham_antitone p)
     (exists_mem_filBDeRham p) (eq_zero_of_forall_mem_filBDeRham p)
 
-/-- **`dim_K D_dR(V) = Σᵢ dim_K gr^i D_dR(V)`** (Fontaine, *Représentations p-adiques
-semi-stables*, Exposé III, §3.4 p. 140 and §3.7 p. 142): for `K` finite over `ℚ_p` and a
+/-- **`dim_K D_dR(V) = Σᵢ dim_K gr^i D_dR(V)`**: for `K` finite over `ℚ_p` and a
 finite-dimensional `V`, the dimension of `D_dR(V)` over `B_dR^{G_K} = K` is the sum of the
-dimensions of the graded pieces of its filtration. -/
+dimensions of the graded pieces of its filtration, which is decreasing, exhaustive and separated:
+`D_dR(V)` is a filtered `K`-vector space in the sense of Fontaine, *Représentations p-adiques
+semi-stables*, Exposé III, §3.4 p. 140 and §3.7 p. 141. -/
 theorem finrank_periods_galoisBDeRham_eq_finsum [FiniteDimensional ℚ_[p] V] :
     Module.finrank (fixedSubalgebra 𝔹 (galoisBDeRham p) K.fixingSubgroup)
         (ρ.periods (galoisBDeRham p) K.fixingSubgroup) =
@@ -165,8 +172,10 @@ private theorem finrank_padic_deRhamGraded (i : ℤ) :
     (fixedSubalgebra_mul_mem_filBDeRham p K) i).symm
 
 /-- **`dim_K gr^i D_dR(V) ≤ h_{-i}`** (Fontaine, *Représentations p-adiques semi-stables*,
-Exposé III, §3.7 p. 142): `gr^i D_dR(V)` embeds in `(ℂ_p(i) ⊗_{ℚ_p} V)^{G_K}`, of dimension
-`h_{-i}` over `K` (`Representation.deRhamGradedToTwistPeriods_injective`). -/
+Exposé III, §3.7 p. 142): for `K` finite over `ℚ_p` inside `ℚ̄_p` and a finite-dimensional `V`,
+`gr^i D_dR(V)` embeds in `(ℂ_p(i) ⊗_{ℚ_p} V)^{G_K}`
+(`Representation.deRhamGradedToTwistPeriods_injective`), whose dimension over `ℂ_p^{G_K} = K` is
+`h_{-i}`; the dimension of `gr^i D_dR(V)` is taken over `B_dR^{G_K} = K`. -/
 theorem finrank_deRhamGraded_le [FiniteDimensional ℚ_[p] V] (i : ℤ) :
     Module.finrank (fixedSubalgebra 𝔹 (galoisBDeRham p) K.fixingSubgroup)
       (ρ.deRhamGraded K i) ≤ ρ.hodgeTateNumber K (-i) := by
@@ -207,8 +216,9 @@ variable {ρ : Representation ℚ_[p] (Galois p) V} {K : IntermediateField ℚ_[
 
 /-- **De Rham representations are Hodge–Tate** (Fontaine, *Représentations p-adiques
 semi-stables*, Astérisque 223, Exposé III, Théorème 3.8 (i) p. 142): for `K` finite over `ℚ_p`,
-if `V` is de Rham over `K`, then `dim_{ℚ_p} V = dim_K D_dR(V) ≤ dim_K D_HT(V) ≤ dim_{ℚ_p} V`, so
-`V` is Hodge–Tate over `K`. -/
+if `V` is de Rham over `K`, then `dim_{ℚ_p} V = dim_K D_dR(V) ≤ dim_K D_HT(V) ≤ dim_{ℚ_p} V`, the
+dimensions over `K` being taken over `B_dR^{G_K} = K` and `B_HT^{G_K} = K`, so `V` is Hodge–Tate
+over `K`. -/
 theorem IsDeRham.isHodgeTate (h : ρ.IsDeRham K) : ρ.IsHodgeTate K := by
   obtain ⟨hV, hdim⟩ := h
   refine ⟨hV, le_antisymm (finrank_periods_hodgeTateAction_le K ρ) ?_⟩
@@ -218,7 +228,8 @@ theorem IsDeRham.isHodgeTate (h : ρ.IsDeRham K) : ρ.IsHodgeTate K := by
 /-- **The Hodge–Tate numbers of a de Rham representation are the jumps of its filtration**
 (Fontaine, *Représentations p-adiques semi-stables*, Exposé III, Théorème 3.8 (i) p. 142): for `K`
 finite over `ℚ_p` and `V` de Rham over `K`, `dim_K gr^i D_dR(V) = h_{-i}`, the dimension of
-`(ℂ_p(i) ⊗_{ℚ_p} V)^{G_K}` over `K`. -/
+`(ℂ_p(i) ⊗_{ℚ_p} V)^{G_K}` over `ℂ_p^{G_K} = K`, the dimension of `gr^i D_dR(V)` being taken over
+`B_dR^{G_K} = K`. -/
 theorem IsDeRham.finrank_deRhamGraded (h : ρ.IsDeRham K) (i : ℤ) :
     Module.finrank (fixedSubalgebra 𝔹 (galoisBDeRham p) K.fixingSubgroup)
       (ρ.deRhamGraded K i) = ρ.hodgeTateNumber K (-i) := by
@@ -229,8 +240,9 @@ theorem IsDeRham.finrank_deRhamGraded (h : ρ.IsDeRham K) (i : ℤ) :
     (isHodgeTate_iff_finsum_hodgeTateNumber K ρ).1 h.isHodgeTate]
 
 /-- **`gr^i D_dR(V) ≅ (ℂ_p(i) ⊗_{ℚ_p} V)^{G_K}` for a de Rham representation** (Fontaine,
-*Représentations p-adiques semi-stables*, Exposé III, Théorème 3.8 (i) p. 142): the inclusion
-`gr^i D_dR(V) → (ℂ_p(i) ⊗_{ℚ_p} V)^{G_K}` is bijective, so that `gr D_dR(V) ≅ D_HT(V)`. -/
+*Représentations p-adiques semi-stables*, Exposé III, Théorème 3.8 (i) p. 142): for `K` finite
+over `ℚ_p` and `V` de Rham over `K`, the inclusion `gr^i D_dR(V) → (ℂ_p(i) ⊗_{ℚ_p} V)^{G_K}` is
+bijective, so that `gr D_dR(V) ≅ D_HT(V)`. -/
 theorem IsDeRham.deRhamGradedToTwistPeriods_bijective (h : ρ.IsDeRham K) (i : ℤ) :
     Function.Bijective (deRhamGradedToTwistPeriods ρ K i) := by
   have := h.1
@@ -259,8 +271,8 @@ theorem zpow_neg_one_tmul_mem_periods_cyclotomic :
 
 omit [FiniteDimensional ℚ_[p] K] in
 variable (K) in
-/-- **`ℚ_p(1)` is de Rham** over every `K` finite over `ℚ_p` inside `ℚ̄_p`: `D_dR(ℚ_p(1))`
-contains the nonzero vector `t⁻¹ ⊗ 1`, so it has dimension `1 = dim_{ℚ_p} ℚ_p(1)`. -/
+/-- **`ℚ_p(1)` is de Rham** over every subfield `K` of `ℚ̄_p`: `D_dR(ℚ_p(1))` contains the nonzero
+vector `t⁻¹ ⊗ 1`, so it has dimension `1 = dim_{ℚ_p} ℚ_p(1)` over `B_dR^{G_K}`. -/
 theorem isDeRham_cyclotomic : (cyclotomic p).IsDeRham K := by
   have hS := isRegularPeriodRing_galoisBDeRhamHom p K.fixingSubgroup
   have hne : (algebraMap 𝔹⁺ 𝔹 𝕥 ^ (-1 : ℤ)) ⊗ₜ[ℚ_[p]] (1 : ℚ_[p]) ≠ 0 := by
@@ -274,8 +286,8 @@ theorem isDeRham_cyclotomic : (cyclotomic p).IsDeRham K := by
 
 variable (K) in
 /-- **The filtration of `D_dR(ℚ_p(1))` jumps at `-1`**: for `K` finite over `ℚ_p` inside `ℚ̄_p`,
-`gr^i D_dR(ℚ_p(1))` has dimension `1` over `K` for `i = -1` and `0` otherwise, matching
-`h₁ = 1` (`Representation.hodgeTateNumber_cyclotomic`), as `D_dR(ℚ_p(1)) = K t⁻¹` with
+`gr^i D_dR(ℚ_p(1))` has dimension `1` over `B_dR^{G_K} = K` for `i = -1` and `0` otherwise,
+matching `h₁ = 1` (`Representation.hodgeTateNumber_cyclotomic`), as `D_dR(ℚ_p(1)) = K t⁻¹` with
 `t⁻¹ ∈ Fil^{-1} B_dR` and `t⁻¹ ∉ Fil^0 B_dR`. -/
 theorem finrank_deRhamGraded_cyclotomic (i : ℤ) :
     Module.finrank (fixedSubalgebra 𝔹 (galoisBDeRham p) K.fixingSubgroup)
