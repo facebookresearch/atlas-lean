@@ -9,11 +9,9 @@ LICENSE file in the root directory of this source tree.
 /-
 Portions of this file are adapted from:
 
-`Definitions/Def_ModularCurve_ComponentGroup.lean`,
-`Definitions/Def_CerednikDrinfeld_Ribbon.lean` and
 `Definitions/Def_CerednikDrinfeld_MumfordPeriod.lean`
 (https://github.com/anthropics/fermats-last-theorem):
-Compared with the source files at commit
+Compared with the source file at commit
 `6e837e75355538c7f80bab5b956861e86c4eacc2`.
 Copyright (c) 2026 Anthropic, PBC. All rights reserved.
 Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
@@ -35,6 +33,7 @@ public import Mathlib.LinearAlgebra.BilinearMap
 public import Mathlib.LinearAlgebra.Matrix.ToLin
 public import Mathlib.LinearAlgebra.Quotient.Defs
 public import MathlibExt.Combinatorics.SimpleGraph.SchottkyTreeAction
+public import MathlibExt.NumberTheory.ModularCurve.RibbonKernel
 
 @[expose] public section
 
@@ -43,150 +42,6 @@ noncomputable section
 open MulAction CerednikDrinfeld CerednikDrinfeld.Mumford
 
 namespace Mumford
-
-section Lattice
-
-variable {ι : Type*} [Fintype ι]
-
-/-- The degree (sum of coordinates) functional on a free abelian group. -/
-public def degreeOn (ι : Type*) [Fintype ι] : (ι → ℤ) →ₗ[ℤ] ℤ :=
-  ∑ x : ι, LinearMap.proj x
-
-@[simp]
-public theorem degreeOn_apply (D : ι → ℤ) : degreeOn ι D = ∑ x : ι, D x := by
-  simp [degreeOn]
-
-/-- The character lattice: degree-zero elements of a free abelian group. -/
-public def characterLattice (ι : Type*) [Fintype ι] :
-    Submodule ℤ (ι → ℤ) :=
-  LinearMap.ker (degreeOn ι)
-
-public theorem mem_characterLattice {D : ι → ℤ} :
-    D ∈ characterLattice ι ↔ ∑ x : ι, D x = 0 := by
-  simp [characterLattice, LinearMap.mem_ker]
-
-/-- The diagonal pairing weighted by `e`. -/
-public def widthPairing (e : ι → ℕ) :
-    (ι → ℤ) →ₗ[ℤ] (ι → ℤ) →ₗ[ℤ] ℤ :=
-  LinearMap.mk₂ ℤ (fun D D' => ∑ x : ι, (e x : ℤ) * (D x * D' x))
-    (fun D₁ D₂ D' => by
-      rw [← Finset.sum_add_distrib]
-      exact Finset.sum_congr rfl fun x _ => by
-        simp only [Pi.add_apply]; ring)
-    (fun c D D' => by
-      rw [smul_eq_mul, Finset.mul_sum]
-      exact Finset.sum_congr rfl fun x _ => by
-        simp only [Pi.smul_apply, smul_eq_mul]; ring)
-    (fun D D'₁ D'₂ => by
-      rw [← Finset.sum_add_distrib]
-      exact Finset.sum_congr rfl fun x _ => by
-        simp only [Pi.add_apply]; ring)
-    (fun c D D' => by
-      rw [smul_eq_mul, Finset.mul_sum]
-      exact Finset.sum_congr rfl fun x _ => by
-        simp only [Pi.smul_apply, smul_eq_mul]; ring)
-
-@[simp]
-public theorem widthPairing_apply (e : ι → ℕ) (D D' : ι → ℤ) :
-    widthPairing e D D' = ∑ x : ι, (e x : ℤ) * (D x * D' x) :=
-  rfl
-
-end Lattice
-
-section Ribbon
-
-variable {E V : Type*}
-
-/-- The incidence matrix of a vertex map. -/
-public def degeneracyMatrix [DecidableEq V] (f : E → V) : Matrix V E ℤ :=
-  Matrix.of fun v e => if f e = v then 1 else 0
-
-/-- Pushforward of chains along a vertex map. -/
-public def pushforward [Fintype E] [DecidableEq V] (f : E → V) :
-    (E → ℤ) →ₗ[ℤ] (V → ℤ) :=
-  (degeneracyMatrix f).mulVecLin
-
-/-- The two degeneracy maps, packaged as a `Fin 2` family. -/
-public def jointDelta [Fintype E] [DecidableEq V] (D : DegeneracyData E V) :
-    Fin 2 → ((E → ℤ) →ₗ[ℤ] (V → ℤ)) :=
-  ![pushforward D.a, pushforward D.b]
-
-/-- The ribbon kernel: chains killed by both degeneracy maps. -/
-public def ribbonKernel [Fintype E] [DecidableEq V] (D : DegeneracyData E V) :
-    Submodule ℤ (E → ℤ) :=
-  ⨅ i, LinearMap.ker (jointDelta D i)
-
-public theorem mem_ribbonKernel [Fintype E] [DecidableEq V]
-    {D : DegeneracyData E V} {x : E → ℤ} :
-    x ∈ ribbonKernel D ↔ ∀ i, jointDelta D i x = 0 := by
-  simp [ribbonKernel, Submodule.mem_iInf, LinearMap.mem_ker]
-
-public theorem degreeOn_pushforward [Fintype E] [Fintype V] [DecidableEq V]
-    (f : E → V) (x : E → ℤ) :
-    degreeOn V (pushforward f x) = degreeOn E x := by
-  classical
-  simp only [degreeOn_apply, pushforward, Matrix.mulVecLin_apply,
-    Matrix.mulVec, dotProduct, degeneracyMatrix, Matrix.of_apply, ite_mul,
-    one_mul, zero_mul]
-  rw [Finset.sum_comm]
-  refine Finset.sum_congr rfl fun e _ => ?_
-  simp
-
-public theorem ribbonKernel_le_characterLattice [Fintype E] [Fintype V]
-    [DecidableEq V] (D : DegeneracyData E V) :
-    ribbonKernel D ≤ characterLattice E := by
-  intro x hx
-  rw [mem_ribbonKernel] at hx
-  have h0 : pushforward D.a x = 0 := by
-    simpa [jointDelta] using hx 0
-  have hdeg : degreeOn E x = 0 := by
-    rw [← degreeOn_pushforward D.a x, h0, map_zero]
-  simpa [characterLattice, LinearMap.mem_ker] using hdeg
-
-/-- The Gram pairing of the ribbon kernel, given by the edge widths. -/
-public def ribbonGram [Fintype E] [DecidableEq V] (D : DegeneracyData E V) :
-    ribbonKernel D →ₗ[ℤ] Module.Dual ℤ (ribbonKernel D) :=
-  (widthPairing (fun e => (D.w e : ℕ))).domRestrict₁₂
-    (ribbonKernel D) (ribbonKernel D)
-
-@[simp]
-public theorem ribbonGram_apply [Fintype E] [DecidableEq V]
-    (D : DegeneracyData E V) (x y : ribbonKernel D) :
-    ribbonGram D x y = ∑ e : E, (D.w e : ℤ) * (x.1 e * y.1 e) :=
-  rfl
-
-/-- Hecke data on degeneracy data: commuting operators on edges and
-vertices, equivariant away from a finite set of bad primes, and preserving
-the ribbon kernel. -/
-public structure HeckeData [Fintype E] [Fintype V] [DecidableEq V]
-    (D : DegeneracyData E V) where
-  T : Nat.Primes → Matrix E E ℤ
-  Tv : Nat.Primes → Matrix V V ℤ
-  comm : ∀ ℓ ℓ' : Nat.Primes, Commute (T ℓ) (T ℓ')
-  commv : ∀ ℓ ℓ' : Nat.Primes, Commute (Tv ℓ) (Tv ℓ')
-  S : Finset Nat.Primes
-  good_equivariant : ∀ ℓ : Nat.Primes, ℓ ∉ S → ∀ i : Fin 2,
-    ∀ x : E → ℤ,
-      jointDelta D i ((T ℓ).mulVecLin x) =
-        (Tv ℓ).mulVecLin (jointDelta D i x)
-  kernel_stable : ∀ ℓ : Nat.Primes, ∀ x : E → ℤ,
-    (∀ i, jointDelta D i x = 0) →
-      ∀ i, jointDelta D i ((T ℓ).mulVecLin x) = 0
-
-public theorem ribbonKernel_stable [Fintype E] [Fintype V] [DecidableEq V]
-    {D : DegeneracyData E V} (H : HeckeData D) (ℓ : Nat.Primes) :
-    ∀ x ∈ ribbonKernel D, (H.T ℓ).mulVecLin x ∈ ribbonKernel D := by
-  intro x hx
-  rw [mem_ribbonKernel] at hx ⊢
-  exact H.kernel_stable ℓ x hx
-
-/-- The Hecke operator induced on the ribbon kernel. -/
-public def heckeKernelMap [Fintype E] [Fintype V] [DecidableEq V]
-    {D : DegeneracyData E V} (H : HeckeData D) (ℓ : Nat.Primes) :
-    ribbonKernel D →ₗ[ℤ] ribbonKernel D :=
-  ((H.T ℓ).mulVecLin).restrict (ribbonKernel_stable H ℓ)
-
-end Ribbon
 
 section GraphAction
 
@@ -240,8 +95,12 @@ end GraphAction
 section PeriodDatum
 
 /-- Mumford period data over a degeneracy datum: a symmetric bilinear
-period pairing on the ribbon kernel whose valuation recovers the ribbon
-Gram pairing. -/
+period pairing `Q` on the ribbon kernel with values in the units of `K`, such
+that the given additive homomorphism `ord : Additive Kˣ →+ ℤ` sends `Q x y` to
+the ribbon Gram pairing of `x` and `y` (`ord_Q`). Any group homomorphism from
+the units of `K` to `ℤ` may serve as `ord`: a valuation is one choice, but no
+valuation inequality is required (on `ℚ`, `ord = -v₂` with
+`Q x y = (1/2) ^ ribbonGram D x y` is a period datum). -/
 public structure PeriodDatum {E V : Type} [Fintype E] [DecidableEq V]
     (D : DegeneracyData E V) (K L : Type) [Field K] [Field L] [Algebra K L]
     (ord : Additive Kˣ →+ ℤ) where
@@ -249,8 +108,11 @@ public structure PeriodDatum {E V : Type} [Fintype E] [DecidableEq V]
   Q_symm : ∀ x y, Q x y = Q y x
   ord_Q : ∀ x y, ord (Q x y) = ribbonGram D x y
 
-/-- Hecke adjointability of period data: every Hecke translate of the
-second argument is represented, through `Q`, by a translate of the first. -/
+/-- Hecke adjointability of period data: for each prime `ℓ` and each `y` in
+the ribbon kernel there is one `y'` in the ribbon kernel with
+`Q y (heckeKernelMap H ℓ z) = Q y' z` for every `z` in the ribbon kernel. The
+witness `y'` may depend on `ℓ` and `y`, and it need not be the Hecke translate
+`heckeKernelMap H ℓ y`: the Hecke operators need not be self-adjoint for `Q`. -/
 public def PeriodDatum.HeckeAdjointable {E V : Type} [Fintype E] [Fintype V]
     [DecidableEq V] {D : DegeneracyData E V} {K L : Type} [Field K] [Field L]
     [Algebra K L] {ord : Additive Kˣ →+ ℤ} (P : PeriodDatum D K L ord)
@@ -310,7 +172,12 @@ public def U : Submodule ℤ P.TorusPoints :=
 public def π : ↥P.U →ₗ[ℤ] P.JacPoints :=
   P.periodLattice.mkQ ∘ₗ P.U.subtype
 
-/-- `T` captures exactly the torsion of the Jacobian through `U`. -/
+/-- `T` captures exactly the torsion of the Jacobian through `U`: there is an
+additive homomorphism `e : U →+ T` whose values are exactly the finite-order
+elements of `T` (every finite-order element of `T` is a value of `e`, and every
+value of `e` has finite order), and whose kernel is the period lattice, viewed
+inside `U`. `T` itself need not be a torsion group: adding a free summand `ℤ`
+to `T` keeps the property. -/
 public def IsTorsionOf (T : Type) [AddCommGroup T] : Prop :=
   ∃ e : ↥P.U →+ T,
     (∀ t : T, IsOfFinAddOrder t → t ∈ e.range) ∧
