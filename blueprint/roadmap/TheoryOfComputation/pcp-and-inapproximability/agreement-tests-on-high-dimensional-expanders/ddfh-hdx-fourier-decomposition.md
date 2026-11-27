@@ -1,6 +1,6 @@
 # Boolean function analysis on HDX: approximate eigen-decomposition of the up-down walk
 
-Let $X$ be a $d$-dimensional two-sided $\lambda$-local spectral expander and $0 \le k \le d$. Every $f : X(k) \to \mathbb{R}$ decomposes uniquely as $f = \sum_{i=-1}^{k} U^{k-i} h_i$ where $h_i : X(i) \to \mathbb{R}$ satisfies $D_i h_i = 0$ for $i \ge 0$ (and $U^{j}$ denotes iterated up operators). The components are approximately orthogonal and approximately eigenvectors of the up-down walk:
+Let $X$ be a $d$-dimensional two-sided $\lambda$-local spectral expander with $\lambda < 1/(d+1)$, which makes $X$ proper (every up operator $U_i$ with $-1 \le i \le d-1$ is injective), and let $0 \le k \le d$. Every $f : X(k) \to \mathbb{R}$ decomposes uniquely as $f = \sum_{i=-1}^{k} U^{k-i} h_i$ where $h_i : X(i) \to \mathbb{R}$ satisfies $D_i h_i = 0$ for $i \ge 0$ (and $U^{j}$ denotes iterated up operators). The components are approximately orthogonal and approximately eigenvectors of the up-down walk:
 
 $$
 \Bigl\| N_k^{\wedge} U^{k-i}h_i - \Bigl(1 - \frac{i+1}{k+2}\Bigr) U^{k-i}h_i \Bigr\| \le O_k(\lambda)\, \|U^{k-i} h_i\|.

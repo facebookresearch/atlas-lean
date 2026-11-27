@@ -20,3 +20,5 @@
 - [Ergodic set](is-ergodic-set.md)
 - [Uniform geometric contraction](hilbert-metric-forward-product-le.md)
 - [Weak ergodicity](tendsto-normalize-sub.md)
+
+- [Stochastic and random-environment population dynamics](stochastic-and-random-environment-dynamics/README.md)
