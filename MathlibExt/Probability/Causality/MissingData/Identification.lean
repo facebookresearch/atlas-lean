@@ -102,8 +102,8 @@ noncomputable def completeCaseMean (μ : Measure Ω) (R : Set Ω) (Y : Ω → �
 the response event `R`, where `π(x) = P(R | X = x)` is the response probability given the
 always-observed discrete covariate `X` (Horvitz & Thompson 1952). For a probability measure
 `μ` it is the inverse-response-weighted mean `E[1_R Y / π(X)]`. For other measures it is a
-weighted integral, not a mean: `π` does not change when `μ` is scaled, so scaling `μ` by `2`
-doubles the value. Here `π` is the exact-fibre
+weighted integral, not a mean: `π` does not change when `μ` is multiplied by a positive finite
+constant, so doubling `μ` doubles the value. Here `π` is the exact-fibre
 ratio `propensity μ R X` of real-valued measures, `0` on a set of infinite measure, so it is the
 response probability only on measurable fibres of positive finite mass; the integral is a
 Bochner integral, `0` for a non-integrable integrand. An observed-data estimand

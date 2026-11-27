@@ -157,8 +157,9 @@ theorem aipwRemainder_eq_zero_of_outcome (hout₀ : g₀ =ᵐ[μ] μ[Y₀ | m])
   filter_upwards [hout₀, hout₁] with ω h₀ h₁
   simp [h₀, h₁]
 
-/-- **The remainder is bounded by a product of `L²` nuisance errors.** If
-`ε ≤ e ≤ 1 - ε` a.e., then
+/-- **The remainder is bounded by a product of `L²` nuisance errors.** For a finite measure `μ`,
+a measurable `T`, square-integrable `Y₀`, `Y₁`, `g₀` and `g₁`, an a.e. strongly measurable `e`
+and `ε > 0` with `ε ≤ e ≤ 1 - ε` a.e.,
 `|aipwRemainder| ≤ ε⁻¹ ‖e* - e‖₂ (‖μ₁* - g₁‖₂ + ‖μ₀* - g₀‖₂)`, with `e* = P(T | m)`,
 `μₐ* = E[Yₐ | m]`. The theorem bounds the remainder, not a bias. Under the extra hypotheses of
 `integral_aipwScoreOfSigma_sub`, which assumes a finite measure, the remainder is the difference
