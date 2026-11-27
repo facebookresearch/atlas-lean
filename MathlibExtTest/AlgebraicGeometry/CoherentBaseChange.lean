@@ -50,7 +50,13 @@ example {R : Type u} [CommRing R] (G : TwoTermComplex.{u, v} R)
     (x : A ⊗[R] (LinearMap.ker G.d)) :
     (G.kerBaseChangeHom A x : A ⊗[R] G.C0) =
       (LinearMap.ker G.d).subtype.baseChange A x :=
-  G.kerBaseChangeHom_apply_coe A x
+  LinearMap.tensorKer_coe A A G.d x
+
+-- The comparison map is Mathlib's `LinearMap.tensorKer`, not a second construction.
+example {R : Type u} [CommRing R] (G : TwoTermComplex.{u, v} R)
+    (A : Type w) [CommRing A] [Algebra R A] :
+    G.kerBaseChangeHom A = LinearMap.tensorKer A A G.d :=
+  rfl
 
 -- Higher-universe consumer for Mumford's truncation: membership is
 -- `LinearMap.mem_ker` with `LinearMap.coprod_apply`.
@@ -62,8 +68,8 @@ example {R : Type u} [CommRing R] {C0 : Type v} {C1 : Type w}
   rw [LinearMap.mem_ker, LinearMap.coprod_apply]
 
 -- The examples of the source's `Gates` section (see the header).
--- Mumford's square commutes, with the original `Type` binder.
-example (R : Type) [CommRing R] :
+-- Mumford's square commutes, with the original `Type u` binder.
+example (R : Type u) [CommRing R] :
     (0 : R →ₗ[R] R) ∘ₗ Mumford.ι0 (0 : R →ₗ[R] R) =
       (-Mumford.lift (0 : R →ₗ[R] R)) ∘ₗ Mumford.dK (0 : R →ₗ[R] R) :=
   Mumford.comm 0
@@ -245,9 +251,8 @@ example (T : Scheme.{u}) (n : ℕ) : ∃ F : FibreH0Family.{u} T, ∀ t, F.h0 t 
 -- Along `ℤ → ℚ` the comparison map of the zero complex sends `q ⊗ v` to `q ⊗ v`.
 example (q : ℚ) (v : Fin 2 → ℤ) :
     ((zeroCx ℤ 2 1).kerBaseChangeHom ℚ (q ⊗ₜ ⟨v, LinearMap.mem_ker.mpr rfl⟩) :
-      ℚ ⊗[ℤ] (Fin 2 → ℤ)) = q ⊗ₜ v := by
-  rw [TwoTermComplex.kerBaseChangeHom_apply_coe, LinearMap.baseChange_tmul,
-    Submodule.subtype_apply]
+      ℚ ⊗[ℤ] (Fin 2 → ℤ)) = q ⊗ₜ v :=
+  LinearMap.tensorKer_tmul ℚ ℚ (zeroCx ℤ 2 1).d q _
 
 -- For the zero complex the comparison map is surjective along `ℤ → 𝔽₂`.
 example : Function.Surjective ((zeroCx ℤ 2 1).kerBaseChangeHom (ZMod 2)) := by
@@ -255,7 +260,7 @@ example : Function.Surjective ((zeroCx ℤ 2 1).kerBaseChangeHom (ZMod 2)) := by
   obtain ⟨x, rfl⟩ := LinearMap.baseChange_surjective (ZMod 2)
     (g := (LinearMap.ker (zeroCx ℤ 2 1).d).subtype)
     (fun v => ⟨⟨v, LinearMap.mem_ker.mpr rfl⟩, rfl⟩) y
-  exact ⟨x, Subtype.ext (TwoTermComplex.kerBaseChangeHom_apply_coe _ _ x)⟩
+  exact ⟨x, Subtype.ext (LinearMap.tensorKer_coe (ZMod 2) (ZMod 2) _ x)⟩
 
 -- `H⁰` does not commute with the base change `ℤ → 𝔽₂` for multiplication by `2`:
 -- `ker 2 = 0` over `ℤ`, while `1 ⊗ 1` is a nonzero element of `H⁰` over `𝔽₂`.

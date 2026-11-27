@@ -25,7 +25,10 @@ framework. This module merges the three source files and adds docstrings. It
 keeps their declaration names, statements and proofs, except that it does not
 export the membership lemmas `mem_K0_iff`, which are `LinearMap.mem_ker` with
 `LinearMap.coprod_apply`, or the negation maps `ι1`: the squares `comm` are
-stated with `-g` and `-lift d`. The examples of the source's `Gates` section are
+stated with `-g` and `-lift d`. Nor does it keep the source's construction of
+`kerBaseChangeHom`: it is Mathlib's `LinearMap.tensorKer A A G.d`, with the
+source's type, and the source's `kerBaseChangeHom_apply_coe` is Mathlib's
+`LinearMap.tensorKer_coe`. The examples of the source's `Gates` section are
 in the test module.
 Adaptations copyright (c) Meta Platforms, Inc. and affiliates, under the
 license in the root LICENSE file.
@@ -39,6 +42,7 @@ public import Mathlib.LinearAlgebra.Dimension.Finrank
 public import Mathlib.LinearAlgebra.Prod
 public import Mathlib.LinearAlgebra.TensorProduct.Tower
 public import Mathlib.RingTheory.Finiteness.Defs
+public import Mathlib.RingTheory.Flat.Equalizer
 public import Mathlib.RingTheory.LocalRing.ResidueField.Ideal
 public import Mathlib.RingTheory.Spectrum.Prime.Defs
 import Mathlib.LinearAlgebra.Quotient.Basic
@@ -99,23 +103,11 @@ abbrev H0 (A : Type w) [CommRing A] [Algebra R A] : Submodule A (A ⊗[R] G.C0) 
   LinearMap.ker (G.d.baseChange A)
 
 /-- The comparison map from the base change of `ker d` to the kernel of
-the base-changed differential. -/
-def kerBaseChangeHom (A : Type w) [CommRing A] [Algebra R A] :
+the base-changed differential. It is Mathlib's `LinearMap.tensorKer A A G.d`, whose coercion
+lemma is `LinearMap.tensorKer_coe`. -/
+abbrev kerBaseChangeHom (A : Type w) [CommRing A] [Algebra R A] :
     A ⊗[R] (LinearMap.ker G.d) →ₗ[A] G.H0 A :=
-  ((LinearMap.ker G.d).subtype.baseChange A).codRestrict
-    (LinearMap.ker (G.d.baseChange A))
-    (fun x => by
-      rw [LinearMap.mem_ker, ← LinearMap.comp_apply, ← LinearMap.baseChange_comp]
-      have h : G.d ∘ₗ (LinearMap.ker G.d).subtype = 0 := by
-        ext ⟨y, hy⟩
-        exact hy
-      rw [h, LinearMap.baseChange_zero, LinearMap.zero_apply])
-
-theorem kerBaseChangeHom_apply_coe (A : Type w) [CommRing A] [Algebra R A]
-    (x : A ⊗[R] (LinearMap.ker G.d)) :
-    (G.kerBaseChangeHom A x : A ⊗[R] G.C0) =
-      (LinearMap.ker G.d).subtype.baseChange A x :=
-  rfl
+  LinearMap.tensorKer A A G.d
 
 end TwoTermComplex
 
