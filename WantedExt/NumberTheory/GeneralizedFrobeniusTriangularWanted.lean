@@ -26,27 +26,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Representation count of the reduced triangular triple at a shifted Frobenius number.** For a
-natural number $r$ write $t_r = r(r+1)/2$. Let $n$, $k$, $i$ be natural numbers with $i \le 2k + 1$
-and put $s = k(k+1) + i$. Let $N_s = 6\lfloor\sqrt{s+1}\rfloor - 6$ if $n$ is even and
-$N_s = 6\lfloor(\sqrt{4s+5} - 1)/2\rfloor - 3$ if $n$ is odd, and suppose $n > N_s$. For even $n$
-let $(x_s, y_s) = (i, 2(k - i))$ if $i \le k$ and $(x_s, y_s) = (i - k - 1, 4k - 2i + 3)$ if
-$i > k$; for odd $n$ let $(x_s, y_s) = (2i, k - i)$ if $i \le k$ and
-$(x_s, y_s) = (2(i - k) - 1, 2k - i + 1)$ if $i > k$. Put $d_1 = \gcd(t_{n+1}, t_{n+2})$,
-$a = t_{n+1}/d_1$ and $b = t_{n+2}/d_1$. If $g$ is the generalized Frobenius number
-$g(a, b; x_s)$, then the number of representations of $g + y_s t_n$ by $(t_n, a, b)$ is $s$.
-
-Source: Kittipong Subwattanachai, *Formulas for the Generalized Frobenius Number of Triangular
-Numbers*, INTEGERS 26 (2026), Article A63, Lemma 5 (`integers-2026-A63-lem-5`). -/
-public theorem_wanted frobeniusRepCount_triangular_reduced_at_pair_frobenius (n k i : ℕ)
-    (hi : i ≤ 2 * k + 1) (hn : triangularFrobeniusBound n (k * (k + 1) + i) < n) :
-    let t : ℕ → ℕ := fun j => j * (j + 1) / 2
-    let d₁ := Nat.gcd (t (n + 1)) (t (n + 2))
-    ∀ g₂ : ℤ, IsGenFrobeniusNumber ![t (n + 1) / d₁, t (n + 2) / d₁]
-        (triangularFrobeniusX n k i) g₂ →
-      frobeniusRepCount ![t n, t (n + 1) / d₁, t (n + 2) / d₁]
-          (g₂ + triangularFrobeniusY n k i * t n) = k * (k + 1) + i
-
 /-- **Generalized Frobenius numbers of three consecutive triangular numbers.** For a natural number
 $j$ write $t_j = j(j+1)/2$. Let $n$ and $s$ be natural numbers, let $r = \lfloor\sqrt{s}\rfloor$,
 let $\delta_s = 1$ if $s \ge r^2 + r$ and $\delta_s = 0$ otherwise, and put

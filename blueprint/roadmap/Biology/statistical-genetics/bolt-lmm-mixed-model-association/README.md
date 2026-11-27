@@ -40,3 +40,4 @@
 - [Coordinate ascent does not decrease the ELBO](elbo-le-elbo-cavi-step.md)
 - [The ELBO is nondecreasing along coordinate ascent](monotone-elbo-cavi-run.md)
 - [Stationary points of coordinate ascent](is-coord-max-iff.md)
+- [Grid-based Bayesian mixed model for longitudinal traits](grid-based-bayesian-mixed-model-for-longitudinal-traits/README.md)
