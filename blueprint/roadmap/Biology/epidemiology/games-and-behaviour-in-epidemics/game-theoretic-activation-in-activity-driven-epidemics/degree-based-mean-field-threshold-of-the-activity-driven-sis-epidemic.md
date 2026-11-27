@@ -19,7 +19,7 @@ where $\delta_{dt}$ is the Kronecker delta. Then $[0,1]^{|\mathcal{D}|}$ is inva
 
 ## Depends on
 
-- [Spectral radius and die-out of SIS epidemics](../../epidemics-on-networks/spectral-radius-and-die-out-of-sis-epidemics.md)
+- [Spectral radius and die-out of SIS epidemics](../../sis-extinction-times-on-finite-graphs/prob-ne-empty-le.md)
 
 ## Expansion
 

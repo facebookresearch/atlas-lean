@@ -26,7 +26,7 @@ is nonempty, then $\bar R(x(k))>\bar R(x(k+1))$ for every $x(k)\gneqq0$ and ever
 
 ## Depends on
 
-- [Spectral radius and die-out of SIS epidemics on graphs](../../epidemics-on-networks/spectral-radius-and-die-out-of-sis-epidemics.md)
+- [Spectral radius and die-out of SIS epidemics on graphs](../../sis-extinction-times-on-finite-graphs/prob-ne-empty-le.md)
 
 ## Expansion
 

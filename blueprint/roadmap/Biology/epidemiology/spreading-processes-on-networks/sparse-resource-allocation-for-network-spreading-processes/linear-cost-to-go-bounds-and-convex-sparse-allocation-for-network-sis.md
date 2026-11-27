@@ -25,7 +25,7 @@ The $\ell_1$-type resource costs promote sparse allocations.
 
 ## Depends on
 
-- [Spectral radius and die-out of SIS epidemics](../../epidemics-on-networks/spectral-radius-and-die-out-of-sis-epidemics.md)
+- [Spectral radius and die-out of SIS epidemics](../../sis-extinction-times-on-finite-graphs/prob-ne-empty-le.md)
 
 ## Expansion
 
