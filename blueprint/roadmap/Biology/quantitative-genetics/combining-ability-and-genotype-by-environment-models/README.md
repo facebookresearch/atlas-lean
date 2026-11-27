@@ -4,3 +4,4 @@ Mixed models that split genetic values by interaction: general and specific comb
 
 - [General and specific combining ability](general-and-specific-combining-ability/README.md)
 - [Genotype-by-environment reaction-norm models](genotype-by-environment-reaction-norm-models/README.md)
+- [Pleiotropy and stabilizing selection](pleiotropy-and-stabilizing-selection/README.md)

@@ -27,4 +27,3 @@ The genetics of continuously varying traits: decomposition of genetic variance, 
 - [Translation invariance of marker coding](translation-invariance-of-marker-coding/README.md)
 - [Minorize–maximize REML for variance components](minorize-maximize-reml-for-variance-components/README.md)
 - [Combining ability and genotype-by-environment models](combining-ability-and-genotype-by-environment-models/README.md)
-- [Pleiotropy and stabilizing selection](pleiotropy-and-stabilizing-selection/README.md)

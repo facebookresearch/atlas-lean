@@ -1,6 +1,6 @@
 # Variance in fitness from deleterious mutations at mutation–selection balance
 
-Consider a diploid population at a site where a deleterious, semidominant allele arises by mutation at rate $u$ per generation, with genotype fitnesses $1$, $1 - s$ and $1 - 2s$ for $0 < u \ll s \le 1/2$. Ignoring drift, the allele is held near the equilibrium frequency $q^* \approx u/s$ (the [diploid mutation–selection equilibrium](../../../population-genetics/mutation-selection-balance/diploid-step-mult-fixed.md)). A segregating allele at frequency $x$ contributes additive variance $2x(1-x)s^2$ in fitness, so at equilibrium the site contributes
+Consider a diploid population at a site where a deleterious, semidominant allele arises by mutation at rate $u$ per generation, with genotype fitnesses $1$, $1 - s$ and $1 - 2s$ for $0 < u \ll s \le 1/2$. Ignoring drift, the allele is held near the equilibrium frequency $q^* \approx u/s$ (the [diploid mutation–selection equilibrium](../../../../population-genetics/mutation-selection-balance/diploid-step-mult-fixed.md)). A segregating allele at frequency $x$ contributes additive variance $2x(1-x)s^2$ in fitness, so at equilibrium the site contributes
 
 $$V \approx 2 q^* s^2 \approx 2us.$$
 
@@ -12,7 +12,7 @@ With additive (semidominant) effects, the average effect of the allele on fitnes
 
 ## Depends on
 
-- [The frequency $U/s$ is an equilibrium](../../../population-genetics/mutation-selection-balance/diploid-step-mult-fixed.md)
+- [The frequency $U/s$ is an equilibrium](../../../../population-genetics/mutation-selection-balance/diploid-step-mult-fixed.md)
 
 ## Sources
 

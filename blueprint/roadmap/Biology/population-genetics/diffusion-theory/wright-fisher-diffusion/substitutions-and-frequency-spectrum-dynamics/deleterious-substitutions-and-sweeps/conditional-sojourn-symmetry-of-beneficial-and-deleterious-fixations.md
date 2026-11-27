@@ -14,12 +14,12 @@ Conditioning on fixation is a Doob $h$-transform by the fixation probability $u(
 
 ## Depends on
 
-- [Sojourn density conditioned on fixation](../../selection-duality-and-general-one-dimensional-di/conditional-green.md)
-- [Drift of an allele under selection with dominance](../../selection-duality-and-general-one-dimensional-di/dominance-drift.md)
+- [Sojourn density conditioned on fixation](../../../selection-duality-and-general-one-dimensional-di/conditional-green.md)
+- [Drift of an allele under selection with dominance](../../../selection-duality-and-general-one-dimensional-di/dominance-drift.md)
 
 ## Proof depends on
 
-- [Doob h-transform: the Wright–Fisher diffusion conditioned on fixation](../../fixation-and-absorption-in-the-wright-fisher-dif/doob-h-transform-process-conditioned-on-fixation.md)
+- [Doob h-transform: the Wright–Fisher diffusion conditioned on fixation](../../../fixation-and-absorption-in-the-wright-fisher-dif/doob-h-transform-process-conditioned-on-fixation.md)
 
 ## Sources
 
