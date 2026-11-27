@@ -25,9 +25,14 @@ Tor amplitude tests every ordinary module placed in degree zero. The
 tensor is the actual balanced coequalizer of the native DG actions;
 perfect inputs use their original cofibrant finite-cell/retract models.
 
-Sources: Bhatt--Mathew, arXiv:1807.04725v4, Section5.4/Theorem5.16;
-Keller, Deriving DG categories, Section2. Native Moore, DG, tensor and
-Hom operations retain the source revisions and Apache notices in imports.
+Source for the degree-zero DG comparison: Bernhard Keller, *Deriving DG categories*,
+Sections 1.2 and 2.1.
+Motivation only, since it concerns arc-hyperdescent rather than this comparison:
+Bhargav Bhatt and Akhil Mathew, *The arc-topology*, arXiv:1807.04725v4, Section 5.4
+(Theorem 5.16).
+
+Native Moore, DG, tensor and Hom operations retain the source revisions and Apache
+notices in imports.
 -/
 
 set_option autoImplicit false

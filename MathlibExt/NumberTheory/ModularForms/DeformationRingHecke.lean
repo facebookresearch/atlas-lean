@@ -58,8 +58,6 @@ operator `U_q`, the universal map `R → T`, a local `𝒪`-algebra map, is surj
 
 ## Main declarations
 
-* `ResidualGaloisRep.baseChangeAlong`: scalar extension of a residual
-  representation along a ring homomorphism of fields.
 * `GaloisRepAdic.charpoly_baseChangeAlong`, `GaloisRepAdic.charpoly_eq_of_isEquiv`.
 * `GaloisRep.DeformationRingData`, `CuspForm.HeckeGaloisRepDatum`.
 * `GaloisRep.DeformationRingData.exists_surjective_algHom_of_heckeGaloisRepDatum`.
@@ -72,18 +70,6 @@ noncomputable section
 universe u v
 
 open Polynomial
-
-namespace ResidualGaloisRep
-
-variable {k : Type u} [Field k]
-
-/-- Scalar extension of a residual representation along a ring homomorphism of fields. -/
-public def baseChangeAlong {K : Type v} [Field K] (φ : k →+* K)
-    (ρ : ResidualGaloisRep k) : ResidualGaloisRep K :=
-  letI : Algebra k K := φ.toAlgebra
-  ρ.baseChange K
-
-end ResidualGaloisRep
 
 namespace GaloisRepAdic
 

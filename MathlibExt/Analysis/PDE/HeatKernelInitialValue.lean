@@ -55,7 +55,9 @@ theorem heatSolution_of_pos (f : ℝ → ℝ) {t : ℝ} (ht : 0 < t) (x : ℝ) :
 theorem heatSolution_of_nonpos (f : ℝ → ℝ) {t : ℝ} (ht : t ≤ 0) (x : ℝ) :
     heatSolution f t x = f x := by simp [heatSolution, not_lt.mpr ht]
 
-/-- The initial value is prescribed exactly, in addition to the limiting theorem. -/
+/-- At time `0` the heat evolution of `f` is `f` itself: `heatSolution f 0 x = f x`. Here
+`heatSolution f t` is the convolution of `f` with the heat kernel for `t > 0`, and `f` for
+`t ≤ 0`. -/
 @[simp] theorem heatSolution_zero (f : ℝ → ℝ) (x : ℝ) : heatSolution f 0 x = f x :=
   heatSolution_of_nonpos f le_rfl x
 
