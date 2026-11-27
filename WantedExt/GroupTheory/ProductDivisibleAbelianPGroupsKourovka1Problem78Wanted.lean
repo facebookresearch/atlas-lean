@@ -34,9 +34,10 @@ the dimension over `𝔽_p` of its socle `{x | x ^ p = 1}`, so finite rank means
 finite.
 -/
 
-/-- `G` is a divisible abelian `p`-group of finite rank: all elements commute, every element has
-`p`-power order, every element has an `n`-th root for every `n ≥ 1`, and only finitely many
-elements satisfy `x ^ p = 1` (the rank of an abelian `p`-group is the dimension of this socle). -/
+/-- `G` is a divisible abelian `p`-group of finite rank: all elements commute, every element `g`
+satisfies `g ^ (p ^ k) = 1` for some `k` (for prime `p`, every element has `p`-power order), every
+element has an `n`-th root for every `n ≥ 1`, and only finitely many elements satisfy `x ^ p = 1`
+(for prime `p`, the rank is the dimension of this socle over `𝔽_p`). -/
 def IsDivisibleAbelianPGroupFiniteRank (p : ℕ) (G : Type*) [Group G] : Prop :=
   (∀ x y : G, x * y = y * x) ∧ IsPGroup p G ∧ (∀ (x : G) (n : ℕ), 0 < n → ∃ y : G, y ^ n = x) ∧
     {x : G | x ^ p = 1}.Finite

@@ -53,6 +53,7 @@ module
 public import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.Basic
 public import Mathlib.Data.Set.Finite.Basic
+public import MathlibExt.NumberTheory.JosephusFixedPointIff
 public import MathlibExt.NumberTheory.JosephusFixedSuccCases
 public import MathlibExt.NumberTheory.JosephusHighExtremal
 public import MathlibExt.NumberTheory.JosephusWrapAround
@@ -64,18 +65,6 @@ set_option autoImplicit false
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.JosephusWanted
-
-/-- **Josephus fixed points detected by the next value.** Let $k \ge 2$ and $n_p$ be natural
-numbers with $n_p \ge k - 1$, and let $J_k$ be the Josephus function. Then $J_k(n_p) = n_p$ if
-and only if $J_k(n_p + 1) = k - 1$.
-
-Source: Yunier Bello-Cruz and Roy Quintero-Contreras,
-"Analytical Study and Efficient Evaluation of the
-Josephus Function", Proposition 4. -/
-theorem_wanted josephus_eq_self_iff (k np : ℕ) (hk : 2 ≤ k)
-    (hnp : k - 1 ≤ np) :
-    MetaMathlibExt.josephus k np = np ↔
-      MetaMathlibExt.josephus k (np + 1) = k - 1
 
 /-- **The Josephus function at the first wrap-around.** Let $k \ge 2$, $n \ge 1$ and $m$ be
 natural numbers and let $J_k$ be the Josephus function. Suppose that $m$ is the least natural
