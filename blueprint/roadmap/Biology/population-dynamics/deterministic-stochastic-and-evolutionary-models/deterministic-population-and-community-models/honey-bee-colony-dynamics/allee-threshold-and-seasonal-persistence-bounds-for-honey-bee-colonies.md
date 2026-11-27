@@ -4,7 +4,7 @@
 
 $$u' = \frac{\bar r(t)\,u^2}{\hat K + u^2} - \bar d_h u, \qquad \bar r(t) = r_0\Big(1 + \epsilon\cos\frac{2\pi(t-\psi)}{\gamma}\Big),$$
 
-with queen egg-laying rate $r_0 > 0$, seasonal intensity $\epsilon \in [0,1)$, season length $\gamma$, phase $\psi$ and half-saturation constant $\hat K > 0$. For a rate $r \ge 2\bar d_h\sqrt{\hat K}$ write
+with queen egg-laying rate $r_0 > 0$, seasonal intensity $\epsilon \in (0,1)$, season length $\gamma$, phase $\psi$ and half-saturation constant $\hat K > 0$. For a rate $r \ge 2\bar d_h\sqrt{\hat K}$ write
 
 $$u_\pm(r) = \frac{r \pm \sqrt{r^2 - 4\bar d_h^2 \hat K}}{2\bar d_h}$$
 
