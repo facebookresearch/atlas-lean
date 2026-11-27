@@ -25,3 +25,4 @@
 ## Further topics
 
 - [Limits of inference on population-size histories](limits-of-inference-on-population-size-histories/README.md)
+- [Gaussian process inference of population size trajectories](gaussian-process-inference-of-population-size-trajectories/README.md)
