@@ -10,6 +10,7 @@
 - [Ensemble epistasis between mutations that are additive within each conformation](ensemble-epistasis-from-conformational-reweighting.md)
 - [Recombination and peak jumping](recombination-and-peak-jumping/README.md)
 - [Rectangular order perturbations of fitness landscapes](rectangular-order-perturbations-of-fitness-landscapes/README.md)
+- [Epistasis from fitness rank orders](epistasis-from-fitness-rank-orders/README.md)
 - [Maynard Smith's connectivity condition in protein space](maynard-smith-connectivity-condition-in-protein-space.md)
 - [Success probability of a mutant lineage in a fitness valley](success-probability-of-a-mutant-lineage-in-a-fitness-valley.md)
 - [Two-step valley-crossing time and the tunneling threshold](two-step-valley-crossing-time-and-tunneling-threshold.md)
