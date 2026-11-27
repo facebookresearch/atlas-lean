@@ -8,15 +8,15 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-import CSLibExt.Bioinformatics.ZIPFA
+import Domains.Biology.Omics.ZIPFA
 
 /-! # Regressions for the zero-inflated Poisson factor law -/
 
 set_option autoImplicit false
 
-namespace Cslib.Bioinformatics.ZIPFA.Tests
+namespace Domains.Biology.Omics.ZIPFA.Tests
 
-open MeasureTheory Real
+open MeasureTheory ProbabilityTheory Real
 open MathlibExt.Probability.Statistics.PoissonLikelihood (poissonLik)
 
 private noncomputable def rankZero : Parameters 2 1 0 where
@@ -85,4 +85,4 @@ example : log ((twoFactors.zeroProb 0 0 : ℝ) / (1 - (twoFactors.zeroProb 0 0 :
   rw [twoFactors.log_odds_zeroProb, twoFactors_logRate]
   norm_num [twoFactors]
 
-end Cslib.Bioinformatics.ZIPFA.Tests
+end Domains.Biology.Omics.ZIPFA.Tests
