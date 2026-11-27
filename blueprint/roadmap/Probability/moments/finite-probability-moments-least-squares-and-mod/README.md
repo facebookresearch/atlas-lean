@@ -104,7 +104,7 @@
 
 - [Weights conditioned on an event of positive weight](cond-weights.md)
 - [Conditioned weights form a distribution](cond-weights-is-distribution.md)
-- [Probability of an event under conditioned weights](prob-cond-weights.md)
+- [Weight of an event under conditioned weights](prob-cond-weights.md)
 - [Positive weights give every nonempty event positive mass](prob-pos-iff-nonempty.md)
 - [Cauchy-Schwarz for finite covariance](covariance-sq-le-variance-mul-variance.md)
 - [Covariance under a finite probability mass function](covariance-to-measure-eq.md)

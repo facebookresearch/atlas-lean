@@ -1,4 +1,4 @@
-# Learning a discrete distribution in total variation
+# High-probability sample complexity of learning a discrete distribution
 
 This node collects the high-probability sample-complexity clauses for learning a distribution $p$ on a
 $k$-element set from $n$ independent samples in total variation. The expectation bound for the empirical

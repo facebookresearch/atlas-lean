@@ -362,7 +362,7 @@ private lemma stopProd_bound (X : ℕ → Ω → ℝ) {K M : ℝ} (hK : 0 ≤ K)
         mul_one]
       refine ⟨fun h => absurd ((qvPrefix_mono X (Nat.le_succ k) ω).trans h) hk, ih2⟩
 
-/-- **Predictable cut bound.** The terms `c k` kept while the running sum `∑_{j ≤ k} c j` stays
+/-- **Predictable cut bound.** The terms `c k`, `k < m`, whose running sum `∑_{j ≤ k} c j` is
 `≤ K` add up to at most `K`. No sign condition on `c` is needed. With `c k = E[X k² | F k]` this
 is the pointwise core of a predictable truncation of the conditional variances. -/
 lemma sum_range_cut_le (c : ℕ → ℝ) {K : ℝ} (hK : 0 ≤ K) (m : ℕ) :

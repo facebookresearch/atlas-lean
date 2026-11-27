@@ -3,7 +3,8 @@
 Let row $n$ of $\xi$ be a square-integrable martingale difference sequence for the filtration
 $\mathcal F_n$, with predictable quadratic variation converging to the identity,
 $\sum_{j < \lfloor n t \rfloor} E[\xi_{n,j}^2 \mid \mathcal F_{n,j}] \to t$ in probability for every
-$t \in [0,1]$, and satisfying the Lindeberg condition. Assume also finite-dimensional convergence of
+$t \in [0,1]$, and satisfying the unconditional Lindeberg condition
+$\sum_{i<n} E[\xi_{n,i}^2 \mathbf 1\{|\xi_{n,i}| > \varepsilon\}] \to 0$ for every $\varepsilon > 0$. Assume also finite-dimensional convergence of
 the step process to $Z$, an almost everywhere measurable map from a probability space into the space
 $C([0,1])$ of continuous paths: for every finite set of times $I \subseteq [0,1]$,
 $(\sum_{i < \lfloor n t \rfloor} \xi_{n,i})_{t \in I} \to (Z_t)_{t \in I}$ in distribution. Then the
