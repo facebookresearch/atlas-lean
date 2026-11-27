@@ -1,6 +1,6 @@
 # Combs maximize Colless-like indices
 
-**Setting.** Let $K_n$ be the rooted comb (caterpillar) with $n$ leaves, and use the [Colless-like indices](soundness-of-colless-like-indices.md) $C_{D,f}$ on the set $\mathcal T^*_n$ of rooted trees with $n$ leaves.
+**Setting.** Let $K_n$ be the rooted comb (caterpillar) with $n$ leaves, and use the [Colless-like indices](soundness-of-colless-like-indices.md) $C_{D,f}$ on the set $\mathcal T^*_n$ of rooted trees without out-degree-1 nodes with $n$ leaves.
 
 **Lemma (classical Colless index).** For every bifurcating tree $T$ with $n$ leaves, $T \ne K_n$ implies $C(T) < C(K_n) = \binom{n-1}{2}$.
 

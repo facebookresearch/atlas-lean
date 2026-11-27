@@ -1,6 +1,6 @@
 # Soundness of Colless-like indices
 
-**Definitions.** Let $\mathcal T^*$ be the set of (unlabeled) rooted trees, possibly multifurcating, and $f : \mathbb N \to \mathbb R_{\ge 0}$. The *$f$-size* of $T \in \mathcal T^*$ is
+**Definitions.** Let $\mathcal T^*$ be the set of (unlabeled) rooted trees without out-degree-1 nodes, possibly multifurcating, and $f : \mathbb N \to \mathbb R_{\ge 0}$. The *$f$-size* of $T \in \mathcal T^*$ is
 
 $$\delta_f(T) = \sum_{v \in V(T)} f(\deg(v)),$$
 

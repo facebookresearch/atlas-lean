@@ -22,6 +22,10 @@ Truncating polynomials at degree $n_{\max}$, the distribution of $N$ up to $n_{\
 - [Probability generating function](../../../../Probability/characteristic-functions/probability-generating-functions/pgf.md)
 - [The Nerode automaton recognizes its language](../../../../TheoryOfComputation/regular-languages/minimization/myhill-nerode-theorem/accepts-nerode-dfa.md)
 
+## Proof depends on
+
+- [Generating function of a sum of independent variables](../../../../Probability/characteristic-functions/probability-generating-functions/pgf-add-of-indep-fun.md)
+
 ## Expansion
 
 Because the automaton is deterministic and non $d$-ambiguous, its current state determines the last $d$ letters, so the next letter's law depends only on the state; this gives the embedding. Marking every transition that enters a final state with a formal variable $y$ makes each path's weight $y^{(\text{number of occurrences})}$ times its probability, and summing over end states gives the generating function. Independence of the sequences turns the total count's generating function into a product. Counting in a set of sequences differs from counting in their concatenation: the concatenation creates spurious junction occurrences and uses the wrong starting distribution for each sequence, an edge effect that biases P-values when the chain converges slowly to stationarity.
