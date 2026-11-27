@@ -17,6 +17,14 @@ public import Mathlib.Combinatorics.SimpleGraph.Prod
 An opposition pairs each vertex with a non-neighbor. These pairs form an opposition matching
 in the complement, and swapping the ends of such a matching recovers an opposition.
 An opposition in the first factor also gives an opposition in six standard graph products.
+
+## References
+
+- Rylo Ashmore, Beth Ann Austin, Alfie M. Davies, Danny Dyer, and William Kellough,
+  *On Graph Automorphisms Related to SNORT*, INTEGERS 26 (2026), Article G2, pp. 1–28,
+  Sections 1, 2, and 4; in particular Theorem 2 for gluing block oppositions.
+- Keiko Kakihara, *Snort: A Combinatorial Game*, Master's thesis, California State University,
+  San Bernardino, 2010, Section 3 (opposable graphs), cited by Ashmore et al.
 -/
 
 namespace MetaMathlibExt
@@ -94,6 +102,50 @@ theorem isOpposable_iff_exists_oppositionMatching (G : SimpleGraph V) :
     refine ⟨⟨hinv.toPerm mate, (SimpleGraph.Embedding.complEquiv.symm e).map_adj_iff⟩, fun v => ?_⟩
     have hv := (G.compl_adj _ _).mp (M.adj_sub (hmate v))
     exact ⟨hinv v, hv.1.symm, hv.2⟩
+
+/-- **Gluing oppositions of blocks.** Let $G$ be a graph, let $p$ be a map from its vertices to
+an index set, with blocks $B_i = \{v : p(v) = i\}$, and let $f$ be a map from the vertices of $G$
+to themselves. Suppose that for every index $i$ there is an opposition of the subgraph of $G$
+induced on $B_i$ that agrees with $f$ on $B_i$, and that for all vertices $u, w$ with
+$p(u) \neq p(w)$ we have $uw \in E(G) \iff f(u)f(w) \in E(G)$ and
+$uf(w) \in E(G) \iff f(u)w \in E(G)$. Then $G$ is opposable.
+
+Since $uf(u)$ and $wf(w)$ are non-edges, the second condition says that the four vertices
+$u, f(u), w, f(w)$ induce $C_4$, $2K_2$ or $4K_1$.
+
+Source: Ashmore, Austin, Davies, Dyer, Kellough, *On Graph Automorphisms
+Related to SNORT*, INTEGERS 26 (2026), Article G2, Theorem 2. -/
+public theorem isOpposable_of_blocks {ι : Type*} (G : SimpleGraph V) (p : V → ι)
+    (f : V → V)
+    (hf : ∀ i, ∃ φ : G.induce {v | p v = i} ≃g G.induce {v | p v = i},
+      IsOpposition _ φ ∧ ∀ x, (φ x : V) = f x)
+    (hpair : ∀ u w, p u ≠ p w →
+      (G.Adj u w ↔ G.Adj (f u) (f w)) ∧ (G.Adj u (f w) ↔ G.Adj (f u) w)) :
+    IsOpposable G := by
+  have hlocal (v : V) : f (f v) = v ∧ f v ≠ v ∧ ¬ G.Adj v (f v) := by
+    obtain ⟨φ, hφ, hφf⟩ := hf (p v)
+    let x : {w : V // p w = p v} := ⟨v, rfl⟩
+    obtain ⟨hinv, hne, hnonadj⟩ := hφ x
+    have hfx : (φ x : V) = f v := hφf x
+    refine ⟨?_, fun h => hne (Subtype.ext (hfx.trans h)), ?_⟩
+    · calc
+        f (f v) = (φ (φ x) : V) := by rw [← hfx, hφf (φ x)]
+        _ = v := congrArg Subtype.val hinv
+    · intro h
+      apply hnonadj
+      change G.Adj v (φ x : V)
+      rwa [hfx]
+  have hinv : Function.Involutive f := fun v => (hlocal v).1
+  have hmap (u w : V) : G.Adj (f u) (f w) ↔ G.Adj u w := by
+    by_cases h : p u = p w
+    · obtain ⟨φ, _, hφf⟩ := hf (p w)
+      let x : {v : V // p v = p w} := ⟨u, h⟩
+      let y : {v : V // p v = p w} := ⟨w, rfl⟩
+      have hadj : G.Adj (φ x : V) (φ y : V) ↔ G.Adj u w := φ.map_adj_iff
+      rw [hφf x, hφf y] at hadj
+      exact hadj
+    · exact (hpair u w h).1.symm
+  exact ⟨⟨hinv.toPerm f, hmap _ _⟩, hlocal⟩
 
 /-- **Almost opposable graph.** A graph $G$ is almost opposable if there are a vertex $u$ and a
 set $S$ of vertices with $u \in S \subseteq N[u]$, where $N[u]$ is the closed neighbourhood of $u$

@@ -1,0 +1,15 @@
+# The Minimum Circuit Size Problem
+
+- [Circuit complexity of a Boolean function and truth tables](circuit-complexity-of-a-boolean-function.md)
+- [The Minimum Circuit Size Problem MCSP and Gap-MCSP](minimum-circuit-size-problem.md)
+- [Multi-output MCSP](multi-output-mcsp.md)
+- [Murray–Williams: NP-hardness of MCSP implies EXP ≠ NP ∩ P/poly and EXP ≠ ZPP](murray-williams-consequences-of-mcsp-np-hardness.md)
+- [Partial MCSP (MCSP*)](partial-minimum-circuit-size-problem.md)
+- [The Shannon–Lupanov window for MCSP](shannon-lupanov-window-for-mcsp.md)
+- [Succinct MCSP](succinct-mcsp.md)
+- [Zero-error average-case devices for MCSP](zero-error-average-case-devices-for-mcsp.md)
+- [Ilango: Partial MCSP requires N^{Ω(log log N)} time under ETH](ilango-partial-mcsp-eth-hardness.md)
+- [MCSP is in NP](mcsp-is-in-np.md)
+- [Partial MCSP is in NP](partial-mcsp-is-in-np.md)
+- [Hirahara: Partial MCSP is NP-hard under randomized reductions](hirahara-partial-mcsp-np-hard.md)
+- [Ilango–Loff–Oliveira: Multi-output MCSP is NP-hard under randomized reductions](multi-output-mcsp-np-hard.md)

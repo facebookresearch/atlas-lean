@@ -21,8 +21,12 @@ import Mathlib.Tactic.LinearCombination
 /-!
 # Stopping a block in the Zeckendorf odometer
 
+The theorem `zeckOdometer_iterate_high_digits` shows that two consecutive zeros stop a carry
+from a small addition.
+
 The block stopping theorem bounds which digits can change when a block of Fibonacci
-summands is added to a Zeckendorf-adic integer.
+summands is added to a Zeckendorf-adic integer. On the digit sequences `i(v)` of natural numbers
+the odometer is addition: `T^r(i(v)) = i(v + r)` (`zeckOdometer_iterate_zeckAdicOfNat`).
 
 Each digit of a finite iterate depends on a finite prefix of the input, so it suffices to
 analyze addition of natural numbers. The proof splits each input at the upper window of
@@ -899,6 +903,54 @@ public theorem zeckOdometer_stopping_block {x : ℕ → Bool} (hx : x ∈ zeckAd
   exact ⟨hf.1 k, hf.2 k⟩
 
 open zeckOdometer_stopping_block in
+/-- **Adding a small $r$ leaves the high digits unchanged.** Write $F_j$ for the Fibonacci
+numbers ($F_1 = F_2 = 1$). Let $\mathbb{X} \subseteq \{0,1\}^{\mathbb{N}}$ be the set of
+Zeckendorf-adic integers (sequences with $x_0 = x_1 = 0$ and no two consecutive ones), and write
+$x + r = T^r(x)$ for the $r$-th iterate of the Zeckendorf odometer $T$. Let $x \in \mathbb{X}$,
+$\ell \ge 2$ and $r < F_{\ell+1}$, and suppose that $x_{\ell+2} = x_{\ell+3} = 0$. Then
+$(x + r)_k = x_k$ for every $k \ge \ell + 3$.
+
+Source: Yohan Hosten, *On the Variation of the Sum of Digits in the Zeckendorf Representation:
+An Algorithm to Compute the Distribution and Mixing Properties*, Journal of Integer Sequences 27
+(2024), Article 24.3.2, Lemma 10 (`jis-2024-24.3.2-lem-10`). -/
+public theorem zeckOdometer_iterate_high_digits {x : ℕ → Bool} (hx : x ∈ zeckAdic)
+    {ℓ r : ℕ} (hℓ : 2 ≤ ℓ) (hr : r < Nat.fib (ℓ + 1)) (hx2 : x (ℓ + 2) = false)
+    (hx3 : x (ℓ + 3) = false) :
+    ∀ k, ℓ + 3 ≤ k → zeckOdometer^[r] x k = x k := by
+  intro k hk
+  -- Truncate beyond every digit that the iterate at k can see.
+  let high := (digits x (k + r + 1)).filter (ℓ + 4 ≤ ·)
+  let low := digits x (ℓ + 2)
+  have hhigh := rep_filter (digits_rep hx (k + r + 1)) (ℓ + 4 ≤ ·)
+  have hlow := digits_rep hx (ℓ + 2)
+  have habove (i : ℕ) (hi : i ∈ high) : ℓ + 4 ≤ i :=
+    of_decide_eq_true (List.mem_filter.mp hi).2
+  have hbelow (i : ℕ) (hi : i ∈ low) : i < ℓ + 2 := (mem_digits.mp hi).1
+  have hrep : (high ++ low).IsZeckendorfRep :=
+    rep_append hhigh hlow fun i hi j hj => by
+      have := habove i hi
+      have := hbelow j hj
+      omega
+  have hprefix (i : ℕ) (hi : i ≤ k + r) :
+      x i = zeckAdicOfNat (value (high ++ low)) i := by
+    rw [ofNat_value hrep]
+    apply Bool.eq_iff_iff.mpr
+    simp only [List.mem_append, high, List.mem_filter, low, mem_digits, decide_eq_true_eq]
+    grind only
+  -- The lower sum still fits below the zero at ℓ + 3.
+  have hbound : value low < Nat.fib (ℓ + 2) :=
+    value_lt hlow (by omega) hbelow
+  have hsum : value low + r < Nat.fib (ℓ + 3) := by
+    rw [Nat.fib_add_two (n := ℓ + 1)]
+    exact (Nat.add_lt_add hbound hr).trans_eq (Nat.add_comm ..)
+  rw [iterate_local r k hprefix, ofNat_iterate]
+  have hvalue : value (high ++ low) = value high + value low := by simp [value]
+  rw [hvalue, Nat.add_assoc, upper_digits hhigh habove hsum hk]
+  apply Bool.eq_iff_iff.mpr
+  simp only [List.mem_filter, mem_digits, decide_eq_true_eq]
+  grind only
+
+open zeckOdometer_stopping_block in
 /-- **Adding $r$ without low digits leaves the low digits unchanged.** Write $F_j$ for the
 Fibonacci numbers ($F_1 = F_2 = 1$). For $r \in \mathbb{N}$ let $Z(r)$ be the set of indices in
 the Zeckendorf representation $r = \sum_{j \in Z(r)} F_j$ (all indices $\ge 2$, no two
@@ -941,5 +993,19 @@ public theorem zeckOdometer_iterate_low_digits {x : ℕ → Bool} (hx : x ∈ ze
     _ = zeckAdicOfNat (v + r) n := by rw [ofNat_iterate]
     _ = zeckAdicOfNat v n := low_add hℓ4 hℓ0 hℓ1 hr (by omega)
     _ = x n := hpre n (by dsimp [N]; omega)
+
+open zeckOdometer_stopping_block in
+/-- **The odometer adds on the natural numbers.** Let $T$ be the Zeckendorf odometer and, for
+$n \in \mathbb{N}$, let $i(n)$ be the Zeckendorf digit sequence of $n$, whose digit $k$ is $1$
+exactly when $F_k$ is a term of the Zeckendorf representation of $n$. Then
+$T^r(i(v)) = i(v + r)$ for all $v, r \in \mathbb{N}$: on the copy $i(\mathbb{N})$ of the natural
+numbers, $x + r = T^r(x)$ is the usual sum.
+
+Source: Yohan Hosten, *On the Variation of the Sum of Digits in the Zeckendorf Representation:
+An Algorithm to Compute the Distribution and Mixing Properties*, Journal of Integer Sequences 27
+(2024), Article 24.3.2, Section 2.2 (`T` restricted to `ℕ` is `n ↦ n + 1`). -/
+public theorem zeckOdometer_iterate_zeckAdicOfNat (v r : ℕ) :
+    zeckOdometer^[r] (zeckAdicOfNat v) = zeckAdicOfNat (v + r) :=
+  ofNat_iterate v r
 
 end MetaMathlibExt
