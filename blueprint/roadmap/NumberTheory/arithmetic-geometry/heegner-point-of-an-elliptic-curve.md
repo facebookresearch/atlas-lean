@@ -27,25 +27,32 @@ depends on $\mathcal{N}$ only up to sign and torsion.
 
 This node is still to be broken down. A good expansion states and links:
 
-- the modular curve $X_0(N)$ over $\mathbb{Q}$ as the moduli space of cyclic $N$-isogenies, with its cusps and the
-  involution $w_N$;
-- the theorem of complex multiplication that makes $x_1$ rational over $K_1$, with $\operatorname{Gal}(K_1/K)$ acting
-  through the class group;
-- the independence of the choice of $\mathcal{N}$ up to sign and torsion, as the other choices are the images of $x_1$
-  under the Atkin–Lehner involutions and $\operatorname{Gal}(K_1/K)$ (Gross and Zagier, Chapter I, §3).
+- the action of the Atkin–Lehner involutions $w_d$ on the parametrization, $\varphi \circ w_d = \pm \varphi + c_d$ with $c_d$ a
+  point of finite order, which turns the simply transitive action of $W \times \operatorname{Gal}(K_1/K)$ on the Heegner
+  points into the independence of $y_K$ from $\mathcal{N}$ up to sign and torsion (Gross and Zagier, Chapter V, §2,
+  p. 310, state the independence).
 
-Darmon, §§3.1–3.4, gives the same construction with $X_0(N)$ uniformised by the upper half-plane.
+The construction itself is laid out on the pages of the
+[construction of the Heegner point](heegner-point-construction/README.md): the
+[ideal $\mathcal{N}$](heegner-point-construction/ideal-of-index-n-under-the-heegner-hypothesis.md), the
+[cyclic isogeny](heegner-point-construction/kernel-of-the-heegner-isogeny.md), the
+[point $x_1$ of $X_0(N)$](heegner-point-construction/complex-points-of-x0-n-as-cyclic-isogenies.md), its
+[rationality over $K_1$](heegner-point-construction/rationality-of-heegner-points.md) and the
+[action on Heegner points](heegner-point-construction/galois-and-atkin-lehner-action-on-heegner-points.md).
 
 ## Depends on
 
+- [An ideal of index $N$ under the Heegner hypothesis](heegner-point-construction/ideal-of-index-n-under-the-heegner-hypothesis.md), for $\mathcal{N}$
+- [The Heegner isogeny is cyclic of degree $N$](heegner-point-construction/kernel-of-the-heegner-isogeny.md), for the cyclic $N$-isogeny $\mathbb{C}/\mathcal{O} \to \mathbb{C}/\mathcal{N}^{-1}$
+- [Complex points of $X_0(N)$ as cyclic $N$-isogenies](heegner-point-construction/complex-points-of-x0-n-as-cyclic-isogenies.md), for the point $x_1$
 - [Modular parametrization of an elliptic curve over $\mathbb{Q}$](../modular-forms-q-series/modular-forms/modular-parametrization-of-an-elliptic-curve.md), for $\varphi$ and $X_0(N)$
 - [Hilbert class field of a number field](../algebraic-number-theory/adeles-class-field-theory/hilbert-class-field/is-hilbert-class-field.md), for $K_1$
 - [Unit groups of imaginary quadratic fields](../algebraic-number-theory/quadratic-fields/schatunowsky-type-theorems/imag-quadratic-units-is-cyclic-card.md), for the unit group $\{\pm 1\}$ of $\mathcal{O}$ when $D_K \ne -3, -4$, which the statement asserts
 
 ## Proof depends on
 
-- [Artin symbols act on the $j$-invariants of CM lattices](../algebraic-number-theory/adeles-class-field-theory/hilbert-class-field/artin-action-on-cm-j-invariants.md), for $j(\mathcal{O}), j(\mathcal{N}^{-1}) \in K_1$ and the action of $\operatorname{Gal}(K_1/K)$ on them
-- [Main theorem of complex multiplication for elliptic curves](../algebraic-number-theory/adeles-class-field-theory/hilbert-class-field/main-theorem-of-complex-multiplication.md), for the action of $\operatorname{Gal}(\overline{\mathbb{Q}}/K)$ on the kernel of the isogeny, which makes the pair, and so $x_1$, rational over $K_1$
+- [Heegner points are rational over the Hilbert class field](heegner-point-construction/rationality-of-heegner-points.md), for $x_1 \in X_0(N)(K_1)$
+- [Galois and Atkin–Lehner action on Heegner points](heegner-point-construction/galois-and-atkin-lehner-action-on-heegner-points.md), for the other choices of $\mathcal{N}$
 
 The rest of its proof is that of the sources below, as the Expansion describes.
 

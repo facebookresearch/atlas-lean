@@ -20,17 +20,15 @@ $L(f, s) = L(E, s)$ that the modularity theorem provides.
 3. **Parity.** Consequently $L(E, s)$ vanishes to even order at $s = 1$ when $w(E) = 1$ and to odd order when
    $w(E) = -1$. In particular, if $L(E, s)$ has a simple zero at $s = 1$, then $w(E) = -1$.
 
-## Expansion
-
-This node is still to be broken down. A good expansion states and links:
-
-- Hecke's theorem for a newform $f$ of weight $2$ on $\Gamma_0(N)$: the integral representation
-  $\Lambda(f, s) = (2\pi)^{-s}\Gamma(s)N^{s/2}L(f, s) = N^{s/2} \int_0^\infty f(it) t^{s-1} \, dt$ (Darmon (2.11)), the
-  action of $w_N$ on newforms (Darmon (2.12)–(2.13)), and the resulting continuation and functional equation
-  $\Lambda(f, s) = -\varepsilon \Lambda(f, 2 - s)$ (Darmon (2.14)), with $\varepsilon$ the eigenvalue of $w_N$ normalised
-  as in item 2;
-- the deduction of items 1 and 2 from $L(E, s) = L(f, s)$, and of item 3 from item 1, as $\Lambda(E, s)$ is not
-  identically zero.
+Proof, from the pages of [root number and parity](root-number-and-parity/README.md): by modularity
+$L(E, s) = L(f, s)$, so $\Lambda(E, s) = \Lambda(f, s)$, the [Mellin transform](root-number-and-parity/mellin-transform-of-a-weight-two-cusp-form.md)
+of $f$ on the half-plane where the Euler product converges, and the
+[functional equation of $L(f, s)$](root-number-and-parity/functional-equation-of-the-l-function-of-a-newform.md) gives
+items 1 and 2 with $w(E) = -\varepsilon$, $\varepsilon$ the [Fricke eigenvalue](root-number-and-parity/fricke-eigenvalue-of-a-newform.md)
+of $f$, normalised by $w_N^*\omega_f = \varepsilon\omega_f$ as in item 2. Item 3 follows from
+[the parity lemma](root-number-and-parity/parity-of-the-order-of-vanishing.md) applied to $\Lambda(E, s)$, which is not
+identically zero, as $(2\pi)^{-s}\Gamma(s)N^{s/2}$ is holomorphic and nonzero at $s = 1$ ($\Gamma(1) = 1$), so that
+$L(E, s)$ and $\Lambda(E, s)$ vanish to the same order there.
 
 ## Depends on
 
@@ -40,8 +38,10 @@ This node is still to be broken down. A good expansion states and links:
 ## Proof depends on
 
 - [Modularity of elliptic curves over $\mathbb{Q}$](../../AlgebraicGeometry/elliptic-curves/modularity-of-elliptic-curves-over-q.md), for $L(E, s) = L(f, s)$
-
-The rest of its proof is that of the sources below, as the Expansion describes.
+- [Mellin transform of a weight-two cusp form](root-number-and-parity/mellin-transform-of-a-weight-two-cusp-form.md), for $\Lambda(f, s)$ as an integral
+- [Functional equation of the $L$-function of a newform](root-number-and-parity/functional-equation-of-the-l-function-of-a-newform.md), for the continuation and $\Lambda(f, s) = -\varepsilon\Lambda(f, 2 - s)$
+- [Fricke eigenvalue of a newform](root-number-and-parity/fricke-eigenvalue-of-a-newform.md), for $\varepsilon$ and its equivalent description by $w_N^*\omega_f = \varepsilon\omega_f$
+- [Parity of the order of vanishing from a functional equation](root-number-and-parity/parity-of-the-order-of-vanishing.md), for item 3
 
 ## Sources
 
