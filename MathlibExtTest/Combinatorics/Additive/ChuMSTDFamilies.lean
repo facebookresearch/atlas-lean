@@ -58,3 +58,13 @@ example : (32 : ℤ) ∈ chuFamilyKLT 2 2 2 := by
 example : (56 : ℤ) ∈ chuFamilyKLT 2 2 2 := by
   simpa using chuFamilyKLT_mem_block_starts (k := 2) (l := 2) (t := 2)
     (by decide) (by decide) (by decide) 2 1 (by decide) (by decide)
+
+/-- At $k = l = t = 1$ the difference set of the Kumar–Mohan–Pandey set has
+$11 + 6 + 8 + 8 = 33$ elements. -/
+example : (chuFamilyKLT 1 1 1 - chuFamilyKLT 1 1 1).card = 33 :=
+  chuFamilyKLT_card_sub (by decide) (by decide) (by decide)
+
+/-- The same count, computed directly from the elements of $A_{1,1,1}$. -/
+example : (chuFamilyKLT 1 1 1 - chuFamilyKLT 1 1 1).card = 33 := by
+  rw [chuFamilyKLT_one_one_one]
+  decide +kernel

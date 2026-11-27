@@ -475,8 +475,19 @@ refused.
 
 ## Annotations
 
-Each new page and folder page gets one annotation row, appended to its
-subject's links file. A page's row has:
+Each new page and folder page gets one annotation row in its subject's links
+file, placed where the sync places a row (`sync_wiki.inserted`, which
+`sync_wiki.insert_rows` uses): right after the row whose page's path comes last
+before its own, paths compared folder by folder, wherever that row stands, or
+first if no row's path comes before its own. A links file need not itself be in
+path order, so a row lands right after that row, not necessarily next to the
+other rows of its folder. Every other byte of the file stays as it is, and a
+links file not there yet is made of the new rows alone, in path order. Rows for
+pages in different places thus no longer all meet at the end of the file; two
+imports still conflict where both add rows right after the same row, where both
+add items to the same folder page, and at the end of the map, which only grows
+([The map](#the-map)). Each row's page is read as the sync reads it, the links
+folder's defaults (`_defaults.json`) applied. A page's row has:
 
 - `id`: `af_` and the first 24 hex digits of the SHA-256 of the compact JSON
   array `["<seed.source>","<seed.node>","<seed.revision>"]`; an id that an

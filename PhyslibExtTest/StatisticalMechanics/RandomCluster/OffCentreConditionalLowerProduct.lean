@@ -1,0 +1,55 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+public import Mathlib
+public import PhyslibExt.StatisticalMechanics.RandomCluster.OffCentreConditionalLowerProduct
+
+/-!
+# Tests for `PhyslibExt.StatisticalMechanics.RandomCluster.OffCentreConditionalLowerProduct`
+
+For the identity embedding of the one-edge graph `⊤` on `Fin 2` into itself, at `p = 1/2`, `q = 2`,
+with the increasing event "the edge `s(0, 1)` is open" and the outside event `univ`:
+* `ocd_freeMass_mul_outsideMass_le_inter` with boundary `{1}`;
+* `ocd_freeMass_mul_freeOutsideMass_le_inter`.
+-/
+
+@[expose] public section
+
+namespace PhyslibExtTest.StatisticalMechanics.RandomCluster.OffCentreConditionalLowerProduct
+
+open _root_.StatMech _root_.StatMech.FK
+
+/-- The one-edge test graph. -/
+abbrev G2 : SimpleGraph (Fin 2) := ⊤
+
+/-- "The edge `s(0, 1)` is open" is increasing. -/
+theorem edgeOpen_isIncreasing :
+    IsIncreasing {ω : ConfigSpace (Sym2 (Fin 2)) | ω s(0, 1) = true} := by
+  intro x y hxy hx
+  have h := hxy s(0, 1)
+  simp only [Set.mem_ofPred_eq] at hx ⊢
+  rw [hx] at h
+  exact top_le_iff.mp h
+
+/-- The sure event depends only on outside edges. -/
+theorem univ_dependsOnOutside :
+    DependsOnOutside (ocd_innerEdgeFinset (Vin := Fin 2) id) Set.univ := fun _ _ _ => by simp
+
+-- Lower product bound with boundary-clique wiring on `{1}`.
+example := ocd_freeMass_mul_outsideMass_le_inter G2 G2 id (· = 1) Function.injective_id
+  (fun _ _ => Iff.rfl) (p := 1 / 2) (q := 2) (by norm_num) (by norm_num) one_le_two
+  edgeOpen_isIncreasing univ_dependsOnOutside
+
+-- Lower product bound with the free measure outside.
+example := ocd_freeMass_mul_freeOutsideMass_le_inter G2 G2 id Function.injective_id
+  (fun _ _ => Iff.rfl) (p := 1 / 2) (q := 2) (by norm_num) (by norm_num) one_le_two
+  edgeOpen_isIncreasing univ_dependsOnOutside
+
+end PhyslibExtTest.StatisticalMechanics.RandomCluster.OffCentreConditionalLowerProduct
