@@ -2,6 +2,9 @@
 
 Compartmental, renewal and branching-process models of infectious disease transmission and their reproduction numbers, the reporting of incidence, and the accuracy of diagnostic tests.
 
+- [Parasite relatedness and genomic epidemiology](parasite-relatedness-and-genomic-epidemiology/README.md)
+- [Treatment, drug resistance and immune escape](treatment-resistance-and-immune-escape/README.md)
+- [Chronic disease and social contagion](chronic-disease-and-social-contagion/README.md)
 - [Branching-process approximation of early epidemics](branching-process-approximation-of-early-epidemi/README.md)
 - [Contact process on power-law random graphs](contact-process-on-power-law-random-graphs/README.md)
 - [Diffusion approximation of the stochastic SIR epidemic](diffusion-approximation-of-the-stochastic-sir-ep/README.md)

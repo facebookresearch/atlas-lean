@@ -8,13 +8,22 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Basic.Real.Basic
 public import MathlibExt.GameTheory.PenultsOfTak
+import Mathlib.Tactic.Linarith
 
 /-!
-# A lower bound for Impartial Tak penults
+# Lower bounds for Impartial Tak penults
 
 `MetaMathlibExt.impartialTak_penult_card_ge_weightedCross` bounds the size of a penult by
 counting the cells covered as one grows the occupied region accessible from the edge.
+`MetaMathlibExt.impartialTak_penult_card_ge_quarter` deduces the quarter lower bound from it.
+
+## References
+
+* Boris Alexeev, Paul Ellis, Michael Richter, and Thotsaporn Aek Thanatipanonda,
+  [*The Penults of Tak: Adventures in Impartial, Normal-Play, Positional Games*](https://math.colgate.edu/~integers/zg1/zg1.pdf),
+  INTEGERS 25 (2025), Article G1, pp. 1–18, Proposition 12 and Proposition 14.
 -/
 
 namespace MetaMathlibExt.impartialTak_penult_card_ge_weightedCross
@@ -248,5 +257,29 @@ public theorem impartialTak_penult_card_ge_weightedCross {n : ℕ} (hn : 5 ≤ n
     7 * (n - 4) ^ 2 ≤ 26 * S.card := by
   have h := impartialTak_penult_card_ge_weightedCross.count_inset hn hS
   omega
+
+/-- **An $n^2/4$ lower bound for Impartial Tak penults.** Impartial Tak is the placement game on
+the $n \times n$ board whose play ends once the tokens contain a road. There is a real constant $C$
+such that for every natural number $n$, every Impartial Tak penult on the $n \times n$ board has at
+least $n^2/4 - Cn$ tokens; that is, every penult has at least $n^2/4 + O(n)$ tokens.
+
+Source: Boris Alexeev, Paul Ellis, Michael Richter, and Thotsaporn Aek Thanatipanonda, *The
+Penults of Tak: Adventures in Impartial, Normal-Play, Positional Games*, INTEGERS 25 (2025),
+Article G1, Proposition 12 (`integers-2025-G1-prop-12`). -/
+public theorem impartialTak_penult_card_ge_quarter :
+    ∃ C : ℝ, ∀ (n : ℕ) (S : Finset (Fin n × Fin n)), placementPenult takHasRoad S →
+      (n : ℝ) ^ 2 / 4 - C * n ≤ S.card := by
+  refine ⟨3, fun n S hS => ?_⟩
+  have hn0 : 0 ≤ (n : ℝ) := Nat.cast_nonneg n
+  by_cases hn : 5 ≤ n
+  · have hn4 : 4 ≤ n := by omega
+    have h : (7 : ℝ) * ((n - 4 : ℕ) : ℝ) ^ 2 ≤ 26 * S.card := by
+      exact_mod_cast impartialTak_penult_card_ge_weightedCross hn hS
+    rw [Nat.cast_sub hn4, Nat.cast_ofNat] at h
+    nlinarith only [h, sq_nonneg (n : ℝ), hn0]
+  · have hn4 : (n : ℝ) ≤ 4 := by exact_mod_cast (show n ≤ 4 by omega)
+    have hsquare : (n : ℝ) ^ 2 ≤ 4 * n := by
+      simpa only [pow_two] using mul_le_mul_of_nonneg_right hn4 hn0
+    linarith only [hsquare, hn0, Nat.cast_nonneg (α := ℝ) S.card]
 
 end MetaMathlibExt
