@@ -71,11 +71,11 @@ five production libraries once (`scripts/lean_changes.py build --base <ref>`), t
   replays from the build log;
 - `scripts/check_env_linters.py`: the findings of `#lint`'s environment linters (`runLinter`) on
   the declarations the change adds. A declaration counts as added when the change adds the line
-  that declares it, below its docstring and attributes, and no declaration of that name is in
-  the changed files at the base (for a private declaration, in its own file), so documenting,
+  that declares it, below its docstring and attributes, and no declaration of that name is in the
+  changed files at the base (for a private declaration, including a `module` file's declarations
+  outside a `public section` that are not marked `public`, in its own file), so documenting,
   tagging, editing or moving an existing declaration does not report it. A `theorem_wanted` or
-  `def_wanted` statement is not the declaration that proves it, so a proof's findings are
-  reported;
+  `def_wanted` statement is not the declaration that proves it, so a proof's findings are reported;
 - `scripts/check_text_linters.py`: Mathlib's `lint-style` errors on added lines, and the module
   names of added or renamed files;
 - `scripts/check_unused_imports.py`: the added import lines that
