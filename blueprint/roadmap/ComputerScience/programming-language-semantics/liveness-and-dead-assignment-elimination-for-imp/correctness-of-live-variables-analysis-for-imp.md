@@ -16,6 +16,11 @@ So the final values of the variables in $X$ depend only on the initial values of
 - [Live variables of an IMP command](live-variables-of-an-imp-command.md)
 - [IMP program states](../operational-semantics-of-imp/state.md)
 
+## Proof depends on
+
+- [Coincidence for IMP expressions](coincidence-for-imp-expressions.md)
+- [Live variables of a loop are closed under its body](live-variables-of-a-loop-are-closed-under-its.md)
+
 ## Sources
 
 - T. Nipkow and G. Klein, *Concrete Semantics with Isabelle/HOL*, Springer, 2014; revised version of January 21, 2026, <http://concrete-semantics.org/concrete-semantics.pdf>, Section 10.3: Lemma 10.15 (liveness via gen/kill), Lemma 10.16, Lemma 10.17 (coincidence), and Theorem 10.18 (correctness of $L$) with its proof by rule induction and Figure 10.7.

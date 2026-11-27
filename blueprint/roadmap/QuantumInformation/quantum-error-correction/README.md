@@ -16,6 +16,8 @@ The topics follow the order of Preskill's lecture notes (Chapter 7): the Knillâ€
 - [Stabilizer formalism](stabilizer-formalism/README.md)
 - [Clifford group](clifford-group/README.md)
 - [Topological codes](topological-codes/README.md)
+- [Subsystem codes](subsystem-codes/README.md)
+- [Bosonic codes](bosonic-codes/README.md)
 
 - [Error recursion for concatenated fault-tolerant codes](error-recursion-for-concatenated-fault-tolerant-codes.md)
 - [Fault tolerance and the threshold theorem](fault-tolerance-and-threshold/README.md)
