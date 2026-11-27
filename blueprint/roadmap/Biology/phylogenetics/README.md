@@ -25,6 +25,8 @@ Reconstruction of evolutionary trees from sequence data: substitution models, li
 - [Quartet support and determination of trees by quartets](quartet-support-and-determination-of-trees-by-qu/README.md)
 
 - [Phylogenetic inference and comparison](inference-and-comparison/README.md)
+- [Phylogenetic networks](phylogenetic-networks/README.md)
+- [Tree shape and balance](tree-shape-and-balance/README.md)
 
 - [Phylogenetic diversity](phylogenetic-diversity/README.md)
 - [Phylogenetic invariants](phylogenetic-invariants/README.md)
