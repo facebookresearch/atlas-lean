@@ -41,24 +41,32 @@ are:
    defining the same polarization gives the same embedding up to $G$.
 5. (Analytic description.) For $k = \mathbb{C}$, if $A(\mathbb{C}) \cong \mathbb{C}^g / (\mathbb{Z}^g +
    \tau \mathbb{Z}^g)$ as principally polarized complex abelian varieties, with $\tau$ in the
-   Siegel upper half space, then $\Theta(0)$ has projective coordinates the theta constants
+   Siegel upper half space, then for a suitable choice of theta coordinates, that is up to the
+   action of $G$, $\Theta(0)$ has projective coordinates the theta constants
    $\theta_{(m_1, m_2)}(\tau, 0)$, $m_1, m_2 \in \{0, \frac{1}{r}, \dots, \frac{r - 1}{r}\}^g$,
    where $\theta_{(m_1, m_2)}(\tau, z) = \sum_{n \in \mathbb{Z}^g} \exp\bigl(i\pi \,
    {}^t(n + m_1) \tau (n + m_1) + 2 i \pi \, {}^t(n + m_1)(z + m_2)\bigr)$; they do not all vanish.
+   In Pazuki's words, the Theta Nullwerte of the embedding "can be chosen as the $r^{2g}$ complex
+   numbers" $\theta_{(m_1, m_2)}(\tau, 0)$ (§2.3.4, p. 30).
 
 Pazuki states the construction over a field $K$ of characteristic zero over which the points of
 order dividing $r^2$ are rational, enlarging $K$ if needed (§2.3.1, p. 27). Over such a field there
 need not be a theta embedding defined over it. Take $r = 2$, $E \colon y^2 = x^3 - x$, $L =
 \mathcal{O}([0])$ and $K = \mathbb{Q}(i, \sqrt{2})$: all of $E[4]$ is rational over $K$, since
 $(i, 1 - i)$ and $(1 + \sqrt{2}, 2 + \sqrt{2})$ are points of $E(K)$ whose doubles are $(0, 0)$ and
-$(1, 0)$. As $E(\mathbb{C}) \cong \mathbb{C} / (\mathbb{Z} + i \mathbb{Z})$, item 5 gives two
-coordinates of $\Theta(0)$ with ratio $\theta_{(1/2, 0)}(i, 0) / \theta_{(0, 0)}(i, 0) =
-\theta_2(0 \mid i) / \theta_3(0 \mid i) = 2^{-1/4}$, because $\theta_2(0 \mid i) = \theta_4(0 \mid i)$
-and $\theta_3^4 = \theta_2^4 + \theta_4^4$ (DLMF 20.7.31 and 20.7.5). Since $G$ has entries in $K$,
-a theta embedding defined over $K$ would make this ratio lie in $K$, whereas $2^{1/4}$ is real of
-degree $4$ and the real subfield of $K$ is $\mathbb{Q}(\sqrt{2})$. Pazuki asserts only that the
-quotients of the theta constants are algebraic (§2.3.4, p. 30), which is why the construction is
-stated here over an algebraically closed field.
+$(1, 0)$. As $E(\mathbb{C}) \cong \mathbb{C} / (\mathbb{Z} + i \mathbb{Z})$, item 5 gives, for one
+choice of theta coordinates, two nonzero coordinates of $\Theta(0)$ with ratio
+$\theta_{(1/2, 0)}(i, 0) / \theta_{(0, 0)}(i, 0) = \theta_2(0 \mid i) / \theta_3(0 \mid i) =
+2^{-1/4}$, because $\theta_2(0 \mid i) = \theta_4(0 \mid i)$ and $\theta_3^4 = \theta_2^4 +
+\theta_4^4$ (DLMF 20.7.31 and 20.7.5). Any other choice changes the coordinates by an element of
+$G$, a permutation followed by multiplication of the coordinates by roots of unity, so it still has
+two nonzero coordinates whose ratio $u$ satisfies $u \bar u = |u|^2 = 1/\sqrt{2}$. A theta
+embedding defined over $K$ would make $\Theta(0)$ rational over $K$, so $u$ would lie in $K$. Write
+$u = a + ib$ with $a, b \in \mathbb{Q}(\sqrt{2}) \subset \mathbb{R}$; then $a^2 + b^2 =
+1/\sqrt{2} = \sqrt{2}/2$, and the automorphism of $K$ that sends $\sqrt{2}$ to $-\sqrt{2}$ and
+fixes $i$ turns this into a sum of two squares of real numbers equal to $-\sqrt{2}/2 < 0$, which is
+impossible. Pazuki asserts only that the quotients of the theta constants are algebraic (§2.3.4,
+p. 30), which is why the construction is stated here over an algebraically closed field.
 
 A good expansion states and links: the isomorphism $j$ and the $i_x$ for $x \in A_r(k)$, from
 the theorem of the cube (Birkenhake–Lange, Corollary 3.6, p. 34, as cited by Pazuki, p. 27);

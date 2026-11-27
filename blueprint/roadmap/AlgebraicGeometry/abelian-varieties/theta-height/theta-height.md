@@ -24,9 +24,10 @@ isomorphism over $\overline{\mathbb{Q}}$ and on $r$, which the notation leaves i
 Pazuki also describes $\Theta(0)$ analytically (§2.3.4, pp. 30–31): for an embedding
 $\overline{\mathbb{Q}} \to \mathbb{C}$ and $\tau$ in the Siegel upper half space with
 $A(\mathbb{C}) \cong \mathbb{C}^g / (\mathbb{Z}^g + \tau \mathbb{Z}^g)$ as principally polarized
-complex abelian varieties, $\Theta(0)$ has projective coordinates the theta constants
+complex abelian varieties, for a suitable choice of theta coordinates (up to the action of $G$)
+$\Theta(0)$ has projective coordinates the theta constants
 $\theta_{(m_1, m_2)}(\tau, 0)$, $m_1, m_2 \in \{0, \frac{1}{r}, \dots, \frac{r - 1}{r}\}^g$, so
-that $h_\Theta(A, L)$ is the $\ell^2$-height of this point of
+that $h_\Theta(A, L)$, which no such choice changes, is the $\ell^2$-height of this point of
 $\mathbb{P}^{r^{2g} - 1}(\overline{\mathbb{Q}})$. Pazuki notes that some authors, Mumford among
 them, use instead the coordinates $\theta_{(m, 0)}(r^2 \tau, 0)$, $m \in \frac{1}{r^2}
 \mathbb{Z}^g / \mathbb{Z}^g$; the definition here uses the former.
