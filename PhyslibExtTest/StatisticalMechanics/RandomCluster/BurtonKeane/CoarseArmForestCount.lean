@@ -71,7 +71,8 @@ example : ∃ z ∈ vertexBoundary 2 4,
 -- The upper lines are a coarse precursor at `L = 3`.
 example : bc60_upperLines ∈ bc62_CoarseTrifPrecursor 2 3
     (faceCorner00 (((3 : ℕ) : ℤ) + 1) 1) (faceCorner00 (((3 : ℕ) : ℤ) + 1) 2)
-    (faceCorner00 (((3 : ℕ) : ℤ) + 1) 3) (faceCorner00 ((3 : ℕ) : ℤ) 1) (faceCorner00 ((3 : ℕ) : ℤ) 2)
+    (faceCorner00 (((3 : ℕ) : ℤ) + 1) 3)
+    (faceCorner00 ((3 : ℕ) : ℤ) 1) (faceCorner00 ((3 : ℕ) : ℤ) 2)
     (faceCorner00 ((3 : ℕ) : ℤ) 3) :=
   (bc63_status (d := 2)).2.2.2 le_rfl
 

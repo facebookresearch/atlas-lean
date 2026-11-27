@@ -35,7 +35,8 @@ def closed2 : ConfigSpace (Sym2 (Site 2)) := fun _ => false
 -- The upper lines have an open boundary edge at radius `2`.
 example : faceCorner00 0 ((2 : ℕ) : ℤ) ∈ vertexBoundary 2 2 ∧
     faceCorner00 1 ((2 : ℕ) : ℤ) ∈ vertexBoundary 2 2 ∧
-    (openSubgraph 2 bc60_upperLines).Adj (faceCorner00 0 ((2 : ℕ) : ℤ)) (faceCorner00 1 ((2 : ℕ) : ℤ)) :=
+    (openSubgraph 2 bc60_upperLines).Adj (faceCorner00 0 ((2 : ℕ) : ℤ))
+      (faceCorner00 1 ((2 : ℕ) : ℤ)) :=
   bc75_upperLines_openBoundaryEdge (by norm_num)
 
 -- The fibre spanning forest is acyclic.

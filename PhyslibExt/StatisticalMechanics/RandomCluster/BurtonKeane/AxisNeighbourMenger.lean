@@ -241,18 +241,12 @@ lemma bc56_offAxisLine_no_runsAlongAxis (j : Fin 2) :
     bc56_runsAlongAxis_forces_nbr_in_cluster bc56_offAxisLine (bc56_lp 0) j h
   exact bc56_offAxisLine_no_originNbr (hrHD_rayPt j 1) (hrHD_adj_origin_rayPt_one j) hmem
 
-lemma bc56_status (_hd : 1 ≤ d) (p : ℝ≥0) (hp1 : p ≤ 1) (_hp0 : 0 < p) :
+lemma bc56_status (hd : 1 ≤ d) (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p) :
     ((∀ n : ℕ, bc56_BoxClusterReachesNbr d n) →
       bernoulliProductMeasure (E := Sym2 (Site d)) p hp1 (atLeastTwoInfinite d) = 0) ∧
-    (∀ j : Fin 2, ¬ crr_ClusterRunsAlongAxis bc56_offAxisLine (bc56_lp 0) j) := by
-  have h2 : bernoulliProductMeasure (E := Sym2 (Site d)) p hp1 (atLeastTwoInfinite d) = 0 := by
-    have hae := MathlibExt.Probability.Percolation.BurtonKeaneWanted.burton_keane_bernoulli d p hp1
-    rw [ae_iff] at hae
-    have hset : {ω : ConfigSpace (Sym2 (Site d)) | ¬ numInfiniteClusters d ω ≤ 1} =
-        atLeastTwoInfinite d := by
-      rw [← compl_compl (atLeastTwoInfinite d), atLeastTwoInfinite_compl]
-      rfl
-    rwa [hset] at hae
-  exact ⟨fun _ => h2, bc56_offAxisLine_no_runsAlongAxis⟩
+    (∀ j : Fin 2, ¬ crr_ClusterRunsAlongAxis bc56_offAxisLine (bc56_lp 0) j) :=
+  ⟨fun h => (bc55_status hd p hp1 hp0).2
+      (fun n => bc56_boxMengerAttachment_of_reachesNbr (h n)),
+   bc56_offAxisLine_no_runsAlongAxis⟩
 
 end StatMech.Walls

@@ -419,7 +419,7 @@ lemma bc59_evenLines_originTrif :
 
 /-! ## C. Summary -/
 
-lemma bc59_status (hd : 1 ≤ d) (p : ℝ≥0) (hp1 : p ≤ 1) (_hp0 : 0 < p) :
+lemma bc59_status (hd : 1 ≤ d) (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p) :
     ((∀ n : ℕ, bc59_HasDisjointCorridors d n) →
       (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
           {ω | numInfiniteClusters d ω = 0} = 1 ∨
@@ -432,24 +432,11 @@ lemma bc59_status (hd : 1 ≤ d) (p : ℝ≥0) (hp1 : p ≤ 1) (_hp0 : 0 < p) :
       ∃ G : Finset (Sym2 (Site d)), IsEncounterPoint d (forceOpenFinset G ω) 0) ∧
     bc59_DisjointCorridors bc57_evenLines ∧
     (∃ G : Finset (Sym2 (Site 2)),
-      IsEncounterPoint 2 (forceOpenFinset G bc57_evenLines) 0) := by
-  have h2 : bernoulliProductMeasure (E := Sym2 (Site d)) p hp1 (atLeastTwoInfinite d) = 0 := by
-    have hae := MathlibExt.Probability.Percolation.BurtonKeaneWanted.burton_keane_bernoulli d p hp1
-    rw [ae_iff] at hae
-    have hset : {ω : ConfigSpace (Sym2 (Site d)) | ¬ numInfiniteClusters d ω ≤ 1} =
-        atLeastTwoInfinite d := by
-      rw [← compl_compl (atLeastTwoInfinite d), atLeastTwoInfinite_compl]
-      rfl
-    rwa [hset] at hae
-  have hle : bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-      {ω | numInfiniteClusters d ω ≤ 1} = 1 := by
-    rw [← atLeastTwoInfinite_compl, prob_compl_eq_one_iff measurableSet_atLeastTwoInfinite]
-    exact h2
-  exact ⟨fun _ => ⟨numInfiniteClusters_zero_or_one _
-      (MathlibExt.Probability.Percolation.BurtonKeaneWanted.bernoulli_lattice_ergodic hd p hp1)
-      h2, h2, hle⟩,
-    fun ω hω => bc59_corridors_give_trifurcation ω hω,
-    bc59_evenLines_hasDisjointCorridors,
-    bc59_evenLines_originTrif⟩
+      IsEncounterPoint 2 (forceOpenFinset G bc57_evenLines) 0) :=
+  ⟨fun h => (bc58_status hd p hp1 hp0).1
+      (fun n => bc59_originTrifModification_of_hasCorridors (h n)),
+   fun ω hω => bc59_corridors_give_trifurcation ω hω,
+   bc59_evenLines_hasDisjointCorridors,
+   bc59_evenLines_originTrif⟩
 
 end StatMech.Walls

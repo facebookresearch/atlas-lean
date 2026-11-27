@@ -18,7 +18,6 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseBo
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ClassicalPrecursorFiniteEnergy
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.HighDimRouting
 public import MathlibExt.Probability.Percolation.BurtonKeane.FiniteModification
-public import MathlibExt.Probability.Percolation.BurtonKeane
 
 /-!
 # Opening the whole box does not create a classical trifurcation
@@ -58,7 +57,7 @@ disjoint routing. The even-lines configuration is an example.
 @[expose] public section
 
 open MathlibExt.Probability.Percolation.BurtonKeaneWanted
-  (IsEncounterPoint)
+  (IsEncounterPoint bernoulli_finiteEnergyMerge bernoulli_lattice_ergodic exists_mergeWitness_pos)
 
 open Set SimpleGraph Finset MeasureTheory Filter Topology
 open scoped BigOperators ENNReal NNReal
@@ -294,7 +293,7 @@ lemma bc58_evenLines_boxOpen_reconnect {k : ℕ} (hk : 1 ≤ k) :
 
 /-! ## C. Summary -/
 
-lemma bc58_status (hd : 1 ≤ d) (p : ℝ≥0) (hp1 : p ≤ 1) (_hp0 : 0 < p) :
+lemma bc58_status (hd : 1 ≤ d) (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p) :
     ((∀ n : ℕ, bc58_OriginTrifModification d n) →
       (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
           {ω | numInfiniteClusters d ω = 0} = 1 ∨
@@ -307,24 +306,23 @@ lemma bc58_status (hd : 1 ≤ d) (p : ℝ≥0) (hp1 : p ≤ 1) (_hp0 : 0 < p) :
       Connected 2 (removeSite 0 (bc58_boxOpen 2 k ω)) (bc58_p 1 0) (bc58_p (-1) 0)) ∧
     (∀ {k : ℕ}, 1 ≤ k → ∀ ω : ConfigSpace (Sym2 (Site 2)),
       ¬ IsEncounterPoint 2 (bc58_boxOpen 2 k ω) 0) ∧
-    (bc57_evenLines ∈ threeMeetBox 2 6) := by
-  have h2 : bernoulliProductMeasure (E := Sym2 (Site d)) p hp1 (atLeastTwoInfinite d) = 0 := by
-    have hae := MathlibExt.Probability.Percolation.BurtonKeaneWanted.burton_keane_bernoulli d p hp1
-    rw [ae_iff] at hae
-    have hset : {ω : ConfigSpace (Sym2 (Site d)) | ¬ numInfiniteClusters d ω ≤ 1} =
-        atLeastTwoInfinite d := by
-      rw [← compl_compl (atLeastTwoInfinite d), atLeastTwoInfinite_compl]
-      rfl
-    rwa [hset] at hae
-  have hle : bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-      {ω | numInfiniteClusters d ω ≤ 1} = 1 := by
-    rw [← atLeastTwoInfinite_compl, prob_compl_eq_one_iff measurableSet_atLeastTwoInfinite]
-    exact h2
-  exact ⟨fun _ => ⟨numInfiniteClusters_zero_or_one _
-      (MathlibExt.Probability.Percolation.BurtonKeaneWanted.bernoulli_lattice_ergodic hd p hp1)
-      h2, h2, hle⟩,
-    fun hk ω => bc58_reconnect_around_origin hk ω,
-    fun hk ω => bc58_boxOpen_not_classicalTrif hk ω,
-    bc57_mem_threeMeetBox⟩
+    (bc57_evenLines ∈ threeMeetBox 2 6) :=
+  ⟨fun hmod => bc48_burton_keane_uniqueness_via_merge_classical
+      (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1)
+      (bernoulli_lattice_ergodic hd p hp1)
+      (bernoulli_finiteEnergyMerge p hp1 hp0)
+      (fun n => boxSV_boundaryCard d (n + 1))
+      (fun ω n => bc54_classicalTcount_le_boundary_succ_all ω hd n)
+      (fun n => bkc_boxFinsetBK_card_pos d n)
+      (bc54_boundary_succ_vol_tendsto d hd)
+      (bc49_classical_htrif_of_route (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1)
+        (bernoulli_finiteEnergyMerge p hp1 hp0)
+        (bc58_hroute_of_originTrifModification
+          (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1)
+          (bernoulli_finiteEnergyMerge p hp1 hp0) hmod))
+      (fun k hk2 _ hk => exists_mergeWitness_pos _ k hk2 hk),
+   fun hk ω => bc58_reconnect_around_origin hk ω,
+   fun hk ω => bc58_boxOpen_not_classicalTrif hk ω,
+   bc57_mem_threeMeetBox⟩
 
 end StatMech.Walls

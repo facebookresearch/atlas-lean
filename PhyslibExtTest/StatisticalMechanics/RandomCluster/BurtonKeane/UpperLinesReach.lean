@@ -32,7 +32,8 @@ example : numInfiniteClusters 2 bc60_upperLines = ⊤ ∧ bc60_upperLines ∈ th
   ⟨bc60_numInfiniteClusters_top, bc60_mem_threeMeetBox⟩
 
 -- Distinct heights give distinct clusters; horizontal edges at height one are open.
-example : cluster 2 bc60_upperLines (faceCorner00 0 1) ≠ cluster 2 bc60_upperLines (faceCorner00 0 2) ∧
+example : cluster 2 bc60_upperLines (faceCorner00 0 1) ≠
+      cluster 2 bc60_upperLines (faceCorner00 0 2) ∧
     bc60_upperLines s(faceCorner00 0 1, faceCorner00 (0 + 1) 1) = true :=
   ⟨bc60_cluster_ne (by decide), bc60_open 0 le_rfl⟩
 

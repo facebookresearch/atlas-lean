@@ -15,7 +15,6 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseBo
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ClassicalPrecursorFiniteEnergy
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoxMergeFreeMenger
 public import MathlibExt.Probability.Percolation.BurtonKeane.FiniteModification
-public import MathlibExt.Probability.Percolation.BurtonKeane
 
 /-!
 # The route hypothesis from Menger attachment
@@ -53,7 +52,7 @@ not proved in general.
 @[expose] public section
 
 open MathlibExt.Probability.Percolation.BurtonKeaneWanted
-  (bernoulli_finiteEnergyMerge)
+  (bernoulli_finiteEnergyMerge bernoulli_lattice_ergodic exists_mergeWitness_pos)
 
 open Set SimpleGraph Finset MeasureTheory Filter Topology
 open scoped BigOperators ENNReal NNReal
@@ -118,7 +117,7 @@ lemma bc55_naive_collapse_false_of_notNeighbour (ω : ConfigSpace (Sym2 (Site d)
   rintro ⟨hadj, _⟩
   exact hxne x hadj rfl
 
-lemma bc55_status (_hd : 1 ≤ d) (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p) :
+lemma bc55_status (hd : 1 ≤ d) (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p) :
     ((∀ n : ℕ, bmm_BoxMengerAttachment d n) →
       ∀ n : ℕ,
         0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1 (threeMeetBox d n) →
@@ -126,15 +125,19 @@ lemma bc55_status (_hd : 1 ≤ d) (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p) :
             0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
               (NeighborTrifPrecursor d a₁ a₂ a₃)) ∧
     ((∀ n : ℕ, bmm_BoxMengerAttachment d n) →
-      bernoulliProductMeasure (E := Sym2 (Site d)) p hp1 (atLeastTwoInfinite d) = 0) := by
-  have h2 : bernoulliProductMeasure (E := Sym2 (Site d)) p hp1 (atLeastTwoInfinite d) = 0 := by
-    have hae := MathlibExt.Probability.Percolation.BurtonKeaneWanted.burton_keane_bernoulli d p hp1
-    rw [ae_iff] at hae
-    have hset : {ω : ConfigSpace (Sym2 (Site d)) | ¬ numInfiniteClusters d ω ≤ 1} =
-        atLeastTwoInfinite d := by
-      rw [← compl_compl (atLeastTwoInfinite d), atLeastTwoInfinite_compl]
-      rfl
-    rwa [hset] at hae
-  exact ⟨fun hattach => bc55_hroute_of_boxMengerAttachment p hp1 hp0 hattach, fun _ => h2⟩
+      bernoulliProductMeasure (E := Sym2 (Site d)) p hp1 (atLeastTwoInfinite d) = 0) :=
+  ⟨fun hattach => bc55_hroute_of_boxMengerAttachment p hp1 hp0 hattach,
+   fun hattach => (bc48_burton_keane_uniqueness_via_merge_classical
+      (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1)
+      (bernoulli_lattice_ergodic hd p hp1)
+      (bernoulli_finiteEnergyMerge p hp1 hp0)
+      (fun n => boxSV_boundaryCard d (n + 1))
+      (fun ω n => bc54_classicalTcount_le_boundary_succ_all ω hd n)
+      (fun n => bkc_boxFinsetBK_card_pos d n)
+      (bc54_boundary_succ_vol_tendsto d hd)
+      (bc49_classical_htrif_of_route (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1)
+        (bernoulli_finiteEnergyMerge p hp1 hp0)
+        (bc55_hroute_of_boxMengerAttachment p hp1 hp0 hattach))
+      (fun k hk2 _ hk => exists_mergeWitness_pos _ k hk2 hk)).2.1⟩
 
 end StatMech.Walls
