@@ -22,7 +22,7 @@ The Myers–Fefferman–Patterson non-identifiable pair has a difference $\widet
 
 ## Proof depends on
 
-- [Sign-variation bound for Laplace transforms](../../../../../Analysis/harmonic-analysis/integral-transforms/laplace-transform/sign-variation-bound-for-laplace-transforms.md)
+- [Sign-variation bound for Laplace transforms](../../../../Analysis/harmonic-analysis/integral-transforms/laplace-transform/sign-variation-bound-for-laplace-transforms.md)
 
 ## Expansion
 
