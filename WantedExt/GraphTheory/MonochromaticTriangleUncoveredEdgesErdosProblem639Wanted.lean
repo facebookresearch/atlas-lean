@@ -36,7 +36,8 @@ by this one; no code imported).
 -/
 
 /-- In the red/blue colouring `c` of the edges of `K_n`, the edge `{x, y}` lies in a monochromatic
-triangle. -/
+triangle. The test also admits `x = y`, where `s(x, x)` is no edge of `K_n`;
+`uncoveredEdgesAtMostQuarter` applies it only to `x ≠ y`. -/
 def InMonoTriangle {n : ℕ} (c : Sym2 (Fin n) → Fin 2) (x y : Fin n) : Prop :=
   ∃ z, z ≠ x ∧ z ≠ y ∧ c s(x, z) = c s(x, y) ∧ c s(y, z) = c s(x, y)
 
