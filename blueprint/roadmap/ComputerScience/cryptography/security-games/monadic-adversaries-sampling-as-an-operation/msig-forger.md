@@ -1,0 +1,3 @@
+# Monadic signature forger
+
+Fix a [sampling family](sample-fam.md), a type $M$ of messages, a type $S$ of signatures and a type $PK$ of public keys. A monadic signature forger maps each public key $pk$ to a computation over the signing-oracle signature (queries $m \in M$ answered in $S$) extended by the sampling operations of the family. It may sample and query the signing oracle at any point, and returns a pair $(m, \sigma) \in M \times S$. The type does not require $(m, \sigma)$ to verify or $m$ to be fresh; the [forgery experiment](m-sig-game.md) tests both (Katz and Lindell, Definition 12.2). All of the message, ciphertext, tag or signature types and the sampling outcomes live in one universe; the public-key type may live in another.

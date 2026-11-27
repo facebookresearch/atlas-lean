@@ -15,6 +15,7 @@ public import MathlibExt.Combinatorics.Coding.PolakSchrijver
 public import MathlibExt.Combinatorics.Coding.CycleShannonBoundsBpz2026CycleTwentyOneConstruction
 public import MathlibExt.Combinatorics.Coding.CycleShannonBoundsBpz2026CycleTwentyOneLowerBound
 public import MathlibExt.Combinatorics.Coding.CycleShannonBoundsLovasz1979UpperBound
+public import MathlibExt.Combinatorics.Coding.CycleShannonBoundsMathewOstergard2017LowerBound
 
 /-!
 # Known cycle-capacity construction and rate requests
@@ -46,13 +47,6 @@ $7$-cycle is at least $108^{1/4}$.
 Source: Vesel--Žerovnik (2002), exact rate row; no unprinted code is supplied. -/
 theorem_wanted veselZerovnik2002LowerBound :
   ENNReal.rpow 108 ((4 : ℝ)⁻¹) ≤ shannonCapacityCycle 7
-
-/-- **Mathew–Östergård lower bound for the capacity of the 7-cycle.** The Shannon capacity of the
-$7$-cycle is at least $350^{1/5}$, as an inequality in $[0, \infty]$.
-
-Source: Mathew--Östergård (2017), exact rate row; no unprinted code is supplied. -/
-theorem_wanted mathewOstergard2017LowerBound :
-  ENNReal.rpow 350 ((5 : ℝ)⁻¹) ≤ shannonCapacityCycle 7
 
 /-- **Itty–Rosin–Carstensen–Reichman lower bound for the capacity of the 7-cycle.** The Shannon
 capacity of the $7$-cycle is at least $134753^{1/10}$, as an inequality in $[0, \infty]$.

@@ -16,3 +16,4 @@
 - [Haldane's cline in a step environment](stationary-cline-in-a-step-environment.md)
 
 - [Sub-inhibitory selection of antibiotic resistance](sub-inhibitory-selection-of-antibiotic-resistance/README.md)
+- [Poissonian interacting trajectories](poissonian-interacting-trajectories/README.md)
