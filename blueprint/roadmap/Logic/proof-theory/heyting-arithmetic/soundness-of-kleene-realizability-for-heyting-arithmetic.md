@@ -14,6 +14,7 @@ $S^m_n$ theorem, realizes $A \to B \to A$.
 ## Proof depends on
 
 - [Kreisel's theorem on provably total functions](kreisel-s-theorem-on-provably-total-functions.md)
+- [Computable codes depending on a parameter](../../../TheoryOfComputation/computability/exists-computable-code.md): an index for $b \mapsto a$ computable from $a$, for the realizers of constant functions
 
 ## Expansion
 

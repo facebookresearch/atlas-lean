@@ -2,7 +2,8 @@
 
 Let $N$ be the set of strongly β-normalizing untyped terms and $N_0$ the set of terms $x\, t_1 \cdots t_n$ with $x$ a variable and $t_1, \dots, t_n \in N$. A set $X$ of terms is
 *$N$-saturated* if $(u[t/x])\, t_1 \cdots t_n \in X$ implies $(\lambda x.\, u)\, t\, t_1 \cdots t_n \in X$ for every $t \in N$; an *$N$-interpretation* assigns $N$-saturated sets to
-type variables and extends to types of [system D](intersection-type-system-d.md) by $|B \to C| = |B| \to |C|$ and $|B \wedge C| = |B| \cap |C|$. Then:
+type variables and extends to types of [system D](intersection-type-system-d.md) by $|B \to C| = |B| \to |C|$, where for sets $X, Y$ of terms
+$X \to Y = \{u : u\, v \in Y \text{ for every } v \in X\}$ (not a function space), and $|B \wedge C| = |B| \cap |C|$. Then:
 
 1. $N$ is $N$-saturated, $N_0 \subseteq N$, $N_0 \subseteq N \to N_0$ and $N_0 \to N \subseteq N$;
 2. if $|X|_I$ is an $N$-saturated set with $N_0 \subseteq |X|_I \subseteq N$ for every type variable, then $N_0 \subseteq |A|_I \subseteq N$ for every type $A$;

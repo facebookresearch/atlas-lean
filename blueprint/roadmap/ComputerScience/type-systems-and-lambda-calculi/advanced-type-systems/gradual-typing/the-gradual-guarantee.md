@@ -20,6 +20,7 @@ can change its behaviour only by introducing trapped cast errors (adding an anno
 - [Cast insertion preserves precision](cast-insertion-preserves-precision.md)
 - [Simulation of more precise programs](simulation-of-more-precise-programs.md)
 - [Catch-up to a value on the left](catchup-to-value-on-the-left.md)
+- [Type safety of the GTLC](type-safety-of-the-gtlc.md): a well-typed program evaluates to a value, to blame or diverges
 
 ## Expansion
 

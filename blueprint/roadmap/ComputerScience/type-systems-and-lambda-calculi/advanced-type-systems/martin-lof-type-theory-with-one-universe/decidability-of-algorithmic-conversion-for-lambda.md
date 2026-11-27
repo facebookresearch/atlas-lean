@@ -23,7 +23,7 @@ The hypotheses that each side is related to itself supply the termination measur
 
 This page becomes ready once:
 
-- Substitution, neutral type equality and strong syntactic equality for λΠUN (Theorems 3.29, 3.31 and 3.33 of the source), context conversion for typing and for algorithmic conversion (Lemmas 4.1 and 4.2), and conversion of algorithmic conversion along a convertible comparison type (Lemma 4.4) (proof prerequisites; not yet stated)
+- Strong syntactic equality, substitution and neutral type equality for λΠUN (Theorems 3.29, 3.31 and 3.33 of the source, respectively), context conversion for typing and for algorithmic conversion (Lemmas 4.1 and 4.2), and conversion of algorithmic conversion along a convertible comparison type (Lemma 4.4) (proof prerequisites; not yet stated)
 
 ## Sources
 

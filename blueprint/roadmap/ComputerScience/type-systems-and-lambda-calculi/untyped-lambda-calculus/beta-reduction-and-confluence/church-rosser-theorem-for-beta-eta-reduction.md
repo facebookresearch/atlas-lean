@@ -4,7 +4,9 @@
 term $t_3$. Consequently $t =_{\beta\eta} t'$ holds exactly when $t$ and $t'$ have a common βη-reduct, and a term has at most one βη-normal form.
 
 The proof follows the one for β: the parallel relation adds the rule "if $t \Rightarrow t'$ then $\lambda x.\, t\, x \Rightarrow t'$ when $x$ is not free in $t$", is substitutive, has the
-diamond property, and has βη-reduction as its transitive closure.
+diamond property, and has βη-reduction as its transitive closure; the diamond property must cover peaks that mix a β-step with an η-step, so it does not follow
+from confluence of β-reduction alone. The closure argument is then the one for β, and the characterization of conversion is the equivalence of confluence with
+the Church–Rosser property.
 
 ## Depends on
 
@@ -13,6 +15,13 @@ diamond property, and has βη-reduction as its transitive closure.
 ## Proof depends on
 
 - [Church–Rosser theorem for β-reduction](church-rosser-theorem-for-beta-reduction.md)
+- [The Church–Rosser property is equivalent to confluence](../../../../Logic/first-order-logic/term-rewriting/church-rosser-property-and-confluence.md)
+
+## Expansion
+
+This page becomes ready once:
+
+- The extended parallel reduction for βη: its substitution lemma and its diamond property, including the peaks that mix β- and η-steps (Lemmas 1.32–1.34 of Krivine's book) (proof prerequisite; not yet stated)
 
 ## Sources
 

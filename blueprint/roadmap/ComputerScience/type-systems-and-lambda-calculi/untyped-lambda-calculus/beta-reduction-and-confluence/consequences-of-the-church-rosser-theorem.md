@@ -14,6 +14,7 @@ For untyped λ-terms:
 ## Proof depends on
 
 - [Church–Rosser theorem for β-reduction](church-rosser-theorem-for-beta-reduction.md)
+- [The Church–Rosser property is equivalent to confluence](../../../../Logic/first-order-logic/term-rewriting/church-rosser-property-and-confluence.md): for part 1
 
 ## Sources
 

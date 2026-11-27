@@ -4,7 +4,9 @@ For all untyped λ-terms $M_1, M_2, M_3$: if $M_1 \twoheadrightarrow_\beta M_2$ 
 (Church and Rosser, 1936).
 
 The proof of Tait and Martin-Löf uses that $\twoheadrightarrow_\beta$ is the transitive closure of parallel reduction, which has the diamond property, and that the
-diamond property passes from a relation to its transitive closure.
+diamond property passes from a relation $\Rightarrow$ to its transitive closure by two inductions: if $a \Rightarrow b$ and $a \Rightarrow^* c$, then $b \Rightarrow^* d$ and
+$c \Rightarrow d$ for some $d$, by induction on the length of $a \Rightarrow^* c$; and then, by induction on the length of $a \Rightarrow^* b$, two paths from $a$ have a common
+end.
 
 ## Depends on
 

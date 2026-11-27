@@ -19,5 +19,3 @@ The gradually typed λ-calculus with the unknown type, its cast calculus with bl
 - [Simulation of function application](simulation-of-function-application.md)
 - [Simulation of unwrapping](simulation-of-unwrapping.md)
 - [Simulation of more precise programs](simulation-of-more-precise-programs.md)
-- [Terms safe for a blame label](terms-safe-for-a-blame-label.md)
-- [Safe terms are preserved and are not blamed](safe-terms-are-preserved-and-not-blamed.md)
