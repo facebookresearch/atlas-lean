@@ -6,7 +6,7 @@ $$
 P(A = n) = \int_0^\infty \frac{(\lambda t)^n}{n!} e^{-\lambda t}\, dF_B(t), \qquad E[z^A] = \tilde B(\lambda - \lambda z) \quad (|z| \le 1),
 $$
 
-and $E[A] = \lambda E[B]$. In the M/G/1 queue served first come first served without interruption, these are the transition probabilities $\alpha_n$ of the embedded chain at departure epochs, the number of arrivals during one service.
+and $E[A] = \lambda E[B]$. In the M/G/1 queue with $\lambda > 0$ and a work-conserving server that serves customers first come first served without interruption, these are the transition probabilities $\alpha_n$ of the embedded chain at departure epochs, the number of arrivals during one service.
 
 ## Depends on
 
