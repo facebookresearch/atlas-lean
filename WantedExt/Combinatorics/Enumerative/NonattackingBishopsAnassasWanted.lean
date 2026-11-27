@@ -10,6 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.Combinatorics.Enumerative.NonattackingBishopsAnassas
+public import MathlibExt.Combinatorics.Enumerative.BishopsArshonReindex
 
 /-!
 # Counting nonattacking placements of bishops and anassas
@@ -47,30 +48,6 @@ open Finset
 /-! Theorem 1.2 (`jis-2025-25.8.6-thm-2`) is not stated: see the audit table. -/
 
 /-! ## The bishop -/
-
-/-- **Arshon's formula for nonattacking bishops (Kotěšovec's form).** For all natural numbers $m$
-and $k$, the number $B_S(m, k)$ of placements of $k$ nonattacking bishops on the $m \times m$
-board satisfies
-
-$$
-B_S(m, k) = \sum_{j=0}^{m} \sum_{i=0}^{\lfloor (m+1)/2 \rfloor}
-\binom{\lfloor (m+1)/2 \rfloor}{i} S\bigl(i + \lfloor m/2 \rfloor, m - j\bigr)
-\sum_{l=0}^{\lfloor m/2 \rfloor} \binom{\lfloor m/2 \rfloor}{l}
-S\bigl(l + \lfloor (m+1)/2 \rfloor, m - k + j\bigr),
-$$
-
-where, for integers $a \ge 0$ and $b$, $S(a, b)$ is the Stirling number of the second kind when
-$b \ge 0$ and $0$ when $b < 0$ (Knuth's extended Stirling numbers of the second kind).
-
-Source: Eder G. Santos, *Counting Nonattacking Chess Piece Placements: Bishops and Anassas*,
-Journal of Integer Sequences 28 (2025), Article 25.8.6, Theorem 3 (Arshon, Kotěšovec)
-(`jis-2025-25.8.6-thm-3`). -/
-public theorem_wanted bishopsSquare_eq_arshon (m k : ℕ) :
-    bishopsSquare m k =
-      ∑ j ∈ range (m + 1), ∑ i ∈ range ((m + 1) / 2 + 1),
-        ((m + 1) / 2).choose i * extStirlingSecond (i + m / 2 : ℕ) ((m : ℤ) - j) *
-          ∑ l ∈ range (m / 2 + 1),
-            (m / 2).choose l * extStirlingSecond (l + (m + 1) / 2 : ℕ) ((m : ℤ) - k + j)
 
 /-- **Recurrence for bishops on white squares.** Write $R_W(m, k)$ for the number of placements of
 $k$ nonattacking bishops on the white squares (those $(i, j)$ with $i + j$ even) of the

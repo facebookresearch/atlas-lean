@@ -145,6 +145,6 @@ example : polyeneWavelength 2 (polyeneLength 2 1) 1 1 1 = 20 / Real.pi := by
       (mul_ne_zero (mul_ne_zero (by norm_num) Real.pi_ne_zero) (by norm_num))
       (by norm_num)
   field_simp
-  try ring
+  ring
 
 end Chemistry.Quantum.OneDimensionalModelsTest
