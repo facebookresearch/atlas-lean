@@ -17,6 +17,7 @@ public import Mathlib.Algebra.Polynomial.Degree.Defs
 public import MathlibExt.NumberTheory.IncompleteExponentialSum
 public import MathlibExt.NumberTheory.LogarithmicCompletion
 public import MathlibExt.NumberTheory.ReciprocalSineSum
+public import MathlibExt.NumberTheory.WeightedSineSum
 
 /-!
 # Explicit estimates for incomplete exponential sums (statements)
@@ -33,6 +34,7 @@ Lemma 3.1 in `MathlibExt.NumberTheory.IncompleteExponentialSum`. Lemma 2.1 and C
 are proved in `MathlibExt.NumberTheory.LogarithmicCompletion`. The reciprocal sine bound is
 proved in `MathlibExt.NumberTheory.ReciprocalSineSum`, together with the bound
 `sum_min_one_div_abs_sin_lt` for the sum with each term capped at the length.
+Lemmas 3.4 and 3.5 are proved in `MathlibExt.NumberTheory.WeightedSineSum`.
 -/
 
 namespace MetaMathlibExt
@@ -40,31 +42,6 @@ namespace MetaMathlibExt
 open Complex Finset
 
 @[expose] public section
-
-/-- **Bound for a weighted sum of absolute sines.** Let $K$ be a positive integer, let $\xi$ be a
-real number, and let $\gamma$ be the Euler–Mascheroni constant. Then
-$$
-\sum_{y=1}^{K} \frac{|\sin(y\xi)|}{y} <
-\frac{2}{\pi}\left(\log(K + 1) + \gamma + \log 2\right) + \frac{3}{\pi(K + 1)}
-$$
-and
-$$
-\sum_{y=1}^{K} \frac{|\sin(y\xi)|}{y} <
-\frac{2}{\pi}\log K + \frac{2}{\pi}(\gamma + \log 2) + \frac{5}{\pi K}.
-$$
-
-The second bound is the form (3.1) of the first, obtained from $\log(K + 1) < \log K + 1/K$.
-
-Source: Todd Cochrane, *Explicit Estimates for Incomplete Exponential Sums*, INTEGERS 25
-(2025), Article A48, Lemma 3.4 (quoted from [3, Lemma 2.1]) and inequality (3.1)
-(`integers-2025-A48-lem-3-4`). -/
-public theorem_wanted sum_abs_sin_mul_div_lt (K : ℕ) (hK : 1 ≤ K) (ξ : ℝ) :
-    ∑ y ∈ Icc 1 K, |Real.sin (y * ξ)| / y <
-        (2 / Real.pi) * (Real.log (K + 1) + Real.eulerMascheroniConstant + Real.log 2) +
-          3 / (Real.pi * (K + 1)) ∧
-      ∑ y ∈ Icc 1 K, |Real.sin (y * ξ)| / y <
-        (2 / Real.pi) * Real.log K +
-          (2 / Real.pi) * (Real.eulerMascheroniConstant + Real.log 2) + 5 / (Real.pi * K)
 
 /-- **Trigonometric polynomials bounding the indicator of an arc.** Let $a \le b$ be real
 numbers with $b - a < 1$ and let $K \ge 1$ be an integer. Let $\chi(x) = 1$ if
@@ -139,23 +116,6 @@ public theorem_wanted norm_incompleteSum_le_min_mul_sup (p : ℕ) (hp : p.Prime)
         (((range p).sup fun y : ℕ =>
           ‖∑ x ∈ Icc 1 p,
             exp (2 * Real.pi * I * ((f.eval (x : ℤ) + y * x : ℤ) : ℂ) / p)‖₊ : NNReal) : ℝ)
-
-/-- **Bound for a sum of sine ratios.** Let $q$, $K$ and $B$ be natural numbers with
-$1 \le K < q$ and $B \ge 1$, and let $\gamma$ be the Euler–Mascheroni constant. Then
-$$
-\sum_{k=1}^{K} \frac{|\sin(\pi B k / q)|}{|\sin(\pi k / q)|} <
-\frac{2}{\pi^2} q \log K + \frac{2q}{\pi^2}(\gamma + \log 2) + \frac{q}{\pi} \cdot \frac{K}{q - K} +
-\frac{5q}{\pi^2 K}.
-$$
-
-Source: Todd Cochrane, *Explicit Estimates for Incomplete Exponential Sums*, INTEGERS 25
-(2025), Article A48, Lemma 3.5 (`integers-2025-A48-lem-3-5`). -/
-public theorem_wanted sum_abs_sin_div_abs_sin_lt (q K B : ℕ) (hK : 1 ≤ K) (hKq : K < q)
-    (hB : 1 ≤ B) :
-    ∑ k ∈ Icc 1 K, |Real.sin (Real.pi * B * k / q)| / |Real.sin (Real.pi * k / q)| <
-      2 / Real.pi ^ 2 * q * Real.log K +
-          2 * q / Real.pi ^ 2 * (Real.eulerMascheroniConstant + Real.log 2) +
-        q / Real.pi * (K / ((q : ℝ) - K)) + 5 * q / (Real.pi ^ 2 * K)
 
 /-- **Square of an incomplete quadratic exponential sum.** Let $p$ be a prime, write
 $e_p(t) = e^{2\pi i t/p}$, let $a, b, c$ be integers with $p \nmid a$, let $B$ be an integer with
