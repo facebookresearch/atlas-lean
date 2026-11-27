@@ -30,3 +30,8 @@
 - [Finite neutral Moran sampling duality on the pair-coalescence clock](finite-moran-forward-backward-sampling-duality.md)
 
 - [Moran and Cannings models: generator limits and effective size](moran-and-cannings-models-generator-limits-and-e.md)
+- [Algebraic dualities of Wright–Fisher and Moran models](algebraic-dualities-of-wright-fisher-and-moran-models/README.md)
+- [Common ancestor type process](common-ancestor-type-process/README.md)
+- [Entropy rates of evolutionary Markov chains](entropy-rates-of-evolutionary-markov-chains/README.md)
+- [Infinitely many genes model with horizontal transfer](infinitely-many-genes-model-with-horizontal-transfer/README.md)
+- [Labelled Moran model with selection](labelled-moran-model-with-selection/README.md)

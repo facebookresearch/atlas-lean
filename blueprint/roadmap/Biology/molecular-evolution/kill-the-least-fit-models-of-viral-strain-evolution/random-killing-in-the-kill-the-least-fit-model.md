@@ -19,4 +19,4 @@ For $r = 0$ and $\lambda > 1$, $X(t)$ is a supercritical linear birth–death pr
 
 ## Sources
 
-- J. Theodore Cox, Rinaldo B. Schinazi, "A stochastic model for the evolution of the influenza virus", arXiv:1302.2362 (2013), Section 1 (model; Theorem 1 restating the $r=0$ results; Theorems 2–4), Section 2 (Lemma 1), Section 3 (Lemmas 2–3), Section 4 (Lemma 4). <https://doi.org/10.48550/arXiv.1302.2362>
+- J. Theodore Cox, Rinaldo B. Schinazi, "A stochastic model for the evolution of the influenza virus", *Markov Processes and Related Fields* 20 (2014), 155–166; preprint arXiv:1302.2362, <https://doi.org/10.48550/arXiv.1302.2362>. Numbering of the arXiv version: Section 1 (model; Theorem 1 restating the $r=0$ results; Theorems 2–4), Section 2 (Lemma 1), Section 3 (Lemmas 2–3), Section 4 (Lemma 4).

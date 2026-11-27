@@ -16,3 +16,5 @@
 - [Effective size of an island-model population](effective-size-of-a-subdivided-population-island.md)
 
 - [The island-model diffusion and $F_{ST}$](island-model-diffusion-and-fst.md)
+- [Fleming–Viot limit under fast density regulation](fleming-viot-limit-under-fast-density-regulation/README.md)
+- [Genealogies in the long-range biased voter model](genealogies-in-the-long-range-biased-voter-model/README.md)

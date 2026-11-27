@@ -5,3 +5,5 @@
 - [Inbreeding under repeated full-sib mating](inbreeding-under-full-sib-mating.md)
 - [Viability selection in an inbred population](selection-under-inbreeding.md)
 - [Mean fitness is linear in the inbreeding coefficient](mean-fitness-under-inbreeding.md)
+- [Multilocus diffusion with assortative mating](multilocus-diffusion-with-assortative-mating/README.md)
+- [Pedigree reconstruction from sequences](pedigree-reconstruction-from-sequences/README.md)

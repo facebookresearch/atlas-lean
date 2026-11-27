@@ -20,4 +20,4 @@ Old and new copies are distinguishable through the band patterns, and since each
 
 ## Sources
 
-- Jason Xu, Peter Guttorp, Midori Kato-Maeda, Vladimir N. Minin, "Likelihood-Based Inference for Discretely Observed Birth-Death-Shift Processes, with Applications to Evolution of Mobile Genetic Elements", arXiv (2014). Section 2 (birth–death–shift model, two-type branching formulation, generating functions and Fourier inversion, Theorem 2.1), Appendices A–B. <https://doi.org/10.48550/arXiv.1411.0031>
+- Jason Xu, Peter Guttorp, Midori Kato-Maeda, Vladimir N. Minin, "Likelihood-Based Inference for Discretely Observed Birth-Death-Shift Processes, with Applications to Evolution of Mobile Genetic Elements", *Biometrics* 71 (2015), 1009–1021, <https://doi.org/10.1111/biom.12352>; preprint arXiv:1411.0031, <https://doi.org/10.48550/arXiv.1411.0031>. Numbering of the arXiv version: Section 2 (birth–death–shift model, two-type branching formulation, generating functions and Fourier inversion, Theorem 2.1), Appendices A–B.

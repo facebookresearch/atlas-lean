@@ -61,3 +61,7 @@
 - [Two-locus Hudson simulator samples the two-locus ancestral process](two-locus-hudson-simulator-samples-the-two-locus.md)
 - [Two-locus coalescence times of a pair: a diagonal atom and an absolutely continuous part](two-locus-n-2-joint-law-of-t-a-t-b-is-diagonal-a.md)
 - [Wiuf–Hein algorithm reproduces the joint law of local trees](wiuf-hein-algorithm-reproduces-the-joint-law-of.md)
+- [Asymptotic expansion of two-locus sampling distributions](asymptotic-expansion-of-two-locus-sampling-distributions/README.md)
+- [Asymptotic sampling distributions under strong recombination](asymptotic-sampling-distributions-under-strong-recombination/README.md)
+- [Gaussian diffusion and coalescent for weakly linked loci](gaussian-diffusion-and-coalescent-for-weakly-linked-loci/README.md)
+- [Moment duality of the two-locus Wright–Fisher diffusion](moment-duality-of-the-two-locus-wright-fisher-diffusion/README.md)

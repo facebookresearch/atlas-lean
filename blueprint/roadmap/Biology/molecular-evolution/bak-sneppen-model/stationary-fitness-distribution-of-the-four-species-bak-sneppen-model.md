@@ -7,25 +7,19 @@
 **Theorem ($n = 4$).** Let
 
 $$
-
 q(x) = \frac32\,\frac{x\,\big(3 - x(3-x)\big)}{\big(3 - x(3 - x(3-x))\big)^2}, \qquad 0 \le x \le 1 .
-
 $$
 
 The stationary distribution of the four-species Bak–Sneppen model is
 
 $$
-
 \mu_4(d^4\mathbf{x}) = \Big[\sum_{\nu=1}^4 q(x_\nu)\Big]\,\mathbf 1_{[0,1]^4}(\mathbf{x})\,d^4\mathbf{x},
-
 $$
 
 and the asymptotic fitness distribution at a fixed site has density
 
 $$
-
 \frac{d}{dx}\,\mathbb{P}(f_{1,\infty} \le x) = \Big(\frac34 + q(x)\Big)\,\mathbf 1_{[0,1]}(x).
-
 $$
 
 For $n = 5$ the stationary density is determined by coefficients satisfying an explicit linear recurrence.
@@ -36,4 +30,4 @@ For $n = 4$ only one coordinate survives each step (the one opposite the minimum
 
 ## Sources
 
-- Eckhard Schlemm, "Asymptotic fitness distribution in the Bak-Sneppen model of biological evolution with four species", arXiv (2012); Journal of Statistical Physics (2012). Section 2 (Propositions 1–2), Section 3 (Propositions 3–4, Theorem 1), Section 4 (Proposition 5). <https://doi.org/10.48550/arXiv.1207.0108>
+- Eckhard Schlemm, "Asymptotic fitness distribution in the Bak-Sneppen model of biological evolution with four species", *Journal of Statistical Physics* 148 (2012), 191–203, <https://doi.org/10.1007/s10955-012-0538-2>; preprint arXiv:1207.0108, <https://doi.org/10.48550/arXiv.1207.0108>. Numbering of the arXiv version: Section 2 (Propositions 1–2), Section 3 (Propositions 3–4, Theorem 1), Section 4 (Proposition 5).

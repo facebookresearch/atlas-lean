@@ -24,4 +24,4 @@ Given the starting fitness, a fixed self-avoiding path is open with probability 
 
 ## Sources
 
-- Julien Berestycki, Éric Brunet, Zhan Shi, "Accessibility percolation with backsteps", arXiv (2014). Section 1 (Theorems 1–3, Conjectures 1–2), Section 2 (Lemmas 1–2), Sections 4–5. <https://doi.org/10.48550/arXiv.1401.6894>
+- Julien Berestycki, Éric Brunet, Zhan Shi, "Accessibility percolation with backsteps", *ALEA Latin American Journal of Probability and Mathematical Statistics* 14 (2017), <https://doi.org/10.30757/ALEA.v14-04>; preprint arXiv:1401.6894, <https://doi.org/10.48550/arXiv.1401.6894>. Numbering of the arXiv version: Section 1 (Theorems 1–3, Conjectures 1–2), Section 2 (Lemmas 1–2), Sections 4–5.

@@ -30,4 +30,4 @@ The conditioned diffusion $X^*$ has drift $\alpha(h + X(1-2h))X(1-X) + X(1-X)\,\
 
 ## Sources
 
-- Greg Ewing, Joachim Hermisson, Peter Pfaffelhuber, Johannes Rudolf, "Selective sweeps for recessive alleles and for other modes of dominance", arXiv (2010). Section 2 (Wright–Fisher model and diffusion limit, structured coalescent), Section 3 (Proposition 1, Theorems 1 and 2 with remarks), Section 4 (Proposition 2, Theorem 3), Section 7 (Key lemma on the rescaled diffusion). <https://doi.org/10.48550/arXiv.1005.5536>
+- Greg Ewing, Joachim Hermisson, Peter Pfaffelhuber, Johannes Rudolf, "Selective sweeps for recessive alleles and for other modes of dominance", *Journal of Mathematical Biology* 63 (2011), 399–431, <https://doi.org/10.1007/s00285-010-0382-4>; preprint arXiv:1005.5536, <https://doi.org/10.48550/arXiv.1005.5536>. Numbering of the arXiv version: Section 2 (Wright–Fisher model and diffusion limit, structured coalescent), Section 3 (Proposition 1, Theorems 1 and 2 with remarks), Section 4 (Proposition 2, Theorem 3), Section 7 (Key lemma on the rescaled diffusion).

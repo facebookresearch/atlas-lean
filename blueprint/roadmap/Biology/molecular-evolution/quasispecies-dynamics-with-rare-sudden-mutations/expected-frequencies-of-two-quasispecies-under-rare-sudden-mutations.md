@@ -28,4 +28,4 @@ Along the characteristics of the replicator drift the Kolmogorov equation become
 
 ## Sources
 
-- Anna Lisa Amadori, Antonella Calzolari, Roberto Natalini, Barbara Torti, "Rare mutations in evolutionary dynamics", arXiv (2012). Section 2 (stochastic model, Lemma 2.1, Proposition 2.1), Section 3 (Kolmogorov equation, Propositions 3.1–3.5), Section 4 (two quasispecies, Lemmas 4.1–4.3, Propositions 4.1–4.5). <https://doi.org/10.48550/arXiv.1211.4170>
+- Anna Lisa Amadori, Antonella Calzolari, Roberto Natalini, Barbara Torti, "Rare mutations in evolutionary dynamics", *Journal of Differential Equations* 259 (2015), 6191–6214, <https://doi.org/10.1016/j.jde.2015.07.021>; preprint arXiv:1211.4170, <https://doi.org/10.48550/arXiv.1211.4170>. Numbering of the arXiv version: Section 2 (stochastic model, Lemma 2.1, Proposition 2.1), Section 3 (Kolmogorov equation, Propositions 3.1–3.5), Section 4 (two quasispecies, Lemmas 4.1–4.3, Propositions 4.1–4.5).

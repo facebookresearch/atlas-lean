@@ -22,4 +22,4 @@ In one colony the conditioned frequency spends $\sim\log\alpha/\alpha$ rising to
 
 ## Sources
 
-- Andreas Greven, Peter Pfaffelhuber, Cornelia Pokalyuk, Anton Wakolbinger, "The fixation time of a strongly beneficial allele in a structured population", arXiv (2014). Section 2 (model, fixation probability, conditioned system, Theorem 1, Definition of the auxiliary epidemic processes, Theorem 2), Section 3 (ancestral selection graph, Proposition 3.1). <https://doi.org/10.48550/arXiv.1402.1769>
+- Andreas Greven, Peter Pfaffelhuber, Cornelia Pokalyuk, Anton Wakolbinger, "The fixation time of a strongly beneficial allele in a structured population", *Electronic Journal of Probability* 21 (2016), <https://doi.org/10.1214/16-EJP3355>; preprint arXiv:1402.1769, <https://doi.org/10.48550/arXiv.1402.1769>. Numbering of the arXiv version: Section 2 (model, fixation probability, conditioned system, Theorem 1, Definition of the auxiliary epidemic processes, Theorem 2), Section 3 (ancestral selection graph, Proposition 3.1).

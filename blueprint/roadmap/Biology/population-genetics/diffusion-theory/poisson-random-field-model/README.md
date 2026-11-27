@@ -18,3 +18,4 @@
 
 - [The Poisson random field as the stationary limit of immigrating Wright–Fisher diffusions](poisson-random-field-as-the-stationary-limit-of.md)
 - [Diffusion observables averaged over a distribution of fitness effects](averages-over-a-distribution-of-fitness-effects.md)
+- [Time-dependent Poisson random fields](time-dependent-poisson-random-fields/README.md)

@@ -18,4 +18,4 @@ The proof reduces $3$-SAT to the decision problem with $\alpha=1$. From a formul
 
 ## Sources
 
-- Ngoc M. Tran, Jed Yang, "Antibiotics Time Machine is NP-hard", arXiv (2015). Section 1 (problem (1) and decision version (2), Theorems 1 and 2), Section 2 (reduction construction from 3-SAT), Section 3 (Lemmas 3 and 4, proof of the main theorem). <https://doi.org/10.48550/arXiv.1505.02694>
+- Ngoc M. Tran, Jed Yang, "Antibiotics Time Machine is NP-hard", published as "Antibiotics Time Machines Are Hard to Build", *Notices of the American Mathematical Society* 64 (2017), 1136–1140, <https://doi.org/10.1090/noti1590>; preprint arXiv:1505.02694, <https://doi.org/10.48550/arXiv.1505.02694>. Numbering of the arXiv version: Section 1 (problem (1) and decision version (2), Theorems 1 and 2), Section 2 (reduction construction from 3-SAT), Section 3 (Lemmas 3 and 4, proof of the main theorem).

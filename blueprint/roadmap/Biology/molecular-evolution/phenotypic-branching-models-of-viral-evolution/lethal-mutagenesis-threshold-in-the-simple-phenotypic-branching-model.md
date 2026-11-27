@@ -22,4 +22,4 @@ Since a class-$r$ particle has $r$ offspring, of which a $\mathrm{Bin}(r, 1-d)$ 
 
 ## Sources
 
-- Fernando Antoneli, Francisco Bosco, Diogo Castro, Luiz Mario Janini, "Viral Evolution and Adaptation as a Multivariate Branching Process", arXiv (2011). Section "Phenotypic Models for Viral Evolution" (model, offspring law, mean matrix), Section "The Simple Phenotypic Model" (eigenvalues, Theorem on three regimes, corollary on lethal mutagenesis, theorem on the stationary state). <https://doi.org/10.48550/arXiv.1110.3368>
+- Fernando Antoneli, Francisco Bosco, Diogo Castro, Luiz Mario Janini, "Viral Evolution and Adaptation as a Multivariate Branching Process", in *BIOMAT 2012* (2013), 217–243, <https://doi.org/10.1142/9789814520829_0013>; preprint arXiv:1110.3368, <https://doi.org/10.48550/arXiv.1110.3368>. Numbering of the arXiv version: Section "Phenotypic Models for Viral Evolution" (model, offspring law, mean matrix), Section "The Simple Phenotypic Model" (eigenvalues; Theorem 3.1, three regimes; Corollary 3.1, lethal mutagenesis; Theorem 3.2, stationary state).

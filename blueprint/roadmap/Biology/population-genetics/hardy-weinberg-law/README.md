@@ -17,3 +17,4 @@
 
 - [Complete positive assortative mating with equal genotype-class contribution](complete-positive-assortative-mating-by-genotype.md)
 - [Autotetraploid chromosome segregation approaches binomial proportions](autopolyploid-segregation.md)
+- [Stochastic encounter-mating model](stochastic-encounter-mating-model/README.md)

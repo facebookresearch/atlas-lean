@@ -18,4 +18,4 @@ The upper bound is elementary: a self-avoiding path visits at most $2^L$ sites a
 
 ## Sources
 
-- Julien Berestycki, Éric Brunet, Zhan Shi, "Accessibility percolation with backsteps", arXiv (2014). Section 2 (Theorem 4) and Section 3 (its proof). <https://doi.org/10.48550/arXiv.1401.6894>
+- Julien Berestycki, Éric Brunet, Zhan Shi, "Accessibility percolation with backsteps", *ALEA Latin American Journal of Probability and Mathematical Statistics* 14 (2017), <https://doi.org/10.30757/ALEA.v14-04>; preprint arXiv:1401.6894, <https://doi.org/10.48550/arXiv.1401.6894>. Numbering of the arXiv version: Section 2 (Theorem 4) and Section 3 (its proof).
