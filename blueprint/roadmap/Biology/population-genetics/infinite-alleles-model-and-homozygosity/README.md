@@ -15,4 +15,3 @@
 - [Parent-independent finite-alleles mutation on the coalescent genealogy](parent-independent-finite-alleles-mutation-on-th.md)
 
 - [Percolation models of neutral mutation on Galton–Watson trees](percolation-models-of-neutral-mutation-on-galton-watson-trees/README.md)
-- [Random match probability of SNP barcodes](random-match-probability-of-snp-barcodes/README.md)
