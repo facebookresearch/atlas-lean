@@ -28,3 +28,4 @@ Theory of reinforcement learning in finite discounted Markov decision processes,
 - [Value iteration](../../heuristic-search-and-planning/value-iteration/README.md)
 - [Policy iteration](../../heuristic-search-and-planning/policy-iteration/README.md)
 - [Hedge algorithm](../online-learning-and-boosting/hedge-algorithm/README.md)
+- [AIXI is incomputable, and its optimal policies are arithmetically hard](aixi-is-incomputable-and-arithmetically-hard.md)
