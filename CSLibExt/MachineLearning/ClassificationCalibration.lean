@@ -14,6 +14,7 @@ public import Mathlib.Analysis.Calculus.Deriv.Mul
 public import Mathlib.Analysis.Calculus.Deriv.Add
 public import Mathlib.Analysis.Convex.Function
 public import Mathlib.Order.ConditionallyCompleteLattice.Indexed
+import Mathlib.Analysis.Convex.Deriv
 
 /-!
 # Classification-calibrated surrogate losses
@@ -35,14 +36,18 @@ loss is **classification-calibrated** (their Definition 1) if `H⁻(η) > H(η)`
 
 Main results:
 
-* `isClassificationCalibrated_of_hasDerivAt`: a nonnegative convex `φ` that is differentiable
-  at `0` with `φ'(0) < 0` is classification-calibrated (the sufficiency half of their
-  Theorem 4, part 1). Hinge, exponential and logistic losses are examples.
+* `isClassificationCalibrated_iff_differentiableAt_and_deriv_neg`: a nonnegative convex `φ` is
+  classification-calibrated if and only if it is differentiable at `0` with `φ'(0) < 0` (their
+  Theorem 4, part 1).
+* `isClassificationCalibrated_of_hasDerivAt`: the sufficiency half. Hinge, exponential and
+  logistic losses are examples.
+* `differentiableAt_and_deriv_neg_of_isClassificationCalibrated`: the necessity half, which
+  holds for every convex `φ : ℝ → ℝ`. If the right derivative of `C_η` at `0`,
+  `η φ'₊(0) - (1 - η) φ'₋(0)`, is nonnegative for some `η ∈ (1/2, 1]`, then `H⁻(η) ≤ H(η)`;
+  `η = 1` excludes `φ'₊(0) ≥ 0`, and `η = φ'₋(0) / (φ'₋(0) + φ'₊(0))` excludes
+  `φ'₋(0) < φ'₊(0) < 0`.
 * `optRisk_one_sub`, `wrongSignRisk_one_sub`: `H` and `H⁻` are symmetric about `1/2` (their
   Lemma 6, part 1).
-
-The converse half of Theorem 4, part 1 (a convex classification-calibrated loss is
-differentiable at `0` with negative derivative) is not formalized here.
 -/
 
 @[expose] public section
@@ -190,5 +195,81 @@ theorem isClassificationCalibrated_of_hasDerivAt (h0 : ∀ x, 0 ≤ φ x)
       (by linarith) (by linarith [hη.1])
     rwa [optRisk_one_sub, wrongSignRisk_one_sub] at h
   · exact optRisk_lt_wrongSignRisk_of_half_lt h0 hconv hd hdneg hgt hη.2
+
+/-- The key case of the necessity direction: for a convex `φ` and `1/2 ≤ η ≤ 1`, if the right
+derivative `η φ'₊(0) - (1 - η) φ'₋(0)` of `C_η` at `0` is nonnegative, then `C_η` is at least
+`C_η(0)` on `(0, ∞)`, so a prediction of the wrong sign does as well as any: `H⁻(η) ≤ H(η)`. -/
+private lemma wrongSignRisk_le_optRisk_of_rightDeriv_nonneg (hconv : ConvexOn ℝ Set.univ φ)
+    {η : ℝ} (hη : 1 / 2 ≤ η) (hη1 : η ≤ 1)
+    (h : (1 - η) * derivWithin φ (Set.Iio 0) 0 ≤ η * derivWithin φ (Set.Ioi 0) 0) :
+    wrongSignRisk φ η ≤ optRisk φ η := by
+  have hint : (0 : ℝ) ∈ interior Set.univ := by simp
+  have hpos : ∀ α : ℝ, 0 < α → condRisk φ η 0 ≤ condRisk φ η α := by
+    intro α hα
+    have h1 := hconv.rightDeriv_le_slope_of_mem_interior hint (Set.mem_univ α) hα
+    have h2 := hconv.slope_le_leftDeriv_of_mem_interior (Set.mem_univ (-α)) hint (neg_lt_zero.2 hα)
+    rw [slope_def_field, sub_zero, le_div_iff₀ hα] at h1
+    rw [slope_def_field, zero_sub, neg_neg, div_le_iff₀ hα] at h2
+    have h3 := mul_le_mul_of_nonneg_left h1 (show 0 ≤ η by linarith)
+    have h4 := mul_le_mul_of_nonneg_left h2 (show 0 ≤ 1 - η by linarith)
+    have h5 := mul_le_mul_of_nonneg_left h hα.le
+    simp only [condRisk, neg_zero]
+    nlinarith
+  have hdom : ∀ α : ℝ, ∃ β : {α : ℝ // α * (2 * η - 1) ≤ 0}, condRisk φ η β ≤ condRisk φ η α := by
+    intro α
+    rcases le_or_gt α 0 with hα | hα
+    · exact ⟨⟨α, mul_nonpos_of_nonpos_of_nonneg hα (by linarith)⟩, le_rfl⟩
+    · exact ⟨⟨0, by simp⟩, hpos α hα⟩
+  unfold optRisk wrongSignRisk
+  by_cases hb : BddBelow (Set.range fun β : {α : ℝ // α * (2 * η - 1) ≤ 0} => condRisk φ η β)
+  · exact le_ciInf fun α => (hdom α).elim fun β hβ => ciInf_le_of_le hb β hβ
+  · have hb' : ¬BddBelow (Set.range fun α : ℝ => condRisk φ η α) := fun ⟨m, hm⟩ =>
+      hb ⟨m, by rintro _ ⟨β, rfl⟩; exact hm ⟨β, rfl⟩⟩
+    rw [Real.iInf_of_not_bddBelow hb, Real.iInf_of_not_bddBelow hb']
+
+/-- **Classification-calibrated convex losses have negative slope at 0** (Bartlett, Jordan and
+McAuliffe, *Convexity, classification, and risk bounds*, Theorem 4, part 1, the necessity
+direction): if `φ : ℝ → ℝ` is convex and classification-calibrated, then `φ` is differentiable
+at `0` and `φ'(0) < 0`. This direction does not need `φ` to be nonnegative; here `H` and `H⁻`
+are infima in `ℝ`, which are `0` for a family unbounded below. -/
+theorem differentiableAt_and_deriv_neg_of_isClassificationCalibrated
+    (hconv : ConvexOn ℝ Set.univ φ) (hcal : IsClassificationCalibrated φ) :
+    DifferentiableAt ℝ φ 0 ∧ deriv φ 0 < 0 := by
+  set a := derivWithin φ (Set.Iio 0) 0
+  set b := derivWithin φ (Set.Ioi 0) 0
+  have hint : (0 : ℝ) ∈ interior Set.univ := by simp
+  -- calibration at `η` fails as soon as `(1 - η) φ'₋(0) ≤ η φ'₊(0)`
+  have key : ∀ η : ℝ, 1 / 2 < η → η ≤ 1 → ¬(1 - η) * a ≤ η * b := fun η hη hη1 h =>
+    (wrongSignRisk_le_optRisk_of_rightDeriv_nonneg hconv hη.le hη1 h).not_gt
+      (hcal η ⟨by linarith, hη1⟩ hη.ne')
+  have hb : b < 0 := by
+    by_contra hb
+    exact key 1 (by norm_num) le_rfl (by linarith)
+  have hab : a = b := by
+    by_contra hne
+    have hlt : a < b := (hconv.leftDeriv_le_rightDeriv_of_mem_interior hint).lt_of_ne hne
+    have hsum : a + b < 0 := by linarith
+    refine key (a / (a + b)) ?_ ?_ (le_of_eq ?_)
+    · rw [lt_div_iff_of_neg hsum]; linarith
+    · rw [div_le_one_of_neg hsum]; linarith
+    · field_simp [hsum.ne]; ring
+  have hd : HasDerivAt φ b 0 := by
+    rw [hasDerivAt_iff_tendsto_slope_left_right]
+    constructor
+    · rw [← hasDerivWithinAt_iff_tendsto_slope' Set.self_notMem_Iio, ← hab]
+      exact hconv.hasDerivWithinAt_leftDeriv_of_mem_interior hint
+    · rw [← hasDerivWithinAt_iff_tendsto_slope' Set.self_notMem_Ioi]
+      exact hconv.hasDerivWithinAt_rightDeriv_of_mem_interior hint
+  exact ⟨hd.differentiableAt, hd.deriv ▸ hb⟩
+
+/-- **Classification calibration of convex margin losses** (Bartlett, Jordan and McAuliffe,
+*Convexity, classification, and risk bounds*, Theorem 4, part 1): a convex loss
+`φ : ℝ → [0, ∞)` is classification-calibrated if and only if it is differentiable at `0` and
+`φ'(0) < 0`. -/
+theorem isClassificationCalibrated_iff_differentiableAt_and_deriv_neg (h0 : ∀ x, 0 ≤ φ x)
+    (hconv : ConvexOn ℝ Set.univ φ) :
+    IsClassificationCalibrated φ ↔ DifferentiableAt ℝ φ 0 ∧ deriv φ 0 < 0 :=
+  ⟨differentiableAt_and_deriv_neg_of_isClassificationCalibrated hconv,
+    fun h => isClassificationCalibrated_of_hasDerivAt h0 hconv h.1.hasDerivAt h.2⟩
 
 end Cslib.MachineLearning.ClassificationCalibration

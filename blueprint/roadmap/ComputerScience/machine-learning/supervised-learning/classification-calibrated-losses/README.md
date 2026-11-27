@@ -7,6 +7,7 @@ Surrogate losses $\varphi$ that replace the 0-1 loss in convex risk minimization
 - [Optimal conditional surrogate risk with the wrong sign](wrong-sign-risk.md)
 - [Classification-calibrated loss](is-classification-calibrated.md)
 - [Convex losses with negative slope at 0 are classification-calibrated](is-classification-calibrated-of-has-deri.md)
+- [Classification-calibrated convex losses have negative slope at 0](differentiable-at-and-deriv-neg-of-is-cl.md)
 - [Classification calibration of convex margin surrogates](classification-calibration-of-convex-margin-surrogates.md)
 
 ## Supporting lemmas
