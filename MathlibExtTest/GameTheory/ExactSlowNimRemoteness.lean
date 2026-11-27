@@ -134,3 +134,61 @@ example : exactSlowNimMRuleMove ![2, 0] = ![1, 0] ∧
   exact ⟨hmove, hmove ▸ hm.2.2.2⟩
 
 end MetaMathlibExt.exactSlowNim_critical_of_even
+
+namespace MetaMathlibExt
+
+private theorem critical_of_basicA1_three {m : ℕ} {x : Fin 3 → ℕ}
+    (hx : IsExactSlowNimBasicA1 2 m x) : IsExactSlowNimCritical 2 m x := by
+  have mass (y : Fin 3 → ℕ) : 2 * exactSlowNimBasicValue 2 y ≤ ∑ i, y i := by
+    obtain ⟨z, hzy, h | h | h⟩ := exists_supports_exactSlowNimBasicValue 2 y <;>
+      have hle : (∑ i : Fin 3, z i) ≤ ∑ i : Fin 3, y i :=
+        Finset.sum_le_sum (fun i _ => hzy i) <;>
+      rw [h.1] at hle <;> omega
+  have hge : m ≤ exactSlowNimBasicValue 2 x := by
+    classical
+    unfold exactSlowNimBasicValue
+    apply Nat.le_findGreatest
+    · rw [hx.1]
+      omega
+    · exact ⟨x, le_rfl, Or.inr (Or.inl hx)⟩
+  refine ⟨?_, fun y hy => ?_⟩
+  · have hle := mass x
+    rw [hx.1] at hle
+    rw [← exactSlowNimBasicValue_eq_smithRemoteness (by decide)]
+    omega
+  · have hlt : ∑ i, y i < ∑ i, x i := by
+      apply Finset.sum_lt_sum (fun i _ => hy.le i)
+      by_contra! h
+      exact hy.not_ge (fun i => h i (Finset.mem_univ _))
+    have hle := mass y
+    rw [hx.1] at hlt
+    change (∑ i : Fin 3, y i) < 2 * m at hlt
+    rw [← exactSlowNimBasicValue_eq_smithRemoteness (by decide)]
+    omega
+
+-- At m = 1 the legal M-move goes to the empty position.
+example : IsExactSlowNimCritical 2 0 (exactSlowNimMRuleMove ![1, 0, 1]) := by
+  have hx : IsExactSlowNimBasicA1 2 1 ![1, 0, 1] := by
+    refine ⟨by decide, by decide, by decide, 1, by decide, ?_⟩
+    rw [Fin.forall_fin_succ, Fin.forall_fin_two]
+    decide
+  obtain ⟨i, -, -, hmove, hcrit, hM⟩ := exactSlowNim_critical_of_odd (by decide) (by decide)
+    ![1, 0, 1] (critical_of_basicA1_three hx)
+  rw [hM]
+  exact (hcrit _ hmove).2 rfl
+
+-- With three legal options, the critical one keeps the even pile rather than the largest pile.
+example : IsExactSlowNimCritical 2 2 ![2, 0, 2] ∧ ¬ IsExactSlowNimCritical 2 2 ![1, 0, 3] := by
+  have hx : IsExactSlowNimBasicA1 2 3 ![2, 1, 3] := by
+    refine ⟨by decide, by decide, by decide, 0, by decide, ?_⟩
+    rw [Fin.forall_fin_succ, Fin.forall_fin_two]
+    decide
+  obtain ⟨i, -, hu, -, hcrit, -⟩ := exactSlowNim_critical_of_odd (by decide) (by decide)
+    ![2, 1, 3] (critical_of_basicA1_three hx)
+  have hi : i = 0 := (hu 0 (by decide)).symm
+  subst i
+  exact ⟨(hcrit _ (by decide)).2 (by decide), fun h =>
+    (show (![1, 0, 3] : Fin 3 → ℕ) ≠ slowANimAfter ![2, 1, 3] (Finset.univ.erase 0) by
+      decide) ((hcrit _ (by decide)).1 h)⟩
+
+end MetaMathlibExt
