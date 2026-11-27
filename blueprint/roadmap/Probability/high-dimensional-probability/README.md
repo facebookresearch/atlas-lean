@@ -5,7 +5,6 @@ Probability in high dimension and on geometric objects: log-concave and uniform 
 - [Angular synchronization](angular-synchronization/README.md)
 - [Beardwood–Halton–Hammersley theorem](beardwood-halton-hammersley-theorem/README.md)
 - [Bernoulli conjecture](bernoulli-conjecture/README.md)
-- [Finite-class learning bounds](finite-class-learning-bounds/README.md)
 - [Singularity of random Bernoulli matrices](singularity-of-random-bernoulli-matrices/README.md)
 - [Singularity of random sign matrices](singularity-of-random-sign-matrices/README.md)
 - [Supermodularity of entropy power](supermodularity-of-entropy-power/README.md)
@@ -24,3 +23,8 @@ Probability in high dimension and on geometric objects: log-concave and uniform 
 - [Free probability](free-probability/README.md)
 - [Gaussian measures restricted to convex sets](gaussian-measures-restricted-to-convex-sets/README.md)
 - [Gaussian surface area of ellipsoids](gaussian-surface-area-of-ellipsoids/README.md)
+
+
+- [Gaussian partitions](gaussian-partitions/README.md)
+- [First-order sampling of log-concave laws](log-concave-sampling/README.md)
+- [Noiseless Gaussian regression](noiseless-gaussian-regression/README.md)

@@ -11,7 +11,7 @@ positive definite matrices), and [Slutsky's theorem for a random matrix](slutsky
 multiplying a random vector converging in distribution gives the limit $V^{-1/2} \mathcal N(0, V) = \mathcal N(0, I_k)$; for $k = 1$ this is the
 [scalar-multiple form of Slutsky's theorem](../../statistical-estimation/asymptotic-normality-of-maximum-likelihood/smul-of-tendsto-in-measure-const.md). The central limit theorem for $T_L$ and the consistency of $\hat V_L$ are hypotheses; for dependent loci they are not
 implied by mixing without separate theorems. When $T_L$ is the mean of $B$ independent, identically distributed block means $z_b$ of $m$ loci each ($L = mB$, $B \to \infty$), $V = m \operatorname{Cov}(z_1)$
-and $\hat V_L = L\, V_{\mathrm{jack}}$ is consistent for it by the [scaled block-jackknife consistency](../../statistical-estimation/jackknife-covariance-estimation/ae-tendsto-card-smul-jack-cov.md), which gives block-jackknife $Z$-scores.
+and $\hat V_L = L\, V_{\mathrm{jack}}$ is consistent for it by the [scaled block-jackknife consistency](../../statistical-estimation/bootstrap-and-the-mallows-metric/jackknife-covariance-estimation/ae-tendsto-card-smul-jack-cov.md), which gives block-jackknife $Z$-scores.
 
 ## Proof depends on
 
@@ -21,7 +21,7 @@ and $\hat V_L = L\, V_{\mathrm{jack}}$ is consistent for it by the [scaled block
 ## Related topics
 
 - [Slutsky's theorem (scalar-multiple form)](../../statistical-estimation/asymptotic-normality-of-maximum-likelihood/smul-of-tendsto-in-measure-const.md)
-- [Strong consistency of the scaled block jackknife covariance](../../statistical-estimation/jackknife-covariance-estimation/ae-tendsto-card-smul-jack-cov.md)
+- [Strong consistency of the scaled block jackknife covariance](../../statistical-estimation/bootstrap-and-the-mallows-metric/jackknife-covariance-estimation/ae-tendsto-card-smul-jack-cov.md)
 
 ## Sources
 

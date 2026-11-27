@@ -19,8 +19,8 @@ A small P-value is evidence against $\operatorname{rank}F\le k$. P-values test a
 ## Proof depends on
 
 - [Eckart–Young theorem in operator norm](../../../Analysis/operator-theory/eigenvalue-inequalities/eckart-young-best-rank-approx-operator-n.md); the unweighted case needs its Frobenius-norm form, that a truncated singular value decomposition is a best rank-$k$ approximation in Frobenius norm
-- [Jackknife covariance as a scaled sample covariance](../../../Probability/statistical-estimation/jackknife-covariance-estimation/jack-cov-eq.md)
-- [Strong consistency of the scaled block jackknife covariance](../../../Probability/statistical-estimation/jackknife-covariance-estimation/ae-tendsto-card-smul-jack-cov.md)
+- [Jackknife covariance as a scaled sample covariance](../../../Probability/statistical-estimation/bootstrap-and-the-mallows-metric/jackknife-covariance-estimation/jack-cov-eq.md)
+- [Strong consistency of the scaled block jackknife covariance](../../../Probability/statistical-estimation/bootstrap-and-the-mallows-metric/jackknife-covariance-estimation/ae-tendsto-card-smul-jack-cov.md)
 - [Multivariate central limit theorem with a constructed limit](../../../Probability/central-limit-theorems/multivariate-central-limit-theorem/exists-tendsto-in-distribution-inv-sqrt.md)
 - [Studentization with a consistent covariance estimator](../../../Probability/convergence-of-measures/slutsky-s-theorem-and-the-delta-method/studentization-for-an-explicitly-supplied-depend.md)
 

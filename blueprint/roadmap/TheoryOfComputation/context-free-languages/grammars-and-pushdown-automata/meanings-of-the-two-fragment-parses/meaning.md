@@ -1,0 +1,3 @@
+# Meaning of a sentence parse
+
+The fragment is a small context-free grammar for sentences such as "everybody admires someone", whose parse trees are compiled into terms of a simply typed lambda calculus over two base types, entities $e$ and truth values $t$. A model consists of a set $D$ of entities, a predicate "person" on $D$ and a binary relation "admire" on $D$. For a parse tree that is valid for the grammar and whose root is the sentence category, its meaning in a model is the proposition obtained by compiling the tree to a closed term of type $t$ over the lexical context and interpreting that term, in the standard semantics of the simply typed lambda calculus, in the lexical environment of the model.

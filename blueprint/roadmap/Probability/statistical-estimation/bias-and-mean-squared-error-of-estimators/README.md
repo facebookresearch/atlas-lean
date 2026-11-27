@@ -40,3 +40,4 @@
 - [Mean squared error as the integral of the squared error under the law of the estimate](lintegral-deterministic-bind-of-real-sq.md)
 - [Variance of the stratified sample mean](variance-of-the-stratified-mean-estimator.md)
 - [A biased variance estimator with smaller mean squared error](biased-variance-estimator-with-smaller-mean-squared-error.md)
+- [Unbiasedness of the sample covariance](unbiasedness-of-the-sample-covariance/README.md)

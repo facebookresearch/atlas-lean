@@ -15,6 +15,7 @@ tools behind generalization bounds in learning theory (Wainwright, *High-Dimensi
 - [Symmetrization bound](integral-uniform-deviation-le-two-mul-ra.md)
 - [Concentration of the uniform deviation](uniform-deviation-le-integral-uniform-de.md)
 - [Uniform law via Rademacher complexity](uniform-deviation-le-two-mul-rademacher.md)
+- [Finite-class learning bounds](finite-class-learning-bounds/README.md)
 
 ## Related topics
 

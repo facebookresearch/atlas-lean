@@ -1,3 +1,0 @@
-# Scaling of Rademacher complexity
-
-For a finite set $A \subseteq \mathbb{R}^n$, let $\hat{\mathfrak R}(A) = 2^{-n}\sum_{\sigma \in \{\pm1\}^n}\max_{a \in A}\frac1n\sum_i\sigma_ia_i$ be its empirical Rademacher complexity (one-sided, $0$ for $A = \emptyset$). For every finite $A$ and $c \in \mathbb{R}$, $\hat{\mathfrak R}(cA) = |c|\,\hat{\mathfrak R}(A)$. This is the finite-set case of [scaling](../../../ComputerScience/machine-learning/generalization-bounds-and-concentration/rademacher-complexity/rademacher-complexity-smul.md) of the empirical Rademacher complexity, which holds for every set of vectors.

@@ -58,7 +58,7 @@
 - [Conditioning on an ascertainment event can correlate drift increments](ascertainment-as-conditioning-breaks-the-second.md)
 ## Standard errors from blocks of loci
 
-The delete-one-block jackknife covariance of $B \ge 2$ block values is [a scaled sample covariance](../../../Probability/statistical-estimation/jackknife-covariance-estimation/jack-cov-eq.md) of the blocks, so it is $0$ exactly when all block values are equal; for independent, identically distributed blocks, $B$ times it is [strongly consistent](../../../Probability/statistical-estimation/jackknife-covariance-estimation/ae-tendsto-card-smul-jack-cov.md) for their covariance. Neither statement covers dependent blocks.
+The delete-one-block jackknife covariance of $B \ge 2$ block values is [a scaled sample covariance](../../../Probability/statistical-estimation/bootstrap-and-the-mallows-metric/jackknife-covariance-estimation/jack-cov-eq.md) of the blocks, so it is $0$ exactly when all block values are equal; for independent, identically distributed blocks, $B$ times it is [strongly consistent](../../../Probability/statistical-estimation/bootstrap-and-the-mallows-metric/jackknife-covariance-estimation/ae-tendsto-card-smul-jack-cov.md) for their covariance. Neither statement covers dependent blocks.
 
 - [Averages with summable autocovariances converge in mean square](consistency-of-mean-genetic-summaries-under-summ.md)
 - [Consistency, delta variance and weak-denominator behavior of the f4 ratio](statistical-behavior-of-the-f4-ratio-estimate.md)
@@ -66,3 +66,7 @@ The delete-one-block jackknife covariance of $B \ge 2$ block values is [a scaled
 - [Genome-wide f-statistic estimation with dependent loci](genome-wide-f-statistic-estimation-with-dependen.md)
 - [Goodness of fit of a qpGraph model and its limits](qp-graph-goodness-of-fit-and-model-ambiguity.md)
 - [Asymptotic rank test for qpWave and qpAdm](rank-test-for-qp-wave-qp-adm.md)
+- [The f-branch statistic](f-branch-statistic.md)
+- [Frequency-based ABBA–BABA counts and the minimum D statistic of a trio](frequency-based-abba-baba-counts-and-dmin.md)
+## Asymptotic normality of the D-statistic
+- [Asymptotic normality of the D-statistic](asymptotic-normality-of-the-d-statistic/README.md)

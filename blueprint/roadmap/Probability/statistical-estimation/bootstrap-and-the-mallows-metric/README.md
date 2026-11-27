@@ -76,6 +76,7 @@ Efron's bootstrap estimates the sampling distribution of a statistic by recomput
 - [Central limit theorem for bootstrap rows with positive variance](tendsto-integral-map-sum-bootstrap-row-o.md)
 - [Central limit theorem for bootstrap rows](tendsto-in-distribution-sum-bootstrap-ro.md)
 - [Weak convergence implies convergence of quantiles](tendsto-cdf-quantile-of-tendsto-in-distr.md)
+- [Jackknife covariance estimation](jackknife-covariance-estimation/README.md)
 
 ## Related topics
 

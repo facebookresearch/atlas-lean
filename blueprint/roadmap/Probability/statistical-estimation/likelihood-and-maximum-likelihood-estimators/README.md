@@ -1,7 +1,21 @@
 # Likelihood and maximum likelihood estimators
 
-The [Poisson likelihood of an observed count](../../../Biology/statistical-genetics/gene-constraint-scores-pli-and-loeuf/poisson-lik.md), its [positivity](../../../Biology/statistical-genetics/gene-constraint-scores-pli-and-loeuf/poisson-lik-pos.md) and its [recursion](../../../Biology/statistical-genetics/gene-constraint-scores-pli-and-loeuf/poisson-lik-succ.md) are stated with gene constraint scores.
+- [Maximum likelihood for Bernoulli samples](bernoulli-mle/README.md)
+- [The Bernoulli likelihood depends only on the number of successes](bernoulli-likelihood-eq-pow.md)
+- [Sample proportion of an all-success sample](sample-proportion-eq-one-of-all-true.md)
+- [Sample proportion of an all-failure sample](sample-proportion-eq-zero-of-all-false.md)
+- [Bernoulli likelihood of an all-success sample](bernoulli-likelihood-all-true.md)
+- [Bernoulli likelihood of an all-failure sample](bernoulli-likelihood-all-false.md)
+- [The sample proportion lies in the unit interval](sample-proportion-mem-icc.md)
+- [Sample proportion as a parameter of the Bernoulli model](sample-proportion-param.md)
+- [Density of the Bernoulli model](bernoulli-family-dens-eq.md)
+- [Maximum likelihood in the Bernoulli model](bernoulli-family-dens-is-max-on.md)
+- [Strict maximum likelihood in the Bernoulli model](bernoulli-family-dens-lt-of-ne.md)
+- [Consistency of maximum likelihood](consistency-of-maximum-likelihood/README.md)
+- [Estimating equations and misspecified models](estimating-equations-and-misspecified-models/README.md)
 
+## Bernoulli likelihood is maximized at the sample proportion
+The [Poisson likelihood of an observed count](../../../Biology/statistical-genetics/gene-constraint-scores-pli-and-loeuf/poisson-lik.md), its [positivity](../../../Biology/statistical-genetics/gene-constraint-scores-pli-and-loeuf/poisson-lik-pos.md) and its [recursion](../../../Biology/statistical-genetics/gene-constraint-scores-pli-and-loeuf/poisson-lik-succ.md) are stated with gene constraint scores.
 ## Definition
 
 - [Normalized density family](normalized-density-family.md)
@@ -29,16 +43,7 @@ The [Poisson likelihood of an observed count](../../../Biology/statistical-genet
 - [Probability of a count vector under independent Poisson laws](pi-poisson-measure-real-singleton.md)
 - [The Poisson-random-field log-likelihood](log-pi-poisson-measure-real-singleton.md)
 
-## Bernoulli likelihood is maximized at the sample proportion
+## Incidental parameters and latent structure
 
-- [Maximum likelihood for Bernoulli samples](bernoulli-mle/README.md)
-- [The Bernoulli likelihood depends only on the number of successes](bernoulli-likelihood-eq-pow.md)
-- [Sample proportion of an all-success sample](sample-proportion-eq-one-of-all-true.md)
-- [Sample proportion of an all-failure sample](sample-proportion-eq-zero-of-all-false.md)
-- [Bernoulli likelihood of an all-success sample](bernoulli-likelihood-all-true.md)
-- [Bernoulli likelihood of an all-failure sample](bernoulli-likelihood-all-false.md)
-- [The sample proportion lies in the unit interval](sample-proportion-mem-icc.md)
-- [Sample proportion as a parameter of the Bernoulli model](sample-proportion-param.md)
-- [Density of the Bernoulli model](bernoulli-family-dens-eq.md)
-- [Maximum likelihood in the Bernoulli model](bernoulli-family-dens-is-max-on.md)
-- [Strict maximum likelihood in the Bernoulli model](bernoulli-family-dens-lt-of-ne.md)
+- [Neyman–Scott inconsistency for groups of any size](neyman-scott-incidental-parameter-inconsistency.md)
+- [Hidden Markov and latent structure models](hidden-markov-and-latent-structure-models/README.md)
