@@ -223,3 +223,4 @@ Topics added since this subject's fields were last revised.
 - [BSpline](bspline/README.md)
 - [Jensen's inequality for the logarithm of an analytic function](log-norm-le-circle-average-log-norm.md)
 - [Unit Add Torus Volume](unit-add-torus-volume/README.md)
+- [Weak approximation for absolute values](exists-forall-sub-lt-of-pairwise-not-is.md)
