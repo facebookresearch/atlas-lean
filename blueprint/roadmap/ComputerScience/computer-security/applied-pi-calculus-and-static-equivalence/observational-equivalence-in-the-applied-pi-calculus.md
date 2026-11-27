@@ -1,7 +1,7 @@
 # Observational equivalence in the applied pi calculus
 
-For closed extended processes of the [applied pi calculus](applied-pi-calculus.md), write $A \Downarrow a$ if $A$ can send a message on the name $a$, that is,
-$A \to^* \equiv E[\overline a\langle M\rangle.P]$ for some evaluation context $E$ that does not bind $a$. An *observational bisimulation* is a symmetric relation $\mathcal R$ on
+For closed extended processes of the [applied pi calculus](terms-and-processes-of-the-applied-pi-calculus.md), write $A \Downarrow a$ if $A$ can send a message on the name $a$, that is,
+$A \to^* \equiv E[\overline a\langle M\rangle.P]$ in [internal reduction](internal-reduction-in-the-applied-pi-calculus.md) for some evaluation context $E$ that does not bind $a$. An *observational bisimulation* is a symmetric relation $\mathcal R$ on
 closed extended processes with the same domain such that $A \mathrel{\mathcal R} B$ implies
 
 1. if $A \Downarrow a$ then $B \Downarrow a$;
@@ -12,7 +12,8 @@ closed extended processes with the same domain such that $A \mathrel{\mathcal R}
 
 ## Depends on
 
-- [The applied pi calculus](applied-pi-calculus.md)
+- [Terms and processes of the applied pi calculus](terms-and-processes-of-the-applied-pi-calculus.md)
+- [Internal reduction in the applied pi calculus](internal-reduction-in-the-applied-pi-calculus.md)
 
 ## Sources
 
