@@ -8,7 +8,7 @@ $$\partial_tP + \frac{x(1 - x)}{2\nu(t)}\partial_x^2P + b_t(x)\,\partial_xP = 0,
 
 with terminal value the indicator of $\{1\}$ at $t = T$. With mutation this identification fails: at a regular reflecting endpoint a path may hit $1$ and leave again before time $T$, so the terminal indicator of the unstopped process computes $P_{x,t}(X_T = 1)$, not $P_{x,t}(\tau_1 \le T)$. The first-passage probability in that case is a separate target, for the process stopped at $\tau_1$, with boundary value $1$ at $x = 1$ and the original boundary behavior at $0$.
 
-Running the process on the genetic clock $A(t) = \int_0^t\nu(s)^{-1}ds$, which makes the variance $x(1 - x)$, multiplies the drift by $\nu$: in genetic time the scaled selection coefficient and mutation rates at time $t$ are $\nu(t)\alpha(t)$ and $\nu(t)\theta_i(t)$, which is the chain rule $\frac{d}{du} = \nu(t)\frac{d}{dt}$ for $u = A(t)$. The definition of the time-inhomogeneous martingale problem and the deterministic clock change itself are separate statements.
+Running the process on the genetic clock $A(t) = \int_0^t\nu(s)^{-1}ds$, which makes the variance $x(1 - x)$, multiplies the drift by $\nu$: in genetic time the scaled selection coefficient and mutation rates at time $t$ are $\nu(t)\alpha(t)$ and $\nu(t)\theta_i(t)$, which is the chain rule $\frac{d}{du} = \nu(t)\frac{d}{dt}$ for $u = A(t)$. The definition of the [time-inhomogeneous martingale problem](../../fixation-and-absorption-in-the-wright-fisher-dif/time-inhomogeneous-martingale-problem.md) and the [deterministic clock change](../../fixation-and-absorption-in-the-wright-fisher-dif/deterministic-clock-change-for-martingale-proble.md) itself are separate statements.
 
 ## Depends on
 

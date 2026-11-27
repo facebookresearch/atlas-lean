@@ -4,7 +4,7 @@ In the structured diffusion with generator $Lf = \sum_i\frac{x_i(1 - x_i)}{2\kap
 
 $$u(\bar x) = \begin{cases}\dfrac{1 - e^{-2\alpha K\bar x}}{1 - e^{-2\alpha K}}, & \alpha \ne 0,\\[1ex] \bar x, & \alpha = 0,\end{cases} \qquad \bar x = \sum_iw_ix_i,$$
 
-whatever the migration rates.
+whatever the migration rates. Maruyama (1970, Summary) obtained this invariance for a discrete-generation model, by Moran's method of an expectation $E[e^{-2s\,i(t)}]$ that is almost invariant in time, with $i(t)$ the number of mutant genes in generation $t$ and $s$ the selection coefficient of the additive model: the fixation probability of a mutant is not altered by the subdivision of the population into partially isolated colonies when fitness is additive, sampling and selection act separately in each colony, and migration does not change the gene frequency in the whole population. The diffusion form above and its proof are this page's derivation.
 
 Proof. Let $H(x) = \sum_iw_ix_i(1 - x_i)$. Migration does not change $\bar x$, so the drift of $\bar x$ is $\alpha H(x)$; since the demes resample independently, its quadratic-variation rate is $\sum_iw_i^2x_i(1 - x_i)/\kappa_i = H(x)/K$, because $w_i/\kappa_i = 1/K$. For $f(x) = e^{-2\alpha K\bar x}$,
 
@@ -30,5 +30,6 @@ so for $\alpha \ne 0$, $e^{-2\alpha K\bar x(t)}$ is a bounded martingale, and op
 
 ## Sources
 
+- T. Maruyama, On the fixation probability of mutant genes in a subdivided population, Genet. Res. 15 (1970), 221–225, Summary. <https://doi.org/10.1017/S0016672300001543>
 - J. L. Cherry and J. Wakeley, A diffusion approximation for selection and drift in a subdivided population, Genetics 163 (2003), 421–428, abstract. <https://doi.org/10.1093/genetics/163.1.421>
 - M. C. Whitlock, Fixation probability and time in subdivided populations, Genetics 164 (2003), 767–779, abstract. <https://doi.org/10.1093/genetics/164.2.767>

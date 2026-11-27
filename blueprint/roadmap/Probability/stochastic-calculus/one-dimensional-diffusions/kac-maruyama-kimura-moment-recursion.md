@@ -1,6 +1,6 @@
 # Moment recursion for additive path functionals
 
-Let $X$ be a regular diffusion on $[0, 1]$ with infinitesimal mean $\mu$ and variance $\sigma^2$, let $T^*$ be its exit time from $(0, 1)$ and $G(p, \xi)$ its Green's function, so that $E_p[\int_0^{T^*}g(X_s)\,ds] = \int_0^1G(p, \xi)g(\xi)\,d\xi$ for continuous $g$ (Karlin and Taylor 1981, Chapter 15); write $(Gg)(p)$ for the right side. For continuous $g \ge 0$ let $A = \int_0^{T^*}g(X_s)\,ds$ and $M_n(p) = E_p[A^n]$. Then $M_0 = 1$ and
+Let $X$ be a regular diffusion on $[0, 1]$ with infinitesimal mean $\mu$ and variance $\sigma^2$, let $T^*$ be its exit time from $(0, 1)$ and $G(p, \xi)$ its Green's function, so that $E_p[\int_0^{T^*}g(X_s)\,ds] = \int_0^1G(p, \xi)g(\xi)\,d\xi$ for continuous $g$ (Karlin and Taylor 1981, Chapter 15; the [Green-function occupation formula](../../../Biology/population-genetics/diffusion-theory/selection-duality-and-general-one-dimensional-di/green-function-occupation-times-and-mean-exit-ti.md) with $[l, r] = [0, 1]$); write $(Gg)(p)$ for the right side. For continuous $g \ge 0$ let $A = \int_0^{T^*}g(X_s)\,ds$ and $M_n(p) = E_p[A^n]$. Then $M_0 = 1$ and
 
 $$M_n = n\,G(g\,M_{n-1}), \qquad n \ge 1.$$
 
@@ -8,6 +8,7 @@ Derivation: $A^n = n\int_0^{T^*}g(X_t)\bigl(\int_t^{T^*}g(X_s)\,ds\bigr)^{n-1}dt
 
 ## Depends on
 
+- [Green function, occupation times and mean exit times of a one-dimensional diffusion](../../../Biology/population-genetics/diffusion-theory/selection-duality-and-general-one-dimensional-di/green-function-occupation-times-and-mean-exit-ti.md)
 - [Dirichlet Green's function of a one-dimensional diffusion](../../../Biology/population-genetics/diffusion-theory/selection-duality-and-general-one-dimensional-di/green-function.md)
 - [Green's representation for a regular diffusion](../../../Biology/population-genetics/diffusion-theory/selection-duality-and-general-one-dimensional-di/diffusion-generator-integral-green-funct.md)
 - [Expected occupation integral until absorption, from L₀u = −g](../../../Biology/population-genetics/diffusion-theory/absorption-of-the-neutral-wright-fisher-martinga/integral-absorption-time-of-generator-eq.md)

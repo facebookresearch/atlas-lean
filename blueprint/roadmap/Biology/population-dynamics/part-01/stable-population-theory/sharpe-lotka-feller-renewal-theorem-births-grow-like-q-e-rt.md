@@ -10,6 +10,7 @@ The derivation is explicit. Put $B_r(t) = e^{-rt}B(t)$, $G_r(t) = e^{-rt}G(t)$ a
 
 ## Depends on
 
+- [Lotka's characteristic equation](lotka-characteristic-equation-unique-real-root-r-0-iff-r0-1-dominance.md)
 - [Renewal equation for exponential growth](../../../epidemiology/euler-lotka-equation-and-the-reproduction-number/renewal-exp-iff.md)
 
 ## Expansion

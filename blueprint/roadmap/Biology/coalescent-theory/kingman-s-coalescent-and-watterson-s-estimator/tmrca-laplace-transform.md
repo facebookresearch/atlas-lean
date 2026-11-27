@@ -16,7 +16,7 @@ and $E[e^{-sT_{\mathrm{MRCA},n}}] = \infty$ for $s \le -1$, since the smallest r
 
 1. The [holding times](../../../Biology/coalescent-theory/kingman-s-coalescent-and-watterson-s-estimator/kingman-times.md) and their independence.
 2. The transform of one exponential variable and the product over independent factors; the domain $s > -1$.
-3. Convergence of the infinite product ($\sum_k |s|/(\binom k2 + s) < \infty$) and the monotone-convergence step for $s > 0$ and for $-1 < s < 0$.
+3. Convergence of the infinite product ($\sum_k |s|/(\binom k2 + s) < \infty$) the bounded-convergence step for $s \ge 0$, and the monotone-convergence step for $-1 < s < 0$.
 4. Consistency with the [expected TMRCA](../../../Biology/coalescent-theory/kingman-s-coalescent-and-watterson-s-estimator/integral-tmrca.md) and the [variance of the TMRCA](../../../Biology/coalescent-theory/kingman-s-coalescent-and-watterson-s-estimator/variance-tmrca.md) through the first two derivatives at $s = 0$.
 
 ## Sources

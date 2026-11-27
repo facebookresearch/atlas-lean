@@ -8,6 +8,8 @@ by the same decomposition of $A^n$ and the Markov property at time $t$, since th
 
 ## Depends on
 
+- [Scale function and exit probabilities for one-dimensional diffusions (process level)](../../../Biology/population-genetics/diffusion-theory/selection-duality-and-general-one-dimensional-di/scale-function-and-exit-probabilities-for-one-di.md)
+- [Green function, occupation times and mean exit times of a one-dimensional diffusion](../../../Biology/population-genetics/diffusion-theory/selection-duality-and-general-one-dimensional-di/green-function-occupation-times-and-mean-exit-ti.md)
 - [Moment recursion for additive path functionals](../../../Probability/stochastic-calculus/one-dimensional-diffusions/kac-maruyama-kimura-moment-recursion.md)
 - [Path functionals between prescribed frequencies](../../../Probability/stochastic-calculus/one-dimensional-diffusions/functionals-between-prescribed-frequencies.md)
 - [A retrospective sampling model for allele age](../../../Biology/population-genetics/diffusion-theory/allele-age-and-the-maruyama-effect/retrospective-sampling-model.md)

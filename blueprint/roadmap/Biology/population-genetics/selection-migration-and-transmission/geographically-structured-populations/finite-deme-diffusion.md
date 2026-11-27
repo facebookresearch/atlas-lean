@@ -8,7 +8,7 @@ In time units of $M$ generations, adding local selection and mutation drifts $\b
 
 $$Lf = \sum_i\frac{x_i(1 - x_i)}{2\kappa_i}\partial_i^2f + \sum_i\Bigl[\sum_{j \ne i}q_{ij}(x_j - x_i) + \beta_i(x_i)\Bigr]\partial_if,$$
 
-with no cross second-order terms, because the demes resample independently. If sampling precedes migration, $x' = Px''$ with independent binomial $x''$: the mean is the same and the covariance $\sum_kp_{ik}p_{jk}x_k(1 - x_k)/M_k$ differs from the one above by $O(1/M^2)$, so the order of the two steps does not change the limiting generator. Cherry and Wakeley (2003, abstract) use such a diffusion for Wright's island model with genic selection.
+with no cross second-order terms, because the demes resample independently. If sampling precedes migration, $x' = Px''$ with independent binomial $x''$: the mean is the same and the covariance $\sum_kp_{ik}p_{jk}x_k(1 - x_k)/M_k$ differs from the one above by $O(1/M^2)$, so the order of the two steps does not change the limiting generator. Cherry and Wakeley (2003, abstract) use such a diffusion for Wright's island model with genic selection. With genic selection, the forward equation of this generator for a density of derived mutations has the form of the [multi-population diffusion for the joint allele-frequency density](../../diffusion-theory/poisson-random-field-model/multipopulation-diffusion-with-migration-and-admixture.md).
 
 ## Expansion
 

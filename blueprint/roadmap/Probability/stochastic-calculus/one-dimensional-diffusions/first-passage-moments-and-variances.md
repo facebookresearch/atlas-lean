@@ -8,6 +8,8 @@ which for $n = 1$ is the equation $L\,E[\tau] = -1$ with zero boundary values (K
 
 ## Depends on
 
+- [Scale function and exit probabilities for one-dimensional diffusions (process level)](../../../Biology/population-genetics/diffusion-theory/selection-duality-and-general-one-dimensional-di/scale-function-and-exit-probabilities-for-one-di.md)
+- [Green function, occupation times and mean exit times of a one-dimensional diffusion](../../../Biology/population-genetics/diffusion-theory/selection-duality-and-general-one-dimensional-di/green-function-occupation-times-and-mean-exit-ti.md)
 - [Moment recursion for additive path functionals](../../../Probability/stochastic-calculus/one-dimensional-diffusions/kac-maruyama-kimura-moment-recursion.md)
 - [Dirichlet Green's function of a one-dimensional diffusion](../../../Biology/population-genetics/diffusion-theory/selection-duality-and-general-one-dimensional-di/green-function.md)
 - [Green's representation for a regular diffusion](../../../Biology/population-genetics/diffusion-theory/selection-duality-and-general-one-dimensional-di/diffusion-generator-integral-green-funct.md)

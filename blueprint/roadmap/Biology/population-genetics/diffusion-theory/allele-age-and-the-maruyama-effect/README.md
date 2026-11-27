@@ -50,4 +50,3 @@
 - [A retrospective sampling model for allele age](retrospective-sampling-model.md)
 - [Higher moments of allele age and comparison with first arrival](age-moments-variance-and-first-arrival-comparison.md)
 - [Alternative definitions of allele age](alternative-age-definitions-and-limits-of-the-effect.md)
-- [Allele age under changing population size](time-dependent-allele-age.md)

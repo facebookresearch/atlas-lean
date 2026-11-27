@@ -5,12 +5,13 @@ Let $x_1, x_2, \dots$ be operators representing time-varying vital rates (for ex
 ## Expansion
 
 1. The model: products of nonnegative matrices, normalization, and the uniform weak ergodicity property.
-2. A precise sufficient condition: there are $k$ and $\varepsilon > 0$ such that every product of $k$ consecutive matrices from $X$ is positive with the ratios of entries in each column bounded by $1/\varepsilon$.
-3. Hilbert's projective metric on the positive cone and Birkhoff's contraction coefficient for positive matrices, and the contraction of $k$-step products under the condition of item 2.
+2. A precise sufficient condition (Seneta 2006, Theorem 3.3): there are an integer $r_0 \ge 1$ and $\gamma > 0$ such that every product of $r_0$ consecutive matrices of the sequence is positive and in every matrix of the sequence the smallest positive entry is at least $\gamma$ times the largest entry; then the forward products are weakly ergodic at a geometric rate.
+3. Hilbert's projective metric on the positive cone and Birkhoff's contraction coefficient for positive matrices, and the contraction of $r_0$-step products under the condition of item 2.
 4. From convergence to $0$ of the projective distance to weak ergodicity in the norm of normalized vectors.
 5. Strong ergodicity (convergence of $y_n$ itself when $x_n \to x$), as a separate statement.
 
 ## Sources
 
 - J. E. Cohen, Ergodicity of age structure in populations with Markovian vital rates. II. General states, Adv. Appl. Probab. 9 (1977), 18–37, Introduction, Theorem 2 and Section 2.5 (proof of Corollary 1). <https://doi.org/10.2307/1425814>
+- E. Seneta, *Non-negative Matrices and Markov Chains*, revised printing, Springer, New York, 2006, Section 3.2, Theorem 3.3.
 - Original result: M. Golubitsky, E. B. Keeler and M. Rothschild, Convergence of the age structure: applications of the projective metric, Theor. Popul. Biol. 7 (1975), 84–93. <https://doi.org/10.1016/0040-5809(75)90007-6> The weak ergodic theorem and its projective proof follow Cohen (1977).

@@ -1,6 +1,10 @@
 # Stability of May's negative-binomial host–parasitoid model
 
-May's model of parasitoids that aggregate in a patchy environment is $H_{t+1} = F H_t (1 + a P_t/k)^{-k}$, $P_{t+1} = H_t - H_{t+1}/F$ (May 1978, eqs. (3)–(4)), with $F > 1$, $a > 0$ and clumping parameter $k > 0$; the negative-binomial factor is the probability that a host escapes parasitism. Its positive equilibrium is $a P^* = k(F^{1/k} - 1)$ (eq. (5)) with $H^* = F P^*/(F - 1)$ (eq. (6), from eq. (4) at equilibrium). May shows that this equilibrium is stable against small disturbances if and only if $k < 1$ (eq. (7), proved in his Appendix 2); for $k > 1$ arbitrarily small disturbances lead to diverging oscillations, and the stability depends only on $k$, independently of $F$ and $a$. As $k \to \infty$ the Nicholson–Bailey result $a P^* = \ln F$ is recovered.
+May's model of parasitoids that aggregate in a patchy environment is $H_{t+1} = F H_t (1 + a P_t/k)^{-k}$, $P_{t+1} = H_t - H_{t+1}/F$ (May 1978, eqs. (3)–(4)), with $F > 1$, $a > 0$ and clumping parameter $k > 0$; the negative-binomial factor is the probability that a host escapes parasitism. Its positive equilibrium is $a P^* = k(F^{1/k} - 1)$ (eq. (5)) with $H^* = F P^*/(F - 1)$ (eq. (6), from eq. (4) at equilibrium). May shows that this equilibrium is stable against small disturbances if and only if $k < 1$ (eq. (7), proved in his Appendix 2); for $k > 1$ arbitrarily small disturbances lead to diverging oscillations, and the stability depends only on $k$, independently of $F$ and $a$. As $k \to \infty$ the [Nicholson–Bailey equilibrium](../../../not-yet-classified/nicholson-bailey/positive-equilibrium.md) $a P^* = \ln F$ is recovered.
+
+## Depends on
+
+- [Positive Equilibrium](../../../not-yet-classified/nicholson-bailey/positive-equilibrium.md)
 
 ## Expansion
 

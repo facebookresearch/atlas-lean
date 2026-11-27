@@ -10,6 +10,10 @@ $$V'(t) = \int_0^\infty (-\partial_x n - \mu n) v\, dx = n(0, t) v(0) + \int_0^\
 
 by integration by parts and the birth condition, so $V(t) = V(0) e^{rt}$ exactly, for every initial age distribution.
 
+## Depends on
+
+- [Lotka's characteristic equation](lotka-characteristic-equation-unique-real-root-r-0-iff-r0-1-dominance.md)
+
 ## Expansion
 
 1. The model: survivorship, mortality and fertility, the characteristic root $r$, and the McKendrick–von Foerster equation with the renewal boundary condition.

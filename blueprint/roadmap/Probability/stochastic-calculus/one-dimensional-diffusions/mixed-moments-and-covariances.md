@@ -8,6 +8,7 @@ so $\mathrm{Cov}_p(A_g, A_h) = G(g\,Gh + h\,Gg)(p) - (Gg)(p)\,(Gh)(p)$. Derivati
 
 ## Depends on
 
+- [Green function, occupation times and mean exit times of a one-dimensional diffusion](../../../Biology/population-genetics/diffusion-theory/selection-duality-and-general-one-dimensional-di/green-function-occupation-times-and-mean-exit-ti.md)
 - [Moment recursion for additive path functionals](../../../Probability/stochastic-calculus/one-dimensional-diffusions/kac-maruyama-kimura-moment-recursion.md)
 - [Dirichlet Green's function of a one-dimensional diffusion](../../../Biology/population-genetics/diffusion-theory/selection-duality-and-general-one-dimensional-di/green-function.md)
 

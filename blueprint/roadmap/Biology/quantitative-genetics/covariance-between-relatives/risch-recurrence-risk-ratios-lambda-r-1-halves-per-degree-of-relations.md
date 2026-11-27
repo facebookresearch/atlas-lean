@@ -10,6 +10,8 @@ For relatives with $\Delta_R = 0$ (parents and offspring, and second- and higher
 
 ## Depends on
 
+- [Prevalence](../../statistical-genetics/risch-recurrence-risk-ratios-for-multilocus-trai/prevalence.md)
+- [Risch's recurrence-risk ratio](../../statistical-genetics/risch-recurrence-risk-ratios-for-multilocus-trai/recurrence-ratio.md)
 - [Single-locus covariance between relatives in Cockerham form](../../../Biology/quantitative-genetics/covariance-between-relatives/rel-cov-eq-cov.md)
 - [Malécot's recursion computes gene-dropping kinship](../../../Biology/quantitative-genetics/pedigree-kinship-and-inbreeding/gene-drop-kinship-eq-kinship.md)
 

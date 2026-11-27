@@ -8,7 +8,7 @@ so that conservative migration becomes $\sum_jc_iM_{ij} = \sum_jc_jM_{ji}$. With
 
 $$dp_i = \sum_j\frac{c_j}{c_i}M_{ji}(p_j - p_i)\,dt + \sqrt{\frac{p_i(1 - p_i)}{c_i}}\,dW_i,$$
 
-with independent Brownian motions $W_i$ (the stepping-stone model of Kimura and Weiss 1964). The ancestral lineages of a sample follow the structured coalescent $n = (n_i)_{i\in I}$, the deme counts of the [structured coalescent for $n$ lineages](structured-coalescent-for-n-lineages-with-a-gene.md): a lineage in deme $i$ moves to deme $j$, $n_i \mapsto n_i - 1$ and $n_j \mapsto n_j + 1$, at rate $n_ic_jM_{ji}/c_i$, and two lineages in deme $i$ coalesce, $n_i \mapsto n_i - 1$, at rate $n_i(n_i - 1)/(2c_i)$; under conservative migration $c_jM_{ji}/c_i$ is the backward migration rate from deme $i$ to deme $j$, and this is the structured coalescent of Notohara (1990) and Wilkinson-Herbots (1998, Eq. (3)), up to the normalization of the scaled migration rates. With $p^n = \prod_{i\in I}p_i^{n_i}$, the two processes are dual (Notohara 1990):
+with independent Brownian motions $W_i$ (the stepping-stone model of Kimura and Weiss 1964). The ancestral lineages of a sample follow the structured coalescent $n = (n_i)_{i\in I}$, the deme counts of the [structured coalescent for $n$ lineages](structured-coalescent-for-n-lineages-with-a-gene.md) with the relative sizes $c_i$, $N$ gene copies in the reference population (so that its time unit is the present one of $N$ generations) and backward migration probabilities $q_{ij} = c_jM_{ji}/(Nc_i)$. With that page's rates, each lineage moves from deme $i$ to deme $j$ at rate $Nq_{ij} = c_jM_{ji}/c_i$ and each pair of lineages in deme $i$ coalesces at rate $1/c_i$, so a lineage in deme $i$ moves to deme $j$, $n_i \mapsto n_i - 1$ and $n_j \mapsto n_j + 1$, at rate $n_ic_jM_{ji}/c_i$, and two lineages in deme $i$ coalesce, $n_i \mapsto n_i - 1$, at rate $n_i(n_i - 1)/(2c_i)$; under conservative migration $c_jM_{ji}/c_i$ is the backward migration rate from deme $i$ to deme $j$, and this is the structured coalescent of Notohara (1990) and Wilkinson-Herbots (1998, Eq. (3)), up to the normalization of the scaled migration rates. With $p^n = \prod_{i\in I}p_i^{n_i}$, the two processes are dual (Notohara 1990):
 
 $$E\bigl[p_t^{n_0}\bigr] = E\bigl[p_0^{n_t}\bigr],$$
 
@@ -16,6 +16,7 @@ that is, the probability that a sample of $n_i(0)$ genes from each deme $i$ at t
 
 ## Depends on
 
+- [Structured coalescent for n lineages with a general migration matrix](structured-coalescent-for-n-lineages-with-a-gene.md)
 - [Transition rates of the two-lineage structured coalescent](../../../Biology/coalescent-theory/structured-coalescent/rate.md)
 - [Closed-form mean coalescence times in the island model](../../../Biology/coalescent-theory/structured-coalescent/mean-coalescence-time.md)
 - [Moment duality with Kingman's coalescent](../../../Biology/population-genetics/diffusion-theory/wright-fisher-diffusion/generator-pow.md)

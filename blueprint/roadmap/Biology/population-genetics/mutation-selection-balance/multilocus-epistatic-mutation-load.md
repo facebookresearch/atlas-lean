@@ -10,7 +10,7 @@ For deleterious mutations at many loci, the Haldane–Muller principle of mutati
 
 1. The multilocus model: per-locus mutation rates, a fitness function of the number of deleterious mutations, and the recombination and population assumptions.
 2. Multiplicative fitness across loci and the mean fitness $e^{-U}$, from the single-locus load.
-3. The equilibrium distribution of the number of mutations per individual under the model's assumptions, and the load under the quadratic fitness function of Kimura and Maruyama.
+3. The equilibrium distribution of the number of mutations per individual under the model's assumptions, and the load under the quadratic fitness function of Kimura and Maruyama; for multiplicative fitness in an asexual haploid population see the [Poisson equilibrium of multiplicative mutation–selection balance](multilocus-multiplicative-mutation-selection-poi.md).
 4. Truncation selection, and the comparison of its load with the multiplicative case.
 
 ## Sources

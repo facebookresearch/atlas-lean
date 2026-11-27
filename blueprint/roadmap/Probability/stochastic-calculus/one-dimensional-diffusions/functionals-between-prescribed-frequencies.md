@@ -1,6 +1,6 @@
 # Path functionals between prescribed frequencies
 
-Let $X$ be a regular diffusion on $[0, 1]$ with drift $\mu$, infinitesimal variance $\sigma^2$, scale function $S$ and speed density $m$, and let $0 \le c < p < d \le 1$ with $c$ and $d$ accessible. Stop the path at the first exit time $T$ from $(c, d)$; both $c$ and $d$ are stopping (killing) boundaries for the functional, and the side of exit is the observation. By Karlin and Taylor (1981, Chapter 15) the path started at $p$ leaves at $d$ with probability $h(p) = (S(p) - S(c))/(S(d) - S(c))$, and, on the interval $(c, d)$, $E_p\int_0^Tg(X_s)\,ds = \int_c^dG_{c,d}(p, \xi)\,g(\xi)\,d\xi$, where $G_{c,d}$ is their Green's function with endpoints $c$ and $d$.
+Let $X$ be a regular diffusion on $[0, 1]$ with drift $\mu$, infinitesimal variance $\sigma^2$, scale function $S$ and speed density $m$, and let $0 \le c < p < d \le 1$ with $c$ and $d$ accessible. Stop the path at the first exit time $T$ from $(c, d)$; both $c$ and $d$ are stopping (killing) boundaries for the functional, and the side of exit is the observation. By Karlin and Taylor (1981, Chapter 15) the path started at $p$ leaves at $d$ with probability $h(p) = (S(p) - S(c))/(S(d) - S(c))$, and, on the interval $(c, d)$, $E_p\int_0^Tg(X_s)\,ds = \int_c^dG_{c,d}(p, \xi)\,g(\xi)\,d\xi$, where $G_{c,d}$ is their Green's function with endpoints $c$ and $d$: these are the [scale-function exit probabilities](../../../Biology/population-genetics/diffusion-theory/selection-duality-and-general-one-dimensional-di/scale-function-and-exit-probabilities-for-one-di.md) and the [Green-function occupation formula](../../../Biology/population-genetics/diffusion-theory/selection-duality-and-general-one-dimensional-di/green-function-occupation-times-and-mean-exit-ti.md) with $[l, r] = [c, d]$.
 
 The functionals conditioned on the exit side follow by the Markov property: on $\{s < T\}$ the conditional probability of exit at $d$ given the path up to $s$ is $h(X_s)$, so
 
@@ -10,6 +10,8 @@ and dividing by $h(p)$ gives the mean conditioned on exit at $d$; exit at $c$ us
 
 ## Depends on
 
+- [Scale function and exit probabilities for one-dimensional diffusions (process level)](../../../Biology/population-genetics/diffusion-theory/selection-duality-and-general-one-dimensional-di/scale-function-and-exit-probabilities-for-one-di.md)
+- [Green function, occupation times and mean exit times of a one-dimensional diffusion](../../../Biology/population-genetics/diffusion-theory/selection-duality-and-general-one-dimensional-di/green-function-occupation-times-and-mean-exit-ti.md)
 - [Dirichlet Green's function of a one-dimensional diffusion](../../../Biology/population-genetics/diffusion-theory/selection-duality-and-general-one-dimensional-di/green-function.md)
 - [Sojourn density conditioned on fixation](../../../Biology/population-genetics/diffusion-theory/selection-duality-and-general-one-dimensional-di/conditional-green.md)
 - [The scale-function ratio does not depend on the base point](../../../Biology/population-genetics/diffusion-theory/scale-and-speed-of-one-dimensional-diffusions/fixation-prob-eq-ratio-scale-function-fr.md)

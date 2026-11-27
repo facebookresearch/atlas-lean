@@ -4,7 +4,7 @@ Watterson (1977) treats the age of an allele in two-allele models through time r
 
 $$\mu^*(x) = \mu(x) - \sigma^2(x)\,\frac{S'(x)}{S(1) - S(x)}.$$
 
-The expected age follows by applying the Green's-function formula for occupation integrals to the conditioned reversed diffusion. Maruyama and Kimura (1975, abstract) compute, for a diffusion model, any moment of the sum of a function of gene frequency along sample paths between two specified frequencies, and use it for the mean age of a mutant at frequency $x$, including or excluding the possibility that it was at frequency $1$ in the past. The interpretation of these ages through time reversal of the diffusion is a separate statement.
+The expected age follows by applying the Green's-function formula for occupation integrals to the conditioned reversed diffusion. Maruyama and Kimura (1975, abstract) compute, for a diffusion model, any moment of the sum of a function of gene frequency along sample paths between two specified frequencies, and use it for the mean age of a mutant at frequency $x$, including or excluding the possibility that it was at frequency $1$ in the past. The interpretation of these ages through time reversal of the diffusion is a separate statement, the [process interpretation of allele age via time reversal](process-interpretation-of-allele-age-via-time-re.md).
 
 ## Depends on
 

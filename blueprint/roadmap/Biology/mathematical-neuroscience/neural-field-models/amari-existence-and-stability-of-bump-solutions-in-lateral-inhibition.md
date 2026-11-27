@@ -6,7 +6,7 @@ $$
 W(a) = h - s, \qquad W(x) + W(a - x) > h - s \text{ for } 0 < x < a, \qquad W(x) - W(x - a) \le h - s \text{ for } x > a,
 $$
 
-and the bump is then $u_a$ (Oleynik, Ponosov and Wyller, Theorem 2.3; since $u_a$ is symmetric about $a/2$, the last condition also covers $x < 0$). When $0 < h - s$ and $W_\infty < h - s < W_m$, the first condition has exactly two roots $a_1 < x_0 < a_2$, with $w(a_1) > 0$ and $w(a_2) < 0$; so every bump has width $a_1$ or $a_2$, and there is a bump of width $a_i$ exactly when $a_i$ satisfies the other two conditions. If $h - s > W_m$, for instance if $h - s > \int_0^\infty |w|$, there is no bump.
+and the bump is then $u_a$ (Oleynik, Ponosov and Wyller, Theorem 2.3; since $u_a$ is symmetric about $a/2$, the last condition also covers $x < 0$). Theorem 2.3 (ii) states the middle condition with the non-strict inequality $W(x) + W(a - x) \ge h - s$; the strict form is the one that matches the definition of a bump used here, since a point of $(0, a)$ where equality holds has $u_a = h$ and lies outside the excited region $\{u_a > h\}$, which is then not the interval $(0, a)$. When $0 < h - s$ and $W_\infty < h - s < W_m$, the first condition has exactly two roots $a_1 < x_0 < a_2$, with $w(a_1) > 0$ and $w(a_2) < 0$; so every bump has width $a_1$ or $a_2$, and there is a bump of width $a_i$ exactly when $a_i$ satisfies the other two conditions. If $h - s > W_m$, for instance if $h - s > \int_0^\infty |w|$, there is no bump.
 
 ## Depends on
 
