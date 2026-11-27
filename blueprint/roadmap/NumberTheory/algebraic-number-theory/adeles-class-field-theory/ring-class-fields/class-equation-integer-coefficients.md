@@ -24,20 +24,25 @@ $\mathfrak{a}_1, \ldots, \mathfrak{a}_h$ represent the classes of $C(\mathcal{O}
 
 ## Expansion
 
-A good expansion has pages for the steps of Sutherland's proof (Lecture 20): lattices with the same
-$j$-invariant are [homothetic](../../../../Analysis/special-functions/elliptic-functions/homothetic-complex-period-lattices/is-homothetic.md),
-and two proper fractional $\mathcal{O}$-ideals are homothetic exactly when they lie in the same class,
-so $C(\mathcal{O})$ acts freely and transitively on the values $j(\mathfrak{a})$ (recalled in §20.3);
-the modular polynomial $\Phi_N \in \mathbb{Z}[X, Y]$ (Lecture 19, Theorem 19.17), and Theorem 20.3, which says that $\Phi_N(j_1, j_2) = 0$ exactly when $j_1$ and $j_2$ are the
-$j$-invariants of curves related by a cyclic isogeny of degree $N$; the leading term $-X^{2p}$ of
-$\Phi_p(X, X)$ for $p$ prime (Lemma 20.9); the existence of a principal $\mathcal{O}$-ideal of prime
-norm (Theorem 20.11, every class of $C(\mathcal{O})$ contains infinitely many ideals of prime norm),
-which makes $j(\mathfrak{a})$ a root of the monic integer polynomial $-\Phi_p(X, X)$ (proof of
-Theorem 20.12 and Corollary 20.13); and the action of $\mathrm{Gal}(\overline{\mathbb{Q}}/\mathbb{Q})$
-on elliptic curves over $\overline{\mathbb{Q}}$, which preserves complex multiplication by
-$\mathcal{O}$ and so permutes the values $j(\mathfrak{a})$, whence the coefficients of
-$H_{\mathcal{O}}$ are rational algebraic integers (proof of Theorem 20.12). Each page states its result
-precisely, with its locator in those notes.
+This node is still to be broken down. A good expansion states and links:
+
+- lattices with the same $j$-invariant are [homothetic](../../../../Analysis/special-functions/elliptic-functions/homothetic-complex-period-lattices/is-homothetic.md),
+  and two proper fractional $\mathcal{O}$-ideals are homothetic exactly when they lie in the same class,
+  so $C(\mathcal{O})$ acts freely and transitively on the values $j(\mathfrak{a})$ (Sutherland, Lecture 20,
+  recalled in §20.3);
+- the modular polynomial $\Phi_N \in \mathbb{Z}[X, Y]$ (Lecture 19, Theorem 19.17), and Theorem 20.3:
+  $\Phi_N(j_1, j_2) = 0$ exactly when $j_1$ and $j_2$ are the $j$-invariants of curves related by a
+  cyclic isogeny of degree $N$;
+- the leading term $-X^{2p}$ of $\Phi_p(X, X)$ for $p$ prime (Lemma 20.9);
+- every class of $C(\mathcal{O})$ contains infinitely many ideals of prime norm (Theorem 20.11), so there
+  is a principal $\mathcal{O}$-ideal of prime norm $p$, which makes $j(\mathfrak{a})$ a root of the monic
+  integer polynomial $-\Phi_p(X, X)$ (proof of Theorem 20.12 and Corollary 20.13);
+- the action of $\mathrm{Gal}(\overline{\mathbb{Q}}/\mathbb{Q})$ on elliptic curves over
+  $\overline{\mathbb{Q}}$ preserves complex multiplication by $\mathcal{O}$ and so permutes the values
+  $j(\mathfrak{a})$, whence the coefficients of $H_{\mathcal{O}}$ are rational algebraic integers (proof
+  of Theorem 20.12).
+
+Each page states its result precisely, with its locator in those notes.
 
 ## Depends on
 

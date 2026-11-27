@@ -29,12 +29,16 @@ of $\mathfrak{a}_f$.
 
 ## Expansion
 
-A good expansion has pages for the endomorphism ring of the lattice $\mathbb{Z} + \mathbb{Z}\tau$, the
-order $\mathbb{Z} + \mathbb{Z}a\tau$ of discriminant $b^2 - 4ac$, for $\tau$ a root of the primitive
-equation $a\tau^2 + b\tau + c = 0$; for the equivalence of proper and invertible ideals of an imaginary
-quadratic order; for the bijection itself, through the action of $\mathrm{SL}_2(\mathbb{Z})$ on the root
-$\tau$; and for the uniqueness of the reduced form in each proper equivalence class. Each page states its
-result precisely, with its locator in the source it follows.
+This node is still to be broken down. A good expansion states and links:
+
+- the endomorphism ring of the lattice $\mathbb{Z} + \mathbb{Z}\tau$ is the order
+  $\mathbb{Z} + \mathbb{Z}a\tau$ of discriminant $b^2 - 4ac$, for $\tau$ a root of the primitive equation
+  $a\tau^2 + b\tau + c = 0$;
+- the equivalence of proper and invertible ideals of an imaginary quadratic order;
+- the bijection itself, through the action of $\mathrm{SL}_2(\mathbb{Z})$ on the root $\tau$;
+- the uniqueness of the reduced form in each proper equivalence class.
+
+Each page states its result precisely, with its locator in the source it follows.
 
 ## Depends on
 

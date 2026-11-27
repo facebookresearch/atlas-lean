@@ -24,21 +24,26 @@ is the inverse of the isomorphism from the class group onto $\mathrm{Gal}(H/K)$ 
 
 ## Expansion
 
-A good expansion has pages for the steps of Sutherland's proof: the class group acts freely and
-transitively on the values $j(\mathfrak{b})$, with $[\mathfrak{c}]$ sending $j(\mathfrak{b})$ to
-$j(\mathfrak{c}^{-1}\mathfrak{b})$ through the isogeny $\mathbb{C}/\mathfrak{b} \to
-\mathbb{C}/\mathfrak{c}^{-1}\mathfrak{b}$ (Lecture 20, §20.3); the action of
-$\mathrm{Gal}(\overline{\mathbb{Q}}/\mathbb{Q})$ on elliptic curves over number fields preserves
-complex multiplication by $\mathcal{O}$ (Lecture 20, proof of Theorem 20.12); the compatibility
-$(\mathfrak{b}E)^\sigma \simeq \mathfrak{b}^\sigma E^\sigma$ for $\sigma \in \mathrm{Gal}(L/K)$ (Lecture 20,
-equation (2), whose proof the notes omit and cite from Silverman, *Advanced topics in the arithmetic of
-elliptic curves*, Prop. II.2.5), which makes $\Psi$ a well-defined injective homomorphism (Lecture 20,
-Theorem 20.14 and the discussion before it); every class of $C(\mathcal{O})$ contains infinitely many
-ideals of prime norm (Lecture 20, Theorem 20.11); the Frobenius element $\sigma_{\mathfrak{p}}$ of an
-unramified prime $\mathfrak{p}$ of $K$ in the abelian extension $L/K$ (Lecture 21, §21.1); and the
-reduction modulo a prime $\mathfrak{q}$ of $L$ above such a prime, which shows that
-$\Psi(\sigma_{\mathfrak{p}}) = [\mathfrak{p} \cap \mathcal{O}]$, so $\Psi$ is surjective (Lecture 21,
-proof of Theorem 21.1). Each page states its result precisely, with its locator in those notes.
+This node is still to be broken down. A good expansion states and links:
+
+- the class group acts freely and transitively on the values $j(\mathfrak{b})$, with $[\mathfrak{c}]$
+  sending $j(\mathfrak{b})$ to $j(\mathfrak{c}^{-1}\mathfrak{b})$ through the isogeny
+  $\mathbb{C}/\mathfrak{b} \to \mathbb{C}/\mathfrak{c}^{-1}\mathfrak{b}$ (Sutherland, Lecture 20, §20.3);
+- the action of $\mathrm{Gal}(\overline{\mathbb{Q}}/\mathbb{Q})$ on elliptic curves over number fields
+  preserves complex multiplication by $\mathcal{O}$ (Lecture 20, proof of Theorem 20.12);
+- the compatibility $(\mathfrak{b}E)^\sigma \simeq \mathfrak{b}^\sigma E^\sigma$ for
+  $\sigma \in \mathrm{Gal}(L/K)$ (Lecture 20, equation (2), whose proof the notes omit and cite from
+  Silverman, *Advanced topics in the arithmetic of elliptic curves*, Prop. II.2.5), which makes $\Psi$ a
+  well-defined injective homomorphism (Lecture 20, Theorem 20.14 and the discussion before it);
+- every class of $C(\mathcal{O})$ contains infinitely many ideals of prime norm (Lecture 20,
+  Theorem 20.11);
+- the Frobenius element $\sigma_{\mathfrak{p}}$ of an unramified prime $\mathfrak{p}$ of $K$ in the
+  abelian extension $L/K$ (Lecture 21, §21.1);
+- the reduction modulo a prime $\mathfrak{q}$ of $L$ above such a prime, which shows that
+  $\Psi(\sigma_{\mathfrak{p}}) = [\mathfrak{p} \cap \mathcal{O}]$, so $\Psi$ is surjective (Lecture 21,
+  proof of Theorem 21.1).
+
+Each page states its result precisely, with its locator in those notes.
 
 ## Depends on
 
