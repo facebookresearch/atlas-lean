@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.LaurentSeriesConvergentProperties
 public import Mathlib.Algebra.Polynomial.FieldDivision
+public import MathlibExt.NumberTheory.LaurentSeriesBoundedPartialQuotientsFrobenius
 public import MathlibExt.NumberTheory.LaurentSeriesBoundedPartialQuotientsLaurentSubConvergentOrder
 public import MathlibExt.NumberTheory.LaurentSeriesBoundedPartialQuotientsLaurentMobiusOrderIdentities
 
@@ -66,21 +67,6 @@ public theorem_wanted baumSweet_exists_root_continuedFraction (n : ℕ)
         laurentPartialQuotient f 0 = polyToLaurentInv Q ∧
         ∀ k, 1 ≤ k → laurentPartialQuotient f k =
           polyToLaurentInv (P ^ (2 ^ ((k - 1) * n)) + Q ^ (2 ^ (k * n)))
-
-/-- **Frobenius acts on continued fractions of Laurent series.** Let $K$ be a finite field with
-$q$ elements and let $\alpha \in K((x^{-1}))$, with partial quotients $b_0, b_1, \dots$ and
-convergent numerators and denominators $P_n, Q_n$, where $P_{-1} = 1$ and $Q_{-1} = 0$. Then for
-every $n \ge 0$ the $n$-th partial quotient of $\alpha^q$ is $b_n^q$, and for every $n \ge -1$
-the convergent numerator and denominator of $\alpha^q$ of index $n$ are $P_n^q$ and $Q_n^q$.
-
-Source: Tuangrat Chaichana, Natthaphong Chitmung, and Vichian Laohakosol, *Certain Algebraic
-Formal Laurent Series with Bounded Partial Quotients*, INTEGERS 26 (2026), Article A57,
-Lemma 2 (`integers-2026-A57-lem-2`). -/
-public theorem_wanted laurentPartialQuotient_pow_card [Fintype K] (α : LaurentSeries K) (n : ℕ) :
-    laurentPartialQuotient (α ^ Fintype.card K) n =
-        laurentPartialQuotient α n ^ Fintype.card K ∧
-      laurentConvNum (α ^ Fintype.card K) n = laurentConvNum α n ^ Fintype.card K ∧
-      laurentConvDen (α ^ Fintype.card K) n = laurentConvDen α n ^ Fintype.card K
 
 /-- **Close rational approximations and convergents.** Let $K$ be a field and let
 $\alpha \in K((x^{-1}))$ be irrational, with partial quotients $b_0, b_1, \dots$ and convergents
