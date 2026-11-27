@@ -11,7 +11,9 @@ of two of them is a scalar multiple of a third, and $\operatorname{Tr}(A^{*} B) 
 basis of the $q^n \times q^n$ matrices. The error group $G_n$ consists of the $\omega^c X(\mathbf a) Z(\mathbf b)$, and
 two of its elements commute exactly when the trace-symplectic form
 $\operatorname{tr}(\mathbf b \cdot \mathbf a' - \mathbf b' \cdot \mathbf a)$ vanishes. For $q = 2$ these are the qubit
-Pauli operators $X^a Z^b$ up to phase.
+Pauli operators $X^a Z^b$ up to phase. When $p = 2$ the phases $\omega^c = \pm 1$ do not suffice to build stabilizers: for
+$n = 1$ and $q = 2$ the vector $(1, 1)$ lifts only to $\pm XZ$, which square to $-I$. Stabilizer codes in characteristic
+$2$ therefore use the extension $\tilde G_n$ of $G_n$ by the phases $i^c$, which contains $iXZ = Y$.
 
 ## Depends on
 

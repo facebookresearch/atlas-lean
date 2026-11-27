@@ -13,7 +13,7 @@ eigenvalues of both reduced states of $uu^*$, which therefore have the same nonz
 
 - [Left partial trace of a rank-one matrix](../../LinearAlgebra/linear-maps-and-duality/partial-trace/partial-trace-left-vec-mul-vec-star.md)
 - [Right partial trace of a rank-one matrix](../../LinearAlgebra/linear-maps-and-duality/partial-trace/partial-trace-right-vec-mul-vec-star.md)
-- [Quantum states: pure states and density operators](quantum-states-pure-states-and-density-operators.md)
+- [Density matrices, pure states and reduced states](../quantum-states-distances-and-entropy/density-matrices-and-fidelity/density-matrices-and-reduced-states.md)
 
 ## Sources
 

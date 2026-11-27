@@ -20,7 +20,7 @@ by $\pm X_1 X_2$ leaves the anticommuting pair $X_1 X_2, Z_2$; the correct secon
 ## Depends on
 
 - [Stabilizer groups and stabilizer states](stabilizer-groups-and-stabilizer-states.md)
-- [Measurements: POVMs, projective measurements and the Born rule](../../../QuantumInformation/quantum-foundations/measurements-povms-projective-measurements-and-the-born-rule.md)
+- [Positive-operator-valued measurements and the Born rule](../../../QuantumInformation/quantum-operations/povms-and-measurement-readout/povm-and-born-rule.md)
 
 ## Sources
 

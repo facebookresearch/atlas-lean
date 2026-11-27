@@ -7,7 +7,7 @@ outcomes.
 
 ## Depends on
 
-- [Measurements: POVMs, projective measurements and the Born rule](../../../QuantumInformation/quantum-foundations/measurements-povms-projective-measurements-and-the-born-rule.md)
+- [Positive-operator-valued measurements and the Born rule](../../../QuantumInformation/quantum-operations/povms-and-measurement-readout/povm-and-born-rule.md)
 - [The Clifford group on $n$ qubits](clifford-group-on-n-qubits.md)
 
 ## Proof depends on

@@ -12,7 +12,7 @@ effectively computational-basis states.
 
 ## Depends on
 
-- [Measurements: POVMs, projective measurements and the Born rule](../../QuantumInformation/quantum-foundations/measurements-povms-projective-measurements-and-the-born-rule.md)
+- [Positive-operator-valued measurements and the Born rule](../../QuantumInformation/quantum-operations/povms-and-measurement-readout/povm-and-born-rule.md)
 - [Quantum channel](../../QuantumInformation/quantum-operations/quantum-channel.md)
 
 ## Sources

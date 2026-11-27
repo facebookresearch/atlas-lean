@@ -11,7 +11,7 @@ one shared entangled pair and two bits of classical communication.
 
 - [Bell basis and maximally entangled states](bell-basis-and-maximally-entangled-states.md)
 - [Unitary evolution and elementary gates](unitary-evolution-and-elementary-gates.md)
-- [Measurements: POVMs, projective measurements and the Born rule](measurements-povms-projective-measurements-and-the-born-rule.md)
+- [Positive-operator-valued measurements and the Born rule](../quantum-operations/povms-and-measurement-readout/povm-and-born-rule.md)
 
 ## Sources
 

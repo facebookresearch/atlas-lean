@@ -21,7 +21,7 @@ prerequisites and links it under the dependency sections below:
 
 ## Depends on
 
-- [Fidelity of quantum states](fidelity-of-quantum-states.md)
+- [Fidelity of positive semidefinite matrices](density-matrices-and-fidelity/root-fidelity.md)
 
 ## Proof depends on
 

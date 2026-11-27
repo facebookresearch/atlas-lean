@@ -14,12 +14,12 @@ fault-tolerant implementation of $U$ to fault-tolerant preparation of the encode
 ## Depends on
 
 - [Unitary evolution and elementary gates](../../quantum-foundations/unitary-evolution-and-elementary-gates.md)
-- [Measurements: POVMs, projective measurements and the Born rule](../../quantum-foundations/measurements-povms-projective-measurements-and-the-born-rule.md)
+- [Positive-operator-valued measurements and the Born rule](../../quantum-operations/povms-and-measurement-readout/povm-and-born-rule.md)
+- [Clifford hierarchy](../clifford-group/clifford-hierarchy.md)
 
 ## Proof depends on
 
 - [Quantum teleportation](../../quantum-foundations/quantum-teleportation.md)
-- [Clifford hierarchy](../clifford-group/clifford-hierarchy.md)
 
 ## Sources
 

@@ -6,7 +6,7 @@ $\mathrm{Tr}(P_n \rho^{\otimes n}) \to 0$ as $n \to \infty$. The proof uses the 
 
 ## Depends on
 
-- [Von Neumann entropy](../quantum-states-distances-and-entropy/von-neumann-entropy.md)
+- [Von Neumann entropy and Holevo information](classical-quantum-information/von-neumann-entropy-and-holevo-information.md)
 
 ## Proof depends on
 

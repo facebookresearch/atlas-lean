@@ -1,7 +1,7 @@
 # Conditions for approximate quantum error correction
 
 For channels $\mathcal{N}, \mathcal{M}$ let $d(\mathcal{N}, \mathcal{M}) = \max_\rho \sqrt{1 - F_\rho(\mathcal{N}, \mathcal{M})}$,
-the Bures distance from the entanglement [fidelity](../../quantum-states-distances-and-entropy/fidelity-of-quantum-states.md)
+the Bures distance from the entanglement [fidelity](../../quantum-states-distances-and-entropy/density-matrices-and-fidelity/root-fidelity.md)
 $F_\rho$ of the two channels on a purification of $\rho$. A code with encoding channel $\mathcal{E}$ is
 *$\varepsilon$-correctable* under a noise [channel](../../quantum-operations/quantum-channel.md) $\mathcal{N}$ if some
 recovery channel $\mathcal{R}$ has $d(\mathcal{R} \mathcal{N} \mathcal{E}, \mathrm{id}) \le \varepsilon$. A code with
@@ -10,8 +10,11 @@ projector $P$ is $\varepsilon$-correctable under $\mathcal{N}(\rho) = \sum_i E_i
 $$P E_i^{*} E_j P = \lambda_{ij} P + P B_{ij} P$$
 
 for the entries $\lambda_{ij}$ of some density operator and operators $B_{ij}$ with $d(\Lambda + \mathcal{B}, \Lambda) \le \varepsilon$,
-where $\Lambda(\rho) = \sum_{ij} \lambda_{ij} \operatorname{Tr}(\rho) |i\rangle\langle j|$ and
-$(\Lambda + \mathcal{B})(\rho) = \Lambda(\rho) + \sum_{ij} \operatorname{Tr}(\rho B_{ij}) |i\rangle\langle j|$, both regarded as
+where $\Lambda(\rho) = \sum_{ij} \lambda_{ij} \operatorname{Tr}(\rho) |j\rangle\langle i|$ and
+$(\Lambda + \mathcal{B})(\rho) = \Lambda(\rho) + \sum_{ij} \operatorname{Tr}(\rho B_{ij}) |j\rangle\langle i|$ (on code states
+$\Lambda + \mathcal{B}$ is the complementary channel $\rho \mapsto \sum_{ij} \operatorname{Tr}(E_i \rho E_j^{*}) |i\rangle\langle j|$ of
+the noise, since $\operatorname{Tr}(E_i \rho E_j^{*}) = \operatorname{Tr}(\rho E_j^{*} E_i)$; with $|i\rangle\langle j|$ in both sums the
+map need not be a channel), both regarded as
 channels on states supported on the code, so that the maximum in $d$ ranges over code states $\rho = P \rho P$ (as in
 Bény and Oreshkov, who apply their criterion to the noise composed with the encoding). For
 $\varepsilon = 0$ this reduces to the [Knill–Laflamme conditions](is-correctable-iff-knill-laflamme.md). Choosing
@@ -31,7 +34,7 @@ theorem; the corollary stated here follows from it, and the factor-two statement
 ## Depends on
 
 - [Quantum channel](../../quantum-operations/quantum-channel.md)
-- [Fidelity of quantum states](../../quantum-states-distances-and-entropy/fidelity-of-quantum-states.md)
+- [Fidelity of positive semidefinite matrices](../../quantum-states-distances-and-entropy/density-matrices-and-fidelity/root-fidelity.md)
 - [The Knill–Laflamme conditions](is-correctable-iff-knill-laflamme.md)
 
 ## Sources

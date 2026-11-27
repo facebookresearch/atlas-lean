@@ -11,8 +11,8 @@ and its complement.
 
 ## Depends on
 
-- [Trace distance](../quantum-states-distances-and-entropy/trace-distance.md)
-- [Measurements: POVMs, projective measurements and the Born rule](../quantum-foundations/measurements-povms-projective-measurements-and-the-born-rule.md)
+- [Trace norm and trace distance](../quantum-states-distances-and-entropy/density-matrices-and-fidelity/trace-norm-and-trace-distance.md)
+- [Positive-operator-valued measurements and the Born rule](povms-and-measurement-readout/povm-and-born-rule.md)
 
 ## Sources
 

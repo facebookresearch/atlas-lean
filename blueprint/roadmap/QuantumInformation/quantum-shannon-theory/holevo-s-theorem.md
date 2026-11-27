@@ -16,7 +16,7 @@ prerequisites and links it under the dependency sections below:
 ## Depends on
 
 - [Mutual information of a finite joint law](../../InformationTheory/entropy-and-mutual-information/conditional-mutual-information/finite-mutual-information.md)
-- [Measurements: POVMs, projective measurements and the Born rule](../quantum-foundations/measurements-povms-projective-measurements-and-the-born-rule.md)
+- [Positive-operator-valued measurements and the Born rule](../quantum-operations/povms-and-measurement-readout/povm-and-born-rule.md)
 
 ## Sources
 

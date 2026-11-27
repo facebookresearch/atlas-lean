@@ -9,9 +9,9 @@ where $S$ is the von Neumann entropy and $h$ the binary entropy function.
 
 ## Depends on
 
-- [Trace distance](trace-distance.md)
+- [Trace norm and trace distance](density-matrices-and-fidelity/trace-norm-and-trace-distance.md)
 - [Shannon entropy](../../InformationTheory/entropy-and-mutual-information/shannon-entropy-and-kullback-leibler-divergence/shannon-entropy.md)
-- [Von Neumann entropy](von-neumann-entropy.md)
+- [Von Neumann entropy and Holevo information](../quantum-shannon-theory/classical-quantum-information/von-neumann-entropy-and-holevo-information.md)
 
 ## Sources
 

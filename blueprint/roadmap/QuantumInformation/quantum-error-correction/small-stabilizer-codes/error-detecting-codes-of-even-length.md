@@ -10,7 +10,7 @@ commutes with both generators and is not in the stabilizer $\{I, X^{\otimes n}, 
 For $m = 2$ this is the $[[4, 2, 2]]$ code.
 
 For $m = 1$ the code space is one-dimensional, spanned by the Bell state $(|00\rangle + |11\rangle)/\sqrt 2$. The detection
-distance of the $[[n, k, d]]$ page does not apply to a one-dimensional code, for which every operator $E$ satisfies
+distance of the $[[n, k, d]]$ page does not apply to a one-dimensional code, for which the compression of every operator $E$ is a scalar,
 $P E P = \langle \psi | E | \psi \rangle P$. With the convention used for one-dimensional stabilizer codes, the minimum weight of
 a nonidentity element of the stabilizer, it is a $[[2, 0, 2]]$ code: the stabilizer elements other than $I$ are
 $X_1 X_2$, $Z_1 Z_2$ and $-Y_1 Y_2$, all of weight $2$.
@@ -19,6 +19,7 @@ $X_1 X_2$, $Z_1 Z_2$ and $-Y_1 Y_2$, all of weight $2$.
 
 - [$[[n, k, d]]$ quantum code](../distance-of-a-quantum-code/n-k-d-quantum-code.md)
 - [The Pauli group on $n$ qubits](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/pauli-group-on-n-qubits.md)
+- [Stabilizer groups and stabilizer states](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/stabilizer-groups-and-stabilizer-states.md)
 
 ## Proof depends on
 

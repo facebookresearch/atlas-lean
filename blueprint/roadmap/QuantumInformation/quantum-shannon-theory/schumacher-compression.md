@@ -17,8 +17,8 @@ prerequisites and links it under the dependency sections below:
 ## Depends on
 
 - [Quantum channel](../quantum-operations/quantum-channel.md)
-- [Von Neumann entropy](../quantum-states-distances-and-entropy/von-neumann-entropy.md)
-- [Fidelity of quantum states](../quantum-states-distances-and-entropy/fidelity-of-quantum-states.md)
+- [Von Neumann entropy and Holevo information](classical-quantum-information/von-neumann-entropy-and-holevo-information.md)
+- [Fidelity of positive semidefinite matrices](../quantum-states-distances-and-entropy/density-matrices-and-fidelity/root-fidelity.md)
 
 ## Sources
 

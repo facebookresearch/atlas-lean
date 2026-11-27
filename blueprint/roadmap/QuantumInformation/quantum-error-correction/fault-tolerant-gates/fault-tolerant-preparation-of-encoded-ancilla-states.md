@@ -18,6 +18,7 @@ the circuit and the proof of properties Prep A and Prep B for $t = 1$.
 ## Depends on
 
 - [Fault-tolerant preparation gadget](../fault-tolerance-and-threshold/fault-tolerant-preparation-gadget.md)
+- [Steane's seven-qubit code](../small-stabilizer-codes/steane-seven-qubit-code.md)
 
 ## Sources
 

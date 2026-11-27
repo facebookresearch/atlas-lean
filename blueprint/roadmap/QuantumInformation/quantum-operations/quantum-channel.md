@@ -6,7 +6,7 @@ positive semidefinite operators, *completely positive* if $\mathrm{id}_{L(\mathb
 $k \ge 1$, and *trace preserving* if $\operatorname{Tr} \Phi(X) = \operatorname{Tr} X$ for all $X$. A *quantum channel* is a
 completely positive, trace-preserving linear map.
 
-A channel maps [density operators](../quantum-foundations/quantum-states-pure-states-and-density-operators.md) to density
+A channel maps [density operators](../quantum-states-distances-and-entropy/density-matrices-and-fidelity/density-matrices-and-reduced-states.md) to density
 operators, and so does $\mathrm{id} \otimes \Phi$ on any larger system. Examples are the unitary channel
 $\rho \mapsto U \rho U^*$, the partial trace, the preparation of a fixed state, and the Pauli channel
 $\rho \mapsto \sum_{P} p_P\, P \rho P^{*}$ over Pauli operators $P$ with probabilities $p_P$ (for the Hermitian tensor products
@@ -14,7 +14,7 @@ of $I, X, Y, Z$ this is $P \rho P$; for $P = iI$ the map $\rho \mapsto P \rho P 
 
 ## Depends on
 
-- [Quantum states: pure states and density operators](../quantum-foundations/quantum-states-pure-states-and-density-operators.md)
+- [Density matrices, pure states and reduced states](../quantum-states-distances-and-entropy/density-matrices-and-fidelity/density-matrices-and-reduced-states.md)
 
 ## Sources
 

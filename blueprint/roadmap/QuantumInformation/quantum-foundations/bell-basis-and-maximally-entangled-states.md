@@ -11,7 +11,7 @@ applied to one qubit. Each Bell state is maximally entangled: the reduced densit
 ## Depends on
 
 - [Unitary evolution and elementary gates](unitary-evolution-and-elementary-gates.md)
-- [Quantum states: pure states and density operators](quantum-states-pure-states-and-density-operators.md)
+- [Density matrices, pure states and reduced states](../quantum-states-distances-and-entropy/density-matrices-and-fidelity/density-matrices-and-reduced-states.md)
 
 ## Proof depends on
 

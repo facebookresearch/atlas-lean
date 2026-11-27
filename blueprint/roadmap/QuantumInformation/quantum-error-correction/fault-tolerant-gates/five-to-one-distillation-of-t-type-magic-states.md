@@ -1,7 +1,8 @@
 # Five-to-one distillation of $T$-type magic states
 
-Let $|T_0\rangle$ be the $T$-type [magic state](magic-state.md), the eigenvector of the order-three Clifford unitary
-$T$ that cycles $X \to Y \to Z$ with Bloch vector $(1, 1, 1)/\sqrt{3}$, let $|T_1\rangle$ be the orthogonal eigenvector, and
+Let $|T_0\rangle$ be the $T$-type [magic state](magic-state.md), the eigenvector with eigenvalue $e^{i\pi/3}$ and Bloch vector $(1, 1, 1)/\sqrt{3}$ of Bravyi and Kitaev's Clifford
+unitary $T$ (their equations (7)–(8)), which conjugates $X \to Z \to Y \to X$, has eigenvalues $e^{\pm i\pi/3}$ and has order
+three up to a global phase, let $|T_1\rangle$ be the orthogonal eigenvector, and
 let $\rho = (1 - \varepsilon) |T_0\rangle\langle T_0| + \varepsilon |T_1\rangle\langle T_1|$ with $0 \le \varepsilon \le 1/2$; Bravyi and
 Kitaev first bring the input to this form, twirling it to be diagonal in the $T$ eigenbasis and choosing the eigenvector
 it is closer to as $|T_0\rangle$. Bravyi and Kitaev's subroutine

@@ -21,7 +21,7 @@ build CNOT from them (Section 4); each step is a page to write and check.
 ## Depends on
 
 - [Planar surface code](planar-surface-code.md)
-- [Measurements: POVMs, projective measurements and the Born rule](../../quantum-foundations/measurements-povms-projective-measurements-and-the-born-rule.md)
+- [Positive-operator-valued measurements and the Born rule](../../quantum-operations/povms-and-measurement-readout/povm-and-born-rule.md)
 
 ## Sources
 

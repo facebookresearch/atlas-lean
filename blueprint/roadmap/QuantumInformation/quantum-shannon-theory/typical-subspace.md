@@ -8,7 +8,7 @@ $n \to \infty$ and $\mathrm{rank}(\Pi_n) \le 2^{n(S(\rho) + \delta)}$ for every 
 
 ## Depends on
 
-- [Von Neumann entropy](../quantum-states-distances-and-entropy/von-neumann-entropy.md)
+- [Von Neumann entropy and Holevo information](classical-quantum-information/von-neumann-entropy-and-holevo-information.md)
 
 ## Proof depends on
 

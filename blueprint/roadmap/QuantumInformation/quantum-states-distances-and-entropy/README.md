@@ -1,8 +1,5 @@
 # Quantum states, distances and entropy
 
-- [Trace distance](trace-distance.md)
-- [Fidelity of quantum states](fidelity-of-quantum-states.md)
-- [Von Neumann entropy](von-neumann-entropy.md)
 - [Fannes–Audenaert inequality](fannesaudenaert-inequality.md)
 - [Fuchs–van de Graaf inequalities](fuchsvan-de-graaf-inequalities.md)
 - [Uhlmann's theorem](uhlmann-s-theorem.md)

@@ -11,8 +11,8 @@ The classical value is at most the entangled value, which is at most $1$.
 
 ## Depends on
 
-- [Quantum states: pure states and density operators](quantum-states-pure-states-and-density-operators.md)
-- [Measurements: POVMs, projective measurements and the Born rule](measurements-povms-projective-measurements-and-the-born-rule.md)
+- [Density matrices, pure states and reduced states](../quantum-states-distances-and-entropy/density-matrices-and-fidelity/density-matrices-and-reduced-states.md)
+- [Positive-operator-valued measurements and the Born rule](../quantum-operations/povms-and-measurement-readout/povm-and-born-rule.md)
 
 ## Sources
 

@@ -8,8 +8,6 @@ Quantum foundations studies what quantum mechanics rules out and allows at the l
 - [Bell basis and maximally entangled states](bell-basis-and-maximally-entangled-states.md)
 - [Schmidt decomposition](schmidt-decomposition.md)
 - [Quantum teleportation](quantum-teleportation.md)
-- [Quantum states: pure states and density operators](quantum-states-pure-states-and-density-operators.md)
-- [Measurements: POVMs, projective measurements and the Born rule](measurements-povms-projective-measurements-and-the-born-rule.md)
 - [Unitary evolution and elementary gates](unitary-evolution-and-elementary-gates.md)
 - [Partial measurement and the principle of deferred measurement](partial-measurement-and-the-principle-of-deferred-measuremen.md)
 - [General no-cloning with environment and no-broadcasting](general-no-cloning-with-environment-and-no-broadcasting.md)

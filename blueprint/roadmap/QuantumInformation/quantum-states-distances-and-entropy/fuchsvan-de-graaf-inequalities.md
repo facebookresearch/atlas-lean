@@ -6,8 +6,8 @@ $$1 - F(\rho, \sigma) \le \tfrac12\|\rho - \sigma\|_1 \le \sqrt{1 - F(\rho, \sig
 
 ## Depends on
 
-- [Trace distance](trace-distance.md)
-- [Fidelity of quantum states](fidelity-of-quantum-states.md)
+- [Trace norm and trace distance](density-matrices-and-fidelity/trace-norm-and-trace-distance.md)
+- [Fidelity of positive semidefinite matrices](density-matrices-and-fidelity/root-fidelity.md)
 
 ## Proof depends on
 

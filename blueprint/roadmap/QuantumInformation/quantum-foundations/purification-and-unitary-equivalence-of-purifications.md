@@ -8,7 +8,7 @@ $Y$. Here $\mathrm{Tr}_Y$ is the partial trace over the second factor.
 ## Depends on
 
 - [Partial trace over the second factor](../../LinearAlgebra/linear-maps-and-duality/partial-trace/partial-trace-right.md)
-- [Quantum states: pure states and density operators](quantum-states-pure-states-and-density-operators.md)
+- [Density matrices, pure states and reduced states](../quantum-states-distances-and-entropy/density-matrices-and-fidelity/density-matrices-and-reduced-states.md)
 
 ## Proof depends on
 

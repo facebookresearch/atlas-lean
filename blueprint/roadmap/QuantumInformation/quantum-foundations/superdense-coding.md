@@ -8,7 +8,7 @@ Bob's projective measurement in the Bell basis recovers $(b_1, b_2)$ with probab
 ## Depends on
 
 - [Bell basis and maximally entangled states](bell-basis-and-maximally-entangled-states.md)
-- [Measurements: POVMs, projective measurements and the Born rule](measurements-povms-projective-measurements-and-the-born-rule.md)
+- [Positive-operator-valued measurements and the Born rule](../quantum-operations/povms-and-measurement-readout/povm-and-born-rule.md)
 
 ## Sources
 

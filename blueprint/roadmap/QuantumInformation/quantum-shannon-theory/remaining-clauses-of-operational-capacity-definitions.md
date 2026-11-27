@@ -19,7 +19,7 @@ under the dependency sections.
 
 ## Depends on
 
-- [Measurements: POVMs, projective measurements and the Born rule](../quantum-foundations/measurements-povms-projective-measurements-and-the-born-rule.md)
+- [Positive-operator-valued measurements and the Born rule](../quantum-operations/povms-and-measurement-readout/povm-and-born-rule.md)
 - [Quantum channel](../quantum-operations/quantum-channel.md)
 
 ## Sources

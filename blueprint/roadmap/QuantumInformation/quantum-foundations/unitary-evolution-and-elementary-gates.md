@@ -8,7 +8,7 @@ the identity on the others.
 
 ## Depends on
 
-- [Quantum states: pure states and density operators](quantum-states-pure-states-and-density-operators.md)
+- [Density matrices, pure states and reduced states](../quantum-states-distances-and-entropy/density-matrices-and-fidelity/density-matrices-and-reduced-states.md)
 
 ## Sources
 

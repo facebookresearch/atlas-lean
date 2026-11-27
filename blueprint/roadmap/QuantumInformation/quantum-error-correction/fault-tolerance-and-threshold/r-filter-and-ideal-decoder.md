@@ -11,6 +11,7 @@ gadgets as equalities between circuits.
 ## Depends on
 
 - [Weight of a Pauli operator](../distance-of-a-quantum-code/pauli-weight.md)
+- [Stabilizer groups and stabilizer states](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/stabilizer-groups-and-stabilizer-states.md)
 
 ## Sources
 

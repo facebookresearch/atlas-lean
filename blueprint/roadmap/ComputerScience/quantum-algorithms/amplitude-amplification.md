@@ -20,7 +20,7 @@ $I - 2\Pi$ and $I - 2\lvert 0 \rangle\langle 0 \rvert$.
 ## Depends on
 
 - [Unitary evolution and elementary gates](../../QuantumInformation/quantum-foundations/unitary-evolution-and-elementary-gates.md)
-- [Measurements: POVMs, projective measurements and the Born rule](../../QuantumInformation/quantum-foundations/measurements-povms-projective-measurements-and-the-born-rule.md)
+- [Positive-operator-valued measurements and the Born rule](../../QuantumInformation/quantum-operations/povms-and-measurement-readout/povm-and-born-rule.md)
 
 ## Related topics
 
