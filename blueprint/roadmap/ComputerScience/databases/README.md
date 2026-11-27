@@ -3,7 +3,6 @@
 Relational algebra, functional dependencies, normal forms and lossless decomposition, and transaction concurrency control (conflict serializability, two-phase locking).
 
 - [Conflict serializability](conflict-serializability/README.md)
-- [Conjunctive queries and the Chandra-Merlin theorem](conjunctive-queries-and-the-chandra-merlin-theor/README.md)
 - [Functional dependencies](functional-dependencies/README.md)
 - [Relational algebra](relational-algebra/README.md)
 - [Lossless decomposition and normal forms](lossless-decomposition-and-normal-forms/README.md)

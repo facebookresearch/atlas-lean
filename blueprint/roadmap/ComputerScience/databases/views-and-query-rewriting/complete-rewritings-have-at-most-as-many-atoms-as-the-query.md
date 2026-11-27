@@ -11,7 +11,7 @@ atoms.
 
 ## Proof depends on
 
-- [Chandra-Merlin containment criterion](../conjunctive-queries-and-the-chandra-merlin-theor/contained-iff-hom.md)
+- [Chandra-Merlin containment criterion](../conjunctive-queries/conjunctive-queries-and-the-chandra-merlin-theor/contained-iff-hom.md)
 
 ## Sources
 

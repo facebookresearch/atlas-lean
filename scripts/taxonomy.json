@@ -1795,7 +1795,7 @@
   "CSLibExt/Crypto/SymmetricKey/PRP": {"to": "ComputerScience/cryptography/symmetric-key", "title": "Pseudorandom permutations"},
   "CSLibExt/Databases/AcyclicSchema": {"to": "ComputerScience/databases", "title": "Join processing"},
   "CSLibExt/Crypto/SymmetricKey/PilingUp": {"to": "ComputerScience/cryptography/symmetric-key", "title": "Piling-up lemma and toy-substitution-permutation-network trail bias"},
-  "CSLibExt/Databases/ConjunctiveQueries": {"to": "ComputerScience/databases", "title": "Conjunctive queries and the Chandra-Merlin theorem"},
+  "CSLibExt/Databases/ConjunctiveQueries": {"to": "ComputerScience/databases", "title": "Conjunctive queries"},
   "CSLibExt/Databases/FunctionalDependencies": {"to": "ComputerScience/databases", "title": "Functional dependencies"},
   "CSLibExt/Databases/InclusionDependencies": {"to": "ComputerScience/databases", "title": "Dependencies and the chase"},
   "CSLibExt/Databases/NormalForms": {"to": "ComputerScience/databases", "title": "Lossless decomposition and normal forms"},
