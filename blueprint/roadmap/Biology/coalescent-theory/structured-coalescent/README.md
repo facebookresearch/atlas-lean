@@ -49,5 +49,6 @@
 - [Autotetraploid coalescent](autotetraploid-coalescent/README.md)
 - [IBD sharing under migration](ibd-sharing-under-migration/README.md)
 - [Semelparous age-structured coalescent](semelparous-age-structured-coalescent/README.md)
+- [Branch lengths of the seed-bank coalescent](branch-lengths-of-the-seed-bank-coalescent/README.md)
 - [Coalescence time of coalescing random walks on graphs](coalescence-time-of-coalescing-random-walks-on-graphs/README.md)
 - [Coalescence time of reversible random walks](coalescence-time-of-reversible-random-walks/README.md)

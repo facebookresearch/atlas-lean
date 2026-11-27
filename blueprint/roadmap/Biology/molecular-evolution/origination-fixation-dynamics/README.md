@@ -6,4 +6,5 @@
 - [Toroidal diffusions for protein evolution](toroidal-diffusions-for-protein-evolution/README.md)
 - [Fitness landscapes and epistasis](fitness-landscapes-and-epistasis/README.md)
 - [Mutation rates and generation time](mutation-rates-and-generation-time/README.md)
+- [Accessible paths in random fitness landscapes](accessible-paths-in-random-fitness-landscapes/README.md)
 - [Wright–Fisher quasispecies on class-dependent landscapes](wright-fisher-quasispecies-on-class-dependent-landscapes/README.md)
