@@ -3,9 +3,9 @@
 There is an algorithm that decides which player wins a finite [parity game](../parity-games/parity-game.md) with $n$ positions and priorities
 in $\{1, \dots, d\}$ from a given position in time $O(n^{\log d + 6})$, and that computes a positional winning strategy of
 the winner in time $O(n^{\log d + 7} \log n)$ (Calude, Jain, Khoussainov, Li and Stephan). The algorithm reduces the
-game to a reachability game on a product with *play summaries*, statistics of polylogarithmically many bits that record
-witnesses of long runs of even domination; in the language of separating automata, it gives a deterministic
-$(n, d)$-separating safety automaton with $n^{O(\log d)}$ states.
+game to a reachability game on a product with Eve's *play summaries*, statistics of polylogarithmically many bits that record
+witnesses of long runs of even domination. Read for Adam, the same statistics give a deterministic safety automaton that is a strong
+$(n, d)$-separator with $n^{\log_2 d + O(1)}$ states, so the separating-automaton reduction also applies.
 
 ## Depends on
 

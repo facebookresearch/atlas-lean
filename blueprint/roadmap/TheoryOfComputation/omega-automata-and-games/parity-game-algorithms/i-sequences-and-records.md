@@ -1,27 +1,29 @@
 # i-sequences and records
 
-Let $\pi = p_1 p_2 \cdots p_t$ be a finite sequence of priorities. An *$i$-sequence* in $\pi$ is a set of exactly $2^i$ indices
-$1 \le j_1 < \cdots < j_{2^i} \le t$ such that
+Let $\mathcal{G}$ be a [parity game](../parity-games/parity-game.md) with $n$ positions, whose priorities are positive integers, and consider a finite or infinite play
+$v_1 v_2 \cdots$. An *$i$-sequence for Eve* in it is a sequence of $2^i$ positions $a_1, \dots, a_{2^i}$ visited in this order (at increasing times, not
+necessarily consecutive) such that for every $k < 2^i$ the largest priority of the positions visited from the visit of $a_k$ to the visit of $a_{k+1}$, both
+included, is even.
 
-- (evenness) $p_{j_k}$ is even for every $k < 2^i$;
-- (inner domination) whenever $j_k < l < j_{k+1}$, $p_l \le p_{j_k}$ or $p_l \le p_{j_{k+1}}$;
-- (outer domination) $p_l \le p_{j_{2^i}}$ for every $l > j_{2^i}$.
+Let $\ell$ be the least integer with $2^\ell > 2n$. The *record* (winning statistics) of Eve is a tuple $(b_\ell, \dots, b_1, b_0)$ in which each $b_i$ is $0$ or a priority;
+it starts with every entry $0$. When the play moves to a position of priority $b$, the record changes only if $b$ is even or $b > b_i > 0$ for some $i$. In
+that case let $i$ be the largest index such that
 
-A *record* is a tuple $b_k, b_{k-1}, \dots, b_0$ in which each $b_i$ is a priority or the symbol $-$; $b_i \ne -$ is meant to witness an $i$-sequence
-whose last priority is $b_i$, the witnessed sequences appearing in order of decreasing $i$. Reading a priority $p$ updates the record in
-two steps:
+- (a) $b_i$ is $0$ or odd, while $b$ and every $b_j$ with $j < i$ are even, or
+- (b) $0 < b_i < b$,
 
-1. let $i$ be the largest index such that $b_j$ is an even priority for every $j < i$; if $b_i = -$ or $b_i < p$, set $b_i := p$ and $b_j := -$ for
-   all $j < i$ (otherwise leave the record unchanged);
-2. in the result, let $i$ be the largest index with $b_i \ne -$ and $p > b_i$; if there is one, set $b_i := p$
-   and $b_j := -$ for all $j < i$.
+and set $b_i := b$ and $b_j := 0$ for every $j < i$. Eve is *declared the winner* once $b_\ell \ne 0$. The record of Adam is the same construction with even
+and odd exchanged.
 
-These play summaries are those of Calude, Jain, Khoussainov, Li and Stephan, in the presentation of the cited chapter.
+These are the play summaries of Calude, Jain, Khoussainov, Li and Stephan. Rule (a) lets an incoming even priority replace an odd entry
+when all lower entries are even, even if it is smaller. The variant in the cited chapter cannot: on the play $3, 2, 2, \dots$ through two positions of
+priorities $3$ and $2$, which Eve wins, that variant keeps the odd $b_0 = 3$ forever, while the record above sets $b_0 = 2$, then $b_1 = 2$, and so on.
 
 ## Depends on
 
-- [Parity winning condition of a player](../parity-games/wins.md)
+- [Parity game](../parity-games/parity-game.md)
 
 ## Sources
 
-- N. Fijalkow (ed.), *Games on Graphs: From Logic and Automata to Algorithms*, Cambridge University Press, 2026, doi:10.1017/9781009500678 (numbering of the version arXiv:2305.10546v2, 2025), Chapter 2 (J. Fearnley and N. Fijalkow, "Parity games"): Section 2.4, "i-sequences" (the definition with evenness, inner and outer domination), "A data structure for recognising i-sequences" (records, with the witnessing and order properties) and "The update rule" (Steps 1 and 2 and the worked example of Figures 2.3 and 2.4).
+- C. S. Calude, S. Jain, B. Khoussainov, W. Li and F. Stephan, "Deciding parity games in quasipolynomial time", *Proceedings of the 49th ACM STOC*, 2017 (numbering of the authors' preprint, <http://www.cmap.polytechnique.fr/~gaubert/COURSM2/PARITYGAMES/paritygame.pdf>): Section 2, the definition of $i$-sequences, the winning statistics, the update rules (a) and (b), the termination condition ($b_i \ne 0$ with $2^i > 2n$) and the worked example.
+- N. Fijalkow (ed.), *Games on Graphs: From Logic and Automata to Algorithms*, Cambridge University Press, 2026, doi:10.1017/9781009500678 (numbering of the version arXiv:2305.10546v2, 2025), Chapter 2 (J. Fearnley and N. Fijalkow, "Parity games"): Section 2.4, "i-sequences" and "The update rule", the variant contrasted above.
