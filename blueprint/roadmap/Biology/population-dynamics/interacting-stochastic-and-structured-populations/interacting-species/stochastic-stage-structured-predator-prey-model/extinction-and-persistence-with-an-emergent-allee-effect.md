@@ -6,7 +6,7 @@ $$dx = \bigl(\beta y - \varphi(x)x - \mu_x x\bigr)dt - \sigma_x x\,dB_x, \qquad 
 
 $$dz = z(\alpha y - \mu_z)\,dt - \sigma_z z\,dB_z ,$$
 
-with birth rate $\beta>0$, a maturation function $\varphi\ge0$ with $\varphi\le1$ (for the persistence result $\varphi(x) = \kappa/(1+x)$, $\kappa>0$, which saturates maturation and produces an emergent Allee effect), mortalities $\mu_x, \mu_y, \mu_z>0$, conversion efficiency $\alpha\in(0,1)$, and independent Brownian motions $B_x,B_y,B_z$ with intensities $\sigma_x,\sigma_y,\sigma_z\ge0$. The bounds $\alpha<1$ and $\varphi\le1$ are used in the proofs of items 1 and 2 below.
+with birth rate $\beta>0$, a maturation function $\varphi:\mathbb R_{\ge0}\to\mathbb R_{\ge0}$ that is differentiable on $(0,\infty)$, satisfies $\lim_{x\to\infty}\varphi(x)=0$ and has $\sup_{x\ge0}\varphi(x)\le1$ (for the persistence result $\varphi(x) = \kappa/(1+x)$, $\kappa>0$, which saturates maturation and produces an emergent Allee effect), mortalities $\mu_x, \mu_y, \mu_z>0$, conversion efficiency $\alpha\in(0,1)$, and independent Brownian motions $B_x,B_y,B_z$ with intensities $\sigma_x,\sigma_y,\sigma_z>0$ (item 5 uses that the noise is nondegenerate). The bounds $\alpha<1$ and $\varphi\le1$ are used in the proofs of items 1 and 2 below.
 
 **Theorem.** For initial data in $\mathbb{R}^3_{>0}$:
 1. (Positivity) there is a unique global solution, remaining in $\mathbb{R}^3_{>0}$ almost surely.

@@ -1,6 +1,6 @@
 # Binary normal networks without near reticulations are determined by their triples
 
-**Definitions.** A rooted binary phylogenetic network $N$ on $X$ is normal if it is tree-child (every non-leaf vertex has a child that is a tree vertex or a leaf) and has no shortcuts (no reticulation edge $(u,v)$ with another directed path from $u$ to $v$). $R(N)$ is the set of rooted binary triples on three leaves displayed by $N$, and $Q(N)$ the set of rooted four-leaf trees displayed by $N$. Reticulations $u,v$ are near-sibling if some tree vertex has two children, one of them $v$ and the other a tree vertex that is a parent of $u$; they are near-stack if the unique child of $u$ is a tree vertex that is a parent of $v$. $N$ has no near reticulations if it has neither.
+**Definitions.** A rooted binary phylogenetic network $N$ on $X$ is normal if it is tree-child (every non-leaf vertex has a child that is a tree vertex or a leaf) and has no shortcuts (no reticulation edge $(u,v)$ with another directed path from $u$ to $v$). $R(N)$ is the set of rooted binary triples on three leaves displayed by $N$, and $Q(N)$ the set of rooted four-leaf caterpillars displayed by $N$ (rooted binary phylogenetic trees on four leaves with exactly one cherry). Reticulations $u,v$ are near-sibling if some tree vertex has two children, one of them $v$ and the other a tree vertex that is a parent of $u$; they are near-stack if the unique child of $u$ is a tree vertex that is a parent of $v$. $N$ has no near reticulations if it has neither.
 
 **Theorem.**
 

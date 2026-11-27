@@ -1,6 +1,6 @@
 # Stochastic Cahn-Hilliard tumor model with chemotaxis and variable mobility
 
-**Model.** In a bounded domain $D\subset\mathbb R^3$, let $\phi\in[0,1]$ be the tumor volume fraction (diffuse interface between tumor $\{\phi=1\}$ and healthy tissue $\{\phi=0\}$) and $\sigma$ the nutrient concentration. With a double-well potential $\Psi$, interface width $\varepsilon$, chemotaxis coefficient $\chi\ge0$, mobilities $m_1(\phi),m_2(\sigma)$, proliferation $\beta\sigma f(\phi)$, apoptosis $\alpha f(\phi)$ and nutrient consumption $\delta\sigma f(\phi)$, the stochastic system is
+**Model.** In a bounded domain $D\subset\mathbb R^d$, $d\in\{2,3\}$, with smooth boundary, let $\phi\in[0,1]$ be the tumor volume fraction (diffuse interface between tumor $\{\phi=1\}$ and healthy tissue $\{\phi=0\}$) and $\sigma$ the nutrient concentration. With a double-well potential $\Psi$, interface width $\varepsilon$, chemotaxis coefficient $\chi\ge0$, mobilities $m_1(\phi),m_2(\sigma)$, proliferation $\beta\sigma f(\phi)$, apoptosis $\alpha f(\phi)$ and nutrient consumption $\delta\sigma f(\phi)$, the stochastic system is
 
 $$d\phi=\operatorname{div}\big(m_1(\phi)(\nabla\mu-\chi\nabla\sigma)\big)dt+(\beta\sigma-\alpha)f(\phi)\,dt+G_1(\phi)\,dW_1,\qquad \mu=\Psi'(\phi)-\varepsilon^2\Delta\phi,$$
 

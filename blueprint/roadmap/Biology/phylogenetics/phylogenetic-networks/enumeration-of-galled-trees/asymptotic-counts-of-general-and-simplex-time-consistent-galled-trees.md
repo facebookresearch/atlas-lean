@@ -8,19 +8,23 @@ $$\mathcal E^1_g(t)\sim\frac{(4g-3)!!\,\rho^g}{(2g)!\,\gamma^{4g-1}\,(1-t/\rho)^
 
 and by singularity analysis, as $n\to\infty$,
 
-$$E^1_{n,g}\,\rho^{-g}\sim E_{n,g}\sim\tilde E_{n,g}\sim\frac{2^{2g-1}}{(2g)!\,\gamma^{4g-1}\sqrt\pi}\,n^{2g-3/2}\rho^{-n}.$$
+$$E^1_{n,g}\sim\rho^{g}\,E_{n,g},\qquad \tilde E_{n,g}\sim E_{n,g},$$
 
-So for fixed $g$ general and time-consistent galled trees are asymptotically equinumerous, while the simplex restriction costs a constant factor $\rho^{g}$.
+where the asymptotics of the time-consistent count $E_{n,g}$ are those of [Asymptotic counts of time-consistent galled trees](../enumeration-of-time-consistent-galled-trees/asymptotic-counts-of-time-consistent-galled-trees.md). So for fixed $g$ general and time-consistent galled trees are asymptotically equinumerous, while the simplex restriction costs a constant factor $\rho^{g}$.
 
-**Leaf-labeled, fixed number of reticulations $k\ge1$.**
+**Leaf-labeled, fixed number of reticulations $k\ge1$.** Relative to the labeled time-consistent count $e_{n,k}$ of the same article,
 
-$$e^1_{n,k}\frac{(2k)!}{k!}\sim e_{n,k}\frac{(2k)!}{2^kk!}\sim\tilde e_{n,k}\frac{(2k)!}{2^kk!}\sim\frac{2^{k-1}\sqrt2}{k!}\,n^{n+2k-1}\Big(\frac2e\Big)^n,$$
+$$e^1_{n,k}\sim2^{-k}e_{n,k},\qquad \tilde e_{n,k}\sim e_{n,k},\qquad\text{so}\qquad e_{n,k}\frac{(2k)!}{2^kk!}\sim\frac{2^{k-1}\sqrt2}{k!}\,n^{n+2k-1}\Big(\frac2e\Big)^n,$$
 
 the last expression being the common asymptotic count of general, tree-child, normal and galled networks with $k$ reticulations.
 
 **Unrestricted number of galls.** All classes follow $\frac{\delta}{2\sqrt\pi}n^{-3/2}\alpha^{-n}$ (unlabeled) or $\frac{\delta}{\sqrt2}n^{n-1}(\alpha^{-1}/e)^n$ (labeled), with different exponential rates: unlabeled $(\delta,\alpha)\approx(0.1966,0.1165)$ general, $(0.2762,0.2073)$ time-consistent, $(0.3846,0.2344)$ simplex time-consistent; labeled $(0.1894,0.1250)$, $(0.2548,0.2383)$ and $\big((9-\sqrt3)\sqrt{3(9+\sqrt3)}/117,\ (3+\sqrt3)/18\big)\approx(0.3525,0.2629)$.
 
 **Extremal counts.** A general galled tree has at most $n-1$ galls and $\tilde E_{n,n-1}=C_{n-1}$ (Catalan), $\tilde e_{n,n-1}=(2n-2)!/(n-1)!$; a simplex time-consistent galled tree with $n$ odd has at most $(n-1)/2$ galls, and $E^1_{n,(n-1)/2}=U_{(n+1)/2}$, the number of unlabeled binary trees with $(n+1)/2$ leaves.
+
+## Depends on
+
+- [Asymptotic counts of time-consistent galled trees](../enumeration-of-time-consistent-galled-trees/asymptotic-counts-of-time-consistent-galled-trees.md)
 
 ## Expansion
 

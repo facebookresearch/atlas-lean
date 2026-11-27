@@ -8,7 +8,7 @@ $$\begin{aligned}
 \dot P &= -a_2 P + d_2 S^r P + d_3 IP,
 \end{aligned}$$
 
-with all parameters positive, a strong Allee threshold $0 < L < K$, and an aggregation exponent $0 < r < 1$: susceptible prey form herds, so only a sublinear amount $S^r$ is exposed to predation. Infected prey do not reproduce and are caught at rate $d_1 P$.
+with all parameters other than $L$ positive, an Allee threshold $-K < L < K$ (a weak Allee effect for $L \le 0$, a strong one for $0 < L < K$), and an aggregation exponent $0 < r < 1$: susceptible prey form herds, so only a sublinear amount $S^r$ is exposed to predation. Infected prey do not reproduce and are caught at rate $d_1 P$.
 
 **Theorem.**
 1. Solutions with nonnegative initial data remain nonnegative, and if $d_0 > d_2$ and $d_1 > d_3$, solutions with positive initial data are uniformly bounded.
@@ -21,7 +21,12 @@ so both are positive exactly when
 $$S_2 := \frac{a_1}{e_0} \;<\; S^* \;<\; S_3 := \Big(\frac{a_2}{d_2}\Big)^{1/r},$$
 
 with $S^*$ a root of the remaining prey equation in this window. The number of such roots depends on the Allee threshold $L$.
-3. Varying the Allee threshold $L$, the predator-free equilibrium undergoes a transcritical bifurcation and the coexistence equilibrium undergoes Hopf and saddle-node bifurcations (at the Routh–Hurwitz boundary $\Omega_1\Omega_2 = \Omega_3$, respectively $\Omega_3 = 0$, of its characteristic polynomial $\lambda^3 + \Omega_1\lambda^2 + \Omega_2\lambda + \Omega_3$).
+3. *(Bifurcations in $L$.)* Write $W$ for the right-hand side of the system, $W_L = \partial W/\partial L$, and $\lambda^3 + \Omega_1(L)\lambda^2 + \Omega_2(L)\lambda + \Omega_3(L)$ for the characteristic polynomial of the Jacobian at $E^*$. For a bifurcation value $L_c$ at an equilibrium $E$ whose Jacobian has a simple zero eigenvalue and no other eigenvalue on the imaginary axis, let $U$ and $V$ be the corresponding right and left null vectors.
+   - (Transcritical.) Let $E_2 = (a_1/e_0, I_2, 0)$ with $I_2 > 0$ be the predator-free equilibrium. If $L^{TC} \in (-K, K)$ is such a value at $E_2$ and $V^{\mathsf T}W_L(E_2, L^{TC}) = 0$, $V^{\mathsf T}[DW_L(E_2, L^{TC})U] \ne 0$ and $V^{\mathsf T}[D^2W(E_2, L^{TC})(U, U)] \ne 0$, then $E_2$ undergoes a transcritical bifurcation at $L = L^{TC}$.
+   - (Hopf.) If $\Omega_1(L^H) > 0$, $\Omega_3(L^H) > 0$, $\Omega_1(L^H)\Omega_2(L^H) = \Omega_3(L^H)$ and $(\Omega_1\Omega_2)'(L^H) \ne \Omega_3'(L^H)$, then $E^*$ undergoes a Hopf bifurcation at $L = L^H$.
+   - (Saddle-node.) If $\Omega_3(L^{SN}) = 0$, $L^{SN}$ is such a value at $E^*$, $V^{\mathsf T}W_L(E^*, L^{SN}) \ne 0$ and $V^{\mathsf T}[D^2W(E^*, L^{SN})(U, U)] \ne 0$, then $E^*$ undergoes a saddle-node bifurcation at $L = L^{SN}$.
+
+   Without the sign conditions, $\Omega_1\Omega_2 = \Omega_3$ alone factors the cubic as $(\lambda + \Omega_1)(\lambda^2 + \Omega_2)$, which has real roots when $\Omega_2 < 0$.
 
 ## Expansion
 

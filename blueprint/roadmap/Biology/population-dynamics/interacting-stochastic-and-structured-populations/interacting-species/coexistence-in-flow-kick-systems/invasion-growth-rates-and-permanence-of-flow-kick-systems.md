@@ -6,7 +6,7 @@
 
 $$\max_ir_i(\mu)>0\quad\text{for all invariant probability measures }\mu\text{ with }\mu(M_m)=1,$$
 
-equivalently (by the minimax theorem) there are weights $p_1,\dots,p_k>0$, possibly depending on $m$, with $\sum_ip_ir_i(\mu)>0$ for all ergodic $\mu$ with $\mu(M_m)=1$, then the flow-kick system is permanent, and permanence is robust to small perturbations of $\kappa$ (Theorem 9.1).
+equivalently (by the minimax theorem) there are weights $p_1,\dots,p_k>0$, possibly depending on $m$, with $\sum_ip_ir_i(\mu)>0$ for all ergodic $\mu$ with $\mu(M_m)=1$, then the flow-kick system is permanent.
 
 **Propositions 4.4 and 4.5 (extinction).** Assume (A1)-(A5). If $\kappa$ is $C^2$ and there is an ergodic $\mu$ on $\mathcal S_0$ with $r_i(\mu)<0$ for all species absent from its support, then some trajectory starting in $\mathcal S_+$ has its $\omega$-limit set in $\mathcal S_0$, so the system is not permanent. If an attractor of $\kappa$ restricted to the face of a subcommunity $I$ satisfies $r_i(\mu)<0$ for all $i\notin I$ and all ergodic $\mu$ on it, it is an attractor of the full system.
 
@@ -20,4 +20,4 @@ Discretizing at kicks reduces the impulsive system to a map, to which the Hofbau
 
 ## Sources
 
-- S. J. Schreiber, "Coexistence and extinction in flow-kick systems: an invasion growth rate approach", *Journal of Mathematical Biology* 91(5) (2025), 50, Theorem 4.2, Propositions 4.4 and 4.5, Theorem 4.7, Corollaries 4.8 and 4.9, Theorem 9.1, <https://doi.org/10.1007/s00285-025-02283-0> (preprint arXiv:2507.02157).
+- S. J. Schreiber, "Coexistence and extinction in flow-kick systems: an invasion growth rate approach", *Journal of Mathematical Biology* 91(5) (2025), 50, Theorem 4.2, Propositions 4.4 and 4.5, Theorem 4.7, Corollaries 4.8 and 4.9, <https://doi.org/10.1007/s00285-025-02283-0> (preprint arXiv:2507.02157).

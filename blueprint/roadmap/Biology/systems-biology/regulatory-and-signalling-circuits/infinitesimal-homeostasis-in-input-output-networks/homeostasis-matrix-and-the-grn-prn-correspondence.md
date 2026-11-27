@@ -2,17 +2,18 @@
 
 **Setting.** An input-output network $\mathcal G$ has nodes $\iota,\rho_1,\dots,\rho_{n-1},o$ (input, regulatory, output) and an admissible system $\dot x=f(x,\mathcal I)$ in which the input parameter $\mathcal I$ appears only in $f_\iota$, and $f_j$ depends on $x_k$ only if $k\to j$ is an edge or $k=j$. Suppose $X(\mathcal I)$ is a family of linearly stable equilibria, so the input-output function $o(\mathcal I)=X_o(\mathcal I)$ is smooth. $\mathcal I_0$ is a point of infinitesimal homeostasis if $o'(\mathcal I_0)=0$.
 
-**Homeostasis matrix.** Delete from the Jacobian $J=(f_{j,k})$ (with $f_{j,k}=\partial f_j/\partial x_k$) the row of $\iota$ and the column of $o$; the result is the $n\times n$ homeostasis matrix $H$. By Cramer's rule,
-
-$$\mathcal I_0\ \text{is a point of infinitesimal homeostasis}\iff \det H=0\ \text{at}\ (X(\mathcal I_0),\mathcal I_0).$$
-
-By Frobenius–König theory there are permutation matrices $P,Q$ with $PHQ$ block upper-triangular with unique irreducible square diagonal blocks $B_1,\dots,B_m$, so $\det H=\prod_\eta\det B_\eta$ and each factor defines a homeostasis type. A block of size $k$ has $k$ or $k-1$ self-coupling entries $f_{j,j}$: the first gives appendage homeostasis (a subnetwork off every simple path from $\iota$ to $o$), the second structural homeostasis (a subnetwork between consecutive super-simple nodes, nodes lying on every simple $\iota\to o$ path).
+**Homeostasis matrix.** Let $H$ be the homeostasis matrix of $\mathcal G$ (the Jacobian $J=(f_{j,k})$, $f_{j,k}=\partial f_j/\partial x_k$, with the row of $\iota$ and the column of $o$ deleted) and $\det H=\prod_\eta\det B_\eta$ its factorization into irreducible diagonal blocks, as in [Determinant criterion for infinitesimal homeostasis](determinant-criterion-for-infinitesimal-homeostasis.md), where $\mathcal I_0$ is a point of infinitesimal homeostasis iff $\det H=0$. The homeostasis subnetworks are the appendage and structural ones of [Appendage and structural homeostasis subnetworks](appendage-and-structural-homeostasis-subnetworks.md), with super-simple and appendage nodes as defined there; a block of size $k$ has $k$ self-coupling entries $f_{j,j}$ in the appendage case and $k-1$ in the structural case.
 
 **GRN–PRN correspondence.** In a gene regulatory network (GRN) each gene $\tau$ carries an mRNA and a protein concentration. The associated protein-mRNA network (PRN) $\mathcal R$ replaces $\tau$ by two nodes $\tau^R\to\tau^P$ and a regulation $\sigma\to\tau$ by $\sigma^P\to\tau^R$, giving a bipartite input-output network. Then:
 
 - The homeostasis subnetworks of $\mathcal G$ and $\mathcal R$ correspond one-to-one, except that (a) each super-simple node $\rho$ of $\mathcal G$ corresponds to an extra $\mathcal R$-Haldane subnetwork $\{\rho^R\to\rho^P\}$, and (b) each single appendage node $\tau$ of $\mathcal G$ yields two appendage subnetworks $\{\tau^R\}$ and $\{\tau^P\}$ of $\mathcal R$ (null-degradation types).
 - The homeostasis patterns of $\mathcal G$ (which nodes are simultaneously homeostatic) correspond exactly to the GRN-generating homeostasis patterns of $\mathcal R$; patterns of $\mathcal R$ triggered by Haldane or protein null-degradation subnetworks have no GRN counterpart.
 - If the PRN is infinitesimally homeostatic at the output mRNA $o^R$, it is also homeostatic at the output protein $o^P$.
+
+## Depends on
+
+- [Determinant criterion for infinitesimal homeostasis](determinant-criterion-for-infinitesimal-homeostasis.md)
+- [Appendage and structural homeostasis subnetworks](appendage-and-structural-homeostasis-subnetworks.md)
 
 ## Expansion
 

@@ -8,9 +8,9 @@
 - (A2)(3) for every $x>0$, $\operatorname{ess\,sup}_{\theta\in\Theta}\int_0^\infty\exp\bigl(-x\int_0^a\gamma(s,\theta)\,ds\bigr)\,da<\infty$;
 - (A2)(4) $K>0$ on $\Theta^2$ and $\theta\mapsto\sup_{\tilde\theta\in\Theta}K(\tilde\theta,\theta)$ belongs to $L^1(\nu)$.
 
-Theorem 3.1 uses (A1); Theorem 3.3 uses (A1) and (A2). $T_I(\theta)$ denotes the infectious period. The empirical measure $\mu^N_t$ of (age, trait) pairs describes the population state.
+Theorem 3.1 uses (A1) and (A2)(1)(a)–(b) (nonnegative measurable $\lambda,\gamma$ bounded by $\lambda_*$ and $1$); Theorem 3.3 uses (A1) and (A2). $T_I(\theta)$ denotes the infectious period. The initial (age, trait) pairs $(a^k_0,\theta^k_0)_{1\le k\le N}$ are i.i.d. with law $\mu_0$ on $\mathbb R_+\times\Theta$, and the empirical measure $\mu^N_t$ of (age, trait) pairs describes the population state.
 
-**Theorem 3.1 (law of large numbers).** As $N\to\infty$, $\mu^N$ converges in law in the Skorokhod space of probability-measure-valued paths to the unique solution $\mu$ of a measure-valued equation, equivalently of an age-structured transport PDE with renewal boundary condition driven by the force of infection $\mathfrak F(t)=\int\lambda(a,\theta)\mu_t(da,d\theta)$ (Proposition 4.1, Corollary 4.2).
+**Theorem 3.1 (law of large numbers).** As $N\to\infty$, $\mu^N$ converges in law in the Skorokhod space of probability-measure-valued paths to the unique solution $\mu$, with initial value $\mu_0$, of a measure-valued equation, equivalently of an age-structured transport PDE with renewal boundary condition driven by the force of infection $\mathfrak F(t)=\int\lambda(a,\theta)\mu_t(da,d\theta)$ (Proposition 4.1, Corollary 4.2).
 
 **Theorem 3.3 (endemic equilibrium).** Under (A1) and (A2) there is a unique $\mathfrak S_*\in L^1(\nu)$, positive $\nu$-a.e., solving $\mathfrak S_*(\theta)=\int_\Theta K(\tilde\theta,\theta)\mathfrak S_*(\tilde\theta)\nu(d\tilde\theta)$ with $\int\lambda(a,\theta)\mathfrak S_*(\theta)\,da\,\nu(d\theta)=1$. An endemic equilibrium exists when
 

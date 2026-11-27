@@ -1,10 +1,10 @@
 # ODE reduction of Laplace-kernel integrodifference two-cycles
 
-**Setting.** Let $F:\mathbb{R}\to\mathbb{R}$ be a growth map and consider the integrodifference equation
+**Setting.** Let $F\in C^2(\mathbb{R})$ be a growth map $F:\mathbb{R}\to\mathbb{R}$ and consider the integrodifference equation
 
 $$N_{t+1}(x)=QN_t=\int_{\mathbb{R}}K(x-y)\,F(N_t(y))\,dy$$
 
-with the Laplace dispersal kernel $K(u)=\tfrac{\sigma}{2}e^{-\sigma|u|}$, $\sigma>0$. Suppose the non-spatial map $n\mapsto F(n)$ has a 2-cycle $\{n_-,n_+\}$, $n_-<n_+$. A *spatial 2-cycle* is a pair of functions $N,M:\mathbb{R}\to\mathbb{R}$ with
+with the Laplace dispersal kernel $K(u)=\tfrac{\sigma}{2}e^{-\sigma|u|}$, $\sigma>0$. Suppose the non-spatial map $n\mapsto F(n)$ has a 2-cycle $\{n_-,n_+\}$, $n_-<n_+$, with $0<F'(n_-)F'(n_+)<1$ (the source's standing assumptions; the derivative condition is used in Lemma 2.7 below). A *spatial 2-cycle* is a pair of functions $N,M:\mathbb{R}\to\mathbb{R}$ with
 
 $$\lim_{x\to\pm\infty}N(x)=n_\pm,\qquad \lim_{x\to\pm\infty}M(x)=n_\mp,\qquad N=Q[M],\quad M=Q[N].$$
 

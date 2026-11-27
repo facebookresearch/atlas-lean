@@ -12,7 +12,7 @@ where $\rho_C$ is CAR T-cell stimulation per CD19$^+$ encounter, $\tau_C,\tau_B,
 
 $$I_0^{\mathrm{crit}}=\frac1{\tau_C\rho_C}\Big(1-\frac{\tau_B}{\tau_B+\tau_I(1+\tau_B\rho_L)}\Big),$$
 
-$P_2$ and $P_3$ undergo a transcritical bifurcation: for $I_0>I_0^{\mathrm{crit}}$ the cure state $P_2$ with persisting CAR T cells is stable and the coexistence state is unstable. So sustained B-cell production can secure tumour eradication by keeping CAR T cells stimulated.
+$P_2$ and $P_3$ undergo a transcritical bifurcation: for $I_0^{\mathrm{crit}}<I_0<\frac1{\tau_C\rho_C}$ the cure state $P_2$ with persisting CAR T cells is stable and the coexistence state is unstable (for $I_0>\frac1{\tau_C\rho_C}$ the B-cell coordinate of $P_2$ is negative, so $P_2$ lies outside the state space). So sustained B-cell production can secure tumour eradication by keeping CAR T cells stimulated.
 
 **Theorem (oscillations).** At $I_0=0$ the coexistence equilibrium has a subcritical Hopf bifurcation with first Lyapunov coefficient $l_1=\tau_C^{3/2}\rho_C^2/(3\sqrt{\rho_L})>0$, so unstable periodic orbits appear for small $I_0>0$. Trajectories follow an almost heteroclinic cycle between equilibria, with successive leukaemia maxima that explain apparent remission followed by relapse; their size depends on the initial tumour burden.
 

@@ -11,7 +11,7 @@ Here $\varepsilon=\mu\sigma^2$ is a small evolutionary rate (mutation fraction t
 - **H3.** $c'(u)/c(u)>b_1'(u)/b_1(u)$ for all $u$ (fitness maxima shift toward higher resistance as the dose increases);
 - **H4.** the fitness landscape $h(u,a)=b(u,a)/c(u)$ has finitely many critical points in $u$, each isolated, for every $a$, and $h(u,a)\to-\infty$ as $|u|\to\infty$ for all $a\ge0$.
 
-The *cemetery* (cure) set is $E=\{(u,0):u\in\mathbb R\}$, a line of equilibria by H1. Let $\Gamma(x_0)$ be the reachable set from $x_0=(u_0,n_0)$ under piecewise-constant doses in $A$ and $\tilde\Gamma(x_0)$ that of the reduced system, obtained by dividing $\dot n$ by $k(n)/n$, for which $E$ is no longer invariant; the set of *curable* states is $S=\{x_0:\tilde\Gamma(x_0)\cap E\ne\emptyset\}$. By H2–H3 the equilibria with $n>0$ form the graph
+The *cemetery* (cure) set is $E=\{(u,0):u\in\mathbb R\}$, a line of equilibria by H1. Let $\Gamma(x_0)$ be the reachable set from $x_0=(u_0,n_0)$ under piecewise-constant doses in $A$ and $\tilde\Gamma(x_0)$ that of the reduced system, obtained by dividing the vector field by $k(n)$, $\dot u=\varepsilon\big(\partial_ub(u,\alpha)-c'(u)n\big)$, $\dot n=\big(b(u,\alpha)-c(u)n\big)/\tilde k(n)$ with $\tilde k(n)=k(n)/n>0$, for which $E$ no longer consists of equilibria; the set of *curable* states is $S=\{x_0:\tilde\Gamma(x_0)\cap E\ne\emptyset\}$. By H2–H3 the equilibria with $n>0$ form the graph
 
 $$\mathcal P=\{(x,a):\ a=a_\star(u),\ n=h_\star(u)\},\qquad h_\star(u)=h(u,a_\star(u)),$$
 
