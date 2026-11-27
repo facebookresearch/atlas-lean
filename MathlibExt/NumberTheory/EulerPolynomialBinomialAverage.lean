@@ -37,8 +37,10 @@ noncomputable def eulerPoly (n : ℕ) : ℚ[X] :=
     (2 : ℚ) ^ (n + 1) •
       (Polynomial.bernoulli (n + 1)).comp (C (1 / 2) * X))
 
-/-- The average of the Euler polynomial at adjacent arguments recovers the monomial. -/
-private theorem eulerPoly_shift (n : ℕ) :
+/-- **Adjacent sum of an Euler polynomial.** Let $E_n(x)$ denote the Euler polynomial. For every
+natural number $n$, $E_n(x + 1) + E_n(x) = 2x^n$ as polynomials in $x$ with rational coefficients;
+here `taylor 1` is the shift $p(x) \mapsto p(x + 1)$. -/
+theorem eulerPoly_shift (n : ℕ) :
     taylor 1 (eulerPoly n) + eulerPoly n = (2 : ℚ) • X ^ n := by
   apply Polynomial.funext
   intro x
@@ -155,9 +157,9 @@ private theorem average_pow (k n : ℕ) :
     Nat.cast_sub (mem_range_succ_iff.mp hj)]
   ring_nf
 
-set_option linter.unusedVariables false in
 /-- **Euler polynomials as alternating sums of shifted powers.** Let $E_n(x)$ denote the Euler
-polynomial. For all natural numbers $m \ge 2$ and $n \le 2m + 1$,
+polynomial. For all natural numbers $m$ and $n$ with $n \le 2m + 1$, that is
+$m \ge \lfloor n/2 \rfloor$,
 $E_n(x) = \sum_{k=0}^{m} \frac{(-1)^k}{2^k} \binom{m+1}{k+1}
 \sum_{j=0}^{k} \binom{k}{j} \left(x + j - \frac{k+1}{2}\right)^n$
 as polynomials in $x$ with rational coefficients.
@@ -166,7 +168,7 @@ Source: Nouara Mokhtari, Rachid Boumahdi, and Farid
 Bencherif, "Generalizations of Several Explicit Formulas
 for Euler Polynomials", Theorem 4.1. -/
 theorem eulerPoly_eq_binomial_average (m n : ℕ)
-    (hm : 2 ≤ m) (hn : n ≤ 2 * m + 1) :
+    (hn : n ≤ 2 * m + 1) :
     eulerPoly n =
       ∑ k ∈ Finset.range (m + 1),
         ((-1) ^ k * (Nat.choose (m + 1) (k + 1) : ℚ) /

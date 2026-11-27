@@ -1,0 +1,15 @@
+# Near-Maximum Circuit Lower Bounds for Symmetric Exponential Time
+
+- [Symmetric alternation: the classes S2TIME[T], S2P and S2E](symmetric-alternation-s2p-s2e.md)
+- [Miltersen–Vinodchandran–Watanabe: E^Σ2P contains a language of circuit complexity at least 2^n/n](delta3e-near-maximum-circuit-lower-bound.md)
+- [GGM-tree evaluation: every vertex value of the GGM tree GGM_T of C on input x is computable in time Õ(|C| log T)](ggm-tree-vertex-evaluation.md)
+- [Russell–Sundaram and Canetti: BPP is contained in S2P](bpp-subset-s2p.md)
+- [Cai: S2P is contained in ZPP^NP](cai-s2p-subset-zpp-np.md)
+- [Single-valued FΣ2P and FS2P algorithms for search problems](single-valued-fsigma2p-and-fs2p.md)
+- [Korten's reduction: from a non-image of the GGM tree, an NP oracle finds a non-image of C](korten-reduction-ggm-tree.md)
+- [Li: with post-order traversal the history of Korten's reduction has a description of size poly(n)](post-order-history-short-description.md)
+- [Li: a single-valued FS2P algorithm solves Avoid on every input length](li-single-valued-fs2p-avoid.md)
+- [Chen–Hirahara–Ren: an infinitely-often single-valued FZPP^NP/1 algorithm for Avoid](chr-infinitely-often-pseudodeterministic-avoid.md)
+- [Chen–Hirahara–Ren: S2E/1 requires circuit size 2^n/n, hence so do Σ2E, (Σ2E ∩ Π2E)/1 and ZPE^NP/1](chr-s2e-advice-near-maximum-lower-bound.md)
+- [Li: S2E is not in i.o.-SIZE[2^n/n], giving almost-everywhere bounds for Σ2E ∩ Π2E and ZPE^NP](li-s2e-almost-everywhere-lower-bound.md)
+- [Li: zero-error pseudodeterministic NP-oracle constructions on every length for Ramsey graphs, rigid matrices, extractors and codes](li-pseudodeterministic-np-oracle-explicit-constructions.md)
