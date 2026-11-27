@@ -12,7 +12,7 @@ Brown's method approximates the null law of $X$ by a scaled chi-square $c\,\chi^
 
 $$c = \frac{\operatorname{Var} X}{2\,\mathbb E X}, \qquad f = \frac{2\,(\mathbb E X)^2}{\operatorname{Var} X}, \qquad p_{\mathrm{Brown}} = \Pr\bigl(\chi^2_f > X/c\bigr).$$
 
-The covariances are estimated from the empirical covariation of the p-values across all genes. With independent sources $c = 1$ and $f = 2k$, recovering Fisher's test; positive dependence gives $c > 1$ and $f < 2k$, so the same $X$ receives a larger, more conservative p-value.
+The covariances are estimated from the empirical covariation of the p-values across all genes. With independent sources $c = 1$ and $f = 2k$, recovering Fisher's test; positive dependence gives $c > 1$ and $f < 2k$, producing a more dispersed null distribution with the same mean $2k$, so in the upper tail (large $X$, i.e. small Fisher p-values) the same $X$ receives a larger, more conservative p-value.
 
 ## Expansion
 

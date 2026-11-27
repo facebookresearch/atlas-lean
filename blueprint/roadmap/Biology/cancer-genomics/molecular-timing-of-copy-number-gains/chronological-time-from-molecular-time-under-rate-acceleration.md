@@ -8,7 +8,7 @@ the inverse map from molecular to chronological time is, with $\tau = T\,\big(t_
 
 $$t(T) = \begin{cases} \tau, & \tau \le t_a, \\ t_a + (\tau - t_a)/a, & \tau \ge t_a, \end{cases}$$
 
-and $t(T) \ge T\, t_D$, with equality for all $T$ if and only if $a = 1$, $t_a = 0$ or $t_a = t_D$. The acceleration is estimated from tumours sampled at diagnosis (age $t_D$) and relapse (age $t_R$) as
+and $t(T) \ge T\, t_D$, with equality for all $T$ if and only if $a = 1$, $t_a = 0$ or $t_a = t_D$. The acceleration is estimated from tumours sampled at diagnosis (age $t_D$) and relapse after an elapsed interval $t_R > 0$ from diagnosis to relapse as
 
 $$a = \frac{n_R}{n_D} \cdot \frac{t_D}{t_R},$$
 
