@@ -31,10 +31,6 @@ stage, $\eta$ the isolation rate of symptomatic cases, $\gamma_X$ recovery rates
 disease-induced death rates. Isolated ($H$, $Q$) and dead individuals do not transmit and are
 excluded from the mixing denominator.
 
-## Depends on
-
-- [SEIR epidemic model](../../seir-epidemic-model/README.md)
-
 ## Expansion
 
 The model is an SEIR scheme whose infectious period is split in two stages. A presymptomatic stage

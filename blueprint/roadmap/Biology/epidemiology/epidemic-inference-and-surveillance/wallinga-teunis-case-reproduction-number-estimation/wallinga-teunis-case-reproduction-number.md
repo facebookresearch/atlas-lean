@@ -23,6 +23,7 @@ every case with a possible infector in the data is attributed exactly once, spli
 ## Depends on
 
 - [Reproductive number from growth rate and generation interval](../../euler-lotka-equation-and-the-reproduction-number/reproduction-number.md)
+- [Case reproduction number as a smoothed instantaneous reproduction number](../case-and-instantaneous-reproduction-numbers/case-reproduction-number-as-a-smoothed-instantaneous-reproduction-number.md)
 
 ## Expansion
 

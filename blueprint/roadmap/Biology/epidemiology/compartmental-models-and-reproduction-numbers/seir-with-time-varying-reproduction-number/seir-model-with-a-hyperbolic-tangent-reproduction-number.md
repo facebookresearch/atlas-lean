@@ -27,7 +27,6 @@ with $s_\infty \le s^*_\infty$ and $r^*_\infty \le r_\infty$ relative to the unc
 ## Depends on
 
 - [Lambert-W solution of the SEIR final-size relation](lambert-w-solution-of-the-seir-final-size-relation.md)
-- [SEIR epidemic model](../../seir-epidemic-model/README.md)
 
 ## Expansion
 

@@ -27,7 +27,6 @@ with $\eta_{ij} = 1$ for $i \ne j$ and a doubled weight for $i = j$, where eithe
 ## Depends on
 
 - [Multitype birth–death process and its extinction probabilities](multitype-birth-death-process-and-its-extinction-probabilities.md)
-- [Felsenstein's pruning algorithm](../../felsenstein-s-pruning-algorithm/README.md)
 
 ## Expansion
 

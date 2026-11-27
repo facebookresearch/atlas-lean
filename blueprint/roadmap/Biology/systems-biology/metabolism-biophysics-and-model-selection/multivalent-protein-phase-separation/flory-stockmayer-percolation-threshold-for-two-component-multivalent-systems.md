@@ -9,7 +9,7 @@ $$f_1 f_2\,(s_1 - 1)(s_2 - 1) > 1 .$$
 **Consequences.**
 
 1. Stoichiometric balance: every bond uses one sticker of each species, so $f_1 s_1 c_1 = f_2 s_2 c_2$. A large excess of species $1$ forces $f_1 \to 0$ (and $f_2 \to 1$), and vice versa, so $f_1 f_2 \to 0$ and the network cannot percolate at either extreme of composition.
-2. Hence the percolation line in the $(c_1, c_2)$ plane is a bounded, parabola-like curve, and percolation is reentrant: at fixed $c_1$ inside the percolating range, increasing $c_2$ first crosses into and then out of the percolated regime.
+2. Hence the percolated region excludes both regimes of large excess: the percolation line is parabola-like (conical in the source's log–log plot), opening towards high concentrations around balanced stoichiometry, and percolation is reentrant: at fixed $c_1$ inside the percolating range, increasing $c_2$ first crosses into and then out of the percolated regime.
 3. Lattice simulations of the nucleolar protein N130 ($s_1 = 10$ acidic tracts) with the rpL5 peptide ($s_2 = 2$ arginine motifs) show parabolic percolation lines and closed, ellipse-shaped binodals, so phase separation driven by obligate heterotypic interactions is likewise reentrant and has no composition-independent saturation concentration.
 
 ## Expansion

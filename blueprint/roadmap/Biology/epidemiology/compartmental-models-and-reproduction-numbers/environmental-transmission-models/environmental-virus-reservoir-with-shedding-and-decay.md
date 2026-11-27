@@ -4,11 +4,11 @@
 
 $$\frac{dV}{dt} = \omega I(t) - c\,V(t).$$
 
-Susceptible hosts are infected from the environment at rate $\alpha\rho V(t)$ per host, as for an [exponential dose–response](exponential-dose-response-from-independent-exposures.md), in addition to direct transmission.
+Susceptible hosts are infected from the environment at rate $\rho\,(1 - e^{-\alpha V(t)})$ per host, with exposure rate $\rho$ and per-virion infectiousness $\alpha$, as for an [exponential dose–response](exponential-dose-response-from-independent-exposures.md), in addition to direct transmission.
 
 **Proposition.**
 
-1. *Rescaling.* With $\tilde V = V/\omega$ (virus measured in units of the per-capita shedding rate), $d\tilde V/dt = I - c\tilde V$ and the environmental infection rate is $\alpha\rho\omega\, \tilde V$; the dynamics depend on $\alpha$, $\rho$ and $\omega$ only through the product $\alpha\rho\omega$ (rescaled environmental infectiousness).
+1. *Rescaling.* With $\tilde V = V/\omega$ (virus measured in units of the per-capita shedding rate), $d\tilde V/dt = I - c\tilde V$ and the environmental infection rate is $\rho\,(1 - e^{-(\alpha\omega)\tilde V})$; the dynamics depend on $\alpha$ and $\omega$ only through the product $\alpha\omega$ (rescaled per-virion infectiousness), and on $\rho$ separately.
 2. *Piecewise-constant shedding.* If $I(t) = I$ is constant on an interval $[t_0, t_0 + \Delta]$, then for $0 \le s \le \Delta$
 
 $$V(t_0 + s) = V(t_0)\, e^{-cs} + \frac{\omega I}{c}\big(1 - e^{-cs}\big),$$
@@ -27,7 +27,7 @@ secondary infections, the second term through the environment.
 
 ## Expansion
 
-Property 1 is immediate by substitution. Property 2 is the solution of a linear first-order equation with constant forcing. Property 4 follows from the next-generation method with infected compartments $(I, V)$: an infective lives $1/(\gamma + d)$ time units, infects $\beta S_0$ hosts per unit time directly, and sheds $\omega$ virions per unit time, each of which persists $1/c$ time units on average and infects at rate $\alpha\rho S_0$; summing the two pathways gives the formula. The environmental term is what allows recurrent epidemics in wild waterfowl when host turnover alone is too slow to sustain transmission, because virus deposited during one season seeds the next.
+Property 1 is immediate by substitution. Property 2 is the solution of a linear first-order equation with constant forcing. Property 4 follows from the next-generation method with infected compartments $(I, V)$: an infective lives $1/(\gamma + d)$ time units, infects $\beta S_0$ hosts per unit time directly, and sheds $\omega$ virions per unit time, each of which persists $1/c$ time units on average; linearizing the environmental rate at $V = 0$, $\rho(1 - e^{-\alpha V}) = \alpha\rho V + O(V^2)$, so each virion infects at rate $\alpha\rho S_0$ near the disease-free state; summing the two pathways gives the formula. The environmental term is what allows recurrent epidemics in wild waterfowl when host turnover alone is too slow to sustain transmission, because virus deposited during one season seeds the next.
 
 ## Sources
 

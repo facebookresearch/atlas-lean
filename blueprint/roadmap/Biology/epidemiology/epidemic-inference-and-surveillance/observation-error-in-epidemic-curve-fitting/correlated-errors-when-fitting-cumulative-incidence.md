@@ -16,10 +16,6 @@ $$\mathrm{Cov}(Z_s, Z_t) = \mathrm{Var}(Z_s) = \sum_{u \le s} v_u, \qquad \mathr
 
 so consecutive cumulative errors are strongly positively correlated (for constant $v_u$, $\mathrm{Corr}(Z_{t-1}, Z_t) = \sqrt{(t-1)/t} \to 1$) and their variance grows linearly in $t$. A least-squares or likelihood fit that treats the $Z_t$ as independent, identically distributed errors therefore uses a misspecified error model: it counts each per-period deviation many times, which yields overconfident (too narrow) uncertainty for $R_0$ and other parameters and hides lack of fit.
 
-## Depends on
-
-- [SEIR epidemic model](../../seir-epidemic-model/README.md)
-
 ## Expansion
 
 The covariance identity is bilinearity: $\mathrm{Cov}(Z_s, Z_t) = \sum_{u \le s}\sum_{w \le t}\mathrm{Cov}(Y_u, Y_w) = \sum_{u \le s} v_u$ because only the diagonal terms $u = w \le s$ survive. The negative-binomial moments follow from the gamma–Poisson mixture with shape $1/k$. The Erlang incubation period is the method of stages: the sum of $m$ independent exponential sojourns of rate $m\alpha$. In the source, deterministic models were fitted by least squares to stochastically simulated cumulative incidence and recovered biased $R_0$ with confidence intervals that frequently excluded the truth; fitting the stochastic model with the negative-binomial observation process to raw (non-accumulated) weekly counts reduced bias, quantified forecast uncertainty properly, and exposed misfit through diagnostics such as the lag-one autocorrelation of weekly cases.

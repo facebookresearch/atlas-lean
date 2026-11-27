@@ -14,10 +14,6 @@ $$\mathrm{LFP}(t) \;=\; \sum_{k \in \text{pyramidal}} \bigl(|I_{A,k}(t)| + |I_{G
 
 reflecting that pyramidal dendrites form an approximately open-field dipole, with excitatory currents entering apically and inhibitory currents leaving basally.
 
-## Depends on
-
-- [Leaky integrate-and-fire neuron](../../leaky-integrate-and-fire-neuron/README.md)
-
 ## Expansion
 
 Each pulse is the impulse response of the linear cascade $\tau_r \dot x = -x + \tau_m J\sum\delta(t - t^* - \tau_L)$, $\tau_d \dot I = -I + x$, which is why the currents can be integrated with two auxiliary variables per synapse type; the normalization written here gives each pulse area $\tau_m J$. Strong recurrent inhibition puts the network in an inhibition-dominated regime: single neurons fire irregularly at low rates, while the population shows oscillations. Delayed interactions among interneurons favour high (gamma) frequencies, and excitatory–inhibitory loops favour lower ones, with frequency set by delays, synaptic time constants and the balance of excitation and inhibition. Driven by thalamic activity recorded during natural movies, the LFP proxy reproduced both the power spectrum and the frequency-resolved stimulus information of primary visual cortex LFPs, whereas the network-averaged membrane potential decayed too fast at high frequencies.

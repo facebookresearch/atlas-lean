@@ -34,10 +34,6 @@ Contact tracing enters through $\alpha_u$ (traced exposed moved to quarantine) a
 susceptibility of quarantined susceptibles and $\psi_q$ the rate at which they are released. The
 model has a line of disease-free equilibria $(S_u(0), 0, \dots, 0)$.
 
-## Depends on
-
-- [Kermack–McKendrick SIR model](../../kermack-mckendrick-sir-model/README.md)
-
 ## Expansion
 
 A susceptible making an effective contact is quarantined with probability $(1-p)$ if not infected,

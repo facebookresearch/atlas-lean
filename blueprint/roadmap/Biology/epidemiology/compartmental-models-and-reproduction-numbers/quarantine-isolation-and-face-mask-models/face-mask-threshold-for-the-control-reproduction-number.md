@@ -28,7 +28,9 @@ $$\epsilon_M c_M \ > \ 1 - \frac{1}{\mathcal R_c^{0}} .$$
 ## Depends on
 
 - [Quarantine–isolation model with face-mask use](quarantine-isolation-model-with-face-mask-use.md)
-- [Next-generation matrix and the basic reproduction number](../../next-generation-matrix-and-the-basic-reproductio/README.md)
+- [Basic reproduction number of the next-generation matrix](../../next-generation-matrix-and-the-basic-reproductio/r0.md)
+- [$R_0$ as a threshold for the linearized infected subsystem](../../next-generation-matrix-and-the-basic-reproductio/is-hurwitz-sub-iff-r0-lt-one.md)
+- [Unstable mode of the infected subsystem exactly when $R_0 > 1$](../../next-generation-matrix-and-the-basic-reproductio/exists-re-pos-iff-one-lt-r0.md)
 
 ## Expansion
 

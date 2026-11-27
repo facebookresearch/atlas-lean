@@ -29,7 +29,7 @@ distribution of infections during exponential growth.
 ## Depends on
 
 - [SEPIA compartmental model](sepia-compartmental-model.md)
-- [Next-generation matrix and the basic reproduction number](../../next-generation-matrix-and-the-basic-reproductio/README.md)
+- [Basic reproduction number of the next-generation matrix](../../next-generation-matrix-and-the-basic-reproductio/r0.md)
 
 ## Expansion
 

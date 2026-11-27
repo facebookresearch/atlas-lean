@@ -30,7 +30,8 @@ If sampling is complete ($\pi = 1$) then $\omega_\ast = 0$ and $\alpha_\ast = \a
 
 ## Depends on
 
-- [Superspreading and negative-binomial offspring](../../superspreading-and-negative-binomial-offspring/README.md)
+- [Negative-binomial offspring distribution](../../superspreading-and-negative-binomial-offspring/nb-offspring.md)
+- [Negative-binomial probability generating function](../../superspreading-and-negative-binomial-offspring/nb-pgf.md)
 
 ## Expansion
 

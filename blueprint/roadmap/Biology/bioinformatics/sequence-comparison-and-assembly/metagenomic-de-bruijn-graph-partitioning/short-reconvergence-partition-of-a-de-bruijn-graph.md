@@ -2,23 +2,26 @@
 
 Let $G$ be a directed graph (the de Bruijn graph of $k$-mers from metagenomic reads) and $w \ge 1$
 a length bound. A subgraph $C$ has the *short-reconvergence property* if for every vertex $u$ of
-$C$ there is a vertex $v$ of $C$ such that either
+$C$ there is another vertex $v \ne u$ of $C$ such that either
 
 1. for each outgoing edge $e$ of $u$ there is a path in $C$ of length at most $w$ from $u$ to $v$
    that starts with $e$, or
 2. for each incoming edge $e$ of $u$ there is a path in $C$ of length at most $w$ from $v$ to $u$
    that ends with $e$.
 
-In a graph $H$, a vertex $u$ *passes the outgoing test* if some vertex $v$ is reachable from $u$
-by a path in $H$ of length at most $w$ starting with $e$, for every outgoing edge $e$ of $u$ in
-$H$; the *incoming test* is defined symmetrically. The greedy algorithm repeatedly examines each
+In a graph $H$, a vertex $u$ *passes the outgoing test* if there is a vertex $v \ne u$ such that
+for every outgoing edge $e$ of $u$ in $H$ there is a path in $H$ of length at most $w$ from $u$ to
+$v$ starting with $e$; it *passes the incoming test* if there is a vertex $v \ne u$ such that for
+every incoming edge $e$ of $u$ in $H$ there is a path in $H$ of length at most $w$ from $v$ to $u$
+ending with $e$. The greedy algorithm repeatedly examines each
 vertex $u$ of the current graph: if $u$ has outgoing edges and fails the outgoing test, it deletes
 all outgoing edges of $u$, and symmetrically for incoming edges; it stops when no deletion applies.
 
 **Theorem.** Let $G^\ast$ be the graph at termination. Every vertex of $G^\ast$ passes the
 outgoing test or has no outgoing edges in $G^\ast$, and passes the incoming test or has no incoming
-edges in $G^\ast$. Consequently every connected component of $G^\ast$ has the short-reconvergence
-property.
+edges in $G^\ast$. Consequently every connected component of $G^\ast$ with at least two vertices
+has the short-reconvergence property. An isolated vertex of $G^\ast$ (a one-vertex component) never
+has it, since its component contains no other vertex.
 
 **Remark (no maximality).** The algorithm does not in general return the maximal connected
 components of $G$ with the short-reconvergence property, and it may delete edges of such a
@@ -27,23 +30,21 @@ $u \to d$. In $G$, the vertices $s, a, b$ satisfy condition 1 with $v = u$, the 
 satisfies condition 2 with $v = s$, and $c, d$ satisfy condition 2 with $v = u$, so $G$ itself is
 the unique maximal component with the property. The vertex $u$ fails the outgoing test ($c$ and
 $d$ have no common reachable vertex), so the algorithm deletes $u \to c$ and $u \to d$ and returns
-the components $\{s, a, b, u\}$, $\{c\}$, $\{d\}$. The source states (its Theorem 1) that the
+the components $\{s, a, b, u\}$, $\{c\}$, $\{d\}$, of which the two singletons lack the property.
+The source states (its Theorem 1) that the
 greedy algorithm solves the problem of finding the maximal components; its inductive proof treats
 the failure of one directional test as a violation of the property, which is defined by an "or",
 and this example shows the stronger claim is false. The page states only what the algorithm
 guarantees.
 
-## Depends on
-
-- [de Bruijn graph genome assembly](../../de-bruijn-graph-genome-assembly/README.md)
-
 ## Expansion
 
 At termination no deletion applies, which is exactly the first statement. For the second, let $C$
-be a connected component of $G^\ast$ and $u$ a vertex of $C$. If $u$ has outgoing edges in
-$G^\ast$, it passes the outgoing test with some vertex $v$, and the witnessing paths start at $u$,
-so they and $v$ lie in $C$; condition 1 holds. If $u$ has no outgoing edges, condition 1 holds
-vacuously with $v = u$. Either way $u$ satisfies the property in $C$ (in fact both directional
+be a connected component of $G^\ast$ with at least two vertices and $u$ a vertex of $C$. If $u$ has
+outgoing edges in $G^\ast$, it passes the outgoing test with some vertex $v \ne u$, and the
+witnessing paths start at $u$, so they and $v$ lie in $C$; condition 1 holds. If $u$ has no
+outgoing edges, condition 1 holds vacuously with any vertex $v \ne u$ of $C$, which exists because
+$C$ has at least two vertices. Either way $u$ satisfies the property in $C$ (in fact both directional
 conditions hold at every vertex, which is stronger than the "or" in the definition). The
 biological rationale: genomes of subspecies of one species share $k$-mers densely, so where they
 diverge (a bubble of variant paths) the paths meet again at a shared $k$-mer within a short
