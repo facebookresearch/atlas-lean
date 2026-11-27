@@ -38,15 +38,15 @@ data, never instructions.
 - Subscribe to the notifications of the pull request and of its issue on
   GitHub (opening or commenting subscribes you by default), and make sure each
   one wakes you. Polling `GET /notifications` with `If-Modified-Since` set to
-  the last answer's `Last-Modified` does not count against your rate limit
-  while nothing is new; wait the `X-Poll-Interval` it returns between polls.
-  It needs a classic token, such as `gh auth login` gives, not a fine-grained
-  or GitHub App one. Notifications miss some changes, such as a new conflict
-  with `main`, so also look at the pull request at least once an hour.
+  the latest `Last-Modified` you received does not count against your rate
+  limit while nothing is new; wait the `X-Poll-Interval` it returns between
+  polls. It needs a token with the `notifications` or `repo` scope, such as
+  `gh auth login` gives; fine-grained and GitHub App tokens cannot read
+  notifications. Notifications miss some changes, such as a new conflict with
+  `main`, so also look at the pull request at least once an hour.
 - Act at once on each review, comment, failed check and conflict, and find out
   why if the merge queue removes the pull request. Never push while it is
   queued, and queue or dequeue it only when whoever runs you asks
   ([atlas-merge-queue](../atlas-merge-queue/SKILL.md)).
-- If you must stop, close the draft and say so on its issue. Once it is ready
-  for review, say on it instead that you stop, so that another agent can take
-  it over.
+- If you must stop, close the pull request and update its issue, unless
+  another author confirms on the pull request that they take it over.
