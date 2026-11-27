@@ -39,8 +39,8 @@ coefficients with `σ(X) = X + log [u_σ]`, where `σ(p̃) = p̃ u_σ`
 (`PadicComplexInt.BSt.galois_X`; Fontaine, *op. cit.*, §4.3.3 p. 89). We construct injective
 Galois-equivariant `ℚ_[p]`-algebra maps to `B_dR`, `X ↦ log [p̃]` on `B_st`, whose images are the
 subalgebras `PadicComplexInt.bCrisPlus`, `PadicComplexInt.bCris` and `PadicComplexInt.bSt`
-(Fontaine, *op. cit.*, §4.1.2 p. 83 and Théorème 4.2.4 p. 86 for `K = ℚ_p`), and the resulting
-equivariant isomorphisms (`PadicComplexInt.BCris.equivBCris`,
+(Fontaine, *op. cit.*, §4.1.2–4.1.3 pp. 83–84 and Théorème 4.2.4 p. 86 for `K = ℚ_p`), and the
+resulting equivariant isomorphisms (`PadicComplexInt.BCris.equivBCris`,
 `PadicComplexInt.BSt.equivBSt`).
 
 The injectivity of `B_st → B_dR` is the transcendence of `log [p̃]` over `B_cris`
