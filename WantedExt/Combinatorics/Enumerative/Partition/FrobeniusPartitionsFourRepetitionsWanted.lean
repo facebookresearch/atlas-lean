@@ -10,7 +10,10 @@ LICENSE file in the root directory of this source tree.
 # Congruences for generalized Frobenius partitions with 4 repetitions
 
 Statements from Bipul Kumar Sarmah and Satyajit Gayan, *Congruences for F-partitions with 4
-Repetitions*, INTEGERS 25 (2025), Article A17.
+Repetitions*, INTEGERS 25 (2025), Article A17. The statement
+`frobeniusPartitionRepCount_four_four_mul_add_three_mod_two` is proved in
+`MathlibExt.Combinatorics.Enumerative.Partition.FrobeniusPartitionsFourRepetitionsFrobeniusPartitionRepCountFourFourMulAddThreeModTwo`,
+where `frobeniusPartitionRepCount` is defined.
 
 A generalized Frobenius partition (F-partition) of `n` is a two-rowed array of nonnegative
 integers with `r` columns whose rows are nonincreasing and with `n = r + Σ aᵢ + Σ bᵢ`.
@@ -25,6 +28,7 @@ public import Mathlib.Data.Int.ModEq
 public import Mathlib.Data.Fintype.Pi
 public import MathlibExt.Combinatorics.Enumerative.Partition.LevelFiveEulerDissection
 public import MathlibExt.NumberTheory.ModularForms.JacobiTheta.RamanujanProduct
+public import MathlibExt.Combinatorics.Enumerative.Partition.FrobeniusPartitionsFourRepetitionsFrobeniusPartitionRepCountFourFourMulAddThreeModTwo
 
 open PowerSeries
 
@@ -33,25 +37,6 @@ namespace MetaMathlibExt
 @[expose] public section
 
 local notation "𝔣" => qEulerProduct
-
-/-- **Frobenius partitions with at most $k$ repetitions.** For natural numbers $k$ and $n$,
-$\varphi_k(n)$ is the number of generalized Frobenius partitions of $n$ in which each integer
-appears at most $k$ times in each row. Concretely, $\varphi_k(n)$ is the number of pairs of
-functions $m_1, m_2 \colon \{0, 1, \dots, n\} \to \{0, 1, \dots, k\}$ with
-$\sum_i m_1(i) = \sum_i m_2(i)$ and $\sum_i (i + 1)\, m_1(i) + \sum_i i\, m_2(i) = n$.
-
-Here a generalized Frobenius partition of $n$ is a two-rowed array of nonnegative integers with
-$r$ columns, both rows nonincreasing, whose entries sum to $n - r$; its entries are at most $n$,
-and $m_1(i)$, $m_2(i)$ count how often $i$ appears in the top and bottom rows.
-
-Source: Bipul Kumar Sarmah and Satyajit Gayan, *Congruences for F-partitions with 4
-Repetitions*, INTEGERS 25 (2025), Article A17, Section 1 (definition of `φ_k(n)`, after
-Andrews). -/
-public def frobeniusPartitionRepCount (k n : ℕ) : ℕ :=
-  ((Finset.univ : Finset ((Fin (n + 1) → Fin (k + 1)) × (Fin (n + 1) → Fin (k + 1)))).filter
-    fun p => ∑ i : Fin (n + 1), (p.1 i : ℕ) = ∑ i : Fin (n + 1), (p.2 i : ℕ) ∧
-      ∑ i : Fin (n + 1), (p.1 i : ℕ) * ((i : ℕ) + 1) +
-        ∑ i : Fin (n + 1), (p.2 i : ℕ) * (i : ℕ) = n).card
 
 /-- **Initial values of $\varphi_4$.** Let $\varphi_4(n)$ be the number of generalized Frobenius
 partitions of $n$ in which each integer appears at most $4$ times in each row. Then
@@ -63,15 +48,6 @@ Repetitions*, INTEGERS 25 (2025), Article A17, Section 1 (definition of `φ_k(n)
 public theorem frobeniusPartitionRepCount_four_zero_one :
     frobeniusPartitionRepCount 4 0 = 1 ∧ frobeniusPartitionRepCount 4 1 = 1 := by
   constructor <;> decide +kernel
-
-/-- **$\varphi_4(4n+3)$ is even.** Let $\varphi_4(n)$ be the number of generalized Frobenius
-partitions of $n$ in which each integer appears at most $4$ times in each row. For every natural
-number $n$, $\varphi_4(4n + 3) \equiv 0 \pmod 2$.
-
-Source: Bipul Kumar Sarmah and Satyajit Gayan, *Congruences for F-partitions with 4
-Repetitions*, INTEGERS 25 (2025), Article A17, Theorem 2 (`integers-2025-A17-thm-2`). -/
-public theorem_wanted frobeniusPartitionRepCount_four_four_mul_add_three_mod_two (n : ℕ) :
-    frobeniusPartitionRepCount 4 (4 * n + 3) ≡ 0 [MOD 2]
 
 /-- **$\varphi_4(2N+1)$ is even when $5 \nmid N$.** Let $\varphi_4(n)$ be the number of generalized
 Frobenius partitions of $n$ in which each integer appears at most $4$ times in each row. For every
