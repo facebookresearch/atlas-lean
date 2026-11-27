@@ -30,13 +30,13 @@ $\varphi_{L/K}(u) = u$ for $-1 \le u \le 0$. Write $g_i$ for the order of $G_i$.
    $v = \varphi_{L/K}(u)$, then $\psi'_d(v) = 1/\varphi'_d(u)$ for every $v \ge -1$ and $\psi'_g(v) = 1/\varphi'_g(u)$ for
    every $v > -1$, so these one-sided derivatives take only integer values; at $-1$ there is no left derivative, and
    $\psi'_d(-1) = 1$. If $v$ is an integer, so is $\psi_{L/K}(v)$.
+3. For every $u \ge -1$,
+
+    $$\varphi_{L/K}(u) = \frac{1}{g_0} \sum_{s \in G} \min\bigl(i_G(s), u + 1\bigr) - 1.$$
 
 Serre states the formulas for the left derivatives for every integer $u$; at $u = -1$, where the half-line
 $[-1, +\infty)$ ends, there is no left derivative, and the convention for $(G_0 : G_{-1})$ would give the value
 $(G_{-1} : G_0)$, which is $2$ for an unramified quadratic extension.
-3. For every $u \ge -1$,
-
-    $$\varphi_{L/K}(u) = \frac{1}{g_0} \sum_{s \in G} \min\bigl(i_G(s), u + 1\bigr) - 1.$$
 
 The proof of the integrality in item 2 uses that $g_{m+1}$ divides $g_0, \dots, g_m$, the group $G_{m+1}$ being
 a subgroup of each of $G_0, \dots, G_m$.
