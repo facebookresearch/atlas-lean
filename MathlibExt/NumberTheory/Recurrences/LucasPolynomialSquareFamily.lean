@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Algebra.Polynomial.AlgebraMap
-public import Mathlib.Analysis.SpecialFunctions.Sqrt
+public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.Topology.Algebra.InfiniteSum.Defs
 public import MathlibExt.NumberTheory.GeneralizedFibonacciPolynomial
 import Mathlib.Tactic.LinearCombination
