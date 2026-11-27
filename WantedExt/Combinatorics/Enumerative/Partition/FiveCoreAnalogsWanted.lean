@@ -9,11 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import MathlibExt.Combinatorics.Enumerative.Partition.QEulerProduct
+public import MathlibExt.Combinatorics.Enumerative.Partition.FiveCoreAnalogs
 public import MathlibExt.Data.Set.Density
-public import Mathlib.RingTheory.PowerSeries.Expand
-public import Mathlib.Data.Int.Interval
-public import Mathlib.RingTheory.PowerSeries.Inverse
 
 /-!
 # Arithmetic identities for analogs of the 5-core partition function
@@ -38,128 +35,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Ramanujan's general theta function at powers of q.** For positive integers $i$ and $j$,
-$f(q^i, q^j)$ is the integer power series $\sum_{n \in \mathbb{Z}} q^{i n(n+1)/2 + j n(n-1)/2}$,
-that is, Ramanujan's $f(a, b) = \sum_{n \in \mathbb{Z}} a^{n(n+1)/2} b^{n(n-1)/2}$ at $a = q^i$
-and $b = q^j$.
-
-Since $i, j \ge 1$, only integers $n$ with $|n| \le m$ contribute to the coefficient of $q^m$, so
-each coefficient is a finite count.
-
-Source: Subhajit Bandyopadhyay and Nayandeep Deka Baruah, *Arithmetic Identities for Some
-Analogs of the 5-Core Partition Function*, Journal of Integer Sequences 27 (2024),
-Article 24.4.5, Section 1 (definition of `f(a, b)`). -/
-def ramanujanThetaPow (i j : ℕ+) : ℤ⟦X⟧ :=
-  mk fun m => (((Finset.Icc (-(m : ℤ)) m).filter fun n =>
-    ((i : ℕ) : ℤ) * (n * (n + 1) / 2) + ((j : ℕ) : ℤ) * (n * (n - 1) / 2) = m).card : ℤ)
-
-/-- **The 5-core counts.** For a natural number $n$, $c_5(n)$ is the coefficient of $q^n$ in the
-integer power series $f_5^5 / f_1$, where $f_k = \prod_{m \ge 1} (1 - q^{km})$ is the Euler
-product. The series $f_5^5 / f_1$ is the generating function of 5-core partitions.
-
-Source: Subhajit Bandyopadhyay and Nayandeep Deka Baruah, *Arithmetic Identities for Some
-Analogs of the 5-Core Partition Function*, Journal of Integer Sequences 27 (2024),
-Article 24.4.5, Section 1, equation for `∑ c_t(n) q^n` with `t = 5` (OEIS A053723). -/
-noncomputable def fiveCoreCount (n : ℕ) : ℤ :=
-  coeff n (qEulerProduct 5 ^ 5 * invOfUnit (pentagonalSeries ℤ) 1)
-
-/-- **The φ-analog of the 5-core partition function.** Let
-$\varphi(q) = \sum_{n \in \mathbb{Z}} q^{n^2}$ be Ramanujan's theta function. For a natural
-number $n$, $\bar a_5(n)$ is the coefficient of $q^n$ in the integer power series
-$\varphi^5(-q^5)/\varphi(-q)$ (the denominator has constant term $1$, so the quotient is a power
-series).
-
-Source: Subhajit Bandyopadhyay and Nayandeep Deka Baruah, *Arithmetic Identities for Some
-Analogs of the 5-Core Partition Function*, Journal of Integer Sequences 27 (2024),
-Article 24.4.5, Section 1, equation (at) (OEIS A368490). -/
-noncomputable def phiFiveCoreAnalog (n : ℕ) : ℤ :=
-  coeff n (expand 5 (by norm_num) (rescale (-1) (ramanujanThetaPow 1 1)) ^ 5 *
-    invOfUnit (rescale (-1) (ramanujanThetaPow 1 1)) 1)
-
-/-- **The ψ-analog of the 5-core partition function.** Let
-$\psi(q) = \sum_{n \in \mathbb{Z}} q^{2n^2 - n} = \sum_{n \ge 0} q^{n(n+1)/2}$ be Ramanujan's theta
-function. For a natural number $n$, $\bar b_5(n)$ is the coefficient of $q^n$ in the integer
-power series $\psi^5(-q^5)/\psi(-q)$ (the denominator has constant term $1$, so the quotient is
-a power series).
-
-Source: Subhajit Bandyopadhyay and Nayandeep Deka Baruah, *Arithmetic Identities for Some
-Analogs of the 5-Core Partition Function*, Journal of Integer Sequences 27 (2024),
-Article 24.4.5, Section 1, equation (bt) (OEIS A368495). -/
-noncomputable def psiFiveCoreAnalog (n : ℕ) : ℤ :=
-  coeff n (expand 5 (by norm_num) (rescale (-1) (ramanujanThetaPow 1 3)) ^ 5 *
-    invOfUnit (rescale (-1) (ramanujanThetaPow 1 3)) 1)
-
-/-- **Constant term of Ramanujan's theta function.** For all positive integers $i$ and $j$, the
-integer power series $f(q^i, q^j) = \sum_{n \in \mathbb{Z}} q^{i n(n+1)/2 + j n(n-1)/2}$ has
-constant term $1$: only $n = 0$ contributes to $q^0$.
-
-Source: Subhajit Bandyopadhyay and Nayandeep Deka Baruah, *Arithmetic Identities for Some
-Analogs of the 5-Core Partition Function*, Journal of Integer Sequences 27 (2024),
-Article 24.4.5, Section 1. -/
-theorem constantCoeff_ramanujanThetaPow (i j : ℕ+) : constantCoeff (ramanujanThetaPow i j) = 1 := by
-  rw [← coeff_zero_eq_constantCoeff_apply, ramanujanThetaPow, coeff_mk]
-  simp [Finset.filter_singleton]
-
-/-- **Generating function of the 5-core counts.** Let $f_k = \prod_{m \ge 1} (1 - q^{km})$ and
-let $c_5(n)$ be the coefficient of $q^n$ in $f_5^5 / f_1$. Then, as integer power series,
-$\left(\sum_{n \ge 0} c_5(n) q^n\right) f_1 = f_5^5$, where $f_1$ is written as the pentagonal
-series $\sum_{j \in \mathbb{Z}} (-1)^j q^{j(3j-1)/2}$.
-
-Source: Subhajit Bandyopadhyay and Nayandeep Deka Baruah, *Arithmetic Identities for Some
-Analogs of the 5-Core Partition Function*, Journal of Integer Sequences 27 (2024),
-Article 24.4.5, Section 1. -/
-theorem mk_fiveCoreCount_mul : mk fiveCoreCount * pentagonalSeries ℤ = qEulerProduct 5 ^ 5 := by
-  have h0 : constantCoeff (pentagonalSeries ℤ) = ((1 : ℤˣ) : ℤ) := by
-    have := coeff_pentagonalSeries_pentagonal (R := ℤ) 0
-    rw [show pentagonal 0 = 0 by simp [pentagonal_def], coeff_zero_eq_constantCoeff_apply] at this
-    simpa using this
-  have hmk : mk fiveCoreCount = qEulerProduct 5 ^ 5 * invOfUnit (pentagonalSeries ℤ) 1 := by
-    ext n; simp [fiveCoreCount]
-  rw [hmk, mul_assoc, invOfUnit_mul _ _ h0, mul_one]
-
-/-- **Generating function of the $\varphi$-analog of the 5-core counts.** Let
-$\varphi(q) = \sum_{n \in \mathbb{Z}} q^{n^2}$ and let $\bar a_5(n)$ be the coefficient of $q^n$
-in $\varphi(-q^5)^5 / \varphi(-q)$. Then, as integer power series,
-$\left(\sum_{n \ge 0} \bar a_5(n) q^n\right) \varphi(-q) = \varphi(-q^5)^5$.
-
-Source: Subhajit Bandyopadhyay and Nayandeep Deka Baruah, *Arithmetic Identities for Some
-Analogs of the 5-Core Partition Function*, Journal of Integer Sequences 27 (2024),
-Article 24.4.5, Section 1, equation (at). -/
-theorem mk_phiFiveCoreAnalog_mul :
-    mk phiFiveCoreAnalog * rescale (-1) (ramanujanThetaPow 1 1) =
-      expand 5 (by norm_num) (rescale (-1) (ramanujanThetaPow 1 1)) ^ 5 := by
-  have h0 : constantCoeff (rescale (-1) (ramanujanThetaPow 1 1)) = ((1 : ℤˣ) : ℤ) := by
-    rw [← coeff_zero_eq_constantCoeff_apply, coeff_rescale, coeff_zero_eq_constantCoeff_apply,
-      constantCoeff_ramanujanThetaPow]
-    simp
-  have hmk : mk phiFiveCoreAnalog =
-      expand 5 (by norm_num) (rescale (-1) (ramanujanThetaPow 1 1)) ^ 5 *
-      invOfUnit (rescale (-1) (ramanujanThetaPow 1 1)) 1 := by
-    ext n; simp [phiFiveCoreAnalog]
-  rw [hmk, mul_assoc, invOfUnit_mul _ _ h0, mul_one]
-
-/-- **Generating function of the $\psi$-analog of the 5-core counts.** Let
-$\psi(q) = \sum_{n \in \mathbb{Z}} q^{n(2n-1)}$ and let $\bar b_5(n)$ be the coefficient of $q^n$
-in $\psi(-q^5)^5 / \psi(-q)$. Then, as integer power series,
-$\left(\sum_{n \ge 0} \bar b_5(n) q^n\right) \psi(-q) = \psi(-q^5)^5$.
-
-Source: Subhajit Bandyopadhyay and Nayandeep Deka Baruah, *Arithmetic Identities for Some
-Analogs of the 5-Core Partition Function*, Journal of Integer Sequences 27 (2024),
-Article 24.4.5, Section 1, equation (bt). -/
-theorem mk_psiFiveCoreAnalog_mul :
-    mk psiFiveCoreAnalog * rescale (-1) (ramanujanThetaPow 1 3) =
-      expand 5 (by norm_num) (rescale (-1) (ramanujanThetaPow 1 3)) ^ 5 := by
-  have h0 : constantCoeff (rescale (-1) (ramanujanThetaPow 1 3)) = ((1 : ℤˣ) : ℤ) := by
-    rw [← coeff_zero_eq_constantCoeff_apply, coeff_rescale, coeff_zero_eq_constantCoeff_apply,
-      constantCoeff_ramanujanThetaPow]
-    simp
-  have hmk : mk psiFiveCoreAnalog =
-      expand 5 (by norm_num) (rescale (-1) (ramanujanThetaPow 1 3)) ^ 5 *
-      invOfUnit (rescale (-1) (ramanujanThetaPow 1 3)) 1 := by
-    ext n; simp [psiFiveCoreAnalog]
-  rw [hmk, mul_assoc, invOfUnit_mul _ _ h0, mul_one]
-
-
 local notation "𝔣" => qEulerProduct
 local notation "Φ" => ramanujanThetaPow 1 1
 local notation "Ψ" => ramanujanThetaPow 1 3
@@ -182,20 +57,6 @@ public theorem_wanted phiFiveCoreAnalog_eq_fiveCoreCount (n : ℕ) :
       phiFiveCoreAnalog (10 * n + 9) = 2 * fiveCoreCount (10 * n + 8) ∧
       phiFiveCoreAnalog (20 * n + 6) = 10 * fiveCoreCount (10 * n + 2) ∧
       phiFiveCoreAnalog (20 * n + 14) = 10 * fiveCoreCount (10 * n + 6)
-
-/-- **Recurrence for the $\varphi$-analog of the 5-core counts along powers of 5.** Let
-$\varphi(q) = \sum_{n \in \mathbb{Z}} q^{n^2}$ and let $\bar a_5(n)$ be the coefficient of $q^n$
-in $\varphi(-q^5)^5 / \varphi(-q)$. For every natural number $k \ge 2$ and every natural number
-$n$, $\bar a_5(5^k n) = \frac{5^k - 1}{4}\, \bar a_5(5n) - \frac{5^k - 5}{4}\, \bar a_5(n)$.
-Both quotients are integers.
-
-Source: Subhajit Bandyopadhyay and Nayandeep Deka Baruah, *Arithmetic Identities for Some
-Analogs of the 5-Core Partition Function*, Journal of Integer Sequences 27 (2024),
-Article 24.4.5, Theorem 2 (`jis-2024-24.4.5-thm-2`). -/
-public theorem_wanted phiFiveCoreAnalog_five_pow_mul {k : ℕ} (hk : 2 ≤ k) (n : ℕ) :
-    phiFiveCoreAnalog (5 ^ k * n) =
-      ((5 ^ k - 1) / 4 : ℤ) * phiFiveCoreAnalog (5 * n) -
-        ((5 ^ k - 5) / 4 : ℤ) * phiFiveCoreAnalog n
 
 /-- **Congruences for the $\varphi$-analog of the 5-core counts.** Let
 $\varphi(q) = \sum_{n \in \mathbb{Z}} q^{n^2}$ and let $\bar a_5(n)$ be the coefficient of $q^n$
