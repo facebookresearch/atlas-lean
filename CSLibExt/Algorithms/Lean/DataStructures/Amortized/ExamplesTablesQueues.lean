@@ -6,6 +6,15 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+Portions of this file are adapted from:
+
+`thys/Amortized_Complexity/Amortized_Examples.thy` (Archive of Formal Proofs, entry `Amortized Complexity`, https://isa-afp.org/entries/Amortized_Complexity.html):
+Copyright (c) 2014 Tobias Nipkow. All rights reserved.
+Licensed under the BSD License.
+Authors: Tobias Nipkow
+-/
+
 module
 
 public import CSLibExt.Algorithms.Lean.DataStructures.Amortized.Framework
@@ -27,14 +36,13 @@ generalised growth factor (`Dyn_Tab2`, `c > 1`,
 `dynTab2Ins` / `dynTab2Amortized` are `noncomputable` because
 `Int.ceil` is.
 
-Ported from the Chapter 22 Lean conversion in
-`converted_proofs/ch22/lean/Chapter22.lean`, itself a conversion of the
-Isabelle/HOL sources: the AFP entries `Skew_Heap` (`Skew_Heap.thy`) and
-`Amortized_Complexity` (`Skew_Heap_Analysis.thy`,
-`Amortized_Framework.thy`, `Priority_Queue_ops_merge.thy`), and
-Tobias Nipkow (ed.), *Functional Data Structures and Algorithms: A Proof
-Assistant Approach*, Chapter 22 (Skew Heaps, pp. 253-256) with Appendix
-B.10. Isabelle-derived names are kept for traceability to those sources.
+Source: the AFP entry `Amortized Complexity` (Tobias Nipkow,
+2014; BSD), `thys/Amortized_Complexity/Amortized_Examples.thy`
+(https://isa-afp.org/entries/Amortized_Complexity.html)
+(`Dyn_Tab3`, `Queue2`, `Queue3`, `Dyn_Tab2`). Book: Ch. 19
+section 19.3.2 and the `adjust` / `balance` queues. The instances
+and proofs are re-established in Lean; Isabelle-derived names are
+kept for traceability.
 -/
 
 @[expose] public section

@@ -80,9 +80,10 @@ example : ∃ t : SkewHeap.Tree ℕ, Phi t ≠ 0 := exists_phi_pos
 example : height (List.foldl (fun t a => SkewHeap.insert a t) SkewHeap.Tree.leaf [2, 1, 0]) = 3 := by
   simp [SkewHeap.insert, merge, height]
 
-/-- Exercise 22.1, existence form, at `k = 3`. -/
+/-- Exercise 22.1, existence form, at `k = 3`: exactly 3 insertions. -/
 example : ∃ ns : List ℕ,
-    height (List.foldl (fun t a => insert a t) SkewHeap.Tree.leaf ns) = 3 :=
+    ns.length = 3 ∧
+      height (List.foldl (fun t a => insert a t) SkewHeap.Tree.leaf ns) = 3 :=
   exercise_22_1 3
 
 end Cslib.Algorithms.Lean.SkewHeapTests

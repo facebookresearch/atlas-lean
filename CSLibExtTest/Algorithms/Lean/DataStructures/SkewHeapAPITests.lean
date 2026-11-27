@@ -79,10 +79,11 @@ example {t : SkewHeap.Tree α} :
       3 * Real.logb 2 (size1 t + 2) + 1 :=
   a_delMin _
 
--- Check Exercise 22.1 in full generality.
+-- Check Exercise 22.1 in full generality: exactly `k` insertions.
 example (k : ℕ) :
     ∃ ns : List ℕ,
-      height (List.foldl (fun t a => insert a t) SkewHeap.Tree.leaf ns) = k :=
+      ns.length = k ∧
+        height (List.foldl (fun t a => insert a t) SkewHeap.Tree.leaf ns) = k :=
   exercise_22_1 k
 
 -- Check the framework specialisation: total cost is bounded by total `U`.

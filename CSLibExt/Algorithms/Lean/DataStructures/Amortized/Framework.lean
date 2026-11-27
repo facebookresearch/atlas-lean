@@ -6,6 +6,15 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+Portions of this file are adapted from:
+
+`thys/Amortized_Complexity/Amortized_Framework.thy` (Archive of Formal Proofs, entry `Amortized Complexity`, https://isa-afp.org/entries/Amortized_Complexity.html):
+Copyright (c) 2014 Tobias Nipkow. All rights reserved.
+Licensed under the BSD License.
+Authors: Tobias Nipkow
+-/
+
 module
 
 public import Mathlib.Data.List.Basic
@@ -22,19 +31,22 @@ histories. Main results: `t_sum_a_sum` (actual cost = amortized
 cost − final potential, i.e. Ch. 19's telescoping sum),
 `t_sum_le_a_sum`, `a_le_U`, `a_sum_le_U_sum`, `t_sum_le_U_sum`,
 and the `Amortized2` transfer locale (`AmortizedTransfer`,
-`amortizedTransfer`, potential `Phi ∘ hom`). Isabelle's `fun`
+`amortizedTransfer`, potential `Phi ∘ hom`). The sums below are over
+a single operation history: every occurrence in the history counts
+once, in the order the history applies it. They say nothing about an
+arbitrary persistent execution that reuses a state at no cost.
+Isabelle's `fun`
 equations for `exec` / `cost` / `U` in instantiations cover only
 arity-matching argument lists; Lean totalises them with fallbacks,
 never used on a `wf` history.
 
-Ported from the Chapter 22 Lean conversion in
-`converted_proofs/ch22/lean/Chapter22.lean`, itself a conversion of the
-Isabelle/HOL sources: the AFP entries `Skew_Heap` (`Skew_Heap.thy`) and
-`Amortized_Complexity` (`Skew_Heap_Analysis.thy`,
-`Amortized_Framework.thy`, `Priority_Queue_ops_merge.thy`), and
-Tobias Nipkow (ed.), *Functional Data Structures and Algorithms: A Proof
-Assistant Approach*, Chapter 22 (Skew Heaps, pp. 253-256) with Appendix
-B.10. Isabelle-derived names are kept for traceability to those sources.
+Source: the AFP entry `Amortized Complexity` (Tobias Nipkow,
+2014; BSD), `thys/Amortized_Complexity/Amortized_Framework.thy`
+(https://isa-afp.org/entries/Amortized_Complexity.html), the
+`Amortized` locale and the `Amortized2` transfer. Book: Ch. 19
+section 19.1, the potential method and the telescoping sum. The
+structure and proofs are re-established in Lean; Isabelle-derived
+names are kept for traceability.
 -/
 
 @[expose] public section
@@ -160,7 +172,8 @@ theorem sum_map_sub' (ts : List (RoseTree Op)) (g h : RoseTree Op → ℝ) :
   | nil => simp
   | cons t ts ih => simp [List.map_cons, List.sum_cons, ih]; ring
 
-/-- `t_sum_a_sum`: actual cost = amortized cost − final potential. -/
+/-- `t_sum_a_sum`: for one operation history, actual cost =
+amortized cost − final potential. -/
 theorem t_sum_a_sum {ot : RoseTree Op} (hw : wf A ot) :
     cost_sum A ot = acost_sum A ot - A.Phi (state A ot) := by
   induction ot using rose_induct with
@@ -212,7 +225,8 @@ theorem a_sum_le_U_sum {ot : RoseTree Op} (hw : wf A ot) :
       apply List.sum_le_sum; intro t ht; exact ih t ht (hw.2 t ht)
     linarith
 
-/-- `t_sum_le_U_sum`: actual cost ≤ total bound. -/
+/-- `t_sum_le_U_sum`: for one operation history, actual cost ≤
+total bound. -/
 theorem t_sum_le_U_sum {ot : RoseTree Op} (hw : wf A ot) :
     cost_sum A ot ≤ U_sum A ot :=
   le_trans (t_sum_le_a_sum A hw) (a_sum_le_U_sum A hw)

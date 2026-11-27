@@ -25,14 +25,9 @@ Import the submodules separately when only one API is needed:
 `SkewHeap.Amortized` (potential, Lemma 22.1, logarithmic amortized
 bounds, Exercise 22.1).
 
-Ported from the Chapter 22 Lean conversion in
-`converted_proofs/ch22/lean/Chapter22.lean`, itself a conversion of the
-Isabelle/HOL sources: the AFP entries `Skew_Heap` (`Skew_Heap.thy`) and
-`Amortized_Complexity` (`Skew_Heap_Analysis.thy`,
-`Amortized_Framework.thy`, `Priority_Queue_ops_merge.thy`), and
-Tobias Nipkow (ed.), *Functional Data Structures and Algorithms: A Proof
-Assistant Approach*, Chapter 22 (Skew Heaps, pp. 253-256) with Appendix
-B.10. Isabelle-derived names are kept for traceability to those sources.
+Source: the AFP entries `Skew Heap` and `Amortized Complexity`
+and book Ch. 22, as cited in each submodule (`SkewHeap.Basic`,
+`SkewHeap.PriorityQueue`, `SkewHeap.Amortized`).
 -/
 
 @[expose] public section

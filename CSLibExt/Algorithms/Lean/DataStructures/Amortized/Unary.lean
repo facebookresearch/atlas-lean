@@ -6,6 +6,15 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+Portions of this file are adapted from:
+
+`thys/Amortized_Complexity/Amortized_Framework0.thy` (Archive of Formal Proofs, entry `Amortized Complexity`, https://isa-afp.org/entries/Amortized_Complexity.html):
+Copyright (c) 2014 Tobias Nipkow. All rights reserved.
+Licensed under the BSD License.
+Authors: Tobias Nipkow
+-/
+
 module
 
 public import CSLibExt.Algorithms.Lean.DataStructures.PotentialMethod
@@ -27,14 +36,12 @@ the generic potential-method API in `PotentialMethod`; the Isabelle
 names are retained here as compatibility wrappers. `unary_aa1` is the
 locale's own per-operation `U` bound.
 
-Ported from the Chapter 22 Lean conversion in
-`converted_proofs/ch22/lean/Chapter22.lean`, itself a conversion of the
-Isabelle/HOL sources: the AFP entries `Skew_Heap` (`Skew_Heap.thy`) and
-`Amortized_Complexity` (`Skew_Heap_Analysis.thy`,
-`Amortized_Framework.thy`, `Priority_Queue_ops_merge.thy`), and
-Tobias Nipkow (ed.), *Functional Data Structures and Algorithms: A Proof
-Assistant Approach*, Chapter 22 (Skew Heaps, pp. 253-256) with Appendix
-B.10. Isabelle-derived names are kept for traceability to those sources.
+Source: the AFP entry `Amortized Complexity` (Tobias Nipkow,
+2014; BSD), `thys/Amortized_Complexity/Amortized_Framework0.thy`
+(https://isa-afp.org/entries/Amortized_Complexity.html), the unary
+`Amortized` locale. Book: Ch. 19, a sequence of operations from an
+initial state. The structure and proofs are re-established in Lean;
+Isabelle-derived names are kept for traceability.
 -/
 
 @[expose] public section

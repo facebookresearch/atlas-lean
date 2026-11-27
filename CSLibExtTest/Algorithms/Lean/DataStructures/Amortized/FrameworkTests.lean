@@ -96,8 +96,19 @@ example : (amortizedTransfer binCounterTransfer).Phi [true, false] =
     binCounterPhi [true, false] :=
   rfl
 
--- The amortized bound survives the transfer: `incr` on `[true]` has
--- amortized cost `1 + 0 - 1 = 0 ≤ U = 2`.
+-- The amortized cost itself: `incr` on `[true]` flips the `1` and
+-- appends a new one, so its actual cost is `2`, the potential is
+-- unchanged (`1` one-bit before and after), and the amortized cost
+-- is `2 + 1 - 1 = 2`.
+example : acost (amortizedTransfer binCounterTransfer) .incr [[true]] = 2 := by
+  simp only [acost, amortizedTransfer, binCounterTransfer, List.map_cons,
+    List.map_nil, List.sum_cons, List.sum_nil, add_zero]
+  rw [binCounterCost_incr, binCounterExec_incr]
+  change (binCounterTIncr [true] : ℝ) + binCounterPhi (binCounterIncr [true]) -
+      binCounterPhi [true] = 2
+  exact binCounter_a_incr [true]
+
+-- The amortized bound survives the transfer: that cost `2 ≤ U = 2`.
 example : acost (amortizedTransfer binCounterTransfer) .incr [[true]] ≤
     (amortizedTransfer binCounterTransfer).U .incr [[true]] :=
   a_le_U (A := amortizedTransfer binCounterTransfer)

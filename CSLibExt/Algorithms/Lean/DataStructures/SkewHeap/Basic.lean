@@ -6,6 +6,15 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+Portions of this file are adapted from:
+
+`thys/Skew_Heap/Skew_Heap.thy` (Archive of Formal Proofs, entry `Skew Heap`, https://isa-afp.org/entries/Skew_Heap.html):
+Copyright (c) 2014 Tobias Nipkow. All rights reserved.
+Licensed under the BSD License.
+Authors: Tobias Nipkow
+-/
+
 module
 
 public import Mathlib.Algebra.Order.Group.Multiset
@@ -23,14 +32,14 @@ multiset / set / heap correctness lemmas, the alternative `merge2`
 §14.1 (Exercise 14.2), and the priority-queue operations
 `insert` / `delMin` / `getMin` defined from `merge` as in §14.1.
 
-Ported from the Chapter 22 Lean conversion in
-`converted_proofs/ch22/lean/Chapter22.lean`, itself a conversion of the
-Isabelle/HOL sources: the AFP entries `Skew_Heap` (`Skew_Heap.thy`) and
-`Amortized_Complexity` (`Skew_Heap_Analysis.thy`,
-`Amortized_Framework.thy`, `Priority_Queue_ops_merge.thy`), and
-Tobias Nipkow (ed.), *Functional Data Structures and Algorithms: A Proof
-Assistant Approach*, Chapter 22 (Skew Heaps, pp. 253-256) with Appendix
-B.10. Isabelle-derived names are kept for traceability to those sources.
+Source: the AFP entry `Skew Heap` (Tobias Nipkow, 2014; BSD),
+`thys/Skew_Heap/Skew_Heap.thy`
+(https://isa-afp.org/entries/Skew_Heap.html), for `merge`, `merge2`,
+and their size / multiset / set / heap lemmas. The `heap` predicate
+follows `HOL-Data_Structures.Heaps` and book section 14.1; `set_tree`
+and `size` follow book Ch. 4. The definitions and proofs are
+re-established in Lean; Isabelle-derived names are kept for
+traceability to those sources.
 Deliberate divergences from the Isabelle sources, preserved here:
 `getMin` is `Option`-valued (Isabelle's `get_min` is partial on
 `Leaf`); `set_tree` is defined recursively (Ch. 4 / HOL-Library)
@@ -194,7 +203,10 @@ theorem heap_singleton (a : α) : heap (.node .leaf a .leaf) := by
 
 /- ## §22.1: `merge` -/
 
-/-- Skew-heap merge: swap the children of every node on the merge path. -/
+/-- Skew-heap merge: keep the smaller root, merge the other tree
+against that root's right child, and swap the children at every node
+on the merge path. The recursive-equation counter `T_merge` follows
+these same branches. -/
 def merge : Tree α → Tree α → Tree α
   | .leaf, t => t
   | t, .leaf => t

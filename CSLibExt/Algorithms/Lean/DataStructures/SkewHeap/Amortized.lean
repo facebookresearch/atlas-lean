@@ -6,6 +6,20 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+Portions of this file are adapted from:
+
+`thys/Amortized_Complexity/Skew_Heap_Analysis.thy` (Archive of Formal Proofs, entry `Amortized Complexity`, https://isa-afp.org/entries/Amortized_Complexity.html):
+Copyright (c) 2014 Tobias Nipkow. All rights reserved.
+Licensed under the BSD License.
+Authors: Tobias Nipkow
+
+`thys/Amortized_Complexity/Priority_Queue_ops_merge.thy` (Archive of Formal Proofs, entry `Amortized Complexity`, https://isa-afp.org/entries/Amortized_Complexity.html):
+Copyright (c) 2014 Tobias Nipkow. All rights reserved.
+Licensed under the BSD License.
+Authors: Tobias Nipkow
+-/
+
 module
 
 public import CSLibExt.Algorithms.Lean.DataStructures.SkewHeap.Basic
@@ -24,20 +38,22 @@ the logarithmic amortized bounds `a_merge` / `a_insert` /
 `a_delMin`, the potential-method link to the framework
 (`amortizedCost_*`, `potential_method_telescoping`, Ch. 19 §19.1),
 the framework instantiation for skew heaps (`skewAmortized`), and
-Exercise 22.1 (a list of insertions producing a tree of height
-exactly `k`). `T_insert` / `T_delMin` are `Nat`-valued (Isabelle's
+Exercise 22.1 (exactly `k` insertions producing a tree of height
+exactly `k`, so the worst-case height is linear in the number of
+insertions). `T_insert` / `T_delMin` are `Nat`-valued (Isabelle's
 are `int`-valued coerced `T_merge`); the values are identical.
 `size1Nat` is defined recursively (Isabelle's `size1`) with
 `size1_size` as `size1Nat_eq_size_add_one`.
 
-Ported from the Chapter 22 Lean conversion in
-`converted_proofs/ch22/lean/Chapter22.lean`, itself a conversion of the
-Isabelle/HOL sources: the AFP entries `Skew_Heap` (`Skew_Heap.thy`) and
-`Amortized_Complexity` (`Skew_Heap_Analysis.thy`,
-`Amortized_Framework.thy`, `Priority_Queue_ops_merge.thy`), and
-Tobias Nipkow (ed.), *Functional Data Structures and Algorithms: A Proof
-Assistant Approach*, Chapter 22 (Skew Heaps, pp. 253-256) with Appendix
-B.10. Isabelle-derived names are kept for traceability to those sources.
+Source: the AFP entry `Amortized Complexity` (Tobias Nipkow,
+2014; BSD), `thys/Amortized_Complexity/Skew_Heap_Analysis.thy`
+(https://isa-afp.org/entries/Amortized_Complexity.html), for the
+potential, the spine bounds, Lemma 22.1 and the amortized bounds;
+the operation type is `Priority_Queue_ops_merge.thy` in the same
+entry. Book: Ch. 22 section 22.2 (pp. 253-256), Appendix B.10
+(p. 353) for the time functions, and Exercise 22.1 (p. 253). The
+definitions and proofs are re-established in Lean; Isabelle-derived
+names are kept for traceability.
 -/
 
 @[expose] public section
@@ -197,7 +213,11 @@ variable {α : Type u} [LinearOrder α]
 
 /- ## Time function and potential -/
 
-/-- `T_merge`, the running-time function of `merge` (Appendix B.10). -/
+/-- `T_merge`: the recursive-equation count of `merge` (Appendix B.10).
+It counts one per recursive equation of `merge` — one per call,
+including the leaf cases — following the same recursive branches as
+`merge` itself. It is a count of recursive equations, not wall-clock
+runtime, and not the cost of reusing a persistent state. -/
 def T_merge : Tree α → Tree α → ℕ
   | .leaf, _ => 1
   | _, .leaf => 1
@@ -335,7 +355,10 @@ theorem amor_le_real (t1 t2 : Tree α) :
   have h := amor_le t1 t2
   exact_mod_cast h
 
-/-- The logarithmic amortized bound for `merge` (`a_merge`).
+/-- The logarithmic amortized bound for `merge` (`a_merge`). The
+bound sums the logarithmic spine bounds for the two inputs and the
+output (`amor_le_real`); it assumes no worst-case logarithmic height.
+`T_merge` is the recursive-equation count, as above.
 Isabelle writes the logarithm as `log 2 ((size1 t1 + size1 t2 : ℕ) : ℝ)`;
 `size1_add_cast` below states that this equals the real sum
 `size1 t1 + size1 t2` used here. -/
@@ -359,10 +382,14 @@ theorem a_merge (t1 t2 : Tree α) :
     plus_log_le_2log_plus (by norm_num) (size1_pos t1) (size1_pos t2)
   linarith
 
-/-- `T_insert` (manual definition, as in the analysis file). -/
+/-- `T_insert`: the recursive-equation count of `insert`, as the
+`T_merge` count of merging a singleton tree (as in the analysis
+file). -/
 def T_insert (a : α) (t : Tree α) : ℕ := T_merge (.node .leaf a .leaf) t
 
-/-- `T_delMin` (manual definition, as in the analysis file). -/
+/-- `T_delMin`: the recursive-equation count of `delMin` — `0` on
+`Leaf`, else the `T_merge` count of merging the two children (as in
+the analysis file). -/
 def T_delMin : Tree α → ℕ
   | .leaf => 0
   | .node l _ r => T_merge l r
@@ -479,21 +506,28 @@ theorem foldr_insert_range' (m k : ℕ) :
     rw [ih (m + 1)]
     rfl
 
-/-- Exercise 22.1, in `foldr` form: the list is written in increasing
-order, but `foldr` inserts its rightmost element first. -/
+/-- Exercise 22.1, in `foldr` form: exactly `k` insertions (the list
+is written in increasing order, but `foldr` inserts its rightmost
+element first) produce a tree of height exactly `k`. -/
 theorem exercise_22_1_foldr (k : ℕ) :
     ∃ ns : List ℕ,
-      height (List.foldr (fun a t => insert a t) .leaf ns) = k := by
-  exact ⟨List.range' 0 k, by rw [foldr_insert_range', height_rangeTree]⟩
+      ns.length = k ∧
+        height (List.foldr (fun a t => insert a t) .leaf ns) = k := by
+  refine ⟨List.range' 0 k, ?_, ?_⟩
+  · simp
+  · rw [foldr_insert_range', height_rangeTree]
 
-/-- Exercise 22.1, in the book's "insertion one by one" form: the list
-is the insertion sequence in temporal order, folded left, so the
-list is decreasing: `k-1, k-2, …, 0`, each a new minimum. -/
+/-- Exercise 22.1, in the book's "insertion one by one" form: exactly
+`k` insertions, in temporal order, folded left, so the list is
+decreasing: `k-1, k-2, …, 0`, each a new minimum, and the resulting
+tree has height exactly `k`. -/
 theorem exercise_22_1 (k : ℕ) :
     ∃ ns : List ℕ,
-      height (List.foldl (fun t a => insert a t) .leaf ns) = k := by
-  obtain ⟨ns, hns⟩ := exercise_22_1_foldr k
-  exact ⟨ns.reverse, by rw [List.foldl_reverse, hns]⟩
+      ns.length = k ∧
+        height (List.foldl (fun t a => insert a t) .leaf ns) = k := by
+  obtain ⟨ns, hlen, hns⟩ := exercise_22_1_foldr k
+  exact ⟨ns.reverse, by rw [List.length_reverse, hlen],
+    by rw [List.foldl_reverse, hns]⟩
 
 /- ## Instantiation of the framework for skew heaps -/
 
