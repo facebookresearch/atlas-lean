@@ -30,7 +30,7 @@ public import MathlibExt.Combinatorics.SimpleGraph.Planarity
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Combinatorics.SimpleGraph.Operations
-public import WantedExt.Complexity.NPComplete.HamiltonianCycleUndirectedWanted
+public import CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs
 
 @[expose] public section
 
@@ -46,7 +46,7 @@ INSTANCE: a maximal planar graph `G = (V, E)`, that is, a planar graph to which 
 added without destroying planarity (a triangulation).
 QUESTION: does `G` contain a Hamiltonian circuit, i.e. a simple cycle through every vertex?
 
-This is HAMILTONIAN CIRCUIT ([GT37], `HamiltonianCycleUndirectedWanted`) restricted to maximal
+This is HAMILTONIAN CIRCUIT ([GT37], `HamiltonianCycleUndirectedDefs`) restricted to maximal
 planar graphs. The instance, the graph and the question are the parent's
 (`HamiltonianCycleUndirected.HamiltonianCycleUndirectedInstance`,
 `HamiltonianCycleUndirected.Graph`,
