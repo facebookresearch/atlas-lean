@@ -1,0 +1,17 @@
+# Sequence indexing, k-mer sampling and alignment
+
+- [Bit-sliced Bloom filter sequence indexing](bit-sliced-bloom-filter-sequence-indexing/README.md)
+- [Block pigeonhole filters for edit-distance search](block-pigeonhole-filters-for-edit-distance-search/README.md)
+- [Colored de Bruijn graph pseudoalignment](colored-de-bruijn-graph-pseudoalignment/README.md)
+- [Colored de Bruijn graphs](colored-de-bruijn-graphs/README.md)
+- [De Bruijn graph compaction by vertex states](de-bruijn-graph-compaction-by-vertex-states/README.md)
+- [Haplotype assembly from sequence fragments](haplotype-assembly-from-sequence-fragments/README.md)
+- [Haplotype likelihoods on variation graphs](haplotype-likelihoods-on-variation-graphs/README.md)
+- [Metagenomic presence testing](metagenomic-presence-testing/README.md)
+- [Minimizer schemes](minimizer-schemes/README.md)
+- [Order min hash for edit distance](order-min-hash-for-edit-distance/README.md)
+- [Reverse-complement-complete sequences](reverse-complement-complete-sequences/README.md)
+- [Sequence-to-graph alignment](sequence-to-graph-alignment/README.md)
+- [Simultaneous alignment and folding of RNAs](simultaneous-alignment-and-folding-of-rnas/README.md)
+- [Splicing-graph transcript assembly](splicing-graph-transcript-assembly/README.md)
+- [Stevens' coverage theorem for metagenomes](stevens-coverage-theorem-for-metagenomes/README.md)

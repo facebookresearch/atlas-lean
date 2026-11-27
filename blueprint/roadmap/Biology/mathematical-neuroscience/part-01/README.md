@@ -1,0 +1,16 @@
+# Neural network dynamics, mean-field limits and plasticity
+
+- [Balanced and semi-balanced network states](balanced-and-semi-balanced-network-states/README.md)
+- [Bayesian ring attractor networks](bayesian-ring-attractor-networks/README.md)
+- [Closed-loop control of neural mass models](closed-loop-control-of-neural-mass-models/README.md)
+- [Computational universality of feedback in neural circuits](computational-universality-of-feedback-in-neural-circuits/README.md)
+- [Equilibrium propagation](equilibrium-propagation/README.md)
+- [Information routing in phase-locked oscillator networks](information-routing-in-phase-locked-oscillator-networks/README.md)
+- [Mean-field limits of conductance-based networks](mean-field-limits-of-conductance-based-networks/README.md)
+- [Mean-field limits of random neural networks](mean-field-limits-of-random-neural-networks/README.md)
+- [Neural fields on the sphere](neural-fields-on-the-sphere/README.md)
+- [Neural sampling by spiking networks](neural-sampling-by-spiking-networks/README.md)
+- [Optogenetic control of neural ensembles](optogenetic-control-of-neural-ensembles/README.md)
+- [Readily releasable pool of synaptic vesicles](readily-releasable-pool-of-synaptic-vesicles/README.md)
+- [Synaptic sampling](synaptic-sampling/README.md)
+- [Time-discretized integrate-and-fire networks](time-discretized-integrate-and-fire-networks/README.md)

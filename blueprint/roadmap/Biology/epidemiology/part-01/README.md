@@ -1,0 +1,18 @@
+# Reproduction numbers, bifurcation and global stability
+
+- [Age structured transmission and contact matrices](age-structured-transmission-and-contact-matrices/README.md)
+- [Backward bifurcation](backward-bifurcation/README.md)
+- [Backward bifurcation from exogenous reinfection](backward-bifurcation-from-exogenous-reinfection/README.md)
+- [Basic reproduction number in periodic environments](basic-reproduction-number-in-periodic-environments/README.md)
+- [Co-infection compartmental models](co-infection-compartmental-models/README.md)
+- [Delayed SEIR model with health-care-capacity-dependent rates](delayed-seir-with-health-care-capacity/README.md)
+- [Endemic stability via second additive compounds](endemic-stability-via-second-additive-compounds/README.md)
+- [Epidemic spread through a transportation hub](epidemic-spread-through-a-transportation-hub/README.md)
+- [Fast periodic switching interventions](fast-periodic-switching-interventions/README.md)
+- [Fractional-order epidemic models](fractional-order-epidemic-models/README.md)
+- [Geometric approach to global stability](geometric-approach-to-global-stability/README.md)
+- [Global stability of disease-free equilibria](global-stability-of-disease-free-equilibria/README.md)
+- [Pulse vaccination strategy](pulse-vaccination-strategy/README.md)
+- [Residence-tracked metapopulation models](residence-tracked-metapopulation-models/README.md)
+- [Sensitivity of the reproduction number](sensitivity-of-the-reproduction-number/README.md)
+- [Urban–satellite metapopulation SIR model](urban-satellite-metapopulation-sir-model/README.md)

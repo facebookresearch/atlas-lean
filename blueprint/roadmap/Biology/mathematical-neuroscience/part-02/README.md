@@ -1,0 +1,15 @@
+# Neural coding, decision making and brain networks
+
+- [Adaptive learning of neural encoding models](adaptive-learning-of-neural-encoding-models/README.md)
+- [Attention-weighted sequential sampling models](attention-weighted-sequential-sampling-models/README.md)
+- [Causal emergence in neural dynamics](causal-emergence-in-neural-dynamics/README.md)
+- [Concentration of measure and neuronal selectivity](concentration-of-measure-and-neuronal-selectivity/README.md)
+- [Conduction-delay minimization in brain wiring](conduction-delay-minimization-in-brain-wiring/README.md)
+- [Copula models of spike counts](copula-models-of-spike-counts/README.md)
+- [Dendritic computation of Boolean functions](dendritic-computation-of-boolean-functions/README.md)
+- [Noise correlations in population codes](noise-correlations-in-population-codes/README.md)
+- [Ollivier–Ricci curvature of brain networks](ollivier-ricci-curvature-of-brain-networks/README.md)
+- [Optimal control of arm movements](optimal-control-of-arm-movements/README.md)
+- [Slow feature analysis](slow-feature-analysis/README.md)
+- [Stochastic separation in high dimensions](stochastic-separation-in-high-dimensions/README.md)
+- [Structural eigenmode models of functional connectivity](structural-eigenmode-models-of-functional-connectivity/README.md)

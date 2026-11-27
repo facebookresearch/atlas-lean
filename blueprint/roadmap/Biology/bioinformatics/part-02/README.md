@@ -1,0 +1,18 @@
+# Molecular networks, omics statistics and protein design
+
+- [Bias-corrected microbiome correlations](bias-corrected-microbiome-correlations/README.md)
+- [Co-orientational order of cytoskeletal fibers](co-orientational-order-of-cytoskeletal-fibers/README.md)
+- [Conditional mutual inclusive information](conditional-mutual-inclusive-information/README.md)
+- [Dead-end elimination for protein design](dead-end-elimination-for-protein-design/README.md)
+- [Dense module enumeration in interaction networks](dense-module-enumeration-in-interaction-networks/README.md)
+- [Entropy-minimal taxonomic majority assignment](entropy-minimal-taxonomic-majority-assignment/README.md)
+- [Gaussian mixture optimal transport for trajectory inference](gaussian-mixture-optimal-transport-for-trajectory-inference/README.md)
+- [Graph-regularized tensor completion of spatial transcriptomes](graph-regularized-tensor-completion-of-spatial-transcriptomes/README.md)
+- [Heterogeneous graph inference](heterogeneous-graph-inference/README.md)
+- [Isotope-pattern sum formula identification](isotope-pattern-sum-formula-identification/README.md)
+- [k-shortest-path inference of regulatory pathways](k-shortest-path-inference-of-regulatory-pathways/README.md)
+- [Latent-factor Markov networks for gene network inference](latent-factor-markov-networks-for-gene-network-inference/README.md)
+- [Pseudobulk differential expression](pseudobulk-differential-expression/README.md)
+- [Rank-based microbial association networks](rank-based-microbial-association-networks/README.md)
+- [Single-cell sketching](single-cell-sketching/README.md)
+- [Tree Bayesian networks for molecular fingerprints](tree-bayesian-networks-for-molecular-fingerprints/README.md)
