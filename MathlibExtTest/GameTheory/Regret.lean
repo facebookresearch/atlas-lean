@@ -209,4 +209,17 @@ theorem ex2_swap_gt_external :
     norm_num
   exact ⟨hext, hswap, externalRegret_le_swapRegret mixPlay mixLoss hplay⟩
 
+/-- T8: average regret and the base lemmas need no `NeZero` horizon and no
+`DecidableEq` on actions: with neither instance in scope, a per-round loss
+shift leaves average regret unchanged, and regret against a fixed
+distribution is at most external regret. -/
+theorem test_regret_no_instances {K : Type*} [Fintype K] [Nonempty K] {T : ℕ}
+    (play loss : Fin T → K → ℝ) (hplay : ∀ t, IsSimplex (play t)) (c : Fin T → ℝ)
+    (q : K → ℝ) (hq : IsSimplex q) :
+    averageRegret play (fun t a => loss t a + c t) = averageRegret play loss ∧
+      expectedLoss play loss - ∑ a, q a * cumulativeLoss loss a ≤
+        externalRegret play loss := by
+  refine ⟨?_, expectedLoss_sub_weightedCumulative_le_externalRegret play loss q hq⟩
+  rw [averageRegret, averageRegret, externalRegret_add_roundConst play loss hplay c]
+
 end MathlibExtTest.GameTheory.Regret

@@ -678,6 +678,133 @@ private lemma tableau_code {n : ℕ} {T : Tableau n} (hs : Standard T) :
     (fun j => hside b ▸ hmem b j) (hmono b)
   exact (idx_label b i).symm.trans (congrArg (label h) (congrFun he i))
 
+-- The two maps encode the side entries with the same heart position. Up to that position,
+-- ξ reads the labels 2, …, H - 1 in order, while ψ moves the label 2 to the backward step.
+private def cyclePrefix (h : ℕ) : ℕ ≃ ℕ where
+  toFun k := if k < h then k + 1 else if k = h then 0 else k
+  invFun k := if k = 0 then h else if k ≤ h then k - 1 else k
+  left_inv k := by
+    dsimp only
+    rcases lt_trichotomy k h with hlt | rfl | hgt
+    · simp [hlt, show k + 1 ≤ h by omega]
+    · simp
+    · simp [hgt.not_gt, hgt.ne', show k ≠ 0 by omega, hgt.not_ge]
+  right_inv k := by dsimp only; split_ifs <;> omega
+
+private lemma cyclePrefix_lt (h m k : ℕ) (hm : h < m) :
+    cyclePrefix h k < m ↔ k < m := by
+  change (if k < h then k + 1 else if k = h then 0 else k) < m ↔ k < m
+  split_ifs <;> omega
+
+private def Code.reindex (c : Code) (e : ℕ ≃ ℕ) : Code :=
+  ⟨c.heart, c.arm.map e.symm.toEmbedding⟩
+
+private lemma mem_reindex_arm (c : Code) (e : ℕ ≃ ℕ) (k : ℕ) :
+    k ∈ (c.reindex e).arm ↔ e k ∈ c.arm := by
+  simp [Code.reindex, Finset.mem_map_equiv]
+
+private lemma reindex_symm (c : Code) (e : ℕ ≃ ℕ) : (c.reindex e).reindex e.symm = c := by
+  cases c with
+  | mk h A =>
+    have ha : ((Code.mk h A).reindex e |>.reindex e.symm).arm = A := by
+      ext k
+      simp [mem_reindex_arm]
+    exact congrArg (Code.mk h) ha
+
+private lemma Good.reindex {n : ℕ} {c : Code} (g : Good n c) (e : ℕ ≃ ℕ)
+    (hrange : ∀ k, e k < 2 * n + 2 ↔ k < 2 * n + 2)
+    (hprefix : ∀ k, e k < c.heart + 1 ↔ k < c.heart + 1) : Good n (c.reindex e) := by
+  have hleg : (c.reindex e).leg n = (c.leg n).map e.symm.toEmbedding := by
+    ext k
+    simp only [Code.leg, Finset.mem_sdiff, Finset.mem_range, mem_reindex_arm,
+      Finset.mem_map_equiv, Equiv.symm_symm, hrange]
+  have hbefore (k : ℕ) (hk : k ≤ c.heart) : e.symm k ≤ c.heart := by
+    apply Nat.lt_succ_iff.mp ((hprefix (e.symm k)).mp _)
+    simpa only [Equiv.apply_symm_apply] using Nat.lt_succ_of_le hk
+  refine ⟨g.heart_lt, ?_, by simp [Code.reindex, g.arm_card], by simp [hleg, g.leg_card], ?_, ?_⟩
+  · intro k hk
+    exact Finset.mem_range.mpr ((hrange k).mp (Finset.mem_range.mp
+      (g.arm_sub ((mem_reindex_arm c e k).mp hk))))
+  · obtain ⟨k, hk, hkh⟩ := g.arm_before
+    exact ⟨e.symm k, by simp [mem_reindex_arm, hk], hbefore k hkh⟩
+  · obtain ⟨k, hk, hkh⟩ := g.leg_before
+    exact ⟨e.symm k, by simp [hleg, hk], hbefore k hkh⟩
+
+private def Code.rotate (c : Code) : Code := c.reindex (cyclePrefix c.heart)
+
+private def Code.unrotate (c : Code) : Code := c.reindex (cyclePrefix c.heart).symm
+
+private lemma Good.rotate {n : ℕ} {c : Code} (g : Good n c) : Good n c.rotate :=
+  g.reindex _ (fun k => cyclePrefix_lt _ _ k g.heart_lt)
+    (fun k => cyclePrefix_lt _ _ k (Nat.lt_succ_self _))
+
+private lemma Good.unrotate {n : ℕ} {c : Code} (g : Good n c) : Good n c.unrotate := by
+  have aux (m k : ℕ) (hm : c.heart < m) : (cyclePrefix c.heart).symm k < m ↔ k < m := by
+    rw [← cyclePrefix_lt c.heart m ((cyclePrefix c.heart).symm k) hm, Equiv.apply_symm_apply]
+  exact g.reindex _ (fun k => aux _ k g.heart_lt) (fun k => aux _ k (Nat.lt_succ_self _))
+
+private lemma unrotate_rotate (c : Code) : c.rotate.unrotate = c :=
+  reindex_symm c (cyclePrefix c.heart)
+
+private lemma rotate_unrotate (c : Code) : c.unrotate.rotate = c :=
+  reindex_symm c (cyclePrefix c.heart).symm
+
+private lemma side_has_label {n : ℕ} {T : Tableau n} {c : Code} {g : Good n c}
+    (hT : Matches T g) (b : Bool) {v : ℕ} (hv : v ≠ 1) :
+    (∃ j < n + 2, (if b then T 0 j else T j 0) = v) ↔
+      ∃ k ∈ c.side n b, label c.heart k = v := by
+  constructor
+  · rintro ⟨_ | j, hj, he⟩
+    · exact (hv (by simpa [hT.corner] using he.symm)).elim
+    · let i : Fin (n + 1) := ⟨j, by omega⟩
+      refine ⟨indexAt g b i, index_mem g b i, (hT.sides b i).symm.trans ?_⟩
+      cases b <;> exact he
+  · rintro ⟨k, hk, hvk⟩
+    obtain ⟨i, rfl⟩ := exists_index g b hk
+    refine ⟨i + 1, by have := i.isLt; omega, ?_⟩
+    cases b <;> exact (hT.sides _ i).trans hvk
+
+private lemma matches_path_psi {n : ℕ} {T : Tableau n} {c : Code} {g : Good n c}
+    (hT : Matches T g) : nearHookTableauToPathPsi n T = c.rotate.path n := by
+  unfold nearHookTableauToPathPsi Code.path word
+  apply List.map_congr_left
+  intro k hk
+  rw [List.mem_range] at hk
+  have hmem := mem_reindex_arm c (cyclePrefix c.heart) k
+  change k ∈ c.rotate.arm ↔ _ at hmem
+  have hside (b : Bool) (j : ℕ) :
+      (∃ i < n + 2, (if b then T 0 i else T i 0) = label c.heart j) ↔ j ∈ c.side n b := by
+    have hne : label c.heart j ≠ 1 := by unfold label; split <;> omega
+    rw [side_has_label hT b hne]
+    simp [(label_strict c.heart).injective.eq_iff]
+  have heart_eq : c.rotate.heart = c.heart := rfl
+  by_cases hh : k = c.heart
+  · subst k
+    have hnone (b : Bool) : ¬ ∃ i < n + 2, (if b then T 0 i else T i 0) = c.heart + 3 := by
+      rw [side_has_label hT b (by omega)]
+      rintro ⟨j, -, hj⟩
+      unfold label at hj
+      split at hj <;> omega
+    have ha : ¬ ∃ i < n + 2, T 0 i = c.heart + 3 := hnone true
+    have hl : ¬ ∃ i < n + 2, T i 0 = c.heart + 3 := hnone false
+    have htwo : (∃ i < n + 2, T 0 i = 2) ↔ 0 ∈ c.arm := by
+      simpa [Code.side, label] using hside true 0
+    have hmem₀ : c.heart ∈ c.rotate.arm ↔ 0 ∈ c.arm := by simpa [cyclePrefix] using hmem
+    by_cases h : 0 ∈ c.arm <;> simp [hmem₀, heart_eq, ha, hl, htwo, h]
+  · let j := cyclePrefix c.heart k
+    have hj : j < 2 * n + 2 := (cyclePrefix_lt _ _ _ g.heart_lt).mpr hk
+    have hlabel : label c.heart j = k + 3 := by
+      dsimp [j]
+      by_cases hlt : k < c.heart
+      · simp [cyclePrefix, hlt, label, show k + 1 ≤ c.heart by omega]
+      · simp [cyclePrefix, hlt, hh, label, show ¬ k ≤ c.heart by omega]
+    have ha : (∃ i < n + 2, T 0 i = k + 3) ↔ j ∈ c.arm := by
+      simpa [Code.side, hlabel] using hside true j
+    have hl : (∃ i < n + 2, T i 0 = k + 3) ↔ j ∉ c.arm := by
+      simpa [Code.side, Code.leg, Finset.mem_range, hj, hlabel] using hside false j
+    change k ∈ c.rotate.arm ↔ j ∈ c.arm at hmem
+    by_cases h : j ∈ c.arm <;> simp [hmem, heart_eq, hh, ha, hl, h]
+
 end bijOn_nearHookTableauToPathXi
 
 open bijOn_nearHookTableauToPathXi
@@ -711,6 +838,39 @@ public theorem bijOn_nearHookTableauToPathXi (n : ℕ) :
   · intro w hw
     obtain ⟨c, g, rfl⟩ := path_code hw
     exact ⟨tableau g, tableau_standard g, matches_path (tableau_matches g)⟩
+
+/-- **The map $\psi$ is a bijection from near-hook tableaux to first-quadrant paths.** For every
+$n \in \mathbb{N}$, the map $\psi$ restricts to a bijection from the standard Young tableaux of
+shape $\theta^{(n)}$ onto the set $\mathcal{P}_n$ of first-quadrant paths. Here a standard Young
+tableau of shape $\theta^{(n)}$ is a semistandard Young tableau of that shape whose entries map
+the $2n + 4$ cells of $\theta^{(n)}$ bijectively onto $\{1, \dots, 2n + 4\}$.
+
+Source: Liam Ayres, Evan Bialo, Alwin Chen, Aidan Cook, Matteus Froese, Erica Liu, Maryam Mohammadi
+Yekta, Oliver Pechenik and Benjamin Wong, *An Exceptional Equinumerosity of Lattice Paths and Young
+Tableaux*, Journal of Integer Sequences 28 (2025), Article 25.5.2, Theorem 2
+(`jis-2025-25.5.2-thm-2`). -/
+public theorem bijOn_nearHookTableauToPathPsi (n : ℕ) :
+    Set.BijOn (nearHookTableauToPathPsi n)
+      {T | Set.BijOn (fun c : ℕ × ℕ => T c.1 c.2) (nearHookTheta n).cells
+        (Set.Icc 1 (2 * n + 4))}
+      (firstQuadrantPaths n) := by
+  refine ⟨?_, ?_, ?_⟩
+  · intro T hT
+    obtain ⟨c, g, hm⟩ := tableau_code hT
+    rw [matches_path_psi hm]
+    exact path_mem g.rotate
+  · intro T hT U hU heq
+    obtain ⟨c, g, ht⟩ := tableau_code hT
+    obtain ⟨d, g', hu⟩ := tableau_code hU
+    rw [matches_path_psi ht, matches_path_psi hu] at heq
+    have h := congrArg Code.unrotate (path_inj g.rotate g'.rotate heq)
+    rw [unrotate_rotate, unrotate_rotate] at h
+    subst d
+    exact matches_unique ht hu
+  · intro w hw
+    obtain ⟨c, g, rfl⟩ := path_code hw
+    refine ⟨tableau g.unrotate, tableau_standard g.unrotate, ?_⟩
+    rw [matches_path_psi (tableau_matches g.unrotate), rotate_unrotate]
 
 end
 

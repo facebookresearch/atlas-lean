@@ -14,6 +14,8 @@ public import Mathlib.Analysis.Calculus.IteratedDeriv.Defs
 public import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
+public import MathlibExt.NumberTheory.HeightOneMultipleZetaMulNat
+public import MathlibExt.NumberTheory.HeightOneMultipleZetaMulNegNat
 public import MathlibExt.NumberTheory.HeightOneMultipleZetaSeries
 public import WantedExt.NumberTheory.BernoulliStirlingHarmonicWanted
 public import WantedExt.NumberTheory.HyperharmonicEulerSumsWanted
@@ -44,78 +46,6 @@ Source: Paul Thomas Young, *Series of Height One Multiple Zeta Functions*, INTEG
 public theorem_wanted hasSum_heightOneMultipleZeta_mul_pow {s r : ℂ} (hs : 1 < s.re)
     (hr : ‖r - 1‖ < ‖s - 1‖) (hrs : r.re < s.re) :
     HasSum (fun j : ℕ => heightOneMultipleZeta s j * (r - 1) ^ j) (multipleHurwitzZeta r s)
-
-/-- **Height one multiple zeta series weighted by powers of a natural number.** Let $n \ge 0$ be
-an integer. Write $\zeta(s, \{1\}^j)$ for the height one multiple zeta function, $\zeta$ for the
-Riemann zeta function, $c(n, m)$ for the unsigned Stirling numbers of the first kind and
-$B_j^{(k)}(x)$ for the poly-Bernoulli polynomials. For every complex $s$ with
-$\operatorname{Re} s > n + 1$, the series $\sum_{j \ge 0} \zeta(s, \{1\}^j) \, n^j$ (with $0^0 = 1$)
-is summable with sum $\frac{1}{n!} \sum_{m=0}^{n} c(n, m) \, \zeta(s - m)$. For every complex $s$
-with $\operatorname{Re} s > 1$, the series $\sum_{j \ge 0} B_j^{(-n)}(-1) \, \zeta(s + n, \{1\}^j)$
-is summable with sum $\zeta(s)$.
-
-The source states the second identity with $C_j^{(-n)} = B_j^{(-n)}(1)$, where its poly-Bernoulli
-polynomials have the generating function with $e^{-xt}$; with the factor $e^{xt}$ used here this
-coefficient is $B_j^{(-n)}(-1)$.
-
-Source: Paul Thomas Young, *Series of Height One Multiple Zeta Functions*, INTEGERS 24
-(2024), Article A43, Corollary 1 (`integers-2024-A43-cor-1`). -/
-public theorem_wanted hasSum_heightOneMultipleZeta_mul_nat_pow (n : ℕ) :
-    (∀ s : ℂ, (n : ℝ) + 1 < s.re →
-      HasSum (fun j : ℕ => heightOneMultipleZeta s j * (n : ℂ) ^ j)
-        (1 / (n.factorial : ℂ) *
-          ∑ m ∈ Finset.range (n + 1), (n.stirlingFirst m : ℂ) * riemannZeta (s - m))) ∧
-    ∀ s : ℂ, 1 < s.re →
-      HasSum (fun j : ℕ => (polyBernoulliPoly j (-(n : ℤ)) (-1) : ℂ) *
-        heightOneMultipleZeta (s + n) j) (riemannZeta s)
-
-/-- **Height one multiple zeta series weighted by powers of a negative integer.** Let $r \ge 1$
-be an integer and let $\zeta(s, \{1\}^j)$ denote the height one multiple zeta function. For
-every complex number $s$ with $\operatorname{Re} s > r + 1$,
-
-$$\sum_{j \ge 0} \zeta(s, \{1\}^j) (-r)^j = \sum_{m=0}^{r-1} \binom{r-1}{m} (-1)^m (m+1)^{-s}.$$
-
-For every integer $k > r + 1$,
-
-$$\sum_{j \ge 0} \zeta(k, \{1\}^j) (-r)^j = \frac{H_{r,k-1}}{r},$$
-
-where $H_{r,k-1} = \sum_{i=1}^{r} (-1)^{i-1} \binom{r}{i} i^{-(k-1)}$ is the rational Roman
-harmonic number (Equation (2.18)).
-
-Source: Paul Thomas Young, *Series of Height One Multiple Zeta Functions*, INTEGERS 24
-(2024), Article A43, Corollary 2 (`integers-2024-A43-cor-2`). -/
-public theorem_wanted tsum_heightOneMultipleZeta_mul_neg_nat_pow
-    (r : ℕ) (hr : 1 ≤ r) :
-    (∀ s : ℂ, (r : ℝ) + 1 < s.re →
-      ∑' j : ℕ, heightOneMultipleZeta s j * (-(r : ℂ)) ^ j =
-        ∑ m ∈ Finset.range r, ((r - 1).choose m : ℂ) * (-1) ^ m * ((m : ℂ) + 1) ^ (-s)) ∧
-    ∀ k : ℕ, r + 1 < k →
-      ∑' j : ℕ, heightOneMultipleZeta k j * (-(r : ℂ)) ^ j =
-        (((∑ i ∈ Finset.Icc 1 r, (-1 : ℚ) ^ (i - 1) * (r.choose i : ℚ) / (i : ℚ) ^ (k - 1)) /
-          r : ℚ) : ℂ)
-
-/-- **Generalized Goldbach series for height one multiple zeta values.** Let $k \ge 1$ be an
-integer. Write $\zeta(s, \{1\}^j)$ for the height one multiple zeta function, $\zeta$ for the
-Riemann zeta function, $c(k, m)$ for the unsigned Stirling numbers of the first kind,
-$H_k = \sum_{i=1}^{k} 1/i$ for the $k$-th harmonic number and
-$H_{k,k} = \sum_{i=1}^{k} (-1)^{i-1} \binom{k}{i} i^{-k}$ for the Roman harmonic number. Then the
-series $\sum_{j \ge 0} \bigl(k^j \zeta(k + 1, \{1\}^j) - \frac{1}{k! \, k}\bigr)$ is summable with
-sum $\frac{1}{k!} \bigl(\sum_{m=0}^{k-1} c(k, m) \, \zeta(k + 1 - m) + H_k\bigr)$, and the series
-$\sum_{j \ge 0} (-1)^j \bigl(k^j \zeta(k + 1, \{1\}^j) - \frac{1}{k! \, k}\bigr)$ is summable with
-sum $\frac{H_{k,k}}{k} - \frac{1}{2 \, k! \, k}$.
-
-Source: Paul Thomas Young, *Series of Height One Multiple Zeta Functions*, INTEGERS 24
-(2024), Article A43, Theorem 2 (`integers-2024-A43-thm-2`). -/
-public theorem_wanted hasSum_heightOneMultipleZeta_goldbach (k : ℕ) (hk : 1 ≤ k) :
-    HasSum (fun j : ℕ => (k : ℂ) ^ j * heightOneMultipleZeta ((k : ℂ) + 1) j -
-        1 / ((k.factorial : ℂ) * k))
-      (1 / (k.factorial : ℂ) *
-        (∑ m ∈ Finset.range k, (k.stirlingFirst m : ℂ) * riemannZeta ((k : ℂ) + 1 - m) +
-          (harmonic k : ℂ))) ∧
-    HasSum (fun j : ℕ => (-1) ^ j * ((k : ℂ) ^ j * heightOneMultipleZeta ((k : ℂ) + 1) j -
-        1 / ((k.factorial : ℂ) * k)))
-      (((∑ i ∈ Finset.Icc 1 k, (-1 : ℚ) ^ (i - 1) * (k.choose i : ℚ) / (i : ℚ) ^ k) / k -
-        1 / (2 * (k.factorial : ℚ) * k) : ℚ) : ℂ)
 
 /-- **Expansion of the hyperharmonic zeta function in height one multiple zeta values.** Let $r$
 and $s$ be complex numbers with $\operatorname{Re} s > 0$, $|r| < |s|$ and

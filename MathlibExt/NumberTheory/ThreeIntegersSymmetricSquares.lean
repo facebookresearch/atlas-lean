@@ -65,6 +65,23 @@ def HasSquareElementarySymmetricFunctions (a b c : ℤ) : Prop :=
     IsSquare (a * b + b * c + c * a) ∧
     IsSquare (a * b * c)
 
+/-- **Pairwise products preserve square symmetric functions.** If $a$, $b$, $c$ are integers
+such that each of $a + b + c$, $ab + bc + ca$ and $abc$ is the square of an integer, then the
+same holds for the triple $ab$, $bc$, $ca$.
+
+Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the
+Integers, Taken Two at a Time, Are Perfect Squares", Lemma 2. -/
+theorem hasSquareElementarySymmetricFunctions_pairwise_products
+    {a b c : ℤ}
+    (h : HasSquareElementarySymmetricFunctions a b c) :
+    HasSquareElementarySymmetricFunctions (a * b) (b * c) (c * a) := by
+  obtain ⟨⟨x, hx⟩, ⟨y, hy⟩, ⟨z, hz⟩⟩ := h
+  refine ⟨⟨y, hy⟩, ⟨z * x, ?_⟩, ⟨a * b * c, by ring⟩⟩
+  calc (a * b) * (b * c) + (b * c) * (c * a) + (c * a) * (a * b)
+      = (a * b * c) * (a + b + c) := by ring
+    _ = (z * z) * (x * x) := by rw [hz, hx]
+    _ = (z * x) * (z * x) := by ring
+
 /-- **Rationals with square elementary symmetric functions.** Rational numbers $a$, $b$, $c$
 have square elementary symmetric functions when each of $a + b + c$, $ab + bc + ca$ and $abc$
 is the square of a rational number. -/

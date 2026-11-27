@@ -10,13 +10,15 @@ module
 
 public import Mathlib.NumberTheory.LegendreSymbol.JacobiSymbol
 public import Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
+import Mathlib.Algebra.BigOperators.Ring.Nat
 import Mathlib.NumberTheory.LSeries.PrimesInAP
 
 /-!
 # Weakly prime-additive multiples of length at most four
 
-Under Leung's primitive-root hypothesis, every positive integer has infinitely many
-weakly prime-additive multiples of length at most four.
+The Fang–Chen theorem characterizes positive integers with infinitely many weakly prime-additive
+multiples of length three as those not divisible by 8. Under Leung's primitive-root hypothesis,
+every positive integer has infinitely many weakly prime-additive multiples of length at most four.
 
 We adapt Leung's four-prime construction. For the power-of-two part of the modulus we choose
 residues 5, 3 and −9 for the primes $q, r, s$, respectively. In particular, −2 is a nonsquare
@@ -524,6 +526,308 @@ public theorem infinite_weaklyPrimeAdditive_length_le_four_dvd
   have hd : 2 ^ k * M ∣ WeaklyPrimeAdditive.twoPart k * M :=
     mul_dvd_mul_right (pow_dvd_pow 2 (by omega)) M
   exact ⟨n, ⟨hd.trans hn, hw, hl⟩, hB.trans_le hpn⟩
+
+namespace WeaklyPrimeAdditive
+
+/-- Replacing an exponent by one of 1, 2, 3, 4 preserves its parity and the power of 2
+modulo 8. -/
+private theorem exponent_mod_eight {a : ℕ} (ha : 0 < a) :
+    ∃ k : Fin 5, 0 < k.val ∧ k.val ≡ a [MOD 2] ∧ 2 ^ k.val ≡ 2 ^ a [MOD 8] := by
+  by_cases h : a ≤ 2
+  · exact ⟨⟨a, by omega⟩, ha, .refl _, .refl _⟩
+  have hz (i : ℕ) (hi : 3 ≤ i) : 2 ^ i ≡ 0 [MOD 8] :=
+    Nat.modEq_zero_iff_dvd.mpr (pow_dvd_pow 2 hi)
+  let k : Fin 5 := ⟨3 + (a + 1) % 2, by omega⟩
+  exact ⟨k, by dsimp [k]; omega, by change (3 + (a + 1) % 2) % 2 = a % 2; omega,
+    (hz _ (by dsimp [k]; omega)).trans (hz a (by omega)).symm⟩
+
+/-- Evaluate the Jacobi symbol of the negative power of two from the two supplementary laws. -/
+private theorem symbol_neg_pow_two {u a k : ℕ} (hu : Odd u) (hk : k ≡ a [MOD 2]) :
+    jacobiSym (-(2 : ℤ) ^ a) u =
+      ZMod.χ₄ (u % 8 : ℕ) * ZMod.χ₈ (u % 8 : ℕ) ^ k := by
+  have h₄ : ZMod.χ₄ (u % 8 : ℕ) = ZMod.χ₄ u := by
+    rw [ZMod.χ₄_nat_mod_four (u % 8), Nat.mod_mod_of_dvd _ (by decide : 4 ∣ 8),
+      ← ZMod.χ₄_nat_mod_four]
+  have h₂ : ZMod.χ₈ u ^ 2 = 1 := by
+    rw [← jacobiSym.at_two hu]
+    exact jacobiSym.sq_one (show Nat.Coprime 2 u from hu.coprime_two_left)
+  rw [jacobiSym.neg _ hu, jacobiSym.pow_left, jacobiSym.at_two hu, h₄,
+    ← ZMod.χ₈_nat_mod_eight, pow_eq_pow_of_modEq hk h₂]
+
+/-- Reciprocity at the two odd prime powers is incompatible with divisibility by 8. -/
+private theorem eight_obstruction {a u v : ℕ} (ha : 0 < a) (hu : Odd u) (hv : Odd v)
+    (huv : jacobiSym v u = jacobiSym (-(2 : ℤ) ^ a) u)
+    (hvu : jacobiSym u v = jacobiSym (-(2 : ℤ) ^ a) v) : ¬ 8 ∣ 2 ^ a + u + v := by
+  intro h
+  obtain ⟨k, hk, hka, hk8⟩ := exponent_mod_eight ha
+  let x : Fin 8 := ⟨u % 8, Nat.mod_lt _ (by decide)⟩
+  let y : Fin 8 := ⟨v % 8, Nat.mod_lt _ (by decide)⟩
+  have table : ∀ x y : Fin 8, ∀ k : Fin 5, Odd x.val → Odd y.val → 0 < k.val →
+      8 ∣ 2 ^ k.val + x.val + y.val →
+      ZMod.χ₄ x.val * ZMod.χ₈ x.val ^ k.val ≠
+        (-1) ^ (x.val / 2 * (y.val / 2)) * (ZMod.χ₄ y.val * ZMod.χ₈ y.val ^ k.val) := by
+    decide
+  have half (z : ℕ) : z / 2 ≡ z % 8 / 2 [MOD 2] := by unfold Nat.ModEq; omega
+  have hs := pow_eq_pow_of_modEq ((half u).mul (half v)) (neg_one_sq (R := ℤ))
+  have hr := jacobiSym.quadratic_reciprocity hv hu
+  rw [huv, hvu, symbol_neg_pow_two hu hka, symbol_neg_pow_two hv hka, mul_comm (v / 2), hs] at hr
+  apply table x y k (Nat.odd_iff.mpr (by have := Nat.odd_iff.mp hu; dsimp [x]; omega))
+    (Nat.odd_iff.mpr (by have := Nat.odd_iff.mp hv; dsimp [y]; omega)) hk _ hr
+  exact Nat.modEq_zero_iff_dvd.mp (((hk8.add (Nat.mod_modEq ..)).add (Nat.mod_modEq ..)).trans
+    (Nat.modEq_zero_iff_dvd.mpr h))
+
+private theorem symbol_of_prime_dvd_sum {p a b v : ℕ} (hb : 0 < b)
+    (hd : p ∣ 2 ^ a + p ^ b + v) :
+    jacobiSym v (p ^ b) = jacobiSym (-(2 : ℤ) ^ a) (p ^ b) := by
+  have h := (ZMod.natCast_eq_zero_iff ..).mpr hd
+  simp only [Nat.cast_add, Nat.cast_pow, Nat.cast_ofNat, ZMod.natCast_self, zero_pow hb.ne',
+    add_zero] at h
+  rw [jacobiSym.pow_right, jacobiSym.pow_right]
+  congr 1
+  apply jacobi_congr
+  push_cast
+  linear_combination h
+
+private theorem not_eight_dvd_sum_three {n : ℕ} (hsum : IsPrimeDivisorPowerSum n 3) : ¬ 8 ∣ n := by
+  intro h₈
+  obtain ⟨s, hcard, primes, e, pos, hn⟩ := hsum
+  have htwo : 2 ∈ s := by
+    by_contra h
+    have ho (x : ℕ) (hx : x ∈ s) : Odd (x ^ e x) :=
+      ((primes x hx).1.odd_of_ne_two (fun he => h (he ▸ hx))).pow
+    have hnOdd : Odd n := by
+      rw [hn, Finset.odd_sum_iff_odd_card_odd, Finset.filter_true_of_mem ho, hcard]
+      decide
+    have := Nat.odd_iff.mp hnOdd
+    omega
+  obtain ⟨p, q, hpq, hpqs⟩ := Finset.card_eq_two.mp
+    (show (s.erase 2).card = 2 by rw [Finset.card_erase_of_mem htwo, hcard])
+  have hne : 2 ∉ ({p, q} : Finset ℕ) := hpqs ▸ Finset.notMem_erase 2 s
+  simp only [Finset.mem_insert, Finset.mem_singleton, not_or] at hne
+  have hs : s = {2, p, q} := by rw [← hpqs, Finset.insert_erase htwo]
+  have hp := primes p (by simp [hs])
+  have hq := primes q (by simp [hs])
+  have hb := pos p (by simp [hs])
+  have hc := pos q (by simp [hs])
+  have ha := pos 2 htwo
+  have he : n = 2 ^ e 2 + p ^ e p + q ^ e q := by
+    simpa [hs, hne.1, hne.2, hpq, add_assoc] using hn
+  rw [he] at hp hq h₈
+  exact eight_obstruction ha (hp.1.odd_of_ne_two (Ne.symm hne.1)).pow
+    (hq.1.odd_of_ne_two (Ne.symm hne.2)).pow (symbol_of_prime_dvd_sum hb hp.2)
+    (symbol_of_prime_dvd_sum hc (by simpa [add_right_comm] using hq.2)) h₈
+
+/-- Every weakly prime-additive number has length at least three. -/
+private theorem three_le_length {n : ℕ} (hw : IsWeaklyPrimeAdditive n) :
+    3 ≤ weaklyPrimeAdditiveLength n := by
+  have hcard := hw.1
+  obtain ⟨t, ht, htprimes, e, pos, he⟩ :=
+    Nat.sInf_mem (s := {k | IsPrimeDivisorPowerSum n k}) hw.2
+  change t.card = weaklyPrimeAdditiveLength n at ht
+  by_contra! hlt
+  have cases : t.card = 0 ∨ t.card = 1 ∨ t.card = 2 := by omega
+  rcases cases with h₀ | h₁ | h₂
+  · simp [Finset.card_eq_zero.mp h₀] at he
+    simp [he] at hcard
+  · obtain ⟨p, rfl⟩ := Finset.card_eq_one.mp h₁
+    simp only [Finset.sum_singleton] at he
+    rw [he, Nat.primeFactors_prime_pow (pos p (by simp)).ne' (htprimes p (by simp)).1] at hcard
+    simp at hcard
+  · obtain ⟨p, q, hpq, rfl⟩ := Finset.card_eq_two.mp h₂
+    obtain ⟨hp, hpn⟩ := htprimes p (by simp)
+    have hq := (htprimes q (by simp)).1
+    simp only [Finset.mem_singleton, hpq, not_false_eq_true, Finset.sum_insert,
+      Finset.sum_singleton] at he
+    rw [he] at hpn
+    have hd := (Nat.dvd_add_right (dvd_pow_self p (pos p (by simp)).ne')).mp hpn
+    exact hpq ((Nat.prime_dvd_prime_iff_eq hp hq).mp (hp.dvd_of_dvd_pow hd))
+
+/-- A sum of three powers witnessing weak prime-additivity already has minimum length. -/
+private theorem length_three {n : ℕ} (hn : 0 < n) (h : IsPrimeDivisorPowerSum n 3) :
+    IsWeaklyPrimeAdditive n ∧ weaklyPrimeAdditiveLength n = 3 := by
+  have hcard : 3 ≤ n.primeFactors.card := by
+    obtain ⟨s, hs, primes, _⟩ := h
+    rw [← hs]
+    exact Finset.card_le_card fun p hp =>
+      (primes p hp).1.mem_primeFactors (primes p hp).2 hn.ne'
+  have hw : IsWeaklyPrimeAdditive n := ⟨by omega, 3, h⟩
+  exact ⟨hw, le_antisymm (weaklyPrimeAdditiveLength_le h) (three_le_length hw)⟩
+
+/-- Choose the two odd primes so that the half period of the second is coprime to both
+periods needed for the power of two. -/
+private theorem shortest_primes (M B : ℕ) (hM : Odd M) :
+    ∃ p q : ℕ, p.Prime ∧ q.Prime ∧ B + 2 < p ∧ p < q ∧ p % 8 = 1 ∧ q % 8 = 3 ∧
+      (p : ZMod M) = -1 ∧ (q : ZMod M) = -1 ∧ (q : ZMod p) = -2 ∧
+      (q / 2).Coprime ((p - 1) * M.totient) := by
+  have Mpos := hM.pos
+  let : NeZero (8 * M) := ⟨by omega⟩
+  have pProg := combine (show Nat.Coprime 8 M from hM.coprime_two_left.pow_left 3)
+    (residue (d := 8) isUnit_one) (residue (d := M) isUnit_one.neg)
+  obtain ⟨p, hpB, hp, hp8, hpM⟩ := primeIn pProg (B + M + 8)
+  have p8 : p % 8 = 1 := modEight (z := 1) dvd_rfl (by simpa using hp8) (by decide) (by decide)
+  have pOdd := hp.odd_of_ne_two (by omega)
+  let T := (p - 1) * M.totient
+  have hφ := Nat.totient_pos.mpr Mpos
+  have hT : 0 < T := Nat.mul_pos (by omega) hφ
+  obtain ⟨j, U, hU, hTU⟩ := Nat.exists_eq_two_pow_mul_odd hT.ne'
+  have pT : p.Coprime T := Nat.coprime_mul_iff_right.mpr
+    ⟨Nat.coprime_of_lt_prime (by omega) (by omega) hp,
+      Nat.coprime_of_lt_prime hφ.ne' ((Nat.totient_le M).trans_lt (by omega)) hp⟩
+  have pU := pT.of_dvd_right (show U ∣ T by rw [hTU]; exact dvd_mul_left ..)
+  let L := M * U
+  have hL : Odd L := hM.mul hU
+  have pL : L.Coprime p := (Nat.coprime_mul_iff_right.mpr
+    ⟨Nat.coprime_of_lt_prime Mpos.ne' (by omega) hp, pU⟩).symm
+  have qProg := combine (Nat.coprime_mul_iff_left.mpr ⟨pOdd.coprime_two_left.pow_left 3, pL⟩)
+    (combine (show Nat.Coprime 8 L from hL.coprime_two_left.pow_left 3)
+      (residue (d := 8) (x := 3) ((ZMod.isUnit_iff_coprime 3 8).mpr (by decide)))
+      (residue (d := L) isUnit_one.neg))
+    (residue (d := p) (x := -2) (((ZMod.isUnit_iff_coprime 2 p).mpr pOdd.coprime_two_left).neg))
+  let : NeZero (8 * L * p) := ⟨Nat.mul_ne_zero (Nat.mul_ne_zero (by decide) hL.pos.ne') hp.ne_zero⟩
+  obtain ⟨q, hpq, hq, ⟨hq8, hqL⟩, hqp⟩ := primeIn qProg p
+  have q8 : q % 8 = 3 := modEight (z := 3) dvd_rfl (by simpa using hq8) (by decide) (by decide)
+  have negL (d : ℕ) (hd : d ∣ L) : (q : ZMod d) = -1 := by
+    simpa using reduce (z := -1) hd (by simpa using hqL)
+  have hb : Odd (q / 2) := Nat.odd_iff.mpr (by omega)
+  refine ⟨p, q, hp, hq, by omega, hpq, p8, q8, hpM, negL M (dvd_mul_right ..), hqp, ?_⟩
+  change (q / 2).Coprime T
+  rw [hTU, Nat.coprime_mul_iff_right]
+  have hpred := coprime_pred hq.pos hU (negL U (dvd_mul_left ..))
+  exact ⟨hb.coprime_two_right.pow_right _, hpred.of_dvd_left ⟨2, by omega⟩⟩
+
+/-- For odd M, construct arbitrarily large three-term sums divisible by 4M. -/
+private theorem shortest_multiple (M B : ℕ) (hM : Odd M) :
+    ∃ n > B, 4 * M ∣ n ∧ IsWeaklyPrimeAdditive n ∧ weaklyPrimeAdditiveLength n = 3 := by
+  obtain ⟨p, q, hp, hq, hB, hpq, p8, q8, pM, qM, qp, hcop⟩ := shortest_primes M B hM
+  let : Fact q.Prime := ⟨hq⟩
+  let b := q / 2
+  have hb : Odd b := Nat.odd_iff.mpr (by dsimp [b]; omega)
+  -- Reciprocity makes p a square at q. At the same prime, 2 is a nonsquare.
+  have hjp : jacobiSym p q = 1 := by
+    rw [jacobiSym.quadratic_reciprocity_one_mod_four (by omega) (hq.odd_of_ne_two (by omega)),
+      jacobi_congr (z := -2) (by simpa using qp),
+      jacobiSym.at_neg_two (hp.odd_of_ne_two (by omega)), ZMod.χ₈'_nat_eq_if_mod_eight]
+    simp [p8, show p % 2 = 1 by omega]
+  have hj2 : jacobiSym 2 q = -1 := by
+    rw [jacobiSym.at_two (hq.odd_of_ne_two (by omega)), ZMod.χ₈_nat_eq_if_mod_eight]
+    simp [q8, show q % 2 = 1 by omega]
+  have h2q : (2 : ZMod q) ^ b = -1 := by
+    have he := legendreSym.eq_pow q 2
+    rw [jacobiSym.legendreSym.to_jacobiSym, hj2] at he
+    simpa [b] using he.symm
+  -- Euler's theorem gives a ≡ 1 modulo T, while a is an odd multiple of b.
+  let T := (p - 1) * M.totient
+  have hT : 0 < T := Nat.mul_pos (by omega) (Nat.totient_pos.mpr hM.pos)
+  let a := b ^ T.totient
+  have haT : a ≡ 1 [MOD T] := Nat.ModEq.pow_totient hcop
+  have ht := Nat.totient_pos.mpr hT
+  have hba : b ≤ a := le_self_pow (by dsimp [b]; omega) ht.ne'
+  have ha : 2 ≤ a := by dsimp [b] at hba; omega
+  have h2aq : (2 : ZMod q) ^ a = -1 := by
+    obtain ⟨j, hj⟩ := Nat.exists_eq_succ_of_ne_zero ht.ne'
+    dsimp [a]
+    rw [hj, pow_succ', pow_mul, h2q, (hb.pow (n := j)).neg_one_pow]
+  have two_pow (d : ℕ) (hd : d.totient ∣ T) (ho : Odd d) : (2 : ZMod d) ^ a = 2 := by
+    have he := (ZMod.natCast_eq_natCast_iff ..).mpr (Nat.ModEq.pow_totient ho.coprime_two_left)
+    simpa using pow_eq_pow_of_modEq (haT.of_dvd hd) (by simpa using he :
+      (2 : ZMod d) ^ d.totient = 1)
+  let n := 2 ^ a + p ^ b + q
+  have zeroMod (d : ℕ) (h : (2 : ZMod d) ^ a + (p : ZMod d) ^ b + q = 0) : d ∣ n :=
+    (ZMod.natCast_eq_zero_iff ..).mp (by simpa [n] using h)
+  have hMdiv := zeroMod M (by rw [two_pow M (dvd_mul_left ..) hM, pM, hb.neg_one_pow, qM]; ring)
+  have hpdiv := zeroMod p (by
+    rw [two_pow p (by rw [Nat.totient_prime hp]; exact dvd_mul_right ..)
+      (hp.odd_of_ne_two (by omega)), ZMod.natCast_self, zero_pow hb.pos.ne', qp]
+    ring)
+  have hqdiv := zeroMod q (by rw [h2aq, pow_half hjp, ZMod.natCast_self]; ring)
+  have h₄ := zeroMod 4 (by
+    have hp4 : (p : ZMod 4) = 1 := (ZMod.natCast_eq_natCast_iff p 1 4).mpr (by
+      change p % 4 = 1; omega)
+    have hq4 : (q : ZMod 4) = -1 := by
+      have h : (q : ZMod 4) = (3 : ℕ) := (ZMod.natCast_eq_natCast_iff q 3 4).mpr (by
+        change q % 4 = 3; omega)
+      exact h.trans (by decide)
+    have hpow : (2 : ZMod 4) ^ a = 0 := by
+      exact pow_eq_zero_of_le ha (by decide : (2 : ZMod 4) ^ 2 = 0)
+    rw [hpow, hp4, one_pow, hq4]; ring)
+  have hqn : q ≤ n := Nat.le_add_left ..
+  have hsum : IsPrimeDivisorPowerSum n 3 := by
+    have h2p : 2 ≠ p := by omega
+    have h2q' : 2 ≠ q := by omega
+    refine ⟨{2, p, q}, by simp [h2p, h2q', hpq.ne], ?_,
+      fun x => if x = 2 then a else if x = p then b else 1, ?_, ?_⟩
+    · intro x hx
+      simp only [Finset.mem_insert, Finset.mem_singleton] at hx
+      rcases hx with rfl | rfl | rfl
+      · exact ⟨Nat.prime_two, dvd_trans (by decide : 2 ∣ 4) h₄⟩
+      · exact ⟨hp, hpdiv⟩
+      · exact ⟨hq, hqdiv⟩
+    · intro x _
+      have := hb.pos
+      dsimp only
+      split_ifs <;> omega
+    · simp [n, h2p, h2q', hpq.ne, h2p.symm, h2q'.symm, hpq.ne', add_assoc]
+  exact ⟨n, by omega, (hM.coprime_two_left.pow_left 2).mul_dvd_of_dvd_of_dvd h₄ hMdiv,
+    length_three (hq.pos.trans_le hqn) hsum⟩
+
+end WeaklyPrimeAdditive
+
+/-- **Fang–Chen theorem on shortest weakly prime-additive multiples.** For every positive integer
+$m$, there are infinitely many weakly prime-additive numbers $n$ with $m \mid n$ and length
+$\kappa_n = 3$ if and only if $8 \nmid m$.
+
+Source: Wing Hong Leung, *On the Weakly Prime-Additive Numbers with Length 4*, INTEGERS 24
+(2024), Article A9, Theorem 5 (Fang and Chen, Corollary 1.1). -/
+public theorem infinite_shortest_weaklyPrimeAdditive_dvd_iff (m : ℕ) (hm : 0 < m) :
+    {n : ℕ | m ∣ n ∧ IsWeaklyPrimeAdditive n ∧ weaklyPrimeAdditiveLength n = 3}.Infinite ↔
+      ¬ 8 ∣ m := by
+  constructor
+  · intro h hm₈
+    obtain ⟨n, hn⟩ := h.nonempty
+    obtain ⟨hmn, hw, hl⟩ := hn
+    have hsum : IsPrimeDivisorPowerSum n (weaklyPrimeAdditiveLength n) :=
+      Nat.sInf_mem (s := {k | IsPrimeDivisorPowerSum n k}) hw.2
+    rw [hl] at hsum
+    exact WeaklyPrimeAdditive.not_eight_dvd_sum_three hsum (hm₈.trans hmn)
+  · intro hm₈
+    obtain ⟨k, M, hM, rfl⟩ := Nat.exists_eq_two_pow_mul_odd hm.ne'
+    have hk : k ≤ 2 := by
+      by_contra! h
+      exact hm₈ ((show 8 ∣ 2 ^ k from pow_dvd_pow 2 h).mul_right M)
+    apply Set.infinite_iff_exists_gt.mpr
+    intro B
+    obtain ⟨n, hB, hdiv, hlen⟩ := WeaklyPrimeAdditive.shortest_multiple M B hM
+    have hd : 2 ^ k * M ∣ 4 * M := mul_dvd_mul_right (pow_dvd_pow 2 hk) M
+    exact ⟨n, ⟨hd.trans hdiv, hlen⟩, hB⟩
+
+/-- **Weakly prime-additive multiples of length four.** Assume $(\ast)$: for all natural numbers
+$a$, $f$, $g$ with $1 \le a \le f$, $\gcd(a, f) = 1$ and $4 \mid f$, and $g$ an odd prime dividing
+$f$ with Jacobi symbol $\left(\frac{g}{a}\right) = -1$, there is a prime $\ell \equiv a \pmod f$
+such that $g$ is a primitive root modulo $\ell$. Then for every positive integer $m$ there are
+infinitely many weakly prime-additive numbers $n$ with $m \mid n$ and length $\kappa_n = 4$.
+
+The paper states $(\ast)$ with the Kronecker symbol; since $a$ is coprime to $f$ and $4 \mid f$,
+$a$ is odd, so it is the Jacobi symbol.
+
+Source: Wing Hong Leung, *On the Weakly Prime-Additive Numbers with Length 4*, INTEGERS 24
+(2024), Article A9, Theorem 1. -/
+public theorem infinite_weaklyPrimeAdditive_length_four_dvd
+    (hstar : ∀ a f g : ℕ, 1 ≤ a → a ≤ f → Nat.Coprime a f → 4 ∣ f → g.Prime → Odd g →
+      g ∣ f → jacobiSym g a = -1 →
+      ∃ p : ℕ, p.Prime ∧ p ≡ a [MOD f] ∧ IsPrimitiveRoot (g : ZMod p) (p - 1))
+    (m : ℕ) (hm : 0 < m) :
+    {n : ℕ | m ∣ n ∧ IsWeaklyPrimeAdditive n ∧ weaklyPrimeAdditiveLength n = 4}.Infinite := by
+  refine (infinite_weaklyPrimeAdditive_length_le_four_dvd hstar (8 * m)
+    (Nat.mul_pos (by decide) hm)).mono ?_
+  rintro n ⟨hd, hw, hl⟩
+  refine ⟨(dvd_mul_left m 8).trans hd, hw, le_antisymm hl ?_⟩
+  have h₃ := WeaklyPrimeAdditive.three_le_length hw
+  by_contra! hlt
+  have he : weaklyPrimeAdditiveLength n = 3 := by omega
+  have hsum : IsPrimeDivisorPowerSum n (weaklyPrimeAdditiveLength n) :=
+    Nat.sInf_mem (s := {k | IsPrimeDivisorPowerSum n k}) hw.2
+  rw [he] at hsum
+  exact WeaklyPrimeAdditive.not_eight_dvd_sum_three hsum ((dvd_mul_right 8 m).trans hd)
 
 end
 

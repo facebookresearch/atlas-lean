@@ -1,0 +1,3 @@
+# UNIT-TIME NO-WAIT OPEN SHOP WITH PRECEDENCE, TOTAL COMPLETION TIME as a decision problem
+
+The decision problem UNIT-TIME NO-WAIT OPEN SHOP WITH PRECEDENCE, TOTAL COMPLETION TIME accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding of quadruples $(m, P, A, K)$ (a natural number, a list of lists of natural numbers, a list of pairs and a natural number), to an instance that is well-formed ($m \ge 1$, every job has exactly $m$ operations of processing time $1$, every arc names two jobs, and no job reaches itself by a nonempty sequence of arcs) and feasible for UNIT-TIME NO-WAIT OPEN SHOP WITH PRECEDENCE, TOTAL COMPLETION TIME. It rejects every bitstring that does not decode to such an instance.

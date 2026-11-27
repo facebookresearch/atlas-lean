@@ -21,3 +21,6 @@
 
 - [Finite two-way nondeterministic automata accept regular languages](language-is-regular-2.md)
 - [Regular languages are accepted by two-way nondeterministic automata](exists-two-way-na-of-is-regular.md)
+- [One-way liveness has exponential two-way deterministic state cost](one-way-liveness-deterministic-state-lower-bound.md)
+- [Exponential state cost of complementing two-way NFAs](two-way-nfa-complementation-state-bound.md)
+- [Joint two-way complementation and determinization bounds for relational liveness](relational-liveness-joint-state-lower-bounds.md)

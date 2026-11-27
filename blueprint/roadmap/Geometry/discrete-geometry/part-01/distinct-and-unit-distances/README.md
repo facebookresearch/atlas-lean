@@ -29,3 +29,7 @@
 - [Maximal number of rich distances](max-rich-distances.md)
 - [Statement of Erdős Problem 756 on rich distances](conjecture-2.md)
 - [Bhowmick's theorem on rich distances](conjecture-holds-2.md)
+
+- [Uniform rarity of large pinned distance fibers](rare-rich-pinned-distance-pairs.md)
+
+- [Power saving over the four-thirds planar unit-distance bound](power-saving-unit-distance-bound.md)

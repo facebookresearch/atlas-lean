@@ -1,0 +1,16 @@
+# Zero-determinant strategies in iterated games
+
+- [Y View](y-view.md)
+- [Markov Matrix](markov-matrix.md)
+- [Is Stationary](is-stationary.md)
+- [Payoff X](payoff-x.md)
+- [Payoff Y](payoff-y.md)
+- [P Tilde](p-tilde.md)
+- [Q Tilde](q-tilde.md)
+- [Pd Det](pd-det.md)
+- [Is Strategy](is-strategy.md)
+- [Press–Dyson determinant lemma](dot-product-eq-div-pd-det.md)
+- [Zero-determinant strategies](zero-determinant-linear-relation.md)
+- [X sets Y's score: equalizer strategies](equalizer-score.md)
+- [In the Prisoner's Dilemma X can fix any score `P ≤ σ ≤ R` of Y](exists-strategy-fixing-score.md)
+- [X cannot fix her own score](own-score-singular.md)

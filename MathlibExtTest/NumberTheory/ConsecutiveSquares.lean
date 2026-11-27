@@ -41,3 +41,12 @@ example (b : ℤ) : SoCSEq b b b ∧ ¬ IsSoCSSolution b b b := by
   · unfold SoCSEq
     ring
   · exact fun h => (lt_irrefl b) h.2.2.1
+
+-- Infinitely many even-span solutions leave one outside every finite set.
+example (s : Finset (ℤ × ℤ × ℤ)) :
+    ∃ t ∈ {t : ℤ × ℤ × ℤ | IsSoCSSolution t.1 t.2.1 t.2.2 ∧ Even (t.2.2 - t.1)}, t ∉ s :=
+  soCS_even_span_infinite.exists_notMem_finset s
+
+-- The solution the even-span family starts from.
+example : IsSoCSSolution 59 110 135 ∧ Even ((135 : ℤ) - 59) :=
+  ⟨by norm_num [IsSoCSSolution, SoCSEq], by decide⟩
