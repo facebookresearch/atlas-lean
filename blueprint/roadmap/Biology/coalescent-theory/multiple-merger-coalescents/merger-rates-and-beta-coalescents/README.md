@@ -15,3 +15,4 @@
 
 - [The Beta-coalescent on a finite sample](beta-2-alpha-alpha-coalescent-n-sample-chains-pa.md)
 - [Beta-coalescents, stable trees and frequency spectra of large samples](branching-tree-connections-and-mutation-asymptotics.md)
+- [Dust criterion for Λ-coalescents](dust-criterion-for-lambda-coalescents.md)
