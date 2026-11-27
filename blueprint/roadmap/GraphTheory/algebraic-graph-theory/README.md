@@ -38,3 +38,4 @@ Graphs studied through groups and matrices: Cayley and vertex-transitive graphs,
 - [Conductance and Cheeger's inequality](part-02/conductance-and-cheeger-s-inequality/README.md)
 - [Spectral sparsification](part-02/spectral-sparsification/README.md)
 - [Vertex-transitive graph](part-02/is-vertex-transitive.md)
+- [Homomorphism indistinguishability](homomorphism-indistinguishability/README.md)
