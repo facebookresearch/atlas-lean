@@ -32,7 +32,6 @@
 - [Degree bound gives a natural-degree bound](poly-nat-degree-le-of-degree-lt-succ.md)
 - [Natural-degree bound gives a degree bound](poly-degree-lt-succ-of-nat-degree-le.md)
 - [Constant coefficient is evaluation at zero](poly-constant-coeff-eq-eval-zero.md)
-- [Recombination weights for Shamir parameters](recombination-vector-spec.md)
 - [Sharing polynomial of a new BGW gate](new-gate-poly.md)
 - [Gate sharing polynomials of a BGW program](gate-polys.md)
 - [Input sharing polynomials of a BGW program](input-polys.md)

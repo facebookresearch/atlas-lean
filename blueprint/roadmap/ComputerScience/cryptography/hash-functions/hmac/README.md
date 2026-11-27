@@ -11,10 +11,9 @@
 
 ## The construction
 
-- [Xor Block](xor-block.md)
+- [Bitwise exclusive or of two words](xor-block.md)
 - [HMAC](hmac.md)
-- [Inner Key](inner-key.md)
-- [Outer Key](outer-key.md)
+- [Derived inner and outer keys](inner-key.md)
 - [Nested continuation hash](nested-cont-hash.md)
 - [HMAC in nested form](hmac-eq-nested-cont-hash.md)
 - [HMAC depends on the key only through the derived keys](hmac-eq-of-inner-key-eq.md)

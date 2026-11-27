@@ -27,7 +27,6 @@
 ## ElGamal
 
 - [ElGamal eavesdropper as a public-key adversary](to-pub-cpa.md)
-- [ElGamal eavesdropping experiment as public-key CPA](elgamal-eav-game-eq.md)
 
 ## Lamport signatures
 

@@ -9,10 +9,8 @@
 - [Joint PMF](joint-pmf.md)
 - [Joint PMF apply](joint-pmf-apply.md)
 - [Joint PMF to Real](joint-pmf-to-real.md)
-- [Xor All](xor-all.md)
 - [Xor All zero](xor-all-zero.md)
 - [Xor All succ](xor-all-succ.md)
-- [Bit Sign](bit-sign.md)
 - [Bit Sign xor](bit-sign-xor.md)
 - [Sign of false](bit-sign-false.md)
 - [Bit Sign true](bit-sign-true.md)
@@ -66,7 +64,6 @@
 
 ## Part 2: toy substitution-permutation network
 
-- [Xor Vec](xor-vec.md)
 - [Permute](permute.md)
 - [Spn Round](spn-round.md)
 - [Parity](parity.md)
