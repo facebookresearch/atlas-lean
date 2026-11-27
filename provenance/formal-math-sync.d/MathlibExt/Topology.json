@@ -81,6 +81,60 @@
       "upstream_sha256": "7b5a409cea09c986f65f1bfff5ea78a3e4b0d172dfe3381ad4a7565d828771be"
     },
     {
+      "path": "MathlibExt/Topology/Category/TopCat/Colimits/TopCatSingularClosedSequentialColimit.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "c691c1243a49e2ae66de7d6571f5d8304013b380217cfcae3771a05d40037f17",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "ce64796afe67b1387a1a95a43da129d5c6c8db47efc8079689fc2672d7cb39ca"
+    },
+    {
+      "path": "MathlibExt/Topology/Category/TopCat/Colimits/TopCatSingularClosedSequentialPreserves.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "2fe8b714bbbc9f69371e21d63e421c9123bceb247da33793452fa60212c5aebf",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "255416c2faa549ef6bd06d6cce9f22eb01afc796281f79542655c4175a017f9e"
+    },
+    {
+      "path": "MathlibExt/Topology/Category/TopCat/Colimits/TopCatSingularClosedTransfiniteColimit.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "ee3a00733ee4db2e76c8f4cca435fb6ac0c83cecf286eddaedea300b5a95254c",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "1c8b0089638b1f839f26dcc01182a91a906117e4968cca270eee1ba0bebc9e51"
+    },
+    {
+      "path": "MathlibExt/Topology/Category/TopCat/Colimits/TopCatSingularClosedTransfiniteContinuous.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "a5b454205c10b71b8134b923c8c65df605f83edb8edd9960b5355f6422acc74f",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "4195641c40a547bc3d1e5421a656f95ddbf85d215ae83163195fcd5e3e973d5c"
+    },
+    {
+      "path": "MathlibExt/Topology/Category/TopCat/Colimits/TopCatSingularClosedTransfinitePreserves.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "ec2f3f64e8e231f7fe69a0f3334e2519237b39153b7f58491f86701c51bf2bc4",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "1eaeae5e03519f3e901aa60fd19ecaa2eb48a3f35cb70a7350a737b3e72c37ba"
+    },
+    {
+      "path": "MathlibExt/Topology/Category/TopCat/CompactPushoutProduct.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "883abcb39cd504bf345e841313eab5951a247eba8787cd92ce6ff538a3a8671e",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "d916f679226195596a7e1d2dfe5595189f4a0fbb518dc8090ac95d159e0ca7fd"
+    },
+    {
       "path": "MathlibExt/Topology/Category/TopCat/DeltaGeneratedOpen.lean",
       "backport": "pending",
       "disposition": "diverged",
@@ -88,6 +142,24 @@
       "rationale": "General homological algebra API with Atlas copyright and mathematical documentation; original maps, hypotheses and independent universes retained. Mathematical docs state simplex contraction, twisting/nilpotence, bialgebra/Hopf, coefficient squares and topological colimit contracts with their exact hypotheses, maps and universes; all code and legal text are unchanged.",
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "4a0724bec7fbd878abb076d9b43c5a8fd8a619ca9e47c77713cba388cd42c632"
+    },
+    {
+      "path": "MathlibExt/Topology/Category/TopCat/Embedding/ClosedT1EmbeddingCoproducts.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "e499c47704652defa419c72adbba778c75676b6783d11cfb7c951a2f2b5b5a5d",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "015247f7098d903cf38e3dca9bb224375811261141e76e034d52be8a4a056b4b"
+    },
+    {
+      "path": "MathlibExt/Topology/Category/TopCat/Embedding/TopCatHornCoproductClosedT1.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "c707bca17b1e20fdadfe265f0490846c4bd57be64f0c64e788a934304f5516da",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "45572b6850c3bf44ae089332e201e97abb15d72ce18f65b14bdd79eb7da02b4d"
     },
     {
       "path": "MathlibExt/Topology/Category/TopCat/FixedFiberGauge.lean",
@@ -108,6 +180,42 @@
       "upstream_sha256": "344281f40848b6fce312e9567f04338c12cca2fd37a905427bc31513dc0bc021"
     },
     {
+      "path": "MathlibExt/Topology/Category/TopCat/ProdPushoutFactors.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "cda6a06ff2d7457550992cb68369ccc25d9807b7c3f1bbb6941c69e584ddabb1",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "471cf486edb077ccb1dd1a1ffe572dc8685ae2775e5a011ba7db7709f26d7935"
+    },
+    {
+      "path": "MathlibExt/Topology/Category/TopCat/ProdPushoutFiberDesc.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "5eeec6ed690d590a0f04e579981180fbac664f8dd0bd1b3f13939528f0d7d26f",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "b0e5ed36819d80a3dd45ab41d224d9cd23748d304a091a3d5d9efec0ed0fdf69"
+    },
+    {
+      "path": "MathlibExt/Topology/Category/TopCat/ProdPushoutFiberFormula.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "ae111c08de0d856b117ef49ceb9d57eba80610b8a8c53161ff201e504126adee",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "ec94962dc61480db7ff4843ee95be186513df1545c381e259f9bc763925033a1"
+    },
+    {
+      "path": "MathlibExt/Topology/Category/TopCat/ProdPushoutQuotient.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "e2d8fced320044502b9e86acc3443bcfaab0620ffdfd5fdfb6e987b28320c196",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "5ef96df92b59588c9187091b320d8cfff1853f47403179b7c143be92a0e553bb"
+    },
+    {
       "path": "MathlibExt/Topology/Category/TopCat/ProdPushoutSymm.lean",
       "backport": "pending",
       "disposition": "diverged",
@@ -124,6 +232,24 @@
       "rationale": "General homological algebra API with Atlas copyright and mathematical documentation; original maps, hypotheses and independent universes retained. The module and five public declarations now state the pushout-complement and quotient-topology results with all hypotheses; proof tokens and legal credits are unchanged.",
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "970327fa658fe925eb3dee8f3813b94952962837f36484645ca151b6a7edc088"
+    },
+    {
+      "path": "MathlibExt/Topology/Category/TopCat/PushoutOpenRestriction.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "900f5dd4ce6a4483458532bc2c61d467de0748e6d1bd64260d5256ea575d9f4c",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "7753707acd5fb03afa0ec70908b757f6bc4e4a38631f6e687ceb4a24d93eaae2"
+    },
+    {
+      "path": "MathlibExt/Topology/Category/TopCat/QuotientPushout.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "abb4bb65f5b7655b1027117903e692693ec8244313a0902f2f4c562b404297f9",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "86e9164f0c676cf04e324425c7142ae8b07569b1a02a4cacf9c3951aa80a99b1"
     },
     {
       "path": "MathlibExt/Topology/Category/TopCat/Subspace.lean",
@@ -306,6 +432,15 @@
       "published_sha256": "2c3e62bed643bc072ded87cfa231cce4362297e773fe736c31dd5b174e999fae",
       "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
       "upstream_sha256": "7d6e9c46f2e2bcbecb9b31690437acbc413443d544bad1dba4d990f9492ba6ea"
+    },
+    {
+      "path": "MathlibExt/Topology/Homotopy/TopCat/Singular/SingularKanPolymorphic.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "bb796a707af9b9d632bed8fc39431e1a5cdb4d0c20f67448c41e8350ceddbbef",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "9b9c47c8f8bdc3f0f3e4c4988c230a4b52cc3de580615928b7642c46b9b158a6"
     },
     {
       "path": "MathlibExt/Topology/HomotopyGroups.lean",

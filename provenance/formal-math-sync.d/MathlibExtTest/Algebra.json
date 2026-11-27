@@ -1,724 +1,118 @@
 {
   "rows": [
-    {
-      "path": "MathlibExtTest/Algebra/BigOperators/ProdCompPowTests.lean",
-      "disposition": "identical",
-      "published_sha256": "c31af736c294b1a5f8943c925d9390bbfa9b1fce38bd3e8d6fe4d588eb7069c4",
-      "upstream_sha256": "b4777bc00236b1691dd25524f4c5d26b1e327fc3f4cc3010b44ce817a03161bb"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Category/Grp/ExactnessTransport.lean",
-      "disposition": "identical",
-      "published_sha256": "5a68bbc3684043e4b52b17661ae3303e17852e1fae981908fab293f3a1417c3f",
-      "upstream_sha256": "96a74f6ccfc5f3ee6c000f6e56d3e362c7bdf326f386a9fca6b7e5ebe278b6da"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Category/Grp/FilteredColimits/ConstantSource.lean",
-      "disposition": "identical",
-      "published_sha256": "c7d4ced0e75b65e7168ee811fed5823af9537beaed7dc2c7a20138068c39895b",
-      "upstream_sha256": "bc969d9bbdfe743e0ea7f4742216e397669a92b0b8bb819ad2a8afc9512a31ac"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Category/Grp/FilteredColimits/Fubini.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "ad17ec853969892d7e127b98da8a2c6413029a7eacec2069b1b4c9329ee75ba1",
-      "rationale": "Validate the native uncurry construction instead of the retired duplicate cocone scaffolding, keeping the original concrete Fubini API and kernel-kind checks.",
-      "upstream_commit": "075e9d5d217821aaf3a66cfdf09d0487a64e1f10",
-      "upstream_sha256": "c1630f351e4a4532bb6e439f73ccd265ef395717ba7085eaace329c06f9f63e4"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Category/Grp/FilteredColimits/NatTail.lean",
-      "disposition": "identical",
-      "published_sha256": "3c9b207c6d544114e9b6e61ee279b8f827628c2537954e62c21f417fb3674072",
-      "upstream_sha256": "972d4f24410c4382a92d05a27ca493d580ca323531e9ee1c6979c6fddd6eda36"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Category/Grp/FilteredColimits/PointwiseComparison.lean",
-      "disposition": "identical",
-      "published_sha256": "6d8b43568fbbf3abd6e5f6966aadd8f6e368167c4284b1585411ef2fc1f69b72",
-      "upstream_sha256": "1038b399b356e903ad3aeea5203478e7368ec39c0d7f65acea3467406dc9faa0"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Category/Grp/FilteredColimits/Successor.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "e5564922697f7f78e689f8eb410648e4a376fe31eab318ab241d1b20c3fbcfb1",
-      "rationale": "Test the same concrete quotient, successor comparison and kernel facts using the native cocone factorization law and the existing sequential quotient functor.",
-      "upstream_commit": "075e9d5d217821aaf3a66cfdf09d0487a64e1f10",
-      "upstream_sha256": "a9d88b6eea65cfcb6e00ffd3d6ddc9cd4feff3143dd679bfd4b325a7b96eb4ec"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Category/Grp/FilteredInterleavingTests.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "0d60187b373a36a3d9b84eca46f9b7551e6e2036b99c0e385aff960f5f7a48a0",
-      "rationale": "Test original representatives, inverse comparison and successor maps through the existing functor of concrete sequential quotients.",
-      "upstream_commit": "075e9d5d217821aaf3a66cfdf09d0487a64e1f10",
-      "upstream_sha256": "63d10d6105424b97271bf6a81dac8cf5102192f516459dae7a51b224800e8880"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Category/Grp/FilteredKernelRepresentatives.lean",
-      "disposition": "identical",
-      "published_sha256": "5e1639b24a2bebdc7de534ab65131929920ab22311431d57774cf418b204d884",
-      "upstream_sha256": "7b38ac15b397deeaef962b580b9737594e482078b4af2245cb4adc2c152f376c"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Category/Grp/FilteredSourceTypeColimitClients.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "9d0763cf573989e4d945a12cb504305c241564e7021c0dc19367e8399804ebd4",
-      "rationale": "Use native IsColimit.map between the same literal group-quotient cocones while keeping the Type leg, diagram square and isomorphism-transport tests.",
-      "upstream_commit": "075e9d5d217821aaf3a66cfdf09d0487a64e1f10",
-      "upstream_sha256": "eef8fac5283c5a12702d9c9a5284a2a55291a1d52ff2cb03d7dbd66c6762d22c"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Category/Grp/FiniteColimitSupportTests.lean",
-      "disposition": "identical",
-      "published_sha256": "773dc2f51957290346264d28f1533ea136b68fc940af77453974a182f350be2c",
-      "upstream_sha256": "19ced7c693b46be61680020ba2ed1cd051fbcec44d91591e3c7d141064c474dc"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Category/ModuleCat/BalancedTensorRight/UniverseMatrix.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "d2fc44b238b27e01350df7bdad2cd2172d64c44d2585ef89c05c3b7af8e7d665",
-      "rationale": "General homological algebra API adapted to canonical Atlas owners and mathematical documentation; original maps, statements and independent universes are retained.",
-      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
-      "upstream_sha256": "0e65bf8f85f0642b7e47ea17432b42c54f1fee1741d829f907b1978f8d497b4d"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Category/ModuleCat/BalancedTensorRight/UniverseTorsion.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "bd339f64c129abdff878a9aee7667326ac4ad5e589c866252f51a92c356d0b43",
-      "rationale": "General homological algebra API adapted to canonical Atlas owners and mathematical documentation; original maps, statements and independent universes are retained.",
-      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
-      "upstream_sha256": "c71d7a465c9a3fb20c22c3a9445257ce30504af03466036ee57ac99011c60183"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Category/ModuleCat/Bimodule/TorScalarChangeMatrixCoherence.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "3b9f2e5b29ac4ca2eba2b0ef0c1bb4d63fcfc23821000c41e718eed5031b1bb3",
-      "rationale": "General homological algebra API adapted to canonical Atlas owners and mathematical documentation; original maps, statements and independent universes are retained.",
-      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
-      "upstream_sha256": "1844a1ccdfad077ee6c5db6166953f27489fc768e0630e74b56509b5e9654fbb"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Category/ModuleCat/Bimodule/TorScalarChangeRingMapCoherence.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "86639b9d152f6c82d5bdc61e23b09300f9ed6070fbdc272a505a553c8d28e6ca",
-      "rationale": "General homological algebra API adapted to canonical Atlas owners and mathematical documentation; original maps, statements and independent universes are retained.",
-      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
-      "upstream_sha256": "f6a876ad609e04c4f9aaecab814e381d4add6d12cd6e334ecc43aae057a67003"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Category/ModuleCat/ExactFilteredColimitsIndependentUniverses.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "24c4027bd6d937dad6fe9ef5d7895157a5383f8765b0b8dac8ad07191dcf7977",
-      "rationale": "Original genuine homological client imported with the recorded source/proofs/models, Atlas license header and mathematical documentation; no assertions or coefficient/index universes weakened.",
-      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
-      "upstream_sha256": "2bd301c1b9b1eaf857555223c32cd879641b0cdaa26827af2bcb294cd50934a7"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Category/ModuleCat/FieldTensorTorComparison.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "cb8235eb2e995357089e11090dc5dcc1155a052bca78416734c0770900a21c4b",
-      "rationale": "General homological algebra API adapted to canonical Atlas owners and mathematical documentation; original maps, statements and independent universes are retained.",
-      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
-      "upstream_sha256": "51c4f36a7c654b29a3a5e3832e8cc9a04258152d94a37a0932aeec30fb224a55"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Category/ModuleCat/FinsuppCofanTests.lean",
-      "backport": "not-needed",
-      "disposition": "diverged",
-      "published_sha256": "5a719a2b09f465e870bf7db178bccde5c9473e4a385d0d5058b7a43fe2717901",
-      "rationale": "ATLAS specializes the source single-coordinate descent proof to two copies of the left regular module over the integer matrix ring. The new client checks the descended map on the sum of two distinct coordinates, replacing the generic signature checks and diagnostic commands.",
-      "upstream_commit": "11faf00241b371826000ec82975d096d2ab584d0",
-      "upstream_sha256": "0b629e77c483ac18c765dc363685f203d367d266944d6663a337659909b8b9cf"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Category/ModuleCat/LocalizationUnitTests.lean",
-      "disposition": "identical",
-      "published_sha256": "b686cdf04c5253986e78ffea8a49f51b2a66312eba918a8ad9301518c50c8b2e",
-      "upstream_sha256": "a88e804ec2cf79552f9511e82c2fb9a53328eed322219168143b62477c06fe58"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Category/ModuleCat/LocalizedExtension.lean",
-      "disposition": "identical",
-      "published_sha256": "8f7f0eb4c1e87f6a0647ad68895304e536dd98030dab7faa95eb44e5c8ef7f0a",
-      "upstream_sha256": "f391803496b45ab69d0bbbd6986500ad9dabbdecf8aa1c3000d0373bcda6d5e8"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Category/ModuleCat/NativeTorEulerAdditivityUniverse.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "895eac0869ab09407a8a570bf397c6d96831a25d9a151caf41a4da60c4046041",
-      "rationale": "Original genuine homological client imported with the recorded source/proofs/models, Atlas license header and mathematical documentation; no assertions or coefficient/index universes weakened.",
-      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
-      "upstream_sha256": "e920d8c3dbfb7252c2f01231e4d3bcce2429f6991d036c9e2058a63d51fd1dca"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Category/ModuleCat/NativeTorExactCoefficientDevissageUniverse.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "708b9acfff06a83e8693de20446ce8bcb552dd38271514914774f4893df94130",
-      "rationale": "Original genuine homological client imported with the recorded source/proofs/models, Atlas license header and mathematical documentation; no assertions or coefficient/index universes weakened.",
-      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
-      "upstream_sha256": "8c4b3cf0bf23ba63192f55ac19c9a954d64522b3bac4d89ef8c79da62e4b0564"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Category/ModuleCat/NativeTorLongExactUniverse.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "11071efa9c7036533fa621a57d14a5ee5521284bf411ce9e31cae16de8e582e9",
-      "rationale": "Original genuine homological client imported with the recorded source/proofs/models, Atlas license header and mathematical documentation; no assertions or coefficient/index universes weakened.",
-      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
-      "upstream_sha256": "8c5160d80b56012e82436052d28f417f42f58cf753dc1c95ee0d291b036d8004"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Category/ModuleCat/NativeTorProjectiveDimensionUniverse.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "7b0144c1f574e205b5d568a88ccaaf473821b593d29d8e1ab0f2e41b22e034a4",
-      "rationale": "Original genuine homological client imported with the recorded source/proofs/models, Atlas license header and mathematical documentation; no assertions or coefficient/index universes weakened.",
-      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
-      "upstream_sha256": "c555fadd1ce4bce3a5d47fbacd2e8b6566992c515bc326f36e0eff30af50e6ac"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Category/ModuleCat/PIDGlobalDimension.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "1943908011e3a2bfa4a7a619346f4e4f131ea4e999926db9a0202cca9f77e00e",
-      "rationale": "General homological algebra API adapted to canonical Atlas owners and mathematical documentation; original maps, statements and independent universes are retained.",
-      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
-      "upstream_sha256": "63158e41706953a282a7c1014b0299dac856b5688f7bccf0519ddada34b32807"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Category/ModuleCat/TensorFoldTests.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "aa7e03d2a15a8b1de923fbff9bf6c2716e863746fe84a874b6ed4f718b3b0e20",
-      "rationale": "General reusable APIs with Atlas headers and mathematical documentation, preserving original maps, hypotheses and universes; whitespace-only source cleanup before initial publication."
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Category/ModuleCat/TensorProjectiveResolutionUniverse.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "0d9baaba540e7ae346417c056019f7ab218a4ee92fb3bfcba91fe87039672725",
-      "rationale": "Original genuine homological client imported with the recorded source/proofs/models, Atlas license header and mathematical documentation; no assertions or coefficient/index universes weakened.",
-      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
-      "upstream_sha256": "10d1be0e2e7c1ac24c0bc6cc933e75a2c71651a64174ca7cf009363f1e3eb374"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Category/ModuleCat/TorFlat.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "d3fb963c867baf9c92aa99775534b48f2cc070ae54272aabdc8554b6430289ae",
-      "rationale": "Atlas adaptation of the general homological-algebra API or client, including the Atlas copyright notice, mathematical documentation and Lean 4.36 public-API compatibility. Original source attribution and applicable license notices are retained in the source and NOTICE.",
-      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
-      "upstream_sha256": "d2dc710bc14ea5aee6124b01fdfa4bc5e14fc9219f4f3d22c6aea2b1ae061251"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Category/ModuleCat/TorsionFunctorIndependentUniverses.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "ba0adc8f147b0537bf0e30f614e13b0cbcf6398e5e5e3ef921044b1786f61a14",
-      "rationale": "Original genuine homological client imported with the recorded source/proofs/models, Atlas license header and mathematical documentation; no assertions or coefficient/index universes weakened.",
-      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
-      "upstream_sha256": "757c083f1133cce68eb7aee060d61fa8e67c3298def4065e3be69473b36b3912"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Category/ModuleCatLocalizationColimitsTests.lean",
-      "disposition": "identical",
-      "published_sha256": "5a5f422c6e3ebc9f17e26119f505660f7a0f8ba7132daf5f871aa30af63ac4b3",
-      "upstream_sha256": "2b7ec774e8925b55d0cb079549abceb0170684e776ef333ecc0f4aa4852601e8"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Category/ModuleCatLocalizationUnitIsoTests.lean",
-      "disposition": "identical",
-      "published_sha256": "f0f7c2fd2813255262fe882fe1373ea626c1ec695f38da3d03106e4205313fec",
-      "upstream_sha256": "9f3e3dc7e08b0abd680655bf165ec139d989deac554bbb2ac533d7b83d9de13a"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Category/ModuleCatMonoidActionTests.lean",
-      "disposition": "identical",
-      "published_sha256": "4994c35439972b41b886e6b1b161c14810f77dffed18fbff0999cf60044402ce",
-      "upstream_sha256": "5600920c820f076bb2504e057648e586ba1fa61a1a718aa7b45aa98411ecd6a7"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/ContinuedFractions/Computation/Approximations.lean",
-      "disposition": "identical",
-      "published_sha256": "992a2ec566415bfd32318ace6c97881d5f97b9a0b26ea754982ff9a4eb5d8e20",
-      "upstream_sha256": "08aeaa740f2247e1cde5b3add58a77a8242e4ed07f27819a80fbe325c93481cb"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Group/ProductFree.lean",
-      "disposition": "identical",
-      "published_sha256": "f32be8a904f948f5a1b77cc3147d39ee42f29840141724c052144339c8a2cdb0",
-      "upstream_sha256": "98ee2fae2830df7ec1326f5a3e95848b248e55d2bc212fdafa693adc628abdb1"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Group/Subgroup/Pointwise.lean",
-      "disposition": "identical",
-      "published_sha256": "34aecf96304ea1eeb0d57b77d5a8b2e3d6d0524e84ae647aabd3616687b2b515",
-      "upstream_sha256": "47f7a71d74bcac23640c5933b9e6291a3eed3692946051bea3c6a0f1cfc532f4"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Homology/BoundedBicomplexLengthEuler.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "cf53a628513bdae8ec8e775df3e4ae1ba27acf90d4abd0cea119238aa6759cce",
-      "rationale": "Original genuine homological client imported with the recorded source/proofs/models, Atlas license header and mathematical documentation; no assertions or coefficient/index universes weakened.",
-      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
-      "upstream_sha256": "60edce77dec2d241a2979fe88a68b566cfa5551de7fb1c43d516c3eb036df343"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Homology/ChainComplex/TensorCoefficientZMod.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "91b8bf7ca4badb60eba8db4fead08780d05aa3308f5769bfc70f7f012cbff809",
-      "rationale": "General homological algebra API adapted to canonical Atlas owners and mathematical documentation; original maps, statements and independent universes are retained.",
-      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
-      "upstream_sha256": "82bc880964123c52029f7e5819388ac0d4867b8147860ed8852910d021c2155b"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Homology/ChevalleyEilenberg/AbelianPrimitiveHomology.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "408b2b97e62f09e869fee5015daea85caad9aa0fabf373a00326f77cae5722b6",
-      "rationale": "Atlas adaptation of the general homological-algebra API or client, including the Atlas copyright notice, mathematical documentation and Lean 4.36 public-API compatibility. Original source attribution and applicable license notices are retained in the source and NOTICE.",
-      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
-      "upstream_sha256": "1a1edb0dc6bdd2c8e0498015618553d16699cf2e451f18a4e05ee64436b296a6"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Homology/ChevalleyEilenberg/ActualIndependentWorldHomologyCoalgebra.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "e183e08a67b3e1a1b2b4337a0a47f1b6e714f8399580a4f03db0c2353b7c4a14",
-      "rationale": "Atlas adaptation of the general homological-algebra API or client, including the Atlas copyright notice, mathematical documentation and Lean 4.36 public-API compatibility. Original source attribution and applicable license notices are retained in the source and NOTICE.",
-      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
-      "upstream_sha256": "1950193cabcfa1b751539b35d0b22ba28af15db7b7905033c37dd2f006b51cd2"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Homology/ChevalleyEilenberg/CharacteristicTwoPrimitive.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "925e45a070e38c05268636fc51d840655682e492bcbb1dde7a36ed2f73d9f32f",
-      "rationale": "Atlas adaptation of the general homological-algebra API or client, including the Atlas copyright notice, mathematical documentation and Lean 4.36 public-API compatibility. Original source attribution and applicable license notices are retained in the source and NOTICE.",
-      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
-      "upstream_sha256": "69a600195246a19fc3cd11bf537583e1ef4516ef3502ac2213ce496b38201911"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Homology/ChevalleyEilenberg/CoefficientCohomologyZeroNonfree.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "e8c61c96705e870585591beadb413ac8eb6e5bfb6c288b71b410132f7ec47941",
-      "rationale": "Atlas adaptation of the general homological-algebra API or client, including the Atlas copyright notice, mathematical documentation and Lean 4.36 public-API compatibility. Original source attribution and applicable license notices are retained in the source and NOTICE.",
-      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
-      "upstream_sha256": "1fbeb264da512b0b41418eb35023cfaa0d95f1420753153a21d9a4a45269bcff"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Homology/ChevalleyEilenberg/CoefficientFunctor.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "b030173b781f1e61d7f40a9782de024cb199ec2a55a833201f7f8a557851c40c",
-      "rationale": "Atlas adaptation of the general homological-algebra API or client, including the Atlas copyright notice, mathematical documentation and Lean 4.36 public-API compatibility. Original source attribution and applicable license notices are retained in the source and NOTICE.",
-      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
-      "upstream_sha256": "18336cdf5710b32997b1de9104a8aaae8b95a053856c4fbfe375a8a1f137c849"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Homology/ChevalleyEilenberg/Exterior.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "81c3410847aa7c83c62bbcdd2479bbe23580b0455782c6a1d36dc3bbe2716383",
-      "rationale": "Atlas adaptation of the general homological-algebra API or client, including the Atlas copyright notice, mathematical documentation and Lean 4.36 public-API compatibility. Original source attribution and applicable license notices are retained in the source and NOTICE.",
-      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
-      "upstream_sha256": "7e90cb9e7ec44201ca17ef2c8609d7bc6bc40ce5a879d8a7dfed6bfc48b19a80"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Homology/ChevalleyEilenberg/IndependentWorldDiagonal.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "47e7b4d8485f96e3312a7c8d4d72a2e14e2c40f55de5f0ef41f8600ffbd2da87",
-      "rationale": "Atlas adaptation of the general homological-algebra API or client, including the Atlas copyright notice, mathematical documentation and Lean 4.36 public-API compatibility. Original source attribution and applicable license notices are retained in the source and NOTICE.",
-      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
-      "upstream_sha256": "de2c4050637bac89ab54e4ad4d9ff92c4e1836a2703fbe26dd77618c33e9f631"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Homology/ChevalleyEilenberg/PrimitiveHomologyNoninjective.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "dd831cc84f2e5c3798f0ffb9de6054467ff9fb7cee601b6547cdfb12c791dc76",
-      "rationale": "Atlas adaptation of the general homological-algebra API or client, including the Atlas copyright notice, mathematical documentation and Lean 4.36 public-API compatibility. Original source attribution and applicable license notices are retained in the source and NOTICE.",
-      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
-      "upstream_sha256": "885233de288433af3a809e2c7432e68589fbce701c602bd5dab628b17e28a8e4"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Homology/ChevalleyEilenberg/UniversalEnveloping.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "abd2bbd38b40503ed606aeae2f7b272d2aba939c502f1b48e0501b7cf22108ee",
-      "rationale": "Atlas adaptation of the general homological-algebra API or client, including the Atlas copyright notice, mathematical documentation and Lean 4.36 public-API compatibility. Original source attribution and applicable license notices are retained in the source and NOTICE.",
-      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
-      "upstream_sha256": "7d515677d8ad6e1b32fa1539e13377a5593a1e3f3906af60612d908554695804"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Homology/CochainComplex/BoundedAmbientAcyclicNonzeroTests.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "92f08d5183a3adf4e4b68bc803ebe42aa083e5bb9037f6e9e639b2a31fc3d079",
-      "rationale": "Adapt this general API or genuine regression client to the pinned native toolchain: explicit existing imports and coordinate coercions, typed naturality/composition proofs, and public module visibility. Preserve the mathematical hypotheses, maps, signs, universes and assertions. Native verification pending."
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Homology/CochainComplex/TensorHom/FiniteFactorIsoAPI.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "76f6e90d2f55a38cc72dee25582b96f4c1a5492d0a4b49cf6251b1b35057c51f",
-      "rationale": "General homological algebra API adapted to canonical Atlas owners and mathematical documentation; original maps, statements and independent universes are retained.",
-      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
-      "upstream_sha256": "1aed701c19c6d5b308a84bb4137d1ce370b78983dd8ac7b0334551ed33b44ab0"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Homology/Embedding/RestrictionHomologyNaturalityTests.lean",
-      "disposition": "identical",
-      "published_sha256": "55670406ae7692e2e031ca478c0d6b322e5f13dae9dacd31c45afe1b41e7bea9",
-      "upstream_sha256": "ee9e2277d6cdd10b75855a4d6d6df62ef57630b6dc6e5c94a8b5536267504d7a"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Homology/FiniteResolutionProjectiveDimensionTests.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "6965f685163a89c11757412f02e856fd563cd344573253c9f0d0bd92e0b13da9",
-      "rationale": "General homological algebra API adapted to canonical Atlas owners and mathematical documentation; original maps, statements and independent universes are retained.",
-      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
-      "upstream_sha256": "4a2536bd685ab3d4f840cb28f44f9e76d05d7e8666369cf661448ae736e2ee3d"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Homology/FiniteResolutionTests.lean",
-      "disposition": "identical",
-      "published_sha256": "2685d4fda22709744146c6ff56cbdbb540cf22dc4ce9fe26e879772653fd0612",
-      "upstream_sha256": "246d93b2e3d1ec53bfa9a9a56c252974e3e8b47eb69bb468fa3f5863694b28a7"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Homology/FirstQuadrantDegreeTwoTests.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "92875055a1ee5d4b004418964e2efb27a4a9ccaa709a9cc9d494ad92393b1d85",
-      "rationale": "Atlas adaptation of the general homological-algebra API or client, including the Atlas copyright notice, mathematical documentation and Lean 4.36 public-API compatibility. Original source attribution and applicable license notices are retained in the source and NOTICE.",
-      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
-      "upstream_sha256": "993cf5cbc9210195359c7c0536cbcd0f0c1b8674e23088b31f61bb7f90dea90f"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Homology/FirstQuadrantLowestRowTests.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "b498370e454a9753ae0785fc77b5a81106bbfe04f29cab300a0e217273d42f60",
-      "rationale": "Atlas adaptation of the general homological-algebra API or client, including the Atlas copyright notice, mathematical documentation and Lean 4.36 public-API compatibility. Original source attribution and applicable license notices are retained in the source and NOTICE.",
-      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
-      "upstream_sha256": "b4ce8469168cd1a0bc3268563cc62e7f0a04c67607631712880e27c0ef9808ec"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Homology/FirstQuadrantTotalQuasiIso.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "bb49506215f9f3a054f61126466083b90df580256ce7e696a26a237c743fc71d",
-      "rationale": "Atlas adaptation of the general homological-algebra API or client, including the Atlas copyright notice, mathematical documentation and Lean 4.36 public-API compatibility. Original source attribution and applicable license notices are retained in the source and NOTICE.",
-      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
-      "upstream_sha256": "e24339a4bc03e96aab19a1aa006b90788fa02e0a0c068ba8fd8918a74642e1f4"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Homology/Hochschild/Matrix/MoritaTests.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "3c8b4ddcb7e3a228ecc8d79eb5ae20b5bf12c56cc20397cc9056fe33f6aa8615",
-      "rationale": "Repair native Lean 4.36 elaboration for signed second-page and graded-piece coordinates, arbitrary connected-colimit Morita universes, and the existing nonzero lifted matrix client; preserve public contracts, maps, signs, coefficient hypotheses and independent universes."
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Homology/Hochschild/Matrix/StableMoritaTests.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "1d2f0f6f08ffaa8c45829887811256a27fc5053a0896408103fb074ae5262f5b",
-      "rationale": "Atlas adaptation of the independently authored general stable matrix colimit Morita client. Frozen original authored source file SHA-256: a07e62d19e8f1e07f753d7ee7444652c75dddebaf1db896872ea5bb9bb276679. This original is absent from source snapshot 9a495da20622876d4a72852b4de7e0921e976bc0; Atlas copyright and Lean 4.36 public-API compatibility changes retain its authorship notice."
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Homology/KoszulFamilyZeroDivisorSigns.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "3f5727e119dd44a8cee2e754e7bb50b1c2782e11c64c77f113e5c12e4a535a46",
-      "rationale": "Use explicit scalar-map parameters and independent carrier universes, canonical native projection/sheafification and abelian functor-category imports, and typed exterior-power coordinates; preserve general maps, hypotheses, signs and concrete nonzero regressions at pinned Lean defaults. Pin unchanged scalar and carrier-universe arguments and local transparent functor components; retain mathematical assumptions, canonical maps and nonzero regression assertions. Native verification pending."
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Homology/LinearHomCochainCrossEvaluation.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "443e39b9a12dc59d5d3bda0f6a6486f3dff0637ad00a430c358e7f0c033339a4",
-      "rationale": "General homological algebra API adapted to canonical Atlas owners and mathematical documentation; original maps, statements and independent universes are retained.",
-      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
-      "upstream_sha256": "09c08368ac839075f3ed7a8f601eb5c04936e1bbbf4fae2928ed0eab359deade"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Homology/SpectralObject/FunctorTests.lean",
-      "disposition": "identical",
-      "published_sha256": "bf202e8bfd725867033c66b9d51f9cf8b9a1711e0ec502ee1f339966b2d87b89",
-      "upstream_sha256": "a8d2773065fee7bf3339d961897500d2f33b3f5d1ca38a42aa312b34df2190d9"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Homology/SpectralObject/MonoidActionForgetCharacteristic.lean",
-      "disposition": "identical",
-      "published_sha256": "9f192d35d11fbfb00867f4d83ddb4a563c9337592cf7e887491b6cbbdb183479",
-      "upstream_sha256": "ef8fb5fa38322d4704edcaeb5187287467f6bd88f516e3436bd9507830901bfd"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Homology/SpectralObject/MonoidActionPageScalarsTests.lean",
-      "disposition": "identical",
-      "published_sha256": "0688884fe385763c9cc43150bddd148fa9dd1f18744e3bfa2b6e6124c19c4d2e",
-      "upstream_sha256": "6f5132563e1369873fa797e103a2bd6d215caea84e3154a5b7f572effc5d8338"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Homology/SpectralObject/MonoidActionPages.lean",
-      "disposition": "identical",
-      "published_sha256": "223693f663a42292a6bf5840b24cfab010026b7f4df9f1cbc39491b807643960",
-      "upstream_sha256": "918791936dc40e3f35ce5e491027ad628616dd518fe22e0a6d1ece1637aec8e5"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Homology/SpectralObject/MonoidActionTests.lean",
-      "disposition": "identical",
-      "published_sha256": "1f2a6e2305b2b88229ccf979bfd0e8340af96ce71561fb9fd01c7cb89cea78f0",
-      "upstream_sha256": "57acb24b8f34d8ddc75ba420e513632f9865aa9ea8c7fa0468058fa77bd96311"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Homology/SpectralObjectPageMapTests.lean",
-      "disposition": "identical",
-      "published_sha256": "d40afeeec61b946ee98bf228b3c3e2dcd0aae58a3f69a0b611db6573f4fdf8d6",
-      "upstream_sha256": "b9a0c2f936b44d59872883ae5c23574cc5f646853ccc54aef46e732fe652a778"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/HomologyMappingConeCokernelConnectingTests.lean",
-      "disposition": "identical",
-      "published_sha256": "8768efbb87b167eea7346429ad9085d7373b8725bfebf0ae7ded747d5c5fa052",
-      "upstream_sha256": "3e640610c7b9d77ff81fe0b2d8ba7c2946cf9f2aa3a95cf5caa90112750b760a"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/HomologySpectralObjectMapTests.lean",
-      "disposition": "identical",
-      "published_sha256": "5f5dea354fc1950015553ee7cadbdc11aa9ba1c33f8d9e7698cd39c621e1b3b1",
-      "upstream_sha256": "ced2e674bfba451ca5b2d387cf27cdbfbb58dce91eee49ce54b3610ae3f7be04"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/HomologySpectralObjectPageMapNaturalityTests.lean",
-      "disposition": "identical",
-      "published_sha256": "89cf473c8714a671fdd66c501b83443510160cc4c327054367d661e98b8dc00e",
-      "upstream_sha256": "b0d4a179a8065e008cd17d0adb582cbdfca6b8900c8f80dcac66dff091a417a0"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/HomologySpectralObjectPageMapTests.lean",
-      "disposition": "identical",
-      "published_sha256": "8b5c7650884544c7ef69b7e76b70c87c239868cb8097c32d55921482173a23b9",
-      "upstream_sha256": "d4c5a39b0f65a78e2a34df764e26cac6c9845356da1508a24c5c3048386513c6"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/HomologyTotalHomotopyTests.lean",
-      "disposition": "identical",
-      "published_sha256": "346fd03ed9ee80c19dd1510854b591e719a87ba0126cac5c9e06c31d78ca5a71",
-      "upstream_sha256": "06c79bbf6d51a5b85b95a03e6c9e57c90272a49de5a6877e7f89e848c4116da6"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/LAdditiveFunction.lean",
-      "disposition": "identical",
-      "published_sha256": "900cf499adb27c0456ee456c81c8ded78f6a6f8cca3d84134cf41e4199ca78e3",
-      "upstream_sha256": "c4981b1e090843a59bdb532d0a4324da7c83a55a17c6f5c46eae117ab76457a8"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Lie/Ado.lean",
-      "disposition": "identical",
-      "published_sha256": "76a555c0f2bfceba4ef9fb42fede63e880abc07fd2d4659d4457bc733114dc5c",
-      "upstream_sha256": "a34ad1f19b188a214ccd2e9f1ff4ac1d32bab7c1a4436ed8ac7427de80f488a0"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Lie/LeviDecomposition.lean",
-      "disposition": "identical",
-      "published_sha256": "5f62a17682314c13eda6d58716626dd358ea74c2e2155478ef84bab6d370648a",
-      "upstream_sha256": "4672a937f391df4fdfce6a2f0e3fb7cf5960a1f4d91185f281b4a01d811de118"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Lie/PoissonBracket.lean",
-      "disposition": "behind",
-      "published_sha256": "e1c47695f526318dcdb222ed6981ac15fd1af3843c3f00a7b14e8580be2c3ffe",
-      "upstream_commit": "7989815882813c949259c9abb7e69b6741819c8f",
-      "upstream_sha256": "6b07b1039699d1b65c98b5c113ecfc9b5094c95f3212f72d082297837180d4d0"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Lie/WittMultigradedDimension.lean",
-      "disposition": "identical",
-      "published_sha256": "a4a582a562238bf69c0abd91924f3480083ade977dee9fc602d980ea1d483e25",
-      "upstream_sha256": "52104a8ccd64cc3eae5ce2f1c5204f94db157fec794496035434bf5447467a6d"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/LinearRecurrence.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "b0c8e8f1cac000940a846f760e1e5a2afb8e2d3403fae2a0b445c0b2803a7409",
-      "rationale": "Move the order-zero and order-one sequence-annihilator regression checks with the generic API, using named private theorems as in the existing recurrence tests.",
-      "upstream_sha256": "0cc03a83e659eb968361f6d9a1a3026a0d076f396abf3eb14121d3dc64639f6c"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Module/QuillenSuslin.lean",
-      "disposition": "identical",
-      "published_sha256": "e83dd4a69a278301ec3b6d7efd6b398754bf9d8390ce750c763c42b579c57f94",
-      "upstream_sha256": "d41e62dcd73dc4aff0590e10104bf67e17345e2383e4a637bebcb9de66ec33f9"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/MonoidAlgebra/InversionTwist.lean",
-      "disposition": "identical",
-      "published_sha256": "8baf5d6aea3c37a295d89998ef79a04d0029686ed73e4927358ab3ba25611bf1",
-      "upstream_sha256": "112752efcd4d1a810d7327ec53a46154e561147295b54d686835dc88a1110c79"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/MonoidCofinalElementLocalizationTests.lean",
-      "disposition": "identical",
-      "published_sha256": "7e57cc555ba7de857636a5537ff5f9ded7fa3123c29f1222f91da11aedb42cd9",
-      "upstream_sha256": "1075d8ed2b08d39778fe6eca4172eaae57f16865ac97f685c81d10ff3b779368"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/MvPolynomial/PDeriv.lean",
-      "disposition": "identical",
-      "published_sha256": "22f766b5d774944a4c663f85ad3057a8dc148378b59001c1a3eb07d5884529c7",
-      "upstream_sha256": "549147952043ca5ef69260326b867bdf11a5b7efb1d42054c9bc31a034291c40"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/MvPolynomial/RegularFunction.lean",
-      "disposition": "identical",
-      "published_sha256": "22ae2f50c2eeb308229b7f656a8e6ad3c0caacea73f29b47b35e5b56dbb657d0",
-      "upstream_sha256": "7dd601ea503a1a7ec40b0333fbaa520c06a7977a221aeec7a5b756be5f802442"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/MvPolynomial/Stable.lean",
-      "disposition": "identical",
-      "published_sha256": "d2e2ad980e6088f01077a0c79aa9b81b15132a55a5eb0fded8ce0cd9216ded20",
-      "upstream_sha256": "abd976fa8d203dd11a7e8a8907c5d6e2d195b594881f6f292074fa8bad45e773"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Polynomial/BesselPolynomial.lean",
-      "disposition": "identical",
-      "published_sha256": "b72fcd9752cd55dfb2a8f0c7f10ff0faca33c4af4cd188a7220b410b45866705",
-      "upstream_sha256": "11cb316c3fcfeabf9258472aa2f1a4b59429b901017333599f6da5999ee06a5a"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Polynomial/CoefficientDenominatorTests.lean",
-      "disposition": "identical",
-      "published_sha256": "1c63222a34621b5b6fe75bd57d88dc426d0fb4acc6573e9fe668a145af7ac801",
-      "upstream_sha256": "0f67622fc0a3e4b0a0ddb85a749a6d355ef6e9db0ac18aea8b54f7413fde4bfb"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Polynomial/DegreeStability.lean",
-      "disposition": "identical",
-      "published_sha256": "e9a7a2dc938e6c747b30498cf2504f77c9ef293e4f0a13fff2e698fd4387a9ae",
-      "upstream_sha256": "ca8be5a7eb9deb7a6329ea1de58fde3dce61f8f7c4ba1357a2f4fdef85bd6a95"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Polynomial/FavardForward.lean",
-      "disposition": "identical",
-      "published_sha256": "738e2c8ccdc6ea4d79ebd1c0a2c6013b7d15262d8cb772fb18455df577a8fdcc",
-      "upstream_sha256": "77bc1e95740c3f807a49a1e26a59eb7ad6b7eb04dfed588ff4cdcae02a78a96e"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Polynomial/FavardIff.lean",
-      "disposition": "identical",
-      "published_sha256": "94397d7da39122dec81a63427f539f434451f9b25144127902d3345cd4ea8c8f",
-      "upstream_sha256": "6af0ac7f9349a9c78f9b1c21d4340a6c06e24962b0a75c3fe2f92c9c5ca43191"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Polynomial/FormalOrthogonality.lean",
-      "disposition": "identical",
-      "published_sha256": "d8da8b6521b0585108a9fdcc470a039d9418e15dff6a2c20e919636112c8bb10",
-      "upstream_sha256": "c2683810c98f8b2ec393d465b6a9d5c78940b366837f4b4b8f2943b1560a6036"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Polynomial/GeneralizedChebyshevSecondKind.lean",
-      "disposition": "identical",
-      "published_sha256": "9835be8e77ddee92e2a77da0a42dc7b5fc7ddd12dc2e8b3282c1ee292cee99ec",
-      "upstream_sha256": "3c60c3e074e325b57f4a858ecb3532fa3556192e31b653d36c67412d4cfb6425"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Polynomial/Interlacing.lean",
-      "disposition": "identical",
-      "published_sha256": "e7d4c279c673b6a428e8a5178a569bf4f2611634ccf57f6fb2dbcab770dfc420",
-      "upstream_sha256": "f365a301b81b00df65fa88f3c05c6ecf92a00472f0ce9d84ceb9469b98d32153"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Polynomial/L1Norm.lean",
-      "disposition": "identical",
-      "published_sha256": "75619520e1b68ff3cb14f6fe74935ea26be3806a1c87e6763b99e6e2ea1417dc",
-      "upstream_sha256": "80a130b52c5a9b169016f7453673220cbffa2125f44238552e854ba2c9623257"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Polynomial/MomentGeneratingJFraction.lean",
-      "disposition": "identical",
-      "published_sha256": "bb0f9451e743441ff57bb27456ac83b5fc0d4a51a0ca37527eccad5eff1b8597",
-      "upstream_sha256": "1ce4ed10822201597238a50a1a81be4a059c912abd0135596ee6b1b5d11cdbfe"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Polynomial/PrimeValueConditions.lean",
-      "disposition": "identical",
-      "published_sha256": "e51006a590f8eae41b08445137f888896e8368d1340e0e1eb3a3f0b9bdc1f368",
-      "upstream_sha256": "753ac0a27365fa95d7dc15f9e1b88b43b04d6fa909f8c61a1f0b04ccf541f059"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Polynomial/RealRooted.lean",
-      "disposition": "identical",
-      "published_sha256": "8627db7852d46fd2fb3a0ee650696967a85e723edfaae06021d3ba76db9381b5",
-      "upstream_sha256": "c6e51ba52940ea52055b1050363a1bdad9915faabce64d08f67839ebbce6dff6"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Polynomial/RiordanOrthogonalPolynomials.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "ca3a324a6b9c4e82b83975346fc8acf559f17cc7dcd92da7433881fca200e8be",
-      "rationale": "Adapted to the Lean, Mathlib, CSLib and Physlib v4.36.0 API changes (toolchain bump); formal-math needs the same changes when it moves to v4.36.0.",
-      "upstream_sha256": "d263d3706919625821881d45eb7c561b1912c58e1fecb1cdf70ffe5f271fce7b"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Polynomial/RootBound.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "5b2a0b086f2bda56db61abe6d61909fa365d867532935eea9457cd011c192a53",
-      "rationale": "ATLAS-side edit not in formal-math; last ATLAS change 93f20f31c (Apply the copyright header rule to MathlibExt, MathlibExtTest, CSLibExt, CSLibExtTest and WantedExt)",
-      "upstream_sha256": "36e917f547af1c882affc66293666a7c9772a29062f65e1ebf32a2d3402a436a"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Polynomial/ShanksCubicPolynomial.lean",
-      "disposition": "identical",
-      "published_sha256": "1a643caf888d33849be5ee671b1d7af10518c255fa7707243d97e8345c8254db",
-      "upstream_sha256": "643f7385ffff0dab7631521433b0eabc2ef0fff230034f8ffdeb1893e08edf97"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Polynomial/Taylor.lean",
-      "disposition": "identical",
-      "published_sha256": "0ea98b49809812da21e6c653a5c72a43752841e0ba1df0ab3238272ac9f19194",
-      "upstream_sha256": "c2ef766b0550a680316105bfb6c521ed0457be82a192c7f1532e793ff84cfac1"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Polynomial/UnsignedCharlierPolynomialsOfOrder0.lean",
-      "disposition": "identical",
-      "published_sha256": "fbabd78d31d992f0ccd848dd0024d8c6f9a15fd21227e899c003fb80463436cf",
-      "upstream_sha256": "031a45604b5c37638495d617177304bf492d0d3b0f5778dd9979252397ca4248"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Ring/CandidoIdentity.lean",
-      "disposition": "identical",
-      "published_sha256": "e96c334cb833f82b210ebd1ec7abdb3b6ff5c965659ba0d17dd6adc15966e07a",
-      "upstream_sha256": "cf80574a427daab7f1dfa9ffe939abfdf4709957eccaa58cf57c0ce32e961fb7"
-    },
-    {
-      "path": "MathlibExtTest/Algebra/Ring/JacobsonCommutativity.lean",
-      "disposition": "identical",
-      "published_sha256": "cb23a5148b2a20ae23939cd63817d4f76106baeddea2690aa80a773648457228",
-      "upstream_sha256": "9615e4ee4ae803663890bfb8ec179de73c43fed71f5d2dfe399f36987f5c6433"
-    }
+    {"path": "MathlibExtTest/Algebra/BigOperators/ProdCompPowTests.lean", "disposition": "identical", "published_sha256": "c31af736c294b1a5f8943c925d9390bbfa9b1fce38bd3e8d6fe4d588eb7069c4", "upstream_sha256": "b4777bc00236b1691dd25524f4c5d26b1e327fc3f4cc3010b44ce817a03161bb"},
+    {"path": "MathlibExtTest/Algebra/Category/CommAlgCat/CotangentPushoutFlatNonflat.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "820d1abb19ed1d117cc763be96b971309f1e9f991529cb4a594480d6823ac585", "rationale": "Imported general MathlibExt regression client from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "fea4e11d90f25325758725eec3fa6f11bb2027e81ca902a989a6227ef8625791"},
+    {"path": "MathlibExtTest/Algebra/Category/CommAlgCat/CotangentPushoutIndependentCoefficient.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "6697ea0fed12184cd4ed8564410f90f4bb4d8f0e9967b9ff0cdf089c5d099ace", "rationale": "Imported general MathlibExt regression client from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "b2f0fef16c1cde52e6c22f3de0ac44fb9061db8d68dcc30f595397576969a7dd"},
+    {"path": "MathlibExtTest/Algebra/Category/CommAlgCat/PolynomialCotangentContraction.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "54c2331b5d2e196eaadee3a28778aa4d6efddf3af8cbe2003326ecc98b69378b", "rationale": "Imported general MathlibExt regression client from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "d22a3f83d2fdb2c71f4f0be012762753083763d2c4ccde293bdb256c863df777"},
+    {"path": "MathlibExtTest/Algebra/Category/CommAlgCat/StandardSimplexPolynomialCotangent.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "74706da2bbe4af5ef4f0a628d60b1181c02683068e1db8afdc963df91392f1a8", "rationale": "Imported general MathlibExt regression client from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "401d78c8f79d90d15bb1455df6749e660e4883fb3d78314aa4552324b5cd690b"},
+    {"path": "MathlibExtTest/Algebra/Category/Grp/ExactnessTransport.lean", "disposition": "identical", "published_sha256": "5a68bbc3684043e4b52b17661ae3303e17852e1fae981908fab293f3a1417c3f", "upstream_sha256": "96a74f6ccfc5f3ee6c000f6e56d3e362c7bdf326f386a9fca6b7e5ebe278b6da"},
+    {"path": "MathlibExtTest/Algebra/Category/Grp/FilteredColimits/ConstantSource.lean", "disposition": "identical", "published_sha256": "c7d4ced0e75b65e7168ee811fed5823af9537beaed7dc2c7a20138068c39895b", "upstream_sha256": "bc969d9bbdfe743e0ea7f4742216e397669a92b0b8bb819ad2a8afc9512a31ac"},
+    {"path": "MathlibExtTest/Algebra/Category/Grp/FilteredColimits/Fubini.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "ad17ec853969892d7e127b98da8a2c6413029a7eacec2069b1b4c9329ee75ba1", "rationale": "Validate the native uncurry construction instead of the retired duplicate cocone scaffolding, keeping the original concrete Fubini API and kernel-kind checks.", "upstream_commit": "075e9d5d217821aaf3a66cfdf09d0487a64e1f10", "upstream_sha256": "c1630f351e4a4532bb6e439f73ccd265ef395717ba7085eaace329c06f9f63e4"},
+    {"path": "MathlibExtTest/Algebra/Category/Grp/FilteredColimits/NatTail.lean", "disposition": "identical", "published_sha256": "3c9b207c6d544114e9b6e61ee279b8f827628c2537954e62c21f417fb3674072", "upstream_sha256": "972d4f24410c4382a92d05a27ca493d580ca323531e9ee1c6979c6fddd6eda36"},
+    {"path": "MathlibExtTest/Algebra/Category/Grp/FilteredColimits/PointwiseComparison.lean", "disposition": "identical", "published_sha256": "6d8b43568fbbf3abd6e5f6966aadd8f6e368167c4284b1585411ef2fc1f69b72", "upstream_sha256": "1038b399b356e903ad3aeea5203478e7368ec39c0d7f65acea3467406dc9faa0"},
+    {"path": "MathlibExtTest/Algebra/Category/Grp/FilteredColimits/Successor.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "e5564922697f7f78e689f8eb410648e4a376fe31eab318ab241d1b20c3fbcfb1", "rationale": "Test the same concrete quotient, successor comparison and kernel facts using the native cocone factorization law and the existing sequential quotient functor.", "upstream_commit": "075e9d5d217821aaf3a66cfdf09d0487a64e1f10", "upstream_sha256": "a9d88b6eea65cfcb6e00ffd3d6ddc9cd4feff3143dd679bfd4b325a7b96eb4ec"},
+    {"path": "MathlibExtTest/Algebra/Category/Grp/FilteredInterleavingTests.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "0d60187b373a36a3d9b84eca46f9b7551e6e2036b99c0e385aff960f5f7a48a0", "rationale": "Test original representatives, inverse comparison and successor maps through the existing functor of concrete sequential quotients.", "upstream_commit": "075e9d5d217821aaf3a66cfdf09d0487a64e1f10", "upstream_sha256": "63d10d6105424b97271bf6a81dac8cf5102192f516459dae7a51b224800e8880"},
+    {"path": "MathlibExtTest/Algebra/Category/Grp/FilteredKernelRepresentatives.lean", "disposition": "identical", "published_sha256": "5e1639b24a2bebdc7de534ab65131929920ab22311431d57774cf418b204d884", "upstream_sha256": "7b38ac15b397deeaef962b580b9737594e482078b4af2245cb4adc2c152f376c"},
+    {"path": "MathlibExtTest/Algebra/Category/Grp/FilteredSourceTypeColimitClients.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "9d0763cf573989e4d945a12cb504305c241564e7021c0dc19367e8399804ebd4", "rationale": "Use native IsColimit.map between the same literal group-quotient cocones while keeping the Type leg, diagram square and isomorphism-transport tests.", "upstream_commit": "075e9d5d217821aaf3a66cfdf09d0487a64e1f10", "upstream_sha256": "eef8fac5283c5a12702d9c9a5284a2a55291a1d52ff2cb03d7dbd66c6762d22c"},
+    {"path": "MathlibExtTest/Algebra/Category/Grp/FiniteColimitSupportTests.lean", "disposition": "identical", "published_sha256": "773dc2f51957290346264d28f1533ea136b68fc940af77453974a182f350be2c", "upstream_sha256": "19ced7c693b46be61680020ba2ed1cd051fbcec44d91591e3c7d141064c474dc"},
+    {"path": "MathlibExtTest/Algebra/Category/ModuleCat/BalancedTensorRight/UniverseMatrix.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "d2fc44b238b27e01350df7bdad2cd2172d64c44d2585ef89c05c3b7af8e7d665", "rationale": "General homological algebra API adapted to canonical Atlas owners and mathematical documentation; original maps, statements and independent universes are retained.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "0e65bf8f85f0642b7e47ea17432b42c54f1fee1741d829f907b1978f8d497b4d"},
+    {"path": "MathlibExtTest/Algebra/Category/ModuleCat/BalancedTensorRight/UniverseTorsion.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "bd339f64c129abdff878a9aee7667326ac4ad5e589c866252f51a92c356d0b43", "rationale": "General homological algebra API adapted to canonical Atlas owners and mathematical documentation; original maps, statements and independent universes are retained.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "c71d7a465c9a3fb20c22c3a9445257ce30504af03466036ee57ac99011c60183"},
+    {"path": "MathlibExtTest/Algebra/Category/ModuleCat/Bimodule/TorScalarChangeMatrixCoherence.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "3b9f2e5b29ac4ca2eba2b0ef0c1bb4d63fcfc23821000c41e718eed5031b1bb3", "rationale": "General homological algebra API adapted to canonical Atlas owners and mathematical documentation; original maps, statements and independent universes are retained.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "1844a1ccdfad077ee6c5db6166953f27489fc768e0630e74b56509b5e9654fbb"},
+    {"path": "MathlibExtTest/Algebra/Category/ModuleCat/Bimodule/TorScalarChangeRingMapCoherence.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "86639b9d152f6c82d5bdc61e23b09300f9ed6070fbdc272a505a553c8d28e6ca", "rationale": "General homological algebra API adapted to canonical Atlas owners and mathematical documentation; original maps, statements and independent universes are retained.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "f6a876ad609e04c4f9aaecab814e381d4add6d12cd6e334ecc43aae057a67003"},
+    {"path": "MathlibExtTest/Algebra/Category/ModuleCat/ExactFilteredColimitsIndependentUniverses.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "24c4027bd6d937dad6fe9ef5d7895157a5383f8765b0b8dac8ad07191dcf7977", "rationale": "Original genuine homological client imported with the recorded source/proofs/models, Atlas license header and mathematical documentation; no assertions or coefficient/index universes weakened.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "2bd301c1b9b1eaf857555223c32cd879641b0cdaa26827af2bcb294cd50934a7"},
+    {"path": "MathlibExtTest/Algebra/Category/ModuleCat/FieldTensorTorComparison.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "cb8235eb2e995357089e11090dc5dcc1155a052bca78416734c0770900a21c4b", "rationale": "General homological algebra API adapted to canonical Atlas owners and mathematical documentation; original maps, statements and independent universes are retained.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "51c4f36a7c654b29a3a5e3832e8cc9a04258152d94a37a0932aeec30fb224a55"},
+    {"path": "MathlibExtTest/Algebra/Category/ModuleCat/FinsuppCofanTests.lean", "backport": "not-needed", "disposition": "diverged", "published_sha256": "5a719a2b09f465e870bf7db178bccde5c9473e4a385d0d5058b7a43fe2717901", "rationale": "ATLAS specializes the source single-coordinate descent proof to two copies of the left regular module over the integer matrix ring. The new client checks the descended map on the sum of two distinct coordinates, replacing the generic signature checks and diagnostic commands.", "upstream_commit": "11faf00241b371826000ec82975d096d2ab584d0", "upstream_sha256": "0b629e77c483ac18c765dc363685f203d367d266944d6663a337659909b8b9cf"},
+    {"path": "MathlibExtTest/Algebra/Category/ModuleCat/LocalizationUnitTests.lean", "disposition": "identical", "published_sha256": "b686cdf04c5253986e78ffea8a49f51b2a66312eba918a8ad9301518c50c8b2e", "upstream_sha256": "a88e804ec2cf79552f9511e82c2fb9a53328eed322219168143b62477c06fe58"},
+    {"path": "MathlibExtTest/Algebra/Category/ModuleCat/LocalizedExtension.lean", "disposition": "identical", "published_sha256": "8f7f0eb4c1e87f6a0647ad68895304e536dd98030dab7faa95eb44e5c8ef7f0a", "upstream_sha256": "f391803496b45ab69d0bbbd6986500ad9dabbdecf8aa1c3000d0373bcda6d5e8"},
+    {"path": "MathlibExtTest/Algebra/Category/ModuleCat/NativeTorEulerAdditivityUniverse.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "895eac0869ab09407a8a570bf397c6d96831a25d9a151caf41a4da60c4046041", "rationale": "Original genuine homological client imported with the recorded source/proofs/models, Atlas license header and mathematical documentation; no assertions or coefficient/index universes weakened.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "e920d8c3dbfb7252c2f01231e4d3bcce2429f6991d036c9e2058a63d51fd1dca"},
+    {"path": "MathlibExtTest/Algebra/Category/ModuleCat/NativeTorExactCoefficientDevissageUniverse.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "708b9acfff06a83e8693de20446ce8bcb552dd38271514914774f4893df94130", "rationale": "Original genuine homological client imported with the recorded source/proofs/models, Atlas license header and mathematical documentation; no assertions or coefficient/index universes weakened.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "8c4b3cf0bf23ba63192f55ac19c9a954d64522b3bac4d89ef8c79da62e4b0564"},
+    {"path": "MathlibExtTest/Algebra/Category/ModuleCat/NativeTorLongExactUniverse.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "11071efa9c7036533fa621a57d14a5ee5521284bf411ce9e31cae16de8e582e9", "rationale": "Original genuine homological client imported with the recorded source/proofs/models, Atlas license header and mathematical documentation; no assertions or coefficient/index universes weakened.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "8c5160d80b56012e82436052d28f417f42f58cf753dc1c95ee0d291b036d8004"},
+    {"path": "MathlibExtTest/Algebra/Category/ModuleCat/NativeTorProjectiveDimensionUniverse.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "7b0144c1f574e205b5d568a88ccaaf473821b593d29d8e1ab0f2e41b22e034a4", "rationale": "Original genuine homological client imported with the recorded source/proofs/models, Atlas license header and mathematical documentation; no assertions or coefficient/index universes weakened.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "c555fadd1ce4bce3a5d47fbacd2e8b6566992c515bc326f36e0eff30af50e6ac"},
+    {"path": "MathlibExtTest/Algebra/Category/ModuleCat/PIDGlobalDimension.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "1943908011e3a2bfa4a7a619346f4e4f131ea4e999926db9a0202cca9f77e00e", "rationale": "General homological algebra API adapted to canonical Atlas owners and mathematical documentation; original maps, statements and independent universes are retained.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "63158e41706953a282a7c1014b0299dac856b5688f7bccf0519ddada34b32807"},
+    {"path": "MathlibExtTest/Algebra/Category/ModuleCat/RegularElementTorTests.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "90385e19da517a50959e766250b8a0675ad49bddeb210e238b7d7af79f359d53", "rationale": "General homological-algebra API or regression client recorded in the actual Formal-Math source commit a7b89907ea54d74bac3450da5799a54195ee6399. ATLAS source is byte-identical to that per-file snapshot. The global sync pin remains ce8c29ddc196a723b04323e66d8ea039cd8a9bbf; this source outside that pinned snapshot is recorded as a divergence with an informational per-file origin, not as a newly synced row. Formal source-branch publication and coordinated upstream integration/sync remain pending.", "upstream_commit": "a7b89907ea54d74bac3450da5799a54195ee6399", "upstream_sha256": "83f60b218741ab3e92848fdfcf4e9a7b87355776cb5f698ccacfa1fe3c913d2d"},
+    {"path": "MathlibExtTest/Algebra/Category/ModuleCat/TensorFoldTests.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "aa7e03d2a15a8b1de923fbff9bf6c2716e863746fe84a874b6ed4f718b3b0e20", "rationale": "General reusable APIs with Atlas headers and mathematical documentation, preserving original maps, hypotheses and universes; whitespace-only source cleanup before initial publication."},
+    {"path": "MathlibExtTest/Algebra/Category/ModuleCat/TensorProjectiveResolutionUniverse.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "0d9baaba540e7ae346417c056019f7ab218a4ee92fb3bfcba91fe87039672725", "rationale": "Original genuine homological client imported with the recorded source/proofs/models, Atlas license header and mathematical documentation; no assertions or coefficient/index universes weakened.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "10d1be0e2e7c1ac24c0bc6cc933e75a2c71651a64174ca7cf009363f1e3eb374"},
+    {"path": "MathlibExtTest/Algebra/Category/ModuleCat/TorFlat.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "d3fb963c867baf9c92aa99775534b48f2cc070ae54272aabdc8554b6430289ae", "rationale": "Atlas adaptation of the general homological-algebra API or client, including the Atlas copyright notice, mathematical documentation and Lean 4.36 public-API compatibility. Original source attribution and applicable license notices are retained in the source and NOTICE.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "d2dc710bc14ea5aee6124b01fdfa4bc5e14fc9219f4f3d22c6aea2b1ae061251"},
+    {"path": "MathlibExtTest/Algebra/Category/ModuleCat/TorsionFunctorIndependentUniverses.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "ba0adc8f147b0537bf0e30f614e13b0cbcf6398e5e5e3ef921044b1786f61a14", "rationale": "Original genuine homological client imported with the recorded source/proofs/models, Atlas license header and mathematical documentation; no assertions or coefficient/index universes weakened.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "757c083f1133cce68eb7aee060d61fa8e67c3298def4065e3be69473b36b3912"},
+    {"path": "MathlibExtTest/Algebra/Category/ModuleCatLocalizationColimitsTests.lean", "disposition": "identical", "published_sha256": "5a5f422c6e3ebc9f17e26119f505660f7a0f8ba7132daf5f871aa30af63ac4b3", "upstream_sha256": "2b7ec774e8925b55d0cb079549abceb0170684e776ef333ecc0f4aa4852601e8"},
+    {"path": "MathlibExtTest/Algebra/Category/ModuleCatLocalizationUnitIsoTests.lean", "disposition": "identical", "published_sha256": "f0f7c2fd2813255262fe882fe1373ea626c1ec695f38da3d03106e4205313fec", "upstream_sha256": "9f3e3dc7e08b0abd680655bf165ec139d989deac554bbb2ac533d7b83d9de13a"},
+    {"path": "MathlibExtTest/Algebra/Category/ModuleCatMonoidActionTests.lean", "disposition": "identical", "published_sha256": "4994c35439972b41b886e6b1b161c14810f77dffed18fbff0999cf60044402ce", "upstream_sha256": "5600920c820f076bb2504e057648e586ba1fa61a1a718aa7b45aa98411ecd6a7"},
+    {"path": "MathlibExtTest/Algebra/ContinuedFractions/Computation/Approximations.lean", "disposition": "identical", "published_sha256": "992a2ec566415bfd32318ace6c97881d5f97b9a0b26ea754982ff9a4eb5d8e20", "upstream_sha256": "08aeaa740f2247e1cde5b3add58a77a8242e4ed07f27819a80fbe325c93481cb"},
+    {"path": "MathlibExtTest/Algebra/Group/ProductFree.lean", "disposition": "identical", "published_sha256": "f32be8a904f948f5a1b77cc3147d39ee42f29840141724c052144339c8a2cdb0", "upstream_sha256": "98ee2fae2830df7ec1326f5a3e95848b248e55d2bc212fdafa693adc628abdb1"},
+    {"path": "MathlibExtTest/Algebra/Group/Subgroup/Pointwise.lean", "disposition": "identical", "published_sha256": "34aecf96304ea1eeb0d57b77d5a8b2e3d6d0524e84ae647aabd3616687b2b515", "upstream_sha256": "47f7a71d74bcac23640c5933b9e6291a3eed3692946051bea3c6a0f1cfc532f4"},
+    {"path": "MathlibExtTest/Algebra/Homology/BoundedBicomplexLengthEuler.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "cf53a628513bdae8ec8e775df3e4ae1ba27acf90d4abd0cea119238aa6759cce", "rationale": "Original genuine homological client imported with the recorded source/proofs/models, Atlas license header and mathematical documentation; no assertions or coefficient/index universes weakened.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "60edce77dec2d241a2979fe88a68b566cfa5551de7fb1c43d516c3eb036df343"},
+    {"path": "MathlibExtTest/Algebra/Homology/ChainComplex/TensorCoefficientZMod.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "91b8bf7ca4badb60eba8db4fead08780d05aa3308f5769bfc70f7f012cbff809", "rationale": "General homological algebra API adapted to canonical Atlas owners and mathematical documentation; original maps, statements and independent universes are retained.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "82bc880964123c52029f7e5819388ac0d4867b8147860ed8852910d021c2155b"},
+    {"path": "MathlibExtTest/Algebra/Homology/ChevalleyEilenberg/AbelianPrimitiveHomology.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "408b2b97e62f09e869fee5015daea85caad9aa0fabf373a00326f77cae5722b6", "rationale": "Atlas adaptation of the general homological-algebra API or client, including the Atlas copyright notice, mathematical documentation and Lean 4.36 public-API compatibility. Original source attribution and applicable license notices are retained in the source and NOTICE.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "1a1edb0dc6bdd2c8e0498015618553d16699cf2e451f18a4e05ee64436b296a6"},
+    {"path": "MathlibExtTest/Algebra/Homology/ChevalleyEilenberg/ActualIndependentWorldHomologyCoalgebra.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "e183e08a67b3e1a1b2b4337a0a47f1b6e714f8399580a4f03db0c2353b7c4a14", "rationale": "Atlas adaptation of the general homological-algebra API or client, including the Atlas copyright notice, mathematical documentation and Lean 4.36 public-API compatibility. Original source attribution and applicable license notices are retained in the source and NOTICE.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "1950193cabcfa1b751539b35d0b22ba28af15db7b7905033c37dd2f006b51cd2"},
+    {"path": "MathlibExtTest/Algebra/Homology/ChevalleyEilenberg/CharacteristicTwoPrimitive.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "925e45a070e38c05268636fc51d840655682e492bcbb1dde7a36ed2f73d9f32f", "rationale": "Atlas adaptation of the general homological-algebra API or client, including the Atlas copyright notice, mathematical documentation and Lean 4.36 public-API compatibility. Original source attribution and applicable license notices are retained in the source and NOTICE.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "69a600195246a19fc3cd11bf537583e1ef4516ef3502ac2213ce496b38201911"},
+    {"path": "MathlibExtTest/Algebra/Homology/ChevalleyEilenberg/CoefficientCohomologyZeroNonfree.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "e8c61c96705e870585591beadb413ac8eb6e5bfb6c288b71b410132f7ec47941", "rationale": "Atlas adaptation of the general homological-algebra API or client, including the Atlas copyright notice, mathematical documentation and Lean 4.36 public-API compatibility. Original source attribution and applicable license notices are retained in the source and NOTICE.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "1fbeb264da512b0b41418eb35023cfaa0d95f1420753153a21d9a4a45269bcff"},
+    {"path": "MathlibExtTest/Algebra/Homology/ChevalleyEilenberg/CoefficientFunctor.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "b030173b781f1e61d7f40a9782de024cb199ec2a55a833201f7f8a557851c40c", "rationale": "Atlas adaptation of the general homological-algebra API or client, including the Atlas copyright notice, mathematical documentation and Lean 4.36 public-API compatibility. Original source attribution and applicable license notices are retained in the source and NOTICE.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "18336cdf5710b32997b1de9104a8aaae8b95a053856c4fbfe375a8a1f137c849"},
+    {"path": "MathlibExtTest/Algebra/Homology/ChevalleyEilenberg/Exterior.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "81c3410847aa7c83c62bbcdd2479bbe23580b0455782c6a1d36dc3bbe2716383", "rationale": "Atlas adaptation of the general homological-algebra API or client, including the Atlas copyright notice, mathematical documentation and Lean 4.36 public-API compatibility. Original source attribution and applicable license notices are retained in the source and NOTICE.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "7e90cb9e7ec44201ca17ef2c8609d7bc6bc40ce5a879d8a7dfed6bfc48b19a80"},
+    {"path": "MathlibExtTest/Algebra/Homology/ChevalleyEilenberg/IndependentWorldDiagonal.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "47e7b4d8485f96e3312a7c8d4d72a2e14e2c40f55de5f0ef41f8600ffbd2da87", "rationale": "Atlas adaptation of the general homological-algebra API or client, including the Atlas copyright notice, mathematical documentation and Lean 4.36 public-API compatibility. Original source attribution and applicable license notices are retained in the source and NOTICE.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "de2c4050637bac89ab54e4ad4d9ff92c4e1836a2703fbe26dd77618c33e9f631"},
+    {"path": "MathlibExtTest/Algebra/Homology/ChevalleyEilenberg/PrimitiveHomologyNoninjective.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "dd831cc84f2e5c3798f0ffb9de6054467ff9fb7cee601b6547cdfb12c791dc76", "rationale": "Atlas adaptation of the general homological-algebra API or client, including the Atlas copyright notice, mathematical documentation and Lean 4.36 public-API compatibility. Original source attribution and applicable license notices are retained in the source and NOTICE.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "885233de288433af3a809e2c7432e68589fbce701c602bd5dab628b17e28a8e4"},
+    {"path": "MathlibExtTest/Algebra/Homology/ChevalleyEilenberg/UniversalEnveloping.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "abd2bbd38b40503ed606aeae2f7b272d2aba939c502f1b48e0501b7cf22108ee", "rationale": "Atlas adaptation of the general homological-algebra API or client, including the Atlas copyright notice, mathematical documentation and Lean 4.36 public-API compatibility. Original source attribution and applicable license notices are retained in the source and NOTICE.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "7d515677d8ad6e1b32fa1539e13377a5593a1e3f3906af60612d908554695804"},
+    {"path": "MathlibExtTest/Algebra/Homology/CochainComplex/BoundedAmbientAcyclicNonzeroTests.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "92f08d5183a3adf4e4b68bc803ebe42aa083e5bb9037f6e9e639b2a31fc3d079", "rationale": "Adapt this general API or genuine regression client to the pinned native toolchain: explicit existing imports and coordinate coercions, typed naturality/composition proofs, and public module visibility. Preserve the mathematical hypotheses, maps, signs, universes and assertions. Native verification pending."},
+    {"path": "MathlibExtTest/Algebra/Homology/CochainComplex/TensorHom/FiniteFactorIsoAPI.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "76f6e90d2f55a38cc72dee25582b96f4c1a5492d0a4b49cf6251b1b35057c51f", "rationale": "General homological algebra API adapted to canonical Atlas owners and mathematical documentation; original maps, statements and independent universes are retained.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "1aed701c19c6d5b308a84bb4137d1ce370b78983dd8ac7b0334551ed33b44ab0"},
+    {"path": "MathlibExtTest/Algebra/Homology/Embedding/RestrictionHomologyNaturalityTests.lean", "disposition": "identical", "published_sha256": "55670406ae7692e2e031ca478c0d6b322e5f13dae9dacd31c45afe1b41e7bea9", "upstream_sha256": "ee9e2277d6cdd10b75855a4d6d6df62ef57630b6dc6e5c94a8b5536267504d7a"},
+    {"path": "MathlibExtTest/Algebra/Homology/FiniteResolutionProjectiveDimensionTests.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "6965f685163a89c11757412f02e856fd563cd344573253c9f0d0bd92e0b13da9", "rationale": "General homological algebra API adapted to canonical Atlas owners and mathematical documentation; original maps, statements and independent universes are retained.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "4a2536bd685ab3d4f840cb28f44f9e76d05d7e8666369cf661448ae736e2ee3d"},
+    {"path": "MathlibExtTest/Algebra/Homology/FiniteResolutionTests.lean", "disposition": "identical", "published_sha256": "2685d4fda22709744146c6ff56cbdbb540cf22dc4ce9fe26e879772653fd0612", "upstream_sha256": "246d93b2e3d1ec53bfa9a9a56c252974e3e8b47eb69bb468fa3f5863694b28a7"},
+    {"path": "MathlibExtTest/Algebra/Homology/FirstQuadrantDegreeTwoTests.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "92875055a1ee5d4b004418964e2efb27a4a9ccaa709a9cc9d494ad92393b1d85", "rationale": "Atlas adaptation of the general homological-algebra API or client, including the Atlas copyright notice, mathematical documentation and Lean 4.36 public-API compatibility. Original source attribution and applicable license notices are retained in the source and NOTICE.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "993cf5cbc9210195359c7c0536cbcd0f0c1b8674e23088b31f61bb7f90dea90f"},
+    {"path": "MathlibExtTest/Algebra/Homology/FirstQuadrantLowestRowTests.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "b498370e454a9753ae0785fc77b5a81106bbfe04f29cab300a0e217273d42f60", "rationale": "Atlas adaptation of the general homological-algebra API or client, including the Atlas copyright notice, mathematical documentation and Lean 4.36 public-API compatibility. Original source attribution and applicable license notices are retained in the source and NOTICE.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "b4ce8469168cd1a0bc3268563cc62e7f0a04c67607631712880e27c0ef9808ec"},
+    {"path": "MathlibExtTest/Algebra/Homology/FirstQuadrantTotalQuasiIso.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "bb49506215f9f3a054f61126466083b90df580256ce7e696a26a237c743fc71d", "rationale": "Atlas adaptation of the general homological-algebra API or client, including the Atlas copyright notice, mathematical documentation and Lean 4.36 public-API compatibility. Original source attribution and applicable license notices are retained in the source and NOTICE.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "e24339a4bc03e96aab19a1aa006b90788fa02e0a0c068ba8fd8918a74642e1f4"},
+    {"path": "MathlibExtTest/Algebra/Homology/Hochschild/Matrix/MoritaTests.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "3c8b4ddcb7e3a228ecc8d79eb5ae20b5bf12c56cc20397cc9056fe33f6aa8615", "rationale": "Repair native Lean 4.36 elaboration for signed second-page and graded-piece coordinates, arbitrary connected-colimit Morita universes, and the existing nonzero lifted matrix client; preserve public contracts, maps, signs, coefficient hypotheses and independent universes."},
+    {"path": "MathlibExtTest/Algebra/Homology/Hochschild/Matrix/StableMoritaTests.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "1d2f0f6f08ffaa8c45829887811256a27fc5053a0896408103fb074ae5262f5b", "rationale": "Atlas adaptation of the independently authored general stable matrix colimit Morita client. Frozen original authored source file SHA-256: a07e62d19e8f1e07f753d7ee7444652c75dddebaf1db896872ea5bb9bb276679. This original is absent from source snapshot 9a495da20622876d4a72852b4de7e0921e976bc0; Atlas copyright and Lean 4.36 public-API compatibility changes retain its authorship notice."},
+    {"path": "MathlibExtTest/Algebra/Homology/HomologicalComplex/BalancedTensor/HomologyCokernelNaturalityExamples.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "5ea8b849a3a4e091fa42573c4a02c5f000f647232c214fcb2fb11f60743b08f6", "rationale": "General homological-algebra API or regression client recorded in the actual Formal-Math source commit a7b89907ea54d74bac3450da5799a54195ee6399. ATLAS source is byte-identical to that per-file snapshot. The global sync pin remains ce8c29ddc196a723b04323e66d8ea039cd8a9bbf; this source outside that pinned snapshot is recorded as a divergence with an informational per-file origin, not as a newly synced row. Formal source-branch publication and coordinated upstream integration/sync remain pending.", "upstream_commit": "a7b89907ea54d74bac3450da5799a54195ee6399", "upstream_sha256": "02111de744653a941142bcbce1f51e8c1a53e40296b2cf4be846b1d0c4a92877"},
+    {"path": "MathlibExtTest/Algebra/Homology/HomologicalComplex/BalancedTensor/HomologyCokernelTests.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "729af9e078680fe3ec12ab07c5a5626054e29f3e83bdaedd0b64f6553afeaed2", "rationale": "Imported newly authored general MathlibExt regression client from formal-math commit 4f22bac274ac352350618557313847a8fed47f1c; retains source authors, independent universes, mathematical hypotheses and original proofs, with ATLAS mathematical documentation. Adds a concrete full integer-antidiagonal regression at p+q=-3 with the (-1,-2) Tor1 summand in grading -2; projective terms/images earn comparison exactness, original assertions and nonflat ZMod2 coefficients are retained. Native compilation remains pending. Qualifies categorical coproduct references as Limits.Sigma, avoiding the root Sigma.map function in the new integer-antidiagonal section; original fixture and mathematical maps are unchanged. The Meta copyright header is canonical; the author notice is retained in a separate comment. Lean code from module onward is unchanged.", "upstream_commit": "4f22bac274ac352350618557313847a8fed47f1c", "upstream_sha256": "54729247c26adbe8a60fc1ecd4bf786ade1cd1e1989421a63d08753bf038642f"},
+    {"path": "MathlibExtTest/Algebra/Homology/HomologicalComplex/BalancedTensor/TorAntidiagonalKernelTests.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "971ac0e7662eec217dc95c0320c7cd9fdc05b02d07c9929b7270ca2b7b35c8c4", "rationale": "Imported newly authored general MathlibExt regression client from formal-math commit 4f22bac274ac352350618557313847a8fed47f1c; retains source authors, independent universes, mathematical hypotheses and original proofs, with ATLAS mathematical documentation. Removes surplus EOF blank lines; all nonwhitespace source tokens are unchanged. The Meta copyright header is canonical; the author notice is retained in a separate comment. Lean code from module onward is unchanged.", "upstream_commit": "4f22bac274ac352350618557313847a8fed47f1c", "upstream_sha256": "79932a78825ce41e749c8305f0b1ff9e4cbe6b7f158ce3f7ef8f1d473e2aecd9"},
+    {"path": "MathlibExtTest/Algebra/Homology/HomologicalComplex/BalancedTensor/TorBoundaryCoefficientNaturalityTests.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "77cdb4b893cf7ae419ea0e0e294f64a99e76d59067df5d151f4733678cb58848", "rationale": "General Tor coefficient naturality client from the actual recorded formal source commit, subsequently reusing regular-element multiplication, resolution projectivity and tensor unitor APIs. All original assertions, worlds and maps remain unchanged. Formal-source branch publication remains pending; the global sync pin is unchanged.", "upstream_commit": "a7b89907ea54d74bac3450da5799a54195ee6399", "upstream_sha256": "2ac18ddbb25efff4fdd40b153039e7cf7d0d876a18f90e14f0a124a792e0a48a"},
+    {"path": "MathlibExtTest/Algebra/Homology/HomologicalComplex/BalancedTensor/TorBoundaryKernelCriterionTests.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "6abe371b6baa52cb390e85890620451f9c6d60a57c4850f8d952d9f5a4db67c8", "rationale": "Imported newly authored general MathlibExt regression client from formal-math commit 4f22bac274ac352350618557313847a8fed47f1c; retains source authors, independent universes, mathematical hypotheses and original proofs, with ATLAS mathematical documentation. Removes surplus EOF blank lines; all nonwhitespace source tokens are unchanged. The Meta copyright header is canonical; the author notice is retained in a separate comment. Lean code from module onward is unchanged.", "upstream_commit": "4f22bac274ac352350618557313847a8fed47f1c", "upstream_sha256": "1ed44de7ffa5cdfc91935227b376536580af425c9750f22ebf6f72dbc21e24fa"},
+    {"path": "MathlibExtTest/Algebra/Homology/HomologicalComplex/EndpointCofreeAdjunctionTests.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "95e2001d864bf51d1b9dc038652c8510b43672c4fe68cf056997c965ab3510a9", "rationale": "General homological-algebra API or regression client recorded in the actual Formal-Math source commit a7b89907ea54d74bac3450da5799a54195ee6399. ATLAS source is byte-identical to that per-file snapshot. The global sync pin remains ce8c29ddc196a723b04323e66d8ea039cd8a9bbf; this source outside that pinned snapshot is recorded as a divergence with an informational per-file origin, not as a newly synced row. Formal source-branch publication and coordinated upstream integration/sync remain pending.", "upstream_commit": "a7b89907ea54d74bac3450da5799a54195ee6399", "upstream_sha256": "e2701f4009f5f29f989b8642b400a0cc8abb45d685e1aa6311bee5828cc67670"},
+    {"path": "MathlibExtTest/Algebra/Homology/HomologicalComplex/EndpointCofreeFunctorTransportTests.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "20ec3605a5ed12ec5952ebcf96d9382d3fa10420acb2b52e326f74dc01b7538d", "rationale": "General homological-algebra API or regression client recorded in the actual Formal-Math source commit a7b89907ea54d74bac3450da5799a54195ee6399. ATLAS source is byte-identical to that per-file snapshot. The global sync pin remains ce8c29ddc196a723b04323e66d8ea039cd8a9bbf; this source outside that pinned snapshot is recorded as a divergence with an informational per-file origin, not as a newly synced row. Formal source-branch publication and coordinated upstream integration/sync remain pending.", "upstream_commit": "a7b89907ea54d74bac3450da5799a54195ee6399", "upstream_sha256": "98359999a2af5a3237fac0baa12b077cc19ccc7b74573ccaae52f0429db00095"},
+    {"path": "MathlibExtTest/Algebra/Homology/HomologicalComplex/EndpointCofreeTests.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "d64679c9721590306f6b4e7a19aa85fdb55ea95fcdaa52dfc335fa0962771d97", "rationale": "Imported newly authored general MathlibExt regression client from formal-math commit 4f22bac274ac352350618557313847a8fed47f1c; retains source authors, independent universes, mathematical hypotheses and original proofs, with ATLAS mathematical documentation. Adapts the Omega tactic import to public meta import Lean.Elab.Tactic.Omega for Lean4.36.", "upstream_commit": "4f22bac274ac352350618557313847a8fed47f1c", "upstream_sha256": "2c8a113b72f1f8c4faacdca35ee4d0e6bb320a46f26932235dab50e826772acc"},
+    {"path": "MathlibExtTest/Algebra/Homology/KoszulFamilyZeroDivisorSigns.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "3f5727e119dd44a8cee2e754e7bb50b1c2782e11c64c77f113e5c12e4a535a46", "rationale": "Use explicit scalar-map parameters and independent carrier universes, canonical native projection/sheafification and abelian functor-category imports, and typed exterior-power coordinates; preserve general maps, hypotheses, signs and concrete nonzero regressions at pinned Lean defaults. Pin unchanged scalar and carrier-universe arguments and local transparent functor components; retain mathematical assumptions, canonical maps and nonzero regression assertions. Native verification pending."},
+    {"path": "MathlibExtTest/Algebra/Homology/LinearHomCochainCrossEvaluation.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "443e39b9a12dc59d5d3bda0f6a6486f3dff0637ad00a430c358e7f0c033339a4", "rationale": "General homological algebra API adapted to canonical Atlas owners and mathematical documentation; original maps, statements and independent universes are retained.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "09c08368ac839075f3ed7a8f601eb5c04936e1bbbf4fae2928ed0eab359deade"},
+    {"path": "MathlibExtTest/Algebra/Homology/ResolutionNormalizationTransportTests.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "d62820c18a7a7ebcef11930ebda7db739dc07b908f1ff0310d1ab87f907fbb69", "rationale": "General homological-algebra API or regression client recorded in the actual Formal-Math source commit a7b89907ea54d74bac3450da5799a54195ee6399. ATLAS source is byte-identical to that per-file snapshot. The global sync pin remains ce8c29ddc196a723b04323e66d8ea039cd8a9bbf; this source outside that pinned snapshot is recorded as a divergence with an informational per-file origin, not as a newly synced row. Formal source-branch publication and coordinated upstream integration/sync remain pending.", "upstream_commit": "a7b89907ea54d74bac3450da5799a54195ee6399", "upstream_sha256": "3e02ba1e07283199bbc271f216b1016924814efb18a706ec21cb8fe0e876c0d1"},
+    {"path": "MathlibExtTest/Algebra/Homology/SpectralObject/FunctorTests.lean", "disposition": "identical", "published_sha256": "bf202e8bfd725867033c66b9d51f9cf8b9a1711e0ec502ee1f339966b2d87b89", "upstream_sha256": "a8d2773065fee7bf3339d961897500d2f33b3f5d1ca38a42aa312b34df2190d9"},
+    {"path": "MathlibExtTest/Algebra/Homology/SpectralObject/MonoidActionForgetCharacteristic.lean", "disposition": "identical", "published_sha256": "9f192d35d11fbfb00867f4d83ddb4a563c9337592cf7e887491b6cbbdb183479", "upstream_sha256": "ef8fb5fa38322d4704edcaeb5187287467f6bd88f516e3436bd9507830901bfd"},
+    {"path": "MathlibExtTest/Algebra/Homology/SpectralObject/MonoidActionPageScalarsTests.lean", "disposition": "identical", "published_sha256": "0688884fe385763c9cc43150bddd148fa9dd1f18744e3bfa2b6e6124c19c4d2e", "upstream_sha256": "6f5132563e1369873fa797e103a2bd6d215caea84e3154a5b7f572effc5d8338"},
+    {"path": "MathlibExtTest/Algebra/Homology/SpectralObject/MonoidActionPages.lean", "disposition": "identical", "published_sha256": "223693f663a42292a6bf5840b24cfab010026b7f4df9f1cbc39491b807643960", "upstream_sha256": "918791936dc40e3f35ce5e491027ad628616dd518fe22e0a6d1ece1637aec8e5"},
+    {"path": "MathlibExtTest/Algebra/Homology/SpectralObject/MonoidActionTests.lean", "disposition": "identical", "published_sha256": "1f2a6e2305b2b88229ccf979bfd0e8340af96ce71561fb9fd01c7cb89cea78f0", "upstream_sha256": "57acb24b8f34d8ddc75ba420e513632f9865aa9ea8c7fa0468058fa77bd96311"},
+    {"path": "MathlibExtTest/Algebra/Homology/SpectralObjectPageMapTests.lean", "disposition": "identical", "published_sha256": "d40afeeec61b946ee98bf228b3c3e2dcd0aae58a3f69a0b611db6573f4fdf8d6", "upstream_sha256": "b9a0c2f936b44d59872883ae5c23574cc5f646853ccc54aef46e732fe652a778"},
+    {"path": "MathlibExtTest/Algebra/HomologyMappingConeCokernelConnectingTests.lean", "disposition": "identical", "published_sha256": "8768efbb87b167eea7346429ad9085d7373b8725bfebf0ae7ded747d5c5fa052", "upstream_sha256": "3e640610c7b9d77ff81fe0b2d8ba7c2946cf9f2aa3a95cf5caa90112750b760a"},
+    {"path": "MathlibExtTest/Algebra/HomologySpectralObjectMapTests.lean", "disposition": "identical", "published_sha256": "5f5dea354fc1950015553ee7cadbdc11aa9ba1c33f8d9e7698cd39c621e1b3b1", "upstream_sha256": "ced2e674bfba451ca5b2d387cf27cdbfbb58dce91eee49ce54b3610ae3f7be04"},
+    {"path": "MathlibExtTest/Algebra/HomologySpectralObjectPageMapNaturalityTests.lean", "disposition": "identical", "published_sha256": "89cf473c8714a671fdd66c501b83443510160cc4c327054367d661e98b8dc00e", "upstream_sha256": "b0d4a179a8065e008cd17d0adb582cbdfca6b8900c8f80dcac66dff091a417a0"},
+    {"path": "MathlibExtTest/Algebra/HomologySpectralObjectPageMapTests.lean", "disposition": "identical", "published_sha256": "8b5c7650884544c7ef69b7e76b70c87c239868cb8097c32d55921482173a23b9", "upstream_sha256": "d4c5a39b0f65a78e2a34df764e26cac6c9845356da1508a24c5c3048386513c6"},
+    {"path": "MathlibExtTest/Algebra/HomologyTotalHomotopyTests.lean", "disposition": "identical", "published_sha256": "346fd03ed9ee80c19dd1510854b591e719a87ba0126cac5c9e06c31d78ca5a71", "upstream_sha256": "06c79bbf6d51a5b85b95a03e6c9e57c90272a49de5a6877e7f89e848c4116da6"},
+    {"path": "MathlibExtTest/Algebra/LAdditiveFunction.lean", "disposition": "identical", "published_sha256": "900cf499adb27c0456ee456c81c8ded78f6a6f8cca3d84134cf41e4199ca78e3", "upstream_sha256": "c4981b1e090843a59bdb532d0a4324da7c83a55a17c6f5c46eae117ab76457a8"},
+    {"path": "MathlibExtTest/Algebra/Lie/Ado.lean", "disposition": "identical", "published_sha256": "76a555c0f2bfceba4ef9fb42fede63e880abc07fd2d4659d4457bc733114dc5c", "upstream_sha256": "a34ad1f19b188a214ccd2e9f1ff4ac1d32bab7c1a4436ed8ac7427de80f488a0"},
+    {"path": "MathlibExtTest/Algebra/Lie/LeviDecomposition.lean", "disposition": "identical", "published_sha256": "5f62a17682314c13eda6d58716626dd358ea74c2e2155478ef84bab6d370648a", "upstream_sha256": "4672a937f391df4fdfce6a2f0e3fb7cf5960a1f4d91185f281b4a01d811de118"},
+    {"path": "MathlibExtTest/Algebra/Lie/PoissonBracket.lean", "disposition": "behind", "published_sha256": "e1c47695f526318dcdb222ed6981ac15fd1af3843c3f00a7b14e8580be2c3ffe", "upstream_commit": "7989815882813c949259c9abb7e69b6741819c8f", "upstream_sha256": "6b07b1039699d1b65c98b5c113ecfc9b5094c95f3212f72d082297837180d4d0"},
+    {"path": "MathlibExtTest/Algebra/Lie/WittMultigradedDimension.lean", "disposition": "identical", "published_sha256": "a4a582a562238bf69c0abd91924f3480083ade977dee9fc602d980ea1d483e25", "upstream_sha256": "52104a8ccd64cc3eae5ce2f1c5204f94db157fec794496035434bf5447467a6d"},
+    {"path": "MathlibExtTest/Algebra/LinearRecurrence.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "b0c8e8f1cac000940a846f760e1e5a2afb8e2d3403fae2a0b445c0b2803a7409", "rationale": "Move the order-zero and order-one sequence-annihilator regression checks with the generic API, using named private theorems as in the existing recurrence tests.", "upstream_sha256": "0cc03a83e659eb968361f6d9a1a3026a0d076f396abf3eb14121d3dc64639f6c"},
+    {"path": "MathlibExtTest/Algebra/Module/QuillenSuslin.lean", "disposition": "identical", "published_sha256": "e83dd4a69a278301ec3b6d7efd6b398754bf9d8390ce750c763c42b579c57f94", "upstream_sha256": "d41e62dcd73dc4aff0590e10104bf67e17345e2383e4a637bebcb9de66ec33f9"},
+    {"path": "MathlibExtTest/Algebra/MonoidAlgebra/InversionTwist.lean", "disposition": "identical", "published_sha256": "8baf5d6aea3c37a295d89998ef79a04d0029686ed73e4927358ab3ba25611bf1", "upstream_sha256": "112752efcd4d1a810d7327ec53a46154e561147295b54d686835dc88a1110c79"},
+    {"path": "MathlibExtTest/Algebra/MonoidCofinalElementLocalizationTests.lean", "disposition": "identical", "published_sha256": "7e57cc555ba7de857636a5537ff5f9ded7fa3123c29f1222f91da11aedb42cd9", "upstream_sha256": "1075d8ed2b08d39778fe6eca4172eaae57f16865ac97f685c81d10ff3b779368"},
+    {"path": "MathlibExtTest/Algebra/MvPolynomial/PDeriv.lean", "disposition": "identical", "published_sha256": "22f766b5d774944a4c663f85ad3057a8dc148378b59001c1a3eb07d5884529c7", "upstream_sha256": "549147952043ca5ef69260326b867bdf11a5b7efb1d42054c9bc31a034291c40"},
+    {"path": "MathlibExtTest/Algebra/MvPolynomial/RegularFunction.lean", "disposition": "identical", "published_sha256": "22ae2f50c2eeb308229b7f656a8e6ad3c0caacea73f29b47b35e5b56dbb657d0", "upstream_sha256": "7dd601ea503a1a7ec40b0333fbaa520c06a7977a221aeec7a5b756be5f802442"},
+    {"path": "MathlibExtTest/Algebra/MvPolynomial/Stable.lean", "disposition": "identical", "published_sha256": "d2e2ad980e6088f01077a0c79aa9b81b15132a55a5eb0fded8ce0cd9216ded20", "upstream_sha256": "abd976fa8d203dd11a7e8a8907c5d6e2d195b594881f6f292074fa8bad45e773"},
+    {"path": "MathlibExtTest/Algebra/Polynomial/BesselPolynomial.lean", "disposition": "identical", "published_sha256": "b72fcd9752cd55dfb2a8f0c7f10ff0faca33c4af4cd188a7220b410b45866705", "upstream_sha256": "11cb316c3fcfeabf9258472aa2f1a4b59429b901017333599f6da5999ee06a5a"},
+    {"path": "MathlibExtTest/Algebra/Polynomial/CoefficientDenominatorTests.lean", "disposition": "identical", "published_sha256": "1c63222a34621b5b6fe75bd57d88dc426d0fb4acc6573e9fe668a145af7ac801", "upstream_sha256": "0f67622fc0a3e4b0a0ddb85a749a6d355ef6e9db0ac18aea8b54f7413fde4bfb"},
+    {"path": "MathlibExtTest/Algebra/Polynomial/DegreeStability.lean", "disposition": "identical", "published_sha256": "e9a7a2dc938e6c747b30498cf2504f77c9ef293e4f0a13fff2e698fd4387a9ae", "upstream_sha256": "ca8be5a7eb9deb7a6329ea1de58fde3dce61f8f7c4ba1357a2f4fdef85bd6a95"},
+    {"path": "MathlibExtTest/Algebra/Polynomial/FavardForward.lean", "disposition": "identical", "published_sha256": "738e2c8ccdc6ea4d79ebd1c0a2c6013b7d15262d8cb772fb18455df577a8fdcc", "upstream_sha256": "77bc1e95740c3f807a49a1e26a59eb7ad6b7eb04dfed588ff4cdcae02a78a96e"},
+    {"path": "MathlibExtTest/Algebra/Polynomial/FavardIff.lean", "disposition": "identical", "published_sha256": "94397d7da39122dec81a63427f539f434451f9b25144127902d3345cd4ea8c8f", "upstream_sha256": "6af0ac7f9349a9c78f9b1c21d4340a6c06e24962b0a75c3fe2f92c9c5ca43191"},
+    {"path": "MathlibExtTest/Algebra/Polynomial/FormalOrthogonality.lean", "disposition": "identical", "published_sha256": "d8da8b6521b0585108a9fdcc470a039d9418e15dff6a2c20e919636112c8bb10", "upstream_sha256": "c2683810c98f8b2ec393d465b6a9d5c78940b366837f4b4b8f2943b1560a6036"},
+    {"path": "MathlibExtTest/Algebra/Polynomial/GeneralizedChebyshevSecondKind.lean", "disposition": "identical", "published_sha256": "9835be8e77ddee92e2a77da0a42dc7b5fc7ddd12dc2e8b3282c1ee292cee99ec", "upstream_sha256": "3c60c3e074e325b57f4a858ecb3532fa3556192e31b653d36c67412d4cfb6425"},
+    {"path": "MathlibExtTest/Algebra/Polynomial/Interlacing.lean", "disposition": "identical", "published_sha256": "e7d4c279c673b6a428e8a5178a569bf4f2611634ccf57f6fb2dbcab770dfc420", "upstream_sha256": "f365a301b81b00df65fa88f3c05c6ecf92a00472f0ce9d84ceb9469b98d32153"},
+    {"path": "MathlibExtTest/Algebra/Polynomial/L1Norm.lean", "disposition": "identical", "published_sha256": "75619520e1b68ff3cb14f6fe74935ea26be3806a1c87e6763b99e6e2ea1417dc", "upstream_sha256": "80a130b52c5a9b169016f7453673220cbffa2125f44238552e854ba2c9623257"},
+    {"path": "MathlibExtTest/Algebra/Polynomial/MomentGeneratingJFraction.lean", "disposition": "identical", "published_sha256": "bb0f9451e743441ff57bb27456ac83b5fc0d4a51a0ca37527eccad5eff1b8597", "upstream_sha256": "1ce4ed10822201597238a50a1a81be4a059c912abd0135596ee6b1b5d11cdbfe"},
+    {"path": "MathlibExtTest/Algebra/Polynomial/PrimeValueConditions.lean", "disposition": "identical", "published_sha256": "e51006a590f8eae41b08445137f888896e8368d1340e0e1eb3a3f0b9bdc1f368", "upstream_sha256": "753ac0a27365fa95d7dc15f9e1b88b43b04d6fa909f8c61a1f0b04ccf541f059"},
+    {"path": "MathlibExtTest/Algebra/Polynomial/RealRooted.lean", "disposition": "identical", "published_sha256": "8627db7852d46fd2fb3a0ee650696967a85e723edfaae06021d3ba76db9381b5", "upstream_sha256": "c6e51ba52940ea52055b1050363a1bdad9915faabce64d08f67839ebbce6dff6"},
+    {"path": "MathlibExtTest/Algebra/Polynomial/RiordanOrthogonalPolynomials.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "ca3a324a6b9c4e82b83975346fc8acf559f17cc7dcd92da7433881fca200e8be", "rationale": "Adapted to the Lean, Mathlib, CSLib and Physlib v4.36.0 API changes (toolchain bump); formal-math needs the same changes when it moves to v4.36.0.", "upstream_sha256": "d263d3706919625821881d45eb7c561b1912c58e1fecb1cdf70ffe5f271fce7b"},
+    {"path": "MathlibExtTest/Algebra/Polynomial/RootBound.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "5b2a0b086f2bda56db61abe6d61909fa365d867532935eea9457cd011c192a53", "rationale": "ATLAS-side edit not in formal-math; last ATLAS change 93f20f31c (Apply the copyright header rule to MathlibExt, MathlibExtTest, CSLibExt, CSLibExtTest and WantedExt)", "upstream_sha256": "36e917f547af1c882affc66293666a7c9772a29062f65e1ebf32a2d3402a436a"},
+    {"path": "MathlibExtTest/Algebra/Polynomial/ShanksCubicPolynomial.lean", "disposition": "identical", "published_sha256": "1a643caf888d33849be5ee671b1d7af10518c255fa7707243d97e8345c8254db", "upstream_sha256": "643f7385ffff0dab7631521433b0eabc2ef0fff230034f8ffdeb1893e08edf97"},
+    {"path": "MathlibExtTest/Algebra/Polynomial/Taylor.lean", "disposition": "identical", "published_sha256": "0ea98b49809812da21e6c653a5c72a43752841e0ba1df0ab3238272ac9f19194", "upstream_sha256": "c2ef766b0550a680316105bfb6c521ed0457be82a192c7f1532e793ff84cfac1"},
+    {"path": "MathlibExtTest/Algebra/Polynomial/UnsignedCharlierPolynomialsOfOrder0.lean", "disposition": "identical", "published_sha256": "fbabd78d31d992f0ccd848dd0024d8c6f9a15fd21227e899c003fb80463436cf", "upstream_sha256": "031a45604b5c37638495d617177304bf492d0d3b0f5778dd9979252397ca4248"},
+    {"path": "MathlibExtTest/Algebra/Ring/CandidoIdentity.lean", "disposition": "identical", "published_sha256": "e96c334cb833f82b210ebd1ec7abdb3b6ff5c965659ba0d17dd6adc15966e07a", "upstream_sha256": "cf80574a427daab7f1dfa9ffe939abfdf4709957eccaa58cf57c0ce32e961fb7"},
+    {"path": "MathlibExtTest/Algebra/Ring/JacobsonCommutativity.lean", "disposition": "identical", "published_sha256": "cb23a5148b2a20ae23939cd63817d4f76106baeddea2690aa80a773648457228", "upstream_sha256": "9615e4ee4ae803663890bfb8ec179de73c43fed71f5d2dfe399f36987f5c6433"}
   ]
 }
