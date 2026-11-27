@@ -4,7 +4,7 @@ Let $G$ be drawn from $G(n, 1/2, k)$: a random graph $G(n, 1/2)$ in which a $k$-
 
 ## Proof sketch
 
-Following Alon, Krivelevich and Sudakov, Section 2.2, let $z$ have $z_v = n - k$ on $Q$ and $z_v = -k$ off $Q$. By the Füredi-Komlós bound (their Lemma 2.2: almost surely every eigenvalue of $G(m, 1/2)$ but the largest has absolute value at most $\sqrt m + O(m^{1/3}\log m)$; compare the noise bound linked below), the eigenvalues of the adjacency matrix satisfy $\lambda_1 \ge (1/2 + o(1))n$ and $\lambda_i \le (1 + o(1))\sqrt n$ for $i \ge 3$ almost surely (Proposition 2.1), and from this Proposition 2.3 shows that almost surely some multiple of $v_2$ equals $z - d$ with $\|d\|_2^2 \le \|z\|_2^2/60 \le kn^2/60$, while Corollary 2.5 gives uniqueness of $v_2$ up to scaling. On this event (for $n$ large enough that $k < n/6$), the almost-sure degree-cleanup recovery lemma applies directly to $v_2$, showing that almost surely the degree cleanup outputs exactly $Q$ (the Hoeffding/outside-degree bound gives the concrete $7k/12$ event used in the deterministic variant).
+Following Alon, Krivelevich and Sudakov, Section 2.2, let $z$ have $z_v = n - k$ on $Q$ and $z_v = -k$ off $Q$. By the Füredi-Komlós bound (their Lemma 2.2: almost surely every eigenvalue of $G(m, 1/2)$ but the largest has absolute value at most $\sqrt m + O(m^{1/3}\log m)$; compare the noise bound linked below), the eigenvalues of the adjacency matrix satisfy $\lambda_1 \ge (1/2 + o(1))n$ and $\lambda_i \le (1 + o(1))\sqrt n$ for $i \ge 3$ almost surely (Proposition 2.1), and from this Proposition 2.3 shows that almost surely some multiple of $v_2$ equals $z - d$ with $\|d\|_2^2 \le \|z\|_2^2/60 \le kn^2/60$, while Corollary 2.5 gives uniqueness of $v_2$ up to scaling. On this event (for $n$ large enough that $k < n/6$), the almost-sure degree-cleanup recovery lemma applies directly to $v_2$, showing that almost surely the degree cleanup outputs exactly $Q$.
 
 ## Depends on
 
@@ -14,8 +14,6 @@ Following Alon, Krivelevich and Sudakov, Section 2.2, let $z$ have $z_v = n - k$
 
 - [Exact recovery of a planted clique by degree cleanup](planted-clique-deterministic-recovery.md)
 - [Spectral norm of planted-clique noise is O(sqrt n)](../../../GraphTheory/random-graphs/planted-clique/planted-clique-noise-spectral-norm.md)
-- [Outside vertices have at most 5|S|/8 neighbors in the planted clique](../../../GraphTheory/random-graphs/planted-clique/planted-clique-outside-degrees.md)
-- [Hoeffding's inequality for averages of bounded variables](../../../Probability/concentration-inequalities/hoeffding-s-inequality/measure-real-avg-sub-ge-le.md)
 
 ## Sources
 

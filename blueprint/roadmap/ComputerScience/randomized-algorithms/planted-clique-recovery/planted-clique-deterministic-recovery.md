@@ -4,7 +4,7 @@ Let $G$ be a graph on $n$ vertices containing a clique $Q$ of size $k$, with $k 
 
 ## Proof sketch
 
-This is the analysis of Algorithm A of Alon, Krivelevich and Sudakov (Section 2.2, penultimate paragraph for the first part, last paragraph for the cleanup). Scaling by $c$ does not change $W$, so take $c = 1$. At most $9k/60 < k/6$ coordinates of $d$ exceed $n/3$ in absolute value, since each contributes more than $n^2/9$ to $\|d\|_2^2$. Let $k_1$ of them lie in $Q$ and $k_2$ outside, so $k_1 + k_2 < k/6$. Every other coordinate in $Q$ has $|x_v| \ge n - k - n/3 > n/2$ and every other coordinate outside $Q$ has $|x_v| \le k + n/3 < n/2$, using $k < n/6$. So at least $k - k_1$ vertices of $Q$ and at most $k_2$ vertices outside $Q$ have $|x_v| > n/2$, and $W$ contains at least $k - \max(k_1, k_2) \ge 5k/6$ vertices of $Q$, so $|W \setminus Q| \le k/6$. In $G(n, 1/2, k)$ each vertex outside $Q$ has a $\mathrm{Binomial}(k, 1/2)$ number of neighbours in $Q$, so by Chernoff bounds and a union bound almost surely all of them have at most $(1 + o(1))k/2$, hence at most $(1 + o(1))k/2 + k/6 < 3k/4$ neighbours in $W$; a vertex of $Q$ is adjacent to every other vertex of $W \cap Q$, so it has at least $5k/6 - 1 \ge 3k/4$ neighbours in $W$ for large $n$.
+This is the analysis of Algorithm A of Alon, Krivelevich and Sudakov (Section 2.2, penultimate paragraph for the first part, last paragraph for the cleanup). Scaling by $c$ does not change $W$, so take $c = 1$. At most $9k/60 < k/6$ coordinates of $d$ exceed $n/3$ in absolute value, since each contributes more than $n^2/9$ to $\|d\|_2^2$. Let $k_1$ of them lie in $Q$ and $k_2$ outside, so $k_1 + k_2 < k/6$. Every other coordinate in $Q$ has $|x_v| \ge n - k - n/3 > n/2$ and every other coordinate outside $Q$ has $|x_v| \le k + n/3 < n/2$, using $k < n/6$. So at least $k - k_1$ vertices of $Q$ and at most $k_2$ vertices outside $Q$ have $|x_v| > n/2$, and $W$ contains at least $k - \max(k_1, k_2) \ge 5k/6$ vertices of $Q$, so $|W \setminus Q| \le k/6$. In $G(n, 1/2, k)$ each vertex outside $Q$ has a $\mathrm{Binomial}(k, 1/2)$ number of neighbours in $Q$, so by Hoeffding's inequality and a union bound (deviation $\sqrt{\ln n / k} \to 0$ per vertex gives failure probability at most $n \cdot n^{-2} = 1/n$) almost surely all of them have at most $(1 + o(1))k/2$, hence at most $(1 + o(1))k/2 + k/6 < 3k/4$ neighbours in $W$; a vertex of $Q$ is adjacent to every other vertex of $W \cap Q$, so it has at least $5k/6 - 1 \ge 3k/4$ neighbours in $W$ for large $n$.
 
 Deterministic cleanup: if $12 \le k < n/6$ and every vertex outside $Q$ has fewer than $7k/12$ neighbours in $Q$, then the degree cleanup equals $Q$ for every $x$ as above, with no randomness. A vertex of $Q$ has at least $5k/6 - 1 \ge 3k/4$ neighbours in $W$ (as $k \ge 12$); a vertex outside $Q$ has fewer than $7k/12 + k/6 = 3k/4$ neighbours in $W$, because $|W \setminus Q| \le k/6$.
 
@@ -13,6 +13,10 @@ Variant for the signed adjacency matrix $M$ ($M_{uv} = 1$ for an edge, $-1$ for 
 ## Depends on
 
 - [Planted clique model, search and detection problems](../../../GraphTheory/random-graphs/planted-clique/planted-clique-model.md)
+
+## Proof depends on
+
+- [Hoeffding's inequality for averages of bounded variables](../../../Probability/concentration-inequalities/hoeffding-s-inequality/measure-real-avg-sub-ge-le.md)
 
 ## Sources
 
