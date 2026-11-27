@@ -47,7 +47,7 @@ set_option autoImplicit false
 
 namespace Cslib.Algorithms.Lean.MarkovDecision.Simplex
 
-open Finset Matrix StochasticPolicy
+open Finset Matrix Filter Topology StochasticPolicy
 
 variable {S A : Type*} [Fintype S] [DecidableEq S] [Fintype A]
   {M : MDP S A ℝ} {γ : ℝ} (hM : M.Stochastic) (hγ0 : 0 ≤ γ) (hγ1 : γ < 1)
@@ -69,6 +69,17 @@ noncomputable def occupancy (π : StochasticPolicy S A) (s₀ s : S) : ℝ :=
   visitation (policyKernel_mem hM π) hγ0 hγ1 s₀ s
 
 include hM hγ0 hγ1
+
+/-- The discounted occupancy depends continuously on the policy probabilities. -/
+theorem tendsto_occupancy_of_tendsto
+    {ι : Type*} {l : Filter ι} {π : ι → StochasticPolicy S A} {π₀ : StochasticPolicy S A}
+    (h : ∀ s a, Tendsto (fun i => (π i).prob s a) l (𝓝 (π₀.prob s a))) (s₀ s : S) :
+    Tendsto (fun i => occupancy hM hγ0 hγ1 (π i) s₀ s) l
+      (𝓝 (occupancy hM hγ0 hγ1 π₀ s₀ s)) := by
+  unfold occupancy visitation
+  refine (tendsto_mrpValue_of_tendsto (fun i => policyKernel_mem hM (π i))
+    (policyKernel_mem hM π₀) hγ0 hγ1 (fun s s' => ?_) _ s₀).const_mul _
+  exact tendsto_finsetSum _ fun a _ => (h s a).mul_const _
 
 /-- The advantage of a policy averages to zero under the policy itself. -/
 theorem sum_prob_mul_advantage (π : StochasticPolicy S A) (s : S) :

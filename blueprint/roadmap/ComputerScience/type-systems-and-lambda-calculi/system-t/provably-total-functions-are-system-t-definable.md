@@ -18,12 +18,7 @@ $\lambda x.\, \Pi_2(Y_1 x)$ defines $f$, where $\Pi_2$ defines the second projec
 - [Functions definable in System T are provably total in PA](system-t-definable-functions-are-provably-total.md)
 - [Gödel's Dialectica interpretation of Heyting arithmetic](dialectica-interpretation-of-heyting-arithmetic.md)
 - [Closed normal forms of System T](closed-normal-forms-of-system-t.md)
-
-## Expansion
-
-This page becomes ready once:
-
-- Kreisel's theorem: a recursive function is provably total in PA if and only if it is provably total in Heyting arithmetic (proof prerequisite; not yet stated)
+- [Kreisel's theorem on provably total functions](../../../Logic/proof-theory/heyting-arithmetic/kreisel-s-theorem-on-provably-total-functions.md)
 
 ## Sources
 

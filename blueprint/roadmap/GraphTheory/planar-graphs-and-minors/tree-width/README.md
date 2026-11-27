@@ -40,3 +40,4 @@ tree-width at most every $k$.
   parameter for dense graphs; rank-width is at most tree-width plus one.
 - [Graph minors](../graph-minors/README.md): the minor relation under which tree-width is
   monotone and the graph minor theorem.
+- [Bounded-treewidth metrics in finite-dimensional ℓ₁](bounded-treewidth-l1-distortion.md)
