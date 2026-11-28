@@ -10,23 +10,21 @@ module
 
 public import Mathlib.Algebra.Module.Defs
 public import Mathlib.Basic.Real.Basic
-import Mathlib.Algebra.GroupWithZero.Units.Basic
-import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.NormNum.Inv
 
 /-!
 # The θ-method for ordinary differential equations
 
 `IsThetaStep` relates the current state to a candidate next state; it does not assume that
-an implicit step is solvable. On a uniform grid, impose the relation at each consecutive
-pair of states and prescribe the initial state. For the scalar equation $y' = \lambda y$,
-the step reduces to a single linear equation, including when its leading coefficient vanishes.
+an implicit step has a solution or that its solution is unique. The cases `θ = 0`, `θ = 1`
+and `θ = 1/2` give explicit Euler, implicit Euler and the trapezium rule. On a uniform grid,
+impose the relation at each consecutive pair of states and prescribe the initial state.
 
 ## References
 
 * E. Süli, *Numerical Solution of Ordinary Differential Equations*, Mathematical Institute,
   University of Oxford, 2 March 2022, §2.1, equations (14)–(17) and the remarks following (17).
-  <https://people.maths.ox.ac.uk/suli/nsodes.pdf>. The scalar linear formulas are derived from (16).
+  <https://people.maths.ox.ac.uk/suli/nsodes.pdf>.
 -/
 
 @[expose] public section
@@ -79,39 +77,5 @@ lemma thetaMethod_uniformGrid_iff (f : ℝ → E → E) (θ t₀ tEnd : ℝ) (N 
   simp only [IsThetaStep, ht]
 
 end Module
-
-/-- On `y' = λ y` the θ-method is equivalent to a linear equation in `yNext`. -/
-lemma isThetaStep_linear_iff {θ t h lam y yNext : ℝ} :
-    IsThetaStep (fun _ z ↦ lam * z) θ t h y yNext ↔
-      (1 - h * θ * lam) * yNext = (1 + h * (1 - θ) * lam) * y := by
-  change yNext = y + h * ((1 - θ) * (lam * y) + θ * (lam * yNext)) ↔ _
-  constructor <;> intro hs <;> linear_combination hs
-
-/-- When the denominator is nonzero, the scalar linear step holds exactly at its closed-form
-next value. -/
-lemma isThetaStep_linear_iff_eq {θ t h lam y yNext : ℝ} (hden : 1 - h * θ * lam ≠ 0) :
-    IsThetaStep (fun _ z ↦ lam * z) θ t h y yNext ↔
-      yNext = ((1 + h * (1 - θ) * lam) * y) / (1 - h * θ * lam) := by
-  rw [isThetaStep_linear_iff, eq_div_iff hden, mul_comm yNext]
-
-/-- If the scalar denominator vanishes, every next value solves the step when the right-hand
-side is zero, and no next value solves it otherwise. -/
-lemma isThetaStep_linear_singular_iff {θ t h lam y yNext : ℝ} (hden : 1 - h * θ * lam = 0) :
-    IsThetaStep (fun _ z ↦ lam * z) θ t h y yNext ↔ (1 + h * (1 - θ) * lam) * y = 0 := by
-  rw [isThetaStep_linear_iff, hden, zero_mul, eq_comm]
-
-/-- The scalar linear θ-step has exactly one solution if and only if its denominator is
-nonzero. -/
-lemma existsUnique_isThetaStep_linear_iff {θ t h lam y : ℝ} :
-    (∃! yNext, IsThetaStep (fun _ z ↦ lam * z) θ t h y yNext) ↔ 1 - h * θ * lam ≠ 0 := by
-  constructor
-  · rintro ⟨z, hz, huniq⟩ hden
-    have hrhs := (isThetaStep_linear_singular_iff hden).1 hz
-    have hzero : (0 : ℝ) = z := huniq 0 ((isThetaStep_linear_singular_iff hden).2 hrhs)
-    have hone : (1 : ℝ) = z := huniq 1 ((isThetaStep_linear_singular_iff hden).2 hrhs)
-    exact zero_ne_one (hzero.trans hone.symm)
-  · intro hden
-    refine ⟨_, (isThetaStep_linear_iff_eq hden).2 rfl, ?_⟩
-    exact fun _ hz ↦ (isThetaStep_linear_iff_eq hden).1 hz
 
 end MetaMathlibExt.ODE

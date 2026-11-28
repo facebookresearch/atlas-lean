@@ -42,26 +42,7 @@ example : ∃ u : Fin 3 → ℝ, u 0 = 0 ∧ ∀ n : Fin 2,
   have hh : (5 - 1 : ℝ) / (2 : ℕ) = 2 := by norm_num
   exact ⟨u, by simpa only [hh, Fin.val_castSucc] using hu⟩
 
--- A regular, genuinely implicit step has the single solution z = 2.
-example (z : ℝ) : IsThetaStep (fun _ y : ℝ ↦ -y) (1 / 2) 0 1 6 z ↔ z = 2 := by
-  have hd : (1 - 1 * (1 / 2) * (-1) : ℝ) ≠ 0 := by norm_num
-  have hval : (((1 + 1 * (1 - 1 / 2) * (-1)) * 6) / (1 - 1 * (1 / 2) * (-1)) : ℝ) = 2 := by
-    norm_num
-  simpa only [neg_one_mul, hval] using
-    (isThetaStep_linear_iff_eq (t := 0) (y := 6) (yNext := z) hd)
-
-example : ∃! z, IsThetaStep (fun _ y : ℝ ↦ (-1) * y) (1 / 2) 0 1 6 z := by
-  apply existsUnique_isThetaStep_linear_iff.mpr
-  norm_num
-
--- At hθλ = 1 the equation is inconsistent for a nonzero starting value.
-example : ¬ ∃ z, IsThetaStep (fun _ y : ℝ ↦ 2 * y) (1 / 2) 0 1 1 z := by
-  have hd : (1 - 1 * (1 / 2) * 2 : ℝ) = 0 := by norm_num
-  rintro ⟨z, hz⟩
-  have hr := (isThetaStep_linear_singular_iff hd).mp hz
-  norm_num at hr
-
--- For the same singular parameters but zero initial state, every z works.
-example (z : ℝ) : IsThetaStep (fun _ y : ℝ ↦ 2 * y) (1 / 2) 0 1 0 z := by
-  have hd : (1 - 1 * (1 / 2) * 2 : ℝ) = 0 := by norm_num
-  exact (isThetaStep_linear_singular_iff hd).mpr (mul_zero _)
+-- For y' = y², implicit Euler with h = 1 and y₀ = 0 asks for z = z².
+example : IsThetaStep (fun _ y : ℝ ↦ y * y) 1 0 1 0 0 ∧
+    IsThetaStep (fun _ y : ℝ ↦ y * y) 1 0 1 0 1 := by
+  constructor <;> apply isThetaStep_one_iff.mpr <;> norm_num [smul_eq_mul]
