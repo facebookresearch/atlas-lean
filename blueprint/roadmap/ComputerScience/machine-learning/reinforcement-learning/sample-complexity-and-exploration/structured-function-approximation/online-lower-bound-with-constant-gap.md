@@ -19,11 +19,11 @@ with probability greater than $0.1$.
 
 ## Depends on
 
-- [Probability measure](../../../../Probability/foundations/probability-measures/is-probability-measure.md)
+- [Probability measure](../../../../../Probability/foundations/probability-measures/is-probability-measure.md)
 
 ## Proof depends on
 
-- [Johnson–Lindenstrauss lemma](../../../../Geometry/metric-geometry/johnson-lindenstrauss.md)
+- [Johnson–Lindenstrauss lemma](../../../../../Geometry/metric-geometry/johnson-lindenstrauss.md)
 
 ## Expansion
 

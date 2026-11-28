@@ -18,7 +18,7 @@ normalized by $\lVert\phi^\star(x,a)\rVert_2 \le 1$ for all $(x,a)$ and $\big\lV
 
 ## Depends on
 
-- [Probability measure](../../../../Probability/foundations/probability-measures/is-probability-measure.md)
+- [Probability measure](../../../../../Probability/foundations/probability-measures/is-probability-measure.md)
 
 ## Proof depends on
 

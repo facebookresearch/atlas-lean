@@ -26,8 +26,8 @@ For $k = 1$ the sums are empty, so $\Lambda^1_h = \lambda I$ and $w^1_h = 0$. Th
 
 ## Depends on
 
-- [Ridge estimate](../../supervised-learning/least-squares-ridge-and-lasso-regression/ridge-estimate.md)
-- [Ridge objective](../../supervised-learning/least-squares-ridge-and-lasso-regression/ridge.md)
+- [Ridge estimate](../../../supervised-learning/least-squares-ridge-and-lasso-regression/ridge-estimate.md)
+- [Ridge objective](../../../supervised-learning/least-squares-ridge-and-lasso-regression/ridge.md)
 
 ## Proof depends on
 

@@ -27,8 +27,8 @@ $$
 ## Proof depends on
 
 - [Bernstein-type self-normalized bound for vector-valued martingales](bernstein-self-normalized-bound.md)
-- [Elliptical potential lemma](../multi-armed-bandits/elliptical-potential-lemma.md)
-- [Azuma's inequality](../../../../Probability/concentration-inequalities/azuma-inequality.md)
+- [Elliptical potential lemma](../../multi-armed-bandits/elliptical-potential-lemma.md)
+- [Azuma's inequality](../../../../../Probability/concentration-inequalities/azuma-inequality.md)
 
 ## Expansion
 

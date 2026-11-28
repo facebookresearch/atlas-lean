@@ -18,7 +18,7 @@ The source's Theorem 3.1 states the result for $d$-dimensional features with $2d
 
 ## Depends on
 
-- [Probability measure](../../../../Probability/foundations/probability-measures/is-probability-measure.md)
+- [Probability measure](../../../../../Probability/foundations/probability-measures/is-probability-measure.md)
 
 ## Proof depends on
 

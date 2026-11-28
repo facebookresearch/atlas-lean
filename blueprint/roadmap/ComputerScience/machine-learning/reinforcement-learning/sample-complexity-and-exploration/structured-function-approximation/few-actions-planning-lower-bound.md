@@ -22,7 +22,7 @@ Since global access is easier than local access, the same lower bound holds for 
 
 ## Depends on
 
-- [Probability measure](../../../../Probability/foundations/probability-measures/is-probability-measure.md)
+- [Probability measure](../../../../../Probability/foundations/probability-measures/is-probability-measure.md)
 
 ## Proof depends on
 

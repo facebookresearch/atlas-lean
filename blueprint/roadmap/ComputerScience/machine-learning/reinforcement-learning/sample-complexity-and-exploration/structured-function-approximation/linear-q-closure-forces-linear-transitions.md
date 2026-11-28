@@ -20,7 +20,7 @@ The hypothesis quantifies over all policies. It is a completeness condition on t
 
 ## Depends on
 
-- [Expectation under a probability mass function](../../../../Probability/distributions/discrete/expectation-under-a-probability-mass-function/expect.md)
+- [Expectation under a probability mass function](../../../../../Probability/distributions/discrete/expectation-under-a-probability-mass-function/expect.md)
 
 ## Proof depends on
 

@@ -22,7 +22,7 @@ trajectories.
 
 ## Proof depends on
 
-- [Two-sided Hoeffding inequality for averages of bounded variables](../../../../Probability/concentration-inequalities/hoeffding-s-inequality/measure-real-abs-avg-sub-ge-le.md)
+- [Two-sided Hoeffding inequality for averages of bounded variables](../../../../../Probability/concentration-inequalities/hoeffding-s-inequality/measure-real-abs-avg-sub-ge-le.md)
 
 ## Expansion
 

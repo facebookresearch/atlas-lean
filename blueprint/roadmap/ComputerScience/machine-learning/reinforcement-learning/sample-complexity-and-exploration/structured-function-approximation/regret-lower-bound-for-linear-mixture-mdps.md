@@ -28,9 +28,9 @@ Together with the [regret of UCRL-VTR+](regret-of-ucrl-vtr-plus.md), this shows 
 
 ## Proof depends on
 
-- [Pinsker's inequality for probability measures](../../../../InformationTheory/information-inequalities/total-variation-and-pinsker-s-inequality/of-real-two-mul-total-variation-dist-sq.md)
-- [Divergence decomposition for stochastic bandits](../multi-armed-bandits/divergence-decomposition-for-stochastic-bandits.md)
-- [Comparison hierarchy of total variation, Hellinger, KL and chi-square divergences](../../../../InformationTheory/information-inequalities/renyi-chi-square-and-hockey-stick-divergences/divergence-comparison-hierarchy.md)
+- [Pinsker's inequality for probability measures](../../../../../InformationTheory/information-inequalities/total-variation-and-pinsker-s-inequality/of-real-two-mul-total-variation-dist-sq.md)
+- [Divergence decomposition for stochastic bandits](../../multi-armed-bandits/divergence-decomposition-for-stochastic-bandits.md)
+- [Comparison hierarchy of total variation, Hellinger, KL and chi-square divergences](../../../../../InformationTheory/information-inequalities/renyi-chi-square-and-hockey-stick-divergences/divergence-comparison-hierarchy.md)
 
 ## Expansion
 

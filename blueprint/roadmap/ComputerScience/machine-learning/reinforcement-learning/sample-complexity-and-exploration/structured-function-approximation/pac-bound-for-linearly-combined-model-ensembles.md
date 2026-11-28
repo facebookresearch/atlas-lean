@@ -26,8 +26,8 @@ trajectories and returns a policy whose value is at least $v^\ast - \varepsilon 
 
 ## Proof depends on
 
-- [Matrix Bernstein inequality, Hermitian case](../../../../Probability/concentration-inequalities/matrix-concentration-inequalities/matrix-bernstein.md)
-- [Two-sided Hoeffding inequality for averages of bounded variables](../../../../Probability/concentration-inequalities/hoeffding-s-inequality/measure-real-abs-avg-sub-ge-le.md)
+- [Matrix Bernstein inequality, Hermitian case](../../../../../Probability/concentration-inequalities/matrix-concentration-inequalities/matrix-bernstein.md)
+- [Two-sided Hoeffding inequality for averages of bounded variables](../../../../../Probability/concentration-inequalities/hoeffding-s-inequality/measure-real-abs-avg-sub-ge-le.md)
 
 ## Expansion
 

@@ -26,7 +26,7 @@ The witness rank is $\mathrm{W}(\kappa, \beta, \mathcal{M}, \mathcal{F}, h) = \m
 
 ## Depends on
 
-- [Probability measure](../../../../Probability/foundations/probability-measures/is-probability-measure.md)
+- [Probability measure](../../../../../Probability/foundations/probability-measures/is-probability-measure.md)
 
 ## Proof depends on
 

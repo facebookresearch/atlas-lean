@@ -24,13 +24,13 @@ Compared with the [sub-Gaussian self-normalized bound](self-normalized-bound-for
 
 ## Depends on
 
-- [Filtrations and stopping times](../../../../Probability/martingales/stopping-times-and-martingale-problems/filtrations-and-stopping-times.md)
-- [Conditional expectation given a σ-field](../../../../Probability/foundations/conditional-expectation/conditional-expectation-given-a-sigma-field/conditional-expectation.md)
-- [Ridge estimate](../../supervised-learning/least-squares-ridge-and-lasso-regression/ridge-estimate.md)
+- [Filtrations and stopping times](../../../../../Probability/martingales/stopping-times-and-martingale-problems/filtrations-and-stopping-times.md)
+- [Conditional expectation given a σ-field](../../../../../Probability/foundations/conditional-expectation/conditional-expectation-given-a-sigma-field/conditional-expectation.md)
+- [Ridge estimate](../../../supervised-learning/least-squares-ridge-and-lasso-regression/ridge-estimate.md)
 
 ## Proof depends on
 
-- [Elliptical potential lemma](../multi-armed-bandits/elliptical-potential-lemma.md)
+- [Elliptical potential lemma](../../multi-armed-bandits/elliptical-potential-lemma.md)
 
 ## Expansion
 

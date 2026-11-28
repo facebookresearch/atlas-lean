@@ -15,7 +15,7 @@ Here $v^\pi$ is the expected total reward with $\sum_h r_h \le 1$, and the true 
 
 ## Depends on
 
-- [Probability measure](../../../../Probability/foundations/probability-measures/is-probability-measure.md)
+- [Probability measure](../../../../../Probability/foundations/probability-measures/is-probability-measure.md)
 
 ## Proof depends on
 

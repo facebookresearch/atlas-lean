@@ -12,11 +12,11 @@ generative-model theorem; rewards in $[0, R_{\max}]$ multiply the value bound by
 
 ## Depends on
 
-- [Markov decision process](../../heuristic-search-and-planning/value-iteration/mdp.md)
+- [Markov decision process](../../../heuristic-search-and-planning/value-iteration/mdp.md)
 
 ## Proof depends on
 
-- [Simulation lemma](simulation-lemma/stoch-value-sub-stoch-value-eq.md)
+- [Simulation lemma](../simulation-lemma/stoch-value-sub-stoch-value-eq.md)
 
 ## Sources
 

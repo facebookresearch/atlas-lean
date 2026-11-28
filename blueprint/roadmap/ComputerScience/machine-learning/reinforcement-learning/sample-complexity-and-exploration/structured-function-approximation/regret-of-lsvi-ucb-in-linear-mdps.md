@@ -31,8 +31,8 @@ The theorem is printed (Jin et al., Theorem 3.1) under the total-mass normalizat
 
 - [Action values are linear in a linear MDP](action-values-are-linear-in-a-linear-mdp.md)
 - [Uniform self-normalized bound over a value-function class](uniform-self-normalized-bound-over-a-value-class.md)
-- [Elliptical potential lemma](../multi-armed-bandits/elliptical-potential-lemma.md)
-- [Azuma's inequality](../../../../Probability/concentration-inequalities/azuma-inequality.md)
+- [Elliptical potential lemma](../../multi-armed-bandits/elliptical-potential-lemma.md)
+- [Azuma's inequality](../../../../../Probability/concentration-inequalities/azuma-inequality.md)
 
 ## Expansion
 

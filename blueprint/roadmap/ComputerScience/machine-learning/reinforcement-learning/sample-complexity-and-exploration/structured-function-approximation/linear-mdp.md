@@ -30,7 +30,7 @@ which is how Agarwal, Kakade, Krishnamurthy and Sun normalize the second embeddi
 
 ## Depends on
 
-- [Probability measure](../../../../Probability/foundations/probability-measures/is-probability-measure.md)
+- [Probability measure](../../../../../Probability/foundations/probability-measures/is-probability-measure.md)
 
 ## Proof depends on
 

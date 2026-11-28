@@ -31,7 +31,7 @@ A sound expansion has separate pages for:
 ## Proof depends on
 
 - [Asynchronous stochastic approximation: convergence by box shrinking](asynchronous-stochastic-approximation-convergence-by-box-shr.md)
-- [Bellman's operator is a contraction](../../heuristic-search-and-planning/value-iteration/bellman-contracting.md)
+- [Bellman's operator is a contraction](../../../heuristic-search-and-planning/value-iteration/bellman-contracting.md)
 
 ## Sources
 

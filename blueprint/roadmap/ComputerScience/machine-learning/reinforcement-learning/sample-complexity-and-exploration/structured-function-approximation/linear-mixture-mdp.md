@@ -24,7 +24,7 @@ The feature map is known; the parameters $\Theta^\star = (\theta^\star_h)_{h \in
 
 ## Depends on
 
-- [Expectation under a probability mass function](../../../../Probability/distributions/discrete/expectation-under-a-probability-mass-function/expect.md)
+- [Expectation under a probability mass function](../../../../../Probability/distributions/discrete/expectation-under-a-probability-mass-function/expect.md)
 
 ## Proof depends on
 

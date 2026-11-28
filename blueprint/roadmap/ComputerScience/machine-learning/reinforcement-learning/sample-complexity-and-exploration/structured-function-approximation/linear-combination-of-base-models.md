@@ -28,8 +28,8 @@ attained at $W^\ast$; $\theta = 0$ is the realizable case $M^\ast = M(W^\ast)$. 
 
 ## Depends on
 
-- [Probability measure](../../../../Probability/foundations/probability-measures/is-probability-measure.md)
-- [Total variation distance between finite measures](../../../../Probability/convergence-of-measures/total-variation-distance/total-variation-dist.md)
+- [Probability measure](../../../../../Probability/foundations/probability-measures/is-probability-measure.md)
+- [Total variation distance between finite measures](../../../../../Probability/convergence-of-measures/total-variation-distance/total-variation-dist.md)
 
 ## Proof depends on
 

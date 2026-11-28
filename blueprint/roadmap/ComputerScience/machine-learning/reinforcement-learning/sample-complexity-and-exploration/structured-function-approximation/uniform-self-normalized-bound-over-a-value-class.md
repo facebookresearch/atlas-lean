@@ -12,8 +12,8 @@ For each fixed $V$ the centred terms use the conditional expectation of that fix
 
 ## Depends on
 
-- [Filtrations and stopping times](../../../../Probability/martingales/stopping-times-and-martingale-problems/filtrations-and-stopping-times.md)
-- [Conditional expectation given a σ-field](../../../../Probability/foundations/conditional-expectation/conditional-expectation-given-a-sigma-field/conditional-expectation.md)
+- [Filtrations and stopping times](../../../../../Probability/martingales/stopping-times-and-martingale-problems/filtrations-and-stopping-times.md)
+- [Conditional expectation given a σ-field](../../../../../Probability/foundations/conditional-expectation/conditional-expectation-given-a-sigma-field/conditional-expectation.md)
 
 ## Proof depends on
 
@@ -25,7 +25,7 @@ Take an $\varepsilon$-cover $\{\tilde V\}$ of $\mathcal{V}$ and write $V = \tild
 
 The source applies this to the class of LSVI-UCB value functions $V(\cdot) = \min\{\max_a [w^{\mathsf T}\phi(\cdot,a) + \beta \sqrt{\phi(\cdot,a)^{\mathsf T}\Lambda^{-1}\phi(\cdot,a)}], H\}$ with $\lVert w \rVert \le L$, $\beta \in [0,B]$, $\lambda_{\min}(\Lambda) \ge \lambda$, assuming $\lVert\phi(x,a)\rVert_2 \le 1$ at every state-action pair, whose log-covering number it bounds by $d \log(1 + 4L/\varepsilon) + d^2 \log(1 + 8 d^{1/2} B^2/(\lambda \varepsilon^2))$ (Lemma D.6, via the upper bound $(1 + 2R/\varepsilon)^d$ on the covering number of a Euclidean ball of radius $R$, Lemma D.5). Using the statement above for this class also needs $\sup_x |V(x)| \le H$: the cap gives $V \le H$, but a lower bound has to be supplied separately.
 
-A complete expansion adds a page for the centred conditional Hoeffding lemma: if $X \in [a,b]$ almost surely, then $X - \mathbb{E}[X \mid m]$ is conditionally sub-Gaussian given $m$ with variance proxy $(b-a)^2/4$. The [conditional Hoeffding lemma](../../../../Probability/concentration-inequalities/has-cond-subgaussian-mgf-of-mem-icc-of-c.md) assumes a fixed interval and a vanishing conditional mean. Applied to the centred term, which lies only in $[-2H, 2H]$, it gives proxy $4H^2$ and would turn the constant $4H^2$ above into $16H^2$, so it does not support the stated bound.
+A complete expansion adds a page for the centred conditional Hoeffding lemma: if $X \in [a,b]$ almost surely, then $X - \mathbb{E}[X \mid m]$ is conditionally sub-Gaussian given $m$ with variance proxy $(b-a)^2/4$. The [conditional Hoeffding lemma](../../../../../Probability/concentration-inequalities/has-cond-subgaussian-mgf-of-mem-icc-of-c.md) assumes a fixed interval and a vanishing conditional mean. Applied to the centred term, which lies only in $[-2H, 2H]$, it gives proxy $4H^2$ and would turn the constant $4H^2$ above into $16H^2$, so it does not support the stated bound.
 
 ## Sources
 

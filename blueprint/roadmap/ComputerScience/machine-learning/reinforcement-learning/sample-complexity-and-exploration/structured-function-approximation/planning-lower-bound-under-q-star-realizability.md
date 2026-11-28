@@ -24,7 +24,7 @@ Choosing $\eta = \frac12 - \frac{2}{\log_2(d-1)}$ gives $C(\mathcal{P},H,d) = \m
 
 ## Depends on
 
-- [Probability measure](../../../../Probability/foundations/probability-measures/is-probability-measure.md)
+- [Probability measure](../../../../../Probability/foundations/probability-measures/is-probability-measure.md)
 
 ## Proof depends on
 

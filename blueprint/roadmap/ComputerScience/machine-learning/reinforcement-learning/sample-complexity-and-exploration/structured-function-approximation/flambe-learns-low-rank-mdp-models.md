@@ -25,12 +25,12 @@ trajectories and runs in polynomial time with polynomially many calls to MLE and
 ## Depends on
 
 - [Low-rank MDP](low-rank-mdp.md)
-- [Total variation distance between finite measures](../../../../Probability/convergence-of-measures/total-variation-distance/total-variation-dist.md)
+- [Total variation distance between finite measures](../../../../../Probability/convergence-of-measures/total-variation-distance/total-variation-dist.md)
 
 ## Proof depends on
 
 - [Regret of LSVI-UCB in linear MDPs](regret-of-lsvi-ucb-in-linear-mdps.md)
-- [Two-sided Hoeffding inequality for averages of bounded variables](../../../../Probability/concentration-inequalities/hoeffding-s-inequality/measure-real-abs-avg-sub-ge-le.md)
+- [Two-sided Hoeffding inequality for averages of bounded variables](../../../../../Probability/concentration-inequalities/hoeffding-s-inequality/measure-real-abs-avg-sub-ge-le.md)
 
 ## Expansion
 

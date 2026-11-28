@@ -26,12 +26,12 @@ The conditional sub-Gaussian condition implies $\mathbb{E}[\eta_t \mid \mathcal{
 
 ## Depends on
 
-- [Filtrations and stopping times](../../../../Probability/martingales/stopping-times-and-martingale-problems/filtrations-and-stopping-times.md)
-- [Conditional expectation given a σ-field](../../../../Probability/foundations/conditional-expectation/conditional-expectation-given-a-sigma-field/conditional-expectation.md)
+- [Filtrations and stopping times](../../../../../Probability/martingales/stopping-times-and-martingale-problems/filtrations-and-stopping-times.md)
+- [Conditional expectation given a σ-field](../../../../../Probability/foundations/conditional-expectation/conditional-expectation-given-a-sigma-field/conditional-expectation.md)
 
 ## Proof depends on
 
-- [Ville's maximal inequality](../../../../Probability/hypothesis-testing/sequential-tests-and-quickest-change-detection/anytime-valid-confidence-sequences/ville/ville-maximal-ineq.md)
+- [Ville's maximal inequality](../../../../../Probability/hypothesis-testing/sequential-tests-and-quickest-change-detection/anytime-valid-confidence-sequences/ville/ville-maximal-ineq.md)
 
 ## Expansion
 
