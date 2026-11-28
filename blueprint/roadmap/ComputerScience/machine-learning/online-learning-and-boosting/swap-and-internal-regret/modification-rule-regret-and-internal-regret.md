@@ -10,8 +10,8 @@ Taking $F$ the constant maps gives external regret; $F$ all maps gives swap regr
 
 ## Depends on
 
-- [External regret](../../../../GameTheory/not-yet-classified/part-02/regret/external-regret.md)
-- [Swap regret](../../../../GameTheory/not-yet-classified/part-02/regret/swap-regret.md)
+- [External regret](../../../../GameTheory/noncooperative-games/external-and-swap-regret/external-regret.md)
+- [Swap regret](../../../../GameTheory/noncooperative-games/external-and-swap-regret/swap-regret.md)
 
 ## Sources
 

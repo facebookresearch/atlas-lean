@@ -49,8 +49,8 @@ namespace MathlibExt.GameTheory.MechanismDesign.TruthfulScheduling
 
 @[expose] public section
 
-/-- Load of machine `i` under allocation `A`: its total processing time
-for the tasks assigned to it. -/
+/-- Load of machine `i` under allocation `A`, for finitely many tasks: its total processing
+time for the tasks assigned to it. -/
 noncomputable def load {Machine Task : Type*} [Fintype Task]
     [DecidableEq Machine] (t : Machine → Task → ℝ) (A : Task → Machine)
     (i : Machine) : ℝ :=
@@ -83,7 +83,7 @@ def IsTruthful {Machine Task : Type*} [Fintype Task] [DecidableEq Machine]
         P t i - load t (A t) i
 
 /-- Weak monotonicity of an allocation rule on the nonnegative type
-space: if only machine `i`'s row changes from `t` to `t'` (both
+space, for finitely many tasks: if only machine `i`'s row changes from `t` to `t'` (both
 nonnegative), then `t`-load of the old bundle minus `t`-load of the new
 bundle is at most the same difference measured with `t'`. -/
 def IsWeaklyMonotone {Machine Task : Type*} [Fintype Task]
@@ -123,7 +123,8 @@ def IsApproximate {Machine Task : Type*} [Fintype Machine] [Fintype Task]
     (A : (Machine → Task → ℝ) → Task → Machine) : Prop :=
   ∀ t, (∀ i j, 0 ≤ t i j) → makespanOf t (A t) ≤ c * optMakespan t
 
-/-- Loads are nonnegative when all processing times are nonnegative. -/
+/-- For finitely many tasks, loads are nonnegative when all processing times are
+nonnegative. -/
 theorem load_nonneg {Machine Task : Type*} [Fintype Task]
     [DecidableEq Machine] {t : Machine → Task → ℝ} (ht : ∀ i j, 0 ≤ t i j)
     (A : Task → Machine) (i : Machine) :
@@ -137,7 +138,8 @@ theorem load_le_makespanOf {Machine Task : Type*} [Fintype Machine]
     load t A i ≤ makespanOf t A := by
   exact Finset.le_max' _ _ (Finset.mem_image_of_mem _ (Finset.mem_univ i))
 
-/-- The optimal makespan is at most the makespan of any allocation. -/
+/-- For finitely many tasks and finitely many machines, at least one, the optimal makespan is
+at most the makespan of any allocation. -/
 theorem optMakespan_le {Machine Task : Type*} [Fintype Machine]
     [Fintype Task] [DecidableEq Machine] [DecidableEq Task]
     [Nonempty Machine] (t : Machine → Task → ℝ) (A : Task → Machine) :

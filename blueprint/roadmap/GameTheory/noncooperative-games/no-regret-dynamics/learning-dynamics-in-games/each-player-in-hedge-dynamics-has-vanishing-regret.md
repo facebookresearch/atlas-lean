@@ -9,7 +9,7 @@ The multiplicative-weights regret bound holds against any loss sequence, adaptiv
 ## Depends on
 
 - [Hedge (multiplicative-weights) dynamics in a finite game](hedge-multiplicative-weights-dynamics-in-a-finite-game.md)
-- [External regret](../../../not-yet-classified/part-02/regret/external-regret.md)
+- [External regret](../../external-and-swap-regret/external-regret.md)
 - [Coarse correlated equilibrium](../is-coarse-correlated-eq.md)
 
 ## Proof depends on

@@ -71,8 +71,8 @@ theorem sumcheck1_complete {d : ℕ} {p : F[X]} (hp : p.natDegree ≤ d) {H : F}
     (hH : p.eval 0 + p.eval 1 = H) (r : F) : accept1 d p p H r :=
   ⟨hp, hH, rfl⟩
 
-/-- Root bound: a polynomial `q` different from `p`, both of degree at most `d`, agrees with
-`p` at no more than `d` points. -/
+/-- Root bound: for polynomials `p ≠ q` over a finite field `F`, both of degree at most `d`,
+`q` agrees with `p` at no more than `d` points of `F`. -/
 theorem card_agree_le (p q : F[X]) (d : ℕ)
     (hp : p.natDegree ≤ d) (hq : q.natDegree ≤ d) (hne : q ≠ p) :
     (Finset.univ.filter (fun r => q.eval r = p.eval r)).card

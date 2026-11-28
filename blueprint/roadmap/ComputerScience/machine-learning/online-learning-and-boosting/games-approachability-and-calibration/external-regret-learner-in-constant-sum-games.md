@@ -15,7 +15,7 @@ Let $\bar q$ be the average of the column strategies. The regret bound compares 
 ## Depends on
 
 - [Von Neumann's minimax theorem](../../../../GameTheory/noncooperative-games/von-neumann-s-minimax-theorem/matrix-game-minimax.md)
-- [External regret](../../../../GameTheory/not-yet-classified/part-02/regret/external-regret.md)
+- [External regret](../../../../GameTheory/noncooperative-games/external-and-swap-regret/external-regret.md)
 
 ## Proof depends on
 

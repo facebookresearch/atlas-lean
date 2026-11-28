@@ -16,12 +16,12 @@ The stationary-distribution step makes the player's realized cost equal to the s
 
 - [Coupled Blum–Mansour swap-regret dynamics](coupled-blum-mansour-swap-regret-dynamics.md)
 - [Correlated equilibrium](../../correlated-equilibria/is-correlated-eq.md)
-- [Swap regret](../../../not-yet-classified/part-02/regret/swap-regret.md)
-- [External regret](../../../not-yet-classified/part-02/regret/external-regret.md)
+- [Swap regret](../../external-and-swap-regret/swap-regret.md)
+- [External regret](../../external-and-swap-regret/external-regret.md)
 
 ## Proof depends on
 
-- [Blum–Mansour decomposition](../../../not-yet-classified/part-02/regret-blum-mansour/swap-regret-le-sum-external-regret-scale.md)
+- [Blum–Mansour decomposition](../../blum-mansour-swap-regret-decomposition/swap-regret-le-sum-external-regret-scale.md)
 - [Each player in Hedge dynamics has vanishing regret](each-player-in-hedge-dynamics-has-vanishing-regret.md)
 
 ## Sources

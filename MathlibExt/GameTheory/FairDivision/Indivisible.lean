@@ -184,8 +184,8 @@ def HasEnvyCycle {ι γ : Type*} [Fintype γ] [DecidableEq ι] (v : ι → γ �
     (A : γ → ι) : Prop :=
   ∃ m c, IsEnvyCycle v A m c
 
-/-- A closed envy walk contains an explicit envy cycle: by strong induction on
-the length, either the walk is already injective or a repeated agent splits
+/-- A closed envy walk of positive length implies that the envy graph has an envy cycle: by
+strong induction on the length, either the walk is already injective or a repeated agent splits
 it into strictly shorter closed walks. -/
 theorem walk_contains_cycle {ι γ : Type*} [Fintype γ] [DecidableEq ι]
     (v : ι → γ → ℝ) (A : γ → ι) (n : ℕ) (p : ℕ → ι)
@@ -340,9 +340,9 @@ theorem exists_source_of_acyclic {ι γ : Type*} [Fintype ι] [Fintype γ]
     (fun k => f^[max a b - k] i₀) hedge' hclose' hpos'
   exact h hcon2
 
-/-- Rotation along an explicit envy cycle: each good held by an agent on the
-cycle moves to that agent's predecessor, so every agent on the cycle receives
-the bundle of its successor; goods held off the cycle stay put. -/
+/-- Rotation along `c`, defined for any `c`: a good whose owner is `c t` for a chosen preimage `t`
+moves to `c (t - 1)`, and goods held by agents outside the image of `c` stay put. For an
+injective `c`, such as an envy cycle, every agent on it receives the bundle of its successor. -/
 noncomputable def rotateAlloc {ι γ : Type*} [Fintype γ] [DecidableEq ι]
     (m : ℕ) (c : ZMod m → ι) (A : γ → ι) (hm : 2 ≤ m) : γ → ι :=
   haveI : NeZero m := ⟨by omega⟩
@@ -495,8 +495,8 @@ theorem exists_EF1_acyclic {ι γ : Type*} [Fintype ι] [Fintype γ]
   rw [hBmax] at hlt
   exact absurd hle (not_le_of_gt hlt)
 
-/-- Extend a partial allocation (on goods `↥S`) with a new good `g`, giving `g`
-to agent `i₀` and keeping every other good's holder. -/
+/-- Extend a partial allocation (on goods `↥S`) with a good `g`, giving `g` to agent `i₀`
+(even if `g ∈ S`) and keeping every other good's holder. -/
 def extendAlloc {ι γ : Type*} [DecidableEq γ] (S : Finset γ) (g : γ)
     (A : ↥S → ι) (i₀ : ι) : ↥(insert g S) → ι :=
   fun x =>

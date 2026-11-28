@@ -8,3 +8,4 @@
 - [Moulin's characterization of strategyproof location rules on an interval](moulins-characterization-of-strategyproof-location-rules-on-an-interval.md)
 - [Schummer–Vohra cycle dictatorship](schummer-vohra-cycle-dictatorship.md)
 - [Schummer–Vohra characterization on trees](schummer-vohra-characterization-on-trees.md)
+- [Strategyproof facility location on the line](strategyproof-facility-location-on-the-line/README.md)

@@ -8,6 +8,7 @@ The PCP theorem and Dinur's gap amplification, optimization classes (NPO, APX, M
 - [The PCP theorem: NP = PCP(O(log n), O(1))](pcp-theorem.md)
 - [Blum–Luby–Rubinfeld linearity test](blum-luby-rubinfeld-linearity-test/README.md)
 - [Pcp constructions](pcp-constructions/README.md)
+- [The BLR linearity test over `ZMod 2`](the-blr-linearity-test-over-zmod-2/README.md)
 - [Gap reduction to independent sets in three-colourable graphs](three-colourable-independent-set-gap.md)
 - [Arbitrary fixed gaps for directed feedback vertex set](directed-feedback-vertex-set-arbitrary-gap.md)
 - [Arbitrary fixed gaps for Min-Uncut](min-uncut-arbitrary-fixed-gaps.md)

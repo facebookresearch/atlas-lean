@@ -61,10 +61,10 @@ theorem bundle_transfer_owner {ι γ : Type*} [Fintype γ] [DecidableEq γ]
   · have hx : Function.update A g i x = A x := Function.update_of_ne h _ _
     simp [h]
 
-/-- The single-good exchange inequality at a maximum Nash welfare
-allocation, in the case where both agents keep positive value after the
-transfer: moving `g` from `j` to `i` cannot increase the product of the
-two bundle values. -/
+/-- The single-good exchange inequality at a maximum Nash welfare allocation with nonnegative
+single-good values: if `g` belongs to `j ≠ i`, `i` has positive value and `j` keeps positive
+value without `g`, then moving `g` from `j` to `i` cannot increase the product of the two
+bundle values. -/
 theorem exchange_le {ι γ : Type*} [Fintype ι] [Fintype γ] [DecidableEq γ]
     [DecidableEq ι] {v : ι → γ → ℝ} {A : γ → ι} (hA : IsMaxNashWelfare v A)
     (hv : ∀ i g, 0 ≤ v i g)

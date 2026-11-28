@@ -8,7 +8,7 @@ Define by recursion on the finite tree whether the player to move can force a wi
 
 ## Depends on
 
-- [Perfect-information game tree](../../../../not-yet-classified/part-01/backward-induction/perfect-info-game.md)
+- [Perfect-information game tree](../../../backward-induction-and-subgame-perfection/perfect-info-game.md)
 
 ## Sources
 

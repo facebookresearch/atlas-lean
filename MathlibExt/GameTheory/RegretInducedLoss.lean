@@ -50,8 +50,9 @@ open scoped BigOperators
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 variable {S : ι → Type*} [∀ i, Fintype (S i)] [∀ i, DecidableEq (S i)]
 
-/-- The pure cost as the cost weighted by the opponents' mixed play,
-summed over profiles where player `i` plays `a`. (C3 game layer) -/
+/-- The pure cost as the cost weighted by the products `σ j (s j)` of the other players' real
+weights, summed over profiles `s` where player `i` plays `a`. When each `σ j` is a probability
+distribution, this weighting is the opponents' independent mixed play. (C3 game layer) -/
 theorem pureCost_eq_sum_filter (cost : ι → (∀ i, S i) → ℝ)
     (σ : ∀ i, S i → ℝ) (i : ι) (a : S i) :
     MathlibExt.GameTheory.CorrelatedEquilibrium.pureCost cost σ i a

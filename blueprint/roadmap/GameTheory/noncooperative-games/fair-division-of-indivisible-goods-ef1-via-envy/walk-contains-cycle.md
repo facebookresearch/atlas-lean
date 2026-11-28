@@ -1,0 +1,3 @@
+# Walk contains cycle
+
+Let $v$ give each agent's value for each of finitely many goods and let $A$ be an allocation. If there is a closed envy walk of positive length, that is agents $p_0, \dots, p_n$ with $1 \le n$, $p_n = p_0$ and $p_k$ envying $p_{k+1}$ for every $k < n$, then the envy graph has an envy cycle: an injective cyclic list of at least two agents, each envying the next. The statement does not say that the cycle lies on the walk. The proof is by strong induction on the length: either the walk is already injective or a repeated agent splits it into strictly shorter closed walks. Positive length is needed: a single agent with no envy edges forms a closed walk of length zero and no envy cycle.

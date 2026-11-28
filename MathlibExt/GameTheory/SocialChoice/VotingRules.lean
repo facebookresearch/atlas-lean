@@ -206,8 +206,8 @@ private theorem topOrder_lt_top {Alt : Type*} [Fintype Alt]
   unfold topRank
   rw [ite_eq_left rfl, ite_eq_right hb]
   exact Nat.zero_lt_succ _
-/-- Every alternative is a Condorcet winner of some profile: with a
-nonempty electorate, the unanimous profile ranking `a` first works. -/
+/-- With finitely many alternatives and a finite nonempty electorate, every alternative is a
+Condorcet winner of some profile: the unanimous profile ranking `a` first works. -/
 theorem exists_isCondorcetWinner {Alt Voter : Type*} [Fintype Alt]
     [Fintype Voter] [DecidableEq Alt] [Nonempty Voter] (a : Alt) :
     ∃ Q : Profile Alt Voter, IsCondorcetWinner Q a := by

@@ -6,8 +6,8 @@ Over a horizon $T$ the expected loss of $H$ is $L_H^T = \sum_{t<T} \sum_{i \in X
 
 ## Depends on
 
-- [External regret](../../../../GameTheory/not-yet-classified/part-02/regret/external-regret.md)
-- [Cumulative loss](../../../../GameTheory/not-yet-classified/part-02/regret/cumulative-loss.md)
+- [External regret](../../../../GameTheory/noncooperative-games/external-and-swap-regret/external-regret.md)
+- [Cumulative loss](../../../../GameTheory/noncooperative-games/external-and-swap-regret/cumulative-loss.md)
 
 ## Sources
 

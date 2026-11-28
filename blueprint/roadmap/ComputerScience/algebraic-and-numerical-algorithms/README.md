@@ -17,6 +17,7 @@ Algorithms on numbers, polynomials and matrices: integer and polynomial multipli
 - [Solving linear congruences](solving-linear-congruences/README.md)
 - [Strassen algorithm](strassen-algorithm/README.md)
 - [Lattice basis reduction](lattice-basis-reduction/README.md)
+- [Rational values of the core binary64 model](rational-values-of-the-core-binary64-model/README.md)
 - [Babai's Nearest-Plane Algorithm and the LLL Potential](nearest-plane-and-lll-potential/README.md)
 - [Exact Rational Linear Algebra](exact-rational-linear-algebra/README.md)
 - [Exact Sampling from Coin Flips](exact-sampling-from-coin-flips/README.md)

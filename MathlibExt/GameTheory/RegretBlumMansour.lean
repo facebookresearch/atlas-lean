@@ -38,8 +38,9 @@ open scoped BigOperators
 variable {K : Type*} [Fintype K] [DecidableEq K] [Nonempty K]
 variable {T : ℕ}
 
-/-- The losses fed to copy `j` in the Blum–Mansour reduction: the true
-losses scaled by the master's probability of `j` at each time. -/
+/-- The losses fed to copy `j` in the Blum–Mansour reduction: `p t j * loss t a` at time `t`
+and action `a`, for arbitrary real arrays `p` and `loss`. When each `p t` is a probability
+distribution, these are the true losses scaled by the master's probability of `j` at time `t`. -/
 def scaledLoss (p : Fin T → K → ℝ) (loss : Fin T → K → ℝ) (j : K) :
     Fin T → K → ℝ :=
   fun t a => p t j * loss t a

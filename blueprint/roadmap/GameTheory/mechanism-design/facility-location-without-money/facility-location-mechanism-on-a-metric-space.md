@@ -4,7 +4,7 @@ A (randomized) *facility-location mechanism* maps reported locations $x \in G^\i
 
 ## Depends on
 
-- [Group strategyproof facility location](../../not-yet-classified/part-01/facility-location/is-group-strategyproof.md)
+- [Group strategyproof facility location](strategyproof-facility-location-on-the-line/is-group-strategyproof.md)
 
 ## Sources
 

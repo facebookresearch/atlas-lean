@@ -74,17 +74,17 @@ def cycOrder (i : Fin 3) : StrictTotalOrder (Fin 3) where
 /-- The Condorcet profile: voter `i` ranks `i ≻ i + 1 ≻ i + 2` (mod 3). -/
 def condorcetProfile : Profile (Fin 3) (Fin 3) := fun i => cycOrder i
 
-/-- In the Condorcet profile, voters `0` and `2` prefer `0` to `1`. -/
+/-- In the Condorcet profile, the voters who prefer `0` to `1` are exactly `0` and `2`. -/
 theorem condorcet_sup01 : supporters condorcetProfile 0 1 = {0, 2} := by
   ext i
   fin_cases i <;> simp [supporters, condorcetProfile, cycOrder, crank, Finset.mem_filter]
 
-/-- In the Condorcet profile, voters `0` and `1` prefer `1` to `2`. -/
+/-- In the Condorcet profile, the voters who prefer `1` to `2` are exactly `0` and `1`. -/
 theorem condorcet_sup12 : supporters condorcetProfile 1 2 = {0, 1} := by
   ext i
   fin_cases i <;> simp [supporters, condorcetProfile, cycOrder, crank, Finset.mem_filter]
 
-/-- In the Condorcet profile, voters `1` and `2` prefer `2` to `0`. -/
+/-- In the Condorcet profile, the voters who prefer `2` to `0` are exactly `1` and `2`. -/
 theorem condorcet_sup20 : supporters condorcetProfile 2 0 = {1, 2} := by
   ext i
   fin_cases i <;> simp [supporters, condorcetProfile, cycOrder, crank, Finset.mem_filter]
@@ -155,8 +155,8 @@ theorem exists_majorityPrefers_not_transitive :
       MajorityPrefers P 0 1 ∧ MajorityPrefers P 1 2 ∧ ¬ MajorityPrefers P 0 2 := by
   exact ⟨condorcetProfile, condorcet_maj01, condorcet_maj12, condorcet_nmaj02⟩
 
-/-- Some profile has no Condorcet winner: every alternative is beaten by
-pairwise majority. -/
+/-- Some profile of three voters over three alternatives has no Condorcet winner: every
+alternative is beaten by pairwise majority. -/
 theorem exists_no_condorcetWinner :
     ∃ P : Profile (Fin 3) (Fin 3), ∀ a, ∃ b, MajorityPrefers P b a := by
   refine ⟨condorcetProfile, ?_⟩

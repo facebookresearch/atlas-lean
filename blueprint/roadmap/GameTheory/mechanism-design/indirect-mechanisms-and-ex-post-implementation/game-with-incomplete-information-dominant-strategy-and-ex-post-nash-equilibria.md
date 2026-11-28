@@ -4,7 +4,7 @@ A *game with strict incomplete information* has players $i$ with type spaces $T_
 
 ## Depends on
 
-- [Bayesian game](../../not-yet-classified/part-01/bayesian-game/bayesian-game.md)
+- [Bayesian game](../../noncooperative-games/finite-bayesian-games-and-the-agent-normal-form/bayesian-game.md)
 - [Pure Nash equilibrium of a finite game](../../noncooperative-games/potential-games/is-pure-nash-2.md)
 - [Dominant-strategy profile](../revelation-principle/is-dominant-strategy-profile.md)
 

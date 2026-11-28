@@ -17,6 +17,12 @@ An agent with a value $t \in [a, b]$ who reports $s$ to a single-parameter mecha
 - [Myerson's Lemma 2 for one bidder](is-incentive-compatible-on-and-utility-n.md)
 - [Single-parameter quasilinear mechanisms: model, DSIC and IR](remaining-clauses-of-single-parameter-quasilinear-mechanisms.md)
 
+## Dominant-strategy auctions
+
+- [Dominant-strategy incentive compatibility of a single-parameter auction](dsic.md)
+- [Myerson payment of an allocation rule](myerson-payment.md)
+- [The Myerson payment of a zero bid is zero](myerson-payment-zero.md)
+
 ## Related topics
 
 - [Revelation principle](../revelation-principle/README.md): why direct, incentive-compatible mechanisms suffice.

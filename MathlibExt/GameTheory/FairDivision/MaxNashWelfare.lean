@@ -84,8 +84,8 @@ theorem positiveWelfare_eq_nashWelfare {ι γ : Type*} [Fintype ι] [Fintype γ]
     simp [mem_positiveAgents, h i]
   simp only [positiveWelfare, nashWelfare, hS]
 
-/-- Existence of a maximum Nash welfare allocation: first maximise the number
-of agents with positive value, then their value product. -/
+/-- Existence of a maximum Nash welfare allocation for a nonempty set of agents: first maximise
+the number of agents with positive value, then their value product. -/
 theorem exists_isMaxNashWelfare {ι γ : Type*} [Fintype ι] [Fintype γ]
     [DecidableEq ι] [Nonempty ι] (v : ι → γ → ℝ) :
     ∃ A : γ → ι, IsMaxNashWelfare v A := by

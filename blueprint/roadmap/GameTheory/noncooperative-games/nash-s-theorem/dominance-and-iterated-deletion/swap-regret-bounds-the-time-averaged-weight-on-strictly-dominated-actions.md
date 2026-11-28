@@ -13,7 +13,7 @@ Consider the swap function that replaces each dominated action $a \in D$ by its 
 ## Depends on
 
 - [Strict, weak and ε-strict dominance by mixed strategies](strict-weak-and-strict-dominance-by-mixed-strategies.md)
-- [Swap regret](../../../not-yet-classified/part-02/regret/swap-regret.md)
+- [Swap regret](../../external-and-swap-regret/swap-regret.md)
 
 ## Sources
 

@@ -10,6 +10,7 @@ Minimum spanning trees (Kruskal, Prim), maximum flow and minimum cut (Edmonds-Ka
 - [Minimum-cost flows and residual potentials](minimum-cost-flows-and-residual-potentials/README.md)
 - [Prim's algorithm](prim-s-algorithm/README.md)
 
+- [Component halving in Borůvka's algorithm](boruvka-halving.md)
 - [Hoffman's circulation theorem](hoffman-circulation-theorem.md)
 - [Gale's feasibility condition for transportation problems](gale-feasibility-for-transportation-problems.md)
 - [Reduced-cost optimality certificate for minimum-cost flow](potential-certificate-for-minimum-cost-flow.md)

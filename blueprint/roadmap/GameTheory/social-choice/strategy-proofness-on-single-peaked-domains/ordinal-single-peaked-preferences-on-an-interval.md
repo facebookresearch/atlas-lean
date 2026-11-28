@@ -4,7 +4,7 @@ A weak order on a closed interval $[a, b]$ is *single-peaked* with peak $p$ if $
 
 ## Depends on
 
-- [Single-peaked profile](../../not-yet-classified/part-01/median-voter/single-peaked-profile.md)
+- [Single-peaked profile](../voting-rules-and-majority-relations/black-s-median-voter-theorem/single-peaked-profile.md)
 - [Strategy-proof social choice function](../gibbard-satterthwaite-theorem/is-strategy-proof.md)
 
 ## Sources

@@ -9,7 +9,7 @@ Every mechanism placing the facility at a fixed order statistic $x_{(k)}$ of the
 ## Depends on
 
 - [Facility-location mechanism on a metric space](facility-location-mechanism-on-a-metric-space.md)
-- [The median mechanism is group strategyproof](../../not-yet-classified/part-01/facility-location/median-is-group-strategyproof.md)
+- [The median mechanism is group strategyproof](strategyproof-facility-location-on-the-line/median-is-group-strategyproof.md)
 
 ## Sources
 

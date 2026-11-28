@@ -121,9 +121,11 @@ public noncomputable def levelAction (ρ : GaloisRepAdic A) (I : Ideal A)
     rw [← Submodule.map_le_iff_le_comap, Submodule.map_smul'']
     exact Submodule.smul_mono le_rfl le_top)
 
-/-- An adic representation is flat at `p` when every finite quotient level
-is the points of a finite flat cocommutative Hopf algebra over the
-rationals localized at `p`. -/
+/-- An adic representation is flat at `p` when the residue field of `A` is finite and every
+finite quotient level is the points of a finite, flat, commutative and cocommutative Hopf
+algebra over the
+rationals localized at `p`, compatibly with the group laws (convolution product to addition)
+and with the Galois actions. -/
 public def IsFlatAt (ρ : GaloisRepAdic A) (p : ℕ) : Prop :=
   Finite (IsLocalRing.ResidueField A) ∧ ∀ I : Ideal A, Finite (A ⧸ I) →
     ∃ (H : Type u) (cH : CommRing H) (hH : HopfAlgebra (Rat.localizedAt p) H),

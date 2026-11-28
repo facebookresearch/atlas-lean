@@ -5,7 +5,7 @@ In a finite cost-minimization game, a pure strategy $a \in S_i$ is *strictly dom
 ## Depends on
 
 - [Strategic Game](../../../not-yet-classified/part-02/strategic-game/strategic-game.md)
-- [Strictly dominant strategy](../../../not-yet-classified/part-01/dominant-strategy/is-strictly-dominant.md)
+- [Strictly dominant strategy](../../strictly-dominant-strategies-and-nash-equilibriu/is-strictly-dominant.md)
 
 ## Sources
 

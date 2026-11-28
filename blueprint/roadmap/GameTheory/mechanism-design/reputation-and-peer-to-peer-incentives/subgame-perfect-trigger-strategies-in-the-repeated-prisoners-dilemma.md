@@ -9,7 +9,7 @@ Discounting makes continuation payoffs continuous at infinity, so the one-shot d
 ## Depends on
 
 - [Subgame-perfect equilibrium of a perfect-information game](../../noncooperative-games/von-neumann-s-minimax-theorem/extensive-form-and-sequence-form/perfect-information-refinements/subgame-perfect-equilibrium-of-a-perfect-information-game.md)
-- [The one-shot incentive inequalities of grim trigger, in closed form](../../not-yet-classified/part-02/repeated-prisoners-dilemma/one-shot-incentives-iff.md)
+- [The one-shot incentive inequalities of grim trigger, in closed form](../../noncooperative-games/grim-trigger-in-the-repeated-prisoner-s-dilemma/one-shot-incentives-iff.md)
 
 ## Proof depends on
 

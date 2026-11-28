@@ -6,4 +6,3 @@ Topics added since this subject's fields were last revised.
 - [Kernel of a Galois representation as a fixing subgroup](exists-intermediate-field-is-galois-fixi.md)
 - [Kummer Character](kummer-character/README.md)
 - [Semilinear Descent](exists-basis-base-change-forall-apply-eq.md)
-- [Residual Galois Rep](residual-galois-rep/README.md)

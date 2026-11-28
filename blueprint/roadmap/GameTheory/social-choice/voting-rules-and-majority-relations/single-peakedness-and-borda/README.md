@@ -1,0 +1,15 @@
+# Single-peakedness and Borda
+
+- [Is Single Peaked](is-single-peaked.md)
+- [Top of is Single Peaked](top-of-is-single-peaked.md)
+- [Strict asymm](strict-asymm.md)
+- [Not majority both](not-majority-both.md)
+- [Majority Prefers of not](majority-prefers-of-not.md)
+- [Not below both of single Peaked](not-below-both-of-single-peaked.md)
+- [Supporters zy subset zx](supporters-zy-subset-zx.md)
+- [Supporters xy subset xz](supporters-xy-subset-xz.md)
+- [No cycle forward](no-cycle-forward.md)
+- [No cycle backward](no-cycle-backward.md)
+- [Majority Prefers trans of single Peaked](majority-prefers-trans-of-single-peaked.md)
+- [Borda Score](borda-score.md)
+- [Borda score reversal](borda-score-reversal.md)

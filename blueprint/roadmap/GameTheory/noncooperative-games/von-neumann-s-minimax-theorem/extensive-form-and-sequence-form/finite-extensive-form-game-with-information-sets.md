@@ -5,7 +5,7 @@ A *finite extensive-form game* consists of a finite rooted tree whose leaves car
 ## Depends on
 
 - [Strategic Game](../../../not-yet-classified/part-02/strategic-game/strategic-game.md)
-- [Perfect-information game tree](../../../not-yet-classified/part-01/backward-induction/perfect-info-game.md)
+- [Perfect-information game tree](../../backward-induction-and-subgame-perfection/perfect-info-game.md)
 
 ## Sources
 
