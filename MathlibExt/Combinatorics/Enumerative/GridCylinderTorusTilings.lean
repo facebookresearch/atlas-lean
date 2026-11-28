@@ -38,6 +38,9 @@ two for even `n` and odd `a.val`, and none when both are even.
 
 * `MetaMathlibExt.fixedTilingCount`: the number of maps `F : α → T` with `F (φ c) = σ (F c)`
   for every `c : α`.
+* `MetaMathlibExt.fixedTilingsEquiv`: for involutions on cells with decidable equality and
+  on tile designs, restrict a fixed tiling to a decidably chosen representative of each
+  two-cycle and to each fixed cell.
 * `MetaMathlibExt.torusShiftSum`: the sum of the fixed-tiling counts over all torus shifts.
 
 ## Main results
@@ -78,6 +81,9 @@ quotients `-(j + 1)` and `k - (j + 1)`, and both residues solve the equation bec
   Journal of Integer Sequences 27 (2024), Article 24.6.1; arXiv:2311.13072v2, Theorem 2.1.2
   (the tilings of the grid fixed by the identity), Theorem 2.2.2, Equation (7) (the tilings of
   the square grid fixed by the identity) and Lemma 3.0.1.
+* The published Theorem 20 (p. 12) supplies the orbit argument for `fixedTilingsEquiv`.
+  Its Lean construction was moved from `squareGrid_r2_odd.restrictEquiv` in
+  `MathlibExt.Combinatorics.Enumerative.SquareGridR2Odd`.
 -/
 
 namespace MetaMathlibExt
@@ -107,13 +113,82 @@ Source: Peter Kagey, William Keehn, *Counting Tilings of the n × m Grid, Cylind
     [Fintype T] [DecidableEq T] (φ : α → α) (σ : Equiv.Perm T) : ℕ :=
   Fintype.card {F : α → T // ∀ c, F (φ c) = σ (F c)}
 
-/-- **Cardinality formula for fixed tilings.** For finite sets of cells $\alpha$ and designs $T$
-with decidable equality, a map $\varphi : \alpha \to \alpha$, and a permutation $\sigma$ of $T$,
-the fixed-tiling count is $\left|\{F : \alpha \to T \mid \forall c \in \alpha,\,
-F(\varphi(c)) = \sigma(F(c))\}\right|$. -/
-public theorem fixedTilingCount_eq_card {α T : Type*} [Fintype α] [DecidableEq α]
-    [Fintype T] [DecidableEq T] (φ : α → α) (σ : Equiv.Perm T) :
-    fixedTilingCount φ σ = Fintype.card {F : α → T // ∀ c, F (φ c) = σ (F c)} := rfl
+/-- **Tilings fixed by an involution via orbit representatives.** Let $\alpha$ be a type of
+cells with decidable equality and let $T$ be a type of tile designs. Let
+$\varphi : \alpha \to \alpha$ and a permutation $\sigma$ of $T$ both be involutions. Let
+$p$ be a decidable predicate on $\alpha$ with $\neg p(c)$ when $\varphi(c)=c$ and
+$p(\varphi(c)) \iff \neg p(c)$ when $\varphi(c)\ne c$. Restriction gives a bijection
+
+$$\{F : \alpha \to T \mid \forall c,\, F(\varphi(c))=\sigma(F(c))\} \simeq
+(\{c \mid p(c)\} \to T) \times (\{c \mid \varphi(c)=c\} \to \{d \mid \sigma(d)=d\}).$$
+-/
+@[expose] public def fixedTilingsEquiv {α T : Type*} [DecidableEq α]
+    (φ : α → α) (hφ : Function.Involutive φ)
+    (p : α → Prop) [DecidablePred p]
+    (hfixed : ∀ c, φ c = c → ¬ p c)
+    (hflip : ∀ c, φ c ≠ c → (p (φ c) ↔ ¬ p c))
+    (σ : Equiv.Perm T) (hσ : Function.Involutive σ) :
+    {F : α → T // ∀ c, F (φ c) = σ (F c)} ≃
+      ((Subtype p → T) × ({c // φ c = c} → {d : T // σ d = d})) := by
+  let extend (f : Subtype p → T) (g : {c // φ c = c} → {d : T // σ d = d}) (c : α) : T :=
+    if h : p c then f ⟨c, h⟩
+    else if hfix : φ c = c then (g ⟨c, hfix⟩).1
+    else σ (f ⟨φ c, (hflip c hfix).2 h⟩)
+  refine
+    { toFun := fun F =>
+        (fun c => F.1 c, fun c => ⟨F.1 c, by
+          have h := F.2 c
+          rw [c.2] at h
+          exact h.symm⟩)
+      invFun := fun fg => ⟨extend fg.1 fg.2, ?_⟩
+      left_inv := ?_
+      right_inv := ?_ }
+  · intro c
+    by_cases hp : p c
+    · have hne : φ c ≠ c := fun he => hfixed c he hp
+      have hnp : ¬ p (φ c) := fun h => (hflip c hne).1 h hp
+      have hne3 : φ (φ c) ≠ φ c := by rw [hφ c]; exact Ne.symm hne
+      have h1 : extend fg.1 fg.2 c = fg.1 ⟨c, hp⟩ := by simp [extend, hp]
+      have h2 : extend fg.1 fg.2 (φ c) = σ (fg.1 ⟨c, hp⟩) := by
+        simp [extend, hnp, hφ c, Ne.symm hne]
+      rw [h2, h1]
+    · by_cases hfix : φ c = c
+      · have hnp : ¬ p (φ c) := by rwa [hfix]
+        have h1 : extend fg.1 fg.2 c = (fg.2 ⟨c, hfix⟩).1 := by simp [extend, hp, hfix]
+        have h2 : extend fg.1 fg.2 (φ c) = (fg.2 ⟨c, hfix⟩).1 := by
+          simp [extend, hp, hfix]
+        rw [h2, h1]
+        exact (fg.2 ⟨c, hfix⟩).2.symm
+      · have hpφ : p (φ c) := (hflip c hfix).2 hp
+        have h1 : extend fg.1 fg.2 c = σ (fg.1 ⟨φ c, hpφ⟩) := by simp [extend, hp, hfix]
+        have h2 : extend fg.1 fg.2 (φ c) = fg.1 ⟨φ c, hpφ⟩ := by simp [extend, hpφ]
+        rw [h2, h1, hσ]
+  · intro F
+    apply Subtype.ext
+    funext c
+    by_cases hp : p c
+    · simp [extend, hp]
+    · by_cases hfix : φ c = c
+      · have h1 : extend (fun c => F.1 c)
+            (fun c => ⟨F.1 c, by have h := F.2 c; rw [c.2] at h; exact h.symm⟩) c =
+            F.1 c := by simp [extend, hp, hfix]
+        exact h1
+      · have hpφ : p (φ c) := (hflip c hfix).2 hp
+        have h1 : extend (fun c => F.1 c)
+            (fun c => ⟨F.1 c, by have h := F.2 c; rw [c.2] at h; exact h.symm⟩) c =
+            σ (F.1 (φ c)) := by simp [extend, hp, hfix]
+        dsimp only
+        rw [h1]
+        have h := F.2 (φ c)
+        rw [hφ c] at h
+        exact h.symm
+  · rintro ⟨f, g⟩
+    apply Prod.ext
+    · funext ⟨c, hp⟩
+      simp [extend, hp]
+    · funext ⟨c, hfix⟩
+      apply Subtype.ext
+      simp [extend, hfixed c hfix, hfix]
 
 /-- **Cylinder shift sum.** Let $T$ be a finite set of tile designs, let $n, m \ge 1$, let $g$ be
 a map from the cells $\mathbb{Z}/n \times \mathbb{Z}/m$ to themselves, and let $\sigma$ be a
@@ -131,17 +206,6 @@ Source: Peter Kagey, William Keehn, *Counting Tilings of the n × m Grid, Cylind
     (cellG : ZMod n × ZMod m → ZMod n × ZMod m) (σ : Equiv.Perm T) : ℕ :=
   ∑ a : ZMod n,
     fixedTilingCount (fun c => cellG (c.1 + a, c.2)) σ
-
-/-- **Expansion of the cylinder shift sum.** Let $n,m\ge 1$, let $T$ be a finite set of designs
-with decidable equality, and put $C = \mathbb{Z}/n\mathbb{Z} \times \mathbb{Z}/m\mathbb{Z}$.
-For $g : C \to C$ and a permutation $\sigma$ of $T$, the cylinder shift sum is
-$\sum_{a \in \mathbb{Z}/n\mathbb{Z}} \operatorname{Fix}(g_a,\sigma)$, where
-$g_a(x,y)=g(x+a,y)$ and $\operatorname{Fix}(g_a,\sigma)$ is the number of fixed tilings. -/
-public theorem cylinderShiftSum_eq_sum {T : Type*} [Fintype T] [DecidableEq T]
-    (n m : ℕ) [NeZero n] [NeZero m]
-    (cellG : ZMod n × ZMod m → ZMod n × ZMod m) (σ : Equiv.Perm T) :
-    cylinderShiftSum n m cellG σ =
-      ∑ a : ZMod n, fixedTilingCount (fun c => cellG (c.1 + a, c.2)) σ := rfl
 
 /-- **Torus shift sum.** Let $n, m \ge 1$, let $T$ be a finite set of tile designs, let $g$ be a
 map from $\mathbb{Z}/n \times \mathbb{Z}/m$ (the cells of the $n \times m$ torus) to itself and

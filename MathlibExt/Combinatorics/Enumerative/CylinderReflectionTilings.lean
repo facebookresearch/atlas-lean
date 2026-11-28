@@ -9,7 +9,6 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Combinatorics.Enumerative.GridReflectionTilings
-import MathlibExt.Combinatorics.Enumerative.SquareGridR2Odd
 import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Data.Fintype.Sum
 import Mathlib.Logic.Equiv.Fin.Basic
@@ -33,11 +32,9 @@ column. A reflected pair takes any design, while a fixed cell takes a design fix
   Journal of Integer Sequences 27 (2024), Article 24.6.1, Theorem 20 (p. 12), Lemma 25
   (pp. 16–17), and Theorem 30, Equations (26a) and (26b) (pp. 19–20).
   <https://cs.uwaterloo.ca/journals/JIS/VOL27/Kagey/kagey6.html>
-* `MathlibExt.Combinatorics.Enumerative.SquareGridR2Odd`: the proof reuses
-  `squareGrid_r2_odd.restrictEquiv` to choose tiles on one representative per pair and on
-  the fixed cells.
-* `MathlibExt.Combinatorics.Enumerative.GridCylinderTorusTilings`: the odd case uses
-  `reflection_shift_solutions_odd` to identify the unique fixed column.
+* `MathlibExt.Combinatorics.Enumerative.GridCylinderTorusTilings`: `fixedTilingsEquiv` chooses
+  tiles on one representative per pair and on the fixed cells; `reflection_shift_solutions_odd`
+  identifies the unique fixed column when the width is odd.
 -/
 
 namespace MetaMathlibExt
@@ -119,18 +116,17 @@ private theorem fixedTilingCount_shiftedReflection {T : Type*} [Fintype T] [Deci
   simp only [C, Fintype.card_prod, ZMod.card] at htotal
   have hrep : Fintype.card (Subtype p) = (n * m - k * m) / 2 := by omega
   have hshift (c : C) : cellF n m (c.1 + a, c.2) = φ c := by
-    rw [cellF_apply]
     refine Prod.ext ?_ rfl
-    dsimp [φ, r]
+    dsimp [cellF, φ, r]
     ring
   simp_rw [hshift]
-  rw [fixedTilingCount_eq_card, tileFixedCount_one]
   calc
-    Fintype.card {F : C → T // ∀ c, F (φ c) = σ (F c)} = Fintype.card
+    fixedTilingCount φ σ = Fintype.card
         ((Subtype p → T) × (Subtype q → {d : T // σ d = d})) :=
-      Fintype.card_congr (squareGrid_r2_odd.restrictEquiv φ hφ p hp hflip σ hσ)
+      Fintype.card_congr (fixedTilingsEquiv φ hφ p hp hflip σ hσ)
     _ = _ := by
       rw [Fintype.card_prod, Fintype.card_fun, Fintype.card_fun, hrep, hcard]
+      simp [tileFixedCount]
 
 /-- **Fixed cylinder tilings of the reflection f, n even.** Let $T$ be a finite set of tile
 designs, let $\sigma$ be a permutation of $T$ with $\sigma^2 = 1$, and let $n, m \ge 1$ with $n$
@@ -160,7 +156,7 @@ public theorem cylinder_f_even {T : Type*} [Fintype T] [DecidableEq T]
     rw [fixedTilingCount_shiftedReflection n m a σ htiles, card_fixedColumns hn]
     split_ifs <;> simp [A, B]
   suffices hsum : 2 * (∑ a : ZMod n, if Even a.val then A else B) = n * (A + B) by
-    simpa only [cylinderShiftSum_eq_sum, hcount] using hsum
+    simpa only [cylinderShiftSum, hcount] using hsum
   -- Index the two parities by the second coordinate of `Fin k × Fin 2`.
   obtain ⟨k, hk⟩ : ∃ k, n = k * 2 := by
     obtain ⟨k, hk⟩ := hn
@@ -202,7 +198,7 @@ public theorem cylinder_f_odd {T : Type*} [Fintype T] [DecidableEq T]
       (Fintype.card_congr (Equiv.subtypeEquivRight hmem)).trans (Fintype.card_subtype_eq x₀)
     rw [fixedTilingCount_shiftedReflection n m a σ htiles]
     simp only [hcard, one_mul]
-  rw [cylinderShiftSum_eq_sum, Finset.sum_const_nat (fun a _ => hcount a)]
+  rw [cylinderShiftSum, Finset.sum_const_nat (fun a _ => hcount a)]
   simp only [Finset.card_univ, ZMod.card, Nat.mul_assoc]
 
 end MetaMathlibExt

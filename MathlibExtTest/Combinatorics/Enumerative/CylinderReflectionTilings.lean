@@ -31,17 +31,17 @@ example : cylinderShiftSum 4 2 (cellF 4 2) (Equiv.swap (0 : Fin 3) 1) = 180 := b
 -- Enumerate the fixed tilings over all three shifts. Each pair has four choices and its
 -- fixed cell has two (the designs not swapped by the permutation).
 example : cylinderShiftSum 3 1 (cellF 3 1) (Equiv.swap (0 : Fin 4) 1) = 24 := by
-  rw [cylinderShiftSum_eq_sum]
+  rw [cylinderShiftSum]
   decide +kernel
 
 -- At width one, the sole shift and reflection leave both rows fixed.
 example : cylinderShiftSum 1 2 (cellF 1 2) (Equiv.swap (0 : Fin 3) 1) = 1 := by
-  rw [cylinderShiftSum_eq_sum]
+  rw [cylinderShiftSum]
   decide +kernel
 
 -- With no fixed tile design, the fixed column rules out every tiling at every shift.
 example : cylinderShiftSum 3 1 (cellF 3 1) (Equiv.swap (0 : Fin 2) 1) = 0 := by
-  rw [cylinderShiftSum_eq_sum]
+  rw [cylinderShiftSum]
   decide +kernel
 
 -- Directly count the fixed columns for each shift at width three.
@@ -50,7 +50,7 @@ example : ∀ a : ZMod 3, Fintype.card {x : ZMod 3 // cellF 3 1 (x + a, 0) = (x,
 
 -- Two rows give two reflected pairs and two fixed cells at each of the three shifts.
 example : cylinderShiftSum 3 2 (cellF 3 2) (1 : Equiv.Perm (Fin 2)) = 48 := by
-  rw [cylinderShiftSum_eq_sum]
+  rw [cylinderShiftSum]
   decide +kernel
 
 -- A client of the closed formula with one fixed design and two pairs per shift.

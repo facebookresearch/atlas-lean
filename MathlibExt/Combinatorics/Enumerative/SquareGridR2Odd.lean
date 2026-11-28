@@ -18,96 +18,19 @@ permutation $\sigma$ of $T$ with $\sigma^2=1$, `MetaMathlibExt.squareGrid_r2_odd
 tilings of the $n \times n$ grid fixed by the half-turn and $\sigma$. The nonfixed cells form
 pairs, and the unique fixed cell must carry a tile fixed by $\sigma$.
 
-The restriction bijection applies to any involutions on cells with decidable equality and
-on tile designs, given a decidable choice of one representative from each pair of nonfixed
-cells and no representative at fixed cells.
+The proof applies `fixedTilingsEquiv` to the half-turn and a choice of one cell from each
+nonfixed pair.
 
 ## References
 
 * Peter Kagey and William Keehn, *Counting Tilings of the n × m Grid, Cylinder, and Torus*,
   Journal of Integer Sequences 27 (2024), Article 24.6.1, Theorem 20 (p. 12) and
-  Theorem 24 (pp. 14–15).
+  Theorem 24, Equation (8) (p. 15).
 -/
 
 namespace MetaMathlibExt
 
 namespace squareGrid_r2_odd
-
-/-- **Tilings fixed by an involution via orbit representatives.** Let $\alpha$ be a type of
-cells with decidable equality and let $T$ be a type of tile designs. Let
-$\varphi : \alpha \to \alpha$ and a permutation $\sigma$ of $T$ both be involutions. Let
-$p$ be a decidable predicate on $\alpha$ with $\neg p(c)$ when $\varphi(c)=c$ and
-$p(\varphi(c)) \iff \neg p(c)$ when $\varphi(c)\ne c$. Restriction gives a bijection
-
-$$\{F : \alpha \to T \mid \forall c,\, F(\varphi(c))=\sigma(F(c))\} \simeq
-(\{c \mid p(c)\} \to T) \times (\{c \mid \varphi(c)=c\} \to \{d \mid \sigma(d)=d\}).$$
--/
-public def restrictEquiv {α T : Type*} [DecidableEq α] (φ : α → α) (hφ : Function.Involutive φ)
-    (p : α → Prop) [DecidablePred p]
-    (hfixed : ∀ c, φ c = c → ¬ p c)
-    (hflip : ∀ c, φ c ≠ c → (p (φ c) ↔ ¬ p c))
-    (σ : Equiv.Perm T) (hσ : Function.Involutive σ) :
-    {F : α → T // ∀ c, F (φ c) = σ (F c)} ≃
-      ((Subtype p → T) × ({c // φ c = c} → {d : T // σ d = d})) := by
-  let extend (f : Subtype p → T) (g : {c // φ c = c} → {d : T // σ d = d}) (c : α) : T :=
-    if h : p c then f ⟨c, h⟩
-    else if hfix : φ c = c then (g ⟨c, hfix⟩).1
-    else σ (f ⟨φ c, (hflip c hfix).2 h⟩)
-  refine
-    { toFun := fun F =>
-        (fun c => F.1 c, fun c => ⟨F.1 c, by
-          have h := F.2 c
-          rw [c.2] at h
-          exact h.symm⟩)
-      invFun := fun fg => ⟨extend fg.1 fg.2, ?_⟩
-      left_inv := ?_
-      right_inv := ?_ }
-  · intro c
-    by_cases hp : p c
-    · have hne : φ c ≠ c := fun he => hfixed c he hp
-      have hnp : ¬ p (φ c) := fun h => (hflip c hne).1 h hp
-      have hne3 : φ (φ c) ≠ φ c := by rw [hφ c]; exact Ne.symm hne
-      have h1 : extend fg.1 fg.2 c = fg.1 ⟨c, hp⟩ := by simp [extend, hp]
-      have h2 : extend fg.1 fg.2 (φ c) = σ (fg.1 ⟨c, hp⟩) := by
-        simp [extend, hnp, hφ c, Ne.symm hne]
-      rw [h2, h1]
-    · by_cases hfix : φ c = c
-      · have hnp : ¬ p (φ c) := by rwa [hfix]
-        have h1 : extend fg.1 fg.2 c = (fg.2 ⟨c, hfix⟩).1 := by simp [extend, hp, hfix]
-        have h2 : extend fg.1 fg.2 (φ c) = (fg.2 ⟨c, hfix⟩).1 := by
-          simp [extend, hp, hfix]
-        rw [h2, h1]
-        exact (fg.2 ⟨c, hfix⟩).2.symm
-      · have hpφ : p (φ c) := (hflip c hfix).2 hp
-        have h1 : extend fg.1 fg.2 c = σ (fg.1 ⟨φ c, hpφ⟩) := by simp [extend, hp, hfix]
-        have h2 : extend fg.1 fg.2 (φ c) = fg.1 ⟨φ c, hpφ⟩ := by simp [extend, hpφ]
-        rw [h2, h1, hσ]
-  · intro F
-    apply Subtype.ext
-    funext c
-    by_cases hp : p c
-    · simp [extend, hp]
-    · by_cases hfix : φ c = c
-      · have h1 : extend (fun c => F.1 c)
-            (fun c => ⟨F.1 c, by have h := F.2 c; rw [c.2] at h; exact h.symm⟩) c =
-            F.1 c := by simp [extend, hp, hfix]
-        exact h1
-      · have hpφ : p (φ c) := (hflip c hfix).2 hp
-        have h1 : extend (fun c => F.1 c)
-            (fun c => ⟨F.1 c, by have h := F.2 c; rw [c.2] at h; exact h.symm⟩) c =
-            σ (F.1 (φ c)) := by simp [extend, hp, hfix]
-        dsimp only
-        rw [h1]
-        have h := F.2 (φ c)
-        rw [hφ c] at h
-        exact h.symm
-  · rintro ⟨f, g⟩
-    apply Prod.ext
-    · funext ⟨c, hp⟩
-      simp [extend, hp]
-    · funext ⟨c, hfix⟩
-      apply Subtype.ext
-      simp [extend, hfixed c hfix, hfix]
 
 /-- The half-turn on the odd square grid, in `Fin` coordinates. -/
 private def halfTurn (k : ℕ) (c : Fin (2 * k + 1) × Fin (2 * k + 1)) :
@@ -275,7 +198,7 @@ public theorem squareGrid_r2_odd {T : Type*} [Fintype T] [DecidableEq T]
       = Fintype.card ((Subtype (squareGrid_r2_odd.repPred k) → T) ×
           ({c : Fin (2 * k + 1) × Fin (2 * k + 1) //
               squareGrid_r2_odd.halfTurn k c = c} → {d : T // σ d = d})) :=
-        Fintype.card_congr (squareGrid_r2_odd.restrictEquiv
+        Fintype.card_congr (fixedTilingsEquiv
           (squareGrid_r2_odd.halfTurn k) (squareGrid_r2_odd.halfTurn_involutive k)
           (squareGrid_r2_odd.repPred k)
           (fun c h => squareGrid_r2_odd.repPred_of_fixed k h)
