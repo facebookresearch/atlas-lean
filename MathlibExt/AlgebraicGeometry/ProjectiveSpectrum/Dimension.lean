@@ -12,7 +12,6 @@ public import Mathlib.AlgebraicGeometry.ProjectiveSpectrum.Scheme
 public import Mathlib.AlgebraicGeometry.Properties
 public import Mathlib.Order.KrullDimension
 public import Mathlib.RingTheory.KrullDimension.Basic
-public import Mathlib.RingTheory.Ideal.GoingUp
 public import Mathlib.Topology.KrullDimension
 
 /-!
@@ -26,22 +25,11 @@ Let `𝒜` be an `ℕ`-grading of a commutative ring `A`.
   length `n` extends to a chain of primes of `A` of length `n + 1` (by a maximal ideal containing
   the last prime and the irrelevant ideal).
 * `AlgebraicGeometry.Proj.topologicalKrullDim_lt`: if `dim A ≤ n` then `dim Proj 𝒜 < n`.
-* `ringKrullDim_le_of_isIntegral`: an integral algebra has Krull dimension at most that of the base
-  (by incomparability).
 -/
 
 @[expose] public section
 
 open AlgebraicGeometry
-
-/-- **Integral extensions do not raise the dimension.** If `B` is an integral `A`-algebra, then
-`dim B ≤ dim A`: contraction of primes is strictly monotone (incomparability). Injectivity of
-`A → B` is not needed for this inequality. -/
-theorem ringKrullDim_le_of_isIntegral (A B : Type*) [CommRing A] [CommRing B] [Algebra A B]
-    [Algebra.IsIntegral A B] : ringKrullDim B ≤ ringKrullDim A :=
-  Order.krullDim_le_of_strictMono (fun p : PrimeSpectrum B =>
-    (⟨p.asIdeal.under A, inferInstance⟩ : PrimeSpectrum A)) fun _ _ h =>
-      Ideal.IsIntegral.under_lt_under h
 
 namespace ProjectiveSpectrum
 

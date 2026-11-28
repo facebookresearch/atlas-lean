@@ -77,6 +77,11 @@ noncomputable def projectiveCoordinate (i : Fin 3) : W.HomogeneousCoordinateRing
 theorem projectiveCoordinate_mem (i : Fin 3) : W.projectiveCoordinate i ∈ W.projectiveGrading 1 :=
   W.mk_mem_projectiveGrading (isHomogeneous_X R i)
 
+/-- The coordinate `i` lies in degree `1 • 1`, as `HomogeneousLocalization.Away.mk` asks for. -/
+theorem projectiveCoordinate_mem_one_smul (i : Fin 3) :
+    W.projectiveCoordinate i ∈ W.projectiveGrading (1 • 1) := by
+  simpa using W.projectiveCoordinate_mem i
+
 /-- **The projective Weierstrass curve.** For a Weierstrass curve `W` over a commutative ring `R`,
 this is the scheme `Proj S_W` of the homogeneous coordinate ring `S_W = R[X, Y, Z] / (F)`, graded
 by total degree: the closed subscheme of the projective plane over `R` cut out by the homogeneous

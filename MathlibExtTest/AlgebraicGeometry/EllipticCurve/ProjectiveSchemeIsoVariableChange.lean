@@ -31,11 +31,12 @@ abbrev C : WeierstrassCurve.VariableChange ℚ := ⟨-1, 1, 2, 3⟩
 example : IsDominant E.affineChart := inferInstance
 
 /-- The isomorphism of the variable change is characterized by its restriction to the affine
-chart. -/
-example : (E.projectiveSchemeVariableChangeIso C).hom =
-    (E.projectiveSchemeVariableChangeIso C).hom :=
-  E.eq_projectiveSchemeVariableChangeIso_hom C _
-    (E.projectiveSchemeVariableChangeIso_hom_projectiveSchemeToSpec C)
-    (E.affineChart_comp_projectiveSchemeVariableChangeIso_hom C)
+chart: any morphism over `ℚ` that is the affine variable change on the chart is that isomorphism. -/
+example (φ : (C • E).ProjectiveScheme ⟶ E.ProjectiveScheme)
+    (h₁ : φ ≫ E.projectiveSchemeToSpec = (C • E).projectiveSchemeToSpec)
+    (h₂ : (C • E).affineChart ≫ φ =
+      Spec.map (CommRingCat.ofHom (E.affineVariableChange C)) ≫ E.affineChart) :
+    φ = (E.projectiveSchemeVariableChangeIso C).hom :=
+  E.eq_projectiveSchemeVariableChangeIso_hom C φ h₁ h₂
 
 end ProjectiveSchemeIsoVariableChangeTest

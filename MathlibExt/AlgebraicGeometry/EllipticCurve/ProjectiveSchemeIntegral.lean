@@ -11,6 +11,7 @@ module
 public import MathlibExt.AlgebraicGeometry.EllipticCurve.ProjectiveScheme
 public import MathlibExt.AlgebraicGeometry.ProjectiveSpectrum.IsIntegral
 public import MathlibExt.AlgebraicGeometry.ProjectiveSpectrum.Dimension
+public import MathlibExt.RingTheory.Ideal.IntegralKrullDim
 public import Mathlib.RingTheory.MvPolynomial.Ideal
 public import Mathlib.RingTheory.KrullDimension.Polynomial
 public import Mathlib.RingTheory.KrullDimension.Field
@@ -122,8 +123,9 @@ discriminant) over a domain `R` with unique factorization, in particular over a 
 (`WeierstrassCurve.Projective.isDomain_quotient_span_polynomial`) with the nonzero degree one
 element `Y`. (B. Conrad, "Minimal models for elliptic curves", §2, p. 2: the special fiber is
 irreducible and reduced; J. S. Milne, *Elliptic Curves*, 2nd ed., Ch. II, §1, p. 46.) The
-geometric statements (geometrically integral) and the density of the affine chart are not proved
-here. -/
+density of the affine chart over a field is
+`WeierstrassCurve.isIntegral_isProper_dim_one_dense_affineChart`; geometric integrality is not
+asserted here. -/
 theorem isIntegral_projectiveScheme [IsDomain R] [UniqueFactorizationMonoid R] :
     IsIntegral W.ProjectiveScheme := by
   have : IsDomain W.HomogeneousCoordinateRing :=
@@ -241,13 +243,15 @@ theorem ringKrullDim_le [IsNoetherianRing R] :
     ringKrullDim W.HomogeneousCoordinateRing ≤ ringKrullDim R + 2 := by
   let := W.yzHom.toAlgebra
   have := W.isIntegral_mk
-  refine (ringKrullDim_le_of_isIntegral (MvPolynomial (Fin 2) R)
-    W.HomogeneousCoordinateRing).trans ?_
+  refine (ringKrullDim_le_of_integral (A := MvPolynomial (Fin 2) R)
+    (B := W.HomogeneousCoordinateRing)).trans ?_
   rw [MvPolynomial.ringKrullDim_of_isNoetherianRing]
   simp
 
-/-- **The point at infinity `(0 : 1 : 0)`** of `Proj S_W`, over a domain: the relevant homogeneous
-prime ideal `(X, Z)` of `S_W`. -/
+/-- **The generic point of the image of the infinity section** of `Proj S_W`, over a domain: the
+relevant homogeneous prime ideal `(X, Z)` of `S_W`. Over a field it is the point `(0 : 1 : 0)`;
+over a domain that is not a field it is the generic point of the image of `zeroSection`, not the
+whole section. -/
 noncomputable def pointO [IsDomain R] : ProjectiveSpectrum W.projectiveGrading :=
   ⟨⟨Ideal.span {W.projectiveCoordinate 0, W.projectiveCoordinate 2},
     Ideal.homogeneous_span _ _ (by

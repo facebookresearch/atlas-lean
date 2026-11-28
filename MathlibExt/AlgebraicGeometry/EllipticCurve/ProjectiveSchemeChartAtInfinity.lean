@@ -111,11 +111,6 @@ theorem homogeneousToAtInfinity_projectiveCoordinate_one :
 
 /-! ### The ring of sections of the chart `Y ≠ 0` -/
 
-/-- The coordinate `i` lies in degree `1 • 1`, as `Away.mk` asks for. -/
-theorem projectiveCoordinate_mem_one_smul (i : Fin 3) :
-    W.projectiveCoordinate i ∈ W.projectiveGrading (1 • 1) := by
-  simpa using W.projectiveCoordinate_mem i
-
 /-- The element `X / Y` of `(S_W[1 / Y])₀`. -/
 noncomputable def xOverY : Away W.projectiveGrading (W.projectiveCoordinate 1) :=
   Away.mk W.projectiveGrading (W.projectiveCoordinate_mem 1) 1 (W.projectiveCoordinate 0)

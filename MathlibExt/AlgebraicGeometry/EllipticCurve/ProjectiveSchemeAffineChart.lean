@@ -145,18 +145,13 @@ theorem affine_relation_of_mul_eq_one {T : Type*} [CommRing T]
 /-- The localization `S_W[1/Z]`. -/
 abbrev LocZ : Type u := Localization.Away (W.projectiveCoordinate 2)
 
-/-- `1 / Z` in `S_W[1/Z]`. -/
-noncomputable def invZ : W.LocZ :=
-  IsLocalization.mk' W.LocZ (1 : W.HomogeneousCoordinateRing)
-    (⟨W.projectiveCoordinate 2, Submonoid.mem_powers _⟩ : Submonoid.powers _)
+/-- `1 / Z` in `S_W[1/Z]` (Mathlib's `IsLocalization.Away.invSelf`). -/
+noncomputable abbrev invZ : W.LocZ :=
+  IsLocalization.Away.invSelf (W.projectiveCoordinate 2)
 
 theorem algebraMap_coordinate_two_mul_invZ :
-    algebraMap _ W.LocZ (W.projectiveCoordinate 2) * W.invZ = 1 := by
-  rw [invZ, mul_comm, IsLocalization.mk'_spec, map_one]
-
-theorem mem_projectiveGrading_one_nsmul (i : Fin 3) :
-    W.projectiveCoordinate i ∈ W.projectiveGrading (1 • 1) := by
-  simpa using W.projectiveCoordinate_mem i
+    algebraMap _ W.LocZ (W.projectiveCoordinate 2) * W.invZ = 1 :=
+  IsLocalization.Away.mul_invSelf _
 
 /-- The constants `R → S_(Z)`. -/
 noncomputable def constZ : R →+* W.AwayZ :=
@@ -170,20 +165,22 @@ theorem val_constZ (r : R) :
 /-- `X / Z` in `S_(Z)`. -/
 noncomputable def xZ : W.AwayZ :=
   Away.mk _ W.projectiveCoordinate_two_mem 1 (W.projectiveCoordinate 0)
-    (W.mem_projectiveGrading_one_nsmul 0)
+    (W.projectiveCoordinate_mem_one_smul 0)
 
 /-- `Y / Z` in `S_(Z)`. -/
 noncomputable def yZ : W.AwayZ :=
   Away.mk _ W.projectiveCoordinate_two_mem 1 (W.projectiveCoordinate 1)
-    (W.mem_projectiveGrading_one_nsmul 1)
+    (W.projectiveCoordinate_mem_one_smul 1)
 
 theorem val_xZ : W.xZ.val = algebraMap _ W.LocZ (W.projectiveCoordinate 0) * W.invZ := by
-  rw [xZ, Away.val_mk, Localization.mk_eq_mk', IsLocalization.mk'_eq_mul_mk'_one, invZ]
+  rw [xZ, Away.val_mk, Localization.mk_eq_mk', IsLocalization.mk'_eq_mul_mk'_one, invZ,
+    IsLocalization.Away.invSelf]
   congr
   simp
 
 theorem val_yZ : W.yZ.val = algebraMap _ W.LocZ (W.projectiveCoordinate 1) * W.invZ := by
-  rw [yZ, Away.val_mk, Localization.mk_eq_mk', IsLocalization.mk'_eq_mul_mk'_one, invZ]
+  rw [yZ, Away.val_mk, Localization.mk_eq_mk', IsLocalization.mk'_eq_mul_mk'_one, invZ,
+    IsLocalization.Away.invSelf]
   congr
   simp
 
@@ -290,7 +287,7 @@ theorem affineToAwayZ_comp_awayZToAffine :
     Localization.mk_eq_mk',
     IsLocalization.mk'_eq_mul_mk'_one, mul_comm]
   congr 1
-  rw [invZ, ← IsLocalization.mk'_pow]
+  rw [invZ, IsLocalization.Away.invSelf, ← IsLocalization.mk'_pow]
   congr 1
   · simp
 

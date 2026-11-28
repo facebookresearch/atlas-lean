@@ -22,8 +22,10 @@ defined because `I` contains the homogeneous components of its elements
 
 ## Main definitions
 
-* `Ideal.quotientGrading 𝒜 I`: the grading `i ↦ (𝒜 i).map (Ideal.Quotient.mkₐ R I)` of `A ⧸ I`.
-* `Ideal.IsHomogeneous.gradedAlgebra`: it is a graded algebra when `I` is homogeneous.
+* `Ideal.quotientGrading 𝒜 I`: the images `i ↦ (𝒜 i).map (Ideal.Quotient.mkₐ R I)` in `A ⧸ I`,
+  for any family of submodules `𝒜` and any ideal `I`.
+* `Ideal.IsHomogeneous.gradedAlgebra`: these images grade `A ⧸ I` when `𝒜` is a grading of `A`
+  and `I` is homogeneous.
 -/
 
 @[expose] public section
@@ -35,14 +37,16 @@ namespace Ideal
 variable {ι R A : Type*} [CommRing R] [CommRing A] [Algebra R A]
   (𝒜 : ι → Submodule R A) (I : Ideal A)
 
-/-- The grading of `A ⧸ I` by the images of the homogeneous components of `A`: the degree `i`
-part is `(𝒜 i).map (Ideal.Quotient.mkₐ R I)`. -/
+/-- The images in `A ⧸ I` of the submodules `𝒜 i`: the submodule
+`(𝒜 i).map (Ideal.Quotient.mkₐ R I)`. For an arbitrary family `𝒜` and ideal `I` they need not
+grade `A ⧸ I`; they form a grading when `𝒜` is a grading of `A` and `I` is homogeneous
+(`Ideal.IsHomogeneous.gradedAlgebra`). -/
 def quotientGrading (i : ι) : Submodule R (A ⧸ I) :=
   (𝒜 i).map (Ideal.Quotient.mkₐ R I).toLinearMap
 
 variable {𝒜 I}
 
-/-- The class of an element of degree `i` has degree `i` in `A ⧸ I`. -/
+/-- The class of an element of `𝒜 i` lies in the image `quotientGrading 𝒜 I i` of `𝒜 i`. -/
 theorem mk_mem_quotientGrading {i : ι} {a : A} (ha : a ∈ 𝒜 i) :
     Ideal.Quotient.mk I a ∈ quotientGrading 𝒜 I i :=
   Submodule.mem_map_of_mem ha

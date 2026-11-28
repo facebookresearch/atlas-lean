@@ -82,12 +82,14 @@ example (W : WeierstrassCurve ℚ) (C : VariableChange ℚ) :
     W.projectiveSchemeVariableChangeIso_hom_projectiveSchemeToSpec C,
     W.affineChart_comp_projectiveSchemeVariableChangeIso_hom C⟩
 
-/-- The inverse of the isomorphism is `Proj.map` of the map induced by `C⁻¹`, and the two
-composites are identities. -/
+/-- The two composites of the isomorphism and its inverse are identities. -/
 example (W : WeierstrassCurve ℤ) (C : VariableChange ℤ) :
     (W.projectiveSchemeVariableChangeIso C).hom ≫ (W.projectiveSchemeVariableChangeIso C).inv =
-      𝟙 _ :=
-  (W.projectiveSchemeVariableChangeIso C).hom_inv_id
+        𝟙 _ ∧
+      (W.projectiveSchemeVariableChangeIso C).inv ≫ (W.projectiveSchemeVariableChangeIso C).hom =
+        𝟙 _ :=
+  ⟨(W.projectiveSchemeVariableChangeIso C).hom_inv_id,
+    (W.projectiveSchemeVariableChangeIso C).inv_hom_id⟩
 
 /-- The affine variable change on `x` for the test curve: `x ↦ (-1)² x' + 1`. -/
 example : testCurve.affineVariableChange testChange testCurve.affineX =

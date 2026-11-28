@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.CategoryTheory.Comma.Over.Pullback
 public import MathlibExt.AlgebraicGeometry.EllipticCurve.ProjectiveSchemeChartAtInfinity
 public import Mathlib.AlgebraicGeometry.Morphisms.Proper
 public import Mathlib.AlgebraicGeometry.Morphisms.Flat
@@ -79,17 +80,17 @@ theorem baseChangeSection_snd (g : X ⟶ S) (s : S ⟶ X) (hs : s ≫ g = 𝟙 S
 
 /-- **The base change of a morphism over `S`.** For `S`-schemes `f : X ⟶ S`, `g : Y ⟶ S`, an
 `S`-morphism `φ : X ⟶ Y` (`φ ≫ g = f`) and a morphism `b : T ⟶ S`, this is the induced
-`T`-morphism `X ×_S T ⟶ Y ×_S T`. -/
+`T`-morphism `X ×_S T ⟶ Y ×_S T`: the underlying morphism of the image of `φ` under Mathlib's
+pullback functor `Over.pullback b : Over S ⥤ Over T`. -/
 noncomputable def baseChangeMap {Y : Scheme.{u}} (f : X ⟶ S) (g : Y ⟶ S) (φ : X ⟶ Y)
     (h : φ ≫ g = f) (b : T ⟶ S) : pullback f b ⟶ pullback g b :=
-  pullback.map f b g b φ (𝟙 T) (𝟙 S) (by rw [Category.comp_id, h])
-    (by rw [Category.comp_id, Category.id_comp])
+  ((Over.pullback b).map (Over.homMk φ h : Over.mk f ⟶ Over.mk g)).left
 
 @[reassoc (attr := simp)]
 theorem baseChangeMap_fst {Y : Scheme.{u}} (f : X ⟶ S) (g : Y ⟶ S) (φ : X ⟶ Y)
     (h : φ ≫ g = f) (b : T ⟶ S) :
-    baseChangeMap f g φ h b ≫ pullback.fst g b = pullback.fst f b ≫ φ :=
-  pullback.lift_fst _ _ _
+    baseChangeMap f g φ h b ≫ pullback.fst g b = pullback.fst f b ≫ φ := by
+  simp [baseChangeMap]
 
 @[reassoc (attr := simp)]
 theorem baseChangeMap_snd {Y : Scheme.{u}} (f : X ⟶ S) (g : Y ⟶ S) (φ : X ⟶ Y)
@@ -97,16 +98,23 @@ theorem baseChangeMap_snd {Y : Scheme.{u}} (f : X ⟶ S) (g : Y ⟶ S) (φ : X �
     baseChangeMap f g φ h b ≫ pullback.snd g b = pullback.snd f b := by
   simp [baseChangeMap]
 
+/-- The base change of the identity is the identity (functoriality of `Over.pullback b`). -/
 @[simp]
 theorem baseChangeMap_id (f : X ⟶ S) (b : T ⟶ S) :
     baseChangeMap f f (𝟙 X) (Category.id_comp f) b = 𝟙 _ := by
-  apply pullback.hom_ext <;> simp
+  simp only [baseChangeMap]
+  rw [show (Over.homMk (𝟙 X) (Category.id_comp f) : Over.mk f ⟶ Over.mk f) = 𝟙 _ from rfl,
+    CategoryTheory.Functor.map_id]
+  rfl
 
+/-- The base change of a composite is the composite (functoriality of `Over.pullback b`). -/
 theorem baseChangeMap_comp {Y Z : Scheme.{u}} (f : X ⟶ S) (g : Y ⟶ S) (k : Z ⟶ S) (φ : X ⟶ Y)
     (ψ : Y ⟶ Z) (hφ : φ ≫ g = f) (hψ : ψ ≫ k = g) (b : T ⟶ S) :
     baseChangeMap f k (φ ≫ ψ) (by rw [Category.assoc, hψ, hφ]) b =
       baseChangeMap f g φ hφ b ≫ baseChangeMap g k ψ hψ b := by
-  apply pullback.hom_ext <;> simp
+  simp only [baseChangeMap]
+  rw [← Over.comp_left, ← CategoryTheory.Functor.map_comp]
+  rfl
 
 end AlgebraicGeometry
 
@@ -233,8 +241,9 @@ where `f` is smooth). -/
 noncomputable abbrev smoothLocus (M : E.WeierstrassModel R) : M.𝒲.Opens :=
   M.f.smoothLocus
 
-/-- **Morphism of Weierstrass models** (B. Conrad, *Minimal models for elliptic curves*, p. 2,
-after Definition 2.4). A morphism `(𝒲, i) ⟶ (𝒲', i')` is an `R`-morphism `𝒲 ⟶ 𝒲'` whose generic
+/-- **Morphism of Weierstrass models** (B. Conrad, *Minimal models for elliptic curves*,
+Definition 2.4, p. 2: a morphism is an `R`-morphism respecting the generic-fibre
+identifications). A morphism `(𝒲, i) ⟶ (𝒲', i')` is an `R`-morphism `𝒲 ⟶ 𝒲'` whose generic
 fibre `𝒲_K ⟶ 𝒲'_K` respects `i` and `i'`. No compatibility with the sections `ε`, `ε'` is
 required, as in the source (it would follow from the uniqueness of `ε'`, not proved here). -/
 @[ext]
@@ -273,7 +282,8 @@ namespace PlanarWeierstrassModel
 variable {R E} [IsDomain R] [IsDiscreteValuationRing R] [IsFractionRing R K] [E.IsElliptic]
 
 /-- **Morphism of planar Weierstrass models** (B. Conrad, *Minimal models for elliptic curves*,
-p. 2, after Definition 2.4). A morphism `(W, i) ⟶ (W', i')` is an `R`-morphism
+Definition 2.1, p. 2: a morphism is an `R`-morphism respecting the generic-fibre
+identifications). A morphism `(W, i) ⟶ (W', i')` is an `R`-morphism
 `W.ProjectiveScheme ⟶ W'.ProjectiveScheme` whose generic fibre respects `i` and `i'`. It is not
 required to come from a change of variables of the equations, as in the source. -/
 @[ext]

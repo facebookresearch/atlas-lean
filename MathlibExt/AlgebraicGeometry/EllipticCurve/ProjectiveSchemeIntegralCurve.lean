@@ -25,8 +25,8 @@ proper over `Spec F`, of dimension `1`, and its affine chart `C ∩ {Z ≠ 0} = 
 * B. Conrad, "Minimal models for elliptic curves", notes (version of 21 November 2015),
   <http://math.stanford.edu/~conrad/papers/minimalmodel.pdf>, §2, p. 2.
 * J. S. Milne, *Elliptic Curves*, second edition, World Scientific, 2021, author's version
-  <https://jmilne.org/math/Books/EC2.pdf>, Chapter II, §1, p. 46: the plane cubic (9) and its
-  affine part.
+  <https://jmilne.org/math/Books/EC2.pdf>, Chapter II, §1: the plane cubic (9), displayed on
+  p. 45 and referred back to on p. 46, and its affine part.
 -/
 
 @[expose] public section
@@ -59,7 +59,8 @@ Source: B. Conrad, "Minimal models for elliptic curves", notes (version of 21 No
 <http://math.stanford.edu/~conrad/papers/minimalmodel.pdf>, §2, p. 2 ("the 1-dimensional special
 fiber of such a `W` is geometrically irreducible and geometrically reduced"; the geometric
 statements are not formalized here, only integrality over `F`); J. S. Milne, *Elliptic Curves*,
-2nd ed., author's version <https://jmilne.org/math/Books/EC2.pdf>, Chapter II, §1, p. 46. -/
+2nd ed., author's version <https://jmilne.org/math/Books/EC2.pdf>, Chapter II, §1, equation (9),
+p. 45, referred back to on p. 46. -/
 theorem isIntegral_isProper_dim_one_dense_affineChart :
     IsIntegral W.ProjectiveScheme ∧ IsProper W.projectiveSchemeToSpec ∧
       topologicalKrullDim W.ProjectiveScheme = 1 ∧ Dense (Set.range W.affineChart.base) :=
