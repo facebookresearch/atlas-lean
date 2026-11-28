@@ -21,3 +21,4 @@ The simplex category, simplicial and cosimplicial objects, simplicial sets with 
 - [To Simplicial](to-simplicial/README.md)
 - [Data-level left extra degeneracy](extra-degeneracy.md)
 - [Kan complex](kan-complex.md)
+- [Undecidable problems for complexes and maps](undecidable-problems-for-complexes-and-maps/README.md)

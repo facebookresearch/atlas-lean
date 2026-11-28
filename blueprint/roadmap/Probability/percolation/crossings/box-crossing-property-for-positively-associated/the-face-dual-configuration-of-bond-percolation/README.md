@@ -1,0 +1,18 @@
+# The face-dual configuration of bond percolation on ℤ²
+
+- [Fci face Walk to dual Walk](fci-face-walk-to-dual-walk.md)
+- [Fci face Open Dual](fci-face-open-dual.md)
+- [Fci face Boundary Graph cluster le](fci-face-boundary-graph-cluster-le.md)
+- [Fci cluster face Open Dual circuit](fci-cluster-face-open-dual-circuit.md)
+- [Fci left Reach face Open Dual adj of closed](fci-left-reach-face-open-dual-adj-of-clo.md)
+- [Fci Frame Compat](fci-frame-compat.md)
+- [Fci no frame Change Iso](fci-no-frame-change-iso.md)
+- [Fci no open dual relabel](fci-no-open-dual-relabel.md)
+- [Fci shared Edge Raw](fci-shared-edge-raw.md)
+- [Fci shared Edge Map](fci-shared-edge-map.md)
+- [Fci lattice Edge Equiv](fci-lattice-edge-equiv.md)
+- [Fci face Edge Equiv](fci-face-edge-equiv.md)
+- [Fci face Dual Config](fci-face-dual-config.md)
+- [Fci face Open Dual eq open Subgraph](fci-face-open-dual-eq-open-subgraph.md)
+- [Self-duality of critical bond percolation on `ℤ²`](fci-face-dual-config-measure-preserving.md)
+- [Fci square dichotomy](fci-square-dichotomy.md)
