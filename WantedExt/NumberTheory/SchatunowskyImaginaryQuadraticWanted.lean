@@ -18,6 +18,7 @@ public import Mathlib.NumberTheory.NumberField.ClassNumber
 public import Mathlib.Data.Nat.Nth
 public import MathlibExt.NumberTheory.Schatunowsky
 public import MathlibExt.NumberTheory.SchatunowskyImaginaryQuadratic
+public import MathlibExt.NumberTheory.SchatunowskyImaginaryQuadraticExistsQuadPrimeNormPowLtQuadPrimorialNorm
 
 /-!
 # Bertrand postulates and Schatunowsky-type theorems in ℕ and Gaussian and Eisenstein integers
@@ -25,7 +26,9 @@ public import MathlibExt.NumberTheory.SchatunowskyImaginaryQuadratic
 Statement-only targets from Hirofumi Nakai, Ken Sasaki and Konoka Yoshida,
 *Schatunowsky-type Theorems for Imaginary Quadratic Integer Rings of Class Number One*,
 INTEGERS 26 (2026), Article A110. The Eisenstein integers are the ring of integers of
-`CyclotomicField 3 ℚ`, with the field norm `Algebra.norm ℚ`.
+`CyclotomicField 3 ℚ`, with the field norm `Algebra.norm ℚ`. The theorem
+`exists_quadPrimeNorm_pow_lt_quadPrimorialNorm` is proved in
+`MathlibExt.NumberTheory.SchatunowskyImaginaryQuadraticExistsQuadPrimeNormPowLtQuadPrimorialNorm`.
 
 For the paper's Sections 3-5 an imaginary quadratic field is a number field `K` with
 `Module.finrank ℚ K = 2` and `IsTotallyComplex K`; "`m` is one of the integers of Proposition 1"
@@ -138,21 +141,6 @@ public theorem_wanted tendsto_quadPrimeNorm_succ_div {K : Type*} [Field K] [Numb
         Filter.atTop (nhds 1) ∧
       Filter.Tendsto (fun n : ℕ => (quadPrimeNorm K (n + 2) : ℝ) / quadPrimeNorm K (n + 1))
         Filter.atTop (nhds 1)
-
-/-- **Prime norm powers eventually fall below the quadratic primorial.** Let $K$ be an imaginary
-quadratic field. Put $N(\pi_0) = 1$ and, for $n \ge 1$, let $N(\pi_n)$ be the $n$-th smallest
-number that is the norm of a nonzero prime ideal of $\mathcal{O}_K$; let $N(\pi_n\#)$ be the
-product of the norms of the nonzero prime ideals of $\mathcal{O}_K$ of norm at most $N(\pi_n)$.
-For every natural number $\ell$ there is $n_0$ such that $N(\pi_{n+1})^{\ell+1} < N(\pi_n\#)$
-for all $n \ge n_0$.
-
-Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
-Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Proposition 4
-(`integers-2026-A110-prop-4`). -/
-public theorem_wanted exists_quadPrimeNorm_pow_lt_quadPrimorialNorm {K : Type*} [Field K]
-    [NumberField K]
-    (hK : Module.finrank ℚ K = 2) [IsTotallyComplex K] (ℓ : ℕ) :
-    ∃ n₀ : ℕ, ∀ n ≥ n₀, quadPrimeNorm K (n + 1) ^ (ℓ + 1) < quadPrimorialNorm K n
 
 /-- **Explicit primorial thresholds for the Gaussian integers.** Let $K$ be a number field of
 discriminant $-4$ (so $K \cong \mathbb{Q}(i)$). Put $N(\pi_0) = 1$ and, for $n \ge 1$, let
