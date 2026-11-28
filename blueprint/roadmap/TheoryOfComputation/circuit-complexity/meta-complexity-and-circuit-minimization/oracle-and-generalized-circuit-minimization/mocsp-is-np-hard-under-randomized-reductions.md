@@ -23,6 +23,7 @@ The reduction is from approximating Set Cover within a factor of $6$: given sets
 ## Proof depends on
 
 - [Lund–Yannakakis–Feige: Set Cover is NP-hard to approximate within every constant](../../../pcp-and-inapproximability/approximation-hardness-of-classical-problems/set-cover-hardness-of-approximation.md)
+- [Nondeterministic time hierarchy](../../../hierarchy-theorems-and-barriers/nondet-time-hierarchy.md)
 
 ## Sources
 

@@ -14,6 +14,12 @@ The *coin problem* with bias $\varepsilon$ asks to distinguish $N$ independent b
 
 Take $t=\lceil 2^{0.49n}\rceil$ and biases $p_i=0.01+0.49\,i/t$ for $0\le i\le t$, with product distributions $\mu_i$ and expected circuit sizes $s_i$. Lupanov's estimates give $s_t\ge0.9\cdot2^n/n$ and $s_0\le0.1\cdot2^n/n$, so some consecutive pair has $s_{i+1}-s_i\ge\Omega(2^{0.51n}/n)$, far above the concentration window $\sqrt{N}\,n^2$. With threshold $s^*=(s_i+s_{i+1})/2$, $\mathrm{MCSP}(\cdot,s^*)$ separates $\mu_i$ from $\mu_{i+1}$ with constant advantage. Randomly zeroing coordinates turns this into a coin-problem solver of the same size and depth with $\varepsilon=\Theta(N^{-0.49})$, and the coin-problem lower bound finishes the proof.
 
+
+Expanding this node to full proof readiness requires planned proof-prerequisite pages for:
+
+- Coin-problem lower bound for AC0[p] (Golovnev et al. Theorem 2.6)
+- Explicit Shannon–Lupanov circuit-size bounds $s_t \ge 0.9\cdot 2^n/n$ and $s_0 \le 0.1\cdot 2^n/n$ (Golovnev et al. Theorems 2.1 and 2.2)
+
 ## Depends on
 
 - [The Minimum Circuit Size Problem MCSP and Gap-MCSP](../../minimum-circuit-size-problem/minimum-circuit-size-problem.md)

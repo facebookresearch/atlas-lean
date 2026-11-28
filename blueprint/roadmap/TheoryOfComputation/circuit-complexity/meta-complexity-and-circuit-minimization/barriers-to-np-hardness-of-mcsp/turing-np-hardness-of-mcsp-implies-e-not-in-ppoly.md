@@ -14,6 +14,12 @@ Every language in P reduces to MCSP under parametric honest Turing reductions, s
 
 For item 3, take a tally language in E but not in P, which exists by diagonalization, and simulate the reduction on $0^n$ answering every query "yes". Each query is produced from $0^n$ in polynomial time, so it has Kt complexity $O(\log n)$, below its parameter $n^{\varepsilon}$; all "yes" answers are therefore correct and the tally language would be in P. For item 1, simulate a parametric honest reduction from SAT answering every query "yes". If this decides SAT, then $\mathrm{P}=\mathrm{NP}$, and $\mathrm{E}\subseteq\mathrm{SIZE}(\mathrm{poly})$ would collapse E into $\Sigma_2^p=\mathrm{P}$ by the Karp–Lipton theorem for E, contradicting the time hierarchy (by padding, $\mathrm{E}\subseteq\mathrm{P}$ would give $\mathrm{EXP}\subseteq\mathrm{P}$). Otherwise the Gutfreund–Shaltiel–Ta-Shma refuter produces, from $1^n$ in polynomial time, instances on which the simulation fails; the first wrongly answered query is a truth table needing circuits of size $n^{\varepsilon}$, and the concatenation of all queries is an E-computable truth table on $O(\log n)$ variables that needs exponential-size circuits. Item 2 uses indirect diagonalization with robustly-often simulations.
 
+
+Expanding this node to full proof readiness requires planned proof-prerequisite pages for:
+
+- Meyer's Karp–Lipton theorem for E (Saks–Santhanam, proof of Lemma 9)
+- Gutfreund–Shaltiel–Ta-Shma refuter construction
+
 ## Depends on
 
 - [Natural and parametric honest reductions to MCSP](natural-and-parametric-honest-reductions-to-mcsp.md)

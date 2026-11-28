@@ -12,6 +12,11 @@ Nečiporuk's method, which gives the corresponding bound for MKTP, does not appl
 
 The pseudorandom generator of Impagliazzo, Meka and Zuckerman, analyzed for these models, has seed length $s^{2/3+o(1)}$ and fools nondeterministic, co-nondeterministic and parity branching programs of size $s$. Its outputs are truth tables of small circuit complexity, so a small program for MCSP would accept all of them while rejecting most uniformly random truth tables, which have large circuit complexity. Balancing the seed length against $N$ gives the size bound $N^{1.5-o(1)}$.
 
+
+Expanding this node to full proof readiness requires planned proof-prerequisite pages for:
+
+- Impagliazzo–Meka–Zuckerman pseudorandom generator for nondeterministic and parity branching programs (Cheraghchi et al., proof of Theorem 5)
+
 ## Depends on
 
 - [The Minimum Circuit Size Problem MCSP and Gap-MCSP](../../minimum-circuit-size-problem/minimum-circuit-size-problem.md)

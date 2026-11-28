@@ -10,6 +10,11 @@ The inclusion would follow at once from $\mathrm{BPP}\subseteq\mathrm{ZPP}^{\mat
 
 Given a BPP machine and an input of length $n$, guess a random truth table on $O(\log n)$ variables and ask the MCSP oracle whether it has circuits of size $n^{\Omega(1)}$; output "don't know" if it does. Since most Boolean functions are hard, a hard function is found with high probability. The Impagliazzo–Wigderson generator built from that truth table alone, with no hard function in E needed, has logarithmic seed and fools the machine, so enumerating all seeds simulates it deterministically with no error.
 
+
+Expanding this node to full proof readiness requires planned proof-prerequisite pages for:
+
+- Pseudorandom generator built from a given hard truth table (Kabanets–Cai Theorem 5)
+
 ## Depends on
 
 - [The Minimum Circuit Size Problem MCSP and Gap-MCSP](../../minimum-circuit-size-problem/minimum-circuit-size-problem.md)
