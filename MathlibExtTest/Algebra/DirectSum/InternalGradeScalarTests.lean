@@ -53,7 +53,7 @@ example :
 private abbrev LiftedZ := ULift.{1} ℤ
 
 example :
-    (letI := Module.oppositeOfCommutingAction ℤ LiftedZ
+    (letI := Module.oppositeOfCommutingAction ℤ LiftedZ;
       (MulOpposite.op (3 : ℤ)) • (ULift.up 2 : LiftedZ)) = ULift.up 6 := by
   rw [Module.oppositeOfCommutingAction_smul]
   apply ULift.ext
