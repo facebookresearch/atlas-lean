@@ -40,6 +40,20 @@ open scoped CategoryTheory.Prod
 
 universe v u w
 
+namespace SSet.stdSimplex
+
+/-- The initial inclusion has the constant-zero standard-simplex coordinate. -/
+lemma asOrderHom_ι₀_app_snd {S : SSet.{w}} {Δ : SimplexCategoryᵒᵖ} (x : S.obj Δ) :
+    (SSet.stdSimplex.asOrderHom ((SSet.ι₀.app Δ x).2)).toFunctor =
+      (Functor.const (Fin (Δ.unop.len + 1))).obj (0 : Fin 2) := rfl
+
+/-- The terminal inclusion has the constant-one standard-simplex coordinate. -/
+lemma asOrderHom_ι₁_app_snd {S : SSet.{w}} {Δ : SimplexCategoryᵒᵖ} (x : S.obj Δ) :
+    (SSet.stdSimplex.asOrderHom ((SSet.ι₁.app Δ x).2)).toFunctor =
+      (Functor.const (Fin (Δ.unop.len + 1))).obj (1 : Fin 2) := rfl
+
+end SSet.stdSimplex
+
 namespace CategoryTheory
 
 variable {C D : Type u} [Category.{v} C] [Category.{v} D]
@@ -117,6 +131,69 @@ lemma nerveCylinderFunctor_map_one (α : F ⟶ G) {X Y : A} (f : X ⟶ Y) :
   change 𝟙 (G.obj X) ≫ G.map f = G.map f
   simp
 
+/-- A mixed cylinder edge applies the transformation before the terminal functor map. -/
+@[simp]
+lemma nerveCylinderFunctor_map_zero_one (α : F ⟶ G) {X Y : A} (f : X ⟶ Y) :
+    (nerveCylinderFunctor α).map (f ×ₘ homOfLE (show (0 : Fin 2) ≤ 1 by decide)) =
+      α.app X ≫ G.map f := by
+  simp only [nerveCylinderFunctor, Functor.comp_map, Prod.swap_map,
+    Functor.uncurry_obj_map]
+  rfl
+
+/-- The cylinder on a chain with constant parameter zero is the chain mapped by `F`. -/
+lemma nerveCylinderFunctor_mapComposableArrows_zero (α : F ⟶ G) {n : ℕ}
+    (X : ComposableArrows A n) :
+    ((nerveCylinderFunctor α).mapComposableArrows n).obj
+      (X.prod' ((Functor.const (Fin (n + 1))).obj (0 : Fin 2))) =
+        (F.mapComposableArrows n).obj X := by
+  change (X.prod' ((Functor.const (Fin (n + 1))).obj (0 : Fin 2))) ⋙
+    nerveCylinderFunctor α = X ⋙ F
+  refine Functor.hext (fun _ => rfl) ?_
+  intro i j f
+  change HEq ((nerveCylinderFunctor α).map (X.map f ×ₘ 𝟙 (0 : Fin 2))) (F.map (X.map f))
+  exact heq_of_eq (nerveCylinderFunctor_map_zero α (X.map f))
+
+/-- The cylinder on a chain with constant parameter one is the chain mapped by `G`. -/
+lemma nerveCylinderFunctor_mapComposableArrows_one (α : F ⟶ G) {n : ℕ}
+    (X : ComposableArrows A n) :
+    ((nerveCylinderFunctor α).mapComposableArrows n).obj
+      (X.prod' ((Functor.const (Fin (n + 1))).obj (1 : Fin 2))) =
+        (G.mapComposableArrows n).obj X := by
+  change (X.prod' ((Functor.const (Fin (n + 1))).obj (1 : Fin 2))) ⋙
+    nerveCylinderFunctor α = X ⋙ G
+  refine Functor.hext (fun _ => rfl) ?_
+  intro i j f
+  change HEq ((nerveCylinderFunctor α).map (X.map f ×ₘ 𝟙 (1 : Fin 2))) (G.map (X.map f))
+  exact heq_of_eq (nerveCylinderFunctor_map_one α (X.map f))
+
+private lemma nerveCylinderFunctor_mapComposableArrows_ι₀ (α : F ⟶ G)
+    {Δ : SimplexCategoryᵒᵖ} (X : (nerve A).obj Δ) :
+    ((nerveCylinderFunctor α).mapComposableArrows Δ.unop.len).obj
+      ((SSet.ι₀.app Δ X).1.prod'
+        (SSet.stdSimplex.asOrderHom ((SSet.ι₀.app Δ X).2)).toFunctor) =
+      (F.mapComposableArrows Δ.unop.len).obj X := by
+  have hinput : (SSet.ι₀.app Δ X).1.prod'
+      (SSet.stdSimplex.asOrderHom ((SSet.ι₀.app Δ X).2)).toFunctor =
+        X.prod' ((Functor.const (Fin (Δ.unop.len + 1))).obj (0 : Fin 2)) :=
+    congrArg₂ (fun A B => A.prod' B) (SSet.ι₀_app_fst X)
+      (SSet.stdSimplex.asOrderHom_ι₀_app_snd (S := nerve A) X)
+  rw [hinput]
+  exact nerveCylinderFunctor_mapComposableArrows_zero α X
+
+private lemma nerveCylinderFunctor_mapComposableArrows_ι₁ (α : F ⟶ G)
+    {Δ : SimplexCategoryᵒᵖ} (X : (nerve A).obj Δ) :
+    ((nerveCylinderFunctor α).mapComposableArrows Δ.unop.len).obj
+      ((SSet.ι₁.app Δ X).1.prod'
+        (SSet.stdSimplex.asOrderHom ((SSet.ι₁.app Δ X).2)).toFunctor) =
+      (G.mapComposableArrows Δ.unop.len).obj X := by
+  have hinput : (SSet.ι₁.app Δ X).1.prod'
+      (SSet.stdSimplex.asOrderHom ((SSet.ι₁.app Δ X).2)).toFunctor =
+        X.prod' ((Functor.const (Fin (Δ.unop.len + 1))).obj (1 : Fin 2)) :=
+    congrArg₂ (fun A B => A.prod' B) (SSet.ι₁_app_fst X)
+      (SSet.stdSimplex.asOrderHom_ι₁_app_snd (S := nerve A) X)
+  rw [hinput]
+  exact nerveCylinderFunctor_mapComposableArrows_one α X
+
 end CylinderClassifier
 
 variable {F G : C ⥤ D}
@@ -165,6 +242,21 @@ private theorem nerveCylinderFunctor_map_const_heq
           (eqToHom_heq_id_dom _ _ h)
       simpa [nerveCylinderFunctor, ComposableArrows.mk₁] using hid
 
+/-- An identity transition makes every parameter chain at `c` its image under `F`. -/
+lemma nerveCylinderFunctor_mapComposableArrows_const
+    {A : Type uConst} [Category.{vConst} A]
+    {B : Type uConstTarget} [Category.{vConstTarget} B] {F G : A ⥤ B}
+    (α : F ⟶ G) (c : A) (h : F.obj c = G.obj c) (hα : α.app c = eqToHom h)
+    {n : ℕ} (T : Fin (n + 1) ⥤ Fin 2) :
+    ((nerveCylinderFunctor α).mapComposableArrows n).obj
+      (((Functor.const (Fin (n + 1))).obj c).prod' T) =
+        (F.mapComposableArrows n).obj ((Functor.const (Fin (n + 1))).obj c) := by
+  apply Functor.hext
+  · intro i
+    exact nerveCylinderFunctor_obj_const_eq α c h (T.obj i)
+  · intro i j f
+    simpa using nerveCylinderFunctor_map_const_heq α c h hα (T.map f)
+
 end NativeConstantClassifier
 
 /-- The cylinder on a constant chain with an identity transition.
@@ -179,17 +271,43 @@ theorem nerveHomotopyMap_const_apply_of_app_eqToHom
         ⟨(Functor.const (Fin (Δ.unop.len + 1))).obj c, t⟩ =
       (nerveMap F).app Δ
         ((Functor.const (Fin (Δ.unop.len + 1))).obj c) := by
-  let K : Fin (Δ.unop.len + 1) ⥤ C :=
-    (Functor.const (Fin (Δ.unop.len + 1))).obj c
-  let T : Fin (Δ.unop.len + 1) ⥤ Fin 2 :=
+  exact nerveCylinderFunctor_mapComposableArrows_const α c h hα
     (SSet.stdSimplex.asOrderHom t).toFunctor
-  change ((nerveCylinderFunctor α).mapComposableArrows _).obj (K.prod' T) =
-    (F.mapComposableArrows _).obj K
+
+section NativeClassifierPrecomposition
+
+universe uPre vPre uMid vMid uOut vOut
+
+/-- Left whiskering of cylinder classifiers.
+
+For K : X → A, the cylinder functor classified by Kα equals K × id on X × Fin 2 followed by
+the cylinder functor classified by α. All category universes in this equality are independent. -/
+theorem nerveCylinderFunctor_whiskerLeft
+    {X : Type uPre} [Category.{vPre} X]
+    {A : Type uMid} [Category.{vMid} A]
+    {B : Type uOut} [Category.{vOut} B]
+    {F G : A ⥤ B} (K : X ⥤ A) (α : F ⟶ G) :
+    nerveCylinderFunctor (Functor.whiskerLeft K α) =
+      (K.prod (𝟭 (Fin 2))) ⋙ nerveCylinderFunctor α := by
   apply Functor.hext
-  · intro i
-    exact nerveCylinderFunctor_obj_const_eq α c h (T.obj i)
-  · intro i j f
-    simpa [K] using nerveCylinderFunctor_map_const_heq α c h hα (T.map f)
+  · rintro ⟨x, i⟩
+    fin_cases i <;> rfl
+  · rintro ⟨x, i⟩ ⟨y, j⟩ f
+    rcases f with ⟨f, g⟩
+    fin_cases i
+    · fin_cases j
+      · apply heq_of_eq
+        simp [nerveCylinderFunctor, ComposableArrows.mk₁]
+      · apply heq_of_eq
+        simp [nerveCylinderFunctor, ComposableArrows.mk₁]
+    · fin_cases j
+      · exfalso
+        have hle : (1 : Fin 2) ≤ (0 : Fin 2) := leOfHom g
+        omega
+      · apply heq_of_eq
+        simp [nerveCylinderFunctor, ComposableArrows.mk₁]
+
+end NativeClassifierPrecomposition
 
 /-- Precomposition of nerve cylinder maps.
 
@@ -203,26 +321,7 @@ lemma nerveHomotopyMap_precomp {B : Type u} [Category.{v} B] (K : B ⥤ C) (α :
       (((nerveMap K).app Δ X.1).prod' (SSet.stdSimplex.asOrderHom X.2).toFunctor) =
     ((nerveCylinderFunctor (Functor.whiskerLeft K α)).mapComposableArrows _).obj
       (X.1.prod' (SSet.stdSimplex.asOrderHom X.2).toFunctor)
-  have h_cyl : nerveCylinderFunctor (Functor.whiskerLeft K α) =
-      (K.prod (𝟭 (Fin 2))) ⋙ nerveCylinderFunctor α := by
-    apply Functor.hext
-    · rintro ⟨X, i⟩
-      fin_cases i <;> rfl
-    · rintro ⟨X, i⟩ ⟨Y, j⟩ f
-      rcases f with ⟨f, g⟩
-      fin_cases i
-      · fin_cases j
-        · apply heq_of_eq
-          simp [nerveCylinderFunctor, ComposableArrows.mk₁]
-        · apply heq_of_eq
-          simp [nerveCylinderFunctor, ComposableArrows.mk₁]
-      · fin_cases j
-        · exfalso
-          have hle : (1 : Fin 2) ≤ (0 : Fin 2) := leOfHom g
-          omega
-        · apply heq_of_eq
-          simp [nerveCylinderFunctor, ComposableArrows.mk₁]
-  rw [h_cyl]
+  rw [nerveCylinderFunctor_whiskerLeft]
   apply Functor.hext
   · intro i; rfl
   · intro i j f
@@ -269,24 +368,6 @@ lemma nerveHomotopyMap_postcomp {E : Type u} [Category.{v} E] (α : F ⟶ G) (L 
     apply heq_of_eq
     rfl
 
-/-- The interval coordinate of the initial cylinder inclusion.
-
-On a nerve simplex, the Δ¹-coordinate of the endpoint-0 inclusion represents the constant
-monotone map with value 0. -/
-lemma asOrderHom_ι₀_app_snd {Δ : SimplexCategoryᵒᵖ} (X : (nerve C).obj Δ) :
-    (SSet.stdSimplex.asOrderHom ((SSet.ι₀.app Δ X).2)).toFunctor =
-      (Functor.const (Fin (Δ.unop.len + 1))).obj (0 : Fin 2) := by
-  rfl
-
-/-- The interval coordinate of the terminal cylinder inclusion.
-
-On a nerve simplex, the Δ¹-coordinate of the endpoint-1 inclusion represents the constant
-monotone map with value 1. -/
-lemma asOrderHom_ι₁_app_snd {Δ : SimplexCategoryᵒᵖ} (X : (nerve C).obj Δ) :
-    (SSet.stdSimplex.asOrderHom ((SSet.ι₁.app Δ X).2)).toFunctor =
-      (Functor.const (Fin (Δ.unop.len + 1))).obj (1 : Fin 2) := by
-  rfl
-
 set_option backward.isDefEq.respectTransparency false in
 /-- The simplicial homotopy induced by a natural transformation.
 
@@ -302,19 +383,7 @@ noncomputable def nerveHomotopy (α : F ⟶ G) :
         ((SSet.ι₀.app Δ X).1.prod'
           (SSet.stdSimplex.asOrderHom ((SSet.ι₀.app Δ X).2)).toFunctor) =
       (F.mapComposableArrows _).obj X
-    have hinput :
-        (SSet.ι₀.app Δ X).1.prod'
-            (SSet.stdSimplex.asOrderHom ((SSet.ι₀.app Δ X).2)).toFunctor =
-          X.prod' ((Functor.const (Fin (Δ.unop.len + 1))).obj (0 : Fin 2)) :=
-      congrArg₂ (fun A B => A.prod' B) (SSet.ι₀_app_fst X)
-        (asOrderHom_ι₀_app_snd X)
-    rw [hinput]
-    refine ComposableArrows.ext (fun i => ?_) (fun i hi => ?_)
-    · rfl
-    · simp only [ComposableArrows.map', Functor.mapComposableArrows_obj_map,
-        Functor.prod'_map, Functor.const_obj_map, eqToHom_refl,
-        Category.id_comp, Category.comp_id]
-      exact nerveCylinderFunctor_map_zero α _
+    exact nerveCylinderFunctor_mapComposableArrows_ι₀ α X
   h₁ := by
     change SSet.ι₁ ≫ nerveHomotopyMap α = nerveMap G
     ext Δ X
@@ -322,19 +391,7 @@ noncomputable def nerveHomotopy (α : F ⟶ G) :
         ((SSet.ι₁.app Δ X).1.prod'
           (SSet.stdSimplex.asOrderHom ((SSet.ι₁.app Δ X).2)).toFunctor) =
       (G.mapComposableArrows _).obj X
-    have hinput :
-        (SSet.ι₁.app Δ X).1.prod'
-            (SSet.stdSimplex.asOrderHom ((SSet.ι₁.app Δ X).2)).toFunctor =
-          X.prod' ((Functor.const (Fin (Δ.unop.len + 1))).obj (1 : Fin 2)) :=
-      congrArg₂ (fun A B => A.prod' B) (SSet.ι₁_app_fst X)
-        (asOrderHom_ι₁_app_snd X)
-    rw [hinput]
-    refine ComposableArrows.ext (fun i => ?_) (fun i hi => ?_)
-    · rfl
-    · simp only [ComposableArrows.map', Functor.mapComposableArrows_obj_map,
-        Functor.prod'_map, Functor.const_obj_map, eqToHom_refl,
-        Category.id_comp, Category.comp_id]
-      exact nerveCylinderFunctor_map_one α _
+    exact nerveCylinderFunctor_mapComposableArrows_ι₁ α X
   rel := by
     ext Δ X
     exact X.1.2.elim
@@ -406,29 +463,29 @@ The chain F → G → H defines a functor C × Fin 3 → D. Omitting level 0 giv
 omitting level 1 gives the cylinder of α ≫ β, and omitting level 2 gives the cylinder of α.
 -/
 
+section ChainClassifier
+
+universe uChainSource vChainSource uChainTarget vChainTarget
+
 /-- The functor classified by two composable natural transformations.
 
 For F → G → H with transformations α and β, this functor C × Fin 3 → D has values F,G,H on the
 three levels and transition maps α,β and α ≫ β. -/
-def NatTrans.nerveChainFunctor {F G H : C ⥤ D} (α : F ⟶ G) (β : G ⟶ H) :
+def NatTrans.nerveChainFunctor
+    {C : Type uChainSource} [Category.{vChainSource} C]
+    {D : Type uChainTarget} [Category.{vChainTarget} D]
+    {F G H : C ⥤ D} (α : F ⟶ G) (β : G ⟶ H) :
     C × Fin 3 ⥤ D :=
   Prod.swap C (Fin 3) ⋙ Functor.uncurry.obj (ComposableArrows.mk₂ α β)
-
-/-- The prism of a cylinder classifier.
-
-The one-dimensional nerve prism associated to the cylinder functor of α equals the nerve
-cylinder map of α. -/
-lemma NatTrans.nervePrismMap_nerveCylinderFunctor {F G : C ⥤ D}
-    (α : F ⟶ G) :
-    (NatTrans.nerveCylinderFunctor α).nervePrismMap =
-      NatTrans.nerveHomotopyMap α :=
-  rfl
 
 /-- The composite-transformation face of the chain classifier.
 
 Restricting the three-level chain functor along δ₁ : Fin 2 → Fin 3 omits the middle level and
 gives the cylinder functor of α ≫ β. -/
-lemma NatTrans.prod_δ_one_comp_nerveChainFunctor {F G H : C ⥤ D}
+lemma NatTrans.prod_δ_one_comp_nerveChainFunctor
+    {C : Type uChainSource} [Category.{vChainSource} C]
+    {D : Type uChainTarget} [Category.{vChainTarget} D]
+    {F G H : C ⥤ D}
     (α : F ⟶ G) (β : G ⟶ H) :
     ((𝟭 C).prod (SimplexCategory.δ (1 : Fin 3)).toOrderHom.toFunctor) ⋙
         NatTrans.nerveChainFunctor α β =
@@ -440,7 +497,10 @@ lemma NatTrans.prod_δ_one_comp_nerveChainFunctor {F G H : C ⥤ D}
 
 Restricting the chain functor along δ₂ omits the last level and gives the cylinder functor of
 α. -/
-lemma NatTrans.prod_δ_two_comp_nerveChainFunctor {F G H : C ⥤ D}
+lemma NatTrans.prod_δ_two_comp_nerveChainFunctor
+    {C : Type uChainSource} [Category.{vChainSource} C]
+    {D : Type uChainTarget} [Category.{vChainTarget} D]
+    {F G H : C ⥤ D}
     (α : F ⟶ G) (β : G ⟶ H) :
     ((𝟭 C).prod (SimplexCategory.δ (2 : Fin 3)).toOrderHom.toFunctor) ⋙
         NatTrans.nerveChainFunctor α β =
@@ -452,13 +512,28 @@ lemma NatTrans.prod_δ_two_comp_nerveChainFunctor {F G H : C ⥤ D}
 
 Restricting the chain functor along δ₀ omits the first level and gives the cylinder functor of
 β. -/
-lemma NatTrans.prod_δ_zero_comp_nerveChainFunctor {F G H : C ⥤ D}
+lemma NatTrans.prod_δ_zero_comp_nerveChainFunctor
+    {C : Type uChainSource} [Category.{vChainSource} C]
+    {D : Type uChainTarget} [Category.{vChainTarget} D]
+    {F G H : C ⥤ D}
     (α : F ⟶ G) (β : G ⟶ H) :
     ((𝟭 C).prod (SimplexCategory.δ (0 : Fin 3)).toOrderHom.toFunctor) ⋙
         NatTrans.nerveChainFunctor α β =
       NatTrans.nerveCylinderFunctor β :=
   congrArg (fun K => Prod.swap C (Fin 2) ⋙ Functor.uncurry.obj K)
     (CategoryTheory.nerve.δ₀_mk₂_eq α β)
+
+end ChainClassifier
+
+/-- The prism of a cylinder classifier.
+
+The one-dimensional nerve prism associated to the cylinder functor of α equals the nerve
+cylinder map of α. -/
+lemma NatTrans.nervePrismMap_nerveCylinderFunctor {F G : C ⥤ D}
+    (α : F ⟶ G) :
+    (NatTrans.nerveCylinderFunctor α).nervePrismMap =
+      NatTrans.nerveHomotopyMap α :=
+  rfl
 
 universe uId vId uId' vId'
 
@@ -542,21 +617,7 @@ noncomputable def nerveHomotopyCommonHomUp (α : F ⟶ G) :
         ((SSet.ι₀.app Δ X).1.prod'
           (SSet.stdSimplex.asOrderHom ((SSet.ι₀.app Δ X).2)).toFunctor) =
       (F.mapComposableArrows _).obj X
-    have hinput :
-        (SSet.ι₀.app Δ X).1.prod'
-            (SSet.stdSimplex.asOrderHom ((SSet.ι₀.app Δ X).2)).toFunctor =
-          X.prod' ((Functor.const (Fin (Δ.unop.len + 1))).obj (0 : Fin 2)) :=
-      congrArg₂ (fun A B => A.prod' B) (SSet.ι₀_app_fst X)
-        (asOrderHom_ι₀_app_snd X)
-    rw [hinput]
-    change (X.prod' ((Functor.const (Fin (Δ.unop.len + 1))).obj
-        (0 : Fin 2))) ⋙ nerveCylinderFunctor α = X ⋙ F
-    refine CategoryTheory.Functor.hext (fun i => rfl) ?_
-    intro i j f
-    change HEq
-      ((nerveCylinderFunctor α).map (X.map f ×ₘ 𝟙 (0 : Fin 2)))
-      (F.map (X.map f))
-    exact heq_of_eq (nerveCylinderFunctor_map_zero α (X.map f))
+    exact nerveCylinderFunctor_mapComposableArrows_ι₀ α X
   h₁ := by
     change SSet.ι₁ ≫ nerveHomotopyMapCommonHomUp α = nerveMapCommonHomUp.{uObj, vObj, wHom} G
     ext Δ X
@@ -564,21 +625,7 @@ noncomputable def nerveHomotopyCommonHomUp (α : F ⟶ G) :
         ((SSet.ι₁.app Δ X).1.prod'
           (SSet.stdSimplex.asOrderHom ((SSet.ι₁.app Δ X).2)).toFunctor) =
       (G.mapComposableArrows _).obj X
-    have hinput :
-        (SSet.ι₁.app Δ X).1.prod'
-            (SSet.stdSimplex.asOrderHom ((SSet.ι₁.app Δ X).2)).toFunctor =
-          X.prod' ((Functor.const (Fin (Δ.unop.len + 1))).obj (1 : Fin 2)) :=
-      congrArg₂ (fun A B => A.prod' B) (SSet.ι₁_app_fst X)
-        (asOrderHom_ι₁_app_snd X)
-    rw [hinput]
-    change (X.prod' ((Functor.const (Fin (Δ.unop.len + 1))).obj
-        (1 : Fin 2))) ⋙ nerveCylinderFunctor α = X ⋙ G
-    refine CategoryTheory.Functor.hext (fun i => rfl) ?_
-    intro i j f
-    change HEq
-      ((nerveCylinderFunctor α).map (X.map f ×ₘ 𝟙 (1 : Fin 2)))
-      (G.map (X.map f))
-    exact heq_of_eq (nerveCylinderFunctor_map_one α (X.map f))
+    exact nerveCylinderFunctor_mapComposableArrows_ι₁ α X
   rel := by
     ext Δ X
     exact X.1.2.elim
@@ -628,21 +675,7 @@ noncomputable def nerveHomotopyCommonHom (α : F ⟶ G) :
         ((SSet.ι₀.app Δ X).1.prod'
           (SSet.stdSimplex.asOrderHom ((SSet.ι₀.app Δ X).2)).toFunctor) =
       (F.mapComposableArrows _).obj X
-    have hinput :
-        (SSet.ι₀.app Δ X).1.prod'
-            (SSet.stdSimplex.asOrderHom ((SSet.ι₀.app Δ X).2)).toFunctor =
-          X.prod' ((Functor.const (Fin (Δ.unop.len + 1))).obj (0 : Fin 2)) :=
-      congrArg₂ (fun A B => A.prod' B) (SSet.ι₀_app_fst X)
-        (asOrderHom_ι₀_app_snd X)
-    rw [hinput]
-    change (X.prod' ((Functor.const (Fin (Δ.unop.len + 1))).obj
-        (0 : Fin 2))) ⋙ nerveCylinderFunctor α = X ⋙ F
-    refine CategoryTheory.Functor.hext (fun i => rfl) ?_
-    intro i j f
-    change HEq
-      ((nerveCylinderFunctor α).map (X.map f ×ₘ 𝟙 (0 : Fin 2)))
-      (F.map (X.map f))
-    exact heq_of_eq (nerveCylinderFunctor_map_zero α (X.map f))
+    exact nerveCylinderFunctor_mapComposableArrows_ι₀ α X
   h₁ := by
     change SSet.ι₁ ≫ nerveHomotopyMapCommonHom α = nerveMapCommonHom.{uObj, vObj, wHom} G
     ext Δ X
@@ -650,21 +683,7 @@ noncomputable def nerveHomotopyCommonHom (α : F ⟶ G) :
         ((SSet.ι₁.app Δ X).1.prod'
           (SSet.stdSimplex.asOrderHom ((SSet.ι₁.app Δ X).2)).toFunctor) =
       (G.mapComposableArrows _).obj X
-    have hinput :
-        (SSet.ι₁.app Δ X).1.prod'
-            (SSet.stdSimplex.asOrderHom ((SSet.ι₁.app Δ X).2)).toFunctor =
-          X.prod' ((Functor.const (Fin (Δ.unop.len + 1))).obj (1 : Fin 2)) :=
-      congrArg₂ (fun A B => A.prod' B) (SSet.ι₁_app_fst X)
-        (asOrderHom_ι₁_app_snd X)
-    rw [hinput]
-    change (X.prod' ((Functor.const (Fin (Δ.unop.len + 1))).obj
-        (1 : Fin 2))) ⋙ nerveCylinderFunctor α = X ⋙ G
-    refine CategoryTheory.Functor.hext (fun i => rfl) ?_
-    intro i j f
-    change HEq
-      ((nerveCylinderFunctor α).map (X.map f ×ₘ 𝟙 (1 : Fin 2)))
-      (G.map (X.map f))
-    exact heq_of_eq (nerveCylinderFunctor_map_one α (X.map f))
+    exact nerveCylinderFunctor_mapComposableArrows_ι₁ α X
   rel := by
     ext Δ X
     exact X.1.2.elim
@@ -681,17 +700,8 @@ theorem nerveHomotopyMapCommonHom_const_apply_of_app_eqToHom
         ⟨(Functor.const (Fin (Δ.unop.len + 1))).obj c, t⟩ =
       (nerveMapCommonHom.{uObj, vObj, wHom} F).app Δ
         ((Functor.const (Fin (Δ.unop.len + 1))).obj c) := by
-  let K : Fin (Δ.unop.len + 1) ⥤ A :=
-    (Functor.const (Fin (Δ.unop.len + 1))).obj c
-  let T : Fin (Δ.unop.len + 1) ⥤ Fin 2 :=
+  exact nerveCylinderFunctor_mapComposableArrows_const α c h hα
     (SSet.stdSimplex.asOrderHom t).toFunctor
-  change ((nerveCylinderFunctor α).mapComposableArrows _).obj (K.prod' T) =
-    (F.mapComposableArrows _).obj K
-  apply Functor.hext
-  · intro i
-    exact nerveCylinderFunctor_obj_const_eq α c h (T.obj i)
-  · intro i j f
-    simpa [K] using nerveCylinderFunctor_map_const_heq α c h hα (T.map f)
 
 end CategoryTheory.NatTrans
 
@@ -701,47 +711,7 @@ end
 
 @[expose] public section
 
-section NativeClassifierPrecomposition
 
-universe uPre vPre uMid vMid uOut vOut
-
-open CategoryTheory Opposite CategoryTheory.MonoidalCategory
-open scoped Simplicial MonoidalCategory CategoryTheory.Prod
-
-namespace CategoryTheory.NatTrans
-
-/-- Left whiskering of cylinder classifiers.
-
-For K : X → A, the cylinder functor classified by Kα equals K × id on X × Fin 2 followed by
-the cylinder functor classified by α. All category universes in this equality are independent. -/
-theorem nerveCylinderFunctor_whiskerLeft
-    {X : Type uPre} [Category.{vPre} X]
-    {A : Type uMid} [Category.{vMid} A]
-    {B : Type uOut} [Category.{vOut} B]
-    {F G : A ⥤ B} (K : X ⥤ A) (α : F ⟶ G) :
-    nerveCylinderFunctor (Functor.whiskerLeft K α) =
-      (K.prod (𝟭 (Fin 2))) ⋙ nerveCylinderFunctor α := by
-  apply Functor.hext
-  · rintro ⟨x, i⟩
-    fin_cases i <;> rfl
-  · rintro ⟨x, i⟩ ⟨y, j⟩ f
-    rcases f with ⟨f, g⟩
-    fin_cases i
-    · fin_cases j
-      · apply heq_of_eq
-        simp [nerveCylinderFunctor, ComposableArrows.mk₁]
-      · apply heq_of_eq
-        simp [nerveCylinderFunctor, ComposableArrows.mk₁]
-    · fin_cases j
-      · exfalso
-        have hle : (1 : Fin 2) ≤ (0 : Fin 2) := leOfHom g
-        omega
-      · apply heq_of_eq
-        simp [nerveCylinderFunctor, ComposableArrows.mk₁]
-
-end CategoryTheory.NatTrans
-
-end NativeClassifierPrecomposition
 
 section NativeDownwardPrecomposition
 
@@ -786,6 +756,8 @@ end NativeDownwardPrecomposition
 end
 
 
+@[expose] public section
+
 noncomputable section
 
 open CategoryTheory Opposite CategoryTheory.MonoidalCategory
@@ -808,6 +780,15 @@ public def Functor.nervePrismMapCommonHomUp {n : ℕ}
   app _ := ↾fun x =>
     (Φ.mapComposableArrows _).obj
       (x.1.prod' (SSet.stdSimplex.asOrderHom x.2).toFunctor)
+
+/-- A finite common-height prism applies its classifier to the product chain. -/
+@[simp]
+public theorem Functor.nervePrismMapCommonHomUp_app {n : ℕ}
+    (Φ : A × Fin (n + 1) ⥤ B) (Δ : SimplexCategoryᵒᵖ)
+    (x : (nerve A ⊗ (Δ[n] : SSet.{max uPrismObj vPrismObj wPrismHom})).obj Δ) :
+    (Functor.nervePrismMapCommonHomUp Φ).app Δ x =
+      (Φ.mapComposableArrows Δ.unop.len).obj
+        (x.1.prod' (SSet.stdSimplex.asOrderHom x.2).toFunctor) := rfl
 
 /-- Faces of finite prisms at the common morphism height.
 
@@ -834,7 +815,7 @@ public def NatTrans.nerveCompositionPrismMapCommonHomUp
     {F G H : A ⥤ B} (α : F ⟶ G) (β : G ⟶ H) :
     nerve A ⊗ (Δ[2] : SSet.{max uPrismObj vPrismObj wPrismHom}) ⟶ nerve B :=
   Functor.nervePrismMapCommonHomUp
-    (Prod.swap A (Fin 3) ⋙ Functor.uncurry.obj (ComposableArrows.mk₂ α β))
+    (NatTrans.nerveChainFunctor α β)
 
 /-- The face of the composition prism determined by the first transformation.
 
@@ -847,13 +828,7 @@ public theorem NatTrans.nerveCompositionPrismMapCommonHomUp_face_two
       NatTrans.nerveHomotopyMapCommonHomUp.{uPrismObj, vPrismObj, wPrismHom} α := by
   rw [NatTrans.nerveCompositionPrismMapCommonHomUp,
     Functor.whiskerLeft_δ_nervePrismMapCommonHomUp]
-  have hClass :
-      ((𝟭 A).prod (SimplexCategory.δ (2 : Fin 3)).toOrderHom.toFunctor) ⋙
-          (Prod.swap A (Fin 3) ⋙ Functor.uncurry.obj (ComposableArrows.mk₂ α β)) =
-        NatTrans.nerveCylinderFunctor α :=
-    congrArg (fun K => Prod.swap A (Fin 2) ⋙ Functor.uncurry.obj K)
-      (CategoryTheory.nerve.δ₂_mk₂_eq α β)
-  rw [hClass]
+  rw [NatTrans.prod_δ_two_comp_nerveChainFunctor]
   rfl
 
 /-- The face of the composition prism determined by the second transformation.
@@ -867,13 +842,7 @@ public theorem NatTrans.nerveCompositionPrismMapCommonHomUp_face_zero
       NatTrans.nerveHomotopyMapCommonHomUp.{uPrismObj, vPrismObj, wPrismHom} β := by
   rw [NatTrans.nerveCompositionPrismMapCommonHomUp,
     Functor.whiskerLeft_δ_nervePrismMapCommonHomUp]
-  have hClass :
-      ((𝟭 A).prod (SimplexCategory.δ (0 : Fin 3)).toOrderHom.toFunctor) ⋙
-          (Prod.swap A (Fin 3) ⋙ Functor.uncurry.obj (ComposableArrows.mk₂ α β)) =
-        NatTrans.nerveCylinderFunctor β :=
-    congrArg (fun K => Prod.swap A (Fin 2) ⋙ Functor.uncurry.obj K)
-      (CategoryTheory.nerve.δ₀_mk₂_eq α β)
-  rw [hClass]
+  rw [NatTrans.prod_δ_zero_comp_nerveChainFunctor]
   rfl
 
 /-- The face of the composition prism determined by the composite transformation.
@@ -887,13 +856,7 @@ public theorem NatTrans.nerveCompositionPrismMapCommonHomUp_face_one
       NatTrans.nerveHomotopyMapCommonHomUp.{uPrismObj, vPrismObj, wPrismHom} (α ≫ β) := by
   rw [NatTrans.nerveCompositionPrismMapCommonHomUp,
     Functor.whiskerLeft_δ_nervePrismMapCommonHomUp]
-  have hClass :
-      ((𝟭 A).prod (SimplexCategory.δ (1 : Fin 3)).toOrderHom.toFunctor) ⋙
-          (Prod.swap A (Fin 3) ⋙ Functor.uncurry.obj (ComposableArrows.mk₂ α β)) =
-        NatTrans.nerveCylinderFunctor (α ≫ β) :=
-    congrArg (fun K => Prod.swap A (Fin 2) ⋙ Functor.uncurry.obj K)
-      (CategoryTheory.nerve.δ₁_mk₂_eq α β)
-  rw [hClass]
+  rw [NatTrans.prod_δ_one_comp_nerveChainFunctor]
   rfl
 
 /-- Cylinder maps under equality transport of endpoint functors.
@@ -945,6 +908,14 @@ public def nerveMapAsSmallUp (A : Type uPrismObj)
   app _ := ↾fun x =>
     ((AsSmall.up : A ⥤ AsSmall.{vPrismObj} A).mapComposableArrows _).obj x
 
+/-- Canonical category transport maps every arrow of the given nerve chain. -/
+@[simp]
+public theorem nerveMapAsSmallUp_app (A : Type uPrismObj)
+    [Category.{max vPrismObj wPrismHom} A] (Δ : SimplexCategoryᵒᵖ)
+    (x : (nerve A).obj Δ) :
+    (nerveMapAsSmallUp.{uPrismObj, vPrismObj, wPrismHom} A).app Δ x =
+      ((AsSmall.up : A ⥤ AsSmall.{vPrismObj} A).mapComposableArrows Δ.unop.len).obj x := rfl
+
 /-- The cylinder map after canonical category transport.
 
 Precompose α by AsSmall.down : AsSmall A → A and apply its cylinder classifier to chains in
@@ -971,7 +942,8 @@ public theorem NatTrans.nerveHomotopyMapAsSmallDown_app
       (Δ[1] : SSet.{max uPrismObj vPrismObj wPrismHom})).obj Δ) :
     (NatTrans.nerveHomotopyMapAsSmallDown.{uPrismObj, vPrismObj, wPrismHom} α).app Δ x =
       ((NatTrans.nerveCylinderFunctor
-        (Functor.whiskerLeft (AsSmall.down : AsSmall.{vPrismObj} A ⥤ A) α)).mapComposableArrows Δ.unop.len).obj
+        (Functor.whiskerLeft (AsSmall.down : AsSmall.{vPrismObj} A ⥤ A) α)).mapComposableArrows
+          Δ.unop.len).obj
         (x.1.prod' (SSet.stdSimplex.asOrderHom x.2).toFunctor) := by
   unfold NatTrans.nerveHomotopyMapAsSmallDown
   rfl
@@ -1009,7 +981,7 @@ universe uConcrete
 
 For C with objects in Type 0 and morphisms in universe u, applying AsSmall.up to chains equals
 the common-morphism-universe nerve map of that functor. -/
-public theorem nerveMapAsSmallUp_eq_nativeCommonHomUp
+public theorem nerveMapAsSmallUp_eq_nerveMapCommonHomUp
     (C : Type 0) [Category.{uConcrete} C] :
     nerveMapAsSmallUp.{0, uConcrete, 0} C =
       nerveMapCommonHomUp.{0, uConcrete, 0}
@@ -1057,6 +1029,8 @@ end CategoryTheory
 
 end
 
+end
+
 
 /-!
 # Coordinates of the natural-transformation cylinder
@@ -1077,24 +1051,16 @@ namespace CategoryTheory.NatTrans
 variable {C D : Type uCylinderValue} [Category.{vCylinderValue} C]
   [Category.{vCylinderValue} D]
 
-private theorem originalNerveHomotopyCylinderChainValue
+/-- Product-chain coordinates of the nerve cylinder.
+
+In degree m, the cylinder sends a chain c and an interval simplex t to the image of the
+product chain c × t under the cylinder functor classified by α. -/
+public theorem nerveHomotopyMap_app
     {F G : C ⥤ D} (alpha : F ⟶ G) (Delta : SimplexCategoryᵒᵖ)
     (X : (nerve C ⊗ (Δ[1] : SSet.{max uCylinderValue vCylinderValue})).obj Delta) :
     (nerveHomotopyMap alpha).app Delta X =
       ((nerveCylinderFunctor alpha).mapComposableArrows Delta.unop.len).obj
         (X.1.prod' (SSet.stdSimplex.asOrderHom X.2).toFunctor) := rfl
-
-/-- Product-chain coordinates of the nerve cylinder.
-
-In degree m, the cylinder sends a chain c and an interval simplex t to the image of the
-product chain c × t under the cylinder functor classified by α. -/
-public theorem nerveHomotopyMap_app_value
-    {F G : C ⥤ D} (alpha : F ⟶ G) (Delta : SimplexCategoryᵒᵖ)
-    (X : (nerve C ⊗ (Δ[1] : SSet.{max uCylinderValue vCylinderValue})).obj Delta) :
-    (nerveHomotopyMap alpha).app Delta X =
-      ((nerveCylinderFunctor alpha).mapComposableArrows Delta.unop.len).obj
-        (X.1.prod' (SSet.stdSimplex.asOrderHom X.2).toFunctor) :=
-  originalNerveHomotopyCylinderChainValue alpha Delta X
 
 end CategoryTheory.NatTrans
 
@@ -1119,17 +1085,12 @@ namespace CategoryTheory.NatTrans
 
 variable {C D : Type uHField} [Category.{vHField} C] [Category.{vHField} D]
 
-private theorem originalNerveHomotopyHFieldValue
-    {F G : C ⥤ D} (alpha : F ⟶ G) :
-    (nerveHomotopy alpha).h = nerveHomotopyMap alpha := rfl
-
 /-- The underlying map of the nerve homotopy.
 
 The cylinder field h of the simplicial homotopy associated to α is nerveHomotopyMap α. -/
-public theorem nerveHomotopy_h_value
+public theorem nerveHomotopy_h
     {F G : C ⥤ D} (alpha : F ⟶ G) :
-    (nerveHomotopy alpha).h = nerveHomotopyMap alpha :=
-  originalNerveHomotopyHFieldValue alpha
+    (nerveHomotopy alpha).h = nerveHomotopyMap alpha := rfl
 
 end CategoryTheory.NatTrans
 
@@ -1157,25 +1118,17 @@ variable {A : Type (max uCommonHObj vCommonHObj)}
   [Category.{max vCommonHObj wCommonHHom} A]
   {B : Type uCommonHObj} [Category.{max vCommonHObj wCommonHHom} B]
 
-private theorem originalCommonHomHWholeChainValue
-    {F G : A ⥤ B} (alpha : F ⟶ G) (Delta : SimplexCategoryᵒᵖ)
-    (X : (nerve A ⊗ (Δ[1] : SSet.{max uCommonHObj vCommonHObj wCommonHHom})).obj Delta) :
-    (nerveHomotopyCommonHom.{uCommonHObj, vCommonHObj, wCommonHHom} alpha).h.app Delta X =
-      ((nerveCylinderFunctor alpha).mapComposableArrows Delta.unop.len).obj
-        (X.1.prod' (SSet.stdSimplex.asOrderHom X.2).toFunctor) := rfl
-
 /-- Product-chain coordinates of the larger-source homotopy.
 
 In degree m, the cylinder field of the common-morphism-universe homotopy sends (c,t) to the
 image of the product chain under the cylinder classifier of α, with the stated source and
 target object heights. -/
-public theorem nerveHomotopyCommonHom_h_app_value
+public theorem nerveHomotopyCommonHom_h_app
     {F G : A ⥤ B} (alpha : F ⟶ G) (Delta : SimplexCategoryᵒᵖ)
     (X : (nerve A ⊗ (Δ[1] : SSet.{max uCommonHObj vCommonHObj wCommonHHom})).obj Delta) :
     (nerveHomotopyCommonHom.{uCommonHObj, vCommonHObj, wCommonHHom} alpha).h.app Delta X =
       ((nerveCylinderFunctor alpha).mapComposableArrows Delta.unop.len).obj
-        (X.1.prod' (SSet.stdSimplex.asOrderHom X.2).toFunctor) :=
-  originalCommonHomHWholeChainValue alpha Delta X
+        (X.1.prod' (SSet.stdSimplex.asOrderHom X.2).toFunctor) := rfl
 
 end CategoryTheory.NatTrans
 
@@ -1203,30 +1156,18 @@ variable {A : Type uCompositionValue} [Category.{max vCompositionValue wComposit
   {B : Type (max uCompositionValue vCompositionValue)}
   [Category.{max vCompositionValue wCompositionValue} B]
 
-private theorem originalUpwardCompositionPrismValueComputed
-    {F G H : A ⥤ B} (alpha : F ⟶ G) (beta : G ⟶ H) (Delta : SimplexCategoryᵒᵖ)
-    (x : (nerve A ⊗
-      (Δ[2] : SSet.{max uCompositionValue vCompositionValue wCompositionValue})).obj Delta) :
-    (nerveCompositionPrismMapCommonHomUp.{uCompositionValue, vCompositionValue, wCompositionValue}
-        alpha beta).app Delta x =
-      ((Prod.swap A (Fin 3) ⋙
-        Functor.uncurry.obj (ComposableArrows.mk₂ alpha beta)).mapComposableArrows
-          Delta.unop.len).obj (x.1.prod' (SSet.stdSimplex.asOrderHom x.2).toFunctor) := rfl
-
 /-- Product-chain coordinates of the composition prism.
 
 In degree m, the triangular composition prism sends a chain c and a monotone map t to the
 image of their product chain under the three-level classifier of α and β. -/
-public theorem nerveCompositionPrismMapCommonHomUp_app_value
+public theorem nerveCompositionPrismMapCommonHomUp_app
     {F G H : A ⥤ B} (alpha : F ⟶ G) (beta : G ⟶ H) (Delta : SimplexCategoryᵒᵖ)
     (x : (nerve A ⊗
       (Δ[2] : SSet.{max uCompositionValue vCompositionValue wCompositionValue})).obj Delta) :
     (nerveCompositionPrismMapCommonHomUp.{uCompositionValue, vCompositionValue, wCompositionValue}
         alpha beta).app Delta x =
-      ((Prod.swap A (Fin 3) ⋙
-        Functor.uncurry.obj (ComposableArrows.mk₂ alpha beta)).mapComposableArrows
-          Delta.unop.len).obj (x.1.prod' (SSet.stdSimplex.asOrderHom x.2).toFunctor) :=
-  originalUpwardCompositionPrismValueComputed alpha beta Delta x
+      ((nerveChainFunctor alpha beta).mapComposableArrows Delta.unop.len).obj
+        (x.1.prod' (SSet.stdSimplex.asOrderHom x.2).toFunctor) := rfl
 
 end CategoryTheory.NatTrans
 
