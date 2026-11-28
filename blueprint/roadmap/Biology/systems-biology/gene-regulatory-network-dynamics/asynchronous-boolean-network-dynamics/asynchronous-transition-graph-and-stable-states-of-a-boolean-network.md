@@ -1,0 +1,20 @@
+# Asynchronous transition graph and stable states of a Boolean network
+
+**Setting.** A Boolean network on $n$ variables is a map $F = (f_1, \dots, f_n) : \{0,1\}^n \to \{0,1\}^n$, where $f_i$ is the logical rule of variable $i$.
+
+- *Synchronous dynamics:* each state $x$ has exactly one successor $F(x)$.
+- *Asynchronous dynamics:* the successors of $x$ are obtained by (1) computing $F(x)$; (2) taking the indices $i$ with $x_i \ne f_i(x)$ (the variables called to change); (3) for each such $i$, the state $(x_1, \dots, x_{i-1}, f_i(x), x_{i+1}, \dots, x_n)$, i.e. $x$ with coordinate $i$ flipped. The asynchronous transition graph has an arc from each state to each of its asynchronous successors.
+
+**Statements.**
+
+1. The stable states (states without asynchronous successors, sinks of the asynchronous transition graph) are exactly the fixed points $F(x) = x$, which are also the stable states of the synchronous dynamics; stable states do not depend on the updating strategy.
+2. Every asynchronous transition changes exactly one coordinate, so the asynchronous transition graph is a subgraph of the $n$-dimensional hypercube graph, each state has at most $n$ successors, and no assumption is made about the relative speeds of processes: every interleaving of single-variable updates is represented.
+3. From every state some terminal strongly connected component (an attractor) is reachable along a path of the asynchronous transition graph; the stable states are the singleton attractors, and if the stable states are the only attractors, every state reaches at least one of them along some path. A particular trajectory need not enter an attractor: it can cycle forever inside a non-terminal strongly connected component. The random walk that leaves each non-stable state $x$ along each of its arcs with probability $1/|\mathrm{succ}(x)|$ enters a terminal strongly connected component, and then stays in it, with probability one.
+
+## Expansion
+
+For 1: $x$ has no asynchronous successor iff no index satisfies $x_i \ne f_i(x)$, i.e. iff $F(x) = x$, which is the definition of a synchronous fixed point. For 2: by construction a successor differs from $x$ in one coordinate; a state has as many successors as variables called to change. For 3: the strongly connected components of the finite asynchronous transition graph, ordered by reachability, form a finite acyclic graph, so from the component of any state a path leads to a component with no outgoing arcs; a terminal component with one state and no arcs is a stable state. A single trajectory can still avoid the terminal components: for $n = 2$ with $F(00) = 01$, $F(01) = 10$, $F(10) = 11$, $F(11) = 11$, the arcs out of $00$ and $01$ are $00 \to 01$, $01 \to 00$ and $01 \to 11$, the only attractor is the stable state $11$, and $00 \to 01 \to 00 \to \cdots$ never enters it. For the uniform random walk, every state reaches a terminal component in at most $2^n$ steps along a path of probability at least $n^{-2^n}$, so the probability of not having entered one after $k \cdot 2^n$ steps is at most $(1 - n^{-2^n})^k \to 0$; no arc leaves a terminal component, so the walk stays in it. In the death-receptor cell-fate model (25 variables, $2^{25} > 3.3 \times 10^7$ states), the 27 stable states were the sole attractors under asynchronous updating and clustered into survival (NF-κB active), apoptosis (caspase activation, mitochondrial outer membrane permeabilization), non-apoptotic death (mitochondrial permeability transition) and a naïve state; synchronous updating, by contrast, imposes simultaneous updates of all variables and can produce cyclic attractors that no single-variable interleaving realizes.
+
+## Sources
+
+- L. Calzone, L. Tournier, S. Fourquet, D. Thieffry, B. Zhivotovsky, E. Barillot, A. Zinovyev, "Mathematical modelling of cell-fate decision in response to death receptor engagement", PLoS Computational Biology (2010), Methods ("Boolean formalism, synchronous vs. asynchronous strategy") and Results ("Identification of stable states"), <https://doi.org/10.1371/journal.pcbi.1000702> (PMC2832675).

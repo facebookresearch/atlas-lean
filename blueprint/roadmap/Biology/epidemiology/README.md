@@ -47,3 +47,6 @@ Compartmental, renewal and branching-process models of infectious disease transm
 - [Multi-strain diffusive SIS model](multi-strain-diffusive-sis-model/README.md)
 - [Separable heterogeneity in Kermack–McKendrick models](separable-heterogeneity-in-kermack-mckendrick-models/README.md)
 - [SIR model on metric graphs](sir-model-on-metric-graphs/README.md)
+- [Compartmental models, interventions and reproduction numbers](compartmental-models-and-reproduction-numbers/README.md)
+- [Stochastic, network, spatial, airborne and vector-borne transmission](stochastic-network-spatial-and-vector-models/README.md)
+- [Epidemic inference and surveillance](epidemic-inference-and-surveillance/README.md)

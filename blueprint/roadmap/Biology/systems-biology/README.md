@@ -13,9 +13,6 @@ Dynamics of biochemical reaction networks and gene regulatory circuits: mass-act
 - [Six-variable repressilator](six-variable-repressilator/README.md)
 - [Stochastic mass action, metabolic control and flux balance](stochastic-mass-action-metabolic-control-and-flu/README.md)
 
-- [Extended Permanence Conjecture](extended-permanence-conjecture.md)
-- [Nondegeneracy Conjecture for reaction networks](nondegeneracy-conjecture-for-reaction-networks.md)
-- [Maximal multistationarity of multisite phosphorylation](maximal-multistationarity-of-multisite-phosphorylation.md)
 - [Leak removal in linear compartmental models](leak-removal-in-linear-compartmental-models.md)
 
 - [Gene regulatory network dynamics](gene-regulatory-network-dynamics/README.md)
@@ -38,3 +35,4 @@ Dynamics of biochemical reaction networks and gene regulatory circuits: mass-act
 - [Operon dynamics with state-dependent delays](operon-dynamics-with-state-dependent-delays/README.md)
 - [Slowest first passage times](slowest-first-passage-times/README.md)
 - [Sparse-regression equation learning](sparse-regression-equation-learning/README.md)
+- [Metabolic networks, molecular biophysics and model selection](metabolism-biophysics-and-model-selection/README.md)

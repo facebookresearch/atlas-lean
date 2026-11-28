@@ -11,3 +11,8 @@ models of concentration measurements. Enzyme kinetics as such is under Systems b
 - [Pharmacokinetic observation models](pharmacokinetic-observation-models/README.md)
 - [Saturable Michaelis–Menten elimination](saturable-michaelis-menten-elimination/README.md)
 - [Two-compartment pharmacokinetics](two-compartment-pharmacokinetics/README.md)
+- [Allometric scaling of pharmacokinetic parameters](allometric-scaling-of-pharmacokinetic-parameters/README.md)
+- [Blood–brain barrier transport kinetics](blood-brain-barrier-transport-kinetics/README.md)
+- [MIRD internal dosimetry](mird-internal-dosimetry/README.md)
+- [Three-compartment pharmacokinetics](three-compartment-pharmacokinetics/README.md)
+- [Tracer kinetics and the central volume principle](tracer-kinetics-and-the-central-volume-principle/README.md)

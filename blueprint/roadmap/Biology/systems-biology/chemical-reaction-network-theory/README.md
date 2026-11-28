@@ -13,3 +13,6 @@
 - [Monomolecular networks are not nondegenerately multistationary](monomolecular-networks-are-not-nondegenerately-multistationary.md)
 - [Steady-state invariants of glued reaction networks](steady-state-invariants-of-glued-reaction-networks.md)
 - [Topological criterion for autocatalysis in diluted reaction networks](topological-criterion-for-autocatalysis-in-diluted-networks.md)
+- [Extended Permanence Conjecture](extended-permanence-conjecture.md)
+- [Nondegeneracy Conjecture for reaction networks](nondegeneracy-conjecture-for-reaction-networks.md)
+- [Maximal multistationarity of multisite phosphorylation](maximal-multistationarity-of-multisite-phosphorylation.md)

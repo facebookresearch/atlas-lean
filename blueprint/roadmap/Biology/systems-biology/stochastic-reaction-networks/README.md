@@ -5,3 +5,4 @@
 - [Boundary-induced power-law slow mixing of stochastic reaction networks](boundary-induced-power-law-slow-mixing.md)
 - [Conditional stationary distribution after eliminating non-interacting species](conditional-stationary-distribution-after-eliminating-non-interacting-species.md)
 - [Limit of complex balanced distributions under fast-degradation scaling](limit-of-complex-balanced-distributions-under-fast-degradation-scaling.md)
+- [Occupation measures of transcriptional processes](occupation-measures-of-transcriptional-processes/README.md)

@@ -15,3 +15,4 @@
 - [Pupko's joint reconstruction](pupko.md)
 - [Likelihood of Pupko's joint reconstruction](joint-lik-pupko.md)
 - [Pupko's reconstruction is a joint maximum-likelihood reconstruction](pupko-is-joint-ml.md)
+- [Empirical Bayes marginal reconstruction integrated over topologies](empirical-bayes-marginal-reconstruction-integrated-over-topologies.md)
