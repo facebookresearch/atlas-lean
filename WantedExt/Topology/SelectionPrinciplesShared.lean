@@ -23,6 +23,7 @@ public import Mathlib.Data.Set.Countable
 public import Mathlib.Order.Filter.AtTopBot.Basic
 public import Mathlib.Topology.Constructions
 public import Mathlib.Topology.Instances.Real.Lemmas
+public import MathlibExt.Topology.SelectionPrinciplesShared
 
 @[expose] public section
 
@@ -87,25 +88,12 @@ end Selection
 
 section FunctionSpaces
 
-/-- `C_p(X)`: continuous real-valued functions on `X` with the pointwise (product) topology. -/
-abbrev Cp (X : Type*) [TopologicalSpace X] : Type _ := {f : X → ℝ // Continuous f}
-
-/-- The constant zero function `𝟎` as a point of `C_p(X)`. -/
-def cpZero (X : Type*) [TopologicalSpace X] : Cp X := ⟨fun _ => 0, continuous_const⟩
-
 /-- The Reznichenko (weak Fréchet–Urysohn) property: for `y ∈ cl A \ A` there are pairwise
 disjoint finite subsets of `A` such that every neighbourhood of `y` meets all but finitely many. -/
 def HasReznichenkoProperty (Y : Type*) [TopologicalSpace Y] : Prop :=
   ∀ A : Set Y, ∀ y ∈ closure A \ A, ∃ F : ℕ → Finset Y, (∀ n, (F n : Set Y) ⊆ A) ∧
     Pairwise (fun m n => Disjoint (F m) (F n)) ∧
       ∀ U ∈ 𝓝 y, ∀ᶠ n in atTop, ((F n : Set Y) ∩ U).Nonempty
-
-/-- The weak sequence selection property of `C_p(X)` (Scheepers; Tsaban, Section 15): for every
-sequence `(f^n_k)_{k ∈ ℕ}`, `n ∈ ℕ`, of sequences in `C_p(X)` each converging to `𝟎`, there are
-indices `k_n` with `𝟎` in the closure of `{f^n_{k_n} : n ∈ ℕ}`. -/
-def HasWeakSSP (X : Type*) [TopologicalSpace X] : Prop :=
-  ∀ f : ℕ → ℕ → Cp X, (∀ n, Tendsto (f n) atTop (𝓝 (cpZero X))) →
-    ∃ k : ℕ → ℕ, cpZero X ∈ closure (range fun n => f n (k n))
 
 end FunctionSpaces
 
