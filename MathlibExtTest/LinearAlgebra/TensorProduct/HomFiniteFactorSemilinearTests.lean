@@ -224,12 +224,13 @@ example :
     pairEquiv.symm
         (semilinearSquareOutput (rationalEquiv (rationalEval ⊗ₜ[ℚ] (1 : ℚ)))) =
       semilinearSquareInput (rationalEval ⊗ₜ[ℚ] (1 : ℚ)) := by
+  apply pairEquiv.injective
+  rw [LinearEquiv.apply_symm_apply]
   have h := LinearMap.congr_fun
-    (TensorProduct.rTensorHomToHomRTensor_symm_map_precomp
+    (TensorProduct.rTensorHomToHomRTensor_map_precomp
       (algebraMap ℤ ℚ) (ℤ → ℤ) ℚ sourceDouble coefficientTriple factorPair)
-    (rationalEquiv (rationalEval ⊗ₜ[ℚ] (1 : ℚ)))
-  simpa only [rationalEquiv, pairEquiv, semilinearSquareInput,
-    semilinearSquareOutput, LinearMap.comp_apply, LinearEquiv.symm_apply_apply] using h
+    (rationalEval ⊗ₜ[ℚ] (1 : ℚ))
+  exact h.symm
 
 example :
     TensorProduct.piScalarRight ℚ ℚ ℚ (Fin 2)
@@ -258,7 +259,16 @@ private theorem domain_finite_value :
         (U := ℕ → ZMod 2) modTwoScalars_surjective
         (domainFiniteHom ⊗ₜ[ℤ] infiniteResidueFactor) (1 : ZMod 2)) = 1 := by
   rw [TensorProduct.rTensorHomEquivOfSurjectiveScalars_tmul]
-  simp [residueProductProbe, domainFiniteHom, infiniteResidueFactor, modTwoMultiply]
+  change modTwoMultiply
+    (((LinearMap.proj (0 : ℕ)).lTensor (ZMod 2))
+      ((1 : ZMod 2) ⊗ₜ[ℤ] infiniteResidueFactor)) = 1
+  rw [LinearMap.lTensor_tmul]
+  change modTwoMultiply ((1 : ZMod 2) ⊗ₜ[ℤ] (1 : ZMod 2)) = 1
+  change TensorProduct.rid (ZMod 2) (ZMod 2)
+    (TensorProduct.mapOfCompatibleSMul (ZMod 2) ℤ ℤ (ZMod 2) (ZMod 2)
+      ((1 : ZMod 2) ⊗ₜ[ℤ] (1 : ZMod 2))) = 1
+  rw [TensorProduct.mapOfCompatibleSMul_tmul]
+  simp
 
 example :
     (domainFiniteHom ⊗ₜ[ℤ] infiniteResidueFactor :

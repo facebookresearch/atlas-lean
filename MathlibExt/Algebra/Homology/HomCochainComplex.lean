@@ -12,6 +12,7 @@ public import Mathlib.Algebra.Homology.Opposite
 public import Mathlib.CategoryTheory.Preadditive.Yoneda.Limits
 public import Mathlib.Algebra.Category.Grp.Abelian
 public import Mathlib.Algebra.Homology.HomologicalComplexLimits
+public import Mathlib.Algebra.Homology.HomologicalComplexAbelian
 
 public import MathlibExt.Algebra.Homology.HomologyMapSquare
 
