@@ -80,22 +80,6 @@ These are category-(b) candidates from §115 of the Knill survey
 (`sections/115-moments.md`).
 -/
 
-/- **Hausdorff–Hildebrandt–Schoenberg theorem.** A multi-indexed real sequence
-is the moment sequence of a signed bounded-variation measure on the unit cube
-`Iᵈ` iff its moments are Hausdorff bounded. -/
-/-- **Hausdorff–Hildebrandt–Schoenberg moment theorem.** A real sequence $a$ indexed by
-$\mathbb{N}^d$ is a moment configuration, that is, there are finite measures $\mu$ and $\nu$ on
-$\mathbb{R}^d$ with $a_n = \int_{[0,1]^d} x^n \, d\mu(x) - \int_{[0,1]^d} x^n \, d\nu(x)$ for every
-multi-index $n \in \mathbb{N}^d$, where $x^n = \prod_i x_i^{n_i}$, if and only if $a$ is Hausdorff
-bounded.
-
-Source: F. Hausdorff (1921, 1923); T. H. Hildebrandt and I. J. Schoenberg, *On linear functional
-operations and the moment problem for a finite interval in one or several dimensions*, Ann. of Math.
-34 (1933). Knill, *Some fundamental theorems in mathematics*, §115. Via
-leanprover/lean-eval@38361be, problem `hausdorff_hildebrandt_schoenberg`. -/
-public theorem_wanted hausdorff_hildebrandt_schoenberg {d : ℕ} (a : (Fin d → ℕ) → ℝ) :
-    IsMomentConfiguration a ↔ HausdorffBounded a
-
 end Analysis
 
 end MathlibExt.Analysis.HausdorffMomentsWanted
