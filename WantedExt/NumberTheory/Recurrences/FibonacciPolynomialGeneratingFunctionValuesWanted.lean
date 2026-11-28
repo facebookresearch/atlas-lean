@@ -27,6 +27,7 @@ public import Mathlib.FieldTheory.RatFunc.AsPolynomial
 public import MathlibExt.NumberTheory.GeneralizedFibonacciPolynomial
 public import MathlibExt.NumberTheory.Recurrences.FibonacciGeneratingFunctionValues
 public import MathlibExt.NumberTheory.Recurrences.FibonacciGeneratingFunctionRadius
+public import MathlibExt.NumberTheory.Recurrences.LucasGenFunIntegerInRadius
 public import MathlibExt.NumberTheory.Recurrences.LucasNumberGeneratingFunctionValues
 public import MathlibExt.NumberTheory.Recurrences.OddFibonacciLucasPell
 
@@ -104,25 +105,6 @@ public theorem_wanted lucasGenFun_eval_isInt_iff {a b : ℕ} (ha : 0 < a) (hb : 
           q = -(((𝕃[a, b] (i + 1)).eval 1 : ℤ) : ℚ) / (b * (((𝕃[a, b] i).eval 1 : ℤ) : ℚ))) ∨
         ∃ i : ℕ, 0 < i ∧
           q = -(((𝔽[a, b] (i + 1)).eval 1 : ℤ) : ℚ) / (b * (((𝔽[a, b] i).eval 1 : ℤ) : ℚ))
-
-/-- **Integer values of the generalized Lucas generating function in its interval of
-convergence.** Let $a$ and $b$ be positive integers with $a \ne 1$ and $b \mid a$, and let
-$F_i(x), L_i(x) \in \mathbb{Z}[x]$ be the polynomials with $F_0 = 0$, $F_1 = 1$, $L_0 = 2$,
-$L_1 = ax$ and $G_{i+2} = ax\,G_{i+1} + b\,G_i$ for $G = F, L$ and all $i \ge 0$. For a rational
-number $q$ with $|q| < 2 / (a + \sqrt{a^2 + 4b})$, the radius of convergence of the power series
-of $(2 - at) / (1 - at - bt^2)$, the number $(2 - aq) / (1 - aq - bq^2)$ is an integer if and
-only if $q = F_{2i}(1) / F_{2i+1}(1)$ or $q = L_{2i+1}(1) / L_{2i+2}(1)$ for some
-$i \in \mathbb{N}$.
-
-Source: Yuji Tsuno, *Polynomial Values with Integer Coefficients for the Generating Functions of
-Fibonacci Polynomials*, The Fibonacci Quarterly 62 (2024), Article tsuno05142024, Corollary 1.7
-(`fq-2024-tsuno05142024-cor-1.7`). -/
-public theorem_wanted lucasGenFun_eval_isInt_iff_of_abs_lt_radius {a b : ℕ} (ha : 0 < a)
-    (ha1 : a ≠ 1) (hb : 0 < b) (hba : b ∣ a) {q : ℚ}
-    (hq : |(q : ℝ)| < 2 / (a + Real.sqrt (a ^ 2 + 4 * b))) :
-    (∃ n : ℤ, (2 - a * q) / (1 - a * q - b * q ^ 2) = n) ↔
-      ∃ i : ℕ, q = (((𝔽[a, b] (2 * i)).eval 1 : ℤ) : ℚ) / (((𝔽[a, b] (2 * i + 1)).eval 1 : ℤ) : ℚ) ∨
-        q = (((𝕃[a, b] (2 * i + 1)).eval 1 : ℤ) : ℚ) / (((𝕃[a, b] (2 * i + 2)).eval 1 : ℤ) : ℚ)
 
 /-- **Polynomial Pell-type solutions as rescaled Fibonacci–Lucas polynomials.** Let $a$ and $b$ be
 positive integers, and let $F_n(x), L_n(x) \in \mathbb{Z}[x]$ be the polynomials with $F_0 = 0$,
