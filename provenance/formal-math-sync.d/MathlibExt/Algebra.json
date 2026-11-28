@@ -36,8 +36,8 @@
       "path": "MathlibExt/Algebra/Category/ModuleCat/Graded.lean",
       "backport": "pending",
       "disposition": "diverged",
-      "published_sha256": "9faa0e6d29910ad0f005172649112a7f2d8aade38ac12948aeaf7191ee6a10de",
-      "rationale": "General graded-module categories, shifts/localization and differential-graded tensor-power coherence retained from the immutable recorded MathlibExt source. All original mathematical declarations, hypotheses, worlds, maps and signs are preserved. The contributor notice is normalized to Atlas style while all actual contributors and archived history remain credited; five generic tensor bridges use the canonical current API, without changing the RingTheory-local splitting API. Necessary 100-column whitespace wraps only; hosted Native verification remains pending.",
+      "published_sha256": "107e02af55bd4ecc48848bf4956c49d044b04ee579ced3431d1b9888a0e9a999",
+      "rationale": "Retain the recorded immutable graded-module API, all declarations, original mathematical hypotheses, worlds, maps, signs, contributors and licenses. This compiler repair only indents mathematical field docstrings inside their original structure layout; all nonwhitespace tokens and mathematical code remain identical. Earlier Atlas author normalization and current generic tensor bridge promotion remain as recorded. Hosted Native verification after the layout correction is pending.",
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "d773f74b940cf1395804832cf4e72d5afed0de1b0776f9225b31c12e958a3707"
     },

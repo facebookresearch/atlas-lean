@@ -68,28 +68,28 @@ structure GradedModuleCat {R : Type u} [CommRing R] {σS : Type*} [SetLike σS R
     [AddSubgroupClass σS R] (𝒜 : ℕ → σS) [GradedRing 𝒜] where
   /-- The underlying carrier of a graded module.
 
-This is the module carrier in the stated universe of the coefficient ring R. -/
+  This is the module carrier in the stated universe of the coefficient ring R. -/
   carrier : Type u
-/-- The additive group structure of a graded module.
+  /-- The additive group structure of a graded module.
 
-The carrier of the graded module is an additive commutative group. -/
+  The carrier of the graded module is an additive commutative group. -/
   addCommGroup : AddCommGroup carrier
-/-- The scalar module structure of a graded module.
+  /-- The scalar module structure of a graded module.
 
-The carrier is an R-module, compatible with its additive group structure. -/
+  The carrier is an R-module, compatible with its additive group structure. -/
   module : Module R carrier
   /-- The integer-indexed homogeneous components.
 
-For i ∈ ℤ, grade i is the additive subgroup M_i of elements homogeneous of degree i. -/
+  For i ∈ ℤ, grade i is the additive subgroup M_i of elements homogeneous of degree i. -/
   grade : ℤ → AddSubgroup carrier
   /-- The direct-sum decomposition by homogeneous components.
 
-Every element of M decomposes uniquely as a finite sum of components in the M_i, giving M ≅
-⊕_{i∈ℤ} M_i as additive groups. -/
+  Every element of M decomposes uniquely as a finite sum of components in the M_i, giving M ≅
+  ⊕_{i∈ℤ} M_i as additive groups. -/
   decomposition : DirectSum.Decomposition grade
-/-- Compatibility of scalar multiplication with the gradings.
+  /-- Compatibility of scalar multiplication with the gradings.
 
-A homogeneous scalar in 𝒜_n sends M_i into M_{i+n}, with n ∈ ℕ and i ∈ ℤ. -/
+  A homogeneous scalar in 𝒜_n sends M_i into M_{i+n}, with n ∈ ℕ and i ∈ ℤ. -/
   gradedSMul : SetLike.GradedSMul 𝒜 grade
 
 attribute [instance] GradedModuleCat.addCommGroup GradedModuleCat.module
@@ -232,27 +232,27 @@ structure NumDenSameDegModuleAtPrime {R : Type u} [CommRing R]
     (M : GradedModuleCat (𝒜 := 𝒜)) (S : Submonoid R) where
   /-- The common nonnegative degree of a fraction representative.
 
-This n ∈ ℕ is the homogeneous degree of both the module numerator and ring denominator. -/
+  This n ∈ ℕ is the homogeneous degree of both the module numerator and ring denominator. -/
   deg : ℕ
   /-- The module numerator of a homogeneous fraction.
 
-The numerator is an element m of the underlying module carrier. -/
+  The numerator is an element m of the underlying module carrier. -/
   m : M.carrier
-/-- The homogeneous-degree condition on the fraction numerator.
+  /-- The homogeneous-degree condition on the fraction numerator.
 
-The numerator m belongs to M_n, with n coerced from ℕ to the integer module grading. -/
+  The numerator m belongs to M_n, with n coerced from ℕ to the integer module grading. -/
   m_mem : m ∈ M.grade deg
   /-- The ring denominator of a homogeneous module fraction.
 
-The denominator is the ring element s used in the representative m/s. -/
+  The denominator is the ring element s used in the representative m/s. -/
   s : R
-/-- The homogeneous-degree condition on the fraction denominator.
+  /-- The homogeneous-degree condition on the fraction denominator.
 
-The denominator s belongs to the ring component 𝒜_n at the common fraction degree. -/
+  The denominator s belongs to the ring component 𝒜_n at the common fraction degree. -/
   s_mem : s ∈ 𝒜 deg
-/-- The localization condition on a fraction denominator.
+  /-- The localization condition on a fraction denominator.
 
-The denominator s lies in the specified multiplicative submonoid S. -/
+  The denominator s lies in the specified multiplicative submonoid S. -/
   s_in_S : s ∈ S
 
 /-- The localization equivalence of homogeneous module fractions.
