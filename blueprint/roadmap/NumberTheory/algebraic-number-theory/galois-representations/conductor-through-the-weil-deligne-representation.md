@@ -29,7 +29,10 @@ $\sigma \in I_K$; conversely, $\ker r \cap I_K$ is open in $I_K$, so it contains
 $t(\sigma_0) \ne 0$, and a vector $v$ fixed by $\rho(I_K)$ satisfies $\exp(t(\sigma_0) N) v = v$, hence $N v = 0$
 since $N$ is nilpotent, and then $r(\sigma) v = \rho(\sigma) v = v$ for every $\sigma \in I_K$. Item 3 follows:
 for $-1 < u \le 0$ the integrand is $\operatorname{codim} V^{\rho(I_K)} = \operatorname{codim} V_N^{I_K}$, and for
-$u > 0$ it is $\operatorname{codim} V^{r(G_K^u)}$ by item 1, as $G_K^u \subseteq P_K$.
+$u > 0$ it is $\operatorname{codim} V^{r(G_K^u)}$ by item 1, as $G_K^u \subseteq P_K$. Ulmer states (8.1), the equality on
+$P_F$, $V_N^{I_F} = V_\ell^{I_F}$ and (9.1) for representations with values in $\mathrm{GL}_n(E)$, $E$ a finite extension of
+$\mathbb{Q}_\ell$; the argument above uses of the coefficient field only that it has characteristic $0$, and holds over
+$\overline{\mathbb{Q}}_\ell$ as written.
 
 ## Depends on
 

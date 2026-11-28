@@ -18,7 +18,6 @@
 - [Conductor of an ℓ-adic representation through its Weil–Deligne representation](conductor-through-the-weil-deligne-representation.md)
 - [Absolute irreducibility of the ℓ-adic representations of a newform](absolute-irreducibility-of-the-l-adic-representations-of-a-newform.md)
 - [Carayol's Hecke correspondence for GL₂](carayol-s-hecke-correspondence.md)
-- [Conductors under Carayol's Hecke correspondence](conductors-under-the-hecke-correspondence.md)
 - [Casselman's theorem on local newforms for GL₂](local-newforms-for-gl-2.md)
 - [Automorphic representation of a newform of weight two](automorphic-representation-of-a-weight-two-newform.md)
 - [Carayol's theorem on the ℓ-adic representations of Hilbert modular forms](carayol-s-theorem-on-hilbert-modular-forms.md)

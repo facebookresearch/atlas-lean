@@ -17,7 +17,8 @@ the integrand being read for $u > -1$, where $G_K^u \subseteq I_K \subseteq W_K$
 subgroups $G_K^u$, $u > 0$, decrease with trivial intersection, so $r$ is trivial on $G_K^u$ for all large $u$.
 For a representation that factors through the group of a finite Galois extension $L/K$, $a(r)$ is Artin's sum
 $\sum_{i \ge 0} \operatorname{codim} V^{G_i} / (G_0 : G_i)$ over the lower-numbering ramification groups $G_i$ of
-$L/K$.
+$L/K$, the [Artin conductor](../../not-yet-classified/finite-ramification-conductors/artin-conductor.md) of a
+representation of the Galois group of a finite Galois extension of local fields.
 
 For a [Weil–Deligne representation](weil-deligne-representations/weil-deligne-representations.md)
 $(V, r, N)$ of $W_K$ over $\Omega$, let $V_N = \ker N$ and

@@ -52,10 +52,15 @@ This node is still to be broken down. A good expansion states and links:
    two identities, by the preservation of the factors of pairs with characters of $F^\times$ and the compatibility
    with twists and contragredients of $\mathrm{rec}_2$, together with $L(\chi \times \pi, s) = L(\chi.\pi, s)$ and
    $\varepsilon(\chi \times \pi, s, \psi) = \varepsilon(\chi.\pi, s, \psi)$ for a character $\chi$ (Bushnell–Henniart–Kutzko,
-   §1.3, p. 538); its uniqueness: a Frobenius-semisimple two-dimensional Weil–Deligne representation is determined
-   by the $L$- and $\varepsilon$-factors of its twists by characters, through the bijectivity of $\mathrm{rec}_2$ and the
+   §1.3, p. 538); its uniqueness: if $\sigma'$ also satisfies the two identities, the preimage $\Pi'$ of $\check\sigma'$ under
+   $\mathrm{rec}_2$ has the $L$- and $\varepsilon$-factors of the twists of $\omega^{1/2}.\pi$, so that $\Pi' \cong \omega^{1/2}.\pi$, hence
+   $\sigma' \cong \sigma(\pi)$, by the bijectivity of $\mathrm{rec}_2$ and the
    [local converse theorem for GLₙ](../../../RepresentationTheory/reductive-groups-over-local-fields/representations-of-p-adic-gl-n/local-converse-theorem-for-gl-n.md)
-   with $n = 2$;
+   with $n = 2$, once $\Pi'$ is known to be generic, the converse theorem comparing generic representations. A
+   non-generic irreducible $\Pi'$ is a character $\chi \circ \det$; its twist by $\chi^{-1}$, the trivial representation, has
+   the $L$-factor $L(\lvert\cdot\rvert^{1/2}, s)\,L(\lvert\cdot\rvert^{-1/2}, s)$ of $\lvert\cdot\rvert^{1/2} \oplus \lvert\cdot\rvert^{-1/2}$, which no twist of
+   an infinite-dimensional irreducible representation has (an irreducible $\mathrm{Ind}(\xi_1, \xi_2)$ with this $L$-factor
+   would have $\xi_1\xi_2^{-1} = \lvert\cdot\rvert^{\pm 1}$), so that case does not occur;
 2. the agreement of the correspondence of Kutzko, through which Carayol defines $\sigma(\pi)$, with
    $\mathrm{rec}_2$, both being normalized by class field theory with geometric Frobenius elements corresponding to
    uniformizers;

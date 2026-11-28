@@ -76,7 +76,7 @@ closure. For $K = \mathbb{Q}_p$, Darmon, Diamond and Taylor write $P_p = \bigcup
     as $\varprojlim G(L'/K)^v$, $L'$ running through the set of finite Galois subextensions of $L$. The $G^v$
     again form a filtration of $G$; this filtration is *left continuous*: $G^v = \bigcap_{w<v} G^w$."
 - J.-M. Fontaine and Y. Ouyang, *Theory of p-adic Galois Representations*, book draft (PDF of 2022-05-26),
-  archived at <http://web.archive.org/web/20261014003209/http://staff.ustc.edu.cn/~yiouyang/galoisrep.pdf>:
+  at <http://staff.ustc.edu.cn/~yiouyang/galoisrep.pdf>:
   §1.3.4, Proposition 1.74, p. 29: for an infinite Galois extension $L/K$ with group $G$ and a closed normal
   subgroup $H$ with fixed field $L'$, "(1) If $H$ is also open in $G$, then $G^v \cap H = H^{\psi_{G/H}(v)}$ where
   $\Psi_{G/H} := \Psi_{L'/K}$", proved from the finite-level formula $(G/N)^v \cap H/N = (H/N)^{\Psi_{G/H}(v)}$ by passing to

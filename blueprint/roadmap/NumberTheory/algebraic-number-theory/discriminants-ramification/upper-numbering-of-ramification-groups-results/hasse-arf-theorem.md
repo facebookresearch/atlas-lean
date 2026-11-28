@@ -42,6 +42,7 @@ This node is still to be broken down. A good expansion states and links:
 
 - [Herbrand's theorem](herbrand-s-theorem.md), for the reduction to cyclic quotients (expansion item 1)
 - [Upper numbering of ramification groups](../ramification-groups-in-the-upper-numbering.md), for the compatibility $(G/H)^v = G^v H/H$ of the upper numbering with quotients and $G^{\varphi_{L/K}(u)} = G_u$, which translates the first form into the second
+- [Hilbert's Theorem 90 for the multiplicative group](../../../../FieldTheory/galois-theory/multiplicative-hilbert-s-theorem-90.md), in the cyclic form used by Serre's Lemma 8: the elements of norm $1$ are the $y^{s-1}$, $y \in L^\times$ (expansion item 2)
 
 ## Sources
 
