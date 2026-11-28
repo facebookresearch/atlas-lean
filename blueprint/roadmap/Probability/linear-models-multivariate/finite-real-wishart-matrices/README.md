@@ -1,0 +1,18 @@
+# Finite real Wishart matrices
+
+- [Matrix Law](matrix-law.md)
+- [Gram](gram.md)
+- [Gram pos Semidef](gram-pos-semidef.md)
+- [Integral gram diag](integral-gram-diag.md)
+- [Integral gram entry sq](integral-gram-entry-sq.md)
+- [First Trace](first-trace.md)
+- [Second Trace](second-trace.md)
+- [Trace power sums](trace-power-sums.md)
+- [Trace integrability](trace-integrability.md)
+- [Trace moments](trace-moments.md)
+- [Dispersion](dispersion.md)
+- [Dispersion spec](dispersion-spec.md)
+- [Ae dispersion pos](ae-dispersion-pos.md)
+- [Dispersion one row](dispersion-one-row.md)
+- [Dispersion no columns](dispersion-no-columns.md)
+- [Ae zero of zero variance](ae-zero-of-zero-variance.md)
