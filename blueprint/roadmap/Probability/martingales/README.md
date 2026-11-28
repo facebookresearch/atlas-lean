@@ -19,6 +19,9 @@ Discrete-time martingales, sub- and supermartingales: convergence theorems (almo
 - [Uniform integrability](uniform-integrability/README.md)
 - [Self-normalized bounds for symmetric random walks](self-normalized-bounds-for-symmetric-random-walk/README.md)
 - [Prophet inequalities](prophet-inequalities/README.md)
+- [Filtration sampled on a finite schedule](finite-schedule-filtration.md)
+- [The sampled filtration at a scheduled index](finite-schedule-filtration-apply.md)
+- [Stopping-time equivalence on a finite schedule](finite-schedule-stopping-equiv.md)
 
 ## Related topics
 

@@ -15683,6 +15683,7 @@
   "MathlibExt/Probability/NonnegSLLN": {"to": "Probability/laws-of-large-numbers", "title": "A strong law for nonnegative, non-identically distributed variables"},
   "MathlibExt/Probability/NumberTheory/RandomMultiplicativeFunction": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Random multiplicative functions"},
   "MathlibExt/Probability/OptimalStopping/FiniteBinomialTree": {"to": "Probability/martingales", "title": "Optimal stopping and the Snell envelope"},
+  "MathlibExt/Probability/OptimalStopping/FiniteSchedule": {"to": "Probability/martingales", "title": "Optimal stopping and the Snell envelope"},
   "MathlibExt/Probability/OptimalStopping/Secretary": {"to": "Probability/martingales", "title": "Secretary problem"},
   "MathlibExt/Probability/OptimalStopping/SecretaryModel": {"to": "Probability/martingales", "title": "Secretary problem"},
   "MathlibExt/Probability/OptimalStopping/SecretaryOptimality": {"to": "Probability/martingales", "title": "Secretary problem"},
