@@ -14,6 +14,7 @@ Graphs are in the language with the edge relation only. In a language with relat
 ## Proof depends on
 
 - [Joint embedding for hereditary graph classes is undecidable](joint-embedding-for-hereditary-graph-classes.md)
+- [The tiling problem is undecidable](../../../TheoryOfComputation/undecidable-problems/wang-tiles/the-tiling-problem-is-undecidable.md)
 
 ## Expansion
 

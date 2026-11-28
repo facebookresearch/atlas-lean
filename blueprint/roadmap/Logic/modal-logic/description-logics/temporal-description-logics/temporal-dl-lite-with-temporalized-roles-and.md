@@ -24,11 +24,11 @@ The source attributes the undecidability to the interaction of functionality con
 
 ## Proof depends on
 
-None.
+- [The tiling problem is undecidable](../../../../TheoryOfComputation/undecidable-problems/wang-tiles/the-tiling-problem-is-undecidable.md)
 
 ## Expansion
 
-The proof reduces the problem whether a finite set of tile types tiles the grid $\mathbb N \times \mathbb N$. Time gives one axis of the grid. Inclusions such as ${\ge}\,2\,\Diamond^* R \sqsubseteq \bot$ and ${\ge}\,2\,\Diamond^* R^- \sqsubseteq \bot$ make $R$ injective across all time points, and inclusions using $\bigcirc_F$ generate an $R$-chain of domain elements, the other axis; columns of tiles are placed every $k + 1$ moments, with $k$ the number of colors, and their colors are matched by further inclusions. The knowledge base is satisfiable iff the tile set tiles $\mathbb N \times \mathbb N$. A good expansion links the undecidability of tiling the quadrant $\mathbb N \times \mathbb N$, which the source cites from Börger, Grädel and Gurevich.
+The proof reduces the problem whether a finite set of tile types tiles the grid $\mathbb N \times \mathbb N$. Time gives one axis of the grid. Inclusions such as ${\ge}\,2\,\Diamond^* R \sqsubseteq \bot$ and ${\ge}\,2\,\Diamond^* R^- \sqsubseteq \bot$ make $R$ injective across all time points, and inclusions using $\bigcirc_F$ generate an $R$-chain of domain elements, the other axis; columns of tiles are placed every $k + 1$ moments, with $k$ the number of colors, and their colors are matched by further inclusions. The knowledge base is satisfiable iff the tile set tiles $\mathbb N \times \mathbb N$. The undecidability of tiling the quadrant $\mathbb N \times \mathbb N$, which the source cites from Börger, Grädel and Gurevich, is equivalent by compactness to the undecidability of tiling the plane.
 
 ## Sources
 

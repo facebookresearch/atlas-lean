@@ -13,6 +13,7 @@ Every variant of propositional dynamic logic that can express program compositio
 
 - [PDL programs](propositional-dynamic-logic-pdl/program.md)
 - [PDL formulas](propositional-dynamic-logic-pdl/formula.md)
+- [Guarded while loop in PDL](partial-correctness-and-loop-invariants-for-pdl/while-do.md)
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 - [Recognizability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
 
