@@ -50,7 +50,7 @@ private theorem filtration_mono : Monotone filtration := by
   | zero =>
       cases j with
       | zero => exact le_rfl
-      | succ j => simpa [filtration] using (le_top : diagonal ≤ ⊤)
+      | succ j => simp [filtration]
   | succ i =>
       have hj : j ≠ 0 := by omega
       simp [filtration, hj]
@@ -150,8 +150,11 @@ example : Algebra ℤ (AssociatedGraded filtration) := inferInstance
 private theorem algebraMap_two :
     algebraMap ℤ (AssociatedGraded filtration) 2 =
       symbol filtration 0 (diagonalRepresentative 2) := by
-  simpa [scalarStage, diagonalRepresentative, Algebra.linearMap_apply] using
-    (symbol_algebraMap filtration 2).symm
+  rw [← symbol_algebraMap filtration 2]
+  apply congrArg (symbol filtration 0)
+  apply Subtype.ext
+  change algebraMap ℤ A 2 = ((2 : ℤ), (2 : ℤ))
+  norm_num
 
 example :
     (2 : ℤ) • symbol filtration 1 degreeOneRepresentative =
