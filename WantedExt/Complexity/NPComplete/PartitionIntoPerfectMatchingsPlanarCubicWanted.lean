@@ -23,11 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Combinatorics.SimpleGraph.Planarity
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Finite
-public import WantedExt.Complexity.NPComplete.PartitionIntoPerfectMatchingsWanted
+public import CSLibExt.Complexity.NPComplete.PartitionIntoPerfectMatchingsPlanarCubicDefs
 
 @[expose] public section
 
@@ -64,23 +60,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-open Classical in
-/-- Well-formedness of an instance: a well-formed PARTITION INTO PERFECT MATCHINGS instance
-(simple edge list, `0 < K ≤ |V|`) whose graph is planar and cubic. -/
-def WellFormed (i : PartitionIntoPerfectMatchingsInstance) : Prop :=
-  PartitionIntoPerfectMatchings.WellFormed i ∧ (Graph i).IsPlanar ∧
-    (Graph i).IsRegularOfDegree 3
-
-open Classical in
-/-- PARTITION INTO PERFECT MATCHINGS for planar cubic graphs as a decision problem over
-bitstrings. -/
-noncomputable def partitionIntoPerfectMatchingsPlanarCubicDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PartitionIntoPerfectMatchingsInstance) x with
-  | some i => decide (WellFormed i ∧ PartitionIntoPerfectMatchingsFeasible i)
-  | none => false
 
 /-- **PARTITION INTO PERFECT MATCHINGS is NP-complete for planar cubic graphs.** Source: Garey and
 Johnson (1979), [GT16], comment; Schaefer (1978); Demaine, Karntikoon and Pitimanaaree (2025). -/

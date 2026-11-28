@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Order.Interval.Set.Basic
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.GraphColoringDefs
+public import CSLibExt.Complexity.NPComplete.GraphColoringBZeroVPGDefs
 
 @[expose] public section
 
@@ -67,26 +64,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- The graph is a `B₀`-VPG graph: vertex `v` gets the grid segment `Set.Icc (lo v) (hi v)` of
-`ℕ × ℕ`, horizontal or vertical (its endpoints agree in one coordinate), and two distinct
-vertices are adjacent exactly when their segments share a grid point. -/
-def IsBZeroVPG {n : ℕ} (G : SimpleGraph (Fin n)) : Prop :=
-  ∃ lo hi : Fin n → ℕ × ℕ, (∀ v, lo v ≤ hi v ∧ ((lo v).1 = (hi v).1 ∨ (lo v).2 = (hi v).2)) ∧
-    ∀ u v, u ≠ v → (G.Adj u v ↔ (Set.Icc (lo u) (hi u) ∩ Set.Icc (lo v) (hi v)).Nonempty)
-
-/-- Well-formedness of an instance: a well-formed GRAPH K-COLORABILITY instance with `3 ≤ m ≤ |V|`
-whose graph is a `B₀`-VPG graph. -/
-def WellFormed (i : GraphColoringInstance) : Prop :=
-  GraphColoring.WellFormed i ∧ (3 ≤ i.2.2 ∧ i.2.2 ≤ i.1) ∧ IsBZeroVPG (Graph i)
-
-open Classical in
-/-- GRAPH K-COLORABILITY ON B₀-VPG GRAPHS as a decision problem over bitstrings. -/
-noncomputable def graphColoringBZeroVPGDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := GraphColoringInstance) x with
-  | some i => decide (WellFormed i ∧ GraphColoring.GraphColoringFeasible i)
-  | none => false
 
 /-- **GRAPH K-COLORABILITY ON B₀-VPG GRAPHS is NP-complete.** Source: Garey and Johnson (1979),
 [GT4]; Asinowski, Cohen, Golumbic, Limouzy, Lipshteyn, and Stern (2012), Theorem 8. -/

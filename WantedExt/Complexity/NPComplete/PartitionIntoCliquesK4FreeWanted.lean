@@ -22,10 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Clique
-public import CSLibExt.Complexity.NPComplete.PartitionIntoCliquesDefs
+public import CSLibExt.Complexity.NPComplete.PartitionIntoCliquesK4FreeDefs
 
 @[expose] public section
 
@@ -60,20 +57,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed PARTITION INTO CLIQUES instance (simple edge
-list, `0 < K ≤ |V|`) whose graph contains no complete subgraph on 4 vertices. -/
-def WellFormed (i : PartitionIntoCliquesInstance) : Prop :=
-  PartitionIntoCliques.WellFormed i ∧ (Graph i).CliqueFree 4
-
-open Classical in
-/-- PARTITION INTO CLIQUES for K₄-free graphs as a decision problem over bitstrings. -/
-noncomputable def partitionIntoCliquesK4FreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PartitionIntoCliquesInstance) x with
-  | some i => decide (WellFormed i ∧ PartitionIntoCliquesFeasible i)
-  | none => false
 
 /-- **PARTITION INTO CLIQUES is NP-complete for K₄-free graphs.** Source: Garey and Johnson
 (1979), [GT15], comment, and Theorem 3.7. -/

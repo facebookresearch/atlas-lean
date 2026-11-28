@@ -24,12 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Maps
-public import MathlibExt.Combinatorics.SimpleGraph.Planarity
-public import CSLibExt.Complexity.NPComplete.MaxCutDefs
+public import CSLibExt.Complexity.NPComplete.SimpleMaxCutApexDefs
 
 @[expose] public section
 
@@ -71,29 +66,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- `G` is an apex graph: deleting some vertex `v` leaves a planar graph. -/
-def IsApex {V : Type*} (G : SimpleGraph V) : Prop :=
-  ∃ v : V, (G.induce {w | w ≠ v}).IsPlanar
-
-/-- Well-formedness of an instance: a well-formed MAXIMUM CUT instance (a simple edge list on
-the vertices `0, …, n - 1`) whose graph is an apex graph, and `0 < K`. -/
-def WellFormed (i : MaxCutInstance) : Prop :=
-  MaxCut.WellFormed i ∧ IsApex (Cslib.Complexity.Karp.edgeGraph i.1 i.2.1) ∧ 0 < i.2.2
-
-/-- A partition `V₁ = S`, `V₂ = V - S` with at least `K` edges between the two sets (the
-MAXIMUM CUT question). -/
-def SimpleMaxCutApexFeasible (i : MaxCutInstance) : Prop :=
-  MaxCutFeasible i
-
-open Classical in
-/-- SIMPLE MAX CUT on apex graphs as a decision problem over bitstrings. -/
-noncomputable def simpleMaxCutApexDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MaxCutInstance) x with
-  | some i => decide (WellFormed i ∧ SimpleMaxCutApexFeasible i)
-  | none => false
 
 /-- **SIMPLE MAX CUT on apex graphs is NP-complete.** Source: Garey and Johnson (1979), [ND16];
 ISGCI gc_1181 (Kamiński 2010; Barahona 1983). -/

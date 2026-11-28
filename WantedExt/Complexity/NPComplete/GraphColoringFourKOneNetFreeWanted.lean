@@ -23,11 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Combinatorics.SimpleGraph.Copy
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.GraphColoringTwoKTwoNetFreeWanted
-public import CSLibExt.Complexity.NPComplete.GraphColoringDefs
+public import CSLibExt.Complexity.NPComplete.GraphColoringFourKOneNetFreeDefs
 
 @[expose] public section
 
@@ -69,21 +65,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed GRAPH K-COLORABILITY instance with `0 < K ≤ |V|`
-whose graph has no induced `4K₁` (no independent set of four vertices) and no induced net. -/
-def WellFormed (i : GraphColoringInstance) : Prop :=
-  GraphColoring.WellFormed i ∧ (0 < i.2.2 ∧ i.2.2 ≤ i.1) ∧
-    ¬ (⊥ : SimpleGraph (Fin 4)).IsIndContained (Graph i) ∧
-    ¬ GraphColoringTwoKTwoNetFree.net.IsIndContained (Graph i)
-
-open Classical in
-/-- GRAPH K-COLORABILITY ON (4K₁, NET)-FREE GRAPHS as a decision problem over bitstrings. -/
-noncomputable def graphColoringFourKOneNetFreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := GraphColoringInstance) x with
-  | some i => decide (WellFormed i ∧ GraphColoring.GraphColoringFeasible i)
-  | none => false
 
 /-- **GRAPH K-COLORABILITY ON (4K₁, NET)-FREE GRAPHS is NP-complete.** Source: Garey and Johnson
 (1979), [GT4]; Schindl (2005); Golovach, Johnson, Paulusma, and Song (2017), Theorem 17. -/

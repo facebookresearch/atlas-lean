@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Maps
-public import WantedExt.Complexity.NPComplete.NesetrilRodlDimensionWanted
+public import CSLibExt.Complexity.NPComplete.EmbeddingDimensionDefs
 
 @[expose] public section
 
@@ -71,33 +68,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: `n` is written in unary as `[true, ..., true]`, the edge
-list describes a simple graph on `0, ..., n - 1`, and `K` is positive. -/
-def WellFormed (i : NesetrilRodlDimensionInstance) : Prop :=
-  (∀ b ∈ i.1, b = true) ∧
-    (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1.length ∧ e.2 < i.1.length ∧ e.1 ≠ e.2 ∧
-      (e.2, e.1) ∉ i.2.1) ∧
-    0 < i.2.2
-
-/-- The graph on `{0, 1, 2}^K` (functions `Fin K → Fin 3`) joining two distinct tuples whose
-components differ by at most `1` everywhere. -/
-def Host (K : ℕ) : SimpleGraph (Fin K → Fin 3) :=
-  SimpleGraph.fromRel fun f g => ∀ k, (f k : ℕ) ≤ g k + 1 ∧ (g k : ℕ) ≤ f k + 1
-
-/-- `G` embeds into `Host K` as an induced subgraph: some one-to-one `f : V → {0, 1, 2}^K` has
-`{u, v} ∈ E` iff `f(u)` and `f(v)` are adjacent in `Host K`. -/
-def EmbeddingDimensionFeasible (i : NesetrilRodlDimensionInstance) : Prop :=
-  Nonempty (Graph i ↪g Host i.2.2)
-
-open Classical in
-/-- EMBEDDING DIMENSION as a decision problem over bitstrings. -/
-noncomputable def embeddingDimensionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := NesetrilRodlDimensionInstance) x with
-  | some i => decide (WellFormed i ∧ EmbeddingDimensionFeasible i)
-  | none => false
 
 /-- **EMBEDDING DIMENSION is NP-complete.** Source: Johnson, NP-completeness column (1982),
 problem [4]; Dewdney (1979). -/

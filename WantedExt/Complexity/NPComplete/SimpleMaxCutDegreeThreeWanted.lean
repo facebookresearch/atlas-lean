@@ -20,12 +20,8 @@ Symposium on Theory of Computing (1978), 253-264, doi:10.1145/800133.804355.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.Complexity.Karp.Color
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Combinatorics.SimpleGraph.Finite
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.MaxCutDefs
+public import CSLibExt.Complexity.NPComplete.SimpleMaxCutDegreeThreeDefs
 
 @[expose] public section
 
@@ -56,31 +52,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the vertex count `n`, the edge list, and the bound `K`; this is the MAXIMUM
-CUT instance type. -/
-abbrev SimpleMaxCutDegreeThreeInstance := MaxCutInstance
-
-open Classical in
-/-- Well-formedness of an instance: a well-formed MAXIMUM CUT instance (a simple edge list on
-the vertices `0, ..., n - 1`) whose graph has no vertex of degree exceeding 3, and `0 < K`. -/
-def WellFormed (i : SimpleMaxCutDegreeThreeInstance) : Prop :=
-  MaxCut.WellFormed i ∧ (∀ v, (Cslib.Complexity.Karp.edgeGraph i.1 i.2.1).degree v ≤ 3) ∧
-    0 < i.2.2
-
-/-- A partition `V₁ = S`, `V₂ = V - S` with at least `K` edges between the two sets (the
-MAXIMUM CUT question). -/
-def SimpleMaxCutDegreeThreeFeasible (i : SimpleMaxCutDegreeThreeInstance) : Prop :=
-  MaxCutFeasible i
-
-open Classical in
-/-- SIMPLE MAX CUT on graphs of maximum degree 3 as a decision problem over bitstrings. -/
-noncomputable def simpleMaxCutDegreeThreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SimpleMaxCutDegreeThreeInstance) x with
-  | some i => decide (WellFormed i ∧ SimpleMaxCutDegreeThreeFeasible i)
-  | none => false
 
 /-- **SIMPLE MAX CUT on graphs of maximum degree 3 is NP-complete.** Source: Garey and Johnson
 (1979), [ND16], comment; Yannakakis (1978). -/

@@ -23,12 +23,8 @@ problems", STOC 1978, 253-264, doi:10.1145/800133.804355).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.Complexity.Karp.Color
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Combinatorics.SimpleGraph.Finite
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.MaxCutDefs
+public import CSLibExt.Complexity.NPComplete.SimpleMaxCutCubicDefs
 
 @[expose] public section
 
@@ -63,21 +59,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-open Classical in
-/-- Well-formedness of an instance: a well-formed MAXIMUM CUT instance (a simple edge list on
-the vertices `0, ..., n - 1`) whose graph is cubic, and `0 < K`. -/
-def WellFormed (i : MaxCutInstance) : Prop :=
-  MaxCut.WellFormed i ∧ (Cslib.Complexity.Karp.edgeGraph i.1 i.2.1).IsRegularOfDegree 3 ∧
-    0 < i.2.2
-
-open Classical in
-/-- SIMPLE MAX CUT on cubic graphs as a decision problem over bitstrings. -/
-noncomputable def simpleMaxCutCubicDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := MaxCutInstance) x with
-  | some i => decide (WellFormed i ∧ MaxCutFeasible i)
-  | none => false
 
 /-- **SIMPLE MAX CUT on cubic graphs is NP-complete.** Source: Berman and Karpinski (1999);
 Díaz and Mertzios (2017), citing Yannakakis (1978). -/

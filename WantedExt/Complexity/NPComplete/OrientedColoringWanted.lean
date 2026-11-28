@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Combinatorics.Digraph.Basic
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.OrientedColoringDefs
 
 @[expose] public section
 
@@ -57,29 +55,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number `n` of vertices and the arcs `(u, v)` of `D`. -/
-abbrev OrientedColoringInstance := ℕ × List (ℕ × ℕ)
-
-/-- Well-formedness of an instance: the arcs are distinct, join vertices `< n`, and `D` has no
-loops and no pair of opposite arcs. -/
-def WellFormed (i : OrientedColoringInstance) : Prop :=
-  i.2.Nodup ∧ ∀ e ∈ i.2, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2
-
-/-- `D` has an oriented `k`-coloring: a map to `Fin k` that is a homomorphism to some oriented
-graph `T` on `Fin k` (no loops, no pair of opposite arcs). -/
-def OrientedColoringFeasible (k : ℕ) (i : OrientedColoringInstance) : Prop :=
-  ∃ (T : Digraph (Fin k)) (c : ℕ → Fin k), (∀ a, ¬ T.Adj a a) ∧
-    (∀ a b, T.Adj a b → ¬ T.Adj b a) ∧ ∀ e ∈ i.2, T.Adj (c e.1) (c e.2)
-
-open Classical in
-/-- ORIENTED k-COLORING, for the fixed `k`, as a decision problem over bitstrings. -/
-noncomputable def orientedColoringDec (k : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := OrientedColoringInstance) x with
-  | some i => decide (WellFormed i ∧ OrientedColoringFeasible k i)
-  | none => false
 
 /-- **ORIENTED k-COLORING is NP-complete for every fixed `k ≥ 4`.** Source: Klostermeyer and
 MacGillivray (2004); Sopena (2016). -/

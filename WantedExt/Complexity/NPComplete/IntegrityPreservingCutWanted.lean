@@ -20,11 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
-public import Mathlib.Data.Fintype.Basic
+public import CSLibExt.Complexity.NPComplete.IntegrityPreservingCutDefs
 
 @[expose] public section
 
@@ -55,37 +51,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number `n` of vertices, the edges, and the vertex lists `U₁` and `U₂`. -/
-abbrev IntegrityPreservingCutInstance := ℕ × List (ℕ × ℕ) × List ℕ × List ℕ
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : IntegrityPreservingCutInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- Well-formedness: a simple edge list on the vertices `0, …, n - 1`, and `U₁`, `U₂` disjoint
-sets of vertices. -/
-def WellFormed (i : IntegrityPreservingCutInstance) : Prop :=
-  i.2.1.Nodup ∧ (∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    (∀ u ∈ i.2.2.1, u < i.1) ∧ (∀ u ∈ i.2.2.2, u < i.1) ∧ ∀ u ∈ i.2.2.1, u ∉ i.2.2.2
-
-/-- Some set `V₁` with complement `V₂` has `U₁ ⊆ V₁`, `U₂ ⊆ V₂`, and both induced subgraphs
-connected. -/
-def IntegrityPreservingCutFeasible (i : IntegrityPreservingCutInstance) : Prop :=
-  ∃ V₁ : Finset (Fin i.1),
-    (∀ v : Fin i.1, (v : ℕ) ∈ i.2.2.1 → v ∈ V₁) ∧
-    (∀ v : Fin i.1, (v : ℕ) ∈ i.2.2.2 → v ∉ V₁) ∧
-    ((Graph i).induce (V₁ : Set (Fin i.1))).Connected ∧
-    ((Graph i).induce ((V₁ᶜ : Finset (Fin i.1)) : Set (Fin i.1))).Connected
-
-open Classical in
-/-- INTEGRITY PRESERVING CUT as a decision problem over bitstrings. -/
-noncomputable def integrityPreservingCutDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := IntegrityPreservingCutInstance) x with
-  | some i => decide (WellFormed i ∧ IntegrityPreservingCutFeasible i)
-  | none => false
 
 /-- **INTEGRITY PRESERVING CUT is NP-complete.** Source: Johnson (1982), problem [5]; van 't Hof,
 Paulusma and Woeginger (2009). -/

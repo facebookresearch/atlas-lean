@@ -23,10 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Clique
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.ProbeTwoTwoGraphRecognitionDefs
 
 @[expose] public section
 
@@ -71,44 +68,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`) and edge list. -/
-abbrev ProbeTwoTwoGraphRecognitionInstance := ℕ × List (ℕ × ℕ)
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : ProbeTwoTwoGraphRecognitionInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range). -/
-def WellFormed (i : ProbeTwoTwoGraphRecognitionInstance) : Prop :=
-  i.2.Nodup ∧ ∀ e ∈ i.2, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2
-
-/-- `H` is a `(2,2)`-graph: its vertex set splits into at most two independent sets (labels `0`
-and `1`) and at most two cliques (labels `2` and `3`). -/
-def IsTwoTwoGraph {n : ℕ} (H : SimpleGraph (Fin n)) : Prop :=
-  ∃ c : Fin n → Fin 4, H.IsIndepSet {v | c v = 0} ∧ H.IsIndepSet {v | c v = 1} ∧
-    H.IsClique {v | c v = 2} ∧ H.IsClique {v | c v = 3}
-
-/-- `G` is a probe `(2,2)`-graph: some independent set `N` of non-probes admits a supergraph
-`H ≥ G`, adding only edges between non-probes, that is a `(2,2)`-graph. -/
-def IsProbeTwoTwoGraph {n : ℕ} (G : SimpleGraph (Fin n)) : Prop :=
-  ∃ N : Set (Fin n), G.IsIndepSet N ∧
-    ∃ H : SimpleGraph (Fin n), G ≤ H ∧ (∀ u v, H.Adj u v → G.Adj u v ∨ (u ∈ N ∧ v ∈ N)) ∧
-      IsTwoTwoGraph H
-
-/-- The graph of the instance is a probe `(2,2)`-graph. -/
-def ProbeTwoTwoGraphRecognitionFeasible (i : ProbeTwoTwoGraphRecognitionInstance) : Prop :=
-  IsProbeTwoTwoGraph (Graph i)
-
-open Classical in
-/-- PROBE (2,2)-GRAPH RECOGNITION as a decision problem over bitstrings. -/
-noncomputable def probeTwoTwoGraphRecognitionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ProbeTwoTwoGraphRecognitionInstance) x with
-  | some i => decide (WellFormed i ∧ ProbeTwoTwoGraphRecognitionFeasible i)
-  | none => false
 
 /-- **PROBE (2,2)-GRAPH RECOGNITION is NP-complete.** Source: Dantas, Faria, de Figueiredo and
 Teixeira (2016; announced 2013). -/

@@ -27,12 +27,8 @@ doi:10.1016/j.dam.2021.05.021, Table 1.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.Complexity.Karp.Color
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Combinatorics.SimpleGraph.PerfectGraph
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.MaxCutDefs
+public import CSLibExt.Complexity.NPComplete.SimpleMaxCutPerfectDefs
 
 @[expose] public section
 
@@ -85,20 +81,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed MAXIMUM CUT instance (a simple edge list on
-the vertices `0, ..., n - 1`) whose graph is perfect, and `0 < K`. -/
-def WellFormed (i : MaxCutInstance) : Prop :=
-  MaxCut.WellFormed i ∧ IsPerfect (Cslib.Complexity.Karp.edgeGraph i.1 i.2.1) ∧ 0 < i.2.2
-
-open Classical in
-/-- SIMPLE MAX CUT for perfect graphs as a decision problem over bitstrings. -/
-noncomputable def simpleMaxCutPerfectDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MaxCutInstance) x with
-  | some i => decide (WellFormed i ∧ MaxCutFeasible i)
-  | none => false
 
 /-- **SIMPLE MAX CUT for perfect graphs is NP-complete.** Source: Garey and Johnson (1979), [ND16];
 Bodlaender and Jansen (2000); de Figueiredo, de Melo, Sasaki and Silva (2022), Table 1. -/

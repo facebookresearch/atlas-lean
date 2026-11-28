@@ -25,9 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MonochromaticTriangleWanted
+public import CSLibExt.Complexity.NPComplete.MonochromaticCliqueFixedKDefs
 
 @[expose] public section
 
@@ -67,20 +65,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- The edges split into two parts neither of which contains `K_k`: a subgraph `G₁ ≤ G` such that
-neither `G₁` nor its complement `G \ G₁` in `G` contains a `k`-clique. -/
-def MonochromaticCliqueFeasible (k : ℕ) (i : MonochromaticTriangleInstance) : Prop :=
-  ∃ G₁ : SimpleGraph (Fin i.1), G₁ ≤ Graph i ∧ G₁.CliqueFree k ∧ (Graph i \ G₁).CliqueFree k
-
-open Classical in
-/-- MONOCHROMATIC K_k, for the fixed `k`, as a decision problem over bitstrings. -/
-noncomputable def monochromaticCliqueFixedKDec (k : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MonochromaticTriangleInstance) x with
-  | some i => decide (MonochromaticTriangle.WellFormed i ∧ MonochromaticCliqueFeasible k i)
-  | none => false
 
 /-- **MONOCHROMATIC K_k is NP-complete for every fixed `k ≥ 4`.** Source: Garey and Johnson
 (1979), [GT6], comment (Burr, 1976); Burr (1990). -/

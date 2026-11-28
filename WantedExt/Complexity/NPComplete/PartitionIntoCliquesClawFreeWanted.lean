@@ -25,10 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Combinatorics.SimpleGraph.ClawFreeIndependencePoly
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.PartitionIntoCliquesDefs
+public import CSLibExt.Complexity.NPComplete.PartitionIntoCliquesClawFreeDefs
 
 @[expose] public section
 
@@ -76,20 +73,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed PARTITION INTO CLIQUES instance (a simple edge
-list on the vertices `0, ..., n - 1` and `0 < K ≤ n`) whose graph is claw-free. -/
-def WellFormed (i : PartitionIntoCliquesInstance) : Prop :=
-  PartitionIntoCliques.WellFormed i ∧ (Graph i).IsClawFree
-
-open Classical in
-/-- PARTITION INTO CLIQUES for claw-free graphs as a decision problem over bitstrings. -/
-noncomputable def partitionIntoCliquesClawFreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PartitionIntoCliquesInstance) x with
-  | some i => decide (WellFormed i ∧ PartitionIntoCliquesFeasible i)
-  | none => false
 
 /-- **PARTITION INTO CLIQUES for claw-free graphs is NP-complete.** Source: Garey and Johnson
 (1979), [GT15]; Maffray and Preissmann (1996); de Figueiredo, de Melo, Sasaki and Silva (2022),

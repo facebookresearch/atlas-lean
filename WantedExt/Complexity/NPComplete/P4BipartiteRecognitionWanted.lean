@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.ThreeColorabilityP4BipartiteWanted
+public import CSLibExt.Complexity.NPComplete.P4BipartiteRecognitionDefs
 
 @[expose] public section
 
@@ -62,31 +59,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`) and edge list. -/
-abbrev P4BipartiteRecognitionInstance := ℕ × List (ℕ × ℕ)
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : P4BipartiteRecognitionInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range). -/
-def WellFormed (i : P4BipartiteRecognitionInstance) : Prop :=
-  i.2.Nodup ∧ ∀ e ∈ i.2, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2
-
-/-- The graph of the instance is `P_4`-bipartite. -/
-def P4BipartiteRecognitionFeasible (i : P4BipartiteRecognitionInstance) : Prop :=
-  ThreeColorabilityP4Bipartite.IsP4Bipartite (Graph i)
-
-open Classical in
-/-- P_4-BIPARTITE GRAPH RECOGNITION as a decision problem over bitstrings. -/
-noncomputable def p4BipartiteRecognitionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := P4BipartiteRecognitionInstance) x with
-  | some i => decide (WellFormed i ∧ P4BipartiteRecognitionFeasible i)
-  | none => false
 
 /-- **P_4-BIPARTITE GRAPH RECOGNITION is NP-complete.** Source: Hoàng and Le (2001), Lemma 1;
 Achlioptas (1997). -/

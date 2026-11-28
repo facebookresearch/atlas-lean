@@ -19,10 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Clique
+public import CSLibExt.Complexity.NPComplete.EdgePartitionIntoTrianglesDefs
 
 @[expose] public section
 
@@ -51,34 +48,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`) and edge list. -/
-abbrev EdgePartitionIntoTrianglesInstance := ℕ × List (ℕ × ℕ)
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : EdgePartitionIntoTrianglesInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2
-
-/-- Well-formedness of an instance: a simple edge list on `Fin n` (no repeated edge, no loop,
-no reversed copy), so that `i.2.length = |E|`. -/
-def WellFormed (i : EdgePartitionIntoTrianglesInstance) : Prop :=
-  i.2.Nodup ∧ ∀ e ∈ i.2, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2
-
-/-- Some set `T` of triangles of the graph covers every edge exactly once: each member of `T`
-is a 3-clique, and every edge `uv` has exactly one member of `T` containing both `u` and
-`v`. -/
-def EdgePartitionIntoTrianglesFeasible (i : EdgePartitionIntoTrianglesInstance) : Prop :=
-  ∃ T : Finset (Finset (Fin i.1)), (∀ t ∈ T, (Graph i).IsNClique 3 t) ∧
-    ∀ u v, (Graph i).Adj u v → ∃! t, t ∈ T ∧ u ∈ t ∧ v ∈ t
-
-open Classical in
-/-- EDGE PARTITION INTO TRIANGLES as a decision problem over bitstrings. -/
-noncomputable def edgePartitionIntoTrianglesDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := EdgePartitionIntoTrianglesInstance) x with
-  | some i => decide (WellFormed i ∧ EdgePartitionIntoTrianglesFeasible i)
-  | none => false
 
 /-- **EDGE PARTITION INTO TRIANGLES is NP-complete.** Source: Holyer (1981). -/
 public theorem_wanted edgePartitionIntoTriangles_npComplete :

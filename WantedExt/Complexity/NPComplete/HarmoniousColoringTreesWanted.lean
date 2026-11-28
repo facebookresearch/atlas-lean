@@ -17,10 +17,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.HarmoniousColoringWanted
-public import Mathlib.Combinatorics.SimpleGraph.Acyclic
+public import CSLibExt.Complexity.NPComplete.HarmoniousColoringTreesDefs
 
 @[expose] public section
 
@@ -51,20 +48,6 @@ reduction from every language in `NP`
 
 open MetaMathlibExt.Complexity.NPComplete.HarmoniousColoring
   (HarmoniousColoringInstance Graph HarmoniousColoringFeasible)
-
-/-- Well-formedness of an instance: well-formed for HARMONIOUS COLORING (simple edge list,
-`0 < K`), and the graph is a tree. -/
-def WellFormed (i : HarmoniousColoringInstance) : Prop :=
-  MetaMathlibExt.Complexity.NPComplete.HarmoniousColoring.WellFormed i ∧ (Graph i).IsTree
-
-open Classical in
-/-- HARMONIOUS COLORING OF TREES as a decision problem over bitstrings. -/
-noncomputable def harmoniousColoringTreesDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := HarmoniousColoringInstance) x with
-  | some i => decide (WellFormed i ∧ HarmoniousColoringFeasible i)
-  | none => false
 
 /-- **HARMONIOUS COLORING OF TREES is NP-complete.** Source: Edwards and McDiarmid (1995). -/
 public theorem_wanted harmoniousColoringTrees_npComplete :

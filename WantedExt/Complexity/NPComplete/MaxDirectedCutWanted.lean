@@ -24,9 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Combinatorics.Digraph.Basic
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.MaxDirectedCutDefs
 
 @[expose] public section
 
@@ -64,39 +62,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`), arc list, and the bound `K`. -/
-abbrev MaxDirectedCutInstance := ℕ × List (ℕ × ℕ) × ℕ
-
-/-- The directed graph `G = (V, A)` of the instance: an arc from `u` to `v` when `(u, v)` is
-listed. -/
-def Graph (i : MaxDirectedCutInstance) : Digraph (Fin i.1) where
-  Adj u v := ((u : ℕ), (v : ℕ)) ∈ i.2.1
-
-/-- Well-formedness of an instance: the arc list has no repeated arcs, no loops, and endpoints
-in range, and `K` is positive. -/
-def WellFormed (i : MaxDirectedCutInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2) ∧ 0 < i.2.2
-
-open Classical in
-/-- The number of arcs of `G` with start point in `V₁` and endpoint outside `V₁`. -/
-noncomputable def cutSize (i : MaxDirectedCutInstance) (V₁ : Finset (Fin i.1)) : ℕ :=
-  (Finset.univ.filter fun p : Fin i.1 × Fin i.1 =>
-    (Graph i).Adj p.1 p.2 ∧ p.1 ∈ V₁ ∧ p.2 ∉ V₁).card
-
-/-- Some partition of `V` into `V₁` and `V₂ = V \ V₁` has at least `K` arcs from `V₁` to
-`V₂`. -/
-def MaxDirectedCutFeasible (i : MaxDirectedCutInstance) : Prop :=
-  ∃ V₁ : Finset (Fin i.1), i.2.2 ≤ cutSize i V₁
-
-open Classical in
-/-- MAX DIRECTED CUT as a decision problem over bitstrings. -/
-noncomputable def maxDirectedCutDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MaxDirectedCutInstance) x with
-  | some i => decide (WellFormed i ∧ MaxDirectedCutFeasible i)
-  | none => false
 
 /-- **MAX DIRECTED CUT is NP-complete.** Source: Crescenzi and Kann, MAXIMUM DIRECTED CUT; Håstad
 (2001); Garey, Johnson and Stockmeyer (1976). -/

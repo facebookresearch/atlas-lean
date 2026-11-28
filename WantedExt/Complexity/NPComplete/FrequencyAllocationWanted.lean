@@ -22,9 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.ListColoringWanted
+public import CSLibExt.Complexity.NPComplete.FrequencyAllocationDefs
 
 @[expose] public section
 
@@ -63,36 +61,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: node count `n`, edge list, lists `L(u)` of available frequencies, bounds
-`M_u` and the bound `K`. -/
-abbrev FrequencyAllocationInstance := ℕ × List (ℕ × ℕ) × List (List ℕ) × List ℕ × ℕ
-
-/-- Well-formedness of an instance: the graph and the `n` frequency lists form a well-formed
-LIST COLORING instance; each list has distinct positive entries; there is one bound `M_u` per
-node; and `0 < K`. -/
-def WellFormed (i : FrequencyAllocationInstance) : Prop :=
-  ListColoring.WellFormed (i.1, i.2.1, i.2.2.1) ∧
-    (∀ l ∈ i.2.2.1, l.Nodup ∧ ∀ x ∈ l, 0 < x) ∧ i.2.2.2.1.length = i.1 ∧ 0 < i.2.2.2.2
-
-/-- An allocation `S` with stability number at least `K`: each node `u` gets between `1` and
-`M_u` distinct frequencies from `L(u)`, adjacent nodes get disjoint sets, and the sizes sum to at
-least `K`. -/
-def FrequencyAllocationFeasible (i : FrequencyAllocationInstance) : Prop :=
-  ∃ S : List (List ℕ), S.length = i.1 ∧
-    (∀ u < i.1, (S.getD u []).Nodup ∧ S.getD u [] ⊆ i.2.2.1.getD u [] ∧
-      1 ≤ (S.getD u []).length ∧ (S.getD u []).length ≤ i.2.2.2.1.getD u 0) ∧
-    (∀ e ∈ i.2.1, (S.getD e.1 []).Disjoint (S.getD e.2 [])) ∧
-    i.2.2.2.2 ≤ (S.map List.length).sum
-
-open Classical in
-/-- FREQUENCY ALLOCATION as a decision problem over bitstrings. -/
-noncomputable def frequencyAllocationDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := FrequencyAllocationInstance) x with
-  | some i => decide (WellFormed i ∧ FrequencyAllocationFeasible i)
-  | none => false
 
 /-- **FREQUENCY ALLOCATION is NP-complete.** Source: Crescenzi and Kann, MAXIMUM FREQUENCY
 ALLOCATION; Malesińska and Panconesi (1998); Garey and Johnson (1979), [GT4]. -/

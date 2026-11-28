@@ -25,12 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.GraphColoringDefs
-public import Mathlib.Combinatorics.SimpleGraph.Copy
-public import Mathlib.Combinatorics.SimpleGraph.Hasse
-public import Mathlib.Combinatorics.SimpleGraph.Maps
+public import CSLibExt.Complexity.NPComplete.ThreeColorabilityP4BipartiteDefs
 
 @[expose] public section
 
@@ -74,37 +69,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `0, …, n - 1`) and edge list. -/
-abbrev ThreeColorabilityP4BipartiteInstance := ℕ × List (ℕ × ℕ)
-
-/-- The GRAPH COLORING instance with the same graph and bound `K = 3`. -/
-abbrev withThreeColors (i : ThreeColorabilityP4BipartiteInstance) : GraphColoringInstance :=
-  (i.1, i.2, 3)
-
-/-- `G` is `P_4`-bipartite: its vertex set splits into a set `A` and the rest `Aᶜ`, each inducing
-a graph with no induced path on four vertices. -/
-def IsP4Bipartite {n : ℕ} (G : SimpleGraph (Fin n)) : Prop :=
-  ∃ A : Set (Fin n), ¬ (SimpleGraph.pathGraph 4).IsIndContained (G.induce A) ∧
-    ¬ (SimpleGraph.pathGraph 4).IsIndContained (G.induce Aᶜ)
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (GRAPH
-COLORING's well-formedness), and the graph is `P_4`-bipartite. -/
-def WellFormed (i : ThreeColorabilityP4BipartiteInstance) : Prop :=
-  GraphColoring.WellFormed (withThreeColors i) ∧ IsP4Bipartite (Graph (withThreeColors i))
-
-/-- The graph is properly 3-colorable. -/
-def ThreeColorabilityP4BipartiteFeasible (i : ThreeColorabilityP4BipartiteInstance) : Prop :=
-  GraphColoringFeasible (withThreeColors i)
-
-open Classical in
-/-- 3-COLORABILITY OF P_4-BIPARTITE GRAPHS as a decision problem over bitstrings. -/
-noncomputable def threeColorabilityP4BipartiteDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ThreeColorabilityP4BipartiteInstance) x with
-  | some i => decide (WellFormed i ∧ ThreeColorabilityP4BipartiteFeasible i)
-  | none => false
 
 /-- **3-COLORABILITY OF P_4-BIPARTITE GRAPHS is NP-complete.** Source: Barbato and Bezzi (2021), via
 monopolar graphs; Garey and Johnson (1979), [GT4] (parent problem); ISGCI, class

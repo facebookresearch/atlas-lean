@@ -19,10 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Acyclic
+public import CSLibExt.Complexity.NPComplete.MinimumCutLinearArrangementWeightedTreesDefs
 
 @[expose] public section
 
@@ -55,44 +52,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number `n` of vertices, the weighted edges `((u, v), w(uv))`, and the
-bound `K`. -/
-abbrev MinimumCutLinearArrangementWeightedTreesInstance := ℕ × List ((ℕ × ℕ) × ℕ) × ℕ
-
-/-- The tree of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : MinimumCutLinearArrangementWeightedTreesInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 (i.2.1.map Prod.fst)
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `0, …, n - 1`
-(no duplicate edges in either orientation, no self-loops, endpoints in range) that is a tree,
-every weight is positive, and `0 < K`. -/
-def WellFormed (i : MinimumCutLinearArrangementWeightedTreesInstance) : Prop :=
-  ((i.2.1.map Prod.fst).Nodup ∧ ∀ e ∈ i.2.1.map Prod.fst,
-      e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1.map Prod.fst) ∧
-    (Graph i).IsTree ∧ (∀ e ∈ i.2.1, 0 < e.2) ∧ 0 < i.2.2
-
-/-- A one-to-one numbering of the vertices, given by the positions in a permutation `perm` of
-`0, …, n - 1`, such that for every cut position `j` with `j + 1 < n` the entries of the edge
-list with one endpoint at a position `≤ j` and the other at a position `> j` have total weight
-at most `K`. Every such entry is summed, so on a list that is not simple an edge can count more
-than once. -/
-def MinimumCutLinearArrangementWeightedTreesFeasible
-    (i : MinimumCutLinearArrangementWeightedTreesInstance) : Prop :=
-  ∃ perm : List ℕ, perm.Perm (List.range i.1) ∧
-    ∀ j, j + 1 < i.1 →
-      ((i.2.1.filter fun e => (perm.idxOf e.1.1 ≤ j ∧ j < perm.idxOf e.1.2) ∨
-        (perm.idxOf e.1.2 ≤ j ∧ j < perm.idxOf e.1.1)).map Prod.snd).sum ≤ i.2.2
-
-open Classical in
-/-- MINIMUM CUT LINEAR ARRANGEMENT on edge-weighted trees as a decision problem over
-bitstrings. -/
-noncomputable def minimumCutLinearArrangementWeightedTreesDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MinimumCutLinearArrangementWeightedTreesInstance) x with
-  | some i => decide (WellFormed i ∧ MinimumCutLinearArrangementWeightedTreesFeasible i)
-  | none => false
 
 /-- **MINIMUM CUT LINEAR ARRANGEMENT on edge-weighted trees is NP-complete.** Source: Monien and
 Sudborough (1988). -/

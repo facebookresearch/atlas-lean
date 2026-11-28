@@ -19,11 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Combinatorics.SimpleGraph.Copy
-public import Mathlib.Combinatorics.SimpleGraph.Hasse
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.GraphColoringDefs
+public import CSLibExt.Complexity.NPComplete.FourColorabilityP7FreeDefs
 
 @[expose] public section
 
@@ -58,20 +54,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed GRAPH K-COLORABILITY instance with `K = 4`
-whose graph is `P_7`-free (has no induced path on 7 vertices). -/
-def WellFormed (i : GraphColoringInstance) : Prop :=
-  GraphColoring.WellFormed i ∧ i.2.2 = 4 ∧
-    ¬ (SimpleGraph.pathGraph 7).IsIndContained (Graph i)
-
-open Classical in
-/-- 4-COLORABILITY OF P7-FREE GRAPHS as a decision problem over bitstrings. -/
-noncomputable def fourColorabilityP7FreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := GraphColoringInstance) x with
-  | some i => decide (WellFormed i ∧ GraphColoring.GraphColoringFeasible i)
-  | none => false
 
 /-- **4-COLORABILITY OF P7-FREE GRAPHS is NP-complete.** Source: Garey and Johnson (1979), [GT4];
 Huang (2016). -/

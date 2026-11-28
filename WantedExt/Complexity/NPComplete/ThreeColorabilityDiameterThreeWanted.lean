@@ -18,10 +18,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.GraphColoringDefs
-public import Mathlib.Combinatorics.SimpleGraph.Diam
+public import CSLibExt.Complexity.NPComplete.ThreeColorabilityDiameterThreeDefs
 
 @[expose] public section
 
@@ -59,32 +56,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `0, …, n - 1`) and edge list. -/
-abbrev ThreeColorabilityDiameterThreeInstance := ℕ × List (ℕ × ℕ)
-
-/-- The GRAPH COLORING instance with the same graph and bound `K = 3`. -/
-abbrev withThreeColors (i : ThreeColorabilityDiameterThreeInstance) : GraphColoringInstance :=
-  (i.1, i.2, 3)
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (GRAPH
-COLORING's well-formedness), the graph has at least one vertex, and it has diameter at most 3. -/
-def WellFormed (i : ThreeColorabilityDiameterThreeInstance) : Prop :=
-  GraphColoring.WellFormed (withThreeColors i) ∧ 0 < i.1 ∧
-    (Graph (withThreeColors i)).ediam ≤ 3
-
-/-- The graph is properly 3-colorable. -/
-def ThreeColorabilityDiameterThreeFeasible (i : ThreeColorabilityDiameterThreeInstance) : Prop :=
-  GraphColoringFeasible (withThreeColors i)
-
-open Classical in
-/-- 3-COLORABILITY OF GRAPHS OF DIAMETER AT MOST 3 as a decision problem over bitstrings. -/
-noncomputable def threeColorabilityDiameterThreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ThreeColorabilityDiameterThreeInstance) x with
-  | some i => decide (WellFormed i ∧ ThreeColorabilityDiameterThreeFeasible i)
-  | none => false
 
 /-- **3-COLORABILITY OF GRAPHS OF DIAMETER AT MOST 3 is NP-complete.** Source: Mertzios and
 Spirakis (2016), Theorem 6. -/

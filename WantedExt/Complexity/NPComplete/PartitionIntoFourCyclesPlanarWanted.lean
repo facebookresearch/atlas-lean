@@ -19,10 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import MathlibExt.Combinatorics.SimpleGraph.Planarity
-public import WantedExt.Complexity.NPComplete.PartitionIntoIsomorphicSubgraphsWanted
+public import CSLibExt.Complexity.NPComplete.PartitionIntoFourCyclesPlanarDefs
 
 @[expose] public section
 
@@ -62,22 +59,6 @@ reduction from every language in `NP`
 
 open MetaMathlibExt.Complexity.NPComplete.PartitionIntoIsomorphicSubgraphs
   (PartitionIntoIsomorphicSubgraphsInstance Graph PartitionIntoIsomorphicSubgraphsFeasible)
-
-/-- Well-formedness of an instance: a well-formed PARTITION INTO ISOMORPHIC SUBGRAPHS instance
-(simple graphs, `|V|` a positive multiple of `|V_H|`) whose pattern is the 4-cycle
-`0 - 1 - 2 - 3 - 0` and whose graph is planar. -/
-def WellFormed (i : PartitionIntoIsomorphicSubgraphsInstance) : Prop :=
-  PartitionIntoIsomorphicSubgraphs.WellFormed i ∧
-    i.2.2 = (4, [(0, 1), (1, 2), (2, 3), (3, 0)]) ∧ (Graph i).IsPlanar
-
-open Classical in
-/-- PARTITION INTO 4-CYCLES on planar graphs as a decision problem over bitstrings. -/
-noncomputable def partitionIntoFourCyclesPlanarDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PartitionIntoIsomorphicSubgraphsInstance) x with
-  | some i => decide (WellFormed i ∧ PartitionIntoIsomorphicSubgraphsFeasible i)
-  | none => false
 
 /-- **PARTITION INTO 4-CYCLES on planar graphs is NP-complete.** Source: Berman, Johnson,
 Leighton, Shor and Snyder (1990); Johnson (1985). -/

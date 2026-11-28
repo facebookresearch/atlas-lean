@@ -25,10 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Matching
+public import CSLibExt.Complexity.NPComplete.PartitionIntoPerfectMatchingsDefs
 
 @[expose] public section
 
@@ -58,36 +55,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`), edge list, bound `K`. -/
-abbrev PartitionIntoPerfectMatchingsInstance := ℕ × List (ℕ × ℕ) × ℕ
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : PartitionIntoPerfectMatchingsInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range), and
-`0 < K ≤ |V| = n`. -/
-def WellFormed (i : PartitionIntoPerfectMatchingsInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    0 < i.2.2 ∧ i.2.2 ≤ i.1
-
-/-- The vertices split into at most `K` blocks, each inducing a perfect matching: for some
-`k ≤ K` there is a partition into blocks `c⁻¹(j)`, `j : Fin k`, such that the subgraph induced
-by each block is a matching on that block. -/
-def PartitionIntoPerfectMatchingsFeasible (i : PartitionIntoPerfectMatchingsInstance) : Prop :=
-  ∃ k ≤ i.2.2, ∃ c : Fin i.1 → Fin k,
-    ∀ j : Fin k, ((⊤ : (Graph i).Subgraph).induce {v | c v = j}).IsMatching
-
-open Classical in
-/-- PARTITION INTO PERFECT MATCHINGS as a decision problem over bitstrings. -/
-noncomputable def partitionIntoPerfectMatchingsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PartitionIntoPerfectMatchingsInstance) x with
-  | some i => decide (WellFormed i ∧ PartitionIntoPerfectMatchingsFeasible i)
-  | none => false
 
 /-- **PARTITION INTO PERFECT MATCHINGS is NP-complete.** Source: Garey and Johnson (1979),
 [GT16]; Schaefer (1978). -/

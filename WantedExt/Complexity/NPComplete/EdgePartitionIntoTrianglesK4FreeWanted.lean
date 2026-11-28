@@ -22,10 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Combinatorics.SimpleGraph.Clique
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.EdgePartitionIntoTrianglesWanted
+public import CSLibExt.Complexity.NPComplete.EdgePartitionIntoTrianglesK4FreeDefs
 
 @[expose] public section
 
@@ -66,20 +63,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed EDGE PARTITION INTO TRIANGLES instance (a
-simple edge list on `Fin n`) whose graph has no 4-clique. -/
-def WellFormed (i : EdgePartitionIntoTrianglesInstance) : Prop :=
-  EdgePartitionIntoTriangles.WellFormed i ∧ (Graph i).CliqueFree 4
-
-open Classical in
-/-- EDGE PARTITION INTO TRIANGLES for `K₄`-free graphs as a decision problem over bitstrings. -/
-noncomputable def edgePartitionIntoTrianglesK4FreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := EdgePartitionIntoTrianglesInstance) x with
-  | some i => decide (WellFormed i ∧ EdgePartitionIntoTrianglesFeasible i)
-  | none => false
 
 /-- **EDGE PARTITION INTO TRIANGLES for `K₄`-free graphs is NP-complete.** Source: Johnson (1982),
 recording Holyer (1981); Colbourn (1984) for tripartite graphs. -/

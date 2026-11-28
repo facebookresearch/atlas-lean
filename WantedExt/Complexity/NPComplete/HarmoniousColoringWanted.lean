@@ -17,10 +17,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Coloring.Vertex
+public import CSLibExt.Complexity.NPComplete.HarmoniousColoringDefs
 
 @[expose] public section
 
@@ -49,37 +46,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`), edge list, bound `K`. -/
-abbrev HarmoniousColoringInstance := ℕ × List (ℕ × ℕ) × ℕ
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : HarmoniousColoringInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range), and `0 < K`. -/
-def WellFormed (i : HarmoniousColoringInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    0 < i.2.2
-
-/-- A coloring `c` of `G` is harmonious: two edges with the same unordered pair of colors are
-the same edge. -/
-def IsHarmonious {n k : ℕ} {G : SimpleGraph (Fin n)} (c : G.Coloring (Fin k)) : Prop :=
-  ∀ u v x y : Fin n, G.Adj u v → G.Adj x y → s(c u, c v) = s(c x, c y) → s(u, v) = s(x, y)
-
-/-- Some proper coloring with colors `Fin K` (at most `K` colors) is harmonious. -/
-def HarmoniousColoringFeasible (i : HarmoniousColoringInstance) : Prop :=
-  ∃ c : (Graph i).Coloring (Fin i.2.2), IsHarmonious c
-
-open Classical in
-/-- HARMONIOUS COLORING as a decision problem over bitstrings. -/
-noncomputable def harmoniousColoringDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := HarmoniousColoringInstance) x with
-  | some i => decide (WellFormed i ∧ HarmoniousColoringFeasible i)
-  | none => false
 
 /-- **HARMONIOUS COLORING is NP-complete.** Source: Hopcroft and Krishnamoorthy (1983). -/
 public theorem_wanted harmoniousColoring_npComplete :

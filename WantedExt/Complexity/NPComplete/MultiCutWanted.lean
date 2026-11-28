@@ -23,9 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
+public import CSLibExt.Complexity.NPComplete.MultiCutDefs
 
 @[expose] public section
 
@@ -56,41 +54,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `0, …, n - 1`), weighted edge list `(u, v, w(e))`,
-the list of source-terminal pairs `S`, and the bound `K`. -/
-abbrev MultiCutInstance := ℕ × List (ℕ × ℕ × ℕ) × List (ℕ × ℕ) × ℕ
-
-/-- The unweighted graph on `Fin n` of a list of weighted edges. -/
-def Graph (i : MultiCutInstance) (T : List (ℕ × ℕ × ℕ)) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 (T.map fun e => (e.1, e.2.1))
-
-/-- Well-formedness of an instance: the edge list has no duplicates, no self-loops, endpoints
-below `n`, and at most one edge per unordered vertex pair; every pair of `S` has both vertices
-below `n`; and `K` is positive. -/
-def WellFormed (i : MultiCutInstance) : Prop :=
-  i.2.1.Nodup ∧
-    (∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2.1 < i.1 ∧ e.1 ≠ e.2.1) ∧
-    (∀ e1 ∈ i.2.1, ∀ e2 ∈ i.2.1,
-      (e1.1 = e2.1 ∧ e1.2.1 = e2.2.1 ∨ e1.1 = e2.2.1 ∧ e1.2.1 = e2.1) → e1 = e2) ∧
-    (∀ p ∈ i.2.2.1, p.1 < i.1 ∧ p.2 < i.1) ∧ 0 < i.2.2.2
-
-/-- A multi-cut of weight at most `K`: a sublist `E'` of the edges, of total weight at most `K`,
-such that after deleting the edges of `E'` from `G` (`SimpleGraph.deleteEdges`) the terminal
-of every pair of `S` is not reachable from its source. -/
-def MultiCutFeasible (i : MultiCutInstance) : Prop :=
-  ∃ C : List (ℕ × ℕ × ℕ), C.Sublist i.2.1 ∧ (C.map fun e => e.2.2).sum ≤ i.2.2.2 ∧
-    ∀ p ∈ i.2.2.1, ∀ hs : p.1 < i.1, ∀ ht : p.2 < i.1,
-      ¬ ((Graph i i.2.1).deleteEdges (Graph i C).edgeSet).Reachable ⟨p.1, hs⟩ ⟨p.2, ht⟩
-
-open Classical in
-/-- MULTI-CUT as a decision problem over bitstrings. -/
-noncomputable def multiCutDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MultiCutInstance) x with
-  | some i => decide (WellFormed i ∧ MultiCutFeasible i)
-  | none => false
 
 /-- **MULTI-CUT is NP-complete.** Source: Crescenzi and Kann, MINIMUM MULTI-CUT, citing Garg,
 Vazirani and Yannakakis (1996); NP-hard already for MULTIWAY CUT with three terminals, Dahlhaus,

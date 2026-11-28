@@ -28,10 +28,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Maps
+public import CSLibExt.Complexity.NPComplete.PartitionIntoIsomorphicSubgraphsDefs
 
 @[expose] public section
 
@@ -65,44 +62,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` of `G` (vertices `Fin n`), edge list of `G`, vertex count
-`m` of `H` (vertices `Fin m`), edge list of `H`. -/
-abbrev PartitionIntoIsomorphicSubgraphsInstance := ℕ × List (ℕ × ℕ) × ℕ × List (ℕ × ℕ)
-
-/-- The graph `G` of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : PartitionIntoIsomorphicSubgraphsInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- The graph `H` of the instance as a `SimpleGraph (Fin m)`. -/
-def Pattern (i : PartitionIntoIsomorphicSubgraphsInstance) : SimpleGraph (Fin i.2.2.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.2.2.1 i.2.2.2
-
-/-- Well-formedness of an instance: both edge lists describe simple graphs (no duplicate edges
-in either orientation, no self-loops, endpoints in range), and `n = q * m` for some positive
-integer `q`. -/
-def WellFormed (i : PartitionIntoIsomorphicSubgraphsInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    (i.2.2.2.Nodup ∧ ∀ e ∈ i.2.2.2,
-      e.1 < i.2.2.1 ∧ e.2 < i.2.2.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.2.2) ∧
-    ∃ q, 0 < q ∧ i.1 = q * i.2.2.1
-
-/-- For some positive integer `q`, the vertices of `G` split into blocks `P⁻¹(k)`, `k : Fin q`,
-such that each block's induced subgraph contains a spanning copy of `H`: a bijective
-homomorphism from `H` onto the block. -/
-def PartitionIntoIsomorphicSubgraphsFeasible
-    (i : PartitionIntoIsomorphicSubgraphsInstance) : Prop :=
-  ∃ q, 0 < q ∧ ∃ P : Fin i.1 → Fin q, ∀ k : Fin q,
-    ∃ φ : Pattern i →g (Graph i).induce {v | P v = k}, Function.Bijective φ
-
-open Classical in
-/-- PARTITION INTO ISOMORPHIC SUBGRAPHS as a decision problem over bitstrings. -/
-noncomputable def partitionIntoIsomorphicSubgraphsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PartitionIntoIsomorphicSubgraphsInstance) x with
-  | some i => decide (WellFormed i ∧ PartitionIntoIsomorphicSubgraphsFeasible i)
-  | none => false
 
 /-- **PARTITION INTO ISOMORPHIC SUBGRAPHS, in the non-induced (`H`-factor) form, is
 NP-complete.** Source: Kirkpatrick and Hell (1978, 1983); Garey and Johnson (1979), p. 193,

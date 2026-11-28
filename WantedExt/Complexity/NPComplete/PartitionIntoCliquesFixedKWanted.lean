@@ -24,9 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.PartitionIntoCliquesDefs
+public import CSLibExt.Complexity.NPComplete.PartitionIntoCliquesFixedKDefs
 
 @[expose] public section
 
@@ -65,20 +63,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance for the fixed bound `k`: a well-formed PARTITION INTO CLIQUES
-instance (simple edge list, `0 < K ≤ |V|`) whose bound is `k`. -/
-def WellFormed (k : ℕ) (i : PartitionIntoCliquesInstance) : Prop :=
-  PartitionIntoCliques.WellFormed i ∧ i.2.2 = k
-
-open Classical in
-/-- PARTITION INTO CLIQUES, for the fixed bound `k`, as a decision problem over bitstrings. -/
-noncomputable def partitionIntoCliquesFixedKDec (k : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PartitionIntoCliquesInstance) x with
-  | some i => decide (WellFormed k i ∧ PartitionIntoCliquesFeasible i)
-  | none => false
 
 /-- **PARTITION INTO CLIQUES is NP-complete for every fixed `K ≥ 3`.** Source: Garey and Johnson
 (1979), [GT15], comment; Karp (1972). -/

@@ -22,11 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
-public import Mathlib.Combinatorics.SimpleGraph.Maps
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.PartitionIntoCliquesDefs
+public import CSLibExt.Complexity.NPComplete.PartitionIntoCliquesLocallyConnectedDefs
 
 @[expose] public section
 
@@ -73,22 +69,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed PARTITION INTO CLIQUES instance (a simple edge
-list on `Fin n`, `0 < K ≤ |V|`) whose graph is locally connected (the neighbourhood of every
-vertex induces a connected graph). -/
-def WellFormed (i : PartitionIntoCliquesInstance) : Prop :=
-  PartitionIntoCliques.WellFormed i ∧
-    ∀ v, ((Graph i).induce ((Graph i).neighborSet v)).Connected
-
-open Classical in
-/-- PARTITION INTO CLIQUES on locally connected graphs as a decision problem over bitstrings. -/
-noncomputable def partitionIntoCliquesLocallyConnectedDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PartitionIntoCliquesInstance) x with
-  | some i => decide (WellFormed i ∧ PartitionIntoCliquesFeasible i)
-  | none => false
 
 /-- **PARTITION INTO CLIQUES on locally connected graphs is NP-complete.** Source: ISGCI
 (`gc_932`, note `ref_1506`); Garey and Johnson (1979), [GT15] (parent problem). -/

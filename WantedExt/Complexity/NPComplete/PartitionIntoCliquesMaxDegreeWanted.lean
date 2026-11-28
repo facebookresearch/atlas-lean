@@ -26,10 +26,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Combinatorics.SimpleGraph.Finite
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.PartitionIntoCliquesDefs
+public import CSLibExt.Complexity.NPComplete.PartitionIntoCliquesMaxDegreeDefs
 
 @[expose] public section
 
@@ -69,23 +66,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-open Classical in
-/-- Well-formedness of an instance for the fixed degree bound `k`: well formed for PARTITION
-INTO CLIQUES (a simple graph on `Fin n` and `0 < K ≤ n`), and no vertex has degree exceeding
-`k`. -/
-def WellFormed (k : ℕ) (i : PartitionIntoCliquesInstance) : Prop :=
-  PartitionIntoCliques.WellFormed i ∧ ∀ v, (Graph i).degree v ≤ k
-
-open Classical in
-/-- PARTITION INTO CLIQUES on graphs of maximum degree at most `k`, for the fixed `k`, as a
-decision problem over bitstrings. -/
-noncomputable def partitionIntoCliquesMaxDegreeDec (k : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PartitionIntoCliquesInstance) x with
-  | some i => decide (WellFormed k i ∧ PartitionIntoCliquesFeasible i)
-  | none => false
 
 /-- **PARTITION INTO CLIQUES on graphs of maximum degree at most `k` is NP-complete for every
 fixed `k ≥ 3`.** Source: Johnson (1985), Table 1; Cerioli, Faria, Ferreira, Martinhon, Protti and

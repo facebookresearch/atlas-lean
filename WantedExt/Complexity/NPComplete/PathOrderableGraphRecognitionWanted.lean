@@ -20,11 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Paths
-public import Mathlib.Logic.Equiv.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.PathOrderableGraphRecognitionDefs
 
 @[expose] public section
 
@@ -63,37 +59,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`) and edge list. -/
-abbrev PathOrderableGraphRecognitionInstance := ℕ × List (ℕ × ℕ)
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : PathOrderableGraphRecognitionInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range). -/
-def WellFormed (i : PathOrderableGraphRecognitionInstance) : Prop :=
-  i.2.Nodup ∧ ∀ e ∈ i.2, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2
-
-/-- `pos` (vertex ↦ position) is a path ordering of `G`: for every triple `u, w, x` in this
-order with `u` and `x` non-adjacent, `w` is adjacent to a vertex of every `u, x`-path. -/
-def IsPathOrdering {n : ℕ} (G : SimpleGraph (Fin n)) (pos : Fin n ≃ Fin n) : Prop :=
-  ∀ u w x, pos u < pos w → pos w < pos x → ¬ G.Adj u x →
-    ∀ p : G.Walk u x, p.IsPath → ∃ y ∈ p.support, G.Adj w y
-
-/-- The graph of the instance is path orderable: it has a path ordering. -/
-def PathOrderableGraphRecognitionFeasible (i : PathOrderableGraphRecognitionInstance) : Prop :=
-  ∃ pos : Fin i.1 ≃ Fin i.1, IsPathOrdering (Graph i) pos
-
-open Classical in
-/-- PATH ORDERABLE GRAPH RECOGNITION as a decision problem over bitstrings. -/
-noncomputable def pathOrderableGraphRecognitionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PathOrderableGraphRecognitionInstance) x with
-  | some i => decide (WellFormed i ∧ PathOrderableGraphRecognitionFeasible i)
-  | none => false
 
 /-- **PATH ORDERABLE GRAPH RECOGNITION is NP-complete.** Source: Corneil, Köhler, Olariu and
 Stewart (2006). -/

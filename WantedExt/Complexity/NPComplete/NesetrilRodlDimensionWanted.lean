@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
+public import CSLibExt.Complexity.NPComplete.NesetrilRodlDimensionDefs
 
 @[expose] public section
 
@@ -60,37 +58,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the vertex count `n` in unary (a list of length `n`; vertices
-`0, ..., n - 1`), the edge list, and the bound `K`. -/
-abbrev NesetrilRodlDimensionInstance := List Bool × List (ℕ × ℕ) × ℕ
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`, `n` the length of the unary list. -/
-def Graph (i : NesetrilRodlDimensionInstance) : SimpleGraph (Fin i.1.length) :=
-  Cslib.Complexity.Karp.edgeGraph i.1.length i.2.1
-
-/-- Well-formedness of an instance: `n` is written in unary as `[true, ..., true]`, the edge
-list describes a simple graph on `0, ..., n - 1`, and `1 ≤ K ≤ |E|`. -/
-def WellFormed (i : NesetrilRodlDimensionInstance) : Prop :=
-  (∀ b ∈ i.1, b = true) ∧
-    (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1.length ∧ e.2 < i.1.length ∧ e.1 ≠ e.2 ∧
-      (e.2, e.1) ∉ i.2.1) ∧
-    0 < i.2.2 ∧ i.2.2 ≤ i.2.1.length
-
-/-- Some one-to-one `f : V → (Fin K → Fin n)` has, for all `u, v`, `{u, v} ∈ E` iff `f(u)` and
-`f(v)` disagree in every component. -/
-def NesetrilRodlDimensionFeasible (i : NesetrilRodlDimensionInstance) : Prop :=
-  ∃ f : Fin i.1.length → Fin i.2.2 → Fin i.1.length, Function.Injective f ∧
-    ∀ u v, (Graph i).Adj u v ↔ ∀ k, f u k ≠ f v k
-
-open Classical in
-/-- NESETRIL-RODL DIMENSION as a decision problem over bitstrings. -/
-noncomputable def nesetrilRodlDimensionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := NesetrilRodlDimensionInstance) x with
-  | some i => decide (WellFormed i ∧ NesetrilRodlDimensionFeasible i)
-  | none => false
 
 /-- **NESETRIL-RODL DIMENSION is NP-complete.** Source: Garey and Johnson (1979), [GT62];
 Nešetřil and Pultr (1977). -/

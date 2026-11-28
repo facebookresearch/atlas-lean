@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.GraphPartitioningWanted
+public import CSLibExt.Complexity.NPComplete.GraphPartitioningUnitWeightsFixedKDefs
 
 @[expose] public section
 
@@ -60,29 +58,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance for a fixed block bound `K`: vertex count `n` (vertices `0, …, n - 1`), the
-vertex weights `[w 0, …, w (n - 1)]`, the edges `(u, v, l(e))`, and the bound `J`. -/
-abbrev FixedBoundInstance := ℕ × List ℕ × List (ℕ × ℕ × ℕ) × ℕ
-
-/-- The GRAPH PARTITIONING instance given by `i` and the block bound `K`. -/
-abbrev withBound (i : FixedBoundInstance) (K : ℕ) : GraphPartitioningInstance :=
-  (i.1, i.2.1, i.2.2.1, K, i.2.2.2)
-
-/-- Well-formedness of an instance for the bound `K`: the GRAPH PARTITIONING instance
-`withBound i K` is well-formed, every vertex weight is `1`, and every edge length is `1`. -/
-def WellFormed (K : ℕ) (i : FixedBoundInstance) : Prop :=
-  GraphPartitioning.WellFormed (withBound i K) ∧ (∀ x ∈ i.2.1, x = 1) ∧
-    ∀ e ∈ i.2.2.1, e.2.2 = 1
-
-open Classical in
-/-- GRAPH PARTITIONING with unit weights and the block bound fixed to `K`, as a decision problem
-over bitstrings. -/
-noncomputable def graphPartitioningUnitWeightsDec (K : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := FixedBoundInstance) x with
-  | some i => decide (WellFormed K i ∧ GraphPartitioningFeasible (withBound i K))
-  | none => false
 
 /-- **GRAPH PARTITIONING with unit weights is NP-complete for every fixed `K ≥ 3`.** Source:
 Garey and Johnson (1979), [ND14], comment; Hyafil and Rivest (1973). -/
