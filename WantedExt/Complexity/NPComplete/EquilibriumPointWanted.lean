@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.MvPolynomial.Eval
-public import MathlibExt.GameTheory.StrategicGame
+public import CSLibExt.Complexity.NPComplete.EquilibriumPointDefs
 
 @[expose] public section
 
@@ -70,70 +67,6 @@ reduction from every language in `NP`
 -/
 
 open MvPolynomial
-
-/-- A monomial term: an integer coefficient `(positive part, negative part)` and the list of
-variables of the monomial, each repeated as often as its exponent. -/
-abbrev MonomialTerm := (ℕ × ℕ) × List ℕ
-
-/-- The polynomial `∑ (cₖ⁺ - cₖ⁻) · ∏ x_v` of a list of monomial terms. -/
-noncomputable def factorPoly (f : List MonomialTerm) : MvPolynomial ℕ ℤ :=
-  (f.map fun t => C ((t.1.1 : ℤ) - t.1.2) * (t.2.map X).prod).sum
-
-/-- The product polynomial of a list of factors: the product of their polynomials. -/
-noncomputable def productPoly (F : List (List MonomialTerm)) : MvPolynomial ℕ ℤ :=
-  (F.map factorPoly).prod
-
-/-- An instance: the number `n` of variables (and players), the product polynomials
-`F₀, ..., Fₙ₋₁` as lists of factors, and the range-sets `M₀, ..., Mₙ₋₁` as lists of integers
-`(positive part, negative part)`. -/
-abbrev EquilibriumPointInstance := ℕ × List (List (List MonomialTerm)) × List (List (ℕ × ℕ))
-
-/-- The payoff polynomial `Fᵢ`. -/
-noncomputable def payoffPoly (inst : EquilibriumPointInstance) (i : ℕ) : MvPolynomial ℕ ℤ :=
-  productPoly (inst.2.1.getD i [])
-
-/-- The range-set `Mᵢ`, as a list of integers. -/
-def rangeSet (inst : EquilibriumPointInstance) (i : ℕ) : List ℤ :=
-  (inst.2.2.getD i []).map fun q => (q.1 : ℤ) - q.2
-
-/-- Well-formedness of an instance: there are exactly `n` product polynomials and `n`
-range-sets, and every variable occurring in a monomial is one of `x₀, ..., xₙ₋₁`. -/
-def WellFormed (inst : EquilibriumPointInstance) : Prop :=
-  inst.2.1.length = inst.1 ∧ inst.2.2.length = inst.1 ∧
-    ∀ F ∈ inst.2.1, ∀ f ∈ F, ∀ t ∈ f, ∀ v ∈ t.2, v < inst.1
-
-/-- The strategies of player `i`: the elements of the range-set `Mᵢ`. -/
-abbrev Strategy (inst : EquilibriumPointInstance) (i : Fin inst.1) : Type :=
-  {z : ℤ // z ∈ rangeSet inst i}
-
-/-- The values of the variables at a strategy profile: `xᵢ = σ i` for `i < n` (larger indices
-do not occur in a well-formed instance and get `0`). -/
-def assignment (inst : EquilibriumPointInstance) (σ : ∀ i, Strategy inst i) : ℕ → ℤ :=
-  fun v => if h : v < inst.1 then (σ ⟨v, h⟩).1 else 0
-
-/-- The game of the instance: players `Fin n`, strategies of player `i` the elements of `Mᵢ`,
-and payoff of player `i` the value of `Fᵢ` at the profile. Building it needs every `Mᵢ`
-nonempty (`hne`), as `StrategicGame` requires. -/
-noncomputable def game (inst : EquilibriumPointInstance)
-    (hne : ∀ i, Nonempty (Strategy inst i)) :
-    MathlibExt.GameTheory.StrategicGame (Fin inst.1) (Strategy inst) where
-  payoff i σ := (eval (assignment inst σ) (payoffPoly inst i) : ℝ)
-  strategy_nonempty := hne
-
-/-- An equilibrium point exists: some profile `σ` (`σ i ∈ Mᵢ` for every player `i`) is a pure
-Nash equilibrium of the game of the instance; the game is built with the nonemptiness of the
-range-sets that `σ` itself witnesses. -/
-def EquilibriumPointFeasible (inst : EquilibriumPointInstance) : Prop :=
-  ∃ σ : ∀ i, Strategy inst i, (game inst fun i => ⟨σ i⟩).IsNash σ
-
-open Classical in
-/-- EQUILIBRIUM POINT as a decision problem over bitstrings. -/
-noncomputable def equilibriumPointDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := EquilibriumPointInstance) x with
-  | some i => decide (WellFormed i ∧ EquilibriumPointFeasible i)
-  | none => false
 
 /-- **EQUILIBRIUM POINT is NP-complete.** Source: Garey and Johnson (1979), [AN15];
 Sahni (1974), Theorem 2.4.1. -/

@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MinimumAxiomSetWanted
+public import CSLibExt.Complexity.NPComplete.MinimumAxiomSetAllSentencesTrueDefs
 
 @[expose] public section
 
@@ -66,20 +64,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed MINIMUM AXIOM SET instance in which every
-sentence is true (`T = S`). -/
-def WellFormed (i : MinimumAxiomSetInstance) : Prop :=
-  MinimumAxiomSet.WellFormed i ∧ ∀ x < i.1, x ∈ i.2.1
-
-open Classical in
-/-- MINIMUM AXIOM SET with all sentences true as a decision problem over bitstrings. -/
-noncomputable def minimumAxiomSetAllSentencesTrueDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MinimumAxiomSetInstance) x with
-  | some i => decide (WellFormed i ∧ MinimumAxiomSetFeasible i)
-  | none => false
 
 /-- **MINIMUM AXIOM SET with all sentences true is NP-complete.** Source: Garey and Johnson
 (1979), [LO17]; Pudlák (1975). -/

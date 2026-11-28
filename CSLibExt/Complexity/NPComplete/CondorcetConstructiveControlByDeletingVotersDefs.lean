@@ -1,0 +1,55 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+# CONDORCET CONSTRUCTIVE CONTROL BY DELETING VOTERS: definitions
+
+Source:
+J. J. Bartholdi III, C. A. Tovey, and M. A. Trick, "How hard is it to control an election?",
+Mathematical and Computer Modelling 16 (1992), 27-40, doi:10.1016/0895-7177(92)90085-Y;
+E. Hemaspaandra, L. A. Hemaspaandra, and J. Rothe, "Anyone but him: The complexity of
+precluding an alternative", Proceedings of the 20th National Conference on Artificial
+Intelligence (AAAI 2005), 95-101 (Table 1 records the Bartholdi-Tovey-Trick result).
+-/
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.CondorcetConstructiveControlByAddingVotersDefs
+
+@[expose] public section
+
+namespace MetaMathlibExt.Complexity.NPComplete.CondorcetConstructiveControlByDeletingVoters
+
+/-- An instance: the number `m` of candidates, the votes `V`, the distinguished candidate `c`,
+and the bound `k`. -/
+abbrev CondorcetConstructiveControlByDeletingVotersInstance := ℕ × List (List ℕ) × ℕ × ℕ
+
+/-- Well-formedness of an instance: every vote is a strict ranking of all `m` candidates, `c` is
+a candidate, and `0 < k ≤ ‖V‖`. -/
+def WellFormed (i : CondorcetConstructiveControlByDeletingVotersInstance) : Prop :=
+  (∀ v ∈ i.2.1, v.Perm (List.range i.1)) ∧ i.2.2.1 < i.1 ∧ 0 < i.2.2.2 ∧
+    i.2.2.2 ≤ i.2.1.length
+
+/-- At most `k` voters of `V` whose deletion makes `c` the Condorcet winner of the remaining
+votes `V'`. -/
+def CondorcetConstructiveControlByDeletingVotersFeasible
+    (i : CondorcetConstructiveControlByDeletingVotersInstance) : Prop :=
+  ∃ V' : List (List ℕ), V'.Sublist i.2.1 ∧ i.2.1.length ≤ V'.length + i.2.2.2 ∧
+    CondorcetConstructiveControlByAddingVoters.IsCondorcetWinner i.1 V' i.2.2.1
+
+open Classical in
+/-- CONDORCET CONSTRUCTIVE CONTROL BY DELETING VOTERS as a decision problem over bitstrings. -/
+noncomputable def condorcetConstructiveControlByDeletingVotersDec :
+    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
+  match MetaMathlibExt.BitstringEncoding.bitDecode
+      (α := CondorcetConstructiveControlByDeletingVotersInstance) x with
+  | some i => decide (WellFormed i ∧ CondorcetConstructiveControlByDeletingVotersFeasible i)
+  | none => false
+
+end MetaMathlibExt.Complexity.NPComplete.CondorcetConstructiveControlByDeletingVoters

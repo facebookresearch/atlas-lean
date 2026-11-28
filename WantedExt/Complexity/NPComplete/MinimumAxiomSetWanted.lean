@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Data.Finset.Card
-public import Mathlib.Logic.Function.Iterate
+public import CSLibExt.Complexity.NPComplete.MinimumAxiomSetDefs
 
 @[expose] public section
 
@@ -56,37 +53,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number `|S|` of sentences (sentences `0, ..., |S| - 1`), the true sentences
-`T`, the implication relation `R` (pairs `(A, s)`, the premises `A` as a list), and the bound
-`K`. -/
-abbrev MinimumAxiomSetInstance := ℕ × List ℕ × List (List ℕ × ℕ) × ℕ
-
-/-- Well-formedness of an instance: every true sentence, premise and conclusion is a sentence
-(`< |S|`), and `0 < K ≤ |S|`. -/
-def WellFormed (i : MinimumAxiomSetInstance) : Prop :=
-  (∀ x ∈ i.2.1, x < i.1) ∧ (∀ r ∈ i.2.2.1, (∀ x ∈ r.1, x < i.1) ∧ r.2 < i.1) ∧
-    0 < i.2.2.2 ∧ i.2.2.2 ≤ i.1
-
-/-- One derivation round: the sentences of `X`, together with the conclusion `s` of every pair
-`(A, s) ∈ R` whose premises `A` all lie in `X`. -/
-def derive (R : List (List ℕ × ℕ)) (X : Finset ℕ) : Finset ℕ :=
-  X ∪ ((R.filter fun r => ∀ x ∈ r.1, x ∈ X).map Prod.snd).toFinset
-
-/-- Some set `S₀` of at most `K` true sentences reaches exactly `T` after `n ≥ 1` derivation
-rounds. -/
-def MinimumAxiomSetFeasible (i : MinimumAxiomSetInstance) : Prop :=
-  ∃ S₀ : Finset ℕ, (∀ x ∈ S₀, x ∈ i.2.1) ∧ S₀.card ≤ i.2.2.2 ∧
-    ∃ n, 0 < n ∧ (derive i.2.2.1)^[n] S₀ = i.2.1.toFinset
-
-open Classical in
-/-- MINIMUM AXIOM SET as a decision problem over bitstrings. -/
-noncomputable def minimumAxiomSetDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MinimumAxiomSetInstance) x with
-  | some i => decide (WellFormed i ∧ MinimumAxiomSetFeasible i)
-  | none => false
 
 /-- **MINIMUM AXIOM SET is NP-complete.** Source: Garey and Johnson (1979), [LO17];
 Pudlák (1975). -/

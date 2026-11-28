@@ -22,9 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.TwoDimensionalConsecutiveSetsWanted
+public import CSLibExt.Complexity.NPComplete.TwoDimensionalConsecutiveSetsSizeFiveDefs
 
 @[expose] public section
 
@@ -58,24 +56,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: it is a well-formed 2-DIMENSIONAL CONSECUTIVE SETS instance
-(every subset lists distinct symbols of the alphabet), and every subset has at most `5`
-elements. -/
-def WellFormed (i : TwoDimensionalConsecutiveSets.TwoDimensionalConsecutiveSetsInstance) :
-    Prop :=
-  TwoDimensionalConsecutiveSets.WellFormed i ∧ ∀ S ∈ i.2, S.length ≤ 5
-
-open Classical in
-/-- 2-DIMENSIONAL CONSECUTIVE SETS with sets of size at most 5 as a decision problem over
-bitstrings. -/
-noncomputable def twoDimensionalConsecutiveSetsSizeFiveDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TwoDimensionalConsecutiveSets.TwoDimensionalConsecutiveSetsInstance) x with
-  | some i => decide (WellFormed i ∧
-      TwoDimensionalConsecutiveSets.TwoDimensionalConsecutiveSetsFeasible i)
-  | none => false
 
 /-- **2-DIMENSIONAL CONSECUTIVE SETS with sets of size at most 5 is NP-complete.** Source: Garey
 and Johnson (1979), [SR19], comment; Lipski (1977). -/

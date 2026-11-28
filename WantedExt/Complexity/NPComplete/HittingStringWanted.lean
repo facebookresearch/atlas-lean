@@ -21,8 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.HittingStringDefs
 
 @[expose] public section
 
@@ -51,28 +50,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the common length `n` and the strings of `A` (`0`, `1`, and `2` for `*`). -/
-abbrev HittingStringInstance := ℕ × List (List ℕ)
-
-/-- Well-formedness of an instance: every string of `A` has length `n` and its symbols are `0`,
-`1` or `2` (for `*`). -/
-def WellFormed (i : HittingStringInstance) : Prop :=
-  ∀ a ∈ i.2, a.length = i.1 ∧ ∀ c ∈ a, c ≤ 2
-
-/-- A string `x ∈ {0, 1}ⁿ` that agrees with every string of `A` in some position. -/
-def HittingStringFeasible (i : HittingStringInstance) : Prop :=
-  ∃ x : List Bool, x.length = i.1 ∧
-    ∀ a ∈ i.2, ∃ k < i.1, a.getD k 2 = (x.getD k false).toNat
-
-open Classical in
-/-- HITTING STRING as a decision problem over bitstrings. -/
-noncomputable def hittingStringDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := HittingStringInstance) x with
-  | some i => decide (WellFormed i ∧ HittingStringFeasible i)
-  | none => false
 
 /-- **HITTING STRING is NP-complete.** Source: Garey and Johnson (1979), [SR12]; Fagin (1974),
 Theorem 36. -/

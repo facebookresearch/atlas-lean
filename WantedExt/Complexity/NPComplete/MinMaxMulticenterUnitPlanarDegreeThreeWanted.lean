@@ -25,11 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Combinatorics.SimpleGraph.Planarity
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Data.Set.Card
-public import WantedExt.Complexity.NPComplete.MinMaxMulticenterWanted
+public import CSLibExt.Complexity.NPComplete.MinMaxMulticenterUnitPlanarDegreeThreeDefs
 
 @[expose] public section
 
@@ -78,22 +74,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed MIN-MAX MULTICENTER instance with all weights
-`1` and all edge lengths `1`, whose graph is planar with maximum degree at most 3. -/
-def WellFormed (i : MinMaxMulticenterInstance) : Prop :=
-  MinMaxMulticenter.WellFormed i ∧ (∀ w ∈ i.2.2.1, w = 1) ∧ (∀ e ∈ i.2.1, e.2.2 = 1) ∧
-    (Graph i).IsPlanar ∧ ∀ v : Fin i.1, ((Graph i).neighborSet v).ncard ≤ 3
-
-open Classical in
-/-- MIN-MAX MULTICENTER with unit weights and lengths on planar graphs of maximum degree 3, as a
-decision problem over bitstrings. -/
-noncomputable def minMaxMulticenterUnitPlanarDegreeThreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MinMaxMulticenterInstance) x with
-  | some i => decide (WellFormed i ∧ MinMaxMulticenterFeasible i)
-  | none => false
 
 /-- **MIN-MAX MULTICENTER is NP-complete with unit weights and lengths on planar graphs of
 maximum degree 3.** Source: Garey and Johnson (1979), [ND50] and [GT2], comments; Kariv and

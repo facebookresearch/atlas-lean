@@ -20,11 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.Digraph.Basic
-public import Mathlib.Data.Finset.Card
-public import Mathlib.Logic.Relation
+public import CSLibExt.Complexity.NPComplete.FaultDetectionWithTestPointsDefs
 
 @[expose] public section
 
@@ -59,50 +55,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`), the arc list (a pair `(u, v)` is the arc
-`u → v`), the source `s`, the sink `t`, and the bound `K`. -/
-abbrev FaultDetectionWithTestPointsInstance := ℕ × List (ℕ × ℕ) × ℕ × ℕ × ℕ
-
-/-- The directed graph of the instance, with an arc `u → v` for each pair `(u, v)` of the arc
-list. -/
-def Graph (i : FaultDetectionWithTestPointsInstance) : Digraph (Fin i.1) where
-  Adj u v := ((u : ℕ), (v : ℕ)) ∈ i.2.1
-
-/-- `v` lies on a directed path from `u₁` to `u₂`: `u₁` reaches `v` and `v` reaches `u₂`. -/
-def OnPath (i : FaultDetectionWithTestPointsInstance) (u₁ v u₂ : Fin i.1) : Prop :=
-  Relation.ReflTransGen (Graph i).Adj u₁ v ∧ Relation.ReflTransGen (Graph i).Adj v u₂
-
-/-- Well-formedness of an instance: no repeated arcs, endpoints in range, no directed cycle
-(this also excludes loops), `s` is the unique vertex of in-degree `0`, `t` is the unique vertex
-of out-degree `0`, and `0 < K`. -/
-def WellFormed (i : FaultDetectionWithTestPointsInstance) : Prop :=
-  i.2.1.Nodup ∧ (∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1) ∧
-    (∀ v, ¬ Relation.TransGen (Graph i).Adj v v) ∧
-    (∃ s : Fin i.1, (s : ℕ) = i.2.2.1 ∧ ∀ v, (∀ u, ¬ (Graph i).Adj u v) ↔ v = s) ∧
-    (∃ t : Fin i.1, (t : ℕ) = i.2.2.2.1 ∧ ∀ v, (∀ w, ¬ (Graph i).Adj v w) ↔ v = t) ∧
-    0 < i.2.2.2.2
-
-/-- Some set `A'` of at most `K` arcs makes the test set
-`T = ({s} ∪ {tails of A'}) × ({t} ∪ {heads of A'})` locate every single fault: for all distinct
-`v, v' ∉ {s, t}` some `(u₁, u₂) ∈ T` has `v` on a directed path from `u₁` to `u₂` and `v'` on
-no such path. -/
-def FaultDetectionWithTestPointsFeasible (i : FaultDetectionWithTestPointsInstance) : Prop :=
-  ∃ A' : Finset (Fin i.1 × Fin i.1), (∀ a ∈ A', (Graph i).Adj a.1 a.2) ∧ A'.card ≤ i.2.2.2.2 ∧
-    ∀ v v' : Fin i.1, (v : ℕ) ≠ i.2.2.1 → (v : ℕ) ≠ i.2.2.2.1 → (v' : ℕ) ≠ i.2.2.1 →
-      (v' : ℕ) ≠ i.2.2.2.1 → v ≠ v' →
-        ∃ u₁ u₂ : Fin i.1, ((u₁ : ℕ) = i.2.2.1 ∨ ∃ w, (u₁, w) ∈ A') ∧
-          ((u₂ : ℕ) = i.2.2.2.1 ∨ ∃ w, (w, u₂) ∈ A') ∧
-          OnPath i u₁ v u₂ ∧ ¬ OnPath i u₁ v' u₂
-
-open Classical in
-/-- FAULT DETECTION WITH TEST POINTS as a decision problem over bitstrings. -/
-noncomputable def faultDetectionWithTestPointsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := FaultDetectionWithTestPointsInstance) x with
-  | some i => decide (WellFormed i ∧ FaultDetectionWithTestPointsFeasible i)
-  | none => false
 
 /-- **FAULT DETECTION WITH TEST POINTS is NP-complete.** Source: Garey and Johnson (1979),
 [MS19] (Ibaraki, Kameda, and Toida, unpublished). -/

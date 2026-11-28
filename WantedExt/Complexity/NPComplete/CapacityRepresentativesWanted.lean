@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.CapacityRepresentativesDefs
 
 @[expose] public section
 
@@ -61,37 +59,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the sets `S₁, ..., S_m`, the capacity matrix (rows and columns indexed by the
-elements `0, ..., N - 1`), and the bound `K`. -/
-abbrev CapacityRepresentativesInstance := List (List ℕ) × List (List ℕ) × ℕ
-
-/-- Well-formedness of an instance: the capacity matrix is `N × N` with `N` its number of rows,
-the sets consist of elements below `N` and are duplicate-free and pairwise disjoint, and `K` is
-positive. -/
-def WellFormed (i : CapacityRepresentativesInstance) : Prop :=
-  (∀ row ∈ i.2.1, row.length = i.2.1.length) ∧ (∀ s ∈ i.1, ∀ x ∈ s, x < i.2.1.length) ∧
-    i.1.flatten.Nodup ∧ 0 < i.2.2
-
-/-- The capacity `c(x, y)`: the entry in row `x` and column `y` of the matrix. -/
-def capacity (i : CapacityRepresentativesInstance) (x y : ℕ) : ℕ :=
-  (i.2.1.getD x []).getD y 0
-
-/-- Some choice of one representative `t[k] ∈ S_{k+1}` for every set has capacity
-`∑_{k ≠ l} c(t[k], t[l])` at least `K`. -/
-def CapacityRepresentativesFeasible (i : CapacityRepresentativesInstance) : Prop :=
-  ∃ t : List ℕ, List.Forall₂ (fun x s => x ∈ s) t i.1 ∧
-    i.2.2 ≤ ∑ k ∈ Finset.range i.1.length, ∑ l ∈ (Finset.range i.1.length).filter (· ≠ k),
-      capacity i (t.getD k 0) (t.getD l 0)
-
-open Classical in
-/-- CAPACITY REPRESENTATIVES as a decision problem over bitstrings. -/
-noncomputable def capacityRepresentativesDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := CapacityRepresentativesInstance) x with
-  | some i => decide (WellFormed i ∧ CapacityRepresentativesFeasible i)
-  | none => false
 
 /-- **CAPACITY REPRESENTATIVES is NP-complete.** Source: Crescenzi and Kann, MAXIMUM CAPACITY
 REPRESENTATIVES; Bellare (1993). -/

@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Data.Fintype.Card
+public import CSLibExt.Complexity.NPComplete.HittingSetDefs
 
 @[expose] public section
 
@@ -50,28 +48,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: `n = |S|` (elements `0, ..., n - 1`), the collection `C` (a list of subsets,
-each a list of elements), and the bound `K`. -/
-abbrev HittingSetInstance := ℕ × List (List ℕ) × ℕ
-
-/-- Well-formedness of an instance: every subset in `C` lists elements of `S` without
-repetition, and `0 < K ≤ |S|`. -/
-def WellFormed (i : HittingSetInstance) : Prop :=
-  (∀ c ∈ i.2.1, c.Nodup ∧ ∀ x ∈ c, x < i.1) ∧ 0 < i.2.2 ∧ i.2.2 ≤ i.1
-
-/-- A subset `S'` of `S` with at most `K` elements meets every subset in `C`. -/
-def HittingSetFeasible (i : HittingSetInstance) : Prop :=
-  ∃ S' : Finset (Fin i.1), S'.card ≤ i.2.2 ∧ ∀ c ∈ i.2.1, ∃ x ∈ S', (x : ℕ) ∈ c
-
-open Classical in
-/-- HITTING SET as a decision problem over bitstrings. -/
-noncomputable def hittingSetDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := HittingSetInstance) x with
-  | some i => decide (WellFormed i ∧ HittingSetFeasible i)
-  | none => false
 
 /-- **HITTING SET is NP-complete.** Source: Garey and Johnson (1979), [SP8]; Karp (1972). -/
 public theorem_wanted hittingSet_npComplete :

@@ -18,9 +18,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.BordaManipulationTwoManipulatorsWanted
+public import CSLibExt.Complexity.NPComplete.ShiftBriberyBordaDefs
 
 @[expose] public section
 
@@ -61,51 +59,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number `m` of candidates, the preferred candidate `p`, one pair per voter
-(its vote over `0, …, m - 1`, most preferred first, and its finite prices
-`(ρ(1), …, ρ(j))`, `j` the index of `p` in the vote), and the budget `B`. -/
-abbrev ShiftBriberyBordaInstance := ℕ × ℕ × List (List ℕ × List ℕ) × ℕ
-
-/-- The voters of the instance, `Fin n` for `n` listed voters. -/
-abbrev Voter (inst : ShiftBriberyBordaInstance) : Type := Fin inst.2.2.1.length
-
-/-- The vote `v` after shifting `p` up by `k` places: `p` is removed and reinserted at index
-`j - k`, where `j` is its index in `v`. -/
-def shift (v : List ℕ) (p k : ℕ) : List ℕ :=
-  (v.erase p).take (v.idxOf p - k) ++ p :: (v.erase p).drop (v.idxOf p - k)
-
-/-- The price `ρ(k)` of shifting `p` up by `k ≤ j` places, with `ρ(0) = 0`. -/
-def price (prices : List ℕ) (k : ℕ) : ℕ :=
-  (0 :: prices).getD k 0
-
-/-- Well-formedness of an instance: `p` is a candidate, and every voter's vote ranks the `m`
-candidates and comes with one finite price per place `p` can move up, nondecreasing in the
-shift. -/
-def WellFormed (inst : ShiftBriberyBordaInstance) : Prop :=
-  inst.2.1 < inst.1 ∧
-    ∀ w ∈ inst.2.2.1, IsVote inst.1 w.1 ∧ w.2.length = w.1.idxOf inst.2.1 ∧
-      w.2.Pairwise (· ≤ ·)
-
-/-- Some shifts `kᵢ ≤ j`, of total price at most `B`, make `p` a Borda winner: no candidate scores
-more than `p` in the bribed election. -/
-def ShiftBriberyBordaFeasible (inst : ShiftBriberyBordaInstance) : Prop :=
-  ∃ k : Voter inst → ℕ,
-    (∀ i, k i ≤ (inst.2.2.1.get i).1.idxOf inst.2.1) ∧
-      ∑ i, price (inst.2.2.1.get i).2 (k i) ≤ inst.2.2.2 ∧
-      ∀ d < inst.1,
-        bordaScore inst.1 (List.ofFn fun i => shift (inst.2.2.1.get i).1 inst.2.1 (k i)) d ≤
-          bordaScore inst.1 (List.ofFn fun i => shift (inst.2.2.1.get i).1 inst.2.1 (k i))
-            inst.2.1
-
-open Classical in
-/-- SHIFT BRIBERY for Borda as a decision problem over bitstrings. -/
-noncomputable def shiftBriberyBordaDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ShiftBriberyBordaInstance) x with
-  | some i => decide (WellFormed i ∧ ShiftBriberyBordaFeasible i)
-  | none => false
 
 /-- **SHIFT BRIBERY for Borda is NP-complete.** Source: Elkind, Faliszewski and Slinko (2009),
 Theorem 5.1. -/

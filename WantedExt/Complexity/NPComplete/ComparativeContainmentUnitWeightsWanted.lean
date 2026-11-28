@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.ComparativeContainmentWanted
+public import CSLibExt.Complexity.NPComplete.ComparativeContainmentUnitWeightsDefs
 
 @[expose] public section
 
@@ -66,31 +64,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the size `n` of `X = Fin n` and the collections `R` and `S` as lists of
-(subset, weight) pairs; this is the COMPARATIVE CONTAINMENT instance type. -/
-abbrev ComparativeContainmentUnitWeightsInstance := ComparativeContainmentInstance
-
-/-- Well-formedness of an instance: a well-formed COMPARATIVE CONTAINMENT instance (every member
-of `R` and `S` lists distinct elements of `X`) in which every member of `R` and of `S` has
-weight 1. -/
-def WellFormed (i : ComparativeContainmentUnitWeightsInstance) : Prop :=
-  ComparativeContainment.WellFormed i ∧ (∀ T ∈ i.2.1, T.2 = 1) ∧ ∀ T ∈ i.2.2, T.2 = 1
-
-/-- Some `Y ⊆ X` is contained in at least as many members of `R` as of `S`, counted with their
-(unit) weights (the COMPARATIVE CONTAINMENT question). -/
-def ComparativeContainmentUnitWeightsFeasible
-    (i : ComparativeContainmentUnitWeightsInstance) : Prop :=
-  ComparativeContainmentFeasible i
-
-open Classical in
-/-- COMPARATIVE CONTAINMENT with unit weights as a decision problem over bitstrings. -/
-noncomputable def comparativeContainmentUnitWeightsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ComparativeContainmentUnitWeightsInstance) x with
-  | some i => decide (WellFormed i ∧ ComparativeContainmentUnitWeightsFeasible i)
-  | none => false
 
 /-- **COMPARATIVE CONTAINMENT with unit weights is NP-complete.** Source: Garey and Johnson
 (1979), [SP10], comment. -/

@@ -25,9 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.KSupplierDefs
 
 @[expose] public section
 
@@ -68,40 +66,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n`, distance matrix, construction costs `c`, usage weights `w`,
-cost bound `L`, and bound `K`. -/
-abbrev KSupplierInstance := ℕ × List (List ℕ) × List ℕ × List ℕ × ℕ × ℕ
-
-/-- The distance `d(a, b)`, read from the matrix. -/
-def distance (i : KSupplierInstance) (a b : ℕ) : ℕ :=
-  (i.2.1.getD a []).getD b 0
-
-/-- Well-formedness of an instance: an `n × n` distance matrix that is symmetric, has zero
-diagonal and satisfies the triangle inequality, cost and weight lists of length `n`, and
-`0 < K`. -/
-def WellFormed (i : KSupplierInstance) : Prop :=
-  i.2.1.length = i.1 ∧ (∀ row ∈ i.2.1, row.length = i.1) ∧
-    i.2.2.1.length = i.1 ∧ i.2.2.2.1.length = i.1 ∧
-    (∀ a < i.1, distance i a a = 0) ∧
-    (∀ a < i.1, ∀ b < i.1, distance i a b = distance i b a) ∧
-    (∀ a < i.1, ∀ b < i.1, ∀ c < i.1, distance i a c ≤ distance i a b + distance i b c) ∧
-    0 < i.2.2.2.2.2
-
-/-- A supplier set of total construction cost at most `L` such that every vertex `v` has a
-supplier `s` with `w(v) · d(v, s) ≤ K`. -/
-def KSupplierFeasible (i : KSupplierInstance) : Prop :=
-  ∃ S : Finset ℕ, (∀ s ∈ S, s < i.1) ∧ ∑ s ∈ S, i.2.2.1.getD s 0 ≤ i.2.2.2.2.1 ∧
-    ∀ v < i.1, ∃ s ∈ S, i.2.2.2.1.getD v 0 * distance i v s ≤ i.2.2.2.2.2
-
-open Classical in
-/-- K-SUPPLIER as a decision problem over bitstrings. -/
-noncomputable def kSupplierDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := KSupplierInstance) x with
-  | some i => decide (WellFormed i ∧ KSupplierFeasible i)
-  | none => false
 
 /-- **K-SUPPLIER is NP-complete.** Source: Crescenzi and Kann, MINIMUM K-SUPPLIER; Hochbaum and
 Shmoys (1986); Garey and Johnson (1979), [ND50], [GT2]. -/

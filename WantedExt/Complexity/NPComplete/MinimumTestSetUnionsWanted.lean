@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MinimumTestSetWanted
+public import CSLibExt.Complexity.NPComplete.MinimumTestSetUnionsDefs
 
 @[expose] public section
 
@@ -56,28 +54,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the parent's well-formedness (every test is a
-duplicate-free list of elements of `S`), the tests are distinct as sets, and `0 < K ≤ |C|`. -/
-def WellFormed (i : MinimumTestSetInstance) : Prop :=
-  MinimumTestSet.WellFormed i ∧ (i.2.1.map List.toFinset).Nodup ∧ 0 < i.2.2 ∧
-    i.2.2 ≤ i.2.1.length
-
-/-- Some collection of at most `K` tests, each the union of a sublist of `C`, distinguishes every
-pair of distinct elements of `S`: some test contains exactly one of them. -/
-def MinimumTestSetUnionsFeasible (i : MinimumTestSetInstance) : Prop :=
-  ∃ T : List (List (List ℕ)), (∀ t ∈ T, t.Sublist i.2.1) ∧ T.length ≤ i.2.2 ∧
-    ∀ a < i.1, ∀ b < i.1, a ≠ b →
-      ∃ t ∈ T, ((∃ s ∈ t, a ∈ s) ∧ ¬ ∃ s ∈ t, b ∈ s) ∨ (¬ (∃ s ∈ t, a ∈ s) ∧ ∃ s ∈ t, b ∈ s)
-
-open Classical in
-/-- MINIMUM TEST SET with unions of tests as a decision problem over bitstrings. -/
-noncomputable def minimumTestSetUnionsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MinimumTestSetInstance) x with
-  | some i => decide (WellFormed i ∧ MinimumTestSetUnionsFeasible i)
-  | none => false
 
 /-- **MINIMUM TEST SET with unions of tests is NP-complete.** Source: Garey and Johnson (1979),
 [SP6], comment (Ibaraki, Kameda, and Toida, 1977). -/

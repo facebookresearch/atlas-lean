@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Data.Finset.Card
+public import CSLibExt.Complexity.NPComplete.MinFeaturesDefs
 
 @[expose] public section
 
@@ -51,30 +49,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number `f` of input features, the examples (input values, target value),
-and the cardinality `n`. -/
-abbrev MinFeaturesInstance := ℕ × List (List Bool × Bool) × ℕ
-
-/-- Well-formedness of an instance: every example gives a value for each of the `f` input
-features. -/
-def WellFormed (i : MinFeaturesInstance) : Prop :=
-  ∀ x ∈ i.2.1, x.1.length = i.1
-
-/-- Some set `S` of exactly `n` input features is sufficient: two examples that agree on every
-feature in `S` have the same target value. -/
-def MinFeaturesFeasible (i : MinFeaturesInstance) : Prop :=
-  ∃ S : Finset (Fin i.1), S.card = i.2.2 ∧
-    ∀ x ∈ i.2.1, ∀ y ∈ i.2.1, (∀ j ∈ S, x.1.getD j false = y.1.getD j false) → x.2 = y.2
-
-open Classical in
-/-- MIN-FEATURES as a decision problem over bitstrings. -/
-noncomputable def minFeaturesDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MinFeaturesInstance) x with
-  | some i => decide (WellFormed i ∧ MinFeaturesFeasible i)
-  | none => false
 
 /-- **MIN-FEATURES is NP-complete.** Source: Davies and Russell (1994). -/
 public theorem_wanted minFeatures_npComplete :

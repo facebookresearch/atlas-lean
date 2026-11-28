@@ -20,10 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
-public import WantedExt.Complexity.NPComplete.ExactCoverWanted
+public import CSLibExt.Complexity.NPComplete.MinimumExactCoverDefs
 
 @[expose] public section
 
@@ -57,29 +54,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the size `n` of `S`, the members of `C` in order, and the bound `K`. -/
-abbrev MinimumExactCoverInstance := ℕ × List (List ℕ) × ℕ
-
-/-- Well-formedness of an instance: `(n, C)` is a well-formed `ExactCoverWanted` instance. -/
-def WellFormed (i : MinimumExactCoverInstance) : Prop :=
-  ExactCover.WellFormed (i.1, i.2.1)
-
-/-- Some set `C'` of positions in the list of members covers every element of `S`, and the
-lengths of the selected list entries sum to at most `K` (a member listed with a repeated element
-counts it twice; for well-formed members the length is the size). -/
-def MinimumExactCoverFeasible (i : MinimumExactCoverInstance) : Prop :=
-  ∃ C' : Finset (Fin i.2.1.length), (∀ x < i.1, ∃ j ∈ C', x ∈ i.2.1.get j) ∧
-    ∑ j ∈ C', (i.2.1.get j).length ≤ i.2.2
-
-open Classical in
-/-- MINIMUM EXACT COVER as a decision problem over bitstrings. -/
-noncomputable def minimumExactCoverDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MinimumExactCoverInstance) x with
-  | some i => decide (WellFormed i ∧ MinimumExactCoverFeasible i)
-  | none => false
 
 /-- **MINIMUM EXACT COVER is NP-complete.** Source: Crescenzi and Kann, MINIMUM EXACT COVER; Karp
 (1972). -/

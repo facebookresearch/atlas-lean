@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Data.Fintype.Defs
+public import CSLibExt.Complexity.NPComplete.ComparativeContainmentDefs
 
 @[expose] public section
 
@@ -50,38 +48,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the size `n` of `X = Fin n`, the collection `R` as a list of pairs
-`(R_i, w(R_i))`, and the collection `S` as a list of pairs `(S_j, w(S_j))`. -/
-abbrev ComparativeContainmentInstance := ℕ × List (List ℕ × ℕ) × List (List ℕ × ℕ)
-
-/-- A weighted subset `(T, w)` of `Fin n` is well formed when `T` lists distinct elements of
-`Fin n` and the weight `w` is positive. -/
-def WeightedSubsetWellFormed (n : ℕ) (T : List ℕ × ℕ) : Prop :=
-  T.1.Nodup ∧ (∀ x ∈ T.1, x < n) ∧ 0 < T.2
-
-/-- Well-formedness of an instance: every member of `R` and of `S` is a subset of `X` with a
-positive weight. -/
-def WellFormed (i : ComparativeContainmentInstance) : Prop :=
-  (∀ T ∈ i.2.1, WeightedSubsetWellFormed i.1 T) ∧ ∀ T ∈ i.2.2, WeightedSubsetWellFormed i.1 T
-
-/-- The total weight `∑_{Y ⊆ T} w(T)` of the members `T` of a weighted collection that
-contain `Y`. -/
-def containingWeight {n : ℕ} (C : List (List ℕ × ℕ)) (Y : Finset (Fin n)) : ℕ :=
-  (C.map fun T => if ∀ y ∈ Y, (y : ℕ) ∈ T.1 then T.2 else 0).sum
-
-/-- Some subset `Y ⊆ X` has `∑_{Y ⊆ R_i} w(R_i) ≥ ∑_{Y ⊆ S_j} w(S_j)`. -/
-def ComparativeContainmentFeasible (i : ComparativeContainmentInstance) : Prop :=
-  ∃ Y : Finset (Fin i.1), containingWeight i.2.2 Y ≤ containingWeight i.2.1 Y
-
-open Classical in
-/-- COMPARATIVE CONTAINMENT as a decision problem over bitstrings. -/
-noncomputable def comparativeContainmentDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ComparativeContainmentInstance) x with
-  | some i => decide (WellFormed i ∧ ComparativeContainmentFeasible i)
-  | none => false
 
 /-- **COMPARATIVE CONTAINMENT is NP-complete.** Source: Garey and Johnson (1979), [SP10];
 Plaisted (1976). -/

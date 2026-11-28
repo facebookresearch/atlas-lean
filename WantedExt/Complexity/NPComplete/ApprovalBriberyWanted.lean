@@ -18,8 +18,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.ApprovalBriberyDefs
 
 @[expose] public section
 
@@ -51,39 +50,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number `c` of candidates, the voters' approval vectors, the distinguished
-candidate `p`, and the bribe limit `k`. -/
-abbrev ApprovalBriberyInstance := ℕ × List (List Bool) × ℕ × ℕ
-
-/-- The number of approvals of candidate `x` in the votes `V`. -/
-def approvals (V : List (List Bool)) (x : ℕ) : ℕ :=
-  V.countP fun v => v.getD x false
-
-/-- Candidate `p` is a winner of the approval election with `c` candidates and votes `V`: no
-candidate has more approvals than `p`. -/
-def IsApprovalWinner (c : ℕ) (V : List (List Bool)) (p : ℕ) : Prop :=
-  ∀ x < c, approvals V x ≤ approvals V p
-
-/-- Well-formedness of an instance: every approval vector has one entry per candidate, and `p`
-is a candidate. -/
-def WellFormed (i : ApprovalBriberyInstance) : Prop :=
-  (∀ v ∈ i.2.1, v.length = i.1) ∧ i.2.2.1 < i.1
-
-/-- The approval vectors of at most `k` voters can be changed so that `p` becomes a winner. -/
-def ApprovalBriberyFeasible (i : ApprovalBriberyInstance) : Prop :=
-  ∃ V' : List (List Bool), V'.length = i.2.1.length ∧ (∀ v ∈ V', v.length = i.1) ∧
-    (i.2.1.zip V').countP (fun q => decide (q.1 ≠ q.2)) ≤ i.2.2.2 ∧
-    IsApprovalWinner i.1 V' i.2.2.1
-
-open Classical in
-/-- APPROVAL BRIBERY as a decision problem over bitstrings. -/
-noncomputable def approvalBriberyDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ApprovalBriberyInstance) x with
-  | some i => decide (WellFormed i ∧ ApprovalBriberyFeasible i)
-  | none => false
 
 /-- **APPROVAL BRIBERY is NP-complete.** Source: Faliszewski, Hemaspaandra and Hemaspaandra
 (2009), Theorem 4.2. -/

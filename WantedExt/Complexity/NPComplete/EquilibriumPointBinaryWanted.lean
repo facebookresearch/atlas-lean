@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.EquilibriumPointWanted
+public import CSLibExt.Complexity.NPComplete.EquilibriumPointBinaryDefs
 
 @[expose] public section
 
@@ -55,20 +53,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the [AN15] well-formedness, and every range-set is
-`Mᵢ = {0, 1}`. -/
-def WellFormed (inst : EquilibriumPointInstance) : Prop :=
-  EquilibriumPoint.WellFormed inst ∧ ∀ i < inst.1, ∀ z : ℤ, z ∈ rangeSet inst i ↔ z = 0 ∨ z = 1
-
-open Classical in
-/-- EQUILIBRIUM POINT with range-sets `{0, 1}` as a decision problem over bitstrings. -/
-noncomputable def equilibriumPointBinaryDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := EquilibriumPointInstance) x with
-  | some i => decide (WellFormed i ∧ EquilibriumPointFeasible i)
-  | none => false
 
 /-- **EQUILIBRIUM POINT with range-sets `{0, 1}` is NP-complete.** Source: Garey and Johnson
 (1979), [AN15], comment; Sahni (1974). -/

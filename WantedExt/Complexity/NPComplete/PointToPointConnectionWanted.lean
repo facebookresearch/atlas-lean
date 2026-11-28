@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.PointToPointConnectionDefs
 
 @[expose] public section
 
@@ -58,36 +56,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `0, ..., n - 1`), edge list with weights
-`(u, v, w(u, v))`, the source-destination pairs `(sⱼ, dⱼ)`, and `K`. -/
-abbrev PointToPointConnectionInstance := ℕ × List (ℕ × ℕ × ℕ) × List (ℕ × ℕ) × ℕ
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range), every source and
-destination is a vertex, and `K` is positive. -/
-def WellFormed (i : PointToPointConnectionInstance) : Prop :=
-  ((i.2.1.map fun e => (e.1, e.2.1)).Nodup ∧
-    ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2.1 < i.1 ∧ e.1 ≠ e.2.1 ∧
-      (e.2.1, e.1) ∉ i.2.1.map fun e => (e.1, e.2.1)) ∧
-    (∀ q ∈ i.2.2.1, q.1 < i.1 ∧ q.2 < i.1) ∧ 0 < i.2.2.2
-
-/-- Some sublist `E'` of the edges has total weight at most `K` and connects every pair: in the
-graph with edge set `E'`, each destination `dⱼ` is reachable from its source `sⱼ`. -/
-def PointToPointConnectionFeasible (i : PointToPointConnectionInstance) : Prop :=
-  ∃ E' : List (ℕ × ℕ × ℕ), E'.Sublist i.2.1 ∧ (E'.map fun e => e.2.2).sum ≤ i.2.2.2 ∧
-    ∀ q ∈ i.2.2.1, ∀ (hs : q.1 < i.1) (hd : q.2 < i.1),
-      (Cslib.Complexity.Karp.edgeGraph i.1 (E'.map fun e => (e.1, e.2.1))).Reachable
-        ⟨q.1, hs⟩ ⟨q.2, hd⟩
-
-open Classical in
-/-- POINT-TO-POINT CONNECTION as a decision problem over bitstrings. -/
-noncomputable def pointToPointConnectionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PointToPointConnectionInstance) x with
-  | some i => decide (WellFormed i ∧ PointToPointConnectionFeasible i)
-  | none => false
 
 /-- **POINT-TO-POINT CONNECTION is NP-complete.** Source: Crescenzi and Kann, MINIMUM
 POINT-TO-POINT CONNECTION; Li, McCormick and Simchi-Levi (1992). -/

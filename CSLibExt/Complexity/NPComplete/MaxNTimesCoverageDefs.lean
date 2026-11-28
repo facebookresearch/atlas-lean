@@ -1,0 +1,50 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+# MAXIMUM n-TIMES COVERAGE: definitions
+
+Source:
+G. Liu, A. Dimitrakakis, B. Carter and D. Gifford, "Maximum n-times coverage for vaccine design",
+*International Conference on Learning Representations (ICLR)* (2022).
+-/
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+
+@[expose] public section
+
+namespace MetaMathlibExt.Complexity.NPComplete.MaxNTimesCoverage
+
+/-- An instance: `n`, the coverage rows of the overlays, element weights, `k`, `τ`. -/
+abbrev Instance := ℕ × List (List ℕ) × List ℕ × ℕ × ℕ
+
+/-- Well-formedness: every row has one entry per element. -/
+def WellFormed (i : Instance) : Prop :=
+  ∀ row ∈ i.2.1, row.length = i.2.2.1.length
+
+/-- The weight of the elements covered at least `n` times by the rows `sub`. -/
+def coveredWeight (n : ℕ) (sub : List (List ℕ)) (weights : List ℕ) : ℕ :=
+  ((List.range weights.length).filter fun e => n ≤ (sub.map fun row => row.getD e 0).sum).foldr
+    (fun e acc => weights.getD e 0 + acc) 0
+
+/-- At most `k` overlays cover weight at least `τ` at least `n` times. -/
+def Feasible (i : Instance) : Prop :=
+  ∃ sub : List (List ℕ), sub.Sublist i.2.1 ∧ sub.length ≤ i.2.2.2.1 ∧
+    i.2.2.2.2 ≤ coveredWeight i.1 sub i.2.2.1
+
+open Classical in
+/-- MAXIMUM n-TIMES COVERAGE as a decision problem over bitstrings. -/
+noncomputable def maxNTimesCoverageDec :
+    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
+  match MetaMathlibExt.BitstringEncoding.bitDecode (α := Instance) x with
+  | some i => decide (WellFormed i ∧ Feasible i)
+  | none => false
+
+end MetaMathlibExt.Complexity.NPComplete.MaxNTimesCoverage

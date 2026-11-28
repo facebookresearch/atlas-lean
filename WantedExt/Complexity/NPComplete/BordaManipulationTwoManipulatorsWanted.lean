@@ -22,9 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.CoalitionalManipulationBordaWanted
+public import CSLibExt.Complexity.NPComplete.BordaManipulationTwoManipulatorsDefs
 
 @[expose] public section
 
@@ -64,43 +62,6 @@ reduction from every language in `NP`
 -/
 
 open MetaMathlibExt.Complexity.NPComplete.CoalitionalManipulationBorda (score)
-
-/-- An instance: the number `m` of candidates, the nonmanipulative votes `V` (each a ranking of
-`0, …, m - 1`, most preferred first), and the distinguished candidate `c`. -/
-abbrev BordaManipulationInstance := ℕ × List (List ℕ) × ℕ
-
-/-- `v` is a vote over the candidates `0, …, m - 1`: it ranks each of them exactly once. -/
-def IsVote (m : ℕ) (v : List ℕ) : Prop := v.Perm (List.range m)
-
-/-- The Borda scoring vector for `m` candidates, `(m - 1, m - 2, …, 0)`: the candidate at
-position `i` (counting from `1`) receives `m - i` points. -/
-def bordaVector (m : ℕ) : List ℕ := (List.range m).reverse
-
-/-- The Borda score `s(V, d)` of candidate `d` under the unweighted votes `V` with `m`
-candidates. -/
-def bordaScore (m : ℕ) (V : List (List ℕ)) (d : ℕ) : ℕ :=
-  score (bordaVector m) (V.map fun v => (v, 1)) d
-
-/-- Well-formedness of an instance: every nonmanipulative vote ranks the `m` candidates, and
-`c` is a candidate. -/
-def WellFormed (i : BordaManipulationInstance) : Prop :=
-  (∀ v ∈ i.2.1, IsVote i.1 v) ∧ i.2.2 < i.1
-
-/-- Two manipulative votes `w₁, w₂` over the candidates make `c` a Borda winner of the election
-with votes `V ∪ {w₁, w₂}`: no candidate scores more than `c`. -/
-def BordaManipulationFeasible (i : BordaManipulationInstance) : Prop :=
-  ∃ w₁ w₂ : List ℕ, IsVote i.1 w₁ ∧ IsVote i.1 w₂ ∧
-    ∀ d < i.1, bordaScore i.1 (i.2.1 ++ [w₁, w₂]) d ≤ bordaScore i.1 (i.2.1 ++ [w₁, w₂]) i.2.2
-
-open Classical in
-/-- UNWEIGHTED COALITIONAL MANIPULATION under Borda with two manipulators as a decision problem
-over bitstrings. -/
-noncomputable def bordaManipulationDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := BordaManipulationInstance) x with
-  | some i => decide (WellFormed i ∧ BordaManipulationFeasible i)
-  | none => false
 
 /-- **UNWEIGHTED COALITIONAL MANIPULATION under Borda with two manipulators is NP-complete.**
 Source: Betzler, Niedermeier and Woeginger (2011), Theorem 3.1; Davies, Katsirelos, Narodytska

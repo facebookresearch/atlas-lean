@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.SetPackingWanted
+public import CSLibExt.Complexity.NPComplete.SetPackingSetSizeAtMostThreeDefs
 
 @[expose] public section
 
@@ -53,21 +51,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: it is a well-formed SET PACKING instance (every set is a
-duplicate-free list of elements of the universe), every set has at most three elements, and
-`0 < K ≤ |C|`. -/
-def WellFormed (i : SetPacking.SetPackingInstance) : Prop :=
-  SetPacking.WellFormed i ∧ (∀ c ∈ i.2.1, c.length ≤ 3) ∧ 0 < i.2.2 ∧ i.2.2 ≤ i.2.1.length
-
-open Classical in
-/-- SET PACKING with sets of size at most 3 as a decision problem over bitstrings. -/
-noncomputable def setPackingSetSizeAtMostThreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SetPacking.SetPackingInstance) x with
-  | some i => decide (WellFormed i ∧ SetPacking.SetPackingFeasible i)
-  | none => false
 
 /-- **SET PACKING is NP-complete for sets of size at most 3.** Source: Garey and Johnson (1979),
 [SP3]; Karp (1972). -/

@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Data.Finset.Card
+public import CSLibExt.Complexity.NPComplete.IntersectionPatternDefs
 
 @[expose] public section
 
@@ -51,28 +49,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the rows of the matrix `A`. -/
-abbrev IntersectionPatternInstance := List (List ℕ)
-
-/-- Well-formedness of an instance: `A` is square, every row having as many entries as there are
-rows. -/
-def WellFormed (A : IntersectionPatternInstance) : Prop :=
-  ∀ row ∈ A, row.length = A.length
-
-/-- Some sets `C₀, ..., C_{n-1}` satisfy `|Cᵢ ∩ Cⱼ| = a_ij` for all `i, j`. -/
-def IntersectionPatternFeasible (A : IntersectionPatternInstance) : Prop :=
-  ∃ C : Fin A.length → Finset ℕ, ∀ i j : Fin A.length,
-    (C i ∩ C j).card = (A.getD i []).getD j 0
-
-open Classical in
-/-- INTERSECTION PATTERN as a decision problem over bitstrings. -/
-noncomputable def intersectionPatternDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := IntersectionPatternInstance) x with
-  | some A => decide (WellFormed A ∧ IntersectionPatternFeasible A)
-  | none => false
 
 /-- **INTERSECTION PATTERN is NP-complete.** Source: Garey and Johnson (1979), [SP9];
 Chvátal (1980). -/

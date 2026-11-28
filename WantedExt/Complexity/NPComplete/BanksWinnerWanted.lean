@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Data.Finset.Insert
-public import Mathlib.Order.Defs.Unbundled
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.BanksWinnerDefs
 
 @[expose] public section
 
@@ -52,41 +49,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number `n = |C|` of vertices, the arcs of the tournament, and the vertex
-`c`. -/
-abbrev BanksWinnerInstance := ℕ × List (ℕ × ℕ) × ℕ
-
-/-- Well-formedness of an instance: the arc list has no repeated arc, every arc joins two
-distinct vertices of `C` and its reverse is not an arc, every two distinct vertices are joined
-by an arc (so `T` is a tournament), and `c ∈ C`. -/
-def WellFormed (i : BanksWinnerInstance) : Prop :=
-  i.2.1.Nodup ∧
-    (∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    (∀ a < i.1, ∀ b < i.1, a ≠ b → (a, b) ∈ i.2.1 ∨ (b, a) ∈ i.2.1) ∧
-    i.2.2 < i.1
-
-/-- `a` dominates `b` in the tournament of the instance. -/
-def Dominates (i : BanksWinnerInstance) (a b : Fin i.1) : Prop :=
-  ((a : ℕ), (b : ℕ)) ∈ i.2.1
-
-/-- The dominance relation is transitive on `X`. -/
-def IsTransitiveSet (i : BanksWinnerInstance) (X : Finset (Fin i.1)) : Prop :=
-  ∀ a ∈ X, ∀ b ∈ X, ∀ d ∈ X, Dominates i a b → Dominates i b d → Dominates i a d
-
-/-- `c` is the top vertex of some maximal transitive set of the tournament. -/
-def BanksWinnerFeasible (i : BanksWinnerInstance) : Prop :=
-  ∃ X : Finset (Fin i.1), Maximal (IsTransitiveSet i) X ∧
-    ∃ c ∈ X, (c : ℕ) = i.2.2 ∧ ∀ v ∈ X, v ≠ c → Dominates i c v
-
-open Classical in
-/-- BANKS WINNER as a decision problem over bitstrings. -/
-noncomputable def banksWinnerDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := BanksWinnerInstance) x with
-  | some i => decide (WellFormed i ∧ BanksWinnerFeasible i)
-  | none => false
 
 /-- **BANKS WINNER is NP-complete.** Source: Woeginger (2003); Brandt, Fischer and Harrenstein
 (2007). -/
