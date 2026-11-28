@@ -81,16 +81,20 @@ private def readZero : ((⋀[ℤ]^0 Mat) ⊗[ℤ] Mat) →ₗ[ℤ] Mat :=
 private def readOne : (E ⊗[ℤ] Mat) →ₗ[ℤ] ℤ :=
   (TensorProduct.lid ℤ ℤ).toLinearMap.comp (TensorProduct.map firstEntry (entry 0 1))
 @[simp] private lemma readZero_zeroWord_tmul (m : Mat) : readZero (zeroWord ⊗ₜ[ℤ] m) = m := by
-  unfold readZero
-  rw [LinearMap.comp_apply, TensorProduct.map_tmul]
+  change TensorProduct.lid ℤ Mat
+    (TensorProduct.map (exteriorPower.zeroEquiv ℤ Mat).toLinearMap LinearMap.id
+      (zeroWord ⊗ₜ[ℤ] m)) = m
+  rw [TensorProduct.map_tmul]
   change TensorProduct.lid ℤ Mat
     ((exteriorPower.zeroEquiv ℤ Mat zeroWord) ⊗ₜ[ℤ] m) = m
   have h : exteriorPower.zeroEquiv ℤ Mat zeroWord = 1 := by simp [zeroWord]
   rw [h, TensorProduct.lid_tmul, one_smul]
 @[simp] private lemma readOne_ι_tmul (a b : Mat) :
     readOne (ExteriorAlgebra.ι ℤ a ⊗ₜ[ℤ] b) = a 0 0 * b 0 1 := by
-  unfold readOne
-  rw [LinearMap.comp_apply, TensorProduct.map_tmul]
+  change TensorProduct.lid ℤ ℤ
+    (TensorProduct.map firstEntry (entry 0 1) (ExteriorAlgebra.ι ℤ a ⊗ₜ[ℤ] b)) =
+      a 0 0 * b 0 1
+  rw [TensorProduct.map_tmul]
   change TensorProduct.lid ℤ ℤ
     (firstEntry (ExteriorAlgebra.ι ℤ a) ⊗ₜ[ℤ] entry 0 1 b) = _
   rw [firstEntry_ι, TensorProduct.lid_tmul, entry_apply]
