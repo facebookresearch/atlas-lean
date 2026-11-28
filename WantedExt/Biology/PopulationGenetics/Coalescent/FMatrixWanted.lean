@@ -21,13 +21,14 @@ The models and every part of the statement below except one are proved in
 `Domains.Biology.PopulationGenetics.Coalescent.FMatrix`: the unique encoding
 (`RankedTreeShape.fMatrix_injective`, and `RankedHistory.fMatrix_eq_fMatrix_iff` for ranked
 labeled histories), the diagonal of isochronous F matrices
-(`RankedTreeShape.fMatrix_diag_of_isochronous`), the metric properties of `d₁` and `d₂`
-(`RankedTreeShape.d₁_isMetric`, `RankedTreeShape.d₂_isMetric`), the pseudometric properties of
-`d₁ʷ` and `d₂ʷ` (`RankedGenealogy.dw₁_pseudometric`, `RankedGenealogy.dw₂_pseudometric`), their
-separation of isochronous genealogies (`RankedGenealogy.eq_of_dw₁_eq_zero_of_isochronous`,
-`RankedGenealogy.eq_of_dw₂_eq_zero_of_isochronous`) and the existence of medoids
-(`l2MedoidSet_nonempty`). What remains is that `d₁ʷ` and `d₂ʷ` separate heterochronous ranked
-genealogies: two ranked genealogies with the same weighted F matrix are equal. When the diagonals
+(`RankedTreeShape.fMatrix_diag_of_isochronous`), the metric space structures of `d₁` and `d₂`
+(`RankedTreeShape.metricSpaceD₁`, `RankedTreeShape.metricSpaceD₂`), the pseudometric space
+structures of `d₁ʷ` and `d₂ʷ` (`RankedGenealogy.pseudoMetricSpaceDw₁`,
+`RankedGenealogy.pseudoMetricSpaceDw₂`), their metric space structures on isochronous genealogies
+(`RankedGenealogy.metricSpaceDw₁OfIsochronous`, `RankedGenealogy.metricSpaceDw₂OfIsochronous`)
+and the existence of medoids (`l2MedoidSet_nonempty`). What remains is that `d₁ʷ` and `d₂ʷ`
+separate heterochronous ranked genealogies: two ranked genealogies with the same weighted F matrix
+are equal. When the diagonals
 of the F matrices agree this is `RankedGenealogy.eq_of_weighted_eq`; the source's argument (SI
 Appendix, section 2) recovers the times from the first column of the weighted matrix, which
 determines them only when a child of the root persists to the most recent interval.
@@ -59,8 +60,8 @@ Theorem 1, Eqs. 1–5 and Proposition 2).
   from `0`) has `i + 2` lineages: `F_{i,i} = i + 1` in the source's indexing from `1`.
 * The `L¹` and `L²` distances `d₁, d₂` between the F matrices are metrics on ranked tree shapes
   with `n` leaves and `m` sampling events, and so are the weighted distances `d₁ʷ, d₂ʷ` on ranked
-  genealogies with `n` leaves and `m` sampling events: each vanishes on the diagonal, is
-  symmetric, satisfies the triangle inequality and vanishes only on the diagonal.
+  genealogies with `n` leaves and `m` sampling events: each is the distance of a metric space
+  structure.
 * For any distance, a nonempty finite sample has a nonempty `L²`-medoid set, the set of sampled
   points minimising the sum of squared distances to the sample. -/
 theorem_wanted fMatrix_encoding_and_metrics :
@@ -68,30 +69,14 @@ theorem_wanted fMatrix_encoding_and_metrics :
     (∀ (n : ℕ) (h₁ h₂ : RankedHistory n), h₁.fMatrix = h₂.fMatrix ↔
       ∃ σ : Equiv.Perm (Fin n), (partitionsOf h₁).map (relabelLineages σ) = partitionsOf h₂) ∧
     (∀ (n : ℕ) (T : RankedTreeShape n 1) (i : Fin (n + 1 - 2)), T.fMatrix i i = (i : ℕ) + 2) ∧
-    (∀ n m : ℕ,
-      (∀ T : RankedTreeShape n m, RankedTreeShape.d₁ T T = 0) ∧
-      (∀ T₁ T₂ : RankedTreeShape n m, RankedTreeShape.d₁ T₁ T₂ = RankedTreeShape.d₁ T₂ T₁) ∧
-      (∀ T₁ T₂ T₃ : RankedTreeShape n m,
-        RankedTreeShape.d₁ T₁ T₃ ≤ RankedTreeShape.d₁ T₁ T₂ + RankedTreeShape.d₁ T₂ T₃) ∧
-      ∀ T₁ T₂ : RankedTreeShape n m, RankedTreeShape.d₁ T₁ T₂ = 0 → T₁ = T₂) ∧
-    (∀ n m : ℕ,
-      (∀ T : RankedTreeShape n m, RankedTreeShape.d₂ T T = 0) ∧
-      (∀ T₁ T₂ : RankedTreeShape n m, RankedTreeShape.d₂ T₁ T₂ = RankedTreeShape.d₂ T₂ T₁) ∧
-      (∀ T₁ T₂ T₃ : RankedTreeShape n m,
-        RankedTreeShape.d₂ T₁ T₃ ≤ RankedTreeShape.d₂ T₁ T₂ + RankedTreeShape.d₂ T₂ T₃) ∧
-      ∀ T₁ T₂ : RankedTreeShape n m, RankedTreeShape.d₂ T₁ T₂ = 0 → T₁ = T₂) ∧
-    (∀ n m : ℕ,
-      (∀ g : RankedGenealogy n m, RankedGenealogy.dw₁ g g = 0) ∧
-      (∀ g₁ g₂ : RankedGenealogy n m, RankedGenealogy.dw₁ g₁ g₂ = RankedGenealogy.dw₁ g₂ g₁) ∧
-      (∀ g₁ g₂ g₃ : RankedGenealogy n m,
-        RankedGenealogy.dw₁ g₁ g₃ ≤ RankedGenealogy.dw₁ g₁ g₂ + RankedGenealogy.dw₁ g₂ g₃) ∧
-      ∀ g₁ g₂ : RankedGenealogy n m, RankedGenealogy.dw₁ g₁ g₂ = 0 → g₁ = g₂) ∧
-    (∀ n m : ℕ,
-      (∀ g : RankedGenealogy n m, RankedGenealogy.dw₂ g g = 0) ∧
-      (∀ g₁ g₂ : RankedGenealogy n m, RankedGenealogy.dw₂ g₁ g₂ = RankedGenealogy.dw₂ g₂ g₁) ∧
-      (∀ g₁ g₂ g₃ : RankedGenealogy n m,
-        RankedGenealogy.dw₂ g₁ g₃ ≤ RankedGenealogy.dw₂ g₁ g₂ + RankedGenealogy.dw₂ g₂ g₃) ∧
-      ∀ g₁ g₂ : RankedGenealogy n m, RankedGenealogy.dw₂ g₁ g₂ = 0 → g₁ = g₂) ∧
+    (∀ n m : ℕ, ∃ M : MetricSpace (RankedTreeShape n m),
+      ∀ T₁ T₂, M.dist T₁ T₂ = RankedTreeShape.d₁ T₁ T₂) ∧
+    (∀ n m : ℕ, ∃ M : MetricSpace (RankedTreeShape n m),
+      ∀ T₁ T₂, M.dist T₁ T₂ = RankedTreeShape.d₂ T₁ T₂) ∧
+    (∀ n m : ℕ, ∃ M : MetricSpace (RankedGenealogy n m),
+      ∀ g₁ g₂, M.dist g₁ g₂ = RankedGenealogy.dw₁ g₁ g₂) ∧
+    (∀ n m : ℕ, ∃ M : MetricSpace (RankedGenealogy n m),
+      ∀ g₁ g₂, M.dist g₁ g₂ = RankedGenealogy.dw₂ g₁ g₂) ∧
     (∀ {X : Type} (d : X → X → ℝ) {s : ℕ} (T : Fin s → X), 0 < s →
       (l2MedoidSet d T).Nonempty)
 

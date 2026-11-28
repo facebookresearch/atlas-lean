@@ -60,12 +60,14 @@ the source, and `F_{i,i} = i + 1` there reads `T.fMatrix i i = i + 2` here.
 * `RankedTreeShape.fMatrix_injective`: the F matrix determines the ranked tree shape
   (Theorem 1), and `RankedHistory.fMatrix_eq_fMatrix_iff` for ranked labeled histories.
 * `RankedTreeShape.fMatrix_diag_of_isochronous`: the diagonal of an isochronous F matrix.
-* `RankedTreeShape.d₁_isMetric`, `RankedTreeShape.d₂_isMetric`: `d₁` and `d₂` are metrics.
-* `RankedGenealogy.dw₁_pseudometric`, `RankedGenealogy.dw₂_pseudometric`: the weighted distances
-  are pseudometrics, and `RankedGenealogy.eq_of_dw₁_eq_zero_of_isochronous`,
-  `RankedGenealogy.eq_of_dw₂_eq_zero_of_isochronous`: they are metrics on isochronous ranked
-  genealogies (Proposition 2 for `m = 1`). `RankedGenealogy.eq_of_weighted_eq` reduces the
-  heterochronous case to the diagonals of the F matrices.
+* `RankedTreeShape.metricSpaceD₁`, `RankedTreeShape.metricSpaceD₂`: `d₁` and `d₂` are the
+  distances of metric space structures on ranked tree shapes (`RankedTreeShape.dist_metricSpaceD₁`,
+  `RankedTreeShape.dist_metricSpaceD₂`).
+* `RankedGenealogy.pseudoMetricSpaceDw₁`, `RankedGenealogy.pseudoMetricSpaceDw₂`: the weighted
+  distances are pseudometrics, and `RankedGenealogy.metricSpaceDw₁OfIsochronous`,
+  `RankedGenealogy.metricSpaceDw₂OfIsochronous`: metrics on isochronous ranked genealogies
+  (Proposition 2 for `m = 1`). `RankedGenealogy.eq_of_weighted_eq` reduces the heterochronous case
+  to the diagonals of the F matrices.
 * `l2MedoidSet_nonempty`: a nonempty sample has an `L²`-medoid.
 
 ## References
@@ -1224,17 +1226,6 @@ private theorem sum_lowerPart (A B : Matrix (Fin r) (Fin r) ℝ) (f : ℝ → �
   ext j
   simp
 
-private theorem lowerPart_eq_iff {A B : Matrix (Fin r) (Fin r) ℝ} :
-    lowerPart A = lowerPart B ↔ ∀ i j, j ≤ i → A i j = B i j := by
-  constructor
-  · intro h i j hji
-    simpa [lowerPart, hji] using congrFun h (i, j)
-  · intro h
-    funext p
-    simp only [lowerPart]
-    split_ifs with hp
-    exacts [h _ _ hp, rfl]
-
 private theorem lowerL1_eq_dist (A B : Matrix (Fin r) (Fin r) ℝ) :
     ∑ i, ∑ j ∈ Iic i, |A i j - B i j| =
       dist (WithLp.toLp 1 (lowerPart A) : PiLp 1 fun _ : Fin r × Fin r => ℝ)
@@ -1245,21 +1236,11 @@ private theorem lowerL1_eq_dist (A B : Matrix (Fin r) (Fin r) ℝ) :
 
 private theorem lowerL2_eq_dist (A B : Matrix (Fin r) (Fin r) ℝ) :
     √(∑ i, ∑ j ∈ Iic i, (A i j - B i j) ^ 2) =
-      dist (WithLp.toLp 2 (lowerPart A) : EuclideanSpace ℝ (Fin r × Fin r))
+      dist (WithLp.toLp 2 (lowerPart A) : PiLp 2 fun _ : Fin r × Fin r => ℝ)
         (WithLp.toLp 2 (lowerPart B)) := by
-  rw [EuclideanSpace.dist_eq]
+  rw [PiLp.dist_eq_of_L2]
   simp only [Real.dist_eq, sq_abs]
   rw [sum_lowerPart A B (· ^ 2) (by simp)]
-
-/-- A function given by the distance between images in a metric space is a pseudometric, and it
-vanishes only where the images agree. -/
-private theorem metric_of_eq_dist {X M : Type*} [MetricSpace M] (v : X → M) (d : X → X → ℝ)
-    (hd : ∀ x y, d x y = dist (v x) (v y)) :
-    (∀ x, d x x = 0) ∧ (∀ x y, d x y = d y x) ∧ (∀ x y z, d x z ≤ d x y + d y z) ∧
-      ∀ x y, d x y = 0 → v x = v y :=
-  ⟨fun x => by rw [hd, dist_self], fun x y => by rw [hd, hd, dist_comm],
-    fun x y z => by rw [hd, hd, hd]; exact dist_triangle _ _ _,
-    fun x y h => dist_eq_zero.1 (by rw [← hd]; exact h)⟩
 
 end LowerDistance
 
@@ -1296,37 +1277,50 @@ differences of their F matrices. -/
 noncomputable def d₂ (T₁ T₂ : RankedTreeShape n m) : ℝ :=
   √(∑ i, ∑ j ∈ Iic i, ((T₁.fMatrix i j : ℝ) - T₂.fMatrix i j) ^ 2)
 
-private theorem cast_lower_eq {T₁ T₂ : RankedTreeShape n m}
-    (h : lowerPart (T₁.fMatrix.map ((↑) : ℕ → ℝ)) = lowerPart (T₂.fMatrix.map ((↑) : ℕ → ℝ))) :
-    T₁ = T₂ :=
-  eq_of_fMatrix_lower_eq fun i j hji => by
-    have := lowerPart_eq_iff.1 h i j hji
-    simp only [Matrix.map_apply, Nat.cast_inj] at this
-    exact this
+private theorem fVector_eq_lowerPart (T : RankedTreeShape n m) :
+    (fun p : Fin (n + m - 2) × Fin (n + m - 2) => (T.fMatrix p.1 p.2 : ℝ)) =
+      lowerPart (T.fMatrix.map ((↑) : ℕ → ℝ)) := by
+  funext p
+  simp only [lowerPart, Matrix.map_apply]
+  split_ifs with h
+  · rfl
+  · rw [T.fMatrix_eq_zero_of_lt (not_le.1 h), Nat.cast_zero]
 
-/-- `d₁` is a metric on ranked tree shapes with `n` leaves and `m` sampling events. -/
-theorem d₁_isMetric :
-    (∀ T : RankedTreeShape n m, d₁ T T = 0) ∧ (∀ T₁ T₂ : RankedTreeShape n m, d₁ T₁ T₂ = d₁ T₂ T₁) ∧
-      (∀ T₁ T₂ T₃ : RankedTreeShape n m, d₁ T₁ T₃ ≤ d₁ T₁ T₂ + d₁ T₂ T₃) ∧
-      ∀ T₁ T₂ : RankedTreeShape n m, d₁ T₁ T₂ = 0 → T₁ = T₂ := by
-  obtain ⟨h1, h2, h3, h4⟩ := metric_of_eq_dist
-    (fun T : RankedTreeShape n m =>
-      (WithLp.toLp 1 (lowerPart (T.fMatrix.map ((↑) : ℕ → ℝ))) :
-        PiLp 1 fun _ : Fin (n + m - 2) × Fin (n + m - 2) => ℝ))
-    d₁ fun T₁ T₂ => lowerL1_eq_dist _ _
-  exact ⟨h1, h2, h3, fun T₁ T₂ h => cast_lower_eq (WithLp.toLp_injective 1 (h4 T₁ T₂ h))⟩
+/-- The metric space structure on ranked tree shapes whose distance is `d₁`
+(`dist_metricSpaceD₁`), induced by the `L¹` norm on F matrices. It is not an instance, as `d₂`
+gives another (`metricSpaceD₂`). -/
+noncomputable abbrev metricSpaceD₁ : MetricSpace (RankedTreeShape n m) :=
+  MetricSpace.induced
+    (fun T => (WithLp.toLp 1 fun p => (T.fMatrix p.1 p.2 : ℝ) :
+      PiLp 1 fun _ : Fin (n + m - 2) × Fin (n + m - 2) => ℝ))
+    (fun _ _ h => fMatrix_injective (Matrix.ext fun i j => by
+      exact_mod_cast congrFun (WithLp.toLp_injective 1 h) (i, j)))
+    inferInstance
 
-/-- `d₂` is a metric on ranked tree shapes with `n` leaves and `m` sampling events. -/
-theorem d₂_isMetric :
-    (∀ T : RankedTreeShape n m, d₂ T T = 0) ∧ (∀ T₁ T₂ : RankedTreeShape n m, d₂ T₁ T₂ = d₂ T₂ T₁) ∧
-      (∀ T₁ T₂ T₃ : RankedTreeShape n m, d₂ T₁ T₃ ≤ d₂ T₁ T₂ + d₂ T₂ T₃) ∧
-      ∀ T₁ T₂ : RankedTreeShape n m, d₂ T₁ T₂ = 0 → T₁ = T₂ := by
-  obtain ⟨h1, h2, h3, h4⟩ := metric_of_eq_dist
-    (fun T : RankedTreeShape n m =>
-      (WithLp.toLp 2 (lowerPart (T.fMatrix.map ((↑) : ℕ → ℝ))) :
-        EuclideanSpace ℝ (Fin (n + m - 2) × Fin (n + m - 2))))
-    d₂ fun T₁ T₂ => lowerL2_eq_dist _ _
-  exact ⟨h1, h2, h3, fun T₁ T₂ h => cast_lower_eq (WithLp.toLp_injective 2 (h4 T₁ T₂ h))⟩
+/-- The distance of `metricSpaceD₁` is `d₁`. -/
+theorem dist_metricSpaceD₁ (T₁ T₂ : RankedTreeShape n m) :
+    metricSpaceD₁.dist T₁ T₂ = d₁ T₁ T₂ := by
+  have h := lowerL1_eq_dist (T₁.fMatrix.map ((↑) : ℕ → ℝ)) (T₂.fMatrix.map ((↑) : ℕ → ℝ))
+  rw [← fVector_eq_lowerPart, ← fVector_eq_lowerPart] at h
+  exact h.symm
+
+/-- The metric space structure on ranked tree shapes whose distance is `d₂`
+(`dist_metricSpaceD₂`), induced by the `L²` norm on F matrices. It is not an instance, as `d₁`
+gives another (`metricSpaceD₁`). -/
+noncomputable abbrev metricSpaceD₂ : MetricSpace (RankedTreeShape n m) :=
+  MetricSpace.induced
+    (fun T => (WithLp.toLp 2 fun p => (T.fMatrix p.1 p.2 : ℝ) :
+      PiLp 2 fun _ : Fin (n + m - 2) × Fin (n + m - 2) => ℝ))
+    (fun _ _ h => fMatrix_injective (Matrix.ext fun i j => by
+      exact_mod_cast congrFun (WithLp.toLp_injective 2 h) (i, j)))
+    inferInstance
+
+/-- The distance of `metricSpaceD₂` is `d₂`. -/
+theorem dist_metricSpaceD₂ (T₁ T₂ : RankedTreeShape n m) :
+    metricSpaceD₂.dist T₁ T₂ = d₂ T₁ T₂ := by
+  have h := lowerL2_eq_dist (T₁.fMatrix.map ((↑) : ℕ → ℝ)) (T₂.fMatrix.map ((↑) : ℕ → ℝ))
+  rw [← fVector_eq_lowerPart, ← fVector_eq_lowerPart] at h
+  exact h.symm
 
 end RankedTreeShape
 
@@ -1463,61 +1457,86 @@ theorem eq_of_weighted_eq {g₁ g₂ : RankedGenealogy n m}
     exact_mod_cast mul_right_cancel₀ (g₂.weightMatrix_pos hji).ne' h1
   exact RankedGenealogy.ext hshape htime'
 
-private theorem dw_lower_eq {g₁ g₂ : RankedGenealogy n m}
-    (h : lowerPart g₁.weightedF = lowerPart g₂.weightedF) :
-    ∀ i j, j ≤ i → (g₁.shape.fMatrix i j : ℝ) * g₁.weightMatrix i j =
-      g₂.shape.fMatrix i j * g₂.weightMatrix i j :=
-  lowerPart_eq_iff.1 h
+theorem weightMatrix_eq_zero_of_lt (g : RankedGenealogy n m) {i j : Fin (n + m - 2)}
+    (hij : i < j) : g.weightMatrix i j = 0 := by
+  simp only [weightMatrix, Matrix.of_apply, not_le.2 hij, ↓reduceIte]
 
-/-- `d₁ʷ` is a pseudometric on ranked genealogies: it vanishes on the diagonal, is symmetric
-and satisfies the triangle inequality. Two genealogies at distance zero have the same weighted F
-matrix on and below the diagonal. -/
-theorem dw₁_pseudometric :
-    (∀ g : RankedGenealogy n m, dw₁ g g = 0) ∧
-      (∀ g₁ g₂ : RankedGenealogy n m, dw₁ g₁ g₂ = dw₁ g₂ g₁) ∧
-      (∀ g₁ g₂ g₃ : RankedGenealogy n m, dw₁ g₁ g₃ ≤ dw₁ g₁ g₂ + dw₁ g₂ g₃) ∧
-      ∀ g₁ g₂ : RankedGenealogy n m, dw₁ g₁ g₂ = 0 → ∀ i j, j ≤ i →
-        (g₁.shape.fMatrix i j : ℝ) * g₁.weightMatrix i j =
-          g₂.shape.fMatrix i j * g₂.weightMatrix i j := by
-  obtain ⟨h1, h2, h3, h4⟩ := metric_of_eq_dist
-    (fun g : RankedGenealogy n m =>
-      (WithLp.toLp 1 (lowerPart g.weightedF) :
-        PiLp 1 fun _ : Fin (n + m - 2) × Fin (n + m - 2) => ℝ))
-    dw₁ fun g₁ g₂ => lowerL1_eq_dist _ _
-  exact ⟨h1, h2, h3, fun g₁ g₂ h => dw_lower_eq (WithLp.toLp_injective 1 (h4 g₁ g₂ h))⟩
+private theorem weightedVector_eq_lowerPart (g : RankedGenealogy n m) :
+    (fun p : Fin (n + m - 2) × Fin (n + m - 2) =>
+      (g.shape.fMatrix p.1 p.2 : ℝ) * g.weightMatrix p.1 p.2) = lowerPart g.weightedF := by
+  funext p
+  simp only [lowerPart, weightedF, Matrix.of_apply]
+  split_ifs with h
+  · rfl
+  · rw [g.weightMatrix_eq_zero_of_lt (not_le.1 h), mul_zero]
 
-/-- `d₂ʷ` is a pseudometric on ranked genealogies: it vanishes on the diagonal, is symmetric
-and satisfies the triangle inequality. Two genealogies at distance zero have the same weighted F
-matrix on and below the diagonal. -/
-theorem dw₂_pseudometric :
-    (∀ g : RankedGenealogy n m, dw₂ g g = 0) ∧
-      (∀ g₁ g₂ : RankedGenealogy n m, dw₂ g₁ g₂ = dw₂ g₂ g₁) ∧
-      (∀ g₁ g₂ g₃ : RankedGenealogy n m, dw₂ g₁ g₃ ≤ dw₂ g₁ g₂ + dw₂ g₂ g₃) ∧
-      ∀ g₁ g₂ : RankedGenealogy n m, dw₂ g₁ g₂ = 0 → ∀ i j, j ≤ i →
-        (g₁.shape.fMatrix i j : ℝ) * g₁.weightMatrix i j =
-          g₂.shape.fMatrix i j * g₂.weightMatrix i j := by
-  obtain ⟨h1, h2, h3, h4⟩ := metric_of_eq_dist
-    (fun g : RankedGenealogy n m =>
-      (WithLp.toLp 2 (lowerPart g.weightedF) :
-        EuclideanSpace ℝ (Fin (n + m - 2) × Fin (n + m - 2))))
-    dw₂ fun g₁ g₂ => lowerL2_eq_dist _ _
-  exact ⟨h1, h2, h3, fun g₁ g₂ h => dw_lower_eq (WithLp.toLp_injective 2 (h4 g₁ g₂ h))⟩
+/-- The pseudometric space structure on ranked genealogies whose distance is `d₁ʷ`
+(`dist_pseudoMetricSpaceDw₁`), induced by the `L¹` norm on the matrices `F ∘ W`. It is not an
+instance, as `d₂ʷ` gives another (`pseudoMetricSpaceDw₂`). -/
+noncomputable abbrev pseudoMetricSpaceDw₁ : PseudoMetricSpace (RankedGenealogy n m) :=
+  PseudoMetricSpace.induced
+    (fun g => (WithLp.toLp 1 fun p => (g.shape.fMatrix p.1 p.2 : ℝ) * g.weightMatrix p.1 p.2 :
+      PiLp 1 fun _ : Fin (n + m - 2) × Fin (n + m - 2) => ℝ))
+    inferInstance
 
-/-- **The weighted distances are metrics on isochronous ranked genealogies** (Kim, Rosenberg and
-Palacios 2020, Proposition 2, for one sampling event): `d₁ʷ` separates ranked genealogies with
-`n` leaves sampled at the same time. -/
-theorem eq_of_dw₁_eq_zero_of_isochronous {g₁ g₂ : RankedGenealogy n 1} (h : dw₁ g₁ g₂ = 0) :
-    g₁ = g₂ :=
-  eq_of_weighted_eq (dw₁_pseudometric.2.2.2 g₁ g₂ h) fun i => by
-    rw [RankedTreeShape.fMatrix_diag_of_isochronous, RankedTreeShape.fMatrix_diag_of_isochronous]
+/-- The distance of `pseudoMetricSpaceDw₁` is `d₁ʷ`. -/
+theorem dist_pseudoMetricSpaceDw₁ (g₁ g₂ : RankedGenealogy n m) :
+    pseudoMetricSpaceDw₁.dist g₁ g₂ = dw₁ g₁ g₂ := by
+  have h := lowerL1_eq_dist g₁.weightedF g₂.weightedF
+  rw [← weightedVector_eq_lowerPart, ← weightedVector_eq_lowerPart] at h
+  exact h.symm
 
-/-- **The weighted distances are metrics on isochronous ranked genealogies** (Kim, Rosenberg and
-Palacios 2020, Proposition 2, for one sampling event): `d₂ʷ` separates ranked genealogies with
-`n` leaves sampled at the same time. -/
-theorem eq_of_dw₂_eq_zero_of_isochronous {g₁ g₂ : RankedGenealogy n 1} (h : dw₂ g₁ g₂ = 0) :
-    g₁ = g₂ :=
-  eq_of_weighted_eq (dw₂_pseudometric.2.2.2 g₁ g₂ h) fun i => by
-    rw [RankedTreeShape.fMatrix_diag_of_isochronous, RankedTreeShape.fMatrix_diag_of_isochronous]
+/-- The pseudometric space structure on ranked genealogies whose distance is `d₂ʷ`
+(`dist_pseudoMetricSpaceDw₂`), induced by the `L²` norm on the matrices `F ∘ W`. It is not an
+instance, as `d₁ʷ` gives another (`pseudoMetricSpaceDw₁`). -/
+noncomputable abbrev pseudoMetricSpaceDw₂ : PseudoMetricSpace (RankedGenealogy n m) :=
+  PseudoMetricSpace.induced
+    (fun g => (WithLp.toLp 2 fun p => (g.shape.fMatrix p.1 p.2 : ℝ) * g.weightMatrix p.1 p.2 :
+      PiLp 2 fun _ : Fin (n + m - 2) × Fin (n + m - 2) => ℝ))
+    inferInstance
+
+/-- The distance of `pseudoMetricSpaceDw₂` is `d₂ʷ`. -/
+theorem dist_pseudoMetricSpaceDw₂ (g₁ g₂ : RankedGenealogy n m) :
+    pseudoMetricSpaceDw₂.dist g₁ g₂ = dw₂ g₁ g₂ := by
+  have h := lowerL2_eq_dist g₁.weightedF g₂.weightedF
+  rw [← weightedVector_eq_lowerPart, ← weightedVector_eq_lowerPart] at h
+  exact h.symm
+
+/-- **`d₁ʷ` is a metric on isochronous ranked genealogies** (Kim, Rosenberg and Palacios 2020,
+Proposition 2, for one sampling event): the metric space structure on ranked genealogies with `n`
+leaves sampled at the same time whose distance is `d₁ʷ` (`dist_metricSpaceDw₁OfIsochronous`). -/
+noncomputable abbrev metricSpaceDw₁OfIsochronous : MetricSpace (RankedGenealogy n 1) :=
+  MetricSpace.induced
+    (fun g => (WithLp.toLp 1 fun p => (g.shape.fMatrix p.1 p.2 : ℝ) * g.weightMatrix p.1 p.2 :
+      PiLp 1 fun _ : Fin (n + 1 - 2) × Fin (n + 1 - 2) => ℝ))
+    (fun _ _ h => eq_of_weighted_eq (fun i j _ => congrFun (WithLp.toLp_injective 1 h) (i, j))
+      fun i => by
+        rw [RankedTreeShape.fMatrix_diag_of_isochronous,
+          RankedTreeShape.fMatrix_diag_of_isochronous])
+    inferInstance
+
+/-- The distance of `metricSpaceDw₁OfIsochronous` is `d₁ʷ`. -/
+theorem dist_metricSpaceDw₁OfIsochronous (g₁ g₂ : RankedGenealogy n 1) :
+    metricSpaceDw₁OfIsochronous.dist g₁ g₂ = dw₁ g₁ g₂ :=
+  dist_pseudoMetricSpaceDw₁ g₁ g₂
+
+/-- **`d₂ʷ` is a metric on isochronous ranked genealogies** (Kim, Rosenberg and Palacios 2020,
+Proposition 2, for one sampling event): the metric space structure on ranked genealogies with `n`
+leaves sampled at the same time whose distance is `d₂ʷ` (`dist_metricSpaceDw₂OfIsochronous`). -/
+noncomputable abbrev metricSpaceDw₂OfIsochronous : MetricSpace (RankedGenealogy n 1) :=
+  MetricSpace.induced
+    (fun g => (WithLp.toLp 2 fun p => (g.shape.fMatrix p.1 p.2 : ℝ) * g.weightMatrix p.1 p.2 :
+      PiLp 2 fun _ : Fin (n + 1 - 2) × Fin (n + 1 - 2) => ℝ))
+    (fun _ _ h => eq_of_weighted_eq (fun i j _ => congrFun (WithLp.toLp_injective 2 h) (i, j))
+      fun i => by
+        rw [RankedTreeShape.fMatrix_diag_of_isochronous,
+          RankedTreeShape.fMatrix_diag_of_isochronous])
+    inferInstance
+
+/-- The distance of `metricSpaceDw₂OfIsochronous` is `d₂ʷ`. -/
+theorem dist_metricSpaceDw₂OfIsochronous (g₁ g₂ : RankedGenealogy n 1) :
+    metricSpaceDw₂OfIsochronous.dist g₁ g₂ = dw₂ g₁ g₂ :=
+  dist_pseudoMetricSpaceDw₂ g₁ g₂
 
 end RankedGenealogy
 

@@ -15,8 +15,9 @@ public import Domains.Biology.PopulationGenetics.Coalescent.FMatrix
 
 The F matrix of the example of Fig. 2 of Kim, Rosenberg and Palacios (2020); the two ranked tree
 shapes with four leaves, their F matrices and their distances `d₁ = d₂ = 1`; two labelings of one
-shape, which the F matrix identifies; the fixed diagonal of isochronous F matrices; the weight
-matrices of two genealogies of one shape and their weighted distance; a heterochronous history
+shape, which the F matrix identifies; the metric space structures of `d₁` and `d₂`; the fixed
+diagonal of isochronous F matrices; the weight matrices of two genealogies of one shape and their
+weighted distance, also in the metric space structure of `d₁ʷ`; a heterochronous history
 with two leaves sampled at two times; the boundary case of one leaf; and an `L²`-medoid of a
 sample of reals.
 -/
@@ -78,7 +79,8 @@ example (T : RankedTreeShape 4 1) : T.fMatrix 0 0 = 2 ∧ T.fMatrix 1 1 = 3 ∧ 
     T.fMatrix_diag_of_isochronous 2⟩
 
 /-- The two ranked tree shapes with four leaves are at `L¹` distance `1`. -/
-example : RankedTreeShape.d₁ caterpillar.rankedTreeShape balanced.rankedTreeShape = 1 := by
+theorem d₁_caterpillar_balanced :
+    RankedTreeShape.d₁ caterpillar.rankedTreeShape balanced.rankedTreeShape = 1 := by
   simp only [RankedTreeShape.d₁, RankedHistory.fMatrix_rankedTreeShape, fMatrix_caterpillar,
     fMatrix_balanced]
   have h0 : Finset.Iic (0 : Fin 3) = {0} := by decide
@@ -87,13 +89,33 @@ example : RankedTreeShape.d₁ caterpillar.rankedTreeShape balanced.rankedTreeSh
   simp [Fin.sum_univ_three, h0, h1, h2]
 
 /-- The two ranked tree shapes with four leaves are at `L²` distance `1`. -/
-example : RankedTreeShape.d₂ caterpillar.rankedTreeShape balanced.rankedTreeShape = 1 := by
+theorem d₂_caterpillar_balanced :
+    RankedTreeShape.d₂ caterpillar.rankedTreeShape balanced.rankedTreeShape = 1 := by
   simp only [RankedTreeShape.d₂, RankedHistory.fMatrix_rankedTreeShape, fMatrix_caterpillar,
     fMatrix_balanced]
   have h0 : Finset.Iic (0 : Fin 3) = {0} := by decide
   have h1 : Finset.Iic (1 : Fin 3) = {0, 1} := by decide
   have h2 : Finset.Iic (2 : Fin 3) = {0, 1, 2} := by decide
   simp [Fin.sum_univ_three, h0, h1, h2]
+
+/-- The same distances in the metric space structures. -/
+example : RankedTreeShape.metricSpaceD₁.dist caterpillar.rankedTreeShape
+      balanced.rankedTreeShape = 1 ∧
+    RankedTreeShape.metricSpaceD₂.dist caterpillar.rankedTreeShape
+      balanced.rankedTreeShape = 1 := by
+  rw [RankedTreeShape.dist_metricSpaceD₁, RankedTreeShape.dist_metricSpaceD₂]
+  exact ⟨d₁_caterpillar_balanced, d₂_caterpillar_balanced⟩
+
+/-- Distinct ranked tree shapes are at positive distance. -/
+example : 0 < RankedTreeShape.d₁ caterpillar.rankedTreeShape balanced.rankedTreeShape := by
+  let _ := RankedTreeShape.metricSpaceD₁ (n := 4) (m := 1)
+  rw [← RankedTreeShape.dist_metricSpaceD₁]
+  refine dist_pos.2 fun h => ?_
+  have := congrArg RankedTreeShape.fMatrix h
+  rw [RankedHistory.fMatrix_rankedTreeShape, RankedHistory.fMatrix_rankedTreeShape,
+    fMatrix_caterpillar, fMatrix_balanced] at this
+  revert this
+  decide
 
 /-- The ranked labeled history of three genes. -/
 def three : RankedHistory 3 := ofPairs ![{1, 2}, {0, 1}] (by decide)
@@ -128,7 +150,7 @@ theorem weightMatrix_genealogy₂ : genealogy₂.weightMatrix = !![1, 0; 3, 2] :
 
 /-- The weighted matrices `F ∘ W` are `[[4, 0], [3, 3]]` and `[[2, 0], [3, 6]]`, at weighted
 `L¹` distance `2 + 0 + 3 = 5`. -/
-example : RankedGenealogy.dw₁ genealogy₁ genealogy₂ = 5 := by
+theorem dw₁_genealogy₁_genealogy₂ : RankedGenealogy.dw₁ genealogy₁ genealogy₂ = 5 := by
   have hs₁ : genealogy₁.shape.fMatrix = !![2, 0; 1, 3] := fMatrix_three
   have hs₂ : genealogy₂.shape.fMatrix = !![2, 0; 1, 3] := fMatrix_three
   have h0 : Finset.Iic (0 : Fin 2) = {0} := by decide
@@ -137,6 +159,10 @@ example : RankedGenealogy.dw₁ genealogy₁ genealogy₂ = 5 := by
     genealogy₁.weightMatrix i j - genealogy₂.shape.fMatrix i j * genealogy₂.weightMatrix i j| = 5
   rw [hs₁, hs₂, weightMatrix_genealogy₁, weightMatrix_genealogy₂, Fin.sum_univ_two, h0, h1]
   norm_num
+
+/-- The same distance in the metric space structure on isochronous genealogies. -/
+example : RankedGenealogy.metricSpaceDw₁OfIsochronous.dist genealogy₁ genealogy₂ = 5 := by
+  rw [RankedGenealogy.dist_metricSpaceDw₁OfIsochronous, dw₁_genealogy₁_genealogy₂]
 
 /-- The heterochronous history with leaf `0` sampled at the present, leaf `1` sampled earlier,
 and the root above both. -/
