@@ -88,4 +88,18 @@ theorem oppositeOfCommutingAction_actionsComm :
     SMulCommClass A Aᵐᵒᵖ M :=
   oppositeOfCommutingAction_smulComm A M (R := A)
 
+/-- Let A be a semiring and M an A-semimodule with commuting scalar operators.
+Let R act on A and M with IsScalarTower R A M. Under oppositeOfCommutingAction A M,
+the tower R → Aᵐᵒᵖ → M satisfies (r • aᵒᵖ) • m = r • (aᵒᵖ • m).
+The three carrier universes are independent. -/
+theorem oppositeOfCommutingAction_isScalarTower {R : Type z}
+    [SMul R A] [SMul R M] [IsScalarTower R A M] :
+    letI := oppositeOfCommutingAction A M
+    IsScalarTower R Aᵐᵒᵖ M := by
+  letI := oppositeOfCommutingAction A M
+  constructor
+  intro r a m
+  change (r • MulOpposite.unop a) • m = r • (MulOpposite.unop a • m)
+  exact smul_assoc r (MulOpposite.unop a) m
+
 end Module
