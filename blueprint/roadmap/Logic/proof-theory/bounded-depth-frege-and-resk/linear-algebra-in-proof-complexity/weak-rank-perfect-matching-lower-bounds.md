@@ -2,13 +2,7 @@
 
 For every $m>n$, the perfect matching CNF encoding $\mathrm{PMRank}^m_n(A)$ of the weak rank principle needs size $2^{\Omega(n)}$ in $\mathrm{PCR}_{\mathbb F_2}$ for $A=I_m$, and, for every $A\in\{0,1\}^{m\times m}$, size $2^{\Omega(n)}$ in $\mathrm{PCR}_{\mathbb F}$ with $\mathrm{char}\,\mathbb F\ne2$ and in Sum-of-Squares, and size $2^{n^{\Omega(1)}}$ in bounded-depth Frege.
 
-Here $\mathrm{PMRank}^m_n(A)$ is the perfect matching encoding of the [weak rank principle](weak-rank-principle.md) over the expressed field $\mathbb F_2$, defined for $A\in\{0,1\}^{m\times m}$, and [$\mathrm{PCR}_{\mathbb F}$](polynomial-calculus-resolution.md) refutes it through the polynomial translations of its clauses, with size the number of monomials. A *Sum-of-Squares* refutation of polynomials $f_1,\dots,f_k$ over $\mathbb R$ is a pair of sequences $(g_1,\dots,g_k)$ and $(h_1,\dots,h_\ell)$ of real polynomials with
-
-$$
-\sum_{i=1}^kf_ig_i+\sum_{j=1}^\ell h_j^2=-1,
-$$
-
-and its size is $\sum_i\|f_i\|\,\|g_i\|+\sum_j\|h_j\|$, where $\|f\|$ is the number of monomials of $f$ with nonzero coefficient. Like $\mathrm{PCR}_{\mathbb F}$, Sum-of-Squares refutes $\mathrm{PMRank}^m_n(A)$ over twin variables $x_i,\bar x_i$: the input polynomials $f_i$ are the Boolean and complementarity axioms $x_i^2-x_i$, $\bar x_i^2-\bar x_i$, and $x_i+\bar x_i-1$ for every variable, together with the single monomial $\prod_{i\in P}\bar x_i\prod_{i\in N}x_i$ for each clause $\bigvee_{i\in P}x_i\vee\bigvee_{i\in N}\neg x_i$ of $\mathrm{PMRank}^m_n(A)$. Refutations exist only when $\mathrm{PMRank}^m_n(A)$ is unsatisfiable.
+Here $\mathrm{PMRank}^m_n(A)$ is the perfect matching encoding of the [weak rank principle](weak-rank-principle.md) over the expressed field $\mathbb F_2$, defined for $A\in\{0,1\}^{m\times m}$, and [$\mathrm{PCR}_{\mathbb F}$](../../algebraic-and-semialgebraic-proof-systems/polynomial-calculus.md) refutes it through the polynomial translations of its clauses, measured by [distinct-monomial size](polynomial-calculus-resolution.md). A [Sum-of-Squares refutation](../../algebraic-and-semialgebraic-proof-systems/sums-of-squares-proof-system.md) of polynomials $f_1,\dots,f_k$ over $\mathbb R$ is taken in the equational form $\sum_{i=1}^kf_ig_i+\sum_{j=1}^\ell h_j^2=-1$ with Garlík et al.'s size measure $\sum_i\|f_i\|\,\|g_i\|+\sum_j\|h_j\|$, where $\|f\|$ is the number of monomials of $f$ with nonzero coefficient. Like $\mathrm{PCR}_{\mathbb F}$, Sum-of-Squares refutes $\mathrm{PMRank}^m_n(A)$ over twin variables $x_i,\bar x_i$: the input polynomials $f_i$ are the Boolean and complementarity axioms $x_i^2-x_i$, $\bar x_i^2-\bar x_i$, and $x_i+\bar x_i-1$ for every variable, together with the single monomial $\prod_{i\in P}\bar x_i\prod_{i\in N}x_i$ for each clause $\bigvee_{i\in P}x_i\vee\bigvee_{i\in N}\neg x_i$ of $\mathrm{PMRank}^m_n(A)$. Refutations exist only when $\mathrm{PMRank}^m_n(A)$ is unsatisfiable.
 
 **Theorem.** For every $m>n$, every $\mathrm{PCR}_{\mathbb F_2}$ refutation of $\mathrm{PMRank}^m_n(I_m)$ requires size $2^{\Omega(n)}$.
 
@@ -21,7 +15,9 @@ Over $\mathbb F_2$ the perfect matching principle (no perfect matching on an odd
 ## Depends on
 
 - [The weak rank principle](weak-rank-principle.md)
-- [Polynomial calculus resolution PCR_F](polynomial-calculus-resolution.md)
+- [Polynomial calculus](../../algebraic-and-semialgebraic-proof-systems/polynomial-calculus.md)
+- [Distinct-monomial size of PCR refutations](polynomial-calculus-resolution.md)
+- [Sums-of-Squares proof system](../../algebraic-and-semialgebraic-proof-systems/sums-of-squares-proof-system.md)
 - [Bounded-depth Frege proofs](../bounded-depth-frege-systems/bounded-depth-frege-proofs.md)
 
 ## Proof depends on

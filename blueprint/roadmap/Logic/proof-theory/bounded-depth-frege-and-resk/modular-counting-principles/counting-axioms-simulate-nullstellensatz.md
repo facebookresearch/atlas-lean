@@ -2,7 +2,7 @@
 
 If a formula $\Gamma$ reduces in depth $d$ and size $T$ to a polynomial system over $\mathbb Z_m$ with a size-$S$ Nullstellensatz refutation, then $\Gamma$ has a depth-$O(d)$ refutation of size $O(S^{2m}T)$ in Frege with counting axioms modulo $m$.
 
-[Nullstellensatz refutations](nullstellensatz-refutations.md) are taken over $\mathbb Z_m$, with size the number of monomials appearing in $p_1,\dots,p_k$ and $f_1,\dots,f_k$; no assumption on $m$ is made.
+[Nullstellensatz refutations over $\mathbb Z_m$ with the Impagliazzo–Segerlind size](nullstellensatz-refutations.md) are taken with no assumption on $m$, where the size is the number of monomials appearing in $p_1,\dots,p_k$ and $f_1,\dots,f_k$.
 
 **Theorem.** Let $m>1$ be an integer, $\Gamma(\vec x)$ a propositional formula and $F$ a system of polynomials over $\mathbb Z_m$ such that $\Gamma$ [reduces](reductions-to-polynomial-systems.md) to $F$ in depth $d$ and size $T$. If $F$ has a Nullstellensatz refutation of size $S$, then $\Gamma(\vec x)$ has a depth-$O(d)$ refutation in Frege with [counting axioms modulo $m$](counting-axioms-modulo-m.md) of size $O(S^{2m}T)$.
 
@@ -13,7 +13,7 @@ Expand $\sum_i\bar p_i\bar f_i$ without collecting terms: its monomial copies ar
 ## Depends on
 
 - [Counting axioms modulo m](counting-axioms-modulo-m.md)
-- [Nullstellensatz refutations](nullstellensatz-refutations.md)
+- [Nullstellensatz refutations over $\mathbb Z_m$ with the Impagliazzo–Segerlind size](nullstellensatz-refutations.md)
 - [Reductions from formulas to polynomial systems](reductions-to-polynomial-systems.md)
 
 ## Proof depends on

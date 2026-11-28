@@ -2,13 +2,13 @@
 
 For every $m>n$ and $A\in\{0,1\}^{m\times m}$, $\mathrm{PCR}_{\mathbb F_2}$ refutations of the algebraic and of the bamboo-tree encoding of the weak rank principle need size $2^{\Omega(n)}$. For $m>2n$ this makes $(X,Y)\mapsto XY$ a proof complexity generator stretching $2nm$ bits to $m^2$, and iterated versions of both encodings give function generators.
 
-Here the encodings $\mathrm{Rank}^m_n(A)$ and $\mathrm{BTRank}^m_n(A)$ are those of the [weak rank principle](weak-rank-principle.md) over the expressed field $\mathbb F_2$, refuted in [$\mathrm{PCR}_{\mathbb F_2}$](polynomial-calculus-resolution.md), with size the number of monomials; a refutation exists only when the system is unsatisfiable, that is when $A$ is not a product $XY$ over $\mathbb F_2$.
+Here the encodings $\mathrm{Rank}^m_n(A)$ and $\mathrm{BTRank}^m_n(A)$ are those of the [weak rank principle](weak-rank-principle.md) over the expressed field $\mathbb F_2$, refuted in [$\mathrm{PCR}_{\mathbb F_2}$](../../algebraic-and-semialgebraic-proof-systems/polynomial-calculus.md) with the [distinct-monomial size](polynomial-calculus-resolution.md); a refutation exists only when the system is unsatisfiable, that is when $A$ is not a product $XY$ over $\mathbb F_2$.
 
 **Theorem (algebraic encoding).** For every $m>n$ and $A\in\mathbb F_2^{m\times m}$, every $\mathrm{PCR}_{\mathbb F_2}$ refutation of $\mathrm{Rank}^m_n(A)$ requires size $2^{\Omega(n)}$.
 
 **Theorem (bamboo-tree encoding).** For every $m>n$ and $A\in\mathbb F_2^{m\times m}$, every $\mathrm{PCR}_{\mathbb F_2}$ refutation of $\mathrm{BTRank}^m_n(A)$ requires size $2^{\Omega(n)}$.
 
-**Generators.** A *proof complexity generator* is a polynomial-time map $g:\{0,1\}^k\to\{0,1\}^\ell$ with $k<\ell$; it is hard for a proof system when, for every $b\in\{0,1\}^\ell$, the encoding of "$b\notin\mathrm{Range}(g)$" has no short refutation, and it is a *function generator* when its stretch $\ell$ is $2^{k^{\Omega(1)}}$. The rank generator $g(X,Y)=XY$ maps $\mathbb F_2^{2mn}$ to $\mathbb F_2^{m^2}$ and stretches exactly when $m>2n$. For $m>2n$, both theorems therefore say that $g$ is a proof complexity generator for $\mathrm{PCR}_{\mathbb F_2}$, under the algebraic and under the bamboo-tree encoding, stretching $2nm$ bits into $m^2$.
+**Generators.** Taking the notion of a [proof complexity generator](../../resolution-tradeoffs-lifting-and-qbf/proof-complexity-generators/proof-complexity-generators.md) $g:\{0,1\}^k\to\{0,1\}^\ell$ ($k<\ell$) hard for a proof system from the linked page, $g$ is a *function generator* when its stretch $\ell$ is $2^{k^{\Omega(1)}}$. The rank generator $g(X,Y)=XY$ maps $\mathbb F_2^{2mn}$ to $\mathbb F_2^{m^2}$ and stretches exactly when $m>2n$. For $m>2n$, both theorems therefore say that $g$ is a proof complexity generator for $\mathrm{PCR}_{\mathbb F_2}$, under the algebraic and under the bamboo-tree encoding, stretching $2nm$ bits into $m^2$.
 
 **Iterated encodings.** Copies of the rank system are indexed by strings $\pi$ of length at most $\kappa$ over a finite alphabet $\Sigma$, and every entry of the right-hand side $A^{(\pi)}$ is a Boolean constant or a variable of a copy indexed by a strictly longer string, of the kind each item specifies (so the copies with $|\pi|=\kappa$ have constant right-hand sides).
 
@@ -24,7 +24,9 @@ The algebraic bound uses random restrictions to reduce size to degree, then a de
 ## Depends on
 
 - [The weak rank principle](weak-rank-principle.md)
-- [Polynomial calculus resolution PCR_F](polynomial-calculus-resolution.md)
+- [Polynomial calculus](../../algebraic-and-semialgebraic-proof-systems/polynomial-calculus.md)
+- [Distinct-monomial size of PCR refutations](polynomial-calculus-resolution.md)
+- [Proof complexity generators and their tau-formulas](../../resolution-tradeoffs-lifting-and-qbf/proof-complexity-generators/proof-complexity-generators.md)
 
 ## Proof depends on
 
