@@ -15,3 +15,4 @@ Rational points of varieties over number fields: torsion and rank of elliptic cu
 - [Complex conjugation on the Heegner point](complex-conjugation-on-the-heegner-point.md)
 - [Kolyvagin's theorem on Heegner points](kolyvagin-s-theorem-on-heegner-points.md)
 - [Gross–Zagier–Kolyvagin, rank-one implication](rank-eq-one-of-simple-zero-l-series.md)
+- [Mordell–Weil rank of an elliptic curve](mordell-weil-rank-of-an-elliptic-curve.md)
