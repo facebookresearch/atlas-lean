@@ -25,13 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Combinatorics.SimpleGraph.Clique
-public import Mathlib.Combinatorics.SimpleGraph.Copy
-public import Mathlib.Combinatorics.SimpleGraph.DeleteEdges
-public import Mathlib.Combinatorics.SimpleGraph.Star
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.GraphColoringDefs
+public import CSLibExt.Complexity.NPComplete.ThreeColorabilityK4ClawDiamondFreeDefs
 
 @[expose] public section
 
@@ -78,21 +72,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed GRAPH K-COLORABILITY instance with `K = 3`
-whose graph has no `K_4`, no induced claw `K_{1,3}` and no induced diamond `K_4 - e`. -/
-def WellFormed (i : GraphColoringInstance) : Prop :=
-  GraphColoring.WellFormed i ∧ i.2.2 = 3 ∧ (Graph i).CliqueFree 4 ∧
-    ¬ (SimpleGraph.starGraph (0 : Fin 4)).IsIndContained (Graph i) ∧
-    ¬ ((⊤ : SimpleGraph (Fin 4)).deleteEdges {s(0, 1)}).IsIndContained (Graph i)
-
-open Classical in
-/-- 3-COLORABILITY OF (K4, CLAW, DIAMOND)-FREE GRAPHS as a decision problem over bitstrings. -/
-noncomputable def threeColorabilityK4ClawDiamondFreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := GraphColoringInstance) x with
-  | some i => decide (WellFormed i ∧ GraphColoring.GraphColoringFeasible i)
-  | none => false
 
 /-- **3-COLORABILITY OF (K4, CLAW, DIAMOND)-FREE GRAPHS is NP-complete.** Source: Garey and
 Johnson (1979), [GT4]; Král', Kratochvíl, Tuza and Woeginger (2001). -/

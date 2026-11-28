@@ -28,10 +28,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Combinatorics.SimpleGraph.Girth
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.GraphColoringDefs
+public import CSLibExt.Complexity.NPComplete.ThreeColorabilityGirthNineDefs
 
 @[expose] public section
 
@@ -73,19 +70,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed GRAPH K-COLORABILITY instance with `K = 3`
-whose graph has girth at least 9 (every cycle has length at least 9). -/
-def WellFormed (i : GraphColoringInstance) : Prop :=
-  GraphColoring.WellFormed i ∧ i.2.2 = 3 ∧ 9 ≤ (Graph i).egirth
-
-open Classical in
-/-- 3-COLORABILITY OF GRAPHS OF GIRTH AT LEAST 9 as a decision problem over bitstrings. -/
-noncomputable def threeColorabilityGirthNineDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := GraphColoringInstance) x with
-  | some i => decide (WellFormed i ∧ GraphColoring.GraphColoringFeasible i)
-  | none => false
 
 /-- **3-COLORABILITY OF GRAPHS OF GIRTH AT LEAST 9 is NP-complete.** Source: Garey and Johnson
 (1979), [GT4]; Kamiński and Lozin (2007), Theorem 2.3; Emden-Weinert, Hougardy and Kreuter

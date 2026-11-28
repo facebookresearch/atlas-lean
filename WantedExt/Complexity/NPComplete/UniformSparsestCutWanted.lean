@@ -19,9 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Data.Finset.Card
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.UniformSparsestCutDefs
 
 @[expose] public section
 
@@ -54,35 +52,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number `n` of vertices, the edge list, and the bound `r` as a pair
-`(num, den)` standing for `num / den`. -/
-abbrev UniformSparsestCutInstance := ℕ × List (ℕ × ℕ) × (ℕ × ℕ)
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `0, ..., n - 1`,
-and `r = num / den` has a positive denominator and is positive. -/
-def WellFormed (i : UniformSparsestCutInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    0 < i.2.2.2 ∧ 0 < i.2.2.1
-
-/-- The number of edges with exactly one end in `S`. -/
-def cutSize (i : UniformSparsestCutInstance) (S : Finset ℕ) : ℕ :=
-  (i.2.1.filter fun e => decide ((e.1 ∈ S ∧ e.2 ∉ S) ∨ (e.1 ∉ S ∧ e.2 ∈ S))).length
-
-/-- Some vertex set `S` with `0 < |S| < n` has sparsity
-`cutSize S / (|S| · (n - |S|)) ≤ num / den`. -/
-def UniformSparsestCutFeasible (i : UniformSparsestCutInstance) : Prop :=
-  ∃ S : Finset ℕ, (∀ v ∈ S, v < i.1) ∧ 0 < S.card ∧ S.card < i.1 ∧
-    cutSize i S * i.2.2.2 ≤ i.2.2.1 * (S.card * (i.1 - S.card))
-
-open Classical in
-/-- UNIFORM SPARSEST CUT as a decision problem over bitstrings. -/
-noncomputable def uniformSparsestCutDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := UniformSparsestCutInstance) x with
-  | some i => decide (WellFormed i ∧ UniformSparsestCutFeasible i)
-  | none => false
 
 /-- **UNIFORM SPARSEST CUT is NP-complete.** Source: Matula and Shahrokhi (1990); Gupta,
 Talwar and Witmer (2013). -/

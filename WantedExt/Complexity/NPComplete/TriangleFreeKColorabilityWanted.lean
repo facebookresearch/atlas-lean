@@ -23,10 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Combinatorics.SimpleGraph.Clique
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.GraphColoringDefs
+public import CSLibExt.Complexity.NPComplete.TriangleFreeKColorabilityDefs
 
 @[expose] public section
 
@@ -66,21 +63,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance for the fixed number of colors `k`: a well-formed GRAPH
-K-COLORABILITY instance whose number of colors is `k` and whose graph is triangle-free (has no
-3-clique). -/
-def WellFormed (k : ℕ) (i : GraphColoringInstance) : Prop :=
-  GraphColoring.WellFormed i ∧ i.2.2 = k ∧ (Graph i).CliqueFree 3
-
-open Classical in
-/-- K-COLORABILITY OF TRIANGLE-FREE GRAPHS, for the fixed number of colors `k`, as a decision
-problem over bitstrings. -/
-noncomputable def triangleFreeKColorabilityDec (k : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := GraphColoringInstance) x with
-  | some i => decide (WellFormed k i ∧ GraphColoring.GraphColoringFeasible i)
-  | none => false
 
 /-- **K-COLORABILITY OF TRIANGLE-FREE GRAPHS is NP-complete for every fixed `K ≥ 3`.** Source:
 Garey and Johnson (1979), [GT4]; Maffray and Preissmann (1996); Kamiński and Lozin (2007),

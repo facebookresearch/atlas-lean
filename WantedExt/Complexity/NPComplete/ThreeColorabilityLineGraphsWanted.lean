@@ -23,10 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Combinatorics.SimpleGraph.LineGraph
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.GraphColoringDefs
+public import CSLibExt.Complexity.NPComplete.ThreeColorabilityLineGraphsDefs
 
 @[expose] public section
 
@@ -65,32 +62,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `0, …, n - 1`) and edge list. -/
-abbrev ThreeColorabilityLineGraphsInstance := ℕ × List (ℕ × ℕ)
-
-/-- The GRAPH COLORING instance with the same graph and bound `K = 3`. -/
-abbrev withThreeColors (i : ThreeColorabilityLineGraphsInstance) : GraphColoringInstance :=
-  (i.1, i.2, 3)
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (GRAPH
-COLORING's well-formedness), and the graph is a line graph. -/
-def WellFormed (i : ThreeColorabilityLineGraphsInstance) : Prop :=
-  GraphColoring.WellFormed (withThreeColors i) ∧
-    MetaMathlibExt.SimpleGraph.IsLineGraph (Graph (withThreeColors i))
-
-/-- The graph is properly 3-colorable. -/
-def ThreeColorabilityLineGraphsFeasible (i : ThreeColorabilityLineGraphsInstance) : Prop :=
-  GraphColoringFeasible (withThreeColors i)
-
-open Classical in
-/-- 3-COLORABILITY OF LINE GRAPHS as a decision problem over bitstrings. -/
-noncomputable def threeColorabilityLineGraphsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ThreeColorabilityLineGraphsInstance) x with
-  | some i => decide (WellFormed i ∧ ThreeColorabilityLineGraphsFeasible i)
-  | none => false
 
 /-- **3-COLORABILITY OF LINE GRAPHS is NP-complete.** Source: Holyer (1981); Garey and Johnson
 (1979), [GT4] (parent problem); ISGCI, class "line". -/

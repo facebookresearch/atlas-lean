@@ -26,11 +26,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Combinatorics.SimpleGraph.Planarity
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Hamiltonian
-public import CSLibExt.Complexity.NPComplete.GraphColoringDefs
+public import CSLibExt.Complexity.NPComplete.ThreeColorabilityPlanarHamiltonianDefs
 
 @[expose] public section
 
@@ -76,21 +72,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed GRAPH K-COLORABILITY instance (a simple edge
-list on `Fin n`) with `K = 3` whose graph is planar and Hamiltonian (`n ≥ 3` and a Hamiltonian
-cycle exists). -/
-def WellFormed (i : GraphColoringInstance) : Prop :=
-  GraphColoring.WellFormed i ∧ i.2.2 = 3 ∧ (Graph i).IsPlanar ∧ 3 ≤ i.1 ∧
-    (Graph i).IsHamiltonian
-
-open Classical in
-/-- 3-COLORABILITY on planar Hamiltonian graphs as a decision problem over bitstrings. -/
-noncomputable def threeColorabilityPlanarHamiltonianDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := GraphColoringInstance) x with
-  | some i => decide (WellFormed i ∧ GraphColoring.GraphColoringFeasible i)
-  | none => false
 
 /-- **3-COLORABILITY on planar Hamiltonian graphs is NP-complete.** Source: Cavallaro (2019),
 Theorem 4.5; Dailey (1980); Garey and Johnson (1979), [GT4] (parent problem). -/
