@@ -161,8 +161,8 @@
       "path": "MathlibExt/Algebra/Homology/FilteredColimitStageQuasiIso.lean",
       "backport": "pending",
       "disposition": "diverged",
-      "published_sha256": "d9c34fb5998f897a5609b3f2c73f7a50b6074f3928628273f85ccd9a5b282117",
-      "rationale": "General complex/functor, homology-sequence, quasi-isomorphism and categorical cokernel/product API retained from the immutable recorded source. Atlas mathematical documentation and all original authors/license, hypotheses, independent worlds, maps, signs and proof tokens are preserved. This source is diverged from the current global Formal-Math pin; only necessary 100-column whitespace wraps were applied. Hosted Native verification remains pending.",
+      "published_sha256": "33614687014698c17700999664e252849e0b0bff7f5248bf0bd01c7e9bbdca4a",
+      "rationale": "Retain the general filtered-colimit quasi-isomorphism theorem and its original homology-preserving colimit hypothesis, independent indexing/category/degree universes, maps and signs. This compiler repair explicitly derives HasExactColimitsOfShape using the existing proved API, making the canonical homology-functor preservation instance available without strengthening any theorem hypothesis. Hosted Native verification remains pending.",
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "96560377415dc25509966f245092713133605b66889f725a562056238c7a209a"
     },

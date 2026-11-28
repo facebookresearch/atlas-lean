@@ -46,6 +46,8 @@ theorem quasiIso_ι_of_isColimit_of_quasiIso_maps
     (K : J ⥤ HomologicalComplex C c) (s : Cocone K) (hs : IsColimit s)
     (hK : ∀ {i j : J} (f : i ⟶ j), QuasiIso (K.map f)) (j : J) :
     QuasiIso (s.ι.app j) := by
+  let _ : HasExactColimitsOfShape J C :=
+    hasExactColimitsOfShape_of_colim_preservesHomology (J := J) (C := C)
   rw [quasiIso_iff]
   intro n
   rw [quasiIsoAt_iff_isIso_homologyMap]
