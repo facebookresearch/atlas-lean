@@ -6,7 +6,7 @@ Given an average-hard-attention transformer with only uniform attention layers, 
 
 **Theorem (Sälzer, Köcher, Kozachinskiy, Zetzsche and Lin).** Given a transformer in $\mathrm{NoPE}$-$\mathrm{AHAT}[\mathrm{U}]$ or in $\mathrm{SMAT}$, already with two attention layers, it is undecidable whether its language is empty.
 
-The same paper proves that every recursively enumerable counting property is a projection of a language recognized by such a transformer with two attention layers, that this fails with one layer, and that $\mathrm{NoPE}$-$\mathrm{AHAT}[\mathrm{U}]$ recognizes exactly the semialgebraic counting properties.
+The same paper proves that every recursively enumerable counting property is a projection of a language recognized by such a transformer with two attention layers, that this fails for $\mathrm{NoPE}$-$\mathrm{AHAT}[\mathrm{U}]$ with one attention layer (Theorem B.2: one-layer NoPE-AHAT recognize exactly the quantifier-free Presburger properties), while the one-layer softmax case is left open, and that $\mathrm{NoPE}$-$\mathrm{AHAT}[\mathrm{U}]$ recognizes exactly the semialgebraic counting properties.
 
 ## Depends on
 
@@ -23,4 +23,4 @@ For every polynomial $p \in \mathbb{Z}[X_1, \dots, X_m]$, the authors construct 
 
 ## Sources
 
-- Marco Sälzer, Chris Köcher, Alexander Kozachinskiy, Georg Zetzsche and Anthony W. Lin, *The Counting Power of Transformers*, The Fourteenth International Conference on Learning Representations (ICLR 2026), 2026, https://proceedings.iclr.cc/paper_files/paper/2026/hash/2d663ddbad415a8105473a9e7f048da1-Abstract-Conference.html; the definitions of Section 2 and Theorem 1.4 with its proof in the appendix on universality and undecidability, read in arXiv:2505.11199v3.
+- Marco Sälzer, Chris Köcher, Alexander Kozachinskiy, Georg Zetzsche and Anthony W. Lin, *The Counting Power of Transformers*, The Fourteenth International Conference on Learning Representations (ICLR 2026), 2026, https://proceedings.iclr.cc/paper_files/paper/2026/hash/2d663ddbad415a8105473a9e7f048da1-Abstract-Conference.html; the definitions of Section 2 and Theorem 1.4 with its proof in the appendix on universality and undecidability, and Theorem B.2 in Appendix B, read in arXiv:2505.11199v3.
