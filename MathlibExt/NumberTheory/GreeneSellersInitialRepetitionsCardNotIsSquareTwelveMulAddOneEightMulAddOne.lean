@@ -9,8 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Data.ZMod.Basic
-import Mathlib.NumberTheory.LegendreSymbol.Basic
-
+public import Mathlib.NumberTheory.LegendreSymbol.Basic
 import Mathlib.NumberTheory.LegendreSymbol.QuadraticReciprocity
 import Mathlib.NumberTheory.JacobiSum.Basic
 import Mathlib.Tactic.NormNum.LegendreSymbol
@@ -21,11 +20,20 @@ import Mathlib.Tactic.Ring
 /-!
 # Simultaneous nonresidues of two affine expressions
 
-We count residues for which both $12r + 1$ and $8r + 1$ are nonsquares modulo a prime.
+For an odd prime $p$ and integers $m,n$ with $p \nmid mn(n-m)$, Lemma 1 counts the
+representatives $0 \le r < p$ for which $mr+1$ and $nr+1$ are both quadratic nonresidues.
+An affine change of variables reduces the count to prescribing the quadratic characters of $x$
+and $1-x$, for which a Jacobi sum evaluates the mixed term. The same character count is used
+for the $12r+1$, $8r+1$ specialization for primes $p \ge 5$; for $p = 2,3$ its count is zero.
 
-Source: John Greene and James A. Sellers, *Extending Recent Parity Results of Nyirenda and
-Mugwangwavari for Partitions with Initial Repetitions*, INTEGERS 25 (2025), Article A32,
-Theorem 8 (`integers-2025-A32-thm-8`).
+## References
+
+* John Greene and James A. Sellers, *Extending Recent Parity Results of Nyirenda and
+  Mugwangwavari for Partitions with Initial Repetitions*, INTEGERS 25 (2025), Article A32,
+  pp. 1–12, Lemma 1 and Theorem 8. <https://doi.org/10.5281/zenodo.15283654>
+
+The affine reduction and passage from representatives generalize `affine_card` and
+`representative_card` in this module; both counts use `character_pair_count` and `character_scale`.
 -/
 
 namespace MetaMathlibExt
@@ -200,6 +208,116 @@ private theorem character_formula (p : ℕ) [Fact p.Prime] (hp5 : 5 ≤ p) :
     norm_num [hodd, h4, h8, h3, h] <;> omega
 
 @[expose] public section
+
+section
+
+local notation "χ" => quadraticChar _
+
+/-- **Counting $r$ with $mr + 1$ and $nr + 1$ both quadratic nonresidues.** Let $p$ be an odd
+prime, write $\left(\frac{a}{p}\right)$ for the Legendre symbol of an integer $a$, and let $m$ and
+$n$ be integers with $p \nmid mn(n - m)$. If $N$ is the number of integers $r$ with
+$0 \le r \le p - 1$ such that $\left(\frac{mr+1}{p}\right) = \left(\frac{nr+1}{p}\right) = -1$, then
+
+$$4N = 4\left\lfloor \frac{p}{4} \right\rfloor -
+\left(\left(\frac{m}{p}\right) - \left(\frac{n-m}{p}\right)\right)
+\left(\left(\frac{n}{p}\right) - \left(\frac{m-n}{p}\right)\right).$$
+
+Source: John Greene and James A. Sellers, *Extending Recent Parity Results of Nyirenda and
+Mugwangwavari for Partitions with Initial Repetitions*, INTEGERS 25 (2025), Article A32, Lemma 1
+(`integers-2025-A32-lem-1`). -/
+public theorem four_mul_card_legendreSym_pair_eq_neg_one (p : ℕ) [Fact p.Prime]
+    (hp : p ≠ 2) (m n : ℤ) (hmn : ¬ (p : ℤ) ∣ m * n * (n - m)) :
+    4 * ((((Finset.range p).filter fun r : ℕ =>
+        legendreSym p (m * r + 1) = -1 ∧ legendreSym p (n * r + 1) = -1).card : ℕ) : ℤ) =
+      4 * ((p / 4 : ℕ) : ℤ) -
+        (legendreSym p m - legendreSym p (n - m)) * (legendreSym p n - legendreSym p (m - n)) := by
+  let m' : ZMod p := m
+  let n' : ZMod p := n
+  have h : m' * n' * (n' - m') ≠ 0 := by
+    simpa only [Int.cast_mul, Int.cast_sub] using
+      (CharP.intCast_eq_zero_iff (ZMod p) p (m * n * (n - m))).not.mpr hmn
+  obtain ⟨hmul, hd⟩ := mul_ne_zero_iff.mp h
+  obtain ⟨hm, hn⟩ := mul_ne_zero_iff.mp hmul
+  have hd' : m' - n' ≠ 0 := sub_ne_zero.mpr (Ne.symm (sub_ne_zero.mp hd))
+  let a := n' / (n' - m')
+  let b := m' / (m' - n')
+  have ha : a ≠ 0 := div_ne_zero hn hd
+  have hb : b ≠ 0 := div_ne_zero hm hd'
+  -- Normalise the two affine forms to complementary arguments.
+  let e := (Equiv.mulLeft₀ (a * m') (mul_ne_zero ha hm)).trans (Equiv.addRight a)
+  have hx (r : ZMod p) : e r = a * (m' * r + 1) := by
+    change (a * m') * r + a = a * (m' * r + 1)
+    ring
+  have hy (r : ZMod p) : 1 - e r = b * (n' * r + 1) := by
+    have had : a * (n' - m') = n' := div_mul_cancel₀ _ hd
+    have hbd : b * (n' - m') = -m' := by
+      rw [show n' - m' = -(m' - n') by ring, mul_neg]
+      exact congrArg Neg.neg (div_mul_cancel₀ m' hd')
+    apply mul_right_cancel₀ hd
+    rw [hx]
+    calc
+      _ = (n' - m') - (a * (n' - m')) * (m' * r + 1) := by ring
+      _ = (b * (n' - m')) * (n' * r + 1) := by rw [had, hbd]; ring
+      _ = _ := by ring
+  have hcard₁ : ((range p).filter fun r : ℕ =>
+      legendreSym p (m * r + 1) = -1 ∧ legendreSym p (n * r + 1) = -1).card =
+      (univ.filter fun r : ZMod p => χ (m' * r + 1) = -1 ∧ χ (n' * r + 1) = -1).card := by
+    refine card_nbij' (fun r : ℕ ↦ (r : ZMod p)) ZMod.val ?_ ?_ ?_ ?_
+    · intro r hr
+      refine mem_filter.mpr ⟨mem_univ _, ?_⟩
+      simpa only [legendreSym, Int.cast_add, Int.cast_mul, Int.cast_one, Int.cast_natCast] using
+        (mem_filter.mp hr).2
+    · intro r hr
+      refine mem_filter.mpr ⟨mem_range.mpr r.val_lt, ?_⟩
+      simpa only [legendreSym, Int.cast_add, Int.cast_mul, Int.cast_one, Int.cast_natCast,
+        ZMod.natCast_zmod_val] using (mem_filter.mp hr).2
+    · intro r hr
+      exact ZMod.val_natCast_of_lt (mem_range.mp (mem_filter.mp hr).1)
+    · intro r _
+      exact ZMod.natCast_zmod_val r
+  have hcard₂ : (univ.filter fun r : ZMod p =>
+      χ (m' * r + 1) = -1 ∧ χ (n' * r + 1) = -1).card =
+      (univ.filter fun x : ZMod p => χ x = -χ a ∧ χ (1 - x) = -χ b).card := by
+    apply card_equiv e
+    intro r
+    simp only [mem_filter, mem_univ, true_and]
+    rw [hy, hx, ← character_scale (ZMod p) a _ ha, ← character_scale (ZMod p) b _ hb]
+  have hs : -χ a = 1 ∨ -χ a = -1 := by
+    rcases quadraticChar_dichotomy ha with h | h <;> simp [h]
+  have ht : -χ b = 1 ∨ -χ b = -1 := by
+    rcases quadraticChar_dichotomy hb with h | h <;> simp [h]
+  have hF : ringChar (ZMod p) ≠ 2 := (ZMod.ringChar_zmod_n p).substr hp
+  have hcount := character_pair_count (ZMod p) hF (-χ a) (-χ b) hs ht
+  have hdiv (x y : ZMod p) : χ (x / y) = χ x * χ y := by
+    rw [div_eq_mul_inv, map_mul, ← MulChar.inv_apply', (quadraticChar_isQuadratic _).inv]
+  have haχ : χ a = χ n' * χ (n' - m') := hdiv _ _
+  have hbχ : χ b = χ m' * χ (m' - n') := hdiv _ _
+  have hnegprod : χ (n' - m') * χ (m' - n') = χ (-1 : ZMod p) := by
+    rw [show m' - n' = -1 * (n' - m') by ring, map_mul]
+    calc
+      _ = χ (-1 : ZMod p) * χ (n' - m') ^ 2 := by ring
+      _ = _ := by rw [quadraticChar_sq_one hd, mul_one]
+  have hcross : χ a * χ b * χ (-1 : ZMod p) = χ m' * χ n' := by
+    rw [haχ, hbχ]
+    calc
+      _ = χ m' * χ n' * ((χ (n' - m') * χ (m' - n')) * χ (-1 : ZMod p)) := by ring
+      _ = _ := by
+        rw [hnegprod, ← pow_two (χ (-1 : ZMod p)),
+          quadraticChar_sq_one (neg_ne_zero.mpr one_ne_zero), mul_one]
+  have hfour : (p : ℤ) - 2 = 4 * ((p / 4 : ℕ) : ℤ) - χ (-1 : ZMod p) := by
+    have hodd := (Nat.Prime.mod_two_eq_one_iff_ne_two (Fact.out : p.Prime)).mpr hp
+    rw [quadraticChar_neg_one hF, ZMod.card, ZMod.χ₄_nat_eq_if_mod_four]
+    have hmod : p % 4 = 1 ∨ p % 4 = 3 := by omega
+    rcases hmod with hmod | hmod <;> simp [hmod] <;> omega
+  calc
+    _ = (p : ℤ) - 2 + χ a + χ b - χ a * χ b * χ (-1 : ZMod p) := by
+      simpa only [← hcard₂, ← hcard₁, ZMod.card, sub_neg_eq_add, neg_mul_neg] using hcount
+    _ = _ := by
+      rw [hfour, hcross, haχ, hbχ, ← hnegprod]
+      simp only [legendreSym, Int.cast_sub]
+      ring
+
+end
 
 open scoped Classical in
 /-- **Residues $r$ with $12r + 1$ and $8r + 1$ both non-squares modulo $p$.** For every prime $p$,

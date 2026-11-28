@@ -9,12 +9,15 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.NumberTheory.GreeneSellersInitialRepetitionsCardNotIsSquareTwelveMulAddOneEightMulAddOne
+import Mathlib.Tactic.NormNum.LegendreSymbol
 import Mathlib.Tactic.NormNum.Prime
 
 /-!
 # Concrete simultaneous-nonresidue counts
 
-We apply the counting theorem at the primes $2$, $3$, $5$, $7$, and $11$.
+We apply the specialised counting theorem at the primes $2$, $3$, $5$, $7$, and $11$.
+For the general formula, we check exact residue sets and the three possible signs of the
+correction independently, including at the smallest odd prime and with a negative coefficient.
 -/
 
 namespace MathlibExtTest.NumberTheory
@@ -64,6 +67,51 @@ example :
     11 (by norm_num)
 
 end
+
+local instance : Fact (Nat.Prime 5) := ⟨by norm_num⟩
+local instance : Fact (Nat.Prime 11) := ⟨by norm_num⟩
+
+-- At the smallest odd prime the set is empty and the correction vanishes.
+example :
+    ((Finset.range 3).filter fun r : ℕ =>
+      legendreSym 3 ((r : ℤ) + 1) = -1 ∧ legendreSym 3 (-r + 1 : ℤ) = -1) = ∅ ∧
+    4 * ((3 / 4 : ℕ) : ℤ) -
+      (legendreSym 3 1 - legendreSym 3 (-2)) * (legendreSym 3 (-1) - legendreSym 3 2) = 0 := by
+  constructor
+  · decide
+  · norm_num
+
+-- Modulo five the product of differences is positive and cancels the floor term.
+example :
+    ((Finset.range 5).filter fun r : ℕ =>
+      legendreSym 5 (2 * r + 1) = -1 ∧ legendreSym 5 (3 * r + 1) = -1) = ∅ ∧
+    4 * ((5 / 4 : ℕ) : ℤ) -
+      (legendreSym 5 2 - legendreSym 5 1) * (legendreSym 5 3 - legendreSym 5 (-1)) = 0 := by
+  constructor
+  · decide
+  · norm_num
+
+-- With a negative slope modulo eleven, the negative correction product adds one to the count.
+example :
+    ((Finset.range 11).filter fun r : ℕ =>
+      legendreSym 11 ((r : ℤ) + 1) = -1 ∧ legendreSym 11 (-3 * r + 1) = -1) = {5, 7, 9} ∧
+    4 * ((11 / 4 : ℕ) : ℤ) -
+      (legendreSym 11 1 - legendreSym 11 (-4)) * (legendreSym 11 (-3) - legendreSym 11 4) = 12 := by
+  constructor
+  · decide
+  · norm_num
+
+-- The public formula gives the count for the same signed slopes.
+example : ((Finset.range 11).filter fun r : ℕ =>
+    legendreSym 11 ((r : ℤ) + 1) = -1 ∧ legendreSym 11 (-3 * r + 1) = -1).card = 3 := by
+  have h := MetaMathlibExt.four_mul_card_legendreSym_pair_eq_neg_one
+    11 (by decide) 1 (-3) (by decide)
+  have hvalue : 4 * ((11 / 4 : ℕ) : ℤ) -
+      (legendreSym 11 1 - legendreSym 11 (-3 - 1)) *
+        (legendreSym 11 (-3) - legendreSym 11 (1 - (-3))) = 12 := by norm_num
+  rw [hvalue] at h
+  simp only [one_mul] at h
+  omega
 
 end GreeneSellersInitialRepetitionsCardNotIsSquareTwelveMulAddOneEightMulAddOne
 
