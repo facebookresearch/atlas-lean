@@ -43,6 +43,7 @@ public import Mathlib.Algebra.Polynomial.Eval.Defs
 public import MathlibExt.NumberTheory.FermatQuotient
 public import MathlibExt.NumberTheory.WilsonFermatQuotient
 public import MathlibExt.NumberTheory.WilsonFaulhaberHenselDigit
+public import MathlibExt.NumberTheory.WilsonFaulhaberCoefficients
 
 set_option autoImplicit false
 
@@ -59,24 +60,6 @@ private theorem coprime_of_mem {p k : ℕ} (hp : p.Prime)
   exact Nat.isCoprime_iff_coprime.mpr
     ((hp.coprime_iff_not_dvd.mpr
       (Nat.not_dvd_of_pos_of_lt h.1 hlt)).symm)
-
-/-- **Theorem 2**: let `p = 2l + 1` be an odd prime and `a = p(p - 1)/2`. The
-Faulhaber polynomial `F ∈ ℚ[a]` with `∑_{k=1}^{n} k^p = F(n(n+1)/2)` for all `n`
-exists, and its coefficients `c_i(l)` of `a^(i+1)` (`1 ≤ i ≤ l`) satisfy
-(i) `c_i(l) ∈ ℤ_p` and (ii) `(p - 1)! ≡ c_1(l)/2 - p (mod p^2)`, both read in
-`ℚ` through the `p`-adic norm. The identity at `n = p - 1` is the paper's (3).
-
-Source: Claire Levaillant, *Wilson's Theorem Modulo p^2 Derived from Faulhaber
-Polynomials*, INTEGERS 24 (2024), Article A87, Theorem 2. -/
-theorem_wanted faulhaber_coeff_integral_and_wilson (p l : ℕ) (hp : p.Prime)
-    (hpl : p = 2 * l + 1) :
-    (∃ F : Polynomial ℚ, ∀ n : ℕ,
-        ∑ k ∈ Finset.Icc 1 n, (k : ℚ) ^ p = F.eval ((n * (n + 1) / 2 : ℕ) : ℚ)) ∧
-      ∀ F : Polynomial ℚ, (∀ n : ℕ,
-          ∑ k ∈ Finset.Icc 1 n, (k : ℚ) ^ p = F.eval ((n * (n + 1) / 2 : ℕ) : ℚ)) →
-        (∀ i ∈ Finset.Icc 1 l, padicNorm p (F.coeff (i + 1)) ≤ 1) ∧
-          padicNorm p ((Nat.factorial (p - 1) : ℚ) - (F.coeff 2 / 2 - p)) ≤
-            (p : ℚ) ^ (-2 : ℤ)
 
 /-- **Corollary 1** (Glaisher): `(p - 1)! ≡ p B_{p-1} - p (mod p^2)`, read in `ℚ`
 through the `p`-adic norm (`p B_{p-1}` is `p`-integral by von Staudt–Clausen).
