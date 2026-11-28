@@ -2,18 +2,13 @@
 
 The two-variable guarded fragment $\mathrm{GF}^2$ consists of the first-order formulas in two variables $x, y$ in which every quantifier is relativized by an atom, its guard, that contains all free variables of the quantified formula. Extensions declare some binary symbols to denote transitive relations, equivalence relations or linear orders.
 
-**Formulas.** Fix a relational signature of unary and binary relation symbols, with equality. $\mathrm{GF}^2$ is the intersection of [two-variable logic](../two-variable-logic-and-its-extensions/two-variable-logic-and-its-counting-extension.md) $\mathrm{FO}^2$ with the guarded fragment: it is the least set of formulas in the variables $x, y$ that contains all atomic formulas, is closed under $\neg, \vee, \wedge, \rightarrow$, and contains
+**Formulas.** $\mathrm{GF}^2$ is the two-variable [guarded fragment](guarded-fragment.md), the set of $\mathrm{GF}$ formulas in the variables $x, y$, taken here over a relational signature of unary and binary relation symbols with equality; it is the intersection of [two-variable logic](../two-variable-logic-and-its-extensions/two-variable-logic-and-its-counting-extension.md) $\mathrm{FO}^2$ with the guarded fragment.
 
-$$
-\forall u\, (\gamma \rightarrow \varphi) \quad \text{and} \quad \exists u\, (\gamma \wedge \varphi)
-$$
-
-whenever $\varphi$ is in $\mathrm{GF}^2$, $\gamma$ is an atomic formula, possibly an equality, containing all free variables of $\varphi$, and $u \in \{x, y\}$ is a free variable of $\gamma$. The atom $\gamma$ is the *guard*.
-
-**Distinguished relations.** In an extension of $\mathrm{GF}^2$ some binary symbols are *special*: each must be interpreted as a transitive relation, an equivalence relation or a linear order, as the extension prescribes. A formula is (finitely) satisfiable if it has a (finite) model in which every special symbol has its required interpretation. Unless stated otherwise, special symbols may occur anywhere in a formula. In the variants *with special guards*, they may occur only as guards.
+**Distinguished relations.** An extension of $\mathrm{GF}^2$ may declare some binary symbols *special* and require each to be interpreted as a transitive relation, an [equivalence relation](../../../../Order/ordered-sets/equivalence-relation.md) or a linear order, as the extension prescribes. A formula is (finitely) satisfiable if it has a (finite) model in which every special symbol has its required interpretation. Unless stated otherwise, special symbols may occur anywhere in a formula. In the variants *with special guards*, they may occur only as guards.
 
 ## Depends on
 
+- [Guarded fragment of first-order logic](guarded-fragment.md)
 - [Two-variable logic and its counting extension](../two-variable-logic-and-its-extensions/two-variable-logic-and-its-counting-extension.md)
 - [Equivalence relation](../../../../Order/ordered-sets/equivalence-relation.md)
 
