@@ -21,12 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
-public import Mathlib.Combinatorics.SimpleGraph.Hasse
-public import Mathlib.Combinatorics.SimpleGraph.Prod
-public import Mathlib.Data.Nat.Dist
+public import CSLibExt.Complexity.NPComplete.SatogaeriDefs
 
 @[expose] public section
 
@@ -72,67 +67,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number of regions `R`, and the grid row by row, each cell
-`(region, clue)` with clue `0` (no circle), `1` (circle without a number) or `d + 2` (circle
-with number `d`). -/
-abbrev SatogaeriInstance := ℕ × List (List (ℕ × ℕ))
-
-/-- The number of rows. -/
-def rows (i : SatogaeriInstance) : ℕ := i.2.length
-
-/-- The number of columns (the length of the first row). -/
-def cols (i : SatogaeriInstance) : ℕ := (i.2.headD []).length
-
-/-- A cell of the grid. -/
-abbrev Cell (i : SatogaeriInstance) := Fin (rows i) × Fin (cols i)
-
-/-- The entry `(region, clue)` of cell `x`. -/
-def cell (i : SatogaeriInstance) (x : Cell i) : ℕ × ℕ :=
-  (i.2.getD x.1 []).getD x.2 (0, 0)
-
-/-- The grid graph on the cells: cells sharing a side are adjacent. -/
-abbrev Grid (i : SatogaeriInstance) : SimpleGraph (Cell i) :=
-  SimpleGraph.pathGraph (rows i) □ SimpleGraph.pathGraph (cols i)
-
-/-- Well-formedness: at least one row and one column, rows of equal length, region indices
-below `R`, and every region a nonempty connected set of cells. -/
-def WellFormed (i : SatogaeriInstance) : Prop :=
-  0 < rows i ∧ 0 < cols i ∧ (∀ row ∈ i.2, row.length = cols i) ∧
-    (∀ row ∈ i.2, ∀ e ∈ row, e.1 < i.1) ∧
-    ∀ k < i.1, ((Grid i).induce {x | (cell i x).1 = k}).Connected
-
-/-- Cell `z` lies on the track from `x` to `y` (cells of a common row or column): the segment
-of cells between them, both included. -/
-def OnTrack {i : SatogaeriInstance} (x y z : Cell i) : Prop :=
-  (z.1 = x.1 ∧ y.1 = x.1 ∧ min x.2 y.2 ≤ z.2 ∧ z.2 ≤ max x.2 y.2) ∨
-    (z.2 = x.2 ∧ y.2 = x.2 ∧ min x.1 y.1 ≤ z.1 ∧ z.1 ≤ max x.1 y.1)
-
-/-- The destinations `D` satisfy rules 1-3. -/
-def Solves (i : SatogaeriInstance) (D : Cell i → Cell i) : Prop :=
-  -- each circle moves straight: its destination is in its row or its column
-  (∀ x, (cell i x).2 ≠ 0 → (D x).1 = x.1 ∨ (D x).2 = x.2) ∧
-  -- 2. a circle with number `d` moves exactly `d` cells
-  (∀ x, 2 ≤ (cell i x).2 →
-    Nat.dist x.1 (D x).1 + Nat.dist x.2 (D x).2 = (cell i x).2 - 2) ∧
-  -- 3. the tracks of different circles are disjoint
-  (∀ x y, (cell i x).2 ≠ 0 → (cell i y).2 ≠ 0 → x ≠ y →
-    ∀ z, ¬ (OnTrack x (D x) z ∧ OnTrack y (D y) z)) ∧
-  -- 1. every region contains the destination of exactly one circle
-  ∀ k < i.1, ∃! x, (cell i x).2 ≠ 0 ∧ (cell i (D x)).1 = k
-
-/-- Some destinations of the circles satisfy the rules. -/
-def SatogaeriFeasible (i : SatogaeriInstance) : Prop :=
-  ∃ D : Cell i → Cell i, Solves i D
-
-open Classical in
-/-- SATOGAERI as a decision problem over bitstrings. -/
-noncomputable def satogaeriDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SatogaeriInstance) x with
-  | some i => decide (WellFormed i ∧ SatogaeriFeasible i)
-  | none => false
 
 /-- **SATOGAERI is NP-complete.** Source: Kanehiro and Takenaga (2015). -/
 public theorem_wanted satogaeri_npComplete :

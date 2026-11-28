@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
-public import Mathlib.Data.Fintype.Basic
+public import CSLibExt.Complexity.NPComplete.SantaClausDefs
 
 @[expose] public section
 
@@ -59,35 +56,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number `m` of goods, one row `(vᵢ(0), …, vᵢ(m - 1))` of valuations per agent
-`i`, and the bound `T`. -/
-abbrev SantaClausInstance := ℕ × List (List ℕ) × ℕ
-
-/-- The agents of the instance, `Fin k` for `k` rows. -/
-abbrev Agent (inst : SantaClausInstance) : Type := Fin inst.2.1.length
-
-/-- The value `vᵢ(j)` of good `j` for agent `i`. -/
-def value (inst : SantaClausInstance) (i : Agent inst) (j : Fin inst.1) : ℕ :=
-  (inst.2.1.get i).getD j 0
-
-/-- Well-formedness of an instance: there is at least one agent, and every agent's row has one
-valuation per good. -/
-def WellFormed (inst : SantaClausInstance) : Prop :=
-  inst.2.1 ≠ [] ∧ ∀ r ∈ inst.2.1, r.length = inst.1
-
-/-- Some allocation `f` of the goods to the agents gives every agent total value at least `T`. -/
-def SantaClausFeasible (inst : SantaClausInstance) : Prop :=
-  ∃ f : Fin inst.1 → Agent inst, ∀ i, inst.2.2 ≤ ∑ j ∈ Finset.univ.filter (f · = i), value inst i j
-
-open Classical in
-/-- SANTA CLAUS as a decision problem over bitstrings. -/
-noncomputable def santaClausDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SantaClausInstance) x with
-  | some i => decide (WellFormed i ∧ SantaClausFeasible i)
-  | none => false
 
 /-- **SANTA CLAUS (MAX-MIN FAIR ALLOCATION) is NP-complete.** Source: Bezáková and Dani (2005);
 Deuermeyer, Friesen and Langston (1982). -/

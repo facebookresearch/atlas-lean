@@ -19,12 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Clique
-public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
-public import Mathlib.Data.Finset.Basic
+public import CSLibExt.Complexity.NPComplete.WeakBisplitRecognitionDefs
 
 @[expose] public section
 
@@ -69,39 +64,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `0, …, n - 1`) and edge list. -/
-abbrev WeakBisplitRecognitionInstance := ℕ × List (ℕ × ℕ)
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : WeakBisplitRecognitionInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `0, …, n - 1` (no
-duplicate edges in either orientation, no self-loops, endpoints in range). -/
-def WellFormed (i : WeakBisplitRecognitionInstance) : Prop :=
-  i.2.Nodup ∧ ∀ e ∈ i.2, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2
-
-/-- `G` is weak bisplit: some stable set `X` has every connected component of `G[V \ X]` a
-bi-clique, with sides given by `s`: two vertices outside `X` that are joined by a path outside
-`X` are adjacent exactly when they lie on different sides. -/
-def IsWeakBisplit {n : ℕ} (G : SimpleGraph (Fin n)) : Prop :=
-  ∃ X : Finset (Fin n), G.IsIndepSet (X : Set (Fin n)) ∧ ∃ s : Fin n → Bool,
-    ∀ u v : ↥(X : Set (Fin n))ᶜ, (G.induce (X : Set (Fin n))ᶜ).Reachable u v →
-      (G.Adj u v ↔ s u ≠ s v)
-
-/-- The graph of the instance is weak bisplit. -/
-def WeakBisplitRecognitionFeasible (i : WeakBisplitRecognitionInstance) : Prop :=
-  IsWeakBisplit (Graph i)
-
-open Classical in
-/-- WEAK BISPLIT GRAPH RECOGNITION as a decision problem over bitstrings. -/
-noncomputable def weakBisplitRecognitionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := WeakBisplitRecognitionInstance) x with
-  | some i => decide (WellFormed i ∧ WeakBisplitRecognitionFeasible i)
-  | none => false
 
 /-- **WEAK BISPLIT GRAPH RECOGNITION is NP-complete.** Source: Brandstädt, Hammer, Le and Lozin
 (2005), Theorem 15. -/

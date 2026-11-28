@@ -17,8 +17,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.TetravexDefs
 
 @[expose] public section
 
@@ -46,37 +45,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the side length `n` and the list of tiles; a tile `(a, b, c, d)` is labelled
-top `a`, right `b`, bottom `c`, left `d`. -/
-abbrev TetravexInstance := ℕ × List (ℕ × ℕ × ℕ × ℕ)
-
-/-- Well-formedness of an instance: there are exactly `n²` tiles. -/
-def WellFormed (i : TetravexInstance) : Prop :=
-  i.2.length = i.1 * i.1
-
-/-- A Tetravex solution: `f x y` is the index (in the tile list) of the tile placed at position
-`(x, y)`. Every position gets a tile, distinct positions get distinct tiles (with `n²` tiles and
-`n²` positions, every tile is placed exactly once), horizontally neighbouring tiles agree on
-the right and left labels, and vertically neighbouring tiles agree on the bottom and top
-labels. -/
-def TetravexFeasible (i : TetravexInstance) : Prop :=
-  ∃ f : ℕ → ℕ → ℕ,
-    (∀ x < i.1, ∀ y < i.1, f x y < i.2.length) ∧
-    (∀ x < i.1, ∀ y < i.1, ∀ x' < i.1, ∀ y' < i.1, f x y = f x' y' → x = x' ∧ y = y') ∧
-    (∀ x y, x + 1 < i.1 → y < i.1 →
-      (i.2.getD (f x y) (0, 0, 0, 0)).2.1 = (i.2.getD (f (x + 1) y) (0, 0, 0, 0)).2.2.2) ∧
-    (∀ x y, x < i.1 → y + 1 < i.1 →
-      (i.2.getD (f x y) (0, 0, 0, 0)).2.2.1 = (i.2.getD (f x (y + 1)) (0, 0, 0, 0)).1)
-
-open Classical in
-/-- TETRAVEX as a decision problem over bitstrings. -/
-noncomputable def tetravexDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TetravexInstance) x with
-  | some i => decide (WellFormed i ∧ TetravexFeasible i)
-  | none => false
 
 /-- **TETRAVEX is NP-complete.** Source: Takenaga and Walsh (2006). -/
 public theorem_wanted tetravex_npComplete :

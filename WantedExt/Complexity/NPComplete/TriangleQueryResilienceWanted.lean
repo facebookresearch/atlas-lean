@@ -20,10 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Databases.ConjunctiveQueries
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import CSLibExt.Complexity.NPComplete.TriangleQueryResilienceDefs
 
 @[expose] public section
 
@@ -60,41 +57,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- The triangle query `q△ :- R(x, y), S(y, z), T(z, x)`, with `R, S, T` named `0, 1, 2` and
-`x, y, z` numbered `0, 1, 2`. -/
-def triangleQuery : CQ := ⟨[], [(0, [0, 1]), (1, [1, 2]), (2, [2, 0])]⟩
-
-/-- An instance: the tuples of `R`, `S` and `T`, and the bound `k`. -/
-abbrev TriangleQueryResilienceInstance :=
-  List (ℕ × ℕ) × List (ℕ × ℕ) × List (ℕ × ℕ) × ℕ
-
-/-- The database of the instance: relation `0` is `R`, `1` is `S`, `2` is `T`, and every other
-relation is empty. -/
-def database (i : TriangleQueryResilienceInstance) : DB := fun r =>
-  ((if r = 0 then i.1 else if r = 1 then i.2.1 else if r = 2 then i.2.2.1 else []).map
-    fun t => [t.1, t.2]).toFinset
-
-/-- Well-formedness of an instance: no relation lists a tuple twice. -/
-def WellFormed (i : TriangleQueryResilienceInstance) : Prop :=
-  i.1.Nodup ∧ i.2.1.Nodup ∧ i.2.2.1.Nodup
-
-/-- `(D, k) ∈ RES(q△)`: `D ⊨ q△`, and deleting at most `k` tuples of `D` leaves a database
-`D'` with `D' ⊭ q△`. -/
-def TriangleQueryResilienceFeasible (i : TriangleQueryResilienceInstance) : Prop :=
-  (∃ σ, Satisfies (database i) triangleQuery σ) ∧
-    ∃ D' : DB, (∀ r, D' r ⊆ database i r) ∧
-      ∑ r ∈ Finset.range 3, (database i r \ D' r).card ≤ i.2.2.2 ∧
-      ¬ ∃ σ, Satisfies D' triangleQuery σ
-
-open Classical in
-/-- RESILIENCE OF THE TRIANGLE QUERY as a decision problem over bitstrings. -/
-noncomputable def triangleQueryResilienceDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TriangleQueryResilienceInstance) x with
-  | some i => decide (WellFormed i ∧ TriangleQueryResilienceFeasible i)
-  | none => false
 
 /-- **RESILIENCE OF THE TRIANGLE QUERY is NP-complete.** Source: Freire, Gatterbauer, Immerman
 and Meliou (2015), Proposition 10. -/

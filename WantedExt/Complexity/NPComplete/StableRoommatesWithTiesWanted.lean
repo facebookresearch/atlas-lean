@@ -20,10 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Logic.Function.Basic
-public import Mathlib.Data.Fin.Basic
+public import CSLibExt.Complexity.NPComplete.StableRoommatesWithTiesDefs
 
 @[expose] public section
 
@@ -58,41 +55,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number `n` of agents and the rank table; row `v`, entry `w` is the rank of
-`w` in agent `v`'s preference list (smaller is better, equal ranks are ties). -/
-abbrev StableRoommatesWithTiesInstance := ℕ × List (List ℕ)
-
-/-- The rank of agent `w` in agent `v`'s preference list. -/
-def rank (i : StableRoommatesWithTiesInstance) (v w : Fin i.1) : ℕ :=
-  (i.2.getD v []).getD w 0
-
-/-- The edge `vw` blocks the matching with partner function `μ`: `v ≠ w`, they are not matched
-to each other, `v` is unmatched or strictly prefers `w` to its partner, and `w` is unmatched
-or strictly prefers `v` to its partner. -/
-def Blocks (i : StableRoommatesWithTiesInstance) (μ : Fin i.1 → Fin i.1) (v w : Fin i.1) :
-    Prop :=
-  v ≠ w ∧ μ v ≠ w ∧ (μ v = v ∨ rank i v w < rank i v (μ v)) ∧
-    (μ w = w ∨ rank i w v < rank i w (μ w))
-
-/-- Well-formedness of an instance: one rank row per agent, each with an entry for every
-agent. -/
-def WellFormed (i : StableRoommatesWithTiesInstance) : Prop :=
-  i.2.length = i.1 ∧ ∀ row ∈ i.2, row.length = i.1
-
-/-- The instance is solvable: some matching (an involutive partner function) is blocked by no
-edge. -/
-def StableRoommatesWithTiesFeasible (i : StableRoommatesWithTiesInstance) : Prop :=
-  ∃ μ : Fin i.1 → Fin i.1, Function.Involutive μ ∧ ∀ v w, ¬ Blocks i μ v w
-
-open Classical in
-/-- STABLE ROOMMATES WITH TIES as a decision problem over bitstrings. -/
-noncomputable def stableRoommatesWithTiesDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := StableRoommatesWithTiesInstance) x with
-  | some i => decide (WellFormed i ∧ StableRoommatesWithTiesFeasible i)
-  | none => false
 
 /-- **STABLE ROOMMATES WITH TIES (weak stability, complete lists) is NP-complete.** Source:
 Ronn (1990); Cseh, Irving and Manlove (2019), Section 1. -/

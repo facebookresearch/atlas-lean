@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.ShortestCommonSuperstringWanted
+public import CSLibExt.Complexity.NPComplete.ShortestCommonSuperstringBinaryDefs
 
 @[expose] public section
 
@@ -51,21 +49,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the instance is well-formed for SHORTEST COMMON
-SUPERSTRING, and the alphabet has two symbols. -/
-def WellFormed (i : ShortestCommonSuperstring.ShortestCommonSuperstringInstance) : Prop :=
-  ShortestCommonSuperstring.WellFormed i ∧ i.1 = 2
-
-open Classical in
-/-- SHORTEST COMMON SUPERSTRING over a binary alphabet as a decision problem over bitstrings. -/
-noncomputable def shortestCommonSuperstringBinaryDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ShortestCommonSuperstring.ShortestCommonSuperstringInstance) x with
-  | some i =>
-      decide (WellFormed i ∧ ShortestCommonSuperstring.ShortestCommonSuperstringFeasible i)
-  | none => false
 
 /-- **SHORTEST COMMON SUPERSTRING over a binary alphabet is NP-complete.** Source: Garey and
 Johnson (1979), [SR9], comment; Gallant, Maier, and Storer (1980). -/
