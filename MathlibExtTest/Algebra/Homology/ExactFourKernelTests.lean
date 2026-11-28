@@ -15,6 +15,7 @@ module
 public import MathlibExt.Algebra.Homology.ExactSequenceFour
 public import MathlibExt.Algebra.Homology.ShortComplex.KernelSequence
 public import Mathlib.Algebra.Category.ModuleCat.Abelian
+public import Mathlib.Algebra.Homology.ShortComplex.ModuleCat
 public import Mathlib.Tactic.NormNum
 
 /-!
@@ -91,16 +92,20 @@ private abbrev extracted := exactSequenceFourShortComplex row row_exact
 
 example : extracted.ShortExact := exactSequenceFourShortComplex_shortExact row row_exact
 
-example : extracted.f.hom ((cokernel.π (row.map' 0 1)).hom 3) = (3, 0) :=
-  ConcreteCategory.congr_hom (exactSequenceFourShortComplex_π_f row row_exact) 3
+example : extracted.f.hom ((cokernel.π (row.map' 0 1)).hom (3 : ℤ)) = (3, 0) := by
+  have h := exactSequenceFourShortComplex_π_f row row_exact
+  change cokernel.π (row.map' 0 1) ≫ extracted.f = inclusion at h
+  exact ConcreteCategory.congr_hom h (3 : ℤ)
 
-example : (kernel.ι (row.map' 3 4)).hom (extracted.g.hom (2, 3)) = 3 :=
-  ConcreteCategory.congr_hom (exactSequenceFourShortComplex_g_ι row row_exact) (2, 3)
+example : (kernel.ι (row.map' 3 4)).hom (extracted.g.hom (2, 3)) = (3 : ℤ) := by
+  have h := exactSequenceFourShortComplex_g_ι row row_exact
+  change extracted.g ≫ kernel.ι (row.map' 3 4) = projection at h
+  exact ConcreteCategory.congr_hom h ((2 : ℤ), (3 : ℤ))
 
-private def scalarComplex : ChainComplex E ℕ :=
+private abbrev scalarComplex : ChainComplex E ℕ :=
   ChainComplex.of (fun _ => N) (fun _ => 0) (by intro n; simp)
 
-private def productComplex : ChainComplex E ℕ :=
+private abbrev productComplex : ChainComplex E ℕ :=
   ChainComplex.of (fun _ => P) (fun _ => 0) (by intro n; simp)
 
 private theorem scalar_d_zero (i j : ℕ) : scalarComplex.d i j = 0 := by
@@ -155,6 +160,7 @@ private theorem kernelOne_ne_zero : kernelOne ≠ 0 := by
     (kernelCoordinate.hom.hom x)) hzero
   rw [kernelOne_value, map_zero, map_zero] at h
   have hf := congrArg Prod.fst h
+  change (1 : ℤ) = 0 at hf
   norm_num at hf
 
 example : ((epimorphism.f 0).hom (2, 3)) = 3 := rfl
@@ -168,7 +174,7 @@ example : ¬ (kernel epimorphism).Acyclic := by
   intro h
   have hz := (h 0).isZero_homology
   let _ : Subsingleton ((kernel epimorphism).homology 0) :=
-    (ModuleCat.isZero_iff_subsingleton _).mp hz
+    ModuleCat.isZero_iff_subsingleton.mp hz
   exact kernelOne_ne_zero (Subsingleton.elim _ _)
 
 example : ¬ QuasiIso epimorphism := by
@@ -176,7 +182,7 @@ example : ¬ QuasiIso epimorphism := by
   have hk := (HomologicalComplex.quasiIso_iff_acyclic_kernel epimorphism).mp h
   have hz := (hk 0).isZero_homology
   let _ : Subsingleton ((kernel epimorphism).homology 0) :=
-    (ModuleCat.isZero_iff_subsingleton _).mp hz
+    ModuleCat.isZero_iff_subsingleton.mp hz
   exact kernelOne_ne_zero (Subsingleton.elim _ _)
 
 end MathlibExtTest.ExactFourKernel

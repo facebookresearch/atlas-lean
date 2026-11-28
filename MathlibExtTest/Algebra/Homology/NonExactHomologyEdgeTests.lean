@@ -56,13 +56,22 @@ private def reduction : N ⟶ T :=
 private theorem exact_twice_reduction : Function.Exact twice.hom reduction.hom := by
   intro x
   change (x : ZMod 2) = 0 ↔ ∃ y : ℤ, (2 : ℤ) • y = x
-  simpa only [smul_eq_mul] using ZMod.intCast_zmod_eq_zero_iff_dvd x 2
+  constructor
+  · intro hx
+    obtain ⟨y, hy⟩ := (ZMod.intCast_zmod_eq_zero_iff_dvd x 2).mp hx
+    exact ⟨y, by simpa only [smul_eq_mul, eq_comm] using hy⟩
+  · rintro ⟨y, hy⟩
+    apply (ZMod.intCast_zmod_eq_zero_iff_dvd x 2).mpr
+    exact ⟨y, by simpa only [smul_eq_mul, eq_comm] using hy⟩
 
-private theorem reduction_surjective : Function.Surjective reduction.hom :=
-  ZMod.intCast_surjective
+private theorem reduction_surjective : Function.Surjective reduction.hom := by
+  change Function.Surjective (fun x : ℤ => (x : ZMod 2))
+  exact ZMod.intCast_surjective
 
 private theorem twice_reduction : twice ≫ reduction = 0 := by
-  ext x
+  apply ModuleCat.hom_ext
+  apply LinearMap.ext
+  intro x
   exact exact_twice_reduction.apply_apply_eq_zero x
 
 private def S : ShortComplex E := ShortComplex.mk twice (0 : N ⟶ Z) (by simp)
@@ -76,16 +85,23 @@ private def homologyCoordinate : S.homology ≅ T :=
 private abbrev F : E ⥤ AddCommGrpCat.{0} := preadditiveCoyoneda.obj (op T)
 
 private theorem hom_to_integer_zero (f : T ⟶ N) : f = 0 := by
-  ext x
-  have hx : (2 : ℤ) • x = 0 := by norm_num [zsmul_eq_mul]
+  apply ModuleCat.hom_ext
+  apply LinearMap.ext
+  intro x
+  change (f.hom x : ℤ) = 0
+  have hx : (2 : ℤ) • x = 0 := by
+    change (2 : ZMod 2) * (x : ZMod 2) = 0
+    norm_num
   have hfx : (2 : ℤ) • f.hom x = 0 := by
     rw [← f.hom.map_smul, hx, map_zero]
   have hmul : 2 * f.hom x = 0 := by simpa only [smul_eq_mul] using hfx
+  change (2 : ℤ) * (f.hom x : ℤ) = 0 at hmul
   omega
 
 private theorem mapped_middle_isZero : IsZero (F.obj N) := by
   let _ : Subsingleton (T ⟶ N) := ⟨fun f g =>
     (hom_to_integer_zero f).trans (hom_to_integer_zero g).symm⟩
+  change IsZero (AddCommGrpCat.of (T ⟶ N))
   exact AddCommGrpCat.isZero_of_subsingleton _
 
 private theorem endomorphism_group_not_isZero : ¬ IsZero (F.obj T) := by

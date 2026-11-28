@@ -42,7 +42,7 @@ namespace MathlibExtTest.CokernelBoundaryHomology
 private abbrev E := ModuleCat.{0} ℤ
 private abbrev N : E := ModuleCat.of ℤ ℤ
 
-private def K : ChainComplex E ℕ :=
+private abbrev K : ChainComplex E ℕ :=
   ChainComplex.of (fun _ => N) (fun _ => 0) (by intro n; simp)
 
 private theorem differential_zero (i j : ℕ) : K.d i j = 0 := by
@@ -92,7 +92,8 @@ example : zeroComparison.hom = homologyMap (cokernel.π (spike 1)) 0 := by
   simpa only [zeroComparison, cokernelHomologyZeroIso] using
     cokernelHomologyIsoOfZeroComponents_hom (spike 1) 0
       (spike_away 1 0 (by decide)) (by
-        simpa only [ChainComplex.next_nat_zero] using spike_away 1 0 (by decide))
+        erw [ChainComplex.next_nat_zero]
+        exact spike_away 1 0 (by decide))
 
 private theorem zeroComparison_one_ne_zero : (zeroComparison.hom).hom (oneClass 0) ≠ 0 := by
   intro h
@@ -114,7 +115,8 @@ example : oneComparison.hom = homologyMap (cokernel.π (spike 2)) 1 := by
   simpa only [oneComparison, cokernelHomologyOneIso] using
     cokernelHomologyIsoOfZeroComponents_hom (spike 2) 1
       (spike_away 2 1 (by decide)) (by
-        simpa only [ChainComplex.next_nat_succ 0] using spike_away 2 0 (by decide))
+        erw [ChainComplex.next_nat_succ (0 : ℕ)]
+        exact spike_away 2 0 (by decide))
 
 example : (oneComparison.hom).hom (oneClass 1) ≠ 0 := by
   intro h
@@ -138,8 +140,12 @@ example :
 example :
     (imageCokernelHomologyIso (spike 1) 0).hom.hom
       ((homologyMap (cokernel.π (Abelian.image.ι (spike 1))) 0).hom (oneClass 0)) ≠ 0 := by
-  rw [ConcreteCategory.congr_hom
-    (imageCokernelHomologyIso_projection (spike 1) 0) (oneClass 0)]
+  have h := ConcreteCategory.congr_hom
+    (imageCokernelHomologyIso_projection (spike 1) 0) (oneClass 0)
+  change (imageCokernelHomologyIso (spike 1) 0).hom.hom
+    ((homologyMap (cokernel.π (Abelian.image.ι (spike 1))) 0).hom (oneClass 0)) =
+      (homologyMap (cokernel.π (spike 1)) 0).hom (oneClass 0) at h
+  rw [h]
   change zeroComparison.hom.hom (oneClass 0) ≠ 0
   exact zeroComparison_one_ne_zero
 
@@ -147,8 +153,12 @@ example :
     (coimageCokernelHomologyIso (spike 1) 0).hom.hom
       ((homologyMap (cokernel.π (Abelian.factorThruCoimage (spike 1))) 0).hom
         (oneClass 0)) ≠ 0 := by
-  rw [ConcreteCategory.congr_hom
-    (coimageCokernelHomologyIso_projection (spike 1) 0) (oneClass 0)]
+  have h := ConcreteCategory.congr_hom
+    (coimageCokernelHomologyIso_projection (spike 1) 0) (oneClass 0)
+  change (coimageCokernelHomologyIso (spike 1) 0).hom.hom
+    ((homologyMap (cokernel.π (Abelian.factorThruCoimage (spike 1))) 0).hom (oneClass 0)) =
+      (homologyMap (cokernel.π (spike 1)) 0).hom (oneClass 0) at h
+  rw [h]
   change zeroComparison.hom.hom (oneClass 0) ≠ 0
   exact zeroComparison_one_ne_zero
 
