@@ -271,13 +271,14 @@ theorem gradeMap_comp
       (LinearMap.comp_apply (g.stageMap m q) (f.stageMap m q) x)
   calc
     (f.comp g).gradeMap m q (Submodule.Quotient.mk (p := nextStage R M N m q) x) =
-        Submodule.Quotient.mk (p := nextStage R M'' N'' m q)
-          ((f.comp g).stageMap m q x) :=
+        (Submodule.Quotient.mk (p := nextStage R M'' N'' m q)
+          ((f.comp g).stageMap m q x) : associatedGraded R M'' N'' m q) :=
       (f.comp g).gradeMap_mk m q x
-    _ = Submodule.Quotient.mk (p := nextStage R M'' N'' m q)
-          (g.stageMap m q (f.stageMap m q x)) :=
+    _ = (Submodule.Quotient.mk (p := nextStage R M'' N'' m q)
+          (g.stageMap m q (f.stageMap m q x)) : associatedGraded R M'' N'' m q) :=
       congrArg (fun y : filtration R M'' N'' m q =>
-        Submodule.Quotient.mk (p := nextStage R M'' N'' m q) y) hs
+        (Submodule.Quotient.mk (p := nextStage R M'' N'' m q) y :
+          associatedGraded R M'' N'' m q)) hs
     _ = g.gradeMap m q
           (Submodule.Quotient.mk (p := nextStage R M' N' m q) (f.stageMap m q x)) :=
       (g.gradeMap_mk m q (f.stageMap m q x)).symm
