@@ -4,7 +4,7 @@
 
 $$dS=\big[\mu_{\alpha}-\lambda_{\alpha}SI+\gamma_{\alpha}I-\mu_{\alpha}S\big]dt-\sigma_{\alpha}SI\,dw,\qquad dI=\big[\lambda_{\alpha}SI-(\mu_{\alpha}+\gamma_{\alpha}+C)I\big]dt+\sigma_{\alpha}SI\,dw,$$
 
-with $\alpha=\alpha(t)$, $C(t)$ taking values in a compact set $\mathcal U\subset[0,\infty)$ containing $0$.
+with $\alpha=\alpha(t)$, $C(t)$ taking values in a compact set $\mathcal U\subset[0,\infty)$ containing $0$, and $\mu_\ell$, $\gamma_\ell$, $\lambda_\ell$ nonnegative for each $\ell\in\mathcal M$ (the source's assumption (A)).
 
 **Theorem (well-posedness).** For $(s_0,i_0)\in(0,1)^2$ with $s_0+i_0=1$, any $\ell_0\in\mathcal M$ and constant control $C\equiv c_0\in\mathcal U$, there is a unique global solution with $(S(t),I(t))\in(0,1)^2$ and $S(t)+I(t)=1$ for all $t\ge0$, almost surely. Hence $I$ solves the switching stochastic logistic equation
 
@@ -20,11 +20,17 @@ $$\min_{c\in\mathcal U}\Big[b(i,\ell,c)V_i+\tfrac12a(i,\ell)V_{ii}+\sum_{\iota}\
 
 with $b(i,\ell,c)=i(\lambda_\ell-\mu_\ell-\gamma_\ell-\lambda_\ell i-c)$ and $a(i,\ell)=\sigma_\ell^2i^2(1-i)^2$.
 
-**Theorem (convergence of the approximating chains).** Let $(I^h_n,\alpha^h_n)$ be a controlled Markov chain on the grid $\{kh\}\times\mathcal M$ whose transition probabilities are locally consistent with the controlled switching diffusion (matching conditional mean and variance of the increments of $I$, and the switching rates of $\alpha$, to first order in the interpolation interval), with value function $V^h$ defined by the discrete dynamic programming equation. Then the interpolated processes, together with their drift and martingale parts, relaxed controls and stopping times, are tight, every weak limit solves the controlled switching diffusion with a relaxed control, and
+**Theorem (convergence of the approximating chains).** Let $(I^h_n,\alpha^h_n)$ be the controlled Markov chain on $\{kh\}\times\mathcal M$ with
+
+$$Q_h(i,\ell,c)=a(i,\ell)+h|b(i,\ell,c)|-h^2\Lambda_{\ell\ell}+h,\qquad p^h\big((i,\ell),(i\pm h,\ell)\mid c\big)=\frac{a(i,\ell)/2+b(i,\ell,c)^{\pm}h}{Q_h(i,\ell,c)},$$
+
+$$p^h\big((i,\ell),(i,\ell')\mid c\big)=\frac{h^2\Lambda_{\ell\ell'}}{Q_h(i,\ell,c)}\ (\ell'\ne\ell),\qquad p^h\big((i,\ell),(i,\ell)\mid c\big)=\frac{h}{Q_h(i,\ell,c)},\qquad \Delta t^h(i,\ell,c)=\frac{h^2}{Q_h(i,\ell,c)},$$
+
+all other transition probabilities $0$, where $r^+=\max\{r,0\}$ and $r^-=-\min\{r,0\}$ (Section 3.2; locally consistent with the controlled switching diffusion by Lemma 3.1, including $\sup_{n,\omega}|\Delta I^h_n|\to0$ as $h\to0$), and let $V^h$ be its value function, defined by the discrete dynamic programming equation. The source's display of $Q_h$ prints "$a(i,\ell,c)+h|b(i,\ell)|$"; the page writes $a(i,\ell)+h|b(i,\ell,c)|$ because $a$ does not depend on the control and $b$ does, as in the transition probabilities printed directly below it. Then the interpolated processes, together with their drift and martingale parts, relaxed controls and stopping times, are tight, every weak limit solves the controlled switching diffusion with a relaxed control, and
 
 $$V^h(i,\ell)\to V(i,\ell)\qquad (h\to0).$$
 
-The same well-posedness and value-function convergence hold for the SIS model with vaccination of newborns and susceptibles and waning vaccine immunity, controlled jointly by treatment and the vaccination rates.
+The same well-posedness and value-function convergence, for the analogous chain the source constructs in Section 4, hold for the SIS model with vaccination of newborns and susceptibles and waning vaccine immunity, controlled jointly by treatment and the vaccination rates.
 
 ## Depends on
 

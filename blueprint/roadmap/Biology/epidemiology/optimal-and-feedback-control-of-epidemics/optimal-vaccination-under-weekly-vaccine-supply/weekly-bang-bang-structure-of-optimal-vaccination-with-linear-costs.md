@@ -4,7 +4,7 @@
 
 $$\dot s^{(i)} = -s^{(i)} f_i(\boldsymbol{x}) - u_i s^{(i)}, \qquad \dot x^{(i)} = s^{(i)} f_i(\boldsymbol{x})\,e_1 + g(x^{(i)}), \qquad \dot V = \sum_{i=1}^K u_i\,n_i\,s^{(i)},$$
 
-with $f_i \ge 0$ the force of infection, $g$ the within-group progression ($\sum_j g_j = 0$, $g(0) = 0$, essentially nonnegative). Vaccination capacity gives the mixed constraint $0 \le u_i s^{(i)} \le v_i^{\max}$; weekly shipments of at most $V_w^{\max}$ doses give the cumulative supply $D(t) = \sum_{m \le w} V_m^{\max}$ on $[7w, 7(w+1))$, smoothed to $D_\epsilon$ equal to $D$ away from $\epsilon/2$-neighbourhoods of shipment days, and the pure state constraint $V(t) \le D_\epsilon(t)$. The cost is linear in the vaccination total and in a per-capita health cost $f_0 \ge 0$:
+with $f_i \ge 0$ the force of infection, $g$ the within-group progression ($\sum_j g_j = 0$, $g(0) = 0$, essentially nonnegative), $f_i$ and $g$ twice continuously differentiable, and initial data $s^{(i)}(0) > 0$, $x^{(i)}(0) \ge 0$ (componentwise), $V(0) \ge 0$. Vaccination capacity gives the mixed constraint $0 \le u_i s^{(i)} \le v_i^{\max}$; weekly shipments of at most $V_w^{\max}$ doses give the cumulative supply $D(t) = \sum_{m \le w} V_m^{\max}$ on $[7w, 7(w+1))$, smoothed to $D_\epsilon$ equal to $D$ away from $\epsilon/2$-neighbourhoods of shipment days, and the pure state constraint $V(t) \le D_\epsilon(t)$. The cost is linear in the vaccination total and in a per-capita health cost $f_0 \ge 0$:
 
 $$J[u] = c_v\,V(T) + \sum_{i=1}^K \int_0^T n_i\, f_0\big(x^{(i)}(t)\big)\,dt, \qquad c_v > 0.$$
 

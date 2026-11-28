@@ -4,7 +4,7 @@
 
 $$\dot S=-\beta SI(1-u),\qquad \dot I=\beta SI(1-u)-\gamma I ,$$
 
-with $\mathcal R_0=\beta/\gamma>1$, herd-immunity threshold $S_h=\gamma/\beta$ and initial state $(S_0,I_0)$ with $S_0>S_h$, minimize the epidemic peak $\max_{t\ge0}I(t)$ over measurable controls with total budget
+with $\mathcal R_0=\beta/\gamma>1$, herd-immunity threshold $S_h=\gamma/\beta$ and initial state $(S_0,I_0)$ with $S_0>0$, $I_0>0$, $S_0+I_0\le1$ and $S_0>S_h$, minimize the epidemic peak $\max_{t\ge0}I(t)$ over measurable controls with total budget
 
 $$\int_0^\infty u(t)\,dt\le Q .$$
 

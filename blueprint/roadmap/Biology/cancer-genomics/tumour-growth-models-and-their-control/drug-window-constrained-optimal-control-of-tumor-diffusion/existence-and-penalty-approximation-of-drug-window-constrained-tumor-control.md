@@ -11,7 +11,9 @@ with $M_0 > 0$ and the hypotheses
 
 **Problem (P).** For $\lambda > 0$ minimize $J(y,u) = \tfrac12\|y\|^2_{L^2(\Omega\times(0,T))} + \tfrac{\lambda}{2}\|u\|^2_{L^2(0,T)}$ subject to the state equations and the **therapeutic window**
 
-$$s(t) \le s_+ \ \text{ for } t \in (0,T), \qquad s(t) \ge s_- \ \text{ for } t \in (t_0, T).$$
+$$s(t) \le s_+ \ \text{ for } t \in (0,T), \qquad s(t) \ge s_- \ \text{ for } t \in (t_0, T),$$
+
+where $s_+$ is a constant and $s_- > 0$, $t_0 > 0$ are constants (the source's "$s_-$, $t_0$ are positive constants").
 
 **Theorem.**
 
@@ -19,8 +21,8 @@ $$s(t) \le s_+ \ \text{ for } t \in (0,T), \qquad s(t) \ge s_- \ \text{ for } t 
 
 $$\frac{1 - e^{-M_0 T}}{1 - e^{-M_0 t_0}}\, s_- \le s_+,$$
 
-then Problem (P) has a solution.
-2. *(Penalty problem.)* For $\varepsilon > 0$ replace the window constraints by the penalty $\varepsilon^{-1}\int_0^T (s - s_+)_+^2\, dt + \varepsilon^{-1}\int_{t_0}^T (s_- - s)_+^2\, dt$ added to $J$. This penalized problem $(P_\varepsilon)$ has a solution $(y_\varepsilon, s_\varepsilon, u_\varepsilon)$, and along a sequence $\varepsilon \to 0^+$, $u_\varepsilon \rightharpoonup \hat u$ weakly in $L^2(0,T)$, $y_\varepsilon \to \hat y$ strongly in $L^2(0,T; L^2(\Omega))$ and $s_\varepsilon \to \hat s$ strongly in $L^2(0,T)$, where $(\hat y, \hat u)$ solves (P).
+then Problem (P) has a solution. This compatibility inequality is the source's condition (6).
+2. *(Penalty problem.)* Under (i)–(ii) and condition (6), for $\varepsilon > 0$ replace the window constraints by the penalty $\varepsilon^{-1}\int_0^T (s - s_+)_+^2\, dt + \varepsilon^{-1}\int_{t_0}^T (s_- - s)_+^2\, dt$ added to $J$. This penalized problem $(P_\varepsilon)$ has a solution $(y_\varepsilon, s_\varepsilon, u_\varepsilon)$, and along a sequence $\varepsilon \to 0^+$, $u_\varepsilon \rightharpoonup \hat u$ weakly in $L^2(0,T)$, $y_\varepsilon \to \hat y$ strongly in $L^2(0,T; L^2(\Omega))$ and $s_\varepsilon \to \hat s$ strongly in $L^2(0,T)$, where $(\hat y, \hat u)$ solves (P). This corrects the source: its Theorem 3 is printed under "conditions (i), (ii)" only, but its proof starts from "the pair $\{y,u\}$, a solution to problem ($P$), the existence of which is guaranteed by Theorem 1", and Theorem 1 needs (6). Without (6) the printed form fails: for $s_- = 2$, $s_+ = 1$, $t_0 = T/2$ the window asks $s \le 1$ on $(0,T)$ and $s \ge 2$ on $(T/2,T)$, so (P) has no admissible pair, while $(P_\varepsilon)$ still has a solution.
 3. *(Optimality system.)* Each solution of $(P_\varepsilon)$ has a unique adjoint pair $(p_1, p_2)$ with $p_1(T) = 0$, $p_2(T) = 0$,
 
 $$-p_1' + A p_1 - d(s_\varepsilon) p_1 = -y_\varepsilon, \qquad -p_2' + M_0 p_2 + \tfrac{1}{\varepsilon}\, f_1'(s_\varepsilon) + \tfrac{1}{\varepsilon}\,\chi(s_\varepsilon, t) = d'(s_\varepsilon)\,(y_\varepsilon, p_1),$$
