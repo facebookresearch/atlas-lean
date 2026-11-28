@@ -49,11 +49,11 @@ range of `k` and hypotheses on `Xₙ` are not stated.
 open MvPolynomial
 
 /-- The points `P` of `ℙ⁴(ℂ)` at which all partial derivatives of `f` vanish at the fixed
-representative `P.rep`. For homogeneous `f` of positive degree this is the singular locus of the
-hypersurface `{f = 0}`: the condition does not depend on the representative, and these points lie
-on the hypersurface by Euler's formula. For other `f` the test can depend on the representative:
-for `f = x₀² - x₀` the gradient vanishes at `(1/2, 0, 0, 0, 0)` but not at `(1, 0, 0, 0, 0)`,
-which represent the same point. -/
+representative `P.rep`. For nonzero `f` homogeneous of positive degree this is the singular locus
+of the hypersurface `{f = 0}`: the condition does not depend on the representative, and these
+points lie on the hypersurface by Euler's formula. For other `f` the test can depend on the
+representative: for `f = x₀² - x₀` the gradient vanishes at `(1/2, 0, 0, 0, 0)` but not at
+`(1, 0, 0, 0, 0)`, which represent the same point. -/
 def singularLocus (f : MvPolynomial (Fin 5) ℂ) : Set (Projectivization ℂ (Fin 5 → ℂ)) :=
   {P | ∀ i, eval P.rep (pderiv i f) = 0}
 
@@ -63,7 +63,7 @@ noncomputable def hessianAt (f : MvPolynomial (Fin 5) ℂ) (a : Fin 5 → ℂ) :
   fun i j => eval a (pderiv j (pderiv i f))
 
 /-- Finitely many points lie in `singularLocus f`, and at each of them the Hessian of `f` at the
-representative has rank `4`. For homogeneous `f` of positive degree this says that the
+representative has rank `4`. For nonzero `f` homogeneous of positive degree this says that the
 hypersurface `{f = 0} ⊆ ℙ⁴` has at most isolated ordinary double points, and `4` is the maximum
 rank at a singular point, since the representative lies in the kernel of the Hessian by Euler's
 formula. Without homogeneity the rank can be `5`: for a fixed representative `a`, the polynomial
