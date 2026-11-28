@@ -1,6 +1,12 @@
 /-
-Copyright (c) 2025 Avocado. All rights reserved.
-Released under Apache 2.0 license as described in the file LICENSE.
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
 Authors: Avocado
 -/
 module

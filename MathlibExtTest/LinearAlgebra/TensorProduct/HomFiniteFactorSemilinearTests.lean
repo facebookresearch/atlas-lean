@@ -202,4 +202,69 @@ example : (leftFactorPair ⊗ₜ[ℚ] leftSemilinearHom :
   rw [h, map_zero, LinearMap.zero_apply, map_zero] at hv
   norm_num at hv
 
+private def rationalEquiv :
+    (((ℤ → ℤ) →ₛₗ[algebraMap ℤ ℚ] ℚ) ⊗[ℚ] ℚ) ≃ₗ[ℚ]
+      ((ℤ → ℤ) →ₛₗ[algebraMap ℤ ℚ] ℚ ⊗[ℚ] ℚ) :=
+  LinearEquiv.ofBijective
+    (TensorProduct.rTensorHomToHomRTensor (algebraMap ℤ ℚ) (ℤ → ℤ) ℚ ℚ)
+    (TensorProduct.rTensorHomToHomRTensor_bijective_of_finite_projective
+      (algebraMap ℤ ℚ) (ℤ → ℤ) ℚ ℚ)
+
+private def pairEquiv :
+    (ℤ →ₛₗ[algebraMap ℤ ℚ] ℚ) ⊗[ℚ] (Fin 2 → ℚ) ≃ₗ[ℚ]
+      (ℤ →ₛₗ[algebraMap ℤ ℚ] ℚ ⊗[ℚ] (Fin 2 → ℚ)) :=
+  LinearEquiv.ofBijective
+    (TensorProduct.rTensorHomToHomRTensor (algebraMap ℤ ℚ) ℤ ℚ (Fin 2 → ℚ))
+    (TensorProduct.rTensorHomToHomRTensor_bijective_of_finite_projective
+      (algebraMap ℤ ℚ) ℤ ℚ (Fin 2 → ℚ))
+
+-- The same three nonidentity maps also satisfy the inverse naturality square.
+example :
+    pairEquiv.symm
+        (semilinearSquareOutput (rationalEquiv (rationalEval ⊗ₜ[ℚ] (1 : ℚ)))) =
+      semilinearSquareInput (rationalEval ⊗ₜ[ℚ] (1 : ℚ)) := by
+  have h := LinearMap.congr_fun
+    (TensorProduct.rTensorHomToHomRTensor_symm_map_precomp
+      (algebraMap ℤ ℚ) (ℤ → ℤ) ℚ sourceDouble coefficientTriple factorPair)
+    (rationalEquiv (rationalEval ⊗ₜ[ℚ] (1 : ℚ)))
+  simpa only [rationalEquiv, pairEquiv, semilinearSquareInput,
+    semilinearSquareOutput, LinearMap.comp_apply, LinearEquiv.symm_apply_apply] using h
+
+example :
+    TensorProduct.piScalarRight ℚ ℚ ℚ (Fin 2)
+        (pairEquiv
+          (pairEquiv.symm
+            (semilinearSquareOutput (rationalEquiv (rationalEval ⊗ₜ[ℚ] (1 : ℚ)))))
+          (3 : ℤ)) (0 : Fin 2) = 72 := by
+  rw [LinearEquiv.apply_symm_apply]
+  norm_num [semilinearSquareOutput, rationalEquiv, sourceDouble, coefficientTriple,
+    factorPair, rationalEval, TensorProduct.rTensorHomToHomRTensor_apply,
+    TensorProduct.piScalarRight_apply, TensorProduct.piScalarRightHom_tmul]
+
+private def domainFiniteHom : ZMod 2 →ₗ[ℤ] ZMod 2 := LinearMap.id
+
+private def infiniteResidueFactor : ℕ → ZMod 2 := fun _ => 1
+
+private def residueProductProbe :
+    (ZMod 2) ⊗[ℤ] (ℕ → ZMod 2) →ₗ[ℤ] ZMod 2 :=
+  modTwoMultiply.comp ((LinearMap.proj (0 : ℕ)).lTensor (ZMod 2))
+
+-- Finite projectivity is on the Hom domain; the tensor factor is an unrestricted product.
+private theorem domain_finite_value :
+    residueProductProbe
+      (TensorProduct.rTensorHomEquivOfSurjectiveScalars
+        (R := ℤ) (S := ZMod 2) (M := ZMod 2) (J := ZMod 2)
+        (U := ℕ → ZMod 2) modTwoScalars_surjective
+        (domainFiniteHom ⊗ₜ[ℤ] infiniteResidueFactor) (1 : ZMod 2)) = 1 := by
+  rw [TensorProduct.rTensorHomEquivOfSurjectiveScalars_tmul]
+  simp [residueProductProbe, domainFiniteHom, infiniteResidueFactor, modTwoMultiply]
+
+example :
+    (domainFiniteHom ⊗ₜ[ℤ] infiniteResidueFactor :
+      ((ZMod 2) →ₗ[ℤ] ZMod 2) ⊗[ℤ] (ℕ → ZMod 2)) ≠ 0 := by
+  intro h
+  have h' := domain_finite_value
+  rw [h, map_zero, LinearMap.zero_apply, map_zero] at h'
+  exact zero_ne_one h'
+
 end HomFiniteFactorSemilinearTests
