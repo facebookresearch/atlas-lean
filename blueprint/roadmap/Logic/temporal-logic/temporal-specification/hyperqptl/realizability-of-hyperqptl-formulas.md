@@ -20,7 +20,7 @@ None.
 
 ## Expansion
 
-The traces of a strategy form a strategy tree branching on input valuations, so realizability asks for a set of traces of a special, input-complete shape, in contrast with satisfiability, which allows any set. LTL realizability is 2EXPTIME-complete (Pnueli and Rosner), and distributed realizability over architectures with information forks is undecidable.
+The traces of a strategy form a strategy tree branching on input valuations, so realizability asks for a set of traces of a special, input-complete shape, in contrast with satisfiability, which allows any set. The source recalls that distributed realizability of QPTL is undecidable in general, as for LTL, and decidable for architectures without information forks (Section 4).
 
 ## Sources
 

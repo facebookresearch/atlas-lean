@@ -22,4 +22,4 @@ None.
 
 ## Sources
 
-- Marek Chalupa, Thomas A. Henzinger and Ana Oliveira da Costa, "Flavors of quantifiers in hyperlogics", in *45th IARCS Annual Conference on Foundations of Software Technology and Theoretical Computer Science (FSTTCS 2025)*, LIPIcs 360, 20:1–20:18, 2025, doi:[10.4230/LIPIcs.FSTTCS.2025.20](https://doi.org/10.4230/LIPIcs.FSTTCS.2025.20). Numbering of the version read, arXiv:2510.12298v1: Section 3.1 (syntax and semantics of hypertrace logic, grammar (5)).
+- Marek Chalupa, Thomas A. Henzinger and Ana Oliveira da Costa, "Flavors of quantifiers in hyperlogics", in *45th IARCS Annual Conference on Foundations of Software Technology and Theoretical Computer Science (FSTTCS 2025)*, LIPIcs 360, 20:1–20:18, 2025, doi:[10.4230/LIPIcs.FSTTCS.2025.20](https://doi.org/10.4230/LIPIcs.FSTTCS.2025.20). Numbering of the version read, arXiv:2510.12298v1: Section 3.1 (syntax and semantics of hypertrace logic, grammar (5)) and Section 3.2 (the satisfiability problem).

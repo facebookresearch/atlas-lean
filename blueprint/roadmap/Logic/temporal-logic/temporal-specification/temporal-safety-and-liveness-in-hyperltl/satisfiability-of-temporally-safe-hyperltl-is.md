@@ -15,6 +15,7 @@ For general HyperLTL, satisfiability is $\Sigma^1_1$-complete (Fortin, Kuijer, T
 ## Proof depends on
 
 - [Halting is undecidable](../../../../TheoryOfComputation/computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halts.md)
+- [Every recognizable predicate many-one reduces to the halting set](../../../../TheoryOfComputation/degrees-and-hierarchies/completeness-of-the-halting-set/many-one-reducible-halting-set.md)
 
 ## Expansion
 
