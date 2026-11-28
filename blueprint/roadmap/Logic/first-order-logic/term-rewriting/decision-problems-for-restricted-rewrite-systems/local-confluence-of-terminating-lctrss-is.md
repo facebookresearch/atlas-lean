@@ -24,4 +24,4 @@ From an instance $P = \{(\alpha_1, \beta_1), \ldots, (\alpha_N, \beta_N)\}$ of t
 
 ## Sources
 
-- J. Schöpf, F. Mitterwallner and A. Middeldorp, "Confluence of Logically Constrained Rewrite Systems Revisited", in *Automated Reasoning (IJCAR 2024), Part II*, Lecture Notes in Computer Science 14740, Springer, 2024, pp. 298–316, <https://doi.org/10.1007/978-3-031-63501-4_16>; numbers from arXiv:2402.13552v5, <https://arxiv.org/abs/2402.13552v5>: Section 3: Theorem 1 and its proof (the LCTRS $\mathcal R_P$), Example 3; Section 1 for confluence.
+- J. Schöpf, F. Mitterwallner and A. Middeldorp, "Confluence of Logically Constrained Rewrite Systems Revisited", in *Automated Reasoning (IJCAR 2024), Part II*, Lecture Notes in Computer Science 14740, Springer, 2024, pp. 298–316, <https://doi.org/10.1007/978-3-031-63501-4_16>; numbers from arXiv:2402.13552v5, <https://arxiv.org/abs/2402.13552v5>: Section 3: Theorem 1 and its proof (the LCTRS $\mathcal R_P$); Section 4: Example 3; Section 1 for confluence.

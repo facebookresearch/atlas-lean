@@ -20,12 +20,13 @@ Whether the satisfiability problem of AAUL is itself co-recursively enumerable i
 
 - [The tiling problem is undecidable](../../../TheoryOfComputation/undecidable-problems/wang-tiles/the-tiling-problem-is-undecidable.md)
 - [The halting problem for single-tape machines is undecidable](../../../TheoryOfComputation/computability/halting-problem-for-single-tape-turing-machines/exists-not-tm2-decidable-tm0-halts-on.md)
+- [The halting problem is not co-recognizable by multi-stack machines](../../../TheoryOfComputation/computability/halting-problem-and-rice-s-theorem/not-tm2-co-recognizable-halting.md)
 
 ## Expansion
 
 *Part 1.* The proof reduces the tiling problem for the plane $\mathbb Z \times \mathbb Z$: for every finite set of tile types it builds an AAUL formula that is satisfiable iff the tile types can tile the plane, representing each point of $\mathbb Z \times \mathbb Z$ by a state. Since the tiling problem is co-r.e.-complete, satisfiability is co-r.e.-hard; the linked page gives undecidability, and a good expansion adds the co-r.e.-completeness of the tiling problem.
 
-*Part 2.* For a Turing machine $T$, a formula $\varphi_T$ of AAULC is built whose models contain a grid representing the run of $T$, with a proposition $s_{\mathit{end}}$ marking halting; then $\varphi_T \to C\neg s_{\mathit{end}}$ is valid iff $T$ does not halt, and $\varphi_T \to \neg C\neg s_{\mathit{end}}$ is valid iff $T$ halts (Theorem 1 of the conference paper). Thus the halting problem and its complement both reduce to validity. A good expansion links the undecidability of the halting problem and the fact that its complement is not recursively enumerable.
+*Part 2.* For a Turing machine $T$, a formula $\varphi_T$ of AAULC is built whose models contain a grid representing the run of $T$, with a proposition $s_{\mathit{end}}$ marking halting; then $\varphi_T \to C\neg s_{\mathit{end}}$ is valid iff $T$ does not halt, and $\varphi_T \to \neg C\neg s_{\mathit{end}}$ is valid iff $T$ halts (Theorem 1 of the conference paper). Thus the halting problem and its complement both reduce to validity, and validity is not co-r.e. because the halting problem is not co-recognizable (Corollary 1).
 
 ## Sources
 

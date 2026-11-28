@@ -26,7 +26,7 @@ By contrast, the source shows that $\mathrm{BFOML}^{\exists\Box}$ is decidable o
 
 ## Expansion
 
-The proof reduces satisfiability of first-order sentences over a single binary predicate $R$, without equality, which is undecidable. An atom $R(x, y)$ is translated as $\exists z \Diamond (p(x) \wedge q(y))$ with fresh $z$ and two unary predicates $p, q$; the translation of a prenex sentence $\alpha$ is conjoined with sentences that use the $\forall \Box$ bundle and the constant domain to make all worlds at the relevant modal depth interpret $R$ in the same way, and $\alpha$ is satisfiable iff its translation is constant-domain satisfiable. A complete expansion links the undecidability of first-order satisfiability over one binary relation symbol without equality, which main states only for the language of arithmetic.
+The proof reduces satisfiability of first-order sentences over a single binary predicate $R$, without equality, which is undecidable. An atom $R(x, y)$ is translated as $\exists z \Diamond (p(x) \wedge q(y))$ with fresh $z$ and two unary predicates $p, q$; the translation of a prenex sentence $\alpha$ is conjoined with sentences that use the $\forall \Box$ bundle and the constant domain to make all worlds at the relevant modal depth interpret $R$ in the same way, and $\alpha$ is satisfiable iff its translation is constant-domain satisfiable. A complete expansion links the undecidability of first-order satisfiability over one binary relation symbol without equality, which [Validity of first-order sentences is undecidable](../../../TheoryOfComputation/undecidable-problems/validity-of-first-order-sentences-is-undecidable.md) states only for the language of arithmetic.
 
 ## Sources
 

@@ -1,6 +1,6 @@
 # Modal logics of model change
 
-Modal logics with operators that delete points or links of a model, such as stepwise removal, and the complexity of their satisfiability problems.
+Modal logics with operators that delete points or change links of a model, such as stepwise removal, and the complexity of their satisfiability problems.
 
 - [Modal logic of stepwise removal](modal-logic-of-stepwise-removal.md)
 - [Satisfiability of stepwise removal logic is undecidable](satisfiability-of-stepwise-removal-logic-is.md)
