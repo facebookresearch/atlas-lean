@@ -19,7 +19,7 @@ None.
 
 ## Expansion
 
-The proof reduces boundedness of reset nets, which Dufourd, Finkel and Schnoebelen proved undecidable. From a reset net $N$ one builds in polynomial time a ν-PN $N^*$ with a copy $\bar{p}$ of each place $p$: $\bar{p}$ holds a single name $a_p$, and the tokens of $p$ in $N$ are the occurrences of $a_p$ in $p$. Resetting $p$ is simulated by replacing $a_p$ with a freshly created name, which strands the old occurrences, so reachable markings of $N$ correspond to reachable markings of $N^*$ through the multiplicities $M^*(p)(a_p)$. Hence $N$ is bounded exactly when $N^*$ is depth-bounded. A good expansion adds and links a page for the undecidability of boundedness of reset nets.
+The proof reduces boundedness of reset nets, which Dufourd, Finkel and Schnoebelen proved undecidable. From a reset net $N$ one builds in polynomial time a ν-PN $N^*$ with a copy $\bar{p}$ of each place $p$: $\bar{p}$ holds a single name $a_p$, and the tokens of $p$ in $N$ are the occurrences of $a_p$ in $p$. Resetting $p$ is simulated by replacing $a_p$ with a freshly created name, which strands the old occurrences, so reachable markings of $N$ correspond to reachable markings of $N^*$ through the multiplicities $M^*(p)(a_p)$. Hence $N$ is bounded exactly when $N^*$ is depth-bounded. A good expansion links a page for the undecidability of boundedness of reset nets.
 
 ## Sources
 

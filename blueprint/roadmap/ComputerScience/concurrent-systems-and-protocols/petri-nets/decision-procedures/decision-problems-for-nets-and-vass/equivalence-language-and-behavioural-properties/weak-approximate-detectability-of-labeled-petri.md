@@ -8,7 +8,9 @@ $$
 \emptyset \ne \mathcal{M}(G, \sigma') \subseteq R_i \quad \text{for some } i \in \{1, \dots, n\}.
 $$
 
-**Theorem (Zhang and Giua).** Let $n > 1$ be an integer. It is undecidable whether an $\varepsilon$-free labeled P/T net is weakly approximately detectable with respect to a partition $\{R_1, \dots, R_n\}$ of its reachable markings.
+**Theorem (Zhang and Giua).** Let $n > 1$ be an integer. It is undecidable whether an $\varepsilon$-free labeled P/T net is weakly approximately detectable with respect to a partition $\{R_1, \dots, R_n\}$ of its reachable markings (Theorem 1 of the source).
+
+The partition is part of the input, so it must be given finitely. In the reduction of the source each class is the set of reachable markings in which the token of a designated control path lies in a given set of places (for example $R_1 = \{M : M(p_0) = 1 \text{ or } M(p_{11}) = 1 \text{ or } M(p_2) = 1,\ M(p_{21}) = M(p_3) = 0\}$ for $n = 2$), so the undecidability holds for partitions given by such Boolean conditions on finitely many places.
 
 For finite automata the same property is PSPACE-complete, by the same paper.
 

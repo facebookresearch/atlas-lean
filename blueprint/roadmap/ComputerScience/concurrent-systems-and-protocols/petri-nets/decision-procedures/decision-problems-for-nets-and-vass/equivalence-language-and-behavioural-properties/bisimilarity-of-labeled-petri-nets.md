@@ -2,7 +2,7 @@
 
 Whether two labeled Petri nets are bisimilar, that is, whether their reachability graphs are related by a strong bisimulation from the initial markings, is undecidable, already for nets with only two unbounded places.
 
-**Bisimilarity.** For labeled [Petri nets](../../../place-transition-petri-nets.md), the reachability graph has the reachable markings as nodes and an edge $M \xrightarrow{a} M'$ when some transition with label $a$ leads from $M$ to $M'$. A symmetric relation $R$ between the nodes of two such graphs is a *(strong) bisimulation* if whenever $(n_1, n_2) \in R$ and $n_1 \xrightarrow{a} n_1'$, there is $n_2'$ with $n_2 \xrightarrow{a} n_2'$ and $(n_1', n_2') \in R$. Two labeled nets are *bisimilar* if some bisimulation contains the pair of their initial markings.
+**Bisimilarity.** For labeled [Petri nets](../../../place-transition-petri-nets.md), the reachability graph has the reachable markings as nodes and an edge $M \xrightarrow{a} M'$ when some transition with label $a$ leads from $M$ to $M'$. A relation $R$ between the nodes of two such graphs, taken on the disjoint union of their node sets so that it can be required to be symmetric, is a *(strong) bisimulation* if it is symmetric and whenever $(n_1, n_2) \in R$ and $n_1 \xrightarrow{a} n_1'$, there is $n_2'$ with $n_2 \xrightarrow{a} n_2'$ and $(n_1', n_2') \in R$. Two labeled nets are *bisimilar* if some bisimulation contains the pair of their initial markings.
 
 **Theorem (Jančar).** Bisimilarity of labeled Petri nets is undecidable, even for nets with only two unbounded places.
 

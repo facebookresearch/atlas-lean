@@ -16,10 +16,11 @@ When an effective homogeneous structure admits wqo, all standard problems are de
 ## Proof depends on
 
 - [Two-counter machines are universal](../../../../../../TheoryOfComputation/equivalence-of-models/counter-machines/two-counter-machines-are-universal.md)
+- [Halting is undecidable](../../../../../../TheoryOfComputation/computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halts.md)
 
 ## Expansion
 
-The core result of the paper is that a strongly homogeneous 3-graph which does not admit wqo contains, for some $i, j$, arbitrarily long induced paths in the graph $(V, C_i \cup C_j)$. Such paths let a Petri net with data $\mathbb{G}$ simulate a deterministic two-counter machine started at zero: a counter value $n$ is stored as $n + 2$ tokens carrying the nodes of an induced path, a zero test checks that the two ends are adjacent, a decrement replaces an end by its neighbor on the path, and an increment extends the path by a nondeterministically guessed node. The halting place is then markable exactly when the machine halts. By homogeneity and König's lemma the graph also contains an infinite induced path, so the net terminates exactly when the machine halts, which gives the remaining problems. A good expansion adds and links a page for the classification step, that a strongly homogeneous 3-graph either admits wqo or contains arbitrarily long induced paths in the union of two of its colors.
+The core result of the paper is that a strongly homogeneous 3-graph which does not admit wqo contains, for some $i, j$, arbitrarily long induced paths in the graph $(V, C_i \cup C_j)$. Such paths let a Petri net with data $\mathbb{G}$ simulate a deterministic two-counter machine started at zero: a counter value $n$ is stored as $n + 2$ tokens carrying the nodes of an induced path, a zero test checks that the two ends are adjacent, a decrement replaces an end by its neighbor on the path, and an increment extends the path by a nondeterministically guessed node. The halting place is then markable exactly when the machine halts. By homogeneity and König's lemma the graph also contains an infinite induced path, so the net terminates exactly when the machine halts, which gives the remaining problems. A good expansion links a page for the classification step, that a strongly homogeneous 3-graph either admits wqo or contains arbitrarily long induced paths in the union of two of its colors.
 
 ## Sources
 

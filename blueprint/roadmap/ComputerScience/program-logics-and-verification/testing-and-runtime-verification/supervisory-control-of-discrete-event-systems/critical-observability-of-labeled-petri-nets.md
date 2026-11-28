@@ -10,7 +10,7 @@ $$
 
 **Theorem (Masopust).** Critical observability of labeled Petri nets is undecidable.
 
-In the reduction the set $C$ is neither finite nor co-finite; it is built from the reachability set of a second Petri net. The same paper proves that for a finite or co-finite set $C$ the problem is decidable and as hard as Petri net non-reachability, and that critical observability is NL-complete for finite automata and PSPACE-complete for networks of finite automata.
+The set $C$ is part of the input and must be given finitely. In the reduction (Theorem 11 of the source, from the inclusion problem $R(A) \subseteq R(B)$ for Petri nets) it is neither finite nor co-finite: it is $C = \{0\}^r \times \{(0, 0, 1)\} \cup R(B) \times \{(1, 0, 0)\} \cup R(B) \times \{(0, 1, 0)\}$ for a given Petri net $B$ with $r$ places, so the undecidability holds for sets $C$ given as finite unions of products of a single marking or the reachability set of a given Petri net with a fixed vector on three control places. The same paper proves that for a finite or co-finite set $C$ the problem is decidable and as hard as Petri net non-reachability, and that critical observability is NL-complete for finite automata and PSPACE-complete for networks of finite automata.
 
 ## Depends on
 

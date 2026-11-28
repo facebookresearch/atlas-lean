@@ -11,6 +11,7 @@ In contrast, control-state reachability for senescent GTRS is Ackermann-complete
 ## Depends on
 
 - [Decidability by multi-stack machines](../../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Bottom-up finite tree automata](../../../../../TheoryOfComputation/omega-automata-and-games/logic-and-tree-automata/bottom-up-finite-tree-automata.md)
 
 ## Proof depends on
 
