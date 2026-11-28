@@ -825,7 +825,7 @@ private theorem lapOmegaTerm (k m : ℕ) (hm : Nat.IsAlmostPrime (k + 1) m) :
     have hcast : ((x.1 * x.2 : ℕ) : ℝ) = (m : ℝ) := by rw [hxx]
     rw [← hcast, Nat.cast_mul, mul_inv_rev, mul_comm]
   have hω : m.primeFactors.card = ArithmeticFunction.cardDistinctFactors m := by
-    rw [ArithmeticFunction.cardDistinctFactors_apply, ← Nat.toFinset_factors]
+    rw [cardDistinctFactors_eq_length_dedup_primeFactorsList, ← Nat.toFinset_factors]
     exact List.card_toFinset _
   rw [Finset.sum_congr rfl hterm, Finset.sum_const, nsmul_eq_mul, div_eq_mul_inv,
     ← hω, lapPrimeAntidiagCard m hm0]
@@ -904,7 +904,7 @@ private theorem lapRecipLower (k N : ℕ) :
     have hω : ArithmeticFunction.cardDistinctFactors m ≤ k + 1 :=
       calc ArithmeticFunction.cardDistinctFactors m
           = m.primeFactorsList.dedup.length :=
-            ArithmeticFunction.cardDistinctFactors_apply
+            cardDistinctFactors_eq_length_dedup_primeFactorsList
         _ ≤ m.primeFactorsList.length :=
             List.Sublist.length_le (List.dedup_sublist _)
         _ = ArithmeticFunction.cardFactors m :=
@@ -1701,7 +1701,7 @@ private theorem lapNonprimeVonMangoldt (m : ℕ) :
   rw [ArithmeticFunction.coe_mul_zeta_apply, Finset.sum_filter]
   apply Finset.sum_congr rfl
   intro d _
-  rw [sub_eq_add_neg, ArithmeticFunction.add_apply, ArithmeticFunction.neg_apply,
+  rw [sub_eq_add_neg, add_apply, neg_apply,
     lapRestrictApply]
   by_cases hd : Nat.Prime d
   · have hd1 : Nat.IsAlmostPrime 1 d := Nat.isAlmostPrime_one_iff.mpr hd
@@ -1714,7 +1714,7 @@ private theorem lapNonprimeDiffZero (n : ℕ) (hnp : Nat.Prime n) :
     ((ArithmeticFunction.vonMangoldt
       - lapRestrictAlmostPrime 1 ArithmeticFunction.vonMangoldt) n) = 0 := by
   have hn1 : Nat.IsAlmostPrime 1 n := Nat.isAlmostPrime_one_iff.mpr hnp
-  rw [sub_eq_add_neg, ArithmeticFunction.add_apply, ArithmeticFunction.neg_apply,
+  rw [sub_eq_add_neg, add_apply, neg_apply,
     lapRestrictApply, ite_eq_left hn1, add_neg_cancel]
 
 /-- The nonprime von Mangoldt difference is `Λ` off primes. -/
@@ -1723,7 +1723,7 @@ private theorem lapNonprimeDiffEq (n : ℕ) (hnp : ¬ Nat.Prime n) :
       - lapRestrictAlmostPrime 1 ArithmeticFunction.vonMangoldt) n)
       = ArithmeticFunction.vonMangoldt n := by
   have hn1 : ¬ Nat.IsAlmostPrime 1 n := fun h => hnp (Nat.isAlmostPrime_one_iff.mp h)
-  rw [sub_eq_add_neg, ArithmeticFunction.add_apply, ArithmeticFunction.neg_apply,
+  rw [sub_eq_add_neg, add_apply, neg_apply,
     lapRestrictApply, ite_eq_right hn1, neg_zero, add_zero]
 
 /-- The nonprime von Mangoldt double sum is `O(N)`. -/
