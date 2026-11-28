@@ -11,7 +11,6 @@ module
 import MathlibExt.RepresentationTheory.Homological.GroupCohomology.CupProduct
 import MathlibExt.RepresentationTheory.Homological.GroupCohomology.CupOneOneFunctoriality
 import Mathlib.Algebra.Group.TypeTags.Basic
-import Mathlib.Data.Matrix.Notation
 meta import Mathlib.Tactic.NormNum
 
 /-!
@@ -113,7 +112,7 @@ example [Nontrivial R] : H1π (A R) (second R) ≠ 0 := by
 
 private def firstCochain : (inhomogeneousCochains (A R)).X 1 := fun g => (g 0).toAdd.1
 private def secondCochain : (inhomogeneousCochains (A R)).X 1 := fun g => (g 0).toAdd.2
-private def orderedPair : Fin 2 → G R := ![e₁ R, e₂ R]
+private def orderedPair : Fin 2 → G R := Fin.cases (e₁ R) (fun _ => e₂ R)
 
 /-- The arbitrary-degree cup pairing retains the ordered positive-degree coordinate. -/
 example : tensorCoordinate R

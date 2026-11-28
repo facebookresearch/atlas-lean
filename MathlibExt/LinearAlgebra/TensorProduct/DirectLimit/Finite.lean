@@ -24,13 +24,13 @@ public import Mathlib.Data.Fintype.EquivFin
 Let R be a commutative semiring. For a coefficient system M_a and a
 family of module systems V_(j,a), all with additive commutative monoid
 structures, the simultaneous transition acts on M and on every V_j.
-The forward comparison maps a stage into
+The stage comparison maps a stage into
 (lim M) ⊗[R] (⨂_j lim V_j), retaining the coefficient M first.
 
 When the stage preorder is directed and all transition systems satisfy
 identity and composition, this comparison is an R-linear equivalence
 for every finite factor index β, including an empty family:
-lim_a(M_a ⊗[R] (⨂_j V_(j,a))) ≅ (lim M) ⊗[R] (⨂_j lim_a V_(j,a)).
+(lim M) ⊗[R] (⨂_j lim_a V_(j,a)) ≅ lim_a(M_a ⊗[R] (⨂_j V_(j,a))).
 The finite-family splittings preserve prefix order and split off the last
 factor. Scalar, stage-index, coefficient-carrier, factor-carrier and
 factor-index universes are independent. No finite-generation or flatness
@@ -43,11 +43,7 @@ noncomputable section
 
 open scoped TensorProduct
 
-universe r v
-
-
-
-universe i m n b
+universe r i m n b
 
 namespace TensorProduct
 
@@ -84,7 +80,7 @@ abbrev finiteDiagonalLimit :=
 equality, M_a R-modules, and V_(j,a) a family of R-modules indexed by β.
 All modules have additive commutative monoid structures. Let f_ab and
 g_j,ab be their R-linear transitions for a ≤ b.
-The R-linear forward map from D_β to
+The R-linear stage comparison from D_β to
 (lim M) ⊗[R] (⨂_j lim V_j) is induced at stage a by
 of_a^M ⊗ (⨂_j of_a^(V_j)).
 The map is defined before imposing finiteness on β or directed-system laws. -/
@@ -128,7 +124,7 @@ def finiteDiagonalToTensor :
 equality, M_a R-modules, and V_(j,a) a family of R-modules indexed by β.
 All modules have additive commutative monoid structures. Let f_ab and
 g_j,ab be their R-linear transitions for a ≤ b.
-For x ∈ M_a and y_j ∈ V_(j,a), the forward comparison has value
+For x ∈ M_a and y_j ∈ V_(j,a), the stage comparison from D_β has value
 [x ⊗ tprod(y)]_a ↦ [x]_a ⊗ tprod(j ↦ [y_j]_a).
 The coefficient remains in the first tensor position. -/
 @[simp]
@@ -504,7 +500,7 @@ All modules have additive commutative monoid structures. Let f_ab and
 g_j,ab be their R-linear transitions for a ≤ b.
 Assume ι is directed, f and every g_j satisfy identity and composition,
 and β is finite. Write D_β = lim_a(M_a ⊗[R] (⨂_j V_(j,a))).
-The canonical forward map D_β → (lim M) ⊗[R] (⨂_j lim V_j)
+The canonical stage comparison D_β → (lim M) ⊗[R] (⨂_j lim V_j)
 is bijective. It acts on each simultaneous stage by the coefficient
 and factor stage inclusions. -/
 theorem finiteDiagonalToTensor_bijective :
@@ -588,7 +584,7 @@ All modules have additive commutative monoid structures. Let f_ab and
 g_j,ab be their R-linear transitions for a ≤ b.
 Assume ι is directed, f and every g_j satisfy identity and composition,
 and β is finite. Write D_β = lim_a(M_a ⊗[R] (⨂_j V_(j,a))).
-On classes represented at a common stage a, the forward equivalence
+On classes represented at a common stage a, the tensor-of-limits to limit-of-tensors equivalence
 sends [x]_a ⊗ tprod(j ↦ [y_j]_a) to [x ⊗ tprod(y)]_a. -/
 @[simp]
 theorem directLimitFinite_of_tprod (a : ι) (x : M a) (y : ∀ j, V j a) :
