@@ -7,3 +7,8 @@ Survival probabilities from a life table and the expected present values of life
 - [Whole life insurance and the annuity-due identity](whole-life-insurance-and-annuity-due-identity.md)
 - [Last-survivor annuity values by inclusion–exclusion](last-survivor-annuity-values.md)
 - [Curtate lifetime as a tail sum](curtate-lifetime-as-a-tail-sum.md)
+- [Finite Life Table](finite-life-table.md)
+- [Count](count.md)
+- [Law](law.md)
+- [Survives](survives.md)
+- [Life Annuity Value](life-annuity-value.md)

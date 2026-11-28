@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Gamma.Digamma
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
 public import MathlibExt.NumberTheory.ZetaStrideSeries
+public import MathlibExt.NumberTheory.ZetaStrideSeriesDigammaHalf
 public import MathlibExt.NumberTheory.ZetaStrideSeriesTendstoStrideAlternatingSumRiemannZeta
 
 namespace MetaMathlibExt
@@ -212,35 +213,6 @@ public theorem_wanted tendsto_strideSignedSum_dirichletEta_add (q t p : ℕ) (hq
         (-1 : ℝ) ^ n * (((n : ℝ) + 1) ^ (p + 1) + ((n : ℝ) + 1 + q) ^ (p + 1)) /
           (((n : ℝ) + 1) * ((n : ℝ) + 1 + q)) ^ (p + 1) * strideSignedSum q t (n + 1))
       atTop (𝓝 (∑' n : ℕ, (-1 : ℝ) ^ n / ((n : ℝ) + 1) ^ (p + t + 1)))
-
-/-- **Digamma series for the alternating stride sum.** Let $q \ge 1$ and $t \ge 1$ be integers,
-let $S_{q,t}$ denote the alternating stride sum and $\psi$ the digamma function. As
-$N \to \infty$, the partial sums
-$$
-\sum_{n=1}^{N} \frac{2n + q}{(n + \frac12)(n - \frac12 + q)} \, S_{q,t}(n)
-$$
-converge to
-$$
-\frac{1}{2q} \sum_{n=1}^{\infty} \frac{1}{n^t}
-\left[\psi\left(\frac{n+\frac12+q}{2q}\right) - \psi\left(\frac{n+\frac12}{2q}\right)\right] +
-\frac{1}{2q} \sum_{n=1}^{\infty} \frac{1}{n^t}
-\left[\psi\left(\frac{n-\frac12+2q}{2q}\right) - \psi\left(\frac{n-\frac12+q}{2q}\right)\right].
-$$
-
-Source: Anthony Sofo and Junesang Choi, *New Series Representations for the Riemann Zeta
-Function and Its Associated Functions*, INTEGERS 24 (2024), Article A45, Corollary 1,
-equation (20). -/
-public theorem_wanted tendsto_strideAlternatingSum_digamma_half (q t : ℕ) (hq : 0 < q)
-    (ht : 0 < t) :
-    Tendsto (fun N : ℕ => ((∑ n ∈ Finset.range N,
-        (2 * ((n : ℝ) + 1) + q) / (((n : ℝ) + 1 + 1 / 2) * ((n : ℝ) + 1 - 1 / 2 + q)) *
-          strideAlternatingSum q t (n + 1) : ℝ) : ℂ))
-      atTop (𝓝 ((∑' n : ℕ, 1 / ((n : ℂ) + 1) ^ t *
-          (Complex.digamma (((n : ℂ) + 1 + 1 / 2 + q) / (2 * q)) -
-            Complex.digamma (((n : ℂ) + 1 + 1 / 2) / (2 * q)))) / (2 * q) +
-        (∑' n : ℕ, 1 / ((n : ℂ) + 1) ^ t *
-          (Complex.digamma (((n : ℂ) + 1 - 1 / 2 + 2 * q) / (2 * q)) -
-            Complex.digamma (((n : ℂ) + 1 - 1 / 2 + q) / (2 * q)))) / (2 * q)))
 
 end
 
