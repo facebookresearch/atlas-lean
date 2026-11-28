@@ -2,6 +2,7 @@
 
 Social choice theory studies rules that aggregate individual preferences into a collective ranking or choice, and the impossibility theorems that limit them.
 
+- [Approval-based committee elections](approval-based-committee-elections/README.md)
 - [Arrow's impossibility theorem](arrow-s-impossibility-theorem/README.md)
 - [Condorcet's jury theorem](condorcet-s-jury-theorem/README.md)
 - [Gibbard–Satterthwaite theorem](gibbard-satterthwaite-theorem/README.md)
