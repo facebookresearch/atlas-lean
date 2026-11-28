@@ -29,7 +29,8 @@ This gives negative answers to both parts of Timoshenko's test rank question.
 
 * E. I. Khukhro and V. D. Mazurov (eds.), *Unsolved Problems in Group Theory: The Kourovka
   Notebook*, 21st issue, arXiv:1401.0300v49 (2026), Problem 16.87 (E. I. Timoshenko).
-* M. Kinyon and J. Urban, [*Results on problems from the Kourovka Notebook*][kinyon-urban],
+* Michael Kinyon, Josef Urban, and Codex gpt-6-astra,
+  [*Results on problems from the Kourovka Notebook*][kinyon-urban],
   preprint, version 4 (19 September 2026), Section 3.23 and Proposition 3.9.
 
 [kinyon-urban]:
@@ -274,7 +275,8 @@ also satisfies both laws but is not abelian.
 Source: E. I. Khukhro and V. D. Mazurov (eds.), *Unsolved Problems in Group Theory: The Kourovka
 Notebook*, 21st issue, arXiv:1401.0300v49 (2026), Problem 16.87(b) (E. I. Timoshenko).
 For the prime-indexed construction with $[[x, y], z] = 1$ and $[x, y]^p = 1$, and with
-$\mathrm{UT}_3(\mathbb{F}_p)$ as the nonabelian witness, see M. Kinyon and J. Urban,
+$\mathrm{UT}_3(\mathbb{F}_p)$ as the nonabelian witness, see Michael Kinyon, Josef Urban, and
+Codex gpt-6-astra,
 *Results on problems from the Kourovka Notebook*, preprint, version 4 (19 September 2026),
 Section 3.23 and Proposition 3.9.
 https://kourovkanotebookorg.wordpress.com/wp-content/uploads/2026/09/kourovka-mathematics.pdf.
