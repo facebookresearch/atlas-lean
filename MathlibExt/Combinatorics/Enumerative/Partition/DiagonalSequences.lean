@@ -31,6 +31,12 @@ version of the paper (Definition (1.1), Proposition 2.3, Section 4).
 To realize a class of size `k + 1`, take the staircase with row lengths `k, …, 1` and
 add one cell on the next diagonal. The full inner diagonals determine the staircase,
 and each of the `k + 1` positions for the extra cell gives a distinct partition.
+
+## References
+
+* Michael Neubauer and Harmony Vargas, *Diagonal Sequences of Integer Partitions*, INTEGERS 25
+  (2025), Article A60, pp. 1–17. Section 1 (diagonal sequences and classes), Corollary 1 and
+  Propositions 1–2 (normal form and extremal partitions), and Corollary 6 (3) (class sizes).
 -/
 
 namespace MetaMathlibExt
@@ -174,6 +180,12 @@ Source: Michael Neubauer and Harmony Vargas, *Diagonal Sequences of Integer Part
 INTEGERS 25 (2025), Article A60, Section 1 (definition of `[d]`). -/
 noncomputable def diagonalClass {n : ℕ} (p : Nat.Partition n) : Finset (Nat.Partition n) :=
   open Classical in Finset.univ.filter fun β => diagonalSequence β.parts = diagonalSequence p.parts
+
+/-- **Membership in a diagonal class.** For partitions $p$ and $\beta$ of the same natural
+number $n$, $\beta \in [\delta(p)]$ if and only if $\delta(\beta) = \delta(p)$. -/
+theorem mem_diagonalClass_iff {n : ℕ} {p β : Nat.Partition n} :
+    β ∈ diagonalClass p ↔ diagonalSequence β.parts = diagonalSequence p.parts := by
+  simp [diagonalClass]
 
 /-- **Every partition lies in its diagonal class.** For every partition $p$ of $n$, $p$ belongs
 to the diagonal class of $p$, the set of partitions of $n$ whose diagonal sequence equals that

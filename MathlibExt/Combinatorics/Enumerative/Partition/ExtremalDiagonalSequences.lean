@@ -37,11 +37,17 @@ For a diagonal normal form of staircase height `q ≥ 1` with arbitrary natural 
 In the binomial product, deleting a copy from three equal consecutive heights removes a unit
 factor.
 
+For a diagonal normal form of staircase height `q ≥ 1`, if each multiplicity `sᵢ` with
+`1 ≤ i < q` is at least two, two consecutive steps after the staircase cannot both drop.
+Thus exactly one partition in the class has `q` parts. If also `s_q ≥ 1`, the first drop
+is zero, and the class size is the product of one plus each drop from `q` to the last
+nonzero diagonal (including the drop from that diagonal to zero).
+
 ## References
 
 * Michael Neubauer and Harmony Vargas, *Diagonal Sequences of Integer Partitions*, INTEGERS 25
   (2025), Article A60, pp. 1–17. Corollary 3 (p. 5), Proposition 8 (p. 10), Theorem 1 (p. 12),
-  and Corollary 6 (5) (p. 13).
+  and Corollary 6 (1)–(2) (pp. 12–13) and (5) (p. 13).
 * The staircase sum uses the same reduction to `Finset.sum_range_id` as `staircase_sum` in
   `MathlibExt.Combinatorics.Enumerative.Partition.OverpartitionMexSum`.
 -/
@@ -940,10 +946,6 @@ private theorem rowLen_ofRowLens_getD {l : List ℕ} (hl : l.SortedGE) (i : ℕ)
     obtain ⟨h', _⟩ := hmem
     exact hi h'
 
-private theorem mem_diagonalClass_iff {n : ℕ} {p β : Nat.Partition n} :
-    β ∈ diagonalClass p ↔ diagonalSequence β.parts = diagonalSequence p.parts := by
-  simp [diagonalClass]
-
 -- The partitions in the class of `p` correspond to the words with the letters of
 -- `rowEnds p L` that end at `L`.
 private theorem rowEnds_bijOn {n : ℕ} (p : Nat.Partition n) (L : ℕ)
@@ -1334,6 +1336,90 @@ public theorem card_diagonalClass_filter_card_parts_eq_q {n : ℕ} (p : Nat.Part
     (fun i => diagonalSequence p.parts i - diagonalSequence p.parts (i + 1))
   rw [Nat.add_sub_of_le (staircase_le_last hq hL')] at h
   exact h
+
+open diagonalSequence_max_eq_min_and_multiset Finset in
+/-- **Diagonal classes whose multiplicities are at least two.** Let $q \ge 1$, let
+$s = (s_1, s_2, \dots)$ be a sequence of natural numbers, and let $\alpha$ be a partition of $n$
+whose diagonal sequence $\delta(\alpha) = (d_i)_{i \ge 1}$ is
+$(1, 2, \dots, q, q^{(s_q)}, (q-1)^{(s_{q-1})}, \dots, 1^{(s_1)})$ followed by zeros, where
+$v^{(r)}$ means $r$ copies of $v$. Put $L = q + s_1 + \dots + s_q$. If $s_i \ge 2$ for all
+$1 \le i < q$, then exactly one partition of $n$ with diagonal sequence $\delta(\alpha)$ has
+exactly $q$ parts; if moreover $s_q \ge 1$, then the number of partitions of $n$ with diagonal
+sequence $\delta(\alpha)$ is $\prod_{i=q}^{L} (\max(d_i - d_{i+1}, 0) + 1)$.
+
+Source: Michael Neubauer and Harmony Vargas, *Diagonal Sequences of Integer Partitions*,
+INTEGERS 25 (2025), Article A60, Corollary 6 (1), (2). -/
+public theorem card_diagonalClass_of_two_le_s {n : ℕ} (p : Nat.Partition n) (q : ℕ)
+    (hq : 1 ≤ q) (s : ℕ → ℕ)
+    (hd : diagonalSequence p.parts = diagonalOfList (diagonalNormalForm q s))
+    (hs : ∀ i ∈ Finset.Ico 1 q, 2 ≤ s i) :
+    ((diagonalClass p).filter fun β => β.parts.card = q).card = 1 ∧
+      (1 ≤ s q → (diagonalClass p).card =
+        ∏ i ∈ Finset.Icc q (q + ∑ j ∈ Finset.Icc 1 q, s j),
+          (diagonalSequence p.parts i - diagonalSequence p.parts (i + 1) + 1)) := by
+  let d := diagonalSequence p.parts
+  let L := q + ∑ j ∈ Icc 1 q, s j
+  let b (i : ℕ) := d i - d (i + 1)
+  have hqL : q ≤ L := Nat.le_add_right _ _
+  have threshold (h k : ℕ) (hh : 0 < h) :
+      h ≤ d k ↔ h ≤ k ∧ h ≤ q ∧ k ≤ q + ∑ j ∈ Icc h q, s j := by
+    simpa only [d, hd] using le_normalForm q s h k hh
+  have hstair (j : ℕ) (hj : j ∈ Icc 1 q) : d j = j := by
+    obtain ⟨hj₁, hj₂⟩ := mem_Icc.mp hj
+    have hlo := (threshold j j hj₁).mpr ⟨le_rfl, hj₂, hj₂.trans (Nat.le_add_right _ _)⟩
+    have hhi (h : j < d j) := ((threshold (j + 1) j (Nat.succ_pos _)).mp h).1
+    omega
+  have hnext : d (q + 1) ≠ q + 1 := by
+    intro heq
+    have := ((threshold (q + 1) (q + 1) (Nat.succ_pos _)).mp heq.ge).2.1
+    omega
+  have hlast : d L ≠ 0 :=
+    Nat.ne_of_gt ((threshold 1 L Nat.one_pos).mpr ⟨hq.trans hqL, hq, le_rfl⟩)
+  have hend : d (L + 1) = 0 := by
+    apply Nat.eq_zero_of_not_pos
+    intro h
+    exact (Nat.not_succ_le_self L) ((threshold 1 (L + 1) Nat.one_pos).mp h).2.2
+  -- Crossing both heights `h + 1` and `h` in two steps would skip the block at `h`.
+  have hgap (i : ℕ) : b i = 0 ∨ b (i + 1) = 0 := by
+    by_contra! hb
+    let h := d (i + 2) + 1
+    have hle : h + 1 ≤ d i := by
+      simp only [b, show i + 1 + 1 = i + 2 from rfl] at hb
+      dsimp only [h]
+      omega
+    obtain ⟨hhi, hhq, hi⟩ := (threshold (h + 1) i (Nat.succ_pos _)).mp hle
+    have hh : 1 ≤ h := Nat.succ_pos _
+    have hsh := hs h (mem_Ico.mpr ⟨hh, Nat.lt_of_succ_le hhq⟩)
+    have hsum : ∑ j ∈ Icc h q, s j = s h + ∑ j ∈ Icc (h + 1) q, s j := by
+      simpa only [Nat.succ_eq_add_one, Ico_add_one_right_eq_Icc] using
+        sum_eq_sum_Ico_succ_bot (Nat.lt_succ_of_le (Nat.le_of_succ_le hhq)) s
+    have : h ≤ d (i + 2) := (threshold h (i + 2) hh).mpr
+      ⟨by omega, by omega, by rw [hsum]; omega⟩
+    exact (Nat.not_succ_le_self _) this
+  constructor
+  · rw [card_diagonalClass_filter_card_parts_eq_q p q L hstair hnext hlast hend]
+    apply prod_eq_one
+    intro i _
+    change (b i + b (i + 1)).choose (b i) = 1
+    rcases hgap i with hi | hi <;> simp [hi]
+  · intro hsq
+    have hfirst : b q = 0 := by
+      have htop := hstair q (mem_Icc.mpr ⟨hq, le_rfl⟩)
+      have hrep := (threshold q (q + 1) hq).mpr ⟨Nat.le_succ q, le_rfl, by simpa using hsq⟩
+      exact Nat.sub_eq_zero_of_le (htop.trans_le hrep)
+    rw [card_diagonalClass_eq_prod_choose p q L hstair hnext hlast hend]
+    change (∏ i ∈ Ico q L, (b i + b (i + 1) + 1).choose (b i + 1)) =
+      ∏ i ∈ Icc q L, (b i + 1)
+    calc
+      _ = ∏ i ∈ Ico q L, (b (i + 1) + 1) := by
+        apply prod_congr rfl
+        intro i _
+        rcases hgap i with hi | hi <;> simp [hi]
+      _ = ∏ i ∈ Icc (q + 1) L, (b i + 1) := by
+        rw [prod_Ico_add' (fun i => b i + 1), Ico_add_one_right_eq_Icc]
+      _ = _ := by
+        simpa only [Nat.succ_eq_add_one, Ico_add_one_right_eq_Icc, hfirst, zero_add, one_mul] using
+          (prod_eq_prod_Ico_succ_bot (Nat.lt_succ_of_le hqL) (fun i => b i + 1)).symm
 
 namespace card_diagonalClassOf_min_two
 
