@@ -3,7 +3,6 @@
 Read mappers, assemblers and metagenomic classifiers index a sequence by a sparse sample of its $k$-mers. A minimizer (winnowing) scheme picks, in every window of $w$ consecutive $k$-mers, the smallest one under a fixed order, so any two strings sharing a window share a sampled $k$-mer; other local methods (syncmers, word-based rules) decide from a bounded window too. The cost of a scheme is its density, the expected fraction of positions sampled. The theory relates density to charged contexts and universal hitting sets of the de Bruijn graph, fixes when density $O(1/w)$ is achievable, gives constructions that beat the random-order density $2/(w+1)$, tunes orders to a fixed sequence, and describes the conservation of selected $k$-mers under mutation and the bias of estimators computed on minimizer sketches.
 
 - [Local k-mer selection methods and their densities](local-k-mer-selection-methods-and-their-densities.md)
-- [Expected density of random-order minimizers](expected-density-of-random-order-minimizers.md)
 - [Density of random minimizers via charged contexts](random-minimizer-density-and-charged-contexts.md)
 - [Charged contexts and the energy of a random minimizer](charged-contexts-and-the-energy-of-a-random-minimizer.md)
 - [Universal sets and asymptotically optimal minimizer density](universal-sets-and-asymptotically-optimal-minimizer-density.md)

@@ -19,7 +19,7 @@ explicitly $\mathcal{R}_{0j} = (1-c)^2 \rho_j m \beta \alpha_j (\epsilon_j + \ga
 
 **Results.**
 
-1. The disease-free equilibrium is globally asymptotically stable when $\mathcal{R}_0 < 1$ (proved for $\omega = 0$ via the Castillo-Chavez–Feng–Huang global stability criterion).
+1. The disease-free equilibrium is locally asymptotically stable when $\mathcal{R}_0 < 1$ (and unstable when $\mathcal{R}_0 > 1$); Collins–Duffy (2022) state global asymptotic stability in Theorem 1, whose Appendix 1 proof covers only the special case $\omega = 0$.
 2. Let $\omega = 0$. Every equilibrium with $y^* > 0$ has $i_j^* = \rho_j \Lambda s^* y^* k_j/(\sigma_j l_j + \mu k_j) = \xi \mathcal{R}_{0j} s^* y^*/a_j$ and $\tau_j^* = \sigma_j i_j^*/k_j$, so for $0 < \rho < 1$ both strains are present: the only endemic equilibrium is the coexistence one, which exists iff $\mathcal{R}_0 > 1$ and has $s^* = \dfrac{\mathcal{R}_0 \mu + \Lambda}{\mathcal{R}_0(\mu + \Lambda)}$ and $y^* = \mu(1 - s^*)/(\Lambda s^*)$. Single-strain endemic equilibria occur only for $\rho \in \{0, 1\}$, where only one strain is transmitted and $\mathcal{R}_0$ equals that strain's $\mathcal{R}_{0j}$. (For $\omega > 0$ the $s$-equation gives instead $y^* = (\mu(1 - s^*) + \omega r^*)/(\Lambda s^*)$.)
 3. Bed nets act quadratically: $\mathcal{R}_0 \propto (1-c)^2$, since they reduce both mosquito-to-human and human-to-mosquito transmission.
 
@@ -27,9 +27,13 @@ explicitly $\mathcal{R}_{0j} = (1-c)^2 \rho_j m \beta \alpha_j (\epsilon_j + \ga
 
 - [Basic reproduction number of the next-generation matrix](../../next-generation-matrix-and-the-basic-reproductio/r0.md)
 
+## Proof depends on
+
+- [Next-generation threshold for local stability of the disease-free equilibrium](../../next-generation-matrix-and-the-basic-reproductio/is-hurwitz-sub-iff-r0-lt-one.md)
+
 ## Expansion
 
-The next-generation computation inverts $V$ blockwise: for each strain the $2 \times 2$ block $\begin{pmatrix} b_j & -\epsilon_j \\ -\sigma_j & k_j\end{pmatrix}$ has determinant $b_j k_j - \epsilon_j\sigma_j = \sigma_j l_j + \mu k_j$, the expected time spent infectious (untreated or failing treatment) per infection being $k_j/(\sigma_j l_j + \mu k_j)$. Treatment failure lengthens this time, which is why $\epsilon_j$ raises $\mathcal{R}_{0j}$. The rank-one vector-host structure of $F V^{-1}$ makes its nonzero eigenvalues $\pm\sqrt{\mathcal{R}_{0r} + \mathcal{R}_{0s}}$, so strain contributions add at the level of the two-generation number. The (H2) condition of the global criterion holds because the subtracted terms $\Lambda y (1 - s)$ and $a_j i_j (1 - x)$ are nonnegative when proportions are at most one.
+The next-generation computation inverts $V$ blockwise: for each strain the $2 \times 2$ block $\begin{pmatrix} b_j & -\epsilon_j \\ -\sigma_j & k_j\end{pmatrix}$ has determinant $b_j k_j - \epsilon_j\sigma_j = \sigma_j l_j + \mu k_j$, the expected time spent infectious (untreated or failing treatment) per infection being $k_j/(\sigma_j l_j + \mu k_j)$. Treatment failure lengthens this time, which is why $\epsilon_j$ raises $\mathcal{R}_{0j}$. The rank-one vector-host structure of $F V^{-1}$ makes its nonzero eigenvalues $\pm\sqrt{\mathcal{R}_{0r} + \mathcal{R}_{0s}}$, so strain contributions add at the level of the two-generation number. Local stability follows from the next-generation matrix criterion ($\mathcal{R}_0 < 1 \iff$ the linearized infection Jacobian is Hurwitz).
 
 ## Sources
 

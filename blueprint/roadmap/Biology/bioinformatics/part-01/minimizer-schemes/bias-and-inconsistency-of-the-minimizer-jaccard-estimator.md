@@ -23,7 +23,7 @@ So $\hat J$ is biased downward, and for a fixed true $J > 0$ the ratio $\mathbb 
 
 ## Depends on
 
-- [Expected density of random-order minimizers](expected-density-of-random-order-minimizers.md)
+- [Expected density of random-order minimizers](../../../../ComputerScience/string-algorithms/winnowing-and-minimizers/winnowing-minimizer-density-2-w-1-and-the-1-5-w-1-lower-bound-for-loca.md)
 
 ## Expansion
 

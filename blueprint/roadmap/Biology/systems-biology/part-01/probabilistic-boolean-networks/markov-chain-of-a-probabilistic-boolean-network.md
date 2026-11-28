@@ -11,6 +11,11 @@ where $T_k$ is the $0/1$ transition matrix of $f^{(k)}$ ($T_k(s, w) = 1$ iff $w 
 1. *Deterministic case* ($r = 1$, $p = 0$). Every trajectory enters an attractor (a fixed point or a cycle) and the basins partition $\{0,1\}^n$. Any probability vector that is uniform on each attractor cycle and zero off the attractors is stationary; the stationary distribution is unique iff there is exactly one attractor, and the chain converges to it from every initial law iff that attractor is a single fixed point.
 2. *Perturbed case* ($0 < p < 1$). All off-diagonal entries of $T$ are positive, so the chain is irreducible and has a unique stationary distribution $\pi$ ($\pi T = \pi$, $\sum_s \pi(s) = 1$). For $n \ge 2$ it is also aperiodic, hence ergodic: the distribution at time $t$ converges to $\pi$ from every initial condition. (For $n = 1$ the negation network gives a chain of period $2$, which still has a unique stationary law.)
 
+## Proof depends on
+
+- [Convergence theorem for finite Markov chains](../../../../Probability/markov-chains/convergence-theorem-for-finite-markov-chains/exists-tv-dist-pow-le.md)
+- [Uniqueness of the stationary distribution](../../../../Probability/markov-chains/convergence-theorem-for-finite-markov-chains/stationary-unique.md)
+
 ## Expansion
 
 A transition $s \to w$ happens either by the network update (probability $(1-p)^n c_k$ for $w = f^{(k)}(s)$) or by perturbation, where the specific flip pattern $\gamma = s \oplus w \ne 0$ has probability $p^{\eta}(1-p)^{n-\eta}$; summing over $\eta \ge 1$ with $\binom{n}{\eta}$ patterns gives $1 - (1-p)^n$, so rows sum to one. In the deterministic case the chain moves along the functional graph of $f$, a cycle of length $L$ supports the uniform law on it (stationary but periodic), and mixtures over attractors give all stationary laws. With $p > 0$ every state reaches every other in one step; with at least $4$ states there are closed walks of lengths $2$ and $3$ through any state, so the period is $1$. The source uses $\pi$ to define long-run attractor probabilities, which are the natural model counterparts of phenotype frequencies.
