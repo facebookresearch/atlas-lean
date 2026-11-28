@@ -23,17 +23,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Lemma 9: the values `H_n / H_{n+1}` (`n ∈ ℤ`, `H_{n+1} ≠ 0`) of the
-sequence with `H_0 = -b`, `H_1 = a` are exactly the values
-`-G_{n+1} / G_n` (`n ∈ ℤ`, `G_n ≠ 0`) of the Gibonacci sequence with
-`G_0 = a`, `G_1 = b`; both index sets run over the two-sided orbits.
-
-Source: Knapp, *Fibonacci Generating Functions*, Journal of Integer
-Sequences 27 (2024), Article 24.3.1, Lemma 9 (`jis-2024-24.3.1-lem-9`). -/
-public theorem_wanted gibonacci_shifted_ratios_eq_negated_ratios (a b : ℤ) :
-    {x : ℚ | ∃ v ∈ fibonacciPairOrbit (-b, a), v.2 ≠ 0 ∧ x = (v.1 : ℚ) / v.2} =
-      {x : ℚ | ∃ w ∈ fibonacciPairOrbit (a, b), w.1 ≠ 0 ∧ x = -(w.2 : ℚ) / w.1}
-
 /-- Lemma 12: if `a² + ab - b² < 0` and `p / q` (lowest terms) is good for
 `(a, b)`, some consecutive pair `(H_n, H_{n+1})` of its family has
 `M(a, b, H_n, H_{n+1})² ≤ |a² + ab - b²|`. The pairs include one with

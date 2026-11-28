@@ -28,6 +28,11 @@ import Mathlib.Tactic.Ring
 At the ratio of consecutive Fibonacci numbers, Cassini's identity reduces the denominator
 of the generating function to a sign divided by the square of a Fibonacci number.
 At $-G_{n+1}/G_n$, the generating function also takes an integer value whenever $G_n \ne 0$.
+For every integer seed $(a,b)$, the set of these ratios over the two-sided sequence $G$ with
+initial terms $(a,b)$ equals the set of ratios $H_n/H_{n+1}$ with $n \in \mathbb{Z}$ and
+$H_{n+1} \ne 0$ for the two-sided sequence $H$ with initial terms $(-b,a)$. Both sequences
+satisfy the Fibonacci recurrence at every integer index. Unlike the paper's standing
+assumption for Lemma 9, this equality also includes $(a,b)=(0,0)$, when both sets are empty.
 For a fixed coprime seed, congruences characterize the pairs for which all defined consecutive
 ratios are good.
 
@@ -35,7 +40,8 @@ ratios are good.
 
 - Michael P. Knapp, [*Fibonacci Generating Functions*](https://cs.uwaterloo.ca/journals/JIS/VOL27/Knapp/knapp5.pdf),
   Journal of Integer Sequences 27 (2024), Article 24.3.1, pp. 1–12, Theorem 3 (which uses
-  Lemma 6 and Theorem 1). See also Corollary 2, Lemmas 5–8, and Sections 2–3.
+  Lemma 6 and Theorem 1). See also Corollary 2, Lemmas 5–9, and Sections 2–3.
+  The ratio-set equality follows the index reversal in Lemma 9, equation (4).
 -/
 
 namespace MetaMathlibExt
@@ -506,6 +512,76 @@ Sequences 27 (2024), Article 24.3.1, Section 2 (families of good
 values). -/
 public def fibonacciPairOrbit (v : ℤ × ℤ) : Set (ℤ × ℤ) :=
   {w | ∃ n : ℕ, w = fibonacciPairStep^[n] v ∨ w = fibonacciPairStepBack^[n] v}
+
+/-- **Membership in a two-sided Fibonacci pair orbit.** Let $v,w\in\mathbb{Z}^2$ and let
+$S(x,y)=(y,x+y)$ and $B(x,y)=(y-x,x)$ be the forward and backward Fibonacci steps.
+Then $w$ belongs to the two-sided orbit of $v$ if and only if there exists
+$n\in\mathbb{N}$ such that $w=S^n(v)$ or $w=B^n(v)$. -/
+public theorem mem_fibonacciPairOrbit_iff (v w : ℤ × ℤ) :
+    w ∈ fibonacciPairOrbit v ↔
+      ∃ n : ℕ, w = fibonacciPairStep^[n] v ∨ w = fibonacciPairStepBack^[n] v :=
+  Iff.rfl
+
+private def signedReverseFibonacciPair (s : ℤ) (v : ℤ × ℤ) : ℤ × ℤ :=
+  (s * -v.2, s * v.1)
+
+/-- Lemma 9: the values `H_n / H_{n+1}` (`n ∈ ℤ`, `H_{n+1} ≠ 0`) of the
+sequence with `H_0 = -b`, `H_1 = a` are exactly the values
+`-G_{n+1} / G_n` (`n ∈ ℤ`, `G_n ≠ 0`) of the Gibonacci sequence with
+`G_0 = a`, `G_1 = b`; both index sets run over the two-sided orbits.
+
+Source: Knapp, *Fibonacci Generating Functions*, Journal of Integer
+Sequences 27 (2024), Article 24.3.1, Lemma 9 (`jis-2024-24.3.1-lem-9`). -/
+public theorem gibonacci_shifted_ratios_eq_negated_ratios (a b : ℤ) :
+    {x : ℚ | ∃ v ∈ fibonacciPairOrbit (-b, a), v.2 ≠ 0 ∧ x = (v.1 : ℚ) / v.2} =
+      {x : ℚ | ∃ w ∈ fibonacciPairOrbit (a, b), w.1 ≠ 0 ∧ x = -(w.2 : ℚ) / w.1} := by
+  by_cases hab : (a, b) = (0, 0)
+  · obtain ⟨rfl, rfl⟩ := Prod.mk.inj hab
+    have hmem (v : ℤ × ℤ) : v ∈ fibonacciPairOrbit (0, 0) ↔ v = (0, 0) := by
+      rw [mem_fibonacciPairOrbit_iff]
+      simp only [Function.iterate_fixed (f := fibonacciPairStep) (x := (0, 0)) rfl,
+        Function.iterate_fixed (f := fibonacciPairStepBack) (x := (0, 0)) rfl, or_self,
+        exists_const]
+    ext x
+    simp [hmem]
+  -- Swapping the coordinates and negating the new first coordinate interchanges the steps,
+  -- up to a common sign.
+  have hiter (n : ℕ) :
+      fibonacciPairStep^[n] (-b, a) =
+        signedReverseFibonacciPair ((-1) ^ n) (fibonacciPairStepBack^[n] (a, b)) ∧
+      fibonacciPairStepBack^[n] (-b, a) =
+        signedReverseFibonacciPair ((-1) ^ n) (fibonacciPairStep^[n] (a, b)) := by
+    induction n with
+    | zero => simp [signedReverseFibonacciPair]
+    | succ n ih =>
+      simp only [Function.iterate_succ_apply', ih.1, ih.2, pow_succ]
+      constructor <;> apply Prod.ext <;>
+        simp only [fibonacciPairStep, fibonacciPairStepBack, signedReverseFibonacciPair] <;> ring
+  refine Set.ext fun x => ?_
+  simp only [Set.mem_ofPred_eq]
+  -- The common nonzero sign cancels in the fraction and preserves its domain.
+  have hratio (n : ℕ) (w : ℤ × ℤ) :
+      let v := signedReverseFibonacciPair ((-1) ^ n) w
+      (v.2 ≠ 0 ∧ x = (v.1 : ℚ) / v.2) ↔ (w.1 ≠ 0 ∧ x = -(w.2 : ℚ) / w.1) := by
+    have hs : (-1 : ℤ) ^ n ≠ 0 := pow_ne_zero _ (by decide)
+    have hs' : (↑((-1 : ℤ) ^ n) : ℚ) ≠ 0 := Int.cast_ne_zero.mpr hs
+    simp only [signedReverseFibonacciPair, mul_ne_zero_iff, and_iff_right hs, Int.cast_mul,
+      Int.cast_neg, mul_div_mul_left _ _ hs']
+  constructor
+  · rintro ⟨v, hv, hx⟩
+    rcases (mem_fibonacciPairOrbit_iff _ _).mp hv with ⟨n, rfl | rfl⟩
+    · refine ⟨_, (mem_fibonacciPairOrbit_iff _ _).mpr ⟨n, Or.inr rfl⟩, (hratio n _).mp ?_⟩
+      rwa [← (hiter n).1]
+    · refine ⟨_, (mem_fibonacciPairOrbit_iff _ _).mpr ⟨n, Or.inl rfl⟩, (hratio n _).mp ?_⟩
+      rwa [← (hiter n).2]
+  · rintro ⟨w, hw, hx⟩
+    rcases (mem_fibonacciPairOrbit_iff _ _).mp hw with ⟨n, rfl | rfl⟩
+    · refine ⟨_, (mem_fibonacciPairOrbit_iff _ _).mpr ⟨n, Or.inr rfl⟩, ?_⟩
+      rw [(hiter n).2]
+      exact (hratio n _).mpr hx
+    · refine ⟨_, (mem_fibonacciPairOrbit_iff _ _).mpr ⟨n, Or.inl rfl⟩, ?_⟩
+      rw [(hiter n).1]
+      exact (hratio n _).mpr hx
 
 /-- Characteristic members: the orbit of `(0, 1)` (the Fibonacci
 numbers) contains `(0, 1)`, `(1, 1)` and `(1, 0)`.
