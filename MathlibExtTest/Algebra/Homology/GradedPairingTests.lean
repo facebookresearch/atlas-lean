@@ -11,6 +11,7 @@ import MathlibExt.Algebra.Category.Grp.MonoidalPreadditive
 import MathlibExt.CategoryTheory.Monoidal.PreservesColimits
 import MathlibExt.Algebra.Homology.GradedPairingHomology
 import Mathlib.Algebra.Algebra.Bilinear
+import Mathlib.Algebra.Category.Grp.Abelian
 import Mathlib.Data.ZMod.Basic
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring
@@ -48,7 +49,7 @@ private def scalar (a : ℤ) : Z ⟶ Z :=
   change (0 : ℤ) * x = 0
   simp
 
-private def coefficientComplex (a : ℕ → ℤ) (ha : ∀ n, a n * a (n + 1) = 0) :
+private abbrev coefficientComplex (a : ℕ → ℤ) (ha : ∀ n, a n * a (n + 1) = 0) :
     CochainComplex Ab.{0} ℕ :=
   CochainComplex.of (fun _ => Z) (fun n => scalar (a n)) (by
     intro n
@@ -67,7 +68,7 @@ private def coefficientComplex (a : ℕ → ℤ) (ha : ∀ n, a n * a (n + 1) = 
   cases h
   rfl
 
-private def zeroComplex := coefficientComplex (fun _ => 0) (by intro n; simp)
+private abbrev zeroComplex := coefficientComplex (fun _ => 0) (by intro n; simp)
 
 private def evenThree (n : ℕ) : ℤ := if n % 2 = 0 then 3 else 0
 private def oddMinusThree (n : ℕ) : ℤ := if n % 2 = 1 then -3 else 0
@@ -92,8 +93,8 @@ private lemma odd_shift (q : ℕ) : oddMinusThree (1 + q) = -evenThree q := by
   · have hn : (1 + q) % 2 ≠ 1 := by omega
     simp [oddMinusThree, evenThree, h, hn]
 
-private def evenComplex := coefficientComplex evenThree evenThree_square
-private def oddComplex := coefficientComplex oddMinusThree oddMinusThree_square
+private abbrev evenComplex := coefficientComplex evenThree evenThree_square
+private abbrev oddComplex := coefficientComplex oddMinusThree oddMinusThree_square
 
 private def multiply : Z ⊗ Z ⟶ Z :=
   AddCommGrpCat.ofHom (LinearMap.mul' ℤ ℤ).toAddMonoidHom
@@ -112,7 +113,8 @@ private theorem tensor_ext {X Y D : Ab.{0}} {f g : X ⊗ Y ⟶ D}
 
 private def zeroPairing : CochainGradedPairing zeroComplex zeroComplex zeroComplex where
   pair _ _ := multiply
-  leibniz p q := by simp [zeroComplex, coefficient_d]
+  leibniz p q := by simp [zeroComplex, coefficient_d, MonoidalPreadditive.zero_tensor,
+    MonoidalPreadditive.tensor_zero, comp_zero, zero_comp]
 
 private def oddComponent (p _q : ℕ) : Z ⊗ Z ⟶ Z := if p = 1 then multiply else 0
 
@@ -121,9 +123,9 @@ private def oddPairing : CochainGradedPairing zeroComplex evenComplex oddComplex
   leibniz p q := by
     by_cases hp : p = 1
     · subst p
-      apply tensor_ext
+      apply tensor_ext (X := Z) (Y := Z) (D := Z)
       intro x y
-      simp only [oddComponent, if_pos rfl, if_neg (by omega : 1 + 1 ≠ 1),
+      simp only [oddComponent, ite_eq_left rfl, ite_eq_right (by omega : 1 + 1 ≠ 1),
         zeroComplex, evenComplex, oddComplex, coefficient_d, scalar_zero,
         AddCommGrpCat.tensorHom_apply, coefficient_iso_apply, multiply_tmul]
       change oddMinusThree (1 + q) * (x * y) =
@@ -131,7 +133,8 @@ private def oddPairing : CochainGradedPairing zeroComplex evenComplex oddComplex
       rw [odd_shift]
       simp only [pow_one, zsmul_eq_mul]
       ring
-    · simp [oddComponent, hp, zeroComplex, coefficient_d]
+    · simp [oddComponent, hp, zeroComplex, coefficient_d,
+        MonoidalPreadditive.zero_tensor, MonoidalPreadditive.tensor_zero, comp_zero, zero_comp]
 
 private def cycleSection (a : ℕ → ℤ) (ha) (n : ℕ) (hn : a n = 0) :
     Z ⟶ (coefficientComplex a ha).cycles n :=
@@ -188,18 +191,18 @@ example : zeroComplex.toCycles 0 0 = 0 :=
 example :
     ((classMap (fun _ => 0) (by intro n; simp) 0 rfl ⊗ₘ
         classMap (fun _ => 0) (by intro n; simp) 0 rfl) ≫
-      zeroPairing.pairHomology 0 0 ≫ zeroReadback) (2 ⊗ₜ[ℤ] 3) = 6 := by
+      zeroPairing.pairHomology 0 0 ≫ zeroReadback) ((2 : ℤ) ⊗ₜ[ℤ] (3 : ℤ)) = 6 := by
   have h := pairing_readback (fun _ => 0) (fun _ => 0) (fun _ => 0)
     (by intro n; simp) (by intro n; simp) (by intro n; simp)
     zeroPairing 0 0 rfl rfl (𝟙 Z) (by rw [zero_d, zero_comp])
-  have he := congrArg (fun g : Z ⊗ Z ⟶ Z => g (2 ⊗ₜ[ℤ] 3)) h
+  have he := congrArg (fun g : MonoidalCategory.tensorObj Z Z ⟶ Z => g ((2 : ℤ) ⊗ₜ[ℤ] (3 : ℤ))) h
   simpa [zeroReadback, zeroPairing] using he
 
-example : (oddPairing.pair 1 0 ≫ oddComplex.d 1 2) (1 ⊗ₜ[ℤ] 1) = -3 := by
+example : (oddPairing.pair 1 0 ≫ oddComplex.d 1 2) ((1 : ℤ) ⊗ₜ[ℤ] (1 : ℤ)) = -3 := by
   norm_num [oddPairing, oddComponent, oddComplex, coefficient_d]
 
 example : ((𝟙 Z ⊗ₘ evenComplex.d 0 1) ≫ oddPairing.pair 1 1)
-    (1 ⊗ₜ[ℤ] 1) = 3 := by
+    ((1 : ℤ) ⊗ₜ[ℤ] (1 : ℤ)) = 3 := by
   norm_num [oddPairing, oddComponent, evenComplex, coefficient_d, evenThree,
     AddCommGrpCat.tensorHom_apply]
 
@@ -209,24 +212,28 @@ private def reduceThree : Z ⟶ T :=
   AddCommGrpCat.ofHom (Int.castRingHom (ZMod 3)).toAddMonoidHom
 
 private lemma reduced_boundary : oddComplex.d 1 2 ≫ reduceThree = 0 := by
+  change scalar (-3) ≫ reduceThree = 0
   apply ConcreteCategory.ext_apply
   intro x
-  change (reduceThree ((oddComplex.d 1 2) x)) = 0
-  norm_num [reduceThree, oddComplex, coefficient_d, oddMinusThree]
+  change (((-3 : ℤ) * x : ℤ) : ZMod 3) = 0
+  norm_num
 
 private def oddReadback : oddComplex.homology 2 ⟶ T :=
   readback oddComplex 2 reduceThree (by
-    simpa only [CochainComplex.prev_nat_succ] using reduced_boundary)
+    change oddComplex.d 1 2 ≫ reduceThree = 0
+    exact reduced_boundary)
 
 example :
     ((classMap (fun _ => 0) (by intro n; simp) 1 rfl ⊗ₘ
         classMap evenThree evenThree_square 1 (by norm_num [evenThree])) ≫
-      oddPairing.pairHomology 1 1 ≫ oddReadback) (1 ⊗ₜ[ℤ] 1) = (1 : ZMod 3) := by
+      oddPairing.pairHomology 1 1 ≫ oddReadback) ((1 : ℤ) ⊗ₜ[ℤ] (1 : ℤ)) = (1 : ZMod 3) := by
   have h := pairing_readback (fun _ => 0) evenThree oddMinusThree
     (by intro n; simp) evenThree_square oddMinusThree_square
     oddPairing 1 1 rfl (by norm_num [evenThree]) reduceThree
-    (by simpa only [CochainComplex.prev_nat_succ] using reduced_boundary)
-  have he := congrArg (fun g : Z ⊗ Z ⟶ T => g (1 ⊗ₜ[ℤ] 1)) h
+    (by
+      change oddComplex.d 1 2 ≫ reduceThree = 0
+      exact reduced_boundary)
+  have he := congrArg (fun g : MonoidalCategory.tensorObj Z Z ⟶ T => g ((1 : ℤ) ⊗ₜ[ℤ] (1 : ℤ))) h
   simpa [oddReadback, oddPairing, oddComponent, reduceThree] using he
 
 example : (1 : ZMod 3) ≠ 0 := by norm_num
