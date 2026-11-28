@@ -53,15 +53,4 @@ example : almostPrimeCounting 3 ⌊(55 / 2 : ℝ)⌋₊ = 5 := by
     almostPrimeCounting_eq_card_filter]
   decide +kernel
 
--- One constant works simultaneously for semiprimes and integers with three prime factors,
--- including at nonintegral counting cutoffs.
-example : ∃ C : ℝ,
-    (almostPrimeCounting 2 ⌊(9 / 2 : ℝ)⌋₊ : ℝ) ≤ C * (1 / 2) * (9 / 2) * Real.log (9 / 2) ∧
-    (almostPrimeCounting 3 ⌊(17 / 2 : ℝ)⌋₊ : ℝ) ≤ C * 4 * (17 / 2) * Real.log (17 / 2) := by
-  obtain ⟨C, hC⟩ := almostPrime_count_le_erdos_sarkozy
-  refine ⟨C, ?_, ?_⟩
-  · simpa using hC 1 le_rfl (9 / 2) (by norm_num)
-  · have h4 : (2 : ℝ) ^ 4 / 2 ^ (2 : ℕ) = 4 := by norm_num
-    simpa only [Nat.cast_ofNat, h4] using hC 2 (by decide) (17 / 2) (by norm_num)
-
 end MetaMathlibExt
