@@ -23,3 +23,4 @@ Perfect secrecy of the one-time pad over a finite group, and pseudorandom functi
 - [Pseudorandom Function Constructions](pseudorandom-function-constructions/README.md)
 - [Pseudorandom Generator Attacks and Transformations](pseudorandom-generator-attacks-and-transformations/README.md)
 - [Symmetric Encryption Security Notions and Separations](symmetric-encryption-security-notions/README.md)
+- [Neural differential cryptanalysis](neural-differential-cryptanalysis/README.md)
