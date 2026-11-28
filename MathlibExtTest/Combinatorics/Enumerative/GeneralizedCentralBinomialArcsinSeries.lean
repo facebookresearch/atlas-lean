@@ -84,6 +84,10 @@ example : zuritaM 3 (1 / 2) = 14 / 15 := by
   rw [zuritaM_eq_sum_range]
   norm_num [sum_range_succ, zuritaMCoeff]
 
+private theorem sqrt_half_mul_one_sub : Real.sqrt ((1 / 2 : ℝ) * (1 - 1 / 2)) = 1 / 2 := by
+  rw [show (1 / 2 : ℝ) * (1 - 1 / 2) = (1 / 2) ^ 2 by norm_num,
+    Real.sqrt_sq (by norm_num)]
+
 -- Client at the smallest n and at a point strictly inside the real interval.
 example :
     ∑' k : ℕ, (4 : ℝ) ^ (k + 1 + 1) * (1 / 2) ^ (k + 1 + 1) /
@@ -91,10 +95,20 @@ example :
       2 * Real.arcsin (Real.sqrt (1 / 2)) ^ 2 + 2 * Real.arcsin (Real.sqrt (1 / 2)) - 2 := by
   refine (tsum_four_pow_div_sub_sq_mul_centralBinom (n := 1) le_rfl
     (x := 1 / 2) (by norm_num) (by norm_num)).trans ?_
-  have hs : Real.sqrt ((1 / 2 : ℝ) * (1 - 1 / 2)) = 1 / 2 := by
-    rw [show (1 / 2 : ℝ) * (1 - 1 / 2) = (1 / 2) ^ 2 by norm_num,
-      Real.sqrt_sq (by norm_num)]
-  rw [hs]
+  rw [sqrt_half_mul_one_sub]
   norm_num [zuritaM_eq_sum_range, zuritaSCoeff, zuritaMCoeff, sum_range_succ,
     Nat.centralBinom, Nat.choose, show Icc 1 0 = (∅ : Finset ℕ) by decide]
+  ring
+
+-- At n = 2 the lower correction has one term, as does the inner sum in the degree-two correction.
+example :
+    ∑' k : ℕ, (4 : ℝ) ^ (k + 2 + 1) * (1 / 2) ^ (k + 2 + 1) /
+        (((k : ℝ) + 1) ^ 2 * Nat.centralBinom (k + 2 + 1)) =
+      4 / 3 * Real.arcsin (Real.sqrt (1 / 2)) ^ 2 +
+        16 / 9 * Real.arcsin (Real.sqrt (1 / 2)) - 47 / 27 := by
+  refine (tsum_four_pow_div_sub_sq_mul_centralBinom (n := 2) (by decide)
+    (x := 1 / 2) (by norm_num) (by norm_num)).trans ?_
+  rw [sqrt_half_mul_one_sub]
+  norm_num [zuritaM_eq_sum_range, zuritaSCoeff, zuritaMCoeff, zuritaTCoeff, zuritaTCoeffRev,
+    zuritaC, sum_range_succ, Nat.centralBinom, Nat.choose, show Icc 1 1 = ({1} : Finset ℕ) by decide]
   ring
