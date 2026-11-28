@@ -25,8 +25,9 @@ open scoped Quaternion TensorProduct
 namespace QuaternionRamifiedPrimesTest
 
 /-- $(ij)^2 = -ab$ in `ℍ[R,a,b]`, from Mathlib's quaternion basis
-(`QuaternionAlgebra.Basis.i_mul_j`, `QuaternionAlgebra.Basis.k_mul_k`); this is the coefficient $ab$
-of $x_4^2$ in the reduced norm. -/
+(`QuaternionAlgebra.Basis.i_mul_j`, `QuaternionAlgebra.Basis.k_mul_k`). The coefficient $ab$ of
+$x_4^2$ in the reduced norm comes from it: $\overline{ij} = -ij$, so
+$\operatorname{nrd}(ij) = -(ij)^2 = ab$. -/
 example {R : Type*} [CommRing R] (a b : R) :
     ((⟨0, 1, 0, 0⟩ : ℍ[R,a,b]) * ⟨0, 0, 1, 0⟩) ^ 2 = algebraMap R ℍ[R,a,b] (-(a * b)) := by
   let q := QuaternionAlgebra.Basis.self R (c₁ := a) (c₂ := 0) (c₃ := b)

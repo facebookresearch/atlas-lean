@@ -87,7 +87,7 @@ $\alpha^2 - \operatorname{trd}(\alpha)\, \alpha + \operatorname{nrd}(\alpha) = 0
 $\operatorname{trd}(\alpha) = 2x_1$ and
 $\operatorname{nrd}(\alpha) = x_1^2 - a x_2^2 - b x_3^2 + ab x_4^2$.
 
-The source states this for $H_{a,b} \otimes \mathbb{Q}_p$; it holds over every commutative ring.
+Voight states this over a field; it holds over every commutative ring.
 
 Sources: J. Voight, *Quaternion Algebras*, Graduate Texts in Mathematics 288, Springer, 2021,
 <https://doi.org/10.1007/978-3-030-56694-4>, 3.3.9, p. 39: for an algebra $B$ with a standard
@@ -114,8 +114,7 @@ $\operatorname{nrd}(\alpha) = x_1^2 - a x_2^2 - b x_3^2 + ab x_4^2$ for
 $\alpha = x_1 + x_2 i + x_3 j + x_4 ij$.
 
 The proof: $g$ minus the reduced characteristic polynomial has degree at most $1$ and vanishes at
-$\alpha$, so it is $0$ as $\alpha \notin K$. The source states this for
-$H_{a,b} \otimes \mathbb{Q}_p$; it holds over every field.
+$\alpha$, so it is $0$ as $\alpha \notin K$.
 
 Sources: J. Voight, *Quaternion Algebras*, Graduate Texts in Mathematics 288, Springer, 2021,
 <https://doi.org/10.1007/978-3-030-56694-4>, 3.3.9, p. 39: for an algebra with a standard
