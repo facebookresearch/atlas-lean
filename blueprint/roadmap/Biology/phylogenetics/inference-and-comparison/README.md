@@ -34,7 +34,4 @@ These articles concern inference of evolutionary trees, networks and recorded ce
 
 - [Monte Carlo phylogenetic bootstrap support](phylogenetic-bootstrap-support-definition-and-no.md)
 - [Phylogenetic network identifiability, recombination tests, and tree-space geometry](phylogenetic-network-identifiability-and-geometry/README.md)
-- [NJMerge: constrained neighbor joining](njmerge-constrained-neighbor-joining/README.md)
-- [Higher-level phylogenies under the birth–death–skyline](higher-level-phylogenies-under-the-birth-death-skyline/README.md)
-- [Duplication histories of tandem repeats](duplication-histories-of-tandem-repeats/README.md)
-- [Node-based and stem-based trees](node-based-and-stem-based-trees/README.md)
+- [Constrained tree merging and skyline models](constrained-tree-merging-and-skyline-models/README.md)

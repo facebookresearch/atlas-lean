@@ -10,7 +10,7 @@
 
 ## Depends on
 
-- [Atteson's theorem: neighbor joining has sup-norm radius one half](../../atteson-s-theorem-on-neighbor-joining/nj-run-splits-of-abs-sub-lt.md)
+- [Atteson's theorem: neighbor joining has sup-norm radius one half](../../../atteson-s-theorem-on-neighbor-joining/nj-run-splits-of-abs-sub-lt.md)
 
 ## Expansion
 

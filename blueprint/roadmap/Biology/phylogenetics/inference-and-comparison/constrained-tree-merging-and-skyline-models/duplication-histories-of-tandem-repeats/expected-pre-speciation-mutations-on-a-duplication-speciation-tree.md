@@ -23,8 +23,8 @@ Each class contributes its number of minimal labelings, weighted by how many of 
 
 ## Depends on
 
-- [Fitch's algorithm](../../small-parsimony-problem/fitch.md)
-- [Fitch's algorithm computes the small-parsimony score](../../small-parsimony-problem/fitch-score-eq.md)
+- [Fitch's algorithm](../../../small-parsimony-problem/fitch.md)
+- [Fitch's algorithm computes the small-parsimony score](../../../small-parsimony-problem/fitch-score-eq.md)
 
 ## Sources
 

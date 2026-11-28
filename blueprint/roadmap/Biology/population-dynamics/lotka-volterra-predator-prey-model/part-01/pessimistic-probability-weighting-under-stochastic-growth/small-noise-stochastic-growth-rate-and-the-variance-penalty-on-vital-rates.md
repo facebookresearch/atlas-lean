@@ -22,8 +22,8 @@ Growth is multiplicative, so the long-run rate is a time average of logarithms o
 
 ## Depends on
 
-- [Leslie matrix](../../leslie-matrix-model/leslie-matrix.md)
-- [Sensitivity of the population growth rate to matrix entries](../../matrix-population-models/eigenvalue-sensitivity-formula.md)
+- [Leslie matrix](../../../leslie-matrix-model/leslie-matrix.md)
+- [Sensitivity of the population growth rate to matrix entries](../../../matrix-population-models/eigenvalue-sensitivity-formula.md)
 
 ## Sources
 

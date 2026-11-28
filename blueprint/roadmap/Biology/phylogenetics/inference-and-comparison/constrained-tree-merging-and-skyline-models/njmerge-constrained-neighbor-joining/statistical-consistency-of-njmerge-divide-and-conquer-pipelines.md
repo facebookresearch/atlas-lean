@@ -11,7 +11,7 @@
 ## Depends on
 
 - [NJMerge returns the true tree on nearly additive input](njmerge-returns-the-true-tree-on-nearly-additive-input.md)
-- [The multispecies coalescent](../../../coalescent-theory/multispecies-coalescent/gene-tree-prob.md)
+- [The multispecies coalescent](../../../../coalescent-theory/multispecies-coalescent/gene-tree-prob.md)
 
 ## Expansion
 

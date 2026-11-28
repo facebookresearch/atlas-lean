@@ -20,7 +20,7 @@ Hence $G$ amplifies weak selection (beats $K_N$ for all $r$ in some interval $(a
 
 ## Depends on
 
-- [Average fixation equals Moran fixation on isothermal graphs (Birth-death updating)](../../isothermal-theorem-for-evolutionary-graph-dynami/average-fixation-eq-moran-fixation.md)
+- [Average fixation equals Moran fixation on isothermal graphs (Birth-death updating)](../../../isothermal-theorem-for-evolutionary-graph-dynami/average-fixation-eq-moran-fixation.md)
 
 ## Expansion
 

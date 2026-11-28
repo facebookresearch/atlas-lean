@@ -27,7 +27,7 @@ With $L = 0$, $\dot C = 0$ gives $C + M = K(r-\sigma)/r$ and $\dot M = 0$ then g
 
 ## Depends on
 
-- [Logistic growth](../../logistic-growth-equation/logistic.md)
+- [Logistic growth](../../../logistic-growth-equation/logistic.md)
 
 ## Sources
 

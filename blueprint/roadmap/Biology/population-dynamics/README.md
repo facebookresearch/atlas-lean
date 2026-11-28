@@ -28,7 +28,6 @@ Differential-equation and matrix models of population growth, structure, species
 - [Nonlocal selection–mutation equations](nonlocal-selection-mutation-equations/README.md)
 - [Phase-field models of tumor growth](phase-field-models-of-tumor-growth/README.md)
 - [Phenotype-structured population models](phenotype-structured-population-models/README.md)
-## [Consumer–resource models, lifetime reproduction and selection](part-01/README.md)
 - [Crop–locust–pesticide model](part-01/crop-locust-pesticide-model/README.md)
 - [Invasion criterion in consumer-resource models](part-01/invasion-criterion-in-consumer-resource-models/README.md)
 - [Markov chains with rewards](part-01/markov-chains-with-rewards/README.md)
