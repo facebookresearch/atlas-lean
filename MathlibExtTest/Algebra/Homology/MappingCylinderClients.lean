@@ -59,6 +59,7 @@ private lemma twice_coordinate (z : K.X 0) :
     ModuleCat.hom_nsmul, ModuleCat.hom_id]
   simp only [LinearMap.smul_apply, LinearMap.id_apply, map_nsmul]
   rw [nsmul_eq_mul]
+  norm_num
 
 private def sourcePoint (x : ℤ) : (HomologicalComplex.mappingCylinder phi2).X 0 :=
   ((mappingCylinder.source phi2).f 0).hom (degreeZeroIso.inv.hom x)
