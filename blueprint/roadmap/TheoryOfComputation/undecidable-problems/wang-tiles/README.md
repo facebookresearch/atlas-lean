@@ -15,3 +15,6 @@ space–time diagrams of one-dimensional cellular automata, and the reductions f
 - [Tiling the plane with three polygons is undecidable](tiling-the-plane-with-three-polygons-is-undecida.md)
 - [Tilings of the hyperbolic plane](tilings-of-the-hyperbolic-plane/README.md)
 - [Translational tiling problems](translational-tiling-problems/README.md)
+- [Combinatorial substitutions](combinatorial-substitutions/README.md)
+- [Deciding the winner of the two-player domino game on the plane is undecidable](deciding-the-winner-of-the-two-player-domino-gam.md)
+- [The domino problem is undecidable for Wang tile sets of parameter 43](domino-problem-for-tile-sets-of-parameter-43.md)
