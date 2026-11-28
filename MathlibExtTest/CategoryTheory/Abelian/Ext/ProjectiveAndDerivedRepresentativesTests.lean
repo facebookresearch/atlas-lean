@@ -58,11 +58,11 @@ private abbrev ε : P ⟶ (ChainComplex.single₀ (ModuleCat ℤ)).obj Z :=
 private theorem ε_zero : ε.f 0 = 𝟙 Z :=
   ChainComplex.toSingle₀Equiv_symm_apply_f_zero _ _
 
-example : ¬ HomologicalComplex.QuasiIso ε := by
+example : ¬ _root_.QuasiIso ε := by
   intro h
-  let _ : HomologicalComplex.QuasiIso ε := h
+  let _ : _root_.QuasiIso ε := h
   have hex : P.ExactAt 1 :=
-    (HomologicalComplex.exactAt_iff_of_quasiIsoAt ε 1).mpr
+    (_root_.exactAt_iff_of_quasiIsoAt ε 1).mpr
       (ChainComplex.exactAt_succ_single_obj Z 0)
   have hz : IsZero Z :=
     hex.isZero_homology.of_iso
@@ -75,15 +75,16 @@ example : ¬ Projective N := by
   intro hp
   let _ : Projective N := hp
   let _ : Epi quotient := (ModuleCat.epi_iff_surjective quotient).mpr (by
+    change ∀ a : ZMod 6, ∃ z : ℤ, quotient.hom z = a
     intro a
-    obtain ⟨z, hz⟩ := ZMod.intCast_surjective a
+    obtain ⟨z, hz⟩ := ZMod.intCast_surjective (n := 6) a
     refine ⟨z, ?_⟩
     simpa [quotient, LinearMap.toSpanSingleton_apply, zsmul_eq_mul] using hz)
   let s : N ⟶ Z := Projective.factorThru (𝟙 N) quotient
   have hs : s ≫ quotient = 𝟙 N := Projective.factorThru_comp _ _
-  have h6 : (6 : ℤ) • (s.hom (1 : ZMod 6)) = 0 := by
-    rw [← map_smul]
-    have h61 : (6 : ℤ) • (1 : ZMod 6) = 0 := by norm_num
+  have h6 : (6 : ℕ) • (s.hom (1 : ZMod 6)) = 0 := by
+    rw [← map_nsmul]
+    have h61 : (6 : ℕ) • (1 : ZMod 6) = 0 := by decide
     rw [h61, map_zero]
   have h0 : s.hom (1 : ZMod 6) = 0 :=
     (smul_eq_zero.mp h6).resolve_left (by norm_num)
@@ -103,31 +104,40 @@ private abbrev resolution : ProjectiveResolution N := projectiveResolution N
 private abbrev lift : P ⟶ resolution.complex :=
   ProjectiveResolution.liftFromComplex quotient P ε resolution hP
 
-example : (resolution.π.f 0).hom ((lift.f 0).hom 2) = (2 : ZMod 6) := by
-  have h := ProjectiveResolution.liftFromComplex_f_zero_comp
-    quotient P ε resolution hP
-  rw [ε_zero, Category.id_comp] at h
-  simpa [quotient, LinearMap.toSpanSingleton_apply, zsmul_eq_mul] using
-    ConcreteCategory.congr_hom h (2 : ℤ)
+private theorem lift_value :
+    (resolution.π.f 0).hom ((lift.f 0).hom 2) = (2 : ZMod 6) := by
+  have h := ConcreteCategory.congr_hom
+    (ProjectiveResolution.liftFromComplex_f_zero_comp quotient P ε resolution hP)
+    (2 : ℤ)
+  change (resolution.π.f 0).hom ((lift.f 0).hom 2) =
+    quotient.hom ((ε.f 0).hom 2) at h
+  have hε : (ε.f 0).hom (2 : ℤ) = (2 : ℤ) := by
+    simpa using ConcreteCategory.congr_hom ε_zero (2 : ℤ)
+  rw [hε] at h
+  have hq : quotient.hom (2 : ℤ) = (2 : ZMod 6) := by
+    decide
+  exact h.trans hq
+
+example : (resolution.π.f 0).hom ((lift.f 0).hom 2) = (2 : ZMod 6) := lift_value
 
 example : (resolution.π.f 0).hom ((lift.f 0).hom 2) ≠ (0 : ZMod 6) := by
-  have h := ProjectiveResolution.liftFromComplex_f_zero_comp
-    quotient P ε resolution hP
-  rw [ε_zero, Category.id_comp] at h
-  have h2 : (resolution.π.f 0).hom ((lift.f 0).hom 2) = (2 : ZMod 6) := by
-    simpa [quotient, LinearMap.toSpanSingleton_apply, zsmul_eq_mul] using
-      ConcreteCategory.congr_hom h (2 : ℤ)
-  rw [h2]
+  rw [lift_value]
   decide
 
 private abbrev I : InjectiveResolution N := injectiveResolution N
 private abbrev twice : Z ⟶ N :=
   ModuleCat.ofHom (LinearMap.toSpanSingleton ℤ (ZMod 6) 2)
-private abbrev representative : Z ⟶ I.cocomplex.X 0 := twice ≫ I.ι.f 0
-private theorem representative_cycle :
-    representative ≫ I.cocomplex.d 0 1 = 0 := by
-  change (twice ≫ I.ι.f 0) ≫ I.cocomplex.d 0 1 = 0
+private abbrev inclusion : N ⟶ I.cocomplex.X 0 :=
+  (HomologicalComplex.singleObjXSelf (ComplexShape.up ℕ) 0 N).inv ≫ I.ι.f 0
+private theorem inclusion_cycle : inclusion ≫ I.cocomplex.d 0 1 = 0 := by
+  change ((HomologicalComplex.singleObjXSelf (ComplexShape.up ℕ) 0 N).inv ≫
+    I.ι.f 0) ≫ I.cocomplex.d 0 1 = 0
   rw [Category.assoc, I.ι_f_zero_comp_complex_d, comp_zero]
+private abbrev representative : Z ⟶ I.cocomplex.X 0 := twice ≫ inclusion
+private theorem representative_cycle :
+    representative ≫ I.cocomplex.d 0 1 = 0 :=
+  (Category.assoc twice inclusion (I.cocomplex.d 0 1)).trans
+    ((congrArg (fun f => twice ≫ f) inclusion_cycle).trans (comp_zero twice))
 private abbrev e : CategoryTheory.Abelian.Ext Z N 0 :=
   I.extMk representative 1 rfl representative_cycle
 
@@ -135,7 +145,12 @@ private theorem e_nonzero : e ≠ 0 := by
   intro he
   have hr : representative = 0 :=
     DerivedCoyoneda.extMk_zero_eq_zero Z I representative_cycle he
-  have ht : twice = 0 := (cancel_mono (I.ι.f 0)).mp (by simpa using hr)
+  have hcomp : twice ≫ inclusion = (0 : Z ⟶ N) ≫ inclusion := by
+    calc
+      _ = representative := rfl
+      _ = 0 := hr
+      _ = (0 : Z ⟶ N) ≫ inclusion := (zero_comp inclusion).symm
+  have ht : twice = 0 := (cancel_mono inclusion).mp hcomp
   have h2 : (2 : ZMod 6) = 0 := by
     simpa [twice, LinearMap.toSpanSingleton_apply] using
       ConcreteCategory.congr_hom ht (1 : ℤ)

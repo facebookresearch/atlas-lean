@@ -264,12 +264,8 @@ theorem homologyShiftedHomEquiv_postcomp (Z : C) {K L : CochainComplex C ℤ}
   obtain ⟨z, rfl⟩ := originalCycleClassMap_surjective ((singleFunctor C 0).obj Z) K q x
   rw [originalCycleClassMap_postcomp, homologyShiftedHomEquiv_originalCycleClass,
     homologyShiftedHomEquiv_originalCycleClass]
-  dsimp only [Cocycle.shiftedHom]
-  rw [Cocycle.equivHomShift_symm_postcomp, Functor.map_comp, Category.assoc]
-  exact (congrArg (fun f =>
-    (HomotopyCategory.quotient C (.up ℤ)).map (Cocycle.equivHomShift.symm z) ≫ f)
-    ((HomotopyCategory.quotient C (.up ℤ)).commShiftIso_hom_naturality g q)).trans
-      (Category.assoc _ _ _).symm
+  simpa only [Cocycle.shiftedHom] using
+    Cocycle.mappedShiftedHom_postcomp (HomotopyCategory.quotient C (.up ℤ)) z g
 
 end CochainComplex.HomComplex
 
