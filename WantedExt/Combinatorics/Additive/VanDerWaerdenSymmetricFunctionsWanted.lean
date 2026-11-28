@@ -30,6 +30,7 @@ public import MathlibExt.Combinatorics.Additive.VanDerWaerdenSumProductPrimeOneM
 public import MathlibExt.Combinatorics.Additive.VanDerWaerdenSumProductThree
 public import MathlibExt.Combinatorics.Additive.VanDerWaerdenTransformationSums
 public import MathlibExt.Combinatorics.Additive.VanDerWaerdenSumProductEightMul
+public import MathlibExt.Combinatorics.Additive.VanDerWaerdenZModTwoEquations
 
 namespace MetaMathlibExt
 
@@ -37,22 +38,6 @@ namespace MetaMathlibExt
 
 -- `not_isMVanishingFamily_sumAddMulProd_six` is proved in
 -- `MathlibExt.Combinatorics.Additive.VanDerWaerdenSumProductClassification`, re-exported here.
-
-/-- **Nonzero solutions of a two-equation system modulo primes greater than 3 congruent to 3
-mod 4.** Let $n > 3$ be a prime with $n \equiv 3 \pmod 4$. Then there are nonzero
-$x, y \in \mathbb{Z}/n\mathbb{Z}$ and an integer $r \in \{2, 3\}$ such that $x + ry = 0$ and
-$xy^r = 1$ in $\mathbb{Z}/n\mathbb{Z}$.
-
-The source prints the second equation as $xy r = 1$; it is read as $xy^r = 1$, as in the proof,
-whose first case computes $xy^2 = x^3/4 = 1$.
-
-Source: Arie Bialostocki and Vladyslav Oles, *On Generalizing the Van Der Waerden Theorem
-to Some Symmetric Functions*, INTEGERS 26 (2026), Article A25, Lemma 6
-(`integers-2026-A25-lem-6`). -/
-public theorem_wanted exists_add_mul_eq_zero_mul_pow_eq_one {n : ℕ} (hp : n.Prime)
-    (h3 : 3 < n) (h4 : n % 4 = 3) :
-    ∃ x y : ZMod n, x ≠ 0 ∧ y ≠ 0 ∧ ∃ r : ℕ, (r = 2 ∨ r = 3) ∧
-      x + r * y = 0 ∧ x * y ^ r = 1
 
 /-- **$F_1$ modulo a prime $n > 3$ with $n \equiv 3 \pmod 4$ is not $m$-vanishing for $m > 0$.**
 Let $n > 3$ be a prime with $n \equiv 3 \pmod 4$. Then for every $m > 0$ the sum-plus-product
