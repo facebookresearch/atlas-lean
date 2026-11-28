@@ -853,8 +853,9 @@ private lemma bilinPayoff_eq_right (C : M → N → ℝ) (x : StdSimplex ℝ M) 
   simp only [mul_sum]
   exact sum_congr rfl fun j _ => sum_congr rfl fun i _ => by ring
 
-/-- **Best response condition**: `(x, y)` is a Nash equilibrium iff every pure strategy used by
-either player is a pure best response to the other's. -/
+/-- **Best response condition.** In a finite bimatrix game `(A, B)` with real payoff
+matrices, `(x, y)` is a Nash equilibrium iff every pure strategy used by either player is a
+pure best response to the other's. -/
 theorem isBimatrixNash_iff (A B : M → N → ℝ) (x : StdSimplex ℝ M) (y : StdSimplex ℝ N) :
     IsBimatrixNash A B x y ↔ (∀ i, x.weights i ≠ 0 → i ∈ bestResponses₁ A y) ∧
       ∀ j, y.weights j ≠ 0 → j ∈ bestResponses₂ B x := by

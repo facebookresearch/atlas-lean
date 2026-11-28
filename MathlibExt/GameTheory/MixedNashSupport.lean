@@ -181,7 +181,8 @@ private theorem best_response_iff_support_max {X : Type*} [Fintype X] (τ : StdS
     calc ∑ a, τ'.weights a * U a ≤ U c := weighted_avg_le τ' U (U c) hub
       _ ≤ ∑ a, τ.weights a * U a := hle_c
 
-/-- **The expected payoff is affine in each player's mixed strategy.** Replacing the mixed
+/-- **The expected payoff is affine in each player's mixed strategy.** In a finite game
+(finitely many players, finite action sets, real payoffs), replacing the mixed
 strategy of any player `j` by `τ` turns the expected payoff of player `i` into the
 `τ`-weighted average of its values when `j` plays each pure action `b`. -/
 theorem expectedPayoff_update_eq_sum_update_single {ι : Type*} [Fintype ι] [DecidableEq ι]
@@ -196,7 +197,8 @@ theorem expectedPayoff_update_eq_sum_update_single {ι : Type*} [Fintype ι] [De
   simp only [← expectedPayoff_update_single_eq_restPayoff u σ i j] at hsum
   exact hsum
 
-/-- **Expected payoff of a mixed deviation.** For every mixed strategy `τ` of player `i`,
+/-- **Expected payoff of a mixed deviation.** In a finite game, for every mixed profile
+`σ`, player `i` and mixed strategy `τ` of player `i`,
 `U_i(τ, σ_{-i}) = ∑ₐ τ(a) U_i(a, σ_{-i})`. -/
 theorem expectedPayoff_update_eq_sum {ι : Type*} [Fintype ι] [DecidableEq ι] {A : ι → Type*}
     [∀ i, Fintype (A i)] (u : ι → (∀ i, A i) → ℝ) (σ : ∀ i, StdSimplex ℝ (A i)) (i : ι)
@@ -205,15 +207,16 @@ theorem expectedPayoff_update_eq_sum {ι : Type*} [Fintype ι] [DecidableEq ι] 
       ∑ a, τ.weights a * pureExpectedPayoff u σ i a := by
   exact expectedPayoff_update_eq_sum_update_single u σ i i τ
 
-/-- **Expected payoff as an average of pure payoffs.**
-`U_i(σ) = ∑ₐ σ_i(a) U_i(a, σ_{-i})`. -/
+/-- **Expected payoff as an average of pure payoffs.** In a finite game, for every mixed
+profile `σ` and player `i`, `U_i(σ) = ∑ₐ σ_i(a) U_i(a, σ_{-i})`. -/
 theorem expectedPayoff_eq_sum {ι : Type*} [Fintype ι] [DecidableEq ι] {A : ι → Type*}
     [∀ i, Fintype (A i)] (u : ι → (∀ i, A i) → ℝ) (σ : ∀ i, StdSimplex ℝ (A i)) (i : ι) :
     expectedPayoff u σ i = ∑ a, (σ i).weights a * pureExpectedPayoff u σ i a := by
   have h := expectedPayoff_update_eq_sum u σ i (σ i)
   rwa [Function.update_eq_self] at h
 
-/-- The payoffs of the pure actions of player `i` do not depend on the mixed strategy of `i`. -/
+/-- In a finite game, the payoffs of the pure actions of player `i` against a mixed
+profile `σ` do not depend on the mixed strategy of `i` in `σ`. -/
 theorem pureExpectedPayoff_update {ι : Type*} [Fintype ι] [DecidableEq ι] {A : ι → Type*}
     [∀ i, Fintype (A i)] (u : ι → (∀ i, A i) → ℝ) (σ : ∀ i, StdSimplex ℝ (A i)) (i : ι)
     (τ : StdSimplex ℝ (A i)) (a : A i) :
@@ -222,9 +225,10 @@ theorem pureExpectedPayoff_update {ι : Type*} [Fintype ι] [DecidableEq ι] {A 
   rw [Function.update_idem]
 
 /-- **Support characterization of mixed best responses** (Savani and von Stengel 2006, Lemma 1,
-for `n` players). Against the mixed strategies `σ_{-i}` of the other players, the mixed strategy
-`τ` of player `i` is a best response if and only if every pure action in the support of `τ`
-earns at least as much as every pure action of `i`. -/
+for `n` players). In a finite game, fix a mixed profile `σ` and a player `i`. Against the
+mixed strategies `σ_{-i}` of the other players, the mixed strategy `τ` of player `i` is a
+best response if and only if every pure action in the support of `τ` earns at least as much
+as every pure action of `i`. -/
 theorem forall_expectedPayoff_update_le_iff {ι : Type*} [Fintype ι] [DecidableEq ι]
     {A : ι → Type*} [∀ i, Fintype (A i)] (u : ι → (∀ i, A i) → ℝ)
     (σ : ∀ i, StdSimplex ℝ (A i)) (i : ι) (τ : StdSimplex ℝ (A i)) :
@@ -234,9 +238,9 @@ theorem forall_expectedPayoff_update_le_iff {ι : Type*} [Fintype ι] [Decidable
   simp only [expectedPayoff_update_eq_sum]
   exact best_response_iff_support_max τ (pureExpectedPayoff u σ i)
 
-/-- **Pure deviations suffice.** `σ` is a mixed Nash equilibrium if and only if no player gains
-by a unilateral deviation to a pure action: `U_i(a, σ_{-i}) ≤ U_i(σ)` for every player `i` and
-every pure action `a` of `i`. -/
+/-- **Pure deviations suffice.** In a finite game, a mixed profile `σ` is a mixed Nash
+equilibrium if and only if no player gains by a unilateral deviation to a pure action:
+`U_i(a, σ_{-i}) ≤ U_i(σ)` for every player `i` and every pure action `a` of `i`. -/
 theorem isMixedNash_iff_forall_pureExpectedPayoff_le {ι : Type*} [Fintype ι] [DecidableEq ι]
     {A : ι → Type*} [∀ i, Fintype (A i)] (u : ι → (∀ i, A i) → ℝ)
     (σ : ∀ i, StdSimplex ℝ (A i)) :
@@ -249,9 +253,9 @@ theorem isMixedNash_iff_forall_pureExpectedPayoff_le {ι : Type*} [Fintype ι] [
     exact weighted_avg_le τ _ _ (h i)
 
 /-- **Best-response (support) condition** (Nash 1951; Savani and von Stengel 2006, Lemma 1,
-applied to each player). `σ` is a mixed Nash equilibrium if and only if, for every player `i`,
-every pure action in the support of `σ i` earns at least as much against `σ_{-i}` as every pure
-action of `i`. -/
+applied to each player). In a finite game, a mixed profile `σ` is a mixed Nash equilibrium
+if and only if, for every player `i`, every pure action in the support of `σ i` earns at
+least as much against `σ_{-i}` as every pure action of `i`. -/
 theorem isMixedNash_iff_support {ι : Type*} [Fintype ι] [DecidableEq ι] {A : ι → Type*}
     [∀ i, Fintype (A i)] (u : ι → (∀ i, A i) → ℝ) (σ : ∀ i, StdSimplex ℝ (A i)) :
     IsMixedNash u σ ↔ ∀ i (a : A i), (σ i).weights a ≠ 0 → ∀ b : A i,
@@ -269,8 +273,9 @@ theorem isMixedNash_iff_support {ι : Type*} [Fintype ι] [DecidableEq ι] {A : 
     have hle := hsupp τ
     rwa [Function.update_eq_self] at hle
 
-/-- **Indifference on the support.** In a mixed Nash equilibrium, every pure action that
-player `i` plays with positive probability earns exactly the equilibrium payoff of `i`. -/
+/-- **Indifference on the support.** In a finite game, at a mixed Nash equilibrium, every
+pure action that player `i` plays with positive probability earns exactly the equilibrium
+payoff of `i`. -/
 theorem IsMixedNash.pureExpectedPayoff_eq {ι : Type*} [Fintype ι] [DecidableEq ι]
     {A : ι → Type*} [∀ i, Fintype (A i)] {u : ι → (∀ i, A i) → ℝ}
     {σ : ∀ i, StdSimplex ℝ (A i)} (h : IsMixedNash u σ) {i : ι} {a : A i}
