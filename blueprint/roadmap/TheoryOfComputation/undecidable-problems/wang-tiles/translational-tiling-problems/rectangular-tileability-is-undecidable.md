@@ -22,7 +22,7 @@ The rectangle is not part of the input: for a fixed rectangle the question is a 
 
 The proof works with generalized Wang tiles (polyominoes with colored edges) and then converts them into plain polyominoes by a geometric encoding that preserves tileability. From an instance of Post's correspondence problem it builds tiles whose rectangular tilings are bordered by special border tiles and whose interior rows spell the two concatenations, so that some rectangle is tileable iff the instance has a solution. Using the undecidability of the correspondence problem with $7$ pairs over a binary alphabet already bounds the number of tiles by $80$. For $19$, Ollinger's $11$ polyominoes simulating an arbitrary Wang tileset are combined with $8$ border tiles, so that the resulting set tiles some rectangle iff the Wang tileset tiles some suitably bordered rectangle.
 
-A good expansion links pages for the encoding of generalized Wang tiles by plain polyominoes, for the reduction from the Post correspondence problem to bordered rectangular tilings, and for Ollinger's $11$ polyominoes simulating an arbitrary Wang tile set.
+A good expansion links pages for the encoding of generalized Wang tiles by plain polyominoes (Lemma A.1), for the reduction from the Post correspondence problem to bordered rectangular tilings, and for Ollinger's $11$ polyominoes simulating an arbitrary Wang tile set.
 
 ## Sources
 
