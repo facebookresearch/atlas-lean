@@ -2,4 +2,3 @@
 
 - [Misspecified MLE](misspecified-mle/README.md)
 - [MLEConsistency](mleconsistency/README.md)
-- [Multinomial Totals](multinomial-totals/README.md)

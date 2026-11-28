@@ -10,3 +10,4 @@ Number-theoretic analogues over $\mathbb{F}_q[T]$ and finite fields: polynomial 
 - [Prime factors of given multiplicity in $h$-free polynomials](prime-factors-of-given-multiplicity-in-h-free-po/README.md)
 - [Twin primes and Chowla's conjecture over function fields](twin-primes-and-chowla-s-conjecture-over-functio/README.md)
 - [Odd perfect polynomials over $\mathbb{F}_2$ are squares (Canaday)](odd-perfect-polynomial-is-square.md)
+- [Undecidability in function fields](undecidability-in-function-fields/README.md)

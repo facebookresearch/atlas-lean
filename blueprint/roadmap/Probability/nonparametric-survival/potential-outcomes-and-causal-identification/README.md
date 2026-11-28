@@ -1,5 +1,8 @@
 # Potential outcomes and causal identification
 
+- [Regression discontinuity designs](regression-discontinuity-designs/README.md)
+- [Difference in differences](difference-in-differences/README.md)
+
 ## Finite-population randomization inference (Neyman 1923)
 
 - [Sample mean over a set of units](sample-mean.md)
