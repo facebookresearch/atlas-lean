@@ -392,17 +392,17 @@ private lemma wave_moment {k q : ℕ} [NeZero q] [Nonempty (Fin k)]
   ring
 
 -- Product weights describe independent choices of colour at distinct integers.
-private lemma fixed_colour {V : Type*} [Fintype V] [DecidableEq V] {k : ℕ}
-    (p : V → Fin 2 → ℝ) (hs : ∀ v, ∑ c, p v c = 1) (x : Fin k → V)
-    (hx : Function.Injective x) (c : Fin 2) :
-    (∑ f : V → Fin 2, if ∀ i, f (x i) = c then ∏ v, p v (f v) else 0) =
+private lemma fixed_colour {V : Type*} [Fintype V] [DecidableEq V] {k r : ℕ}
+    (p : V → Fin r → ℝ) (hs : ∀ v, ∑ c, p v c = 1) (x : Fin k → V)
+    (hx : Function.Injective x) (c : Fin r) :
+    (∑ f : V → Fin r, if ∀ i, f (x i) = c then ∏ v, p v (f v) else 0) =
       ∏ i, p (x i) c := by
   classical
   let S := univ.image x
-  have equiv (f : V → Fin 2) : (∀ i, f (x i) = c) ↔ ∀ v, v ∈ S → f v = c := by
+  have equiv (f : V → Fin r) : (∀ i, f (x i) = c) ↔ ∀ v, v ∈ S → f v = c := by
     simp [S]
-  let g (v : V) (j : Fin 2) := if v ∈ S → j = c then p v j else 0
-  have factor (f : V → Fin 2) :
+  let g (v : V) (j : Fin r) := if v ∈ S → j = c then p v j else 0
+  have factor (f : V → Fin r) :
       (if ∀ i, f (x i) = c then ∏ v, p v (f v) else 0) = ∏ v, g v (f v) := by
     simp only [g, Fintype.prod_ite_zero, equiv]
   have total (v : V) : ∑ j, g v j = if v ∈ S then p v c else 1 := by
@@ -412,15 +412,16 @@ private lemma fixed_colour {V : Type*} [Fintype V] [DecidableEq V] {k : ℕ}
   simp_rw [total]
   rw [Fintype.prod_ite_mem, prod_image hx.injOn]
 
-private lemma round_good {k : ℕ} [Nonempty (Fin k)] (n : ℕ) (G : Finset (Fin k → ℤ))
+private lemma round_good {k r : ℕ} [Nonempty (Fin k)] [NeZero r] (n : ℕ)
+    (G : Finset (Fin k → ℤ))
     (hrange : ∀ x ∈ G, ∀ i, x i ∈ Icc (1 : ℤ) n) (hinj : ∀ x ∈ G, Function.Injective x)
-    (w : ℤ → Fin 2 → ℝ) (hw : ∀ z c, 0 ≤ w z c) (hs : ∀ z, ∑ c, w z c = 1) :
-    ∃ χ : ℤ → Fin 2, ((G.filter (mono χ)).card : ℝ) ≤ ∑ x ∈ G, ∑ c, ∏ i, w (x i) c := by
+    (w : ℤ → Fin r → ℝ) (hw : ∀ z c, 0 ≤ w z c) (hs : ∀ z, ∑ c, w z c = 1) :
+    ∃ χ : ℤ → Fin r, ((G.filter (mono χ)).card : ℝ) ≤ ∑ x ∈ G, ∑ c, ∏ i, w (x i) c := by
   classical
   let V := ↥(Icc (1 : ℤ) n)
-  let colour (f : V → Fin 2) (z : ℤ) := if h : z ∈ Icc (1 : ℤ) n then f ⟨z, h⟩ else 0
-  let p (v : V) (c : Fin 2) := w v c
-  let mass (f : V → Fin 2) := ∏ v, p v (f v)
+  let colour (f : V → Fin r) (z : ℤ) := if h : z ∈ Icc (1 : ℤ) n then f ⟨z, h⟩ else 0
+  let p (v : V) (c : Fin r) := w v c
+  let mass (f : V → Fin r) := ∏ v, p v (f v)
   have hmass : ∑ f, mass f = 1 := by
     simp [mass, ← Fintype.prod_sum, p, hs]
   have hn (f) : 0 ≤ mass f := prod_nonneg fun _ _ => hw _ _
@@ -428,7 +429,7 @@ private lemma round_good {k : ℕ} [Nonempty (Fin k)] (n : ℕ) (G : Finset (Fin
       (∑ f, if mono (colour f) x then mass f else 0) = ∑ c, ∏ i, w (x i) c := by
     let y (i : Fin k) : V := ⟨x i, hrange x hx i⟩
     have hy : Function.Injective y := fun i j e => hinj x hx (congrArg Subtype.val e)
-    have hsum (c : Fin 2) := fixed_colour p (fun v => hs v) y hy c
+    have hsum (c : Fin r) := fixed_colour p (fun v => hs v) y hy c
     rw [← sum_congr rfl (fun c _ => hsum c), sum_comm]
     apply sum_congr rfl
     intro f _
@@ -438,7 +439,7 @@ private lemma round_good {k : ℕ} [Nonempty (Fin k)] (n : ℕ) (G : Finset (Fin
     · have hall (i) : f (y i) = c₀ := by simpa only [he] using hm i (Classical.arbitrary (Fin k))
       rw [ite_eq_left hm]
       simp [hall, mass]
-    · have none (c : Fin 2) : ¬ ∀ i, f (y i) = c := fun h => hm fun i j => by simp [he, h]
+    · have none (c : Fin r) : ¬ ∀ i, f (y i) = c := fun h => hm fun i j => by simp [he, h]
       simp [hm, none]
   let M (f) : ℝ := (G.filter (mono (colour f))).card
   have avg : ∑ f, mass f * M f = ∑ x ∈ G, ∑ c, ∏ i, w (x i) c := by

@@ -11758,6 +11758,7 @@
   "MathlibExt/Combinatorics/MisereCubeRotationNim": {"to": "GameTheory/combinatorial-games", "title": "Nim on a cube"},
   "MathlibExt/Combinatorics/MonochromaticLinearEquations": {"to": "Combinatorics/ramsey-theory/schur-rado-theorems", "title": "Monochromatic solutions of linear equations"},
   "MathlibExt/Combinatorics/MonochromaticLinearEquations/NoCancelingPartition": {"to": "Combinatorics/ramsey-theory/schur-rado-theorems", "title": "Monochromatic solutions of linear equations"},
+  "MathlibExt/Combinatorics/MonochromaticLinearEquations/Odd": {"to": "Combinatorics/ramsey-theory/schur-rado-theorems", "title": "Monochromatic solutions of linear equations"},
   "MathlibExt/Combinatorics/NeggersStanley": {"to": "Combinatorics/partially-ordered-sets", "title": "Neggers–Stanley conjecture"},
   "MathlibExt/Combinatorics/MonochromaticLinearEquations/OneTwo": {"to": "Combinatorics/ramsey-theory/schur-rado-theorems", "title": "Monochromatic solutions of linear equations"},
   "MathlibExt/Combinatorics/MonochromaticLinearEquations/Recolouring": {"to": "Combinatorics/ramsey-theory/schur-rado-theorems", "title": "Monochromatic solutions of linear equations"},
