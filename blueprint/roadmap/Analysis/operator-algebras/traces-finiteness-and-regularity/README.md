@@ -1,6 +1,7 @@
 # Traces, finiteness and regularity of C*-algebras
 
 - [Extended traces and closed ideals](extended-traces-and-closed-ideals/README.md)
+- [Free hypergraph C*-algebras](free-hypergraph-c-star-algebras/README.md)
 - [A uniform trace-halving projection from tracial real rank zero](halving-projection-from-tracial-real-rank-zero.md)
 - [One pair witnesses nonadditivity of every normalized two-quasitrace](nonadditive-normalized-two-quasitraces-fixed-pair.md)
 - [Loss of normalized two-quasitraces in a reduced free group product model](reduced-free-group-product-quasitrace-loss.md)

@@ -24,6 +24,12 @@ public def IsPracticalNumber (n : ℕ) : Prop :=
   0 < n ∧ ∀ m, 1 ≤ m → m ≤ n →
     ∃ s : Finset ℕ, s ⊆ n.divisors ∧ ∑ x ∈ s, x = m
 
+/-- A natural number is practical exactly when it is positive and each natural number from `1`
+through `n` has a representation as a sum of distinct positive divisors of `n`. -/
+theorem isPracticalNumber_iff {n : ℕ} :
+    IsPracticalNumber n ↔ 0 < n ∧ ∀ m, 1 ≤ m → m ≤ n →
+      ∃ s : Finset ℕ, s ⊆ n.divisors ∧ ∑ x ∈ s, x = m := Iff.rfl
+
 end
 
 end MetaMathlibExt
