@@ -1,7 +1,8 @@
 # Multi-armed bandits
 
 - [Oblivious adversarial bandits](oblivious-adversarial-bandits.md)
-- [Action law of a bandit policy on a fixed reward table](action-law-of-a-bandit-policy-on-a-fixed-reward-table.md)
+- [Oblivious adversarial bandit model](oblivious-adversarial-bandit-model/README.md)
+- [Product formula for the action law of a bandit policy](action-law-of-a-bandit-policy-on-a-fixed-reward-table.md)
 - [Regret in reward form equals regret in loss form](regret-in-reward-form-equals-regret-in-loss-form.md)
 - [Regret of the uniform policy with two arms](regret-of-the-uniform-policy-with-two-arms.md)
 - [Regret decomposition for stochastic bandits](regret-decomposition-for-stochastic-bandits.md)

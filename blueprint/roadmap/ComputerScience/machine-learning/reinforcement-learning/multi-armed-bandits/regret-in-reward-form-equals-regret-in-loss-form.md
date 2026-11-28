@@ -18,7 +18,9 @@ agree term by term.
 ## Depends on
 
 - [Oblivious adversarial bandits](oblivious-adversarial-bandits.md)
-- [Action law of a bandit policy on a fixed reward table](action-law-of-a-bandit-policy-on-a-fixed-reward-table.md)
+- [Policy for an oblivious adversarial bandit](oblivious-adversarial-bandit-model/policy.md)
+- [Action law of a policy on a reward table](oblivious-adversarial-bandit-model/action-law.md)
+- [Product formula for the action law of a bandit policy](action-law-of-a-bandit-policy-on-a-fixed-reward-table.md)
 - [Expectation under a probability mass function](../../../../Probability/distributions/discrete/expectation-under-a-probability-mass-function/expect.md)
 
 ## Proof depends on
