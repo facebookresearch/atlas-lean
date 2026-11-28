@@ -13,6 +13,7 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.NumberTheory.ArithmeticFunction.Moebius
 public import Mathlib.NumberTheory.DirichletCharacter.Orthogonality
 public import MathlibExt.NumberTheory.ModularInverseProductMean
+public import MathlibExt.NumberTheory.ModularInverseProductMeanCoprimeSumMulAdditiveCharacter
 
 namespace MetaMathlibExt
 
@@ -212,24 +213,6 @@ public theorem_wanted weighted_kloosterman_sum_bound {n k m : ℕ} (hn : 1 ≤ n
         (a : ℂ) * exp (2 * Real.pi * I * (k * m * ((a : ZMod n)⁻¹).val : ℕ) / n)‖ ≤
       2 * (n : ℝ) ^ ((3 : ℝ) / 2) * n.divisors.card * Real.sqrt (Nat.gcd n k) *
         Real.log (Real.exp 1 * n)
-
-/-- **Weighted additive character sum over reduced residues.** For a positive integer $r$ and an
-integer $x$ write $e_r(x) = \exp(2\pi i x / r)$, and let $\mu$ be the Möbius function. For all
-natural numbers $n \ge 2$ and $k \ge 1$,
-
-$$\sum_{1 \le b \le n,\ \gcd(b, n) = 1} b \, e_n(-kb)
-= -n \sum_{d \mid n,\ (n/d) \nmid k} \frac{\mu(d)}{1 - e_{n/d}(-k)} +
-\frac{n}{2} \sum_{d \mid n,\ d < n,\ (n/d) \mid k} \mu(d) \left(\frac{n}{d} - 1\right).$$
-
-Source: O. Bordellès and L. Tóth, *Mean Values of the Product of an Integer and Its Modular
-Inverse*, INTEGERS 24 (2024), Article A33, Lemma 4. -/
-public theorem_wanted coprime_sum_mul_additive_character {n k : ℕ} (hn : 2 ≤ n) (hk : 1 ≤ k) :
-    ∑ b ∈ Icc 1 n with Nat.Coprime b n, (b : ℂ) * exp (2 * Real.pi * I * (-(k * b : ℂ)) / n) =
-      -n * ∑ d ∈ n.divisors with ¬ (n / d) ∣ k,
-          (ArithmeticFunction.moebius d : ℂ) /
-            (1 - exp (2 * Real.pi * I * (-(k : ℂ)) / (n / d : ℕ))) +
-        n / 2 * ∑ d ∈ n.divisors with d < n ∧ (n / d) ∣ k,
-          (ArithmeticFunction.moebius d : ℂ) * ((n / d : ℕ) - 1)
 
 /-- **Splitting a sum by greatest common divisor.** For every function
 $f : \mathbb{N} \to \mathbb{C}$ and every natural number $n$,
