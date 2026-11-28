@@ -9,9 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.NumberTheory.PrimeCounting.RamanujanPrime
-import MathlibExt.NumberTheory.PrimeCounting.ChebyshevThetaBounds
+import MathlibExt.NumberTheory.PrimeCounting.ExplicitPrimeEstimates
 import Mathlib.Analysis.SpecialFunctions.Log.Monotone
-import Mathlib.Data.Nat.Prime.Factorial
 import Mathlib.Analysis.Complex.ExponentialBounds
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 
@@ -31,75 +30,7 @@ namespace MetaMathlibExt
 
 namespace laishram_ramanujan_prime_bound
 
-open Real Chebyshev Finset MeasureTheory
-
-private noncomputable def chebyshevConstant : ℝ :=
-  log (((2 : ℝ) ^ (1 / 2 : ℝ) * 3 ^ (1 / 3 : ℝ) * 5 ^ (1 / 5 : ℝ)) / 30 ^ (1 / 30 : ℝ))
-
-private lemma constant_bounds : 0.921 < chebyshevConstant ∧ chebyshevConstant < 0.922 := by
-  unfold chebyshevConstant
-  rw [log_div (by positivity) (by positivity), log_mul (by positivity) (by positivity),
-    log_mul (by positivity) (by positivity)]
-  simp only [log_rpow (by norm_num : (0 : ℝ) < 2), log_rpow (by norm_num : (0 : ℝ) < 3),
-    log_rpow (by norm_num : (0 : ℝ) < 5), log_rpow (by norm_num : (0 : ℝ) < 30)]
-  rw [show (30 : ℝ) = 2 * 3 * 5 by norm_num, log_mul (by norm_num) (by norm_num),
-    log_mul (by norm_num) (by norm_num)]
-  constructor <;> linarith [log_two_gt_d9, log_two_lt_d9, log_three_gt_d9, log_three_lt_d9,
-    log_five_gt_d9, log_five_lt_d9]
-
-private lemma theta_estimates (x : ℝ) (hx : 1 < x) :
-    theta x ≤ 1.107 * x + (log x)^2 + 3 * log x + 2 ∧
-    0.921 * x - 2.22 * √x - (log x)^2 / 2 - 4 * log x - 3 ≤ theta x := by
-  obtain ⟨hu, hl⟩ := chebyshev_theta_explicit_bounds x hx
-  change _ * chebyshevConstant * x - chebyshevConstant * √x + _ + _ + _ > theta x at hu
-  change theta x > chebyshevConstant * x - _ * chebyshevConstant * √x - _ - _ - _ at hl
-  have hlog : 0 ≤ log x := log_nonneg hx.le
-  have h6 : 1.7 < log 6 := by
-    rw [show (6 : ℝ) = 2 * 3 by norm_num, log_mul (by norm_num) (by norm_num)]
-    linarith [log_two_gt_d9, log_three_gt_d9]
-  have hu' : 5 / (4 * log 6) ≤ (1 : ℝ) := (div_le_iff₀ (by linarith)).2 (by linarith)
-  have hl' : 5 / (8 * log 6) ≤ (1 : ℝ) / 2 := (div_le_iff₀ (by linarith)).2 (by linarith)
-  have ⟨hA, hA'⟩ := constant_bounds
-  have hx0 : 0 ≤ x := by linarith
-  constructor
-  · nlinarith only [hu, mul_le_mul_of_nonneg_right hA'.le hx0,
-      mul_nonneg (show 0 ≤ chebyshevConstant by linarith) (sqrt_nonneg x),
-      mul_le_mul_of_nonneg_right hu' (sq_nonneg (log x)), hlog, hx0]
-  · nlinarith only [hl, mul_le_mul_of_nonneg_right hA.le hx0,
-      mul_le_mul_of_nonneg_right hA'.le (sqrt_nonneg x),
-      mul_le_mul_of_nonneg_right hl' (sq_nonneg (log x)), hlog, sqrt_nonneg x]
-
-private lemma log_65536 : log 65536 = 16 * log 2 := by
-  rw [show (65536 : ℝ) = 2 ^ 16 by norm_num, log_pow]
-  norm_num
-
-private lemma theta_large (x : ℝ) (hx : 65536 ≤ x) :
-    theta x ≤ 1.11 * x ∧ 0.91 * x ≤ theta x := by
-  have hexp : exp 2 ≤ (65536 : ℝ) := by
-    rw [← le_log_iff_exp_le (by norm_num), log_65536]
-    linarith [log_two_gt_d9]
-  have h := log_div_sqrt_antitoneOn hexp (hexp.trans hx) hx
-  have hs : 256 ≤ √x := by
-    exact (le_sqrt (by norm_num) (by linarith)).2 (by linarith)
-  have hs' := sq_sqrt (show 0 ≤ x by linarith)
-  have hlog : log x ≤ 0.044 * √x := by
-    change log x / √x ≤ log 65536 / √65536 at h
-    rw [log_65536, show √(65536 : ℝ) = 256 by rw [Real.sqrt_eq_iff_mul_self_eq] <;> norm_num] at h
-    apply (div_le_iff₀ (show 0 < √x by linarith)).1
-    exact h.trans (by linarith [log_two_lt_d9])
-  have hlog0 := log_nonneg (show 1 ≤ x by linarith)
-  have hlog2 := mul_self_le_mul_self hlog0 hlog
-  have hsx : 256 * √x ≤ x := by nlinarith [mul_nonneg (sqrt_nonneg x) (sub_nonneg.mpr hs)]
-  obtain ⟨hu, hl⟩ := theta_estimates x (by linarith)
-  constructor <;> nlinarith only [hlog, hlog2, hs', hsx, hu, hl, hx]
-
-private lemma theta_base : 3400 ≤ theta 4096 := by
-  have h := (theta_estimates 4096 (by norm_num)).2
-  rw [show √(4096 : ℝ) = 64 by rw [Real.sqrt_eq_iff_mul_self_eq] <;> norm_num,
-    show (4096 : ℝ) = 2 ^ 12 by norm_num, log_pow] at h
-  norm_num at h
-  nlinarith [log_two_lt_d9, log_two_gt_d9,
-    mul_self_le_mul_self (log_nonneg (by norm_num : 1 ≤ (2 : ℝ))) log_two_lt_d9.le]
+open Real Chebyshev Finset MeasureTheory ExplicitPrimeEstimates
 
 private lemma thetaIntegral_bound {x : ℝ} (hx : 65536 ≤ x) :
     (∫ t in 4096..x, theta t / (t * log t ^ 2)) ≤
@@ -171,16 +102,16 @@ private lemma primeCounting_upper {x : ℝ} (hx : 65536 ≤ x)
       4096 / (5 * log 4096) ≤ 60 := by
     have hLpos' : 0 < log 4096 := log_pos (by norm_num)
     have : 504 * log 4096 ≤ theta 4096 + 4096 / 5 := by
-      linarith [hL, log_two_lt_d9, theta_base]
+      linarith [hL, log_two_lt_d9, le_theta_4096]
     apply (mul_le_mul_iff_left₀ hLpos').mp
     field_simp at hbase' ⊢
     linarith
-  have he : exp 1 ≤ (65536 : ℝ) := by
-    rw [← le_log_iff_exp_le (by norm_num), log_65536]
-    linarith [log_two_gt_d9]
+  have he : exp 1 ≤ (65536 : ℝ) := exp_one_lt_three.le.trans (by norm_num)
   have hmono := log_div_self_antitoneOn he (he.trans hx) hx
   change log x / x ≤ log 65536 / 65536 at hmono
-  rw [div_le_div_iff₀ (by linarith) (by norm_num), log_65536] at hmono
+  rw [div_le_div_iff₀ (by linarith) (by norm_num),
+    show (65536 : ℝ) = 2 ^ 16 by norm_num, log_pow] at hmono
+  norm_num at hmono
   have herror : 60 * log x ≤ 0.02 * x := by
     nlinarith only [hx, hmono, mul_le_mul_of_nonneg_right log_two_lt_d9.le (show 0 ≤ x by linarith)]
   rw [primeCounting_eq_theta_div_log_add_integral hx2, ← hsum, add_mul,
@@ -190,7 +121,7 @@ private lemma primeCounting_upper {x : ℝ} (hx : 65536 ≤ x)
       (∫ t in 4096..x, theta t / (t * log t ^ 2)) ≤ 60 + x / (5 * log x) := by linarith
   have h := mul_le_mul_of_nonneg_right this hLpos.le
   field_simp at h
-  linarith [(theta_large x hx).1]
+  linarith [(theta_bounds_of_65536_le x hx).1]
 
 private lemma theta_difference (a b : ℕ) (hab : a ≤ b) :
     theta b - theta a ≤ (b.primeCounting - a.primeCounting : ℝ) * log b := by
@@ -209,9 +140,12 @@ private lemma theta_difference (a b : ℕ) (hab : a ≤ b) :
 private lemma large_dyadic {m : ℕ} (hm : 65536 ≤ m) (hbase : Nat.primeCounting 4096 = 564) :
     3 * m.primeCounting < 2 * (2 * m).primeCounting := by
   have hx : (65536 : ℝ) ≤ m := by exact_mod_cast hm
-  have hL : 16 * log 2 ≤ log m := log_65536 ▸ log_le_log (by norm_num) hx
-  have hθ := (theta_large (m : ℝ) hx).1
-  have hθ' := (theta_large (2 * m : ℝ) (by linarith)).2
+  have hL : 16 * log 2 ≤ log m := by
+    have h := log_le_log (by norm_num) hx
+    rw [show (65536 : ℝ) = 2 ^ 16 by norm_num, log_pow] at h
+    simpa only [Nat.cast_ofNat] using h
+  have hθ := (theta_bounds_of_65536_le (m : ℝ) hx).1
+  have hθ' := (theta_bounds_of_65536_le (2 * m : ℝ) (by linarith)).2
   have hdiff := theta_difference m (2 * m) (by omega)
   have hπ := primeCounting_upper hx hbase
   rw [Nat.floor_natCast] at hπ
@@ -224,33 +158,6 @@ private lemma large_dyadic {m : ℕ} (hm : 65536 ≤ m) (hbase : Nat.primeCounti
   have h' : 2 * ((2 * m).primeCounting : ℝ) ≤ 3 * (m.primeCounting : ℝ) := by exact_mod_cast h
   have hmul := mul_le_mul_of_nonneg_right h' (log_nonneg (by linarith : (1 : ℝ) ≤ 2 * m))
   linarith
-
--- Above 362, a composite in the finite range has a factor in 362!.
-private def primeFlag (p : ℕ) : ℕ :=
-  if p ≤ 362 then (if p.Prime then 1 else 0)
-  else if p.gcd (Nat.factorial 362) = 1 then 1 else 0
-
-private lemma primeFlag_eq {p : ℕ} (hp : p < 363 ^ 2) :
-    primeFlag p = if p.Prime then 1 else 0 := by
-  by_cases hs : p ≤ 362
-  · simp [primeFlag, hs]
-  have hiff : p.gcd (Nat.factorial 362) = 1 ↔ p.Prime := by
-    rw [← Nat.coprime_iff_gcd_eq_one]
-    refine ⟨fun hc => ?_, fun h => h.coprime_factorial_of_lt (by omega)⟩
-    by_contra h
-    have hfac := Nat.minFac_sq_le_self (by omega : 0 < p) h
-    have hg := (Nat.coprime_factorial_iff (by omega : p ≠ 1)).mp hc
-    nlinarith only [hp, hfac, Nat.mul_self_le_mul_self (show 363 ≤ p.minFac by omega)]
-  simp only [primeFlag, ite_eq_right hs, hiff]
-
-private lemma primeCounting_base : Nat.primeCounting 4096 = 564 := by
-  change (List.range 4097).countP (fun p => decide p.Prime) = 564
-  have h : (List.range 4097).countP (fun p => primeFlag p == 1) = 564 := by decide +kernel
-  apply Eq.trans _ h
-  apply List.countP_congr
-  intro p hp
-  rw [primeFlag_eq (by have := List.mem_range.mp hp; omega)]
-  by_cases h : p.Prime <;> simp [h]
 
 private def surplus (k : ℕ) : ℤ :=
   2 * ((2 * k).primeCounting : ℤ) - 3 * (k.primeCounting : ℤ)
@@ -326,7 +233,7 @@ private lemma prime_dyadic {p : ℕ} (hp : p.Prime) :
   have hhalf : 3 * (p / 2).primeCounting < 2 * (2 * (p / 2)).primeCounting := by
     rcases lt_or_ge (p / 2) 65536 with hm | hm
     · exact small_dyadic (by omega) hm
-    · exact large_dyadic hm primeCounting_base
+    · exact large_dyadic hm primeCounting_4096
   exact hhalf.trans_le (Nat.mul_le_mul_left 2 (Nat.monotone_primeCounting (by omega)))
 
 end laishram_ramanujan_prime_bound
