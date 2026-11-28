@@ -79,20 +79,21 @@ private structure FundHyp (L : List ℕ) (Q : ℕ → ℝ) : Prop where
 variable {L : List ℕ} {Q : ℕ → ℝ}
 
 private theorem mlb_add (s j : ℕ) : maxLStarBlock L s (j + s) = maxLStarBlock L 0 j := by
-  simp [maxLStarBlock]
+  rw [maxLStarBlock_of_le (Nat.le_add_left s j), maxLStarBlock_of_le (Nat.zero_le j)]
+  simp
 
 private theorem mlb_self (s : ℕ) : maxLStarBlock L s s = L.getD 0 0 := by
-  simp [maxLStarBlock]
+  simp [maxLStarBlock_of_le (le_refl s)]
 
 private theorem mlb_add_mul (s k : ℕ) : maxLStarBlock L s (s + L.length * k) = L.getD 0 0 := by
-  simp [maxLStarBlock]
+  simp [maxLStarBlock_of_le (Nat.le_add_right s (L.length * k))]
 
 /-- Past index `m + N`, the maximal blocks starting at `m` and at `m + N` agree. -/
 private theorem mlb_tail (m i : ℕ) :
     maxLStarBlock L m (i + (m + L.length)) =
       maxLStarBlock L (m + L.length) (i + (m + L.length)) := by
-  simp only [maxLStarBlock, show ¬ i + (m + L.length) < m by omega,
-    show ¬ i + (m + L.length) < m + L.length by omega, ite_false]
+  rw [maxLStarBlock_of_le (show m ≤ i + (m + L.length) by omega),
+    maxLStarBlock_of_le (Nat.le_add_left (m + L.length) i)]
   congr 1
   rw [show i + (m + L.length) - m = i + L.length by omega,
     show i + (m + L.length) - (m + L.length) = i by omega, Nat.add_mod_right]

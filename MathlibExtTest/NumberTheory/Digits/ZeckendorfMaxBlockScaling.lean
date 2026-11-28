@@ -57,9 +57,9 @@ example (L' : List ℕ) (hL' : 2 ≤ L'.length) (he' : L'.getD 0 0 ≠ 0) {Q' : 
     hbij' 1
   have h1 : ∀ s k, (maxLStarBlock [1, 1] s k : ℝ) = if k < s then 0 else 1 := by
     intro s k
-    unfold maxLStarBlock
-    split_ifs
-    · simp
-    · rcases Nat.mod_two_eq_zero_or_one (k - s) with h2 | h2 <;> simp [h2]
+    by_cases hks : k < s
+    · simp [hks, maxLStarBlock_of_lt hks]
+    · rw [ite_eq_right hks, maxLStarBlock_of_le (le_of_not_gt hks)]
+      rcases Nat.mod_two_eq_zero_or_one (k - s) with h2 | h2 <;> simp [h2]
   simp only [h1, pow_one, Nat.not_lt_zero, ite_false, one_mul] at h
   simpa [ite_mul] using h

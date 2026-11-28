@@ -17,7 +17,7 @@ open MetaMathlibExt
 -- On a singleton interval, zero is an admissible final digit.
 example : IsProperLStarBlock [2, 3, 0] 0 4 4 := by
   refine ⟨le_rfl, fun i hi => ?_, by decide, fun _ _ => rfl⟩
-  simp [maxLStarBlock, hi]
+  exact (maxLStarBlock_of_lt hi).symm
 
 -- The interval starts away from zero and its endpoint wraps around to the second digit.
 example : {ζ : ℕ → ℕ | IsProperLStarBlock [2, 3, 0] ζ 4 8}.ncard = 3 :=

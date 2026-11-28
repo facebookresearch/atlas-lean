@@ -17,7 +17,7 @@ example : ∃ k, 1 ≤ k ∧ IsProperLStarBlock [2, 3, 0] (fun _ => 0) 1 k := by
   simpa using
     (descLexLT_maxLStarBlock_iff [2, 3, 0] (by decide) (by decide)
       (ε := fun _ => 0) (b := 1) (fun _ _ => rfl)).mp
-        ⟨1, by decide, fun i hi => by simp [maxLStarBlock, hi]⟩
+        ⟨1, by decide, fun _ hi => (maxLStarBlock_of_lt hi).symm⟩
 
 -- Only the prefix through the first smaller digit matters, not a later larger digit.
 example : DescLexLT (fun i => if i = 1 then 2 else if i = 4 then 7 else 0)

@@ -72,8 +72,7 @@ Lemma 15 (`integers-2025-A25-lem-15`; arXiv:2308.12872v1, Section 4.1). -/
 public theorem ncard_properLStarBlock (L : List ℕ) (hL : 2 ≤ L.length)
     (he : L.getD 0 0 ≠ 0) {s k : ℕ} (hsk : s ≤ k) :
     {ζ : ℕ → ℕ | IsProperLStarBlock L ζ s k}.ncard = L.getD ((k - s) % L.length) 0 := by
-  have hk : maxLStarBlock L s k = L.getD ((k - s) % L.length) 0 := by
-    simp [maxLStarBlock, Nat.not_lt.mpr hsk]
+  have hk := maxLStarBlock_of_le (L := L) hsk
   rw [← hk]
   let block (d i : ℕ) := if i < k then maxLStarBlock L s i else if i = k then d else 0
   apply Set.ncard_eq_of_bijective (fun d _ => block d)
