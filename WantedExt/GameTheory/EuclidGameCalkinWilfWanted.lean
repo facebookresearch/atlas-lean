@@ -18,22 +18,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Number of P-positions of Euclid in a row of the Calkin–Wilf tree.** Let $L_k$ be the
-number of P-positions of Euclid in row $k$ of the Calkin–Wilf tree. Then $L_0 = 1$, $L_1 = 0$,
-$L_{k+2} = L_{k+1} + 2L_k$ for every $k$, and $3L_k = 2^k + 2(-1)^k$ for every $k$, that is,
-$L_k = 2^k/3 + 2(-1)^k/3$.
-
-Source: Michael A. Jones and Brittany C. Ohlinger, *Self-Similar Structure of P-Positions
-of the Game Euclid*, The Fibonacci Quarterly 62.1 (2024), Corollary 4.6. -/
-public theorem_wanted count_euclidPPosition_calkinWilfRow :
-    (calkinWilfRow 0).countP (fun p => euclidPPosition p.1 p.2) = 1 ∧
-      (calkinWilfRow 1).countP (fun p => euclidPPosition p.1 p.2) = 0 ∧
-      (∀ k, (calkinWilfRow (k + 2)).countP (fun p => euclidPPosition p.1 p.2) =
-        (calkinWilfRow (k + 1)).countP (fun p => euclidPPosition p.1 p.2) +
-          2 * (calkinWilfRow k).countP (fun p => euclidPPosition p.1 p.2)) ∧
-      ∀ k, 3 * ((calkinWilfRow k).countP (fun p => euclidPPosition p.1 p.2) : ℤ) =
-        2 ^ k + 2 * (-1) ^ k
-
 /-- **Positions of a Calkin–Wilf row with maximal optimal play in Euclid.** For every $k \ge 0$,
 the number of positions in row $k$ of the Calkin–Wilf tree whose Smith remoteness in the Euclid
 game is $k$ equals $2^{k/2}$ if $k$ is even and $2^{(k+1)/2}$ if $k$ is odd.
