@@ -23,7 +23,7 @@ The source credits this result (Theorem 3.8 there) to Ben-Amram, Genaim and Masu
 
 ## Expansion
 
-The result is due to Ben-Amram, Genaim and Masud, who prove it by a reduction from two-counter programs, whose termination is undecidable; the survey states the result and the source of the reduction without reproducing it. The same survey records related results: termination of deterministic loops $\mathbf{while}\ (x_1 + x_2 > 0)\ \mathbf{do}\ (x_1, x_2) := f(x_1, x_2)$ with $f$ piecewise affine is undecidable over $\mathbb Q$ and $\mathbb R$ (Blondel and coauthors) and over $\mathbb Z$ (Ben-Amram).
+The result is due to Ben-Amram, Genaim and Masud, who prove it by a reduction from two-counter programs, whose termination is undecidable; the survey states the result and the source of the reduction without reproducing it. The same survey records related results: termination of deterministic loops $\mathbf{while}\ (x_1 + x_2 > 0)\ \mathbf{do}\ (x_1, x_2) := f(x_1, x_2)$ with $f$ piecewise affine is undecidable over $\mathbb Q$ and $\mathbb R$ (Blondel and coauthors) and over $\mathbb Z$ (Ben-Amram). A good expansion links pages for the undecidability of termination of two-counter programs and for the reduction of Ben-Amram, Genaim and Masud, which the survey does not reproduce.
 
 ## Sources
 

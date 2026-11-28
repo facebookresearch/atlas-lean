@@ -2,24 +2,22 @@
 
 Separation logic describes heaps with a separating conjunction and its adjoint, the magic wand. In its Bernays–Schönfinkel–Ramsey fragment, sentences with an $\exists^*\forall^*$ prefix over a quantifier-free matrix, satisfiability becomes undecidable once heap locations are integers with linear arithmetic.
 
-**Setting (Reynolds, Iosif and Serban).** Fix a theory $T$ and two of its sorts, $\mathsf{Loc}$ (interpreted as a countable set, with a constant $\mathsf{nil}$) and $\mathsf{Data}$. Given an interpretation $\mathcal{I}$ of $T$, a *heap* is a finite partial map $h$ from $\mathsf{Loc}^{\mathcal{I}}$ to $\mathsf{Data}^{\mathcal{I}}$. Formulas of $\mathsf{SL}(T)_{\mathsf{Loc},\mathsf{Data}}$ extend first-order formulas of $T$ with $\mathsf{emp}$ (the heap is empty), points-to atoms $t \mapsto u$ (the heap is the single cell mapping $t \ne \mathsf{nil}$ to $u$), the separating conjunction $\varphi_1 * \varphi_2$ (the heap splits into two disjoint parts satisfying $\varphi_1$ and $\varphi_2$), and the magic wand $\varphi_1 \mathrel{-\!\!*} \varphi_2$ (every disjoint extension satisfying $\varphi_1$ yields a heap satisfying $\varphi_2$). A formula is satisfiable if some interpretation of $T$ and heap satisfy it. $\exists^*\forall^*\mathsf{SL}(T)_{\mathsf{Loc},\mathsf{Data}}$ consists of the sentences $\exists x_1 \dots \exists x_m \forall y_1 \dots \forall y_n\, \varphi$ with $\varphi$ quantifier-free. $\mathsf{LIA}$ is linear integer arithmetic over the sort $\mathbb{Z}$, $\mathsf{EUF}$ the theory of equality over an uninterpreted sort $U$, and $\mathsf{EUF{+}LIA}$ their union.
+**Setting (Reynolds, Iosif and Serban).** Fix a theory $T$ and two of its sorts, $\mathsf{Loc}$ (interpreted as a countable set, with a constant $\mathsf{nil}$) and $\mathsf{Data}$. Given an interpretation $\mathcal{I}$ of $T$, a *heap* is a finite partial map $h$ from $\mathsf{Loc}^{\mathcal{I}}$ to $\mathsf{Data}^{\mathcal{I}}$. Formulas of $\mathsf{SL}(T)_{\mathsf{Loc},\mathsf{Data}}$ extend first-order formulas of $T$ with $\mathsf{emp}$ (the heap is empty), points-to atoms $t \mapsto u$ (the heap is the single cell mapping $t \ne \mathsf{nil}$ to $u$), the separating conjunction $\varphi_1 * \varphi_2$ (the heap splits into two disjoint parts satisfying $\varphi_1$ and $\varphi_2$), and the magic wand $\varphi_1 \mathrel{-\!\!*} \varphi_2$ (every disjoint extension satisfying $\varphi_1$ yields a heap satisfying $\varphi_2$). A formula is satisfiable if some interpretation of $T$ and heap satisfy it. $\exists^*\forall^*\mathsf{SL}(T)_{\mathsf{Loc},\mathsf{Data}}$ consists of the sentences $\exists x_1 \dots \exists x_m \forall y_1 \dots \forall y_n\, \varphi$ with $\varphi$ quantifier-free. $\mathsf{LIA}$ is linear integer arithmetic over the sort $\mathbb{Z}$, $\mathsf{E}$ the empty theory with equality, whose signature has a sort $U$ and no function symbols, and $\mathsf{ELIA}$ the extension of $\mathsf{LIA}$ by the sort $U$ of $\mathsf{E}$ with equality over it.
 
 **Theorem (Reynolds, Iosif and Serban).** The satisfiability problems for
 
 $$
 \exists^*\forall^*\mathsf{SL}(\mathsf{LIA})_{\mathbb{Z},\mathbb{Z}}
 \qquad\text{and}\qquad
-\exists^*\forall^*\mathsf{SL}(\mathsf{EUF{+}LIA})_{U,\, U \times \mathbb{Z}}
+\exists^*\forall^*\mathsf{SL}(\mathsf{ELIA})_{U,\, U \times \mathbb{Z}}
 $$
 
 are undecidable.
 
-The same paper claimed $\exists^*\forall^*\mathsf{SL}(\mathsf{EUF})_{U,U^k}$ to be PSPACE-complete; Echenim, Iosif and Peltier later corrected this claim and showed that fragment undecidable for $k \ge 2$ ([satisfiability of Bernays–Schönfinkel–Ramsey separation logic](satisfiability-of-bsr-separation-logic.md)).
+The same paper claimed $\exists^*\forall^*\mathsf{SL}(\mathsf{E})_{U,U^k}$ to be PSPACE-complete; Echenim, Iosif and Peltier later corrected this claim and showed that fragment undecidable for $k \ge 2$ ([satisfiability of Bernays–Schönfinkel–Ramsey separation logic](satisfiability-of-bsr-separation-logic.md)).
 
 ## Depends on
 
-- [Separating conjunction](../../separation-logic/star.md)
-- [Heap assertion](../../separation-logic/hassertion.md)
 - [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on

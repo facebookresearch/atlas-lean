@@ -17,7 +17,7 @@ There is no algorithm that decides, given a finite hypergraph rewriting system t
 
 The proof follows the Kapur–Narendran–Otto argument that ground confluence of terminating term rewriting is undecidable. From a Post instance $A = \langle u_1, \dots, u_n \rangle$, $B = \langle v_1, \dots, v_n \rangle$ of nonempty words one builds a finite terminating system $\mathcal{G}(A, B)$ with a single node label. One group of rules creates a critical pair standing for the choice between extending an index sequence and checking it; a second group tests whether an index sequence encoded as a hyperedge path is a solution, a third detects ill-formed hypergraphs, and a fourth collects garbage. The two sides of the critical pair can always be joined unless some index sequence is a solution, so $\mathcal{G}(A, B)$ is confluent exactly when $\langle A, B \rangle$ has no solution.
 
-For terminating term rewriting systems the problem is decidable: compute normal forms of all critical pairs (Knuth and Bendix). The hypergraph case fails because joinable critical pairs need not imply local confluence.
+For terminating term rewriting systems the problem is decidable: compute normal forms of all critical pairs (Knuth and Bendix). The hypergraph case fails because joinable critical pairs need not imply local confluence. A good expansion links pages for the correctness lemmas for $\mathcal{G}(A, B)$, in particular that the two sides of the critical pair are joinable exactly when no index sequence is a solution.
 
 ## Sources
 

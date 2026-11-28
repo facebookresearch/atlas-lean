@@ -18,7 +18,7 @@ None.
 
 ## Expansion
 
-The proofs use game semantics: observational equivalence coincides with equality of the sets of complete plays of the terms' strategies. The authors build terms of the given type whose complete plays correspond to runs of a Turing-complete machine model, adapting Murawski's proof of undecidability at the type $(\mathsf{unit} \to \mathsf{unit}) \to (\mathsf{unit} \to \mathsf{unit}) \to \mathsf{unit}$ to the type $(\mathsf{unit} \to \mathsf{unit}) \to \mathsf{unit} \to \mathsf{unit}$; this adapts to every type described in the theorem.
+The proofs use game semantics: observational equivalence coincides with equality of the sets of complete plays of the terms' strategies. The authors build terms of the given type whose complete plays correspond to runs of a Turing-complete machine model, adapting Murawski's proof of undecidability at the type $(\mathsf{unit} \to \mathsf{unit}) \to (\mathsf{unit} \to \mathsf{unit}) \to \mathsf{unit}$ to the type $(\mathsf{unit} \to \mathsf{unit}) \to \mathsf{unit} \to \mathsf{unit}$; this adapts to every type described in the theorem. A good expansion links pages for the full abstraction of the game model of RML, that observational equivalence coincides with equality of the sets of complete plays, and for the undecidable machine model whose runs these plays encode.
 
 ## Sources
 

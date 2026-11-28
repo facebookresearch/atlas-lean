@@ -21,7 +21,7 @@ The scheme is part of the input; the order is fixed at $2$. For $r = 0$ both set
 
 ## Expansion
 
-From Hilbert's tenth problem: whether $P(\vec{x}) < Q(\vec{x})$ for some $\vec{x} \in \mathbb{N}^k$, for polynomials $P, Q$ with non-negative integer coefficients, is $\Sigma^0_1$-complete (write $D^2 - 1 = P - Q$ for an integer polynomial $D$). From $P$ and $Q$ the proof builds an order-2 scheme that enumerates the tuples $\vec{x}$ and, using probabilistic choices to compare $P(\vec{x})$ with $Q(\vec{x})$, fails to terminate almost surely exactly when $P(\vec{x}) < Q(\vec{x})$ for some $\vec{x}$; an order-3 construction is given first and then lowered to order $2$. Part 2 follows by adding a start rule $S' = S \oplus_r \Omega$, which multiplies the termination probability by $r$.
+From Hilbert's tenth problem: whether $P(\vec{x}) < Q(\vec{x})$ for some $\vec{x} \in \mathbb{N}^k$, for polynomials $P, Q$ with non-negative integer coefficients, is $\Sigma^0_1$-complete (write $D^2 - 1 = P - Q$ for an integer polynomial $D$). From $P$ and $Q$ the proof builds an order-2 scheme that enumerates the tuples $\vec{x}$ and, using probabilistic choices to compare $P(\vec{x})$ with $Q(\vec{x})$, fails to terminate almost surely exactly when $P(\vec{x}) < Q(\vec{x})$ for some $\vec{x}$; an order-3 construction is given first and then lowered to order $2$. Part 2 follows by adding a start rule $S' = S \oplus_r \Omega$, which multiplies the termination probability by $r$. A good expansion links pages for the $\Sigma^0_1$-completeness of the existence of $\vec{x}$ with $P(\vec{x}) < Q(\vec{x})$, which follows from the linked theorem, and for the order-3 construction and its lowering to order $2$.
 
 ## Sources
 

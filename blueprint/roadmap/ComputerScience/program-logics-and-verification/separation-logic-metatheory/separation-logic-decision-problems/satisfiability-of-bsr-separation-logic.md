@@ -10,7 +10,6 @@ The same paper defines two subsets of $\mathsf{BSR}(\mathsf{SL}^k)$, by restrict
 
 ## Depends on
 
-- [Heap assertion](../../separation-logic/hassertion.md)
 - [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
