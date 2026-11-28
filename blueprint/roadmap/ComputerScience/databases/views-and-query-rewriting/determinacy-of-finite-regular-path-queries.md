@@ -17,6 +17,7 @@ The reduction produces only acyclic structures, so the result holds under the si
 ## Depends on
 
 - [Determinacy of a query by views](determinacy-of-a-query-by-views.md)
+- [Language denoted by a regular expression](../../../TheoryOfComputation/regular-languages/automata-and-expressions/kleene-s-theorem/is-regex-denoted.md)
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 - [Answers of a conjunctive query](../conjunctive-queries/answers-of-a-conjunctive-query.md)
 

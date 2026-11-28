@@ -5,7 +5,7 @@ When a distinguished binary relation is only required to be transitive, open-wor
 **Theorem.** In each of the following settings there are a signature $\sigma = \sigma_B \sqcup \sigma_D$, in which $\sigma_D$ consists of a single distinguished relation $S^+$, required to be transitive, a set $\Sigma$ of [disjunctive inclusion dependencies](disjunctive-inclusion-dependencies.md) on $\sigma$ and a query $Q$ on $\sigma_B$ such that the following problem is undecidable: given a finite set of facts $F_0$, decide $\mathrm{QA}^{tr}(F_0, \Sigma, Q)$, that is, whether every set of facts $F \supseteq F_0$ satisfying $\Sigma$ in which $S^+$ is transitive satisfies $Q$.
 
 1. All relations of $\sigma$ have arity at most two, and $Q$ is a union of conjunctive queries.
-2. $Q$ is a conjunctive query, and $\sigma$ is the signature of setting 1 with the successor relation $S'$ made ternary and a ternary relation $\mathrm{Or}$ and a unary relation $\mathrm{True}$ added.
+2. $Q$ is a conjunctive query, and every relation of $\sigma$ has arity at most two except two ternary relations of $\sigma_B$.
 
 Theorem 9 of the source states the result for a conjunctive query over an arity-two signature; its proof gives the arity-two form for a union of conjunctive queries and the conjunctive form only after the extra arity is added (appendix, "From UCQ to CQ"), as stated above. The notions are those of [Query answering with transitive relations, transitive closure and linear orders](query-answering-over-transitive-and-ordered-data.md).
 

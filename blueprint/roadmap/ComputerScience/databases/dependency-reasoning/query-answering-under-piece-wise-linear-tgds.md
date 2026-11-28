@@ -22,7 +22,7 @@ None.
 
 The proof reduces from a tiling problem of van Emde Boas. A tiling system $(T, L, R, H, V, a, b)$ has a finite set $T$ of tiles, disjoint sets $L, R \subseteq T$ of left and right border tiles, horizontal and vertical constraints $H, V \subseteq T^2$, a start tile $a$ and a finish tile $b$; a tiling is a map $f : [n] \times [m] \to T$ for some $n, m > 0$ with $f(1,1) = a$, $f(1,m) = b$, $f(1,i) \in L$ and $f(n,i) \in R$ for every $i$, respecting $H$ and $V$. Whether a tiling exists is undecidable. The database $D_{\mathbb{T}}$ stores the tiling system with unary predicates Tile, Left, Right, Start, Finish and binary predicates $H$, $V$. The fixed TGDs build all rows respecting $H$ as atoms $\mathrm{Row}(p, c, s, e)$ (previous row id, current id, first and last tile), using existential variables for fresh row ids; then the pairs of rows compatible under $V$ (predicate Comp); then the candidate tilings with their bottom-left tile (predicate CTiling), each TGD having at most one body atom mutually recursive with its head. The query $q \leftarrow \mathrm{CTiling}(x, y), \mathrm{Finish}(y)$ checks the finish condition, and $\mathbb{T}$ has a tiling iff $() \in \mathrm{cert}(q, D_{\mathbb{T}}, \Sigma)$.
 
-A good expansion links the undecidability of this rectangle tiling problem (with border tiles, start and finish tiles); the plane tiling problem has a page, but this variant does not.
+A good expansion links the undecidability of this rectangle tiling problem (with border tiles, start and finish tiles).
 
 ## Sources
 
