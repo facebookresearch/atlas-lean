@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.PartialOrderDimensionWanted
+public import CSLibExt.Complexity.NPComplete.PartialOrderDimensionFixedDefs
 
 @[expose] public section
 
@@ -53,21 +51,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance (an adjacency matrix `M`): the parent instance `(M, K)` is
-well formed (`M` is `n × n`, the digraph is acyclic and transitive, and `0 < K ≤ n²`). -/
-def WellFormed (K : ℕ) (M : List (List Bool)) : Prop :=
-  PartialOrderDimension.WellFormed (M, K)
-
-open Classical in
-/-- PARTIAL ORDER DIMENSION with the bound fixed to `K`, as a decision problem over
-bitstrings. -/
-noncomputable def partialOrderDimensionFixedDec (K : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := List (List Bool)) x with
-  | some M => decide (WellFormed K M ∧
-      PartialOrderDimension.PartialOrderDimensionFeasible (M, K))
-  | none => false
 
 /-- **PARTIAL ORDER DIMENSION (fixed K >= 3) is NP-complete.** For every fixed `K ≥ 3`,
 deciding whether a partial order has dimension at most `K` is NP-complete. Source: Garey and

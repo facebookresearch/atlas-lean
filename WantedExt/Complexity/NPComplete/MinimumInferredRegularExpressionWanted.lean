@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Languages.KleeneConverse
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.MinimumInferredRegularExpressionDefs
 
 @[expose] public section
 
@@ -52,44 +50,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the alphabet size `k` (the alphabet is `{0, ..., k - 1}`), the words `S`
-the expression must match, the words `T` it must not match, and the bound `K`. -/
-abbrev MinimumInferredRegularExpressionInstance := ℕ × List (List ℕ) × List (List ℕ) × ℕ
-
-/-- The number of occurrences of alphabet symbols in a regular expression: each letter
-`char a` counts once per occurrence; `0`, `1` and the operators count nothing. -/
-def symbolOccurrences {α : Type*} : RegularExpression α → ℕ
-  | .zero => 0
-  | .epsilon => 0
-  | .char _ => 1
-  | .plus P Q => symbolOccurrences P + symbolOccurrences Q
-  | .comp P Q => symbolOccurrences P + symbolOccurrences Q
-  | .star P => symbolOccurrences P
-
-/-- Well-formedness of an instance: every word of `S` and of `T` is over the alphabet
-`{0, ..., k - 1}`, and `K` is positive. -/
-def WellFormed (i : MinimumInferredRegularExpressionInstance) : Prop :=
-  (∀ s ∈ i.2.1, ∀ a ∈ s, a < i.1) ∧ (∀ t ∈ i.2.2.1, ∀ a ∈ t, a < i.1) ∧ 0 < i.2.2.2
-
-/-- Some regular expression over the alphabet `{0, ..., k - 1}` with at most `K` symbol
-occurrences matches every word of `S` and no word of `T`. -/
-def MinimumInferredRegularExpressionFeasible
-    (i : MinimumInferredRegularExpressionInstance) : Prop :=
-  ∃ E : RegularExpression ℕ,
-    (∀ a ∈ Cslib.Language.KleeneConverse.regexLetters E, a < i.1) ∧
-      symbolOccurrences E ≤ i.2.2.2 ∧
-      (∀ s ∈ i.2.1, s ∈ E.matches') ∧
-      ∀ t ∈ i.2.2.1, t ∉ E.matches'
-
-open Classical in
-/-- MINIMUM INFERRED REGULAR EXPRESSION as a decision problem over bitstrings. -/
-noncomputable def minimumInferredRegularExpressionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MinimumInferredRegularExpressionInstance) x with
-  | some i => decide (WellFormed i ∧ MinimumInferredRegularExpressionFeasible i)
-  | none => false
 
 /-- **MINIMUM INFERRED REGULAR EXPRESSION is NP-complete.** Source: Garey and Johnson (1979),
 [AL10]; Angluin (1978). -/

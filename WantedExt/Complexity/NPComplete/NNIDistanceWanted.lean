@@ -22,9 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.TBRDistanceWanted
+public import CSLibExt.Complexity.NPComplete.NNIDistanceDefs
 
 @[expose] public section
 
@@ -73,51 +71,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- The graph obtained from `G` by the nni operation on the edge `uv` that exchanges the subtree
-at `b` (a neighbor of `u` other than `v`) with the subtree at `c` (a neighbor of `v` other than
-`u`): the edges `ub` and `vc` are replaced by `uc` and `vb`. -/
-def nniSwap {V : Type*} (G : SimpleGraph V) (u v b c : V) : SimpleGraph V :=
-  G.deleteEdges {s(u, b), s(v, c)} ⊔ SimpleGraph.fromEdgeSet {s(u, c), s(v, b)}
-
-variable {X : Type}
-
-/-- `T'` is obtained from `T` by one nni operation: for an internal edge `uv` of `T` (neither
-end is a leaf), a neighbor `b ≠ v` of `u` and a neighbor `c ≠ u` of `v`, some isomorphism from
-`nniSwap T.G u v b c` to `T'` maps the leaf of each taxon in `T` to its leaf in `T'`. -/
-def IsNNIStep (T T' : UnrootedBinaryTree X) : Prop :=
-  ∃ u v b c : T.V, T.G.Adj u v ∧ T.G.degree u ≠ 1 ∧ T.G.degree v ≠ 1 ∧ T.G.Adj u b ∧ b ≠ v ∧
-    T.G.Adj v c ∧ c ≠ u ∧
-      ∃ φ : nniSwap T.G u v b c ≃g T'.G, ∀ x, φ (T.label x) = T'.label x
-
-/-- The nni distance from `T₁` to `T₂` is at most `K`: for some `k ≤ K`, a sequence of trees
-`S₀, …, S_k` with `T₁ ≅ S₀` and `S_k ≅ T₂` (label-preserving isomorphisms) has each `S_{j+1}`
-obtained from `S_j` by one nni operation. -/
-def NNIDistanceAtMost (T₁ T₂ : UnrootedBinaryTree X) (K : ℕ) : Prop :=
-  ∃ (k : ℕ) (S : Fin (k + 1) → UnrootedBinaryTree X), k ≤ K ∧ T₁.Iso (S 0) ∧
-    (∀ j : Fin k, IsNNIStep (S j.castSucc) (S j.succ)) ∧ (S (Fin.last k)).Iso T₂
-
-/-- An instance: the number of taxa `m`, the trees `T₁` and `T₂`, and the bound `K`. -/
-abbrev NNIDistanceInstance := ℕ × TreeData × TreeData × ℕ
-
-/-- Well-formedness of an instance: both trees are unrooted binary phylogenetic trees on the taxa
-`Fin m`. -/
-def WellFormed (i : NNIDistanceInstance) : Prop :=
-  IsPhyloTree i.1 i.2.1 ∧ IsPhyloTree i.1 i.2.2.1
-
-/-- The nni distance between `T₁` and `T₂` is at most `K`. -/
-def NNIDistanceFeasible (i : NNIDistanceInstance) : Prop :=
-  ∃ (h₁ : IsPhyloTree i.1 i.2.1) (h₂ : IsPhyloTree i.1 i.2.2.1),
-    NNIDistanceAtMost (toTree h₁) (toTree h₂) i.2.2.2
-
-open Classical in
-/-- NNI DISTANCE as a decision problem over bitstrings. -/
-noncomputable def nniDistanceDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := NNIDistanceInstance) x with
-  | some i => decide (WellFormed i ∧ NNIDistanceFeasible i)
-  | none => false
 
 /-- **NNI DISTANCE is NP-complete.** Source: DasGupta, He, Jiang, Li, Tromp and Zhang (2000),
 Theorem 1. -/

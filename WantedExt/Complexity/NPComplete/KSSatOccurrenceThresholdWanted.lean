@@ -18,10 +18,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Logics.Propositional.CNF.Basic
-public import Mathlib.Order.Lattice.Nat
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.KSSatOccurrenceThresholdDefs
 
 @[expose] public section
 
@@ -65,28 +62,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- `φ` is a `(k, s)`-formula: every clause has exactly `k` literals, on pairwise distinct
-variables, and every variable occurs in at most `s` clauses. -/
-def IsKSFormula (k s : ℕ) (φ : CNF) : Prop :=
-  (∀ C ∈ φ, C.length = k ∧ (C.map Prod.fst).Nodup) ∧
-    ∀ x : ℕ, φ.countP (fun C => decide (x ∈ C.map Prod.fst)) ≤ s
-
-/-- `f(k)`: the supremum of the `s` such that every `(k, s)`-formula is satisfiable. For
-`k ≥ 3` the set contains `0` (a `(k, 0)`-formula has no clauses) and is bounded (the `2^k`
-clauses with all sign patterns on `k` variables form an unsatisfiable `(k, 2^k)`-formula), so
-this is its largest element. For `k = 0` the set is empty (`[[]]` is unsatisfiable) and the
-supremum is `0`; the theorem assumes `k ≥ 3`. -/
-noncomputable def kSThreshold (k : ℕ) : ℕ :=
-  sSup {s : ℕ | ∀ φ : CNF, IsKSFormula k s φ → CNFSat φ}
-
-open Classical in
-/-- `(k, s)`-SAT as a decision problem over bitstrings. -/
-noncomputable def kSSatDec (k s : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := CNF) x with
-  | some φ => decide (IsKSFormula k s φ ∧ CNFSat φ)
-  | none => false
 
 /-- **(k,s)-SAT is NP-complete for every `k ≥ 3` and every `s ≥ f(k) + 1`**, in particular at
 the occurrence threshold `s = f(k) + 1`. Source: Kratochvíl, Savický and Tuza (1993). -/

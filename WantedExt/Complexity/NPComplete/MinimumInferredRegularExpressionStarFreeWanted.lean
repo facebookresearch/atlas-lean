@@ -23,11 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Languages.GeneralizedRegularExpression
-public import CSLibExt.Computability.Languages.KleeneConverse
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MinimumInferredRegularExpressionWanted
+public import CSLibExt.Complexity.NPComplete.MinimumInferredRegularExpressionStarFreeDefs
 
 @[expose] public section
 
@@ -63,26 +59,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Some star-free regular expression over the alphabet `{0, ..., k - 1}` with at most `K`
-symbol occurrences matches every word of `S` and no word of `T`. -/
-def MinimumInferredRegularExpressionStarFreeFeasible
-    (i : MinimumInferredRegularExpressionInstance) : Prop :=
-  ∃ E : RegularExpression ℕ, Cslib.Language.regularStarHeight E = 0 ∧
-    (∀ a ∈ Cslib.Language.KleeneConverse.regexLetters E, a < i.1) ∧
-      symbolOccurrences E ≤ i.2.2.2 ∧
-      (∀ s ∈ i.2.1, s ∈ E.matches') ∧
-      ∀ t ∈ i.2.2.1, t ∉ E.matches'
-
-open Classical in
-/-- MINIMUM INFERRED STAR-FREE REGULAR EXPRESSION as a decision problem over bitstrings. -/
-noncomputable def minimumInferredRegularExpressionStarFreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MinimumInferredRegularExpressionInstance) x with
-  | some i => decide (MinimumInferredRegularExpression.WellFormed i ∧
-      MinimumInferredRegularExpressionStarFreeFeasible i)
-  | none => false
 
 /-- **MINIMUM INFERRED STAR-FREE REGULAR EXPRESSION is NP-complete.** Source: Garey and Johnson
 (1979), [AL10]; Angluin (1976). -/

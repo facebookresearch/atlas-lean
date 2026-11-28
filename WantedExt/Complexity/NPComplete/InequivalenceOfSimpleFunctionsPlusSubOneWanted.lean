@@ -25,8 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.InequivalenceOfSimpleFunctionsPlusSubOneDefs
 
 @[expose] public section
 
@@ -63,64 +62,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Expressions over `plus` and `sub1`, with variables `xₖ` and constants at the leaves. -/
-inductive PlusSubOneExpr where
-  /-- The variable `xₖ`. -/
-  | var (k : ℕ)
-  /-- The constant `c`. -/
-  | const (c : ℕ)
-  /-- `plus(e, e') = e + e'`. -/
-  | plus (e e' : PlusSubOneExpr)
-  /-- `sub1(e) = max {0, 1 - e}`. -/
-  | sub1 (e : PlusSubOneExpr)
-
-/-- The value of an expression under the assignment `a` of non-negative integers to the
-variables (`a k` is the value of `xₖ`). -/
-def PlusSubOneExpr.eval (a : ℕ → ℕ) : PlusSubOneExpr → ℕ
-  | .var k => a k
-  | .const c => c
-  | .plus e e' => e.eval a + e'.eval a
-  | .sub1 e => 1 - e.eval a
-
-/-- The prefix token list of an expression (see the module docstring). -/
-def PlusSubOneExpr.tokens : PlusSubOneExpr → List (ℕ × ℕ)
-  | .var k => [(0, k)]
-  | .const c => [(1, c)]
-  | .plus e e' => (2, 0) :: (e.tokens ++ e'.tokens)
-  | .sub1 e => (3, 0) :: e.tokens
-
-/-- An instance: the number `|X|` of variables, and the prefix token lists of `f` and `g`. -/
-abbrev InequivalenceOfSimpleFunctionsPlusSubOneInstance :=
-  ℕ × List (ℕ × ℕ) × List (ℕ × ℕ)
-
-/-- A token list is the prefix token list of an expression whose variables are among
-`x₀, …, x_{nX-1}` and whose constants are positive integers. -/
-def IsExpr (nX : ℕ) (ts : List (ℕ × ℕ)) : Prop :=
-  (∃ e : PlusSubOneExpr, e.tokens = ts) ∧
-    ∀ t ∈ ts, (t.1 = 0 → t.2 < nX) ∧ (t.1 = 1 → 0 < t.2)
-
-/-- Well-formedness of an instance: both token lists are expressions over `X ∪ Z⁺`
-(`IsExpr`). -/
-def WellFormed (i : InequivalenceOfSimpleFunctionsPlusSubOneInstance) : Prop :=
-  IsExpr i.1 i.2.1 ∧ IsExpr i.1 i.2.2
-
-/-- Some assignment of non-negative integers to the variables gives `f` and `g` different
-values. -/
-def InequivalenceOfSimpleFunctionsPlusSubOneFeasible
-    (i : InequivalenceOfSimpleFunctionsPlusSubOneInstance) : Prop :=
-  ∃ f g : PlusSubOneExpr, f.tokens = i.2.1 ∧ g.tokens = i.2.2 ∧
-    ∃ a : ℕ → ℕ, f.eval a ≠ g.eval a
-
-open Classical in
-/-- INEQUIVALENCE OF SIMPLE FUNCTIONS in terms of `plus` and `sub1` as a decision problem over
-bitstrings. -/
-noncomputable def inequivalenceOfSimpleFunctionsPlusSubOneDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := InequivalenceOfSimpleFunctionsPlusSubOneInstance) x with
-  | some i => decide (WellFormed i ∧ InequivalenceOfSimpleFunctionsPlusSubOneFeasible i)
-  | none => false
 
 /-- **INEQUIVALENCE OF SIMPLE FUNCTIONS in terms of `plus` and `sub1` is NP-complete.** Source:
 Garey and Johnson (1979), [PO15]; Constable, Hunt and Sahni (1974). -/

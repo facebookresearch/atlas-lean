@@ -25,9 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import MathlibExt.GameTheory.MixedNashExistence
+public import CSLibExt.Complexity.NPComplete.NashEquilibriumGuaranteedPayoffDefs
 
 @[expose] public section
 
@@ -60,52 +58,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- A rational number `(a - b) / q`, given as `((a, b), q)`. -/
-abbrev RatCode := (ℕ × ℕ) × ℕ
-
-/-- The real value `(a - b) / q` of `((a, b), q)`. -/
-noncomputable def ratValue (r : RatCode) : ℝ := ((r.1.1 : ℝ) - r.1.2) / r.2
-
-/-- An instance: the numbers `m₁` and `m₂` of pure strategies, the payoff matrices `R` and `C`
-(each a list of `m₁` rows of `m₂` entries), and `k`. -/
-abbrev NashEquilibriumGuaranteedPayoffInstance :=
-  ℕ × ℕ × List (List RatCode) × List (List RatCode) × RatCode
-
-/-- An `m₁ × m₂` matrix of rationals with positive denominators. -/
-def IsMatrix (m₁ m₂ : ℕ) (M : List (List RatCode)) : Prop :=
-  M.length = m₁ ∧ ∀ row ∈ M, row.length = m₂ ∧ ∀ q ∈ row, 0 < q.2
-
-/-- Well-formedness of an instance: both players have at least one pure strategy, `R` and `C`
-are `m₁ × m₂` matrices of rationals, and `k` has a positive denominator. -/
-def WellFormed (i : NashEquilibriumGuaranteedPayoffInstance) : Prop :=
-  0 < i.1 ∧ 0 < i.2.1 ∧ IsMatrix i.1 i.2.1 i.2.2.1 ∧ IsMatrix i.1 i.2.1 i.2.2.2.1 ∧
-    0 < i.2.2.2.2.2
-
-/-- The pure strategies of player `p` (`0` is player 1, `1` is player 2). -/
-abbrev Strategy (i : NashEquilibriumGuaranteedPayoffInstance) (p : Fin 2) : Type :=
-  Fin (if p = 0 then i.1 else i.2.1)
-
-/-- The payoff of player `p` at the pure profile `a`: the entry of `R` (for player 1) or `C`
-(for player 2) in row `a 0` and column `a 1`. -/
-noncomputable def utility (i : NashEquilibriumGuaranteedPayoffInstance) (p : Fin 2)
-    (a : ∀ q, Strategy i q) : ℝ :=
-  ratValue (((if p = 0 then i.2.2.1 else i.2.2.2.1).getD (a 0) []).getD (a 1) ((0, 0), 1))
-
-/-- Some mixed Nash equilibrium gives player 1 an expected payoff of at least `k`. -/
-def NashEquilibriumGuaranteedPayoffFeasible (i : NashEquilibriumGuaranteedPayoffInstance) :
-    Prop :=
-  ∃ σ : ∀ p, StdSimplex ℝ (Strategy i p), IsMixedNash (utility i) σ ∧
-    ratValue i.2.2.2.2 ≤ expectedPayoff (utility i) σ 0
-
-open Classical in
-/-- NASH EQUILIBRIUM WITH GUARANTEED PAYOFF as a decision problem over bitstrings. -/
-noncomputable def nashEquilibriumGuaranteedPayoffDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := NashEquilibriumGuaranteedPayoffInstance) x with
-  | some i => decide (WellFormed i ∧ NashEquilibriumGuaranteedPayoffFeasible i)
-  | none => false
 
 /-- **NASH EQUILIBRIUM WITH GUARANTEED PAYOFF is NP-complete.** Source: Conitzer and Sandholm
 (2008); Gilboa and Zemel (1989); Bilò and Mavronicolas (2021). -/

@@ -23,9 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Logics.Propositional.CNF.Semantics
+public import CSLibExt.Complexity.NPComplete.MinimumDistinguishedOnesDefs
 
 @[expose] public section
 
@@ -58,32 +56,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number `n` of variables, the list of distinguished variables `Z`, the
-clauses, and the bound `K`. -/
-abbrev MinimumDistinguishedOnesInstance := ℕ × List ℕ × Cslib.Logic.LegacyPL.CNF × ℕ
-
-/-- Well-formedness of an instance: `Z` lists distinct variables below `n`, and every clause
-has at most 3 literals, all over variables below `n`. -/
-def WellFormed (i : MinimumDistinguishedOnesInstance) : Prop :=
-  i.2.1.Nodup ∧ (∀ z ∈ i.2.1, z < i.1) ∧
-    ∀ clause ∈ i.2.2.1, clause.length ≤ 3 ∧ ∀ l ∈ clause, l.1 < i.1
-
-/-- Some assignment of the `n` variables satisfies every clause and sets at most `K` variables
-of `Z` to true. -/
-def MinimumDistinguishedOnesFeasible (i : MinimumDistinguishedOnesInstance) : Prop :=
-  ∃ assign : List Bool, assign.length = i.1 ∧
-    Cslib.Logic.LegacyPL.CNF.Satisfies (fun x => assign.getD x false) i.2.2.1 ∧
-    (i.2.1.filter fun z => assign.getD z false).length ≤ i.2.2.2
-
-open Classical in
-/-- MINIMUM DISTINGUISHED ONES as a decision problem over bitstrings. -/
-noncomputable def minimumDistinguishedOnesDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MinimumDistinguishedOnesInstance) x with
-  | some i => decide (WellFormed i ∧ MinimumDistinguishedOnesFeasible i)
-  | none => false
 
 /-- **MINIMUM DISTINGUISHED ONES is NP-complete.** Source: Crescenzi and Kann, MINIMUM DISTINGUISHED
 ONES; Kann (1993); Karp (1972). -/

@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Data.Finset.Prod
+public import CSLibExt.Complexity.NPComplete.PartialDigestSupersetDefs
 
 @[expose] public section
 
@@ -58,31 +56,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the distances `D` (a list read as a multiset) and the bound `t`. -/
-abbrev PartialDigestSupersetInstance := List ℕ × ℕ
-
-/-- Well-formedness of an instance: every distance is positive. -/
-def WellFormed (i : PartialDigestSupersetInstance) : Prop :=
-  ∀ d ∈ i.1, 0 < d
-
-/-- The multiset `Δ(P)` of pairwise distances of a finite set of integers, one entry per pair of
-points. -/
-def distances (P : Finset ℤ) : Multiset ℕ :=
-  (((P ×ˢ P).filter fun q => q.1 < q.2).val.map fun q => (q.2 - q.1).toNat)
-
-/-- Some set `P` of at most `t` integers whose distance multiset contains `D`. -/
-def PartialDigestSupersetFeasible (i : PartialDigestSupersetInstance) : Prop :=
-  ∃ P : Finset ℤ, P.card ≤ i.2 ∧ (i.1 : Multiset ℕ) ≤ distances P
-
-open Classical in
-/-- PARTIAL DIGEST SUPERSET as a decision problem over bitstrings. -/
-noncomputable def partialDigestSupersetDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PartialDigestSupersetInstance) x with
-  | some i => decide (WellFormed i ∧ PartialDigestSupersetFeasible i)
-  | none => false
 
 /-- **PARTIAL DIGEST SUPERSET is NP-complete.** Source: Cieliebak, Eidenbenz and Penna (2003),
 Theorem 1. -/

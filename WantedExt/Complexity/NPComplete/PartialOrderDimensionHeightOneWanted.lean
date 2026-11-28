@@ -25,9 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.PartialOrderDimensionFixedWanted
+public import CSLibExt.Complexity.NPComplete.PartialOrderDimensionHeightOneDefs
 
 @[expose] public section
 
@@ -60,24 +58,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance (an adjacency matrix `M`): the fixed-`K` parent instance is
-well formed (`M` is `n × n`, the digraph is acyclic and transitive, and `0 < K ≤ n²`), and the
-order has height one: there are no arcs `(u, v)` and `(v, w)`. -/
-def WellFormed (K : ℕ) (M : List (List Bool)) : Prop :=
-  PartialOrderDimensionFixed.WellFormed K M ∧
-    ∀ u v w : Fin M.length,
-      PartialOrderDimension.Arc (M, K) u v → ¬ PartialOrderDimension.Arc (M, K) v w
-
-open Classical in
-/-- PARTIAL ORDER DIMENSION for height-one orders with the bound fixed to `K`, as a decision
-problem over bitstrings. -/
-noncomputable def partialOrderDimensionHeightOneDec (K : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := List (List Bool)) x with
-  | some M => decide (WellFormed K M ∧
-      PartialOrderDimension.PartialOrderDimensionFeasible (M, K))
-  | none => false
 
 /-- **PARTIAL ORDER DIMENSION for height-one orders (fixed K >= 4) is NP-complete.** For every
 fixed `K ≥ 4`, deciding whether a partial order of height one has dimension at most `K` is

@@ -25,8 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.InequivalenceOfSimpleFunctionsMinusDefs
 
 @[expose] public section
 
@@ -62,60 +61,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Expressions over `minus`, with variables `xₖ` and constants at the leaves. -/
-inductive MinusExpr where
-  /-- The variable `xₖ`. -/
-  | var (k : ℕ)
-  /-- The constant `c`. -/
-  | const (c : ℕ)
-  /-- `minus(e, e') = max {0, e - e'}`. -/
-  | minus (e e' : MinusExpr)
-
-/-- The value of an expression under the assignment `a` of non-negative integers to the
-variables (`a k` is the value of `xₖ`). -/
-def MinusExpr.eval (a : ℕ → ℕ) : MinusExpr → ℕ
-  | .var k => a k
-  | .const c => c
-  | .minus e e' => e.eval a - e'.eval a
-
-/-- The prefix token list of an expression (see the module docstring). -/
-def MinusExpr.tokens : MinusExpr → List (ℕ × ℕ)
-  | .var k => [(0, k)]
-  | .const c => [(1, c)]
-  | .minus e e' => (2, 0) :: (e.tokens ++ e'.tokens)
-
-/-- An instance: the number `|X|` of variables, and the prefix token lists of `f` and `g`. -/
-abbrev InequivalenceOfSimpleFunctionsMinusInstance :=
-  ℕ × List (ℕ × ℕ) × List (ℕ × ℕ)
-
-/-- A token list is the prefix token list of an expression whose variables are among
-`x₀, …, x_{nX-1}` and whose constants are positive integers. -/
-def IsExpr (nX : ℕ) (ts : List (ℕ × ℕ)) : Prop :=
-  (∃ e : MinusExpr, e.tokens = ts) ∧
-    ∀ t ∈ ts, (t.1 = 0 → t.2 < nX) ∧ (t.1 = 1 → 0 < t.2)
-
-/-- Well-formedness of an instance: both token lists are expressions over `X ∪ Z⁺`
-(`IsExpr`). -/
-def WellFormed (i : InequivalenceOfSimpleFunctionsMinusInstance) : Prop :=
-  IsExpr i.1 i.2.1 ∧ IsExpr i.1 i.2.2
-
-/-- Some assignment of non-negative integers to the variables gives `f` and `g` different
-values. -/
-def InequivalenceOfSimpleFunctionsMinusFeasible
-    (i : InequivalenceOfSimpleFunctionsMinusInstance) : Prop :=
-  ∃ f g : MinusExpr, f.tokens = i.2.1 ∧ g.tokens = i.2.2 ∧
-    ∃ a : ℕ → ℕ, f.eval a ≠ g.eval a
-
-open Classical in
-/-- INEQUIVALENCE OF SIMPLE FUNCTIONS solely in terms of `minus` as a decision problem over
-bitstrings. -/
-noncomputable def inequivalenceOfSimpleFunctionsMinusDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := InequivalenceOfSimpleFunctionsMinusInstance) x with
-  | some i => decide (WellFormed i ∧ InequivalenceOfSimpleFunctionsMinusFeasible i)
-  | none => false
 
 /-- **INEQUIVALENCE OF SIMPLE FUNCTIONS solely in terms of `minus` is NP-complete.** Source:
 Garey and Johnson (1979), [PO15]; Constable, Hunt and Sahni (1974). -/

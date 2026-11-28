@@ -25,9 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Logics.Propositional.CNF.Semantics
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.MaximumDistinguishedOnesDefs
 
 @[expose] public section
 
@@ -61,29 +59,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: `|X|`, `|Z|`, the clauses `C`, and the bound `K`. -/
-abbrev MaximumDistinguishedOnesInstance := ℕ × ℕ × Cslib.Logic.LegacyPL.CNF × ℕ
-
-/-- Well-formedness of an instance: every clause has at most three literals, all over the
-variables `0, …, |X| + |Z| - 1`, and `K` is positive. -/
-def WellFormed (i : MaximumDistinguishedOnesInstance) : Prop :=
-  (∀ clause ∈ i.2.2.1, clause.length ≤ 3 ∧ ∀ l ∈ clause, l.1 < i.1 + i.2.1) ∧ 0 < i.2.2.2
-
-/-- Some assignment satisfies every clause and sets at least `K` variables of `Z` to true. -/
-def MaximumDistinguishedOnesFeasible (i : MaximumDistinguishedOnesInstance) : Prop :=
-  ∃ assign : List Bool, assign.length = i.1 + i.2.1 ∧
-    Cslib.Logic.LegacyPL.CNF.Satisfies (fun x => assign.getD x false) i.2.2.1 ∧
-    i.2.2.2 ≤ ((List.range i.2.1).filter fun j => assign.getD (i.1 + j) false).length
-
-open Classical in
-/-- MAXIMUM DISTINGUISHED ONES as a decision problem over bitstrings. -/
-noncomputable def maximumDistinguishedOnesDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MaximumDistinguishedOnesInstance) x with
-  | some i => decide (WellFormed i ∧ MaximumDistinguishedOnesFeasible i)
-  | none => false
 
 /-- **MAXIMUM DISTINGUISHED ONES is NP-complete.** Source: Crescenzi and Kann, MAXIMUM
 DISTINGUISHED ONES; Kann (1992), [7.13]. -/

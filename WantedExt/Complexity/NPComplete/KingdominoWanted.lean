@@ -18,13 +18,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite
-public import Mathlib.Combinatorics.SimpleGraph.Hasse
-public import Mathlib.Combinatorics.SimpleGraph.Maps
-public import Mathlib.Combinatorics.SimpleGraph.Prod
-public import Mathlib.Data.Set.Card
+public import CSLibExt.Complexity.NPComplete.KingdominoDefs
 
 @[expose] public section
 
@@ -61,82 +55,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- A domino: the color and the number of crowns of its first cell, then of its second cell. -/
-abbrev Domino := (ℕ × ℕ) × (ℕ × ℕ)
-
-/-- An instance: the sequence `τ` of dominoes and the score bound `s`. -/
-abbrev KingdominoInstance := List Domino × ℕ
-
-/-- The board graph on `ℤ × ℤ`: positions are adjacent when they share a side. -/
-abbrev boardGraph : SimpleGraph (ℤ × ℤ) :=
-  SimpleGraph.hasse ℤ □ SimpleGraph.hasse ℤ
-
-/-- The tower. -/
-def tower : ℤ × ℤ := (0, 0)
-
-/-- A placed cell: its position, and its color and number of crowns. -/
-abbrev PlacedCell := (ℤ × ℤ) × (ℕ × ℕ)
-
-/-- The cells placed by the first `k` dominoes of `τ` under the placements `pl`. -/
-def placedCells (τ : List Domino) (pl : List (Option ((ℤ × ℤ) × (ℤ × ℤ)))) (k : ℕ) :
-    List PlacedCell :=
-  ((τ.zip pl).take k).flatMap fun x =>
-    match x.2 with
-    | some uv => [(uv.1, x.1.1), (uv.2, x.1.2)]
-    | none => []
-
-/-- A domino cell of color `col` at position `u` touches the board `B`: `u` is adjacent to the
-tower or to a placed cell of color `col`. -/
-def Touches (B : List PlacedCell) (u : ℤ × ℤ) (col : ℕ) : Prop :=
-  boardGraph.Adj u tower ∨ ∃ c ∈ B, boardGraph.Adj u c.1 ∧ c.2.1 = col
-
-/-- Domino `d` can be placed on board `B` with its first cell at `u` and its second at `v`: the
-positions are adjacent and free (neither the tower nor a placed cell), and one of the two cells
-touches the board with its own color. -/
-def CanPlace (B : List PlacedCell) (d : Domino) (u v : ℤ × ℤ) : Prop :=
-  boardGraph.Adj u v ∧ u ≠ tower ∧ v ≠ tower ∧ (∀ c ∈ B, c.1 ≠ u ∧ c.1 ≠ v) ∧
-    (Touches B u d.1.1 ∨ Touches B v d.2.1)
-
-/-- The placements `pl` form a K-tiling by `τ`: one placement per domino; the `k`-th domino is
-placed only where it can be placed on the board left by the first `k` dominoes, and it is lost
-only if it can be placed nowhere. -/
-def IsKTiling (τ : List Domino) (pl : List (Option ((ℤ × ℤ) × (ℤ × ℤ)))) : Prop :=
-  pl.length = τ.length ∧ ∀ k < τ.length,
-    (∀ u v, pl.getD k none = some (u, v) →
-      CanPlace (placedCells τ pl k) (τ.getD k ((0, 0), (0, 0))) u v) ∧
-    (pl.getD k none = none →
-      ∀ u v, ¬ CanPlace (placedCells τ pl k) (τ.getD k ((0, 0), (0, 0))) u v)
-
-/-- The region graph of a board: placed cells (by index) are adjacent when their positions are
-adjacent and their colors are equal. Its connected components are the regions. -/
-def regionGraph (B : List PlacedCell) : SimpleGraph (Fin B.length) :=
-  boardGraph.comap (fun j => (B.get j).1) ⊓
-    SimpleGraph.fromRel fun a b => (B.get a).2.1 = (B.get b).2.1
-
-open Classical in
-/-- The score of a board: the sum over its regions of the number of cells of the region times
-the number of crowns it contains. -/
-noncomputable def score (B : List PlacedCell) : ℕ :=
-  ∑ C : (regionGraph B).ConnectedComponent,
-    C.supp.ncard * ∑ j ∈ Finset.univ.filter (· ∈ C.supp), (B.get j).2.2
-
-/-- Well-formedness of an instance: every sequence of dominoes and every bound is an instance. -/
-def WellFormed (_ : KingdominoInstance) : Prop := True
-
-/-- Some K-tiling by `τ` has score at least `s`. -/
-def KingdominoFeasible (i : KingdominoInstance) : Prop :=
-  ∃ pl : List (Option ((ℤ × ℤ) × (ℤ × ℤ))), IsKTiling i.1 pl ∧
-    i.2 ≤ score (placedCells i.1 pl i.1.length)
-
-open Classical in
-/-- KINGDOMINO (K-TILING) as a decision problem over bitstrings. -/
-noncomputable def kingdominoDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := KingdominoInstance) x with
-  | some i => decide (WellFormed i ∧ KingdominoFeasible i)
-  | none => false
 
 /-- **KINGDOMINO (K-TILING) is NP-complete.** Source: Nguyen, Perrot and Vallet (2020),
 Section 3 and Theorem 1. -/

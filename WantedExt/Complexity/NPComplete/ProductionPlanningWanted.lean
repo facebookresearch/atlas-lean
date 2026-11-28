@@ -21,11 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import Mathlib.Algebra.Order.Ring.Int
-public import Mathlib.Data.Fintype.Basic
+public import CSLibExt.Complexity.NPComplete.ProductionPlanningDefs
 
 @[expose] public section
 
@@ -56,38 +52,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number `n` of periods, the periods as tuples `(rᵢ, cᵢ, bᵢ, pᵢ, hᵢ)` of
-demand, capacity, set-up cost, incremental production cost and inventory cost, and the bound
-`B`. -/
-abbrev ProductionPlanningInstance := ℕ × List (ℕ × ℕ × ℕ × ℕ × ℕ) × ℕ
-
-/-- Well-formedness of an instance: `n ∈ ℤ⁺`, there are exactly `n` periods, and
-`B ∈ ℤ⁺`. -/
-def WellFormed (i : ProductionPlanningInstance) : Prop :=
-  0 < i.1 ∧ i.2.1.length = i.1 ∧ 0 < i.2.2
-
-/-- The inventory level `I_k = ∑_{j ≤ k} (x_j - r_j)` at the end of period `k`. -/
-def inventory (i : ProductionPlanningInstance) (x : Fin i.2.1.length → ℕ)
-    (k : Fin i.2.1.length) : ℤ :=
-  ∑ j ∈ Finset.univ.filter (· ≤ k), ((x j : ℤ) - (i.2.1.get j).1)
-
-/-- There are production amounts within capacity whose inventory levels are nonnegative and
-whose total production, inventory and set-up cost is at most `B`. -/
-def ProductionPlanningFeasible (i : ProductionPlanningInstance) : Prop :=
-  ∃ x : Fin i.2.1.length → ℕ,
-    (∀ k, x k ≤ (i.2.1.get k).2.1) ∧ (∀ k, 0 ≤ inventory i x k) ∧
-      ∑ k, (((i.2.1.get k).2.2.2.1 : ℤ) * x k + (i.2.1.get k).2.2.2.2 * inventory i x k) +
-          ∑ k ∈ Finset.univ.filter (fun k => 0 < x k), ((i.2.1.get k).2.2.1 : ℤ) ≤ i.2.2
-
-open Classical in
-/-- PRODUCTION PLANNING as a decision problem over bitstrings. -/
-noncomputable def productionPlanningDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ProductionPlanningInstance) x with
-  | some i => decide (WellFormed i ∧ ProductionPlanningFeasible i)
-  | none => false
 
 /-- **PRODUCTION PLANNING is NP-complete.** Source: Garey and Johnson (1979), [SS21]; Florian,
 Lenstra, and Rinnooy Kan (1980). -/

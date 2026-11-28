@@ -19,9 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.NumberTheory.Harmonic.Defs
+public import CSLibExt.Complexity.NPComplete.ProportionalApprovalVotingWinnerDefs
 
 @[expose] public section
 
@@ -59,34 +57,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number `m` of candidates, the ballots, the committee size `k`, and the
-nonnegative bound `s` as (numerator, denominator). -/
-abbrev ProportionalApprovalVotingWinnerInstance := ℕ × List (List ℕ) × ℕ × ℕ × ℕ
-
-/-- The PAV score of the committee `W`: each agent contributes `harmonic |W ∩ Aᵢ|`. -/
-def pavScore (i : ProportionalApprovalVotingWinnerInstance) (W : Finset (Fin i.1)) : ℚ :=
-  (i.2.1.map fun A => harmonic (W.filter fun c : Fin i.1 => (c : ℕ) ∈ A).card).sum
-
-/-- Well-formedness of an instance: every ballot lists distinct candidates, `1 ≤ k ≤ m`, and
-the denominator of `s` is positive. -/
-def WellFormed (i : ProportionalApprovalVotingWinnerInstance) : Prop :=
-  (∀ A ∈ i.2.1, A.Nodup ∧ ∀ c ∈ A, c < i.1) ∧ 0 < i.2.2.1 ∧ i.2.2.1 ≤ i.1 ∧ 0 < i.2.2.2.2
-
-/-- Some committee of `k` candidates has PAV score at least `s`. -/
-def ProportionalApprovalVotingWinnerFeasible (i : ProportionalApprovalVotingWinnerInstance) :
-    Prop :=
-  ∃ W : Finset (Fin i.1), W.card = i.2.2.1 ∧
-    ((i.2.2.2.1 : ℚ) / i.2.2.2.2) ≤ pavScore i W
-
-open Classical in
-/-- PROPORTIONAL APPROVAL VOTING WINNER DETERMINATION as a decision problem over bitstrings. -/
-noncomputable def proportionalApprovalVotingWinnerDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ProportionalApprovalVotingWinnerInstance) x with
-  | some i => decide (WellFormed i ∧ ProportionalApprovalVotingWinnerFeasible i)
-  | none => false
 
 /-- **PROPORTIONAL APPROVAL VOTING WINNER DETERMINATION is NP-complete.** Source: Aziz, Gaspers,
 Gudmundsson, Mackenzie, Mattei and Walsh (2015), Theorem 2 and Corollary 1. -/

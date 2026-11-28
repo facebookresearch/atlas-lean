@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Acyclic
+public import CSLibExt.Complexity.NPComplete.PerfectPhylogenyDefs
 
 @[expose] public section
 
@@ -62,41 +60,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number `m` of characters and, for each species, its list of `m` states. -/
-abbrev PerfectPhylogenyInstance := ℕ × List (List ℕ)
-
-/-- Well-formedness: there is at least one species, and every species has a state for each of
-the `m` characters. -/
-def WellFormed (i : PerfectPhylogenyInstance) : Prop :=
-  i.2 ≠ [] ∧ ∀ s ∈ i.2, s.length = i.1
-
-/-- The state of species `s` for character `c`. -/
-def state (i : PerfectPhylogenyInstance) (s c : ℕ) : ℕ :=
-  (i.2.getD s []).getD c 0
-
-/-- `(T, f, lab)` is a perfect phylogeny for the instance: `T` is a tree, species `s` sits at node
-`f s` and keeps its states there, every node carries for each character a state that some species
-has, and for each character `c` and state `x` the nodes with state `x` induce a connected
-subgraph. -/
-def IsPerfectPhylogeny (i : PerfectPhylogenyInstance) {N : ℕ} (T : SimpleGraph (Fin N))
-    (f : Fin i.2.length → Fin N) (lab : Fin N → Fin i.1 → ℕ) : Prop :=
-  T.IsTree ∧ (∀ s c, lab (f s) c = state i s c) ∧
-    (∀ v c, ∃ s : Fin i.2.length, lab v c = state i s c) ∧
-    ∀ c x, (T.induce {v | lab v c = x}).Preconnected
-
-/-- A perfect phylogeny exists. -/
-def PerfectPhylogenyFeasible (i : PerfectPhylogenyInstance) : Prop :=
-  ∃ N, ∃ T : SimpleGraph (Fin N), ∃ f lab, IsPerfectPhylogeny i T f lab
-
-open Classical in
-/-- PERFECT PHYLOGENY as a decision problem over bitstrings. -/
-noncomputable def perfectPhylogenyDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PerfectPhylogenyInstance) x with
-  | some i => decide (WellFormed i ∧ PerfectPhylogenyFeasible i)
-  | none => false
 
 /-- **PERFECT PHYLOGENY is NP-complete.** Source: Bodlaender, Fellows and Warnow (1992),
 Section 3; Steel (1992). -/
