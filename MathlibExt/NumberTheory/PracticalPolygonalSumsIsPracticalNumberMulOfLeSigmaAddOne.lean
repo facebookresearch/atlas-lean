@@ -100,10 +100,13 @@ private theorem subset_sum_of_le_sum (D : Finset ℕ) : ∀ M : ℕ,
         rw [Finset.sum_empty] at hk
         omega
 
-private theorem le_sigma_one (m : ℕ) (hm : 0 < m) : m ≤ sigma 1 m := by
-  rw [sigma_one_apply]
-  exact Finset.single_le_sum (fun i _ => Nat.zero_le i)
-    (Nat.mem_divisors_self m (by omega))
+/-- Every natural number is at most the sum of its positive divisors, with the divisor set of
+zero taken to be empty. -/
+public theorem le_sigma_one (m : ℕ) : m ≤ sigma 1 m := by
+  rcases Nat.eq_zero_or_pos m with rfl | hm
+  · exact Nat.zero_le _
+  · rw [sigma_one_apply]
+    exact Finset.single_le_sum (fun i _ => Nat.zero_le i) (Nat.mem_divisors_self m hm.ne')
 
 private theorem sigma_one_le_of_dvd (m n : ℕ) (hn : n ≠ 0) (h : m ∣ n) :
     sigma 1 m ≤ sigma 1 n := by
@@ -132,7 +135,7 @@ private theorem isPracticalNumber_mul_prime_of_le_sigma_add_one (m p : ℕ)
     omega
   have hqS : t / p ≤ ∑ x ∈ m.divisors, x := by
     rw [← hσ]
-    exact hqle.trans (le_sigma_one m hmpos)
+    exact hqle.trans (le_sigma_one m)
   obtain ⟨S1, hS1sub, hS1sum⟩ := hext _ hrS
   obtain ⟨S2, hS2sub, hS2sum⟩ := hext _ hqS
   have hmpne : m * p ≠ 0 := mul_ne_zero (by omega) (by omega)

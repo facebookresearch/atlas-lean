@@ -64,17 +64,6 @@ theorem dihedralAffinePerm_mem_rackAut (n : ℕ) (a : ZMod n) (u : (ZMod n)ˣ) :
   change a + (u : ZMod n) * (2 * x - y) = 2 * (a + (u : ZMod n) * x) - (a + (u : ZMod n) * y)
   ring
 
-/-- **Class number of the holomorph of $\mathbb{Z}/n\mathbb{Z}$.** For every integer $n > 0$,
-the number of conjugacy classes of the holomorph
-$\mathbb{Z}/n\mathbb{Z} \rtimes (\mathbb{Z}/n\mathbb{Z})^\times$ of $\mathbb{Z}/n\mathbb{Z}$ equals
-$\varphi(n) \sum_{d \mid n} 1/\varphi(d)$, where $\varphi$ is Euler's totient function.
-
-Source: Lực Ta, *Enumeration of Virtual Quandles Up to Isomorphism*, Journal of Integer
-Sequences 28 (2025), Article 25.8.4, Theorem 23 (`jis-2025-25.8.4-thm-23`). -/
-public theorem_wanted card_conjClasses_cyclicHolomorph (n : ℕ) (hn : 0 < n) :
-    (Nat.card (ConjClasses (cyclicHolomorph n)) : ℚ) =
-      n.totient * ∑ d ∈ n.divisors, (1 : ℚ) / d.totient
-
 /-- **Virtual quandle structures on the dihedral quandle.** For every $n > 0$, the number
 $v(R_n)$ of isomorphism classes of virtual racks whose underlying rack is the dihedral quandle
 $R_n$ (the set $\mathbb{Z}/n\mathbb{Z}$ with $x \triangleleft y = 2x - y$) equals

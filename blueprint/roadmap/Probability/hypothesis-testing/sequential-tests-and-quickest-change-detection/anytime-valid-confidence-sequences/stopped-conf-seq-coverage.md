@@ -1,0 +1,3 @@
+# Coverage of a confidence sequence at a stopping time
+
+For each parameter $t$ in a set $\Theta$ let $\mu_t$ be a probability measure on a measurable space $\mathcal X$ and $E_t(n, \cdot)$ real processes; the e-process confidence sequence at level $\alpha$ is $C_n(x) = \{t : E_t(n, x) < 1/\alpha\}$. Suppose each $E_t(n, \cdot)$ is measurable and $\mu_t(t \in C_n \text{ for all } n) \ge 1 - \alpha$ for every $t$. If for each $t$, $\tau_t$ is a stopping time for some filtration that is finite $\mu_t$-almost surely, then $\mu_t\big(\tau_t < \infty,\ t \in C_{\tau_t}\big) \ge 1 - \alpha$ for every $t$.
