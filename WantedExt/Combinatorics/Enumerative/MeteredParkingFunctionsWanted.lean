@@ -13,6 +13,7 @@ public import Mathlib.Analysis.Real.Sqrt
 public import MathlibExt.Combinatorics.Enumerative.ClassicalMeteredParkingFunctions
 public import MathlibExt.Combinatorics.Enumerative.LongMeteredParkingFunctions
 public import MathlibExt.Combinatorics.Enumerative.MeteredParkingDiagonalChoose
+public import MathlibExt.Combinatorics.Enumerative.MeteredParkingFunctions
 public import MathlibExt.Combinatorics.Enumerative.MeteredParkingLowerBound
 public import MathlibExt.Combinatorics.Enumerative.OneMeteredLuckyLaces
 public import MathlibExt.Combinatorics.Enumerative.OneMeteredParkingFunctions
@@ -175,21 +176,6 @@ public theorem_wanted meteredParkingCount_sub_two_pred (k : ℕ) :
       meteredParkingCount k (k + 2) (k + 1) =
         ∑ i ∈ Finset.Icc 1 (k + 1), ∑ s ∈ Finset.range (k + 2 - i),
           k.choose s * i * (s + 1) ^ (s - 1) * (k + 1 - s) ^ (k - 1 - s)
-
-/-- **Parking-function shuffles and the first entry.** Let $1 \le m \le n$ and $1 \le k \le n$,
-and let $w = (w_1, \dots, w_{m-1})$ be a word with entries in $\{0, \dots, n-1\}$. Then the set
-of spots $j \in \{0, \dots, n-1\}$ for which $(j, w_1, \dots, w_{m-1})$ is a partial parking
-function with $m$ cars and $n$ spots equals $\{0, \dots, k-1\}$ if and only if $w$ lies in the
-set $\mathrm{Sh}_m(k - 1, n - k)$ of $(m, n)$-parking-function shuffles with parameter $k$.
-
-Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
-Functions*, INTEGERS 25 (2025), Article A73, Theorem 3 (`integers-2025-A73-thm-3`), with
-Definition 6 (the sets `A^n`). -/
-public theorem_wanted firstEntrySet_eq_iff_isParkingShuffle {m' n k : ℕ} (hmn : m' + 1 ≤ n)
-    (hk : k ∈ Finset.Icc 1 n) (π : Fin m' → Fin n) :
-    (Finset.univ.filter fun j : Fin n => IsPartialParkingFunction (m' + 1) n (Fin.cons j π)) =
-        Finset.univ.filter (fun j : Fin n => (j : ℕ) < k) ↔
-      IsParkingShuffle m' n k π
 
 /-- **Number of parking-function shuffles.** Let $1 \le m \le n$ and $1 \le k \le n$, and write
 $\mathrm{Sh}_m(k - 1, n - k)$ for the set of $(m, n)$-parking-function shuffles with parameter

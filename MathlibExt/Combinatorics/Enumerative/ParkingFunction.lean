@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Data.Finset.Card
+import Mathlib.Data.Fintype.Fin
 public import Mathlib.Data.Fintype.Pi
 
 @[expose] public section
@@ -22,6 +23,13 @@ functions. It gives a direct finite decision procedure. In the ordinary case,
 the predicate is equivalent to the usual formulation in which the sorted
 preferences lie below the identity; for `s` cars and `t` spots, the analogous
 partial sorted bound is shifted to `bᵢ ≤ t - s + i`.
+
+## References
+
+* Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking Functions*,
+  INTEGERS 25 (2025), Article A73, pp. 1–37, Section 4, Equation (3) (the equivalent
+  lower-tail criterion). The lemma for prepending a preference splits the count at each threshold
+  into the contribution of the new head and the contribution of the tail.
 -/
 
 /-- **Partial parking function.** Let $s, t \in \mathbb{N}$ and number the $t$ spots
@@ -43,6 +51,16 @@ instance (s t : ℕ) (f : Fin s → Fin t) :
     Decidable (IsPartialParkingFunction s t f) := by
   unfold IsPartialParkingFunction
   infer_instance
+
+/-- **Parking thresholds after prepending a preference.** For a tail `π` of `m` preferences on
+`n` spots and a new first preference `j`, the resulting word is a partial parking function if
+and only if at every threshold `t`, the number of tail preferences at least `t`, plus one if
+`j` is at least `t`, is at most `n - t`. -/
+theorem isPartialParkingFunction_cons_iff {m n : ℕ} (j : Fin n) (π : Fin m → Fin n) :
+    IsPartialParkingFunction (m + 1) n (Fin.cons j π) ↔
+      ∀ t : Fin n, (if t ≤ j then 1 else 0) +
+        (Finset.univ.filter fun i => t ≤ π i).card ≤ n - (t : ℕ) := by
+  simp only [IsPartialParkingFunction, Fin.card_filter_univ_succ', Fin.cons_zero, Fin.cons_succ]
 
 instance (n : ℕ) (f : Fin n → Fin n) : Decidable (IsParkingFunction n f) := by
   unfold IsParkingFunction
