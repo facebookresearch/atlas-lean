@@ -20,10 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.ChromaticIndexRegularWanted
-public import WantedExt.Complexity.NPComplete.ComparabilityGraphSandwichWanted
+public import CSLibExt.Complexity.NPComplete.ChromaticIndexRegularComparabilityDefs
 
 @[expose] public section
 
@@ -63,23 +60,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance for the fixed degree `k`: the instance is a well-formed
-instance of CHROMATIC INDEX of `k`-regular graphs (a simple edge list whose graph is
-`k`-regular), and its graph is a comparability graph. -/
-def WellFormed (k : ℕ) (i : ChromaticIndexRegular.ChromaticIndexRegularInstance) : Prop :=
-  ChromaticIndexRegular.WellFormed k i ∧
-    ComparabilityGraphSandwich.IsComparabilityGraph (ChromaticIndexRegular.Graph i)
-
-open Classical in
-/-- CHROMATIC INDEX of `k`-regular comparability graphs, for the fixed `k`, as a decision
-problem over bitstrings. -/
-noncomputable def chromaticIndexRegularComparabilityDec (k : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ChromaticIndexRegular.ChromaticIndexRegularInstance) x with
-  | some i => decide (WellFormed k i ∧ ChromaticIndexRegular.ChromaticIndexRegularFeasible k i)
-  | none => false
 
 /-- **CHROMATIC INDEX of k-regular comparability graphs is NP-complete for every fixed
 `k ≥ 3`.** Source: Cai and Ellis (1991); Galby, Lima, Paulusma and Ries (2019). -/

@@ -22,11 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Finite
-public import MathlibExt.Combinatorics.SimpleGraph.Planarity
-public import WantedExt.Complexity.NPComplete.HamiltonianPathUndirectedWanted
+public import CSLibExt.Complexity.NPComplete.HamiltonianPathFourRegularPlanarDefs
 
 @[expose] public section
 
@@ -65,22 +61,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-open Classical in
-/-- Well-formedness of an instance: a well-formed HAMILTONIAN PATH instance (`0 < n`, a simple
-graph given by an edge list) that is planar and 4-regular. -/
-def WellFormed (i : HamiltonianPathUndirectedInstance) : Prop :=
-  HamiltonianPathUndirected.WellFormed i ∧ (Graph i).IsPlanar ∧ (Graph i).IsRegularOfDegree 4
-
-open Classical in
-/-- HAMILTONIAN PATH on 4-regular planar graphs as a decision problem over bitstrings. -/
-noncomputable def hamiltonianPathFourRegularPlanarDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := HamiltonianPathUndirectedInstance) x with
-  | some i => decide (WellFormed i ∧
-      HamiltonianPathUndirected.HamiltonianPathUndirectedFeasible i)
-  | none => false
 
 /-- **HAMILTONIAN PATH on 4-regular planar graphs is NP-complete.** Source: Picouleau (1994). -/
 public theorem_wanted hamiltonianPathFourRegularPlanar_npComplete :

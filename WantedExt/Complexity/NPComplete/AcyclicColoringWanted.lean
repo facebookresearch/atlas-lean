@@ -22,10 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.GraphColoringDefs
-public import WantedExt.GraphTheory.AcyclicChromaticMaxDegreeErdosProblem797Wanted
+public import CSLibExt.Complexity.NPComplete.AcyclicColoringDefs
 
 @[expose] public section
 
@@ -71,25 +68,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: well-formed for GRAPH COLORING (the edge list describes a
-simple graph on `Fin n`), and `0 < K`. -/
-def WellFormed (i : GraphColoringInstance) : Prop :=
-  GraphColoring.WellFormed i ∧ 0 < i.2.2
-
-/-- The graph has an acyclic coloring with `K` colors: a proper coloring by `Fin K` in which
-every two color classes induce a forest. -/
-def AcyclicColoringFeasible (i : GraphColoringInstance) : Prop :=
-  ∃ f : Fin i.1 → Fin i.2.2, IsAcyclicColoring (Graph i) f
-
-open Classical in
-/-- ACYCLIC COLORING as a decision problem over bitstrings. -/
-noncomputable def acyclicColoringDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := GraphColoringInstance) x with
-  | some i => decide (WellFormed i ∧ AcyclicColoringFeasible i)
-  | none => false
 
 /-- **ACYCLIC COLORING is NP-complete.** Source: Coleman and Cai (1986), Theorem 3.1;
 Kostochka (1978); Shalu and Antony (2024). -/

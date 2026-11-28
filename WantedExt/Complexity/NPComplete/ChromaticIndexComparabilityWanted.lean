@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.ComparabilityGraphSandwichWanted
-public import WantedExt.Complexity.NPComplete.EdgeColoringWanted
+public import CSLibExt.Complexity.NPComplete.ChromaticIndexComparabilityDefs
 
 @[expose] public section
 
@@ -64,23 +61,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed CHROMATIC INDEX instance (a simple edge list on
-`Fin n`) whose graph is a comparability graph, and `0 < K`. -/
-def WellFormed (i : EdgeColoringInstance) : Prop :=
-  EdgeColoring.WellFormed i ∧
-    ComparabilityGraphSandwich.IsComparabilityGraph (Cslib.Complexity.Karp.edgeGraph i.1 i.2.1) ∧
-    0 < i.2.2
-
-open Classical in
-/-- CHROMATIC INDEX for comparability graphs as a decision problem
-over bitstrings. -/
-noncomputable def chromaticIndexComparabilityDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := EdgeColoringInstance) x with
-  | some i => decide (WellFormed i ∧ EdgeColoringFeasible i)
-  | none => false
 
 /-- **CHROMATIC INDEX for comparability graphs is NP-complete.**
 Source: Cai and Ellis (1991); de Figueiredo, de Melo, Sasaki and Silva (2022). -/

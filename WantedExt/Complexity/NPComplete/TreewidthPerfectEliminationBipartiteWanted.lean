@@ -20,10 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.FeedbackVertexSetPerfectEliminationBipartiteWanted
-public import WantedExt.Complexity.NPComplete.TreewidthWanted
+public import CSLibExt.Complexity.NPComplete.TreewidthPerfectEliminationBipartiteDefs
 
 @[expose] public section
 
@@ -64,20 +61,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed TREEWIDTH instance (simple edge list) whose
-graph is perfect elimination bipartite (bipartite, with a perfect edge elimination ordering). -/
-def PerfectEliminationBipartiteWellFormed (i : TreewidthInstance) : Prop :=
-  WellFormed i ∧ IsPerfectEliminationBipartite (Graph i)
-
-open Classical in
-/-- TREEWIDTH OF PERFECT ELIMINATION BIPARTITE GRAPHS as a decision problem over bitstrings. -/
-noncomputable def treewidthPerfectEliminationBipartiteDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TreewidthInstance) x with
-  | some i => decide (PerfectEliminationBipartiteWellFormed i ∧ TreewidthFeasible i)
-  | none => false
 
 /-- **TREEWIDTH OF PERFECT ELIMINATION BIPARTITE GRAPHS is NP-complete.** Source: Liu (2014). -/
 public theorem_wanted treewidthPerfectEliminationBipartite_npComplete :

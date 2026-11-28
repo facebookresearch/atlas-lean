@@ -19,12 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Copy
-public import Mathlib.Combinatorics.SimpleGraph.Hasse
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.AchromaticNumberWanted
+public import CSLibExt.Complexity.NPComplete.AchromaticNumberCographsDefs
 
 @[expose] public section
 
@@ -64,21 +59,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed ACHROMATIC NUMBER instance whose graph is
-a cograph (no induced path on four vertices), with `0 < K`. -/
-def WellFormed (i : AchromaticNumberInstance) : Prop :=
-  AchromaticNumber.WellFormed i ∧
-    ¬ (SimpleGraph.pathGraph 4).IsIndContained (Cslib.Complexity.Karp.edgeGraph i.1 i.2.1) ∧
-    0 < i.2.2
-
-open Classical in
-/-- ACHROMATIC NUMBER OF COGRAPHS as a decision problem over bitstrings. -/
-noncomputable def achromaticNumberCographsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := AchromaticNumberInstance) x with
-  | some i => decide (WellFormed i ∧ AchromaticNumber.AchromaticNumberFeasible i)
-  | none => false
 
 /-- **ACHROMATIC NUMBER OF COGRAPHS is NP-complete.** Source: Garey and Johnson (1979), [GT5];
 Bodlaender (1989). -/

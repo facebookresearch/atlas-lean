@@ -18,9 +18,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Analysis.InnerProductSpace.PiL2
+public import CSLibExt.Complexity.NPComplete.PlanarKMeansDefs
 
 @[expose] public section
 
@@ -54,38 +52,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- A rational number: the positive and negative parts of its numerator, and its denominator. -/
-abbrev RatCode := (ℕ × ℕ) × ℕ
-
-/-- The value of a rational code. -/
-def RatCode.val (q : RatCode) : ℚ := ((q.1.1 : ℤ) - q.1.2 : ℤ) / (q.2 : ℚ)
-
-/-- An instance: the points (pairs of rational coordinates), `k`, and the bound `R`. -/
-abbrev PlanarKMeansInstance := List (RatCode × RatCode) × ℕ × RatCode
-
-/-- A point of the instance as an element of the Euclidean plane. -/
-noncomputable def point (p : RatCode × RatCode) : EuclideanSpace ℝ (Fin 2) :=
-  !₂[(p.1.val : ℝ), (p.2.val : ℝ)]
-
-/-- Well-formedness of an instance: all denominators are positive and `k ≥ 1`. -/
-def WellFormed (i : PlanarKMeansInstance) : Prop :=
-  (∀ p ∈ i.1, 0 < p.1.2 ∧ 0 < p.2.2) ∧ 1 ≤ i.2.1 ∧ 0 < i.2.2.2
-
-/-- Some `k` centers in the plane give every point its squared distance to the nearest center,
-with total at most `R`. -/
-def PlanarKMeansFeasible (i : PlanarKMeansInstance) : Prop :=
-  ∃ c : Fin i.2.1 → EuclideanSpace ℝ (Fin 2),
-    (i.1.map fun p => ⨅ j, dist (point p) (c j) ^ 2).sum ≤ (i.2.2.val : ℝ)
-
-open Classical in
-/-- PLANAR k-MEANS as a decision problem over bitstrings. -/
-noncomputable def planarKMeansDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PlanarKMeansInstance) x with
-  | some i => decide (WellFormed i ∧ PlanarKMeansFeasible i)
-  | none => false
 
 /-- **PLANAR k-MEANS is NP-complete.** Source: Mahajan, Nimbhorkar and Varadarajan (2012),
 Theorem 1. -/

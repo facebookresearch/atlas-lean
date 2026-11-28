@@ -17,11 +17,8 @@ Discrete & Computational Geometry 70(2) (2023), 307-322, doi:10.1007/s00454-022-
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.Complexity.Karp.Color
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.IntervalGraphCompletionWanted
-public import CSLibExt.Complexity.NPComplete.MaxCutDefs
+public import CSLibExt.Complexity.NPComplete.MaxCutIntervalGraphsDefs
 
 @[expose] public section
 
@@ -55,30 +52,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the vertex count `n`, the edge list, and the bound `k`; this is the MAXIMUM
-CUT instance type. -/
-abbrev MaxCutIntervalGraphsInstance := MaxCutInstance
-
-/-- Well-formedness of an instance: a well-formed MAXIMUM CUT instance (a simple edge list on
-the vertices `0, ..., n - 1`) whose graph is an interval graph, and `1 ≤ k ≤ |E|`. -/
-def WellFormed (i : MaxCutIntervalGraphsInstance) : Prop :=
-  MaxCut.WellFormed i ∧ IsIntervalGraph (Cslib.Complexity.Karp.edgeGraph i.1 i.2.1) ∧
-    1 ≤ i.2.2 ∧ i.2.2 ≤ i.2.1.length
-
-/-- A partition `A = S`, `B = V - S` with at least `k` edges between the two sets (the MAXIMUM
-CUT question). -/
-def MaxCutIntervalGraphsFeasible (i : MaxCutIntervalGraphsInstance) : Prop :=
-  MaxCutFeasible i
-
-open Classical in
-/-- MAX CUT on interval graphs as a decision problem over bitstrings. -/
-noncomputable def maxCutIntervalGraphsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MaxCutIntervalGraphsInstance) x with
-  | some i => decide (WellFormed i ∧ MaxCutIntervalGraphsFeasible i)
-  | none => false
 
 /-- **MAX CUT on interval graphs is NP-complete.** Source: Adhikary, Bose, Mukherjee and Roy
 (2023). -/

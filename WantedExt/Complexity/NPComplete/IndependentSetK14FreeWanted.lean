@@ -24,10 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Copy
-public import WantedExt.Complexity.NPComplete.TriangleFreeIndependentSetWanted
+public import CSLibExt.Complexity.NPComplete.IndependentSetK14FreeDefs
 
 @[expose] public section
 
@@ -70,23 +67,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range) with no induced
-`K_1,4`, and `0 < K ≤ |V|`. -/
-def WellFormed (i : TriangleFreeIndependentSetInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    ¬ (completeBipartiteGraph (Fin 1) (Fin 4)).IsIndContained (Graph i) ∧
-      0 < i.2.2 ∧ i.2.2 ≤ i.1
-
-open Classical in
-/-- INDEPENDENT SET on `K_1,4`-free graphs as a decision problem over bitstrings. -/
-noncomputable def independentSetK14FreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TriangleFreeIndependentSetInstance) x with
-  | some i => decide (WellFormed i ∧ TriangleFreeIndependentSetFeasible i)
-  | none => false
 
 /-- **INDEPENDENT SET on `K_1,4`-free graphs is NP-complete.** Source: Garey and Johnson (1979),
 [GT20], comment (cubic planar graphs); Garey, Johnson and Stockmeyer (1976); ISGCI (`gc_388`). -/

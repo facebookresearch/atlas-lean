@@ -22,10 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Coloring.Vertex
-public import WantedExt.Complexity.NPComplete.DominatingSetCircleGraphWanted
+public import CSLibExt.Complexity.NPComplete.GraphColoringCircleGraphDefs
 
 @[expose] public section
 
@@ -67,28 +64,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the chords, one per vertex, each given by its endpoints `(a, b)`, and the
-number of colors `K`. -/
-abbrev GraphColoringCircleGraphInstance := List (ℕ × ℕ) × ℕ
-
-/-- Well-formedness of an instance: every chord has endpoints `a < b`, all endpoints of all
-chords are distinct, and `0 < K ≤ |V|`. -/
-def WellFormed (i : GraphColoringCircleGraphInstance) : Prop :=
-  (∀ c ∈ i.1, c.1 < c.2) ∧ (i.1.flatMap fun c => [c.1, c.2]).Nodup ∧ 0 < i.2 ∧ i.2 ≤ i.1.length
-
-/-- The circle graph of the chords has a proper coloring with at most `K` colors. -/
-def GraphColoringCircleGraphFeasible (i : GraphColoringCircleGraphInstance) : Prop :=
-  (circleGraph i.1).Colorable i.2
-
-open Classical in
-/-- GRAPH K-COLORABILITY of circle graphs as a decision problem over bitstrings. -/
-noncomputable def graphColoringCircleGraphDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := GraphColoringCircleGraphInstance) x with
-  | some i => decide (WellFormed i ∧ GraphColoringCircleGraphFeasible i)
-  | none => false
 
 /-- **GRAPH K-COLORABILITY of circle graphs is NP-complete.** Source: Garey and Johnson (1979),
 [GT4], comment; Garey, Johnson, Miller and Papadimitriou (1980). -/

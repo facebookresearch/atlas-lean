@@ -23,11 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import MathlibExt.Combinatorics.SimpleGraph.LineGraph
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.EdgeColoringWanted
+public import CSLibExt.Complexity.NPComplete.ChromaticIndexLineGraphsDefs
 
 @[expose] public section
 
@@ -66,23 +62,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : EdgeColoringInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- Well-formedness of an instance: well formed for EDGE COLORING (a simple edge list on
-`Fin n`), `K > 0`, and the graph is a line graph. -/
-def WellFormed (i : EdgeColoringInstance) : Prop :=
-  EdgeColoring.WellFormed i ∧ 0 < i.2.2 ∧ MetaMathlibExt.SimpleGraph.IsLineGraph (Graph i)
-
-open Classical in
-/-- CHROMATIC INDEX on line graphs as a decision problem over bitstrings. -/
-noncomputable def chromaticIndexLineGraphsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := EdgeColoringInstance) x with
-  | some i => decide (WellFormed i ∧ EdgeColoringFeasible i)
-  | none => false
 
 /-- **CHROMATIC INDEX on line graphs is NP-complete.** Source: Cai and Ellis (1991); de Figueiredo,
 de Melo, Sasaki and Silva (2022), Table 1 and Section 3. -/

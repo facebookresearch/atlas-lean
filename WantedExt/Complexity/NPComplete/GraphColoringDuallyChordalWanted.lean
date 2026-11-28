@@ -26,10 +26,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.GraphColoringDefs
-public import WantedExt.Complexity.NPComplete.IndependentSetDuallyChordalWanted
+public import CSLibExt.Complexity.NPComplete.GraphColoringDuallyChordalDefs
 
 @[expose] public section
 
@@ -80,19 +77,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n`
-(`GraphColoring.WellFormed`), `0 < K ≤ |V|`, and the graph is dually chordal. -/
-def WellFormed (i : GraphColoringInstance) : Prop :=
-  GraphColoring.WellFormed i ∧ (0 < i.2.2 ∧ i.2.2 ≤ i.1) ∧ DuallyChordal (Graph i)
-
-open Classical in
-/-- GRAPH K-COLORABILITY on dually chordal graphs as a decision problem over bitstrings. -/
-noncomputable def graphColoringDuallyChordalDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := GraphColoringInstance) x with
-  | some i => decide (WellFormed i ∧ GraphColoring.GraphColoringFeasible i)
-  | none => false
 
 /-- **GRAPH K-COLORABILITY on dually chordal graphs is NP-complete.** Source: Leitert (2012),
 Theorem 1; Brandstädt, Chepoi and Dragan (1998); ISGCI (`gc_185`); Garey and Johnson (1979),

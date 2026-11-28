@@ -24,10 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.GraphThicknessWanted
-public import WantedExt.Complexity.NPComplete.TriangleFreeIndependentSetWanted
+public import CSLibExt.Complexity.NPComplete.IndependentSetThicknessDefs
 
 @[expose] public section
 
@@ -74,28 +71,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- The GRAPH THICKNESS instance with the same vertex count and edge list and the bound `k`. -/
-def withThickness (k : ℕ) (i : TriangleFreeIndependentSetInstance) :
-    GraphThickness.GraphThicknessInstance :=
-  (i.1, i.2.1, k)
-
-/-- Well-formedness of an instance for the fixed thickness bound `k`: the edge list describes a
-simple graph on `Fin n` (no duplicate edges in either orientation, no self-loops, endpoints in
-range), the graph has thickness at most `k`, and `0 < K ≤ |V| = n`. -/
-def WellFormed (k : ℕ) (i : TriangleFreeIndependentSetInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    GraphThickness.GraphThicknessFeasible (withThickness k i) ∧ 0 < i.2.2 ∧ i.2.2 ≤ i.1
-
-open Classical in
-/-- INDEPENDENT SET on graphs of thickness at most `k`, for the fixed `k`, as a decision problem
-over bitstrings. -/
-noncomputable def independentSetThicknessDec (k : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TriangleFreeIndependentSetInstance) x with
-  | some i => decide (WellFormed k i ∧ TriangleFreeIndependentSetFeasible i)
-  | none => false
 
 /-- **INDEPENDENT SET on graphs of thickness at most `k` is NP-complete for every fixed
 `k ≥ 1`.** Source: Garey and Johnson (1979), [GT20], comment; Garey, Johnson and Stockmeyer

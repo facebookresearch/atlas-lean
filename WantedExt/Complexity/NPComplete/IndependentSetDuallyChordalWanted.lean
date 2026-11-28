@@ -26,11 +26,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Basic
-public import Mathlib.Logic.Equiv.Defs
-public import WantedExt.Complexity.NPComplete.TriangleFreeIndependentSetWanted
+public import CSLibExt.Complexity.NPComplete.IndependentSetDuallyChordalDefs
 
 @[expose] public section
 
@@ -86,38 +82,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- The ordering `σ 0, σ 1, …, σ (n - 1)` of the vertices of `G` is a maximum neighbourhood
-ordering: for every position `i`, with `G_i` the subgraph induced by the vertices at positions
-`≥ i`, the vertex `σ i` has a maximum neighbour `σ j` in `G_i`, i.e. `σ j` lies in the closed
-neighbourhood of `σ i` in `G_i`, and for every `σ k` in that closed neighbourhood, every `σ l`
-in the closed neighbourhood of `σ k` in `G_i` lies in the closed neighbourhood of `σ j` in
-`G_i`. -/
-def IsMaximumNeighbourhoodOrdering {n : ℕ} (G : SimpleGraph (Fin n))
-    (σ : Equiv.Perm (Fin n)) : Prop :=
-  ∀ i : Fin n, ∃ j, i ≤ j ∧ (j = i ∨ G.Adj (σ i) (σ j)) ∧
-    ∀ k, i ≤ k → (k = i ∨ G.Adj (σ i) (σ k)) →
-      ∀ l, i ≤ l → (l = k ∨ G.Adj (σ k) (σ l)) → (l = j ∨ G.Adj (σ j) (σ l))
-
-/-- A graph is dually chordal if it has a maximum neighbourhood ordering. -/
-def DuallyChordal {n : ℕ} (G : SimpleGraph (Fin n)) : Prop :=
-  ∃ σ, IsMaximumNeighbourhoodOrdering G σ
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range) that is dually
-chordal, and `0 < K ≤ |V|`. -/
-def WellFormed (i : TriangleFreeIndependentSetInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    DuallyChordal (Graph i) ∧ 0 < i.2.2 ∧ i.2.2 ≤ i.1
-
-open Classical in
-/-- INDEPENDENT SET on dually chordal graphs as a decision problem over bitstrings. -/
-noncomputable def independentSetDuallyChordalDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TriangleFreeIndependentSetInstance) x with
-  | some i => decide (WellFormed i ∧ TriangleFreeIndependentSetFeasible i)
-  | none => false
 
 /-- **INDEPENDENT SET on dually chordal graphs is NP-complete.** Source: Brandstädt, Chepoi and
 Dragan (1998); ISGCI (`gc_185`); Garey and Johnson (1979), [GT20] (parent problem). -/

@@ -23,10 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Hamiltonian
-public import WantedExt.Complexity.NPComplete.TreewidthWanted
+public import CSLibExt.Complexity.NPComplete.TreewidthHamiltonianDefs
 
 @[expose] public section
 
@@ -69,20 +66,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed TREEWIDTH instance (a simple edge list on
-`Fin n`) whose graph has a Hamiltonian cycle. -/
-def HamiltonianWellFormed (i : TreewidthInstance) : Prop :=
-  WellFormed i ∧ ∃ (a : Fin i.1) (p : (Graph i).Walk a a), p.IsHamiltonianCycle
-
-open Classical in
-/-- TREEWIDTH on Hamiltonian graphs as a decision problem over bitstrings. -/
-noncomputable def treewidthHamiltonianDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TreewidthInstance) x with
-  | some i => decide (HamiltonianWellFormed i ∧ TreewidthFeasible i)
-  | none => false
 
 /-- **TREEWIDTH on Hamiltonian graphs is NP-complete.** Source: Cavallaro (2019), Theorem 7.3;
 Arnborg, Corneil and Proskurowski (1987) (parent problem). -/

@@ -24,10 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Combinatorics.SimpleGraph.VertexConnectivity
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.HamiltonianPathCubicPlanarWanted
+public import CSLibExt.Complexity.NPComplete.HamiltonianPathCubicPlanarBiconnectedDefs
 
 @[expose] public section
 
@@ -69,20 +66,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed instance of HAMILTONIAN PATH on cubic planar
-graphs whose graph is also 2-connected. -/
-def WellFormed (i : HamiltonianPathUndirectedInstance) : Prop :=
-  HamiltonianPathCubicPlanar.CubicPlanarWellFormed i ∧ (Graph i).IsVertexConnected 2
-
-open Classical in
-/-- HAMILTONIAN PATH on 2-connected cubic planar graphs as a decision problem over bitstrings. -/
-noncomputable def hamiltonianPathCubicPlanarBiconnectedDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := HamiltonianPathUndirectedInstance) x with
-  | some i => decide (WellFormed i ∧ HamiltonianPathUndirectedFeasible i)
-  | none => false
 
 /-- **HAMILTONIAN PATH on 2-connected cubic planar graphs is NP-complete.** Source: Garey and
 Johnson (1979), [GT39], comment; Garey, Johnson and Tarjan (1976); ISGCI (`gc_1183`). -/

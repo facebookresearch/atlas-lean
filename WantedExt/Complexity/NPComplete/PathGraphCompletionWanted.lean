@@ -20,11 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Data.Set.Card
-public import WantedExt.Complexity.NPComplete.DominatingSetUndirectedPathGraphsWanted
+public import CSLibExt.Complexity.NPComplete.PathGraphCompletionDefs
 
 @[expose] public section
 
@@ -59,35 +55,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`), edge list, bound `K`. -/
-abbrev PathGraphCompletionInstance := ℕ × List (ℕ × ℕ) × ℕ
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : PathGraphCompletionInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range); `K ≥ 0` needs no
-condition. -/
-def WellFormed (i : PathGraphCompletionInstance) : Prop :=
-  i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1
-
-/-- Some undirected path graph `H` on the same vertices contains the graph and has at most `K`
-edges that are not edges of the graph. -/
-def PathGraphCompletionFeasible (i : PathGraphCompletionInstance) : Prop :=
-  ∃ H : SimpleGraph (Fin i.1), Graph i ≤ H ∧
-    (H.edgeSet \ (Graph i).edgeSet).ncard ≤ i.2.2 ∧
-      DominatingSetUndirectedPathGraphs.IsUndirectedPathGraph H
-
-open Classical in
-/-- PATH GRAPH COMPLETION as a decision problem over bitstrings. -/
-noncomputable def pathGraphCompletionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PathGraphCompletionInstance) x with
-  | some i => decide (WellFormed i ∧ PathGraphCompletionFeasible i)
-  | none => false
 
 /-- **PATH GRAPH COMPLETION is NP-complete.** Source: Garey and Johnson (1979), [GT36],
 citing Gavril (1977b, private communication). -/

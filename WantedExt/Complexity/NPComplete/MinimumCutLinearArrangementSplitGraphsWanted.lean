@@ -21,11 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.DominatingSetSplitGraphsWanted
-public import WantedExt.Complexity.NPComplete.MinimumCutLinearArrangementWanted
+public import CSLibExt.Complexity.NPComplete.MinimumCutLinearArrangementSplitGraphsDefs
 
 @[expose] public section
 
@@ -62,21 +58,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the parent's (the edge list describes a simple graph on
-`0, ..., n - 1`, and `0 < K`), and the graph is a split graph. -/
-def WellFormed (i : MinimumCutLinearArrangementInstance) : Prop :=
-  MinimumCutLinearArrangement.WellFormed i ∧
-    DominatingSetSplitGraphs.IsSplitGraph (Cslib.Complexity.Karp.edgeGraph i.1 i.2.1)
-
-open Classical in
-/-- MINIMUM CUT LINEAR ARRANGEMENT for split graphs as a decision problem over bitstrings. -/
-noncomputable def minimumCutLinearArrangementSplitGraphsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MinimumCutLinearArrangementInstance) x with
-  | some i => decide (WellFormed i ∧ MinimumCutLinearArrangementFeasible i)
-  | none => false
 
 /-- **MINIMUM CUT LINEAR ARRANGEMENT (CUTWIDTH) for split graphs is NP-complete.** Source:
 Heggernes, Lokshtanov, Mihai and Papadopoulos (2008); Garey and Johnson (1979), [GT44]. -/

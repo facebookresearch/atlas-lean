@@ -23,10 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.FeedbackVertexSetStarConvexWanted
-public import WantedExt.Complexity.NPComplete.HamiltonianPathUndirectedWanted
+public import CSLibExt.Complexity.NPComplete.HamiltonianPathStarConvexDefs
 
 @[expose] public section
 
@@ -65,20 +62,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed HAMILTONIAN PATH instance whose graph is star
-convex bipartite. -/
-def WellFormed (i : HamiltonianPathUndirectedInstance) : Prop :=
-  HamiltonianPathUndirected.WellFormed i ∧ FeedbackVertexSetStarConvex.IsStarConvex (Graph i)
-
-open Classical in
-/-- HAMILTONIAN PATH on star convex bipartite graphs as a decision problem over bitstrings. -/
-noncomputable def hamiltonianPathStarConvexDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := HamiltonianPathUndirectedInstance) x with
-  | some i => decide (WellFormed i ∧ HamiltonianPathUndirectedFeasible i)
-  | none => false
 
 /-- **HAMILTONIAN PATH on star convex bipartite graphs is NP-complete.** Source: Chen, Lei, Liu,
 Tang, Wang and Xu (2016); Garey and Johnson (1979), [GT39]; ISGCI (`gc_1151`). -/

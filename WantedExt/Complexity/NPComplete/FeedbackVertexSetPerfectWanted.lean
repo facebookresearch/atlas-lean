@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Combinatorics.SimpleGraph.PerfectGraph
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.FeedbackVertexSetWanted
+public import CSLibExt.Complexity.NPComplete.FeedbackVertexSetPerfectDefs
 
 @[expose] public section
 
@@ -71,21 +68,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed FEEDBACK VERTEX SET instance whose graph is
-perfect. -/
-def WellFormed (i : FeedbackVertexSetInstance) : Prop :=
-  FeedbackVertexSet.WellFormed i ∧
-    MathlibExt.Combinatorics.SimpleGraph.PerfectGraphWanted.IsPerfect (Graph i)
-
-open Classical in
-/-- FEEDBACK VERTEX SET on perfect graphs as a decision problem over bitstrings. -/
-noncomputable def feedbackVertexSetPerfectDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := FeedbackVertexSetInstance) x with
-  | some i => decide (WellFormed i ∧ FeedbackVertexSetFeasible i)
-  | none => false
 
 /-- **FEEDBACK VERTEX SET on perfect graphs is NP-complete.** Source: Garey and Johnson (1979),
 [GT7]; Brandstädt, Brito, Klein, Nogueira and Protti (2013). -/

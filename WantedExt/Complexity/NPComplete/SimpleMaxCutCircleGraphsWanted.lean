@@ -28,12 +28,8 @@ doi:10.1109/12.46286.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.Complexity.Karp.Color
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.MaxCutDefs
-public import WantedExt.Complexity.NPComplete.PathwidthCircleGraphsWanted
+public import CSLibExt.Complexity.NPComplete.SimpleMaxCutCircleGraphsDefs
 
 @[expose] public section
 
@@ -86,21 +82,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed MAXIMUM CUT instance (a simple edge list on
-the vertices `0, ..., n - 1`) whose graph is a circle graph, and `0 < K`. -/
-def WellFormed (i : MaxCutInstance) : Prop :=
-  MaxCut.WellFormed i ∧
-    PathwidthCircleGraphs.IsCircleGraph (Cslib.Complexity.Karp.edgeGraph i.1 i.2.1) ∧ 0 < i.2.2
-
-open Classical in
-/-- SIMPLE MAX CUT for circle graphs as a decision problem over bitstrings. -/
-noncomputable def simpleMaxCutCircleGraphsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MaxCutInstance) x with
-  | some i => decide (WellFormed i ∧ MaxCutFeasible i)
-  | none => false
 
 /-- **SIMPLE MAX CUT for circle graphs is NP-complete.** Source: Garey and Johnson (1979),
 [ND16]; Masuda, Nakajima, Kashiwabara and Fujisawa (1990); Buchheim and Zheng (2006),

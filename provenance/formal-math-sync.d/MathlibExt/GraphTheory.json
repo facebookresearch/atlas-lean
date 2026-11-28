@@ -1,5 +1,6 @@
 {
   "rows": [
+    {"path": "MathlibExt/GraphTheory/AcyclicChromaticMaxDegreeErdosProblem797Defs.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "a8121a93aff84c3a33510f62759bb44a7536787ac5dfe2292122772a729bdec3", "rationale": "Moved `IsAcyclicColoring` from WantedExt/GraphTheory/AcyclicChromaticMaxDegreeErdosProblem797Wanted.lean, preserving their names and definitions."},
     {"path": "MathlibExt/GraphTheory/SnortOppositionsExistsLargeTreeSnortSecondPlayerWins.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "07cbb0e3cf856e0edabafbab4185c711dfb3b5c9cd8b637983563e5560019f83", "rationale": "Moved `snortMoverWins`, `SnortSecondPlayerWins` from WantedExt/GraphTheory/SnortOppositionsWanted.lean when `exists_large_tree_snortSecondPlayerWins` was proved, preserving their names, definitions and statements. Also: Moved `firework` unchanged from WantedExt/GraphTheory/SnortOppositionsWanted.lean and used it for the witness tree instead of a private copy of the construction."}
   ]
 }

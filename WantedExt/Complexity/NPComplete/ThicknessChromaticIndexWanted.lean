@@ -22,10 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.EdgeColoringWanted
-public import WantedExt.Complexity.NPComplete.GraphThicknessWanted
+public import CSLibExt.Complexity.NPComplete.ThicknessChromaticIndexDefs
 
 @[expose] public section
 
@@ -72,21 +69,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance for the thickness bound `k`: a well-formed CHROMATIC INDEX
-instance (a simple edge list on `0, ..., n - 1`) whose graph has thickness at most `k`, with `0 <
-K`. -/
-def WellFormed (k : ℕ) (i : EdgeColoring.EdgeColoringInstance) : Prop :=
-  EdgeColoring.WellFormed i ∧ GraphThickness.GraphThicknessFeasible (i.1, i.2.1, k) ∧ 0 < i.2.2
-
-open Classical in
-/-- CHROMATIC INDEX for graphs of thickness at most `k`, as a decision problem over
-bitstrings. -/
-noncomputable def thicknessChromaticIndexDec (k : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := EdgeColoring.EdgeColoringInstance) x with
-  | some i => decide (WellFormed k i ∧ EdgeColoring.EdgeColoringFeasible i)
-  | none => false
 
 /-- **CHROMATIC INDEX for graphs of thickness at most `k` is NP-complete, for every fixed `k ≥ 2`.**
 Source: Garey and Johnson (1979), [OPEN5]; Holyer (1981); Johnson (1985), Table 1. -/

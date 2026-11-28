@@ -23,12 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Finite
-public import Mathlib.Combinatorics.SimpleGraph.Hamiltonian
-public import MathlibExt.Combinatorics.SimpleGraph.Planarity
-public import WantedExt.Complexity.NPComplete.FeedbackVertexSetPlanarWanted
+public import CSLibExt.Complexity.NPComplete.FeedbackVertexSetPlanarFourRegularHamiltonianDefs
 
 @[expose] public section
 
@@ -78,22 +73,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-open Classical in
-/-- Well-formedness of an instance: a well-formed instance of FEEDBACK VERTEX SET on planar
-graphs (a simple edge list on `Fin n`, a planar graph, `0 < K ≤ n`) whose graph is 4-regular
-and Hamiltonian. -/
-def WellFormed (i : FeedbackVertexSetInstance) : Prop :=
-  FeedbackVertexSetPlanar.WellFormed i ∧ (Graph i).IsRegularOfDegree 4 ∧ (Graph i).IsHamiltonian
-
-open Classical in
-/-- FEEDBACK VERTEX SET on planar 4-regular Hamiltonian graphs as a decision problem over
-bitstrings. -/
-noncomputable def feedbackVertexSetPlanarFourRegularHamiltonianDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := FeedbackVertexSetInstance) x with
-  | some i => decide (WellFormed i ∧ FeedbackVertexSetFeasible i)
-  | none => false
 
 /-- **FEEDBACK VERTEX SET on planar 4-regular Hamiltonian graphs is NP-complete.** Source:
 Cavallaro (2019), Theorem 3.5; Garey and Johnson (1979), [GT7] (parent problem). -/

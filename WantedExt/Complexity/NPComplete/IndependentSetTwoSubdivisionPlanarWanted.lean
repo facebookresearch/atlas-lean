@@ -23,11 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Combinatorics.SimpleGraph.Planarity
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MinimumCutLinearArrangementTwoSubdivisionPlanarWanted
-public import WantedExt.Complexity.NPComplete.TriangleFreeIndependentSetWanted
+public import CSLibExt.Complexity.NPComplete.IndependentSetTwoSubdivisionPlanarDefs
 
 @[expose] public section
 
@@ -75,22 +71,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range) that is a
-2-subdivision and planar, and `0 < K ≤ |V|`. -/
-def WellFormed (i : TriangleFreeIndependentSetInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    IsTwoSubdivision (Graph i) ∧ (Graph i).IsPlanar ∧ 0 < i.2.2 ∧ i.2.2 ≤ i.1
-
-open Classical in
-/-- INDEPENDENT SET on 2-subdivision ∩ planar graphs as a decision problem over bitstrings. -/
-noncomputable def independentSetTwoSubdivisionPlanarDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TriangleFreeIndependentSetInstance) x with
-  | some i => decide (WellFormed i ∧ TriangleFreeIndependentSetFeasible i)
-  | none => false
 
 /-- **INDEPENDENT SET on 2-subdivision ∩ planar graphs is NP-complete.** Source: Poljak (1974);
 Garey and Johnson (1979), [GT20], comment (planar graphs); ISGCI (gc_675). -/

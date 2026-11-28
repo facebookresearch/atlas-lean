@@ -23,10 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Paths
-public import CSLibExt.Complexity.NPComplete.DominatingSetDefs
+public import CSLibExt.Complexity.NPComplete.DominatingSetK33FreeDefs
 
 @[expose] public section
 
@@ -69,29 +66,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- `G` has a subgraph homeomorphic to `K₃,₃` (a subdivision of `K₃,₃`): distinct branch vertices
-`a₀, a₁, a₂, b₀, b₁, b₂` and paths `P i j` from `aᵢ` to `bⱼ` such that a vertex on two different
-paths `P i j` and `P k l` is an endpoint of `P i j` (and, symmetrically, of `P k l`). -/
-def HasK33Subdivision {V : Type*} (G : SimpleGraph V) : Prop :=
-  ∃ (a b : Fin 3 → V) (P : ∀ i j, G.Walk (a i) (b j)),
-    Function.Injective (Sum.elim a b) ∧ (∀ i j, (P i j).IsPath) ∧
-      ∀ i j k l, (i, j) ≠ (k, l) → ∀ v ∈ (P i j).support, v ∈ (P k l).support →
-        v = a i ∨ v = b j
-
-/-- Well-formedness of an instance: a well-formed DOMINATING SET instance (simple edge list) whose
-graph has no subgraph homeomorphic to `K₃,₃`, with `0 < K ≤ |V|`. -/
-def WellFormed (i : DominatingSetInstance) : Prop :=
-  DominatingSet.WellFormed i ∧ ¬ HasK33Subdivision (Graph i) ∧ 0 < i.2.2 ∧ i.2.2 ≤ i.1
-
-open Classical in
-/-- DOMINATING SET for K₃,₃-free graphs as a decision problem over bitstrings. -/
-noncomputable def dominatingSetK33FreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := DominatingSetInstance) x with
-  | some i => decide (WellFormed i ∧ DominatingSetFeasible i)
-  | none => false
 
 /-- **DOMINATING SET is NP-complete for K₃,₃-free graphs.** Source: Garey and Johnson (1979),
 [GT2], comment; Johnson (1985), Table 1; de Figueiredo, de Melo, Sasaki and Silva (2022),

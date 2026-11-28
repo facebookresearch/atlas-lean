@@ -19,12 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Combinatorics.SimpleGraph.Copy
-public import Mathlib.Combinatorics.SimpleGraph.CycleGraph
-public import Mathlib.Combinatorics.SimpleGraph.Bipartite
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.PathwidthChordalGraphsWanted
+public import CSLibExt.Complexity.NPComplete.PathwidthChordalBipartiteDefs
 
 @[expose] public section
 
@@ -68,21 +63,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n`,
-the graph is bipartite with no induced cycle of length at least `6`, and `0 < K`. -/
-def WellFormed (i : PathwidthChordalGraphsInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    (Graph i).IsBipartite ∧
-    (∀ k, 6 ≤ k → ¬ (SimpleGraph.cycleGraph k).IsIndContained (Graph i)) ∧ 0 < i.2.2
-
-open Classical in
-/-- PATHWIDTH OF CHORDAL BIPARTITE GRAPHS as a decision problem over bitstrings. -/
-noncomputable def pathwidthChordalBipartiteDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := PathwidthChordalGraphsInstance) x with
-  | some i => decide (WellFormed i ∧ PathwidthChordalGraphs.PathwidthChordalGraphsFeasible i)
-  | none => false
 
 /-- **PATHWIDTH OF CHORDAL BIPARTITE GRAPHS is NP-complete.**
 Source: Kloks, Bodlaender, Müller and Kratsch (1993). -/

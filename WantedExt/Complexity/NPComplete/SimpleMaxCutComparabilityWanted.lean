@@ -22,12 +22,8 @@ C. M. H. de Figueiredo, A. A. de Melo, D. Sasaki and A. Silva, "Revising Johnson
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.Complexity.Karp.Color
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.ComparabilityGraphSandwichWanted
-public import CSLibExt.Complexity.NPComplete.MaxCutDefs
+public import CSLibExt.Complexity.NPComplete.SimpleMaxCutComparabilityDefs
 
 @[expose] public section
 
@@ -68,31 +64,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the vertex count `n`, the edge list, and the bound `K`; this is the MAXIMUM
-CUT instance type. -/
-abbrev SimpleMaxCutComparabilityInstance := MaxCutInstance
-
-/-- Well-formedness of an instance: a well-formed MAXIMUM CUT instance (a simple edge list on
-the vertices `0, ..., n - 1`) whose graph is a comparability graph, and `0 < K`. -/
-def WellFormed (i : SimpleMaxCutComparabilityInstance) : Prop :=
-  MaxCut.WellFormed i ∧
-    ComparabilityGraphSandwich.IsComparabilityGraph (Cslib.Complexity.Karp.edgeGraph i.1 i.2.1) ∧
-    0 < i.2.2
-
-/-- A partition `V₁ = S`, `V₂ = V - S` with at least `K` edges between the two sets (the
-MAXIMUM CUT question). -/
-def SimpleMaxCutComparabilityFeasible (i : SimpleMaxCutComparabilityInstance) : Prop :=
-  MaxCutFeasible i
-
-open Classical in
-/-- SIMPLE MAX CUT on comparability graphs as a decision problem over bitstrings. -/
-noncomputable def simpleMaxCutComparabilityDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SimpleMaxCutComparabilityInstance) x with
-  | some i => decide (WellFormed i ∧ SimpleMaxCutComparabilityFeasible i)
-  | none => false
 
 /-- **SIMPLE MAX CUT on comparability graphs is NP-complete.** Source: Pocai (2016),
 Theorem 2.3; Garey and Johnson (1979), [ND16]. -/

@@ -23,11 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Combinatorics.SimpleGraph.Maps
-public import WantedExt.Complexity.NPComplete.DominatingSetCircleGraphWanted
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.PathwidthChordalGraphsWanted
+public import CSLibExt.Complexity.NPComplete.PathwidthCircleGraphsDefs
 
 @[expose] public section
 
@@ -73,28 +69,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- `G` is a circle graph: it is isomorphic to the circle graph of a chord model whose chords
-`(a, b)` satisfy `a < b` and have pairwise distinct endpoints. -/
-def IsCircleGraph {n : ℕ} (G : SimpleGraph (Fin n)) : Prop :=
-  ∃ C : List (ℕ × ℕ), (∀ c ∈ C, c.1 < c.2) ∧ (C.flatMap fun c => [c.1, c.2]).Nodup ∧
-    Nonempty (G ≃g DominatingSetCircleGraph.circleGraph C)
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range), the graph is a circle
-graph, and `0 < K`. -/
-def WellFormed (i : PathwidthChordalGraphsInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    IsCircleGraph (Graph i) ∧ 0 < i.2.2
-
-open Classical in
-/-- PATHWIDTH OF CIRCLE GRAPHS as a decision problem over bitstrings. -/
-noncomputable def pathwidthCircleGraphsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PathwidthChordalGraphsInstance) x with
-  | some i => decide (WellFormed i ∧ PathwidthChordalGraphsFeasible i)
-  | none => false
 
 /-- **PATHWIDTH OF CIRCLE GRAPHS is NP-complete.** Source: Kloks, Bodlaender, Müller, and Kratsch
 (1993); Mihai and Todinca (2009). -/

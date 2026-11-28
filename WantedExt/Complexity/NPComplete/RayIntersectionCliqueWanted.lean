@@ -20,10 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Basic.Real.Basic
-public import Mathlib.Combinatorics.SimpleGraph.Clique
+public import CSLibExt.Complexity.NPComplete.RayIntersectionCliqueDefs
 
 @[expose] public section
 
@@ -66,46 +63,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- A ray: origin `(x, y)` and direction `(d, e)`, each integer encoded as a pair of naturals
-standing for their difference. -/
-abbrev Ray := ((ℕ × ℕ) × (ℕ × ℕ)) × ((ℕ × ℕ) × (ℕ × ℕ))
-
-/-- An instance: the rays and the bound `K`. -/
-abbrev RayIntersectionCliqueInstance := List Ray × ℕ
-
-/-- The integer `p - q` encoded by the pair `(p, q)`. -/
-def toInt (z : ℕ × ℕ) : ℤ := (z.1 : ℤ) - z.2
-
-/-- The point set of the open ray with origin `(x, y)` and direction `(d, e)`:
-`{(x + t d, y + t e) : t > 0}` (the origin itself is excluded). -/
-def rayPoints (ρ : Ray) : Set (ℝ × ℝ) :=
-  {p | ∃ t : ℝ, 0 < t ∧
-    p = ((toInt ρ.1.1 : ℝ) + t * (toInt ρ.2.1 : ℝ), (toInt ρ.1.2 : ℝ) + t * (toInt ρ.2.2 : ℝ))}
-
-/-- The intersection graph of the rays: one vertex per list entry, two distinct entries adjacent
-when their rays share a point. -/
-def Graph (i : RayIntersectionCliqueInstance) : SimpleGraph (Fin i.1.length) :=
-  SimpleGraph.fromRel fun a b => (rayPoints (i.1.get a) ∩ rayPoints (i.1.get b)).Nonempty
-
-/-- Well-formedness of an instance: every direction is nonzero, the rays are pairwise distinct
-as point sets (a set of rays), and `0 < K ≤` the number of rays. -/
-def WellFormed (i : RayIntersectionCliqueInstance) : Prop :=
-  (∀ ρ ∈ i.1, toInt ρ.2.1 ≠ 0 ∨ toInt ρ.2.2 ≠ 0) ∧ (i.1.map rayPoints).Nodup ∧ 0 < i.2 ∧
-    i.2 ≤ i.1.length
-
-/-- The intersection graph has a clique of size `K` or more. -/
-def RayIntersectionCliqueFeasible (i : RayIntersectionCliqueInstance) : Prop :=
-  ∃ S : Finset (Fin i.1.length), i.2 ≤ S.card ∧ (Graph i).IsClique (S : Set (Fin i.1.length))
-
-open Classical in
-/-- CLIQUE in ray intersection graphs as a decision problem over bitstrings. -/
-noncomputable def rayIntersectionCliqueDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := RayIntersectionCliqueInstance) x with
-  | some i => decide (WellFormed i ∧ RayIntersectionCliqueFeasible i)
-  | none => false
 
 /-- **CLIQUE in ray intersection graphs is NP-complete.** Source: Garey and Johnson (1979),
 [GT19]; NP-hardness, with the rays given by integer coordinates: Cabello, Cardinal and

@@ -23,10 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Combinatorics.SimpleGraph.Planarity
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.FeedbackVertexSetBipartiteWanted
+public import CSLibExt.Complexity.NPComplete.FeedbackVertexSetBipartitePlanarDefs
 
 @[expose] public section
 
@@ -70,20 +67,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed FEEDBACK VERTEX SET on bipartite graphs
-instance (a simple edge list whose graph is bipartite) whose graph is also planar. -/
-def WellFormed (i : FeedbackVertexSetInstance) : Prop :=
-  FeedbackVertexSetBipartite.WellFormed i ∧ (Graph i).IsPlanar
-
-open Classical in
-/-- FEEDBACK VERTEX SET on planar bipartite graphs as a decision problem over bitstrings. -/
-noncomputable def feedbackVertexSetBipartitePlanarDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := FeedbackVertexSetInstance) x with
-  | some i => decide (WellFormed i ∧ FeedbackVertexSetFeasible i)
-  | none => false
 
 /-- **FEEDBACK VERTEX SET on planar bipartite graphs is NP-complete.** Source: Garey and Johnson
 (1979), [GT7]; Takaoka, Tayu and Ueno (2013), Theorem 2. -/

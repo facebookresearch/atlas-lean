@@ -24,11 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.SteinerTreeWanted
-public import Mathlib.Combinatorics.SimpleGraph.Copy
-public import Mathlib.Combinatorics.SimpleGraph.CycleGraph
+public import CSLibExt.Complexity.NPComplete.SteinerTreeChordalGraphsDefs
 
 @[expose] public section
 
@@ -77,24 +73,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: it is a well-formed STEINER TREE IN GRAPHS instance, every
-edge has weight `1`, its graph is chordal (no induced cycle of length at least `4`), it has at
-least one vertex, and `K` is positive. -/
-def WellFormed (i : SteinerTreeInstance) : Prop :=
-  SteinerTree.WellFormed i ∧ (∀ e ∈ i.2.1, e.2.2 = 1) ∧
-    (∀ k, 4 ≤ k → ¬ (SimpleGraph.cycleGraph k).IsIndContained (SteinerTree.Graph i i.2.1)) ∧
-      0 < i.1 ∧ 0 < i.2.2.2
-
-open Classical in
-/-- STEINER TREE IN GRAPHS with unit weights on chordal graphs as a decision problem over
-bitstrings. -/
-noncomputable def steinerTreeChordalGraphsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SteinerTreeInstance) x with
-  | some i => decide (WellFormed i ∧ SteinerTreeFeasible i)
-  | none => false
 
 /-- **STEINER TREE IN GRAPHS with unit weights on chordal graphs is NP-complete.** Source:
 White, Farber and Pulleyblank (1985); de Figueiredo et al. (2022), Table 1. -/

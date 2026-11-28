@@ -22,10 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Bipartite
-public import WantedExt.Complexity.NPComplete.TotalDominatingSetWanted
+public import CSLibExt.Complexity.NPComplete.TotalDominatingSetBipartiteDefs
 
 @[expose] public section
 
@@ -69,20 +66,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the parent's (a simple edge list on `Fin n`),
-`0 < K ≤ |V| = n`, no isolated vertex, and the graph is bipartite. -/
-def WellFormed (i : TotalDominatingSetInstance) : Prop :=
-  TotalDominatingSet.WellFormed i ∧ 0 < i.2.2 ∧ i.2.2 ≤ i.1 ∧
-    (∀ v : Fin i.1, ∃ u, (Graph i).Adj v u) ∧ (Graph i).IsBipartite
-
-open Classical in
-/-- TOTAL DOMINATING SET on bipartite graphs as a decision problem over bitstrings. -/
-noncomputable def totalDominatingSetBipartiteDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := TotalDominatingSetInstance) x with
-  | some i => decide (WellFormed i ∧ TotalDominatingSetFeasible i)
-  | none => false
 
 /-- **TOTAL DOMINATING SET on bipartite graphs is NP-complete.** Source: Pfaff, Laskar and
 Hedetniemi (1983); Shalu and Kirubakaran (2025). -/

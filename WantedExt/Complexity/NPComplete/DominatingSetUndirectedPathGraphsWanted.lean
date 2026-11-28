@@ -20,10 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Acyclic
-public import CSLibExt.Complexity.NPComplete.DominatingSetDefs
+public import CSLibExt.Complexity.NPComplete.DominatingSetUndirectedPathGraphsDefs
 
 @[expose] public section
 
@@ -56,30 +53,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- `G` is an undirected path graph: for some tree `T` on `Fin m`, each vertex `v` of `G` has
-the vertex set `P v` of a path in `T`, and distinct vertices are adjacent in `G` exactly when
-their paths share a vertex. -/
-def IsUndirectedPathGraph {n : ℕ} (G : SimpleGraph (Fin n)) : Prop :=
-  ∃ (m : ℕ) (T : SimpleGraph (Fin m)), T.IsTree ∧
-    ∃ P : Fin n → Finset (Fin m),
-      (∀ v, ∃ (a b : Fin m) (p : T.Walk a b), p.IsPath ∧ p.support.toFinset = P v) ∧
-        ∀ u v, u ≠ v → (G.Adj u v ↔ (P u ∩ P v).Nonempty)
-
-/-- Well-formedness of an instance: the parent's (a simple edge list on `Fin n`), the graph is
-an undirected path graph, and `0 < K ≤ n`. -/
-def WellFormed (i : DominatingSet.DominatingSetInstance) : Prop :=
-  DominatingSet.WellFormed i ∧ IsUndirectedPathGraph (DominatingSet.Graph i) ∧
-    0 < i.2.2 ∧ i.2.2 ≤ i.1
-
-open Classical in
-/-- DOMINATING SET for undirected path graphs as a decision problem over bitstrings. -/
-noncomputable def dominatingSetUndirectedPathGraphsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := DominatingSet.DominatingSetInstance) x with
-  | some i => decide (WellFormed i ∧ DominatingSet.DominatingSetFeasible i)
-  | none => false
 
 /-- **DOMINATING SET for undirected path graphs is NP-complete.** Source: Booth and Johnson
 (1982); Garey and Johnson (1979), [GT2]. -/

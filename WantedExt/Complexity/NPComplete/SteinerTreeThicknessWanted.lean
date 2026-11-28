@@ -25,10 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.GraphThicknessWanted
-public import WantedExt.Complexity.NPComplete.SteinerTreeWanted
+public import CSLibExt.Complexity.NPComplete.SteinerTreeThicknessDefs
 
 @[expose] public section
 
@@ -78,28 +75,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- The GRAPH THICKNESS instance with the same vertex count, the edge list without weights, and
-the bound `k`. -/
-def withThickness (k : ℕ) (i : SteinerTreeInstance) : GraphThickness.GraphThicknessInstance :=
-  (i.1, i.2.1.map fun e => (e.1, e.2.1), k)
-
-/-- Well-formedness of an instance for the fixed thickness bound `k`: it is a well-formed
-STEINER TREE IN GRAPHS instance, every edge has weight `1`, its graph has thickness at most `k`,
-it has at least one vertex, and the bound `B` is positive. -/
-def WellFormed (k : ℕ) (i : SteinerTreeInstance) : Prop :=
-  SteinerTree.WellFormed i ∧ (∀ e ∈ i.2.1, e.2.2 = 1) ∧
-    GraphThickness.GraphThicknessFeasible (withThickness k i) ∧ 0 < i.1 ∧ 0 < i.2.2.2
-
-open Classical in
-/-- STEINER TREE IN GRAPHS (unit weights) on graphs of thickness at most `k`, for the fixed `k`,
-as a decision problem over bitstrings. -/
-noncomputable def steinerTreeThicknessDec (k : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SteinerTreeInstance) x with
-  | some i => decide (WellFormed k i ∧ SteinerTreeFeasible i)
-  | none => false
 
 /-- **STEINER TREE IN GRAPHS (unit weights) on graphs of thickness at most `k` is NP-complete for
 every fixed `k ≥ 1`.** Source: Garey and Johnson (1979), [ND12], comment; Garey and Johnson

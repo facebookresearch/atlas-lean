@@ -19,10 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.HamiltonianCircuitSplitGraphsWanted
-public import WantedExt.Complexity.NPComplete.StronglyChordalSplitHamiltonianPathWanted
+public import CSLibExt.Complexity.NPComplete.HamiltonianCircuitStronglyChordalSplitDefs
 
 @[expose] public section
 
@@ -70,22 +67,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed HAMILTONIAN CIRCUIT instance on split graphs
-(`HamiltonianCircuitSplitGraphs.WellFormed`) whose graph is strongly chordal. -/
-def WellFormed (i : HamiltonianCycleUndirectedInstance) : Prop :=
-  HamiltonianCircuitSplitGraphs.WellFormed i ∧
-    StronglyChordalSplitHamiltonianPath.IsStronglyChordal (Graph i)
-
-open Classical in
-/-- HAMILTONIAN CIRCUIT on strongly chordal split graphs as a decision problem over
-bitstrings. -/
-noncomputable def hamiltonianCircuitStronglyChordalSplitDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := HamiltonianCycleUndirectedInstance) x with
-  | some i => decide (WellFormed i ∧ HamiltonianCycleUndirectedFeasible i)
-  | none => false
 
 /-- **HAMILTONIAN CIRCUIT on strongly chordal split graphs is NP-complete.** Source: Müller
 (1996); Garey and Johnson (1979), [GT37]. -/

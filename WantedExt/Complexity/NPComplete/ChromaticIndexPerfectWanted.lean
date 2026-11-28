@@ -23,11 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import MathlibExt.Combinatorics.SimpleGraph.PerfectGraph
-public import WantedExt.Complexity.NPComplete.EdgeColoringWanted
+public import CSLibExt.Complexity.NPComplete.ChromaticIndexPerfectDefs
 
 @[expose] public section
 
@@ -62,22 +58,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the parent's simple edge list, the graph is perfect, and `K`
-is positive. -/
-def WellFormed (i : EdgeColoringInstance) : Prop :=
-  EdgeColoring.WellFormed i ∧
-    MathlibExt.Combinatorics.SimpleGraph.PerfectGraphWanted.IsPerfect
-      (Cslib.Complexity.Karp.edgeGraph i.1 i.2.1) ∧ 0 < i.2.2
-
-open Classical in
-/-- CHROMATIC INDEX for perfect graphs as a decision problem over bitstrings. -/
-noncomputable def chromaticIndexPerfectDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := EdgeColoringInstance) x with
-  | some i => decide (WellFormed i ∧ EdgeColoringFeasible i)
-  | none => false
 
 /-- **CHROMATIC INDEX is NP-complete for perfect graphs.** Source: Johnson, NP-completeness
 column (1985), Table 1; Cai and Ellis (1991). -/

@@ -26,9 +26,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.UnitDiskDominatingSetWanted
+public import CSLibExt.Complexity.NPComplete.PennyGraphDominatingSetDefs
 
 @[expose] public section
 
@@ -72,21 +70,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed DOMINATING SET IN UNIT DISK GRAPHS instance
-whose points are pairwise at distance at least `1`. -/
-def WellFormed (i : UnitDiskDominatingSetInstance) : Prop :=
-  UnitDiskDominatingSet.WellFormed i ∧
-    ∀ a b : Fin i.1.length, a ≠ b → 1 ≤ dist (point i.1[a]) (point i.1[b])
-
-open Classical in
-/-- DOMINATING SET IN PENNY GRAPHS as a decision problem over bitstrings. -/
-noncomputable def pennyGraphDominatingSetDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := UnitDiskDominatingSetInstance) x with
-  | some i => decide (WellFormed i ∧ UnitDiskDominatingSetFeasible i)
-  | none => false
 
 /-- **DOMINATING SET IN PENNY GRAPHS is NP-complete.** Source: Clark, Colbourn and Johnson
 (1990); de Berg et al. (2020); ISGCI (`gc_1381`); Garey and Johnson (1979), [GT2]. -/

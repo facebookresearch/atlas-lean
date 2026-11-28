@@ -24,12 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Coloring.Vertex
-public import Mathlib.Combinatorics.SimpleGraph.Finite
-public import Mathlib.Combinatorics.SimpleGraph.LineGraph
+public import CSLibExt.Complexity.NPComplete.ChromaticIndexRegularDefs
 
 @[expose] public section
 
@@ -65,36 +60,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `0, …, n - 1`) and edge list. -/
-abbrev ChromaticIndexRegularInstance := ℕ × List (ℕ × ℕ)
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : ChromaticIndexRegularInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2
-
-open Classical in
-/-- Well-formedness of an instance for the fixed degree `k`: the edge list describes a simple
-graph (no duplicate edges in either orientation, no self-loops, endpoints in range), and the
-graph is `k`-regular: every vertex has degree exactly `k`. -/
-def WellFormed (k : ℕ) (i : ChromaticIndexRegularInstance) : Prop :=
-  (i.2.Nodup ∧ ∀ e ∈ i.2, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2) ∧
-    (Graph i).IsRegularOfDegree k
-
-/-- The edges can be colored with `k` colors, edges sharing an endpoint getting different
-colors: the line graph is `k`-colorable (chromatic index at most `k`). -/
-def ChromaticIndexRegularFeasible (k : ℕ) (i : ChromaticIndexRegularInstance) : Prop :=
-  (Graph i).lineGraph.Colorable k
-
-open Classical in
-/-- CHROMATIC INDEX of `k`-regular graphs, for the fixed `k`, as a decision problem over
-bitstrings. -/
-noncomputable def chromaticIndexRegularDec (k : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ChromaticIndexRegularInstance) x with
-  | some i => decide (WellFormed k i ∧ ChromaticIndexRegularFeasible k i)
-  | none => false
 
 /-- **CHROMATIC INDEX of k-regular graphs is NP-complete for every fixed `k ≥ 3`.** Source:
 Holyer (1981) for `k = 3`; Leven and Galil (1983) for `k ≥ 4`; Galby, Lima, Paulusma and Ries

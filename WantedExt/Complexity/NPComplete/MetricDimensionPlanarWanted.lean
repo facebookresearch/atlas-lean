@@ -20,10 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Combinatorics.SimpleGraph.Planarity
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MetricDimensionWanted
+public import CSLibExt.Complexity.NPComplete.MetricDimensionPlanarDefs
 
 @[expose] public section
 
@@ -57,20 +54,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the instance is a well-formed METRIC DIMENSION instance (a
-simple edge list whose graph is connected, and `0 < K ≤ |V|`), and its graph is planar. -/
-def WellFormed (i : MetricDimension.MetricDimensionInstance) : Prop :=
-  MetricDimension.WellFormed i ∧ (MetricDimension.Graph i).IsPlanar
-
-open Classical in
-/-- METRIC DIMENSION on planar graphs as a decision problem over bitstrings. -/
-noncomputable def metricDimensionPlanarDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MetricDimension.MetricDimensionInstance) x with
-  | some i => decide (WellFormed i ∧ MetricDimension.MetricDimensionFeasible i)
-  | none => false
 
 /-- **METRIC DIMENSION on planar graphs is NP-complete.** Source: Garey and Johnson (1979),
 [GT61]; Díaz, Pottonen, Serna and van Leeuwen (2017), Theorem 3.6. -/

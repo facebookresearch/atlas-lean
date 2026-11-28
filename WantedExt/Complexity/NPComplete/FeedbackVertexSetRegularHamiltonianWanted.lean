@@ -24,11 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Finite
-public import Mathlib.Combinatorics.SimpleGraph.Hamiltonian
-public import WantedExt.Complexity.NPComplete.FeedbackVertexSetWanted
+public import CSLibExt.Complexity.NPComplete.FeedbackVertexSetRegularHamiltonianDefs
 
 @[expose] public section
 
@@ -82,22 +78,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-open Classical in
-/-- Well-formedness of an instance for a fixed `k`: a well-formed FEEDBACK VERTEX SET instance
-(a simple edge list on `Fin n`) whose graph is `k`-regular and has a Hamiltonian cycle. -/
-def WellFormed (k : ℕ) (i : FeedbackVertexSetInstance) : Prop :=
-  FeedbackVertexSet.WellFormed i ∧ (Graph i).IsRegularOfDegree k ∧
-    ∃ (a : Fin i.1) (p : (Graph i).Walk a a), p.IsHamiltonianCycle
-
-open Classical in
-/-- FEEDBACK VERTEX SET on `k`-regular Hamiltonian graphs as a decision problem over
-bitstrings. -/
-noncomputable def feedbackVertexSetRegularHamiltonianDec (k : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := FeedbackVertexSetInstance) x with
-  | some i => decide (WellFormed k i ∧ FeedbackVertexSetFeasible i)
-  | none => false
 
 /-- **FEEDBACK VERTEX SET on `k`-regular Hamiltonian graphs is NP-complete for every fixed
 `k ≥ 4`.** Source: Cavallaro (2019), Theorem 3.29; Garey and Johnson (1979), [GT7] (parent

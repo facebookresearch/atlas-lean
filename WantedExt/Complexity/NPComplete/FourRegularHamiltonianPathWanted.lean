@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Combinatorics.SimpleGraph.Finite
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.HamiltonianPathUndirectedWanted
+public import CSLibExt.Complexity.NPComplete.FourRegularHamiltonianPathDefs
 
 @[expose] public section
 
@@ -63,20 +60,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-open Classical in
-/-- Well-formedness of an instance: a well-formed HAMILTONIAN PATH instance whose graph is
-4-regular. -/
-def WellFormed (i : HamiltonianPathUndirectedInstance) : Prop :=
-  HamiltonianPathUndirected.WellFormed i ∧ (Graph i).IsRegularOfDegree 4
-
-open Classical in
-/-- HAMILTONIAN PATH IN 4-REGULAR GRAPHS as a decision problem over bitstrings. -/
-noncomputable def fourRegularHamiltonianPathDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := HamiltonianPathUndirectedInstance) x with
-  | some i => decide (WellFormed i ∧ HamiltonianPathUndirectedFeasible i)
-  | none => false
 
 /-- **HAMILTONIAN PATH IN 4-REGULAR GRAPHS is NP-complete.**
 Source: Garey and Johnson (1979), [GT39];

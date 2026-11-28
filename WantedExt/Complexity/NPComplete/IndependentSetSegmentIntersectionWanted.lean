@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.SegmentIntersectionCliqueWanted
+public import CSLibExt.Complexity.NPComplete.IndependentSetSegmentIntersectionDefs
 
 @[expose] public section
 
@@ -73,20 +71,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- The intersection graph of the segments has an independent set of size `K` or more. -/
-def IndependentSetSegmentIntersectionFeasible (i : SegmentIntersectionCliqueInstance) : Prop :=
-  ∃ S : Finset (Fin i.1.length), i.2 ≤ S.card ∧ (Graph i).IsIndepSet (S : Set (Fin i.1.length))
-
-open Classical in
-/-- INDEPENDENT SET in segment intersection graphs as a decision problem over bitstrings. -/
-noncomputable def independentSetSegmentIntersectionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SegmentIntersectionCliqueInstance) x with
-  | some i => decide (SegmentIntersectionClique.WellFormed i ∧
-      IndependentSetSegmentIntersectionFeasible i)
-  | none => false
 
 /-- **INDEPENDENT SET in segment intersection graphs is NP-complete.** Source: Kratochvíl and
 Nešetřil (1990), Theorem 1; Garey and Johnson (1979), [GT20]. -/

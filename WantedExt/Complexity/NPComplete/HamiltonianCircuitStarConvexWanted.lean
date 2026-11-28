@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.FeedbackVertexSetStarConvexWanted
-public import CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs
+public import CSLibExt.Complexity.NPComplete.HamiltonianCircuitStarConvexDefs
 
 @[expose] public section
 
@@ -75,20 +72,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed HAMILTONIAN CIRCUIT instance (at least one
-vertex, simple edge list on `Fin n`) whose graph is star convex bipartite. -/
-def WellFormed (i : HamiltonianCycleUndirectedInstance) : Prop :=
-  HamiltonianCycleUndirected.WellFormed i ∧ IsStarConvex (Graph i)
-
-open Classical in
-/-- HAMILTONIAN CIRCUIT on star convex graphs as a decision problem over bitstrings. -/
-noncomputable def hamiltonianCircuitStarConvexDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := HamiltonianCycleUndirectedInstance) x with
-  | some i => decide (WellFormed i ∧ HamiltonianCycleUndirectedFeasible i)
-  | none => false
 
 /-- **HAMILTONIAN CIRCUIT on star convex graphs is NP-complete.** Source: Garey and Johnson
 (1979), [GT37]; ISGCI class `gc_1151` (reference note 1655). -/

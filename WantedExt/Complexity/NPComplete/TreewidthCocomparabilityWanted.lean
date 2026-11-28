@@ -27,10 +27,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.ComparabilityGraphSandwichWanted
-public import WantedExt.Complexity.NPComplete.TreewidthWanted
+public import CSLibExt.Complexity.NPComplete.TreewidthCocomparabilityDefs
 
 @[expose] public section
 
@@ -66,20 +63,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed TREEWIDTH instance (simple edge list) whose
-graph is a cocomparability graph: its complement is a comparability graph. -/
-def CocomparabilityWellFormed (i : TreewidthInstance) : Prop :=
-  WellFormed i ∧ ComparabilityGraphSandwich.IsComparabilityGraph (Graph i)ᶜ
-
-open Classical in
-/-- TREEWIDTH OF COCOMPARABILITY GRAPHS as a decision problem over bitstrings. -/
-noncomputable def treewidthCocomparabilityDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TreewidthInstance) x with
-  | some i => decide (CocomparabilityWellFormed i ∧ TreewidthFeasible i)
-  | none => false
 
 /-- **TREEWIDTH OF COCOMPARABILITY GRAPHS is NP-complete.** Source: Bodlaender (1993), Table 1;
 Arnborg, Corneil and Proskurowski (1987); Bodlaender et al. (2025), Corollary 3.2. -/

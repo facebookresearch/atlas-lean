@@ -24,8 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.MinimumCutLinearArrangementDefs
 
 @[expose] public section
 
@@ -59,35 +58,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `0, ..., n - 1`), edge list, bound `K`. -/
-abbrev MinimumCutLinearArrangementInstance := ℕ × List (ℕ × ℕ) × ℕ
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `0, ..., n - 1`
-(no duplicate edges in either orientation, no self-loops, endpoints in range), and `0 < K`. -/
-def WellFormed (i : MinimumCutLinearArrangementInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    0 < i.2.2
-
-/-- A one-to-one numbering of the vertices, given by the positions in a permutation `perm` of
-`0, ..., n - 1`, such that for every cut position `j` with `j + 1 < n` at most `K` entries
-`(u, v)` of the edge list have one endpoint at a position `≤ j` and the other at a position
-`> j`; a vertex not in `perm` has position `n`. Entries are counted, so `(0, 1)` and `(1, 0)`
-count twice; on a simple edge list, which well-formedness checks, this counts edges. -/
-def MinimumCutLinearArrangementFeasible (i : MinimumCutLinearArrangementInstance) : Prop :=
-  ∃ perm : List ℕ, perm.Perm (List.range i.1) ∧
-    ∀ j, j + 1 < i.1 →
-      (i.2.1.filter fun e => (perm.idxOf e.1 ≤ j ∧ j < perm.idxOf e.2) ∨
-        (perm.idxOf e.2 ≤ j ∧ j < perm.idxOf e.1)).length ≤ i.2.2
-
-open Classical in
-/-- MINIMUM CUT LINEAR ARRANGEMENT as a decision problem over bitstrings. -/
-noncomputable def minimumCutLinearArrangementDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MinimumCutLinearArrangementInstance) x with
-  | some i => decide (WellFormed i ∧ MinimumCutLinearArrangementFeasible i)
-  | none => false
 
 /-- **MINIMUM CUT LINEAR ARRANGEMENT is NP-complete.** Source: Garey and Johnson (1979),
 [GT44] (Gavril 1977); Monien and Sudborough (1988). -/

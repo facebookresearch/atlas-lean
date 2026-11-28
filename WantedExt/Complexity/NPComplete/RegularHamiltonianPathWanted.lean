@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.HamiltonianPathUndirectedWanted
+public import CSLibExt.Complexity.NPComplete.RegularHamiltonianPathDefs
 
 @[expose] public section
 
@@ -66,22 +64,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-open Classical in
-/-- Well-formedness of an instance for the fixed degree `k`: a well-formed HAMILTONIAN PATH
-instance whose graph is `k`-regular (every vertex has degree exactly `k`). -/
-def WellFormed (k : ℕ) (i : HamiltonianPathUndirectedInstance) : Prop :=
-  HamiltonianPathUndirected.WellFormed i ∧ (Graph i).IsRegularOfDegree k
-
-open Classical in
-/-- HAMILTONIAN PATH on `k`-regular graphs, for the fixed `k`, as a decision problem over
-bitstrings. -/
-noncomputable def regularHamiltonianPathDec (k : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := HamiltonianPathUndirectedInstance) x with
-  | some i => decide (WellFormed k i ∧ HamiltonianPathUndirectedFeasible i)
-  | none => false
 
 /-- **HAMILTONIAN PATH on k-regular graphs is NP-complete for every fixed `k ≥ 3`.**
 Source: Garey and Johnson (1979), [GT39]; Picouleau (1994). -/

@@ -19,10 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.SteinerTreeWanted
-public import Mathlib.Combinatorics.SimpleGraph.Clique
+public import CSLibExt.Complexity.NPComplete.SteinerTreeSplitGraphsDefs
 
 @[expose] public section
 
@@ -66,26 +63,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- `G` is a split graph: some set of vertices is a clique and its complement is an independent
-set. -/
-def IsSplitGraph {V : Type*} (G : SimpleGraph V) : Prop :=
-  ∃ S : Set V, G.IsClique S ∧ G.IsIndepSet Sᶜ
-
-/-- Well-formedness of an instance: it is a well-formed STEINER TREE IN GRAPHS instance, every
-edge has weight `1`, and its graph is a connected split graph. -/
-def WellFormed (i : SteinerTreeInstance) : Prop :=
-  SteinerTree.WellFormed i ∧ (∀ e ∈ i.2.1, e.2.2 = 1) ∧
-    (SteinerTree.Graph i i.2.1).Connected ∧ IsSplitGraph (SteinerTree.Graph i i.2.1)
-
-open Classical in
-/-- STEINER TREE IN SPLIT GRAPHS as a decision problem over bitstrings. -/
-noncomputable def steinerTreeSplitGraphsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SteinerTreeInstance) x with
-  | some i => decide (WellFormed i ∧ SteinerTreeFeasible i)
-  | none => false
 
 /-- **STEINER TREE IN SPLIT GRAPHS is NP-complete.** Source:
 White, Farber and Pulleyblank (1985). -/

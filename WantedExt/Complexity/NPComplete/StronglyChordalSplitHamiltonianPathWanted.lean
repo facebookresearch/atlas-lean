@@ -19,13 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Copy
-public import Mathlib.Combinatorics.SimpleGraph.CycleGraph
-public import Mathlib.Combinatorics.SimpleGraph.Paths
-public import WantedExt.Complexity.NPComplete.DominatingSetSplitGraphsWanted
-public import WantedExt.Complexity.NPComplete.HamiltonianPathUndirectedWanted
+public import CSLibExt.Complexity.NPComplete.StronglyChordalSplitHamiltonianPathDefs
 
 @[expose] public section
 
@@ -85,33 +79,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- The closed walk `c` (a cycle of length `ℓ`) has an odd chord: positions `i < j < ℓ` with
-`j - i` odd, `3 ≤ j - i` and `j - i + 3 ≤ ℓ`, whose vertices are adjacent. -/
-def HasOddChord {V : Type*} {G : SimpleGraph V} {v : V} (c : G.Walk v v) : Prop :=
-  ∃ i j : ℕ, i < j ∧ j < c.length ∧ Odd (j - i) ∧ 3 ≤ j - i ∧ j - i + 3 ≤ c.length ∧
-    G.Adj (c.getVert i) (c.getVert j)
-
-/-- `G` is strongly chordal: it has no induced cycle of length at least `4` (chordal), and every
-cycle of even length at least `6` has an odd chord. -/
-def IsStronglyChordal {V : Type*} (G : SimpleGraph V) : Prop :=
-  (∀ k, 4 ≤ k → ¬ (SimpleGraph.cycleGraph k).IsIndContained G) ∧
-    ∀ (v : V) (c : G.Walk v v), c.IsCycle → Even c.length → 6 ≤ c.length → HasOddChord c
-
-/-- Well-formedness of an instance: a well-formed HAMILTONIAN PATH instance whose graph is a
-split graph and strongly chordal. -/
-def WellFormed (i : HamiltonianPathUndirectedInstance) : Prop :=
-  HamiltonianPathUndirected.WellFormed i ∧ DominatingSetSplitGraphs.IsSplitGraph (Graph i) ∧
-    IsStronglyChordal (Graph i)
-
-open Classical in
-/-- HAMILTONIAN PATH on strongly chordal split graphs as a decision problem over bitstrings. -/
-noncomputable def stronglyChordalSplitHamiltonianPathDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := HamiltonianPathUndirectedInstance) x with
-  | some i => decide (WellFormed i ∧ HamiltonianPathUndirectedFeasible i)
-  | none => false
 
 /-- **HAMILTONIAN PATH on strongly chordal split graphs is NP-complete.** Source: Müller (1996);
 Garey and Johnson (1979), [GT39]. -/

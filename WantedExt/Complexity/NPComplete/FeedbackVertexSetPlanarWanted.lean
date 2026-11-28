@@ -28,10 +28,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import MathlibExt.Combinatorics.SimpleGraph.Planarity
-public import WantedExt.Complexity.NPComplete.FeedbackVertexSetWanted
+public import CSLibExt.Complexity.NPComplete.FeedbackVertexSetPlanarDefs
 
 @[expose] public section
 
@@ -69,19 +66,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed FEEDBACK VERTEX SET instance (a simple edge
-list on `Fin n`) whose graph is planar, with `0 < K ≤ n`. -/
-def WellFormed (i : FeedbackVertexSetInstance) : Prop :=
-  FeedbackVertexSet.WellFormed i ∧ (Graph i).IsPlanar ∧ 0 < i.2.2 ∧ i.2.2 ≤ i.1
-
-open Classical in
-/-- FEEDBACK VERTEX SET on planar graphs as a decision problem over bitstrings. -/
-noncomputable def feedbackVertexSetPlanarDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := FeedbackVertexSetInstance) x with
-  | some i => decide (WellFormed i ∧ FeedbackVertexSetFeasible i)
-  | none => false
 
 /-- **FEEDBACK VERTEX SET on planar graphs is NP-complete.** Source: Speckenmeyer (1983, 1988),
 via planar graphs of maximum degree 4, as recorded by Munaro (2017); ISGCI, class `gc_43`. -/

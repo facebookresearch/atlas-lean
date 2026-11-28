@@ -27,12 +27,8 @@ C. M. H. de Figueiredo, A. A. de Melo, D. Sasaki and A. Silva, "Revising Johnson
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.Complexity.Karp.Color
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.GraphThicknessWanted
-public import CSLibExt.Complexity.NPComplete.MaxCutDefs
+public import CSLibExt.Complexity.NPComplete.SimpleMaxCutThicknessDefs
 
 @[expose] public section
 
@@ -81,36 +77,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the vertex count `n`, the edge list, and the bound `K`; this is the MAXIMUM
-CUT instance type. -/
-abbrev SimpleMaxCutThicknessInstance := MaxCutInstance
-
-/-- The GRAPH THICKNESS instance with the same vertex count and edge list and the bound `k`. -/
-def withThickness (k : ℕ) (i : SimpleMaxCutThicknessInstance) :
-    GraphThickness.GraphThicknessInstance :=
-  (i.1, i.2.1, k)
-
-/-- Well-formedness of an instance for the fixed thickness bound `k`: a well-formed MAXIMUM CUT
-instance (a simple edge list on the vertices `0, ..., n - 1`) whose graph has thickness at most
-`k`, and `0 < K`. -/
-def WellFormed (k : ℕ) (i : SimpleMaxCutThicknessInstance) : Prop :=
-  MaxCut.WellFormed i ∧ GraphThickness.GraphThicknessFeasible (withThickness k i) ∧ 0 < i.2.2
-
-/-- A partition `V₁ = S`, `V₂ = V - S` with at least `K` edges between the two sets (the
-MAXIMUM CUT question). -/
-def SimpleMaxCutThicknessFeasible (i : SimpleMaxCutThicknessInstance) : Prop :=
-  MaxCutFeasible i
-
-open Classical in
-/-- SIMPLE MAX CUT on graphs of thickness at most `k`, for the fixed `k`, as a decision problem
-over bitstrings. -/
-noncomputable def simpleMaxCutThicknessDec (k : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SimpleMaxCutThicknessInstance) x with
-  | some i => decide (WellFormed k i ∧ SimpleMaxCutThicknessFeasible i)
-  | none => false
 
 /-- **SIMPLE MAX CUT on graphs of thickness at most `k` is NP-complete for every fixed
 `k ≥ 2`.** Source: Johnson (1985), Section 3 and Table 1 (Barahona 1980); Garey and Johnson

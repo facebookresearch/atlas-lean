@@ -19,9 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MaxBisectionPlanarWanted
-public import WantedExt.Complexity.NPComplete.MaxCutUnitDiskGraphsWanted
+public import CSLibExt.Complexity.NPComplete.MaxBisectionUnitDiskDefs
 
 @[expose] public section
 
@@ -61,19 +59,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- A bisection of the graph with at least `K` edges between its two sides. -/
-def MaxBisectionUnitDiskFeasible (i : MaxCutUnitDiskGraphsInstance) : Prop :=
-  MaxBisectionPlanar.MaxBisectionFeasible (toMaxCut i)
-
-open Classical in
-/-- MAXIMUM BISECTION on unit disk graphs as a decision problem over bitstrings. -/
-noncomputable def maxBisectionUnitDiskDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MaxCutUnitDiskGraphsInstance) x with
-  | some i => decide (MaxCutUnitDiskGraphs.WellFormed i ∧ MaxBisectionUnitDiskFeasible i)
-  | none => false
 
 /-- **MAXIMUM BISECTION on unit disk graphs is NP-complete.** Source: Díaz and Kamiński (2007),
 Corollary 11; ISGCI (gc_389). -/

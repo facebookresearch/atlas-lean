@@ -25,9 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.KDirGraphRecognitionWanted
+public import CSLibExt.Complexity.NPComplete.PureKDirGraphRecognitionDefs
 
 @[expose] public section
 
@@ -77,33 +75,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- `H` is a PURE-`k`-DIR graph: there are slopes `s j` (`j : Fin k`) and, for each vertex `v`, a
-non-degenerate closed segment from `a v` to `b v` whose slope is `s (c v)`, such that segments of
-distinct vertices with the same slope are disjoint, and two distinct vertices are adjacent in `H`
-exactly when their segments intersect. -/
-def IsPureKDirGraph (k : ℕ) {n : ℕ} (H : SimpleGraph (Fin n)) : Prop :=
-  ∃ (s : Fin k → ℝ) (a b : Fin n → ℝ × ℝ) (c : Fin n → Fin k),
-    (∀ v, (a v).1 < (b v).1 ∧ (b v).2 - (a v).2 = s (c v) * ((b v).1 - (a v).1)) ∧
-      (∀ u v, u ≠ v → s (c u) = s (c v) →
-        SimpleGraph.Segment (a u) (b u) ∩ SimpleGraph.Segment (a v) (b v) = ∅) ∧
-      ∀ u v, u ≠ v →
-        (H.Adj u v ↔
-          (SimpleGraph.Segment (a u) (b u) ∩ SimpleGraph.Segment (a v) (b v)).Nonempty)
-
-/-- The graph of the instance is a PURE-`k`-DIR graph. -/
-def PureKDirGraphRecognitionFeasible (k : ℕ) (i : KDirGraphRecognitionInstance) : Prop :=
-  IsPureKDirGraph k (Graph i)
-
-open Classical in
-/-- PURE-k-DIR GRAPH RECOGNITION, for the fixed number of slopes `k`, as a decision problem over
-bitstrings. -/
-noncomputable def pureKDirGraphRecognitionDec (k : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := KDirGraphRecognitionInstance) x with
-  | some i => decide (WellFormed i ∧ PureKDirGraphRecognitionFeasible k i)
-  | none => false
 
 /-- **PURE-k-DIR GRAPH RECOGNITION is NP-complete for every fixed `k ≥ 2`.** Source:
 Kratochvíl and Matoušek (1989), Theorem 1; Kratochvíl (1994) for `k = 2`; membership in NP:

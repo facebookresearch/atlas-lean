@@ -24,10 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Combinatorics.SimpleGraph.Finite
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.SteinerTreeWanted
+public import CSLibExt.Complexity.NPComplete.UnitSteinerTreeBoundedDegreeDefs
 
 @[expose] public section
 
@@ -70,23 +67,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-open Classical in
-/-- Well-formedness of an instance for the degree bound `k`: a well-formed STEINER TREE IN GRAPHS
-instance with every edge weight `1`, every vertex of degree at most `k`, and `0 < B`. -/
-def WellFormed (k : ℕ) (i : SteinerTreeInstance) : Prop :=
-  SteinerTree.WellFormed i ∧ (∀ e ∈ i.2.1, e.2.2 = 1) ∧
-    (∀ v, (SteinerTree.Graph i i.2.1).degree v ≤ k) ∧
-    0 < i.2.2.2
-
-open Classical in
-/-- STEINER TREE IN GRAPHS with unit weights on graphs of maximum degree `k`, as a decision
-problem over bitstrings. -/
-noncomputable def unitSteinerTreeBoundedDegreeDec (k : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := SteinerTreeInstance) x with
-  | some i => decide (WellFormed k i ∧ SteinerTreeFeasible i)
-  | none => false
 
 /-- **STEINER TREE IN GRAPHS with unit weights is NP-complete on graphs of maximum degree `k`,
 for every fixed `k ≥ 4`.** Source: Garey and Johnson (1979), [ND12]; Johnson (1985), Table 1;

@@ -23,10 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Star
-public import WantedExt.Complexity.NPComplete.FeedbackVertexSetWanted
+public import CSLibExt.Complexity.NPComplete.FeedbackVertexSetStarConvexDefs
 
 @[expose] public section
 
@@ -70,26 +67,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- `G` is a star convex bipartite graph: its vertices split into `X` and its complement with
-every edge between the two sides, and for some centre `c ∈ X` the star `starGraph c` on `X` makes
-the neighbourhood of every vertex outside `X` induce a preconnected subgraph (a subtree) of it. -/
-def IsStarConvex {V : Type*} (G : SimpleGraph V) : Prop :=
-  ∃ X : Set V, (∀ u v, G.Adj u v → (u ∈ X ↔ v ∉ X)) ∧
-    ∃ c : X, ∀ y, y ∉ X → ((SimpleGraph.starGraph c).induce {x : X | G.Adj y x}).Preconnected
-
-/-- Well-formedness of an instance: a well-formed FEEDBACK VERTEX SET instance whose graph is
-star convex bipartite, with a positive bound `K`. -/
-def WellFormed (i : FeedbackVertexSetInstance) : Prop :=
-  FeedbackVertexSet.WellFormed i ∧ IsStarConvex (Graph i) ∧ 0 < i.2.2
-
-open Classical in
-/-- FEEDBACK VERTEX SET on star convex bipartite graphs as a decision problem over bitstrings. -/
-noncomputable def feedbackVertexSetStarConvexDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := FeedbackVertexSetInstance) x with
-  | some i => decide (WellFormed i ∧ FeedbackVertexSetFeasible i)
-  | none => false
 
 /-- **FEEDBACK VERTEX SET on star convex bipartite graphs is NP-complete.** Source: Jiang, Liu,
 Ren and Xu (2011); Garey and Johnson (1979), [GT7]; ISGCI, class `gc_1151`. -/

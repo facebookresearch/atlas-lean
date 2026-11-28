@@ -19,9 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.GraphThicknessWanted
+public import CSLibExt.Complexity.NPComplete.GraphThicknessTwoDefs
 
 @[expose] public section
 
@@ -49,22 +47,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`) and edge list. -/
-abbrev GraphThicknessTwoInstance := ℕ × List (ℕ × ℕ)
-
-/-- The GRAPH THICKNESS instance with the same graph and bound `K = 2`. -/
-def withBound (i : GraphThicknessTwoInstance) : GraphThickness.GraphThicknessInstance :=
-  (i.1, i.2, 2)
-
-open Classical in
-/-- GRAPH THICKNESS 2 as a decision problem over bitstrings. -/
-noncomputable def graphThicknessTwoDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := GraphThicknessTwoInstance) x with
-  | some i => decide (GraphThickness.WellFormed (withBound i) ∧
-      GraphThickness.GraphThicknessFeasible (withBound i))
-  | none => false
 
 /-- **GRAPH THICKNESS 2 is NP-complete.** Source: Garey and Johnson (1979), [OPEN3];
 Mansfield (1983). -/

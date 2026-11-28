@@ -24,10 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import WantedExt.Complexity.NPComplete.SegmentIntersectionCliqueWanted
+public import CSLibExt.Complexity.NPComplete.TwoDirRecognitionDefs
 
 @[expose] public section
 
@@ -72,42 +69,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`) and edge list. -/
-abbrev TwoDirRecognitionInstance := ℕ × List (ℕ × ℕ)
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : TwoDirRecognitionInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2
-
-/-- A segment with distinct endpoints that is horizontal (equal y-coordinates) or vertical (equal
-x-coordinates). -/
-def IsAxisSegment (σ : Seg) : Prop :=
-  toPoint σ.1 ≠ toPoint σ.2 ∧ ((toPoint σ.1).2 = (toPoint σ.2).2 ∨ (toPoint σ.1).1 = (toPoint σ.2).1)
-
-/-- `G` is a 2-DIR graph: some assignment of horizontal or vertical segments to the vertices makes
-two distinct vertices adjacent exactly when their segments intersect. -/
-def IsTwoDir {n : ℕ} (G : SimpleGraph (Fin n)) : Prop :=
-  ∃ rep : Fin n → Seg, (∀ v, IsAxisSegment (rep v)) ∧
-    ∀ u v, u ≠ v → (G.Adj u v ↔ (segPoints (rep u) ∩ segPoints (rep v)).Nonempty)
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range). -/
-def WellFormed (i : TwoDirRecognitionInstance) : Prop :=
-  i.2.Nodup ∧ ∀ e ∈ i.2, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2
-
-/-- The graph is a 2-DIR graph. -/
-def TwoDirRecognitionFeasible (i : TwoDirRecognitionInstance) : Prop :=
-  IsTwoDir (Graph i)
-
-open Classical in
-/-- RECOGNITION OF 2-DIR GRAPHS as a decision problem over bitstrings. -/
-noncomputable def twoDirRecognitionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TwoDirRecognitionInstance) x with
-  | some i => decide (WellFormed i ∧ TwoDirRecognitionFeasible i)
-  | none => false
 
 /-- **RECOGNITION OF 2-DIR GRAPHS is NP-complete.** Source: Kratochvíl and Matoušek (1989),
 Theorem 1; Kratochvíl (1994); ISGCI, class "2-DIR". -/

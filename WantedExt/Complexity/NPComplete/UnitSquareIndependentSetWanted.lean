@@ -23,10 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Clique
-public import WantedExt.Complexity.NPComplete.PlanarKMeansWanted
+public import CSLibExt.Complexity.NPComplete.UnitSquareIndependentSetDefs
 
 @[expose] public section
 
@@ -66,36 +63,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the centers of the squares (pairs of rational coordinates) and the bound `K`. -/
-abbrev UnitSquareIndependentSetInstance := List (RatCode × RatCode) × ℕ
-
-/-- The intersection graph of the closed axis-parallel unit squares centered at the given
-points: two distinct squares are adjacent when both coordinates of their centers differ by at
-most `1`. -/
-def unitSquareGraph (P : List (RatCode × RatCode)) : SimpleGraph (Fin P.length) :=
-  SimpleGraph.fromRel fun a b =>
-    |P[a].1.val - P[b].1.val| ≤ 1 ∧ |P[a].2.val - P[b].2.val| ≤ 1
-
-/-- Well-formedness of an instance: all denominators are positive, the centers are distinct (as
-points of the plane), and `1 ≤ K ≤ n`. -/
-def WellFormed (i : UnitSquareIndependentSetInstance) : Prop :=
-  (∀ p ∈ i.1, 0 < p.1.2 ∧ 0 < p.2.2) ∧ (i.1.map fun p => (p.1.val, p.2.val)).Nodup ∧
-    1 ≤ i.2 ∧ i.2 ≤ i.1.length
-
-/-- Some `K` of the squares are pairwise disjoint: an independent set of at least `K` vertices
-in the intersection graph. -/
-def UnitSquareIndependentSetFeasible (i : UnitSquareIndependentSetInstance) : Prop :=
-  ∃ S : Finset (Fin i.1.length), i.2 ≤ S.card ∧ (unitSquareGraph i.1).IsIndepSet ↑S
-
-open Classical in
-/-- INDEPENDENT SET OF UNIT SQUARES as a decision problem over bitstrings. -/
-noncomputable def unitSquareIndependentSetDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := UnitSquareIndependentSetInstance) x with
-  | some i => decide (WellFormed i ∧ UnitSquareIndependentSetFeasible i)
-  | none => false
 
 /-- **INDEPENDENT SET OF UNIT SQUARES is NP-complete.** Source: Fowler, Paterson and Tanimoto
 (1981); Bhore, Cardinal, Iacono and Koumoutsos (2020), Section 1. -/

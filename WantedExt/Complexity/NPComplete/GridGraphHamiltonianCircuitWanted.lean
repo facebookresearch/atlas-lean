@@ -17,11 +17,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Combinatorics.SimpleGraph.Lattice.HypercubicLattice
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Data.Fin.VecNotation
-public import CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs
+public import CSLibExt.Complexity.NPComplete.GridGraphHamiltonianCircuitDefs
 
 @[expose] public section
 
@@ -63,45 +59,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the points of `V`, each a pair of integer coordinates, each coordinate an
-integer `a - b` given as the pair `(a, b)`. -/
-abbrev GridGraphHamiltonianCircuitInstance := List ((ℕ × ℕ) × (ℕ × ℕ))
-
-/-- The site of `ℤ²` encoded by a pair of coordinate pairs. -/
-def site (p : (ℕ × ℕ) × (ℕ × ℕ)) : StatMech.Lattice.Site 2 :=
-  ![(p.1.1 : ℤ) - p.1.2, (p.2.1 : ℤ) - p.2.2]
-
-/-- Adjacency in `hypercubicLattice 2` is decidable: it is an equation between naturals. -/
-instance (x y : StatMech.Lattice.Site 2) :
-    Decidable ((StatMech.Lattice.hypercubicLattice 2).Adj x y) :=
-  inferInstanceAs (Decidable ((∑ j, (x j - y j).natAbs) = 1))
-
-/-- Well-formedness of an instance: the listed points are pairwise distinct (`V` is a set). -/
-def WellFormed (i : GridGraphHamiltonianCircuitInstance) : Prop :=
-  (i.map site).Nodup
-
-/-- The edges of the grid graph: the pairs `(u, v)` with `u < v < |V|` whose sites are adjacent
-in the infinite grid `hypercubicLattice 2`. -/
-def gridEdges (i : GridGraphHamiltonianCircuitInstance) : List (ℕ × ℕ) :=
-  (List.range i.length).flatMap fun u =>
-    ((List.range i.length).filter fun v =>
-      decide (u < v ∧ (StatMech.Lattice.hypercubicLattice 2).Adj (site (i.getD u ((0, 0), (0, 0))))
-        (site (i.getD v ((0, 0), (0, 0)))))).map fun v => (u, v)
-
-/-- The grid graph as a HAMILTONIAN CIRCUIT instance: `|V|` vertices and the grid edges. -/
-def toHamiltonianInstance (i : GridGraphHamiltonianCircuitInstance) :
-    HamiltonianCycleUndirectedInstance :=
-  (i.length, gridEdges i)
-
-open Classical in
-/-- HAMILTONIAN CIRCUIT IN GRID GRAPHS as a decision problem over bitstrings. -/
-noncomputable def gridGraphHamiltonianCircuitDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := GridGraphHamiltonianCircuitInstance) x with
-  | some i => decide (WellFormed i ∧ HamiltonianCycleUndirectedFeasible (toHamiltonianInstance i))
-  | none => false
 
 /-- **HAMILTONIAN CIRCUIT IN GRID GRAPHS is NP-complete.** Source: Itai, Papadimitriou and
 Szwarcfiter (1982). -/

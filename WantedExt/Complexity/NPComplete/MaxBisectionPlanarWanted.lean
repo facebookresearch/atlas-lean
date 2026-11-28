@@ -22,11 +22,8 @@ ISGCI, class "planar" (gc_43), problem Maximum bisection, NP-complete.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.Complexity.Karp.Color
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Combinatorics.SimpleGraph.Planarity
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.MaxCutDefs
+public import CSLibExt.Complexity.NPComplete.MaxBisectionPlanarDefs
 
 @[expose] public section
 
@@ -66,27 +63,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed MAXIMUM CUT instance (a simple edge list on
-the vertices `0, ..., n - 1`) whose graph is planar, and `0 < K`. -/
-def WellFormed (i : MaxCutInstance) : Prop :=
-  MaxCut.WellFormed i ∧ (Cslib.Complexity.Karp.edgeGraph i.1 i.2.1).IsPlanar ∧ 0 < i.2.2
-
-/-- A bisection: a side `A = S` with `|A| = ⌊|V| / 2⌋` (so `B = V - S` has `|B| = |A|` or
-`|B| = |A| + 1`), and at least `K` edges with one endpoint in `A` and the other in `B`. -/
-def MaxBisectionFeasible (i : MaxCutInstance) : Prop :=
-  ∃ S : Finset ℕ, (∀ v ∈ S, v < i.1) ∧ S.card = i.1 / 2 ∧
-    ∃ cut : List (ℕ × ℕ), cut.Sublist i.2.1 ∧ i.2.2 ≤ cut.length ∧
-      ∀ e ∈ cut, (e.1 ∈ S ∧ e.2 ∉ S) ∨ (e.1 ∉ S ∧ e.2 ∈ S)
-
-open Classical in
-/-- MAXIMUM BISECTION on planar graphs as a decision problem over bitstrings. -/
-noncomputable def maxBisectionPlanarDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MaxCutInstance) x with
-  | some i => decide (WellFormed i ∧ MaxBisectionFeasible i)
-  | none => false
 
 /-- **MAXIMUM BISECTION on planar graphs is NP-complete.** Source: Jansen, Karpinski, Lingas,
 and Seidel (2005) (Jerrum); Díaz and Kamiński (2007); ISGCI (gc_43). -/

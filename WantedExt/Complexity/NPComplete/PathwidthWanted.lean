@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.PathwidthChordalGraphsWanted
+public import CSLibExt.Complexity.NPComplete.PathwidthDefs
 
 @[expose] public section
 
@@ -62,21 +60,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range), and `0 < K`. -/
-def WellFormed (i : PathwidthChordalGraphsInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    0 < i.2.2
-
-open Classical in
-/-- PATHWIDTH as a decision problem over bitstrings. -/
-noncomputable def pathwidthDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PathwidthChordalGraphsInstance) x with
-  | some i => decide (WellFormed i ∧ PathwidthChordalGraphsFeasible i)
-  | none => false
 
 /-- **PATHWIDTH is NP-complete.** Source: Ohtsuki, Mori, Kuh, Kashiwabara and Fujisawa (1979);
 Kashiwabara and Fujisawa (1979). -/

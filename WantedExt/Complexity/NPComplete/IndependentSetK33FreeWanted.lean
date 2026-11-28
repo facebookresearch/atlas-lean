@@ -26,10 +26,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import MathlibExt.Combinatorics.SimpleGraph.Connectivity
-public import WantedExt.Complexity.NPComplete.TriangleFreeIndependentSetWanted
+public import CSLibExt.Complexity.NPComplete.IndependentSetK33FreeDefs
 
 @[expose] public section
 
@@ -79,33 +76,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- `G` has a subgraph homeomorphic to `K_3,3`: injective branch vertices `f (inl i)` and
-`f (inr j)` (`i, j : Fin 3`) and paths `p i j` from `f (inl i)` to `f (inr j)` such that no inner
-vertex of a path (its support without the two ends) is a branch vertex and two different paths
-are internally disjoint. -/
-def HasK33Subdivision {V : Type*} (G : SimpleGraph V) : Prop :=
-  ∃ f : Fin 3 ⊕ Fin 3 → V, Function.Injective f ∧
-    ∃ p : ∀ i j : Fin 3, G.Walk (f (Sum.inl i)) (f (Sum.inr j)),
-      (∀ i j, (p i j).IsPath) ∧
-      (∀ i j, ∀ v ∈ (p i j).support.tail.dropLast, ∀ x, v ≠ f x) ∧
-      ∀ i j i' j', (i, j) ≠ (i', j') → SimpleGraph.InternallyDisjoint (p i j) (p i' j')
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range) with no subgraph
-homeomorphic to `K_3,3`, and `0 < K ≤ |V|`. -/
-def WellFormed (i : TriangleFreeIndependentSetInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    ¬ HasK33Subdivision (Graph i) ∧ 0 < i.2.2 ∧ i.2.2 ≤ i.1
-
-open Classical in
-/-- INDEPENDENT SET on `K_3,3`-free graphs as a decision problem over bitstrings. -/
-noncomputable def independentSetK33FreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TriangleFreeIndependentSetInstance) x with
-  | some i => decide (WellFormed i ∧ TriangleFreeIndependentSetFeasible i)
-  | none => false
 
 /-- **INDEPENDENT SET on `K_3,3`-free graphs is NP-complete.** Source: Johnson (1985), Table 1;
 de Figueiredo, de Melo, Sasaki and Silva (2022); Garey and Johnson (1979), [GT20], comment;

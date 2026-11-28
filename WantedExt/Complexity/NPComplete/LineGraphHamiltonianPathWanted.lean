@@ -19,9 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.HamiltonianPathUndirectedWanted
+public import CSLibExt.Complexity.NPComplete.LineGraphHamiltonianPathDefs
 
 @[expose] public section
 
@@ -65,32 +63,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Two edges, given as vertex pairs, share an endpoint. -/
-abbrev ShareEndpoint (e f : ℕ × ℕ) : Prop :=
-  e.1 = f.1 ∨ e.1 = f.2 ∨ e.2 = f.1 ∨ e.2 = f.2
-
-/-- The edges of the line graph: the pairs `(a, b)` of edge positions with `a < b < |E|` whose
-edges share an endpoint. -/
-def lineEdges (i : HamiltonianPathUndirectedInstance) : List (ℕ × ℕ) :=
-  (List.range i.2.length).flatMap fun a =>
-    ((List.range i.2.length).filter fun b =>
-      decide (a < b ∧ ShareEndpoint (i.2.getD a (0, 0)) (i.2.getD b (0, 0)))).map fun b => (a, b)
-
-/-- The line graph of `G` as a HAMILTONIAN PATH (UNDIRECTED) instance: `|E|` vertices and the
-line-graph edges. -/
-def toLineGraphInstance (i : HamiltonianPathUndirectedInstance) :
-    HamiltonianPathUndirectedInstance :=
-  (i.2.length, lineEdges i)
-
-open Classical in
-/-- HAMILTONIAN PATH IN LINE GRAPHS as a decision problem over bitstrings. -/
-noncomputable def lineGraphHamiltonianPathDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := HamiltonianPathUndirectedInstance) x with
-  | some i => decide (WellFormed i ∧ HamiltonianPathUndirectedFeasible (toLineGraphInstance i))
-  | none => false
 
 /-- **HAMILTONIAN PATH IN LINE GRAPHS is NP-complete.** Source: Bertossi (1981). -/
 public theorem_wanted lineGraphHamiltonianPath_npComplete :

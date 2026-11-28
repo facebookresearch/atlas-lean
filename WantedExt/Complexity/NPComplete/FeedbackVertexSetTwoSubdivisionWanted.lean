@@ -22,10 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.FeedbackVertexSetWanted
-public import WantedExt.Complexity.NPComplete.MinimumCutLinearArrangementTwoSubdivisionPlanarWanted
+public import CSLibExt.Complexity.NPComplete.FeedbackVertexSetTwoSubdivisionDefs
 
 @[expose] public section
 
@@ -69,19 +66,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed FEEDBACK VERTEX SET instance with
-`0 < K ≤ |V|` whose graph is a 2-subdivision. -/
-def WellFormed (i : FeedbackVertexSetInstance) : Prop :=
-  FeedbackVertexSet.WellFormed i ∧ 0 < i.2.2 ∧ i.2.2 ≤ i.1 ∧ IsTwoSubdivision (Graph i)
-
-open Classical in
-/-- FEEDBACK VERTEX SET on 2-subdivision graphs as a decision problem over bitstrings. -/
-noncomputable def feedbackVertexSetTwoSubdivisionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := FeedbackVertexSetInstance) x with
-  | some i => decide (WellFormed i ∧ FeedbackVertexSetFeasible i)
-  | none => false
 
 /-- **FEEDBACK VERTEX SET on 2-subdivision graphs is NP-complete.** Source: Garey and Johnson
 (1979), [GT7], comment; ISGCI (`gc_472`, note 1648). -/

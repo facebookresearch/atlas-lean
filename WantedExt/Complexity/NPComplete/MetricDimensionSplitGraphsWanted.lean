@@ -19,10 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MetricDimensionWanted
-public import WantedExt.Complexity.NPComplete.DominatingSetSplitGraphsWanted
+public import CSLibExt.Complexity.NPComplete.MetricDimensionSplitGraphsDefs
 
 @[expose] public section
 
@@ -57,20 +54,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the parent's (a simple edge list on `Fin n`, a connected
-graph, `0 < K ≤ n`), and the graph is a split graph. -/
-def WellFormed (i : MetricDimension.MetricDimensionInstance) : Prop :=
-  MetricDimension.WellFormed i ∧ DominatingSetSplitGraphs.IsSplitGraph (MetricDimension.Graph i)
-
-open Classical in
-/-- METRIC DIMENSION for split graphs as a decision problem over bitstrings. -/
-noncomputable def metricDimensionSplitGraphsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MetricDimension.MetricDimensionInstance) x with
-  | some i => decide (WellFormed i ∧ MetricDimension.MetricDimensionFeasible i)
-  | none => false
 
 /-- **METRIC DIMENSION for split graphs is NP-complete.** Source: Garey and Johnson (1979),
 [GT61]; Epstein, Levin and Woeginger (2015). -/
