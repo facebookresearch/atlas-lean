@@ -47,6 +47,7 @@ public import Mathlib.RingTheory.PowerSeries.Basic
 public import MathlibExt.Combinatorics.Enumerative.FibStepConvolution
 public import MathlibExt.Combinatorics.Enumerative.FibStepConvolutionTribonacciTetranacci
 public import MathlibExt.NumberTheory.PellNumberSequence
+public import MathlibExt.Combinatorics.Enumerative.FibStepConvolutionTetranacciPentanacci
 public import MathlibExt.Combinatorics.Enumerative.FibStepConvolutionCompProdSumEven
 
 set_option autoImplicit false
@@ -76,20 +77,6 @@ theorem_wanted sum_fibStep_mul_succ (m n : ℕ) (hm : 1 ≤ m)
     ∑ j ∈ Finset.range (n - m + 1),
         fibStep m j * fibStep (m + 1) (n - m - j) =
       fibStep (m + 1) n - fibStep m n
-
-/-- **Convolution of the Fibonacci 4-step and 5-step numbers.** Let $Q_j$ and $P_j$ be the
-Fibonacci $4$-step and $5$-step numbers, where the Fibonacci $k$-step numbers start $0, 1$ and
-each later term is the sum of the $k$ terms before it (terms of negative index being $0$). For
-every natural number $n$,
-
-$$\sum_{j=0}^{n} Q_j \, P_{n-j} = P_{n+4} - Q_{n+4}.$$
-
-Source: Robert Frontczak and Karol Gryszka, "General
-Convolution Sums Involving Fibonacci `m`-Step Numbers",
-Corollary 2. -/
-theorem_wanted sum_tetra_mul_penta (n : ℕ) :
-    ∑ j ∈ Finset.range (n + 1), fibStep 4 j * fibStep 5 (n - j) =
-      fibStep 5 (n + 4) - fibStep 4 (n + 4)
 
 /-- **Iterated convolution of Fibonacci $m$-step and $(m+p)$-step numbers.** Let $F^{(k)}_j$ be
 the $j$-th Fibonacci $k$-step number: the sequence starts $F^{(k)}_0 = 0$, $F^{(k)}_1 = 1$, and each

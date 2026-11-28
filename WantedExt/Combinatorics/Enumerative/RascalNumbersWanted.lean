@@ -60,22 +60,6 @@ set_option autoImplicit false
 
 namespace MathlibExt.Combinatorics.Enumerative.RascalNumbersWanted
 
-/-- **Shape of ascent sequences avoiding 001 and 210.** Let $n$ and $k$ be natural numbers and
-let $w$ be an ascent sequence of length $n$ with exactly $k$ ascents that avoids the patterns
-$001$ and $210$. Then either $w$ consists of $0, 1, \ldots, k-1$ followed by $n - k$ copies of
-$k$, or there are natural numbers $x$ and $y$ with $1 \le y < n - k$ and $x < k$ such that $w$
-consists of $0, 1, \ldots, k-1$, followed by $y$ copies of $k$, followed by $n - k - y$ copies
-of $x$. When $k = 0$ the initial part $0, 1, \ldots, k-1$ is empty.
-
-Source: Amelia Gibbs and Brian K. Miceli, "Two Combinatorial
-Interpretations of Rascal Numbers", Lemma 16. -/
-theorem_wanted ascentSeqAvoid_form (n k : ℕ)
-    (w : AscentSeqAvoid n k) :
-    w.1 = List.range k ++ List.replicate (n - k) k ∨
-      ∃ y x : ℕ, 1 ≤ y ∧ y < n - k ∧ x < k ∧
-        w.1 = List.range k ++ List.replicate y k ++
-          List.replicate (n - k - y) x
-
 /-- **Ascent sequences avoiding 001 and 210 are counted by Rascal numbers.** For all natural
 numbers $n$ and $k$, the number of ascent sequences of length $n + 1$ with exactly $k$ ascents
 that avoid the patterns $001$ and $210$ equals the Rascal number $R_{n,k}$, which is
@@ -98,17 +82,6 @@ theorem_wanted iterate_forwardDiff_sum_rascalGen (j n : ℕ) :
     ((fun a : ℕ → ℤ => fun m => a (m + 1) - a m)^[2 * j + 1]
       (fun m => ∑ k ∈ Finset.range (m + 1),
         rascalGenZ j (m : ℤ) (k : ℤ))) n = 1
-
-/-- **Alternating row sums of generalized Rascal numbers vanish on odd rows.** Write
-$R^{(j)}_{n,k}$ for the number of binary words of length $n$ with exactly $k$ ones and at most
-$j$ ascents (positions where a $0$ is immediately followed by a $1$). For all natural numbers
-$j$ and $m$, $\sum_{k=0}^{2m+1} (-1)^k R^{(j)}_{2m+1,k} = 0$.
-
-Source: Amelia Gibbs and Brian K. Miceli, "Two Combinatorial
-Interpretations of Rascal Numbers", Theorem 23. -/
-theorem_wanted sum_rascalGen_alternating_odd (j m : ℕ) :
-    ∑ k ∈ Finset.range (2 * m + 2),
-        (-1 : ℤ) ^ k * (rascalGen j k (2 * m + 1) : ℤ) = 0
 
 /-- **Alternating row sums of generalized Rascal numbers on even rows.** Write $R^{(j)}_{n,k}$ for
 the number of binary words of length $n$ with exactly $k$ ones and at most $j$ ascents

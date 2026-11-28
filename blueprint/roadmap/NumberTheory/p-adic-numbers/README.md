@@ -12,6 +12,7 @@ p-adic integers and expansions, valuations of integer sequences, Hensel lifting,
 - [p-adic valuations of polynomials](p-adic-valuations-of-polynomials/README.md)
 - [Points of valuation one of two-variable polynomials](points-of-valuation-one-of-two-variable-polynomi/README.md)
 - [Spectral norm on algebraic extensions](spectral-norm-on-algebraic-extensions/README.md)
+- [The field of p-adic complex numbers](the-field-of-p-adic-complex-numbers/README.md)
 - [Cassels' embedding theorem](exists-injective-ring-hom-closure-padic.md)
 - [p-adic integrality is equivalent to norm at most one](is-integral-padic-int-iff-norm-le-one.md)
 - [Strassmann's theorem](strassmann.md)

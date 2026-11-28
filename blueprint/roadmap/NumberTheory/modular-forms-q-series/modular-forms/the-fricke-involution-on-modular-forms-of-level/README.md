@@ -1,0 +1,10 @@
+# The Fricke involution on modular forms of level Γ₀(N)
+
+- [Slash scalar nat Cast](slash-scalar-nat-cast.md)
+- [Fricke GL](fricke-gl.md)
+- [Fricke GL mul fricke GL](fricke-gl-mul-fricke-gl.md)
+- [Slash fricke GL slash fricke GL](slash-fricke-gl-slash-fricke-gl.md)
+- [Exists fricke GL mul eq](exists-fricke-gl-mul-eq.md)
+- [Slash fricke GL slash eq self](slash-fricke-gl-slash-eq-self.md)
+- [Fricke](fricke.md)
+- [Coe fricke slash fricke GL](coe-fricke-slash-fricke-gl.md)
