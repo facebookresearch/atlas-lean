@@ -15,17 +15,22 @@ public import CSLibExt.Computability.Languages.ContextFree.Deterministic
 # LR(1) grammars generate deterministic context-free languages
 
 The statement is registered here as a `theorem_wanted`. The LR(1)
-condition is stated as conflict-freedom of the LR(1) action table,
-indexed by viable prefix and one-letter lookahead: for every viable
-prefix `π` and lookahead `ℓ`, at most one reduce handle applies, and
-a reduce handle and a shift on `ℓ` never both apply. Comparing only
+condition is stated as conflict-freedom of the LR(1) action table of
+the augmented grammar (a fresh start symbol `S'` with the production
+`S' → S`), indexed by viable prefix and one-letter lookahead: for
+every viable prefix `π` and lookahead `ℓ`, at most one reduce handle
+applies, a reduce handle and a shift on `ℓ` never both apply, and no
+reduce handle applies at viable prefix `[S]` with lookahead `none`,
+where the augmented grammar accepts. Comparing only
 two reductions with the same viable prefix would miss shift/reduce
 conflicts: the even-palindrome grammar `S → 0 S 0 | 1 S 1 | ε` has a
 shift/reduce conflict at viable prefix `[0]` with lookahead `0`
 (reduce `S → ε` versus shift `0`), yet every pair of reductions
 sharing a viable prefix agrees, so a reductions-only condition would
 wrongly classify it as LR(1) even though its language is not
-deterministic context-free. Building the canonical LR(1) parser
+deterministic context-free. Without the last clause, the ambiguous
+grammar `S → S | a` would pass: at end of input its viable prefixes
+`[S]` and `[a]` have one handle each. Building the canonical LR(1) parser
 (items with lookahead, closure, goto, action/goto tables) and showing
 it is a deterministic pushdown automaton is a large construction, so
 the theorem is left as a `theorem_wanted`. The parser accepts by
@@ -120,13 +125,19 @@ public def IsShiftAction (g : ContextFreeGrammar T)
   ∃ (a : T), ℓ = some a ∧
     IsViablePrefix g (π ++ [Symbol.terminal a])
 
-/-- A grammar is LR(1) when its LR(1) action table is conflict-free:
-for every viable prefix `π` and lookahead `ℓ`, any two reduce
-actions with that prefix and lookahead have the same handle (the
-same left context, nonterminal, and production output), and no
-reduce action coexists with a shift action on `ℓ`. The second clause
-rules out shift/reduce conflicts; the first rules out reduce/reduce
-conflicts.
+/-- A grammar is LR(1) when the LR(1) action table of its augmented
+grammar is conflict-free. The augmented grammar adds a fresh start
+symbol `S'` and the production `S' → S`, where `S` is `g.initial`; its
+reduce action at viable prefix `[S]` with lookahead `none` is the
+accept action, and it adds no other shift or reduce action. So for
+every viable prefix `π` and lookahead `ℓ`, any two reduce actions with
+that prefix and lookahead have the same handle (the same left
+context, nonterminal, and production output), no reduce action
+coexists with a shift action on `ℓ`, and no reduce action has prefix
+`[S]` and lookahead `none`. The first clause rules out reduce/reduce
+conflicts, the second shift/reduce conflicts, and the third conflicts
+with the accept action; without it, the ambiguous grammar `S → S | a`
+would count as LR(1).
 Source: Aho, Lam, Sethi, and Ullman, Compilers: Principles,
 Techniques, and Tools, 2nd ed., Chapter 4 (LR parsing); Knuth, "On
 the translation of languages from left to right", Information and
@@ -141,7 +152,10 @@ public def IsLR1 (g : ContextFreeGrammar T) : Prop :=
   (∀ {π : List (Symbol T g.NT)} {ℓ : Option T}
     {α : List (Symbol T g.NT)} {A : g.NT}
     {β : List (Symbol T g.NT)} {w : List T},
-    IsReduceAction g π ℓ α A β w → ¬ IsShiftAction g π ℓ)
+    IsReduceAction g π ℓ α A β w → ¬ IsShiftAction g π ℓ) ∧
+  (∀ {α : List (Symbol T g.NT)} {A : g.NT}
+    {β : List (Symbol T g.NT)} {w : List T},
+    ¬ IsReduceAction g [Symbol.nonterminal g.initial] none α A β w)
 
 /-- The language of an LR(1) grammar is deterministic context-free.
 Source: Knuth, "On the translation of languages from left to
