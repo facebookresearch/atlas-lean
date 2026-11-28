@@ -19,9 +19,13 @@ import Mathlib.Tactic
 # Optimal strategies of a zero-sum matrix game form a Nash equilibrium
 
 In the finite zero-sum matrix game `A` the row player receives `p ⬝ᵥ (A *ᵥ q)` and the column
-player pays it (the convention of `MathlibExt.GameTheory.ZeroSumMinimax`). A row strategy is
-maximin (optimal) when the payoff it guarantees equals the maximin value, and a column strategy is
-minimax when the most it concedes equals the minimax value. Whenever the two values agree, every
+player pays it (the convention of `MathlibExt.GameTheory.ZeroSumMinimax`). A row strategy `p` is
+maximin (optimal) when the infimum of its payoff over column strategies equals the maximin value
+(the supremum over row strategies of that infimum), and a column strategy `q` is minimax when the
+supremum over row strategies of the payoff against `q` equals the minimax value. These read as the
+payoff `p` guarantees and the most `q` concedes when the opponent has at least one pure strategy
+(`n ≥ 1`, respectively `m ≥ 1`); with no opponent strategy the infimum or supremum is the
+default value `0`. Whenever the two values agree, every
 pair of optimal strategies is a Nash equilibrium (a saddle point). For finite matrix games the
 values agree by von Neumann's minimax theorem `matrixGame_minimax`, which
 `matrixGame_isSaddlePoint_of_optimal` cites. `matrixGame_exists_isSaddlePointOn` already gives the
@@ -60,15 +64,20 @@ open Matrix Convexity
 open MathlibExt.GameTheory.MixedNashExistence
 
 /-- `p` is an optimal (maximin) mixed strategy of the row player in the zero-sum matrix game `A`
-(row player receives `p ⬝ᵥ (A *ᵥ q)`): the payoff `p` guarantees against every column strategy
-equals the maximin value. -/
+(row player receives `p ⬝ᵥ (A *ᵥ q)`): the infimum over column strategies `q` of
+`p ⬝ᵥ (A *ᵥ q)` equals the supremum over row strategies `p'` of the infimum over `q` of
+`p' ⬝ᵥ (A *ᵥ q)`. When `n ≥ 1`, this says the payoff `p` guarantees against every column
+strategy equals the maximin value; for `n = 0` both sides are the default value `0`. -/
 def IsMaximinStrategy {m n : ℕ} (A : Matrix (Fin m) (Fin n) ℝ) (p : StdSimplex ℝ (Fin m)) :
     Prop :=
   (⨅ q : StdSimplex ℝ (Fin n), p.weights ⬝ᵥ (A *ᵥ q.weights)) =
     ⨆ p' : StdSimplex ℝ (Fin m), ⨅ q : StdSimplex ℝ (Fin n), p'.weights ⬝ᵥ (A *ᵥ q.weights)
 
 /-- `q` is an optimal (minimax) mixed strategy of the column player in the zero-sum matrix game
-`A`: the most the row player can get against `q` equals the minimax value. -/
+`A`: the supremum over row strategies `p` of `p ⬝ᵥ (A *ᵥ q)` equals the infimum over column
+strategies `q'` of the supremum over `p` of `p ⬝ᵥ (A *ᵥ q')`. When `m ≥ 1`, this says the most
+the row player can get against `q` equals the minimax value; for `m = 0` both sides are the
+default value `0`. -/
 def IsMinimaxStrategy {m n : ℕ} (A : Matrix (Fin m) (Fin n) ℝ) (q : StdSimplex ℝ (Fin n)) :
     Prop :=
   (⨆ p : StdSimplex ℝ (Fin m), p.weights ⬝ᵥ (A *ᵥ q.weights)) =

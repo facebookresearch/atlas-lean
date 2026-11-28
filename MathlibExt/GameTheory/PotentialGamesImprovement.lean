@@ -44,7 +44,8 @@ def IsStrictBetterResponse {ι : Type*} [Fintype ι] [DecidableEq ι] {S : ι �
     (c : ι → (∀ i, S i) → ℝ) (s s' : ∀ i, S i) : Prop :=
   ∃ (i : ι) (a : S i), s' = Function.update s i a ∧ c i s' < c i s
 
-/-- A finite strict improvement path: every consecutive pair of profiles
+/-- A finite strict improvement path, in a game with finitely many players and finite
+nonempty strategy sets: every consecutive pair of profiles
 is a strict better-response step. This is `List.IsChain` for the step
 relation, so the `List.IsChain` API applies directly. -/
 abbrev IsImprovementPath {ι : Type*} [Fintype ι] [DecidableEq ι] {S : ι → Type*}

@@ -80,8 +80,8 @@ def IsSimplex (p : K → ℝ) : Prop :=
   ∃ x : Convexity.StdSimplex ℝ K, ∀ a, x.weights a = p a
 
 omit [DecidableEq K] [Nonempty K] in
-/-- A weight function is in the simplex when it is nonnegative and sums
-to one. -/
+/-- For a finite action type `K`, a weight function is in the simplex when it is nonnegative
+and sums to one. -/
 theorem isSimplex_iff (p : K → ℝ) :
     IsSimplex p ↔ (∀ a, 0 ≤ p a) ∧ ∑ a, p a = 1 := by
   constructor

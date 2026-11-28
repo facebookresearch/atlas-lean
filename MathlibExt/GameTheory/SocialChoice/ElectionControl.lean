@@ -68,8 +68,8 @@ theorem netPreference_restrictProfile {Alt Voter : Type*} [Fintype Alt]
     (S : Finset Alt) (a b : {x // x ∈ S}) :
     netPreference (restrictProfile P S) a b = netPreference P a.1 b.1 :=
   rfl
-/-- A Condorcet winner of the full election is the Condorcet winner of
-every restricted election still containing them. -/
+/-- With finitely many candidates and voters, a Condorcet winner of the full election is the
+Condorcet winner of every restricted election still containing them. -/
 theorem isCondorcetWinner_restrictProfile {Alt Voter : Type*}
     [Fintype Alt] [Fintype Voter] [DecidableEq Alt] (P : Profile Alt Voter)
     (S : Finset Alt) {p : Alt} (hp : p ∈ S) (h : IsCondorcetWinner P p) :

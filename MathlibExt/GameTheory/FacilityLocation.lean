@@ -82,7 +82,7 @@ public def IsStrategyproof [DecidableEq ι] (f : Mechanism ι) : Prop :=
   ∀ (x : ι → ℝ) (i : ι) (r : ℝ),
     |f x - x i| ≤ |f (Function.update x i r) - x i|
 
-/-- (C1 model) Group strategyproofness: no nonempty coalition can jointly
+/-- (C1 model) Group strategyproofness: no nonempty finite coalition can jointly
 misreport so that every member's cost strictly drops. -/
 public def IsGroupStrategyproof (f : Mechanism ι) : Prop :=
   ∀ (x x' : ι → ℝ) (S : Finset ι), (∀ i, i ∉ S → x' i = x i) →

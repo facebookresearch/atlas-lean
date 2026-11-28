@@ -184,8 +184,8 @@ def HasEnvyCycle {ι γ : Type*} [Fintype γ] [DecidableEq ι] (v : ι → γ �
     (A : γ → ι) : Prop :=
   ∃ m c, IsEnvyCycle v A m c
 
-/-- A closed envy walk of positive length contains an explicit envy cycle: by strong induction on
-the length, either the walk is already injective or a repeated agent splits
+/-- A closed envy walk of positive length implies that the envy graph has an envy cycle: by
+strong induction on the length, either the walk is already injective or a repeated agent splits
 it into strictly shorter closed walks. -/
 theorem walk_contains_cycle {ι γ : Type*} [Fintype γ] [DecidableEq ι]
     (v : ι → γ → ℝ) (A : γ → ι) (n : ℕ) (p : ℕ → ι)
