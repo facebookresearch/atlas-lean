@@ -23,9 +23,10 @@ doi:10.1016/0166-218X(93)E0124-H, and Meyer (1992)).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.MultiPurposeJobShopThreeJobsDefs
 
 @[expose] public section
 
@@ -71,62 +72,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An MPM job shop instance: the number `m` of machines; the jobs, job `j` being the list of its
-operations in order, each operation given as the pair `(p_{jk}, μ_{jk})` of its processing time and
-the list of its eligible machines (numbered `1, …, m`); and the bound `K`. -/
-abbrev MPMJobShopInstance := ℕ × List (List (ℕ × List ℕ)) × ℕ
-
-/-- An operation `O_{jk}` of the instance: a job `j` and a position `k < n_j` (numbered from
-`0`). -/
-abbrev Operation (i : MPMJobShopInstance) : Type :=
-  (j : Fin i.2.1.length) × Fin (i.2.1.get j).length
-
-/-- The processing time `p_{jk}` of an operation. -/
-def opLength (i : MPMJobShopInstance) (t : Operation i) : ℕ :=
-  ((i.2.1.get t.1).get t.2).1
-
-/-- The eligible machines `μ_{jk}` of an operation. -/
-def eligible (i : MPMJobShopInstance) (t : Operation i) : List ℕ :=
-  ((i.2.1.get t.1).get t.2).2
-
-/-- `a` and `σ` form an MPM job shop schedule: operation `t` runs on machine `a t ∈ μ_t` during
-`[σ t, σ t + p_t)`; two different operations of positive length on the same machine do not overlap
-(an operation of length `0` occupies no machine time); and every operation of a job starts no earlier
-than the previous operation of the job completes. -/
-def IsMPMJobShopSchedule (i : MPMJobShopInstance) (a σ : Operation i → ℕ) : Prop :=
-  (∀ t, a t ∈ eligible i t) ∧
-    (∀ t t', t ≠ t' → a t = a t' → 0 < opLength i t → 0 < opLength i t' →
-      σ t + opLength i t ≤ σ t' ∨ σ t' + opLength i t' ≤ σ t) ∧
-    ∀ j (k k' : Fin (i.2.1.get j).length), k'.1 = k.1 + 1 →
-      σ ⟨j, k⟩ + opLength i ⟨j, k⟩ ≤ σ ⟨j, k'⟩
-
-/-- Well-formedness of an MPM job shop instance with `m` machines: the instance has `m` machines,
-every job has at least one operation, and every operation has a nonempty set of eligible machines,
-all in `{1, …, m}`. -/
-def MPMWellFormed (m : ℕ) (i : MPMJobShopInstance) : Prop :=
-  i.1 = m ∧ (∀ job ∈ i.2.1, job ≠ []) ∧ (∀ job ∈ i.2.1, ∀ o ∈ job, o.2 ≠ []) ∧
-    ∀ job ∈ i.2.1, ∀ o ∈ job, ∀ M ∈ o.2, 1 ≤ M ∧ M ≤ i.1
-
-/-- Well-formedness of an instance: a well-formed MPM job shop instance with `m = 2` machines and
-exactly three jobs. -/
-def WellFormed (i : MPMJobShopInstance) : Prop :=
-  MPMWellFormed 2 i ∧ i.2.1.length = 3
-
-/-- Some MPM job shop schedule has makespan at most `K`: the last operation of every job, which
-completes after the job's other operations, completes by `K`. -/
-def MultiPurposeJobShopThreeJobsFeasible (i : MPMJobShopInstance) : Prop :=
-  ∃ a σ : Operation i → ℕ, IsMPMJobShopSchedule i a σ ∧
-    ∀ j (k : Fin (i.2.1.get j).length), k.1 + 1 = (i.2.1.get j).length →
-      σ ⟨j, k⟩ + opLength i ⟨j, k⟩ ≤ i.2.2
-
-open Classical in
-/-- MULTIPURPOSE-MACHINE JOB SHOP `JMPM2|n=3|C_max` as a decision problem over bitstrings. -/
-noncomputable def multiPurposeJobShopThreeJobsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := MPMJobShopInstance) x with
-  | some i => decide (WellFormed i ∧ MultiPurposeJobShopThreeJobsFeasible i)
-  | none => false
 
 /-- **MULTIPURPOSE-MACHINE JOB SHOP `JMPM2|n=3|C_max` is NP-complete.** Source: Brucker (2004),
 Chapter 10 (Meyer (1992)); Brucker and Knust, scheduling classification, class `mpm_shop`. -/

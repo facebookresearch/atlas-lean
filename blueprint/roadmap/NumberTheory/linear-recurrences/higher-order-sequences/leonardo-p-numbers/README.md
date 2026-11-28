@@ -2,6 +2,8 @@
 
 - [Initial segments of the generalized Leonardo $p$-numbers](leonardo-pkseq.md)
 - [Generalized Leonardo $p$-numbers](leonardo-pk.md)
+- [Leonardo PK of le](leonardo-pk-of-le.md)
+- [Leonardo PK recurrence](leonardo-pk-recurrence.md)
 - [Forward evaluation of the $H(p)$ recurrence](h-seq-forward.md)
 - [Backward evaluation of the $H(p)$ recurrence](h-seq-backward.md)
 - [Two-sided extension of initial values by the $H(p)$ recurrence](h-seq-z.md)

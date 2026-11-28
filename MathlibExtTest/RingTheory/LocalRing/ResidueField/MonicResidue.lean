@@ -16,7 +16,7 @@ open Polynomial IsLocalRing
 
 universe u v w
 
-theorem exactSource
+private theorem exactSource
     {𝒪 : Type} [CommRing 𝒪] [IsLocalRing 𝒪]
     {A : Type} [CommRing A] [IsLocalRing A] [Algebra 𝒪 A] [Module.Finite 𝒪 A]
     [Module.Free 𝒪 A] [IsLocalHom (algebraMap 𝒪 A)]

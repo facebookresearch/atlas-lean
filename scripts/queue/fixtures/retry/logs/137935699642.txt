@@ -1,0 +1,18 @@
+2026-11-23T19:03:51.6642690Z Note: This linter can be disabled with `set_option linter.unusedTactic false`
+2026-11-23T19:03:51.7701862Z Build completed successfully (6373 jobs).
+2026-11-23T19:03:52.9150501Z Build completed successfully (4155 jobs).
+2026-11-23T19:03:54.3973345Z Build completed successfully (6375 jobs).
+2026-11-23T19:03:54.4395998Z ##[group]Run scripts/check.sh build
+2026-11-23T19:03:54.4396212Z [36;1mscripts/check.sh build[0m
+2026-11-23T19:03:54.4412758Z shell: /usr/bin/bash -e {0}
+2026-11-23T19:03:54.4412916Z ##[endgroup]
+2026-11-23T19:03:54.4483786Z ==> compiler diagnostics
+2026-11-23T19:06:29.5755298Z ==> compiled environment policy
+2026-11-23T19:18:05.2414328Z ok [environment]: compiled libraries satisfy trust and dependency policies.
+2026-11-23T19:18:05.2482765Z ==> declaration collisions
+2026-11-23T19:18:32.9803740Z FAIL [declaration collisions]: AlgebraicGeometry.ProjSpace.grad0Equiv is declared in both MathlibExt.AlgebraicGeometry.ProjSpace and MathlibExt.AlgebraicGeometry.ProjSpace.Basic.
+2026-11-23T19:18:32.9812200Z Each module builds on its own, but no module can import both, and the wiki's dependency dump imports every v2 module. Keep one declaration: import its module where the other is used, and delete the copy (or rename one).
+2026-11-23T19:18:33.8995275Z ##[error]Process completed with exit code 1.
+2026-11-23T19:18:34.2029029Z Post job cleanup.
+2026-11-23T19:18:34.2911232Z [command]/usr/bin/git version
+2026-11-23T19:18:34.2960887Z git version 2.56.1

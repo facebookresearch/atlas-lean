@@ -28,6 +28,10 @@ Attributes `A, B, C = 0, 1, 2`, values natural numbers.
   decomposition with the key scheme `AC` is lossless.
 * Satisfaction on a sub-schema is satisfaction of the projected dependencies: `{C → A}` imposes
   nothing on `AB`, whose decomposition into `A` and `B` is lossy.
+* No BCNF decomposition of `Fdep` preserves dependencies (Abiteboul–Hull–Vianu, Example 11.2.10).
+* Minimal covers and 3NF synthesis: a superkey as the key scheme, a non-minimal cover, or a wide
+  right side can break third normal form; `minimalCover` repairs the cover, and synthesis
+  from its output is in third normal form.
 -/
 
 @[expose] public section
@@ -116,6 +120,68 @@ example : DependencyPreserving F (synthesize [⟨{0, 1}, {2}⟩, ⟨{2}, {0}⟩]
 example : joinProjections (synthesize [⟨{0, 1}, {2}⟩, ⟨{2}, {0}⟩] {1, 2}) s = s :=
   synthesize_lossless F_equiv (by decide) s_isOver s_satisfies
 
+/-- `Fdep = {AB → C, C → B}` (AHV Example 11.2.10). -/
+def Fdep : Finset (FD (Fin 3)) := {⟨{0, 1}, {2}⟩, ⟨{2}, {1}⟩}
+
+/-- All proper subschemas of `ABC`. -/
+private def properSchemas : Finset (Finset (Fin 3)) :=
+  Finset.univ.powerset.erase Finset.univ
+
+/-- Derivability is monotone in the dependency set. -/
+private theorem derives_of_subset {F G : Finset (FD (Fin 3))} {f : FD (Fin 3)}
+    (hFG : F ⊆ G) (h : Derives F f) : Derives G f := by
+  induction h with
+  | mem h => exact Derives.mem (hFG h)
+  | refl h => exact Derives.refl h
+  | augment Z _ ih => exact Derives.augment Z ih
+  | trans _ _ ih₁ ih₂ => exact Derives.trans ih₁ ih₂
+
+/-- Every dependency in a foldr-union of projected dependencies lies in one of the
+projections. -/
+private theorem exists_mem_projectFDs_of_mem_foldr {f : FD (Fin 3)}
+    {M : List (Finset (Fin 3))}
+    (h : f ∈ (M.map (projectFDs Fdep)).foldr (· ∪ ·) ∅) :
+    ∃ S ∈ M, f ∈ projectFDs Fdep S := by
+  induction M with
+  | nil =>
+    simp only [List.map_nil, List.foldr_nil, Finset.notMem_empty] at h
+  | cons S M ih =>
+    simp only [List.map_cons, List.foldr_cons, Finset.mem_union] at h
+    rcases h with h | h
+    · exact ⟨S, List.mem_cons_self, h⟩
+    · obtain ⟨T, hT, hf⟩ := ih h
+      exact ⟨T, List.mem_cons_of_mem _ hT, hf⟩
+
+/-- The full `ABC` schema is not in BCNF for `Fdep`. -/
+private theorem not_isBCNF_univ : ¬ IsBCNF Fdep Finset.univ := by decide
+
+/-- The union over all proper subschemas does not derive `AB → C`. -/
+private theorem not_derives_saturated :
+    ¬ Derives (properSchemas.biUnion (projectFDs Fdep)) ⟨{0, 1}, {2}⟩ := by
+  decide
+
+/-- **No BCNF decomposition preserves `Fdep`.** Every decomposition of `ABC` into BCNF
+schemes loses a dependency of `Fdep` (in fact `AB → C`), so no dependency-preserving
+BCNF decomposition of this schema exists. -/
+theorem not_dependencyPreserving_of_isBCNF (L : List (Finset (Fin 3)))
+    (hcover : schemaUnion L = Finset.univ) (hbcnf : ∀ S ∈ L, IsBCNF Fdep S) :
+    ¬ DependencyPreserving Fdep L := by
+  intro hpres
+  have _ := hcover
+  have hmem : ∀ S ∈ L, S ∈ properSchemas := by
+    intro S hS
+    simp only [properSchemas, Finset.mem_erase, Finset.mem_powerset]
+    refine ⟨?_, Finset.subset_univ S⟩
+    rintro rfl
+    exact not_isBCNF_univ (hbcnf _ hS)
+  have hsub : (L.map (projectFDs Fdep)).foldr (· ∪ ·) ∅ ⊆
+      properSchemas.biUnion (projectFDs Fdep) := by
+    intro f hf
+    obtain ⟨S, hS, hfS⟩ := exists_mem_projectFDs_of_mem_foldr hf
+    exact Finset.mem_biUnion.mpr ⟨S, hmem S hS, hfS⟩
+  have hAB : ⟨{0, 1}, {2}⟩ ∈ Fdep := by decide
+  exact not_derives_saturated (derives_of_subset hsub (hpres _ hAB))
+
 /-! ### The key scheme matters -/
 
 /-- `G = {A → B, C → D}` over `A, B, C, D = 0, 1, 2, 3`. -/
@@ -160,4 +226,71 @@ example : ¬ LosslessJoin ℕ ({⟨{2}, {0}⟩} : Finset (FD (Fin 3))) {0} {1} :
   revert this
   decide
 
+/-! ### Minimal covers and third normal form -/
+
+-- A superkey key scheme is not enough: for `FAB = {A → B}`, the scheme `ABC` is not in 3NF.
+example : IsSuperkey FAB Finset.univ ∧
+    Finset.univ ∈ synthesize ([⟨{0}, {1}⟩] : List (FD (Fin 3))) Finset.univ ∧
+    ¬ Is3NF FAB Finset.univ := by
+  decide
+
+/-- The non-minimal cover `{AC → B, A → B}` of `FAB`. -/
+def GnonMin : List (FD (Fin 3)) := [⟨{0, 2}, {1}⟩, ⟨{0}, {1}⟩]
+
+-- It is equivalent to `FAB` but not minimal, and synthesis with the candidate key `AC` produces
+-- the scheme `ABC`, which is not in 3NF.
+example : Equivalent FAB GnonMin.toFinset ∧ ¬ IsMinimalCover FAB GnonMin.toFinset ∧
+    IsCandidateKey FAB {0, 2} ∧ ({0, 1, 2} : Finset (Fin 3)) ∈ synthesize GnonMin {0, 2} ∧
+    ¬ Is3NF FAB {0, 1, 2} := by
+  decide
+
+/-- `Fchain = {A → B, B → C}`. -/
+def Fchain : Finset (FD (Fin 3)) := {⟨{0}, {1}⟩, ⟨{1}, {2}⟩}
+
+/-- A cover of `Fchain` with a two-attribute right side. -/
+def Gwide : List (FD (Fin 3)) := [⟨{0}, {1, 2}⟩, ⟨{1}, {2}⟩]
+
+-- Single-attribute right sides are needed: `Gwide` is equivalent to `Fchain`, but its scheme
+-- `ABC` is not in 3NF (`B → C` with `B` not a superkey and `C` not prime).
+example : Equivalent Fchain Gwide.toFinset ∧ ¬ IsMinimalCover Fchain Gwide.toFinset ∧
+    IsCandidateKey Fchain {0} ∧ ({0, 1, 2} : Finset (Fin 3)) ∈ synthesize Gwide {0} ∧
+    ¬ Is3NF Fchain {0, 1, 2} := by
+  decide
+
+/-- A redundant, non-reduced presentation of `Fchain`: `{A → BC, B → C, AB → C}`. -/
+def lchain : List (FD (Fin 3)) := [⟨{0}, {1, 2}⟩, ⟨{1}, {2}⟩, ⟨{0, 1}, {2}⟩]
+
+/-- The minimal cover `{A → B, B → C}` of `Fchain`. -/
+def Gchain : List (FD (Fin 3)) := [⟨{0}, {1}⟩, ⟨{1}, {2}⟩]
+
+-- The algorithm splits, reduces and removes redundancy.
+example : minimalCover lchain (List.finRange 3) = Gchain := by decide
+
+-- It repairs the non-minimal cover of `FAB`.
+example : minimalCover GnonMin (List.finRange 3) = [⟨{0}, {1}⟩] := by decide
+
+-- Positive control: `{A → B, B → C}` is a minimal cover of `Fchain`, and all synthesized schemes
+-- `A`, `AB`, `BC` are in 3NF.
+example : IsMinimalCover Fchain Gchain.toFinset ∧
+    synthesize Gchain {0} = [{0}, {0, 1}, {1, 2}] ∧
+    ∀ S ∈ synthesize Gchain {0}, Is3NF Fchain S := by
+  decide
+
+-- The general theorems, end to end on `lchain`.
+example : ∀ S ∈ synthesize (minimalCover lchain (List.finRange 3))
+    (findKey lchain.toFinset (List.finRange 3)), Is3NF lchain.toFinset S :=
+  fun _ hS => is3NF_of_mem_synthesize (isMinimalCover_minimalCover _ List.mem_finRange)
+    (findKey_isCandidateKey _ List.mem_finRange) hS
+
+-- An attribute missing from `attrs` is dropped: with `attrs = [0]`, the dependency `A → B`
+-- disappears entirely, so the output is not a cover of the input.
+example : minimalCover ([⟨{0}, {1}⟩] : List (FD (Fin 3))) [0] = [] := by decide
+
+-- Left reduction is visible here: without it the output would keep `AB → C`.
+example : minimalCover [⟨{0}, {1}⟩, ⟨{0, 1}, {2}⟩] (List.finRange 3) =
+    [⟨{0}, {1}⟩, ⟨{0}, {2}⟩] := by decide
+
+-- Third normal form without BCNF: for `Fdep`, every attribute is prime (the keys are `AB` and
+-- `AC`), so the universal scheme is in 3NF although `C → B` breaks BCNF.
+example : Is3NF Fdep Finset.univ ∧ ¬ IsBCNF Fdep Finset.univ := by decide
 end Cslib.Databases.NormalFormsTests

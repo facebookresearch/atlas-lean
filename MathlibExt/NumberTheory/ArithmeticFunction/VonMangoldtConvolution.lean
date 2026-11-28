@@ -55,7 +55,7 @@ theorem vonMangoldt_mul_vonMangoldt_apply (n : ℕ) :
   have hΛΛ : Λ * Λ = -(F * log) := by
     rw [← vonMangoldt_mul_zeta, ← mul_assoc, mul_comm F Λ, mul_assoc, hFζ]
     ring
-  rw [hΛΛ, neg_apply, mul_apply, Nat.sum_divisorsAntidiagonal (fun i j => F i * log j),
+  rw [hΛΛ, neg_apply, ArithmeticFunction.mul_apply, Nat.sum_divisorsAntidiagonal (fun i j => F i * log j),
     ← neg_neg (Λ n), ← sum_moebius_mul_log_eq, neg_mul, Finset.sum_mul,
     ← Finset.sum_neg_distrib, ← Finset.sum_neg_distrib, ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun d hd => ?_

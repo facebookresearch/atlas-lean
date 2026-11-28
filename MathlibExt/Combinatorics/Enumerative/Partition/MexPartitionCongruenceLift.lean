@@ -420,30 +420,28 @@ private theorem mex_odd_target_iff {N A : ℕ} (hA : 0 < A) (p : Nat.Partition N
     (fun x => mex_odd_candidate_iff A x hA)
     (fun j => mex_odd_selected_iff A j hA) p
 
-/-- Lifting of partition congruences to mex partition functions.
+/-- **Lifting partition congruences to mex partition functions.** For a partition $\lambda$, a
+positive integer $A$ and a natural number $c$, let $\operatorname{mex}_{A,c}(\lambda)$ be the
+smallest positive integer congruent to $c$ modulo $A$ that is not a part of $\lambda$, and let
+$p_{A,c}(N)$ be the number of partitions $\lambda$ of $N$ with
+$\operatorname{mex}_{A,c}(\lambda) \equiv c \pmod{2A}$. Let $p(N)$ be the number of partitions of
+$N$. Let $m$, $a$ and $b$ be natural numbers with $m \ge 1$ and $b < a$, and suppose that $m$
+divides $p(an + b)$ for every natural number $n$. Then for every integer $t \ge 1$ and every
+natural number $n$, $m$ divides both $p_{at,at}(an + b)$ and $p_{2at,at}(an + b)$.
 
-If `m ∣ p (a*n+b)` for all `n` (with `p` the ordinary partition number),
-then for every `t ≥ 1` the same congruence holds for the mex partition
-functions `p_{at,at}` and `p_{2at,at}`: `μ` encodes the `mex_{A,a}` value
-(smallest positive integer `≡ a (mod A)` missing from the parts) and the
-filter keeps partitions with `mex ≡ a (mod 2A)`. The offset `b` is taken in
-`ℕ` with `b < a`, so `hbase` covers the whole residue class of `b` mod `a`;
-for `b ≥ a` the lift needs `p` at arguments below `b`, which `hbase` does not
-cover.
+Because $b < a$, the hypothesis covers the whole residue class of $b$ modulo $a$; for $b \ge a$
+the lift would need $p$ at arguments below $b$, which the hypothesis does not cover.
+
+The proof follows the Andrews–Newman mex decomposition used by Barman and Singh: remove one copy
+of every forced earlier mex candidate. The exact-mex fibers then telescope, while every removed
+prefix sum remains a multiple of $a$.
+
+Proves `Wanted` entry `mesh_partition_congruence_lift`.
 
 Source: Rupam Barman and Ajit Singh, "Mex-Related Partition Functions of
 Andrews and Newman," Journal of Integer Sequences 24 (2021),
 Article 21.6.3, Theorem (label thm2), lines 172–182,
 https://cs.uwaterloo.ca/journals/JIS/VOL24/Barman/barman3.tex
-
-This is the general lift; the same paper's Ramanujan corollary for
-`p = 5, 7, 11` (label ramanujan-cong) is a separate module.
-
-Proves `Wanted` entry `mesh_partition_congruence_lift`.
-
-Proof: Following the Andrews-Newman mex decomposition used by Barman and Singh, remove one copy
-of every forced earlier mex candidate. The exact-mex fibers then telescope, while every removed
-prefix sum remains a multiple of `a`.
 -/
 public theorem mesh_partition_congruence_lift
     (m a b : ℕ) (_hm : 0 < m) (ha : 0 < a) (hb : b < a)

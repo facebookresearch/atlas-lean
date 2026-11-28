@@ -53,12 +53,14 @@ theorem oneFE_degree : oneFE.degree = 0 := by
 
 theorem isLSeriesContinuation_one :
     IsLSeriesContinuation (1 : ArithmeticFunction ℂ) (fun _ => 1) := by
-  refine ⟨fun s _ => ?_, differentiableOn_const _⟩
-  have h : (fun n => (1 : ArithmeticFunction ℂ) n) = LSeries.delta := by
-    funext n
-    simp [one_apply, LSeries.delta]
-  rw [h, LSeries_delta]
-  rfl
+  refine ⟨fun s _ => ?_, differentiableOn_const _, fun _ hs => ?_⟩
+  · have h : (fun n => (1 : ArithmeticFunction ℂ) n) = LSeries.delta := by
+      funext n
+      simp [ArithmeticFunction.one_apply, LSeries.delta]
+    rw [h, LSeries_delta]
+    rfl
+  · exact LSeriesSummable_of_bounded_of_one_lt_re (m := 1)
+      (fun n _ => by rw [ArithmeticFunction.one_apply]; split_ifs <;> simp) hs
 
 theorem isEulerLog_one : IsEulerLog (1 : ArithmeticFunction ℂ) 0 := by
   refine ⟨fun n h => absurd rfl h, fun s hs => ⟨LSeriesSummable_zero, ?_⟩⟩
@@ -102,6 +104,31 @@ theorem not_isPrimePow_six : ¬ IsPrimePow 6 := by
   omega
 
 theorem zetaC_ne_one : zetaC ≠ 1 := natCoe_zeta_ne_one
+
+/-- Coefficients whose terms at `s = 2` are `1` at every positive index. -/
+private def quadraticCoeffs : ArithmeticFunction ℂ where
+  toFun n := (n : ℂ) ^ (2 : ℕ)
+  map_zero' := by norm_num
+
+-- The series at `2` diverges, so the zero value returned by `LSeries` does not
+-- make this an analytic continuation.
+example : ¬ IsLSeriesContinuation quadraticCoeffs (fun _ => 0) := by
+  intro h
+  have hsum := h.summable (2 : ℂ) (by norm_num)
+  have htends := hsum.tendsto_atTop_zero.norm
+  rw [norm_zero] at htends
+  have hsmall := htends.eventually (gt_mem_nhds (by norm_num : (0 : ℝ) < 1))
+  obtain ⟨N, hN⟩ := Filter.eventually_atTop.mp hsmall
+  let n := max N 1
+  have hn : n ≠ 0 := Nat.ne_zero_of_lt (lt_of_lt_of_le Nat.zero_lt_one (le_max_right N 1))
+  have ht := hN n (le_max_left N 1)
+  have hterm : LSeries.term (fun i => quadraticCoeffs i) (2 : ℂ) n = 1 := by
+    rw [LSeries.term_of_ne_zero hn]
+    change (n : ℂ) ^ (2 : ℕ) / (n : ℂ) ^ (2 : ℂ) = 1
+    rw [show (2 : ℂ) = ((2 : ℕ) : ℂ) by norm_num, Complex.cpow_natCast,
+      div_self (pow_ne_zero _ (Nat.cast_ne_zero.mpr hn))]
+  rw [hterm, norm_one] at ht
+  exact (lt_irrefl 1) ht
 
 /-- `ζ` has no continuation equal to `0`: the continuation is pinned down on `Re s > 1`. -/
 example : ¬ IsLSeriesContinuation zetaC (fun _ => 0) := by

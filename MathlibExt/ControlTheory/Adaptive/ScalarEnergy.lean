@@ -29,7 +29,7 @@ identity.
 namespace ControlTheory
 
 /-- Derivative of the scalar model-reference adaptive control
-energy. With tracking error `e = x - xm`, parameter error
+energy, for input gain `b ≠ 0` and `gamma > 0`. With tracking error `e = x - xm`, parameter error
 `a - ahat`, adaptation gain `gamma`, and energy
 `V = (e ^ 2 + (a - ahat) ^ 2 / gamma) / 2`, the plant law
 `x' = a * x + b * u` with feedback
@@ -41,7 +41,7 @@ theorem scalarMRACEnergy_hasDerivAt
     {a b lam gamma r : ℝ} (hb : b ≠ 0) (hγ : 0 < gamma)
     {x xm ahat : ℝ → ℝ} {t : ℝ}
     (hx : HasDerivAt x
-      (a * x t + b * ((- ahat t * x t - lam * x t + r) / b)) t)
+      (a * x t + b * ((-ahat t * x t - lam * x t + r) / b)) t)
     (hxm : HasDerivAt xm (-lam * xm t + r) t)
     (hahat : HasDerivAt ahat (gamma * (x t - xm t) * x t) t) :
     HasDerivAt

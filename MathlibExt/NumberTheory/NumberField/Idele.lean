@@ -48,7 +48,11 @@ open InfinitePlace AbsoluteValue.Completion InfinitePlace.Completion IsDedekindD
 variable (R K : Type*) [CommRing R] [IsDedekindDomain R] [Field K]
   [Algebra R K] [IsFractionRing R K]
 
-/-- The integral unit subgroup `O_vˣ` of the multiplicative group of the completion at `v`. -/
+/-- **Local integral unit subgroup.** Let $R$ be a Dedekind domain with fraction field $K$, let $v$
+be a height-one prime of $R$, and let $\mathcal{O}_v$ be the ring of integers of the $v$-adic
+completion $K_v$ of $K$. The local integral unit subgroup is the subgroup $\mathcal{O}_v^\times$
+of $K_v^\times$, consisting of the units $u$ of $K_v$ with $u \in \mathcal{O}_v$ and
+$u^{-1} \in \mathcal{O}_v$. -/
 abbrev localIntegralUnitSubgroup (v : HeightOneSpectrum R) :
     Subgroup ((v.adicCompletion K)ˣ) :=
   (Submonoid.ofClass (v.adicCompletionIntegers K)).units
@@ -61,7 +65,12 @@ theorem mem_localIntegralUnitSubgroup {v : HeightOneSpectrum R} {u : (v.adicComp
           v.adicCompletionIntegers K :=
   Iff.rfl
 
-/-- The finite ideles, with the restricted-product topology. -/
+/-- **Finite idele group.** Let $R$ be a Dedekind domain with fraction field $K$. For each
+height-one prime $v$ of $R$, let $K_v$ be the $v$-adic completion of $K$ and $\mathcal{O}_v$ its
+ring of integers. The finite idele group is the restricted product of the unit groups $K_v^\times$
+over all height-one primes $v$ of $R$ with respect to the subgroups $\mathcal{O}_v^\times$: the
+families $(x_v)_v$ with $x_v \in K_v^\times$ for every $v$ and $x_v \in \mathcal{O}_v^\times$ for
+all but finitely many $v$, with componentwise multiplication and the restricted-product topology. -/
 def FiniteIdeleGroup :=
   Πʳ v : HeightOneSpectrum R,
     [(v.adicCompletion K)ˣ, localIntegralUnitSubgroup R K v]
@@ -81,7 +90,10 @@ instance : DFunLike (FiniteIdeleGroup R K) (HeightOneSpectrum R)
   coe a := a.1
   coe_injective _ _ := Subtype.ext
 
-/-- The integral unit subgroup at a finite place is open in the local multiplicative group. -/
+/-- **The local integral units are open.** Let $R$ be a Dedekind domain with fraction field $K$,
+let $v$ be a height-one prime of $R$, and let $\mathcal{O}_v$ be the ring of integers of the
+$v$-adic completion $K_v$ of $K$. Then $\mathcal{O}_v^\times$ is an open subset of the unit group
+$K_v^\times$. -/
 theorem isOpen_localIntegralUnitSubgroup (v : HeightOneSpectrum R) :
     IsOpen (localIntegralUnitSubgroup R K v : Set ((v.adicCompletion K)ˣ)) := by
   let O := v.adicCompletionIntegers K
@@ -105,7 +117,9 @@ instance : IsTopologicalGroup (FiniteIdeleGroup R K) :=
 
 end FiniteIdeleGroup
 
-/-- The infinite ideles, with the product topology. -/
+/-- **Infinite idele group.** For a field $K$, the infinite idele group is the product
+$\prod_v K_v^\times$ of the unit groups of the completions $K_v$ of $K$ over all infinite places
+$v$ of $K$, with componentwise multiplication and the product topology. -/
 def InfiniteIdeleGroup := (v : InfinitePlace K) → (v.Completion)ˣ
 
 namespace InfiniteIdeleGroup
@@ -126,12 +140,17 @@ end InfiniteIdeleGroup
 -- model below uses the explicit `TopologicalIdeleGroup` type to preserve the local
 -- topology; see `TopologicalIdeleGroup.unitsEquiv` for the algebraic bridge.
 
-/-- The topological idele group, with the standard product/restricted-product topology.
+/-- **Topological idele group.** Let $R$ be a Dedekind domain with fraction field $K$. The
+topological idele group is the product $\mathbb{I}_{K,\infty} \times \mathbb{I}_{K,f}$ of the
+infinite idele group $\mathbb{I}_{K,\infty} = \prod_w K_w^\times$, the product of the unit groups
+of the completions of $K$ at its infinite places $w$, and the finite idele group
+$\mathbb{I}_{K,f}$, the restricted product of the unit groups $K_v^\times$ of the completions at
+the height-one primes $v$ of $R$ with respect to the integral unit groups $\mathcal{O}_v^\times$.
+It carries the componentwise group structure and the product of the product topology on
+$\mathbb{I}_{K,\infty}$ and the restricted-product topology on $\mathbb{I}_{K,f}$.
 
-This is the product of the infinite ideles and the finite ideles. It carries the
-product of the infinite-place product topology and the finite restricted-product
-topology, which differs from the subspace topology on the units of the adele ring.
-Upstream `NumberField.IdeleGroup` (`𝔸[R, K]ˣ`) is a distinct type. -/
+As a group it is isomorphic to the unit group of the adele ring of $K$, but its topology differs
+from the subspace topology on those units. -/
 def TopologicalIdeleGroup :=
   (InfiniteIdeleGroup K × FiniteIdeleGroup R K)
 
@@ -146,18 +165,27 @@ instance : TopologicalSpace (TopologicalIdeleGroup R K) := inferInstanceAs <|
 instance : IsTopologicalGroup (TopologicalIdeleGroup R K) := inferInstanceAs <|
   IsTopologicalGroup (InfiniteIdeleGroup K × FiniteIdeleGroup R K)
 
-/-- The diagonal embedding of global units into the infinite ideles. -/
+/-- **Diagonal map into the infinite ideles.** For a field $K$, this is the group homomorphism
+from $K^\times$ to the infinite idele group of $K$ that sends $x$ to the family of its images in the
+completions $K_v$ of $K$, one for each infinite place $v$ of $K$. -/
 def infinitePrincipalEmbedding : Kˣ →* InfiniteIdeleGroup K :=
   MulEquiv.piUnits.toMonoidHom.comp <|
     Units.map (algebraMap K (InfiniteAdeleRing K)).toMonoidHom
 
-/-- The diagonal embedding of global units into the finite ideles. -/
+/-- **Diagonal map into the finite ideles.** Let $R$ be a Dedekind domain with fraction field $K$.
+This is the group homomorphism from $K^\times$ to the finite idele group of $R$ and $K$ that sends
+$x$ to the family of its images in the $v$-adic completions $K_v$ of $K$, one for each height-one
+prime $v$ of $R$. -/
 def finitePrincipalEmbedding : Kˣ →* FiniteIdeleGroup R K :=
   (RestrictedProduct.unitsEquiv
     (fun v : HeightOneSpectrum R ↦ v.adicCompletion K)).toMonoidHom.comp <|
       FiniteAdeleRing.unitEmbedding R K
 
-/-- The diagonal embedding of global units as principal ideles. -/
+/-- **Diagonal map into the ideles.** Let $R$ be a Dedekind domain with fraction field $K$. This
+is the group homomorphism from $K^\times$ to the topological idele group of $R$ and $K$ whose
+infinite component sends $x$ to its images in the completions of $K$ at all infinite places of
+$K$, and whose finite component sends $x$ to its images in the $v$-adic completions $K_v$ of $K$
+at all height-one primes $v$ of $R$. -/
 def principalEmbedding : Kˣ →* TopologicalIdeleGroup R K :=
   (infinitePrincipalEmbedding K).prod (finitePrincipalEmbedding R K)
 
@@ -183,14 +211,23 @@ theorem principalEmbedding_snd (x : Kˣ) :
     (principalEmbedding R K x).2 = finitePrincipalEmbedding R K x :=
   rfl
 
-/-- The subgroup of principal ideles, namely the image of the diagonal embedding. -/
+/-- **Principal ideles.** Let $R$ be a Dedekind domain with fraction field $K$. The subgroup of
+principal ideles is the image of the diagonal homomorphism from $K^\times$ to the topological idele
+group of $R$ and $K$, which sends $x$ to its images in the completions of $K$ at all infinite
+places of $K$ and at all height-one primes of $R$. -/
 def principalIdeles : Subgroup (TopologicalIdeleGroup R K) :=
   (principalEmbedding R K).range
 
-/-- The algebraic equivalence between units of the adele ring and the topological
-idele group.
+/-- **Ideles as units of the adele ring.** Let $R$ be a Dedekind domain with fraction field $K$,
+and let $\mathbb{A}_K$ be the adele ring of $K$ built from the infinite places of $K$ and the
+height-one primes of $R$. For an infinite place $w$ of $K$ write $K_w$ for the completion of $K$
+at $w$, and for a height-one prime $v$ of $R$ write $K_v$ for the $v$-adic completion of $K$.
+This is the group isomorphism from the unit group $\mathbb{A}_K^\times$ to the topological idele
+group that sends a unit adele $a$ to the idele whose component at each infinite place $w$ is the
+component $a_w \in K_w^\times$ of $a$ and whose component at each height-one prime $v$ is the
+component $a_v \in K_v^\times$ of $a$.
 
-This is deliberately not a homeomorphism: the topological idele group has the
+It is stated only as an isomorphism of groups: the topological idele group carries the
 restricted-product topology, not the topology induced on the units of the adele ring. -/
 def unitsEquiv :
     (AdeleRing R K)ˣ ≃* TopologicalIdeleGroup R K :=
@@ -203,7 +240,10 @@ theorem unitsEquiv_globalUnit (x : Kˣ) :
       principalEmbedding R K x :=
   rfl
 
-/-- The diagonal map from the global multiplicative group into the ideles is injective. -/
+/-- **The diagonal map into the ideles is injective.** Let $K$ be a number field and let $R$ be a
+Dedekind domain with fraction field $K$. The diagonal homomorphism from $K^\times$ to the
+topological idele group of $R$ and $K$, which sends $x$ to its images in the completions of $K$ at
+all infinite places of $K$ and at all height-one primes of $R$, is injective. -/
 theorem principalEmbedding_injective [NumberField K] :
     Function.Injective (principalEmbedding R K) := by
   intro x y hxy
@@ -216,9 +256,9 @@ theorem principalEmbedding_injective [NumberField K] :
 
 end TopologicalIdeleGroup
 
-/-- The topological idele class group, namely the quotient of the topological idele
-group by principal ideles. Upstream `NumberField.IdeleClassGroup` (the quotient of
-`𝔸[R, K]ˣ`) is a distinct type. -/
+/-- **Topological idele class group.** Let $R$ be a Dedekind domain with fraction field $K$. The
+topological idele class group is the quotient group of the topological idele group of $R$ and $K$
+by its subgroup of principal ideles, the image of the diagonal homomorphism from $K^\times$. -/
 abbrev TopologicalIdeleClassGroup :=
   (TopologicalIdeleGroup R K) ⧸ (TopologicalIdeleGroup.principalIdeles R K)
 

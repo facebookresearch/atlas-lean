@@ -256,18 +256,20 @@ private theorem hardy_finite {a : ℕ → ℝ} {p : ℝ} (hp : 1 < p)
         exact Real.mul_rpow hq0 (Real.rpow_nonneg hX0 (1 / p))
       _ = q.rpow p * X := by rw [hardy_rpow_inv_rpow hp hX0]
 
-/-- Hardy's inequality (series form): for a nonnegative `p`-summable sequence
-with `p > 1`, the series of `p`-th powers of the partial averages
-`A n = (∑ i in Finset.range (n + 1), a i) / (n + 1)` is bounded by
-`(p / (p - 1)) ^ p` times the series of `p`-th powers of `a`.
-Source: G. H. Hardy, *Note on a theorem of Hilbert*, Mathematische Zeitschrift 6 (1920), 314-317
-(statement hardy-ineq-s1): the discrete series form with constant `(p / (p - 1)) ^ p` for `p > 1`.
-
-Proves `Wanted` entry `hardy_inequality`.
+/-- **Hardy's inequality.** Let $p > 1$ be a real number and let $(a_n)_{n \ge 0}$ be a sequence
+of nonnegative real numbers such that $\sum_n a_n^p$ converges. Write
+$A_n = \frac{1}{n+1} \sum_{i=0}^{n} a_i$ for the average of $a_0, \dots, a_n$. Then
+$\sum_n A_n^p$ converges and
+$$\sum_{n=0}^{\infty} A_n^p \le \left(\frac{p}{p-1}\right)^p \sum_{n=0}^{\infty} a_n^p.$$
 
 Proof: Elliott's finite telescoping argument is combined with Young's and Hölder's inequalities,
 following E. B. Elliott (1926) as presented in Hardy--Littlewood--Pólya, *Inequalities*,
 Theorem 326.
+
+Proves `Wanted` entry `hardy_inequality`.
+
+Source: G. H. Hardy, *Note on a theorem of Hilbert*, Mathematische Zeitschrift 6 (1920), 314-317
+(statement hardy-ineq-s1): the discrete series form with constant `(p / (p - 1)) ^ p` for `p > 1`.
 -/
 theorem hardy_inequality {a : ℕ → ℝ} {p : ℝ} (hp : 1 < p)
     (hnonneg : ∀ n, 0 ≤ a n)

@@ -21,11 +21,11 @@ problem, there called CLIQUE COVER).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Combinatorics.SimpleGraph.Clique
-public import WantedExt.Complexity.NPComplete.PartitionIntoCliquesWanted
+public import CSLibExt.Complexity.NPComplete.PartitionIntoCliquesDefs
 
 @[expose] public section
 
@@ -42,7 +42,7 @@ integer `K ≤ |V|`. QUESTION: can the vertices of `G` be partitioned into `k �
 `V₁, V₂, …, V_k` such that, for `1 ≤ i ≤ k`, the subgraph induced by `Vᵢ` is a complete graph?
 
 This is the restriction of PARTITION INTO CLIQUES
-(`WantedExt.Complexity.NPComplete.PartitionIntoCliquesWanted`, [GT15]) to graphs with no `K₄`. The
+(`CSLibExt.Complexity.NPComplete.PartitionIntoCliquesDefs`, [GT15]) to graphs with no `K₄`. The
 instance, the graph, the parent well-formedness condition (simple edge list, `0 < K ≤ |V|`) and the
 question are that module's; the restriction is added to `WellFormed` as Mathlib's
 `SimpleGraph.CliqueFree 4` (no 4 pairwise adjacent vertices). Garey and Johnson point to their

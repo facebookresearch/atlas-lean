@@ -284,7 +284,8 @@ theorem ewensProb_nonneg {θ : ℝ} (hθ : 0 < θ) {n : ℕ} (π : n.Partition) 
   refine mul_nonneg (div_nonneg (Nat.cast_nonneg _) hpos.le) (prod_nonneg fun j _ => ?_)
   exact div_nonneg (pow_nonneg (div_nonneg hθ.le (Nat.cast_nonneg _)) _) (Nat.cast_nonneg _)
 
-/-- **Expected number of alleles** in a sample of `n` genes under the Ewens sampling formula:
+/-- **Expected number of alleles** in a sample of `n` genes under the Ewens sampling formula,
+for `θ > 0`, where the formula is a probability distribution on the partitions of `n`:
 `E[K_n] = ∑_{i < n} θ / (θ + i)` (Ewens 1972). -/
 theorem sum_ewensProb_mul_card_parts (θ : ℝ) (hθ : 0 < θ) (n : ℕ) :
     ∑ π : n.Partition, ewensProb θ π * (π.parts.card : ℝ) =

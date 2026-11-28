@@ -29,8 +29,9 @@ namespace BurnsidePaqb
 
 variable {G : Type*} [Group G] [Fintype G]
 
-/-- An equation `1 + p * β = 0` with `β` an algebraic integer is impossible
-for prime `p`: it would make `-1/p` an algebraic integer. -/
+/-- **An algebraic integer cannot solve $1 + p\beta = 0$ for a prime $p$.** Let $p$ be a prime
+number. There is no algebraic integer $\beta \in \mathbb{C}$ with $1 + p\beta = 0$, since such a
+$\beta$ would make $-1/p$ an algebraic integer. -/
 theorem false_of_one_add_prime_mul_isIntegral {p : ℕ} (hp : p.Prime)
     {β : ℂ} (hβ : IsIntegral ℤ β) (h : 1 + (p : ℂ) * β = 0) : False := by
   have hβeq : β = -1 / (p : ℂ) := by
@@ -62,7 +63,10 @@ theorem false_of_one_add_prime_mul_isIntegral {p : ℕ} (hp : p.Prime)
   exact hp.not_dvd_one hdvdN
 
 omit [Fintype G] in
-/-- In degree 1, every representation operator is a scalar. -/
+/-- **One-dimensional representations act by their character.** Let $\rho$ be a representation
+of a group $G$ on a complex vector space $V$ of dimension $1$, and let $\chi$ be the character of
+$\rho$. Then for every $g \in G$ the operator $\rho(g)$ is multiplication by the scalar $\chi(g)$,
+that is, $\rho(g) = \chi(g) \cdot \mathrm{id}_V$. -/
 theorem eq_smul_one_of_finrank_one {V : Type*} [AddCommGroup V] [Module ℂ V]
     [FiniteDimensional ℂ V] (ρ : Representation ℂ G V)
     (hd : Module.finrank ℂ V = 1) (g : G) :
@@ -91,7 +95,10 @@ theorem eq_smul_one_of_finrank_one {V : Type*} [AddCommGroup V] [Module ℂ V]
   exact hfg
 
 open Classical in
-/-- The scalar character of a degree-1 representation, as a hom to units. -/
+/-- **A linear character as a homomorphism to $\mathbb{C}^\times$.** Let $G$ be a finite group and
+let $\rho$ be a representation of $G$ on a complex vector space $V$ of dimension $1$, with
+character $\chi$. This is the group homomorphism from $G$ to the multiplicative group
+$\mathbb{C}^\times$ of nonzero complex numbers that sends $g$ to $\chi(g)$. -/
 noncomputable def linearCharHom {V : Type*} [AddCommGroup V] [Module ℂ V]
     [FiniteDimensional ℂ V] [Nontrivial V] (ρ : Representation ℂ G V)
     (hd : Module.finrank ℂ V = 1) : G →* ℂˣ :=
@@ -111,7 +118,10 @@ noncomputable def linearCharHom {V : Type*} [AddCommGroup V] [Module ℂ V]
           exact smul_left_injective ℂ (one_ne_zero : (1 : Module.End ℂ V) ≠ 0) e
         exact htr }
 
-/-- A nontrivial linear character of a simple group forces prime order. -/
+/-- **A simple group with a nontrivial linear character has prime order.** Let $G$ be a finite
+simple group and let $\rho$ be a representation of $G$ on a complex vector space $V$ of
+dimension $1$. If the character of $\rho$ is not the constant function $1$, then the order of
+$G$ is a prime number. -/
 theorem card_eq_prime_of_nontrivial_linear [IsSimpleGroup G]
     {V : Type*} [AddCommGroup V] [Module ℂ V]
     [FiniteDimensional ℂ V] [Nontrivial V] (ρ : Representation ℂ G V)
@@ -141,8 +151,11 @@ theorem card_eq_prime_of_nontrivial_linear [IsSimpleGroup G]
       (IsSimpleGroup.prime_card (α := G))
   · exact absurd htop hker_ne_top
 
-/-- For a nonlinear irreducible of a simple group, a coprime-size class
-element with `g ≠ 1` is killed by the character. -/
+/-- **Nonlinear irreducible characters of a simple group vanish on nonidentity classes of
+coprime size.** Let $G$ be a finite simple group, let $\rho$ be an irreducible representation of
+$G$ on a finite-dimensional complex vector space $V$ of dimension $d > 1$, and let $\chi$ be the
+character of $\rho$. If $g \ne 1$ is an element of $G$ whose conjugacy class has size coprime to
+$d$, then $\chi(g) = 0$. -/
 theorem char_zero_of_nonlinear_of_coprime [IsSimpleGroup G]
     {V : Type*} [AddCommGroup V] [Module ℂ V]
     [FiniteDimensional ℂ V] [Nontrivial V] (ρ : Representation ℂ G V)
@@ -173,10 +186,11 @@ theorem char_zero_of_nonlinear_of_coprime [IsSimpleGroup G]
     exact hne1 hmem
   · exact h0
 
-/-- Bielefeld Corollary 6: a simple group with a prime-power conjugacy class
-has prime order. The nontrivial direction sums the regular character:
-every nonlinear class contributes a multiple of `rr`, leaving `1 + rr * β = 0`
-with `β` an algebraic integer. -/
+/-- **A simple group with a prime-power conjugacy class has prime order.** Let $G$ be a finite
+simple group and let $g \ne 1$ be an element of $G$ whose conjugacy class has size $r^k$ for some
+prime $r$ and some $k \ge 1$. Then the order of $G$ is a prime number.
+
+Source: Bielefeld Corollary 6. -/
 theorem cor6_of_prime_pow_class {G : Type} [Group G] [Fintype G] [IsSimpleGroup G]
     (g : G) (hg1 : g ≠ 1) (hpp : IsPrimePow (conjClass g).card) :
     ∃ r : ℕ, r.Prime ∧ Fintype.card G = r := by

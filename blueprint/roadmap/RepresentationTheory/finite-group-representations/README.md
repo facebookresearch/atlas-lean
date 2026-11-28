@@ -9,3 +9,7 @@ Ordinary representation theory of finite groups over algebraically closed fields
 - [Fourier transform on finite groups](fourier-transform-on-finite-groups/README.md)
 - [Dimension of an irreducible representation divides the group order](irred-dim-dvd-card.md)
 - [Maschke's theorem](maschke-decomposition.md)
+- [Brauer's induction theorem](brauer-induction-theorem.md)
+- [The Saxl tensor-square positivity statement](staircase-specht-tensor-square.md)
+- [Universal irreducible tensor squares for symmetric groups](universal-irreducible-symmetric-group-tensor-square.md)
+- [Quadratic-range surjectivity of the canonical Foulkes–Howe map](foulkes-howe-quadratic-surjectivity.md)

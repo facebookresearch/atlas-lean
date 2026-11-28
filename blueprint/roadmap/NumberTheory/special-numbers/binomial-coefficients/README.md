@@ -4,6 +4,8 @@ Divisibility and valuations of binomial coefficients, Lucas-type theorems, facto
 
 - [Binomial coefficient sums modulo 2](binomial-coefficient-sums-modulo-2/README.md)
 - [Binomid indices and generalized binomial coefficients](binomid-indices-and-generalized-binomial-coeffic/README.md)
+- [Bit length of $\binom{2^n}{2^{n-1}}$](size-choose-two-pow.md)
+- [The logarithm of a central binomial coefficient](log-central-binom.md)
 - [Cubed central binomial coefficients](cubed-central-binomial-coefficients/README.md)
 - [Divisors of the middle binomial coefficient](divisors-of-the-middle-binomial-coefficient/README.md)
 - [Equations in central binomial coefficients](equations-in-central-binomial-coefficients/README.md)

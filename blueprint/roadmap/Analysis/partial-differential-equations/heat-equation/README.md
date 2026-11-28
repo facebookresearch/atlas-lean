@@ -11,6 +11,7 @@ The pages below give the properties of $\Phi$ in every finite dimension, the wea
 subsolutions, uniqueness on bounded domains, and the one-dimensional Cauchy problem.
 
 - [Heat-kernel solution](heat-solution.md)
+- [The one-dimensional heat solution as a heat-kernel convolution](heat-solution-eq-kernel.md)
 - [The Gaussian heat kernel solves the heat equation](heat-kernel-solves-heat-equation.md)
 - [Fundamental solution of the heat equation](heat-kernel.md)
 - [The heat kernel is positive](heat-kernel-pos.md)
@@ -22,6 +23,9 @@ subsolutions, uniqueness on bounded domains, and the one-dimensional Cauchy prob
 - [Parabolic boundary of a space-time cylinder](parabolic-boundary.md)
 - [Weak maximum principle for the heat equation](exists-mem-parabolic-boundary-is-max-on.md)
 - [Uniqueness for the heat equation on a bounded domain](eq-on-of-heat-equation.md)
+- [Single-mode solution of the Dirichlet heat equation](single-mode-solution-of-the-dirichlet-heat-equation.md)
+- [Uniqueness of the Gaussian heat solution in the exponential-growth class](eq-heat-solution-of-exp-growth.md)
+- [The Gaussian heat solution has exponential growth on every strip](heat-solution-has-exp-growth-on-strip.md)
 
 ## Related topics
 
@@ -30,3 +34,15 @@ subsolutions, uniqueness on bounded domains, and the one-dimensional Cauchy prob
   of the Boltzmann entropy (Jordan, Kinderlehrer and Otto).
 - [Fokker–Planck equation](../../../Probability/stochastic-calculus/fokker-planck-equation/README.md):
   the drift–diffusion equation that reduces to the heat equation without drift.
+
+- [Heat convolution](heat-convolution.md)
+
+- [The heat convolution preserves the constant one](heat-convolution-const-one.md)
+
+- [The heat convolution solves the heat equation](heat-convolution-satisfies-heat-equation.md)
+
+- [The heat convolution is smooth at positive time](heat-convolution-smooth.md)
+
+- [The heat semigroup's generator is the Laplacian](heat-semigroup-generator-eq-laplacian.md)
+
+- [The heat semigroup's generator is the Laplacian, in `ENNReal`](heat-semigroup-generator-eq-laplacian-en.md)

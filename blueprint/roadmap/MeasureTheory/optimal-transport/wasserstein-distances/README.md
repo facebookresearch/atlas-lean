@@ -7,28 +7,10 @@ satisfies the triangle inequality (by the gluing lemma) and separates measures, 
 metric on Borel probability measures over a Polish space; $W_p$ increases with $p$, and $W_1$
 controls the integrals of Lipschitz functions.
 
-- [Optimal transport cost of order $p$](transport-cost.md)
-- [Every coupling bounds the transport cost](transport-cost-le-of-is-coupling.md)
-- [Wasserstein distance of order $p$](wasserstein.md)
-- [Wasserstein distance as an infimum over couplings](wasserstein-eq-i-inf.md)
-- [Every coupling bounds the Wasserstein distance](wasserstein-le-of-is-coupling.md)
-- [The product coupling](is-coupling-prod.md)
-- [Swapped coupling](is-coupling-swap.md)
-- [Diagonal coupling](is-coupling-diag.md)
-- [Gluing lemma](exists-gluing.md)
-- [Symmetry of the Wasserstein distance](wasserstein-comm.md)
-- [The Wasserstein distance vanishes on the diagonal](wasserstein-self.md)
-- [Wasserstein distance between Dirac masses](wasserstein-dirac.md)
-- [Triangle inequality for the Wasserstein distance](wasserstein-triangle.md)
-- [Monotonicity of the Wasserstein distances in the exponent](wasserstein-mono.md)
-- [The Wasserstein distance is finite on measures with finite $p$-th moments](wasserstein-lt-top.md)
-- [Lipschitz test functions are controlled by $W_1$](lintegral-le-add-mul-wasserstein-one.md)
-- [Kantorovich–Rubinstein bound for real Lipschitz functions](enorm-integral-sub-le-mul-wasserstein-on.md)
-- [Kantorovich–Rubinstein formula](wasserstein-one-eq-i-sup-lipschitz.md)
-- [The Wasserstein distance separates probability measures](eq-of-wasserstein-eq-zero.md)
-- [Convergence in Wasserstein distance implies weak convergence](tendsto-of-tendsto-wasserstein.md)
-- [The Wasserstein distance metrizes weak convergence in $P_p$](tendsto-wasserstein-iff.md)
-- [Wasserstein distance controlled by total variation](wasserstein-one-le-mul-total-variation-d.md)
+- [Wasserstein distance](wasserstein-distance/README.md)
+- [Kantorovich–Rubinstein formula](kantorovich-rubinstein-formula/README.md)
+- [Wasserstein distance controlled by total variation](wasserstein-distance-and-total-variation/README.md)
+- [Convergence in W_p is weak convergence with convergence of p-th moments](wasserstein-convergence/README.md)
 
 ## Related topics
 

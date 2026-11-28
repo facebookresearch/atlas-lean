@@ -149,9 +149,10 @@ theorem green_ampt_integrated (F : ℝ → ℝ) (K A F₀ t₀ t : ℝ) (hK : 0 
   linear_combination -hHeq
 
 /-- Green-Ampt with no suction head (`A = 0`) reduces to constant-rate
-infiltration: `t - t₀ = (F t - F₀) / K`. The rate `K * (1 + 0 / F s)` is the
-constant `K` whatever the value of `F s`, so no positivity of `F` or `F₀` is
-assumed; in particular the dry start `F t₀ = F₀ = 0` is covered. -/
+infiltration: for `K > 0` and `t₀ ≤ t`, `t - t₀ = (F t - F₀) / K`. The rate
+`K * (1 + 0 / F s)` is the constant `K` whatever the value of `F s`, so no
+positivity of `F` or `F₀` is assumed; in particular the dry start
+`F t₀ = F₀ = 0` is covered. -/
 theorem green_ampt_no_suction (F : ℝ → ℝ) (K F₀ t₀ t : ℝ) (hK : 0 < K)
     (ht : t₀ ≤ t)
     (hF₀eq : F t₀ = F₀)

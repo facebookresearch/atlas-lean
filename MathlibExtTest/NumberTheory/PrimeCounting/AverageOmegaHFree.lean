@@ -22,7 +22,7 @@ open Finset
 example : |((((Icc 1 ⌊(0 : ℝ)⌋₊).filter
       (fun n => ∀ p ∈ n.primeFactors, n.factorization p < 2)).card : ℕ) : ℝ)
     - 0 / (riemannZeta ((2 : ℕ) : ℂ)).re| ≤ 4 * Real.sqrt 0 :=
-  MetaMathlibExt.abs_card_hfree_sub_le 2 le_rfl 0 le_rfl
+  MetaMathlibExt.PowerFreeParity.abs_card_hfree_sub_le 2 le_rfl 0 le_rfl
 
 -- The `h`-free count at `y = 10`, `h = 2` (squarefree numbers): `1, 2, 3, 5, 6, 7, 10`.
 example : ((Icc 1 10).filter (fun n => ∀ p ∈ n.primeFactors, n.factorization p < 2)).card = 7 := by

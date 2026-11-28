@@ -24,11 +24,11 @@ doi:10.1016/j.dam.2021.05.021, Table 1 and Section 2.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Combinatorics.SimpleGraph.ClawFreeIndependencePoly
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.PartitionIntoCliquesWanted
+public import CSLibExt.Complexity.NPComplete.PartitionIntoCliquesDefs
 
 @[expose] public section
 
@@ -43,7 +43,7 @@ INSTANCE: a claw-free graph `G = (V, E)` (no induced `K₁,₃`) and a positive 
 QUESTION: can `V` be partitioned into `k ≤ K` disjoint sets `V₁, …, V_k` such that each `Vᵢ`
 induces a complete subgraph of `G`?
 
-This is PARTITION INTO CLIQUES ([GT15], `PartitionIntoCliquesWanted`) restricted to claw-free
+This is PARTITION INTO CLIQUES ([GT15], `PartitionIntoCliquesDefs`) restricted to claw-free
 graphs. The 2022 revision of Johnson's table by de Figueiredo, de Melo, Sasaki and Silva lists
 the entry as NP-complete, citing Maffray and Preissmann, and gives the argument: CHROMATIC NUMBER
 is NP-complete for triangle-free graphs already with 3 colours (Maffray and Preissmann), and the

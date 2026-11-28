@@ -79,12 +79,14 @@ returns `G i`: the product of the per-period gross returns. -/
 noncomputable def compoundedGross {ι : Type*} (G : ι → ℝ) (s : Finset ι) : ℝ :=
   ∏ i ∈ s, G i
 
-/-- Total log return over a finite set of periods: the log return of the
-compounded gross return. -/
+/-- Total log return over a finite set of periods: the log return of the compounded gross return.
+With the conventions `log 0 = 0` and `log x = log |x|`, it is `0` when some `G i` is `0`, and
+`log |∏_{i ∈ s} G i|` when the product is negative. -/
 noncomputable def totalLogReturn {ι : Type*} (G : ι → ℝ) (s : Finset ι) : ℝ :=
   logReturn (compoundedGross G s)
 
-/-- **Gross returns compound multiplicatively over two periods.** -/
+/-- **Gross returns compound multiplicatively over two periods**: for nonzero `P₀` and `P₁`,
+`P₂ / P₀ = (P₁ / P₀) * (P₂ / P₁)`. -/
 theorem grossReturn_mul {P₀ P₁ P₂ : ℝ} (h₀ : P₀ ≠ 0) (h₁ : P₁ ≠ 0) :
     grossReturn P₀ P₂ = grossReturn P₀ P₁ * grossReturn P₁ P₂ := by
   unfold grossReturn

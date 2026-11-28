@@ -46,8 +46,8 @@ namespace MathlibExt.Biology.PopulationGenetics.FStatistics.DriftModel
 variable {Ω Ω' P E : Type*} {m : MeasurableSpace Ω} {m' : MeasurableSpace Ω'} {μ : Measure Ω}
   {μ' : Measure Ω'} [Fintype E]
 
-/-- f-statistics see the weight vectors only up to a common signed shift: if two drift models
-(possibly on different probability spaces) have the same edge lengths and
+/-- f-statistics do not distinguish weight vectors that differ by a common signed shift: if two
+drift models (possibly on different measure spaces) have the same edge lengths and
 `w' X e = s e * w X e + c e` with `s e = ± 1` for every population `X`, then every `f4`
 agrees. -/
 theorem f4_eq_of_weight_eq_mul_add (M : DriftModel μ E P) (M' : DriftModel μ' E P)
@@ -61,29 +61,31 @@ theorem f4_eq_of_weight_eq_mul_add (M : DriftModel μ E P) (M' : DriftModel μ' 
   linear_combination ((M.weight A e - M.weight B e) * (M.weight C e - M.weight D e) * M.len e) *
     hs2
 
-/-- Common-shift invariance: replacing every weight vector `w X` by `w X + c` for one vector `c`
-leaves every `f4` unchanged. -/
+/-- Common-shift invariance: replacing every weight vector `w X` by `w X + c` for one vector `c`,
+with the same edge lengths, leaves every `f4` unchanged. -/
 theorem f4_eq_of_weight_eq_add (M : DriftModel μ E P) (M' : DriftModel μ' E P)
     (hlen : M'.len = M.len) (c : E → ℝ) (hw : ∀ X, M'.weight X = M.weight X + c)
     (A B C D : P) : f4 μ' M'.freq A B C D = f4 μ M.freq A B C D :=
   f4_eq_of_weight_eq_mul_add M M' hlen (fun _ => 1) c (fun _ => Or.inl rfl)
     (fun X e => by simp [hw X]) A B C D
 
-/-- Common-shift invariance of `f2`. -/
+/-- Common-shift invariance of `f2`: replacing every weight vector `w X` by `w X + c` for one
+vector `c`, with the same edge lengths, leaves every `f2` unchanged. -/
 theorem f2_eq_of_weight_eq_add (M : DriftModel μ E P) (M' : DriftModel μ' E P)
     (hlen : M'.len = M.len) (c : E → ℝ) (hw : ∀ X, M'.weight X = M.weight X + c) (X Y : P) :
     f2 μ' M'.freq X Y = f2 μ M.freq X Y := by
   rw [f2_eq_f4, f2_eq_f4, f4_eq_of_weight_eq_add M M' hlen c hw]
 
-/-- Common-shift invariance of `f3`. -/
+/-- Common-shift invariance of `f3`: replacing every weight vector `w X` by `w X + c` for one
+vector `c`, with the same edge lengths, leaves every `f3` unchanged. -/
 theorem f3_eq_of_weight_eq_add (M : DriftModel μ E P) (M' : DriftModel μ' E P)
     (hlen : M'.len = M.len) (c : E → ℝ) (hw : ∀ X, M'.weight X = M.weight X + c) (C A B : P) :
     f3 μ' M'.freq C A B = f3 μ M.freq C A B := by
   rw [f3_eq_f4, f3_eq_f4, f4_eq_of_weight_eq_add M M' hlen c hw]
 
 /-- Stem invariance: changing the length of edges whose weight is the same for every population
-(on a rooted tree, the root stem above the most recent common ancestor) leaves every `f4`
-unchanged, so such lengths are not identifiable from f-statistics. -/
+(for example, on a rooted tree, the root stem above the most recent common ancestor) leaves
+every `f4` unchanged, so such lengths are not identifiable from f-statistics. -/
 theorem f4_eq_of_len_eq_of_weight_const (M : DriftModel μ E P) (M' : DriftModel μ' E P)
     (hw : M'.weight = M.weight)
     (hlen : ∀ e, M'.len e ≠ M.len e → ∀ X Y, M.weight X e = M.weight Y e) (A B C D : P) :
@@ -111,9 +113,9 @@ theorem f4_eq_of_lineage_eq_symmDiff [DecidableEq E] (M : DriftModel μ E P)
   rcases hM X e with h | h <;> rcases hM' X e with h' | h' <;> by_cases hR : e ∈ R <;>
     simp_all
 
-/-- Rerooting invariance of `f2`: invariance under the symmetric-difference change of
-lineages above. When the lineages come from rerooting a tree this says `f2` does not see
-the root position; for general binary loadings no path-metric conclusion is claimed. -/
+/-- Rerooting invariance of `f2`: two binary-loading models with the same edge lengths whose
+lineage sets differ by a fixed edge set `R` (`lineage' X = lineage X ∆ R`) have the same `f2`.
+When the lineages come from rerooting a tree this says `f2` does not see the root position. -/
 theorem f2_eq_of_lineage_eq_symmDiff [DecidableEq E] (M : DriftModel μ E P)
     (M' : DriftModel μ' E P) (hM : M.HasBinaryLoadings) (hM' : M'.HasBinaryLoadings)
     (hlen : M'.len = M.len) (R : Finset E) (hL : ∀ X, M'.lineage X = M.lineage X ∆ R)

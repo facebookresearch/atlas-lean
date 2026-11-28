@@ -133,7 +133,7 @@ private theorem isIntegral_quotient_map [IsPrincipalIdealRing R] [Module.Flat R 
   have hne : f.map (Ideal.Quotient.mk P) ≠ 0 := by
     intro h0
     apply hi
-    have h := congrArg (fun p => Polynomial.coeff p i) h0
+    have h := congrArg (fun p : Polynomial (R ⧸ P) => p.coeff i) h0
     simp only [Polynomial.coeff_map, Polynomial.coeff_zero] at h
     exact Ideal.Quotient.eq_zero_iff_mem.mp h
   have haeval : aeval (Ideal.Quotient.mk (P.map (algebraMap R S)) s)

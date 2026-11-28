@@ -1,0 +1,17 @@
+# DGCalabi Yau Map Models
+
+- [Inverse Dual Index Hom](inverse-dual-index-hom.md)
+- [Inverse Dual Action](inverse-dual-action.md)
+- [Inverse Dual Model](inverse-dual-model.md)
+- [Trace Path Vertices](trace-path-vertices.md)
+- [Trace Bar Insertion](trace-bar-insertion.md)
+- [Inserted Cycle](inserted-cycle.md)
+- [Compose Representable](compose-representable.md)
+- [Trace Generator](trace-generator.md)
+- [Trace Evaluation Value](trace-evaluation-value.md)
+- [Trace Evaluation Model](trace-evaluation-model.md)
+- [Negative CYClass](negative-cyclass.md)
+- [Shifted Unit Scalar](shifted-unit-scalar.md)
+- [Left CYMap Model](left-cymap-model.md)
+- [Is Left CYNondegenerate](is-left-cynondegenerate.md)
+- [Is Left Calabi Yau](is-left-calabi-yau.md)

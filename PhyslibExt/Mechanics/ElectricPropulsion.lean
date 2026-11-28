@@ -96,11 +96,12 @@ open Set MeasureTheory PhyslibExt.Mechanics.PropulsionPorts
 /-! ## A. Beam quantities -/
 
 /-- The exhaust speed `v_e = √(2 q_i V_b / m_i)` of an ion of mass `m_i` and charge `q_i` that
-starts at rest and falls through the beam voltage `V_b`. -/
+starts at rest and falls through the beam voltage `V_b`. With the conventions `x / 0 = 0` and
+`√x = 0` for `x < 0` it is `0` when `m_i = 0` or `q_i V_b / m_i < 0`. -/
 noncomputable def ionExhaustSpeed (mi qi Vb : ℝ) : ℝ := Real.sqrt (2 * qi * Vb / mi)
 
-/-- The beam mass flow `ṁ = I_b m_i / q_i`: the current `I_b` carries `I_b / q_i` ions of mass
-`m_i` per unit time. -/
+/-- The beam mass flow `ṁ = I_b m_i / q_i`: the current `I_b` carries `I_b / q_i` ions of mass `m_i`
+per unit time. With the convention `x / 0 = 0`, `ṁ = 0` when `q_i = 0`. -/
 noncomputable def beamMassFlow (mi qi Ib : ℝ) : ℝ := Ib * mi / qi
 
 /-- The beam power `P_beam = I_b V_b`. -/
@@ -111,7 +112,7 @@ noncomputable def ionThrust (mi qi Vb Ib γ : ℝ) : ℝ :=
   beamMassFlow mi qi Ib * ionExhaustSpeed mi qi Vb * γ
 
 /-- The thrust efficiency `η_T = T² / (2 ṁ P_in)` of the thrust `T` at the mass flow `ṁ` and the
-input power `P_in`. -/
+input power `P_in`; with the convention `x / 0 = 0` it is `0` when `ṁ P_in = 0`. -/
 noncomputable def thrustEfficiency (T mdot Pin : ℝ) : ℝ := T ^ 2 / (2 * mdot * Pin)
 
 /-! ## B. Exhaust speed from work and energy -/
@@ -189,8 +190,8 @@ lemma beamMassFlow_molar {M e NA z Ib : ℝ} (he : 0 < e) (hNA : 0 < NA) (hz : 0
   · field_simp
 
 /-- **Energy port.** For `m_i, q_i, V_b > 0` each ion leaves with the kinetic energy
-`m_i v_e² / 2 = q_i V_b`, and a beam of current `I_b` carries the kinetic power
-`ṁ v_e² / 2 = I_b V_b = P_beam`. -/
+`m_i v_e² / 2 = q_i V_b`, and `ṁ v_e² / 2 = I_b V_b = P_beam` for every current `I_b`: for
+`I_b ≥ 0` the kinetic power the beam carries. -/
 lemma beam_energy_port {mi qi Vb : ℝ} (hmi : 0 < mi) (hqi : 0 < qi) (hVb : 0 < Vb) (Ib : ℝ) :
     mi * ionExhaustSpeed mi qi Vb ^ 2 / 2 = qi * Vb ∧
       beamMassFlow mi qi Ib * ionExhaustSpeed mi qi Vb ^ 2 / 2 = beamPower Vb Ib := by
@@ -204,8 +205,8 @@ lemma beam_energy_port {mi qi Vb : ℝ} (hmi : 0 < mi) (hqi : 0 < qi) (hVb : 0 <
 /-- **Thrust port.** For `m_i, q_i, I_b > 0` the thrust `T = ṁ v_e γ_div` is the separate-flow
 thrust of `PropulsionPorts` of a pressure-matched rocket (no inlet stream, no capture area, exhaust
 pressure equal to the ambient `p`) whose exhaust carries `ṁ` at the axial velocity `v_e γ_div`,
-whatever the unused inlet data and the exhaust area. Its effective exhaust velocity is
-`v_e γ_div` and its specific impulse `v_e γ_div / g0`. -/
+whatever the unused inlet data and the exhaust area. Its effective exhaust velocity is `v_e γ_div`
+and its specific impulse `v_e γ_div / g0` (`0` at `g0 = 0`). -/
 lemma ionThrust_eq_separateFlowThrust {mi qi Ib : ℝ} (hmi : 0 < mi) (hqi : 0 < qi)
     (hIb : 0 < Ib) (Vb γ vIn pIn p AE g0 : ℝ) :
     ionThrust mi qi Vb Ib γ = separateFlowThrust 0 vIn pIn 0 (beamMassFlow mi qi Ib)

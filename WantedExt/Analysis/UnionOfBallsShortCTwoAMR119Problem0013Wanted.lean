@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# A union of balls in ℂ² that is not the ball, Δ × ℂ or ℂ² (SCV problem list, Problem 13)
+# A union of balls in ℂ² that is not the ball, Δ × ℂ or ℂ² (SCV problem list, Problem 4.3.2)
 
-Several Complex Variables Problem List, Problem 13: suppose `M` is a complex manifold of dimension 2
-such that for every compact `K ⊂ M` there is an open `U` with `K ⊂ U ⊂ M` and `U` biholomorphic to
-the unit ball. Does this imply that `M` is equivalent to the unit ball, `Δ × ℂ` or `ℂ²`? (This is
-false in `ℂ³`.)
+Several Complex Variables Problem List, Problem 4.3.2: suppose `M` is a complex manifold of
+dimension 2 such that for every compact `K ⊂ M` there is an open `U` with `K ⊂ U ⊂ M` and `U`
+biholomorphic to the unit ball. Does this imply that `M` is equivalent to the unit ball, `Δ × ℂ` or
+`ℂ²`? (This is false in `ℂ³`.)
 -/
 
 module
@@ -29,24 +29,24 @@ namespace MathlibExt.Analysis.UnionOfBallsShortCTwoAMR119Problem0013Wanted
 
 /-!
 Source: G. Buzzard, J. E. Fornæss, E. A. Gavosto, S. G. Krantz (eds.), The Several Complex Variables
-Problem List, arXiv:math/9509202 (1995), Problem 13. UnsolvedMath record UM-00800217
+Problem List, arXiv:math/9509202 (1995), Problem 4.3.2. UnsolvedMath record UM-00800217
 (`AMR-119-0013`), dataset ulamai/UnsolvedMath v1.8.0.
 
-Two-dimensional complex manifolds are types with a `ChartedSpace` structure modelled on `ℂ² =
-EuclideanSpace ℂ (Fin 2)` and `IsManifold 𝓘(ℂ, ℂ²) ∞` (holomorphic transition maps), Hausdorff and
-second countable as usual; the hypothesis already forces Hausdorff and connected, since any two
+Two-dimensional complex manifolds are types with a `ChartedSpace` structure modelled on
+`ℂ² = EuclideanSpace ℂ (Fin 2)` and `IsManifold 𝓘(ℂ, ℂ²) ∞` (holomorphic transition maps), Hausdorff
+and second countable as usual; the hypothesis already forces Hausdorff and connected, since any two
 points lie in one open subset biholomorphic to the ball. Biholomorphisms are `∞`-smooth complex
-diffeomorphisms, as in the Problem 14 module `LongCTwoNotBiholomorphicAMR119Problem0014Wanted`. The
-three models are open subsets of `ℂ²` with the induced structure: the Euclidean unit ball, `Δ × ℂ`
-as `{z : ‖z 0‖ < 1}`, and `ℂ²` itself. The question is read as 'is every such `M` biholomorphic to
-one of the three?'.
+diffeomorphisms, as in the Problem 4.3.3 module `LongCTwoNotBiholomorphicAMR119Problem0014Wanted`.
+The three models are open subsets of `ℂ²` with the induced structure: the Euclidean unit ball,
+`Δ × ℂ` as `{z : ‖z 0‖ < 1}`, and `ℂ²` itself. The question is read as 'is every such `M`
+biholomorphic to one of the three?'.
 -/
 
 open scoped Manifold ContDiff
 
 /-- The unit ball `{z : ‖z‖ < 1}` of `ℂ² = EuclideanSpace ℂ (Fin 2)` (Euclidean norm), as an open
 subset, with its induced complex manifold structure. -/
-def unitBall : TopologicalSpace.Opens (EuclideanSpace ℂ (Fin 2)) :=
+noncomputable def unitBall : TopologicalSpace.Opens (EuclideanSpace ℂ (Fin 2)) :=
   ⟨Metric.ball 0 1, Metric.isOpen_ball⟩
 
 /-- The product `Δ × ℂ` of the unit disc and the plane, realized as the open subset
@@ -54,16 +54,16 @@ def unitBall : TopologicalSpace.Opens (EuclideanSpace ℂ (Fin 2)) :=
 def discTimesPlane : TopologicalSpace.Opens (EuclideanSpace ℂ (Fin 2)) :=
   ⟨{z | ‖z 0‖ < 1}, isOpen_lt (by fun_prop) continuous_const⟩
 
-/-- The hypothesis of SCV Problem 13 on a two-dimensional complex manifold `M`: every compact subset
-`K ⊆ M` lies in an open subset `U ⊆ M` biholomorphic to the unit ball of `ℂ²`. -/
+/-- The hypothesis of SCV Problem 4.3.2 on a two-dimensional complex manifold `M`: every compact
+subset `K ⊆ M` lies in an open subset `U ⊆ M` biholomorphic to the unit ball of `ℂ²`. -/
 def CompactsInBalls (M : Type) [TopologicalSpace M] [ChartedSpace (EuclideanSpace ℂ (Fin 2)) M] :
     Prop :=
   ∀ K : Set M, IsCompact K → ∃ U : TopologicalSpace.Opens M, K ⊆ U ∧
     Nonempty (U ≃ₘ^∞⟮𝓘(ℂ, EuclideanSpace ℂ (Fin 2)), 𝓘(ℂ, EuclideanSpace ℂ (Fin 2))⟯ unitBall)
 
-/-- SCV Problem List, Problem 13: every two-dimensional complex manifold in which every compact set
-lies in an open subset biholomorphic to the unit ball is biholomorphic to the ball, to `Δ × ℂ` or to
-`ℂ²`. -/
+/-- SCV Problem List, Problem 4.3.2: every two-dimensional complex manifold in which every compact
+set lies in an open subset biholomorphic to the unit ball is biholomorphic to the ball, to `Δ × ℂ`
+or to `ℂ²`. -/
 def unionOfBallsTrichotomy : Prop :=
   ∀ (M : Type) [TopologicalSpace M] [T2Space M] [SecondCountableTopology M]
     [ChartedSpace (EuclideanSpace ℂ (Fin 2)) M] [IsManifold 𝓘(ℂ, EuclideanSpace ℂ (Fin 2)) ∞ M],
@@ -81,7 +81,7 @@ subset lies in one of them; its Kobayashi metric vanishes identically, unlike th
 models ball and Δ × ℂ, and it carries a nonconstant bounded-above plurisubharmonic function, so it
 is not ℂ². Fornæss presents it as the answer to the remaining question whether there was any other
 possibility. Source: G. Buzzard, J. E. Fornæss, E. A. Gavosto, S. G. Krantz (eds.), The Several
-Complex Variables Problem List, arXiv:math/9509202 (1995), Problem 13; resolution: J. E. Fornæss,
+Complex Variables Problem List, arXiv:math/9509202 (1995), Problem 4.3.2; resolution: J. E. Fornæss,
 Short ℂ^k, in Complex Analysis in Several Variables, Memorial Conference of Kiyoshi Oka's Centennial
 Birthday, Adv. Stud. Pure Math. 42 (2004), 95-108, §1: after Fornæss-Sibony's theorem (an increasing
 union of balls in ℂ² whose Kobayashi metric does not vanish identically is biholomorphic to the ball

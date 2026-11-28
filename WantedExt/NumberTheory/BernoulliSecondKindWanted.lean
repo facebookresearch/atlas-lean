@@ -42,7 +42,13 @@ public import Mathlib.Order.Interval.Finset.Nat
 public import Mathlib.RingTheory.Polynomial.Pochhammer
 public import Mathlib.RingTheory.PowerSeries.Log
 public import MathlibExt.Combinatorics.Enumerative.SignedStirlingFirst
-public import MathlibExt.NumberTheory.Bernoulli.BernoulliSecondKind
+public import MathlibExt.NumberTheory.Bernoulli.BernoulliPolynomialFallingFactorial
+public import MathlibExt.NumberTheory.Bernoulli.BernoulliSecondKindStirling
+public import MathlibExt.NumberTheory.Bernoulli.BernoulliStirlingSum
+public import MathlibExt.NumberTheory.Bernoulli.StirlingInversion
+public import MathlibExt.NumberTheory.Bernoulli.WeightedStirlingSum
+public import MathlibExt.NumberTheory.BernoulliSecondKindBernoulliSecondEqNegSum
+public import MathlibExt.NumberTheory.Bernoulli.BernoulliSecondKindStirlingSum
 
 set_option autoImplicit false
 
@@ -50,55 +56,12 @@ set_option autoImplicit false
 
 namespace MathlibExt.NumberTheory.BernoulliSecondKindWanted
 
-/-- **Theorem 1**: `Bₙ(X) = Bₙ + ∑_{k=1}^n (n/k)
-S(n-1,k-1) X^{\underline k}` as polynomials.
-
-Source: Bakir Farhi, "Formulas Involving Bernoulli and
-Stirling Numbers of Both Kinds", Theorem 1. -/
-theorem_wanted bernoulli_poly_eq (n : ℕ) :
-    Polynomial.bernoulli n =
-      Polynomial.C (bernoulli n) +
-        ∑ k ∈ Finset.Icc 1 n, Polynomial.C
-          ((n : ℚ) / k * (Nat.stirlingSecond (n - 1) (k - 1) : ℚ)) *
-          descPochhammer ℚ k
-
-/-- **Corollary 2**: `Bₙ = -∑_{k=1}^n (n/k) S(n-1,k-1)
-Bₖ^*` for `n ≥ 1`.
-
-Source: Bakir Farhi, "Formulas Involving Bernoulli and
-Stirling Numbers of Both Kinds", Corollary 2. -/
-theorem_wanted bernoulli_eq_neg_sum (n : ℕ) (hn : 1 ≤ n) :
-    bernoulli n =
-      -∑ k ∈ Finset.Icc 1 n, (n : ℚ) / k *
-        (Nat.stirlingSecond (n - 1) (k - 1) : ℚ) *
-        MetaMathlibExt.bernoulliSecond k
-
-/-- **Lemma 3** (Stirling inversion): for rational
-sequences `u, v`, `u n = ∑_{k=0}^n s(n,k) v k` for all `n`
-if and only if `v n = ∑_{k=0}^n S(n,k) u k` for all `n`
-(paper: complex sequences).
-
-Source: Bakir Farhi, "Formulas Involving Bernoulli and
-Stirling Numbers of Both Kinds", Lemma 3. -/
-theorem_wanted stirling_inversion_iff (u v : ℕ → ℚ) :
-    (∀ n, u n = ∑ k ∈ Finset.range (n + 1),
-      (MetaMathlibExt.signedStirlingFirst n k : ℚ) * v k) ↔
-    (∀ n, v n = ∑ k ∈ Finset.range (n + 1),
-      (Nat.stirlingSecond n k : ℚ) * u k)
-
-/-- **Theorem 4**: `Bₙ^* = -∑_{k=1}^n (n/k) s(n-1,k-1)
-Bₖ` for `n ≥ 1`.
-
-Source: Bakir Farhi, "Formulas Involving Bernoulli and
-Stirling Numbers of Both Kinds", Theorem 4. -/
-theorem_wanted bernoulliSecond_eq_neg_sum (n : ℕ)
-    (hn : 1 ≤ n) :
-    MetaMathlibExt.bernoulliSecond n =
-      -∑ k ∈ Finset.Icc 1 n, (n : ℚ) / k *
-        (MetaMathlibExt.signedStirlingFirst (n - 1) (k - 1) : ℚ) * bernoulli k
-
-/-- **Theorem 5**: `X^{\underline n} = Bₙ^* +
-∑_{k=1}^n (n/k) s(n-1,k-1) Bₖ(X)` as polynomials.
+/-- **Falling factorials in the Bernoulli polynomial basis.** Let $B_m^*$ be the Bernoulli
+numbers of the second kind, $B_k(X)$ the Bernoulli polynomials over $\mathbb{Q}$ (so that
+$B_1(X) = X - 1/2$), $s(m, j)$ the signed Stirling numbers of the first kind and
+$X^{\underline{n}} = X(X-1)\cdots(X-n+1)$ the falling factorial. For every natural number
+$n$, in $\mathbb{Q}[X]$,
+$$X^{\underline{n}} = B_n^* + \sum_{k=1}^{n} \frac{n}{k} \, s(n-1, k-1) \, B_k(X).$$
 
 Source: Bakir Farhi, "Formulas Involving Bernoulli and
 Stirling Numbers of Both Kinds", Theorem 5. -/
@@ -109,8 +72,13 @@ theorem_wanted descPochhammer_eq (n : ℕ) :
           ((n : ℚ) / k * (MetaMathlibExt.signedStirlingFirst (n - 1) (k - 1) : ℚ)) *
           Polynomial.bernoulli k
 
-/-- **Corollary 7**: `∑_{i=k}^n S(n-1,i-1) s(i,k)/i =
-(1/n) C(n,k) B_{n-k}` for `1 ≤ k ≤ n`.
+/-- **Shifted Stirling convolution formula for Bernoulli numbers.** For natural numbers $k$ and $n$
+with $1 \le k \le n$, write $S(m,j)$ for the Stirling numbers of the second kind, $s(m,j)$ for
+the signed Stirling numbers of the first kind, and $B_m$ for the Bernoulli numbers with
+$B_1 = -\tfrac12$. Then, in $\mathbb{Q}$,
+$$
+\sum_{i=k}^{n} \frac{S(n-1,i-1)\, s(i,k)}{i} = \frac{1}{n} \binom{n}{k} B_{n-k}.
+$$
 
 Source: Bakir Farhi, "Formulas Involving Bernoulli and
 Stirling Numbers of Both Kinds", Corollary 7. -/
@@ -121,19 +89,14 @@ theorem_wanted sum_stirlingSecond_signed_div (n k : ℕ)
           (MetaMathlibExt.signedStirlingFirst i k : ℚ) / i =
       (1 / (n : ℚ)) * (Nat.choose n k : ℚ) * bernoulli (n - k)
 
-/-- **Corollary 9**: `Bₙ = ∑_{i=0}^n (-1)^i (i!/(i+1))
-S(n,i)`.
-
-Source: Bakir Farhi, "Formulas Involving Bernoulli and
-Stirling Numbers of Both Kinds", Corollary 9. -/
-theorem_wanted bernoulli_eq_sum_stirlingSecond (n : ℕ) :
-    bernoulli n =
-      ∑ i ∈ Finset.range (n + 1), (-1 : ℚ) ^ i *
-        ((i.factorial : ℚ) / (i + 1)) *
-        (Nat.stirlingSecond n i : ℚ)
-
-/-- **Corollary 10**: `∑_{i=k}^n S(n,i) s(i,k)/i = (1/n)
-C(n,k) B_{n-k} + δ_{n-1,k}` for `1 ≤ k ≤ n`.
+/-- **Unshifted Stirling convolution formula for Bernoulli numbers.** For natural numbers $k$
+and $n$ with $1 \le k \le n$, write $S(m,j)$ for the Stirling numbers of the second kind,
+$s(m,j)$ for the signed Stirling numbers of the first kind, and $B_m$ for the Bernoulli numbers
+with $B_1 = -\tfrac12$. Then, in $\mathbb{Q}$,
+$$
+\sum_{i=k}^{n} \frac{S(n,i)\, s(i,k)}{i} = \frac{1}{n} \binom{n}{k} B_{n-k} + \delta_{n-1,k},
+$$
+where $\delta_{n-1,k}$ is $1$ if $k = n - 1$ and $0$ otherwise.
 
 Source: Bakir Farhi, "Formulas Involving Bernoulli and
 Stirling Numbers of Both Kinds", Corollary 10. -/
@@ -145,17 +108,11 @@ theorem_wanted sum_stirlingSecond_signed_div_delta (n k : ℕ)
       (1 / (n : ℚ)) * (Nat.choose n k : ℚ) * bernoulli (n - k) +
         (if n - 1 = k then 1 else 0)
 
-/-- **Proposition 11**: `Bₙ^* = ∑_{i=0}^n s(n,i)/(i+1)`.
-
-Source: Bakir Farhi, "Formulas Involving Bernoulli and
-Stirling Numbers of Both Kinds", Proposition 11. -/
-theorem_wanted bernoulliSecond_eq_sum (n : ℕ) :
-    MetaMathlibExt.bernoulliSecond n =
-      ∑ i ∈ Finset.range (n + 1),
-        (MetaMathlibExt.signedStirlingFirst n i : ℚ) / (i + 1)
-
-/-- **Theorem 13**: `∑_{i=k}^n s(n-1,i-1) S(i,k)/i =
-(1/n) C(n,k) B_{n-k}^*` for `1 ≤ k ≤ n`.
+/-- **Shifted Stirling convolution as a Bernoulli number of the second kind.** Let $s(m, j)$ be
+the signed Stirling numbers of the first kind, $S(m, j)$ the Stirling numbers of the second kind
+and $B_m^*$ the Bernoulli numbers of the second kind. For all natural numbers $n$ and $k$ with
+$1 \le k \le n$,
+$$\sum_{i=k}^{n} \frac{s(n-1, i-1) \, S(i, k)}{i} = \frac{1}{n} \binom{n}{k} \, B_{n-k}^*.$$
 
 Source: Bakir Farhi, "Formulas Involving Bernoulli and
 Stirling Numbers of Both Kinds", Theorem 13. -/
@@ -167,9 +124,12 @@ theorem_wanted sum_signed_stirlingSecond_div (n k : ℕ)
       (1 / (n : ℚ)) * (Nat.choose n k : ℚ) *
         MetaMathlibExt.bernoulliSecond (n - k)
 
-/-- **Corollary 15**: `∑_{i=k}^n s(n,i) S(i,k)/i =
-(-1)^{n-k} ((n-1)!/k!) ∑_{ℓ=0}^{n-k} ((-1)^ℓ/ℓ!) B_ℓ^*`
-for `1 ≤ k ≤ n`.
+/-- **Stirling convolution as a sum of Bernoulli numbers of the second kind.** Let $s(m, j)$ be
+the signed Stirling numbers of the first kind, $S(m, j)$ the Stirling numbers of the second kind
+and $B_m^*$ the Bernoulli numbers of the second kind. For all natural numbers $n$ and $k$ with
+$1 \le k \le n$,
+$$\sum_{i=k}^{n} \frac{s(n, i) \, S(i, k)}{i} =
+(-1)^{n-k} \, \frac{(n-1)!}{k!} \sum_{l=0}^{n-k} \frac{(-1)^l}{l!} \, B_l^*.$$
 
 Source: Bakir Farhi, "Formulas Involving Bernoulli and
 Stirling Numbers of Both Kinds", Corollary 15. -/
@@ -183,25 +143,13 @@ theorem_wanted sum_signed_stirlingSecond_div_eq (n k : ℕ)
         ∑ l ∈ Finset.range (n - k + 1),
           ((-1 : ℚ) ^ l / l.factorial) * MetaMathlibExt.bernoulliSecond l
 
-/-- **Theorem 17**: for `r ≥ 1`, `∑_{k=0}^n (-1)^k
-(k!/(k+r)) S(n,k) = (1/(r-1)!) ∑_{k=0}^{r-1}
-|s(r,k+1)| B_{n+k}`, with `|s|` the unsigned Stirling
-numbers of the first kind.
-
-Source: Bakir Farhi, "Formulas Involving Bernoulli and
-Stirling Numbers of Both Kinds", Theorem 17. -/
-theorem_wanted sum_stirlingSecond_div_add (r n : ℕ)
-    (hr : 1 ≤ r) :
-    ∑ k ∈ Finset.range (n + 1), (-1 : ℚ) ^ k *
-        ((k.factorial : ℚ) / (k + r)) *
-        (Nat.stirlingSecond n k : ℚ) =
-      (1 / ((r - 1).factorial : ℚ)) *
-        ∑ k ∈ Finset.range r,
-          (Nat.stirlingFirst r (k + 1) : ℚ) * bernoulli (n + k)
-
-/-- **Theorem 19**: for `r ≥ 1`, `∑_{k=0}^n s(n,k)/(k+r)
-= ∑_{k=0}^{r-1} λ_{r,n,k} B_{n+k}^*` where
-`λ_{r,n,k} = ∑_{ℓ=0}^{r-1-k} C(r-1,ℓ) S(r-1-ℓ,k) n^ℓ`.
+/-- **Sums of signed Stirling numbers of the first kind with shifted reciprocal weights.** Let
+$s(m, j)$ be the signed Stirling numbers of the first kind, $S(m, j)$ the Stirling numbers of
+the second kind and $B_m^*$ the Bernoulli numbers of the second kind. Let $r \ge 1$ and $n$ be
+natural numbers, and for $0 \le k \le r - 1$ set
+$\lambda_{r,n,k} = \sum_{l=0}^{r-1-k} \binom{r-1}{l} \, S(r-1-l, k) \, n^l$ (with $0^0 = 1$).
+Then
+$$\sum_{k=0}^{n} \frac{s(n, k)}{k + r} = \sum_{k=0}^{r-1} \lambda_{r,n,k} \, B_{n+k}^*.$$
 
 Source: Bakir Farhi, "Formulas Involving Bernoulli and
 Stirling Numbers of Both Kinds", Theorem 19. -/

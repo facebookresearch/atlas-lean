@@ -251,8 +251,10 @@ theorem IsMoritaPadicGamma.eq_moritaGamma {Γ : C(ℤ_[p], ℤ_[p])}
   · simpa using hΓ.zero_eq
   · exact hΓ.natCast_eq hn
 
-/-- For every prime `p` (including `p = 2`), Morita's finite gamma values have a unique
-continuous, unit-valued extension to `ℤ_[p]`.
+/-- **Existence and uniqueness of Morita's p-adic gamma function.** For every prime $p$,
+including $p = 2$, there is exactly one continuous function $\Gamma : \mathbb{Z}_p \to \mathbb{Z}_p$
+with $\Gamma(0) = 1$ and $\Gamma(n) = (-1)^n \prod_{0 < j < n,\ p \nmid j} j$ for every
+positive integer $n$, such that $\Gamma(x)$ is a unit for every $x \in \mathbb{Z}_p$.
 
 Source: Y. Morita, "A p-adic analogue of the Γ-function", J. Fac. Sci. Univ. Tokyo Sect. IA
 Math. 22 (1975), 255–266. The definition and extension theorem are reproduced in

@@ -20,7 +20,7 @@ public import Mathlib.Topology.Order.Real
 # Graphons, the cut distance and convergent graph sequences
 
 Following the convention of the repository's finitely forcible graphons
-(`IsGraphon` in `WantedExt.Combinatorics.FinitelyForcibleOptimumOWR4212Problem011Wanted`), a graphon
+(`IsGraphon` in `MathlibExt.Combinatorics.FinitelyForcibleGraphons`), a graphon
 is represented by a function `W : ℝ → ℝ → ℝ` of which only the values on `[0, 1]²` matter.
 
 * `graphonHomDensity F W` is `t(F, W) = ∫_{[0,1]^k} ∏_{ij ∈ E(F)} W(xᵢ, xⱼ) dx`
@@ -32,8 +32,10 @@ is represented by a function `W : ℝ → ℝ → ℝ` of which only the values 
 * `IsConvergentGraphSequence G`: `t(F, Gₙ)` converges for every simple graph `F` (Lovász–Szegedy,
   §2.2; BCLSV, Definition 2.1).
 
-The main theorems of the theory (limit theorem, compactness, uniqueness) are recorded as wanted
-results in `WantedExt.Combinatorics.SimpleGraph.GraphLimitsWanted`.
+The Lovász–Szegedy limit theorem is proved in
+`MathlibExt.Combinatorics.SimpleGraph.GraphLimits.LimitTheorem`; the other main theorems of the
+theory (compactness, uniqueness) are recorded as wanted results in
+`WantedExt.Combinatorics.SimpleGraph.GraphLimitsWanted`.
 -/
 
 @[expose] public section

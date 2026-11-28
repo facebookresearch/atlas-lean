@@ -129,11 +129,13 @@ variable {ι : Type*} [Fintype ι]
 /-! ## A. Resultant, moment and wrench of a finite load system -/
 
 /-- Moment about the reference point `O` of the forces `F i` applied at the points `r i` and the
-free couples `C i`: `M_O = ∑ i, ((r i - O) ⨯₃ F i + C i)`. -/
+free couples `C i`: `M_O = ∑ i, ((r i - O) ⨯₃ F i + C i)`. All vectors are components in one
+inertial frame. -/
 noncomputable def momentAbout (r F C : ι → Fin 3 → ℝ) (O : Fin 3 → ℝ) : Fin 3 → ℝ :=
   ∑ i, ((r i - O) ⨯₃ F i + C i)
 
-/-- A three-dimensional wrench: a resultant force and a moment about a reference point. -/
+/-- A three-dimensional wrench: a resultant force and a moment about a reference point. The
+reference point is not part of the pair. -/
 structure Wrench where
   /-- The resultant force. -/
   force : Fin 3 → ℝ
@@ -220,7 +222,8 @@ lemma exists_momentAbout_ne_of_resultantForce_ne_zero {r F C : ι → Fin 3 → 
 
 /-- Physical dimensions are retained: with lengths scaled by `ℓ`, forces by `f`, and couples by
 `ℓ * f`, the resultant scales by `f` and the moment about the scaled reference point by
-`ℓ * f`. -/
+`ℓ * f`. The identity holds for all real `ℓ` and `f`; read as a change of units, `ℓ > 0` and
+`f > 0` are the length and force factors. -/
 lemma wrenchAbout_smul (ℓ f : ℝ) (r F C : ι → Fin 3 → ℝ) (O : Fin 3 → ℝ) :
     wrenchAbout (fun i => ℓ • r i) (fun i => f • F i) (fun i => (ℓ * f) • C i) (ℓ • O) =
       ⟨f • resultantForce F, (ℓ * f) • momentAbout r F C O⟩ := by
@@ -262,8 +265,9 @@ section TrussSolvability
 
 open Matrix Mechanics.TrussCompatibility Mechanics.TrussEquilibrium
 
-/-- **Square and injective.** If `m + r = 2 j` and the equilibrium matrix has injective `mulVec`,
-every joint load `f` has exactly one balancing pair of member forces and reactions. -/
+/-- **Square and injective.** If `Fintype.card M + Fintype.card R = 2 * Fintype.card J` (member
+forces plus reaction components equal twice the joints) and the equilibrium matrix has injective
+`mulVec`, every joint load `f` has exactly one balancing pair of member forces and reactions. -/
 lemma jointBalance_existsUnique_of_injective {J M R : Type*} [Fintype J] [DecidableEq J]
     [Fintype M] [Fintype R] (r : J → (Fin 2 → ℝ)) (a b : M → J) (sj : R → J)
     (sd : R → (Fin 2 → ℝ)) (hsq : Fintype.card M + Fintype.card R = 2 * Fintype.card J)

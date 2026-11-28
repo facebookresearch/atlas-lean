@@ -1,8 +1,7 @@
 # Quantile function and inverse transform sampling
 
-- [Quantile function of a real measure](cdf-quantile.md)
-- [The cdf at the quantile is at least the level](cdf-quantile-mem.md)
-- [The quantile function as a generalized inverse of the cdf](cdf-quantile-le-iff.md)
-- [Monotonicity of the quantile function](cdf-quantile-mono-on.md)
-- [Measurability of the quantile function](measurable-cdf-quantile.md)
-- [Inverse transform sampling](map-cdf-quantile-restrict-icc.md)
+- [Quantile function](quantile-function/README.md)
+- [Inverse transform sampling](inverse-transform-sampling/README.md)
+- [The distribution function at the quantile equals the level at continuity points](cdf-cdf-quantile-eq-of-continuous-at.md)
+- [Quantile inversion under a continuous cdf](cdf-cdf-quantile-eq-of-continuous.md)
+- [The quantile inverts a strictly increasing distribution function](cdf-quantile-cdf-of-strict-mono.md)

@@ -28,13 +28,21 @@ the denotational semantics agrees with the big-step operational semantics.
 
 namespace Cslib.IMP
 
-/-- One unfolding of a while loop with the given guard and body denotation. -/
+/-- **One-step unfolding functional of a while loop.** Given a Boolean expression $b$ (the guard)
+and a binary relation $B$ on states (the body relation), the functional sends a relation $R$ on
+states to the relation that relates $s$ to $s'$ exactly when either $b$ evaluates to false in
+$s$ and $s' = s$, or $b$ evaluates to true in $s$ and there is a state $m$ with $B$ relating
+$s$ to $m$ and $R$ relating $m$ to $s'$. -/
 def whileFun (guard : BExp) (body : State → State → Prop)
     (R : State → State → Prop) : State → State → Prop :=
   fun s s' => (guard.eval s = false ∧ s' = s) ∨
     (guard.eval s = true ∧ ∃ m, body s m ∧ R m s')
 
-/-- The while-loop functional is monotone in the candidate loop relation. -/
+/-- **Monotonicity of the while-loop unfolding functional.** Let $b$ be a Boolean expression, $B$
+a binary relation on states, and $\Phi$ the one-step unfolding functional of a while loop with
+guard $b$ and body relation $B$. Then $\Phi$ is monotone for inclusion of relations: for all
+relations $R_1$ and $R_2$ on states with $R_1 \subseteq R_2$, we have
+$\Phi(R_1) \subseteq \Phi(R_2)$. -/
 theorem whileFun_mono {guard : BExp} {body : State → State → Prop} :
     Monotone (whileFun guard body) := by
   intro R₁ R₂ hle s s' h
@@ -42,7 +50,11 @@ theorem whileFun_mono {guard : BExp} {body : State → State → Prop} :
   · exact Or.inl ⟨hfalse, rfl⟩
   · exact Or.inr ⟨htrue, m, hbody, hle m s' hloop⟩
 
-/-- The while-loop functional packaged as a monotone operator. -/
+/-- **The while-loop functional as a monotone map.** For a boolean guard $b$ and a relation $B$
+between states (the body denotation), this is the map $\Phi$ on relations between states, ordered
+by inclusion, where $\Phi(R)$ relates $s$ to $s'$ exactly when either $b$ is false in $s$ and
+$s' = s$, or $b$ is true in $s$ and there is a state $m$ with $B(s, m)$ and $R(m, s')$. The map
+$\Phi$ is monotone: $R_1 \subseteq R_2$ implies $\Phi(R_1) \subseteq \Phi(R_2)$. -/
 def whileOrderHom (guard : BExp) (body : State → State → Prop) :
     (State → State → Prop) →o (State → State → Prop) :=
   ⟨whileFun guard body, whileFun_mono⟩
@@ -52,7 +64,17 @@ theorem whileOrderHom_apply (guard : BExp) (body : State → State → Prop)
     (R : State → State → Prop) :
     whileOrderHom guard body R = whileFun guard body R := rfl
 
-/-- The relational denotation of an IMP command. -/
+/-- **Relational denotational semantics of IMP.** The denotation of an IMP command is a binary
+relation on states, defined by recursion on the command. The command $\mathtt{skip}$ relates
+$s$ to $s'$ iff $s' = s$. For a variable identifier $x$ and an arithmetic expression $a$, the
+assignment $x := a$ relates $s$ to $s'$ iff $s'$ is $s$ with $x$ updated to the value of $a$
+in $s$. The sequence $c_1; c_2$ relates $s$ to $s'$ iff there is a state $m$ such that $c_1$
+relates $s$ to $m$ and $c_2$ relates $m$ to $s'$. For a Boolean expression $b$, the conditional
+$\mathtt{if}\ b\ \mathtt{then}\ t\ \mathtt{else}\ e$ relates $s$ to $s'$ iff either $b$
+evaluates to true in $s$ and $t$ relates $s$ to $s'$, or $b$ evaluates to false in $s$ and $e$
+relates $s$ to $s'$. The denotation of $\mathtt{while}\ b\ \mathtt{do}\ c$ is the least fixed
+point, for inclusion of relations, of the one-step unfolding functional of a while loop with
+guard $b$ and body relation the denotation of $c$. -/
 def Denote : Cmd → State → State → Prop
   | .skip => fun s s' => s' = s
   | .assign n a => fun s s' => s' = Function.update s n (a.eval s)
@@ -80,13 +102,19 @@ theorem ite_iff {b : BExp} {t e : Cmd} {s s' : State} :
       (b.eval s = true ∧ Denote t s s') ∨
         (b.eval s = false ∧ Denote e s s') := Iff.rfl
 
-/-- The denotation of a while loop is a fixed point of the loop functional. -/
+/-- **The while denotation is a fixed point.** Let $b$ be a Boolean expression and $c$ an IMP
+command, let $W$ be the relational denotation of $\mathtt{while}\ b\ \mathtt{do}\ c$, and let
+$\Phi$ be the one-step unfolding functional of a while loop with guard $b$ and body relation the
+denotation of $c$. Then $W = \Phi(W)$. -/
 theorem while_eq {b : BExp} {c : Cmd} :
     Denote (.while b c) = whileFun b (Denote c) (Denote (.while b c)) :=
   (OrderHom.map_lfp (whileOrderHom b (Denote c))).symm
 
-/-- The loop unfolding equation. Not a simp lemma: the right-hand side
-mentions the loop denotation again, so simp would unfold indefinitely. -/
+/-- **Unfolding equation for the while denotation.** For every Boolean expression $b$, IMP command
+$c$ and states $s$ and $s'$, the relational denotation of $\mathtt{while}\ b\ \mathtt{do}\ c$
+relates $s$ to $s'$ if and only if either $b$ evaluates to false in $s$ and $s' = s$, or $b$
+evaluates to true in $s$ and there is a state $m$ such that the denotation of $c$ relates $s$ to
+$m$ and the denotation of the loop relates $m$ to $s'$. -/
 theorem while_iff {b : BExp} {c : Cmd} {s s' : State} :
     Denote (.while b c) s s' ↔
       (b.eval s = false ∧ s' = s) ∨
@@ -94,14 +122,19 @@ theorem while_iff {b : BExp} {c : Cmd} {s s' : State} :
   conv_lhs => rw [while_eq]
   exact Iff.rfl
 
-/-- Park induction: any relation closed under one loop unfolding contains
-the loop denotation. -/
+/-- **Park induction for while loops.** Let $b$ be a Boolean expression, $c$ an IMP command and
+$P$ a binary relation on states, and let $\Phi$ be the one-step unfolding functional of a while
+loop with guard $b$ and body relation the denotation of $c$. If $\Phi(P) \subseteq P$, then
+for all states $s$ and $s'$ related by the relational denotation of
+$\mathtt{while}\ b\ \mathtt{do}\ c$, $P$ relates $s$ to $s'$. -/
 theorem while_ind {b : BExp} {c : Cmd} {P : State → State → Prop}
     (hP : ∀ s s', whileFun b (Denote c) P s s' → P s s')
     {s s' : State} (h : Denote (.while b c) s s') : P s s' :=
   OrderHom.lfp_le (whileOrderHom b (Denote c)) (fun s s' => hP s s') s s' h
 
-/-- Every denotational execution is a big-step execution. -/
+/-- **Denotational executions are big-step executions.** For every IMP command $c$ and all
+states $s$ and $s'$, if the relational denotation of $c$ relates $s$ to $s'$, then executing $c$
+from $s$ terminates in $s'$ according to the big-step semantics. -/
 theorem bigStep_of_denote {c : Cmd} {s s' : State} (h : Denote c s s') :
     BigStep c s s' := by
   induction c generalizing s s' with
@@ -129,7 +162,9 @@ theorem bigStep_of_denote {c : Cmd} {s s' : State} (h : Denote c s s') :
       · exact .whileFalse hfalse
       · exact .whileTrue htrue (ih hbody) hloop
 
-/-- Every big-step execution is a denotational execution. -/
+/-- **Big-step executions are denotational executions.** For every IMP command $c$ and all
+states $s$ and $s'$, if executing $c$ from $s$ terminates in $s'$ according to the big-step
+semantics, then the relational denotation of $c$ relates $s$ to $s'$. -/
 theorem denote_of_bigStep {c : Cmd} {s s' : State} (h : BigStep c s s') :
     Denote c s s' := by
   induction h with
@@ -153,12 +188,18 @@ theorem denote_of_bigStep {c : Cmd} {s s' : State} (h : BigStep c s s') :
       rw [while_iff]
       exact Or.inr ⟨hg, _, ihb, ihl⟩
 
-/-- The denotational and big-step semantics agree. -/
+/-- **Agreement of the denotational and big-step semantics of IMP.** For every IMP command $c$
+and all states $s$ and $s'$, the relational denotation of $c$ relates $s$ to $s'$ if and only
+if executing $c$ from $s$ terminates in $s'$ according to the big-step semantics. -/
 theorem iff_bigStep {c : Cmd} {s s' : State} :
     Denote c s s' ↔ BigStep c s s' :=
   ⟨bigStep_of_denote, denote_of_bigStep⟩
 
-/-- Denotations are deterministic, by agreement with the big-step semantics. -/
+/-- **The denotational semantics of IMP is deterministic.** For every IMP command $c$ and all
+states $s$, $s_1$ and $s_2$, if the relational denotation of $c$ relates $s$ to $s_1$ and $s$
+to $s_2$, then $s_1 = s_2$.
+
+The proof goes through the agreement with the deterministic big-step semantics. -/
 theorem deterministic {c : Cmd} {s s₁ s₂ : State}
     (h₁ : Denote c s s₁) (h₂ : Denote c s s₂) : s₁ = s₂ :=
   BigStep.deterministic (iff_bigStep.mp h₁) (iff_bigStep.mp h₂)

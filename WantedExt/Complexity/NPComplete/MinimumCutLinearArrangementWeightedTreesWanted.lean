@@ -18,7 +18,7 @@ NP-Completeness*, W. H. Freeman (1979), problem [GT44] MINIMUM CUT LINEAR ARRANG
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import CSLibExt.Computability.Complexity.Karp.Color
@@ -73,8 +73,10 @@ def WellFormed (i : MinimumCutLinearArrangementWeightedTreesInstance) : Prop :=
     (Graph i).IsTree ∧ (∀ e ∈ i.2.1, 0 < e.2) ∧ 0 < i.2.2
 
 /-- A one-to-one numbering of the vertices, given by the positions in a permutation `perm` of
-`0, …, n - 1`, such that for every cut position `j` with `j + 1 < n` the edges with one endpoint
-at a position `≤ j` and the other at a position `> j` have total weight at most `K`. -/
+`0, …, n - 1`, such that for every cut position `j` with `j + 1 < n` the entries of the edge
+list with one endpoint at a position `≤ j` and the other at a position `> j` have total weight
+at most `K`. Every such entry is summed, so on a list that is not simple an edge can count more
+than once. -/
 def MinimumCutLinearArrangementWeightedTreesFeasible
     (i : MinimumCutLinearArrangementWeightedTreesInstance) : Prop :=
   ∃ perm : List ℕ, perm.Perm (List.range i.1) ∧

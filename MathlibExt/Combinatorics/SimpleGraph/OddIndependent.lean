@@ -27,26 +27,32 @@ namespace SimpleGraph
 
 variable {V : Type*}
 
-/-- Odd independent set: independent `S` such that every `v ∉ S` meets `S`
-in an empty or finite odd-sized open neighbourhood. -/
+/-- **Odd independent set.** A set $S$ of vertices of a simple graph $G$ is odd independent if
+$S$ is an independent set of $G$ and, for every vertex $v \notin S$, the set of neighbours of $v$
+that lie in $S$ is finite and is either empty or has an odd number of elements. -/
 def IsOddIndependent (G : SimpleGraph V) (S : Set V) : Prop :=
   G.IsIndepSet S ∧
     ∀ v : V, v ∉ S →
       (G.neighborSet v ∩ S).Finite ∧
         ((G.neighborSet v ∩ S) = ∅ ∨ Odd (G.neighborSet v ∩ S).ncard)
 
-/-- Independence projection of an odd independent set. -/
+/-- **Odd independent sets are independent.** If $S$ is an odd independent set of a simple graph
+$G$, then $S$ is an independent set of $G$: no two distinct vertices of $S$ are adjacent. -/
 theorem IsOddIndependent.isIndepSet {G : SimpleGraph V} {S : Set V}
     (h : G.IsOddIndependent S) : G.IsIndepSet S :=
   h.1
 
-/-- Finiteness of each outside-neighbourhood intersection. -/
+/-- **Outside vertices have finitely many neighbours in an odd independent set.** Let $S$ be an
+odd independent set of a simple graph $G$ and let $v$ be a vertex with $v \notin S$. Then only
+finitely many neighbours of $v$ lie in $S$. -/
 theorem IsOddIndependent.finite_inter {G : SimpleGraph V} {S : Set V}
     (h : G.IsOddIndependent S) (v : V) (hv : v ∉ S) :
     (G.neighborSet v ∩ S).Finite :=
   (h.2 v hv).1
 
-/-- Empty-or-odd alternative for each outside intersection. -/
+/-- **Outside vertices see an empty or odd part of an odd independent set.** Let $S$ be an odd
+independent set of a simple graph $G$ and let $v$ be a vertex with $v \notin S$. Then the set of
+neighbours of $v$ that lie in $S$ is either empty or has an odd number of elements. -/
 theorem IsOddIndependent.empty_or_odd {G : SimpleGraph V} {S : Set V}
     (h : G.IsOddIndependent S) (v : V) (hv : v ∉ S) :
     (G.neighborSet v ∩ S) = ∅ ∨ Odd (G.neighborSet v ∩ S).ncard :=
@@ -59,7 +65,8 @@ theorem isOddIndependent_empty {G : SimpleGraph V} :
   rw [Set.inter_empty]
   exact ⟨Set.finite_empty, Or.inl rfl⟩
 
-/-- Every singleton is odd independent in any simple graph. -/
+/-- **Singletons are odd independent.** For every vertex $a$ of a simple graph $G$, the singleton
+$\{a\}$ is odd independent in $G$. -/
 theorem isOddIndependent_singleton {G : SimpleGraph V} (a : V) :
     G.IsOddIndependent {a} := by
   constructor

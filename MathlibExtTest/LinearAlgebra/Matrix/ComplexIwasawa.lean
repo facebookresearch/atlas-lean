@@ -15,7 +15,7 @@ public import MathlibExt.LinearAlgebra.Matrix.ComplexIwasawa
 open AutomorphicForm.ComplexIwasawa
 
 /-- Source consumer with the original binders. -/
-theorem exactSource {g : Matrix (Fin 2) (Fin 2) ℂ} (hg : g.det ≠ 0) (z : ℂ) :
+private theorem exactSource {g : Matrix (Fin 2) (Fin 2) ℂ} (hg : g.det ≠ 0) (z : ℂ) :
     kC g z ∈ Matrix.specialUnitaryGroup (Fin 2) ℂ :=
   kC_mem_specialUnitaryGroup hg z
 

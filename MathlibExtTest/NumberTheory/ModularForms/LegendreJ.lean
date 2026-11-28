@@ -15,7 +15,7 @@ public import MathlibExt.NumberTheory.ModularForms.LegendreJ
 open ModularCurve
 
 /-- Consumer with the original binders. -/
-public theorem exactSource {K : Type*} [Field K] (t : K) :
+private theorem exactSource {K : Type*} [Field K] (t : K) :
     legendreJ t⁻¹ = legendreJ t :=
   ModularCurve.legendreJ_inv t
 

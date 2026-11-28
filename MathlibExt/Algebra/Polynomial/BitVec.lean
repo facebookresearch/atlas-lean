@@ -81,6 +81,17 @@ theorem coeff_toPolynomial {s : Nat} (w : BitVec s) (i : Nat) :
       BitVec.getLsbD_of_ge w i (Nat.le_of_not_gt hi)]
     rfl
 
+/-- The zero bit vector gives the zero polynomial. -/
+theorem toPolynomial_zero (s : Nat) : (0#s).toPolynomial = 0 := by
+  ext i
+  simp [coeff_toPolynomial]
+
+/-- For positive width, the bit vector `1` gives the polynomial `1`. -/
+theorem toPolynomial_one {s : Nat} (hs : 0 < s) : (1#s).toPolynomial = 1 := by
+  ext i
+  rw [coeff_toPolynomial, BitVec.getLsbD_one, Polynomial.coeff_one]
+  simp [hs]
+
 /-- Extracting the coefficients of an encoded word recovers the original fixed-width word. -/
 @[simp] theorem toBitVec_toPolynomial {s : Nat} (w : BitVec s) :
     w.toPolynomial.toBitVec s = w := by
@@ -148,5 +159,27 @@ theorem monicModulus_natDegree {s : Nat} (g : BitVec s) : g.monicModulus.natDegr
     simpa [toPolynomial] using Polynomial.degree_ofCoeffList_lt
       (g.toBoolListLE.map fun b => if b then (1 : ZMod 2) else 0))).trans
     (Polynomial.natDegree_X_pow s)
+
+/-- The taps word of a monic binary polynomial recovers it as the canonical
+modulus `X^s + taps`: `(f.toBitVec s).monicModulus = f` whenever `f.Monic` and
+`f.natDegree = s`. -/
+theorem monicModulus_toBitVec {s : Nat} (f : Polynomial (ZMod 2))
+    (hf : f.Monic) (hd : f.natDegree = s) :
+    (f.toBitVec s).monicModulus = f := by
+  ext n
+  rw [BitVec.monicModulus, Polynomial.coeff_add, Polynomial.coeff_X_pow,
+    BitVec.coeff_toPolynomial]
+  by_cases hn : n < s
+  · rw [ite_eq_right hn.ne, zero_add, Polynomial.toBitVec,
+      BitVec.getLsbD_cast, BitVec.getLsbD_ofBoolListLE,
+      List.getD_eq_getElem _ _ (by simpa using hn), List.getElem_ofFn,
+      Polynomial.if_decide_eq_one_zmod_two]
+  · by_cases heq : n = s
+    · subst n
+      rw [ite_eq_left rfl, BitVec.getLsbD_of_ge _ _ le_rfl]
+      simp [← hd, hf.coeff_natDegree]
+    · have hsn : s < n := by omega
+      rw [ite_eq_right hsn.ne', BitVec.getLsbD_of_ge _ _ hsn.le]
+      simp [Polynomial.coeff_eq_zero_of_natDegree_lt (hd.trans_lt hsn)]
 
 end BitVec

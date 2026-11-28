@@ -20,11 +20,11 @@ Mathematics 164 (1997), 87-147, doi:10.1016/S0012-365X(96)00045-3.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import MathlibExt.Combinatorics.SimpleGraph.LineGraph
-public import WantedExt.Complexity.NPComplete.HamiltonianCycleUndirectedWanted
+public import CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs
 
 @[expose] public section
 
@@ -48,7 +48,7 @@ its root graph", Journal of the ACM 21 (1974), 569-575, doi:10.1145/321850.32185
 restriction does not affect membership in NP.
 
 The instance, its well-formedness and the question are those of
-`WantedExt.Complexity.NPComplete.HamiltonianCycleUndirectedWanted` ([GT37]: a simple graph on
+`CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs` ([GT37]: a simple graph on
 `Fin n`, `n > 0`, given by an edge list; a Hamiltonian circuit needs at least three vertices).
 The restriction adds that the graph is a line graph,
 `MetaMathlibExt.SimpleGraph.IsLineGraph` (isomorphic to Mathlib's `SimpleGraph.lineGraph` of a

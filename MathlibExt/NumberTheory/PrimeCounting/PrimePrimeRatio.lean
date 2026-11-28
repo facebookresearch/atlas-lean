@@ -8,6 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Analysis.Asymptotics.AsymptoticEquivalent
+public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.Nat.Nth
 public import Mathlib.Data.Nat.Prime.Basic
@@ -105,8 +107,11 @@ private lemma ppr_isEquivalent_mul_log {α : Type} {l : Filter α} {u v : α →
       (fun i => v i * Real.log (v i)) :=
   h.mul (h.log hv)
 
-/-- The `n`th prime is asymptotic to `n log n`. -/
-private lemma ppr_nth_prime_isEquivalent_mul_log :
+/-- **The `n`-th prime is asymptotic to `n log n`.** With the zero-based indexing of
+`Nat.nth Nat.Prime` (so `Nat.nth Nat.Prime 0 = 2`), the `n`-th prime, cast to `ℝ`, is
+asymptotically equivalent to `n * Real.log n` along `atTop`. This is the prime number theorem
+composed with `Nat.nth Nat.Prime`. -/
+public theorem nth_prime_isEquivalent_mul_log :
     Asymptotics.IsEquivalent Filter.atTop
       (fun k : ℕ => ((Nat.nth Nat.Prime k : ℕ) : ℝ))
       (fun k : ℕ => ((k : ℕ) : ℝ) * Real.log ((k : ℕ) : ℝ)) := by
@@ -162,8 +167,8 @@ private lemma ppr_nth_prime_isEquivalent_of_isEquivalent {ι : Type} {l : Filter
     h.symm.tendsto_atTop hmR
   have hm' : Filter.Tendsto m' l Filter.atTop :=
     tendsto_natCast_atTop_iff.mp hm'R
-  have hc1 := ppr_nth_prime_isEquivalent_mul_log.comp_tendsto hm'
-  have hc2 := ppr_nth_prime_isEquivalent_mul_log.comp_tendsto hm
+  have hc1 := nth_prime_isEquivalent_mul_log.comp_tendsto hm'
+  have hc2 := nth_prime_isEquivalent_mul_log.comp_tendsto hm
   have hmul := ppr_isEquivalent_mul_log h hmR
   have e1 : ((fun k : ℕ => ((Nat.nth Nat.Prime k : ℕ) : ℝ)) ∘ m')
       =ᶠ[l] (fun i => (((Nat.nth Nat.Prime (m' i) : ℕ)) : ℝ)) :=
@@ -262,7 +267,9 @@ end MetaMathlibExt
 
 namespace MetaMathlibExt
 
-/-- Hypothesis-free form of `primePrimes_ratio_tendsto_one`. -/
+/-- **Ratio of consecutive zero-based prime-indexed primes tends to one.** Let
+$p_0 = 2$, $p_1 = 3$, $p_2 = 5$, $\dots$ be the primes in increasing order, indexed from zero,
+and let $q_n = p_{p_n}$. Then $q_n / q_{n+1} \to 1$ as $n \to \infty$. -/
 public theorem primePrimes_ratio_tendsto_one' :
     Filter.Tendsto (fun n : ℕ =>
       ((Nat.nth Nat.Prime (Nat.nth Nat.Prime n) : ℕ) : ℝ) /
@@ -288,11 +295,11 @@ public theorem primePrimes_ratio_tendsto_one' :
   exact hlim
 
 /--
-Part (c) of the Broughan–Barnett corollary in the source's one-based indexing.
-With zero-based `Nat.nth`, the source's `q_n = p_{p_n}` (with `p_1 = 2`) is
-`Nat.nth Nat.Prime (Nat.nth Nat.Prime n - 1)`, and
-`primePrimes_ratio_tendsto_one` is the same limit for the shifted
-sequence `p_{p_n + 1}`.
+**Ratio of consecutive prime-indexed primes tends to one.** Let $p_1 = 2$, $p_2 = 3$, $p_3 = 5$,
+$\dots$ be the primes in increasing order and let $q_n = p_{p_n}$. Then $q_n / q_{n+1} \to 1$ as
+$n \to \infty$.
+
+This is part (c) of the Broughan–Barnett corollary, in the source's one-based indexing.
 -/
 public theorem primePrimes_oneBased_ratio_tendsto_one :
     Filter.Tendsto (fun n : ℕ =>
@@ -323,22 +330,19 @@ public theorem primePrimes_oneBased_ratio_tendsto_one :
   exact hlim
 
 /--
-For the prime-primes `q n = Nat.nth Nat.Prime (Nat.nth Nat.Prime n)`
-(prime-indexed primes, `q_n ~ n * log^2 n`), consecutive ratios tend to one:
-`(q n : ℝ) / q (n + 1) → 1`.
+**Broughan–Barnett ratio limit, zero-based form.** Assume that there are infinitely many primes
+(which always holds). Let $p_0 = 2$, $p_1 = 3$, $p_2 = 5$, $\dots$ be the primes in increasing
+order, indexed from zero, and let $q_n = p_{p_n}$. Then $q_n / q_{n+1} \to 1$ as $n \to \infty$.
+
+In the source's one-based indexing $p'_1 = 2$, $p'_2 = 3$, $\dots$, this $q_n$ equals
+$p'_{p'_{n+1} + 1}$ rather than the source's prime-indexed prime $p'_{p'_{n+1}}$; the source
+states the same limit for its sequence.
 
 Source: Kevin A. Broughan and A. Ross Barnett, "On the Subsequence of Primes
 Having Prime Subscripts," Journal of Integer Sequences 12 (2009),
 Article 09.2.3, Corollary to the Theorem (label thm:bounds), part (c),
 lines 193–199,
 https://cs.uwaterloo.ca/journals/JIS/VOL12/Broughan/broughan16.tex
-
-The corollary follows from the Rosser–Schoenfeld bounds of the theorem;
-parts (a)–(b) give `q_n ~ n log^2 n`. This states only part (c), the
-consecutive-ratio limit. `Nat.nth Nat.Prime` needs the infinitude of primes,
-supplied as the `Infinite` instance hypothesis.
-
-Proves `Wanted` entry `primePrimes_ratio_tendsto_one`.
 -/
 public theorem primePrimes_ratio_tendsto_one
     [Infinite { n : ℕ // n.Prime }] :

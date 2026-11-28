@@ -18,7 +18,7 @@ solved trivially in polynomial time for K = 1"; reference: Chung and Graham, 197
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.MinimumKConnectedSubgraphWanted

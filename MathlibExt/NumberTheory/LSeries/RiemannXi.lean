@@ -26,11 +26,11 @@ public import Mathlib.NumberTheory.LSeries.Nonvanishing
 
 This module defines the Riemann xi function in the normalization
 
-  `ξ(s) = (s * (s - 1) * Λ₀(s) + 1) / 2`,
+  `ξ(s) = s * (s - 1) / 2 * Λ₀(s) + 1 / 2`,
 
 where `Λ₀ = completedRiemannZeta₀` is Mathlib's entire completed Riemann zeta
 function (the completed zeta function with its polar parts removed). The
-additive term `1` is forced algebraically by `completedRiemannZeta_eq`
+additive constant `1 / 2` is forced algebraically by `completedRiemannZeta_eq`
 together with the requirement that `ξ` agree with `s * (s - 1) / 2 * Λ(s)`
 away from the poles of `Λ` at `s = 0` and `s = 1`.
 
@@ -57,34 +57,36 @@ away from the poles of `Λ` at `s = 0` and `s = 1`.
   zeros of `ζ`.
 -/
 
-namespace Complex
-
-/-- The Riemann xi function `ξ(s) = (s * (s - 1) * Λ₀(s) + 1) / 2`, defined using the
-pole-removed completed zeta function `Λ₀`. This is the definition of PrimeNumberTheoremAnd. -/
-noncomputable def riemannXi (s : ℂ) : ℂ :=
-  (s * (s - 1) * completedRiemannZeta₀ s + 1) / 2
-
-end Complex
-
 namespace RiemannXi
 
-open Complex (riemannXi)
+/-- **Riemann xi function.** Let $\Lambda$ be the completed Riemann zeta function, the
+meromorphic continuation of $\pi^{-s/2}\Gamma(s/2)\zeta(s)$, which has simple poles at
+$s = 0$ and $s = 1$, and let $\Lambda_0$ be the entire function with
+$\Lambda_0(s) = \Lambda(s) + \frac{1}{s} + \frac{1}{1 - s}$ for $s \ne 0, 1$. The Riemann
+xi function is $\xi(s) = \frac{s(s - 1)}{2}\Lambda_0(s) + \frac{1}{2}$ for $s \in \mathbb{C}$. -/
+noncomputable def riemannXi (s : ℂ) : ℂ :=
+  s * (s - 1) / 2 * completedRiemannZeta₀ s + 1 / 2
 
-/-- The Riemann xi function is entire. -/
+/-- **The Riemann xi function is entire.** The Riemann xi function $\xi$ is complex
+differentiable at every point of $\mathbb{C}$. -/
 theorem differentiable_riemannXi : Differentiable ℂ riemannXi := by
-  have h1 : Differentiable ℂ (fun s : ℂ => s * (s - 1)) := by fun_prop
-  have h2 := ((h1.mul differentiable_completedZeta₀).add_const (1 : ℂ)).div_const (2 : ℂ)
+  have h1 : Differentiable ℂ (fun s : ℂ => s * (s - 1) / 2) := by fun_prop
+  have h2 := h1.mul differentiable_completedZeta₀
+  have h3 := h2.add_const (1 / 2 : ℂ)
   unfold riemannXi
-  exact h2
+  exact h3
 
-/-- Functional equation for the Riemann xi function: `ξ(1 - s) = ξ(s)`. -/
+/-- **Functional equation of the Riemann xi function.** Let $\xi$ be the Riemann xi function.
+For every complex number $s$, $\xi(1 - s) = \xi(s)$. -/
 theorem riemannXi_one_sub (s : ℂ) : riemannXi (1 - s) = riemannXi s := by
   unfold riemannXi
-  have hfactor : (1 - s) * ((1 - s) - 1) = s * (s - 1) := by ring
+  have hfactor : (1 - s) * ((1 - s) - 1) / 2 = s * (s - 1) / 2 := by ring
   rw [hfactor, completedRiemannZeta₀_one_sub]
 
-/-- Away from `s = 0` and `s = 1`, `ξ` agrees with
-`s * (s - 1) / 2 * Λ(s)`. -/
+/-- **The xi function in terms of the completed zeta function.** Let $\xi$ be the Riemann xi
+function and let $\Lambda$ be the completed Riemann zeta function, the meromorphic continuation
+of $\pi^{-s/2}\Gamma(s/2)\zeta(s)$, which has simple poles at $s = 0$ and $s = 1$. For every
+complex number $s$ with $s \ne 0$ and $s \ne 1$, $\xi(s) = \frac{s(s - 1)}{2}\Lambda(s)$. -/
 theorem riemannXi_eq_mul_completedRiemannZeta {s : ℂ} (hs0 : s ≠ 0)
     (hs1 : s ≠ 1) :
     riemannXi s = s * (s - 1) / 2 * completedRiemannZeta s := by
@@ -94,8 +96,8 @@ theorem riemannXi_eq_mul_completedRiemannZeta {s : ℂ} (hs0 : s ≠ 0)
   field_simp
   ring
 
-/-- The Riemann xi function does not vanish on the closed half-plane
-`1 ≤ s.re`. -/
+/-- **The xi function has no zeros with real part at least one.** Let $\xi$ be the Riemann xi
+function. For every complex number $s$ with $\operatorname{Re}(s) \ge 1$, $\xi(s) \ne 0$. -/
 theorem riemannXi_ne_zero_of_one_le_re {s : ℂ} (hs : 1 ≤ s.re) :
     riemannXi s ≠ 0 := by
   have hs0 : s ≠ 0 := by
@@ -116,7 +118,8 @@ theorem riemannXi_ne_zero_of_one_le_re {s : ℂ} (hs : 1 ≤ s.re) :
     rw [hag]
     exact mul_ne_zero hfac hN
 
-/-- Every zero of `ξ` has strictly positive real part. -/
+/-- **Zeros of the xi function have positive real part.** Let $\xi$ be the Riemann xi
+function. If $s$ is a complex number with $\xi(s) = 0$, then $\operatorname{Re}(s) > 0$. -/
 theorem re_pos_of_riemannXi_eq_zero {s : ℂ} (h : riemannXi s = 0) :
     0 < s.re := by
   by_contra hle
@@ -128,20 +131,23 @@ theorem re_pos_of_riemannXi_eq_zero {s : ℂ} (h : riemannXi s = 0) :
   rw [riemannXi_one_sub] at hne
   exact hne h
 
-/-- Every zero of `ξ` has real part strictly less than one. -/
+/-- **Zeros of the xi function have real part less than one.** Let $\xi$ be the Riemann xi
+function. If $s$ is a complex number with $\xi(s) = 0$, then $\operatorname{Re}(s) < 1$. -/
 theorem re_lt_one_of_riemannXi_eq_zero {s : ℂ} (h : riemannXi s = 0) :
     s.re < 1 := by
   by_contra hle
   push Not at hle
   exact riemannXi_ne_zero_of_one_le_re hle h
 
-/-- Every zero of `ξ` lies in the open critical strip `0 < s.re < 1`. -/
+/-- **Zeros of the xi function lie in the critical strip.** Let $\xi$ be the Riemann xi
+function. If $s$ is a complex number with $\xi(s) = 0$, then $0 < \operatorname{Re}(s) < 1$. -/
 theorem riemannXi_mem_strip {s : ℂ} (h : riemannXi s = 0) :
     0 < s.re ∧ s.re < 1 :=
   ⟨re_pos_of_riemannXi_eq_zero h, re_lt_one_of_riemannXi_eq_zero h⟩
 
-/-- Packaged corollary: `ξ` is entire, satisfies the functional equation, and
-all of its zeros lie in the open critical strip. -/
+/-- **Basic properties of the Riemann xi function.** The Riemann xi function $\xi$ is
+entire, satisfies $\xi(1 - s) = \xi(s)$ for every complex number $s$, and every complex
+number $s$ with $\xi(s) = 0$ satisfies $0 < \operatorname{Re}(s) < 1$. -/
 theorem riemannXi_entire_functional_equation_and_critical_strip :
     Differentiable ℂ riemannXi ∧
       (∀ s : ℂ, riemannXi (1 - s) = riemannXi s) ∧
@@ -150,6 +156,12 @@ theorem riemannXi_entire_functional_equation_and_critical_strip :
     fun _s h => riemannXi_mem_strip h⟩
 
 end RiemannXi
+
+namespace Complex
+
+export RiemannXi (riemannXi)
+
+end Complex
 
 /-- The **nontrivial zeros** of the Riemann zeta function: the zeros of `riemannZeta` in the
 open critical strip `0 < Re s < 1`, as `NontrivialZeros` in PrimeNumberTheoremAnd. Unlike

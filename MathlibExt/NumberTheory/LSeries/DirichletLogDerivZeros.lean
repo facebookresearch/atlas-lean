@@ -91,7 +91,7 @@ theorem analyticOrderAt_xi_modOne_eq (χ : DirichletCharacter ℂ 1) (w : ℂ) :
   have hmem : ({s : ℂ | s ≠ 0} ∩ {s : ℂ | s ≠ 1}) ∈ 𝓝 w :=
     (isOpen_ne.inter isOpen_ne).mem_nhds ⟨hw0, hw1⟩
   have hΛ : AnalyticAt ℂ completedRiemannZeta w :=
-    DifferentiableOn.analyticAt
+    DifferentiableOn.analyticAt (s := {s : ℂ | s ≠ 0} ∩ {s : ℂ | s ≠ 1})
       (fun x hx => (differentiableAt_completedZeta hx.1 hx.2).differentiableWithinAt) hmem
   have hp : AnalyticAt ℂ (fun s : ℂ => s * (s - 1) / 2) w := by fun_prop
   have hev : riemannXi =ᶠ[𝓝 w] (fun s : ℂ => s * (s - 1) / 2) * completedRiemannZeta := by

@@ -55,13 +55,15 @@ universe u v
 variable {G : Type u} [Group G] [Finite G]
 variable {V : Type v} [AddCommGroup V] [Module ℂ V]
 
-/-- Local Galois data for the Artin Euler factor at a rational prime.
+/-- **Artin local datum.** For a finite group $G$, an Artin local datum consists of a subgroup
+$D \le G$ (the decomposition group), a normal subgroup $I$ of $D$ (the inertia group), and an
+element $\sigma$ of the quotient group $D/I$ (the Frobenius coset).
 
-For the finite Galois group `G = Gal(L/ℚ)`, `decomposition = G_w` is the
-decomposition subgroup at a place `w|p`, `inertia = I_w` is its normal inertia
-subgroup, and `frobenius = σ_w ∈ G_w/I_w` is the Frobenius coset.  The
-representation is restricted to `G_w` and then `I_w`-invariants are taken,
-so `G_w/I_w` acts on `V^{I_w}` and `frobenius` determines the local operator. -/
+In the arithmetic application, $L/\mathbb{Q}$ is a finite Galois extension with
+$G = \mathrm{Gal}(L/\mathbb{Q})$, $D$ is the decomposition group at a place $w$ of $L$ above a
+prime $p$, $I$ is its inertia group and $\sigma$ is the Frobenius. A complex representation of
+$G$ restricted to $D$ then gives an action of $D/I$ on the $I$-invariant vectors, on which
+$\sigma$ acts as the local operator. The definition does not require the data to arise this way. -/
 structure ArtinLocalDatum (G : Type u) [Group G] [Finite G] where
   decomposition : Subgroup G
   inertia : Subgroup decomposition
@@ -70,7 +72,14 @@ structure ArtinLocalDatum (G : Type u) [Group G] [Finite G] where
 
 attribute [instance] ArtinLocalDatum.isNormal
 
-/-- The determinant whose inverse is the formal Artin local factor at `p`. -/
+/-- **Artin local denominator.** Let $\rho$ be a representation of a finite group $G$ on a
+finite-dimensional complex vector space $V$, let $p$ be a prime, let $(D, I, \sigma)$ be an Artin
+local datum for $G$, and let $s \in \mathbb{C}$. Let $V^{I}$ be the subspace of vectors fixed by
+$\rho(I)$, on which $D/I$ acts, and let $\rho(\sigma)$ be the action of $\sigma$ on $V^{I}$. The
+Artin local denominator is
+
+$$\det\left(\mathrm{id} - p^{-s}\,\rho(\sigma) \mid V^{I}\right).$$
+-/
 noncomputable def artinLocalDenominator (ρ : Representation ℂ G V)
     [Module.Free ℂ V] [Module.Finite ℂ V] (p : Nat.Primes)
     (d : ArtinLocalDatum G) (s : ℂ) : ℂ :=
@@ -80,47 +89,66 @@ noncomputable def artinLocalDenominator (ρ : Representation ℂ G V)
         (ρ.comp d.decomposition.subtype : Representation ℂ d.decomposition V)
         d.inertia) d.frobenius))
 
-/-- The domain condition saying that the formal local factor has no pole at `s`. -/
+/-- **Regularity of the Artin local factor.** Let $\rho$ be a representation of a finite group $G$
+on a finite-dimensional complex vector space $V$, let $p$ be a prime, let $d$ be an Artin local
+datum for $G$, and let $s \in \mathbb{C}$. The Artin local factor of $\rho$ at $p$, $d$ is regular
+at $s$ when the Artin local denominator of $\rho$ at $p$, $d$ and $s$ is nonzero, that is, when
+the local factor has no pole at $s$. -/
 def ArtinLocalFactorRegular (ρ : Representation ℂ G V)
     [Module.Free ℂ V] [Module.Finite ℂ V] (p : Nat.Primes)
     (d : ArtinLocalDatum G) (s : ℂ) : Prop :=
   artinLocalDenominator ρ p d s ≠ 0
 
-/-- The totalized inverse of the Artin local denominator at the rational prime `p`.
+/-- **Artin local factor.** Let $\rho$ be a representation of a finite group $G$ on a
+finite-dimensional complex vector space $V$, let $p$ be a prime, let $(D, I, \sigma)$ be an Artin
+local datum for $G$, and let $s \in \mathbb{C}$. Let $V^{I}$ be the subspace of vectors fixed by
+$\rho(I)$ and $\rho(\sigma)$ the induced action of $\sigma \in D/I$ on it. The Artin local factor
+is the inverse of the Artin local denominator,
 
-`ρ` is restricted to the decomposition subgroup and the resulting
-`I_w`-invariants carry the quotient action `G_w/I_w`; evaluating that
-action at `frobenius` gives the operator whose determinant is inverted.
-The hypothesis `[Module.Free ℂ V] [Module.Finite ℂ V]` makes the determinant
-available via `LinearMap.det` on the finite-dimensional invariant subspace.
-At a zero of the denominator, complex inversion gives the totalized value `0`;
-use `ArtinLocalFactorRegular` when a genuine finite Euler factor is required. -/
+$$\det\left(\mathrm{id} - p^{-s}\,\rho(\sigma) \mid V^{I}\right)^{-1},$$
+
+with the value $0$ when the denominator vanishes.
+
+Where the denominator vanishes the true factor has a pole; the regularity condition picks out
+the $s$ at which this value is a genuine finite Euler factor. -/
 noncomputable def artinLocalFactorRaw (ρ : Representation ℂ G V)
     [Module.Free ℂ V] [Module.Finite ℂ V] (p : Nat.Primes)
     (d : ArtinLocalDatum G) (s : ℂ) : ℂ :=
   (artinLocalDenominator ρ p d s)⁻¹
 
-/-- The formal Euler product of raw factors attached to supplied local data.
+/-- **Euler product of Artin local factors.** Let $\rho$ be a representation of a finite group
+$G$ on a finite-dimensional complex vector space $V$, and suppose that for every prime $p$ an Artin
+local datum $d_p$ for $G$ is given. For $s \in \mathbb{C}$, this is the product over all primes
+$p$ of the Artin local factors of $\rho$ at $p$, $d_p$ and $s$, taken as an unconditional infinite
+product (the limit of the products over finite sets of primes); when this product does not
+converge, the value is $1$ by convention.
 
-This is deliberately named as an Euler product *of local data*: the input need
-not arise from places of a number field, and no conjugacy-independence is asserted.
-When the family is not multipliable, `tprod` takes its conventional default value. -/
+The data need not come from the places of a number field, and no independence of the choice of
+place above $p$ is asserted. -/
 noncomputable def artinEulerProductOfLocalData (ρ : Representation ℂ G V)
     [Module.Free ℂ V] [Module.Finite ℂ V]
     (localData : Nat.Primes → ArtinLocalDatum G) (s : ℂ) : ℂ :=
   ∏' p, artinLocalFactorRaw ρ p (localData p) s
 
-/-- The raw local factors have the convergent product `z` at `s`. -/
+/-- **Convergent Artin Euler product.** Let $\rho$ be a representation of a finite group $G$ on a
+finite-dimensional complex vector space $V$, let $d_p$ be an Artin local datum for $G$ for every
+prime $p$, and let $s, z \in \mathbb{C}$. The Artin Euler product of $\rho$ and $(d_p)$ has value
+$z$ at $s$ when the products of the Artin local factors of $\rho$ at $p$, $d_p$ and $s$ over
+finite sets of primes $p$ converge to $z$ as the finite set grows to all primes (unconditional
+convergence). The value $z = 0$ is allowed. -/
 def HasArtinEulerProduct (ρ : Representation ℂ G V)
     [Module.Free ℂ V] [Module.Finite ℂ V]
     (localData : Nat.Primes → ArtinLocalDatum G) (s z : ℂ) : Prop :=
   HasProd (fun p => artinLocalFactorRaw ρ p (localData p) s) z
 
-/-- The raw local factors have a convergent, nonzero product at `s`.
+/-- **Nonzero convergent Artin Euler product.** Let $\rho$ be a representation of a finite group
+$G$ on a finite-dimensional complex vector space $V$, let $d_p$ be an Artin local datum for $G$ for
+every prime $p$, and let $s, z \in \mathbb{C}$. The Artin Euler product of $\rho$ and $(d_p)$ has
+nonzero value $z$ at $s$ when it has value $z$ at $s$ and $z \ne 0$.
 
-Unlike `HasArtinEulerProduct`, this predicate rules out both a zero product and
-every totalized zero local factor, so it represents a genuine finite Euler-product
-value rather than a pole encoded by the raw definitions. -/
+In particular every local factor is then regular at $s$: a factor whose denominator vanishes has
+value $0$ and would force the product to be $0$, so this describes a genuine finite Euler-product
+value rather than a pole. -/
 def HasNonzeroArtinEulerProduct (ρ : Representation ℂ G V)
     [Module.Free ℂ V] [Module.Finite ℂ V]
     (localData : Nat.Primes → ArtinLocalDatum G) (s z : ℂ) : Prop :=
@@ -190,8 +218,12 @@ theorem HasNonzeroArtinEulerProduct.localFactorRegular
     hasProd_zero_of_exists_eq_zero ⟨p, hfactor⟩
   exact h.ne_zero (h.hasArtinEulerProduct.unique hzero)
 
-/-- A trivial quotient action gives the scalar Euler factor raised to the
-dimension of the inertia-invariant subspace. -/
+/-- **Artin local factor when Frobenius acts trivially.** Let $\rho$ be a representation of a
+finite group $G$ on a finite-dimensional complex vector space $V$, let $p$ be a prime, let
+$(D, I, \sigma)$ be an Artin local datum for $G$, and let $s \in \mathbb{C}$. Let $V^{I}$ be the
+subspace of vectors fixed by $\rho(I)$ and $n = \dim V^{I}$. If $\sigma$ acts as the identity on
+$V^{I}$, then the Artin local factor of $\rho$ at $p$, $(D, I, \sigma)$ and $s$ equals
+$\left((1 - p^{-s})^{n}\right)^{-1}$, where the inverse of $0$ is read as $0$. -/
 theorem artinLocalFactorRaw_of_action_eq_id_general (ρ : Representation ℂ G V)
     [Module.Free ℂ V] [Module.Finite ℂ V] (p : Nat.Primes)
     (d : ArtinLocalDatum G) (s : ℂ)
@@ -217,9 +249,15 @@ theorem artinLocalFactorRaw_of_action_eq_id_general (ρ : Representation ℂ G V
     rw [sub_smul, one_smul]
   rw [hlin, LinearMap.det_smul, LinearMap.det_id, mul_one]
 
-/-- A one-dimensional trivial quotient action has the expected degree-one
-Euler factor `(1 - p^{-s})^{-1}`.  This is the unramified trivial-character
-contribution that yields the Riemann-zeta local factor. -/
+/-- **Artin local factor of a one-dimensional trivial Frobenius action.** Let $\rho$ be a
+representation of a finite group $G$ on a finite-dimensional complex vector space $V$, let $p$ be
+a prime, let $(D, I, \sigma)$ be an Artin local datum for $G$, and let $s \in \mathbb{C}$. Let
+$V^{I}$ be the subspace of vectors fixed by $\rho(I)$. If $\sigma$ acts as the identity on $V^{I}$
+and $V^{I}$ is one-dimensional, then the Artin local factor of $\rho$ at $p$, $(D, I, \sigma)$
+and $s$ equals $(1 - p^{-s})^{-1}$, where the inverse of $0$ is read as $0$.
+
+This is the unramified trivial-character case, which gives the local factor of the Riemann zeta
+function. -/
 theorem artinLocalFactorRaw_of_action_eq_id (ρ : Representation ℂ G V)
     [Module.Free ℂ V] [Module.Finite ℂ V] (p : Nat.Primes)
     (d : ArtinLocalDatum G) (s : ℂ)

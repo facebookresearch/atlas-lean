@@ -5,6 +5,8 @@ Let $x$ be real, $\mu$ a probability measure and $(X_t)_{t \ge 0}$ a [solution o
 $$\mathbb{E}_\mu[\tau] = -2\bigl(x \log x + (1 - x)\log(1 - x)\bigr),$$
 
 the [Kimura–Ohta mean absorption time](../wright-fisher-diffusion/mean-absorption-time.md), in units of $2N$ generations.
+Since the solution takes values in $[0, 1]$ and $X_0 = x$ almost surely under a probability measure,
+$x \in [0, 1]$; at $x = 0$ or $x = 1$ the formula, with $0 \log 0 = 0$, gives mean $0$.
 
 ## Sources
 

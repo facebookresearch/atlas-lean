@@ -271,12 +271,24 @@ private lemma theta_exp_bound : ∀ t : ℝ, 0 ≤ t →
   calc theta (Real.exp t) ≤ Real.log 4 * Real.exp t := hle
     _ = Real.log 4 * Real.exp (1 * t) := by rw [one_mul]
 
-/-- Prime log series `∑' p, log p * p ^ (-s)`, the numerator of Lemma 16.10. -/
+/-- **The prime logarithm series.** For $s \in \mathbb{C}$, the prime logarithm series at $s$
+is the complex number $\sum_p \log p \cdot p^{-s}$, where the sum runs over all primes $p$ and
+$p^{-s}$ is the complex power. The sum is unconditional and is taken to be $0$ by convention
+when the family $(\log p \cdot p^{-s})_p$ is not summable.
+
+Source: ATLAS NumberTheoryI Lemma 16.10. -/
 noncomputable def primeLogSeries (s : ℂ) : ℂ :=
   ∑' p : Nat.Primes,
     (Real.log ↑(↑p : ℕ) : ℂ) * (↑(↑p : ℕ) : ℂ) ^ (-s)
 
-/-- Lemma 16.10 identity: the Laplace transform of `theta (exp ·)` at `s`. -/
+/-- **Laplace transform of $\theta(e^t)$.** Let $\theta(x) = \sum_{p \le x} \log p$ be
+Chebyshev's function, the sum running over the primes $p \le x$. For every $s \in \mathbb{C}$
+with $\operatorname{Re} s > 1$, the Laplace transform
+$\int_{(0, \infty)} e^{-st}\,\theta(e^t)\,dt$ of $t \mapsto \theta(e^t)$ at $s$ equals
+$\frac{1}{s} \sum_p \log p \cdot p^{-s}$, the prime logarithm series at $s$ divided by $s$,
+where the sum runs over all primes $p$.
+
+Source: ATLAS NumberTheoryI Lemma 16.10. -/
 theorem laplace_theta_exp_eq_primeLogSeries_div (s : ℂ) (hs : 1 < s.re) :
     laplace (fun t : ℝ => (theta (Real.exp t) : ℂ)) s =
       primeLogSeries s / s := by
@@ -288,7 +300,15 @@ theorem laplace_theta_exp_eq_primeLogSeries_div (s : ℂ) (hs : 1 < s.re) :
       (Real.log ↑(↑p : ℕ) : ℂ) * (↑(↑p : ℕ) : ℂ) ^ (-s)) / s
   rw [hsum, tsum_div_const]
 
-/-- Lemma 16.10 with convergence: `HasLaplace` for `theta (exp ·)`. -/
+/-- **Convergence of the Laplace transform of $\theta(e^t)$.** Let
+$\theta(x) = \sum_{p \le x} \log p$ be Chebyshev's function, the sum running over the primes
+$p \le x$. For every $s \in \mathbb{C}$ with $\operatorname{Re} s > 1$, the function
+$t \mapsto \theta(e^t)$ has Laplace transform $\frac{1}{s} \sum_p \log p \cdot p^{-s}$ at $s$,
+where the sum runs over all primes $p$ (this is the prime logarithm series at $s$ divided by
+$s$): the function $t \mapsto e^{-st}\,\theta(e^t)$ is integrable on $(0, \infty)$ and its
+integral over $(0, \infty)$ equals $\frac{1}{s} \sum_p \log p \cdot p^{-s}$.
+
+Source: ATLAS NumberTheoryI Lemma 16.10. -/
 theorem hasLaplace_theta_exp (s : ℂ) (hs : 1 < s.re) :
     HasLaplace (fun t : ℝ => (theta (Real.exp t) : ℂ)) s
       (primeLogSeries s / s) := by
@@ -297,7 +317,13 @@ theorem hasLaplace_theta_exp (s : ℂ) (hs : 1 < s.re) :
       theta_exp_bound_C theta_exp_bound hs
   · exact laplace_theta_exp_eq_primeLogSeries_div s hs
 
-/-- Lemma 16.10 holomorphy on `{s | 1 < s.re}` via the exponential bound. -/
+/-- **Holomorphy of the Laplace transform of $\theta(e^t)$.** Let
+$\theta(x) = \sum_{p \le x} \log p$ be Chebyshev's function, the sum running over the primes
+$p \le x$. Then the Laplace transform $F(s) = \int_{(0, \infty)} e^{-st}\,\theta(e^t)\,dt$ of
+$t \mapsto \theta(e^t)$ is complex differentiable at every point of the open half-plane
+$\{s \in \mathbb{C} : \operatorname{Re} s > 1\}$, so it is holomorphic there.
+
+Source: ATLAS NumberTheoryI Lemma 16.10. -/
 theorem differentiableOn_laplace_theta_exp :
     DifferentiableOn ℂ (laplace (fun t : ℝ => (theta (Real.exp t) : ℂ)))
       {s | 1 < s.re} :=

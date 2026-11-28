@@ -88,7 +88,8 @@ theorem natCoe_zeta_ne_one : (ζ : ArithmeticFunction ℂ) ≠ 1 := by
 theorem isLSeriesContinuation_zeta :
     IsLSeriesContinuation (ζ : ArithmeticFunction ℂ) riemannZeta := by
   refine ⟨fun s hs => ?_, fun s hs =>
-    (differentiableAt_riemannZeta (Set.mem_compl_singleton_iff.mp hs)).differentiableWithinAt⟩
+    (differentiableAt_riemannZeta (Set.mem_compl_singleton_iff.mp hs)).differentiableWithinAt,
+    fun _ hs => LSeriesSummable_zeta_iff.mpr hs⟩
   rw [← LSeries_zeta_eq_riemannZeta hs]
   rfl
 

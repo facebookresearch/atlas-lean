@@ -36,3 +36,18 @@
 - [Consistency of the partition-valued coalescents](sum-time-law-restrict.md)
 - [Path probability of the Kingman coalescent jump chain](path-prob.md)
 - [Consistency of the jump chains](sum-path-prob-restrict.md)
+
+- [Holding times and jump chain of Kingman's n-coalescent are independent](holding-times-and-jump-chain-of-kingman-s-n-coal.md)
+- [Path laws of Kingman's coalescent on a finite sample are consistent under restriction](strong-path-level-restriction-consistency-of-the.md)
+- [Extension kernels for consistent laws of coalescent paths](extension-kernels-for-consistent-laws-of-coalesc.md)
+- [Kingman's coalescent on the natural numbers](kingman-coalescent-on-n-as-a-time-indexed-cadlag.md)
+- [Kingman's coalescent comes down from infinity](kingman-s-coalescent-comes-down-from-infinity.md)
+
+- [The genealogy of α-stable branching is a time-changed Beta-coalescent](alpha-stable-csbp-genealogy-is-a-time-changed-be.md)
+- [From the paintbox to the partitions of the coalescent](bridge-from-the-shared-paintbox-to-the-coalescen.md)
+- [Generator-level lumpability of the ancestral recombination graph to one locus](generator-level-lumpability-of-the-arg-to-each-l.md)
+- [The marginal genealogy at each locus of the ancestral recombination graph is Kingman's](marginal-genealogy-at-each-locus-of-the-arg-is-k.md)
+- [The paintbox representation for the partitions of Kingman's coalescent](paintbox-representation-transported-to-coalescen.md)
+- [Recursive construction of Kingman's coalescent](recursive-construction-of-kingman-s-coalescent/README.md)
+- [Comb representation of ultrametric genealogies](comb-representation-of-ultrametric-genealogies/README.md)
+- [Sampled genealogies of coalescent point processes](sampled-genealogies-of-coalescent-point-processes/README.md)

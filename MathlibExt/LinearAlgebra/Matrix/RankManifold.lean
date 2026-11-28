@@ -978,7 +978,7 @@ private theorem contDiffOn_inv_of_entries {n : Type*} [Fintype n] [DecidableEq n
     ContDiffOn ℝ ∞ (fun x => (M x)⁻¹ i j) {x | (M x).det ≠ 0} := by
   have h : ∀ x, (M x)⁻¹ i j = ((M x).det)⁻¹ * (M x).adjugate i j := by
     intro x
-    rw [inv_def, Ring.inverse_eq_inv', smul_apply, smul_eq_mul]
+    rw [inv_def, Ring.inverse_eq_inv', Matrix.smul_apply, smul_eq_mul]
   simp only [h]
   exact ((contDiff_det_of_entries hM).contDiffOn.inv fun x hx => hx).mul
     (contDiff_adjugate_of_entries hM i j).contDiffOn

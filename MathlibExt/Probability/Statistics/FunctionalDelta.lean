@@ -245,7 +245,7 @@ theorem TendstoInDistribution.extended_comp {X Y : Type*} [TopologicalSpace X] [
     filter_upwards [eventually_ge_atTop k] with n hn
     refine measure_mono_ae ?_
     filter_upwards [hUD n] with ω hω hgω
-    exact subset_closure (Set.mem_biUnion hn ⟨hω, hgω⟩)
+    exact subset_closure (Set.mem_iUnion₂_of_mem hn ⟨hω, hgω⟩)
   -- Step 2: points of `X₀` in every `S k` are mapped by `g₀` into `K`.
   have h2 : ∀ x ∈ X₀, x ∈ ⋂ k, S k → g₀ x ∈ K := by
     intro x hx hxS

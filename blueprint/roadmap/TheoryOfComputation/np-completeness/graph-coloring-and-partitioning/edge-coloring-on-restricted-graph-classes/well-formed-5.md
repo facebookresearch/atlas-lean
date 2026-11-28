@@ -1,0 +1,3 @@
+# Well-formed instances of CHROMATIC INDEX ON GRAPHS OF THICKNESS AT MOST k
+
+Fix a natural number $k$. An instance $(n, E, K)$ is well-formed for CHROMATIC INDEX ON GRAPHS OF THICKNESS AT MOST $k$ when it is a well-formed EDGE COLORING instance (the list $E$ has no repeated entries, and every pair $(u, v)$ in $E$ satisfies $u < n$, $v < n$, $u \ne v$ and $(v, u) \notin E$), the entries of $E$ can be assigned to $k$ classes so that the graph on $\{0, \dots, n-1\}$ formed by each class has a straight-line planar drawing (an injective placement of the vertices in $\mathbb{R}^2$ in which the segments of two distinct edges meet at most in common endpoints), and $K > 0$.

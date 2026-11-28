@@ -30,16 +30,18 @@ UnsolvedMath record UM-00701039 (`KOU-14.54`), dataset ulamai/UnsolvedMath v1.8.
 `k(G)` is `Nat.card (ConjClasses G)`; nilpotent subgroups are `Group.IsNilpotent N`.
 -/
 
-/-- Kourovka 14.54 (M. W. Liebeck, L. Pyber): every finite group `G` has a nilpotent subgroup `N`
-with `k(G) ≤ |N|`, where `k(G)` is the number of conjugacy classes of `G`. -/
+/-- **Liebeck–Pyber problem on the class number and nilpotent subgroups.** The proposition that
+every finite group $G$ has a nilpotent subgroup $N$ whose order $|N|$ is at least the number
+$k(G)$ of conjugacy classes of $G$. This is Kourovka Problem 14.54 (M. W. Liebeck, L. Pyber). -/
 def classNumberAtMostNilpotentSubgroupOrder : Prop :=
   ∀ (G : Type) [Group G] [Finite G], ∃ N : Subgroup G, Group.IsNilpotent N ∧
     Nat.card (ConjClasses G) ≤ Nat.card N
 
-/--
-Resolved false: Tertooy shows that for certain odd prime powers `q` the number of conjugacy classes
-of `PGL(2, q)` is greater than the order of its largest nilpotent subgroup; the Kourovka Notebook
-(21st issue) answers 14.54 "No, not always". Source: E. I. Khukhro and V. D. Mazurov (eds.),
+/-- **The class number can exceed the order of every nilpotent subgroup.** There is a finite group
+$G$ such that the number $k(G)$ of conjugacy classes of $G$ is greater than $|N|$ for every
+nilpotent subgroup $N$ of $G$.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.),
 Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026),
 Problem 14.54 (M. W. Liebeck, L. Pyber); resolution: S. Tertooy, Class numbers and nilpotent
 subgroups of PGL(2,q), preprint, arXiv:2606.21404 (2026), abstract: for certain odd prime powers q,

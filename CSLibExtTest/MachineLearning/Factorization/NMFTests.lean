@@ -176,7 +176,7 @@ private lemma four_le_nonnegRank_C4 : 4 ≤ nonnegRank C4 := by
   by_contra hlt
   have hlt : nonnegRank C4 < 4 := by omega
   obtain ⟨W, H, hW, hH, hWH⟩ := exists_mul_eq_nonnegRank C4_nonneg
-  have hent : ∀ i j, ∑ a, W i a * H a j = C4 i j := fun i j => by rw [← mul_apply, hWH]
+  have hent : ∀ i j, ∑ a, W i a * H a j = C4 i j := fun i j => by rw [← Matrix.mul_apply, hWH]
   -- every one of `C₄` is covered by a positive term `W i a * H a j`
   have hcov : ∀ e : Fin 4 × Fin 4, pat e.1 e.2 = true → ∃ a, 0 < W e.1 a ∧ 0 < H a e.2 := by
     intro e he
@@ -247,7 +247,7 @@ example : nonnegRank !![(-1 : ℝ)] = 0 := by
   rintro r ⟨W, H, hW, hH, hWH⟩
   have h := congrFun (congrFun hWH 0) 0
   have : 0 ≤ (W * H) 0 0 := by
-    rw [mul_apply]; exact Finset.sum_nonneg fun a _ => mul_nonneg (hW 0 a) (hH a 0)
+    rw [Matrix.mul_apply]; exact Finset.sum_nonneg fun a _ => mul_nonneg (hW 0 a) (hH a 0)
   simp at h
   linarith
 

@@ -44,8 +44,10 @@ variable {A : Type*} [CommRing A] [IsDedekindDomain A]
 
 open scoped nonZeroDivisors
 
-/-- Lemma 3.6: only finitely many prime ideals of a Dedekind domain contain a
-given nonzero element. -/
+/-- **Finitely many primes contain a nonzero element.** In a Dedekind domain $A$, every nonzero
+element $a$ lies in only finitely many prime ideals of $A$.
+
+Source: ATLAS `NumberTheoryI` Lemma 3.6. -/
 theorem Ideal.finite_setOf_isPrime_and_mem {a : A} (ha : a ≠ 0) :
     Set.Finite {P : Ideal A | P.IsPrime ∧ a ∈ P} := by
   have hI : Ideal.span {a} ≠ ⊥ := by rwa [ne_eq, Ideal.span_singleton_eq_bot]
@@ -57,8 +59,10 @@ theorem Ideal.finite_setOf_isPrime_and_mem {a : A} (ha : a ≠ 0) :
   rw [Finset.mem_coe, Multiset.mem_toFinset, Ideal.mem_normalizedFactors_iff hI]
   exact ⟨hPPrime, Ideal.span_le.mpr (Set.singleton_subset_iff.mpr haP)⟩
 
-/-- Corollary 3.7: only finitely many prime ideals of a Dedekind domain contain
-a given nonzero ideal. -/
+/-- **Finitely many primes contain a nonzero ideal.** In a Dedekind domain $A$, every nonzero
+ideal $I$ is contained in only finitely many prime ideals of $A$.
+
+Source: ATLAS `NumberTheoryI` Corollary 3.7. -/
 theorem Ideal.finite_setOf_isPrime_and_le {I : Ideal A} (hI : I ≠ ⊥) :
     {p : Ideal A | p.IsPrime ∧ I ≤ p}.Finite := by
   have hsub : {p : Ideal A | p.IsPrime ∧ I ≤ p} ⊆
@@ -73,10 +77,15 @@ theorem Ideal.finite_setOf_isPrime_and_le {I : Ideal A} (hI : I ≠ ⊥) :
     exact ⟨⟨p, hpPrime, hpne⟩, Ideal.dvd_iff_le.mpr hle, rfl⟩
   exact (Ideal.finite_factors hI).image _ |>.subset hsub
 
-/-- Lemma 3.9: for a prime ideal `𝔭` and a nonzero ideal `I`, the multiplicity
-of `𝔭` in the factorization of `I` is zero if and only if `𝔭` does not
-contain `I`. In particular, the multiplicities of two distinct nonzero primes
-in each other are zero. -/
+/-- **Vanishing multiplicity of a prime factor.** Let $A$ be a Dedekind domain, let $\mathfrak p$
+be a prime ideal of $A$ and let $I$ be a nonzero ideal of $A$. Then the multiplicity of
+$\mathfrak p$ in the factorization of $I$ into prime ideals is zero if and only if
+$I \not\subseteq \mathfrak p$.
+
+In particular, if $\mathfrak p$ and $\mathfrak q$ are distinct nonzero prime ideals of $A$, then
+the multiplicity of $\mathfrak p$ in the factorization of $\mathfrak q$ is zero.
+
+Source: ATLAS `NumberTheoryI` Lemma 3.9. -/
 theorem Ideal.count_normalizedFactors_eq_zero_iff
     {𝔭 I : Ideal A} (hp : 𝔭.IsPrime) (hI : I ≠ ⊥) :
     Multiset.count 𝔭 (UniqueFactorizationMonoid.normalizedFactors I) = 0 ↔
@@ -86,11 +95,17 @@ theorem Ideal.count_normalizedFactors_eq_zero_iff
 
 variable {K : Type*} [Field K] [Algebra A K] [IsFractionRing A K]
 
-/-- Corollary 3.10: for a fractional ideal `I` of a Dedekind domain, the
-valuation `v ↦ FractionalIdeal.count K v I` is nonzero at only finitely many
-height-one primes `v`. In particular, for `x ∈ Kˣ` the valuations
-`v ↦ FractionalIdeal.count K v (spanSingleton x)` vanish for all but finitely
-many `v`. -/
+/-- **Fractional ideals have finite support.** Let $A$ be a Dedekind domain with field of
+fractions $K$, and let $I$ be a fractional ideal of $A$ in $K$. For a nonzero prime ideal
+$\mathfrak p$ of $A$, let $v_{\mathfrak p}(I) \in \mathbb Z$ be the exponent of $\mathfrak p$ in
+the factorization of $I$ into prime ideals, with $v_{\mathfrak p}(0) = 0$. Then
+$v_{\mathfrak p}(I) \neq 0$ for only finitely many nonzero prime ideals $\mathfrak p$ of $A$.
+
+In particular, for $x \in K^\times$ the valuations $v_{\mathfrak p}(xA)$ vanish for all but
+finitely many $\mathfrak p$.
+
+Source: ATLAS `NumberTheoryI` Corollary 3.10. The book's hypothesis $I \neq 0$ is dropped,
+since every valuation of the zero ideal is zero. -/
 theorem FractionalIdeal.count_eq_zero_for_all_but_finitely_many
     (I : FractionalIdeal A⁰ K) :
     {v : IsDedekindDomain.HeightOneSpectrum A |

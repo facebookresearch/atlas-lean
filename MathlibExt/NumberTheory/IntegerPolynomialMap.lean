@@ -29,30 +29,45 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- An integer polynomial map from `n` variables to `m` components. -/
+/-- **Integer polynomial map.** For natural numbers $n$ and $m$, an integer polynomial map from
+$n$ variables to $m$ components is an $m$-tuple $F = (F_0, \dots, F_{m-1})$ of polynomials with
+integer coefficients in the $n$ variables $x_0, \dots, x_{n-1}$. -/
 def IntegerPolynomialMap (n m : ℕ) : Type :=
   Fin m → MvPolynomial (Fin n) ℤ
 
-/-- Evaluate an integer polynomial map at an integer point. -/
+/-- **Evaluation of an integer polynomial map.** Let $F = (F_0, \dots, F_{m-1})$ be an integer
+polynomial map from $n$ variables to $m$ components. The value of $F$ at a point
+$x \in \mathbb{Z}^n$ is the point $(F_0(x), \dots, F_{m-1}(x)) \in \mathbb{Z}^m$. -/
 noncomputable def IntegerPolynomialMap.toFun {n m : ℕ}
     (F : IntegerPolynomialMap n m) (x : Fin n → ℤ) : Fin m → ℤ :=
   fun i ↦ MvPolynomial.eval x (F i)
 
-/-- Reduce the coefficients of an integer polynomial map modulo `p`, then evaluate it at a
-point over `ZMod p`.
+/-- **Reduction of an integer polynomial map modulo a natural number.** Let
+$F = (F_0, \dots, F_{m-1})$ be an integer polynomial map from $n$ variables to $m$ components and
+let $p$ be a natural number. For $x \in (\mathbb{Z}/p\mathbb{Z})^n$, the value of the reduction of
+$F$ modulo $p$ at $x$ is $(\bar F_0(x), \dots, \bar F_{m-1}(x)) \in (\mathbb{Z}/p\mathbb{Z})^m$,
+where $\bar F_i$ is the polynomial obtained from $F_i$ by reducing its coefficients modulo $p$.
 
-The definition allows an arbitrary natural modulus; the source applies it when `p` is prime.
+The definition allows an arbitrary natural modulus; the source applies it when $p$ is prime.
 -/
 noncomputable def IntegerPolynomialMap.toFunReduce {n m : ℕ}
     (F : IntegerPolynomialMap n m) (p : ℕ) (x : Fin n → ZMod p) : Fin m → ZMod p :=
   fun i ↦ MvPolynomial.eval x (MvPolynomial.map (Int.castRingHom (ZMod p)) (F i))
 
-/-- Apply an integer polynomial endomap `k` times. -/
+/-- **Iterates of an integer polynomial map.** Let $F$ be an integer polynomial map from $n$
+variables to $n$ components, viewed as the map $\mathbb{Z}^n \to \mathbb{Z}^n$ given by
+evaluation. For a natural number $k$ and $x \in \mathbb{Z}^n$, the $k$-th iterate of $F$ at $x$ is
+$F^k(x)$, the result of applying $F$ to $x$ exactly $k$ times; in particular $F^0(x) = x$. -/
 noncomputable def IntegerPolynomialMap.iterate {n : ℕ}
     (F : IntegerPolynomialMap n n) (k : ℕ) (x : Fin n → ℤ) : Fin n → ℤ :=
   Nat.iterate F.toFun k x
 
-/-- Reduce an integer polynomial endomap modulo `p`, then apply it `k` times. -/
+/-- **Iterates of an integer polynomial map modulo a natural number.** Let $F$ be an integer
+polynomial map from $n$ variables to $n$ components, let $p$ be a natural number, and let
+$\bar F \colon (\mathbb{Z}/p\mathbb{Z})^n \to (\mathbb{Z}/p\mathbb{Z})^n$ be the map obtained by
+reducing the coefficients of $F$ modulo $p$ and evaluating. For a natural number $k$ and
+$x \in (\mathbb{Z}/p\mathbb{Z})^n$, the $k$-th iterate of $F$ modulo $p$ at $x$ is $\bar F^k(x)$,
+the result of applying $\bar F$ to $x$ exactly $k$ times; in particular $\bar F^0(x) = x$. -/
 noncomputable def IntegerPolynomialMap.iterateReduce {n : ℕ}
     (F : IntegerPolynomialMap n n) (p k : ℕ) (x : Fin n → ZMod p) : Fin n → ZMod p :=
   Nat.iterate (F.toFunReduce p) k x

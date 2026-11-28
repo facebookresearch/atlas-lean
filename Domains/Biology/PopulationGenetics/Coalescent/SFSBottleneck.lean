@@ -15,14 +15,15 @@ import Mathlib.MeasureTheory.Integral.Layercake
 # The site frequency spectrum under a population bottleneck
 
 A sample of `n` gene copies is drawn from a population whose size `s` units of `2N₀`
-generations before the present (`N₀` the present size) is `N₀ η(s)` with the piecewise-constant
+generations before the present (`N₀` a reference size) is `N₀ η(s)` with the piecewise-constant
 **bottleneck history** `η(s) = f` for `a ≤ s < a + d` and `η(s) = 1` otherwise
-(`bottleneckSize`): the population was at its present size, crashed to the relative size
+(`bottleneckSize`): the population had size `N₀`, crashed to the relative size
 `f > 0` at time `a + d` before the present, stayed there for `d ≥ 0` time units and recovered
-`a ≥ 0` time units ago. Pairs of lineages coalesce at rate `1 / η(s)`, so the cumulative
-intensity is `R(s) = ∫_0^s 1/η = s + (1/f - 1) · |[0, s] ∩ [a, a + d]|` (`bottleneckRate`,
-`cumRate_bottleneckSize`). `f < 1` is a bottleneck, `f > 1` a temporary expansion, and
-`f = 1` or `d = 0` a constant population.
+`a ≥ 0` time units ago. `N₀` is the present size when `a > 0`, `d = 0` or `f = 1` (for
+`a = 0 < d` the present size is `f N₀`). Pairs of lineages coalesce at rate `1 / η(s)`, so the
+cumulative intensity is `R(s) = ∫_0^s 1/η = s + (1/f - 1) · |[0, s] ∩ [a, a + d]|`
+(`bottleneckRate`, `cumRate_bottleneckSize`). For `d > 0`, `f < 1` is a bottleneck and `f > 1`
+a temporary expansion; `f = 1` or `d = 0` gives a constant population.
 
 **The time change.** As for exponential growth (`SFSGrowth`), the genealogy is Kingman's
 coalescent run on the clock `R` (Griffiths & Tavaré): a standard-coalescent event at standard
@@ -36,16 +37,17 @@ inherited from Kingman's coalescent.
 
 **Expected spectrum.** By `VariableSFS.integral_sfs_of_indep`,
 `E ξ_i = (θ / 2) ∑_{k=2}^{n} k C(n-i-1, k-2) / C(n-1, k-1) · E T^b_k` for `1 ≤ i ≤ n - 1`
-(`integral_sfs_bottleneck`). For `f ≤ 1` the time change is `1`-Lipschitz, so every epoch is
-shortened and every entry is at most Fu's constant-size value `θ / i`
-(`integral_sfs_bottleneck_le`). For a genuine bottleneck (`f < 1`, `d > 0`) the oldest epoch
-overlaps the bottleneck window with positive probability, so it is strictly shortened on
-average and every entry is strictly below `θ / i` when `θ > 0` (`integral_sfs_bottleneck_lt`).
-For `f ≥ 1` every entry is at least `θ / i` (`integral_sfs_bottleneck_ge`), and `f = 1` or
-`d = 0` gives exactly `θ / i` (`integral_sfs_bottleneck_eq`). The most recent epoch has mean
-Bhaskar–Song's first-coalescence time `E T^b_n = ∫_0^∞ exp(-C(n,2) R(s)) ds`
-(`integral_bottleneckTimes_top`), and the real time to the most recent common ancestor is `G`
-of the standard one (`sum_bottleneckHolding`).
+(`integral_sfs_bottleneck`). For `d ≥ 0` and `0 < f ≤ 1` the time change is `1`-Lipschitz, so no
+epoch is lengthened in expectation and, for `θ ≥ 0`, every entry is at most Fu's constant-size
+value `θ / i` (`integral_sfs_bottleneck_le`). For a genuine bottleneck (`f < 1`, `d > 0`) the
+oldest epoch overlaps the bottleneck window with positive probability, so it is strictly
+shortened on average and every entry is strictly below `θ / i` when `θ > 0`
+(`integral_sfs_bottleneck_lt`). For `f ≥ 1` and `θ ≥ 0` every entry is at least `θ / i`
+(`integral_sfs_bottleneck_ge`), and `f = 1` or `d = 0` gives exactly `θ / i`
+(`integral_sfs_bottleneck_eq`). For `n ≥ 2` and measurable holding times, the most recent epoch
+has mean Bhaskar–Song's first-coalescence time `E T^b_n = ∫_0^∞ exp(-C(n,2) R(s)) ds`
+(`integral_bottleneckTimes_top`), and the real time to the most recent common ancestor is `G` of
+the standard one (`sum_bottleneckHolding`).
 
 Not formalized here: the normalized-spectrum effects of a bottleneck (the relative excess or
 deficit of rare variants depending on the timing), closed forms of `E T^b_k` for `k < n`, the
@@ -63,8 +65,9 @@ spectrum formula of Griffiths & Tavaré (1998) and Polanski & Kimmel (2003), for
 * `cumRate_bottleneckSize`: `R(s) = s + (1/f - 1) · |[0, s] ∩ [a, a + d]|`.
 * `bottleneckTime_bottleneckRate`, `bottleneckRate_bottleneckTime`, `lt_bottleneckTime_iff`:
   `G = R⁻¹`.
-* `bottleneckTime_sub_le`, `le_bottleneckTime_sub`, `bottleneckTime_lt_bottleneckTime`: `G` is
-  strictly increasing, `1`-Lipschitz for `f ≤ 1` and expanding for `f ≥ 1`.
+* `bottleneckTime_sub_le`, `le_bottleneckTime_sub`, `bottleneckTime_lt_bottleneckTime`: for
+  `d ≥ 0` and `f > 0`, `G` is strictly increasing, `1`-Lipschitz for `f ≤ 1` and expanding for
+  `f ≥ 1`.
 * `integral_bottleneckTimes_le`, `integral_bottleneckTimes_ge`, `integral_bottleneckTimes_eq`,
   `integral_bottleneckTimes_two_lt`: comparison of `E T^b_k` with `1 / C(k,2)`.
 * `integral_bottleneckTimes_top`: `E T^b_n = firstCoalMean (bottleneckSize a d f) n`.
@@ -100,22 +103,33 @@ open SiteFrequencySpectrum VariableSFS SFSGrowth
 /-! ### The bottleneck history and its time change -/
 
 /-- The relative population size `η(s)` at time `s` before the present (in units of `2N₀`
-generations) under a **bottleneck**: `f` during `a ≤ s < a + d`, and `1` (the present size)
-otherwise. -/
+generations) under a **bottleneck**: `f` during `a ≤ s < a + d`, and `1` (the reference size
+`N₀`) otherwise. `N₀` is the present size unless the window contains `0` (`a ≤ 0 < a + d`, as
+for `a = 0 < d`) and `f ≠ 1`; the present size is then `f N₀`. For `d ≤ 0` the window is empty
+and `η` is constantly `1`. -/
 def bottleneckSize (a d f s : ℝ) : ℝ := if a ≤ s ∧ s < a + d then f else 1
 
 /-- The length `|[0, u] ∩ [a, a + w]| = min (max (u - a) 0) w` of the part of the window
-`[a, a + w]` before time `u` (for `a ≥ 0`, `w ≥ 0`). -/
+`[a, a + w]` before time `u` (for `a ≥ 0`, `w ≥ 0`). For `w < 0` the clipped expression is `w`
+for every `u`, not the length `0` of the empty window. -/
 def bottleneckOverlap (a w u : ℝ) : ℝ := min (max (u - a) 0) w
 
 /-- The cumulative coalescence intensity `R(s) = s + (1/f - 1) · |[0, s] ∩ [a, a + d]|` of the
-bottleneck history (`cumRate_bottleneckSize`). -/
+bottleneck history for `a, d, s ≥ 0` (`cumRate_bottleneckSize`); in general the total
+expression is `s + (f⁻¹ - 1) * min (max (s - a) 0) d`, whose clipped term is a length only for
+`d ≥ 0` (for `d < 0` it is `d` for every `s`). With `0⁻¹ = 0`, at `f = 0` it is
+`s - min (max (s - a) 0) d`. Intended for `a ≥ 0`, `d ≥ 0` and `f > 0`. -/
 def bottleneckRate (a d f s : ℝ) : ℝ := s + (f⁻¹ - 1) * bottleneckOverlap a d s
 
 /-- The **Griffiths–Tavaré time change** for a bottleneck:
-`G(u) = u - (1 - f) · |[0, u] ∩ [a, a + d/f]|`, the real time at which the intensity `R`
-reaches `u` (`bottleneckTime_bottleneckRate`, `bottleneckRate_bottleneckTime`). A
-standard-coalescent event at time `u` happens at real time `G(u)`. -/
+`G(u) = u - (1 - f) · |[0, u] ∩ [a, a + d/f]|` (for `a ≥ 0`, `d ≥ 0`, `f > 0`; in general the
+total expression is `u - (1 - f) * min (max (u - a) 0) (d / f)`, whose clipped term is a length
+only for `d / f ≥ 0` and is `d / f` for every `u` when `d / f < 0`). For `d ≥ 0`, `f > 0` and
+any real `a`, `G` inverts the intensity `R` (`bottleneckTime_bottleneckRate`,
+`bottleneckRate_bottleneckTime`). For `a ≥ 0` (then `G(0) = 0`) and `u ≥ 0`, `G(u)` is the real
+time at which `R` reaches `u`, so a standard-coalescent event at time `u` happens at real time
+`G(u)`. For `a < 0` this reading can fail: `a = -1`, `d = 1`, `f = 1/2` give `η = 1` on `s ≥ 0`
+but `G(0) = -1/2`. With `d / 0 = 0`, at `f = 0` it is `G(u) = u`. -/
 def bottleneckTime (a d f u : ℝ) : ℝ := u - (1 - f) * bottleneckOverlap a (d / f) u
 
 section TimeChange
@@ -147,15 +161,16 @@ theorem bottleneckOverlap_mono (huv : u ≤ v) :
   simp only [min_def, max_def]
   split_ifs <;> linarith
 
-/-- The overlap is `1`-Lipschitz in `u`. -/
+/-- For `w ≥ 0` the overlap is `1`-Lipschitz in `u`: `O(v) - O(u) ≤ v - u` for `u ≤ v`. -/
 theorem bottleneckOverlap_sub_le (hw : 0 ≤ w) (huv : u ≤ v) :
     bottleneckOverlap a w v - bottleneckOverlap a w u ≤ v - u := by
   unfold bottleneckOverlap
   simp only [min_def, max_def]
   split_ifs <;> linarith
 
-/-- The overlap grows strictly across the window: if `u < v`, `u < a + w` and `a < v`, then
-`[u, v]` meets the window `[a, a + w]` in an interval of positive length. -/
+/-- The overlap grows strictly across the window: for `w > 0`, if `u < v`, `u < a + w` and
+`a < v`, then the overlap at `u` is less than at `v`, since `[u, v]` meets the window
+`[a, a + w]` in an interval of positive length. -/
 theorem bottleneckOverlap_lt (hw : 0 < w) (hu : u < a + w) (hv : a < v) (huv : u < v) :
     bottleneckOverlap a w u < bottleneckOverlap a w v := by
   unfold bottleneckOverlap
@@ -169,12 +184,12 @@ theorem bottleneckTime_eq_self (h : f = 1 ∨ d = 0) (u : ℝ) : bottleneckTime 
   · simp only [bottleneckTime, bottleneckOverlap, zero_div, min_eq_right (le_max_right _ _),
       mul_zero, sub_zero]
 
-/-- The present is fixed by the time change: `G(0) = 0` (for a bottleneck in the past). -/
+/-- The present is fixed by the time change: `G(0) = 0` for `a ≥ 0`, `d ≥ 0` and `f > 0`. -/
 theorem bottleneckTime_zero (ha : 0 ≤ a) (hd : 0 ≤ d) (hf : 0 < f) :
     bottleneckTime a d f 0 = 0 := by
   rw [bottleneckTime, bottleneckOverlap_of_le (div_nonneg hd hf.le) ha, mul_zero, sub_zero]
 
-/-- `G` inverts the intensity: `G(R(s)) = s`. -/
+/-- `G` inverts the intensity: `G(R(s)) = s` for every `s`, when `d ≥ 0` and `f > 0`. -/
 theorem bottleneckTime_bottleneckRate (hd : 0 ≤ d) (hf : 0 < f) (s : ℝ) :
     bottleneckTime a d f (bottleneckRate a d f s) = s := by
   have hw : 0 ≤ d / f := div_nonneg hd hf.le
@@ -202,7 +217,7 @@ theorem bottleneckTime_bottleneckRate (hd : 0 ≤ d) (hf : 0 < f) (s : ℝ) :
     rw [bottleneckTime, hR, bottleneckOverlap_of_ge hw hge]
     linear_combination d * hinv
 
-/-- The intensity inverts `G`: `R(G(u)) = u`. -/
+/-- The intensity inverts `G`: `R(G(u)) = u` for every `u`, when `d ≥ 0` and `f > 0`. -/
 theorem bottleneckRate_bottleneckTime (hd : 0 ≤ d) (hf : 0 < f) (u : ℝ) :
     bottleneckRate a d f (bottleneckTime a d f u) = u := by
   have hw : 0 ≤ d / f := div_nonneg hd hf.le
@@ -226,14 +241,16 @@ theorem bottleneckRate_bottleneckTime (hd : 0 ≤ d) (hf : 0 < f) (u : ℝ) :
     rw [hG, bottleneckRate, bottleneckOverlap_of_ge hd (by linarith)]
     ring
 
-/-- The increment of `G` over `[u, v]`. -/
+/-- The increment of `G` over `[u, v]`, for all real `a`, `d`, `f`, `u`, `v`, with the clipped
+overlap `min (max (· - a) 0) (d / f)` and `d / 0 = 0`; for `d / f < 0` both clipped terms equal
+`d / f` and cancel. -/
 theorem bottleneckTime_sub (a d f u v : ℝ) :
     bottleneckTime a d f v - bottleneckTime a d f u =
       (v - u) - (1 - f) * (bottleneckOverlap a (d / f) v - bottleneckOverlap a (d / f) u) := by
   unfold bottleneckTime
   ring
 
-/-- `G` is monotone. -/
+/-- `G` is monotone for `d ≥ 0` and `f > 0`. -/
 theorem bottleneckTime_sub_nonneg (hd : 0 ≤ d) (hf : 0 < f) (huv : u ≤ v) :
     0 ≤ bottleneckTime a d f v - bottleneckTime a d f u := by
   have hw : 0 ≤ d / f := div_nonneg hd hf.le
@@ -244,7 +261,7 @@ theorem bottleneckTime_sub_nonneg (hd : 0 ≤ d) (hf : 0 < f) (huv : u ≤ v) :
   · nlinarith [mul_le_mul_of_nonneg_left h1 (sub_nonneg.2 hf1)]
   · nlinarith [mul_nonneg (sub_nonneg.2 hf1) h0]
 
-/-- `G` is strictly increasing. -/
+/-- `G` is strictly increasing for `d ≥ 0` and `f > 0`. -/
 theorem bottleneckTime_lt_bottleneckTime (hd : 0 ≤ d) (hf : 0 < f) (huv : u < v) :
     bottleneckTime a d f u < bottleneckTime a d f v := by
   have hw : 0 ≤ d / f := div_nonneg hd hf.le
@@ -255,21 +272,23 @@ theorem bottleneckTime_lt_bottleneckTime (hd : 0 ≤ d) (hf : 0 < f) (huv : u < 
   · nlinarith [mul_le_mul_of_nonneg_left h1 (sub_nonneg.2 hf1), mul_pos hf (sub_pos.2 huv)]
   · nlinarith [mul_nonneg (sub_nonneg.2 hf1) h0]
 
-/-- For a bottleneck (`f ≤ 1`) the time change is `1`-Lipschitz: `G(v) - G(u) ≤ v - u`. -/
+/-- For `f ≤ 1` (any `a`, `d`), `G(v) - G(u) ≤ v - u` whenever `u ≤ v`; for a bottleneck
+(`d ≥ 0`, `0 < f ≤ 1`), where `G` is monotone, the time change is thus `1`-Lipschitz. -/
 theorem bottleneckTime_sub_le (hf1 : f ≤ 1) (huv : u ≤ v) :
     bottleneckTime a d f v - bottleneckTime a d f u ≤ v - u := by
   have h0 := sub_nonneg.2 (bottleneckOverlap_mono (a := a) (w := d / f) huv)
   rw [bottleneckTime_sub]
   nlinarith [mul_nonneg (sub_nonneg.2 hf1) h0]
 
-/-- For an expansion (`f ≥ 1`) the time change is expanding: `v - u ≤ G(v) - G(u)`. -/
+/-- For an expansion (`f ≥ 1`) the time change is expanding: `v - u ≤ G(v) - G(u)` whenever
+`u ≤ v`. -/
 theorem le_bottleneckTime_sub (hf1 : 1 ≤ f) (huv : u ≤ v) :
     v - u ≤ bottleneckTime a d f v - bottleneckTime a d f u := by
   have h0 := sub_nonneg.2 (bottleneckOverlap_mono (a := a) (w := d / f) huv)
   rw [bottleneckTime_sub]
   nlinarith [mul_nonneg (sub_nonneg.2 hf1) h0]
 
-/-- In every case `G(v) - G(u) ≤ max 1 f · (v - u)`. -/
+/-- For `d ≥ 0`, `f > 0` and `u ≤ v`, `G(v) - G(u) ≤ max 1 f · (v - u)`. -/
 theorem bottleneckTime_sub_le_max (hd : 0 ≤ d) (hf : 0 < f) (huv : u ≤ v) :
     bottleneckTime a d f v - bottleneckTime a d f u ≤ max 1 f * (v - u) := by
   have hw : 0 ≤ d / f := div_nonneg hd hf.le
@@ -283,7 +302,7 @@ theorem bottleneckTime_sub_le_max (hd : 0 ≤ d) (hf : 0 < f) (huv : u ≤ v) :
     rw [bottleneckTime_sub]
     nlinarith [mul_le_mul_of_nonneg_left h1 (sub_nonneg.2 hf1)]
 
-/-- `t < G(y) ↔ R(t) < y`. -/
+/-- For `d ≥ 0` and `f > 0`, `t < G(y) ↔ R(t) < y` for all `t`, `y`. -/
 theorem lt_bottleneckTime_iff (hd : 0 ≤ d) (hf : 0 < f) (t y : ℝ) :
     t < bottleneckTime a d f y ↔ bottleneckRate a d f t < y := by
   have hmono : StrictMono (bottleneckTime a d f) := fun _ _ h =>
@@ -297,7 +316,7 @@ theorem continuous_bottleneckOverlap (a w : ℝ) : Continuous (bottleneckOverlap
 theorem measurable_bottleneckTime (a d f : ℝ) : Measurable (bottleneckTime a d f) :=
   (continuous_id.sub (continuous_const.mul (continuous_bottleneckOverlap a (d / f)))).measurable
 
-/-- The intensity is nonnegative on `[0, ∞)`. -/
+/-- The intensity is nonnegative on `[0, ∞)` for `a ≥ 0`, `d ≥ 0` and `f > 0`. -/
 theorem bottleneckRate_nonneg (ha : 0 ≤ a) (hd : 0 ≤ d) (hf : 0 < f) (hs : 0 ≤ s) :
     0 ≤ bottleneckRate a d f s := by
   have h0 := bottleneckOverlap_nonneg (a := a) hd s
@@ -308,8 +327,9 @@ theorem bottleneckRate_nonneg (ha : 0 ≤ a) (hd : 0 ≤ d) (hf : 0 < f) (hs : 0
     rw [bottleneckRate]; ring
   linarith
 
-/-- **The intensity of the bottleneck history**: for `a, d, s ≥ 0`,
-`R(s) = ∫_0^s 1/η = s + (1/f - 1) · |[0, s] ∩ [a, a + d]|`. -/
+/-- **The intensity of the bottleneck history**: for `a, d, s ≥ 0` and every real `f`,
+`R(s) = ∫_0^s 1/η = s + (1/f - 1) · |[0, s] ∩ [a, a + d]|`. With `1/0 = 0` on both sides, at
+`f = 0` both are `s - |[0, s] ∩ [a, a + d]|`. -/
 theorem cumRate_bottleneckSize (ha : 0 ≤ a) (hd : 0 ≤ d) (hs : 0 ≤ s) :
     cumRate (bottleneckSize a d f) s = bottleneckRate a d f s := by
   have hfun : (fun r => (bottleneckSize a d f r)⁻¹) =
@@ -334,20 +354,26 @@ theorem cumRate_bottleneckSize (ha : 0 ≤ a) (hd : 0 ≤ d) (hs : 0 ≤ s) :
 
 /-! ### The time-changed genealogy -/
 
-/-- The **holding times under a bottleneck**: the epoch with `k` lineages, which lasts from
-`V_{k+1}` to `V_k` in standard time, lasts `G(V_k) - G(V_{k+1})` in real time. -/
+/-- The **holding times under a bottleneck**: `T^b_k = G(V_k) - G(V_{k+1})` with
+`V_k = ∑_{j=k}^{n} T_j`, so `T^b_k = 0` for `k > n` (empty sums). For `a ≥ 0`, `d ≥ 0`, `f > 0`
+and standard-coalescent holding times `T_2, …, T_n`, the epoch with `k` lineages
+(`2 ≤ k ≤ n`), which lasts from `V_{k+1}` to `V_k` in standard time, lasts `T^b_k` in real
+time. -/
 def bottleneckHolding (a d f : ℝ) (n : ℕ) (T : ℕ → ℝ) (k : ℕ) : ℝ :=
   bottleneckTime a d f (epochEnd n T k) - bottleneckTime a d f (epochEnd n T (k + 1))
 
 variable {n k : ℕ} {T : ℕ → ℝ}
 
-/-- For a constant population the time change is the identity. -/
+/-- For a constant population (`f = 1` or `d = 0`) the time change is the identity:
+`T^b_k = T_k` for every `k ≤ n`. -/
 theorem bottleneckHolding_eq_self (h : f = 1 ∨ d = 0) (hk : k ≤ n) (T : ℕ → ℝ) :
     bottleneckHolding a d f n T k = T k := by
   rw [bottleneckHolding, bottleneckTime_eq_self h, bottleneckTime_eq_self h, epochEnd_eq_add hk]
   ring
 
-/-- The real time to the most recent common ancestor is `G` of the standard one. -/
+/-- For `a ≥ 0`, `d ≥ 0` and `f > 0`, the real time to the most recent common ancestor is `G`
+of the standard one: `∑_{k=2}^{n} T^b_k = G(∑_{k=2}^{n} T_k)`. For `n < 2` both sides are `0`
+(empty sums and `G(0) = 0`). -/
 theorem sum_bottleneckHolding (ha : 0 ≤ a) (hd : 0 ≤ d) (hf : 0 < f) (n : ℕ) (T : ℕ → ℝ) :
     ∑ k ∈ Icc 2 n, bottleneckHolding a d f n T k = bottleneckTime a d f (∑ k ∈ Icc 2 n, T k) := by
   rcases lt_or_ge n 2 with hn | hn
@@ -359,14 +385,15 @@ theorem sum_bottleneckHolding (ha : 0 ≤ a) (hd : 0 ≤ d) (hf : 0 < f) (n : �
     fun k => by rw [bottleneckHolding, neg_sub]
   rw [sum_congr rfl fun k _ => e k, sum_neg_distrib, h, neg_neg, epochEnd]
 
-/-- The epoch with `k` lineages as an increment of `G` over `[V_{k+1}, T_k + V_{k+1}]`. -/
+/-- For `k ≤ n`, the epoch with `k` lineages as an increment of `G` over
+`[V_{k+1}, T_k + V_{k+1}]`: `T^b_k = G(T_k + V_{k+1}) - G(V_{k+1})`. -/
 theorem bottleneckHolding_eq (hk : k ≤ n) (T : ℕ → ℝ) :
     bottleneckHolding a d f n T k = bottleneckTime a d f (T k + epochEnd n T (k + 1)) -
       bottleneckTime a d f (epochEnd n T (k + 1)) := by
   rw [bottleneckHolding, epochEnd_eq_add hk]
 
-/-- Bounds on one epoch: `0 ≤ T^b_k ≤ max 1 f · T_k`, `T^b_k ≤ T_k` for `f ≤ 1` and
-`T_k ≤ T^b_k` for `f ≥ 1`. -/
+/-- Bounds on one epoch, for `d ≥ 0`, `f > 0`, `T_j ≥ 0` (`2 ≤ j ≤ n`) and `2 ≤ k ≤ n`:
+`0 ≤ T^b_k ≤ max 1 f · T_k`, `T^b_k ≤ T_k` for `f ≤ 1` and `T_k ≤ T^b_k` for `f ≥ 1`. -/
 theorem bottleneckHolding_bounds (hd : 0 ≤ d) (hf : 0 < f) (hT : ∀ j ∈ Icc 2 n, 0 ≤ T j)
     (hk : k ∈ Icc 2 n) :
     0 ≤ bottleneckHolding a d f n T k ∧ bottleneckHolding a d f n T k ≤ max 1 f * T k ∧
@@ -381,9 +408,10 @@ theorem bottleneckHolding_bounds (hd : 0 ≤ d) (hf : 0 < f) (hT : ∀ j ∈ Icc
   · simpa only [add_sub_cancel_right] using bottleneckTime_sub_le hf1 huv
   · simpa only [add_sub_cancel_right] using le_bottleneckTime_sub hf1 huv
 
-/-- **A bottleneck strictly shortens the oldest epoch when they overlap**: with `f < 1`,
-`d > 0`, if `V_3 < a + d/f` (the epoch with two lineages starts before the bottleneck window
-ends in standard time) and `T_2 > a`, then `T^b_2 < T_2`. -/
+/-- **Strict shortening of the oldest epoch under an overlap condition**: with `a ≥ 0`,
+`d > 0`, `0 < f < 1`, `n ≥ 2` and `T_j ≥ 0` for `2 ≤ j ≤ n`, if `V_3 < a + d/f` (the epoch
+with two lineages starts before the bottleneck window ends in standard time) and `T_2 > a`,
+then `T^b_2 < T_2`. -/
 theorem bottleneckHolding_two_lt (ha : 0 ≤ a) (hd : 0 < d) (hf : 0 < f) (hf1 : f < 1)
     (hn : 2 ≤ n) (hT : ∀ j ∈ Icc 2 n, 0 ≤ T j) (h3 : epochEnd n T 3 < a + d / f)
     (h2 : a < T 2) : bottleneckHolding a d f n T 2 < T 2 := by
@@ -415,17 +443,20 @@ variable {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω}
 variable {n : ℕ} (K : KingmanTimes μ n) (a d f : ℝ)
 
 /-- The holding times of a Kingman genealogy after the Griffiths–Tavaré time change for a
-bottleneck: `T^b_k = G(V_k) - G(V_{k+1})`. -/
+bottleneck: `T^b_k = G(V_k) - G(V_{k+1})` with `V_k = T_k + ⋯ + T_n`, so `T^b_k = 0` for
+`k > n`. For `a ≥ 0`, `d ≥ 0` and `f > 0`, `T^b_k` (`2 ≤ k ≤ n`) is the real duration of the
+epoch with `k` lineages under the bottleneck history. -/
 def bottleneckTimes (k : ℕ) (ω : Ω) : ℝ := bottleneckHolding a d f n (fun j => K.T j ω) k
 
 variable {K a d f}
 
-/-- The vector of time-changed holding times is measurable. -/
+/-- If every `K.T k` is measurable, the vector of time-changed holding times is measurable. -/
 theorem measurable_bottleneckTimes (hT : ∀ k, Measurable (K.T k)) :
     Measurable fun ω k => bottleneckTimes K a d f k ω :=
   (measurable_bottleneckHolding a d f n).comp (measurable_pi_iff.2 hT)
 
-/-- Each time-changed holding time is measurable. -/
+/-- If every `K.T k` is measurable, each time-changed holding time is measurable; equivalently,
+the map `ω ↦ (T^b_k ω)_k` into `ℕ → ℝ` with the product σ-algebra is measurable. -/
 theorem measurable_bottleneckTimes_apply (hT : ∀ k, Measurable (K.T k)) (k : ℕ) :
     Measurable (bottleneckTimes K a d f k) :=
   (measurable_pi_apply k).comp (measurable_bottleneckTimes hT)
@@ -439,7 +470,9 @@ theorem comap_bottleneckTimes_le :
     ← MeasurableSpace.comap_comp]
   exact MeasurableSpace.comap_mono (measurable_bottleneckHolding a d f n).comap_le
 
-/-- A.s. bounds on every epoch, from `bottleneckHolding_bounds`. -/
+/-- For `d ≥ 0` and `f > 0`, a.s. bounds on every epoch `2 ≤ k ≤ n`, from
+`bottleneckHolding_bounds`: `0 ≤ T^b_k ≤ max 1 f · T_k`, `T^b_k ≤ T_k` if `f ≤ 1` and
+`T_k ≤ T^b_k` if `f ≥ 1`. -/
 theorem ae_bottleneckTimes_bounds (hd : 0 ≤ d) (hf : 0 < f) : ∀ᵐ ω ∂μ, ∀ k ∈ Icc 2 n,
     0 ≤ bottleneckTimes K a d f k ω ∧ bottleneckTimes K a d f k ω ≤ max 1 f * K.T k ω ∧
       (f ≤ 1 → bottleneckTimes K a d f k ω ≤ K.T k ω) ∧
@@ -447,7 +480,8 @@ theorem ae_bottleneckTimes_bounds (hd : 0 ≤ d) (hf : 0 < f) : ∀ᵐ ω ∂μ,
   filter_upwards [ae_T_pos K] with ω hω k hk
   exact bottleneckHolding_bounds hd hf (fun j hj => (hω j hj).le) hk
 
-/-- Each time-changed holding time is integrable (it is dominated by `max 1 f · T_k`). -/
+/-- For `d ≥ 0`, `f > 0`, measurable `K.T k` and `2 ≤ k ≤ n`, each time-changed holding time
+is integrable (it is dominated by `max 1 f · T_k`). -/
 theorem integrable_bottleneckTimes (hd : 0 ≤ d) (hf : 0 < f) (hT : ∀ k, Measurable (K.T k))
     {k : ℕ} (hk : k ∈ Icc 2 n) : Integrable (bottleneckTimes K a d f k) μ := by
   refine ((K.integrable_T hk).const_mul (max 1 f)).mono'
@@ -456,7 +490,8 @@ theorem integrable_bottleneckTimes (hd : 0 ≤ d) (hf : 0 < f) (hT : ∀ k, Meas
   rw [Real.norm_eq_abs, abs_of_nonneg (hω k hk).1]
   exact (hω k hk).2.1
 
-/-- A bottleneck shortens every epoch on average: `E T^b_k ≤ 1 / C(k,2)` for `f ≤ 1`. -/
+/-- A bottleneck does not lengthen any epoch on average: `E T^b_k ≤ 1 / C(k,2)` for `d ≥ 0`,
+`0 < f ≤ 1`, measurable `K.T k` and `2 ≤ k ≤ n`. -/
 theorem integral_bottleneckTimes_le (hd : 0 ≤ d) (hf : 0 < f) (hf1 : f ≤ 1)
     (hT : ∀ k, Measurable (K.T k)) {k : ℕ} (hk : k ∈ Icc 2 n) :
     μ[bottleneckTimes K a d f k] ≤ ((k.choose 2 : ℕ) : ℝ)⁻¹ := by
@@ -464,7 +499,8 @@ theorem integral_bottleneckTimes_le (hd : 0 ≤ d) (hf : 0 < f) (hf1 : f ≤ 1)
   refine integral_mono_ae (integrable_bottleneckTimes hd hf hT hk) (K.integrable_T hk) ?_
   filter_upwards [ae_bottleneckTimes_bounds (K := K) hd hf] with ω hω using (hω k hk).2.2.1 hf1
 
-/-- An expansion lengthens every epoch on average: `1 / C(k,2) ≤ E T^b_k` for `f ≥ 1`. -/
+/-- An expansion does not shorten any epoch on average: `1 / C(k,2) ≤ E T^b_k` for `d ≥ 0`,
+`f ≥ 1`, measurable `K.T k` and `2 ≤ k ≤ n`. -/
 theorem integral_bottleneckTimes_ge (hd : 0 ≤ d) (hf1 : 1 ≤ f)
     (hT : ∀ k, Measurable (K.T k)) {k : ℕ} (hk : k ∈ Icc 2 n) :
     ((k.choose 2 : ℕ) : ℝ)⁻¹ ≤ μ[bottleneckTimes K a d f k] := by
@@ -473,15 +509,16 @@ theorem integral_bottleneckTimes_ge (hd : 0 ≤ d) (hf1 : 1 ≤ f)
   refine integral_mono_ae (K.integrable_T hk) (integrable_bottleneckTimes hd hf hT hk) ?_
   filter_upwards [ae_bottleneckTimes_bounds (K := K) hd hf] with ω hω using (hω k hk).2.2.2 hf1
 
-/-- For a constant population the time-changed genealogy is Kingman's. -/
+/-- For a constant population (`f = 1` or `d = 0`) every epoch keeps its Kingman mean:
+`E T^b_k = 1 / C(k,2)` for `2 ≤ k ≤ n`. -/
 theorem integral_bottleneckTimes_eq (h : f = 1 ∨ d = 0) {k : ℕ} (hk : k ∈ Icc 2 n) :
     μ[bottleneckTimes K a d f k] = ((k.choose 2 : ℕ) : ℝ)⁻¹ := by
   simp only [bottleneckTimes, bottleneckHolding_eq_self h (mem_Icc.1 hk).2]
   exact K.integral_T hk
 
-/-- With positive probability `V_3 < c` and `T_2 > a`, for `0 ≤ a < c`: the epoch with two
-lineages can start before `c` and outlast `a`. Proof by independence of the holding times:
-the event contains `{T_2 > a} ∩ ⋂_{j ≥ 3} {T_j ≤ c / n}`. -/
+/-- With positive probability `V_3 < c` and `T_2 > a`, for `n ≥ 2` and `0 ≤ a < c`: the epoch
+with two lineages can start before `c` and outlast `a`. Proof by independence of the holding
+times: the event contains `{T_2 > a} ∩ ⋂_{3 ≤ j ≤ n} {T_j ≤ c / n}`. -/
 theorem measure_epochEnd_three_lt_pos (K : KingmanTimes μ n) {a c : ℝ} (ha : 0 ≤ a)
     (hc : a < c) (hn : 2 ≤ n) :
     0 < μ {ω | epochEnd n (fun j => K.T j ω) 3 < c ∧ a < K.T 2 ω} := by
@@ -537,7 +574,8 @@ theorem measure_epochEnd_three_lt_pos (K : KingmanTimes μ n) {a c : ℝ} (ha : 
     simpa [S] using this
 
 /-- **A genuine bottleneck strictly shortens the oldest epoch on average**: for `a ≥ 0`,
-`d > 0` and `0 < f < 1`, `E T^b_2 < 1 = 1 / C(2,2)`. -/
+`d > 0` and `0 < f < 1`, with `μ` a probability measure, every `K.T k` measurable and `n ≥ 2`,
+`E T^b_2 < 1 = 1 / C(2,2)`. -/
 theorem integral_bottleneckTimes_two_lt [IsProbabilityMeasure μ] (ha : 0 ≤ a) (hd : 0 < d)
     (hf : 0 < f) (hf1 : f < 1) (hT : ∀ k, Measurable (K.T k)) (hn : 2 ≤ n) :
     μ[bottleneckTimes K a d f 2] < (((2 : ℕ).choose 2 : ℕ) : ℝ)⁻¹ := by
@@ -564,14 +602,19 @@ section Spectrum
 variable {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω} [IsProbabilityMeasure μ] {n : ℕ}
   {K : KingmanTimes μ n} {a d f : ℝ} {τ : Ω → List (List ℕ)} {θ : ℝ} {ξ : ℕ → Ω → ℝ}
 
-/-- **Expected site frequency spectrum under a bottleneck.** Let the genealogy of a sample of
-`n` gene copies from a population with the bottleneck history `bottleneckSize a d f`
-(`d ≥ 0`, `f > 0`) be Kingman's coalescent (holding times `K.T`, independent random-joining
-block-size history `τ`) run through the Griffiths–Tavaré time change, so that the epoch with
-`k` lineages lasts `T^b_k = G(V_k) - G(V_{k+1})` (`bottleneckTimes`). If, given this
-genealogy, the count `ξ i` is integrable with conditional mean `(θ / 2) L^b_i` (neutral
-infinite-sites mutation at rate `θ / 2` per lineage per unit of real time), then for
-`1 ≤ i ≤ n - 1`, `E ξ_i = (θ / 2) ∑_{k=2}^{n} k C(n-i-1, k-2) / C(n-1, k-1) · E T^b_k`. -/
+/-- **Expected site frequency spectrum under a bottleneck.** For any real `a`, with `d ≥ 0` and
+`f > 0`, run Kingman's coalescent (measurable holding times `K.T`, independent random-joining
+block-size history `τ` with measurable preimages, `μ` a probability measure) through the
+Griffiths–Tavaré time change, giving `T^b_k = G(V_k) - G(V_{k+1})` (`bottleneckTimes`). If,
+given `τ` and the `T^b_k`, each real `ξ i` is integrable with conditional mean
+`(θ / 2) L^b_i`, then for `1 ≤ i ≤ n - 1`,
+`E ξ_i = (θ / 2) ∑_{k=2}^{n} k C(n-i-1, k-2) / C(n-1, k-1) · E T^b_k`. Any real `θ` is allowed
+and `ξ i` need not be integer-valued (one may take `ξ i = (θ / 2) L^b_i`). For `a ≥ 0` the
+`T^b_k` (`2 ≤ k ≤ n`) are the real durations of the epochs of the genealogy of a sample of `n`
+gene copies from a population with the bottleneck history `bottleneckSize a d f`; in the
+neutral infinite-sites model with `θ ≥ 0` (mutation at rate `θ / 2` per lineage per unit of
+real time) one may then take `ξ i` to be the number of sites whose derived allele is carried
+by `i` sample copies. -/
 theorem integral_sfs_bottleneck (hd : 0 ≤ d) (hf : 0 < f) (hT : ∀ k, Measurable (K.T k))
     (hτ : MeasurableSpace.comap τ ⊤ ≤ mΩ)
     (hτ_law : ∀ ps, μ.real (τ ⁻¹' {ps}) = randomJoining (n - 1) (List.replicate n 1) ps)
@@ -587,8 +630,9 @@ theorem integral_sfs_bottleneck (hd : 0 ≤ d) (hf : 0 < f) (hT : ∀ k, Measura
     (fun _ hk => integrable_bottleneckTimes hd hf hT hk) hτ hτ_law
     (indep_of_indep_of_le_right h_indep comap_bottleneckTimes_le) hξ_int hξ hi hin
 
-/-- **A bottleneck lowers the expected spectrum**: under the hypotheses of
-`integral_sfs_bottleneck` with `θ ≥ 0` and `f ≤ 1`, `E ξ_i ≤ θ / i`. -/
+/-- **A bottleneck keeps the expected spectrum at most Fu's value**: under the hypotheses of
+`integral_sfs_bottleneck` with `θ ≥ 0` and `f ≤ 1`, `E ξ_i ≤ θ / i` for every
+`1 ≤ i ≤ n - 1`. -/
 theorem integral_sfs_bottleneck_le (hθ : 0 ≤ θ) (hd : 0 ≤ d) (hf : 0 < f) (hf1 : f ≤ 1)
     (hT : ∀ k, Measurable (K.T k))
     (hτ : MeasurableSpace.comap τ ⊤ ≤ mΩ)
@@ -605,9 +649,9 @@ theorem integral_sfs_bottleneck_le (hθ : 0 ≤ θ) (hd : 0 ≤ d) (hf : 0 < f) 
     ← variableSFS_inv_choose_two θ hi hin]
   exact variableSFS_le_variableSFS hθ (fun k hk => integral_bottleneckTimes_le hd hf hf1 hT hk) i
 
-/-- **A genuine bottleneck strictly lowers every entry of the expected spectrum**: under the
-hypotheses of `integral_sfs_bottleneck` with `θ > 0`, `a ≥ 0`, `d > 0` and `0 < f < 1`,
-`E ξ_i < θ / i` for every `1 ≤ i ≤ n - 1`. -/
+/-- **With `θ > 0`, a genuine bottleneck lowers every expected SFS entry** below Fu's value:
+under the hypotheses of `integral_sfs_bottleneck` with `θ > 0`, `a ≥ 0`, `d > 0` and
+`0 < f < 1`, `E ξ_i < θ / i` for every `1 ≤ i ≤ n - 1`. -/
 theorem integral_sfs_bottleneck_lt (hθ : 0 < θ) (ha : 0 ≤ a) (hd : 0 < d) (hf : 0 < f)
     (hf1 : f < 1) (hT : ∀ k, Measurable (K.T k))
     (hτ : MeasurableSpace.comap τ ⊤ ≤ mΩ)
@@ -627,8 +671,9 @@ theorem integral_sfs_bottleneck_lt (hθ : 0 < θ) (ha : 0 ≤ a) (hd : 0 < d) (h
     (fun k hk => integral_bottleneckTimes_le hd.le hf hf1.le hT hk)
     (integral_bottleneckTimes_two_lt ha hd hf hf1 hT hn) hi hin
 
-/-- **An expansion raises the expected spectrum**: under the hypotheses of
-`integral_sfs_bottleneck` with `θ ≥ 0` and `f ≥ 1`, `θ / i ≤ E ξ_i`. -/
+/-- **An expansion keeps the expected spectrum at least Fu's value**: under the hypotheses of
+`integral_sfs_bottleneck` with `θ ≥ 0` and `f ≥ 1`, `θ / i ≤ E ξ_i` for every
+`1 ≤ i ≤ n - 1`. -/
 theorem integral_sfs_bottleneck_ge (hθ : 0 ≤ θ) (hd : 0 ≤ d) (hf1 : 1 ≤ f)
     (hT : ∀ k, Measurable (K.T k))
     (hτ : MeasurableSpace.comap τ ⊤ ≤ mΩ)
@@ -645,8 +690,9 @@ theorem integral_sfs_bottleneck_ge (hθ : 0 ≤ θ) (hd : 0 ≤ d) (hf1 : 1 ≤ 
     hin, ← variableSFS_inv_choose_two θ hi hin]
   exact variableSFS_le_variableSFS hθ (fun k hk => integral_bottleneckTimes_ge hd hf1 hT hk) i
 
-/-- **A constant population recovers Fu's spectrum**: with `f = 1` or `d = 0`,
-`E ξ_i = θ / i`. -/
+/-- **A constant population recovers Fu's spectrum**: under the hypotheses of
+`integral_sfs_bottleneck` (with `d ≥ 0`, `f > 0`), if `f = 1` or `d = 0`, then `E ξ_i = θ / i`
+for every `1 ≤ i ≤ n - 1`. -/
 theorem integral_sfs_bottleneck_eq (h : f = 1 ∨ d = 0) (hd : 0 ≤ d) (hf : 0 < f)
     (hT : ∀ k, Measurable (K.T k))
     (hτ : MeasurableSpace.comap τ ⊤ ≤ mΩ)
@@ -674,15 +720,19 @@ section FirstCoalescence
 variable {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω} {n : ℕ} {K : KingmanTimes μ n}
   {a d f : ℝ}
 
-/-- The most recent epoch (`n` lineages) lasts `G(T_n)` in real time. -/
+/-- For `a ≥ 0`, `d ≥ 0` and `f > 0`, `T^b_n = G(T_n)` for every `n`; for `n ≥ 2` the most
+recent epoch (`n` lineages) thus lasts `G(T_n)` in real time (for `n < 2` there is no such
+epoch and no law is imposed on `T_n`). -/
 theorem bottleneckTimes_top (ha : 0 ≤ a) (hd : 0 ≤ d) (hf : 0 < f) (ω : Ω) :
     bottleneckTimes K a d f n ω = bottleneckTime a d f (K.T n ω) := by
   simp [bottleneckTimes, bottleneckHolding, epochEnd, bottleneckTime_zero ha hd hf]
 
-/-- **The first coalescence under a bottleneck** (Griffiths & Tavaré): the expected real
-duration of the most recent epoch (`n` lineages) is Bhaskar–Song's first-coalescence time
+/-- **Expected first-coalescence time under a bottleneck** (Griffiths & Tavaré): for `a ≥ 0`,
+`d ≥ 0`, `f > 0`, measurable `K.T k` and `n ≥ 2`, the expected real duration of the most
+recent epoch (`n` lineages) is Bhaskar–Song's first-coalescence time
 `c_n = ∫_0^∞ exp(-C(n,2) R(s)) ds` for the bottleneck history. Proof by the tail formula
-`E X = ∫_0^∞ P(X > t) dt` and `P(G(T_n) > t) = P(T_n > R(t)) = exp(-C(n,2) R(t))`. -/
+`E X = ∫_0^∞ P(X > t) dt` for `X = G(T_n)`, which is nonnegative almost everywhere, and, for
+`t ≥ 0`, `P(G(T_n) > t) = P(T_n > R(t)) = exp(-C(n,2) R(t))`. -/
 theorem integral_bottleneckTimes_top (ha : 0 ≤ a) (hd : 0 ≤ d) (hf : 0 < f)
     (hT : ∀ k, Measurable (K.T k)) (hn : 2 ≤ n) :
     μ[bottleneckTimes K a d f n] = firstCoalMean (bottleneckSize a d f) n := by

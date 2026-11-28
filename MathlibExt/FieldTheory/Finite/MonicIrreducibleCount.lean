@@ -74,9 +74,9 @@ theorem sum_divisors_mul_monicIrreducibleCount {n : ℕ} (hn : n ≠ 0) :
     rw [Fintype.card_eq_nat_card, natCard_extension]
   have hq1 : 1 < Nat.card K ^ n := Nat.one_lt_pow hn Finite.one_lt_card
   -- `X ^ q ^ n - X` splits over `L` with every element of `L` as a simple root.
-  have hbig0 : (X ^ Nat.card K ^ n - X : L[X]) ≠ 0 := X_pow_card_sub_X_ne_zero _ hq1
+  have hbig0 : (X ^ Nat.card K ^ n - X : L[X]) ≠ 0 := Polynomial.X_pow_sub_X_ne_zero hq1
   have hbigdeg : (X ^ Nat.card K ^ n - X : L[X]).natDegree = Nat.card K ^ n :=
-    X_pow_card_sub_X_natDegree_eq _ hq1
+    Polynomial.natDegree_X_pow_sub_X hq1
   have hbigroots : (X ^ Nat.card K ^ n - X : L[X]).roots = Finset.univ.val := by
     rw [← hcardL]; exact roots_X_pow_card_sub_X _
   have hbigsplits : (X ^ Nat.card K ^ n - X : L[X]).Splits := by

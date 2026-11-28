@@ -18,16 +18,32 @@ public import Mathlib.Order.WellFounded
 import Mathlib.Order.Lattice.Nat
 import Batteries.Data.Nat.Bitwise.Lemmas
 
+/-!
+# Sprague–Grundy theory for finite impartial games
+
+## References
+
+- Zev Friedman, *Sprague-Grundy Values for 4-Pile Princess and the Roses*,
+  INTEGERS 26 (2026), Article G4, pp. 1–40, Corollary 4 and Lemma 5.
+- R. P. Sprague, *Über mathematische Kampfspiele*, Tôhoku Mathematical Journal 41
+  (1935–1936), pp. 438–444.
+- P. M. Grundy, *Mathematics and games*, Eureka 2 (1939), pp. 6–8.
+- Tanya Khovanova and Joshua Xiong, *Nim Fractals*, Journal of Integer Sequences 17
+  (2014), Article 14.7.8, Section 1.
+-/
+
 @[expose] public section
 
 namespace MetaMathlibExt.SpragueGrundy
 
-/-- Finite impartial game with a strictly decreasing natural rank.
+/-- **Impartial game.** An impartial game consists of a type of positions, a starting position,
+for each position $p$ a finite set of positions reachable from $p$ in one move, and a rank
+function assigning a natural number to each position such that every move strictly decreases the
+rank: if $q$ is reachable from $p$ in one move, then $\mathrm{rank}(q) < \mathrm{rank}(p)$.
 
-Finite move sets plus a strictly decreasing natural rank give a finite
-reachable game tree from any starting position, even if `Pos` contains
-unreachable points: every move strictly decreases `rank`, so every play
-terminates and only finitely many positions are reachable.
+Because the move sets are finite and the rank strictly decreases along moves, every play
+terminates and only finitely many positions are reachable from any position, even if the type of
+positions is infinite or contains unreachable positions.
 -/
 structure ImpartialGame where
   Pos : Type
@@ -43,11 +59,21 @@ theorem wfRel (G : ImpartialGame) :
   intro a b h
   exact G.rank_lt b a h
 
-/-- Normal-play P-positions: a position is losing iff every move goes to an N-position. -/
+/-- **P-positions.** In an impartial game $G$, the P-positions are defined by well-founded
+recursion along moves: a position $p$ is a P-position if and only if no position reachable from
+$p$ in one move is a P-position. Positions that are not P-positions are called N-positions.
+
+Under normal play, where the player unable to move loses, the P-positions are exactly the
+positions from which the player to move loses. -/
 noncomputable def IsP (G : ImpartialGame) : G.Pos → Prop :=
   (wfRel G).fix fun p ih => ∀ q (h : q ∈ G.moves p), ¬ ih q h
 
-/-- Disjoint sum of two impartial games: move in exactly one component. -/
+/-- **Sum of impartial games.** The sum $G + H$ of two impartial games $G$ and $H$ is the
+impartial game whose positions are the pairs $(a, b)$ of a position $a$ of $G$ and a position $b$
+of $H$, and in which a move changes exactly one component: from $(a, b)$ one may move to
+$(a', b)$ for any move from $a$ to $a'$ in $G$, or to $(a, b')$ for any move from $b$ to $b'$ in
+$H$. Its starting position is the pair of the starting positions of $G$ and $H$, and the rank of
+$(a, b)$ is the sum of the ranks of $a$ in $G$ and of $b$ in $H$. -/
 noncomputable def gameSum (G H : ImpartialGame) : ImpartialGame :=
   letI := G.eqDec
   letI := H.eqDec
@@ -73,7 +99,9 @@ noncomputable def gameSum (G H : ImpartialGame) : ImpartialGame :=
         exact Nat.add_lt_add_left (H.rank_lt p.2 b' hb') _
     start := (G.start, H.start) }
 
-/-- A single Nim heap of size `n`: positions `0, …, n`, moves decrease the value. -/
+/-- **Nim heap.** For a natural number $n$, the Nim heap of size $n$ is the impartial game whose
+positions are $0, 1, \dots, n$, whose starting position is $n$, and in which a move from $k$ goes
+to any $j < k$; the rank of a position is its value. -/
 def nimHeap (n : ℕ) : ImpartialGame where
   Pos := Fin (n + 1)
   eqDec := inferInstance
@@ -84,15 +112,17 @@ def nimHeap (n : ℕ) : ImpartialGame where
     simpa using h
   start := ⟨n, Nat.lt_succ_self n⟩
 
-/-- Contextual normal-play equivalence: `G` and `H` are equivalent when they
-are interchangeable as summands, i.e. no added context `K` distinguishes
-their starting positions as P-positions. -/
+/-- **Equivalence of impartial games.** Two impartial games $G$ and $H$ are equivalent when no
+third game tells them apart as summands: for every impartial game $K$, the starting position of
+the sum $G + K$ is a P-position if and only if the starting position of the sum $H + K$ is a
+P-position. The starting position of a sum is the pair of the starting positions of its summands. -/
 noncomputable def Equiv (G H : ImpartialGame) : Prop :=
   ∀ K : ImpartialGame,
     IsP (gameSum G K) (G.start, K.start) ↔
       IsP (gameSum H K) (H.start, K.start)
 
-/-- A position is a P-position iff every move from it leads to a position that is not. -/
+/-- **Recursive characterization of P-positions.** In an impartial game $G$, a position $p$ is a
+P-position if and only if every position reachable from $p$ in one move is not a P-position. -/
 theorem isP_iff (G : ImpartialGame) (p : G.Pos) :
     IsP G p ↔ ∀ q (_ : q ∈ G.moves p), ¬ IsP G q := by
   unfold IsP
@@ -403,8 +433,8 @@ private theorem isP_sum_iff (G H : ImpartialGame) (a : G.Pos) (b : H.Pos) :
       (grundy G a ^^^ grundy H b = 0) :=
   isP_sum_iff_aux G H _ a b (Nat.le_refl _)
 
-/-- Sprague–Grundy theorem: every finite impartial game is equivalent to a
-single Nim heap.
+/-- **Sprague–Grundy theorem.** Every impartial game $G$ is equivalent to a Nim heap: there is a
+natural number $n$ such that $G$ is equivalent to the Nim heap of size $n$.
 
 Source: Tanya Khovanova and Joshua Xiong, "Nim Fractals", Journal of Integer
 Sequences 17 (2014), lines 101–105,
@@ -430,3 +460,57 @@ theorem sprague_grundy (G : ImpartialGame) :
   exact hG.trans hN.symm
 
 end MetaMathlibExt.SpragueGrundy
+
+namespace MetaMathlibExt
+
+open SpragueGrundy
+
+/-- **Equivalence of impartial games via their sum.** Two finite impartial games $G$ and $H$ are
+equivalent if and only if their sum $G + H$ is a P-position, that is, the position of $G + H$ in
+which both $G$ and $H$ are at their starting positions is a P-position.
+
+Source: Zev Friedman, *Sprague-Grundy Values for 4-Pile Princess and the Roses*,
+INTEGERS 26 (2026), Article G4, Lemma 5 (`integers-2026-G4-lem-5`). -/
+theorem impartialGame_equiv_iff_isP_gameSum (G H : ImpartialGame) :
+    Equiv G H ↔ IsP (gameSum G H) ((G.start, H.start) : (gameSum G H).Pos) := by
+  constructor
+  · intro hEquiv
+    exact (hEquiv H).mpr ((isP_sum_iff H H _ _).mpr (Nat.xor_self _))
+  · intro hP
+    have hGH : grundy G G.start = grundy H H.start :=
+      Nat.xor_eq_zero_iff.mp ((isP_sum_iff G H _ _).mp hP)
+    intro K
+    rw [isP_sum_iff, isP_sum_iff, hGH]
+
+private theorem equiv_nimHeap_iff_grundy_eq (G : ImpartialGame) (n : ℕ) :
+    Equiv G (nimHeap n) ↔ grundy G G.start = n := by
+  have hnim : grundy (nimHeap n) (nimHeap n).start = n :=
+    nim_grundy n (nimHeap n).start
+  rw [impartialGame_equiv_iff_isP_gameSum, isP_sum_iff, hnim, Nat.xor_eq_zero_iff]
+
+/-- **Mex rule for Sprague–Grundy values.** Let $G$ be a finite impartial game and $n$ a natural
+number such that $G$ is equivalent to the Nim heap $*n$, that is, $G$ has Sprague–Grundy value
+$n$. For a move from the start position of $G$ to a position $q$, write $G_q$ for the game $G$
+started at $q$. Then no $G_q$ is equivalent to $*n$, and for every natural number $m < n$ some
+$G_q$ is equivalent to $*m$. That is, the Sprague–Grundy value of $G$ is the mex of the
+Sprague–Grundy values of the games $G_q$.
+
+Source: Zev Friedman, *Sprague-Grundy Values for 4-Pile Princess and the Roses*,
+INTEGERS 26 (2026), Article G4, Corollary 4 (`integers-2026-G4-cor-4`). -/
+theorem spragueGrundyValue_eq_mex_options (G : ImpartialGame) (n : ℕ)
+    (hG : Equiv G (nimHeap n)) :
+    (∀ q ∈ G.moves G.start, ¬ Equiv { G with start := q } (nimHeap n)) ∧
+      ∀ m < n, ∃ q ∈ G.moves G.start, Equiv { G with start := q } (nimHeap m) := by
+  have hstart := (equiv_nimHeap_iff_grundy_eq G n).mp hG
+  have hoption (q : G.Pos) (m : ℕ) :
+      Equiv { G with start := q } (nimHeap m) ↔ grundy G q = m :=
+    -- The recursion depends only on the move relation, so changing the start is definitional.
+    equiv_nimHeap_iff_grundy_eq { G with start := q } m
+  constructor
+  · intro q hq heq
+    exact grundy_ne_of_mem G hq ((hoption q n).mp heq |>.trans hstart.symm)
+  · intro m hm
+    obtain ⟨q, hq, hqm⟩ := exists_move_with_grundy G G.start (hstart.symm ▸ hm)
+    exact ⟨q, hq, (hoption q m).mpr hqm⟩
+
+end MetaMathlibExt

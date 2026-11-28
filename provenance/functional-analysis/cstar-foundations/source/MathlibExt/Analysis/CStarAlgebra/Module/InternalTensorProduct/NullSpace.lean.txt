@@ -1,0 +1,217 @@
+/-
+Author: @toskua, Avocado
+-/
+module
+
+public import MathlibExt.Analysis.CStarAlgebra.Module.InternalTensorProduct.Radical
+public import MathlibExt.Analysis.CStarAlgebra.Module.InternalTensorProduct.MixedGram
+public import MathlibExt.Analysis.CStarAlgebra.Module.Matrix.Gram
+
+import MathlibExt.Analysis.CStarAlgebra.CStarMatrix.Basic
+import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Order
+import Mathlib.LinearAlgebra.TensorProduct.Finiteness
+
+/-!
+# Self-inner-zero vectors and the literal tensor radical
+
+One common finite presentation uses the actual represented first-factor Gram
+matrix and its CFC square root. Its mixed row-vector expansion shows that a
+zero self-inner annihilates every other vector. The conclusion uses the same
+caller B₂op order, not an order transport or a Cauchy–Schwarz premise.
+
+The resulting kernel identification and quotient definiteness are algebraic.
+No quotient norm, completion, completed tensor model or Source existence is used.
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+noncomputable section
+
+open scoped TensorProduct BigOperators
+
+namespace CStarModule.InternalTensorProduct
+
+universe uB₁ uB₂ uE₁ uE₂ uI
+
+variable {B₁ : Type uB₁} [NonUnitalCStarAlgebra B₁] [PartialOrder B₁ᵐᵒᵖ]
+variable {B₂ : Type uB₂} [NonUnitalCStarAlgebra B₂] [PartialOrder B₂ᵐᵒᵖ]
+variable {E₁ : Type uE₁} [NormedAddCommGroup E₁] [NormedSpace ℂ E₁]
+variable [SMul B₁ᵐᵒᵖ E₁] [CStarModule B₁ᵐᵒᵖ E₁]
+variable {E₂ : Type uE₂} [NormedAddCommGroup E₂] [NormedSpace ℂ E₂]
+variable [SMul B₂ᵐᵒᵖ E₂] [CStarModule B₂ᵐᵒᵖ E₂]
+variable [StarOrderedRing B₁ᵐᵒᵖ] [CompleteSpace E₁]
+variable [StarOrderedRing B₂ᵐᵒᵖ] [CompleteSpace E₂]
+
+private theorem rawInner_common_family_eq_zero_of_self_eq_zero
+    {I : Type uI} [Fintype I]
+    (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
+    (x : I → E₁) (u v : I → E₂)
+    (h : rawInner φ (∑ i, x i ⊗ₜ[ℂ] u i) (∑ i, x i ⊗ₜ[ℂ] u i) = 0) :
+    rawInner φ (∑ i, x i ⊗ₜ[ℂ] u i) (∑ i, x i ⊗ₜ[ℂ] v i) = 0 := by
+  classical
+  let : PartialOrder B₁ := CStarAlgebra.spectralOrder B₁
+  let : StarOrderedRing B₁ := CStarAlgebra.spectralOrderedRing B₁
+  let : PartialOrder (AdjointableOperator.End B₂ E₂) :=
+    CStarAlgebra.spectralOrder (AdjointableOperator.End B₂ E₂)
+  let : StarOrderedRing (AdjointableOperator.End B₂ E₂) :=
+    CStarAlgebra.spectralOrderedRing (AdjointableOperator.End B₂ E₂)
+  let G : CStarMatrix I I B₁ :=
+    CStarMatrix.ofMatrix fun i j => rightInner (B := B₁) (x i) (x j)
+  let M : CStarMatrix I I (AdjointableOperator.End B₂ E₂) :=
+    CStarMatrix.mapₙₐ φ G
+  let : PartialOrder (CStarMatrix I I B₁) :=
+    CStarAlgebra.spectralOrder (CStarMatrix I I B₁)
+  let : StarOrderedRing (CStarMatrix I I B₁) :=
+    CStarAlgebra.spectralOrderedRing (CStarMatrix I I B₁)
+  let : PartialOrder (CStarMatrix I I (AdjointableOperator.End B₂ E₂)) :=
+    CStarAlgebra.spectralOrder _
+  let : StarOrderedRing (CStarMatrix I I (AdjointableOperator.End B₂ E₂)) :=
+    CStarAlgebra.spectralOrderedRing _
+  have hG : (0 : CStarMatrix I I B₁) ≤ G :=
+    AdjointableOperator.gramMatrix_nonneg x
+  have hM : (0 : CStarMatrix I I (AdjointableOperator.End B₂ E₂)) ≤ M :=
+    map_nonneg (CStarMatrix.mapₙₐ φ) hG
+  let : NonUnitalContinuousFunctionalCalculus ℝ
+      (CStarMatrix I I (AdjointableOperator.End B₂ E₂)) IsSelfAdjoint :=
+    (IsSelfAdjoint.instNonUnitalIsometricContinuousFunctionalCalculus
+      (A := CStarMatrix I I
+          (AdjointableOperator.End B₂ E₂))).toNonUnitalContinuousFunctionalCalculus
+  let : NonnegSpectrumClass ℝ
+      (CStarMatrix I I (AdjointableOperator.End B₂ E₂)) :=
+    CStarAlgebra.instNonnegSpectrumClass'
+      (A := CStarMatrix I I (AdjointableOperator.End B₂ E₂))
+  let R : CStarMatrix I I (AdjointableOperator.End B₂ E₂) := CFC.sqrt M
+  have hRstar : star R = R :=
+    (IsSelfAdjoint.of_nonneg (CFC.sqrt_nonneg M)).star_eq
+  have hRR : star R * R = M := by
+    rw [hRstar]
+    exact CFC.sqrt_mul_sqrt_self M hM
+  have hMap : M =
+      CStarMatrix.ofMatrix fun i j => φ (rightInner (B := B₁) (x i) (x j)) := by
+    rfl
+  have hMixed (a b : I → E₂) :
+      rawInner φ (∑ i, x i ⊗ₜ[ℂ] a i) (∑ i, x i ⊗ₜ[ℂ] b i) =
+        ∑ k, rightInner (B := B₂) (∑ i, R k i (a i)) (∑ j, R k j (b j)) := by
+    rw [rawInner_sum_tmul_sum_tmul]
+    calc
+      _ = ∑ i, ∑ j, rightInner (B := B₂) (a i) (M i j (b j)) := by
+        rw [hMap]
+        rfl
+      _ = ∑ i, ∑ j, rightInner (B := B₂) (a i) ((star R * R) i j (b j)) := by
+        rw [hRR]
+      _ = ∑ k, rightInner (B := B₂) (∑ i, R k i (a i)) (∑ j, R k j (b j)) :=
+        matrix_star_mul_mixed_inner R a b
+  have hSum :
+      (∑ k, inner B₂ᵐᵒᵖ (∑ i, R k i (u i)) (∑ j, R k j (u j))) = 0 := by
+    calc
+      _ = ∑ k, MulOpposite.op
+          (rightInner (B := B₂) (∑ i, R k i (u i)) (∑ j, R k j (u j))) := by rfl
+      _ = MulOpposite.op
+          (∑ k, rightInner (B := B₂) (∑ i, R k i (u i)) (∑ j, R k j (u j))) :=
+        (map_sum MulOpposite.opAddEquiv _ _).symm
+      _ = MulOpposite.op
+          (rawInner φ (∑ i, x i ⊗ₜ[ℂ] u i) (∑ i, x i ⊗ₜ[ℂ] u i)) :=
+        congrArg MulOpposite.op (hMixed u u).symm
+      _ = 0 := by rw [h, MulOpposite.op_zero]
+  have hRows (k : I) : (∑ i, R k i (u i)) = 0 := by
+    have hSelf : inner B₂ᵐᵒᵖ (∑ i, R k i (u i)) (∑ j, R k j (u j)) = 0 :=
+      ((Finset.sum_eq_zero_iff_of_nonneg
+        (fun l hl => CStarModule.inner_self_nonneg
+          (A := B₂ᵐᵒᵖ) (E := E₂) (x := ∑ i, R l i (u i)))).mp hSum)
+        k (Finset.mem_univ k)
+    exact (CStarModule.inner_self
+      (A := B₂ᵐᵒᵖ) (E := E₂) (x := ∑ i, R k i (u i))).mp hSelf
+  rw [hMixed u v]
+  apply Finset.sum_eq_zero
+  intro k hk
+  rw [hRows k]
+  exact rightInner_zero_left _
+
+/-- A genuine raw tensor with zero self-inner annihilates every raw tensor.
+The proof uses a single common finite first-factor family, not a CS premise. -/
+theorem rawInner_eq_zero_of_self_eq_zero
+    (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
+    (z w : AlgebraicTensor E₁ E₂) (h : rawInner φ z z = 0) :
+    rawInner φ z w = 0 := by
+  classical
+  obtain ⟨s, hs⟩ := TensorProduct.exists_finset z
+  obtain ⟨t, ht⟩ := TensorProduct.exists_finset w
+  have hz : z = ∑ p : s, p.1.1 ⊗ₜ[ℂ] p.1.2 := by
+    calc
+      z = ∑ p ∈ s, p.1 ⊗ₜ[ℂ] p.2 := hs
+      _ = ∑ p : s, p.1.1 ⊗ₜ[ℂ] p.1.2 :=
+        (Finset.sum_coe_sort s
+          (fun p : E₁ × E₂ => p.1 ⊗ₜ[ℂ] p.2)).symm
+  have hw : w = ∑ p : t, p.1.1 ⊗ₜ[ℂ] p.1.2 := by
+    calc
+      w = ∑ p ∈ t, p.1 ⊗ₜ[ℂ] p.2 := ht
+      _ = ∑ p : t, p.1.1 ⊗ₜ[ℂ] p.1.2 :=
+        (Finset.sum_coe_sort t
+          (fun p : E₁ × E₂ => p.1 ⊗ₜ[ℂ] p.2)).symm
+  rw [hz] at h
+  rw [hz, hw]
+  let X : s ⊕ t → E₁ := Sum.elim (fun p => p.1.1) (fun p => p.1.1)
+  let U : s ⊕ t → E₂ := Sum.elim (fun p => p.1.2) (fun _ => 0)
+  let V : s ⊕ t → E₂ := Sum.elim (fun _ => 0) (fun p => p.1.2)
+  have hU : (∑ p : s ⊕ t, X p ⊗ₜ[ℂ] U p) =
+      ∑ p : s, p.1.1 ⊗ₜ[ℂ] p.1.2 := by
+    rw [Fintype.sum_sum_type]
+    simp only [X, U, Sum.elim, TensorProduct.tmul_zero,
+      Finset.sum_const_zero, add_zero]
+  have hV : (∑ p : s ⊕ t, X p ⊗ₜ[ℂ] V p) =
+      ∑ p : t, p.1.1 ⊗ₜ[ℂ] p.1.2 := by
+    rw [Fintype.sum_sum_type]
+    simp only [X, V, Sum.elim, TensorProduct.tmul_zero,
+      Finset.sum_const_zero, zero_add]
+  have hCommon :
+      rawInner φ (∑ p : s ⊕ t, X p ⊗ₜ[ℂ] U p) (∑ p : s ⊕ t, X p ⊗ₜ[ℂ] U p) = 0 := by
+    simpa only [hU] using h
+  simpa only [hU, hV] using
+    rawInner_common_family_eq_zero_of_self_eq_zero φ X U V hCommon
+
+/-- The actual radical is exactly the self-inner-zero set of the balanced
+form. No null closure or completed-model witness is an input. -/
+theorem mem_radicalSpace_iff_self_inner_eq_zero
+    (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
+    (z : BalancedTensor (E₁ := E₁) φ) :
+    z ∈ radicalSpace φ ↔ balancedInner φ z z = 0 := by
+  constructor
+  · intro hz
+    exact (mem_radicalSpace_iff φ z).mp hz z
+  · intro hz
+    apply (mem_radicalSpace_iff φ z).mpr
+    intro w
+    obtain ⟨z, rfl⟩ := (balancingSpan (E₁ := E₁) φ).mkQ_surjective z
+    obtain ⟨w, rfl⟩ := (balancingSpan (E₁ := E₁) φ).mkQ_surjective w
+    have hRaw : rawInner φ z z = 0 := by
+      simpa only [balancedInner_mkQ_mkQ] using hz
+    simpa only [balancedInner_mkQ_mkQ] using
+      rawInner_eq_zero_of_self_eq_zero φ z w hRaw
+
+/-- The actual radical-quotient form is algebraically definite once the
+self-null/radical identification above is established. No norm is asserted. -/
+theorem radicalInner_self_eq_zero_iff
+    (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
+    (q : RadicalTensor (E₁ := E₁) φ) :
+    radicalInner φ q q = 0 ↔ q = 0 := by
+  obtain ⟨z, rfl⟩ := (radicalSpace (E₁ := E₁) φ).mkQ_surjective q
+  rw [radicalInner_mkQ_mkQ]
+  constructor
+  · intro hz
+    have hMem := (mem_radicalSpace_iff_self_inner_eq_zero φ z).mpr hz
+    change (Submodule.Quotient.mk z : RadicalTensor (E₁ := E₁) φ) =
+      Submodule.Quotient.mk 0
+    apply (Submodule.Quotient.eq (radicalSpace (E₁ := E₁) φ)).mpr
+    simpa only [sub_zero] using hMem
+  · intro hq
+    change (Submodule.Quotient.mk z : RadicalTensor (E₁ := E₁) φ) =
+      Submodule.Quotient.mk 0 at hq
+    have hMem : z ∈ radicalSpace φ := by
+      simpa only [sub_zero] using
+        (Submodule.Quotient.eq (radicalSpace (E₁ := E₁) φ)).mp hq
+    exact (mem_radicalSpace_iff_self_inner_eq_zero φ z).mp hMem
+
+end CStarModule.InternalTensorProduct

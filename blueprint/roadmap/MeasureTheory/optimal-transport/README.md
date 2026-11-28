@@ -5,8 +5,8 @@ Couplings of probability measures, transport costs, existence of optimal couplin
 - [Kantorovich duality](kantorovich-duality/README.md)
 - [Monge–Kantorovich existence theorem](monge-kantorovich-existence-theorem/README.md)
 - [Wasserstein distances](wasserstein-distances/README.md)
-- [Brenier's theorem](brenier.md)
-- [Displacement convexity](displacement-convexity/README.md)
+- [Brenier's theorem](brenier-s-theorem/README.md)
+- [McCann's condition for displacement convexity](displacement-convexity/README.md)
 - [Wasserstein gradient flows and the JKO scheme](wasserstein-gradient-flows-and-the-jko-scheme/README.md)
 
 ## Related topics
@@ -30,3 +30,6 @@ Couplings of probability measures, transport costs, existence of optimal couplin
   inequality links entropy, $W_2$ and Fisher information.
 - [Fokker–Planck equation](../../Probability/stochastic-calculus/fokker-planck-equation/README.md):
   the gradient flow of the free energy for $W_2$, through the JKO scheme.
+- [Equal infima without a Monge optimizer for the three-marginal Coulomb cost](three-marginal-coulomb-nonattainment.md)
+
+- [Weak Ma–Trudinger–Wang curvature](weak-ma-trudinger-wang-curvature/README.md)

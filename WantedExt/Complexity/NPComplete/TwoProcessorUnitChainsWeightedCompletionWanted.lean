@@ -19,7 +19,7 @@ P. Brucker, *Scheduling Algorithms*, 5th ed., Springer (2007), Table 5.3
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Order.Defs.Unbundled

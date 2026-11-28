@@ -74,13 +74,13 @@ private theorem mem_pow_span_X_of_coeff_eq_zero (R : Type*) [CommRing R] :
       have h0 : (X 0 : MvPowerSeries (Fin 2) R) ∣ F - F₁ := by
         rw [X_dvd_iff]
         intro m hm0
-        rw [map_sub, hF₁c, if_pos hm0, sub_self]
+        rw [map_sub, hF₁c, ite_eq_left hm0, sub_self]
       obtain ⟨G₁, hG₁⟩ := h1
       obtain ⟨G₀, hG₀⟩ := h0
       have hcoefX : ∀ (k : Fin 2) (G : MvPowerSeries (Fin 2) R) (m : Fin 2 →₀ ℕ),
           coeff (m + Finsupp.single k 1) (X k * G) = coeff m G := by
         intro k G m
-        rw [X_def k, coeff_monomial_mul, if_pos (by simp), one_mul, add_tsub_cancel_right]
+        rw [X_def k, coeff_monomial_mul, ite_eq_left (by simp), one_mul, add_tsub_cancel_right]
       have hG₁z : ∀ m : Fin 2 →₀ ℕ, Finsupp.degree m < n → coeff m G₁ = 0 := by
         intro m hm
         rw [← hcoefX 1 G₁ m, ← hG₁, hF₁c]
@@ -128,7 +128,8 @@ private theorem span_mk_X_le_jacobson (R : Type*) [CommRing R]
 private theorem eq_zero_of_forall_mem_pow {A : Type*} [CommRing A] [IsNoetherianRing A]
   (J : Ideal A)
     (hJ : J ≤ Ideal.jacobson ⊥) (x : A) (hx : ∀ n : ℕ, x ∈ J ^ n) : x = 0 := by
-  have h := Ideal.iInf_pow_smul_eq_bot_of_le_jacobson (I := J) (M := A) hJ
+  have h := Ideal.iInf_pow_smul_eq_bot_of_le_jacobson (I := J) (M := A)
+    (hJ.trans_eq Ideal.jacobson_bot)
   have : x ∈ (⨅ i : ℕ, J ^ i • ⊤ : Submodule A A) := by
     rw [Submodule.mem_iInf]; intro i
     rw [Ideal.smul_eq_mul, Ideal.mul_top]; exact hx i

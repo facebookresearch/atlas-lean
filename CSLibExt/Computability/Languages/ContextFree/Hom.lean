@@ -170,8 +170,12 @@ private theorem homGrammar_language (φ : T → List T') :
     rw [expandForm_map_terminal] at hlift
     exact hlift
 
-/-- Homomorphic images of context-free languages are context-free: expand
-every terminal `a` in every production to the word `φ a`. -/
+/-- **Context-free languages are closed under homomorphic images.** Let $T$ and $T'$ be alphabets,
+$L$ a context-free language over $T$, and $\varphi$ a map sending each letter of $T$ to a word
+over $T'$. Then the language of all words $\varphi(a_1) \cdots \varphi(a_n)$ with
+$a_1 \cdots a_n \in L$ is context-free.
+
+A grammar for it replaces every terminal $a$ in every production by the word $\varphi(a)$. -/
 theorem IsContextFree.homImage {L : Language T} (hL : L.IsContextFree)
     (φ : T → List T') :
     Language.IsContextFree ((fun w => (w.map φ).flatten) '' L) := by

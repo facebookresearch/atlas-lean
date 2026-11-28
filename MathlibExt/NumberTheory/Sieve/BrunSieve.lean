@@ -49,10 +49,6 @@ namespace ArithmeticFunction
 
 open scoped ArithmeticFunction.Moebius ArithmeticFunction.omega ArithmeticFunction.zeta
 
-/-- `ω n = #n.primeFactors`. -/
-theorem cardDistinctFactors_eq_card_primeFactors (n : ℕ) : ω n = n.primeFactors.card := by
-  rw [cardDistinctFactors_apply, Nat.primeFactors, List.card_toFinset]
-
 /-- `ω (∏ p ∈ s, p) = #s` for a finset `s` of primes. -/
 theorem cardDistinctFactors_prod_of_prime {s : Finset ℕ} (hs : ∀ p ∈ s, p.Prime) :
     ω (∏ p ∈ s, p) = s.card := by

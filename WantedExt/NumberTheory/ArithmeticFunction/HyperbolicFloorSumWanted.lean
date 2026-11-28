@@ -15,6 +15,8 @@ public import Mathlib.Analysis.Asymptotics.Defs
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Data.Nat.Factorization.Basic
 public import Mathlib.Topology.Algebra.InfiniteSum.Defs
+public import MathlibExt.NumberTheory.ArithmeticFunction.HyperbolicFloorSum
+public import MathlibExt.NumberTheory.ArithmeticFunction.HyperbolicFloorSumAdditive
 
 /-! # Hyperbolic sums of arithmetic functions at the integer part
 
@@ -36,24 +38,21 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- If `f(n) ≪ n^α` for some `α ∈ [0, 1)`, then for every fixed integer `i ≥ 0` the series
-`∑_{n ≥ 1} f(n) ((log n)^i/n - (log (n+1))^i/(n+1))` converges absolutely.
+/-- **Asymptotics of hyperbolic floor sums.** Let $r \ge 2$ and let $\tau_r(n)$ be the number of
+ordered factorizations $n = n_1 \cdots n_r$ of $n$ into $r$ positive factors. Let
+$P(t) = \sum_j a_j t^j$ be a real polynomial with
+$\sum_{1 \le n \le x} \tau_r(n) - x P(\log x) = O(x^{1 - 1/r} (\log x)^{r-2})$ as $x \to \infty$.
+Let $f$ be a nonnegative real function on the natural numbers such that, for some real $\alpha$
+with $0 \le \alpha < 1$, $f(n) = O(n^\alpha)$ as $n \to \infty$, and, for some real $\beta \ge 0$,
+$\sum_{1 \le n \le x} f(n) = O(x (\log \log x)^\beta)$ as $x \to \infty$. For $i \ge 0$ let
+$$C_i = \sum_{n \ge 1} f(n) \left( \frac{(\log n)^i}{n} - \frac{(\log (n+1))^i}{n+1} \right).$$
+Then, as $x \to \infty$,
+$$\sum_{1 \le n \le x} f(\lfloor x/n \rfloor) \, \tau_r(n) = x \sum_{j=0}^{r-1} \sum_{i=0}^{j}
+\binom{j}{i} (-1)^i a_j C_i (\log x)^{j-i} + O(x (\log x)^{r-2} (\log \log x)^\beta).$$
 
-Source: Meselem Karras and Mihoub Bouderbala, *Hyperbolic Summation Involving Certain
-Arithmetic Functions and the Integer Part Function*, INTEGERS 26 (2026), Article A37,
-Lemma 1 (`integers-2026-A37-lem-1`). -/
-public theorem_wanted summable_abs_mul_log_pow_div_sub
-    (f : ℕ → ℝ) (α : ℝ) (hα0 : 0 ≤ α) (hα1 : α < 1)
-    (hf : (fun n : ℕ => f n) =O[atTop] fun n : ℕ => (n : ℝ) ^ α) (i : ℕ) :
-    Summable fun n : ℕ =>
-      |f (n + 1) * (Real.log (n + 1) ^ i / (n + 1) - Real.log (n + 2) ^ i / (n + 2))|
-
-/-- Let `r ≥ 2` and let `f ≥ 0` satisfy `f(n) ≪ n^α` for some `α ∈ [0, 1)` and
-`∑_{n ≤ x} f(n) ≪ x (log log x)^β` for some `β ≥ 0`. Then
-`S_{f,r}(x) = x ∑_{j=0}^{r-1} ∑_{i=0}^{j} C(j,i) (-1)^i a_j C_i (log x)^{j-i}
-+ O(x (log x)^{r-2} (log log x)^β)`. The hypothesis `0 ≤ f` is added: the source's proof
-bounds its error sum `∑_{d ≤ x} f(d) O((x/d)^{1-1/r} (log (x/d))^{r-2})` through
-`∑_{n ≤ x} f(n)`, which controls it only for nonnegative `f`.
+The hypothesis $f \ge 0$ is not in the source: its proof bounds the error sum
+$\sum_{d \le x} f(d) \, O((x/d)^{1-1/r} (\log (x/d))^{r-2})$ through $\sum_{n \le x} f(n)$,
+which controls it only for nonnegative $f$.
 
 Source: Meselem Karras and Mihoub Bouderbala, *Hyperbolic Summation Involving Certain
 Arithmetic Functions and the Integer Part Function*, INTEGERS 26 (2026), Article A37,
@@ -77,35 +76,6 @@ public theorem_wanted hyperbolic_floor_sum_asymptotic
                 (Real.log (n + 1) ^ i / (n + 1) - Real.log (n + 2) ^ i / (n + 2))) *
               Real.log x ^ (j - i)) =O[atTop]
       fun x : ℝ => x * Real.log x ^ (r - 2) * Real.log (Real.log x) ^ β
-
-/-- Let `f(n) = ∑_{p^a ∥ n} g(a)` with `g(1) ≠ 0` and `g(n) = O(2^{n/2})`. With the
-notation of Theorem 1,
-`S_{f,r}(x) = x ∑_{j=0}^{r-1} ∑_{i=0}^{j} C(j,i) (-1)^i a_j C_i (log x)^{j-i}
-+ O(x (log x)^{r-2} log log x)`. The sum over `p^a ∥ n` is the sum over
-`p ∈ n.primeFactors` of `g (n.factorization p)`, so the source's convention `g(0) = 0` is
-not needed.
-
-Source: Meselem Karras and Mihoub Bouderbala, *Hyperbolic Summation Involving Certain
-Arithmetic Functions and the Integer Part Function*, INTEGERS 26 (2026), Article A37,
-Proposition 1 (`integers-2026-A37-prop-1`). -/
-public theorem_wanted hyperbolic_floor_sum_asymptotic_additive
-    (r : ℕ) (hr : 2 ≤ r) (P : Polynomial ℝ)
-    (hP : (fun x : ℝ =>
-        (∑ n ∈ Finset.Icc 1 ⌊x⌋₊, ((Nat.finMulAntidiag r n).card : ℝ)) -
-          x * P.eval (Real.log x)) =O[atTop]
-        fun x : ℝ => x ^ (1 - 1 / (r : ℝ)) * Real.log x ^ (r - 2))
-    (g : ℕ → ℝ) (hg1 : g 1 ≠ 0)
-    (hg : (fun n : ℕ => g n) =O[atTop] fun n : ℕ => (2 : ℝ) ^ ((n : ℝ) / 2)) :
-    (fun x : ℝ =>
-        (∑ n ∈ Finset.Icc 1 ⌊x⌋₊,
-            (∑ p ∈ (⌊x / n⌋₊).primeFactors, g ((⌊x / n⌋₊).factorization p)) *
-              ((Nat.finMulAntidiag r n).card : ℝ)) -
-          x * ∑ j ∈ Finset.range r, ∑ i ∈ Finset.range (j + 1),
-            (j.choose i : ℝ) * (-1) ^ i * P.coeff j *
-              (∑' n : ℕ, (∑ p ∈ (n + 1).primeFactors, g ((n + 1).factorization p)) *
-                (Real.log (n + 1) ^ i / (n + 1) - Real.log (n + 2) ^ i / (n + 2))) *
-              Real.log x ^ (j - i)) =O[atTop]
-      fun x : ℝ => x * Real.log x ^ (r - 2) * Real.log (Real.log x)
 
 end
 

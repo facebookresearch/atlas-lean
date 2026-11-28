@@ -107,7 +107,8 @@ theorem abs_sqrt_mul_one_sub_sub_le {x y : ℝ}
 
 /-- Lipschitz estimate for the genic-selection/two-way-mutation drift
 `σ x (1 - x) + (θ₁ (1 - x) - θ₂ x) / 2` on `[0, 1]`, with constant
-`|σ| + (|θ₁| + |θ₂|) / 2`. -/
+`|σ| + (|θ₁| + |θ₂|) / 2`, for arbitrary real `σ`, `θ₁`, `θ₂`; the diffusion-drift reading needs
+`θ₁, θ₂ ≥ 0`. -/
 theorem abs_genicDrift_sub_le (σ θ₁ θ₂ : ℝ) {x y : ℝ}
     (hx0 : 0 ≤ x) (hx1 : x ≤ 1) (hy0 : 0 ≤ y) (hy1 : y ≤ 1) :
     |(σ * (x * (1 - x)) + (θ₁ * (1 - x) - θ₂ * x) / 2) -

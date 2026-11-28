@@ -23,7 +23,7 @@ NP-Completeness*, W. H. Freeman (1979), problem [LO1] SATISFIABILITY.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import CSLibExt.Logics.Propositional.CNF.Semantics
@@ -41,12 +41,14 @@ SATISFIABILITY) such that every clause has at most `3` literals and every variab
 most `3` clauses.
 QUESTION: is there a satisfying truth assignment for `C`?
 
-Formulas are `Cslib.Logic.PL.CNF` (lists of clauses, a clause a list of literals
-`(variable, sign)`), with satisfaction `Cslib.Logic.PL.CNF.Satisfies`, in the encoding of the
+Formulas are `Cslib.Logic.LegacyPL.CNF` (lists of clauses, a clause a list of literals
+`(variable, sign)`), with satisfaction `Cslib.Logic.LegacyPL.CNF.Satisfies`, in the encoding of the
 existing `WantedExt.Complexity.NPComplete.BoundedOccurrenceThreeSatWanted` (variables
 `0, …, n - 1`; an assignment is a list of `n` truth values). A variable occurs in a clause when
-one of the clause's literals is on it. Tovey's Theorem 2.1 is stated with clauses of two or three
-literals and at most three occurrences per variable; those instances belong to this class, and
+one of the clause's literals is on it, and the bound counts the clauses that contain each
+variable, not its occurrences: a variable repeated within one clause counts once. Tovey's
+Theorem 2.1 is stated with clauses of two or three literals and at most three occurrences per
+variable; those instances belong to this class, and
 the bound three cannot be lowered (with every variable in at most two clauses the problem is
 solvable in polynomial time). This differs from `BoundedOccurrenceThreeSatWanted`, whose clauses
 have exactly three literals and whose variables occur at most four times (with exactly three
@@ -64,10 +66,11 @@ reduction from every language in `NP`
 -/
 
 /-- An instance: the number `n` of variables and the CNF formula (its clauses). -/
-abbrev ThreeOccurrenceSatInstance := ℕ × Cslib.Logic.PL.CNF
+abbrev ThreeOccurrenceSatInstance := ℕ × Cslib.Logic.LegacyPL.CNF
 
 /-- Well-formedness of an instance: every clause has at most three literals, all on variables
-`< n`, and every variable occurs in at most three clauses. -/
+`< n`, and every variable occurs in at most three clauses. The bound counts the clauses that
+contain a variable, not its occurrences: a variable repeated within one clause counts once. -/
 def WellFormed (i : ThreeOccurrenceSatInstance) : Prop :=
   (∀ clause ∈ i.2, clause.length ≤ 3 ∧ ∀ l ∈ clause, l.1 < i.1) ∧
     ∀ v < i.1, (i.2.filter (fun clause => clause.any (fun l => l.1 == v))).length ≤ 3
@@ -75,7 +78,7 @@ def WellFormed (i : ThreeOccurrenceSatInstance) : Prop :=
 /-- A satisfying truth assignment. -/
 def ThreeOccurrenceSatFeasible (i : ThreeOccurrenceSatInstance) : Prop :=
   ∃ assign : List Bool, assign.length = i.1 ∧
-    Cslib.Logic.PL.CNF.Satisfies (fun x => assign.getD x false) i.2
+    Cslib.Logic.LegacyPL.CNF.Satisfies (fun x => assign.getD x false) i.2
 
 open Classical in
 /-- SATISFIABILITY with at most three literals per clause and three clauses per variable as a

@@ -13,8 +13,8 @@ import MathlibExt.NumberTheory.LSeries.RiemannZetaBounds
 /-!
 # Tests for bounds on `ζ` near the line `Re s = 1`
 
-The sawtooth bound at concrete points, the Euler–Maclaurin formula at `n = 1`, and the
-`3`-`4`-`1` inequality on the real axis.
+The sawtooth bound at concrete points, the Euler–Maclaurin formula at `n = 1`, and a
+convexity-type bound on the critical line.
 -/
 
 @[expose] public section
@@ -35,11 +35,6 @@ example {s : ℂ} (hs : 0 < s.re) (hs1 : s ≠ 1) :
       ((x - (⌊x⌋ : ℝ) - 1 / 2 : ℝ) : ℂ) / (x : ℂ) ^ (s + 1) := by
   have h := riemannZeta_eq_sum_add_integral_sawtooth hs hs1 (n := 1) le_rfl
   simpa using h
-
-/-- The `3`-`4`-`1` inequality at `t = 0`: `|ζ(σ)|⁸ ≥ 1`. -/
-example : 1 ≤ ‖riemannZeta ((2 : ℝ) : ℂ) ^ 3 * riemannZeta (((2 : ℝ) : ℂ) + (0 : ℝ) * Complex.I) ^ 4 *
-    riemannZeta (((2 : ℝ) : ℂ) + 2 * (0 : ℝ) * Complex.I)‖ :=
-  one_le_norm_riemannZeta_pow_three_mul (by norm_num)
 
 /-- The convexity-type bound `ζ(s) ≪ |t|^{1/2}` on `Re s ≥ 1/2`. -/
 example : ∃ C T₀ : ℝ, 0 < C ∧ 0 < T₀ ∧ ∀ t : ℝ, T₀ ≤ |t| →

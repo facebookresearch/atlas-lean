@@ -2,6 +2,7 @@
 
 Discriminants and their bounds, ramification and inertia, orders, units, ideal counting, local degrees under completion, field enumeration and towers.
 
+- [Card units quotient ring of integers proof](card-units-quotient-ring-of-integers-proof/README.md)
 - [Class field towers](class-field-towers/README.md)
 - [Completions of number fields at finite places](completions-of-number-fields-at-finite-places/README.md)
 - [Counting ideals of bounded norm](counting-ideals-of-bounded-norm/README.md)
@@ -16,4 +17,11 @@ Discriminants and their bounds, ramification and inertia, orders, units, ideal c
 - [Martinet's totally real towers](exists-totally-real-discr-le.md)
 - [Odlyzko's root discriminant bound in degree at least 18](odlyzko-root-discr-ge.md)
 - [Order of the inertia group](card-inertia-eq-ramification-idx-in-mul.md)
+- [Ramification groups of local fields](ramification-groups-of-local-fields.md)
+- [Upper numbering of ramification groups](upper-numbering-of-ramification-groups.md)
 - [Units small away from the diagonal generate a subgroup of finite index](finite-index-closure-range-of-lt-one-off.md)
+- [Dirichlet's unit theorem: the logarithmic image of the units is a full lattice](dirichlet-unit-theorem.md)
+- [Dirichlet's S-unit theorem](s-unit-theorem.md)
+- [An algebraic integer of a number field is a unit if and only if its norm is ±1](unit-iff-norm-plus-minus-one.md)
+- [Kummer–Dedekind theorem](kummer-dedekind-theorem.md)
+- [Lenstra's bound for the different](lenstra-s-bound-for-the-different.md)

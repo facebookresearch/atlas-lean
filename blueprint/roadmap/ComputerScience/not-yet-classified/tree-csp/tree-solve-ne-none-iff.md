@@ -1,0 +1,3 @@
+# The tree-CSP algorithm is complete without backtracking
+
+Let $P$ be a binary constraint satisfaction problem with symmetric constraints, and let a parent map make the variables a forest such that every constraint arc joins a variable and its parent and every parent-child pair is an arc. Let the variables be listed in an order containing each exactly once with every parent before its children, and let the value selector pick an element of each nonempty domain. Then for any finite domains, the tree-CSP algorithm (directional arc consistency followed by greedy assignment in that order) succeeds if and only if $P$ has a solution within those domains.

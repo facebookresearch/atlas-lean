@@ -1,0 +1,26 @@
+# Structured function approximation
+
+Exploration and planning when values or dynamics have low-dimensional structure: linear MDPs and least-squares value iteration with optimism, self-normalized concentration, linear mixture and model-ensemble classes, witness rank and low-rank representation learning, and exponential lower bounds when only an optimal value function is linearly realizable.
+
+- [Linear MDP](linear-mdp.md)
+- [Action values are linear in a linear MDP](action-values-are-linear-in-a-linear-mdp.md)
+- [Bellman closure of linear Q-functions forces linear transitions](linear-q-closure-forces-linear-transitions.md)
+- [Self-normalized bound for vector-valued martingales](self-normalized-bound-for-vector-martingales.md)
+- [Uniform self-normalized bound over a value-function class](uniform-self-normalized-bound-over-a-value-class.md)
+- [LSVI-UCB](lsvi-ucb.md)
+- [Regret of LSVI-UCB in linear MDPs](regret-of-lsvi-ucb-in-linear-mdps.md)
+- [Linear mixture MDP](linear-mixture-mdp.md)
+- [Bernstein-type self-normalized bound for vector-valued martingales](bernstein-self-normalized-bound.md)
+- [Regret of UCRL-VTR+ in linear mixture MDPs](regret-of-ucrl-vtr-plus.md)
+- [Regret lower bound for linear mixture MDPs](regret-lower-bound-for-linear-mixture-mdps.md)
+- [Linear combination of base models](linear-combination-of-base-models.md)
+- [PAC bound for linearly combined model ensembles](pac-bound-for-linearly-combined-model-ensembles.md)
+- [Planning lower bound under linear realizability of the optimal action values](planning-lower-bound-under-q-star-realizability.md)
+- [Planning lower bound under linear realizability of the optimal state values](planning-lower-bound-under-v-star-realizability.md)
+- [Planning lower bound with few actions under linear realizability](few-actions-planning-lower-bound.md)
+- [Online lower bound for linearly realizable MDPs with a constant gap](online-lower-bound-with-constant-gap.md)
+- [Witness rank](witness-rank.md)
+- [PAC bound under low witness rank](pac-bound-under-low-witness-rank.md)
+- [Exponential separation between model-based and model-free exploration](model-based-versus-model-free-separation.md)
+- [Low-rank MDP](low-rank-mdp.md)
+- [FLAMBE learns low-rank MDP models](flambe-learns-low-rank-mdp-models.md)

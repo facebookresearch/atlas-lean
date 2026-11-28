@@ -9,11 +9,13 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
+public import MathlibExt.NumberTheory.NLagrangeSpectrum
 public import Mathlib.Algebra.ContinuedFractions.Computation.Basic
 public import Mathlib.Data.EReal.Basic
 public import Mathlib.NumberTheory.Divisors
 public import Mathlib.NumberTheory.DiophantineApproximation.Basic
 public import Mathlib.Order.LiminfLimsup
+public import MathlibExt.NumberTheory.ContinuedFractions.CommonPrefix
 
 namespace MetaMathlibExt
 
@@ -21,30 +23,11 @@ namespace MetaMathlibExt
 
 open Filter Topology
 
-/-- The `n`-Lagrange approximability `λₙ(ξ) = limsup_{s/t → ξ} gcd(t, n)/(t² |s/t - ξ|)` in `EReal`,
-the limsup over rationals `s/t ≠ ξ` (in lowest terms) tending to `ξ`; `λ₁` is the classical
-Lagrange approximability `λ`.
-
-Source: Brandon Dong, Soren Dupont, Evan M. O'Dorney and W. Theo Waitkus, *Raney Transducers and the
-Lowest Point of the n-Lagrange Spectrum*, INTEGERS 25 (2025), Article A47,
-Introduction, equation (3). -/
-noncomputable def nLagrangeApproximability (n : ℕ) (ξ : ℝ) : EReal :=
-  limsup (fun q : ℚ => (((Nat.gcd q.den n : ℝ) / ((q.den : ℝ) ^ 2 * |(q : ℝ) - ξ|) : ℝ) : EReal))
-    (comap ((↑) : ℚ → ℝ) (𝓝[≠] ξ))
-
-/-- For `n = 1` the factor `gcd(t, 1)` is `1`: `λ₁` is the classical approximability.
-
-Source: Brandon Dong, Soren Dupont, Evan M. O'Dorney and W. Theo Waitkus, *Raney Transducers and the
-Lowest Point of the n-Lagrange Spectrum*, INTEGERS 25 (2025), Article A47,
-Introduction, equations (1) and (3). -/
-theorem nLagrangeApproximability_one (ξ : ℝ) :
-    nLagrangeApproximability 1 ξ =
-      limsup (fun q : ℚ => ((1 / ((q.den : ℝ) ^ 2 * |(q : ℝ) - ξ|) : ℝ) : EReal))
-        (comap ((↑) : ℚ → ℝ) (𝓝[≠] ξ)) := by
-  simp [nLagrangeApproximability]
-
-/-- The `n`-Markoff approximability
-`μₙ(ξ, ξ') = sup_{(s,t) ∈ ℤ² ∖ 0} gcd(t, n) |ξ - ξ'| / (|s - tξ| |s - tξ'|)` in `EReal`.
+/-- **$n$-Markoff approximability.** For a natural number $n$ and real numbers $\xi$ and $\xi'$, the
+$n$-Markoff approximability is the supremum in the extended reals
+$$\mu_n(\xi, \xi') = \sup_{(s,t) \ne 0} \frac{\gcd(t, n)\,|\xi - \xi'|}{|s - t\xi|\,|s - t\xi'|}$$
+over all pairs of integers $(s, t) \ne (0, 0)$. A term whose denominator is $0$, which happens only
+when $\xi$ or $\xi'$ is rational, counts as $0$.
 
 Source: Brandon Dong, Soren Dupont, Evan M. O'Dorney and W. Theo Waitkus, *Raney Transducers and the
 Lowest Point of the n-Lagrange Spectrum*, INTEGERS 25 (2025), Article A47,
@@ -54,7 +37,9 @@ noncomputable def nMarkoffApproximability (n : ℕ) (ξ ξ' : ℝ) : EReal :=
     ((((Int.gcd st.1.2 n : ℝ) * |ξ - ξ'| /
       (|(st.1.1 : ℝ) - st.1.2 * ξ| * |(st.1.1 : ℝ) - st.1.2 * ξ'|) : ℝ)) : EReal)
 
-/-- `μₙ` is symmetric in its two arguments.
+/-- **Symmetry of the $n$-Markoff approximability.** For every natural number $n$ and all real
+numbers $\xi$ and $\xi'$, the $n$-Markoff approximability satisfies
+$\mu_n(\xi, \xi') = \mu_n(\xi', \xi)$.
 
 Source: Brandon Dong, Soren Dupont, Evan M. O'Dorney and W. Theo Waitkus, *Raney Transducers and the
 Lowest Point of the n-Lagrange Spectrum*, INTEGERS 25 (2025), Article A47,
@@ -63,8 +48,10 @@ theorem nMarkoffApproximability_comm (n : ℕ) (ξ ξ' : ℝ) :
     nMarkoffApproximability n ξ ξ' = nMarkoffApproximability n ξ' ξ := by
   simp only [nMarkoffApproximability, abs_sub_comm ξ ξ', mul_comm |(_ : ℝ) - _ * ξ|]
 
-/-- The `n`-Lagrange spectrum `Lₙ`: the real values of `λₙ(ξ)` over irrational `ξ`; `L₁` is the
-classical Lagrange spectrum `L`.
+/-- **$n$-Lagrange spectrum.** For a natural number $n$, the $n$-Lagrange spectrum $L_n$ is the set
+of real numbers $\alpha$ such that $\lambda_n(\xi) = \alpha$ for some irrational real number
+$\xi$, where $\lambda_n$ is the $n$-Lagrange approximability; only finite values of $\lambda_n$
+count. For $n = 1$ this is the classical Lagrange spectrum $L$.
 
 Source: Brandon Dong, Soren Dupont, Evan M. O'Dorney and W. Theo Waitkus, *Raney Transducers and the
 Lowest Point of the n-Lagrange Spectrum*, INTEGERS 25 (2025), Article A47,
@@ -72,7 +59,9 @@ Introduction, equation (3). -/
 def nLagrangeSpectrum (n : ℕ) : Set ℝ :=
   {α | ∃ ξ : ℝ, Irrational ξ ∧ nLagrangeApproximability n ξ = α}
 
-/-- Membership in `Lₙ`.
+/-- **Membership in the $n$-Lagrange spectrum.** For every natural number $n$ and real number
+$\alpha$, $\alpha$ lies in the $n$-Lagrange spectrum $L_n$ if and only if $\alpha = \lambda_n(\xi)$
+for some irrational real number $\xi$, where $\lambda_n$ is the $n$-Lagrange approximability.
 
 Source: Brandon Dong, Soren Dupont, Evan M. O'Dorney and W. Theo Waitkus, *Raney Transducers and the
 Lowest Point of the n-Lagrange Spectrum*, INTEGERS 25 (2025), Article A47,
@@ -81,8 +70,12 @@ theorem mem_nLagrangeSpectrum (n : ℕ) (α : ℝ) :
     α ∈ nLagrangeSpectrum n ↔ ∃ ξ : ℝ, Irrational ξ ∧ nLagrangeApproximability n ξ = α :=
   Iff.rfl
 
-/-- The `n`-Markoff spectrum `Mₙ`: the real values of `μₙ(ξ, ξ')` over distinct irrationals
-`ξ, ξ'`; `M₁` is the classical Markoff spectrum `M`.
+/-- **The $n$-Markoff spectrum.** For a natural number $n$ and irrational numbers $\xi \ne \xi'$,
+the $n$-Markoff approximability $\mu_n(\xi, \xi')$ is the extended real number
+$\sup_{(s, t) \in \mathbb{Z}^2 \setminus \{0\}}
+\gcd(t, n) \, |\xi - \xi'| / (|s - t\xi| \, |s - t\xi'|)$. The $n$-Markoff spectrum $M_n$ is the
+set of real numbers $\alpha$ such that $\mu_n(\xi, \xi') = \alpha$ for some irrational numbers
+$\xi \ne \xi'$. For $n = 1$ this is the classical Markoff spectrum $M$.
 
 Source: Brandon Dong, Soren Dupont, Evan M. O'Dorney and W. Theo Waitkus, *Raney Transducers and the
 Lowest Point of the n-Lagrange Spectrum*, INTEGERS 25 (2025), Article A47,
@@ -90,7 +83,10 @@ Introduction, equation (4). -/
 def nMarkoffSpectrum (n : ℕ) : Set ℝ :=
   {α | ∃ ξ ξ' : ℝ, Irrational ξ ∧ Irrational ξ' ∧ ξ ≠ ξ' ∧ nMarkoffApproximability n ξ ξ' = α}
 
-/-- Membership in `Mₙ`.
+/-- **Membership in the $n$-Markoff spectrum.** For every natural number $n$ and real number
+$\alpha$, $\alpha$ lies in the $n$-Markoff spectrum $M_n$ if and only if $\alpha = \mu_n(\xi, \xi')$
+for some distinct irrational real numbers $\xi$ and $\xi'$, where $\mu_n$ is the $n$-Markoff
+approximability.
 
 Source: Brandon Dong, Soren Dupont, Evan M. O'Dorney and W. Theo Waitkus, *Raney Transducers and the
 Lowest Point of the n-Lagrange Spectrum*, INTEGERS 25 (2025), Article A47,
@@ -100,41 +96,11 @@ theorem mem_nMarkoffSpectrum (n : ℕ) (α : ℝ) :
       ∃ ξ ξ' : ℝ, Irrational ξ ∧ Irrational ξ' ∧ ξ ≠ ξ' ∧ nMarkoffApproximability n ξ ξ' = α :=
   Iff.rfl
 
-/-- Classical facts for an irrational `ξ = [a₀; a₁, a₂, …]` with complete quotients `ξ_k`
-(`ξ₀ = ξ`, `ξ_{k+1} = 1/{ξ_k}`) and digits `a_k = ⌊ξ_k⌋`: (a) for `k ≥ 1` the convergent
-`p_k/q_k = [a₀; …, a_{k-1}]` has `(-1)^k/(q_k² (p_k/q_k - ξ)) = a_k + [0; a_{k-1}, …, a₁] +
-[0; a_{k+1}, …]`; (c) `λ(ξ)` is the limsup over `k` of these cut qualities.
-
-Source: Brandon Dong, Soren Dupont, Evan M. O'Dorney and W. Theo Waitkus, *Raney Transducers and the
-Lowest Point of the n-Lagrange Spectrum*, INTEGERS 25 (2025), Article A47,
-Proposition 4 (`integers-2025-A47-prop-4`), parts (a) and (c), quoted from Cusick and Flahive,
-Appendix 1. -/
-public theorem_wanted convergent_quality_and_lagrange_limsup (ξ : ℝ) (hξ : Irrational ξ) :
-    let cq : ℕ → ℝ := fun k => (fun x : ℝ => (Int.fract x)⁻¹)^[k] ξ
-    let a : ℕ → ℤ := fun k => ⌊cq k⌋
-    let rev : ℕ → ℝ := fun k =>
-      ((List.range (k - 1)).reverse.map (fun i => a (i + 1))).foldr
-        (fun b acc => 1 / ((b : ℝ) + acc)) 0
-    let cut : ℕ → ℝ := fun k => (a k : ℝ) + rev k + Int.fract (cq k)
-    (∀ k : ℕ, 1 ≤ k →
-        (-1 : ℝ) ^ k / (((ξ.convergent (k - 1)).den : ℝ) ^ 2 *
-          ((ξ.convergent (k - 1) : ℝ) - ξ)) = cut k) ∧
-      nLagrangeApproximability 1 ξ = limsup (fun k => ((cut k : ℝ) : EReal)) atTop
-
-/-- If two simple continued fractions agree in their initial terms `a₀, …, a_k`, their values differ
-by at most `2^{1-k}`. Digits are those of Mathlib's `GenContFract.of` (`h = a₀`,
-`partDens.get? i = a_{i+1}`).
-
-Source: Brandon Dong, Soren Dupont, Evan M. O'Dorney and W. Theo Waitkus, *Raney Transducers and the
-Lowest Point of the n-Lagrange Spectrum*, INTEGERS 25 (2025), Article A47,
-Lemma 5 (`integers-2025-A47-lem-5`), quoted from Cusick and Flahive, Lemma 1. -/
-public theorem_wanted abs_sub_le_of_contFrac_prefix_eq (ξ ξ' : ℝ) (k : ℕ)
-    (h0 : (GenContFract.of ξ).h = (GenContFract.of ξ').h)
-    (hk : ∀ i < k, (GenContFract.of ξ).partDens.get? i = (GenContFract.of ξ').partDens.get? i) :
-    |ξ - ξ'| ≤ 2 ^ (1 - (k : ℤ))
-
-/-- For each `n ≥ 1` and irrationals `ξ ≠ ξ'`, `λₙ(ξ) = max_{g ∣ n} λ(gξ)` and
-`μₙ(ξ, ξ') = max_{g ∣ n} μ(gξ, gξ')`.
+/-- **The $n$-approximabilities as maxima over divisors.** Let $n \ge 1$, let $\lambda_n$ and
+$\mu_n$ be the $n$-Lagrange and $n$-Markoff approximabilities, and let $\xi \ne \xi'$ be irrational
+real numbers. Then $\lambda_n(\xi) = \max_{g \mid n} \lambda_1(g\xi)$ and
+$\mu_n(\xi, \xi') = \max_{g \mid n} \mu_1(g\xi, g\xi')$, where $g$ runs over the positive divisors
+of $n$ and the maxima are taken in the extended reals.
 
 Source: Brandon Dong, Soren Dupont, Evan M. O'Dorney and W. Theo Waitkus, *Raney Transducers and the
 Lowest Point of the n-Lagrange Spectrum*, INTEGERS 25 (2025), Article A47,
@@ -146,7 +112,11 @@ public theorem_wanted nApproximability_eq_sup_divisors (n : ℕ) (hn : 1 ≤ n) 
       nMarkoffApproximability n ξ ξ' =
         n.divisors.sup (fun g => nMarkoffApproximability 1 (g * ξ) (g * ξ'))
 
-/-- If `m ∣ n` then `Lₙ ⊆ L_m` and `Mₙ ⊆ M_m`; in particular `Lₙ ⊆ L` and `Mₙ ⊆ M`.
+/-- **Divisibility inclusions of the $n$-Lagrange and $n$-Markoff spectra.** Let $m$ and $n$
+be natural numbers with $m \ge 1$, $n \ge 1$ and $m \mid n$, and write $L_k$ and $M_k$ for the
+$k$-Lagrange and $k$-Markoff spectra. Then $L_n \subseteq L_m$ and $M_n \subseteq M_m$; in
+particular $L_n \subseteq L_1$ and $M_n \subseteq M_1$, where $L_1$ and $M_1$ are the
+classical Lagrange and Markoff spectra.
 
 Source: Brandon Dong, Soren Dupont, Evan M. O'Dorney and W. Theo Waitkus, *Raney Transducers and the
 Lowest Point of the n-Lagrange Spectrum*, INTEGERS 25 (2025), Article A47,
@@ -155,8 +125,13 @@ public theorem_wanted nSpectrum_subset_of_dvd (m n : ℕ) (hm : 1 ≤ m) (hmn : 
     (nLagrangeSpectrum n ⊆ nLagrangeSpectrum m ∧ nMarkoffSpectrum n ⊆ nMarkoffSpectrum m) ∧
       nLagrangeSpectrum n ⊆ nLagrangeSpectrum 1 ∧ nMarkoffSpectrum n ⊆ nMarkoffSpectrum 1
 
-/-- `Lₙ ⊆ Mₙ`, and every `α ∈ Lₙ` is `μₙ(ξ, ξ')` for some `ξ, ξ'` at which the supremum in the definition
-of `μₙ` is attained.
+/-- **The $n$-Lagrange spectrum lies in the $n$-Markoff spectrum, with attained suprema.** Let
+$n \ge 1$, let $L_n$ and $M_n$ be the $n$-Lagrange and $n$-Markoff spectra, and let $\mu_n$ be the
+$n$-Markoff approximability. Then $L_n \subseteq M_n$. Moreover, for every $\alpha \in L_n$ there
+are distinct irrational real numbers $\xi$ and $\xi'$ with $\mu_n(\xi, \xi') = \alpha$ at which the
+supremum defining $\mu_n(\xi, \xi')$ is attained: some pair of integers $(s, t) \ne (0, 0)$
+satisfies
+$$\frac{\gcd(t, n)\,|\xi - \xi'|}{|s - t\xi|\,|s - t\xi'|} = \alpha.$$
 
 Source: Brandon Dong, Soren Dupont, Evan M. O'Dorney and W. Theo Waitkus, *Raney Transducers and the
 Lowest Point of the n-Lagrange Spectrum*, INTEGERS 25 (2025), Article A47,
@@ -168,7 +143,12 @@ public theorem_wanted nLagrangeSpectrum_subset_nMarkoffSpectrum_attained (n : �
         ∃ s t : ℤ, (s, t) ≠ 0 ∧
           (((Int.gcd t n : ℝ) * |ξ - ξ'| / (|(s : ℝ) - t * ξ| * |(s : ℝ) - t * ξ'|) : ℝ) : EReal) = α
 
-/-- Every `α ∈ Mₙ` is `μₙ(ξ, ξ')` for some `ξ, ξ'` at which the supremum is attained.
+/-- **Attained suprema in the $n$-Markoff spectrum.** Let $n \ge 1$, let $M_n$ be the $n$-Markoff
+spectrum, and let $\mu_n$ be the $n$-Markoff approximability. For every $\alpha \in M_n$ there are
+distinct irrational real numbers $\xi$ and $\xi'$ with $\mu_n(\xi, \xi') = \alpha$ at which the
+supremum defining $\mu_n(\xi, \xi')$ is attained: some pair of integers $(s, t) \ne (0, 0)$
+satisfies
+$$\frac{\gcd(t, n)\,|\xi - \xi'|}{|s - t\xi|\,|s - t\xi'|} = \alpha.$$
 
 Source: Brandon Dong, Soren Dupont, Evan M. O'Dorney and W. Theo Waitkus, *Raney Transducers and the
 Lowest Point of the n-Lagrange Spectrum*, INTEGERS 25 (2025), Article A47,
@@ -179,7 +159,8 @@ public theorem_wanted nMarkoffSpectrum_attained (n : ℕ) (hn : 1 ≤ n) :
         ∃ s t : ℤ, (s, t) ≠ 0 ∧
           (((Int.gcd t n : ℝ) * |ξ - ξ'| / (|(s : ℝ) - t * ξ| * |(s : ℝ) - t * ξ'|) : ℝ) : EReal) = α
 
-/-- `Mₙ` is closed.
+/-- **The $n$-Markoff spectrum is closed.** For every integer $n \ge 1$, the $n$-Markoff spectrum
+$M_n$ is a closed subset of $\mathbb{R}$.
 
 Source: Brandon Dong, Soren Dupont, Evan M. O'Dorney and W. Theo Waitkus, *Raney Transducers and the
 Lowest Point of the n-Lagrange Spectrum*, INTEGERS 25 (2025), Article A47,
@@ -187,7 +168,9 @@ Proposition 11 (`integers-2025-A47-prop-11`). -/
 public theorem_wanted isClosed_nMarkoffSpectrum (n : ℕ) (hn : 1 ≤ n) :
     IsClosed (nMarkoffSpectrum n)
 
-/-- `Lₙ` and `Mₙ` have a common minimum.
+/-- **Common minimum of the $n$-Lagrange and $n$-Markoff spectra.** For every integer $n \ge 1$
+there is a real number $\alpha$ that is the least element both of the $n$-Lagrange spectrum $L_n$
+and of the $n$-Markoff spectrum $M_n$.
 
 Source: Brandon Dong, Soren Dupont, Evan M. O'Dorney and W. Theo Waitkus, *Raney Transducers and the
 Lowest Point of the n-Lagrange Spectrum*, INTEGERS 25 (2025), Article A47,
@@ -195,7 +178,11 @@ Proposition 12 (`integers-2025-A47-prop-12`). -/
 public theorem_wanted exists_isLeast_nLagrangeSpectrum_nMarkoffSpectrum (n : ℕ) (hn : 1 ≤ n) :
     ∃ α : ℝ, IsLeast (nLagrangeSpectrum n) α ∧ IsLeast (nMarkoffSpectrum n) α
 
-/-- `nL ⊆ Lₙ` and `nM ⊆ Mₙ`.
+/-- **Scaled classical spectra lie in the $n$-spectra.** Let $n \ge 1$ be a natural number and
+write $L_k$ and $M_k$ for the $k$-Lagrange and $k$-Markoff spectra, so that $L_1$ and $M_1$
+are the classical Lagrange and Markoff spectra. Then $n\alpha \in L_n$ for every
+$\alpha \in L_1$ and $n\alpha \in M_n$ for every $\alpha \in M_1$; that is,
+$n L_1 \subseteq L_n$ and $n M_1 \subseteq M_n$.
 
 Source: Brandon Dong, Soren Dupont, Evan M. O'Dorney and W. Theo Waitkus, *Raney Transducers and the
 Lowest Point of the n-Lagrange Spectrum*, INTEGERS 25 (2025), Article A47,
@@ -204,8 +191,11 @@ public theorem_wanted smul_spectrum_subset_nSpectrum (n : ℕ) (hn : 1 ≤ n) :
     (fun α => (n : ℝ) * α) '' nLagrangeSpectrum 1 ⊆ nLagrangeSpectrum n ∧
       (fun α => (n : ℝ) * α) '' nMarkoffSpectrum 1 ⊆ nMarkoffSpectrum n
 
-/-- Hall's ray for the `n`-spectra: `[nF, ∞) ⊆ Lₙ ⊆ Mₙ`, where Freĭman's constant `F` is the least
-`F` with `[F, ∞) ⊆ L`.
+/-- **Hall's ray in the $n$-Lagrange spectrum.** Let $L_1$ be the classical Lagrange spectrum and
+let $F$ (Freĭman's constant) be the infimum of the real numbers $c$ with
+$[c, \infty) \subseteq L_1$. Then for every integer $n \ge 1$,
+$[nF, \infty) \subseteq L_n \subseteq M_n$, where $L_n$ is the $n$-Lagrange spectrum and
+$M_n$ is the $n$-Markoff spectrum.
 
 Source: Brandon Dong, Soren Dupont, Evan M. O'Dorney and W. Theo Waitkus, *Raney Transducers and the
 Lowest Point of the n-Lagrange Spectrum*, INTEGERS 25 (2025), Article A47,
@@ -214,7 +204,8 @@ public theorem_wanted hall_ray_nLagrangeSpectrum (n : ℕ) (hn : 1 ≤ n) :
     Set.Ici ((n : ℝ) * sInf {F : ℝ | Set.Ici F ⊆ nLagrangeSpectrum 1}) ⊆ nLagrangeSpectrum n ∧
       nLagrangeSpectrum n ⊆ nMarkoffSpectrum n
 
-/-- `Lₙ` is closed.
+/-- **The $n$-Lagrange spectrum is closed.** For every integer $n \ge 1$, the $n$-Lagrange spectrum
+$L_n$ is a closed subset of $\mathbb{R}$.
 
 Source: Brandon Dong, Soren Dupont, Evan M. O'Dorney and W. Theo Waitkus, *Raney Transducers and the
 Lowest Point of the n-Lagrange Spectrum*, INTEGERS 25 (2025), Article A47,
@@ -222,7 +213,11 @@ Proposition 19 (`integers-2025-A47-prop-19`). -/
 public theorem_wanted isClosed_nLagrangeSpectrum (n : ℕ) (hn : 1 ≤ n) :
     IsClosed (nLagrangeSpectrum n)
 
-/-- `Lₙ` is the closure of the set `Pₙ` of `n`-approximabilities of quadratic irrationals.
+/-- **The $n$-Lagrange spectrum is the closure of its quadratic-irrational values.** Let $n \ge 1$,
+let $\lambda_n$ be the $n$-Lagrange approximability, and let $P_n$ be the set of real numbers
+$\alpha$ such that $\alpha = \lambda_n(\xi)$ for some quadratic irrational $\xi$, that is, an
+irrational real number with $a\xi^2 + b\xi + c = 0$ for some integers $a \ne 0$, $b$, $c$. Then
+the $n$-Lagrange spectrum $L_n$ is the closure of $P_n$ in $\mathbb{R}$.
 
 Source: Brandon Dong, Soren Dupont, Evan M. O'Dorney and W. Theo Waitkus, *Raney Transducers and the
 Lowest Point of the n-Lagrange Spectrum*, INTEGERS 25 (2025), Article A47,
@@ -233,8 +228,13 @@ public theorem_wanted nLagrangeSpectrum_eq_closure_quadratic (n : ℕ) (hn : 1 �
       nLagrangeApproximability n ξ = α}
 
 
-/-- Conjecture 1 for primes below 2000: for every prime `p < 2000`, `L_p` has a least element `α`
-that is an isolated point of `L_p` and is the irrational square root of a rational number.
+/-- **Isolated minimum of the $p$-Lagrange spectrum for primes below 2000.** For every prime
+$p < 2000$, the $p$-Lagrange spectrum $L_p$ has a least element $\alpha$ with the following
+properties: $\alpha$ is an isolated point of $L_p$, that is, there is $\varepsilon > 0$ such that
+every $\beta \in L_p$ with $|\beta - \alpha| < \varepsilon$ equals $\alpha$; $\alpha$ is
+irrational; and $\alpha = \sqrt{r}$ for some rational number $r$.
+
+This is Conjecture 1 of the source for primes below 2000.
 
 Source: Brandon Dong, Soren Dupont, Evan M. O'Dorney and W. Theo Waitkus, *Raney Transducers and the
 Lowest Point of the n-Lagrange Spectrum*, INTEGERS 25 (2025), Article A47,
@@ -245,9 +245,12 @@ public theorem_wanted min_nLagrangeSpectrum_isolated_sqrt_rat_of_prime_lt_2000 (
       (∃ ε > 0, ∀ β ∈ nLagrangeSpectrum p, |β - α| < ε → β = α) ∧
       Irrational α ∧ ∃ r : ℚ, α = Real.sqrt r
 
-/-- `p = 67` is the only prime `p < 2000` for which no irrational `ξ` has both `ξ` and `pξ` with
-continued fraction digits eventually in `{1, 2}`. Digits are `a_k = ⌊ξ_k⌋` for the complete
-quotients `ξ₀ = ξ`, `ξ_{k+1} = 1/{ξ_k}`.
+/-- **The prime $67$ and continued fraction digits $1$ and $2$.** For an irrational real
+number $\xi$, define its complete quotients by $\xi_0 = \xi$ and $\xi_{k+1} = 1/\{\xi_k\}$,
+where $\{\cdot\}$ denotes the fractional part, and its continued fraction digits by
+$a_k = \lfloor \xi_k \rfloor$. Let $p < 2000$ be a prime. Then there is no irrational $\xi$
+such that the digits of both $\xi$ and $p\xi$ eventually all lie in $\{1, 2\}$ if and only
+if $p = 67$.
 
 Source: Brandon Dong, Soren Dupont, Evan M. O'Dorney and W. Theo Waitkus, *Raney Transducers and the
 Lowest Point of the n-Lagrange Spectrum*, INTEGERS 25 (2025), Article A47,
@@ -259,12 +262,15 @@ public theorem_wanted no_eventually_one_two_contFrac_pair_iff_eq_67 (p : ℕ) (h
           ⌊(fun x : ℝ => (Int.fract x)⁻¹)^[k] ((p : ℝ) * ξ)⌋ ∈ ({1, 2} : Set ℤ)) ↔
       p = 67
 
-/-- Markoff points in `L_p`: for a Markoff triple `x ≤ y ≤ z` (`x² + y² + z² = 3xyz`) with
-`λ_z = √(9 - 4/z²)` and `D = 9z² - 4` (`z` odd) or `(9z² - 4)/4` (`z` even), and a prime `p`:
-(a) if `p` is the product of two principal primes of the quadratic order `O_D`, i.e. some
-`u + v(D + √D)/2 ∈ O_D` has norm `±p`, then `λ_z ∈ L_p`; (b) conversely, if `λ_z ∈ L_p` and
-`(9z² - 4)/(9z'² - 4)` is not a rational square for every other sorted Markoff triple
-`(x', y', z')` with `z' ≤ z`, then `p` is such a product.
+/-- **Markoff points in the $p$-Lagrange spectrum.** Let $x \le y \le z$ be positive integers with
+$x^2 + y^2 + z^2 = 3xyz$ (a sorted Markoff triple), let $\lambda_z = \sqrt{9 - 4/z^2}$, let
+$D = 9z^2 - 4$ if $z$ is odd and $D = (9z^2 - 4)/4$ if $z$ is even, and let $p$ be a prime.
+Call $p$ a principal norm if $|u^2 + Duv + \frac{D^2 - D}{4} v^2| = p$ for some integers $u, v$,
+that is, if some element $u + v \frac{D + \sqrt{D}}{2}$ of the quadratic order $\mathcal{O}_D$ has
+norm $\pm p$. Then: (a) if $p$ is a principal norm, then $\lambda_z$ lies in the $p$-Lagrange
+spectrum $L_p$; (b) if $\lambda_z \in L_p$ and, for every sorted Markoff triple
+$(x', y', z') \ne (x, y, z)$ with $z' \le z$, the rational number $(9z^2 - 4)/(9z'^2 - 4)$ is not
+a square in $\mathbb{Q}$, then $p$ is a principal norm.
 
 Source: Brandon Dong, Soren Dupont, Evan M. O'Dorney and W. Theo Waitkus, *Raney Transducers and the
 Lowest Point of the n-Lagrange Spectrum*, INTEGERS 25 (2025), Article A47,
@@ -283,12 +289,16 @@ public theorem_wanted markoff_point_mem_nLagrangeSpectrum_iff_principal_norm (x 
           ¬ IsSquare ((9 * (z : ℚ) ^ 2 - 4) / (9 * (z' : ℚ) ^ 2 - 4))) →
         principalNorm)
 
-/-- Congruence conditions for the Markoff points `√5, 2√2, √221/5, √1517/13, √7565/29` in `L_p`,
-`p` prime: (a) `√5 ∈ L_p ↔ p ≡ 0, ±1 (mod 5)`; (b) `2√2 ∈ L_p ↔ p ≡ 2, ±1 (mod 8)`;
-(c) `√221/5 ∈ L_p ↔ p` is a square mod `13` and `17`; (d) `√1517/13 ∈ L_p ↔ p` is a square mod
-`37` and `41`; (e) `√7565/29 ∈ L_p ↔ p` is a square mod `5`, `17` and `89`. "Square mod `m`" is
-`IsSquare` in `ZMod m` (so `0` counts). Part (f) (`10√26/17`) is omitted: as printed it fails at
-`p = 17`.
+/-- **Congruence conditions for Markoff points in the $p$-Lagrange spectrum.** Let $p$ be a prime
+and let $L_p$ be the $p$-Lagrange spectrum. Then: (a) $\sqrt{5} \in L_p$ if and only if
+$p \equiv 0, \pm 1 \pmod 5$; (b) $2\sqrt{2} \in L_p$ if and only if $p \equiv 2, \pm 1 \pmod 8$;
+(c) $\sqrt{221}/5 \in L_p$ if and only if $p$ is a square modulo $13$ and modulo $17$;
+(d) $\sqrt{1517}/13 \in L_p$ if and only if $p$ is a square modulo $37$ and modulo $41$;
+(e) $\sqrt{7565}/29 \in L_p$ if and only if $p$ is a square modulo $5$, modulo $17$ and modulo
+$89$. Here $p$ is a square modulo $m$ when $p \equiv a^2 \pmod m$ for some integer $a$; this
+includes the case $p \equiv 0 \pmod m$.
+
+Part (f) of the source, for $10\sqrt{26}/17$, is omitted: as printed it fails at $p = 17$.
 
 Source: Brandon Dong, Soren Dupont, Evan M. O'Dorney and W. Theo Waitkus, *Raney Transducers and the
 Lowest Point of the n-Lagrange Spectrum*, INTEGERS 25 (2025), Article A47,

@@ -26,58 +26,69 @@ and (flexible) permutation stability, following Kourovka Notebook 21.84.
 
 namespace PermutationStability
 
-/-- Normalized Hamming distance between two permutations of `Fin n`: the
-fraction of points on which they disagree. At `n = 0` the denominator is zero,
-so the quotient is `0` by the `ZeroInv₀` convention; this single value is
-harmless for `Filter.atTop` convergence statements. -/
+/-- **Normalized Hamming distance.** For a natural number $n$ and permutations $\sigma$, $\tau$ of
+$\{0, \dots, n-1\}$, the normalized Hamming distance $d_n(\sigma, \tau)$ is the number of points
+$i < n$ with $\sigma(i) \ne \tau(i)$, divided by $n$, as a real number. For $n = 0$ it is $0$;
+this single value does not affect statements about limits as $n \to \infty$. -/
 noncomputable def normalizedHammingDistance (n : ℕ) (σ τ : Equiv.Perm (Fin n)) : ℝ :=
   (hammingDist (fun i => σ i) (fun i => τ i) : ℝ) / n
 
-/-- A sequence of (arbitrary) set maps `f n : G → Equiv.Perm (Fin n)` is an
-almost-homomorphism when the normalized Hamming defect
-`d(f n g * f n h, f n (g * h))` tends to zero for every pair `g h`.
-Following the source, no condition such as `f n 1 = 1` is imposed. -/
+/-- **Almost-homomorphisms to symmetric groups.** Let $G$ be a group and, for each natural number
+$n$, let $f_n \colon G \to S_n$ be an arbitrary map, where $S_n$ is the group of permutations of
+$\{0, \dots, n-1\}$. The sequence $(f_n)$ is an almost-homomorphism when for all $g, h \in G$ the
+normalized Hamming distance $d_n(f_n(g) f_n(h), f_n(gh))$ tends to $0$ as $n \to \infty$.
+
+Following the source, no condition such as $f_n(1) = 1$ is imposed. -/
 def IsAlmostHomomorphism {G : Type*} [Group G]
     (f : ∀ n : ℕ, G → Equiv.Perm (Fin n)) : Prop :=
   ∀ g h : G, Filter.Tendsto
     (fun n => normalizedHammingDistance n (f n g * f n h) (f n (g * h)))
     Filter.atTop (nhds 0)
 
-/-- `f` is close to homomorphisms when genuine homomorphisms
-`ρ n : G →* Equiv.Perm (Fin n)` pointwise approximate it in normalized
-Hamming distance, uniformly over each fixed `g` along `Filter.atTop`. -/
+/-- **Closeness to homomorphisms.** Let $G$ be a group and let $f_n \colon G \to S_n$
+($n \in \mathbb{N}$) be maps into the symmetric groups $S_n$ of permutations of $\{0, \dots, n-1\}$.
+The sequence $(f_n)$ is close to homomorphisms when there are group homomorphisms
+$\rho_n \colon G \to S_n$ such that for every $g \in G$ the normalized Hamming distance
+$d_n(\rho_n(g), f_n(g))$ tends to $0$ as $n \to \infty$. -/
 def IsCloseToHomomorphisms {G : Type*} [Group G]
     (f : ∀ n : ℕ, G → Equiv.Perm (Fin n)) : Prop :=
   ∃ ρ : ∀ n : ℕ, G →* Equiv.Perm (Fin n), ∀ g : G, Filter.Tendsto
     (fun n => normalizedHammingDistance n (ρ n g) (f n g))
     Filter.atTop (nhds 0)
 
-/-- `G` is permutation stable when every almost-homomorphism is close to
-genuine homomorphisms. -/
+/-- **Permutation stability.** A group $G$ is permutation stable when every
+almost-homomorphism $(f_n)$ from $G$ to the symmetric groups $S_n$ is close to
+homomorphisms. -/
 def PermutationStable (G : Type*) [Group G] : Prop :=
   ∀ f : ∀ n : ℕ, G → Equiv.Perm (Fin n),
     IsAlmostHomomorphism f → IsCloseToHomomorphisms f
 
-/-- Flexible Hamming distance between a small permutation `σ` of `Fin n` and a
-large permutation `τ` of `Fin m` (with `h : n ≤ m`): the disagreement count on
-the embedded copy plus the `m - n` unmatched points, normalized by `n`.
+/-- **Flexible Hamming distance.** Let $n \le m$ be natural numbers, $\sigma$ a permutation of
+$\{0, \dots, n-1\}$ and $\tau$ a permutation of $\{0, \dots, m-1\}$. The flexible Hamming distance
+of $\sigma$ and $\tau$ is the real number
 
-Kourovka 21.84 is internally inconsistent about the argument order: it first
-defines the distance with the small permutation first, `d_n^flex(σ, τ)` for
-`σ ∈ S_n`, `τ ∈ S_m`, but later writes the convergence expression with
-`ρ_n(g)` first. This formalization follows the definition site (small first),
-which is also the type-correct order for the embedding `Fin n → Fin m`.
+$$
+d^{\mathrm{flex}}_n(\sigma, \tau) = \frac{\#\{i < n : \sigma(i) \ne \tau(i)\} + (m - n)}{n}.
+$$
 
-As above, the `n = 0` denominator is harmless for `Filter.atTop`
-convergence. -/
+For $n = 0$ this quotient is taken to be $0$; this single value does not affect statements about
+limits as $n \to \infty$.
+
+Source: Kourovka Notebook 21.84. The source is internally inconsistent about the argument order: it
+first defines the distance with the small permutation first, `d_n^flex(σ, τ)` for `σ ∈ S_n`,
+`τ ∈ S_m`, but later writes the convergence expression with `ρ_n(g)` first. This formalization
+follows the definition site (small first), which is also the type-correct order for the embedding
+`Fin n → Fin m`. -/
 noncomputable def flexibleHammingDistance {n m : ℕ} (h : n ≤ m)
     (σ : Equiv.Perm (Fin n)) (τ : Equiv.Perm (Fin m)) : ℝ :=
   ((hammingDist (fun i => Fin.castLE h (σ i))
       (fun i => τ (Fin.castLE h i)) + (m - n) : ℕ) : ℝ) / n
 
-/-- `f` is flexibly close to homomorphisms when, after embedding each `Fin n`
-into some `Fin (m n)`, genuine homomorphisms `ρ n` approximate `f` in the
-flexible Hamming distance for every fixed `g` along `Filter.atTop`. -/
+/-- **Flexible closeness to homomorphisms.** Let $G$ be a group and let $f_n \colon G \to S_n$
+($n \in \mathbb{N}$) be maps into the symmetric groups $S_n$ of permutations of $\{0, \dots, n-1\}$.
+The sequence $(f_n)$ is flexibly close to homomorphisms when there are natural numbers $m_n \ge n$
+and group homomorphisms $\rho_n \colon G \to S_{m_n}$ such that for every $g \in G$ the flexible
+Hamming distance $d^{\mathrm{flex}}_n(f_n(g), \rho_n(g))$ tends to $0$ as $n \to \infty$. -/
 def IsFlexiblyCloseToHomomorphisms {G : Type*} [Group G]
     (f : ∀ n : ℕ, G → Equiv.Perm (Fin n)) : Prop :=
   ∃ m : ℕ → ℕ, ∃ h : ∀ n : ℕ, n ≤ m n,
@@ -85,13 +96,14 @@ def IsFlexiblyCloseToHomomorphisms {G : Type*} [Group G]
       (fun n => flexibleHammingDistance (h n) (f n g) (ρ n g))
       Filter.atTop (nhds 0)
 
-/-- `G` is flexibly permutation stable when every almost-homomorphism is
-flexibly close to genuine homomorphisms. -/
+/-- **Flexible permutation stability.** A group $G$ is flexibly permutation stable when every
+almost-homomorphism $(f_n)$ from $G$ to the symmetric groups is flexibly close to homomorphisms. -/
 def FlexiblePermutationStable (G : Type*) [Group G] : Prop :=
   ∀ f : ∀ n : ℕ, G → Equiv.Perm (Fin n),
     IsAlmostHomomorphism f → IsFlexiblyCloseToHomomorphisms f
 
-/-- `G` is metabelian when its second derived subgroup is trivial. -/
+/-- **Metabelian groups.** Let $G$ be a group and let $G' = [G, G]$ be its commutator subgroup.
+Then $G$ is metabelian when its second derived subgroup $G'' = [G', G']$ is trivial. -/
 def Metabelian (G : Type*) [Group G] : Prop :=
   derivedSeries G 2 = ⊥
 

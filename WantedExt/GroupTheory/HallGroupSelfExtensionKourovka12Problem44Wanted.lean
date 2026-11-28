@@ -33,23 +33,25 @@ subgroup `N ≅ G` and `H ⧸ N ≅ G` is isomorphic to `G`. "Proper" adds nothi
 group in `Type` by itself.
 -/
 
-/-- `G` is isomorphic to every extension of itself by itself: whenever `N` is a normal subgroup
-of a group `H` with `N ≅ G` and `H ⧸ N ≅ G`, also `H ≅ G` (a Hall group in the sense of Göbel and
-Shelah). -/
+/-- **Hall group.** A group $G$ is a Hall group (in the sense of Göbel and Shelah) when it is
+isomorphic to every extension of itself by itself: for every group $H$ and every normal subgroup
+$N$ of $H$ with $N \cong G$ and $H/N \cong G$, also $H \cong G$. -/
 def IsHallGroup (G : Type) [Group G] : Prop :=
   ∀ (H : Type) [Group H] (N : Subgroup H) [N.Normal],
     Nonempty (N ≃* G) → Nonempty ((H ⧸ N) ≃* G) → Nonempty (H ≃* G)
 
-/-- Kourovka 12.44 (P. Hall): there is a nontrivial group isomorphic to every extension of
-itself by itself. -/
+/-- **Hall's problem on self-extensions (Kourovka Problem 12.44).** There is a nontrivial group $G$
+that is a Hall group, that is, isomorphic to every extension of itself by itself: every group $H$
+with a normal subgroup $N \cong G$ such that $H/N \cong G$ is isomorphic to $G$. -/
 def existsGroupIsoToSelfExtensions : Prop :=
   ∃ (G : Type) (_ : Group G), Nontrivial G ∧ IsHallGroup G
 
 /--
-Resolved true: Göbel and Shelah prove that `L^ω` is a Hall group for every rigid group `L`
-(Corollary 1.5) and that rigid groups exist (Theorem 3.1), so nontrivial groups isomorphic to all
-their extensions by themselves exist; the Kourovka Archive answers 12.44 Yes, in every regular
-cardinality. Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The
+**Existence of Hall groups (Göbel–Shelah; Kourovka Problem 12.44).** There is a nontrivial group
+$G$ that is isomorphic to every extension of itself by itself: every group $H$ with a normal
+subgroup $N \cong G$ such that $H/N \cong G$ is isomorphic to $G$.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The
 Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 12.44
 (P. Hall; J. C. Lennox); resolution: R. Göbel and S. Shelah, Philip Hall's problem on non-Abelian
 splitters, Math. Proc. Cambridge Philos. Soc. 134 (2003), no. 1, 23-31, arXiv:math/0009091,

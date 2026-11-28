@@ -21,10 +21,10 @@ import Mathlib.NumberTheory.ZetaValues
 # The completed Dirichlet `L`-function `ξ(s, χ)` and its Hadamard product
 
 For a Dirichlet character `χ` modulo `q` with parity `a = (1 - χ(-1)) / 2`, the function
-`ξ(s, χ) = (q / π) ^ ((s + a) / 2) Γ((s + a) / 2) L(s, χ)` is written as
-`q ^ ((s + a) / 2) · Λ(s, χ)`, where `Λ = DirichletCharacter.completedLFunction`. For primitive
-nonprincipal `χ` it is entire of order exactly `1`, its zeros are the nontrivial zeros of
-`L(s, χ)`, and it has a Hadamard product.
+`ξ(s, χ)` is `q ^ ((s + a) / 2) · Λ(s, χ)`, where `Λ = DirichletCharacter.completedLFunction`.
+Away from the poles of the factors, this equals
+`(q / π) ^ ((s + a) / 2) Γ((s + a) / 2) L(s, χ)`. For primitive nonprincipal `χ` it is entire
+of order exactly `1`, its zeros are the nontrivial zeros of `L(s, χ)`, and it has a Hadamard product.
 
 ## Main definitions
 
@@ -54,10 +54,11 @@ namespace DirichletCharacter
 
 variable {q : ℕ} [NeZero q]
 
-/-- The completed Dirichlet `L`-function
-`ξ(s, χ) = q ^ ((s + a) / 2) Λ(s, χ) = (q / π) ^ ((s + a) / 2) Γ((s + a) / 2) L(s, χ)`, where
-`a = (1 - χ(-1)) / 2` is `0` for even and `1` for odd `χ`. Written through the total function
-`completedLFunction`, so it has no junk values at the poles of the Gamma factor. -/
+/-- The completed Dirichlet `L`-function `ξ(s, χ) = q ^ ((s + a) / 2) Λ(s, χ)`, where
+`a = (1 - χ(-1)) / 2` is `0` for even and `1` for odd `χ`, and `Λ` is `completedLFunction`.
+Away from the poles of the factors this agrees with
+`(q / π) ^ ((s + a) / 2) Γ((s + a) / 2) L(s, χ)`. For nonprincipal `χ`, values at the
+Gamma poles are given by analytic continuation, not by the totalized pointwise product. -/
 noncomputable def xi (χ : DirichletCharacter ℂ q) (s : ℂ) : ℂ :=
   (q : ℂ) ^ ((s + (1 - χ (-1)) / 2) / 2) * completedLFunction χ s
 

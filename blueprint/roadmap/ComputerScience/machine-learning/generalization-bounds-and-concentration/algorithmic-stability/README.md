@@ -5,6 +5,10 @@ An algorithm is uniformly stable if replacing one example of its training sample
 - [Uniform stability](is-uniformly-stable.md)
 - [Replace-one sampling preserves the law of an i.i.d. sample](map-update-prod-pi.md)
 - [Uniform stability implies generalization in expectation](abs-integral-empirical-risk-sub-risk-le.md)
+- [On-average replace-one stability](on-average-replace-one-stability.md)
+- [Expected generalization gap equals replace-one stability term](expected-generalization-gap-equals-replace-one-stability-ter.md)
+- [Uniform stability implies high-probability generalization](uniform-stability-implies-high-probability-generalization.md)
+- [Deletion stability bounds replacement stability](deletion-stability-bounds-replacement-stability.md)
 
 ## Stability of stochastic gradient descent
 
@@ -19,6 +23,12 @@ Stochastic gradient descent on convex, $\beta$-smooth, $L$-Lipschitz losses with
 - [SGM is uniformly stable](is-uniformly-stable-sgm.md)
 - [SGM moves at most $L \sum_t \alpha_t$ from its start](norm-sgm-iterate-sub-start-le.md)
 - [Generalization of SGM in expectation](abs-integral-empirical-risk-sub-risk-sgm.md)
+- [Dataset swap identity](swap-identity.md)
+
+## High-probability generalization from deletion stability
+
+- [Is Deletion Stable](is-deletion-stable.md)
+- [Leave One Out Risk](leave-one-out-risk.md)
 
 ## Related topics
 

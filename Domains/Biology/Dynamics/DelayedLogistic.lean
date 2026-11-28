@@ -84,7 +84,8 @@ bound for any estimate that also holds with time-varying coefficients. Only
 `3 / 2 ≤ r τ < π / 2` needs the principle of linearized stability for delay equations
 (variation of constants and exponential decay of the fundamental solution). Neither the
 refinement to `3 / 2` nor that principle is formalized here, so `√5 - 1 ≤ r τ < π / 2` is not
-covered. The Hopf normal form at `τ_c` is not formalized either.
+covered. A third-order normal-form (Poincaré–Lindstedt) expansion at `τ_c` is in
+`Domains.Biology.Dynamics.DelayedLogisticHopf`.
 
 ## References
 
@@ -113,15 +114,18 @@ namespace MathlibExt.Biology.Dynamics.DelayedLogistic
 
 /-- `x` solves Hutchinson's delayed logistic equation `x'(t) = r x(t) (1 - x(t - τ) / K)` with
 history `φ` on `[-τ, 0]`: `x = φ` on `[-τ, 0]`, `x` is continuous on `[-τ, ∞)`, and at every
-`t ≥ 0` the right derivative of `x` is `r x(t) (1 - x(t - τ) / K)`. -/
+`t ≥ 0` the right derivative of `x` is `r x(t) (1 - x(t - τ) / K)`. With `a / 0 = 0`, for `K = 0`
+the equation reads `x' = r x`; for `τ < 0` the history interval is empty. The intended domain is
+`τ ≥ 0`. -/
 structure IsSolution (r K τ : ℝ) (φ x : ℝ → ℝ) : Prop where
   eqOn_history : EqOn x φ (Icc (-τ) 0)
   continuousOn : ContinuousOn x (Ici (-τ))
   hasDerivWithinAt : ∀ t, 0 ≤ t →
     HasDerivWithinAt x (r * x t * (1 - x (t - τ) / K)) (Ici t) t
 
-/-- **Integral representation**: a solution satisfies
-`x(t) = x(0) exp (r ∫₀ᵗ (1 - x(s - τ) / K) ds)` for every `t ≥ 0`. -/
+/-- **Integral representation**: for `τ ≥ 0`, a solution satisfies
+`x(t) = x(0) exp (r ∫₀ᵗ (1 - x(s - τ) / K) ds)` for every `t ≥ 0`. With `a / 0 = 0`, for `K = 0`
+this reads `x(t) = x(0) e^{r t}`. -/
 theorem IsSolution.eq_mul_exp_integral {r K τ : ℝ} {φ x : ℝ → ℝ} (hτ : 0 ≤ τ)
     (hx : IsSolution r K τ φ x) {t : ℝ} (ht : 0 ≤ t) :
     x t = x 0 * exp (r * ∫ s in (0 : ℝ)..t, (1 - x (s - τ) / K)) := by
@@ -158,7 +162,8 @@ theorem IsSolution.eq_mul_exp_integral {r K τ : ℝ} {φ x : ℝ → ℝ} (hτ 
   rw [hint t ht, ← hconst, mul_assoc, ← exp_add]
   simp
 
-/-- **Positivity**: a solution with positive history value `φ 0` stays positive for `t ≥ 0`. -/
+/-- **Positivity**: for `τ ≥ 0`, a solution with positive history value `φ 0` stays positive for
+`t ≥ 0`. -/
 theorem IsSolution.pos {r K τ : ℝ} {φ x : ℝ → ℝ} (hτ : 0 ≤ τ) (hx : IsSolution r K τ φ x)
     (hφ0 : 0 < φ 0) {t : ℝ} (ht : 0 ≤ t) : 0 < x t := by
   rw [hx.eq_mul_exp_integral hτ ht, hx.eqOn_history ⟨by linarith, le_rfl⟩]
@@ -198,19 +203,24 @@ theorem IsSolution.eqOn {r K τ : ℝ} {φ x y : ℝ → ℝ} (hτ : 0 < τ) (hx
 
 /-- One step of the method of steps: given the history extension `ψ` and a candidate `x`, the
 function equal to `ψ` on `(-∞, 0]` and to `ψ(0) exp (r ∫₀ᵗ (1 - x(s - τ) / K) ds)` for
-`t > 0`. A solution is a fixed point; on `[0, τ]` the right side only uses the history. -/
+`t > 0` (with `a / 0 = 0` and the integral of a non-integrable function equal to `0`). For
+`τ ≥ 0`, a solution with history `ψ` agrees with its image on `[-τ, ∞)`; on `[0, τ]` the right
+side only uses the history. -/
 noncomputable def stepMap (r K τ : ℝ) (ψ x : ℝ → ℝ) : ℝ → ℝ := fun t =>
   if t ≤ 0 then ψ t else ψ 0 * exp (r * ∫ s in (0 : ℝ)..t, (1 - x (s - τ) / K))
 
-/-- The `n`-th iterate of `stepMap` started at the history; it is exact on `(-∞, n τ]`. -/
+/-- The `n`-th iterate of `stepMap` started at the history; for `τ > 0`, started at the history
+extension, it equals the method-of-steps solution on `(-∞, n τ]`. -/
 noncomputable def stepIter (r K τ : ℝ) (ψ : ℝ → ℝ) (n : ℕ) : ℝ → ℝ :=
   (stepMap r K τ ψ)^[n] ψ
 
-/-- Continuous extension of a history given on `[-τ, 0]` to the whole line (constant outside). -/
+/-- Extension of a history given on `[-τ, 0]` to the whole line (constant outside), continuous
+when `τ ≥ 0` and `φ` is continuous on `[-τ, 0]`; for `τ < 0` it is the constant `φ(-τ)`. -/
 noncomputable def historyExt (τ : ℝ) (φ : ℝ → ℝ) : ℝ → ℝ := fun t => φ (max (-τ) (min t 0))
 
 /-- The solution of the delayed logistic equation built by the method of steps from the
-history `φ` on `[-τ, 0]` (meaningful for `τ > 0`). -/
+history `φ` on `[-τ, 0]` (meaningful for `τ > 0`; for `τ = 0`, where `t / 0 = 0`, it is the
+constant `φ(0)`). -/
 noncomputable def solution (r K τ : ℝ) (φ : ℝ → ℝ) : ℝ → ℝ := fun t =>
   stepIter r K τ (historyExt τ φ) ⌈t / τ⌉₊ t
 
@@ -310,7 +320,7 @@ theorem continuous_solution {r K τ : ℝ} (hτ : 0 < τ) {φ : ℝ → ℝ}
   filter_upwards [Iio_mem_nhds hn] with s hs
   exact (solution_eq_stepIter hτ (le_of_lt hs)).symm
 
-/-- The constructed solution is a fixed point of the step map. -/
+/-- For `τ > 0`, the constructed solution is a fixed point of the step map. -/
 theorem stepMap_solution {r K τ : ℝ} (hτ : 0 < τ) {φ : ℝ → ℝ} :
     stepMap r K τ (historyExt τ φ) (solution r K τ φ) = solution r K τ φ := by
   funext t
@@ -372,8 +382,8 @@ theorem isSolution_logistic {r K : ℝ} (hr : 0 ≤ r) (hK : 0 < K) {φ : ℝ �
   · exact (hd t (by simpa using ht)).continuousAt.continuousWithinAt
   · simpa using (hd t ht).hasDerivWithinAt
 
-/-- **Zero delay reduces to the logistic ODE**: for `τ = 0`, every solution equals the
-explicit logistic solution on `[0, ∞)`. -/
+/-- **Zero delay reduces to the logistic ODE**: for `τ = 0`, `r ≥ 0`, `K > 0` and `φ(0) > 0`,
+every solution equals the explicit logistic solution on `[0, ∞)`. -/
 theorem IsSolution.eqOn_logistic {r K : ℝ} (hr : 0 ≤ r) (hK : 0 < K) {φ x : ℝ → ℝ}
     (hφ0 : 0 < φ 0) (hx : IsSolution r K 0 φ x) :
     EqOn x (Logistic.logistic r K (φ 0)) (Ici 0) := by
@@ -428,7 +438,8 @@ theorem IsSolution.hasDerivWithinAt_deviation {r K τ : ℝ} {φ x : ℝ → ℝ
 `u'(t) = -r u(t - τ)`. -/
 noncomputable def charFun (r τ : ℝ) (z : ℂ) : ℂ := z + r * Complex.exp (-(z * τ))
 
-/-- The critical delay `τ_c = π / (2 r)`. -/
+/-- The critical delay `τ_c = π / (2 r)`, for `r > 0`; with `a / 0 = 0` it is `0` when
+`r = 0`, and it is negative for `r < 0`. -/
 noncomputable def criticalDelay (r : ℝ) : ℝ := π / (2 * r)
 
 /-- Real and imaginary parts of the characteristic equation: with `z = a + b i`,
@@ -487,7 +498,7 @@ theorem cos_nonpos_and_abs_im_le {r τ : ℝ} {z : ℂ} (hr : 0 < r) (hτ : 0 �
           exact abs_sin_le_one _
       _ = r := by ring
 
-/-- **Linearized asymptotic stability below the critical delay**: for `r > 0` and
+/-- **Characteristic roots below the critical delay**: for `r > 0` and
 `0 ≤ τ < τ_c = π / (2 r)`, every root of the characteristic equation `z + r e^{-z τ} = 0` has
 negative real part. -/
 theorem re_neg_of_charFun_eq_zero {r τ : ℝ} {z : ℂ} (hr : 0 < r) (hτ : 0 ≤ τ)
@@ -504,7 +515,8 @@ theorem re_neg_of_charFun_eq_zero {r τ : ℝ} {z : ℂ} (hr : 0 < r) (hτ : 0 �
   have := cos_pos_of_mem_Ioo ⟨(abs_lt.1 hb).1, (abs_lt.1 hb).2⟩
   linarith
 
-/-- **At and below the critical delay** every characteristic root has nonpositive real part. -/
+/-- **At and below the critical delay**: for `r > 0` and `0 ≤ τ ≤ τ_c`, every characteristic root
+has nonpositive real part. -/
 theorem re_nonpos_of_charFun_eq_zero {r τ : ℝ} {z : ℂ} (hr : 0 < r) (hτ : 0 ≤ τ)
     (hτc : τ ≤ criticalDelay r) (hz : charFun r τ z = 0) : z.re ≤ 0 := by
   by_contra hre
@@ -693,8 +705,8 @@ theorem abs_exp_sub_one_le_mul {z M : ℝ} (hz : |z| ≤ M) (hM : M ≤ 1) :
     _ ≤ |exp z - 1 - z| + |z| := abs_add_le _ _
     _ ≤ M * (1 + M) := by nlinarith
 
-/-- **Lipschitz bound on a window**: if `|y| ≤ M ≤ 1` on `[c - τ, d - τ]` with `0 ≤ c ≤ d`,
-then `|y d - y c| ≤ r M (1 + M) (d - c)`. -/
+/-- **Lipschitz bound on a window**: for `r, τ ≥ 0`, if `|y| ≤ M ≤ 1` on `[c - τ, d - τ]` with
+`0 ≤ c ≤ d`, then `|y d - y c| ≤ r M (1 + M) (d - c)`. -/
 theorem IsWrightSolution.abs_sub_le {r τ M c d : ℝ} {y : ℝ → ℝ} (hy : IsWrightSolution r τ y)
     (hr : 0 ≤ r) (hτ : 0 ≤ τ) (hM : M ≤ 1) (hc : 0 ≤ c) (hcd : c ≤ d)
     (hb : ∀ s ∈ Icc (c - τ) (d - τ), |y s| ≤ M) :
@@ -710,7 +722,7 @@ theorem IsWrightSolution.abs_sub_le {r τ M c d : ℝ} {y : ℝ → ℝ} (hy : I
     d ⟨hcd, le_rfl⟩
   simpa [Real.norm_eq_abs] using this
 
-/-- **Window contraction** (Razumikhin step): for `t ≥ 2τ`, if `|y| ≤ M ≤ 1` on
+/-- **Window contraction** (Razumikhin step): for `r, τ ≥ 0` and `t ≥ 2τ`, if `|y| ≤ M ≤ 1` on
 `[t - 3τ, t - τ]` then `|y t| ≤ ρ(rτ, M) M`. -/
 theorem IsWrightSolution.abs_le_step {r τ M t : ℝ} {y : ℝ → ℝ} (hy : IsWrightSolution r τ y)
     (hr : 0 ≤ r) (hτ : 0 ≤ τ) (ht : 2 * τ ≤ t) (hM : M ≤ 1)
@@ -782,7 +794,7 @@ theorem contractionFactor_nonneg {a m : ℝ} (ha : 0 ≤ a) (hm : 0 ≤ m) :
     0 ≤ contractionFactor a m := by
   unfold contractionFactor; positivity
 
-/-- **First two windows**: a history bound `|y| ≤ δ` on `[-τ, 0]` gives
+/-- **First two windows**: for `r ≥ 0` and `τ > 0`, a history bound `|y| ≤ δ` on `[-τ, 0]` gives
 `|y| ≤ δ (1 + 2 r τ)²` on `[-τ, 2τ]`, provided the latter is at most `1`. -/
 theorem IsWrightSolution.abs_le_initial {r τ δ : ℝ} {y : ℝ → ℝ} (hy : IsWrightSolution r τ y)
     (hr : 0 ≤ r) (hτ : 0 < τ) (hδ : ∀ s ∈ Icc (-τ) 0, |y s| ≤ δ)
@@ -824,8 +836,8 @@ theorem IsWrightSolution.abs_le_initial {r τ δ : ℝ} {y : ℝ → ℝ} (hy : 
       _ ≤ δ₁ * (1 + 2 * (r * τ)) := by nlinarith
       _ = δ * (1 + 2 * (r * τ)) ^ 2 := by rw [hδ₁]; ring
 
-/-- **Stability of Wright's equation**: if `|y| ≤ M ≤ 1` on `[-τ, 2τ]` and `ρ(rτ, M) ≤ 1`, then
-`|y| ≤ M` on all of `[-τ, ∞)`. -/
+/-- **Stability of Wright's equation**: for `r ≥ 0` and `τ > 0`, if `|y| ≤ M ≤ 1` on `[-τ, 2τ]`
+and `ρ(rτ, M) ≤ 1`, then `|y| ≤ M` on all of `[-τ, ∞)`. -/
 theorem IsWrightSolution.abs_le_of_initial {r τ M : ℝ} {y : ℝ → ℝ} (hy : IsWrightSolution r τ y)
     (hr : 0 ≤ r) (hτ : 0 < τ) (hM : M ≤ 1) (hρ : contractionFactor (r * τ) M ≤ 1)
     (hinit : ∀ s ∈ Icc (-τ) (2 * τ), |y s| ≤ M) : ∀ t, -τ ≤ t → |y t| ≤ M := by
@@ -852,8 +864,8 @@ theorem IsWrightSolution.abs_le_of_initial {r τ M : ℝ} {y : ℝ → ℝ} (hy 
   rw [div_le_iff₀ hτ] at hn
   linarith
 
-/-- **Geometric decay**: under the hypotheses of `abs_le_of_initial`, `|y t| ≤ ρ(rτ, M)ⁿ M`
-for `t ≥ -τ + 3τ n`. -/
+/-- **Geometric decay**: for `r ≥ 0` and `τ > 0`, if `|y| ≤ M ≤ 1` on `[-τ, 2τ]` and
+`ρ(rτ, M) ≤ 1`, then `|y t| ≤ ρ(rτ, M)ⁿ M` for `t ≥ -τ + 3τ n`. -/
 theorem IsWrightSolution.abs_le_pow {r τ M : ℝ} {y : ℝ → ℝ} (hy : IsWrightSolution r τ y)
     (hr : 0 ≤ r) (hτ : 0 < τ) (hM : M ≤ 1) (hρ : contractionFactor (r * τ) M ≤ 1)
     (hinit : ∀ s ∈ Icc (-τ) (2 * τ), |y s| ≤ M) :
@@ -882,8 +894,8 @@ theorem IsWrightSolution.abs_le_pow {r τ M : ℝ} {y : ℝ → ℝ} (hy : IsWri
       _ ≤ ρ * (ρ ^ n * M) := by gcongr; exact contractionFactor_mono ha hMn
       _ = ρ ^ (n + 1) * M := by ring
 
-/-- **Attractivity of Wright's equation**: if `|y| ≤ M ≤ 1` on `[-τ, 2τ]` and `ρ(rτ, M) < 1`,
-then `y t → 0`. -/
+/-- **Attractivity of Wright's equation**: for `r ≥ 0` and `τ > 0`, if `|y| ≤ M ≤ 1` on
+`[-τ, 2τ]` and `ρ(rτ, M) < 1`, then `y t → 0`. -/
 theorem IsWrightSolution.tendsto_zero {r τ M : ℝ} {y : ℝ → ℝ} (hy : IsWrightSolution r τ y)
     (hr : 0 ≤ r) (hτ : 0 < τ) (hM : M ≤ 1) (hρ : contractionFactor (r * τ) M < 1)
     (hinit : ∀ s ∈ Icc (-τ) (2 * τ), |y s| ≤ M) : Tendsto y atTop (𝓝 0) := by
@@ -952,8 +964,8 @@ theorem abs_log_div_le {x K δ : ℝ} (hK : 0 < K) (hδ : δ ≤ K / 2) (hx : |x
       _ ≤ δ / K := by gcongr
       _ ≤ 2 * δ / K := by gcongr; linarith
 
-/-- A positive solution of Hutchinson's equation gives a solution `log (x / K)` of Wright's
-equation. -/
+/-- For `K > 0` and `τ ≥ 0`, a positive solution of Hutchinson's equation gives a solution
+`log (x / K)` of Wright's equation. -/
 theorem IsSolution.isWrightSolution_log {r K τ : ℝ} {φ x : ℝ → ℝ} (hK : 0 < K) (hτ : 0 ≤ τ)
     (hx : IsSolution r K τ φ x) (hpos : ∀ t, -τ ≤ t → 0 < x t) :
     IsWrightSolution r τ (fun t => log (x t / K)) where
@@ -967,11 +979,12 @@ theorem IsSolution.isWrightSolution_log {r K τ : ℝ} {φ x : ℝ → ℝ} (hK 
     field_simp
     ring
 
-/-- **Local asymptotic stability of the nonlinear equation** for `0 < r τ < √5 - 1`: the
-positive equilibrium `K` is stable (every `ε` has a `δ` such that histories within `δ` of `K`
-give solutions within `ε` of `K` on all of `[-τ, ∞)`) and attracting (those solutions converge
-to `K`). The bound `√5 - 1` lies below `π / 2`, so this covers `0 < τ < (√5 - 1) / r`, a
-proper part of the linearly stable range `τ < τ_c` (`sqrt_five_sub_one_lt_pi_div_two`). -/
+/-- **Local asymptotic stability of the nonlinear equation** for `r, K, τ > 0` with
+`r τ < √5 - 1`: the positive equilibrium `K` is stable (every `ε` has a `δ` such that histories
+within `δ` of `K` give solutions within `ε` of `K` on all of `[-τ, ∞)`) and attracting (those
+solutions converge to `K`). The bound `√5 - 1` lies below `π / 2`, so this covers
+`0 < τ < (√5 - 1) / r`, a proper part of the linearly stable range `τ < τ_c`
+(`sqrt_five_sub_one_lt_pi_div_two`). -/
 theorem localAsymptoticStability {r K τ : ℝ} (hr : 0 < r) (hK : 0 < K) (hτ : 0 < τ)
     (hrτ : r * τ < √5 - 1) :
     ∀ ε > 0, ∃ δ > 0, ∀ φ x : ℝ → ℝ, IsSolution r K τ φ x →
@@ -1046,8 +1059,8 @@ theorem sqrt_five_sub_one_lt_pi_div_two : √5 - 1 < π / 2 := by
     rw [Real.sqrt_lt' (by norm_num)]; norm_num
   linarith [pi_gt_three]
 
-/-- The delay range of `localAsymptoticStability` in terms of `τ`: `r τ < √5 - 1` iff
-`τ < (√5 - 1) / r`. That this bound is below `criticalDelay r` is
+/-- The delay range of `localAsymptoticStability` in terms of `τ`: for `r > 0`, `r τ < √5 - 1`
+iff `τ < (√5 - 1) / r`. That this bound is below `criticalDelay r` is
 `sqrt_five_sub_one_div_lt_criticalDelay`. -/
 theorem mul_lt_sqrt_five_sub_one_iff {r τ : ℝ} (hr : 0 < r) :
     r * τ < √5 - 1 ↔ τ < (√5 - 1) / r := by

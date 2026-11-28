@@ -25,11 +25,11 @@ C. M. H. de Figueiredo, A. A. de Melo, D. Sasaki and A. Silva, "Revising Johnson
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.ComparabilityGraphSandwichWanted
-public import WantedExt.Complexity.NPComplete.DominatingSetWanted
+public import CSLibExt.Complexity.NPComplete.DominatingSetDefs
 
 @[expose] public section
 
@@ -45,7 +45,7 @@ QUESTION: is there a dominating set `V' ⊆ V` with `|V'| ≤ K`, that is, every
 has a neighbor in `V'`?
 
 The instance, the graph and the question are those of
-`WantedExt.Complexity.NPComplete.DominatingSetWanted` ([GT2]: a simple graph on `Fin n` given by
+`CSLibExt.Complexity.NPComplete.DominatingSetDefs` ([GT2]: a simple graph on `Fin n` given by
 an edge list, and the bound `K`). The restriction adds that the graph is a comparability graph,
 and `0 < K ≤ |V|` as in [GT2].
 

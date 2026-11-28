@@ -47,8 +47,8 @@ open Filter Topology
 
 namespace MathlibExt.Economics.Producer
 
-/-- **Euler's identity under constant returns**: the derivative applied to the input bundle
-equals output. -/
+/-- **Euler's identity under constant returns**: if `f` has derivative `L` at `x` and
+`f (t • x) = t * f x` for all `t > 0`, the derivative applied to the input bundle equals output. -/
 theorem fderiv_apply_self_eq_of_constantReturns {ι : Type*} [Fintype ι]
     {f : (ι → ℝ) → ℝ} {L : (ι → ℝ) →L[ℝ] ℝ} {x : ι → ℝ} (hf : HasFDerivAt f L x)
     (hcrs : ∀ t : ℝ, 0 < t → f (t • x) = t * f x) :
@@ -60,8 +60,8 @@ theorem fderiv_apply_self_eq_of_constantReturns {ι : Type*} [Fintype ι]
     rw [hcrs t ht, smul_eq_mul]
   simpa using hmain
 
-/-- Marginal products weighted by input quantities sum to output:
-`∑ᵢ (∂f/∂xᵢ)(x) · xᵢ = f(x)`. -/
+/-- If `f` has derivative `L` at `x` and `f (t • x) = t * f x` for all `t > 0`, marginal products
+weighted by input quantities sum to output: `∑ᵢ (∂f/∂xᵢ)(x) · xᵢ = f(x)`. -/
 theorem sum_marginalProduct_mul_eq {ι : Type*} [Fintype ι] [DecidableEq ι]
     {f : (ι → ℝ) → ℝ} {L : (ι → ℝ) →L[ℝ] ℝ} {x : ι → ℝ} (hf : HasFDerivAt f L x)
     (hcrs : ∀ t : ℝ, 0 < t → f (t • x) = t * f x) :
@@ -77,9 +77,9 @@ theorem sum_marginalProduct_mul_eq {ι : Type*} [Fintype ι] [DecidableEq ι]
   rw [map_smul, smul_eq_mul]
   exact mul_comm _ _
 
-/-- **Product exhaustion.** If each input is paid the value of its marginal product at output
-price `P` (competitive factor payments `wᵢ = P · ∂f/∂xᵢ`), total factor payments equal the
-value of output. -/
+/-- **Product exhaustion.** If `f` has derivative `L` at `x`, `f (t • x) = t * f x` for all `t > 0`,
+and each input is paid the value of its marginal product at output price `P` (competitive factor
+payments `wᵢ = P · ∂f/∂xᵢ`), total factor payments equal the value of output. -/
 theorem dotProduct_eq_mul_of_competitive_payments {ι : Type*} [Fintype ι] [DecidableEq ι]
     {f : (ι → ℝ) → ℝ} {L : (ι → ℝ) →L[ℝ] ℝ} {x w : ι → ℝ} {P : ℝ} (hf : HasFDerivAt f L x)
     (hcrs : ∀ t : ℝ, 0 < t → f (t • x) = t * f x)

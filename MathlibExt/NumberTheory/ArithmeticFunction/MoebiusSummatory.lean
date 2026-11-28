@@ -132,7 +132,7 @@ theorem sum_floor_div_eq_iff_sum_moebius_smul_floor_div_eq {A : Type*} [AddCommG
       ∀ x : ℝ, 1 ≤ x → F x = ∑ n ∈ Icc 1 ⌊x⌋₊, μ n • G (x / n) := by
   have hmob : ∀ (r : ℕ) (a : A), (∑ d ∈ r.divisors, μ d • a) = if r = 1 then a else 0 := by
     intro r a
-    rw [← sum_smul, ← coe_mul_zeta_apply, moebius_mul_coe_zeta, one_apply]
+    rw [← sum_smul, ← coe_mul_zeta_apply, moebius_mul_coe_zeta, ArithmeticFunction.one_apply]
     split_ifs <;> simp
   -- Collapsing a sum over `r ≤ x` of `δ_{r,1} • H (x / r)`.
   have hcollapse : ∀ (H : ℝ → A) (x : ℝ), 1 ≤ x →

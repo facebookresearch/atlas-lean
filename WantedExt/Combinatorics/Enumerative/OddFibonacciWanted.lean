@@ -52,6 +52,7 @@ public import Mathlib.Data.Fintype.Perm
 public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.SetTheory.Cardinal.Finite
 public import Mathlib.Combinatorics.Enumerative.DyckWord
+public import MathlibExt.Combinatorics.Enumerative.Avoid2313124
 public import MathlibExt.Combinatorics.NoncrossingPartition.Basic
 public import Mathlib.RingTheory.PowerSeries.Basic
 public import Mathlib.Algebra.Polynomial.Basic
@@ -62,31 +63,10 @@ set_option autoImplicit false
 
 namespace MathlibExt.Combinatorics.Enumerative.OddFibonacciWanted
 
-/-- Classical pattern containment: `σ` contains the
-pattern `π` if some strictly increasing choice of
-positions gives entries order-isomorphic to `π`. -/
-def HasPattern {n k : ℕ} (σ : Equiv.Perm (Fin n))
-    (π : Fin k → Fin k) : Prop :=
-  ∃ e : Fin k → Fin n, (∀ i j : Fin k, i < j → e i < e j) ∧
-    ∀ i j : Fin k, σ (e i) < σ (e j) ↔ π i < π j
-
-
-/-- The pattern `321` (0-based). -/
-def pat321 : Fin 3 → Fin 3 := ![2, 1, 0]
-
-/-- The pattern `231` (0-based). -/
-def pat231 : Fin 3 → Fin 3 := ![1, 2, 0]
-
-/-- The pattern `4123` (0-based). -/
-def pat4123 : Fin 4 → Fin 4 := ![3, 0, 1, 2]
-
-/-- The pattern `3412` (0-based). -/
-def pat3412 : Fin 4 → Fin 4 := ![2, 3, 0, 1]
-
-/-- The pattern `3124` (0-based). -/
-def pat3124 : Fin 4 → Fin 4 := ![2, 0, 1, 3]
-
-/-- **Proposition 1**: `|Sₙ(321, 4123)| = F_{2n-1}`.
+/-- **$(321, 4123)$-avoiding permutations are counted by odd-indexed Fibonacci numbers.** For
+every $n \ge 1$, the number of permutations of $\{0, 1, \dots, n-1\}$ that avoid both patterns
+$321$ and $4123$, that is, contain neither of them, is the Fibonacci number $F_{2n-1}$, where
+$F_0 = 0$ and $F_1 = 1$.
 
 Source: Juan B. Gil, Felix H. Xu, and William Y. Zhu,
 "Odd-Indexed Fibonacci Numbers via Pattern-Avoiding
@@ -96,7 +76,10 @@ theorem_wanted card_avoid_321_4123 (n : ℕ) (hn : 1 ≤ n) :
       ¬ HasPattern σ pat321 ∧ ¬ HasPattern σ pat4123} =
       Nat.fib (2 * n - 1)
 
-/-- **Proposition 7**: `|Sₙ(321, 3412)| = F_{2n-1}`.
+/-- **$(321, 3412)$-avoiding permutations are counted by odd-indexed Fibonacci numbers.** For
+every $n \ge 1$, the number of permutations of $\{0, 1, \dots, n-1\}$ that avoid both patterns
+$321$ and $3412$, that is, contain neither of them, is the Fibonacci number $F_{2n-1}$, where
+$F_0 = 0$ and $F_1 = 1$.
 
 Source: Juan B. Gil, Felix H. Xu, and William Y. Zhu,
 "Odd-Indexed Fibonacci Numbers via Pattern-Avoiding
@@ -106,21 +89,14 @@ theorem_wanted card_avoid_321_3412 (n : ℕ) (hn : 1 ≤ n) :
       ¬ HasPattern σ pat321 ∧ ¬ HasPattern σ pat3412} =
       Nat.fib (2 * n - 1)
 
-/-- **Proposition 10**: `|Sₙ(231, 3124)| = F_{2n-1}`.
+/-- **Position of the smallest entry in $(321, 4123)$-avoiding permutations.** For a natural
+number $m$, write $S_m(321, 4123)$ for the set of permutations of $\{0, 1, \dots, m-1\}$ that
+avoid both patterns $321$ and $4123$, that is, contain neither of them. Let $n \ge 1$ and let
+$j$ be a position with $j + 1 < n$. Then the number of permutations $\sigma \in S_n(321, 4123)$
+with $\sigma(j) = 0$ equals $(j + 1) \cdot |S_{n-j-1}(321, 4123)|$.
 
-Source: Juan B. Gil, Felix H. Xu, and William Y. Zhu,
-"Odd-Indexed Fibonacci Numbers via Pattern-Avoiding
-Permutations", Proposition 10. -/
-theorem_wanted card_avoid_231_3124 (n : ℕ) (hn : 1 ≤ n) :
-    Nat.card {σ : Equiv.Perm (Fin n) //
-      ¬ HasPattern σ pat231 ∧ ¬ HasPattern σ pat3124} =
-      Nat.fib (2 * n - 1)
-
-/-- **Proposition 2** (count): for `1 ≤ k < n`, the number
-of `(321, 4123)`-avoiding permutations of `[n]` with
-`σ(k) = 1` is `k * |S_{n-k}(321, 4123)|` (positions and
-values 1-based in the paper; here the position is
-`j : Fin n` with `σ j = 0`, so `k = j + 1`).
+In the source, positions and values start at $1$: with $k = j + 1$, the number of such
+permutations with $\sigma(k) = 1$ is $k \cdot |S_{n-k}(321, 4123)|$ for $1 \le k < n$.
 
 Source: Juan B. Gil, Felix H. Xu, and William Y. Zhu,
 "Odd-Indexed Fibonacci Numbers via Pattern-Avoiding
@@ -134,26 +110,14 @@ theorem_wanted card_avoid_321_4123_pos_zero (n : ℕ)
         {σ : Equiv.Perm (Fin (n - j.val - 1)) //
           ¬ HasPattern σ pat321 ∧ ¬ HasPattern σ pat4123}
 
-/-- **Proposition 11** (count): for `1 ≤ k < n`, the
-number of `(231, 3124)`-avoiding permutations of `[n]`
-with `σ(k) = 1` is `k * |S_{n-k}(231, 3124)|`.
+/-- **Smallest entry in the first two positions of $(321, 3412)$-avoiding permutations.** Let
+$n \ge 2$. Among the permutations $\sigma$ of $\{0, 1, \dots, n-1\}$ that avoid both patterns
+$321$ and $3412$, that is, contain neither of them, the number with $\sigma(0) = 0$ and the
+number with $\sigma(1) = 0$ are both equal to the Fibonacci number $F_{2n-3}$, where $F_0 = 0$
+and $F_1 = 1$.
 
-Source: Juan B. Gil, Felix H. Xu, and William Y. Zhu,
-"Odd-Indexed Fibonacci Numbers via Pattern-Avoiding
-Permutations", Proposition 11. -/
-theorem_wanted card_avoid_231_3124_pos_zero (n : ℕ)
-    (hn : 1 ≤ n) (j : Fin n) (hj : j.val + 1 < n) :
-    Nat.card {σ : Equiv.Perm (Fin n) //
-      ¬ HasPattern σ pat231 ∧ ¬ HasPattern σ pat3124 ∧
-        σ j = ⟨0, hn⟩} =
-      (j.val + 1) * Nat.card
-        {σ : Equiv.Perm (Fin (n - j.val - 1)) //
-          ¬ HasPattern σ pat231 ∧ ¬ HasPattern σ pat3124}
-
-/-- **Proposition 8**, first clause: for `n > 1`, the
-numbers of `(321, 3412)`-avoiding permutations of `[n]`
-with `σ(1) = 1` and with `σ(2) = 1` (1-based) both equal
-`F_{2n-3}`.
+In the source's indexing from $1$, these are the permutations with $\sigma(1) = 1$ and with
+$\sigma(2) = 1$.
 
 Source: Juan B. Gil, Felix H. Xu, and William Y. Zhu,
 "Odd-Indexed Fibonacci Numbers via Pattern-Avoiding

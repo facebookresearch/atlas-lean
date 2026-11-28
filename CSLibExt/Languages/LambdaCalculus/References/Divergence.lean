@@ -43,27 +43,52 @@ variable {Base : Type u}
 
 namespace Knot
 
-/-- `λx : Unit. x`. -/
+/-- **The identity on Unit.** The identity function $\lambda x{:}\mathrm{Unit}.\ x$ on the
+unit type. -/
 def idU : Term Base := .lam .unit (.var 0)
 
-/-- `λx : Unit. (!r) x`, with the cell `r` as de Bruijn index `1` (under `λx`). -/
+/-- **The recursive function of Landin's knot, with the cell free.** The term
+$\lambda x{:}\mathrm{Unit}.\ (!r)\,x$, which applies the contents of the reference $r$ to its
+argument. Here $r$ is a free variable, de Bruijn index $1$ under the binder $\lambda x$; in
+Landin's knot it is bound by the outer $\lambda r$. -/
 def body : Term Base := .lam .unit (.app (.deref (.var 1)) (.var 0))
 
-/-- Landin's knot. -/
+/-- **Landin's knot.** The term
+$$
+(\lambda r{:}\mathrm{Ref}\,(\mathrm{Unit}\to\mathrm{Unit}).\ (\lambda y{:}\mathrm{Unit}.\ (!r)\,
+\mathrm{unit})\ (r := \lambda x{:}\mathrm{Unit}.\ (!r)\,x))
+\ (\mathrm{ref}\,(\lambda x{:}\mathrm{Unit}.\ x))
+$$
+of the simply typed lambda calculus with references.
+
+It allocates a cell $r$ holding the identity on $\mathrm{Unit}$, overwrites it with a function that
+calls whatever $r$ holds, and then calls the contents of $r$ on $\mathrm{unit}$: a recursive knot
+tied through the store. -/
 def knot : Term Base :=
   .app (.lam (.ref (.arr .unit .unit))
       (.app (.lam .unit (.app (.deref (.var 1)) .unit)) (.assign (.var 0) body)))
     (.ref idU)
 
-/-- `λx : Unit. (!l₀) x`: the recursive function stored in location `0`. -/
+/-- **The stored recursive function of Landin's knot.** The term
+$b_0 = \lambda x{:}\mathrm{Unit}.\ (!\ell_0)\,x$, which applies the contents of store location
+$\ell_0 = 0$ to its argument.
+
+It is the function Landin's knot writes into location $0$. -/
 def body₀ : Term Base := .lam .unit (.app (.deref (.loc 0)) (.var 0))
 
-/-- The two configurations of the cycle: `(!l₀) unit` and `body₀ unit`, with
-`body₀` in the store. -/
+/-- **Cycle term of Landin's knot.** The term $(!\ell_0)\ \mathrm{unit}$: the dereference of
+the store location $\ell_0$ (location $0$), applied to the unit value.
+
+When $\ell_0$ holds $b_0 = \lambda x{:}\mathrm{Unit}.\,(!\ell_0)\,x$, this term steps to
+$b_0\ \mathrm{unit}$, which steps back to it; these are the two configurations of the cycle. -/
 def loopA : Term Base := .app (.deref (.loc 0)) .unit
 def loopB : Term Base := .app body₀ .unit
 
-/-- The configurations on the way into the cycle. -/
+/-- **The knot after allocation.** The term
+$(\lambda r{:}\mathrm{Ref}\,(\mathrm{Unit}\to\mathrm{Unit}).\ (\lambda y{:}\mathrm{Unit}.\ (!r)\,
+\mathrm{unit})\ (r := \lambda x{:}\mathrm{Unit}.\ (!r)\,x))\ \ell_0$, where $\ell_0$ is store
+location $0$: Landin's knot with its allocation $\mathrm{ref}\,(\lambda x{:}\mathrm{Unit}.\ x)$
+replaced by $\ell_0$. -/
 def c₁ : Term Base :=
   .app (.lam (.ref (.arr .unit .unit))
       (.app (.lam .unit (.app (.deref (.var 1)) .unit)) (.assign (.var 0) body)))
@@ -89,19 +114,44 @@ theorem stepA : Step (loopA : Term Base) [body₀] loopB [body₀] :=
 theorem stepB : Step (loopB : Term Base) [body₀] loopA [body₀] :=
   .appAbs .unit
 
-/-- The four steps from the knot into the cycle. -/
+/-- **The first four steps of Landin's knot.** Write $\ell_0$ for store location $0$ and $[t]$
+for the store whose only entry, at $\ell_0$, is $t$, and let
+$\mathrm{id} = \lambda x{:}\mathrm{Unit}.\ x$ and $b_0 = \lambda x{:}\mathrm{Unit}.\ (!\ell_0)\,x$.
+Each of the following is one call-by-value step: Landin's knot with the empty store steps to
+$(\lambda r{:}\mathrm{Ref}\,(\mathrm{Unit}\to\mathrm{Unit}).\ (\lambda y{:}\mathrm{Unit}.\ (!r)\,
+\mathrm{unit})\ (r := \lambda x{:}\mathrm{Unit}.\ (!r)\,x))\ \ell_0$ with store
+$[\mathrm{id}]$; that term with store $[\mathrm{id}]$ steps to
+$(\lambda y{:}\mathrm{Unit}.\ (!\ell_0)\,\mathrm{unit})\ (\ell_0 := b_0)$ with store
+$[\mathrm{id}]$; that term with store $[\mathrm{id}]$ steps to
+$(\lambda y{:}\mathrm{Unit}.\ (!\ell_0)\,\mathrm{unit})\ \mathrm{unit}$ with store $[b_0]$; and
+that term with store $[b_0]$ steps to $(!\ell_0)\,\mathrm{unit}$ with store $[b_0]$. -/
 theorem knot_prefix :
     Step (knot : Term Base) [] c₁ [idU] ∧ Step (c₁ : Term Base) [idU] c₂ [idU] ∧
       Step (c₂ : Term Base) [idU] c₃ [body₀] ∧ Step (c₃ : Term Base) [body₀] loopA [body₀] :=
   ⟨step₀, step₁, step₂, step₃⟩
 
-/-- The two-step cycle: `(!l₀) unit → (λx. (!l₀) x) unit → (!l₀) unit`. -/
+/-- **The cycle of Landin's knot.** Write $\ell_0$ for store location $0$, let
+$b_0 = \lambda x{:}\mathrm{Unit}.\ (!\ell_0)\,x$, and let $[b_0]$ be the store whose only entry, at
+$\ell_0$, is $b_0$. In one call-by-value step, $(!\ell_0)\,\mathrm{unit}$ with store $[b_0]$ steps
+to $b_0\,\mathrm{unit}$ with store $[b_0]$, and in one further step $b_0\,\mathrm{unit}$ with store
+$[b_0]$ steps back to $(!\ell_0)\,\mathrm{unit}$ with store $[b_0]$. -/
 theorem knot_cycle :
     Step (loopA : Term Base) [body₀] loopB [body₀] ∧
       Step (loopB : Term Base) [body₀] loopA [body₀] :=
   ⟨stepA, stepB⟩
 
-/-- The configurations reachable from the knot. -/
+/-- **Configurations on the evaluation path of Landin's knot.** Let $K$ be Landin's knot,
+$\iota = \lambda x{:}\mathrm{Unit}.\,x$, $b_0 = \lambda x{:}\mathrm{Unit}.\,(!\ell_0)\,x$ with
+$\ell_0$ the store location $0$, $a = (!\ell_0)\ \mathrm{unit}$, $b = b_0\ \mathrm{unit}$,
+$c_1$ the term $K$ with its argument $\mathrm{ref}\ \iota$ replaced by $\ell_0$,
+$c_2 = (\lambda y{:}\mathrm{Unit}.\,a)\,(\ell_0 := b_0)$ and
+$c_3 = (\lambda y{:}\mathrm{Unit}.\,a)\ \mathrm{unit}$; write $[\,]$ for the empty store and
+$[t]$ for the store whose only location $\ell_0$ holds $t$. This is the list of the six
+configurations (term, store) $(K, [\,])$, $(c_1, [\iota])$, $(c_2, [\iota])$, $(c_3, [b_0])$,
+$(a, [b_0])$, $(b, [b_0])$.
+
+Each configuration steps to the next and $(b, [b_0])$ steps back to $(a, [b_0])$; every
+configuration reachable from $(K, [\,])$ lies in this list. -/
 def reachable : List (Term Base × Store Base) :=
   [(knot, []), (c₁, [idU]), (c₂, [idU]), (c₃, [body₀]), (loopA, [body₀]), (loopB, [body₀])]
 
@@ -145,21 +195,24 @@ end Knot
 
 open Knot
 
-/-- Landin's knot is closed and well typed at `Unit` under the empty store
-typing. -/
+/-- **Landin's knot is well typed.** Landin's knot is closed and has type $\mathrm{Unit}$
+in the empty typing context under the empty store typing. -/
 theorem knot_hasType : HasType ([] : List (Ty Base)) [] (knot : Term Base) .unit :=
   .app (.lam (.app (.lam (.app (.deref (.var rfl)) .unit))
       (.assign (.var rfl) (.lam (.app (.deref (.var rfl)) (.var rfl))))))
     (.ref (.lam (.var rfl)))
 
-/-- Landin's knot never reaches a value from the empty store. -/
+/-- **Landin's knot never evaluates to a value.** Starting from Landin's knot with the empty
+store, no sequence of zero or more call-by-value evaluation steps reaches a configuration
+$(v, \mu)$ in which the term $v$ is a value, whatever the store $\mu$. -/
 theorem knot_diverges :
     ¬ ∃ (v : Term Base) (μ : Store Base), Steps (knot : Term Base) [] v μ ∧ v.Value := by
   rintro ⟨v, μ, hsteps, hv⟩
   exact not_value_of_mem_reachable (mem_reachable_of_steps hsteps) hv
 
-/-- Nor does it get stuck: every configuration reachable from the knot takes a
-further step, so its evaluation runs forever. -/
+/-- **Landin's knot never gets stuck.** If Landin's knot with the empty store evaluates in zero or
+more call-by-value steps to a term $t$ with store $\mu$, then $t$ with store $\mu$ takes a further
+step to some term $t'$ with some store $\mu'$. So the evaluation of the knot runs forever. -/
 theorem knot_runs_forever {t : Term Base} {μ : Store Base}
     (h : Steps (knot : Term Base) [] t μ) : ∃ t' μ', Step t μ t' μ' :=
   let ⟨c', hc'⟩ := step_of_mem_reachable (mem_reachable_of_steps h)

@@ -33,7 +33,7 @@ public import MathlibExt.Analysis.Fourier.PoissonSummation
 open scoped FourierTransform InnerProductSpace SchwartzMap
 
 /-- Consumer with exactly the binders and statement of the source theorem. -/
-theorem exactSource
+private theorem exactSource
     {ι : Type*} [Fintype ι] (f : 𝓢(EuclideanSpace ℝ ι, ℂ)) (x : EuclideanSpace ℝ ι) :
     ∑' n : ι → ℤ, f (x + WithLp.toLp 2 (fun i ↦ (n i : ℝ))) =
       ∑' n : ι → ℤ, 𝓕 f (WithLp.toLp 2 (fun i ↦ (n i : ℝ))) *
@@ -41,7 +41,7 @@ theorem exactSource
   SchwartzMap.tsum_eq_tsum_fourier_euclideanSpace f x
 
 /-- The same statement at a higher universe, for an index type in `Type 1`. -/
-theorem exactSourceUniverse
+private theorem exactSourceUniverse
     {ι : Type 1} [Fintype ι] (f : 𝓢(EuclideanSpace ℝ ι, ℂ)) (x : EuclideanSpace ℝ ι) :
     ∑' n : ι → ℤ, f (x + WithLp.toLp 2 (fun i ↦ (n i : ℝ))) =
       ∑' n : ι → ℤ, 𝓕 f (WithLp.toLp 2 (fun i ↦ (n i : ℝ))) *

@@ -36,12 +36,12 @@ open scoped ENNReal Topology
 
 namespace MathlibExt.Probability.StieltjesMeasureConstruction
 
-/-- **Construction of measures on ℝ.** For a Stieltjes function
-`f : ℝ → ℝ` (right-continuous and non-decreasing) with `f → 0` at `-∞`
-and `f → 1` at `∞`, the Stieltjes measure `f.measure` is a probability
-measure, it assigns the half-open interval `(a, b]` the mass
-`f b - f a`, and it is the only finite measure with those interval
-masses. -/
+/-- **Construction of measures on ℝ.** Let $f : \mathbb{R} \to \mathbb{R}$ be a Stieltjes
+function, that is, non-decreasing and right-continuous, with $f(x) \to 0$ as $x \to -\infty$
+and $f(x) \to 1$ as $x \to \infty$, and let $\mu_f$ be its Stieltjes measure on $\mathbb{R}$.
+Then $\mu_f$ is a probability measure, $\mu_f((a, b]) = f(b) - f(a)$ for all real $a \le b$,
+and every finite measure $\nu$ on $\mathbb{R}$ with $\nu((a, b]) = f(b) - f(a)$ for all real
+$a \le b$ equals $\mu_f$. -/
 theorem stieltjes_measure_construction (f : StieltjesFunction ℝ)
     (hf_bot : Tendsto f atBot (𝓝 0)) (hf_top : Tendsto f atTop (𝓝 1)) :
     IsProbabilityMeasure f.measure ∧
@@ -55,10 +55,11 @@ theorem stieltjes_measure_construction (f : StieltjesFunction ℝ)
   exact MeasureTheory.Measure.ext_of_Ioc ν f.measure
     (fun {a b} hab => by rw [hν a b hab.le, f.measure_Ioc])
 
-/-- **Construction of measures on ℝ, as unique existence.** For a
-Stieltjes function `f : ℝ → ℝ` with `f → 0` at `-∞` and `f → 1` at `∞`,
-there is a unique Borel probability measure on `ℝ` assigning each
-half-open interval `(a, b]` the mass `f b - f a`. -/
+/-- **Construction of measures on ℝ, as unique existence.** Let
+$f : \mathbb{R} \to \mathbb{R}$ be a Stieltjes function, that is, non-decreasing and
+right-continuous, with $f(x) \to 0$ as $x \to -\infty$ and $f(x) \to 1$ as $x \to \infty$.
+Then there is exactly one measure $\mu$ on $\mathbb{R}$ that is a probability measure and
+satisfies $\mu((a, b]) = f(b) - f(a)$ for all real $a \le b$. -/
 theorem exists_unique_probabilityMeasure_of_stieltjes (f : StieltjesFunction ℝ)
     (hf_bot : Tendsto f atBot (𝓝 0)) (hf_top : Tendsto f atTop (𝓝 1)) :
     ∃! μ : Measure ℝ, IsProbabilityMeasure μ ∧

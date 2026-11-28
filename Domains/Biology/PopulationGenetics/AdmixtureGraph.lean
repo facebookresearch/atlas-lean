@@ -9,6 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Domains.Biology.PopulationGenetics.FStatistics
+import Mathlib.Algebra.BigOperators.Pi
+import Mathlib.Algebra.Order.BigOperators.Ring.Finset
 
 /-!
 # Admixture graphs
@@ -41,6 +43,10 @@ edges, the allele frequency of `X` is `root + ∑ e, weight X e * incr e`.
   `AdmixtureGraph.weight_admixture` and `AdmixtureGraph.weight_tree` specialize it.
 * `AdmixtureGraph.weight_eq_sum_paths`: the path-sum form of the weights.
 * `AdmixtureGraph.weight_eq_zero_or_one`: on a tree (no admixture node) weights are `0` or `1`.
+* `AdmixtureGraph.routeProb`: the routing kernel for several lineages at one node, choosing
+  parents independently with the proportions; its non-root rows sum to `1`
+  (`AdmixtureGraph.sum_routeProb`), and its root row is `0` for `k > 0`
+  (`AdmixtureGraph.sum_routeProb_root`).
 * `AdmixtureGraph.driftModel`: the drift model induced by a graph and edge increments;
   `AdmixtureGraph.hasBinaryLoadings_of_isTree`: a tree-shaped graph induces binary loadings,
   so `AdmixtureGraph.f3_nonneg_of_isTree`: on a tree `f3 ≥ 0` (the three-population test).
@@ -470,6 +476,66 @@ theorem weight_eq_zero_or_one (hG : G.IsTree) (X : V) (e : G.Edge) :
     simpa [hY, he] using G.sum_prop e.1.1 hc
   simpa [weight, hp] using G.visit_eq_zero_or_one hG X e.1.1
 
+section RouteProb
+
+variable {V : Type*} (G : AdmixtureGraph V)
+
+/-- The **routing kernel** for several lineages at one node: `k` lineages entering `X`
+(backward in time) move to parents independently, lineage `i` to `a i`, with probability
+`∏ i, prop X (a i)`. At a non-root node this is a probability kernel (`sum_routeProb`);
+at the root there are no parents to move to, so for `k > 0` every assignment has
+probability `0` and the root row has total mass `0` (`routeProb_root`,
+`sum_routeProb_root`). For `k = 0` the single empty assignment has probability `1`. -/
+def routeProb (X : V) {k : ℕ} (a : Fin k → V) : ℝ := ∏ i, G.prop X (a i)
+
+/-- Routing probabilities are nonnegative. -/
+theorem routeProb_nonneg (X : V) {k : ℕ} (a : Fin k → V) : 0 ≤ G.routeProb X a :=
+  Finset.prod_nonneg fun i _ => G.prop_nonneg X (a i)
+
+/-- A routing that sends some lineage to a non-parent has probability `0`. -/
+theorem routeProb_eq_zero {X : V} {k : ℕ} {a : Fin k → V} {i : Fin k}
+    (hi : a i ∉ G.parents X) : G.routeProb X a = 0 :=
+  Finset.prod_eq_zero (Finset.mem_univ i) (G.prop_eq_zero X (a i) hi)
+
+/-- **The routing kernel is normalized** over the assignments of the `k` lineages to the parents
+of a non-root node. -/
+theorem sum_routeProb_parents {X : V} (hX : X ≠ G.root) (k : ℕ) :
+    ∑ a ∈ Fintype.piFinset (fun _ : Fin k => G.parents X), G.routeProb X a = 1 := by
+  rw [show (∑ a ∈ Fintype.piFinset (fun _ : Fin k => G.parents X), G.routeProb X a) =
+      ∏ _i : Fin k, ∑ Y ∈ G.parents X, G.prop X Y from (Finset.prod_univ_sum _ _).symm]
+  simp [G.sum_prop X hX]
+
+/-- **The routing kernel rows sum to `1`** over all maps from the lineages to the nodes, at a
+non-root node. -/
+theorem sum_routeProb [Fintype V] {X : V} (hX : X ≠ G.root) (k : ℕ) :
+    ∑ a : Fin k → V, G.routeProb X a = 1 := by
+  have hrow : ∑ Y, G.prop X Y = 1 := by
+    rw [← Finset.sum_subset (Finset.subset_univ (G.parents X))
+      fun Y _ hY => G.prop_eq_zero X Y hY]
+    exact G.sum_prop X hX
+  rw [show (∑ a : Fin k → V, G.routeProb X a) = ∏ _i : Fin k, ∑ Y, G.prop X Y from
+    (Fintype.prod_sum _).symm]
+  simp [hrow]
+
+/-- At the root there is no parent to move to: for `k > 0` every assignment has
+probability `0`. -/
+theorem routeProb_root {k : ℕ} (hk : 0 < k) (a : Fin k → V) :
+    G.routeProb G.root a = 0 :=
+  Finset.prod_eq_zero (Finset.mem_univ ⟨0, hk⟩)
+    (G.prop_eq_zero G.root (a ⟨0, hk⟩) (by simp [G.parents_root]))
+
+/-- The root row of the routing kernel has total mass `0` for `k > 0` (it is a probability
+kernel exactly on the non-root rows, plus the trivial `k = 0` row). -/
+theorem sum_routeProb_root [Fintype V] {k : ℕ} (hk : 0 < k) :
+    ∑ a : Fin k → V, G.routeProb G.root a = 0 :=
+  Finset.sum_eq_zero fun a _ => G.routeProb_root hk a
+
+/-- The empty assignment has probability `1` at every node, including the root. -/
+theorem routeProb_zero (X : V) (a : Fin 0 → V) : G.routeProb X a = 1 := by
+  simp [routeProb]
+
+end RouteProb
+
 /-! ### The induced drift model -/
 
 
@@ -488,7 +554,7 @@ theorem prop_eq_one_sub_of_parents_eq_pair {X A B : V} (hX : G.parents X = {A, B
 variable [Fintype V] {Ω : Type*} {m : MeasurableSpace Ω} {μ : Measure Ω}
 
 /-- The drift model of an admixture graph: the populations are the nodes, the root frequency is
-`root`, the edge increments are `incr` (square integrable and pairwise uncorrelated), the drift
+`root`, the edge increments are `incr` (square integrable and pairwise orthogonal in L²), the drift
 length of an edge is the second moment of its increment, and the weights are the lineage
 weights of the graph. -/
 noncomputable def driftModel (root : Ω → ℝ) (incr : G.Edge → Ω → ℝ) (hroot : MemLp root 2 μ)
@@ -581,14 +647,16 @@ theorem f3_admixture_of_len_eq_zero {M : DriftModel μ G.Edge V} (hM : M.weight 
   rw [G.f3_admixture hM hX hAB, hA, hB, show G.prop X B = 1 - G.prop X A by linarith]
   ring
 
-/-- Tree check on a tree-shaped admixture graph: `Σ X Y` is the drift length of the edges shared
-by the root-to-`X` and root-to-`Y` lineages. -/
+/-- Tree check on a tree-shaped admixture graph, in a drift model with the graph's lineage
+weights: `Σ X Y` is the drift length of the edges shared by the root-to-`X` and root-to-`Y`
+lineages. -/
 theorem rootSecondMoment_eq_sum_inter_of_isTree (hG : G.IsTree) {M : DriftModel μ G.Edge V}
     (hM : M.weight = G.weight) (X Y : V) :
     M.rootSecondMoment X Y = ∑ e ∈ M.lineage X ∩ M.lineage Y, M.len e :=
   M.rootSecondMoment_eq_sum_inter (G.hasBinaryLoadings_of_isTree hG hM) X Y
 
-/-- The admixture `f3` formula with `α = prop X A` and `β = 1 - α`:
+/-- The admixture `f3` formula at a node `X` with parents `A ≠ B`, in a drift model with the
+graph's lineage weights, with `α = prop X A` and `β = 1 - α`:
 `f3 X A B = α² ℓ_{XA} + (1 - α)² ℓ_{XB} - α (1 - α) f2 A B`. -/
 theorem f3_admixture_one_sub {M : DriftModel μ G.Edge V} (hM : M.weight = G.weight)
     {X A B : V} (hX : G.parents X = {A, B}) (hAB : A ≠ B) :
@@ -598,25 +666,27 @@ theorem f3_admixture_one_sub {M : DriftModel μ G.Edge V} (hM : M.weight = G.wei
         G.prop X A * (1 - G.prop X A) * f2 μ M.freq A B := by
   rw [G.f3_admixture hM hX hAB, G.prop_eq_one_sub_of_parents_eq_pair hX hAB]
 
-/-- Endpoint `α = 1`: `X` descends from `A` only, and `f3 X A B` is the drift length of the edge
-`(X, A)`; no admixture signal. -/
+/-- Endpoint `α = prop X A = 1` at a node `X` with parents `A ≠ B`, in a drift model with the
+graph's lineage weights: `X` descends from `A` only, and `f3 X A B` is the drift length of the
+edge `(X, A)`; no admixture signal. -/
 theorem f3_admixture_of_prop_eq_one {M : DriftModel μ G.Edge V} (hM : M.weight = G.weight)
     {X A B : V} (hX : G.parents X = {A, B}) (hAB : A ≠ B) (h1 : G.prop X A = 1) :
     f3 μ M.freq X A B = M.len ⟨(X, A), by simp [hX]⟩ := by
   rw [G.f3_admixture_one_sub hM hX hAB, h1]
   ring
 
-/-- Endpoint `α = 0`: `X` descends from `B` only, and `f3 X A B` is the drift length of the edge
-`(X, B)`; no admixture signal. -/
+/-- Endpoint `α = prop X A = 0` at a node `X` with parents `A ≠ B`, in a drift model with the
+graph's lineage weights: `X` descends from `B` only, and `f3 X A B` is the drift length of the
+edge `(X, B)`; no admixture signal. -/
 theorem f3_admixture_of_prop_eq_zero {M : DriftModel μ G.Edge V} (hM : M.weight = G.weight)
     {X A B : V} (hX : G.parents X = {A, B}) (hAB : A ≠ B) (h0 : G.prop X A = 0) :
     f3 μ M.freq X A B = M.len ⟨(X, B), by simp [hX]⟩ := by
   rw [G.f3_admixture_one_sub hM hX hAB, h0]
   ring
 
-/-- Private drift after admixture, graph level: if `Y` has the single parent `X` and `A`, `B` are
-parents of `X`, the drift on the edge `(Y, X)` adds its length to `f3`:
-`f3 Y A B = f3 X A B + ℓ_{YX}`. -/
+/-- Private drift after admixture, graph level: in a drift model with the graph's lineage weights,
+if `Y` has the single parent `X` and `A`, `B` are parents of `X` (not necessarily distinct), the
+drift on the edge `(Y, X)` adds its length to `f3`: `f3 Y A B = f3 X A B + ℓ_{YX}`. -/
 theorem f3_of_parents_eq_singleton {M : DriftModel μ G.Edge V} (hM : M.weight = G.weight)
     {Y X A B : V} (hY : G.parents Y = {X}) (hA : A ∈ G.parents X) (hB : B ∈ G.parents X) :
     f3 μ M.freq Y A B = f3 μ M.freq X A B + M.len ⟨(Y, X), by simp [hY]⟩ := by
@@ -652,8 +722,9 @@ theorem f3_of_parents_eq_singleton {M : DriftModel μ G.Edge V} (hM : M.weight =
   simp_rw [key, Finset.sum_add_distrib]
   simp
 
-/-- The record's combined statement: admixture at `X` (parents `A ≠ B`, `α = prop X A`),
-followed by private drift on the edge `(Y, X)`. -/
+/-- Admixture at `X` (parents `A ≠ B`, `α = prop X A`) followed by private drift on the edge
+`(Y, X)`, where `X` is the single parent of `Y`, in a drift model with the graph's lineage weights:
+`f3 Y A B = α² ℓ_{XA} + (1 - α)² ℓ_{XB} - α (1 - α) f2 A B + ℓ_{YX}`. -/
 theorem f3_admixture_of_parents_eq_singleton {M : DriftModel μ G.Edge V}
     (hM : M.weight = G.weight) {Y X A B : V} (hY : G.parents Y = {X})
     (hX : G.parents X = {A, B}) (hAB : A ≠ B) :

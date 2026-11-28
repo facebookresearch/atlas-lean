@@ -32,8 +32,14 @@ price along a nonzero direction that keeps the linear constraints is another sta
 
 namespace MathlibExt.Probability.Finance.FundamentalTheoremAssetPricing
 
-/-- Finite one-period FTAP without `DecidableEq` instances on the states `Ω` or the assets `A`;
-`one_period_fundamental_theorem_asset_pricing` is the source-shaped form. -/
+/-- **Fundamental theorem of asset pricing for a finite one-period market.** Let $\Omega$ be a
+nonempty finite set of states and $A$ a finite set of assets, and let $g(a, \omega) \in \mathbb{R}$
+be the gain of asset $a$ in state $\omega$. Call a portfolio $h \colon A \to \mathbb{R}$ an
+arbitrage if its gain $\sum_{a \in A} h(a)\, g(a, \omega)$ is nonnegative in every state
+$\omega$ and positive in some state. There is no arbitrage if and only if there is a function
+$q \colon \Omega \to \mathbb{R}$ with $q(\omega) > 0$ for every $\omega \in \Omega$ and
+$\sum_{\omega \in \Omega} q(\omega) = 1$ such that
+$\sum_{\omega \in \Omega} q(\omega)\, g(a, \omega) = 0$ for every asset $a \in A$. -/
 theorem one_period_fundamental_theorem_asset_pricing_general
     {Ω : Type*} [Fintype Ω] [Nonempty Ω]
     {A : Type*} [Fintype A]
@@ -206,8 +212,16 @@ theorem one_period_fundamental_theorem_asset_pricing_general
 
 set_option linter.unusedDecidableInType false in
 /--
-Finite one-period FTAP: no arbitrage iff strictly positive state-price / martingale pmf with zero
-expected gain exists.
+**One-period fundamental theorem of asset pricing.** Let $\Omega$ be a nonempty finite set of
+states and $A$ a finite set of assets, and let $g(a, \omega) \in \mathbb{R}$ be the gain of
+asset $a$ in state $\omega$. Call a portfolio $h \colon A \to \mathbb{R}$ an arbitrage if its
+gain $\sum_{a \in A} h(a)\, g(a, \omega)$ is nonnegative in every state $\omega$ and positive
+in some state. There is no arbitrage if and only if there is a function
+$q \colon \Omega \to \mathbb{R}$ with $q(\omega) > 0$ for every $\omega \in \Omega$ and
+$\sum_{\omega \in \Omega} q(\omega) = 1$ such that
+$\sum_{\omega \in \Omega} q(\omega)\, g(a, \omega) = 0$ for every asset $a \in A$, that is, a
+strictly positive probability on the states under which every asset has zero expected gain.
+
 Source: J. M. Harrison and D. M. Kreps, J. Econom. Theory 20 (1979), DOI
 10.1016/0022-0531(79)90043-7.
 Proves `Wanted` entry `one_period_fundamental_theorem_asset_pricing`.
@@ -227,8 +241,9 @@ theorem one_period_fundamental_theorem_asset_pricing
 /-- **Perturbation lemma.** In a finite one-period market with gains `g`, if `q` is a strictly
 positive normalized state-price vector (`∑ ω, q ω = 1` and `∑ ω, q ω * g a ω = 0` for every
 asset `a`) and `d` is a nonzero direction preserving these linear constraints (`∑ ω, d ω = 0`
-and `∑ ω, d ω * g a ω = 0`), then a sufficiently small perturbation of `q` along `d` is a
-different strictly positive normalized state-price vector. -/
+and `∑ ω, d ω * g a ω = 0`), then there is a strictly positive normalized state-price vector
+`q' ≠ q`. The statement asserts only existence; the proof's witness is a sufficiently small
+perturbation of `q` along `d`. -/
 theorem exists_ne_statePrice_of_ne_zero
     {Ω : Type*} [Fintype Ω] {A : Type*} (g : A → Ω → ℝ)
     {q d : Ω → ℝ} (hq : ∀ ω : Ω, 0 < q ω) (hq1 : ∑ ω : Ω, q ω = 1)

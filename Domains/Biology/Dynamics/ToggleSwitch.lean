@@ -93,17 +93,22 @@ namespace MathlibExt.Biology.Dynamics.ToggleSwitch
 
 /-! ### The model -/
 
-/-- Hill repression `α / (1 + x ^ n)`. -/
+/-- Hill repression `α / (1 + x ^ n)`. With the convention `x / 0 = 0` it is `0` when `x ^ n = -1`
+(`n` odd, `x = -1`); in the model `α > 0`, `n ≥ 1` and `x ≥ 0`. -/
 noncomputable def hill (α : ℝ) (n : ℕ) (x : ℝ) : ℝ := α / (1 + x ^ n)
 
-/-- The derivative of `hill α n` on `x ≥ 0` (`hasDerivAt_hill`): `-α n x^(n-1) / (1 + x^n)²`. -/
+/-- The derivative of `hill α n` on `x ≥ 0` (`hasDerivAt_hill`): `-α n x^(n-1) / (1 + x^n)²`. As a
+formula it is defined for all real `x`, with `n - 1 = 0` for `n = 0` and the convention
+`x / 0 = 0`. -/
 noncomputable def hillDeriv (α : ℝ) (n : ℕ) (x : ℝ) : ℝ :=
   -(α * n * x ^ (n - 1)) / (1 + x ^ n) ^ 2
 
-/-- Right-hand side of the `u` equation: `du/dt = α₁ / (1 + v ^ β) - u`. -/
+/-- Right-hand side of the `u` equation: `du/dt = α₁ / (1 + v ^ β) - u`, with the convention
+`x / 0 = 0` of `hill`. -/
 noncomputable def uDot (α₁ : ℝ) (β : ℕ) (u v : ℝ) : ℝ := hill α₁ β v - u
 
-/-- Right-hand side of the `v` equation: `dv/dt = α₂ / (1 + u ^ γ) - v`. -/
+/-- Right-hand side of the `v` equation: `dv/dt = α₂ / (1 + u ^ γ) - v`, with the convention
+`x / 0 = 0` of `hill`. -/
 noncomputable def vDot (α₂ : ℝ) (γ : ℕ) (u v : ℝ) : ℝ := hill α₂ γ u - v
 
 /-- An equilibrium of the toggle switch in the closed positive quadrant. -/
@@ -133,10 +138,11 @@ only looks at the Jacobian and does not require `(u, v)` to be an equilibrium. -
 def HasSaddleSpectrum (α₁ α₂ : ℝ) (β γ : ℕ) (u v : ℝ) : Prop :=
   (∃ μ ∈ eigenvalues α₁ α₂ β γ u v, 0 < μ.re) ∧ ∃ μ ∈ eigenvalues α₁ α₂ β γ u v, μ.re < 0
 
-/-- The nullcline directions at `(u, v)` are parallel: the tangent vector `(∂_v hill, 1)` of the
-`u`-nullcline `u = α₁ / (1 + v ^ β)` at height `v` and the tangent vector `(1, ∂_u hill)` of the
-`v`-nullcline `v = α₂ / (1 + u ^ γ)` at abscissa `u` are parallel. This does not require `(u, v)`
-to lie on either nullcline; `NullclinesTangent` adds that. -/
+/-- The nullcline directions at `(u, v)` are parallel: the vectors `(hillDeriv α₁ β v, 1)` and
+`(1, hillDeriv α₂ γ u)` are parallel. For `u, v ≥ 0` they are the tangent vectors of the
+`u`-nullcline `u = α₁ / (1 + v ^ β)` at height `v` and of the `v`-nullcline `v = α₂ / (1 + u ^ γ)`
+at abscissa `u`. This does not require `(u, v)` to lie on either nullcline; `NullclinesTangent`
+adds that. -/
 def NullclineTangentsParallel (α₁ α₂ : ℝ) (β γ : ℕ) (u v : ℝ) : Prop :=
   !![hillDeriv α₁ β v, 1; 1, hillDeriv α₂ γ u].det = 0
 
@@ -194,7 +200,8 @@ section Linearization
 
 variable {α₁ α₂ : ℝ} {β γ : ℕ} {u v : ℝ}
 
-/-- The eigenvalues of the toggle-switch linearization are exactly `-1 ± √P`. -/
+/-- For `α₁, α₂ ≥ 0` and `u, v ≥ 0`, the eigenvalues of the toggle-switch linearization are exactly
+`-1 ± √P` (then `P ≥ 0`). -/
 theorem eigenvalues_eq (hα₁ : 0 ≤ α₁) (hα₂ : 0 ≤ α₂) (hu : 0 ≤ u) (hv : 0 ≤ v) :
     eigenvalues α₁ α₂ β γ u v =
       {((-1 + √(loopGain α₁ α₂ β γ u v) : ℝ) : ℂ), ((-1 - √(loopGain α₁ α₂ β γ u v) : ℝ) : ℂ)} := by
@@ -310,8 +317,8 @@ theorem exists_cubic_eq_zero (ha : 0 < a) (hb : 0 < b) : ∃ u, cubic a b u = 0 
     (continuous_cubic a b).continuousOn ⟨h0, h1⟩
   exact ⟨u, hu⟩
 
-/-- Equilibria of the `β = 1`, `γ = 2` toggle switch are the points `(u, b / (1 + u²))` with
-`u` a root of `cubic a b`. -/
+/-- For `a, b > 0`, the equilibria of the `β = 1`, `γ = 2` toggle switch are the points
+`(u, b / (1 + u²))` with `u` a root of `cubic a b`. -/
 theorem isEquilibrium_iff (ha : 0 < a) (hb : 0 < b) {u v : ℝ} :
     IsEquilibrium a b 1 2 u v ↔ cubic a b u = 0 ∧ v = b / (1 + u ^ 2) := by
   have hu2 : 0 < 1 + u ^ 2 := by positivity
@@ -422,7 +429,7 @@ theorem cubic_eq_of_double_root {r : ℝ} (hr : cubic a b r = 0) (hr' : cubicDer
   unfold cubicDeriv at hr'
   linear_combination hr + (u - r) * hr'
 
-/-- The equilibria are the image of the root set of the cubic. -/
+/-- For `a, b > 0`, the equilibria are the image of the root set of the cubic. -/
 theorem equilibria_eq_image (ha : 0 < a) (hb : 0 < b) :
     equilibria a b 1 2 = (fun u ↦ (u, b / (1 + u ^ 2))) '' {u | cubic a b u = 0} := by
   ext ⟨u, v⟩
@@ -438,7 +445,8 @@ theorem ncard_equilibria (ha : 0 < a) (hb : 0 < b) :
   rw [equilibria_eq_image ha hb]
   exact ncard_image_of_injective _ fun x y h ↦ (Prod.mk.inj h).1
 
-/-- The root set of the cubic, given two distinct roots, is contained in the three Vieta roots. -/
+/-- The root set of the cubic, given two distinct roots `r ≠ s`, is the set of the three Vieta roots
+`{r, s, a - r - s}`. -/
 theorem roots_subset {r s : ℝ} (hr : cubic a b r = 0) (hs : cubic a b s = 0) (hrs : r ≠ s) :
     {u | cubic a b u = 0} = {r, s, a - r - s} := by
   ext u
@@ -453,7 +461,8 @@ theorem roots_subset {r s : ℝ} (hr : cubic a b r = 0) (hs : cubic a b s = 0) (
     · exact Or.inr (Or.inr (sub_eq_zero.1 h))
   · rintro (rfl | rfl | rfl) <;> ring
 
-/-- **Number of equilibria.** The `β = 1`, `γ = 2` toggle switch has 1, 2 or 3 equilibria. -/
+/-- **Number of equilibria.** For `a, b > 0`, the `β = 1`, `γ = 2` toggle switch has 1, 2 or 3
+equilibria. -/
 theorem ncard_equilibria_mem (ha : 0 < a) (hb : 0 < b) :
     (equilibria a b 1 2).ncard ∈ ({1, 2, 3} : Set ℕ) := by
   rw [ncard_equilibria ha hb]
@@ -522,8 +531,8 @@ theorem ncard_equilibria_eq_two_iff (ha : 0 < a) (hb : 0 < b) :
     rw [roots_subset hc hq0 hq.symm, show a - u - (a - 2 * u) = u by ring,
       insert_eq_of_mem (by simp), ncard_pair hq]
 
-/-- Three roots `r < s < t` of the cubic: these are all the equilibria, the outer two are linearly
-stable (Hurwitz Jacobian) and the middle one is a saddle (`HasSaddleSpectrum`). -/
+/-- For `a, b > 0`, three roots `r < s < t` of the cubic: these are all the equilibria, the outer
+two are linearly stable (Hurwitz Jacobian) and the middle one is a saddle (`HasSaddleSpectrum`). -/
 theorem three_equilibria_of_lt (ha : 0 < a) (hb : 0 < b) {r s t : ℝ} (hr : cubic a b r = 0)
     (hs : cubic a b s = 0) (ht : cubic a b t = 0) (hrs : r < s) (hst : s < t) :
     equilibria a b 1 2 = {(r, b / (1 + r ^ 2)), (s, b / (1 + s ^ 2)), (t, b / (1 + t ^ 2))} ∧

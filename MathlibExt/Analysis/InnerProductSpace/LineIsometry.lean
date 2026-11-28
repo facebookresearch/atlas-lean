@@ -23,7 +23,9 @@ between `ℝ` and `EuclideanSpace ℝ (Fin 1)` share one representation.
 
 namespace MathlibExt.Analysis.InnerProductSpace.LineIsometry
 
-/-- The volume-preserving orthonormal identification of ℝ with EuclideanSpace ℝ (Fin 1). -/
+/-- **Identification of the line with one-dimensional Euclidean space.** The linear isometric
+isomorphism from $\mathbb{R}$ onto one-dimensional Euclidean space $\mathbb{R}^1$ that sends a
+real number $x$ to the vector whose only coordinate is $x$. -/
 noncomputable def lineIsometry : ℝ ≃ₗᵢ[ℝ] EuclideanSpace ℝ (Fin 1) :=
   (OrthonormalBasis.singleton (Fin 1) ℝ).repr
 

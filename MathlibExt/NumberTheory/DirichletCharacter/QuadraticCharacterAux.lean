@@ -54,7 +54,7 @@ public theorem kroneckerSym_one_left (n : ℕ) :
   · subst hn0
     rw [kroneckerSym_zero]
     simp
-  · simp only [kroneckerSym, hn0, if_false]
+  · simp only [kroneckerSym, hn0, ite_false]
     apply List.prod_eq_one
     intro x hx
     obtain ⟨p, hp_mem, hpx⟩ := List.mem_map.mp hx
@@ -102,15 +102,15 @@ public theorem kroneckerSym_mul (D : ℤ)
       have hperm : (m * n).primeFactorsList.Perm
           (m.primeFactorsList ++ n.primeFactorsList) :=
         Nat.perm_primeFactorsList_mul hm hn
-      simp only [kroneckerSym, hmn, if_false, hm, hn]
+      simp only [kroneckerSym, hmn, ite_false, hm, hn]
       have hmap := hperm.map (kroneckerAtPrime D)
       have hperm_prod := hmap.prod_eq
       rw [List.map_append, List.prod_append] at hperm_prod
       exact hperm_prod
 
-/-- Unconditional step reused by every branch: at an odd prime `p`,
-the Kronecker symbol is the Jacobi symbol. Depends on neither `hpos`
-nor `h1`. -/
+/-- **Kronecker and Jacobi symbols agree at odd primes.** For every integer $D$ and every prime
+$p \ne 2$, the Kronecker symbol $\left(\frac{D}{p}\right)$ equals the Jacobi symbol
+$\left(\frac{D}{p}\right)$. -/
 public theorem kroneckerSym_eq_jacobiSym_of_prime_ne_two (D : ℤ)
     (p : ℕ) (hp : p.Prime) (hp2 : p ≠ 2) :
     kroneckerSym D p = jacobiSym D p := by

@@ -81,7 +81,8 @@ open SiteFrequencySpectrum SFSCovariance SFSFuClosedForm
 
 /-- The expectation of `g` at step `a` times `h` at step `b` (`a ≤ b`) of random joining started
 from `x`: by the Markov property, `joinStep^[a] (g · joinStep^[b - a] h) x`
-(`exists_finset_randomJoining_pair`). -/
+(`exists_finset_randomJoining_pair`). For `b < a` the truncated difference `b - a` is `0`, and
+the value is `joinStep^[a] (g · h) x`. -/
 noncomputable def joinPair (a b : ℕ) (g h : List ℕ → ℝ) (x : List ℕ) : ℝ :=
   joinStep^[a] (fun y => g y * joinStep^[b - a] h y) x
 
@@ -91,7 +92,8 @@ private lemma joinStep_iterate_succ_of_card {x : List ℕ} (hx : (blockPairs x.l
   simp [hx, joinStep_iterate_nil]
 
 /-- **Two-level Markov property of random joining.** The random-joining law has finite support,
-and the expectation of `g` at step `a` times `h` at step `b` (`a ≤ b ≤ m`) is `joinPair`. -/
+and the expectation of `g` at step `a` times `h` at step `b` (`a ≤ b ≤ m`) is `joinPair`; an
+entry missing from a short history is read as the empty list. -/
 theorem exists_finset_randomJoining_pair (m : ℕ) (x : List ℕ) :
     ∃ F : Finset (List (List ℕ)), (∀ ps ∉ F, randomJoining m x ps = 0) ∧
       ∀ a b, a ≤ b → b ≤ m → ∀ g h : List ℕ → ℝ,
@@ -180,13 +182,17 @@ theorem exists_finset_randomJoining_pair (m : ℕ) (x : List ℕ) :
 /-! ### Moments of the block counts and of the holding times -/
 
 /-- `E[c_{k,i}]`: the expected number of blocks of size `i` while `k` lineages remain, under
-random joining started from `n` singletons (step `n - k`). -/
+random joining started from `n` singletons (step `n - k`), for `1 ≤ k ≤ n`. For `k > n` the
+truncated `n - k` is `0` and the value is the count in the initial list (`n` if `i = 1`, else
+`0`); for `k = 0` it is `0`. -/
 noncomputable def blockCountMean (n k i : ℕ) : ℝ :=
   joinStep^[n - k] (fun b => (b.count i : ℝ)) (List.replicate n 1)
 
 /-- `E[c_{k,i} c_{l,j}]`: the joint second moment of the numbers of blocks of size `i` while `k`
 lineages remain and of size `j` while `l` lineages remain, from the two-level Markov property
-(the earlier step `n - max k l` comes first). -/
+(the earlier step `n - max k l` comes first). Meaningful for `1 ≤ k, l ≤ n`; with truncated
+subtraction an index above `n` reads the initial list, and the value is `0` when `k = 0` or
+`l = 0`. -/
 noncomputable def blockCountMoment (n k l i j : ℕ) : ℝ :=
   if l ≤ k then
     joinPair (n - k) (n - l) (fun b => (b.count i : ℝ)) (fun b => (b.count j : ℝ))
@@ -196,14 +202,17 @@ noncomputable def blockCountMoment (n k l i j : ℕ) : ℝ :=
       (List.replicate n 1)
 
 /-- `E[T_k T_l]` for independent `T_k ~ Exp(C(k, 2))`: `2 / C(k, 2)²` if `k = l`, else
-`1 / (C(k, 2) C(l, 2))`. -/
+`1 / (C(k, 2) C(l, 2))`. With `0⁻¹ = 0` it is `0` when `k < 2` or `l < 2`. -/
 noncomputable def kingmanTimeMoment (k l : ℕ) : ℝ :=
   if k = l then 2 * (((k.choose 2 : ℕ) : ℝ)⁻¹) ^ 2
   else ((k.choose 2 : ℕ) : ℝ)⁻¹ * ((l.choose 2 : ℕ) : ℝ)⁻¹
 
-/-- The covariance of `L_i` and `L_j` in terms of the moments of the block counts and of the
-holding times: `∑_{k,l} E[c_{k,i} c_{l,j}] E[T_k T_l] - E[L_i] E[L_j]`, with
-`E[L_i] = ∑_k E[c_{k,i}] / C(k, 2)`. A deterministic number. -/
+/-- The moment sum for the covariance of `L_i` and `L_j`:
+`∑_{k,l} E[c_{k,i} c_{l,j}] E[T_k T_l] - E_i E_j` with `E_i = ∑_k E[c_{k,i}] / C(k, 2)`, the sums
+over `2 ≤ k, l ≤ n` (empty, giving `0`, for `n < 2`). A deterministic number. Under Kingman's
+coalescent with a random-joining topology independent of the holding times, `E_i = E[L_i]` and
+the sum is `Cov(L_i, L_j)` (`covariance_sfsLength_eq_fuTopologyCov`); both identifications use
+that independence. -/
 noncomputable def fuTopologyCov (n i j : ℕ) : ℝ :=
   ∑ k ∈ Icc 2 n, ∑ l ∈ Icc 2 n, blockCountMoment n k l i j * kingmanTimeMoment k l -
     (∑ k ∈ Icc 2 n, blockCountMean n k i * ((k.choose 2 : ℕ) : ℝ)⁻¹) *
@@ -244,9 +253,10 @@ private lemma indepFun_topology_times
       ← MeasurableSpace.comap_comp]
     exact MeasurableSpace.comap_mono hG.comap_le
 
-/-- **The covariances of the branch-length classes reduce to the topology.** Under Kingman's
-coalescent (holding times `K.T`) with an independent block-size history `τ` with the
-random-joining law, `Cov(L_i, L_j) = fuTopologyCov n i j` for all `i, j`, where
+/-- **The covariances of the branch-length classes reduce to the topology.** Under a
+probability measure, for Kingman's coalescent (holding times `K.T`) with an independent
+block-size history `τ`, measurable for the discrete σ-algebra, with the random-joining law from
+`n` singletons, `Cov(L_i, L_j) = fuTopologyCov n i j` for all `i, j`, where
 `L_i = sfsLength n i τ T`. -/
 theorem covariance_sfsLength_eq_fuTopologyCov
     (hτ : MeasurableSpace.comap τ ⊤ ≤ mΩ)
@@ -322,9 +332,11 @@ theorem covariance_sfsLength_eq_fuTopologyCov
     fuTopologyCov]
   exact congrArg (· - _) (sum_congr rfl fun k hk => sum_congr rfl fun l hl => (hterm k hk l hl).2)
 
-/-- **`hσ` from the topology identity**: if `fuTopologyCov n i j = 4 σ_{ij}` for
-`1 ≤ i, j ≤ n - 1`, then `Cov(L_i, L_j) = 4 σ_{ij}`, the hypothesis `hσ` of the theorems of
-`SFSFuClosedForm`. -/
+/-- **`hσ` from the topology identity**: under a probability measure, for Kingman holding times
+`K.T` and an independent block-size history `τ`, measurable for the discrete σ-algebra, with the
+random-joining law from `n` singletons, if `fuTopologyCov n i j = 4 σ_{ij}` for
+`1 ≤ i, j ≤ n - 1`, then `Cov(L_i, L_j) = 4 σ_{ij}` for `1 ≤ i, j ≤ n - 1`, the hypothesis `hσ`
+of the theorems of `SFSFuClosedForm`. -/
 theorem covariance_sfsLength_eq_four_mul_fuSigma_of_fuTopologyCov
     (hτ : MeasurableSpace.comap τ ⊤ ≤ mΩ)
     (hτ_law : ∀ ps, μ.real (τ ⁻¹' {ps}) = randomJoining (n - 1) (List.replicate n 1) ps)
@@ -369,8 +381,9 @@ private lemma joinStep_1111 (g : List ℕ → ℝ) : joinStep g [1, 1, 1, 1] = g
   simp [joinStep, this, mergeBlocks]
   ring
 
-/-- **The topology identity for small samples**: `fuTopologyCov n i j = 4 σ_{ij}` for `n ≤ 4`,
-evaluated from the definitions of `randomJoining`'s transition operator and of `fuSigma`. -/
+/-- **The topology identity for small samples**: `fuTopologyCov n i j = 4 σ_{ij}` for `n ≤ 4`
+and `1 ≤ i, j ≤ n - 1`, evaluated from the definitions of `randomJoining`'s transition operator
+and of `fuSigma`. -/
 theorem fuTopologyCov_eq_four_mul_fuSigma_of_le_four {n : ℕ} (hn : n ≤ 4) :
     ∀ i ∈ Ico 1 n, ∀ j ∈ Ico 1 n, fuTopologyCov n i j = 4 * fuSigma n i j := by
   intro i hi j hj
@@ -386,9 +399,10 @@ theorem fuTopologyCov_eq_four_mul_fuSigma_of_le_four {n : ℕ} (hn : n ≤ 4) :
 variable {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω} [IsProbabilityMeasure μ] {n : ℕ}
   {K : KingmanTimes μ n} {τ : Ω → List (List ℕ)}
 
-/-- **Fu's branch-length covariances for `n ≤ 4`**, unconditionally: under Kingman's coalescent
-with an independent random-joining topology, `Cov(L_i, L_j) = 4 σ_{ij}` for
-`1 ≤ i, j ≤ n - 1`. -/
+/-- **Fu's branch-length covariances for `n ≤ 4`**, unconditionally: under a probability
+measure, for Kingman's coalescent with an independent block-size history `τ`, measurable for the
+discrete σ-algebra, with the random-joining law from `n` singletons,
+`Cov(L_i, L_j) = 4 σ_{ij}` for `1 ≤ i, j ≤ n - 1`. -/
 theorem covariance_sfsLength_eq_four_mul_fuSigma_of_le_four (hn : n ≤ 4)
     (hτ : MeasurableSpace.comap τ ⊤ ≤ mΩ)
     (hτ_law : ∀ ps, μ.real (τ ⁻¹' {ps}) = randomJoining (n - 1) (List.replicate n 1) ps)
@@ -400,7 +414,10 @@ theorem covariance_sfsLength_eq_four_mul_fuSigma_of_le_four (hn : n ≤ 4)
   covariance_sfsLength_eq_four_mul_fuSigma_of_fuTopologyCov hτ hτ_law h_indep
     (fuTopologyCov_eq_four_mul_fuSigma_of_le_four hn)
 
-/-- **Fu's SFS covariance for `n ≤ 4`** (Fu 1995), without the hypothesis `hσ`:
+/-- **Fu's SFS covariance for `n ≤ 4`** (Fu 1995), without the hypothesis `hσ`: under a
+probability measure, for Kingman holding times `K.T` (each measurable) and an independent
+block-size history `τ`, measurable for the discrete σ-algebra, with the random-joining law from
+`n` singletons, and counts `ξ` with the conditional moments `SFSCondMoments` given the genealogy,
 `Cov(ξ_i, ξ_j) = δ_{ij} θ / i + σ_{ij} θ²` for `1 ≤ i, j ≤ n - 1`. -/
 theorem covariance_count_kingman_of_le_four (hn : n ≤ 4) (hT : ∀ k, Measurable (K.T k))
     (hτ : MeasurableSpace.comap τ ⊤ ≤ mΩ)

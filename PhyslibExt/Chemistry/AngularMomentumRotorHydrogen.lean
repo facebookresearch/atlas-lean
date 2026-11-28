@@ -220,9 +220,9 @@ theorem lOne_commutators (hbar : ℝ) :
   all_goals simp [Ring.lie_def, lOneLx, lOneLy, lOneLz, Matrix.mul_apply,
     Matrix.sub_apply, Matrix.smul_apply, Fin.sum_univ_three,
     Matrix.cons_val_zero, Matrix.cons_val_one]
-  all_goals (try field_simp [hs0])
+  all_goals (field_simp [hs0])
   all_goals ring_nf
-  all_goals (try simp only [hsq, hsq_mul, hI, Complex.I_mul_I])
+  all_goals (simp only [hsq, hsq_mul, hI, Complex.I_mul_I])
   all_goals ring
 
 /-- l = 1 Casimir: `L^2 = 2 * hbar^2 * 1` (l(l+1) = 2). -/
@@ -252,9 +252,9 @@ theorem lOne_casimir (hbar : ℝ) :
     Matrix.smul_apply, Matrix.one_apply, Fin.sum_univ_three,
     Matrix.cons_val_zero, Matrix.cons_val_one, pow_two, h10, h20, h21, h01,
     h02, h12]
-  all_goals (try field_simp [hs0])
+  all_goals (field_simp [hs0])
   all_goals ring_nf
-  all_goals (try simp only [hsq, hsq_mul, hI, Complex.I_mul_I])
+  all_goals (simp only [hsq, hsq_mul, hI, Complex.I_mul_I])
   all_goals ring
 
 /-! ## B. Irreducibility -/
@@ -472,12 +472,12 @@ noncomputable def sphericalHarmonic00 (_θ _φ : ℝ) : ℂ := 1 / Real.sqrt (4 
 noncomputable def sphericalHarmonic10 (θ _φ : ℝ) : ℂ :=
   Real.sqrt (3 / (4 * Real.pi)) * Real.cos θ
 
-/-- Rigid-rotor level spacing: `E_{J+1} - E_J = hbar^2 * (J+1) / I`. -/
+/-- Rigid-rotor level spacing for `I ≠ 0`: `E_{J+1} - E_J = hbar^2 * (J+1) / I`. -/
 theorem rigidRotorEnergy_spacing {hbar I : ℝ} (hI : I ≠ 0) (J : ℕ) :
     rigidRotorEnergy hbar I (J + 1) - rigidRotorEnergy hbar I J =
       hbar ^ 2 * ((J + 1 : ℕ) : ℝ) / I := by
   have h2I : (2 : ℝ) * I ≠ 0 := mul_ne_zero (by norm_num) hI
-  unfold rigidRotorEnergy <;> push_cast <;> field_simp [hI, h2I] <;> ring
+  unfold rigidRotorEnergy; push_cast; field_simp [hI, h2I]; ring
 
 /-- Rigid-rotor degeneracy: the magnetic quantum numbers `m ∈ {-J, ..., J}` number
 `2 * J + 1`; a case of Mathlib's `Int.card_Icc`. -/
@@ -503,8 +503,7 @@ theorem l1_Lz_eigenvalues (hbar : ℝ) :
     simp [lOneLz, Matrix.smul_apply, Pi.smul_apply, Pi.zero_apply,
       Fin.sum_univ_three, Matrix.cons_val_zero, Matrix.cons_val_one,
       Pi.single_eq_same, Pi.single_eq_of_ne, h10, h20, h21, h01, h02, h12,
-      smul_eq_mul] <;>
-    ring
+      smul_eq_mul]
 
 /-- At the north pole, `Y_10 = sqrt 3 * Y_00`. -/
 lemma sphericalHarmonic10_at_pole (φ : ℝ) :
@@ -514,11 +513,11 @@ lemma sphericalHarmonic10_at_pole (φ : ℝ) :
   push_cast
   ring
 
-/-- Rigid-rotor energy at `J = 1` is `hbar^2 / I`. -/
+/-- Rigid-rotor energy at `J = 1` is `hbar^2 / I`, for `I ≠ 0`. -/
 lemma rigidRotorEnergy_l1 {hbar I : ℝ} (hI : I ≠ 0) :
     rigidRotorEnergy hbar I 1 = hbar ^ 2 / I := by
   have h2I : (2 : ℝ) * I ≠ 0 := mul_ne_zero (by norm_num) hI
-  unfold rigidRotorEnergy <;> norm_num <;> field_simp [hI, h2I] <;> ring
+  unfold rigidRotorEnergy; norm_num; field_simp [hI, h2I]
 
 /-! ## D. Hydrogen-like atom -/
 
@@ -528,7 +527,8 @@ noncomputable def hydrogenRadial10 (r : ℝ) : ℝ := 2 * Real.exp (-r)
 /-- Derivative of `R_10`: `R_10'(r) = -2 * exp (-r)`. -/
 noncomputable def hydrogenRadial10' (r : ℝ) : ℝ := -2 * Real.exp (-r)
 
-/-- Hydrogen-like radial function `R_20(r) = (1 / (2 * sqrt 2)) * (2 - r) * exp (-r / 2)`. -/
+/-- Hydrogen-like radial function `R_20(r) = (1 / (2 * sqrt 2)) * (2 - r) * exp (-r / 2)`
+(atomic units, Z = 1). -/
 noncomputable def hydrogenRadial20 (r : ℝ) : ℝ :=
   (1 / (2 * Real.sqrt 2)) * (2 - r) * Real.exp (-r / 2)
 
@@ -540,7 +540,8 @@ noncomputable def hydrogenRadial20' (r : ℝ) : ℝ :=
 noncomputable def hydrogenRadial20'' (r : ℝ) : ℝ :=
   (1 / (2 * Real.sqrt 2)) * Real.exp (-r / 2) * (-r / 4 + 3 / 2)
 
-/-- Hydrogen-like radial function `R_21(r) = (1 / (2 * sqrt 6)) * r * exp (-r / 2)`. -/
+/-- Hydrogen-like radial function `R_21(r) = (1 / (2 * sqrt 6)) * r * exp (-r / 2)`
+(atomic units, Z = 1). -/
 noncomputable def hydrogenRadial21 (r : ℝ) : ℝ :=
   (1 / (2 * Real.sqrt 6)) * r * Real.exp (-r / 2)
 
@@ -552,8 +553,9 @@ noncomputable def hydrogenRadial21' (r : ℝ) : ℝ :=
 noncomputable def hydrogenRadial21'' (r : ℝ) : ℝ :=
   (1 / (2 * Real.sqrt 6)) * Real.exp (-r / 2) * (r / 4 - 1)
 
-/-- Radial residual: `-1/2 * R'' - (1/r) * R' + (l*(l+1)/(2*r^2) - Z/r) * R`.
-The eigen-equation is `radialResidual Z l R R' R'' r = E * R`. -/
+/-- Radial residual: `-1/2 * R'' - (1/r) * R' + (l*(l+1)/(2*r^2) - Z/r) * R`. The eigen-equation is
+`radialResidual Z l R R' R'' r = E * R`. At `r = 0` the terms with `1/r` and `1/r^2` are `0`, by the
+convention `x / 0 = 0`. -/
 noncomputable def radialResidual (Z l R R' R'' r : ℝ) : ℝ :=
   -1 / 2 * R'' - (1 / r) * R' + (l * (l + 1) / (2 * r ^ 2) - Z / r) * R
 
@@ -579,7 +581,7 @@ lemma sum_range_odd_eq_sq (n : ℕ) :
     ∑ l ∈ Finset.range n, (2 * l + 1) = n ^ 2 := by
   induction n with
   | zero => decide
-  | succ k ih => rw [Finset.sum_range_succ, ih] <;> ring
+  | succ k ih => rw [Finset.sum_range_succ, ih]; ring
 
 /-- Hydrogen degeneracy: the level with principal quantum number `n : ℕ+` has orbital quantum
 numbers `l < n`, each with `2 l + 1` magnetic sublevels, so `n ^ 2` orbital states
@@ -593,36 +595,36 @@ lemma hydrogen_degeneracy_spin (n : ℕ+) :
     2 * (∑ l ∈ Finset.range (n : ℕ), (2 * l + 1)) = 2 * (n : ℕ) ^ 2 := by
   rw [hydrogen_degeneracy]
 
-/-- 1s eigen-equation, algebraic form: with `R'' = R` and `R' = -R`, the radial
-residual at `Z = 1, l = 0` is `(-1/2) * R`. -/
+/-- 1s eigen-equation, algebraic form: at every `r ≠ 0`, with `R'' = R` and `R' = -R`, the
+radial residual at `Z = 1, l = 0` is `(-1/2) * R`. -/
 theorem radialResidual_1s {r : ℝ} (hr : r ≠ 0) :
     radialResidual 1 0 (hydrogenRadial10 r) (hydrogenRadial10' r)
       (hydrogenRadial10 r) r = (-1 / 2) * hydrogenRadial10 r := by
   have hr2 : (2 : ℝ) * r ^ 2 ≠ 0 := mul_ne_zero (by norm_num) (by positivity)
-  unfold radialResidual hydrogenRadial10 hydrogenRadial10' <;>
-    field_simp [hr, hr2] <;> ring
+  unfold radialResidual hydrogenRadial10 hydrogenRadial10';
+    field_simp [hr, hr2]; ring
 
-/-- 2s eigen-equation, algebraic form: the radial residual at `Z = 1, l = 0`
-is `(-1/8) * R`. -/
+/-- 2s eigen-equation, algebraic form: at every `r ≠ 0`, the radial residual at
+`Z = 1, l = 0` is `(-1/8) * R`. -/
 theorem radialResidual_2s {r : ℝ} (hr : r ≠ 0) :
     radialResidual 1 0 (hydrogenRadial20 r) (hydrogenRadial20' r)
       (hydrogenRadial20'' r) r = (-1 / 8) * hydrogenRadial20 r := by
   have hsqrt2 : Real.sqrt 2 ≠ 0 := ne_of_gt (Real.sqrt_pos.2 (by norm_num))
   have h2s : (2 : ℝ) * Real.sqrt 2 ≠ 0 := mul_ne_zero (by norm_num) hsqrt2
   have hr2 : (2 : ℝ) * r ^ 2 ≠ 0 := mul_ne_zero (by norm_num) (by positivity)
-  unfold radialResidual hydrogenRadial20 hydrogenRadial20' hydrogenRadial20'' <;>
-    field_simp [hr, hr2, h2s] <;> ring
+  unfold radialResidual hydrogenRadial20 hydrogenRadial20' hydrogenRadial20'';
+    field_simp [hr, hr2, h2s]; ring
 
-/-- 2p eigen-equation, algebraic form: the radial residual at `Z = 1, l = 1`
-is `(-1/8) * R`. -/
+/-- 2p eigen-equation, algebraic form: at every `r ≠ 0`, the radial residual at
+`Z = 1, l = 1` is `(-1/8) * R`. -/
 theorem radialResidual_2p {r : ℝ} (hr : r ≠ 0) :
     radialResidual 1 1 (hydrogenRadial21 r) (hydrogenRadial21' r)
       (hydrogenRadial21'' r) r = (-1 / 8) * hydrogenRadial21 r := by
   have hsqrt6 : Real.sqrt 6 ≠ 0 := ne_of_gt (Real.sqrt_pos.2 (by norm_num))
   have h2s : (2 : ℝ) * Real.sqrt 6 ≠ 0 := mul_ne_zero (by norm_num) hsqrt6
   have hr2 : (2 : ℝ) * r ^ 2 ≠ 0 := mul_ne_zero (by norm_num) (by positivity)
-  unfold radialResidual hydrogenRadial21 hydrogenRadial21' hydrogenRadial21'' <;>
-    field_simp [hr, hr2, h2s] <;> ring
+  unfold radialResidual hydrogenRadial21 hydrogenRadial21' hydrogenRadial21'';
+    field_simp [hr, hr2, h2s]; ring
 
 /-- 1s derivatives: `R_10' = -R_10` and `(R_10')' = R_10`, via `HasDerivAt`. -/
 lemma hydrogenRadial_deriv_1s (r : ℝ) :
@@ -635,7 +637,7 @@ lemma hydrogenRadial_deriv_1s (r : ℝ) :
     simp only [hydrogenRadial10, hydrogenRadial10']
     convert h3 using 1
     · funext y
-      simp only [hydrogenRadial10, Pi.neg_apply, id_eq] <;> ring
+      simp only [hydrogenRadial10, Pi.neg_apply, id_eq]
     · simp only [Pi.neg_apply, id_eq]
       ring
   · have h1 := (hasDerivAt_id r).neg
@@ -644,7 +646,7 @@ lemma hydrogenRadial_deriv_1s (r : ℝ) :
     simp only [hydrogenRadial10', hydrogenRadial10]
     convert h3 using 1
     · funext y
-      simp only [hydrogenRadial10', Pi.neg_apply, id_eq] <;> ring
+      simp only [hydrogenRadial10', Pi.neg_apply, id_eq]
     · simp only [Pi.neg_apply, id_eq]
       ring
 
@@ -667,7 +669,7 @@ lemma hydrogenRadial_deriv_2s (r : ℝ) :
     convert hfin using 1
     · funext y
       simp only [hydrogenRadial20, div_eq_mul_inv, Pi.mul_apply, Pi.sub_apply,
-        Pi.neg_apply, id_eq] <;> ring
+        Pi.neg_apply, id_eq]
     · simp only [Pi.mul_apply, Pi.sub_apply, Pi.neg_apply, id_eq]
       ring
   · have hneg := (hasDerivAt_id r).neg
@@ -685,7 +687,7 @@ lemma hydrogenRadial_deriv_2s (r : ℝ) :
     convert hfin using 1
     · funext y
       simp only [hydrogenRadial20', div_eq_mul_inv, Pi.mul_apply, Pi.sub_apply,
-        Pi.neg_apply, id_eq] <;> ring
+        Pi.neg_apply, id_eq]
     · simp only [Pi.mul_apply, Pi.sub_apply, Pi.neg_apply, id_eq]
       ring
 
@@ -706,7 +708,7 @@ lemma hydrogenRadial_deriv_2p (r : ℝ) :
     convert hfin using 1
     · funext y
       simp only [hydrogenRadial21, div_eq_mul_inv, Pi.mul_apply, Pi.neg_apply,
-        id_eq] <;> ring
+        id_eq]
     · simp only [Pi.mul_apply, Pi.neg_apply, id_eq]
       ring
   · have hneg := (hasDerivAt_id r).neg
@@ -724,12 +726,12 @@ lemma hydrogenRadial_deriv_2p (r : ℝ) :
     convert hfin using 1
     · funext y
       simp only [hydrogenRadial21', div_eq_mul_inv, Pi.mul_apply, Pi.sub_apply,
-        Pi.neg_apply, id_eq] <;> ring
+        Pi.neg_apply, id_eq]
     · simp only [Pi.mul_apply, Pi.sub_apply, Pi.neg_apply, id_eq]
       ring
 
-/-- Rydberg lines are positive for `n1 < n2` (emission, `n2 -> n1`); compare Physlib's
-`QuantumMechanics.HydrogenAtom.transitionFrequency_pos`. -/
+/-- For `R > 0` and `Z ≠ 0`, Rydberg lines are positive for `n1 < n2` (emission, `n2 -> n1`);
+compare Physlib's `QuantumMechanics.HydrogenAtom.transitionFrequency_pos`. -/
 theorem rydbergWavenumber_pos {R Z : ℝ} (hR : 0 < R) (hZ : Z ≠ 0) {n1 n2 : ℕ+}
     (h12 : n1 < n2) :
     0 < rydbergWavenumber R Z n1 n2 := by
@@ -750,23 +752,25 @@ theorem rydbergWavenumber_pos {R Z : ℝ} (hR : 0 < R) (hZ : Z ≠ 0) {n1 n2 : �
 Physlib's level `n` (counted from `0`) is the level with principal quantum number `n + 1`, and
 Physlib's Rydberg energy is `Z ^ 2 * R` here (the nuclear charge is part of Physlib's coupling
 `k`, so `Z = 1`). -/
-lemma energyLevel_eq_hydrogenEnergy (H : QuantumMechanics.HydrogenAtom) (hd : H.d = 3)
+lemma energyLevel_eq_hydrogenEnergy {d : ℕ} (H : QuantumMechanics.HydrogenAtom d) (hd : d = 3)
     (n : ℕ) : H.energyLevel n = hydrogenEnergy 1 H.rydbergEnergy n.succPNat := by
+  subst hd
   rw [QuantumMechanics.HydrogenAtom.energyLevel_eq, QuantumMechanics.HydrogenAtom.levelIndex_eq,
-    hd, hydrogenEnergy, Nat.succPNat_coe, Nat.cast_succ]
+    hydrogenEnergy, Nat.succPNat_coe, Nat.cast_succ]
   norm_num
 
 /-- Bridge to Physlib's Rydberg formula: for a three-dimensional
 `QuantumMechanics.HydrogenAtom`, the inverse wavelength of the transition from Physlib's level
-`n₂` to `n₁` is `rydbergWavenumber` between the principal quantum numbers `n₂ + 1` and
-`n₁ + 1`, with the Rydberg constant `R_ν / c` (`Z = 1`, as in
-`energyLevel_eq_hydrogenEnergy`). -/
-lemma wavelength_inv_eq_rydbergWavenumber (H : QuantumMechanics.HydrogenAtom) (hd : H.d = 3)
-    (c : SpeedOfLight) (n₁ n₂ : ℕ) :
+`n₂` to `n₁` is `rydbergWavenumber` for the principal quantum numbers `n₁ + 1` and `n₂ + 1`,
+in this order (a signed value, `0` for `n₁ = n₂`), with the Rydberg constant `R_ν / c`
+(`Z = 1`, as in `energyLevel_eq_hydrogenEnergy`). -/
+lemma wavelength_inv_eq_rydbergWavenumber {d : ℕ} (H : QuantumMechanics.HydrogenAtom d)
+    (hd : d = 3) (c : SpeedOfLight) (n₁ n₂ : ℕ) :
     (H.wavelength c n₁ n₂)⁻¹ =
       rydbergWavenumber (H.rydbergFrequency / c) 1 n₁.succPNat n₂.succPNat := by
+  subst hd
   rw [QuantumMechanics.HydrogenAtom.wavelength_inv, QuantumMechanics.HydrogenAtom.levelIndex_eq,
-    QuantumMechanics.HydrogenAtom.levelIndex_eq, hd, rydbergWavenumber, Nat.succPNat_coe,
+    QuantumMechanics.HydrogenAtom.levelIndex_eq, rydbergWavenumber, Nat.succPNat_coe,
     Nat.succPNat_coe, Nat.cast_succ, Nat.cast_succ]
   norm_num
 
@@ -786,7 +790,7 @@ lemma principalShells_capacity (N : ℕ) :
       (N : ℝ) * ((N : ℝ) + 1) * (2 * (N : ℝ) + 1) / 3 := by
   induction N with
   | zero =>
-      rw [Finset.Icc_eq_empty (by norm_num : ¬ (1 : ℕ) ≤ 0), Finset.sum_empty] <;>
+      rw [Finset.Icc_eq_empty (by norm_num : ¬ (1 : ℕ) ≤ 0), Finset.sum_empty];
         norm_num
   | succ k ih =>
       have hset : Finset.Icc 1 (k + 1) = insert (k + 1) (Finset.Icc 1 k) := by
@@ -796,10 +800,11 @@ lemma principalShells_capacity (N : ℕ) :
       have hmem : (k + 1) ∉ Finset.Icc 1 k := by
         simp only [Finset.mem_Icc]
         omega
-      rw [hset, Finset.sum_insert hmem, ih] <;> push_cast <;> ring
+      rw [hset, Finset.sum_insert hmem, ih]; push_cast; ring
 
-/-- Hund's unpaired count never exceeds the number `g` of degenerate orbitals. -/
+/-- For `e ≤ 2 * g` electrons, Hund's unpaired count never exceeds the number `g` of
+degenerate orbitals. -/
 lemma hundUnpaired_le_g {e g : ℕ} (he : e ≤ 2 * g) : hundUnpaired e g ≤ g := by
-  unfold hundUnpaired <;> omega
+  unfold hundUnpaired; omega
 
 end PhyslibExt.Chemistry.AngularMomentumRotorHydrogen

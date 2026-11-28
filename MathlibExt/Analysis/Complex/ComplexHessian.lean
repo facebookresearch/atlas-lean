@@ -25,13 +25,30 @@ second Fréchet derivative.
 
 namespace MetaMathlibExt
 
-/-- The real second derivative `D²u(z)(a, b)` of `u : ℂⁿ → ℝ`. -/
+/-- **Real Hessian.** For a function $u : \mathbb{C}^n \to \mathbb{R}$, with $\mathbb{C}^n$
+viewed as a real normed space, write $Du(w)$ for the real Fréchet derivative of $u$ at $w$. For
+points $z, a, b \in \mathbb{C}^n$, the real Hessian $D^2u(z)(a, b)$ is the real number obtained
+by taking the real Fréchet derivative at $z$ of the map $w \mapsto Du(w)$, applying it to $a$,
+and applying the result to $b$.
+
+As usual in Mathlib, a derivative that does not exist is taken to be zero. -/
 noncomputable def realHessian {n : ℕ} (u : EuclideanSpace ℂ (Fin n) → ℝ)
     (z a b : EuclideanSpace ℂ (Fin n)) : ℝ :=
   fderiv ℝ (fderiv ℝ u) z a b
 
-/-- The complex Hessian `u_{j k̄} = ∂²u/∂z_j∂z̄_k
-= (u_{x_j x_k} + u_{y_j y_k} + i (u_{x_j y_k} - u_{y_j x_k})) / 4` of `u : ℂⁿ → ℝ` at `z`. -/
+/-- **Complex Hessian.** Let $u : \mathbb{C}^n \to \mathbb{R}$ and $z \in \mathbb{C}^n$, write
+$e_1, \dots, e_n$ for the standard basis of $\mathbb{C}^n$, write $i$ for the imaginary unit, and
+for $a, b \in \mathbb{C}^n$ write $D^2u(z)(a, b)$ for the real Hessian of $u$ at $z$. The complex
+Hessian of $u$ at $z$ is the $n \times n$ complex matrix whose $(j, k)$ entry is
+
+$$
+u_{j\bar k}(z) = \frac{D^2u(z)(e_j, e_k) + D^2u(z)(i e_j, i e_k) +
+i \left(D^2u(z)(e_j, i e_k) - D^2u(z)(i e_j, e_k)\right)}{4}.
+$$
+
+When $u$ is of class $C^2$, in real coordinates $z_j = x_j + i y_j$ this is
+$\partial^2 u / \partial z_j \partial \bar z_k =
+(u_{x_j x_k} + u_{y_j y_k} + i (u_{x_j y_k} - u_{y_j x_k})) / 4$. -/
 noncomputable def complexHessian {n : ℕ} (u : EuclideanSpace ℂ (Fin n) → ℝ)
     (z : EuclideanSpace ℂ (Fin n)) : Matrix (Fin n) (Fin n) ℂ :=
   fun j k =>
@@ -52,12 +69,16 @@ theorem complexHessian_apply {n : ℕ} (u : EuclideanSpace ℂ (Fin n) → ℝ)
               (EuclideanSpace.single k 1) : ℝ) : ℂ) * Complex.I) / 4 :=
   rfl
 
-/-- A constant function has zero real second derivative. -/
+/-- **Constant functions have zero real Hessian.** For every real constant $c$, the function
+$u : \mathbb{C}^n \to \mathbb{R}$ with constant value $c$ has real Hessian $D^2u(z)(a, b) = 0$ for
+all $z, a, b \in \mathbb{C}^n$. -/
 @[simp] theorem realHessian_const {n : ℕ} (c : ℝ) (z a b : EuclideanSpace ℂ (Fin n)) :
     realHessian (fun _ => c) z a b = 0 := by
   simp [realHessian]
 
-/-- A constant function has zero complex Hessian. -/
+/-- **Constant functions have zero complex Hessian.** For every real constant $c$, the function
+$u : \mathbb{C}^n \to \mathbb{R}$ with constant value $c$ has complex Hessian equal to the zero
+$n \times n$ matrix at every point $z \in \mathbb{C}^n$. -/
 @[simp] theorem complexHessian_const {n : ℕ} (c : ℝ) (z : EuclideanSpace ℂ (Fin n)) :
     complexHessian (fun _ => c) z = 0 := by
   ext j k

@@ -144,10 +144,11 @@ private theorem untopD_meromorphicOrderAt_LFunction {ρ : ℂ} (hρ : ρ ∈ χ.
 variable (χ) in
 /-- **`N(T, χ)`**: the number of nontrivial zeros `ρ` of `L(s, χ)` with `|Im ρ| < T`, counted
 with multiplicity (the meromorphic order, as in the zero sums of PrimeNumberTheoremAnd). This is
-a symmetric window, since the zeros of `L(s, χ)` are not symmetric about the real axis. It uses
-the strict inequality, as PrimeNumberTheoremAnd's `riemannZeta.N T` (which counts `0 < Im ρ < T`
-for `ζ` only) does; Davenport's `N(T, χ)` counts `|Im ρ| ≤ T`, and the two differ exactly when
-`T` is the ordinate of a zero. There are finitely many such zeros for every `χ` (the nontrivial
+a symmetric window because the zeros of `L(s, χ)` need not be symmetric about the real axis.
+It uses the strict inequality, as PrimeNumberTheoremAnd's `riemannZeta.N T` (which counts
+`0 < Im ρ < T` for `ζ` only) does. For `T ≥ 0`, the strict window and the inclusive window
+`|Im ρ| ≤ T` differ exactly when some nontrivial zero `ρ` has `|Im ρ| = T`.
+There are finitely many such zeros for every `χ` (the nontrivial
 zeros of `χ` are those of its primitive character); for primitive `χ ≠ 1` this is
 `DirichletCharacter.finite_setOf_mem_nontrivialZeros_abs_im_lt`. If there were infinitely many,
 the `tsum` would take the junk value `0`. -/

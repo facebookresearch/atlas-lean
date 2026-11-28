@@ -22,7 +22,7 @@ Department of Computer Science, Cornell University (1977); journal version: D. K
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.ModelTheory.Satisfiability
@@ -83,7 +83,8 @@ abbrev Token := ℕ × ℕ × ℕ
 abbrev PredicateLogicInstance := List Token
 
 /-- The term with code `t` inside `k` existential quantifiers: `c₀` for `0`, `c₁` for `1`, and
-the variable bound by the `(j + 1)`-th enclosing quantifier for `j + 2` with `j < k`. -/
+for `j + 2` with `j < k` the variable bound by the `(j + 1)`-th enclosing quantifier, counted
+from the outermost (Mathlib's de Bruijn levels). -/
 def term (k : ℕ) : ℕ → Option (Lang.Term (Empty ⊕ Fin k))
   | 0 => some (const 0).term
   | 1 => some (const 1).term

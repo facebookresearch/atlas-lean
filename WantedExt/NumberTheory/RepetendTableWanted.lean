@@ -17,7 +17,18 @@ public import Mathlib.Basic.Real.Basic
 public import Mathlib.GroupTheory.SpecificGroups.Cyclic
 public import Mathlib.NumberTheory.Padics.PadicVal.Defs
 public import Mathlib.Data.Nat.Factorization.Defs
-public import Mathlib.Topology.Algebra.InfiniteSum.Real
+public import MathlibExt.NumberTheory.RepetendTable
+public import MathlibExt.NumberTheory.RepetendTable.BaseShift
+public import MathlibExt.NumberTheory.RepetendTable.DigitDifference
+public import MathlibExt.NumberTheory.RepetendTable.TwoRowColumns
+public import MathlibExt.NumberTheory.RepetendTable.InverseColumns
+public import MathlibExt.NumberTheory.RepetendTable.InversePairs
+public import MathlibExt.NumberTheory.RepetendTable.LastDigit
+public import MathlibExt.NumberTheory.RepetendTable.OrderCount
+public import MathlibExt.NumberTheory.RepetendTable.OrderSix
+public import MathlibExt.NumberTheory.RepetendTable.PrimePowerValuation
+public import MathlibExt.Analysis.Series.InversePowerTail
+public import MathlibExt.NumberTheory.RepetendTableSmallBaseConstraint
 
 /-!
 # Repetend tables
@@ -25,31 +36,49 @@ public import Mathlib.Topology.Algebra.InfiniteSum.Real
 Statements from R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*,
 INTEGERS 25 (2025), Article A26. The `j`-th base-`B` digit of `m/n` is written
 `m * B ^ (j + 1) / n % B`; `E(L, n)` is the number of units of order `L` in `ZMod n`.
+
+`MetaMathlibExt.long_division_remainder_expansion` is proved in
+`MathlibExt.NumberTheory.RepetendTable`.
+
+`MetaMathlibExt.digit_add_mul_modulus_eq` is proved in
+`MathlibExt.NumberTheory.RepetendTable.BaseShift`.
+
+`MetaMathlibExt.repetend_digit_sub_eq` is proved in
+`MathlibExt.NumberTheory.RepetendTable.DigitDifference`.
+
+`MetaMathlibExt.repetend_digit_diff_of_columns_eq` is proved in
+`MathlibExt.NumberTheory.RepetendTable.TwoRowColumns`.
+
+`MetaMathlibExt.repetend_column_eq_column_of_mul_modEq_one` is proved in
+`MathlibExt.NumberTheory.RepetendTable.InverseColumns`.
+
+`MetaMathlibExt.even_card_small_bases_orderOf` is proved in
+`MathlibExt.NumberTheory.RepetendTable.InversePairs`.
+
+`MetaMathlibExt.repetend_last_digit_ne_zero` is proved in
+`MathlibExt.NumberTheory.RepetendTable.LastDigit`.
+
+`MetaMathlibExt.totient_dvd_card_orderOf_eq` is proved in
+`MathlibExt.NumberTheory.RepetendTable.OrderCount`.
+
+`MetaMathlibExt.orderOf_eq_six_ne_small_residues` is proved in
+`MathlibExt.NumberTheory.RepetendTable.OrderSix`.
+
+`MetaMathlibExt.padicValNat_sq_sub_add_one_of_orderOf_eq` is proved in
+`MathlibExt.NumberTheory.RepetendTable.PrimePowerValuation`.
+
+`MetaMathlibExt.tsum_inv_pow_succ_lt` is proved in
+`MathlibExt.Analysis.Series.InversePowerTail`.
 -/
 
 namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Raising the base by multiples of `n` shifts each repetend digit linearly: for the `j`-th digit
-`⌊m B^(j+1) / n⌋ mod B` of `m/n` in base `B`, there is `c < n` with
-`digit_j(b + t n) = digit_j(b) + t c` for every `t ≥ 0`.
-
-Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
-Article A26, Corollary 3 (`integers-2025-A26-cor-3`). -/
-public theorem_wanted digit_add_mul_modulus_eq (m n b j : ℕ) (hn : 0 < n) (hb : 2 ≤ b) :
-    ∃ c < n, ∀ t : ℕ,
-      m * (b + t * n) ^ (j + 1) / n % (b + t * n) = m * b ^ (j + 1) / n % b + t * c
-
-/-- The number `E(L, n)` of elements of order `L` in `(ℤ/nℤ)ˣ` is a multiple of `φ(L)`.
-
-Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
-Article A26, Corollary 4 (`integers-2025-A26-cor-4`). -/
-public theorem_wanted totient_dvd_card_orderOf_eq (L n : ℕ) [NeZero n] : L.totient ∣
-    (Finset.univ.filter fun u : (ZMod n)ˣ => orderOf u = L).card
-
-/-- If `E(L, n) = φ(L)` and `L ≥ 2` is even, then `n = 4, L = 2`, or `n = t q` with `t ∈ {1, 2}`,
-`q` an odd prime power and `L ∣ φ(q)`.
+/-- **Moduli with exactly $\varphi(L)$ units of even order $L$.** Let $n \ge 1$ and let $L \ge 2$
+be even. If the number of elements of multiplicative order $L$ in
+$(\mathbb{Z}/n\mathbb{Z})^\times$ equals $\varphi(L)$, then either $n = 4$ and $L = 2$, or $n = tq$
+for some $t \in \{1, 2\}$ and some odd prime power $q$ with $L \mid \varphi(q)$.
 
 Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
 Article A26, Corollary 5 (`integers-2025-A26-cor-5`). -/
@@ -58,27 +87,22 @@ public theorem_wanted card_orderOf_eq_totient_classification (L n : ℕ) [NeZero
     (n = 4 ∧ L = 2) ∨
       ∃ t q : ℕ, (t = 1 ∨ t = 2) ∧ n = t * q ∧ Odd q ∧ IsPrimePow q ∧ L ∣ q.totient
 
-/-- The number `E(2, n)` of elements of order `2` in `(ℤ/nℤ)ˣ` is a power of `2` minus `1`.
+/-- **Elements of order two modulo $n$.** For every $n \ge 1$, the number of elements of
+multiplicative order $2$ in $(\mathbb{Z}/n\mathbb{Z})^\times$ is $2^k - 1$ for some natural
+number $k$.
 
 Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
 Article A26, Corollary 6 (`integers-2025-A26-cor-6`). -/
 public theorem_wanted card_orderOf_eq_two_eq_two_pow_sub_one (n : ℕ) [NeZero n] :
     ∃ k : ℕ, (Finset.univ.filter fun u : (ZMod n)ˣ => orderOf u = 2).card = 2 ^ k - 1
 
-/-- If `n = p^k` with `p ≡ 1 (mod 6)` prime and `b` has multiplicative order `6` modulo `n`, then
-`b ≢ 0, 1/2, ±1, 2 (mod n)`.
-
-Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
-Article A26, Lemma 16 (`integers-2025-A26-lem-16`). -/
-public theorem_wanted orderOf_eq_six_ne_small_residues (p k : ℕ) (hp : p.Prime) (hp6 : p % 6 = 1)
-    (hk : 0 < k) (b : ZMod (p ^ k))
-    (hb : orderOf b = 6) :
-    b ≠ 0 ∧ 2 * b ≠ 1 ∧ b ≠ 1 ∧ b ≠ -1 ∧ b ≠ 2
-
-/-- For `Q = p^j`, `c_i(z) = ((g_i z + f_i) mod Q) + e_i` with `g_1, g_2, g_2 - g_1` prime to `p`,
-residues `0 ≤ f_1 ≤ f_2 < Q`, `0 ≤ g_i < Q` and reals `0 < e_1 < e_2 < 1`, the sign of
-`d(z) = c_2(z) - c_1(z)` is `+1` and `-1` equally often on (a) `1 ≤ z ≤ Q - 1` and (b)
-`1 ≤ z ≤ Q - 1`, `p ∤ z`, the latter when `f_1 ≡ 0` or `f_1 ≡ f_2 (mod p)`.
+/-- **Sign balance for differences of shifted linear residues.** Let $p$ be prime, $j \ge 1$ and
+$Q = p^j$. Let $g_1, g_2, f_1, f_2$ be natural numbers with $g_1, g_2 < Q$ and $f_1 \le f_2 < Q$
+such that $p$ divides none of $g_1$, $g_2$, $g_2 - g_1$, and let $e_1, e_2$ be reals with
+$0 < e_1 < e_2 < 1$. For natural $z$ put $c_i(z) = ((g_i z + f_i) \bmod Q) + e_i$ and
+$d(z) = c_2(z) - c_1(z)$. Then (a) among $1 \le z \le Q - 1$, the number of $z$ with $d(z) > 0$
+equals the number with $d(z) < 0$; and (b) if $f_1 \equiv 0 \pmod p$ or
+$f_1 \equiv f_2 \pmod p$, the same holds among the $z$ with $1 \le z \le Q - 1$ and $p \nmid z$.
 
 Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
 Article A26, Theorem 7 (`integers-2025-A26-thm-7`). -/
@@ -95,10 +119,12 @@ public theorem_wanted sign_balance_shifted_linear_residues (p j : ℕ) (hp : p.P
         ((Finset.Icc 1 (p ^ j - 1)).filter (fun z => ¬ p ∣ z ∧ 0 < d z)).card =
           ((Finset.Icc 1 (p ^ j - 1)).filter (fun z => ¬ p ∣ z ∧ d z < 0)).card)
 
-/-- Block sums of a repetend: let `x/N = ∑ a_i B^(-i-1)` be purely periodic with period `e = dk`,
-`A_j = ∑_{i<k} a_(jk+i) B^(k-1-i)`, `S_d(x) = ∑_{j<d} A_j`, `x_j = x B^j mod N` and
-`R_d(x) = ∑_{j<d} x_(jk)`. Then (a) `S_d(x) = R_d(x)(B^k - 1)/N`, and (b) if
-`gcd(B^k - 1, N) = 1` then `S_d(x) ≡ 0 (mod B^k - 1)`.
+/-- **Block sums of a repetend.** Let $B \ge 2$, $N$, $x < N$, $d \ge 1$ and $k \ge 1$ be natural
+numbers, and let $a_i = \lfloor xB^{i+1}/N \rfloor \bmod B$ be the $i$-th base-$B$ digit of $x/N$.
+Suppose $a_{i+dk} = a_i$ for every natural number $i$. Let
+$S = \sum_{j<d} \sum_{i<k} a_{jk+i} B^{k-1-i}$ be the sum of the first $d$ blocks of $k$ digits,
+each read as a base-$B$ number, and let $R = \sum_{j<d} (xB^{jk} \bmod N)$. Then
+$SN = R(B^k - 1)$, and if $B^k - 1$ is coprime to $N$, then $B^k - 1$ divides $S$.
 
 Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
 Article A26, Theorem 9 (`integers-2025-A26-thm-9`). -/
@@ -110,45 +136,11 @@ public theorem_wanted repetend_block_sum_eq (B N x d k : ℕ) (hB : 2 ≤ B) (hx
     let R := ∑ j ∈ Finset.range d, x * B ^ (j * k) % N
     S * N = R * (B ^ k - 1) ∧ (Nat.Coprime (B ^ k - 1) N → B ^ k - 1 ∣ S)
 
-
-/-- Long division of `m/n` in base `b`: with remainders `c_j = m b^j mod n` and digits
-`r_j = ⌊b c_j / n⌋`, every truncation satisfies
-`m/n = ∑_{i<k} r_i b^{-i-1} + c_k/(n b^k)`, and `r_j = (b c_j - c_{j+1})/n`. Stated for a
-proper fraction `m < n` (needed for `k = 0`) and every base `b ≥ 1`; the identity
-`r_j = (b c_j - c_{j+1})/n` is stated with the division cleared.
-
-Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
-Article A26, Lemma 5 (`integers-2025-A26-lem-5`). -/
-public theorem_wanted long_division_remainder_expansion (m n b : ℕ) (hmn : m < n) (hb : 0 < b) :
-    let c : ℕ → ℕ := fun j => m * b ^ j % n
-    let r : ℕ → ℕ := fun j => b * c j / n
-    (∀ k : ℕ, (m : ℚ) / n =
-      ∑ i ∈ Finset.range k, (r i : ℚ) / (b : ℚ) ^ (i + 1) + (c k : ℚ) / ((n : ℚ) * (b : ℚ) ^ k)) ∧
-    ∀ j : ℕ, r j * n = b * c j - c (j + 1)
-
-/-- The last repetend digit of `1/n` is nonzero: for `n ≥ 2` and a base `b ≥ 2` prime to `n`,
-with repetend length `L = ord_n(b)`, the digit `⌊b^((L-1)+1)/n⌋ mod b` at position `L - 1` is
-not `0`. Stated for every such base (the paper's table rows are its small bases).
-
-Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
-Article A26, Lemma 25 (`integers-2025-A26-lem-25`). -/
-public theorem_wanted repetend_last_digit_ne_zero (n b : ℕ) (hn : 2 ≤ n) (hb : 2 ≤ b)
-    (hcop : Nat.Coprime b n) :
-    b ^ (orderOf (b : ZMod n) - 1 + 1) / n % b ≠ 0
-
-/-- If `b_2 = b^2 + u n` with `u ∈ ℤ` and `2 ≤ b_2 ≤ n - 2`, then `b ≠ u + 1`. Stated for every
-natural `b` (the paper's `b` is a small base).
-
-Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
-Article A26, Lemma 31 (`integers-2025-A26-lem-31`). -/
-public theorem_wanted ne_add_one_of_sq_add_mul_mem (n b : ℕ) (u : ℤ)
-    (h2 : 2 ≤ (b : ℤ) ^ 2 + u * n) (hn : (b : ℤ) ^ 2 + u * n ≤ n - 2) :
-    (b : ℤ) ≠ u + 1
-
-/-- For a prime `n`, a prime `L` and a base `b` of repetend length `L = ord_n(b)`: if `m = 1`
-or `m` is a small base `2 ≤ m ≤ n - 1` of length `L`, the long-division remainders
-`c_j = m b^j mod n` (`0 ≤ j < L`, one period), with `1` removed, are exactly the small bases
-`2 ≤ a ≤ n - 1` of length `L`.
+/-- **Long-division remainders and small bases of prime order.** Let $n$ and $L$ be primes and
+let $b$ be a natural number of multiplicative order $L$ modulo $n$. Suppose $m = 1$, or
+$2 \le m \le n - 1$ and $m$ has multiplicative order $L$ modulo $n$. Then removing $1$ from the
+set of remainders $\{m b^j \bmod n : 0 \le j < L\}$ leaves exactly the set of integers $a$ with
+$2 \le a \le n - 1$ whose multiplicative order modulo $n$ is $L$.
 
 Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
 Article A26, Corollary 2 (`integers-2025-A26-cor-2`). -/
@@ -158,18 +150,11 @@ public theorem_wanted long_division_remainders_erase_one_eq_small_bases (n L b m
     ((Finset.range L).image fun j => m * b ^ j % n).erase 1 =
       (Finset.Icc 2 (n - 1)).filter fun a : ℕ => orderOf (a : ZMod n) = L
 
-/-- For every modulus `n`, the number of small bases `1 ≤ b < n`, `gcd(b, n) = 1`, of repetend
-length (multiplicative order) `L > 2` is even. The record's first sentence (Lemma 2: `b^x` has
-order `L` iff `gcd(x, L) = 1`) is Mathlib `IsOfFinOrder.orderOf_pow` and is not restated.
-
-Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
-Article A26, Lemma 3 (`integers-2025-A26-lem-2`). -/
-public theorem_wanted even_card_small_bases_orderOf (n L : ℕ) (hL : 2 < L) :
-    Even ((Finset.Ico 1 n).filter fun b => Nat.Coprime b n ∧ orderOf (b : ZMod n) = L).card
-
-/-- Repetend digit formula symmetry: let `b` have order `L` modulo `n`, `b_x = b^x mod n`, and
-`r_{x,j} = ⌊b_x^(j+1)/n⌋ mod b_x` the `j`-th base-`b_x` digit of `1/n`. If `j` is prime to `L` and
-`j j' ≡ 1 (mod L)`, then `r_{xj, j'} = r_{x, j}`.
+/-- **Repetend digits are symmetric under inverse indices.** Let $n, b, x, j, j'$ be natural
+numbers and $L \ge 1$, and suppose $b$ has multiplicative order $L$ modulo $n$. For $y, c \ge 0$
+put $b_y = b^y \bmod n$ and $r_{y,c} = \lfloor b_y^{c+1}/n \rfloor \bmod b_y$, the $c$-th digit
+of $1/n$ in base $b_y$. If $\gcd(j, L) = 1$ and $j j' \equiv 1 \pmod L$, then
+$r_{xj, j'} = r_{x, j}$.
 
 Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
 Article A26, Lemma 6 (`integers-2025-A26-lem-6`). -/
@@ -177,20 +162,12 @@ public theorem_wanted repetend_digit_pow_mul_eq_of_mul_modEq_one (n b L x j j' :
     (hb : orderOf (b : ZMod n) = L) (hj : Nat.Coprime j L) (hjj : j * j' ≡ 1 [MOD L]) :
     (b ^ (x * j) % n) ^ (j' + 1) / n % (b ^ (x * j) % n) = (b ^ x % n) ^ (j + 1) / n % (b ^ x % n)
 
-/-- Class A column matches: in the repetend table of `1/n` whose rows are the small bases
-`1 ≤ b < n` of order `L` and whose column `j` holds the digits `⌊b^(j+1)/n⌋ mod b`, if `j` is prime
-to `L`, `j^2 ≢ 1 (mod L)` and `j j' ≡ 1 (mod L)`, then columns `j` and `j'` are equal as multisets.
+/-- **Units modulo $L$ whose square is not $1$.** Let $L \ge 1$, let $e$ be the exponent of $2$
+in $L$ and let $f$ be the number of distinct odd prime factors of $L$. Then the number of
+integers $0 \le j < L$ with $\gcd(j, L) = 1$ and $j^2 \not\equiv 1 \pmod{L}$ is
+$\varphi(L) - 2^{f + g(e)}$, where $g(e) = \max(0, \min(2, e - 1))$.
 
-Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
-Article A26, Theorem 2 (`integers-2025-A26-thm-2`). -/
-public theorem_wanted repetend_column_eq_column_of_mul_modEq_one (n L j j' : ℕ) (hL : 0 < L)
-    (hj : Nat.Coprime j L) (hjsq : ¬ j ^ 2 ≡ 1 [MOD L]) (hjj : j * j' ≡ 1 [MOD L]) :
-    let B := (Finset.Ico 1 n).filter fun b => Nat.Coprime b n ∧ orderOf (b : ZMod n) = L
-    (B.val.map fun b => b ^ (j + 1) / n % b) = B.val.map fun b => b ^ (j' + 1) / n % b
-
-/-- The number of Class A columns: if `L = 2^e · (odd part)` with `f` distinct odd prime factors,
-the number of `0 ≤ j < L` prime to `L` with `j^2 ≢ 1 (mod L)` is `φ(L) - 2^(f + g(e))`,
-`g(e) = max(0, min(2, e - 1))`. These columns pair off as `{j, j⁻¹}`, so this count is `2 P(L)`.
+In the paper these $j$ index the Class A columns of a repetend table.
 
 Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
 Article A26, Theorem 2 (`integers-2025-A26-thm-2`). -/
@@ -198,9 +175,10 @@ public theorem_wanted card_coprime_not_sq_modEq_one (L : ℕ) (hL : 0 < L) :
     ((Finset.range L).filter fun j => Nat.Coprime j L ∧ ¬ j ^ 2 ≡ 1 [MOD L]).card =
       L.totient - 2 ^ ((L.primeFactors.filter Odd).card + min 2 (L.factorization 2 - 1))
 
-/-- The final column `L - 1` of the repetend table of `1/n` pairs each small base `b` of order `L`
-with `b^(L-1) mod n = b⁻¹`: the two rows have the same digit in column `L - 1`. Here `b < n` is a
-small base, as in the table.
+/-- **The last column pairs a base with its inverse.** Let $n$ and $L \ge 1$ be natural numbers
+and let $b < n$ have multiplicative order $L$ modulo $n$. Put $b' = b^{L-1} \bmod n$, the inverse
+of $b$ modulo $n$. Then $b$ and $b'$ have the same digit in column $L - 1$:
+$\lfloor b'^{L}/n \rfloor \bmod b' = \lfloor b^{L}/n \rfloor \bmod b$.
 
 Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
 Article A26, Theorem 2 (`integers-2025-A26-thm-2`). -/
@@ -208,10 +186,16 @@ public theorem_wanted repetend_last_column_inv_eq (n L b : ℕ) (hL : 0 < L) (hb
     (hb : orderOf (b : ZMod n) = L) :
     (b ^ (L - 1) % n) ^ (L - 1 + 1) / n % (b ^ (L - 1) % n) = b ^ (L - 1 + 1) / n % b
 
-/-- Class B column matches: let `L = 12a + 6` with `a > 0`, `n = p^k` with `p ≡ 1 (mod L)` prime,
-`b` a small base of order `L`, `b_i = b^i mod n` and `k_i = (b_i + b_(i+L/3) + b_(i+2L/3))/n`.
-Then `k_i = 1` for all `i` prime to `L` iff columns `2a + 1, 4a + 2` match and columns
-`8a + 4, 10a + 5` match (columns as in Theorem 2). The conjectured proportion is omitted.
+/-- **Class B matched columns of repetend tables.** Let $a \ge 1$ and $L = 12a + 6$, let $p$ be a
+prime with $p \equiv 1 \pmod L$, let $k \ge 1$ and $n = p^k$, and let $b$ be a natural number of
+multiplicative order $L$ modulo $n$; write $b_i = b^i \bmod n$. Let the rows be the integers $c$
+with $1 \le c < n$, $\gcd(c, n) = 1$ and multiplicative order $L$ modulo $n$, and let column $j$
+be the multiset of the digits $\lfloor c^{j+1}/n \rfloor \bmod c$ over these rows. Then
+$\lfloor (b_i + b_{i + L/3} + b_{i + 2L/3})/n \rfloor = 1$ for every $0 \le i < L$ coprime to $L$
+if and only if columns $2a + 1$ and $4a + 2$ are equal and columns $8a + 4$ and $10a + 5$ are
+equal.
+
+The proportion conjectured in the source is not stated here.
 
 Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
 Article A26, Theorem 4 (`integers-2025-A26-thm-4`). -/
@@ -226,30 +210,11 @@ public theorem_wanted repetend_columns_match_iff_triple_sum_eq (p k a b : ℕ) (
         (b ^ i % n + b ^ (i + L / 3) % n + b ^ (i + 2 * L / 3) % n) / n = 1) ↔
       (C (2 * a + 1) = C (4 * a + 2) ∧ C (8 * a + 4) = C (10 * a + 5))
 
-/-- Digit differences: with `b_x = b^x mod n` and `r_{x,j} = ⌊b_x^(j+1)/n⌋ mod b_x`,
-`n (r_{ym,e} - r_{y,d}) = b_{ym} b_{yme} - b_{ym(e+1)} - b_y b_{yd} + b_{y(d+1)}`.
-
-Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
-Article A26, Lemma 7 (`integers-2025-A26-lem-7`). -/
-public theorem_wanted repetend_digit_sub_eq (n b y m d e : ℕ) (hn : 0 < n) (hb : Nat.Coprime b n) :
-    let r : ℕ → ℕ → ℕ := fun x j => (b ^ x % n) ^ (j + 1) / n % (b ^ x % n)
-    (n : ℤ) * ((r (y * m) e : ℤ) - r y d) =
-      ((b ^ (y * m) % n : ℕ) : ℤ) * (b ^ (y * m * e) % n : ℕ) - (b ^ (y * m * (e + 1)) % n : ℕ) -
-        ((b ^ y % n : ℕ) : ℤ) * (b ^ (y * d) % n : ℕ) + (b ^ (y * (d + 1)) % n : ℕ)
-
-/-- Class C setting (`n = p^i` with `p ≡ 1 (mod 6)` prime, `Q = p^j`, `j ≥ 1`, `i ≥ 2j`, `B` of
-order `L = 6Q` mod `n`):
-`B^2 - B + 1 = M` with `p`-adic valuation exactly `i - j` (so `M = l p^(i-j)`, `p ∤ l`).
-
-Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
-Article A26, Lemma 8 (`integers-2025-A26-lem-8`). -/
-public theorem_wanted padicValNat_sq_sub_add_one_of_orderOf_eq (p i j B : ℕ) (hp : p.Prime)
-    (hp6 : p % 6 = 1)
-    (hj : 0 < j) (hij : 2 * j ≤ i) (hB : orderOf (B : ZMod (p ^ i)) = 6 * p ^ j) :
-    padicValNat p (B ^ 2 - B + 1) = i - j
-
-/-- Class C setting (`p ≡ 1 (mod 6)`): if `0 ≤ z < 6Q` with `z ≡ 2 (mod 6)` and
-`z ≡ B⁻¹ (mod Q)`, or `z ≡ 1 - B (mod Q)`, then `B^z ≡ B - 1 (mod n)`.
+/-- **A power of $B$ equal to $B - 1$ modulo $p^i$.** Let $p$ be a prime with $p \equiv 1 \pmod 6$,
+let $i$ and $j$ be natural numbers with $j \ge 1$ and $i \ge 2j$, put $n = p^i$ and $Q = p^j$, and
+let $B < n$ be a natural number whose multiplicative order modulo $n$ is $6Q$. Let $z < 6Q$ be a
+natural number with $z \equiv 2 \pmod 6$ such that $zB \equiv 1 \pmod Q$ or
+$z \equiv 1 - B \pmod Q$. Then $B^z \bmod n = B - 1$.
 
 Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
 Article A26, Lemma 9 (`integers-2025-A26-lem-9`). -/
@@ -260,7 +225,10 @@ public theorem_wanted pow_mod_eq_sub_one_of_orderOf_eq (p i j B z : ℕ) (hp : p
     (hzQ : z * B ≡ 1 [MOD p ^ j] ∨ (z : ℤ) ≡ 1 - B [ZMOD p ^ j]) :
     B ^ z % p ^ i = B - 1
 
-/-- Class C setting: if `y ≡ s (mod 6)` then `b^y ≡ b^s (mod Q)`.
+/-- **Powers of a base of order $6p^j$ modulo $p^j$ depend only on the exponent modulo $6$.** Let
+$p$ be a prime, let $i$ and $j$ be natural numbers with $j \ge 1$ and $i \ge 2j$, and let $b$ be a
+natural number whose multiplicative order modulo $p^i$ is $6p^j$. If $y$ and $s$ are natural
+numbers with $y \equiv s \pmod 6$, then $b^y \equiv b^s \pmod{p^j}$.
 
 Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
 Article A26, Lemma 10 (`integers-2025-A26-lem-10`). -/
@@ -268,10 +236,16 @@ public theorem_wanted pow_modEq_pow_of_modEq_six (p i j b y s : ℕ) (hp : p.Pri
     (hij : 2 * j ≤ i) (hb : orderOf (b : ZMod (p ^ i)) = 6 * p ^ j) (hys : y ≡ s [MOD 6]) :
     b ^ y ≡ b ^ s [MOD p ^ j]
 
-/-- Class C setting (`p ≡ 1 (mod 6)`): let `f = ±1`, `d ≡ 2f (mod 6)`, `B = b^y mod n` with
-`y ≡ s = ±1 (mod 6)`, and
-`k ∈ [0, 6Q)` with `k ≡ b^(sf) d (mod Q)`, `k ≡ f (mod 6)`. Then `B^k mod n = (B^d mod n) + 1`.
-Here `b^(-1) mod Q` is written `b^5` (`b^6 ≡ 1 (mod Q)` by Lemma 10).
+/-- **Powers of $b^y \bmod p^i$ that differ by one.** Let $p$ be a prime with $p \equiv 1 \pmod 6$,
+let $i$ and $j$ be natural numbers with $j \ge 1$ and $i \ge 2j$, put $n = p^i$ and $Q = p^j$, and
+let $b$ be a natural number whose multiplicative order modulo $n$ is $6Q$. Let $f \in \{1, -1\}$,
+let $y$ be a natural number with $y \equiv s \pmod 6$ for some $s \in \{1, -1\}$, and put $e = 1$
+if $sf = 1$ and $e = 5$ if $sf = -1$. Let $d$ be a natural number with $d \equiv 2f \pmod 6$, and
+let $k < 6Q$ be a natural number with $k \equiv f \pmod 6$ and $k \equiv b^e d \pmod Q$. Then, with
+$B = b^y \bmod n$, we have $B^k \bmod n = (B^d \bmod n) + 1$.
+
+Here $b^5$ stands for $b^{-1}$ modulo $Q$, as $b^6 \equiv 1 \pmod Q$, so $b^e$ is $b^{sf}$ modulo
+$Q$.
 
 Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
 Article A26, Lemma 11 (`integers-2025-A26-lem-11`). -/
@@ -282,11 +256,14 @@ public theorem_wanted pow_mod_eq_pow_mod_add_one_of_crt (p i j b y d k : ℕ) (f
     (hkQ : k ≡ b ^ (if (y % 6 = 1 ↔ f = 1) then 1 else 5) * d [MOD p ^ j]) :
     (b ^ y % p ^ i) ^ k % p ^ i = (b ^ y % p ^ i) ^ d % p ^ i + 1
 
-/-- For `n = p^i` (`p ≡ 1 (mod 6)` prime), `Q = p^j` and `B` of order `6Q` mod `n`, with
-`B_z = B^z mod n` and
-`B_(-Q) = B_(5Q)`: (a) `B_(2Q) = B_Q - 1`, `B_(-2Q) = B_(-Q) - 1`; (b) `B_Q + B_(-Q) = n + 1`;
-(c) `B_(3Q) = n - 1`; (d) `Q^2 ≡ Q (mod 6Q)`. Stated for every `i, j` (the paper's `j ≥ 1`,
-`i ≥ 2j` are not needed).
+/-- **Relations among the powers $B^{zp^j} \bmod p^i$ for a base of order $6p^j$.** Let $p$ be a
+prime with $p \equiv 1 \pmod 6$, let $i$ and $j$ be natural numbers, put $n = p^i$ and $Q = p^j$,
+and let $B$ be a natural number whose multiplicative order modulo $n$ is $6Q$. Write
+$B_z = B^z \bmod n$. Then $B_{2Q} = B_Q - 1$, $B_{4Q} = B_{5Q} - 1$, $B_Q + B_{5Q} = n + 1$ and
+$B_{3Q} = n - 1$; moreover $Q^2 \equiv Q \pmod{6Q}$.
+
+Since $B^{6Q} \equiv 1 \pmod n$, the residues $B_{5Q}$ and $B_{4Q}$ are those of $B^{-Q}$ and
+$B^{-2Q}$. The paper assumes $j \ge 1$ and $i \ge 2j$; these are not needed here.
 
 Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
 Article A26, Lemma 13 (`integers-2025-A26-lem-13`). -/
@@ -298,11 +275,15 @@ public theorem_wanted pow_mod_relations_of_orderOf_eq_six_mul (p i j B : ℕ) (h
     B ^ (2 * Q) % n = B ^ Q % n - 1 ∧ B ^ (4 * Q) % n = B ^ (5 * Q) % n - 1 ∧
       B ^ Q % n + B ^ (5 * Q) % n = n + 1 ∧ B ^ (3 * Q) % n = n - 1 ∧ Q ^ 2 ≡ Q [MOD 6 * Q]
 
-/-- For `n = p^i` (`p ≡ 1 (mod 6)` prime), `Q = p^j`, a small base `B` of order `L = 6Q`,
-`f = ±1`, `d ≡ 2fQ` and
-`e ≡ fQ (mod L)`: with multiplier `m_s = 1` the digit difference `D = n (r_e - r_d)`
-(`r_j = ⌊B^(j+1)/n⌋ mod B`) equals `B + B_(d+1) - B_(e+1)` and lies in `{0, n}`. Stated for every
-`i, j`.
+/-- **Digit differences for a base of order $6p^j$ modulo $p^i$.** Let $p$ be a prime with
+$p \equiv 1 \pmod 6$, let $i$ and $j$ be natural numbers, and put $n = p^i$ and $Q = p^j$. Let
+$B < n$ be a natural number whose multiplicative order modulo $n$ is $6Q$, let $f \in \{1, -1\}$,
+and let $d$ and $e$ be natural numbers with $d \equiv 2fQ \pmod{6Q}$ and $e \equiv fQ \pmod{6Q}$.
+For natural $s$ write $r_s = \lfloor B^{s+1}/n \rfloor \bmod B$ for the $s$-th base-$B$ digit of
+$1/n$, and put $D = n(r_e - r_d)$. Then $D = B + (B^{d+1} \bmod n) - (B^{e+1} \bmod n)$, and
+$D = 0$ or $D = n$.
+
+The statement is made for all natural numbers $i$ and $j$.
 
 Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
 Article A26, Lemma 14 (`integers-2025-A26-lem-14`). -/
@@ -314,11 +295,16 @@ public theorem_wanted repetend_digit_sub_mem_zero_n (p i j B d e : ℕ) (f : ℤ
     let D : ℤ := (n : ℤ) * (((B ^ (e + 1) / n % B : ℕ) : ℤ) - (B ^ (d + 1) / n % B : ℕ))
     D = B + (B ^ (d + 1) % n : ℕ) - (B ^ (e + 1) % n : ℕ) ∧ (D = 0 ∨ D = n)
 
-/-- Class C: for `n = p^i` (`p ≡ 1 (mod 6)` prime), `Q = p^j` (`j ≥ 1`, `i ≥ 2j`) and a small
-base `b` of order `L = 6Q`,
-let `d, e ∈ [0, L)` with `d ≡ b^2`, `e ≡ b^4 (mod Q)` and `d ≡ e ≡ 4 (mod 6)`. Then columns `d`
-and `e` of the repetend table of `1/n` are equal as multisets (the sorted columns coincide). The
-`D_s = 0` clause, which needs the multiplier `m_s`, is omitted.
+/-- **Class C matched columns of repetend tables.** Let $p$ be a prime with $p \equiv 1 \pmod 6$,
+let $j \ge 1$ and $i \ge 2j$, and put $n = p^i$, $Q = p^j$ and $L = 6Q$. Let $b$ be a natural
+number of multiplicative order $L$ modulo $n$, and let $d, e < L$ be natural numbers with
+$d \equiv b^2 \pmod Q$, $e \equiv b^4 \pmod Q$ and $d \equiv e \equiv 4 \pmod 6$. Let the rows be
+the integers $c$ with $1 \le c < n$, $\gcd(c, n) = 1$ and multiplicative order $L$ modulo $n$, and
+let column $s$ be the multiset of the digits $\lfloor c^{s+1}/n \rfloor \bmod c$ over these rows.
+Then columns $d$ and $e$ are equal.
+
+Theorem 6 of the source also says when the digit difference between these columns is $0$; that
+clause is not stated here.
 
 Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
 Article A26, Theorem 6 (`integers-2025-A26-thm-6`). -/
@@ -331,8 +317,11 @@ public theorem_wanted repetend_columns_eq_of_crt_sq (p i j b d e : ℕ) (hp : p.
     let B := (Finset.Ico 1 n).filter fun c => Nat.Coprime c n ∧ orderOf (c : ZMod n) = 6 * p ^ j
     (B.val.map fun c => c ^ (d + 1) / n % c) = B.val.map fun c => c ^ (e + 1) / n % c
 
-/-- If the repetend length is `L ≤ 2` (and some small base has that length), no two distinct
-columns of the repetend table of `1/n` match.
+/-- **Repetend tables of length at most $2$ have no matched columns.** Let $n$ and $L \le 2$ be
+natural numbers, let the rows be the integers $b$ with $1 \le b < n$, $\gcd(b, n) = 1$ and
+multiplicative order $L$ modulo $n$, and let column $j$ be the multiset of the digits
+$\lfloor b^{j+1}/n \rfloor \bmod b$ over these rows. If there is at least one row, then for all
+distinct $i, j < L$ columns $i$ and $j$ are different.
 
 Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
 Article A26, Lemma 26 (`integers-2025-A26-lem-26`). -/
@@ -341,8 +330,11 @@ public theorem_wanted repetend_columns_ne_of_le_two (n L : ℕ) (hL : L ≤ 2) :
     B.Nonempty → ∀ i < L, ∀ j < L, i ≠ j →
       (B.val.map fun b => b ^ (i + 1) / n % b) ≠ B.val.map fun b => b ^ (j + 1) / n % b
 
-/-- If the number of rows `n_r` (small bases of order `L`) is `1` or `3`, no two distinct columns
-of the repetend table of `1/n` match.
+/-- **Repetend tables with one or three rows have no matched columns.** For natural numbers $n$
+and $L$, let the rows be the integers $b$ with $1 \le b < n$, $\gcd(b, n) = 1$ and multiplicative
+order $L$ modulo $n$, and let column $j$ be the multiset of the digits
+$\lfloor b^{j+1}/n \rfloor \bmod b$ over these rows. If there are exactly one or exactly three
+rows, then for all distinct $i, j < L$ columns $i$ and $j$ are different.
 
 Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
 Article A26, Lemma 27 (`integers-2025-A26-lem-27`). -/
@@ -351,22 +343,12 @@ public theorem_wanted repetend_columns_ne_of_card_eq_one_or_three (n L : ℕ) :
     (B.card = 1 ∨ B.card = 3) → ∀ i < L, ∀ j < L, i ≠ j →
       (B.val.map fun b => b ^ (i + 1) / n % b) ≠ B.val.map fun b => b ^ (j + 1) / n % b
 
-/-- If `n_r = 2`, with rows `b ≠ b'` and `D_i = r_{b',i} - r_{b,i}`, `S_i` the column sum: if
-columns `i` and `j` match then `D_i = ±D_j` and `S_i = S_j`.
-
-Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
-Article A26, Lemma 28 (`integers-2025-A26-lem-28`). -/
-public theorem_wanted repetend_digit_diff_of_columns_eq (n L b b' i j : ℕ) :
-    let B := (Finset.Ico 1 n).filter fun c => Nat.Coprime c n ∧ orderOf (c : ZMod n) = L
-    let C : ℕ → Multiset ℕ := fun k => B.val.map fun c => c ^ (k + 1) / n % c
-    let D : ℕ → ℤ := fun k => ((b' ^ (k + 1) / n % b' : ℕ) : ℤ) - (b ^ (k + 1) / n % b : ℕ)
-    B.card = 2 → b ∈ B → b' ∈ B → b ≠ b' → C i = C j →
-      (D i = D j ∨ D i = -D j) ∧ (C i).sum = (C j).sum
-
-/-- If `L` is even, `(ℤ/nℤ)ˣ` is cyclic and `b` is a small base of order `L`, then
-`b_(j+L/2) = n - b_j` (`b_j = b^j mod n`) and the digits `r_j = ⌊b^(j+1)/n⌋ mod b` satisfy
-`r_j + r_(j+L/2) = r_(L/2)`; summing over rows gives the column relations
-`C_j + C_(j+L/2) = C_(L/2)`, `S_j + S_(j+L/2) = S_(L/2)`.
+/-- **Half-period symmetry of the repetend of $1/n$.** Let $n$ be a natural number whose unit
+group $(\mathbb{Z}/n\mathbb{Z})^\times$ is cyclic, let $L > 0$ be even, and let $b < n$ be a
+natural number whose multiplicative order modulo $n$ is $L$. For natural numbers $m$ write
+$b_m = b^m \bmod n$ and $r_m = \lfloor b^{m+1}/n \rfloor \bmod b$, the $m$-th base-$b$ digit of
+$1/n$. Then for every natural number $j$ we have $b_{j+L/2} = n - b_j$ and
+$r_j + r_{j+L/2} = r_{L/2}$.
 
 Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
 Article A26, Lemma 29 (`integers-2025-A26-lem-29`). -/
@@ -375,7 +357,11 @@ public theorem_wanted pow_add_half_mod_eq_and_digit_add (n L b j : ℕ) [IsCycli
     b ^ (j + L / 2) % n = n - b ^ j % n ∧
       b ^ (j + 1) / n % b + b ^ (j + L / 2 + 1) / n % b = b ^ (L / 2 + 1) / n % b
 
-/-- If `n_r = 2` and `L = 3`, no two distinct columns of the repetend table of `1/n` match.
+/-- **Two-row repetend tables of length $3$ have no matched columns.** For a natural number $n$,
+let the rows be the integers $b$ with $1 \le b < n$, $\gcd(b, n) = 1$ and multiplicative order $3$
+modulo $n$, and let column $j$ be the multiset of the digits $\lfloor b^{j+1}/n \rfloor \bmod b$
+over these rows. If there are exactly two rows, then for all distinct $i, j < 3$ columns $i$ and
+$j$ are different.
 
 Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
 Article A26, Lemma 30 (`integers-2025-A26-lem-30`). -/
@@ -384,7 +370,11 @@ public theorem_wanted repetend_columns_ne_of_card_two_of_three (n : ℕ) :
     B.card = 2 → ∀ i < 3, ∀ j < 3, i ≠ j →
       (B.val.map fun b => b ^ (i + 1) / n % b) ≠ B.val.map fun b => b ^ (j + 1) / n % b
 
-/-- If `n_r = 2` and `L = 4`, no two distinct columns of the repetend table of `1/n` match.
+/-- **Two-row repetend tables of length $4$ have no matched columns.** For a natural number $n$,
+let the rows be the integers $b$ with $1 \le b < n$, $\gcd(b, n) = 1$ and multiplicative order $4$
+modulo $n$, and let column $j$ be the multiset of the digits $\lfloor b^{j+1}/n \rfloor \bmod b$
+over these rows. If there are exactly two rows, then for all distinct $i, j < 4$ columns $i$ and
+$j$ are different.
 
 Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
 Article A26, Lemma 32 (`integers-2025-A26-lem-32`). -/
@@ -393,8 +383,10 @@ public theorem_wanted repetend_columns_ne_of_card_two_of_four (n : ℕ) :
     B.card = 2 → ∀ i < 4, ∀ j < 4, i ≠ j →
       (B.val.map fun b => b ^ (i + 1) / n % b) ≠ B.val.map fun b => b ^ (j + 1) / n % b
 
-/-- If exactly two small bases have order `6` modulo `n`, then `n = 3^k t ≥ 9` or `n = p^k t` with
-`p ≡ 1 (mod 6)` prime, `k ≥ 1`, and `t ∈ {1, 2}`.
+/-- **Moduli with exactly two small bases of order six.** Let $n$ be a natural number. If exactly
+two integers $b$ with $1 \le b < n$ and $\gcd(b, n) = 1$ have multiplicative order $6$ modulo $n$,
+then either $n = 3^k t \ge 9$ for some natural number $k$ and some $t \in \{1, 2\}$, or
+$n = p^k t$ for some prime $p \equiv 1 \pmod 6$, some $k \ge 1$ and some $t \in \{1, 2\}$.
 
 Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
 Article A26, Lemma 33 (`integers-2025-A26-lem-33`). -/
@@ -403,8 +395,11 @@ public theorem_wanted eq_of_card_small_bases_orderOf_six_eq_two (n : ℕ)
     (∃ k t : ℕ, (t = 1 ∨ t = 2) ∧ n = 3 ^ k * t ∧ 9 ≤ n) ∨
       ∃ p k t : ℕ, p.Prime ∧ p % 6 = 1 ∧ 0 < k ∧ (t = 1 ∨ t = 2) ∧ n = p ^ k * t
 
-/-- If `n = 3^k t` with `k ≥ 2`, `t ∈ {1, 2}` and `L = 6`, no two distinct columns of the repetend
-table of `1/n` match.
+/-- **Order-$6$ repetend tables of $3^k t$ have no matched columns.** Let $k \ge 2$ and
+$t \in \{1, 2\}$, and put $n = 3^k t$. Let the rows be the integers $b$ with $1 \le b < n$,
+$\gcd(b, n) = 1$ and multiplicative order $6$ modulo $n$, and let column $j$ be the multiset of
+the digits $\lfloor b^{j+1}/n \rfloor \bmod b$ over these rows. Then for all distinct $i, j < 6$
+columns $i$ and $j$ are different.
 
 Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
 Article A26, Lemma 34 (`integers-2025-A26-lem-34`). -/
@@ -415,11 +410,13 @@ public theorem_wanted repetend_columns_ne_of_three_pow_of_six (k t : ℕ) (hk : 
     ∀ i < 6, ∀ j < 6, i ≠ j →
       (B.val.map fun b => b ^ (i + 1) / n % b) ≠ B.val.map fun b => b ^ (j + 1) / n % b
 
-/-- For `n = t p^k` (`t ∈ {1, 2}`, `p ≡ 1 (mod 6)` prime, `k ≥ 1`) and a small base `b_1` of order
-`6`, put `hn = 0` if `t = 1`, `hn = p^k` if `t = 2, b_1 < p^k`, `hn = -p^k` if `t = 2, b_1 > p^k`,
-and `b_j = b_1^j mod n`. Then for some integer `u`: `b_2 = b_1 - 1 + hn`, `b_3 = n - 1`,
-`b_4 = n - b_1`, `b_5 = n - b_1 + 1 - hn`, `b_1^2 = un + b_1 - 1 + hn`,
-`b_2^2 = un - b_1 + (hn + 2b_1 - 1) hn`, `b_1 b_2 = un - 1 + (b_1 + 1) hn`.
+/-- **Powers of a base of order $6$ modulo $tp^k$.** Let $p$ be a prime with $p \equiv 1 \pmod 6$,
+let $k \ge 1$ and $t \in \{1, 2\}$ be natural numbers, and put $n = tp^k$. Let $b_1 < n$ be a
+natural number whose multiplicative order modulo $n$ is $6$, write $b_m = b_1^m \bmod n$, and put
+$H = 0$ if $t = 1$, $H = p^k$ if $t = 2$ and $b_1 < p^k$, and $H = -p^k$ if $t = 2$ and
+$b_1 \ge p^k$. Then $b_2 = b_1 - 1 + H$, $b_3 = n - 1$, $b_4 = n - b_1$ and
+$b_5 = n - b_1 + 1 - H$, and there is an integer $u$ with $b_1^2 = un + b_1 - 1 + H$,
+$b_2^2 = un - b_1 + (H + 2b_1 - 1)H$ and $b_1 b_2 = un - 1 + (b_1 + 1)H$.
 
 Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
 Article A26, Lemma 35 (`integers-2025-A26-lem-35`). -/
@@ -433,10 +430,13 @@ public theorem_wanted pow_mod_eqs_of_orderOf_eq_six (p k t b₁ : ℕ) (hp : p.P
       (b₁ : ℤ) ^ 2 = u * n + b₁ - 1 + H ∧ c 2 ^ 2 = u * n - b₁ + (H + 2 * b₁ - 1) * H ∧
       b₁ * c 2 = u * n - 1 + (b₁ + 1) * H
 
-/-- In the setting of Lemma 35, with rows `b_1` and `b_5` and `D_i = r_{5,i} - r_{1,i}`
-(`r_{x,i} = ⌊b_x^(i+1)/n⌋ mod b_x`): `D_0 = D_5 = 0`, `D_2 = n - b_1 - b_2 = 1 - 2b_1 + (1 - h)n`,
-`D_1 = (1 - h) D_2`, `D_3 = D_2`, `D_4 = h D_2`; the relations with `h = hn/n` are multiplied
-by `n`.
+/-- **Digit differences between the rows $b_1$ and $b_1^5$ of the order-$6$ table.** Let
+$p \equiv 1 \pmod 6$ be prime, $k \ge 1$, $t \in \{1, 2\}$ and $n = t p^k$, and let $b_1 < n$
+have multiplicative order $6$ modulo $n$. Put $H = 0$ if $t = 1$, $H = p^k$ if $t = 2$ and
+$b_1 < p^k$, and $H = -p^k$ if $t = 2$ and $b_1 \ge p^k$. Let $b_5 = b_1^5 \bmod n$ and, for
+$i \ge 0$, $D_i = r_i(b_5) - r_i(b_1)$, where $r_i(c) = \lfloor c^{i+1}/n \rfloor \bmod c$. Then
+$D_0 = D_5 = 0$, $D_2 = n - b_1 - (b_1^2 \bmod n) = 1 - 2 b_1 + n - H$,
+$n D_1 = (n - H) D_2$, $D_3 = D_2$ and $n D_4 = H D_2$.
 
 Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
 Article A26, Lemma 36 (`integers-2025-A26-lem-36`). -/
@@ -450,8 +450,11 @@ public theorem_wanted repetend_digit_diffs_of_orderOf_eq_six (p k t b₁ : ℕ) 
     D 0 = 0 ∧ D 5 = 0 ∧ D 2 = n - b₁ - (b₁ ^ 2 % n : ℕ) ∧ D 2 = 1 - 2 * b₁ + n - H ∧
       n * D 1 = (n - H) * D 2 ∧ D 3 = D 2 ∧ n * D 4 = H * D 2
 
-/-- For `n = t p^k` (`t ∈ {1, 2}`, `p ≡ 1 (mod 6)` prime, `k ≥ 1`) and `L = 6`, column `0` of the
-repetend table of `1/n` does not match column `5`.
+/-- **Columns $0$ and $5$ of the order-$6$ repetend table of $t p^k$ differ.** Let $p$ be a prime
+with $p \equiv 1 \pmod 6$, let $k \ge 1$ and $t \in \{1, 2\}$, and put $n = t p^k$. Let the rows be
+the integers $b$ with $1 \le b < n$, $\gcd(b, n) = 1$ and multiplicative order $6$ modulo $n$, and
+let column $j$ be the multiset of the digits $\lfloor b^{j+1}/n \rfloor \bmod b$ over these rows.
+Then columns $0$ and $5$ are different.
 
 Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
 Article A26, Lemma 37 (`integers-2025-A26-lem-37`). -/
@@ -461,7 +464,12 @@ public theorem_wanted repetend_column_zero_ne_five (p k t : ℕ) (hp : p.Prime) 
     let B := (Finset.Ico 1 n).filter fun b => Nat.Coprime b n ∧ orderOf (b : ZMod n) = 6
     (B.val.map fun b => b ^ (0 + 1) / n % b) ≠ B.val.map fun b => b ^ (5 + 1) / n % b
 
-/-- In the setting of Lemma 37, none of columns `1, 2, 3` matches column `0` or `5`.
+/-- **Columns $1$, $2$, $3$ of the order-$6$ repetend table differ from columns $0$ and $5$.** Let
+$p \equiv 1 \pmod 6$ be prime, $k \ge 1$, $t \in \{1, 2\}$ and $n = t p^k$, and let $B$ be the set
+of integers $b$ with $1 \le b < n$, $\gcd(b, n) = 1$ and multiplicative order $6$ modulo $n$. For
+$c \ge 0$ let column $c$ be the multiset of the digits $\lfloor b^{c+1}/n \rfloor \bmod b$ over
+$b \in B$. Then for every $i \in \{1, 2, 3\}$ and $j \in \{0, 5\}$, columns $i$ and $j$ are
+different multisets.
 
 Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
 Article A26, Lemma 38 (`integers-2025-A26-lem-38`). -/
@@ -472,7 +480,12 @@ public theorem_wanted repetend_columns_one_to_three_ne_zero_five (p k t : ℕ) (
     ∀ i ∈ ({1, 2, 3} : Finset ℕ), ∀ j ∈ ({0, 5} : Finset ℕ),
       (B.val.map fun b => b ^ (i + 1) / n % b) ≠ B.val.map fun b => b ^ (j + 1) / n % b
 
-/-- In the setting of Lemma 37, column `4` matches neither column `0` nor column `5`.
+/-- **Column $4$ of the order-$6$ repetend table of $t p^k$ differs from columns $0$ and $5$.**
+Let $p$ be a prime with $p \equiv 1 \pmod 6$, let $k \ge 1$ and $t \in \{1, 2\}$, and put
+$n = t p^k$. Let the rows be the integers $b$ with $1 \le b < n$, $\gcd(b, n) = 1$ and
+multiplicative order $6$ modulo $n$, and let column $j$ be the multiset of the digits
+$\lfloor b^{j+1}/n \rfloor \bmod b$ over these rows. Then column $4$ is different from column $0$
+and from column $5$.
 
 Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
 Article A26, Lemma 39 (`integers-2025-A26-lem-39`). -/
@@ -483,7 +496,12 @@ public theorem_wanted repetend_column_four_ne_zero_five (p k t : ℕ) (hp : p.Pr
     ∀ j ∈ ({0, 5} : Finset ℕ),
       (B.val.map fun b => b ^ (4 + 1) / n % b) ≠ B.val.map fun b => b ^ (j + 1) / n % b
 
-/-- In the setting of Lemma 37, no two distinct columns among `1, 2, 3, 4` match.
+/-- **Columns $1$ to $4$ of the order-$6$ repetend table of $t p^k$ are pairwise different.** Let
+$p$ be a prime with $p \equiv 1 \pmod 6$, let $k \ge 1$ and $t \in \{1, 2\}$, and put $n = t p^k$.
+Let the rows be the integers $b$ with $1 \le b < n$, $\gcd(b, n) = 1$ and multiplicative order $6$
+modulo $n$, and let column $j$ be the multiset of the digits $\lfloor b^{j+1}/n \rfloor \bmod b$
+over these rows. Then for all distinct $i, j \in \{1, 2, 3, 4\}$ columns $i$ and $j$ are
+different.
 
 Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
 Article A26, Lemma 40 (`integers-2025-A26-lem-40`). -/
@@ -494,8 +512,11 @@ public theorem_wanted repetend_columns_one_to_four_pairwise_ne (p k t : ℕ) (hp
     ∀ i ∈ Finset.Icc 1 4, ∀ j ∈ Finset.Icc 1 4, i ≠ j →
       (B.val.map fun b => b ^ (i + 1) / n % b) ≠ B.val.map fun b => b ^ (j + 1) / n % b
 
-/-- If the repetend table of `1/n` for length `L` has `1 ≤ n_r ≤ 3` rows, no two distinct columns
-match (for such `L` there are no Class A pairs, so this is "no sporadic matches").
+/-- **Repetend tables with at most three rows have no matched columns.** For natural numbers $n$
+and $L$, let the rows be the integers $b$ with $1 \le b < n$, $\gcd(b, n) = 1$ and multiplicative
+order $L$ modulo $n$, and let column $j$ be the multiset of the digits
+$\lfloor b^{j+1}/n \rfloor \bmod b$ over these rows. If there are at least one and at most three
+rows, then for all distinct $i, j < L$ columns $i$ and $j$ are different.
 
 Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
 Article A26, Theorem 12 (`integers-2025-A26-thm-12`). -/
@@ -503,13 +524,6 @@ public theorem_wanted repetend_columns_ne_of_card_le_three (n L : ℕ) :
     let B := (Finset.Ico 1 n).filter fun b => Nat.Coprime b n ∧ orderOf (b : ZMod n) = L
     1 ≤ B.card → B.card ≤ 3 → ∀ i < L, ∀ j < L, i ≠ j →
       (B.val.map fun b => b ^ (i + 1) / n % b) ≠ B.val.map fun b => b ^ (j + 1) / n % b
-
-/-- Tail bound: for `m ≥ 2` and `s > 0`, `∑_{n > s} n^(-m) < ((m - 1) s^(m-1))^(-1)`.
-
-Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
-Article A26, Lemma 42 (`integers-2025-A26-lem-42`). -/
-public theorem_wanted tsum_inv_pow_succ_lt (m s : ℕ) (hm : 2 ≤ m) (hs : 0 < s) :
-    ∑' k : ℕ, (((k + s + 1 : ℕ) : ℝ) ^ m)⁻¹ < (((m - 1 : ℕ) : ℝ) * (s : ℝ) ^ (m - 1))⁻¹
 
 end
 

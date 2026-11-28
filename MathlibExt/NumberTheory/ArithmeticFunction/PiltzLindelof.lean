@@ -58,7 +58,7 @@ namespace ArithmeticFunction
 theorem d_le_sigma_zero_pow (k n : ℕ) : ArithmeticFunction.d k n ≤ sigma 0 n ^ k := by
   induction k generalizing n with
   | zero =>
-    rw [d_zero, one_apply, pow_zero]
+    rw [d_zero, ArithmeticFunction.one_apply, pow_zero]
     split_ifs <;> omega
   | succ k ih =>
     rcases eq_or_ne n 0 with rfl | hn
@@ -77,7 +77,7 @@ theorem exists_d_le_mul_rpow (k : ℕ) {δ : ℝ} (hδ : 0 < δ) :
     ∃ A : ℝ, 0 < A ∧ ∀ n : ℕ, (ArithmeticFunction.d k n : ℝ) ≤ A * (n : ℝ) ^ δ := by
   rcases Nat.eq_zero_or_pos k with rfl | hk
   · refine ⟨1, one_pos, fun n => ?_⟩
-    rw [d_zero, one_apply, one_mul]
+    rw [d_zero, ArithmeticFunction.one_apply, one_mul]
     split_ifs with h
     · simp [h]
     · simp only [Nat.cast_zero]; positivity
@@ -98,7 +98,7 @@ private theorem LSeriesSummable_d_and_LSeries_d (k : ℕ) {s : ℂ} (hs : 1 < s.
       LSeries (fun n : ℕ => (ArithmeticFunction.d k n : ℂ)) s = riemannZeta s ^ k := by
   have hdelta : (fun n : ℕ => (ArithmeticFunction.d 0 n : ℂ)) = LSeries.delta := by
     funext n
-    rw [d_zero, one_apply]
+    rw [d_zero, ArithmeticFunction.one_apply]
     by_cases h : n = 1 <;> simp [h, LSeries.delta]
   have hconv : ∀ m : ℕ, (fun n : ℕ => (ArithmeticFunction.d (m + 1) n : ℂ))
       = LSeries.convolution (1 : ℕ → ℂ) (fun n : ℕ => (ArithmeticFunction.d m n : ℂ)) := by

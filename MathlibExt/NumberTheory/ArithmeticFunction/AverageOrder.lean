@@ -301,7 +301,7 @@ theorem coe_moebius_mul_coe_id_apply (n : ℕ) :
   · simp
   have key := (sum_eq_iff_sum_mul_moebius_eq (R := ℝ) (f := fun d => (d.totient : ℝ))
     (g := fun m => (m : ℝ))).mp (fun m _ => by exact_mod_cast Nat.sum_totient m) n hn
-  rw [mul_apply]
+  rw [ArithmeticFunction.mul_apply]
   simpa using key
 
 /-- `σ 1 = ζ * id`, as real-valued arithmetic functions. -/
@@ -317,7 +317,7 @@ theorem pdiv_coe_moebius_coe_id_mul_coe_zeta_apply (n : ℕ) :
       (ζ : ArithmeticFunction ℝ)) n = (n.totient : ℝ) / n := by
   rcases Nat.eq_zero_or_pos n with rfl | hn
   · simp
-  rw [coe_mul_zeta_apply, ← coe_moebius_mul_coe_id_apply, mul_apply,
+  rw [coe_mul_zeta_apply, ← coe_moebius_mul_coe_id_apply, ArithmeticFunction.mul_apply,
     Nat.sum_divisorsAntidiagonal (fun a b =>
       (μ : ArithmeticFunction ℝ) a * (ArithmeticFunction.id : ArithmeticFunction ℝ) b), sum_div]
   refine sum_congr rfl fun d hd => ?_

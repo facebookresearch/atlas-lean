@@ -53,9 +53,9 @@ open MathlibExt.Biology.PopulationGenetics.Diffusion (dominanceDrift fixationPro
 
 namespace MathlibExt.Biology.PopulationGenetics.Diffusion
 
-/-- Genic case (`h = 1 / 2`): the dominance scale-function ratio is Kimura's genic fixation
-formula. At `h = 1 / 2` dominance selection is genic selection with scaled coefficient
-`σ = c` in the dominance convention above. -/
+/-- Genic case (`h = 1 / 2`): for `p ∈ [0, 1]` the dominance scale-function ratio is Kimura's
+genic fixation formula. At `h = 1 / 2` dominance selection is genic selection with scaled
+coefficient `σ = c` in the dominance convention above. -/
 theorem fixationProb_dominance_half (c : ℝ) {p : ℝ} (hp : p ∈ Icc (0 : ℝ) 1) :
     fixationProb (dominanceDrift c (1 / 2)) (fun x => x * (1 - x)) p =
       kimuraFixation c p := by
@@ -66,7 +66,8 @@ theorem fixationProb_dominance_half (c : ℝ) {p : ℝ} (hp : p ∈ Icc (0 : ℝ
   rw [hdrift]
   exact MathlibExt.Biology.PopulationGenetics.Diffusion.fixationProb_wrightFisher c hp
 
-/-- Recessive case (`h = 0`): the scale exponent simplifies to `-2 c x ^ 2`. -/
+/-- Recessive case (`h = 0`): for `p ∈ [0, 1]` the scale exponent simplifies to `-2 c x ^ 2`, so
+the scale-function ratio is `(∫₀ᵖ exp (-2 c x ^ 2) dx) / (∫₀¹ exp (-2 c x ^ 2) dx)`. -/
 theorem fixationProb_dominance_zero_h (c : ℝ) {p : ℝ} (hp : p ∈ Icc (0 : ℝ) 1) :
     fixationProb (dominanceDrift c 0) (fun x => x * (1 - x)) p =
       (∫ x in (0 : ℝ)..p, exp (-2 * c * x ^ 2)) /
@@ -80,7 +81,9 @@ theorem fixationProb_dominance_zero_h (c : ℝ) {p : ℝ} (hp : p ∈ Icc (0 : �
     ring
   simp only [hpt]
 
-/-- Dominant case (`h = 1`): the scale exponent simplifies to `2 c x ^ 2 - 4 c x`. -/
+/-- Dominant case (`h = 1`): for `p ∈ [0, 1]` the scale exponent simplifies to
+`2 c x ^ 2 - 4 c x`, so the scale-function ratio is
+`(∫₀ᵖ exp (2 c x ^ 2 - 4 c x) dx) / (∫₀¹ exp (2 c x ^ 2 - 4 c x) dx)`. -/
 theorem fixationProb_dominance_one_h (c : ℝ) {p : ℝ} (hp : p ∈ Icc (0 : ℝ) 1) :
     fixationProb (dominanceDrift c 1) (fun x => x * (1 - x)) p =
       (∫ x in (0 : ℝ)..p, exp (2 * c * x ^ 2 - 4 * c * x)) /
@@ -94,8 +97,8 @@ theorem fixationProb_dominance_one_h (c : ℝ) {p : ℝ} (hp : p ∈ Icc (0 : �
     ring
   simp only [hpt]
 
-/-- Neutral case (`c = 0`): the fixation probability is `p` for every dominance coefficient
-`h` (with no selection there is nothing for dominance to act on). -/
+/-- Neutral case (`c = 0`): for `p ∈ [0, 1]` the scale-function ratio is `p` for every
+dominance coefficient `h` (with no selection there is nothing for dominance to act on). -/
 theorem fixationProb_dominance_zero_c (h : ℝ) {p : ℝ} (hp : p ∈ Icc (0 : ℝ) 1) :
     fixationProb (dominanceDrift 0 h) (fun x => x * (1 - x)) p = p := by
   have hdom :=

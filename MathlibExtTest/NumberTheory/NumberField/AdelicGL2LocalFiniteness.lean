@@ -18,12 +18,12 @@ universe u
 
 /-- Consumer with the original binders: the field is taken in `Type`, as in
 the source statement, and the conclusion is the local-finiteness property. -/
-public theorem exactSource (F : Type) [Field F] [NumberField F] :
+private theorem exactSource (F : Type) [Field F] [NumberField F] :
     AdelicKernelLocalFiniteness F :=
   NumberField.adelicKernelLocalFiniteness F
 
 /-- The same statement at an arbitrary universe level. -/
-public theorem exactSource_universe (F : Type u) [Field F] [NumberField F] :
+private theorem exactSource_universe (F : Type u) [Field F] [NumberField F] :
     AdelicKernelLocalFiniteness F :=
   NumberField.adelicKernelLocalFiniteness F
 

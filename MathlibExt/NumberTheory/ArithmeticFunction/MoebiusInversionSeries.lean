@@ -242,7 +242,7 @@ theorem tsum_moebius_inversion (f g : ℝ → ℝ)
           V (A, B) = (μ B : ℝ) * h ((A : ℝ) * x)), ← Finset.sum_mul]
       congr 1
       have := congrArg (fun F : ArithmeticFunction ℤ => F A) moebius_mul_coe_zeta
-      rw [coe_mul_zeta_apply, one_apply] at this
+      rw [coe_mul_zeta_apply, ArithmeticFunction.one_apply] at this
       rw [← Int.cast_sum, this]
       split_ifs <;> simp
     rw [tsum_congr e2, tsum_eq_single 1 (fun b hb => by simp [hb])]

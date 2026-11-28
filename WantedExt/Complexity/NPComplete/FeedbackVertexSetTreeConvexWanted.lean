@@ -25,7 +25,7 @@ problem Feedback vertex set: NP-complete [Wang et al. 2012], NP-complete on star
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Combinatorics.SimpleGraph.Acyclic
 public import Mathlib.Combinatorics.SimpleGraph.Bipartite
 public import MathlibExt.Computability.BinaryNatEncoding

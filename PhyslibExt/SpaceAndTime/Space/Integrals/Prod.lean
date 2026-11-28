@@ -34,9 +34,10 @@ open MeasureTheory
 
 variable {d : ℕ} {𝕜 : Type*} [RCLike 𝕜]
 
-/-- The integral over `Space d` of a product of coordinate functions is the product of
-the one-dimensional integrals. Transport along the orthonormal-basis coordinates
-(`Space.basis`) and `MeasurableEquiv.toLp`, then Mathlib's finite-product Fubini. -/
+/-- The integral over `Space d` of a product of coordinate functions is the product of the
+one-dimensional integrals. No integrability is assumed: an integral of a non-integrable function is
+`0` by convention, and the identity holds for all `f`. Transport along the orthonormal-basis
+coordinates (`Space.basis`) and `MeasurableEquiv.toLp`, then Mathlib's finite-product Fubini. -/
 theorem integral_prod_coord (f : (i : Fin d) → ℝ → 𝕜) :
     ∫ x : Space d, ∏ i, f i (x i) ∂volume = ∏ i, ∫ t : ℝ, f i t ∂volume := by
   let e : Space d ≃ᵐ (Fin d → ℝ) :=

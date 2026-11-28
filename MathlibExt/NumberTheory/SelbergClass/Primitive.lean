@@ -51,7 +51,7 @@ namespace ArithmeticFunction
 /-- Dirichlet convolution at a prime: `(f * g)(p) = f(1) g(p) + f(p) g(1)`. -/
 theorem mul_apply_prime {R : Type*} [Semiring R] (f g : ArithmeticFunction R) {p : ℕ}
     (hp : p.Prime) : (f * g) p = f 1 * g p + f p * g 1 := by
-  rw [mul_apply, Nat.sum_divisorsAntidiagonal (fun a b => f a * g b), hp.divisors,
+  rw [ArithmeticFunction.mul_apply, Nat.sum_divisorsAntidiagonal (fun a b => f a * g b), hp.divisors,
     Finset.sum_pair hp.one_lt.ne, Nat.div_one, Nat.div_self hp.pos]
 
 /-- `a ∈ 𝒮` is **primitive**: `a ≠ 1` (the identity of Dirichlet convolution), and whenever

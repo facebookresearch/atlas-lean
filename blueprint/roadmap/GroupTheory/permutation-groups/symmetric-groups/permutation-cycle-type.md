@@ -1,0 +1,10 @@
+# Full cycle type of a permutation of a finite set, fixed points included
+
+Let $X$ be a finite set with $n$ elements and let $\sigma$ be a permutation of $X$. Write $\sigma$ as a product of disjoint cycles, including a $1$-cycle for each fixed point, so that every element of $X$ lies in exactly one of the cycles; this decomposition is unique up to the order of the factors. The *cycle type* of $\sigma$ is the multiset of the lengths of these cycles. Its elements are positive integers with sum $n$, so the cycle type is a partition of $n$, usually written as the list of its elements in nonincreasing order. For $X$ empty, the cycle type is the empty partition of $0$. Here cycle type means the full partition, including one part of size $1$ for every fixed point. Mathlib's `Equiv.Perm.cycleType` omits those parts; `Equiv.Perm.partition` includes them.
+
+## Sources
+
+- David S. Dummit and Richard M. Foote, Abstract Algebra, 3rd ed., John Wiley & Sons, 2004, §4.3, p. 126, which lists the cycle lengths in nondecreasing order.
+- The mathlib Community, *mathlib4* at revision 56a005855ea17e0b0958f73ec801ae140b0a1679, for partitions as multisets of positive integers: `Nat.Partition`, https://github.com/leanprover-community/mathlib4/blob/56a005855ea17e0b0958f73ec801ae140b0a1679/Mathlib/Combinatorics/Enumerative/Partition/Basic.lean#L50-L58.
+- The mathlib Community, *mathlib4* at revision 56a005855ea17e0b0958f73ec801ae140b0a1679, for the full cycle type, with a part equal to 1 for each fixed point, of a permutation of any finite type, the empty type included: `Equiv.Perm.partition`, https://github.com/leanprover-community/mathlib4/blob/56a005855ea17e0b0958f73ec801ae140b0a1679/Mathlib/GroupTheory/Perm/Cycle/Type.lean#L563-L565.
+- The mathlib Community, *mathlib4* at revision 56a005855ea17e0b0958f73ec801ae140b0a1679, for the multiset of cycle lengths that omits the parts equal to 1: `Equiv.Perm.cycleType`, https://github.com/leanprover-community/mathlib4/blob/56a005855ea17e0b0958f73ec801ae140b0a1679/Mathlib/GroupTheory/Perm/Cycle/Type.lean#L49-L51.

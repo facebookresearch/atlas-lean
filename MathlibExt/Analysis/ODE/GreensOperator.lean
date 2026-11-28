@@ -46,49 +46,59 @@ Source: `v1/Atlas/IntroductionToFunctionalAnalysis/code/SpectralTheory.lean`,
 uses this operator in v1 is not proved in v1 and is not ported here.
 -/
 
-/-- The Hilbert space `L²([0, 1])` of square-integrable real-valued functions
-on the unit interval, equipped with the restriction of Lebesgue measure to
-`[0, 1]`. -/
+/-- **The space $L^2([0, 1])$.** $L^2([0, 1])$ is the real Hilbert space of square-integrable
+real-valued functions on the unit interval, up to equality almost everywhere, with Lebesgue
+measure restricted to $[0, 1]$. -/
 noncomputable abbrev L2UnitInterval :=
   Lp ℝ 2 (volume.restrict (Set.Icc (0 : ℝ) 1))
 
-/-- The `k`-th orthonormal sine basis function on `[0, 1]`:
-`u_k(x) = √2 sin(kπx)`.
-These form an orthonormal eigenbasis of the Green's operator with Dirichlet
-boundary conditions on the unit interval. -/
+/-- **Sine basis functions on $[0, 1]$.** For a positive integer $k$, the $k$-th sine basis function
+is $u_k : \mathbb{R} \to \mathbb{R}$, $u_k(x) = \sqrt{2} \sin(k\pi x)$.
+
+Restricted to $[0, 1]$, these functions form an orthonormal eigenbasis of the Green's operator with
+Dirichlet boundary conditions. -/
 noncomputable def sineBasisFun (k : ℕ+) : ℝ → ℝ :=
   fun x => Real.sqrt 2 * Real.sin (↑k * Real.pi * x)
 
-/-- The `k`-th eigenvalue of the Green's operator on `[0, 1]` with Dirichlet
-boundary conditions: `λ_k = 1 / (k²π²)`. -/
+/-- **Eigenvalues of the Dirichlet Green's operator.** For a positive integer $k$, the $k$-th
+eigenvalue of the Green's operator of $-\frac{d^2}{dx^2}$ on $[0, 1]$ with Dirichlet boundary
+conditions $u(0) = u(1) = 0$ is $\lambda_k = \frac{1}{k^2 \pi^2}$. -/
 noncomputable def greensEigenvalue (k : ℕ+) : ℝ := 1 / ((k : ℝ) ^ 2 * Real.pi ^ 2)
 
-/-- The square root of the `k`-th eigenvalue of the Green's operator,
-`√λ_k = 1 / (kπ)`. This is the `k`-th eigenvalue of `A^{1/2}`. -/
+/-- **Square roots of the Green's operator eigenvalues.** For a positive integer $k$, set
+$\mu_k = \frac{1}{k\pi}$. This is the square root of the $k$-th eigenvalue $\frac{1}{k^2\pi^2}$ of
+the Green's operator of $-\frac{d^2}{dx^2}$ on $[0, 1]$ with Dirichlet boundary conditions. -/
 noncomputable def greensEigenvalueSqrt (k : ℕ+) : ℝ := 1 / ((k : ℝ) * Real.pi)
 
-/-- The square root `A^{1/2}` of the Green's operator, defined via its action
-on the indexed sine eigenbasis `{b_k}`. Require `b_k = u_k` almost everywhere,
-as in `greens_operator_eigendecomposition`. If `f = ∑' k, c_k b_k` where
-`c_k = ⟨b_k, f⟩`, then `A^{1/2} f = ∑' k, (1 / (kπ)) c_k b_k`. -/
+/-- **Square root of the Dirichlet Green's operator.** Let $L^2([0, 1])$ be the real Hilbert space
+of square-integrable functions on $[0, 1]$, and let $(b_k)_{k \ge 1}$ be a Hilbert basis of
+$L^2([0, 1])$ indexed by the positive integers with $b_k(x) = \sqrt{2} \sin(k\pi x)$ for almost
+every $x \in [0, 1]$. Define $A^{1/2} : L^2([0, 1]) \to L^2([0, 1])$ by
+$$A^{1/2} f = \sum_{k \ge 1} \frac{1}{k\pi} \langle b_k, f \rangle\, b_k.$$
+
+Since the Green's operator acts on $b_k$ as multiplication by $\frac{1}{k^2\pi^2}$, this is its
+square root. -/
 noncomputable def greensOperatorSqrt (b : HilbertBasis ℕ+ ℝ L2UnitInterval)
     (_hb : ∀ k : ℕ+, (b k : L2UnitInterval) =ᵐ[volume.restrict (Set.Icc (0 : ℝ) 1)]
       (sineBasisFun k : ℝ → ℝ)) :
     L2UnitInterval → L2UnitInterval :=
   fun f => ∑' (k : ℕ+), (greensEigenvalueSqrt k * inner (𝕜 := ℝ) (b k) f) • b k
 
-/-- The Green's kernel for the Dirichlet Laplacian on `[0, 1]`:
-`G(x, t) = min(x, t) * (1 - max(x, t))`.
-The Green's operator `f ↦ ∫₀¹ G(x, t) f(t) dt` is the inverse of
-`-d²/dx²` subject to `u(0) = u(1) = 0`. -/
+/-- **Green's kernel of the Dirichlet Laplacian on $[0, 1]$.** For real numbers $x$ and $t$, set
+$G(x, t) = \min(x, t)\,(1 - \max(x, t))$.
+
+On $[0, 1]$ this is the Green's kernel of $-\frac{d^2}{dx^2}$ with boundary conditions
+$u(0) = u(1) = 0$: the operator $f \mapsto \int_0^1 G(\cdot, t) f(t)\, dt$ inverts
+$-\frac{d^2}{dx^2}$ under these conditions. -/
 noncomputable def greensKernel (x t : ℝ) : ℝ :=
   min x t * (1 - max x t)
 
-/-- Key computation showing that the sine basis functions are eigenfunctions
-of the Green's operator: for `x ∈ [0, 1]`,
-`∫₀¹ G(x, t) u_k(t) dt = λ_k u_k(x)`,
-where `G` is the Green's kernel, `u_k(x) = √2 sin(kπx)` and
-`λ_k = 1 / (k²π²)`. -/
+/-- **Green's kernel eigenfunction identity for sines.** Let $k$ be a positive integer, let
+$G(x, t) = \min(x, t)\,(1 - \max(x, t))$ be the Green's kernel, and let
+$u_k(x) = \sqrt{2} \sin(k\pi x)$ and $\lambda_k = \frac{1}{k^2\pi^2}$. Then for every
+$x \in [0, 1]$,
+$$\int_0^1 G(x, t)\, u_k(t)\, dt = \lambda_k\, u_k(x).$$
+-/
 lemma greens_kernel_integral_sine_eq (k : ℕ+) (x : ℝ) (hx0 : 0 ≤ x) (hx1 : x ≤ 1) :
     ∫ t in (0 : ℝ)..1, (greensKernel x t) * (sineBasisFun k t) =
       greensEigenvalue k * sineBasisFun k x := by
@@ -169,14 +179,16 @@ lemma greens_kernel_integral_sine_eq (k : ℕ+) (x : ℝ) (hx0 : 0 ≤ x) (hx1 :
   field_simp
   ring
 
-/-- Spectral decomposition of the Green's operator on `L²([0, 1])`.
-If `A` is a symmetric operator on `L²([0, 1])` given by the Green's kernel
-`Af(x) = ∫₀¹ G(x, t) f(t) dt`, and `{b_k}` is a Hilbert basis of sine
-functions `b_k(x) = √2 sin(kπx)` (in the a.e. sense), then:
-* ` ker A = ⊥`;
-* each `b_k` is an eigenvector with eigenvalue `λ_k = 1 / (k²π²)`;
-* every `f ∈ L²([0, 1])` satisfies
-  `Af = ∑' k, λ_k ⟨b_k, f⟩ b_k`. -/
+/-- **Spectral decomposition of the Dirichlet Green's operator.** Write $L^2([0, 1])$ for the real
+Hilbert space of square-integrable functions on $[0, 1]$ with Lebesgue measure, let
+$G(x, t) = \min(x, t)\,(1 - \max(x, t))$ be the Green's kernel, and for each positive integer $k$
+let $u_k(x) = \sqrt{2} \sin(k\pi x)$ and $\lambda_k = \frac{1}{k^2\pi^2}$. Let $A$ be a linear map
+from $L^2([0, 1])$ to itself that is symmetric, $\langle Af, g \rangle = \langle f, Ag \rangle$ for
+all $f, g$, and is given by the Green's kernel, $(Af)(x) = \int_{[0, 1]} G(x, t) f(t)\, dt$ for
+almost every $x \in [0, 1]$ and every $f$. Let $(b_k)_{k \ge 1}$ be a Hilbert basis of
+$L^2([0, 1])$ indexed by the positive integers with $b_k = u_k$ almost everywhere on $[0, 1]$.
+Then $A$ is injective, each $b_k$ is an eigenvector of $A$ with eigenvalue $\lambda_k$, and every
+$f \in L^2([0, 1])$ satisfies $Af = \sum_{k \ge 1} \lambda_k \langle b_k, f \rangle\, b_k$. -/
 theorem greens_operator_eigendecomposition
     (A : Module.End ℝ L2UnitInterval)
     (b : HilbertBasis ℕ+ ℝ L2UnitInterval)
@@ -606,13 +618,18 @@ private lemma exists_sineHilbertBasis : ∃ b : HilbertBasis ℕ+ ℝ L2UnitInte
   rw [hk]
   exact sineL2_coe k
 
-/-- The sine Hilbert basis of real `L²([0,1])`, indexed by positive integers. -/
+/-- **The sine Hilbert basis of $L^2([0, 1])$.** The sine Hilbert basis is a Hilbert basis
+$(b_k)_{k \ge 1}$ of the real Hilbert space $L^2([0, 1])$, indexed by the positive integers, with
+$b_k(x) = \sqrt{2} \sin(k\pi x)$ for almost every $x \in [0, 1]$. Such a basis exists, and since an
+element of $L^2([0, 1])$ is determined by its values almost everywhere, it is unique. -/
 noncomputable def sineHilbertBasis : HilbertBasis ℕ+ ℝ L2UnitInterval :=
   Classical.choose (p := fun b : HilbertBasis ℕ+ ℝ L2UnitInterval =>
     ∀ k : ℕ+, (b k : L2UnitInterval) =ᵐ[volume.restrict (Set.Icc (0 : ℝ) 1)]
       (sineBasisFun k : ℝ → ℝ)) (by exact exists_sineHilbertBasis)
 
-/-- The representatives of the sine Hilbert basis are exactly the source sine functions. -/
+/-- **The sine Hilbert basis consists of sine functions.** For every positive integer $k$, the
+$k$-th element $b_k$ of the sine Hilbert basis of $L^2([0, 1])$ satisfies
+$b_k(x) = \sqrt{2} \sin(k\pi x)$ for almost every $x \in [0, 1]$. -/
 lemma sineHilbertBasis_coe (k : ℕ+) :
     (sineHilbertBasis k : L2UnitInterval) =ᵐ[volume.restrict (Set.Icc (0 : ℝ) 1)]
       (sineBasisFun k : ℝ → ℝ) := by

@@ -31,10 +31,13 @@ namespace MathlibExt.NumberTheory.Ramanujan.Part1Ch2
 
 namespace Entry6Corollary
 
-/-- `A k = (3 ^ k - 1) / 2 = 1 + 3 + ⋯ + 3 ^ (k - 1)`. -/
+/-- **The tripling sequence starting at zero.** For a natural number $k$, let
+$A(k) = (3^k - 1)/2 = 1 + 3 + \cdots + 3^{k-1}$, a natural number with $A(0) = 0$. -/
 def A (k : ℕ) : ℕ := (3 ^ k - 1) / 2
 
-/-- The division in `A` is exact. -/
+/-- **Twice the tripling sequence plus one is a power of three.** For every natural number
+$k$, $2A(k) + 1 = 3^k$, where $A(k) = (3^k - 1)/2$; in particular the division by $2$ in the
+definition of $A(k)$ is exact. -/
 theorem A_two_mul_add_one (k : ℕ) : 2 * A k + 1 = 3 ^ k := by
   have hodd : Odd (3 ^ k) := Odd.pow (by norm_num)
   obtain ⟨t, ht⟩ := hodd
@@ -207,8 +210,14 @@ private lemma main_aux (r : ℕ) :
     rw [hA, htr, hbl, ih, er, cr]
     linear_combination -2 * hw
 
-/-- `ramanujan_part1_ch2_entry6_corollary` without the hypothesis `0 < r`; the statement also holds
-  at `r = 0`. -/
+/-- **Ramanujan's harmonic sum identity (corollary to Entry 6, general form).** For every
+natural number $r$, the following identity holds in $\mathbb{Q}$:
+$$
+\sum_{j=1}^{A(r)} \frac{1}{j} = r + 2 \sum_{k=1}^{r-1} (r - k)
+\sum_{j=A(k-1)+1}^{A(k)} \frac{1}{(3j)^3 - 3j},
+$$
+where $A(k) = (3^k - 1)/2$ and a sum over an empty range is $0$. For $r = 0$ both sides are $0$.
+-/
 theorem ramanujan_part1_ch2_entry6_corollary_general (r : ℕ) :
     ∑ j ∈ Finset.Icc 1 (A r), (1 : ℚ) / (j : ℚ) = (r : ℚ) + 2 * ∑ k ∈ Finset.Icc 1 (r - 1),
         ((r - k : ℕ) : ℚ) *
@@ -216,7 +225,15 @@ theorem ramanujan_part1_ch2_entry6_corollary_general (r : ℕ) :
   exact main_aux r
 
 set_option linter.unusedVariables false in
-/-- Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I (Springer, 1985), Chapter 2,
+/-- **Ramanujan's harmonic sum identity (corollary to Entry 6).** For every natural number
+$r > 0$, the following identity holds in $\mathbb{Q}$:
+$$
+\sum_{j=1}^{A(r)} \frac{1}{j} = r + 2 \sum_{k=1}^{r-1} (r - k)
+\sum_{j=A(k-1)+1}^{A(k)} \frac{1}{(3j)^3 - 3j},
+$$
+where $A(k) = (3^k - 1)/2 = 1 + 3 + \cdots + 3^{k-1}$ and a sum over an empty range is $0$.
+
+Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I (Springer, 1985), Chapter 2,
     corollary to Entry 6, printed p. 33 / PDF p. 43.
 Proves `Wanted` entry `ramanujan_part1_ch2_entry6_corollary`.
 -/

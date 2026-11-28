@@ -104,8 +104,10 @@ theorem integral_chiSqStrat_eq [IsProbabilityMeasure μ] (D : Model μ N M)
   rw [integral_chiSqStrat_of_const D X hN hX hβ hε s c ha]
   ring
 
-/-- The paper's form `𝔼[χ²_j] = 1 + N h² ℓ_j / M + N a` of the regression equation holds
-exactly iff `h² = 0`; otherwise it is off by `-h²`. -/
+/-- For a probability measure, mean-zero effects and noise, a standardized genotype matrix, `N ≠ 0`,
+and a stratification term `s² (X_jᵀ c / N)² = a` common to all markers, the paper's form
+`𝔼[χ²_j] = 1 + N h² ℓ_j / M + N a` of the regression equation holds exactly iff `h² = 0`; otherwise
+it is off by `-h²`. -/
 theorem integral_chiSqStrat_eq_paper_iff [IsProbabilityMeasure μ] (D : Model μ N M)
     (X : Matrix (Fin N) (Fin M) ℝ) (hN : N ≠ 0) (hX : IsStandardized X)
     (hβ : ∀ k, ∫ ω, D.beta k ω ∂μ = 0) (hε : ∀ i, ∫ ω, D.eps i ω ∂μ = 0) (s : ℝ)
@@ -117,11 +119,12 @@ theorem integral_chiSqStrat_eq_paper_iff [IsProbabilityMeasure μ] (D : Model μ
 /-! ### The heritability estimator -/
 
 /-- The **unweighted LD-score regression heritability estimator** `ĥ² = b̂ · M / N`, where `b̂` is
-the ordinary (unweighted) least-squares slope of the statistics `χ` on the LD scores `ℓ` of the
-`M` markers and `N` is the sample size. It is an unweighted analogue of the estimator of
-Bulik-Sullivan et al. (2015), who fit the slope by weighted least squares; for finite samples the
-two slopes generally differ. (Lean's `x / 0 = 0` makes it `0` when `N = 0`, and `olsSlope` is `0`
-when the LD scores are all equal, where the slope is not identified.) -/
+the ordinary (unweighted) least-squares slope of the statistics `χ` on the LD scores `ℓ` of the `M`
+markers and `N` is the sample size. It is an unweighted analogue of the estimator of Bulik-Sullivan
+et al. (2015), who fit the slope by weighted least squares; for finite samples the two slopes
+generally differ. With the convention `x / 0 = 0` it is `0` when `N = 0`, and `olsSlope` is `0` when
+the LD scores are all equal, where the slope is not identified. It is meant for `N ≥ 1` and LD
+scores that are not all equal. -/
 noncomputable def olsH2Hat (N M : ℕ) (ℓ χ : Fin M → ℝ) : ℝ := olsSlope ℓ χ * M / N
 
 /-- If the statistics are exactly affine in the LD scores with slope `N h² / M`, then
@@ -133,7 +136,8 @@ theorem olsH2Hat_affine (hN : N ≠ 0) (hM : M ≠ 0) {ℓ : Fin M → ℝ} (h�
   rw [olsH2Hat, olsSlope_affine hℓ]
   field_simp
 
-/-- Under the model with stratification, the statistic `χ²_j` is integrable. -/
+/-- For a probability measure, under the model with stratification, the statistic `χ²_j` is
+integrable, for every genotype matrix. -/
 theorem integrable_chiSqStrat [IsProbabilityMeasure μ] (D : Model μ N M)
     (X : Matrix (Fin N) (Fin M) ℝ) (s : ℝ) (c : Fin N → ℝ) (j : Fin M) :
     Integrable (chiSqStrat D X s c j) μ := by
@@ -160,9 +164,11 @@ private theorem integral_chiSqStrat_fun [IsProbabilityMeasure μ] (D : Model μ 
   funext j
   rw [integral_chiSqStrat_of_const D X hN hX hβ hε s c ha, add_comm]
 
-/-- **Population consistency of the unweighted estimator.** Applied to the expected statistics,
-the unweighted LD-score regression estimator returns the heritability exactly, with or without a
-confounding term `N a`, provided `N, M ≠ 0` and the LD scores are not all equal. -/
+/-- **Population consistency of the unweighted estimator.** For a probability measure, mean-zero
+effects and noise, a standardized genotype matrix and a stratification term common to all markers,
+the unweighted LD-score regression estimator applied to the expected statistics returns the
+heritability exactly, with or without a confounding term `N a`, provided `N, M ≠ 0` and the LD
+scores are not all equal. -/
 theorem olsH2Hat_integral_chiSqStrat [IsProbabilityMeasure μ] (D : Model μ N M)
     (X : Matrix (Fin N) (Fin M) ℝ) (hN : N ≠ 0) (hM : M ≠ 0) (hX : IsStandardized X)
     (hℓ : sxy (ldScore X) (ldScore X) ≠ 0)
@@ -186,15 +192,17 @@ theorem integral_olsH2Hat_chiSqStrat [IsProbabilityMeasure μ] (D : Model μ N M
     integral_olsSlope _ fun j => integrable_chiSqStrat D X s c j]
   exact olsH2Hat_integral_chiSqStrat D X hN hM hX hℓ hβ hε s c ha
 
-/-- The unweighted LD-score regression estimator is integrable under the model. -/
+/-- For a probability measure, the unweighted LD-score regression estimator is integrable under the
+model, for every genotype matrix. -/
 theorem integrable_olsH2Hat_chiSqStrat [IsProbabilityMeasure μ] (D : Model μ N M)
     (X : Matrix (Fin N) (Fin M) ℝ) (s : ℝ) (c : Fin N → ℝ) :
     Integrable (fun ω => olsH2Hat N M (ldScore X) fun j => chiSqStrat D X s c j ω) μ :=
   ((integrable_olsSlope _ fun j => integrable_chiSqStrat D X s c j).mul_const _).div_const _
 
-/-- **The intercept measures confounding.** Under the same assumptions, the least-squares
-intercept of the statistics on the LD scores is unbiased for the exact intercept
-`1 - h² + N a`: confounding enters the intercept, not the slope. -/
+/-- **The intercept measures confounding.** For a probability measure, mean-zero effects and noise,
+a standardized genotype matrix with LD scores not all equal, `N ≠ 0`, and a confounding term common
+to all markers, the least-squares intercept of the statistics on the LD scores is unbiased for the
+exact intercept `1 - h² + N a`: confounding enters the intercept, not the slope. -/
 theorem integral_olsIntercept_chiSqStrat [IsProbabilityMeasure μ] (D : Model μ N M)
     (X : Matrix (Fin N) (Fin M) ℝ) (hN : N ≠ 0) (hX : IsStandardized X)
     (hℓ : sxy (ldScore X) (ldScore X) ≠ 0)
@@ -204,12 +212,13 @@ theorem integral_olsIntercept_chiSqStrat [IsProbabilityMeasure μ] (D : Model μ
   rw [integral_olsIntercept _ fun j => integrable_chiSqStrat D X s c j,
     integral_chiSqStrat_fun D X hN hX hβ hε s c ha, olsIntercept_affine hℓ]
 
-/-- **Consistency of the unweighted LD-score regression estimator.** Along a sequence of designs
-(sample sizes `N n`, marker counts `M n`, standardized genotype matrices `X n` with LD scores not
-all equal) and models `D n` with common heritability `h²`, mean-zero effects and noise, and
-confounding terms common to the markers of each design, if the variance of `ĥ²` tends to `0`,
-then `ĥ²` converges to `h²` in probability. The model fixes only second moments, so the
-vanishing variance is a hypothesis rather than a consequence. -/
+/-- **Consistency of the unweighted LD-score regression estimator.** For a probability measure,
+along a sequence of designs (sample sizes `N n ≠ 0`, marker counts `M n ≠ 0`, standardized genotype
+matrices `X n` with LD scores not all equal) and models `D n` with common heritability `h²`,
+mean-zero effects and noise, and confounding terms common to the markers of each design, if the
+variance of `ĥ²` (a value in `[0, ∞]`) tends to `0`, then `ĥ²` converges to `h²` in probability. The
+model fixes only second moments, so the vanishing variance is a hypothesis rather than a
+consequence. -/
 theorem tendstoInMeasure_olsH2Hat [IsProbabilityMeasure μ] {ι : Type*} {l : Filter ι}
     {N M : ι → ℕ} (D : ∀ n, Model μ (N n) (M n)) (X : ∀ n, Matrix (Fin (N n)) (Fin (M n)) ℝ)
     {h2 : ℝ} (hh2 : ∀ n, (D n).h2 = h2) (hN : ∀ n, N n ≠ 0) (hM : ∀ n, M n ≠ 0)

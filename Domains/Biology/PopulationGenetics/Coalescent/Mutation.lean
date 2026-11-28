@@ -109,7 +109,10 @@ private lemma condExp_comp_of_hasCondDistrib_poisson (hX : Measurable X)
   filter_upwards [h1, h2] with ω h1 h2
   rw [h1, h2, Kernel.comap_apply, poissonMeasureKernel_apply]
 
-/-- A conditionally Poisson count with integrable conditional mean is integrable. -/
+/-- Under a probability measure, a conditionally Poisson count with integrable conditional mean is
+integrable. Here `N ~ Po(ρ(X))` given `X` means `HasCondDistrib` for a measurable rate
+`ρ : 𝓧 → ℝ≥0`: the pair `(X, N)` is a.e. measurable with image measure
+`μ.map X ⊗ₘ (poissonMeasureKernel.comap ρ)`. -/
 theorem integrable_natCast_of_hasCondDistrib_poisson
     (h : HasCondDistrib N X (poissonMeasureKernel.comap ρ hρ) μ)
     (hρi : Integrable (fun ω => (ρ (X ω) : ℝ)) μ) :
@@ -118,8 +121,10 @@ theorem integrable_natCast_of_hasCondDistrib_poisson
     integrable_natCast_poissonMeasure
     (fun r => by simpa using integral_natCast_poissonMeasure r) (by fun_prop) hρi
 
-/-- **Conditional mean of a conditionally Poisson count**: if `N ~ Po(ρ(X))` given `X`, then
-`E[N | X] = ρ(X)` a.e. -/
+/-- **Conditional mean of a conditionally Poisson count**: under a probability measure, if `X` is
+measurable, `N ~ Po(ρ(X))` given `X` and `ρ(X)` is integrable, then `E[N | X] = ρ(X)` a.e. Here
+`N ~ Po(ρ(X))` given `X` means `HasCondDistrib` for a measurable rate `ρ : 𝓧 → ℝ≥0`: the pair
+`(X, N)` is a.e. measurable with image measure `μ.map X ⊗ₘ (poissonMeasureKernel.comap ρ)`. -/
 theorem condExp_natCast_of_hasCondDistrib_poisson (hX : Measurable X)
     (h : HasCondDistrib N X (poissonMeasureKernel.comap ρ hρ) μ)
     (hρi : Integrable (fun ω => (ρ (X ω) : ℝ)) μ) :
@@ -128,8 +133,10 @@ theorem condExp_natCast_of_hasCondDistrib_poisson (hX : Measurable X)
     (integrable_natCast_of_hasCondDistrib_poisson h hρi)] with ω hω
   rw [hω, integral_natCast_poissonMeasure]
 
-/-- A conditionally Poisson count whose conditional mean is square integrable is square
-integrable. -/
+/-- Under a probability measure, a conditionally Poisson count whose conditional mean is square
+integrable is square integrable. Here `N ~ Po(ρ(X))` given `X` means `HasCondDistrib` for a
+measurable rate `ρ : 𝓧 → ℝ≥0`: the pair `(X, N)` is a.e. measurable with image measure
+`μ.map X ⊗ₘ (poissonMeasureKernel.comap ρ)`. -/
 theorem memLp_two_natCast_of_hasCondDistrib_poisson
     (h : HasCondDistrib N X (poissonMeasureKernel.comap ρ hρ) μ)
     (hρ2 : MemLp (fun ω => (ρ (X ω) : ℝ)) 2 μ) :
@@ -143,8 +150,10 @@ theorem memLp_two_natCast_of_hasCondDistrib_poisson
     (fun r => by simpa using integral_natCast_sq_poissonMeasure r) (by fun_prop)
     ((hρ2.integrable one_le_two).add hρ2.integrable_sq)
 
-/-- **Conditional variance of a conditionally Poisson count**: if `N ~ Po(ρ(X))` given `X`, then
-`Var[N | X] = ρ(X)` a.e. -/
+/-- **Conditional variance of a conditionally Poisson count**: under a probability measure, if `X`
+is measurable, `N ~ Po(ρ(X))` given `X` and `ρ(X)` is square integrable, then `Var[N | X] = ρ(X)`
+a.e. Here `N ~ Po(ρ(X))` given `X` means `HasCondDistrib` for a measurable rate `ρ : 𝓧 → ℝ≥0`: the
+pair `(X, N)` is a.e. measurable with image measure `μ.map X ⊗ₘ (poissonMeasureKernel.comap ρ)`. -/
 theorem condVar_natCast_of_hasCondDistrib_poisson (hX : Measurable X)
     (h : HasCondDistrib N X (poissonMeasureKernel.comap ρ hρ) μ)
     (hρ2 : MemLp (fun ω => (ρ (X ω) : ℝ)) 2 μ) :
@@ -169,9 +178,10 @@ section Branch
 variable {Ω 𝓧 ι : Type*} {mΩ : MeasurableSpace Ω} {m𝓧 : MeasurableSpace 𝓧} [Fintype ι]
   {μ : Measure Ω}
 
-/-- **Infinite-sites mutation on a finite genealogy**: given the genealogy `x`, branch `b` of
-length `ℓ x b` carries an independent `Po(r * ℓ x b)` number of mutation events, where `r` is the
-mutation rate per lineage per unit time. -/
+/-- **Infinite-sites mutation on a finite genealogy**: for a rate `r ≥ 0` and a measurable map
+`ℓ` from genealogies to nonnegative lengths on the finite branch set `ι`, given the genealogy
+`x`, branch `b` of length `ℓ x b` carries an independent `Po(r * ℓ x b)` number of mutation
+events, where `r` is the mutation rate per lineage per unit time. -/
 def branchMutationKernel (r : ℝ≥0) (ℓ : 𝓧 → ι → ℝ≥0) (hℓ : Measurable ℓ) : Kernel 𝓧 (ι → ℕ) :=
   (piPoissonKernel ι).comap (fun x b => r * ℓ x b) (by fun_prop)
 
@@ -184,8 +194,11 @@ instance (r : ℝ≥0) (ℓ : 𝓧 → ι → ℝ≥0) (hℓ : Measurable ℓ) :
 a new site, so `S` is the total number of events over all branches. -/
 def segSites (N : Ω → ι → ℕ) (ω : Ω) : ℝ := ((∑ b, N ω b : ℕ) : ℝ)
 
-/-- **Conditional law of the number of segregating sites**: if the branch counts are independent
-Poisson with means `r ℓ_b(X)` given `X`, then their total is `Po(r ∑_b ℓ_b(X))` given `X`. -/
+/-- **Conditional law of the number of segregating sites**: for an s-finite measure, if the
+branch counts are independent Poisson with means `r ℓ_b(X)` given `X`, then their total is
+`Po(r ∑_b ℓ_b(X))` given `X`. Both are in the sense of `HasCondDistrib` (the pair is a.e.
+measurable, with image measure `μ.map X ⊗ₘ κ`); these image measures need not be probability
+measures. -/
 theorem hasCondDistrib_sum_of_branchMutation {X : Ω → 𝓧} {N : Ω → ι → ℕ} {r : ℝ≥0}
     {ℓ : 𝓧 → ι → ℝ≥0} {hℓ : Measurable ℓ} [SFinite μ]
     (h : HasCondDistrib N X (branchMutationKernel r ℓ hℓ) μ) :
@@ -208,7 +221,7 @@ end Branch
 /-! ### The Kingman genealogy -/
 
 /-- The branches of a Kingman genealogy of `n` gene copies, epoch by epoch: during the epoch with
-`k` lineages (`2 ≤ k ≤ n`) there are `k` branches. -/
+`k` lineages (`2 ≤ k ≤ n`) there are `k` branches. There are none when `n < 2`. -/
 abbrev KingmanBranch (n : ℕ) : Type := Σ k : Icc 2 n, Fin k
 
 /-- The branch lengths of a Kingman genealogy with epoch lengths `t`: each of the `k` branches of
@@ -217,12 +230,13 @@ times). -/
 def kingmanBranchLength (n : ℕ) (t : Icc 2 n → ℝ) (b : KingmanBranch n) : ℝ≥0 :=
   (t b.1).toNNReal
 
-/-- The branch lengths depend measurably on the epoch lengths. -/
+/-- The branch lengths `max (t k) 0` depend measurably on the epoch lengths `t`. -/
 theorem measurable_kingmanBranchLength (n : ℕ) : Measurable (kingmanBranchLength n) := by
   unfold kingmanBranchLength
   fun_prop
 
-/-- The branch lengths of epoch `k` sum to `k * t k`. -/
+/-- The branch lengths sum to `∑_k k * max (t k) 0`: the `k` branches of epoch `k` contribute
+`k * max (t k) 0`, which is `k * t k` for a nonnegative epoch length. -/
 theorem sum_kingmanBranchLength (n : ℕ) (t : Icc 2 n → ℝ) :
     ∑ b, kingmanBranchLength n t b = ∑ k : Icc 2 n, ((k : ℕ) : ℝ≥0) * (t k).toNNReal := by
   rw [Fintype.sum_sigma]
@@ -230,7 +244,8 @@ theorem sum_kingmanBranchLength (n : ℕ) (t : Icc 2 n → ℝ) :
   simp [kingmanBranchLength]
 
 /-- Infinite-sites mutation on the Kingman genealogy at rate `θ / 2` per lineage per unit time
-(`θ = 4Nu`, time in units of `2N` generations). -/
+(`θ = 4Nu`, time in units of `2N` generations). The branch lengths truncate the epoch lengths at
+`0`, so the Poisson mean `(θ / 2) max (t k) 0` is `0` when `t k ≤ 0`. -/
 def kingmanMutationKernel (n : ℕ) (θ : ℝ≥0) : Kernel (Icc 2 n → ℝ) (KingmanBranch n → ℕ) :=
   branchMutationKernel (θ / 2) (kingmanBranchLength n) (measurable_kingmanBranchLength n)
 
@@ -238,7 +253,7 @@ instance (n : ℕ) (θ : ℝ≥0) : IsMarkovKernel (kingmanMutationKernel n θ) 
   unfold kingmanMutationKernel
   infer_instance
 
-/-- An exponentially distributed random variable is a.s. nonnegative. -/
+/-- An exponentially distributed random variable (rate `r > 0`) is a.s. nonnegative. -/
 lemma ae_nonneg_of_hasLaw_expMeasure {Ω : Type*} {mΩ : MeasurableSpace Ω}
     {μ : Measure Ω} {Y : Ω → ℝ} {r : ℝ} (hr : 0 < r) (hY : HasLaw Y (expMeasure r) μ) :
     ∀ᵐ ω ∂μ, 0 ≤ Y ω := by
@@ -283,8 +298,10 @@ private theorem memLp_totalLength : MemLp K.totalLength 2 μ := by
 
 variable {θ : ℝ≥0} {N : Ω → KingmanBranch n → ℕ}
 
-/-- **The number of segregating sites is conditionally Poisson**: under infinite-sites mutation
-at rate `θ / 2` per lineage, `S ~ Po((θ/2) ∑_b ℓ_b)` given the genealogy. -/
+/-- **The number of segregating sites is conditionally Poisson**: for an s-finite measure, under
+infinite-sites mutation at rate `θ / 2` per lineage, `S ~ Po((θ/2) ∑_b ℓ_b)` given the
+genealogy, with `ℓ_b = max (t k) 0` on the branches of epoch `k`; both conditional laws are in
+the sense of `HasCondDistrib`. -/
 theorem hasCondDistrib_segSites_of_mutation [SFinite μ]
     (hN : HasCondDistrib N K.epochs (kingmanMutationKernel n θ) μ) :
     HasCondDistrib (fun ω => ∑ b, N ω b) K.epochs
@@ -300,7 +317,9 @@ private theorem mean_ae_eq (θ : ℝ≥0) :
   filter_upwards [K.sum_kingmanBranchLength_epochs] with ω h
   rw [NNReal.coe_mul, h, NNReal.coe_div, NNReal.coe_two]
 
-/-- **Conditional mean of the number of segregating sites**: `E[S | genealogy] = (θ/2) L` a.s.
+/-- **Conditional mean of the number of segregating sites**: under a probability measure, for a
+measurable epoch vector `K.epochs` and branch counts with conditional law
+`kingmanMutationKernel n θ` given it, `E[S | genealogy] = (θ/2) L` a.s.
 This discharges the hypothesis `hS` of `watterson_unbiased`. -/
 theorem condExp_segSites_of_mutation [IsProbabilityMeasure μ] (hK : Measurable K.epochs)
     (hN : HasCondDistrib N K.epochs (kingmanMutationKernel n θ) μ) :
@@ -311,15 +330,18 @@ theorem condExp_segSites_of_mutation [IsProbabilityMeasure μ] (hK : Measurable 
     (K.hasCondDistrib_segSites_of_mutation hN) hint, K.mean_ae_eq θ] with ω h1 h2
   rw [show segSites N = fun ω => ((∑ b, N ω b : ℕ) : ℝ) from rfl, h1, h2]
 
-/-- Under Poisson mutation marking, the number of segregating sites is square integrable. -/
+/-- Under a probability measure and Poisson mutation marking (branch counts with conditional law
+`kingmanMutationKernel n θ` given the genealogy), the number of segregating sites is square
+integrable. -/
 theorem memLp_segSites_of_mutation [IsProbabilityMeasure μ]
     (hN : HasCondDistrib N K.epochs (kingmanMutationKernel n θ) μ) :
     MemLp (segSites N) 2 μ :=
   memLp_two_natCast_of_hasCondDistrib_poisson (K.hasCondDistrib_segSites_of_mutation hN)
     ((K.memLp_totalLength.const_mul ((θ : ℝ) / 2)).ae_eq (K.mean_ae_eq θ).symm)
 
-/-- **Conditional variance of the number of segregating sites**:
-`Var[S | genealogy] = (θ/2) L` a.s. -/
+/-- **Conditional variance of the number of segregating sites**: under a probability measure,
+for a measurable epoch vector `K.epochs` and branch counts with conditional law
+`kingmanMutationKernel n θ` given it, `Var[S | genealogy] = (θ/2) L` a.s. -/
 theorem condVar_segSites_of_mutation [IsProbabilityMeasure μ] (hK : Measurable K.epochs)
     (hN : HasCondDistrib N K.epochs (kingmanMutationKernel n θ) μ) :
     Var[segSites N; μ | MeasurableSpace.comap K.epochs inferInstance] =ᵐ[μ]
@@ -329,9 +351,10 @@ theorem condVar_segSites_of_mutation [IsProbabilityMeasure μ] (hK : Measurable 
     (K.hasCondDistrib_segSites_of_mutation hN) h2, K.mean_ae_eq θ] with ω h1 h2
   rw [show segSites N = fun ω => ((∑ b, N ω b : ℕ) : ℝ) from rfl, h1, h2]
 
-/-- **Expected number of segregating sites under Poisson mutation marking**:
-`E[S] = θ H_{n-1}`. For `n = 1`, `H₀ = 0` and both sides are `0`. This is the direct
-mutation-marking form of `KingmanTimes.integral_segSites`. -/
+/-- **Expected number of segregating sites under Poisson mutation marking**: under a probability
+measure, for a measurable epoch vector `K.epochs` and branch counts with conditional law
+`kingmanMutationKernel n θ` given it, `E[S] = θ H_{n-1}`. For `n ≤ 1`, `H₀ = 0` and both sides
+are `0`. This is the direct mutation-marking form of `KingmanTimes.integral_segSites`. -/
 theorem integral_segSites_of_mutation [IsProbabilityMeasure μ] (hK : Measurable K.epochs)
     (hN : HasCondDistrib N K.epochs (kingmanMutationKernel n θ) μ) :
     μ[segSites N] = (θ : ℝ) * (harmonic (n - 1) : ℝ) :=
@@ -339,8 +362,10 @@ theorem integral_segSites_of_mutation [IsProbabilityMeasure μ] (hK : Measurable
     (K.condExp_segSites_of_mutation hK hN)
 
 /-- **Watterson's estimator is unbiased under Poisson mutation marking** (Watterson 1975):
-`E[S / H_{n-1}] = θ` for `n ≥ 2`, with `S` the number of infinite-sites mutation events on the
-Kingman genealogy at rate `θ / 2` per lineage. -/
+under a probability measure, for a measurable epoch vector `K.epochs` and branch counts `N` with
+conditional law `kingmanMutationKernel n θ` given it, `E[S / H_{n-1}] = θ` for `n ≥ 2`, where
+`S = ∑_b N_b` is the number of infinite-sites mutation events on the Kingman genealogy at rate
+`θ / 2` per lineage. -/
 theorem watterson_unbiased_of_mutation [IsProbabilityMeasure μ] (hK : Measurable K.epochs)
     (hN : HasCondDistrib N K.epochs (kingmanMutationKernel n θ) μ) (hn : 2 ≤ n) :
     μ[fun ω => segSites N ω / (harmonic (n - 1) : ℝ)] = (θ : ℝ) :=
@@ -348,7 +373,9 @@ theorem watterson_unbiased_of_mutation [IsProbabilityMeasure μ] (hK : Measurabl
     (K.condExp_segSites_of_mutation hK hN) hn
 
 /-- **Variance of the number of segregating sites under Poisson mutation marking** (Watterson
-1975): `Var S = θ a₁ + θ² a₂`. -/
+1975): under a probability measure, for a measurable epoch vector `K.epochs` and branch counts
+with conditional law `kingmanMutationKernel n θ` given it, `Var S = θ a₁ + θ² a₂` (both sides
+are `0` for `n ≤ 1`). -/
 theorem variance_segSites_of_mutation [IsProbabilityMeasure μ] (hK : Measurable K.epochs)
     (hN : HasCondDistrib N K.epochs (kingmanMutationKernel n θ) μ) :
     Var[segSites N; μ] = (θ : ℝ) * tajimaA1 n + (θ : ℝ) ^ 2 * tajimaA2 n :=
@@ -356,6 +383,8 @@ theorem variance_segSites_of_mutation [IsProbabilityMeasure μ] (hK : Measurable
     (K.condExp_segSites_of_mutation hK hN) (K.condVar_segSites_of_mutation hK hN)
 
 /-- **Tajima's variance estimator is unbiased under Poisson mutation marking** (Tajima 1989):
+under a probability measure, for a measurable epoch vector `K.epochs` and branch counts with
+conditional law `kingmanMutationKernel n θ` given it,
 `E[e₁ S + e₂ S (S - 1)] = c₁ θ + c₂ θ²` for `n ≥ 2`. -/
 theorem integral_tajimaVarEstimator_of_mutation [IsProbabilityMeasure μ]
     (hK : Measurable K.epochs) (hN : HasCondDistrib N K.epochs (kingmanMutationKernel n θ) μ)
@@ -369,7 +398,9 @@ end KingmanTimes
 
 /-! ### A concrete marked Kingman model -/
 
-/-- Independence is preserved by precomposition with a measure-preserving map. -/
+/-- Independence is preserved by precomposition with a measure-preserving map: for finitely
+many measurable `f i`, independent under the probability measure `μ`, and `g` measure preserving
+from the probability measure `P` to `μ`, the `f i ∘ g` are independent under `P`. -/
 theorem iIndepFun_comp_of_measurePreserving {ι Ω Ω' : Type*} [Finite ι]
     {mΩ : MeasurableSpace Ω} {mΩ' : MeasurableSpace Ω'} {β : ι → Type*}
     {mβ : ∀ i, MeasurableSpace (β i)} {μ : Measure Ω} {P : Measure Ω'} [IsProbabilityMeasure μ]
@@ -386,14 +417,15 @@ theorem iIndepFun_comp_of_measurePreserving {ι Ω Ω' : Type*} [Finite ι]
     rw [← hg.map_eq, Measure.map_map (hf i) hg.measurable]
   simp only [h1, h2, h]
 
-/-- The first marginal of `μ ⊗ₘ κ` is `μ` for a Markov kernel `κ`. -/
+/-- The first marginal of `μ ⊗ₘ κ` is `μ` for an s-finite `μ` and a Markov kernel `κ`. -/
 theorem measurePreserving_fst_compProd {α β : Type*} {mα : MeasurableSpace α}
     {mβ : MeasurableSpace β} (μ : Measure α) [SFinite μ] (κ : Kernel α β) [IsMarkovKernel κ] :
     MeasurePreserving Prod.fst (μ ⊗ₘ κ) μ :=
   ⟨measurable_fst, Measure.fst_compProd μ κ⟩
 
 /-- The marked Kingman model for a sample of size `n`: independent exponential holding times
-(`piMeasure n`), then, given them, independent `Po((θ/2) ℓ_b)` mutation counts on the branches. -/
+(`piMeasure n`), then, given them, independent `Po((θ/2) ℓ_b)` mutation counts on the branches,
+with `ℓ_b = max (t k) 0` on the branches of epoch `k`. -/
 def kingmanMutationMeasure (n : ℕ) (θ : ℝ≥0) :
     Measure ((Icc 2 n → ℝ) × (KingmanBranch n → ℕ)) :=
   piMeasure n ⊗ₘ kingmanMutationKernel n θ
@@ -402,7 +434,8 @@ instance (n : ℕ) (θ : ℝ≥0) : IsProbabilityMeasure (kingmanMutationMeasure
   unfold kingmanMutationMeasure
   infer_instance
 
-/-- The holding times of the marked Kingman model form a Kingman coalescent. -/
+/-- The holding times of the marked Kingman model form a Kingman coalescent: `T k (t, N) = t k`
+for `2 ≤ k ≤ n`, and `0` for the other `k`. -/
 def KingmanTimes.ofMutationModel (n : ℕ) (θ : ℝ≥0) :
     KingmanTimes (kingmanMutationMeasure n θ) n where
   T k p := (KingmanTimes.ofPi n).T k p.1
@@ -421,7 +454,8 @@ theorem KingmanTimes.epochs_ofMutationModel (n : ℕ) (θ : ℝ≥0) :
   simp only [KingmanTimes.epochs, KingmanTimes.ofMutationModel, KingmanTimes.ofPi, k.2, ↓reduceDIte]
 
 /-- In the marked Kingman model, the branch counts have conditional law
-`kingmanMutationKernel n θ` given the genealogy. -/
+`kingmanMutationKernel n θ` given the genealogy: independent Poisson counts with means
+`(θ / 2) max (t k) 0` on the branches of epoch `k`. -/
 theorem hasCondDistrib_kingmanMutationMeasure (n : ℕ) (θ : ℝ≥0) :
     HasCondDistrib Prod.snd (KingmanTimes.ofMutationModel n θ).epochs
       (kingmanMutationKernel n θ) (kingmanMutationMeasure n θ) := by
@@ -440,7 +474,7 @@ theorem watterson_unbiased_kingmanMutationMeasure {n : ℕ} (θ : ℝ≥0) (hn :
     (hasCondDistrib_kingmanMutationMeasure n θ) hn
 
 /-- **Variance of the number of segregating sites in the marked Kingman model**:
-`Var S = θ a₁ + θ² a₂`, with no remaining hypotheses. -/
+`Var S = θ a₁ + θ² a₂`, with no remaining hypotheses (both sides are `0` for `n ≤ 1`). -/
 theorem variance_segSites_kingmanMutationMeasure (n : ℕ) (θ : ℝ≥0) :
     Var[segSites Prod.snd; kingmanMutationMeasure n θ] =
       (θ : ℝ) * tajimaA1 n + (θ : ℝ) ^ 2 * tajimaA2 n :=
@@ -449,7 +483,7 @@ theorem variance_segSites_kingmanMutationMeasure (n : ℕ) (θ : ℝ≥0) :
     (hasCondDistrib_kingmanMutationMeasure n θ)
 
 /-- **Expected number of segregating sites in the marked Kingman model**: `E[S] = θ H_{n-1}`,
-with no remaining hypotheses (both sides are `0` for `n = 1`). -/
+with no remaining hypotheses (both sides are `0` for `n ≤ 1`, where `n - 1 = 0`). -/
 theorem integral_segSites_kingmanMutationMeasure (n : ℕ) (θ : ℝ≥0) :
     ∫ p, segSites Prod.snd p ∂kingmanMutationMeasure n θ =
       (θ : ℝ) * (harmonic (n - 1) : ℝ) :=

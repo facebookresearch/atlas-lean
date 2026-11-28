@@ -12,13 +12,14 @@ public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
 public import Mathlib.LinearAlgebra.Matrix.PosDef
+public import PhyslibExt.Mechanics.HarmonicMechanics
 import MathlibExt.LinearAlgebra.Matrix.SimultaneousDiagonalization
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Analysis.Calculus.Deriv.Prod
 import Mathlib.Analysis.ODE.ExistUnique
 
 /-!
-# Free response in a mass-orthonormal modal basis
+# Free response in a mass-orthonormal modal basis and the two-mass spring
 
 A linear undamped structure with finitely many degrees of freedom has a symmetric
 positive-definite mass matrix `M` and a symmetric positive-semidefinite stiffness matrix `K`:
@@ -39,6 +40,17 @@ does not depend on the choice of modal basis inside a repeated eigenvalue.
 A negative stiffness entry would need a hyperbolic branch, which is outside this module. Mass,
 stiffness and initial data are model inputs.
 
+Section F assembles the simplest case from the spring networks of
+`PhyslibExt.Mechanics.HarmonicMechanics`: two masses `m₁, m₂ > 0` on a line joined by one spring
+of stiffness `k`, with `M = diag(m₁, m₂)` and `K = k [[1, -1], [-1, 1]]`. The rigid translation
+`(1, 1)` is a zero mode with no spring energy; the mode `(m₂, -m₁)`, mass-orthogonal to it, has
+`ω² = k (m₁ + m₂) / (m₁ m₂)`. Scaled to unit modal mass the two modes form an explicit modal
+matrix, whose response is the centre-of-mass drift plus the modal response of the spring extension,
+an oscillation for `k > 0` and a drift for `k ≤ 0`. Holding either mass at zero displacement leaves
+the one-degree-of-freedom stiffness `k`, positive for `k > 0`. This uses the connection of the two
+masses: in a network with a component not connected to the grounded mass, the remaining stiffness
+keeps a zero mode.
+
 ## ii. Key results
 
 - `exists_modalBasis`: a mass-orthonormal modal basis with nonnegative stiffness entries.
@@ -51,6 +63,12 @@ stiffness and initial data are model inputs.
 - `modalResponse_solves`, `modalResponse_unique`: the physical response `x = C q` solves
   `M x'' + K x = 0` with initial position `x₀` and velocity `v₀`, and is the only twice
   continuously differentiable solution with that initial data.
+- `stiffnessMatrix_twoMassWeights`, `twoMass_rigidMode`, `twoMass_positiveMode`: the stiffness
+  `K = k [[1, -1], [-1, 1]]` of two masses and one spring, its rigid translation and its positive
+  mode.
+- `twoMass_modalBasis`, `modalResponse_twoMass`, `twoMassResponse_solves`,
+  `twoMassResponse_unique`: the explicit mass-orthonormal basis and its response.
+- `grounded_twoMass`: grounding either mass leaves the positive one-degree-of-freedom stiffness.
 
 ## iii. Table of contents
 
@@ -59,16 +77,19 @@ stiffness and initial data are model inputs.
 - C. Decoupling
 - D. Modal responses
 - E. The physical response
+- F. Two masses and one spring
 
 ## iv. References
 
-- S. S. Rao, *Mechanical Vibrations*, 6th edition, Chapter 6 (multidegree-of-freedom systems).
+- S. S. Rao, *Mechanical Vibrations*, 6th edition, Chapter 5 (two-degree-of-freedom systems,
+  semidefinite systems) and Chapter 6 (multidegree-of-freedom systems).
 - D. J. Inman, *Engineering Vibration*, 4th edition, Chapter 4 (multiple-degree-of-freedom
   systems, mass-normalized modes).
 - R. A. Horn and C. R. Johnson, *Matrix Analysis*, 2nd edition, Cambridge University Press
   (2013), Theorem 4.5.15 (simultaneous diagonalization by congruence).
 - `MathlibExt.LinearAlgebra.Matrix.SimultaneousDiagonalization`: the simultaneous
   diagonalization theorem reused here.
+- `PhyslibExt.Mechanics.HarmonicMechanics`: the spring-network energy and stiffness matrix.
 -/
 
 @[expose] public section
@@ -90,7 +111,7 @@ noncomputable def modalCoordinate (μ q₀ v₀ t : ℝ) : ℝ :=
   else q₀ + v₀ * t
 
 /-- The modal response in physical coordinates, `x (t) = C q (t)`, where the modal coordinates
-start from `q (0) = C⁻¹ x₀` and `q' (0) = C⁻¹ v₀`. -/
+start from `q (0) = C⁻¹ x₀` and `q' (0) = C⁻¹ v₀` (`C⁻¹ = 0` when `C` is not invertible). -/
 noncomputable def modalResponse (C : Matrix n n ℝ) (μ : n → ℝ) (x₀ v₀ : n → ℝ) (t : ℝ) :
     n → ℝ :=
   C *ᵥ fun i => modalCoordinate (μ i) ((C⁻¹ *ᵥ x₀) i) ((C⁻¹ *ᵥ v₀) i) t
@@ -118,8 +139,9 @@ lemma inv_eq_transpose_mul {M C : Matrix n n ℝ} (hMC : Cᵀ * M * C = 1) :
 
 /-! ## C. Decoupling -/
 
-/-- In the modal coordinates `q = C⁻¹ x` the equation `M x'' + K x = 0` decouples into
-`q_i'' + μ i q_i = 0`, for every twice continuously differentiable `x`. -/
+/-- For `Cᵀ M C = 1` and `Cᵀ K C = diagonal μ`, in the modal coordinates `q = C⁻¹ x` the
+equation `M x'' + K x = 0` at `t` decouples into `q_i'' + μ i q_i = 0` at `t`, for every twice
+continuously differentiable `x`. -/
 lemma modal_decoupling {M K C : Matrix n n ℝ} {μ : n → ℝ} (hMC : Cᵀ * M * C = 1)
     (hKC : Cᵀ * K * C = diagonal μ) {x : ℝ → n → ℝ} (hx : ContDiff ℝ 2 x) (t : ℝ) :
     M *ᵥ deriv (deriv x) t + K *ᵥ x t = 0 ↔
@@ -268,8 +290,9 @@ lemma modalCoordinate_unique {μ : ℝ} (hμ : 0 ≤ μ) {q : ℝ → ℝ} (hq :
 
 /-! ## E. The physical response -/
 
-/-- The modal response `x = C q` is twice continuously differentiable, solves
-`M x'' + K x = 0`, and matches both initial-data vectors: `x (0) = x₀`, `x' (0) = v₀`. -/
+/-- For `Cᵀ M C = 1`, `Cᵀ K C = diagonal μ` and `μ ≥ 0`, the modal response `x = C q` is twice
+continuously differentiable, solves `M x'' + K x = 0`, and matches both initial-data vectors:
+`x (0) = x₀`, `x' (0) = v₀`. -/
 lemma modalResponse_solves {M K C : Matrix n n ℝ} {μ : n → ℝ} (hMC : Cᵀ * M * C = 1)
     (hKC : Cᵀ * K * C = diagonal μ) (hμ : ∀ i, 0 ≤ μ i) (x₀ v₀ : n → ℝ) :
     ContDiff ℝ 2 (modalResponse C μ x₀ v₀) ∧
@@ -329,8 +352,9 @@ lemma modalResponse_solves {M K C : Matrix n n ℝ} {μ : n → ℝ} (hMC : Cᵀ
       exact (hsol i).2.2.2
     rw [hdx, hQ'0, hb, Matrix.mulVec_mulVec, hCCi, Matrix.one_mulVec]
 
-/-- Every twice continuously differentiable solution of `M x'' + K x = 0` is the modal response
-with its own initial position and velocity. -/
+/-- For `Cᵀ M C = 1`, `Cᵀ K C = diagonal μ` and `μ ≥ 0`, every twice continuously
+differentiable solution of `M x'' + K x = 0` is the modal response with its own initial position
+and velocity. -/
 lemma modalResponse_unique {M K C : Matrix n n ℝ} {μ : n → ℝ} (hMC : Cᵀ * M * C = 1)
     (hKC : Cᵀ * K * C = diagonal μ) (hμ : ∀ i, 0 ≤ μ i) {x : ℝ → n → ℝ} (hx : ContDiff ℝ 2 x)
     (hEq : ∀ t, M *ᵥ deriv (deriv x) t + K *ᵥ x t = 0) :
@@ -375,5 +399,245 @@ lemma modalResponse_unique {M K C : Matrix n n ℝ} {μ : n → ℝ} (hMC : Cᵀ
   congr 1
   funext i
   rw [show q t i = (fun s => q s i) t from rfl, hcomp i, ← (hpi q hqC i 0).1, hq'0]
+
+/-! ## F. Two masses and one spring -/
+
+open PhyslibExt.Mechanics.HarmonicMechanics (springEnergy stiffnessMatrix)
+
+/-- The pair weights of one spring of stiffness `k` between the two masses: reciprocal, no
+self-spring. -/
+def twoMassWeights (k : ℝ) : Fin 2 → Fin 2 → ℝ :=
+  ![![0, k], ![k, 0]]
+
+/-- The squared angular frequency `ω² = k (m₁ + m₂) / (m₁ m₂)` of the positive mode (`0` when
+`m₁ m₂ = 0`, by `u / 0 = 0`). -/
+noncomputable def twoMassFrequencySq (m₁ m₂ k : ℝ) : ℝ :=
+  k * (m₁ + m₂) / (m₁ * m₂)
+
+/-- The mass-orthonormal modal matrix: its columns are the rigid translation `(1, 1)` and the mode
+`(m₂, -m₁)`, each divided by the square root of its modal mass, `m₁ + m₂` and
+`m₁ m₂ (m₁ + m₂)`. Meant for `m₁, m₂ > 0`; otherwise `√u = 0` for `u < 0` and `u / 0 = 0`
+apply. -/
+noncomputable def twoMassModalMatrix (m₁ m₂ : ℝ) : Matrix (Fin 2) (Fin 2) ℝ :=
+  !![1 / Real.sqrt (m₁ + m₂), m₂ / Real.sqrt (m₁ * m₂ * (m₁ + m₂));
+    1 / Real.sqrt (m₁ + m₂), -m₁ / Real.sqrt (m₁ * m₂ * (m₁ + m₂))]
+
+/-- The free response as centre-of-mass drift plus the modal response of the extension: the
+centre of mass `X = (m₁ x₁ + m₂ x₂) / (m₁ + m₂)` follows the zero-mode response from `X₀` with
+velocity `V₀` along `(1, 1)`, and the spring extension `r = x₂ - x₁` follows the modal response at
+`ω²` from `r₀` with rate `ṙ₀`, along `(-m₂, m₁) / (m₁ + m₂)`. For `m₁, m₂ > 0` the extension
+oscillates when `k > 0` and drifts when `k ≤ 0`. In the physical reading `m₁, m₂ > 0` and
+`k ≥ 0`; the formula uses the convention `u / 0 = 0`. -/
+noncomputable def twoMassResponse (m₁ m₂ k : ℝ) (x₀ v₀ : Fin 2 → ℝ) (t : ℝ) : Fin 2 → ℝ :=
+  modalCoordinate 0 ((m₁ * x₀ 0 + m₂ * x₀ 1) / (m₁ + m₂)) ((m₁ * v₀ 0 + m₂ * v₀ 1) / (m₁ + m₂))
+      t • ![1, 1] +
+    (modalCoordinate (twoMassFrequencySq m₁ m₂ k) (x₀ 1 - x₀ 0) (v₀ 1 - v₀ 0) t / (m₁ + m₂)) •
+      ![-m₂, m₁]
+
+private lemma modalCoordinate_smul (μ a q v t : ℝ) :
+    modalCoordinate μ (a * q) (a * v) t = a * modalCoordinate μ q v t := by
+  unfold modalCoordinate
+  split_ifs <;> ring
+
+private lemma K_eq (k : ℝ) :
+    stiffnessMatrix (twoMassWeights k) 0 = !![k, -k; -k, k] := by
+  ext i j; fin_cases i <;> fin_cases j <;> simp [stiffnessMatrix, twoMassWeights, Fin.sum_univ_two]
+
+/-- Assembly: the spring-network stiffness matrix of one spring between the two masses, with no
+wall springs, is `K = k [[1, -1], [-1, 1]]`. -/
+lemma stiffnessMatrix_twoMassWeights (k : ℝ) :
+    stiffnessMatrix (twoMassWeights k) 0 = k • !![1, -1; -1, 1] := by
+  rw [K_eq]
+  ext i j; fin_cases i <;> fin_cases j <;> simp
+
+/-- The spring energy of the two-mass network is `k (u₂ - u₁)² / 2`, half the stiffness quadratic
+form. -/
+lemma springEnergy_twoMassWeights (k : ℝ) (u : Fin 2 → ℝ) :
+    springEnergy (twoMassWeights k) 0 u = k * (u 1 - u 0) ^ 2 / 2 ∧
+      springEnergy (twoMassWeights k) 0 u =
+        (1 / 2) * u ⬝ᵥ (stiffnessMatrix (twoMassWeights k) 0 *ᵥ u) := by
+  have h1 : springEnergy (twoMassWeights k) 0 u = k * (u 1 - u 0) ^ 2 / 2 := by
+    simp [springEnergy, twoMassWeights, Fin.sum_univ_two]; ring
+  refine ⟨h1, ?_⟩
+  rw [h1, K_eq]
+  simp [dotProduct, Matrix.mulVec, Fin.sum_univ_two]; ring
+
+/-- Positive masses give the positive-definite mass matrix `M = diag(m₁, m₂)`, and a
+nonnegative spring gives a positive-semidefinite stiffness: the hypotheses of the modal basis. -/
+lemma twoMass_posDef_posSemidef {m₁ m₂ k : ℝ} (hm₁ : 0 < m₁) (hm₂ : 0 < m₂) (hk : 0 ≤ k) :
+    (Matrix.diagonal ![m₁, m₂]).PosDef ∧ (stiffnessMatrix (twoMassWeights k) 0).PosSemidef := by
+  refine ⟨Matrix.PosDef.diagonal (fun i => by fin_cases i <;> simp [hm₁, hm₂]), ?_⟩
+  rw [K_eq]
+  refine Matrix.PosSemidef.of_dotProduct_mulVec_nonneg ?_ (fun x => ?_)
+  · ext i j; fin_cases i <;> fin_cases j <;> simp
+  · simp [dotProduct, Matrix.mulVec, Fin.sum_univ_two]
+    nlinarith [sq_nonneg (x 0 - x 1), mul_nonneg hk (sq_nonneg (x 0 - x 1))]
+
+/-- The rigid translation `(1, 1)` is a zero mode of the stiffness and carries no spring
+energy. -/
+lemma twoMass_rigidMode (k : ℝ) :
+    stiffnessMatrix (twoMassWeights k) 0 *ᵥ ![1, 1] = 0 ∧
+      springEnergy (twoMassWeights k) 0 ![1, 1] = 0 := by
+  rw [K_eq]
+  refine ⟨?_, ?_⟩
+  · ext i; fin_cases i <;> simp [Matrix.mulVec, dotProduct, Fin.sum_univ_two]
+  · simp [springEnergy, twoMassWeights, Fin.sum_univ_two]
+
+/-- The positive mode: for `m₁, m₂, k > 0`, `φ = (m₂, -m₁)` is mass-orthogonal to the rigid
+translation and satisfies `K φ = ω² M φ` with `ω² = k (m₁ + m₂) / (m₁ m₂) > 0`. -/
+lemma twoMass_positiveMode {m₁ m₂ k : ℝ} (hm₁ : 0 < m₁) (hm₂ : 0 < m₂) (hk : 0 < k) :
+    0 < twoMassFrequencySq m₁ m₂ k ∧
+      stiffnessMatrix (twoMassWeights k) 0 *ᵥ ![m₂, -m₁] =
+        twoMassFrequencySq m₁ m₂ k • (Matrix.diagonal ![m₁, m₂] *ᵥ ![m₂, -m₁]) ∧
+      ![1, 1] ⬝ᵥ (Matrix.diagonal ![m₁, m₂] *ᵥ ![m₂, -m₁]) = 0 := by
+  refine ⟨?_, ?_, ?_⟩
+  · unfold twoMassFrequencySq; positivity
+  · rw [K_eq]
+    ext i; fin_cases i <;>
+      simp [Matrix.mulVec, dotProduct, Fin.sum_univ_two, twoMassFrequencySq] <;>
+      field_simp <;> ring
+  · simp [Matrix.mulVec, dotProduct, Fin.sum_univ_two]; ring
+
+/-- The explicit mass-orthonormal modal basis: for `m₁, m₂ > 0`, `Cᵀ M C = 1` and
+`Cᵀ K C = diag(0, ω²)`. -/
+lemma twoMass_modalBasis {m₁ m₂ : ℝ} (hm₁ : 0 < m₁) (hm₂ : 0 < m₂) (k : ℝ) :
+    (twoMassModalMatrix m₁ m₂)ᵀ * Matrix.diagonal ![m₁, m₂] * twoMassModalMatrix m₁ m₂ = 1 ∧
+      (twoMassModalMatrix m₁ m₂)ᵀ * stiffnessMatrix (twoMassWeights k) 0 *
+          twoMassModalMatrix m₁ m₂ =
+        Matrix.diagonal ![0, twoMassFrequencySq m₁ m₂ k] := by
+  have hs : 0 < m₁ + m₂ := by positivity
+  have hp : 0 < m₁ * m₂ * (m₁ + m₂) := by positivity
+  obtain ⟨a, ha_def⟩ : ∃ a, a = Real.sqrt (m₁ + m₂) := ⟨_, rfl⟩
+  obtain ⟨b, hb_def⟩ : ∃ b, b = Real.sqrt (m₁ * m₂ * (m₁ + m₂)) := ⟨_, rfl⟩
+  have ha : a ^ 2 = m₁ + m₂ := by rw [ha_def]; exact Real.sq_sqrt hs.le
+  have hb : b ^ 2 = m₁ * m₂ * (m₁ + m₂) := by rw [hb_def]; exact Real.sq_sqrt hp.le
+  have ha0 : a ≠ 0 := by rw [ha_def]; exact (Real.sqrt_pos.mpr hs).ne'
+  have hb0 : b ≠ 0 := by rw [hb_def]; exact (Real.sqrt_pos.mpr hp).ne'
+  have hC : twoMassModalMatrix m₁ m₂ = !![1 / a, m₂ / b; 1 / a, -m₁ / b] := by
+    rw [ha_def, hb_def]; rfl
+  rw [K_eq, hC]
+  refine ⟨?_, ?_⟩
+  · ext i j
+    fin_cases i <;> fin_cases j <;> simp [Matrix.mul_apply, Fin.sum_univ_two] <;> field_simp
+    · linear_combination -ha
+    · ring
+    · ring
+    · linear_combination -hb
+  · ext i j
+    fin_cases i <;> fin_cases j <;>
+      simp [Matrix.mul_apply, Fin.sum_univ_two, twoMassFrequencySq] <;> field_simp
+    · ring
+    · linear_combination (-(k * (m₁ + m₂))) * hb
+
+/-- For `m₁, m₂ > 0`, the modal response of the explicit basis, with initial position `x₀` and
+velocity `v₀`, is the centre-of-mass drift plus the modal response of the extension, an
+oscillation when `k > 0` and a drift when `k ≤ 0`. -/
+lemma modalResponse_twoMass {m₁ m₂ : ℝ} (hm₁ : 0 < m₁) (hm₂ : 0 < m₂) (k : ℝ)
+    (x₀ v₀ : Fin 2 → ℝ) :
+    modalResponse (twoMassModalMatrix m₁ m₂) ![0, twoMassFrequencySq m₁ m₂ k] x₀ v₀ =
+      twoMassResponse m₁ m₂ k x₀ v₀ := by
+  have hs : 0 < m₁ + m₂ := by positivity
+  have hp : 0 < m₁ * m₂ * (m₁ + m₂) := by positivity
+  have hm₁' : m₁ ≠ 0 := hm₁.ne'
+  have hm₂' : m₂ ≠ 0 := hm₂.ne'
+  have hs' : m₁ + m₂ ≠ 0 := hs.ne'
+  obtain ⟨-, hinv⟩ := inv_eq_transpose_mul (twoMass_modalBasis hm₁ hm₂ k).1
+  obtain ⟨a, ha_def⟩ : ∃ a, a = Real.sqrt (m₁ + m₂) := ⟨_, rfl⟩
+  obtain ⟨b, hb_def⟩ : ∃ b, b = Real.sqrt (m₁ * m₂ * (m₁ + m₂)) := ⟨_, rfl⟩
+  have ha : a ^ 2 = m₁ + m₂ := by rw [ha_def]; exact Real.sq_sqrt hs.le
+  have hb : b ^ 2 = m₁ * m₂ * (m₁ + m₂) := by rw [hb_def]; exact Real.sq_sqrt hp.le
+  have ha0 : a ≠ 0 := by rw [ha_def]; exact (Real.sqrt_pos.mpr hs).ne'
+  have hb0 : b ≠ 0 := by rw [hb_def]; exact (Real.sqrt_pos.mpr hp).ne'
+  have hC : twoMassModalMatrix m₁ m₂ = !![1 / a, m₂ / b; 1 / a, -m₁ / b] := by
+    rw [ha_def, hb_def]; rfl
+  rw [hC] at hinv
+  have hq : ∀ y : Fin 2 → ℝ,
+      ((twoMassModalMatrix m₁ m₂)⁻¹ *ᵥ y) 0 = a * ((m₁ * y 0 + m₂ * y 1) / (m₁ + m₂)) ∧
+        ((twoMassModalMatrix m₁ m₂)⁻¹ *ᵥ y) 1 = (-(m₁ * m₂) / b) * (y 1 - y 0) := by
+    intro y
+    rw [hC, hinv]
+    constructor
+    · simp [Matrix.mulVec, dotProduct, Fin.sum_univ_two, Matrix.mul_apply]
+      field_simp; ring_nf; simp only [ha]; ring
+    · simp [Matrix.mulVec, dotProduct, Fin.sum_univ_two, Matrix.mul_apply]
+      field_simp; ring
+  funext t
+  obtain ⟨hx0, hx1⟩ := hq x₀
+  obtain ⟨hv0, hv1⟩ := hq v₀
+  have hcoord : (fun i => modalCoordinate ((![0, twoMassFrequencySq m₁ m₂ k] : Fin 2 → ℝ) i)
+      (((twoMassModalMatrix m₁ m₂)⁻¹ *ᵥ x₀) i) (((twoMassModalMatrix m₁ m₂)⁻¹ *ᵥ v₀) i) t) =
+      ![a * modalCoordinate 0 ((m₁ * x₀ 0 + m₂ * x₀ 1) / (m₁ + m₂))
+          ((m₁ * v₀ 0 + m₂ * v₀ 1) / (m₁ + m₂)) t,
+        (-(m₁ * m₂) / b) * modalCoordinate (twoMassFrequencySq m₁ m₂ k) (x₀ 1 - x₀ 0)
+          (v₀ 1 - v₀ 0) t] := by
+    funext i; fin_cases i
+    · simp only [Fin.zero_eta, Matrix.cons_val_zero, hx0, hv0, modalCoordinate_smul]
+    · simp only [Fin.mk_one, Matrix.cons_val_one, Matrix.cons_val_zero, hx1, hv1,
+        modalCoordinate_smul]
+  simp only [modalResponse, hcoord, twoMassResponse]
+  rw [hC]
+  funext i; fin_cases i
+  · simp [Matrix.mulVec, dotProduct, Fin.sum_univ_two]
+    field_simp; ring_nf; simp only [hb]; ring
+  · simp [Matrix.mulVec, dotProduct, Fin.sum_univ_two]
+    field_simp; ring_nf; simp only [hb]; ring
+
+/-- For `m₁, m₂ > 0` and `k ≥ 0` the two-mass response is twice continuously differentiable,
+solves `M x'' + K x = 0`, and matches both initial-data vectors. -/
+lemma twoMassResponse_solves {m₁ m₂ k : ℝ} (hm₁ : 0 < m₁) (hm₂ : 0 < m₂) (hk : 0 ≤ k)
+    (x₀ v₀ : Fin 2 → ℝ) :
+    ContDiff ℝ 2 (twoMassResponse m₁ m₂ k x₀ v₀) ∧
+      (∀ t, Matrix.diagonal ![m₁, m₂] *ᵥ deriv (deriv (twoMassResponse m₁ m₂ k x₀ v₀)) t +
+        stiffnessMatrix (twoMassWeights k) 0 *ᵥ twoMassResponse m₁ m₂ k x₀ v₀ t = 0) ∧
+      twoMassResponse m₁ m₂ k x₀ v₀ 0 = x₀ ∧ deriv (twoMassResponse m₁ m₂ k x₀ v₀) 0 = v₀ := by
+  have hC := twoMass_modalBasis hm₁ hm₂ k
+  have hμ : ∀ i, 0 ≤ (![0, twoMassFrequencySq m₁ m₂ k] : Fin 2 → ℝ) i := by
+    intro i; fin_cases i
+    · simp
+    · simp only [Fin.mk_one, Matrix.cons_val_one, Matrix.cons_val_zero, twoMassFrequencySq]
+      positivity
+  have h := modalResponse_solves hC.1 hC.2 hμ x₀ v₀
+  rw [modalResponse_twoMass hm₁ hm₂ k x₀ v₀] at h
+  exact h
+
+/-- For `m₁, m₂ > 0` and `k ≥ 0` every twice continuously differentiable solution of
+`M x'' + K x = 0` is the two-mass response with its own initial position and velocity. -/
+lemma twoMassResponse_unique {m₁ m₂ k : ℝ} (hm₁ : 0 < m₁) (hm₂ : 0 < m₂) (hk : 0 ≤ k)
+    {x : ℝ → Fin 2 → ℝ} (hx : ContDiff ℝ 2 x)
+    (hEq : ∀ t, Matrix.diagonal ![m₁, m₂] *ᵥ deriv (deriv x) t +
+      stiffnessMatrix (twoMassWeights k) 0 *ᵥ x t = 0) :
+    x = twoMassResponse m₁ m₂ k (x 0) (deriv x 0) := by
+  have hC := twoMass_modalBasis hm₁ hm₂ k
+  have hμ : ∀ i, 0 ≤ (![0, twoMassFrequencySq m₁ m₂ k] : Fin 2 → ℝ) i := by
+    intro i; fin_cases i
+    · simp
+    · simp only [Fin.mk_one, Matrix.cons_val_one, Matrix.cons_val_zero, twoMassFrequencySq]
+      positivity
+  have h := modalResponse_unique hC.1 hC.2 hμ hx hEq
+  rw [modalResponse_twoMass hm₁ hm₂ k (x 0) (deriv x 0)] at h
+  exact h
+
+/-- Grounding either mass leaves a positive one-degree-of-freedom stiffness: deleting the
+grounded row and column of `K` gives the one-node network with a wall spring of stiffness `k`,
+which is positive definite for `k > 0`, and the spring energy with the grounded displacement held
+at zero is the energy of that wall spring. -/
+lemma grounded_twoMass {k : ℝ} (hk : 0 < k) :
+    (stiffnessMatrix (twoMassWeights k) 0).submatrix Fin.succ Fin.succ =
+        stiffnessMatrix (0 : Fin 1 → Fin 1 → ℝ) ![k] ∧
+      (stiffnessMatrix (twoMassWeights k) 0).submatrix Fin.castSucc Fin.castSucc =
+        stiffnessMatrix (0 : Fin 1 → Fin 1 → ℝ) ![k] ∧
+      (stiffnessMatrix (0 : Fin 1 → Fin 1 → ℝ) ![k]).PosDef ∧
+      ∀ u : ℝ, springEnergy (twoMassWeights k) 0 ![0, u] =
+          springEnergy (0 : Fin 1 → Fin 1 → ℝ) ![k] ![u] ∧
+        springEnergy (twoMassWeights k) 0 ![u, 0] =
+          springEnergy (0 : Fin 1 → Fin 1 → ℝ) ![k] ![u] := by
+  have hK1 : stiffnessMatrix (0 : Fin 1 → Fin 1 → ℝ) ![k] = Matrix.diagonal ![k] := by
+    ext i j; fin_cases i; fin_cases j; simp [stiffnessMatrix]
+  refine ⟨?_, ?_, ?_, fun u => ⟨?_, ?_⟩⟩
+  · rw [K_eq, hK1]; ext i j; fin_cases i; fin_cases j; simp
+  · rw [K_eq, hK1]; ext i j; fin_cases i; fin_cases j; simp
+  · rw [hK1]; exact Matrix.PosDef.diagonal (fun i => by fin_cases i; simpa using hk)
+  · simp [springEnergy, twoMassWeights, Fin.sum_univ_two]; ring
+  · simp [springEnergy, twoMassWeights, Fin.sum_univ_two]; ring
 
 end PhyslibExt.Mechanics.ModalResponse

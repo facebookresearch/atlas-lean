@@ -35,16 +35,18 @@ trivially on `R/[R, R]`). Two such modules are isomorphic as `ℤG`-modules when
 abelian groups `Abelianization R₁ ≃ Abelianization R₂` intertwines the two actions.
 -/
 
-/-- The relation modules `R₁/[R₁, R₁]` and `R₂/[R₂, R₂]` of two presentations
-`π₁, π₂ : F_d → G` (`Rᵢ = ker πᵢ`) are isomorphic as `ℤG`-modules: some isomorphism of the
-abelianizations intertwines the conjugation actions of `G`, where `g = π₁(u₁) = π₂(u₂)` acts on
-`Rᵢ/[Rᵢ, Rᵢ]` through conjugation by `uᵢ`. -/
+/-- For homomorphisms `π₁, π₂ : F_d → G` with kernels `Rᵢ = ker πᵢ`, some isomorphism
+`f : R₁/[R₁, R₁] ≃ R₂/[R₂, R₂]` of the abelianized kernels intertwines conjugation by lifts with
+equal images: whenever `π₁ u₁ = π₂ u₂`, `f` carries conjugation by `u₁` on `R₁/[R₁, R₁]` to
+conjugation by `u₂` on `R₂/[R₂, R₂]`. When both maps are surjective, these are the relation
+modules of two presentations of `G`, `g = π₁(u₁) = π₂(u₂)` acts on `Rᵢ/[Rᵢ, Rᵢ]` through
+conjugation by `uᵢ`, and the condition says that `f` is an isomorphism of `ℤG`-modules. -/
 def RelationModulesIsomorphic {G : Type*} [Group G] {d : ℕ} (π₁ π₂ : FreeGroup (Fin d) →* G) :
     Prop :=
-  ∃ f : Abelianization π₁.ker ≃* Abelianization π₂.ker,
-    ∀ u₁ u₂ : FreeGroup (Fin d), π₁ u₁ = π₂ u₂ → ∀ m : Abelianization π₁.ker,
-      f (Abelianization.map (MulAut.conjNormal u₁ : π₁.ker ≃* π₁.ker).toMonoidHom m) =
-        Abelianization.map (MulAut.conjNormal u₂ : π₂.ker ≃* π₂.ker).toMonoidHom (f m)
+  ∃ f : Group.Abelianization π₁.ker ≃* Group.Abelianization π₂.ker,
+    ∀ u₁ u₂ : FreeGroup (Fin d), π₁ u₁ = π₂ u₂ → ∀ m : Group.Abelianization π₁.ker,
+      f (Group.Abelianization.map (MulAut.conjNormal u₁ : π₁.ker ≃* π₁.ker).toMonoidHom m) =
+        Group.Abelianization.map (MulAut.conjNormal u₂ : π₂.ker ≃* π₂.ker).toMonoidHom (f m)
 
 /-- Kourovka 4.54 (K. W. Roggenkamp): any two minimal relation modules of a finite group `G` are
 isomorphic: for any two presentations `1 → Rᵢ → F → G → 1` with `F` free of rank `d(G)`, the

@@ -43,7 +43,7 @@ connected components of the undirected reaction graph `G` on `K`. Write
   `Set.range src ∪ Set.range prod` and the linkage graph
   `SimpleGraph.fromRel (fun c c' => ∃ r, src r = c ∧ prod r = c')`, i.e. for the exact
   unfolded form of `ReactionNetwork.deficiency` in
-  `WantedExt/Biology/Dynamics/DeficiencyZeroWanted.lean`; the second also gives the
+  `MathlibExt.Dynamics.PolynomialNetworks.Deficiency`; the second also gives the
   deficiency with `rank Γ` in place of `s`.
 
 The complexes, linkage graph and deficiency are taken as explicit data and hypotheses here;
@@ -68,7 +68,8 @@ variable {ρ K : Type*} [Fintype K] [DecidableEq K]
 /-- **Rank of the reaction graph in complex space.** If `G` is the undirected graph on the
 complexes `K` in which distinct `c`, `c'` are adjacent exactly when some reaction goes from one
 to the other, then the span of the reaction vectors `e_{t r} - e_{s r}` in `ℝ^K` has dimension
-`#K - ℓ`, where `ℓ` is the number of connected components (linkage classes) of `G`.
+`#K - ℓ`, where `ℓ` is the number of connected components (linkage classes) of `G`. This
+difference of natural numbers is never truncated, since `ℓ ≤ #K`.
 
 Source: Feinberg (2019), § 6.4; the Laplacian-kernel count is Mathlib's
 `SimpleGraph.card_connectedComponent_eq_finrank_ker_toLin'_lapMatrix`. -/
@@ -158,7 +159,8 @@ theorem rank_stoichiometricMatrix_eq_finrank [Fintype ρ] :
 /-- **Deficiency as a kernel dimension.** With complexes `K`, compositions `y`, reaction
 endpoints `s`, `t` and linkage graph `G` as in `finrank_span_incidence_eq`,
 `s + dim (ker Y ∩ Δ) = n - ℓ`, where `s` is the dimension of the stoichiometric subspace,
-`Δ = span {e_{t r} - e_{s r}}` and `Y : e_c ↦ y c`.
+`Δ = span {e_{t r} - e_{s r}}` and `Y : e_c ↦ y c`. The difference `n - ℓ` of natural numbers
+is never truncated, since `ℓ ≤ n`.
 
 Source: Feinberg (2019), Theorem 6.4.7 and its proof. -/
 theorem finrank_stoichiometricSubspace_add_finrank_ker_inf [DecidableEq K] [Finite ρ]
@@ -181,7 +183,7 @@ private lemma natCard_connectedComponent_le (G : SimpleGraph K) :
     SimpleGraph.ConnectedComponent.ind (fun v => ⟨v, rfl⟩) c
 
 /-- **Feinberg's characterization of the deficiency.**
-`n - ℓ - s = dim (ker Y ∩ Δ)`, with `n = #K`, `ℓ` the number of linkage classes, `s` the
+`n - ℓ - s = dim (ker Y ∩ Δ)` in `ℤ`, with `n = #K`, `ℓ` the number of linkage classes, `s` the
 dimension of the stoichiometric subspace, `Δ = span {e_{t r} - e_{s r}}` and `Y : e_c ↦ y c`.
 
 Source: Feinberg (2019), Theorem 6.4.7; Feinberg (1987), § 3. -/
@@ -199,7 +201,7 @@ theorem card_sub_card_sub_finrank_eq_finrank_ker_inf [DecidableEq K] [Finite ρ]
   have hle := natCard_connectedComponent_le G
   omega
 
-/-- **The deficiency is nonnegative**: `s ≤ n - ℓ`, i.e. `0 ≤ n - ℓ - s`.
+/-- **The deficiency is nonnegative**: `s ≤ n - ℓ`, i.e. `0 ≤ n - ℓ - s` in `ℤ`.
 
 Source: Feinberg (2019), § 6.4; Feinberg (1987), § 3. -/
 theorem card_sub_card_sub_finrank_nonneg [Finite ρ] (y : K → S → ℕ)
@@ -212,7 +214,7 @@ theorem card_sub_card_sub_finrank_nonneg [Finite ρ] (y : K → S → ℕ)
   rw [N.card_sub_card_sub_finrank_eq_finrank_ker_inf y s t hs ht G hG]
   exact Int.natCast_nonneg _
 
-/-- **Deficiency zero criterion**: `n - ℓ - s = 0` exactly when `Y` is injective on
+/-- **Deficiency zero criterion**: `n - ℓ - s = 0` in `ℤ` exactly when `Y` is injective on
 `Δ = span {e_{t r} - e_{s r}}`, i.e. `ker Y ∩ Δ = 0`.
 
 Source: Feinberg (2019), § 6.4. -/
@@ -229,7 +231,7 @@ theorem card_sub_card_sub_finrank_eq_zero_iff [DecidableEq K] [Finite ρ] (y : K
     Submodule.finrank_eq_zero]
 
 /-- **Linearly independent complexes give deficiency zero.** If the complex compositions
-`y c` (as vectors in `ℝ^S`) are linearly independent, then `n - ℓ - s = 0`.
+`y c` (as vectors in `ℝ^S`) are linearly independent over `ℝ`, then `n - ℓ - s = 0` in `ℤ`.
 
 Source: Feinberg (2019), § 6.4. -/
 theorem card_sub_card_sub_finrank_eq_zero_of_linearIndependent [Finite ρ] (y : K → S → ℕ)
@@ -268,9 +270,9 @@ private lemma fromRel_adj_iff (c c' : ↥(Set.range N.src ∪ Set.range N.prod))
 
 /-- **The deficiency is nonnegative, exact form.** For the complexes
 `C = range src ∪ range prod` and the linkage graph `G = fromRel (y ⟶ y')` on `C`,
-`0 ≤ #C - #(linkage classes) - dim (stoichiometric subspace)`; this is the unfolded statement
-`0 ≤ N.deficiency` for `ReactionNetwork.deficiency` of
-`WantedExt/Biology/Dynamics/DeficiencyZeroWanted.lean`.
+`0 ≤ #C - #(linkage classes) - dim (stoichiometric subspace)` in `ℤ`; this is the unfolded
+statement `0 ≤ N.deficiency` for `ReactionNetwork.deficiency` in
+`MathlibExt.Dynamics.PolynomialNetworks.Deficiency`.
 
 Source: Feinberg (2019), § 6.4; Feinberg (1987), § 3. -/
 theorem complexes_linkage_finrank_nonneg [Finite ρ] (C : Set (S → ℕ))
@@ -286,8 +288,8 @@ theorem complexes_linkage_finrank_nonneg [Finite ρ] (C : Set (S → ℕ))
 
 /-- **The deficiency in rank form, exact form.** For `C = range src ∪ range prod` and the
 linkage graph `G = fromRel (y ⟶ y')`, the deficiency equals
-`#C - #(linkage classes) - rank Γ`, where `Γ` is the stoichiometric matrix (column `r` is
-`prod r - src r`), and this quantity is nonnegative.
+`#C - #(linkage classes) - rank Γ` in `ℤ`, where `Γ` is the stoichiometric matrix (column `r`
+is `prod r - src r`, rank over `ℝ`), and this quantity is nonnegative.
 
 Source: Feinberg (2019), § 6.4; Feinberg (1987), § 3. -/
 theorem complexes_linkage_rank_nonneg [Fintype ρ] (C : Set (S → ℕ))
@@ -302,8 +304,8 @@ theorem complexes_linkage_rank_nonneg [Fintype ρ] (C : Set (S → ℕ))
   exact ⟨rfl, N.complexes_linkage_finrank_nonneg C hC G hG⟩
 
 /-- **Linearly independent complexes give deficiency zero, exact form.** If the complexes in
-`C = range src ∪ range prod`, viewed as vectors in `ℝ^S`, are linearly independent, then
-`#C - #(linkage classes) - dim (stoichiometric subspace) = 0` for the linkage graph
+`C = range src ∪ range prod`, viewed as vectors in `ℝ^S`, are linearly independent over `ℝ`,
+then `#C - #(linkage classes) - dim (stoichiometric subspace) = 0` in `ℤ` for the linkage graph
 `G = fromRel (y ⟶ y')`.
 
 Source: Feinberg (2019), § 6.4. -/

@@ -7,3 +7,6 @@
 - [Diploid selection strictly increases mean fitness off equilibria](diploid-mean-fitness-lt-diploid-mean-fit.md)
 - [Derivative of two-allele mean fitness](has-deriv-at-diploid-mean-fitness-two.md)
 - [Wright's formula](diploid-select-two-sub.md)
+
+- [A viability matrix negative definite on the simplex directions gives a unique, locally stable multiallelic polymorphism](multiallelic-stable-polymorphism-criterion.md)
+- [Complexity of diploid selection dynamics](complexity-of-diploid-selection-dynamics/README.md)

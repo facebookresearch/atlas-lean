@@ -41,7 +41,6 @@ that drive the elementary proofs of the prime number theorem with error term
   `ζ'(s) + 1/(s-1)² = O(log² T)` on `R_T`, and
   `exists_pos_norm_deriv_riemannZeta_le_mul_log_sq_of_mem_frontier`: `ζ'(s) = O(log² T)` on
   `∂R_T`.
-* `one_le_norm_riemannZeta_pow_three_mul`: the `3-4-1` inequality.
 * `exists_pos_div_log_pow_seven_lt_norm_riemannZeta`: the zero-free region
   `|ζ(σ + it)| > c₂ / log⁷ T` for `1 ≤ |t| ≤ T` and `1 - c₁ / log⁹ T ≤ σ ≤ 2`.
 * `exists_riemannZeta₁_ne_zero_and_norm_logDeriv_le`: `riemannZeta₁` has no zeros in a box
@@ -1223,7 +1222,7 @@ theorem exists_pos_norm_deriv_riemannZeta_le_mul_log_sq_of_mem_frontier :
 Source: F. Mertens, *Über eine Eigenschaft der Riemannschen ζ-Function*, Sitzungsber. Akad. Wiss.
 Wien, Math.-Naturwiss. Kl. 107 (1898), 1429–1434, JFM 30.0192.02.
 -/
-theorem one_le_norm_riemannZeta_pow_three_mul {σ t : ℝ} (hσ : 1 < σ) :
+private theorem one_le_norm_riemannZeta_pow_three_mul {σ t : ℝ} (hσ : 1 < σ) :
     1 ≤ ‖riemannZeta (σ : ℂ) ^ 3 * riemannZeta ((σ : ℂ) + t * I) ^ 4 *
         riemannZeta ((σ : ℂ) + 2 * t * I)‖ := by
   have h := DirichletCharacter.norm_LFunction_product_ge_one (N := 1) 1

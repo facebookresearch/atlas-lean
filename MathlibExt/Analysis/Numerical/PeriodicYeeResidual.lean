@@ -62,8 +62,8 @@ noncomputable def sampledV {N : ℕ} (v : ℝ → ℝ → ℝ) (dt h : ℝ) (n :
     Fin N → ℝ :=
   fun j => v ((n : ℝ) * dt - dt / 2) ((j.val : ℝ) * h - h / 2)
 
-/-- Collocated samples `v(n * dt, j * h)`, used only to record that
-the staggered constant does not transfer to collocated sampling. -/
+/-- The collocated samples of `v` on an `N`-cell grid with steps `dt` and `h` at time step `n`:
+`collocatedV v dt h n j = v (n * dt) (j * h)` for `j = 0, …, N - 1`. -/
 noncomputable def collocatedV {N : ℕ} (v : ℝ → ℝ → ℝ) (dt h : ℝ) (n : ℕ) :
     Fin N → ℝ :=
   fun j => v ((n : ℝ) * dt) ((j.val : ℝ) * h)

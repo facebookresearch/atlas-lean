@@ -59,7 +59,8 @@ namespace MathlibExt.Economics.OaxacaBlinder
 open Matrix MathlibExt.Probability.FiniteProbability
 
 /-- Average regressor vector: the column means of the `n × κ` regressor matrix `X`, each the
-`sampleMean` of that column. -/
+`sampleMean` of that column. For `n = 0` every component is `0`, by the convention `x / 0 = 0`; the
+intended domain is `1 ≤ n`. -/
 noncomputable def regressorMean {n : ℕ} {κ : Type*} (X : Matrix (Fin n) κ ℝ) : κ → ℝ :=
   fun j => sampleMean (fun i => X i j)
 

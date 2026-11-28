@@ -1,0 +1,3 @@
+# The native exact-functor homology comparison is natural for...
+
+The native exact-functor homology comparison is natural for the coefficient and algebra chain maps.

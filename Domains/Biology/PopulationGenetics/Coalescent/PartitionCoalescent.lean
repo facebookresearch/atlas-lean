@@ -54,9 +54,8 @@ the matrix exponentials (`Matrix.exp_mul_eq_mul_exp_of_mul_eq`). Restricting the
 `n + 1` to its first `n` genes maps the time-`t` law of the `(n + 1)`-coalescent to that of the
 `n`-coalescent (Kingman's consistency), by the same argument applied to the restriction map.
 
-The consistency of the jump chains themselves (as laws of the sequences of distinct
-restricted partitions) is stated, not proved, in
-`WantedExt/Biology/PopulationGenetics/Coalescent/PartitionCoalescentWanted.lean`.
+The companion module `Domains.Biology.PopulationGenetics.Coalescent.JumpChain` proves
+consistency for the sequences of distinct restricted partitions.
 
 ## Main results
 

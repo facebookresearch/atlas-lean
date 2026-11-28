@@ -16,7 +16,7 @@ universe u v
 
 open CategoryTheory CategoryTheory.Limits
 
-theorem exactSource
+private theorem exactSource
     {A B : Type u} [CommRing A] [CommRing B] (p : ℕ) [Fact p.Prime] [CharP A p] [CharP B p]
     {φ : A →+* B} (hφ : φ.Etale) :
     IsPushout (CommRingCat.ofHom (frobenius A p)) (CommRingCat.ofHom φ)

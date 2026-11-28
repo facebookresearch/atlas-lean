@@ -39,8 +39,15 @@ its projections onto the schemes (`joinProjections`).
   `lhs ∪ rhs` for each dependency of a cover `G` of `F`, plus a candidate key `K` of all
   attributes. `synthesize_lossless` and `synthesize_dependencyPreserving`: it is lossless and
   dependency-preserving (`DependencyPreserving`: `F` is derivable from the projections of the
-  derivable dependencies onto the schemes). That the schemes are in third normal form needs `G` to
-  be a minimal cover and is not formalized here.
+  derivable dependencies onto the schemes).
+* **Minimal covers and third normal form**: `IsMinimalCover F G` (single-attribute right sides,
+  equivalent to `F`, no redundant dependency, no extraneous left attribute); when `attrs` lists
+  every attribute, `minimalCover l attrs` computes one (`isMinimalCover_minimalCover`).
+  `Is3NF F S`: every nontrivial `X → a`
+  derivable from `F` inside `S` has `X` a superkey of `S` or `a` in a key of `S` (`IsSchemeKey`,
+  `IsPrime`). `is3NF_of_mem_synthesize`: synthesis from a minimal cover and a candidate key gives
+  schemes in third normal form; `synthesize_correct` packages Abiteboul–Hull–Vianu Theorem
+  11.2.14.
 
 ## References
 
@@ -52,6 +59,8 @@ its projections onto the schemes (`joinProjections`).
   1979 (adding a key scheme makes the synthesis lossless).
 * S. Abiteboul, R. Hull and V. Vianu, *Foundations of Databases*, Addison-Wesley, 1995,
   Section 11.2 (normal forms).
+* D. Maier, _Minimum covers in the relational database model_, JACM 27(4), 1980, 664–674
+  (computing minimal covers; credited by Abiteboul–Hull–Vianu for Exercise 11.16).
 -/
 
 @[expose] public section
@@ -118,8 +127,9 @@ theorem join_project_eq_of_holdsIn {R₁ R₂ : Finset A} {r : Finset (Tuple A D
   · intro ht
     exact ⟨hr t ht, mem_project.mpr ⟨t, ht, rfl⟩, mem_project.mpr ⟨t, ht, rfl⟩⟩
 
-/-- `r` satisfies, within the scheme `S`, every dependency derivable from `F` between attributes of
-`S`. -/
+/-- **Satisfying a set of dependencies on a scheme.** A relation $r$ satisfies a finite set $F$ of
+functional dependencies on a set $S$ of attributes when every dependency $X \to Y$ with
+$X, Y \subseteq S$ that is derivable from $F$ by Armstrong's axioms holds in $r$. -/
 def SatisfiesOn (F : Finset (FD A)) (S : Finset A) (r : Finset (Tuple A D)) : Prop :=
   ∀ X ⊆ S, ∀ Y ⊆ S, Derives F ⟨X, Y⟩ → FD.HoldsIn ⟨X, Y⟩ (↑r : Set (Tuple A D))
 
@@ -144,15 +154,22 @@ theorem SatisfiesOn.project {F : Finset (FD A)} {S T : Finset A} {r : Finset (Tu
   simpa [hYT ha] using h X (hXT.trans hTS) Y (hYT.trans hTS) hXY t' ht' u' hu' hagree' a ha
 
 variable (D) in
-/-- The decomposition of `R₁ ∪ R₂` into `R₁` and `R₂` is lossless for `F`: every relation over
-`R₁ ∪ R₂` with values in `D` that satisfies the dependencies derivable from `F` between attributes
-of `R₁ ∪ R₂` is the join of its two projections. -/
+/-- **Lossless decomposition into two schemes.** Let $F$ be a finite set of functional dependencies
+over a finite type of attributes with decidable equality, let $R_1$ and $R_2$ be finite sets of
+attributes, and let $D$ be a type of values with decidable equality. The decomposition of
+$R_1 \cup R_2$ into $R_1$ and $R_2$ is lossless for $F$ with values in $D$ when every finite
+relation $r$ over $R_1 \cup R_2$ with values in $D$ that satisfies $F$ on $R_1 \cup R_2$ (every
+dependency $X \to Y$ with $X, Y \subseteq R_1 \cup R_2$ that is derivable from $F$ by Armstrong's
+axioms holds in $r$) is the natural join of its projections:
+$\pi_{R_1}(r) \bowtie \pi_{R_2}(r) = r$. -/
 def LosslessJoin (F : Finset (FD A)) (R₁ R₂ : Finset A) : Prop :=
   ∀ r : Finset (Tuple A D), IsOver (R₁ ∪ R₂) r → SatisfiesOn F (R₁ ∪ R₂) r →
     join (project R₁ r) (project R₂ r) = r
 
-/-- A binary decomposition is lossless when the common attributes determine one of the two
-schemes. -/
+/-- **Lossless binary decompositions from derivable dependencies.** Let $F$ be a finite set of
+functional dependencies and let $R_1$, $R_2$ be sets of attributes. If $R_1 \cap R_2 \to R_1$ or
+$R_1 \cap R_2 \to R_2$ is derivable from $F$ by Armstrong's axioms, then for every value type $D$
+the decomposition of $R_1 \cup R_2$ into $R_1$ and $R_2$ is lossless for $F$ with values in $D$. -/
 theorem losslessJoin_of_derives {F : Finset (FD A)} {R₁ R₂ : Finset A}
     (h : Derives F ⟨R₁ ∩ R₂, R₁⟩ ∨ Derives F ⟨R₁ ∩ R₂, R₂⟩) : LosslessJoin D F R₁ R₂ := by
   intro r hr hF
@@ -165,8 +182,11 @@ theorem losslessJoin_of_derives {F : Finset (FD A)} {R₁ R₂ : Finset A}
     rw [Finset.inter_comm] at h'
     exact join_project_eq_of_holdsIn hr h'
 
-/-- Conversely, a lossless decomposition of all attributes into two schemes has common attributes
-that determine one of the schemes (for values with two distinct elements). -/
+/-- **Converse of the lossless-join test for two schemes.** Let $F$ be a set of functional
+dependencies, let $R_1$ and $R_2$ be schemes whose union is the set of all attributes, and let
+$D$ be a value type containing at least two distinct elements. If the decomposition of
+$R_1 \cup R_2$ into $R_1$ and $R_2$ is lossless for $F$ with values in $D$, then $F$ derives
+$R_1 \cap R_2 \to R_1$ or $R_1 \cap R_2 \to R_2$. -/
 theorem derives_of_losslessJoin {F : Finset (FD A)} {R₁ R₂ : Finset A} {d₀ d₁ : D}
     (hd : d₀ ≠ d₁) (hR : R₁ ∪ R₂ = Finset.univ) (h : LosslessJoin D F R₁ R₂) :
     Derives F ⟨R₁ ∩ R₂, R₁⟩ ∨ Derives F ⟨R₁ ∩ R₂, R₂⟩ := by
@@ -226,8 +246,11 @@ theorem derives_of_losslessJoin {F : Finset (FD A)} {R₁ R₂ : Finset A} {d₀
       Decidable.not_not, m, t₁] at this
     exact hcC this
 
-/-- **Lossless binary decompositions**: a decomposition of all attributes into `R₁` and `R₂` is
-lossless exactly when `R₁ ∩ R₂ → R₁` or `R₁ ∩ R₂ → R₂` is derivable. -/
+/-- **Lossless binary decompositions.** Let $F$ be a finite set of functional dependencies, let
+$R_1$ and $R_2$ be sets of attributes whose union is the set of all attributes, and suppose that
+the value type $D$ has two distinct elements. Then the decomposition into $R_1$ and $R_2$ is
+lossless for $F$ with values in $D$ if and only if $R_1 \cap R_2 \to R_1$ or
+$R_1 \cap R_2 \to R_2$ is derivable from $F$ by Armstrong's axioms. -/
 theorem losslessJoin_iff {F : Finset (FD A)} {R₁ R₂ : Finset A} {d₀ d₁ : D} (hd : d₀ ≠ d₁)
     (hR : R₁ ∪ R₂ = Finset.univ) :
     LosslessJoin D F R₁ R₂ ↔ Derives F ⟨R₁ ∩ R₂, R₁⟩ ∨ Derives F ⟨R₁ ∩ R₂, R₂⟩ :=
@@ -256,7 +279,11 @@ theorem join_joinUnit (r : Finset (Tuple A D)) : join r (joinUnit D) = r := by
     simp only [merge]
     cases t a <;> rfl
 
-/-- The natural join of the projections of `r` onto the schemes of `l`. -/
+/-- **Join of the projections of a relation.** For a relation $r$ (a finite set of tuples) and a
+list of schemes $S_1, \dots, S_n$, this is the natural join of the projections
+$\pi_{S_1} r, \dots, \pi_{S_n} r$, computed as
+$\pi_{S_1} r \bowtie (\pi_{S_2} r \bowtie (\cdots \bowtie (\pi_{S_n} r \bowtie U)))$, where $U$ is
+the relation containing only the empty tuple; for the empty list it is $U$. -/
 def joinProjections (l : List (Finset A)) (r : Finset (Tuple A D)) : Finset (Tuple A D) :=
   l.foldr (fun S acc => join (project S r) acc) (joinUnit D)
 
@@ -284,7 +311,8 @@ theorem joinProjections_congr {R : Finset A} (l : List (Finset A)) (hl : ∀ S �
     rw [ih fun T hT => hl T (List.mem_cons_of_mem _ hT),
       project_project_of_subset (hl S List.mem_cons_self)]
 
-/-- The union of a list of schemes. -/
+/-- **Union of a list of schemes.** For a list $S_1, \dots, S_n$ of schemes (finite sets of
+attributes), this is the union $S_1 \cup \dots \cup S_n$; for the empty list it is the empty set. -/
 def schemaUnion (l : List (Finset A)) : Finset A := l.foldr (· ∪ ·) ∅
 
 omit [Fintype A] in
@@ -312,8 +340,11 @@ theorem isOver_joinProjections {r : Finset (Tuple A D)} {R : Finset A} (hr : IsO
   | S :: l, hl => isOver_join (isOver_project hr (hl S List.mem_cons_self))
       (isOver_joinProjections hr l fun T hT => hl T (List.mem_cons_of_mem _ hT))
 
-/-- **Membership in a join of projections**: a tuple over the union of the schemes is in the join
-exactly when each of its restrictions is in the corresponding projection. -/
+/-- **Membership in a join of projections.** Let $r$ be a relation over a schema $R$ and let
+$S_1, \dots, S_n$ be a list of schemes, each contained in $R$. A tuple $t$ belongs to the natural
+join of the projections $\pi_{S_1} r, \dots, \pi_{S_n} r$ if and only if $t$ is a tuple over
+$S_1 \cup \dots \cup S_n$ and, for every $i$, the restriction of $t$ to $S_i$ belongs to
+$\pi_{S_i} r$. -/
 theorem mem_joinProjections {r : Finset (Tuple A D)} {R : Finset A} (hr : IsOver R r) :
     ∀ (l : List (Finset A)), (∀ S ∈ l, S ⊆ R) → ∀ {t : Tuple A D},
       t ∈ joinProjections l r ↔ t.IsOver (schemaUnion l) ∧ ∀ S ∈ l, t.restrict S ∈ project S r
@@ -350,12 +381,17 @@ theorem mem_joinProjections {r : Finset (Tuple A D)} {R : Finset A} (hr : IsOver
 
 /-! ### Boyce–Codd normal form -/
 
-/-- The scheme `S` is in **Boyce–Codd normal form** for `F`: for every dependency `X → Y`
-derivable from `F` with `X, Y ⊆ S`, either `Y ⊆ X` or `X` is a superkey of `S`. -/
+/-- **Boyce–Codd normal form.** A scheme $S$ is in Boyce–Codd normal form for a set $F$ of
+functional dependencies when, for every dependency $X \to Y$ derivable from $F$ with
+$X, Y \subseteq S$, either $Y \subseteq X$ or $F$ derives $X \to S$ (that is, $X$ is a superkey of
+$S$). -/
 def IsBCNF (F : Finset (FD A)) (S : Finset A) : Prop :=
   ∀ X ⊆ S, ∀ Y ⊆ S, Derives F ⟨X, Y⟩ → Y ⊆ X ∨ Derives F ⟨X, S⟩
 
-/-- `X ⊆ S` violates BCNF in `S`: its closure within `S` is neither `X` itself nor all of `S`. -/
+/-- **BCNF violations.** Let $F$ be a set of functional dependencies and $S$ a scheme, and write
+$X^+$ for the attribute closure of a set $X$ of attributes under $F$. A set $X \subseteq S$
+violates BCNF in $S$ when $S \not\subseteq X^+$ and $X^+ \cap S \not\subseteq X$, that is, when
+the closure $X^+ \cap S$ of $X$ within $S$ is neither $X$ nor $S$. -/
 def IsBCNFViolation (F : Finset (FD A)) (S X : Finset A) : Prop :=
   X ⊆ S ∧ ¬ S ⊆ attrClosure F X ∧ ¬ attrClosure F X ∩ S ⊆ X
 
@@ -382,14 +418,20 @@ theorem isBCNF_iff {F : Finset (FD A)} {S : Finset A} :
 instance (F : Finset (FD A)) (S : Finset A) : Decidable (IsBCNF F S) :=
   decidable_of_iff _ isBCNF_iff.symm
 
-/-- The candidate violations of BCNF in `S`: the subsets of the attributes of `l` lying in `S`
-(duplicates in `l` are removed first, so there are `2 ^ k` candidates for `k` distinct
-attributes). -/
+/-- **Candidate BCNF violations.** Given a list $l$ of attributes and a set $S$ of attributes, the
+candidate violations of BCNF in $S$ are all subsets of the set of attributes that occur in $l$ and
+lie in $S$, listed once each. Duplicates in $l$ are removed first, so there are $2^k$ candidates
+when $k$ distinct attributes of $l$ lie in $S$. -/
 def bcnfCandidates (l : List A) (S : Finset A) : List (Finset A) :=
   ((l.filter (· ∈ S)).dedup.sublists).map List.toFinset
 
-/-- The BCNF decomposition algorithm with at most `n` rounds of splitting: find a violation `X` of
-BCNF in `S` and split `S` into `X⁺ ∩ S` and `S \ (X⁺ \ X)`. -/
+/-- **BCNF decomposition with bounded depth.** Let $F$ be a set of functional dependencies, $l$ a
+list of attributes, $n$ a natural number and $S$ a scheme. For $n = 0$ the result is the list $[S]$.
+For $n > 0$, the candidate violations of BCNF in $S$ built from $l$ are searched in order for the
+first $X$ that violates BCNF in $S$ for $F$. If there is none, the result is $[S]$. Otherwise, with
+$X^+$ the attribute closure of $X$ under $F$, the result is the decomposition of $X^+ \cap S$
+followed by the decomposition of $S \setminus (X^+ \setminus X)$, both computed with depth bound
+$n - 1$. -/
 def bcnfDecompose (F : Finset (FD A)) (l : List A) : ℕ → Finset A → List (Finset A)
   | 0, S => [S]
   | n + 1, S =>
@@ -398,7 +440,13 @@ def bcnfDecompose (F : Finset (FD A)) (l : List A) : ℕ → Finset A → List (
     | some X => bcnfDecompose F l n (attrClosure F X ∩ S) ++
         bcnfDecompose F l n (S \ (attrClosure F X \ X))
 
-/-- The **BCNF decomposition** of `S`; `l` lists the attributes to try in violations. -/
+/-- **BCNF decomposition.** Let $F$ be a set of functional dependencies, $l$ a list of attributes
+and $S$ a scheme. The BCNF decomposition of $S$ for $F$ and $l$ is the BCNF decomposition with
+bounded depth run on $S$ with depth bound $|S|$. At each step, if some candidate violation of BCNF
+in the current scheme $T$ built from $l$ violates BCNF in $T$ for $F$, the first such $X$ is used:
+with $X^+$ the attribute closure of $X$ under $F$, $T$ is replaced by the decomposition of
+$X^+ \cap T$ followed by the decomposition of $T \setminus (X^+ \setminus X)$. Otherwise, or once
+the depth bound is reached, $T$ is kept as it is. -/
 def bcnfDecomposition (F : Finset (FD A)) (l : List A) (S : Finset A) : List (Finset A) :=
   bcnfDecompose F l S.card S
 
@@ -475,9 +523,10 @@ private theorem joinProjections_bcnfDecompose (F : Finset (FD A)) (l : List A) :
       rw [hinter]
       exact hF X hv.1 R₁ hR₁ ((derives_attrClosure F X).decompose Finset.inter_subset_left)
 
-/-- **The BCNF decomposition is lossless**: every relation over `S` satisfying the dependencies
-derivable from `F` between attributes of `S` is the join of its projections onto the output
-schemes. -/
+/-- **The BCNF decomposition is lossless.** Let $F$ be a set of functional dependencies, $l$ a list
+of attributes and $S$ a set of attributes, and let $r$ be a relation over $S$ that satisfies every
+dependency $X \to Y$ derivable from $F$ with $X, Y \subseteq S$. Then $r$ is the natural join of
+its projections onto the schemes of the BCNF decomposition of $S$ for $F$ and $l$. -/
 theorem bcnfDecomposition_lossless (F : Finset (FD A)) (l : List A) {S : Finset A}
     {r : Finset (Tuple A D)} (hr : IsOver S r) (hF : SatisfiesOn F S r) :
     joinProjections (bcnfDecomposition F l S) r = r :=
@@ -518,27 +567,34 @@ private theorem isBCNF_of_mem_bcnfDecompose (F : Finset (FD A)) {l : List A} (hl
       · exact isBCNF_of_mem_bcnfDecompose F hl n _ T (by omega) h
       · exact isBCNF_of_mem_bcnfDecompose F hl n _ T (by omega) h
 
-/-- **The BCNF decomposition produces BCNF schemes** when `l` lists every attribute. -/
+/-- **The BCNF decomposition produces BCNF schemes.** Let $F$ be a set of functional dependencies
+and $l$ a list containing every attribute. Then for every scheme $S$, every scheme in the BCNF
+decomposition of $S$ for $F$ and $l$ is in Boyce–Codd normal form for $F$. -/
 theorem isBCNF_of_mem_bcnfDecomposition (F : Finset (FD A)) {l : List A} (hl : ∀ a, a ∈ l)
     {S T : Finset A} (hT : T ∈ bcnfDecomposition F l S) : IsBCNF F T :=
   isBCNF_of_mem_bcnfDecompose F hl _ S T le_rfl hT
 
 /-! ### Synthesis -/
 
-/-- `F` and `G` are equivalent: each derives every dependency of the other. -/
+/-- **Equivalent sets of functional dependencies.** Two sets $F$ and $G$ of functional dependencies
+are equivalent when $F$ derives every dependency of $G$ and $G$ derives every dependency of $F$. -/
 def Equivalent (F G : Finset (FD A)) : Prop := (∀ g ∈ G, Derives F g) ∧ ∀ f ∈ F, Derives G f
 
 instance (F G : Finset (FD A)) : Decidable (Equivalent F G) := by
   unfold Equivalent
   infer_instance
 
-/-- The dependencies derivable from `F` between attributes of `S` (the projection of `F⁺` onto
-`S`). -/
+/-- **Projection of the dependency closure onto a scheme.** For a finite set $F$ of functional
+dependencies and a set $S$ of attributes, this is the finite set of all dependencies $X \to Y$
+with $X, Y \subseteq S$ that are derivable from $F$ by Armstrong's axioms, that is, the projection
+onto $S$ of the closure $F^+$ of $F$. -/
 def projectFDs (F : Finset (FD A)) (S : Finset A) : Finset (FD A) :=
   ((S.powerset ×ˢ S.powerset).filter fun p => Derives F ⟨p.1, p.2⟩).image fun p => ⟨p.1, p.2⟩
 
-/-- A decomposition is **dependency-preserving** for `F`: every dependency of `F` is derivable
-from the union of the projections of `F⁺` onto the schemes. -/
+/-- **Dependency-preserving decompositions.** A list $l$ of schemes is dependency-preserving for a
+set $F$ of functional dependencies when every dependency of $F$ is derivable from the union, over
+the schemes $S$ of $l$, of the sets of dependencies $X \to Y$ derivable from $F$ with
+$X, Y \subseteq S$. -/
 def DependencyPreserving (F : Finset (FD A)) (l : List (Finset A)) : Prop :=
   ∀ f ∈ F, Derives ((l.map (projectFDs F)).foldr (· ∪ ·) ∅) f
 
@@ -546,7 +602,9 @@ instance (F : Finset (FD A)) (l : List (Finset A)) : Decidable (DependencyPreser
   unfold DependencyPreserving
   infer_instance
 
-/-- **Synthesis**: one scheme `lhs ∪ rhs` for each dependency of `G`, plus the key `K`. -/
+/-- **Synthesis.** Given a list $G$ of functional dependencies and a set of attributes $K$, the
+synthesized decomposition is the list of schemes consisting of $K$ followed by, for each
+dependency $X \to Y$ of $G$ in order, the scheme $X \cup Y$. -/
 def synthesize (G : List (FD A)) (K : Finset A) : List (Finset A) :=
   K :: G.map fun g => g.lhs ∪ g.rhs
 
@@ -580,7 +638,11 @@ private theorem attrClosure_subset_of_closed {F : Finset (FD A)} {X C : Finset A
     (fun b hb => by simpa [t₀, t₁] using hX hb) a ha
   simpa [t₀, t₁] using this
 
-/-- **Synthesis is dependency-preserving** for any cover `G` of `F`. -/
+/-- **Synthesis is dependency-preserving.** Let $F$ be a finite set of functional dependencies and
+$G$ a list of functional dependencies equivalent to $F$ (each derives every dependency of the
+other). Then for every set of attributes $K$, the decomposition synthesized from $G$ and $K$,
+with one scheme $X \cup Y$ for each dependency $X \to Y$ of $G$ together with the scheme $K$, is
+dependency-preserving for $F$. -/
 theorem synthesize_dependencyPreserving {F : Finset (FD A)} {G : List (FD A)}
     (hG : Equivalent F G.toFinset) (K : Finset A) : DependencyPreserving F (synthesize G K) := by
   intro f hf
@@ -645,5 +707,504 @@ theorem synthesize_lossless {F : Finset (FD A)} {G : List (FD A)} (hG : Equivale
     exact htu ▸ hu
   · intro ht
     exact ⟨hr t ht, fun S _ => mem_project.mpr ⟨t, ht, rfl⟩⟩
+
+/-! ### Minimal covers and third normal form -/
+
+/-- **Key of a scheme.** Let $F$ be a finite set of functional dependencies and $S$ a scheme. A set
+$K$ of attributes is a key of $S$ for $F$ when $K \subseteq S$, $F$ derives $K \to S$, and $F$
+derives $K' \to S$ for no proper subset $K' \subsetneq K$; that is, $K$ is a candidate key of the
+scheme $(S, \pi_S F^+)$. -/
+def IsSchemeKey (F : Finset (FD A)) (S K : Finset A) : Prop :=
+  K ⊆ S ∧ Derives F ⟨K, S⟩ ∧ ∀ K' ⊂ K, ¬ Derives F ⟨K', S⟩
+
+/-- **Prime attribute.** An attribute $a$ is prime in a scheme $S$ for a set $F$ of functional
+dependencies when $a$ belongs to some key of $S$ for $F$ (a *key attribute* in the terminology of
+Abiteboul, Hull and Vianu). -/
+def IsPrime (F : Finset (FD A)) (S : Finset A) (a : A) : Prop :=
+  ∃ K, IsSchemeKey F S K ∧ a ∈ K
+
+/-- **Third normal form.** A scheme $S$ is in third normal form for a set $F$ of functional
+dependencies when, for every $X \subseteq S$ and every attribute $a \in S \setminus X$ such that
+$F$ derives $X \to \{a\}$, either $F$ derives $X \to S$ ($X$ is a superkey of $S$) or $a$ is prime
+in $S$ (Abiteboul–Hull–Vianu, Definition 11.2.11, applied to the scheme $(S, \pi_S F^+)$). -/
+def Is3NF (F : Finset (FD A)) (S : Finset A) : Prop :=
+  ∀ X ⊆ S, ∀ a ∈ S, a ∉ X → Derives F ⟨X, {a}⟩ → Derives F ⟨X, S⟩ ∨ IsPrime F S a
+
+/-- **Minimal cover.** A finite set $G$ of functional dependencies is a minimal cover of $F$ when
+(a) every dependency of $G$ has a single attribute on its right side, (b) $G$ is equivalent to
+$F$, (c) no dependency $g$ of $G$ is derivable from the other dependencies of $G$, (together
+with (b) this is Abiteboul–Hull–Vianu's form: no proper subset of $G$ implies $F$; see
+`IsMinimalCover.not_derives_of_ssubset`), and (d) for
+every $X \to A$ in $G$, $F$ derives $Y \to A$ for no proper subset $Y \subsetneq X$
+(Abiteboul–Hull–Vianu, Section 11.2). -/
+def IsMinimalCover (F G : Finset (FD A)) : Prop :=
+  (∀ g ∈ G, ∃ a, g.rhs = {a}) ∧
+  Equivalent F G ∧
+  (∀ g ∈ G, ¬ Derives (G.erase g) g) ∧
+  (∀ g ∈ G, ∀ Y ⊂ g.lhs, ¬ Derives F ⟨Y, g.rhs⟩)
+
+omit [Fintype A] [DecidableEq D] in
+private theorem Derives.of_subset {F H : Finset (FD A)} (h : F ⊆ H) {f : FD A}
+    (hder : Derives F f) : Derives H f :=
+  Derives.of_forall (fun _ hg => .mem (h hg)) hder
+
+omit [Fintype A] [DecidableEq D] in
+/-- Scheme keys are the superkeys of the scheme minimal under single removals. -/
+theorem isSchemeKey_iff {F : Finset (FD A)} {S K : Finset A} :
+    IsSchemeKey F S K ↔
+      K ⊆ S ∧ Derives F ⟨K, S⟩ ∧ ∀ a ∈ K, ¬ Derives F ⟨K.erase a, S⟩ := by
+  unfold IsSchemeKey
+  constructor
+  · rintro ⟨hsub, hder, hmin⟩
+    exact ⟨hsub, hder, fun a ha => hmin _ (Finset.erase_ssubset ha)⟩
+  · rintro ⟨hsub, hder, hmin⟩
+    refine ⟨hsub, hder, fun K' hsub' hder' => ?_⟩
+    obtain ⟨a, haK, haK'⟩ := Finset.exists_of_ssubset hsub'
+    exact hmin a haK (Derives.trans (Derives.refl fun b hb => Finset.mem_erase.mpr
+      ⟨fun hba => haK' (hba ▸ hb), hsub'.subset hb⟩) hder')
+
+instance (F : Finset (FD A)) (S K : Finset A) : Decidable (IsSchemeKey F S K) :=
+  decidable_of_iff _ isSchemeKey_iff.symm
+
+omit [Fintype A] [DecidableEq D] in
+/-- Prime attributes are those in some scheme key listed in the powerset. -/
+theorem isPrime_iff {F : Finset (FD A)} {S : Finset A} {a : A} :
+    IsPrime F S a ↔ ∃ K ∈ S.powerset, IsSchemeKey F S K ∧ a ∈ K := by
+  unfold IsPrime
+  constructor
+  · rintro ⟨K, hkey, haK⟩
+    exact ⟨K, Finset.mem_powerset.mpr hkey.1, hkey, haK⟩
+  · rintro ⟨K, -, hkey, haK⟩
+    exact ⟨K, hkey, haK⟩
+
+instance (F : Finset (FD A)) (S : Finset A) (a : A) : Decidable (IsPrime F S a) :=
+  decidable_of_iff _ isPrime_iff.symm
+
+omit [Fintype A] [DecidableEq D] in
+/-- Third normal form quantified over the powerset of the scheme. -/
+theorem is3NF_iff {F : Finset (FD A)} {S : Finset A} :
+    Is3NF F S ↔
+      ∀ X ∈ S.powerset, ∀ a ∈ S, a ∉ X → Derives F ⟨X, {a}⟩ →
+        Derives F ⟨X, S⟩ ∨ IsPrime F S a := by
+  simp only [Is3NF, Finset.mem_powerset]
+
+instance (F : Finset (FD A)) (S : Finset A) : Decidable (Is3NF F S) :=
+  decidable_of_iff _ is3NF_iff.symm
+
+omit [Fintype A] [DecidableEq D] in
+/-- Minimal covers with singleton right sides and erase forms of minimality. -/
+theorem isMinimalCover_iff {F G : Finset (FD A)} :
+    IsMinimalCover F G ↔
+      (∀ g ∈ G, g.rhs.card = 1) ∧ Equivalent F G ∧
+        (∀ g ∈ G, ¬ Derives (G.erase g) g) ∧
+        (∀ g ∈ G, ∀ b ∈ g.lhs, ¬ Derives F ⟨g.lhs.erase b, g.rhs⟩) := by
+  unfold IsMinimalCover
+  constructor
+  · rintro ⟨ha, hequiv, hc, hd⟩
+    refine ⟨fun g hg => Finset.card_eq_one.mpr (ha g hg), hequiv, hc, ?_⟩
+    intro g hg b hb
+    exact hd g hg _ (Finset.erase_ssubset hb)
+  · rintro ⟨ha, hequiv, hc, hd⟩
+    refine ⟨fun g hg => Finset.card_eq_one.mp (ha g hg), hequiv, hc, ?_⟩
+    intro g hg Y hsub hder
+    obtain ⟨b, hbL, hbY⟩ := Finset.exists_of_ssubset hsub
+    exact hd g hg b hbL (Derives.trans (Derives.refl fun x hx =>
+      Finset.mem_erase.mpr ⟨fun hxb => hbY (hxb ▸ hx), hsub.subset hx⟩) hder)
+
+instance (F G : Finset (FD A)) : Decidable (IsMinimalCover F G) :=
+  decidable_of_iff _ isMinimalCover_iff.symm
+
+/-- At the full attribute set, keys of the scheme are exactly the candidate keys. -/
+theorem isSchemeKey_univ_iff {F : Finset (FD A)} {K : Finset A} :
+    IsSchemeKey F Finset.univ K ↔ IsCandidateKey F K := by
+  unfold IsSchemeKey IsCandidateKey IsSuperkey
+  constructor
+  · rintro ⟨-, h1, h2⟩
+    exact ⟨h1, h2⟩
+  · rintro ⟨h1, h2⟩
+    exact ⟨Finset.subset_univ K, h1, h2⟩
+
+omit [Fintype A] in
+/-- **BCNF implies third normal form.** -/
+theorem IsBCNF.is3NF {F : Finset (FD A)} {S : Finset A} (h : IsBCNF F S) : Is3NF F S := by
+  intro X hXS a haS haX hder
+  rcases h X hXS {a} (Finset.singleton_subset_iff.mpr haS) hder with hsub | hsup
+  · exact absurd (hsub (Finset.mem_singleton_self a)) haX
+  · exact Or.inl hsup
+
+omit [Fintype A] in
+/-- **No proper subset of a minimal cover implies `F`** (condition (c) in the set-wise form of
+Abiteboul, Hull and Vianu). -/
+theorem IsMinimalCover.not_derives_of_ssubset {F G : Finset (FD A)} (h : IsMinimalCover F G)
+    {G' : Finset (FD A)} (hG' : G' ⊂ G) : ¬ ∀ f ∈ F, Derives G' f := by
+  intro hall
+  obtain ⟨g, hgG, hgG'⟩ := Finset.exists_of_ssubset hG'
+  have hFg : Derives F g := h.2.1.1 g hgG
+  have hG'g : Derives G' g := Derives.of_forall hall hFg
+  have hsub : G' ⊆ G.erase g := by
+    intro x hx
+    simp only [Finset.mem_erase]
+    exact ⟨fun hxg => hgG' (hxg ▸ hx), hG'.subset hx⟩
+  have herase : Derives (G.erase g) g :=
+    Derives.of_subset hsub hG'g
+  exact h.2.2.1 g hgG herase
+
+/-- **Splitting right sides.** Each dependency `X → Y` of the list `l` is replaced by the
+dependencies `X → {a}` for the attributes `a` of `Y` that occur in `attrs`, in their order
+there, once per occurrence. An attribute of `Y` missing from `attrs` is dropped. -/
+def splitRhs (attrs : List A) (l : List (FD A)) : List (FD A) :=
+  l.flatMap fun g => (attrs.filter (· ∈ g.rhs)).map fun a => (⟨g.lhs, {a}⟩ : FD A)
+
+/-- **Removing extraneous left attributes.** Given a set $F$ of functional dependencies, a right
+side $Y$ and a list of attributes, go through the list in order and, for each attribute $b$, replace
+the current left side $X$ by $X \setminus \{b\}$ whenever $F$ derives $X \setminus \{b\} \to Y$. -/
+def reduceLhs (F : Finset (FD A)) (Y : Finset A) : List A → Finset A → Finset A
+  | [], X => X
+  | b :: l, X => reduceLhs F Y l (if Derives F ⟨X.erase b, Y⟩ then X.erase b else X)
+
+/-- **Removing redundant dependencies.** Go through the second list in order, keeping a dependency
+$g$ (appending it to the first list) unless it is derivable from the kept dependencies together
+with the dependencies not yet examined. -/
+def removeRedundant : List (FD A) → List (FD A) → List (FD A)
+  | kept, [] => kept
+  | kept, g :: rest =>
+    if Derives (kept ++ rest).toFinset g then removeRedundant kept rest
+    else removeRedundant (kept ++ [g]) rest
+
+/-- **Minimal-cover algorithm.** Split right sides into single attributes, remove extraneous left
+attributes (tested against the input dependencies, in the order of `attrs`), then remove redundant
+dependencies in list order (Abiteboul–Hull–Vianu, Exercise 11.16). When `attrs` lists every
+attribute, the result is a minimal cover of `l` (`isMinimalCover_minimalCover`). A right-side
+attribute missing from `attrs` is dropped in the splitting step, and the result need not be
+equivalent to `l`. -/
+def minimalCover (l : List (FD A)) (attrs : List A) : List (FD A) :=
+  removeRedundant []
+    ((splitRhs attrs l).map fun g => (⟨reduceLhs l.toFinset g.rhs attrs g.lhs, g.rhs⟩ : FD A))
+
+omit [DecidableEq D] in
+private theorem reduceLhs_spec (F : Finset (FD A)) (Y : Finset A) :
+    ∀ (l : List A) (X : Finset A), Derives F ⟨X, Y⟩ →
+      reduceLhs F Y l X ⊆ X ∧ Derives F ⟨reduceLhs F Y l X, Y⟩ ∧
+        ∀ c ∈ l, c ∈ reduceLhs F Y l X → ¬ Derives F ⟨(reduceLhs F Y l X).erase c, Y⟩
+  | [], X, h => ⟨subset_rfl, h, fun _ ha => absurd ha List.not_mem_nil⟩
+  | b :: l, X, h => by
+    by_cases hdec : Derives F ⟨X.erase b, Y⟩
+    · simp only [reduceLhs, hdec]
+      obtain ⟨hRsub, hRder, hRmin⟩ := reduceLhs_spec F Y l (X.erase b) hdec
+      refine ⟨hRsub.trans (Finset.erase_subset b X), hRder, fun c hc hcR => ?_⟩
+      simp only [List.mem_cons] at hc
+      rcases hc with hEq | hc
+      · subst hEq
+        intro _
+        have hcX : c ∈ X.erase c := hRsub hcR
+        exact Finset.notMem_erase c X hcX
+      · exact hRmin c hc hcR
+    · simp only [reduceLhs, hdec]
+      obtain ⟨hRsub, hRder, hRmin⟩ := reduceLhs_spec F Y l X h
+      refine ⟨hRsub, hRder, fun c hc hcR => ?_⟩
+      simp only [List.mem_cons] at hc
+      rcases hc with hEq | hc
+      · subst hEq
+        intro hcon
+        have hsub : (reduceLhs F Y l X).erase c ⊆ X.erase c :=
+          Finset.erase_subset_erase c hRsub
+        exact hdec (Derives.trans (Derives.refl hsub) hcon)
+      · exact hRmin c hc hcR
+
+omit [DecidableEq D] in
+private theorem reduceLhs_minimal (F : Finset (FD A)) (Y : Finset A) {attrs : List A}
+    (hattrs : ∀ a, a ∈ attrs) {X Z : Finset A} (hder : Derives F ⟨X, Y⟩)
+    (hss : Z ⊂ reduceLhs F Y attrs X) : ¬ Derives F ⟨Z, Y⟩ := by
+  obtain ⟨_, _, hmin⟩ := reduceLhs_spec F Y attrs X hder
+  obtain ⟨b, hbX, hbZ⟩ := Finset.exists_of_ssubset hss
+  intro hderZ
+  exact hmin b (hattrs b) hbX (Derives.trans (Derives.refl fun x hx =>
+    Finset.mem_erase.mpr ⟨fun hxb => hbZ (hxb ▸ hx), hss.subset hx⟩) hderZ)
+
+omit [Fintype A] [DecidableEq D] in
+private theorem mem_splitRhs {attrs : List A} {l : List (FD A)} {g' : FD A} :
+    g' ∈ splitRhs attrs l ↔
+      ∃ g ∈ l, ∃ a ∈ attrs, a ∈ g.rhs ∧ g' = (⟨g.lhs, {a}⟩ : FD A) := by
+  unfold splitRhs
+  simp only [List.mem_flatMap, List.mem_map, List.mem_filter, decide_eq_true_eq]
+  constructor
+  · rintro ⟨g, hg, a, ⟨haA, haR⟩, rfl⟩
+    exact ⟨g, hg, a, haA, haR, rfl⟩
+  · rintro ⟨g, hg, a, haA, haR, rfl⟩
+    exact ⟨g, hg, a, ⟨haA, haR⟩, rfl⟩
+
+omit [Fintype A] [DecidableEq D] in
+private theorem mem_splitRhs_of_mem {attrs : List A} {l : List (FD A)} {g : FD A}
+    (hg : g ∈ l) {a : A} (haA : a ∈ attrs) (haR : a ∈ g.rhs) :
+    (⟨g.lhs, {a}⟩ : FD A) ∈ splitRhs attrs l := by
+  rw [mem_splitRhs]
+  exact ⟨g, hg, a, haA, haR, rfl⟩
+
+omit [DecidableEq D] in
+private theorem toFinset_removeRedundant_subset :
+    ∀ (kept rest : List (FD A)),
+      (removeRedundant kept rest).toFinset ⊆ (kept ++ rest).toFinset
+  | kept, [] => by simp [removeRedundant]
+  | kept, g :: rest => by
+    simp only [removeRedundant]
+    split
+    · have ih := toFinset_removeRedundant_subset kept rest
+      intro x hx
+      have hx' := ih hx
+      simp only [List.mem_toFinset, List.mem_append] at hx' ⊢
+      rcases hx' with hxK | hxR
+      · exact Or.inl hxK
+      · exact Or.inr (List.mem_cons_of_mem g hxR)
+    · have ih := toFinset_removeRedundant_subset (kept ++ [g]) rest
+      have heq : (kept ++ [g]) ++ rest = kept ++ g :: rest := by
+        simp [List.append_assoc]
+      rw [heq] at ih
+      exact ih
+
+omit [DecidableEq D] in
+private theorem derives_removeRedundant :
+    ∀ (kept rest : List (FD A)) (g : FD A),
+      g ∈ (kept ++ rest).toFinset → Derives (removeRedundant kept rest).toFinset g
+  | kept, [], g, hg => by
+    simp only [removeRedundant, List.append_nil] at hg ⊢
+    exact Derives.mem hg
+  | kept, h :: rest, g, hg => by
+    simp only [removeRedundant]
+    split_ifs with hder
+    · have ih : ∀ f ∈ (kept ++ rest).toFinset,
+          Derives (removeRedundant kept rest).toFinset f :=
+        fun f hf => derives_removeRedundant kept rest f hf
+      simp only [List.mem_toFinset, List.mem_append, List.mem_cons] at hg
+      rcases hg with hgK | hgHorR
+      · have hg' : g ∈ (kept ++ rest).toFinset :=
+          List.mem_toFinset.mpr (List.mem_append_left rest hgK)
+        exact ih g hg'
+      · rcases hgHorR with rfl | hgR
+        · exact Derives.of_forall ih hder
+        · have hg' : g ∈ (kept ++ rest).toFinset :=
+            List.mem_toFinset.mpr (List.mem_append_right kept hgR)
+          exact ih g hg'
+    · have ih := derives_removeRedundant (kept ++ [h]) rest
+      have heq : (kept ++ [h]) ++ rest = kept ++ h :: rest := by
+        simp [List.append_assoc]
+      have hg' : g ∈ ((kept ++ [h]) ++ rest).toFinset := by
+        rwa [heq]
+      exact ih g hg'
+
+omit [DecidableEq D] in
+private theorem not_derives_erase_removeRedundant :
+    ∀ (kept rest : List (FD A)) (g : FD A),
+      g ∈ (removeRedundant kept rest).toFinset →
+        g ∈ kept.toFinset ∨ ¬ Derives ((removeRedundant kept rest).toFinset.erase g) g
+  | kept, [], g, hg => by
+    simp only [removeRedundant] at hg ⊢
+    exact Or.inl hg
+  | kept, h :: rest, g, hg => by
+    by_cases hder : Derives (kept ++ rest).toFinset h
+    · simp only [removeRedundant, hder] at hg ⊢
+      exact not_derives_erase_removeRedundant kept rest g hg
+    · simp only [removeRedundant, hder] at hg ⊢
+      have ih := not_derives_erase_removeRedundant (kept ++ [h]) rest g hg
+      rcases ih with hgK | hneg
+      · simp only [List.mem_toFinset, List.mem_append, List.mem_singleton] at hgK ⊢
+        rcases hgK with hgK | hgH
+        · exact Or.inl hgK
+        · rw [hgH]
+          refine Or.inr fun hcon => ?_
+          have hsubR := toFinset_removeRedundant_subset (kept ++ [h]) rest
+          have heq : (kept ++ [h]) ++ rest = kept ++ h :: rest := by
+            simp [List.append_assoc]
+          have hsub : ((removeRedundant (kept ++ [h]) rest).toFinset.erase h) ⊆
+              (kept ++ rest).toFinset := by
+            intro x hx
+            simp only [Finset.mem_erase] at hx
+            obtain ⟨hxNe, hxMem⟩ := hx
+            have hxR := hsubR hxMem
+            rw [heq] at hxR
+            simp only [List.mem_toFinset, List.mem_append, List.mem_cons] at hxR ⊢
+            rcases hxR with hxK | hxHorR
+            · exact Or.inl hxK
+            · rcases hxHorR with hxH | hxR
+              · exact absurd hxH hxNe
+              · exact Or.inr hxR
+          exact hder (Derives.of_subset hsub hcon)
+      · exact Or.inr hneg
+
+/-- **The minimal-cover algorithm is correct**: when `attrs` lists every attribute, the output is
+a minimal cover of the input dependencies. -/
+theorem isMinimalCover_minimalCover (l : List (FD A)) {attrs : List A}
+    (hattrs : ∀ a, a ∈ attrs) : IsMinimalCover l.toFinset (minimalCover l attrs).toFinset := by
+  unfold minimalCover
+  set Lred : List (FD A) := (splitRhs attrs l).map fun g =>
+    (⟨reduceLhs l.toFinset g.rhs attrs g.lhs, g.rhs⟩ : FD A) with hLred
+  have hSub : (removeRedundant [] Lred).toFinset ⊆ Lred.toFinset := by
+    have h := toFinset_removeRedundant_subset [] Lred
+    simpa using h
+  have hLred_char : ∀ g_red ∈ Lred.toFinset, ∃ X a g0,
+      g0 ∈ l ∧ a ∈ attrs ∧ a ∈ g0.rhs ∧ X = g0.lhs ∧
+        g_red = (⟨reduceLhs l.toFinset {a} attrs X, {a}⟩ : FD A) ∧
+        Derives l.toFinset ⟨X, {a}⟩ := by
+    intro g_red hg
+    have hgL : g_red ∈ Lred := List.mem_toFinset.mp hg
+    rw [hLred] at hgL
+    simp only [List.mem_map] at hgL
+    obtain ⟨g_split, hg_split, hEq⟩ := hgL
+    rw [mem_splitRhs] at hg_split
+    obtain ⟨g0, hg0, a, haA, haR, hSplit⟩ := hg_split
+    have hDer : Derives l.toFinset ⟨g0.lhs, {a}⟩ := by
+      have hmem : g0 ∈ l.toFinset := List.mem_toFinset.mpr hg0
+      have h0 : Derives l.toFinset g0 := Derives.mem hmem
+      have hEq0 : g0 = (⟨g0.lhs, g0.rhs⟩ : FD A) := rfl
+      rw [hEq0] at h0
+      exact h0.decompose (Finset.singleton_subset_iff.mpr haR)
+    subst hSplit
+    simp only at hEq
+    subst hEq
+    exact ⟨g0.lhs, a, g0, hg0, haA, haR, rfl, rfl, hDer⟩
+  have hA : ∀ g ∈ (removeRedundant [] Lred).toFinset, ∃ a, g.rhs = {a} := by
+    intro g hg
+    have hgL := hSub hg
+    obtain ⟨X, a, g0, _, _, _, _, hEq, _⟩ := hLred_char g hgL
+    exact ⟨a, by rw [hEq]⟩
+  have hB1 : ∀ g ∈ (removeRedundant [] Lred).toFinset, Derives l.toFinset g := by
+    intro g hg
+    have hgL := hSub hg
+    obtain ⟨X, a, g0, _, _, _, hXeq, hEq, hDer⟩ := hLred_char g hgL
+    subst hXeq
+    have hSpec := (reduceLhs_spec l.toFinset {a} attrs g0.lhs hDer).2.1
+    rw [hEq]
+    exact hSpec
+  have hB2 : ∀ f ∈ l.toFinset, Derives (removeRedundant [] Lred).toFinset f := by
+    have hLred_derives : ∀ f ∈ l.toFinset, Derives Lred.toFinset f := by
+      intro f hf
+      have hfL0 : f ∈ l := List.mem_toFinset.mp hf
+      obtain ⟨X, Y⟩ := f
+      have hEach : ∀ a ∈ Y, Derives Lred.toFinset ⟨X, {a}⟩ := by
+        intro a haY
+        have haA : a ∈ attrs := hattrs a
+        have hSplit : (⟨X, {a}⟩ : FD A) ∈ splitRhs attrs l :=
+          mem_splitRhs_of_mem hfL0 haA haY
+        have hRed_mem :
+            (⟨reduceLhs l.toFinset {a} attrs X, {a}⟩ : FD A) ∈ Lred := by
+          rw [hLred]
+          exact List.mem_map.mpr ⟨⟨X, {a}⟩, hSplit, rfl⟩
+        have hDer0 : Derives l.toFinset ⟨X, {a}⟩ := by
+          have hmem : (⟨X, Y⟩ : FD A) ∈ l.toFinset :=
+            List.mem_toFinset.mpr hfL0
+          have h0 : Derives l.toFinset (⟨X, Y⟩ : FD A) := Derives.mem hmem
+          exact h0.decompose (Finset.singleton_subset_iff.mpr haY)
+        have hSub : reduceLhs l.toFinset {a} attrs X ⊆ X :=
+          (reduceLhs_spec l.toFinset {a} attrs X hDer0).1
+        have hMem :
+            (⟨reduceLhs l.toFinset {a} attrs X, {a}⟩ : FD A) ∈ Lred.toFinset :=
+          List.mem_toFinset.mpr hRed_mem
+        have hDerRed :
+            Derives Lred.toFinset ⟨reduceLhs l.toFinset {a} attrs X, {a}⟩ :=
+          Derives.mem hMem
+        exact Derives.trans (Derives.refl hSub) hDerRed
+      refine derives_iff_subset_attrClosure.mpr ?_
+      intro a ha
+      exact mem_attrClosure.mpr (hEach a ha)
+    have hR_derives_Lred : ∀ g ∈ Lred.toFinset,
+        Derives (removeRedundant [] Lred).toFinset g := by
+      intro g hg
+      have hg' : g ∈ ([] ++ Lred).toFinset := by simpa using hg
+      exact derives_removeRedundant [] Lred g hg'
+    intro f hf
+    exact Derives.of_forall hR_derives_Lred (hLred_derives f hf)
+  have hC : ∀ g ∈ (removeRedundant [] Lred).toFinset,
+      ¬ Derives ((removeRedundant [] Lred).toFinset.erase g) g := by
+    intro g hg
+    rcases not_derives_erase_removeRedundant [] Lred g hg with hgEmpty | hneg
+    · simp at hgEmpty
+    · exact hneg
+  have hD : ∀ g ∈ (removeRedundant [] Lred).toFinset, ∀ Y ⊂ g.lhs,
+      ¬ Derives l.toFinset ⟨Y, g.rhs⟩ := by
+    intro g hg Y hss
+    have hgL := hSub hg
+    obtain ⟨X, a, g0, _, _, _, hXeq, hEq, hDer⟩ := hLred_char g hgL
+    subst hXeq
+    have hLhs : g.lhs = reduceLhs l.toFinset {a} attrs g0.lhs := by rw [hEq]
+    have hRhs : g.rhs = {a} := by rw [hEq]
+    rw [hLhs] at hss
+    rw [hRhs] at ⊢
+    exact reduceLhs_minimal l.toFinset {a} hattrs hDer hss
+  exact ⟨hA, ⟨hB1, hB2⟩, hC, hD⟩
+
+set_option linter.unusedFintypeInType false in
+/-- **Every finite set of functional dependencies over a finite attribute type has a minimal
+cover.** -/
+theorem exists_isMinimalCover (F : Finset (FD A)) :
+    ∃ G : List (FD A), IsMinimalCover F G.toFinset := by
+  have hattrs : ∀ a : A, a ∈ (Finset.univ : Finset A).toList :=
+    fun a => Finset.mem_toList.mpr (Finset.mem_univ a)
+  have h := isMinimalCover_minimalCover F.toList (attrs := (Finset.univ : Finset A).toList)
+    hattrs
+  rw [Finset.toList_toFinset] at h
+  exact ⟨minimalCover F.toList (Finset.univ : Finset A).toList, h⟩
+
+/-- **Synthesis yields third normal form**: if `G` is a minimal cover of `F` and `K` a candidate
+key of all attributes, every scheme synthesized from `G` and `K` is in third normal form for `F`. -/
+theorem is3NF_of_mem_synthesize {F : Finset (FD A)} {G : List (FD A)}
+    (hG : IsMinimalCover F G.toFinset) {K : Finset A} (hK : IsCandidateKey F K)
+    {S : Finset A} (hS : S ∈ synthesize G K) : Is3NF F S := by
+  unfold synthesize at hS
+  simp only [List.mem_cons, List.mem_map] at hS
+  rcases hS with rfl | ⟨g, hgG, rfl⟩
+  · have hKey : IsSchemeKey F S S := by
+      refine ⟨subset_rfl, Derives.refl subset_rfl, fun K' hsub hder => ?_⟩
+      have hsuper : IsSuperkey F K' := Derives.trans hder hK.1
+      exact hK.2 K' hsub hsuper
+    intro X _ a haS _ _
+    exact Or.inr ⟨S, hKey, haS⟩
+  · obtain ⟨X, Y⟩ := g
+    have hgMem : (⟨X, Y⟩ : FD A) ∈ G.toFinset := List.mem_toFinset.mpr hgG
+    obtain ⟨b, hb⟩ := hG.1 _ hgMem
+    have hFg : Derives F (⟨X, Y⟩ : FD A) := hG.2.1.1 _ hgMem
+    subst hb
+    have hFgB : Derives F (⟨X, {b}⟩ : FD A) := hFg
+    have hgMemB : (⟨X, {b}⟩ : FD A) ∈ G.toFinset := hgMem
+    intro Z hZS a haS haZ hder
+    by_cases hab : a = b
+    · subst hab
+      have hZX : Z ⊆ X := by
+        intro y hy
+        have hyS := hZS hy
+        simp only [Finset.mem_union, Finset.mem_singleton] at hyS
+        rcases hyS with hyX | rfl
+        · exact hyX
+        · exact absurd hy haZ
+      have hZeq : Z = X := by
+        by_contra hne
+        have hss : Z ⊂ X := Finset.ssubset_iff_subset_ne.mpr ⟨hZX, hne⟩
+        exact hG.2.2.2 _ hgMemB _ hss hder
+      subst hZeq
+      exact Or.inl hFgB.union_left
+    · have haX : a ∈ X := by
+        have haS' := haS
+        simp only [Finset.mem_union, Finset.mem_singleton] at haS'
+        rcases haS' with haX | hab'
+        · exact haX
+        · exact absurd hab' hab
+      have hKey : IsSchemeKey F (X ∪ {b}) X := by
+        refine ⟨Finset.subset_union_left, hFgB.union_left, fun X' hsub hder' => ?_⟩
+        have hderB : Derives F ⟨X', {b}⟩ :=
+          hder'.decompose Finset.subset_union_right
+        exact hG.2.2.2 _ hgMemB _ hsub hderB
+      exact Or.inr ⟨X, hKey, haX⟩
+
+/-- **Correctness of 3NF synthesis** (Abiteboul–Hull–Vianu, Theorem 11.2.14): from a minimal cover
+`G` of `F` and a candidate key `K`, the synthesized schemes are in third normal form, the
+decomposition preserves dependencies, and it is lossless. The implemented `synthesize` always
+adds the key scheme and has no universe-spanning shortcut; the three guarantees are proved for
+this variant. -/
+theorem synthesize_correct {F : Finset (FD A)} {G : List (FD A)}
+    (hG : IsMinimalCover F G.toFinset) {K : Finset A} (hK : IsCandidateKey F K) :
+    (∀ S ∈ synthesize G K, Is3NF F S) ∧ DependencyPreserving F (synthesize G K) ∧
+      ∀ r : Finset (Tuple A D), IsOver Finset.univ r → Satisfies (↑r : Set (Tuple A D)) F →
+        joinProjections (synthesize G K) r = r := by
+  refine ⟨fun S hS => is3NF_of_mem_synthesize hG hK hS,
+    synthesize_dependencyPreserving hG.2.1 _, fun r hr hF => ?_⟩
+  exact synthesize_lossless hG.2.1 hK.1 hr hF
 
 end Cslib.Databases

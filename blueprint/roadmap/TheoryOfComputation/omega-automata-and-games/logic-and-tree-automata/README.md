@@ -1,0 +1,17 @@
+# Logic and tree automata
+
+- [Monadic second-order logic over words](monadic-second-order-logic-over-words.md)
+- [Büchi–Elgot–Trakhtenbrot theorem](buchielgottrakhtenbrot-theorem.md)
+- [Bottom-up finite tree automata](bottom-up-finite-tree-automata.md)
+- [Determinization, closure and decision properties of regular tree languages](determinization-closure-and-decision-properties.md)
+- [Top-down tree automata](top-down-tree-automata.md)
+- [Nondeterministic top-down and bottom-up tree automata recognize the same languages](top-down-and-bottom-up-tree-automata-recognize-the-same.md)
+- [Deterministic top-down tree automata are strictly weaker](deterministic-top-down-tree-automata-are-strictly-weaker.md)
+- [Pumping lemma for recognizable tree languages](pumping-lemma-for-recognizable-tree-languages.md)
+- [Myhill–Nerode theorem for tree languages](myhill-nerode-theorem-for-tree-languages.md)
+- [The minimal deterministic tree automaton is unique](minimal-deterministic-tree-automaton.md)
+- [Universality of nondeterministic tree automata is EXPTIME-complete](universality-of-tree-automata-is-exptime-complete.md)
+- [Weak monadic second-order logic of $k$ successors](weak-monadic-second-order-logic-of-k-successors.md)
+- [The WS$k$S-definable tree languages are the recognizable ones](wsks-definable-tree-languages-are-the-recognizable-ones.md)
+- [Decidability of WS$k$S](decidability-of-wsks.md)
+- [Separability of regular tree languages by deterministic tree-walking automata is undecidable](separability-of-regular-tree-languages-by-determ.md)

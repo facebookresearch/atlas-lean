@@ -21,7 +21,7 @@ M. Yannakakis, "Edge-deletion problems", SIAM Journal on Computing 10 (1981),
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import CSLibExt.Computability.Complexity.Karp.Color
@@ -74,8 +74,11 @@ def WellFormed (i : EdgeSubgraphInstance) : Prop :=
     0 < i.2.2 ∧ i.2.2 ≤ i.2.1.length
 
 open Classical in
-/-- Some sublist `E'` of the edge list with at least `K` entries forms, on the endpoints of its
-edges, a line graph. -/
+/-- Some sublist `es` of the edge list with at least `K` entries gives a line graph. `K` counts
+the selected list entries, not distinct edges. The tested graph is `edgeGraph n es`, which drops
+loops and pairs with an endpoint at least `n` and identifies repeated and reversed pairs, induced
+on its support (its non-isolated vertices). Under `WellFormed` the entries are distinct edges of
+a simple graph, so this is the source's `|E'| ≥ K` on the endpoints of the edges in `E'`. -/
 def EdgeSubgraphFeasible (i : EdgeSubgraphInstance) : Prop :=
   ∃ es : List (ℕ × ℕ), es.Sublist i.2.1 ∧ i.2.2 ≤ es.length ∧
     MetaMathlibExt.SimpleGraph.IsLineGraph

@@ -70,6 +70,17 @@ example {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q} (hχ : χ.IsPrimiti
     xi χ 0 ≠ 0 ∧ ∀ s, xi χ s = 0 ↔ s ∈ χ.nontrivialZeros :=
   ⟨xi_zero_ne_zero hχ hχ1, xi_eq_zero_iff hχ hχ1⟩
 
+/-- At a Gamma pole, the analytic continuation does not equal the pointwise product. -/
+example {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hprim : χ.IsPrimitive)
+    (hne : χ ≠ 1) (he : χ.Even) :
+    χ.xi 0 ≠ ((q : ℂ) / Real.pi) ^ ((0 + (1 - χ (-1)) / 2) / 2) *
+      Gamma ((0 + (1 - χ (-1)) / 2) / 2) * LFunction χ 0 := by
+  have ha : (0 + (1 - χ (-1)) / 2) / 2 = (0 : ℂ) := by
+    rw [show χ (-1) = 1 from he]
+    ring
+  rw [ha, Gamma_zero, mul_zero, zero_mul]
+  exact xi_zero_ne_zero hprim hne
+
 example {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q} (hχ1 : χ ≠ 1) :
     Complex.Hadamard.EntireOfOrderAtMost 1 (xi χ) :=
   entireOfOrderAtMost_xi hχ1

@@ -35,6 +35,7 @@ public import Mathlib.RingTheory.DiscreteValuationRing.Basic
 public import Mathlib.RingTheory.LocalRing.ResidueField.Basic
 public import Mathlib.RingTheory.Valuation.Discrete.Basic
 public import Mathlib.RingTheory.Valuation.Discrete.IsDiscreteValuationRing
+public import MathlibExt.RingTheory.Valuation.ValuationSubringNotField
 
 @[expose] public section
 
@@ -56,28 +57,6 @@ structure Place where
   ne_top' : toValuationSubring ≠ ⊤
   /-- The valuation subring is a principal ideal ring. -/
   isPrincipalIdealRing' : IsPrincipalIdealRing toValuationSubring
-
-theorem _root_.ValuationSubring.not_isField_of_ne_top {A : ValuationSubring F}
-    (hA : A ≠ ⊤) : ¬IsField A := by
-  intro hf
-  apply hA
-  refine SetLike.ext fun x => ⟨fun _ => ValuationSubring.mem_top x, fun _ => ?_⟩
-  by_cases hx : x ∈ A
-  · exact hx
-  · exfalso
-    have hx0 : x ≠ 0 := fun h => hx (h ▸ A.zero_mem)
-    have hxi : x⁻¹ ∈ A := (A.mem_or_inv_mem x).resolve_left hx
-    have hxi0 : (⟨x⁻¹, hxi⟩ : A) ≠ 0 := by
-      simp only [ne_eq, Subtype.ext_iff]
-      exact inv_ne_zero hx0
-    obtain ⟨b, hb⟩ := hf.mul_inv_cancel hxi0
-    have hb' : x⁻¹ * (b : F) = 1 := by
-      have h := congrArg (Subtype.val) hb
-      simpa using h
-    have hbx : (b : F) = x := by
-      field_simp at hb'
-      exact hb'
-    exact hx (hbx ▸ b.2)
 
 namespace Place
 

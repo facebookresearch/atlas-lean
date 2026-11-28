@@ -110,10 +110,10 @@ private lemma carrollSplit_bijective (p q : Fin (m + 2)) (hp : p = i ∨ p = j)
     by_cases ha : Fin.succAbove p a = q
     · by_cases hb : Fin.succAbove p b = q
       · exact Fin.succAbove_right_injective (ha.trans hb.symm)
-      · simp only [carrollSplit, dif_pos ha, dite_eq_right hb] at hab
+      · simp only [carrollSplit, dite_eq_left ha, dite_eq_right hb] at hab
         exact absurd hab Sum.inr_ne_inl
     · by_cases hb : Fin.succAbove p b = q
-      · simp only [carrollSplit, dite_eq_right ha, dif_pos hb] at hab
+      · simp only [carrollSplit, dite_eq_right ha, dite_eq_left hb] at hab
         exact absurd hab Sum.inl_ne_inr
       · simp only [carrollSplit, dite_eq_right ha, dite_eq_right hb] at hab
         simp only [Sum.inl.injEq] at hab
@@ -139,7 +139,7 @@ private lemma carrollSplit_bijective (p q : Fin (m + 2)) (hp : p = i ∨ p = j)
     | inr k =>
       obtain ⟨a, ha⟩ := Fin.exists_succAbove_eq hqp
       refine ⟨a, ?_⟩
-      simp only [carrollSplit, dif_pos ha]
+      simp only [carrollSplit, dite_eq_left ha]
       exact congrArg Sum.inr (Subsingleton.elim _ _)
 
 private noncomputable def carrollSplitEquiv (p q : Fin (m + 2)) (hp : p = i ∨ p = j)
@@ -150,7 +150,7 @@ private lemma carrollSplitEquiv_inr (p q : Fin (m + 2)) (hp : p = i ∨ p = j)
     (hq : q = i ∨ q = j) (hqp : q ≠ p) (a : Fin (m + 1))
     (h : Fin.succAbove p a = q) :
     carrollSplitEquiv i j p q hp hq hqp a = Sum.inr 0 := by
-  simp only [carrollSplitEquiv, Equiv.ofBijective_apply, carrollSplit, dif_pos h]
+  simp only [carrollSplitEquiv, Equiv.ofBijective_apply, carrollSplit, dite_eq_left h]
 
 private lemma carrollSplitEquiv_inl (p q : Fin (m + 2)) (hp : p = i ∨ p = j)
     (hq : q = i ∨ q = j) (hqp : q ≠ p) (a : Fin (m + 1))
@@ -180,13 +180,13 @@ private def carrollFull (hij : i ≠ j) :
     | inl x =>
       have e : carrollFwd i j (Sum.inl x) = x.val := rfl
       rw [e]
-      simp only [carrollBwd, dif_pos x.prop]
+      simp only [carrollBwd, dite_eq_left x.prop]
     | inr k =>
       fin_cases k <;> simp [carrollFwd, carrollBwd, hij, Ne.symm hij]) (by
     intro k
     by_cases h : k ≠ i ∧ k ≠ j
     · have e : carrollBwd i j k = Sum.inl ⟨k, h⟩ := by
-        simp only [carrollBwd, dif_pos h]
+        simp only [carrollBwd, dite_eq_left h]
       have e2 : carrollFwd i j (Sum.inl ⟨k, h⟩) = k := rfl
       rw [e, e2]
     · have e : carrollBwd i j k =
@@ -967,15 +967,15 @@ private lemma carroll_succ (m : ℕ) (hm : 1 ≤ m) (R : Type*) [CommRing R]
 
 end
 
-/-- Carroll (Dodgson condensation) identity: for an `(n + 2) × (n + 2)` matrix
-over a commutative ring and arbitrary distinct indices `i j`, the product of the
-full determinant with the double-deletion minor equals the difference of the
-products of complementary single-deletion minors.
+/-- **Carroll (Desnanot–Jacobi) identity.** Let $R$ be a commutative ring, let $n$ be a natural
+number, and let $C$ be an $(n + 2) \times (n + 2)$ matrix over $R$. For indices $a$ and $b$,
+write $C^{a}_{b}$ for the $(n + 1) \times (n + 1)$ matrix obtained from $C$ by deleting row $a$
+and column $b$. Let $i \ne j$ be distinct indices and let $C^{ij}_{ij}$ be the $n \times n$
+matrix obtained from $C$ by deleting rows $i$ and $j$ and columns $i$ and $j$. Then
 
-The `(n + 2) × (n + 2)` indexing permits two distinct deleted indices `i ≠ j`.
-Each single-deletion minor (via `Fin.succAbove`) has size `n + 1`, while the
-double minor deleting both `i` and `j` has size `n`. For `n = 0`, the double
-minor is a `0 × 0` matrix, whose determinant in Mathlib is `1`.
+$$\det C \cdot \det C^{ij}_{ij} = \det C^{i}_{i} \det C^{j}_{j} - \det C^{i}_{j} \det C^{j}_{i}.$$
+
+For $n = 0$ the matrix $C^{ij}_{ij}$ is empty and its determinant is $1$.
 
 Source: Charles Delorme and Guillermo Pineda-Villavicencio, "Quadratic Form
 Representations via Generalized Continuants", Journal of Integer Sequences 18

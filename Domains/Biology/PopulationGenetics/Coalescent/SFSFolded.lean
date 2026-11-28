@@ -93,9 +93,9 @@ theorem sum_count_Ico_eq_length {n : ℕ} {b : List ℕ} (hpos : ∀ x ∈ b, 1 
 in the unfolded form of `sfsLength` and `KingmanTimes.totalLength`: if for every
 `k ∈ [2, n]` the block-size list `ps.getD (n - k) []` has `k` positive entries
 summing to `n` (as every list visited by random joining from `n` singletons
-does), then for all holding times `T`,
+does), then for all real weights `T` (of any sign),
 `∑_{i=1}^{n-1} ∑_{k=2}^{n} #{blocks of size i among k} · T k = ∑_{k=2}^{n} k · T k`,
-i.e. `∑_i L_i = L`. -/
+i.e. `∑_i L_i = L` when the `T k` are the holding times of a genealogy. -/
 theorem sum_sum_count_mul_eq_sum_mul {n : ℕ} (ps : List (List ℕ)) (T : ℕ → ℝ)
     (hpos : ∀ k ∈ Finset.Icc 2 n, ∀ x ∈ ps.getD (n - k) [], 1 ≤ x)
     (hsum : ∀ k ∈ Finset.Icc 2 n, (ps.getD (n - k) []).sum = n)
@@ -120,14 +120,15 @@ theorem sum_sum_count_mul_eq_sum_mul {n : ℕ} (ps : List (List ℕ)) (T : ℕ �
 /-- The folded site frequency spectrum (Fu 1995) of the unfolded counts `ξ`:
 for `1 ≤ i ≤ n / 2`, `η_i = ξ_i + ξ_{n-i}` when `2 * i < n` and
 `η_{n/2} = ξ_{n/2}` when `2 * i = n`. Values outside `1 ≤ i ≤ n / 2` are not
-meaningful. -/
+meaningful; the formula `ξ_i + ξ_{n-i}` (for `2 * i ≠ n`) still applies there, with truncated
+subtraction, so `η_i = ξ_i + ξ_0` for `n ≤ i`, `1 ≤ i`. -/
 def foldedCount {Ω : Type*} (n : ℕ) (ξ : ℕ → Ω → ℝ) (i : ℕ) : Ω → ℝ :=
   fun ω => if 2 * i = n then ξ i ω else ξ i ω + ξ (n - i) ω
 
-/-- Expected folded site frequency spectrum: if the unfolded counts are
-integrable with `E ξ_j = θ / j` for `1 ≤ j ≤ n - 1` (Fu's expected spectrum),
+/-- Expected folded site frequency spectrum: for any measure `μ`, if the unfolded counts are
+integrable with `∫ ξ_j ∂μ = θ / j` for `1 ≤ j ≤ n - 1` (Fu's expected spectrum),
 then for `1 ≤ i ≤ n / 2`,
-`E η_i = θ (1 / i + 1 / (n - i)) / (1 + δ_{i, n - i})`. -/
+`∫ η_i ∂μ = θ (1 / i + 1 / (n - i)) / (1 + δ_{i, n - i})`. -/
 theorem integral_foldedCount {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω}
     {n i : ℕ} {θ : ℝ} {ξ : ℕ → Ω → ℝ} (hξ_int : ∀ j, Integrable (ξ j) μ)
     (hmean : ∀ j, 1 ≤ j → j < n → ∫ ω, ξ j ω ∂μ = θ / j) (hi : 1 ≤ i) (hin : 2 * i ≤ n) :
@@ -165,7 +166,9 @@ theorem integral_foldedCount {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measu
 variable {Ω : Type*} {mΩ : MeasurableSpace Ω}
 
 /-- Pathwise total-length decomposition for a block-size history satisfying
-the random-joining support invariant at every level. -/
+the random-joining support invariant at every level: if for every `k ∈ [2, n]` the list
+`ps.getD (n - k) []` has `k` positive entries summing to `n`, then
+`∑_{i=1}^{n-1} L_i = L` at `ω`, with the holding times `K.T k ω`. -/
 theorem sum_sfsLength_eq_totalLength_of_invariant {μ : Measure Ω} {n : ℕ}
     (K : KingmanTimes μ n) (ω : Ω) (ps : List (List ℕ))
     (hpos : ∀ k ∈ Finset.Icc 2 n, ∀ x ∈ ps.getD (n - k) [], 1 ≤ x)
@@ -285,7 +288,7 @@ private lemma ae_levelInvariant {μ : Measure Ω} [IsProbabilityMeasure μ] {n :
     have hterm := (Finset.sum_eq_zero_iff_of_nonneg hnonneg).mp hsum ps hpsF
     have hbad1 : badIndicator n k (ps.getD (n - k) []) = 1 := by
       unfold badIndicator
-      rw [if_neg hkbad]
+      rw [ite_eq_right hkbad]
     rwa [hbad1, mul_one] at hterm
   have haeBad : ∀ᵐ ω ∂μ, τ ω ∉ F.filter (fun ps =>
       ¬ ∀ k ∈ Finset.Icc 2 n, levelInvariant n k (ps.getD (n - k) [])) := by
@@ -309,8 +312,11 @@ private lemma ae_levelInvariant {μ : Measure Ω} [IsProbabilityMeasure μ] {n :
   exact ⟨k, hk, hnot⟩
 
 /-- Pathwise decomposition of total branch length over SFS classes for a
-history with the random-joining law, almost surely. This closes the
-`∑ i, L_i = L` gap noted for `SFSCovariance`. -/
+history with the random-joining law, almost surely: under a probability measure, if every fibre
+`τ ⁻¹' {ps}` has measure `randomJoining (n - 1) (List.replicate n 1) ps` (natural subtraction:
+for `n = 0` no step, the history `[[]]`), then a.s. `∑_{i=1}^{n-1} L_i = L`. Neither
+measurability of `τ` nor independence from the holding times is assumed; for a non-measurable
+fibre `μ.real` is the value of the outer measure. For `n ≤ 1` both sums are empty. -/
 theorem sum_sfsLength_ae_eq_totalLength {μ : Measure Ω} [IsProbabilityMeasure μ] {n : ℕ}
     (K : KingmanTimes μ n) {τ : Ω → List (List ℕ)}
     (hτ_law : ∀ ps, μ.real (τ ⁻¹' {ps}) =
@@ -327,8 +333,12 @@ theorem sum_sfsLength_ae_eq_totalLength {μ : Measure Ω} [IsProbabilityMeasure 
     filter_upwards with ω
     simp [sfsLength, KingmanTimes.totalLength, hIco, hIcc]
 
-/-- Expected folded site frequency spectrum under the hypotheses of
-`integral_sfs`. -/
+/-- Expected folded site frequency spectrum under the hypotheses of `integral_sfs`: a probability
+measure `μ`, Kingman holding times `K.T` (for `2 ≤ k ≤ n`, `K.T k` exponential with rate
+`C(k, 2)`, mutually independent), every `K.T k` measurable, a block-size history `τ` with
+measurable preimages, the random-joining law from `n` singletons and independent of the holding
+times, and integrable counts `ξ i` with conditional mean `(θ / 2) L_i` given the genealogy: for
+`1 ≤ i ≤ n / 2`, `E η_i = θ (1 / i + 1 / (n - i)) / (1 + δ_{i, n - i})`. -/
 theorem integral_foldedCount_kingman {μ : Measure Ω} [IsProbabilityMeasure μ]
     {n : ℕ} (K : KingmanTimes μ n) (hT : ∀ k, Measurable (K.T k))
     {τ : Ω → List (List ℕ)} (hτ : MeasurableSpace.comap τ ⊤ ≤ mΩ)

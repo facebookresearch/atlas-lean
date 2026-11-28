@@ -24,44 +24,75 @@ count endpoint incidences, so a loop contributes two, while `incident` contains 
 
 namespace EndpointMapMultigraph
 
-/-- Edges of `F` incident to `v`. An edge appears once even when it is a loop. -/
+/-- **Edges incident to a vertex.** Let $\mathrm{end}_1, \mathrm{end}_2 : E \to V$ be maps, viewed
+as an undirected multigraph on $V$ in which each edge $e \in E$ has endpoints $\mathrm{end}_1(e)$
+and $\mathrm{end}_2(e)$. For a vertex $v \in V$ and a finite set $F \subseteq E$, the edges of
+$F$ incident to $v$ form the finite set of all $e \in F$ with $\mathrm{end}_1(e) = v$ or
+$\mathrm{end}_2(e) = v$. An edge appears once even when it is a loop. -/
 noncomputable def incident {V E : Type*} (end₁ end₂ : E → V)
     (v : V) (F : Finset E) : Finset E := by
   classical
   exact F.filter (fun e => end₁ e = v ∨ end₂ e = v)
 
-/-- The degree of `v` in `F`, counting each endpoint incidence; a loop contributes two. -/
+/-- **Degree within an edge set.** Let $\mathrm{end}_1, \mathrm{end}_2 : E \to V$ be maps, viewed
+as an undirected multigraph on $V$ in which each edge $e \in E$ has endpoints $\mathrm{end}_1(e)$
+and $\mathrm{end}_2(e)$. For a finite set $F \subseteq E$ and a vertex $v \in V$, the degree of
+$v$ in $F$ is the number of $e \in F$ with $\mathrm{end}_1(e) = v$ plus the number of $e \in F$
+with $\mathrm{end}_2(e) = v$. Each endpoint incidence counts once, so a loop at $v$ contributes
+two. -/
 noncomputable def degreeWithin {V E : Type*} (end₁ end₂ : E → V)
     (F : Finset E) (v : V) : ℕ := by
   classical
   exact (F.filter (fun e => end₁ e = v)).card + (F.filter (fun e => end₂ e = v)).card
 
-/-- The vertices incident with at least one edge of `F`. -/
+/-- **Support of an edge set.** Let $\mathrm{end}_1, \mathrm{end}_2 : E \to V$ be maps, viewed as
+an undirected multigraph on $V$ in which each edge $e \in E$ has endpoints $\mathrm{end}_1(e)$
+and $\mathrm{end}_2(e)$. The support of a finite set $F \subseteq E$ is the set of vertices
+$v \in V$ such that $\mathrm{end}_1(e) = v$ or $\mathrm{end}_2(e) = v$ for some $e \in F$. -/
 noncomputable def support {V E : Type*} (end₁ end₂ : E → V)
     (F : Finset E) : Set V := by
   classical
   exact {v | ∃ e ∈ F, end₁ e = v ∨ end₂ e = v}
 
-/-- Undirected adjacency witnessed by an edge of `F`. -/
+/-- **Adjacency through an edge set.** Let $\mathrm{end}_1, \mathrm{end}_2 : E \to V$ be maps,
+viewed as an undirected multigraph on $V$ in which each edge $e \in E$ has endpoints
+$\mathrm{end}_1(e)$ and $\mathrm{end}_2(e)$. For a finite set $F \subseteq E$, vertices
+$u, v \in V$ are adjacent using $F$ when some $e \in F$ has $\mathrm{end}_1(e) = u$ and
+$\mathrm{end}_2(e) = v$, or $\mathrm{end}_1(e) = v$ and $\mathrm{end}_2(e) = u$. -/
 noncomputable def AdjacentUsing {V E : Type*} (end₁ end₂ : E → V)
     (F : Finset E) (u v : V) : Prop := by
   classical
   exact ∃ e ∈ F, (end₁ e = u ∧ end₂ e = v) ∨ (end₁ e = v ∧ end₂ e = u)
 
-/-- The edge set `F` is connected on its support. -/
+/-- **Edge sets connected on their support.** Let $\mathrm{end}_1, \mathrm{end}_2 : E \to V$ be
+maps, viewed as an undirected multigraph on $V$ in which each edge $e \in E$ has endpoints
+$\mathrm{end}_1(e)$ and $\mathrm{end}_2(e)$. A finite set $F \subseteq E$ is connected on its
+support when for all vertices $u$ and $v$ in the support of $F$ there are vertices
+$u = w_0, w_1, \dots, w_k = v$, with $k \ge 0$, such that $w_{i-1}$ and $w_i$ are adjacent
+using $F$ for each $1 \le i \le k$. -/
 noncomputable def IsConnectedOnSupport {V E : Type*} (end₁ end₂ : E → V)
     (F : Finset E) : Prop :=
   ∀ u ∈ support end₁ end₂ F, ∀ v ∈ support end₁ end₂ F,
     Relation.ReflTransGen (AdjacentUsing end₁ end₂ F) u v
 
-/-- A circuit is a nonempty connected 2-regular edge set. This includes a loop as a
-1-circuit and two parallel edges between distinct vertices as a 2-circuit. -/
+/-- **Circuits in an edge set.** Let $\mathrm{end}_1, \mathrm{end}_2 : E \to V$ be maps, viewed
+as an undirected multigraph on $V$ in which each edge $e \in E$ has endpoints $\mathrm{end}_1(e)$
+and $\mathrm{end}_2(e)$. A finite set $F \subseteq E$ is a circuit when $F$ is nonempty, $F$ is
+connected on its support, and every vertex in the support of $F$ has degree exactly $2$ in $F$,
+where degree counts endpoint incidences, so that a loop contributes two.
+
+This includes a loop as a $1$-circuit and two parallel edges between distinct vertices as a
+$2$-circuit. -/
 noncomputable def IsCircuit {V E : Type*} (end₁ end₂ : E → V)
     (F : Finset E) : Prop :=
   F.Nonempty ∧ IsConnectedOnSupport end₁ end₂ F ∧
     ∀ v ∈ support end₁ end₂ F, degreeWithin end₁ end₂ F v = 2
 
-/-- The cut of `X`: edges with exactly one endpoint in `X`. Loops never cross a cut. -/
+/-- **Cut of a vertex set.** Let $E$ be a finite set and $\mathrm{end}_1, \mathrm{end}_2 : E \to V$
+be maps, viewed as an undirected multigraph on $V$ in which each edge $e \in E$ has endpoints
+$\mathrm{end}_1(e)$ and $\mathrm{end}_2(e)$. For a finite set $X \subseteq V$, the cut of $X$ is
+the set of edges $e \in E$ such that exactly one of $\mathrm{end}_1(e)$ and $\mathrm{end}_2(e)$
+lies in $X$. Loops never cross a cut. -/
 noncomputable def cut {V E : Type*} [Fintype E] (end₁ end₂ : E → V)
     (X : Finset V) : Finset E := by
   classical
@@ -115,8 +146,12 @@ theorem isCircuit_swap {V E : Type*} (end₁ end₂ : E → V) (F : Finset E) :
     IsCircuit end₂ end₁ F ↔ IsCircuit end₁ end₂ F := by
   simp only [IsCircuit, support_swap, degreeWithin_swap, isConnectedOnSupport_swap]
 
-/-- In a loopless edge set, endpoint-incidence degree equals the number of
-distinct incident edges. -/
+/-- **Degree counts incident edges in a loopless edge set.** Let
+$\mathrm{end}_1, \mathrm{end}_2 : E \to V$ be maps, viewed as an undirected multigraph on $V$ in
+which each edge $e \in E$ has endpoints $\mathrm{end}_1(e)$ and $\mathrm{end}_2(e)$. Let
+$F \subseteq E$ be a finite set of edges with no loops, that is,
+$\mathrm{end}_1(e) \ne \mathrm{end}_2(e)$ for every $e \in F$. Then for every vertex $v \in V$,
+the degree of $v$ in $F$ equals the number of edges of $F$ incident to $v$. -/
 theorem degreeWithin_eq_card_incident_of_loopless {V E : Type*} (end₁ end₂ : E → V)
     (F : Finset E) (v : V) (h : ∀ e ∈ F, end₁ e ≠ end₂ e) :
     degreeWithin end₁ end₂ F v = (incident end₁ end₂ v F).card := by

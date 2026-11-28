@@ -4,7 +4,7 @@ Factorizations of matrices (QR, singular value, polar, Schur and LU decompositio
 
 - [Condition numbers of sign matrices](condition-numbers-of-sign-matrices/README.md)
 - [Conjugate gradient method](conjugate-gradient-method/README.md)
-- [Gaussian elimination and row echelon form](gaussian-elimination-and-row-echelon-form/README.md)
+- [Gaussian elimination and reduced row echelon form](gaussian-elimination-and-row-echelon-form/README.md)
 - [LU decomposition](lu-decomposition/README.md)
 - [Randomized range finder](randomized-range-finder/README.md)
 - [Singular value decomposition](singular-value-decomposition/README.md)
@@ -14,9 +14,11 @@ Factorizations of matrices (QR, singular value, polar, Schur and LU decompositio
 - [Linear least squares](linear-least-squares/README.md)
 - [Polar decomposition](polar-decomposition/README.md)
 - [Perturbation theory for linear systems](perturbation-theory-for-linear-systems/README.md)
-- [Convergence of the Jacobi method for strictly diagonally dominant matrices](jacobi-iteration-converges.md)
-- [Rouché–Capelli theorem](rouche-capelli.md)
-- [Schur decomposition of a complex square matrix](exists-unitary-group-is-upper-triangular.md)
+- [Convergence of the Jacobi method](jacobi-method/README.md)
+- [Rouché–Capelli theorem](rouche-capelli-theorem/README.md)
+- [Schur decomposition](schur-decomposition/README.md)
+- [Singular values](singular-values/README.md)
+- [Pseudoinverse](pseudoinverse/README.md)
 
 ## Related topics
 

@@ -17,7 +17,7 @@ open AddMonoidAlgebra
 universe u v
 
 /-- Consumer with the original binders and universes. -/
-theorem exactSource {L : Type u} [Field L] (A : ValuationSubring L)
+private theorem exactSource {L : Type u} [Field L] (A : ValuationSubring L)
     {G : Type v} [AddMonoid G] (hG : ∀ g : G, IsOfFinAddOrder g)
     (χ : AddMonoidAlgebra A G →ₐ[A] L) :
     (∀ x, χ x ∈ A) ∧ ∃ χA : AddMonoidAlgebra A G →ₐ[A] A, ∀ x, (χA x : L) = χ x :=

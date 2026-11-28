@@ -13,7 +13,7 @@ public meta import CSLibExt.Logics.Propositional.CNF.Compaction
 
 @[expose] public section
 
-namespace Cslib.Logic.PL.CNFTest
+namespace Cslib.Logic.LegacyPL.CNFTest
 
 open CNF
 
@@ -106,4 +106,4 @@ example : Nat.card {assignment : Fin 4 → Bool //
   rw [CNF.card_satisfying_fin oneOr 4 (by simp [oneOr])]
   decide
 
-end Cslib.Logic.PL.CNFTest
+end Cslib.Logic.LegacyPL.CNFTest

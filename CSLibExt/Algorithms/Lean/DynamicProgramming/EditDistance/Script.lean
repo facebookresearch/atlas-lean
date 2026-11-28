@@ -25,7 +25,10 @@ universe u
 
 variable {α : Type u}
 
-/-- One alignment step in a unit-cost edit script. -/
+/-- **Edit step.** An edit step over a type $\alpha$ is one of four operations, for
+$a, b \in \alpha$: keep $a$ (consume the input value $a$ and reproduce it), delete $a$ (consume
+$a$), insert $a$ (produce $a$ without consuming input), or substitute $a$ by $b$ (consume $a$
+and produce $b$). -/
 inductive EditStep (α : Type u) where
   /-- Consume and reproduce the given value at zero cost. -/
   | keep (value : α)
@@ -37,22 +40,32 @@ inductive EditStep (α : Type u) where
   | substitute (source target : α)
   deriving Repr, BEq, DecidableEq
 
-/-- A left-to-right sequence of edit operations. -/
+/-- **Edit script.** An edit script over a type $\alpha$ is a finite list of edit steps over
+$\alpha$, applied from left to right. -/
 abbrev EditScript (α : Type u) := List (EditStep α)
 
-/-- Unit cost of an edit step. Keeps are free and the three edits cost one. -/
+/-- **Unit cost of an edit step.** The cost of an edit step is $0$ for a keep step and $1$ for a
+deletion, an insertion or a substitution. -/
 def EditStep.cost : EditStep α → Nat
   | .keep _ => 0
   | .delete _ => 1
   | .insert _ => 1
   | .substitute _ _ => 1
 
-/-- Sum of the unit costs of a script. -/
+/-- **Cost of an edit script.** The cost of an edit script is the sum of the unit costs of its
+steps; the empty script has cost $0$. -/
 def EditScript.cost : EditScript α → Nat
   | [] => 0
   | step :: script => step.cost + EditScript.cost script
 
-/-- Execute a script, rejecting a stored source value that does not match the next input value. -/
+/-- **Running an edit script.** Over a type $\alpha$ with a boolean equality test, running an
+edit script on an input list processes the steps from left to right and either fails or
+returns an output list. A keep step with value $a$ consumes the next input value $b$ and
+outputs $a$; a deletion of $a$ consumes $b$ and outputs nothing; a substitution of $a$ by $c$
+consumes $b$ and outputs $c$. Each of these three fails if the input is exhausted or if the
+equality test of $a$ against $b$ fails. An insertion of $c$ outputs $c$ without consuming input.
+When the script ends, the run succeeds with the outputs in order if the input is used up, and
+fails if input values remain. -/
 def EditScript.apply? [BEq α] : EditScript α → List α → Option (List α)
   | [], [] => some []
   | [], _ :: _ => none
@@ -68,12 +81,18 @@ def EditScript.apply? [BEq α] : EditScript α → List α → Option (List α)
       if value == source then (EditScript.apply? script rest).map (target :: ·) else none
   | .substitute _ _ :: _, [] => none
 
-/-- A script transforms a source when its executable interpretation returns the target. -/
+/-- **An edit script transforming one list into another.** Over a type with a boolean equality
+test, an edit script transforms a list $x$ into a list $y$ when running the script on $x$
+succeeds and outputs $y$. -/
 def EditScript.Transforms [BEq α]
     (script : EditScript α) (source target : List α) : Prop :=
   script.apply? source = some target
 
-/-- A minimum edit distance together with one deterministic realizing script. -/
+/-- **Edit-distance result record.** An edit-distance result over a type $\alpha$ consists of a
+natural number, the reported distance, and an edit script over $\alpha$.
+
+The record imposes no relation between the two fields; it is meant to hold a minimum edit
+distance and a script realizing it. -/
 structure EditDistanceResult (α : Type u) where
   /-- Minimum number of non-keep edit operations. -/
   distance : Nat
@@ -81,7 +100,9 @@ structure EditDistanceResult (α : Type u) where
   script : EditScript α
   deriving Repr, BEq, DecidableEq
 
-/-- Counts table cells and emitted reconstruction steps separately. -/
+/-- **Edit-distance cost counters.** An edit-distance cost record is a pair of natural numbers:
+the number of dynamic-programming table cells initialized or transitioned, and the number of
+operations emitted while reconstructing an edit script. -/
 structure EditDistanceCost where
   /-- Dynamic-programming cells initialized or transitioned. -/
   cellTransitions : Nat
@@ -130,7 +151,8 @@ instance : AddMonoid EditDistanceCost where
       EditDistanceCost.mk (count * cells + cells) (count * reconstruction + reconstruction)
     rw [Nat.add_mul, Nat.one_mul, Nat.add_mul, Nat.one_mul]
 
-/-- Total charged events in the edit-distance cost model. -/
+/-- **Total edit-distance cost.** The total of an edit-distance cost record is the number of table
+cells initialized or transitioned plus the number of operations emitted during reconstruction. -/
 def EditDistanceCost.total (cost : EditDistanceCost) : Nat :=
   cost.cellTransitions + cost.reconstructionSteps
 

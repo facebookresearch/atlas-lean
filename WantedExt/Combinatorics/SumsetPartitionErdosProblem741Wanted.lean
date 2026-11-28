@@ -20,7 +20,8 @@ module
 public import Batteries.Util.ProofWanted
 public import Mathlib.Order.CompletePartialOrder
 public import MathlibExt.Combinatorics.Additive.Basis
-public import MathlibExt.Data.Set.Density
+public import MathlibExt.Combinatorics.Additive.UpperDensitySumsetPartition
+public import MathlibExt.Combinatorics.SumsetPartitionErdosProblem741
 
 @[expose] public section
 
@@ -42,54 +43,5 @@ DeepMind prover agent; the basis there is `A ∪ {0}` of exact order 2; no code 
 -/
 
 open scoped Pointwise
-
-/-- Erdős Problem 741, first question (upper-density reading): if `A ⊆ ℕ` and `A + A` has positive
-upper density, then `A = A₁ ⊔ A₂` with `A₁ + A₁` and `A₂ + A₂` both of positive upper density. -/
-def upperDensitySumsetSplits : Prop :=
-  ∀ A : Set ℕ, 0 < (A + A).upperDensity → ∃ A₁ A₂ : Set ℕ, Disjoint A₁ A₂ ∧ A₁ ∪ A₂ = A ∧
-    0 < (A₁ + A₁).upperDensity ∧ 0 < (A₂ + A₂).upperDensity
-
-/-- `S ⊆ ℕ` has bounded gaps (is syndetic): some `g` is such that every interval `[n, n + g)`
-meets `S`. -/
-def HasBoundedGaps (S : Set ℕ) : Prop :=
-  ∃ g : ℕ, ∀ n : ℕ, ∃ s ∈ S, n ≤ s ∧ s < n + g
-
-/-- Erdős Problem 741, second question: there is a basis `A` of order `2` (every sufficiently large
-integer is a sum of two elements of `A`) such that for every partition `A = A₁ ⊔ A₂` the sumsets
-`A₁ + A₁` and `A₂ + A₂` do not both have bounded gaps. -/
-def basisWithoutBoundedGapSplit : Prop :=
-  ∃ A : Set ℕ, A.IsAsymptoticAddBasisOfOrder 2 ∧
-    ∀ A₁ A₂ : Set ℕ, Disjoint A₁ A₂ → A₁ ∪ A₂ = A →
-      ¬ (HasBoundedGaps (A₁ + A₁) ∧ HasBoundedGaps (A₂ + A₂))
-
-/--
-Resolved true: erdosproblems.com/741 records DeepMind's positive answer to the upper-density
-question: if `A + A` has positive upper density then `A = A₁ ⊔ A₂` with `A₁ + A₁` and `A₂ + A₂` both
-of positive upper density (proof sketched in the page's comments; formal-conjectures marks this
-statement solved with a formal proof by the DeepMind prover agent, not checked here); the page lists
-the problem as solved. Source: T. F. Bloom, Erdős Problems, Problem #741,
-https://www.erdosproblems.com/741 (status SOLVED (LEAN)); resolution: B. Alexeev, M. Putterman, M.
-Sawhney, M. Sellke and G. Valiant, Short proofs in combinatorics and number theory, arXiv:2603.29961
-(2026); erdosproblems.com/741 (DeepMind), Theorem 3.1 of arXiv:2603.29961 (proof due to an internal
-OpenAI model): there is A ⊂ ℕ, a basis of order 2 with [4, ∞) ⊆ A + A, such that for every partition
-A = A₁ ⊔ A₂ one of A₁ + A₁, A₂ + A₂ does not have bounded gaps; erdosproblems.com/741: DeepMind gave
-a positive answer to the upper-density question (proof sketched in the comments),
-https://arxiv.org/abs/2603.29961.
--/
-public theorem_wanted upperDensitySumsetSplits_holds : upperDensitySumsetSplits
-
-/--
-Resolved true: Alexeev, Putterman, Sawhney, Sellke and Valiant (Theorem 3.1, proof by an internal
-OpenAI model; DeepMind found a construction independently) give an explicit basis `A` of order `2`
-such that for every partition `A = A₁ ⊔ A₂` one of `A₁ + A₁`, `A₂ + A₂` does not have bounded gaps.
-Source: T. F. Bloom, Erdős Problems, Problem #741, https://www.erdosproblems.com/741 (status SOLVED
-(LEAN)); resolution: B. Alexeev, M. Putterman, M. Sawhney, M. Sellke and G. Valiant, Short proofs in
-combinatorics and number theory, arXiv:2603.29961 (2026); erdosproblems.com/741 (DeepMind), Theorem
-3.1 of arXiv:2603.29961 (proof due to an internal OpenAI model): there is A ⊂ ℕ, a basis of order 2
-with [4, ∞) ⊆ A + A, such that for every partition A = A₁ ⊔ A₂ one of A₁ + A₁, A₂ + A₂ does not have
-bounded gaps; erdosproblems.com/741: DeepMind gave a positive answer to the upper-density question
-(proof sketched in the comments), https://arxiv.org/abs/2603.29961.
--/
-public theorem_wanted basisWithoutBoundedGapSplit_holds : basisWithoutBoundedGapSplit
 
 end MathlibExt.Combinatorics.SumsetPartitionErdosProblem741Wanted

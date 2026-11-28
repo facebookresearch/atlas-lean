@@ -110,7 +110,7 @@ parent sets.) -/
 noncomputable def intervene (k : Fin n) (a : α) : BayesNet α n where
   pa j := if j = k then ∅ else b.pa j
   cpt j z := if h : j = k then StdSimplex.single a
-    else b.cpt j fun i => z ⟨i.1, by rw [if_neg h]; exact i.2⟩
+    else b.cpt j fun i => z ⟨i.1, by rw [ite_eq_right h]; exact i.2⟩
 
 omit [Nonempty α] in
 /-- The parents of the intervened node are deleted. -/
@@ -129,6 +129,28 @@ noncomputable def mutilateSet (W : Finset (Fin n)) (w : Fin n → α) : BayesNet
   pa j := if j ∈ W then ∅ else b.pa j
   cpt j z := if h : j ∈ W then StdSimplex.single (w j) else
     b.cpt j fun i => z ⟨i, by simp [h]⟩
+
+/-- Without intervened nodes, the joint is that of `b`. -/
+theorem joint_mutilateSet_empty (w : Fin n → α) :
+    (b.mutilateSet ∅ w).joint = b.joint := by
+  funext x
+  rw [joint_eq_prod, joint_eq_prod]
+  exact prod_congr rfl fun j _ => by simp [mutilateSet]
+
+/-- **The truncated factorization for a set of nodes**: after `do(X_W = w)`, the joint is the
+product of the tables of the nodes outside `W` on assignments agreeing with `w` on `W`. -/
+theorem joint_mutilateSet [DecidableEq α] (W : Finset (Fin n)) (w x : Fin n → α) :
+    (b.mutilateSet W w).joint x = ∏ j, if j ∈ W then (if x j = w j then 1 else 0)
+      else (b.cpt j (b.paVal j x)).weights (x j) := by
+  rw [joint_eq_prod]
+  refine prod_congr rfl fun j _ => ?_
+  by_cases h : j ∈ W
+  · simp only [mutilateSet, h, dite_true, ite_true]
+    by_cases hx : x j = w j
+    · simp [StdSimplex.single, hx]
+    · simp [StdSimplex.single, hx]
+  · simp only [mutilateSet, h, dite_false, ite_false]
+    rfl
 
 /-- **The truncated factorization** (Pearl 2009, eq. (3.10)): after `do(X_k = a)` the joint is
 the product of the tables of all nodes other than `k` on assignments with `x_k = a`, and `0`
@@ -371,6 +393,10 @@ variable {n : ℕ} (b : BayesNet α n)
 /-- The edge `i → j` of the network's graph: `i` is a parent of `j`. -/
 def Edge (i j : Fin n) : Prop :=
   ∃ h : i.val < j.val, (⟨i.val, h⟩ : Fin j) ∈ b.pa j
+
+instance decidableRelEdge : DecidableRel b.Edge := fun i j => by
+  unfold Edge
+  infer_instance
 
 /-- `j` is a descendant of `i` (every node is its own descendant). -/
 def IsDescendant (i j : Fin n) : Prop :=

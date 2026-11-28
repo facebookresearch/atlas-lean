@@ -19,7 +19,9 @@ public import Mathlib.Topology.MetricSpace.ProperSpace
 The doubling-of-variables proof of the comparison principle of Crandall and Lions on a bounded
 open subset of a finite-dimensional real inner product space, for continuous sub- and
 supersolutions: first for the model equation `γ u + H(Du) = f(x)` with `γ > 0`, then for a
-general first-order equation under the structure conditions of the user's guide.
+general first-order equation under the structure conditions of the user's guide. For semicontinuous
+sub- and supersolutions, finite dimensionality ensures that the bounded closure is compact, so
+maximizers of the doubled functional have a convergent subsequence.
 
 ## Main results
 
@@ -32,6 +34,8 @@ general first-order equation under the structure conditions of the user's guide.
 * `le_of_isViscositySubsolution_of_isViscositySupersolution_of_proper`: the comparison principle
   for a general first-order `F(x, r, p)` under the structure conditions (3.13)–(3.14) of the
   user's guide, for continuous sub- and supersolutions.
+* `ViscositySolutionWanted.le_of_isViscositySubsolution_of_isViscositySupersolution_of_structure`:
+  comparison under (3.13)–(3.14) for semicontinuous sub- and supersolutions.
 
 ## References
 
@@ -114,8 +118,8 @@ theorem le_of_isViscositySubsolution_of_isViscositySupersolution {Ω : Set E} (h
   -- maximise the doubled functional on `K × K`
   set Φ : E × E → ℝ := fun q => u q.1 - v q.2 - α / 2 * ‖q.1 - q.2‖ ^ 2 with hΦ
   have hΦc : ContinuousOn Φ (K ×ˢ K) := by
-    refine ((hu.comp continuousOn_fst fun q hq => hq.1).sub
-      (hv.comp continuousOn_snd fun q hq => hq.2)).sub ?_
+    refine ((hu.comp continuousOn_fst fun q (hq : q ∈ K ×ˢ K) => hq.1).sub
+      (hv.comp continuousOn_snd fun q (hq : q ∈ K ×ˢ K) => hq.2)).sub ?_
     exact (continuous_const.mul ((continuous_fst.sub continuous_snd).norm.pow 2)).continuousOn
   obtain ⟨q, hqK, hqmax⟩ := (hK.prod hK).exists_isMaxOn ⟨(z, z), hzK, hzK⟩ hΦc
   set x := q.1 with hx
@@ -268,8 +272,8 @@ theorem le_of_isViscositySubsolution_of_isViscositySupersolution_of_proper {Ω :
   -- maximisers of the doubled functional for every penalisation
   set Φ : ℝ → E × E → ℝ := fun α q => u q.1 - v q.2 - α / 2 * ‖q.1 - q.2‖ ^ 2 with hΦ
   have hΦc : ∀ α, ContinuousOn (Φ α) (K ×ˢ K) := fun α =>
-    ((hu.comp continuousOn_fst fun q hq => hq.1).sub
-      (hv.comp continuousOn_snd fun q hq => hq.2)).sub
+    ((hu.comp continuousOn_fst fun q (hq : q ∈ K ×ˢ K) => hq.1).sub
+      (hv.comp continuousOn_snd fun q (hq : q ∈ K ×ˢ K) => hq.2)).sub
       (continuous_const.mul ((continuous_fst.sub continuous_snd).norm.pow 2)).continuousOn
   have hex : ∀ α, ∃ q ∈ K ×ˢ K, IsMaxOn (Φ α) (K ×ˢ K) q := fun α =>
     (hK.prod hK).exists_isMaxOn ⟨(z, z), hzK, hzK⟩ (hΦc α)
@@ -413,3 +417,195 @@ theorem le_of_isViscositySubsolution_of_isViscositySupersolution_of_proper {Ω :
     linarith
 
 end MathlibExt.Analysis.ViscositySolution
+
+namespace MathlibExt.Analysis.ViscositySolutionWanted
+
+open Filter Topology Set MathlibExt.Analysis.ViscositySolution
+
+variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
+
+/-- The compact first-order doubling argument of the user's guide, Lemma 3.1:
+a positive diagonal gap yields interior maximizers with arbitrarily small modulus argument. -/
+private theorem exists_interior_doubled_max [FiniteDimensional ℝ E] {Ω : Set E}
+    (hΩ : IsOpen Ω) (hΩb : Bornology.IsBounded Ω) {u v : E → ℝ}
+    (hu : UpperSemicontinuousOn u (closure Ω)) (hv : LowerSemicontinuousOn v (closure Ω))
+    (hbdry : ∀ x ∈ frontier Ω, u x ≤ v x) {z : E} (hz : z ∈ Ω)
+    {δ ρ : ℝ} (hδ : 0 < δ) (hzδ : δ ≤ u z - v z) (hρ : 0 < ρ) :
+    ∃ α : ℝ, 0 < α ∧ ∃ x ∈ Ω, ∃ y ∈ Ω,
+      IsMaxOn (fun q : E × E => u q.1 - v q.2 - α / 2 * ‖q.1 - q.2‖ ^ 2)
+        (closure Ω ×ˢ closure Ω) (x, y) ∧
+      δ ≤ u x - v y ∧ α * ‖x - y‖ ^ 2 + ‖x - y‖ < ρ := by
+  let K := closure Ω ×ˢ closure Ω
+  have hK := hΩb.isCompact_closure.prod hΩb.isCompact_closure
+  have hzK : (z, z) ∈ K := ⟨subset_closure hz, subset_closure hz⟩
+  let G (q : E × E) := u q.1 - v q.2
+  let d (q : E × E) := ‖q.1 - q.2‖
+  have hd : Continuous d := (continuous_fst.sub continuous_snd).norm
+  have hG : UpperSemicontinuousOn G K := by
+    have hv' : UpperSemicontinuousOn (fun y => -v y) (closure Ω) :=
+      continuous_neg.comp_lowerSemicontinuousOn_antitone hv (fun _ _ h => neg_le_neg h)
+    have hfst : UpperSemicontinuousOn (fun q : E × E => u q.1) K :=
+      hu.comp continuousOn_fst fun _ h => h.1
+    have hsnd : UpperSemicontinuousOn (fun q : E × E => -v q.2) K :=
+      hv'.comp continuousOn_snd fun _ h => h.2
+    exact hfst.add hsnd
+  obtain ⟨B, hB⟩ := hG.bddAbove_of_isCompact hK
+  let a (n : ℕ) : ℝ := (n : ℝ) + 1
+  have ha (n : ℕ) : 0 < a n := by dsimp [a]; positivity
+  let Φ (n : ℕ) (q : E × E) := G q - a n * d q ^ 2
+  have hΦ (n : ℕ) : UpperSemicontinuousOn (Φ n) K := by
+    have hp : Continuous (fun q => -(a n * d q ^ 2)) :=
+      (continuous_const.mul (hd.pow 2)).neg
+    exact hG.add (hp.upperSemicontinuous.upperSemicontinuousOn K)
+  have hex (n : ℕ) := (hΦ n).exists_isMaxOn ⟨(z, z), hzK⟩ hK
+  choose q hq hqmax using hex
+  have hgap (n : ℕ) : δ + a n * d (q n) ^ 2 ≤ G (q n) := by
+    have h : G (z, z) ≤ Φ n (q n) := by
+      simpa [Φ, d] using hqmax n hzK
+    change G (z, z) ≤ G (q n) - a n * d (q n) ^ 2 at h
+    linarith [show δ ≤ G (z, z) from hzδ]
+  -- Boundedness of the unpenalized gap forces the distance between the points to zero.
+  have haTop : Tendsto a atTop atTop :=
+    tendsto_atTop_add_const_right _ 1 tendsto_natCast_atTop_atTop
+  have hdSq : Tendsto (fun n => d (q n) ^ 2) atTop (𝓝 0) := by
+    have hlim : Tendsto (fun n => (B - δ) / a n) atTop (𝓝 0) :=
+      tendsto_const_nhds.div_atTop haTop
+    refine squeeze_zero (fun _ => sq_nonneg _) (fun n => ?_) hlim
+    rw [le_div_iff₀ (ha n)]
+    have h := hB (mem_image_of_mem G (hq n))
+    linarith [hgap n, mul_comm (d (q n) ^ 2) (a n)]
+  obtain ⟨w, hw, s, hs, hqw⟩ := hK.tendsto_subseq hq
+  have hdw : d w = 0 := by
+    have h : d w ^ 2 = 0 := tendsto_nhds_unique
+      (((hd.pow 2).tendsto w).comp hqw) (hdSq.comp hs.tendsto_atTop)
+    by_contra hne
+    exact pow_ne_zero 2 hne h
+  have hdiag : w.1 = w.2 := sub_eq_zero.mp (norm_eq_zero.mp hdw)
+  have hqwK : Tendsto (q ∘ s) atTop (𝓝[K] w) :=
+    tendsto_nhdsWithin_iff.2 ⟨hqw, Eventually.of_forall fun n => hq (s n)⟩
+  have hupper {r : ℝ} (hr : G w < r) : ∀ᶠ n in atTop, G (q (s n)) < r :=
+    hqwK.eventually (hG w hw r hr)
+  -- Upper semicontinuity preserves the positive gap at the diagonal limit, excluding the boundary.
+  have hGw : δ ≤ G w := by
+    by_contra! h
+    obtain ⟨n, hn⟩ := (hupper h).exists
+    have hpen : 0 ≤ a (s n) * d (q (s n)) ^ 2 := mul_nonneg (ha _).le (sq_nonneg _)
+    linarith [hgap (s n)]
+  have hwΩ : w ∈ Ω ×ˢ Ω := by
+    have hw₁ : w.1 ∈ Ω := by
+      by_contra h
+      have hfr : w.1 ∈ frontier Ω := by
+        rw [hΩ.frontier_eq]
+        exact ⟨hw.1, h⟩
+      have hle := hbdry w.1 hfr
+      change δ ≤ u w.1 - v w.2 at hGw
+      rw [← hdiag] at hGw
+      linarith
+    exact ⟨hw₁, hdiag ▸ hw₁⟩
+  have hinside := hqw.eventually ((hΩ.prod hΩ).mem_nhds hwΩ)
+  -- Comparing with the diagonal limit itself controls even the scaled penalty.
+  have hclose := (((hd.tendsto w).comp hqw).eventually
+    (show ∀ᶠ t in 𝓝 (d w), t < ρ / 2 from eventually_lt_nhds (by rw [hdw]; positivity)))
+  obtain ⟨n, hnΩ, hnd, hnG⟩ := (hinside.and (hclose.and
+    (hupper (show G w < G w + ρ / 4 by linarith)))).exists
+  let k := s n
+  have hmax : G w ≤ G (q k) - a k * d (q k) ^ 2 := by
+    simpa [Φ, hdw] using hqmax k hw
+  have hpen : 0 ≤ a k * d (q k) ^ 2 := mul_nonneg (ha _).le (sq_nonneg _)
+  refine ⟨2 * a k, by positivity, (q k).1, hnΩ.1, (q k).2, hnΩ.2, ?_, ?_, ?_⟩
+  · simpa only [Φ, G, d, show 2 * a k / 2 = a k by ring] using hqmax k
+  · change δ ≤ G (q k)
+    linarith [hgap k]
+  · change 2 * a k * d (q k) ^ 2 + d (q k) < ρ
+    change d (q k) < ρ / 2 at hnd
+    change G (q k) < G w + ρ / 4 at hnG
+    linarith
+
+/-- **Comparison principle for first-order equations** (Crandall and Lions 1983; Crandall, Ishii
+and Lions, *User's guide*, Bull. AMS 1992, Theorem 3.3 for an `F` independent of the Hessian
+variable). Let `Ω` be a bounded open subset of a finite-dimensional real inner product space and
+`F` continuous on `closure Ω × ℝ × E*`, with
+* (3.13) properness: `γ (r - s) ≤ F(x, r, p) - F(x, s, p)` for `r ≥ s` and `x ∈ closure Ω`,
+  with `γ > 0`;
+* (3.14) a modulus `ω` with `ω(0+) = 0`, `ω ≥ 0`, such that
+  `F(y, r, α⟪x - y, ·⟫) - F(x, r, α⟪x - y, ·⟫) ≤ ω(α‖x - y‖² + ‖x - y‖)` for `x, y ∈ Ω`,
+  `r ∈ ℝ` and `α > 0` (the matrix condition (3.10) is vacuous here, take `X = Y = 0`).
+As in the printed user's guide, (3.13) is asked on `closure Ω` and (3.14) only on `Ω`.
+If `u` is upper semicontinuous on `closure Ω` and a viscosity subsolution, `v` lower
+semicontinuous on `closure Ω` and a viscosity supersolution of `F = 0` on `Ω`, and `u ≤ v` on
+`∂Ω`, then `u ≤ v` on `Ω`. Test functions are `C¹` here and `C²` in the user's guide; a
+`C¹`-tested subsolution is in particular a `C²`-tested one, so this is a special case of
+Theorem 3.3. The case of continuous `u` and `v` is proved in
+`MathlibExt.Analysis.ViscositySolution` as
+`le_of_isViscositySubsolution_of_isViscositySupersolution_of_proper`; what remains is
+semicontinuity. -/
+theorem le_of_isViscositySubsolution_of_isViscositySupersolution_of_structure
+    [FiniteDimensional ℝ E] {Ω : Set E} (hΩ : IsOpen Ω) (hΩb : Bornology.IsBounded Ω)
+    (F : E → ℝ → (E →L[ℝ] ℝ) → ℝ)
+    (hF : ContinuousOn (fun q : E × ℝ × (E →L[ℝ] ℝ) => F q.1 q.2.1 q.2.2)
+      (closure Ω ×ˢ univ ×ˢ univ))
+    {γ : ℝ} (hγ : 0 < γ)
+    (hproper : ∀ x ∈ closure Ω, ∀ r s : ℝ, ∀ p : E →L[ℝ] ℝ, s ≤ r →
+      γ * (r - s) ≤ F x r p - F x s p)
+    (ω : ℝ → ℝ) (hω : Tendsto ω (𝓝[>] 0) (𝓝 0)) (hω0 : ∀ t, 0 ≤ t → 0 ≤ ω t)
+    (hstruct : ∀ x ∈ Ω, ∀ y ∈ Ω, ∀ r : ℝ, ∀ α : ℝ, 0 < α →
+      F y r (α • innerSL ℝ (x - y)) - F x r (α • innerSL ℝ (x - y)) ≤
+        ω (α * ‖x - y‖ ^ 2 + ‖x - y‖))
+    {u v : E → ℝ} (hu : UpperSemicontinuousOn u (closure Ω))
+    (hv : LowerSemicontinuousOn v (closure Ω))
+    (hsub : IsViscositySubsolution F Ω u) (hsup : IsViscositySupersolution F Ω v)
+    (hbdry : ∀ x ∈ frontier Ω, u x ≤ v x) :
+    ∀ x ∈ Ω, u x ≤ v x := by
+  -- These two assumptions are retained for the statement's API, but not used in the proof.
+  have _ := hF
+  have _ := hω0
+  intro z hz
+  by_contra! hlt
+  let δ := u z - v z
+  have hδ : 0 < δ := sub_pos.mpr hlt
+  obtain ⟨ρ, hρ, hωρ⟩ := Metric.tendsto_nhdsWithin_nhds.1 hω (γ * δ) (mul_pos hγ hδ)
+  obtain ⟨α, hα, x, hx, y, hy, hmax, hgap, hsmall⟩ :=
+    exists_interior_doubled_max hΩ hΩb hu hv hbdry hz hδ le_rfl hρ
+  -- Fixing either coordinate gives a quadratic test with the same derivative in both tests.
+  let p := α • innerSL ℝ (x - y)
+  have hsubx : F x (u x) p ≤ 0 := by
+    have hφ := hasFDerivAt_half_mul_norm_sub_sq α y x
+    have h := hsub.2 x hx (fun w => α / 2 * ‖w - y‖ ^ 2) (contDiff_half_mul_norm_sub_sq α y) ?_
+    · rwa [hφ.fderiv] at h
+    refine IsMaxOn.isLocalMaxOn fun w hw => ?_
+    have h := hmax (show (w, y) ∈ closure Ω ×ˢ closure Ω from
+      ⟨subset_closure hw, subset_closure hy⟩)
+    change u w - v y - α / 2 * ‖w - y‖ ^ 2 ≤ u x - v y - α / 2 * ‖x - y‖ ^ 2 at h
+    change u w - α / 2 * ‖w - y‖ ^ 2 ≤ u x - α / 2 * ‖x - y‖ ^ 2
+    linarith
+  have hsupy : 0 ≤ F y (v y) p := by
+    have hψ := (hasFDerivAt_half_mul_norm_sub_sq α x y).neg
+    have hder : -(α • innerSL ℝ (y - x)) = p := by
+      ext w
+      simp [p]
+      ring
+    have h := hsup.2 y hy (-(fun w : E => α / 2 * ‖w - x‖ ^ 2))
+      (contDiff_half_mul_norm_sub_sq α x).neg ?_
+    · rwa [hψ.fderiv, hder] at h
+    refine IsMinOn.isLocalMinOn fun w hw => ?_
+    have h := hmax (show (x, w) ∈ closure Ω ×ˢ closure Ω from
+      ⟨subset_closure hx, subset_closure hw⟩)
+    change u x - v w - α / 2 * ‖x - w‖ ^ 2 ≤ u x - v y - α / 2 * ‖x - y‖ ^ 2 at h
+    rw [norm_sub_rev x w, norm_sub_rev x y] at h
+    change v y - -(α / 2 * ‖y - x‖ ^ 2) ≤ v w - -(α / 2 * ‖w - x‖ ^ 2)
+    linarith
+  have hprop := hproper x (subset_closure hx) (u x) (v y) p (by linarith)
+  have hγδ : γ * δ ≤ F y (v y) p - F x (v y) p := by
+    linarith [mul_le_mul_of_nonneg_left hgap hγ.le]
+  by_cases hxy : x = y
+  · have heq : F y (v y) p = F x (v y) p := by rw [hxy]
+    linarith [mul_pos hγ hδ]
+  · let t := α * ‖x - y‖ ^ 2 + ‖x - y‖
+    have ht : 0 < t := add_pos_of_nonneg_of_pos (by positivity)
+      (norm_pos_iff.2 (sub_ne_zero.2 hxy))
+    have hωt := hωρ (show t ∈ Ioi 0 from ht)
+      (show dist t 0 < ρ by rwa [Real.dist_eq, sub_zero, abs_of_pos ht])
+    rw [Real.dist_eq, sub_zero] at hωt
+    exact (not_lt_of_ge (hγδ.trans (hstruct x hx y hy (v y) α hα))) ((abs_lt.mp hωt).2)
+
+end MathlibExt.Analysis.ViscositySolutionWanted

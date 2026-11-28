@@ -1,0 +1,3 @@
+# Lazy random function
+
+Let the input type $X$ have decidable equality (it need not be finite) and let the range $Y$ be finite and nonempty. A table is a partial function from $X$ to $Y$. Running an adaptive oracle algorithm with queries in $X$ and answers in $Y$ against the lazy random function from a table $T$ gives the joint distribution of its output and final table, where each query is answered by one [lazy random function step](rf-step.md) and the table is threaded from step to step: recorded queries are answered from the table, and each fresh query gets a uniform answer in $Y$ that is then recorded.

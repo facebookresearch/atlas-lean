@@ -12,3 +12,11 @@
 - [Island-model equilibrium is below one under migration](island-equilibrium-mem-ico.md)
 - [Complete identity by descent in isolated demes](island-equilibrium-zero-right.md)
 - [Wright's $F_{ST} = 1/(1 + 4Nm)$](tendsto-island-equilibrium.md)
+
+- [Effective size of an island-model population](effective-size-of-a-subdivided-population-island.md)
+
+- [The island-model diffusion and $F_{ST}$](island-model-diffusion-and-fst.md)
+
+- [Asymmetric two-island frequency process](asymmetric-two-island-frequency-process/README.md)
+- [Fleming–Viot limit under fast density regulation](fleming-viot-limit-under-fast-density-regulation/README.md)
+- [Genealogies in the long-range biased voter model](genealogies-in-the-long-range-biased-voter-model/README.md)

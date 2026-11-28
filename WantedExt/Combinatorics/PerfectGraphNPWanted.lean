@@ -55,22 +55,26 @@ Resolution note: perfect-graph recognition is in P (Chudnovsky et al.,
 the requested NP description exists; the entry is marked resolved.
 -/
 
-/-- Perfect-graph instance presented by explicit adjacency data (no proof
-fields, so instances admit bitstring encodings): vertex count `n` and a
-Boolean adjacency matrix. Validity (symmetry, no loops) is recorded
-separately by `PerfectGraphInstance.Valid`.
-Cites [AIM-COMBINATORICS-0270] Source item 4, notes[269], Section A.4. -/
+/-- **Adjacency-matrix graph instance.** An instance consists of a natural number $n$ and a
+Boolean $n \times n$ matrix $A$ with rows and columns indexed by $\{0, \dots, n-1\}$, read as the
+adjacency matrix of a graph on the vertices $0, \dots, n-1$. The matrix is arbitrary; symmetry
+and the absence of loops are imposed separately by the validity condition.
+
+Source: [AIM-COMBINATORICS-0270] Source item 4, notes[269], Section A.4. -/
 structure PerfectGraphInstance where
   n : Nat
   adj : Fin n → Fin n → Bool
 
-/-- Validity of a perfect-graph instance: symmetric adjacency, no loops. -/
+/-- **Valid adjacency-matrix instance.** An instance with $n$ vertices and adjacency matrix $A$ is
+valid when $A$ is symmetric, that is, $A_{yx}$ is true whenever $A_{xy}$ is true, and has no
+loops, that is, $A_{xx}$ is false for every vertex $x$. -/
 def PerfectGraphInstance.Valid (I : PerfectGraphInstance) : Prop :=
   (∀ x y : Fin I.n, I.adj x y = true → I.adj y x = true) ∧
     ∀ x : Fin I.n, I.adj x x = false
 
-/-- A valid instance determines a finite simple undirected loopless graph
-(`SimpleGraph`), on which the repository's `IsPerfect` is evaluated. -/
+/-- **Graph of a valid instance.** A valid instance with $n$ vertices and adjacency matrix $A$
+determines the simple graph on the vertex set $\{0, \dots, n-1\}$ in which vertices $x$ and $y$
+are adjacent exactly when $A_{xy}$ is true. -/
 def PerfectGraphInstance.toSimpleGraph (I : PerfectGraphInstance)
     (h : I.Valid) : SimpleGraph (Fin I.n) where
   Adj x y := I.adj x y = true
@@ -101,10 +105,12 @@ instance : MetaMathlibExt.BitstringEncoding PerfectGraphInstance where
     simp [List.getD_eq_getElem?_getD, i.isLt, j.isLt]
 
 open Classical in
-/-- The perfect-graph decision problem as a bitstring decision problem:
-decode an instance, and accept exactly the valid instances whose graph
-is perfect in the repository's `IsPerfect` sense.
-Cites [AIM-COMBINATORICS-0270] Source item 4, notes[269], Section A.4. -/
+/-- **The perfect-graph decision problem.** The decision problem on bitstrings that accepts a
+bitstring $x$ exactly when $x$ decodes, under the bitstring encoding of adjacency-matrix
+instances, to a valid instance whose graph is perfect. Bitstrings that do not decode to an
+instance, or decode to an invalid one, are rejected.
+
+Source: [AIM-COMBINATORICS-0270] Source item 4, notes[269], Section A.4. -/
 noncomputable def perfectGraphProblem :
     MetaMathlibExt.ComplexityTheory.DecisionProblem :=
   fun l => match MetaMathlibExt.BitstringEncoding.bitDecode
@@ -114,21 +120,32 @@ noncomputable def perfectGraphProblem :
           (I.toSimpleGraph h) then true else false) else false
     | none => false
 
-/-- NP description of perfect graphs from the source: the encoded
-perfect-graph decision language lies in the repository's `NP` class
-(polynomial certificates with a polynomial-time verifier).
-Cites [AIM-COMBINATORICS-0270] Source item 4, notes[269], Section A.4, Contributor Jack Edmonds. -/
+/-- **Edmonds's question: an NP description of perfect graphs.** The perfect-graph decision
+problem, which accepts exactly the bitstrings that decode to a valid adjacency-matrix instance
+whose graph is perfect, lies in the complexity class NP: there are a polynomial $p$ with
+natural-number coefficients and a polynomial-time verifier $R$ on pairs of bitstrings such that a
+bitstring $x$ is accepted if and only if $R$ accepts $(x, w)$ for some bitstring $w$ of length at
+most $p(|x|)$.
+
+Source: [AIM-COMBINATORICS-0270] Source item 4, notes[269], Section A.4, Contributor Jack
+Edmonds. -/
 def conjecture : Prop :=
   perfectGraphProblem ∈ MetaMathlibExt.ComplexityTheory.NP
 
 /--
-Resolved true: Resolved: Chudnovsky-Cornuejols-Liu-Seymour-Vuskovic recognize Berge graphs in
-polynomial time, and the Strong Perfect Graph Theorem identifies Berge graphs with perfect
-graphs; hence perfect-graph recognition is in P and the requested NP description exists. Source:
-Maria Chudnovsky, Gerard Cornuejols, Xinming Liu, Paul Seymour, Kristina Vuskovic, Recognizing
-Berge graphs, Combinatorica 25 (2005), 143-186, https://doi.org/10.1007/s00493-005-0012-8; Maria
-Chudnovsky, Neil Robertson, Paul Seymour, Robin Thomas, The strong perfect graph theorem, Annals
-of Mathematics 164 (2006), 51-229, https://doi.org/10.4007/annals.2006.164.51. Moved from
+**Perfect graphs have an NP description.** The perfect-graph decision problem, which accepts
+exactly the bitstrings that decode to a valid adjacency-matrix instance whose graph is perfect,
+lies in the complexity class NP.
+
+Chudnovsky, Cornuéjols, Liu, Seymour and Vušković recognize Berge graphs in polynomial time,
+and the Strong Perfect Graph Theorem identifies Berge graphs with perfect graphs; hence
+perfect-graph recognition is in P, and so in NP.
+
+Source: Maria Chudnovsky, Gerard Cornuejols, Xinming Liu, Paul Seymour, Kristina Vuskovic,
+Recognizing Berge graphs, Combinatorica 25 (2005), 143-186,
+https://doi.org/10.1007/s00493-005-0012-8; Maria Chudnovsky, Neil Robertson, Paul Seymour,
+Robin Thomas, The strong perfect graph theorem, Annals of Mathematics 164 (2006), 51-229,
+https://doi.org/10.4007/annals.2006.164.51. Moved from
 `OpenConjectures/Combinatorics/PerfectGraphNP`.
 -/
 public theorem_wanted conjecture_holds : conjecture

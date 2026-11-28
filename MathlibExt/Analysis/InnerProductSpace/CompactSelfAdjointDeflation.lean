@@ -57,11 +57,11 @@ unproved; it is not ported. The statements below are proved from scratch.
 variable {𝕜 : Type*} [RCLike 𝕜]
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace 𝕜 H] [CompleteSpace H]
 
-/-- **Deflation step.** Let `S` be a submodule invariant under a compact
-self-adjoint `T`, and let `T₁` be the compression of `T` to `S` (via the
-orthogonal projection onto `S`). If `T₁ ≠ 0`, then `T₁` has a real
-eigenvalue of norm `‖T₁‖`, attained at a unit vector `v ∈ S`, and `v` is
-also an eigenvector of `T` with the same eigenvalue. -/
+/-- **Deflation step.** Let $T$ be a compact self-adjoint operator on a Hilbert space $H$ over
+$\mathbb{R}$ or $\mathbb{C}$, let $S$ be a linear subspace of $H$ that admits an orthogonal
+projection $P : H \to H$ onto $S$ and satisfies $T(S) \subseteq S$, and let $T_1 = PTP$ be the
+compression of $T$ to $S$. If $T_1 \neq 0$, then there are a real number $r$ and a unit vector
+$v \in S$ with $Tv = rv$, $|r| = \|T_1\|$ and $|r| \le \|T\|$. -/
 theorem exists_next_eigenvector_of_invariant {S : Submodule 𝕜 H} [S.HasOrthogonalProjection]
     {T : H →L[𝕜] H} (hT : IsSelfAdjoint T) (hc : IsCompactOperator (T : H → H))
     (hS : ∀ x ∈ S, T x ∈ S)
@@ -135,13 +135,16 @@ theorem exists_next_eigenvector_of_invariant {S : Submodule 𝕜 H} [S.HasOrthog
                 exact mul_le_mul_of_nonneg_left hPle (by positivity)
       _ = ‖T‖ := by simp
 
-/-- **Next eigenvalue after a finite family of eigenvectors.** If `T` is a
-compact self-adjoint operator and `u i` are (finitely many) eigenvectors of
-`T`, and `T` does not vanish on the orthogonal complement `S` of their span,
-then there is a real eigenvalue `r` and a unit eigenvector `v ⊥ u i` for all
-`i`, such that `|r|` is the maximum of `‖⟪T x, x⟫‖` over unit vectors
-`x ∈ S` (it is attained at `v`). The orthonormality of the `u i` is not
-needed: the proof only uses that each `u i` is an eigenvector. -/
+/-- **Next eigenvalue after a finite family of eigenvectors.** Let $T$ be a compact self-adjoint
+operator on a Hilbert space $H$ over $\mathbb{R}$ or $\mathbb{C}$, let $u_1, \dots, u_n \in H$ and
+scalars $\mu_1, \dots, \mu_n$ satisfy $T u_i = \mu_i u_i$ for every $i$, and let $S$ be the
+orthogonal complement of the span of $u_1, \dots, u_n$. If $Tz \neq 0$ for some $z \in S$, then
+there are a real number $r$ and a unit vector $v$ with $\langle v, u_i \rangle = 0$ for every $i$,
+$Tv = rv$ and $\langle Tv, v \rangle = r$, such that $|\langle Tx, x \rangle| \le |r|$ for
+every unit vector $x \in S$. In particular $v \in S$, so $|r|$ is the maximum of
+$|\langle Tx, x \rangle|$ over unit vectors $x \in S$.
+
+The vectors $u_i$ need not be orthonormal, or even nonzero. -/
 theorem exists_next_eigenvector_of_finite_eigenvectors
     {n : ℕ} {u : Fin n → H} {μ : Fin n → 𝕜} {T : H →L[𝕜] H}
     (hT : IsSelfAdjoint T) (hc : IsCompactOperator (T : H → H))

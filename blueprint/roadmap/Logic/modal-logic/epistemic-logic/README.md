@@ -25,7 +25,16 @@
 - [Agent 0 knows the coin is tails exactly at tails](sat-know-zero-not-atom.md)
 - [Agent 1 does not know that the coin is heads](muddy-not-know-one-p-true.md)
 - [Agent 1 knows that agent 0 knows whether the coin is heads](muddy-know-one-knows-whether.md)
+- [Arbitrary, group and coalition announcement logics](quantified-public-announcement-logics.md)
+- [Model checking probabilistic knowledge under synchronous perfect recall is undecidable](probabilistic-knowledge-under-perfect-recall.md)
+- [Satisfiability of quantified announcement logics is undecidable](satisfiability-of-quantified-announcement-logics.md)
+
+- [Computing common knowledge on finite models](computing-common-knowledge-on-finite-models/README.md)
+- [Public announcement logic](public-announcement-logic/README.md)
 
 ## Related topics
 
 - [Common knowledge and the agreement theorem](../../../GameTheory/noncooperative-games/common-knowledge-and-the-agreement-theorem/README.md): the semantic, event-based model of knowledge with information partitions, common knowledge as the meet of the partitions, and Aumann's agreement theorem.
+
+- [Common knowledge as a greatest fixed point](common-knowledge-as-a-greatest-fixed-point.md)
+- [Knowledge in runs of a distributed system](knowledge-in-runs-of-a-distributed-system.md)

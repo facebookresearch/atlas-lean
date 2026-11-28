@@ -252,12 +252,13 @@ private theorem setIntegral_dyadic [IsFiniteMeasure μ]
 
 /-! ### The strong Markov property -/
 
-/-- **Strong Markov property, integrated form.** Let `X` be a continuous process adapted to `ℱ`
-under a finite measure `μ` that is Markov with respect to `ℱ` with the neutral Wright–Fisher
-semigroup, in the form of `NeutralMartingaleProblem.isWrightFisherSolution_zero_of_markov`.
-Then for every `ℱ`-stopping time `τ`, every `A ∈ ℱ_τ`, every `t ≥ 0` and every continuous `g`
-on `[0, 1]`,
-`∫_{A ∩ {τ < ∞}} g (X (τ + t)) dμ = ∫_{A ∩ {τ < ∞}} (wfSemigroup t g) (X τ) dμ`.
+/-- **Strong Markov property, integrated form.** Let `μ` be a finite measure and `X` a real process
+with continuous paths, adapted to `ℱ`, whose states are read in `[0, 1]` through the clamp
+`π = projIcc 0 1`, Markov for the neutral semigroup:
+`μ[g (π (X t)) | ℱ s] = (wfSemigroup (t - s) g) (π (X s))` almost surely for `s ≤ t` and every
+continuous `g`. Then for every `ℱ`-stopping time `τ`, every `A ∈ ℱ_τ`, every `t ≥ 0` and every
+continuous `g` on `[0, 1]`,
+`∫_{A ∩ {τ < ∞}} g (π (X (τ + t))) dμ = ∫_{A ∩ {τ < ∞}} (wfSemigroup t g) (π (X τ)) dμ`.
 
 Source: Ethier & Kurtz (1986), ch. 4, Thm. 2.7; Revuz & Yor (1999), ch. III, §3
 (dyadic approximation of `τ` from above and right continuity of the paths). -/
@@ -304,10 +305,13 @@ theorem setIntegral_stoppedValue_add_eq [IsFiniteMeasure μ]
   exact tendsto_nhds_unique
     (hL.congr fun n => setIntegral_dyadic hcont hadapt hmarkov hτ hA t g n) hR
 
-/-- **Strong Markov property of the neutral Wright–Fisher diffusion.** Under the hypotheses of
-`setIntegral_stoppedValue_add_eq`, for every `ℱ`-stopping time `τ`, every `t ≥ 0` and every
-continuous `g` on `[0, 1]`,
-`μ[1_{τ < ∞} g (X (τ + t)) | ℱ_τ] = 1_{τ < ∞} (wfSemigroup t g) (X τ)` almost surely.
+/-- **Strong Markov property of the neutral Wright–Fisher diffusion.** Let `μ` be a finite measure
+and `X` a real process with continuous paths, adapted to `ℱ`, whose states are read in `[0, 1]`
+through the clamp `π = projIcc 0 1`, Markov for the neutral semigroup:
+`μ[g (π (X t)) | ℱ s] = (wfSemigroup (t - s) g) (π (X s))` almost surely for `s ≤ t` and every
+continuous `g`. Then for every `ℱ`-stopping time `τ`, every `t ≥ 0` and every continuous `g` on
+`[0, 1]`, `μ[1_{τ < ∞} g (π (X (τ + t))) | ℱ_τ] = 1_{τ < ∞} (wfSemigroup t g) (π (X τ))` almost
+surely.
 
 Source: Ethier & Kurtz (1986), ch. 4, Thm. 2.7; Revuz & Yor (1999), ch. III, §3. -/
 theorem condExp_stoppedValue_add_ae_eq [IsFiniteMeasure μ]
@@ -347,8 +351,13 @@ theorem condExp_stoppedValue_add_ae_eq [IsFiniteMeasure μ]
   rw [setIntegral_indicator hfin', setIntegral_indicator hfin']
   exact (setIntegral_stoppedValue_add_eq hcont hadapt hmarkov hτ t g hs).symm
 
-/-- **Strong Markov property at an everywhere-finite stopping time.** If `τ` never takes the
-value `∞`, then `μ[g (X (τ + t)) | ℱ_τ] = (wfSemigroup t g) (X τ)` almost surely. -/
+/-- **Strong Markov property at an everywhere-finite stopping time.** Let `μ` be a finite measure
+and `X` a real process with continuous paths, adapted to `ℱ`, whose states are read in `[0, 1]`
+through the clamp `π = projIcc 0 1`, Markov for the neutral semigroup:
+`μ[g (π (X t)) | ℱ s] = (wfSemigroup (t - s) g) (π (X s))` almost surely for `s ≤ t` and every
+continuous `g`. If the `ℱ`-stopping time `τ` never takes the value `∞`, then for every `t ≥ 0` and
+every continuous `g` on `[0, 1]`, `μ[g (π (X (τ + t))) | ℱ_τ] = (wfSemigroup t g) (π (X τ))` almost
+surely. -/
 theorem condExp_stoppedValue_add_ae_eq_of_ne_top [IsFiniteMeasure μ]
     (hcont : ∀ ω, Continuous fun t => X t ω) (hadapt : StronglyAdapted ℱ X)
     (hmarkov : ∀ s t : ℝ≥0, s ≤ t → ∀ g : C(I, ℝ),

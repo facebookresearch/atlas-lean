@@ -16,7 +16,7 @@ Information Processing Letters 14 (1982), 228-232, doi:10.1016/0020-0190(82)9002
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.KernelWanted

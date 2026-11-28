@@ -23,12 +23,12 @@ parent problem).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
 public import Mathlib.Logic.Relation
-public import WantedExt.Complexity.NPComplete.JobShopSchedulingWanted
+public import CSLibExt.Complexity.NPComplete.JobShopSchedulingDefs
 
 @[expose] public section
 
@@ -49,7 +49,7 @@ whenever `j` precedes `j'`, the first task of `j'` starts no earlier than the la
 finishes, and whose total completion time `∑_{j ∈ J} C_j` is at most `K`, `C_j` being the time
 the last task of `j` finishes?
 
-This is `J2|chains; pᵢⱼ = 1; no-wait|∑ Cᵢ`: JOB-SHOP SCHEDULING ([SS18], `JobShopSchedulingWanted`)
+This is `J2|chains; pᵢⱼ = 1; no-wait|∑ Cᵢ`: JOB-SHOP SCHEDULING ([SS18], `JobShopSchedulingDefs`)
 with `m = 2`, unit task lengths, the no-wait condition, chain precedence constraints between jobs,
 and the deadline replaced by a bound `K` on the total completion time. Timkovsky (1998) proves it
 NP-hard in the strong sense with his job-shopping theorem, a reduction of nonpreemptive identical
@@ -81,7 +81,7 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- An instance: the [SS18] instance of `JobShopSchedulingWanted` (the number of processors,
+/-- An instance: the [SS18] instance of `JobShopSchedulingDefs` (the number of processors,
 the jobs as lists of `(l(t), p(t))` pairs, and, in the place of the deadline, the bound `K`),
 and the arcs `(j, j')` of the chains, `j` the immediate predecessor of `j'`. -/
 abbrev TwoProcessorUnitNoWaitJobShopChainsCompletionTimeInstance :=

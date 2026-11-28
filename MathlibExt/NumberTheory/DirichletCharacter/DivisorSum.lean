@@ -429,7 +429,8 @@ theorem norm_sum_zetaMul_div_sqrt_sub_le (hχ : χ ≠ 1) (x : ℝ) :
     · simp [hBdef, toArithmeticFunction, he]
   have hAB : ∀ n : ℕ, (A * B) n = χ.zetaMul n / (√(n : ℝ) : ℂ) := by
     intro n
-    rw [mul_apply, Nat.sum_divisorsAntidiagonal (fun d e ↦ A d * B e), zetaMul_apply, sum_div]
+    rw [ArithmeticFunction.mul_apply, Nat.sum_divisorsAntidiagonal (fun d e ↦ A d * B e),
+      zetaMul_apply, sum_div]
     refine sum_congr rfl fun d hd ↦ ?_
     have hdn : d ∣ n := Nat.dvd_of_mem_divisors hd
     have hn0 : n ≠ 0 := (Nat.mem_divisors.1 hd).2

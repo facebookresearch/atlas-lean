@@ -51,7 +51,7 @@ variable (Λ : Measure I) [IsFiniteMeasure Λ]
 /-- The **block-count drift** `γ_b = ∑_{k=2}^b (k - 1) C(b, k) λ_{b,k}` of the Λ-coalescent: a
 `k`-merger among `b` blocks lowers the block count by `k - 1` and happens at rate
 `C(b, k) λ_{b,k}`, so `γ_b` is the rate at which the number of blocks is expected to decrease
-from `b` blocks (Schweinsberg 2000). -/
+from `b` blocks (Schweinsberg 2000). For `b < 2` the sum is empty and `γ_b = 0`. -/
 def blockDrift (b : ℕ) : ℝ :=
   ∑ k ∈ Icc 2 b, ((k : ℝ) - 1) * (b.choose k : ℝ) * mergerRate Λ b k
 
@@ -72,12 +72,14 @@ private theorem sum_range_sub_one_mul (x : ℝ) (b : ℕ) :
   rw [e, h1, h2]
 
 /-- The drift kernel `D_b(x) = ∑_{k=2}^b (k - 1) C(b, k) x ^ (k - 2) (1 - x) ^ (b - k)`, so that
-`γ_b = ∫ D_b dΛ`. -/
+`γ_b = ∫ D_b dΛ`. Powers are natural-number powers, so `0 ^ 0 = 1`. For `b < 2` the sum is
+empty and `D_b = 0`. -/
 def driftKernel (b : ℕ) (x : ℝ) : ℝ :=
   ∑ k ∈ Icc 2 b, ((k : ℝ) - 1) * (b.choose k : ℝ) * (x ^ (k - 2) * (1 - x) ^ (b - k))
 
-/-- The kernel in closed form: `x² D_b(x) = b x - 1 + (1 - x) ^ b` for every real `x` (the mean of
-`Binomial(b, x)` minus one, corrected for `k = 0`). -/
+/-- The kernel in closed form: `x² D_b(x) = b x - 1 + (1 - x) ^ b` for every real `x`. For
+`0 ≤ x ≤ 1` the right side is the mean of `k - 1` for `k ~ Binomial(b, x)`, with the `k = 0` term
+removed. -/
 theorem sq_mul_driftKernel (x : ℝ) (b : ℕ) :
     x ^ 2 * driftKernel b x = b * x - 1 + (1 - x) ^ b := by
   rw [driftKernel]
@@ -182,7 +184,8 @@ theorem blockDrift_dirac_zero (b : ℕ) :
     simp [hb]
     norm_num
 
-/-- **Bolthausen–Sznitman** (`Λ` uniform on `[0, 1]`): `γ_b = b ∑_{k=2}^b 1 / k`. -/
+/-- **Bolthausen–Sznitman** (`Λ` uniform on `[0, 1]`): `γ_b = b ∑_{k=2}^b 1 / k`. For `b < 2`
+the sum is empty and both sides are `0`. -/
 theorem blockDrift_volume (b : ℕ) :
     blockDrift volume b = b * ∑ k ∈ Icc 2 b, (1 / (k : ℝ)) := by
   rw [blockDrift, mul_sum]

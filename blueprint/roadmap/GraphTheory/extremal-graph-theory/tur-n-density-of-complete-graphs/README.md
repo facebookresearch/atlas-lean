@@ -6,6 +6,8 @@ For $r = 2$ this is Mantel's density $\pi(K_3) = 1/2$; [Goodman's bound](../tria
 
 - [Lower bound on the Turán number](turan-number-lower-bound.md)
 - [Turán density of complete graphs](turan-density-complete-graph.md)
+- [Cliques in multipartite graphs](cliques-in-multipartite-graphs/README.md)
+- [Graphs just above the Turán threshold](graphs-just-above-the-tur-n-threshold/README.md)
 
 ## Related topics
 

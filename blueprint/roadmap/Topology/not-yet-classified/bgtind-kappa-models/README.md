@@ -1,0 +1,15 @@
+# BGTInd Kappa Models
+
+- [Cocone Apex](cocone-apex.md)
+- [Is Ind Omega Vertex](is-ind-omega-vertex.md)
+- [Ind Omega Category](ind-omega-category.md)
+- [Ind Omega Inclusion](ind-omega-inclusion.md)
+- [Compact Category](compact-category.md)
+- [Compact Inclusion](compact-inclusion.md)
+- [Has Omega Filtered Colimits](has-omega-filtered-colimits.md)
+- [FKappa Source](fkappa-source.md)
+- [Presheaf Map](presheaf-map.md)
+- [Sigma Kappa Source](sigma-kappa-source.md)
+- [Exact Sequence](exact-sequence.md)
+- [Sigma Category](sigma-category.md)
+- [Sigma Quotient](sigma-quotient.md)

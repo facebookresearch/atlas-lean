@@ -13,7 +13,7 @@ Gaussian form.
 
 ## Informally uses
 
-- [Separation probability in an inner product space](../../../Probability/distributions/continuous/multivariate-normal-distribution/std-gaussian-sign-ne.md):
+- [Separation probability in an inner product space](../../../Probability/distributions/continuous/multivariate-normal-distribution/sheppard-formula/std-gaussian-sign-ne.md):
   the same statement in any finite-dimensional real inner product space, proved by reduction to
   the plane and polar coordinates rather than by the paper's spherical-digon argument.
 

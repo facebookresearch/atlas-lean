@@ -24,11 +24,11 @@ doi:10.1016/0377-2217(80)90111-3, Theorem 1 (the single-machine problem `1|chain
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Data.Fintype.Card
-public import WantedExt.Complexity.NPComplete.MultiPurposeJobShopThreeJobsWanted
+public import CSLibExt.Complexity.NPComplete.MultiPurposeJobShopThreeJobsDefs
 public import WantedExt.Complexity.NPComplete.MultipurposeParallelTwoMachinesUnitChainsMakespanWanted
 public import WantedExt.Complexity.NPComplete.UnitFlowShopPrecedenceMakespanWanted
 

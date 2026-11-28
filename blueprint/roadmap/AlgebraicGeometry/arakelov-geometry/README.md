@@ -1,0 +1,33 @@
+# Arakelov geometry
+
+Arithmetic varieties over the integers or over rings of integers, with hermitian vector bundles and Green currents on their complex points: arithmetic Chow groups and intersection theory, arithmetic Chern classes and degrees, the arithmetic Riemann–Roch and Hilbert–Samuel theorems, arithmetic volumes and positivity of hermitian line bundles, and Arakelov divisors of number fields, with a subfield for adelic metrics and heights. Heights of algebraic numbers and of points of projective space are under heights and Mahler measure.
+
+- [Arakelov divisors](arakelov-divisors/README.md)
+- [Arithmetic varieties and hermitian vector bundles](arithmetic-variety.md)
+- [Green forms of logarithmic type and the star product](green-forms-of-logarithmic-type.md)
+- [Arithmetic Chow groups](arithmetic-chow-group.md)
+- [Chow groups with supports and their products](chow-groups-with-supports.md)
+- [Arithmetic intersection product](arithmetic-intersection-product.md)
+- [Poincaré–Lelong formula on arithmetic cycles](poincare-lelong-formula-on-arithmetic-cycles.md)
+- [Geometric degrees as integrals of first Chern forms](geometric-degrees-as-integrals-of-chern-forms.md)
+- [Arithmetic degree and arithmetic intersection numbers](arithmetic-intersection-numbers.md)
+- [Arithmetic characteristic classes of hermitian vector bundles](arithmetic-chern-classes.md)
+- [Analytic torsion and Quillen metrics](analytic-torsion-and-quillen-metrics.md)
+- [Arithmetic Riemann–Roch theorem](arithmetic-riemann-roch-theorem.md)
+- [Height of a cycle](height-of-a-cycle.md)
+- [Heights of Chow forms](heights-of-chow-forms.md)
+- [Positivity of hermitian line bundles](positivity-of-hermitian-line-bundles.md)
+- [Small elements of normed lattices](small-elements-of-normed-lattices.md)
+- [Finite complex coordinate cover](chart-cover.md)
+- [Smooth positive volume measure](positive-volume.md)
+- [Hermitian holomorphic line bundles in local frames](hermitian-lines.md)
+- [Holomorphic section of a tensor product of line-bundle powers](section.md)
+- [Pointwise norm in the tensor product metric](pointwise-norm.md)
+- [Gromov's inequality](gromov-inequality.md)
+- [Arithmetic Hilbert–Samuel theorem](arithmetic-hilbert-samuel-theorem.md)
+- [Extension of small sections and bases of small sections](extension-of-small-sections.md)
+- [Zhang's arithmetic ampleness theorem](arithmetic-ampleness-theorem.md)
+- [Ampleness of nef plus ample hermitian line bundles](ampleness-of-nef-plus-ample-hermitian-line-bundles.md)
+
+- [Arithmetic volumes](arithmetic-volumes/README.md)
+- [Covolume bound for the families of characters](covolume-bound-for-character-families.md)

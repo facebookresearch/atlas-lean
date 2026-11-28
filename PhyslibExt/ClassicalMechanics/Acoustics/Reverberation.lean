@@ -54,37 +54,41 @@ namespace Acoustics
 /-! ## A. Sabine rate, reverberation time, and the 60 dB threshold -/
 
 /-- Energy decay rate in the Sabine model. Physically meaningful
-for `0 < V`, `0 < c`, `0 < A_abs`; outside that domain the formula
-uses Lean's totalized division. -/
+for `0 < V`, `0 < c`, `0 < A_abs`; with the convention `x / 0 = 0`
+the rate is `0` when `V = 0`. -/
 noncomputable def sabineRate (V c A_abs : ℝ) : ℝ := c * A_abs / (4 * V)
 
 /-- Reverberation time `T60` in the Sabine model. Physically
-meaningful for `0 < V`, `0 < c`, `0 < A_abs`; outside that domain
-the formula uses Lean's totalized division. -/
+meaningful for `0 < V`, `0 < c`, `0 < A_abs`; with the convention
+`x / 0 = 0` it is `0` when `c * A_abs = 0`. -/
 noncomputable def sabineT60 (V c A_abs : ℝ) : ℝ :=
   24 * Real.log 10 * V / (c * A_abs)
 
 /-- Sabine energy decay: initial energy `E0` decaying at rate
-`k`, `E0 * exp (-k * t)`. Defined locally in the acoustics API so
-that downstream users do not acquire an unrelated kinetics
+`k`, `E0 * exp (-k * t)`. Physically `E0 > 0`, `k > 0` and `t ≥ 0`;
+the definition takes any real values. Defined locally in the acoustics
+API so that downstream users do not acquire an unrelated kinetics
 dependency. -/
 noncomputable def sabineEnergy (E0 k t : ℝ) : ℝ :=
   E0 * Real.exp (-k * t)
 
-/-- The Sabine decay rate is positive. -/
+/-- For positive `V`, `c` and `A_abs`, the Sabine decay rate is
+positive. -/
 lemma sabineRate_pos {V c A_abs : ℝ} (hV : 0 < V) (hc : 0 < c)
     (hA : 0 < A_abs) : 0 < sabineRate V c A_abs := by
   unfold sabineRate
   positivity
 
-/-- The reverberation time `T60` is positive. -/
+/-- For positive `V`, `c` and `A_abs`, the reverberation time `T60`
+is positive. -/
 lemma sabineT60_pos {V c A_abs : ℝ} (hV : 0 < V) (hc : 0 < c)
     (hA : 0 < A_abs) : 0 < sabineT60 V c A_abs := by
   have hlog : 0 < Real.log 10 := Real.log_pos (by norm_num)
   unfold sabineT60
   positivity
 
-/-- The exponential decay factor at `T60` equals `1 / 10 ^ 6`. -/
+/-- For positive `V`, `c` and `A_abs`, the exponential decay factor
+at `T60` equals `1 / 10 ^ 6`. -/
 theorem sabine_exp_at_T60 {V c A_abs : ℝ} (hV : 0 < V) (hc : 0 < c)
     (hA : 0 < A_abs) :
     Real.exp (-(sabineRate V c A_abs) * sabineT60 V c A_abs) = 1 / 10 ^ 6 := by
@@ -106,7 +110,8 @@ theorem sabine_exp_at_T60 {V c A_abs : ℝ} (hV : 0 < V) (hc : 0 < c)
     rw [hcast, Real.exp_nat_mul, Real.exp_log (by norm_num)]
   rw [hexp6, one_div]
 
-/-- At `T60` the Sabine energy has fallen to `E0 / 10 ^ 6`. -/
+/-- For positive `V`, `c` and `A_abs` and every real `E0`, at `T60`
+the Sabine energy has fallen to `E0 / 10 ^ 6`. -/
 theorem sabine_energy_at_T60 {E0 V c A_abs : ℝ} (hV : 0 < V)
     (hc : 0 < c) (hA : 0 < A_abs) :
     sabineEnergy E0 (sabineRate V c A_abs) (sabineT60 V c A_abs)
@@ -115,8 +120,8 @@ theorem sabine_energy_at_T60 {E0 V c A_abs : ℝ} (hV : 0 < V)
   rw [sabine_exp_at_T60 hV hc hA]
   ring
 
-/-- The 60 dB energy ratio at `T60` is `1 / 10 ^ 6`, independent
-of the initial energy. -/
+/-- For `E0 ≠ 0` and positive `V`, `c` and `A_abs`, the 60 dB energy
+ratio at `T60` is `1 / 10 ^ 6`, independent of the initial energy. -/
 lemma sabine_ratio_at_T60 {E0 V c A_abs : ℝ} (hE0 : E0 ≠ 0)
     (hV : 0 < V) (hc : 0 < c) (hA : 0 < A_abs) :
     sabineEnergy E0 (sabineRate V c A_abs) (sabineT60 V c A_abs) / E0
@@ -125,8 +130,9 @@ lemma sabine_ratio_at_T60 {E0 V c A_abs : ℝ} (hE0 : E0 ≠ 0)
   rw [sabine_energy_at_T60 hV hc hA]
   field_simp
 
-/-- `T60` is the unique nonnegative time at which the Sabine
-energy equals `E0 / 10 ^ 6`. -/
+/-- For positive `E0`, `V`, `c` and `A_abs`, any time `t ≥ 0` at which
+the Sabine energy equals `E0 / 10 ^ 6` is `T60`. Since `T60` is such a
+time and is positive, it is the unique nonnegative one. -/
 lemma sabine_T60_unique {E0 V c A_abs t : ℝ} (hE0 : 0 < E0)
     (hV : 0 < V) (hc : 0 < c) (hA : 0 < A_abs) (ht : 0 ≤ t)
     (h : sabineEnergy E0 (sabineRate V c A_abs) t = E0 / 10 ^ 6) :

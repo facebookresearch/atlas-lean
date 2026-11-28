@@ -280,7 +280,7 @@ private theorem Psi'_map (p : MvPolynomial (Fin (n + 1)) A) (hp : p.IsHomogeneou
     intro s hs
     have hsd : s.degree = d := degree_eq_of_mem_support hp hs
     rw [Psi'_monomial]
-    simp only [v, dif_pos hsd]
+    simp only [v, dite_eq_left hsd]
     rw [TensorProduct.smul_tmul', smul_eq_mul, mul_one,
       show algebraMap A B (p.coeff s) = p.coeff s • (1 : B) by rw [Algebra.smul_def, mul_one],
       TensorProduct.smul_tmul, ← Submodule.Quotient.mk_smul]
@@ -312,7 +312,7 @@ private noncomputable def Psi (hI : ∀ p ∈ I, ∀ d : ℕ, homogeneousCompone
     have hqI : (q : MvPolynomial (Fin (n + 1)) B) ∈ I' (B := B) I := by simpa using hq
     have hqd : (q : MvPolynomial (Fin (n + 1)) B).IsHomogeneous d := q.2
     have hcomp : homogeneousComponent d (q : MvPolynomial (Fin (n + 1)) B) = q :=
-      homogeneousComponent_of_mem (m := d) q.2 |>.trans (if_pos rfl)
+      homogeneousComponent_of_mem (m := d) q.2 |>.trans (ite_eq_left rfl)
     rw [LinearMap.mem_ker, LinearMap.coe_comp, Function.comp_apply, Submodule.coe_subtype, ← hcomp]
     exact T_le_ker I d (homogeneousComponent_mem_T I hI hqI d))
 
@@ -359,7 +359,7 @@ private theorem E_Psi (hI : ∀ p ∈ I, ∀ d : ℕ, homogeneousComponent d p �
     intro s hs
     have hsd : s.degree = d := degree_eq_of_mem_support hq hs
     rw [Psi'_monomial]
-    simp only [v, dif_pos hsd]
+    simp only [v, dite_eq_left hsd]
     rw [map_smul, E_tmul, one_smul, ← Submodule.Quotient.mk_smul]
     congr 1
     apply Subtype.ext
@@ -479,7 +479,8 @@ private theorem finite_homogeneousSubmodule (R : Type*) [CommRing R] (d : ℕ) :
     Module.Finite R ↥(homogeneousSubmodule (Fin (n + 1)) R d) := by
   rw [MvPolynomial.homogeneousSubmodule_eq_finsupp_supported]
   haveI : Finite {x : Fin (n + 1) →₀ ℕ | x.degree = d} :=
-    ((Finsupp.finite_of_degree_le d).subset fun x (hx : x.degree = d) => le_of_eq hx).to_subtype
+    ((Finsupp.finite_of_degree_le d).subset (t := {x | x.degree = d})
+      fun x (hx : x.degree = d) => le_of_eq hx).to_subtype
   exact Module.Finite.of_basis (MvPolynomial.basisRestrictSupport R {x : Fin (n + 1) →₀ ℕ |
     x.degree = d})
 
@@ -550,7 +551,7 @@ private theorem J'_le : J' h P e ≤ P.I := Ideal.span_le.mpr fun _ hp => hp.1
 
 private theorem J'_generated : ∃ s : Set (MvPolynomial (Fin (n + 1)) A), (∀ p ∈ s, p.IsHomogeneous
   e) ∧ J' h P e = Ideal.span s :=
-  ⟨_, fun _ hp => hp.2, rfl⟩
+  ⟨{p | p ∈ P.I ∧ p.IsHomogeneous e}, fun _ hp => hp.2, rfl⟩
 
 private theorem J'_homogeneous : ∀ p ∈ J' h P e, ∀ d : ℕ, homogeneousComponent d p ∈ J' h P e :=
   span_homogeneous A _ e fun _ hp => hp.2
@@ -731,7 +732,7 @@ public theorem Point.I_eq_span_of_forall_finrank_piece_succ_le
   rcases subsingleton_or_nontrivial A with hA | hA
   · haveI : Subsingleton (MvPolynomial (Fin (n + 1)) A) := inferInstance
     exact Subsingleton.elim _ _
-  apply le_antisymm _ (Ideal.span_le.mpr fun _ hp => hp.1)
+  refine le_antisymm ?_ (Ideal.span_le.mpr fun _ hp => hp.1)
   have hgood : ∀ d, ∀ q ∈ P.I, q.IsHomogeneous d →
       q ∈ Ideal.span {p | p ∈ P.I ∧ p.IsHomogeneous m} := by
     intro d
@@ -745,7 +746,8 @@ public theorem Point.I_eq_span_of_forall_finrank_piece_succ_le
       | succ e hme ih =>
         intro q hqI hq
         have hqJ := HilbGenH2c.mem_J'_of_mem h P e (h₂ e hme) q hqI hq
-        exact (Ideal.span_le.mpr fun p hp => ih (by omega) p hp.1 hp.2) hqJ
+        refine Ideal.span_le.mpr ?_ hqJ
+        exact fun p hp => ih (by omega) p hp.1 hp.2
   intro p hp
   rw [← sum_homogeneousComponent p]
   exact Ideal.sum_mem _ fun d _ => hgood d _ (P.homogeneous p hp d)

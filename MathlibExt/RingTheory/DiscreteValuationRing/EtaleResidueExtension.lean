@@ -569,10 +569,10 @@ theorem mem_range_of_forall_smul_eq [IsAdicComplete (maximalIdeal (W' W k)) (W' 
   simp only [P, coeff_sub, coeff_zero, finsetSum_coeff, coeff_C_mul, coeff_X_pow, coeff_C_zero,
     mul_ite, mul_one, mul_zero] at hcoeff
   rw [Finset.sum_eq_single (⟨0, hdpos⟩ : Fin pb.dim)] at hcoeff
-  · simp only [if_true, sub_eq_zero] at hcoeff
+  · simp only [ite_true, sub_eq_zero] at hcoeff
     exact ⟨c ⟨0, hdpos⟩, hcoeff⟩
   · intro i _ hi
-    rw [if_neg]
+    rw [ite_eq_right]
     intro h0
     apply hi
     exact Fin.ext (by simpa using h0.symm)

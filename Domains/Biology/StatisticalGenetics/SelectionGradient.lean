@@ -463,8 +463,9 @@ theorem hasDerivAt_indicator_Ioi_of_ne {z : ℝ} (hz : z ≠ 0) :
       rw [Set.indicator_of_mem hx _]
     exact (hasDerivAt_const z (1 : ℝ)).congr_of_eventuallyEq heq
 
-/-- The truncation fitness `1_{z > 0}` is not differentiable everywhere, so the Lande–Arnold
-(Stein) form of the selection gradient does not apply to it. -/
+/-- The truncation fitness `1_{z > 0}` is not everywhere differentiable (it is not continuous at
+`0`), so it does not satisfy the everywhere-differentiability hypothesis of the Lande–Arnold
+(Stein) form `selectionDifferential_div_eq`. -/
 theorem not_forall_hasDerivAt_indicator_Ioi :
     ¬ ∃ W' : ℝ → ℝ, ∀ z, HasDerivAt ((Set.Ioi (0 : ℝ)).indicator (fun _ => (1 : ℝ))) (W' z) z := by
   rintro ⟨W', hW'⟩

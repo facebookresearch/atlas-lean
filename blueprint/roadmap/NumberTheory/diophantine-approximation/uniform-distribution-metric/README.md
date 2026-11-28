@@ -5,6 +5,7 @@ Weyl equidistribution, three-gap theorem, Duffin–Schaeffer, normal numbers, Be
 - [Beatty sequences](beatty-sequences/README.md)
 - [Discrepancy of fractional parts](discrepancy-of-fractional-parts/README.md)
 - [Duffin–Schaeffer conjecture](duffin-schaeffer-conjecture/README.md)
+- [First and last minima of Euclidean lattices](first-and-last-minima-of-euclidean-lattices/README.md)
 - [Floor and ceiling function sums](floor-and-ceiling-function-sums/README.md)
 - [Fractional parts of multiples of primes](fractional-parts-of-multiples-of-primes/README.md)
 - [Lattice points in translated discs](lattice-points-in-translated-discs/README.md)
@@ -15,3 +16,4 @@ Weyl equidistribution, three-gap theorem, Duffin–Schaeffer, normal numbers, Be
 - [Square roots of cubic polynomials modulo one](square-roots-of-cubic-polynomials-modulo-one/README.md)
 - [Three-gap theorem](three-gap-theorem/README.md)
 - [Weyl's equidistribution criterion](weyl-criterion.md)
+- [Minkowski's convex body theorem](minkowski-convex-body-theorem.md)

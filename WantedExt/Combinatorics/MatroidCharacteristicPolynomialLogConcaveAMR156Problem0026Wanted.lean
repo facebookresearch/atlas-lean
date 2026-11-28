@@ -20,7 +20,7 @@ lattice.
 module
 
 public import Batteries.Util.ProofWanted
-public import Mathlib.Combinatorics.Matroid.Rank.ENat
+public import MathlibExt.Combinatorics.Matroid.CharacteristicPolynomial
 
 @[expose] public section
 
@@ -36,34 +36,19 @@ polynomial of its cycle matroid up to a power of `λ`). The characteristic polyn
 `χ_M(λ) = ∑_{I ⊆ E} (-1)^{|I|} λ^{r(E) - r(I)}` (the definition used by Adiprasito–Huh–Katz), with
 ranks from Mathlib's `Matroid.eRk`; `w_k` is the absolute value of the coefficient of `λ^{r - k}`,
 `r = r(E)`, extended by `0` past the degree, and log-concavity is `w_{k-1} w_{k+1} ≤ w_k²` for `k ≥
-1`. Part (b) is implied by the existing entry `WantedExt/Combinatorics/StrongMasonWanted.lean`
-(`strong_mason_conjecture`, ultra-log-concavity of the independent-set numbers), so it is not
-restated; part (c) is still open (only top-heaviness is known) and is not formalized.
+1`. Part (b) is implied by `strong_mason_conjecture` in
+`MathlibExt/Combinatorics/Matroid/StrongMason.lean` (ultra-log-concavity of the independent-set
+numbers), so it is not restated; part (c) is still open (only top-heaviness is known) and is not
+formalized.
 -/
 
-/-- The rank `r(X)` of a set `X` in a finite matroid, as a natural number. -/
-noncomputable def finRank {α : Type*} (M : Matroid α) (X : Set α) : ℕ :=
-  (M.eRk X).toNat
+/-- **Adiprasito–Huh–Katz theorem (Heron–Rota–Welsh conjecture).** For every finite matroid $M$
+on a ground set $E$ with rank function $r$, let $w_k(M)$ be the absolute value of the coefficient
+of $\lambda^{r(E) - k}$ in the characteristic polynomial
+$\chi_M(\lambda) = \sum_{I \subseteq E} (-1)^{|I|} \lambda^{r(E) - r(I)}$ when $k \le r(E)$, and
+$w_k(M) = 0$ when $k > r(E)$. Then $w_{k-1}(M) \, w_{k+1}(M) \le w_k(M)^2$ for every natural
+number $k \ge 1$.
 
-/-- The coefficient of `λ ^ j` in Rota's characteristic polynomial
-`χ_M(λ) = ∑_{I ⊆ E} (-1)^{|I|} λ^{r(E) - r(I)}` of a finite matroid `M` on the ground set `E`. -/
-noncomputable def charPolyCoeff {α : Type*} (M : Matroid α) [M.Finite] (j : ℕ) : ℤ :=
-  ∑ I ∈ M.ground_finite.toFinset.powerset.filter
-      (fun I : Finset α => finRank M M.E - finRank M (I : Set α) = j), (-1) ^ I.card
-
-/-- `w_k(M)`: the absolute value of the coefficient of `λ ^ (r - k)` in `χ_M`, where `r = r(E)` is
-the rank of `M`, and `0` for `k > r`. -/
-noncomputable def charPolyAbsCoeff {α : Type*} (M : Matroid α) [M.Finite] (k : ℕ) : ℕ :=
-  if k ≤ finRank M M.E then (charPolyCoeff M (finRank M M.E - k)).natAbs else 0
-
-/-- Part (a) of Stanley's Problem 25 (Read–Hoggar–Rota–Heron–Welsh), answered: for every finite
-matroid the absolute values of the coefficients of the characteristic polynomial form a
-log-concave sequence, `w_{k-1} w_{k+1} ≤ w_k²`. -/
-def characteristicPolynomialLogConcave : Prop :=
-  ∀ (α : Type) (M : Matroid α) [M.Finite] (k : ℕ), 1 ≤ k →
-    charPolyAbsCoeff M (k - 1) * charPolyAbsCoeff M (k + 1) ≤ charPolyAbsCoeff M k ^ 2
-
-/--
 Resolved true: Adiprasito, Huh and Katz proved the Heron–Rota–Welsh conjecture: for every matroid
 the absolute values `w_k` of the coefficients of the characteristic polynomial form a log-concave
 sequence (K. Adiprasito, J. Huh and E. Katz, Hodge theory for combinatorial geometries, Ann. of

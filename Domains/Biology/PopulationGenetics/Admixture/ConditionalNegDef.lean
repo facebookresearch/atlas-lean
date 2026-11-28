@@ -79,7 +79,8 @@ def IsCondNegSemidef {P : Type*} [Fintype P] (D : P → P → ℝ) : Prop :=
   ∀ c : P → ℝ, ∑ i, c i = 0 → ∑ i, ∑ j, c i * c j * D i j ≤ 0
 
 /-- `D` is the `f2` matrix of an unconstrained (real-valued) drift model on a probability space:
-some finite edge set, square-integrable uncorrelated increments, and arbitrary real weights. -/
+some finite edge set, square-integrable increments that are pairwise orthogonal in L², and
+arbitrary real weights. -/
 def IsF2Realizable {P : Type u} (D : P → P → ℝ) : Prop :=
   ∃ (E : Type u) (_ : Fintype E) (Ω : Type u) (_ : MeasurableSpace Ω) (μ : Measure Ω)
     (_ : IsProbabilityMeasure μ) (M : DriftModel μ E P), ∀ X Y, f2 μ M.freq X Y = D X Y
@@ -496,8 +497,11 @@ end Unit
 
 /-- The three-population admixture weights and lengths realizing a symmetric
 zero-diagonal conditionally negative semidefinite matrix in which `D 0 1` is at least
-the other two off-diagonal entries. For a general symmetric zero-diagonal matrix,
-relabel the populations so that the largest off-diagonal entry is in the `0 1`
+the other two off-diagonal entries: some `0 ≤ α ≤ 1` and `a, b, c ≥ 0` with `a + b = D 0 1`
+give `D X Y = ∑ e, (admixWeight α X e - admixWeight α Y e) ^ 2 * ![a, b, c] e`, with
+`1 - α = (D 0 1 + D 0 2 - D 1 2) / (2 * D 0 1)` and `c = D 0 2 - (1 - α) ^ 2 * D 0 1` when
+`D 0 1 > 0`. For a general symmetric zero-diagonal conditionally negative semidefinite
+matrix, relabel the populations so that the largest off-diagonal entry is in the `0 1`
 position before applying this theorem. -/
 theorem exists_admix_three {D : Fin 3 → Fin 3 → ℝ} (hsymm : ∀ i j, D i j = D j i)
     (hdiag : ∀ i, D i i = 0) (hcnd : IsCondNegSemidef D) (h02 : D 0 2 ≤ D 0 1)

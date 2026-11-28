@@ -9,11 +9,16 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
+public import MathlibExt.Algebra.BigOperators.HomogeneousGeomSum
 public import MathlibExt.NumberTheory.ArithmeticFunction.CompletelyMultiplicative
+public import MathlibExt.NumberTheory.ArithmeticFunction.WeightedDirichletConvolution
 public import Mathlib.NumberTheory.ArithmeticFunction.Moebius
 public import Mathlib.NumberTheory.Harmonic.EulerMascheroni
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Topology.Algebra.InfiniteSum.Real
+public import MathlibExt.NumberTheory.WeightedDirichletConvolution
+public import MathlibExt.NumberTheory.WeightedDirichletConvolutionBFreeCoprimeIndicatorMulMoebius
+public import MathlibExt.NumberTheory.WeightedDirichletBFreeMoebius
 
 namespace MetaMathlibExt
 
@@ -23,20 +28,10 @@ open scoped ArithmeticFunction.Moebius
 @[expose] public section
 
 open scoped Classical in
-/-- The characteristic function `q_{B_κ}` of `B_κ`-free integers, where `B_κ` is the set of
-prime powers `p ^ κ(p)`: `q_{B_κ}(n) = 1` if `n ≥ 1` is divisible by no `p ^ κ(p)` (`p` prime) and
-`0` otherwise. The paper indexes the exponents by the position of the prime
-(`b_i = p_i ^ κ_i`); here `κ` is indexed by the prime itself. For constant `κ = k` this is the
-characteristic function `q_k` of `k`-free integers.
-
-Source: André Pierro de Camargo, *Weighted Summation of Dirichlet Convolutions and Applications
-to Some Divisor Problems over k-Free and B-Free Integers*, INTEGERS 24 (2024), Article A75,
-Equations (2), (11), (12). -/
-public noncomputable def bFreeIndicator (κ : ℕ → ℕ) : ArithmeticFunction ℤ :=
-  ⟨fun n => if n ≠ 0 ∧ ∀ p : ℕ, p.Prime → ¬ p ^ κ p ∣ n then 1 else 0, by simp⟩
-
-open scoped Classical in
-/-- Unfolding lemma for `bFreeIndicator`.
+/-- **Values of the $B_\kappa$-free indicator.** Let $\kappa$ be a function from the natural
+numbers to the natural numbers. For every natural number $n$, the indicator $q_{B_\kappa}$ of
+$B_\kappa$-free integers satisfies $q_{B_\kappa}(n) = 1$ if $n \ne 0$ and no $p^{\kappa(p)}$ with
+$p$ prime divides $n$, and $q_{B_\kappa}(n) = 0$ otherwise.
 
 Source: André Pierro de Camargo, *Weighted Summation of Dirichlet Convolutions and Applications
 to Some Divisor Problems over k-Free and B-Free Integers*, INTEGERS 24 (2024), Article A75,
@@ -46,26 +41,12 @@ public theorem bFreeIndicator_apply (κ : ℕ → ℕ) (n : ℕ) :
   rfl
 
 open scoped Classical in
-/-- `1` is `B_κ`-free when every exponent `κ(p)` is positive.
+/-- **The prime power $p^{\kappa(p)}$ is not $B_\kappa$-free.** Let $\kappa$ be a function from
+the natural numbers to the natural numbers and let $p$ be a prime. Then the indicator
+$q_{B_\kappa}$ of $B_\kappa$-free integers satisfies $q_{B_\kappa}(p^{\kappa(p)}) = 0$.
 
-Source: André Pierro de Camargo, *Weighted Summation of Dirichlet Convolutions and Applications
-to Some Divisor Problems over k-Free and B-Free Integers*, INTEGERS 24 (2024), Article A75,
-Equation (12). -/
-public theorem bFreeIndicator_one {κ : ℕ → ℕ} (hκ : ∀ p : ℕ, p.Prime → 1 ≤ κ p) :
-    bFreeIndicator κ 1 = 1 := by
-  have h : ∀ p : ℕ, p.Prime → ¬ p ^ κ p ∣ 1 := by
-    intro p hp hdvd
-    have h1 : p ^ κ p = 1 := Nat.dvd_one.mp hdvd
-    have h2 : p ^ 1 ≤ p ^ κ p := Nat.pow_le_pow_right hp.pos (hκ p hp)
-    rw [pow_one] at h2
-    have h3 := hp.two_le
-    omega
-  rw [bFreeIndicator_apply, ite_eq_left_iff]
-  intro hc
-  exact absurd ⟨one_ne_zero, h⟩ hc
-
-open scoped Classical in
-/-- A prime power `p ^ κ(p)` is not `B_κ`-free.
+No positivity of $\kappa(p)$ is assumed; for $\kappa(p) = 0$ the statement is
+$q_{B_\kappa}(1) = 0$.
 
 Source: André Pierro de Camargo, *Weighted Summation of Dirichlet Convolutions and Applications
 to Some Divisor Problems over k-Free and B-Free Integers*, INTEGERS 24 (2024), Article A75,
@@ -79,27 +60,18 @@ public theorem bFreeIndicator_prime_pow {κ : ℕ → ℕ} {p : ℕ} (hp : p.Pri
   intro hc
   exact absurd hc this
 
-/-- Lemma 1: for `a, b` in a commutative ring (the values `u(n), v(n)`) and `τ, ξ ≥ 0`,
-`∑_{j=0}^{τ+ξ} a^j b^{τ+ξ-j} = (∑_{j=0}^{τ} a^j b^{τ-j}) (∑_{i=0}^{ξ} a^i b^{ξ-i})
-  - a b (∑_{j=0}^{τ-1} a^j b^{τ-1-j}) (∑_{i=0}^{ξ-1} a^i b^{ξ-1-i})`, void sums being zero.
+/-- **Gcd expansion of a convolution of completely multiplicative functions at a product.** Let
+$u$ and $v$ be complex-valued completely multiplicative arithmetic functions, meaning
+$u(mn) = u(m) u(n)$ and $v(mn) = v(m) v(n)$ for all natural numbers $m$ and $n$. Let $u * v$ be
+their Dirichlet convolution and $\mu$ the Möbius function. Then for all natural numbers $r$ and
+$s$,
 
-Stated for arbitrary values in a commutative ring instead of `u(n), v(n) ∈ ℂ`.
+$$(u * v)(rs) = \sum_{m \mid \gcd(r, s)} \mu(m) u(m) v(m) (u * v)(r/m) (u * v)(s/m),$$
 
-Source: André Pierro de Camargo, *Weighted Summation of Dirichlet Convolutions and Applications
-to Some Divisor Problems over k-Free and B-Free Integers*, INTEGERS 24 (2024), Article A75,
-Lemma 1, Equation (16) (`integers-2024-A75-lem-1`). -/
-public theorem_wanted sum_pow_mul_pow_add_eq {R : Type*} [CommRing R] (a b : R) (τ ξ : ℕ) :
-    ∑ j ∈ Finset.range (τ + ξ + 1), a ^ j * b ^ (τ + ξ - j) =
-      (∑ j ∈ Finset.range (τ + 1), a ^ j * b ^ (τ - j)) *
-          (∑ i ∈ Finset.range (ξ + 1), a ^ i * b ^ (ξ - i)) -
-        a * b * (∑ j ∈ Finset.range τ, a ^ j * b ^ (τ - 1 - j)) *
-          (∑ i ∈ Finset.range ξ, a ^ i * b ^ (ξ - 1 - i))
+the sum running over the positive divisors $m$ of $\gcd(r, s)$ (it is empty when $r = s = 0$).
 
-/-- Lemma 2: for completely multiplicative `u, v`,
-`(u * v)(rs) = ∑_{m ∣ gcd(r, s)} μ(m) u(m) v(m) (u * v)(r/m) (u * v)(s/m)`.
-
-The paper takes `r, s` positive; the identity also holds (both sides vanish) when `r` or `s`
-is `0`, so no positivity hypothesis is imposed.
+The paper takes $r, s$ positive; the identity also holds (both sides vanish) when $r$ or $s$
+is $0$, so no positivity hypothesis is imposed.
 
 Source: André Pierro de Camargo, *Weighted Summation of Dirichlet Convolutions and Applications
 to Some Divisor Problems over k-Free and B-Free Integers*, INTEGERS 24 (2024), Article A75,
@@ -109,101 +81,20 @@ public theorem_wanted dirichletConvolution_mul_eq_sum_gcd {u v : ArithmeticFunct
     (u * v) (r * s) = ∑ m ∈ (Nat.gcd r s).divisors,
       (μ m : ℂ) * u m * v m * (u * v) (r / m) * (u * v) (s / m)
 
-/-- Lemma 3: for completely multiplicative `u, v`, `r ∈ ℕ` and real `x`,
-`S_r[u, v](x) = ∑_{j ≤ x/r} (u * v)(rj)` equals
-`∑_{d ∣ r} u(d) v(r/d) ∑_{m ∣ d} μ(m) v(m) D[u, v](x/(mr))`, where
-`D[u, v](y) = ∑_{1 ≤ j ≤ y} (u * v)(j)` (Equations (7), (19)).
+/-- **Asymptotic for the divisor function summed over $k$-free integers.** Let $k \ge 2$ be a
+natural number, let $q_k$ be the indicator of $k$-free integers (the indicator of
+$B_\kappa$-free integers for the constant function $\kappa = k$), let $\tau(n)$ be the number of
+positive divisors of $n$, let $\gamma$ be the Euler–Mascheroni constant, let
+$\Delta(x) = \sum_{1 \le n \le x} \tau(n) - x \log x - (2\gamma - 1) x$ be the Dirichlet divisor
+error term, and put
 
-The paper takes `r ≥ 1` and `x ≥ 1`; both sides vanish otherwise, so these hypotheses are dropped.
+$$c_k = \prod_p \Bigl(1 - \frac{k + 1}{p^k} + \frac{k}{p^{k+1}}\Bigr),$$
 
-Source: André Pierro de Camargo, *Weighted Summation of Dirichlet Convolutions and Applications
-to Some Divisor Problems over k-Free and B-Free Integers*, INTEGERS 24 (2024), Article A75,
-Lemma 3, Equation (20) (`integers-2024-A75-lem-3`). -/
-public theorem_wanted sum_dirichletConvolution_mul_eq {u v : ArithmeticFunction ℂ}
-    (hu : u.IsCompletelyMultiplicative) (hv : v.IsCompletelyMultiplicative) (r : ℕ) (x : ℝ) :
-    ∑ j ∈ Finset.Icc 1 ⌊x / r⌋₊, (u * v) (r * j) =
-      ∑ d ∈ r.divisors, u d * v (r / d) * ∑ m ∈ d.divisors, (μ m : ℂ) * v m *
-        ∑ j ∈ Finset.Icc 1 ⌊x / (m * r)⌋₊, (u * v) j
-
-/-- Lemma 4: for arbitrary arithmetic functions `w, u, v` and real `x`,
-`D[w, u, v](x) = ∑_{j ≤ x} w(j) (u * v)(j) = ∑_{r ≤ x} g(r) S_r[u, v](x)` with `g = w * μ` and
-`S_r[u, v](x) = ∑_{j ≤ x/r} (u * v)(rj)`.
-
-The paper's `x ≥ 1` is dropped (both sides vanish for `x < 1`).
-
-Source: André Pierro de Camargo, *Weighted Summation of Dirichlet Convolutions and Applications
-to Some Divisor Problems over k-Free and B-Free Integers*, INTEGERS 24 (2024), Article A75,
-Lemma 4 (`integers-2024-A75-lem-4`). -/
-public theorem_wanted sum_mul_dirichletConvolution_eq_sum_moebius (w u v : ArithmeticFunction ℂ)
-    (x : ℝ) :
-    ∑ j ∈ Finset.Icc 1 ⌊x⌋₊, w j * (u * v) j =
-      ∑ r ∈ Finset.Icc 1 ⌊x⌋₊, (w * (μ : ArithmeticFunction ℂ)) r *
-        ∑ j ∈ Finset.Icc 1 ⌊x / r⌋₊, (u * v) (r * j)
-
-/-- Theorem 1: for completely multiplicative `u, v`, any arithmetic function `w` and real `x`,
-`D[w, u, v](x) = ∑_{r ≤ x} g(r) ∑_{d ∣ r} u(d) v(r/d) ∑_{m ∣ d} μ(m) v(m) D[u, v](x/(mr))`
-with `g = w * μ`, `D[w, u, v](x) = ∑_{j ≤ x} w(j) (u * v)(j)` and
-`D[u, v](y) = ∑_{1 ≤ j ≤ y} (u * v)(j)`.
-
-The paper's `x ≥ 1` is dropped (both sides vanish for `x < 1`); the trailing text about the
-Dirichlet divisor problem is omitted.
-
-Source: André Pierro de Camargo, *Weighted Summation of Dirichlet Convolutions and Applications
-to Some Divisor Problems over k-Free and B-Free Integers*, INTEGERS 24 (2024), Article A75,
-Theorem 1, Equation (8) (`integers-2024-A75-thm-1`). -/
-public theorem_wanted weighted_sum_dirichletConvolution_eq {u v : ArithmeticFunction ℂ}
-    (hu : u.IsCompletelyMultiplicative) (hv : v.IsCompletelyMultiplicative)
-    (w : ArithmeticFunction ℂ) (x : ℝ) :
-    ∑ j ∈ Finset.Icc 1 ⌊x⌋₊, w j * (u * v) j =
-      ∑ r ∈ Finset.Icc 1 ⌊x⌋₊, (w * (μ : ArithmeticFunction ℂ)) r *
-        ∑ d ∈ r.divisors, u d * v (r / d) * ∑ m ∈ d.divisors, (μ m : ℂ) * v m *
-          ∑ j ∈ Finset.Icc 1 ⌊x / (m * r)⌋₊, (u * v) j
-
-open scoped Classical in
-/-- Lemma 5: for `n ≥ 1`, `(q_{B_κ} * μ)(n) = μ(n^{1/κ})` if `n^{1/κ}` is an integer and `0`
-otherwise, where for `n = ∏ p^{e_p}` one sets `n^{1/κ} = ∏ p^{e_p/κ(p)}`; it is an integer
-exactly when `κ(p) ∣ e_p` for every prime `p`.
-
-`κ` is indexed by primes (paper: `κ_i` for the `i`-th prime) and every `κ(p) ≥ 1` (the paper
-requires `b_i = p_i^{κ_i} > 1`).
-
-Source: André Pierro de Camargo, *Weighted Summation of Dirichlet Convolutions and Applications
-to Some Divisor Problems over k-Free and B-Free Integers*, INTEGERS 24 (2024), Article A75,
-Lemma 5, Equation (22) (`integers-2024-A75-lem-5`). -/
-public theorem_wanted bFreeIndicator_mul_moebius_apply {κ : ℕ → ℕ}
-    (hκ : ∀ p : ℕ, p.Prime → 1 ≤ κ p) {n : ℕ} (hn : 1 ≤ n) :
-    (bFreeIndicator κ * μ) n =
-      if ∀ p : ℕ, κ p ∣ n.factorization p then
-        μ (n.factorization.prod fun p e => p ^ (e / κ p))
-      else 0
-
-/-- Lemma 6: let `w(n) = q_{B_κ}(n) χ_ξ(n)` with `χ_ξ` the principal Dirichlet character modulo
-`ξ` (`χ_ξ(n) = 1` if `gcd(n, ξ) = 1`, else `0`). Then `(w * μ)(n) ≠ 0` only if `n = ℓ r^κ` with
-`ℓ ∣ ξ` and `gcd(r, ξ) = 1`, and in that case `(w * μ)(n) = μ(ℓ) μ(r)`. Here
-`r^κ = ∏ p^{κ(p) e_p}` for `r = ∏ p^{e_p}`, and the convolution is written out as a divisor sum.
-
-`κ` is indexed by primes with every `κ(p) ≥ 1`; `r ≥ 1` is required in the evaluation (for
-`r = 0` the formula is false); the paper's positivity of `ξ` is not needed.
-
-Source: André Pierro de Camargo, *Weighted Summation of Dirichlet Convolutions and Applications
-to Some Divisor Problems over k-Free and B-Free Integers*, INTEGERS 24 (2024), Article A75,
-Lemma 6, Equation (23) (`integers-2024-A75-lem-6`). -/
-public theorem_wanted bFreeCoprimeIndicator_mul_moebius {κ : ℕ → ℕ}
-    (hκ : ∀ p : ℕ, p.Prime → 1 ≤ κ p) (ξ : ℕ) :
-    (∀ n : ℕ, ∑ d ∈ n.divisors, (if d.Coprime ξ then bFreeIndicator κ d else 0) * μ (n / d) ≠ 0 →
-        ∃ ℓ r : ℕ, ℓ ∣ ξ ∧ r.Coprime ξ ∧ n = ℓ * r.factorization.prod fun p e => p ^ (κ p * e)) ∧
-      ∀ ℓ r : ℕ, ℓ ∣ ξ → r.Coprime ξ → 0 < r →
-        ∑ d ∈ (ℓ * r.factorization.prod fun p e => p ^ (κ p * e)).divisors,
-            (if d.Coprime ξ then bFreeIndicator κ d else 0) *
-              μ ((ℓ * r.factorization.prod fun p e => p ^ (κ p * e)) / d) = μ ℓ * μ r
-
-/-- Corollary 1: for `k ≥ 2` there is a constant `β_k` such that
-`D̃_k(x) = ∑_{n ≤ x, n k-free} τ(n) = c_k x log x + β_k x + O(x^{η_k + ε})` for every `ε > 0`,
-with `c_k = ∏_p (1 - (k + 1)/p^k + k/p^{k+1})`, `η_k = 1/k` for `k = 2, 3`, and for `k ≥ 4`
-`η_k` any `η ≥ 1/4` with `Δ(x) = O(x^η)`, where
-`Δ(x) = ∑_{n ≤ x} τ(n) - x log x - (2γ - 1) x` is the Dirichlet divisor error term (10).
-
-The infinite product is a `tprod` over primes; the `O` is as `x → ∞`.
+the product running over all primes $p$. Then there is a real constant $\beta_k$ such that
+$E(x) = \sum_{1 \le n \le x} q_k(n) \tau(n) - c_k x \log x - \beta_k x$ satisfies the following
+as $x \to \infty$. If $k \le 3$, then $E(x) = O(x^{1/k + \varepsilon})$ for every
+$\varepsilon > 0$. If $k \ge 4$, then for every real $\eta \ge 1/4$ with $\Delta(x) = O(x^\eta)$,
+$E(x) = O(x^{\eta + \varepsilon})$ for every $\varepsilon > 0$.
 
 Source: André Pierro de Camargo, *Weighted Summation of Dirichlet Convolutions and Applications
 to Some Divisor Problems over k-Free and B-Free Integers*, INTEGERS 24 (2024), Article A75,
@@ -220,15 +111,22 @@ public theorem_wanted kFree_divisor_sum_asymptotic {k : ℕ} (hk : 2 ≤ k) :
               (2 * Real.eulerMascheroniConstant - 1) * x) =O[atTop] fun x => x ^ η) →
             ∀ ε : ℝ, 0 < ε → err =O[atTop] fun x => x ^ (η + ε))
 
-/-- Corollary 2: let `κ` assign to each prime `p` an exponent `κ(p)` with minimum
-`κ_min ≥ 2`. There is a constant `β_κ` such that
-`D̃_{B_κ}(x) = ∑_{n ≤ x, n B_κ-free} τ(n)
-  = (∏_p (1 - (κ(p) + 1)/p^{κ(p)} + κ(p)/p^{κ(p)+1})) x log x + β_κ x + O(x^{η_κ + ε})`
-for every `ε > 0`, with `η_κ = 1/κ_min` for `κ_min = 2, 3` and, for `κ_min ≥ 4`, `η_κ` any
-`η ≥ 1/4` with `Δ(x) = O(x^η)` (`Δ` the Dirichlet divisor error term (10)).
+/-- **Asymptotic for the divisor function summed over $B_\kappa$-free integers.** Let $\kappa$ be
+a function from the natural numbers to the natural numbers and let $K \ge 2$ be the minimum of
+$\kappa(p)$ over the primes $p$: $\kappa(p) \ge K$ for every prime $p$, with equality for some
+prime. Let $q_{B_\kappa}$ be the indicator of $B_\kappa$-free integers, $\tau(n)$ the number of
+positive divisors of $n$, $\gamma$ the Euler–Mascheroni constant and
+$\Delta(x) = \sum_{1 \le n \le x} \tau(n) - x \log x - (2\gamma - 1) x$ the Dirichlet divisor
+error term, and put
 
-`κ` is indexed by primes (paper: `κ_i` for the `i`-th prime); `κ_min` is the parameter `K`,
-attained at some prime.
+$$C_\kappa = \prod_p \Bigl(1 - \frac{\kappa(p) + 1}{p^{\kappa(p)}} +
+\frac{\kappa(p)}{p^{\kappa(p)+1}}\Bigr),$$
+
+the product running over all primes $p$. Then there is a real constant $\beta_\kappa$ such that
+$E(x) = \sum_{1 \le n \le x} q_{B_\kappa}(n) \tau(n) - C_\kappa x \log x - \beta_\kappa x$
+satisfies the following as $x \to \infty$. If $K \le 3$, then $E(x) = O(x^{1/K + \varepsilon})$
+for every $\varepsilon > 0$. If $K \ge 4$, then for every real $\eta \ge 1/4$ with
+$\Delta(x) = O(x^\eta)$, $E(x) = O(x^{\eta + \varepsilon})$ for every $\varepsilon > 0$.
 
 Source: André Pierro de Camargo, *Weighted Summation of Dirichlet Convolutions and Applications
 to Some Divisor Problems over k-Free and B-Free Integers*, INTEGERS 24 (2024), Article A75,
@@ -246,16 +144,25 @@ public theorem_wanted bFree_divisor_sum_asymptotic {κ : ℕ → ℕ} {K : ℕ} 
               (2 * Real.eulerMascheroniConstant - 1) * x) =O[atTop] fun x => x ^ η) →
             ∀ ε : ℝ, 0 < ε → err =O[atTop] fun x => x ^ (η + ε))
 
-/-- Corollary 3: let `κ_min = K ≥ 2` and let `0 ≤ a < ξ` with `gcd(a, ξ) = 1`. There is a
-constant `c̃` such that, for every `ε > 0`,
-`D̃_{B_κ}(x, a, ξ) = ∑_{n ≤ x, n ≡ a (mod ξ), n B_κ-free} τ(n)
-  = (φ(ξ)/ξ²) (∏_{p ∤ ξ} (1 - (κ(p) + 1)/p^{κ(p)} + κ(p)/p^{κ(p)+1})) x log x + c̃ x
-    + O(x^{η_κ + ε})`,
-with `η_κ = 1/2` for `κ_min = 2` and `η_κ = 1/3` for `κ_min ≥ 4`. The printed statement does not
-cover `κ_min = 3`, so neither does this declaration.
+/-- **Asymptotic for the divisor function summed over $B_\kappa$-free integers in a progression.**
+Let $\kappa$ be a function from the natural numbers to the natural numbers and let $K$ be the
+minimum of $\kappa(p)$ over the primes $p$: $\kappa(p) \ge K$ for every prime $p$, with equality
+for some prime. Assume $K \ge 2$ and $K \ne 3$. Let $a$ and $\xi$ be natural numbers with
+$a < \xi$ and $\gcd(a, \xi) = 1$. Let $q_{B_\kappa}$ be the indicator of $B_\kappa$-free
+integers, $\tau(n)$ the number of positive divisors of $n$ and $\varphi$ Euler's totient
+function, and put
 
-The product over `χ_ξ(p) = 1` is written as a `tprod` over primes with factor `1` at primes
-dividing `ξ`; `κ` is indexed by primes.
+$$C_{\kappa,\xi} = \prod_{p \nmid \xi} \Bigl(1 - \frac{\kappa(p) + 1}{p^{\kappa(p)}} +
+\frac{\kappa(p)}{p^{\kappa(p)+1}}\Bigr),$$
+
+the product running over the primes $p$ that do not divide $\xi$. Let $\eta = 1/2$ if $K = 2$
+and $\eta = 1/3$ if $K \ge 4$. Then there is a real constant $\tilde c$ such that for every
+$\varepsilon > 0$, as $x \to \infty$,
+
+$$\sum_{\substack{1 \le n \le x \\ n \equiv a \pmod{\xi}}} q_{B_\kappa}(n) \tau(n) =
+\frac{\varphi(\xi)}{\xi^2} C_{\kappa,\xi} \, x \log x + \tilde c x + O(x^{\eta + \varepsilon}).$$
+
+The case $K = 3$ is not covered by the paper's statement and is excluded.
 
 Source: André Pierro de Camargo, *Weighted Summation of Dirichlet Convolutions and Applications
 to Some Divisor Problems over k-Free and B-Free Integers*, INTEGERS 24 (2024), Article A75,

@@ -1,0 +1,8 @@
+# Dijkstra's self-stabilizing token ring
+
+- [Dijkstra's token ring](privileged.md)
+- [The value a privileged machine moves to](move-val.md)
+- [One step of the token ring](step.md)
+- [Legitimate configurations of the token ring](legit.md)
+- [Dijkstra's token ring never deadlocks](exists-privileged.md)
+- [Legitimate configurations of Dijkstra's token ring are closed](legit-closed.md)

@@ -35,15 +35,16 @@ Atlas roadmap target MA07.T02.
 
 namespace MathlibExt.Economics.Macro.GovernmentDebtRatio
 
-/-- Debt-to-output ratio `b[t] = B[t] / Y[t]`: nominal government debt over output. -/
+/-- Debt-to-output ratio `b[t] = B[t] / Y[t]`: nominal government debt over output. With the
+convention `x / 0 = 0`, `b(t) = 0` when `Y(t) = 0`. -/
 noncomputable def debtRatio (B Y : ℕ → ℝ) (t : ℕ) : ℝ := B t / Y t
 
-/-- Primary-deficit-to-output ratio `d[t] = D[t] / Y[t]`, against the same-period
-output denominator as `debtRatio`. -/
+/-- Primary-deficit-to-output ratio `d[t] = D[t] / Y[t]`, against the same-period output denominator
+as `debtRatio`. With the convention `x / 0 = 0`, `d(t) = 0` when `Y(t) = 0`. -/
 noncomputable def deficitRatio (D Y : ℕ → ℝ) (t : ℕ) : ℝ := D t / Y t
 
-/-- **Debt-ratio recurrence (MA07.T02).** Under the frozen ratio timing, with
-output growth `Y[t+1] = (1+g) * Y[t]` and the nominal debt law
+/-- **Debt-ratio recurrence (MA07.T02).** Under the frozen ratio timing, with nonzero output,
+output growth `Y[t+1] = (1+g) * Y[t]` with `1 + g ≠ 0`, and the nominal debt law
 `B[t+1] = (1+r) * B[t] + D[t+1]`, the debt ratio satisfies
 `b[t+1] = ((1+r)/(1+g)) * b[t] + d[t+1]`, where `d[t+1]` is the primary-deficit
 ratio against the same-period output denominator `Y[t+1]`. -/

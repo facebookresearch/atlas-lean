@@ -51,13 +51,21 @@ open Finset Convexity
 
 variable {α : Type*}
 
-/-- Sums over `Fin (n + 1) → α` split into the first `n` coordinates and the last one. -/
+/-- **Splitting a sum over $\alpha^{n+1}$ at the last coordinate.** Let $\alpha$ be a finite
+type, $M$ an additive commutative monoid, $n$ a natural number and $f : \alpha^{n+1} \to M$.
+Then $\sum_{x \in \alpha^{n+1}} f(x) =
+\sum_{y \in \alpha^n} \sum_{a \in \alpha} f(y_0, \dots, y_{n-1}, a)$, where
+$y = (y_0, \dots, y_{n-1})$. -/
 theorem sum_snoc [Fintype α] {M : Type*} [AddCommMonoid M] {n : ℕ} (f : (Fin (n + 1) → α) → M) :
     ∑ x, f x = ∑ y : Fin n → α, ∑ a, f (Fin.snoc y a) := by
   rw [← (Fin.snocEquiv fun _ => α).sum_comp, Fintype.sum_prod_type, Finset.sum_comm]
   rfl
 
-/-- Conditional distributions of each variable given all earlier ones. -/
+/-- **Chain of conditional distributions.** A chain of conditional distributions with values in
+a type $\alpha$ assigns to every $k \in \mathbb{N}$ and every assignment $(x_0, \dots, x_{k-1})$
+of values in $\alpha$ to the variables $0, \dots, k - 1$ a finitely supported probability
+distribution $p_k(\cdot \mid x_0, \dots, x_{k-1})$ on $\alpha$, the conditional distribution of
+variable $k$ given the earlier ones. -/
 structure Chain (α : Type*) where
   /-- The distribution of variable `k` given the values of variables `0, …, k - 1`. -/
   cond : (k : ℕ) → (Fin k → α) → StdSimplex ℝ α
@@ -66,7 +74,11 @@ namespace Chain
 
 variable (c : Chain α)
 
-/-- The joint distribution of the first `n` variables, by the chain rule. -/
+/-- **Joint distribution of a chain.** For a chain of conditional distributions with values in
+a type $\alpha$, write $p_k(\cdot \mid x_0, \dots, x_{k-1})$ for the conditional distribution of
+variable $k$ given the earlier ones. The joint distribution $P_n : \alpha^n \to \mathbb{R}$ of
+the first $n$ variables is defined by the chain rule: $P_0 = 1$ and
+$P_{n+1}(x_0, \dots, x_n) = P_n(x_0, \dots, x_{n-1}) \, p_n(x_n \mid x_0, \dots, x_{n-1})$. -/
 noncomputable def joint : (n : ℕ) → (Fin n → α) → ℝ
   | 0, _ => 1
   | n + 1, x => joint n (Fin.init x) * (c.cond n (Fin.init x)).weights (x (Fin.last n))
@@ -82,12 +94,17 @@ theorem joint_nonneg : ∀ (n : ℕ) (x : Fin n → α), 0 ≤ c.joint n x
   | 0, _ => zero_le_one
   | n + 1, _ => mul_nonneg (joint_nonneg n _) ((c.cond n _).nonneg _)
 
-/-- Summing out the last variable gives the joint of the earlier ones. -/
+/-- **Marginalizing the last variable of a chain.** Let $c$ be a chain of conditional
+distributions with values in a finite type $\alpha$, and write $P_k$ for its joint distribution
+of the first $k$ variables. For every $n$ and every $y = (y_0, \dots, y_{n-1}) \in \alpha^n$,
+$\sum_{a \in \alpha} P_{n+1}(y_0, \dots, y_{n-1}, a) = P_n(y)$. -/
 theorem sum_joint_snoc [Fintype α] (n : ℕ) (y : Fin n → α) :
     ∑ a, c.joint (n + 1) (Fin.snoc y a) = c.joint n y := by
   simp only [joint_snoc, ← mul_sum, (c.cond n y).total_of_fintype, mul_one]
 
-/-- The joint is a probability distribution. -/
+/-- **The joint distribution of a chain sums to one.** Let $c$ be a chain of conditional
+distributions with values in a finite type $\alpha$, and write $P_n$ for its joint distribution
+of the first $n$ variables. For every $n$, $\sum_{x \in \alpha^n} P_n(x) = 1$. -/
 theorem sum_joint [Fintype α] : ∀ n : ℕ, ∑ x, c.joint n x = 1
   | 0 => by simp [joint]
   | n + 1 => by
@@ -95,13 +112,21 @@ theorem sum_joint [Fintype α] : ∀ n : ℕ, ∑ x, c.joint n x = 1
     simp only [sum_joint_snoc]
     exact sum_joint n
 
-/-- The conditional distribution of the last variable given the earlier ones, computed from the
-joint, is the given conditional distribution. -/
+/-- **Conditionals of the joint of a chain.** Let $c$ be a chain of conditional distributions
+with values in a type $\alpha$, let $P_m$ be its joint distribution of the first $m$ variables,
+and let $p_n(\cdot \mid y)$ be its conditional distribution of variable $n$ given values
+$y \in \alpha^n$ of the earlier ones. For every $n$, every $y \in \alpha^n$ with $P_n(y) \ne 0$
+and every $a \in \alpha$, we have $P_{n+1}(y, a) / P_n(y) = p_n(a \mid y)$, where
+$(y, a) \in \alpha^{n+1}$ extends $y$ by the value $a$. -/
 theorem cond_eq_div {n : ℕ} {y : Fin n → α} (hy : c.joint n y ≠ 0) (a : α) :
     c.joint (n + 1) (Fin.snoc y a) / c.joint n y = (c.cond n y).weights a := by
   rw [joint_snoc, mul_div_cancel_left₀ _ hy]
 
-/-- The joint is the product of the conditionals along the order. -/
+/-- **Factorization of the joint of a chain.** For a chain of conditional distributions with
+values in a type $\alpha$, write $p_k(\cdot \mid x_0, \dots, x_{k-1})$ for the conditional
+distribution of variable $k$ given the earlier ones and $P_n$ for the joint distribution of
+the first $n$ variables. Then for every $n$ and every $x \in \alpha^n$ we have
+$P_n(x) = \prod_{k < n} p_k(x_k \mid x_0, \dots, x_{k-1})$. -/
 theorem joint_eq_prod : ∀ (n : ℕ) (x : Fin n → α),
     c.joint n x = ∏ k : Fin n, (c.cond k fun j => x (Fin.castLE k.2.le j)).weights (x k)
   | 0, _ => by simp [joint]
@@ -109,8 +134,10 @@ theorem joint_eq_prod : ∀ (n : ℕ) (x : Fin n → α),
     rw [joint, joint_eq_prod n, Fin.prod_univ_castSucc]
     rfl
 
-/-- Two chains that agree on the conditionals of the first `n` variables have the same joint
-distribution of these variables. -/
+/-- **Joint distribution determined by the first conditionals.** Let $n \in \mathbb{N}$. If two
+chains of conditional distributions $c$ and $c'$ with values in a type $\alpha$ have the same
+conditional distribution of variable $k$ given the earlier variables for every $k < n$, then
+they have the same joint distribution of the first $n$ variables. -/
 theorem joint_congr {c' : Chain α} : ∀ {n : ℕ}, (∀ k < n, c.cond k = c'.cond k) →
     c.joint n = c'.joint n
   | 0, _ => rfl
@@ -118,7 +145,10 @@ theorem joint_congr {c' : Chain α} : ∀ {n : ℕ}, (∀ k < n, c.cond k = c'.c
     funext x
     rw [joint, joint, joint_congr fun k hk => h k (Nat.lt_succ_of_lt hk), h n (Nat.lt_succ_self n)]
 
-/-- Replace the conditional distribution of variable `n`. -/
+/-- **Replacing one conditional of a chain.** Given a chain $c$ of conditional distributions with
+values in $\alpha$, an index $n$ and a family $f$ assigning to each $y \in \alpha^n$ a
+probability distribution $f(y)$ on $\alpha$, the updated chain has conditional distribution $f$
+for variable $n$ and the same conditional distribution as $c$ for every other variable. -/
 def update (n : ℕ) (f : (Fin n → α) → StdSimplex ℝ α) : Chain α where
   cond k := if h : k = n then h ▸ f else c.cond k
 
@@ -132,8 +162,10 @@ theorem update_cond_of_ne (n : ℕ) (f : (Fin n → α) → StdSimplex ℝ α) {
 
 end Chain
 
-/-- **The chain rule**: every probability distribution of `n` variables is the joint of a chain
-of conditional distributions. -/
+/-- **The chain rule.** Let $\alpha$ be a finite nonempty type and $n \in \mathbb{N}$. For every
+function $P : \alpha^n \to \mathbb{R}$ with $P(x) \ge 0$ for all $x$ and $\sum_x P(x) = 1$,
+there is a chain of conditional distributions with values in $\alpha$ whose joint distribution
+of the first $n$ variables equals $P$. -/
 theorem exists_chain [Fintype α] [Nonempty α] : ∀ (n : ℕ) (P : (Fin n → α) → ℝ),
     (∀ x, 0 ≤ P x) → ∑ x, P x = 1 → ∃ c : Chain α, ∀ x, P x = c.joint n x
   | 0, P, _, h1 => ⟨⟨fun _ _ => StdSimplex.single (Classical.arbitrary α)⟩, fun x => by
@@ -165,8 +197,11 @@ theorem exists_chain [Fintype α] [Nonempty α] : ∀ (n : ℕ) (P : (Fin n → 
 
 /-! ### Bayesian networks -/
 
-/-- A Bayesian network on nodes `0, …, n - 1` in topological order: each node has parents among
-the earlier nodes and a conditional probability table given the values of its parents. -/
+/-- **Bayesian network.** A Bayesian network with values in a type $\alpha$ on the nodes
+$0, \dots, n - 1$, listed in a topological order, assigns to each node $k$ a finite set of
+parents among the earlier nodes $0, \dots, k - 1$, and a conditional probability table: for each
+assignment of values in $\alpha$ to the parents of $k$, a finitely supported probability
+distribution on $\alpha$ for the value of node $k$. -/
 structure BayesNet (α : Type*) (n : ℕ) where
   /-- The parents of node `k`, among the nodes `0, …, k - 1`. -/
   pa : (k : Fin n) → Finset (Fin k)
@@ -177,13 +212,20 @@ namespace BayesNet
 
 variable {n : ℕ} [Nonempty α] (b : BayesNet α n)
 
-/-- The network as a chain: the conditional of node `k` given the earlier nodes is its table
-applied to the values of its parents. -/
+/-- **The chain of a Bayesian network.** A Bayesian network $b$ on nodes $0, \dots, n - 1$ with
+values in a nonempty type $\alpha$ defines a chain of conditional distributions. For $k < n$,
+the conditional distribution of variable $k$ given values $y_0, \dots, y_{k-1}$ of the earlier
+variables is the table of node $k$ applied to the values $y_j$ of its parents $j$. For
+$k \ge n$ it is the point mass at a fixed arbitrary element of $\alpha$. -/
 noncomputable def toChain : Chain α where
   cond k y := if hk : k < n then b.cpt ⟨k, hk⟩ fun j => y j else
     StdSimplex.single (Classical.arbitrary α)
 
-/-- The joint distribution of the network. -/
+/-- **Joint distribution of a Bayesian network.** Let $B$ be a Bayesian network on the nodes
+$0, \dots, n - 1$ with values in a nonempty type $\alpha$. The joint distribution of $B$ is the
+function $P : \alpha^n \to \mathbb{R}$ given by $P(x) = P_n(x)$ for $x \in \alpha^n$, where $P_n$
+is the joint distribution of the first $n$ variables of the chain of conditional distributions
+of $B$. -/
 noncomputable def joint (x : Fin n → α) : ℝ :=
   b.toChain.joint n x
 
@@ -195,13 +237,21 @@ theorem joint_eq_prod (x : Fin n → α) :
   refine prod_congr rfl fun k _ => ?_
   simp [toChain, k.2]
 
-/-- The joint of a Bayesian network is a probability distribution. -/
+/-- **The joint distribution of a Bayesian network sums to one.** Let $B$ be a Bayesian network
+on the nodes $0, \dots, n - 1$ with values in a finite nonempty type $\alpha$, and let $P$ be its
+joint distribution. Then $\sum_{x \in \alpha^n} P(x) = 1$. -/
 theorem sum_joint [Fintype α] : ∑ x, b.joint x = 1 :=
   b.toChain.sum_joint n
 
-/-- **The ordered Markov property**: the conditional distribution of node
-`k` given all earlier nodes, computed from the joint of the first `k + 1` nodes, is the node's
-table at its parents' values. In particular it depends only on the values of the parents. -/
+/-- **The ordered Markov property.** Let $B$ be a Bayesian network on the nodes
+$0, \dots, n - 1$ with values in a nonempty type $\alpha$, and let $P_m$ be the joint
+distribution of the first $m$ nodes of $B$ viewed as a chain of conditional distributions. For
+a node $k < n$, write $p_k(\cdot \mid z)$ for its conditional probability table at values $z$
+of its parents. Let $y = (y_0, \dots, y_{k-1}) \in \alpha^k$ with $P_k(y) \ne 0$, and write
+$y_{\mathrm{pa}(k)}$ for the values of $y$ at the parents of $k$. Then for every $a \in \alpha$,
+$$P_{k+1}(y_0, \dots, y_{k-1}, a) / P_k(y) = p_k(a \mid y_{\mathrm{pa}(k)}).$$
+In particular, the conditional distribution of node $k$ given all earlier nodes depends only on
+the values of its parents. -/
 theorem cond_eq_cpt {k : ℕ} (hk : k < n) {y : Fin k → α} (hy : b.toChain.joint k y ≠ 0)
     (a : α) :
     b.toChain.joint (k + 1) (Fin.snoc y a) / b.toChain.joint k y =

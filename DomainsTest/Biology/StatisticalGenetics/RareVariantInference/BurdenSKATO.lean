@@ -60,7 +60,7 @@ noncomputable def P0 : Matrix (Fin 2) (Fin 2) ℝ := !![1 / 2, -1 / 2; -1 / 2, 1
 theorem gram_X0 : X0ᵀ * (1 : Matrix (Fin 2) (Fin 2) ℝ)⁻¹ * X0 = !![2] := by
   ext i j
   fin_cases i; fin_cases j
-  simp [X0, mul_apply, Fin.sum_univ_two]
+  simp [X0, Matrix.mul_apply, Fin.sum_univ_two, -Matrix.transpose_of]
   norm_num
 
 theorem isUnit_X0 : IsUnit (X0ᵀ * (1 : Matrix (Fin 2) (Fin 2) ℝ)⁻¹ * X0) := by
@@ -76,7 +76,7 @@ theorem projP_X0 : projP X0 1 = P0 := by
   have hgls : glsMatrix X0 1 = !![1 / 2, 1 / 2] := by
     rw [glsMatrix, gram_X0, hinv, inv_one, Matrix.mul_one]
     ext i j
-    fin_cases i; fin_cases j <;> simp [X0, vecMul, dotProduct]
+    fin_cases i; fin_cases j <;> simp [X0, vecMul, dotProduct, -Matrix.transpose_of]
   rw [projP, hgls, inv_one, Matrix.one_mul]
   ext i j
   fin_cases i <;> fin_cases j <;> simp [X0, P0] <;> norm_num
@@ -164,7 +164,8 @@ theorem kernelMixtureMatrix_burden_G2 :
     kernelMixtureMatrix X0 1 (burdenKernel G2 a1) 1 = !![1, -1; -1, 1] := by
   rw [kernelMixtureMatrix, CFC.sqrt_one, Matrix.mul_one, projP_X0, burdenKernel_G2]
   ext i j
-  fin_cases i <;> fin_cases j <;> simp [P0, mul_apply, Fin.sum_univ_two] <;> norm_num
+  fin_cases i <;> fin_cases j <;>
+    simp [P0, Matrix.mul_apply, Fin.sum_univ_two, -Matrix.transpose_of] <;> norm_num
 
 /-- At `ρ = 1` the SKAT-O kernel is the burden kernel. -/
 theorem skatOKernel_one_G2 : skatOKernel G2 a1 1 = burdenKernel G2 a1 := by

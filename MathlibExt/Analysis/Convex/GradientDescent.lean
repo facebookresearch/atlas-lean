@@ -129,6 +129,42 @@ theorem gradientDescent_sufficient_decrease
     Real.norm_eq_abs, abs_neg, abs_of_pos hη.1] at h
   nlinarith
 
+/-- **Gradient norm bound for smooth lower-bounded functions.** Let $f : E \to \mathbb{R}$ be
+differentiable on a real Hilbert space $E$, with $L$-Lipschitz gradient for $L \ge 0$.
+If $f_{\mathrm{lower}} \le f(y)$ for every $y \in E$, then for every $x \in E$,
+$\|\nabla f(x)\|^2 \le 2L (f(x) - f_{\mathrm{lower}})$.
+
+The proof only uses that $f_{\mathrm{lower}}$ is a global lower bound, so it need not be the
+infimum. Neither convexity nor an attained minimum is required.
+
+Source: A. Khaled and P. Richtárik,
+[*Better Theory for SGD in the Nonconvex World*](https://arxiv.org/abs/2002.03329v3),
+§4.5, Lemma 1, eq. (14), and §10.1 (proof), where the lower bound is the infimum. -/
+theorem gradientDescent_norm_gradient_sq_le
+    {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [CompleteSpace E]
+    {f : E → ℝ} {L fLower : ℝ} (hL : 0 ≤ L) (hdiff : Differentiable ℝ f)
+    (hsmooth : LipschitzWith ⟨L, hL⟩ (gradient f)) (hLower : ∀ y, fLower ≤ f y) (x : E) :
+    ‖gradient f x‖ ^ 2 ≤ 2 * L * (f x - fLower) := by
+  rcases hL.eq_or_lt with hzero | hpos
+  · subst L
+    simp only [mul_zero, zero_mul]
+    by_contra! hnorm
+    -- With no quadratic term, this step lowers the upper model below `fLower`.
+    let t := (f x - fLower + 1) / ‖gradient f x‖ ^ 2
+    have ht : t * ‖gradient f x‖ ^ 2 = f x - fLower + 1 :=
+      div_mul_cancel₀ _ (ne_of_gt hnorm)
+    have hdec := gradientDescent_descent_lemma hL hdiff hsmooth x (-t • gradient f x)
+    simp only [inner_smul_right, real_inner_self_eq_norm_sq, zero_div, zero_mul, add_zero,
+      neg_mul, ht] at hdec
+    linarith only [hdec, hLower (x + -t • gradient f x)]
+  · have hdec := gradientDescent_sufficient_decrease hpos hdiff hsmooth
+      (η := 1 / L) ⟨one_div_pos.mpr hpos, le_rfl⟩ x
+    have hgap : (1 / L / 2) * ‖gradient f x‖ ^ 2 ≤ f x - fLower := by
+      linarith only [hdec, hLower (x - (1 / L) • gradient f x)]
+    rw [div_div, one_div_mul_eq_div, mul_comm L 2] at hgap
+    simpa only [mul_comm (f x - fLower)] using
+      (div_le_iff₀ (show 0 < 2 * L by positivity)).mp hgap
+
 private theorem gradientDescent_first_order
     {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [CompleteSpace E]
     {f : E → ℝ} (hconvex : ConvexOn ℝ Set.univ f) (hdiff : Differentiable ℝ f)
@@ -225,22 +261,26 @@ private theorem gradientDescent_sum_bound
       (div_le_div_iff_of_pos_right (mul_pos (by norm_num) hη.1)).2
         (sub_le_self _ (sq_nonneg _))
 
-/-- Gradient descent on a smooth convex function in finite dimensions: with a
-step below `1 / L`, the objective gap after `k` steps is at most
-`‖X 0 - x⋆‖^2 / (2 * η * k)`.
+/-- **Sublinear rate of gradient descent for smooth convex functions.** Let $E$ be a
+finite-dimensional real inner product space, let $L > 0$, and let $f : E \to \mathbb{R}$ be
+convex and differentiable with $L$-Lipschitz gradient $\nabla f$. Let $x^\star \in E$ be a global
+minimizer of $f$, let $0 < \eta \le 1/L$, and let $(x_k)_{k \ge 0}$ be any sequence in $E$ with
+$x_{k+1} = x_k - \eta \nabla f(x_k)$ for all $k$. Then for every $k \ge 1$,
+$f(x_k) - f(x^\star) \le \|x_0 - x^\star\|^2 / (2 \eta k)$.
+
+Proves `Wanted` entry `gradient_descent_convex_sublinear_rate`.
+
+Proof: The descent lemma and first-order convexity inequality are proved on affine lines. They
+bound each objective gap by a difference of squared distances to $x^\star$; telescoping and the
+monotonicity of $f(x_k)$ in $k$ give the rate, as in L. Vandenberghe, ECE236C lecture notes
+"Gradient method" (Spring 2022), slides 1.23-1.26.
+
 Sources: `Mathlib/docs/undergrad.yaml`, section `Numerical Analysis` /
 `Iterative methods of solving systems of real and vector-valued equations`,
 entries `optimization of convex function in finite dimension` and
 `gradient descent square root` (unmapped);
 Y. Nesterov, Introductory Lectures on Convex Optimization, Section 2.1;
 stable ref https://en.wikipedia.org/wiki/Gradient_descent.
-
-Proves `Wanted` entry `gradient_descent_convex_sublinear_rate`.
-
-Proof: The descent lemma and first-order convexity inequality are proved on affine lines. They
-bound each objective gap by a difference of squared distances to `x⋆`; telescoping and the
-monotonicity of `f (X k)` give the rate, as in L. Vandenberghe, ECE236C lecture notes
-"Gradient method" (Spring 2022), slides 1.23-1.26.
 -/
 theorem gradient_descent_convex_sublinear_rate
     {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [CompleteSpace E]

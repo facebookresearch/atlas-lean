@@ -1,5 +1,6 @@
 # Bias and mean squared error of estimators
 
+- [Sample mean, sample variance and sampling distributions](sample-mean-sample-variance-and-sampling-distrib/README.md)
 - [Bias of an estimator](bias.md)
 - [Bias as an integral](bias-eq-integral.md)
 - [Mean squared error](mean-squared-error.md)
@@ -29,3 +30,6 @@
 - [Finite and extended frequentist risk agree](of-real-frequentist-risk.md)
 - [Extended frequentist risk of a measurable non-integrable loss is infinite](frequentist-risk-enn-eq-top-of-not-integ.md)
 - [Mean squared error is frequentist risk under squared-error loss](frequentist-risk-squared-eq-family-mean.md)
+- [Variance of the stratified sample mean](variance-of-the-stratified-mean-estimator.md)
+- [A biased variance estimator with smaller mean squared error](biased-variance-estimator-with-smaller-mean-squared-error.md)
+- [Unbiasedness of the sample covariance](unbiasedness-of-the-sample-covariance/README.md)

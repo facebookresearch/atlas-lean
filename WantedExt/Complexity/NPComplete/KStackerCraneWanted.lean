@@ -20,7 +20,7 @@ NP-Completeness*, W. H. Freeman (1979), problem [ND26] STACKER-CRANE.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.StackerCraneWanted
@@ -86,7 +86,7 @@ def IsCycleAt (i : StackerCraneInstance) (s : ℕ) (c : List (Fin (moves i).leng
       ((moves i)[c[j]]).2.1 = ((moves i)[c[(j + 1) % c.length]'(Nat.mod_lt _ (by omega))]).1) ∧
     ∀ h : 0 < c.length, ((moves i)[c[0]]).1 = s
 
-/-- Some `k` cycles, each containing `s` and of length at most `K`, together traverse every
+/-- Some `k` cycles at `s` (possibly empty), each of length at most `K`, together traverse every
 directed edge (index `< |A|` in `moves`). -/
 def KStackerCraneFeasible (i : KStackerCraneInstance) : Prop :=
   ∃ cs : List (List (Fin (moves i.1).length)), cs.length = i.2.2 ∧

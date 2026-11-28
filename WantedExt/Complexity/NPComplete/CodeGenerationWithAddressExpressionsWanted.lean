@@ -19,7 +19,7 @@ Communications of the ACM 21 (1978), 300-308, doi:10.1145/359460.359474.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Data.Set.Operations
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
@@ -60,8 +60,8 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- An instance: the expressions `g(I₁), …, g(Iₙ)` (see the module docstring), and the
-positive integers `B`, `C` and `M`. -/
+/-- An instance `(g, B, C, M)`: the list `g` of address expressions `g(I₁), …, g(Iₙ)` (see the
+module docstring), and natural numbers `B`, `C` and `M`. -/
 abbrev CodeGenerationWithAddressExpressionsInstance := List (ℕ × ℕ × ℕ) × ℕ × ℕ × ℕ
 
 /-- An expression of an instruction among `n` instructions: `Iⱼ` (`(0, j, 0)` with `j < n`),

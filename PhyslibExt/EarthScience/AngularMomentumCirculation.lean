@@ -54,7 +54,7 @@ namespace EarthScience
 
 /-- Conservation of absolute axial angular momentum: an air parcel starting
 at rest at the equator has absolute angular momentum per unit mass `Ω a²`.
-If at latitude `φ` its eastward wind is `u`, conservation
+For `a > 0` and `|φ| < π/2`, if at latitude `φ` its eastward wind is `u`, conservation
 `(Ω a cos φ + u) (a cos φ) = Ω a²` forces
 `u = Ω a sin²φ / cos φ`. -/
 theorem angular_momentum_zonal_wind (Ω a φ u : ℝ) (ha : 0 < a)
@@ -79,7 +79,7 @@ theorem angular_momentum_zonal_wind (Ω a φ u : ℝ) (ha : 0 < a)
   rw [eq_div_iff hC]
   linear_combination e2
 
-/-- At the equator the conserved parcel is still at rest: the formula gives
+/-- At the equator the conserved parcel is still at rest: for `a > 0` the formula gives
 `u = 0` at `φ = 0`. -/
 theorem angular_momentum_zonal_wind_equator (Ω a u : ℝ) (ha : 0 < a)
     (hcons : (Ω * a * Real.cos 0 + u) * (a * Real.cos 0) = Ω * a ^ 2) :

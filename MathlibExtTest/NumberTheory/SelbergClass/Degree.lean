@@ -59,12 +59,8 @@ example {a : ArithmeticFunction ℂ} (ha : a ∈ selbergClass) : 1 * a ∈ selbe
   ⟨mul_mem one_mem_selbergClass ha, one_mul a⟩
 
 theorem isLSeriesContinuation_zeta_mul_zeta :
-    IsLSeriesContinuation (zetaC * zetaC) (fun s => riemannZeta s * riemannZeta s) := by
-  refine ⟨fun s hs => ?_, isLSeriesContinuation_zeta.2.mul isLSeriesContinuation_zeta.2⟩
-  change riemannZeta s * riemannZeta s = _
-  rw [isLSeriesContinuation_zeta.1 s hs, ArithmeticFunction.LSeries_mul'
-    (LSeriesSummable_of_mem zeta_mem_selbergClass hs)
-    (LSeriesSummable_of_mem zeta_mem_selbergClass hs)]
+    IsLSeriesContinuation (zetaC * zetaC) (fun s => riemannZeta s * riemannZeta s) :=
+  isLSeriesContinuation_zeta.mul isLSeriesContinuation_zeta
 
 /-- Every functional equation of `ζ²` has degree `2`. -/
 example (D : FunctionalEquation fun s => riemannZeta s * riemannZeta s) : D.degree = 2 := by

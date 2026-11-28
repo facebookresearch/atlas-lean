@@ -65,7 +65,8 @@ theorem two_mul_f4_eq_sub (hp : ∀ X, MemLp (p X) 2 μ) (A B C D : P) :
   rw [f4_eq_f2 hp]
   ring
 
-/-- If `f2` satisfies the four-point condition (as the `f2` matrix of a tree
+/-- For square-integrable frequencies, if `f2` satisfies the four-point
+condition (as the `f2` matrix of a tree
 model does, by `Buneman.IsTreeMetric.fourPointCondition`), then for every
 four populations at least one of the three f4 permutations
 `f4(A,B;C,D)`, `f4(A,C;B,D)`, `f4(A,D;B,C)` vanishes. The four-point
@@ -107,7 +108,8 @@ theorem f4_eq_zero_or_of_fourPointCondition (hp : ∀ X, MemLp (p X) 2 μ)
   · exact Or.inr (Or.inl (by linarith))
   · exact Or.inl (by linarith)
 
-/-- Quartet trichotomy for a split: if `f2` is a tree metric and the pair sum
+/-- Quartet trichotomy for a split: for square-integrable frequencies, if `f2`
+is a tree metric and the pair sum
 `s1 = f2AB + f2CD` is at most the other two pair sums (the split is `AB|CD`),
 then `f4(A,B;C,D) = 0` and the two crossing permutations are equal,
 `f4(A,C;B,D) = f4(A,D;B,C) = ((f2AC + f2BD) - (f2AB + f2CD)) / 2 ≥ 0`, the
@@ -142,9 +144,10 @@ theorem f4_split_of_isTreeMetric (hp : ∀ X, MemLp (p X) 2 μ)
     rwa [f2_comm D B, f2_comm D C] at this
   refine ⟨by linarith, by linarith, by linarith, by linarith⟩
 
-/-- If all three f4 permutations at some four populations are nonzero, then
-`f2` is not a tree metric: the frequencies do not come from a tree model
-(informally, some population is admixed). This is the contrapositive of
+/-- For square-integrable frequencies, if all three f4 permutations at some
+four populations are nonzero, then
+`f2` is not a tree metric, so the frequencies do not come from a drift model with
+the lineage weights of a tree-shaped admixture graph. This is the contrapositive of
 `f4_eq_zero_or_of_fourPointCondition` composed with Buneman's theorem. -/
 theorem not_isTreeMetric_of_f4_ne_zero (hp : ∀ X, MemLp (p X) 2 μ) {A B C D : P}
     (h1 : f4 μ p A B C D ≠ 0) (h2 : f4 μ p A C B D ≠ 0) (h3 : f4 μ p A D B C ≠ 0) :
@@ -156,7 +159,8 @@ theorem not_isTreeMetric_of_f4_ne_zero (hp : ∀ X, MemLp (p X) 2 μ) {A B C D :
   · exact h2 hh
   · exact h3 hh
 
-/-- Zero internal branch: if the three quartet pair sums are all equal, all
+/-- Zero internal branch: for square-integrable frequencies, if the three
+quartet pair sums are all equal, all
 three f4 permutations vanish. No tree assumption is needed. -/
 theorem f4_eq_zero_of_pairSums_eq (hp : ∀ X, MemLp (p X) 2 μ) (A B C D : P)
     (h1 : f2 μ p A B + f2 μ p C D = f2 μ p A C + f2 μ p B D)

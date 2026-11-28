@@ -15,7 +15,7 @@ public import MathlibExt.NumberTheory.ModularForms.JCoefficientBound
 open ModularCurve
 
 /-- Source consumer with the original binders. -/
-theorem exactSource (n : ℕ) : (1 : ℚ) ≤ jq.coeff (n : ℤ) :=
+private theorem exactSource (n : ℕ) : (1 : ℚ) ≤ jq.coeff (n : ℤ) :=
   ModularCurve.one_le_coeff_jq n
 
 /-- The bound at the first nonnegative indices, and nonvanishing there. -/

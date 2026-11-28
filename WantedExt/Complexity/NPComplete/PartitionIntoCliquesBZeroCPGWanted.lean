@@ -22,11 +22,11 @@ NP-Completeness*, W. H. Freeman (1979), problem [GT15] PARTITION INTO CLIQUES.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Order.Interval.Set.Basic
-public import WantedExt.Complexity.NPComplete.PartitionIntoCliquesWanted
+public import CSLibExt.Complexity.NPComplete.PartitionIntoCliquesDefs
 
 @[expose] public section
 
@@ -41,7 +41,7 @@ INSTANCE: a `B₀-CPG` graph `G = (V, E)` and a positive integer `K ≤ |V|`.
 QUESTION: can `V` be partitioned into `k ≤ K` disjoint sets `V₁, …, V_k` such that each `Vᵢ`
 induces a complete subgraph of `G`?
 
-This is PARTITION INTO CLIQUES ([GT15], `PartitionIntoCliquesWanted`) restricted to the graph
+This is PARTITION INTO CLIQUES ([GT15], `PartitionIntoCliquesDefs`) restricted to the graph
 class `B₀-CPG` (ISGCI `gc_1337`). A graph is a CPG graph (Deniz, Galby, Munaro and Ries 2018) if
 its vertices can be represented by a family of pairwise interiorly disjoint paths on a grid, two
 vertices being adjacent exactly when their paths touch; the paths may not have common interior
@@ -52,7 +52,7 @@ vertices) is NP-complete for `B₀-CPG` line graphs, hence for `B₀-CPG` graphs
 can be made a partition, since subsets of cliques are cliques.
 
 The instance, the graph, the well-formedness `0 < K ≤ |V|` and the question are those of
-`PartitionIntoCliquesWanted`; the restriction `IsBZeroCPG` is added to the well-formedness. A
+`PartitionIntoCliquesDefs`; the restriction `IsBZeroCPG` is added to the well-formedness. A
 grid segment is given by its endpoints `p < q` in `ℕ × ℕ` (componentwise order, so `p ≠ q`) with
 one coordinate equal; its grid points are `Set.Icc p q`. Two such segments touch, i.e. have a
 common point in the plane, exactly when they have a common grid point (perpendicular segments

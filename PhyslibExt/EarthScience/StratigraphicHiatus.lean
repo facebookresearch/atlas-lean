@@ -55,24 +55,25 @@ namespace EarthScience
 /-- Age at depth `d` (positive downward) under constant accumulation speed
 `v`, with a hiatus at depth `h` that removes `g` of time: above (shallower
 than) the hiatus the age is `d / v`; at and below (deeper than) the hiatus
-an extra `g` is added. -/
+an extra `g` is added. With the convention `x / 0 = 0`, at `v = 0` it is `0` above the hiatus
+and `g` at and below it; the intended domain is `v > 0` and `g > 0`. -/
 noncomputable def hiatusAge (v h g d : ℝ) : ℝ :=
   if d < h then d / v else d / v + g
 
 /-- Above (shallower than) the hiatus the age is the ordinary
-constant-accumulation age. -/
+constant-accumulation age (`0` when `v = 0`, by the convention `x / 0 = 0`). -/
 theorem hiatus_age_above {v h g d : ℝ} (hd : d < h) :
     hiatusAge v h g d = d / v := by
   simp [hiatusAge, hd]
 
 /-- At and below the hiatus the age is the constant-accumulation age offset
-by the hiatus gap `g`. -/
+by the hiatus gap `g` (`g` when `v = 0`, by the convention `x / 0 = 0`). -/
 theorem hiatus_age_at_or_below {v h g d : ℝ} (hd : h ≤ d) :
     hiatusAge v h g d = d / v + g := by
   simp [hiatusAge, not_lt.mpr hd]
 
-/-- The hiatus is a jump, not a negative rate: age is strictly increasing
-across every pair of depths, including pairs straddling the hiatus. -/
+/-- The hiatus is a jump, not a negative rate: for `v > 0` and `g > 0`, age is strictly
+increasing across every pair of depths, including pairs straddling the hiatus. -/
 theorem hiatus_age_strictMono {v h g : ℝ} (hv : 0 < v) (hg : 0 < g) :
     StrictMono (hiatusAge v h g) := by
   intro a b hab
@@ -90,13 +91,14 @@ theorem hiatus_age_strictMono {v h g : ℝ} (hv : 0 < v) (hg : 0 < g) :
       gcongr
 
 /-- The jump at the hiatus is exactly `g`: the value at `h` is the continuous
-constant-accumulation extension `h / v` offset by `g`. -/
+constant-accumulation extension `h / v` offset by `g` (`g` when `v = 0`, by `x / 0 = 0`). -/
 theorem hiatus_age_jump {v h g : ℝ} :
     hiatusAge v h g h = h / v + g := by
   simp [hiatusAge]
 
 /-- Across the hiatus: for depths straddling it, the age difference is the
-constant-accumulation difference `(d₂ - d₁) / v` offset by the gap `g`. -/
+constant-accumulation difference `(d₂ - d₁) / v` offset by the gap `g` (`g` when `v = 0`, by
+the convention `x / 0 = 0`). -/
 theorem hiatus_age_straddle {v h g d₁ d₂ : ℝ} (h1 : d₁ < h) (h2 : h ≤ d₂) :
     hiatusAge v h g d₂ - hiatusAge v h g d₁ = (d₂ - d₁) / v + g := by
   rw [hiatus_age_at_or_below h2, hiatus_age_above h1, sub_div]

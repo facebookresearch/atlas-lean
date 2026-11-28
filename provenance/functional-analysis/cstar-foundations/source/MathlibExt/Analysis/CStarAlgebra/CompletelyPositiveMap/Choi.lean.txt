@@ -1,0 +1,278 @@
+/-
+  Author: @toskua, Avocado
+-/
+module
+
+public import MathlibExt.Analysis.CStarAlgebra.CompletelyPositiveMap.Basic
+public import Mathlib.Analysis.Matrix.Order
+public import Mathlib.Analysis.CStarAlgebra.Matrix
+public import Mathlib.Data.Matrix.Basis
+
+/-!
+# Choi matrix for linear and completely positive maps (finite-dimensional)
+
+This module defines the repository-convention Choi matrix for arbitrary
+complex-linear maps `Matrix n n ℂ →ₗ[ℂ] Matrix m m ℂ` and the reconstruction
+by matrix-unit expansion. It proves application formulas, both inverse laws,
+a linear equivalence, injectivity and extensionality, and retains
+`CompletelyPositiveMap.choiMatrix` as a thin specialization.
+
+Convention: `J(Φ) ((i,a),(j,b)) = Φ (Matrix.single i j 1) a b`,
+indexed by `n × m`. Reconstruction is
+`Φ(X) = ∑ i j, X i j • (fun a b => J (i,a) (j,b))`.
+
+## Tags
+
+choi, completely positive map, cstar algebra
+-/
+
+@[expose] public section
+
+open Matrix
+open scoped Matrix.Norms.L2Operator CStarAlgebra MatrixOrder
+
+namespace LinearMap
+
+variable {n m : Type*} [DecidableEq n]
+
+/-- Repository-convention Choi matrix for an arbitrary complex-linear map
+`Φ : Matrix n n ℂ →ₗ[ℂ] Matrix m m ℂ`.
+
+The `((i,a),(j,b))` entry is `Φ (Matrix.single i j 1) a b`. Requires only
+`[DecidableEq n]` for `Matrix.single`. -/
+noncomputable def choiMatrix (Φ : Matrix n n ℂ →ₗ[ℂ] Matrix m m ℂ) :
+    Matrix (n × m) (n × m) ℂ :=
+  fun ⟨i, a⟩ ⟨j, b⟩ => Φ (Matrix.single i j (1 : ℂ)) a b
+
+@[simp]
+theorem choiMatrix_apply (Φ : Matrix n n ℂ →ₗ[ℂ] Matrix m m ℂ) (i j : n) (a b : m) :
+    choiMatrix Φ (i, a) (j, b) = Φ (Matrix.single i j (1 : ℂ)) a b :=
+  rfl
+
+/-- Identity map convention regression: its Choi matrix is the
+matrix-unit delta `δ(a,i) δ(b,j)`, i.e. `1` iff `i = a ∧ j = b`. -/
+theorem choiMatrix_id :
+    choiMatrix (LinearMap.id : Matrix n n ℂ →ₗ[ℂ] Matrix n n ℂ) =
+      fun ⟨i, a⟩ ⟨j, b⟩ => if i = a ∧ j = b then (1 : ℂ) else 0 :=
+  rfl
+
+/-- `choiMatrix` as a linear map on the space of linear maps.
+
+Requires only `[DecidableEq n]`, not `[Fintype n]`, for the matrix-unit
+`Matrix.single` API. -/
+noncomputable def choiMatrixHom :
+    (Matrix n n ℂ →ₗ[ℂ] Matrix m m ℂ) →ₗ[ℂ] Matrix (n × m) (n × m) ℂ where
+  toFun := choiMatrix
+  map_add' := by
+    intro Φ Ψ
+    ext ⟨i, a⟩ ⟨j, b⟩
+    simp [choiMatrix]
+  map_smul' := by
+    intro r Φ
+    ext ⟨i, a⟩ ⟨j, b⟩
+    simp [choiMatrix, LinearMap.smul_apply]
+
+variable [Fintype n]
+
+/-- Reconstruction from a Choi matrix by matrix-unit expansion.
+
+For `J : Matrix (n × m) (n × m) ℂ`, the associated linear map sends
+`X` to `∑ i j, X i j • (of fun a b => J (i,a) (j,b))`. This is the inverse of
+`LinearMap.choiMatrix` under the repository product ordering. -/
+noncomputable def fromChoiMatrix (J : Matrix (n × m) (n × m) ℂ) :
+    Matrix n n ℂ →ₗ[ℂ] Matrix m m ℂ :=
+  Matrix.liftLinear ℂ (fun i j =>
+    { toFun := fun c => c • (Matrix.of fun a b => J (i, a) (j, b))
+      map_add' := fun x y => by simp [add_smul]
+      map_smul' := fun r x => by simp [smul_smul, mul_comm r x] })
+
+/-- Application to a matrix unit. -/
+theorem fromChoiMatrix_single (J : Matrix (n × m) (n × m) ℂ) (i j : n) (c : ℂ) :
+    fromChoiMatrix J (Matrix.single i j c) = c • (Matrix.of fun a b => J (i, a) (j, b)) := by
+  unfold fromChoiMatrix
+  simp [Matrix.liftLinear_single]
+
+@[simp]
+theorem fromChoiMatrix_single_one (J : Matrix (n × m) (n × m) ℂ) (i j : n) :
+    fromChoiMatrix J (Matrix.single i j (1 : ℂ)) = Matrix.of fun a b => J (i, a) (j, b) := by
+  rw [fromChoiMatrix_single, one_smul]
+
+theorem fromChoiMatrix_apply_single (J : Matrix (n × m) (n × m) ℂ) (i j : n) (c : ℂ) (a b : m) :
+    fromChoiMatrix J (Matrix.single i j c) a b = c * J (i, a) (j, b) := by
+  rw [fromChoiMatrix_single]
+  simp [Matrix.of_apply, Matrix.smul_apply, smul_eq_mul]
+
+theorem fromChoiMatrix_single_one_apply (J : Matrix (n × m) (n × m) ℂ) (i j : n) (a b : m) :
+    fromChoiMatrix J (Matrix.single i j (1 : ℂ)) a b = J (i, a) (j, b) := by
+  rw [fromChoiMatrix_single_one]
+  rfl
+
+/-- Entry formula for the reconstruction. -/
+theorem fromChoiMatrix_apply (J : Matrix (n × m) (n × m) ℂ) (X : Matrix n n ℂ) (a b : m) :
+    fromChoiMatrix J X a b = ∑ i : n, ∑ j : n, X i j * J (i, a) (j, b) := by
+  classical
+  unfold fromChoiMatrix
+  simp [Matrix.liftLinear_apply, Matrix.sum_apply, Matrix.of_apply, smul_eq_mul]
+
+/-- `J( fromChoi(J) ) = J` : Choi of reconstruction is the original matrix. -/
+theorem choiMatrix_fromChoiMatrix (J : Matrix (n × m) (n × m) ℂ) :
+    choiMatrix (fromChoiMatrix J) = J := by
+  ext ⟨i, a⟩ ⟨j, b⟩
+  simp [choiMatrix, fromChoiMatrix_single_one_apply]
+
+/-- `fromChoi( J(Φ) ) = Φ` : reconstruction of Choi is the original map. -/
+theorem fromChoiMatrix_choiMatrix (Φ : Matrix n n ℂ →ₗ[ℂ] Matrix m m ℂ) :
+    fromChoiMatrix (choiMatrix Φ) = Φ := by
+  classical
+  have h_single_smul : ∀ (i j : n) (c : ℂ),
+      Matrix.single i j c = c • Matrix.single i j (1 : ℂ) := by
+    intro i j c
+    ext p q
+    simp only [Matrix.single_apply, Matrix.smul_apply, smul_eq_mul]
+    by_cases h : i = p ∧ j = q
+    · simp [h]
+    · simp [h]
+  have h_X : ∀ X : Matrix n n ℂ,
+      X = ∑ i : n, ∑ j : n, X i j • Matrix.single i j (1 : ℂ) := by
+    intro X
+    calc
+      X = ∑ i : n, ∑ j : n, Matrix.single i j (X i j) :=
+        Matrix.matrix_eq_sum_single X
+      _ = ∑ i : n, ∑ j : n, X i j • Matrix.single i j (1 : ℂ) := by
+        apply Finset.sum_congr rfl
+        intro i _
+        apply Finset.sum_congr rfl
+        intro j _
+        rw [h_single_smul]
+  ext X a b
+  rw [fromChoiMatrix_apply]
+  have hΦ : Φ X = ∑ i : n, ∑ j : n, X i j • Φ (Matrix.single i j (1 : ℂ)) := by
+    calc
+      Φ X = Φ (∑ i : n, ∑ j : n, X i j • Matrix.single i j (1 : ℂ)) := by rw [← h_X X]
+      _ = ∑ i : n, ∑ j : n, Φ (X i j • Matrix.single i j (1 : ℂ)) := by simp [map_sum]
+      _ = ∑ i : n, ∑ j : n, X i j • Φ (Matrix.single i j (1 : ℂ)) := by simp_rw [map_smul]
+  calc
+    (∑ i : n, ∑ j : n, X i j * choiMatrix Φ (i, a) (j, b))
+        = (∑ i : n, ∑ j : n, X i j * Φ (Matrix.single i j (1 : ℂ)) a b) := by rfl
+    _ = (∑ i : n, ∑ j : n, (X i j • Φ (Matrix.single i j (1 : ℂ)) : Matrix m m ℂ) a b) := by
+          simp [Matrix.smul_apply, smul_eq_mul]
+    _ = ((∑ i : n, ∑ j : n, X i j • Φ (Matrix.single i j (1 : ℂ)) : Matrix m m ℂ) a b) := by
+          simp [Matrix.sum_apply]
+    _ = (Φ X) a b := by rw [hΦ]
+
+/-- `fromChoiMatrix` as a linear map on Choi matrices. -/
+noncomputable def fromChoiMatrixHom :
+    Matrix (n × m) (n × m) ℂ →ₗ[ℂ] (Matrix n n ℂ →ₗ[ℂ] Matrix m m ℂ) where
+  toFun := fromChoiMatrix
+  map_add' := by
+    intro J K
+    apply Matrix.ext_linearMap
+    intro i j
+    apply LinearMap.ext
+    intro c
+    have hJK : (Matrix.of fun a b => (J + K) (i, a) (j, b) : Matrix m m ℂ) =
+        (Matrix.of fun a b => J (i, a) (j, b)) + (Matrix.of fun a b => K (i, a) (j, b)) := by
+      ext a b
+      simp [Matrix.add_apply]
+    calc
+      fromChoiMatrix (J + K) (Matrix.single i j c)
+          = c • (Matrix.of fun a b => (J + K) (i, a) (j, b)) := fromChoiMatrix_single _ i j c
+      _ = c • ((Matrix.of fun a b => J (i, a) (j, b)) +
+          (Matrix.of fun a b => K (i, a) (j, b))) := by rw [hJK]
+      _ = c • (Matrix.of fun a b => J (i, a) (j, b)) +
+          c • (Matrix.of fun a b => K (i, a) (j, b)) := smul_add _ _ _
+      _ = fromChoiMatrix J (Matrix.single i j c) +
+          fromChoiMatrix K (Matrix.single i j c) := by
+            rw [← fromChoiMatrix_single, ← fromChoiMatrix_single]
+      _ = (fromChoiMatrix J + fromChoiMatrix K) (Matrix.single i j c) := by
+            simp [LinearMap.add_apply]
+  map_smul' := by
+    intro r J
+    apply Matrix.ext_linearMap
+    intro i j
+    apply LinearMap.ext
+    intro c
+    have hr : (Matrix.of fun a b => (r • J) (i, a) (j, b) : Matrix m m ℂ) =
+        r • (Matrix.of fun a b => J (i, a) (j, b)) := by
+      ext a b
+      simp [Matrix.smul_apply, smul_eq_mul]
+    calc
+      fromChoiMatrix (r • J) (Matrix.single i j c)
+          = c • (Matrix.of fun a b => (r • J) (i, a) (j, b)) := fromChoiMatrix_single _ i j c
+      _ = c • (r • (Matrix.of fun a b => J (i, a) (j, b))) := by rw [hr]
+      _ = r • (c • (Matrix.of fun a b => J (i, a) (j, b))) := by
+            rw [smul_smul, smul_smul, mul_comm]
+      _ = r • fromChoiMatrix J (Matrix.single i j c) := by rw [← fromChoiMatrix_single]
+      _ = (r • fromChoiMatrix J) (Matrix.single i j c) := by simp [LinearMap.smul_apply]
+
+/-- Linear equivalence between linear maps and Choi matrices. -/
+noncomputable def choiMatrixEquiv :
+    (Matrix n n ℂ →ₗ[ℂ] Matrix m m ℂ) ≃ₗ[ℂ] Matrix (n × m) (n × m) ℂ :=
+  LinearEquiv.ofLinearMap choiMatrixHom fromChoiMatrixHom
+    (by
+      apply LinearMap.ext
+      intro J
+      exact choiMatrix_fromChoiMatrix J)
+    (by
+      apply LinearMap.ext
+      intro Φ
+      exact fromChoiMatrix_choiMatrix Φ)
+
+set_option linter.unusedFintypeInType false in
+theorem choiMatrix_injective :
+    Function.Injective (choiMatrix (n := n) (m := m)) := by
+  intro Φ Ψ h
+  have h1 : fromChoiMatrix (choiMatrix Φ) = fromChoiMatrix (choiMatrix Ψ) := by rw [h]
+  rwa [fromChoiMatrix_choiMatrix, fromChoiMatrix_choiMatrix] at h1
+
+set_option linter.unusedFintypeInType false in
+theorem fromChoiMatrix_injective :
+    Function.Injective (fromChoiMatrix (n := n) (m := m)) := by
+  intro J K h
+  have h1 : choiMatrix (fromChoiMatrix J) = choiMatrix (fromChoiMatrix K) := by rw [h]
+  rwa [choiMatrix_fromChoiMatrix, choiMatrix_fromChoiMatrix] at h1
+
+set_option linter.unusedFintypeInType false in
+theorem choiMatrix_inj {Φ Ψ : Matrix n n ℂ →ₗ[ℂ] Matrix m m ℂ} :
+    choiMatrix Φ = choiMatrix Ψ ↔ Φ = Ψ :=
+  ⟨fun h => choiMatrix_injective h, fun h => by rw [h]⟩
+
+theorem fromChoiMatrix_inj {J K : Matrix (n × m) (n × m) ℂ} :
+    fromChoiMatrix J = fromChoiMatrix K ↔ J = K :=
+  ⟨fun h => fromChoiMatrix_injective h, fun h => by rw [h]⟩
+
+set_option linter.unusedFintypeInType false in
+theorem ext_choiMatrix {Φ Ψ : Matrix n n ℂ →ₗ[ℂ] Matrix m m ℂ}
+    (h : choiMatrix Φ = choiMatrix Ψ) : Φ = Ψ :=
+  choiMatrix_injective h
+
+set_option linter.unusedFintypeInType false in
+theorem choiMatrix_ext_iff {Φ Ψ : Matrix n n ℂ →ₗ[ℂ] Matrix m m ℂ} :
+    Φ = Ψ ↔ choiMatrix Φ = choiMatrix Ψ :=
+  ⟨fun h => by rw [h], fun h => ext_choiMatrix h⟩
+
+end LinearMap
+
+namespace CompletelyPositiveMap
+
+variable {n m : Type*} [Fintype n] [DecidableEq n] [Fintype m] [DecidableEq m]
+
+/-- Choi matrix of a completely positive map `φ : Matrix n n ℂ →CP Matrix m m ℂ`.
+
+Thin specialization of `LinearMap.choiMatrix` to the bundled CP type. The
+`((i,a),(j,b))` entry is `φ (Matrix.single i j 1) a b`. -/
+noncomputable def choiMatrix (φ : Matrix n n ℂ →CP Matrix m m ℂ) :
+    Matrix (n × m) (n × m) ℂ :=
+  LinearMap.choiMatrix φ.toLinearMap
+
+@[simp]
+theorem choiMatrix_apply (φ : Matrix n n ℂ →CP Matrix m m ℂ)
+    (i j : n) (a b : m) :
+    choiMatrix φ (i, a) (j, b) = φ (Matrix.single i j (1 : ℂ)) a b :=
+  rfl
+
+theorem choiMatrix_toLinearMap (φ : Matrix n n ℂ →CP Matrix m m ℂ) :
+    choiMatrix φ = LinearMap.choiMatrix φ.toLinearMap :=
+  rfl
+
+end CompletelyPositiveMap

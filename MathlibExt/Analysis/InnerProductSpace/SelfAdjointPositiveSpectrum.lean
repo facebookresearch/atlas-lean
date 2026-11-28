@@ -75,9 +75,10 @@ private theorem rayleighQuotient_algebraMap_ofReal (t : ℝ) (x : H) (hx : x ≠
   rw [ContinuousLinearMap.rayleighQuotient, h1]
   field_simp [norm_ne_zero_iff.mpr hx]
 
-/-- **Spectrum of a positive operator is nonnegative.** If
-`Re ⟪Tu, u⟫ ≥ 0` for every `u`, then every spectral value of `T` has
-nonnegative real part. -/
+/-- **Spectrum of an accretive operator has nonnegative real part.** Let $T$ be a bounded linear
+operator on a Hilbert space $H$ over $\mathbb{R}$ or $\mathbb{C}$. If
+$\operatorname{Re}\langle Tu, u\rangle \ge 0$ for every $u \in H$, then every element $\mu$ of
+the spectrum of $T$ satisfies $\operatorname{Re}\mu \ge 0$. -/
 theorem spectrum_re_nonneg_of_reApplyInnerSelf_nonneg {T : H →L[𝕜] H}
     (hpos : ∀ u : H, 0 ≤ T.reApplyInnerSelf u) :
     ∀ μ ∈ spectrum 𝕜 T, 0 ≤ RCLike.re μ := by
@@ -108,10 +109,10 @@ theorem spectrum_re_nonneg_of_reApplyInnerSelf_nonneg {T : H →L[𝕜] H}
       linarith [h1, hposx]
   exact (spectrum.mem_iff.mp hμ) hunit
 
-/-- **Positivity iff spectrum nonnegative.** Let `T` be a self-adjoint
-bounded linear operator on a Hilbert space. Then `⟨Tu, u⟩ ≥ 0` for all
-`u` if and only if every spectral value of `T` has nonnegative real
-part. -/
+/-- **Positivity iff spectrum nonnegative.** Let $T$ be a self-adjoint bounded linear operator on a
+nonzero Hilbert space $H$ over $\mathbb{R}$ or $\mathbb{C}$. Then
+$\operatorname{Re}\langle Tu, u\rangle \ge 0$ for every $u \in H$ if and only if every element
+$\mu$ of the spectrum of $T$ satisfies $\operatorname{Re}\mu \ge 0$. -/
 theorem positive_iff_spectrum_nonneg [Nontrivial H] (T : H →L[𝕜] H) (hT : IsSelfAdjoint T) :
     (∀ u : H, 0 ≤ T.reApplyInnerSelf u) ↔
     (∀ μ ∈ spectrum 𝕜 T, 0 ≤ RCLike.re μ) := by

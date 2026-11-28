@@ -24,11 +24,11 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Karp.Color
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Combinatorics.SimpleGraph.Finite
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MaxCutWanted
+public import CSLibExt.Complexity.NPComplete.MaxCutDefs
 
 @[expose] public section
 
@@ -44,7 +44,7 @@ QUESTION: is there a partition of `V` into two sets with at least `K` edges betw
 
 This is SIMPLE MAX CUT (MAX CUT with all edge weights one) restricted to cubic graphs. The
 instance, the simple-edge-list conditions and the question are those of MAXIMUM CUT
-(`MaxCutWanted`, whose question counts edges), reused as in `SimpleMaxCutDegreeThreeWanted`,
+(`MaxCutDefs`, whose question counts edges), reused as in `SimpleMaxCutDegreeThreeWanted`,
 which bounds degrees by `3`; here `Cslib.Complexity.Karp.edgeGraph` is cubic, Mathlib's
 `IsRegularOfDegree 3` (every vertex has degree exactly `3`), and `0 < K`. Every vertex lies on
 three edges, so `3 |V| = 2 |E|` and the binary vertex count does not make the problem succinct.

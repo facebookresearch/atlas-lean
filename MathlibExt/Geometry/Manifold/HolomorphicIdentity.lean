@@ -162,9 +162,11 @@ private theorem holomorphic_identity_aux_complete
   obtain ⟨o, -, hxo, hfg⟩ := hxS
   exact hfg hxo
 
-/-- Identity theorem for holomorphic maps: two `MDiff` maps from a connected complex manifold
-without boundary to a complex normed space that agree on a nonempty open set are equal.
-`holomorphic_identity_on_connected_complex_manifold` is the source-shaped form. -/
+/-- **Holomorphic maps on a connected manifold that agree on a nonempty open set are equal.**
+Let $M$ be a connected complex manifold without boundary, modeled on a complex normed space with
+complex $C^1$ (that is, holomorphic) transition maps, and let $F$ be a complex normed space. If
+two holomorphic (everywhere complex differentiable) maps $f, g : M \to F$ agree on a nonempty
+open subset $U \subseteq M$, then $f = g$. -/
 theorem eq_of_eqOn_of_isOpen
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
     {F : Type*} [NormedAddCommGroup F] [NormedSpace ℂ F]
@@ -194,8 +196,13 @@ end MDifferentiable
 namespace MathlibExt.Geometry.Manifold.ComplexRigidityWanted
 
 /--
-If `M` is connected and `f, g : M → F` are `MDiff` and agree on a nonempty open `U ⊂ M`, then `f =
-g`. Source: O. Forster, Lectures on Riemann Surfaces, identity theorem for holomorphic maps; Lean
+**Identity theorem for holomorphic maps.** Let $M$ be a connected complex manifold without
+boundary, modeled on a complex normed space with complex $C^1$ (that is, holomorphic) transition
+maps, and let $F$ be a complex normed space. If two holomorphic (everywhere complex
+differentiable) maps $f, g : M \to F$ agree on a nonempty open subset $U \subseteq M$, then
+$f = g$.
+
+Source: O. Forster, Lectures on Riemann Surfaces, identity theorem for holomorphic maps; Lean
 states connected-complex-manifold vector-valued form.
 It is `MDifferentiable.eq_of_eqOn_of_isOpen`, kept under the source's name.
 Proves `Wanted` entry `holomorphic_identity_on_connected_complex_manifold`.

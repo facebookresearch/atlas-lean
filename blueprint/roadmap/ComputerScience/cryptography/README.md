@@ -8,7 +8,20 @@ Cryptographic schemes and their correctness and security reductions: the game-ba
 - [Public-key cryptography](public-key/README.md)
 - [Signatures, identification and zero knowledge](signatures-and-protocols/README.md)
 - [Differential privacy](differential-privacy/README.md)
+- [Approximate differential privacy](approximate-differential-privacy/README.md)
+- [Approximate max-divergence decomposition on finite spaces](approximate-max-divergence-decomposition-on-fini/README.md)
+- [Differential privacy composition](differential-privacy-composition/README.md)
+- [Differential privacy from density bounds](differential-privacy-from-density-bounds/README.md)
+- [Discrete privacy mechanisms](discrete-privacy-mechanisms/README.md)
+- [Hypothesis-testing characterization of differential privacy](hypothesis-testing-characterization-of-different/README.md)
+- [k-fold adaptive composition and group privacy](k-fold-adaptive-composition-and-group-privacy/README.md)
+- [Lower Bounds and Reconstruction Attacks for Differential Privacy](differential-privacy-lower-bounds/README.md)
+- [Measure differential privacy](measure-differential-privacy/README.md)
+- [Privacy-loss random variable and KL bound](privacy-loss-random-variable-and-kl-bound/README.md)
+- [Renyi differential privacy](renyi-differential-privacy/README.md)
 - [Laplace and exponential mechanisms](laplace-and-exponential-mechanisms/README.md)
+- [Matrix mechanisms](matrix-mechanisms/README.md)
+- [Unclonable Quantum Cryptography](unclonable-quantum-cryptography/README.md)
 
 ## Related topics
 
@@ -20,3 +33,6 @@ Cryptographic schemes and their correctness and security reductions: the game-ba
   families in P/poly rule out natural proofs of lower bounds against P/poly.
 - [Graph isomorphism and Arthur–Merlin proofs](../../TheoryOfComputation/randomized-and-quantum-complexity/graph-isomorphism-and-arthur-merlin-proofs/README.md):
   the complexity of the problem behind the graph-isomorphism zero-knowledge proof.
+
+- [Entropy and randomness extraction](randomness-extraction/README.md)
+- [Program obfuscation](program-obfuscation/README.md)

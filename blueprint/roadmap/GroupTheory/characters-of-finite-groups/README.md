@@ -17,3 +17,5 @@ Complex characters and representations used to study finite groups: class functi
 - [Rational groups](rational-groups/README.md)
 - [Simply reducible groups](simply-reducible-groups/README.md)
 - [Four isotypic components in a tensor square for a simple group of order 10200960](m23-irrep-tensor-square-decomp.md)
+- [Green's parametrization of the cuspidal characters of $\mathrm{GL}_n(\mathbb{F}_q)$](green-cuspidal-characters-of-gl-n.md)
+- [Induction from cyclic subgroups in Grothendieck groups of modular representations](induction-from-cyclic-subgroups.md)

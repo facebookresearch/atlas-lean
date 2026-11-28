@@ -154,7 +154,7 @@ theorem abs_sum_divisors_div_sub_le {u : ℝ} (hu : 1 ≤ u) :
   -- `d(n)/n = (1/n * 1/n)(n)`
   have hdd : ∀ n : ℕ, (n.divisors.card : ℝ) / n = (recip * recip) n := by
     intro n
-    rw [mul_apply, Nat.sum_divisorsAntidiagonal (fun i j => recip i * recip j)]
+    rw [ArithmeticFunction.mul_apply, Nat.sum_divisorsAntidiagonal (fun i j => recip i * recip j)]
     rcases Nat.eq_zero_or_pos n with rfl | hn
     · simp
     have : ∀ i ∈ n.divisors, recip i * recip (n / i) = ((n : ℝ))⁻¹ := by

@@ -37,20 +37,28 @@ Atlas roadmap target EC07.T01.
 
 namespace MathlibExt.Economics.Producer
 
-/-- Cobb–Douglas production function `A ∏ᵢ xᵢ ^ aᵢ` (real powers). -/
+/-- Cobb–Douglas production function `A ∏ᵢ xᵢ ^ aᵢ` (real powers). It is defined for all real
+arguments, with the conventions `0 ^ 0 = 1`, `0 ^ t = 0` for `t ≠ 0` and
+`s ^ t = |s| ^ t * cos (π t)` for `s < 0`; the intended domain is `A > 0`, `aᵢ > 0` and `xᵢ ≥ 0`. -/
 noncomputable def cobbDouglas {ι : Type*} [Fintype ι] (A : ℝ) (a x : ι → ℝ) : ℝ :=
   A * ∏ i, x i ^ a i
 
-/-- The stated Cobb–Douglas cost formula `(q / A) ∏ᵢ (wᵢ / aᵢ) ^ aᵢ`. -/
+/-- The stated Cobb–Douglas cost formula `(q / A) ∏ᵢ (wᵢ / aᵢ) ^ aᵢ`. It is defined for all real
+arguments, with the conventions `x / 0 = 0` (so it is `0` when `A = 0`), `0^0 = 1`, `0^y = 0` for
+`y ≠ 0` and `x^y = |x|^y cos(π y)` for `x < 0`; the intended domain is `A > 0`, `aᵢ > 0` and
+`wᵢ > 0`. -/
 noncomputable def cobbDouglasCost {ι : Type*} [Fintype ι] (A : ℝ) (a w : ι → ℝ) (q : ℝ) : ℝ :=
   q / A * ∏ i, (w i / a i) ^ a i
 
-/-- Conditional factor demand `xᵢ* = (aᵢ / wᵢ) · c(w, q)`. -/
+/-- Conditional factor demand `xᵢ* = (aᵢ / wᵢ) · c(w, q)`. It is defined for all real arguments:
+by the convention `x / 0 = 0`, `xᵢ* = 0` when `wᵢ = 0` or `A = 0`; the intended domain is `A > 0`,
+`aᵢ > 0` and `wᵢ > 0`. -/
 noncomputable def cobbDouglasDemand {ι : Type*} [Fintype ι] (A : ℝ) (a w : ι → ℝ) (q : ℝ) :
     ι → ℝ :=
   fun i => a i / w i * cobbDouglasCost A a w q
 
-/-- Every nonnegative input bundle producing at least `q` costs at least the stated formula. -/
+/-- With `A > 0`, positive exponents summing to `1` and positive input prices, every nonnegative
+input bundle producing at least `q` costs at least the stated formula. -/
 theorem cobbDouglasCost_le_dotProduct {ι : Type*} [Fintype ι] {A q : ℝ} {a w x : ι → ℝ}
     (hA : 0 < A) (ha : ∀ i, 0 < a i) (hsum : ∑ i, a i = 1) (hw : ∀ i, 0 < w i)
     (hx : ∀ i, 0 ≤ x i) (hout : q ≤ cobbDouglas A a x) :
@@ -91,7 +99,8 @@ theorem cobbDouglasCost_le_dotProduct {ι : Type*} [Fintype ι] {A q : ℝ} {a w
     _ = ∑ i, w i * x i := hsum_eq
     _ = w ⬝ᵥ x := hdot.symm
 
-/-- The conditional factor demands are nonnegative. -/
+/-- With `A > 0`, positive exponents, positive input prices and `q ≥ 0`, the conditional factor
+demands are nonnegative. -/
 theorem cobbDouglasDemand_nonneg {ι : Type*} [Fintype ι] {A q : ℝ} {a w : ι → ℝ}
     (hA : 0 < A) (ha : ∀ i, 0 < a i) (hw : ∀ i, 0 < w i) (hq : 0 ≤ q) (i : ι) :
     0 ≤ cobbDouglasDemand A a w q i := by
@@ -101,7 +110,8 @@ theorem cobbDouglasDemand_nonneg {ι : Type*} [Fintype ι] {A q : ℝ} {a w : ι
   refine mul_nonneg (div_nonneg hq (le_of_lt hA)) ?_
   exact Finset.prod_nonneg (fun j _ => Real.rpow_nonneg (le_of_lt (div_pos (hw j) (ha j))) _)
 
-/-- The conditional factor demands produce exactly the target output. -/
+/-- With `A > 0`, positive exponents summing to `1`, positive input prices and `q ≥ 0`, the
+conditional factor demands produce exactly the target output. -/
 theorem cobbDouglas_cobbDouglasDemand {ι : Type*} [Fintype ι] {A q : ℝ} {a w : ι → ℝ}
     (hA : 0 < A) (ha : ∀ i, 0 < a i) (hsum : ∑ i, a i = 1) (hw : ∀ i, 0 < w i)
     (hq : 0 ≤ q) :
@@ -146,7 +156,8 @@ theorem cobbDouglas_cobbDouglasDemand {ι : Type*} [Fintype ι] {A q : ℝ} {a w
     _ = 1 * (A * (q / A)) := by rw [hQP]
     _ = q := by field_simp
 
-/-- The conditional factor demands cost exactly the stated formula. -/
+/-- With exponents summing to `1` and positive input prices, the conditional factor demands cost
+exactly the stated formula. -/
 theorem dotProduct_cobbDouglasDemand {ι : Type*} [Fintype ι] {A q : ℝ} {a w : ι → ℝ}
     (hsum : ∑ i, a i = 1) (hw : ∀ i, 0 < w i) :
     w ⬝ᵥ cobbDouglasDemand A a w q = cobbDouglasCost A a w q := by
@@ -163,8 +174,9 @@ theorem dotProduct_cobbDouglasDemand {ι : Type*} [Fintype ι] {A q : ℝ} {a w 
   rw [hdot]
   simp only [e, ← Finset.sum_mul, hsum, one_mul]
 
-/-- **Cobb–Douglas cost formula.** The stated formula is the least cost of producing at least
-`q` with nonnegative inputs. -/
+/-- **Cobb–Douglas cost formula.** With `A > 0`, positive exponents summing to `1`, positive input
+prices and `q ≥ 0`, the stated formula is the least cost of producing at least `q` with nonnegative
+inputs. -/
 theorem isLeast_cobbDouglasCost {ι : Type*} [Fintype ι] {A q : ℝ} {a w : ι → ℝ}
     (hA : 0 < A) (ha : ∀ i, 0 < a i) (hsum : ∑ i, a i = 1) (hw : ∀ i, 0 < w i)
     (hq : 0 ≤ q) :

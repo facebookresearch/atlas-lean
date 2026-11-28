@@ -41,6 +41,8 @@ public import Mathlib.NumberTheory.Bernoulli
 public import Mathlib.NumberTheory.Padics.PadicNorm
 public import Mathlib.Algebra.Polynomial.Eval.Defs
 public import MathlibExt.NumberTheory.FermatQuotient
+public import MathlibExt.NumberTheory.WilsonFermatQuotient
+public import MathlibExt.NumberTheory.WilsonFaulhaberHenselDigit
 
 set_option autoImplicit false
 
@@ -57,40 +59,6 @@ private theorem coprime_of_mem {p k : ℕ} (hp : p.Prime)
   exact Nat.isCoprime_iff_coprime.mpr
     ((hp.coprime_iff_not_dvd.mpr
       (Nat.not_dvd_of_pos_of_lt h.1 hlt)).symm)
-
-/-- **Theorem 1**: let `δ₀(k)` be defined for
-`1 ≤ k ≤ p - 1` by
-`k^(p-1) ≡ 1 + p δ₀(k) (mod p^2)`. Then
-`(p - 1)! ≡ -1 + p ∑_{k=1}^{p-1} δ₀(k) (mod p^2)`.
-Here `δ₀(k)` is `Int.fermatQuotient` (the sum runs
-over the attached subtype so that each term carries
-its coprimality witness).
-
-Source: Claire Levaillant, "Wilson's Theorem Modulo
-`p^2` Derived from Faulhaber Polynomials", Theorem 1. -/
-theorem_wanted wilson_mod_prime_sq (p : ℕ) (hp : p.Prime)
-    (hp2 : p ≠ 2) :
-    (Nat.factorial (p - 1) : ZMod (p ^ 2)) =
-      -1 + (p : ZMod (p ^ 2)) *
-        ∑ k ∈ (Finset.Icc 1 (p - 1)).attach,
-          ((Int.fermatQuotient p hp (k.1 : ℤ)
-            (coprime_of_mem hp k.2) : ℤ) : ZMod (p ^ 2))
-
-/-- **Lemma 1**: for `1 ≤ k ≤ p - 1` let `k + p t` (with `t ∈ ℤ`) satisfy
-`(k + p t)^(p-1) + (p - 1)! ≡ 0 (mod p^2)`, i.e. `t` reduces to the second
-`p`-adic digit `t_k^{(0)}` of the Hensel root `x_k ≡ k (mod p)` of
-`X^(p-1) + (p - 1)!`. Then `p t ≡ k (1 + (p - 1)! + p δ₀(k)) (mod p^2)`, with
-`δ₀(k)` the Fermat quotient (`Int.fermatQuotient`).
-
-Source: Claire Levaillant, *Wilson's Theorem Modulo p^2 Derived from Faulhaber
-Polynomials*, INTEGERS 24 (2024), Article A87, Lemma 1. -/
-theorem_wanted hensel_digit_mul_prime_mod_sq (p : ℕ) (hp : p.Prime) (k : ℕ)
-    (hk : k ∈ Finset.Icc 1 (p - 1)) (t : ℤ)
-    (ht : (p : ℤ) ^ 2 ∣ ((k : ℤ) + p * t) ^ (p - 1) + (Nat.factorial (p - 1) : ℤ)) :
-    (((p : ℤ) * t : ℤ) : ZMod (p ^ 2)) =
-      (k : ZMod (p ^ 2)) * (1 + (Nat.factorial (p - 1) : ZMod (p ^ 2)) +
-        (p : ZMod (p ^ 2)) *
-          ((Int.fermatQuotient p hp (k : ℤ) (coprime_of_mem hp hk) : ℤ) : ZMod (p ^ 2)))
 
 /-- **Theorem 2**: let `p = 2l + 1` be an odd prime and `a = p(p - 1)/2`. The
 Faulhaber polynomial `F ∈ ℚ[a]` with `∑_{k=1}^{n} k^p = F(n(n+1)/2)` for all `n`

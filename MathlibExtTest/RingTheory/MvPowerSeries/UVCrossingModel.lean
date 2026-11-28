@@ -22,7 +22,7 @@ public import MathlibExt.RingTheory.MvPowerSeries.UVCrossingModel
 @[expose] public section
 
 open ModularCurve ModularCurve.UVCrossingModel in
-theorem exactSource {W : Type*} [CommRing W] (π : W)
+private theorem exactSource {W : Type*} [CommRing W] (π : W)
     [Nontrivial (W ⧸ Ideal.span {π})] : U π ≠ V π :=
   ModularCurve.UVCrossingModel.U_ne_V π
 

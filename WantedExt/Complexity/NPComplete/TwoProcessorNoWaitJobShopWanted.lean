@@ -20,10 +20,10 @@ Operations Research 4 (1979), 448-457, doi:10.1287/moor.4.4.448.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.JobShopSchedulingWanted
+public import CSLibExt.Complexity.NPComplete.JobShopSchedulingDefs
 
 @[expose] public section
 
@@ -39,7 +39,7 @@ and a deadline `D ∈ ℤ⁺`.
 QUESTION: is there a job-shop schedule for `J` that meets the overall deadline and has no wait
 in process, i.e. `σ(t_{k+1}[j]) = σ(t_k[j]) + l(t_k[j])` for all `j ∈ J` and `1 ≤ k < n_j`?
 
-This is the "no-wait" version of JOB-SHOP SCHEDULING ([SS18], `JobShopSchedulingWanted`) with
+This is the "no-wait" version of JOB-SHOP SCHEDULING ([SS18], `JobShopSchedulingDefs`) with
 `m = 2`, which Garey and Johnson record in the comment to [SS16]: the no-wait condition of
 [SS16], `σᵢ₊₁(j) = σᵢ(j) + l(tᵢ[j])`, applied to consecutive tasks of a job. In the
 Brucker-Knust notation it is `J2|no-wait|C_max` (the deadline `D` bounds the makespan). The

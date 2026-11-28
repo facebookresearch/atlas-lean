@@ -100,7 +100,7 @@ namespace ArithmeticFunction
 theorem mul_apply_prime_pow {R : Type*} [Semiring R] (f g : ArithmeticFunction R) {p : ℕ}
     (hp : p.Prime) (a : ℕ) :
     (f * g) (p ^ a) = ∑ i ∈ Finset.range (a + 1), f (p ^ i) * g (p ^ (a - i)) := by
-  rw [mul_apply, Nat.sum_divisorsAntidiagonal (fun i j ↦ f i * g j),
+  rw [ArithmeticFunction.mul_apply, Nat.sum_divisorsAntidiagonal (fun i j ↦ f i * g j),
     Nat.sum_divisors_prime_pow hp]
   refine Finset.sum_congr rfl fun i hi ↦ ?_
   rw [Finset.mem_range] at hi

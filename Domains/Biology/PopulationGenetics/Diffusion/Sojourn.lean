@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Domains.Biology.PopulationGenetics.Diffusion.WrightFisher
+public import MathlibExt.Analysis.ODE.GreenKernel
 import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 
@@ -33,6 +34,8 @@ no diffusion processes. The statements here are the analytic Green's-function fa
 ## Main results
 
 * `neutralGreen`: the neutral Green's function `G(p, x)`.
+* `neutralGreen_eq_greenKernel`: `G` is the two-solution `GreenKernel.kernel`
+  built from `1 / (1 - x)` and `1 / x` with normalization `2 (1 - p)`.
 * `generator_integral_neutralGreen`: `u(p) = ∫ G(p, x) g(x) dx` solves `L_0 u = -g` on `(0, 1)`.
 * `integral_neutralGreen_left`, `integral_neutralGreen_right`: `u(0) = u(1) = 0`.
 * `integral_neutralGreen`: `∫ x in 0..1, G(p, x) = meanAbsorptionTime p` on `[0, 1]`.
@@ -57,6 +60,27 @@ generations (Ewens 2004, Chapter 4): `G(p, x) = 2 (1 - p) / (1 - x)` for `x ≤ 
 at frequencies in `(x, x + dx)` before loss or fixation. -/
 noncomputable def neutralGreen (p x : ℝ) : ℝ :=
   if x ≤ p then 2 * (1 - p) / (1 - x) else 2 * p / x
+
+/-- The neutral Green function is the two-solution `GreenKernel.kernel` built
+from the left solution `1 / (1 - x)`, the right solution `1 / x`, and the
+normalization `C p = 2 (1 - p)`, on `(0, 1)`. -/
+theorem neutralGreen_eq_greenKernel {p x : ℝ} (hp : p ∈ Ioo (0 : ℝ) 1)
+    (hx : x ∈ Ioo (0 : ℝ) 1) :
+    neutralGreen p x =
+      GreenKernel.kernel (fun x => 1 / (1 - x)) (fun x => 1 / x)
+        (fun p => 2 * (1 - p)) x p := by
+  by_cases h : x ≤ p
+  · have h1x : (1 : ℝ) - x ≠ 0 := (sub_pos.mpr hx.2).ne'
+    rw [GreenKernel.kernel_of_le h]
+    simp only [neutralGreen, ite_eq_left h]
+    field_simp
+  · have hlt : p < x := not_le.mp h
+    have hp0 : p ≠ 0 := hp.1.ne'
+    have h1p : (1 : ℝ) - p ≠ 0 := (sub_pos.mpr hp.2).ne'
+    have hx0 : x ≠ 0 := hx.1.ne'
+    rw [GreenKernel.kernel_of_lt hlt]
+    simp only [neutralGreen, ite_eq_right h]
+    field_simp
 
 /-- Splitting the Green integral at `q ∈ (0, 1)`:
 `∫₀¹ G(q, x) g(x) dx = 2 (1 - q) ∫₀^q g(x) / (1 - x) dx + 2 q ∫_q^1 g(x) / x dx`. -/

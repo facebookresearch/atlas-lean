@@ -46,3 +46,4 @@
 - [Empty predecessor query in a van Emde Boas tree](predecessor-eq-none-iff.md)
 - [Characterization of the van Emde Boas predecessor](predecessor-eq-some-iff-of-valid.md)
 - [Predecessor queries in the empty van Emde Boas tree](predecessor-empty.md)
+- [Predecessor in doubly logarithmic time](predecessor-in-doubly-logarithmic-time.md)

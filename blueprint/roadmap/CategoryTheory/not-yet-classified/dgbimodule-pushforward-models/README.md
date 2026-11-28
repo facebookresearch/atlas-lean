@@ -1,0 +1,17 @@
+# DGBimodule Pushforward Models
+
+- [Module Dual Value](module-dual-value.md)
+- [Module Dual Action](module-dual-action.md)
+- [Module Left Dual Model](module-left-dual-model.md)
+- [To Module Left Dual](to-module-left-dual.md)
+- [Enveloping Map](enveloping-map.md)
+- [Restriction Value Iso](restriction-value-iso.md)
+- [Mapped Path](mapped-path.md)
+- [Bar Restriction Map Model](bar-restriction-map-model.md)
+- [Bar Counit Model](bar-counit-model.md)
+- [Representable Restriction Map Model](representable-restriction-map-model.md)
+- [Dual Base Change Model](dual-base-change-model.md)
+- [Pushed Diagonal](pushed-diagonal.md)
+- [Dual Counit Model](dual-counit-model.md)
+- [Phi Middle](phi-middle.md)
+- [Phi Transfer](phi-transfer.md)

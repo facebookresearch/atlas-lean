@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import MathlibExt.Analysis.SpecialFunctions.QPochhammer
+public import MathlibExt.NumberTheory.RamanujanKFunction
 public import MathlibExt.NumberTheory.ModularForms.JacobiTheta.Ramanujan
 
 namespace MetaMathlibExt
@@ -25,28 +25,14 @@ open MetaMathlibExt.QPochhammer
 * `ψ(q) = f(q, q³) = ∑_{n ≥ 0} q^{n(n+1)/2}` is `ramanujanThetaRaw q (q ^ 3)`.
 All raw sums and products converge on the disk, where they equal the canonical values. -/
 
-/-- Ramanujan's function `k(q) = r(q) r²(q²)`, through its product representation
-`k(q) = q (q, q², q⁸, q⁹; q¹⁰)_∞ / (q³, q⁴, q⁶, q⁷; q¹⁰)_∞`.
-
-Source: Russelle Guadalupe, *New Proofs of Certain Theta Function Identities via Ramanujan's
-Function*, INTEGERS 26 (2026), Article A41, Section 1 (product representation of `k(q)`). -/
-noncomputable def ramanujanK (q : ℂ) : ℂ :=
-  q * (qPochhammerInfRaw q (q ^ 10) * qPochhammerInfRaw (q ^ 2) (q ^ 10) *
-        qPochhammerInfRaw (q ^ 8) (q ^ 10) * qPochhammerInfRaw (q ^ 9) (q ^ 10)) /
-    (qPochhammerInfRaw (q ^ 3) (q ^ 10) * qPochhammerInfRaw (q ^ 4) (q ^ 10) *
-        qPochhammerInfRaw (q ^ 6) (q ^ 10) * qPochhammerInfRaw (q ^ 7) (q ^ 10))
-
-/-- `k(0) = 0`.
-
-Source: Russelle Guadalupe, *New Proofs of Certain Theta Function Identities via Ramanujan's
-Function*, INTEGERS 26 (2026), Article A41, Section 1 (product representation of `k(q)`). -/
-theorem ramanujanK_zero : ramanujanK 0 = 0 := by
-  simp [ramanujanK]
-
-/-- Three eta-quotient expressions for `k(q)`: for `0 < ‖q‖ < 1`, with `k = k(q)`,
-`f(-q²) f⁵(-q⁵) / (q f(-q) f⁵(-q¹⁰)) = 1/k - k`,
-`f⁴(-q²) f²(-q⁵) / (q f²(-q) f⁴(-q¹⁰)) = 1/k + 1 - k`, and
-`f³(-q) f(-q⁵) / (q f(-q²) f³(-q¹⁰)) = 1/k - 4 - k`.
+/-- **Eta-quotient expressions for Ramanujan's function $k$.** Let $q$ be a complex number with
+$0 < |q| < 1$, write $f_m = (q^m;q^m)_\infty = \prod_{n \ge 1} (1 - q^{mn})$ for $m \ge 1$, and let
+$k = k(q)$ be the value of Ramanujan's function. Then
+$$
+\frac{f_2 f_5^5}{q f_1 f_{10}^5} = \frac{1}{k} - k, \qquad
+\frac{f_2^4 f_5^2}{q f_1^2 f_{10}^4} = \frac{1}{k} + 1 - k, \qquad
+\frac{f_1^3 f_5}{q f_2 f_{10}^3} = \frac{1}{k} - 4 - k.
+$$
 
 Source: Russelle Guadalupe, *New Proofs of Certain Theta Function Identities via Ramanujan's
 Function*, INTEGERS 26 (2026), Article A41, Lemma 2, Equations (5)-(7)
@@ -62,8 +48,13 @@ public theorem_wanted ramanujanK_eta_quotients (q : ℂ) (hq : ‖q‖ < 1) (hq0
         (q * qPochhammerInfRaw (q ^ 2) (q ^ 2) * qPochhammerInfRaw (q ^ 10) (q ^ 10) ^ 3) =
       1 / ramanujanK q - 4 - ramanujanK q
 
-/-- For `0 < ‖q‖ < 1`: `k(q)/k(q²) - k(q²)/k(q) = f(-q) f³(-q⁵) / (q f⁴(-q¹⁰))`. The
-hypothesis `q ≠ 0` excludes the point where the divisions by `q` and `k(q)` are undefined.
+/-- **Ramanujan's function $k$ at $q$ and $q^2$ as an eta quotient.** For every complex number
+$q$ with $0 < |q| < 1$, Ramanujan's function $k$ satisfies
+$$
+\frac{k(q)}{k(q^2)} - \frac{k(q^2)}{k(q)} =
+\frac{(q;q)_\infty (q^5;q^5)_\infty^3}{q\,(q^{10};q^{10})_\infty^4},
+$$
+where $(a;x)_\infty = \prod_{n \ge 0} (1 - a x^n)$ is the infinite q-Pochhammer product.
 
 Source: Russelle Guadalupe, *New Proofs of Certain Theta Function Identities via Ramanujan's
 Function*, INTEGERS 26 (2026), Article A41, Lemma 3 (`integers-2026-A41-lem-3`). -/
@@ -72,18 +63,19 @@ public theorem_wanted ramanujanK_div_sub_div_sq (q : ℂ) (hq : ‖q‖ < 1) (hq
       qPochhammerInfRaw q q * qPochhammerInfRaw (q ^ 5) (q ^ 5) ^ 3 /
         (q * qPochhammerInfRaw (q ^ 10) (q ^ 10) ^ 4)
 
-/-- Polynomial relation between `X = k(q)` and `Y = k(q²)` on the unit disk:
-`X² - Y + 2XY + X²Y + Y² = 0`.
-
-Source: Russelle Guadalupe, *New Proofs of Certain Theta Function Identities via Ramanujan's
-Function*, INTEGERS 26 (2026), Article A41, Theorem 4 (`integers-2026-A41-thm-4`). -/
-public theorem_wanted ramanujanK_sq_relation (q : ℂ) (hq : ‖q‖ < 1) :
-    ramanujanK q ^ 2 - ramanujanK (q ^ 2) + 2 * ramanujanK q * ramanujanK (q ^ 2) +
-        ramanujanK q ^ 2 * ramanujanK (q ^ 2) + ramanujanK (q ^ 2) ^ 2 = 0
-
-/-- Ramanujan's level-10 theta identities: on the unit disk,
-`φ⁵(q)/φ(q⁵) + φ⁵(-q²)/φ(-q¹⁰) + 2 f⁵(q)/f(q⁵) = 4 ψ⁵(q)/ψ(q⁵)` and
-`φ²(q)φ²(q⁵) - φ²(-q)φ²(-q⁵) - 16 q³ ψ²(q²)ψ²(q¹⁰) = 8 q f²(-q²) f²(-q¹⁰)`.
+/-- **Ramanujan's level-10 theta function identities.** For complex $x$ with $|x| < 1$, let
+$\varphi(x) = \sum_{n \in \mathbb{Z}} x^{n^2}$, $\psi(x) = \sum_{n \ge 0} x^{n(n+1)/2}$ and
+$f(-x) = \prod_{n \ge 1} (1 - x^n)$, so that $f(x) = \prod_{n \ge 1} (1 - (-x)^n)$. Then for
+every complex number $q$ with $|q| < 1$,
+$$
+\frac{\varphi(q)^5}{\varphi(q^5)} + \frac{\varphi(-q^2)^5}{\varphi(-q^{10})} +
+2\,\frac{f(q)^5}{f(q^5)} = 4\,\frac{\psi(q)^5}{\psi(q^5)}
+$$
+and
+$$
+\varphi(q)^2 \varphi(q^5)^2 - \varphi(-q)^2 \varphi(-q^5)^2 - 16 q^3 \psi(q^2)^2 \psi(q^{10})^2 =
+8 q\, f(-q^2)^2 f(-q^{10})^2.
+$$
 
 Source: Russelle Guadalupe, *New Proofs of Certain Theta Function Identities via Ramanujan's
 Function*, INTEGERS 26 (2026), Article A41, Theorem 1, Equations (3) and (4)

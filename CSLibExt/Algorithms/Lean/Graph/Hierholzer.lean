@@ -70,17 +70,29 @@ universe u
 
 variable {V : Type u} [DecidableEq V]
 
-/-- The edge occurrences of a remaining adjacency `R`, in vertex order: one pair per entry. -/
+/-- **Edge list of an adjacency function.** Given a directed adjacency graph $G$ and a function
+$R$ assigning to each vertex $u$ a list $R(u)$ of vertices, the edge list of $R$ is the list of
+pairs $(u, w)$, one for each entry $w$ of $R(u)$, taken over the vertices $u$ in the order of the
+vertex enumeration of $G$ and, for each $u$, in the order of $R(u)$. A repeated entry gives a
+repeated pair. -/
 def edgeListOf (graph : DirectedAdjacency V) (R : V → List V) : List (V × V) :=
   graph.vertices.flatMap fun u => (R u).map (u, ·)
 
-/-- The edge occurrences of the graph. -/
+/-- **Edge list of a directed graph.** The edge list of a directed adjacency graph $G$ is the list
+of pairs $(u, w)$, one for each entry $w$ of the adjacency list of $u$, taken over the vertices
+$u$ in the order of the vertex enumeration of $G$ and, for each $u$, in adjacency-list order. A
+repeated adjacency entry gives a repeated pair, so $G$ is read as a multigraph with one edge
+occurrence per entry. -/
 def edgeList (graph : DirectedAdjacency V) : List (V × V) := edgeListOf graph graph.adjacency
 
-/-- The consecutive pairs (steps) of a vertex sequence. -/
+/-- **Steps of a walk.** For a finite sequence of vertices $W = (w_0, w_1, \dots, w_n)$, the
+steps of $W$ are the list of consecutive pairs $((w_0, w_1), (w_1, w_2), \dots, (w_{n-1}, w_n))$,
+in order. A sequence with at most one vertex has no steps. -/
 def walkEdges (W : List V) : List (V × V) := W.zip W.tail
 
-/-- Every vertex is the source of as many edge occurrences as it is the target of. -/
+/-- **Balanced directed multigraph.** A finite directed multigraph, read from its adjacency lists
+with each entry $w$ in the list of $u$ counted as one occurrence of the edge $u \to w$, is
+balanced when every vertex is the source of as many edge occurrences as it is the target of. -/
 def IsBalanced (graph : DirectedAdjacency V) : Prop :=
   ∀ x ∈ graph.vertices,
     ((edgeList graph).map Prod.fst).count x = ((edgeList graph).map Prod.snd).count x
@@ -88,8 +100,11 @@ def IsBalanced (graph : DirectedAdjacency V) : Prop :=
 instance (graph : DirectedAdjacency V) : Decidable (IsBalanced graph) := by
   unfold IsBalanced; infer_instance
 
-/-- At `s` one more edge occurrence leaves than enters, at `t` one more enters than leaves, and
-every other vertex is balanced (every vertex, when `s = t`). -/
+/-- **Semi-balanced directed multigraph.** A finite directed multigraph is semi-balanced for
+vertices $s$ and $t$ when, for every vertex $x$, the number of edge occurrences leaving $x$ plus
+$[x = t]$ equals the number entering $x$ plus $[x = s]$, where $[P]$ is $1$ if $P$ holds and $0$
+otherwise. So for $s \ne t$, one more edge occurrence leaves $s$ than enters it, one more enters
+$t$ than leaves it, and every other vertex is balanced; for $s = t$ every vertex is balanced. -/
 def IsSemiBalanced (graph : DirectedAdjacency V) (s t : V) : Prop :=
   ∀ x ∈ graph.vertices,
     ((edgeList graph).map Prod.fst).count x + (if x = t then 1 else 0) =
@@ -98,8 +113,10 @@ def IsSemiBalanced (graph : DirectedAdjacency V) (s t : V) : Prop :=
 instance (graph : DirectedAdjacency V) (s t : V) : Decidable (IsSemiBalanced graph s t) := by
   unfold IsSemiBalanced; infer_instance
 
-/-- `W` is an Euler path from `s` to `t`: a walk from `s` to `t` whose steps are exactly the edge
-occurrences, each traversed once. -/
+/-- **Euler path in a directed multigraph.** In a finite directed multigraph, a list of vertices
+$W = (w_0, \dots, w_k)$ is an Euler path from $s$ to $t$ when $w_0 = s$, $w_k = t$, and its list
+of steps $(w_0, w_1), \dots, (w_{k-1}, w_k)$ is a permutation of the list of edge occurrences of
+the graph, so that each edge occurrence, counted with multiplicity, is traversed exactly once. -/
 def IsEulerPath (graph : DirectedAdjacency V) (s t : V) (W : List V) : Prop :=
   W.head? = some s ∧ W.getLast? = some t ∧ (walkEdges W).Perm (edgeList graph)
 
@@ -107,7 +124,10 @@ instance (graph : DirectedAdjacency V) (s t : V) (W : List V) :
     Decidable (IsEulerPath graph s t W) := by
   unfold IsEulerPath; infer_instance
 
-/-- `W` is an Euler circuit from `s`: an Euler path from `s` back to `s`. -/
+/-- **Euler circuit in a directed multigraph.** In a finite directed multigraph, a list of
+vertices $W$ is an Euler circuit from a vertex $s$ when it is an Euler path from $s$ to $s$: it
+starts and ends at $s$, and its list of consecutive pairs is a permutation of the list of edge
+occurrences of the graph. -/
 def IsEulerCircuit (graph : DirectedAdjacency V) (s : V) (W : List V) : Prop :=
   IsEulerPath graph s s W
 
@@ -117,11 +137,18 @@ instance (graph : DirectedAdjacency V) (s : V) (W : List V) :
 
 /-! ## The algorithm -/
 
-/-- Hierholzer's recursion with fuel. `visit fuel v R acc` follows unused edges from `v` depth
-first, splicing sub-tours in, and returns the emitted vertices prepended to `acc` together with
-the remaining adjacency `R`. Fuel `0` returns `(acc, R)` unchanged and too little fuel can stop
-early; with more fuel than remaining edges and a remainder unbalanced only by `v → … → t`, the
-contract is `visit_spec`. `hierholzer` passes one more than the number of edges. -/
+/-- **Hierholzer's recursion.** Given a fuel $n$, a vertex $v$, an assignment $R$ of a list of
+remaining out-neighbours to each vertex, and a list $\mathit{acc}$ of vertices, the recursion
+returns a list of vertices and a new assignment, with a cost. With fuel $0$ it returns
+$(\mathit{acc}, R)$ at cost $0$. With fuel $n + 1$: if $R(v)$ is empty, it returns $v$ followed by
+$\mathit{acc}$ together with $R$, at cost $0$; otherwise $R(v)$ is $w$ followed by a list
+$\mathit{rest}$, and it replaces $R(v)$ by $\mathit{rest}$, runs the recursion with fuel $n$ from
+$w$ on the new assignment with accumulator $\mathit{acc}$, obtaining $(L_1, R_1)$, and returns the
+result of the recursion with fuel $n$ from $v$ on $R_1$ with accumulator $L_1$, at cost $1$ plus
+the costs of the two calls.
+
+This follows unused edges depth first and splices sub-tours in; too little fuel can stop it
+early. Hierholzer's algorithm runs it with fuel one more than the number of edge occurrences. -/
 def visit : ℕ → V → (V → List V) → List V → TimeM ℕ (List V × (V → List V))
   | 0, _, R, acc => pure (acc, R)
   | fuel + 1, v, R, acc =>
@@ -132,8 +159,12 @@ def visit : ℕ → V → (V → List V) → List V → TimeM ℕ (List V × (V 
           let r ← visit fuel w (Function.update R v rest) acc
           visit fuel v r.2 r.1
 
-/-- Hierholzer's algorithm from `s`: an Euler circuit from `s`, or an Euler path from `s`, when one
-exists. -/
+/-- **Hierholzer's algorithm.** Let $G$ be a directed adjacency graph, read as a multigraph with
+one edge occurrence per adjacency entry, let $s$ be a vertex, and let $m$ be the number of edge
+occurrences of $G$, that is, the length of its edge list. Hierholzer's algorithm on $G$ from $s$
+runs Hierholzer's recursion from $s$ with fuel $m + 1$, with the adjacency list of each vertex as
+its list of remaining out-neighbours and the empty list as accumulator, and returns the list of
+vertices produced by the recursion, at the cost of the recursion. -/
 def hierholzer (graph : DirectedAdjacency V) (s : V) : TimeM ℕ (List V) := do
   let r ← visit ((edgeList graph).length + 1) s graph.adjacency []
   pure r.1
@@ -178,7 +209,9 @@ private theorem edgeListOf_update_perm (graph : DirectedAdjacency V) {R : V → 
   flatMap_update_perm R hv _ graph.vertices_nodup (graph.vertices_complete v)
 
 omit [DecidableEq V] in
-/-- The steps of a concatenated walk: those of each part and the step joining them. -/
+/-- **Steps of a concatenated walk.** Let $A$ and $B$ be nonempty vertex sequences, where $A$
+ends at the vertex $a$ and $B$ starts at the vertex $b$. Then the steps of the concatenation
+$A B$ are the steps of $A$, followed by the step $(a, b)$, followed by the steps of $B$. -/
 theorem walkEdges_append {A B : List V} {a b : V} (ha : A.getLast? = some a)
     (hb : B.head? = some b) : walkEdges (A ++ B) = walkEdges A ++ (a, b) :: walkEdges B := by
   induction A with
@@ -201,7 +234,12 @@ theorem walkEdges_append {A B : List V} {a b : V} (ha : A.getLast? = some a)
           rw [this]
 
 omit [DecidableEq V] in
-/-- Splicing a sub-tour `B` in front of the edge `e`. -/
+/-- **Moving a block of a list in front of an element is a permutation.** For an element $e$ and
+lists $A$, $B$, $C$ of the same type, the list $e \cdot A \cdot B \cdot C$ is a permutation of
+$B \cdot e \cdot A \cdot C$, where $\cdot$ denotes concatenation and $e$ stands for the
+one-element list.
+
+This is how a sub-tour $B$ is spliced in front of the edge $e$. -/
 theorem perm_splice {α : Type*} (e : α) (A B C : List α) :
     (e :: (A ++ (B ++ C))).Perm (B ++ e :: A ++ C) := by
   rw [List.append_assoc, List.cons_append]
@@ -217,13 +255,19 @@ private theorem ite_eq_comm_nat (a b : V) :
   · subst h; rfl
   · simp [h, Ne.symm h]
 
-/-- In the edge list `E`, `v` has one more outgoing than incoming occurrence, `t` one more incoming
-than outgoing, and every other vertex is balanced (all are balanced when `v = t`). -/
+/-- **Semi-balanced edge list.** A list $E$ of ordered pairs of vertices is semi-balanced for
+vertices $v$ and $t$ when, for every vertex $x$, the number of pairs in $E$ with first component
+$x$ plus $[x = t]$ equals the number with second component $x$ plus $[x = v]$, where $[P]$ is $1$
+if $P$ holds and $0$ otherwise. So for $v \ne t$, $v$ has one more outgoing than incoming
+occurrence, $t$ one more incoming than outgoing, and every other vertex is balanced; for $v = t$
+every vertex is balanced. -/
 def SemiBalancedEdges (E : List (V × V)) (v t : V) : Prop :=
   ∀ x, (E.map Prod.fst).count x + (if x = t then 1 else 0) =
     (E.map Prod.snd).count x + (if x = v then 1 else 0)
 
-/-- In the edge list `E`, every vertex has as many outgoing as incoming occurrences. -/
+/-- **Balanced edge list.** A list $E$ of ordered pairs of vertices, read as directed edge
+occurrences, is balanced when every vertex $x$ occurs as the first component of exactly as many
+entries of $E$ as it occurs as the second component, counted with multiplicity. -/
 def BalancedEdges (E : List (V × V)) : Prop :=
   ∀ x, (E.map Prod.fst).count x = (E.map Prod.snd).count x
 
@@ -267,10 +311,19 @@ private theorem visit_cons {fuel : ℕ} {v w : V} {R : V → List V} {rest : Lis
   · simp [visit, hv]
   · simp [visit, hv]; omega
 
-/-- The contract of `visit`: given more fuel than remaining edges and a remaining multigraph
-unbalanced only by `v → … → t`, the call emits a walk `W` from `v` to `t` in front of `acc`,
-removes exactly its steps, leaves a balanced remainder in which `W`'s vertices have no outgoing
-edges, only shortens adjacency lists, and costs one unit per removed edge. -/
+/-- **Contract of Hierholzer's recursion.** Let $G$ be a finite directed multigraph, let $R$
+assign to each vertex $u$ a list $R(u)$ of remaining out-neighbours, and let $E(R)$ be the list
+of remaining edge occurrences, one pair $(u, w)$ for each entry $w$ of $R(u)$. Let $v$ and $t$ be
+vertices, $\mathit{acc}$ a list of vertices and $n$ a natural number with $|E(R)| < n$, and
+suppose $E(R)$ is semi-balanced for $v$ and $t$: for every vertex $x$, the number of pairs in
+$E(R)$ with first component $x$ plus $[x = t]$ equals the number with second component $x$ plus
+$[x = v]$, where $[P]$ is $1$ if $P$ holds and $0$ otherwise. Let $(L, R')$ be the result and $c$
+the cost of Hierholzer's recursion with fuel $n$ from $v$ on $R$ with accumulator $\mathit{acc}$.
+Then there is a list of vertices $W$ such that $L$ is $W$ followed by $\mathit{acc}$; $W$ starts
+at $v$ and ends at $t$; $E(R)$ is a permutation of the steps (consecutive pairs) of $W$ followed
+by $E(R')$; every vertex is the first component of as many pairs of $E(R')$ as it is the second
+component of; $R'(x)$ is empty for every vertex $x$ of $W$; $R'(x)$ is a suffix of $R(x)$ for
+every vertex $x$; and $c + |E(R')| = |E(R)|$. -/
 theorem visit_spec (graph : DirectedAdjacency V) : ∀ (fuel : ℕ) (v t : V)
     (R : V → List V) (acc : List V), (edgeListOf graph R).length < fuel →
     SemiBalancedEdges (edgeListOf graph R) v t →
@@ -368,8 +421,13 @@ private theorem isSemiBalanced_of_isBalanced {graph : DirectedAdjacency V} (s : 
     (h : IsBalanced graph) : IsSemiBalanced graph s s :=
   fun x hx => by rw [h x hx]
 
-/-- On a semi-balanced graph the result is a walk from `s` to `t` that uses each edge occurrence
-at most once (closed when `s = t`). -/
+/-- **Hierholzer's algorithm returns a trail in a directed multigraph.** Let $G$ be a directed
+adjacency graph, read as a multigraph with one edge per adjacency entry, and let $s$ and $t$ be
+vertices such that $G$ is semi-balanced for $s$ and $t$. Then the vertex sequence $W$ returned by
+Hierholzer's algorithm on $G$ from $s$ starts at $s$ and ends at $t$, and the edge list of $G$ is a
+permutation of the list of consecutive pairs of $W$ followed by some further list of pairs. So $W$
+is a walk from $s$ to $t$ that uses each edge occurrence at most once; reachability is not
+assumed. -/
 theorem hierholzer_trail (graph : DirectedAdjacency V) (s t : V)
     (hbal : IsSemiBalanced graph s t) :
     (hierholzer graph s).ret.head? = some s ∧ (hierholzer graph s).ret.getLast? = some t ∧
@@ -402,8 +460,13 @@ private theorem leftover_nil (graph : DirectedAdjacency V) (s : V) {W : List V} 
   rw [hstuck a ha] at hb
   exact List.not_mem_nil hb
 
-/-- Euler paths: on a semi-balanced graph whose edges all start at vertices reachable from `s`,
-`hierholzer graph s` is an Euler path from `s` to `t`. -/
+/-- **Hierholzer's algorithm finds Euler paths in directed multigraphs.** Let $G$ be a directed
+adjacency graph, read as a multigraph with one edge per adjacency entry, and let $s$ and $t$ be
+vertices such that $G$ is semi-balanced for $s$ and $t$ (at $s$ one more edge occurrence leaves
+than enters, at $t$ one more enters than leaves, and at every other vertex as many leave as enter;
+at every vertex when $s = t$) and the source of every edge of $G$ is reachable from $s$. Then the
+vertex sequence returned by Hierholzer's algorithm on $G$ from $s$ is an Euler path of $G$ from $s$
+to $t$. -/
 theorem hierholzer_isEulerPath (graph : DirectedAdjacency V) (s t : V)
     (hbal : IsSemiBalanced graph s t) (hreach : ∀ u w, graph.Edge u w → graph.Reachable s u) :
     IsEulerPath graph s t (hierholzer graph s).ret := by
@@ -412,14 +475,27 @@ theorem hierholzer_isEulerPath (graph : DirectedAdjacency V) (s t : V)
   rw [hnil, List.append_nil] at hp
   exact ⟨hh, hl, hp.symm⟩
 
-/-- CLRS Problem 22-3, sufficiency with the algorithm: on a balanced graph whose edges all start
-at vertices reachable from `s`, `hierholzer graph s` is an Euler circuit from `s`. -/
+/-- **Hierholzer's algorithm finds Euler circuits in directed multigraphs.** Let $G$ be a directed
+adjacency graph, read as a multigraph with one edge per adjacency entry, that is balanced (every
+vertex is the source of exactly as many edge occurrences as it is the target of), and let $s$ be a
+vertex such that the source of every edge of $G$ is reachable from $s$. Then the vertex sequence
+returned by Hierholzer's algorithm on $G$ from $s$ is an Euler circuit of $G$ from $s$.
+
+Source: CLRS, third edition, Problem 22-3, sufficiency with the algorithm; strong connectivity is
+weakened to reachability from $s$ of the source of every edge. -/
 theorem hierholzer_isEulerCircuit (graph : DirectedAdjacency V) (s : V)
     (hbal : IsBalanced graph) (hreach : ∀ u w, graph.Edge u w → graph.Reachable s u) :
     IsEulerCircuit graph s (hierholzer graph s).ret :=
   hierholzer_isEulerPath graph s s (isSemiBalanced_of_isBalanced s hbal) hreach
 
-/-- The algorithm traverses each edge once: exactly `|E|` units on such a graph. -/
+/-- **Running time of Hierholzer's algorithm.** Let $G$ be a directed adjacency graph, read as a
+multigraph with one edge per adjacency entry, and let $s$ and $t$ be vertices such that $G$ is
+semi-balanced for $s$ and $t$ and the source of every edge of $G$ is reachable from $s$. Then
+Hierholzer's algorithm on $G$ from $s$ costs exactly $|E|$ units, where $|E|$ is the number of
+edge occurrences of $G$, that is, the length of its edge list.
+
+The cost model charges one unit per edge traversal (removing the head of an adjacency list);
+reading an adjacency list and emitting a vertex are free. -/
 theorem hierholzer_time (graph : DirectedAdjacency V) (s t : V)
     (hbal : IsSemiBalanced graph s t) (hreach : ∀ u w, graph.Edge u w → graph.Reachable s u) :
     (hierholzer graph s).time = (edgeList graph).length := by
@@ -450,7 +526,10 @@ private theorem walkEdges_count : ∀ (W : List V) (v t : V), W.head? = some v �
       rw [ite_eq_comm_nat a x, ite_eq_comm_nat b x]
       omega
 
-/-- A graph with an Euler path from `s` to `t` is semi-balanced. -/
+/-- **A directed multigraph with an Euler path is semi-balanced.** If a finite directed
+multigraph has an Euler path from $s$ to $t$, then it is semi-balanced for $s$ and $t$: counting
+edge occurrences, $s$ has one more outgoing than incoming edge, $t$ one more incoming than
+outgoing, and every other vertex is balanced (every vertex, when $s = t$). -/
 theorem isSemiBalanced_of_isEulerPath {graph : DirectedAdjacency V} {s t : V} {W : List V}
     (h : IsEulerPath graph s t W) : IsSemiBalanced graph s t := by
   obtain ⟨hh, hl, hp⟩ := h
@@ -459,22 +538,36 @@ theorem isSemiBalanced_of_isEulerPath {graph : DirectedAdjacency V} {s t : V} {W
   rw [← (hp.map Prod.fst).count_eq, ← (hp.map Prod.snd).count_eq]
   exact hc
 
-/-- CLRS Problem 22-3, necessity: a graph with an Euler circuit is balanced. -/
+/-- **A directed multigraph with an Euler circuit is balanced.** If a finite directed multigraph
+has an Euler circuit from some vertex $s$, then it is balanced: every vertex is the source of as
+many edge occurrences as it is the target of.
+
+This is the necessity direction of CLRS Problem 22-3. -/
 theorem isBalanced_of_isEulerCircuit {graph : DirectedAdjacency V} {s : V} {W : List V}
     (h : IsEulerCircuit graph s W) : IsBalanced graph := fun x hx => by
   have := isSemiBalanced_of_isEulerPath h x hx
   omega
 
-/-- When every edge starts at a vertex reachable from `s`, an Euler path from `s` to `t` exists
-iff the graph is semi-balanced for `s` and `t`. -/
+/-- **Euler path criterion for directed multigraphs.** Let $G$ be a directed adjacency graph, read
+as a multigraph with one edge per adjacency entry, and let $s$ and $t$ be vertices such that the
+source of every edge of $G$ is reachable from $s$. Then $G$ has an Euler path from $s$ to $t$ if
+and only if $G$ is semi-balanced for $s$ and $t$: at $s$ one more edge occurrence leaves than
+enters, at $t$ one more enters than leaves, and every other vertex is the source of exactly as
+many edge occurrences as it is the target of (every vertex, when $s = t$). -/
 theorem exists_isEulerPath_iff (graph : DirectedAdjacency V) (s t : V)
     (hreach : ∀ u w, graph.Edge u w → graph.Reachable s u) :
     (∃ W, IsEulerPath graph s t W) ↔ IsSemiBalanced graph s t :=
   ⟨fun ⟨_, h⟩ => isSemiBalanced_of_isEulerPath h,
     fun hbal => ⟨_, hierholzer_isEulerPath graph s t hbal hreach⟩⟩
 
-/-- CLRS Problem 22-3: when every edge starts at a vertex reachable from `s`, an Euler circuit from
-`s` exists iff every vertex is balanced. -/
+/-- **Euler circuit criterion for directed multigraphs.** Let $G$ be a directed adjacency graph,
+read as a multigraph with one edge per adjacency entry, and let $s$ be a vertex such that the
+source of every edge of $G$ is reachable from $s$. Then $G$ has an Euler circuit from $s$ if and
+only if $G$ is balanced, that is, every vertex is the source of exactly as many edge occurrences
+as it is the target of.
+
+Source: CLRS, third edition, Problem 22-3; strong connectivity is weakened to reachability from
+$s$ of the source of every edge. -/
 theorem exists_isEulerCircuit_iff (graph : DirectedAdjacency V) (s : V)
     (hreach : ∀ u w, graph.Edge u w → graph.Reachable s u) :
     (∃ W, IsEulerCircuit graph s W) ↔ IsBalanced graph :=

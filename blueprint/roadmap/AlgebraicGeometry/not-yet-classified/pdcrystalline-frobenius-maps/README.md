@@ -1,0 +1,18 @@
+# PDCrystalline Frobenius Maps
+
+- [Base Frobenius](base-frobenius.md)
+- [Hull Reduction Frobenius](hull-reduction-frobenius.md)
+- [Completed Frobenius hull](completed-frobenius-hull.md)
+- [Completed Ideal preserved](completed-ideal-preserved.md)
+- [Finite Frobenius](finite-frobenius.md)
+- [Finite Frobenius quotient](finite-frobenius-quotient.md)
+- [Finite Frobenius hull](finite-frobenius-hull.md)
+- [Finite Frobenius transition](finite-frobenius-transition.md)
+- [Compatibility](compatibility.md)
+- [Reindexed Algebra](reindexed-algebra.md)
+- [Reindexed Test](reindexed-test.md)
+- [Reindexed Arrow](reindexed-arrow.md)
+- [Reindex](reindex.md)
+- [Coefficient Reindex](coefficient-reindex.md)
+- [Finite Arrow](finite-arrow.md)
+- [Finite Arrow naturality](finite-arrow-naturality.md)

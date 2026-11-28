@@ -35,6 +35,13 @@ relates the two: for `q : PMF α` the weights `(q a).toReal` sum to `1`, and the
 finite sums of this file. As a sum, `expectation p X` is the dot product `p ⬝ᵥ X`, and the
 sample mean equals Mathlib's uniform average `Finset.expect`.
 
+Conditioning on an event `A` of positive mass `P(A) = prob p A > 0` keeps the weights on `A`,
+divided by `P(A)`, and sets them to `0` off `A` (`condWeights`); the proof of `0 < P(A)` is an
+argument, so a null event has no normalized weights. For nonnegative weights the result is a
+finite distribution, and it gives an event `F` the probability `P(A ∩ F) / P(A)`; that ratio
+identity uses only `P(A) > 0` and holds for signed weights as well, which are not a probability
+law. With positive weights `P(A) > 0` exactly when `A` is nonempty.
+
 Independence is the product form `p (x, y) = pX x * pY y` on a product type: product events
 `s ×ˢ t` factor and the covariance of `f x` and `g y` vanishes. Zero covariance does not imply
 independence (`exists_covariance_eq_zero_prob_ne`).
@@ -65,6 +72,8 @@ its coverage under the posterior is definitional.
 
 - `expectation_linear`, `expectation_indicator`, `sum_prob_filter_eq` : linearity, indicators and
   total probability.
+- `condWeights`, `condWeights_isDistribution`, `prob_condWeights`, `prob_pos_iff_nonempty` :
+  weights normalized on an event of positive mass.
 - `variance_nonneg`, `variance_affine`, `covariance_sq_le_variance_mul_variance`,
   `covariance_sum_mul_sum`, `covMatrix_mulVec` : second moments and linear maps.
 - `covariance_prod_eq_zero`, `exists_covariance_eq_zero_prob_ne` : independence gives zero
@@ -86,6 +95,7 @@ its coverage under the posterior is definitional.
 - G. Least squares for a line
 - H. Least squares in matrix form
 - I. Intervals under a sampling model
+- J. Conditioning on an event of positive mass
 
 ## iv. References
 
@@ -873,7 +883,8 @@ theorem integrable_olsSlope {Ω : Type*} {m : MeasurableSpace Ω} {μ : Measure 
   exact (integrable_finsetSum _ fun i _ => (hY i).const_mul _).div_const _
 
 open MeasureTheory in
-/-- Expectation commutes with the least-squares slope: for integrable responses `Y i`,
+/-- Integration commutes with the least-squares slope: for any measure `μ` and `μ`-integrable
+responses `Y i`, `∫ b̂(x, Y) ∂μ = b̂(x, ∫ Y ∂μ)`; for a probability measure this reads
 `𝔼[b̂(x, Y)] = b̂(x, 𝔼 Y)`. -/
 theorem integral_olsSlope {Ω : Type*} {m : MeasurableSpace Ω} {μ : Measure Ω} {ι : Type*}
     [Fintype ι] (x : ι → ℝ) {Y : ι → Ω → ℝ} (hY : ∀ i, Integrable (Y i) μ) :
@@ -962,7 +973,7 @@ lemma transpose_designMatrix_mulVec {ι : Type*} [Fintype ι] (x v : ι → ℝ)
 lemma det_gram_designMatrix {ι : Type*} [Fintype ι] (x : ι → ℝ) :
     ((designMatrix x)ᵀ * designMatrix x).det = Fintype.card ι * sxy x x := by
   rw [Matrix.det_fin_two, sxy_eq_sum_mul_sub]
-  simp [designMatrix, Matrix.mul_apply, Finset.card_univ, ← card_mul_sampleMean x]
+  simp [designMatrix, Matrix.mul_apply, Function.swap, Finset.card_univ, ← card_mul_sampleMean x]
   ring
 
 /-- The design matrix of the simple linear model has full column rank iff `0 < S_xx`. -/
@@ -1014,8 +1025,8 @@ lemma mem_pivotInterval_iff {t s lo hi θ : ℝ} (hs : 0 < s) :
 
 open MeasureTheory ProbabilityTheory in
 /-- **Coverage under a sampling model.** If, under `μ`, the pivot `(T - θ) / s` of the statistic
-`T` has law `ν`, then the interval obtained by inverting it contains `θ` with probability
-`ν [lo, hi]`. -/
+`T` has law `ν`, then the event that the interval obtained by inverting it contains `θ` has
+`μ`-measure `ν [lo, hi]`; for a probability measure `μ` this is the coverage probability. -/
 lemma measure_mem_pivotInterval {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
     {ν : Measure ℝ} {T : Ω → ℝ} {s lo hi θ : ℝ} (hs : 0 < s)
     (hpivot : HasLaw (fun ω => (T ω - θ) / s) ν μ) :
@@ -1073,5 +1084,54 @@ lemma IsCredibleInterval.expectation_indicator_eq {Θ : Type*} [Fintype Θ] {pos
     expectation post (fun t => if θ t ∈ Set.Icc lo hi then 1 else 0) = c := by
   rw [expectation_indicator]
   exact h.2.2
+
+/-! ## J. Conditioning on an event of positive mass -/
+
+variable {Ω : Type*}
+
+/-- The weights normalized on the event `A`: `p ω / P(A)` on `A` and `0` off it. The proof of
+`0 < P(A)` is part of the definition, so a null event has no normalized weights. For nonnegative
+weights they are a finite distribution (`condWeights_isDistribution`). -/
+noncomputable def condWeights [DecidableEq Ω] (p : Ω → ℝ) (A : Finset Ω)
+    (_hA : 0 < prob p A) : Ω → ℝ :=
+  fun ω => if ω ∈ A then p ω / prob p A else 0
+
+/-- **Normalization.** For nonnegative weights and `P(A) > 0`, the normalized weights are
+nonnegative, have total mass one and vanish off `A`. -/
+lemma condWeights_isDistribution [Fintype Ω] [DecidableEq Ω] {p : Ω → ℝ} (hp : ∀ ω, 0 ≤ p ω)
+    {A : Finset Ω} (hA : 0 < prob p A) :
+    (∀ ω, 0 ≤ condWeights p A hA ω) ∧ ∑ ω, condWeights p A hA ω = 1 ∧
+      ∀ ω ∉ A, condWeights p A hA ω = 0 := by
+  refine ⟨fun ω => ?_, ?_, fun ω hω => by simp [condWeights, hω]⟩
+  · unfold condWeights
+    split_ifs
+    · exact div_nonneg (hp ω) hA.le
+    · exact le_rfl
+  · unfold condWeights
+    rw [Finset.sum_ite_mem, Finset.univ_inter, ← Finset.sum_div]
+    exact div_self hA.ne'
+
+/-- **Ratio identity.** Under the weights normalized on `A`, an event `F` has the weight
+`P(A ∩ F) / P(A)`. Only `P(A) > 0` is used, so the identity also holds for signed weights, which
+are not a probability law; for nonnegative weights it is the conditional probability of `F` given
+`A`. -/
+lemma prob_condWeights [DecidableEq Ω] (p : Ω → ℝ) {A : Finset Ω}
+    (hA : 0 < prob p A) (F : Finset Ω) :
+    prob (condWeights p A hA) F = prob p (A ∩ F) / prob p A := by
+  unfold prob condWeights
+  rw [Finset.sum_ite_mem, Finset.inter_comm, ← Finset.sum_div]
+  rfl
+
+/-- **Positive mass.** With positive weights, `P(A) > 0` exactly when `A` is nonempty, so only the
+empty event is null. -/
+lemma prob_pos_iff_nonempty {p : Ω → ℝ} (hp : ∀ ω, 0 < p ω) (A : Finset Ω) :
+    0 < prob p A ↔ A.Nonempty := by
+  constructor
+  · intro h
+    by_contra hne
+    rw [Finset.not_nonempty_iff_eq_empty] at hne
+    simp [prob, hne] at h
+  · intro hne
+    exact Finset.sum_pos (fun ω _ => hp ω) hne
 
 end MathlibExt.Probability.FiniteProbability

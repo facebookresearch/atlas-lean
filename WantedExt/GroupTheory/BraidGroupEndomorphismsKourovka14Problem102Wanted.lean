@@ -18,8 +18,7 @@ have proper non-abelian torsion-free quotients?
 module
 
 public import Batteries.Util.ProofWanted
-public import Mathlib.GroupTheory.OrderOfElement
-public import WantedExt.GroupTheory.BraidGroupShared
+public import MathlibExt.GroupTheory.BraidTorsionFreeQuotient
 
 @[expose] public section
 
@@ -39,74 +38,66 @@ quotient is `Bₙ / N` with `N ≠ 1`; torsion-free means no nontrivial element 
 
 open MathlibExt.GroupTheory.BraidGroupShared (BraidGroup)
 
-/-- Kourovka 14.102(a) (V. Lin; V. Shpilrain): for some `n > 4`, `Bₙ` has a non-injective
-endomorphism with non-cyclic (in particular nontrivial) image. -/
+/-- **Kourovka Problem 14.102(a): non-injective braid endomorphisms with non-cyclic image.** The
+statement that for some $n > 4$ the braid group $B_n$ on $n$ strands has a non-injective
+endomorphism whose image is not cyclic (in particular not trivial). Posed by V. Lin and
+V. Shpilrain. -/
 def braidNonInjectiveNoncyclicEndomorphism : Prop :=
   ∃ n : ℕ, 4 < n ∧ ∃ φ : BraidGroup n →* BraidGroup n, ¬ Function.Injective φ ∧
     ¬ IsCyclic φ.range
 
-/-- Kourovka 14.102(b) (V. Lin; V. Shpilrain): for every `n > 4`, every nontrivial endomorphism of
-the derived subgroup `[Bₙ, Bₙ]` is an automorphism. -/
+/-- **Kourovka Problem 14.102(b): endomorphisms of the braid commutator subgroup.** The statement
+that for every $n > 4$, every endomorphism of the commutator subgroup $[B_n, B_n]$ of the braid
+group $B_n$ on $n$ strands other than the trivial endomorphism is bijective, that is, an
+automorphism. Posed by V. Lin and V. Shpilrain. -/
 def braidCommutatorEndomorphismAutomorphism : Prop :=
   ∀ n : ℕ, 4 < n → ∀ φ : commutator (BraidGroup n) →* commutator (BraidGroup n), φ ≠ 1 →
     Function.Bijective φ
 
-/-- Kourovka 14.102(c) (V. Lin; V. Shpilrain): for every `n > 4`, `Bₙ` has a proper (`N ≠ 1`)
-non-abelian torsion-free quotient `Bₙ / N`. -/
-def braidTorsionFreeNonabelianProperQuotient : Prop :=
-  ∀ n : ℕ, 4 < n → ∃ (N : Subgroup (BraidGroup n)) (_ : N.Normal), N ≠ ⊥ ∧
-    (∃ x y : BraidGroup n ⧸ N, x * y ≠ y * x) ∧
-    ∀ x : BraidGroup n ⧸ N, x ≠ 1 → ¬ IsOfFinOrder x
-
 /--
-Resolved false: for every `n ≥ 5`, every non-injective endomorphism of `Bₙ` has cyclic image (Castel
-for `n ≥ 6`, Chen-Kordek-Margalit for `n = 5`); the Kourovka Notebook (21st issue) answers 14.102(a)
-"No". Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The
-Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 14.102 (V. Lin; V. Shpilrain);
-part (c) in the Archive of Solved Problems; resolution: (a) F. Castel, Geometric representations of
-the braid groups, Astérisque 378 (2016) (n ≥ 6), and L. Chen, K. Kordek and D. Margalit,
-Homomorphisms between braid groups, arXiv:1910.00712 (n = 5); (b) S. Orevkov, Ann. Fac. Sci.
-Toulouse Math. 33 (2024), no. 1, 105-121, extending K. Kordek and D. Margalit, Bull. London Math.
-Soc. 54 (2022), 95-111 (n ≥ 7); (c) P. Linnell and T. Schick, J. Amer. Math. Soc. 20 (2007), no. 4,
-1003-1051, the Kourovka Notebook (21st issue) marks 14.102(a), (b) solved (for n ≥ 5 every
-non-injective endomorphism of B_n has cyclic image; every non-trivial endomorphism of [B_n, B_n] is
-an automorphism); Kourovka Archive, Problem 14.102(c) (Yes), https://arxiv.org/abs/1910.00712.
+**Non-injective endomorphisms of braid groups on five or more strands have cyclic image.** The
+answer to Kourovka Problem 14.102(a) is negative: there is no $n > 4$ for which the braid group
+$B_n$ on $n$ strands has a non-injective endomorphism whose image is not cyclic. Equivalently, for
+every $n \ge 5$, every non-injective endomorphism of $B_n$ has cyclic image.
+
+This was proved by Castel for $n \ge 6$ and by Chen, Kordek and Margalit for $n = 5$; the Kourovka
+Notebook (21st issue) answers 14.102(a) "No".
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
+Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 14.102 (V. Lin; V. Shpilrain). Part (c)
+is in the Archive of Solved Problems, answered "Yes" citing P. Linnell and T. Schick, J. Amer.
+Math. Soc. 20 (2007), no. 4, 1003-1051 (every braid group is residually torsion-free
+nilpotent-by-finite), with a comment of 2001 citing S. P. Humphries, Int. J. Algebra Comput. 11
+(2001), no. 3, 363-373 (n < 7). Parts (a) and (b) are solved in the main list: (a) F. Castel,
+Geometric representations of the braid groups, Astérisque 378 (2016) (n ≥ 6), and L. Chen,
+K. Kordek and D. Margalit, Homomorphisms between braid groups, arXiv:1910.00712 (n = 5); (b)
+S. Orevkov, Ann. Fac. Sci. Toulouse Math. 33 (2024), no. 1, 105-121, extending K. Kordek and
+D. Margalit, Bull. London Math. Soc. 54 (2022), 95-111 (n ≥ 7).
 -/
 public theorem_wanted braidNonInjectiveNoncyclicEndomorphism_refuted :
     ¬ braidNonInjectiveNoncyclicEndomorphism
 
 /--
-Resolved true: for every `n ≥ 5`, every non-trivial endomorphism of `[Bₙ, Bₙ]` is an automorphism
-(Orevkov, extending Kordek-Margalit for `n ≥ 7`); the Kourovka Notebook (21st issue) answers
-14.102(b) "Yes". Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory:
-The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 14.102 (V. Lin; V. Shpilrain);
-part (c) in the Archive of Solved Problems; resolution: (a) F. Castel, Geometric representations of
-the braid groups, Astérisque 378 (2016) (n ≥ 6), and L. Chen, K. Kordek and D. Margalit,
-Homomorphisms between braid groups, arXiv:1910.00712 (n = 5); (b) S. Orevkov, Ann. Fac. Sci.
-Toulouse Math. 33 (2024), no. 1, 105-121, extending K. Kordek and D. Margalit, Bull. London Math.
-Soc. 54 (2022), 95-111 (n ≥ 7); (c) P. Linnell and T. Schick, J. Amer. Math. Soc. 20 (2007), no. 4,
-1003-1051, the Kourovka Notebook (21st issue) marks 14.102(a), (b) solved (for n ≥ 5 every
-non-injective endomorphism of B_n has cyclic image; every non-trivial endomorphism of [B_n, B_n] is
-an automorphism); Kourovka Archive, Problem 14.102(c) (Yes), https://arxiv.org/abs/1910.00712.
+**Nontrivial endomorphisms of the braid commutator subgroup on five or more strands are
+automorphisms.** For every $n > 4$, every endomorphism of the commutator subgroup $[B_n, B_n]$ of
+the braid group $B_n$ on $n$ strands other than the trivial endomorphism is bijective, that is, an
+automorphism.
+
+This was proved by Kordek and Margalit for $n \ge 7$ and extended by Orevkov to all $n \ge 5$; the
+Kourovka Notebook (21st issue) answers 14.102(b) "Yes".
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
+Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 14.102 (V. Lin; V. Shpilrain). Part (c)
+is in the Archive of Solved Problems, answered "Yes" citing P. Linnell and T. Schick, J. Amer.
+Math. Soc. 20 (2007), no. 4, 1003-1051 (every braid group is residually torsion-free
+nilpotent-by-finite), with a comment of 2001 citing S. P. Humphries, Int. J. Algebra Comput. 11
+(2001), no. 3, 363-373 (n < 7). Parts (a) and (b) are solved in the main list: (a) F. Castel,
+Geometric representations of the braid groups, Astérisque 378 (2016) (n ≥ 6), and L. Chen,
+K. Kordek and D. Margalit, Homomorphisms between braid groups, arXiv:1910.00712 (n = 5); (b)
+S. Orevkov, Ann. Fac. Sci. Toulouse Math. 33 (2024), no. 1, 105-121, extending K. Kordek and
+D. Margalit, Bull. London Math. Soc. 54 (2022), 95-111 (n ≥ 7).
 -/
 public theorem_wanted braidCommutatorEndomorphismAutomorphism_holds :
     braidCommutatorEndomorphismAutomorphism
-
-/--
-Resolved true: the Kourovka Archive answers 14.102(c) "Yes, it does", citing Linnell and Schick
-(every braid group is residually torsion-free nilpotent-by-finite); Humphries had constructed such
-quotients for `n < 7`. Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group
-Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 14.102 (V. Lin; V.
-Shpilrain); part (c) in the Archive of Solved Problems; resolution: (a) F. Castel, Geometric
-representations of the braid groups, Astérisque 378 (2016) (n ≥ 6), and L. Chen, K. Kordek and D.
-Margalit, Homomorphisms between braid groups, arXiv:1910.00712 (n = 5); (b) S. Orevkov, Ann. Fac.
-Sci. Toulouse Math. 33 (2024), no. 1, 105-121, extending K. Kordek and D. Margalit, Bull. London
-Math. Soc. 54 (2022), 95-111 (n ≥ 7); (c) P. Linnell and T. Schick, J. Amer. Math. Soc. 20 (2007),
-no. 4, 1003-1051, the Kourovka Notebook (21st issue) marks 14.102(a), (b) solved (for n ≥ 5 every
-non-injective endomorphism of B_n has cyclic image; every non-trivial endomorphism of [B_n, B_n] is
-an automorphism); Kourovka Archive, Problem 14.102(c) (Yes), https://arxiv.org/abs/1910.00712.
--/
-public theorem_wanted braidTorsionFreeNonabelianProperQuotient_holds :
-    braidTorsionFreeNonabelianProperQuotient
 
 end MathlibExt.GroupTheory.BraidGroupEndomorphismsKourovka14Problem102Wanted

@@ -19,7 +19,7 @@ E102-A(9) (2019), 1118-1125, doi:10.1587/transfun.E102.A.1118; conference versio
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.DosunFuwariWanted
@@ -95,7 +95,8 @@ def PointsAt {h w : ℕ} (d : ℕ) (p q : Fin h × Fin w) : Prop :=
   (d = 2 ∧ q.2 = p.2 ∧ (p.1 : ℕ) + 1 = q.1) ∨
   (d = 3 ∧ q.1 = p.1 ∧ (q.2 : ℕ) + 1 = p.2)
 
-/-- The number of cells of the room containing `p`. -/
+/-- The number of cells of the board with the same label as `p`. For a cell with a nonzero
+label this is the size of its room; for a black cell (label `0`) it counts all black cells. -/
 def roomSize (i : MakaroInstance) (p : Cell i) : ℕ :=
   (Finset.univ.filter fun q => label i.1 q = label i.1 p).card
 

@@ -23,34 +23,51 @@ Arman, Kaire and Prymak, arXiv:2510.25968v3, introduction.
 
 namespace ConvexCovering
 
-/-- A unit direction illuminates a boundary point along an inward halfline. -/
+/-- **Illumination by a direction.** Let $K \subseteq \mathbb{R}^n$ be a set and let
+$v, x \in \mathbb{R}^n$. The direction $v$ illuminates $x$ with respect to $K$ when $x$ lies on
+the boundary of $K$, $\|v\| = 1$, and $x + tv$ lies in the interior of $K$ for some real
+$t > 0$. -/
 def DirectionIlluminates {n : ℕ} (K : Set (EuclideanSpace ℝ (Fin n)))
     (v x : EuclideanSpace ℝ (Fin n)) : Prop :=
   x ∈ frontier K ∧ ‖v‖ = 1 ∧ ∃ t : ℝ, 0 < t ∧ x + t • v ∈ interior K
 
-/-- Every boundary point is illuminated by one of a finite family of unit directions. -/
+/-- **Illumination by $q$ directions.** A set $K \subseteq \mathbb{R}^n$ is illuminated by $q$
+directions, for a natural number $q$, if there are unit vectors $v_1, \dots, v_q \in \mathbb{R}^n$
+(not necessarily distinct) such that for every boundary point $x$ of $K$ there are an index $i$
+and a real $t > 0$ with $x + tv_i$ in the interior of $K$. -/
 def IlluminatedByDirections {n : ℕ} (K : Set (EuclideanSpace ℝ (Fin n)))
     (q : ℕ) : Prop :=
   ∃ v : Fin q → EuclideanSpace ℝ (Fin n),
     (∀ i, ‖v i‖ = 1) ∧ ∀ x ∈ frontier K, ∃ i, DirectionIlluminates K (v i) x
 
-/-- A light outside the body enters its interior strictly beyond the boundary point. -/
+/-- **Illumination by an external point.** Let $K \subseteq \mathbb{R}^n$ be a set and let
+$p, x \in \mathbb{R}^n$. The point $p$ illuminates $x$ with respect to $K$ when $p \notin K$, $x$
+lies on the boundary of $K$, and $p + t(x - p)$ lies in the interior of $K$ for some real $t > 1$;
+that is, the ray from $p$ through $x$ meets the interior of $K$ at a point beyond $x$. -/
 def ExternalPointIlluminates {n : ℕ} (K : Set (EuclideanSpace ℝ (Fin n)))
     (p x : EuclideanSpace ℝ (Fin n)) : Prop :=
   p ∉ K ∧ x ∈ frontier K ∧ ∃ t : ℝ, 1 < t ∧ p + t • (x - p) ∈ interior K
 
-/-- A finite family of actual exterior light sources illuminates every boundary point. -/
+/-- **Illumination by $q$ external points.** A set $K \subseteq \mathbb{R}^n$ is illuminated by $q$
+external points, for a natural number $q$, if there are points
+$p_1, \dots, p_q \in \mathbb{R}^n \setminus K$ (not necessarily distinct) such that for every
+boundary point $x$ of $K$ there are an index $i$ and a real $t > 1$ with $p_i + t(x - p_i)$ in the
+interior of $K$. -/
 def IlluminatedByExternalPoints {n : ℕ} (K : Set (EuclideanSpace ℝ (Fin n)))
     (q : ℕ) : Prop :=
   ∃ p : Fin q → EuclideanSpace ℝ (Fin n),
     (∀ i, p i ∉ K) ∧ ∀ x ∈ frontier K, ∃ i, ExternalPointIlluminates K (p i) x
 
-/-- The least directional count, with infinity if no finite family exists. -/
+/-- **Directional illumination number.** The directional illumination number of a set
+$K \subseteq \mathbb{R}^n$ is the least natural number $q$ such that $K$ is illuminated by $q$
+directions, and $\infty$ if there is no such $q$. -/
 noncomputable def directionalIlluminationNumber {n : ℕ}
     (K : Set (EuclideanSpace ℝ (Fin n))) : WithTop ℕ :=
   sInf ((fun q : ℕ ↦ (q : WithTop ℕ)) '' {q | IlluminatedByDirections K q})
 
-/-- The corresponding minimum number of actual exterior light sources. -/
+/-- **External-point illumination number.** The external-point illumination number of a set
+$K \subseteq \mathbb{R}^n$ is the least natural number $q$ such that $K$ is illuminated by $q$
+external points, and $\infty$ if there is no such $q$. -/
 noncomputable def externalPointIlluminationNumber {n : ℕ}
     (K : Set (EuclideanSpace ℝ (Fin n))) : WithTop ℕ :=
   sInf ((fun q : ℕ ↦ (q : WithTop ℕ)) '' {q | IlluminatedByExternalPoints K q})

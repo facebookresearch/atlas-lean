@@ -40,8 +40,8 @@ We record a member of `𝒮` by its coefficient sequence, an arithmetic function
 
 ## Main definitions
 
-* `ArithmeticFunction.IsLSeriesContinuation a F`: `F` agrees with `L(a, s)` on `Re s > 1` and
-  is holomorphic on `ℂ ∖ {1}`.
+* `ArithmeticFunction.IsLSeriesContinuation a F`: the series is absolutely convergent on
+  `Re s > 1`, where `F` agrees with its sum, and `F` is holomorphic on `ℂ ∖ {1}`.
 * `ArithmeticFunction.IsEulerLog a b`: `b` is supported on prime powers and
   `L(a, s) = exp L(b, s)` on `Re s > 1`, with `L(b, s)` absolutely convergent there.
 * `SelbergClass.FunctionalEquation F`: the data of a functional equation of `F`.
@@ -66,10 +66,25 @@ open Complex Filter Topology
 
 namespace ArithmeticFunction
 
-/-- `F` is the *continuation* of the Dirichlet series of `a`: it equals `L(a, s) = ∑ a n n^{-s}`
-on `Re s > 1` and is holomorphic on `ℂ ∖ {1}`. The value `F 1` is irrelevant. -/
-def IsLSeriesContinuation (a : ArithmeticFunction ℂ) (F : ℂ → ℂ) : Prop :=
-  (∀ s : ℂ, 1 < s.re → F s = LSeries (fun n => a n) s) ∧ DifferentiableOn ℂ F {1}ᶜ
+/-- `F` is the *continuation* of the Dirichlet series of `a`: the series converges absolutely
+on `Re s > 1`, `F` agrees there with its sum, and `F` is holomorphic on `ℂ ∖ {1}`.
+The value `F 1` is irrelevant. -/
+structure IsLSeriesContinuation (a : ArithmeticFunction ℂ) (F : ℂ → ℂ) : Prop where
+  /-- The continuation agrees with the sum where the series converges. -/
+  eq_lSeries : ∀ s : ℂ, 1 < s.re → F s = LSeries (fun n => a n) s
+  /-- The continuation is holomorphic away from the possible pole at `1`. -/
+  differentiableOn : DifferentiableOn ℂ F {1}ᶜ
+  /-- The series is absolutely convergent in its defining half-plane. -/
+  summable : ∀ s : ℂ, 1 < s.re → LSeriesSummable (fun n => a n) s
+
+/-- Multiplying continuations gives a continuation of the Dirichlet convolution. -/
+theorem IsLSeriesContinuation.mul {a b : ArithmeticFunction ℂ} {F G : ℂ → ℂ}
+    (hF : IsLSeriesContinuation a F) (hG : IsLSeriesContinuation b G) :
+    IsLSeriesContinuation (a * b) (fun s => F s * G s) := by
+  refine ⟨fun s hs => ?_, hF.differentiableOn.mul hG.differentiableOn,
+    fun s hs => ArithmeticFunction.LSeriesSummable_mul (hF.summable s hs) (hG.summable s hs)⟩
+  rw [hF.eq_lSeries s hs, hG.eq_lSeries s hs,
+    ArithmeticFunction.LSeries_mul' (hF.summable s hs) (hG.summable s hs)]
 
 /-- `b` is an *Euler logarithm* of `a`: `b` is supported on prime powers and, for `Re s > 1`,
 `∑ b n n^{-s}` converges absolutely with `∑ a n n^{-s} = exp (∑ b n n^{-s})`. -/

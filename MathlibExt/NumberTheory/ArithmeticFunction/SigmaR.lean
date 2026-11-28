@@ -40,8 +40,9 @@ adapted from the Apache-2.0 licensed `ArithmeticFunction.sigmaR` declaration in
 
 namespace ArithmeticFunction
 
-/-- The divisor power sum `σ_s(n) = ∑_{d ∣ n} d ^ s` with exponent in a semiring `R`, as in
-PrimeNumberTheoremAnd; the main case is `R = ℂ`. -/
+/-- **Divisor-power sum.** Let `R` be a semiring with a power operation `R → R → R`.
+For `s : R`, this arithmetic function has value `∑ d ∈ n.divisors, (d : R) ^ s` at `n`.
+At `n = 0` the sum is empty. The main case is `R = ℂ`, as in PrimeNumberTheoremAnd. -/
 noncomputable def sigmaR {R : Type*} [Semiring R] [HPow R R R] (s : R) : ArithmeticFunction R where
   toFun := fun n => ∑ d ∈ n.divisors, (d : R) ^ s
   map_zero' := by simp
@@ -49,24 +50,30 @@ noncomputable def sigmaR {R : Type*} [Semiring R] [HPow R R R] (s : R) : Arithme
 @[inherit_doc]
 scoped[ArithmeticFunction] notation "σᴿ" => ArithmeticFunction.sigmaR
 
-/-- The defining finite divisor-sum formula for `sigmaR`, for exponents in any semiring. -/
+/-- **Divisor-sum formula for `sigmaR`.** The sum runs over the positive divisors of `n`,
+with an empty sum when `n = 0`. -/
 theorem sigmaR_apply {R : Type*} [Semiring R] [HPow R R R] {n : ℕ} {s : R} :
     sigmaR s n = ∑ d ∈ n.divisors, (d : R) ^ s := by
   rfl
 
-/-- Every complex-exponent divisor sum takes the value one at one. -/
+/-- **The complex-exponent divisor sum at one.** For every complex number $s$, the divisor-power
+sum $\sigma_s(n) = \sum_{d \mid n} d^s$ with complex exponent $s$ satisfies $\sigma_s(1) = 1$. -/
 @[simp]
 theorem sigmaR_apply_one (s : ℂ) : sigmaR s 1 = 1 := by
   simp [sigmaR_apply]
 
-/-- At exponent zero, `sigmaR` counts the divisors of its input. -/
+/-- **The complex-exponent divisor sum at exponent zero counts divisors.** Let
+$\sigma_s(n) = \sum_{d \mid n} d^s$ be the divisor-power sum with complex exponent $s$. For
+every natural number $n$, $\sigma_0(n)$ equals the number of positive divisors of $n$, with the
+convention that $0$ has no divisors, so that $\sigma_0(0) = 0$. -/
 @[simp]
 theorem sigmaR_zero_apply (n : ℕ) :
     sigmaR (0 : ℂ) n = (n.divisors.card : ℂ) := by
   simp [sigmaR_apply]
 
-/-- At a natural exponent, `sigmaR` agrees with Mathlib's divisor-power sum after coercion to
-`ℂ`. -/
+/-- **Natural exponents give the classical divisor function.** For all natural numbers $k$ and
+$n$, the value at $n$ of the complex-exponent divisor sum $\sum_{d \mid n} d^s$ with $s = k$
+equals the natural number $\sigma_k(n) = \sum_{d \mid n} d^k$, viewed as a complex number. -/
 @[simp]
 theorem sigmaR_natCast_apply (k n : ℕ) :
     sigmaR (k : ℂ) n = (sigma k n : ℂ) := by

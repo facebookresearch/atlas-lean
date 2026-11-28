@@ -31,16 +31,23 @@ Source: T. F. Bloom, Erdős Problems, Problem #140, https://www.erdosproblems.co
 `≪` is a constant depending on `C`, for all `N ≥ 2`. formal-conjectures has no statement.
 -/
 
-/-- Erdős Problem 140: for every `C > 0`, `r₃(N) ≪ N / (log N)^C`, where `r₃(N) = rothNumberNat N`
-is the largest size of a subset of `{0, …, N - 1}` with no non-trivial three-term arithmetic
-progression. -/
+/-- **Roth numbers below every power of the logarithm (Erdős Problem 140).** The statement that
+for every real $C > 0$ there is a real constant $K$ such that $r_3(N) \le K N / (\log N)^C$ for
+every natural number $N \ge 2$, where $r_3(N)$ is the largest size of a subset of
+$\{0, 1, \dots, N - 1\}$ containing no non-trivial three-term arithmetic progression. -/
 def rothNumberLogPowerDecay : Prop :=
   ∀ C : ℝ, 0 < C → ∃ K : ℝ, ∀ N : ℕ, 2 ≤ N → (rothNumberNat N : ℝ) ≤ K * N / Real.log N ^ C
 
 /--
-Resolved true: Kelley and Meka proved that for some `β > 0` every subset of `{1, …, N}` of size at
-least `2^{-O((log N)^β)} N` contains a non-trivial three-term progression, so `r₃(N) ≤ N exp(-c (log
-N)^β)`, which is `≪ N/(log N)^C` for every `C`; erdosproblems.com/140 lists the problem as proved.
+**Kelley–Meka: Roth numbers are below every power of the logarithm.** For every real $C > 0$
+there is a real constant $K$ such that $r_3(N) \le K N / (\log N)^C$ for every natural number
+$N \ge 2$, where $r_3(N)$ is the largest size of a subset of $\{0, 1, \dots, N - 1\}$ containing no
+non-trivial three-term arithmetic progression.
+
+This follows from the theorem of Kelley and Meka that for some $\beta > 0$ every subset of
+$\{1, \dots, N\}$ of size at least $2^{-O((\log N)^\beta)} N$ contains a non-trivial three-term
+progression, which gives $r_3(N) \le N \exp(-c (\log N)^\beta)$ for some $c > 0$.
+
 Source: T. F. Bloom, Erdős Problems, Problem #140, https://www.erdosproblems.com/140 (status PROVED
 (LEAN)); resolution: Z. Kelley and R. Meka, Strong bounds for 3-progressions, FOCS 2023,
 arXiv:2302.05537, abstract: every A ⊆ {1, …, N} with |A| ≥ 2^{-O((log N)^β)} N contains a

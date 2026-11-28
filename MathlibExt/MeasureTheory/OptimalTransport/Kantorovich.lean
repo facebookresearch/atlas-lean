@@ -40,23 +40,55 @@ namespace MathlibExt.MeasureTheory.OptimalTransport.KantorovichWanted
 
 Strong Kantorovich duality on products of nonempty compact
 metric Borel probability spaces with continuous cost.
+
+## References
+
+* Cédric Villani, *Optimal Transport: Old and New*, Grundlehren der mathematischen
+  Wissenschaften 338, Springer, 2009, Chapter 1, Definition 1.1 (couplings), and Chapter 5
+  (Kantorovich duality).
+* The characterization `isCoupling_iff_map` was moved from
+  `MathlibExt.MeasureTheory.OptimalTransport.Existence`.
 -/
 
-/-- Coupling of `μ` and `ν`: prob. measure on `X × Y` with marginals `μ`, `ν`. -/
+/-- **Coupling of two probability measures.** Let $\mu$ and $\nu$ be probability measures on
+measurable spaces $X$ and $Y$. A probability measure $\pi$ on $X \times Y$ is a coupling of
+$\mu$ and $\nu$ when its marginals are $\mu$ and $\nu$, that is, when the pushforward of $\pi$
+under the projection $X \times Y \to X$ is $\mu$ and the pushforward of $\pi$ under the
+projection $X \times Y \to Y$ is $\nu$. -/
 def IsCoupling {X Y : Type*} [MeasurableSpace X] [MeasurableSpace Y]
     (μ : ProbabilityMeasure X) (ν : ProbabilityMeasure Y)
     (π : ProbabilityMeasure (X × Y)) : Prop :=
   (μ : Measure X) = (π : Measure (X × Y)).map Prod.fst ∧
     (ν : Measure Y) = (π : Measure (X × Y)).map Prod.snd
 
-/-- Values of `∫ c dπ` over couplings `π` of `μ`, `ν`. -/
+/-- A joint probability measure is a coupling exactly
+when its two projected probability measures are the prescribed marginals. -/
+theorem isCoupling_iff_map {X Y : Type*} [MeasurableSpace X] [MeasurableSpace Y]
+    (μ : ProbabilityMeasure X) (ν : ProbabilityMeasure Y)
+    (π : ProbabilityMeasure (X × Y)) :
+    IsCoupling μ ν π ↔ π.map Prod.fst = μ ∧ π.map Prod.snd = ν := by
+  constructor
+  · rintro ⟨h1, h2⟩
+    exact ⟨Subtype.ext h1.symm, Subtype.ext h2.symm⟩
+  · rintro ⟨h1, h2⟩
+    exact ⟨(congrArg Subtype.val h1).symm, (congrArg Subtype.val h2).symm⟩
+
+/-- **Values of the transport cost over couplings.** Let $\mu$ and $\nu$ be probability measures
+on measurable spaces $X$ and $Y$, and let $c : X \times Y \to \mathbb{R}$. The primal values of
+$c$ for $\mu$ and $\nu$ form the set of real numbers $\int c \, d\pi$, where $\pi$ ranges over
+the couplings of $\mu$ and $\nu$.
+
+Here $\int c \, d\pi$ is the Bochner integral, which is $0$ when $c$ is not $\pi$-integrable. -/
 def primalValues {X Y : Type*} [MeasurableSpace X] [MeasurableSpace Y]
     (μ : ProbabilityMeasure X) (ν : ProbabilityMeasure Y)
     (c : X × Y → ℝ) : Set ℝ :=
   {r : ℝ | ∃ π : ProbabilityMeasure (X × Y),
     IsCoupling μ ν π ∧ r = ∫ p, c p ∂(π : Measure (X × Y))}
 
-/-- Dual feasibility: continuous `φ`, `ψ` with `φ x + ψ y ≤ c (x,y)`. -/
+/-- **Dual feasible pair of potentials.** Let $X$ and $Y$ be topological spaces and let
+$c : X \times Y \to \mathbb{R}$. A pair of functions $\varphi : X \to \mathbb{R}$ and
+$\psi : Y \to \mathbb{R}$ is dual feasible for the cost $c$ when $\varphi$ and $\psi$ are
+continuous and $\varphi(x) + \psi(y) \le c(x, y)$ for all $x \in X$ and $y \in Y$. -/
 def DualFeasible {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
     (c : X × Y → ℝ) (φ : X → ℝ) (ψ : Y → ℝ) : Prop :=
   Continuous φ ∧ Continuous ψ ∧ ∀ x y, φ x + ψ y ≤ c (x, y)
@@ -266,14 +298,14 @@ private noncomputable def PhiLM
     intro z
     have h1 : (d + e).1 z.1 = d.1 z.1 + e.1 z.1 := rfl
     have h2 : (d + e).2 z.2 = d.2 z.2 + e.2 z.2 := rfl
-    simp only [phiPlusPsi_apply, BoundedContinuousFunction.add_apply, h1, h2]
+    simp only [phiPlusPsi_apply, add_apply, h1, h2]
     ring
   map_smul' c d := by
     apply BoundedContinuousFunction.ext
     intro z
     have h1 : (c • d).1 z.1 = c • d.1 z.1 := rfl
     have h2 : (c • d).2 z.2 = c • d.2 z.2 := rfl
-    simp only [phiPlusPsi_apply, BoundedContinuousFunction.smul_apply, h1, h2, smul_add,
+    simp only [phiPlusPsi_apply, smul_apply, h1, h2, smul_add,
       RingHom.id_apply]
 
 /-- The dual objective as a linear map on pairs of bounded continuous functions. -/
@@ -399,7 +431,7 @@ private theorem isOpen_negBCF
   intro z
   have h3 : w' z - w z ≤ ‖w' - w‖ := by
     have hnorm := (w' - w).norm_coe_le_norm z
-    rw [BoundedContinuousFunction.sub_apply, Real.norm_eq_abs] at hnorm
+    rw [sub_apply, Real.norm_eq_abs] at hnorm
     exact le_trans (le_abs_self _) hnorm
   have h4 : w z ≤ w z₀ := hz₀ z
   linarith
@@ -410,8 +442,8 @@ private theorem convex_negBCF
     Convex ℝ {w : W →ᵇ ℝ | ∀ z, w z < 0} := by
   intro w₁ hw₁ w₂ hw₂ a b ha hb hab z
   have e : (a • w₁ + b • w₂) z = a * w₁ z + b * w₂ z := by
-    rw [BoundedContinuousFunction.add_apply, BoundedContinuousFunction.smul_apply,
-      BoundedContinuousFunction.smul_apply, smul_eq_mul, smul_eq_mul]
+    rw [add_apply, smul_apply,
+      smul_apply, smul_eq_mul, smul_eq_mul]
   rw [e]
   have h1 : a * w₁ z ≤ 0 := mul_nonpos_of_nonneg_of_nonpos ha (le_of_lt (hw₁ z))
   have h2 : b * w₂ z ≤ 0 := mul_nonpos_of_nonneg_of_nonpos hb (le_of_lt (hw₂ z))
@@ -434,8 +466,8 @@ private theorem sepMap_apply
     (p : (W →ᵇ ℝ) × ℝ) (z : W) :
     sepMap cb t p z = p.1 z - cb z - (p.2 - t) := by
   change (p.1 - cb - (p.2 - t) • 1) z = _
-  rw [BoundedContinuousFunction.sub_apply, BoundedContinuousFunction.sub_apply,
-    BoundedContinuousFunction.smul_apply]
+  rw [sub_apply, sub_apply,
+    smul_apply]
   congr 1
   have h1 : (1 : (W →ᵇ ℝ)) z = 1 := rfl
   rw [h1, smul_eq_mul, mul_one]
@@ -481,8 +513,8 @@ private theorem sepMap_affine
   intro z
   have e1 : ((a • p + b • q).1) z = a • p.1 z + b • q.1 z := rfl
   have e2 : (a • p + b • q).2 = a • p.2 + b • q.2 := rfl
-  rw [sepMap_apply, e1, e2, BoundedContinuousFunction.add_apply,
-    BoundedContinuousFunction.smul_apply, BoundedContinuousFunction.smul_apply,
+  rw [sepMap_apply, e1, e2, add_apply,
+    smul_apply, smul_apply,
     sepMap_apply, sepMap_apply]
   simp only [smul_eq_mul]
   linear_combination (cb z - t) * hab
@@ -655,7 +687,7 @@ private theorem exists_posFunctional
       rw [sepSet_mem]
       intro z
       have e1 : (mkBCF c hc - s • w) z = (mkBCF c hc) z - s * w z := by
-        rw [BoundedContinuousFunction.sub_apply, BoundedContinuousFunction.smul_apply,
+        rw [sub_apply, smul_apply,
           smul_eq_mul]
       rw [e1]
       have hsw : 0 ≤ s * w z := mul_nonneg hs (hw z)
@@ -905,7 +937,7 @@ private theorem coupling_of_posFunctional
         have hnonneg : 0
             ≤ Pim (h.toBoundedContinuousFunction - g.toBoundedContinuousFunction) :=
           hpos _ (fun z => by
-            rw [BoundedContinuousFunction.sub_apply]
+            rw [sub_apply]
             linarith [hle z])
         have hadd : Pim (h.toBoundedContinuousFunction - g.toBoundedContinuousFunction)
             = Pim (h.toBoundedContinuousFunction) - Pim (g.toBoundedContinuousFunction) := by
@@ -1027,14 +1059,19 @@ private theorem coupling_of_posFunctional
     exact hcost
 
 /--
-Strong duality on nonempty compact metric Borel spaces: for continuous `c : X × Y → ℝ`, `inf_π ∫ c
-dπ = sup_{φ,ψ} ∫ φ dμ + ∫ ψ dν` over couplings `π` and continuous potentials `φ, ψ` with `φ x + ψ y
-≤ c (x,y)`.
+**Kantorovich duality on compact metric spaces.** Let $X$ and $Y$ be nonempty compact metric
+spaces, each carrying its Borel $\sigma$-algebra, let $\mu$ and $\nu$ be probability measures on
+$X$ and $Y$, and let $c : X \times Y \to \mathbb{R}$ be continuous. Then the infimum of
+$\int c \, d\pi$ over all couplings $\pi$ of $\mu$ and $\nu$ equals the supremum of
+$\int \varphi \, d\mu + \int \psi \, d\nu$ over all pairs of continuous functions
+$\varphi : X \to \mathbb{R}$ and $\psi : Y \to \mathbb{R}$ such that
+$\varphi(x) + \psi(y) \le c(x, y)$ for all $x \in X$ and $y \in Y$.
+
+Proves `Wanted` entry `kantorovich_duality_compact`.
+
 Source: L. V. Kantorovich, On the Translocation of Masses (1942); English transl. J. Math. Sci. 133
 (2006), 1381-1382, DOI 10.1007/S10958-006-0049-2; modern ref C. Villani, Topics in Optimal
 Transportation (2003).
-
-Proves `Wanted` entry `kantorovich_duality_compact`.
 -/
 theorem kantorovich_duality_compact
     {X Y : Type*}

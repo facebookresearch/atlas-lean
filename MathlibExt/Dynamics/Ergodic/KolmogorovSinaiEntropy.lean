@@ -255,7 +255,6 @@ theorem iterateJoin_preimage_ae_eq {μ : Measure α} {T : α → α} {S : β →
   have h : ∀ᵐ x ∂μ, ∀ k : Fin n, π (T^[(k : ℕ)] x) = S^[(k : ℕ)] (π x) :=
     ae_all_iff.2 fun k => (iterate_comp_ae_eq hT hπ k).mono fun x hx => hx
   filter_upwards [h] with x hx
-  apply propext
   simp only [iterateJoin, Set.mem_iInter, Set.mem_preimage, hx]
 
 /-- **Relative entropy of a pulled-back partition under an a.e. factor map.** If

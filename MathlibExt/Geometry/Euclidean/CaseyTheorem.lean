@@ -278,19 +278,23 @@ private lemma complex_ptolemy {z1 z2 z3 z4 : ℂ}
   exact hPtol
 
 set_option linter.unusedVariables false in
-/-- Casey's theorem: four circles with centers `c1`, `c2`, `c3`, `c4` and radii
-`r1`, `r2`, `r3`, `r4` tangent internally to a fixed outer circle with center `O`
-and radius `R` in cyclic order, with pairwise outer common tangent lengths `t12`,
-`t23`, `t34`, `t41`, `t13`, `t24` satisfying `t12 * t34 + t23 * t41 = t13 * t24`.
-See https://en.wikipedia.org/wiki/Casey%27s_theorem.
+/-- **Casey's theorem.** In the Euclidean plane, let a circle have center $O$ and radius $R > 0$,
+and let four circles have centers $c_1, c_2, c_3, c_4$ and radii $r_1, r_2, r_3, r_4$ with
+$0 < r_i < R$ and $|c_i O| + r_i = R$ for each $i$, so that each is internally tangent to the
+outer circle. Assume that the four circles lie outside each other, $r_i + r_j < |c_i c_j|$ for
+all $i \ne j$, and that they appear counterclockwise around $O$ with every consecutive angular
+gap less than $\pi$: writing $u \times v = u_1 v_2 - u_2 v_1$ for vectors $u = (u_1, u_2)$ and
+$v = (v_1, v_2)$ of the plane, $(c_i - O) \times (c_j - O) > 0$ for
+$(i, j) = (1, 2), (2, 3), (3, 4), (4, 1)$. For the pairs $ij = 12, 23, 34, 41, 13, 24$ let
+$t_{ij} > 0$ satisfy $t_{ij}^2 = |c_i c_j|^2 - (r_i - r_j)^2$, the length of an exterior common
+tangent of the circles $i$ and $j$. Then $t_{12} t_{34} + t_{23} t_{41} = t_{13} t_{24}$.
 
-Cyclic order is encoded by `hcyc12`, `hcyc23`, `hcyc34`, `hcyc41`: each consecutive pair of
-centers makes a positive oriented angle at `O`, so every consecutive angular gap is strictly
-less than `π`. Configurations with a gap of at least `π` are not covered; the general
-cyclic-order statement is `MetaMathlibExt.casey_theorem_cyclic_order` in
-`MathlibExt.Geometry.Euclidean.CaseyTheoremCyclicOrder`.
+Configurations with a consecutive angular gap of at least $\pi$ are not covered here; they are
+covered by the cyclic-order form of Casey's theorem.
 
 Proves `Wanted` entry `casey_theorem`.
+
+Source: https://en.wikipedia.org/wiki/Casey%27s_theorem.
 -/
 theorem casey_theorem {O c1 c2 c3 c4 : EuclideanSpace ℝ (Fin 2)}
     {R r1 r2 r3 r4 t12 t23 t34 t41 t13 t24 : ℝ}

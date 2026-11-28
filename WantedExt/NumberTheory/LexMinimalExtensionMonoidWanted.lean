@@ -11,7 +11,10 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.GCDMonoid.Finset
 public import Mathlib.GroupTheory.Finiteness
+public import MathlibExt.NumberTheory.LexMinimalExtensionMonoid
 public import WantedExt.NumberTheory.BinomidIndexWanted
+public import MathlibExt.NumberTheory.LexMinimalExtensionMonoidBinomidAverageLe
+public import MathlibExt.NumberTheory.LexMinimalExtensionPeriod
 
 namespace MetaMathlibExt
 
@@ -29,115 +32,15 @@ index of length `m` is an `η` with `IsLexMinimalExtensionOf η m`; the paper's
 set `L_k(I_k)` of lex-minimal extensions of length-`k` binomid indices is
 `{η | IsLexMinimalExtensionOf η k}`. -/
 
-/-- `A_1 = e_1`.
+/-- **Partial-sum criterion for lex-minimal extensions.** Let $k \ge 1$, let
+$\eta = (e_1, e_2, \dots)$ be a sequence of nonnegative integers and write
+$S_i = e_1 + \dots + e_i$. Suppose $S_i + S_j \le S_{i+j}$ for all $i, j \ge 1$ with
+$i + j \le k$. Then $\eta$ is the lex-minimal extension of $(e_1, \dots, e_k)$ if and only if,
+for every $r > k$, $S_i + S_j \le S_r$ for all $i, j \ge 1$ with $i + j = r$, with equality for
+at least one such pair $(i, j)$.
 
-Source: Caalim and Tanaka, *Generalized Binomial Coefficients and the Monoid
-of Lexicographically Minimal Extensions*, INTEGERS 26 (2026), Article A113,
-Section 2. -/
-public theorem binomidAverage_one (η : ℕ → ℕ) : binomidAverage η 1 = η 0 := by
-  simp [binomidAverage]
-
-/-- The indices `1 ≤ i ≤ m` with `A_i = A_max`, where
-`A_max = max {A_i | 1 ≤ i ≤ m}`.
-
-Source: Caalim and Tanaka, *Generalized Binomial Coefficients and the Monoid
-of Lexicographically Minimal Extensions*, INTEGERS 26 (2026), Article A113,
-Section 3 (the set `{i ≤ m | A_max = A_i}`). -/
-public noncomputable def maxAverageIndices (η : ℕ → ℕ) (m : ℕ) : Finset ℕ :=
-  open scoped Classical in
-  (Finset.Icc 1 m).filter fun i =>
-    ∀ j ∈ Finset.Icc 1 m, binomidAverage η j ≤ binomidAverage η i
-
-/-- For `m = 1` the only index is `1`.
-
-Source: Caalim and Tanaka, *Generalized Binomial Coefficients and the Monoid
-of Lexicographically Minimal Extensions*, INTEGERS 26 (2026), Article A113,
-Section 3. -/
-public theorem maxAverageIndices_one (η : ℕ → ℕ) : maxAverageIndices η 1 = {1} := by
-  simp [maxAverageIndices]
-
-/-- `B` is a basis of `M`: `M` is the span `⟨B⟩` of `B`, and no element of `B`
-is a nonnegative integer combination `∑ m_i β_i` of distinct elements `β_i` of
-`B` in which its own coefficient is `0`. The family `β` is injective: the
-paper's wording allows repeated entries, under which `β = (b, b)` and
-`b = 0 • b + 1 • b` would rule out every nonempty `B`; its uniqueness proof
-uses distinct entries.
-
-Source: Caalim and Tanaka, *Generalized Binomial Coefficients and the Monoid
-of Lexicographically Minimal Extensions*, INTEGERS 26 (2026), Article A113,
-Section 4 (definition of a basis). -/
-public def IsAddMonoidBasis {α : Type*} [AddCommMonoid α] (M B : Set α) : Prop :=
-  (AddSubmonoid.closure B : Set α) = M ∧
-    ∀ (n : ℕ) (β : Fin n → α), Function.Injective β → (∀ i, β i ∈ B) →
-      ∀ (c : Fin n → ℕ) (j : Fin n), β j = ∑ i, c i • β i → 1 ≤ c j
-
-/-- A basis never contains `0`.
-
-Source: Caalim and Tanaka, *Generalized Binomial Coefficients and the Monoid
-of Lexicographically Minimal Extensions*, INTEGERS 26 (2026), Article A113,
-Section 4. -/
-public theorem IsAddMonoidBasis.zero_notMem {α : Type*} [AddCommMonoid α] {M B : Set α}
-    (h : IsAddMonoidBasis M B) : (0 : α) ∉ B := by
-  intro h0
-  have := h.2 1 (fun _ => 0) (fun a b _ => Subsingleton.elim a b) (fun _ => h0)
-    (fun _ => 0) 0 (by simp)
-  simp at this
-
-/-- The empty set is a basis of the trivial monoid `{0}`.
-
-Source: Caalim and Tanaka, *Generalized Binomial Coefficients and the Monoid
-of Lexicographically Minimal Extensions*, INTEGERS 26 (2026), Article A113,
-Section 4. -/
-public theorem isAddMonoidBasis_empty {α : Type*} [AddCommMonoid α] :
-    IsAddMonoidBasis ({0} : Set α) ∅ :=
-  ⟨by simp, fun _ _ _ hβ _ j _ => absurd (hβ j) (Set.notMem_empty _)⟩
-
-/-- `η` is a nonzero atomic binomid index (an element of the paper's set
-`Atom`): a nonzero binomid index that is not the sum of two nonzero binomid
-indices.
-
-Source: Caalim and Tanaka, *Generalized Binomial Coefficients and the Monoid
-of Lexicographically Minimal Extensions*, INTEGERS 26 (2026), Article A113,
-Section 4 (definition of atomic). -/
-public def IsAtomicBinomidIndex (η : ℕ → ℕ) : Prop :=
-  IsBinomidIndex η ∧ η ≠ 0 ∧
-    ∀ η₁ η₂ : ℕ → ℕ, IsBinomidIndex η₁ → IsBinomidIndex η₂ → η = η₁ + η₂ →
-      η₁ = 0 ∨ η₂ = 0
-
-/-- The constant sequence `1^∞ = (E_1)^∞` is atomic.
-
-Source: Caalim and Tanaka, *Generalized Binomial Coefficients and the Monoid
-of Lexicographically Minimal Extensions*, INTEGERS 26 (2026), Article A113,
-Section 4 (example of `(E_m)^∞` with `m = 1`). -/
-public theorem isAtomicBinomidIndex_one : IsAtomicBinomidIndex fun _ => 1 := by
-  have key : ∀ γ : ℕ → ℕ, IsBinomidIndex γ → ∀ i, γ 0 ≤ γ i := fun γ hγ i => by
-    simpa using hγ 1 (i + 1) (by omega)
-  refine ⟨isBinomidIndex_const 1, fun h => by simpa using congrFun h 0, ?_⟩
-  intro η₁ η₂ h₁ h₂ h
-  have hs : ∀ i, η₁ i + η₂ i = 1 := fun i => by simpa [eq_comm] using congrFun h i
-  rcases Nat.eq_zero_or_pos (η₁ 0) with h0 | h0
-  · left
-    funext i
-    have := key η₂ h₂ i
-    have := hs 0
-    have := hs i
-    show η₁ i = 0
-    omega
-  · right
-    funext i
-    have := key η₁ h₁ i
-    have := hs 0
-    have := hs i
-    show η₂ i = 0
-    omega
-
-/-- Proposition 1, part 2: if the first `k` entries (`k ≥ 1`) form a finite
-binomid index (`S_i + S_j ≤ S_{i+j}` for `i, j ≥ 1`, `i + j ≤ k`), then `η` is
-the lex-minimal extension of its first `k` entries if and only if
-`Δ_η(r) = min {S_r - S_i - S_j | i + j = r, i, j ≥ 1} = 0` for every `r > k`,
-written as `S_i + S_j ≤ S_r` for all such splits with equality for one of
-them. Part 1 (`η` is binomid iff `S_i + S_j ≤ S_{i+j}`) is the first conjunct
-of `isBinomidIndex_iff_partialSum`.
+In the paper's notation, the condition says that $\Delta_\eta(r) = 0$ for every $r > k$, where
+$\Delta_\eta(r) = \min \{S_r - S_i - S_j : i + j = r,\ i, j \ge 1\}$.
 
 Source: Caalim and Tanaka, *Generalized Binomial Coefficients and the Monoid
 of Lexicographically Minimal Extensions*, INTEGERS 26 (2026), Article A113,
@@ -155,11 +58,13 @@ public theorem_wanted isLexMinimalExtensionOf_iff_forall_lt {η : ℕ → ℕ} {
         ∑ l ∈ Finset.range i, η l + ∑ l ∈ Finset.range j, η l
           = ∑ l ∈ Finset.range r, η l
 
-/-- Proposition 2: if `η` is the lex-minimal extension of a finite binomid
-index of length `m ≥ 1`, then for every `c ≥ 1` there is a solution
-`(n_i)_{i ≤ m}` of the unbounded knapsack problem `UKP[(S_i); (i); c]`
-(maximize `∑ n_i S_i` subject to `∑ n_i i ≤ c`) with `S_c = ∑ n_i S_i` and
-`c = ∑ n_i i`.
+/-- **Partial sums of a lex-minimal extension solve a knapsack problem.** Let $m \ge 1$, let
+$\eta = (e_1, e_2, \dots)$ be the lex-minimal extension of its first $m$ entries, and write
+$S_i = e_1 + \dots + e_i$. Then for every $c \ge 1$ there are nonnegative integers
+$n_1, \dots, n_m$ with $\sum_{i=1}^m n_i i = c$ and $S_c = \sum_{i=1}^m n_i S_i$ that solve the
+unbounded knapsack problem with values $S_i$, weights $i$ and capacity $c$: all nonnegative
+integers $n'_1, \dots, n'_m$ with $\sum_{i=1}^m n'_i i \le c$ satisfy
+$\sum_{i=1}^m n'_i S_i \le \sum_{i=1}^m n_i S_i$.
 
 Source: Caalim and Tanaka, *Generalized Binomial Coefficients and the Monoid
 of Lexicographically Minimal Extensions*, INTEGERS 26 (2026), Article A113,
@@ -173,56 +78,11 @@ public theorem_wanted IsLexMinimalExtensionOf.exists_knapsack {η : ℕ → ℕ}
         ∑ i ∈ Finset.Icc 1 m, n' i * ∑ l ∈ Finset.range i, η l
           ≤ ∑ i ∈ Finset.Icc 1 m, n i * ∑ l ∈ Finset.range i, η l
 
-/-- Lemma 1: for the lex-minimal extension of a finite binomid index of length
-`m`, `A_max = max {A_i | 1 ≤ i ≤ m}` is the maximum of all averages: `A_i ≤ A_j`
-for every `i ≥ 1` and every maximizing index `j ≤ m`.
-
-Source: Caalim and Tanaka, *Generalized Binomial Coefficients and the Monoid
-of Lexicographically Minimal Extensions*, INTEGERS 26 (2026), Article A113,
-Lemma 1 (`integers-2026-A113-lem-1`). -/
-public theorem_wanted IsLexMinimalExtensionOf.binomidAverage_le {η : ℕ → ℕ} {m : ℕ}
-    (hη : IsLexMinimalExtensionOf η m) {i : ℕ} (hi : 1 ≤ i) {j : ℕ}
-    (hj : j ∈ maxAverageIndices η m) :
-    binomidAverage η i ≤ binomidAverage η j
-
-/-- Lemma 2: `GCD {i ≤ m | A_i = A_max} = GCD {i ∈ ℕ | A_i = A_max}`, stated as:
-the left gcd divides every `i ≥ 1` with `A_i = A_max` (the other divisibility
-is immediate).
-
-Source: Caalim and Tanaka, *Generalized Binomial Coefficients and the Monoid
-of Lexicographically Minimal Extensions*, INTEGERS 26 (2026), Article A113,
-Lemma 2 (`integers-2026-A113-lem-2`). -/
-public theorem_wanted IsLexMinimalExtensionOf.gcd_maxAverageIndices_dvd {η : ℕ → ℕ}
-    {m : ℕ} (hη : IsLexMinimalExtensionOf η m) {i : ℕ} (hi : 1 ≤ i)
-    (hmax : ∃ j ∈ maxAverageIndices η m, binomidAverage η i = binomidAverage η j) :
-    (maxAverageIndices η m).gcd id ∣ i
-
-/-- Lemma 3: the minimal period of the lex-minimal extension `η̃` of a finite
-binomid index of length `m ≥ 1` (the least `p ≥ 1` with `η (i + p) = η i` for
-all large `i`) is divisible by `GCD {i ≤ m | A_i = A_max}`.
-
-Source: Caalim and Tanaka, *Generalized Binomial Coefficients and the Monoid
-of Lexicographically Minimal Extensions*, INTEGERS 26 (2026), Article A113,
-Lemma 3 (`integers-2026-A113-lem-3`). -/
-public theorem_wanted IsLexMinimalExtensionOf.gcd_maxAverageIndices_dvd_minimalPeriod
-    {η : ℕ → ℕ} {m : ℕ} (hη : IsLexMinimalExtensionOf η m) (hm : 1 ≤ m) {p : ℕ}
-    (hp : IsLeast {q : ℕ | 0 < q ∧ ∃ N, ∀ i, N ≤ i → η (i + q) = η i} p) :
-    (maxAverageIndices η m).gcd id ∣ p
-
-/-- Theorem 1: the minimal period of the lex-minimal extension `η̃` of a finite
-binomid index of length `m ≥ 1` is `GCD {i ≤ m | A_i = A_max}`.
-
-Source: Caalim and Tanaka, *Generalized Binomial Coefficients and the Monoid
-of Lexicographically Minimal Extensions*, INTEGERS 26 (2026), Article A113,
-Theorem 1 (`integers-2026-A113-thm-1`). -/
-public theorem_wanted IsLexMinimalExtensionOf.isLeast_period_gcd_maxAverageIndices
-    {η : ℕ → ℕ} {m : ℕ} (hη : IsLexMinimalExtensionOf η m) (hm : 1 ≤ m) :
-    IsLeast {q : ℕ | 0 < q ∧ ∃ N, ∀ i, N ≤ i → η (i + q) = η i}
-      ((maxAverageIndices η m).gcd id)
-
-/-- Theorem 2: if `k ≤ m` attains `A_k = A_max`, then `k m (m + 1) / 2` is a
-preperiod of `η̃`: the tail `(e_i)_{i > k m (m + 1) / 2}`, i.e. `η j` for
-`j ≥ k m (m + 1) / 2`, is periodic.
+/-- **A preperiod bound for lex-minimal extensions.** Let $m \ge 0$, let
+$\eta = (e_1, e_2, \dots)$ be the lex-minimal extension of its first $m$ entries, with averages
+$A_i = (e_1 + \dots + e_i)/i$, and let $1 \le k \le m$ with
+$A_k = \max \{A_i \mid 1 \le i \le m\}$. Then $\eta$ is periodic after position
+$N = k m (m + 1)/2$: there is $p \ge 1$ with $e_{i+p} = e_i$ for all $i > N$.
 
 Source: Caalim and Tanaka, *Generalized Binomial Coefficients and the Monoid
 of Lexicographically Minimal Extensions*, INTEGERS 26 (2026), Article A113,
@@ -232,37 +92,10 @@ public theorem_wanted IsLexMinimalExtensionOf.exists_period_from_preperiod_bound
     (hk : k ∈ maxAverageIndices η m) :
     ∃ p, 0 < p ∧ ∀ j, k * (m * (m + 1) / 2) ≤ j → η (j + p) = η j
 
-/-- Proposition 3: if the lex-minimal extension of the first `k` entries of
-`η₁ + η₂` decomposes with `η₁`, `η₂` binomid indices, then each `ηᵢ` is the
-lex-minimal extension of its own first `k` entries. Since every lex-minimal
-extension is one of its first `k` entries for some `k`, this includes the first
-claim (`η₁`, `η₂` are lex-minimal extensions).
-
-Source: Caalim and Tanaka, *Generalized Binomial Coefficients and the Monoid
-of Lexicographically Minimal Extensions*, INTEGERS 26 (2026), Article A113,
-Proposition 3 (`integers-2026-A113-prop-3`). -/
-public theorem_wanted IsLexMinimalExtensionOf.of_add {η₁ η₂ : ℕ → ℕ} {k : ℕ}
-    (h : IsLexMinimalExtensionOf (η₁ + η₂) k) (h₁ : IsBinomidIndex η₁)
-    (h₂ : IsBinomidIndex η₂) :
-    IsLexMinimalExtensionOf η₁ k ∧ IsLexMinimalExtensionOf η₂ k
-
-/-- Proposition 4: let `M` be a submonoid of `ℕ^ι` and `A` its set of nonzero
-atomic elements (nonzero, and not a sum of two nonzero elements of `M`). If
-every element of `M` is a finite sum of elements of `A`, then `A` is the unique
-basis of `M`.
-
-Source: Caalim and Tanaka, *Generalized Binomial Coefficients and the Monoid
-of Lexicographically Minimal Extensions*, INTEGERS 26 (2026), Article A113,
-Proposition 4 (`integers-2026-A113-prop-4`). -/
-public theorem_wanted isAddMonoidBasis_iff_eq_atoms {ι : Type*} (M : AddSubmonoid (ι → ℕ))
-    (hM : ∀ x ∈ M, x ∈ AddSubmonoid.closure
-      {a | a ∈ M ∧ a ≠ 0 ∧ ∀ y ∈ M, ∀ z ∈ M, a = y + z → y = 0 ∨ z = 0})
-    (B : Set (ι → ℕ)) :
-    IsAddMonoidBasis (M : Set (ι → ℕ)) B ↔
-      B = {a | a ∈ M ∧ a ≠ 0 ∧ ∀ y ∈ M, ∀ z ∈ M, a = y + z → y = 0 ∨ z = 0}
-
-/-- Proposition 5, first part: `Atom ∩ L` is the unique basis of the monoid `L`
-of lex-minimal extensions.
+/-- **Basis of the monoid of lex-minimal extensions.** Let $L$ be the set of lex-minimal
+extensions, viewed inside the sequences of nonnegative integers under componentwise addition.
+A set $B$ of sequences of nonnegative integers is a basis of $L$ if and only if $B$ is the set
+of nonzero atomic binomid indices that belong to $L$. Hence that set is the unique basis of $L$.
 
 Source: Caalim and Tanaka, *Generalized Binomial Coefficients and the Monoid
 of Lexicographically Minimal Extensions*, INTEGERS 26 (2026), Article A113,
@@ -271,8 +104,12 @@ public theorem_wanted isAddMonoidBasis_lexMinimalExtensions_iff (B : Set (ℕ �
     IsAddMonoidBasis {η | IsLexMinimalExtension η} B ↔
       B = {η | IsAtomicBinomidIndex η ∧ IsLexMinimalExtension η}
 
-/-- Proposition 5, second part: `Atom ∩ L_k(I_k)` is the unique basis of the
-span `⟨L_k(I_k)⟩`.
+/-- **Basis of the span of the lex-minimal extensions of length $k$.** Let $k \ge 0$ and let
+$L_k$ be the set of sequences $\eta = (e_1, e_2, \dots)$ of nonnegative integers that are the
+lex-minimal extension of $(e_1, \dots, e_k)$. A set $B$ of sequences of nonnegative integers is
+a basis of the submonoid generated by $L_k$ under componentwise addition if and only if $B$ is
+the set of nonzero atomic binomid indices that belong to $L_k$. Hence that set is the unique
+basis of this submonoid.
 
 Source: Caalim and Tanaka, *Generalized Binomial Coefficients and the Monoid
 of Lexicographically Minimal Extensions*, INTEGERS 26 (2026), Article A113,
@@ -283,11 +120,14 @@ public theorem_wanted isAddMonoidBasis_closure_lexMinimalExtensionsOf_iff (k : �
         (AddSubmonoid.closure {η : ℕ → ℕ | IsLexMinimalExtensionOf η k} : Set (ℕ → ℕ)) B ↔
       B = {η | IsAtomicBinomidIndex η ∧ IsLexMinimalExtensionOf η k}
 
-/-- Lemma 4: if `η` is the lex-minimal extension of its first `k ≥ 1` entries,
-then for every bound `l` there is a map `π` with `1 ≤ π i < i` and
-`S_i - S_{π(i)} - S_{i - π(i)} = 0` for all `k < i ≤ l`. The paper takes the
-specific bound `l = l(k)` from its proof of the preceding lemma; the statement
-here holds for every `l`.
+/-- **Late partial sums of a lex-minimal extension split.** Let $k \ge 1$, let
+$\eta = (e_1, e_2, \dots)$ be the lex-minimal extension of its first $k$ entries, and write
+$S_i = e_1 + \dots + e_i$. Then for every $l$ there is a map $\pi \colon \mathbb{N} \to \mathbb{N}$
+such that $1 \le \pi(i) < i$ and $S_i = S_{\pi(i)} + S_{i - \pi(i)}$ for every $i$ with
+$k < i \le l$.
+
+The paper takes the specific bound $l = l(k)$ from its proof of the preceding lemma; the
+statement here holds for every $l$.
 
 Source: Caalim and Tanaka, *Generalized Binomial Coefficients and the Monoid
 of Lexicographically Minimal Extensions*, INTEGERS 26 (2026), Article A113,
@@ -298,8 +138,12 @@ public theorem_wanted IsLexMinimalExtensionOf.exists_path {η : ℕ → ℕ} {k 
       ∑ t ∈ Finset.range i, η t
         = ∑ t ∈ Finset.range (π i), η t + ∑ t ∈ Finset.range (i - π i), η t
 
-/-- Lemma 5: the span `⟨L_k(I_k)⟩` is a finitely generated monoid, and its
-basis `Atom ∩ L_k(I_k)` is finite.
+/-- **Spans of lex-minimal extensions of a fixed length are finitely generated.** For $k \ge 0$
+let $L_k$ be the set of sequences of nonnegative integers that are the lex-minimal extension of
+their first $k$ entries. Then the submonoid of $\mathbb{N}^{\mathbb{N}}$ (under componentwise
+addition) generated by $L_k$ is finitely generated, and only finitely many elements of $L_k$
+are atomic binomid indices, that is, nonzero binomid indices that are not the sum of two
+nonzero binomid indices.
 
 Source: Caalim and Tanaka, *Generalized Binomial Coefficients and the Monoid
 of Lexicographically Minimal Extensions*, INTEGERS 26 (2026), Article A113,
@@ -308,9 +152,13 @@ public theorem_wanted fg_closure_lexMinimalExtensionsOf (k : ℕ) :
     (AddSubmonoid.closure {η : ℕ → ℕ | IsLexMinimalExtensionOf η k}).FG ∧
       {η | IsAtomicBinomidIndex η ∧ IsLexMinimalExtensionOf η k}.Finite
 
-/-- Lemma 6: the span `⟨L_k(I_k)⟩` is a finitely presented commutative monoid:
-it is the image of a surjective homomorphism from the free commutative monoid
-`ℕ^n` whose kernel congruence is generated by finitely many relations.
+/-- **Spans of lex-minimal extensions of a fixed length are finitely presented.** For $k \ge 0$
+let $L_k$ be the set of sequences of nonnegative integers that are the lex-minimal extension of
+their first $k$ entries, and let $\langle L_k \rangle$ be the submonoid of $\mathbb{N}^{\mathbb{N}}$
+(under componentwise addition) generated by $L_k$. Then there are $n \ge 0$, a surjective
+monoid homomorphism $f \colon \mathbb{N}^n \to \langle L_k \rangle$ and a finite set $R$ of
+pairs of elements of $\mathbb{N}^n$ such that the congruence on $\mathbb{N}^n$ generated by $R$
+is the kernel congruence of $f$, which relates $x$ and $y$ exactly when $f(x) = f(y)$.
 
 Source: Caalim and Tanaka, *Generalized Binomial Coefficients and the Monoid
 of Lexicographically Minimal Extensions*, INTEGERS 26 (2026), Article A113,
@@ -321,10 +169,15 @@ public theorem_wanted exists_finitePresentation_closure_lexMinimalExtensionsOf (
       Function.Surjective f ∧ ∃ R : Set ((Fin n → ℕ) × (Fin n → ℕ)), R.Finite ∧
         addConGen (fun x y => (x, y) ∈ R) = AddCon.ker f
 
-/-- Theorem 3: `L` is the inductive limit (directed union) of the increasing
-system of submonoids `⟨L_k(I_k)⟩` (finitely presented by
-`exists_finitePresentation_closure_lexMinimalExtensionsOf`), and
-`(Atom ∩ L_k(I_k))_k` is an increasing system of generators of that system.
+/-- **The monoid of lex-minimal extensions is a directed union.** For $k \ge 0$ let $L_k$ be the
+set of sequences of nonnegative integers that are the lex-minimal extension of their first $k$
+entries, let $\langle L_k \rangle$ be the submonoid of $\mathbb{N}^{\mathbb{N}}$ (under
+componentwise addition) generated by $L_k$, and let $\mathcal{A}_k$ be the set of elements of
+$L_k$ that are atomic binomid indices, that is, nonzero binomid indices that are not the sum of
+two nonzero binomid indices. Then $\langle L_k \rangle \subseteq \langle L_{k'} \rangle$ and
+$\mathcal{A}_k \subseteq \mathcal{A}_{k'}$ whenever $k \le k'$; the union of the sets
+$\langle L_k \rangle$ over all $k$ is the set $L$ of all lex-minimal extensions; and for every
+$k$ the submonoid generated by $\mathcal{A}_k$ is $\langle L_k \rangle$.
 
 Source: Caalim and Tanaka, *Generalized Binomial Coefficients and the Monoid
 of Lexicographically Minimal Extensions*, INTEGERS 26 (2026), Article A113,

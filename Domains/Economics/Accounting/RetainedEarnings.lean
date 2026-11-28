@@ -63,8 +63,9 @@ def netIncome {α : Type*} [Fintype α] (role : α → ClosingRole) (b : α → 
 def distributions {α : Type*} [Fintype α] (role : α → ClosingRole) (b : α → ℝ) : ℝ :=
   roleTotal role ClosingRole.distribution b
 
-/-- Closing entry: zero every temporary (non-permanent) account and transfer their net
-debit-positive balance to the retained-earnings account `re`. -/
+/-- Closing entry: post minus its balance to every temporary (non-permanent) account and their
+net debit-positive balance to the account `re`; when `re` is permanent (retained earnings) this
+zeroes every temporary account. -/
 def closingEntry {α : Type*} [Fintype α] [DecidableEq α] (role : α → ClosingRole) (re : α)
     (b : α → ℝ) : α → ℝ :=
   fun a => (if role a = ClosingRole.permanent then 0 else -b a) +
@@ -95,7 +96,8 @@ theorem isBalanced_closingEntry {α : Type*} [Fintype α] [DecidableEq α]
   rw [Finset.sum_congr rfl (fun a _ => hfun a), Finset.sum_add_distrib, h1, h2]
   exact neg_add_cancel _
 
-/-- Closing leaves every temporary account at zero. -/
+/-- If the retained-earnings account is permanent, closing leaves every temporary account at
+zero. -/
 theorem post_closingEntry_of_ne_permanent {α : Type*} [Fintype α] [DecidableEq α]
     {role : α → ClosingRole} {re : α} (hre : role re = ClosingRole.permanent) (b : α → ℝ)
     {a : α} (ha : role a ≠ ClosingRole.permanent) :
@@ -110,7 +112,8 @@ theorem post_closingEntry_of_ne_permanent {α : Type*} [Fintype α] [DecidableEq
           else 0)) := rfl
   rw [hfun, ite_eq_right ha, ite_eq_right hane, add_zero, add_neg_cancel]
 
-/-- Retained-earnings roll-forward: after closing, the (credit-normal) retained-earnings
+/-- Retained-earnings roll-forward: if the retained-earnings account is permanent, after
+closing, the (credit-normal) retained-earnings
 balance equals the opening retained earnings plus net income minus distributions. -/
 theorem retainedEarnings_rollForward {α : Type*} [Fintype α] [DecidableEq α]
     {role : α → ClosingRole} {re : α} (hre : role re = ClosingRole.permanent) (b : α → ℝ) :

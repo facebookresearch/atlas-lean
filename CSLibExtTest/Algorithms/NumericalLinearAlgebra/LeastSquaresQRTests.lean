@@ -34,11 +34,11 @@ example : ∀ θ, rss (!![1; 1] : Matrix (Fin 2) (Fin 1) ℝ) ![0, 2] ![1] ≤
     field_simp
     linarith
   · ext i j; fin_cases i; fin_cases j
-    simp [mul_apply, Fin.sum_univ_two]
+    simp [Matrix.mul_apply, Fin.sum_univ_two]
     field_simp
     linarith
   · simp [hs0]
-  · ext i j; fin_cases i <;> fin_cases j <;> simp [mul_apply, hs0]
+  · ext i j; fin_cases i <;> fin_cases j <;> simp [Matrix.mul_apply, hs0]
 
 /-- With linearly independent columns the least-squares solution is unique. -/
 example (y : Fin 3 → ℝ) :

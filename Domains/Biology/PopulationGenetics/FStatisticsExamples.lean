@@ -15,7 +15,7 @@ public import Mathlib.Probability.Distributions.Gaussian.Real
 # A Gaussian drift model whose frequency leaves `[0, 1]`
 
 `DriftModel` records only second-moment information: square-integrable root and increments,
-pairwise uncorrelated increments, and drift lengths given by second moments. It deliberately does
+pairwise L²-orthogonal increments, and drift lengths given by second moments. It deliberately does
 not assume that the resulting population frequencies lie in `[0, 1]`.
 
 This file gives the smallest example showing that. With one edge, one population, root frequency
@@ -39,7 +39,8 @@ open MeasureTheory ProbabilityTheory MathlibExt.Biology.PopulationGenetics.FStat
 namespace MathlibExt.Biology.PopulationGenetics.FStatisticsExamples
 
 /-- A one-edge, one-population drift model with root frequency `1 / 2` and a standard Gaussian
-increment. The single edge makes the uncorrelatedness condition vacuous; the point of the example
+increment. The single edge makes the orthogonality condition on distinct increments vacuous; the
+point of the example
 is the range of the resulting frequency. -/
 noncomputable def gaussianDriftModel : DriftModel (gaussianReal 0 1) Unit Unit where
   root _ := 1 / 2
@@ -59,7 +60,8 @@ noncomputable def gaussianDriftModel : DriftModel (gaussianReal 0 1) Unit Unit w
 theorem gaussianDriftModel_freq (ω : ℝ) : gaussianDriftModel.freq () ω = 1 / 2 + ω := by
   simp [DriftModel.freq, gaussianDriftModel]
 
-/-- The Gaussian drift model's frequency lies outside `[0, 1]` on a non-null set. -/
+/-- The Gaussian drift model's frequency lies outside `[0, 1]` on a non-null set, equivalently
+with positive probability (the set contains `(1 / 2, ∞)`). -/
 theorem gaussianDriftModel_freq_not_mem_Icc :
     gaussianReal 0 1 {ω | gaussianDriftModel.freq () ω ∉ Set.Icc (0 : ℝ) 1} ≠ 0 := by
   have hsub : Set.Ioi (1 / 2 : ℝ) ⊆ {ω | gaussianDriftModel.freq () ω ∉ Set.Icc (0 : ℝ) 1} := by

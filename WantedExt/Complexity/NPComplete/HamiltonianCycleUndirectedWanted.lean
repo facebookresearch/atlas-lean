@@ -16,11 +16,12 @@ M. Karp, "Reducibility among combinatorial problems" (1972).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import CSLibExt.Computability.Complexity.Karp.Color
 public import Mathlib.Combinatorics.SimpleGraph.Hamiltonian
+public import CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs
 
 @[expose] public section
 
@@ -45,33 +46,12 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- An instance: vertex count, edge list. -/
-abbrev HamiltonianCycleUndirectedInstance := ℕ × List (ℕ × ℕ)
 
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : HamiltonianCycleUndirectedInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2
+/-- **HAMILTONIAN CYCLE (UNDIRECTED) is NP-complete.** The decision problem HAMILTONIAN CYCLE
+(UNDIRECTED) belongs to NP, and every decision problem in NP has a polynomial-time many-one
+reduction to it.
 
-
-/-- Well-formedness of an instance. -/
-def WellFormed (i : HamiltonianCycleUndirectedInstance) : Prop :=
-  0 < i.1 ∧ i.2.Nodup ∧ ∀ e ∈ i.2, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2
-
-/-- A Hamiltonian cycle. -/
-def HamiltonianCycleUndirectedFeasible
-    (i : HamiltonianCycleUndirectedInstance) : Prop :=
-  3 ≤ i.1 ∧ (Graph i).IsHamiltonian
-
-open Classical in
-/-- HAMILTONIAN CYCLE (UNDIRECTED) as a decision problem over bitstrings. -/
-noncomputable def hamiltonianCycleUndirectedDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := HamiltonianCycleUndirectedInstance) x with
-  | some i => decide (WellFormed i ∧ HamiltonianCycleUndirectedFeasible i)
-  | none => false
-
-/-- **HAMILTONIAN CYCLE (UNDIRECTED) is NP-complete.** Source: M. R. Garey and D. S. Johnson,
+Source: M. R. Garey and D. S. Johnson,
 *Computers and Intractability* (1979), HAMILTONIAN CIRCUIT; R. M. Karp, "Reducibility
 among combinatorial problems" (1972). -/
 public theorem_wanted hamiltonianCycleUndirected_npComplete :

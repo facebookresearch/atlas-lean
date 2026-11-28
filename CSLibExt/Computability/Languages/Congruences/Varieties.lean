@@ -454,7 +454,7 @@ theorem exists_split_pow {w : FreeMonoid Symbol} (N : ℕ) (X1 X2 : List Symbol)
     rcases (List.append_eq_append_iff.mp h2) with ⟨c, hUX, hX2⟩ | ⟨d, hX1, hW⟩
     · obtain ⟨i, p, s, j, hW, hX1', hc, hij⟩ := ih X1 c hUX.symm
       refine ⟨i, p, s, j + 1, hW, hX1', ?_, by omega⟩
-      rw [hX2, hc, List.append_assoc, ← FreeMonoid.toList_mul, ← pow_succ]
+      rw [hX2, hc, List.append_assoc, ← FreeMonoid.toList_mul (w ^ j) w, ← pow_succ]
     · refine ⟨N + 1, d, X2, 0, hW, hX1, ?_, by omega⟩
       simp
 

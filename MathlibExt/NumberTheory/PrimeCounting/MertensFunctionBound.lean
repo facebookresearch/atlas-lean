@@ -683,7 +683,7 @@ theorem card_squarefree_sub_isBigO_sqrt :
       =O[atTop] fun x : ℝ => Real.sqrt x := by
   refine IsBigO.of_bound 4 ?_
   filter_upwards [eventually_ge_atTop (0 : ℝ)] with x hx
-  have h := MetaMathlibExt.abs_card_hfree_sub_le 2 le_rfl x hx
+  have h := MetaMathlibExt.PowerFreeParity.abs_card_hfree_sub_le 2 le_rfl x hx
   have hfilt : (Finset.Icc 1 ⌊x⌋₊).filter
       (fun n => ∀ p ∈ n.primeFactors, n.factorization p < 2) =
       (Finset.Icc 1 ⌊x⌋₊).filter Squarefree := by

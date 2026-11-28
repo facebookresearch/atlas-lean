@@ -20,7 +20,7 @@ journal version SIAM Journal on Computing 7 (1978), 458-464, doi:10.1137/0207036
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Algebra.Polynomial.Basic
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity

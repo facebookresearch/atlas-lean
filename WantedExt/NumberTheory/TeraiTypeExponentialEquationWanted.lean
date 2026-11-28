@@ -25,9 +25,9 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- For every integer `m > 1`, the only solution of
-`(10m² + 1)^x + (15m² - 1)^y = (5m)^z` in positive integers is `(x, y, z) = (1, 1, 2)`.
-Natural-number subtraction in `15 m² - 1` is exact since `m > 1`.
+/-- **The Terai equation $(10m^2 + 1)^x + (15m^2 - 1)^y = (5m)^z$.** For every integer
+$m > 1$, the only solution of $(10m^2 + 1)^x + (15m^2 - 1)^y = (5m)^z$ in positive integers
+$x, y, z$ is $(x, y, z) = (1, 1, 2)$.
 
 Source: Kalyan Chakraborty and Meenu Sharma, *A Note on Terai's Conjecture Related to Exponential
 Diophantine Equations*, INTEGERS 26 (2026), Article A67, Theorem 2 (`integers-2026-A67-thm-2`). -/
@@ -36,11 +36,13 @@ public theorem_wanted terai_ten_fifteen_five_eq_one_one_two {m x y z : ℕ} (hm 
     (h : (10 * m ^ 2 + 1) ^ x + (15 * m ^ 2 - 1) ^ y = (5 * m) ^ z) :
     x = 1 ∧ y = 1 ∧ z = 2
 
-/-- **Theorem 3** (quoted from Hua's textbook). For every positive integer `D`, the class number
-of primitive positive definite binary quadratic forms of discriminant `-4D` satisfies
-`h(-4D) < (4/π) √D log(2e√D)`. "Class number of positive binary quadratic forms" is read as the
-standard primitive (Gauss) class number `gaussClassNumber`: the number of primitive
-Gauss-reduced forms of discriminant `-4D`.
+/-- **Hua's class number bound.** For every positive integer $D$, the Gauss class number
+$h(-4D)$, the number of primitive, reduced, positive definite binary quadratic forms of
+discriminant $-4D$, satisfies $h(-4D) < \frac{4}{\pi} \sqrt{D} \log(2e\sqrt{D})$, where $\log$ is
+the natural logarithm.
+
+The source quotes this bound from Hua's textbook for the class number of positive binary
+quadratic forms; it is read here as the primitive (Gauss) class number.
 
 Source: Kalyan Chakraborty and Meenu Sharma, *A Note on Terai's Conjecture Related to Exponential
 Diophantine Equations*, INTEGERS 26 (2026), Article A67, Theorem 3 (`integers-2026-A67-thm-3`). -/

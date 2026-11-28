@@ -485,13 +485,13 @@ balance coordinates are the components and charge. -/
 def balanceMatrix {κ ι : Type*} (z : ι → ℤ) (B : Matrix κ ι ℚ) : Matrix (Option κ) ι ℚ :=
   Matrix.of fun r i => r.elim (z i : ℚ) fun k => B k i
 
-/-- The charge row of the balance matrix. -/
+/-- The charge row of the balance matrix: its entries are the species charges `z i`. -/
 @[simp]
 lemma balanceMatrix_none {κ ι : Type*} (z : ι → ℤ) (B : Matrix κ ι ℚ) (i : ι) :
     balanceMatrix z B none i = z i :=
   rfl
 
-/-- The component rows of the balance matrix. -/
+/-- The component rows of the balance matrix: the row of component `k` is row `k` of `B`. -/
 @[simp]
 lemma balanceMatrix_some {κ ι : Type*} (z : ι → ℤ) (B : Matrix κ ι ℚ) (k : κ) (i : ι) :
     balanceMatrix z B (some k) i = B k i :=
@@ -552,7 +552,7 @@ theorem independentFormationCount_eq {κ ι : Type*} [Fintype ι] (z : ι → �
 /-- **Formation count with charged components.** If every species charge is the combination
 `zc ᵥ* B` of its component content, as when each component carries a fixed charge `zc k`,
 conserving the components conserves charge, and the formation reactions form a space of
-dimension `S - C` with `C = Matrix.rank B`. -/
+dimension `S - C` with `S = Fintype.card ι` and `C = Matrix.rank B`. -/
 theorem independentFormationCount_eq_of_charge_eq {κ ι : Type*} [Fintype ι] [Fintype κ]
     (z : ι → ℤ) (B : Matrix κ ι ℚ) (zc : κ → ℚ) (hz : ∀ i, (z i : ℚ) = (zc ᵥ* B) i) :
     independentFormationCount z B = Fintype.card ι - B.rank := by
@@ -624,8 +624,8 @@ lemma independentFormationCount_basisChange {κ ι : Type*} [Fintype ι] [Fintyp
   unfold independentFormationCount
   rw [hker]
 
-/-- The balance combination built in the new basis, with weights transported by `P⁻¹`, equals
-the one built in the old basis. -/
+/-- For an invertible matrix `P`, the balance combination built in the new component basis
+`P * B`, with weights transported by `P⁻¹`, equals the one built in the old basis. -/
 lemma balanceCombination_basisChange {κ ι : Type*} [Fintype κ] [DecidableEq κ]
     (z : ι → ℤ) (B : Matrix κ ι ℚ) (a₀ : ℚ) (w : κ → ℚ) (P : Matrix κ κ ℚ)
     (hP : IsUnit P.det) :
@@ -642,8 +642,8 @@ lemma balanceCombination_basisChange {κ ι : Type*} [Fintype κ] [DecidableEq �
 
 namespace ProtonReferenceLevel
 
-/-- The reference level `R` in the component basis `P * B`: the same designated species and
-zero level, with the weights `R.w ᵥ* P⁻¹`. -/
+/-- For an invertible matrix `P`, the reference level `R` in the component basis `P * B`: the same
+designated species and zero level, with the weights `R.w ᵥ* P⁻¹`. -/
 noncomputable def basisChange {κ ι : Type*} [Fintype κ] [DecidableEq κ] {z : ι → ℤ}
     {B : Matrix κ ι ℚ} (R : ProtonReferenceLevel z B) (P : Matrix κ κ ℚ) (hP : IsUnit P.det) :
     ProtonReferenceLevel z (P * B) where
@@ -666,14 +666,16 @@ noncomputable def basisChange {κ ι : Type*} [Fintype κ] [DecidableEq κ] {z :
     rw [balanceCombination_basisChange z B 1 R.w P hP]
     exact R.balanceCombination_hydroxide
 
-/-- The transported reference level has the same proton excess. -/
+/-- For an invertible change of component basis `P`, the transported reference level has the same
+proton excess. -/
 lemma protonExcess_basisChange {κ ι : Type*} [Fintype κ] [DecidableEq κ] {z : ι → ℤ}
     {B : Matrix κ ι ℚ} (R : ProtonReferenceLevel z B) (P : Matrix κ κ ℚ)
     (hP : IsUnit P.det) : (R.basisChange P hP).protonExcess = R.protonExcess :=
   balanceCombination_basisChange z B 1 R.w P hP
 
-/-- The transported weights give the same weighted total of the transported real totals, so
-they annihilate `P *ᵥ T` exactly when `R.w` annihilates `T`. -/
+/-- For an invertible change of component basis `P`, the transported weights give the same weighted
+total of the transported real totals, so they annihilate `P *ᵥ T` exactly when `R.w` annihilates
+`T`. -/
 lemma protonWeightTotal_basisChange {κ ι : Type*} [Fintype κ] [DecidableEq κ] {z : ι → ℤ}
     {B : Matrix κ ι ℚ} (R : ProtonReferenceLevel z B) (P : Matrix κ κ ℚ)
     (hP : IsUnit P.det) (T : κ → ℝ) :
@@ -691,7 +693,8 @@ lemma protonWeightTotal_basisChange {κ ι : Type*} [Fintype κ] [DecidableEq κ
     (fun k => ((R.w k : ℚ) : ℝ)) ⬝ᵥ T
   rw [Matrix.dotProduct_mulVec, hcast]
 
-/-- The proton condition of the transported reference level is the same constraint. -/
+/-- For an invertible change of component basis `P`, the proton condition of the transported
+reference level is the same constraint. -/
 lemma protonSet_basisChange {κ ι : Type*} [Fintype κ] [DecidableEq κ] [Fintype ι]
     {z : ι → ℤ} {B : Matrix κ ι ℚ} (R : ProtonReferenceLevel z B) (P : Matrix κ κ ℚ)
     (hP : IsUnit P.det) :

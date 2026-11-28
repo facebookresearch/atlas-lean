@@ -8,11 +8,12 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Combinatorics.Enumerative.Catalan.Basic
 public import Mathlib.Data.Fintype.BigOperators
 public import Mathlib.Data.Rat.Defs
+public import Mathlib.SetTheory.Cardinal.Finite
 import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Combinatorics.Enumerative.Catalan.Basic
 import Mathlib.Data.Fin.Basic
 import Mathlib.Data.Finset.Max
 import Mathlib.Data.Fintype.Card
@@ -1126,6 +1127,21 @@ private lemma park_card_eq_catalan (n : ℕ) :
     Fintype.card (Park n) = catalan n :=
   park_card_eq_catalan_aux n n (Nat.le_refl n)
 
+/-- The number of nondecreasing maps `f : Fin n → Fin n` with `f k ≤ k` for all `k` and
+`f i = i` is `catalan i.val * catalan (n - i.val)`. Split just before `i` and subtract `i`
+from the indices and values in the second block. If `i = 0`, the first block is the unique
+empty map. -/
+theorem card_monotone_le_id_eq_self (n : ℕ) (i : Fin n) :
+    Nat.card { f : Fin n → Fin n // Monotone f ∧ (∀ k, f k ≤ k) ∧ f i = i } =
+      catalan i.val * catalan (n - i.val) := by
+  let e : { f : Fin n → Fin n // Monotone f ∧ (∀ k, f k ≤ k) ∧ f i = i } ≃ Fiber n i :=
+    { toFun := fun ⟨f, hm, hb, hi⟩ => ⟨⟨f, hm, fun k => Fin.le_def.mp (hb k)⟩, hi⟩
+      invFun := fun ⟨⟨f, hm, hb⟩, hi⟩ => ⟨f, hm, fun k => Fin.le_def.mpr (hb k), hi⟩
+      left_inv := fun _ => rfl
+      right_inv := fun _ => rfl }
+  rw [Nat.card_congr (e.trans (fiberEquiv n i)), Nat.card_eq_fintype_card,
+    Fintype.card_prod, park_card_eq_catalan, park_card_eq_catalan]
+
 private lemma ratio_of_catalan (n : ℕ) (hn : 0 < n)
     (Cn : ℕ) (hCn : 0 < Cn)
     (h1 : (n + 1) * Cn = n.centralBinom)
@@ -1156,11 +1172,14 @@ private lemma ratio_of_catalan (n : ℕ) (hn : 0 < n)
   linarith [keyQ]
 
 /--
-The uniform average number of lucky cars/spots among weakly increasing
-parking functions of length `n` is `3n / (n + 2)`. A weakly increasing
-parking function is encoded 0-based as a monotone `a : Fin n → Fin n` with
-`a i ≤ i`; the `i`-th car parks in spot `i` and is lucky exactly when
-`a i = i`.
+**Expected number of lucky cars in weakly increasing parking functions.** Let $n \ge 1$. Number
+cars and spots from $0$, and encode a weakly increasing parking function of length $n$ as a
+nondecreasing map $a : \{0, \dots, n-1\} \to \{0, \dots, n-1\}$ with $a(i) \le i$ for every $i$.
+The average, over all such maps $a$, of the number of indices $i$ with $a(i) = i$ equals
+$\frac{3n}{n+2}$. Here car $i$ parks in spot $i$ and is lucky exactly when $a(i) = i$, so this
+number counts both the lucky cars and the lucky spots.
+
+Proves `Wanted` entry `expected_lucky_spots_weakly_increasing_parking_functions`.
 
 Source: Steve Butler, Kimberly Hadaway, Victoria Lenius, Preston Martens,
 and Marshall Moats, "Lucky Cars and Lucky Spots in Parking Functions,"
@@ -1168,8 +1187,6 @@ Journal of Integer Sequences 29 (2026), Article 26.1.1, Corollary,
 lines 631–633 (supporting lemma lines 619–629),
 https://cs.uwaterloo.ca/journals/JIS/VOL29/Hadaway/had3.tex
 The corollary attributes the Dyck-path expectation value to Deutsch.
-
-Proves `Wanted` entry `expected_lucky_spots_weakly_increasing_parking_functions`.
 -/
 theorem expected_lucky_spots_weakly_increasing_parking_functions
     (n : ℕ) (hn : 0 < n) :

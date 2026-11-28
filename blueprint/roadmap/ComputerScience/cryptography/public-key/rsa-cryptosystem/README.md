@@ -6,6 +6,7 @@
 - [Fermat's little theorem for congruent exponents](pow-eq-pow-of-mod-eq.md)
 - [Positivity of the reduced RSA exponent](one-le-mod.md)
 - [RSA key](key.md)
+- [RSA Attacks and Reductions](rsa-attacks-and-reductions/README.md)
 
 ## Key
 
@@ -22,7 +23,11 @@
 - [RSA-CRT decryption is correct](crt-decrypt-eq.md)
 - [RSA-CRT decryption with the standard exponents](crt-decrypt-mod-eq.md)
 - [RSA key from the totient condition](of-totient.md)
+- [RSA moduli exceed two](two-lt-n.md)
 
 ## Public keys
 
+- [RSA public key](pub-key.md)
 - [Textbook RSA encryption under a public key](encrypt-2.md)
+- [Public part of an RSA key](public-key.md)
+- [Encrypting under the public part of a key](public-key-encrypt.md)

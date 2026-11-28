@@ -77,34 +77,55 @@ namespace EuclideanGeometry
 variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E]
 
 omit [FiniteDimensional ℝ E] in
-/-- `ρ` is a local defining function of `S ⊆ E` at `p`: `p` lies on the zero set of `ρ`, `ρ` is
-`C²` at `p`, its differential at `p` is nonzero, and near `p` the set `S` is the zero set of `ρ`
-(in particular `p ∈ S`). Every point of a `C²` hypersurface has local defining functions, and every
-point of a regular level set of a `C²` function is of this form. -/
+/-- **Local defining function.** Let $E$ be a real inner product space, $S \subseteq E$,
+$\rho : E \to \mathbb{R}$ and $p \in E$. Then $\rho$ is a local defining function of $S$ at $p$
+when $\rho(p) = 0$, $\rho$ is of class $C^2$ at $p$, its differential $D\rho(p)$ is nonzero, and
+for all $x$ in some neighborhood of $p$, $x \in S$ if and only if $\rho(x) = 0$. In particular
+$p \in S$.
+
+Every point of a $C^2$ hypersurface has local defining functions, and every point of a regular
+level set of a $C^2$ function is of this form. -/
 def IsLocalDefiningFunction (S : Set E) (ρ : E → ℝ) (p : E) : Prop :=
   ρ p = 0 ∧ ContDiffAt ℝ 2 ρ p ∧ fderiv ℝ ρ p ≠ 0 ∧ ∀ᶠ x in 𝓝 p, x ∈ S ↔ ρ x = 0
 
 omit [FiniteDimensional ℝ E] in
-/-- A point with a local defining function lies on the hypersurface. -/
+/-- **A point with a local defining function lies in the set.** Let $E$ be a real inner product
+space, $S \subseteq E$, $\rho : E \to \mathbb{R}$ and $p \in E$. If $\rho$ is a local defining
+function of $S$ at $p$, then $p \in S$. -/
 theorem IsLocalDefiningFunction.mem {S : Set E} {ρ : E → ℝ} {p : E}
     (h : IsLocalDefiningFunction S ρ p) : p ∈ S :=
   h.2.2.2.self_of_nhds.2 h.1
 
-/-- The second fundamental form at `p` of the level set of `ρ` through `p`, with respect to the
-unit normal `∇ρ(p) / ‖∇ρ(p)‖`: `II(u, v) = D²ρ(p)(u, v) / ‖∇ρ(p)‖`, for tangent vectors `u`, `v`
-(orthogonal to `∇ρ(p)`). It equals `⟪D_u ν, v⟫` for the unit normal field `ν = ∇ρ / ‖∇ρ‖`.
+/-- **Second fundamental form of a level set.** Let $E$ be a finite-dimensional real inner
+product space, $\rho : E \to \mathbb{R}$ and $p \in E$. Write $\nabla\rho(p)$ for the gradient of
+$\rho$ at $p$ and $D^2\rho(p)$ for the second derivative of $\rho$ at $p$ (a bilinear form on
+$E$). The second fundamental form at $p$ of the level set of $\rho$ through $p$, with respect to
+the unit normal $\nabla\rho(p) / \|\nabla\rho(p)\|$, is defined for all $u, v \in E$ by
+$\mathrm{II}(u, v) = D^2\rho(p)(u, v) / \|\nabla\rho(p)\|$, and it is $0$ when $\nabla\rho(p) = 0$.
+When $\rho$ is $C^2$ near $p$ and $\nabla\rho(p) \neq 0$, for tangent vectors $u$, $v$ (orthogonal
+to $\nabla\rho(p)$) it equals $\langle D_u \nu, v \rangle$ for the unit normal field
+$\nu = \nabla\rho / \|\nabla\rho\|$.
 
-The formula is defined for all `u v : E`, but it is the second fundamental form (independent of
-the defining function, up to the sign fixed by the normal) only for tangent `u` and `v`: two
-defining functions of the same hyperplane can give different values on the normal vector. -/
+The formula is the second fundamental form (independent of the defining function, up to the sign
+fixed by the normal) only for tangent $u$ and $v$: two defining functions of the same hyperplane
+can give different values on the normal vector. -/
 def levelSetSecondFundamentalForm (ρ : E → ℝ) (p u v : E) : ℝ :=
   fderiv ℝ (fderiv ℝ ρ) p u v / ‖∇ ρ p‖
 
-/-- The mean curvature at `p` of the level set of `ρ` through `p`, with respect to the unit normal
-`ν = ∇ρ(p) / ‖∇ρ(p)‖`: the trace of the second fundamental form on the tangent hyperplane
-`∇ρ(p)⊥`, `H = (Δρ(p) - D²ρ(p)(ν, ν)) / ‖∇ρ(p)‖ = div (∇ρ / ‖∇ρ‖)(p)`, the sum of the principal
-curvatures. The Laplacian is computed in the orthonormal basis `stdOrthonormalBasis ℝ E`; since
-`D²ρ(p)` is bilinear, this does not depend on the basis. -/
+/-- **Mean curvature of a level set.** Let $E$ be a finite-dimensional real inner product space,
+$\rho : E \to \mathbb{R}$ and $p \in E$. Write $\nabla\rho(p)$ for the gradient of $\rho$ at $p$,
+$D^2\rho(p)$ for the second derivative of $\rho$ at $p$ (a bilinear form on $E$), and
+$\Delta\rho(p) = \sum_i D^2\rho(p)(e_i, e_i)$ for a fixed orthonormal basis $(e_i)$ of $E$. The
+mean curvature at $p$ of the level set of $\rho$ through $p$, with respect to the unit normal
+$\nu = \nabla\rho(p) / \|\nabla\rho(p)\|$, is
+$H = (\Delta\rho(p) - D^2\rho(p)(\nu, \nu)) / \|\nabla\rho(p)\|$, and $H = 0$ when
+$\nabla\rho(p) = 0$.
+
+This is the trace of the second fundamental form on the tangent hyperplane $\nabla\rho(p)^\perp$,
+the sum of the principal curvatures, and it equals
+$\operatorname{div}(\nabla\rho / \|\nabla\rho\|)(p)$ when $\rho$ is $C^2$ near $p$ and
+$\nabla\rho(p) \neq 0$. Since $D^2\rho(p)$ is bilinear, $\Delta\rho(p)$ does not depend on the
+choice of orthonormal basis. -/
 def levelSetMeanCurvature (ρ : E → ℝ) (p : E) : ℝ :=
   ((∑ i, fderiv ℝ (fderiv ℝ ρ) p (stdOrthonormalBasis ℝ E i) (stdOrthonormalBasis ℝ E i)) -
       fderiv ℝ (fderiv ℝ ρ) p (∇ ρ p) (∇ ρ p) / ‖∇ ρ p‖ ^ 2) / ‖∇ ρ p‖
@@ -118,8 +139,11 @@ private theorem fderiv_fderiv_smul (ρ : E → ℝ) (c : ℝ) :
 private theorem gradient_smul (ρ : E → ℝ) (c : ℝ) (p : E) : ∇ (c • ρ) p = c • ∇ ρ p := by
   simp [gradient, fderiv_const_smul_field c]
 
-/-- Rescaling the defining function by `c ≠ 0` multiplies the second fundamental form by the sign
-of `c`: it only depends on the level set and on the side toward which the normal points. -/
+/-- **Second fundamental form under rescaling of the defining function.** Let $E$ be a
+finite-dimensional real inner product space. For every $\rho : E \to \mathbb{R}$, all
+$p, u, v \in E$ and every real $c \neq 0$, the second fundamental form at $p$ of the level set of
+$c\rho$ through $p$, evaluated at $(u, v)$, equals $c / |c|$ (the sign of $c$) times the second
+fundamental form at $p$ of the level set of $\rho$ through $p$, evaluated at $(u, v)$. -/
 theorem levelSetSecondFundamentalForm_smul (ρ : E → ℝ) (p u v : E) {c : ℝ} (hc : c ≠ 0) :
     levelSetSecondFundamentalForm (c • ρ) p u v =
       c / |c| * levelSetSecondFundamentalForm ρ p u v := by
@@ -131,7 +155,10 @@ theorem levelSetSecondFundamentalForm_smul (ρ : E → ℝ) (p u v : E) {c : ℝ
   · have hn : ‖∇ ρ p‖ ≠ 0 := norm_ne_zero_iff.mpr hg
     field_simp
 
-/-- Rescaling the defining function by `c ≠ 0` multiplies the mean curvature by the sign of `c`. -/
+/-- **Mean curvature under rescaling of the defining function.** Let $E$ be a finite-dimensional
+real inner product space. For every $\rho : E \to \mathbb{R}$, every $p \in E$ and every real
+$c \neq 0$, the mean curvature at $p$ of the level set of $c\rho$ through $p$ equals $c / |c|$
+(the sign of $c$) times the mean curvature at $p$ of the level set of $\rho$ through $p$. -/
 theorem levelSetMeanCurvature_smul (ρ : E → ℝ) (p : E) {c : ℝ} (hc : c ≠ 0) :
     levelSetMeanCurvature (c • ρ) p = c / |c| * levelSetMeanCurvature ρ p := by
   simp only [levelSetMeanCurvature, fderiv_fderiv_smul, gradient_smul, Pi.smul_apply,
@@ -145,12 +172,19 @@ theorem levelSetMeanCurvature_smul (ρ : E → ℝ) (p : E) {c : ℝ} (hc : c �
     rw [sq_abs]
     ring
 
-/-- A positive multiple of the defining function has the same mean curvature. -/
+/-- **Positive rescaling preserves the mean curvature.** Let $E$ be a finite-dimensional real
+inner product space. For every $\rho : E \to \mathbb{R}$, every $p \in E$ and every real $c > 0$,
+the mean curvature at $p$ of the level set of $c\rho$ through $p$ equals the mean curvature at $p$
+of the level set of $\rho$ through $p$. -/
 theorem levelSetMeanCurvature_smul_of_pos (ρ : E → ℝ) (p : E) {c : ℝ} (hc : 0 < c) :
     levelSetMeanCurvature (c • ρ) p = levelSetMeanCurvature ρ p := by
   rw [levelSetMeanCurvature_smul ρ p hc.ne', abs_of_pos hc, div_self hc.ne', one_mul]
 
-/-- Reversing the normal (replacing `ρ` by `-ρ`) changes the sign of the mean curvature. -/
+/-- **Reversing the normal negates the mean curvature.** Let $E$ be a finite-dimensional real
+inner product space. For every $\rho : E \to \mathbb{R}$ and every $p \in E$, the mean curvature
+at $p$ of the level set of $-\rho$ through $p$ is the negative of the mean curvature at $p$ of the
+level set of $\rho$ through $p$: replacing $\rho$ by $-\rho$ reverses the unit normal and changes
+the sign of the mean curvature. -/
 theorem levelSetMeanCurvature_neg (ρ : E → ℝ) (p : E) :
     levelSetMeanCurvature (-ρ) p = -levelSetMeanCurvature ρ p := by
   rw [← neg_one_smul ℝ ρ, levelSetMeanCurvature_smul ρ p (by norm_num)]
@@ -164,8 +198,11 @@ private theorem gradient_norm_sq_sub_one (p : E) :
   ext v
   simp [InnerProductSpace.toDual_apply_apply]
 
-/-- Sanity check: the unit sphere of `E`, as the zero set of `‖x‖² - 1`, has mean curvature
-`n - 1` with respect to the outward normal (sum convention). -/
+/-- **Mean curvature of the unit sphere.** Let $E$ be a finite-dimensional real inner product
+space of dimension $n$. For every $p \in E$ with $\|p\| = 1$, the mean curvature at $p$ of the
+level set of $\rho(x) = \|x\|^2 - 1$ through $p$ is $n - 1$. That is, the unit sphere of $E$ has
+mean curvature $n - 1$ with respect to the outward normal, the mean curvature being the sum (not
+the average) of the principal curvatures. -/
 theorem levelSetMeanCurvature_sphere (p : E) (hp : ‖p‖ = 1) :
     levelSetMeanCurvature (fun x : E ↦ ‖x‖ ^ 2 - 1) p = finrank ℝ E - 1 := by
   have h1 : fderiv ℝ (fun x : E ↦ ‖x‖ ^ 2 - 1) = fderiv ℝ (fun x : E ↦ ‖x‖ ^ 2) := by
@@ -179,7 +216,10 @@ theorem levelSetMeanCurvature_sphere (p : E) (hp : ‖p‖ = 1) :
   norm_num
   ring
 
-/-- Sanity check: a hyperplane `{x | ⟪a, x⟫ = c}` has mean curvature `0`. -/
+/-- **Hyperplanes have zero mean curvature.** Let $E$ be a finite-dimensional real inner product
+space. For all $a \in E$, $c \in \mathbb{R}$ and $p \in E$, the mean curvature at $p$ of the level
+set of $\rho(x) = \langle a, x \rangle - c$ through $p$ is $0$. In particular, for $a \neq 0$ the
+hyperplane $\{x \mid \langle a, x \rangle = c\}$ has mean curvature $0$ at each of its points. -/
 theorem levelSetMeanCurvature_affine (a : E) (c : ℝ) (p : E) :
     levelSetMeanCurvature (fun x : E ↦ inner ℝ a x - c) p = 0 := by
   have h : fderiv ℝ (fun x : E ↦ inner ℝ a x - c) = fun _ ↦ innerSL ℝ a := by

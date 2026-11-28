@@ -10,7 +10,15 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Real.Sqrt
+public import MathlibExt.Combinatorics.Enumerative.ClassicalMeteredParkingFunctions
+public import MathlibExt.Combinatorics.Enumerative.LongMeteredParkingFunctions
+public import MathlibExt.Combinatorics.Enumerative.MeteredParkingDiagonalChoose
+public import MathlibExt.Combinatorics.Enumerative.MeteredParkingLowerBound
+public import MathlibExt.Combinatorics.Enumerative.OneMeteredLuckyLaces
+public import MathlibExt.Combinatorics.Enumerative.OneMeteredParkingFunctions
+public import MathlibExt.Combinatorics.Enumerative.OneMeteredTwoSpots
 public import MathlibExt.Combinatorics.Enumerative.ParkingFunction
+public import MathlibExt.Combinatorics.Enumerative.TwoMeteredParkingFunctions
 
 namespace MetaMathlibExt
 
@@ -23,128 +31,13 @@ source's car `i + 1`. Classical `(m, n)`-parking functions are MathlibExt's
 `IsPartialParkingFunction m n` (and `IsParkingFunction n` for `m = n`).
 -/
 
-/-- The outcome of the `t`-metered parking scheme on `n` spots (zero-based) for the preference
-list `prefs`: cars arrive in order; car `i` takes the least spot `s` with `prefs[i] ≤ s < n` not
-occupied by one of the previous `t` cars (cars `i - t, …, i - 1` that parked), giving `some s`, or
-fails, giving `none`. After car `j` parks, car `j - t` leaves, so only the last `t` entries of the
-outcome so far are occupied.
-
-Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
-Functions*, INTEGERS 25 (2025), Article A73, Section 1 (definition of the `t`-metered scheme) and
-Section 2
-(definition of the outcome). -/
-public def meteredOutcome (t n : ℕ) (prefs : List ℕ) : List (Option ℕ) :=
-  prefs.foldl
-    (fun out a => out ++ [(List.range' a (n - a)).find?
-      (fun s => decide (s ∉ (out.drop (out.length - t)).filterMap id))])
-    []
-
-/-- The source's example with `t = 1`, `n = 2` and preferences `(1,1,1)`: cars park in spots
-`1, 2, 1`.
-
-Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
-Functions*, INTEGERS 25 (2025), Article A73, example after the definition of `t`-metered parking
-functions (Section 1). -/
-public theorem meteredOutcome_one_two_ones :
-    meteredOutcome 1 2 [0, 0, 0] = [some 0, some 1, some 0] := by decide
-
-/-- The source's example with `t = 1`, `n = 2` and preferences `(1,1,2)`: car `3` fails.
-
-Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
-Functions*, INTEGERS 25 (2025), Article A73, example after the definition of `t`-metered parking
-functions (Section 1). -/
-public theorem meteredOutcome_one_two_fail :
-    meteredOutcome 1 2 [0, 0, 1] = [some 0, some 1, none] := by decide
-
-/-- The source's example `O^2_6(3,3,3,3,4,5,6) = (3,4,5,3,4,5,6)` and
-`O^1_6(3,3,3,3,4,5,6) = (3,4,3,4,5,6,X)`.
-
-Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
-Functions*, INTEGERS 25 (2025), Article A73, example after the definition of the outcome
-(Section 2). -/
-public theorem meteredOutcome_example_six :
-    meteredOutcome 2 6 [2, 2, 2, 2, 3, 4, 5] =
-        [some 2, some 3, some 4, some 2, some 3, some 4, some 5] ∧
-      meteredOutcome 1 6 [2, 2, 2, 2, 3, 4, 5] =
-        [some 2, some 3, some 2, some 3, some 4, some 5, none] := by decide
-
-/-- A `t`-metered `(m, n)`-parking function: every car parks under the `t`-metered scheme.
-
-Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
-Functions*, INTEGERS 25 (2025), Article A73, Section 1 (definition of `t`-metered parking
-functions). -/
-public def IsMeteredParkingFunction {m n : ℕ} (t : ℕ) (f : Fin m → Fin n) : Prop :=
-  ∀ o ∈ meteredOutcome t n (List.ofFn fun i => (f i : ℕ)), o ≠ none
-
-/-- Decidability of `IsMeteredParkingFunction` (a finite check of the outcome list).
-
-Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
-Functions*, INTEGERS 25 (2025), Article A73, Section 1 (definition of `t`-metered parking
-functions). -/
-public instance {m n : ℕ} (t : ℕ) (f : Fin m → Fin n) :
-    Decidable (IsMeteredParkingFunction t f) := by
-  unfold IsMeteredParkingFunction
-  infer_instance
-
-/-- The source's `mpf_{m,n}(t)`: the number of `t`-metered `(m, n)`-parking functions.
-
-Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
-Functions*, INTEGERS 25 (2025), Article A73, Section 1 (definition and the notation
-`mpf_{m,n}(t)`). -/
-public def meteredParkingCount (t m n : ℕ) : ℕ :=
-  (Finset.univ.filter fun f : Fin m → Fin n => IsMeteredParkingFunction t f).card
-
-/-- `mpf_{2,2}(1) = 3`, an entry of the source's Table 1.
-
-Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
-Functions*, INTEGERS 25 (2025), Article A73, Table 1. -/
-public theorem meteredParkingCount_one_two_two : meteredParkingCount 1 2 2 = 3 := by decide
-
-/-- The number of lucky cars (cars parking in their preferred spot) of `f` under the `t`-metered
-scheme.
-
-Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
-Functions*, INTEGERS 25 (2025), Article A73, Section 2 (`lucky(α)`). -/
-public def meteredLuckyCount {m n : ℕ} (t : ℕ) (f : Fin m → Fin n) : ℕ :=
-  ((List.ofFn fun i => (f i : ℕ)).zip (meteredOutcome t n (List.ofFn fun i => (f i : ℕ)))).countP
-    fun p => decide (p.2 = some p.1)
-
-/-- One step of the lace decomposition: append `a` to the last lace if that keeps it a lace
-(`(p)` extends by `p`, `(p, p, p+1, …, e)` extends by `e + 1`), otherwise start a new lace `(a)`.
-
-Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
-Functions*, INTEGERS 25 (2025), Article A73, Section 3 (definitions of a lace and of the lace
-decomposition). -/
-public def laceStep (acc : List (List ℕ)) (a : ℕ) : List (List ℕ) :=
-  match acc.getLast? with
-  | some [p] => if a = p then acc.dropLast ++ [[p, a]] else acc ++ [[a]]
-  | some l@(_ :: _ :: _) =>
-      if a = l.getLastD 0 + 1 then acc.dropLast ++ [l ++ [a]] else acc ++ [[a]]
-  | _ => acc ++ [[a]]
-
-/-- The lace decomposition of a sequence: its partition, from left to right, into maximally long
-laces of consecutive entries, where a lace is `(p)` or `(p, p, p+1, …, p+ℓ-2)`.
-
-Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
-Functions*, INTEGERS 25 (2025), Article A73, Section 3 (definitions of a lace and of the lace
-decomposition). -/
-public def laceDecomposition (l : List ℕ) : List (List ℕ) :=
-  l.foldl laceStep []
-
-/-- The source's examples `lace(3,3,3,3,4,6) = ((3,3),(3,3,4),(6))` and
-`lace(4,1,2,2,3,4,5,5,1,2) = ((4),(1),(2,2,3,4,5),(5),(1),(2))`.
-
-Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
-Functions*, INTEGERS 25 (2025), Article A73, Section 3, example after the definition of the lace
-decomposition. -/
-public theorem laceDecomposition_examples :
-    laceDecomposition [3, 3, 3, 3, 4, 6] = [[3, 3], [3, 3, 4], [6]] ∧
-      laceDecomposition [4, 1, 2, 2, 3, 4, 5, 5, 1, 2] =
-        [[4], [1], [2, 2, 3, 4, 5], [5], [1], [2]] := by decide
-
-/-- A necessary condition: if `f` is a `t`-metered `(m, n)`-parking function then for every spot
-`i ∈ [n]` and every `j ∈ [m - t]`, `|{j ≤ k ≤ j + t : a_k ≤ i}| ≥ t + 1 - n + i`, stated with
-`n` moved to the left (`t + 1 + i ≤ |…| + n`) and one-based `i`, `j`, `k`.
+/-- **Window condition for metered parking functions.** Number the cars $1, \dots, m$ and the
+spots $1, \dots, n$, and let $a_k$ be the preferred spot of car $k$. If $(a_1, \dots, a_m)$ is a
+$t$-metered $(m, n)$-parking function, then for every $i$ with $1 \le i \le n$ and every $j$ with
+$1 \le j \le m - t$ (truncated subtraction, so there is no such $j$ when $m \le t$),
+$$t + 1 + i \le \#\{k : j \le k \le j + t,\ a_k \le i\} + n,$$
+that is, at least $t + 1 - n + i$ of the cars $j, \dots, j + t$ prefer one of the spots
+$1, \dots, i$.
 
 Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
 Functions*, INTEGERS 25 (2025), Article A73, Proposition 1 (`integers-2025-A73-prop-1`). -/
@@ -155,72 +48,10 @@ public theorem_wanted metered_window_count_ge {m n t : ℕ} {f : Fin m → Fin n
       (Finset.univ.filter fun k : Fin m =>
           j ≤ (k : ℕ) + 1 ∧ (k : ℕ) + 1 ≤ j + t ∧ (f k : ℕ) + 1 ≤ i).card + n
 
-/-- If `m > n` and `t ≥ n`, there are no `t`-metered `(m, n)`-parking functions.
-
-Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
-Functions*, INTEGERS 25 (2025), Article A73, Proposition 2 (`integers-2025-A73-prop-2`). -/
-public theorem_wanted meteredParkingCount_eq_zero {m n t : ℕ} (hmn : n < m) (htn : n ≤ t) :
-    meteredParkingCount t m n = 0
-
-/-- If `t ≥ m - 1` and `n ≥ m`, the `t`-metered `(m, n)`-parking functions are exactly the
-classical `(m, n)`-parking functions.
-
-Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
-Functions*, INTEGERS 25 (2025), Article A73, Proposition 3 (`integers-2025-A73-prop-3`). -/
-public theorem_wanted isMeteredParkingFunction_iff_of_le {m n t : ℕ} (ht : m - 1 ≤ t)
-    (hmn : m ≤ n) (f : Fin m → Fin n) :
-    IsMeteredParkingFunction t f ↔ IsPartialParkingFunction m n f
-
-/-- For `m ≤ n`, every classical `(m, n)`-parking function is a `t`-metered parking function for
-every `t ≥ 0`.
-
-Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
-Functions*, INTEGERS 25 (2025), Article A73, Proposition 4 (`integers-2025-A73-prop-4`). -/
-public theorem_wanted IsPartialParkingFunction.isMeteredParkingFunction {m n : ℕ} (hmn : m ≤ n)
-    {f : Fin m → Fin n} (hf : IsPartialParkingFunction m n f) (t : ℕ) :
-    IsMeteredParkingFunction t f
-
-/-- Under the `t`-metered scheme, a car that parks has displacement at most `t`, and a car that
-fails to park has preference `a_i ≥ n - t + 1` (zero-based: `n ≤ f i + t`).
-
-Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
-Functions*, INTEGERS 25 (2025), Article A73, Proposition 5 (`integers-2025-A73-prop-5`). -/
-public theorem_wanted meteredOutcome_displacement_le {m n t : ℕ} (f : Fin m → Fin n) (i : Fin m) :
-    (∀ s, (meteredOutcome t n (List.ofFn fun i => (f i : ℕ)))[(i : ℕ)]? = some (some s) →
-        s ≤ (f i : ℕ) + t) ∧
-      ((meteredOutcome t n (List.ofFn fun i => (f i : ℕ)))[(i : ℕ)]? = some none →
-        n ≤ (f i : ℕ) + t)
-
-/-- `mpf_{m,n}(t) ≥ (n - t)^m` for all `m, n, t`, with truncated subtraction `n - t` in `ℕ`.
-
-Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
-Functions*, INTEGERS 25 (2025), Article A73, Corollary 1 (`integers-2025-A73-cor-1`). -/
-public theorem_wanted pow_sub_le_meteredParkingCount (t m n : ℕ) :
-    (n - t) ^ m ≤ meteredParkingCount t m n
-
-/-- For every `t ≥ 1`, `mpf_{2,n}(t) = n^2 - 1`.
-
-Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
-Functions*, INTEGERS 25 (2025), Article A73, Corollary 2 (`integers-2025-A73-cor-2`). -/
-public theorem_wanted meteredParkingCount_two {t : ℕ} (ht : 1 ≤ t) (n : ℕ) :
-    meteredParkingCount t 2 n = n ^ 2 - 1
-
-/-- For `0 < m ≤ n` and `t = 1`, car `i` is lucky (parks in its preference) if and only if `a_i`
-is the first entry of a lace of `lace(α)`; equivalently car `i` is displaced (by one, or fails at
-spot `n`) exactly when `a_i` is not the first entry of its lace. Stated as equality of the
-lucky-indicator list with the lace-start pattern.
-
-Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
-Functions*, INTEGERS 25 (2025), Article A73, Lemma 1 (`integers-2025-A73-lem-1`). -/
-public theorem_wanted one_metered_lucky_iff_lace_start {m n : ℕ} (hm : 0 < m) (hmn : m ≤ n)
-    (f : Fin m → Fin n) :
-    ((List.ofFn fun i => (f i : ℕ)).zip (meteredOutcome 1 n (List.ofFn fun i => (f i : ℕ)))).map
-        (fun p => decide (p.2 = some p.1)) =
-      (laceDecomposition (List.ofFn fun i => (f i : ℕ))).flatMap
-        fun c => true :: List.replicate (c.length - 1) false
-
-/-- For `0 < m ≤ n`, `f` is a `1`-metered `(m, n)`-parking function if and only if every instance
-of `n` (zero-based `n - 1`) in `f` is the first entry of a lace of `lace(f)`.
+/-- **One-metered parking functions and laces.** Let $0 < m \le n$ and
+$f : \{0, \dots, m-1\} \to \{0, \dots, n-1\}$. Then $f$ is a $1$-metered parking function if and
+only if, in the lace decomposition of $(f(0), \dots, f(m-1))$, the last spot $n - 1$ occurs in
+no lace other than as its first entry.
 
 Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
 Functions*, INTEGERS 25 (2025), Article A73, Theorem 1 (`integers-2025-A73-thm-1`). -/
@@ -229,18 +60,9 @@ public theorem_wanted isMeteredParkingFunction_one_iff_lace {m n : ℕ} (hm : 0 
     IsMeteredParkingFunction 1 f ↔
       ∀ c ∈ laceDecomposition (List.ofFn fun i => (f i : ℕ)), n - 1 ∉ c.tail
 
-/-- For `m ≥ 1`, `f : [m] → [2]` is a `1`-metered `(m, 2)`-parking function if and only if every
-lace of `lace(f)` containing a `2` (zero-based `1`) is a singleton.
-
-Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
-Functions*, INTEGERS 25 (2025), Article A73, Corollary 3 (`integers-2025-A73-cor-3`). -/
-public theorem_wanted isMeteredParkingFunction_one_two_iff_lace {m : ℕ} (hm : 1 ≤ m)
-    (f : Fin m → Fin 2) :
-    IsMeteredParkingFunction 1 f ↔
-      ∀ c ∈ laceDecomposition (List.ofFn fun i => (f i : ℕ)), 1 ∈ c → c.length = 1
-
-/-- If `1 ≤ m ≤ j < k ≤ n`, the `1`-metered `(m, n)`-parking functions whose last car parks in
-spot `j` are as many as those whose last car parks in spot `k` (one-based `j`, `k`).
+/-- **Equal last-spot counts for 1-metered parking functions.** Let $1 \le m \le j < k \le n$
+and number the spots $1, \dots, n$. The number of $1$-metered $(m, n)$-parking functions whose
+last car parks in spot $j$ equals the number of those whose last car parks in spot $k$.
 
 Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
 Functions*, INTEGERS 25 (2025), Article A73, Lemma 2 (`integers-2025-A73-lem-2`). -/
@@ -251,8 +73,12 @@ public theorem_wanted one_metered_last_spot_card_eq {m n j k : ℕ} (hm : 1 ≤ 
       (Finset.univ.filter fun f : Fin m → Fin n => IsMeteredParkingFunction 1 f ∧
         (meteredOutcome 1 n (List.ofFn fun i => (f i : ℕ))).getLast? = some (some (k - 1))).card
 
-/-- For `1 ≤ m ≤ n`, `mpf_{m-1,n}(1)` counts the `1`-metered `(m, n)`-parking functions whose last
-car parks in spot `n` (zero-based `n - 1`). The source leaves `1 ≤ m` implicit (a last car).
+/-- **1-metered parking functions whose last car parks in the last spot.** Let $1 \le m \le n$
+and number the spots $1, \dots, n$. The number of $1$-metered $(m, n)$-parking functions whose
+last car parks in spot $n$ equals $\mathrm{mpf}_{m-1,n}(1)$, the number of $1$-metered
+$(m - 1, n)$-parking functions.
+
+The source leaves $1 \le m$ implicit (there is a last car).
 
 Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
 Functions*, INTEGERS 25 (2025), Article A73, Lemma 3 (`integers-2025-A73-lem-3`). -/
@@ -261,51 +87,14 @@ public theorem_wanted one_metered_last_spot_n_card {m n : ℕ} (hm : 1 ≤ m) (h
         (meteredOutcome 1 n (List.ofFn fun i => (f i : ℕ))).getLast? = some (some (n - 1))).card =
       meteredParkingCount 1 (m - 1) n
 
-/-- The Lucas-type recursion for `1`-metered parking functions: `mpf_{1,n}(1) = n`,
-`mpf_{0,n}(1) = 1`, and `mpf_{m+1,n}(1) = n · mpf_{m,n}(1) - mpf_{m-1,n}(1)` for `1 ≤ m ≤ n`
-(stated in `ℤ`).
+/-- **Metered parking functions in which every car is lucky.** Let $m \ge 2$, $n \ge 2$ and
+$t \le m - 1$. The number of $t$-metered $(m, n)$-parking functions in which every car parks in
+its preferred spot is $n(n-1)\cdots(n-t+1) \cdot (n-t)^{m-t}$, where the falling factorial
+$n(n-1)\cdots(n-t+1)$ has $t$ factors (it equals $1$ for $t = 0$ and $0$ for $t > n$).
 
-Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
-Functions*, INTEGERS 25 (2025), Article A73, Theorem 2 (`integers-2025-A73-thm-2`). -/
-public theorem_wanted meteredParkingCount_one_recursion (n : ℕ) :
-    meteredParkingCount 1 1 n = n ∧ meteredParkingCount 1 0 n = 1 ∧
-      ∀ m, 1 ≤ m → m ≤ n →
-        (meteredParkingCount 1 (m + 1) n : ℤ) =
-          n * meteredParkingCount 1 m n - meteredParkingCount 1 (m - 1) n
-
-/-- For `n > 2`, `mpf_{n,n}(1) = ∑_{k=0}^{n} (n-2)^{n-k} binom(2n+1-k, k)`.
-
-Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
-Functions*, INTEGERS 25 (2025), Article A73, Corollary 4 (`integers-2025-A73-cor-4`). -/
-public theorem_wanted meteredParkingCount_one_diag {n : ℕ} (hn : 2 < n) :
-    meteredParkingCount 1 n n =
-      ∑ k ∈ Finset.range (n + 1), (n - 2) ^ (n - k) * (2 * n + 1 - k).choose k
-
-/-- For `m ≤ n + 1` and `n > 2`, the Binet form
-`mpf_{m,n}(1) = (n(n+√(n²-4)) - 2)/(n(n+√(n²-4)) - 4) · ((n+√(n²-4))/2)^m
-  + (n(n-√(n²-4)) - 2)/(n(n-√(n²-4)) - 4) · ((n-√(n²-4))/2)^m`.
-
-Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
-Functions*, INTEGERS 25 (2025), Article A73, Corollary 5 (`integers-2025-A73-cor-5`). -/
-public theorem_wanted meteredParkingCount_one_binet {m n : ℕ} (hm : m ≤ n + 1) (hn : 2 < n) :
-    (meteredParkingCount 1 m n : ℝ) =
-      (n * (n + Real.sqrt (n ^ 2 - 4)) - 2) / (n * (n + Real.sqrt (n ^ 2 - 4)) - 4) *
-          ((n + Real.sqrt (n ^ 2 - 4)) / 2) ^ m +
-        (n * (n - Real.sqrt (n ^ 2 - 4)) - 2) / (n * (n - Real.sqrt (n ^ 2 - 4)) - 4) *
-          ((n - Real.sqrt (n ^ 2 - 4)) / 2) ^ m
-
-/-- For `n ≥ 2`, `mpf_{3,n}(1) = n^3 - 2n`.
-
-Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
-Functions*, INTEGERS 25 (2025), Article A73, Proposition 7 (`integers-2025-A73-prop-7`). -/
-public theorem_wanted meteredParkingCount_one_three {n : ℕ} (hn : 2 ≤ n) :
-    meteredParkingCount 1 3 n = n ^ 3 - 2 * n
-
-/-- For `m, n ≥ 2` and `t ≤ m - 1`, the number of `t`-metered `(m, n)`-parking functions in which
-every car is lucky is `n!/(n-t)! · (n-t)^{m-t}`, written `n.descFactorial t * (n - t)^(m - t)`
-(equal to `n!/(n-t)!` for `t ≤ n`, and `0` for `t > n`, where the count is also `0`). The source's
-companion formula (12) for exactly one lucky car is not stated: it is false as printed when
-`m > n + 1` (`n = 2`, `m = 4`, `t = 1`: count `0`, formula `(t-1)!(n-m+1)t^{m-t} = -1`).
+The source's companion formula (12) for exactly one lucky car is not stated: it is false as
+printed when $m > n + 1$ (for $n = 2$, $m = 4$, $t = 1$ the count is $0$, while the formula
+$(t-1)!\,(n-m+1)\,t^{m-t}$ gives $-1$).
 
 Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
 Functions*, INTEGERS 25 (2025), Article A73, Proposition 8, Equation (13)
@@ -316,13 +105,18 @@ public theorem_wanted metered_all_lucky_card {m n t : ℕ} (hm : 2 ≤ m) (hn : 
         IsMeteredParkingFunction t f ∧ meteredLuckyCount t f = m).card =
       n.descFactorial t * (n - t) ^ (m - t)
 
-/-- For `2 < m ≤ n + 1`, the closed form of `mpf_{m,n}(m-2)`:
-`(n-m+2)^2 (m-1)^{m-3} + ∑_{k=n-m+3}^{n} binom(m-2, n-k) (n-k+1)^{n-k-1} [binom(k+1, 2)(n-m+2)
-k^{m-n+k-3} + (k(n-m+1) - binom(n-m+2, 2))(k-n+m-1)^{k-n+m-3} + ∑_{j=n-m+2}^{k-1}
-(jk - binom(j+1, 2)) binom(m-2-n+k, k-1-j)(n-m+1) j^{j+m-2-n} (k-j)^{k-j-2}]`. Stated in `ℕ`:
-every subtraction is nonnegative on the summation ranges except the exponents of the bases
-`n - k + 1 = 1` (at `k = n`) and `k - j = 1` (at `j = k - 1`), where the source's `1^{-1}` and
-the truncated `1^0` agree. Formula taken from the arXiv source (the text layer is garbled).
+/-- **Closed form for (m-2)-metered parking functions.** Let $m, n$ be natural numbers with
+$2 < m \le n + 1$. Then the number $\mathrm{mpf}_{m,n}(m-2)$ of $(m-2)$-metered
+$(m, n)$-parking functions is
+$$(n-m+2)^2 (m-1)^{m-3} + \sum_{k=n-m+3}^{n} \binom{m-2}{n-k} (n-k+1)^{n-k-1} S_k,$$
+where
+$$S_k = \binom{k+1}{2}(n-m+2)\, k^{m-n+k-3} +
+\left(k(n-m+1) - \binom{n-m+2}{2}\right)(k-n+m-1)^{k-n+m-3} +
+\sum_{j=n-m+2}^{k-1} \left(jk - \binom{j+1}{2}\right) \binom{m-2-n+k}{k-1-j} (n-m+1)\,
+j^{j+m-2-n} (k-j)^{k-j-2}.$$
+Every subtraction is nonnegative on the summation ranges except in the exponents of the bases
+$n - k + 1$ (at $k = n$) and $k - j$ (at $j = k - 1$), which equal $1$ there, so the formula is
+the same with exponents truncated at $0$.
 
 Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
 Functions*, INTEGERS 25 (2025), Article A73, Theorem 5 (`integers-2025-A73-thm-5`). -/
@@ -337,13 +131,19 @@ public theorem_wanted meteredParkingCount_sub_two {m n : ℕ} (hm : 2 < m) (hmn 
                 (j * k - (j + 1).choose 2) * (m + k - 2 - n).choose (k - 1 - j) * (n + 1 - m) *
                   j ^ (j + m - 2 - n) * (k - j) ^ (k - j - 2))
 
-/-- For `1 ≤ m ≤ n`, the number of classical `(m, n)`-parking functions with first entry
-`a_1 = j > n - m + 1` is `∑_{i=j}^{n} binom(m-1, n-i)(n-m+1) i^{i+m-n-2} (n-i+1)^{n-i-1}`, and
-with `a_1 = j ≤ n - m + 1` it is `m^{m-2} + ∑_{i=n-m+2}^{n}` of the same summand. The text prints
-the factor as `(n - m - 1)`, which is false (`m = n = 2`, `j = 1`: two parking functions, formula
-`0`); the factor `n - m + 1` is the one in the source's Lemma 4 (`|Sh_m(k-1, n-k)|`), from which
-the source derives this corollary, and it matches exact counts. Stated in `ℕ` (the only negative
-exponents are `1^{-1}` at `i = n` and `m = 1`, equal to the truncated `1^0`).
+/-- **Parking functions with a given first entry.** Let $1 \le m \le n$ and $1 \le j \le n$, and
+number the spots $1, \dots, n$. Write
+$$S(i) = \binom{m-1}{n-i} (n-m+1)\, i^{i+m-n-2} (n-i+1)^{n-i-1}.$$
+If $j > n - m + 1$, the number of partial parking functions with $m$ cars and $n$ spots
+(classical $(m, n)$-parking functions) whose first entry is $a_1 = j$ is $\sum_{i=j}^{n} S(i)$;
+if $j \le n - m + 1$, it is $m^{m-2} + \sum_{i=n-m+2}^{n} S(i)$. Exponents are natural numbers
+with truncated subtraction; the only affected powers are $1^{-1}$, at $i = n$ and at $m = 1$,
+which equal the truncated $1^0$.
+
+The text prints the factor $n - m + 1$ as $n - m - 1$, which is false ($m = n = 2$, $j = 1$: two
+parking functions, formula $0$); the factor $n - m + 1$ is the one in the source's Lemma 4
+($|\mathrm{Sh}_m(k-1, n-k)|$), from which the source derives this corollary, and it matches
+exact counts.
 
 Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
 Functions*, INTEGERS 25 (2025), Article A73, Corollary 6 (`integers-2025-A73-cor-6`). -/
@@ -358,10 +158,13 @@ public theorem_wanted parkingFunction_first_entry_card {m n j : ℕ} (hm : 0 < m
         m ^ (m - 2) + ∑ i ∈ Finset.Icc (n - m + 2) n, (m - 1).choose (n - i) * (n - m + 1) *
           i ^ (i + m - n - 2) * (n - i + 1) ^ (n - i - 1)
 
-/-- For `m ≥ 2` (written `m = k + 2`), `mpf_{m,m-1}(m-2)` equals the sum of the first entries of
-all classical parking functions of length `m - 1`, and equals
-`∑_{i=1}^{m-1} ∑_{s=0}^{m-1-i} binom(m-2, s) i (s+1)^{s-1} (m-s-1)^{m-s-3}`. Stated in `ℕ` (the
-only negative exponents are `1^{-1}` at `s = 0` and `s = m - 2`, equal to the truncated `1^0`).
+/-- **Metered parking functions with one spot fewer than cars.** Let $m \ge 2$ be a natural
+number. The number $\mathrm{mpf}_{m,m-1}(m-2)$ of $(m-2)$-metered $(m, m-1)$-parking functions
+equals the sum, over all parking functions $f$ of length $m - 1$, of $f(0) + 1$ (the preferred
+spot of the first car, with spots numbered from $1$), and it also equals
+$$\sum_{i=1}^{m-1} \sum_{s=0}^{m-1-i} \binom{m-2}{s}\, i\, (s+1)^{s-1} (m-s-1)^{m-s-3}.$$
+The only negative exponents occur at $s = 0$ and $s = m - 2$, where the base is $1$, so the
+formula is the same with exponents truncated at $0$.
 
 Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
 Functions*, INTEGERS 25 (2025), Article A73, Corollary 7 (`integers-2025-A73-cor-7`). -/
@@ -373,49 +176,11 @@ public theorem_wanted meteredParkingCount_sub_two_pred (k : ℕ) :
         ∑ i ∈ Finset.Icc 1 (k + 1), ∑ s ∈ Finset.range (k + 2 - i),
           k.choose s * i * (s + 1) ^ (s - 1) * (k + 1 - s) ^ (k - 1 - s)
 
-/-- `(π_2, …, π_m)` (zero-based values `π i`, length `m - 1` written `m'`, so `m = m' + 1`) lies in
-the parking-function shuffle set `Sh_m(k - 1, n - k)`: it is a shuffle of a word
-`α ∈ PF_{m-n+k-1, k-1}` and `β + (k)^{n-k}` with `β ∈ PF_{n-k, n-k}`. Since the entries of `α`
-are `≤ k - 1` and those of `β + (k)^{n-k}` are `≥ k + 1` (one-based), such a shuffle is split by
-value and parking-function membership does not depend on the order of the entries, so this is
-stated as: no entry equals `k`; exactly `m - n + k - 1` entries are `< k` and they form a
-parking function on the spots `1, …, k - 1` (at most `k - 1 - j` of them prefer zero-based spot
-`j` or later); exactly `n - k` entries are `> k` and, shifted down by `k`, they form a classical
-parking function on `n - k` spots (at most `n - j` of them prefer zero-based spot `j`, `k ≤ j < n`,
-or later).
-
-Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
-Functions*, INTEGERS 25 (2025), Article A73, Section 4, Definition of `(m, n)`-parking function
-shuffles (`Sh_m(k - 1, n - k)`). -/
-public def IsParkingShuffle (m' n k : ℕ) (π : Fin m' → Fin n) : Prop :=
-  (∀ i, (π i : ℕ) + 1 ≠ k) ∧
-    (Finset.univ.filter fun i => (π i : ℕ) + 1 < k).card = m' + 1 + k - n - 1 ∧
-    (Finset.univ.filter fun i => k < (π i : ℕ) + 1).card = n - k ∧
-    (∀ j < k - 1, (Finset.univ.filter fun i => j ≤ (π i : ℕ) ∧ (π i : ℕ) < k - 1).card ≤
-      k - 1 - j) ∧
-    ∀ j ∈ Finset.Ico k n, (Finset.univ.filter fun i => j ≤ (π i : ℕ)).card ≤ n - j
-
-/-- Membership in the parking-function shuffle set is decidable.
-
-Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
-Functions*, INTEGERS 25 (2025), Article A73, Section 4 (`Sh_m(k - 1, n - k)`). -/
-public instance (m' n k : ℕ) (π : Fin m' → Fin n) : Decidable (IsParkingShuffle m' n k π) := by
-  unfold IsParkingShuffle
-  infer_instance
-
-/-- Characteristic example: `(3, 7, 2, 1, 7, 2)` (one-based) is a `(7, 8)`-parking function shuffle
-with `k = 6`, a shuffle of `(3, 2, 1, 2) ∈ PF_{4,5}` and `(7, 7) = (1, 1) + (6, 6)`.
-
-Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
-Functions*, INTEGERS 25 (2025), Article A73, Section 4, Example 5. -/
-public theorem isParkingShuffle_example :
-    IsParkingShuffle 6 8 6 ![2, 6, 1, 0, 6, 1] := by
-  unfold IsParkingShuffle
-  decide
-
-/-- Parking-function shuffles and the first entry: for `m ≤ n` and `1 ≤ k ≤ n`, the set
-`A^n_{(π_2, …, π_m)} = {j : (j, π_2, …, π_m) ∈ PF_{m,n}}` equals `[k]` if and only if
-`(π_2, …, π_m) ∈ Sh_m(k - 1, n - k)`. Zero-based: `A = {j : j < k}`; `m = m' + 1`.
+/-- **Parking-function shuffles and the first entry.** Let $1 \le m \le n$ and $1 \le k \le n$,
+and let $w = (w_1, \dots, w_{m-1})$ be a word with entries in $\{0, \dots, n-1\}$. Then the set
+of spots $j \in \{0, \dots, n-1\}$ for which $(j, w_1, \dots, w_{m-1})$ is a partial parking
+function with $m$ cars and $n$ spots equals $\{0, \dots, k-1\}$ if and only if $w$ lies in the
+set $\mathrm{Sh}_m(k - 1, n - k)$ of $(m, n)$-parking-function shuffles with parameter $k$.
 
 Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
 Functions*, INTEGERS 25 (2025), Article A73, Theorem 3 (`integers-2025-A73-thm-3`), with
@@ -426,11 +191,12 @@ public theorem_wanted firstEntrySet_eq_iff_isParkingShuffle {m' n k : ℕ} (hmn 
         Finset.univ.filter (fun j : Fin n => (j : ℕ) < k) ↔
       IsParkingShuffle m' n k π
 
-/-- The number of parking-function shuffles: for `m ≤ n` and `1 ≤ k ≤ n`,
-`|Sh_m(k - 1, n - k)|` is `binom(m-1, n-k) (n-m+1) k^{m-n+k-2} (n-k+1)^{n-k-1}` if
-`k > n - m + 1`, `m^{m-2}` if `k = n - m + 1`, and `0` if `k < n - m + 1`. Stated in `ℕ` with
-`m = m' + 1`; the only negative exponents are `1^{-1}` (at `k = n`, and `m = 1`), equal to the
-truncated `1^0`.
+/-- **Number of parking-function shuffles.** Let $1 \le m \le n$ and $1 \le k \le n$, and write
+$\mathrm{Sh}_m(k - 1, n - k)$ for the set of $(m, n)$-parking-function shuffles with parameter
+$k$, words of length $m - 1$ with entries in $\{0, \dots, n-1\}$. Then
+$|\mathrm{Sh}_m(k - 1, n - k)|$ equals $\binom{m-1}{n-k}(n-m+1)\,k^{m-n+k-2}(n-k+1)^{n-k-1}$
+if $k > n - m + 1$, equals $m^{m-2}$ if $k = n - m + 1$, and equals $0$ if $k < n - m + 1$.
+The exponent $-1$ occurs only on the base $1$ (at $k = n$, and at $m = 1$), and $1^{-1} = 1$.
 
 Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
 Functions*, INTEGERS 25 (2025), Article A73, Lemma 4 (`integers-2025-A73-lem-4`). -/
@@ -443,14 +209,16 @@ public theorem_wanted isParkingShuffle_card {m' n k : ℕ} (hmn : m' + 1 ≤ n)
       else if k = n - (m' + 1) + 1 then (m' + 1) ^ (m' + 1 - 2)
       else 0
 
-/-- Characterization of `(m - 2)`-metered `(m, n)`-parking functions for `2 < m ≤ n + 1`: let
-`(a_2, …, a_{m-1}) ∈ Sh_{m-1}(k - 1, n - k)` for some `k ∈ [n]`; when `m ≤ n` let `j ∈ [k - 1]`
-be such that the subsequence `σ` of the entries of `(a_2, …, a_{m-1})` that are less than `k`
-lies in `Sh_{m-n+k-1}(j - 1, k - j - 1)`, and when `m = n + 1` let `j = 0`. Then `α` is an
-`(m - 2)`-metered parking function iff `a_1 ≤ j` and `a_m ≤ k`, or `j < a_1 ≤ k` and
-`a_m ≤ a_1` (one-based `a_i = f i + 1`). The shuffle sets are `IsParkingShuffle` (`m = m' + 1`);
-the subsequence `σ`, of length `m - n + k - 2` (the source's first subscript `m - n + k - 1` is
-a misprint for this length), is given as a function whose values list equals the filtered list.
+/-- **Characterization of $(m-2)$-metered parking functions.** Let $2 < m \le n + 1$,
+$f : \{0, \dots, m-1\} \to \{0, \dots, n-1\}$, $1 \le k \le n$ and $j \in \mathbb{N}$. Write
+$\mathrm{Sh}_p(q - 1, N - q)$ for the set of $(p, N)$-parking-function shuffles with parameter
+$q$, words of length $p - 1$ with entries in $\{0, \dots, N-1\}$. Suppose that the middle word
+$w = (f(1), \dots, f(m-2))$ lies in $\mathrm{Sh}_{m-1}(k - 1, n - k)$, and that either
+$m = n + 1$ and $j = 0$, or $m \le n$, $1 \le j \le k - 1$ and the subsequence $\sigma$ of the
+entries of $w$ that are less than $k - 1$, a word of length $m + k - n - 2$ with entries in
+$\{0, \dots, k-2\}$, lies in $\mathrm{Sh}_{m+k-n-1}(j - 1, k - 1 - j)$. Then $f$ is an
+$(m-2)$-metered parking function if and only if either $f(0) < j$ and $f(m-1) < k$, or
+$j \le f(0) < k$ and $f(m-1) \le f(0)$.
 
 Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
 Functions*, INTEGERS 25 (2025), Article A73, Theorem 4 (`integers-2025-A73-thm-4`). -/
@@ -469,12 +237,15 @@ public theorem_wanted isMeteredParkingFunction_sub_two_iff {m n k j : ℕ} (hm :
         (j < (f ⟨0, by omega⟩ : ℕ) + 1 ∧ (f ⟨0, by omega⟩ : ℕ) + 1 ≤ k ∧
           (f ⟨m - 1, by omega⟩ : ℕ) ≤ f ⟨0, by omega⟩)
 
-/-- Characterization of `(n - 1)`-metered `(n + k, n)`-parking functions for `k > 0`: `α` is one
-iff its first `n` entries form a classical parking function (MathlibExt's threshold form of
-`a'_i ≤ i` for the non-decreasing rearrangement) and, with `(π_1, …, π_n)` the
-`(n - 1)`-metered outcome of `(a_1, …, a_n)`, `a_{n+i} ≤ π_{i mod n}` for all `i ∈ [k]`. The index
-`i mod n` is read with representatives `1, …, n` (zero-based `i % n`), as the proof describes the
-periodic outcome `(π_1, …, π_n, π_1, …)`; the printed `π_{n mod n} = π_0` is undefined.
+/-- **Metered parking functions with meter $n - 1$ and more cars than spots.** Let $k > 0$ and
+$f : \{0, \dots, n+k-1\} \to \{0, \dots, n-1\}$, and let $\pi_0, \dots, \pi_{n-1}$ be the
+$(n-1)$-metered outcome of the first $n$ preferences $(f(0), \dots, f(n-1))$ on $n$ spots, where
+$\pi_c$ is the spot in which car $c$ parks, if it parks. Then $f$ is an $(n-1)$-metered parking
+function if and only if $(f(0), \dots, f(n-1))$ is a parking function and, for every
+$i \in \{0, \dots, k-1\}$, car $i \bmod n$ parks in this outcome and $f(n + i) \le \pi_{i \bmod n}$.
+
+The outcome is read periodically: the later preferences $f(n), f(n+1), \dots$ are compared with
+$\pi_0, \dots, \pi_{n-1}, \pi_0, \dots$ in turn.
 
 Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
 Functions*, INTEGERS 25 (2025), Article A73, Theorem 6 (`integers-2025-A73-thm-6`). -/

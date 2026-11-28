@@ -133,7 +133,8 @@ namespace MathlibExt.Biology.StatisticalGenetics.RareVariantInference.GenomicCon
 /-- The `χ²₁` tail `P(χ²₁ > c)`, as the canonical chi-square survival function. -/
 noncomputable def chiSqOneTail (c : ℝ) : ℝ≥0∞ := chiSquareSurvival 1 c
 
-/-- Bridge to the Gaussian form, for proofs that work with a standard-normal square. -/
+/-- The `χ²₁` tail is a standard-normal probability: for every real `c`,
+`P(χ²₁ > c) = 𝒩(0, 1){x | c < x²}`. -/
 theorem chiSqOneTail_eq_gaussianReal (c : ℝ) :
     chiSqOneTail c = gaussianReal 0 1 {x | c < x ^ 2} :=
   (gaussianReal_sq_preimage_Ioi_eq_chiSquareSurvival c).symm
@@ -241,7 +242,9 @@ theorem chiSqOneTail_toReal_ten_le : (chiSqOneTail 10).toReal ≤ 1 / 20 := by
 /-! ### Genomic-control p-values -/
 
 /-- The genomic-control p-value of a 1-df statistic `x` with inflation factor `lam` (`λ` in the
-literature): the `χ²₁` tail at `x / lam`, as a real number. -/
+literature): the `χ²₁` tail at `x / lam`, as a real number. It is meant for `lam > 0` and
+`x ≥ 0`; it is `1` whenever `x / lam ≤ 0`, in particular at `lam = 0` by the convention
+`y / 0 = 0`. -/
 noncomputable def gcPValue (lam x : ℝ) : ℝ :=
   (chiSqOneTail (x / lam)).toReal
 
@@ -253,7 +256,9 @@ theorem gcPValue_antitone {lam : ℝ} (hlam : 0 < lam) : Antitone (gcPValue lam)
   fun _ _ hxy => ENNReal.toReal_mono (chiSqOneTail_ne_top _)
     (chiSqOneTail_antitone (div_le_div_of_nonneg_right hxy hlam.le))
 
-/-- A positive statistic has genomic-control p-value below `1`. -/
+/-- For `lam > 0`, a positive statistic has genomic-control p-value below `1`. The condition is
+needed: for `lam < 0`, and at `lam = 0` by the convention `y / 0 = 0`, the p-value of a positive
+statistic is `1`. -/
 theorem gcPValue_lt_one {lam x : ℝ} (hlam : 0 < lam) (hx : 0 < x) : gcPValue lam x < 1 := by
   have h := (ENNReal.toReal_lt_toReal (chiSqOneTail_ne_top (x / lam)) ENNReal.one_ne_top).mpr
     (chiSqOneTail_lt_one (div_pos hx hlam))
@@ -365,8 +370,9 @@ end CommonInflationModel
 
 /-! ### Failure outside the model: marker-specific inflation -/
 
-/-- A marker whose null variance `v` exceeds the `λ` used (its inflation is not the common one)
-is strictly anti-conservative after genomic control, at every positive threshold. -/
+/-- A marker whose null variance `v` exceeds the positive `λ` used (its inflation is not the
+common one) is strictly anti-conservative after genomic control: for `Z ∼ 𝒩(0, v)` and
+`0 < λ < v`, `P(χ²₁ > c) < P(Z² / λ > c)` at every threshold `c > 0`. -/
 theorem chiSqOneTail_lt_measure_reject_of_lt {Ω : Type*} {m : MeasurableSpace Ω}
     {P : Measure Ω} {Z : Ω → ℝ} {v : ℝ≥0} (hZ : HasLaw Z (gaussianReal 0 v) P) {lam : ℝ}
     (hlam : 0 < lam) (hv : lam < v) {c : ℝ} (hc : 0 < c) :
@@ -377,8 +383,9 @@ theorem chiSqOneTail_lt_measure_reject_of_lt {Ω : Type*} {m : MeasurableSpace �
   rw [div_lt_iff₀ hv0]
   exact mul_lt_mul_of_pos_left hv hc
 
-/-- A marker whose null variance `v` is below the `λ` used is strictly conservative after
-genomic control, at every positive threshold. -/
+/-- A marker whose null variance `v > 0` is below the `λ` used is strictly conservative after
+genomic control: for `Z ∼ 𝒩(0, v)` and `λ > v`, `P(Z² / λ > c) < P(χ²₁ > c)` at every
+threshold `c > 0`. -/
 theorem measure_reject_lt_chiSqOneTail_of_gt {Ω : Type*} {m : MeasurableSpace Ω}
     {P : Measure Ω} {Z : Ω → ℝ} {v : ℝ≥0} (hv0 : v ≠ 0) (hZ : HasLaw Z (gaussianReal 0 v) P)
     {lam : ℝ} (hv : (v : ℝ) < lam) {c : ℝ} (hc : 0 < c) :
@@ -394,13 +401,17 @@ theorem measure_reject_lt_chiSqOneTail_of_gt {Ω : Type*} {m : MeasurableSpace �
 variable {Ω : Type*} {m : MeasurableSpace Ω} {μ : Measure Ω} {N M : ℕ}
 
 /-- The population genomic-control factor of the LD-score model with stratification: the mean
-expected association statistic `(1 / M) ∑ j, 𝔼[χ²_j]`. -/
+expected association statistic `(1 / M) ∑ j, 𝔼[χ²_j]` when `μ` is a probability measure, as in
+the results below. The formula is defined for every measure, with the integral of a
+non-integrable function taken to be `0`; with the convention `x / 0 = 0` it is `0` when
+`M = 0`. -/
 noncomputable def lambdaGC (D : Model μ N M) (X : Matrix (Fin N) (Fin M) ℝ) (s : ℝ)
     (c : Fin N → ℝ) : ℝ :=
   (∑ j, ∫ ω, chiSqStrat D X s c j ω ∂μ) / M
 
-/-- With a stratification term `a` common to all markers, each expected statistic differs from
-`λ_GC` by the polygenic term `N h² / M * (ℓ_j - ℓ̄)`. -/
+/-- For a probability measure, mean-zero effects and noise, a standardized genotype matrix and
+`N, M ≠ 0`: with a stratification term `a` common to all markers, each expected statistic
+differs from `λ_GC` by the polygenic term `N h² / M * (ℓ_j - ℓ̄)`. -/
 theorem integral_chiSqStrat_sub_lambdaGC [IsProbabilityMeasure μ] (D : Model μ N M)
     (X : Matrix (Fin N) (Fin M) ℝ) (hN : N ≠ 0) (hM : M ≠ 0) (hX : IsStandardized X)
     (hβ : ∀ k, ∫ ω, D.beta k ω ∂μ = 0) (hε : ∀ i, ∫ ω, D.eps i ω ∂μ = 0) (s : ℝ)
@@ -412,8 +423,9 @@ theorem integral_chiSqStrat_sub_lambdaGC [IsProbabilityMeasure μ] (D : Model μ
   ring
 
 /-- Genomic control is calibrated in mean when there is no polygenic signal (`h² = 0`) and the
-stratification term `a` is common to all markers: `λ_GC = 1 + N a`, and every marker has
-`𝔼[χ²_j] / λ_GC = 1`. -/
+stratification term `a` is common to all markers: for a probability measure, mean-zero effects
+and noise, a standardized genotype matrix and `N, M ≠ 0`, `λ_GC = 1 + N a`, and every marker
+has `𝔼[χ²_j] / λ_GC = 1`. -/
 theorem integral_chiSqStrat_div_lambdaGC_of_null [IsProbabilityMeasure μ] (D : Model μ N M)
     (X : Matrix (Fin N) (Fin M) ℝ) (hN : N ≠ 0) (hM : M ≠ 0) (hX : IsStandardized X)
     (hβ : ∀ k, ∫ ω, D.beta k ω ∂μ = 0) (hε : ∀ i, ∫ ω, D.eps i ω ∂μ = 0) (hh : D.h2 = 0)
@@ -437,7 +449,9 @@ private theorem polygenicSlope_pos (D : Model μ N M) (hN : N ≠ 0) (hM : M ≠
   have := Nat.cast_pos (α := ℝ) |>.mpr (Nat.pos_of_ne_zero hM)
   positivity
 
-/-- With a common stratification term `a ≥ 0` and `h² ≠ 0`, `λ_GC > 0`. -/
+/-- For a probability measure, mean-zero effects and noise, a standardized genotype matrix and
+`N, M ≠ 0`, with a common stratification term `a` (necessarily `a ≥ 0`) and `h² ≠ 0`,
+`λ_GC > 0`. -/
 theorem lambdaGC_pos [IsProbabilityMeasure μ] (D : Model μ N M) (X : Matrix (Fin N) (Fin M) ℝ)
     (hN : N ≠ 0) (hM : M ≠ 0) (hX : IsStandardized X) (hβ : ∀ k, ∫ ω, D.beta k ω ∂μ = 0)
     (hε : ∀ i, ∫ ω, D.eps i ω ∂μ = 0) (hh : D.h2 ≠ 0) (s : ℝ) (c : Fin N → ℝ) {a : ℝ}
@@ -457,7 +471,8 @@ theorem lambdaGC_pos [IsProbabilityMeasure μ] (D : Model μ N M) (X : Matrix (F
   have : (0 : ℝ) ≤ N * a := by positivity
   linarith
 
-/-- **Failure with polygenic signal.** With a common stratification term and `h² ≠ 0`,
+/-- **Failure with polygenic signal.** For a probability measure, mean-zero effects and noise, a
+standardized genotype matrix and `N, M ≠ 0`, with a common stratification term and `h² ≠ 0`,
 genomic control calibrates a marker in mean exactly when its LD score equals the mean LD
 score. With `h² ≠ 0` no marker is null, so "calibrated in mean" concerns the expected statistic,
 not type I error. -/
@@ -473,8 +488,9 @@ theorem integral_chiSqStrat_div_lambdaGC_eq_one_iff [IsProbabilityMeasure μ] (D
   rw [div_eq_one_iff_eq hlam.ne', ← sub_eq_zero, hsub, mul_eq_zero, sub_eq_zero]
   exact or_iff_right hcoef
 
-/-- With a common stratification term and `h² ≠ 0`, a marker whose LD score is below the mean
-LD score is over-corrected in mean: `𝔼[χ²_j] / λ_GC < 1`. -/
+/-- For a probability measure, mean-zero effects and noise, a standardized genotype matrix and
+`N, M ≠ 0`, with a common stratification term and `h² ≠ 0`, a marker whose LD score is below
+the mean LD score is over-corrected in mean: `𝔼[χ²_j] / λ_GC < 1`. -/
 theorem integral_chiSqStrat_div_lambdaGC_lt_one_of_lt [IsProbabilityMeasure μ]
     (D : Model μ N M) (X : Matrix (Fin N) (Fin M) ℝ) (hN : N ≠ 0) (hM : M ≠ 0)
     (hX : IsStandardized X) (hβ : ∀ k, ∫ ω, D.beta k ω ∂μ = 0)
@@ -488,8 +504,9 @@ theorem integral_chiSqStrat_div_lambdaGC_lt_one_of_lt [IsProbabilityMeasure μ]
   rw [div_lt_one hlam]
   nlinarith [mul_neg_of_pos_of_neg hcoef (sub_neg.mpr hj)]
 
-/-- With a common stratification term and `h² ≠ 0`, a marker whose LD score is above the mean
-LD score is under-corrected in mean: `𝔼[χ²_j] / λ_GC > 1`. -/
+/-- For a probability measure, mean-zero effects and noise, a standardized genotype matrix and
+`N, M ≠ 0`, with a common stratification term and `h² ≠ 0`, a marker whose LD score is above
+the mean LD score is under-corrected in mean: `𝔼[χ²_j] / λ_GC > 1`. -/
 theorem one_lt_integral_chiSqStrat_div_lambdaGC_of_lt [IsProbabilityMeasure μ]
     (D : Model μ N M) (X : Matrix (Fin N) (Fin M) ℝ) (hN : N ≠ 0) (hM : M ≠ 0)
     (hX : IsStandardized X) (hβ : ∀ k, ∫ ω, D.beta k ω ∂μ = 0)
@@ -503,8 +520,10 @@ theorem one_lt_integral_chiSqStrat_div_lambdaGC_of_lt [IsProbabilityMeasure μ]
   rw [one_lt_div hlam]
   nlinarith [mul_pos hcoef (sub_pos.mpr hj)]
 
-/-- **Failure with heterogeneous stratification.** With no polygenic signal but stratification
-terms that differ between two markers, no single `λ` calibrates both in mean. -/
+/-- **Failure with heterogeneous stratification.** For a probability measure, mean-zero effects
+and noise, a standardized genotype matrix and `N ≠ 0`: with no polygenic signal (`h² = 0`) but
+stratification terms `s² (X_jᵀ c / N)²` that differ between two markers `j` and `k`, no single
+real `λ` calibrates both in mean (`𝔼[χ²_j] / λ = 𝔼[χ²_k] / λ = 1`). -/
 theorem not_exists_lambda_calibrates_of_strat_ne [IsProbabilityMeasure μ] (D : Model μ N M)
     (X : Matrix (Fin N) (Fin M) ℝ) (hN : N ≠ 0) (hX : IsStandardized X)
     (hβ : ∀ k, ∫ ω, D.beta k ω ∂μ = 0) (hε : ∀ i, ∫ ω, D.eps i ω ∂μ = 0) (hh : D.h2 = 0)

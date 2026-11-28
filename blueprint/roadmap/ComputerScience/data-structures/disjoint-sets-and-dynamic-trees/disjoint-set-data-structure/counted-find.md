@@ -6,3 +6,7 @@ It returns the union-find structure with node array $A'$, together with $r$ as a
 structure (whose size equals $|S|$), at cost $(t, w)$.
 
 It reuses the array and root of that single run; FIND is not run a second time.
+
+## Depends on
+
+- [Cost-counted FIND auxiliary](counted-aux.md)

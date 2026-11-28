@@ -35,7 +35,7 @@ statements are unchanged. Source: S. Brendle & R. Schoen, *Manifolds with 1/4-pi
 module
 
 public import Batteries.Util.ProofWanted
-public import WantedExt.Geometry.MetricCompatibilityShared
+public import MathlibExt.Geometry.MetricCompatibilityShared
 public import Mathlib
 
 @[expose] public section
@@ -52,11 +52,14 @@ namespace Geometry.SphereTheorem
 manifold is homeomorphic to the standard sphere (Berger–Klingenberg–Rauch 1960).
 `differentiable_sphere_theorem`: under the same hypotheses it is diffeomorphic to
 the sphere (Brendle–Schoen 2007, via Ricci flow). The trusted helpers
-(`IsMetricCompatible`, `curv`, `QuarterPinched`) are non-holes; following §38,
-the Levi-Civita connection is hypothesized as a smooth torsion-free
-metric-compatible covariant derivative (Mathlib has the covariant-derivative
-interface but does not yet construct Levi-Civita). Mathlib has no Riemann
-curvature tensor, sectional curvature, pinching, or Ricci flow.
+(`IsMetricCompatible`, imported from `MathlibExt.Geometry.MetricCompatibilityShared`, `curv` and
+`QuarterPinched`) are non-holes; following §38, the Levi-Civita connection is hypothesized as a
+smooth torsion-free metric-compatible covariant derivative. The pinned Mathlib constructs the
+Levi-Civita connection (`CovariantDerivative.leviCivitaConnection`);
+`MathlibExt.Geometry.Manifold.Riemannian.LeviCivita` proves that it is smooth and that, on a
+Hausdorff manifold, a smooth torsion-free metric-compatible connection exists and is unique on
+smooth vector fields (`levi_civita_exists_unique`). Mathlib has no Riemann curvature tensor,
+sectional curvature, pinching, or Ricci flow.
 
 Category-(b) candidates from §121 of the Knill survey.
 -/
@@ -75,8 +78,11 @@ variable
 
 /- A covariant derivative `cov` is **compatible with the Riemannian metric**:
 `v · ⟨Y, Z⟩ = ⟨∇_v Y, Z⟩ + ⟨Y, ∇_v Z⟩`. -/
-/-- The **Riemann curvature tensor** of `cov` on smooth vector fields:
-`R(X,Y)Z = ∇_X ∇_Y Z − ∇_Y ∇_X Z − ∇_{[X,Y]} Z`. -/
+/-- **Riemann curvature of a covariant derivative.** Let $\nabla$ be a covariant derivative on the
+tangent bundle of a smooth manifold $M$. For vector fields $X, Y, Z$ on $M$, the curvature of
+$\nabla$ is the vector field
+$R(X,Y)Z = \nabla_X \nabla_Y Z - \nabla_Y \nabla_X Z - \nabla_{[X,Y]} Z$, where $[X,Y]$ is the Lie
+bracket of $X$ and $Y$. -/
 noncomputable def curv (cov : CovariantDerivative I E (TangentSpace I (M := M)))
     (X Y Z : Π x : M, TangentSpace I x) : Π x : M, TangentSpace I x :=
   fun x =>
@@ -84,8 +90,11 @@ noncomputable def curv (cov : CovariantDerivative I E (TangentSpace I (M := M)))
       - cov (fun y => cov Z y (X y)) x (Y x)
       - cov Z x (mlieBracket I X Y x)
 
-/-- The manifold is **strictly quarter-pinched**: every sectional curvature
-`K = ⟨R(X,Y)Y, X⟩` at an orthonormal pair lies in Knill's interval `(1, 4]`. -/
+/-- **Strictly quarter-pinched curvature.** Let $\nabla$ be a covariant derivative on the tangent
+bundle of a Riemannian manifold $M$, with curvature $R$. Then $\nabla$ is strictly quarter-pinched
+when, for all smooth vector fields $X, Y$ on $M$ and every point $x \in M$ at which $X(x)$ and
+$Y(x)$ are orthonormal, the sectional curvature $K = \langle R(X,Y)Y(x), X(x) \rangle$ satisfies
+$1 < K \le 4$. The interval $(1, 4]$ is Knill's normalization of strict quarter pinching. -/
 def QuarterPinched
     (cov : CovariantDerivative I E (TangentSpace I (M := M))) : Prop :=
   ∀ (X Y : Π x : M, TangentSpace I x),
@@ -99,7 +108,16 @@ def QuarterPinched
 /- **Topological sphere theorem** (Berger–Klingenberg–Rauch 1960). A closed,
 simply-connected, smooth `d`-manifold (`d ≥ 2`) whose Levi-Civita connection is
 strictly quarter-pinched is homeomorphic to the standard `d`-sphere. -/
-/-- Source: M. Berger; W. Klingenberg; H. E. Rauch (topological sphere theorem, 1951–1961). Knill, *Some fundamental theorems in mathematics*, §121. Via leanprover/lean-eval@38361be, problem `sphere_theorem_topological`. -/
+/-- **Topological sphere theorem.** Let $M$ be a compact, Hausdorff, simply connected smooth
+manifold without boundary, of dimension $d \ge 2$, with a smooth Riemannian metric. Suppose $M$
+carries a smooth covariant derivative $\nabla$ on its tangent bundle that is torsion-free,
+compatible with the metric and strictly quarter-pinched (every sectional curvature at an
+orthonormal pair lies in $(1, 4]$). Then $M$ is homeomorphic to the unit sphere
+$S^d \subset \mathbb{R}^{d+1}$.
+
+Source: M. Berger; W. Klingenberg; H. E. Rauch (topological sphere theorem, 1951–1961). Knill, *Some
+fundamental theorems in mathematics*, §121. Via leanprover/lean-eval@38361be, problem
+`sphere_theorem_topological`. -/
 public theorem_wanted sphere_theorem
     [I.Boundaryless] [T2Space M] [CompactSpace M] [SimplyConnectedSpace M]
     (hdim : 2 ≤ Module.finrank ℝ E)
@@ -112,7 +130,16 @@ public theorem_wanted sphere_theorem
 
 /- **Differentiable sphere theorem** (Brendle–Schoen 2007). Under the same
 hypotheses, `M` is diffeomorphic to the standard `d`-sphere. -/
-/-- Source: S. Brendle & R. Schoen, *Manifolds with 1/4-pinched curvature are space forms*, J. AMS 22 (2009). Knill, *Some fundamental theorems in mathematics*, §121. Via leanprover/lean-eval@38361be, problem `sphere_theorem_differentiable`. -/
+/-- **Differentiable sphere theorem.** Let $M$ be a compact, Hausdorff, simply connected smooth
+manifold without boundary, of dimension $d \ge 2$, with a smooth Riemannian metric. Suppose $M$
+carries a smooth covariant derivative $\nabla$ on its tangent bundle that is torsion-free,
+compatible with the metric and strictly quarter-pinched (every sectional curvature at an
+orthonormal pair lies in $(1, 4]$). Then $M$ is diffeomorphic to the unit sphere
+$S^d \subset \mathbb{R}^{d+1}$ with its standard smooth structure.
+
+Source: S. Brendle & R. Schoen, *Manifolds with 1/4-pinched curvature are space forms*, J. AMS 22
+(2009). Knill, *Some fundamental theorems in mathematics*, §121. Via leanprover/lean-eval@38361be,
+problem `sphere_theorem_differentiable`. -/
 public theorem_wanted differentiable_sphere_theorem
     [I.Boundaryless] [T2Space M] [CompactSpace M] [SimplyConnectedSpace M]
     (hdim : 2 ≤ Module.finrank ℝ E)

@@ -141,4 +141,24 @@ theorem trace_mul_nonneg_two_one_one_two_diag_two_three :
     0 ≤ (((!![(2 : ℂ), 1; 1, 2] * Matrix.diagonal ![(2 : ℂ), 3]).trace)).re :=
   psd_two_one_one_two.trace_mul_nonneg_re psd_diag_two_three
 
+/-- `diagonal ![2, 3]` over the reals is positive semidefinite. -/
+theorem psd_diag_two_three_real :
+    (Matrix.diagonal ![2, 3] : Matrix (Fin 2) (Fin 2) ℝ).PosSemidef :=
+  Matrix.PosSemidef.diagonal (fun i => by
+    fin_cases i <;> norm_num [Matrix.cons_val_one, Matrix.cons_val_zero])
+
+/-- Real AM–GM power form for `diagonal ![2, 3]`: `6 ≤ (5 / 2) ^ 2`. -/
+theorem det_le_pow_trace_div_card_diag_two_three_real :
+    (6 : ℝ) ≤ ((5 : ℝ) / 2) ^ 2 := by
+  have hdet2 : (Matrix.diagonal ![2, 3] : Matrix (Fin 2) (Fin 2) ℝ).det = 6 := by
+    norm_num [Matrix.det_diagonal, Fin.prod_univ_two, Matrix.cons_val_one,
+      Matrix.cons_val_zero]
+  have htr2 : (Matrix.diagonal ![2, 3] : Matrix (Fin 2) (Fin 2) ℝ).trace = 5 := by
+    norm_num [Matrix.trace_diagonal, Fin.sum_univ_two, Matrix.cons_val_one,
+      Matrix.cons_val_zero]
+  have hd2 : 0 < Fintype.card (Fin 2) := by rw [Fintype.card_fin]; norm_num
+  have h := psd_diag_two_three_real.det_le_pow_trace_div_card hd2
+  rw [hdet2, htr2, Fintype.card_fin] at h
+  simpa using h
+
 end MathlibExtTest.LinearAlgebra.Matrix.PosSemidefDeterminantTests

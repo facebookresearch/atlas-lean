@@ -13,8 +13,10 @@ Brunn–Minkowski choice $A(s) = -s^{(d-1)/d}$ (his Remark 2.4). The energy $\in
 drives the fast diffusion equation $\partial_t \rho = \Delta \rho^m$ for $m < 1$.
 
 Together with [the case $m > 1$](mc-cann-condition-porous-medium-of-one-l.md) and
-[the entropy](mc-cann-condition-entropy.md) (the limit $m \to 1$), this gives the full range
-$m \ge 1 - 1/d$ of displacement-convex power energies.
+[the entropy](mc-cann-condition-entropy.md) $s \log s$, the limit as $m \to 1$ of
+$(s^m - s)/(m - 1)$ (adding a multiple of $s$ to $A$ adds a constant to its dilation profile, so it
+does not change the condition), this gives the full range $m \ge 1 - 1/d$ of displacement-convex
+power energies.
 
 ## Sources
 

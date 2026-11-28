@@ -31,7 +31,7 @@ namespace AMR22P5019
 - Domain of meromorphicity: the unit disc `D`.
 - Boundary set: the circumference `T`.
 - Object: a function meromorphic in `D`, with poles in `D`, discrete,
-  holomorphic off the poles, unbounded near each pole.
+  holomorphic off the poles, with `‖f w‖ → ∞` as `w` tends to each pole.
 - Side condition: no asymptotic value, finite or infinite.
 - Global value distribution: every Riemann-sphere value assumed infinitely
   often in the disc (finite values by infinite fibres, infinity by infinite
@@ -44,13 +44,14 @@ namespace AMR22P5019
 -/
 
 /-- Unit disc `D` in [AMR-022-5019] Problem 5.19. -/
-def openUnitDisc : Set ℂ := Metric.ball 0 1
+noncomputable def openUnitDisc : Set ℂ := Metric.ball 0 1
 
 /-- Circumference `T` in [AMR-022-5019] Problem 5.19. -/
 def unitCircle : Set ℂ := {z | ‖z‖ = 1}
 
 /-- Meromorphic in `D` in [AMR-022-5019] Problem 5.19: poles lie in `D`,
-discrete, complex-differentiable off the poles, unbounded near each pole. -/
+discrete, complex-differentiable off the poles, and `‖f w‖ → ∞` as `w` tends to each pole `z`
+off the poles: for every `M`, some neighbourhood `U` of `z` has `M ≤ ‖f w‖` on `U \ poles`. -/
 def IsMeromorphicInDisc (f : ℂ → ℂ) (poles : Set ℂ) : Prop :=
   poles ⊆ openUnitDisc ∧ DiscreteTopology ↥poles ∧
     DifferentiableOn ℂ f (openUnitDisc \ poles) ∧
@@ -70,7 +71,9 @@ def HasInfiniteAsymptoticValue (f : ℂ → ℂ) (poles : Set ℂ) : Prop :=
     ∃ ζ ∈ unitCircle, Filter.Tendsto γ Filter.atTop (𝓝 ζ) ∧
       Filter.Tendsto (fun t => ‖f (γ t)‖) Filter.atTop Filter.atTop
 
-/-- No asymptotic value in [AMR-022-5019] Problem 5.19. -/
+/-- No asymptotic value in [AMR-022-5019] Problem 5.19: no finite `w` is an asymptotic value
+(`IsFiniteAsymptoticValue`), and no continuous curve in `D` off the poles tending to a point of
+`T` has `‖f‖ → ∞` along it (`HasInfiniteAsymptoticValue`). -/
 def HasNoAsymptoticValue (f : ℂ → ℂ) (poles : Set ℂ) : Prop :=
   (∀ w : ℂ, ¬ IsFiniteAsymptoticValue f poles w) ∧
     ¬ HasInfiniteAsymptoticValue f poles
@@ -98,10 +101,10 @@ def IsLocallyExceptionalValue (f : ℂ → ℂ) (poles : Set ℂ) (ζ : ℂ)
     | none => ∀ z ∈ openUnitDisc ∩ U, z ∉ poles
     | some a => ∀ z ∈ openUnitDisc ∩ U, z ∉ poles → f z ≠ a
 
-/-- [AMR-022-5019] Problem 5.19 (E. F. Collingwood), answered affirmatively by Eremenko
-(Hayman-Lingham Update 5.19): does there exist a function meromorphic in `D` with no
-asymptotic value, assuming every value infinitely often, Picard at every point of `T`,
-possessing a locally exceptional value at some point of `T`? -/
+/-- [AMR-022-5019] Problem 5.19 (E. F. Collingwood), reported answered affirmatively by an
+unpublished construction of Eremenko (Hayman-Lingham Update 5.19): does there exist a function
+meromorphic in `D` with no asymptotic value, assuming every value infinitely often, Picard at
+every point of `T`, possessing a locally exceptional value at some point of `T`? -/
 def CollingwoodLocalExceptionProblem : Prop :=
   ∃ f : ℂ → ℂ, ∃ poles : Set ℂ, IsMeromorphicInDisc f poles ∧
     HasNoAsymptoticValue f poles ∧ TakesEveryValueInfinitelyOften f poles ∧
@@ -110,10 +113,11 @@ def CollingwoodLocalExceptionProblem : Prop :=
 
 end AMR22P5019
 /--
-Resolved true: Resolved affirmatively according to the list's own update: Hayman and Lingham
-(arXiv:1809.07200v2, Update 5.19) report that Eremenko gave a strongly positive answer
-(unpublished) by slightly modifying an example of Barth and Schneider, producing such a function
-whose zeros and poles accumulate only at z = 1. Source: W. K. Hayman and E. F. Lingham, Research
+Resolved true on the list's report of an unpublished construction, not on a published proof:
+Hayman and Lingham (arXiv:1809.07200v2, Update 5.19) report that Eremenko gave a strongly positive
+answer, which he did not publish, by slightly modifying an example of Barth and Schneider,
+producing such a function whose zeros and poles accumulate only at z = 1. Source: W. K. Hayman
+and E. F. Lingham, Research
 Problems in Function Theory (Fiftieth Anniversary Edition), arXiv:1809.07200v2, Update 5.19,
 https://arxiv.org/abs/1809.07200v2. Moved from `OpenConjectures/Analysis/AMR22Problem5019`.
 -/

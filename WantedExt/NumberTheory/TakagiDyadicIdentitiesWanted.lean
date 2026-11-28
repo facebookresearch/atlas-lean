@@ -14,6 +14,13 @@ public import Mathlib.Data.Nat.Digits.Defs
 public import Mathlib.Data.Tree.Basic
 public import Mathlib.NumberTheory.Padics.PadicVal.Defs
 public import MathlibExt.Analysis.SpecialFunctions.TakagiFunction
+public import MathlibExt.NumberTheory.Digits.BinaryDigitSum
+public import MathlibExt.NumberTheory.TakagiDNodeEvenSuccessor
+public import MathlibExt.NumberTheory.TakagiDNodeOddSuccessor
+public import MathlibExt.NumberTheory.TakagiDNodeSuccessor
+public import MathlibExt.NumberTheory.TakagiDNodeLevelPred
+public import MathlibExt.NumberTheory.TakagiDyadicIdentities
+public import MathlibExt.NumberTheory.TakagiDNodeTreeCount
 
 /-!
 # Takagi function identities on dyadic rationals
@@ -38,198 +45,25 @@ namespace MetaMathlibExt
 
 open Finset
 
-/-- The number `δ(n)` of `D`-nodes in the divide-and-conquer tree on `n` leaves (OEIS
-A296062), defined by the recurrence the paper quotes from Coronado et al.:
-`δ(1) = 0`, `δ(2m) = 2 δ(m)`, `δ(2m+1) = δ(m) + δ(m+1) + 1`. The value at `0` is a
-junk value `0`; no statement below uses it.
-
-Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
-Sequences 27 (2024), Article 24.2.7, Theorem 9 (`exp_D_recursive`). -/
-public def dcDNodes : ℕ → ℕ
-  | 0 => 0
-  | 1 => 0
-  | n + 2 =>
-    if h : (n + 2) % 2 = 0 then 2 * dcDNodes ((n + 2) / 2)
-    else dcDNodes ((n + 2) / 2) + dcDNodes ((n + 2) / 2 + 1) + 1
-decreasing_by all_goals omega
-
-/-- `δ(1) = 0`.
-
-Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
-Sequences 27 (2024), Article 24.2.7, Theorem 9 (`exp_D_recursive`). -/
-public theorem dcDNodes_one : dcDNodes 1 = 0 := by
-  simp [dcDNodes]
-
-/-- `δ(2m) = 2 δ(m)` for `m > 0`.
-
-Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
-Sequences 27 (2024), Article 24.2.7, Theorem 9 (`exp_D_recursive`). -/
-public theorem dcDNodes_two_mul {m : ℕ} (hm : 0 < m) : dcDNodes (2 * m) = 2 * dcDNodes m := by
-  obtain ⟨j, rfl⟩ : ∃ j, m = j + 1 := ⟨m - 1, by omega⟩
-  rw [show 2 * (j + 1) = 2 * j + 2 by ring, dcDNodes]
-  simp only [show (2 * j + 2) % 2 = 0 by omega, ↓reduceDIte]
-  congr 2
-  omega
-
-/-- `δ(2m+1) = δ(m) + δ(m+1) + 1` for `m > 0`.
-
-Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
-Sequences 27 (2024), Article 24.2.7, Theorem 9 (`exp_D_recursive`). -/
-public theorem dcDNodes_two_mul_add_one {m : ℕ} (hm : 0 < m) :
-    dcDNodes (2 * m + 1) = dcDNodes m + dcDNodes (m + 1) + 1 := by
-  obtain ⟨j, rfl⟩ : ∃ j, m = j + 1 := ⟨m - 1, by omega⟩
-  rw [show 2 * (j + 1) + 1 = (2 * j + 1) + 2 by ring, dcDNodes]
-  simp only [show ¬(2 * j + 1 + 2) % 2 = 0 by omega, ↓reduceDIte]
-  have h : (2 * j + 1 + 2) / 2 = j + 1 := by omega
-  rw [h]
-
-/-- Small values `δ(2), …, δ(7) = 0, 1, 0, 2, 2, 2`.
-
-Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
-Sequences 27 (2024), Article 24.2.7, Theorem 9 (`exp_D_recursive`). -/
-public theorem dcDNodes_small :
-    dcDNodes 2 = 0 ∧ dcDNodes 3 = 1 ∧ dcDNodes 4 = 0 ∧ dcDNodes 5 = 2 ∧ dcDNodes 6 = 2 ∧
-      dcDNodes 7 = 2 := by
-  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> simp [dcDNodes]
-
-/-- The number `λᵢ(n)` of `D`-nodes on level `i` of the divide-and-conquer tree on `n`
-leaves: `n mod 2^i` if the binary digit `nᵢ` is `0`, and `2^i - (n mod 2^i)` if it is `1`.
-
-Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
-Sequences 27 (2024), Article 24.2.7, Theorem 11 (`exp_D_closed`). -/
-public def dcLevelDNodes (n i : ℕ) : ℕ :=
-  if n / 2 ^ i % 2 = 0 then n % 2 ^ i else 2 ^ i - n % 2 ^ i
-
-/-- `λᵢ(n) = n mod 2^i` when `nᵢ = 0`.
-
-Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
-Sequences 27 (2024), Article 24.2.7, Theorem 11 (`exp_D_closed`). -/
-public theorem dcLevelDNodes_of_digit_eq_zero {n i : ℕ} (h : n / 2 ^ i % 2 = 0) :
-    dcLevelDNodes n i = n % 2 ^ i := by
-  simp [dcLevelDNodes, h]
-
-/-- `λᵢ(n) = 2^i - (n mod 2^i)` when `nᵢ = 1`.
-
-Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
-Sequences 27 (2024), Article 24.2.7, Theorem 11 (`exp_D_closed`). -/
-public theorem dcLevelDNodes_of_digit_eq_one {n i : ℕ} (h : n / 2 ^ i % 2 = 1) :
-    dcLevelDNodes n i = 2 ^ i - n % 2 ^ i := by
-  simp [dcLevelDNodes, h]
-
-/-- On level `0`, `λ₀(n) = n mod 2`.
-
-Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
-Sequences 27 (2024), Article 24.2.7, Theorem 11 (`exp_D_closed`). -/
-public theorem dcLevelDNodes_zero (n : ℕ) : dcLevelDNodes n 0 = n % 2 := by
-  rcases Nat.mod_two_eq_zero_or_one n with h | h <;> simp [dcLevelDNodes, h, Nat.mod_one]
-
-/-- The number of `D`-nodes of a full binary tree (`BinaryTree Unit`, leaves are `nil`):
-interior nodes whose two subtrees have different numbers of leaves.
-
-Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
-Sequences 27 (2024), Article 24.2.7, Definition (`S`-nodes and `D`-nodes). -/
-public def treeDNodes : BinaryTree Unit → ℕ
-  | .nil => 0
-  | .node _ l r => (if l.numLeaves = r.numLeaves then 0 else 1) + treeDNodes l + treeDNodes r
-
-/-- The number of `S`-nodes of a full binary tree: interior nodes whose two subtrees have
-the same number of leaves.
-
-Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
-Sequences 27 (2024), Article 24.2.7, Definition (`S`-nodes and `D`-nodes). -/
-public def treeSNodes : BinaryTree Unit → ℕ
-  | .nil => 0
-  | .node _ l r => (if l.numLeaves = r.numLeaves then 1 else 0) + treeSNodes l + treeSNodes r
-
-/-- A divide-and-conquer tree: a full binary tree in which, at every interior node, the leaf
-counts of the two subtrees differ by at most `1`.
-
-Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
-Sequences 27 (2024), Article 24.2.7, Definition (Divide-and-conquer tree). -/
-public def IsDivideConquerTree : BinaryTree Unit → Prop
-  | .nil => True
-  | .node _ l r =>
-    (l.numLeaves ≤ r.numLeaves + 1 ∧ r.numLeaves ≤ l.numLeaves + 1) ∧
-      IsDivideConquerTree l ∧ IsDivideConquerTree r
-
-/-- Unfolding of `treeDNodes` at an interior node.
-
-Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
-Sequences 27 (2024), Article 24.2.7, Definition (`S`-nodes and `D`-nodes). -/
-public theorem treeDNodes_node (u : Unit) (l r : BinaryTree Unit) :
-    treeDNodes (.node u l r) =
-      (if l.numLeaves = r.numLeaves then 0 else 1) + treeDNodes l + treeDNodes r := rfl
-
-/-- Unfolding of `treeSNodes` at an interior node.
-
-Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
-Sequences 27 (2024), Article 24.2.7, Definition (`S`-nodes and `D`-nodes). -/
-public theorem treeSNodes_node (u : Unit) (l r : BinaryTree Unit) :
-    treeSNodes (.node u l r) =
-      (if l.numLeaves = r.numLeaves then 1 else 0) + treeSNodes l + treeSNodes r := rfl
-
-/-- The single-leaf tree has no `D`-nodes and no `S`-nodes and is divide-and-conquer.
-
-Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
-Sequences 27 (2024), Article 24.2.7, Definitions (`S`-nodes and `D`-nodes;
-Divide-and-conquer tree). -/
-public theorem treeNodes_nil :
-    treeDNodes .nil = 0 ∧ treeSNodes .nil = 0 ∧ IsDivideConquerTree .nil :=
-  ⟨rfl, rfl, trivial⟩
-
-/-- Unfolding of `IsDivideConquerTree` at an interior node.
-
-Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
-Sequences 27 (2024), Article 24.2.7, Definition (Divide-and-conquer tree). -/
-public theorem isDivideConquerTree_node (u : Unit) (l r : BinaryTree Unit) :
-    IsDivideConquerTree (.node u l r) ↔
-      (l.numLeaves ≤ r.numLeaves + 1 ∧ r.numLeaves ≤ l.numLeaves + 1) ∧
-        IsDivideConquerTree l ∧ IsDivideConquerTree r := Iff.rfl
-
-/-- Lemma 2: with `n = 2^k + r`, `0 ≤ r < 2^k`, and `n = 2^k (1 + x)`, one has
-`x = r / 2^k` and `1 + x = n / 2^k`.
-
-Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
-Sequences 27 (2024), Article 24.2.7, Lemma 2 (`jis-2024-24.2.7-lem-2`). -/
-public theorem_wanted dyadic_mantissa_eq (n k r : ℕ) (x : ℚ) (hr : r < 2 ^ k)
-    (hn : n = 2 ^ k + r) (hx : (n : ℚ) = 2 ^ k * (1 + x)) :
-    x = r / 2 ^ k ∧ 1 + x = n / 2 ^ k
-
-/-- Lemma 5: in a full binary tree with `n` leaves and `a(n)` `S`-nodes, the number of
-`D`-nodes is `n - 1 - a(n)`.
-
-Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
-Sequences 27 (2024), Article 24.2.7, Lemma 5 (`jis-2024-24.2.7-lem-5`). -/
-public theorem_wanted treeDNodes_eq_numLeaves_sub_one_sub_treeSNodes (t : BinaryTree Unit) :
-    treeDNodes t = t.numLeaves - 1 - treeSNodes t
-
-/-- Theorem 8 (Coronado et al.): for `0 ≤ r ≤ 2^k`, `τ(r / 2^k) = δ(2^k + r) / 2^k`.
+/-- **The Takagi function at dyadic rationals counts D-nodes (Coronado et al.).** Let $k$ and $r$
+be natural numbers with $r \le 2^k$. Write $\tau(r / 2^k)$ for the Takagi value of the dyadic
+presentation $r / 2^k$, and $\delta(n)$ for the number of $D$-nodes of the divide-and-conquer
+tree on $n$ leaves, given by $\delta(1) = 0$, $\delta(2m) = 2 \delta(m)$ and
+$\delta(2m + 1) = \delta(m) + \delta(m + 1) + 1$ for $m \ge 1$. Then
+$\tau(r / 2^k) = \delta(2^k + r) / 2^k$.
 
 Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
 Sequences 27 (2024), Article 24.2.7, Theorem 8 (`jis-2024-24.2.7-thm-8`). -/
 public theorem_wanted takagi_dyadic_eq_dcDNodes_div (k r : ℕ) (hr : r ≤ 2 ^ k) :
     takagiNewdef r ((k : ℤ) - 1) = (dcDNodes (2 ^ k + r) : ℝ) / 2 ^ k
 
-/-- Theorem 9 (Coronado et al.), tree form: every divide-and-conquer tree with `n` leaves
-has `δ(n)` `D`-nodes, where `δ` is the recurrence `dcDNodes`.
-
-Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
-Sequences 27 (2024), Article 24.2.7, Theorem 9 (`jis-2024-24.2.7-thm-9`). -/
-public theorem_wanted treeDNodes_eq_dcDNodes_of_isDivideConquerTree (t : BinaryTree Unit)
-    (ht : IsDivideConquerTree t) : treeDNodes t = dcDNodes t.numLeaves
-
-/-- Corollary 10: for `n = 2^k + r` with `0 < r < 2^k` and `ρ₁` the position of the lowest
-nonzero bit of `r`, `δ(n) = (δ(n-1) + δ(n+1))/2 + 1 - ρ₁`.
-
-Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
-Sequences 27 (2024), Article 24.2.7, Corollary 10 (`jis-2024-24.2.7-cor-10`). -/
-public theorem_wanted dcDNodes_eq_midpoint_add_one_sub_lowestBit (k r : ℕ) (hr0 : 0 < r)
-    (hr : r < 2 ^ k) :
-    (dcDNodes (2 ^ k + r) : ℚ) =
-      ((dcDNodes (2 ^ k + r - 1) : ℚ) + dcDNodes (2 ^ k + r + 1)) / 2 + 1 - padicValNat 2 r
-
-/-- Theorem 11: for `n > 0`, `δ(n) = ∑_{i=0}^{⌊log₂ n⌋-1} λᵢ(n)`, and explicitly
-`δ(n) = ∑_{i=0}^{⌊log₂ n⌋-1} (nᵢ 2^i + (-1)^{nᵢ} (n mod 2^i))`.
+/-- **Level-sum formula for the divide-and-conquer D-node count.** Let $\delta$ be the
+divide-and-conquer D-node count. For every integer $n > 0$, let $k = \lfloor \log_2 n \rfloor$,
+let $\lambda_i(n)$ be the level-$i$ D-node count, and let $n_i$ be the binary digit of $n$ at
+$2^i$. Then
+$$\delta(n) = \sum_{i=0}^{k-1} \lambda_i(n),$$
+and explicitly
+$$\delta(n) = \sum_{i=0}^{k-1} \left(n_i 2^i + (-1)^{n_i} (n \bmod 2^i)\right).$$
 
 Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
 Sequences 27 (2024), Article 24.2.7, Theorem 11 (`jis-2024-24.2.7-thm-11`). -/
@@ -239,78 +73,24 @@ public theorem_wanted dcDNodes_eq_sum_dcLevelDNodes (n : ℕ) (hn : 0 < n) :
         ∑ i ∈ range (Nat.log 2 n),
           (((n / 2 ^ i % 2 : ℕ) : ℤ) * 2 ^ i + (-1) ^ (n / 2 ^ i % 2) * ((n % 2 ^ i : ℕ) : ℤ))
 
-/-- Lemma 13: for `n = 2^k + r` with `0 ≤ r < 2^k`, `s₁(n) = s₁(r) + 1`.
-
-Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
-Sequences 27 (2024), Article 24.2.7, Lemma 13 (`jis-2024-24.2.7-lem-13`). -/
-public theorem_wanted hammingWeight_two_pow_add (k r : ℕ) (hr : r < 2 ^ k) :
-    (Nat.digits 2 (2 ^ k + r)).sum = (Nat.digits 2 r).sum + 1
-
-/-- Lemma 14: if `n` is even, then `s₁(n+1) = s₁(n) + 1` (also at `n = 0`).
-
-Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
-Sequences 27 (2024), Article 24.2.7, Lemma 14 (`jis-2024-24.2.7-lem-14`). -/
-public theorem_wanted hammingWeight_succ_of_even (n : ℕ) (hn : Even n) :
-    (Nat.digits 2 (n + 1)).sum = (Nat.digits 2 n).sum + 1
-
-/-- Lemma 15: if `n` is odd, then `s₁(n-1) = s₁(n) - 1`.
-
-Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
-Sequences 27 (2024), Article 24.2.7, Lemma 15 (`jis-2024-24.2.7-lem-15`). -/
-public theorem_wanted hammingWeight_pred_of_odd (n : ℕ) (hn : Odd n) :
-    (Nat.digits 2 (n - 1)).sum = (Nat.digits 2 n).sum - 1
-
-/-- Lemma 16: if `r` is odd and `r < 2^(k-1)` (written `2r < 2^k`), then
-`s₁(2^k - r) = 1 + k - s₁(r)`.
-
-Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
-Sequences 27 (2024), Article 24.2.7, Lemma 16 (`jis-2024-24.2.7-lem-16`). -/
-public theorem_wanted hammingWeight_two_pow_sub_of_odd (k r : ℕ) (hodd : Odd r)
-    (hr : 2 * r < 2 ^ k) :
-    (Nat.digits 2 (2 ^ k - r)).sum = 1 + k - (Nat.digits 2 r).sum
-
-/-- Lemma 17: for `n = 2^k + r` with `r` odd, `0 < r < 2^k`, and `0 < i < k`,
-`λᵢ(n) - λᵢ(n-1)` is `1` if `nᵢ = 0` and `-1` if `nᵢ = 1`.
-
-Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
-Sequences 27 (2024), Article 24.2.7, Lemma 17 (`jis-2024-24.2.7-lem-17`). -/
-public theorem_wanted dcLevelDNodes_sub_pred (k r i : ℕ) (hodd : Odd r) (hr : r < 2 ^ k)
-    (hi0 : 0 < i) (hik : i < k) :
-    (dcLevelDNodes (2 ^ k + r) i : ℤ) - dcLevelDNodes (2 ^ k + r - 1) i =
-      if (2 ^ k + r) / 2 ^ i % 2 = 0 then 1 else -1
-
-/-- Lemma 18: for `0 ≤ r ≤ 2^k`, `δ(2^(k+1) - r) = δ(2^k + r)`.
+/-- **Symmetry of the D-node counts.** For all natural numbers $k$ and $r$ with $r \le 2^k$,
+$\delta(2^{k+1} - r) = \delta(2^k + r)$, where $\delta(n)$ denotes the number of D-nodes in the
+divide-and-conquer tree on $n$ leaves.
 
 Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
 Sequences 27 (2024), Article 24.2.7, Lemma 18 (`jis-2024-24.2.7-lem-18`). -/
 public theorem_wanted dcDNodes_two_pow_succ_sub (k r : ℕ) (hr : r ≤ 2 ^ k) :
     dcDNodes (2 ^ (k + 1) - r) = dcDNodes (2 ^ k + r)
 
-/-- Lemma 19: for even `n > 0`, `δ(n+1) = δ(n) + ⌊log₂ n⌋ - 2 s₁(n) + 2`.
+/-- **Binary-digit formula for the divide-and-conquer D-node count.** Let $\delta$ be the
+divide-and-conquer D-node count and let $s_1(m)$ be the number of ones in the binary expansion
+of $m$. For every integer $n > 0$, let $k = \lfloor \log_2 n \rfloor$ and let $n_j$ be the binary
+digit of $n$ at $2^j$. Then
+$$\delta(n) = \sum_{i=0}^{k-1} 2^i n_i \Big(k - i - 2 \sum_{j=i}^{k} n_j + 4\Big),$$
+and also
+$$\delta(n) = \sum_{i=0}^{k-1} 2^i n_i \Big(k - i - 2\, s_1(\lfloor n / 2^i \rfloor) + 4\Big).$$
 
-Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
-Sequences 27 (2024), Article 24.2.7, Lemma 19 (`jis-2024-24.2.7-lem-19`). -/
-public theorem_wanted dcDNodes_succ_of_even (n : ℕ) (hn : 0 < n) (heven : Even n) :
-    (dcDNodes (n + 1) : ℤ) = dcDNodes n + Nat.log 2 n - 2 * (Nat.digits 2 n).sum + 2
-
-/-- Lemma 20: for odd `n`, `δ(n+1) = δ(n) + ⌊log₂ n⌋ - 2 s₁(n) + 2`.
-
-Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
-Sequences 27 (2024), Article 24.2.7, Lemma 20 (`jis-2024-24.2.7-lem-20`). -/
-public theorem_wanted dcDNodes_succ_of_odd (n : ℕ) (hodd : Odd n) :
-    (dcDNodes (n + 1) : ℤ) = dcDNodes n + Nat.log 2 n - 2 * (Nat.digits 2 n).sum + 2
-
-/-- Theorem 21: for every `n > 0`, `δ(n+1) = δ(n) + ⌊log₂ n⌋ - 2 s₁(n) + 2`.
-
-Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
-Sequences 27 (2024), Article 24.2.7, Theorem 21 (`jis-2024-24.2.7-thm-21`). -/
-public theorem_wanted dcDNodes_succ (n : ℕ) (hn : 0 < n) :
-    (dcDNodes (n + 1) : ℤ) = dcDNodes n + Nat.log 2 n - 2 * (Nat.digits 2 n).sum + 2
-
-/-- Theorem 22: for `n > 0` with `k = ⌊log₂ n⌋`,
-`δ(n) = ∑_{i=0}^{k-1} 2^i nᵢ (k - i - 2 ∑_{j=i}^{k} nⱼ + 4)`, and equivalently with
-`∑_{j=i}^{k} nⱼ` replaced by `s₁(⌊n / 2^i⌋)`. The printed inner sum `∑_{j=i}^k n_i` is read
-as `∑_{j=i}^k n_j`.
+The printed inner sum $\sum_{j=i}^k n_i$ is read as $\sum_{j=i}^k n_j$.
 
 Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
 Sequences 27 (2024), Article 24.2.7, Theorem 22 (`jis-2024-24.2.7-thm-22`). -/
@@ -324,16 +104,11 @@ public theorem_wanted dcDNodes_eq_sum_digit_weight (n : ℕ) (hn : 0 < n) :
           2 ^ i * ((n / 2 ^ i % 2 : ℕ) : ℤ) *
             ((Nat.log 2 n : ℤ) - i - 2 * (Nat.digits 2 (n / 2 ^ i)).sum + 4)
 
-/-- Corollary 23: for `n > 0`, `s₁(n) = (δ(n) - δ(n+1) + ⌊log₂ n⌋)/2 + 1`.
-
-Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
-Sequences 27 (2024), Article 24.2.7, Corollary 23 (`jis-2024-24.2.7-cor-23`). -/
-public theorem_wanted hammingWeight_eq_dcDNodes_diff (n : ℕ) (hn : 0 < n) :
-    ((Nat.digits 2 n).sum : ℚ) =
-      ((dcDNodes n : ℚ) - dcDNodes (n + 1) + Nat.log 2 n) / 2 + 1
-
-/-- Theorem 24: for `1 ≤ r ≤ 2^k - 1` and `ρ₁` the position of the lowest nonzero bit of
-`r`, `τ(r/2^k) = (τ((r-1)/2^k) + τ((r+1)/2^k))/2 + (1 - ρ₁)/2^k`.
+/-- **Midpoint recurrence for the Takagi function at dyadic rationals.** Let $k$ and $r$ be
+natural numbers with $1 \le r < 2^k$. For a natural number $m$, write $\tau(m / 2^k)$ for the
+Takagi value of the dyadic presentation $m / 2^k$, and let $\rho_1$ be the $2$-adic valuation of
+$r$, the position (counted from $0$) of the lowest nonzero binary digit of $r$. Then
+$\tau(r / 2^k) = (\tau((r - 1) / 2^k) + \tau((r + 1) / 2^k))/2 + (1 - \rho_1)/2^k$.
 
 Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
 Sequences 27 (2024), Article 24.2.7, Theorem 24 (`jis-2024-24.2.7-thm-24`). -/
@@ -342,9 +117,17 @@ public theorem_wanted takagi_dyadic_eq_midpoint_add (k r : ℕ) (hr0 : 1 ≤ r) 
       (takagiNewdef (r - 1) ((k : ℤ) - 1) + takagiNewdef (r + 1) ((k : ℤ) - 1)) / 2 +
         (1 - (padicValNat 2 r : ℝ)) / 2 ^ k
 
-/-- Theorem 25: for `n = 2^k + r` with `0 ≤ r < 2^k`,
-`τ(r/2^k) = 2^(-k) ∑_{i=0}^{k-1} λᵢ(n)`, and explicitly
-`τ(r/2^k) = 2^(-k) ∑_{i=0}^{k-1} (nᵢ 2^i + (-1)^{nᵢ} (n mod 2^i))`.
+/-- **Takagi values at dyadic rationals from level $D$-node counts.** Let $k$ and $r$ be
+natural numbers with $r < 2^k$ and put $n = 2^k + r$. Write $\tau(r, k-1)$ for the Takagi value
+of the dyadic presentation $r/2^k$, write $n_i = \lfloor n/2^i \rfloor \bmod 2$ for the binary
+digit of $n$ at position $i$, and let $\lambda_i(n)$ be the level-$i$ $D$-node count, which
+equals $n \bmod 2^i$ if $n_i = 0$ and $2^i - (n \bmod 2^i)$ if $n_i = 1$. Then
+
+$$\tau(r, k-1) = 2^{-k} \sum_{i=0}^{k-1} \lambda_i(n)$$
+
+and
+
+$$\tau(r, k-1) = 2^{-k} \sum_{i=0}^{k-1} (n_i 2^i + (-1)^{n_i} (n \bmod 2^i)).$$
 
 Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
 Sequences 27 (2024), Article 24.2.7, Theorem 25 (`jis-2024-24.2.7-thm-25`). -/
@@ -356,8 +139,10 @@ public theorem_wanted takagi_dyadic_eq_sum_dcLevelDNodes (k r : ℕ) (hr : r < 2
           (((((2 ^ k + r) / 2 ^ i % 2 : ℕ) : ℝ)) * 2 ^ i +
             (-1) ^ ((2 ^ k + r) / 2 ^ i % 2) * (((2 ^ k + r) % 2 ^ i : ℕ) : ℝ))) / 2 ^ k
 
-/-- Theorem 26: for `n = 2^k + r` with `0 ≤ r < 2^k`,
-`τ((r+1)/2^k) = τ(r/2^k) + (k - 2 s₁(n) + 2)/2^k`.
+/-- **Consecutive Takagi values at dyadic rationals.** Let $k$ and $r$ be natural numbers with
+$r < 2^k$ and put $n = 2^k + r$. Write $\tau(m, k-1)$ for the Takagi value of the dyadic
+presentation $m/2^k$, and $s_1(n)$ for the number of ones in the binary expansion of $n$. Then
+$\tau(r+1, k-1) = \tau(r, k-1) + (k - 2 s_1(n) + 2)/2^k$.
 
 Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
 Sequences 27 (2024), Article 24.2.7, Theorem 26 (`jis-2024-24.2.7-thm-26`). -/
@@ -366,10 +151,19 @@ public theorem_wanted takagi_dyadic_succ (k r : ℕ) (hr : r < 2 ^ k) :
       takagiNewdef r ((k : ℤ) - 1) +
         ((k : ℝ) - 2 * (Nat.digits 2 (2 ^ k + r)).sum + 2) / 2 ^ k
 
-/-- Theorem 27: for `n = 2^k + r` with `0 ≤ r < 2^k`,
-`τ(r/2^k) = 2^(-k) ∑_{i=0}^{k-1} 2^i nᵢ (k - i - 2 ∑_{j=i}^{k} nⱼ + 4)`, and equivalently
-with `∑_{j=i}^{k} nⱼ` replaced by `s₁(⌊n / 2^i⌋)`. The printed inner sum `∑_{j=i}^k n_i` is
-read as `∑_{j=i}^k n_j`.
+/-- **Takagi values at dyadic rationals from binary digits.** Let $k$ and $r$ be natural
+numbers with $r < 2^k$ and put $n = 2^k + r$. Write $\tau(r, k-1)$ for the Takagi value of the
+dyadic presentation $r/2^k$, write $n_j = \lfloor n/2^j \rfloor \bmod 2$ for the binary digit of
+$n$ at position $j$, and write $s_1(m)$ for the number of ones in the binary expansion of $m$.
+Then
+
+$$\tau(r, k-1) = 2^{-k} \sum_{i=0}^{k-1} 2^i n_i (k - i - 2 \sum_{j=i}^{k} n_j + 4)$$
+
+and
+
+$$\tau(r, k-1) = 2^{-k} \sum_{i=0}^{k-1} 2^i n_i (k - i - 2 s_1(\lfloor n/2^i \rfloor) + 4).$$
+
+The paper prints the inner sum as $\sum_{j=i}^{k} n_i$; it is read here as $\sum_{j=i}^{k} n_j$.
 
 Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
 Sequences 27 (2024), Article 24.2.7, Theorem 27 (`jis-2024-24.2.7-thm-27`). -/
@@ -384,8 +178,10 @@ public theorem_wanted takagi_dyadic_eq_sum_digit_weight (k r : ℕ) (hr : r < 2 
           2 ^ i * (((2 ^ k + r) / 2 ^ i % 2 : ℕ) : ℝ) *
             ((k : ℝ) - i - 2 * (Nat.digits 2 ((2 ^ k + r) / 2 ^ i)).sum + 4)) / 2 ^ k
 
-/-- Theorem 28: for `n = 2^k + r` with `0 ≤ r < 2^k`,
-`s₁(n) = 2^(k-1) (τ(r/2^k) - τ((r+1)/2^k)) + (k+2)/2`.
+/-- **Binary digit sum from consecutive Takagi values.** Let $k$ and $r$ be natural numbers
+with $r < 2^k$, let $n = 2^k + r$, and let $s_1(n)$ be the sum of the binary digits of $n$.
+Writing $\tau(m, k - 1)$ for the Takagi value of the dyadic presentation $m / 2^k$, one has
+$s_1(n) = 2^{k-1} \bigl(\tau(r, k - 1) - \tau(r + 1, k - 1)\bigr) + (k + 2)/2$.
 
 Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
 Sequences 27 (2024), Article 24.2.7, Theorem 28 (`jis-2024-24.2.7-thm-28`). -/
@@ -394,15 +190,12 @@ public theorem_wanted hammingWeight_eq_takagi_diff (k r : ℕ) (hr : r < 2 ^ k) 
       2 ^ k / 2 * (takagiNewdef r ((k : ℤ) - 1) - takagiNewdef (r + 1) ((k : ℤ) - 1)) +
         ((k : ℝ) + 2) / 2
 
-/-- Lemma 29: `S₁(2^m) = ∑_{i<2^m} s₁(i) = 2^m · m / 2` (stated as `2 S₁(2^m) = 2^m m`).
+/-- **Trollope's formula via the Takagi function.** For a natural number $m$, write $s_1(m)$ for
+the sum of the binary digits of $m$ and $S_1(m) = \sum_{i=0}^{m-1} s_1(i)$. Let $k$ and $r$ be
+natural numbers with $r < 2^k$, and put $n = 2^k + r$ and $x = r / 2^k$. Write $\tau(x)$ for
+the Takagi value of the dyadic presentation $r / 2^k$. Then
 
-Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
-Sequences 27 (2024), Article 24.2.7, Lemma 29 (`jis-2024-24.2.7-lem-29`). -/
-public theorem_wanted two_mul_sum_hammingWeight_range_two_pow (m : ℕ) :
-    2 * ∑ i ∈ range (2 ^ m), (Nat.digits 2 i).sum = 2 ^ m * m
-
-/-- Corollary 30 (Trollope): for `n = 2^k + r` with `0 ≤ r < 2^k` and `x = r/2^k`,
-`S₁(n) = n log₂ n / 2 + 2^(k-1) (2x - τ(x) - (1+x) log₂(1+x))`.
+$$S_1(n) = \frac{n \log_2 n}{2} + 2^{k-1} \left(2x - \tau(x) - (1 + x) \log_2 (1 + x)\right).$$
 
 Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
 Sequences 27 (2024), Article 24.2.7, Corollary 30 (`jis-2024-24.2.7-cor-30`). -/
@@ -413,9 +206,14 @@ public theorem_wanted sum_hammingWeight_range_eq_trollope (k r : ℕ) (hr : r < 
           (2 * ((r : ℝ) / 2 ^ k) - takagiNewdef r ((k : ℤ) - 1) -
             (1 + (r : ℝ) / 2 ^ k) * Real.logb 2 (1 + (r : ℝ) / 2 ^ k))
 
-/-- Corollary 31: for `n = 2^k + r` with `0 ≤ r < 2^k` and `x = r/2^k`,
-(1) `S₁(n) = (n k + 2^k (2x - τ(x)))/2`, (2) `S₁(n) = (n k + 2r - 2^k τ(r/2^k))/2`, and
-(3) `S₁(n) = (n k + 2r - δ(n))/2`.
+/-- **Cumulative binary digit sums via the Takagi function.** For a natural number $m$, write
+$s_1(m)$ for the sum of the binary digits of $m$ and $S_1(m) = \sum_{i=0}^{m-1} s_1(i)$. Let
+$k$ and $r$ be natural numbers with $r < 2^k$, and put $n = 2^k + r$ and $x = r / 2^k$. Write
+$\tau(x)$ for the Takagi value of the dyadic presentation $r / 2^k$, and $\delta(n)$ for the
+number of $D$-nodes of the divide-and-conquer tree on $n$ leaves, given by $\delta(1) = 0$,
+$\delta(2m) = 2 \delta(m)$ and $\delta(2m + 1) = \delta(m) + \delta(m + 1) + 1$ for $m \ge 1$.
+Then $S_1(n) = (nk + 2^k (2x - \tau(x)))/2$, $S_1(n) = (nk + 2r - 2^k \tau(x))/2$ and
+$S_1(n) = (nk + 2r - \delta(n))/2$.
 
 Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
 Sequences 27 (2024), Article 24.2.7, Corollary 31 (`jis-2024-24.2.7-cor-31`). -/

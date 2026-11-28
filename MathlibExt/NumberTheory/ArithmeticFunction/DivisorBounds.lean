@@ -145,6 +145,7 @@ theorem sigma_zero_isLittleO_rpow {ε : ℝ} (hε : 0 < ε) :
   refine (h2.congr_left fun n => mul_one _).congr_right fun n => ?_
   rw [← Real.rpow_add' (Nat.cast_nonneg n) (by linarith), add_halves]
 
+set_option maxHeartbeats 500000 in
 /-- **Wigert's divisor bound**: for every `η > 0`, the number of divisors satisfies
 `σ 0 n < 2 ^ ((1 + η) * log n / log (log n))` for all sufficiently large `n`.
 

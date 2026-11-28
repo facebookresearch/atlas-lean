@@ -38,17 +38,11 @@ namespace SelbergClass
 
 
 /-- The continuation of `L(a₁ * a₂, s)` is `F₁ F₂` off `1`. -/
-private lemma isLSeriesContinuation_mul {a₁ a₂ : ArithmeticFunction ℂ} (ha₁ : a₁ ∈ selbergClass)
-    (ha₂ : a₂ ∈ selbergClass) {F₁ F₂ F : ℂ → ℂ} (hF₁ : IsLSeriesContinuation a₁ F₁)
+private lemma isLSeriesContinuation_mul {a₁ a₂ : ArithmeticFunction ℂ}
+    {F₁ F₂ F : ℂ → ℂ} (hF₁ : IsLSeriesContinuation a₁ F₁)
     (hF₂ : IsLSeriesContinuation a₂ F₂) (hF : IsLSeriesContinuation (a₁ * a₂) F) :
-    ∀ s : ℂ, s ≠ 1 → F s = F₁ s * F₂ s := by
-  have hP : IsLSeriesContinuation (a₁ * a₂) (fun s => F₁ s * F₂ s) := by
-    refine ⟨fun s hs => ?_, hF₁.2.mul hF₂.2⟩
-    change F₁ s * F₂ s = _
-    rw [hF₁.1 s hs, hF₂.1 s hs, ArithmeticFunction.LSeries_mul'
-      (LSeriesSummable.of_forall_norm_le_mul_rpow ha₁.2.2.2 hs)
-          (LSeriesSummable.of_forall_norm_le_mul_rpow ha₂.2.2.2 hs)]
-  exact IsLSeriesContinuation.eqOn_compl_one hF hP
+    ∀ s : ℂ, s ≠ 1 → F s = F₁ s * F₂ s :=
+  hF.eqOn_compl_one (hF₁.mul hF₂)
 
 /-- The convolution of two coefficient sequences with subpolynomial growth has subpolynomial
 growth. -/
@@ -100,12 +94,7 @@ theorem mul_mem {a₁ a₂ : ArithmeticFunction ℂ} (ha₁ : a₁ ∈ selbergCl
     hram₁⟩ := ha₁
   obtain ⟨h1₂, ⟨F₂, hF₂, ⟨m₂, G₂, β₂, hG₂o, hG₂F⟩, ⟨D₂⟩⟩, ⟨b₂, θ₂, hθ₂, hlog₂, C₂, hb₂⟩,
     hram₂⟩ := ha₂
-  have hF : IsLSeriesContinuation (a₁ * a₂) (fun s => F₁ s * F₂ s) := by
-    refine ⟨fun s hs => ?_, hF₁.2.mul hF₂.2⟩
-    change F₁ s * F₂ s = _
-    rw [hF₁.1 s hs, hF₂.1 s hs, ArithmeticFunction.LSeries_mul'
-      (LSeriesSummable.of_forall_norm_le_mul_rpow hram₁ hs)
-          (LSeriesSummable.of_forall_norm_le_mul_rpow hram₂ hs)]
+  have hF : IsLSeriesContinuation (a₁ * a₂) (fun s => F₁ s * F₂ s) := hF₁.mul hF₂
   refine ⟨by rw [ArithmeticFunction.mul_apply_one, h1₁, h1₂, one_mul],
     ⟨_, hF, ⟨m₁ + m₂, fun z => G₁ z * G₂ z, max β₁ β₂,
         (hG₁o.mono (le_max_left _ _)).mul (hG₂o.mono (le_max_right _ _)), ?_⟩,
@@ -221,7 +210,7 @@ private lemma zeroCount_mul {a₁ a₂ : ArithmeticFunction ℂ} (ha₁ : a₁ �
       ((∑ᶠ ρ ∈ {ρ : ℂ | F₂ ρ = 0 ∧ 0 ≤ ρ.re ∧ 0 ≤ ρ.im ∧ ρ.im ≤ T},
         analyticOrderNatAt F₂ ρ : ℕ) : ℝ) + c := by
   classical
-  have hmul := isLSeriesContinuation_mul ha₁ ha₂ hF₁ hF₂ hF
+  have hmul := isLSeriesContinuation_mul hF₁ hF₂ hF
   have hadd : ∀ ρ : ℂ, ρ ≠ 1 →
       analyticOrderNatAt F ρ = analyticOrderNatAt F₁ ρ + analyticOrderNatAt F₂ ρ := by
     intro ρ hρ

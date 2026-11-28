@@ -15,7 +15,7 @@ public meta import CSLibExt.Computability.Complexity.Karp.Color
 
 namespace Cslib.Complexity.Karp.ColorTests
 
-open Cslib.CookLevin Cslib.Logic.PL
+open Cslib.CookLevin Cslib.Logic.LegacyPL
 
 -- The encoding: `n` in unary, then each edge's endpoints in unary.
 #guard encodeE 3 [(0, 2)] = [true, true, true, false, false, true, true, false]

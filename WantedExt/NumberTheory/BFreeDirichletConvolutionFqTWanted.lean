@@ -16,6 +16,10 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.MeasureTheory.Integral.CircleIntegral
 public import Mathlib.NumberTheory.MulChar.Basic
 public import Mathlib.RingTheory.UniqueFactorizationDomain.Moebius
+public import MathlibExt.NumberTheory.FunctionField.BFreeConvolution
+public import MathlibExt.NumberTheory.FunctionField.KappaPowMoebius
+public import MathlibExt.NumberTheory.FunctionField.MonicConvolution
+public import MathlibExt.NumberTheory.FunctionField.MonicCount
 
 /-!
 # Dirichlet convolutions over `𝔽_q[T]`
@@ -38,37 +42,14 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- The Dirichlet convolution over monic divisors in `F[T]`:
-`(α * β)(f) = ∑_{g ∈ M, g ∣ f} α(g) β(f / g)`.
+/-- **Perron's formula for monic polynomials over a finite field.** Let $F$ be a finite field, let
+$a$ be a complex-valued function on $F[T]$, and let $\rho$ be a real number with $0 < \rho < 1$ such
+that the series $\sum_f |a(f)| \rho^{\deg f}$ over all monic $f \in F[T]$ converges. Put
+$A(u) = \sum_f a(f) u^{\deg f}$, the sum again over all monic $f$. Then for every natural number
+$n$, with the circle $|u| = \rho$ traversed counterclockwise,
 
-Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
-Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Section 3, definition of the
-Dirichlet convolution. -/
-public noncomputable def monicDirichletConv {F : Type*} [Field F] (α β : F[X] → ℂ)
-    (f : F[X]) : ℂ :=
-  ∑ᶠ g ∈ {g : F[X] | g.Monic ∧ g ∣ f}, α g * β (f /ₘ g)
-
-/-- The only monic divisor of `1` is `1`, so `(α * β)(1) = α(1) β(1)`.
-
-Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
-Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Section 3, definition of the
-Dirichlet convolution. -/
-public theorem monicDirichletConv_one {F : Type*} [Field F] (α β : F[X] → ℂ) :
-    monicDirichletConv α β 1 = α 1 * β 1 := by
-  have hset : {g : F[X] | g.Monic ∧ g ∣ 1} = {1} := by
-    ext g
-    simp only [Set.mem_ofPred_eq, Set.mem_singleton_iff]
-    constructor
-    · rintro ⟨hm, hg⟩
-      exact hm.isUnit_iff.mp (isUnit_of_dvd_one hg)
-    · rintro rfl
-      exact ⟨monic_one, dvd_rfl⟩
-  rw [monicDirichletConv, hset, finsum_mem_singleton, divByMonic_one]
-
-/-- Perron's formula over `𝔽_q[T]`: if `A(u) = ∑_{f ∈ M} a(f) u^{deg f}` converges absolutely on
-`|u| ≤ ρ` with `0 < ρ < 1`, then
-`∑_{f ∈ M, deg f ≤ n} a(f) = (2πi)⁻¹ ∮_{|u| = ρ} A(u) / (u^n (1 - u)) du / u`.
-Absolute convergence is stated as summability of `‖a f‖ ρ^{deg f}` over monic `f`.
+$$\sum_{f \text{ monic},\ \deg f \le n} a(f) = \frac{1}{2 \pi i} \oint_{|u| = \rho}
+\frac{A(u)}{u^n (1 - u)} \, \frac{du}{u}.$$
 
 Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
 Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Lemma 1 (Perron's Formula)
@@ -83,11 +64,16 @@ public theorem_wanted monic_perron_formula {F : Type*} [Field F] [Finite F]
           (∑' f : {f : F[X] // f.Monic}, a f * u ^ (f : F[X]).natDegree) /
             (u ^ n * (1 - u)) * u⁻¹
 
-/-- For completely multiplicative `α, β` and monic `f, g`,
-`(α * β)(f g) = ∑_{ℓ ∈ M, ℓ ∣ f, ℓ ∣ g} μ(ℓ) α(ℓ) β(ℓ) (α * β)(f / ℓ) (α * β)(g / ℓ)`.
-Complete multiplicativity is encoded by taking `α, β` to be monoid homomorphisms
-`F[T] →* ℂ`; every completely multiplicative function on monic polynomials extends to one
-(send nonzero constants to `1` and `0` to `0`), and only values on monic polynomials enter.
+/-- **Dirichlet convolution of completely multiplicative functions at a product.** Let $F$ be a
+field and let $\alpha, \beta : F[T] \to \mathbb{C}$ be completely multiplicative, that is,
+monoid homomorphisms from the multiplicative monoid of $F[T]$ to $\mathbb{C}$. Write
+$\gamma = \alpha * \beta$ for their Dirichlet convolution over monic divisors and $\mu$ for the
+Möbius function. Then for all monic $f, g \in F[T]$,
+$$\gamma(fg) = \sum_{\ell} \mu(\ell) \alpha(\ell) \beta(\ell) \gamma(f/\ell) \gamma(g/\ell),$$
+where $\ell$ runs over the monic common divisors of $f$ and $g$.
+
+Every completely multiplicative function on monic polynomials extends to such a homomorphism (send
+nonzero constants to $1$ and $0$ to $0$), and only values at monic polynomials enter.
 
 Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
 Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Lemma 2
@@ -99,9 +85,14 @@ public theorem_wanted monicDirichletConv_mul_of_completelyMultiplicative {F : Ty
         (moebius ℓ : ℂ) * α ℓ * β ℓ * monicDirichletConv α β (f /ₘ ℓ) *
           monicDirichletConv α β (g /ₘ ℓ)
 
-/-- For monic `f`, `∑_{g ∈ M, g ∣ f} μ(g) / |g| = Φ(f) / |f| = ∏_{P ∣ f} (1 - 1 / |P|)`, where
-`Φ(f) = |f| ∏_{P ∣ f} (1 - 1/|P|)` is the paper's Euler totient; the right side is written as
-the product, so `Φ` is not introduced.
+/-- **Möbius sum over the monic divisors of a polynomial over a finite field.** Let $F$ be a finite
+field with $q$ elements and let $\mu$ be the Möbius function of $F[T]$. For every monic
+$f \in F[T]$,
+
+$$\sum_{g \text{ monic},\ g \mid f} \frac{\mu(g)}{q^{\deg g}} =
+\prod_{P \text{ monic irreducible},\ P \mid f} \left(1 - \frac{1}{q^{\deg P}}\right).$$
+
+The right side is $\Phi(f) / q^{\deg f}$, where $\Phi$ is Euler's totient function on $F[T]$.
 
 Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
 Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Lemma 6
@@ -113,8 +104,17 @@ public theorem_wanted monic_sum_moebius_div_norm {F : Type*} [Field F] [Fintype 
       ∏ᶠ P ∈ {P : F[X] | P.Monic ∧ Irreducible P ∧ P ∣ f},
         (1 - 1 / (Fintype.card F : ℝ) ^ P.natDegree)
 
-/-- For monic `f`, `∑_{g ∈ M, g ∣ f} μ(g) deg(g) / |g| = (Φ(f) / |f|) ∑_{P ∣ f} deg P / (1 - |P|)`,
-with `Φ(f) / |f| = ∏_{P ∣ f} (1 - 1/|P|)` written as the product.
+/-- **Degree-weighted Möbius sum over the monic divisors of a polynomial over a finite field.** Let
+$F$ be a finite field with $q$ elements and let $\mu$ be the Möbius function of $F[T]$. For every
+monic $f \in F[T]$,
+
+$$\sum_{g \text{ monic},\ g \mid f} \frac{\mu(g) \deg g}{q^{\deg g}} =
+\prod_{P \mid f} \left(1 - \frac{1}{q^{\deg P}}\right)
+\sum_{P \mid f} \frac{\deg P}{1 - q^{\deg P}},$$
+
+where in the product and in the sum $P$ runs over the monic irreducible divisors of $f$.
+
+The product is $\Phi(f) / q^{\deg f}$, where $\Phi$ is Euler's totient function on $F[T]$.
 
 Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
 Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Lemma 7
@@ -128,18 +128,13 @@ public theorem_wanted monic_sum_moebius_mul_natDegree_div_norm {F : Type*} [Fiel
         ∑ᶠ P ∈ {P : F[X] | P.Monic ∧ Irreducible P ∧ P ∣ f},
           (P.natDegree : ℝ) / (1 - (Fintype.card F : ℝ) ^ P.natDegree)
 
-/-- The number of monic polynomials of degree at most `N` is `(q^{N+1} - 1) / (q - 1)`
-(Proposition 4, case `h = 1`, `m = 1`).
+/-- **Summatory divisor function for monic polynomials over a finite field.** Let $F$ be a finite
+field with $q$ elements. For monic $f \in F[T]$, the Dirichlet convolution $(1 * 1)(f)$ of the
+constant function $1$ with itself is the number of monic divisors of $f$. Then for every natural
+number $N$,
 
-Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
-Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Proposition 4
-(`integers-2026-A80-prop-4`), case `h = 1`, `m = 1`. -/
-public theorem_wanted monic_count_natDegree_le {F : Type*} [Field F] [Fintype F] (N : ℕ) :
-    (Nat.card {f : F[X] // f.Monic ∧ f.natDegree ≤ N} : ℚ) =
-      ((Fintype.card F : ℚ) ^ (N + 1) - 1) / (Fintype.card F - 1)
-
-/-- `∑_{f ∈ M, deg f ≤ N} (1 * 1)(f) = ((N + 1) q^{N+2} - (N + 2) q^{N+1} + 1) / (q - 1)^2`, where
-`(1 * 1)(f)` is the number of monic divisors of `f` (Proposition 4, case `h = 2`, `m = 1`).
+$$\sum_{f \text{ monic},\ \deg f \le N} (1 * 1)(f) =
+\frac{(N + 1) q^{N + 2} - (N + 2) q^{N + 1} + 1}{(q - 1)^2}.$$
 
 Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
 Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Proposition 4
@@ -151,7 +146,8 @@ public theorem_wanted monic_sum_divisorCount_natDegree_le {F : Type*} [Field F] 
       (((N + 1 : ℂ) * (Fintype.card F : ℂ) ^ (N + 2) - (N + 2) * (Fintype.card F : ℂ) ^ (N + 1)
           + 1) / ((Fintype.card F : ℂ) - 1) ^ 2)
 
-/-- The norm `|f| = q ^ deg f` of a nonzero `f ∈ 𝔽_q[T]`, with `|0| = 0`.
+/-- **Norm of a polynomial over a finite field.** Let $F$ be a finite field with $q$ elements. The
+norm of a nonzero $f \in F[T]$ is the real number $|f| = q^{\deg f}$, and $|0| = 0$.
 
 Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
 Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Section 1, definition of the
@@ -160,7 +156,8 @@ public noncomputable def fqNorm {F : Type*} [Field F] [Fintype F] (f : F[X]) : �
   open scoped Classical in
   if f = 0 then 0 else (Fintype.card F : ℝ) ^ f.natDegree
 
-/-- For `f ≠ 0`, `|f| = q ^ deg f`.
+/-- **The norm of a nonzero polynomial.** Let $F$ be a finite field with $q$ elements. For every
+nonzero $f \in F[T]$, the norm of $f$ is $|f| = q^{\deg f}$.
 
 Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
 Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Section 1, definition of the
@@ -170,7 +167,9 @@ public theorem fqNorm_of_ne_zero {F : Type*} [Field F] [Fintype F] {f : F[X]} (h
   classical
   simp [fqNorm, hf]
 
-/-- The norm is multiplicative on nonzero polynomials: `|f g| = |f| |g|`.
+/-- **Multiplicativity of the norm.** Let $F$ be a finite field with $q$ elements, and let
+$|f| = q^{\deg f}$ be the norm of a nonzero $f \in F[T]$. For all nonzero $f, g \in F[T]$,
+$|fg| = |f| \, |g|$.
 
 Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
 Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Section 1, definition of the
@@ -180,28 +179,9 @@ public theorem fqNorm_mul {F : Type*} [Field F] [Fintype F] {f g : F[X]} (hf : f
   rw [fqNorm_of_ne_zero (mul_ne_zero hf hg), fqNorm_of_ne_zero hf, fqNorm_of_ne_zero hg,
     natDegree_mul hf hg, pow_add]
 
-/-- The only monic polynomial of degree at most `0` is `1`.
-
-Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
-Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Section 2, the set
-`M_{≤ 0}`. -/
-public theorem monic_natDegree_le_zero_iff {F : Type*} [Field F] {f : F[X]} :
-    f.Monic ∧ f.natDegree ≤ 0 ↔ f = 1 := by
-  constructor
-  · rintro ⟨hm, hd⟩
-    exact eq_one_of_monic_natDegree_zero hm (Nat.le_zero.mp hd)
-  · rintro rfl
-    exact ⟨monic_one, by simp⟩
-
-/-- `f ∈ 𝔽_q[T]` is `B_κ`-free when no `P ^ κ(P)`, `P` monic irreducible, divides it.
-
-Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
-Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Section 1, definition of
-`B_κ`-free polynomials. -/
-public def IsBFree {F : Type*} [Field F] (κ : F[X] → ℕ) (f : F[X]) : Prop :=
-  ∀ P : F[X], P.Monic → Irreducible P → ¬ P ^ κ P ∣ f
-
-/-- `1` is `B_κ`-free when every `κ(P)` is nonzero.
+/-- **The polynomial $1$ is $B_\kappa$-free.** Let $F$ be a field and let $\kappa$ assign to each
+polynomial in $F[T]$ a natural number, with $\kappa(P) \ne 0$ for every monic irreducible $P$.
+Then $1$ is $B_\kappa$-free: $P^{\kappa(P)}$ does not divide $1$ for any monic irreducible $P$.
 
 Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
 Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Section 1, definition of
@@ -211,53 +191,9 @@ public theorem isBFree_one {F : Type*} [Field F] (κ : F[X] → ℕ)
   intro P hm hP hdvd
   exact hP.not_isUnit ((isUnit_pow_iff (hκ P hm hP)).mp (isUnit_of_dvd_one hdvd))
 
-/-- `κ_min = min_P κ(P)` over the monic irreducible `P`.
-
-Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
-Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Section 1, definition of
-`κ_min`. -/
-public noncomputable def kappaMin {F : Type*} [Field F] (κ : F[X] → ℕ) : ℕ :=
-  ⨅ P : {P : F[X] // P.Monic ∧ Irreducible P}, κ P
-
-/-- `κ_min ≤ κ(P)` for every monic irreducible `P`.
-
-Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
-Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Section 1, definition of
-`κ_min`. -/
-public theorem kappaMin_le {F : Type*} [Field F] (κ : F[X] → ℕ) {P : F[X]} (hm : P.Monic)
-    (hP : Irreducible P) : kappaMin κ ≤ κ P :=
-  ciInf_le (OrderBot.bddBelow _) (⟨P, hm, hP⟩ : {P : F[X] // P.Monic ∧ Irreducible P})
-
-/-- `f ^ κ = ∏_P P ^ (ν_P(f) κ(P))` for `f = ∏_P P ^ ν_P(f)` monic.
-
-Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
-Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Section 3, definition of
-`f ^ κ`. -/
-public noncomputable def kappaPow {F : Type*} [Field F] (κ : F[X] → ℕ) (f : F[X]) : F[X] :=
-  open scoped Classical in
-  ((normalizedFactors f).map fun P => P ^ κ P).prod
-
-/-- `1 ^ κ = 1`.
-
-Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
-Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Section 3, definition of
-`f ^ κ`. -/
-public theorem kappaPow_one {F : Type*} [Field F] (κ : F[X] → ℕ) :
-    kappaPow κ (1 : F[X]) = 1 := by
-  classical
-  simp [kappaPow]
-
-/-- `P ^ κ = P ^ κ(P)` for monic irreducible `P`.
-
-Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
-Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Section 3, definition of
-`f ^ κ`. -/
-public theorem kappaPow_of_irreducible {F : Type*} [Field F] (κ : F[X] → ℕ) {P : F[X]}
-    (hm : P.Monic) (hP : Irreducible P) : kappaPow κ P = P ^ κ P := by
-  classical
-  simp [kappaPow, normalizedFactors_irreducible hP, hm.normalize_eq_self]
-
-/-- The `h`-divisor function `d_h(f) = #{(g_1, …, g_h) ∈ M^h : g_1 ⋯ g_h = f}`.
+/-- **The $h$-fold divisor function.** Let $F$ be a field and $h$ a natural number. For
+$f \in F[T]$, $d_h(f)$ is the number of $h$-tuples $(g_1, \dots, g_h)$ of monic polynomials in
+$F[T]$ with $g_1 \cdots g_h = f$.
 
 Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
 Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Section 1, definition of
@@ -265,7 +201,9 @@ Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Section 1, d
 public noncomputable def monicDivisorCount {F : Type*} [Field F] (h : ℕ) (f : F[X]) : ℕ :=
   Nat.card {v : Fin h → F[X] // (∀ i, (v i).Monic) ∧ ∏ i, v i = f}
 
-/-- `d_h(1) = 1`.
+/-- **The divisor functions at $1$.** Let $F$ be a field and $h$ a natural number. Then
+$d_h(1) = 1$, where $d_h(f)$ is the number of $h$-tuples of monic polynomials in $F[T]$ whose
+product is $f$: the only such tuple for $f = 1$ has every entry equal to $1$.
 
 Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
 Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Section 1, definition of
@@ -280,7 +218,10 @@ public theorem monicDivisorCount_one {F : Type*} [Field F] (h : ℕ) :
   have hdvd : v i ∣ 1 := hprod ▸ Finset.dvd_prod_of_mem v (Finset.mem_univ i)
   exact (hv i).isUnit_iff.mp (isUnit_of_dvd_one hdvd)
 
-/-- `d_0(f) = 0` for `f ≠ 1` (the empty product is `1`).
+/-- **The divisor function $d_0$ vanishes away from $1$.** Let $F$ be a field and let $f \in F[T]$
+with $f \ne 1$. Then $d_0(f) = 0$, where $d_h(f)$ is the number of $h$-tuples of monic
+polynomials in $F[T]$ whose product is $f$: the only $0$-tuple is the empty one, whose product
+is $1$.
 
 Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
 Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Section 1, definition of
@@ -291,7 +232,9 @@ public theorem monicDivisorCount_zero_of_ne_one {F : Type*} [Field F] {f : F[X]}
   left
   exact ⟨fun ⟨v, _, hv⟩ => hf (by simpa using hv.symm)⟩
 
-/-- `d_1(f) = 1` for monic `f`.
+/-- **The divisor function $d_1$ on monic polynomials.** Let $F$ be a field. For every monic
+$f \in F[T]$, $d_1(f) = 1$, where $d_h(f)$ is the number of $h$-tuples of monic polynomials in
+$F[T]$ whose product is $f$.
 
 Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
 Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Section 1, definition of
@@ -306,90 +249,21 @@ public theorem monicDivisorCount_one_left {F : Type*} [Field F] {f : F[X]} (hf :
   obtain rfl := Subsingleton.elim i 0
   simpa using hprod
 
-/-- `S_f[α, β](n) = ∑_{g ∈ M, deg f + deg g ≤ n} (α * β)(f g)` (the paper's `g ∈ M_{≤ n - deg f}`).
+/-- **Shifted partial sums for completely multiplicative functions.** Let $F$ be a finite field
+and let $\alpha, \beta \colon F[T] \to \mathbb{C}$ be completely multiplicative, that is, monoid
+homomorphisms from the multiplicative monoid of $F[T]$ to $\mathbb{C}$. Write $\mu$ for the Möbius
+function of $F[T]$. For $f \in F[T]$, a natural number $n$ and an integer $k$, write
+$S_f[\alpha, \beta](n)$ and $D[\alpha, \beta](k)$ for the shifted partial sums and the partial
+sums of the Dirichlet convolution of $\alpha$ and $\beta$ over monic divisors, where
+$D[\alpha, \beta](k) = 0$ for $k < 0$. Then for every monic $f \in F[T]$ and every natural number
+$n$,
+$$S_f[\alpha, \beta](n) = \sum_{d \mid f} \alpha(d)\, \beta(f/d) \sum_{\ell \mid d} \mu(\ell)\,
+\beta(\ell)\, D[\alpha, \beta](n - \deg(f \ell)),$$
+where $d$ runs over the monic divisors of $f$, $\ell$ over the monic divisors of $d$, and
+$n - \deg(f \ell)$ is computed in the integers.
 
-Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
-Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Section 3, eq. (3). -/
-public noncomputable def monicConvShiftedSum {F : Type*} [Field F] (α β : F[X] → ℂ)
-    (f : F[X]) (n : ℕ) : ℂ :=
-  ∑ᶠ g ∈ {g : F[X] | g.Monic ∧ f.natDegree + g.natDegree ≤ n}, monicDirichletConv α β (f * g)
-
-/-- `S_f[α, β](n) = 0` when `n < deg f`.
-
-Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
-Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Section 3, eq. (3). -/
-public theorem monicConvShiftedSum_of_lt {F : Type*} [Field F] (α β : F[X] → ℂ) {f : F[X]}
-    {n : ℕ} (hn : n < f.natDegree) : monicConvShiftedSum α β f n = 0 := by
-  have hset : {g : F[X] | g.Monic ∧ f.natDegree + g.natDegree ≤ n} = ∅ := by
-    ext g
-    simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false, not_and, not_le]
-    intro _
-    omega
-  rw [monicConvShiftedSum, hset, finsum_mem_empty]
-
-/-- `D[α, β](n) = ∑_{g ∈ M_{≤ n}} (α * β)(g)`, taken as `0` for `n < 0` (empty range), which is
-how the paper's Lemma 3 uses it at `n - deg(f ℓ)`.
-
-Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
-Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Section 3, definition of
-`D[α, β](n)`. -/
-public noncomputable def monicConvPartialSum {F : Type*} [Field F] (α β : F[X] → ℂ) (n : ℤ) : ℂ :=
-  ∑ᶠ g ∈ {g : F[X] | g.Monic ∧ (g.natDegree : ℤ) ≤ n}, monicDirichletConv α β g
-
-/-- `D[α, β](n) = 0` for `n < 0`.
-
-Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
-Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Section 3, definition of
-`D[α, β](n)`. -/
-public theorem monicConvPartialSum_of_neg {F : Type*} [Field F] (α β : F[X] → ℂ) {n : ℤ}
-    (hn : n < 0) : monicConvPartialSum α β n = 0 := by
-  have hset : {g : F[X] | g.Monic ∧ (g.natDegree : ℤ) ≤ n} = ∅ := by
-    ext g
-    simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false, not_and, not_le]
-    intro _
-    omega
-  rw [monicConvPartialSum, hset, finsum_mem_empty]
-
-/-- `D[α, β](0) = α(1) β(1)`.
-
-Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
-Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Section 3, definition of
-`D[α, β](n)`. -/
-public theorem monicConvPartialSum_zero {F : Type*} [Field F] (α β : F[X] → ℂ) :
-    monicConvPartialSum α β 0 = α 1 * β 1 := by
-  have hset : {g : F[X] | g.Monic ∧ (g.natDegree : ℤ) ≤ 0} = {1} := by
-    ext g
-    simp only [Set.mem_ofPred_eq, Set.mem_singleton_iff]
-    rw [← monic_natDegree_le_zero_iff]
-    exact and_congr_right fun _ => ⟨fun h => by omega, fun h => by omega⟩
-  rw [monicConvPartialSum, hset, finsum_mem_singleton, monicDirichletConv_one]
-
-/-- `D[γ, α, β](n) = ∑_{f ∈ M_{≤ n}} γ(f) (α * β)(f)`.
-
-Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
-Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Section 3, definition of
-`D[γ, α, β](n)`. -/
-public noncomputable def weightedMonicConvSum {F : Type*} [Field F] (γ α β : F[X] → ℂ)
-    (n : ℕ) : ℂ :=
-  ∑ᶠ f ∈ {f : F[X] | f.Monic ∧ f.natDegree ≤ n}, γ f * monicDirichletConv α β f
-
-/-- `D[γ, α, β](0) = γ(1) α(1) β(1)`.
-
-Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
-Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Section 3, definition of
-`D[γ, α, β](n)`. -/
-public theorem weightedMonicConvSum_zero {F : Type*} [Field F] (γ α β : F[X] → ℂ) :
-    weightedMonicConvSum γ α β 0 = γ 1 * (α 1 * β 1) := by
-  have hset : {f : F[X] | f.Monic ∧ f.natDegree ≤ 0} = {1} := by
-    ext f
-    simp only [Set.mem_ofPred_eq, Set.mem_singleton_iff]
-    exact monic_natDegree_le_zero_iff
-  rw [weightedMonicConvSum, hset, finsum_mem_singleton, monicDirichletConv_one]
-
-/-- Lemma 3: for completely multiplicative `α, β` (monoid homomorphisms, as in Lemma 2) and monic
-`f`, `S_f[α, β](n) = ∑_{d ∣ f} α(d) β(f/d) ∑_{ℓ ∣ d} μ(ℓ) β(ℓ) D[α, β](n - deg(f ℓ))`, sums over
-monic divisors; `D` vanishes at negative arguments. The paper leaves `f ∈ 𝔽_q[T]` unrestricted; its
-proof applies Lemma 2, which needs `f` monic.
+The paper states this for every $f \in F[T]$, monic or not; its proof applies Lemma 2, which needs
+$f$ monic.
 
 Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
 Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Lemma 3
@@ -401,62 +275,17 @@ public theorem_wanted monicConvShiftedSum_eq_of_completelyMultiplicative {F : Ty
         ∑ᶠ ℓ ∈ {ℓ : F[X] | ℓ.Monic ∧ ℓ ∣ d},
           (moebius ℓ : ℂ) * β ℓ * monicConvPartialSum α β ((n : ℤ) - (f * ℓ).natDegree)
 
-/-- Lemma 4: for arbitrary `α, β, γ`,
-`D[γ, α, β](n) = ∑_{f ∈ M_{≤ n}} λ(f) S_f[α, β](n)` with `λ = γ * μ`.
 
-Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
-Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Lemma 4
-(`integers-2026-A80-lem-4`). -/
-public theorem_wanted weightedMonicConvSum_eq_sum_shifted {F : Type*} [Field F] [Finite F]
-    (γ α β : F[X] → ℂ) (n : ℕ) :
-    weightedMonicConvSum γ α β n =
-      ∑ᶠ f ∈ {f : F[X] | f.Monic ∧ f.natDegree ≤ n},
-        monicDirichletConv γ (fun g => (moebius g : ℂ)) f * monicConvShiftedSum α β f n
+/-- **Divisor-count bound over $\kappa$-th powers of monic polynomials.** Let $F$ be a finite
+field with $q$ elements and let $\kappa$ assign a natural number to each polynomial in $F[T]$,
+with $\kappa(P) \ge 2$ for every monic irreducible $P$. For monic $r = \prod_P P^{\nu_P}$ write
+$r^\kappa = \prod_P P^{\nu_P \kappa(P)}$, and let $\kappa_{\min}$ be the minimum of $\kappa(P)$
+over the monic irreducible $P$. Then for every $\varepsilon > 0$, as $N \to \infty$,
 
-/-- Theorem 6 (function-field Camargo identity): for completely multiplicative `α, β` and any `γ`,
-`D[γ, α, β](n) = ∑_{deg f ≤ n} (γ * μ)(f) ∑_{d ∣ f} α(d) β(f/d) ∑_{ℓ ∣ d} μ(ℓ) β(ℓ)
-D[α, β](n - deg(f ℓ))`, all sums over monic polynomials.
+$$\sum_{r \text{ monic},\ \deg r^\kappa \le N} \ \sum_{f \mid r^\kappa} \ \sum_{\ell \mid f} 1 =
+O\left(q^{(1/\kappa_{\min} + \varepsilon) N}\right),$$
 
-Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
-Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Theorem 6
-(`integers-2026-A80-thm-6`). -/
-public theorem_wanted weightedMonicConvSum_eq_of_completelyMultiplicative {F : Type*} [Field F]
-    [Finite F] (γ : F[X] → ℂ) (α β : F[X] →* ℂ) (n : ℕ) :
-    weightedMonicConvSum γ α β n =
-      ∑ᶠ f ∈ {f : F[X] | f.Monic ∧ f.natDegree ≤ n},
-        monicDirichletConv γ (fun g => (moebius g : ℂ)) f *
-          ∑ᶠ d ∈ {d : F[X] | d.Monic ∧ d ∣ f}, α d * β (f /ₘ d) *
-            ∑ᶠ ℓ ∈ {ℓ : F[X] | ℓ.Monic ∧ ℓ ∣ d},
-              (moebius ℓ : ℂ) * β ℓ * monicConvPartialSum α β ((n : ℤ) - (f * ℓ).natDegree)
-
-/-- Lemma 5: for monic `f` and positive `κ(P)`, `(1_{B_κ} * μ)(f) = μ(f^{1/κ})` if `f^{1/κ} ∈ M`
-and `0` otherwise. `f^{1/κ} ∈ M` means `f = r ^ κ` for a (unique) monic `r`, so the right side is
-the sum of `μ(r)` over monic `r` with `r ^ κ = f`.
-
-Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
-Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Lemma 5
-(`integers-2026-A80-lem-5`). -/
-public theorem_wanted monicDirichletConv_bFreeIndicator_moebius {F : Type*} [Field F]
-    (κ : F[X] → ℕ) (hκ : ∀ P : F[X], P.Monic → Irreducible P → κ P ≠ 0) {f : F[X]}
-    (hf : f.Monic) :
-    monicDirichletConv ({g : F[X] | IsBFree κ g}.indicator 1) (fun g => (moebius g : ℂ)) f =
-      ∑ᶠ r ∈ {r : F[X] | r.Monic ∧ kappaPow κ r = f}, (moebius r : ℂ)
-
-/-- Lemma 8, bound (6): for `κ ≥ 2` and `N ≥ 1`,
-`|∑_{r ∈ M, deg r^κ ≤ N} μ(r) ∑_{f ∣ r^κ} ∑_{ℓ ∣ f} μ(ℓ)| ≤ q ^ (N / κ_min)`.
-
-Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
-Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Lemma 8, eq. (6)
-(`integers-2026-A80-lem-8`). -/
-public theorem_wanted abs_sum_moebius_kappaPow_le {F : Type*} [Field F] [Fintype F]
-    (κ : F[X] → ℕ) (hκ : ∀ P : F[X], P.Monic → Irreducible P → 2 ≤ κ P) {N : ℕ} (hN : 1 ≤ N) :
-    |∑ᶠ r ∈ {r : F[X] | r.Monic ∧ (kappaPow κ r).natDegree ≤ N},
-        (moebius r : ℝ) * ∑ᶠ f ∈ {f : F[X] | f.Monic ∧ f ∣ kappaPow κ r},
-          ∑ᶠ ℓ ∈ {ℓ : F[X] | ℓ.Monic ∧ ℓ ∣ f}, (moebius ℓ : ℝ)| ≤
-      (Fintype.card F : ℝ) ^ ((N : ℝ) / kappaMin κ)
-
-/-- Lemma 8, bound (7): for `κ ≥ 2` and every `ε > 0`,
-`∑_{r ∈ M, deg r^κ ≤ N} ∑_{f ∣ r^κ} ∑_{ℓ ∣ f} 1 = O(q ^ ((1/κ_min + ε) N))` as `N → ∞`.
+where $f$ runs over the monic divisors of $r^\kappa$ and $\ell$ over the monic divisors of $f$.
 
 Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
 Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Lemma 8, eq. (7)
@@ -468,11 +297,23 @@ public theorem_wanted sum_divisors_kappaPow_isBigO {F : Type*} [Field F] [Fintyp
           Nat.card {ℓ : F[X] // ℓ.Monic ∧ ℓ ∣ f} : ℕ) : ℝ)) =O[atTop]
       fun N : ℕ => (Fintype.card F : ℝ) ^ ((1 / (kappaMin κ : ℝ) + ε) * N)
 
-/-- Proposition 1: for `κ ≥ 2`, fixed monic `m`, `h ≥ 1` and `ε > 0`,
-`∑_{r ∈ M, deg r^κ ≤ N, (r, m) = 1} μ(r)/|r^κ| ∑_{f ∣ r^κ} d_{h-1}(f) ∑_{g ∣ f} μ(g)/|g|
-= ∏_{P ∤ m} [1 - |P|^{-κ(P)} (C_P + |P|^{-1} (1 - C_P))] + O(q ^ ((1/κ_min + ε - 1)(N + 1)))`
-with `C_P = binom(h + κ(P) - 1, κ(P))`; `(r, m) = 1` is `IsCoprime r m` and `|P^{κ(P)}|` is written
-`|P|^{κ(P)}`.
+/-- **Euler-product asymptotic with the $(h-1)$-divisor function over $\kappa$-th powers.** Let
+$F$ be a finite field with $q$ elements, write $|f| = q^{\deg f}$ for nonzero $f \in F[T]$, and let
+$\mu$ be the Möbius function of $F[T]$. Let $\kappa$ assign a natural number to each polynomial in
+$F[T]$, with $\kappa(P) \ge 2$ for every monic irreducible $P$. For monic $r = \prod_P P^{\nu_P}$
+write $r^\kappa = \prod_P P^{\nu_P \kappa(P)}$, and let $\kappa_{\min}$ be the minimum of
+$\kappa(P)$ over the monic irreducible $P$. Let $m \in F[T]$ be monic, let $h \ge 1$, let
+$d_{h-1}$ be the $(h-1)$-divisor function, and put $C_P = \binom{h + \kappa(P) - 1}{\kappa(P)}$.
+Then for every $\varepsilon > 0$, as $N \to \infty$,
+
+$$\sum_{\substack{r \text{ monic},\ \deg r^\kappa \le N \\ \gcd(r, m) = 1}}
+\frac{\mu(r)}{|r^\kappa|} \sum_{f \mid r^\kappa} d_{h-1}(f) \sum_{g \mid f} \frac{\mu(g)}{|g|} =
+\prod_{P \nmid m} \left(1 - \frac{1}{|P|^{\kappa(P)}}
+\left(C_P + \frac{1}{|P|} (1 - C_P)\right)\right) +
+O\left(q^{(1/\kappa_{\min} + \varepsilon - 1)(N + 1)}\right),$$
+
+where $f$ runs over the monic divisors of $r^\kappa$, $g$ over the monic divisors of $f$, and $P$
+over the monic irreducible polynomials not dividing $m$.
 
 Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
 Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Proposition 1
@@ -491,10 +332,23 @@ public theorem_wanted sum_moebius_kappaPow_divisorCount_isBigO {F : Type*} [Fiel
               1 / fqNorm (P : F[X]) * (1 - (Nat.choose (h + κ P - 1) (κ P) : ℝ))))) =O[atTop]
       fun N : ℕ => (Fintype.card F : ℝ) ^ ((1 / (kappaMin κ : ℝ) + ε - 1) * (N + 1))
 
-/-- Proposition 2: for `κ ≥ 2`, fixed monic `m` and `ε > 0`,
-`∑_{deg r^κ ≤ N, (r, m) = 1} μ(r)/|r^κ| ∑_{f ∣ r^κ} ∑_{g ∣ f} μ(g) deg(g)/|g|
-= ∏_{P ∤ m} (1 - (κ+1)/|P|^κ + κ/|P|^{κ+1}) ∑_{P ∤ m} κ deg P / (|P|^{κ+1} - |P|(κ+1) + κ)
-+ O(q ^ ((1/κ_min + ε - 1)(N + 1)))`, with `κ = κ(P)`.
+/-- **Euler-product asymptotic for a degree-weighted Möbius sum over $\kappa$-th powers.** Let
+$F$ be a finite field with $q$ elements, write $|f| = q^{\deg f}$ for nonzero $f \in F[T]$, and let
+$\mu$ be the Möbius function of $F[T]$. Let $\kappa$ assign a natural number to each polynomial in
+$F[T]$, with $\kappa(P) \ge 2$ for every monic irreducible $P$. For monic $r = \prod_P P^{\nu_P}$
+write $r^\kappa = \prod_P P^{\nu_P \kappa(P)}$, and let $\kappa_{\min}$ be the minimum of
+$\kappa(P)$ over the monic irreducible $P$. Let $m \in F[T]$ be monic. Then for every
+$\varepsilon > 0$, as $N \to \infty$,
+
+$$\sum_{\substack{r \text{ monic},\ \deg r^\kappa \le N \\ \gcd(r, m) = 1}}
+\frac{\mu(r)}{|r^\kappa|} \sum_{f \mid r^\kappa} \sum_{g \mid f} \frac{\mu(g) \deg g}{|g|} =
+\prod_{P \nmid m} \left(1 - \frac{\kappa(P) + 1}{|P|^{\kappa(P)}} +
+\frac{\kappa(P)}{|P|^{\kappa(P) + 1}}\right)
+\sum_{P \nmid m} \frac{\kappa(P) \deg P}{|P|^{\kappa(P) + 1} - |P| (\kappa(P) + 1) + \kappa(P)} +
+O\left(q^{(1/\kappa_{\min} + \varepsilon - 1)(N + 1)}\right),$$
+
+where $f$ runs over the monic divisors of $r^\kappa$, $g$ over the monic divisors of $f$, and $P$
+in the product and in the sum over the monic irreducible polynomials not dividing $m$.
 
 Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
 Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Proposition 2
@@ -515,11 +369,24 @@ public theorem_wanted sum_moebius_kappaPow_moebius_natDegree_isBigO {F : Type*} 
               (fqNorm (P : F[X]) ^ (κ P + 1) - fqNorm (P : F[X]) * (κ P + 1) + κ P)) =O[atTop]
       fun N : ℕ => (Fintype.card F : ℝ) ^ ((1 / (kappaMin κ : ℝ) + ε - 1) * (N + 1))
 
-/-- Proposition 3: for `κ ≥ 2`, fixed monic `m` and `ε > 0`,
-`∑_{deg r^κ ≤ N, (r, m) = 1} μ(r) deg(r^κ)/|r^κ| ∑_{f ∣ r^κ} ∑_{g ∣ f} μ(g)/|g|
-= -∏_{P ∤ m} (1 - (κ+1)/|P|^κ + κ/|P|^{κ+1})
-× ∑_{P ∤ m} κ deg P (|P|(κ+1) - κ) / (|P|^{κ+1} - |P|(κ+1) + κ)
-+ O(q ^ ((1/κ_min + ε - 1)(N + 1)))`, with `κ = κ(P)`.
+/-- **Euler-product asymptotic for a Möbius sum weighted by $\deg r^\kappa$.** Let $F$ be a finite
+field with $q$ elements, write $|f| = q^{\deg f}$ for nonzero $f \in F[T]$, and let $\mu$ be the
+Möbius function of $F[T]$. Let $\kappa$ assign a natural number to each polynomial in $F[T]$, with
+$\kappa(P) \ge 2$ for every monic irreducible $P$. For monic $r = \prod_P P^{\nu_P}$ write
+$r^\kappa = \prod_P P^{\nu_P \kappa(P)}$, and let $\kappa_{\min}$ be the minimum of $\kappa(P)$
+over the monic irreducible $P$. Let $m \in F[T]$ be monic. Then for every $\varepsilon > 0$, as
+$N \to \infty$,
+
+$$\sum_{\substack{r \text{ monic},\ \deg r^\kappa \le N \\ \gcd(r, m) = 1}}
+\frac{\mu(r) \deg r^\kappa}{|r^\kappa|} \sum_{f \mid r^\kappa} \sum_{g \mid f} \frac{\mu(g)}{|g|}
+= -\prod_{P \nmid m} \left(1 - \frac{\kappa(P) + 1}{|P|^{\kappa(P)}} +
+\frac{\kappa(P)}{|P|^{\kappa(P) + 1}}\right)
+\sum_{P \nmid m} \frac{\kappa(P) \deg P \, (|P| (\kappa(P) + 1) - \kappa(P))}
+{|P|^{\kappa(P) + 1} - |P| (\kappa(P) + 1) + \kappa(P)} +
+O\left(q^{(1/\kappa_{\min} + \varepsilon - 1)(N + 1)}\right),$$
+
+where $f$ runs over the monic divisors of $r^\kappa$, $g$ over the monic divisors of $f$, and $P$
+in the product and in the sum over the monic irreducible polynomials not dividing $m$.
 
 Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
 Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Proposition 3
@@ -540,10 +407,15 @@ public theorem_wanted sum_moebius_natDegree_kappaPow_isBigO {F : Type*} [Field F
               (fqNorm (P : F[X]) ^ (κ P + 1) - fqNorm (P : F[X]) * (κ P + 1) + κ P)) =O[atTop]
       fun N : ℕ => (Fintype.card F : ℝ) ^ ((1 / (kappaMin κ : ℝ) + ε - 1) * (N + 1))
 
-/-- Proposition 5: for a non-principal Dirichlet character `χ` modulo monic `m` (a multiplicative
-character of `𝔽_q[T]/(m)`, zero off the units) and `h ≥ 1`,
-`|∑_{f ∈ M_{≤ N}} χ^{(h)}(f)| ≤ (√q + 1) ^ (h (deg m - 1))`, where `χ^{(h)}(f) = χ(f) d_h(f)` by
-eq. (8). The paper's trailing `= O(q^{h deg(m)/2})` is a coarser restatement and is omitted.
+/-- **Character sums of the $h$-divisor function over monic polynomials.** Let $F$ be a finite
+field with $q$ elements, let $m \in F[T]$ be monic, and let $\chi$ be a non-principal Dirichlet
+character modulo $m$: a multiplicative character of $F[T]/(m)$, vanishing off the units, other
+than the principal one, evaluated at $f \in F[T]$ through the class of $f$ modulo $m$. Let
+$h \ge 1$ be a natural number and let $d_h$ be the $h$-divisor function, so that $d_h(f)$ is the
+number of $h$-tuples of monic polynomials with product $f$. Then for every natural number $N$,
+
+$$\left| \sum_{f \text{ monic},\ \deg f \le N} \chi(f) \, d_h(f) \right| \le
+(\sqrt{q} + 1)^{h (\deg m - 1)}.$$
 
 Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
 Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Proposition 5
@@ -555,7 +427,14 @@ public theorem_wanted norm_sum_mulChar_divisorCount_le {F : Type*} [Field F] [Fi
         χ (Ideal.Quotient.mk (Ideal.span {m}) f) * (monicDivisorCount h f : ℂ)‖ ≤
       (Real.sqrt (Fintype.card F) + 1) ^ (h * (m.natDegree - 1))
 
-/-- `D̃_{B_κ,h}(N) = ∑_{f ∈ M_{≤ N}} 1_{B_κ}(f) d_h(f)`.
+/-- **The $B_\kappa$-free divisor sum.** Let $F$ be a field, let $\kappa$ assign a natural number
+to each polynomial in $F[T]$, and let $h$ and $N$ be natural numbers. Then
+$\tilde D_{B_\kappa,h}(N)$ is the sum of $d_h(f)$ over the monic $B_\kappa$-free polynomials
+$f \in F[T]$ of degree at most $N$, where $d_h(f)$ is the number of $h$-tuples of monic
+polynomials with product $f$, and $f$ is $B_\kappa$-free when $P^{\kappa(P)}$ does not divide $f$
+for any monic irreducible $P$.
+
+The sum is meant for finite $F$; if it has infinitely many nonzero terms, its value is $0$.
 
 Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
 Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Section 1, definition of
@@ -563,7 +442,13 @@ Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Section 1, d
 public noncomputable def bFreeDivisorSum {F : Type*} [Field F] (κ : F[X] → ℕ) (h N : ℕ) : ℕ :=
   ∑ᶠ f ∈ {f : F[X] | f.Monic ∧ f.natDegree ≤ N ∧ IsBFree κ f}, monicDivisorCount h f
 
-/-- `D̃_{B_κ,h}(0) = 1` when every `κ(P)` is nonzero.
+/-- **The $B_\kappa$-free divisor sum at degree zero.** Let $F$ be a field and let $\kappa$ assign
+to each polynomial in $F[T]$ a natural number, with $\kappa(P) \ne 0$ for every monic irreducible
+$P$. Call $f \in F[T]$ $B_\kappa$-free when $P^{\kappa(P)}$ does not divide $f$ for any monic
+irreducible $P$, let $d_h(f)$ be the number of $h$-tuples of monic polynomials with product $f$,
+and let $\tilde D_{B_\kappa,h}(N)$ be the sum of $d_h(f)$ over the $B_\kappa$-free monic
+$f \in F[T]$ of degree at most $N$. Then $\tilde D_{B_\kappa,h}(0) = 1$ for every natural number
+$h$.
 
 Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
 Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Section 1, definition of
@@ -581,7 +466,13 @@ public theorem bFreeDivisorSum_zero {F : Type*} [Field F] (κ : F[X] → ℕ)
       exact ⟨monic_one, by simp, isBFree_one κ hκ⟩
   rw [bFreeDivisorSum, hset, finsum_mem_singleton, monicDivisorCount_one]
 
-/-- `D̃_{B_κ,h}(N, a, m) = ∑_{f ∈ M_{≤ N}, f ≡ a (mod m)} 1_{B_κ}(f) d_h(f)`.
+/-- **B-free divisor sum in an arithmetic progression.** For a field $F$, a function
+$\kappa : F[T] \to \mathbb{N}$, natural numbers $h$ and $N$, and $a, m \in F[T]$, the natural
+number $\tilde D_{\kappa,h}(N, a, m)$ is the sum of $d_h(f)$ over the monic $B_\kappa$-free
+$f \in F[T]$ of degree at most $N$ with $f \equiv a \pmod m$, that is, with $m$ dividing $f - a$.
+Here $d_h(f)$ is the number of $h$-tuples of monic polynomials with product $f$, and $f$ is
+$B_\kappa$-free when no $P^{\kappa(P)}$ with $P$ monic irreducible divides it. The sum is finite
+when $F$ is finite; it is taken to be $0$ if infinitely many of its terms are nonzero.
 
 Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
 Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Section 1, definition of
@@ -590,7 +481,14 @@ public noncomputable def bFreeDivisorSumMod {F : Type*} [Field F] (κ : F[X] →
     (a m : F[X]) : ℕ :=
   ∑ᶠ f ∈ {f : F[X] | f.Monic ∧ f.natDegree ≤ N ∧ IsBFree κ f ∧ m ∣ f - a}, monicDivisorCount h f
 
-/-- Modulo `m = 1` the progression sum is the full sum: `D̃_{B_κ,h}(N, a, 1) = D̃_{B_κ,h}(N)`.
+/-- **The progression sum modulo 1 is the full sum.** Let $F$ be a field, let
+$\kappa : F[T] \to \mathbb{N}$, and let $h$ and $N$ be natural numbers. Write
+$\tilde D_{\kappa,h}(N)$ for the sum of $d_h(f)$ over the monic $B_\kappa$-free $f \in F[T]$ of
+degree at most $N$, and for $a, m \in F[T]$ write $\tilde D_{\kappa,h}(N, a, m)$ for the same sum
+restricted to the $f$ with $f \equiv a \pmod m$. Here $d_h(f)$ is the number of $h$-tuples of
+monic polynomials with product $f$, $f$ is $B_\kappa$-free when no $P^{\kappa(P)}$ with $P$ monic
+irreducible divides it, and a sum with infinitely many nonzero terms is taken to be $0$. Then
+for every $a \in F[T]$, $\tilde D_{\kappa,h}(N, a, 1) = \tilde D_{\kappa,h}(N)$.
 
 Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
 Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Section 1, definition of
@@ -599,8 +497,18 @@ public theorem bFreeDivisorSumMod_one {F : Type*} [Field F] (κ : F[X] → ℕ) 
     (a : F[X]) : bFreeDivisorSumMod κ h N a 1 = bFreeDivisorSum κ h N := by
   simp [bFreeDivisorSumMod, bFreeDivisorSum]
 
-/-- Theorem 1, case `h = 1`: for `κ ≥ 2` and every `ε > 0`,
-`D̃_{B_κ,1}(N) = q^N / (1 - 1/q) ∏_P (1 - 1/|P|^{κ(P)}) + O(q ^ ((1/κ_min + ε) N))`.
+/-- **Asymptotic count of B-free polynomials.** Let $F$ be a finite field with $q$ elements, write
+$|f| = q^{\deg f}$ for nonzero $f \in F[T]$, and let $\kappa$ assign a natural number to each
+polynomial in $F[T]$, with $\kappa(P) \ge 2$ for every monic irreducible $P$; let $\kappa_{\min}$
+be the minimum of $\kappa(P)$ over the monic irreducible $P$. Let $\tilde D_{\kappa,1}(N)$ be the
+sum of $d_1(f)$ (which is $1$ for monic $f$) over the monic $B_\kappa$-free $f$ of degree at most
+$N$, where $f$ is $B_\kappa$-free when no $P^{\kappa(P)}$ with $P$ monic irreducible divides it.
+Then for every $\varepsilon > 0$,
+$$
+\tilde D_{\kappa,1}(N) - \frac{q^N}{1 - 1/q} \prod_P \bigl(1 - |P|^{-\kappa(P)}\bigr) =
+O\bigl(q^{(1/\kappa_{\min} + \varepsilon) N}\bigr)
+$$
+as $N \to \infty$, the product running over the monic irreducible $P$.
 
 Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
 Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Theorem 1, first formula
@@ -612,10 +520,23 @@ public theorem_wanted bFreeDivisorSum_one_isBigO {F : Type*} [Field F] [Fintype 
           ∏' P : {P : F[X] // P.Monic ∧ Irreducible P}, (1 - 1 / fqNorm (P : F[X]) ^ κ P))
       =O[atTop] fun N : ℕ => (Fintype.card F : ℝ) ^ ((1 / (kappaMin κ : ℝ) + ε) * N)
 
-/-- Theorem 1, case `h = 2`: for `κ ≥ 2` and every `ε > 0`,
-`D̃_{B_κ,2}(N) = q^N / (1 - 1/q) ∏_P (1 - (κ+1)/|P|^κ + κ/|P|^{κ+1})
-× [N + 1 - 1/(q - 1) + ∑_P κ(κ+1) deg(P) (|P| - 1) / (|P|^{κ+1} - |P|(κ+1) + κ)]
-+ O(q ^ ((1/κ_min + ε) N))`, with `κ = κ(P)`.
+/-- **Asymptotic for the $B_\kappa$-free sum of the divisor function.** Let $F$ be a finite field
+with $q$ elements and let $\kappa$ assign to each polynomial in $F[T]$ a natural number, with
+$\kappa(P) \ge 2$ for every monic irreducible $P$. A polynomial $f$ is $B_\kappa$-free when
+$P^{\kappa(P)}$ does not divide $f$ for any monic irreducible $P$; $d_2(f)$ is the number of
+ordered pairs of monic polynomials with product $f$; $\tilde D_{B_\kappa,2}(N)$ is the sum of
+$d_2(f)$ over the $B_\kappa$-free monic $f$ of degree at most $N$; $\kappa_{\min}$ is the minimum
+of $\kappa(P)$ over the monic irreducible $P$; and for a monic irreducible $P$ we write
+$\kappa_P = \kappa(P)$ and $|P| = q^{\deg P}$ for its norm. Then for every $\varepsilon > 0$, as
+$N \to \infty$,
+$$
+\tilde D_{B_\kappa,2}(N) = \frac{q^N}{1 - 1/q}
+\prod_P \left( 1 - \frac{\kappa_P + 1}{|P|^{\kappa_P}} + \frac{\kappa_P}{|P|^{\kappa_P + 1}} \right)
+\left( N + 1 - \frac{1}{q - 1} +
+\sum_P \frac{\kappa_P (\kappa_P + 1) \deg(P) (|P| - 1)}{|P|^{\kappa_P + 1} - |P| (\kappa_P + 1) +
+\kappa_P} \right) + O\left( q^{(1/\kappa_{\min} + \varepsilon) N} \right),
+$$
+where the product and the sum run over the monic irreducible polynomials $P$.
 
 Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
 Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Theorem 1, second formula
@@ -633,10 +554,21 @@ public theorem_wanted bFreeDivisorSum_two_isBigO {F : Type*} [Field F] [Fintype 
                 (fqNorm (P : F[X]) ^ (κ P + 1) - fqNorm (P : F[X]) * (κ P + 1) + κ P)))
       =O[atTop] fun N : ℕ => (Fintype.card F : ℝ) ^ ((1 / (kappaMin κ : ℝ) + ε) * N)
 
-/-- Theorem 2 for `h ∈ {1, 2}`: for `κ ≥ 2`,
-`D̃_{B_κ,h}(N) = q^N N^{h-1} / (1 - 1/q) ∏_P [1 - |P|^{-κ(P)} (C_P + |P|^{-1} (1 - C_P))]
-(1 + O(1/N))` with `C_P = binom(h + κ(P) - 1, κ(P))`, stated as
-`D̃ - main = O(main / N)`. For `h ≥ 3` the printed main term is wrong (see the audit row).
+/-- **Asymptotic for B-free divisor sums when h is at most 2.** Let $F$ be a finite field with $q$
+elements, write $|f| = q^{\deg f}$ for nonzero $f \in F[T]$, and let $\kappa$ assign a natural
+number to each polynomial in $F[T]$, with $\kappa(P) \ge 2$ for every monic irreducible $P$. Let
+$h \in \{1, 2\}$ and let $\tilde D_{\kappa,h}(N)$ be the sum of $d_h(f)$ over the monic
+$B_\kappa$-free $f$ of degree at most $N$, where $d_h(f)$ is the number of $h$-tuples of monic
+polynomials with product $f$, and $f$ is $B_\kappa$-free when no $P^{\kappa(P)}$ with $P$ monic
+irreducible divides it. Put $C_P = \binom{h + \kappa(P) - 1}{\kappa(P)}$ and
+$$
+M(N) = \frac{q^N N^{h-1}}{1 - 1/q}
+\prod_P \Bigl(1 - |P|^{-\kappa(P)} \bigl(C_P + |P|^{-1} (1 - C_P)\bigr)\Bigr),
+$$
+the product running over the monic irreducible $P$. Then
+$\tilde D_{\kappa,h}(N) - M(N) = O(M(N)/N)$ as $N \to \infty$.
+
+The paper states this for every $h \ge 1$, but its main term is not correct for $h \ge 3$.
 
 Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
 Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Theorem 2, cases `h = 1, 2`
@@ -657,10 +589,23 @@ public theorem_wanted bFreeDivisorSum_isBigO_of_le_two {F : Type*} [Field F] [Fi
               ((Nat.choose (h + κ P - 1) (κ P) : ℝ) +
                 1 / fqNorm (P : F[X]) * (1 - (Nat.choose (h + κ P - 1) (κ P) : ℝ))))) / N
 
-/-- Theorem 3, case `h = 1`: for `κ ≥ 2`, `m ≠ 0`, `(a, m) = 1` and every `ε > 0`,
-`D̃_{B_κ,1}(N, a, m) = q^N / ((1 - 1/q) |m|) ∏_{P ∤ m} (1 - 1/|P|^{κ(P)})
-+ O(q ^ ((1/κ_min + ε) N))`.
-`m ≠ 0` is added (the modulus of a progression).
+/-- **Asymptotic count of B-free polynomials in an arithmetic progression.** Let $F$ be a finite
+field with $q$ elements, write $|f| = q^{\deg f}$ for nonzero $f \in F[T]$, and let $\kappa$
+assign a natural number to each polynomial in $F[T]$, with $\kappa(P) \ge 2$ for every monic
+irreducible $P$; let $\kappa_{\min}$ be the minimum of $\kappa(P)$ over the monic irreducible $P$.
+Let $m \ne 0$ and $a$ be polynomials in $F[T]$ with $a$ coprime to $m$, and let
+$\tilde D_{\kappa,1}(N, a, m)$ be the sum of $d_1(f)$ (which is $1$ for monic $f$) over the monic
+$B_\kappa$-free $f$ of degree at most $N$ with $f \equiv a \pmod m$, where $f$ is $B_\kappa$-free
+when no $P^{\kappa(P)}$ with $P$ monic irreducible divides it. Then for every $\varepsilon > 0$,
+$$
+\tilde D_{\kappa,1}(N, a, m) -
+\frac{q^N}{(1 - 1/q) \, |m|} \prod_{P \nmid m} \bigl(1 - |P|^{-\kappa(P)}\bigr) =
+O\bigl(q^{(1/\kappa_{\min} + \varepsilon) N}\bigr)
+$$
+as $N \to \infty$, the product running over the monic irreducible $P$ not dividing $m$.
+
+The paper's statement does not list the hypothesis $m \ne 0$; it is implicit, since $m$ is the
+modulus of a progression.
 
 Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
 Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Theorem 3, first formula
@@ -674,11 +619,26 @@ public theorem_wanted bFreeDivisorSumMod_one_isBigO {F : Type*} [Field F] [Finty
             (1 - 1 / fqNorm (P : F[X]) ^ κ P))
       =O[atTop] fun N : ℕ => (Fintype.card F : ℝ) ^ ((1 / (kappaMin κ : ℝ) + ε) * N)
 
-/-- Theorem 3, case `h = 2`: for `κ ≥ 2`, `m ≠ 0`, `(a, m) = 1` and every `ε > 0`,
-`D̃_{B_κ,2}(N, a, m) = q^N Φ(m) / ((1 - 1/q) |m|^2) ∏_{P ∤ m} (1 - (κ+1)/|P|^κ + κ/|P|^{κ+1})
-× [N + 1 - 1/(q - 1) + 2 ∑_{P ∣ m} deg P / (|P| - 1)
-+ ∑_{P ∤ m} κ(κ+1) deg(P) (|P| - 1) / (|P|^{κ+1} - |P|(κ+1) + κ)] + O(q ^ ((1/κ_min + ε) N))`,
-with `Φ(m) / |m| = ∏_{P ∣ m} (1 - 1/|P|)` written as the product.
+/-- **Asymptotic for the B-free divisor function in an arithmetic progression.** Let $F$ be a
+finite field with $q$ elements, write $|f| = q^{\deg f}$ for nonzero $f \in F[T]$, and let
+$\kappa$ assign a natural number to each polynomial in $F[T]$, with $\kappa(P) \ge 2$ for every
+monic irreducible $P$; let $\kappa_{\min}$ be the minimum of $\kappa(P)$ over the monic
+irreducible $P$. Let $m \ne 0$ and $a$ be polynomials in $F[T]$ with $a$ coprime to $m$, and let
+$\tilde D_{\kappa,2}(N, a, m)$ be the sum of $d_2(f)$ over the monic $B_\kappa$-free $f$ of degree
+at most $N$ with $f \equiv a \pmod m$, where $d_2(f)$ is the number of pairs of monic polynomials
+with product $f$, and $f$ is $B_\kappa$-free when no $P^{\kappa(P)}$ with $P$ monic irreducible
+divides it. Writing $\kappa$ for $\kappa(P)$ inside sums and products over $P$, put
+$$
+M(N) = \frac{q^N}{(1 - 1/q) \, |m|} \prod_{P \mid m} \Bigl(1 - \frac{1}{|P|}\Bigr)
+\prod_{P \nmid m} \Bigl(1 - \frac{\kappa + 1}{|P|^{\kappa}} + \frac{\kappa}{|P|^{\kappa + 1}}\Bigr)
+\times \Bigl(N + 1 - \frac{1}{q - 1} + 2 \sum_{P \mid m} \frac{\deg P}{|P| - 1} +
+\sum_{P \nmid m}
+\frac{\kappa (\kappa + 1) \deg P \, (|P| - 1)}{|P|^{\kappa + 1} - |P| (\kappa + 1) + \kappa}\Bigr),
+$$
+where $P$ runs over the monic irreducible polynomials dividing, respectively not dividing, $m$.
+Then for every $\varepsilon > 0$,
+$\tilde D_{\kappa,2}(N, a, m) - M(N) = O\bigl(q^{(1/\kappa_{\min} + \varepsilon) N}\bigr)$ as
+$N \to \infty$.
 
 Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
 Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Theorem 3, second formula
@@ -701,11 +661,24 @@ public theorem_wanted bFreeDivisorSumMod_two_isBigO {F : Type*} [Field F] [Finty
                 (fqNorm (P : F[X]) ^ (κ P + 1) - fqNorm (P : F[X]) * (κ P + 1) + κ P)))
       =O[atTop] fun N : ℕ => (Fintype.card F : ℝ) ^ ((1 / (kappaMin κ : ℝ) + ε) * N)
 
-/-- Theorem 4 for `h ∈ {1, 2}`: for `κ ≥ 2`, `m ≠ 0` and `(a, m) = 1`,
-`D̃_{B_κ,h}(N, a, m) = q^N N^{h-1} / (h-1)! · Φ(m)^{h-1} / |m|^h · (1 - 1/q)^{-1}
-∏_{P ∤ m} [1 - |P|^{-κ(P)} (C_P + |P|^{-1} (1 - C_P))] (1 + O(1/N))`, stated as
-`D̃ - main = O(main / N)`, with `Φ(m)^{h-1} / |m|^h = (Φ(m)/|m|)^{h-1} / |m|`. For `h ≥ 3` the
-printed main term is wrong (see the audit row).
+/-- **Asymptotic for B-free divisor sums in progressions when h is at most 2.** Let $F$ be a
+finite field with $q$ elements, write $|f| = q^{\deg f}$ for nonzero $f \in F[T]$, and let
+$\kappa$ assign a natural number to each polynomial in $F[T]$, with $\kappa(P) \ge 2$ for every
+monic irreducible $P$. Let $m \ne 0$ and $a$ be polynomials in $F[T]$ with $a$ coprime to $m$, let
+$h \in \{1, 2\}$, and let $\tilde D_{\kappa,h}(N, a, m)$ be the sum of $d_h(f)$ over the monic
+$B_\kappa$-free $f$ of degree at most $N$ with $f \equiv a \pmod m$, where $d_h(f)$ is the number
+of $h$-tuples of monic polynomials with product $f$, and $f$ is $B_\kappa$-free when no
+$P^{\kappa(P)}$ with $P$ monic irreducible divides it. Put
+$C_P = \binom{h + \kappa(P) - 1}{\kappa(P)}$ and
+$$
+M(N) = \frac{q^N N^{h-1}}{(h-1)!} \cdot
+\frac{\bigl(\prod_{P \mid m} (1 - 1/|P|)\bigr)^{h-1}}{|m| \, (1 - 1/q)}
+\prod_{P \nmid m} \Bigl(1 - |P|^{-\kappa(P)} \bigl(C_P + |P|^{-1} (1 - C_P)\bigr)\Bigr),
+$$
+the products running over the monic irreducible $P$ dividing, respectively not dividing, $m$.
+Then $\tilde D_{\kappa,h}(N, a, m) - M(N) = O(M(N)/N)$ as $N \to \infty$.
+
+The paper states this for every $h \ge 1$, but its main term is not correct for $h \ge 3$.
 
 Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
 Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Theorem 4, cases `h = 1, 2`
@@ -730,13 +703,26 @@ public theorem_wanted bFreeDivisorSumMod_isBigO_of_le_two {F : Type*} [Field F] 
               ((Nat.choose (h + κ P - 1) (κ P) : ℝ) +
                 1 / fqNorm (P : F[X]) * (1 - (Nat.choose (h + κ P - 1) (κ P) : ℝ))))) / N
 
-/-- Theorem 5 (short intervals): let `κ ≥ 2` be symmetric (`κ(P) = κ(P^*)` with
-`P^*(T) = T^{deg P} P(1/T)` made monic, for `P ≠ T`), `h ≥ 1`, `c > (h + 2/κ_min)/(h + 2)` and
-`ε > 0`. Then, uniformly in monic `A` of degree `N` and `cN ≤ Δ ≤ N - 2`,
-`Ñ_{B_κ,h}(A, Δ) = q^{-(N-Δ-1)} (D̃_{B_κ,h}(N) - D̃_{B_κ,h}(N-1))
-+ O(q ^ (h(N-Δ)/2 + (1/κ_min + ε) N))`,
-where `Ñ_{B_κ,h}(A, Δ) = ∑_{|f - A| ≤ q^Δ} 1_{B_κ}(f) d_h(f)` (`|f - A| ≤ q^Δ` is
-`deg(f - A) ≤ Δ`). The paper's `κ(P^*)` leaves `P^*` unnormalized and undefined for `P = T`.
+/-- **Divisor sums over $B_\kappa$-free polynomials in short intervals.** Let $F$ be a finite field
+with $q$ elements and let $\kappa$ assign to each polynomial in $F[T]$ a natural number, with
+$\kappa(P) \ge 2$ for every monic irreducible $P$. Suppose that $\kappa$ is symmetric:
+$\kappa(P^*) = \kappa(P)$ for every monic irreducible $P$ with $P(0) \ne 0$, where $P^*$ is the
+monic scalar multiple of $T^{\deg P} P(1/T)$. Let $h \ge 1$ be an integer, let $c$ be a real
+number with $c > (h + 2/\kappa_{\min})/(h + 2)$, and let $\varepsilon > 0$. Then there is a constant
+$C$ such that for every sufficiently large $N$, every monic $A \in F[T]$ of degree $N$ and every
+integer $\Delta$ with $cN \le \Delta \le N - 2$,
+$$
+\left| \tilde N_{B_\kappa,h}(A, \Delta) - q^{-(N - \Delta - 1)} \left( \tilde D_{B_\kappa,h}(N) -
+\tilde D_{B_\kappa,h}(N - 1) \right) \right| \le
+C q^{h (N - \Delta)/2 + (1/\kappa_{\min} + \varepsilon) N}.
+$$
+Here $\tilde N_{B_\kappa,h}(A, \Delta)$ is the sum of $d_h(f)$ over the $B_\kappa$-free
+$f \in F[T]$ with $\deg(f - A) \le \Delta$ (where $\deg 0 = -\infty$), $d_h(f)$ is the number of
+$h$-tuples of monic polynomials with product $f$, $\tilde D_{B_\kappa,h}(N)$ is the sum of $d_h(f)$
+over the $B_\kappa$-free monic $f$ of degree at most $N$, and $\kappa_{\min}$ is the minimum of
+$\kappa(P)$ over the monic irreducible $P$.
+
+The paper's $\kappa(P^*)$ leaves $P^*$ unnormalized and undefined for $P = T$.
 
 Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
 Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Theorem 5, general formula
@@ -754,8 +740,22 @@ public theorem_wanted bFreeDivisorSum_shortInterval {F : Type*} [Field F] [Finty
               (Fintype.card F : ℝ) ^ (N - Δ - 1)| ≤
           C * (Fintype.card F : ℝ) ^ (h * ((N : ℝ) - Δ) / 2 + (1 / (kappaMin κ : ℝ) + ε) * N)
 
-/-- Theorem 5, case `h = 1`: under the hypotheses of `bFreeDivisorSum_shortInterval` with `h = 1`,
-`Ñ_{B_κ,1}(A, Δ) = q^{Δ+1} ∏_P (1 - 1/|P|^{κ(P)}) + O(q ^ ((N-Δ)/2 + (1/κ_min + ε) N))`.
+/-- **B-free polynomials in short intervals.** Let $F$ be a finite field with $q$ elements, write
+$|f| = q^{\deg f}$ for nonzero $f \in F[T]$, and let $\kappa$ assign a natural number to each
+polynomial in $F[T]$, with $\kappa(P) \ge 2$ for every monic irreducible $P$; let $\kappa_{\min}$
+be the minimum of $\kappa(P)$ over the monic irreducible $P$. Assume $\kappa$ is symmetric:
+$\kappa(P^*) = \kappa(P)$ for every monic irreducible $P$ with $P(0) \ne 0$, where $P^*$ is the
+monic scalar multiple of the reversed polynomial $T^{\deg P} P(1/T)$. Let
+$c > (1 + 2/\kappa_{\min})/3$ and $\varepsilon > 0$. Then there is a constant $C$ such that for
+all sufficiently large $N$, every monic $A \in F[T]$ of degree $N$ and every natural number
+$\Delta$ with $cN \le \Delta \le N - 2$,
+$$
+\Bigl|\sum_f d_1(f) - q^{\Delta + 1} \prod_P \bigl(1 - |P|^{-\kappa(P)}\bigr)\Bigr| \le
+C q^{(N - \Delta)/2 + (1/\kappa_{\min} + \varepsilon) N},
+$$
+where $f$ runs over the $B_\kappa$-free $f \in F[T]$ with $f = A$ or $\deg(f - A) \le \Delta$,
+$d_1(f)$ is $1$ if $f$ is monic and $0$ otherwise, $f$ is $B_\kappa$-free when no $P^{\kappa(P)}$
+with $P$ monic irreducible divides it, and $P$ runs over the monic irreducible polynomials.
 
 Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
 Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Theorem 5, case `h = 1`
@@ -772,10 +772,26 @@ public theorem_wanted bFreeDivisorSum_shortInterval_one {F : Type*} [Field F] [F
               ∏' P : {P : F[X] // P.Monic ∧ Irreducible P}, (1 - 1 / fqNorm (P : F[X]) ^ κ P)| ≤
           C * (Fintype.card F : ℝ) ^ (((N : ℝ) - Δ) / 2 + (1 / (kappaMin κ : ℝ) + ε) * N)
 
-/-- Theorem 5, case `h = 2`: under the hypotheses of `bFreeDivisorSum_shortInterval` with `h = 2`,
-`Ñ_{B_κ,2}(A, Δ) = q^{Δ+1} ∏_P (1 - (κ+1)/|P|^κ + κ/|P|^{κ+1})
-× [N + 1 + ∑_P κ deg(P) (κ+1) (|P| - 1) / (|P|^{κ+1} - |P|(κ+1) + κ)]
-+ O(q ^ (N - Δ + (1/κ_min + ε) N))`, with `κ = κ(P)`.
+/-- **The B-free divisor function in short intervals.** Let $F$ be a finite field with $q$
+elements, write $|f| = q^{\deg f}$ for nonzero $f \in F[T]$, and let $\kappa$ assign a natural
+number to each polynomial in $F[T]$, with $\kappa(P) \ge 2$ for every monic irreducible $P$; let
+$\kappa_{\min}$ be the minimum of $\kappa(P)$ over the monic irreducible $P$. Assume $\kappa$ is
+symmetric: $\kappa(P^*) = \kappa(P)$ for every monic irreducible $P$ with $P(0) \ne 0$, where $P^*$
+is the monic scalar multiple of the reversed polynomial $T^{\deg P} P(1/T)$. Let
+$c > (2 + 2/\kappa_{\min})/4$ and $\varepsilon > 0$. Then there is a constant $C$ such that for
+all sufficiently large $N$, every monic $A \in F[T]$ of degree $N$ and every natural number
+$\Delta$ with $cN \le \Delta \le N - 2$,
+$$
+\Bigl|\sum_f d_2(f) - q^{\Delta + 1}
+\prod_P \Bigl(1 - \frac{\kappa + 1}{|P|^{\kappa}} + \frac{\kappa}{|P|^{\kappa + 1}}\Bigr)
+\Bigl(N + 1 + \sum_P
+\frac{\kappa \deg P \, (\kappa + 1) (|P| - 1)}{|P|^{\kappa + 1} - |P| (\kappa + 1) + \kappa}\Bigr)
+\Bigr| \le C q^{N - \Delta + (1/\kappa_{\min} + \varepsilon) N},
+$$
+where $f$ runs over the $B_\kappa$-free $f \in F[T]$ with $f = A$ or $\deg(f - A) \le \Delta$,
+$d_2(f)$ is the number of pairs of monic polynomials with product $f$, $f$ is $B_\kappa$-free when
+no $P^{\kappa(P)}$ with $P$ monic irreducible divides it, $P$ runs over the monic irreducible
+polynomials, and $\kappa$ stands for $\kappa(P)$.
 
 Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
 Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Theorem 5, case `h = 2`

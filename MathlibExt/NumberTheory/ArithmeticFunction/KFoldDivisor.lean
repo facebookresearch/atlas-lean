@@ -47,7 +47,7 @@ theorem pow_apply_eq_sum_finMulAntidiag {R : Type*} [CommSemiring R] (f : Arithm
     · simp [Nat.finMulAntidiag_one]
     · simp [Nat.finMulAntidiag_zero_left hn, one_apply_ne hn]
   | succ k ih =>
-    rw [pow_succ', mul_apply]
+    rw [pow_succ', ArithmeticFunction.mul_apply]
     simp_rw [ih, mul_sum]
     rw [sum_sigma']
     refine sum_bij' (fun x _ => Fin.cons x.1.1 x.2)
@@ -153,7 +153,8 @@ theorem piltzNontrivial_eq_zeta_sub_one_pow (k : ℕ) :
     rcases eq_or_ne (a i) 1 with h | h
     · simp [h]
     · simp [one_apply_ne h, show 1 < a i by have := h0 i; omega]
-  simp_rw [hterm, prod_ite_zero, prod_const_one]
-  simp
+  change _ = ∏ i, ((ζ : ArithmeticFunction ℤ) - 1) (a i)
+  simp only [hterm, Fintype.prod_boole]
+  split_ifs <;> rfl
 
 end ArithmeticFunction

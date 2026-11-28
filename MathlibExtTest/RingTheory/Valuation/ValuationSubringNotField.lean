@@ -14,9 +14,9 @@ public import MathlibExt.RingTheory.Valuation.ValuationSubringNotField
 
 /-- Consumer with the original binders: the field is explicit in the
 source, and the valuation subring and its properness are as there. -/
-theorem exactSource (F : Type*) [Field F] {A : ValuationSubring F}
+private theorem exactSource (F : Type*) [Field F] {A : ValuationSubring F}
     (hA : A ≠ ⊤) : ¬ IsField A :=
-  ValuationSubring.not_isField_of_ne_top hA
+  ValuationSubring.not_isField_of_ne_top F hA
 
 /-- The properness hypothesis matters: the whole field, as the top
 valuation subring of itself, is a field. -/

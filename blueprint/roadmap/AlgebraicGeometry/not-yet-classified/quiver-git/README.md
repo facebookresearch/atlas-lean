@@ -1,0 +1,18 @@
+# Quiver GIT
+
+- [Finite Quiver](finite-quiver.md)
+- [Representation](representation.md)
+- [Coordinate](coordinate.md)
+- [Coordinate Ring](coordinate-ring.md)
+- [Representation Scheme](representation-scheme.md)
+- [Base Change Group](base-change-group.md)
+- [Base Change](base-change.md)
+- [Determinant Character](determinant-character.md)
+- [Evaluate](evaluate.md)
+- [Is Semi Invariant](is-semi-invariant.md)
+- [Character Semistable](character-semistable.md)
+- [Dimension Weight](dimension-weight.md)
+- [Is Subrepresentation](is-subrepresentation.md)
+- [Subrepresentation Weight](subrepresentation-weight.md)
+- [Numerically Semistable](numerically-semistable.md)
+- [Quiver GITWanted](king-numerical-criterion.md)

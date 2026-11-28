@@ -25,11 +25,11 @@ and the packaged corollary.
 
 namespace RiemannXiTest
 
-/-- The definition unfolds to the stated normalization. -/
+/-- Both spellings refer to the existing definition, whose normalisation is unchanged. -/
 example (s : ℂ) :
-    Complex.riemannXi s =
-      (s * (s - 1) * completedRiemannZeta₀ s + 1) / 2 :=
-  rfl
+    Complex.riemannXi s = RiemannXi.riemannXi s ∧
+    RiemannXi.riemannXi s = s * (s - 1) / 2 * completedRiemannZeta₀ s + 1 / 2 :=
+  ⟨rfl, rfl⟩
 
 /-- Entireness API. -/
 example : Differentiable ℂ Complex.riemannXi :=
