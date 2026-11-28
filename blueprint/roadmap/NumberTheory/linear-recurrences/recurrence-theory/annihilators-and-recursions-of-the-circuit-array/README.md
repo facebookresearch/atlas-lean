@@ -27,7 +27,15 @@
 - [Multivariable circuit array](circuit-array-m.md)
 - [First entries of the circuit array](circuit-array-small.md)
 - [First entry of the one-variable circuit array](circuit-array-x-zero-one.md)
+- [Left edges after a reduction](circuit-grid-succ-left.md)
+- [Right edges after a reduction](circuit-grid-succ-right.md)
+- [Bases after a reduction](circuit-grid-succ-base.md)
+- [Interior edges stay one](circuit-grid-eq-one.md)
+- [Interior triangles stay all-one](circuit-grid-eq-one-fun.md)
+- [Front of the left boundary](circuit-grid-front.md)
 - [First entries of the left diagonal of the multivariable circuit array](circuit-array-m-diagonal.md)
+- [The row-one front value is nonsingular](front-nonsingular.md)
+- [Right edge on the left front](right-edge-value.md)
 
 ## Section 4
 
