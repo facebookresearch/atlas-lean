@@ -9,9 +9,11 @@ Fix a standard Boolean encoding $[C]$ of constant-free algebraic circuits, of si
 3. $K([G(\vec{x})]) \wedge K([C(\vec{x}, 0)]) \rightarrow K([C(\vec{x}, G(\vec{x}))])$ (a circuit computing $0$ may be substituted for the constant $0$);
 4. $K([C(\vec{x})]) \rightarrow K([C(\pi(\vec{x}))])$ for permutations $\pi$ of the variables.
 
+A **Frege** proof system uses a finite, sound, implicationally complete set of schematic propositional inference rules over a finite complete Boolean basis, with proof size equal to total symbol count; **Extended Frege (EF)** adds the extension rule allowing introduction of $x_i \leftrightarrow \varphi$ for a fresh variable $x_i$ not occurring in $\varphi$, earlier lines, or the conclusion. For a circuit class $\mathcal{C}$ closed under $\mathrm{AC}^0$ reductions, **$\mathcal{C}$-Frege** is a Frege proof system whose proof lines are Boolean circuits from $\mathcal{C}$ (in particular, **$\mathrm{AC}^0[p]$-Frege** is the constant-depth specialization with unbounded fan-in $\lor, \land, \neg$ and $\mathrm{MOD}_p$ gates).
+
 **Theorem.** If there is a family $K$ of polynomial-size Boolean circuits computing PIT such that the PIT axioms for $K$ have polynomial-size Extended Frege proofs, then Extended Frege is polynomially equivalent to IPS.
 
-**Scaled-down version.** Let $\mathcal{C}$ be any class of Boolean circuits closed under $\mathrm{AC}^0$ circuit reductions, and write **$\mathcal{C}$-Frege** for a Frege proof system whose proof lines are circuits from $\mathcal{C}$. If there is a family $K$ of polynomial-size Boolean circuits computing PIT (not necessarily in $\mathcal{C}$) whose PIT axioms have polynomial-size $\mathcal{C}$-Frege proofs, then $\mathcal{C}$-Frege is polynomially equivalent to IPS, and consequently to Extended Frege.
+**Scaled-down version.** Let $\mathcal{C}$ be any class of Boolean circuits closed under $\mathrm{AC}^0$ circuit reductions. If there is a family $K$ of polynomial-size Boolean circuits computing PIT (not necessarily in $\mathcal{C}$) whose PIT axioms have polynomial-size $\mathcal{C}$-Frege proofs, then $\mathcal{C}$-Frege is polynomially equivalent to IPS, and consequently to Extended Frege.
 
 **Corollary.** For any $d$: if some family of tautologies has no polynomial-size $\mathrm{AC}^0[p]$-Frege proofs and $\mathrm{AC}^0[p]$-Frege has polynomial-size proofs of the (depth-$d$) PIT axioms for some $K$, then $\mathrm{VNP}_{\mathbb{F}_p}$ does not have polynomial-size (depth-$d$) algebraic circuits.
 
