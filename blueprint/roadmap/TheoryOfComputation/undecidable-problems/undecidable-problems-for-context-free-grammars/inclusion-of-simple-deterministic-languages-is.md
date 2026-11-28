@@ -12,6 +12,7 @@ This sharpens the [undecidability of inclusion for context-free languages](exist
 
 - [Context-free languages](../../context-free-languages/grammars-and-pushdown-automata/context-free-languages.md)
 - [Greibach normal form](../../context-free-languages/grammars-and-pushdown-automata/greibach-normal-form/is-greibach-normal-form.md)
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

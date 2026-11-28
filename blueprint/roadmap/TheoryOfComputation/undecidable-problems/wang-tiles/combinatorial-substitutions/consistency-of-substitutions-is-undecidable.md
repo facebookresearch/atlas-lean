@@ -9,6 +9,7 @@ The proof gives the stronger statement that consistency is undecidable for two-d
 ## Depends on
 
 - [Combinatorial substitutions, consistency and overlapping](combinatorial-substitutions-and-consistency.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

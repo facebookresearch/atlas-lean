@@ -23,6 +23,7 @@ states that equivalence of two subword histories is decidable (Mateescu, Salomaa
 ## Depends on
 
 - [Subword histories](subword-histories.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

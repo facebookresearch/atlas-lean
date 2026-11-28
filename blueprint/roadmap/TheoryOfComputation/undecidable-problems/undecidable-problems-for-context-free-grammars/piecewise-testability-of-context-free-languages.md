@@ -16,6 +16,7 @@ containing $K$ and disjoint from $L$?) is decidable.
 
 - [Context-free languages](../../context-free-languages/grammars-and-pushdown-automata/context-free-languages.md)
 - [Piecewise testable languages](../../regular-languages/syntactic-monoids/varieties-and-algebraic-characterizations/piecewise-testable-languages.md)
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

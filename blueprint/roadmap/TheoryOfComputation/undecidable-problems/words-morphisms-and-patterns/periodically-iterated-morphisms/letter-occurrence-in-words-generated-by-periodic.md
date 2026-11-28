@@ -20,6 +20,7 @@ Harju) and morphic words, whose monadic second-order theory is decidable (Carton
 - [Periodically iterated morphisms (PD0L systems)](periodically-iterated-morphisms-pd0l-systems.md)
 - [First-order logic of order over infinite words](../../../../Logic/temporal-logic/temporal-specification/first-order-logic-of-order-over-infinite-words.md)
 - [The arithmetical class $\Pi_n$](../../../degrees-and-hierarchies/arithmetical-hierarchy/is-pi.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -35,4 +36,4 @@ generated word is infinite exactly when the program does not halt.
 
 ## Sources
 
-- J. Endrullis and D. Hendriks, "On periodically iterated morphisms", in *Proceedings of the Joint Meeting of the 23rd EACSL Annual Conference on Computer Science Logic and the 29th Annual ACM/IEEE Symposium on Logic in Computer Science (CSL-LICS 2014)*, ACM, 2014, pp. 1–10, doi:10.1145/2603088.2603152; read in arXiv:1207.2336v1: the theorem on letter occurrence in Section 5 (Turing completeness of non-erasing PD0L systems) with its proof and the two corollaries after it (first-order theory and equality), the productivity theorem of Section 4, and the proposition on Fractran halting in Section 3.
+- J. Endrullis and D. Hendriks, "On periodically iterated morphisms", in *Proceedings of the Joint Meeting of the 23rd EACSL Annual Conference on Computer Science Logic and the 29th Annual ACM/IEEE Symposium on Logic in Computer Science (CSL-LICS 2014)*, ACM, 2014, pp. 1–10, doi:10.1145/2603088.2603152; read in arXiv:1207.2336v1: Theorem 4.15 (letter occurrence) in Section 4 ("Turing Completeness") with its proof, Corollaries 4.16 (first-order theory) and 4.17 (equality), Theorem 3.6 (productivity) in Section 3, and Proposition 2.3 (Fractran halting on input $2$) in Section 2, with the numbering of that version.

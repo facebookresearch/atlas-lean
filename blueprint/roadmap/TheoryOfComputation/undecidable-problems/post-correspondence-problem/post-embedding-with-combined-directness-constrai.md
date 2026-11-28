@@ -23,6 +23,8 @@ source proves decidable through Higman's lemma and a length function theorem.
 
 - [Deterministic pushdown automaton](../../context-free-languages/grammars-and-pushdown-automata/deterministic-context-free-languages/is-deterministic.md)
 - [Parikh image of a language](../../context-free-languages/closure-and-pumping/parikh-images-and-semilinear-sets/parikh-image.md)
+- [The arithmetical class $\Sigma_n$](../../degrees-and-hierarchies/arithmetical-hierarchy/is-sigma.md)
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -14,6 +14,7 @@ $m$-catenation, two-sided codes are never ND, MSD or UD $m$-codes, so those case
 ## Depends on
 
 - [Directed figures and decipherable directed figure codes](directed-figures-and-decipherable-directed-figur.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -30,4 +31,4 @@ undecidability of unique decipherability for two-sided codes was known from earl
 
 ## Sources
 
-- W. Moczurad, "Decidability of multiset, set and numerically decipherable directed figure codes", *Discrete Mathematics and Theoretical Computer Science* 19(1), paper 11, 2017, doi:10.23638/DMTCS-19-1-11; read in arXiv:1604.02167v3: Theorem 4 with its proof in Section 4, Theorems 1 to 3 (the decidable cases) and the summary table in Section 4.
+- W. Moczurad, "Decidability of multiset, set and numerically decipherable directed figure codes", *Discrete Mathematics and Theoretical Computer Science* 19(1), paper 11, 2017, doi:10.23638/DMTCS-19-1-11; read in arXiv:1604.02167v3: Theorem 4 with its proof in Section 4, Theorems 2 and 3 (the decidable cases), Theorem 1 (a necessary condition for two-sided codes) and the summary table in Section 4.

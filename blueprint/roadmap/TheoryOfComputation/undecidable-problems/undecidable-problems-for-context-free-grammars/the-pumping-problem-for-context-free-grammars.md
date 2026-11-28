@@ -4,7 +4,9 @@ Whether the language of a given context-free grammar satisfies the context-free 
 
 **Pumping with a constant.** A language $L \subseteq \Sigma^*$ *satisfies the context-free pumping lemma with constant* $p \in \mathbb{N}$ if every $z \in L$ with $|z| \ge p$ can be written as $z = uvwxy$ with $u, v, w, x, y \in \Sigma^*$, $|vx| \ge 1$ and $|vwx| \le p$, such that $u v^t w x^t y \in L$ for every $t \ge 0$. Every [context-free language](../../context-free-languages/grammars-and-pushdown-automata/context-free-languages.md) satisfies it for some $p$ (the Bar-Hillel pumping lemma, in this one-constant form).
 
-**Theorem (Gruber, Holzer and Rauch).** The *pumping problem* for context-free grammars, which asks, given a context-free grammar $G$ and a natural number $p$, whether $L(G)$ satisfies the context-free pumping lemma with constant $p$, is undecidable; it is [$\Pi^0_1$](../../degrees-and-hierarchies/arithmetical-hierarchy/is-pi.md)-complete under many-one reductions. It remains undecidable for linear context-free grammars with the pumping lemma for linear context-free languages.
+**Theorem (Gruber, Holzer and Rauch).** The *pumping problem* for context-free grammars, which asks, given a context-free grammar $G$ and a natural number $p$, whether $L(G)$ satisfies the context-free pumping lemma with constant $p$, is [$\Pi^0_1$](../../degrees-and-hierarchies/arithmetical-hierarchy/is-pi.md)-complete under many-one reductions, so undecidable (Theorem 15 of the source, with Lemmas 13 and 14).
+
+The undecidability, stated separately as Theorem 11, also holds for linear context-free grammars with the pumping lemma for linear context-free languages.
 
 The constant $p$ is part of the input. When the language is given by a finite automaton, the pumping problem for this lemma is decidable (Theorem 7 of the source).
 
@@ -13,6 +15,7 @@ The constant $p$ is part of the input. When the language is given by a finite au
 - [Context-free languages](../../context-free-languages/grammars-and-pushdown-automata/context-free-languages.md)
 - [The arithmetical class $\Pi_n$](../../degrees-and-hierarchies/arithmetical-hierarchy/is-pi.md)
 - [Pumping lemma for context-free languages](../../context-free-languages/closure-and-pumping/pumping-lemma-for-context-free-languages/pumping.md)
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

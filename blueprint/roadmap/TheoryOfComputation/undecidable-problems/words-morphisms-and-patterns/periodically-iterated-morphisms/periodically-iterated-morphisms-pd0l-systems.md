@@ -23,4 +23,4 @@ None.
 
 ## Sources
 
-- J. Endrullis and D. Hendriks, "On periodically iterated morphisms", in *Proceedings of the Joint Meeting of the 23rd EACSL Annual Conference on Computer Science Logic and the 29th Annual ACM/IEEE Symposium on Logic in Computer Science (CSL-LICS 2014)*, ACM, 2014, pp. 1–10, doi:10.1145/2603088.2603152; read in arXiv:1207.2336v1: the definition of PD0L systems in Section 2 (D0L systems with periodic control).
+- J. Endrullis and D. Hendriks, "On periodically iterated morphisms", in *Proceedings of the Joint Meeting of the 23rd EACSL Annual Conference on Computer Science Logic and the 29th Annual ACM/IEEE Symposium on Logic in Computer Science (CSL-LICS 2014)*, ACM, 2014, pp. 1–10, doi:10.1145/2603088.2603152; read in arXiv:1207.2336v1: Definition 1.1 in Section 1 ("D0L Systems with Periodic Control"), with the numbering of that version.

@@ -18,6 +18,8 @@ system.
 ## Depends on
 
 - [Domino (Post correspondence problem)](domino.md)
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Recognizability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
 
 ## Proof depends on
 
@@ -30,4 +32,4 @@ from right to left, writes the same configurations so that the matching conditio
 
 ## Sources
 
-- B. Nagy, "Reverse Post correspondence problem and undecidability of $5' \to 3'$ string assembly systems", *Electronic Proceedings in Theoretical Computer Science* 451, pp. 245–260, 2026, doi:10.4204/EPTCS.451.17; read in arXiv:2608.24257v1: the theorem on the opposite direction PCP with regular filter and its corollary for the reverse PCP in Section 3, the equivalence theorem of the two problems in the same section, the theorems of Section 4 on $5' \to 3'$ string assembly systems, and the proposition on the unary case in Section 5.
+- B. Nagy, "Reverse Post correspondence problem and undecidability of $5' \to 3'$ string assembly systems", *Electronic Proceedings in Theoretical Computer Science* 451, pp. 245–260, 2026, doi:10.4204/EPTCS.451.17; read in arXiv:2608.24257v1: Theorem 5 (opposite direction PCP with regular filter, Section 3.1) and Corollary 1 (reverse PCP), Theorem 4 (equivalence of the two problems, Section 3), Theorems 6 and 7 of Section 4 on $5' \to 3'$ string assembly systems, and Proposition 2 (the unary case) in Section 5, with the numbering of that version.

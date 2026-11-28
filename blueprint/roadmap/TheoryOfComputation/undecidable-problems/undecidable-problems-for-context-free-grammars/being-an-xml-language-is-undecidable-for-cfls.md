@@ -13,6 +13,7 @@ In contrast, it is decidable whether the language of a context-free grammar is w
 ## Depends on
 
 - [Context-free languages](../../context-free-languages/grammars-and-pushdown-automata/context-free-languages.md)
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -12,6 +12,7 @@ constraints equivalence is trivially decidable (Angluin).
 ## Depends on
 
 - [Pattern languages with regular constraints](pattern-languages-with-regular-constraints.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -28,4 +29,4 @@ the constraint languages to two letters.
 
 ## Sources
 
-- D. Nowotka and M. Wiedenhöft, "The equivalence problem of E-pattern languages with regular constraints is undecidable", *Theoretical Computer Science* 1083, article 116126, 2026, doi:10.1016/j.tcs.2026.116126; conference version in *Implementation and Application of Automata (CIAA 2024)*, Lecture Notes in Computer Science, pp. 276–288, Springer, 2024, doi:10.1007/978-3-031-71112-1_20. Read in arXiv:2411.07275v1: the main theorem of Section 3 with its proof, the corollary on terminal-free patterns, and the encoding of two-counter automata in Section 2.
+- D. Nowotka and M. Wiedenhöft, "The equivalence problem of E-pattern languages with regular constraints is undecidable", *Theoretical Computer Science* 1083, article 116126, 2026, doi:10.1016/j.tcs.2026.116126; conference version in *Implementation and Application of Automata (CIAA 2024)*, Lecture Notes in Computer Science, pp. 276–288, Springer, 2024, doi:10.1007/978-3-031-71112-1_20. Read in arXiv:2411.07275v1: Theorem 4 of Section 3 with its proof (Lemmas 5–7 and Corollary 8), Corollary 9 (terminal-free patterns) in Section 4, and the two-counter automata of Section 2.1, with the numbering of that version.

@@ -21,6 +21,7 @@ In contrast, whether $A$ can win within a given number $T$ of moves is decidable
 
 - [Wang tiles and valid tilings](wang-tiles-and-valid-tilings.md)
 - [The arithmetical class $\Sigma_n$](../../degrees-and-hierarchies/arithmetical-hierarchy/is-sigma.md)
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -35,4 +36,4 @@ moves at most once the game is decided by bounded play.
 
 ## Sources
 
-- B. Hellouin de Menibus and R. Pallen, "Two-player domino games", in *Twenty Years of Theoretical and Practical Synergies (CiE 2024)*, Lecture Notes in Computer Science 14773, pp. 139–152, Springer, 2024, doi:10.1007/978-3-031-64309-5_12; read in arXiv:2310.19759v2: the main theorem of Section 3 (Complexity of the Domino game problem) with its membership and hardness propositions, the theorem of Section 4 (Games with bounded time), and the theorem on balanced turn orders in Section 5 (Non-alternating play).
+- B. Hellouin de Menibus and R. Pallen, "Two-player domino games", in *Twenty Years of Theoretical and Practical Synergies (CiE 2024)*, Lecture Notes in Computer Science 14773, pp. 139–152, Springer, 2024, doi:10.1007/978-3-031-64309-5_12; read in arXiv:2310.19759v2: Theorem 1 of Section 3 (Complexity of the Domino game problem) with Propositions 1 (membership) and 2 (hardness), Theorem 2 of Section 4 (Games with bounded time), and Theorem 3 (balanced turn orders) in Section 5 (Non-alternating play), with the numbering of that version.

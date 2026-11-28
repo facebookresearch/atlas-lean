@@ -19,6 +19,7 @@ case undecidable. Membership stays NP-complete with length constraints.
 ## Depends on
 
 - [Pattern languages with regular constraints](pattern-languages-with-regular-constraints.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -11,6 +11,7 @@ constructible, membership in $\mathrm{BU}(k)$ is decidable by checking that all 
 ## Depends on
 
 - [Bottom-up semi-Thue systems](bottom-up-semi-thue-systems.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -25,4 +26,4 @@ construction uses fresh letters $S_{0,1}, \dots, S_{0,k}$ and $a_1, \dots, a_k$.
 
 ## Sources
 
-- I. Durand and G. Sénizergues, "Bottom-up rewriting for words and terms", *Journal of Symbolic Computation* 67:93–121, 2015, doi:10.1016/j.jsc.2014.06.001; read in arXiv:0903.2554v2: the theorem on $\mathrm{BU}(k)$ for length-increasing semi-Thue systems in Section 5 (Testing the bottom-up property), the proposition on $\mathrm{BU}(1)$ and its proof before it, and the decidable cases in the same section.
+- I. Durand and G. Sénizergues, "Bottom-up rewriting for words and terms", *Journal of Symbolic Computation* 67:93–121, 2015, doi:10.1016/j.jsc.2014.06.001; read in arXiv:0903.2554v2: Theorem 5.11 in Section 5.2 ("Decidable/undecidable cases for semi-Thue systems"), Proposition 5.8 on $\mathrm{BU}(1)$ with Lemmas 5.9 and 5.10 before it, and Proposition 5.7 (the decidable cases) in the same section, with the numbering of that version.
