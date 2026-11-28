@@ -28,14 +28,13 @@ the characters $\xi(r) = \left(\frac{-1}{r}\right)$, $\eta(r) = \left(\frac{2}{r
 $\xi(r)\eta(r) = \left(\frac{-2}{r}\right)$ according as $D/4 \equiv 3 \pmod 4$,
 $D/4 \equiv 2 \pmod 8$ or $D/4 \equiv 6 \pmod 8$.
 
-This file proves that every system of signs $s_p = \pm 1$ indexed by the prime divisors of $D$
-with $\prod_p s_p = 1$ is the system of genus character values of some prime $q$ that is coprime
-to $2D$ and is the leading coefficient of an integral binary quadratic form $(q, b, c)$ of
-discriminant $D$. This combines Knapp, *Advanced Algebra* (digital second edition, 2016),
-Chapter I, Problems 38 and 39, p. 75: the prime $q$ comes from the Chinese remainder theorem and
-Dirichlet's theorem on primes in arithmetic progressions, and the condition $\prod_p s_p = 1$
-gives $\left(\frac{D}{q}\right) = 1$ by quadratic reciprocity (Problem 37), so that $D$ is a
-square modulo $4q$.
+Every system of signs $s_p = \pm 1$ indexed by the prime divisors of $D$ is the system of genus
+character values of some prime $q$ coprime to $2D$ (Knapp, *Advanced Algebra*, digital second
+edition, 2016, Chapter I, Problem 38, p. 75): the prime comes from the Chinese remainder theorem
+and Dirichlet's theorem on primes in arithmetic progressions. If $\prod_p s_p = 1$, then every
+prime $q \nmid D$ with these character values is the leading coefficient of an integral binary
+quadratic form $(q, b, c)$ of discriminant $D$ (Problem 39, p. 75): quadratic reciprocity
+(Problem 37) gives $\left(\frac{D}{q}\right) = 1$, so that $D$ is a square modulo $4q$.
 -/
 
 @[expose] public section
@@ -200,49 +199,25 @@ private lemma exists_jacobiSym_eq {p : ℕ} (hp : p.Prime) (hp2 : p ≠ 2) {t : 
     rw [← jacobiSym.legendreSym.to_jacobiSym, legendreSym.eq_neg_one_iff]
     simpa using hx
 
-/-- **Primes with prescribed genus characters, represented by a form of discriminant $D$.** Let
-$D$ be a fundamental discriminant and let $p \mapsto s_p$ assign a sign $\pm 1$ to each prime
-divisor $p$ of $D$, with $\prod_{p \mid D} s_p = 1$. Then there is a prime $q$ coprime to $2D$
-such that the Jacobi symbol $\left(\frac{q}{p}\right)$ equals $s_p$ for each odd prime $p \mid D$,
-the $2$-adic genus character `genusCharTwo D q` equals $s_2$ when $D$ is even, and
-$D = b^2 - 4qc$ for some integers $b, c$, so that $q$ is represented (primitively, by $(1, 0)$)
-by the integral binary quadratic form $q x^2 + b x y + c y^2$ of discriminant $D$.
-
-The sign of $D$ plays no role: the statement holds for positive and negative fundamental
-discriminants alike, so no hypothesis $D < 0$ is assumed. The form is exhibited through its
-coefficients and discriminant (Mathlib's `discrim`). The genus characters are evaluated at $q$;
-this file does not formalize them as functions on forms or similarity classes, nor the count of
-similarity classes that Problem 39 concludes with.
-
-Source: Knapp, *Advanced Algebra* (digital second edition, 2016), Chapter I, Problem 38, p. 75:
-"Let p ↦ s_p be any function to {±1} from the set of distinct prime divisors of D. Using
-Dirichlet's Theorem on primes in arithmetic progressions, prove that there exists a prime q such
-that (q/p) = s_p for each odd prime divisor p of D and α(q) = s_2 in case D is even", and
-Problem 39, p. 75: "let p ↦ s_p be any function to {±1} from the set of distinct prime divisors
-of D such that ∏_p s_p = +1, and choose a prime q as in the previous problem. Prove that q is
-primitively representable by some integer binary quadratic form of discriminant D and that the
-values of the genus characters on this form are the numbers s_p." The genus characters are
-defined before Problem 35, p. 74. -/
-theorem exists_prime_genusCharacters {D : ℤ} (hf : IsFundamentalDiscriminant D)
-    (s : ℕ → ℤ) (hs : ∀ p ∈ D.natAbs.primeFactors, s p = 1 ∨ s p = -1)
-    (hprod : ∏ p ∈ D.natAbs.primeFactors, s p = 1) :
-    ∃ q : ℕ, q.Prime ∧ Nat.Coprime q (2 * D.natAbs) ∧
-      (∀ p ∈ D.natAbs.primeFactors, p ≠ 2 → jacobiSym (q : ℤ) p = s p) ∧
-      (2 ∈ D.natAbs.primeFactors → genusCharTwo D q = s 2) ∧
-      ∃ b c : ℤ, discrim (q : ℤ) b c = D := by
-  obtain ⟨o, ho, hsq, hD⟩ := exists_odd_part hf
+/-- The prime divisors of `D` in terms of its odd part `o` (as in `exists_odd_part`): the odd
+ones are the prime divisors of `o`, and `2` divides `D` exactly when `D` is even. -/
+private lemma primeFactors_of_odd_part {D : ℤ} {o : ℕ} (ho : o % 2 = 1)
+    (hD : (D = o ∧ o % 4 = 1) ∨ (D = -o ∧ o % 4 = 3) ∨ (D = 4 * o ∧ o % 4 = 3) ∨
+        (D = -(4 * o) ∧ o % 4 = 1) ∨ (D = 8 * o ∧ o % 4 = 1) ∨ (D = 8 * o ∧ o % 4 = 3) ∨
+        (D = -(8 * o) ∧ o % 4 = 1) ∨ (D = -(8 * o) ∧ o % 4 = 3)) :
+    (∀ p ∈ o.primeFactors, p.Prime ∧ p ≠ 2) ∧
+      (∀ p, (p ∈ D.natAbs.primeFactors ∧ p ≠ 2) ↔ p ∈ o.primeFactors) ∧
+      (2 ∈ D.natAbs.primeFactors ↔ D % 2 = 0) := by
   have hn : D.natAbs = o ∨ D.natAbs = 4 * o ∨ D.natAbs = 8 * o := by omega
   have hn0 : D.natAbs ≠ 0 := by omega
-  have hD4 : D % 4 = 0 ∨ D % 4 = 1 := by omega
   have hoddp : ∀ p ∈ o.primeFactors, p.Prime ∧ p ≠ 2 := fun p hp => by
     have hp' := Nat.mem_primeFactors.1 hp
     refine ⟨hp'.1, fun h => ?_⟩
     have h2 := hp'.2.1
     rw [h] at h2
     omega
-  have hmem : ∀ p, (p ∈ D.natAbs.primeFactors ∧ p ≠ 2) ↔ p ∈ o.primeFactors := by
-    intro p
-    simp only [Nat.mem_primeFactors]
+  refine ⟨hoddp, fun p => ?_, ?_⟩
+  · simp only [Nat.mem_primeFactors]
     constructor
     · rintro ⟨⟨hp, hpd, -⟩, hp2⟩
       have hcop : Nat.Coprime p (2 ^ 3) :=
@@ -260,10 +235,30 @@ theorem exists_prime_genusCharacters {D : ℤ} (hf : IsFundamentalDiscriminant D
         · exact Dvd.dvd.mul_left hpd 8
       · rintro rfl
         omega
-  have h2mem : 2 ∈ D.natAbs.primeFactors ↔ D % 2 = 0 := by
-    simp only [Nat.mem_primeFactors, Nat.prime_two, true_and, ne_eq, hn0, not_false_eq_true,
+  · simp only [Nat.mem_primeFactors, Nat.prime_two, true_and, ne_eq, hn0, not_false_eq_true,
       and_true]
     omega
+
+/-- **Primes with prescribed genus characters.** Let $D$ be a fundamental discriminant and let
+$p \mapsto s_p$ assign a sign $\pm 1$ to each prime divisor $p$ of $D$. Then there is a prime $q$
+coprime to $2D$ such that the Jacobi symbol $\left(\frac{q}{p}\right)$ equals $s_p$ for each odd
+prime $p \mid D$, and the $2$-adic genus character `genusCharTwo D q` equals $s_2$ when $D$ is
+even. No condition is put on the product of the signs, and $D$ may be positive or negative.
+
+Source: Knapp, *Advanced Algebra* (digital second edition, 2016), Chapter I, Problem 38, p. 75:
+"Let p ↦ s_p be any function to {±1} from the set of distinct prime divisors of D. Using
+Dirichlet's Theorem on primes in arithmetic progressions, prove that there exists a prime q such
+that (q/p) = s_p for each odd prime divisor p of D and α(q) = s_2 in case D is even". The genus
+characters are defined before Problem 35, p. 74, and fundamental discriminants, of either sign,
+in §5, p. 33. -/
+theorem exists_prime_genusCharacters {D : ℤ} (hf : IsFundamentalDiscriminant D)
+    (s : ℕ → ℤ) (hs : ∀ p ∈ D.natAbs.primeFactors, s p = 1 ∨ s p = -1) :
+    ∃ q : ℕ, q.Prime ∧ Nat.Coprime q (2 * D.natAbs) ∧
+      (∀ p ∈ D.natAbs.primeFactors, p ≠ 2 → jacobiSym (q : ℤ) p = s p) ∧
+      (2 ∈ D.natAbs.primeFactors → genusCharTwo D q = s 2) := by
+  obtain ⟨o, ho, hsq, hD⟩ := exists_odd_part hf
+  have hn0 : D.natAbs ≠ 0 := by omega
+  obtain ⟨hoddp, hmem, h2mem⟩ := primeFactors_of_odd_part ho hD
   -- residues modulo the odd primes
   have hres : ∀ p ∈ o.primeFactors, ∃ a : ℕ, jacobiSym a p = s p := fun p hp =>
     exists_jacobiSym_eq (hoddp p hp).1 (hoddp p hp).2 (hs p ((hmem p).2 hp).1)
@@ -342,22 +337,72 @@ theorem exists_prime_genusCharacters {D : ℤ} (hf : IsFundamentalDiscriminant D
     (Nat.coprime_or_dvd_of_prime hq _).resolve_right fun h => by
       have := Nat.le_of_dvd (by omega) h
       omega
-  -- quadratic reciprocity
-  have hJo : jacobiSym q o = ∏ p ∈ o.primeFactors, jacobiSym q p := by
-    have := jacobiSym_prod_right (q : ℤ) o.primeFactors (fun p hp => (hoddp p hp).1.ne_zero)
+  refine ⟨q, hq, hcopq, fun p hp hp2 => hJq p ((hmem p).1 ⟨hp, hp2⟩), fun h2 => ?_⟩
+  rw [hgq]
+  exact ha2s (h2mem.1 h2)
+
+/-- **A prime with prescribed genus characters of product one is represented by a form of
+discriminant $D$.** Let $D$ be a fundamental discriminant, let $p \mapsto s_p$ assign an integer
+to each prime divisor $p$ of $D$ with $\prod_{p \mid D} s_p = 1$, and let $q$ be any prime not
+dividing $D$ such that the Jacobi symbol $\left(\frac{q}{p}\right)$ equals $s_p$ for each odd
+prime $p \mid D$ and `genusCharTwo D q` equals $s_2$ when $D$ is even. Then $D = b^2 - 4qc$ for
+some integers $b, c$, so $q$ is represented, primitively by $(1, 0)$, by the integral binary
+quadratic form $q x^2 + b x y + c y^2$ of discriminant $D$; the genus characters, evaluated at
+the represented value $q$, are the $s_p$. The prime $q = 2$ is allowed when $D$ is odd: then
+$D \equiv 1 \pmod 8$ and $(b, c) = (1, (1 - D)/8)$.
+
+Source: Knapp, *Advanced Algebra* (digital second edition, 2016), Chapter I, Problem 39, p. 75:
+"let p ↦ s_p be any function to {±1} from the set of distinct prime divisors of D such that
+∏_p s_p = +1, and choose a prime q as in the previous problem. Prove that q is primitively
+representable by some integer binary quadratic form of discriminant D and that the values of the
+genus characters on this form are the numbers s_p." The genus characters are defined before
+Problem 35, p. 74. -/
+theorem exists_discrim_eq_of_genusCharacters {D : ℤ} (hf : IsFundamentalDiscriminant D)
+    (s : ℕ → ℤ) (hprod : ∏ p ∈ D.natAbs.primeFactors, s p = 1) {q : ℕ} (hq : q.Prime)
+    (hqD : Nat.Coprime q D.natAbs)
+    (hodd : ∀ p ∈ D.natAbs.primeFactors, p ≠ 2 → jacobiSym (q : ℤ) p = s p)
+    (htwo : 2 ∈ D.natAbs.primeFactors → genusCharTwo D q = s 2) :
+    ∃ b c : ℤ, discrim (q : ℤ) b c = D := by
+  obtain ⟨o, ho, hsq, hD⟩ := exists_odd_part hf
+  obtain ⟨hoddp, hmem, h2mem⟩ := primeFactors_of_odd_part ho hD
+  have hJo : ∀ a : ℤ, jacobiSym a o = ∏ p ∈ o.primeFactors, jacobiSym a p := fun a => by
+    have := jacobiSym_prod_right a o.primeFactors (fun p hp => (hoddp p hp).1.ne_zero)
     rwa [Nat.prod_primeFactors_of_squarefree hsq] at this
-  have hJD : jacobiSym D q = 1 := by
-    rw [jacobiSym_eq_genusCharTwo_mul hqodd ho hD, ← hprod,
-      ← Finset.prod_filter_mul_prod_filter_not D.natAbs.primeFactors (· = 2),
+  have hJq : ∀ p ∈ o.primeFactors, jacobiSym q p = s p := fun p hp =>
+    hodd p ((hmem p).2 hp).1 ((hmem p).2 hp).2
+  have hsplit : ∏ p ∈ D.natAbs.primeFactors, s p =
+      (if 2 ∈ D.natAbs.primeFactors then s 2 else 1) * ∏ p ∈ o.primeFactors, s p := by
+    rw [← Finset.prod_filter_mul_prod_filter_not D.natAbs.primeFactors (· = 2),
       Finset.filter_eq']
     have hfil : {x ∈ D.natAbs.primeFactors | ¬x = 2} = o.primeFactors := by
       ext p
       simp only [Finset.mem_filter]
       exact hmem p
-    rw [hfil, hJo, Finset.prod_congr rfl hJq]
+    rw [hfil]
+    split_ifs <;> simp
+  rcases hq.eq_two_or_odd with rfl | hqodd
+  · -- `q = 2`: `D` is odd, and the characters force `D ≡ 1 (mod 8)`
+    have hDodd : D.natAbs % 2 = 1 := Nat.odd_iff.1 (Nat.coprime_two_left.1 hqD)
+    have h2 : 2 ∉ D.natAbs.primeFactors := fun h => by
+      have := h2mem.1 h
+      omega
+    have ho1 : jacobiSym ((2 : ℕ) : ℤ) o = 1 := by
+      rw [hJo, Finset.prod_congr rfl hJq, ← hprod, hsplit, ite_eq_right h2, one_mul]
+    have hχ : (ZMod.χ₈ (o : ZMod 8) : ℤ) = 1 := by
+      rw [← jacobiSym.at_two (Nat.odd_iff.2 ho)]
+      exact_mod_cast ho1
+    rw [ZMod.χ₈_nat_eq_if_mod_eight] at hχ
+    have ho8 : o % 8 = 1 ∨ o % 8 = 7 := by
+      split_ifs at hχ <;> omega
+    obtain ⟨t, ht⟩ : ∃ t : ℤ, D = 1 - 8 * t := ⟨(1 - D) / 8, by omega⟩
+    exact ⟨1, t, by rw [discrim, ht]; push_cast; ring⟩
+  -- `q` odd: `(D/q) = 1` by quadratic reciprocity
+  have hJD : jacobiSym D q = 1 := by
+    rw [jacobiSym_eq_genusCharTwo_mul hqodd ho hD, hJo, Finset.prod_congr rfl hJq, ← hprod,
+      hsplit]
     split_ifs with h2
-    · rw [Finset.prod_singleton, hgq, ha2s (h2mem.1 h2)]
-    · rw [Finset.prod_empty, genusCharTwo_eq_one (by rw [h2mem] at h2; omega)]
+    · rw [htwo h2]
+    · rw [genusCharTwo_eq_one (by rw [h2mem] at h2; omega), one_mul]
   -- a square root of D modulo 4q
   have : Fact q.Prime := ⟨hq⟩
   obtain ⟨r, hr⟩ := ZMod.isSquare_of_jacobiSym_eq_one hJD
@@ -390,10 +435,30 @@ theorem exists_prime_genusCharacters {D : ℤ} (hf : IsFundamentalDiscriminant D
     rw [Int.isCoprime_iff_gcd_eq_one]
     exact hc4
   obtain ⟨c, hc⟩ := hcop4.mul_dvd h4 hbq
-  refine ⟨q, hq, hcopq, fun p hp hp2 => hJq p ((hmem p).1 ⟨hp, hp2⟩), fun h2 => ?_, b, c, ?_⟩
-  · rw [hgq]
-    exact ha2s (h2mem.1 h2)
-  · rw [discrim]
-    linarith
+  refine ⟨b, c, ?_⟩
+  rw [discrim]
+  linarith
+
+/-- **Primes with prescribed genus characters of product one, represented by a form of
+discriminant $D$.** Let $D$ be a fundamental discriminant and let $p \mapsto s_p$ assign a sign
+$\pm 1$ to each prime divisor $p$ of $D$, with $\prod_{p \mid D} s_p = 1$. Then there is a prime
+$q$ coprime to $2D$ such that $\left(\frac{q}{p}\right) = s_p$ for each odd prime $p \mid D$,
+`genusCharTwo D q` $= s_2$ when $D$ is even, and $D = b^2 - 4qc$ for some integers $b, c$, so
+that $q$ is represented, primitively by $(1, 0)$, by the form $q x^2 + b x y + c y^2$ of
+discriminant $D$. This combines `MetaMathlibExt.exists_prime_genusCharacters` and
+`MetaMathlibExt.exists_discrim_eq_of_genusCharacters`.
+
+Source: Knapp, *Advanced Algebra* (digital second edition, 2016), Chapter I, Problems 38 and 39,
+p. 75. -/
+theorem exists_prime_genusCharacters_discrim_eq {D : ℤ} (hf : IsFundamentalDiscriminant D)
+    (s : ℕ → ℤ) (hs : ∀ p ∈ D.natAbs.primeFactors, s p = 1 ∨ s p = -1)
+    (hprod : ∏ p ∈ D.natAbs.primeFactors, s p = 1) :
+    ∃ q : ℕ, q.Prime ∧ Nat.Coprime q (2 * D.natAbs) ∧
+      (∀ p ∈ D.natAbs.primeFactors, p ≠ 2 → jacobiSym (q : ℤ) p = s p) ∧
+      (2 ∈ D.natAbs.primeFactors → genusCharTwo D q = s 2) ∧
+      ∃ b c : ℤ, discrim (q : ℤ) b c = D := by
+  obtain ⟨q, hq, hcop, hodd, htwo⟩ := exists_prime_genusCharacters hf s hs
+  exact ⟨q, hq, hcop, hodd, htwo, exists_discrim_eq_of_genusCharacters hf s hprod hq
+    (Nat.Coprime.coprime_dvd_right (dvd_mul_left _ _) hcop) hodd htwo⟩
 
 end MetaMathlibExt
