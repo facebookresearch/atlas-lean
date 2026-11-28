@@ -30,8 +30,9 @@ of the divisor `1`.
 
 * Christian Kassel and Christophe Reutenauer, *Pairs of Intertwined Integer Sequences*,
   Journal of Integer Sequences 29 (2026), Article 26.4.4, pp. 1–25, Lemma 14, Theorem 16,
-  Corollary 17, Lemma 22, Theorem 23, Corollary 24, and Lemma 26. We derive the odd-divisor formula
-  directly from the divisor counts, then use the exponent uniqueness argument of Lemma 22.
+  Corollary 17 (the power-of-two criterion, numbered Corollary 4.5 in the preprint), Lemma 22,
+  Theorem 23, Corollary 24, and Lemma 26. We derive the odd-divisor formula directly from the
+  divisor counts, then use the exponent uniqueness argument of Lemma 22.
 * Christian Kassel and Christophe Reutenauer, *Complete determination of the zeta function of the
   Hilbert scheme of n points on a two-dimensional torus*, The Ramanujan Journal 46 (2018),
   pp. 633–655, Theorem 1.3 (divisor counts) and Lemma 3.5(ii) (exponent uniqueness).
@@ -469,7 +470,7 @@ sum of the monic Chebyshev polynomials. Then $\bar P_n = F_{n-1}$ if and only if
 some natural number $k$.
 
 Source: C. Kassel and C. Reutenauer, *Pairs of Intertwined Integer Sequences*,
-Journal of Integer Sequences 29 (2026), Article 26.4.4, Corollary 17
+Journal of Integer Sequences 29 (2026), Article 26.4.4, Corollary 4.5
 (`jis-2026-26.4.4-cor-17`). -/
 public theorem kasselReutenauerPoly_eq_chebyshevCPartialSum_iff (n : ℕ) (hn : 1 ≤ n) :
     kasselReutenauerPoly n = chebyshevCPartialSum (n - 1) ↔ ∃ k : ℕ, n = 2 ^ k := by
