@@ -13,15 +13,20 @@ import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Data.Fintype.Sum
 import Mathlib.Order.Fin.Basic
 import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.TFAE
 public import Mathlib.Algebra.BigOperators.Finprod
 public import Mathlib.Combinatorics.SimpleGraph.Basic
+public import Mathlib.Data.List.TFAE
 
 /-!
 # Arithmetical structures on coconut trees
 
 The vertex equation expresses the product of the two labels at a vertex as the sum
 of its neighbours' labels. Starting at a leaf, this equation propagates a common
-divisor of the leaf labels back along the path.
+divisor of the leaf labels back along the path. For an arithmetical structure on a
+coconut tree, the nonterminal path vertices have `d`-labels at least two exactly
+when the `r`-labels strictly increase along the path, or equivalently when their
+successive differences are positive and nondecreasing.
 
 ## References
 
@@ -31,6 +36,9 @@ divisor of the leaf labels back along the path.
 * K. Archer, A. C. Bishop, A. Diaz-Lopez, L. D. García Puente, D. Glass, and J. Louwsma,
   *Arithmetical structures on bidents*, Discrete Mathematics **343**, no. 7 (2020),
   Article 111850, Lemma 2.1, credited for the path monotonicity argument in Lemma 1 above.
+* The Lean proof of Lemma 1 reuses `IsSmoothCoconut.path_equation`,
+  `IsSmoothCoconut.levelSum_path`, and the growth induction in `IsSmoothCoconut.levelSum_lt_succ`
+  from `MathlibExt.Combinatorics.ArithmeticalStructureCoconutTree`.
 -/
 
 namespace MetaMathlibExt
@@ -195,20 +203,21 @@ private theorem path_equation {p s : ℕ} {d r : Fin p ⊕ Fin s → ℕ}
   rw [levelSum_path, h.2.2.1 (.inl i), hadj]
   exact finsum_mem_union hdisj (Set.toFinite _) (Set.toFinite _)
 
--- Smoothness forces growth from the empty level 0 up to the central vertex.
-private theorem levelSum_lt_succ {n s : ℕ} {d r : Fin (n + 1) ⊕ Fin s → ℕ}
-    (h : IsSmoothCoconut (n + 1) s d r) (k : ℕ) (hk : k ≤ n) :
+-- The nonterminal d-label bounds force growth from level 0 up to the central vertex.
+private theorem levelSum_lt_succ {p s : ℕ} {d r : Fin p ⊕ Fin s → ℕ}
+    (h : IsArithmeticalStructure (coconutTree p s) d r)
+    (hd : ∀ i : Fin p, i.val + 1 < p → 2 ≤ d (.inl i)) (k : ℕ) (hk : k < p) :
     levelSum r k < levelSum r (k + 1) := by
   induction k with
   | zero =>
-    have hempty : level (n + 1) s 0 = ∅ := by
+    have hempty : level p s 0 = ∅ := by
       ext (i | j) <;> simp [level]
     rw [levelSum, hempty, finsum_mem_empty]
-    exact (h.1.2.1 _).trans_eq (levelSum_path r (0 : Fin (n + 1))).symm
+    exact (h.2.1 _).trans_eq (levelSum_path r (⟨0, hk⟩ : Fin p)).symm
   | succ k ih =>
-    let i : Fin (n + 1) := ⟨k, by omega⟩
-    have heq := path_equation h.1 i
-    have hbound := Nat.mul_le_mul_right (levelSum r (k + 1)) (h.2.1 i (Nat.succ_le_succ hk))
+    let i : Fin p := ⟨k, by omega⟩
+    have heq := path_equation h i
+    have hbound := Nat.mul_le_mul_right (levelSum r (k + 1)) (hd i hk)
     have hlt := ih (by omega)
     change d (.inl i) * levelSum r (k + 1) = levelSum r k + levelSum r (k + 2) at heq
     change levelSum r (k + 1) < levelSum r (k + 2)
@@ -222,7 +231,7 @@ private theorem leafSum_pos {n s : ℕ} {d r : Fin (n + 1) ⊕ Fin s → ℕ}
   simp only [Fin.val_last] at heq
   rw [← levelSum_leaves r]
   change 0 < levelSum r (n + 2)
-  have hlt := levelSum_lt_succ h n le_rfl
+  have hlt := levelSum_lt_succ h.1 h.2.1 n (Nat.lt_succ_self n)
   omega
 
 private theorem leaf_equation {n s : ℕ} {d r : Fin (n + 1) ⊕ Fin s → ℕ}
@@ -236,6 +245,70 @@ private theorem leaf_equation {n s : ℕ} {d r : Fin (n + 1) ⊕ Fin s → ℕ}
   rw [h.2.2.1 (.inr j), hadj, finsum_mem_singleton]
 
 end IsSmoothCoconut
+
+/-- **Monotonicity criteria for arithmetical structures on coconut trees.** Let $(d, r)$ be an
+arithmetical structure on the coconut tree $CT(p, s)$ with path vertices $v_1, \dots, v_p$, and
+write $d_k = d(v_k)$ and $r_k = r(v_k)$. The following are equivalent: (1) $d_k \ge 2$ for
+$1 \le k \le p - 1$; (2) $0 < r_2 - r_1 \le r_3 - r_2 \le \cdots \le r_p - r_{p-1}$; (3)
+$r_1 < r_2 < \cdots < r_p$.
+
+Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
+Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Lemma 1
+(`integers-2025-A82-lem-1`). -/
+public theorem IsArithmeticalStructure.coconut_tfae {p s : ℕ}
+    {d r : Fin p ⊕ Fin s → ℕ} (h : IsArithmeticalStructure (coconutTree p s) d r) :
+    [∀ i : Fin p, i.val + 1 < p → 2 ≤ d (.inl i),
+      (∀ hp : 1 < p, r (.inl ⟨0, by omega⟩) < r (.inl ⟨1, hp⟩)) ∧
+        ∀ (i : ℕ) (hi : i + 2 < p),
+          (r (.inl ⟨i + 1, by omega⟩) : ℤ) - r (.inl ⟨i, by omega⟩)
+            ≤ (r (.inl ⟨i + 2, hi⟩) : ℤ) - r (.inl ⟨i + 1, by omega⟩),
+      StrictMono fun i : Fin p => r (.inl i)].TFAE := by
+  open IsSmoothCoconut in
+  tfae_have 1 → 2 := by
+    intro hd
+    constructor
+    · intro hp
+      rw [← levelSum_path r (⟨0, by omega⟩ : Fin p), ← levelSum_path r (⟨1, hp⟩ : Fin p)]
+      exact levelSum_lt_succ h hd 1 hp
+    · intro i hi
+      let j : Fin p := ⟨i + 1, by omega⟩
+      have heq := path_equation h j
+      change d (.inl j) * levelSum r (i + 2) = levelSum r (i + 1) + levelSum r (i + 3) at heq
+      have hmul := Nat.mul_le_mul_right (levelSum r (i + 2)) (hd j hi)
+      rw [← levelSum_path r (⟨i, by omega⟩ : Fin p), ← levelSum_path r j,
+        ← levelSum_path r (⟨i + 2, hi⟩ : Fin p)]
+      change (levelSum r (i + 2) : ℤ) - levelSum r (i + 1) ≤
+        (levelSum r (i + 3) : ℤ) - levelSum r (i + 2)
+      omega
+  tfae_have 2 → 3 := by
+    rintro ⟨hfirst, hstep⟩
+    cases p with
+    | zero =>
+      intro i
+      exact Fin.elim0 i
+    | succ n =>
+      apply Fin.strictMono_iff_lt_succ.mpr
+      have hadj (i : ℕ) (hi : i + 1 < n + 1) :
+          r (.inl ⟨i, by omega⟩) < r (.inl ⟨i + 1, hi⟩) := by
+        induction i with
+        | zero => exact hfirst hi
+        | succ i ih =>
+          have hprev := ih (by omega)
+          have hdiff := hstep i hi
+          change r (.inl ⟨i + 1, by omega⟩) < r (.inl ⟨i + 2, hi⟩)
+          omega
+      intro i
+      exact hadj i.val (by omega)
+  open IsSmoothCoconut in
+  tfae_have 3 → 1 := by
+    intro hm i hi
+    let j : Fin p := ⟨i.val + 1, hi⟩
+    have hlt : r (.inl i) < r (.inl j) := hm (show i < j from Nat.lt_succ_self i.val)
+    have heq := path_equation h i
+    rw [levelSum_path r i, show levelSum r (i.val + 2) = r (.inl j) from levelSum_path r j] at heq
+    have hmul : 1 * r (.inl i) < d (.inl i) * r (.inl i) := by omega
+    exact (Nat.mul_lt_mul_right (h.2.1 _)).mp hmul
+  tfae_finish
 
 /-- **Characterization of smooth coconut structures.** Let $p \ge 1$ and let $(d, r)$ be an
 arithmetical structure on the coconut tree $CT(p, s)$ with path vertices $v_1, \dots, v_p$ and
@@ -265,29 +338,12 @@ public theorem IsArithmeticalStructure.isSmoothCoconut_iff {p s : ℕ}
       have hmul := Nat.mul_le_mul_right (r (.inr j)) (show d (.inr j) ≤ 1 by omega)
       rw [one_mul] at hmul
       omega
+  have hpath := h.coconut_tfae.out 1 3
   constructor
   · intro hs
-    refine ⟨fun j => (hleaf j).mp (hs.2.2 j), Fin.strictMono_iff_lt_succ.mpr ?_⟩
-    intro i
-    have hi := IsSmoothCoconut.levelSum_lt_succ hs (i.val + 1) (by omega)
-    change IsSmoothCoconut.levelSum r (i.castSucc.val + 1) <
-      IsSmoothCoconut.levelSum r (i.succ.val + 1) at hi
-    simpa only [IsSmoothCoconut.levelSum_path] using hi
+    exact ⟨fun j => (hleaf j).mp (hs.2.2 j), hpath.mp hs.2.1⟩
   · rintro ⟨hl, hm⟩
-    refine ⟨h, ?_, fun j => (hleaf j).mpr (hl j)⟩
-    intro i hi
-    let j : Fin (n + 1) := ⟨i.val + 1, hi⟩
-    have hlt : i < j := Nat.lt_succ_self i.val
-    have hnext : r (.inl i) < r (.inl j) := hm hlt
-    rw [← IsSmoothCoconut.levelSum_path r j] at hnext
-    have heq := IsSmoothCoconut.path_equation h i
-    rw [IsSmoothCoconut.levelSum_path] at heq
-    by_contra! hd
-    have hpos := h.1 (.inl i)
-    have hd_one : d (.inl i) = 1 := by omega
-    rw [hd_one, one_mul] at heq
-    change r (.inl i) < IsSmoothCoconut.levelSum r (i.val + 2) at hnext
-    omega
+    exact ⟨h, hpath.mpr hm, fun j => (hleaf j).mpr (hl j)⟩
 
 /-- **The leaf labels of a smooth arithmetical structure on a coconut tree are coprime.** Let
 $(d, r)$ be a smooth arithmetical structure on the coconut tree $\mathrm{CT}(p, s)$ with leaves
@@ -336,7 +392,7 @@ public theorem IsSmoothCoconut.one_lt_center_iff {p s : ℕ} (hp : 0 < p)
   let c : Fin (n + 1) ⊕ Fin s := .inl (Fin.last n)
   change 1 < d c ↔ r c < ∑ j, r (.inr j)
   have hc : levelSum r (n + 1) = r c := levelSum_path r (Fin.last n)
-  have hprev := levelSum_lt_succ h n le_rfl
+  have hprev := levelSum_lt_succ h.1 h.2.1 n (Nat.lt_succ_self n)
   rw [hc] at hprev
   have heq := path_equation h.1 (Fin.last n)
   simp only [Fin.val_last, hc, levelSum_leaves] at heq
@@ -372,7 +428,7 @@ public theorem IsSmoothCoconut.center_le_one_of_two {p : ℕ} (hp : 0 < p)
     have h₁ := hleaf 1
     omega
   have hc : levelSum r (n + 1) = r c := levelSum_path r (Fin.last n)
-  have hprev := levelSum_lt_succ h n le_rfl
+  have hprev := levelSum_lt_succ h.1 h.2.1 n (Nat.lt_succ_self n)
   rw [hc] at hprev
   have heq := path_equation h.1 (Fin.last n)
   simp only [Fin.val_last, hc, levelSum_leaves] at heq
