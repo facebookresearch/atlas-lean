@@ -46,8 +46,10 @@ because `{x}` is null. Reversed endpoints give zero. -/
 noncomputable def RWValuation.eval (V : RWValuation) (x y : ℝ) : ℝ :=
   V.measure.real (Ioc x y)
 
-/-- Every attainable cut target has exactly one least realizing endpoint. Other endpoints
-can attain the same target. -/
+/-- **Least cut point.** For every start `x ∈ [0, 1]` and every target
+`0 ≤ α ≤ V.eval x 1`, the set of endpoints `z ∈ [x, 1]` with `V.eval x z = α`
+has a unique least member. Other endpoints can attain the same target; only
+the least one is unique. -/
 theorem RWValuation.existsUnique_isLeast_cut (V : RWValuation) {x α : ℝ}
     (hx : x ∈ Icc (0 : ℝ) 1) (hα : α ∈ Icc (0 : ℝ) (V.eval x 1)) :
     ∃! y : ℝ, IsLeast {z ∈ Icc x 1 | V.eval x z = α} y := by
@@ -112,12 +114,14 @@ theorem RWValuation.existsUnique_isLeast_cut (V : RWValuation) {x α : ℝ}
   obtain ⟨y0, hy0⟩ := hcompact.exists_isLeast hnonempty
   exact ⟨y0, hy0, fun y' hy' => hy'.unique hy0⟩
 
-/-- The Robertson–Webb cut response for a valid start and an attainable target. -/
+/-- The Robertson–Webb cut response: the leftmost endpoint in `[x, 1]` attaining
+the target `α`, for a start `x ∈ [0, 1]` and a target `0 ≤ α ≤ V.eval x 1`. -/
 noncomputable def RWValuation.cut (V : RWValuation) (x α : ℝ)
     (hx : x ∈ Icc (0 : ℝ) 1) (hα : α ∈ Icc (0 : ℝ) (V.eval x 1)) : ℝ :=
   Classical.choose (V.existsUnique_isLeast_cut hx hα).exists
 
-/-- The cut response attains the target and is leftmost among endpoints that do so. -/
+/-- The cut response attains the target and is leftmost among endpoints in `[x, 1]`
+that do so. -/
 theorem RWValuation.cut_spec (V : RWValuation) (x α : ℝ)
     (hx : x ∈ Icc (0 : ℝ) 1) (hα : α ∈ Icc (0 : ℝ) (V.eval x 1)) :
     IsLeast {z ∈ Icc x 1 | V.eval x z = α} (V.cut x α hx hα) := by
@@ -132,7 +136,8 @@ structure PiecewiseConstantDensity (n : ℕ) where
   /-- Nonnegative heights of the intervals. -/
   height : Fin n → ℝ≥0
 
-/-- A finite sum of interval indicators weighted by their heights. Overlapping terms add. -/
+/-- A finite sum of indicators of the intervals `(lo i, hi i]`, weighted by their
+heights. Overlapping terms add. -/
 noncomputable def PiecewiseConstantDensity.density {n : ℕ} (D : PiecewiseConstantDensity n)
     (t : ℝ) : ℝ :=
   ∑ i, (Ioc (D.lo i) (D.hi i)).indicator (fun _ => (D.height i : ℝ)) t
@@ -142,7 +147,8 @@ noncomputable def PiecewiseConstantDensity.measure {n : ℕ} (D : PiecewiseConst
     Measure ℝ :=
   (volume.restrict (Icc (0 : ℝ) 1)).withDensity (fun t => ENNReal.ofReal (D.density t))
 
-/-- A piecewise-constant density of total mass one gives a Robertson–Webb valuation. -/
+/-- A piecewise-constant density of mass one on `[0, 1]` gives a Robertson–Webb
+valuation. -/
 noncomputable def PiecewiseConstantDensity.toRWValuation {n : ℕ}
     (D : PiecewiseConstantDensity n)
     (hm : (∫⁻ t in Icc (0 : ℝ) 1, ENNReal.ofReal (D.density t)) = 1) : RWValuation where
@@ -155,7 +161,10 @@ noncomputable def PiecewiseConstantDensity.toRWValuation {n : ℕ}
     unfold PiecewiseConstantDensity.measure
     infer_instance
 
-/-- Least-cut existence and uniqueness for a normalized piecewise-constant valuation. -/
+/-- **Least cut point for a piecewise constant density.** For a density `D` of mass
+one on `[0, 1]`, every start `x ∈ [0, 1]` and every target
+`0 ≤ α ≤ (D.toRWValuation hm).eval x 1`, the set of endpoints `z ∈ [x, 1]`
+attaining `α` has a unique least member. -/
 theorem PiecewiseConstantDensity.existsUnique_isLeast_cut {n : ℕ}
     (D : PiecewiseConstantDensity n)
     (hm : (∫⁻ t in Icc (0 : ℝ) 1, ENNReal.ofReal (D.density t)) = 1)
