@@ -23,6 +23,27 @@ example : fixedTilingCount (α := Fin 2) (T := Fin 3) id 1 = 9 := by
 example : fixedTilingCount (fun c : ZMod 3 => c + 1) (1 : Equiv.Perm (Fin 2)) = 2 := by
   decide +kernel
 
+-- A swap on three cells has one pair and one fixed cell. With the same swap on the designs,
+-- enumerate three fixed tilings independently of the restriction equivalence.
+example : fixedTilingCount (Equiv.swap (0 : Fin 3) 1) (Equiv.swap (0 : Fin 3) 1) = 3 := by
+  decide +kernel
+
+private def swapFirstTwo : Equiv.Perm (Fin 3) := Equiv.swap 0 1
+
+-- Choose design 1 at representative cell 0 and design 2 at fixed cell 2. Extension must
+-- use the swapped design 0 at cell 1, and restriction must recover the two choices.
+example :
+    let e := fixedTilingsEquiv swapFirstTwo (by
+        unfold Function.Involutive
+        decide +kernel) (fun c => c = 0)
+      (by decide +kernel) (by decide +kernel) swapFirstTwo (by
+        unfold Function.Involutive
+        decide +kernel)
+    let F := e.symm (fun _ => 1, fun _ => ⟨2, by decide +kernel⟩)
+    (F.val 0 = 1 ∧ F.val 1 = 0 ∧ F.val 2 = 2) ∧
+      (e F).1 ⟨0, rfl⟩ = 1 ∧ ((e F).2 ⟨2, by decide +kernel⟩).val = 2 := by
+  decide +kernel
+
 -- The 2 × 3 grid with two designs: all `2 ^ 6 = 64` tilings are fixed by the identity.
 example :
     fixedTilingCount (id : ZMod 2 × ZMod 3 → ZMod 2 × ZMod 3) (1 : Equiv.Perm (Fin 2)) = 64 := by

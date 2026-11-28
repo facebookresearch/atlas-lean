@@ -354,20 +354,6 @@ public theorem_wanted cylinder_r2_odd_odd {T : Type*} [Fintype T] [DecidableEq T
     cylinderShiftSum n m (cellR2 n m) σ =
       n * Fintype.card T ^ ((n * m - 1) / 2) * tileFixedCount σ 1
 
-/-- **Cylinder fixed-tiling count for the reflection $f$ when $n$ is odd.** Let $T$ be a finite set
-of tile designs, let $n, m \ge 1$ with $n$ odd, and let $\sigma$ be a permutation of $T$ with
-$\sigma^2 = 1$. Let $f$ be the cell map $(x, y) \mapsto (-1 - x, y)$ of
-$\mathbb{Z}/n \times \mathbb{Z}/m$, and let $t$ be the number of designs fixed by $\sigma$. Then
-the cylinder shift sum of $f$ and $\sigma$ equals $n \cdot |T|^{(nm - m)/2} \cdot t^m$.
-
-Source: Peter Kagey, William Keehn, *Counting Tilings of the n × m Grid, Cylinder, and Torus*,
-        Journal of Integer Sequences 27 (2024), Article 24.6.1, Theorem 30. -/
-public theorem_wanted cylinder_f_odd {T : Type*} [Fintype T] [DecidableEq T]
-    (n m : ℕ) [NeZero n] [NeZero m] (σ : Equiv.Perm T) (hσ : σ ^ 2 = 1)
-    (hn : Odd n) :
-    cylinderShiftSum n m (cellF n m) σ =
-      n * Fintype.card T ^ ((n * m - m) / 2) * tileFixedCount σ 1 ^ m
-
 /-- **Cylinder fixed-tiling count for the reflection $r^2 f$ when $m$ is even.** Let $T$ be a
 finite set of tile designs, let $n, m \ge 1$ with $m$ even, and let $\sigma$ be a permutation of
 $T$ with $\sigma^2 = 1$. Let $r^2 f$ be the cell map $(x, y) \mapsto (x, -1 - y)$ of
