@@ -95,7 +95,7 @@ lemma shiftCyclesIso_hom_iCycles (K : CochainComplex C ℤ) (a i : ℤ)
     [K.HasHomology (i + a)] :
     letI := hasHomology_shift K a i
     (shiftCyclesIso K a i).hom ≫ K.iCycles (i + a) = (K⟦a⟧).iCycles i := by
-  letI := hasHomology_shift K a i
+  let _ := hasHomology_shift K a i
   let e : (K⟦a⟧).sc i ≅ K.sc (i + a) :=
     (shiftShortComplexFunctorIso C a i (i + a) (by omega)).app K
   change ShortComplex.cyclesMap e.hom ≫ (K.sc (i + a)).iCycles =
@@ -116,7 +116,7 @@ lemma shiftCyclesIso_inv_iCycles (K : CochainComplex C ℤ) (a i : ℤ)
     [K.HasHomology (i + a)] :
     letI := hasHomology_shift K a i
     (shiftCyclesIso K a i).inv ≫ (K⟦a⟧).iCycles i = K.iCycles (i + a) := by
-  letI := hasHomology_shift K a i
+  let _ := hasHomology_shift K a i
   let e : (K⟦a⟧).sc i ≅ K.sc (i + a) :=
     (shiftShortComplexFunctorIso C a i (i + a) (by omega)).app K
   change ShortComplex.cyclesMap e.inv ≫ ((K⟦a⟧).sc i).iCycles =
@@ -138,7 +138,7 @@ lemma shiftHomologyIso_homologyπ (K : CochainComplex C ℤ) (a i : ℤ)
     letI := hasHomology_shift K a i
     (K⟦a⟧).homologyπ i ≫ (shiftHomologyIso K a i).hom =
       (shiftCyclesIso K a i).hom ≫ K.homologyπ (i + a) := by
-  letI := hasHomology_shift K a i
+  let _ := hasHomology_shift K a i
   let e : (K⟦a⟧).sc i ≅ K.sc (i + a) :=
     (shiftShortComplexFunctorIso C a i (i + a) (by omega)).app K
   exact ShortComplex.homologyπ_naturality e.hom
@@ -156,8 +156,8 @@ lemma shiftCyclesIso_naturality {K L : CochainComplex C ℤ} (f : K ⟶ L) (a i 
     letI := hasHomology_shift L a i
     cyclesMap (f⟦a⟧') i ≫ (shiftCyclesIso L a i).hom =
       (shiftCyclesIso K a i).hom ≫ cyclesMap f (i + a) := by
-  letI := hasHomology_shift K a i
-  letI := hasHomology_shift L a i
+  let _ := hasHomology_shift K a i
+  let _ := hasHomology_shift L a i
   apply (cancel_mono (L.iCycles (i + a))).1
   simp only [Category.assoc]
   rw [shiftCyclesIso_hom_iCycles, HomologicalComplex.cyclesMap_i,
@@ -177,8 +177,8 @@ lemma shiftHomologyIso_naturality {K L : CochainComplex C ℤ} (f : K ⟶ L) (a 
     letI := hasHomology_shift L a i
     homologyMap (f⟦a⟧') i ≫ (shiftHomologyIso L a i).hom =
       (shiftHomologyIso K a i).hom ≫ homologyMap f (i + a) := by
-  letI := hasHomology_shift K a i
-  letI := hasHomology_shift L a i
+  let _ := hasHomology_shift K a i
+  let _ := hasHomology_shift L a i
   apply (cancel_epi ((K⟦a⟧).homologyπ i)).1
   rw [HomologicalComplex.homologyπ_naturality_assoc, shiftHomologyIso_homologyπ,
     shiftHomologyIso_homologyπ_assoc, HomologicalComplex.homologyπ_naturality]
@@ -194,7 +194,7 @@ lemma hasKernel_homologyπ_shift (K : CochainComplex C ℤ) (a i : ℤ)
     [K.HasHomology (i + a)] [HasKernel (K.homologyπ (i + a))] :
     letI := hasHomology_shift K a i
     HasKernel ((K⟦a⟧).homologyπ i) := by
-  letI := hasHomology_shift K a i
+  let _ := hasHomology_shift K a i
   let e : parallelPair ((K⟦a⟧).homologyπ i) 0 ≅ parallelPair (K.homologyπ (i + a)) 0 :=
     parallelPair.ext (shiftCyclesIso K a i) (shiftHomologyIso K a i)
       (shiftHomologyIso_homologyπ K a i) (by simp)
@@ -210,7 +210,7 @@ lemma hasCokernel_iCycles_shift (K : CochainComplex C ℤ) (a i : ℤ)
     [K.HasHomology (i + a)] [HasCokernel (K.iCycles (i + a))] :
     letI := hasHomology_shift K a i
     HasCokernel ((K⟦a⟧).iCycles i) := by
-  letI := hasHomology_shift K a i
+  let _ := hasHomology_shift K a i
   let e : parallelPair ((K⟦a⟧).iCycles i) 0 ≅ parallelPair (K.iCycles (i + a)) 0 :=
     parallelPair.ext (shiftCyclesIso K a i) (Iso.refl _)
       (by
@@ -251,8 +251,8 @@ lemma shiftBoundaryIso_hom_ι (K : CochainComplex C ℤ) (a i : ℤ)
     letI := hasKernel_homologyπ_shift K a i
     (shiftBoundaryIso K a i).hom ≫ kernel.ι (K.homologyπ (i + a)) =
       kernel.ι ((K⟦a⟧).homologyπ i) ≫ (shiftCyclesIso K a i).hom := by
-  letI := hasHomology_shift K a i
-  letI := hasKernel_homologyπ_shift K a i
+  let _ := hasHomology_shift K a i
+  let _ := hasKernel_homologyπ_shift K a i
   simp [shiftBoundaryIso, kernel.mapIso]
 
 /--
@@ -287,8 +287,8 @@ lemma shiftOutgoingIso_π_hom (K : CochainComplex C ℤ) (a i : ℤ)
     letI := hasCokernel_iCycles_shift K a i
     cokernel.π ((K⟦a⟧).iCycles i) ≫ (shiftOutgoingIso K a i).hom =
       cokernel.π (K.iCycles (i + a)) := by
-  letI := hasHomology_shift K a i
-  letI := hasCokernel_iCycles_shift K a i
+  let _ := hasHomology_shift K a i
+  let _ := hasCokernel_iCycles_shift K a i
   simp [shiftOutgoingIso, cokernel.mapIso]
 
 end CochainComplex

@@ -41,8 +41,8 @@ makes all of K₁ cycles; the restricted degree-zero homology is the cokernel of
 incoming differential K₂→K₁.
 -/
 def positiveRestrictionHomologyZeroIso (h : K.d 1 0 = 0) :
-    (K.restriction ComplexShape.positiveNatEmbedding).homology 0 ≅ K.homology 1 := by
-  let P := K.restriction ComplexShape.positiveNatEmbedding
+    (K.restriction ChainComplex.kernelTailEmbedding).homology 0 ≅ K.homology 1 := by
+  let P := K.restriction ChainComplex.kernelTailEmbedding
   let S := K.sc' 2 1 0
   have hprev : (ComplexShape.down ℕ).prev 1 = 2 :=
     (ComplexShape.down ℕ).prev_eq' (show (ComplexShape.down ℕ).Rel 2 1 from rfl)
@@ -63,14 +63,14 @@ positive-degree embedding. For every n∈ℕ, H_{n+1}(K.restriction e) ≅ H_{n+
 retain both adjacent differentials of K, so no condition on K.d 1 0 is required.
 -/
 def positiveRestrictionHomologySuccIso (n : ℕ) :
-    (K.restriction ComplexShape.positiveNatEmbedding).homology (n + 1) ≅ K.homology (n + 2) :=
-  K.restrictionHomologyIso ComplexShape.positiveNatEmbedding
+    (K.restriction ChainComplex.kernelTailEmbedding).homology (n + 1) ≅ K.homology (n + 2) :=
+  K.restrictionHomologyIso ChainComplex.kernelTailEmbedding
     (n + 2) (n + 1) n
     ((ComplexShape.down ℕ).prev_eq' (show (ComplexShape.down ℕ).Rel (n + 2) (n + 1) from rfl))
     ((ComplexShape.down ℕ).next_eq' (show (ComplexShape.down ℕ).Rel (n + 1) n from rfl))
-    (show ComplexShape.positiveNatEmbedding.f (n + 2) = n + 3 from rfl)
-    (show ComplexShape.positiveNatEmbedding.f (n + 1) = n + 2 from rfl)
-    (show ComplexShape.positiveNatEmbedding.f n = n + 1 from rfl)
+    (show ChainComplex.kernelTailEmbedding.f (n + 2) = n + 3 from rfl)
+    (show ChainComplex.kernelTailEmbedding.f (n + 1) = n + 2 from rfl)
+    (show ChainComplex.kernelTailEmbedding.f n = n + 1 from rfl)
     ((ComplexShape.down ℕ).prev_eq' (show (ComplexShape.down ℕ).Rel (n + 3) (n + 2) from rfl))
     ((ComplexShape.down ℕ).next_eq' (show (ComplexShape.down ℕ).Rel (n + 2) (n + 1) from rfl))
 
@@ -80,7 +80,7 @@ positive-degree embedding. If K.d 1 0 = 0, the positive restriction shifts all h
 degrees by one: Hₙ(K.restriction e) ≅ H_{n+1}(K) for every n∈ℕ, including n=0.
 -/
 def positiveRestrictionHomologyIso (h : K.d 1 0 = 0) : ∀ n : ℕ,
-    (K.restriction ComplexShape.positiveNatEmbedding).homology n ≅ K.homology (n + 1)
+    (K.restriction ChainComplex.kernelTailEmbedding).homology n ≅ K.homology (n + 1)
   | 0 => positiveRestrictionHomologyZeroIso K h
   | n + 1 => positiveRestrictionHomologySuccIso K n
 

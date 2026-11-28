@@ -13,6 +13,7 @@ public import Mathlib.Algebra.Category.ModuleCat.Colimits
 public import Mathlib.Algebra.Homology.Bifunctor
 public import MathlibExt.Algebra.Category.ModuleCat.TensorBifunctor
 public import MathlibExt.Algebra.Homology.Functor
+public import MathlibExt.CategoryTheory.DGSource.CochainBifunctor
 public meta import Lean.Elab.Tactic.Omega
 
 /-!
@@ -49,22 +50,6 @@ local instance tensorHasMapBifunctorAt (P : CochainComplex (ModuleCat.{v} R) ℤ
     HomologicalComplex.HasMapBifunctor P Q (ModuleCat.tensorBifunctorAt R) (.up ℤ) := by
   intro n
   infer_instance
-
-/-
-This abbreviation retains the earlier compatibility name for the tensorHasMapBifunctorAt provider.
--/
-
-/--
-Let R be a commutative ring and P,Q integer cochain complexes of R-modules, whose carriers may
-belong to independent universes. The integer-graded tensor family satisfies the coproduct and
-differential compatibility requirements for the sum totalization, with degree-n term ⊕_{p+q=n}
-Pᵖ ⊗_R Qᑫ.
--/
-abbrev instHasMapBifunctorModuleCatIntTensorBifunctorAtUp
-    (P : CochainComplex (ModuleCat.{v} R) ℤ)
-    (Q : CochainComplex (ModuleCat.{w} R) ℤ) :
-    HomologicalComplex.HasMapBifunctor P Q (ModuleCat.tensorBifunctorAt R) (.up ℤ) :=
-  tensorHasMapBifunctorAt R P Q
 
 /--
 For a commutative ring R, the full tensor totalization is a bifunctor on integer cochain
@@ -150,27 +135,16 @@ theorem mapAt_mk {P P' : CochainComplex (ModuleCat.{v} R) ℤ}
   rw [ht] at hv
   exact hv
 
-/--
-Let R be a commutative ring and P,P',Q,Q' integer cochain complexes of R-modules in the same
-carrier universe. For f : P → P' and g : Q → Q', mapping the first factor and then the second
-gives the simultaneous map: (f⊗1_Q) ≫ (1_{P'}⊗g) = f⊗g.
--/
+/-- Simultaneous tensor maps are the composite of the separate first and second maps,
+for independently indexed coefficient universes. This is the native bifunctor composition law. -/
 theorem mapAt_precomp_postcomp
-    {P P' Q Q' : CochainComplex (ModuleCat.{v} R) ℤ}
+    {P P' : CochainComplex (ModuleCat.{v} R) ℤ}
+    {Q Q' : CochainComplex (ModuleCat.{w} R) ℤ}
     (f : P ⟶ P') (g : Q ⟶ Q') :
     mapAt R f (𝟙 Q) ≫ mapAt R (𝟙 P') g = mapAt R f g := by
-  apply HomologicalComplex.hom_ext
-  intro n
-  apply HomologicalComplex.mapBifunctor.hom_ext
-  intro p q hpq
-  apply ModuleCat.hom_ext
-  apply TensorProduct.ext'
-  intro x y
-  change ((mapAt R (𝟙 P') g).f n).hom
-      (((mapAt R f (𝟙 Q)).f n).hom (mkAt R P Q p q n hpq x y)) =
-    ((mapAt R f g).f n).hom (mkAt R P Q p q n hpq x y)
-  rw [mapAt_mk, mapAt_mk, mapAt_mk]
-  rfl
+  simpa only [mapAt, Category.comp_id, Category.id_comp] using
+    (HomologicalComplex.mapBifunctorMap_comp (ModuleCat.tensorBifunctorAt R) (.up ℤ)
+      f (𝟙 P') (𝟙 Q) g).symm
 
 /--
 Let R be a commutative ring and P,Q integer cochain complexes of R-modules, whose carriers may
@@ -192,9 +166,11 @@ theorem d_mkAt (P : CochainComplex (ModuleCat.{v} R) ℤ)
   let T := K.X (n + 1)
   let i : A ⟶ K.X n := HomologicalComplex.ιMapBifunctor P Q F (.up ℤ) p q n h
   let j₁ : ModuleCat.tensorObjAt R (P.X (p + 1)) (Q.X q) ⟶ T :=
-    HomologicalComplex.ιMapBifunctor P Q F (.up ℤ) (p + 1) q (n + 1) (by change p + 1 + q = n + 1; omega)
+    HomologicalComplex.ιMapBifunctor P Q F (.up ℤ) (p + 1) q (n + 1)
+      (by change p + 1 + q = n + 1; omega)
   let j₂ : ModuleCat.tensorObjAt R (P.X p) (Q.X (q + 1)) ⟶ T :=
-    HomologicalComplex.ιMapBifunctor P Q F (.up ℤ) p (q + 1) (n + 1) (by change p + (q + 1) = n + 1; omega)
+    HomologicalComplex.ιMapBifunctor P Q F (.up ℤ) p (q + 1) (n + 1)
+      (by change p + (q + 1) = n + 1; omega)
   have hε₁ : ComplexShape.ε₁ (.up ℤ) (.up ℤ) (.up ℤ) (p, q) = 1 := rfl
   have hε₂ : ComplexShape.ε₂ (.up ℤ) (.up ℤ) (.up ℤ) (p, q) = p.negOnePow := rfl
   have hi : i ≫ K.d n (n + 1) =
@@ -226,7 +202,7 @@ theorem d_mkAt (P : CochainComplex (ModuleCat.{v} R) ℤ)
       map_zero' := by simp only [ModuleCat.hom_zero, LinearMap.zero_apply]
       map_add' := fun f g => by simp only [ModuleCat.hom_add, LinearMap.add_apply] }
   have hv := congrArg ev hi
-  simp only [map_add, Units.smul_def, map_zsmul] at hv
+  simp only [Units.smul_def] at hv
   change (K.d n (n + 1)).hom (i.hom (x ⊗ₜ[R] y)) =
     j₁.hom (((F.map (P.d p (p + 1))).app (Q.X q)).hom (x ⊗ₜ[R] y)) +
       (p.negOnePow : ℤ) •
