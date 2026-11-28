@@ -15,6 +15,7 @@ where $T_k$ is the $0/1$ transition matrix of $f^{(k)}$ ($T_k(s, w) = 1$ iff $w 
 
 - [Convergence theorem for finite Markov chains](../../../../Probability/markov-chains/convergence-theorem-for-finite-markov-chains/exists-tv-dist-pow-le.md)
 - [Uniqueness of the stationary distribution](../../../../Probability/markov-chains/convergence-theorem-for-finite-markov-chains/stationary-unique.md)
+- [Existence of a stationary distribution for finite Markov chains](../../../../Probability/markov-chains/convergence-theorem-for-finite-markov-chains/exists-stationary.md)
 
 ## Expansion
 

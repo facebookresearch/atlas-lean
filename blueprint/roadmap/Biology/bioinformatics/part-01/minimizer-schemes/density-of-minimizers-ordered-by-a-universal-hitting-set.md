@@ -14,7 +14,8 @@ is a universal hitting set with $SP(U_{k,w}) > 0$. Taking $C$ to be a Hamiltonia
 
 ## Depends on
 
-- [Expected density of random-order minimizers](../../../../ComputerScience/string-algorithms/winnowing-and-minimizers/winnowing-minimizer-density-2-w-1-and-the-1-5-w-1-lower-bound-for-loca.md)
+- [Winnowing: density 2/(w+1) and the lower bound for local fingerprinting](../../../../ComputerScience/string-algorithms/winnowing-and-minimizers/winnowing-minimizer-density-2-w-1-and-the-1-5-w-1-lower-bound-for-loca.md)
+- [Local k-mer selection methods and their densities](local-k-mer-selection-methods-and-their-densities.md)
 
 ## Expansion
 

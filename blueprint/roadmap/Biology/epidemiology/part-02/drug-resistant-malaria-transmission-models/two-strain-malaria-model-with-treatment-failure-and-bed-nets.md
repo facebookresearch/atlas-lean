@@ -30,6 +30,7 @@ explicitly $\mathcal{R}_{0j} = (1-c)^2 \rho_j m \beta \alpha_j (\epsilon_j + \ga
 ## Proof depends on
 
 - [Next-generation threshold for local stability of the disease-free equilibrium](../../next-generation-matrix-and-the-basic-reproductio/is-hurwitz-sub-iff-r0-lt-one.md)
+- [Next-generation threshold for instability of the disease-free equilibrium](../../next-generation-matrix-and-the-basic-reproductio/exists-re-pos-jacobian-of-one-lt-r0.md)
 
 ## Expansion
 
@@ -38,3 +39,4 @@ The next-generation computation inverts $V$ blockwise: for each strain the $2 \t
 ## Sources
 
 - O. C. Collins, K. J. Duffy, "A mathematical model for the dynamics and control of malaria in Nigeria", Infectious Disease Modelling 7 (2022) 728–741, Section 2 (models (1)–(2)), Section 3.1 (equations (3)–(8), Theorem 1) and Appendix 1, <https://doi.org/10.1016/j.idm.2022.10.005>.
+- P. van den Driessche and J. Watmough, "Reproduction numbers and sub-threshold endemic equilibria for compartmental models of disease transmission", *Mathematical Biosciences* 180 (2002), 29–48, Theorem 2 (local asymptotic stability for $\mathcal{R}_0 < 1$ and instability for $\mathcal{R}_0 > 1$), <https://doi.org/10.1016/S0025-5564(02)00108-6>.

@@ -24,6 +24,10 @@ $$b\big(\bar K e^{\alpha} - 1\big) + \tfrac{2}{3}\, d\, \bar K^{2/3} e^{-\alpha/
 
 and unstable under the reverse inequality; in particular $b e^{\alpha} - \mu - \beta u - \gamma v > d$ guarantees both existence and stability.
 
+## Proof depends on
+
+- [Routh–Hurwitz criterion for cubic polynomials](../../../../Analysis/control-theory/feedback-stability-and-classical-design/routh-hurwitz-criterion-for-cubic-polynomials.md)
+
 ## Expansion
 
 At a positive steady state, adding the tumour equations gives $\ln\frac{N_1+N_2}{K} = -\beta_1 u N_1/(\lambda_1 N_1 + \lambda_2 N_2)$, and substituting into the $N_2$ equation yields $\beta_1\lambda_2 u N_1 N_2 + (\lambda_1 N_1 + \lambda_2 N_2)(\tau_1 N_1 - \tau_2 N_2) = 0$, a quadratic $Ax^2 + Bx + C = 0$ in $x = N_1/N_2$; since $AC < 0$ it has exactly one positive root $R$. The $N_2$ equation then fixes $\ln\frac{N_1 + N_2}{K} = \alpha$, and the $K$ equation, with $N_1 + N_2 = K e^\alpha$, gives $b e^\alpha - \mu - \beta u - \gamma v = d K^{2/3} e^{2\alpha/3}$. Stability follows from Routh–Hurwitz applied to the cubic characteristic polynomial: the leading coefficient conditions hold automatically, the constant term has the sign of the displayed inequality, and the steady-state relation $b e^\alpha > \tfrac23 d (\bar K e^\alpha)^{2/3}$ yields $a_1 a_2 > a_0$. Since resistant cells are untouched by $u$, higher chemotherapy doses shift the steady-state composition toward resistance ($R$ decreases in $u$), which motivates comparing continuous, metronomic and anti-angiogenic-first schedules.

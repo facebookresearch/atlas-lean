@@ -15,6 +15,10 @@ with $b, d, \beta, \gamma, K > 0$, $\tau \ge 0$, nonnegative continuous initial 
 
 - [Basic reproduction number of a delayed SEIR model with health-care-capacity-dependent rates](reproduction-number-of-the-delayed-seir-model-with-health-care-capacity.md)
 
+## Proof depends on
+
+- [LaSalle's invariance principle](../../../../Dynamics/smooth-dynamics/lasalle-s-invariance-principle/lasalle.md)
+
 ## Expansion
 
 *Disease-free case.* Take $L(t) = I(t) + k \int_{t-\tau}^{t} S(\theta) I(\theta)\, d\theta$. The delayed terms cancel and

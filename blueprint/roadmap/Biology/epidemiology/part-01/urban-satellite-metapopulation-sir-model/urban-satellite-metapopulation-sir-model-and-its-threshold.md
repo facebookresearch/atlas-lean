@@ -36,6 +36,10 @@ $$\min\{\mathcal{R}_0^W, \mathcal{R}_0^1, \dots, \mathcal{R}_0^n\} \le \mathcal{
 - [Nonsingular M-matrix](../../../../LinearAlgebra/special-matrices/m-matrices-and-hurwitz-stability/nonsingular-m-matrices/is-nonsingular-mmatrix.md)
 - [Unstable mode of the infected subsystem exactly when $R_0 > 1$](../../next-generation-matrix-and-the-basic-reproductio/exists-re-pos-iff-one-lt-r0.md)
 
+## Proof depends on
+
+- [LaSalle's invariance principle](../../../../Dynamics/smooth-dynamics/lasalle-s-invariance-principle/lasalle.md)
+
 ## Expansion
 
 Global stability uses a Lyapunov function built from the Perron vector. Since $V$ is an irreducible

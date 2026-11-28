@@ -15,6 +15,11 @@ describing the $n$ sites of an individual just infected while having $j$ partner
 - [Basic reproduction number of the next-generation matrix](../../next-generation-matrix-and-the-basic-reproductio/r0.md)
 - [Binding-site partnership network and its stationary degree distribution](binding-site-partnership-network-and-its-stationary-degree-distribution.md)
 
+## Proof depends on
+
+- [Next-generation threshold for stability of the disease-free equilibrium](../../next-generation-matrix-and-the-basic-reproductio/is-hurwitz-sub-iff-r0-lt-one.md)
+- [Next-generation threshold for instability of the disease-free equilibrium](../../next-generation-matrix-and-the-basic-reproductio/exists-re-pos-iff-one-lt-r0.md)
+
 ## Expansion
 
 Theorem 1 is the standard next-generation threshold for a positive-off-diagonal splitting $T + \Sigma$ with $\Sigma$ stable, proved via Perron–Frobenius theory. For Theorem 2, the range of $T$ is spanned by the three independent vectors $\psi_A, \psi_B, \psi_C$, so every eigenvector of $T(-\Sigma)^{-1}$ with nonzero eigenvalue lies in that span; writing $v = \sum_y w_y \psi_y$ turns $T(-\Sigma)^{-1}v = \lambda v$ into $K w = \lambda w$, so the nonzero spectra coincide. The closure makes the model approximate: for $n = 2$, partner states are not independent, so the binding-site description is a moment closure rather than an exact reduction of the network process. When $n = 1$ the model reduces to a pair-formation model.

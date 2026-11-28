@@ -27,6 +27,10 @@ where $0 < r \le 1$ is the asymptomatic fraction, $\varphi_s$ the hospitalizatio
 ## Depends on
 
 - [Basic reproduction number of the next-generation matrix](../../next-generation-matrix-and-the-basic-reproductio/r0.md)
+## Proof depends on
+
+- [LaSalle's invariance principle](../../../../Dynamics/smooth-dynamics/lasalle-s-invariance-principle/lasalle.md)
+
 ## Expansion
 
 New infections enter only $E$, so $FV^{-1}$ has rank one and $R_0$ is the expected infectiousness of one exposed individual: it becomes asymptomatic with probability $r$ for mean time $1/\gamma_a$, or symptomatic with probability $1-r$ for mean time $1/(\varphi_s+\gamma_s+\delta_s)$, after which it is hospitalized with probability $\varphi_s/(\varphi_s+\gamma_s+\delta_s)$ for mean time $1/(\gamma_h+\delta_h)$. For stability, $L = E + g_1 I_a + g_2 I_s + g_3 I_h$ with $g_1 = \beta_a/\gamma_a$, $g_3 = \beta_h/(\gamma_h+\delta_h)$, $g_2 = (\beta_s + g_3\varphi_s)/(\varphi_s+\gamma_s+\delta_s)$ satisfies $\dot L \le \sigma(R_0 - 1)E$ because $S \le N$; LaSalle's principle gives convergence. For the final size, write the model in the form $\dot x = \Pi\, \beta\, S\, b x - Vx$, $\dot S = -\beta S\, b x$ of Arino, Brauer, van den Driessche, Watmough and Wu, integrate $\dot S / S$ over $[0, \infty)$ and use $\int_0^\infty x\,dt = V^{-1}\big(x(0) + \Pi\,(\text{total new infections})\big)$; the vector $bV^{-1}$ gives the expected remaining infectiousness of an individual in each infected class, which yields the initial-condition terms. Disease deaths make $N$ decrease, so the standard-incidence factor $1/N$ exceeds $1/N(0)$ and only an inequality survives.

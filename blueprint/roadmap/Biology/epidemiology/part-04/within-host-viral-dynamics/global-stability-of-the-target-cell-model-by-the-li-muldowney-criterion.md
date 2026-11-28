@@ -29,6 +29,7 @@ Part 2 follows from the [Li–Muldowney second-compound criterion](../../part-01
 
 - [Li–Muldowney second-compound criterion](../../part-01/geometric-approach-to-global-stability/li-muldowney-second-compound-criterion.md)
 - [LaSalle's invariance principle](../../../../Dynamics/smooth-dynamics/lasalle-s-invariance-principle/lasalle.md)
+- [Routh–Hurwitz criterion for cubic polynomials](../../../../Analysis/control-theory/feedback-stability-and-classical-design/routh-hurwitz-criterion-for-cubic-polynomials.md)
 
 ## Expansion
 
