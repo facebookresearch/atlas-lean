@@ -15,6 +15,8 @@ By contrast, for the continuous, differentiable, $C^\infty$ and analytic functio
 
 ## Depends on
 
+- [Continuous map between topological spaces](../../../../Topology/topological-spaces/continuous-map.md)
+- [Polynomials in one variable over a semiring](../../../../Algebra/polynomials/univariate-polynomial-arithmetic/polynomial-ring.md)
 - [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 - [Co-recognizability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-co-recognizable.md)
 
@@ -30,4 +32,4 @@ Parts 1 and 2 reduce from finite graph theory: the validity problem for $\Sigma_
 
 - H. Friedman and Á. Seress, "Decidability in elementary analysis. I", *Advances in Mathematics* 76(1), pp. 94–115, 1989, doi:[10.1016/0001-8708(89)90044-3](https://doi.org/10.1016/0001-8708(89)90044-3): Section 4, Theorem 4.2, for parts 1 and 2 (not read here; locator as given by the survey).
 - H. Friedman and Á. Seress, "Decidability in elementary analysis. II", *Advances in Mathematics* 79(1), pp. 1–17, 1990, doi:[10.1016/0001-8708(90)90056-S](https://doi.org/10.1016/0001-8708(90)90056-S): Section 1 for parts 3 and 4, Section 4, Theorem 4.7, for the polynomials (not read here; locators as given by the survey).
-- D. Cantone, E. G. Omodeo and G. T. Spartà, "Solvable (and unsolvable) cases of the decision problem for fragments of analysis", *Rendiconti dell'Istituto di Matematica dell'Università di Trieste* 44, pp. 313–348, 2012, a refereed survey and the copy read: Definition 1.8, Propositions 1.6, 1.11, 1.13 and 1.15, and the reductions in Subsections 1.2 and 1.3 (its footnote notes that the source for part 4 treats only functions on $\mathbb R$).
+- D. Cantone, E. G. Omodeo and G. T. Spartà, "Solvable (and unsolvable) cases of the decision problem for fragments of analysis", *Rendiconti dell'Istituto di Matematica dell'Università di Trieste* 44, pp. 313–348, 2012, a refereed survey and the copy read: Definition 1.8, Propositions 1.5, 1.6, 1.9, 1.11, 1.13 and 1.15 (Proposition 1.11 is headed "separated Π4" while its items and the reduction concern separated Σ4 sentences; this page follows the items), and the reductions in Subsections 1.2 and 1.3 (its footnote notes that the source for part 4 treats only functions on $\mathbb R$).

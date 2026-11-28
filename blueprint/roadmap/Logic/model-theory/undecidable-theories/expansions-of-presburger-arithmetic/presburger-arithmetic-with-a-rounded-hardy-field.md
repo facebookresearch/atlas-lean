@@ -2,7 +2,7 @@
 
 Adding to the integers with order and addition the nearest-integer rounding of a Hardy field function that grows polynomially but is not asymptotically linear or slower than every positive power gives an undecidable theory.
 
-**Theorem (Brown and Konieczny).** Call two continuous real functions equivalent if they agree on some interval $[x_0, \infty)$; the equivalence classes (germs) form a ring, a *Hardy field* is a subfield of this ring closed under differentiation, and a *Hardy field function* is a function whose germ lies in some Hardy field, extended by $0$ outside its domain $[x_0, \infty)$. For real $x$ let $\lfloor x\rceil$ be the integer with $\lfloor x\rceil - 1/2 \le x < \lfloor x\rceil + 1/2$, and $\lfloor f\rceil(n) = \lfloor f(n)\rceil$. Let $f$ be a Hardy field function. Then the first-order theory $\mathrm{Th}(\mathbb Z; <, +, \lfloor f\rceil)$ is undecidable in each of the following cases:
+**Theorem (Brown and Konieczny).** Call two continuous real functions equivalent if they agree on some interval $[x_0, \infty)$; the equivalence classes (germs) form a ring, a *Hardy field* is a subfield of this ring closed under differentiation, and a *Hardy field function* is a function whose germ lies in some Hardy field, extended by $0$ outside its domain $[x_0, \infty)$. For real $x$ let $\lfloor x\rceil$ be the integer with $\lfloor x\rceil - 1/2 \le x < \lfloor x\rceil + 1/2$ (rounding half up, the convention of Section 1.1 of the source, which the theorems use; Section 1.4 of the source briefly writes $\lfloor x\rceil = \lceil x - 1/2\rceil$), and $\lfloor f\rceil(n) = \lfloor f(n)\rceil$. Let $f$ be a Hardy field function. Then the first-order theory $\mathrm{Th}(\mathbb Z; <, +, \lfloor f\rceil)$ is undecidable in each of the following cases:
 
 1. $\lim_{x \to \infty} f(x)/x = \infty$ and $\lim_{x \to \infty} f(x)/x^d = 0$ for some integer $d \ge 2$ (Theorem A of the source);
 2. $\lim_{x \to \infty} f(x)/x^{\varepsilon} = \infty$ for some $\varepsilon > 0$ and $\lim_{x \to \infty} f(x)/x = 0$ (Theorem B).
@@ -17,7 +17,7 @@ Hardy field functions include all logarithmico-exponential functions. Presburger
 
 ## Proof depends on
 
-None.
+- [Tarski's undefinability theorem](../../../proof-theory/g-del-s-incompleteness-theorems/tarski-s-undefinability-theorem.md)
 
 ## Expansion
 
@@ -25,4 +25,4 @@ In each case multiplication on $\mathbb Z$ is defined, so the theory interprets 
 
 ## Sources
 
-- H. Brown and J. Konieczny, "Decidability of Extensions of Presburger Arithmetic by Hardy Field Functions", in *43rd International Symposium on Theoretical Aspects of Computer Science (STACS 2026)*, Leibniz International Proceedings in Informatics, Schloss Dagstuhl, 2026, paper 21, <https://doi.org/10.4230/LIPIcs.STACS.2026.21>; numbers from arXiv:2508.19206v1, <https://arxiv.org/abs/2508.19206v1>: Section 1 (background, Theorems A and B, proof outline, future directions) and Section 2 (Hardy fields).
+- H. Brown and J. Konieczny, "Decidability of Extensions of Presburger Arithmetic by Hardy Field Functions", in *43rd International Symposium on Theoretical Aspects of Computer Science (STACS 2026)*, Leibniz International Proceedings in Informatics, Schloss Dagstuhl, 2026, paper 21, <https://doi.org/10.4230/LIPIcs.STACS.2026.21>, where Theorems A and B are Theorems 1.1 and 1.2 (open copy checked); numbers from arXiv:2508.19206v1, <https://arxiv.org/abs/2508.19206v1>: Section 1 (background, Theorems A and B, proof outline, future directions) and Section 2 (Hardy fields).

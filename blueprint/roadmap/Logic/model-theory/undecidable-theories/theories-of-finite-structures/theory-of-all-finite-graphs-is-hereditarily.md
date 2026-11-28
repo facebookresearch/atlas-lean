@@ -4,7 +4,7 @@ The first-order theory of the class of all finite graphs is hereditarily undecid
 
 **Theorem (Lavrov).** Let $\mathcal{G}_{\mathrm{fin}}$ be the class of all finite graphs. Then $\mathrm{Th}(\mathcal{G}_{\mathrm{fin}})$ is hereditarily undecidable in the interpretability sense of [hereditarily undecidable theories](interpretability-and-hereditary-undecidability.md).
 
-According to the source, known proofs of hereditary undecidability of pseudovarieties of finite algebras usually proceed by showing $\mathrm{Th}(\mathcal{G}_{\mathrm{fin}}) \leq \mathrm{Th}(\mathcal{V})$.
+According to the source, in all results known to its author, hereditary undecidability of a pseudovariety $\mathcal V$ of finite algebras is established by showing $\mathrm{Th}(\mathcal{G}_{\mathrm{fin}}) \leq \mathrm{Th}(\mathcal{V})$.
 
 ## Depends on
 
@@ -18,7 +18,7 @@ None.
 
 ## Expansion
 
-Lavrov proved that the sets of sentences true in all graphs and of sentences refuted in some finite graph are effectively inseparable, which yields the hereditary undecidability. The copy read cites the result without proof; a good expansion links the reduction from the halting problem or from Trakhtenbrot's theorem, neither of which is given in the copy read.
+Lavrov's paper (by its title, as the source's bibliography gives it) shows that the sets of sentences true in all graphs and of sentences refuted in some finite graph are effectively inseparable, which yields the hereditary undecidability. The copy read cites the result without proof; a good expansion links the reduction from the halting problem or from Trakhtenbrot's theorem, neither of which is given in the copy read.
 
 ## Sources
 

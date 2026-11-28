@@ -17,6 +17,7 @@ For an ordinary polynomial $f$ of degree at least $2$, multiplication is definab
 ## Depends on
 
 - [Complete theory of a first-order structure](../../../first-order-logic/theory-of-structure.md)
+- [Linearly independent family](../../../../LinearAlgebra/bases-and-dimension/bases-and-coordinates/bases/linear-independent.md)
 - [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on

@@ -24,7 +24,7 @@ None.
 
 ## Expansion
 
-Shelah–Stupp (weak) and Muchnik–Walukiewicz (strong) proved that monadic second-order logic over the iteration is decidable when it is decidable over $\mathcal{M}$. With $E$ the full monadic theory of the binary tree becomes undecidable, but its chain theory is decidable (Thomas). The source proves that the chain theory of $\mathcal{M}^\#_E$ with $\mathcal{L}$ on siblings is decidable whenever the $\mathcal{L}$-theory of $\mathcal{M}$ is (for admissible $\mathcal{M}$, which has two singleton predicates naming elements $0$ and $1$), by coding chains as $\omega$-words over $M \times \{0,1\}$ and using Büchi automata whose transitions are given by $\mathcal{L}$-formulas.
+Shelah–Stupp (weak) and Muchnik–Walukiewicz (strong) proved that monadic second-order logic over the iteration is decidable when it is decidable over $\mathcal{M}$. With $E$ the full monadic theory of the binary tree becomes undecidable (without $E$ it is the decidable [monadic second-order logic of two successors](../../../TheoryOfComputation/omega-automata-and-games/automata-on-infinite-trees/monadic-second-order-logic-of-two-successors.md) in another signature), but its chain theory is decidable (Thomas). The source proves that the chain theory of $\mathcal{M}^\#_E$ with $\mathcal{L}$ on siblings is decidable whenever the $\mathcal{L}$-theory of $\mathcal{M}$ is (for admissible $\mathcal{M}$, which has two singleton predicates naming elements $0$ and $1$), by coding chains as $\omega$-words over $M \times \{0,1\}$ and using Büchi automata whose transitions are given by $\mathcal{L}$-formulas.
 
 ## Sources
 

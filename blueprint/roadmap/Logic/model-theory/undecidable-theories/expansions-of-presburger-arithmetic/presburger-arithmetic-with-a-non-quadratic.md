@@ -17,7 +17,7 @@ Here $\alpha$ is fixed, given by its defining polynomial over $\mathbb Z$ and an
 
 ## Expansion
 
-If $\alpha$ is algebraic and not quadratic, then $1, \alpha, \alpha^2$ are linearly independent over $\mathbb Q$, and $\mathbb Q(\alpha, \alpha^2) = \mathbb Q(\alpha)$. Applying the theorem for two independent scalars with $\beta = \alpha^2$, and clearing denominators so that all coefficients lie in $\mathbb Z[\alpha]$, gives the result. Undecidability of $\alpha$-PA for non-quadratic $\alpha$ also follows from the undecidability of the theory of $(\mathbb R, <, +, \mathbb Z, x \mapsto \alpha x)$ (Hieronymi and Tychonievich), with no bound on the number of quantifier alternations; the point here is the bound of four blocks.
+If $\alpha$ is algebraic and not quadratic, then $1, \alpha, \alpha^2$ are linearly independent over $\mathbb Q$, and $\mathbb Q(\alpha, \alpha^2) = \mathbb Q(\alpha)$. Applying the theorem for two independent scalars with $\beta = \alpha^2$, and clearing denominators so that all coefficients lie in $\mathbb Z[\alpha]$, gives the result. Undecidability of $\alpha$-PA for non-quadratic $\alpha$ can also be obtained from a careful analysis of the proof (not the statement) that the theory of $(\mathbb R, <, +, \mathbb Z, x \mapsto \alpha x)$ is undecidable (Hieronymi and Tychonievich; Section 1.2 of the source), with no bound on the number of quantifier alternations; the point here is the bound of four blocks.
 
 ## Sources
 

@@ -27,4 +27,4 @@ For a finite subtheory $\Sigma$ of the theory of a PAC field $K$ and any nonempt
 
 ## Sources
 
-- B. Tyrrell, "Finite undecidability in PAC and PRC fields", *Annals of Pure and Applied Logic* 175(10):103465, 2024, doi:10.1016/j.apal.2024.103465; read as arXiv:2212.12918v2, <https://arxiv.org/abs/2212.12918v2>: Corollaries 3.19, 4.16 and 4.17, Theorems 3.18, 3.21, 4.15 and 5.10, and Sections 3–5 of arXiv:2212.12918v2.
+- B. Tyrrell, "Finite undecidability in PAC and PRC fields", *Annals of Pure and Applied Logic* 175(10):103465, 2024, doi:10.1016/j.apal.2024.103465; read as arXiv:2212.12918v2, <https://arxiv.org/abs/2212.12918v2>, titled there "Finite Undecidability in Fields II: PAC, PRC and PpC Fields": Corollaries 3.19, 4.16 and 4.17, Theorems 3.18, 3.21, 4.15 and 5.10, and Sections 3–5 of arXiv:2212.12918v2.

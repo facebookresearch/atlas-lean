@@ -16,7 +16,7 @@ None.
 
 ## Expansion
 
-The unbounding quantifier expresses boundedness: for a formula describing finite sets attached to positions (for instance, the blocks between consecutive elements of a set), $\neg\mathsf U X$ says that their sizes are bounded. This is how MSO+U defines properties such as "the gaps of an infinite set are unbounded", which are beyond $\omega$-regular languages.
+The unbounding quantifier expresses boundedness: for a formula describing finite sets attached to positions (for instance, the blocks between consecutive elements of a set), $\neg\mathsf U X$ says that their sizes are bounded. This is how MSO+U defines properties beyond $\omega$-regular languages.
 
 ## Sources
 

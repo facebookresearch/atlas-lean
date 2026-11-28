@@ -15,6 +15,7 @@ By contrast, the universal fragment of $T[F]$ is decidable for every sufficientl
 
 - [Complete theory of a first-order structure](../../../first-order-logic/theory-of-structure.md)
 - [Field](../../../../Algebra/rings-and-fields/field.md)
+- [Subfield](../../../../Algebra/rings-and-fields/subfield.md)
 - [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 - [Recognizability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
 
@@ -24,7 +25,7 @@ By contrast, the universal fragment of $T[F]$ is decidable for every sufficientl
 
 ## Expansion
 
-The proof constructs nonstandard models of $T[F]^*$ on the real line by twisting the multiplication with suitable bijections $h$ of $\mathbb R$ that fix the additive structure (Sections 9 to 11). For a model $M$ with elements $\mu, \kappa, \lambda$, property $(\ast)$ says that the set of $x$ with $1 \le x \le \mu$ and $(\kappa + x)(\lambda + x) = \kappa\lambda + \kappa x + \lambda x + x^2$ contains $1$ and is closed under $x \mapsto x + 1$ within $[1, \mu]$; property $(\ast\ast)$ says that this set is exactly the positive integers of $M$. Theorem 11.7 builds a model with property $(\ast\ast)$, so a Diophantine equation $D$ is solvable in positive integers iff in every model with property $(\ast)$ it is solvable over that set (Corollary 11.8). This statement is expressible as a $\forall\forall\forall\exists^*$ sentence of the language $0, 1, +, \times, <$, which reduces solvability of Diophantine equations over the positive integers, an r.e.-complete problem by the Davis–Putnam–Robinson–Matiyasevich theorem, to provability in $T[F]^*$ and, via the translations of Lemmas 4.1 and 4.2, in $T[F]$.
+The proof constructs nonstandard models of $T[F]^*$ on the real line by twisting the multiplication with suitable bijections $h$ of $\mathbb R$ that fix the additive structure (Sections 9 to 11). For a model $M$ with elements $\mu, \kappa, \lambda$, property $(\ast)$ says that the set of $x$ with $1 \le x \le \mu$ and $(\kappa + x)(\lambda + x) = \kappa\lambda + \kappa x + \lambda x + x^2$ contains $1$ and is closed under $x \mapsto x + 1$ (property $(\ast)$ of the source); property $(\ast\ast)$ says that this set is exactly the positive integers of $M$. Theorem 11.7 builds a model with property $(\ast\ast)$, so a Diophantine equation $D$ is solvable in positive integers iff in every model with property $(\ast)$ it is solvable over that set (Corollary 11.8). This statement is expressible as a $\forall\forall\forall\exists^*$ sentence of the language $0, 1, +, \times, <$, which reduces solvability of Diophantine equations over the positive integers, an r.e.-complete problem by the Davis–Putnam–Robinson–Matiyasevich theorem, to provability in $T[F]^*$ and, via the translations of Lemmas 4.1 and 4.2, in $T[F]$.
 
 ## Sources
 

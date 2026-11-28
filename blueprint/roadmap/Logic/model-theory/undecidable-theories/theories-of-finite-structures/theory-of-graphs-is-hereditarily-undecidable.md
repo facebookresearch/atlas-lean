@@ -2,7 +2,7 @@
 
 The first-order theory of the class of all graphs is undecidable and, being finitely axiomatizable, hereditarily undecidable; it also represents the maximum of the interpretability ordering.
 
-**Theorem (Rogers).** Let $\mathcal{G}$ be the class of all graphs. Then $\mathrm{Th}(\mathcal{G})$ is undecidable.
+**Theorem (Rogers).** A *graph* is a set with a symmetric irreflexive binary relation (the usual convention; the source does not restate it). Let $\mathcal{G}$ be the class of all graphs. Then $\mathrm{Th}(\mathcal{G})$ is undecidable.
 
 Since $\mathrm{Th}(\mathcal{G})$ is undecidable and finitely axiomatizable, it is hereditarily undecidable in the sense of [hereditarily undecidable theories](interpretability-and-hereditary-undecidability.md): $\mathrm{Th}(\mathcal{G}) \leq T$ implies that $T$ is undecidable. It also represents the maximum element of $\leq$.
 

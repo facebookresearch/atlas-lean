@@ -15,13 +15,14 @@ In particular these theories are not arithmetical, hence not recursively enumera
 - [Field](../../../../Algebra/rings-and-fields/field.md)
 - [Normed vector space](../../../../Analysis/banach-spaces/normed-spaces/normed-space.md)
 - [Metric on a set, as a function](../../../../ComputerScience/machine-learning/unsupervised-learning/single-linkage-hierarchical-clustering/is-metric-fn.md)
+- [Dimension of a finite-dimensional vector space](../../../../LinearAlgebra/bases-and-dimension/bases-and-coordinates/dimension/finite-dimension.md)
 - [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 - [Recognizability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
 - [The arithmetical class $\Sigma_n$](../../../../TheoryOfComputation/degrees-and-hierarchies/arithmetical-hierarchy/is-sigma.md)
 
 ## Proof depends on
 
-None.
+- [Tarski's undefinability theorem](../../../proof-theory/g-del-s-incompleteness-theorems/tarski-s-undefinability-theorem.md)
 
 ## Expansion
 

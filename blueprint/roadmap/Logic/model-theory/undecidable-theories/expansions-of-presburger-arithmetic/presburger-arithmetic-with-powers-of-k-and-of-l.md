@@ -2,12 +2,12 @@
 
 For multiplicatively independent integers k, ℓ ≥ 2, the first-order theory of the natural numbers with addition and predicates for the powers of k and the powers of ℓ is undecidable, settling the case k = 2, ℓ = 3 open since the 1980s.
 
-**Theorem (Hieronymi and Schulz).** For $k \in \mathbb N_{\ge 2}$ let $k^{\mathbb N} = \{k^i : i \in \mathbb N\}$. Let $k, \ell \in \mathbb N_{\ge 2}$ be [multiplicatively independent](../../../../NumberTheory/digits-numeration/numeration-automatic/cobham-s-theorems-on-recognizable-sets/bases-multiplicatively-independent.md), that is, $k^m \neq \ell^n$ for all positive integers $m, n$. Then:
+**Theorem (Hieronymi and Schulz).** For $k \in \mathbb N_{\ge 2}$ let $k^{\mathbb N} = \{k^i : i \in \mathbb N\}$. Let $k, \ell \in \mathbb N_{\ge 2}$ be [multiplicatively independent](../../../../NumberTheory/digits-numeration/numeration-automatic/cobham-s-theorems-on-recognizable-sets/bases-multiplicatively-independent.md), that is, $k^m \neq \ell^n$ for all positive integers $m, n$. A set $X \subseteq \mathbb N^m$ is *$k$-recognizable* if some finite automaton over the alphabet $\{0, \dots, k-1\}^m$ accepts exactly the words that spell, letter by letter, the base-$k$ representations of the coordinates of a tuple in $X$, padded with leading zeros to a common length (the standard convention of Allouche and Shallit, to which the source refers in Section 1); for $m = 1$ this is the [base-$k$ recognizability](../../../../NumberTheory/digits-numeration/numeration-automatic/cobham-s-theorems-on-recognizable-sets/is-base-recognizable.md) of a set of natural numbers. Then:
 
 1. the first-order theory $\mathrm{FO}(\mathbb N, +, k^{\mathbb N}, \ell^{\mathbb N})$ is undecidable (Theorem B of the source);
-2. more generally, if $X \subseteq \mathbb N^m$ is [$k$-recognizable](../../../../NumberTheory/digits-numeration/numeration-automatic/cobham-s-theorems-on-recognizable-sets/is-base-recognizable.md), $Y \subseteq \mathbb N^n$ is $\ell$-recognizable, and neither is first-order definable in $(\mathbb N, +)$, then $\mathrm{FO}(\mathbb N, +, X, Y)$ is undecidable (Theorem A).
+2. more generally, if $X \subseteq \mathbb N^m$ is $k$-recognizable, $Y \subseteq \mathbb N^n$ is $\ell$-recognizable, and neither is first-order definable in $(\mathbb N, +)$, then $\mathrm{FO}(\mathbb N, +, X, Y)$ is undecidable (Theorem A).
 
-By Büchi's theorem, each $\mathrm{FO}(\mathbb N, +, V_k)$ is decidable, where $V_k(x)$ is the largest power of $k$ dividing $x$; Villemaire showed that $\mathrm{FO}(\mathbb N, +, V_k, V_\ell)$ is undecidable, and Bès extended this to $(\mathbb N, +, V_k, L)$ for $\ell$-recognizable $L$ not definable in $(\mathbb N, +)$. Part 2 implies the Cobham–Semënov theorem: a set that is both $k$- and $\ell$-recognizable is definable in $(\mathbb N, +)$. The structure $(\mathbb N, +, k^{\mathbb N}, \ell^{\mathbb N})$ does not define multiplication, so the undecidability is not obtained by interpreting arithmetic.
+By Büchi's theorem, each $\mathrm{FO}(\mathbb N, +, V_k)$ is decidable, where $V_k(x)$ is the largest power of $k$ dividing $x$ for $x \ge 1$, and $V_k(0) = 1$; Villemaire showed that $\mathrm{FO}(\mathbb N, +, V_k, V_\ell)$ is undecidable, and Bès extended this to $(\mathbb N, +, V_k, L)$ for $\ell$-recognizable $L$ not definable in $(\mathbb N, +)$. Part 2 implies the Cobham–Semënov theorem: a set that is both $k$- and $\ell$-recognizable is definable in $(\mathbb N, +)$. The structure $(\mathbb N, +, k^{\mathbb N}, \ell^{\mathbb N})$ does not define multiplication, so the undecidability is not obtained by interpreting arithmetic.
 
 ## Depends on
 
@@ -18,7 +18,7 @@ By Büchi's theorem, each $\mathrm{FO}(\mathbb N, +, V_k)$ is decidable, where $
 
 ## Proof depends on
 
-None.
+- [Halting is undecidable](../../../../TheoryOfComputation/computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halts.md)
 
 ## Expansion
 

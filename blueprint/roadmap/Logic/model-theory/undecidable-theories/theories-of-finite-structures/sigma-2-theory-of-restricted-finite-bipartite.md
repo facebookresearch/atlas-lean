@@ -2,7 +2,7 @@
 
 The set of $\Sigma_2$ sentences, of the form $\exists\forall$, true in all finite bipartite graphs with at least three vertices on each side, every vertex joined to at least two vertices and missing at least one vertex on the other side, is hereditarily undecidable.
 
-**Nice bipartite graphs.** Bipartite graphs are structures $(\mathrm{Le}, \mathrm{Ri}, E)$ in the language with unary predicates $\mathrm{Le}$, $\mathrm{Ri}$ and a binary predicate $E$, satisfying $\forall x\,(\mathrm{Le}\,x \leftrightarrow \neg\mathrm{Ri}\,x)$ and $\forall x\,\forall y\,(E\,xy \to \mathrm{Le}\,x \wedge \mathrm{Ri}\,y)$. F-BiGraphs* is the class of finite bipartite graphs with $|\mathrm{Le}| \ge 3$ and $|\mathrm{Ri}| \ge 3$ in which every vertex is joined by $E$ to at least two vertices and the complement graph $(\mathrm{Le}, \mathrm{Ri}, \mathrm{Le} \times \mathrm{Ri} \setminus E)$ has no isolated vertices.
+**Nice bipartite graphs.** Bipartite graphs are structures $(\mathrm{Le}, \mathrm{Ri}, E)$ in the language with unary predicates $\mathrm{Le}$, $\mathrm{Ri}$ and a binary predicate $E$, satisfying $\forall x\,(\mathrm{Le}\,x \leftrightarrow \neg\mathrm{Ri}\,x)$ and $\forall x\,\forall y\,(E\,xy \to \mathrm{Le}\,x \wedge \mathrm{Ri}\,y)$. F-BiGraphs* (the source's name; "nice" is this page's name for its members) is the class of finite bipartite graphs with $|\mathrm{Le}| \ge 3$ and $|\mathrm{Ri}| \ge 3$ in which every vertex is joined by $E$ to at least two vertices and the complement graph $(\mathrm{Le}, \mathrm{Ri}, \mathrm{Le} \times \mathrm{Ri} \setminus E)$ has no isolated vertices.
 
 **Theorem (Nies).** $\Sigma_2\text{-}\mathrm{Th}(\text{F-BiGraphs*})$ is hereditarily undecidable, in the sense of [hereditarily undecidable theories](interpretability-and-hereditary-undecidability.md) (Corollary 4.7 of the source).
 
@@ -15,7 +15,7 @@ Hereditary undecidability of the $\Sigma_2$ theory of all finite bipartite graph
 
 ## Proof depends on
 
-None.
+- [The ∃∀-theory of finite bipartite graphs is hereditarily undecidable](sigma-2-theory-of-finite-bipartite-graphs-is.md)
 
 ## Expansion
 

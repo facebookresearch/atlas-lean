@@ -20,7 +20,7 @@ None.
 
 ## Expansion
 
-Theorem 2.1 is proved by a direct coding of computations in finite $L$-structures; finite $L$-structures are then defined in finite undirected graphs with at least three vertices by $\Sigma_1$ schemes (Theorem 4.2), and Corollary 4.5 follows by building the coding graph as a bipartite graph, which is possible because all cycles used have even length. A good expansion links the undecidable problem coded in Theorem 2.1.
+Theorem 2.1 is proved by a direct coding of computations in finite $L$-structures; finite $L$-structures are then defined in finite undirected graphs by $\Sigma_1$ schemes (Theorem 4.2), and Corollary 4.5 follows by building the coding graph as a bipartite graph, which is possible because all cycles used have even length. A good expansion links the undecidable problem coded in Theorem 2.1.
 
 ## Sources
 

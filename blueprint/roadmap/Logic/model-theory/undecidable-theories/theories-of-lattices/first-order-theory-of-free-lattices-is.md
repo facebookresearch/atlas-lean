@@ -8,11 +8,12 @@ The first-order theory of the class of free lattices, that of the finitely gener
 2. the first-order theory of the class of finitely generated free lattices is undecidable;
 3. for every cardinal $\kappa \geq 3$, the first-order theory $\mathrm{Th}(\mathbf{F}_\kappa)$ is undecidable.
 
-For $\kappa = 1, 2$ the free lattice is finite (one or four elements), so its theory is decidable; $\mathbf{F}_3$ is the first infinite free lattice.
+The decidability of the universal theory of infinite free lattices is proved in the second paper of the series, J. B. Nation and G. Paolini, "Elementary properties of free lattices II: Decidability of the universal theory", which the source cites in its abstract and Section 1. For $\kappa = 1, 2$ the free lattice is finite (one or four elements), so its theory is decidable; $\mathbf{F}_3$ is the first infinite free lattice. This remark is not in the source; it is in Nation's lecture notes (Chapter 6: $\mathrm{FL}(2)$ has four elements and $\mathrm{FL}(n)$ is infinite for $n \ge 3$).
 
 ## Depends on
 
 - [Free lattices](free-lattices.md)
+- [Complete theory of a first-order structure](../../../first-order-logic/theory-of-structure.md)
 - [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
@@ -26,3 +27,4 @@ The proof reduces from Nies's theorem (1996), as the source recalls, that the $\
 ## Sources
 
 - J. B. Nation and G. Paolini, "Elementary properties of free lattices III: Undecidability of the full theory", *Proceedings of the American Mathematical Society* 154(11):4893–4901, 2026, doi:10.1090/proc/17766; read as arXiv:2511.13149v1, <https://arxiv.org/abs/2511.13149v1>: Theorem 1.1 of arXiv:2511.13149v1 and its proof (Fact 2.3 from Nies, Corollary 2.7, Lemmas 3.1–4.4, Theorem 4.5, and Section 5 for $\mathbf{F}_3$).
+- J. B. Nation, *Notes on Lattice Theory*, lecture notes, read in the author's open copy at <https://math.hawaii.edu/~jb/math618/LTNotes.pdf>: Chapter 6 (the sizes of $\mathrm{FL}(n)$).

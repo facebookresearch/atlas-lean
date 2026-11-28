@@ -10,15 +10,16 @@ $$
 
 where $\mathrm{FO}(\mathbb N_2)$ is the set of true sentences of second-order arithmetic and $\equiv_m$ is many-one equivalence (Theorem 3.2 of Kudinov and Selivanov).
 
-Grzegorczyk had interpreted first-order arithmetic in the lattice of closed subsets of $\mathbb R^n$ for $n \ge 2$, showing undecidability; for $n = 1$ the theory is decidable, a consequence of Rabin's decidability of the monadic second-order theory of the binary tree. The lattices of closed and of open sets are anti-isomorphic, so the results transfer.
+Grzegorczyk had interpreted first-order arithmetic in the lattice of closed subsets of $\mathbb R^n$ for $n \ge 2$, showing undecidability; for $n = 1$ the theory is decidable, a consequence of Rabin's decidability of the monadic second-order theory of the binary tree (see [Rabin's tree theorem](../../../../TheoryOfComputation/omega-automata-and-games/automata-on-infinite-trees/rabin-s-tree-theorem.md)). The lattices of closed and of open sets are anti-isomorphic, so the results transfer.
 
 ## Depends on
 
+- [Complete theory of a first-order structure](../../../first-order-logic/theory-of-structure.md)
 - [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
-None.
+- [Tarski's undefinability theorem](../../../proof-theory/g-del-s-incompleteness-theorems/tarski-s-undefinability-theorem.md)
 
 ## Expansion
 

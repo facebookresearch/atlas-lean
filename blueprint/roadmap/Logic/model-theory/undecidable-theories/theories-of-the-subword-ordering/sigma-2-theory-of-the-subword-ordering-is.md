@@ -1,6 +1,6 @@
 # The Σ₂ theory of the subword ordering is undecidable
 
-Whether an $\exists^*\forall^*$ sentence about words ordered by the subsequence relation is true is undecidable, even with three variables, even without constants, and even for a fixed alphabet, answering a question of Kuske.
+Whether an $\exists^*\forall^*$ sentence about words ordered by the subsequence relation is true is undecidable, even with three variables (in the logic with constants), and even without constants over a fixed alphabet, answering a question of Kuske.
 
 **Theorem (Karandikar and Schnoebelen).** For the [first-order logic of the subword ordering](first-order-logic-of-the-subword-ordering.md):
 

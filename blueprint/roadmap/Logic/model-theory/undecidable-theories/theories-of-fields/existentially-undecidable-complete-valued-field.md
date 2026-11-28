@@ -10,11 +10,12 @@ For every prime $p$ there is a complete discretely valued field of characteristi
 
 (Theorem 1.1, Theorem 5.1). Here the existential theory of a field is the set of existential sentences $\exists \bar{x}\,\psi$ ($\psi$ quantifier-free, no parameters) of the language of rings that hold in it.
 
-This answers a question of Anscombe and Fehm on existentially undecidable henselian fields of mixed characteristic with existentially decidable residue field, in the strong form where even the algebraic part of $E$ is decidable.
+This answers a question of Anscombe and Fehm on existentially undecidable henselian fields of mixed characteristic with existentially decidable residue field and pointed value group (the value group with a constant for the value of $p$; Remark 5.3 of the source), in the strong form where even the algebraic part of $E$ is decidable.
 
 ## Depends on
 
 - [Field](../../../../Algebra/rings-and-fields/field.md)
+- [Complete theory of a first-order structure](../../../first-order-logic/theory-of-structure.md)
 - [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on

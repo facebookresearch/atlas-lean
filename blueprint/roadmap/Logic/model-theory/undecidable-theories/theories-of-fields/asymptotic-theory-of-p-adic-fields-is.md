@@ -8,7 +8,7 @@ For a fixed prime $p$, the set of sentences of the language of valued fields wit
 
 **Theorem (Kartas).** Fix a prime $p$. The asymptotic $L_{\mathrm{val},\times}$-theory of $\{K : [K : \mathbb{Q}_p] < \infty\}$ is undecidable (Theorem A). More precisely, its restriction to $\exists\forall$-sentences is already undecidable (the restatement of Theorem A in Section 4.3), and so is the asymptotic $\exists\forall$-theory of the totally ramified extensions $\{K : [K:\mathbb{Q}_p] = e(K/\mathbb{Q}_p) < \infty\}$ (Section 4.2).
 
-By contrast, by Ax–Kochen and Ershov each finite extension of $\mathbb{Q}_p$, with a suitable cross-section, has a decidable $L_{\mathrm{val},\times}$-theory.
+By contrast, each finite extension of $\mathbb{Q}_p$, with a suitable cross-section, has a decidable $L_{\mathrm{val},\times}$-theory (Remark 1.4.2(b) of the source, which refers to §2.4 of the author's thesis; for $\mathbb Q_p$ itself this is Ax–Kochen and Ershov, Fact 1.4.1).
 
 ## Depends on
 

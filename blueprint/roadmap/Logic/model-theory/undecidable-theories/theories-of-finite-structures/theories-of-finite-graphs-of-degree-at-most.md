@@ -15,6 +15,8 @@ The first-order theory of the class of finite graphs of vertex-degree at most 3,
 - [Hereditarily undecidable theories of classes of structures](interpretability-and-hereditary-undecidability.md)
 - [Finite simple graph](../../../../GraphTheory/planar-graphs-and-minors/graph-minors/fin-graph.md)
 - [Finite-dimensional vector space](../../../../LinearAlgebra/bases-and-dimension/bases-and-coordinates/dimension/finite-dimensional.md)
+- [Field](../../../../Algebra/rings-and-fields/field.md)
+- [Linear map](../../../../Algebra/modules/linear-map.md)
 - [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
@@ -23,7 +25,7 @@ None.
 
 ## Expansion
 
-The proof uses a result of Gurevich and Lewis on the word problem for finite semigroups: the set of quasi-identities true in all semigroups and the set of quasi-identities refuted in some finite cancellation semigroup are recursively inseparable in a strong sense (Lemma 2.2 of the source). Quasi-identities $\psi$ in $n$ letters translate into sentences $\hat{\psi}$ about $n$ partial injective unary functions with a zero, true in all such structures iff $\psi$ is true in all semigroups and refuted in suitable finite structures otherwise; Theorem 2.1 transfers the result to graphs of bounded degree (via Vizing's theorem) and to permutations. A good expansion links the Gurevich–Lewis theorem.
+The proof uses a result of Gurevich and Lewis on the word problem for finite semigroups: the set of quasi-identities true in all semigroups and the set of quasi-identities refuted in some finite cancellation semigroup are recursively inseparable in a strong sense (Lemma 2.2 of the source). Quasi-identities $\psi$ in $n$ letters translate into sentences $\hat{\psi}$ about $n$ partial injective unary functions with a zero, true in all such structures iff $\psi$ is true in all semigroups, and refuted in a finite such structure whenever $\psi$ is refuted in a finite cancellation semigroup with zero and identity (proof of Theorem 2.3, using Lemma 2.2.1); Theorem 2.1 transfers the result to graphs of bounded degree (via Vizing's theorem) and to permutations. A good expansion links the Gurevich–Lewis theorem.
 
 ## Sources
 
