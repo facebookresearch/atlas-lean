@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
+public import MathlibExt.GameTheory.PrincessAndRosesSimplification
 public import MathlibExt.GameTheory.SpragueGrundyZero
 public import WantedExt.Combinatorics.SlowANimWanted
 public import Mathlib.Algebra.Ring.Parity
@@ -40,21 +41,6 @@ namespace MetaMathlibExt
 open SpragueGrundy
 
 /-! ### The Princess and the Roses game -/
-
-/-- **The Princess and the Roses game.** For $k \in \mathbb{N}$ and $p \in \mathbb{N}^k$, the
-Princess and the Roses game (P&R) with $k$ labelled piles started at $p$ is the impartial game
-whose positions are the $q \in \mathbb{N}^k$, with $q_i$ objects on pile $i$, and whose moves
-remove one object from one nonempty pile, or one object from each of two distinct nonempty
-piles. It is Slow$A$-Nim $\mathrm{SN}(k, \{1, 2\})$ started at $p$, and its rank is the total
-number of objects $\sum_i q_i$.
-
-Pile order is not normalized; the paper's convention of listing piles in non-increasing order
-does not change the game.
-
-Source: Zev Friedman, *Sprague-Grundy Values for 4-Pile Princess and the Roses*,
-INTEGERS 26 (2026), Article G4, Section 2.1. -/
-public def princessRoses {k : ℕ} (p : Fin k → ℕ) : ImpartialGame :=
-  { slowANimGame k {1, 2} with start := p }
 
 /-- **Options in Princess and the Roses.** Let $p$ and $q$ be positions of Slow$A$-Nim on $k$
 stacks with $A = \{1, 2\}$, which is the Princess and the Roses game. Then $q$ is an option of
@@ -173,75 +159,6 @@ public theorem_wanted princessRoses_four_piles_equiv_add_three_largest (a b c d 
 
 /-! ### Simplified P&R -/
 
-/-- **Moves of simplified P&R.** The simplified Princess and the Roses game on four sorted piles
-$(a, b, c, d)$ has seven moves, given as the amounts removed from $(a, b, c, d)$: $(1, 0, 0, 0)$,
-$(0, 1, 0, 0)$, $(0, 0, 0, 1)$, $(1, 1, 0, 0)$, $(1, 0, 0, 1)$, $(0, 1, 0, 1)$ and $(0, 0, 1, 1)$.
-
-These are the moves of four-pile Princess and the Roses except taking one object from the third
-pile alone or together with the first or second pile, so the third pile may be taken from only
-together with the fourth.
-
-Source: Zev Friedman, *Sprague-Grundy Values for 4-Pile Princess and the Roses*,
-INTEGERS 26 (2026), Article G4, Section 3.1. -/
-public def simplifiedPrincessRosesMoveList : List (ℕ × ℕ × ℕ × ℕ) :=
-  [(1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 0, 1), (1, 1, 0, 0), (1, 0, 0, 1), (0, 1, 0, 1),
-    (0, 0, 1, 1)]
-
-/-- **Options in simplified Princess and the Roses.** The seven simplified Princess and the Roses
-moves are the removal vectors $(1, 0, 0, 0)$, $(0, 1, 0, 0)$, $(0, 0, 0, 1)$, $(1, 1, 0, 0)$,
-$(1, 0, 0, 1)$, $(0, 1, 0, 1)$ and $(0, 0, 1, 1)$. For a quadruple $(a, b, c, d)$ of natural
-numbers, its options are the quadruples $(a - r_1, b - r_2, c - r_3, d - r_4)$ for those moves
-$(r_1, r_2, r_3, r_4)$ with $r_1 \le a$, $r_2 \le b$, $r_3 \le c$ and $r_4 \le d$ whose result is
-in non-increasing order: $a - r_1 \ge b - r_2 \ge c - r_3 \ge d - r_4$.
-
-Source: Zev Friedman, *Sprague-Grundy Values for 4-Pile Princess and the Roses*,
-INTEGERS 26 (2026), Article G4, Sections 2.2 and 3.1. -/
-public def simplifiedPrincessRosesMoves (p : ℕ × ℕ × ℕ × ℕ) : Finset (ℕ × ℕ × ℕ × ℕ) :=
-  (simplifiedPrincessRosesMoveList.toFinset.filter fun m =>
-      m.1 ≤ p.1 ∧ m.2.1 ≤ p.2.1 ∧ m.2.2.1 ≤ p.2.2.1 ∧ m.2.2.2 ≤ p.2.2.2 ∧
-        p.2.1 - m.2.1 ≤ p.1 - m.1 ∧ p.2.2.1 - m.2.2.1 ≤ p.2.1 - m.2.1 ∧
-        p.2.2.2 - m.2.2.2 ≤ p.2.2.1 - m.2.2.1).image
-    fun m => (p.1 - m.1, p.2.1 - m.2.1, p.2.2.1 - m.2.2.1, p.2.2.2 - m.2.2.2)
-
-/-- **Characterization of simplified P&R options.** For natural numbers $a, b, c, d$ and
-$a', b', c', d'$, the position $[a', b', c', d']$ is an option of the simplified P&R position
-$[a, b, c, d]$ if and only if $a' \le a$, $b' \le b$, $c' \le c$, $d' \le d$,
-$a' \ge b' \ge c' \ge d'$, and the amounts removed $(a - a', b - b', c - c', d - d')$ form one of
-the seven simplified P&R moves $(1, 0, 0, 0)$, $(0, 1, 0, 0)$, $(0, 0, 0, 1)$, $(1, 1, 0, 0)$,
-$(1, 0, 0, 1)$, $(0, 1, 0, 1)$ and $(0, 0, 1, 1)$.
-
-Source: Zev Friedman, *Sprague-Grundy Values for 4-Pile Princess and the Roses*,
-INTEGERS 26 (2026), Article G4, Sections 2.2 and 3.1. -/
-public theorem mem_simplifiedPrincessRosesMoves {a b c d a' b' c' d' : ℕ} :
-    (a', b', c', d') ∈ simplifiedPrincessRosesMoves (a, b, c, d) ↔
-      a' ≤ a ∧ b' ≤ b ∧ c' ≤ c ∧ d' ≤ d ∧ b' ≤ a' ∧ c' ≤ b' ∧ d' ≤ c' ∧
-        (a - a', b - b', c - c', d - d') ∈ simplifiedPrincessRosesMoveList := by
-  simp only [simplifiedPrincessRosesMoves, Finset.mem_image, Finset.mem_filter,
-    List.mem_toFinset, Prod.mk.injEq, Prod.exists]
-  constructor
-  · rintro ⟨m₁, m₂, m₃, m₄, ⟨hm, h₁, h₂, h₃, h₄, h₅, h₆, h₇⟩, rfl, rfl, rfl, rfl⟩
-    rw [Nat.sub_sub_self h₁, Nat.sub_sub_self h₂, Nat.sub_sub_self h₃, Nat.sub_sub_self h₄]
-    exact ⟨by omega, by omega, by omega, by omega, h₅, h₆, h₇, hm⟩
-  · rintro ⟨h₁, h₂, h₃, h₄, h₅, h₆, h₇, hm⟩
-    exact ⟨a - a', b - b', c - c', d - d', ⟨hm, by omega⟩, by omega⟩
-
-/-- **Simplified P&R moves decrease the number of objects.** For all quadruples $(a, b, c, d)$
-and $(a', b', c', d')$ of natural numbers, if $(a', b', c', d')$ is an option of $(a, b, c, d)$
-in simplified Princess and the Roses, then $a' + b' + c' + d' < a + b + c + d$.
-
-Source: Zev Friedman, *Sprague-Grundy Values for 4-Pile Princess and the Roses*,
-INTEGERS 26 (2026), Article G4, Section 3.1. -/
-public theorem simplifiedPrincessRosesMoves_rank_lt {p q : ℕ × ℕ × ℕ × ℕ}
-    (h : q ∈ simplifiedPrincessRosesMoves p) :
-    q.1 + q.2.1 + q.2.2.1 + q.2.2.2 < p.1 + p.2.1 + p.2.2.1 + p.2.2.2 := by
-  obtain ⟨a, b, c, d⟩ := p
-  obtain ⟨a', b', c', d'⟩ := q
-  have := mem_simplifiedPrincessRosesMoves.mp h
-  simp only [simplifiedPrincessRosesMoveList, List.mem_cons, List.not_mem_nil, or_false,
-    Prod.mk.injEq] at this
-  show a' + b' + c' + d' < a + b + c + d
-  omega
-
 /-- **A terminal position of simplified P&R.** In simplified Princess and the Roses, the
 position $(3, 3, 3, 0)$ has no options.
 
@@ -250,34 +167,6 @@ INTEGERS 26 (2026), Article G4, Section 3.1. -/
 public theorem simplifiedPrincessRosesMoves_three_three_three_zero :
     simplifiedPrincessRosesMoves (3, 3, 3, 0) = ∅ := by
   decide
-
-/-- **Simplified Princess and the Roses.** For a quadruple $p$ of natural numbers, simplified
-Princess and the Roses started at $p$ is the impartial game whose positions are all quadruples
-$(a, b, c, d)$ of natural numbers, whose options from a position are its simplified Princess and
-the Roses options (the results of the seven simplified moves that take no pile below zero and
-leave the piles in non-increasing order), whose rank is the total number of objects
-$a + b + c + d$, and whose start position is $p$.
-
-Source: Zev Friedman, *Sprague-Grundy Values for 4-Pile Princess and the Roses*,
-INTEGERS 26 (2026), Article G4, Section 3.1. -/
-public def simplifiedPrincessRoses (p : ℕ × ℕ × ℕ × ℕ) : ImpartialGame where
-  Pos := ℕ × ℕ × ℕ × ℕ
-  eqDec := inferInstance
-  moves := simplifiedPrincessRosesMoves
-  rank := fun q => q.1 + q.2.1 + q.2.2.1 + q.2.2.2
-  rank_lt := fun _ _ h => simplifiedPrincessRosesMoves_rank_lt h
-  start := p
-
-/-- **Four-pile P&R is equivalent to simplified P&R.** For natural numbers $a \ge b \ge c \ge d$
-and every natural number $n$, the Princess and the Roses position $(a, b, c, d)$ is equivalent to
-the simplified P&R position $[a + n, b + n, c + n, d]$; that is, the two have the same
-Sprague–Grundy value.
-
-Source: Zev Friedman, *Sprague-Grundy Values for 4-Pile Princess and the Roses*,
-INTEGERS 26 (2026), Article G4, Lemma 11 (`integers-2026-G4-lem-11`). -/
-public theorem_wanted princessRoses_equiv_simplifiedPrincessRoses (a b c d n : ℕ)
-    (hab : b ≤ a) (hbc : c ≤ b) (hcd : d ≤ c) :
-    Equiv (princessRoses ![a, b, c, d]) (simplifiedPrincessRoses (a + n, b + n, c + n, d))
 
 /-! ### The P&R Helper game -/
 

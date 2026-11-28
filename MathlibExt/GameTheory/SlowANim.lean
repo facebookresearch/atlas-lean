@@ -22,6 +22,14 @@ public import MathlibExt.GameTheory.SpragueGrundy
 A move removes one token from each selected stack. When all but one stack are played,
 the change in the total token count and the parity of the omitted stack determine the
 new residue and the number of odd stacks.
+
+## References
+
+- Matthieu Dufour and Silvia Heubach, *On the 𝒫-Positions of Some Infinite Families of
+  Slow A-Nim*, INTEGERS 26 (2026), Article G3, pp. 1–25, Section 1 for the move rules and
+  Lemma 5 for the parity calculation.
+- Zev Friedman, *Sprague-Grundy Values for 4-Pile Princess and the Roses*,
+  INTEGERS 26 (2026), Article G4, pp. 1–40, Section 2.1 for the one- or two-stack game.
 -/
 
 namespace MetaMathlibExt
@@ -37,6 +45,21 @@ Source: Matthieu Dufour and Silvia Heubach, *On the 𝒫-Positions of Some Infin
 Slow`A`-Nim*, INTEGERS 26 (2026), Article G3, Definition in Section 1. -/
 public def slowANimAfter {n : ℕ} (p : Fin n → ℕ) (S : Finset (Fin n)) : Fin n → ℕ :=
   fun i => if i ∈ S then p i - 1 else p i
+
+/-- **Tokens removed by a Slow A-Nim move.** If each selected stack is nonempty,
+then the number of tokens remaining plus the number of selected stacks equals the
+original number of tokens. -/
+public theorem sum_slowANimAfter_add_card {n : ℕ} (p : Fin n → ℕ) (S : Finset (Fin n))
+    (hS : ∀ i ∈ S, 1 ≤ p i) : (∑ i, slowANimAfter p S i) + S.card = ∑ i, p i := by
+  calc
+    _ = ∑ i, (slowANimAfter p S i + if i ∈ S then 1 else 0) := by
+      simp [Finset.sum_add_distrib]
+    _ = _ := by
+      apply Finset.sum_congr rfl
+      intro i _
+      by_cases hi : i ∈ S
+      · simp [slowANimAfter, hi, Nat.sub_add_cancel (hS i hi)]
+      · simp [slowANimAfter, hi]
 
 /-- **Options in Slow A-Nim.** Let $A$ be a finite set of natural numbers and $p$ a position on
 $n$ stacks. The options of $p$ in Slow$A$-Nim are the positions obtained from $p$ by choosing a
@@ -85,6 +108,43 @@ public def slowANimGame (n : ℕ) (A : Finset ℕ) : SpragueGrundy.ImpartialGame
   rank := fun p => ∑ i, p i
   rank_lt := sum_lt_of_mem_slowANimMoves A
   start := fun _ => 0
+
+/-- **Options in Slow$\{1, 2\}$-Nim.** In Slow$A$-Nim with $A = \{1, 2\}$ on $k$ labelled
+stacks (the Princess and the Roses game), a position $q$ is an option of $p$ if and only if
+$q_i \le p_i \le q_i + 1$ for every stack $i$ and
+$\sum_i q_i < \sum_i p_i \le \sum_i q_i + 2$.
+
+Source: Zev Friedman, *Sprague-Grundy Values for 4-Pile Princess and the Roses*,
+INTEGERS 26 (2026), Article G4, Section 2.1 (the move rules). -/
+public theorem mem_slowANimGame_moves_one_two_iff {k : ℕ} {p q : Fin k → ℕ} :
+    q ∈ (slowANimGame k {1, 2}).moves p ↔
+      (∀ i, q i ≤ p i ∧ p i ≤ q i + 1) ∧
+        (∑ i, q i) < (∑ i, p i) ∧ (∑ i, p i) ≤ (∑ i, q i) + 2 := by
+  change q ∈ slowANimMoves {1, 2} p ↔ _
+  simp only [slowANimMoves, Finset.mem_image, Finset.mem_filter, Finset.mem_univ, true_and,
+    Finset.mem_insert, Finset.mem_singleton]
+  constructor
+  · rintro ⟨S, ⟨-, hcard, hpos⟩, rfl⟩
+    refine ⟨fun i => ?_, ?_⟩
+    · unfold slowANimAfter
+      split_ifs <;> omega
+    · have hsum := sum_slowANimAfter_add_card p S hpos
+      omega
+  · rintro ⟨hpq, hlo, hhi⟩
+    let S := Finset.univ.filter fun i => q i < p i
+    have hpos (i : Fin k) (hi : i ∈ S) : 1 ≤ p i :=
+      Nat.one_le_of_lt (Finset.mem_filter.mp hi).2
+    have heq : slowANimAfter p S = q := by
+      funext i
+      have hi := hpq i
+      by_cases hlt : q i < p i
+      · simp [slowANimAfter, S, hlt]
+        omega
+      · simp [slowANimAfter, S, hlt]
+        omega
+    have hsum := sum_slowANimAfter_add_card p S hpos
+    simp only [heq] at hsum
+    exact ⟨S, ⟨Finset.card_pos.mp (by omega), by omega, hpos⟩, heq⟩
 
 /-- **The empty position has no options.** For every finite set $A$ of natural numbers, the
 position of Slow$A$-Nim on $n$ stacks in which every stack is empty has no options.
@@ -259,15 +319,7 @@ public theorem slowANim_n_sub_one_option_of_reduced (n : ℕ) (hn : 2 ≤ n)
         if Odd (p j) then n - (Finset.univ.filter fun i => Odd (p i)).card + 1
         else n - (Finset.univ.filter fun i => Odd (p i)).card - 1 := by
   have hsum : (∑ i, slowANimAfter p S i) + (n - 1) = ∑ i, p i := by
-    calc
-      _ = ∑ i, (slowANimAfter p S i + if i ∈ S then 1 else 0) := by
-        simp [Finset.sum_add_distrib, ← Finset.sum_filter, hS]
-      _ = _ := by
-        apply Finset.sum_congr rfl
-        intro i _
-        by_cases hi : i ∈ S
-        · simp [slowANimAfter, hi, Nat.sub_add_cancel (hSp i hi)]
-        · simp [slowANimAfter, hi]
+    simpa only [hS] using sum_slowANimAfter_add_card p S hSp
   constructor
   · set k := n - 1
     have hk : 0 < k := by dsimp [k]; omega

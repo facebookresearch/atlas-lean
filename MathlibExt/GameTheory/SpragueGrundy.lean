@@ -275,20 +275,32 @@ private theorem sum_mem_right (G H : ImpartialGame) (a : G.Pos) (b : H.Pos)
   right
   exact Finset.mem_image.mpr ⟨b', h, rfl⟩
 
-private theorem sum_cases (G H : ImpartialGame) (a : G.Pos) (b : H.Pos)
-    (q : (gameSum G H).Pos)
-    (h : q ∈ (gameSum G H).moves ((a, b) : (gameSum G H).Pos)) :
-    (∃ a', ∃ _ : a' ∈ G.moves a, q = ((a', b) : (gameSum G H).Pos)) ∨
+/-- **Options in a sum of impartial games.** Let $G$ and $H$ be impartial games and let $a$ and
+$b$ be positions of $G$ and $H$, respectively. A position $q$ of $G + H$ is an option of $(a, b)$
+if and only if $q = (a', b)$ for some option $a'$ of $a$ in $G$, or $q = (a, b')$ for some option
+$b'$ of $b$ in $H$.
+
+Source: Zev Friedman, *Sprague-Grundy Values for 4-Pile Princess and the Roses*,
+INTEGERS 26 (2026), Article G4, Section 1.5 (the sum of games). -/
+theorem mem_gameSum_moves_iff (G H : ImpartialGame) (a : G.Pos) (b : H.Pos)
+    (q : (gameSum G H).Pos) :
+    q ∈ (gameSum G H).moves ((a, b) : (gameSum G H).Pos) ↔
+      (∃ a', ∃ _ : a' ∈ G.moves a, q = ((a', b) : (gameSum G H).Pos)) ∨
       (∃ b', ∃ _ : b' ∈ H.moves b, q = ((a, b') : (gameSum G H).Pos)) := by
-  let := (gameSum G H).eqDec
-  have hdisj := Finset.mem_union.mp h
-  cases hdisj with
-  | inl hl =>
-    obtain ⟨a', ha', heq⟩ := Finset.mem_image.mp hl
-    exact Or.inl ⟨a', ha', heq.symm⟩
-  | inr hr =>
-    obtain ⟨b', hb', heq⟩ := Finset.mem_image.mp hr
-    exact Or.inr ⟨b', hb', heq.symm⟩
+  constructor
+  · intro h
+    let := (gameSum G H).eqDec
+    have hdisj := Finset.mem_union.mp h
+    cases hdisj with
+    | inl hl =>
+      obtain ⟨a', ha', heq⟩ := Finset.mem_image.mp hl
+      exact Or.inl ⟨a', ha', heq.symm⟩
+    | inr hr =>
+      obtain ⟨b', hb', heq⟩ := Finset.mem_image.mp hr
+      exact Or.inr ⟨b', hb', heq.symm⟩
+  · rintro (⟨a', ha', rfl⟩ | ⟨b', hb', rfl⟩)
+    · exact sum_mem_left G H a b a' ha'
+    · exact sum_mem_right G H a b b' hb'
 
 private theorem IsP_sum_unfold (G H : ImpartialGame) (a : G.Pos) (b : H.Pos) :
     IsP (gameSum G H) ((a, b) : (gameSum G H).Pos) ↔
@@ -321,7 +333,7 @@ private theorem isP_sum_iff_aux (G H : ImpartialGame) (t : ℕ) (a : G.Pos) (b :
     have hsum_empty : (gameSum G H).moves ((a, b) : (gameSum G H).Pos) = ∅ := by
       rw [Finset.eq_empty_iff_forall_notMem]
       intro q hq
-      have hc := sum_cases G H a b q hq
+      have hc := (mem_gameSum_moves_iff G H a b q).mp hq
       cases hc with
       | inl hl =>
         obtain ⟨a', ha', -⟩ := hl
@@ -399,7 +411,7 @@ private theorem isP_sum_iff_aux (G H : ImpartialGame) (t : ℕ) (a : G.Pos) (b :
           have hP : IsP (gameSum G H) ((a', b) : (gameSum G H).Pos) := hi.mpr hxor0
           exact hall _ hq hP
     · intro hxor q hq hP
-      have hc := sum_cases G H a b q hq
+      have hc := (mem_gameSum_moves_iff G H a b q).mp hq
       cases hc with
       | inl hl =>
         obtain ⟨a', ha', heq⟩ := hl
