@@ -31,6 +31,7 @@ public import Mathlib.Data.Fin.Tuple.NatAntidiagonal
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Data.Nat.Choose.Basic
 public import MathlibExt.Combinatorics.HockeyStick
+public import MathlibExt.Combinatorics.HockeyStickLatticeSequences
 public import MathlibExt.Combinatorics.HockeyStickTableauCardinality
 
 set_option autoImplicit false
@@ -38,17 +39,6 @@ set_option autoImplicit false
 @[expose] public section
 
 namespace MetaMathlibExt
-
-/-- The set `𝒞(k, r)` of compositions of some `j ≤ k` with every part in `[2, r + 1]`, as lists
-of parts.
-
-Source: Molly Lynch and Michael Weselcouch, *A Generalized Hockey Stick Theorem*, Journal of
-Integer Sequences 28 (2025), Article 25.7.7, Section 2.2 (definition of `c(k, r)` and `𝒞(k, r)`). -/
-def hockeyCompositions (k r : ℕ) : Finset (List ℕ) :=
-  (Finset.range (k + 1)).biUnion fun j =>
-    (Finset.range (j + 1)).biUnion fun l =>
-      ((Finset.Nat.antidiagonalTuple l j).filter fun x => ∀ i, 2 ≤ x i ∧ x i ≤ r + 1).image
-        List.ofFn
 
 /-- `𝒞(5, 3) = {∅, (2), (3), (4), (2, 2), (2, 3), (3, 2)}`.
 
@@ -65,15 +55,6 @@ Integer Sequences 28 (2025), Article 25.7.7, Section 2.3 (labeled tableaux). -/
 theorem card_labeledTableaux_small :
     (labeledTableaux [2, 2] 2).card = 4 ∧ (labeledTableaux [] 3).card = 1 := by
   decide
-
-/-- The lattice sequences `𝓛(m, h)` of width `m` and height `h`:
-`0 = L_0 ≤ L_1 ≤ ⋯ ≤ L_{m+1} = h`, as maps `Fin (m + 2) → Fin (h + 1)`.
-
-Source: Molly Lynch and Michael Weselcouch, *A Generalized Hockey Stick Theorem*, Journal of
-Integer Sequences 28 (2025), Article 25.7.7, Section 2.4 (lattice sequences). -/
-def latticeSequences (m h : ℕ) : Finset (Fin (m + 2) → Fin (h + 1)) :=
-  Finset.univ.filter fun L =>
-    L 0 = 0 ∧ (∀ i : Fin (m + 1), L i.castSucc ≤ L i.succ) ∧ L (Fin.last (m + 1)) = Fin.last h
 
 /-- `|𝓛(1, 1)| = 2` and `|𝓛(2, 2)| = 6 = C(4, 2)`.
 
@@ -134,18 +115,6 @@ theorem_wanted card_latticeSequences_mu_ge (r k n i : ℕ) (hi : i ≤ k) :
         (r : ℤ) * latticeOmega L (r * k + n + 1) ≤ latticeMu L (r * k + n + 1) ∧
           latticeOmega L (r * k + n + 1) = k - i).card =
       ((r + 1) * i + n).choose i
-
-/-- For `α ∈ 𝒞(k, r)`, the number of labeled lattice sequences `(λ, L)` of type `(k, n, r)` with
-`sh(λ) = α` (`λ ∈ Λ(α, r)`, `L ∈ 𝓛(rk + n + 1 + ℓ(α), k - |α|)`) is
-`(∏_j C(r, α_j - 1)) · C((r + 1)k + n + 1 - |α| + ℓ(α), k - |α|)`.
-
-Source: Molly Lynch and Michael Weselcouch, *A Generalized Hockey Stick Theorem*, Journal of
-Integer Sequences 28 (2025), Article 25.7.7, Proposition 11 (`jis-2025-25.7.7-prop-11`). -/
-theorem_wanted card_labeledLatticeSequences (k n r : ℕ) (α : List ℕ)
-    (hα : α ∈ hockeyCompositions k r) :
-    (labeledTableaux α r ×ˢ latticeSequences (r * k + n + 1 + α.length) (k - α.sum)).card =
-      (α.map fun a => r.choose (a - 1)).prod *
-        ((r + 1) * k + n + 1 - α.sum + α.length).choose (k - α.sum)
 
 /-- The total weight `∑ sgn(λ)` over the labeled lattice sequences `(λ, L)` of type `(k, n, r)`
 is `∑_{i=0}^k C((r + 1)i + n, i)`.
