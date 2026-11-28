@@ -22,9 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.ComparativeDivisibilityWanted
+public import CSLibExt.Complexity.NPComplete.ComparativeDivisibilityDistinctDefs
 
 @[expose] public section
 
@@ -55,20 +53,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: every entry is positive (`ComparativeDivisibility`), the
-`aᵢ` are pairwise different, and the `bⱼ` are pairwise different. -/
-def WellFormed (i : ComparativeDivisibilityInstance) : Prop :=
-  ComparativeDivisibility.WellFormed i ∧ i.1.Nodup ∧ i.2.Nodup
-
-open Classical in
-/-- COMPARATIVE DIVISIBILITY with distinct elements as a decision problem over bitstrings. -/
-noncomputable def comparativeDivisibilityDistinctDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ComparativeDivisibilityInstance) x with
-  | some i => decide (WellFormed i ∧ ComparativeDivisibilityFeasible i)
-  | none => false
 
 /-- **COMPARATIVE DIVISIBILITY with distinct elements is NP-complete.** Source: Garey and
 Johnson (1979), [AN4], comment (Garey and Johnson, unpublished). -/

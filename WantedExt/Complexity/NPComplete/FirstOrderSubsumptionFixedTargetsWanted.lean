@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.FirstOrderSubsumptionWanted
+public import CSLibExt.Complexity.NPComplete.FirstOrderSubsumptionFixedTargetsDefs
 
 @[expose] public section
 
@@ -59,21 +57,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance for the fixed `n`: it is a well-formed FIRST ORDER
-SUBSUMPTION instance, and `F` consists of exactly `n` distinct expressions. -/
-def WellFormed (n : ℕ) (i : FirstOrderSubsumptionInstance) : Prop :=
-  FirstOrderSubsumption.WellFormed i ∧ i.2.2.2.length = n ∧ i.2.2.2.Nodup
-
-open Classical in
-/-- FIRST ORDER SUBSUMPTION with exactly `n` target expressions, as a decision problem over
-bitstrings. -/
-noncomputable def firstOrderSubsumptionFixedTargetsDec (n : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := FirstOrderSubsumptionInstance) x with
-  | some i => decide (WellFormed n i ∧ FirstOrderSubsumptionFeasible i)
-  | none => false
 
 /-- **FIRST ORDER SUBSUMPTION with a fixed number `n ≥ 3` of target expressions is
 NP-complete.** Source: Garey and Johnson (1979), [LO18]; Baxter (1976, 1977). -/

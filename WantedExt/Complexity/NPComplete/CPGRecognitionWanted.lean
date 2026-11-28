@@ -20,12 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Hasse
-public import Mathlib.Combinatorics.SimpleGraph.Paths
-public import Mathlib.Combinatorics.SimpleGraph.Prod
+public import CSLibExt.Complexity.NPComplete.CPGRecognitionDefs
 
 @[expose] public section
 
@@ -70,48 +65,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `0, …, n - 1`) and edge list. -/
-abbrev CPGRecognitionInstance := ℕ × List (ℕ × ℕ)
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : CPGRecognitionInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `0, …, n - 1` (no
-duplicate edges in either orientation, no self-loops, endpoints in range). -/
-def WellFormed (i : CPGRecognitionInstance) : Prop :=
-  i.2.Nodup ∧ ∀ e ∈ i.2, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2
-
-/-- The `N × N` grid graph: grid points `Fin N × Fin N`, two of them adjacent when they differ by
-`1` in one coordinate and agree in the other. -/
-abbrev grid (N : ℕ) : SimpleGraph (Fin N × Fin N) :=
-  SimpleGraph.pathGraph N □ SimpleGraph.pathGraph N
-
-/-- `P` is a CPG representation of `G` on the `N × N` grid: every `P v` (a walk of the grid from
-`a v` to `b v`) is a path with at least one grid edge; two distinct paths have no common grid edge,
-and every common grid point is an endpoint of one of them (they are interiorly disjoint); and two
-distinct vertices are adjacent if and only if their paths have a common grid point (touch). -/
-def IsCPGRepresentation {V : Type*} (G : SimpleGraph V) (N : ℕ) (a b : V → Fin N × Fin N)
-    (P : ∀ v, (grid N).Walk (a v) (b v)) : Prop :=
-  (∀ v, (P v).IsPath ∧ 0 < (P v).length) ∧
-    (∀ u v, u ≠ v → (∀ e, e ∈ (P u).edges → e ∉ (P v).edges) ∧
-      ∀ x, x ∈ (P u).support → x ∈ (P v).support → x = a u ∨ x = b u ∨ x = a v ∨ x = b v) ∧
-    ∀ u v, u ≠ v → (G.Adj u v ↔ ∃ x, x ∈ (P u).support ∧ x ∈ (P v).support)
-
-/-- The graph of the instance is a CPG graph: it has a CPG representation on some grid. -/
-def CPGRecognitionFeasible (i : CPGRecognitionInstance) : Prop :=
-  ∃ (N : ℕ) (a b : Fin i.1 → Fin N × Fin N) (P : ∀ v, (grid N).Walk (a v) (b v)),
-    IsCPGRepresentation (Graph i) N a b P
-
-open Classical in
-/-- RECOGNITION OF CPG GRAPHS as a decision problem over bitstrings. -/
-noncomputable def cpgRecognitionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := CPGRecognitionInstance) x with
-  | some i => decide (WellFormed i ∧ CPGRecognitionFeasible i)
-  | none => false
 
 /-- **RECOGNITION OF CPG GRAPHS is NP-complete.** Source: Champseix, Galby, Munaro and Ries
 (2021), Theorems 4 and 10. -/

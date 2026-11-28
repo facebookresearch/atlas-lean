@@ -24,12 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Basic.Real.Basic
-public import Mathlib.Combinatorics.SimpleGraph.Basic
-public import Mathlib.Order.Defs.Unbundled
+public import CSLibExt.Complexity.NPComplete.CocomparabilityIntervalDimensionRecognitionDefs
 
 @[expose] public section
 
@@ -77,51 +72,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `0, …, n - 1`) and edge list. -/
-abbrev CocomparabilityIntervalDimensionRecognitionInstance := ℕ × List (ℕ × ℕ)
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : CocomparabilityIntervalDimensionRecognitionInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `0, …, n - 1` (no
-duplicate edges in either orientation, no self-loops, endpoints in range). -/
-def WellFormed (i : CocomparabilityIntervalDimensionRecognitionInstance) : Prop :=
-  i.2.Nodup ∧ ∀ e ∈ i.2, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2
-
-/-- The order `r` on `Fin n` has interval dimension at most `d`: there are `k ≤ d` interval
-orders (in the `j`-th one, element `v` has the closed real interval `[l j v, h j v]`, and `u`
-precedes `v` when `h j u < l j v`) such that `r u v` holds if and only if `u` precedes `v` in
-each of them. -/
-def HasIntervalDimensionAtMost {n : ℕ} (r : Fin n → Fin n → Prop) (d : ℕ) : Prop :=
-  ∃ k ≤ d, ∃ l h : Fin k → Fin n → ℝ, (∀ j v, l j v ≤ h j v) ∧
-    ∀ u v : Fin n, r u v ↔ ∀ j : Fin k, h j u < l j v
-
-/-- `H` is the co-comparability graph of a poset of interval dimension at most `d`: some strict
-partial order `r` on the vertices (Mathlib's `IsStrictOrder`) makes two vertices adjacent in the
-complement `Hᶜ` exactly when they are comparable under `r`, and `r` has interval dimension at
-most `d`. -/
-def IsCocomparabilityGraphOfIntervalDimensionAtMost {n : ℕ} (H : SimpleGraph (Fin n))
-    (d : ℕ) : Prop :=
-  ∃ r : Fin n → Fin n → Prop, IsStrictOrder (Fin n) r ∧
-    (∀ u v, Hᶜ.Adj u v ↔ r u v ∨ r v u) ∧ HasIntervalDimensionAtMost r d
-
-/-- The graph of the instance is the co-comparability graph of a poset of interval dimension at
-most `d`. -/
-def CocomparabilityIntervalDimensionRecognitionFeasible (d : ℕ)
-    (i : CocomparabilityIntervalDimensionRecognitionInstance) : Prop :=
-  IsCocomparabilityGraphOfIntervalDimensionAtMost (Graph i) d
-
-open Classical in
-/-- RECOGNITION OF CO-COMPARABILITY GRAPHS OF POSETS OF INTERVAL DIMENSION `d` as a decision
-problem over bitstrings. -/
-noncomputable def cocomparabilityIntervalDimensionRecognitionDec (d : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := CocomparabilityIntervalDimensionRecognitionInstance) x with
-  | some i => decide (WellFormed i ∧ CocomparabilityIntervalDimensionRecognitionFeasible d i)
-  | none => false
 
 /-- **RECOGNITION OF CO-COMPARABILITY GRAPHS OF POSETS OF INTERVAL DIMENSION d is
 NP-complete.** For every fixed `d ≥ 3`, deciding whether a graph is the co-comparability graph

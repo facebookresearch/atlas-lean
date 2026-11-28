@@ -24,9 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.UnificationForFinitelyPresentedAlgebrasWanted
+public import CSLibExt.Complexity.NPComplete.ACMatchingDefs
 
 @[expose] public section
 
@@ -68,47 +66,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Equality modulo associativity and commutativity of the AC symbols `acs` (indices of binary
-symbols): `s` and `t` are related by every equivalence relation that is compatible with every
-function symbol and relates `f(u, f(v, w))` with `f(f(u, v), w)` and `f(u, v)` with `f(v, u)`
-for every AC symbol `f` and all terms `u`, `v`, `w`. -/
-def ACEquiv {ar : List ℕ} (acs : List ℕ) {β : Type} (s t : (lang ar).Term β) : Prop :=
-  ∀ R : (lang ar).Term β → (lang ar).Term β → Prop, Equivalence R →
-    (∀ {l : ℕ} (f : (lang ar).Functions l) (u v : Fin l → (lang ar).Term β),
-      (∀ k, R (u k) (v k)) → R (Term.func f u) (Term.func f v)) →
-    (∀ f : (lang ar).Functions 2, f.1.val ∈ acs → ∀ u v w : (lang ar).Term β,
-      R (f.apply₂ u (f.apply₂ v w)) (f.apply₂ (f.apply₂ u v) w)) →
-    (∀ f : (lang ar).Functions 2, f.1.val ∈ acs → ∀ u v : (lang ar).Term β,
-      R (f.apply₂ u v) (f.apply₂ v u)) →
-    R s t
-
-/-- An instance: the arities of the function symbols, the indices of the AC symbols, the number
-of variables `|V|`, and the token lists of the pattern `s` and of the subject `t`. -/
-abbrev ACMatchingInstance := List ℕ × List ℕ × ℕ × List (ℕ × ℕ) × List (ℕ × ℕ)
-
-/-- Well-formedness of an instance: every AC symbol is a binary symbol, `s` is a term with
-variables `Fin |V|`, and `t` is a ground term. -/
-def WellFormed (i : ACMatchingInstance) : Prop :=
-  (∀ k ∈ i.2.1, i.1[k]? = some 2) ∧
-    (∃ s : (lang i.1).Term (Fin i.2.2.1), tokens Fin.val s = i.2.2.2.1) ∧
-      ∃ t : (lang i.1).Term Empty, tokens Empty.elim t = i.2.2.2.2
-
-/-- Some substitution `σ` of ground terms for the variables makes `σ(s)` equal to `t` modulo
-associativity and commutativity of the AC symbols. -/
-def ACMatchingFeasible (i : ACMatchingInstance) : Prop :=
-  ∃ s : (lang i.1).Term (Fin i.2.2.1), tokens Fin.val s = i.2.2.2.1 ∧
-    ∃ t : (lang i.1).Term Empty, tokens Empty.elim t = i.2.2.2.2 ∧
-      ∃ σ : Fin i.2.2.1 → (lang i.1).Term Empty, ACEquiv i.2.1 (s.subst σ) t
-
-open Classical in
-/-- AC-MATCHING as a decision problem over bitstrings. -/
-noncomputable def acMatchingDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ACMatchingInstance) x with
-  | some i => decide (WellFormed i ∧ ACMatchingFeasible i)
-  | none => false
 
 /-- **AC-MATCHING is NP-complete.** Source: Benanav, Kapur and Narendran (1987). -/
 public theorem_wanted acMatching_npComplete :

@@ -23,9 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Fin
+public import CSLibExt.Complexity.NPComplete.ChamberlinCourantWinnerDeterminationDefs
 
 @[expose] public section
 
@@ -58,32 +56,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number `m` of candidates, the votes, the committee size `k`, and the bound
-`B`. -/
-abbrev ChamberlinCourantWinnerDeterminationInstance := ℕ × List (List ℕ) × ℕ × ℕ
-
-/-- Well-formedness of an instance: every vote is a strict ranking of all `m` candidates, and
-the committee size satisfies `0 < k ≤ m`. -/
-def WellFormed (i : ChamberlinCourantWinnerDeterminationInstance) : Prop :=
-  (∀ v ∈ i.2.1, v.Perm (List.range i.1)) ∧ 0 < i.2.2.1 ∧ i.2.2.1 ≤ i.1
-
-/-- A committee `W` of `k` candidates and an assignment `r` of a representative in `W` to each
-voter whose total Borda misrepresentation is at most `B`. -/
-def ChamberlinCourantWinnerDeterminationFeasible
-    (i : ChamberlinCourantWinnerDeterminationInstance) : Prop :=
-  ∃ W : Finset (Fin i.1), W.card = i.2.2.1 ∧
-    ∃ r : Fin i.2.1.length → Fin i.1, (∀ j, r j ∈ W) ∧
-      ∑ j : Fin i.2.1.length, i.2.1[j].idxOf (r j : ℕ) ≤ i.2.2.2
-
-open Classical in
-/-- CHAMBERLIN-COURANT WINNER DETERMINATION as a decision problem over bitstrings. -/
-noncomputable def chamberlinCourantWinnerDeterminationDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ChamberlinCourantWinnerDeterminationInstance) x with
-  | some i => decide (WellFormed i ∧ ChamberlinCourantWinnerDeterminationFeasible i)
-  | none => false
 
 /-- **CHAMBERLIN-COURANT WINNER DETERMINATION is NP-complete** (Borda misrepresentation).
 Source: Lu and Boutilier (2011), Theorem 8; Betzler, Slinko, and Uhlmann (2013), Theorem 2. -/

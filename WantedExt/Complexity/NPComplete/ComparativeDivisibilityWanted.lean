@@ -21,8 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.ComparativeDivisibilityDefs
 
 @[expose] public section
 
@@ -48,27 +47,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the sequence `a₁, …, aₙ` and the sequence `b₁, …, bₘ`. -/
-abbrev ComparativeDivisibilityInstance := List ℕ × List ℕ
-
-/-- Well-formedness of an instance: every entry of both sequences is positive. -/
-def WellFormed (i : ComparativeDivisibilityInstance) : Prop :=
-  (∀ a ∈ i.1, 0 < a) ∧ ∀ b ∈ i.2, 0 < b
-
-/-- Some positive integer `c` divides more entries of the first sequence than of the second,
-counting entries with multiplicity. -/
-def ComparativeDivisibilityFeasible (i : ComparativeDivisibilityInstance) : Prop :=
-  ∃ c : ℕ, 0 < c ∧ i.2.countP (fun b => c ∣ b) < i.1.countP (fun a => c ∣ a)
-
-open Classical in
-/-- COMPARATIVE DIVISIBILITY as a decision problem over bitstrings. -/
-noncomputable def comparativeDivisibilityDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ComparativeDivisibilityInstance) x with
-  | some i => decide (WellFormed i ∧ ComparativeDivisibilityFeasible i)
-  | none => false
 
 /-- **COMPARATIVE DIVISIBILITY is NP-complete.** Source: Garey and Johnson (1979), [AN4];
 Plaisted (1976, 1978). -/

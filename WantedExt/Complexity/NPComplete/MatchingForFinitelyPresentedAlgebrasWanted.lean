@@ -22,9 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.UnificationForFinitelyPresentedAlgebrasWanted
+public import CSLibExt.Complexity.NPComplete.MatchingForFinitelyPresentedAlgebrasDefs
 
 @[expose] public section
 
@@ -61,26 +59,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- A token list contains a variable symbol: some token `(0, v)`. -/
-def HasVariable (l : List (ℕ × ℕ)) : Prop :=
-  ∃ t ∈ l, t.1 = 0
-
-/-- Well-formedness of an instance: the [AN17] well-formedness, and exactly one of the two
-expressions `e`, `f` contains a variable symbol. -/
-def WellFormed (i : UnificationForFinitelyPresentedAlgebrasInstance) : Prop :=
-  UnificationForFinitelyPresentedAlgebras.WellFormed i ∧
-    (HasVariable i.2.2.2.2.1 ∧ ¬ HasVariable i.2.2.2.2.2 ∨
-      HasVariable i.2.2.2.2.2 ∧ ¬ HasVariable i.2.2.2.2.1)
-
-open Classical in
-/-- MATCHING FOR FINITELY PRESENTED ALGEBRAS as a decision problem over bitstrings. -/
-noncomputable def matchingForFinitelyPresentedAlgebrasDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := UnificationForFinitelyPresentedAlgebrasInstance) x with
-  | some i => decide (WellFormed i ∧ UnificationForFinitelyPresentedAlgebrasFeasible i)
-  | none => false
 
 /-- **MATCHING FOR FINITELY PRESENTED ALGEBRAS is NP-complete.** Source: Garey and Johnson
 (1979), [AN17], comment; Kozen (1977). -/

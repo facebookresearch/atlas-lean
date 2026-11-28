@@ -1,0 +1,96 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.NonTautologyDefs
+public import Cslib.Computability.Circuit.Basic
+
+/-!
+# TRUTH-FUNCTIONALLY COMPLETE CONNECTIVES: definitions
+
+INSTANCE: a set `U` of variables and a collection `C` of well-formed Boolean expressions over
+`U`. QUESTION: is `C` truth-functionally complete, i.e., is there a truth-functionally complete
+set of logical connectives (unary and binary operators) `D = {θ₁, …, θₖ}` such that for each
+`θᵢ ∈ D` there is an expression `E ∈ C` and a substitution `s : U → {a, b}` for which
+`s(E) ≡ a θᵢ b` or `s(E) ≡ θᵢ a` (depending on whether `θᵢ` is binary or unary)?
+
+Expressions are those of `NonTautologyDefs` (connectives `¬`, `∧`, `∨`, `→`, written in
+postfix over `U = {u₀, …, u_{n-1}}`), and `C` is a list of their token lists. A substitution is
+`s : ℕ → Bool`, sending `uₓ` to `a` when `s x = true` and to `b` when `s x = false`;
+`substOp E s` is the binary truth function `(a, b) ↦ s(E)`, so `s(E) ≡ a θ b` says
+`substOp E s = θ`. A unary connective `θ` is represented by the binary truth function
+`fun a _ => θ a`, which composes exactly as `θ` does; then `s(E) ≡ θ a` again says
+`substOp E s = fun a _ => θ a`. A set `D` of connectives is truth-functionally complete when
+every truth function of every arity `m ≥ 1` is a composition of members of `D` applied to the
+`m` arguments. Compositions are CSLib circuits (`Cslib.Circuits.Circuit`, a straight-line program
+whose gates read the inputs and earlier gates) over the signature with one binary operation
+symbol per member of `D` (operation symbols `Fin D.length`, each of arity `2`), interpreted by
+that member; `f` is a composition when a one-output circuit computes it
+(`Circuit.Computes`, `Cslib.Circuits.single f`). Arity `0` is excluded because a composition of
+unary and binary connectives always mentions an argument; this is the logician's convention
+under which `{NAND}` is complete, and it is why the statement does not use CSLib's
+`Interpretation.IsComplete`, which also asks for circuits with no inputs.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
+
+Source:
+M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the
+Theory of NP-Completeness*, W. H. Freeman (1979), problem [LO10] TRUTH-FUNCTIONALLY COMPLETE
+CONNECTIVES, p. 261 (reference: R. Statman (1976), private communication; transformation from
+3SAT).
+-/
+
+@[expose] public section
+
+namespace MetaMathlibExt.Complexity.NPComplete.TruthFunctionallyCompleteConnectives
+
+open Cslib.Logic.LegacyPL
+
+/-- An instance: the number `n` of variables `u₀, …, u_{n-1}`, and the expressions of `C`, each
+a postfix token list as in `NonTautologyWanted`. -/
+abbrev TruthFunctionallyCompleteConnectivesInstance := ℕ × List (List (ℕ × ℕ))
+
+/-- The binary truth function `(a, b) ↦ s(E)` that the expression `E` defines under the
+substitution `s`, which sends `uₓ` to `a` if `s x = true` and to `b` if `s x = false`. -/
+def substOp (E : Proposition (WithBot ℕ)) (s : ℕ → Bool) (a b : Bool) : Bool :=
+  E.evalBool (NonTautology.valuation fun x => if s x then a else b)
+
+/-- Well-formedness of an instance: every member of `C` is an expression over
+`u₀, …, u_{n-1}` (`NonTautology.WellFormed`). -/
+def WellFormed (i : TruthFunctionallyCompleteConnectivesInstance) : Prop :=
+  ∀ t ∈ i.2, NonTautology.WellFormed (i.1, t)
+
+/-- Some set `D` of connectives, each defined by an expression of `C` under a substitution
+`s : U → {a, b}`, is truth-functionally complete: for every arity `m ≥ 1`, every `m`-ary truth
+function `f` is computed by a one-output CSLib circuit whose gates are the members of `D` (the
+operation symbol `k : Fin D.length` has arity `2` and is interpreted by `D.get k`). -/
+def TruthFunctionallyCompleteConnectivesFeasible
+    (i : TruthFunctionallyCompleteConnectivesInstance) : Prop :=
+  ∃ D : List (Bool → Bool → Bool),
+    (∀ θ ∈ D, ∃ t ∈ i.2, ∃ E, NonTautology.parse t = some E ∧
+      ∃ s : ℕ → Bool, substOp E s = θ) ∧
+    ∀ m, 0 < m → ∀ f : (Fin m → Bool) → Bool,
+      ∃ c : Cslib.Circuits.Circuit ⟨Fin D.length, fun _ => 2⟩ m 1,
+        c.Computes (fun k args => D.get k (args ⟨0, Nat.zero_lt_two⟩) (args ⟨1, Nat.one_lt_two⟩))
+          (Cslib.Circuits.single f)
+
+open Classical in
+/-- TRUTH-FUNCTIONALLY COMPLETE CONNECTIVES as a decision problem over bitstrings. -/
+noncomputable def truthFunctionallyCompleteConnectivesDec :
+    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
+  match MetaMathlibExt.BitstringEncoding.bitDecode
+      (α := TruthFunctionallyCompleteConnectivesInstance) x with
+  | some i => decide (WellFormed i ∧ TruthFunctionallyCompleteConnectivesFeasible i)
+  | none => false
+
+end MetaMathlibExt.Complexity.NPComplete.TruthFunctionallyCompleteConnectives

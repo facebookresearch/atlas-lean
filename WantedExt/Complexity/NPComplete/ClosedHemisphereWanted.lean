@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.OpenHemisphereWanted
+public import CSLibExt.Complexity.NPComplete.ClosedHemisphereDefs
 
 @[expose] public section
 
@@ -55,20 +53,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- A nonzero rational `m`-tuple `y` with `x · y ≥ 0` for at least `K` elements `x` of `X`. -/
-def ClosedHemisphereFeasible (i : OpenHemisphereInstance) : Prop :=
-  ∃ y : Fin i.1 → ℚ, y ≠ 0 ∧ i.2.2 ≤
-    (i.2.1.filter fun x => 0 ≤ ∑ j : Fin i.1, (intOf (x.getD j (0, 0)) : ℚ) * y j).length
-
-open Classical in
-/-- CLOSED HEMISPHERE as a decision problem over bitstrings. -/
-noncomputable def closedHemisphereDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := OpenHemisphereInstance) x with
-  | some i => decide (WellFormed i ∧ ClosedHemisphereFeasible i)
-  | none => false
 
 /-- **CLOSED HEMISPHERE is NP-complete.** Source: Garey and Johnson (1979), [MP6], comment;
 Johnson and Preparata (1978). -/

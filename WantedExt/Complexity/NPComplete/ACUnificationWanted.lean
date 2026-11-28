@@ -23,9 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.ACMatchingWanted
+public import CSLibExt.Complexity.NPComplete.ACUnificationDefs
 
 @[expose] public section
 
@@ -60,33 +58,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the arities of the function symbols, the indices of the AC symbols, the number
-of variables `|V|`, and the token lists of `s` and of `t`. -/
-abbrev ACUnificationInstance := List ℕ × List ℕ × ℕ × List (ℕ × ℕ) × List (ℕ × ℕ)
-
-/-- Well-formedness of an instance: every AC symbol is a binary symbol, and `s` and `t` are
-terms with variables `Fin |V|`. -/
-def WellFormed (i : ACUnificationInstance) : Prop :=
-  (∀ k ∈ i.2.1, i.1[k]? = some 2) ∧
-    (∃ s : (lang i.1).Term (Fin i.2.2.1), tokens Fin.val s = i.2.2.2.1) ∧
-      ∃ t : (lang i.1).Term (Fin i.2.2.1), tokens Fin.val t = i.2.2.2.2
-
-/-- Some substitution `σ` makes `σ(s)` and `σ(t)` equal modulo associativity and commutativity
-of the AC symbols. -/
-def ACUnificationFeasible (i : ACUnificationInstance) : Prop :=
-  ∃ s t : (lang i.1).Term (Fin i.2.2.1),
-    tokens Fin.val s = i.2.2.2.1 ∧ tokens Fin.val t = i.2.2.2.2 ∧
-      ∃ σ : Fin i.2.2.1 → (lang i.1).Term ℕ, ACEquiv i.2.1 (s.subst σ) (t.subst σ)
-
-open Classical in
-/-- AC-UNIFICATION as a decision problem over bitstrings. -/
-noncomputable def acUnificationDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ACUnificationInstance) x with
-  | some i => decide (WellFormed i ∧ ACUnificationFeasible i)
-  | none => false
 
 /-- **AC-UNIFICATION is NP-complete.** Source: Kapur and Narendran (1992); Benanav, Kapur and
 Narendran (1987). -/

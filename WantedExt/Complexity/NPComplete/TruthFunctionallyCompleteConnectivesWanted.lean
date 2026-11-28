@@ -19,10 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.NonTautologyWanted
-public import Cslib.Computability.Circuit.Basic
+public import CSLibExt.Complexity.NPComplete.TruthFunctionallyCompleteConnectivesDefs
 
 @[expose] public section
 
@@ -66,43 +63,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number `n` of variables `u₀, …, u_{n-1}`, and the expressions of `C`, each
-a postfix token list as in `NonTautologyWanted`. -/
-abbrev TruthFunctionallyCompleteConnectivesInstance := ℕ × List (List (ℕ × ℕ))
-
-/-- The binary truth function `(a, b) ↦ s(E)` that the expression `E` defines under the
-substitution `s`, which sends `uₓ` to `a` if `s x = true` and to `b` if `s x = false`. -/
-def substOp (E : Proposition (WithBot ℕ)) (s : ℕ → Bool) (a b : Bool) : Bool :=
-  E.evalBool (NonTautology.valuation fun x => if s x then a else b)
-
-/-- Well-formedness of an instance: every member of `C` is an expression over
-`u₀, …, u_{n-1}` (`NonTautology.WellFormed`). -/
-def WellFormed (i : TruthFunctionallyCompleteConnectivesInstance) : Prop :=
-  ∀ t ∈ i.2, NonTautology.WellFormed (i.1, t)
-
-/-- Some set `D` of connectives, each defined by an expression of `C` under a substitution
-`s : U → {a, b}`, is truth-functionally complete: for every arity `m ≥ 1`, every `m`-ary truth
-function `f` is computed by a one-output CSLib circuit whose gates are the members of `D` (the
-operation symbol `k : Fin D.length` has arity `2` and is interpreted by `D.get k`). -/
-def TruthFunctionallyCompleteConnectivesFeasible
-    (i : TruthFunctionallyCompleteConnectivesInstance) : Prop :=
-  ∃ D : List (Bool → Bool → Bool),
-    (∀ θ ∈ D, ∃ t ∈ i.2, ∃ E, NonTautology.parse t = some E ∧
-      ∃ s : ℕ → Bool, substOp E s = θ) ∧
-    ∀ m, 0 < m → ∀ f : (Fin m → Bool) → Bool,
-      ∃ c : Cslib.Circuits.Circuit ⟨Fin D.length, fun _ => 2⟩ m 1,
-        c.Computes (fun k args => D.get k (args ⟨0, Nat.zero_lt_two⟩) (args ⟨1, Nat.one_lt_two⟩))
-          (Cslib.Circuits.single f)
-
-open Classical in
-/-- TRUTH-FUNCTIONALLY COMPLETE CONNECTIVES as a decision problem over bitstrings. -/
-noncomputable def truthFunctionallyCompleteConnectivesDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TruthFunctionallyCompleteConnectivesInstance) x with
-  | some i => decide (WellFormed i ∧ TruthFunctionallyCompleteConnectivesFeasible i)
-  | none => false
 
 /-- **TRUTH-FUNCTIONALLY COMPLETE CONNECTIVES is NP-complete.** Source: Garey and Johnson
 (1979), [LO10] (Statman, 1976). -/

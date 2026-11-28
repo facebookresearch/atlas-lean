@@ -19,10 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import Mathlib.Data.Set.Pairwise.Basic
+public import CSLibExt.Complexity.NPComplete.CombinatorialAuctionWinnerDeterminationDefs
 
 @[expose] public section
 
@@ -53,30 +50,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number of items `m`, the bids `(items, price)`, and the bound `K`. -/
-abbrev CombinatorialAuctionWinnerDeterminationInstance := ℕ × List (List ℕ × ℕ) × ℕ
-
-/-- Well-formedness of an instance: every bid lists distinct items, all below `m`. -/
-def WellFormed (i : CombinatorialAuctionWinnerDeterminationInstance) : Prop :=
-  ∀ b ∈ i.2.1, b.1.Nodup ∧ ∀ x ∈ b.1, x < i.1
-
-/-- Some set `W` of bid positions has pairwise disjoint item sets and total price at least
-`K`. -/
-def CombinatorialAuctionWinnerDeterminationFeasible
-    (i : CombinatorialAuctionWinnerDeterminationInstance) : Prop :=
-  ∃ W : Finset (Fin i.2.1.length),
-    (W : Set (Fin i.2.1.length)).PairwiseDisjoint (fun j => (i.2.1.get j).1.toFinset) ∧
-      i.2.2 ≤ ∑ j ∈ W, (i.2.1.get j).2
-
-open Classical in
-/-- COMBINATORIAL AUCTION WINNER DETERMINATION as a decision problem over bitstrings. -/
-noncomputable def combinatorialAuctionWinnerDeterminationDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := CombinatorialAuctionWinnerDeterminationInstance) x with
-  | some i => decide (WellFormed i ∧ CombinatorialAuctionWinnerDeterminationFeasible i)
-  | none => false
 
 /-- **COMBINATORIAL AUCTION WINNER DETERMINATION is NP-complete.** Source: Rothkopf, Pekeč and
 Harstad (1998); Sandholm (2002). -/

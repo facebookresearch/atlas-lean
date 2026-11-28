@@ -22,9 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
+public import CSLibExt.Complexity.NPComplete.GeneralizedZeroOneAssignmentDefs
 
 @[expose] public section
 
@@ -55,50 +53,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: `m`, `n`, the matrix `A` (rows of `(positive part, negative part)` pairs), the
-vector `b` (same encoding), the binary matrix `C` (rows of naturals), and the bound `K`. -/
-abbrev GeneralizedZeroOneAssignmentInstance :=
-  ℕ × ℕ × List (List (ℕ × ℕ)) × List (ℕ × ℕ) × List (List ℕ) × ℕ
-
-/-- The integer encoded by a pair `(positive part, negative part)`. -/
-def intOf (p : ℕ × ℕ) : ℤ := (p.1 : ℤ) - (p.2 : ℤ)
-
-/-- The entry `A_{r,c}`. -/
-def entryA (i : GeneralizedZeroOneAssignmentInstance) (r : Fin i.1) (c : Fin i.2.1) : ℤ :=
-  intOf ((i.2.2.1.getD r []).getD c (0, 0))
-
-/-- The entry `b_r`. -/
-def entryB (i : GeneralizedZeroOneAssignmentInstance) (r : Fin i.1) : ℤ :=
-  intOf (i.2.2.2.1.getD r (0, 0))
-
-/-- The entry `C_{r,c}`. -/
-def entryC (i : GeneralizedZeroOneAssignmentInstance) (r : Fin i.1) (c : Fin i.2.1) : ℕ :=
-  (i.2.2.2.2.1.getD r []).getD c 0
-
-/-- Well-formedness of an instance: `A` and `C` have `m` rows of length `n`, `b` has length
-`m`, every entry of `C` is `0` or `1`, and `K` is positive. -/
-def WellFormed (i : GeneralizedZeroOneAssignmentInstance) : Prop :=
-  i.2.2.1.length = i.1 ∧ (∀ row ∈ i.2.2.1, row.length = i.2.1) ∧
-    i.2.2.2.1.length = i.1 ∧
-    i.2.2.2.2.1.length = i.1 ∧ (∀ row ∈ i.2.2.2.2.1, row.length = i.2.1 ∧ ∀ x ∈ row, x ≤ 1) ∧
-    0 < i.2.2.2.2.2
-
-/-- A binary matrix `X` with exactly one `1` in each column, satisfying `A X ≤ b` row by row,
-with `∑ᵢ ∑ⱼ C_{i,j} X_{i,j} ≤ K`. -/
-def GeneralizedZeroOneAssignmentFeasible (i : GeneralizedZeroOneAssignmentInstance) : Prop :=
-  ∃ X : Fin i.1 → Fin i.2.1 → ℕ, (∀ r c, X r c ≤ 1) ∧ (∀ c, ∃! r, X r c = 1) ∧
-    (∀ r, ∑ c, entryA i r c * (X r c : ℤ) ≤ entryB i r) ∧
-    ∑ r, ∑ c, entryC i r c * X r c ≤ i.2.2.2.2.2
-
-open Classical in
-/-- GENERALIZED 0-1 ASSIGNMENT as a decision problem over bitstrings. -/
-noncomputable def generalizedZeroOneAssignmentDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := GeneralizedZeroOneAssignmentInstance) x with
-  | some i => decide (WellFormed i ∧ GeneralizedZeroOneAssignmentFeasible i)
-  | none => false
 
 /-- **GENERALIZED 0-1 ASSIGNMENT is NP-complete.** Source: Crescenzi and Kann, MINIMUM GENERALIZED
 0-1 ASSIGNMENT, citing Sahni and Gonzalez (1976); Martello and Toth (1990), Section 7.1. -/

@@ -18,8 +18,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.GroupingBySwappingDefs
 
 @[expose] public section
 
@@ -57,39 +56,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the alphabet size `s` (symbols `0, ..., s - 1`), the string `x`, and the bound
-`K`. -/
-abbrev GroupingBySwappingInstance := ℕ × List ℕ × ℕ
-
-/-- Well-formedness of an instance: `x` is a string over the alphabet, and `K` is positive. -/
-def WellFormed (i : GroupingBySwappingInstance) : Prop :=
-  (∀ a ∈ i.2.1, a < i.1) ∧ 0 < i.2.2
-
-/-- One adjacent symbol interchange: `b` is `a` with two adjacent symbols interchanged. -/
-def Swap (a b : List ℕ) : Prop :=
-  ∃ (l₁ l₂ : List ℕ) (c d : ℕ), a = l₁ ++ c :: d :: l₂ ∧ b = l₁ ++ d :: c :: l₂
-
-/-- All occurrences of each symbol of `y` form a single block: `y` has no subsequence
-`a b a` with `a ≠ b`. -/
-def IsGrouped (y : List ℕ) : Prop :=
-  ∀ a b : ℕ, a ≠ b → ¬ [a, b, a].Sublist y
-
-/-- A sequence of at most `K` adjacent interchanges converts `x` into a grouped string: a list
-of strings from `x` to `y` with at most `K + 1` entries, each obtained from the previous one by
-one `Swap`, where `y` is grouped. -/
-def GroupingBySwappingFeasible (i : GroupingBySwappingInstance) : Prop :=
-  ∃ (ws : List (List ℕ)) (y : List ℕ), ws.head? = some i.2.1 ∧ ws.getLast? = some y ∧
-    ws.length ≤ i.2.2 + 1 ∧ ws.IsChain Swap ∧ IsGrouped y
-
-open Classical in
-/-- GROUPING BY SWAPPING as a decision problem over bitstrings. -/
-noncomputable def groupingBySwappingDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := GroupingBySwappingInstance) x with
-  | some i => decide (WellFormed i ∧ GroupingBySwappingFeasible i)
-  | none => false
 
 /-- **GROUPING BY SWAPPING is NP-complete.** Source: Garey and Johnson (1979), [SR21]; Howell
 (1977, unpublished). -/

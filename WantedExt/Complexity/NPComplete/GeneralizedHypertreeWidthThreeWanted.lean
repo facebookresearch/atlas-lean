@@ -22,10 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Acyclic
-public import Mathlib.Data.Fintype.Basic
+public import CSLibExt.Complexity.NPComplete.GeneralizedHypertreeWidthThreeDefs
 
 @[expose] public section
 
@@ -61,42 +58,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number of vertices `n` (vertices `Fin n`) and the hyperedges, each a list of
-vertices. -/
-abbrev GeneralizedHypertreeWidthThreeInstance := ℕ × List (List ℕ)
-
-/-- The vertex set of hyperedge `e`. -/
-def edgeSet (i : GeneralizedHypertreeWidthThreeInstance) (e : Fin i.2.length) :
-    Finset (Fin i.1) :=
-  Finset.univ.filter fun v => v.1 ∈ i.2.get e
-
-/-- Well-formedness of an instance: every hyperedge lists only vertices `< n`. -/
-def WellFormed (i : GeneralizedHypertreeWidthThreeInstance) : Prop :=
-  ∀ e ∈ i.2, ∀ v ∈ e, v < i.1
-
-/-- `⟨T, B, Λ⟩` is a generalized hypertree decomposition of width at most 3: conditions (1)-(3),
-and every `Λ u` (the hyperedges `e` with `λ_u(e) = 1`) has at most 3 elements. -/
-def IsGHDWidthAtMostThree (i : GeneralizedHypertreeWidthThreeInstance) {N : ℕ}
-    (T : SimpleGraph (Fin N)) (B : Fin N → Finset (Fin i.1)) (Λ : Fin N → Finset (Fin i.2.length)) :
-    Prop :=
-  T.IsTree ∧ (∀ e, ∃ u, edgeSet i e ⊆ B u) ∧
-    (∀ v, (T.induce {u | v ∈ B u}).Preconnected) ∧
-    (∀ u, B u ⊆ (Λ u).biUnion (edgeSet i)) ∧ ∀ u, (Λ u).card ≤ 3
-
-/-- Some generalized hypertree decomposition of the hypergraph has width at most 3. -/
-def GeneralizedHypertreeWidthThreeFeasible (i : GeneralizedHypertreeWidthThreeInstance) : Prop :=
-  ∃ (N : ℕ) (T : SimpleGraph (Fin N)) (B : Fin N → Finset (Fin i.1))
-    (Λ : Fin N → Finset (Fin i.2.length)), IsGHDWidthAtMostThree i T B Λ
-
-open Classical in
-/-- GENERALIZED HYPERTREE WIDTH AT MOST 3 as a decision problem over bitstrings. -/
-noncomputable def generalizedHypertreeWidthThreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := GeneralizedHypertreeWidthThreeInstance) x with
-  | some i => decide (WellFormed i ∧ GeneralizedHypertreeWidthThreeFeasible i)
-  | none => false
 
 /-- **GENERALIZED HYPERTREE WIDTH AT MOST 3 is NP-complete.** Source: Gottlob, Miklós and
 Schwentick (2009); Fischl, Gottlob and Pichler (2018), Section 1. -/

@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.ModelTheory.Semantics
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.UnificationForFinitelyPresentedAlgebrasWanted
+public import CSLibExt.Complexity.NPComplete.RigidEUnificationDefs
 
 @[expose] public section
 
@@ -71,48 +68,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the arities `ar` of the function symbols, the number of variables `|V|`, the
-equations of `E` as pairs of token lists, and the token lists of `s` and `t`. -/
-abbrev RigidEUnificationInstance :=
-  List ℕ × ℕ × List (List (ℕ × ℕ) × List (ℕ × ℕ)) × List (ℕ × ℕ) × List (ℕ × ℕ)
-
-/-- The equations of `E` whose token lists are those of the instance. -/
-def Equations (i : RigidEUnificationInstance)
-    (E : List ((lang i.1).Term (Fin i.2.1) × (lang i.1).Term (Fin i.2.1))) : Prop :=
-  E.map (fun p => (tokens Fin.val p.1, tokens Fin.val p.2)) = i.2.2.1
-
-/-- Well-formedness of an instance: the token lists are those of an equation set `E` and of
-terms `s` and `t`, all over the symbols of `ar` and the variables `Fin |V|`. -/
-def WellFormed (i : RigidEUnificationInstance) : Prop :=
-  (∃ E, Equations i E) ∧
-    (∃ s : (lang i.1).Term (Fin i.2.1), tokens Fin.val s = i.2.2.2.1) ∧
-    ∃ t : (lang i.1).Term (Fin i.2.1), tokens Fin.val t = i.2.2.2.2
-
-/-- `Eσ ⊨ sσ ≈ tσ` with the variables held rigid: in every structure, every assignment of the
-variables that satisfies all equations of `Eσ` satisfies `sσ ≈ tσ`. -/
-def RigidlyEntails {ar : List ℕ} {n : ℕ}
-    (E : List ((lang ar).Term (Fin n) × (lang ar).Term (Fin n)))
-    (s t : (lang ar).Term (Fin n)) : Prop :=
-  ∀ (M : Type) [(lang ar).Structure M] (v : Fin n → M),
-    (∀ p ∈ E, p.1.realize v = p.2.realize v) → s.realize v = t.realize v
-
-/-- Some substitution `σ` is a rigid `E`-unifier of `s` and `t`: `Eσ ⊨ sσ ≈ tσ` with the
-variables of `Eσ` held rigid. -/
-def RigidEUnificationFeasible (i : RigidEUnificationInstance) : Prop :=
-  ∃ E, Equations i E ∧
-    ∃ s t : (lang i.1).Term (Fin i.2.1),
-      tokens Fin.val s = i.2.2.2.1 ∧ tokens Fin.val t = i.2.2.2.2 ∧
-        ∃ σ : Fin i.2.1 → (lang i.1).Term (Fin i.2.1),
-          RigidlyEntails (E.map fun p => (p.1.subst σ, p.2.subst σ)) (s.subst σ) (t.subst σ)
-
-open Classical in
-/-- RIGID E-UNIFICATION as a decision problem over bitstrings. -/
-noncomputable def rigidEUnificationDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := RigidEUnificationInstance) x with
-  | some i => decide (WellFormed i ∧ RigidEUnificationFeasible i)
-  | none => false
 
 /-- **RIGID E-UNIFICATION is NP-complete.** Source: Gallier, Narendran, Plaisted, and Snyder
 (1990); Beckert (1994), Section 3. -/
