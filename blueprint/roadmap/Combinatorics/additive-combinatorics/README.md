@@ -10,3 +10,4 @@ The additive structure of sets in integers and abelian groups: sumsets and inver
 - [Zero-sum problems and subset sums](zero-sum-subset-sums/README.md)
 - [Arithmetic progressions in dense sets](progressions-dense-sets/README.md)
 - [Combinatorial Nullstellensatz](combinatorial-nullstellensatz/README.md)
+- [Additive systems for the integers](additive-systems-for-the-integers/README.md)
