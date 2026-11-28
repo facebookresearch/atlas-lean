@@ -42,13 +42,13 @@ is the set of places above $p$.
 
 ## Depends on
 
-- [Cohomology of profinite groups](../../../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for the cohomology of $G_S$ and of the decomposition groups
+- [Cohomology of a profinite group with discrete coefficients](../../../../RepresentationTheory/group-cohomology/profinite-group-cohomology/discrete-coefficients/cohomology-with-discrete-coefficients.md), for the cohomology of $G_S$ and of the decomposition groups
 - [Unramified classes under local duality](../galois-cohomology-of-local-fields/unramified-classes-under-local-duality.md), for the unramified subgroups
 
 ## Proof depends on
 
 - [Cyclotomic fields are unramified at primes not dividing $m$](../../cyclotomic-fields/ramification-and-inertia-in-cyclotomic-fields/is-unramified-in-of-not-dvd.md), applied to $\mathbb{Q}(\mu_n)$, so that $F(\mu_n) = F \cdot \mathbb{Q}(\mu_n)$ is unramified outside $S$ for $n \in \mathbb{N}(S)$
-- [Cohomology of profinite groups](../../../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for the description of $H^i(G_S, M)$ as a direct limit of the cohomology of finite quotients, through which every class is inflated from a finite Galois extension unramified at almost all places
+- [Cohomology as a direct limit over finite quotients](../../../../RepresentationTheory/group-cohomology/profinite-group-cohomology/discrete-coefficients/cohomology-as-a-direct-limit-over-finite-quotients.md), for the description of $H^i(G_S, M)$ as a direct limit of the cohomology of finite quotients, through which every class is inflated from a finite Galois extension unramified at almost all places
 
 ## Sources
 

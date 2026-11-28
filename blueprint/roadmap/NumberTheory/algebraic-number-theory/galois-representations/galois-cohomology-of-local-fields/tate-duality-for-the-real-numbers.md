@@ -12,12 +12,12 @@ All these groups are finite and killed by $2$.
 
 ## Depends on
 
-- [Cohomology of profinite groups](../../../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for cup products, here of a finite group in Tate cohomology
+- [Cup products in Tate cohomology](../../../../RepresentationTheory/group-cohomology/cup-products-in-tate-cohomology.md), for cup products, here of a finite group in Tate cohomology
 
 ## Proof depends on
 
 - [Periodicity of Tate cohomology for finite cyclic groups](../../../../RepresentationTheory/group-cohomology/tate-cohomology-and-the-herbrand-quotient/nonempty-periodicity-iso.md)
-- [Cohomology of profinite groups](../../../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for the long exact sequences of Tate cohomology, which reduce the theorem to $A = \mathbb{Z}/2\mathbb{Z}$, $\mathbb{Z}$ and $\mathbb{Z}(1)$
+- [The long exact Tate cohomology sequence of a finite group](../../../../RepresentationTheory/group-cohomology/profinite-group-cohomology/discrete-coefficients/long-exact-tate-cohomology-sequence-of-a-finite-group.md), for the long exact sequences of Tate cohomology, which reduce the theorem to $A = \mathbb{Z}/2\mathbb{Z}$, $\mathbb{Z}$ and $\mathbb{Z}(1)$
 
 ## Sources
 

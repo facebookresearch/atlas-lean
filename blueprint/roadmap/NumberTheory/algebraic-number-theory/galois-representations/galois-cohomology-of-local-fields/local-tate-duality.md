@@ -19,13 +19,13 @@ $H^2(k, \mu_{\ell^r}) \cong \mathbb{Z}/\ell^r\mathbb{Z} \subset \mathbb{Q}/\math
 
 - [Galois cohomology of roots of unity over a p-adic field](cohomology-of-roots-of-unity-over-p-adic-fields.md), for $H^2(k, \mu) \cong \mathbb{Q}/\mathbb{Z}$ and $H^2(k, \mu_{\ell^r}) \cong \mathbb{Z}/\ell^r\mathbb{Z}$
 - [Cohomological dimension and finiteness for p-adic fields](cohomological-dimension-of-p-adic-fields.md), for the finiteness of the groups
-- [Cohomology of profinite groups](../../../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for cup products
+- [Cup products for profinite groups](../../../../RepresentationTheory/group-cohomology/profinite-group-cohomology/discrete-coefficients/cup-products.md), for cup products
 - [Cyclotomic character and Tate twists](../cyclotomic-character-and-tate-twists.md), for the twist $(1)$
 
 ## Proof depends on
 
 - [Dualizing module of a p-adic field](dualizing-module-of-a-p-adic-field.md), for the identification of the dualizing module of $G_k$ with $\mu$, under which the duality takes values in $H^2(k, \mu) \cong \mathbb{Q}/\mathbb{Z}$
-- [Cohomology of profinite groups](../../../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for the duality theorem (3.4.6): for a profinite group $G$ with $\operatorname{cd}_P G = n < \infty$ such that $D_i(\mathbb{Z}/p\mathbb{Z}) = 0$ for $p \in P$ and $i < n$, cup product and the trace give $H^i(G, \operatorname{Hom}(A, D_P)) \cong H^{n-i}(G, A)^*$ for every finite $P$-torsion module $A$; with Remark 1 after (3.4.3), which allows any isomorphism $H^n(G, D_P) \cong \mathbb{Q}_P/\mathbb{Z}_P$ in place of the trace
+- [Dualizing modules and the abstract duality theorems](../../../../RepresentationTheory/group-cohomology/profinite-group-cohomology/dualizing-modules-and-duality-theorems.md), for the duality theorem (3.4.6): for a profinite group $G$ with $\operatorname{cd}_P G = n < \infty$ such that $D_i(\mathbb{Z}/p\mathbb{Z}) = 0$ for $p \in P$ and $i < n$, cup product and the trace give $H^i(G, \operatorname{Hom}(A, D_P)) \cong H^{n-i}(G, A)^*$ for every finite $P$-torsion module $A$; with Remark 1 after (3.4.3), which allows any isomorphism $H^n(G, D_P) \cong \mathbb{Q}_P/\mathbb{Z}_P$ in place of the trace
 - [Cohomological dimension and finiteness for p-adic fields](cohomological-dimension-of-p-adic-fields.md), for $\operatorname{cd}_\ell(G_k) = 2$ for every prime $\ell$
 - [Local class field theory: the local Artin map](../../../p-adic-numbers/local-class-field-theory.md), for the surjections $K^\times/K^{\times \ell} \to G_K^{\mathrm{ab}}/\ell$ over the finite extensions $K/k$, which give $D_1(\mathbb{Z}/\ell\mathbb{Z}) = \varinjlim_K H^1(K, \mathbb{Z}/\ell\mathbb{Z})^* = 0$; and $D_0(\mathbb{Z}/\ell\mathbb{Z}) = 0$ because every finite extension has finite extensions of degree divisible by $\ell$
 

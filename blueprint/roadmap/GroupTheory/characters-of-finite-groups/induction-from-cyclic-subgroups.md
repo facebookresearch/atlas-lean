@@ -30,7 +30,7 @@ them against a pinned edition.
 
 ## Proof depends on
 
-- [Cohomology of profinite groups](../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for the composition series with factors $\mathbb{Z}/\ell\mathbb{Z}$ of a finite module killed by $\ell$ over a finite $\ell$-group (its item 8; Neukirch–Schmidt–Wingberg (1.6.13), as used in the proof of (7.3.4)), which makes $H_\ell$ act trivially on a simple module in item 3
+- [Simple modules over pro-p-groups](../../RepresentationTheory/group-cohomology/profinite-group-cohomology/discrete-coefficients/simple-modules-over-pro-p-groups.md), for the composition series with factors $\mathbb{Z}/\ell\mathbb{Z}$ of a finite module killed by $\ell$ over a finite $\ell$-group (Neukirch–Schmidt–Wingberg (1.6.13), as used in the proof of (7.3.4)), which makes $H_\ell$ act trivially on a simple module in item 3
 
 ## Expansion
 

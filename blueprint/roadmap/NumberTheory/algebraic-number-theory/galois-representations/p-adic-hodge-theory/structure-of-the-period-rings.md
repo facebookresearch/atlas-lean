@@ -59,7 +59,7 @@ A good expansion has pages for:
 
 - [Cyclotomic character and Tate twists](../cyclotomic-character-and-tate-twists.md), for the twists $\mathbb{Q}_p(r)$ of item 3
 - [Weakly admissible filtered (φ, N)-modules](weakly-admissible-filtered-phi-n-modules.md), for $\varphi$-modules over $K_0$ and their Newton numbers in item 5
-- [Cohomology of profinite groups](../../../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for continuous cochain cohomology of topological modules (its item 5), whose forms for $C$-representations item 1 states
+- [Continuous cohomology](../../../../RepresentationTheory/group-cohomology/profinite-group-cohomology/continuous-cochain-cohomology/continuous-cohomology.md), for continuous cochain cohomology of topological modules, whose forms for $C$-representations item 1 states
 
 ## Proof depends on
 

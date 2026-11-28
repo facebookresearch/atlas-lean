@@ -24,7 +24,7 @@ $\ker(H^1(G_K, V) \to H^1(I_K, V))$.
 ## Proof depends on
 
 - [Admissible representations for a regular ring of periods](admissible-representations.md), for the dimension criterion, which, for crystalline (or de Rham) $V$, makes the exactness of the sequence of $D_{\mathrm{cris}}$ (or $D_{\mathrm{dR}}$) equivalent to $W$ being crystalline (or de Rham)
-- [Cohomology of profinite groups](../../../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for the long exact sequence of continuous cohomology of $0 \to B \otimes V \to B \otimes W \to B \to 0$ for $B = B_{\mathrm{cris}}$ or $B_{\mathrm{dR}}$, which has a continuous section since it splits $B$-linearly (its item 5); its connecting map sends $1 \in B^{G_K}$ to the image of the class of the extension
+- [The long exact sequence of continuous cohomology](../../../../RepresentationTheory/group-cohomology/profinite-group-cohomology/continuous-cochain-cohomology/long-exact-sequence-for-continuous-cohomology.md), for the long exact sequence of continuous cohomology of $0 \to B \otimes V \to B \otimes W \to B \to 0$ for $B = B_{\mathrm{cris}}$ or $B_{\mathrm{dR}}$, which has a continuous section since it splits $B$-linearly; its connecting map sends $1 \in B^{G_K}$ to the image of the class of the extension
 
 ## Sources
 

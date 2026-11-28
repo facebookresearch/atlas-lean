@@ -15,12 +15,14 @@ maximal extension of $F$ unramified outside $S$.
 ## Depends on
 
 - [Galois groups with restricted ramification and their modules](galois-groups-with-restricted-ramification.md)
-- [Cohomology of profinite groups](../../../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for cohomological $p$-dimension
+- [Cohomological dimension of a profinite group](../../../../RepresentationTheory/group-cohomology/profinite-group-cohomology/cohomological-dimension.md), for cohomological $p$-dimension
 
 ## Proof depends on
 
 - [Global duality for Galois groups with restricted ramification](global-duality-for-galois-groups-with-restricted-ramification.md), for the cohomology of the $S$-units and the $p$-divisibility of $\mathcal{O}_S^\times$ (items 1 and 2), and for the global duality theorem and the exact sequence $0 \to A' \to I_S(A) \to C_S(A) \to 0$ of level-compact modules (item 3)
-- [Cohomology of profinite groups](../../../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for the Hochschild–Serre spectral sequence, the passage from $p$-Sylow subgroups, and the Tate cohomology of profinite groups of order divisible by $\ell^\infty$ (NSW (1.9.13), (1.9.15)), used in item 3
+- [The Hochschild–Serre spectral sequence](../../../../RepresentationTheory/group-cohomology/profinite-group-cohomology/discrete-coefficients/hochschild-serre-spectral-sequence.md), for the Hochschild–Serre spectral sequence, used in item 3
+- [Properties of cohomological dimension](../../../../RepresentationTheory/group-cohomology/profinite-group-cohomology/properties-of-cohomological-dimension.md), for the passage from $p$-Sylow subgroups, used in item 3
+- [The long exact Tate cohomology sequence of level-compact modules](../../../../RepresentationTheory/group-cohomology/profinite-group-cohomology/discrete-coefficients/long-exact-tate-cohomology-sequence-of-level-compact-modules.md) and [Tate cohomology of finite modules over groups of order divisible by ℓ^∞](../../../../RepresentationTheory/group-cohomology/profinite-group-cohomology/discrete-coefficients/tate-cohomology-of-finite-modules.md), for the Tate cohomology of profinite groups of order divisible by $\ell^\infty$ (NSW (1.9.13), (1.9.15)), used in item 3
 
 ## Sources
 

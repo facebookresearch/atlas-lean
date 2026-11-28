@@ -28,7 +28,7 @@ H^0(k, \mathbb{Q}_\ell/\mathbb{Z}_\ell(1-i))^\vee$, which is finite of order $w_
 ## Depends on
 
 - [Cyclotomic character and Tate twists](../cyclotomic-character-and-tate-twists.md), for $\mathbb{Q}_\ell/\mathbb{Z}_\ell(i)$ and $\mathbb{Z}_\ell(i)$
-- [Cohomology of profinite groups](../../../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for continuous cochain cohomology with compact coefficients
+- [Continuous cohomology](../../../../RepresentationTheory/group-cohomology/profinite-group-cohomology/continuous-cochain-cohomology/continuous-cohomology.md), for continuous cochain cohomology with compact coefficients
 
 ## Proof depends on
 
@@ -36,7 +36,8 @@ H^0(k, \mathbb{Q}_\ell/\mathbb{Z}_\ell(1-i))^\vee$, which is finite of order $w_
 - [Local Euler characteristic formula](local-euler-characteristic-formula.md), for the Euler characteristics of $\mathbb{Z}/\ell\mathbb{Z}(j)$, which give the coranks of $H^1$
 - [Cohomological dimension and finiteness for p-adic fields](cohomological-dimension-of-p-adic-fields.md), for $\operatorname{cd}_\ell(G_k) = 2$
 - [Galois cohomology of roots of unity over a p-adic field](cohomology-of-roots-of-unity-over-p-adic-fields.md), for $H^1(k, \mathbb{Q}_\ell/\mathbb{Z}_\ell(1)) \cong k^\times \otimes \mathbb{Q}_\ell/\mathbb{Z}_\ell$
-- [Cohomology of profinite groups](../../../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for continuous cohomology as an inverse limit over finite levels and its ranks
+- [Continuous cohomology as an inverse limit over finite levels](../../../../RepresentationTheory/group-cohomology/profinite-group-cohomology/continuous-cochain-cohomology/continuous-cohomology-as-an-inverse-limit.md), for continuous cohomology as an inverse limit over finite levels
+- [Ranks of ℓ-adic cohomology](../../../../RepresentationTheory/group-cohomology/profinite-group-cohomology/continuous-cochain-cohomology/ranks-of-l-adic-cohomology.md), for its ranks
 
 ## Sources
 
