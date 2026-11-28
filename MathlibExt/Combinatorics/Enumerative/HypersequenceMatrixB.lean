@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Algebra.Polynomial.Basic
 public import Mathlib.Combinatorics.Enumerative.Stirling
 public import Mathlib.RingTheory.MvPolynomial.Symmetric.Defs
 import Mathlib.Algebra.BigOperators.Intervals
@@ -20,7 +21,8 @@ import MathlibExt.Combinatorics.Enumerative.StirlingAscPochhammer
 /-!
 # Parisse's hypersequence matrix B
 
-The entries of `hyperseqB` are signed elementary symmetric functions. At zero,
+The entries of `hyperseqB` are signed elementary symmetric functions, or equivalently signed
+coefficients of a product of linear factors, for every integer parameter. At zero,
 `hyperseqB_zero_recurrence_stirling` gives their recurrence and two closed forms in
 unsigned Stirling numbers of the first kind. For nonnegative parameters,
 `hyperseqB_recurrence_closed_form_row_sums` transfers the elementary symmetric formulas to the
@@ -29,7 +31,8 @@ matrix entries by reversing degrees and accounting for the signs.
 ## References
 
 * Daniele Parisse, *On Hypersequences of an Arbitrary Sequence and Their Weighted Sums II*,
-  INTEGERS 26 (2026), Article A36, pp. 1–15, Section 3, Propositions 1 and 2.
+  INTEGERS 26 (2026), Article A36, pp. 1–15, Section 2, Equations (2.4) and (2.5), and
+  Section 3, Propositions 1 and 2.
 -/
 
 namespace MetaMathlibExt
@@ -47,6 +50,26 @@ Sums II*, INTEGERS 26 (2026), Article A36,
 Section 2, Equation (2.5). -/
 @[expose] public def hyperseqB (n : ℤ) (j k : ℕ) : ℤ :=
   if k ≤ j then (-1) ^ k * ((Finset.Icc 1 j).val.map fun i : ℕ => n + i).esymm (j - k) else 0
+
+open Finset Polynomial in
+/-- **Parisse's matrix entries as polynomial coefficients.** For any integer `n` and natural
+indices `j, k`, the entry `hyperseqB n j k` is `(-1)^k` times the coefficient of degree `k` in
+$\prod_{i=1}^j (X + n + i)$. Above the diagonal, the polynomial has no coefficient of that degree.
+This is the coefficient form of Equations (2.4) and (2.5) of Parisse's paper. -/
+public theorem hyperseqB_eq_neg_one_pow_mul_coeff (n : ℤ) (j k : ℕ) :
+    hyperseqB n j k = (-1) ^ k * (∏ i ∈ Icc 1 j, (X + C (n + (i : ℤ)))).coeff k := by
+  by_cases hk : k ≤ j
+  · rw [hyperseqB, ite_eq_left hk]
+    congr 1
+    have h := Multiset.prod_X_add_C_coeff' (Icc 1 j).val (fun i : ℕ => n + (i : ℤ))
+      (k := k) (by simpa using hk)
+    simpa [prod_map_val] using h.symm
+  · have hdeg : (∏ i ∈ Icc 1 j, (X + C (n + (i : ℤ)))).natDegree = j := by
+      simpa [sub_eq_add_neg] using
+        natDegree_finsetProd_X_sub_C_eq_card (Icc 1 j) (fun i : ℕ => -(n + (i : ℤ)))
+    have hlt : (∏ i ∈ Icc 1 j, (X + C (n + (i : ℤ)))).natDegree < k :=
+      hdeg.trans_lt (Nat.lt_of_not_ge hk)
+    rw [hyperseqB, ite_eq_right hk, coeff_eq_zero_of_natDegree_lt hlt, mul_zero]
 
 /-- **Row one of Parisse's matrix $B(n)$.** For every integer $n$, the entries $b_{j,k}(n)$ of
 $B(n)$ satisfy $b_{1,0}(n) = n + 1$ and $b_{1,1}(n) = -1$.
@@ -88,12 +111,8 @@ private theorem closed_forms (j k : ℕ) :
     hyperseqB 0 j k = (-1) ^ k * ∑ ℓ ∈ Icc k j, (ℓ.choose k * Nat.stirlingFirst j ℓ : ℤ) ∧
       hyperseqB 0 j k = (-1) ^ k * Nat.stirlingFirst (j + 1) (k + 1) := by
   by_cases hk : k ≤ j
-  · have hc := Multiset.prod_X_add_C_coeff' (Icc 1 j).val (fun i : ℕ => (i : ℤ))
-        (k := k) (by simpa using hk)
-    rw [prod_map_val, prod_X_add_C_eq_shifted_ascPochhammer] at hc
-    have hB : hyperseqB 0 j k = (-1) ^ k * ((ascPochhammer ℤ j).comp (X + 1)).coeff k := by
-      simp [hyperseqB, hk, hc]
-    rw [hB]
+  · rw [hyperseqB_eq_neg_one_pow_mul_coeff]
+    simp only [zero_add, prod_X_add_C_eq_shifted_ascPochhammer]
     constructor <;> congr 1
     · rw [← Nat.sum_stirlingFirst_mul_X_pow]
       simp only [Polynomial.sum_comp, mul_comp, natCast_comp, pow_comp, X_comp, finsetSum_coeff,
