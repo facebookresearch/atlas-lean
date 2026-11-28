@@ -19,9 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.ShuffleOfSeveralStringsWanted
+public import CSLibExt.Complexity.NPComplete.IteratedShuffleMembershipDefs
 
 @[expose] public section
 
@@ -59,26 +57,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the string `w` and the string `u`. -/
-abbrev IteratedShuffleMembershipInstance := List ℕ × List ℕ
-
-/-- Well-formedness of an instance: both strings are over the alphabet `{0, 1, 2}`. -/
-def WellFormed (i : IteratedShuffleMembershipInstance) : Prop :=
-  (∀ a ∈ i.1, a < 3) ∧ ∀ a ∈ i.2, a < 3
-
-/-- `w` is in the iterated shuffle of `u`: it is a shuffle of `m` copies of `u` for some `m`. -/
-def IteratedShuffleMembershipFeasible (i : IteratedShuffleMembershipInstance) : Prop :=
-  ∃ m : ℕ, i.1 ∈ shuffleAll (List.replicate m i.2)
-
-open Classical in
-/-- ITERATED SHUFFLE MEMBERSHIP as a decision problem over bitstrings. -/
-noncomputable def iteratedShuffleMembershipDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := IteratedShuffleMembershipInstance) x with
-  | some i => decide (WellFormed i ∧ IteratedShuffleMembershipFeasible i)
-  | none => false
 
 /-- **ITERATED SHUFFLE MEMBERSHIP is NP-complete.** Source: Warmuth and Haussler (1984). -/
 public theorem_wanted iteratedShuffleMembership_npComplete :

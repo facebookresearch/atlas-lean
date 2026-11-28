@@ -19,9 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Data.List.Perm.Basic
+public import CSLibExt.Complexity.NPComplete.SortingByReversalsDefs
 
 @[expose] public section
 
@@ -52,33 +50,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the permutation `π` as the list `[π(1), …, π(n)]`, and the bound `K`. -/
-abbrev SortingByReversalsInstance := List ℕ × ℕ
-
-/-- Reverse the entries of `l` in the (`0`-based) positions `i` through `j`. -/
-def reversal (l : List ℕ) (i j : ℕ) : List ℕ :=
-  l.take i ++ ((l.drop i).take (j + 1 - i)).reverse ++ l.drop (j + 1)
-
-/-- Well-formedness of an instance: the list is a permutation of the numbers `1` to `n`, where
-`n` is its length. -/
-def WellFormed (i : SortingByReversalsInstance) : Prop :=
-  i.1.Perm (List.range' 1 i.1.length)
-
-/-- At most `K` reversals of intervals `[i, j]` (`i < j < n`), applied in order, turn `π` into
-the identity `[1, 2, …, n]`. -/
-def SortingByReversalsFeasible (i : SortingByReversalsInstance) : Prop :=
-  ∃ ops : List (ℕ × ℕ), ops.length ≤ i.2 ∧ (∀ o ∈ ops, o.1 < o.2 ∧ o.2 < i.1.length) ∧
-    ops.foldl (fun l o => reversal l o.1 o.2) i.1 = List.range' 1 i.1.length
-
-open Classical in
-/-- SORTING BY REVERSALS as a decision problem over bitstrings. -/
-noncomputable def sortingByReversalsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SortingByReversalsInstance) x with
-  | some i => decide (WellFormed i ∧ SortingByReversalsFeasible i)
-  | none => false
 
 /-- **SORTING BY REVERSALS is NP-complete.** Source: Caprara (1999); Crescenzi and Kann, MINIMUM
 SORTING BY REVERSALS. -/

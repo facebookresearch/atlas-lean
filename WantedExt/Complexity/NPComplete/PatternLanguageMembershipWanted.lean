@@ -22,8 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.PatternLanguageMembershipDefs
 
 @[expose] public section
 
@@ -54,30 +53,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the pattern (symbols `(isVariable, name)`) and the word. -/
-abbrev PatternLanguageMembershipInstance := List (Bool × ℕ) × List ℕ
-
-/-- The image of the pattern `α` under the substitution `σ`: each variable `x` is replaced by
-`σ x` and each terminal `a` by itself. -/
-def substitute (σ : ℕ → List ℕ) (α : List (Bool × ℕ)) : List ℕ :=
-  α.flatMap fun t => if t.1 then σ t.2 else [t.2]
-
-/-- Well-formedness of an instance: the pattern is nonempty. -/
-def WellFormed (i : PatternLanguageMembershipInstance) : Prop := i.1 ≠ []
-
-/-- Some nonerasing substitution maps the pattern onto the word. -/
-def PatternLanguageMembershipFeasible (i : PatternLanguageMembershipInstance) : Prop :=
-  ∃ σ : ℕ → List ℕ, (∀ t ∈ i.1, t.1 = true → σ t.2 ≠ []) ∧ substitute σ i.1 = i.2
-
-open Classical in
-/-- PATTERN LANGUAGE MEMBERSHIP as a decision problem over bitstrings. -/
-noncomputable def patternLanguageMembershipDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PatternLanguageMembershipInstance) x with
-  | some i => decide (WellFormed i ∧ PatternLanguageMembershipFeasible i)
-  | none => false
 
 /-- **PATTERN LANGUAGE MEMBERSHIP is NP-complete.** Source: Angluin (1980); Ehrenfeucht and
 Rozenberg (1979). -/

@@ -19,9 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Data.List.Perm.Basic
+public import CSLibExt.Complexity.NPComplete.RightTrominoTilingDefs
 
 @[expose] public section
 
@@ -51,37 +49,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the cells `(x, y)` of the region. -/
-abbrev RightTrominoTilingInstance := List (ℕ × ℕ)
-
-/-- Well-formedness of an instance: the cells are distinct, so the list is a set of cells. -/
-def WellFormed (i : RightTrominoTilingInstance) : Prop :=
-  i.Nodup
-
-/-- The four cells of the `2 × 2` block whose lower left cell is `p`. -/
-def blockCells (p : ℕ × ℕ) : List (ℕ × ℕ) :=
-  [(p.1, p.2), (p.1 + 1, p.2), (p.1, p.2 + 1), (p.1 + 1, p.2 + 1)]
-
-/-- The three cells of the right tromino in rotation `o`, in the `2 × 2` block at `p`: the
-block without its cell number `o`. -/
-def trominoCells (o : Fin 4) (p : ℕ × ℕ) : List (ℕ × ℕ) :=
-  (blockCells p).eraseIdx o
-
-/-- The region is tiled by right trominoes: some list of placed trominoes (a rotation and a
-block position each) covers every cell of the region exactly once and nothing else, i.e. the
-cells of the tiles, counted with multiplicity, are a permutation of the region's cells. -/
-def RightTrominoTilingFeasible (i : RightTrominoTilingInstance) : Prop :=
-  ∃ tiles : List (Fin 4 × (ℕ × ℕ)), (tiles.flatMap fun t => trominoCells t.1 t.2).Perm i
-
-open Classical in
-/-- TILING A REGION WITH RIGHT TROMINOES as a decision problem over bitstrings. -/
-noncomputable def rightTrominoTilingDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := RightTrominoTilingInstance) x with
-  | some i => decide (WellFormed i ∧ RightTrominoTilingFeasible i)
-  | none => false
 
 /-- **TILING A REGION WITH RIGHT TROMINOES is NP-complete.** Source: Moore and Robson (2001),
 Section 3. -/

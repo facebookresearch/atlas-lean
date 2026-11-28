@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.ReynoldsCoveringWanted
+public import CSLibExt.Complexity.NPComplete.RegularGrammarInequivalenceUnaryDefs
 
 @[expose] public section
 
@@ -57,37 +55,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- A right-hand side of Garey and Johnson's regular form: a terminal followed by a nonterminal
-(`a B`), or a single terminal (`a`). -/
-def isRegularRhs : List (Bool × ℕ) → Bool
-  | [(true, _)] => true
-  | [(true, _), (false, _)] => true
-  | _ => false
-
-/-- A grammar is regular when every production is `A → a B` or `A → a`. -/
-def IsRegularGrammar (g : GrammarData) : Prop :=
-  ∀ p ∈ g.2.2, isRegularRhs p.2 = true
-
-/-- Well-formedness of an instance: both grammars are well-formed over the terminal alphabet
-`{0, …, k - 1}` and regular, and the alphabet has exactly one letter. -/
-def WellFormed (i : ReynoldsCoveringInstance) : Prop :=
-  GrammarWellFormed i.1 i.2.1 ∧ GrammarWellFormed i.1 i.2.2 ∧ IsRegularGrammar i.2.1 ∧
-    IsRegularGrammar i.2.2 ∧ i.1 = 1
-
-/-- `G₁` and `G₂` generate different languages. -/
-def RegularGrammarInequivalenceFeasible (i : ReynoldsCoveringInstance) : Prop :=
-  (toEncodedCFG i.2.1).language ≠ (toEncodedCFG i.2.2).language
-
-open Classical in
-/-- REGULAR GRAMMAR INEQUIVALENCE over a one-letter alphabet as a decision problem over
-bitstrings. -/
-noncomputable def regularGrammarInequivalenceUnaryDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ReynoldsCoveringInstance) x with
-  | some i => decide (WellFormed i ∧ RegularGrammarInequivalenceFeasible i)
-  | none => false
 
 /-- **REGULAR GRAMMAR INEQUIVALENCE over a one-letter alphabet is NP-complete.** Source: Garey
 and Johnson (1979), [AL14], comment. -/

@@ -23,9 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MinimumInferredFiniteStateAutomatonWanted
+public import CSLibExt.Complexity.NPComplete.ConsistentFiniteAutomatonBinaryDefs
 
 @[expose] public section
 
@@ -67,26 +65,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the strings `P` to accept and `N` to reject, as lists of letters `0` and `1`,
-and the state bound `K`. -/
-abbrev ConsistentFiniteAutomatonBinaryInstance := List (List ℕ) × List (List ℕ) × ℕ
-
-/-- The MINIMUM INFERRED FINITE STATE AUTOMATON instance with alphabet `{0, 1}` and the same
-`P`, `N` and `K`. -/
-abbrev withBinaryAlphabet (i : ConsistentFiniteAutomatonBinaryInstance) :
-    MinimumInferredFiniteStateAutomatonInstance :=
-  (2, i.1, i.2.1, i.2.2)
-
-open Classical in
-/-- CONSISTENT FINITE AUTOMATON over a binary alphabet as a decision problem over bitstrings. -/
-noncomputable def consistentFiniteAutomatonBinaryDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ConsistentFiniteAutomatonBinaryInstance) x with
-  | some i => decide (WellFormed (withBinaryAlphabet i) ∧
-      MinimumInferredFiniteStateAutomatonFeasible (withBinaryAlphabet i))
-  | none => false
 
 /-- **CONSISTENT FINITE AUTOMATON over a binary alphabet is NP-complete.** Source: Crescenzi and
 Kann (2000), MINIMUM CONSISTENT FINITE AUTOMATON; Lingg, de Oliveira Oliveira and Wolf (2024). -/

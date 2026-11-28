@@ -19,9 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.InformationTheory.Hamming
+public import CSLibExt.Complexity.NPComplete.DistinguishingStringSelectionDefs
 
 @[expose] public section
 
@@ -55,40 +53,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: alphabet size `q` (symbols `0, ..., q - 1`), string length `L`, the bad strings,
-the good strings, `k_b`, `k_g`. -/
-abbrev DistinguishingStringSelectionInstance :=
-  ℕ × ℕ × List (List ℕ) × List (List ℕ) × ℕ × ℕ
-
-/-- A string read as a function on positions `Fin L`. -/
-def asWord (L : ℕ) (s : List ℕ) : Fin L → ℕ := fun k => s.getD k 0
-
-/-- A string over the alphabet `{0, ..., q - 1}` of length `L`. -/
-def IsWord (q L : ℕ) (s : List ℕ) : Prop :=
-  s.length = L ∧ ∀ a ∈ s, a < q
-
-/-- Well-formedness of an instance: every bad and every good string has length `L` over the
-alphabet `{0, ..., q - 1}`. -/
-def WellFormed (i : DistinguishingStringSelectionInstance) : Prop :=
-  (∀ s ∈ i.2.2.1, IsWord i.1 i.2.1 s) ∧ ∀ s ∈ i.2.2.2.1, IsWord i.1 i.2.1 s
-
-/-- A string `t ∈ Σ^L` within Hamming distance `k_b` of every bad string and at Hamming distance
-at least `k_g` from every good string. -/
-def DistinguishingStringSelectionFeasible
-    (i : DistinguishingStringSelectionInstance) : Prop :=
-  ∃ t : List ℕ, IsWord i.1 i.2.1 t ∧
-    (∀ s ∈ i.2.2.1, hammingDist (asWord i.2.1 t) (asWord i.2.1 s) ≤ i.2.2.2.2.1) ∧
-    ∀ s ∈ i.2.2.2.1, i.2.2.2.2.2 ≤ hammingDist (asWord i.2.1 t) (asWord i.2.1 s)
-
-open Classical in
-/-- DISTINGUISHING STRING SELECTION as a decision problem over bitstrings. -/
-noncomputable def distinguishingStringSelectionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := DistinguishingStringSelectionInstance) x with
-  | some i => decide (WellFormed i ∧ DistinguishingStringSelectionFeasible i)
-  | none => false
 
 /-- **DISTINGUISHING STRING SELECTION is NP-complete.** Source: Lanctot, Li, Ma, Wang, and
 Zhang (2003). -/

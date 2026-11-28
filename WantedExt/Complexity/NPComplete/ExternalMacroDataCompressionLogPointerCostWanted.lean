@@ -25,10 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Analysis.SpecialFunctions.Log.Base
-public import WantedExt.Complexity.NPComplete.ExternalMacroDataCompressionWanted
+public import CSLibExt.Complexity.NPComplete.ExternalMacroDataCompressionLogPointerCostDefs
 
 @[expose] public section
 
@@ -70,35 +67,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance (for a fixed alphabet `{0, …, k - 1}`): the string `s`, the parameter `h`, and
-the bound `B`. -/
-abbrev ExternalMacroDataCompressionLogPointerCostInstance := List ℕ × ℕ × ℕ
-
-/-- The pointer cost `⌈h · log₂ |s|⌉`. -/
-noncomputable def pointerCost (s : List ℕ) (h : ℕ) : ℕ :=
-  ⌈(h : ℝ) * Real.logb 2 s.length⌉₊
-
-/-- Well-formedness of an instance for the alphabet `{0, …, k - 1}`: `s` is a string over it,
-and `h` and `B` are positive. -/
-def WellFormed (k : ℕ) (i : ExternalMacroDataCompressionLogPointerCostInstance) : Prop :=
-  (∀ a ∈ i.1, a < k) ∧ 0 < i.2.1 ∧ 0 < i.2.2
-
-/-- `s` has an external macro compression with pointer cost `⌈h · log₂ |s|⌉` within the bound
-`B`. -/
-def ExternalMacroDataCompressionLogPointerCostFeasible (k : ℕ)
-    (i : ExternalMacroDataCompressionLogPointerCostInstance) : Prop :=
-  Compresses k i.1 (pointerCost i.1 i.2.1) i.2.2
-
-open Classical in
-/-- EXTERNAL MACRO DATA COMPRESSION over the alphabet `{0, …, k - 1}` with pointer cost
-`⌈h · log₂ |s|⌉`, as a decision problem over bitstrings. -/
-noncomputable def externalMacroDataCompressionLogPointerCostDec (k : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ExternalMacroDataCompressionLogPointerCostInstance) x with
-  | some i => decide (WellFormed k i ∧ ExternalMacroDataCompressionLogPointerCostFeasible k i)
-  | none => false
 
 /-- **EXTERNAL MACRO DATA COMPRESSION with a fixed alphabet of size `k ≥ 3` and pointer cost
 `⌈h · log |s|⌉` is NP-complete.** Source: Garey and Johnson (1979), [SR22], comment; Storer and

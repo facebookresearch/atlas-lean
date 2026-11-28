@@ -22,10 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import WantedExt.Complexity.NPComplete.MinimumInferredFiniteStateAutomatonWanted
+public import CSLibExt.Complexity.NPComplete.MinimumInferredFiniteStateAutomatonNearlyCompleteDefs
 
 @[expose] public section
 
@@ -63,31 +60,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- `|Σ^(n)|` for an alphabet of `m` letters: the number of strings of length at most `n`. -/
-def stringsUpTo (m n : ℕ) : ℕ := ∑ k ∈ Finset.range (n + 1), m ^ k
-
-/-- The sample is nearly complete for `ε = p / q`: for some `n`, every string of `S` and `T`
-has length at most `n`, and `|Σ^(n) - (S ∪ T)|^q ≤ |Σ^(n)|^p`. -/
-def NearlyComplete (p q : ℕ) (i : MinimumInferredFiniteStateAutomatonInstance) : Prop :=
-  ∃ n, (∀ w ∈ i.2.1 ++ i.2.2.1, w.length ≤ n) ∧
-    (stringsUpTo i.1 n - (i.2.1 ++ i.2.2.1).toFinset.card) ^ q ≤ stringsUpTo i.1 n ^ p
-
-/-- Well-formedness of an instance: it is a well-formed MINIMUM INFERRED FINITE STATE
-AUTOMATON instance (letters below `m`, `K` positive), and the sample is nearly complete for
-`ε = p / q`. -/
-def WellFormed (p q : ℕ) (i : MinimumInferredFiniteStateAutomatonInstance) : Prop :=
-  MinimumInferredFiniteStateAutomaton.WellFormed i ∧ NearlyComplete p q i
-
-open Classical in
-/-- MINIMUM INFERRED FINITE STATE AUTOMATON restricted to nearly complete samples for
-`ε = p / q`, as a decision problem over bitstrings. -/
-noncomputable def minimumInferredFiniteStateAutomatonNearlyCompleteDec (p q : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MinimumInferredFiniteStateAutomatonInstance) x with
-  | some i => decide (WellFormed p q i ∧ MinimumInferredFiniteStateAutomatonFeasible i)
-  | none => false
 
 /-- **MINIMUM INFERRED FINITE STATE AUTOMATON for nearly complete samples is NP-complete**, for
 every fixed rational `ε = p / q > 0`. Source: Garey and Johnson (1979), [AL8] comment;

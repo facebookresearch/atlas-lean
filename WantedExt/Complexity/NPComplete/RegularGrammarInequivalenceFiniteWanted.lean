@@ -23,11 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Basic.Finite.Defs
-public import WantedExt.Complexity.NPComplete.ReynoldsCoveringWanted
-public import WantedExt.Complexity.NPComplete.RegularGrammarInequivalenceUnaryWanted
+public import CSLibExt.Complexity.NPComplete.RegularGrammarInequivalenceFiniteDefs
 
 @[expose] public section
 
@@ -64,22 +60,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: both grammars are well-formed over the terminal alphabet
-`{0, …, k - 1}` and regular, and both generate finite languages. -/
-def WellFormed (i : ReynoldsCoveringInstance) : Prop :=
-  GrammarWellFormed i.1 i.2.1 ∧ GrammarWellFormed i.1 i.2.2 ∧ IsRegularGrammar i.2.1 ∧
-    IsRegularGrammar i.2.2 ∧ Set.Finite (toEncodedCFG i.2.1).language ∧
-      Set.Finite (toEncodedCFG i.2.2).language
-
-open Classical in
-/-- REGULAR GRAMMAR INEQUIVALENCE for finite languages as a decision problem over bitstrings. -/
-noncomputable def regularGrammarInequivalenceFiniteDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ReynoldsCoveringInstance) x with
-  | some i => decide (WellFormed i ∧ RegularGrammarInequivalenceFeasible i)
-  | none => false
 
 /-- **REGULAR GRAMMAR INEQUIVALENCE for grammars generating finite languages is
 NP-complete.** Source: Garey and Johnson (1979), [AL14], comment. -/

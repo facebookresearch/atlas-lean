@@ -23,10 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Basic.Finite.Defs
-public import WantedExt.Complexity.NPComplete.FiniteStateAutomatonInequivalenceUnaryWanted
+public import CSLibExt.Complexity.NPComplete.FiniteStateAutomatonInequivalenceFiniteDefs
 
 @[expose] public section
 
@@ -62,22 +59,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: both automata are well-formed over the alphabet
-`{0, …, m - 1}`, and both recognize finite languages. -/
-def WellFormed (i : AutomatonInequivalenceInstance) : Prop :=
-  AutomatonWellFormed i.1 i.2.1 ∧ AutomatonWellFormed i.1 i.2.2 ∧
-    Set.Finite (toEncodedNFA i.2.1).language ∧ Set.Finite (toEncodedNFA i.2.2).language
-
-open Classical in
-/-- FINITE STATE AUTOMATON INEQUIVALENCE for finite languages as a decision problem over
-bitstrings. -/
-noncomputable def automatonInequivalenceFiniteDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := AutomatonInequivalenceInstance) x with
-  | some i => decide (WellFormed i ∧ AutomatonInequivalenceFeasible i)
-  | none => false
 
 /-- **FINITE STATE AUTOMATON INEQUIVALENCE for automata recognizing finite languages is
 NP-complete.** Source: Garey and Johnson (1979), [AL1], comment. -/

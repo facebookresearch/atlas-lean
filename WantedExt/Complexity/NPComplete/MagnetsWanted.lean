@@ -17,11 +17,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Basic.Sign.Defs
-public import Mathlib.Combinatorics.SimpleGraph.Hasse
-public import Mathlib.Combinatorics.SimpleGraph.Prod
+public import CSLibExt.Complexity.NPComplete.MagnetsDefs
 
 @[expose] public section
 
@@ -51,52 +47,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance `(w, h, D, R, C)`: the width `w`, the height `h`, the dominoes `D` (each a
-pair of squares `(row, column)`), the row counts `R = [(r₀⁺, r₀⁻), …]` (one pair per row) and
-the column counts `C = [(c₀⁺, c₀⁻), …]` (one pair per column). -/
-abbrev MagnetsInstance :=
-  ℕ × ℕ × List ((ℕ × ℕ) × (ℕ × ℕ)) × List (ℕ × ℕ) × List (ℕ × ℕ)
-
-/-- The grid graph of the rectangle: squares `(i, j)` with `i < h`, `j < w`, adjacent when
-horizontally or vertically adjacent. -/
-def Grid (i : MagnetsInstance) : SimpleGraph (Fin i.2.1 × Fin i.1) :=
-  SimpleGraph.pathGraph i.2.1 □ SimpleGraph.pathGraph i.1
-
-/-- A square of the grid as a pair of natural numbers `(row, column)`. -/
-def toNatPair {h w : ℕ} (a : Fin h × Fin w) : ℕ × ℕ := ((a.1 : ℕ), (a.2 : ℕ))
-
-/-- Well-formedness of an instance `(w, h, D, R, C)`: there are `h` row counts and `w` column
-counts, every domino is a pair of adjacent squares of the grid, and the dominoes subdivide the
-rectangle (every square lies in exactly one domino). -/
-def WellFormed (i : MagnetsInstance) : Prop :=
-  i.2.2.2.1.length = i.2.1 ∧ i.2.2.2.2.length = i.1 ∧
-    (∀ d ∈ i.2.2.1, ∃ a b : Fin i.2.1 × Fin i.1,
-      toNatPair a = d.1 ∧ toNatPair b = d.2 ∧ (Grid i).Adj a b) ∧
-    (i.2.2.1.flatMap fun d => [d.1, d.2]).Perm
-      ((List.range i.2.1).flatMap fun r => (List.range i.1).map fun c => (r, c))
-
-/-- Some assignment of `-1`, `0`, `+1` to the squares satisfies rules (1)-(3). -/
-def MagnetsFeasible (i : MagnetsInstance) : Prop :=
-  ∃ v : Fin i.2.1 × Fin i.1 → SignType,
-    (∀ d ∈ i.2.2.1, ∀ a b : Fin i.2.1 × Fin i.1,
-      toNatPair a = d.1 → toNatPair b = d.2 → (v a : ℤ) + (v b : ℤ) = 0) ∧
-    (∀ a b, (Grid i).Adj a b → (v a = 0 ∧ v b = 0) ∨ v a ≠ v b) ∧
-    (∀ r : Fin i.2.1,
-      (Finset.univ.filter fun c => v (r, c) = 1).card = (i.2.2.2.1.getD r (0, 0)).1 ∧
-        (Finset.univ.filter fun c => v (r, c) = -1).card = (i.2.2.2.1.getD r (0, 0)).2) ∧
-    ∀ c : Fin i.1,
-      (Finset.univ.filter fun r => v (r, c) = 1).card = (i.2.2.2.2.getD c (0, 0)).1 ∧
-        (Finset.univ.filter fun r => v (r, c) = -1).card = (i.2.2.2.2.getD c (0, 0)).2
-
-open Classical in
-/-- MAGNETS as a decision problem over bitstrings. -/
-noncomputable def magnetsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MagnetsInstance) x with
-  | some i => decide (WellFormed i ∧ MagnetsFeasible i)
-  | none => false
 
 /-- **MAGNETS is NP-complete.** Source: Kölker (2012), Theorem 1 (membership: a solution is
 a certificate; hardness: a reduction from monotone 1-in-3 satisfiability). -/

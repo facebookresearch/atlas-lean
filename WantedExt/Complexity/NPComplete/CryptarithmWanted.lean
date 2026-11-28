@@ -17,10 +17,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Data.Nat.Digits.Defs
-public import Mathlib.Data.Set.Operations
+public import CSLibExt.Complexity.NPComplete.CryptarithmDefs
 
 @[expose] public section
 
@@ -55,38 +52,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the base `b` and the words `w₁`, `w₂`, `w₃` of the puzzle `w₁ + w₂ = w₃`, each
-a list of letters, most significant first. -/
-abbrev CryptarithmInstance := ℕ × List ℕ × List ℕ × List ℕ
-
-/-- The letters of the puzzle, with repetitions. -/
-def letters (i : CryptarithmInstance) : List ℕ :=
-  i.2.1 ++ i.2.2.1 ++ i.2.2.2
-
-/-- The value of the word `w` in base `b` when letter `x` stands for the digit `f x`. -/
-def wordValue (b : ℕ) (f : ℕ → ℕ) (w : List ℕ) : ℕ :=
-  Nat.ofDigits b (w.reverse.map f)
-
-/-- Well-formedness of an instance: the base is at least `2`, the three words are nonempty, and
-the puzzle has at most `b` different letters. -/
-def WellFormed (i : CryptarithmInstance) : Prop :=
-  2 ≤ i.1 ∧ i.2.1 ≠ [] ∧ i.2.2.1 ≠ [] ∧ i.2.2.2 ≠ [] ∧ (letters i).dedup.length ≤ i.1
-
-/-- Some one-to-one correspondence between the letters of the puzzle and base-`b` digits makes
-the sum `w₁ + w₂ = w₃` correct. -/
-def CryptarithmFeasible (i : CryptarithmInstance) : Prop :=
-  ∃ f : ℕ → ℕ, (∀ x ∈ letters i, f x < i.1) ∧ Set.InjOn f {x | x ∈ letters i} ∧
-    wordValue i.1 f i.2.1 + wordValue i.1 f i.2.2.1 = wordValue i.1 f i.2.2.2
-
-open Classical in
-/-- CRYPTARITHM as a decision problem over bitstrings. -/
-noncomputable def cryptarithmDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := CryptarithmInstance) x with
-  | some i => decide (WellFormed i ∧ CryptarithmFeasible i)
-  | none => false
 
 /-- **CRYPTARITHM is NP-complete.** Source: Eppstein (1987). -/
 public theorem_wanted cryptarithm_npComplete :

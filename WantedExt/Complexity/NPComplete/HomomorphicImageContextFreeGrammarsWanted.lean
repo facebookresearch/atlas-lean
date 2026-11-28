@@ -22,10 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Languages.ContextFree.Encoded
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.ReynoldsCoveringWanted
+public import CSLibExt.Complexity.NPComplete.HomomorphicImageContextFreeGrammarsDefs
 
 @[expose] public section
 
@@ -65,28 +62,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- `G₂` is a homomorphic image of `G₁`: some map `f` on nonterminals (extended by the identity
-on terminals) sends every nonterminal of `G₁` to a nonterminal of `G₂` and the initial symbol of
-`G₁` to that of `G₂`, every production of `G₁` to a production of `G₂`, and every production of
-`G₂` is the image of a production of `G₁`. -/
-def HomomorphicImageFeasible : ReynoldsCoveringInstance → Prop
-  | (_, g₁, g₂) =>
-    ∃ f : ℕ → ℕ, (∀ A < g₁.1, f A < g₂.1) ∧
-      f (toEncodedCFG g₁).toCFG.initial = (toEncodedCFG g₂).toCFG.initial ∧
-      (∀ r ∈ (toEncodedCFG g₁).toCFG.rules,
-        Cslib.Language.mapRule f r ∈ (toEncodedCFG g₂).toCFG.rules) ∧
-      ∀ q ∈ (toEncodedCFG g₂).toCFG.rules,
-        ∃ r ∈ (toEncodedCFG g₁).toCFG.rules, Cslib.Language.mapRule f r = q
-
-open Classical in
-/-- HOMOMORPHIC IMAGE FOR CONTEXT-FREE GRAMMARS as a decision problem over bitstrings. -/
-noncomputable def homomorphicImageDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ReynoldsCoveringInstance) x with
-  | some i => decide (ReynoldsCovering.WellFormed i ∧ HomomorphicImageFeasible i)
-  | none => false
 
 /-- **HOMOMORPHIC IMAGE FOR CONTEXT-FREE GRAMMARS is NP-complete.** Source: Garey and Johnson
 (1979), [AL11]; Rosenkrantz and Hunt (1985), Theorem 3.2(1). -/

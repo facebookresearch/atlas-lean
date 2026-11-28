@@ -19,11 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Hasse
-public import Mathlib.Combinatorics.SimpleGraph.Prod
-public import Mathlib.Logic.Equiv.Basic
+public import CSLibExt.Complexity.NPComplete.NPuzzleShortestSolutionDefs
 
 @[expose] public section
 
@@ -58,41 +54,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the board side `n`, the start configuration `s` and the target configuration
-`t` (row by row, `0` for the hole), and the move bound `k`. -/
-abbrev NPuzzleShortestSolutionInstance := ℕ × List (List ℕ) × List (List ℕ) × ℕ
-
-/-- Well-formedness: `n ≥ 1`, both configurations have `n` rows of length `n`, and each lists
-every label `0, …, n² − 1` exactly once. -/
-def WellFormed (i : NPuzzleShortestSolutionInstance) : Prop :=
-  1 ≤ i.1 ∧ i.2.1.length = i.1 ∧ (∀ row ∈ i.2.1, row.length = i.1) ∧
-    i.2.1.flatten.Perm (List.range (i.1 * i.1)) ∧ i.2.2.1.length = i.1 ∧
-    (∀ row ∈ i.2.2.1, row.length = i.1) ∧ i.2.2.1.flatten.Perm (List.range (i.1 * i.1))
-
-/-- The configuration given row by row, as a labelling of the cells `Fin n × Fin n`. -/
-def config (n : ℕ) (rows : List (List ℕ)) : Fin n × Fin n → ℕ :=
-  fun x => (rows.getD x.1 []).getD x.2 0
-
-/-- One move takes configuration `a` to `b`: the hole, at cell `x`, exchanges cells with the
-square at a cell `y` that shares a side with `x`. -/
-def Move (n : ℕ) (a b : Fin n × Fin n → ℕ) : Prop :=
-  ∃ x y : Fin n × Fin n, (SimpleGraph.pathGraph n □ SimpleGraph.pathGraph n).Adj x y ∧
-    a x = 0 ∧ b = a ∘ Equiv.swap x y
-
-/-- Some sequence of at most `k` moves converts `s` into `t`. -/
-def NPuzzleShortestSolutionFeasible (i : NPuzzleShortestSolutionInstance) : Prop :=
-  ∃ m ≤ i.2.2.2, ∃ f : ℕ → Fin i.1 × Fin i.1 → ℕ,
-    f 0 = config i.1 i.2.1 ∧ f m = config i.1 i.2.2.1 ∧ ∀ j < m, Move i.1 (f j) (f (j + 1))
-
-open Classical in
-/-- (n²−1)-PUZZLE SHORTEST SOLUTION as a decision problem over bitstrings. -/
-noncomputable def nPuzzleShortestSolutionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := NPuzzleShortestSolutionInstance) x with
-  | some i => decide (WellFormed i ∧ NPuzzleShortestSolutionFeasible i)
-  | none => false
 
 /-- **(n²−1)-PUZZLE SHORTEST SOLUTION is NP-complete.** Source: Ratner and Warmuth (1990);
 Demaine and Rudoy (2018). -/

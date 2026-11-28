@@ -18,9 +18,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Languages.Shuffle
+public import CSLibExt.Complexity.NPComplete.ShuffleSquareDefs
 
 @[expose] public section
 
@@ -52,25 +50,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the string `w`, a list of symbols. -/
-abbrev ShuffleSquareInstance := List ℕ
-
-/-- Well-formedness of an instance: every string of symbols is an instance. -/
-def WellFormed (_i : ShuffleSquareInstance) : Prop := True
-
-/-- `w` is a square: `w = u ⊙ u` for some string `u`. -/
-def ShuffleSquareFeasible (i : ShuffleSquareInstance) : Prop :=
-  ∃ u : List ℕ, Cslib.Language.IsShuffle u u i
-
-open Classical in
-/-- UNSHUFFLING A SQUARE as a decision problem over bitstrings. -/
-noncomputable def shuffleSquareDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ShuffleSquareInstance) x with
-  | some i => decide (WellFormed i ∧ ShuffleSquareFeasible i)
-  | none => false
 
 /-- **UNSHUFFLING A SQUARE is NP-complete.** Source: Buss and Soltys (2014),
 Theorem 3. -/

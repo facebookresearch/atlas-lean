@@ -18,9 +18,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MinimumFragmentRemovalWanted
+public import CSLibExt.Complexity.NPComplete.MinimumSnpRemovalDefs
 
 @[expose] public section
 
@@ -60,31 +58,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- The matrix with the columns in `C` removed: their entries are replaced by holes (`2`). -/
-def removeColumns (i : MinimumErrorCorrectionInstance) (C : Finset (Fin i.1)) :
-    MinimumErrorCorrectionInstance :=
-  (i.1, i.2.1.map (fun X => X.mapIdx fun k x => if k ∈ C.map Fin.valEmbedding then 2 else x),
-    i.2.2)
-
-/-- Well-formedness of an instance: every row has length `m` and entries in `{0, 1, 2}` (that of
-MINIMUM FRAGMENT REMOVAL). -/
-def WellFormed (i : MinimumErrorCorrectionInstance) : Prop :=
-  MinimumFragmentRemoval.WellFormed i
-
-/-- Removing some set `C` of at most `K` columns leaves a feasible matrix: its fragment conflict
-graph is bipartite. -/
-def MinimumSnpRemovalFeasible (i : MinimumErrorCorrectionInstance) : Prop :=
-  ∃ C : Finset (Fin i.1), C.card ≤ i.2.2 ∧ (fragmentConflictGraph (removeColumns i C)).IsBipartite
-
-open Classical in
-/-- MINIMUM SNP REMOVAL as a decision problem over bitstrings. -/
-noncomputable def minimumSnpRemovalDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MinimumErrorCorrectionInstance) x with
-  | some i => decide (WellFormed i ∧ MinimumSnpRemovalFeasible i)
-  | none => false
 
 /-- **MINIMUM SNP REMOVAL is NP-complete.** Source: Lancia, Bafna, Istrail, Lippert, and
 Schwartz (2001), Theorem 8. -/

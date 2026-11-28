@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.SquareTilingWanted
+public import CSLibExt.Complexity.NPComplete.PeriodicSquareTilingDefs
 
 @[expose] public section
 
@@ -65,26 +63,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- A tiling of the plane with period `p` in both directions, for some `0 < p < N`: every
-position `(x, y) ∈ ℤ × ℤ` gets a tile of `T`, horizontally adjacent tiles agree on the shared
-right/left color, vertically adjacent tiles agree on the shared bottom/top color, and
-`f (x + p) y = f x y = f x (y + p)`. -/
-def PeriodicSquareTilingFeasible (i : SquareTilingInstance) : Prop :=
-  ∃ p : ℕ, 0 < p ∧ p < i.2.2 ∧ ∃ f : ℤ → ℤ → ℕ × ℕ × ℕ × ℕ,
-    (∀ x y, f x y ∈ i.2.1) ∧
-    (∀ x y, (f x y).2.1 = (f (x + 1) y).2.2.2) ∧
-    (∀ x y, (f x y).2.2.1 = (f x (y + 1)).1) ∧
-    (∀ x y, f (x + p) y = f x y ∧ f x (y + p) = f x y)
-
-open Classical in
-/-- PERIODIC SQUARE-TILING WITH BOUNDED PERIOD as a decision problem over bitstrings. -/
-noncomputable def periodicSquareTilingDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SquareTilingInstance) x with
-  | some i => decide (SquareTiling.WellFormed i ∧ PeriodicSquareTilingFeasible i)
-  | none => false
 
 /-- **PERIODIC SQUARE-TILING WITH BOUNDED PERIOD is NP-complete.** Source: Garey and Johnson
 (1979), [GP13], comment (Garey, Johnson, and Papadimitriou, unpublished). -/
