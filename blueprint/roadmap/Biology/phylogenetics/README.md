@@ -28,7 +28,6 @@ Reconstruction of evolutionary trees from sequence data: substitution models, li
 - [Phylogenetic networks](phylogenetic-networks/README.md)
 - [Tree shape and balance](tree-shape-and-balance/README.md)
 
-- [Phylogenetic diversity](phylogenetic-diversity/README.md)
 - [Phylogenetic invariants](phylogenetic-invariants/README.md)
 - [Displayed-tree measures on phylogenetic networks](displayed-tree-measures-on-phylogenetic-networks/README.md)
 - [Trinet encoding of phylogenetic networks](trinet-encoding-of-phylogenetic-networks/README.md)
@@ -39,3 +38,4 @@ Reconstruction of evolutionary trees from sequence data: substitution models, li
 - [Orchard phylogenetic networks](orchard-phylogenetic-networks/README.md)
 - [Ranked nearest neighbour interchange](ranked-nearest-neighbour-interchange/README.md)
 - [Tree balance indices](tree-balance-indices/README.md)
+- [Combinatorial phylogenetics](combinatorial-phylogenetics/README.md)

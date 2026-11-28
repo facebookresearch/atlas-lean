@@ -47,3 +47,6 @@ Compartmental, renewal and branching-process models of infectious disease transm
 - [Multi-strain diffusive SIS model](multi-strain-diffusive-sis-model/README.md)
 - [Separable heterogeneity in Kermack–McKendrick models](separable-heterogeneity-in-kermack-mckendrick-models/README.md)
 - [SIR model on metric graphs](sir-model-on-metric-graphs/README.md)
+- [Control of epidemics](control-of-epidemics/README.md)
+- [Vaccination strategies and epidemic games](vaccination-strategies-and-epidemic-games/README.md)
+- [Epidemic models and their dynamics](epidemic-models-and-their-dynamics/README.md)

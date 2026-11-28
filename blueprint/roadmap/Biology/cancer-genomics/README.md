@@ -28,3 +28,6 @@ Mathematical models for tumour sequencing data: purity and copy number, cancer c
 - [Phenotype-structured models of tumour evolution](phenotype-structured-models-of-tumour-evolution/README.md)
 - [Phenotypic switching in tumours](phenotypic-switching-in-tumours/README.md)
 - [Random segregation of extrachromosomal DNA](random-segregation-of-extrachromosomal-dna/README.md)
+- [Clone sizes and mutation counts in growing tumours](clone-sizes-and-mutation-counts-in-growing-tumours/README.md)
+- [Optimal control, therapy and parameter identification of tumour models](optimal-control-and-therapy-of-tumour-models/README.md)
+- [Conflict-free row splits of tumor mixture matrices](conflict-free-row-splits-of-tumor-mixture-matrices/README.md)

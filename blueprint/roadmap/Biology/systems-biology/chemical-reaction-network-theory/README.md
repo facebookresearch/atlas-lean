@@ -13,3 +13,8 @@
 - [Monomolecular networks are not nondegenerately multistationary](monomolecular-networks-are-not-nondegenerately-multistationary.md)
 - [Steady-state invariants of glued reaction networks](steady-state-invariants-of-glued-reaction-networks.md)
 - [Topological criterion for autocatalysis in diluted reaction networks](topological-criterion-for-autocatalysis-in-diluted-networks.md)
+- [Absolute concentration robustness and integral feedback](absolute-concentration-robustness-and-integral-feedback/README.md)
+- [Hamiltonian structure of chemical reaction rate equations](hamiltonian-structure-of-chemical-reaction-rate-equations/README.md)
+- [Hill coefficients of multisite binding](hill-coefficients-of-multisite-binding/README.md)
+- [Large deviations of reaction networks coupled to ODEs](large-deviations-of-reaction-networks-coupled-to-odes/README.md)
+- [Minimal absolute concentration robust networks](minimal-absolute-concentration-robust-networks/README.md)

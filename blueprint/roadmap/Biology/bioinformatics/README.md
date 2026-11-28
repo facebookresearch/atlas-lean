@@ -39,3 +39,5 @@ Algorithms and statistical models on biological sequences and data: sequence ali
 - [Sequence design and binding prediction](sequence-design-and-binding-prediction/README.md)
 - [Variant edges in bidirected pangenome graphs](variant-edges-in-bidirected-pangenome-graphs/README.md)
 - [Aberrant splicing detection](aberrant-splicing-detection/README.md)
+- [Combinatorics of RNA secondary structures](rna-secondary-structure-combinatorics/README.md)
+- [Genome rearrangements and DNA codes](genome-rearrangements-and-dna-codes/README.md)
