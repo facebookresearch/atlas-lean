@@ -19,7 +19,7 @@ meta import Mathlib.Tactic.Abel
 
 On the cyclic group of order two, the product of the three coordinate characters is a
 normalized three-cocycle with trivial coefficients in `ZMod 2`. It takes value one on three
-nonidentity elements and zero when the middle entry is the identity. Every two-coboundary
+nonidentity elements and zero when the middle entry is the identity. Every three-coboundary
 has opposite values at those two tuples, which proves that this actual cohomology class is
 nonzero. The additive integral-coefficient comparison retains the same nonzero class.
 -/
