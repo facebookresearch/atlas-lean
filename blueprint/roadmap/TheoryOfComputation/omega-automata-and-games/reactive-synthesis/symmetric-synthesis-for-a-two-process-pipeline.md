@@ -22,7 +22,7 @@ None.
 
 ## Expansion
 
-The proof first shows undecidability for a larger symmetric architecture $S2$, by reducing distributed synthesis for the two-process architecture $A0$ of Pnueli and Rosner, whose undecidability has no page here: a specification forces the two copies to play the roles of the two different processes of $A0$, using that a process cannot tell whether its local input comes from the environment or from the other process. Undecidability for $S0$ follows by compressing the signals of $S2$ into the single signals $x$, $y$ and $z$ of $S0$.
+The proof first shows undecidability for a larger symmetric architecture $S2$, by reducing distributed synthesis for the two-process architecture $A0$ of Pnueli and Rosner, which is undecidable: a specification forces the two copies to play the roles of the two different processes of $A0$, using that a process cannot tell whether its local input comes from the environment or from the other process. Undecidability for $S0$ follows by compressing the signals of $S2$ into the single signals $x$, $y$ and $z$ of $S0$.
 
 ## Sources
 

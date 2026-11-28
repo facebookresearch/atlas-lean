@@ -29,7 +29,7 @@ None.
 
 ## Expansion
 
-The source obtains both items as corollaries of undecidability results for probabilistic Büchi and co-Büchi automata on infinite words (emptiness under positive and almost-sure semantics), which have no page here; Büchi and co-Büchi automata are the special cases with weights $0$ and $1$.
+The source obtains both items as corollaries of undecidability results for probabilistic Büchi and co-Büchi automata on infinite words (emptiness under positive and almost-sure semantics); Büchi and co-Büchi automata are the special cases with weights $0$ and $1$. A good expansion links pages for those results.
 
 ## Sources
 

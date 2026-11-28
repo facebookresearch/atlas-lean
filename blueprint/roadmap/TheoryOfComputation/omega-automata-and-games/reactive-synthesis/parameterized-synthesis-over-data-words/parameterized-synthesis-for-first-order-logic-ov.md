@@ -26,7 +26,7 @@ In both cases every process is controlled by both players. By contrast, for $\ma
 
 ## Expansion
 
-Both proofs reduce the halting problem for two-counter machines. For item 1 the paper adapts the reduction of Figueira and Praveen, given for a fragment of the logic of repeating values, showing that their encoding of two-counter machines can be written with two variables and adapted to the asynchronous setting. For item 2 the paper translates $\mathrm{FO}[\sim]$ formulas into a normal form that only counts processes and the actions of each process up to a threshold, and from there into parameterized vector games; it shows that the game problem with only mixed processes encodes a two-counter machine, and the translation back gives undecidability of synthesis. A complete expansion links the reduction from the logic of repeating values and the undecidability of the parameterized vector game, which have no pages.
+Both proofs reduce the halting problem for two-counter machines. For item 1 the paper adapts the reduction of Figueira and Praveen, given for a fragment of the logic of repeating values, showing that their encoding of two-counter machines can be written with two variables and adapted to the asynchronous setting. For item 2 the paper translates $\mathrm{FO}[\sim]$ formulas into a normal form that only counts processes and the actions of each process up to a threshold, and from there into parameterized vector games; it shows that the game problem with only mixed processes encodes a two-counter machine, and the translation back gives undecidability of synthesis. A complete expansion links the reduction from the logic of repeating values and the undecidability of the parameterized vector game.
 
 ## Sources
 
