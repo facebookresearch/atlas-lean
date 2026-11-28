@@ -10508,6 +10508,7 @@
   "Domains/Biology/PopulationGenetics/Classical/QuantMutationSelection": {"to": "Biology/quantitative-genetics", "title": "Continuum-of-alleles model of mutation and stabilizing selection"},
   "Domains/Biology/PopulationGenetics/Classical/SexRatio": {"to": "Biology/population-genetics", "title": "Fisher's sex-ratio principle"},
   "Domains/Biology/PopulationGenetics/Classical/TwoLocusSelection": {"to": "Biology/population-genetics", "title": "Haploid selection and multiplicative fitnesses"},
+  "Domains/Biology/PopulationGenetics/Classical/ViabilityRegimes": {"to": "Biology/population-genetics/selection-migration-and-transmission", "title": "One-locus selection dynamics"},
   "Domains/Biology/PopulationGenetics/Classical/XLinked": {"to": "Biology/population-genetics", "title": "Unequal allele frequencies in the sexes and X linkage"},
   "Domains/Biology/PopulationGenetics/Coalescent/BetaCoalescent": {"to": "Biology/coalescent-theory/multiple-merger-coalescents", "title": "Merger rates and Beta-coalescents"},
   "Domains/Biology/PopulationGenetics/Coalescent/BlockCounting": {"to": "Biology/coalescent-theory", "title": "Ancestral lineage counting and Tavaré's formula"},
