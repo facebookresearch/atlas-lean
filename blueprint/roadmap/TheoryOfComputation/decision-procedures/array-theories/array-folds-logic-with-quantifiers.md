@@ -17,7 +17,7 @@ The quantifier-free fragment, where all variables are implicitly existential, is
 
 ## Expansion
 
-The reduction is from Hilbert's tenth problem. Addition is already available, so it suffices to define multiplication $x=y\cdot z$ by an $\exists^*\forall^*$ formula. The formula requires $|a|=x$, uses one fold to say that $a$ is a $0$–$1$ array with exactly $z$ ones, and, for every index $j$ with $0\le j<|a|$, a fold starting at $j$ that counts exactly one $1$ among the positions $j,\dots,j+y$. This forces $a$ to consist of $z$ blocks $0\cdots01$ of length $y$, so $x=y\cdot z$.
+The reduction is from Hilbert's tenth problem over the natural numbers, undecidable by the DPRM theorem. Addition is already available, so it suffices to define multiplication $x=y\cdot z$ by an $\exists^*\forall^*$ formula. The formula requires $|a|=x$, uses one fold to say that $a$ is a $0$–$1$ array with exactly $z$ ones, and, for every index $j$ with $0\le j<|a|$, a fold starting at $j$ that counts exactly one $1$ among the positions $j,\dots,j+y$. This forces $a$ to consist of $z$ blocks $0\cdots01$ of length $y$, so $x=y\cdot z$.
 
 ## Sources
 
