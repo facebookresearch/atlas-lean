@@ -28,4 +28,3 @@ Mathematical models for tumour sequencing data: purity and copy number, cancer c
 - [Phenotype-structured models of tumour evolution](phenotype-structured-models-of-tumour-evolution/README.md)
 - [Phenotypic switching in tumours](phenotypic-switching-in-tumours/README.md)
 - [Random segregation of extrachromosomal DNA](random-segregation-of-extrachromosomal-dna/README.md)
-- [Somatic copy-number and clonal timing models](somatic-copy-number-and-clonal-timing/README.md)

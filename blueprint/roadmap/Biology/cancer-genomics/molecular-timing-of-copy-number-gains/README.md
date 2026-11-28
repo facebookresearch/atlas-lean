@@ -21,3 +21,7 @@
 - [Timing of a single-copy gain](single-gain-timing.md)
 - [Timing of a copy-neutral loss of heterozygosity](cn-loh-timing.md)
 - [Timing of a whole-genome doubling](wgd-timing.md)
+
+## Subtopics
+
+- [Somatic copy-number and clonal timing models](somatic-copy-number-and-clonal-timing/README.md)
