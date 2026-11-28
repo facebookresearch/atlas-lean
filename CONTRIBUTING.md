@@ -495,6 +495,16 @@ included, makes it a graph PR in full.
   comments `@codex` for an advisory review. Agents produce graph changes faster
   than people can check them, and a poor expansion spreads into every task
   below it.
+- **A code owner's AI review agent may give the code owner's approval,**
+  under the code owner's account, when neither the code owner nor any person
+  or agent acting for them authored or committed to the pull request. On a
+  pull request that moves shared definitions out of `WantedExt` into a proved
+  library (completing a `def_wanted` is not such a move), the agent's approval
+  counts only when the moved definitions are unchanged apart from their names,
+  namespaces and imports; otherwise a code owner approves it in person. A code
+  owner who approves in person says so in the review, as agent and personal
+  approvals come from the same account. This rule decides which approvals
+  count as a code owner's, not which pull requests need one.
 
 ## How PRs merge
 
