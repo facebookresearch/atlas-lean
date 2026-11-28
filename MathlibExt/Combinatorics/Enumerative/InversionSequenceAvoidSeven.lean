@@ -9,7 +9,6 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Combinatorics.Enumerative.InversionSequencePatternSets
-import all MathlibExt.Combinatorics.Enumerative.InversionSequenceAvoid011102120
 import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Data.Finset.Powerset
 import Mathlib.Data.Finset.Sort
@@ -32,8 +31,8 @@ We count them by the last entry and the set of positive values in the prefix.
 * David Callan and Toufik Mansour, *Inversion Sequences Avoiding Quadruple Length-3 Patterns*,
   INTEGERS 23 (2023), Article A78, pp. 1–64, Theorems 2 and 3 (pp. 3–4), for the reductions
   involving `100`, `101` and `110` also recorded in Mansour's Theorem 2.
-* `MathlibExt.Combinatorics.Enumerative.InversionSequenceAvoid011102120`: the proof reuses
-  `invSeqAvoidGF_011_102_120.contains_iff` and `invSeqAvoidGF_011_102_120.SameOrder` to translate
+* `MathlibExt.Combinatorics.Enumerative.InversionSequencePatternSets`: the proof uses
+  `invSeqContainsPattern_iff_exists_indices` and `invSeqPatternSameOrder_iff` to translate
   pattern avoidance into comparisons of entries.
 -/
 
@@ -42,8 +41,6 @@ namespace MetaMathlibExt
 open Finset PowerSeries
 
 namespace InversionSequenceAvoidSeven
-
-open invSeqAvoidGF_011_102_120 (contains_iff SameOrder)
 
 private def corePatterns : Set (Fin 3 → ℕ) :=
   {![0, 1, 0], ![0, 1, 1], ![1, 0, 2], ![2, 0, 1], ![2, 1, 0]}
@@ -62,8 +59,8 @@ private theorem shape_iff {n : ℕ} {e : Fin n → ℕ} {B : Set (Fin 3 → ℕ)
   constructor
   · intro h
     have ht {i j k : Fin n} (hij : i < j) (hjk : j < k) (p : Fin 3 → ℕ)
-        (hp : p ∈ corePatterns) : ¬ SameOrder (e i) (e j) (e k) p := fun hs =>
-      h p (hcore hp) ((contains_iff e p).mpr ⟨i, j, k, hij, hjk, hs⟩)
+        (hp : p ∈ corePatterns) : ¬ InvSeqPatternSameOrder (e i) (e j) (e k) p := fun hs =>
+      h p (hcore hp) ((invSeqContainsPattern_iff_exists_indices e p).mpr ⟨i, j, k, hij, hjk, hs⟩)
     have hpos {i j : Fin n} (hij : i < j) (hi : 0 < e i) : 0 < e j ∧ e i ≠ e j := by
       let z : Fin n := ⟨0, by omega⟩
       have hz : e z = 0 := Nat.eq_zero_of_le_zero (hb z)
@@ -73,7 +70,7 @@ private theorem shape_iff {n : ℕ} {e : Fin n → ℕ} {B : Set (Fin 3 → ℕ)
         omega
       have h010 := ht hzi hij ![0, 1, 0] (by simp [corePatterns])
       have h011 := ht hzi hij ![0, 1, 1] (by simp [corePatterns])
-      simp [SameOrder, Fin.forall_fin_succ, hz] at h010 h011
+      simp [invSeqPatternSameOrder_iff, hz] at h010 h011
       omega
     intro i j hij hi
     obtain ⟨hj, hne⟩ := hpos hij hi
@@ -85,10 +82,10 @@ private theorem shape_iff {n : ℕ} {e : Fin n → ℕ} {B : Set (Fin 3 → ℕ)
     have h102 := ht hij hjk ![1, 0, 2] (by simp [corePatterns])
     have h201 := ht hij hjk ![2, 0, 1] (by simp [corePatterns])
     have h210 := ht hij hjk ![2, 1, 0] (by simp [corePatterns])
-    simp [SameOrder, Fin.forall_fin_succ] at h102 h201 h210
+    simp [invSeqPatternSameOrder_iff] at h102 h201 h210
     omega
   · intro h p hp hc
-    obtain ⟨i, j, k, hij, hjk, hs⟩ := (contains_iff e p).mp hc
+    obtain ⟨i, j, k, hij, hjk, hs⟩ := (invSeqContainsPattern_iff_exists_indices e p).mp hc
     have hbefore : j.val + 1 < n := by omega
     have hij' := h hij
     have hik' := h (hij.trans hjk)
@@ -96,7 +93,7 @@ private theorem shape_iff {n : ℕ} {e : Fin n → ℕ} {B : Set (Fin 3 → ℕ)
     have hp' := hall hp
     simp only [allPatterns, Set.mem_insert_iff, Set.mem_singleton_iff] at hp'
     rcases hp' with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
-      simp [SameOrder, Fin.forall_fin_succ] at hs <;> omega
+      simp [invSeqPatternSameOrder_iff] at hs <;> omega
 
 private def positiveValues {k : ℕ} (e : Fin k → ℕ) : Finset ℕ :=
   (univ.filter fun i => 0 < e i).image e

@@ -9,19 +9,33 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.Combinatorics.Enumerative.InversionSequenceAvoidSeven
+import Mathlib.Data.Fintype.Pi
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
 
 open MetaMathlibExt PowerSeries
 
-private abbrev B₁ : Set (Fin 3 → ℕ) :=
+private abbrev B₁ : Finset (Fin 3 → ℕ) :=
   {![0, 1, 0], ![0, 1, 1], ![1, 0, 0], ![1, 0, 1], ![1, 0, 2], ![2, 0, 1], ![2, 1, 0]}
 
-private abbrev B₂ : Set (Fin 3 → ℕ) :=
+private abbrev B₂ : Finset (Fin 3 → ℕ) :=
   {![0, 1, 0], ![0, 1, 1], ![1, 0, 0], ![1, 0, 2], ![1, 1, 0], ![2, 0, 1], ![2, 1, 0]}
 
-private abbrev B₃ : Set (Fin 3 → ℕ) :=
+private abbrev B₃ : Finset (Fin 3 → ℕ) :=
   {![0, 1, 0], ![0, 1, 1], ![1, 0, 1], ![1, 0, 2], ![1, 1, 0], ![2, 0, 1], ![2, 1, 0]}
+
+private instance (x y z : ℕ) (p : Fin 3 → ℕ) : Decidable (InvSeqPatternSameOrder x y z p) :=
+  decidable_of_iff _ invSeqPatternSameOrder_iff.symm
+
+private instance {n : ℕ} (e : Fin n → ℕ) (p : Fin 3 → ℕ) :
+    Decidable (InvSeqContainsPattern e p) :=
+  decidable_of_iff _ (invSeqContainsPattern_iff_exists_indices e p).symm
+
+-- Enumerate all bounded words and test three-index occurrences directly, without the GF identity
+-- or the characterization used in its proof. Every inversion sequence of length n has entries < n.
+private def countByEnumeration (B : Finset (Fin 3 → ℕ)) (n : ℕ) : ℕ :=
+  ((Finset.univ : Finset (Fin n → Fin n)).filter fun e =>
+    (∀ i, e i ≤ i) ∧ ∀ p ∈ B, ¬ InvSeqContainsPattern (fun i => (e i : ℕ)) p).card
 
 -- Extract the first nontrivial coefficients from the public identity.
 private theorem initialCoefficients (B : Set (Fin 3 → ℕ))
@@ -51,13 +65,19 @@ private theorem initialCoefficients (B : Set (Fin 3 → ℕ))
   exact ⟨h2, h3, h4⟩
 
 -- Length two is below the length of a forbidden pattern.
-example : coeff 2 (invSeqAvoidGF B₁) = 2 :=
-  (initialCoefficients B₁ (invSeqAvoidGF_010_011_102_201_210_seven B₁ (Or.inl rfl))).1
+example : countByEnumeration B₁ 2 = 2 ∧ coeff 2 (invSeqAvoidGF B₁) = 2 := by
+  refine ⟨by decide, (initialCoefficients B₁ (invSeqAvoidGF_010_011_102_201_210_seven B₁ ?_)).1⟩
+  left
+  simp [B₁]
 
--- Length three is the first length at which the avoidance condition can remove sequences.
-example : coeff 3 (invSeqAvoidGF B₂) = 4 :=
-  (initialCoefficients B₂ (invSeqAvoidGF_010_011_102_201_210_seven B₂ (Or.inr (Or.inl rfl)))).2.1
+-- Length three is the first length at which avoidance can remove sequences.
+example : countByEnumeration B₂ 3 = 4 ∧ coeff 3 (invSeqAvoidGF B₂) = 4 := by
+  refine ⟨by decide, (initialCoefficients B₂ (invSeqAvoidGF_010_011_102_201_210_seven B₂ ?_)).2.1⟩
+  right; left
+  simp [B₂]
 
--- At length four a descent into the last position is possible.
-example : coeff 4 (invSeqAvoidGF B₃) = 9 :=
-  (initialCoefficients B₃ (invSeqAvoidGF_010_011_102_201_210_seven B₃ (Or.inr (Or.inr rfl)))).2.2
+-- At length four the enumeration includes sequences that descend only into the last position.
+example : countByEnumeration B₃ 4 = 9 ∧ coeff 4 (invSeqAvoidGF B₃) = 9 := by
+  refine ⟨by decide, (initialCoefficients B₃ (invSeqAvoidGF_010_011_102_201_210_seven B₃ ?_)).2.2⟩
+  right; right
+  simp [B₃]
