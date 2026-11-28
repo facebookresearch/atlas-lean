@@ -166,8 +166,13 @@ example : flipQ ≠ 𝟙 Q := by
 example : ((adjointCoinvariantComul ℤ Mat incl).f 1).hom identityClass ≠ 0 := by
   letI : ComonObj Q := adjointCoinvariantComonObj ℤ Mat incl
   let T := (ComonObj.counit (X := Q)) ⊗ₘ (𝟙 Q)
+  have hδ : ComonObj.comul (X := Q) = adjointCoinvariantComul ℤ Mat incl := by
+    change (adjointCoinvariantComonObj ℤ Mat incl).comul = adjointCoinvariantComul ℤ Mat incl
+    rfl
   have h : adjointCoinvariantComul ℤ Mat incl ≫ T = (λ_ Q).inv := by
-    simpa only [Category.id_comp] using ComonObj.counit_comul_hom (𝟙 Q)
+    have h' := ComonObj.counit_comul_hom (𝟙 Q)
+    rw [hδ, Category.id_comp] at h'
+    exact h'
   intro hz
   have hp := congrArg (fun f => (f.f 1).hom identityClass) h
   simp only [HomologicalComplex.comp_f, ModuleCat.hom_comp, LinearMap.comp_apply] at hp
