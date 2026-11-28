@@ -6,12 +6,13 @@ Here a *triangulation* of a PL manifold $M$ is a finite [abstract simplicial com
 
 **Theorem (Nabutovsky and Ben-Av).** Let $M_0$ be a compact four-dimensional PL manifold that cannot be recognized by any algorithm, and for $N \ge 1$ let $s(N)$ be the number of distinct triangulations of $M_0$ with at most $N$ simplices. Then $s$ is not a recursive function.
 
-By Markov's theorem such manifolds exist; the source notes that one can take a manifold diffeomorphic to the $4$-sphere with $46$ attached handles of index two. In the dynamical triangulation model of four-dimensional quantum gravity, $s(N)$ equals the model's partition function at a particular limiting choice of its parameters (with $\Delta\lambda_4 = \infty$ and $\hat N_4 = N$), so the partition function is not computable there either.
+By Markov's theorem such manifolds exist; the source notes that one can take a manifold diffeomorphic to the $4$-sphere with $46$ attached handles of index two. The source also states that, in the dynamical triangulation model of four-dimensional quantum gravity, $s(N)$ equals the model's partition function (its Equation (2)) at $\hat\lambda_0 = \hat\lambda_4 = \Delta\lambda_0 = 0$, $\Delta\lambda_4 = \infty$ and $\hat N_4 = N$, and concludes that the partition function is then not recursive. Read literally, the weight in that limit vanishes unless the number $N_4$ of four-dimensional simplices equals $N$, so the sum counts the triangulations with exactly $N$ four-simplices rather than those with at most $N$ simplices; this identification is the source's.
 
 ## Depends on
 
 - [Finite abstract simplicial complex](../../../Combinatorics/polytopes-simplicial-complexes/rational-homology-of-simplicial-complexes/is-simplicial-complex.md)
 - [Algorithmic recognition problem for a manifold](recognition-problem-for-a-manifold.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -19,8 +20,8 @@ None.
 
 ## Expansion
 
-Suppose $s$ were computable, and fix a triangulation $T_0$ of $M_0$. Given a triangulation $T$ of a manifold $M$ with $N$ simplices, compute $s(N)$ and apply all finite sequences of Alexander's stellar moves and their inverses to $T_0$, recording the distinct triangulations of $M_0$ with at most $N$ simplices, until $s(N)$ of them have been found. Since these moves connect any two triangulations of the same compact PL manifold, the list is then complete, and comparing $T$ with each entry up to simplicial isomorphism decides whether $M$ is PL homeomorphic to $M_0$, contradicting unrecognizability. A good expansion links Alexander's theorem that stellar moves connect PL homeomorphic triangulations, and Markov's theorem on the existence of unrecognizable $4$-manifolds, which have no pages here.
+Suppose $s$ were computable, and fix a triangulation $T_0$ of $M_0$. Given a triangulation $T$ of a manifold $M$ with $N$ simplices, compute $s(N)$ and apply all finite sequences of Alexander's stellar moves and their inverses to $T_0$, recording the distinct triangulations of $M_0$ with at most $N$ simplices, until $s(N)$ of them have been found. Since these moves connect any two triangulations of the same compact PL manifold, the list is then complete, and comparing $T$ with each entry up to simplicial isomorphism decides whether $M$ is PL homeomorphic to $M_0$, contradicting unrecognizability. A good expansion links Alexander's theorem that the Alexander move and its inverse connect any two triangulations of the same compact PL manifold, and the decidability of simplicial isomorphism of finite complexes. Markov's theorem is needed only for the existence of such manifolds $M_0$, not for the proof.
 
 ## Sources
 
-- A. Nabutovsky and R. Ben-Av, "Noncomputability arising in dynamical triangulation model of four-dimensional quantum gravity", *Communications in Mathematical Physics* 157(1):93–98, 1993, doi:10.1007/BF02098020; read in arXiv:hep-lat/9208014v1: Proposition 2 with its proof, the convention on triangulations, and the remarks on Markov's manifold and on the partition function, in the numbering of that version.
+- A. Nabutovsky and R. Ben-Av, "Noncomputability arising in dynamical triangulation model of four-dimensional quantum gravity", *Communications in Mathematical Physics* 157(1):93–98, 1993, doi:10.1007/BF02098020; read in arXiv:hep-lat/9208014v1: Proposition 2 with its proof, the convention on triangulations, and the remarks on Markov's manifold and on the partition function (Equation (2)), in the numbering of that version.
