@@ -13,6 +13,7 @@ The product formula is immediate since square roots of products factor; then $1 
 
 ## Depends on
 
+- [Comparison hierarchy of total variation, Hellinger, KL and chi-square divergences](divergence-comparison-hierarchy.md)
 - [Hellinger distance](../../../Probability/convergence-of-measures/hellinger-distance/hellinger-dist.md)
 - [Total variation is at most √2 times Hellinger](../../../Probability/convergence-of-measures/hellinger-distance/total-variation-dist-div-sqrt-two-le-hel.md)
 

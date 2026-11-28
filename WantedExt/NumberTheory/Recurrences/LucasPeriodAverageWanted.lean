@@ -26,6 +26,7 @@ import Mathlib.Tactic.IntervalCases
 import Mathlib.Tactic.NormNum
 public import MathlibExt.NumberTheory.Recurrences.LucasPeriodAverageDegenerateSecondOrderSums
 public import MathlibExt.NumberTheory.Recurrences.LucasPeriodAverageLucasUSumDvdIffOfPEqOne
+public import MathlibExt.NumberTheory.Recurrences.LucasDoublingDivisibility
 
 /-!
 # Period lengths modulo `n` and averages of second-order recurrences
@@ -182,20 +183,6 @@ Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Section 2. -/
 theorem lucasAllAveragesIntegral_one (params : LucasSequenceParams) :
     lucasAllAveragesIntegral params 1 :=
   fun _ _ => by simp
-
-/-- **Doubling formulas and divisibility for Lucas sequences.** Let $U$ and $V$ be the Lucas
-sequences with integer parameters $P$ and $Q \neq 0$. Then $U_{2n} = U_n V_n$ and
-$U_{2n+1} = -Q U_n^2 + U_{n+1}^2$ for every natural number $n$, and $U_m \mid U_n$ for all
-natural numbers $m$ and $n$ with $m \mid n$.
-
-Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
-Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Lemma 1.1
-(`integers-2024-A36-lem-1-1`). -/
-public theorem_wanted lucasU_two_mul_and_lucasU_dvd (params : LucasSequenceParams) :
-    (∀ n, lucasU params (2 * n) = lucasU params n * lucasV params n) ∧
-    (∀ n, lucasU params (2 * n + 1) =
-      -params.q * lucasU params n ^ 2 + lucasU params (n + 1) ^ 2) ∧
-    (∀ m n, m ∣ n → lucasU params m ∣ lucasU params n)
 
 /-- **Periods of Lucas sequences modulo a least common multiple.** Let $U$ be the Lucas sequence
 with integer parameters $P$ and $Q \neq 0$, and write $\pi(m)$ and $\rho(m)$ for its period and
