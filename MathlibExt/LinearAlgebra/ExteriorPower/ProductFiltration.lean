@@ -191,6 +191,15 @@ abbrev associatedGraded (m q : ℕ) :=
   _root_.Quotient (Submodule.quotientRel (R := R) (M := filtration R M N m q)
     (nextStage R M N m q))
 
+-- These are the native quotient structures on the adjacent-stage quotient.
+instance (m q : ℕ) : AddCommGroup (associatedGraded R M N m q) :=
+  Submodule.Quotient.addCommGroup (R := R) (M := filtration R M N m q)
+    (nextStage R M N m q)
+
+instance (m q : ℕ) : Module R (associatedGraded R M N m q) :=
+  Submodule.Quotient.module (R := R) (M := filtration R M N m q)
+    (nextStage R M N m q)
+
 /-- Let R be a commutative ring and M and N R-modules. In exterior degree m, let F_m^q consist of
 elements whose mixed coordinates of first degree below q are zero. For q ≤ m, the coordinate
 projection induces an R-linear equivalence associatedGraded R M N m q ≃ₗ[R] ⋀[R]^q M ⊗[R]
@@ -216,7 +225,8 @@ associatedGradedEquiv R M N m q hq [z] = coordinate R M N m (q, m − q) z.val. 
 in the quotient by nextStage. -/
 theorem associatedGradedEquiv_mk (m q : ℕ) (hq : q ≤ m)
     (z : filtration R M N m q) :
-    associatedGradedEquiv R M N m q hq (Submodule.Quotient.mk z) =
+    associatedGradedEquiv R M N m q hq
+      (Submodule.Quotient.mk (p := nextStage R M N m q) z) =
       coordinate R M N m (index m q hq) z.val := by
   let eQ := Submodule.quotEquivOfEq (R := R) (M := filtration R M N m q)
       (nextStage R M N m q)
@@ -226,17 +236,20 @@ theorem associatedGradedEquiv_mk (m q : ℕ) (hq : q ≤ m)
     (M₂ := Piece R M N m (index m q hq))
     (gradeProjection R M N m q hq)
     (gradeProjection_surjective R M N m q hq)
-  have hQ : eQ (Submodule.Quotient.mk z) = Submodule.Quotient.mk z :=
+  have hQ : eQ (Submodule.Quotient.mk (p := nextStage R M N m q) z) =
+      Submodule.Quotient.mk (p := (gradeProjection R M N m q hq).ker) z :=
     Submodule.quotEquivOfEq_mk (R := R) (M := filtration R M N m q)
       (nextStage R M N m q)
       (gradeProjection R M N m q hq).ker (gradeProjection_ker R M N m q hq).symm z
-  have hP : eP (Submodule.Quotient.mk z) = gradeProjection R M N m q hq z :=
+  have hP : eP (Submodule.Quotient.mk (p := (gradeProjection R M N m q hq).ker) z) =
+      gradeProjection R M N m q hq z :=
     LinearMap.quotKerEquivOfSurjective_apply_mk (R := R)
       (M := filtration R M N m q)
       (M₂ := Piece R M N m (index m q hq))
       (gradeProjection R M N m q hq)
       (gradeProjection_surjective R M N m q hq) z
-  change eP (eQ (Submodule.Quotient.mk z)) = gradeProjection R M N m q hq z
+  change eP (eQ (Submodule.Quotient.mk (p := nextStage R M N m q) z)) =
+    gradeProjection R M N m q hq z
   exact (congrArg eP hQ).trans hP
 
 section Transport
@@ -304,6 +317,15 @@ abbrev transportedAssociatedGraded (m q : ℕ) :=
   _root_.Quotient (Submodule.quotientRel (R := R) (M := transportedFiltration R M N e m q)
     (transportedNextStage R M N e m q))
 
+-- Transported quotients use the same native group and module structures.
+instance (m q : ℕ) : AddCommGroup (transportedAssociatedGraded R M N e m q) :=
+  Submodule.Quotient.addCommGroup (R := R) (M := transportedFiltration R M N e m q)
+    (transportedNextStage R M N e m q)
+
+instance (m q : ℕ) : Module R (transportedAssociatedGraded R M N e m q) :=
+  Submodule.Quotient.module (R := R) (M := transportedFiltration R M N e m q)
+    (transportedNextStage R M N e m q)
+
 /-- Let R be a commutative ring and M and N R-modules. Let W be an R-module and e : W ≃ₗ[R] M × N
 a module decomposition. Write θ_m = ⋀^m e for its exterior-power equivalence. For q ≤ m, the
 transported adjacent-stage quotient is R-linearly equivalent to ⋀[R]^q M ⊗[R] ⋀[R]^(m−q) N. It
@@ -332,12 +354,13 @@ This representative is supplied by the inverse stage equivalence applied to the 
 section. -/
 def transportedMixedClass (m q : ℕ) (hq : q ≤ m)
     (z : Piece R M N m (index m q hq)) : transportedAssociatedGraded R M N e m q :=
-  Submodule.Quotient.mk
+  Submodule.Quotient.mk (p := transportedNextStage R M N e m q)
     ((transportedStageEquiv R M N e m q).symm (gradeSection R M N m q hq z))
 
 theorem transportedAssociatedGradedEquiv_mk (m q : ℕ) (hq : q ≤ m)
     (z : transportedFiltration R M N e m q) :
-    transportedAssociatedGradedEquiv R M N e m q hq (Submodule.Quotient.mk z) =
+    transportedAssociatedGradedEquiv R M N e m q hq
+      (Submodule.Quotient.mk (p := transportedNextStage R M N e m q) z) =
       transportedGradeProjection R M N e m q hq z := by
   let eQ := Submodule.quotEquivOfEq (R := R) (M := transportedFiltration R M N e m q)
       (transportedNextStage R M N e m q)
@@ -348,18 +371,21 @@ theorem transportedAssociatedGradedEquiv_mk (m q : ℕ) (hq : q ≤ m)
     (M₂ := Piece R M N m (index m q hq))
     (transportedGradeProjection R M N e m q hq)
     (transportedGradeProjection_surjective R M N e m q hq)
-  have hQ : eQ (Submodule.Quotient.mk z) = Submodule.Quotient.mk z :=
+  have hQ : eQ (Submodule.Quotient.mk (p := transportedNextStage R M N e m q) z) =
+      Submodule.Quotient.mk (p := (transportedGradeProjection R M N e m q hq).ker) z :=
     Submodule.quotEquivOfEq_mk (R := R) (M := transportedFiltration R M N e m q)
       (transportedNextStage R M N e m q)
       (transportedGradeProjection R M N e m q hq).ker
       (transportedGradeProjection_ker R M N e m q hq).symm z
-  have hP : eP (Submodule.Quotient.mk z) = transportedGradeProjection R M N e m q hq z :=
+  have hP : eP (Submodule.Quotient.mk (p := (transportedGradeProjection R M N e m q hq).ker) z) =
+      transportedGradeProjection R M N e m q hq z :=
     LinearMap.quotKerEquivOfSurjective_apply_mk (R := R)
       (M := transportedFiltration R M N e m q)
       (M₂ := Piece R M N m (index m q hq))
       (transportedGradeProjection R M N e m q hq)
       (transportedGradeProjection_surjective R M N e m q hq) z
-  change eP (eQ (Submodule.Quotient.mk z)) = transportedGradeProjection R M N e m q hq z
+  change eP (eQ (Submodule.Quotient.mk (p := transportedNextStage R M N e m q) z)) =
+    transportedGradeProjection R M N e m q hq z
   exact (congrArg eP hQ).trans hP
 
 /-- Let R be a commutative ring and M and N R-modules. Let W be an R-module and e : W ≃ₗ[R] M × N
