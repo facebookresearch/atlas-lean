@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import MathlibExt.Combinatorics.Coding.CycleShannonBounds
 public import MathlibExt.Combinatorics.Coding.PolakSchrijver
+public import MathlibExt.Combinatorics.Coding.CycleShannonBoundsBpz2026CycleElevenConstruction
 public import MathlibExt.Combinatorics.Coding.CycleShannonBoundsBpz2026CycleTwentyOneConstruction
 public import MathlibExt.Combinatorics.Coding.CycleShannonBoundsBpz2026CycleTwentyOneLowerBound
 public import MathlibExt.Combinatorics.Coding.CycleShannonBoundsLovasz1979UpperBound
@@ -198,70 +199,6 @@ Source: Tandon, arXiv:2608.30273, exact dimension-500 root rate. -/
 theorem_wanted tandon2026LowerBound :
   ENNReal.rpow (tandon2026Mstar : ENNReal) ((500 : ℝ)⁻¹) ≤ shannonCapacityCycle 7
 
-/-- **One-block BPZ profile for the 11-cycle.** The one-block eleven-cycle profile of Buys,
-Polak and Zuiddam is the profile with code coordinate $148$, pairs coordinate $3$, auxiliary
-coordinate $148$ and neutral coordinate $142$.
-
-In the source this profile comes from a construction in dimension $3$; that origin is not
-checked here.
-
-Source: BPZ, arXiv:2607.29681, eleven-cycle construction. -/
-def bpzC11Pi1 : BPZProfile := ⟨148, 3, 148, 142⟩
-/-- **Two-block BPZ profile for the 11-cycle.** The two-block eleven-cycle profile of Buys,
-Polak and Zuiddam is the profile product $\pi_1 \star \pi_1$, where $\pi_1$ is their one-block
-eleven-cycle profile.
-
-Source: BPZ, arXiv:2607.29681, eleven-cycle construction. -/
-def bpzC11Pi2 : BPZProfile := bpzC11Pi1.star bpzC11Pi1
-/-- **Three-block BPZ profile for the 11-cycle.** The three-block eleven-cycle profile of Buys,
-Polak and Zuiddam is the profile product $\pi_1 \star \pi_2$, where $\pi_1$ and $\pi_2$ are
-their one-block and two-block eleven-cycle profiles.
-
-Source: BPZ, arXiv:2607.29681, eleven-cycle construction. -/
-def bpzC11Pi3 : BPZProfile := bpzC11Pi1.star bpzC11Pi2
-/-- **Four-block BPZ profile for the 11-cycle.** The four-block eleven-cycle profile of Buys,
-Polak and Zuiddam is the profile product $\pi_2 \star \pi_2$, where $\pi_2$ is their two-block
-eleven-cycle profile.
-
-Source: BPZ, arXiv:2607.29681, eleven-cycle construction. -/
-def bpzC11Pi4 : BPZProfile := bpzC11Pi2.star bpzC11Pi2
-/-- **Seven-block BPZ profile for the 11-cycle.** The seven-block eleven-cycle profile of Buys,
-Polak and Zuiddam is the profile product $\pi_3 \star \pi_4$, where $\pi_3$ and $\pi_4$ are
-their three-block and four-block eleven-cycle profiles.
-
-Source: BPZ, arXiv:2607.29681, eleven-cycle construction. -/
-def bpzC11Pi7 : BPZProfile := bpzC11Pi3.star bpzC11Pi4
-/-- **Eight-block BPZ profile of the eleven-cycle.** The eight-block BPZ profile of the
-eleven-cycle is $\pi_4 \star \pi_4$, where $\pi_4$ is the four-block BPZ profile of the
-eleven-cycle and $\star$ is the BPZ profile product.
-
-Source: BPZ, arXiv:2607.29681, eleven-cycle construction. -/
-def bpzC11Pi8 : BPZProfile := bpzC11Pi4.star bpzC11Pi4
-/-- **Fourteen-block BPZ profile for the 11-cycle.** The fourteen-block eleven-cycle profile of
-Buys, Polak and Zuiddam is the profile product $\pi_7 \star \pi_7$, where $\pi_7$ is their
-seven-block eleven-cycle profile.
-
-Source: BPZ, arXiv:2607.29681, eleven-cycle construction. -/
-def bpzC11Pi14 : BPZProfile := bpzC11Pi7.star bpzC11Pi7
-/-- **Fifteen-block BPZ profile for the 11-cycle.** The fifteen-block eleven-cycle profile of
-Buys, Polak and Zuiddam is the profile product $\pi_7 \star \pi_8$, where $\pi_7$ and $\pi_8$
-are their seven-block and eight-block eleven-cycle profiles.
-
-Source: BPZ, arXiv:2607.29681, eleven-cycle construction. -/
-def bpzC11Pi15 : BPZProfile := bpzC11Pi7.star bpzC11Pi8
-/-- **Twenty-nine-block BPZ profile for the 11-cycle.** The twenty-nine-block eleven-cycle
-profile of Buys, Polak and Zuiddam is the profile product $\pi_{14} \star \pi_{15}$, where
-$\pi_{14}$ and $\pi_{15}$ are their fourteen-block and fifteen-block eleven-cycle profiles.
-
-Source: BPZ, arXiv:2607.29681, eleven-cycle construction. -/
-def bpzC11Pi29 : BPZProfile := bpzC11Pi14.star bpzC11Pi15
-/-- **Fifty-eight-block BPZ profile for the 11-cycle.** The final fifty-eight-block eleven-cycle
-profile of Buys, Polak and Zuiddam is the profile product $\pi_{29} \star \pi_{29}$, where
-$\pi_{29}$ is their twenty-nine-block eleven-cycle profile.
-
-Source: BPZ, arXiv:2607.29681, eleven-cycle construction. -/
-def bpzC11Pi58 : BPZProfile := bpzC11Pi29.star bpzC11Pi29
-
 /-- **One-block BPZ profile of the thirteen-cycle.** The one-block BPZ profile of the
 thirteen-cycle is the BPZ profile with code coordinate $62530$, pairs coordinate $1014$,
 auxiliary coordinate $62530$ and neutral coordinate $60502$.
@@ -361,15 +298,6 @@ $p_0$ nine times.
 
 Source: BPZ, arXiv:2607.29681, twenty-three-cycle construction. -/
 def bpzC23Pi512 : BPZProfile := bpzProfileSquareIter 9 bpzC23Pi1
-
-/-- **Buys–Polak–Zuiddam code for the eleven-cycle in dimension 174.** Let $c$ be the code
-coordinate of the fifty-eight-block eleven-cycle profile $\pi_{58}$ of Buys–Polak–Zuiddam. There
-is a finite set of words of length $174$ over $\mathbb{Z}/11\mathbb{Z}$ that is an independent
-code for the $11$-cycle and has exactly $\max(c, 0)$ elements.
-
-Source: BPZ, arXiv:2607.29681, eleven-cycle construction in dimension 174. -/
-theorem_wanted bpz2026CycleElevenConstruction :
-  ∃ A : Finset (Fin 174 → ZMod 11), IsCycleCode 11 A ∧ A.card = bpzC11Pi58.code.toNat
 
 /-- **Buys–Polak–Zuiddam code for the 13-cycle in length 432.** Let $c$ be the code coordinate
 of BPZ's final seventy-two-block thirteen-cycle profile, and let $M = \max(c, 0)$. There is a
