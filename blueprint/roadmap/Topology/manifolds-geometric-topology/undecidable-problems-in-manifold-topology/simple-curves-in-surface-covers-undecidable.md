@@ -24,3 +24,4 @@ The proof modifies Rabin's construction. Let $S_2 \to S$ be the mod $2$ homology
 ## Sources
 
 - Ingrid Irmer, *Finding simple curves in surface covers is undecidable*, Geom. Dedicata 206 (2020), no. 1, 201–210, https://doi.org/10.1007/s10711-019-00482-w, read in the copy arXiv:1806.03700v2, whose numbering is used here: the statement is Theorem 1 there, proved in Section 5 with Lemma 6, and Corollaries 4 and 5 are in Section 3.
+- Michael O. Rabin, *Recursive unsolvability of group theoretic problems*, Ann. of Math. (2) 67 (1958), no. 1, 172–194, https://doi.org/10.2307/1969933, whose construction the proof modifies; cited beside the copy read above.

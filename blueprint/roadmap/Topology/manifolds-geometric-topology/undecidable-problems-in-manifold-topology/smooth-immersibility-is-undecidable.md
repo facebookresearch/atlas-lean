@@ -13,6 +13,7 @@ Conventions: the dimensions $m$ and $n$ are fixed and the manifold is the input.
 
 ## Depends on
 
+- [Finite abstract simplicial complex](../../../Combinatorics/polytopes-simplicial-complexes/rational-homology-of-simplicial-complexes/is-simplicial-complex.md)
 - [Closed manifold, not required to be connected](../closed-topological-manifold.md)
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 

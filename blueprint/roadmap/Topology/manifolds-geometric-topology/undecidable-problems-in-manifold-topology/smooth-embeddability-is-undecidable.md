@@ -10,6 +10,7 @@ Conventions: the dimensions are fixed and the manifold is the input; manifolds w
 
 ## Depends on
 
+- [Finite abstract simplicial complex](../../../Combinatorics/polytopes-simplicial-complexes/rational-homology-of-simplicial-complexes/is-simplicial-complex.md)
 - [Homeomorphism](../../topological-spaces/homeomorphism.md)
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 

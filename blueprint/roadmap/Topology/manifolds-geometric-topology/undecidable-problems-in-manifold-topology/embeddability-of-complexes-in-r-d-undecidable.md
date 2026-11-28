@@ -24,3 +24,4 @@ By Novikov's theorem in the form of Theorem 3.1 of the source (whose detailed pr
 ## Sources
 
 - Jiří Matoušek, Martin Tancer and Uli Wagner, *Hardness of embedding simplicial complexes in $\mathbb{R}^d$*, J. Eur. Math. Soc. (JEMS) 13 (2011), no. 2, 259–295, https://doi.org/10.4171/JEMS/252, read in the copy arXiv:0807.0336v2: the statement is Theorem 1.1 there, the consequence on subdivisions is the corollary after it, and the proof is in Section 3 ("Undecidability: Proof of Theorem 1.1"), combining Novikov's theorem as quoted there (Theorem 3.1) with Lemma 3.3, which relates embeddings of the skeleton to sphere recognition, and Lemma 3.2.
+- Alexander Nabutovsky, *Einstein structures: existence versus uniqueness*, Geom. Funct. Anal. 5 (1995), no. 1, 76–91, https://doi.org/10.1007/BF01928216, whose appendix gives the detailed proof of Novikov's theorem cited by Matoušek, Tancer and Wagner; cited beside the copies read above.
