@@ -164,21 +164,22 @@ theorem connecting_naturality_complex
   HomologicalComplex.HomologySequence.δ_naturality (mapShortComplex R K f S)
     (shortExact R K hK S hS) (shortExact R L hL S hS) (n + 1) n rfl
 
-/-- For a commutative ring R, a flat-term ℕ-chain complex K, and a short exact coefficient
+/-- For a commutative ring R, an ℕ-chain complex K, and a short exact coefficient
 sequence S₁ → S₂ →^g S₃, the induced map H₀(S₂⊗K) → H₀(S₃⊗K) is an epimorphism. The connective
 homology sequence therefore ends in H₀(S₃⊗K) → 0. -/
-theorem homologyMap_zero_epi (hK : ∀ n, Module.Flat R (K.X n))
+theorem homologyMap_zero_epi
     (S : ShortComplex (ModuleCat.{t} R)) (hS : S.ShortExact) :
     Epi ((homologyFunctor R K 0).map S.g) := by
   let g := (functor R K).map S.g
-  have hDegree := (HomologicalComplex.shortExact_iff_degreewise_shortExact
-    (S.map (functor R K))).mp (shortExact R K hK S hS) 0
-  let : Epi (g.f 0) := hDegree.epi_g
+  let : Epi (g.f 0) := (ModuleCat.epi_iff_surjective _).mpr (by
+    change Function.Surjective (S.g.hom.rTensor (K.X 0))
+    exact LinearMap.rTensor_surjective (K.X 0) hS.moduleCat_surjective_g)
   change Epi (HomologicalComplex.homologyMap g 0)
   exact HomologicalComplex.epi_homologyMap_of_epi_of_not_rel g 0 (by
     intro j
     change j + 1 ≠ 0
     exact Nat.succ_ne_zero j)
+
 /-- Let R be a commutative ring, K a flat-term ℕ-chain complex, and S₁ →^f S₂ →^g S₃ a short exact
 coefficient sequence. For a probe module T, let x₃ : T → (S₃⊗K)_{n+1} be a cycle, choose x₂
 with x₂≫g_{n+1}=x₃, and choose x₁ : T → (S₁⊗K)_n with x₁≫f_n=x₂≫d_{n+1,n}. Then x₁ is a cycle

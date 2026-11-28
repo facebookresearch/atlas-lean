@@ -71,8 +71,8 @@ example :
       (ULift.up (5 : ℤ)) = ULift.up (ULift.up (5 : ℤ)) := rfl
 
 private abbrev P := ℤ × ℤ
-private def swapRing : P ≃+* P := RingEquiv.prodComm ℤ ℤ
-private def swapEquivalence : ModuleCat.{0} P ≌ ModuleCat.{0} P :=
+private def swapRing : P ≃+* P := RingEquiv.prodComm
+private abbrev swapEquivalence : ModuleCat.{0} P ≌ ModuleCat.{0} P :=
   ModuleCat.restrictScalarsEquivalenceOfRingEquiv swapRing
 private abbrev regularP : ModuleCat.{0} P := ModuleCat.of P P
 
@@ -90,6 +90,8 @@ example : projectiveDimension (swapEquivalence.functor.obj regularP) =
 -- The restriction functor changes the two scalar coordinates, so the equivalence is nonidentity.
 example :
     ((3, 5) : P) • ((7, 11) : swapEquivalence.functor.obj regularP) =
-      ((35, 33) : P) := rfl
+      ((35, 33) : P) := by
+  change ((5 : ℤ) * 7, (3 : ℤ) * 11) = ((35, 33) : P)
+  decide
 
 end CoefficientTensorDimensionClients

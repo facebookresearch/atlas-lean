@@ -65,19 +65,30 @@ example :
       (ChainComplex.homologyZeroClass originalComplex).hom (zeroCoordinate 3) := by
   change (HomologicalComplex.homologyMap
     (ChainComplex.TensorCoefficient.regularIso R originalComplex).hom 0).hom _ = _
-  have h := congrArg ModuleCat.Hom.hom
-    (ChainComplex.homologyZeroClass_naturality
-      (ChainComplex.TensorCoefficient.regularIso R originalComplex).hom)
-  have hv := LinearMap.congr_fun h ((3 : R) ⊗ₜ[R] zeroCoordinate 1)
-  simp only [ModuleCat.hom_comp, LinearMap.comp_apply,
-    ChainComplex.TensorCoefficient.regularIso_tmul] at hv
+  have h : ChainComplex.homologyZeroClass regularComplex ≫
+      HomologicalComplex.homologyMap
+        (ChainComplex.TensorCoefficient.regularIso R originalComplex).hom 0 =
+      (ChainComplex.TensorCoefficient.regularIso R originalComplex).hom.f 0 ≫
+        ChainComplex.homologyZeroClass originalComplex :=
+    ChainComplex.homologyZeroClass_naturality
+      (ChainComplex.TensorCoefficient.regularIso R originalComplex).hom
+  have hv := congrArg
+    (fun g : regularComplex.X 0 ⟶ originalComplex.homology 0 =>
+      g ((3 : R) ⊗ₜ[R] zeroCoordinate 1)) h
+  simp only [CategoryTheory.comp_apply] at hv
   have hc : (3 : R) • zeroCoordinate 1 = zeroCoordinate 3 := by
     apply (ModuleCat.mono_iff_injective zeroTermIso.hom).mp inferInstance
     change zeroTermIso.hom.hom ((3 : R) • zeroCoordinate 1) =
       zeroTermIso.hom.hom (zeroCoordinate 3)
     rw [map_smul, zeroCoordinate_value, zeroCoordinate_value]
     simp
-  simpa only [hc] using hv
+  have hterm :
+      (ChainComplex.TensorCoefficient.regularIso R originalComplex).hom.f 0
+        ((3 : R) ⊗ₜ[R] zeroCoordinate 1) = zeroCoordinate 3 := by
+    change ((ChainComplex.TensorCoefficient.regularIso R originalComplex).hom.f 0).hom _ = _
+    rw [ChainComplex.TensorCoefficient.regularIso_tmul]
+    exact hc
+  simpa only [hterm] using hv
 
 private def negativeComplexIso : originalComplex ≅ originalComplex where
   hom := -𝟙 originalComplex
@@ -109,6 +120,25 @@ example :
   rw [hn]
   simp only [binaryValue, LinearMap.comp_apply, TensorProduct.map_tmul,
     LinearMap.id_apply, map_neg, zeroCoordinate_value, TensorProduct.rid_tmul]
+  decide
+
+private def regularValue : regularComplex.X 0 →ₗ[R] R :=
+  (TensorProduct.lid R R).toLinearMap.comp
+    (TensorProduct.map (LinearMap.id : R →ₗ[R] R) zeroTermIso.hom.hom)
+
+-- In ZMod 4 the nonidentity negation is observable as the distinct coefficient three.
+example :
+    regularValue
+      ((((ChainComplex.TensorCoefficient.mapIso R negativeComplexIso).hom.app regular).f 0).hom
+        ((1 : R) ⊗ₜ[R] zeroCoordinate 1)) = 3 := by
+  change regularValue
+    ((((ChainComplex.TensorCoefficient.map R negativeComplexIso.hom).app regular).f 0).hom _) = 3
+  rw [ChainComplex.TensorCoefficient.map_chain_tmul]
+  have hn : (negativeComplexIso.hom.f 0).hom (zeroCoordinate 1) = -zeroCoordinate 1 := by
+    simp [negativeComplexIso, HomologicalComplex.neg_f_apply]
+  rw [hn]
+  simp only [regularValue, LinearMap.comp_apply, TensorProduct.map_tmul,
+    LinearMap.id_apply, map_neg, zeroCoordinate_value, TensorProduct.lid_tmul]
   decide
 
 example :
@@ -173,6 +203,6 @@ example :
 
 example : Epi ((ChainComplex.TensorCoefficient.homologyFunctor R originalComplex 0).map quotient) :=
   ChainComplex.TensorCoefficient.homologyMap_zero_epi R originalComplex
-    originalComplex_terms_flat sequence sequence_shortExact
+    sequence sequence_shortExact
 
 end TensorCoefficientAPIClients
