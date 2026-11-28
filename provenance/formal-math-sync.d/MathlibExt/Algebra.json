@@ -670,8 +670,8 @@
       "path": "MathlibExt/Algebra/Homology/ChainComplex/MixedBicomplex/HomologyOne.lean",
       "backport": "pending",
       "disposition": "diverged",
-      "published_sha256": "97dd824851bd1abe68f55cfccdde772b33c1aef1c8fec6bc0e4f69246377db87",
-      "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Give the remaining generic homology, quotient, scalar-normalization and graded/dyadic APIs precise mathematical docstrings and readable titles. Preserve every code/import/option/privacy/legal token; state actual signs, ring/ideal/projector hypotheses and independent universes.",
+      "published_sha256": "77cce54be04acda7a7fe5d946bb69b299e95115ac3c746d5995441a33e3c8a95",
+      "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Give the remaining generic homology, quotient, scalar-normalization and graded/dyadic APIs precise mathematical docstrings and readable titles. Preserve every code/import/option/privacy/legal token; state actual signs, ring/ideal/projector hypotheses and independent universes. Bind total-coordinate morphisms to the existing mixedBicomplexCellIso domains and retain typed native signed-differential/component equations under Lean 4.36 defaults; the canonical maps, positive summand signs, hypotheses and universes are unchanged.",
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "6708bbaa7c5c7710b5997ab86f16bb6854dcb9074f990043065f8fc0e215b15e"
     },

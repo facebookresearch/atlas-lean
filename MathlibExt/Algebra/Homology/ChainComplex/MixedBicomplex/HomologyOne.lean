@@ -87,8 +87,8 @@ def mixedTotalZeroIso : (T).X 0 ≅ K.X 0 where
     have hq : q = 0 := by change p + q = 0 at hpq; omega
     subst p
     subst q
-    exact (mixedColumnIso K 0 0 0 rfl).hom)
-  inv := (mixedColumnIso K 0 0 0 rfl).inv ≫
+    exact (mixedBicomplexCellIso K H hSquare 0 0 (Nat.zero_le 0)).hom)
+  inv := (mixedBicomplexCellIso K H hSquare 0 0 (Nat.zero_le 0)).inv ≫
     (B).ιTotal (ComplexShape.down ℕ) 0 0 0 rfl
   hom_inv_id := by
     apply HomologicalComplex₂.total.hom_ext
@@ -98,26 +98,26 @@ def mixedTotalZeroIso : (T).X 0 ≅ K.X 0 where
     subst p
     subst q
     rw [← Category.assoc, HomologicalComplex₂.ι_totalDesc]
-    let e : ((B).X 0).X 0 ≅ K.X 0 := mixedColumnIso K 0 0 0 rfl
+    let e : ((B).X 0).X 0 ≅ K.X 0 := mixedBicomplexCellIso K H hSquare 0 0 (Nat.zero_le 0)
     change e.hom ≫ (e.inv ≫ (B).ιTotal (ComplexShape.down ℕ) 0 0 0 rfl) =
       (B).ιTotal (ComplexShape.down ℕ) 0 0 0 rfl ≫ 𝟙 _
     simpa only [Category.assoc, Category.id_comp, Category.comp_id] using
       congrArg (fun m => m ≫ (B).ιTotal (ComplexShape.down ℕ) 0 0 0 rfl) e.hom_inv_id
   inv_hom_id := by
     rw [Category.assoc, HomologicalComplex₂.ι_totalDesc]
-    let e : ((B).X 0).X 0 ≅ K.X 0 := mixedColumnIso K 0 0 0 rfl
+    let e : ((B).X 0).X 0 ≅ K.X 0 := mixedBicomplexCellIso K H hSquare 0 0 (Nat.zero_le 0)
     change e.inv ≫ e.hom = 𝟙 _
     exact e.inv_hom_id
 
 /-- Let C be preadditive with a zero object, K a chain complex indexed by ℕ, and H a homotopy
 between the zero endomorphisms of K. Write B_n = H.hom n (n + 1), assume B_n ≫ B_(n+1) = 0 for
 every n, and assume the mixed bicomplex has its down-ℕ total T. The coprojection from cell (0,
-0), followed by mixedTotalZeroIso.hom, equals (mixedColumnIso K 0 0 0 rfl).hom :
+0), followed by mixedTotalZeroIso.hom, equals (mixedBicomplexCellIso K H hSquare 0 0 (Nat.zero_le 0)).hom :
 (mixedBicomplex.X 0).X 0 ⟶ K.X 0. -/
 @[reassoc]
 lemma mixedTotalZeroIso_ι :
     (B).ιTotal (ComplexShape.down ℕ) 0 0 0 rfl ≫ (mixedTotalZeroIso K H hSquare).hom =
-      (mixedColumnIso K 0 0 0 rfl).hom := by
+      (mixedBicomplexCellIso K H hSquare 0 0 (Nat.zero_le 0)).hom := by
   dsimp only [mixedTotalZeroIso]
   rw [HomologicalComplex₂.ι_totalDesc]
 
@@ -131,9 +131,9 @@ def mixedTotalOneIso : (T).X 1 ≅ K.X 1 where
     subst p
     have hq : q = 1 := by change 0 + q = 1 at hpq; omega
     subst q
-    exact (mixedColumnIso K 0 1 1 rfl).hom
+    exact (mixedBicomplexCellIso K H hSquare 0 1 (Nat.zero_le 1)).hom
     else 0)
-  inv := (mixedColumnIso K 0 1 1 rfl).inv ≫
+  inv := (mixedBicomplexCellIso K H hSquare 0 1 (Nat.zero_le 1)).inv ≫
     (B).ιTotal (ComplexShape.down ℕ) 0 1 1 rfl
   hom_inv_id := by
     apply HomologicalComplex₂.total.hom_ext
@@ -143,7 +143,7 @@ def mixedTotalOneIso : (T).X 1 ≅ K.X 1 where
       have hq : q = 1 := by change 0 + q = 1 at hpq; omega
       subst q
       rw [← Category.assoc, HomologicalComplex₂.ι_totalDesc]
-      let e : ((B).X 0).X 1 ≅ K.X 1 := mixedColumnIso K 0 1 1 rfl
+      let e : ((B).X 0).X 1 ≅ K.X 1 := mixedBicomplexCellIso K H hSquare 0 1 (Nat.zero_le 1)
       change e.hom ≫ (e.inv ≫ (B).ιTotal (ComplexShape.down ℕ) 0 1 1 rfl) =
         (B).ιTotal (ComplexShape.down ℕ) 0 1 1 rfl ≫ 𝟙 _
       simpa only [Category.assoc, Category.id_comp, Category.comp_id] using
@@ -152,19 +152,19 @@ def mixedTotalOneIso : (T).X 1 ≅ K.X 1 where
         (by change p + q = 1 at hpq; omega)).eq_of_src _ _
   inv_hom_id := by
     rw [Category.assoc, HomologicalComplex₂.ι_totalDesc]
-    let e : ((B).X 0).X 1 ≅ K.X 1 := mixedColumnIso K 0 1 1 rfl
+    let e : ((B).X 0).X 1 ≅ K.X 1 := mixedBicomplexCellIso K H hSquare 0 1 (Nat.zero_le 1)
     change e.inv ≫ e.hom = 𝟙 _
     exact e.inv_hom_id
 
 /-- Let C be preadditive with a zero object, K a chain complex indexed by ℕ, and H a homotopy
 between the zero endomorphisms of K. Write B_n = H.hom n (n + 1), assume B_n ≫ B_(n+1) = 0 for
 every n, and assume the mixed bicomplex has its down-ℕ total T. The total coprojection from
-cell (0, 1), followed by mixedTotalOneIso.hom, equals (mixedColumnIso K 0 1 1 rfl).hom, the
+cell (0, 1), followed by mixedTotalOneIso.hom, equals (mixedBicomplexCellIso K H hSquare 0 1 (Nat.zero_le 1)).hom, the
 supported-cell comparison to K.X 1. -/
 @[reassoc]
 lemma mixedTotalOneIso_ι :
     (B).ιTotal (ComplexShape.down ℕ) 0 1 1 rfl ≫ (mixedTotalOneIso K H hSquare).hom =
-      (mixedColumnIso K 0 1 1 rfl).hom := by
+      (mixedBicomplexCellIso K H hSquare 0 1 (Nat.zero_le 1)).hom := by
   dsimp only [mixedTotalOneIso]
   rw [HomologicalComplex₂.ι_totalDesc]
   rfl
@@ -182,17 +182,17 @@ def mixedTotalTwoIso : (T).X 2 ≅ K.X 2 ⊞ K.X 0 where
     subst p
     have hq : q = 2 := by change 0 + q = 2 at hpq; omega
     subst q
-    exact (mixedColumnIso K 0 2 2 rfl).hom ≫ biprod.inl
+    exact (mixedBicomplexCellIso K H hSquare 0 2 (Nat.zero_le 2)).hom ≫ biprod.inl
     else if hp' : p = 1 then by
       subst p
       have hq : q = 1 := by change 1 + q = 2 at hpq; omega
       subst q
-      exact (mixedColumnIso K 1 0 1 rfl).hom ≫ biprod.inr
+      exact (mixedBicomplexCellIso K H hSquare 1 1 (Nat.le_refl 1)).hom ≫ biprod.inr
     else 0)
   inv := biprod.desc
-    ((mixedColumnIso K 0 2 2 rfl).inv ≫
+    ((mixedBicomplexCellIso K H hSquare 0 2 (Nat.zero_le 2)).inv ≫
       (B).ιTotal (ComplexShape.down ℕ) 0 2 2 rfl)
-    ((mixedColumnIso K 1 0 1 rfl).inv ≫
+    ((mixedBicomplexCellIso K H hSquare 1 1 (Nat.le_refl 1)).inv ≫
       (B).ιTotal (ComplexShape.down ℕ) 1 1 2 rfl)
   hom_inv_id := by
     apply HomologicalComplex₂.total.hom_ext
@@ -202,15 +202,15 @@ def mixedTotalTwoIso : (T).X 2 ≅ K.X 2 ⊞ K.X 0 where
       have hq : q = 2 := by change 0 + q = 2 at hpq; omega
       subst q
       rw [← Category.assoc, HomologicalComplex₂.ι_totalDesc]
-      change ((mixedColumnIso K 0 2 2 rfl).hom ≫ biprod.inl) ≫
+      change ((mixedBicomplexCellIso K H hSquare 0 2 (Nat.zero_le 2)).hom ≫ biprod.inl) ≫
           biprod.desc
-            ((mixedColumnIso K 0 2 2 rfl).inv ≫
+            ((mixedBicomplexCellIso K H hSquare 0 2 (Nat.zero_le 2)).inv ≫
               (B).ιTotal (ComplexShape.down ℕ) 0 2 2 rfl)
-            ((mixedColumnIso K 1 0 1 rfl).inv ≫
+            ((mixedBicomplexCellIso K H hSquare 1 1 (Nat.le_refl 1)).inv ≫
               (B).ιTotal (ComplexShape.down ℕ) 1 1 2 rfl) =
         (B).ιTotal (ComplexShape.down ℕ) 0 2 2 rfl ≫ 𝟙 _
       rw [Category.assoc, biprod.inl_desc]
-      let e : ((B).X 0).X 2 ≅ K.X 2 := mixedColumnIso K 0 2 2 rfl
+      let e : ((B).X 0).X 2 ≅ K.X 2 := mixedBicomplexCellIso K H hSquare 0 2 (Nat.zero_le 2)
       change e.hom ≫ (e.inv ≫ (B).ιTotal (ComplexShape.down ℕ) 0 2 2 rfl) =
         (B).ιTotal (ComplexShape.down ℕ) 0 2 2 rfl ≫ 𝟙 _
       simpa only [Category.assoc, Category.id_comp, Category.comp_id] using
@@ -220,15 +220,15 @@ def mixedTotalTwoIso : (T).X 2 ≅ K.X 2 ⊞ K.X 0 where
         have hq : q = 1 := by change 1 + q = 2 at hpq; omega
         subst q
         rw [← Category.assoc, HomologicalComplex₂.ι_totalDesc]
-        change ((mixedColumnIso K 1 0 1 rfl).hom ≫ biprod.inr) ≫
+        change ((mixedBicomplexCellIso K H hSquare 1 1 (Nat.le_refl 1)).hom ≫ biprod.inr) ≫
             biprod.desc
-              ((mixedColumnIso K 0 2 2 rfl).inv ≫
+              ((mixedBicomplexCellIso K H hSquare 0 2 (Nat.zero_le 2)).inv ≫
                 (B).ιTotal (ComplexShape.down ℕ) 0 2 2 rfl)
-              ((mixedColumnIso K 1 0 1 rfl).inv ≫
+              ((mixedBicomplexCellIso K H hSquare 1 1 (Nat.le_refl 1)).inv ≫
                 (B).ιTotal (ComplexShape.down ℕ) 1 1 2 rfl) =
           (B).ιTotal (ComplexShape.down ℕ) 1 1 2 rfl ≫ 𝟙 _
         rw [Category.assoc, biprod.inr_desc]
-        let e : ((B).X 1).X 1 ≅ K.X 0 := mixedColumnIso K 1 0 1 rfl
+        let e : ((B).X 1).X 1 ≅ K.X 0 := mixedBicomplexCellIso K H hSquare 1 1 (Nat.le_refl 1)
         change e.hom ≫ (e.inv ≫ (B).ιTotal (ComplexShape.down ℕ) 1 1 2 rfl) =
           (B).ιTotal (ComplexShape.down ℕ) 1 1 2 rfl ≫ 𝟙 _
         simpa only [Category.assoc, Category.id_comp, Category.comp_id] using
@@ -239,14 +239,14 @@ def mixedTotalTwoIso : (T).X 2 ≅ K.X 2 ⊞ K.X 0 where
     apply biprod.hom_ext'
     · rw [← Category.assoc, biprod.inl_desc, Category.assoc,
         HomologicalComplex₂.ι_totalDesc]
-      let e : ((B).X 0).X 2 ≅ K.X 2 := mixedColumnIso K 0 2 2 rfl
+      let e : ((B).X 0).X 2 ≅ K.X 2 := mixedBicomplexCellIso K H hSquare 0 2 (Nat.zero_le 2)
       change e.inv ≫ (e.hom ≫ biprod.inl) = biprod.inl ≫ 𝟙 _
       simpa only [Category.assoc, Category.id_comp, Category.comp_id] using
         congrArg (fun m : K.X 2 ⟶ K.X 2 => m ≫
           (biprod.inl : K.X 2 ⟶ K.X 2 ⊞ K.X 0)) e.inv_hom_id
     · rw [← Category.assoc, biprod.inr_desc, Category.assoc,
         HomologicalComplex₂.ι_totalDesc]
-      let e : ((B).X 1).X 1 ≅ K.X 0 := mixedColumnIso K 1 0 1 rfl
+      let e : ((B).X 1).X 1 ≅ K.X 0 := mixedBicomplexCellIso K H hSquare 1 1 (Nat.le_refl 1)
       change e.inv ≫ (e.hom ≫ biprod.inr) = biprod.inr ≫ 𝟙 _
       simpa only [Category.assoc, Category.id_comp, Category.comp_id] using
         congrArg (fun m : K.X 0 ⟶ K.X 0 => m ≫
@@ -256,11 +256,11 @@ def mixedTotalTwoIso : (T).X 2 ≅ K.X 2 ⊞ K.X 0 where
 between the zero endomorphisms of K. Write B_n = H.hom n (n + 1), assume B_n ≫ B_(n+1) = 0 for
 every n, and assume the mixed bicomplex has its down-ℕ total T. Assume the biproduct K₂ ⊞ K₀
 exists. The total coprojection from (0, 2), followed by mixedTotalTwoIso.hom, is
-(mixedColumnIso K 0 2 2 rfl).hom ≫ biprod.inl. Thus this supported cell is the K₂ summand. -/
+(mixedBicomplexCellIso K H hSquare 0 2 (Nat.zero_le 2)).hom ≫ biprod.inl. Thus this supported cell is the K₂ summand. -/
 @[reassoc]
 lemma mixedTotalTwoIso_ι_b :
     (B).ιTotal (ComplexShape.down ℕ) 0 2 2 rfl ≫ (mixedTotalTwoIso K H hSquare).hom =
-      (mixedColumnIso K 0 2 2 rfl).hom ≫ biprod.inl := by
+      (mixedBicomplexCellIso K H hSquare 0 2 (Nat.zero_le 2)).hom ≫ biprod.inl := by
   dsimp only [mixedTotalTwoIso]
   rw [HomologicalComplex₂.ι_totalDesc]
   rfl
@@ -269,11 +269,11 @@ lemma mixedTotalTwoIso_ι_b :
 between the zero endomorphisms of K. Write B_n = H.hom n (n + 1), assume B_n ≫ B_(n+1) = 0 for
 every n, and assume the mixed bicomplex has its down-ℕ total T. Assume the biproduct K₂ ⊞ K₀
 exists. The total coprojection from (1, 1), followed by mixedTotalTwoIso.hom, is
-(mixedColumnIso K 1 0 1 rfl).hom ≫ biprod.inr. Thus this supported cell is the K₀ summand. -/
+(mixedBicomplexCellIso K H hSquare 1 1 (Nat.le_refl 1)).hom ≫ biprod.inr. Thus this supported cell is the K₀ summand. -/
 @[reassoc]
 lemma mixedTotalTwoIso_ι_B :
     (B).ιTotal (ComplexShape.down ℕ) 1 1 2 rfl ≫ (mixedTotalTwoIso K H hSquare).hom =
-      (mixedColumnIso K 1 0 1 rfl).hom ≫ biprod.inr := by
+      (mixedBicomplexCellIso K H hSquare 1 1 (Nat.le_refl 1)).hom ≫ biprod.inr := by
   dsimp only [mixedTotalTwoIso]
   rw [HomologicalComplex₂.ι_totalDesc]
   rfl
@@ -299,14 +299,18 @@ def mixedHomologyOneShortComplex : ShortComplex C :=
 omit [HasBinaryBiproduct (K.X 2) (K.X 0)] in
 private lemma firstColumn_d (n : ℕ) :
     (B).ιTotal (ComplexShape.down ℕ) 0 (n + 1) (n + 1) (Nat.zero_add (n + 1)) ≫ (T).d (n + 1) n =
-      (mixedColumnIso K 0 (n + 1) (n + 1) rfl).hom ≫ K.d (n + 1) n ≫
-        (mixedColumnIso K 0 n n rfl).inv ≫
+      (mixedBicomplexCellIso K H hSquare 0 (n + 1) (Nat.zero_le (n + 1))).hom ≫ K.d (n + 1) n ≫
+        (mixedBicomplexCellIso K H hSquare 0 n (Nat.zero_le n)).inv ≫
           (B).ιTotal (ComplexShape.down ℕ) 0 n n (Nat.zero_add n) := by
   have hd : ((B).X 0).d (n + 1) n =
-      (mixedColumnIso K 0 (n + 1) (n + 1) rfl).hom ≫ K.d (n + 1) n ≫
-        (mixedColumnIso K 0 n n rfl).inv := by
-    simpa only [ComplexShape.ε_zero, one_smul] using
+      (mixedBicomplexCellIso K H hSquare 0 (n + 1) (Nat.zero_le (n + 1))).hom ≫ K.d (n + 1) n ≫
+        (mixedBicomplexCellIso K H hSquare 0 n (Nat.zero_le n)).inv := by
+    have hSigned : (ComplexShape.down ℕ).ε 0 • ((B).X 0).d (n + 1) n =
+        (mixedBicomplexCellIso K H hSquare 0 (n + 1) (Nat.zero_le (n + 1))).hom ≫
+          K.d (n + 1) n ≫
+            (mixedBicomplexCellIso K H hSquare 0 n (Nat.zero_le n)).inv :=
       mixedBicomplex_total_vertical K H hSquare 0 (n + 1) n (n + 1) n rfl rfl
+    simpa only [ComplexShape.ε_zero, one_smul] using hSigned
   have hNative := HomologicalComplex₂.ιTotal_firstColumn_d B n
   rw [hd] at hNative
   simpa only [Category.assoc] using hNative
@@ -324,11 +328,12 @@ omit [HasBinaryBiproduct (K.X 2) (K.X 0)] in
 /-- Let C be preadditive with a zero object, K a chain complex indexed by ℕ, and H a homotopy
 between the zero endomorphisms of K. Write B_n = H.hom n (n + 1), assume B_n ≫ B_(n+1) = 0 for
 every n, and assume the mixed bicomplex has its down-ℕ total T. For every n : ℕ,
-mixedColumnZeroInclusion.f n = (mixedColumnIso K 0 n n rfl).inv ≫ ιTotal (0, n). This maps K_n
+mixedColumnZeroInclusion.f n = (mixedBicomplexCellIso K H hSquare 0 n (Nat.zero_le n)).inv ≫
+  ιTotal (0, n). This maps K_n
 into the first-column cell of total degree n. -/
 lemma mixedColumnZeroInclusion_f (n : ℕ) :
     (mixedColumnZeroInclusion K H hSquare).f n =
-      (mixedColumnIso K 0 n n rfl).inv ≫
+      (mixedBicomplexCellIso K H hSquare 0 n (Nat.zero_le n)).inv ≫
         (B).ιTotal (ComplexShape.down ℕ) 0 n n (Nat.zero_add n) := rfl
 
 omit [HasBinaryBiproduct (K.X 2) (K.X 0)] in
@@ -358,8 +363,8 @@ def mixedColumnZeroShortComplexMap : K.sc' 2 1 0 ⟶ mixedHomologyOneShortComple
 omit [HasBinaryBiproduct (K.X 2) (K.X 0)] in
 private lemma horizontalBottom_d :
     (B).ιTotal (ComplexShape.down ℕ) 1 1 2 rfl ≫ (T).d 2 1 =
-      (mixedColumnIso K 1 0 1 rfl).hom ≫ H.hom 0 1 ≫
-        (mixedColumnIso K 0 1 1 rfl).inv ≫
+      (mixedBicomplexCellIso K H hSquare 1 1 (Nat.le_refl 1)).hom ≫ H.hom 0 1 ≫
+        (mixedBicomplexCellIso K H hSquare 0 1 (Nat.zero_le 1)).inv ≫
           (B).ιTotal (ComplexShape.down ℕ) 0 1 1 rfl := by
   have hε : ComplexShape.ε₁ (ComplexShape.down ℕ) (ComplexShape.down ℕ)
       (ComplexShape.down ℕ) (1, 1) = 1 := rfl
@@ -368,6 +373,18 @@ private lemma horizontalBottom_d :
   have hd : (B).d 1 0 = mixedHorizontalMap K H 0 := by
     change ChainComplex.of.d (mixedColumn K) (mixedHorizontalMap K H) 1 0 = _
     exact ChainComplex.of_d _ _ _
+  have hComponent : ((B).d 1 0).f 1 =
+      (mixedBicomplexCellIso K H hSquare 1 1 (Nat.le_refl 1)).hom ≫
+        H.hom 0 1 ≫
+          (mixedBicomplexCellIso K H hSquare 0 1 (Nat.zero_le 1)).inv := by
+    have hMap : ((B).d 1 0).f 1 = (mixedHorizontalMap K H 0).f 1 :=
+      congrArg (fun f : (B).X 1 ⟶ (B).X 0 => f.f 1) hd
+    have hNative : (mixedHorizontalMap K H 0).f 1 =
+        (mixedBicomplexCellIso K H hSquare 1 1 (Nat.le_refl 1)).hom ≫
+          H.hom 0 1 ≫
+            (mixedBicomplexCellIso K H hSquare 0 1 (Nat.zero_le 1)).inv :=
+      mixedHorizontalComponent_eq K H 0 0 1 rfl
+    exact hMap.trans hNative
   change (B).ιTotal (ComplexShape.down ℕ) 1 1 2 rfl ≫
     ((B).D₁ (ComplexShape.down ℕ) 2 1 + (B).D₂ (ComplexShape.down ℕ) 2 1) = _
   rw [Preadditive.comp_add, HomologicalComplex₂.ι_D₁, HomologicalComplex₂.ι_D₂,
@@ -376,8 +393,7 @@ private lemma horizontalBottom_d :
     hι, comp_zero, smul_zero, add_zero,
     (B).d₁_eq (ComplexShape.down ℕ)
       (by show (ComplexShape.down ℕ).Rel 1 0; rfl) 1 1 rfl,
-    hε, one_smul, hd, mixedHorizontalMap_f,
-    mixedHorizontalComponent_eq K H 0 0 1 rfl]
+    hε, one_smul, hComponent]
   simp only [Category.assoc]
 
 omit [HasBinaryBiproduct (K.X 2) (K.X 0)] in
@@ -388,7 +404,7 @@ every n, and assume the mixed bicomplex has its down-ℕ total T. For e₁ = mix
 lemma mixedTotalOneIso_inv_d :
     (mixedTotalOneIso K H hSquare).inv ≫ (T).d 1 0 ≫
       (mixedTotalZeroIso K H hSquare).hom = K.d 1 0 := by
-  change ((mixedColumnIso K 0 1 1 rfl).inv ≫
+  change ((mixedBicomplexCellIso K H hSquare 0 1 (Nat.zero_le 1)).inv ≫
       (B).ιTotal (ComplexShape.down ℕ) 0 1 1 rfl) ≫
         ((T).d 1 0 ≫ (mixedTotalZeroIso K H hSquare).hom) = _
   rw [Category.assoc]
@@ -409,9 +425,9 @@ lemma mixedTotalTwoIso_inv_d :
   apply biprod.hom_ext'
   · change biprod.inl ≫
         (biprod.desc
-          ((mixedColumnIso K 0 2 2 rfl).inv ≫
+          ((mixedBicomplexCellIso K H hSquare 0 2 (Nat.zero_le 2)).inv ≫
             (B).ιTotal (ComplexShape.down ℕ) 0 2 2 rfl)
-          ((mixedColumnIso K 1 0 1 rfl).inv ≫
+          ((mixedBicomplexCellIso K H hSquare 1 1 (Nat.le_refl 1)).inv ≫
             (B).ιTotal (ComplexShape.down ℕ) 1 1 2 rfl) ≫
           (T).d 2 1 ≫ (mixedTotalOneIso K H hSquare).hom) = _
     rw [biprod.inl_desc_assoc, biprod.inl_desc, Category.assoc]
@@ -421,9 +437,9 @@ lemma mixedTotalTwoIso_inv_d :
     rw [mixedTotalOneIso_ι, Iso.inv_hom_id, Category.comp_id]
   · change biprod.inr ≫
         (biprod.desc
-          ((mixedColumnIso K 0 2 2 rfl).inv ≫
+          ((mixedBicomplexCellIso K H hSquare 0 2 (Nat.zero_le 2)).inv ≫
             (B).ιTotal (ComplexShape.down ℕ) 0 2 2 rfl)
-          ((mixedColumnIso K 1 0 1 rfl).inv ≫
+          ((mixedBicomplexCellIso K H hSquare 1 1 (Nat.le_refl 1)).inv ≫
             (B).ιTotal (ComplexShape.down ℕ) 1 1 2 rfl) ≫
           (T).d 2 1 ≫ (mixedTotalOneIso K H hSquare).hom) = _
     rw [biprod.inr_desc_assoc, biprod.inr_desc, Category.assoc]
