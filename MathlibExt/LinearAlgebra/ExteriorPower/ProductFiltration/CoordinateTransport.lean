@@ -43,8 +43,23 @@ variable (R : Type u) [CommRing R]
   {X : Type x} [AddCommGroup X] [Module R X]
   (m : ℕ) (e : X ≃ₗ[R] (⋀[R]^m (M × N)))
 
+-- Explicitly select the canonical native exterior and subgroup data.
+local instance (Y : Type*) [AddCommGroup Y] [Module R Y] (d : ℕ) :
+    AddCommGroup (⋀[R]^d Y) :=
+  Submodule.addCommGroup (R := R) (M := ExteriorAlgebra R Y)
+    (ExteriorAlgebra.exteriorPower R d Y)
+
+local instance (A : Type*) [AddCommGroup A] [Module R A]
+    (B : Type*) [AddCommGroup B] [Module R B] (d q : ℕ) :
+    AddCommGroup (ProductFiltration.filtration R A B d q) :=
+  Submodule.addCommGroup (R := R) (M := ⋀[R]^d (A × B))
+    (ProductFiltration.filtration R A B d q)
+
 def filtration (q : ℕ) : Submodule R X :=
   (ProductFiltration.filtration R M N m q).comap e.toLinearMap
+
+local instance (q : ℕ) : AddCommGroup (filtration R M N m e q) :=
+  Submodule.addCommGroup (R := R) (M := X) (filtration R M N m e q)
 
 def stageEquiv (q : ℕ) :
     filtration R M N m e q ≃ₗ[R] ProductFiltration.filtration R M N m q :=
@@ -76,7 +91,14 @@ def quotientEquiv (q : ℕ) :
     let E : filtration R M N m e q ≃ₗ[R] ProductFiltration.filtration R M N m q :=
       stageEquiv R M N m e q
     have hE : P.map E.toLinearMap = Q := nextStage_image R M N m e q
-    exact Submodule.Quotient.equiv P Q E hE
+    let hquot :
+        (filtration R M N m e q ⧸ P) ≃ₗ[R]
+          (ProductFiltration.filtration R M N m q ⧸ Q) :=
+      Submodule.Quotient.equiv (R := R) (R₂ := R)
+        (σ₁₂ := RingHom.id R) (σ₂₁ := RingHom.id R)
+        (M := filtration R M N m e q)
+        (N := ProductFiltration.filtration R M N m q) P Q E hE
+    exact hquot
 
 def coordinateEquiv (q : ℕ) (hq : q ≤ m) :
     associatedGraded R M N m e q ≃ₗ[R] (⋀[R]^q M) ⊗[R] (⋀[R]^(m - q) N) :=
@@ -85,6 +107,17 @@ def coordinateEquiv (q : ℕ) (hq : q ≤ m) :
 theorem quotientEquiv_mk (q : ℕ) (z : filtration R M N m e q) :
     quotientEquiv R M N m e q (Submodule.Quotient.mk z) =
       Submodule.Quotient.mk (stageEquiv R M N m e q z) := rfl
+
+private theorem coordinateEquiv_mk (q : ℕ) (hq : q ≤ m)
+    (z : filtration R M N m e q) :
+    coordinateEquiv R M N m e q hq
+        (Submodule.Quotient.mk (p := nextStage R M N m e q) z) =
+      ProductFiltration.associatedGradedEquiv R M N m q hq
+        (Submodule.Quotient.mk (p := ProductFiltration.nextStage R M N m q)
+          (stageEquiv R M N m e q z)) := by
+  exact congrArg (fun y : ProductFiltration.associatedGraded R M N m q =>
+    ProductFiltration.associatedGradedEquiv R M N m q hq y)
+      (quotientEquiv_mk R M N m e q z)
 
 /-- Let R be a commutative ring, M and N R-modules, m : ℕ, and e : X ≃ₗ[R] ⋀[R]^m (M × N) a linear
 equivalence from an R-module X. For q : ℕ, let F_X^q be the inverse image under e of the
@@ -154,7 +187,10 @@ def gradeMap (q : ℕ) :
 theorem gradeMap_mk (q : ℕ) (z : filtration R M N m e q) :
     gradeMap e e' f q (Submodule.Quotient.mk z) =
       Submodule.Quotient.mk (stageMap e e' f q z) := by
-  rw [gradeMap, Submodule.mapQ_apply]
+  exact Submodule.mapQ_apply (R := R) (R₂ := R)
+    (M := filtration R M N m e q) (M₂ := filtration R M' N' m e' q)
+    (nextStage R M N m e q) (nextStage R M' N' m e' q)
+    (stageMap e e' f q) (h := stageMap_next e e' f q) z
 
 /-- Let R be a commutative ring, M and N R-modules, m : ℕ, and e : X ≃ₗ[R] ⋀[R]^m (M × N) a linear
 equivalence from an R-module X. Let M', N' and X' be R-modules with coordinates e' : X' ≃ₗ[R]
@@ -168,16 +204,30 @@ theorem coordinateEquiv_gradeMap (q : ℕ) (hq : q ≤ m)
     coordinateEquiv R M' N' m e' q hq (gradeMap e e' f q z) =
       TensorProduct.map (exteriorPower.map q f.first) (exteriorPower.map (m - q) f.relative)
         (coordinateEquiv R M N m e q hq z) := by
-  refine Submodule.Quotient.induction_on _ z (fun x => ?_)
-  rw [gradeMap_mk]
-  change ProductFiltration.associatedGradedEquiv R M' N' m q hq
-      (Submodule.Quotient.mk (stageEquiv R M' N' m e' q (stageMap e e' f q x))) =
-    TensorProduct.map (exteriorPower.map q f.first) (exteriorPower.map (m - q) f.relative)
-      (ProductFiltration.associatedGradedEquiv R M N m q hq
-        (Submodule.Quotient.mk (stageEquiv R M N m e q x)))
-  rw [stageMap_coordinates]
-  exact f.associatedGradedEquiv_gradeMap m q hq
-    (Submodule.Quotient.mk (stageEquiv R M N m e q x))
+  refine Submodule.Quotient.induction_on (nextStage R M N m e q) z (fun x => ?_)
+  let oldx : ProductFiltration.associatedGraded R M N m q :=
+    Submodule.Quotient.mk (p := ProductFiltration.nextStage R M N m q)
+      (stageEquiv R M N m e q x)
+  let tmap := TensorProduct.map (exteriorPower.map q f.first)
+    (exteriorPower.map (m - q) f.relative)
+  have hqmap :
+      (Submodule.Quotient.mk (p := ProductFiltration.nextStage R M' N' m q)
+        (stageEquiv R M' N' m e' q (stageMap e e' f q x)) :
+          ProductFiltration.associatedGraded R M' N' m q) =
+      f.gradeMap m q oldx :=
+    (congrArg (fun y : ProductFiltration.filtration R M' N' m q =>
+      (Submodule.Quotient.mk (p := ProductFiltration.nextStage R M' N' m q) y :
+        ProductFiltration.associatedGraded R M' N' m q))
+          (stageMap_coordinates e e' f q x)).trans
+      (f.gradeMap_mk m q (stageEquiv R M N m e q x)).symm
+  have h₁ := congrArg (fun y : associatedGraded R M' N' m e' q =>
+    coordinateEquiv R M' N' m e' q hq y) (gradeMap_mk e e' f q x)
+  have h₂ := coordinateEquiv_mk R M' N' m e' q hq (stageMap e e' f q x)
+  have h₃ := congrArg (fun y : ProductFiltration.associatedGraded R M' N' m q =>
+    ProductFiltration.associatedGradedEquiv R M' N' m q hq y) hqmap
+  have h₄ := f.associatedGradedEquiv_gradeMap m q hq oldx
+  have h₅ := congrArg tmap (coordinateEquiv_mk R M N m e q hq x).symm
+  exact h₁.trans (h₂.trans (h₃.trans (h₄.trans h₅)))
 
 end exteriorPower.ProductFiltration.CoordinateTransport
 
