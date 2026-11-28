@@ -12,11 +12,7 @@ $$L(\Psi, \Gamma \mid G) = \prod_{i=1}^{m} p(G_i \mid \Psi, \Gamma),$$
 
 and if locus $i$ is represented by a set $\mathcal{G}_i$ of bootstrap genealogies, $p(G_i \mid \Psi, \Gamma)$ is replaced by $|\mathcal{G}_i|^{-1}\sum_{g \in \mathcal{G}_i} p(g \mid \Psi, \Gamma)$.
 
-**Proposition (nesting).** Let $\Omega(n, k)$ be the networks on $n$ taxa with $k$ reticulations. For every $(\Psi, \Gamma)$ with $\Psi \in \Omega(n,k)$ there is $(\Psi', \Gamma')$ with $\Psi' \in \Omega(n, k+1)$ inducing the same distribution of gene genealogies, hence
-
-$$\sup_{\Psi' \in \Omega(n,k+1),\,\Gamma'} L(\Psi', \Gamma') \ \ge\ \sup_{\Psi \in \Omega(n,k),\,\Gamma} L(\Psi, \Gamma).$$
-
-The maximum likelihood is non-decreasing in the number of reticulations, so the number of reticulations cannot be chosen by likelihood alone; information criteria or cross-validation on held-out gene tree frequencies are used instead.
+Because networks in $\Omega(n, k+1)$ (networks on $n$ taxa with $k+1$ reticulations) provide more complex models than networks in $\Omega(n, k)$, the source selects the number of reticulations using information criteria or $K$-fold cross-validation on held-out gene-tree topology frequencies rather than raw likelihood alone.
 
 ## Depends on
 
@@ -25,7 +21,7 @@ The maximum likelihood is non-decreasing in the number of reticulations, so the 
 
 ## Expansion
 
-To embed $\Psi$ in $\Omega(n, k+1)$, subdivide two edges with new vertices $u$ (on an edge $e_1$) and $w$ (on an edge $e_2$, not below $u$ so that no cycle is created), and add the arc $(u, w)$, which makes $w$ a reticulation. Set the inheritance probability of $(u,w)$ to $0$ and of the subdivided half of $e_2$ entering $w$ to $1$ at every locus. Every lineage then follows the original edges, the subdivided branches have the original total lengths, and the genealogy distribution is unchanged. The product forms of the likelihoods come from independence of loci given the species history; the bootstrap average integrates gene tree estimation uncertainty approximately. With fully resolved topologies, $K$-fold cross-validation compares predicted and held-out gene tree frequencies, accepting an extra reticulation only for a substantial improvement in fit (3% in the paper).
+**Derived remark (nesting of network models).** Every $(\Psi, \Gamma)$ with $\Psi \in \Omega(n, k)$ embeds into $\Omega(n, k+1)$ with the same gene-genealogy distribution, so $\sup_{\Omega(n,k+1)} L \ge \sup_{\Omega(n,k)} L$. To embed $\Psi$ in $\Omega(n, k+1)$, subdivide two edges with new vertices $u$ (on an edge $e_1$) and $w$ (on an edge $e_2$, not below $u$ so that no cycle is created), and add the arc $(u, w)$, which makes $w$ a reticulation. Set the inheritance probability of $(u,w)$ to $0$ and of the subdivided half of $e_2$ entering $w$ to $1$ at every locus. Every lineage then follows the original edges, the subdivided branches have the original total lengths, and the genealogy distribution is unchanged. The product forms of the likelihoods come from independence of loci given the species history; the bootstrap average integrates gene tree estimation uncertainty approximately. With fully resolved topologies, $K$-fold cross-validation compares predicted and held-out gene tree frequencies, accepting an extra reticulation only for a substantial improvement in fit (3% in the paper).
 
 ## Sources
 
