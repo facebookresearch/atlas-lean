@@ -53,6 +53,11 @@
 - [IEEE operations agree with rounding in the normal range](ieee-operations-agree-with-rounding-in-the-normal-range.md)
 - [Core floating-point operations in the normal range](core-float-model-in-the-normal-range/README.md)
 
+## Veltkamp splitting in binary floating-point arithmetic
+
+- [Veltkamp splitting algorithm](veltkamp-split.md)
+- [Nonoverlapping](nonoverlapping.md)
+
 ## Related topics
 
 - [Rounding error analysis](../rounding-error-analysis/README.md): error bounds for dot products, matrix products and LU factorization built on the relative error bound of $\mathrm{fl}$.

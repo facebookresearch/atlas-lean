@@ -17,16 +17,10 @@ up to a global phase), and measure a Hermitian Pauli operator $M$
 The multiplication step is required: for generators $Z_1, Z_2$ and $M = X_1 X_2$, replacing only $Z_1$
 by $\pm X_1 X_2$ leaves the anticommuting pair $X_1 X_2, Z_2$; the correct second generator is $Z_1 Z_2$.
 
-## Expansion
-
-This node states a precise result. A good expansion adds a page for the pending prerequisite below and
-links it under the dependency sections.
-
-- Statement prerequisite: measurements (POVMs and projective measurements) and the Born rule.
-
 ## Depends on
 
-- [Pauli group, Clifford group and stabilizer states](pauli-group-clifford-group-and-stabilizer-states.md)
+- [Stabilizer groups and stabilizer states](stabilizer-groups-and-stabilizer-states.md)
+- [Positive-operator-valued measurements and the Born rule](../../../QuantumInformation/quantum-operations/povms-and-measurement-readout/povm-and-born-rule.md)
 
 ## Sources
 
