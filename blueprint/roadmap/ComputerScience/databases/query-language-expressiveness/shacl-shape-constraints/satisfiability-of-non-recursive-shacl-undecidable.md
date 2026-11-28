@@ -21,7 +21,7 @@ By the correspondence between SCL and SHACL documents, the same holds for satisf
 
 ## Expansion
 
-Clause 1 reduces from the subsumption problem for role-value maps in description logic, which Schmidt-Schauß proved undecidable by a reduction from the word problem for groups: equalities between compositions of roles become property-pair equality constraints along sequence paths. Clause 2 reduces from the domino problem on the quadrant $\mathbb{N} \times \mathbb{N}$: a sentence labels every element with exactly one tile, requires horizontal and vertical successors to carry matching tiles, and uses the stated features to force every model to contain the infinite grid, so it is satisfiable exactly when the tile set tiles the quadrant. A good expansion adds and links a page for the undecidability of subsumption of role-value maps.
+Clause 1 reduces from the subsumption problem for role-value maps in description logic, which Schmidt-Schauß proved undecidable by a reduction from the word problem for groups: equalities between compositions of roles become property-pair equality constraints along sequence paths. Clause 2 reduces from the domino problem on the quadrant $\mathbb{N} \times \mathbb{N}$: a sentence labels every element with exactly one tile, requires horizontal and vertical successors to carry matching tiles, and uses the stated features to force every model to contain the infinite grid, so it is satisfiable exactly when the tile set tiles the quadrant. A good expansion links a page for the undecidability of subsumption of role-value maps.
 
 ## Sources
 
