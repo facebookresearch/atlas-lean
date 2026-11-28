@@ -15,3 +15,4 @@ Dold, Newton and realizable sequences, Sylvester, Euclid and Göbel sequences, g
 - [Multiple-counting Jacobsthal sequence](multiple-counting-jacobsthal-sequence.md)
 - [Odd Lichtenberg numbers](odd-lichtenberg.md)
 - [Some generalized Euclid sequence contains every prime](generalized-euclid-sequence-contains-eve.md)
+- [OEIS conjectures](oeis-conjectures/README.md)

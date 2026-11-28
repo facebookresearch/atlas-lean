@@ -8,6 +8,7 @@ Time and space hierarchy theorems and diagonalization against time-bounded machi
 - [Space hierarchy theorem](space-hierarchy-theorem/README.md)
 - [Time hierarchy theorem](time-hierarchy-theorem/README.md)
 - [Nondeterministic time hierarchy](nondet-time-hierarchy.md)
+- [The McCreight–Meyer union theorem](blum-union.md)
 - [Forrelation and the Oracle Separation of BQP and PH](forrelation-and-bqp-versus-ph/README.md)
 - [Learning algorithms from natural proofs](learning-algorithms-from-natural-proofs/README.md)
 - [Learning versus pseudorandomness](learning-versus-pseudorandomness/README.md)

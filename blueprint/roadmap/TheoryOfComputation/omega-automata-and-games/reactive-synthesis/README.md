@@ -3,6 +3,13 @@
 - [GR(1) synthesis](gr-1-synthesis.md)
 - [The GR(1) winning region as a nested fixpoint](the-gr-1-winning-region-as-a-nested-fixpoint.md)
 - [Realizability of specifications over infinite words](realizability-of-specifications-over-infinite.md)
+
+## Deterministic parity specifications (Church's problem)
+
+- [Deterministic parity specifications](det-parity-spec.md)
+- [Run of a deterministic parity specification](run.md)
+- [Realizing a parity specification by a transducer](realizes.md)
+- [The synthesis parity game of a specification](synthesis-game.md)
 - [Careful cooperative rational synthesis with common resources](careful-cooperative-rational-synthesis-with-comm.md)
 - [Careful cooperative rational synthesis with two resources is undecidable](careful-cooperative-rational-synthesis-with-two.md)
 - [Church games with register-automaton specifications over the naturals are undecidable](church-games-with-register-automaton.md)

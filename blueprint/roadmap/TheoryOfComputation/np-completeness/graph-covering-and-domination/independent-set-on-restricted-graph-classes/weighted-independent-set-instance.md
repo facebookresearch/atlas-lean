@@ -1,0 +1,3 @@
+# Instances of vertex-weighted independent set problems
+
+An instance of WEIGHTED INDEPENDENT SET on $(K_{1,4}, \text{diamond})$-free graphs, and likewise of WEIGHTED INDEPENDENT DOMINATING SET for chordal graphs, is a quadruple $(n, E, w, k)$ of a natural number $n$, the number of vertices (the vertices are $0, \dots, n-1$), a list $E$ of pairs of natural numbers, the undirected edges, a list $w$ of natural numbers whose $v$-th entry is the weight of vertex $v$ (it need not have length $n$), and a natural number $k$, the weight threshold: a lower bound on the total weight for independent set, an upper bound for independent dominating set. The forbidden subgraphs, chordality and domination belong to the predicates, not to the instances.

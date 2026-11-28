@@ -1,0 +1,3 @@
+# Well-formed WEIGHTED DIAMETER instances on trees
+
+An instance $(n, E, C, K)$ of WEIGHTED DIAMETER is well formed for the restriction to trees when the list $E$ has no repeated entries, every pair $(u, v)$ in $E$ satisfies $u < n$, $v < n$ and $u \ne v$, with the reversed pair $(v, u)$ not in $E$, the list $C$ has as many entries as $E$, $K > 0$, and the graph of the instance is a tree (connected, hence with at least one vertex, and acyclic). The same predicate, with its conjuncts in another order, is the well-formedness of WEIGHTED RADIUS for trees, with radius $K$ or less or $K$ or greater.

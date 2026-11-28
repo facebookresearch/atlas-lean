@@ -24,6 +24,7 @@ Clique, independent set, vertex cover, domination variants, feedback vertex and 
 - [Roman domination](roman-domination/README.md)
 - [Total dominating set](total-dominating-set/README.md)
 - [Zero forcing](zero-forcing/README.md)
+- [Vertex-disjoint cycle cover](vertex-disjoint-cycle-cover/README.md)
 - [Bicluster editing](bicluster-editing/README.md)
 - [Cluster deletion](cluster-deletion/README.md)
 - [Geodetic sets](geodetic-sets/README.md)

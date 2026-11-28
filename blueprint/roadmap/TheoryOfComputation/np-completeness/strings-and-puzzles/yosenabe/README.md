@@ -1,0 +1,16 @@
+# Yosenabe
+
+- [Yosenabe instances](yosenabe-instance.md)
+- [Number of rows of a Yosenabe puzzle](rows.md)
+- [Number of columns of a Yosenabe puzzle](cols.md)
+- [Cells of a Yosenabe puzzle](cell.md)
+- [Cell contents of a Yosenabe puzzle](cell-2.md)
+- [Gray cells of a Yosenabe puzzle](gray.md)
+- [Circle cells of a Yosenabe puzzle](circle.md)
+- [Gray-cell graph of a Yosenabe puzzle](gray-graph.md)
+- [Gray areas of a Yosenabe puzzle](same-area.md)
+- [Cells on a Yosenabe arrow](on-arrow.md)
+- [Well-formed Yosenabe instances](well-formed.md)
+- [Yosenabe solutions](yosenabe-feasible.md)
+- [YOSENABE as a decision problem](yosenabe-dec.md)
+- [YOSENABE is NP-complete](yosenabe-np-complete.md)

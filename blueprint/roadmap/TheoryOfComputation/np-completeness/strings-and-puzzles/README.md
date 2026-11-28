@@ -29,6 +29,8 @@ String problems (closest string, longest common subsequence, shortest common sup
 - [Single-letter context-free language membership](single-letter-context-free-language-membership/README.md)
 - [Sudoku](sudoku/README.md)
 - [Unshuffling a square](unshuffling-a-square/README.md)
+- [Yosenabe](yosenabe/README.md)
+- [Zeiger](zeiger/README.md)
 - [KPlumber](kplumber/README.md)
 - [Kurodoko](kurodoko/README.md)
 - [Magnets](magnets/README.md)

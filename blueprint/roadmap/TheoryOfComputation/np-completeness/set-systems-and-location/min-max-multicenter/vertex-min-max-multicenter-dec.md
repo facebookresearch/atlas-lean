@@ -1,0 +1,3 @@
+# Vertex MIN-MAX MULTICENTER as a decision problem
+
+The decision problem VERTEX MIN-MAX MULTICENTER accepts a bitstring $x$ exactly when the canonical bitstring decoding of $x$ as an instance $(n, E, w, K, (p, q))$ of MIN-MAX MULTICENTER succeeds and the instance is both well formed and feasible for the variant with centers at vertices; every bitstring that does not decode is rejected. Well formed means the edge list describes a simple graph on $\{0, \dots, n-1\}$ (distinct endpoint pairs, endpoints below $n$, no loops, no reversed duplicates), $w$ has exactly $n$ entries, $0 < K \le n$, $p > 0$ and $q > 0$.

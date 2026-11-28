@@ -61,6 +61,7 @@ order.
 - [Total predecessor-work bound](hopcroft-cost-init-trace-le.md)
 - [$O(|\Sigma| n \log n)$ bound on Hopcroft predecessor-work](hopcroft-cost-init-trace-le-log.md)
 - [Predecessor-work bound for the complete Hopcroft run](hopcroft-cost-complete-le.md)
+- [Hopcroft's total-work bound](hopcroft-total-work.md)
 - [No initial Hopcroft splitters with at most one state](init-w-eq-nil-of-card-le-one.md)
 - [Zero Hopcroft predecessor-work with at most one state](hopcroft-cost-eq-zero-of-card-le-one.md)
 - [Zero Hopcroft predecessor-work over an empty alphabet](hopcroft-cost-eq-zero-of-alphabet-card-e.md)

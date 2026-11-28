@@ -17,3 +17,6 @@
 - [Well-formed instances of INDEPENDENT DOMINATING SET ON 2P_3-FREE GRAPHS](well-formed-4.md)
 - [INDEPENDENT DOMINATING SET ON 2P_3-FREE GRAPHS as a decision problem](independent-dominating-set-two-p3-free-d.md)
 - [INDEPENDENT DOMINATING SET ON 2P_3-FREE GRAPHS is NP-complete](independent-dominating-set-two-p3-free-n.md)
+- [Well-formed weighted independent dominating set instances (chordal)](well-formed-3.md)
+- [Instances with a light independent dominating set (chordal)](weighted-independent-dominating-set-chor-2.md)
+- [WEIGHTED INDEPENDENT DOMINATING SET (chordal) as a decision problem](weighted-independent-dominating-set-chor-3.md)

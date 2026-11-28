@@ -1,0 +1,3 @@
+# 0/1 WEIGHTED DIAMETER with $K = 2$ as a decision problem
+
+The decision problem WEIGHTED DIAMETER with $0/1$ lengths and $K = 2$ accepts a bitstring $x$ exactly when the canonical bitstring decoding of $x$ as a quadruple $(n, E, C, K)$ succeeds and returns an instance that is well formed for this restriction (in particular every entry of $C$ is $0$ or $1$ and $K = 2$) and feasible for WEIGHTED DIAMETER: some rearrangement $\ell$ of $C$, the $k$-th edge of $E$ receiving length $\ell_k$, makes every pair of vertices joined by a path of length at most $2$. Every bitstring that does not decode is rejected.

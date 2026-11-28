@@ -9,3 +9,4 @@
 - [Inherently ambiguous language](is-inherently-ambiguous.md)
 - [Inherently ambiguous example as a union of two languages](inherently-ambiguous-lang-eq.md)
 - [The example language is context-free](inherently-ambiguous-lang-is-context-fre.md)
+- [Inherent ambiguity of $\{a^i b^j c^k : i = j \text{ or } j = k\}$](inherently-ambiguous-example.md)
