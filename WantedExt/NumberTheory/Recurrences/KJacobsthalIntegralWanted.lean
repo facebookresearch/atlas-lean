@@ -35,6 +35,7 @@ public import Mathlib.RingTheory.PowerSeries.Basic
 public import MathlibExt.NumberTheory.Recurrences.JacobsthalOffsetIntegral
 public import MathlibExt.NumberTheory.Recurrences.KJacobsthal
 public import MathlibExt.NumberTheory.Recurrences.KJacobsthalGeneratingFunction
+public import MathlibExt.NumberTheory.Recurrences.KJacobsthalIntegralCompanionKJacobsthalMulEqIntegral
 public import MathlibExt.NumberTheory.Recurrences.KJacobsthalIntegralCompanionKJacobsthalCatalan
 
 namespace MetaMathlibExt
@@ -222,41 +223,6 @@ public theorem_wanted jacobsthalLucas_mul_add_eq_integral (ℓ n r : ℕ) :
         (9 * n * J[1, ℓ] * J[1, r] + jL[1, ℓ] * jL[1, r] +
             3 * (n + 1) * J[1, ℓ] * jL[1, r] * x) * (jL[1, ℓ] + 3 * J[1, ℓ] * x) ^ ((n : ℤ) - 1)
 
-/-- **Companion $k$-Jacobsthal numbers via Lucas sequences.** For a natural number $k$ and
-integers $a, b$, let $\mathcal{J}_{k,n}(a, b)$ be the companion $k$-Jacobsthal numbers, and let
-$J_{k,n} = U_n(k, -2)$ and $j_{k,n} = V_n(k, -2)$ be the $k$-Jacobsthal and $k$-Jacobsthal–Lucas
-numbers, the Lucas sequences $U$ and $V$ with parameters $(P, Q) = (k, -2)$. Then for every
-natural number $n$, $2\,\mathcal{J}_{k,n}(a, b) = a\,j_{k,n} + (2b - ak)\,J_{k,n}$.
-
-The source states this as $\mathcal{J}_{k,n} = \tfrac{a}{2} j_{k,n} + \tfrac{2b - ak}{2} J_{k,n}$.
-
-Source: Weerayuth Nilsrakoo and Achariya Nilsrakoo, *An Integral Representation of k-Jacobsthal and
-k-Jacobsthal-Lucas Numbers*, INTEGERS 25 (2025), Article A74,
-Theorem 9 (`integers-2025-A74-thm-9`). -/
-public theorem_wanted two_mul_companionKJacobsthal (k : ℕ) (a b : ℤ) (n : ℕ) :
-    2 * companionKJacobsthal k a b n =
-      a * lucasV (kJacobsthalParams k) n + (2 * b - a * k) * lucasU (kJacobsthalParams k) n
-
-/-- **Integral representation of the companion $k$-Jacobsthal numbers.** Let $k$, $\ell$, $n$ be
-natural numbers and $a, b$ integers. Write $\mathcal{J}_{k,m} = \mathcal{J}_{k,m}(a, b)$ for the
-companion $k$-Jacobsthal numbers, $J_{k,m} = U_m(k, -2)$ and $j_{k,m} = V_m(k, -2)$ for the
-$k$-Jacobsthal and $k$-Jacobsthal-Lucas numbers, and $\Delta_k = \sqrt{k^2 + 8}$. Then, in
-$\mathbb{R}$,
-$$
-\mathcal{J}_{k,\ell n} = \frac{1}{2^{n+1}} \int_{-1}^{1}
-\bigl(a\,j_{k,\ell} + (2b - ak)\,n\,J_{k,\ell} + a(n+1)\Delta_k J_{k,\ell}\,x\bigr)
-\bigl(j_{k,\ell} + \Delta_k J_{k,\ell}\,x\bigr)^{n-1}\,dx,
-$$
-where the power $n - 1$ is an integer power (for $n = 0$ it is the reciprocal).
-
-Source: Weerayuth Nilsrakoo and Achariya Nilsrakoo, *An Integral Representation of k-Jacobsthal and
-k-Jacobsthal-Lucas Numbers*, INTEGERS 25 (2025), Article A74,
-Theorem 12 (`integers-2025-A74-thm-12`). -/
-public theorem_wanted companionKJacobsthal_mul_eq_integral (k ℓ n : ℕ) (a b : ℤ) :
-    (companionKJacobsthal k a b (ℓ * n) : ℝ) =
-      1 / 2 ^ (n + 1) * ∫ x in (-1 : ℝ)..1,
-        (a * jL[k, ℓ] + (2 * b - a * k) * n * J[k, ℓ] +
-            a * (n + 1) * Δ[k] * J[k, ℓ] * x) * (jL[k, ℓ] + Δ[k] * J[k, ℓ] * x) ^ ((n : ℤ) - 1)
 
 end
 
