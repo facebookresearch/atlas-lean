@@ -90,11 +90,25 @@ example : (K.d 1 0).hom ((K.d 2 1).hom z2) = 0 := by
   have h := congrArg (fun f => f.hom z2) (K.d_comp_d 2 1 0)
   exact h
 example : Q.π.f 0 (zeroWord ⊗ₜ[R] (algebraMap R U 2)) = ULift.up (2 : R) := by
-  change (envelopingAugmentation R Mat).f 0 (zeroWord ⊗ₜ[R] (algebraMap R U 2)) = _
-  rw [envelopingAugmentation_f_zero]
-  change envelopingAugmentationComponent R Mat (zeroWord ⊗ₜ[R] (algebraMap R U 2)) = _
-  rw [envelopingAugmentationComponent_apply, envelopingZeroEquiv_tmul, zeroWordValue, one_smul]
-  apply ULift.ext
-  change UniversalEnvelopingAlgebra.augmentation R Mat (algebraMap R U 2) = 2
-  exact (UniversalEnvelopingAlgebra.augmentation R Mat).commutes 2
+  let p : K.X 0 := zeroWord ⊗ₜ[R] (algebraMap R U 2)
+  have hz : envelopingZeroEquiv R Mat p = algebraMap R U 2 := by
+    calc
+      _ = (exteriorPower.zeroEquiv R Mat zeroWord) • (algebraMap R U 2) :=
+        envelopingZeroEquiv_tmul R Mat zeroWord (algebraMap R U 2)
+      _ = _ := by rw [zeroWordValue, one_smul]
+  have ha : envelopingAugmentationComponent R Mat p = ULift.up (2 : R) := by
+    calc
+      _ = ULift.up (UniversalEnvelopingAlgebra.augmentation R Mat
+          (envelopingZeroEquiv R Mat p)) := envelopingAugmentationComponent_apply R Mat p
+      _ = _ := by
+        apply ULift.ext
+        change UniversalEnvelopingAlgebra.augmentation R Mat
+          (envelopingZeroEquiv R Mat p) = 2
+        rw [hz]
+        exact (UniversalEnvelopingAlgebra.augmentation R Mat).commutes 2
+  have hp := congrArg
+    (fun f : K.X 0 ⟶ envelopingTrivialObject R Mat => f.hom p)
+    (envelopingAugmentation_f_zero R Mat)
+  change Q.π.f 0 p = envelopingAugmentationComponent R Mat p at hp
+  exact hp.trans ha
 end MathlibExtTest.EnvelopingResolution
