@@ -11965,6 +11965,7 @@
   "MathlibExt/Combinatorics/Finpartition/PairMerge": {"to": "Combinatorics/set-partitions", "title": "Block sizes and pullbacks of set partitions"},
   "MathlibExt/Combinatorics/ForbiddenIntersectionErdosProblem703": {"to": "Combinatorics/extremal-set-theory/intersecting-families", "title": "Forbidden intersection theorems"},
   "MathlibExt/Combinatorics/FractalSequence": {"to": "Combinatorics/combinatorics-on-words/self-describing-sequences", "title": "Fractal sequences"},
+  "MathlibExt/Combinatorics/FractionalExpectationThresholds": {"to": "Combinatorics/probabilistic-combinatorics", "title": "Thresholds and expectation thresholds"},
   "MathlibExt/Combinatorics/FraserKakeya": {"to": "Geometry/discrete-geometry", "title": "Kakeya sets in finite fields"},
   "MathlibExt/Combinatorics/Fundamentals/Partitions": {"to": "Combinatorics/integer-partitions/young-diagrams-statistics", "title": "Compositions, conjugate partitions and dominance order"},
   "MathlibExt/Combinatorics/Fundamentals/SpecialSequences": {"to": "Combinatorics/elementary-enumeration", "title": "Special counting sequences"},

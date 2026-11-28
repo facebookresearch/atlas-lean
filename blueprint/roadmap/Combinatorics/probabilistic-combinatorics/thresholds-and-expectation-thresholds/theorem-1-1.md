@@ -1,6 +1,6 @@
 # Thresholds versus fractional expectation-thresholds
 
-There is an absolute real constant $K$ ([the constant of the theorem](k.md)) such that, for every finite set $X$ and every increasing
+With $K=12/\ln 2$ ([the constant of the theorem](k.md)), for every finite set $X$ and every increasing
 family $\mathcal F$ of subsets of $X$ (closed under taking supersets) with
 $\ell(\mathcal F) \ge 2$, where $\ell(\mathcal F)$ is the size of a largest minimal element of
 $\mathcal F$,
@@ -18,4 +18,5 @@ so the inequality cannot hold.
 
 ## Sources
 
-- Keith Frankston, Jeff Kahn, Bhargav Narayanan and Jinyoung Park, *Thresholds versus fractional expectation-thresholds*, Ann. of Math. 194(2) (2021). Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge, problem `annals_fractional_expectation_thresholds` of the lean-eval benchmark.
+- Keith Frankston, Jeff Kahn, Bhargav Narayanan and Jinyoung Park, [*Thresholds versus fractional expectation-thresholds*](https://doi.org/10.4007/annals.2021.194.2.2), Ann. of Math. 194(2) (2021), Theorem 1.1. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge, problem `annals_fractional_expectation_thresholds` of the lean-eval benchmark.
+- For the explicit constant, Bryan Park and Jan Vondrák, [*A simple proof of the non-uniform Kahn–Kalai conjecture*](https://arxiv.org/abs/2306.12576), §2.3.
