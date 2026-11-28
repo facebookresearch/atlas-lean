@@ -45,11 +45,12 @@ private def coaugmented : CosimplicialObject.Augmented C where
 private abbrev cochainPresentation :=
   CosimplicialObject.Augmented.cochainCoaugmentationFunctor.obj coaugmented
 
-private lemma coaugmentation_value : (cochainPresentation.hom.f 0).hom (3 : ZMod 6) = 1 := by
+private lemma coaugmentation_value :
+    (cochainPresentation.hom.f 0).hom (3 : ZMod 6) = (1 : ZMod 2) := by
   change reduction.hom (3 : ZMod 6) = (1 : ZMod 2)
   decide
 
-example : (cochainPresentation.hom.f 0).hom (3 : ZMod 6) = 1 := coaugmentation_value
+example : (cochainPresentation.hom.f 0).hom (3 : ZMod 6) = (1 : ZMod 2) := coaugmentation_value
 example : (cochainPresentation.hom.f 0).hom (3 : ZMod 6) ≠ 0 := by
   intro hz
   exact (by decide : (1 : ZMod 2) ≠ 0) (coaugmentation_value.symm.trans hz)
@@ -71,21 +72,23 @@ private def K : ChainComplex C ℤ where
       simp only [if_pos h, if_neg h', comp_zero]
     · simp only [if_neg h, zero_comp]
 
-private lemma original_d_value : (K.d 1 0).hom (1 : ZMod 6) = 2 := by
+private lemma original_d_value : (K.d 1 0).hom (1 : ZMod 6) = (2 : ZMod 6) := by
   change (if (1 : ℤ) = 1 ∧ (0 : ℤ) = 0 then twice else 0).hom (1 : ZMod 6) = _
   rw [if_pos (by decide)]
   change (2 : ℤ) • (1 : ZMod 6) = (2 : ZMod 6)
   decide
 
-private lemma regraded_d_value : ((signedRegrading K 1).d 0 1).hom (1 : ZMod 6) = 4 := by
+private lemma regraded_d_value :
+    ((signedRegrading K 1).d 0 1).hom (1 : ZMod 6) = (4 : ZMod 6) := by
   change (-(2 : ℤ)) • (1 : ZMod 6) = (4 : ZMod 6)
   decide
 
-example : (K.d 1 0).hom (1 : ZMod 6) = 2 ∧
-    ((signedRegrading K 1).d 0 1).hom (1 : ZMod 6) = 4 :=
+example : (K.d 1 0).hom (1 : ZMod 6) = (2 : ZMod 6) ∧
+    ((signedRegrading K 1).d 0 1).hom (1 : ZMod 6) = (4 : ZMod 6) :=
   ⟨original_d_value, regraded_d_value⟩
 
-example : ((signedRegradingShortComplexIso K 1 0).hom.τ₃).hom (1 : ZMod 6) = 5 := by
+example :
+    ((signedRegradingShortComplexIso K 1 0).hom.τ₃).hom (1 : ZMod 6) = (5 : ZMod 6) := by
   change -(1 : ZMod 6) = (5 : ZMod 6)
   decide
 
