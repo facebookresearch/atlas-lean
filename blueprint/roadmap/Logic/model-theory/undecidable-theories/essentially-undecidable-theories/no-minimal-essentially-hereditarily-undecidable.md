@@ -7,10 +7,11 @@ Among recursively enumerable theories that are essentially hereditarily undecida
 1. there is no interpretability minimal essentially hereditarily undecidable RE theory (Theorem 7.1 of the source);
 2. for every essentially undecidable RE theory $U$ one can effectively find an essentially hereditarily undecidable RE theory $V$, which can moreover be taken effectively inseparable, such that $V$ does not interpret $U$ (Theorem 7.2).
 
-Examples of essentially hereditarily undecidable theories are Robinson's theory $\mathsf R$ (Cobham), finitely axiomatized theories of every nonzero RE Turing degree (Hanf), and theories strictly below $\mathsf R$ in interpretability (Corollary 3.1 of the source). If a theory tolerates an essentially hereditarily undecidable theory, that is, has a consistent extension in the same language that interprets it, then it is hereditarily undecidable (Theorem 3.5), which makes the notion a tool for undecidability proofs.
+Examples of essentially hereditarily undecidable theories are Robinson's theory $\mathsf R$ (Cobham), finitely axiomatized theories of every nonzero RE Turing degree (Hanf), and some theories strictly below $\mathsf R$ in interpretability (Corollary 3.1 of the source). If a theory tolerates an essentially hereditarily undecidable theory, that is, has a consistent extension in the same language that interprets it, then it is hereditarily undecidable (Theorem 3.5), which makes the notion a tool for undecidability proofs.
 
 ## Depends on
 
+- [Recognizability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
 - [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on

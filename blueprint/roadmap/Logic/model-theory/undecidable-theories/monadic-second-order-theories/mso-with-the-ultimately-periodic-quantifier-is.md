@@ -2,9 +2,9 @@
 
 Satisfiability over $\omega$-words of monadic second-order logic extended by a quantifier over ultimately periodic sets is undecidable, answering a question of Bojańczyk and Colcombet.
 
-**Theorem (Bojańczyk, Daviaud, Guillon, Penelle and Sreejith).** Satisfiability over $\omega$-words is undecidable for [MSO+P](mso-with-the-ultimately-periodic-quantifier.md): no algorithm decides, given an MSO+P sentence over a finite alphabet, whether some $\omega$-word satisfies it.
+**Theorem (Bojańczyk, Daviaud, Guillon, Penelle and Sreejith).** Satisfiability over $\omega$-words is undecidable for [MSO+P](mso-with-the-ultimately-periodic-quantifier.md): no algorithm decides, given an MSO+P sentence over a finite alphabet, whether some $\omega$-word satisfies it (Theorem 1.4 of the source).
 
-Equivalently, the MSO+P theory of $(\mathbb{N}, <)$ expanded by finitely many unary predicates is undecidable, in contrast with plain MSO, which is decidable by Büchi's theorem.
+Since the letter predicates of an $\omega$-word can be quantified existentially as sets, the MSO+P theory of $(\mathbb{N}, <)$ is undecidable as well, in contrast with plain MSO, which is decidable by Büchi's theorem.
 
 ## Depends on
 
@@ -17,7 +17,7 @@ Equivalently, the MSO+P theory of $(\mathbb{N}, <)$ expanded by finitely many un
 
 ## Expansion
 
-The main theorem of the source shows that MSO+U and MSO+W define the same languages of $\omega$-words, with effective translations both ways; since MSO+U has undecidable satisfiability, so does MSO+W. The predicate $\mathsf{W}$ is definable with $\mathsf{P}$: a set $X$ satisfies $\mathsf{W}(X)$ iff for every infinite ultimately periodic set $Y$ there are two positions of $Y$ not separated by a position of $X$. Hence every MSO+W sentence can be effectively rewritten into an MSO+P sentence true on the same $\omega$-words, and a decision procedure for MSO+P would decide MSO+W.
+The main theorem of the source shows that MSO+U and MSO+U$_1$ define the same languages of $\omega$-words, with effective translations both ways; since MSO+U has undecidable satisfiability, so does MSO+U$_1$. The predicate $\mathsf{U}_1$ is definable with $\mathsf{P}$: a set $X$ satisfies $\mathsf{U}_1(X)$ iff for every infinite ultimately periodic set $Y$ there are two positions of $Y$ not separated by a position of $X$. Hence every MSO+U$_1$ sentence can be effectively rewritten into an MSO+P sentence true on the same $\omega$-words, and a decision procedure for MSO+P would decide MSO+U$_1$.
 
 ## Sources
 

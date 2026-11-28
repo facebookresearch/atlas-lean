@@ -12,7 +12,7 @@ The Tarski–Mostowski–Robinson theory R, whose axioms are infinitely many tru
 
 **Theorem (Tarski, Mostowski and Robinson).** A first-order theory $U$ is *essentially undecidable* if every consistent extension of $U$ in the same language is undecidable. The theory R is essentially undecidable.
 
-Cobham strengthened this: R is essentially hereditarily undecidable, so also every consistent recursively enumerable theory in the same language that is contained in a consistent extension of R is undecidable (Theorem 3.9 of arXiv:2212.03565v2, there for the variant of R with $<$ as a primitive symbol).
+Cobham strengthened this: R is essentially hereditarily undecidable, that is, every theory $W$ in the language of R such that $\mathrm{R} + W$ is consistent is undecidable (Theorem 3.11 of arXiv:2212.03565v2, with the characterization of Theorem 3.1 there, for the variant of R with $<$ as a primitive symbol; the proof is in Section 4).
 
 ## Depends on
 
@@ -25,10 +25,10 @@ None.
 
 ## Expansion
 
-R is strong enough to represent every recursive function, since representability only needs the numerical axioms and the bounded-quantifier axioms 4 and 5; the diagonal argument used for Q then applies to every consistent extension of R. A good expansion links pages for representability of recursive functions in R and for the diagonal argument, which have none yet.
+R is strong enough to represent every recursive function, since representability only needs the numerical axioms and the bounded-quantifier axioms 4 and 5; the diagonal argument used for Q then applies to every consistent extension of R. A good expansion links pages for representability of recursive functions in R and for the diagonal argument.
 
 ## Sources
 
 - A. Tarski, A. Mostowski and R. M. Robinson, *Undecidable Theories*, Studies in Logic and the Foundations of Mathematics, North-Holland, 1953 (original source, cited beside the copy read).
 - J. Murwanashyaka, F. Pakhomov and A. Visser, "There are no minimal essentially undecidable theories", *Journal of Logic and Computation* 34(6):1159–1171, 2024, doi:10.1093/logcom/exad005; read as arXiv:2207.08174v2, <https://arxiv.org/abs/2207.08174v2>: Section 2 ("Salient examples of essentially undecidable theories are R and Q").
-- A. Visser, "Essential hereditary undecidability", *Archive for Mathematical Logic* 63(5–6):529–562, 2024, doi:10.1007/s00153-024-00911-y; read as arXiv:2212.03565v2, <https://arxiv.org/abs/2212.03565v2>: Section 2.2 (the axioms of R and the remark after them on the original version, with $\leq$ defined by $u \leq t$ iff $\exists w\, w + u = t$) and Theorem 3.9 (Cobham).
+- A. Visser, "Essential hereditary undecidability", *Archive for Mathematical Logic* 63(5–6):529–562, 2024, doi:10.1007/s00153-024-00911-y; read as arXiv:2212.03565v2, <https://arxiv.org/abs/2212.03565v2>: Section 2.2 (the axioms of R and the remark after them on the original version, with $\leq$ defined by $u \leq t$ iff $\exists w\, w + u = t$) Theorem 3.1 (characterization of essential hereditary undecidability) and Theorem 3.11 (Cobham), proved in Section 4.

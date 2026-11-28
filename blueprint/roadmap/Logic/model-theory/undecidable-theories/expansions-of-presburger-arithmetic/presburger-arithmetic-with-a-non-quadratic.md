@@ -4,7 +4,7 @@ For a real algebraic irrational $\alpha$ of degree at least three, the truth of 
 
 **Theorem (Hieronymi, Nguyen and Pak).** Let $\alpha$ be a real algebraic irrational number that is not quadratic. There is no algorithm that decides, given an $\exists^k\forall^k\exists^k\forall^k$ [$\alpha$-PA sentence](presburger-arithmetic-with-scalar-multiplication.md) with $k = 20000$, whether it is true in $\mathbb Z$.
 
-Here $\alpha$ is fixed and the sentence is the input. For quadratic irrational $\alpha$ the problem is decidable (Theorem 3.1 of the source), though deciding sentences with $r \ge 4$ alternating blocks requires space a tower of exponentials of height $r - 3$ (Theorem 1.3); whether three alternating blocks already give undecidability for non-quadratic $\alpha$ is left open (Conjecture 8.1).
+Here $\alpha$ is fixed, given by its defining polynomial over $\mathbb Z$ and an isolating rational interval, and the sentence is the input, with coefficients written in the basis $1, \alpha, \ldots, \alpha^{d-1}$ as on the definition page (Theorem 1.5 of the source; it follows from the $\mathbb Q(\alpha, \beta)$ result with $\beta = \alpha^2$, since $1, \alpha, \alpha^2$ are linearly independent over $\mathbb Q$). For quadratic irrational $\alpha$ the problem is decidable (Theorem 3.1 of the source), though deciding sentences with $r \ge 4$ alternating blocks requires space a tower of exponentials of height $r - 3$ (Theorem 1.3); whether three alternating blocks already give undecidability for non-quadratic $\alpha$ is left open (Conjecture 8.1).
 
 ## Depends on
 

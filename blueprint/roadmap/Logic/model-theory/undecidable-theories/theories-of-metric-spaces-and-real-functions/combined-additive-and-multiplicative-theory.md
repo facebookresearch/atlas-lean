@@ -7,6 +7,8 @@ The union of the complete theories of the real numbers as an additive structure 
 - the set of sentences in the language $0, 1, +, \times, <$ (no constants $c_a$) provable in $T[F]^*$, and the set of sentences in the language $0, 1, +, -, \times, \div, <$ (no symbols $f_a$) provable in $T[F]$, are undecidable;
 - in fact, the set of provable sentences of the form $\forall\forall\forall\exists^*$ in either case is r.e.-complete.
 
+This is Theorem 11.9 of the source, proved by reducing solvability of Diophantine equations over the positive integers (Hilbert's tenth problem) through a model of $T[F]^*$ in which a definable set of reals coincides with the positive integers (Theorem 11.7 and Corollary 11.8 there).
+
 By contrast, the universal fragment of $T[F]$ is decidable for every sufficiently computable $F$ (Theorem 7.3 of the source), and the three component theories $T_{\mathrm{add}}[F]$, $T_{\mathrm{mult}}[F]$ and their intersection admit quantifier elimination.
 
 ## Depends on

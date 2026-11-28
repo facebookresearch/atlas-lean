@@ -17,7 +17,7 @@ None.
 
 ## Expansion
 
-The classical proof shows that every recursive function is representable in Q, and then applies a diagonal argument: a consistent decidable extension of Q would make the set of Gödel numbers of its theorems representable in it, which yields a sentence that is provable iff it is not. A good expansion links pages for the representability of recursive functions in Q and for the diagonal argument, which have none yet; the minimality clause needs, for each axiom, a decidable consistent extension of the remaining six (Chapter 2, Theorem 11 of the original).
+The classical proof shows that every recursive function is representable in Q, and then applies a diagonal argument: a consistent decidable extension of Q would make the set of Gödel numbers of its theorems representable in it, which yields a sentence that is provable iff it is not. A good expansion links pages for the representability of recursive functions in Q and for the diagonal argument; the minimality clause needs, for each axiom, a decidable consistent extension of the remaining six (Chapter 2, Theorem 11 of the original).
 
 ## Sources
 

@@ -20,7 +20,7 @@ In particular both fragments are undecidable. According to the source, $\Pi_2\te
 
 ## Expansion
 
-Clause 1 combines a $\Sigma_2$ definition of finite partial orders in finite distributive lattices (Proposition 4.1) with Schmerl's hereditary undecidability of $\Sigma_2\text{-}\mathrm{Th}$ of finite lattices and partial orders (Theorem 4.3), through the Transfer Lemma. Clause 2 defines the class of finite bipartite graphs with at least three vertices on each side, every vertex of degree at least two and complement without isolated vertices in finite distributive lattices by a $\Sigma_1$ scheme with parameters, and transfers the hereditary undecidability of its $\Sigma_2$ theory (Corollary 4.7). A good expansion links Schmerl's theorem and the Transfer Lemma, which have no pages.
+Clause 1 combines a $\Sigma_2$ definition of finite partial orders in finite distributive lattices (Proposition 4.1) with Schmerl's hereditary undecidability of $\Sigma_2\text{-}\mathrm{Th}$ of finite lattices and partial orders (Theorem 4.3), through the Transfer Lemma. Clause 2 defines the class of finite bipartite graphs with at least three vertices on each side, every vertex of degree at least two and complement without isolated vertices in finite distributive lattices by a $\Sigma_1$ scheme with parameters, and transfers the hereditary undecidability of its $\Sigma_2$ theory (Corollary 4.7). A good expansion links Schmerl's theorem and the Transfer Lemma.
 
 ## Sources
 

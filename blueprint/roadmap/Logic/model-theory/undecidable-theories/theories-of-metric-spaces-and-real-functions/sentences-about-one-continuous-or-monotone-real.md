@@ -24,7 +24,7 @@ By contrast, for the continuous, differentiable, $C^\infty$ and analytic functio
 
 ## Expansion
 
-Parts 1 and 2 reduce from finite graph theory: the validity problem for $\Sigma_2$ sentences about finite symmetric irreflexive relations is undecidable (Gurevich), and an algorithm maps each such sentence $\psi$ to a separated $\Sigma_4$ sentence $\varphi$ such that $\psi$ holds in all finite graphs exactly when $(\forall f\in F)\,\varphi$ holds for the continuous functions. Parts 3 and 4 encode Turing machines: for a machine $T$ started on the empty tape one builds a sentence $\varphi(T)$ that some function with finitely many constant intervals satisfies exactly when $T$ halts. A good expansion links a page for Gurevich's undecidability of $\Sigma_2$ validity over finite graphs, which has no page yet.
+Parts 1 and 2 reduce from finite graph theory: the validity problem for $\Sigma_2$ sentences about finite symmetric irreflexive relations is undecidable (Gurevich), and an algorithm maps each such sentence $\psi$ to a separated $\Sigma_4$ sentence $\varphi$ such that $\psi$ holds in all finite graphs exactly when $(\forall f\in F)\,\varphi$ holds for the continuous functions. Parts 3 and 4 encode Turing machines: for a machine $T$ started on the empty tape one builds a sentence $\varphi(T)$ that some function with finitely many constant intervals satisfies exactly when $T$ halts. A good expansion links a page for Gurevich's undecidability of $\Sigma_2$ validity over finite graphs.
 
 ## Sources
 

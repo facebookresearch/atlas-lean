@@ -23,7 +23,7 @@ None.
 
 ## Expansion
 
-The proof uses a result of Gurevich and Lewis on the word problem for finite semigroups: the set of quasi-identities true in all semigroups and the set of quasi-identities refuted in some finite cancellation semigroup are recursively inseparable in a strong sense (Lemma 2.2 of the source). Quasi-identities $\psi$ in $n$ letters translate into sentences $\hat{\psi}$ about $n$ partial injective unary functions with a zero, true in all such structures iff $\psi$ is true in all semigroups and refuted in suitable finite structures otherwise; Theorem 2.1 transfers the result to graphs of bounded degree (via Vizing's theorem) and to permutations. A good expansion links the Gurevich–Lewis theorem, which has no page.
+The proof uses a result of Gurevich and Lewis on the word problem for finite semigroups: the set of quasi-identities true in all semigroups and the set of quasi-identities refuted in some finite cancellation semigroup are recursively inseparable in a strong sense (Lemma 2.2 of the source). Quasi-identities $\psi$ in $n$ letters translate into sentences $\hat{\psi}$ about $n$ partial injective unary functions with a zero, true in all such structures iff $\psi$ is true in all semigroups and refuted in suitable finite structures otherwise; Theorem 2.1 transfers the result to graphs of bounded degree (via Vizing's theorem) and to permutations. A good expansion links the Gurevich–Lewis theorem.
 
 ## Sources
 

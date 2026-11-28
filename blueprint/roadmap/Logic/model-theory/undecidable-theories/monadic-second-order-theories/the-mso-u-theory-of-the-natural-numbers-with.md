@@ -2,7 +2,7 @@
 
 Monadic second-order logic extended by the unbounding quantifier is undecidable on infinite words: no algorithm decides which MSO+U sentences hold in $(\mathbb N, \le)$, in contrast with Büchi's decidability of plain MSO there.
 
-**Theorem (Bojańczyk, Parys and Toruńczyk).** The [MSO+U](monadic-second-order-logic-with-the-unbounding.md) theory of $(\mathbb N, \le)$ is undecidable: there is no algorithm that decides, given a sentence of monadic second-order logic with the unbounding quantifier over the signature $\{\le\}$, whether it holds in $(\mathbb N, \le)$.
+**Theorem (Bojańczyk, Parys and Toruńczyk).** The [MSO+U](monadic-second-order-logic-with-the-unbounding.md) theory of $(\mathbb N, \le)$ is undecidable: there is no algorithm that decides, given a sentence of monadic second-order logic with the unbounding quantifier over the signature $\{\le\}$, whether it holds in $(\mathbb N, \le)$. This is Theorem 1.1 of the source, proved by reducing emptiness of Minsky (counter) machines.
 
 The result uses no set-theoretic hypothesis. It improves an earlier theorem of Bojańczyk, Gogacz, Michalewski and Skrzypczak, who showed, assuming the axiom of constructibility $V = L$, that the MSO+U theory of the complete binary tree is undecidable.
 

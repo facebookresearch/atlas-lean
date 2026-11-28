@@ -2,7 +2,7 @@
 
 For every class of finite graphs of unbounded tree-width, it is undecidable whether a monadic second-order sentence, with quantification over sets of edges as well as of vertices, holds in some graph of the class; in particular this holds for planar graphs.
 
-**Setting.** Graphs are finite simple undirected graphs, given as structures with one binary edge relation; *monadic second-order logic* $\mathrm{MSO}_2$ extends first-order logic by variables for sets of vertices and for sets of edges (subsets of the edge relation), and quantification over them. This is the logic $\mathrm{MS}_2$ of Courcelle and Engelfriet, who express it over incidence structures. The *tree-width* of a graph measures how close it is to a tree: a graph has tree-width at most $k$ iff it is a partial $k$-tree. A class $\mathcal{K}$ has *unbounded tree-width* if for every $k$ some graph in $\mathcal{K}$ has tree-width greater than $k$. *Finite satisfiability of $\mathrm{MSO}_2$ by graphs in $\mathcal{K}$* asks, for an $\mathrm{MSO}_2$ sentence $\varphi$, whether some graph in $\mathcal{K}$ satisfies $\varphi$.
+**Setting.** Graphs are finite simple undirected graphs, given as structures with one binary edge relation; *monadic second-order logic* $\mathrm{MSO}_2$ extends first-order logic by variables for sets of vertices and for sets of edges (subsets of the edge relation), and quantification over them. The source notes that Courcelle and Engelfriet denote this logic MS and obtain quantification over edge sets by viewing graphs as incidence structures, which the source does not do. The *tree-width* of a graph measures how close it is to a tree: a graph has tree-width at most $k$ iff it is a partial $k$-tree. A class $\mathcal{K}$ has *unbounded tree-width* if for every $k$ some graph in $\mathcal{K}$ has tree-width greater than $k$. *Finite satisfiability of $\mathrm{MSO}_2$ by graphs in $\mathcal{K}$* asks, for an $\mathrm{MSO}_2$ sentence $\varphi$, whether some graph in $\mathcal{K}$ satisfies $\varphi$.
 
 **Theorem (Seese).** For each class $\mathcal{K}$ of graphs of unbounded tree-width, finite satisfiability of $\mathrm{MSO}_2$ by graphs in $\mathcal{K}$ is undecidable.
 
@@ -20,7 +20,7 @@ None.
 
 ## Expansion
 
-The copy read cites the result without proof. A good expansion would present Seese's proof and link the undecidable problem it reduces from; neither has a page.
+The copy read cites the result without proof. A good expansion presents Seese's proof and links the undecidable problem it reduces from.
 
 ## Sources
 

@@ -4,7 +4,7 @@ For the successor structure of the natural numbers, the first-order theory of it
 
 **Theorem (Spelten, Thomas and Winter).** Let $\mathcal{S} = (\mathbb{N}, \mathrm{Suc})$, and let $\mathcal{S}^*_E$ be its [strong tree iteration with the equal-level relation](tree-iterations-with-the-equal-level-relation.md). The first-order theory of $\mathcal{S}^*_E$ with FO on siblings is undecidable (Theorem 13). Consequently its chain theory is undecidable too.
 
-By contrast, for the weak iteration $\mathcal{S}^\#_E$ the chain theory with FO on siblings is decidable, since the first-order theory of $\mathcal{S}$ is decidable (Theorem 12).
+The source contrasts this with Theorem 12: for an admissible structure $\mathcal{M}$ (one with two singleton predicates naming elements $0$ and $1$) whose $\mathcal{L}$-theory is decidable, the chain theory of the weak iteration $\mathcal{M}^\#_E$ with $\mathcal{L}$ on siblings is decidable.
 
 ## Depends on
 
@@ -18,7 +18,7 @@ By contrast, for the weak iteration $\mathcal{S}^\#_E$ the chain theory with FO 
 
 ## Expansion
 
-The proof reduces the termination problem of 2-counter machines started in configuration $(1,0,0)$ (Minsky). A computation $(\ell_0,m_0,n_0), \dots, (\ell_r,m_r,n_r)$ is coded by three finite paths of the same length, carrying the instruction numbers, the values of the first counter and the values of the second counter as their successive letters; each path is determined by its last node $x_0$, $x_1$, $x_2$, and $E(x_0,x_1) \wedge E(x_1,x_2)$ makes them equally long. A first-order sentence with FO on siblings states the initial condition at the children of the root, the update condition at every level (for instance, for "$3$ Inc$(X_2)$": the next instruction node is the number $4$, the next first-counter node is the clone of the current one, and the next second-counter node is the $\mathrm{Suc}$-successor of the clone of the current one), and that $x_0$ is the stop instruction. Then $M$ terminates iff the sentence holds in $\mathcal{S}^*_E$.
+The proof reduces the termination problem of 2-counter machines started in configuration $(1,0,0)$ (Minsky); instructions are increments, decrements (a decrement of $0$ gives $0$) and zero tests, and a terminating computation ends at the stop instruction. A computation $(\ell_0,m_0,n_0), \dots, (\ell_r,m_r,n_r)$ is coded by three finite paths of the same length, carrying the instruction numbers, the values of the first counter and the values of the second counter as their successive letters; each path is determined by its last node $x_0$, $x_1$, $x_2$, and $E(x_0,x_1) \wedge E(x_1,x_2)$ makes them equally long. A first-order sentence with FO on siblings states the initial condition at the children of the root, the update condition at every level (for instance, for "$3$ Inc$(X_2)$": the next instruction node is the number $4$, the next first-counter node is the clone of the current one, and the next second-counter node is the $\mathrm{Suc}$-successor of the clone of the current one), and that $x_0$ is the stop instruction. Then $M$ terminates iff the sentence holds in $\mathcal{S}^*_E$.
 
 ## Sources
 

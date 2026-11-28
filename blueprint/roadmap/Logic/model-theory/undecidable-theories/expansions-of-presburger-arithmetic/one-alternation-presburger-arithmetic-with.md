@@ -25,7 +25,7 @@ The second statement corrects an earlier claim that the positive fragment is dec
 
 ## Expansion
 
-Bozga and Iosif define in $\forall\exists_R\mathrm{PAD}$, through the complementary fragment, the least-common-multiple relation, then squaring and finally multiplication, so that solvability of Diophantine equations reduces to the fragment and the DPRM theorem applies. Lechner's translation computes, for every $\forall\exists_R\mathrm{PAD}$ sentence, an equivalent $\forall\exists_R\mathrm{PAD}^+$ sentence, which transfers undecidability to the positive fragment. A good expansion links pages for the Bozga–Iosif definition of multiplication and for Lechner's translation; neither has a page yet.
+Bozga and Iosif define in $\forall\exists_R\mathrm{PAD}$, through the complementary fragment, the least-common-multiple relation, then squaring and finally multiplication, so that solvability of Diophantine equations reduces to the fragment and the DPRM theorem applies. Lechner's translation computes, for every $\forall\exists_R\mathrm{PAD}$ sentence, an equivalent $\forall\exists_R\mathrm{PAD}^+$ sentence, which transfers undecidability to the positive fragment. A good expansion links pages for the Bozga–Iosif definition of multiplication (Proposition 3 of the source) and for Lechner's translation (Proposition 1).
 
 ## Sources
 

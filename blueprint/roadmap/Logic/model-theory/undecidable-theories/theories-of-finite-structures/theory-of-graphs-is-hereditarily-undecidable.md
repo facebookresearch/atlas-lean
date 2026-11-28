@@ -17,7 +17,7 @@ None.
 
 ## Expansion
 
-The copy read cites Rogers for the undecidability without proof and derives hereditary undecidability from finite axiomatizability: if $\mathrm{Th}(\mathcal{G}) \leq T_2$ with $T_2$ decidable, then a decision procedure for $\mathrm{Th}(\mathcal{G})$ would follow. A good expansion gives Rogers's reduction, which interprets an undecidable theory in graphs, and links it; neither has a page.
+The copy read cites Rogers for the undecidability without proof and derives hereditary undecidability from finite axiomatizability: if $\mathrm{Th}(\mathcal{G}) \leq T_2$ with $T_2$ decidable, then a decision procedure for $\mathrm{Th}(\mathcal{G})$ would follow. A good expansion gives Rogers's reduction, which interprets an undecidable theory in graphs, and links the undecidable theory it starts from.
 
 ## Sources
 

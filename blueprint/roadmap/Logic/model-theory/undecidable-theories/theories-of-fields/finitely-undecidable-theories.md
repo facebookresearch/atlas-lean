@@ -2,9 +2,9 @@
 
 A theory is finitely undecidable if every finitely axiomatized subtheory of it, in the same language, is undecidable. A finitely undecidable complete theory with infinite models is in particular not finitely axiomatizable, which links the notion to the open question whether some infinite field is finitely axiomatizable.
 
-**Definition.** Let $\mathcal{L}$ be a first-order language. A theory $T$ in $\mathcal{L}$ is *finitely undecidable* if every finitely axiomatized $\mathcal{L}$-theory $\Sigma \subseteq T$ is undecidable, that is, the set $\mathrm{Cons}(\Sigma)$ of $\mathcal{L}$-sentences $\varphi$ with $\Sigma \models \varphi$ is not decidable. An $\mathcal{L}$-structure is finitely undecidable if its complete $\mathcal{L}$-theory is.
+**Definition.** Let $\mathcal{L}$ be a finite first-order language, so that $\mathcal{L}$-sentences are finite strings over a finite alphabet. A theory $T$ in $\mathcal{L}$ is *finitely undecidable* if every finitely axiomatized $\mathcal{L}$-theory $\Sigma \subseteq T$ is undecidable, that is, the set $\mathrm{Cons}(\Sigma)$ of $\mathcal{L}$-sentences $\varphi$ with $\Sigma \models \varphi$ is not decidable. An $\mathcal{L}$-structure is finitely undecidable if its complete $\mathcal{L}$-theory is.
 
-Shlapentokh and Videla call this property *finite hereditary undecidability*. For fields the default language is the language of rings $\mathcal{L}_r = \{0, 1, +, -, \cdot\}$; for valued fields it is $\mathcal{L}_{\mathrm{val}}$, the language of rings with a unary predicate for the valuation ring.
+The source states the definition once for every finitely axiomatized subtheory and once for every nonempty finite one; in the languages used here the two agree, since the empty set of axioms has an undecidable set of consequences in any language with a binary function symbol. Shlapentokh and Videla call this property *finite hereditary undecidability*. For fields the default language is the language of rings $\mathcal{L}_r = \{0, 1, +, -, \cdot\}$; for valued fields it is $\mathcal{L}_{\mathrm{val}}$, the language of rings with a unary predicate for the valuation ring.
 
 ## Depends on
 

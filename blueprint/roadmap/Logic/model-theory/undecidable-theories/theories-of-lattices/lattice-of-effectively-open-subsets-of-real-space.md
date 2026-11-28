@@ -10,7 +10,7 @@ $$
 
 where $\mathrm{FO}(\mathbb N)$ is the first-order theory of $(\mathbb N; +, \cdot)$ and $\equiv_m$ is many-one equivalence (Theorem 4.4 of the source).
 
-More generally, the theory of the lattice of effectively open sets is *hereditarily undecidable* (every subtheory in its language is undecidable) for every strongly computable metric space, a computable metric space with an infinite computable sequence of pairwise disjoint basic balls, and for every strongly computable $\varphi$-space (Theorem 4.1). By contrast, the theory of the lattice of all open subsets of $\mathbb R$ is decidable (Rabin).
+More generally, the theory of the lattice of effectively open sets is *hereditarily undecidable* (every subtheory in its language is undecidable) for every strongly computable metric space, that is, a computable metric space with an infinite computable sequence of pairwise disjoint basic balls, and for every strongly computable $\varphi$-space (Theorem 4.1). By contrast, the theory of the lattice of all open subsets of $\mathbb R$ is decidable (Rabin).
 
 ## Depends on
 
