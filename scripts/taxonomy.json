@@ -11457,6 +11457,7 @@
   "MathlibExt/Combinatorics/Enumerative/PermutationWordleCounts": {"to": "Combinatorics/permutations/permutation-statistics", "title": "Permutation Wordle"},
   "MathlibExt/Combinatorics/Enumerative/PermutationWordleDerangements": {"to": "Combinatorics/permutations/permutation-statistics", "title": "Permutation Wordle"},
   "MathlibExt/Combinatorics/Enumerative/PermutationWordleFirstCorrectThree": {"to": "Combinatorics/permutations/permutation-statistics", "title": "Permutation Wordle"},
+  "MathlibExt/Combinatorics/Enumerative/PermutationWordleFirstCorrectTwo": {"to": "Combinatorics/permutations/permutation-statistics", "title": "Permutation Wordle"},
   "MathlibExt/Combinatorics/Enumerative/PermutationWordleLeftShift": {"to": "Combinatorics/permutations/permutation-statistics", "title": "Permutation Wordle"},
   "MathlibExt/Combinatorics/Enumerative/PollakPartialParkingFunctions": {"to": "Combinatorics/parking-functions", "title": "Parking functions"},
   "MathlibExt/Combinatorics/Enumerative/PolyInitialExpansion": {"to": "Combinatorics/stirling-bell-eulerian/generalized-stirling-numbers", "title": "Stirling expansions of the Akiyama–Tanigawa algorithm"},
