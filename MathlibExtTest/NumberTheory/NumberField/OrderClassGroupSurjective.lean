@@ -23,12 +23,6 @@ namespace OrderClassGroupSurjectiveTest
 
 open scoped nonZeroDivisors
 
-/-- Every class of `Cl(ℤ)` has an invertible integral representative prime to `6`. -/
-example (x : ClassGroup ℤ) :
-    ∃ (b : Ideal ℤ) (hb : IsUnit (b : FractionalIdeal ℤ⁰ ℚ)), b ⊔ Ideal.span {6} = ⊤ ∧
-      ClassGroup.mk ℚ hb.unit = x :=
-  ClassGroup.exists_isUnit_coeIdeal_sup_eq_top (by simp) x
-
 /-- The ring of integers of `ℚ`, as an order of `ℚ`: every class has a representative prime to
 `2`. -/
 example (x : ClassGroup (integralClosure ℤ ℚ)) :
@@ -38,27 +32,36 @@ example (x : ClassGroup (integralClosure ℤ ℚ)) :
   (NumberField.isOrder_integralClosure ℚ).exists_isUnit_coeIdeal_sup_eq_top
     (by simp) x
 
-/-- The class group map of the maximal order of `ℚ(ζ₃)` is surjective. -/
-example : Function.Surjective (NumberField.IsOrder.classGroupMap
-    (NumberField.isOrder_integralClosure (CyclotomicField 3 ℚ))) :=
-  NumberField.IsOrder.classGroupMap_surjective _
+/-- The class group map of the maximal order of `ℚ(ζ₃)` to itself is surjective. -/
+example : Function.Surjective (ClassGroup.map
+    (Subalgebra.inclusion (le_refl (integralClosure ℤ (CyclotomicField 3 ℚ)))).toRingHom
+    (Subalgebra.inclusion_injective _)) :=
+  NumberField.IsOrder.classGroup_map_surjective
+    (NumberField.isOrder_integralClosure (CyclotomicField 3 ℚ))
 
 /-- The conductor of the maximal order of `ℚ(ζ₃)` is nonzero. -/
 example : ((integralClosure ℤ (CyclotomicField 3 ℚ)).comap
     (integralClosure ℤ (CyclotomicField 3 ℚ)).val).conductorIdeal ≠ ⊥ :=
   (NumberField.isOrder_integralClosure (CyclotomicField 3 ℚ)).conductorIdeal_ne_bot
 
-variable {K : Type*} [Field K] [NumberField K] {O : Subalgebra ℤ K} [IsFractionRing O K]
+variable {K : Type*} [Field K] [NumberField K] {O : Subalgebra ℤ K}
 
-/-- Every class of `Cl(𝒪_K)` comes from an invertible ideal of an order `O`. -/
+/-- Every class of `Cl(𝒪_K)` comes from a class of an order `O`. -/
 example (hO : NumberField.IsOrder K O) (y : ClassGroup (integralClosure ℤ K)) :
-    ∃ x : ClassGroup O, NumberField.IsOrder.classGroupMap hO x = y :=
-  NumberField.IsOrder.classGroupMap_surjective hO y
+    ∃ x : ClassGroup O, ClassGroup.map (Subalgebra.inclusion hO.le_integralClosure).toRingHom
+      (Subalgebra.inclusion_injective hO.le_integralClosure) x = y :=
+  NumberField.IsOrder.classGroup_map_surjective hO y
 
-#check @ClassGroup.exists_isUnit_coeIdeal_sup_eq_top
-#check @NumberField.exists_isUnit_coeIdeal_sup_eq_top_integralClosure
+/-- Every class of `Cl(𝒪_K)` has an invertible integral representative prime to the conductor
+of an order `O`. -/
+example (hO : NumberField.IsOrder K O) (y : ClassGroup (integralClosure ℤ K)) :
+    ∃ (a : Ideal (integralClosure ℤ K))
+      (ha : IsUnit (a : FractionalIdeal (integralClosure ℤ K)⁰ K)),
+        a ⊔ (O.comap (integralClosure ℤ K).val).conductorIdeal = ⊤ ∧ ClassGroup.mk K ha.unit = y :=
+  ClassGroup.exists_isUnit_coeIdeal_sup_eq_top K hO.conductorIdeal_ne_bot y
+
 #check @NumberField.IsOrder.conductorIdeal_ne_bot
 #check @NumberField.IsOrder.exists_isUnit_coeIdeal_sup_eq_top
-#check @NumberField.IsOrder.classGroupMap_surjective
+#check @NumberField.IsOrder.classGroup_map_surjective
 
 end OrderClassGroupSurjectiveTest
