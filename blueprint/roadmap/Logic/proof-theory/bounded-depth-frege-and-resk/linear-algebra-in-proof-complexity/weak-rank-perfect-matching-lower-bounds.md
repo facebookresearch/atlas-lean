@@ -8,7 +8,7 @@ $$
 \sum_{i=1}^kf_ig_i+\sum_{j=1}^\ell h_j^2=-1,
 $$
 
-and its size is $\sum_i\|f_i\|\,\|g_i\|+\sum_j\|h_j\|$, where $\|f\|$ is the number of monomials of $f$ with nonzero coefficient. Refutations exist only when $\mathrm{PMRank}^m_n(A)$ is unsatisfiable.
+and its size is $\sum_i\|f_i\|\,\|g_i\|+\sum_j\|h_j\|$, where $\|f\|$ is the number of monomials of $f$ with nonzero coefficient. Like $\mathrm{PCR}_{\mathbb F}$, Sum-of-Squares refutes $\mathrm{PMRank}^m_n(A)$ over twin variables $x_i,\bar x_i$: the input polynomials $f_i$ are the Boolean and complementarity axioms $x_i^2-x_i$, $\bar x_i^2-\bar x_i$, and $x_i+\bar x_i-1$ for every variable, together with the single monomial $\prod_{i\in P}\bar x_i\prod_{i\in N}x_i$ for each clause $\bigvee_{i\in P}x_i\vee\bigvee_{i\in N}\neg x_i$ of $\mathrm{PMRank}^m_n(A)$. Refutations exist only when $\mathrm{PMRank}^m_n(A)$ is unsatisfiable.
 
 **Theorem.** For every $m>n$, every $\mathrm{PCR}_{\mathbb F_2}$ refutation of $\mathrm{PMRank}^m_n(I_m)$ requires size $2^{\Omega(n)}$.
 
@@ -30,4 +30,4 @@ None.
 
 ## Sources
 
-- Michal Garlík, Svyatoslav Gryaznov, Hanlin Ren and Iddo Tzameret, "The Weak Rank Principle: Lower Bounds and Applications", *58th Annual ACM Symposium on Theory of Computing (STOC 2026)*, 2026, https://doi.org/10.1145/3798129.3800735; numbering as in arXiv:2608.08760v1 (Section 2.1, Theorems 2.2 and 2.3; Section 4.2, Definition 4.3 (Sum-of-Squares refutations and their size); Section 5.2, Definition 5.8 and Theorems 5.10 and 5.18).
+- Michal Garlík, Svyatoslav Gryaznov, Hanlin Ren and Iddo Tzameret, "The Weak Rank Principle: Lower Bounds and Applications", *58th Annual ACM Symposium on Theory of Computing (STOC 2026)*, 2026, https://doi.org/10.1145/3798129.3800735; numbering as in arXiv:2608.08760v1 (Section 2.1, Theorems 2.2 and 2.3; Section 4.2, Definition 4.3 (Sum-of-Squares refutations and their size); Section 4.3; Section 5.2, Definition 5.8, Lemma 5.17, and Theorems 5.10 and 5.18).
