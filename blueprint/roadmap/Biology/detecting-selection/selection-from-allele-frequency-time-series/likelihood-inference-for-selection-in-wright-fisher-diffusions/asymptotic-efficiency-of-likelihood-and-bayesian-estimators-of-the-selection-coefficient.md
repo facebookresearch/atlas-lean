@@ -8,7 +8,7 @@ where the mutation parameters $\theta_1,\theta_2>0$ are known and the selection 
 
 $$\frac{d\mathbb P^{(s')}_\nu}{d\mathbb P^{(s)}_\nu}(X^T)=\frac{\nu(s',X_0)}{\nu(s,X_0)}\exp\Bigl\{(s'-s)\int_0^T\tfrac12\sqrt{X_t(1-X_t)}\,dW_t-\tfrac18(s'-s)^2\int_0^TX_t(1-X_t)\,dt\Bigr\}.$$
 
-The maximum likelihood estimator is $\hat s_T=\arg\sup_{s\in\mathcal S}d\mathbb P^{(s)}_\nu/d\mathbb P^{(s_0)}_\nu$. The Bayesian estimator $\tilde s_T$ minimizes the integrated risk $\int_{\mathcal S}\mathbb E^{(s)}_\nu[\ell(\sqrt T(\bar s_T-s))]\,p(s)\,ds$. Here $p$ is a continuous prior with a polynomial majorant, and $\ell$ is an even, nonnegative loss with convex sublevel sets, continuous at $0$, $\ell(0)=0$, not identically zero, and with a polynomial majorant.
+The maximum likelihood estimator is $\hat s_T=\arg\sup_{s\in\mathcal S}d\mathbb P^{(s)}_\nu/d\mathbb P^{(s_0)}_\nu$. The Bayesian estimator $\tilde s_T$ minimizes the integrated risk $\int_{\mathcal S}\mathbb E^{(s)}_\nu[\ell(\sqrt T(\bar s_T-s))]\,p(s)\,ds$. Here $p$ is a prior density that is continuous and strictly positive on $\bar{\mathcal S}$, with a polynomial majorant, and $\ell$ is an even, nonnegative loss with convex sublevel sets, continuous at $0$, $\ell(0)=0$, not identically zero, and with a polynomial majorant.
 
 **Theorem.** Assume the initial densities $\nu(s,\cdot)$, with respect to a common dominating measure $\lambda$ on $[0,1]$, satisfy:
 

@@ -8,7 +8,7 @@ $$\mathrm{fdr}_k(Z_{i,\cdot}) \le \frac{\displaystyle\sum_{h \in \mathcal H',\, 
 
 The first numerator sum and the denominator run over the retained configurations only, and the full sum $\sum_{|h| < k} P(Z_{i,\cdot} \mid h)$ is a lower tail of a product of per-study terms, computable by the same counting dynamic program as in the independent case. With $|\mathcal H'| = n_H$ the bound costs $O(m(n_H + k))$ per gene.
 
-**Restricted EM.** The retained prior can be estimated by the EM iteration $\pi^{(t+1)}(h) = n^{-1} \sum_i P(H_{i,\cdot} = h \mid Z_{i,\cdot}, \pi^{(t)})$: a configuration with $\pi^{(t)}(h) = 0$ stays at zero, so starting from $\pi^{(0)}$ supported on $\mathcal H'$ yields a local optimum of the likelihood under the constraint $\pi(h) = 0$ for $h \notin \mathcal H'$. Growing $\mathcal H'$ one study at a time and keeping the $n_H/2$ most probable prefixes gives the retained set together with a running estimate of $\epsilon$, since extending a prefix cannot increase its probability.
+**Restricted EM.** The retained prior can be estimated by the EM iteration $\pi^{(t+1)}(h) = n^{-1} \sum_i P(H_{i,\cdot} = h \mid Z_{i,\cdot}, \pi^{(t)})$: a configuration with $\pi^{(t)}(h) = 0$ stays at zero; initialised with positive weight on every retained configuration $h \in \mathcal H'$ and zero weight outside $\mathcal H'$, EM keeps these zeros and can be used to seek a local optimum of the likelihood under the constraint $\pi(h) = 0$ for $h \notin \mathcal H'$. Growing $\mathcal H'$ one study at a time and keeping the $n_H/2$ most probable prefixes gives the retained set together with a running estimate of $\epsilon$, since extending a prefix cannot increase its probability.
 
 ## Depends on
 
