@@ -14025,6 +14025,7 @@
   "MathlibExt/NumberTheory/FrobeniusPseudoprime": {"to": "NumberTheory/primes-primality/primality-tests-pseudoprimes", "title": "Frobenius pseudoprimes"},
   "MathlibExt/NumberTheory/FunctionField/AdeleRing": {"to": "NumberTheory/function-fields", "title": "Adeles of function fields"},
   "MathlibExt/NumberTheory/FunctionField/BFreeConvolution": {"to": "NumberTheory/function-fields", "title": "Divisor problems for B-free polynomials"},
+  "MathlibExt/NumberTheory/FunctionField/DegreeSlicePerron": {"to": "NumberTheory/function-fields", "title": "Prime factors of given multiplicity in h-free polynomials"},
   "MathlibExt/NumberTheory/FunctionField/KappaPowMoebius": {"to": "NumberTheory/function-fields", "title": "Divisor problems for B-free polynomials"},
   "MathlibExt/NumberTheory/FunctionField/MonicConvolution": {"to": "NumberTheory/function-fields", "title": "Divisor problems for B-free polynomials"},
   "MathlibExt/NumberTheory/FunctionField/MonicCount": {"to": "NumberTheory/function-fields", "title": "Divisor problems for B-free polynomials"},

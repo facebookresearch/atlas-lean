@@ -15,6 +15,7 @@ public import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 public import Mathlib.NumberTheory.Harmonic.EulerMascheroni
 public import Mathlib.RingTheory.Polynomial.Pochhammer
 public import Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
+public import MathlibExt.NumberTheory.FunctionField.DegreeSlicePerron
 public import MathlibExt.NumberTheory.FunctionFieldMultiplicityIteratedDerivSubIsBigOOfUniformApprox
 
 /-!
@@ -23,9 +24,13 @@ public import MathlibExt.NumberTheory.FunctionFieldMultiplicityIteratedDerivSubI
 Statement-only targets from Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given
 Multiplicity in h-Free and h-Full Polynomials over Function Fields*, over a finite field `F`
 with `q = Fintype.card F` elements: Erdős–Kac laws for `ω_1` on `h`-free and `ω_h` on `h`-full
-monic polynomials, the absence of a normal order for the other `ω_k`, a coprime count, and
-Perron's formula. `ω_k(f)` counts the monic irreducible `P` with `P^k ∥ f` (the title's "prime
+monic polynomials, the absence of a normal order for the other `ω_k`, and a coprime count.
+`ω_k(f)` counts the monic irreducible `P` with `P^k ∥ f` (the title's "prime
 factors with given multiplicity").
+
+The sets `M_n = fixedDegreeMonic F n` of monic polynomials of fixed degree and Perron's formula
+for their degree slices live in the proved module
+`MathlibExt.NumberTheory.FunctionField.DegreeSlicePerron`.
 -/
 
 open scoped Interval
@@ -36,47 +41,6 @@ namespace MetaMathlibExt
 attribute [local instance] Classical.propDecidable
 
 @[expose] public section
-
-/--
-**Monic polynomials of fixed degree.** For a finite field $F$ and a natural number $n$, $M_n$ is
-the finite set of monic polynomials of degree $n$ over $F$: the polynomials
-$X^n + c_{n-1} X^{n-1} + \dots + c_1 X + c_0$ with $c_0, \dots, c_{n-1} \in F$.
-Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
-h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
-Definitions.
--/
-public noncomputable def fixedDegreeMonic (F : Type*) [Field F] [Fintype F] [DecidableEq F]
-    (n : ℕ) :
-    Finset (Polynomial F) :=
-  Finset.univ.image fun c : Fin n → F =>
-    X ^ n + ∑ i : Fin n, C (c i) * X ^ (i : ℕ)
-
-/--
-**Membership in $M_n$.** Let $F$ be a finite field and $n \in \mathbb{N}$. A polynomial $f$ over
-$F$ lies in the set $M_n$ of monic polynomials of degree $n$ over $F$ if and only if there are
-$c_0, \dots, c_{n-1} \in F$ with $f = X^n + \sum_{i=0}^{n-1} c_i X^i$.
-
-Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
-h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
-Definitions.
--/
-public theorem mem_fixedDegreeMonic_iff (F : Type*) [Field F] [Fintype F] [DecidableEq F]
-    (n : ℕ) (f : Polynomial F) :
-    f ∈ fixedDegreeMonic F n ↔
-      ∃ c : Fin n → F, X ^ n + ∑ i : Fin n, C (c i) * X ^ (i : ℕ) = f := by
-  simp [fixedDegreeMonic]
-
-/--
-**The only monic polynomial of degree zero.** For every finite field $F$, the set $M_0$ of monic
-polynomials of degree $0$ over $F$ is $\{1\}$.
-Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
-h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
-Definitions.
--/
-public theorem fixedDegreeMonic_zero (F : Type*) [Field F] [Fintype F] [DecidableEq F] :
-    fixedDegreeMonic F 0 = {1} := by
-  ext f
-  simp [fixedDegreeMonic]
 
 /--
 **Monic irreducible polynomials.** For a field $F$, $\mathcal{P}$ is the set of polynomials over
@@ -413,38 +377,6 @@ public theorem_wanted card_hFree_coprime_irreducible_asymptotic
           (1 - (Fintype.card F : ℝ) ^ (1 - (ℓ : ℤ))) *
           (1 - ((Fintype.card F : ℝ) ^ P.natDegree)⁻¹) /
           (1 - (((Fintype.card F : ℝ) ^ P.natDegree) ^ ℓ)⁻¹))| ≤ C
-
-/--
-**Perron's formula for degree slices of monic polynomials.** Let $F$ be a finite field,
-let $M_m$ be the set of monic polynomials of degree $m$ over $F$, let
-$a \colon F[X] \to \mathbb{C}$, and write $c_m = \sum_{f \in M_m} a(f)$. Let $r$ be a real
-number with $0 < r < 1$ such that the series $\sum_{m \ge 0} |c_m| r^m$ converges, and let
-$A \colon \mathbb{C} \to \mathbb{C}$ satisfy $A(u) = \sum_{m \ge 0} c_m u^m$ for every
-complex $u$ with $|u| = r$. Then for every $n \ge 0$,
-$$c_n = \frac{1}{2\pi i} \oint_{|u| = r} \frac{A(u)}{u^{n+1}}\, du,$$
-where the circle $|u| = r$ is traversed once counterclockwise.
-
-Convergence of $\sum |c_m| r^m$ at the single radius $r$ stands in for the paper's uniform
-absolute convergence on the closed disk, and $A$ only has to agree with the series on the
-circle, the only values the contour integral sees.
-
-Source: Juan Arévalo Gómez and Matilde Lalín, *Prime Factors with Given Multiplicity in
-h-Free and h-Full Polynomials over Function Fields*, INTEGERS 25 (2025), Article A9,
-Theorem 9.
--/
-public theorem_wanted perron_formula_polynomial_degree_slice
-    (F : Type*) [Field F] [Fintype F] [DecidableEq F]
-    (a : Polynomial F → ℂ) (A : ℂ → ℂ) (r : ℝ)
-    (hr₀ : 0 < r) (hr₁ : r < 1)
-    (hsum : Summable fun n : ℕ =>
-      ‖∑ f ∈ fixedDegreeMonic F n, a f‖ * r ^ n)
-    (hA : ∀ u : ℂ, ‖u‖ = r → A u = ∑' m : ℕ,
-      (∑ f ∈ fixedDegreeMonic F m, a f) * u ^ m)
-    (n : ℕ) :
-    (∑ f ∈ fixedDegreeMonic F n, a f) =
-      (1 / (2 * Real.pi * Complex.I)) *
-        ∮ u in C(0, r), A u / u ^ (n + 1)
-
 
 /-- **The polynomial norm $q^{\deg f}$ over a finite field.** Let $F$ be a finite field with
 $q$ elements. The norm of a polynomial $f \in F[X]$ is the real number $|f| = q^{\deg f}$ if
