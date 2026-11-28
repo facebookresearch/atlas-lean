@@ -22,10 +22,12 @@ independently supplied global solution; uniqueness alone does not prove global e
 ## Depends on
 
 - [Solution of the Michaelis–Menten system on a time window](is-solution-on.md)
+- [Solution of the Michaelis–Menten mass-action system](../is-solution.md)
 
 ## Proof depends on
 
 - [Solution of the Michaelis–Menten system on a time window](is-solution-on.md)
+- [A global solution solves the system on every window](is-solution-on-2.md)
 - [Tube bootstrap for perturbed trajectories](../../../../Analysis/ordinary-differential-equations/gronwall-inequality/tube-bootstrap.md)
 
 ## Expansion
@@ -44,7 +46,14 @@ after this identification.
 
 ## Sources
 
-- J. Eilertsen, S. Schnell and S. Walcher, "Rigorous estimates for the quasi-steady state approximation
+- G. Teschl, *Ordinary Differential Equations and Dynamical Systems*, Graduate Studies in
+  Mathematics 140, American Mathematical Society (2012), Theorem 2.2 (Picard–Lindelöf) and the
+  opening uniqueness argument of Section 2.6, pp. 38 and 50–51 in the
+  [author's preliminary version](https://www.mat.univie.ac.at/~gerald/ftp/book-ode/ode.pdf).
+  Apply local uniqueness to the autonomous polynomial field $F$ above; the continuation
+  argument extends equality to the common window, with its endpoints handled by continuity.
+  The global-solution specialization is also the [equality from initial data](../global-positive-trajectories-of-the-michaelis-me/eq-of-initial.md).
+- Model background: J. Eilertsen, S. Schnell and S. Walcher, "Rigorous estimates for the quasi-steady state approximation
   of the Michaelis–Menten reaction mechanism at low enzyme concentrations", *Nonlinear Analysis: Real World Applications* 78 (2024), 104088, <https://doi.org/10.1016/j.nonrwa.2024.104088>; locators from the version read, arXiv:2305.12602v2 (2024),
   Section 1, Eq. (1) (the system in the variables $s, c$ with $e = e_0 - c$ and data $s(0) = s_0$,
   $c(0) = 0$), <https://arxiv.org/abs/2305.12602v2>.

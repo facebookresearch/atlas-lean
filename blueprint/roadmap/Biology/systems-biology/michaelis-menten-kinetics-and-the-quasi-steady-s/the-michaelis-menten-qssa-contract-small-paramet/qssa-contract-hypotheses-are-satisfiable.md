@@ -1,6 +1,6 @@
 # The hypotheses of the QSSA contract are satisfiable
 
-For positive rate constants, initial substrate and enzyme, a reduced solution exists on every slow-time window and the full system has a solution on the matching real-time window with the standard data. So the QSSA contract constrains actual trajectories and is not vacuous.
+For $k_1,k_2,s_0,e_0>0$ and $k_b\ge0$, a reduced solution exists on every slow-time window and the full system has a solution on the matching real-time window with the standard data. So the QSSA contract constrains actual trajectories and is not vacuous.
 
 Let $k_1 > 0$, $k_b \ge 0$, $k_2 > 0$, $s_0 > 0$, $e_0 > 0$ and $T$ real, with
 $K_M = (k_b + k_2)/k_1$, $\kappa = K_M/s_0$ and the [slow time scale](slow-time-scale.md)
@@ -43,7 +43,14 @@ with $e(0) + c(0) = e_0$ is a window solution on every window, in particular on 
 
 ## Sources
 
-- J. Eilertsen, S. Schnell and S. Walcher, "Rigorous estimates for the quasi-steady state approximation
+- The reduced trajectory is the linear state/time rescaling of
+  [existence of a positive reduced solution through $s_0$](../exists-reduced-solution.md).
+  The full trajectory is the restriction of
+  [global nonnegative existence](../global-positive-trajectories-of-the-michaelis-me/exists-is-solution-nonneg.md)
+  at initial data $(s_0,0,e_0,0)$, using the
+  [global-to-window implication](is-solution-on-2.md). These are the existence results
+  specialized in the two clauses; they do not assert either QSSA error bound.
+- Model background: J. Eilertsen, S. Schnell and S. Walcher, "Rigorous estimates for the quasi-steady state approximation
   of the Michaelis–Menten reaction mechanism at low enzyme concentrations", *Nonlinear Analysis: Real World Applications* 78 (2024), 104088, <https://doi.org/10.1016/j.nonrwa.2024.104088>; locators from the version read, arXiv:2305.12602v2 (2024),
   Section 1, Eqs. (1) and (2) with initial values $s(0) = s_0$, $c(0) = 0$,
   <https://arxiv.org/abs/2305.12602v2>.

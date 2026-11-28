@@ -54,7 +54,15 @@ The convention that $F$ reads $0$ at $x = -\kappa$ never matters, because the so
 
 ## Sources
 
-- J. Eilertsen, S. Schnell and S. Walcher, "Rigorous estimates for the quasi-steady state approximation
+- G. Teschl, *Ordinary Differential Equations and Dynamical Systems*, Graduate Studies in
+  Mathematics 140, American Mathematical Society (2012), Theorem 2.2 (Picard–Lindelöf) and the
+  opening uniqueness argument of Section 2.6, pp. 38 and 50–51 in the
+  [author's preliminary version](https://www.mat.univie.ac.at/~gerald/ftp/book-ode/ode.pdf).
+  This is the uniqueness theorem applied to $F$ on $(-\kappa,\infty)$ after the linear change
+  of state and time. [Positivity of the supplied reduced solution](../reduced-pos.md) keeps
+  the rescaled curve inside that open domain; the continuation argument above proves equality
+  without assuming in advance that the other window solution stays in the domain.
+- Model and scaling background: J. Eilertsen, S. Schnell and S. Walcher, "Rigorous estimates for the quasi-steady state approximation
   of the Michaelis–Menten reaction mechanism at low enzyme concentrations", *Nonlinear Analysis: Real World Applications* 78 (2024), 104088, <https://doi.org/10.1016/j.nonrwa.2024.104088>; locators from the version read, arXiv:2305.12602v2 (2024),
   Section 1, Eq. (2) (the Michaelis–Menten reduction $\dot s = -k_1 k_2 e_0 s/(k_{-1} + k_2 + k_1 s)$),
   Section 2.1, Eq. (8) (Segel–Slemrod parameter $e_0/(K_M + s_0)$) and Section 5.1, Table 2,

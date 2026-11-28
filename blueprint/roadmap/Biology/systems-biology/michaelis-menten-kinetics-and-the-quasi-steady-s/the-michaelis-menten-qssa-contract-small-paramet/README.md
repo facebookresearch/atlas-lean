@@ -23,6 +23,9 @@
 - [Solution of the Michaelis–Menten system on a time window](is-solution-on.md)
 - [A global solution solves the system on every window](is-solution-on-2.md)
 - [Solution of the reduced problem on a slow-time window](is-reduced-solution-on.md)
+- [Window solutions of the Michaelis–Menten system are unique](window-solution-uniqueness.md)
+- [The reduced solution on a slow-time window is the rescaled Michaelis–Menten solution](reduced-solution-on-window-is-rescaled.md)
+- [The hypotheses of the QSSA contract are satisfiable](qssa-contract-hypotheses-are-satisfiable.md)
 
 ## The contract
 
@@ -32,8 +35,3 @@
 
 - [Initial-layer gap of the complex at slow time zero](initial-layer-gap.md)
 - [When C ε is below the initial-layer gap, the bound fails at θ = 0](not-complex-le-at-zero.md)
-- [Normalized complex error past the initial layer](normalized-complex-error-past-the-initial-layer.md)
-- [The hypotheses of the QSSA contract are satisfiable](qssa-contract-hypotheses-are-satisfiable.md)
-- [The Michaelis–Menten QSSA contract holds](qssa-contract-holds.md)
-- [The reduced solution on a slow-time window is the rescaled Michaelis–Menten solution](reduced-solution-on-window-is-rescaled.md)
-- [Window solutions of the Michaelis–Menten system are unique](window-solution-uniqueness.md)

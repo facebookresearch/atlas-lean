@@ -78,10 +78,10 @@ mechanisms in which inhibitor binds only the active site can produce mixed patte
 
 - A. Pesaresi, "Mixed and non-competitive enzyme inhibition: underlying mechanisms and mechanistic
   irrelevance of the formal two-site model", *Journal of Enzyme Inhibition and Medicinal Chemistry*
-  38(1) (2023) 2245168, Introduction and caption of Figure 1 (binding to free enzyme and the ES complex,
-  and the pure noncompetitive case $K_{IC}=K_{IU}$),
-  <https://doi.org/10.1080/14756366.2023.2245168>. The caption and text, not the figure image, were read;
-  the restricted mechanism's omitted $EI+S\rightleftharpoons ESI$ step is an explicit model choice.
+  38(1) (2023) 2245168, Introduction (the conventional model binds the active site of free enzyme
+  and a distinct site on $ES$; the kinetic classification does not identify a molecular mechanism),
+  <https://doi.org/10.1080/14756366.2023.2245168>. The restricted mechanism excludes the
+  $EI+S\rightleftharpoons ESI$ step explicitly.
 - NC-IUB Panel on Enzyme Kinetics (A. Cornish-Bowden, H. B. F. Dixon, K. J. Laidler, I. H. Segel,
   J. Ricard, S. F. Velick and E. C. Webb), "Symbolism and terminology in enzyme kinetics,
   Recommendations 1981", *European Journal of Biochemistry* 128 (1982) 281–291; web version
