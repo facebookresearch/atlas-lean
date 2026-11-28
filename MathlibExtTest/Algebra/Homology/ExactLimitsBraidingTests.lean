@@ -55,7 +55,7 @@ example :
     (mapBifunctorBraidingNatIso_hom_app_app K L)
   have hc := h.trans (mapBifunctorBraidingIso_hom_f_f K L 2 1)
   exact (congrArg (fun f => f.hom ((2 : ℤ) ⊗ₜ[ℤ] (3 : ℤ))) hc).trans
-    (ModuleCat.braiding_hom_apply (2 : ℤ) (3 : ℤ))
+    (ModuleCat.MonoidalCategory.braiding_hom_apply (2 : ℤ) (3 : ℤ))
 
 example :
     (((((mapBifunctorBraidingNatIso (c₁ := ComplexShape.down ℕ)
@@ -65,7 +65,7 @@ example :
     (mapBifunctorBraidingNatIso_inv_app_app K L)
   have hc := h.trans (mapBifunctorBraidingIso_inv_f_f K L 2 1)
   exact (congrArg (fun f => f.hom ((3 : ℤ) ⊗ₜ[ℤ] (2 : ℤ))) hc).trans
-    (ModuleCat.braiding_inv_apply (2 : ℤ) (3 : ℤ))
+    (ModuleCat.MonoidalCategory.braiding_inv_apply (2 : ℤ) (3 : ℤ))
 
 /-! ### Rank-two integer coefficient coordinates -/
 
@@ -92,8 +92,11 @@ private def tensorCoordinate (i j : Fin 2) : V ⊗[ℤ] V →ₗ[ℤ] ℤ :=
 
 private lemma tensorCoordinate_tmul (i j : Fin 2) (x y : V) :
     tensorCoordinate i j (x ⊗ₜ[ℤ] y) = x i * y j := by
-  simp [tensorCoordinate, LinearMap.comp_apply, TensorProduct.map_tmul,
-    TensorProduct.lid_tmul, smul_eq_mul]
+  change (TensorProduct.lid ℤ ℤ)
+    (TensorProduct.map (LinearMap.proj i : V →ₗ[ℤ] ℤ)
+      (LinearMap.proj j : V →ₗ[ℤ] ℤ) (x ⊗ₜ[ℤ] y)) = x i * y j
+  rw [TensorProduct.map_tmul, TensorProduct.lid_tmul]
+  rfl
 
 private def rankTwoBraiding : V ⊗[ℤ] V →ₗ[ℤ] V ⊗[ℤ] V :=
   (((((mapBifunctorBraidingNatIso (c₁ := ComplexShape.down ℕ)
@@ -105,7 +108,7 @@ private lemma rankTwoBraiding_tmul (x y : V) :
     (mapBifunctorBraidingNatIso_hom_app_app vectorK vectorL)
   have hc := h.trans (mapBifunctorBraidingIso_hom_f_f vectorK vectorL 2 1)
   exact (congrArg (fun f => f.hom (x ⊗ₜ[ℤ] y)) hc).trans
-    (ModuleCat.braiding_hom_apply x y)
+    (ModuleCat.MonoidalCategory.braiding_hom_apply x y)
 
 -- The off-diagonal coordinates interchange under the actual cell (2,1) braiding.
 example :

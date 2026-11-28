@@ -46,6 +46,7 @@ example :
     MultilinearMap.alternatizeTail, MultilinearMap.alternatization_apply,
     MultilinearMap.domDomCongr_apply, coordinateForm, ordered2,
     Fin.sum_univ_two, Fin.removeNth]
+  decide
 
 private def twoHeads :
     M3 →ₗ[ℤ] M3 →ₗ[ℤ] MultilinearMap (RingHom.id ℤ) (fun _ : Fin 1 => M3) ℤ :=
@@ -63,6 +64,7 @@ example :
     MultilinearMap.alternatizeTail, MultilinearMap.alternatization_apply,
     MultilinearMap.domDomCongr_apply, twoHeads, coordinateForm, reversed3,
     Fin.sum_univ_three, Fin.sum_univ_two, Fin.removeNth]
+  decide
 
 example :
     ExteriorAlgebra.derivation ℤ M2 (LinearMap.id : Module.End ℤ M2)
@@ -71,6 +73,8 @@ example :
         ExteriorAlgebra.ιMulti ℤ 2 ![ordered2 1, ordered2 0] := by
   rw [ExteriorAlgebra.derivation_ιMulti_eq_sum_vecCons]
   simp [Fin.sum_univ_two, Fin.removeNth, ordered2, sub_eq_add_neg]
+
+attribute [local instance 100] LieRing.ofAssociativeRing
 
 example :
     ((ExteriorAlgebra.derivationLieHom ℤ M2).toLinearMap

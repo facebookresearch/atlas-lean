@@ -272,7 +272,7 @@ def exteriorPowerBaseChangeNatIso (n : ℕ) :
     apply LinearMap.ext
     intro s
     apply exteriorPower.linearMap_ext
-    apply AlternatingMap.ext
+    apply _root_.AlternatingMap.ext
     intro a
     let aQ : Q := exteriorPower.ιMulti R n a
     let QN := (ModuleCat.exteriorPower.functor.{max u v w, u} R n).obj N
