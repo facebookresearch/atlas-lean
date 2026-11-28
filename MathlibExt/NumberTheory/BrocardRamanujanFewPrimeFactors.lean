@@ -42,7 +42,9 @@ open Nat
 
 namespace MetaMathlibExt
 
-/-- A nonzero divisor of `n!` with at most `r` distinct prime factors is at most `(2 ^ r) ^ n`. -/
+/-- **Exponential bound for a factorial divisor with few prime factors.**
+Let $n$, $y$, and $r$ be natural numbers with $y \ne 0$. If $y$ divides $n!$ and has at most
+$r$ distinct prime factors, then $y \le (2^r)^n$. -/
 public theorem le_pow_of_dvd_factorial_of_primeFactors_card_le {n y r : ℕ}
     (hy : y ≠ 0) (hdvd : y ∣ n !) (hcard : y.primeFactors.card ≤ r) : y ≤ (2 ^ r) ^ n := by
   have hfactor (p : ℕ) (hp : p ∈ y.primeFactors) : p ^ y.factorization p ≤ 2 ^ n := by

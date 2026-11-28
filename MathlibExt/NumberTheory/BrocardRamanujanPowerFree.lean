@@ -43,7 +43,9 @@ namespace MetaMathlibExt
 
 namespace BrocardRamanujanPowerFree
 
-/-- A positive `k`-free natural number dividing `n!` is at most `exp (3 n k / 2)`. -/
+/-- **Exponential bound for a power-free divisor of a factorial.**
+Let $n > 0$ and $k \ge 2$ be natural numbers. If a positive $k$-free natural number $y$
+divides $n!$, then $y \le \exp(3 n k / 2)$. -/
 public theorem le_exp_of_isPowerFree_dvd_factorial {n y k : ℕ} (hn : 0 < n)
     (hy : y.IsPowerFree k) (hdvd : y ∣ n !) :
     (y : ℝ) ≤ Real.exp (3 * n * k / 2) := by
