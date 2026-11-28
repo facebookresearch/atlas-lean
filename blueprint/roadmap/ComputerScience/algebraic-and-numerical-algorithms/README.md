@@ -24,3 +24,4 @@ Algorithms on numbers, polynomials and matrices: integer and polynomial multipli
 - [Reductions for 3SUM](three-sum-reductions/README.md)
 - [Simplex Dictionaries and Pivot Rules](simplex-dictionaries-and-pivot-rules/README.md)
 - [The AKS Primality Test on the Word RAM](aks-primality-on-the-word-ram/README.md)
+- [Word-size modular arithmetic and number-theoretic transforms](word-size-modular-arithmetic-and-ntt/README.md)

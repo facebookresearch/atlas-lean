@@ -12,3 +12,5 @@
 - [Approximate correctness of CKKS homomorphic evaluation](ckks-approximate-correctness.md)
 - [Restoring IND-CPA-D security of CKKS by noise flooding decryptions](ckks-noise-flooding.md)
 - [Bootstrapping for approximate homomorphic encryption](ckks-bootstrapping.md)
+- [Key switching with a special modulus in RNS-CKKS](special-modulus-key-switching.md)
+- [Rescaling in RNS-CKKS divides by the last prime](rns-ckks-rescaling.md)

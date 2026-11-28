@@ -10,3 +10,4 @@ Post-quantum public-key encryption: lattice problems and Gaussians, trapdoors, R
 - [ML-KEM (Kyber)](ml-kem/README.md)
 - [Code-Based and Lattice-Based Post-Quantum Schemes](code-and-lattice-based-schemes/README.md)
 - [Hamming Quasi-Cyclic (HQC) Encryption](hqc-encryption/README.md)
+- [RNS Arithmetic for Ring-LWE Schemes](rns-arithmetic-for-ring-lwe/README.md)
