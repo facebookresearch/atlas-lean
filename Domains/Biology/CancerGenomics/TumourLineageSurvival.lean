@@ -37,16 +37,17 @@ at `2`, and the probability that the lineage goes extinct is its `GaltonWatson.e
 
 Time is measured in cell divisions (one step of the process). The survival probability is
 `1 - q`, where `q` is the extinction probability of the lineage of one cell. The small-`a` claim
-is an exact `Tendsto` statement; no remainder term is claimed. The source's further observation
-that one additional driver mutation, acquired at a small rate `u` upon division, leaves the
-tumour's survival probability essentially unchanged is a heuristic about timescales and is not
-stated here.
+is an exact `Tendsto` statement; no remainder term is claimed. The source's further remark that
+one additional driver mutation, acquired with a small probability `u` upon division, does not
+change the tumour's survival probability is not stated here: as written it is not a precise
+statement, and for `u > 0` a mutant that grows faster than resident cells raises the survival
+probability.
 
 ## References
 
 * J. G. Reiter, I. Bozic, B. Allen, K. Chatterjee, M. A. Nowak, *The effect of one additional
   driver mutation on tumor progression*, Evolutionary Applications 6 (2013), 34–45
-  (Materials and methods, "The model"; Results, first paragraph).
+  (Materials and methods, "The model"; Results, second paragraph).
 * I. Bozic, T. Antal, H. Ohtsuki, H. Carter, D. Kim, S. Chen, R. Karchin, K. W. Kinzler,
   B. Vogelstein, M. A. Nowak, *Accumulation of driver and passenger mutations during tumor
   progression*, Proc. Natl. Acad. Sci. USA 107 (2010), 18545–18550.

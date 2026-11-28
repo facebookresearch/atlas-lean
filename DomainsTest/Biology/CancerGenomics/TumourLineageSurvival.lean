@@ -53,15 +53,15 @@ example :
   rw [hs, hq]
   norm_num
 
-/-- The survival probability is positive and at most `2 a`: the approximation `2 a` is an upper
-bound. -/
+/-- The survival probability is positive and less than `2 a`: the approximation `2 a` is a strict
+upper bound. -/
 example {a : ℝ} (ha0 : 0 < a) (ha1 : a < 1) :
     0 < 1 - extinctionProb (binaryOffspring ((1 + a) / 2)) ∧
-      1 - extinctionProb (binaryOffspring ((1 + a) / 2)) ≤ 2 * a := by
+      1 - extinctionProb (binaryOffspring ((1 + a) / 2)) < 2 * a := by
   rw [(tumourLineage_survival.1 a ha0 ha1).2]
   have h1a : 0 < 1 + a := by linarith
   refine ⟨by positivity, ?_⟩
-  rw [div_le_iff₀ h1a]
+  rw [div_lt_iff₀ h1a]
   nlinarith
 
 end DomainsTest.Biology.CancerGenomics.TumourLineageSurvival
