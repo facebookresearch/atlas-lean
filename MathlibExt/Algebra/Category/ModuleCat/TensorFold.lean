@@ -86,7 +86,7 @@ def isoAt (R : Type u) [CommRing R] :
   | n + 1, P, Q, e, M, N, h => by
       simpa only [List.ofFn_succ, objAt, Functor.BifunctorFold.obj,
         tensorBifunctorAt, tensorObjAt] using
-        (isoAt.{u, v, w} R
+        (isoAt R
           (TensorProduct.congr e.toLinearEquiv (h 0).toLinearEquiv).toModuleIso
           (fun j : Fin n => M j.succ) (fun j : Fin n => N j.succ)
           (fun j : Fin n => h j.succ))
