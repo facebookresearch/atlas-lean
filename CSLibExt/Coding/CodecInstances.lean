@@ -51,8 +51,7 @@ theorem Hamming74.encoding_encode_length (m : Fin 4 → ZMod 2) : (Hamming74.enc
   show (List.ofFn (Hamming74.encode m)).length = 7
   exact List.length_ofFn
 
-/-- Decoding any 7-bit vector returns the data bits of its syndrome-decoded word (the sent message
-only when at most one bit was flipped). -/
+/-- Decoding any 7-bit vector returns the data bits of its syndrome-decoded word. -/
 theorem Hamming74.encoding_decode_ofFn (y : Fin 7 → ZMod 2) : Hamming74.encoding.decode (List.ofFn y) = some (Hamming74.message (Hamming74.decode y)) := by
   show (if h : (List.ofFn y).length = 7 then _ else none) = _
   rw [dite_eq_left List.length_ofFn]
