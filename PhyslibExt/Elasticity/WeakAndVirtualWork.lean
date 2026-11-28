@@ -151,7 +151,8 @@ structure WeakH10On (L : ℝ) where
   /-- The weak derivative has integral zero over `[0, L]`, the condition `toFun L = 0`. -/
   integral_weakDeriv_eq_zero : ∫ t in (0 : ℝ)..L, weakDeriv t = 0
 
-/-- Zero displacement at both ends. -/
+/-- Zero displacement at both ends: for `0 ≤ L`, every `v : WeakH10On L` has `v.toFun 0 = 0`
+and `v.toFun L = 0`. -/
 lemma WeakH10On.toFun_zero_and_length {L : ℝ} (hL : 0 ≤ L) (v : WeakH10On L) :
     v.toFun 0 = 0 ∧ v.toFun L = 0 := by
   exact ⟨by rw [v.toFun_eq_integral 0 ⟨le_rfl, hL⟩]; simp,
@@ -190,7 +191,8 @@ private lemma map_inv_mul_restrict_Icc {L : ℝ} (hL : 0 < L) :
     Real.map_volume_mul_left (inv_ne_zero hL.ne'), Measure.restrict_smul, inv_inv,
     abs_of_pos hL]
 
-/-- The scaled weak derivative `ξ ↦ L * g (L * ξ)` is in `L²(0, 1)` when `g ∈ L²(0, L)`. -/
+/-- For `0 < L`, the scaled weak derivative `ξ ↦ L * g (L * ξ)` is in `L²(0, 1)` when
+`g ∈ L²(0, L)`. -/
 lemma memLp_scale_toUnit {L : ℝ} (hL : 0 < L) {g : ℝ → ℝ}
     (hg : MemLp g 2 (volume.restrict (Set.Icc 0 L))) :
     MemLp (fun ξ => L * g (L * ξ)) 2 (volume.restrict (Set.Icc 0 1)) := by
@@ -201,7 +203,8 @@ lemma memLp_scale_toUnit {L : ℝ} (hL : 0 < L) {g : ℝ → ℝ}
     (measurable_const_mul L).aemeasurable).1 h1
   exact h2.const_mul L
 
-/-- The scaled weak derivative `x ↦ g (x / L) / L` is in `L²(0, L)` when `g ∈ L²(0, 1)`. -/
+/-- For `0 < L`, the scaled weak derivative `x ↦ g (x / L) / L` is in `L²(0, L)` when
+`g ∈ L²(0, 1)`. -/
 lemma memLp_scale_ofUnit {L : ℝ} (hL : 0 < L) {g : ℝ → ℝ}
     (hg : MemLp g 2 (volume.restrict (Set.Icc 0 1))) :
     MemLp (fun x => g (x / L) / L) 2 (volume.restrict (Set.Icc 0 L)) := by
@@ -217,7 +220,8 @@ lemma memLp_scale_ofUnit {L : ℝ} (hL : 0 < L) {g : ℝ → ℝ}
   rw [he]
   exact h3
 
-/-- `x = L ξ` transports the primitive representation to `[0, 1]`. -/
+/-- For `0 < L`, `x = L ξ` transports the primitive representation to `[0, 1]`: for every
+`v : WeakH10On L` and `ξ ∈ [0, 1]`, `v (L ξ) = ∫₀^ξ L * v' (L t) dt`. -/
 lemma toUnit_primitive {L : ℝ} (hL : 0 < L) (v : WeakH10On L) :
     ∀ ξ ∈ Set.Icc (0 : ℝ) 1, v.toFun (L * ξ) = ∫ t in (0 : ℝ)..ξ, L * v.weakDeriv (L * t) := by
   intro ξ hξ
@@ -227,14 +231,16 @@ lemma toUnit_primitive {L : ℝ} (hL : 0 < L) (v : WeakH10On L) :
     intervalIntegral.integral_comp_mul_left (fun t => v.weakDeriv t) hL.ne', mul_zero,
     smul_eq_mul, ← mul_assoc, mul_inv_cancel₀ hL.ne', one_mul]
 
-/-- `x = L ξ` transports the end condition to `[0, 1]`. -/
+/-- For `0 < L`, `x = L ξ` transports the end condition to `[0, 1]`: every `v : WeakH10On L`
+has `∫₀¹ L * v' (L t) dt = 0`. -/
 lemma toUnit_integral_eq_zero {L : ℝ} (hL : 0 < L) (v : WeakH10On L) :
     ∫ t in (0 : ℝ)..1, L * v.weakDeriv (L * t) = 0 := by
   rw [intervalIntegral.integral_const_mul,
     intervalIntegral.integral_comp_mul_left (fun t => v.weakDeriv t) hL.ne', mul_zero, mul_one,
     smul_eq_mul, v.integral_weakDeriv_eq_zero, mul_zero, mul_zero]
 
-/-- `ξ = x / L` transports the primitive representation to `[0, L]`. -/
+/-- For `0 < L`, `ξ = x / L` transports the primitive representation to `[0, L]`: for every
+`ŵ : WeakH10` and `x ∈ [0, L]`, `ŵ (x / L) = ∫₀ˣ ŵ' (t / L) / L dt`. -/
 lemma ofUnit_primitive {L : ℝ} (hL : 0 < L) (w : WeakH10) :
     ∀ x ∈ Set.Icc (0 : ℝ) L, w.toFun (x / L) = ∫ t in (0 : ℝ)..x, w.weakDeriv (t / L) / L := by
   intro x hx
@@ -243,14 +249,16 @@ lemma ofUnit_primitive {L : ℝ} (hL : 0 < L) (w : WeakH10) :
     intervalIntegral.integral_comp_div (fun t => w.weakDeriv t) hL.ne', zero_div, smul_eq_mul]
   field_simp
 
-/-- `ξ = x / L` transports the end condition to `[0, L]`. -/
+/-- For `0 < L`, `ξ = x / L` transports the end condition to `[0, L]`: every `ŵ : WeakH10` has
+`∫₀ᴸ ŵ' (t / L) / L dt = 0`. -/
 lemma ofUnit_integral_eq_zero {L : ℝ} (hL : 0 < L) (w : WeakH10) :
     ∫ t in (0 : ℝ)..L, w.weakDeriv (t / L) / L = 0 := by
   rw [intervalIntegral.integral_div,
     intervalIntegral.integral_comp_div (fun t => w.weakDeriv t) hL.ne', zero_div, div_self hL.ne',
     smul_eq_mul, w.integral_weakDeriv_eq_zero, mul_zero, zero_div]
 
-/-- Pull a bar field back to `[0, 1]`: `v̂ ξ = v (L ξ)` and `v̂' ξ = L * v' (L ξ)`. -/
+/-- For `0 < L`, pull a bar field back to `[0, 1]`: `v̂ ξ = v (L ξ)` and
+`v̂' ξ = L * v' (L ξ)`. -/
 noncomputable def WeakH10On.toUnit {L : ℝ} (hL : 0 < L) (v : WeakH10On L) : WeakH10 where
   toFun ξ := v.toFun (L * ξ)
   weakDeriv ξ := L * v.weakDeriv (L * ξ)
@@ -258,7 +266,8 @@ noncomputable def WeakH10On.toUnit {L : ℝ} (hL : 0 < L) (v : WeakH10On L) : We
   toFun_eq_integral := toUnit_primitive hL v
   integral_weakDeriv_eq_zero := toUnit_integral_eq_zero hL v
 
-/-- Push a unit field forward to `[0, L]`: `w x = ŵ (x / L)` and `w' x = ŵ' (x / L) / L`. -/
+/-- For `0 < L`, push a unit field forward to `[0, L]`: `w x = ŵ (x / L)` and
+`w' x = ŵ' (x / L) / L`. -/
 noncomputable def WeakH10On.ofUnit {L : ℝ} (hL : 0 < L) (w : WeakH10) : WeakH10On L where
   toFun x := w.toFun (x / L)
   weakDeriv x := w.weakDeriv (x / L) / L
@@ -266,7 +275,8 @@ noncomputable def WeakH10On.ofUnit {L : ℝ} (hL : 0 < L) (w : WeakH10) : WeakH1
   toFun_eq_integral := ofUnit_primitive hL w
   integral_weakDeriv_eq_zero := ofUnit_integral_eq_zero hL w
 
-/-- Round trip from the bar: `ofUnit (toUnit v)` has the fields of `v`. -/
+/-- Round trip from the bar: for `0 < L`, `ofUnit (toUnit v)` has the fields of `v`, the same
+`toFun` and the same `weakDeriv`. -/
 lemma WeakH10On.ofUnit_toUnit {L : ℝ} (hL : 0 < L) (v : WeakH10On L) :
     (WeakH10On.ofUnit hL (v.toUnit hL)).toFun = v.toFun ∧
       (WeakH10On.ofUnit hL (v.toUnit hL)).weakDeriv = v.weakDeriv := by
@@ -279,7 +289,8 @@ lemma WeakH10On.ofUnit_toUnit {L : ℝ} (hL : 0 < L) (v : WeakH10On L) :
     rw [mul_div_cancel₀ x hL.ne']
     field_simp
 
-/-- Round trip from the unit interval: `toUnit (ofUnit ŵ)` has the fields of `ŵ`. -/
+/-- Round trip from the unit interval: for `0 < L`, `toUnit (ofUnit ŵ)` has the fields of `ŵ`,
+the same `toFun` and the same `weakDeriv`. -/
 lemma WeakH10On.toUnit_ofUnit {L : ℝ} (hL : 0 < L) (w : WeakH10) :
     ((WeakH10On.ofUnit hL w).toUnit hL).toFun = w.toFun ∧
       ((WeakH10On.ofUnit hL w).toUnit hL).weakDeriv = w.weakDeriv := by
@@ -302,7 +313,7 @@ noncomputable def scaledRigidity (EA : ℝ → ℝ) (L ξ : ℝ) : ℝ :=
 noncomputable def scaledLoad (q : ℝ → ℝ) (L ξ : ℝ) : ℝ :=
   L * q (L * ξ)
 
-/-- Energy integral, bar to unit: `∫₀¹ κ û' v̂' = ∫₀ᴸ EA u' v'`. -/
+/-- Energy integral, bar to unit: for `0 < L`, `∫₀¹ κ û' v̂' = ∫₀ᴸ EA u' v'`. -/
 lemma integral_rigidity_toUnit {L : ℝ} (hL : 0 < L) (EA : ℝ → ℝ) (u v : WeakH10On L) :
     ∫ ξ in (0 : ℝ)..1, scaledRigidity EA L ξ * (u.toUnit hL).weakDeriv ξ *
         (v.toUnit hL).weakDeriv ξ =
@@ -317,7 +328,7 @@ lemma integral_rigidity_toUnit {L : ℝ} (hL : 0 < L) (EA : ℝ → ℝ) (u v : 
     intervalIntegral.integral_comp_mul_left (fun x => EA x * u.weakDeriv x * v.weakDeriv x)
       hL.ne', mul_zero, mul_one, smul_eq_mul, ← mul_assoc, mul_inv_cancel₀ hL.ne', one_mul]
 
-/-- Load integral, bar to unit: `∫₀¹ f̂ v̂ = ∫₀ᴸ q v`. -/
+/-- Load integral, bar to unit: for `0 < L`, `∫₀¹ f̂ v̂ = ∫₀ᴸ q v`. -/
 lemma integral_load_toUnit {L : ℝ} (hL : 0 < L) (q : ℝ → ℝ) (v : WeakH10On L) :
     ∫ ξ in (0 : ℝ)..1, scaledLoad q L ξ * (v.toUnit hL).toFun ξ =
       ∫ x in (0 : ℝ)..L, q x * v.toFun x := by
@@ -330,7 +341,7 @@ lemma integral_load_toUnit {L : ℝ} (hL : 0 < L) (q : ℝ → ℝ) (v : WeakH10
     intervalIntegral.integral_comp_mul_left (fun x => q x * v.toFun x) hL.ne', mul_zero, mul_one,
     smul_eq_mul, ← mul_assoc, mul_inv_cancel₀ hL.ne', one_mul]
 
-/-- Energy integral, unit to bar: `∫₀ᴸ EA w₁' w₂' = ∫₀¹ κ ŵ₁' ŵ₂'`. -/
+/-- Energy integral, unit to bar: for `0 < L`, `∫₀ᴸ EA w₁' w₂' = ∫₀¹ κ ŵ₁' ŵ₂'`. -/
 lemma integral_rigidity_ofUnit {L : ℝ} (hL : 0 < L) (EA : ℝ → ℝ) (w₁ w₂ : WeakH10) :
     ∫ x in (0 : ℝ)..L, EA x * (WeakH10On.ofUnit hL w₁).weakDeriv x *
         (WeakH10On.ofUnit hL w₂).weakDeriv x =
@@ -349,7 +360,7 @@ lemma integral_rigidity_ofUnit {L : ℝ} (hL : 0 < L) (EA : ℝ → ℝ) (w₁ w
     zero_div, div_self hL.ne', smul_eq_mul]
   field_simp
 
-/-- Load integral, unit to bar: `∫₀ᴸ q w = ∫₀¹ f̂ ŵ`. -/
+/-- Load integral, unit to bar: for `0 < L`, `∫₀ᴸ q w = ∫₀¹ f̂ ŵ`. -/
 lemma integral_load_ofUnit {L : ℝ} (hL : 0 < L) (q : ℝ → ℝ) (w : WeakH10) :
     ∫ x in (0 : ℝ)..L, q x * (WeakH10On.ofUnit hL w).toFun x =
       ∫ ξ in (0 : ℝ)..1, scaledLoad q L ξ * w.toFun ξ := by
@@ -365,7 +376,8 @@ lemma integral_load_ofUnit {L : ℝ} (hL : 0 < L) (q : ℝ → ℝ) (w : WeakH10
     zero_div, div_self hL.ne', smul_eq_mul]
   field_simp
 
-/-- The unit diffusivity is a.e. strongly measurable on `[0, 1]`. -/
+/-- For `0 < L`, if the rigidity `EA` is a.e. strongly measurable on `[0, L]`, the unit
+diffusivity `κ ξ = EA (L ξ) / L` is a.e. strongly measurable on `[0, 1]`. -/
 lemma aestronglyMeasurable_scaledRigidity {L : ℝ} (hL : 0 < L) {EA : ℝ → ℝ}
     (hEA : AEStronglyMeasurable EA (volume.restrict (Set.Icc 0 L))) :
     AEStronglyMeasurable (scaledRigidity EA L) (volume.restrict (Set.Icc 0 1)) := by
@@ -375,7 +387,8 @@ lemma aestronglyMeasurable_scaledRigidity {L : ℝ} (hL : 0 < L) {EA : ℝ → �
     exact hEA.smul_measure _
   exact (h1.comp_aemeasurable (measurable_const_mul L).aemeasurable).mul_const L⁻¹
 
-/-- The rigidity bounds transport to `EAmin / L ≤ κ ≤ EAmax / L` a.e. on `[0, 1]`. -/
+/-- For `0 < L`, the rigidity bounds `EAmin ≤ EA ≤ EAmax` a.e. on `[0, L]` transport to
+`EAmin / L ≤ κ ≤ EAmax / L` a.e. on `[0, 1]`. -/
 lemma ae_bounds_scaledRigidity {L : ℝ} (hL : 0 < L) {EA : ℝ → ℝ} {EAmin EAmax : ℝ}
     (hEA : ∀ᵐ x ∂(volume.restrict (Set.Icc 0 L)), EAmin ≤ EA x ∧ EA x ≤ EAmax) :
     ∀ᵐ ξ ∂(volume.restrict (Set.Icc 0 1)),
@@ -395,8 +408,8 @@ def IsWeakBarSolution {L : ℝ} (EA q : ℝ → ℝ) (u : WeakH10On L) : Prop :=
   ∀ v : WeakH10On L,
     ∫ x in (0 : ℝ)..L, EA x * u.weakDeriv x * v.weakDeriv x = ∫ x in (0 : ℝ)..L, q x * v.toFun x
 
-/-- A weak solution of the unit problem with `κ` and `f̂` gives the bar solution
-`u x = û (x / L)`. -/
+/-- For `0 < L`, a weak solution `û` of the unit problem with `κ` and `f̂` gives the bar
+solution `u x = û (x / L)`. -/
 lemma isWeakBarSolution_ofUnit {L : ℝ} (hL : 0 < L) {EA q : ℝ → ℝ} {w : WeakH10}
     (hw : ∀ v : WeakH10,
       ∫ ξ in (0 : ℝ)..1, scaledRigidity EA L ξ * w.weakDeriv ξ * v.weakDeriv ξ =
@@ -412,7 +425,9 @@ lemma isWeakBarSolution_ofUnit {L : ℝ} (hL : 0 < L) {EA q : ℝ → ℝ} {w : 
     _ = ∫ ξ in (0 : ℝ)..1, scaledLoad q L ξ * (v.toUnit hL).toFun ξ := hw (v.toUnit hL)
     _ = ∫ x in (0 : ℝ)..L, q x * v.toFun x := integral_load_toUnit hL q v
 
-/-- A bar solution pulled back to `[0, 1]` is a weak solution of the unit problem. -/
+/-- For `0 < L`, a bar solution pulled back to `[0, 1]` is a weak solution of the unit problem:
+for every `v ∈ H¹₀(0, 1)`, `∫₀¹ κ(ξ) û'(ξ) v'(ξ) dξ = ∫₀¹ f̂(ξ) v(ξ) dξ`, with
+`û'(ξ) = L u'(L ξ)`, `κ(ξ) = EA(L ξ) / L` and `f̂(ξ) = L q(L ξ)`. -/
 lemma IsWeakBarSolution.toUnit {L : ℝ} (hL : 0 < L) {EA q : ℝ → ℝ} {u : WeakH10On L}
     (hu : IsWeakBarSolution EA q u) :
     ∀ v : WeakH10,
@@ -490,8 +505,8 @@ private lemma integral_mul_one_sub : ∫ ξ in (0 : ℝ)..1, ξ * (1 - ξ) = 1 /
     ((by fun_prop : Continuous fun t : ℝ => t * (1 - t)).intervalIntegrable _ _)]
   norm_num
 
-/-- Constant rigidity recovers the classical bar: every weak solution with constant `EA > 0`
-and uniform load `q` equals `q x (L - x) / (2 EA)` on `[0, L]`. -/
+/-- Constant rigidity recovers the classical bar: for `0 < L`, every weak solution with
+constant `EA > 0` and uniform load `q` equals `q x (L - x) / (2 EA)` on `[0, L]`. -/
 lemma IsWeakBarSolution.eqOn_axialDisplacement {L EA q : ℝ} (hL : 0 < L) (hEA : 0 < EA)
     {u : WeakH10On L} (hu : IsWeakBarSolution (fun _ => EA) (fun _ => q) u) :
     Set.EqOn u.toFun (axialDisplacement EA L q) (Set.Icc 0 L) := by
@@ -535,12 +550,14 @@ lemma IsWeakBarSolution.eqOn_axialDisplacement {L EA q : ℝ} (hL : 0 < L) (hEA 
   unfold axialDisplacement
   field_simp
 
-/-- A positive two-valued rigidity `EA₁` on `x < a`, `EA₂` on `x ≥ a`. -/
+/-- A two-valued rigidity: `EA₁` on `x < a` and `EA₂` on `x ≥ a`, for any real `EA₁` and `EA₂`;
+it is positive when both values are positive. -/
 noncomputable def stepRigidity (EA₁ EA₂ a x : ℝ) : ℝ :=
   if x < a then EA₁ else EA₂
 
-/-- A positive piecewise constant rigidity is admissible: it is a.e. strongly measurable and lies
-between `min EA₁ EA₂ > 0` and `max EA₁ EA₂`. -/
+/-- A positive piecewise constant rigidity is admissible on `[0, L]`: for `EA₁ > 0`, `EA₂ > 0`
+and every `a` and `L`, `stepRigidity EA₁ EA₂ a` is a.e. strongly measurable on `[0, L]` and lies
+a.e. on `[0, L]` between `min EA₁ EA₂ > 0` and `max EA₁ EA₂`. -/
 lemma stepRigidity_admissible {EA₁ EA₂ : ℝ} (hEA₁ : 0 < EA₁) (hEA₂ : 0 < EA₂) (a L : ℝ) :
     0 < min EA₁ EA₂ ∧
       AEStronglyMeasurable (stepRigidity EA₁ EA₂ a) (volume.restrict (Set.Icc 0 L)) ∧
@@ -553,7 +570,8 @@ lemma stepRigidity_admissible {EA₁ EA₂ : ℝ} (hEA₁ : 0 < EA₁) (hEA₂ :
     · exact ⟨min_le_left _ _, le_max_left _ _⟩
     · exact ⟨min_le_right _ _, le_max_right _ _⟩
 
-/-- Zero rigidity is not admissible: under the unit load it has no weak solution. -/
+/-- Zero rigidity is not admissible: for `0 < L`, under the unit load the weak bar problem on
+`[0, L]` has no solution. -/
 lemma not_isWeakBarSolution_zero_rigidity {L : ℝ} (hL : 0 < L) (u : WeakH10On L) :
     ¬ IsWeakBarSolution (fun _ => 0) (fun _ => 1) u := by
   intro h
@@ -572,7 +590,8 @@ lemma not_isWeakBarSolution_zero_rigidity {L : ℝ} (hL : 0 < L) (u : WeakH10On 
   rw [h2] at h1
   linarith
 
-/-- A rigidity that is nonpositive on `[0, L]` has no positive a.e. lower bound there. -/
+/-- For `0 < L`, a rigidity that is nonpositive on `[0, L]` has no positive a.e. lower bound
+there. -/
 lemma not_ae_lowerBound_of_nonpos {L : ℝ} (hL : 0 < L) {EA : ℝ → ℝ}
     (hEA : ∀ x ∈ Set.Icc (0 : ℝ) L, EA x ≤ 0) {EAmin EAmax : ℝ} (hEAmin : 0 < EAmin) :
     ¬ ∀ᵐ x ∂(volume.restrict (Set.Icc 0 L)), EAmin ≤ EA x ∧ EA x ≤ EAmax := by
@@ -584,8 +603,9 @@ lemma not_ae_lowerBound_of_nonpos {L : ℝ} (hL : 0 < L) {EA : ℝ → ℝ}
     ENNReal.ofReal_eq_zero] at hae
   linarith
 
-/-- A traction end is not covered: the fixed-free displacement `q x (2 L - x) / (2 EA)` with
-`q ≠ 0` does not vanish at `x = L`, so no element of `H¹₀(0, L)` represents it. -/
+/-- A traction end is not covered: for `0 < L` and `0 < EA`, the fixed-free displacement
+`q x (2 L - x) / (2 EA)` with `q ≠ 0` does not vanish at `x = L`, so no element of `H¹₀(0, L)`
+represents it. -/
 lemma not_exists_weakH10On_eqOn_fixedFree {L EA q : ℝ} (hL : 0 < L) (hEA : 0 < EA) (hq : q ≠ 0) :
     ¬ ∃ v : WeakH10On L, Set.EqOn v.toFun (fixedFreeDisplacement EA L q) (Set.Icc 0 L) := by
   rintro ⟨v, hv⟩
@@ -788,8 +808,12 @@ lemma lowerFaceWork_eq_zero {a b : Fin 3 → ℝ} {σ : (Fin 3 → ℝ) → Matr
     fun y hy => by simp only [hv y hy, dotProduct_zero]]
   simp
 
-/-- Removing a clamped face: if `v` vanishes on the lower face `x i₀ = a i₀`, the identity holds
-with that face, and only that face, removed. -/
+/-- Removing a clamped face: let the box `[a, b]` be nondegenerate (`a i < b i`) and contained in
+an open set `U`, let the stress `σ` have components continuously differentiable on `U` and be
+symmetric on the box, let `div σ + body = 0` on the box, and let the virtual displacement `v` be
+continuously differentiable on `U`. If `v` vanishes on the lower face `x i₀ = a i₀`, then
+`∫ σ : ε(v) = ∫ body · v` plus the traction work on the other five faces: the identity holds with
+that face, and only that face, removed. -/
 lemma virtualWork_box_of_lowerFace_eq_zero {a b : Fin 3 → ℝ} (hab : ∀ i, a i < b i)
     {U : Set (Fin 3 → ℝ)} (hU : IsOpen U) (hbox : Set.Icc a b ⊆ U)
     {σ : (Fin 3 → ℝ) → Matrix (Fin 3) (Fin 3) ℝ} {v body : (Fin 3 → ℝ) → Fin 3 → ℝ}
@@ -804,8 +828,11 @@ lemma virtualWork_box_of_lowerFace_eq_zero {a b : Fin 3 → ℝ} (hab : ∀ i, a
     ← Finset.add_sum_erase Finset.univ (fun i => lowerFaceWork a b σ v i) (Finset.mem_univ i₀),
     lowerFaceWork_eq_zero hclamp, zero_add, add_assoc]
 
-/-- A rigid virtual displacement `v x = W x` with `Wᵀ = -W` does no internal work, so its
-external virtual work vanishes. -/
+/-- Rigid virtual displacements do no work: let the box `[a, b]` be nondegenerate (`a i < b i`)
+and contained in an open set `U`, let the stress `σ` have components continuously differentiable
+on `U` and be symmetric on the box, and let `div σ + body = 0` on the box. A rigid virtual
+displacement `v x = W x` with `Wᵀ = -W` does no internal work, so its external virtual work, the
+body-force work `∫ body · v` plus the traction work on the six faces, vanishes. -/
 lemma virtualWork_box_rigid {a b : Fin 3 → ℝ} (hab : ∀ i, a i < b i) {U : Set (Fin 3 → ℝ)}
     (hU : IsOpen U) (hbox : Set.Icc a b ⊆ U) {σ : (Fin 3 → ℝ) → Matrix (Fin 3) (Fin 3) ℝ}
     {body : (Fin 3 → ℝ) → Fin 3 → ℝ} (hσ : ∀ i j, ContDiffOn ℝ 1 (fun x => σ x i j) U)
@@ -829,9 +856,10 @@ lemma virtualWork_box_rigid {a b : Fin 3 → ℝ} (hab : ∀ i, a i < b i) {U : 
 def simpleShearStress (τ : ℝ) : Matrix (Fin 3) (Fin 3) ℝ :=
   !![0, τ, 0; τ, 0, 0; 0, 0, 0]
 
-/-- The engineering shear factor: for simple shear `u x = (γ x₁, 0, 0)` under the shear stress `τ`
-the virtual work density is `σ : ε = τ γ`; contracting with the engineering shear
-`γ₀₁ = 2 ε₀₁` in both off-diagonal slots gives `2 τ γ`, which differs for `τ γ ≠ 0`. -/
+/-- The engineering shear factor: let `τ ≠ 0` and `γ ≠ 0`. For simple shear `u x = (γ x₁, 0, 0)`
+under the shear stress `τ` the virtual work density is `σ : ε = τ γ`; contracting with the
+engineering shear `γ₀₁ = 2 ε₀₁` in both off-diagonal slots gives `2 τ γ`, which differs from
+`τ γ` since `τ γ ≠ 0`. -/
 lemma simpleShear_engineering_double_count {τ γ : ℝ} (hτ : τ ≠ 0) (hγ : γ ≠ 0) (x : Fin 3 → ℝ) :
     ∑ i, ∑ j, simpleShearStress τ i j *
         smallStrain (displacementGradient (simpleShearField γ) x) i j = τ * γ ∧
