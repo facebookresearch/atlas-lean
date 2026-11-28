@@ -116,12 +116,6 @@ public theorem basePDigit_div_periodic_one (p d : ℕ) [Fact p.Prime] (hd : d �
   have _ := hm -- The source requires positivity, although the digit calculation does not.
   obtain ⟨n, rfl⟩ : ∃ n : ℕ, k = (n : ℤ) + 1 := ⟨(k - 1).toNat, by omega⟩
   simp only [basePDigit, zpow_neg, div_inv_eq_mul, ← Int.natCast_succ, zpow_natCast]
-  by_cases hpTwo : p = 2
-  · subst p
-    have hdOne : d = 1 := Nat.dvd_one.mp hd
-    subst d
-    simp only [Nat.cast_one, div_one, ← Nat.cast_pow, ← Nat.cast_mul, Int.floor_natCast]
-    simp only [Nat.cast_mul, Nat.cast_pow, pow_succ, ← mul_assoc, Int.mul_emod_left]
   have hp : p.Prime := Fact.out
   have hd₀ : (d : ℚ) ≠ 0 := Nat.cast_ne_zero.mpr
     (ne_zero_of_dvd_ne_zero (Nat.sub_pos_of_lt hp.one_lt).ne' hd)

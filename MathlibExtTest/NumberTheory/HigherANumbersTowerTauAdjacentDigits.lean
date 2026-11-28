@@ -40,7 +40,11 @@ example : basePDigit 5 (3 / 4) (-2) = 3 := by
       basePDigit_div_periodic_one 5 4 (by decide) 3 (by decide) 1 (by decide)
     _ = 3 := by decide +kernel
 
--- The binary expansion of an integer has zero fractional digits.
-example : basePDigit 2 (3 / 1) (-4) = 0 := by decide +kernel
+-- The fourth binary fractional digit agrees with the third, which is zero.
+example : basePDigit 2 (3 / 1) (-4) = 0 := by
+  calc
+    basePDigit 2 (3 / 1) (-4) = basePDigit 2 (3 / 1) (-3) :=
+      basePDigit_div_periodic_one 2 1 (by decide) 3 (by decide) 3 (by decide)
+    _ = 0 := by decide +kernel
 
 end MathlibExtTest.NumberTheory.HigherANumbersTowerTauAdjacentDigits
