@@ -20,6 +20,15 @@ import Mathlib.Data.ZMod.Basic
 
 This file defines the square theta series and its integer-power representation counts and proves
 that prime divisibility of a coefficient below the prime is periodic in the exponent.
+
+## References
+
+* Alegri and Christopher, *On Formulas, Recurrences, and Congruences for Representations of
+  Integers as Sums of Squares and Triangular Numbers*, INTEGERS **26** (2026), Article A93,
+  Section 1 and Theorem 3.
+* The proof of `coeff_squareThetaSeries` is moved from
+  `MathlibExt.Combinatorics.Enumerative.Partition.OverpartitionOddSquareRecurrence`, where it
+  was the private coefficient calculation for `overpartitionOdd_square_recurrence`.
 -/
 
 namespace MetaMathlibExt
@@ -48,6 +57,41 @@ public theorem coeff_squareThetaSeries_small :
       PowerSeries.coeff 2 squareThetaSeries = 0 ∧ PowerSeries.coeff 4 squareThetaSeries = 2 := by
   simp only [squareThetaSeries, PowerSeries.coeff_mk]
   decide
+
+open PowerSeries in
+/-- **Coefficients of the square theta series.** The coefficient in degree zero is $1$. In each
+positive degree $n$, the coefficient is $2$ if $n$ is a square and $0$ otherwise. -/
+public theorem coeff_squareThetaSeries (n : ℕ) :
+    squareThetaSeries.coeff n =
+      if n = 0 then 1 else if n ∈ (Finset.Icc 1 n).image (fun m => m ^ 2) then 2 else 0 := by
+  by_cases hn : n = 0
+  · subst n
+    simpa using coeff_squareThetaSeries_small.1
+  rw [ite_eq_right hn, squareThetaSeries, coeff_mk]
+  split_ifs with hs
+  · obtain ⟨m, hm, rfl⟩ := Finset.mem_image.mp hs
+    obtain ⟨hm₁, hm₂⟩ := Finset.mem_Icc.mp hm
+    have hset : ((Finset.Icc (-(↑(m ^ 2) : ℤ)) ↑(m ^ 2)).filter
+        fun x : ℤ => x ^ 2 = ↑(m ^ 2)) = {(m : ℤ), -(m : ℤ)} := by
+      ext x
+      simp only [Finset.mem_filter, Finset.mem_Icc, Nat.cast_pow, sq_eq_sq_iff_eq_or_eq_neg,
+        Finset.mem_insert, Finset.mem_singleton]
+      have hm' : (m : ℤ) ≤ (m : ℤ) ^ 2 := Int.le_self_sq _
+      omega
+    rw [hset]
+    simp [show (m : ℤ) ≠ -(m : ℤ) by omega]
+  · have hset : ((Finset.Icc (-(n : ℤ)) n).filter fun x : ℤ => x ^ 2 = n) = ∅ := by
+      apply Finset.eq_empty_iff_forall_notMem.mpr
+      intro x hx
+      obtain ⟨_, hx⟩ := Finset.mem_filter.mp hx
+      have he : x.natAbs ^ 2 = n := by exact_mod_cast (Int.natAbs_sq x).trans hx
+      refine hs (Finset.mem_image.mpr ⟨x.natAbs, Finset.mem_Icc.mpr ⟨?_, ?_⟩, he⟩)
+      · by_contra! hz
+        simp [show x.natAbs = 0 by omega] at he
+        omega
+      · rw [← he]
+        exact Nat.le_self_pow (by decide) _
+    simp [hset]
 
 /-- **The square theta series is a unit.** The square theta series
 $\theta(q) = \sum_{m \in \mathbb{Z}} q^{m^2}$ is a unit of the ring $\mathbb{Z}[[q]]$ of formal

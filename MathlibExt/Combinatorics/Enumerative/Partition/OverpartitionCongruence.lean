@@ -40,6 +40,69 @@ import Mathlib.FieldTheory.Finite.Basic
 import Mathlib.Analysis.SpecialFunctions.Log.Summable
 import MathlibExt.Analysis.SpecialFunctions.JacobiTripleProduct
 
+/-!
+# Generating functions and a congruence for overpartitions
+
+The generating function that counts all overpartitions times the square of Euler's
+pentagonal series equals the pentagonal series at `X²`. The square theta series is
+reciprocal to the generating function at `-X`. The congruence compares the number
+of overpartitions of `5 * n` with the signed three-square representation count modulo `5`
+for natural numbers `n ≥ 1`.
+
+## References
+
+* Hartosh Singh Bal and Gaurav Bhatnagar, *Glaisher's Divisors and Infinite Products*,
+  Journal of Integer Sequences **27** (2024), Article 24.1.6, Theorem 9, equation (21)
+  (the overpartition product, written here as a quotient of Euler products).
+* Liuquan Wang, *Another Proof of a Conjecture by Hirschhorn and Sellers on Overpartitions*,
+  Journal of Integer Sequences **17** (2014), Article 14.9.8 (the congruence modulo `5`).
+-/
+
+@[expose] public section
+
+namespace Nat
+namespace Overpartition
+
+/-- **Overpartitions as pairs of a multiset and a set.** For every natural number $m$, the number
+of overpartitions of $m$ equals the number of pairs $(P, S)$ in which $P$ is a finite multiset of
+positive integers with sum $m$ and $S$ is a finite set of natural numbers each belonging to $P$. -/
+public lemma natCard_eq_card_subtype (m : ℕ) :
+    Nat.card (Nat.Overpartition m) =
+      Nat.card { p : Multiset ℕ × Finset ℕ //
+        (∀ a ∈ p.1, 0 < a) ∧ p.1.sum = m ∧ ∀ a ∈ p.2, a ∈ p.1 } := by
+  apply Nat.card_congr
+  exact
+    { toFun := fun O =>
+        ⟨(O.toPartition.parts, O.overlines), fun a ha => O.toPartition.parts_pos ha,
+          O.toPartition.parts_sum,
+          fun a ha => Multiset.mem_toFinset.mp (O.overlines_subset ha)⟩
+      invFun := fun p =>
+        { toPartition :=
+            { parts := p.val.1
+              parts_pos := fun {a} ha => p.property.1 a ha
+              parts_sum := p.property.2.1 }
+          overlines := p.val.2
+          overlines_subset := fun a ha =>
+            Multiset.mem_toFinset.mpr (p.property.2.2 a ha) }
+      left_inv := fun O => by
+        obtain ⟨P, S, hsub⟩ := O
+        obtain ⟨M, hpos, hsum⟩ := P
+        apply Nat.Overpartition.ext
+        · apply Nat.Partition.ext
+          rfl
+        · rfl
+      right_inv := fun p => by
+        obtain ⟨⟨M, S⟩, hpos, hsum, hsub⟩ := p
+        apply Subtype.ext
+        apply Prod.ext
+        · rfl
+        · rfl }
+
+end Overpartition
+end Nat
+
+end
+
 section
 
 namespace MetaMathlibExt
@@ -145,14 +208,18 @@ private def opcOverSigma (m : ℕ) :
   left_inv p := by obtain ⟨⟨M, S⟩, hpos, hsum, hsub⟩ := p; rfl
   right_inv q := by obtain ⟨⟨M, hpos, hsum⟩, ⟨S, hsub⟩⟩ := q; rfl
 
-private theorem opc_overpartition_card_eq_coeff_genFun (m : ℕ) :
-    ((Nat.card (opcOver m) : ℕ) : ℤ)
+/-- **Coefficients of the overpartition generating function.** For each natural number $m$,
+counting two choices of overline status for each distinct part size gives the coefficient
+of degree $m$ in the partition generating function with constant weight $2$. -/
+public theorem overpartition_card_eq_coeff_genFun (m : ℕ) :
+    ((Nat.card (Nat.Overpartition m) : ℕ) : ℤ)
       = (Nat.Partition.genFun (fun _ _ ↦ (2 : ℤ))).coeff m := by
   have hfin : ∀ π : m.Partition,
       Finite {s : Finset ℕ // s ⊆ π.parts.toFinset} :=
     fun π => Finite.of_equiv _ (opcSubsetPowerset _)
-  rw [Nat.Partition.coeff_genFun, Nat.card_congr (opcOverSigma m), Nat.card_sigma,
-    Nat.cast_sum]
+  rw [Nat.Overpartition.natCard_eq_card_subtype, Nat.Partition.coeff_genFun]
+  change ((Nat.card (opcOver m) : ℕ) : ℤ) = _
+  rw [Nat.card_congr (opcOverSigma m), Nat.card_sigma, Nat.cast_sum]
   apply Finset.sum_congr rfl
   intro π _
   rw [opc_card_subset π.parts.toFinset, Nat.cast_pow, Nat.cast_two]
@@ -361,7 +428,9 @@ private theorem opc_coeff_theta_cube (n : ℕ) :
     opc_coeff_weight]
   exact e4 n
 
-private theorem opc_genFun_two_mul_pentagonalSeries_sq :
+/-- **Euler-product quotient for overpartitions.** The generating function for all
+overpartitions, multiplied by `E(X)²`, equals `E(X²)`, where `E` is the pentagonal series. -/
+public theorem overpartition_genFun_mul_pentagonalSeries_sq :
     Nat.Partition.genFun (fun _ _ ↦ (2 : ℤ)) * (PowerSeries.pentagonalSeries ℤ) ^ 2
       = PowerSeries.expand 2 two_ne_zero (PowerSeries.pentagonalSeries ℤ) := by
   have hP : HasProd
@@ -1852,7 +1921,7 @@ private theorem opc_theta_mul_rescale_genFun :
     opcTheta * PowerSeries.rescale (-1 : ℤ)
         (Nat.Partition.genFun (fun _ _ ↦ (2 : ℤ))) = 1 := by
   have hmap := congrArg (PowerSeries.rescale (-1 : ℤ))
-    opc_genFun_two_mul_pentagonalSeries_sq
+    overpartition_genFun_mul_pentagonalSeries_sq
   rw [map_mul, map_pow, opc_rescale_expand_two] at hmap
   have hmul := congrArg (opcTheta * ·) hmap
   rw [← mul_assoc, opc_theta_mul_expand_two] at hmul
@@ -2138,7 +2207,9 @@ public theorem overpartition_mul_five_mod_five
       = (Int.castRingHom (ZMod 5)) (PowerSeries.coeff n (opcTheta ^ 3)) := by
     unfold opcPhi5
     rw [← map_pow, PowerSeries.coeff_map]
-  have hN1 := opc_overpartition_card_eq_coeff_genFun (5 * n)
+  have hN1 := overpartition_card_eq_coeff_genFun (5 * n)
+  rw [Nat.Overpartition.natCard_eq_card_subtype] at hN1
+  change ((Nat.card (opcOver (5 * n)) : ℕ) : ℤ) = _ at hN1
   have hN3 := opc_coeff_theta_cube n
   rw [← hN1] at hLHS
   rw [hN3] at hRHS
@@ -2191,47 +2262,6 @@ public theorem overpartition_mul_five_mod_five
   exact (ZMod.intCast_eq_intCast_iff _ _ _).mp hfin
 
 end MetaMathlibExt
-
-namespace Nat
-namespace Overpartition
-
-/-- **Overpartitions as pairs of a multiset and a set.** For every natural number $m$, the number
-of overpartitions of $m$ equals the number of pairs $(P, S)$ in which $P$ is a finite multiset of
-positive integers with sum $m$ and $S$ is a finite set of natural numbers each belonging to $P$. -/
-public lemma natCard_eq_card_subtype (m : ℕ) :
-    Nat.card (Nat.Overpartition m) =
-      Nat.card { p : Multiset ℕ × Finset ℕ //
-        (∀ a ∈ p.1, 0 < a) ∧ p.1.sum = m ∧ ∀ a ∈ p.2, a ∈ p.1 } := by
-  apply Nat.card_congr
-  exact
-    { toFun := fun O =>
-        ⟨(O.toPartition.parts, O.overlines), fun a ha => O.toPartition.parts_pos ha,
-          O.toPartition.parts_sum,
-          fun a ha => Multiset.mem_toFinset.mp (O.overlines_subset ha)⟩
-      invFun := fun p =>
-        { toPartition :=
-            { parts := p.val.1
-              parts_pos := fun {a} ha => p.property.1 a ha
-              parts_sum := p.property.2.1 }
-          overlines := p.val.2
-          overlines_subset := fun a ha =>
-            Multiset.mem_toFinset.mpr (p.property.2.2 a ha) }
-      left_inv := fun O => by
-        obtain ⟨P, S, hsub⟩ := O
-        obtain ⟨M, hpos, hsum⟩ := P
-        apply Nat.Overpartition.ext
-        · apply Nat.Partition.ext
-          rfl
-        · rfl
-      right_inv := fun p => by
-        obtain ⟨⟨M, S⟩, hpos, hsum, hsub⟩ := p
-        apply Subtype.ext
-        apply Prod.ext
-        · rfl
-        · rfl }
-
-end Overpartition
-end Nat
 
 namespace Nat
 
