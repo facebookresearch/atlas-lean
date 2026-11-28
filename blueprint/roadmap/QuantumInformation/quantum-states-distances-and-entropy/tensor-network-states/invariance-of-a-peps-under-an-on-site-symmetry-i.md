@@ -17,6 +17,7 @@ In particular there is no algorithm bringing PEPS tensors to a canonical form fr
 
 - [Projected entangled pair states](projected-entangled-pair-states.md)
 - [Density matrices, pure states and reduced states](../density-matrices-and-fidelity/density-matrices-and-reduced-states.md)
+- [Trace norm and trace distance](../density-matrices-and-fidelity/trace-norm-and-trace-distance.md)
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
