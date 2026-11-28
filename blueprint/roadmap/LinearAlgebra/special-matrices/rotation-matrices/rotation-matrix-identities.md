@@ -18,10 +18,6 @@ $R(-\theta)$, and $R(-\theta) R(\theta) = R(0) = I$; then $\det R(\theta) = \cos
 $R(a)^{\mathsf{T}} R(b) = R(-a) R(b) = R(b - a)$, and
 $e^{i\theta}(x + iy) = (x \cos\theta - y \sin\theta) + i (x \sin\theta + y \cos\theta)$.
 
-## Depends on
-
-- [Real planar rotation matrices](real-planar-rotation-matrices.md)
-
 ## Sources
 
 - J. Su, Y. Lu, S. Pan, A. Murtadha, B. Wen and Y. Liu, "RoFormer: Enhanced Transformer with Rotary Position Embedding", arXiv:2104.09864 (version 5), Section 3.2.1, equations (12)–(13): the rotation matrix and its complex form $e^{im\theta}$, with the inner product as the real part of $z \bar{w}$. The identities themselves are derived here.

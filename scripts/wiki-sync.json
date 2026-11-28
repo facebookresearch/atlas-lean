@@ -90575,6 +90575,7 @@
 "MetaMathlibExt.Matrix.hasNonnegativeMinors_iff_isTotallyNonneg": "94f989c5cfdeadd4",
 "MetaMathlibExt.Matrix.isSemiseparable_of_sss": "2d2dc88ed88fe7b9",
 "MetaMathlibExt.Matrix.planarRotation": "9ebdba7211e2bbd5",
+"MetaMathlibExt.Matrix.planarRotation_identities": "292f3ec7dc8dad1b",
 "MetaMathlibExt.McKayConjecture.Irr'": "a5621bf2b12f3f58",
 "MetaMathlibExt.McKayConjecture.theorem_1_1": "e7e501ce1af0f8f6",
 "MetaMathlibExt.MeinardusHypotheses": "ae85faf9e02ff94e",
