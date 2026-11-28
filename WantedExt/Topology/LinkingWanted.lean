@@ -37,6 +37,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.Topology.ConwayKnotShared
+public import MathlibExt.Topology.Knot.NonIsotopicTwoLinks
 public import Mathlib.Analysis.InnerProductSpace.PiL2
 public import Mathlib.Analysis.Calculus.ContDiff.Basic
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
@@ -84,16 +85,6 @@ orientations, and is invariant under ambient isotopy of the oriented link.
 pullback of a closed 2-form on `ℝ³ \ {0}`.)
 
 See <https://en.wikipedia.org/wiki/Linking_number> for a reference. -/
-/-- **Non-isotopic two-component links exist.** There exist two oriented smooth two-component
-links $L_1$ and $L_2$ in $\mathbb{R}^3$ that are not ambient isotopic as oriented links with
-ordered components: no ambient isotopy of $\mathbb{R}^3$ carries the first component of $L_1$ to
-the first component of $L_2$ and the second component of $L_1$ to the second component of $L_2$,
-each up to an orientation-preserving reparametrization of the circle.
-
-Source: Classical; see https://en.wikipedia.org/wiki/Linking_number. Via
-leanprover/lean-eval@38361be, problem `exists_nonisotopic_link`. -/
-public theorem_wanted exists_nonisotopic_link : ∃ L₁ L₂ : TwoLink, ¬ L₁.Isotopic L₂
-
 end KnotTheory
 
 end MathlibExt.Topology.LinkingWanted
