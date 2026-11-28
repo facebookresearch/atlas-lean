@@ -7,3 +7,4 @@ Selective inference for single-cell RNA-seq when the same counts are used both t
 
 - [Empirical Bayes batch-effect adjustment](empirical-bayes-batch-effect-adjustment/README.md)
 - [Surrogate variable analysis](surrogate-variable-analysis/README.md)
+- [Poisson Binomial Split](poisson-binomial-split.md)
