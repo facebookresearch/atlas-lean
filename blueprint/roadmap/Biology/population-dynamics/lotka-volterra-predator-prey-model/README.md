@@ -10,4 +10,5 @@
 - [Non-equilibrium positive solutions are periodic with a least period](exists-minimal-period.md)
 
 - [Spatial, Allee, tumour, and eco-evolutionary population dynamics](spatial-and-game-population-dynamics/README.md)
+- [Interacting species](interacting-species/README.md)
 - [Stability and competition](stability-and-competition/README.md)
