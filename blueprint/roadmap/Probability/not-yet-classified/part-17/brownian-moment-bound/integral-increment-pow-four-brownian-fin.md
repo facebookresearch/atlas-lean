@@ -1,0 +1,3 @@
+# Integral increment pow four brownian Finite Dimensional Law
+
+`E (x_t - x_s)⁴ = 3 |t - s|²` under the finite-dimensional law.
