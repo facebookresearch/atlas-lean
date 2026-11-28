@@ -25,7 +25,8 @@ import Mathlib.NumberTheory.ZetaValues
 `∑' n : ℕ, z ^ (n + 1) / (n + 1) ^ 2`. It agrees with the standard real
 `Li₂` on `[-1, 1]`, where the series converges. It is not an analytic
 continuation: outside the convergence domain, `tsum` totalization gives `0`.
-The results below are stated only where the series converges.
+The defining identity below holds for all real inputs; the analytic results are restricted to the
+indicated parts of the convergence interval.
 
 ## Main results
 
@@ -54,6 +55,13 @@ real dilogarithm `Li₂`; outside that interval this totalized series is not
 an analytic continuation (`tsum` gives `0` where the series is not summable). -/
 noncomputable def li2PowerSeries (z : ℝ) : ℝ :=
   ∑' n : ℕ, z ^ (n + 1) / (((n + 1 : ℕ)) : ℝ) ^ 2
+
+/-- With the denominator written using real addition, the totalized dilogarithm power series at
+`z : ℝ` is $\sum_{n=0}^{\infty} z^{n+1}/(n+1)^2$, interpreted as `0` when the series is not
+summable. -/
+theorem li2PowerSeries_eq_tsum (z : ℝ) :
+    li2PowerSeries z = ∑' n : ℕ, z ^ (n + 1) / ((n : ℝ) + 1) ^ 2 := by
+  simp only [li2PowerSeries, Nat.cast_add, Nat.cast_one]
 
 private theorem summable_li2PowerSeries_term_of_abs_lt_one {z : ℝ} (hz : |z| < 1) :
     Summable (fun n : ℕ => z ^ (n + 1) / (((n + 1 : ℕ)) : ℝ) ^ 2) := by
