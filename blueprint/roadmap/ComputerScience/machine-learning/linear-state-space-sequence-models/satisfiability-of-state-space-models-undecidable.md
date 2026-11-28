@@ -8,7 +8,7 @@ $$
 h_t = \mathit{gate}(x_t)\, h_{t-1} + \mathit{inc}(x_t), \qquad z_t = \phi(h_t, x_t) \qquad (1 \le t \le k).
 $$
 
-An *SSM* $\mathcal{S} = (\mathit{emb}, l_1, \dots, l_L, \mathit{out})$ over a finite alphabet $\Sigma$ embeds a word $w = a_1 \cdots a_k$ letterwise by $\mathit{emb} : \Sigma \to \mathbb{R}^d$, applies the layers $l_1, \dots, l_L$ in turn, and outputs $\mathcal{S}(w) = \mathit{out}(z^L_k)$, where $\mathit{out}$ is a feedforward ReLU network applied to the last vector of the last layer; $\mathcal{S}$ *accepts* $w$ if $\mathcal{S}(w) = 1$. All weights have finite representations. The SSM is *time-invariant* if every gate is constant, $\mathit{gate}(x) = A$, and *diagonal* if every $\mathit{gate}(x)$ is a diagonal matrix. For a class $\mathcal{C}$ of SSMs, $\mathrm{ssmSAT}[\mathcal{C}]$ asks, given $\mathcal{S} \in \mathcal{C}$, whether $\mathcal{S}$ accepts some word; in $\mathrm{ssmSAT}^{\mathrm{fix}}_{\log}[\mathcal{C}]$ the model is evaluated on $w$ in fixed-width arithmetic with $O(\log \max(|\Sigma|, |w|))$ bits.
+An *SSM* $\mathcal{S} = (\mathit{emb}, l_1, \dots, l_L, \mathit{out})$ over a finite alphabet $\Sigma$ embeds a word $w = a_1 \cdots a_k$ letterwise by $\mathit{emb} : \Sigma \to \mathbb{R}^d$, applies the layers $l_1, \dots, l_L$ in turn, and outputs $\mathcal{S}(w) = \mathit{out}(z^L_k)$, where $\mathit{out}$ is a feedforward ReLU network applied to the last vector of the last layer; $\mathcal{S}$ *accepts* $w$ if $\mathcal{S}(w) = 1$. The source assumes only that all weights and constants of an SSM have a finite representation; its reductions use rational weights (for example a gate that shifts a binary expansion by two positions, a factor $1/4$), so the undecidability holds for SSMs whose weights are rational numbers given in binary. The SSM is *time-invariant* if every gate is constant, $\mathit{gate}(x) = A$, and *diagonal* if every $\mathit{gate}(x)$ is a diagonal matrix. For a class $\mathcal{C}$ of SSMs, $\mathrm{ssmSAT}[\mathcal{C}]$ asks, given $\mathcal{S} \in \mathcal{C}$, whether $\mathcal{S}$ accepts some word; in $\mathrm{ssmSAT}^{\mathrm{fix}}_{\log}[\mathcal{C}]$ the model is evaluated on $w$ in fixed-width arithmetic with $O(\log \max(|\Sigma|, |w|))$ bits.
 
 **Theorem (Alsmann and Lange).** For the class of SSMs that are both time-invariant and diagonal, $\mathrm{ssmSAT}$ and $\mathrm{ssmSAT}^{\mathrm{fix}}_{\log}$ are undecidable.
 
@@ -21,6 +21,7 @@ The same paper shows that bounding the context length or the bit-width makes the
 ## Proof depends on
 
 - [Two-counter machines are universal](../../../TheoryOfComputation/equivalence-of-models/counter-machines/two-counter-machines-are-universal.md)
+- [Halting is undecidable](../../../TheoryOfComputation/computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halts.md)
 
 ## Expansion
 
