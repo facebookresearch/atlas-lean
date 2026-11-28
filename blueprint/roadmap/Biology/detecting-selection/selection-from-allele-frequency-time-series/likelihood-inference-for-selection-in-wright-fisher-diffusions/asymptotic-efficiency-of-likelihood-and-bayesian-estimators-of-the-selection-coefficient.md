@@ -10,14 +10,14 @@ $$\frac{d\mathbb P^{(s')}_\nu}{d\mathbb P^{(s)}_\nu}(X^T)=\frac{\nu(s',X_0)}{\nu
 
 The maximum likelihood estimator is $\hat s_T=\arg\sup_{s\in\mathcal S}d\mathbb P^{(s)}_\nu/d\mathbb P^{(s_0)}_\nu$. The Bayesian estimator $\tilde s_T$ minimizes the integrated risk $\int_{\mathcal S}\mathbb E^{(s)}_\nu[\ell(\sqrt T(\bar s_T-s))]\,p(s)\,ds$. Here $p$ is a continuous prior with a polynomial majorant, and $\ell$ is an even, nonnegative loss with convex sublevel sets, continuous at $0$, $\ell(0)=0$, not identically zero, and with a polynomial majorant.
 
-**Theorem.** Assume the initial densities $\nu(s,\cdot)$, with respect to a common dominating measure $\lambda$ on $[0,1]$, satisfy, for some constants $C_1,C_2>0$:
+**Theorem.** Assume the initial densities $\nu(s,\cdot)$, with respect to a common dominating measure $\lambda$ on $[0,1]$, satisfy:
 
 - $\lim_{\varepsilon\to0}\nu(s+\varepsilon,x)/\nu(s,x)=1$ for all $x\in[0,1]$;
-- for every $M\ge2$ and every $u$ with $s+u/\sqrt T\in\mathcal S$,
+- for every $M\ge2$ there is a constant $C_1 = C_1(M) > 0$ such that for every $u$ with $s+u/\sqrt T\in\mathcal S$,
 
 $$\mathbb P^{(s)}_\nu\Bigl[\log\frac{\nu(s+u/\sqrt T,X_0)}{\nu(s,X_0)}>\tfrac1{48}\,\mathbb E^{(s)}[\xi(1-\xi)]\,|u|^2\Bigr]\le\frac{C_1}{|u|^M};$$
 
-- for every $R>0$ and all $u,v$ with $s+u/\sqrt T,\ s+v/\sqrt T\in\mathcal S$ and $|u|,|v|<R$,
+- for every $R>0$ there is a constant $C_2 = C_2(R) > 0$ such that for all $u,v$ with $s+u/\sqrt T,\ s+v/\sqrt T\in\mathcal S$ and $|u|,|v|<R$,
 
 $$\int_0^1\Bigl|\nu\bigl(s+u/\sqrt T,x\bigr)^{1/2}-\nu\bigl(s+v/\sqrt T,x\bigr)^{1/2}\Bigr|^2\lambda(dx)\le C_2|u-v|^2 .$$
 
