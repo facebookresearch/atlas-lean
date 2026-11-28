@@ -25,6 +25,8 @@ Erdős-problem statements: the number of ordered pairs `(a, b) ∈ A × A` with
 
 * `AdditiveCombinatorics.orderedRepresentationCount_pos_iff`: positivity holds
   iff an ordered representation exists.
+* `AdditiveCombinatorics.orderedRepresentationCount_coe_finset`: the count on a finite set is
+  the cardinality of a computable filter of the antidiagonal.
 -/
 
 @[expose] public section
@@ -60,5 +62,15 @@ public theorem orderedRepresentationCount_pos_iff {A : Set ℕ} {n : ℕ} :
   · rintro ⟨a, ha, b, hb, hsum⟩
     exact ⟨(a, b), Finset.mem_filter.mpr
       ⟨Finset.mem_antidiagonal.mpr hsum, ha, hb⟩⟩
+
+/-- For a finite set of natural numbers, the ordered representation count is the cardinality
+of the antidiagonal filtered by membership of both summands in the set. -/
+public theorem orderedRepresentationCount_coe_finset (A : Finset ℕ) (n : ℕ) :
+    orderedRepresentationCount (A : Set ℕ) n =
+      ((Finset.antidiagonal n).filter (fun p => p.1 ∈ A ∧ p.2 ∈ A)).card := by
+  unfold orderedRepresentationCount
+  congr 1
+  ext p
+  simp
 
 end AdditiveCombinatorics

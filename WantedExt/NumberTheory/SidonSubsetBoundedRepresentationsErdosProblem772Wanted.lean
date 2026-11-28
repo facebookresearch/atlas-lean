@@ -20,6 +20,7 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import MathlibExt.Combinatorics.Additive.RepresentationCount
 public import MathlibExt.Combinatorics.Additive.Sidon
+public import MathlibExt.Combinatorics.Additive.SidonSubsetBoundedRepresentations
 
 @[expose] public section
 
@@ -39,32 +40,12 @@ elements is admissible, so that case is vacuous. Compared with the formal-conjec
 `ErdosProblems/772.lean` (equivalent; no code imported).
 -/
 
-/-- Erdős Problem 772, first question: for every `k ≥ 1`, `H_k(n) / √n → ∞`, where
-`‖1_A ∗ 1_A‖_∞ ≤ k` bounds `AdditiveCombinatorics.orderedRepresentationCount` (ordered pairs). -/
-def sidonSubsetBeyondSqrt : Prop :=
-  ∀ k : ℕ, 1 ≤ k → ∀ C : ℝ, ∀ᶠ n : ℕ in Filter.atTop, ∀ A : Finset ℕ, A.card = n →
-    (∀ m, AdditiveCombinatorics.orderedRepresentationCount (A : Set ℕ) m ≤ k) →
-      ∃ S ⊆ A, (S : Set ℕ).IsSidon ∧ C * Real.sqrt n ≤ S.card
-
 /-- Erdős Problem 772, second question: for every `k ≥ 1` some `c > 0` has `H_k(n) > n^{1/2 + c}`
 for all large `n`. -/
 def sidonSubsetPowerGain : Prop :=
   ∀ k : ℕ, 1 ≤ k → ∃ c : ℝ, 0 < c ∧ ∀ᶠ n : ℕ in Filter.atTop, ∀ A : Finset ℕ, A.card = n →
     (∀ m, AdditiveCombinatorics.orderedRepresentationCount (A : Set ℕ) m ≤ k) →
       ∃ S ⊆ A, (S : Set ℕ).IsSidon ∧ (n : ℝ) ^ ((1 : ℝ) / 2 + c) < S.card
-
-/--
-Resolved true: Alon and Erdős proved `H_k(n) ≫_k n^{2/3}`, so `H_k(n) / √n → ∞`;
-erdosproblems.com/772 lists the problem as proved. Source: T. F. Bloom, Erdős Problems, Problem
-#772, https://www.erdosproblems.com/772 (status PROVED); resolution: N. Alon and P. Erdős, An
-application of graph theory to additive number theory, European J. Combin. 6 (1985), 201-203,
-Theorem 1: every B_2^{(k)} sequence of n terms (at most k representations of each integer as a sum
-of two distinct terms) is a union of C_2(k) n^{1/3} Sidon (B_2) sequences, so it has a Sidon
-subsequence of c_4(k) n^{2/3} terms (inequality (4)); a set with ‖1_A ∗ 1_A‖_∞ ≤ k is a B_2^{(k)}
-sequence,
-https://web.math.princeton.edu/~nalon/PDFS/Publications2/An%20application%20of%20graph%20theory%20to%20additive%20number%20theory.pdf.
--/
-public theorem_wanted sidonSubsetBeyondSqrt_holds : sidonSubsetBeyondSqrt
 
 /--
 Resolved true: Alon and Erdős proved `H_k(n) ≫_k n^{2/3}`; erdosproblems.com/772 answers both
