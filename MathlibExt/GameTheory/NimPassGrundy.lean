@@ -41,14 +41,17 @@ namespace MetaMathlibExt
 @[expose] public section
 
 /-- **Grundy number of a chocolate bar with a height function.** Let $s \in \mathbb{N}$ and
-$F : \mathbb{N}^s \to \mathbb{N}$. The $(s + 1)$-dimensional chocolate bar
-$\mathrm{CB}(F, x_1, \dots, x_s, y)$ has, at each $u = (u_1, \dots, u_s)$ with $u_t \le x_t$ for
-all $t$, a column of height $\min(F(u), y) + 1$. A move either lowers one coordinate $x_i$ to some
-$a < x_i$, which clamps the height to $\min(F(x'), y)$ for the new position $x'$, or lowers the
-height $y$ to some $v < y$. The Grundy number of $\mathrm{CB}(F, x_1, \dots, x_s, y)$ is the mex
-(least natural number not attained) of the Grundy numbers of the positions reachable in one
-move. It is defined for all $x \in \mathbb{N}^s$ and $y \in \mathbb{N}$; the bars themselves are
-the positions with $y \le F(x)$.
+$F : \mathbb{N}^s \to \mathbb{N}$. In the formal game at $(x, y)$, a move either lowers one
+coordinate $x_i$ to some $a < x_i$, clamping the height to $\min(F(x'), y)$ for the new position
+$x'$, or lowers the height $y$ to some $v < y$. The value is the mex (least natural number not
+attained) of the values of the positions reachable in one move. This recursion is defined for
+arbitrary $F$, $x \in \mathbb{N}^s$, and $y \in \mathbb{N}$.
+
+When $F$ is monotone for the coordinatewise order and $y \le F(x)$, the value is the Grundy
+number of the $(s + 1)$-dimensional chocolate bar $\mathrm{CB}(F, x_1, \dots, x_s, y)$, whose
+column at $u \le x$ has height $\min(F(u), y) + 1$. After a coordinate cut to $x'$, monotonicity
+gives $F(u) \le F(x')$ for each remaining column $u \le x'$, so the clamp leaves those columns
+unchanged. For nonmonotone $F$, a formal move need not agree with a geometric cut.
 
 Source: Ryohei Miyadera, Hikaru Manabe and Aditi Singh, *Generalizations of
 Two-Dimensional and Three-Dimensional Chocolate Bar Games*, INTEGERS 25 (2025),
@@ -70,11 +73,10 @@ decreasing_by
   · omega
 
 /-- **Mex recursion for chocolate bars with a height function.** Let $s \in \mathbb{N}$ and
-$F : \mathbb{N}^s \to \mathbb{N}$, and write $G(x, y)$ for the Grundy number of the chocolate bar
-$\mathrm{CB}(F, x_1, \dots, x_s, y)$. For all $x \in \mathbb{N}^s$ and $y \in \mathbb{N}$,
-$G(x, y)$ is the least natural number $m$ such that $m \ne G(x', \min(F(x'), y))$ for every $x'$
-obtained from $x$ by lowering one coordinate $x_i$ to some $u < x_i$, and $m \ne G(x, v)$ for
-every $v < y$.
+$F : \mathbb{N}^s \to \mathbb{N}$, and write $G(x, y)$ for `heightChocolateBarGrundy F x y`.
+For all $x \in \mathbb{N}^s$ and $y \in \mathbb{N}$, $G(x, y)$ is the least natural number $m$
+such that $m \ne G(x', \min(F(x'), y))$ for every $x'$ obtained from $x$ by lowering one
+coordinate $x_i$ to some $u < x_i$, and $m \ne G(x, v)$ for every $v < y$.
 
 Source: Ryohei Miyadera, Hikaru Manabe and Aditi Singh, *Generalizations of
 Two-Dimensional and Three-Dimensional Chocolate Bar Games*, INTEGERS 25 (2025),
