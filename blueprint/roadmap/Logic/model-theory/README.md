@@ -21,4 +21,3 @@ Relations between formal theories and their structures: first-order languages of
 - [Upward Löwenheim–Skolem theorem](upward-lowenheim-skolem-theorem.md)
 - [Quantifier elimination for Presburger arithmetic](quantifier-elimination-for-presburger-arithmetic.md)
 - [A CH obstruction at the countable Hanf threshold](ch-hanf-categoricity-threshold-obstruction.md)
-- [Joint embedding for hereditary classes](joint-embedding-for-hereditary-classes/README.md)
