@@ -41,8 +41,9 @@ its projections onto the schemes (`joinProjections`).
   dependency-preserving (`DependencyPreserving`: `F` is derivable from the projections of the
   derivable dependencies onto the schemes).
 * **Minimal covers and third normal form**: `IsMinimalCover F G` (single-attribute right sides,
-  equivalent to `F`, no redundant dependency, no extraneous left attribute); `minimalCover l
-  attrs` computes one (`isMinimalCover_minimalCover`). `Is3NF F S`: every nontrivial `X → a`
+  equivalent to `F`, no redundant dependency, no extraneous left attribute); when `attrs` lists
+  every attribute, `minimalCover l attrs` computes one (`isMinimalCover_minimalCover`).
+  `Is3NF F S`: every nontrivial `X → a`
   derivable from `F` inside `S` has `X` a superkey of `S` or `a` in a key of `S` (`IsSchemeKey`,
   `IsPrime`). `is3NF_of_mem_synthesize`: synthesis from a minimal cover and a candidate key gives
   schemes in third normal form; `synthesize_correct` packages Abiteboul–Hull–Vianu Theorem
@@ -58,6 +59,8 @@ its projections onto the schemes (`joinProjections`).
   1979 (adding a key scheme makes the synthesis lossless).
 * S. Abiteboul, R. Hull and V. Vianu, *Foundations of Databases*, Addison-Wesley, 1995,
   Section 11.2 (normal forms).
+* D. Maier, _Minimum covers in the relational database model_, JACM 27(4), 1980, 664–674
+  (computing minimal covers; credited by Abiteboul–Hull–Vianu for Exercise 11.16).
 -/
 
 @[expose] public section
@@ -729,7 +732,9 @@ def Is3NF (F : Finset (FD A)) (S : Finset A) : Prop :=
 
 /-- **Minimal cover.** A finite set $G$ of functional dependencies is a minimal cover of $F$ when
 (a) every dependency of $G$ has a single attribute on its right side, (b) $G$ is equivalent to
-$F$, (c) no dependency $g$ of $G$ is derivable from the other dependencies of $G$, and (d) for
+$F$, (c) no dependency $g$ of $G$ is derivable from the other dependencies of $G$, (together
+with (b) this is Abiteboul–Hull–Vianu's form: no proper subset of $G$ implies $F$; see
+`IsMinimalCover.not_derives_of_ssubset`), and (d) for
 every $X \to A$ in $G$, $F$ derives $Y \to A$ for no proper subset $Y \subsetneq X$
 (Abiteboul–Hull–Vianu, Section 11.2). -/
 def IsMinimalCover (F G : Finset (FD A)) : Prop :=
@@ -742,23 +747,6 @@ omit [Fintype A] [DecidableEq D] in
 private theorem Derives.of_subset {F H : Finset (FD A)} (h : F ⊆ H) {f : FD A}
     (hder : Derives F f) : Derives H f :=
   Derives.of_forall (fun _ hg => .mem (h hg)) hder
-
-omit [Fintype A] [DecidableEq D] in
-private theorem Derives.of_subset_left {F : Finset (FD A)} {X X' Y : Finset A}
-    (h : X ⊆ X') (hder : Derives F ⟨X, Y⟩) : Derives F ⟨X', Y⟩ :=
-  Derives.trans (Derives.refl h) hder
-
-omit [Fintype A] [DecidableEq D] in
-private theorem derives_biUnion {F : Finset (FD A)} {X : Finset A} {ι : Type*}
-    (s : Finset ι) (g : ι → Finset A) (h : ∀ i ∈ s, Derives F ⟨X, g i⟩) :
-    Derives F ⟨X, s.biUnion g⟩ := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => exact Derives.refl (Finset.empty_subset _)
-  | insert i s hi ih =>
-    rw [Finset.biUnion_insert]
-    exact Derives.union (h i (Finset.mem_insert_self i s))
-      (ih fun j hj => h j (Finset.mem_insert_of_mem hj))
 
 omit [Fintype A] [DecidableEq D] in
 /-- Scheme keys are the superkeys of the scheme minimal under single removals. -/
@@ -858,11 +846,12 @@ theorem IsMinimalCover.not_derives_of_ssubset {F G : Finset (FD A)} (h : IsMinim
     simp only [Finset.mem_erase]
     exact ⟨fun hxg => hgG' (hxg ▸ hx), hG'.subset hx⟩
   have herase : Derives (G.erase g) g :=
-    Derives.of_forall (fun _ hf => .mem (hsub hf)) hG'g
+    Derives.of_subset hsub hG'g
   exact h.2.2.1 g hgG herase
 
-/-- **Splitting right sides.** Each dependency $X \to Y$ of the list $l$ is replaced by the
-dependencies $X \to \{a\}$ for the attributes $a \in Y$, taken in the order of the list `attrs`. -/
+/-- **Splitting right sides.** Each dependency `X → Y` of the list `l` is replaced by the
+dependencies `X → {a}` for the attributes `a` of `Y` that occur in `attrs`, in their order
+there, once per occurrence. An attribute of `Y` missing from `attrs` is dropped. -/
 def splitRhs (attrs : List A) (l : List (FD A)) : List (FD A) :=
   l.flatMap fun g => (attrs.filter (· ∈ g.rhs)).map fun a => (⟨g.lhs, {a}⟩ : FD A)
 
@@ -884,7 +873,10 @@ def removeRedundant : List (FD A) → List (FD A) → List (FD A)
 
 /-- **Minimal-cover algorithm.** Split right sides into single attributes, remove extraneous left
 attributes (tested against the input dependencies, in the order of `attrs`), then remove redundant
-dependencies in list order (Abiteboul–Hull–Vianu, Exercise 11.16). -/
+dependencies in list order (Abiteboul–Hull–Vianu, Exercise 11.16). When `attrs` lists every
+attribute, the result is a minimal cover of `l` (`isMinimalCover_minimalCover`). A right-side
+attribute missing from `attrs` is dropped in the splitting step, and the result need not be
+equivalent to `l`. -/
 def minimalCover (l : List (FD A)) (attrs : List A) : List (FD A) :=
   removeRedundant []
     ((splitRhs attrs l).map fun g => (⟨reduceLhs l.toFinset g.rhs attrs g.lhs, g.rhs⟩ : FD A))
@@ -1110,14 +1102,9 @@ theorem isMinimalCover_minimalCover (l : List (FD A)) {attrs : List A}
             Derives Lred.toFinset ⟨reduceLhs l.toFinset {a} attrs X, {a}⟩ :=
           Derives.mem hMem
         exact Derives.trans (Derives.refl hSub) hDerRed
-      have hUnion :
-          Derives Lred.toFinset ⟨X, Y.biUnion (fun a => {a})⟩ :=
-        derives_biUnion Y (fun a => {a}) hEach
-      have hY : Y.biUnion (fun a => {a}) = Y := by
-        ext b
-        simp
-      rw [hY] at hUnion
-      exact hUnion
+      refine derives_iff_subset_attrClosure.mpr ?_
+      intro a ha
+      exact mem_attrClosure.mpr (hEach a ha)
     have hR_derives_Lred : ∀ g ∈ Lred.toFinset,
         Derives (removeRedundant [] Lred).toFinset g := by
       intro g hg
@@ -1145,7 +1132,8 @@ theorem isMinimalCover_minimalCover (l : List (FD A)) {attrs : List A}
   exact ⟨hA, ⟨hB1, hB2⟩, hC, hD⟩
 
 set_option linter.unusedFintypeInType false in
-/-- **Every finite set of functional dependencies has a minimal cover.** -/
+/-- **Every finite set of functional dependencies over a finite attribute type has a minimal
+cover.** -/
 theorem exists_isMinimalCover (F : Finset (FD A)) :
     ∃ G : List (FD A), IsMinimalCover F G.toFinset := by
   have hattrs : ∀ a : A, a ∈ (Finset.univ : Finset A).toList :=
@@ -1207,7 +1195,9 @@ theorem is3NF_of_mem_synthesize {F : Finset (FD A)} {G : List (FD A)}
 
 /-- **Correctness of 3NF synthesis** (Abiteboul–Hull–Vianu, Theorem 11.2.14): from a minimal cover
 `G` of `F` and a candidate key `K`, the synthesized schemes are in third normal form, the
-decomposition preserves dependencies, and it is lossless. -/
+decomposition preserves dependencies, and it is lossless. The implemented `synthesize` always
+adds the key scheme and has no universe-spanning shortcut; the three guarantees are proved for
+this variant. -/
 theorem synthesize_correct {F : Finset (FD A)} {G : List (FD A)}
     (hG : IsMinimalCover F G.toFinset) {K : Finset A} (hK : IsCandidateKey F K) :
     (∀ S ∈ synthesize G K, Is3NF F S) ∧ DependencyPreserving F (synthesize G K) ∧

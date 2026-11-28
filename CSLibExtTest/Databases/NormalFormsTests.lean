@@ -30,8 +30,8 @@ Attributes `A, B, C = 0, 1, 2`, values natural numbers.
   nothing on `AB`, whose decomposition into `A` and `B` is lossy.
 * No BCNF decomposition of `Fdep` preserves dependencies (Abiteboul–Hull–Vianu, Example 11.2.10).
 * Minimal covers and 3NF synthesis: a superkey as the key scheme, a non-minimal cover, or a wide
-  right side breaks third normal form; `minimalCover` repairs the cover, and synthesis from its
-  output is in third normal form.
+  right side can break third normal form; `minimalCover` repairs the cover, and synthesis
+  from its output is in third normal form.
 -/
 
 @[expose] public section
@@ -281,4 +281,16 @@ example : ∀ S ∈ synthesize (minimalCover lchain (List.finRange 3))
     (findKey lchain.toFinset (List.finRange 3)), Is3NF lchain.toFinset S :=
   fun _ hS => is3NF_of_mem_synthesize (isMinimalCover_minimalCover _ List.mem_finRange)
     (findKey_isCandidateKey _ List.mem_finRange) hS
+
+-- An attribute missing from `attrs` is dropped: with `attrs = [0]`, the dependency `A → B`
+-- disappears entirely, so the output is not a cover of the input.
+example : minimalCover ([⟨{0}, {1}⟩] : List (FD (Fin 3))) [0] = [] := by decide
+
+-- Left reduction is visible here: without it the output would keep `AB → C`.
+example : minimalCover [⟨{0}, {1}⟩, ⟨{0, 1}, {2}⟩] (List.finRange 3) =
+    [⟨{0}, {1}⟩, ⟨{0}, {2}⟩] := by decide
+
+-- Third normal form without BCNF: for `Fdep`, every attribute is prime (the keys are `AB` and
+-- `AC`), so the universal scheme is in 3NF although `C → B` breaks BCNF.
+example : Is3NF Fdep Finset.univ ∧ ¬ IsBCNF Fdep Finset.univ := by decide
 end Cslib.Databases.NormalFormsTests
