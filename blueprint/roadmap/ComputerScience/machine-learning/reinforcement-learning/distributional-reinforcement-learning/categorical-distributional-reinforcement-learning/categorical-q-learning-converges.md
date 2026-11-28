@@ -1,0 +1,33 @@
+# Sample-based categorical Q-learning converges
+
+Under the conditions of categorical evaluation, if sampled targets stay within the grid interval and the optimal policy is unique, categorical Q-learning with mixture updates converges almost surely. Then its limit has the optimal policy as its greedy policy.
+
+Fix a grid $z_1 < z_2 < \dots < z_K$ with $K \ge 2$. Let $\mathsf{p}$ be a reward–transition kernel with $M_1 < \infty$ and $\gamma \in [0,1)$, and let $q^*$ be the fixed point of the expected optimality map from the page on [means under optimality operators](../distributional-control/optimality-operator-means-contract.md). Assume $q^*$ has a unique maximizing action $\pi^*(x)$ at every state, and view $\pi^*$ as a deterministic stochastic policy. Run the [categorical algorithm](../categorical-distributional-reinforcement-learning/categorical-evaluation-with-mixture-updates.md) in its Q-learning variant with initial laws supported in $[z_1, z_K]$ and step sizes $\alpha_t(x,a) \in [0,1]$ satisfying the Robbins–Monro conditions. Assume also that every unprojected target $(f_{r_t,\gamma})_\# \eta_t^{(x_{t+1}, a^*_t)}$ is supported in $[z_1, z_K]$ almost surely. Then almost surely $\eta_t$ converges in the [supremum Cramér metric](../categorical-distributional-reinforcement-learning/cramer-distance.md) to a limit $\eta^*_{\mathcal{C}}$, every [greedy policy](../distributional-control/greedy-policies-for-return-distributions.md) for $\eta^*_{\mathcal{C}}$ equals $\pi^*$, and $\eta^*_{\mathcal{C}}$ is the [fixed point of $\Pi_{\mathcal{C}} \mathcal{T}^{\pi^*}$](../categorical-distributional-reinforcement-learning/projected-categorical-operator-fixed-point.md).
+
+## Depends on
+
+- [Means under a distributional optimality operator contract](../distributional-control/optimality-operator-means-contract.md)
+- [Sample-based categorical evaluation and Q-learning with mixture updates](../categorical-distributional-reinforcement-learning/categorical-evaluation-with-mixture-updates.md)
+- [Cramér distance](../categorical-distributional-reinforcement-learning/cramer-distance.md)
+- [Greedy policies for a return-distribution function](../distributional-control/greedy-policies-for-return-distributions.md)
+- [The projected categorical operator is a √γ-contraction with a unique fixed point](../categorical-distributional-reinforcement-learning/projected-categorical-operator-fixed-point.md)
+- [Finite MDP with a joint reward and next-state kernel](../return-distributions-and-policy-evaluation/reward-and-transition-kernel-mdp.md)
+
+## Proof depends on
+
+- [Sample-based categorical policy evaluation converges](../categorical-distributional-reinforcement-learning/categorical-policy-evaluation-converges.md)
+- [The categorical projection preserves the mean on the grid interval](../categorical-distributional-reinforcement-learning/categorical-projection-preserves-the-mean.md)
+- [Cramér distance](../categorical-distributional-reinforcement-learning/cramer-distance.md)
+
+## Expansion
+
+**Missing prerequisite.** The proof needs the almost-sure convergence of discounted tabular Q-learning: in a finite MDP with $\gamma < 1$ and bounded rewards, on a filtered probability space where the pair $(x_t, a_t)$ and the step sizes $\alpha_t(x,a) \in [0,1]$ (zero off $(x_t, a_t)$) are $\mathcal{F}_t$-measurable, $(r_t, x_{t+1})$ has conditional law $\mathsf{p}(\cdot \mid x_t, a_t)$ given $\mathcal{F}_t$ and is $\mathcal{F}_{t+1}$-measurable, and the Robbins–Monro conditions hold at every pair almost surely, the Q-values updated by $Q_{t+1}(x_t, a_t) = (1 - \alpha_t) Q_t(x_t, a_t) + \alpha_t (r_t + \gamma \max_a Q_t(x_{t+1}, a))$, other entries unchanged, converge to $q^*$ almost surely (Watkins and Dayan; Tsitsiklis). That theorem is only an item of a node still to expand ([tabular Q-learning and TD(0) converge](../../tabular-q-learning-and-td-converge.md)), so it is not linked as a prerequisite.
+
+**Proof given that theorem.** The support assumption and [mean preservation](../categorical-distributional-reinforcement-learning/categorical-projection-preserves-the-mean.md) make the means $Q_t(x,a) = \int z \, \eta_t^{(x,a)}(dz)$ follow exactly the Q-learning recursion with the same samples and step sizes; realized rewards are bounded because the targets stay in $[z_1, z_K]$. So $Q_t \to q^*$ almost surely, and since the action gaps of $q^*$ are positive and finite in number, the greedy action $a^*_t$ equals $\pi^*(x_{t+1})$ for all $t$ beyond some random time $N$. For a fixed $k$, run alongside a $\pi^*$-evaluation of the same algorithm from time $k$, started at $\eta_k$ and driven by the same pairs, step sizes and sampled transitions, with next action $\pi^*(x_{t+1})$. It is an evaluation run for the filtration $(\mathcal{F}_{k+s})_{s \ge 0}$: its initial laws are $\mathcal{F}_k$-measurable and supported in $[z_1, z_K]$, its pairs and step sizes are predictable, its samples are drawn conditionally as the algorithm requires, and its next action is a deterministic function of $x_{t+1}$. By [categorical evaluation convergence](../categorical-distributional-reinforcement-learning/categorical-policy-evaluation-converges.md), applied from time $k$, it converges almost surely to the fixed point $\eta_{\mathcal{C}}$ of $\Pi_{\mathcal{C}} \mathcal{T}^{\pi^*}$. On $\{N \le k\}$ it coincides with the Q-learning run. Since $\mathbb{P}(N \le k) \uparrow 1$, $\eta_t \to \eta_{\mathcal{C}}$ almost surely. Finally $|m(\nu) - m(\nu')| \le \int |F_\nu - F_{\nu'}| \le (z_K - z_1)^{1/2} \ell_2(\nu, \nu')$ for laws in $[z_1, z_K]$, so the limit's means are $\lim Q_t = q^*$ and its greedy policy is $\pi^*$.
+
+Rowland and coauthors instead couple the Q-learning run with an evaluation run through independent sampled operators and bound $\bar \ell_2^2$ between them by $(1 - \alpha(1 - \sqrt{\gamma}))^2$ per step; the restart argument above reaches the same conclusion with the evaluation theorem alone. Their statement names only "some limit"; their proof identifies it as $\eta_{\mathcal{C}}$ for $\pi^*$, as stated here.
+
+## Sources
+
+- M. Rowland, M. G. Bellemare, W. Dabney, R. Munos and Y. W. Teh, *An Analysis of Categorical Distributional Reinforcement Learning*, Proceedings of the 21st International Conference on Artificial Intelligence and Statistics (AISTATS 2018); numbers from arXiv:1802.08163v1, <https://arxiv.org/abs/1802.08163v1>: Section 4.3, Theorem 2, proved in Appendix C.
+- C. J. C. H. Watkins and P. Dayan, *Technical note: Q-learning*, Machine Learning 8 (1992) 279–292, the Theorem of Section 2. <http://www.gatsby.ucl.ac.uk/~dayan/papers/cjch.pdf>
