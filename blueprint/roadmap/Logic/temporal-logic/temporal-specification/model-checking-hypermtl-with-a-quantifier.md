@@ -29,7 +29,7 @@ None.
 
 ## Expansion
 
-The proofs reduce the halting problem for deterministic channel machines, finite automata with one unbounded FIFO channel, which is undecidable (Brand and Zafiropulo). The model generates candidate executions, one trace writing messages and another reading them, and a formula with one alternation uses the timestamps to match each read with an earlier write of the same message in FIFO order; in the synchronous semantics a single clock and an extra trace quantifier recreate the matching. A good expansion links a page for the undecidability of halting for deterministic channel machines, which has no page yet.
+The proofs reduce the halting problem for deterministic channel machines, finite automata with one unbounded FIFO channel, which is undecidable (Brand and Zafiropulo). The model generates candidate executions, one trace writing messages and another reading them, and a formula with one alternation uses the timestamps to match each read with an earlier write of the same message in FIFO order; in the synchronous semantics a single clock and an extra trace quantifier recreate the matching. A good expansion links a page for the undecidability of halting for deterministic channel machines.
 
 ## Sources
 

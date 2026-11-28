@@ -8,10 +8,13 @@ Under synchronous team semantics, model checking LTL extended with inclusion ato
 2. model checking TeamLTL$(\subseteq, \varovee, \mathsf A)$ is $\Sigma^1_1$-hard, already for formulas with a single occurrence of $\mathsf A$ (Theorem 3);
 3. the satisfiability problems of these two logics are $\Sigma^0_1$-hard and $\Sigma^1_1$-hard, respectively (Corollary 4), and it is undecidable whether a TeamLTL$(\subseteq, \varovee)$ formula is $1$-coherent, that is, holds at a team $(T, i)$ exactly when it holds at $(S, i)$ for every $S \subseteq T$ with $|S| \le 1$ (Definition 7, Theorem 12).
 
+Here a set of natural numbers is $\Sigma^1_1$-hard if every set definable by a formula $\exists f\, \forall n\, R(f, n, x)$ of second-order arithmetic, with $f$ ranging over functions $\mathbb N \to \mathbb N$ and $R$ recursive, many-one reduces to it; such a set is not in the arithmetical hierarchy.
+
 TeamLTL with Boolean negation is complete for third-order arithmetic (Lück), while left-flat TeamLTL with Boolean disjunction and generalized atoms has model checking in EXPSPACE (Theorem 15).
 
 ## Depends on
 
+- [Kripke structures with initial states](../kripke-structures-with-initial-states.md)
 - [Formulas of linear temporal logic](../../linear-temporal-logic/formula.md)
 - [The arithmetical class $\Sigma_n$](../../../../TheoryOfComputation/degrees-and-hierarchies/arithmetical-hierarchy/is-sigma.md)
 - [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)

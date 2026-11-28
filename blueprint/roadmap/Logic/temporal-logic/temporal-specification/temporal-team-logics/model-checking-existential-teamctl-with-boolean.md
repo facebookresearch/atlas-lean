@@ -2,7 +2,7 @@
 
 Model checking finite Kripke structures against the existential fragment of TeamCTL extended with Boolean disjunction is Σ¹₁-hard, hence highly undecidable, because time evaluation functions let traces progress asynchronously.
 
-**Theorem (Gutsfeld, Meier, Ohrem and Virtema).** The model-checking problem for $\exists$TeamCTL$(\varovee)$ is $\Sigma^1_1$-hard: deciding, given a formula $\varphi$ of the existential fragment of [TeamCTL](temporal-team-logics-with-time-evaluation.md) with Boolean disjunction and a finite Kripke structure $\mathcal K$, whether $\mathrm{Traces}(\mathcal K) \models_\exists \varphi$ is $\Sigma^1_1$-hard.
+**Theorem (Gutsfeld, Meier, Ohrem and Virtema).** The model-checking problem for $\exists$TeamCTL$(\varovee)$ is $\Sigma^1_1$-hard: deciding, given a formula $\varphi$ of the existential fragment of [TeamCTL](temporal-team-logics-with-time-evaluation.md) with Boolean disjunction and a finite Kripke structure $\mathcal K$, whether $\mathrm{Traces}(\mathcal K) \models_\exists \varphi$ is $\Sigma^1_1$-hard (Theorem 5.2 of the source, by a reduction from the $\Sigma^1_1$-complete problem whether a nondeterministic two-counter machine has a computation that visits a given instruction infinitely often, Theorem 5.1).
 
 The source attributes the high undecidability to asynchronicity. Model checking $\exists$TeamLTL$(\varovee, \subseteq)$, $\forall$TeamLTL$(\varovee, \subseteq, \mathrm{NE})$ and $\forall$TeamCTL$(\varovee, \subseteq)$ is $\Sigma^0_1$-hard through embeddings of synchronous TeamLTL (Corollary 4.5), while restricted variants of TeamCTL* model checking, for $k$-synchronous or $k$-context-bounded tefs, are decidable via alternating asynchronous Büchi automata (Section 6).
 

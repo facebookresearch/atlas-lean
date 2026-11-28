@@ -2,7 +2,7 @@
 
 Interrupt timed automata have a decidable reachability problem, yet checking a fixed formula of the timed linear-time logic State Clock Logic over them is undecidable, already for automata with three interrupt levels.
 
-**Interrupt timed automata.** An *interrupt timed automaton* (ITA) is a hybrid automaton whose finite set of control states is organized in interrupt levels $1,\dots,n$, with one clock $x_k$ per level. In a state of level $k$ the clock $x_k$ is active and evolves with rate $1$, the clocks of lower levels are suspended (rate $0$) and those of higher levels are irrelevant. Guards on transitions are linear constraints over the clocks of the current and lower levels, updates assign to clocks linear expressions in clocks of lower levels, and each state carries a policy (lazy, urgent or delayed) that rules its sojourn time. Reachability for ITA is decidable (in NEXPTIME).
+**Interrupt timed automata.** An *interrupt timed automaton* (ITA) is a hybrid automaton whose finite set of control states is organized in interrupt levels $1,\dots,n$, with one clock $x_k$ per level. In a state of level $k$ the clock $x_k$ is active and evolves with rate $1$, the clocks of lower levels are suspended (rate $0$) and those of higher levels are irrelevant. Guards on transitions are linear constraints with rational coefficients over the clocks of the current and lower levels, updates assign to clocks linear expressions with rational coefficients in clocks of lower levels, and each state carries a policy (lazy, urgent or delayed) that rules its sojourn time. Reachability for ITA is decidable (in NEXPTIME).
 
 **State Clock Logic.** Formulas of State Clock Logic (SCL) are
 

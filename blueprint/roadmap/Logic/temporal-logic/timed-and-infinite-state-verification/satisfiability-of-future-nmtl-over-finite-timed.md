@@ -2,7 +2,7 @@
 
 Adding the future abstract (call–return) timed modalities to future MTL makes satisfiability over finite timed words undecidable, although satisfiability of future MTL itself over finite timed words is decidable.
 
-**Theorem (Bozzelli, Murano and Peron).** Satisfiability of future [NMTL](nested-metric-temporal-logic.md), interpreted in the pointwise semantics over finite timed words, is undecidable: there is no algorithm that decides, given a formula built with the timed until modalities $\widehat{\mathsf U}{}^g_I$ and $\widehat{\mathsf U}{}^a_I$ (and no since modalities), whether some finite timed word over the pushdown alphabet satisfies it at position $0$.
+**Theorem (Bozzelli, Murano and Peron).** Satisfiability of future [NMTL](nested-metric-temporal-logic.md), interpreted in the pointwise semantics over finite timed words, is undecidable: there is no algorithm that decides, given a formula built with the timed until modalities $\widehat{\mathsf U}{}^g_I$ and $\widehat{\mathsf U}{}^a_I$ (and no since modalities), whether some nonempty finite timed word over the pushdown alphabet satisfies it at position $0$ (Theorem 6 of the source).
 
 For comparison: over infinite timed words satisfiability of future MTL is already undecidable (Ouaknine and Worrell, FOSSACS 2006), MTL with past is undecidable, and over finite timed words future MTL is decidable (Ouaknine and Worrell, LMCS 2007); the fragment NMITL$_{(0,\infty)}$ is EXPTIME-complete.
 

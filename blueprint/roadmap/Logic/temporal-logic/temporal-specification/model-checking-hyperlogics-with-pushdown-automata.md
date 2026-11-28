@@ -23,7 +23,7 @@ On the decidable side, HyperPDA model checking for $\Sigma_1$ formulas is in EXP
 
 ## Expansion
 
-Part 1 is immediate from the undecidability of universality of ω-pushdown automata: a $\Pi_1$ formula $\forall\pi.\,\mathcal A$ over a transition system generating all words states that $\mathcal A$ is universal. For part 2, the universal quantifier ranges over input words $w$ and the existential one over sequences of transitions of a pushdown automaton for a context-free grammar; an ω-VPA controlled by the second component simulates the transition sequence, using the transitions themselves to decide whether to push or pop, and checks that it is an accepting run on $w$, so the $\Pi_{2,2}$ formula holds exactly when the grammar's language is universal. A good expansion links a page for undecidability of universality of ω-pushdown automata, which has no page yet.
+Part 1 is immediate from the undecidability of universality of ω-pushdown automata: a $\Pi_1$ formula $\forall\pi.\,\mathcal A$ over a transition system generating all words states that $\mathcal A$ is universal. For part 2, the universal quantifier ranges over input words $w$ and the existential one over sequences of transitions of a pushdown automaton for a context-free grammar; an ω-VPA controlled by the second component simulates the transition sequence, using the transitions themselves to decide whether to push or pop, and checks that it is an accepting run on $w$, so the $\Pi_{2,2}$ formula holds exactly when the grammar's language is universal. A good expansion links a page for undecidability of universality of ω-pushdown automata.
 
 ## Sources
 
