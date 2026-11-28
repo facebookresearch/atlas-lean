@@ -66,6 +66,7 @@ theorem model_three_one (rule : TieBreak) (sign0 : ℤˣ) :
     rw [splitCusum, show segmentStart ∅ 2 = 1 by decide, show segmentEnd 3 ∅ 2 = 3 by decide,
       cusum_three_two]
   have hpos : (0 : ℝ) < √(2 / 3) := by positivity
+  rw [model_succ_of_lt rule sign0 _ (by norm_num)]
   simp only [model, List.nil_append, List.cons.injEq, and_true]
   refine step_eq_of_lt (by decide) ?_ ?_
   · simp only [List.map_nil, List.toFinset_nil, h2, Units.val_one, Int.cast_one, one_mul]
@@ -94,7 +95,7 @@ example (rule : TieBreak) (sign0 : ℤˣ) :
   have hzero : splitCusum ![0, 0, 1] {2} 1 = 0 := by
     rw [splitCusum, show segmentStart {2} 1 = 1 by decide, show segmentEnd 3 {2} 1 = 2 by decide,
       cusum_three_one_left]
-  rw [model, model_three_one]
+  rw [model_succ_of_lt rule sign0 _ (by norm_num), model_three_one]
   simp only [step, hB, hbest, hpick, hzero, direction, lt_irrefl, ite_false, List.cons_append,
     List.nil_append]
 
@@ -111,8 +112,9 @@ example (rule : TieBreak) (sign0 : ℤˣ) :
       [(1, 1)] := rfl
   constructor
   · intro y hy
-    simp only [selectionEvent, Set.mem_ofPred_eq, hT, model, List.nil_append, List.cons.injEq,
-      and_true]
+    simp only [selectionEvent, Set.mem_ofPred_eq, hT]
+    rw [model_succ_of_lt rule sign0 y (by norm_num)]
+    simp only [model, List.nil_append, List.cons.injEq, and_true]
     refine step_eq_of_lt (by decide) ?_ ?_
     · simp only [List.map_nil, List.toFinset_nil, hX, Units.val_one, Int.cast_one, one_mul]
       exact mul_pos hc (sub_pos.2 hy)
@@ -120,8 +122,9 @@ example (rule : TieBreak) (sign0 : ℤˣ) :
       simp only [List.map_nil, List.toFinset_nil, freeSplits, sdiff_empty, mem_Icc] at hc'
       omega
   · intro y hy
-    simp only [selectionEvent, Set.mem_ofPred_eq, hT, model, List.nil_append, List.cons.injEq,
-      and_true] at hy
+    simp only [selectionEvent, Set.mem_ofPred_eq, hT] at hy
+    rw [model_succ_of_lt rule sign0 y (by norm_num)] at hy
+    simp only [model, List.nil_append, List.cons.injEq, and_true] at hy
     obtain ⟨-, habs⟩ := step_spec hy (by decide)
     simp only [List.map_nil, List.toFinset_nil, hX, Units.val_one, Int.cast_one, one_mul] at habs
     have := habs ▸ abs_nonneg (√(1 / 2) * (y 1 - y 0))
@@ -149,13 +152,39 @@ example : ∑ ℓ ∈ Icc 1 2, (2 * (3 - ℓ - 1) + 1) = 4 := by
 /-- Two steps on three points never select the same location twice. -/
 example (rule : TieBreak) (sign0 : ℤˣ) (d : Fin 2 → ℤˣ) :
     selectionEvent 3 rule sign0 ![1, 1] d = ∅ :=
-  selectionEvent_eq_empty rule sign0 d (by decide) fun h => by
+  selectionEvent_eq_empty rule sign0 d fun h => by
     simpa using h.1 (a₁ := 0) (a₂ := 1) rfl
 
 /-- One step on three points never selects the location `3`, which is no split point. -/
 example (rule : TieBreak) (sign0 : ℤˣ) (d : Fin 1 → ℤˣ) :
     selectionEvent 3 rule sign0 ![3] d = ∅ :=
-  selectionEvent_eq_empty rule sign0 d (by decide) fun h => by
+  selectionEvent_eq_empty rule sign0 d fun h => by
     simpa using h.2 0
+
+/-- A single point has no split point, so the run stops at once: one step with the rule
+`lowestTie` selects nothing, rather than the location `0` that the rule returns on no candidates. -/
+example (sign0 : ℤˣ) (y : Fin 1 → ℝ) : model lowestTie sign0 y 1 = [] :=
+  model_succ_of_le lowestTie sign0 y le_rfl
+
+example : lowestTie.pick [] ∅ = 0 := rfl
+
+/-- So one step on a single point selects no location at all. -/
+example (rule : TieBreak) (sign0 : ℤˣ) (b : Fin 1 → ℕ) (d : Fin 1 → ℤˣ) :
+    selectionEvent 1 rule sign0 b d = ∅ :=
+  selectionEvent_eq_empty rule sign0 d fun h => by
+    simpa using h.2 0
+
+/-- On three points both possible steps are taken, and a third step adds nothing. -/
+example (rule : TieBreak) (sign0 : ℤˣ) (y : Fin 3 → ℝ) :
+    (model rule sign0 y 2).length = 2 ∧ model rule sign0 y 3 = model rule sign0 y 2 :=
+  ⟨length_model_of_le rule sign0 y 2 (by norm_num), model_succ_of_le rule sign0 y (by norm_num)⟩
+
+/-- Three steps on three points select no three locations: the selection event of any three
+locations is empty, the theorem's feasibility hypothesis failing for them. -/
+example (rule : TieBreak) (sign0 : ℤˣ) (b : Fin 3 → ℕ) (d : Fin 3 → ℤˣ) :
+    selectionEvent 3 rule sign0 b d = ∅ :=
+  selectionEvent_eq_empty rule sign0 d fun h => by
+    have := le_sub_one_of_feasible (n := 3) h.1 h.2
+    omega
 
 end MathlibExtTest.Probability.Statistics.BinarySegmentation

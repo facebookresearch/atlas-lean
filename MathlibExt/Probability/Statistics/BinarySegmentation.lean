@@ -30,8 +30,9 @@ of that partition containing `b` and `b + 1`, and records the location `b̂_ℓ`
 
 For fixed locations `b_{1:k}` and directions `d_{1:k}`, the event that binary segmentation
 selects them lies between the open and the closed convex polyhedral cones `{y : Γ y > 0}` and
-`{y : Γ y ≥ 0}` of an explicit matrix `Γ`, whatever the tie-breaking rule, so it is the closed cone
-up to its boundary hyperplanes. Step `ℓ` contributes the sign row `d_ℓ g_ℓ` and, for every
+`{y : Γ y ≥ 0}` of an explicit matrix `Γ`, whatever the tie-breaking rule. So it agrees with the
+closed cone outside the hyperplanes of the rows of `Γ`, that is almost everywhere, though it need
+not equal it. Step `ℓ` contributes the sign row `d_ℓ g_ℓ` and, for every
 competing split point `c`, the two rows `d_ℓ g_ℓ ∓ g_c`, where `g_ℓ` and `g_c` are the CUSUM
 contrasts of `b_ℓ` and `c` in their segments. This corrects the statement of Hyun, Lin, G'Sell
 and Tibshirani (2021, Proposition 1), as the implementation notes explain.
@@ -44,8 +45,8 @@ and Tibshirani (2021, Proposition 1), as the implementation notes explain.
   changepoints `B` that has `b` as a split point.
 * `TieBreak`: a rule for breaking ties in the argmax.
 * `model rule sign0 y k`: the ordered history `M^{BS}_{1:k}(y)` of the locations and directions
-  that `k` steps of binary segmentation select, and `selectionEvent n rule sign0 b d` the set of
-  data vectors for which it is `{b_{1:k}, d_{1:k}}`.
+  that `k` steps of binary segmentation select (a run stops once no split point is free), and
+  `selectionEvent n rule sign0 b d` the set of data vectors for which it is `{b_{1:k}, d_{1:k}}`.
 * `selectionRow n b d`: the rows of the matrix `Γ`.
 
 ## Main results
@@ -54,8 +55,9 @@ and Tibshirani (2021, Proposition 1), as the implementation notes explain.
   `{1, …, n - 1}`) and any directions `d_{1:k} ∈ {-1, +1}ᵏ`, there is a matrix `Γ` with
   `∑_{ℓ=1}^{k} (2 (n - ℓ - 1) + 1)` rows, none of them zero, such that
   `{y : Γ y > 0} ⊆ {y : M^{BS}_{1:k}(y) = {b_{1:k}, d_{1:k}}} ⊆ {y : Γ y ≥ 0}` for every
-  tie-breaking rule and every value of `sign 0`; in particular the selection event differs from
-  the cone `{y : Γ y ≥ 0}` by a Lebesgue-null set.
+  tie-breaking rule and every value of `sign 0`; in particular the selection event agrees with
+  the cone `{y : Γ y ≥ 0}` almost everywhere (their symmetric difference is Lebesgue-null),
+  though not necessarily exactly.
 
 ## Implementation notes
 
@@ -64,7 +66,9 @@ and a split point `b ∈ {s_j, …, e_j - 1}` of it, correspond one to one to th
 `b ∈ {1, …, n - 1}` that are not changepoints yet: the interval is then the one containing `b`
 and `b + 1`, which `segmentStart` and `segmentEnd` compute. So the algorithm chooses among those
 split points, and intervals of length one, which have no split point, never compete. A
-tie-breaking rule may depend on the history of the run, hence on the partition.
+tie-breaking rule may depend on the history of the run, hence on the partition. The source runs
+`k ≤ n - 1` steps, which are always possible; a step is taken only while a split point is free, so
+for `k > n - 1` the run stops after `n - 1` steps and selects no `k` locations.
 
 The source's Proposition 1 states that the selection event equals `{y : Γ y ≥ 0}` for a matrix
 with `2 ∑_{ℓ=1}^{k} (n - ℓ - 1)` rows, the comparison rows only, and does not deal with ties.
@@ -331,31 +335,22 @@ noncomputable def step (rule : TieBreak) (sign0 : ℤˣ) (y : Fin n → ℝ) (H 
 
 /-- The model `M^{BS}_{1:k}(y) = {b̂_{1:k}(y), d̂_{1:k}(y)}` that `k` steps of binary segmentation
 select from the data `y`, with the tie-breaking rule `rule` and `sign 0 = sign0`: the ordered
-history of the locations and directions, step `ℓ` being its `ℓ`-th entry. -/
+history of the locations and directions, step `ℓ` being its `ℓ`-th entry. A step is taken only
+while some split point is free, so the run stops after `n - 1` steps: for `k ≤ n - 1` the history
+has `k` entries (`length_model_of_le`), and for larger `k` it has only `n - 1`, so it selects no
+`k` locations. -/
 noncomputable def model (rule : TieBreak) (sign0 : ℤˣ) (y : Fin n → ℝ) : ℕ → List (ℕ × ℤˣ)
   | 0 => []
-  | k + 1 => model rule sign0 y k ++ [step rule sign0 y (model rule sign0 y k)]
+  | k + 1 =>
+    if (freeSplits n ((model rule sign0 y k).map Prod.fst).toFinset).Nonempty then
+      model rule sign0 y k ++ [step rule sign0 y (model rule sign0 y k)]
+    else model rule sign0 y k
 
 /-- The selection event `{y ∈ ℝⁿ : M^{BS}_{1:k}(y) = {b_{1:k}, d_{1:k}}}` of the locations
 `b_{1:k}` and directions `d_{1:k}` (step `ℓ + 1` is index `ℓ : Fin k`). -/
 def selectionEvent (n : ℕ) (rule : TieBreak) (sign0 : ℤˣ) (b : Fin k → ℕ) (d : Fin k → ℤˣ) :
     Set (Fin n → ℝ) :=
   {y | model rule sign0 y k = List.ofFn fun ℓ => (b ℓ, d ℓ)}
-
-theorem length_model (rule : TieBreak) (sign0 : ℤˣ) (y : Fin n → ℝ) :
-    ∀ k, (model rule sign0 y k).length = k
-  | 0 => rfl
-  | k + 1 => by simp [model, length_model rule sign0 y k]
-
-theorem model_take (rule : TieBreak) (sign0 : ℤˣ) (y : Fin n → ℝ) {ℓ k : ℕ} (h : ℓ ≤ k) :
-    (model rule sign0 y k).take ℓ = model rule sign0 y ℓ := by
-  have hp : model rule sign0 y ℓ <+: model rule sign0 y k := by
-    induction h with
-    | refl => exact List.prefix_refl _
-    | step _ ih => exact ih.trans (List.prefix_append _ _)
-  have := List.prefix_iff_eq_take.1 hp
-  rw [length_model] at this
-  exact this.symm
 
 theorem abs_eq_direction_mul (sign0 : ℤˣ) (t : ℝ) :
     |t| = ((direction sign0 t : ℤ) : ℝ) * t := by
@@ -431,48 +426,110 @@ theorem step_eq_of_lt {rule : TieBreak} {sign0 : ℤˣ} {y : Fin n → ℝ} {H :
   rw [hpick]
   exact direction_eq_of_pos_mul hpos
 
-/- While `ℓ ≤ n - 1`, the first `ℓ` steps select distinct locations in `{1, …, n - 1}`: at each
-of them a split point is still free. -/
-theorem model_feasible (rule : TieBreak) (sign0 : ℤˣ) (y : Fin n → ℝ) :
-    ∀ ℓ ≤ n - 1, ((model rule sign0 y ℓ).map Prod.fst).Nodup ∧
-      ∀ x ∈ (model rule sign0 y ℓ).map Prod.fst, x ∈ Icc 1 (n - 1)
-  | 0, _ => by simp [model]
-  | ℓ + 1, hℓ => by
-    obtain ⟨hnd, hmem⟩ := model_feasible rule sign0 y ℓ (by omega)
-    set H := model rule sign0 y ℓ
-    set B := (H.map Prod.fst).toFinset
-    have hsub : B ⊆ Icc 1 (n - 1) := fun x hx => hmem x (List.mem_toFinset.1 hx)
-    have hfree : (freeSplits n B).Nonempty := by
-      rw [← Finset.card_pos, freeSplits, card_sdiff_of_subset hsub, Nat.card_Icc,
-        List.toFinset_card_of_nodup hnd, List.length_map, length_model]
-      omega
-    have hbest : (bestSplits y B).Nonempty := by
-      obtain ⟨c, hc, hmax⟩ :=
-        (freeSplits n B).exists_max_image (fun c => |splitCusum y B c|) hfree
-      exact ⟨c, mem_filter.2 ⟨hc, hmax⟩⟩
-    have hpick := mem_sdiff.1 (mem_filter.1 (rule.pick_mem H _ hbest)).1
-    have hfst : (step rule sign0 y H).1 = rule.pick H (bestSplits y B) := rfl
-    simp only [model, List.map_append, List.map_cons, List.map_nil]
-    refine ⟨List.nodup_append.2 ⟨hnd, List.nodup_singleton _, ?_⟩, fun x hx => ?_⟩
-    · intro a ha c hc
-      rw [List.mem_singleton] at hc
-      rintro rfl
-      exact hpick.2 (by rw [hc, hfst] at ha; exact List.mem_toFinset.2 ha)
-    · rcases List.mem_append.1 hx with hx | hx
-      · exact hmem x hx
-      · rw [List.mem_singleton.1 hx, hfst]
-        exact hpick.1
+theorem model_prefix (rule : TieBreak) (sign0 : ℤˣ) (y : Fin n → ℝ) {ℓ k : ℕ} (h : ℓ ≤ k) :
+    model rule sign0 y ℓ <+: model rule sign0 y k := by
+  induction h with
+  | refl => exact List.prefix_refl _
+  | step _ ih =>
+    refine ih.trans ?_
+    rw [model]
+    split_ifs
+    · exact List.prefix_append _ _
+    · exact List.prefix_refl _
 
-/- For `k ≤ n - 1`, the selection event of infeasible locations is empty. -/
+/- The locations that binary segmentation selects are distinct elements of `{1, …, n - 1}`: a step
+is taken only while a split point is free, and it picks one. -/
+theorem model_feasible (rule : TieBreak) (sign0 : ℤˣ) (y : Fin n → ℝ) :
+    ∀ ℓ, ((model rule sign0 y ℓ).map Prod.fst).Nodup ∧
+      ∀ x ∈ (model rule sign0 y ℓ).map Prod.fst, x ∈ Icc 1 (n - 1)
+  | 0 => by simp [model]
+  | ℓ + 1 => by
+    obtain ⟨hnd, hmem⟩ := model_feasible rule sign0 y ℓ
+    rw [model]
+    split_ifs with hfree
+    · set H := model rule sign0 y ℓ
+      set B := (H.map Prod.fst).toFinset
+      have hbest : (bestSplits y B).Nonempty := by
+        obtain ⟨c, hc, hmax⟩ :=
+          (freeSplits n B).exists_max_image (fun c => |splitCusum y B c|) hfree
+        exact ⟨c, mem_filter.2 ⟨hc, hmax⟩⟩
+      have hpick := mem_sdiff.1 (mem_filter.1 (rule.pick_mem H _ hbest)).1
+      have hfst : (step rule sign0 y H).1 = rule.pick H (bestSplits y B) := rfl
+      simp only [List.map_append, List.map_cons, List.map_nil]
+      refine ⟨List.nodup_append.2 ⟨hnd, List.nodup_singleton _, ?_⟩, fun x hx => ?_⟩
+      · intro a ha c hc
+        rw [List.mem_singleton] at hc
+        rintro rfl
+        exact hpick.2 (by rw [hc, hfst] at ha; exact List.mem_toFinset.2 ha)
+      · rcases List.mem_append.1 hx with hx | hx
+        · exact hmem x hx
+        · rw [List.mem_singleton.1 hx, hfst]
+          exact hpick.1
+    · exact ⟨hnd, hmem⟩
+
+private theorem freeSplits_model_nonempty {rule : TieBreak} {sign0 : ℤˣ} {y : Fin n → ℝ}
+    {ℓ : ℕ} (hℓ : ℓ < n - 1) (hlen : (model rule sign0 y ℓ).length = ℓ) :
+    (freeSplits n ((model rule sign0 y ℓ).map Prod.fst).toFinset).Nonempty := by
+  obtain ⟨hnd, hmem⟩ := model_feasible rule sign0 y ℓ
+  have hsub : ((model rule sign0 y ℓ).map Prod.fst).toFinset ⊆ Icc 1 (n - 1) :=
+    fun x hx => hmem x (List.mem_toFinset.1 hx)
+  rw [← Finset.card_pos, freeSplits, card_sdiff_of_subset hsub, Nat.card_Icc,
+    List.toFinset_card_of_nodup hnd, List.length_map, hlen]
+  omega
+
+/- For `ℓ ≤ n - 1` every one of the first `ℓ` steps is taken. -/
+theorem length_model_of_le (rule : TieBreak) (sign0 : ℤˣ) (y : Fin n → ℝ) :
+    ∀ ℓ ≤ n - 1, (model rule sign0 y ℓ).length = ℓ
+  | 0, _ => rfl
+  | ℓ + 1, hℓ => by
+    have ih := length_model_of_le rule sign0 y ℓ (by omega)
+    rw [model, ite_eq_left (freeSplits_model_nonempty (by omega) ih), List.length_append, ih]
+    rfl
+
+theorem model_succ_of_lt (rule : TieBreak) (sign0 : ℤˣ) (y : Fin n → ℝ) {ℓ : ℕ}
+    (hℓ : ℓ < n - 1) :
+    model rule sign0 y (ℓ + 1) =
+      model rule sign0 y ℓ ++ [step rule sign0 y (model rule sign0 y ℓ)] := by
+  rw [model, ite_eq_left (freeSplits_model_nonempty hℓ (length_model_of_le rule sign0 y ℓ hℓ.le))]
+
+/- After `n - 1` steps no split point is free, and the run stops. -/
+theorem model_succ_of_le (rule : TieBreak) (sign0 : ℤˣ) (y : Fin n → ℝ) {ℓ : ℕ}
+    (hℓ : n - 1 ≤ ℓ) : model rule sign0 y (ℓ + 1) = model rule sign0 y ℓ := by
+  obtain ⟨hnd, hmem⟩ := model_feasible rule sign0 y ℓ
+  have hsub : ((model rule sign0 y ℓ).map Prod.fst).toFinset ⊆ Icc 1 (n - 1) :=
+    fun x hx => hmem x (List.mem_toFinset.1 hx)
+  have hlen : n - 1 ≤ (model rule sign0 y ℓ).length := by
+    have := (model_prefix rule sign0 y hℓ).length_le
+    rwa [length_model_of_le rule sign0 y (n - 1) le_rfl] at this
+  have heq := Finset.eq_of_subset_of_card_le hsub (by
+    rw [Nat.card_Icc, List.toFinset_card_of_nodup hnd, List.length_map]
+    omega)
+  rw [model, ite_eq_right]
+  rw [freeSplits, heq, Finset.sdiff_self]
+  exact Finset.not_nonempty_empty
+
+theorem model_take (rule : TieBreak) (sign0 : ℤˣ) (y : Fin n → ℝ) {ℓ k : ℕ} (h : ℓ ≤ k)
+    (hk : k ≤ n - 1) : (model rule sign0 y k).take ℓ = model rule sign0 y ℓ := by
+  have := List.prefix_iff_eq_take.1 (model_prefix rule sign0 y h)
+  rw [length_model_of_le rule sign0 y ℓ (h.trans hk)] at this
+  exact this.symm
+
+/- The selection event of infeasible locations is empty. -/
 theorem selectionEvent_eq_empty (rule : TieBreak) (sign0 : ℤˣ) {b : Fin k → ℕ}
-    (d : Fin k → ℤˣ) (hk : k ≤ n - 1)
-    (hb : ¬(Function.Injective b ∧ ∀ ℓ, b ℓ ∈ Icc 1 (n - 1))) :
+    (d : Fin k → ℤˣ) (hb : ¬(Function.Injective b ∧ ∀ ℓ, b ℓ ∈ Icc 1 (n - 1))) :
     selectionEvent n rule sign0 b d = ∅ := by
   refine Set.eq_empty_of_forall_notMem fun y hy => hb ?_
-  obtain ⟨hnd, hmem⟩ := model_feasible rule sign0 y k hk
+  obtain ⟨hnd, hmem⟩ := model_feasible rule sign0 y k
   have hy : model rule sign0 y k = List.ofFn fun ℓ => (b ℓ, d ℓ) := hy
   rw [hy, List.map_ofFn] at hnd hmem
   exact ⟨List.nodup_ofFn.1 hnd, fun ℓ => hmem _ (List.mem_ofFn.2 ⟨ℓ, rfl⟩)⟩
+
+/- Feasible locations number at most `n - 1`. -/
+theorem le_sub_one_of_feasible {b : Fin k → ℕ} (hb : Function.Injective b)
+    (hbn : ∀ ℓ, b ℓ ∈ Icc 1 (n - 1)) : k ≤ n - 1 := by
+  have := Finset.card_le_card_of_injOn b (s := univ) (t := Icc 1 (n - 1))
+    (by intro ℓ _; exact hbn ℓ) hb.injOn
+  simpa using this
 
 /-! ### The matrix `Γ` -/
 
@@ -577,12 +634,13 @@ theorem selectionRow_dotProduct_nonneg {b : Fin k → ℕ} (hb : Function.Inject
   obtain ⟨ℓ, r⟩ := r
   set T := List.ofFn fun j => (b j, d j)
   have hy : model rule sign0 y k = T := hy
+  have hk := le_sub_one_of_feasible hb hbn
   have hℓ : model rule sign0 y ℓ = T.take ℓ := by
-    rw [← model_take rule sign0 y ℓ.2.le, hy]
+    rw [← model_take rule sign0 y ℓ.2.le hk, hy]
   have hℓ1 : model rule sign0 y (ℓ + 1) = T.take (ℓ + 1) := by
-    rw [← model_take rule sign0 y (Nat.succ_le_of_lt ℓ.2), hy]
+    rw [← model_take rule sign0 y (Nat.succ_le_of_lt ℓ.2) hk, hy]
   have hstep : step rule sign0 y (T.take ℓ) = (b ℓ, d ℓ) := by
-    rw [model, hℓ, take_ofFn_succ] at hℓ1
+    rw [model_succ_of_lt rule sign0 y (lt_of_lt_of_le ℓ.2 hk), hℓ, take_ofFn_succ] at hℓ1
     simpa using List.append_cancel_left hℓ1
   have hB : ((T.take ℓ).map Prod.fst).toFinset = priorSplits b ℓ := by
     rw [map_fst_take_ofFn]; rfl
@@ -611,6 +669,7 @@ theorem mem_selectionEvent_of_pos {b : Fin k → ℕ} (hb : Function.Injective b
     {y : Fin n → ℝ} (hy : ∀ r, 0 < selectionRow n b d r ⬝ᵥ y) :
     y ∈ selectionEvent n rule sign0 b d := by
   set T := List.ofFn fun j => (b j, d j)
+  have hk := le_sub_one_of_feasible hb hbn
   suffices h : ∀ ℓ ≤ k, model rule sign0 y ℓ = T.take ℓ by
     change model rule sign0 y k = T
     rw [h k le_rfl, List.take_of_length_le (by simp [T])]
@@ -620,7 +679,8 @@ theorem mem_selectionEvent_of_pos {b : Fin k → ℕ} (hb : Function.Injective b
   | succ ℓ ih =>
     intro hℓk
     have hℓ : ℓ < k := hℓk
-    rw [model, ih hℓ.le, show ℓ = ((⟨ℓ, hℓ⟩ : Fin k) : ℕ) from rfl, take_ofFn_succ]
+    rw [model_succ_of_lt rule sign0 y (lt_of_lt_of_le hℓ hk), ih hℓ.le,
+      show ℓ = ((⟨ℓ, hℓ⟩ : Fin k) : ℕ) from rfl, take_ofFn_succ]
     congr 2
     have hB : ((T.take ℓ).map Prod.fst).toFinset = priorSplits b ℓ := by
       rw [map_fst_take_ofFn]; rfl
@@ -673,13 +733,14 @@ Proposition 1). For feasible locations `b_{1:k}`, distinct elements of `{1, …,
 directions `d_{1:k} ∈ {-1, +1}ᵏ`, there is a matrix `Γ` with `∑_{ℓ=1}^{k} (2 (n - ℓ - 1) + 1)`
 rows, none of them zero, such that for every tie-breaking rule and every value of `sign 0`
 `{y : Γ y > 0} ⊆ {y : M^{BS}_{1:k}(y) = {b_{1:k}, d_{1:k}}} ⊆ {y : Γ y ≥ 0}` (componentwise),
-where `M^{BS}_{1:k}` is `k`-step binary segmentation (`model`). In particular the selection event
-differs from the cone `{y : Γ y ≥ 0}` only within the hyperplanes `{y : γᵀ y = 0}`, one for each
-row `γ` of `Γ`, so by a Lebesgue-null set. The matrix is explicit: its rows are those of
-`selectionRow`, listed through an equivalence `e` of their indices with `Fin` of the row count.
-The source states exact equality with the closed cone and `2 ∑_{ℓ=1}^{k} (n - ℓ - 1)` rows; ties
-and steps with no competitor break it, hence the two inclusions and the sign rows. For
-`k ≤ n - 1` the selection event of infeasible locations is empty (`selectionEvent_eq_empty`). -/
+where `M^{BS}_{1:k}` is `k`-step binary segmentation (`model`). The selection event need not
+equal the closed cone `{y : Γ y ≥ 0}`: the two can differ on the hyperplanes `{y : γᵀ y = 0}`, one
+for each row `γ` of `Γ`, where ties occur. They agree outside these hyperplanes, so almost
+everywhere: their symmetric difference is Lebesgue-null. The matrix is explicit: its rows are
+those of `selectionRow`, listed through an equivalence `e` of their indices with `Fin` of the row
+count. The source states exact equality with the closed cone and `2 ∑_{ℓ=1}^{k} (n - ℓ - 1)`
+rows; ties and steps with no competitor break exact equality, hence the two inclusions and the
+sign rows. The selection event of infeasible locations is empty (`selectionEvent_eq_empty`). -/
 theorem exists_polyhedral_selectionEvent (b : Fin k → ℕ) (d : Fin k → ℤˣ)
     (hb : Function.Injective b) (hbn : ∀ ℓ, b ℓ ∈ Icc 1 (n - 1)) :
     ∃ Γ : Matrix (Fin (∑ ℓ ∈ Icc 1 k, (2 * (n - ℓ - 1) + 1))) (Fin n) ℝ,
