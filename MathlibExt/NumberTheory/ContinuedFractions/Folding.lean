@@ -78,13 +78,27 @@ public theorem finiteContFrac_zero_merge (l s : List ℤ) (a b : ℤ) :
 
 namespace finiteContFrac_neg_block
 
-private theorem map_neg (s : List ℤ) :
+/-- **Negating every entry negates the value.** For every finite list of integers
+$s_1, \dots, s_n$ ($n \ge 0$), the finite continued fractions satisfy
+$[-s_1; -s_2, \dots, -s_n] = -[s_1; s_2, \dots, s_n]$. Here the brackets denote `finiteContFrac`,
+evaluated from the right, with the empty list valued $0$ and with $0^{-1} = 0$ whenever an
+intermediate value is zero: the ordinary $[1; 0]$ is undefined, but its value here is $1$.
+
+Source: Daniel J. Hoyt, *The Self-Describing Paperfolding Sequence in Continued Fractions*,
+Journal of Integer Sequences 29 (2026), Article 26.3.6, Lemma 13 (bracket notation). -/
+public theorem map_neg (s : List ℤ) :
     finiteContFrac (s.map (fun b => -b)) = -finiteContFrac s := by
   induction s with
   | nil => simp [finiteContFrac]
   | cons b s ih => simp [finiteContFrac_cons, ih, add_comm]
 
-private theorem pos (s : List ℤ) (hs : ∀ b ∈ s, 1 ≤ b) (hne : s ≠ []) :
+/-- **Positive entries give a positive value.** For every nonempty finite list of integers
+$s_1, \dots, s_n$ ($n \ge 1$) with $s_i \ge 1$ for every $i$, the finite continued fraction
+$[s_1; s_2, \dots, s_n]$ is positive.
+
+Source: Daniel J. Hoyt, *The Self-Describing Paperfolding Sequence in Continued Fractions*,
+Journal of Integer Sequences 29 (2026), Article 26.3.6, Lemma 13 (bracket notation). -/
+public theorem pos (s : List ℤ) (hs : ∀ b ∈ s, 1 ≤ b) (hne : s ≠ []) :
     0 < finiteContFrac s := by
   induction s with
   | nil => contradiction
