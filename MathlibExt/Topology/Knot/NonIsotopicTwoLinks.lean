@@ -7,12 +7,18 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-Portion of this file adapted from `LeanEval/KnotTheory/Linking.lean`
-(leanprover/lean-eval at commit 38361be884302c7edce1908c4aef8296eb2cb27e).
-Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
-Benchmark submitter: Kim Morrison.
+Portions of this file are adapted from:
 
-The theorem statement is retained; the proof and the concrete links are new.
+`LeanEval/KnotTheory/Linking.lean` (leanprover/lean-eval at commit
+38361be884302c7edce1908c4aef8296eb2cb27e), manifest
+`manifests/problems/exists_nonisotopic_link.toml` (revision 1).
+Copyright 2026 Lean FRO, LLC.
+Authors: Kim Morrison (benchmark submitter).
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+
+The adapted portion is the statement of `exists_nonisotopic_link`, moved from
+`WantedExt/Topology/LinkingWanted.lean` with its name and statement intact.
+The proof and the concrete links are new. lean-eval ships no `NOTICE` file.
 -/
 
 module
