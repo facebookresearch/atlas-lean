@@ -9,13 +9,13 @@ with initial age profiles and birth boundary data at $a = 0$. Vaccination enters
 - **age-targeted policy:** at prescribed ages $\bar a_1 < \dots < \bar a_N$ a fraction $\eta_j(t) \in [0,1]$ of susceptibles is vaccinated, $S(t,\bar a_j+) = (1-\eta_j(t))S(t,\bar a_j-)$, $I(t, \bar a_j+) = I(t, \bar a_j-)$, $R(t,\bar a_j+) = R(t,\bar a_j-) + \eta_j(t)S(t,\bar a_j-)$;
 - **time-targeted policy:** at campaign times $\bar t_1 < \dots < \bar t_N$ a fraction $\nu_k(a) \in [0,1]$ of susceptibles of each age is vaccinated, $S(\bar t_k+, a) = (1-\nu_k(a))S(\bar t_k-, a)$, $I$ unchanged, and $R$ gains $\nu_k(a) S(\bar t_k-,a)$.
 
-Assume $\lambda$ is continuous, bounded and Lipschitz in the age of the susceptible, the rates $d_S, d_I, d_R, r_I$ are Carathéodory functions that are bounded and Lipschitz in age, and the data are nonnegative and integrable with bounded variation.
+Assume the source's hypotheses (λ) and (dr): $\lambda$ is continuous and Lipschitz in the age of the susceptible with $\|\lambda\|_{L^\infty} + \mathrm{TV}\big(\lambda(\cdot,a');\mathbb R^+\big) \le \Lambda_\infty$ for every $a' \ge 0$ (the source's (2.2)); each rate $\varphi = d_S, d_I, d_R, r_I$ is a Carathéodory function, Lipschitz in age, with $\|\varphi\|_{L^\infty} + \mathrm{TV}\big(\varphi(t,\cdot);\mathbb R^+\big) \le R_\infty$ for every $t \in \mathbb I$ (2.4) and $\|\varphi\|_{C^0(\mathbb I;L^1(\mathbb R^+;\mathbb R))} \le R_1$ (2.6). In particular every rate is integrable in age, so a constant positive death rate is excluded. The data are nonnegative and integrable with bounded variation.
 
 **Theorem.** For every choice of vaccination ages (respectively times) and every control of bounded variation $\eta \in \mathrm{BV}(\mathbb I; [0,1]^N)$ (respectively $\nu$), the problem has a unique solution
 
 $$(S, I, R) \in C^{0,1}\big(\mathbb I; L^1(\mathbb R^+; \mathbb R^3)\big), \qquad S, I, R \ge 0,$$
 
-with $(S,I,R)(t) \in \mathrm{BV}(\mathbb R^+;\mathbb R^3)$ for every $t \in \mathbb I$, satisfying the source's explicit a priori bounds in terms of the data, the rates and $T$: the total-variation bounds (2.2) and (2.4) on $\mathrm{TV}\big((S,I,R)(t)\big)$, uniform in $t \in \mathbb I$, and the bound (2.6) on $\|(S,I,R)\|_{C^0(\mathbb I;L^1)}$; and depending Lipschitz continuously on the initial datum in $L^1$ and on the control in $L^\infty$.
+depending Lipschitz continuously on the initial datum in $L^1$ and on the control in $L^\infty$.
 
 The Lipschitz dependence on the vaccination controls is what makes cost functionals of the form "infections plus vaccination cost" continuous on the control set, the basis for optimizing vaccination ages or campaign times.
 

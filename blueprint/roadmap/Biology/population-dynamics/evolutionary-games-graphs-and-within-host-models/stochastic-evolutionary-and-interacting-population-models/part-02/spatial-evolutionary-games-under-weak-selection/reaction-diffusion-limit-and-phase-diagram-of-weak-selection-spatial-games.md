@@ -1,6 +1,6 @@
 # Reaction–diffusion limit and phase diagram of weak-selection spatial games
 
-**Voter model perturbations.** On $\mathbb Z^d$ each site holds a strategy in a finite set $S$; with a finite-range symmetric kernel $p$ ($p(0)=0$) whose covariance matrix is $\sigma^2I$, let $f_i(x,\xi) = \sum_y p(y-x)\mathbf 1(\xi(y) = i)$. The voter model flips $x$ from $i$ to $j$ at rate $\mathbf 1(\xi(x) = i) f_j(x,\xi)$. A spatial evolutionary game with payoff matrix $\mathbf 1 + \varepsilon^2 G$ under Birth–Death or Death–Birth updating has flip rates $c^v_{i,j} + \varepsilon^2 h^\varepsilon_{i,j}$ for explicit perturbations $h$.
+**Voter model perturbations.** On $\mathbb Z^d$ each site holds a strategy in a finite set $S$; with an irreducible finite-range symmetric probability kernel $p$ ($p(0)=0$) whose covariance matrix is $\sigma^2I$, let $f_i(x,\xi) = \sum_y p(y-x)\mathbf 1(\xi(y) = i)$. The voter model flips $x$ from $i$ to $j$ at rate $\mathbf 1(\xi(x) = i) f_j(x,\xi)$. A spatial evolutionary game with payoff matrix $\mathbf 1 + \varepsilon^2 G$ under Birth–Death or Death–Birth updating has flip rates $c^v_{i,j} + \varepsilon^2 h^\varepsilon_{i,j}$ for explicit perturbations $h$.
 
 **Theorem (PDE limit).** Let $d \ge 3$. Rescale space by $\varepsilon$ and time by $\varepsilon^{-2}$, and start from configurations with continuous local densities $v_i$ ($\sum_i v_i = 1$). Then $u^\varepsilon_i(t,x) = \mathbb P\big(\xi^\varepsilon_{t\varepsilon^{-2}}(x) = i\big)$ converges to the solution of
 

@@ -4,7 +4,7 @@
 
 $$ \partial_t\rho_1 - \Delta\rho_1 + \nabla\cdot\Big(\rho_1\,\frac{\nabla c}{|\nabla c|}\,\Psi(|\nabla c|)\Big) = -\epsilon\rho_1\rho_2, \qquad \partial_t\rho_2 = -\epsilon\rho_1\rho_2, \qquad -\sigma\Delta c = \rho_2, $$
 
-where the *flux limiter* $\Psi:\mathbb R_+\to\mathbb R_+$ is smooth and increasing with $\Psi(z) = \chi z$ for small $z$ and $\Psi(z) = v_0$ (the maximal chemotactic speed) for $z \ge \beta$, $\chi\beta = v_0$. Initially $\rho_2(\cdot,0)$ lies between $2\theta\mathbf 1_{B(0,1-\delta_0)}$ and $2\theta\mathbf 1_{B(0,1)}$, while $\rho_1$ has mass $M_0$ in $\{|x| \le L\}$ and only a negligible part of it in $\{|x| \le L/2\}$ (no radial symmetry is assumed). Put $\gamma = \theta\chi/\sigma$ and define the *half-time*
+where the *flux limiter* $\Psi:\mathbb R_+\to\mathbb R_+$ is smooth and increasing with $\Psi(z) = \chi z$ for small $z$ and $\Psi(z) = v_0$ (the maximal chemotactic speed) for $z \ge \beta$, $\chi\beta = v_0$. Initially $\rho_2(\cdot,0)$ lies between $2\theta\mathbf 1_{B(0,1-\delta_0)}$ and $2\theta\mathbf 1_{B(0,1)}$, with $\delta_0$ small enough that $\int\rho_2(x,0)\,dx \ge 7\pi\theta/4$ (the source's (1.5): "7πθ/4 ≤ ‖ρ2(·, 0)‖1 ≤ 2πθ, where in the last line we assumed that δ0 is sufficiently small"), while $\rho_1$ has mass $M_0$ in $\{|x| \le L\}$ and only a negligible part of it in $\{|x| \le L/2\}$ (no radial symmetry is assumed). Put $\gamma = \theta\chi/\sigma$ and define the *half-time*
 
 $$ \tau = \sup\Big\{t \ge 0 : \int_{\mathbb R^2}\rho_2(x,t)\,dx \ge \pi\theta\Big\}. $$
 

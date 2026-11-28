@@ -26,7 +26,7 @@ and $\mathcal R_p > 1$ if and only if $p < p_2(T)$.
 
 $$p_2^{\mathrm{seas}}(T) = 1 - \exp\Big[-\Big((A - S_c)T + \gamma\int_0^T \Psi(\omega t)\,\mathcal S(t)\,dt\Big)\Big].$$
 
-**Theorem (chaos under strong seasonality).** Assume that $\Psi$ has at least two non-degenerate critical points per period (condition (C4) of the source). If $0 < p < p_2^{\mathrm{seas}}(T)$, $T$ is an integer multiple of the forcing period, and $\gamma$ is large enough, the flow has a suspended topological horseshoe; in particular it has infinitely many periodic solutions and positive topological entropy.
+**Theorem (chaos under strong seasonality).** Assume (C4) of the source: $\Psi$ is periodic, $\frac1\tau\int_0^\tau\beta_\gamma(t)\,dt>0$ for the values of $\gamma$ considered ($\tau$ the period of the forcing), and $\Psi$ has at least two non-degenerate critical points per period. If $0 < p < p_2^{\mathrm{seas}}(T)$, $T$ is an integer multiple of the forcing period, and $\gamma$ is large enough, the flow has a suspended topological horseshoe; in particular it has infinitely many periodic solutions and positive topological entropy.
 
 ## Expansion
 

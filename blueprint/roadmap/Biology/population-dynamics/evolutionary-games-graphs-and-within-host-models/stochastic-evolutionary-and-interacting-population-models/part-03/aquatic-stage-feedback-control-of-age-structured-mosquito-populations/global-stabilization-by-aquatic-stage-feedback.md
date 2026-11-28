@@ -26,9 +26,15 @@ makes the closed loop globally asymptotically stable, with a Lyapunov function $
 $$\int_0^A\Bigl|g_F(a) - z_I\kappa_I\int_a^Ag_F(s)\,ds\Bigr|\,da < 1, \qquad \int_0^A\Bigl|g_I(a) - z_F\kappa_F\int_a^Ag_I(s)\,ds\Bigr|\,da < 1.$$
 
    Then the system is globally asymptotically stabilizable by a uniformly bounded control that stays positive for all $t>0$ whenever the initial condition lies in the largest level set of the combined Lyapunov function $V(\eta_I,\psi_I)$ inside the admissible region.
-3. (Tracking) Let $y(t) = \int_0^Aw(a)I(a,t)\,da$ be the emergent aquatic density, $p^\ast = \int_0^AI^\ast(a)\,da/y^\ast$ with $y^\ast = \int_0^Aw(a)I^\ast(a)\,da$, and $\alpha > 0$ a feedback gain. A feedforward-plus-feedback controller $P = P_{FF} + P_{FB}$, $P_{FB} = \alpha\ln(y/y_d)$, with values in a prescribed interval $(P_{\min},P_{\max})$ makes $y$ track every positive reference trajectory satisfying the bound (4.9),
+3. (Tracking) Let $y(t) = \int_0^Aw(a)I(a,t)\,da$ be the emergent aquatic density, $p^\ast = \int_0^AI^\ast(a)\,da/y^\ast$ with $y^\ast = \int_0^Aw(a)I^\ast(a)\,da$, and $\alpha > 0$ a feedback gain. A feedforward-plus-feedback controller $P = P_{FF} + P_{FB}$ with $P_{FB} = \alpha\ln(y/y_d)$ and
 
-$$0 < y_d(t) < \frac{\min(2,\alpha)}{4p^\ast}\min\Bigl\{1,\frac{P_{\max} - P_{\min}}{2}\Bigr\}.$$
+$$P_{FF}(t) = \zeta_I - \frac{\partial_ty_d(t)}{y_d(t)} + \Gamma(t) - p^\ast\frac{\Gamma(t)\gamma(t)}{K(t)}\,y_d(t)$$
+
+($\zeta_I$ the constant of the source's (3.2)), with values in a prescribed interval $(P_{\min},P_{\max})$, makes $y$ track every positive differentiable reference trajectory $y_d$ that satisfies the bound (4.9),
+
+$$0 < y_d(t) < \frac{\min(2,\alpha)}{4p^\ast}\min\Bigl\{1,\frac{P_{\max} - P_{\min}}{2}\Bigr\},$$
+
+and for which $P_{FF}$ takes values in $\bigl(\frac{4p^\ast}{\min(2,\alpha)}y_d(t)+P_{\min},\,P_{\max}-\frac{4p^\ast}{\min(2,\alpha)}y_d(t)\bigr)$ for all $t$ (the source's (4.11)).
 
 ## Expansion
 
