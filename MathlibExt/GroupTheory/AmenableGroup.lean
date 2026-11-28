@@ -18,7 +18,7 @@ import Mathlib.GroupTheory.FreeGroup.Reduce
 
 @[expose] public section
 
-open scoped Pointwise Classical symmDiff
+open scoped Pointwise symmDiff
 
 /-! # Amenable groups via the Følner condition
 
@@ -44,6 +44,7 @@ below.
   (pp. 87–89), and Corollary 4.5.2 (p. 89). We use a finite-set count in place of the invariant
   mean, retaining the reduced-word and right-coset arguments. -/
 
+open Classical in
 /-- **Amenable group (Følner condition).** A discrete group $G$ is *amenable* if it satisfies the
 Følner condition: for every finite subset $K \subseteq G$ and every real $\varepsilon > 0$ there is
 a finite nonempty subset $F \subseteq G$ such that
@@ -60,7 +61,8 @@ def IsAmenable (G : Type*) [Group G] : Prop :=
 The whole group $F = G$ is invariant under left translation, so it is a Følner set whose
 symmetric-difference ratio is $0$. -/
 theorem isAmenable_of_finite (G : Type*) [Group G] [Finite G] : IsAmenable G := by
-  letI := Fintype.ofFinite G
+  classical
+  let := Fintype.ofFinite G
   intro K ε hε
   refine ⟨Finset.univ, ⟨1, Finset.mem_univ 1⟩, fun s _ => ?_⟩
   rw [Finset.smul_finset_univ, symmDiff_self]
@@ -70,6 +72,7 @@ theorem isAmenable_of_finite (G : Type*) [Group G] [Finite G] : IsAmenable G := 
 $F = \{1\}$ witnesses the Følner condition. -/
 theorem isAmenable_of_subsingleton (G : Type*) [Group G] [Subsingleton G] :
     IsAmenable G := by
+  let := Classical.decEq G
   intro K ε hε
   refine ⟨{1}, Finset.singleton_nonempty 1, fun s _ => ?_⟩
   rw [Finset.smul_finset_singleton, Subsingleton.elim (s • (1 : G)) 1, symmDiff_self]
