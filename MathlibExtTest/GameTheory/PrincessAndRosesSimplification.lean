@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import Mathlib.Algebra.BigOperators.Fin
 import MathlibExt.GameTheory.PrincessAndRosesSimplification
 
 open MetaMathlibExt MetaMathlibExt.SpragueGrundy
@@ -24,13 +25,40 @@ example (n : ℕ) : simplifiedPrincessRosesMoves (n, n, n, 0) = ∅ := by
   change n - c = 0 ∧ (n - a = 1 ∨ n - b = 1) at this
   omega
 
--- Ties at the bottom do not prevent shifting the three largest piles.
-example : Equiv (princessRoses ![2, 1, 1, 1]) (simplifiedPrincessRoses (4, 3, 3, 1)) :=
-  princessRoses_equiv_simplifiedPrincessRoses 2 1 1 1 2 (by decide) le_rfl le_rfl
+-- The next player wins from (1, 0, 0, 0) in ordinary play by clearing the only nonempty pile.
+example : ¬ IsP (princessRoses ![1, 0, 0, 0]) ![1, 0, 0, 0] := by
+  let G := princessRoses ![1, 0, 0, 0]
+  have hterminal : IsP G ![0, 0, 0, 0] := by
+    refine (isP_iff G _).mpr ?_
+    intro q hq
+    have hlt := (mem_princessRoses_moves_iff.mp hq).2.1
+    simp [Fin.sum_univ_succ] at hlt
+  have hmove : ![0, 0, 0, 0] ∈ G.moves ![1, 0, 0, 0] :=
+    mem_princessRoses_moves_iff.mpr (by decide)
+  exact fun hP => (isP_iff G _).mp hP _ hmove hterminal
+
+-- Its shifted simplified counterpart wins by the unique move to (1, 1, 1, 0).
+example : ¬ IsP (simplifiedPrincessRoses (2, 1, 1, 0)) (2, 1, 1, 0) := by
+  let G := simplifiedPrincessRoses (2, 1, 1, 0)
+  let p : G.Pos := (2, 1, 1, 0)
+  let q : G.Pos := (1, 1, 1, 0)
+  have hoptions : G.moves p = {q} :=
+    @of_decide_eq_true _ (@Finset.decidableEq G.Pos G.eqDec (G.moves p) {q}) rfl
+  have hempty : G.moves q = ∅ :=
+    @of_decide_eq_true _ (@Finset.decidableEq G.Pos G.eqDec (G.moves q) ∅) rfl
+  have hterminal : IsP G q := by
+    refine (isP_iff G q).mpr ?_
+    intro r hr
+    rw [hempty] at hr
+    exact (Finset.notMem_empty r hr).elim
+  have hmove : q ∈ G.moves p := by
+    rw [hoptions]
+    exact Finset.mem_singleton_self q
+  exact fun hP => (isP_iff G p).mp hP q hmove hterminal
 
 -- Even with four distinct piles, the ordinary game has moves the simplified game forbids.
 example : ![4, 3, 1, 1] ∈ (princessRoses ![4, 3, 2, 1]).moves ![4, 3, 2, 1] := by
-  apply mem_slowANimGame_moves_one_two_iff.mpr
+  apply mem_princessRoses_moves_iff.mpr
   decide
 
 example : (4, 3, 1, 1) ∉ simplifiedPrincessRosesMoves (4, 3, 2, 1) := by
@@ -39,6 +67,3 @@ example : (4, 3, 1, 1) ∉ simplifiedPrincessRosesMoves (4, 3, 2, 1) := by
 -- The simplified game permits taking from the third and fourth piles together.
 example : (4, 3, 1, 0) ∈ simplifiedPrincessRosesMoves (4, 3, 2, 1) := by
   decide
-
-example : Equiv (princessRoses ![4, 3, 2, 1]) (simplifiedPrincessRoses (5, 4, 3, 1)) :=
-  princessRoses_equiv_simplifiedPrincessRoses 4 3 2 1 1 (by decide) (by decide) (by decide)

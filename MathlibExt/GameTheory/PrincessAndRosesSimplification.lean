@@ -60,6 +60,18 @@ INTEGERS 26 (2026), Article G4, Section 2.1. -/
 public def princessRoses {k : ℕ} (p : Fin k → ℕ) : ImpartialGame :=
   { slowANimGame k {1, 2} with start := p }
 
+/-- **Options in the Princess and the Roses game.** On $k$ labelled piles with any starting
+position $s$, the position $q$ is an option of $p$ if and only if $q_i \le p_i \le q_i + 1$ for
+every pile $i$ and $\sum_i q_i < \sum_i p_i \le \sum_i q_i + 2$.
+
+Source: Zev Friedman, *Sprague-Grundy Values for 4-Pile Princess and the Roses*,
+INTEGERS 26 (2026), Article G4, Section 2.1 (the move rules). -/
+public theorem mem_princessRoses_moves_iff {k : ℕ} {s p q : Fin k → ℕ} :
+    q ∈ (princessRoses s).moves p ↔
+      (∀ i, q i ≤ p i ∧ p i ≤ q i + 1) ∧
+        (∑ i, q i) < (∑ i, p i) ∧ (∑ i, p i) ≤ (∑ i, q i) + 2 :=
+  mem_slowANimGame_moves_one_two_iff
+
 /-- **Moves of simplified P&R.** The simplified Princess and the Roses game on four sorted piles
 $(a, b, c, d)$ has seven moves, given as the amounts removed from $(a, b, c, d)$: $(1, 0, 0, 0)$,
 $(0, 1, 0, 0)$, $(0, 0, 0, 1)$, $(1, 1, 0, 0)$, $(1, 0, 0, 1)$, $(0, 1, 0, 1)$ and $(0, 0, 1, 1)$.
