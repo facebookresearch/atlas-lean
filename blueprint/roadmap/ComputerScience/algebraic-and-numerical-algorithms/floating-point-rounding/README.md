@@ -43,6 +43,7 @@
 - [Error-free transformation of a sum (TwoSum, FastTwoSum)](error-free-transformation-of-a-sum.md)
 - [Veltkamp splitting of a floating-point number](veltkamp-splitting.md)
 - [Dekker's error-free product without a fused multiply-add](dekker-two-product.md)
+- [Floating-point expansions](floating-point-expansions/README.md)
 
 ## IEEE arithmetic, double rounding and compilation
 
@@ -50,6 +51,12 @@
 - [Double rounding through an extended precision](double-rounding-through-an-extended-precision.md)
 - [Semantics preservation of floating-point compilation](semantics-preservation-of-floating-point-compilation.md)
 - [IEEE operations agree with rounding in the normal range](ieee-operations-agree-with-rounding-in-the-normal-range.md)
+- [Core floating-point operations in the normal range](core-float-model-in-the-normal-range/README.md)
+
+## Veltkamp splitting in binary floating-point arithmetic
+
+- [Veltkamp splitting algorithm](veltkamp-split.md)
+- [Nonoverlapping](nonoverlapping.md)
 
 ## Related topics
 

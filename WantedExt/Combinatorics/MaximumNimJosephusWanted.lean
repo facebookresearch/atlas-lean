@@ -10,8 +10,12 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.Combinatorics.Enumerative.JosephusFunction
+public import MathlibExt.Combinatorics.MaximumNimFloorReduction
+public import MathlibExt.Combinatorics.MaximumNimIterates
+public import MathlibExt.Combinatorics.MaximumNimGrundyPPositions
 public import MathlibExt.Combinatorics.MaximumNimJosephus
 public import MathlibExt.GameTheory.SpragueGrundy
+public import MathlibExt.Combinatorics.MaximumNimFloorNonmultiple
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 import Mathlib.Tactic
 
@@ -26,45 +30,8 @@ namespace MetaMathlibExt
 -- `maximumNimGrundy_div_two_three` for the halving rule are in
 -- `MathlibExt.Combinatorics.MaximumNimJosephus`, which this module imports.
 
-/-- **The Maximum Nim game.** For a rule function $f : \mathbb{N} \to \mathbb{N}$, the Maximum Nim
-game with rule $f$ is the impartial game whose positions are the pile sizes $x \in \mathbb{N}$, in
-which the moves from $x$ go to $x - u$ for each $u$ with $1 \le u \le \min(f(x), x)$. The rank of
-a position is the pile size itself, and the starting position is the empty pile $0$.
-
-Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
-        INTEGERS 24 (2024), Article G5, Section 2. -/
-public def maximumNimGame (f : ℕ → ℕ) : SpragueGrundy.ImpartialGame where
-  Pos := ℕ
-  eqDec := inferInstance
-  moves := fun x => (Finset.Icc 1 (min (f x) x)).image (fun u => x - u)
-  rank := id
-  rank_lt := by
-    intro x y h
-    simp only [Finset.mem_image, Finset.mem_Icc] at h
-    obtain ⟨u, ⟨h1, h2⟩, rfl⟩ := h
-    simp only [id_eq]
-    omega
-  start := 0
-
-/-- **P-positions of Maximum Nim.** Let $f : \mathbb{N} \to \mathbb{N}$ be a rule function and let
-$x$ be a pile size. The position $x$ of the Maximum Nim game with rule $f$ is a P-position
-if and only if, for every $u$ with $1 \le u \le \min(f(x), x)$, the position $x - u$ is not
-a P-position.
-
-Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
-        INTEGERS 24 (2024), Article G5, Section 2. -/
-public theorem maximumNimGame_isP_iff (f : ℕ → ℕ) (x : ℕ) :
-    SpragueGrundy.IsP (maximumNimGame f) x ↔
-      ∀ u, 1 ≤ u → u ≤ min (f x) x → ¬SpragueGrundy.IsP (maximumNimGame f) (x - u) := by
-  refine (SpragueGrundy.isP_iff (maximumNimGame f) x).trans ?_
-  change (∀ q : ℕ, q ∈ (Finset.Icc 1 (min (f x) x)).image (fun u => x - u) →
-      ¬SpragueGrundy.IsP (maximumNimGame f) q) ↔ _
-  constructor
-  · intro h u h1 h2
-    exact h (x - u) (Finset.mem_image.mpr ⟨u, Finset.mem_Icc.mpr ⟨h1, h2⟩, rfl⟩)
-  · intro h q hq
-    obtain ⟨u, hu, rfl⟩ := Finset.mem_image.mp hq
-    exact h u (Finset.mem_Icc.mp hu).1 (Finset.mem_Icc.mp hu).2
+-- `maximumNimGame` and `maximumNimGame_isP_iff` are in
+-- `MathlibExt.Combinatorics.MaximumNimGrundyPPositions`, which this module publicly imports.
 
 -- `maximumNimH` and `maximumNimH_iterate_bounds` are in
 -- `MathlibExt.Combinatorics.MaximumNimJosephus`, which this module publicly imports.
@@ -286,16 +253,8 @@ public theorem josephusEliminationOrder_getLast? (k n : ℕ) (hk : 1 ≤ k) (hn 
   congr 1
   omega
 
-/-- **Grundy value zero characterizes P-positions in Maximum Nim.** Let $f : \mathbb{N} \to
-\mathbb{N}$ satisfy $f(0) = 0$ and $f(m-1) \le f(m) \le f(m-1) + 1$ for every $m \ge 1$. Then for
-every pile size $x \in \mathbb{N}$, the Grundy number of $x$ in Maximum Nim with rule function $f$
-is $0$ if and only if $x$ is a P-position (a previous-player win under normal play) of that game.
-
-Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
-        INTEGERS 24 (2024), Article G5, Theorem 1 (`integers-2024-G5-thm-1`). -/
-public theorem_wanted maximumNimGrundy_eq_zero_iff_isP (f : ℕ → ℕ) (hf0 : f 0 = 0)
-    (hf : ∀ m, 1 ≤ m → f (m - 1) ≤ f m ∧ f m ≤ f (m - 1) + 1) (x : ℕ) :
-    maximumNimGrundy f x = 0 ↔ SpragueGrundy.IsP (maximumNimGame f) x
+-- `maximumNimGrundy_eq_zero_iff_isP` is proved in
+-- `MathlibExt.Combinatorics.MaximumNimGrundyPPositions`, which this module publicly imports.
 
 -- Lemma 1(i) and (ii) are proved in `MathlibExt.Combinatorics.MaximumNimJosephus`,
 -- which this module publicly imports.
@@ -308,15 +267,8 @@ public theorem_wanted maximumNimGrundy_eq_zero_iff_isP (f : ℕ → ℕ) (hf0 : 
 -- `maximumNimGrundy_div_eq_of_dvd` in `MathlibExt.Combinatorics.MaximumNimJosephus`, which this
 -- module imports.
 
-/-- **Maximum Nim Grundy numbers at non-multiples of the divisor.** Let $k \ge 2$ and let $G$
-be the Grundy number of Maximum Nim with rule function $f(y) = \lfloor y/k \rfloor$. If $x$ is a
-natural number not divisible by $k$, then $G(x) = G(\lfloor (k-1)x/k \rfloor)$.
-
-Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
-        INTEGERS 24 (2024), Article G5, Lemma 3(ii) (`integers-2024-G5-lem-3`). -/
-public theorem_wanted maximumNimGrundy_eq_F_of_not_dvd (k x : ℕ) (hk : 2 ≤ k)
-     (hkx : ¬k ∣ x) :
-    maximumNimGrundy (· / k) x = maximumNimGrundy (· / k) ((k - 1) * x / k)
+-- `maximumNimGrundy_eq_F_of_not_dvd` is proved in
+-- `MathlibExt.Combinatorics.MaximumNimFloorNonmultiple`, which this module publicly imports.
 
 -- Lemma 4(ii) is proved as `maximumNim_not_dvd_mul_sub_of_ne` in
 -- `MathlibExt.Combinatorics.MaximumNimJosephus`, which this module publicly imports.
@@ -340,23 +292,6 @@ public theorem_wanted maximumNimGrundy_mul_sub_eq_decomposition (k n t u i : ℕ
     (hi : 1 ≤ i) (hin : i ≤ n) (hki : ¬k ∣ i) :
     maximumNimGrundy (· / k) (n * k - i) =
       maximumNimGrundy (· / k) ((n - t) * k - (u + i - i / k))
-
-/-- **Floor-rule Maximum Nim: one-step Grundy reduction when k = nt + h.** Let $n$, $t$, $h$ be
-natural numbers with $t \ge 1$ and $1 \le h \le n$, and let $k = nt + h$. Write $G(x)$ for the
-Grundy number of a pile of $x$ stones in Maximum Nim with rule function
-$f(y) = \lfloor y/k \rfloor$, and let $F(x) = \lfloor (k-1)x/k \rfloor$. Then for every natural
-number $i$ with $1 \le i \le n$,
-$$G(nk - i) = G(F(nk - i)) = G(n(k - 1) - i).$$
-
-Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
-        INTEGERS 24 (2024), Article G5, Lemma 5(ii.1) (`integers-2024-G5-lem-5`). -/
-public theorem_wanted maximumNimGrundy_mul_sub_eq_F_eq_pred (k n t h i : ℕ)
-    (ht : 1 ≤ t) (hh : 1 ≤ h)
-    (hdecomp : k = n * t + h) (hhn : h ≤ n) (hi : 1 ≤ i) (hin : i ≤ n) :
-    maximumNimGrundy (· / k) (n * k - i) =
-        maximumNimGrundy (· / k) ((k - 1) * (n * k - i) / k) ∧
-      maximumNimGrundy (· / k) ((k - 1) * (n * k - i) / k) =
-        maximumNimGrundy (· / k) (n * (k - 1) - i)
 
 /-- **Floor-rule Maximum Nim: t-step Grundy reduction when k = nt + h.** Let $n$, $t$, $h$ be
 natural numbers with $t \ge 1$ and $1 \le h \le n$, and let $k = nt + h$. Write $G(x)$ for the
@@ -393,16 +328,6 @@ public theorem_wanted maximumNimGrundy_mul_sub_eq_succ_iterate_F (k n t h i : �
         maximumNimGrundy (· / k) (Nat.iterate F (t + 1) (n * k - i)) ∧
       maximumNimGrundy (· / k) (Nat.iterate F (t + 1) (n * k - i)) =
         maximumNimGrundy (· / k) ((n - 1) * k - (n - h + i))
-
-/-- **Iterates of the Maximum Nim map $h_k$ tend to infinity.** Let $k \ge 2$ be a natural
-number and let $h_k$ be the map $x \mapsto x + \lfloor x/(k-1) \rfloor + 1$ on the natural numbers.
-For every natural number $x_0$, the iterates $h_k^p(x_0)$ tend to infinity as $p \to \infty$.
-
-Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
-        INTEGERS 24 (2024), Article G5, Lemma 6(iii) (`integers-2024-G5-lem-6`). -/
-public theorem_wanted maximumNimH_iterate_tendsto_atTop (k x₀ : ℕ) (hk : 2 ≤ k) :
-    Filter.Tendsto (fun p => Nat.iterate (maximumNimH k) p x₀)
-      Filter.atTop Filter.atTop
 
 /-- **Josephus elimination positions as Maximum Nim Grundy numbers.** Let $k \ge 2$ and
 $1 \le m \le n$. Write $o_n(m)$ for the position, counting from $1$, at which $m$ appears in the

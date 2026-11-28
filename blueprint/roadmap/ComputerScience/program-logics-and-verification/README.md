@@ -9,6 +9,7 @@ Logics for proving programs correct: Hoare logic for partial and total correctne
 - [Kleene algebra with tests](kleene-algebra-with-tests/README.md)
 - [Safe backward rules for heap IMP](safe-backward-rules-for-heap-imp/README.md)
 - [Separation logic](separation-logic/README.md)
+- [Successful array-read credits](successful-array-read-credits/README.md)
 - [Metatheory of separation logic](separation-logic-metatheory/README.md)
 - [Verification-condition generation](verification-condition-generation/README.md)
 - [Hoare logic for typed traced diagrams](hoare-logic-for-typed-traced-diagrams/README.md)
@@ -20,7 +21,9 @@ Logics for proving programs correct: Hoare logic for partial and total correctne
 - [User model and machine model composition](user-model-and-machine-model-composition.md)
 
 - [Safety verification](safety-verification/README.md)
+- [Model checking hyperproperties and multi-agent logics](hyperproperty-and-multi-agent-model-checking/README.md)
 - [Termination analysis](termination-analysis/README.md)
+- [Expected run-time calculus](expected-run-time-calculus/README.md)
 - [Testing and runtime verification](testing-and-runtime-verification/README.md)
 
 - [Concurrency logics](concurrency-logics/README.md)

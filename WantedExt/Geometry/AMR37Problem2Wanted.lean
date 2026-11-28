@@ -65,11 +65,11 @@ def conjecture : Prop :=
 /--
 Resolved true: Resolved affirmatively: Kopczyński, Pak and Przytycki (Acute triangulations of
 polyhedra and R^n, Combinatorica 32 (2012), arXiv:0909.3706) construct a triangulation of the
-3-cube into tetrahedra whose dihedral angles are all acute, and VanderZee, Hirani, Guoy and
-Ramos (A dihedral acute triangulation of the cube, arXiv:0905.3715) give another. Source: E.
-Kopczyński, I. Pak, P. Przytycki, Acute triangulations of polyhedra and R^n, Combinatorica 32
-(2012), arXiv:0909.3706, https://arxiv.org/abs/0909.3706. Moved from
-`OpenConjectures/Geometry/AMR37Problem2`.
+3-cube into tetrahedra whose dihedral angles are all acute, and VanderZee, Hirani, Zharnitsky and
+Guoy (A dihedral acute triangulation of the cube, Computational Geometry 43(5) (2010), 445-452,
+doi:10.1016/j.comgeo.2009.09.001, arXiv:0905.3715) give another. Source: E. Kopczyński, I. Pak, P.
+Przytycki, Acute triangulations of polyhedra and R^n, Combinatorica 32 (2012), arXiv:0909.3706,
+https://arxiv.org/abs/0909.3706. Moved from `OpenConjectures/Geometry/AMR37Problem2`.
 -/
 public theorem_wanted conjecture_holds : conjecture
 

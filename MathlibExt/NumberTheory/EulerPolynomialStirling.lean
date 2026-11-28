@@ -9,18 +9,23 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import Mathlib.Algebra.Polynomial.Basic
+public import Mathlib.Algebra.Polynomial.Eval.Defs
 public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.Data.Nat.Factorial.Basic
+import Mathlib.Algebra.Polynomial.Eval.SMul
+import Mathlib.Tactic.Ring
 
 /-!
 # Generalized Stirling polynomials and the coefficients `α_k`
 
-The generalized Stirling polynomial `genStirlingPoly n k` of Mokhtari, Boumahdi and Bencherif,
-"Generalizations of Several Explicit Formulas for Euler Polynomials" (Proposition 3.1), and the
-coefficients `eulerAlpha` of their Lemma 2.2, the Taylor coefficients of `(2 + 2z) / (2 + 2z + z²)`.
-The expansions of Euler polynomials in these polynomials are stated in
-`WantedExt.NumberTheory.EulerPolynomialFormulasWanted`.
+For natural numbers `n` and `k`, `genStirlingPoly n k` is the generalized Stirling polynomial.
+For each `k`, `eulerAlpha k` is the coefficient of `z^k` in `(2 + 2z) / (2 + 2z + z²)`.
+
+## References
+
+* Nouara Mokhtari, Rachid Boumahdi, and Farid Bencherif,
+  *Generalizations of Several Explicit Formulas for Euler Polynomials*, INTEGERS 25 (2025),
+  Article A65, pp. 1–15, Proposition 3.1 and Lemma 2.2.
 -/
 
 set_option autoImplicit false
@@ -56,5 +61,29 @@ def eulerAlpha : ℕ → ℚ
   | 0 => 1
   | 1 => 0
   | k + 2 => -eulerAlpha (k + 1) - eulerAlpha k / 2
+
+/-- Evaluating a generalized Stirling polynomial gives its defining finite sum at `x`. -/
+theorem genStirlingPoly_eval (n k : ℕ) (x : ℚ) :
+    (genStirlingPoly n k).eval x =
+      (1 / (Nat.factorial k : ℚ)) *
+        ∑ j ∈ Finset.range (k + 1),
+          ((Nat.choose k j : ℚ) * (-1) ^ (k - j)) * (x + j) ^ n := by
+  simp [genStirlingPoly, eval_finsetSum, eval_smul, smul_eq_mul]
+
+/-- The Taylor coefficient $\alpha_0$ of $(2 + 2z)/(2 + 2z + z^2)$ is $1$. -/
+theorem eulerAlpha_zero : eulerAlpha 0 = 1 := rfl
+
+/-- The Taylor coefficient $\alpha_1$ of $(2 + 2z)/(2 + 2z + z^2)$ is $0$. -/
+theorem eulerAlpha_one : eulerAlpha 1 = 0 := rfl
+
+private theorem eulerAlpha_succ_succ (k : ℕ) :
+    eulerAlpha (k + 2) = -eulerAlpha (k + 1) - eulerAlpha k / 2 := rfl
+
+/-- The Taylor coefficients $\alpha_k$ of $(2 + 2z)/(2 + 2z + z^2)$ satisfy
+$2\alpha_{k+2} + 2\alpha_{k+1} + \alpha_k = 0$ for every $k \ge 0$. -/
+theorem eulerAlpha_rec (k : ℕ) :
+    2 * eulerAlpha (k + 2) + 2 * eulerAlpha (k + 1) + eulerAlpha k = 0 := by
+  rw [eulerAlpha_succ_succ]
+  ring
 
 end MathlibExt.NumberTheory.EulerPolynomialFormulasWanted

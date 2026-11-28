@@ -12,13 +12,17 @@ Büchi, generalized Büchi, parity, Rabin, Streett and Muller automata on infini
 - [Parity games](parity-games/README.md)
 - [Parity game algorithms](parity-game-algorithms/README.md)
 - [Muller, Rabin and Streett games](muller-rabin-and-streett-games/README.md)
+- [Quantitative games](quantitative-games/README.md)
 - [Rabin and Streett automata](rabin-and-streett-automata/README.md)
 - [Logic and tree automata](logic-and-tree-automata/README.md)
 - [Monadic logic on infinite words](monadic-logic-on-infinite-words/README.md)
 - [Automata on infinite trees](automata-on-infinite-trees/README.md)
 - [Alternating automata](alternating-automata/README.md)
+- [Probabilistic Büchi automata](probabilistic-buchi-automata/README.md)
 - [Timed automata](timed-automata/README.md)
 
 - [Polynomial-time solvability of mean-payoff games](polynomial-time-solvability-of-mean-payoff-games.md)
 
 - [Reactive synthesis](reactive-synthesis/README.md)
+- [Randomized quasipolynomial computation of the mean-payoff winning set](randomized-quasipolynomial-mean-payoff-winning-set.md)
+- [Imperfect-information and multiplayer games](imperfect-information-and-multiplayer-games/README.md)

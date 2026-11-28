@@ -1,16 +1,26 @@
 # q-gram (seed) filtering lemma for approximate matching
 
-Let $w$, $q$ and $k$ be integers with $1 \le q \le w$ and $k \ge 0$. If two strings of length $w$ differ in at most $k$
-positions, they share at least $w - q + 1 - kq$ positionally aligned $q$-grams (equal substrings of length $q$ at the
-same offset); in particular, if $w - q + 1 > kq$, they share at least one. Consequently an exhaustive filter that reports
-every window pair sharing an aligned $q$-gram loses no pair at Hamming distance at most $k$ when $w - q + 1 > kq$.
-This is a statement about exhaustive seeding; it is not a sensitivity guarantee for BLAST, whose extension and
-filtering steps are heuristic, and the edit-distance version with its own bound is a separate page.
+Let $w$, $q$ and $k$ be natural numbers with $q \le w$. If two strings $x$ and $y$ of length $w$ over an alphabet
+differ in at most $k$ positions, then the number $s$ of offsets $i \in \{0, \dots, w - q\}$ at which their
+[$q$-grams](q-gram.md) are equal (the positionally aligned $q$-grams they share: equal substrings of length $q$ at the
+same offset) satisfies
+
+$$w - q + 1 \le s + kq,$$
+
+that is, they share at least $w - q + 1 - kq$ positionally aligned $q$-grams. The bound is written as a sum so that it
+stays exact when $w - q + 1 - kq$ is negative. For $q = 0$ it holds trivially: all $w + 1$ offsets carry the empty
+$q$-gram.
+
+In particular, if $w - q + 1 > kq$, the two strings
+[share at least one aligned $q$-gram](exists-q-gram-eq-of-mul-lt.md); consequently
+[an exhaustive filter that reports every window pair sharing an aligned $q$-gram loses no pair at Hamming distance at most $k$](set-of-hamming-dist-le-subset.md).
+This is a statement about exhaustive seeding; it is not a sensitivity guarantee for BLAST, whose extension and filtering
+steps are heuristic.
 
 ## Proof
 
-The aligned $q$-grams start at positions $1, \dots, w - q + 1$. A mismatch at position $j$ lies in the $q$-grams starting at
-positions $j - q + 1, \dots, j$ only, so it spoils at most $q$ of them, and at most $k$ mismatches spoil at most $kq$. The
+The aligned $q$-grams start at offsets $0, \dots, w - q$. A mismatch at position $j$ lies in the $q$-grams starting at
+offsets $j - q + 1, \dots, j$ only, so it spoils at most $q$ of them, and at most $k$ mismatches spoil at most $kq$. The
 remaining at least $w - q + 1 - kq$ aligned $q$-grams contain no mismatch and are equal.
 
 ## Related topics

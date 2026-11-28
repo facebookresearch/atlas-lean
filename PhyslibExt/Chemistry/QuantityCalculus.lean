@@ -323,7 +323,7 @@ lemma pressure_div_concentration : pressure / concentration = chemicalPotential 
   funext i
   fin_cases i
   all_goals simp
-  all_goals norm_num
+  norm_num
 
 /-- The factor by which the numerical value of a quantity of dimension `d` is multiplied under a
 change of unit choices from `u₁` to `u₂`: the real value of Physlib's

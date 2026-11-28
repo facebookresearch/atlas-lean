@@ -40,34 +40,71 @@ example (t : ℝ) (ht : 0 < t) :
       mul_assoc, coeff_C_mul]
   · simpa only [a, coeff_C] using constant_pf t ht.le
 
+private theorem one_coeffMatrix_hasNonnegativeMinors : Matrix.HasNonnegativeMinors
+    (riordanCoeffMatrix (fun n => coeff n (1 : PowerSeries ℝ))
+      (fun n => coeff n (1 : PowerSeries ℝ))) := by
+  let δ (j : ℕ) : ℝ := if j = 0 then 1 else 0
+  change Matrix.HasNonnegativeMinors (riordanCoeffMatrix _ _)
+  have hd (n : ℕ) : coeff n (1 : PowerSeries ℝ) = δ n := coeff_one n
+  simp_rw [hd]
+  have entry (i j : ℕ) : riordanCoeffMatrix δ δ i j = (1 : Matrix ℕ ℕ ℝ) i (j - 1) := by
+    cases j with
+    | zero => simp [δ, riordanCoeffMatrix, Matrix.one_apply]
+    | succ j =>
+      simp [δ, riordanCoeffMatrix, Matrix.one_apply, Nat.sub_eq_zero_iff_le]
+      split_ifs <;> first | rfl | omega
+  intro k r c hr hc
+  let col (i : Fin k) := c i - 1
+  have hm : Monotone col := fun _ _ h => Nat.sub_le_sub_right (hc.monotone h) 1
+  by_cases hinj : Function.Injective col
+  · simpa only [Matrix.submatrix, entry, col] using
+      (Matrix.IsTotallyNonneg.one (R := ℝ) hr (hm.strictMono_of_injective hinj))
+  · obtain ⟨i, j, heq, hne⟩ := Function.not_injective_iff.mp hinj
+    rw [Matrix.det_zero_of_column_eq hne]
+    intro t
+    simp only [Matrix.submatrix_apply, entry]
+    exact congrArg ((1 : Matrix ℕ ℕ ℝ) (r t)) heq
+
+
+private theorem lowerOnes_isRiordanArrayAZ :
+    IsRiordanArrayAZ (fun n => coeff n (1 : PowerSeries ℝ))
+      (fun n => coeff n (1 : PowerSeries ℝ)) (fun n k => if k ≤ n then 1 else 0) := by
+  refine ⟨by simp, by simp, ?_, ?_⟩
+  · intro n
+    rw [Finset.sum_eq_single 0] <;> simp_all [coeff_one]
+  · intro n k
+    rw [Finset.sum_eq_single 0] <;> simp_all [coeff_one]
+
 -- For A(x) = Z(x) = 1 the array is the lower triangle of ones.
 -- Its coefficient matrix repeats the first column of the identity.
 example : Matrix.HasNonnegativeMinors
+    (Matrix.of fun n k : ℕ => if k ≤ n then (1 : ℝ) else 0) :=
+  riordanArray_hasNonnegativeMinors_of_coeffMatrix lowerOnes_isRiordanArrayAZ
+    one_coeffMatrix_hasNonnegativeMinors
+
+-- At a = b = r = s = t = 0 the parameter criterion recovers the same array.
+example : Matrix.HasNonnegativeMinors
     (Matrix.of fun n k : ℕ => if k ≤ n then (1 : ℝ) else 0) := by
-  let δ (j : ℕ) : ℝ := if j = 0 then 1 else 0
-  apply riordanArray_hasNonnegativeMinors_of_coeffMatrix (a := δ) (z := δ)
-  · refine ⟨by simp, by simp, ?_, ?_⟩
-    · intro n
-      rw [Finset.sum_eq_single 0] <;> simp_all [δ]
-    · intro n k
-      rw [Finset.sum_eq_single 0] <;> simp_all [δ]
-  · have entry (i j : ℕ) : riordanCoeffMatrix δ δ i j = (1 : Matrix ℕ ℕ ℝ) i (j - 1) := by
-      cases j with
-      | zero => simp [δ, riordanCoeffMatrix, Matrix.one_apply]
-      | succ j =>
-        simp [δ, riordanCoeffMatrix, Matrix.one_apply, Nat.sub_eq_zero_iff_le]
-        split_ifs <;> first | rfl | omega
-    intro k r c hr hc
-    let col (i : Fin k) := c i - 1
-    have hm : Monotone col := fun _ _ h => Nat.sub_le_sub_right (hc.monotone h) 1
-    by_cases hinj : Function.Injective col
-    · simpa only [Matrix.submatrix, entry, col] using
-        (Matrix.IsTotallyNonneg.one (R := ℝ) hr (hm.strictMono_of_injective hinj))
-    · obtain ⟨i, j, heq, hne⟩ := Function.not_injective_iff.mp hinj
-      rw [Matrix.det_zero_of_column_eq hne]
-      intro t
-      simp only [Matrix.submatrix_apply, entry]
-      exact congrArg ((1 : Matrix ℕ ℕ ℝ) (r t)) heq
+  exact riordanArray_hasNonnegativeMinors_of_params 1 1 1 1 (by simp)
+    (a := 0) (b := 0) (r := 0) (s := 0) (t := 0) le_rfl le_rfl le_rfl le_rfl le_rfl
+    (by simp) (by simp) lowerOnes_isRiordanArrayAZ one_coeffMatrix_hasNonnegativeMinors
+    (by simp) (by simp)
+
+-- With P = Q = 1, a = b = t = 1, r = 0, s = 2, the discriminant vanishes
+-- and b attains its upper bound. The resulting Z-series is 2 + 2X.
+example {R : ℕ → ℕ → ℝ}
+    (hR : IsRiordanArrayAZ (fun n => coeff n (1 + C 2 * X + X ^ 2))
+      (fun n => coeff n (C 2 + C 2 * X)) R) :
+    Matrix.HasNonnegativeMinors (Matrix.of R) ∧ R 1 0 = 2 ∧ R 1 1 = 1 := by
+  refine ⟨?_, ?_⟩
+  · apply riordanArray_hasNonnegativeMinors_of_params 1 1 _ _ (by simp)
+      (a := 1) (b := 1) (r := 0) (s := 2) (t := 1)
+      (by norm_num) (by norm_num) le_rfl (by norm_num) (by norm_num)
+      _ _ hR one_coeffMatrix_hasNonnegativeMinors (by norm_num) (by norm_num)
+    · simp
+    · simp only [map_zero, zero_mul, sub_zero, one_pow, mul_one, map_one, map_ofNat]
+      ring
+  · simpa [coeff_zero_eq_constantCoeff] using hR.one_zero_and_one_one
 
 -- With all three parameters zero and P = 1, the recurrence gives the identity array.
 example : Matrix.HasNonnegativeMinors (1 : Matrix ℕ ℕ ℝ) := by

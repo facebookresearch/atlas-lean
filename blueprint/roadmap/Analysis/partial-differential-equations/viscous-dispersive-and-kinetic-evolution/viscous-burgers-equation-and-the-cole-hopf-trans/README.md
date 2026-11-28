@@ -1,0 +1,17 @@
+# Viscous Burgers equation and the Cole–Hopf transform
+
+- [The Burgers solution as a weighted heat average of the initial velocity](burgers-solution-eq-weighted-heat.md)
+- [The constructed Burgers solution stays in every interval containing the initial velocity](burgers-solution-mem-icc.md)
+- [Uniform bounds are preserved by the constructed Burgers solution](abs-burgers-solution-le.md)
+- [Joint continuity of the Cole–Hopf field of an exponentially growing profile](burgers-from-heat-continuous-of-exp-grow.md)
+- [Joint continuity of the Burgers solution for bounded initial velocity](burgers-solution-continuous-of-bounded.md)
+- [Joint recovery of the initial velocity by the Burgers solution](burgers-solution-tendsto-initial-of-boun.md)
+- [Exponential growth of the anchored heat profile of a bounded velocity](initial-heat-profile-has-exp-growth.md)
+- [Exponential growth of the derivative of the anchored heat profile](initial-heat-profile-deriv-has-exp-growt.md)
+- [Positive-time C² regularity of the Cole–Hopf field of an exponentially growing profile](burgers-from-heat-cont-diff-on-of-exp-gr.md)
+- [The Cole–Hopf field of an exponentially growing positive profile solves Burgers](burgers-from-heat-burgers-of-exp-growth.md)
+- [Initial recovery of the logarithmic derivative for exponentially growing profiles](burgers-from-heat-tendsto-zero-of-exp-gr.md)
+- [Recovery of a bounded continuous initial velocity](burgers-solution-tendsto-zero-of-bounded.md)
+- [Positive-time C² regularity for bounded continuous initial velocity](burgers-solution-cont-diff-on-of-bounded.md)
+- [Classical Burgers solutions for bounded continuous initial velocity](burgers-solution-burgers-of-bounded.md)
+- [Classical existence for the Burgers initial-value problem with bounded data](burgers-solution-solves-initial-value-of.md)

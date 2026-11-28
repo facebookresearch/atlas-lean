@@ -7,7 +7,7 @@
 - [Finite and unrestricted implication of functional and inclusion dependencies](finite-and-unrestricted-implication-of-functional-and-inclusion.md)
 - [Successful terminating chases yield universal models](successful-terminating-chases-yield-universal-models.md)
 - [Data exchange: universal solutions and certain answers of UCQs](data-exchange-universal-solutions-and-certain-answers-of-ucq.md)
-- [Multivalued and join dependencies; 4NF](multivalued-and-join-dependencies-4nf.md)
+- [Multivalued and join dependencies](multivalued-and-join-dependencies/README.md)
 
 ## Instances and projection inclusion
 
