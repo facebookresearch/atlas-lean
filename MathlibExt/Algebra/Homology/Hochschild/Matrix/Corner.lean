@@ -97,7 +97,8 @@ theorem corner_right (b : ι) (a : A) (m : M) :
   rw [Coefficients.right_smul_apply]
   by_cases hi : b = i <;> by_cases hj : b = j <;>
     simp [cornerAlgHom_apply, Matrix.singleLinearMap_apply, Matrix.single_apply, eq_comm, ite_and,
-      hi, hj, apply_ite]
+      hi, hj, apply_ite] <;>
+    by_cases hij : i = j <;> simp [hij]
 
 omit [Module A M] [Module Aᵐᵒᵖ M] [SMulCommClass A Aᵐᵒᵖ M] [IsScalarTower k A M]
   [IsScalarTower k Aᵐᵒᵖ M] in
