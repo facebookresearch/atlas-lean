@@ -18,6 +18,14 @@ of initial conditions `B(1), …, B(m)`. With `pad = true` the sequence is also 
 at every nonpositive index (the source's `⟨0̄; …⟩` convention). A term that would reference an
 undefined index (a nonpositive index when `pad = false`, or an index not yet computed) cannot
 be computed, and the sequence stops there: it "dies" (unpadded) or "ends" (padded).
+
+## References
+
+* Nathan Fox, *The Behavior of a Three-Term Hofstadter-Like Recurrence with Linear
+  Initial Conditions*, Journal of Integer Sequences 27 (2024), Article 24.7.4, Section 1
+  (recurrence and padding conventions) and Theorem 1 (exact unpadded length).
+* The array-push lookup lemma is taken from `ThreeTermHofstadterSixteenCycleTwo`, where it
+  was named `lookup_push`.
 -/
 
 namespace MetaMathlibExt
@@ -128,6 +136,74 @@ theorem threeTermHofstadterTerm_of_le_length (pad : Bool) (init : List ℤ) {j :
     threeTermHofstadterTerm pad init j = threeTermHofstadterLookup pad init.toArray j := by
   simp [threeTermHofstadterTerm, threeTermHofstadterPrefix, Nat.sub_eq_zero_of_le hj,
     threeTermHofstadterExtend]
+
+/-- **Lookup at a positive index.** For an array $x=(x_1,\dots,x_m)$ of integers, either padding
+choice, and an integer $j>0$, the lookup is the optional array entry at zero-based index $j-1$:
+it is $x_j$ if $j\le m$ and undefined otherwise. -/
+theorem threeTermHofstadterLookup_of_pos (pad : Bool) (xs : Array ℤ) {j : ℤ} (hj : 0 < j) :
+    threeTermHofstadterLookup pad xs j = xs[(j - 1).toNat]? := by
+  simp [threeTermHofstadterLookup, not_le.mpr hj]
+
+/-- **Padded lookup at a nonpositive index.** For every array of computed integer terms and every
+integer $j\le 0$, the padded lookup at $j$ is defined and equals $0$. -/
+theorem threeTermHofstadterLookup_true_of_nonpos (xs : Array ℤ) {j : ℤ} (hj : j ≤ 0) :
+    threeTermHofstadterLookup true xs j = some 0 := by
+  simp [threeTermHofstadterLookup, hj]
+
+/-- **Padded lookup after appending a term.** For an array $x$ of $m$ computed integer terms and an
+integer $v$, the padded lookup in $x$ with $v$ appended is $v$ at index $m+1$. At every other
+integer index $j$, it agrees with the padded lookup in $x$. -/
+theorem threeTermHofstadterLookup_push (xs : Array ℤ) (v j : ℤ) :
+    threeTermHofstadterLookup true (xs.push v) j =
+      if j = (xs.size : ℤ) + 1 then some v else threeTermHofstadterLookup true xs j := by
+  by_cases hj : j ≤ 0
+  · simp [threeTermHofstadterLookup, hj, show j ≠ (xs.size : ℤ) + 1 by omega]
+  · simp only [threeTermHofstadterLookup, hj, ite_false, Array.getElem?_push,
+      show (j - 1).toNat = xs.size ↔ j = (xs.size : ℤ) + 1 by omega]
+
+/-- **Next term with known predecessors.** Let $x$ be an array of $m$ computed integer terms
+with either padding choice, and set $n=m+1$. If the lookups at $n-i$ are defined with values
+$b_i$ for $i=1,2,3$, the next term is the sum of the lookups at $n-b_1,n-b_2,n-b_3$ when all
+three are defined, and is undefined otherwise. -/
+theorem threeTermHofstadterNext_eq (pad : Bool) (xs : Array ℤ) {b₁ b₂ b₃ : ℤ}
+    (h₁ : threeTermHofstadterLookup pad xs ((xs.size : ℤ) + 1 - 1) = some b₁)
+    (h₂ : threeTermHofstadterLookup pad xs ((xs.size : ℤ) + 1 - 2) = some b₂)
+    (h₃ : threeTermHofstadterLookup pad xs ((xs.size : ℤ) + 1 - 3) = some b₃) :
+    threeTermHofstadterNext pad xs =
+      (threeTermHofstadterLookup pad xs ((xs.size : ℤ) + 1 - b₁)).bind fun v₁ =>
+      (threeTermHofstadterLookup pad xs ((xs.size : ℤ) + 1 - b₂)).bind fun v₂ =>
+      (threeTermHofstadterLookup pad xs ((xs.size : ℤ) + 1 - b₃)).map fun v₃ => v₁ + v₂ + v₃ := by
+  simp only [threeTermHofstadterNext, h₁, h₂, h₃, Option.bind_some]
+
+/-- **Computing a term by a prefix invariant.** Let $P$ be a property of finite arrays of
+integer terms, $a$ the list of initial conditions, $j\ge 0$ the target index, and $v$ an optional
+integer. Fix either padding choice. Suppose $P$ holds for $a$, and whenever $P$ holds for an
+array $x$ of size $m<j$, the next term is defined and appending it preserves $P$. If the lookup
+at $j$ equals $v$ in every array of size at least $j$ that satisfies $P$, then the term at $j$
+equals $v$. -/
+theorem threeTermHofstadterTerm_of_invariant (pad : Bool) (init : List ℤ) (j : ℕ)
+    {P : Array ℤ → Prop} {v : Option ℤ} (hinit : P init.toArray)
+    (hstep : ∀ xs, P xs → xs.size < j →
+      ∃ w, threeTermHofstadterNext pad xs = some w ∧ P (xs.push w))
+    (hread : ∀ xs, P xs → j ≤ xs.size → threeTermHofstadterLookup pad xs j = v) :
+    threeTermHofstadterTerm pad init j = v := by
+  by_cases hj : j ≤ init.length
+  · rw [threeTermHofstadterTerm_of_le_length _ _ hj]
+    exact hread _ hinit (by simpa using hj)
+  have extend (steps : ℕ) (xs : Array ℤ) (hx : P xs) (hle : xs.size + steps ≤ j) :
+      ∃ ys, threeTermHofstadterExtend pad steps xs = some ys ∧
+        ys.size = xs.size + steps ∧ P ys := by
+    induction steps generalizing xs with
+    | zero => exact ⟨xs, rfl, rfl, hx⟩
+    | succ steps ih =>
+      obtain ⟨w, hw, hp⟩ := hstep xs hx (by omega)
+      have hsize : (xs.push w).size = xs.size + 1 := Array.size_push w
+      obtain ⟨ys, hext, hy, hp'⟩ := ih (xs.push w) hp (by omega)
+      exact ⟨ys, by simpa [threeTermHofstadterExtend, hw] using hext, by omega, hp'⟩
+  have hsize : init.toArray.size = init.length := List.size_toArray
+  obtain ⟨ys, hext, hy, hp⟩ := extend (j - init.length) init.toArray hinit (by omega)
+  simpa only [threeTermHofstadterTerm, threeTermHofstadterPrefix, hext, Option.bind_some] using
+    hread ys hp (by omega)
 
 /-- **Index zero of the sequence started at 5.** For the three-term Hofstadter-like sequence with
 the single initial condition $5$, the term at index $0$ is defined and equals $0$ when the
