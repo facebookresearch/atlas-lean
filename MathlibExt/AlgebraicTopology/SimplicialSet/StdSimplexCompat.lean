@@ -105,7 +105,7 @@ noncomputable def ofSimplexRepresentableBy :
 lemma ofSimplexRepresentableBy_id :
     dsimp% (ofSimplexRepresentableBy x).homEquiv (𝟙 ⦋n⦌) = x := by
   simpa only [ofSimplexRepresentableBy,
-    Functor.RepresentableBy.equivUliftYonedaIso, Equiv.trans_apply,
+    Functor.RepresentableBy.equivUliftYonedaIso, Equiv.symm, Equiv.trans_apply,
     equivEquivIso_inv, Iso.toEquiv, asIso, SSet.yonedaEquiv,
     CategoryTheory.uliftYonedaEquiv]
     using congrArg Subtype.val (yonedaEquiv_toOfSimplex x)
