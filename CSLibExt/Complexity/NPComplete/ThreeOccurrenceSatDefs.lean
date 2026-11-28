@@ -7,8 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# SATISFIABILITY with at most three literals per clause and three clauses per variable is: definitions
-NP-complete
+# SATISFIABILITY with at most three literals per clause and three clauses per variable: definitions
 
 Source:
 C. A. Tovey, "A simplified NP-complete satisfiability problem", Discrete Applied Mathematics

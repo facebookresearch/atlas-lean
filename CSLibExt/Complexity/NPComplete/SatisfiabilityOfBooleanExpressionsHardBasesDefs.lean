@@ -7,8 +7,8 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# SATISFIABILITY OF BOOLEAN EXPRESSIONS over a fixed set of connectives that expresses `x ∧ ¬y`: definitions
-is NP-complete
+# SATISFIABILITY OF BOOLEAN EXPRESSIONS over a fixed set of connectives that expresses `x ∧ ¬y`:
+definitions
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the

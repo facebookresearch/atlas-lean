@@ -7,7 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# MAXIMUM K-SATISFIABILITY is NP-complete for every fixed k ≥ 2: definitions
+# MAXIMUM K-SATISFIABILITY: definitions
 
 Source:
 M. R. Garey, D. S. Johnson and L. Stockmeyer, "Some simplified NP-complete graph problems",
