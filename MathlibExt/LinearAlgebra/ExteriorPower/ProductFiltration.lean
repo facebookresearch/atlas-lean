@@ -49,7 +49,8 @@ variable (R : Type u) [CommRing R]
 -- Bind the native exterior-power subgroup structure to the given scalar ring.
 local instance (P : Type*) [AddCommGroup P] [Module R P] (m : ℕ) :
     AddCommGroup (⋀[R]^m P) :=
-  Submodule.addCommGroup (R := R) (exteriorPower R m P)
+  Submodule.addCommGroup (R := R) (M := ExteriorAlgebra R P)
+    (ExteriorAlgebra.exteriorPower R m P)
 
 /-- For m : ℕ, Index m is the subtype of pairs (i, j) : ℕ × ℕ satisfying i + j = m. It indexes
 every complementary mixed weight in degree m, including (0, m) and (m, 0). -/
@@ -101,7 +102,8 @@ def filtration (m q : ℕ) : Submodule R (⋀[R]^m (M × N)) where
 
 -- The stage inherits its native subgroup structure over the same ring R.
 local instance (m q : ℕ) : AddCommGroup (filtration R M N m q) :=
-  Submodule.addCommGroup (R := R) (filtration R M N m q)
+  Submodule.addCommGroup (R := R) (M := ⋀[R]^m (M × N))
+    (filtration R M N m q)
 
 theorem filtration_antitone (m : ℕ) {q q' : ℕ} (h : q ≤ q') :
     filtration R M N m q' ≤ filtration R M N m q := by
@@ -276,7 +278,8 @@ def transportedFiltration (m q : ℕ) : Submodule R (⋀[R]^m W) :=
 
 -- The transported stage uses the native subgroup structure over R as well.
 local instance (m q : ℕ) : AddCommGroup (transportedFiltration R M N e m q) :=
-  Submodule.addCommGroup (R := R) (transportedFiltration R M N e m q)
+  Submodule.addCommGroup (R := R) (M := ⋀[R]^m W)
+    (transportedFiltration R M N e m q)
 
 theorem transportedFiltration_zero (m : ℕ) : transportedFiltration R M N e m 0 = ⊤ := by
   rw [transportedFiltration, filtration_zero, Submodule.comap_top]
