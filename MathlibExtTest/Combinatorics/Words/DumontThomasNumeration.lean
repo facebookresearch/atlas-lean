@@ -207,3 +207,69 @@ example : (∑ j ∈ Finset.range 1, (morphIterate letterMap j (path j).1).lengt
     false path (fun _ => path 0) hs hs').1.mpr rfl
 
 end MetaMathlibExt.tail_injective_and_strictMono.Tests
+
+namespace MetaMathlibExt.dumontThomasRep_quotient_remainder_pos.Tests
+
+private def ternary (a : Bool) : List Bool := [a, !a, a]
+
+private def alternating (i : ℤ) : Bool := decide (i % 2 = 1)
+
+private def onePath (_ : ℕ) : List Bool × Bool := ([false], true)
+
+private def fivePath : ℕ → List Bool × Bool
+  | 0 => ([true, false], true)
+  | _ + 1 => ([false], true)
+
+private theorem onePath_admissible :
+    IsLetterAdmissibleSequence ternary (alternating 0) onePath 0 :=
+  ⟨isAdmissibleSequence_zero _ _, ⟨[false], rfl⟩⟩
+
+private theorem one_rep : IsDumontThomasRep ternary alternating 1 1 [0, 1] :=
+  Or.inr (Or.inr (Or.inl
+    ⟨1, 1, onePath, by decide, rfl, dvd_refl _, onePath_admissible, by decide, by decide, rfl⟩))
+
+-- Odd-length images preserve the alternating word on both sides of the origin. For N = 5,
+-- the first digit skips a block of three; the last skips two letters in the image of `true`.
+example : IsDumontThomasRep ternary alternating 1 5 [0, 1, 2] := by
+  have hs : IsLetterAdmissibleSequence ternary (alternating 0) fivePath 1 := by
+    refine ⟨fun i hi => ?_, ⟨[false], rfl⟩⟩
+    obtain rfl : i = 0 := by omega
+    exact ⟨[], rfl⟩
+  exact Or.inr (Or.inr (Or.inl
+    ⟨5, 2, fivePath, by decide, rfl, by decide, hs, by decide, by decide, rfl⟩))
+
+-- Independent positive-quotient check: the weighted positions are q = 1 and r = 2;
+-- the quotient seed is `true`, not the original seed `false`.
+example : (∑ j ∈ Finset.range (2 - 1), (morphIterate ternary j (fivePath (j + 1)).1).length) = 1 ∧
+    (∑ j ∈ Finset.range 1, (morphIterate ternary j (fivePath j).1).length) = 2 ∧
+    (morphIterate ternary 1 [alternating 1])[2]? = some (alternating 5) ∧
+    IsDumontThomasRep ternary alternating 1 1 [0, 1] ∧
+    IsLetterAdmissibleSequence ternary (alternating 1) fivePath 0 :=
+  ⟨by decide, by decide, by decide, one_rep, isAdmissibleSequence_zero _ _, ⟨[], rfl⟩⟩
+
+-- Independent zero-quotient check: there are no retained digits and r = 1.
+example : (∑ j ∈ Finset.range (1 - 1), (morphIterate ternary j (onePath (j + 1)).1).length) = 0 ∧
+    (∑ j ∈ Finset.range 1, (morphIterate ternary j (onePath j).1).length) = 1 ∧
+    (morphIterate ternary 1 [alternating 0])[1]? = some (alternating 1) ∧
+    IsDumontThomasRep ternary alternating 1 0 [0] ∧
+    IsLetterAdmissibleSequence ternary (alternating 0) onePath 0 :=
+  ⟨by decide, by decide, by decide, isDumontThomasRep_zero _ _ _, onePath_admissible⟩
+
+-- Compute the singleton extension and both sides of iterate composition independently.
+example : morphExtend ternary [true] = [true, false, true] ∧
+    morphIterate ternary 2 [true] = [true, false, true, false, true, false, true, false, true] ∧
+    morphIterate ternary 1 (morphIterate ternary 1 [true]) =
+      [true, false, true, false, true, false, true, false, true] := by decide
+
+open seedAutomaton_neutral_padding.Tests (double unitPoint)
+
+-- Apply the public theorem on an actual period-one point, with a zero quotient.
+example : IsDumontThomasRep double (fun _ => ()) 1 0 [0] := by
+  let s : ℕ → List Unit × Unit := fun _ => ([()], ())
+  have hs : IsLetterAdmissibleSequence double () s 0 :=
+    ⟨isAdmissibleSequence_zero _ _, ⟨[], rfl⟩⟩
+  exact (dumontThomasRep_quotient_remainder_pos (η := double) (u := fun _ => ())
+    (p := 1) (hu := unitPoint) (N := 1) (k := 1) (s := s) (hN := by decide)
+    (hk := dvd_refl _) (hs := hs) (htop := by decide) (hpre := by decide)).2.1
+
+end MetaMathlibExt.dumontThomasRep_quotient_remainder_pos.Tests

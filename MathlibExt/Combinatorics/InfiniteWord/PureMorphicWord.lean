@@ -44,6 +44,12 @@ Source: concept `jis_sem_817d955b6393d48d72476d2d`, clause `word_morphism`; stat
 public def morphExtend {A : Type*} (f : A → List A) (w : List A) : List A :=
   w.flatMap f
 
+/-- **The image of a one-letter word.** For every letter map $f$ and letter $a$, extending $f$
+by concatenation sends the one-letter word $[a]$ to $f(a)$. -/
+public theorem morphExtend_singleton {A : Type*} (f : A → List A) (a : A) :
+    morphExtend f [a] = f a := by
+  simp [morphExtend]
+
 /-- **Iterates of a letter map.** Let $f$ send each letter of an alphabet $A$ to a finite word
 over $A$, extended to finite words by concatenation. The iterates of $f$ on finite words over
 $A$ are defined by $f^0(w) = w$ and $f^{n+1}(w) = f(f^n(w))$ for every finite word $w$ over $A$
@@ -68,6 +74,17 @@ public theorem morphIterate_succ_right {A : Type*} (f : A → List A) (n : ℕ) 
     change morphExtend f (morphIterate f (n + 1) w) = _
     rw [ih]
     rfl
+
+/-- **Composition of letter-map iterates.** Applying the $n$-th iterate after the $m$-th
+iterate of a letter map $f$ to a finite word $w$ gives the $(m+n)$-th iterate on $w$. -/
+public theorem morphIterate_add {A : Type*} (f : A → List A) (m n : ℕ) (w : List A) :
+    morphIterate f (m + n) w = morphIterate f n (morphIterate f m w) := by
+  induction n with
+  | zero => rfl
+  | succ n ih =>
+    change morphExtend f (morphIterate f (m + n) w) =
+      morphExtend f (morphIterate f n (morphIterate f m w))
+    rw [ih]
 
 /-- **Iterated letter maps preserve prefixes.** If $u$ is a prefix of $v$, then for any letter
 map $f$ and natural number $n$, $f^n(u)$ is a prefix of $f^n(v)$. -/

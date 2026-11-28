@@ -21,12 +21,21 @@ the letter at its weighted position with the final state of the substitution aut
 The theorem `substitutionAutomaton_admissibleSequence` identifies the state after each digit
 with the corresponding letter of the sequence.
 
+For a substitution with a two-sided periodic point of least period $p$ and growing seed,
+`dumontThomasRep_quotient_remainder_pos` splits a positive position's complement representation
+into a quotient representation and a chain of $p$ admissible pairs. The chain starts at the
+letter at the quotient position and selects the letter at the original position. If the original
+chain has just $p$ pairs, the quotient is zero.
+
 ## References
 
 * Sébastien Labbé and Jana Lepšová, *Dumont-Thomas Complement Numeration Systems for ℤ*,
   INTEGERS 24 (2024), Article A112, pp. 1–27. Neutral padding follows Lemma 7.1 (p. 19),
   using the automaton identities (7) and (8) of Section 6. Tail injectivity and order follow
   Lemma 3.12 (pp. 10–11), using the weighted-length bound and uniqueness in Lemmas 3.3 and 3.4.
+  The positive quotient–remainder result follows Definition 4.7, Remark 4.8, and the positive
+  case of Lemma 4.9 (pp. 14–16), using the right-hand expansion of Theorem 4.1 (p. 11).
+  <https://math.colgate.edu/~integers/y112/y112.pdf>
 * Jean-Marie Dumont and Alain Thomas, *Systèmes de numération et fonctions fractales relatifs aux
   substitutions*, Theoretical Computer Science 65 (2) (1989), pp. 153–169, Lemmas 1.1 and 1.3
   (the originals of Lemmas 3.3 and 3.4, respectively).
@@ -783,6 +792,182 @@ public theorem seedAutomaton_neutral_padding {A : Type*} (η : A → List A) (u 
       repeat_loop (u 0) (List.replicate p 0) hzero i
   · simpa only [seedAutomaton_one_cons] using
       repeat_loop (u (-1)) (lastLetterDigits η p (u (-1))) hone i
+
+namespace dumontThomasRep_quotient_remainder_pos
+
+open morphIterate_getElem_eq_substitutionAutomaton_tail (iterate_append)
+
+private theorem expansion_prefix {A : Type*} (η : A → List A) (s : ℕ → List A × A)
+    (k : ℕ) (x : A) (hs : IsLetterAdmissibleSequence η x s k) :
+    ((List.range (k + 1)).reverse.map fun j => morphIterate η j (s j).1).flatten ++ [(s 0).2] <+:
+      morphIterate η (k + 1) [x] := by
+  induction k generalizing x with
+  | zero =>
+    simpa only [Nat.zero_add, List.range_one, List.reverse_singleton, List.map_singleton,
+      List.flatten_singleton, morphIterate_succ_right, morphExtend_singleton,
+      morphIterate.eq_1] using hs.2
+  | succ k ih =>
+    have hshort : IsLetterAdmissibleSequence η (s (k + 1)).2 s k :=
+      ⟨fun i hi => hs.1 i (Nat.lt_succ_of_lt hi), hs.1 k k.lt_succ_self⟩
+    have htop := morphIterate_prefix hs.2 η (k + 1)
+    rw [iterate_append] at htop
+    rw [morphIterate_succ_right, morphExtend_singleton]
+    simp only [List.range_succ (n := k + 1), List.reverse_append, List.reverse_singleton,
+      List.singleton_append, List.map_cons, List.flatten_cons, List.append_assoc]
+    exact ((List.prefix_append_right_inj _).mpr (ih _ hshort)).trans htop
+
+private theorem periodic_iterate_eq {A : Type*} {η : A → List A} {u : ℤ → A} {p : ℕ}
+    (hu : IsTwoSidedPeriodicPoint η u p) (n : ℕ) (hn : p ∣ n) :
+    morphIterate η n [u 0] =
+      (List.range (morphIterate η n [u 0]).length).map (fun j : ℕ => u j) := by
+  obtain ⟨m, rfl⟩ := hn
+  induction m with
+  | zero => simp [morphIterate.eq_1, List.range_one]
+  | succ m ih =>
+    rw [Nat.mul_succ, morphIterate_add, ih]
+    apply List.ext_getElem
+    · simp
+    · intro i hi _
+      simpa only [List.getElem_map, List.getElem_range] using hu.2.1 _ i hi
+
+end dumontThomasRep_quotient_remainder_pos
+
+/-- **Quotient and remainder for positive Dumont–Thomas representations.** Let $\eta$ be a
+substitution and let $u$ be a two-sided periodic point of $\eta$ with least period $p$ whose
+seed letters $u_{-1}$ and $u_0$ are growing, that is, $|\eta^j(u_{-1})|$ and $|\eta^j(u_0)|$
+tend to infinity with $j$. Let $N \ge 1$, let $k$ be a multiple of $p$, and let
+$(m_i, a_i)_{0 \le i \le k-1}$ be a $u_0$-admissible sequence (admissible with respect to
+$\eta$, with $m_{k-1} a_{k-1}$ a prefix of $\eta(u_0)$) such that the word
+$m_{k-1} m_{k-2} \cdots m_{k-p}$ is nonempty and
+$u_0 u_1 \cdots u_{N-1} = \eta^{k-1}(m_{k-1}) \cdots \eta^1(m_1) \eta^0(m_0)$. Put
+$q = \sum_{j=0}^{k-p-1} |\eta^j(m_{j+p})|$ and $r = \sum_{j=0}^{p-1} |\eta^j(m_j)|$. Then
+$r < |\eta^p(u_q)|$ and the letter of $\eta^p(u_q)$ at position $r$ (counting from $0$) is
+$u_N$; the digit word $0\,|m_{k-1}|\,|m_{k-2}| \cdots |m_p|$ is the Dumont–Thomas complement
+representation $\operatorname{rep}_u(q)$ of $q$ for $\eta$, $u$ and $p$; and the sequence
+$(m_i, a_i)_{0 \le i \le p-1}$ is $u_q$-admissible.
+
+The hypotheses on $N$, $k$ and $(m_i, a_i)$ say that $0\,|m_{k-1}| \cdots |m_0|$ is
+$\operatorname{rep}_u(N)$; in the source, $q$ and $r$ are the $u$-quotient and the
+$u$-remainder of $N$.
+
+Source: Sébastien Labbé and Jana Lepšová, *Dumont-Thomas Complement Numeration Systems for
+ℤ*, INTEGERS 24 (2024), Article A112, Lemma 4.9 (with the `u`-quotient and `u`-remainder of
+Section 4). -/
+public theorem dumontThomasRep_quotient_remainder_pos {A : Type*} (η : A → List A)
+    (u : ℤ → A) (p : ℕ) (hu : IsPeriodicPointWithGrowingSeed η u p) (N k : ℕ)
+    (s : ℕ → List A × A) (hN : 1 ≤ N) (hk : p ∣ k)
+    (hs : IsLetterAdmissibleSequence η (u 0) s (k - 1))
+    (htop : ((List.range p).map fun t => (s (k - 1 - t)).1).flatten ≠ [])
+    (hpre : (List.range N).map (fun j : ℕ => u j) =
+      ((List.range k).reverse.map fun j => morphIterate η j (s j).1).flatten) :
+    (morphIterate η p [u (∑ j ∈ Finset.range (k - p),
+        (morphIterate η j (s (j + p)).1).length : ℕ)])[
+        ∑ j ∈ Finset.range p, (morphIterate η j (s j).1).length]? = some (u N) ∧
+      IsDumontThomasRep η u p
+        (∑ j ∈ Finset.range (k - p), (morphIterate η j (s (j + p)).1).length : ℕ)
+        (0 :: (List.range (k - p)).reverse.map fun j => (s (j + p)).1.length) ∧
+      IsLetterAdmissibleSequence η
+        (u (∑ j ∈ Finset.range (k - p), (morphIterate η j (s (j + p)).1).length : ℕ)) s (p - 1)
+    := by
+  let t := fun j => s (j + p)
+  let b := k - p
+  let q := ∑ j ∈ Finset.range b, (morphIterate η j (t j).1).length
+  let r := ∑ j ∈ Finset.range p, (morphIterate η j (s j).1).length
+  change (morphIterate η p [u q])[r]? = some (u N) ∧
+    IsDumontThomasRep η u p q (0 :: (List.range b).reverse.map fun j => (t j).1.length) ∧
+    IsLetterAdmissibleSequence η (u q) s (p - 1)
+  have hper := hu.isTwoSidedPeriodicPoint
+  have hp : 0 < p := hper.one_le
+  have hkpos : 0 < k := by
+    by_contra! h
+    simp [Nat.eq_zero_of_le_zero h] at hpre
+    omega
+  have hpk : p ≤ k := Nat.le_of_dvd hkpos hk
+  have length_expansion (n : ℕ) (v : ℕ → List A) :
+      ((List.range n).reverse.map v).flatten.length = ∑ j ∈ Finset.range n, (v j).length := by
+    rw [List.length_flatten, List.map_map, List.map_reverse, List.sum_reverse_nat,
+      ← List.sum_toFinset _ List.nodup_range]
+    congr 1
+    ext i
+    simp
+  have terminal {w v : List A} {a : A} (h : w ++ [a] <+: v) : v[w.length]? = some a := by
+    obtain ⟨more, rfl⟩ := h
+    rw [List.getElem?_append_left (by simp), List.getElem?_concat_length]
+  have seed_prefix (n : ℕ) (hd : p ∣ n) (hn : 0 < n) (v : ℕ → List A × A)
+      (hv : IsLetterAdmissibleSequence η (u 0) v (n - 1)) :
+      ((List.range n).reverse.map fun j => morphIterate η j (v j).1).flatten ++ [(v 0).2] <+:
+        (List.range (morphIterate η n [u 0]).length).map (fun j : ℕ => u j) := by
+    rw [← dumontThomasRep_quotient_remainder_pos.periodic_iterate_eq hper n hd]
+    simpa only [Nat.sub_add_cancel hn] using
+      dumontThomasRep_quotient_remainder_pos.expansion_prefix η v (n - 1) (u 0) hv
+  have seed_terminal {w : List A} {n : ℕ} {a : A}
+      (h : w ++ [a] <+: (List.range n).map (fun j : ℕ => u j)) : u (w.length : ℕ) = a := by
+    have hi : w.length < n := Nat.lt_of_succ_le (by simpa using h.length_le)
+    simpa only [List.getElem?_map, List.getElem?_range hi, Option.map_some, Option.some.injEq]
+      using terminal h
+  have hNletter : (s 0).2 = u N := by
+    have h := seed_prefix k hk hkpos s hs
+    rw [← hpre] at h
+    simpa only [List.length_map, List.length_range] using (seed_terminal h).symm
+  -- Removing one period leaves either the empty expansion or a shorter positive one.
+  have htrunc :
+      IsDumontThomasRep η u p q (0 :: (List.range b).reverse.map fun j => (t j).1.length) ∧
+        IsLetterAdmissibleSequence η (u q) s (p - 1) := by
+    by_cases heq : k = p
+    · have hb : b = 0 := Nat.sub_eq_zero_of_le heq.le
+      have hq : q = 0 := by simp [q, hb]
+      refine ⟨?_, ?_⟩
+      · simpa only [hq, hb, Nat.cast_zero, List.range_zero, List.reverse_nil, List.map_nil] using
+          isDumontThomasRep_zero η u p
+      · simpa only [hq, heq, Nat.cast_zero] using hs
+    have hb : 0 < b := Nat.sub_pos_of_lt (lt_of_le_of_ne hpk (Ne.symm heq))
+    have hd : p ∣ b := Nat.dvd_sub hk (dvd_refl p)
+    have hpb : p ≤ b := Nat.le_of_dvd hb hd
+    have ht : IsLetterAdmissibleSequence η (u 0) t (b - 1) := by
+      refine ⟨fun i hi => ?_, ?_⟩
+      · simpa only [t, Nat.add_right_comm i p 1] using hs.1 (i + p) (by dsimp [b] at hi; omega)
+      · simpa only [t, show b - 1 + p = k - 1 by dsimp [b]; omega] using hs.2
+    let w := ((List.range b).reverse.map fun j => morphIterate η j (t j).1).flatten
+    have hw : w.length = q := length_expansion b _
+    have hqpre := seed_prefix b hd hb t ht
+    change w ++ [(t 0).2] <+: _ at hqpre
+    have hlet : (s p).2 = u q := by
+      simpa only [hw, t, Nat.zero_add] using (seed_terminal hqpre).symm
+    have hwpre : (List.range q).map (fun j : ℕ => u j) = w := by
+      apply List.ext_getElem
+      · simp [hw]
+      · intro i _ hi
+        have h := ((List.prefix_append w [(t 0).2]).trans hqpre).getElem hi
+        simpa only [List.getElem_map, List.getElem_range] using h.symm
+    have htop' : ((List.range p).map fun i => (t (b - 1 - i)).1).flatten ≠ [] := by
+      convert htop using 2
+      apply List.map_congr_left
+      intro i hi
+      have := List.mem_range.mp hi
+      simp only [t, show b - 1 - i + p = k - 1 - i by dsimp [b] at hpb ⊢; omega]
+    have hqpos : 1 ≤ q := by
+      rw [← hw]
+      obtain ⟨_, hmem, hne⟩ := List.flatten_ne_nil_iff.mp htop'
+      obtain ⟨i, hi, rfl⟩ := List.mem_map.mp hmem
+      let j := b - 1 - i
+      have hj : j < b := by dsimp [j]; omega
+      obtain ⟨c, cs, hcs⟩ := List.exists_cons_of_ne_nil hne
+      have hfirst : [c] <+: (t j).1 := ⟨cs, hcs.symm⟩
+      have hlen := (morphIterate_prefix hfirst η j).length_le
+      have hc := List.length_pos_iff.mpr
+        (seedAutomaton_neutral_padding.iterate_singleton_ne_nil hu.1.isNonErasing j c)
+      exact List.length_pos_iff.mpr (List.flatten_ne_nil_iff.mpr
+        ⟨_, List.mem_map.mpr ⟨j, List.mem_reverse.mpr (List.mem_range.mpr hj), rfl⟩,
+          List.length_pos_iff.mp (hc.trans_le hlen)⟩)
+    refine ⟨Or.inr (Or.inr (Or.inl ⟨q, b, t, hqpos, rfl, hd, ht, htop', hwpre, rfl⟩)), ?_⟩
+    refine ⟨fun i hi => hs.1 i (by omega), ?_⟩
+    simpa only [Nat.sub_add_cancel hp, hlet] using hs.1 (p - 1) (by dsimp [b] at hb; omega)
+  refine ⟨?_, htrunc⟩
+  have h := dumontThomasRep_quotient_remainder_pos.expansion_prefix η s (p - 1) (u q) htrunc.2
+  rw [Nat.sub_add_cancel hp] at h
+  dsimp only [r]
+  rw [← hNletter, ← length_expansion p (fun j => morphIterate η j (s j).1)]
+  exact terminal h
 
 /-- **The complement radix order.** For finite words $w$ and $w'$ over $\mathbb{N}$, write
 $|w|$ for the length of $w$. Then $w \prec w'$ holds exactly in the following three cases:
