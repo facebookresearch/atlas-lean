@@ -14,7 +14,7 @@ $$\rho_{\mathrm{evo}} \approx \frac{\langle \gamma\omega \rangle_{\mathrm{fixed}
 
 which is negative for every symmetric distribution $p_{\mathrm{mut}}$ with uncorrelated $\gamma$ and $\omega$.
 
-Assume that the mutational effects are centered and uncorrelated under $p_{\mathrm{mut}}$, $\langle \gamma \rangle_{\mathrm{mut}} = \langle \omega \rangle_{\mathrm{mut}} = \langle \gamma\omega \rangle_{\mathrm{mut}} = 0$, and that the population's average yield does not change and stays at its ancestral value $Y_0$. Then the SSWM adaptation speeds per cycle are
+Assume that the mutational effects are uncorrelated, $\langle \gamma\omega \rangle_{\mathrm{mut}} = 0$, and symmetric about zero, that is, $(\gamma, \omega)$ and $(-\gamma, -\omega)$ have the same law under $p_{\mathrm{mut}}$ (as for the source's independent uniform distributions on intervals symmetric about $0$, or centred Gaussians), and that the population's average yield does not change and stays at its ancestral value $Y_0$. Then the SSWM adaptation speeds per cycle are
 
 $$W_{\mathrm{growth}} = \sigma_\gamma^2 r_0 \ln D \cdot \mu R Y_0 \frac{\ln D}{D-1}, \qquad W_{\mathrm{lag}} = -\frac{\sigma_\omega^2}{r_0} \cdot \mu R Y_0 \frac{\ln D}{D-1},$$
 
