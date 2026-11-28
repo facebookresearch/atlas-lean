@@ -1393,6 +1393,7 @@
   "CSLibExt/Algorithms/Lean/NumberTheory/ModularExponentiation": {"to": "ComputerScience/algebraic-and-numerical-algorithms", "title": "Modular exponentiation"},
   "CSLibExt/Algorithms/Lean/NumberTheory/ModularLinearEquation": {"to": "ComputerScience/algebraic-and-numerical-algorithms", "title": "Solving linear congruences"},
   "CSLibExt/Algorithms/Lean/Numerical/DotProductError": {"to": "ComputerScience/algebraic-and-numerical-algorithms", "title": "Rounding error analysis"},
+  "CSLibExt/Algorithms/Lean/Numerical/DoubleRounding": {"to": "ComputerScience/algebraic-and-numerical-algorithms", "title": "Floating-point rounding"},
   "CSLibExt/Algorithms/Lean/Numerical/FloatingPoint": {"to": "ComputerScience/algebraic-and-numerical-algorithms", "title": "Floating-point rounding"},
   "CSLibExt/Algorithms/Lean/Numerical/FusedProductResidual": {"to": "ComputerScience/algebraic-and-numerical-algorithms", "title": "Floating-point rounding"},
   "CSLibExt/Algorithms/Lean/Numerical/GaussianEliminationBackwardError": {"to": "ComputerScience/algebraic-and-numerical-algorithms", "title": "Rounding error analysis"},
