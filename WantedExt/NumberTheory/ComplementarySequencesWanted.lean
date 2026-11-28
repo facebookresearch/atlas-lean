@@ -150,18 +150,6 @@ public theorem_wanted nthNonValue_sumPow (k : ℕ) (hk : 1 < k) (n : ℕ) (hn : 
     nthNonValue (fun j => ∑ i ∈ Finset.Icc 1 j, i ^ k) n =
       if n ≤ ∑ i ∈ Finset.Icc 1 h, (i ^ k - 1) then n + h - 1 else n + h
 
-/-- **Integers not of the form $m + 1^k + \cdots + m^k$.** Let $k > 1$. For $n \ge 1$ let $a(n)$
-be the $n$-th positive integer that is not of the form $m + \sum_{i=1}^m i^k$ with $m \ge 1$, and
-let $h = \lfloor ((k + 1) n)^{1/(k+1)} \rfloor$. Then $a(n) = n + h - 1$ if
-$n \le \sum_{i=1}^h i^k$, and $a(n) = n + h$ otherwise.
-
-Source: Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025),
-Article A95, Theorem 11 (third equivalent form). -/
-public theorem_wanted nthNonValue_add_sumPow (k : ℕ) (hk : 1 < k) (n : ℕ) (hn : 1 ≤ n) :
-    let h := Nat.nthRoot (k + 1) ((k + 1) * n)
-    nthNonValue (fun j => j + ∑ i ∈ Finset.Icc 1 j, i ^ k) n =
-      if n ≤ ∑ i ∈ Finset.Icc 1 h, i ^ k then n + h - 1 else n + h
-
 /-- **Formula for the non-simplex numbers.** Let $k$ satisfy $1 < k \le 5$, $k = 7$ or $k = 9$.
 For every integer $n \ge 1$, put $R = \lfloor (k!\, n)^{1/k} \rfloor$ and let
 $t = n + R - \lfloor k/2 \rfloor$, an integer. Then the $n$-th positive integer that is not a

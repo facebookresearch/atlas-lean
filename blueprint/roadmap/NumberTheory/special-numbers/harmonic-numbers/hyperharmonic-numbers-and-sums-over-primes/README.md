@@ -5,6 +5,7 @@
 - [Hyperharmonic numbers of order one are the harmonic numbers](hyperharmonic-one.md)
 - [The hyperharmonic number $h_2^{(2)}$](hyperharmonic-two-two.md)
 - [Asymptotic of the hyperharmonic numbers (Mező)](hyperharmonic-is-equivalent.md)
+- [Hyperharmonic numbers and sums over primes](is-equivalent-add-choose.md)
 - [Jakimczuk's lemma on sums of asymptotically equivalent terms](sum-is-equivalent-of-is-equivalent.md)
 - [Asymptotics of the $n$-th number with $k$ prime factors](nth-k-prime-factors-is-equivalent.md)
 - [Asymptotics of power-logarithm sums](sum-pow-mul-log-pow-is-equivalent.md)
