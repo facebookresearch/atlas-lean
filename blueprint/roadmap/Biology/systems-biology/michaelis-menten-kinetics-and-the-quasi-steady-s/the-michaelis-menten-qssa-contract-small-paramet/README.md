@@ -23,6 +23,9 @@
 - [Solution of the Michaelis–Menten system on a time window](is-solution-on.md)
 - [A global solution solves the system on every window](is-solution-on-2.md)
 - [Solution of the reduced problem on a slow-time window](is-reduced-solution-on.md)
+- [Window solutions of the Michaelis–Menten system are unique](window-solution-uniqueness.md)
+- [Rescaling a positive reduced trajectory solves the normalized equation](reduced-solution-on-window-is-rescaled.md)
+- [The hypotheses of the QSSA contract are satisfiable](qssa-contract-hypotheses-are-satisfiable.md)
 
 ## The contract
 
