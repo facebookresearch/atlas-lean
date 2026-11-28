@@ -10401,6 +10401,7 @@
   "MathlibExt/Analysis/PDE/HeatMaximumPrinciple": {"to": "Analysis/partial-differential-equations", "title": "Heat equation"},
   "MathlibExt/Analysis/PDE/HeatSmoothing": {"to": "Analysis/partial-differential-equations", "title": "Heat equation"},
   "MathlibExt/Analysis/PDE/LaplaceMaximumPrinciple": {"to": "Analysis/potential-theory", "title": "Maximum principle for harmonic functions"},
+  "MathlibExt/Analysis/PDE/LaplaceHarnack": {"to": "Analysis/potential-theory", "title": "Maximum principle for harmonic functions"},
   "MathlibExt/Analysis/PDE/LaplaceMeanValue": {"to": "Analysis/potential-theory", "title": "Maximum principle for harmonic functions"},
   "MathlibExt/Analysis/PDE/LaplaceStrongMaximumPrinciple": {"to": "Analysis/potential-theory", "title": "Maximum principle for harmonic functions"},
   "MathlibExt/Analysis/PDE/PlanarHarmonicMaximumPrinciple": {"to": "Analysis/potential-theory", "title": "Maximum principle for harmonic functions"},
