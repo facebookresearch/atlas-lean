@@ -43,22 +43,15 @@ def rankSum (g : Fin N → Fin C) (σ : Equiv.Perm (Fin N)) (i : Fin C) : ℕ :=
 noncomputable def kruskalWallis (g : Fin N → Fin C) (σ : Equiv.Perm (Fin N)) : ℝ :=
   12 / (N * (N + 1)) * ∑ i, (rankSum g σ i : ℝ) ^ 2 / sampleSize g i - 3 * (N + 1)
 
-/-- **The two forms of `H`.** For an assignment `g` of `N ≥ 1` positions to
-`C` samples, each of size `n_i ≥ 1`, and every ranking `σ`,
-`H = 12 / (N (N + 1)) ∑_i n_i (R_i / n_i - (N + 1)/2)²`.
+-- The fibers of `g` partition the positions.
+private theorem sum_sampleSize (g : Fin N → Fin C) : ∑ i, (sampleSize g i : ℝ) = N := by
+  have h : ∑ i, sampleSize g i = N := by
+    simpa only [sampleSize, ← Finset.card_eq_sum_ones, Finset.card_univ, Fintype.card_fin] using
+      (Finset.sum_fiberwise Finset.univ g fun _ => (1 : ℕ))
+  exact_mod_cast h
 
-Sources: W. H. Kruskal, "A nonparametric test for the several sample problem", Ann. Math. Statist.
-23 (1952) 525–540, p. 526. -/
-theorem kruskalWallis_eq_sum_sq (g : Fin N → Fin C) (hN : 0 < N)
-    (hn : ∀ i, 0 < sampleSize g i) (σ : Equiv.Perm (Fin N)) :
-    kruskalWallis g σ = 12 / (N * (N + 1)) *
-      ∑ i, (sampleSize g i : ℝ) * ((rankSum g σ i : ℝ) / sampleSize g i - (N + 1) / 2) ^ 2 := by
-  -- The fibers of `g` partition the positions.
-  have hSize : ∑ i, (sampleSize g i : ℝ) = N := by
-    have h : ∑ i, sampleSize g i = N := by
-      simpa only [sampleSize, ← Finset.card_eq_sum_ones, Finset.card_univ, Fintype.card_fin] using
-        (Finset.sum_fiberwise Finset.univ g fun _ => (1 : ℕ))
-    exact_mod_cast h
+private theorem sum_rankSum (g : Fin N → Fin C) (hN : 0 < N) (σ : Equiv.Perm (Fin N)) :
+    ∑ i, (rankSum g σ i : ℝ) = (N : ℝ) * (N + 1) / 2 := by
   -- Reversing the ranks pairs each rank with its complement to `N + 1`.
   have hRanks : ∑ k : Fin N, ((k : ℕ) + 1 : ℝ) = (N : ℝ) * (N + 1) / 2 := by
     obtain ⟨m, rfl⟩ := Nat.exists_eq_succ_of_ne_zero hN.ne'
@@ -79,13 +72,23 @@ theorem kruskalWallis_eq_sum_sq (g : Fin N → Fin C) (hN : 0 < N)
       _ = ∑ k, (r k + r (Fin.revPerm k)) := Finset.sum_add_distrib.symm
       _ = _ := by simp only [hPair, Finset.sum_const, Finset.card_univ, Fintype.card_fin,
         nsmul_eq_mul]
-  have hRankSum : ∑ i, (rankSum g σ i : ℝ) = (N : ℝ) * (N + 1) / 2 := by
-    calc
-      ∑ i, (rankSum g σ i : ℝ) = ∑ k : Fin N, ((σ k : ℕ) + 1 : ℝ) := by
-        simpa only [rankSum, Nat.cast_sum, Nat.cast_add, Nat.cast_one] using
-          (Finset.sum_fiberwise Finset.univ g fun k => ((σ k : ℕ) + 1 : ℝ))
-      _ = ∑ k : Fin N, ((k : ℕ) + 1 : ℝ) := Equiv.sum_comp σ fun k => ((k : ℕ) + 1 : ℝ)
-      _ = _ := hRanks
+  calc
+    ∑ i, (rankSum g σ i : ℝ) = ∑ k : Fin N, ((σ k : ℕ) + 1 : ℝ) := by
+      simpa only [rankSum, Nat.cast_sum, Nat.cast_add, Nat.cast_one] using
+        (Finset.sum_fiberwise Finset.univ g fun k => ((σ k : ℕ) + 1 : ℝ))
+    _ = ∑ k : Fin N, ((k : ℕ) + 1 : ℝ) := Equiv.sum_comp σ fun k => ((k : ℕ) + 1 : ℝ)
+    _ = _ := hRanks
+
+/-- **The two forms of `H`.** For an assignment `g` of `N ≥ 1` positions to
+`C` samples, each of size `n_i ≥ 1`, and every ranking `σ`,
+`H = 12 / (N (N + 1)) ∑_i n_i (R_i / n_i - (N + 1)/2)²`.
+
+Sources: W. H. Kruskal, "A nonparametric test for the several sample problem", Ann. Math. Statist.
+23 (1952) 525–540, p. 526. -/
+theorem kruskalWallis_eq_sum_sq (g : Fin N → Fin C) (hN : 0 < N)
+    (hn : ∀ i, 0 < sampleSize g i) (σ : Equiv.Perm (Fin N)) :
+    kruskalWallis g σ = 12 / (N * (N + 1)) *
+      ∑ i, (sampleSize g i : ℝ) * ((rankSum g σ i : ℝ) / sampleSize g i - (N + 1) / 2) ^ 2 := by
   have hExpand (i : Fin C) :
       (sampleSize g i : ℝ) * ((rankSum g σ i : ℝ) / sampleSize g i - (N + 1) / 2) ^ 2 =
         (rankSum g σ i : ℝ) ^ 2 / sampleSize g i - (N + 1) * (rankSum g σ i : ℝ) +
@@ -94,10 +97,51 @@ theorem kruskalWallis_eq_sum_sq (g : Fin N → Fin C) (hN : 0 < N)
     field_simp
     ring
   simp only [kruskalWallis, hExpand, Finset.sum_add_distrib, Finset.sum_sub_distrib,
-    ← Finset.mul_sum, hRankSum, hSize]
+    ← Finset.mul_sum, sum_rankSum g hN σ, sum_sampleSize g]
   have hN₀ : (N : ℝ) ≠ 0 := (Nat.cast_pos.mpr hN).ne'
   have hN₁ : (N : ℝ) + 1 ≠ 0 := (add_pos (Nat.cast_pos.mpr hN) zero_lt_one).ne'
   field_simp
+  ring
+
+/-- **Two samples.** For an assignment `g` of `N` positions to two samples
+of sizes `n₀, n₁ ≥ 1` and every ranking `σ`,
+`H = 12 (R_0 - n_0 (N + 1)/2)² / ((N + 1) n_0 (N - n_0))`.
+
+Sources: W. H. Kruskal, "A nonparametric test for the several sample problem", Ann. Math. Statist.
+23 (1952) 525–540, p. 526. -/
+theorem kruskalWallis_two_samples (g : Fin N → Fin 2)
+    (hn : ∀ i, 0 < sampleSize g i) (σ : Equiv.Perm (Fin N)) :
+    kruskalWallis g σ = 12 * ((rankSum g σ 0 : ℝ) - sampleSize g 0 * (N + 1) / 2) ^ 2 /
+      ((N + 1) * sampleSize g 0 * (N - sampleSize g 0)) := by
+  have hSize : (sampleSize g 0 : ℝ) + sampleSize g 1 = N := by
+    simpa only [Fin.sum_univ_two] using sum_sampleSize g
+  have hPos (i : Fin 2) : 0 < (sampleSize g i : ℝ) := Nat.cast_pos.mpr (hn i)
+  have hNPos : 0 < (N : ℝ) := hSize ▸ add_pos (hPos 0) (hPos 1)
+  have hN : 0 < N := Nat.cast_pos.mp hNPos
+  have hRanks : (rankSum g σ 0 : ℝ) + rankSum g σ 1 = (N : ℝ) * (N + 1) / 2 := by
+    simpa only [Fin.sum_univ_two] using sum_rankSum g hN σ
+  have hComplement : (N : ℝ) - sampleSize g 0 = sampleSize g 1 := by
+    rw [← hSize]
+    ring
+  let d (i : Fin 2) : ℝ := (rankSum g σ i : ℝ) - sampleSize g i * (N + 1) / 2
+  -- The centered rank sums add to zero because the fibers exhaust all positions.
+  have hOpp : d 1 = -d 0 := by
+    calc
+      d 1 = ((rankSum g σ 0 : ℝ) + rankSum g σ 1) -
+          ((sampleSize g 0 : ℝ) + sampleSize g 1) * (N + 1) / 2 - d 0 := by
+        dsimp [d]
+        ring
+      _ = -d 0 := by rw [hRanks, hSize, sub_self, zero_sub]
+  have hCenter (i : Fin 2) :
+      (sampleSize g i : ℝ) * ((rankSum g σ i : ℝ) / sampleSize g i - (N + 1) / 2) ^ 2 =
+        d i ^ 2 / sampleSize g i := by
+    dsimp [d]
+    field_simp [(hPos i).ne']
+  change kruskalWallis g σ = 12 * d 0 ^ 2 / ((N + 1) * sampleSize g 0 * (N - sampleSize g 0))
+  rw [kruskalWallis_eq_sum_sq g hN hn σ, Fin.sum_univ_two, hCenter 0, hCenter 1, hOpp,
+    neg_sq, hComplement]
+  field_simp [(hPos 0).ne', (hPos 1).ne', hNPos.ne', (add_pos hNPos zero_lt_one).ne']
+  rw [← hSize]
   ring
 
 end WantedExt.Probability.Statistics.KruskalWallisWanted

@@ -99,17 +99,6 @@ public theorem_wanted kruskalWallis_bounds (g : Fin N → Fin C) (hN : 0 < N)
       kruskalWallis g σ ≤ ((N : ℝ) ^ 3 - ∑ i, (sampleSize g i : ℝ) ^ 3) / (N * (N + 1))) ∧
       ∃ σ, kruskalWallis g σ = ((N : ℝ) ^ 3 - ∑ i, (sampleSize g i : ℝ) ^ 3) / (N * (N + 1))
 
-/-- **Two samples.** For an assignment `g` of `N` positions to two samples
-of sizes `n₀, n₁ ≥ 1` and every ranking `σ`,
-`H = 12 (R_0 - n_0 (N + 1)/2)² / ((N + 1) n_0 (N - n_0))`.
-
-Sources: W. H. Kruskal, "A nonparametric test for the several sample problem", Ann. Math. Statist.
-23 (1952) 525–540, p. 526. -/
-public theorem_wanted kruskalWallis_two_samples (g : Fin N → Fin 2)
-    (hn : ∀ i, 0 < sampleSize g i) (σ : Equiv.Perm (Fin N)) :
-    kruskalWallis g σ = 12 * ((rankSum g σ 0 : ℝ) - sampleSize g 0 * (N + 1) / 2) ^ 2 /
-      ((N + 1) * sampleSize g 0 * (N - sampleSize g 0))
-
 /-- **Distribution-freeness.** Let `μ`
 be a probability measure, `X_1, …, X_N : Ω → ℝ` independent measurable random variables with a
 common law (`X_k` and `X_l` have the same law for all `k, l`) that has no atoms, and `g` an

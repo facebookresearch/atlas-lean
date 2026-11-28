@@ -33,3 +33,10 @@ example : kruskalWallis groups (Equiv.refl (Fin 3)) = 3 / 2 := by
   rw [kruskalWallis_eq_sum_sq groups (by decide) hn, Fin.sum_univ_two, hSize₀, hSize₁,
     hRank₀, hRank₁]
   norm_num
+
+example : kruskalWallis groups (Equiv.refl (Fin 3)) = 3 / 2 := by
+  have hSize₀ : sampleSize groups 0 = 1 := by decide
+  have hRank₀ : rankSum groups (Equiv.refl (Fin 3)) 0 = 1 := by decide
+  have hn : ∀ i, 0 < sampleSize groups i := Fin.forall_fin_two.mpr ⟨by decide, by decide⟩
+  rw [kruskalWallis_two_samples groups hn, hSize₀, hRank₀]
+  norm_num
