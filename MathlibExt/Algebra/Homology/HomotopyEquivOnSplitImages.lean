@@ -19,9 +19,9 @@ K. Suppose K' and L' are retracts of K and L with inclusions i_K, i_L and retrac
 p_L. If f commutes with the two retract projectors, (p_K ≫ i_K) ≫ f = f ≫ (p_L ≫ i_L), the
 maps i_K ≫ f ≫ p_L and i_L ≫ g ≫ p_K give a chain homotopy equivalence K' ≃ L'.
 
-The inverse-after-forward identity follows from the right-inverse and projector equations. The
-other composite is homotopic to the identity by precomposing and postcomposing the homotopy on
-K. These constructions hold in a preadditive category for any common complex shape.
+Forward after inverse is the identity on L' by the right-inverse and projector equations.
+Inverse after forward is homotopic to the identity on K' by precomposing and postcomposing the
+homotopy on K. These constructions hold in a preadditive category for any common complex shape.
 -/
 
 @[expose] public section

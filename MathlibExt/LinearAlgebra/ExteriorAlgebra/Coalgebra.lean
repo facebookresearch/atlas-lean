@@ -21,9 +21,9 @@ For a commutative ring `R` and an `R`-module `M`, the exterior coproduct is the 
 : E → E ⊗[R] E`, `E=ExteriorAlgebra R M`, with `Δ(1)=1⊗1` and `Δ(ι(x))=1⊗ι(x)+ι(x)⊗1`.
 
 Its recursion uses `D_x(a⊗b)=ι(x)a⊗b+γ(a)⊗ι(x)b`, where `γ` is the grade involution. These
-insertion operators square to zero. The augmentation `ε : E → R` kills generators and supplies
-the counit. Coassociativity uses the tensor associator, and the counit identities identify the
-outputs with `1⊗a` and `a⊗1`.
+insertion operators square to zero. The native augmentation `ε=algebraMapInv : E → R` kills
+generators and supplies the counit. Coassociativity uses the tensor associator, and the counit
+identities identify the outputs with `1⊗a` and `a⊗1`.
 
 These maps define an ordinary coalgebra. The coproduct commutes with the grade involution and
 with exterior maps induced by linear maps.
@@ -46,6 +46,7 @@ variable (M : Type v) [AddCommGroup M] [Module R M]
 
 local notation "E" => ExteriorAlgebra R M
 local notation "γ" => (CliffordAlgebra.involute : E →ₐ[R] E)
+local notation "ε" => (algebraMapInv : E →ₐ[R] R)
 
 /-- Let `R` be a commutative ring, `M` an `R`-module, and `E = ExteriorAlgebra R M`. Write `ι : M
 → E` for the generators, `γ` for the grade involution, and `Δ : E →ₗ[R] E ⊗[R] E` for the
@@ -53,7 +54,8 @@ exterior coproduct. For `x : M`, `signedInsertion R M x` is the endomorphism `a�
 + γ(a) ⊗ ι(x)*b`. The assignment `x ↦ signedInsertion x` is `R`-linear. -/
 def signedInsertion : M →ₗ[R] Module.End R (E ⊗[R] E) where
   toFun x := ((Algebra.lmul R E) (ι R x)).rTensor E +
-    TensorProduct.map (CliffordAlgebra.involute : E →ₐ[R] E).toLinearMap ((Algebra.lmul R E) (ι R x))
+    TensorProduct.map (CliffordAlgebra.involute : E →ₐ[R] E).toLinearMap
+      ((Algebra.lmul R E) (ι R x))
   map_add' x y := by
     apply TensorProduct.ext'
     intro a b
@@ -74,8 +76,7 @@ def signedInsertion : M →ₗ[R] Module.End R (E ⊗[R] E) where
 theorem signedInsertion_tmul (x : M) (a b : E) :
     signedInsertion R M x (a ⊗ₜ[R] b) =
       (ι R x * a) ⊗ₜ[R] b + γ a ⊗ₜ[R] (ι R x * b) := by
-  simp only [signedInsertion, LinearMap.add_apply, LinearMap.rTensor_tmul,
-    TensorProduct.map_tmul, AlgHom.toLinearMap_apply]
+  simp only [signedInsertion]
   rfl
 
 /-- Let `R` be a commutative ring, `M` an `R`-module, and `E = ExteriorAlgebra R M`. Write `ι : M
@@ -129,24 +130,21 @@ theorem coproduct_ι (x : M) :
   simpa only [mul_one, coproduct_one, signedInsertion_tmul, map_one, add_comm] using
     coproduct_ι_mul R M x (1 : E)
 
-/-- Let `R` be a commutative ring, `M` an `R`-module, and `E = ExteriorAlgebra R M`. Write `ι : M
-→ E` for the generators, `γ` for the grade involution, and `Δ : E →ₗ[R] E ⊗[R] E` for the
-exterior coproduct. `augmentation R M : E →ₐ[R] R` fixes coefficient scalars and sends every
-generator `ι(x)` to zero. Its underlying linear map is the counit. -/
-def augmentation : E →ₐ[R] R :=
-  lift R ⟨(0 : M →ₗ[R] R), fun x => by simp only [LinearMap.zero_apply, zero_mul]⟩
-
+/-- For a commutative ring `R` and an `R`-module `M`, the native map
+`algebraMapInv : ExteriorAlgebra R M →ₐ[R] R` sends each generator `ι(x)` to zero. -/
 @[simp]
-theorem augmentation_ι (x : M) : augmentation R M (ι R x) = 0 := by
-  simp only [augmentation, lift_ι_apply, LinearMap.zero_apply]
+theorem augmentation_ι (x : M) : ε (ι R x) = 0 := by
+  simp only [algebraMapInv, lift_ι_apply, LinearMap.zero_apply]
 
+/-- For a commutative ring `R` and an `R`-module `M`, the native exterior augmentation
+`algebraMapInv` is unchanged by the grade involution: `ε(γ(a))=ε(a)`. -/
 @[simp]
-theorem augmentation_involute (a : E) : augmentation R M (γ a) = augmentation R M a := by
-  have h : (augmentation R M).comp γ = augmentation R M := by
+theorem augmentation_involute (a : E) : ε (γ a) = ε a := by
+  have h : (ε).comp γ = ε := by
     apply ExteriorAlgebra.hom_ext
     apply LinearMap.ext
     intro x
-    change augmentation R M (γ (ι R x)) = augmentation R M (ι R x)
+    change ε (γ (ι R x)) = ε (ι R x)
     rw [CliffordAlgebra.involute_ι, map_neg, augmentation_ι, neg_zero]
   exact AlgHom.congr_fun h a
 
@@ -154,8 +152,9 @@ theorem augmentation_involute (a : E) : augmentation R M (γ a) = augmentation R
 → E` for the generators, `γ` for the grade involution, and `Δ : E →ₗ[R] E ⊗[R] E` for the
 exterior coproduct. `tensorParity R M` is the endomorphism `γ ⊗ γ` of `E ⊗[R] E`, sending
 `a⊗b` to `γ(a)⊗γ(b)`. -/
-def tensorParity : Module.End R (E ⊗[R] E) := TensorProduct.map (CliffordAlgebra.involute : E →ₐ[R] E).toLinearMap
-  (CliffordAlgebra.involute : E →ₐ[R] E).toLinearMap
+def tensorParity : Module.End R (E ⊗[R] E) :=
+  TensorProduct.map (CliffordAlgebra.involute : E →ₐ[R] E).toLinearMap
+    (CliffordAlgebra.involute : E →ₐ[R] E).toLinearMap
 
 @[simp]
 theorem tensorParity_tmul (a b : E) : tensorParity R M (a ⊗ₜ[R] b) = γ a ⊗ₜ[R] γ b := by
@@ -256,12 +255,12 @@ theorem coproduct_coassoc :
   LinearMap.ext (coproduct_coassoc_apply R M)
 
 private theorem augmentation_left_insertion (x : M) (p : E ⊗[R] E) :
-    (augmentation R M).toLinearMap.rTensor E (signedInsertion R M x p) =
+    (ε).toLinearMap.rTensor E (signedInsertion R M x p) =
       ((Algebra.lmul R E) (ι R x)).lTensor R
-        ((augmentation R M).toLinearMap.rTensor E p) := by
-  have h : ((augmentation R M).toLinearMap.rTensor E).comp (signedInsertion R M x) =
+        ((ε).toLinearMap.rTensor E p) := by
+  have h : ((ε).toLinearMap.rTensor E).comp (signedInsertion R M x) =
       (((Algebra.lmul R E) (ι R x)).lTensor R).comp
-        ((augmentation R M).toLinearMap.rTensor E) := by
+        ((ε).toLinearMap.rTensor E) := by
     apply TensorProduct.ext'
     intro a b
     simp only [LinearMap.comp_apply, signedInsertion_tmul, map_add,
@@ -272,12 +271,12 @@ private theorem augmentation_left_insertion (x : M) (p : E ⊗[R] E) :
   exact LinearMap.congr_fun h p
 
 private theorem augmentation_right_insertion (x : M) (p : E ⊗[R] E) :
-    (augmentation R M).toLinearMap.lTensor E (signedInsertion R M x p) =
+    (ε).toLinearMap.lTensor E (signedInsertion R M x p) =
       ((Algebra.lmul R E) (ι R x)).rTensor R
-        ((augmentation R M).toLinearMap.lTensor E p) := by
-  have h : ((augmentation R M).toLinearMap.lTensor E).comp (signedInsertion R M x) =
+        ((ε).toLinearMap.lTensor E p) := by
+  have h : ((ε).toLinearMap.lTensor E).comp (signedInsertion R M x) =
       (((Algebra.lmul R E) (ι R x)).rTensor R).comp
-        ((augmentation R M).toLinearMap.lTensor E) := by
+        ((ε).toLinearMap.lTensor E) := by
     apply TensorProduct.ext'
     intro a b
     simp only [LinearMap.comp_apply, signedInsertion_tmul, map_add,
@@ -288,14 +287,14 @@ private theorem augmentation_right_insertion (x : M) (p : E ⊗[R] E) :
 
 /-- Let `R` be a commutative ring, `M` an `R`-module, and `E = ExteriorAlgebra R M`. Write `ι : M
 → E` for the generators, `γ` for the grade involution, and `Δ : E →ₗ[R] E ⊗[R] E` for the
-exterior coproduct. For `a : E` and `ε=augmentation R M`, `(ε ⊗ id_E)(Δ a)=1⊗a` in `R ⊗[R] E`. -/
+exterior coproduct. For `a : E` and `ε=algebraMapInv`, `(ε ⊗ id_E)(Δ a)=1⊗a` in `R ⊗[R] E`. -/
 theorem augmentation_rTensor_coproduct (a : E) :
-    (augmentation R M).toLinearMap.rTensor E (coproduct R M a) = (1 : R) ⊗ₜ[R] a := by
+    (ε).toLinearMap.rTensor E (coproduct R M a) = (1 : R) ⊗ₜ[R] a := by
   induction a using CliffordAlgebra.left_induction with
   | algebraMap r =>
-      simp only [coproduct_algebraMap, map_smul, LinearMap.rTensor_tmul,
+      simp only [map_smul, LinearMap.rTensor_tmul,
         AlgHom.toLinearMap_apply, map_one, Algebra.algebraMap_eq_smul_one,
-        TensorProduct.tmul_smul, coproduct_one, map_one]
+        TensorProduct.tmul_smul, coproduct_one]
   | add a b ha hb => simp only [map_add, ha, hb, TensorProduct.tmul_add]
   | ι_mul a x ha =>
       rw [coproduct_ι_mul, augmentation_left_insertion, ha, LinearMap.lTensor_tmul]
@@ -303,14 +302,14 @@ theorem augmentation_rTensor_coproduct (a : E) :
 
 /-- Let `R` be a commutative ring, `M` an `R`-module, and `E = ExteriorAlgebra R M`. Write `ι : M
 → E` for the generators, `γ` for the grade involution, and `Δ : E →ₗ[R] E ⊗[R] E` for the
-exterior coproduct. For `a : E` and `ε=augmentation R M`, `(id_E ⊗ ε)(Δ a)=a⊗1` in `E ⊗[R] R`. -/
+exterior coproduct. For `a : E` and `ε=algebraMapInv`, `(id_E ⊗ ε)(Δ a)=a⊗1` in `E ⊗[R] R`. -/
 theorem augmentation_lTensor_coproduct (a : E) :
-    (augmentation R M).toLinearMap.lTensor E (coproduct R M a) = a ⊗ₜ[R] (1 : R) := by
+    (ε).toLinearMap.lTensor E (coproduct R M a) = a ⊗ₜ[R] (1 : R) := by
   induction a using CliffordAlgebra.left_induction with
   | algebraMap r =>
-      simp only [coproduct_algebraMap, map_smul, LinearMap.lTensor_tmul,
+      simp only [map_smul, LinearMap.lTensor_tmul,
         AlgHom.toLinearMap_apply, map_one, Algebra.algebraMap_eq_smul_one,
-        TensorProduct.smul_tmul', coproduct_one, map_one]
+        TensorProduct.smul_tmul', coproduct_one]
   | add a b ha hb => simp only [map_add, ha, hb, TensorProduct.add_tmul]
   | ι_mul a x ha =>
       rw [coproduct_ι_mul, augmentation_right_insertion, ha, LinearMap.rTensor_tmul]
@@ -318,11 +317,11 @@ theorem augmentation_lTensor_coproduct (a : E) :
 
 /-- Let `R` be a commutative ring, `M` an `R`-module, and `E = ExteriorAlgebra R M`. Write `ι : M
 → E` for the generators, `γ` for the grade involution, and `Δ : E →ₗ[R] E ⊗[R] E` for the
-exterior coproduct. The coassociative coproduct `Δ` and counit `(augmentation R
-M).toLinearMap` define `Coalgebra R E`, with the associator and both counit laws. -/
+exterior coproduct. The coassociative coproduct `Δ` and counit `algebraMapInv.toLinearMap`
+define `Coalgebra R E`, with the associator and both counit laws. -/
 instance instCoalgebra : Coalgebra R E where
   comul := coproduct R M
-  counit := (augmentation R M).toLinearMap
+  counit := (ε).toLinearMap
   coassoc := coproduct_coassoc R M
   rTensor_counit_comp_comul := LinearMap.ext (augmentation_rTensor_coproduct R M)
   lTensor_counit_comp_comul := LinearMap.ext (augmentation_lTensor_coproduct R M)
@@ -386,15 +385,17 @@ theorem coproduct_naturality (f : M →ₗ[R] N) (a : E) :
       rw [coproduct_ι_mul, signedInsertion_naturality, ha, map_mul, map_apply_ι,
         coproduct_ι_mul]
 
+/-- For `R`-modules `M,N` over a commutative ring and `f : M →ₗ[R] N`, the native
+augmentations satisfy `ε_N(ExteriorAlgebra.map f a)=ε_M(a)` for every exterior element `a`. -/
 @[simp]
 theorem augmentation_map (f : M →ₗ[R] N) (a : E) :
-    augmentation R N (map f a) = augmentation R M a := by
-  have h : (augmentation R N).comp (map f) = augmentation R M := by
+    (algebraMapInv : ExteriorAlgebra R N →ₐ[R] R) (map f a) = ε a := by
+  have h : (algebraMapInv : ExteriorAlgebra R N →ₐ[R] R).comp (map f) = ε := by
     apply ExteriorAlgebra.hom_ext
     apply LinearMap.ext
     intro x
-    change augmentation R N (map f (ι R x)) = augmentation R M (ι R x)
-    exact (congrArg (augmentation R N) (map_apply_ι f x)).trans
+    change (algebraMapInv : ExteriorAlgebra R N →ₐ[R] R) (map f (ι R x)) = ε (ι R x)
+    exact (congrArg (algebraMapInv : ExteriorAlgebra R N →ₐ[R] R) (map_apply_ι f x)).trans
       ((augmentation_ι R N (f x)).trans (augmentation_ι R M x).symm)
   exact AlgHom.congr_fun h a
 

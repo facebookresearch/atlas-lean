@@ -56,7 +56,6 @@ def adicSymbol (I : Ideal R) (n : ℕ) :
     (I ^ n : Ideal R) →ₗ[R] I.adicGradedPiece n :=
   (I • ⊤ : Submodule R (I ^ n : Ideal R)).mkQ
 
-@[simp]
 theorem adicSymbol_apply (I : Ideal R) (n : ℕ) (x : (I ^ n : Ideal R)) :
     I.adicSymbol n x = Submodule.Quotient.mk x :=
   rfl
@@ -165,7 +164,7 @@ noncomputable def adicGradedMul (I : Ideal R) (m n : ℕ) :
     (I • ⊤ : Submodule R (I ^ n : Ideal R))
     (adicGradedMulRaw_left I m n) (adicGradedMulRaw_right I m n)
 
-@[simp, nolint simpNF]
+@[simp]
 theorem adicGradedMul_symbol (I : Ideal R) (m n : ℕ)
     (x : (I ^ m : Ideal R)) (y : (I ^ n : Ideal R)) :
     I.adicGradedMul m n (I.adicSymbol m x) (I.adicSymbol n y) =
@@ -467,7 +466,7 @@ noncomputable def adicGradedPieceMapEquiv (e : R ≃+* S)
       Submodule S ((I.map (e : R →+* S)) ^ n : Ideal S))
     (I.adicPowMapEquiv e n) (adicPowMapEquiv_denominator e I n)).toAddEquiv
 
-@[simp, nolint simpNF]
+@[simp]
 theorem adicGradedPieceMapEquiv_symbol (e : R ≃+* S)
     (I : Ideal R) (n : ℕ) (x : (I ^ n : Ideal R)) :
     I.adicGradedPieceMapEquiv e n (I.adicSymbol n x) =
@@ -578,7 +577,7 @@ noncomputable def adicAssociatedGradedMapEquiv (e : R ≃+* S)
   rw [hgf]
   exact f.map_mul x y
 
-@[simp, nolint simpNF]
+@[simp]
 theorem adicAssociatedGradedMapEquiv_of_symbol (e : R ≃+* S)
     (I : Ideal R) (n : ℕ) (x : (I ^ n : Ideal R)) :
     I.adicAssociatedGradedMapEquiv e
