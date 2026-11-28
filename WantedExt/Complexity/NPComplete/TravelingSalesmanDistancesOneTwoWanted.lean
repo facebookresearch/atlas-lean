@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.TspWanted
+public import CSLibExt.Complexity.NPComplete.TravelingSalesmanDistancesOneTwoDefs
 
 @[expose] public section
 
@@ -60,24 +58,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed TRAVELING SALESMAN instance (`0 < m`, a
-symmetric `m × m` distance matrix with zero diagonal) in which the distance between any two
-distinct cities is `1` or `2`, and `0 < B`. -/
-def WellFormed (i : Tsp.TspInstance) : Prop :=
-  Tsp.WellFormed i ∧
-    (∀ a < i.1, ∀ b < i.1, a ≠ b →
-      (i.2.1.getD a []).getD b 0 = 1 ∨ (i.2.1.getD a []).getD b 0 = 2) ∧
-    0 < i.2.2
-
-open Classical in
-/-- TRAVELING SALESMAN with distances 1 and 2 as a decision problem over bitstrings. -/
-noncomputable def travelingSalesmanDistancesOneTwoDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := Tsp.TspInstance) x with
-  | some i => decide (WellFormed i ∧ Tsp.TspFeasible i)
-  | none => false
 
 /-- **TRAVELING SALESMAN is NP-complete with distances 1 and 2.** Source: Garey and Johnson
 (1979), [ND22], comment. -/

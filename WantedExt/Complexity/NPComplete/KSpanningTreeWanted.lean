@@ -20,12 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.BoundedDiameterSpanningTreeWanted
-public import Mathlib.Algebra.BigOperators.Finprod
-public import Mathlib.Combinatorics.SimpleGraph.Acyclic
-public import Mathlib.Data.Set.Card
+public import CSLibExt.Complexity.NPComplete.KSpanningTreeDefs
 
 @[expose] public section
 
@@ -64,28 +59,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range), `0 < k ≤ |V|`,
-and `0 < K`. -/
-def WellFormed (i : BoundedDiameterSpanningTreeInstance) : Prop :=
-  ((endpoints i).Nodup ∧
-    ∀ e ∈ endpoints i, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ endpoints i) ∧
-    0 < i.2.2.1 ∧ i.2.2.1 ≤ i.1 ∧ 0 < i.2.2.2
-
-/-- Some subtree `T` of `G` has at least `k` nodes and weight at most `K`. -/
-def KSpanningTreeFeasible (i : BoundedDiameterSpanningTreeInstance) : Prop :=
-  ∃ T : (Graph i).Subgraph, T.coe.IsTree ∧ i.2.2.1 ≤ T.verts.ncard ∧
-    ∑ᶠ e ∈ T.edgeSet, weight i e ≤ i.2.2.2
-
-open Classical in
-/-- K-SPANNING TREE as a decision problem over bitstrings. -/
-noncomputable def kSpanningTreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := BoundedDiameterSpanningTreeInstance) x with
-  | some i => decide (WellFormed i ∧ KSpanningTreeFeasible i)
-  | none => false
 
 /-- **K-SPANNING TREE is NP-complete.** Source: Crescenzi and Kann, MINIMUM K-SPANNING TREE; Ravi,
 Sundaram, Marathe, Rosenkrantz, and Ravi (1996), Theorem 2.1. -/

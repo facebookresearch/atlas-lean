@@ -21,11 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Connectivity.EdgeConnectivity
-public import WantedExt.Complexity.NPComplete.BiconnectivityAugmentationWanted
+public import CSLibExt.Complexity.NPComplete.BridgeConnectivityAugmentationDefs
 
 @[expose] public section
 
@@ -58,36 +54,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: `n ≥ 1`; the edge list is simple (in range, no loops, no
-repeated edge in either orientation); `w` is an `n × n` symmetric matrix with positive
-off-diagonal entries; and `B` is positive. -/
-def WellFormed (i : BiconnectivityAugmentation.BiconnectivityAugmentationInstance) : Prop :=
-  0 < i.1 ∧ i.2.1.Nodup ∧
-    (∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    i.2.2.1.length = i.1 ∧ (∀ row ∈ i.2.2.1, row.length = i.1) ∧
-    (∀ u < i.1, ∀ v < i.1,
-      BiconnectivityAugmentation.weight i.2.2.1 u v =
-        BiconnectivityAugmentation.weight i.2.2.1 v u) ∧
-    (∀ u < i.1, ∀ v < i.1, u ≠ v → 0 < BiconnectivityAugmentation.weight i.2.2.1 u v) ∧
-    0 < i.2.2.2
-
-/-- Some list `E'` of pairs of distinct vertices has total weight at most `B`, and adding its
-pairs to `G` gives a bridge-connected graph. -/
-def BridgeConnectivityAugmentationFeasible
-    (i : BiconnectivityAugmentation.BiconnectivityAugmentationInstance) : Prop :=
-  ∃ E' : List (ℕ × ℕ), (∀ e ∈ E', e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2) ∧
-    (E'.map fun e => BiconnectivityAugmentation.weight i.2.2.1 e.1 e.2).sum ≤ i.2.2.2 ∧
-    (Cslib.Complexity.Karp.edgeGraph i.1 (i.2.1 ++ E')).IsEdgeConnected 2
-
-open Classical in
-/-- BRIDGE-CONNECTIVITY AUGMENTATION as a decision problem over bitstrings. -/
-noncomputable def bridgeConnectivityAugmentationDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := BiconnectivityAugmentation.BiconnectivityAugmentationInstance) x with
-  | some i => decide (WellFormed i ∧ BridgeConnectivityAugmentationFeasible i)
-  | none => false
 
 /-- **BRIDGE-CONNECTIVITY AUGMENTATION is NP-complete.** Source: Garey and Johnson (1979),
 [ND18], comment; Eswaran and Tarjan (1976). -/

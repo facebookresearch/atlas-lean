@@ -17,9 +17,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import MathlibExt.Combinatorics.Tree.WeightedLeafDistance
+public import CSLibExt.Complexity.NPComplete.BalancedMinimumEvolutionDefs
 
 @[expose] public section
 
@@ -63,42 +61,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number `n` of species, the rows of the dissimilarity matrix (entry `(a, b)`
-meaning `a / b`), and the bound `L` as a pair `(a, b)` meaning `a / b`. -/
-abbrev BalancedMinimumEvolutionInstance := ℕ × List (List (ℕ × ℕ)) × (ℕ × ℕ)
-
-/-- The entry `δᵢⱼ` of the matrix, as a pair `(a, b)` meaning `a / b`. -/
-def entry (inst : BalancedMinimumEvolutionInstance) (i j : Fin inst.1) : ℕ × ℕ :=
-  (inst.2.1.getD i []).getD j (0, 1)
-
-/-- The dissimilarity `δᵢⱼ = a / b` as a real number. -/
-noncomputable def dissim (inst : BalancedMinimumEvolutionInstance) (i j : Fin inst.1) : ℝ :=
-  ((entry inst i j).1 : ℝ) / (entry inst i j).2
-
-/-- Well-formedness of an instance: the matrix has `n` rows of `n` entries, every entry has a
-positive denominator, the diagonal is zero, the matrix is symmetric (`δᵢⱼ = δⱼᵢ`), and `L` has a
-positive denominator. -/
-def WellFormed (inst : BalancedMinimumEvolutionInstance) : Prop :=
-  inst.2.1.length = inst.1 ∧ (∀ r ∈ inst.2.1, r.length = inst.1 ∧ ∀ q ∈ r, 0 < q.2) ∧
-    (∀ i, (entry inst i i).1 = 0) ∧
-    (∀ i j, (entry inst i j).1 * (entry inst j i).2 = (entry inst j i).1 * (entry inst i j).2) ∧
-    0 < inst.2.2.2
-
-/-- Some cubic tree whose leaves are labelled by the `n` species, each exactly once, has balanced
-minimum-evolution length at most `L`. -/
-def BalancedMinimumEvolutionFeasible (inst : BalancedMinimumEvolutionInstance) : Prop :=
-  ∃ T : UTree (Fin inst.1), T.labels.Perm (List.finRange inst.1) ∧
-    T.bmeLength (dissim inst) ≤ (inst.2.2.1 : ℝ) / inst.2.2.2
-
-open Classical in
-/-- BALANCED MINIMUM EVOLUTION as a decision problem over bitstrings. -/
-noncomputable def balancedMinimumEvolutionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := BalancedMinimumEvolutionInstance) x with
-  | some i => decide (WellFormed i ∧ BalancedMinimumEvolutionFeasible i)
-  | none => false
 
 /-- **BALANCED MINIMUM EVOLUTION is NP-complete.** Source: Fiorini and Joret (2012),
 Theorem 3.1. -/

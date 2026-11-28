@@ -23,11 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import Mathlib.Combinatorics.SimpleGraph.Walk.Basic
+public import CSLibExt.Complexity.NPComplete.CapacitatedArcRoutingDefs
 
 @[expose] public section
 
@@ -62,53 +58,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`), the edge list (an entry `(u, v, c, d)` is
-the edge `{u, v}` with cost `c` and demand `d`), the depot `v₀`, the capacity `W`, and the
-bound `B`. -/
-abbrev CapacitatedArcRoutingInstance := ℕ × List (ℕ × ℕ × ℕ × ℕ) × ℕ × ℕ × ℕ
-
-/-- The endpoint pairs of the listed edges. -/
-def endpoints (i : CapacitatedArcRoutingInstance) : List (ℕ × ℕ) :=
-  i.2.1.map fun e => (e.1, e.2.1)
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : CapacitatedArcRoutingInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 (endpoints i)
-
-/-- The cost of an edge `s`: the cost recorded for the list entry whose endpoints are the
-endpoints of `s` (unique under `WellFormed`). -/
-def edgeCost (i : CapacitatedArcRoutingInstance) (s : Sym2 (Fin i.1)) : ℕ :=
-  ((i.2.1.find? fun e => s.map Fin.val = s(e.1, e.2.1)).map fun e => e.2.2.1).getD 0
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range), and the depot is a
-vertex. -/
-def WellFormed (i : CapacitatedArcRoutingInstance) : Prop :=
-  ((endpoints i).Nodup ∧
-    ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2.1 < i.1 ∧ e.1 ≠ e.2.1 ∧ (e.2.1, e.1) ∉ endpoints i) ∧
-    i.2.2.1 < i.1
-
-/-- Some `m` routes `C k`, closed walks at the depot `v₀`, and a serving assignment `s` (edge
-entry `e` is served by route `s e`) satisfy: every edge of positive demand lies on the route
-serving it; the edges served by each route have total demand at most `W`; and the routes have
-total cost at most `B`, counting every traversal of an edge. -/
-def CapacitatedArcRoutingFeasible (i : CapacitatedArcRoutingInstance) : Prop :=
-  ∃ v₀ : Fin i.1, (v₀ : ℕ) = i.2.2.1 ∧
-    ∃ (m : ℕ) (C : Fin m → (Graph i).Walk v₀ v₀) (s : Fin i.2.1.length → Fin m),
-      (∀ e, 0 < (i.2.1.get e).2.2.2 →
-        s((i.2.1.get e).1, (i.2.1.get e).2.1) ∈ (C (s e)).edges.map (Sym2.map Fin.val)) ∧
-      (∀ k, ∑ e ∈ Finset.univ.filter (fun e => s e = k), (i.2.1.get e).2.2.2 ≤ i.2.2.2.1) ∧
-      ∑ k, ((C k).edges.map (edgeCost i)).sum ≤ i.2.2.2.2
-
-open Classical in
-/-- CAPACITATED ARC ROUTING as a decision problem over bitstrings. -/
-noncomputable def capacitatedArcRoutingDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := CapacitatedArcRoutingInstance) x with
-  | some i => decide (WellFormed i ∧ CapacitatedArcRoutingFeasible i)
-  | none => false
 
 /-- **CAPACITATED ARC ROUTING is NP-complete.** Source: Golden and Wong (1981); van Bevern,
 Hartung, Nichterlein, and Sorge (2014); Garey and Johnson (1979), [ND27] (special case). -/

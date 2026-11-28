@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.CapacitatedSpanningTreeWanted
+public import CSLibExt.Complexity.NPComplete.CapacitatedSpanningTreeCapacityTwoDefs
 
 @[expose] public section
 
@@ -59,22 +57,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed CAPACITATED SPANNING TREE instance in which
-every edge `(u, v, c, l)` has `c = 2` and `l ≤ 1`, and every vertex `v ≠ v₀` has `r(v) ≤ 1`. -/
-def WellFormed (i : CapacitatedSpanningTreeInstance) : Prop :=
-  CapacitatedSpanningTree.WellFormed i ∧ (∀ e ∈ i.2.1, e.2.2.1 = 2 ∧ e.2.2.2 ≤ 1) ∧
-    ∀ v < i.1, v ≠ i.2.2.1 → i.2.2.2.1.getD v 0 ≤ 1
-
-open Classical in
-/-- CAPACITATED SPANNING TREE with capacities 2 and 0-1 requirements and lengths as a decision
-problem over bitstrings. -/
-noncomputable def capacitatedSpanningTreeCapacityTwoDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := CapacitatedSpanningTreeInstance) x with
-  | some i => decide (WellFormed i ∧ CapacitatedSpanningTreeFeasible i)
-  | none => false
 
 /-- **CAPACITATED SPANNING TREE with capacities 2 and 0-1 requirements and lengths is
 NP-complete.** Source: Garey and Johnson (1979), [ND5], comment (Even and Johnson, 1977). -/

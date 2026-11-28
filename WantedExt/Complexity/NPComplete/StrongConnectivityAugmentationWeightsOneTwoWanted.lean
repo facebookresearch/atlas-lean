@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.StrongConnectivityAugmentationWanted
+public import CSLibExt.Complexity.NPComplete.StrongConnectivityAugmentationWeightsOneTwoDefs
 
 @[expose] public section
 
@@ -66,22 +64,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed STRONG CONNECTIVITY AUGMENTATION instance
-with no arcs in `G` and every weight equal to `1` or `2`. -/
-def WellFormed (i : StrongConnectivityAugmentationInstance) : Prop :=
-  StrongConnectivityAugmentation.WellFormed i ∧ i.2.1 = [] ∧
-    ∀ u < i.1, ∀ v < i.1, weight i.2.2.1 u v = 1 ∨ weight i.2.2.1 u v = 2
-
-open Classical in
-/-- STRONG CONNECTIVITY AUGMENTATION with weights 1 or 2 and no arcs as a decision problem over
-bitstrings. -/
-noncomputable def strongConnectivityAugmentationWeightsOneTwoDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := StrongConnectivityAugmentationInstance) x with
-  | some i => decide (WellFormed i ∧ StrongConnectivityAugmentationFeasible i)
-  | none => false
 
 /-- **STRONG CONNECTIVITY AUGMENTATION with weights 1 or 2 and no arcs is NP-complete.**
 Source: Garey and Johnson (1979), [ND19]; Eswaran and Tarjan (1976). -/

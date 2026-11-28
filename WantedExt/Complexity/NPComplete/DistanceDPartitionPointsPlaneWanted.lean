@@ -22,9 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.GeometricTravelingSalesmanWanted
+public import CSLibExt.Complexity.NPComplete.DistanceDPartitionPointsPlaneDefs
 
 @[expose] public section
 
@@ -63,31 +61,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the points of `P` (each a pair of integer coordinates in positive/negative-part
-form), the distance `d` and the number of sets `K`. -/
-abbrev DistanceDPartitionPointsPlaneInstance := List ((ℕ × ℕ) × (ℕ × ℕ)) × ℕ × ℕ
-
-/-- Well-formedness of an instance: the points are distinct, and `d` and `K` are positive. -/
-def WellFormed (i : DistanceDPartitionPointsPlaneInstance) : Prop :=
-  (i.1.map point).Nodup ∧ 0 < i.2.1 ∧ 0 < i.2.2
-
-/-- Some partition of the points into `K` nonempty sets (a surjective map `c` to `Fin K`) puts
-two distinct points in the same set only when their Euclidean distance exceeds `d`:
-`d² < (u₁ - v₁)² + (u₂ - v₂)²`. -/
-def DistanceDPartitionPointsPlaneFeasible (i : DistanceDPartitionPointsPlaneInstance) : Prop :=
-  ∃ c : Fin i.1.length → Fin i.2.2, Function.Surjective c ∧ ∀ a b, a ≠ b → c a = c b →
-    (i.2.1 : ℤ) ^ 2 < ((point i.1[a]).1 - (point i.1[b]).1) ^ 2 +
-      ((point i.1[a]).2 - (point i.1[b]).2) ^ 2
-
-open Classical in
-/-- DISTANCE-d PARTITION OF POINTS IN THE PLANE as a decision problem over bitstrings. -/
-noncomputable def distanceDPartitionPointsPlaneDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := DistanceDPartitionPointsPlaneInstance) x with
-  | some i => decide (WellFormed i ∧ DistanceDPartitionPointsPlaneFeasible i)
-  | none => false
 
 /-- **DISTANCE-d PARTITION OF POINTS IN THE PLANE is NP-complete.** Source: Johnson (1982),
 problem [3] (Burr); Johnson (1984), Section 2 (Orlin). -/

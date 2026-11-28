@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.GeometricTravelingSalesmanWanted
-public import WantedExt.Complexity.NPComplete.TspWanted
+public import CSLibExt.Complexity.NPComplete.RectilinearTravelingSalesmanDefs
 
 @[expose] public section
 
@@ -56,35 +53,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- The `L₁` ("rectilinear") distance `|x₁ - x₂| + |y₁ - y₂|` between two integer points. -/
-def rectilinearDist (p q : ℤ × ℤ) : ℕ :=
-  (p.1 - q.1).natAbs + (p.2 - q.2).natAbs
-
-/-- The TRAVELING SALESMAN instance with `C = P`, the `L₁` distance, and the bound `B`: the
-number of points, the matrix of pairwise `L₁` distances (row `j`, column `k` holds
-`d(pⱼ, pₖ)`), and `B`. -/
-def toTspInstance (i : GeometricTravelingSalesman.GeometricTravelingSalesmanInstance) :
-    Tsp.TspInstance :=
-  (i.1.length,
-    (i.1.map GeometricTravelingSalesman.point).map fun p =>
-      (i.1.map GeometricTravelingSalesman.point).map fun q => rectilinearDist p q,
-    i.2)
-
-/-- Some tour of the points has `L₁` length at most `B`. -/
-def RectilinearTravelingSalesmanFeasible
-    (i : GeometricTravelingSalesman.GeometricTravelingSalesmanInstance) : Prop :=
-  Tsp.TspFeasible (toTspInstance i)
-
-open Classical in
-/-- RECTILINEAR TRAVELING SALESMAN as a decision problem over bitstrings. -/
-noncomputable def rectilinearTravelingSalesmanDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := GeometricTravelingSalesman.GeometricTravelingSalesmanInstance) x with
-  | some i =>
-      decide (GeometricTravelingSalesman.WellFormed i ∧ RectilinearTravelingSalesmanFeasible i)
-  | none => false
 
 /-- **RECTILINEAR TRAVELING SALESMAN is NP-complete.** Source: Garey and Johnson (1979),
 [ND23], comment; Garey, Graham, and Johnson (1976). -/

@@ -29,9 +29,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
+public import CSLibExt.Complexity.NPComplete.TravelingRepairmanDefs
 
 @[expose] public section
 
@@ -67,48 +65,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number `n` of locations, the distance matrix as `n` rows of `n` entries
-(`t[a, b]` is entry `b` of row `a`), the starting location `s`, and the bound `K`. -/
-abbrev TravelingRepairmanInstance := ℕ × List (List ℕ) × ℕ × ℕ
-
-/-- The distance `t[a, b]`: entry `b` of row `a` of the matrix (`0` outside it). -/
-def dist (i : TravelingRepairmanInstance) (a b : ℕ) : ℕ :=
-  (i.2.1.getD a []).getD b 0
-
-/-- The length of the route visiting the listed locations in order: the sum of
-`t[a, b]` over consecutive entries `a, b`. -/
-def routeLength (i : TravelingRepairmanInstance) (route : List ℕ) : ℕ :=
-  ((route.zip route.tail).map fun p => dist i p.1 p.2).sum
-
-/-- The total latency of a route `π(0), …, π(n - 1)`: the sum over positions `k` of the length
-of its prefix `π(0), …, π(k)`, i.e. `∑_{k} ∑_{j=1}^{k} t[π(j - 1), π(j)]`. -/
-def totalLatency (i : TravelingRepairmanInstance) (route : List ℕ) : ℕ :=
-  ∑ k ∈ Finset.range route.length, routeLength i (route.take (k + 1))
-
-/-- Well-formedness of an instance: the matrix has `n` rows of `n` entries, `s < n`, and the
-distances form a metric on the locations in the sense of the compendium entry: `t[a, a] = 0`,
-`t[a, b] = t[b, a]`, and `t[a, c] ≤ t[a, b] + t[b, c]`. -/
-def WellFormed (i : TravelingRepairmanInstance) : Prop :=
-  i.2.1.length = i.1 ∧ (∀ row ∈ i.2.1, row.length = i.1) ∧ i.2.2.1 < i.1 ∧
-    (∀ a < i.1, dist i a a = 0) ∧
-    (∀ a < i.1, ∀ b < i.1, dist i a b = dist i b a) ∧
-    ∀ a < i.1, ∀ b < i.1, ∀ c < i.1, dist i a c ≤ dist i a b + dist i b c
-
-/-- Some route, a permutation of the locations starting at `s`, has total latency at most
-`K`. -/
-def TravelingRepairmanFeasible (i : TravelingRepairmanInstance) : Prop :=
-  ∃ route : List ℕ, route.Perm (List.range i.1) ∧ route.head? = some i.2.2.1 ∧
-    totalLatency i route ≤ i.2.2.2
-
-open Classical in
-/-- TRAVELING REPAIRMAN (MINIMUM LATENCY) as a decision problem over bitstrings. -/
-noncomputable def travelingRepairmanDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TravelingRepairmanInstance) x with
-  | some i => decide (WellFormed i ∧ TravelingRepairmanFeasible i)
-  | none => false
 
 /-- **TRAVELING REPAIRMAN (MINIMUM LATENCY) is NP-complete.** Source: Afrati et al. (1986);
 Crescenzi and Kann, MINIMUM TRAVELING REPAIRMAN; Blum et al. (1994); Sitters (2002). -/

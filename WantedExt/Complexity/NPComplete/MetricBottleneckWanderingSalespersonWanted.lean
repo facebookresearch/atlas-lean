@@ -24,9 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.BottleneckTravelingSalesmanWanted
+public import CSLibExt.Complexity.NPComplete.MetricBottleneckWanderingSalespersonDefs
 
 @[expose] public section
 
@@ -65,38 +63,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number of cities `m`, the distance matrix and the bound `K`
-(`BottleneckTravelingSalesmanWanted`'s instance), the initial city `s`, and the final city
-`f`. -/
-abbrev MetricBottleneckWanderingSalespersonInstance :=
-  BottleneckTravelingSalesmanInstance × ℕ × ℕ
-
-/-- Well-formedness of an instance: `BottleneckTravelingSalesman.WellFormed` (`m ≥ 1`; the
-distances form an `m × m` symmetric matrix with zero diagonal and positive off-diagonal entries;
-`K` is positive), the triangle inequality, and `s` and `f` are cities. -/
-def WellFormed (i : MetricBottleneckWanderingSalespersonInstance) : Prop :=
-  BottleneckTravelingSalesman.WellFormed i.1 ∧
-    (∀ a < i.1.1, ∀ b < i.1.1, ∀ c < i.1.1,
-      dist i.1.2.1 a c ≤ dist i.1.2.1 a b + dist i.1.2.1 b c) ∧
-    i.2.1 < i.1.1 ∧ i.2.2 < i.1.1
-
-/-- Some permutation of the cities starts at `s`, ends at `f`, and has every distance between
-consecutive cities at most `K`. -/
-def MetricBottleneckWanderingSalespersonFeasible
-    (i : MetricBottleneckWanderingSalespersonInstance) : Prop :=
-  ∃ path : List ℕ, path.Perm (List.range i.1.1) ∧ path.head? = some i.2.1 ∧
-    path.getLast? = some i.2.2 ∧
-    ∀ j, j + 1 < i.1.1 → dist i.1.2.1 (path.getD j 0) (path.getD (j + 1) 0) ≤ i.1.2.2
-
-open Classical in
-/-- METRIC BOTTLENECK WANDERING SALESPERSON as a decision problem over bitstrings. -/
-noncomputable def metricBottleneckWanderingSalespersonDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MetricBottleneckWanderingSalespersonInstance) x with
-  | some i => decide (WellFormed i ∧ MetricBottleneckWanderingSalespersonFeasible i)
-  | none => false
 
 /-- **METRIC BOTTLENECK WANDERING SALESPERSON is NP-complete.** Source: Crescenzi and Kann,
 MINIMUM METRIC BOTTLENECK WANDERING SALESPERSON PROBLEM; Hochbaum and Shmoys (1986). The special

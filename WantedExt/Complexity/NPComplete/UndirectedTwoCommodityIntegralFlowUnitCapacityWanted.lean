@@ -22,9 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.UndirectedTwoCommodityIntegralFlowWanted
+public import CSLibExt.Complexity.NPComplete.UndirectedTwoCommodityIntegralFlowUnitCapacityDefs
 
 @[expose] public section
 
@@ -59,21 +57,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance of the restriction: the instance is a well-formed
-UNDIRECTED TWO-COMMODITY INTEGRAL FLOW instance and every edge capacity is `1`. -/
-def UnitWellFormed (i : UndirectedTwoCommodityIntegralFlowInstance) : Prop :=
-  WellFormed i ∧ ∀ e ∈ i.2.1, e.2.2 = 1
-
-open Classical in
-/-- UNDIRECTED TWO-COMMODITY INTEGRAL FLOW with unit capacities, as a decision problem over
-bitstrings. -/
-noncomputable def unitCapacityDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := UndirectedTwoCommodityIntegralFlowInstance) x with
-  | some i => decide (UnitWellFormed i ∧ UndirectedTwoCommodityIntegralFlowFeasible i)
-  | none => false
 
 /-- **UNDIRECTED TWO-COMMODITY INTEGRAL FLOW remains NP-complete when every capacity is `1`.**
 Source: Garey and Johnson (1979), [ND39], comment; Even, Itai, and Shamir (1976). -/

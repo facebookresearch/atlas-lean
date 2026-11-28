@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.BottleneckTravelingSalesmanWanted
+public import CSLibExt.Complexity.NPComplete.BottleneckTravelingSalesmanDistancesOneTwoDefs
 
 @[expose] public section
 
@@ -37,7 +35,7 @@ longer than `B`, i.e., a permutation `⟨c_π(1), ..., c_π(m)⟩` of `C` with
 `d(c_π(i), c_π(i+1)) ≤ B` for `1 ≤ i < m` and `d(c_π(m), c_π(1)) ≤ B`?
 
 This is BOTTLENECK TRAVELING SALESMAN
-(`WantedExt.Complexity.NPComplete.BottleneckTravelingSalesmanWanted`, Garey and Johnson [ND24])
+(`CSLibExt.Complexity.NPComplete.BottleneckTravelingSalesmanDefs`, Garey and Johnson [ND24])
 restricted as in the [ND24] comment: "Remains NP-complete even if `d(cᵢ, cⱼ) ∈ {1,2}` for all
 `cᵢ, cⱼ ∈ C`." Garey and Johnson give no separate reference: the entry's transformation from
 HAMILTONIAN CIRCUIT (NP-complete by Karp (1972)) already yields such instances, with distance
@@ -63,23 +61,6 @@ reduction from every language in `NP`
 -/
 
 open BottleneckTravelingSalesman (BottleneckTravelingSalesmanInstance dist)
-
-/-- Well-formedness of an instance: a well-formed BOTTLENECK TRAVELING SALESMAN instance in
-which the distance between any two distinct cities is `1` or `2`. -/
-def WellFormed (i : BottleneckTravelingSalesmanInstance) : Prop :=
-  BottleneckTravelingSalesman.WellFormed i ∧
-    ∀ a < i.1, ∀ b < i.1, a ≠ b → dist i.2.1 a b = 1 ∨ dist i.2.1 a b = 2
-
-open Classical in
-/-- BOTTLENECK TRAVELING SALESMAN with distances 1 and 2 as a decision problem over
-bitstrings. -/
-noncomputable def bottleneckTravelingSalesmanDistancesOneTwoDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := BottleneckTravelingSalesmanInstance) x with
-  | some i =>
-      decide (WellFormed i ∧ BottleneckTravelingSalesman.BottleneckTravelingSalesmanFeasible i)
-  | none => false
 
 /-- **BOTTLENECK TRAVELING SALESMAN is NP-complete with distances 1 and 2.** Source: Garey and
 Johnson (1979), [ND24], comment. -/

@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.GeometricCapacitatedSpanningTreeWanted
+public import CSLibExt.Complexity.NPComplete.GeometricCapacitatedSpanningTreeEqualRequirementsDefs
 
 @[expose] public section
 
@@ -58,25 +56,6 @@ reduction from every language in `NP`
 -/
 
 open GeometricCapacitatedSpanningTree (GeometricCapacitatedSpanningTreeInstance)
-
-/-- Well-formedness of an instance: a well-formed GEOMETRIC CAPACITATED SPANNING TREE instance
-in which all points other than `p₀` have the same requirement. -/
-def WellFormed (i : GeometricCapacitatedSpanningTreeInstance) : Prop :=
-  GeometricCapacitatedSpanningTree.WellFormed i ∧
-    ∀ u < i.1.length, ∀ v < i.1.length, u ≠ i.2.1 → v ≠ i.2.1 →
-      i.2.2.1.getD u 0 = i.2.2.1.getD v 0
-
-open Classical in
-/-- GEOMETRIC CAPACITATED SPANNING TREE with equal requirements as a decision problem over
-bitstrings. -/
-noncomputable def geometricCapacitatedSpanningTreeEqualRequirementsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := GeometricCapacitatedSpanningTreeInstance) x with
-  | some i =>
-      decide (WellFormed i ∧
-        GeometricCapacitatedSpanningTree.GeometricCapacitatedSpanningTreeFeasible i)
-  | none => false
 
 /-- **GEOMETRIC CAPACITATED SPANNING TREE is NP-complete with equal requirements.** Source:
 Garey and Johnson (1979), [ND6], comment; Papadimitriou (1978). -/

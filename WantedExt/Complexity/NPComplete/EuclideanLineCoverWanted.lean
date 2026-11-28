@@ -20,10 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Basic.Real.Basic
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.GeometricTravelingSalesmanWanted
+public import CSLibExt.Complexity.NPComplete.EuclideanLineCoverDefs
 
 @[expose] public section
 
@@ -66,35 +63,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- A line `a x + b y = c`, given by its integer coefficients `(a, b, c)` in positive/negative-part
-form. -/
-abbrev Line := (ℕ × ℕ) × (ℕ × ℕ) × (ℕ × ℕ)
-
-/-- An instance: the lines and the number of points `K`. -/
-abbrev EuclideanLineCoverInstance := List Line × ℕ
-
-/-- The point set `{(x, y) ∈ ℝ² | a x + b y = c}` of a line. -/
-def lineSet (ℓ : Line) : Set (ℝ × ℝ) :=
-  {p | (toInt ℓ.1 : ℝ) * p.1 + (toInt ℓ.2.1 : ℝ) * p.2 = (toInt ℓ.2.2 : ℝ)}
-
-/-- Well-formedness of an instance: every line has `(a, b) ≠ (0, 0)`, the lines are distinct
-as point sets, and `K` is positive. -/
-def WellFormed (i : EuclideanLineCoverInstance) : Prop :=
-  (∀ ℓ ∈ i.1, toInt ℓ.1 ≠ 0 ∨ toInt ℓ.2.1 ≠ 0) ∧ (i.1.map lineSet).Nodup ∧ 0 < i.2
-
-/-- There are `K` points of `ℝ × ℝ` such that every line contains one of them. -/
-def EuclideanLineCoverFeasible (i : EuclideanLineCoverInstance) : Prop :=
-  ∃ q : Fin i.2 → ℝ × ℝ, ∀ ℓ ∈ i.1, ∃ j, q j ∈ lineSet ℓ
-
-open Classical in
-/-- EUCLIDEAN LINE COVER as a decision problem over bitstrings. -/
-noncomputable def euclideanLineCoverDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := EuclideanLineCoverInstance) x with
-  | some i => decide (WellFormed i ∧ EuclideanLineCoverFeasible i)
-  | none => false
 
 /-- **EUCLIDEAN LINE COVER is NP-complete.** Source: Megiddo and Tamir (1982); Johnson (1982). -/
 public theorem_wanted euclideanLineCover_npComplete :
