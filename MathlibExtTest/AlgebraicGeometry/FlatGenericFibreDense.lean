@@ -17,19 +17,12 @@ public import Mathlib.NumberTheory.Padics.PadicIntegers
 
 open CategoryTheory Limits AlgebraicGeometry
 
-#check @IsDiscreteValuationRing.isLocalization_away_of_irreducible
 #check @AlgebraicGeometry.specMap_algebraMap_fractionRing_apply
 #check @AlgebraicGeometry.range_specMap_algebraMap_fractionRing
 #check @AlgebraicGeometry.isDominant_specMap_algebraMap_fractionRing
 #check @AlgebraicGeometry.isSchemeTheoreticallyDominant_pullback_fst_fractionRing
-#check @AlgebraicGeometry.isDominant_pullback_fst_fractionRing
-#check @AlgebraicGeometry.injective_app_pullback_fst_fractionRing
 #check @AlgebraicGeometry.dense_preimage_genericPoint_of_flat
 #check @AlgebraicGeometry.isOpenImmersion_and_isSchemeTheoreticallyDominant_pullback_fst
-
-/-- `ℚ_[p]` is the localization of `ℤ_[p]` away from `p`. -/
-example (p : ℕ) [Fact p.Prime] : IsLocalization.Away (p : ℤ_[p]) ℚ_[p] :=
-  IsDiscreteValuationRing.isLocalization_away_of_irreducible ℚ_[p] PadicInt.irreducible_p
 
 /-- `Spec ℚ ⟶ Spec ℤ` is dominant. -/
 example : IsDominant (Spec.map (CommRingCat.ofHom (algebraMap ℤ ℚ))) := inferInstance
@@ -43,12 +36,14 @@ dense open subscheme. -/
 example (p : ℕ) [Fact p.Prime] {X : Scheme} (f : X ⟶ Spec (CommRingCat.of ℤ_[p])) [Flat f] :
     IsOpenImmersion (pullback.fst f (Spec.map (CommRingCat.ofHom (algebraMap ℤ_[p] ℚ_[p])))) ∧
       IsSchemeTheoreticallyDominant
-        (pullback.fst f (Spec.map (CommRingCat.ofHom (algebraMap ℤ_[p] ℚ_[p])))) ∧
-      IsDominant (pullback.fst f (Spec.map (CommRingCat.ofHom (algebraMap ℤ_[p] ℚ_[p])))) :=
+        (pullback.fst f (Spec.map (CommRingCat.ofHom (algebraMap ℤ_[p] ℚ_[p])))) :=
   isOpenImmersion_and_isSchemeTheoreticallyDominant_pullback_fst ℚ_[p] f
 
-/-- Sections of a flat `ℤ`-scheme inject into sections of its generic fibre over `ℚ`. -/
+/-- Sections of a flat `ℤ`-scheme inject into sections of its generic fibre over `ℚ`, and the
+projection from the generic fibre is dominant (from scheme-theoretic dominance). -/
 example {X : Scheme} (f : X ⟶ Spec (CommRingCat.of ℤ)) [Flat f] (U : X.Opens) :
     Function.Injective
-      ((pullback.fst f (Spec.map (CommRingCat.ofHom (algebraMap ℤ ℚ)))).app U) :=
-  injective_app_pullback_fst_fractionRing ℚ f U
+        ((pullback.fst f (Spec.map (CommRingCat.ofHom (algebraMap ℤ ℚ)))).app U) ∧
+      IsDominant (pullback.fst f (Spec.map (CommRingCat.ofHom (algebraMap ℤ ℚ)))) := by
+  have := isSchemeTheoreticallyDominant_pullback_fst_fractionRing ℚ f
+  exact ⟨Scheme.Hom.app_injective _ U, inferInstance⟩

@@ -38,7 +38,7 @@ The inequality `depth M - 1 ≤ depth (M / x M)` comes from the long exact `Ext`
 
 ## References
 
-* The Stacks project, Tag 090R (Lemma 10.72.7), first sentence.
+* The Stacks project, Tag 090R (Lemma 10.72.7), part (1).
 * The Stacks project, Tag 00LE (Definition 10.72.1) for depth.
 -/
 
@@ -52,18 +52,6 @@ namespace IsLocalRing
 
 variable {R : Type u} [CommRing R] [IsLocalRing R]
   {M : Type v} [AddCommGroup M] [Module R M]
-
-/-- Over a local ring, if `x` lies in the maximal ideal and `M` is a nonzero finitely generated
-module, then `M / x M` is nonzero (Nakayama's lemma). -/
-theorem nontrivial_quotSMulTop_of_mem_maximalIdeal [Module.Finite R M] [Nontrivial M] {x : R}
-    (hx : x ∈ maximalIdeal R) : Nontrivial (QuotSMulTop x M) := by
-  apply Submodule.Quotient.nontrivial_iff.mpr
-  intro h
-  have h1 : x • (⊤ : Submodule R M) ≤ (maximalIdeal R) • ⊤ := by
-    rw [← Submodule.ideal_span_singleton_smul]
-    exact Submodule.smul_mono_left ((Ideal.span_singleton_le_iff_mem _).mpr hx)
-  exact Submodule.top_ne_ideal_smul_of_le_jacobson_annihilator
-    (maximalIdeal_le_jacobson _) (top_le_iff.mp (h ▸ h1)).symm
 
 variable [Small.{v} R] [IsNoetherianRing R] [Module.Finite R M] [Nontrivial M]
 
@@ -84,12 +72,12 @@ theorem one_le_depth_iff :
       exact absurd ((isRegular_cons_iff M y t).mp hs).1
         (hne y (hsm y List.mem_cons_self))
   · rintro ⟨x, hx, hreg⟩
-    have := nontrivial_quotSMulTop_of_mem_maximalIdeal (M := M) hx
+    have := nontrivial_quotSMulTop_of_mem_maximalIdeal M hx
     refine le_sSup ⟨[x], ?_, by simpa using hx, by simp⟩
     exact (isRegular_cons_iff M x []).mpr ⟨hreg, IsRegular.nil R (QuotSMulTop x M)⟩
 
-/-- **Depth drops by one modulo a nonzerodivisor** (Stacks, Tag 090R, Lemma 10.72.7, first
-sentence). Let `R` be a Noetherian local ring, `M` a nonzero finitely generated `R`-module and
+/-- **Depth drops by one modulo a nonzerodivisor** (Stacks, Tag 090R, Lemma 10.72.7,
+part (1)). Let `R` be a Noetherian local ring, `M` a nonzero finitely generated `R`-module and
 `x` an element of the maximal ideal that is a nonzerodivisor on `M`. Then
 `IsLocalRing.depth (M / x M) + 1 = IsLocalRing.depth M`, as an equality in `ℕ∞`.
 
@@ -100,7 +88,7 @@ supremum of the lengths of regular sequences in the maximal ideal
 theorem depth_quotSMulTop_add_one {x : R} (hx : x ∈ maximalIdeal R) (hreg : IsSMulRegular M x) :
     IsLocalRing.depth (ModuleCat.of R (QuotSMulTop x M)) + 1 =
       IsLocalRing.depth (ModuleCat.of R M) := by
-  have := nontrivial_quotSMulTop_of_mem_maximalIdeal (M := M) hx
+  have := nontrivial_quotSMulTop_of_mem_maximalIdeal M hx
   refine le_antisymm ?_ ?_
   · rw [IsLocalRing.depth_eq_sSup_length_isRegular (ModuleCat.of R (QuotSMulTop x M)),
       IsLocalRing.depth_eq_sSup_length_isRegular (ModuleCat.of R M), ENat.sSup_add]
@@ -115,8 +103,8 @@ theorem depth_quotSMulTop_add_one {x : R} (hx : x ∈ maximalIdeal R) (hreg : Is
       (IsSMulRegular.smulShortComplex_shortExact (M := ModuleCat.of R M) hreg)
     exact tsub_le_iff_right.mp ((le_inf tsub_le_self le_rfl).trans h)
 
-/-- **Depth drops by one modulo a nonzerodivisor** (Stacks, Tag 090R, Lemma 10.72.7, first
-sentence), in the printed form: for a Noetherian local ring `R`, a nonzero finitely generated
+/-- **Depth drops by one modulo a nonzerodivisor** (Stacks, Tag 090R, Lemma 10.72.7,
+part (1)), in the printed form: for a Noetherian local ring `R`, a nonzero finitely generated
 `R`-module `M` and an element `x` of the maximal ideal that is a nonzerodivisor on `M`,
 `IsLocalRing.depth (M / x M) = IsLocalRing.depth M - 1` (truncated subtraction in `ℕ∞`; since
 `depth M ≥ 1` here, it is the honest difference). See `depth_quotSMulTop_add_one`. -/

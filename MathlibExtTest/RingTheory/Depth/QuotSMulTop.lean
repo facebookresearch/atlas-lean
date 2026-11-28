@@ -21,7 +21,6 @@ public import Mathlib.Algebra.Module.Torsion.Free
 
 @[expose] public section
 
-#check @IsLocalRing.nontrivial_quotSMulTop_of_mem_maximalIdeal
 #check @IsLocalRing.one_le_depth_iff
 #check @IsLocalRing.depth_quotSMulTop_add_one
 #check @IsLocalRing.depth_quotSMulTop

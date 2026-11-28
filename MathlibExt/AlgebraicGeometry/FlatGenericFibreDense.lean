@@ -12,7 +12,7 @@ public import Mathlib.AlgebraicGeometry.FunctionField
 public import Mathlib.AlgebraicGeometry.Morphisms.Flat
 public import Mathlib.AlgebraicGeometry.Morphisms.SchemeTheoreticallyDominant
 public import Mathlib.AlgebraicGeometry.PullbackCarrier
-public import Mathlib.RingTheory.DiscreteValuationRing.Basic
+public import MathlibExt.RingTheory.DiscreteValuationRing.LocalizationAway
 
 /-!
 # The generic fibre of a flat scheme over a domain is dense
@@ -35,20 +35,20 @@ of a quasi-compact morphism is preserved by flat base change
   generic point.
 * `AlgebraicGeometry.isSchemeTheoreticallyDominant_pullback_fst_fractionRing`: `X_K ⟶ X` is
   scheme-theoretically dominant.
-* `AlgebraicGeometry.isDominant_pullback_fst_fractionRing`: `X_K ⟶ X` is dominant.
-* `AlgebraicGeometry.injective_app_pullback_fst_fractionRing`: restriction of sections from any
-  open `U` of `X` to its preimage in `X_K` is injective.
 * `AlgebraicGeometry.dense_preimage_genericPoint_of_flat`: the fibre of `f` over the generic point
   of `Spec R` is dense in `X`.
-* `IsDiscreteValuationRing.isLocalization_away_of_irreducible`: the fraction field of a discrete
-  valuation ring is its localization away from a uniformizer.
 * `AlgebraicGeometry.isOpenImmersion_and_isSchemeTheoreticallyDominant_pullback_fst`: for `R` a
-  discrete valuation ring, `X_K ⟶ X` is a scheme-theoretically dominant, dominant open immersion.
+  discrete valuation ring, `X_K ⟶ X` is a scheme-theoretically dominant open immersion (hence
+  dominant, and injective on sections over every open: Mathlib's instance for quasi-compact
+  morphisms and `Scheme.Hom.app_injective`). Its proof uses that the fraction field of a
+  discrete valuation ring is its localization away from a uniformizer
+  (`IsDiscreteValuationRing.isLocalization_away_of_irreducible`).
 
 ## References
 
 * B. Conrad, *Minimal models for elliptic curves*, notes (version of 21 November 2015),
-  Example 2.5, p. 2.
+  Example 2.5, p. 2: the density step in its argument ("`R`-flatness forces the `K`-fibers to be
+  dense"), strengthened here to scheme-theoretic density.
 * The Stacks project, Lemma 31.14.4 (Tag 07ZU) and Lemma 29.26.15 (Tag 081H).
 -/
 
@@ -57,31 +57,6 @@ of a quasi-compact morphism is preserved by flat base change
 open CategoryTheory Limits TopologicalSpace Topology
 
 universe u
-
-/-- The fraction field `K` of a discrete valuation ring `R` is the localization of `R` away from
-any uniformizer `ϖ`: every nonzero element of `R` is a unit times a power of `ϖ`. -/
-theorem IsDiscreteValuationRing.isLocalization_away_of_irreducible {R : Type*} [CommRing R]
-    [IsDomain R] [IsDiscreteValuationRing R] (K : Type*) [Field K] [Algebra R K]
-    [IsFractionRing R K] {ϖ : R} (hϖ : Irreducible ϖ) : IsLocalization.Away ϖ K := by
-  refine IsLocalization.Away.mk ϖ ?_ ?_ ?_
-  · exact (IsFractionRing.to_map_ne_zero_of_mem_nonZeroDivisors
-      (mem_nonZeroDivisors_of_ne_zero hϖ.ne_zero)).isUnit
-  · intro z
-    obtain ⟨a, b, hb, rfl⟩ := IsFractionRing.div_surjective (A := R) z
-    obtain ⟨n, u, rfl⟩ := IsDiscreteValuationRing.eq_unit_mul_pow_irreducible
-      (nonZeroDivisors.ne_zero hb) hϖ
-    refine ⟨n, a * ↑u⁻¹, ?_⟩
-    have hu : algebraMap R K (u : R) ≠ 0 := (u.isUnit.map _).ne_zero
-    have hp : algebraMap R K (ϖ ^ n) ≠ 0 :=
-      IsFractionRing.to_map_ne_zero_of_mem_nonZeroDivisors
-        (mem_nonZeroDivisors_of_ne_zero (pow_ne_zero _ hϖ.ne_zero))
-    rw [map_mul, map_mul, ← map_pow]
-    have hu' : algebraMap R K (↑u⁻¹ : R) * algebraMap R K (u : R) = 1 := by
-      rw [← map_mul, Units.inv_mul, map_one]
-    field_simp
-    linear_combination (-(algebraMap R K) a) * hu'
-  · intro a b hab
-    exact ⟨0, by simpa using IsFractionRing.injective R K hab⟩
 
 namespace AlgebraicGeometry
 
@@ -130,8 +105,9 @@ instance isDominant_specMap_algebraMap_fractionRing :
 projection `X ×_{Spec R} Spec K ⟶ X` from the generic fibre is scheme-theoretically dominant: its
 kernel ideal sheaf is zero, i.e. its scheme-theoretic image is all of `X`.
 
-This is the main statement of B. Conrad, *Minimal models for elliptic curves*, Example 2.5, p. 2
-("`R`-flatness forces the `K`-fibers to be dense"), proved as in Stacks Lemma 31.14.4 (Tag 07ZU)
+This is the density step in the argument of B. Conrad, *Minimal models for elliptic curves*,
+Example 2.5, p. 2 ("`R`-flatness forces the `K`-fibers to be dense"), strengthened to
+scheme-theoretic density, proved as in Stacks Lemma 31.14.4 (Tag 07ZU)
 and Lemma 29.26.15 (Tag 081H); the latter is Mathlib's
 `AlgebraicGeometry.IsSchemeTheoreticallyDominant.pullbackFst`. The source states it for `R` a
 discrete valuation ring; here `R` is any domain. For a discrete valuation ring the projection is a
@@ -146,67 +122,41 @@ theorem isSchemeTheoreticallyDominant_pullback_fst_fractionRing {X : Scheme.{u}}
     (Spec.map (CommRingCat.ofHom (algebraMap R K)))
   exact IsSchemeTheoreticallyDominant.pullbackFst _ _
 
-/-- Let `R` be a domain with fraction field `K` and `f : X ⟶ Spec R` a flat morphism. Then the
-projection `X ×_{Spec R} Spec K ⟶ X` from the generic fibre is dominant.
-
-B. Conrad, *Minimal models for elliptic curves*, Example 2.5, p. 2 (stated there for `R` a discrete
-valuation ring; here `R` is any domain). -/
-theorem isDominant_pullback_fst_fractionRing {X : Scheme.{u}}
-    (f : X ⟶ Spec (CommRingCat.of R)) [Flat f] :
-    IsDominant (pullback.fst f (Spec.map (CommRingCat.ofHom (algebraMap R K)))) := by
-  have := isSchemeTheoreticallyDominant_pullback_fst_fractionRing K f
-  infer_instance
-
-/-- Let `R` be a domain with fraction field `K` and `f : X ⟶ Spec R` a flat morphism. Then for
-every open `U` of `X`, the map from sections of `X` over `U` to sections of the generic fibre
-`X ×_{Spec R} Spec K` over the preimage of `U` is injective.
-
-This is the concrete content of the scheme-theoretic density in B. Conrad, *Minimal models for
-elliptic curves*, Example 2.5, p. 2 (stated there for `R` a discrete valuation ring; here `R` is
-any domain). -/
-theorem injective_app_pullback_fst_fractionRing {X : Scheme.{u}}
-    (f : X ⟶ Spec (CommRingCat.of R)) [Flat f] (U : X.Opens) :
-    Function.Injective
-      ((pullback.fst f (Spec.map (CommRingCat.ofHom (algebraMap R K)))).app U) := by
-  have := isSchemeTheoreticallyDominant_pullback_fst_fractionRing K f
-  exact Scheme.Hom.app_injective _ U
-
 end FractionRing
 
 /-- Let `R` be a domain and `f : X ⟶ Spec R` a flat morphism. Then the fibre of `f` over the
 generic point of `Spec R` is dense in `X`.
 
-This is the topological statement of B. Conrad, *Minimal models for elliptic curves*, Example 2.5,
-p. 2 (stated there for `R` a discrete valuation ring; here `R` is any domain). -/
+This is the topological form of the density step in the argument of B. Conrad, *Minimal models
+for elliptic curves*, Example 2.5, p. 2 (stated there for `R` a discrete valuation ring; here `R`
+is any domain). -/
 theorem dense_preimage_genericPoint_of_flat {R : Type u} [CommRing R] [IsDomain R]
     {X : Scheme.{u}} (f : X ⟶ Spec (CommRingCat.of R)) [Flat f] :
     Dense (f ⁻¹' {genericPoint (Spec (CommRingCat.of R))}) := by
-  have := isDominant_pullback_fst_fractionRing (FractionRing R) f
+  have := isSchemeTheoreticallyDominant_pullback_fst_fractionRing (FractionRing R) f
   have h := (pullback.fst f
     (Spec.map (CommRingCat.ofHom (algebraMap R (FractionRing R))))).denseRange
   rwa [DenseRange, Scheme.Pullback.range_fst, range_specMap_algebraMap_fractionRing] at h
 
 /-- Let `R` be a discrete valuation ring with fraction field `K` and `f : X ⟶ Spec R` a flat
 morphism. Then the projection `X ×_{Spec R} Spec K ⟶ X` from the generic fibre is an open
-immersion which is scheme-theoretically dominant and dominant: the generic fibre is a
-scheme-theoretically dense open subscheme of `X`.
+immersion which is scheme-theoretically dominant: the generic fibre is a scheme-theoretically
+dense open subscheme of `X`. (It is then dominant, and injective on sections over every open, by
+Mathlib's instance for quasi-compact morphisms and `Scheme.Hom.app_injective`.)
 
-This is B. Conrad, *Minimal models for elliptic curves*, Example 2.5, p. 2, with the proof of
-Stacks Lemma 31.14.4 (Tag 07ZU) and Lemma 29.26.15 (Tag 081H). Scheme-theoretic density is
-expressed by Mathlib's `IsSchemeTheoreticallyDominant` (zero kernel ideal sheaf); for this
-quasi-compact open immersion its sections-level content is
-`injective_app_pullback_fst_fractionRing`. -/
+This is the density step in the argument of B. Conrad, *Minimal models for elliptic curves*,
+Example 2.5, p. 2, strengthened to scheme-theoretic density, with the proof of Stacks
+Lemma 31.14.4 (Tag 07ZU) and Lemma 29.26.15 (Tag 081H). Scheme-theoretic density is expressed by
+Mathlib's `IsSchemeTheoreticallyDominant` (zero kernel ideal sheaf). -/
 theorem isOpenImmersion_and_isSchemeTheoreticallyDominant_pullback_fst {R : Type u} [CommRing R]
     [IsDomain R] [IsDiscreteValuationRing R] (K : Type u) [Field K] [Algebra R K]
     [IsFractionRing R K] {X : Scheme.{u}} (f : X ⟶ Spec (CommRingCat.of R)) [Flat f] :
     IsOpenImmersion (pullback.fst f (Spec.map (CommRingCat.ofHom (algebraMap R K)))) ∧
       IsSchemeTheoreticallyDominant
-        (pullback.fst f (Spec.map (CommRingCat.ofHom (algebraMap R K)))) ∧
-      IsDominant (pullback.fst f (Spec.map (CommRingCat.ofHom (algebraMap R K)))) := by
+        (pullback.fst f (Spec.map (CommRingCat.ofHom (algebraMap R K)))) := by
   obtain ⟨ϖ, hϖ⟩ := IsDiscreteValuationRing.exists_irreducible R
   have := IsDiscreteValuationRing.isLocalization_away_of_irreducible K hϖ
   have := IsOpenImmersion.of_isLocalization (S := K) ϖ
-  exact ⟨inferInstance, isSchemeTheoreticallyDominant_pullback_fst_fractionRing K f,
-    isDominant_pullback_fst_fractionRing K f⟩
+  exact ⟨inferInstance, isSchemeTheoreticallyDominant_pullback_fst_fractionRing K f⟩
 
 end AlgebraicGeometry
