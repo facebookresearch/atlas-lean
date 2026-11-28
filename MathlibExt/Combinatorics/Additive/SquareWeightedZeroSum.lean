@@ -13,9 +13,11 @@ public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Algebra.Group.Pointwise.Set.Basic
 public import Mathlib.Data.Set.Card
 public import Mathlib.Data.Nat.Factorization.Basic
+public import Mathlib.Order.Interval.Finset.Fin
 import Mathlib.Data.Nat.ChineseRemainder
 import Mathlib.Data.Nat.PrimeFin
 import Mathlib.FieldTheory.Finite.Basic
+import MathlibExt.Combinatorics.Additive.ConsecutiveZeroSum
 
 /-!
 # Square-weighted zero sums modulo integers
@@ -23,15 +25,18 @@ import Mathlib.FieldTheory.Finite.Basic
 For a natural number $n$, write $S(n)$ for the set of nonzero squares in $\mathbb{Z}/n\mathbb{Z}$
 and $U(n)^2$ for the squares of its units. An $A$-weighted zero sum uses a weight from $A$ at
 each term of a sequence; an $A$-weighted zero-sum subsequence uses weights at a nonempty set of
-indices. In either case the weighted terms sum to zero.
+indices. In either case the weighted terms sum to zero. A consecutive weighted zero-sum
+subsequence requires those indices to form an interval.
 
-This file proves four results of Paul and Paul. Lemma 5 counts the unit squares modulo a prime
+This file proves results of Paul and Paul. Lemma 5 counts the unit squares modulo a prime
 power after scaling by an even power of the prime. For odd $n \ge 2$, Proposition 17 gives units
 $u, v$ whose reductions modulo every prime $p$ dividing $n$ have no $S(p)$-weighted zero-sum
 subsequence. Lemma 13 lifts a $U(p^2)^2$-weighted zero sum modulo $p^2$ to an $S(p^r)$-weighted
 zero sum modulo $p^r$ when $p \ge 2$ and $r$ is positive and even; $p$ need not be prime.
 Lemma 7 lifts an $S(p^r)$-weighted zero sum of the reduction modulo $p^r$, where $p^r$ exactly
-divides $n$, to an $S(n)$-weighted zero sum modulo $n$.
+divides $n$, to an $S(n)$-weighted zero sum modulo $n$. Corollary 8 uses this to bound the
+consecutive constant $C_{S(n)}$ by $C_{S(p^r)}$ when $n \ge 2$, $p$ is a prime divisor of $n$,
+and $r = v_p(n)$ is its full exponent in $n$.
 
 ## Main definitions
 
@@ -39,6 +44,9 @@ divides $n$, to an $S(n)$-weighted zero sum modulo $n$.
 * `MetaMathlibExt.unitSquareSet`: the squares of units of $\mathbb{Z}/n\mathbb{Z}$.
 * `MetaMathlibExt.HasWeightedZeroSum`: a sequence is an $A$-weighted zero sum.
 * `MetaMathlibExt.HasWeightedZeroSumSubseq`: a sequence has an $A$-weighted zero-sum subsequence.
+* `MetaMathlibExt.HasConsecutiveWeightedZeroSumSubseq`: such a subsequence occupies an interval.
+* `MetaMathlibExt.weightedConsecutiveDefiningSet`: the positive lengths forcing such a block.
+* `MetaMathlibExt.weightedConsecutiveConstant`: the least such length, or $0$ when none exists.
 
 ## Main results
 
@@ -46,6 +54,7 @@ divides $n$, to an $S(n)$-weighted zero sum modulo $n$.
 * `MetaMathlibExt.exists_pair_units_avoiding_prime_squareWeights`: Proposition 17.
 * `MetaMathlibExt.squareWeightedZeroSum_of_reduction_square`: Lemma 13.
 * `MetaMathlibExt.squareWeightedZeroSum_of_primePower_reduction`: Lemma 7.
+* `MetaMathlibExt.weightedConsecutiveConstant_squareSet_le_primePower`: Corollary 8.
 
 ## Implementation notes
 
@@ -63,10 +72,22 @@ For the prime-power component, write $n = p^r m$ with $p^r$ and $m$ coprime and 
 $e \equiv 1 \pmod{p^r}$ and $e \equiv 0 \pmod m$. If $b_i = c_i^2$, the weights $(e c_i)^2$ reduce
 to $b_i$ modulo $p^r$ and to $0$ modulo $m$, so the weighted sum vanishes modulo both factors.
 
+For Corollary 8, the prime-power defining set is nonempty: among $p^r$ terms there is a
+nonempty consecutive ordinary zero sum, and $1$ is a nonzero square because $p^r > 1$. At the
+least forcing length, apply Lemma 7 to the terms indexed by a zero-sum block in the reduction,
+keeping that block of indices unchanged.
+
 ## References
 
 * Krishnendu Paul and Shameek Paul, *Square-Weighted Zero-Sum Constants*, Journal of Integer
-  Sequences 27 (2024), Article 24.6.6; arXiv:2202.13143.
+  Sequences 27 (2024), Article 24.6.6, pp. 1–16, Introduction (Remark 1) and Corollary 8
+  (pp. 4–5), using Lemma 7 and Observation 2; arXiv:2202.13143.
+* Santanu Mondal, Krishnendu Paul and Shameek Paul, *On Unit-Weighted Zero-Sum Constants of
+  $\mathbb{Z}_n$*, INTEGERS 24 (2024), Article A38, pp. 1–16, Theorem 3.1. Its upper bound
+  is also credited there to the same authors, *On a different weighted zero-sum constant*,
+  Discrete Mathematics 346 (2023), Article 113350, Theorem 1.
+* The unweighted block existence is reused from `consecutive_constant_eq_card` in
+  `MathlibExt.Combinatorics.Additive.ConsecutiveZeroSum`.
 -/
 
 namespace MetaMathlibExt
@@ -109,6 +130,43 @@ Source: Krishnendu Paul and Shameek Paul, *Square-Weighted Zero-Sum Constants*, 
 Sequences 27 (2024), Article 24.6.6, Introduction. -/
 public def HasWeightedZeroSum {n k : ℕ} (A : Set (ZMod n)) (S : Fin k → ZMod n) : Prop :=
   ∃ a : Fin k → ZMod n, (∀ i, a i ∈ A) ∧ ∑ i, a i * S i = 0
+
+/-- **Consecutive weighted zero-sum subsequences.** Let $A \subseteq \mathbb{Z}/n\mathbb{Z}$ and let
+$S = (x_1, \dots, x_k)$ be a sequence in $\mathbb{Z}/n\mathbb{Z}$. Then $S$ has an $A$-weighted
+zero-sum consecutive subsequence if there are indices $1 \le l \le h \le k$ and weights
+$a_l, \dots, a_h \in A$ with $\sum_{i=l}^{h} a_i x_i = 0$.
+
+Source: Krishnendu Paul and Shameek Paul, *Square-Weighted Zero-Sum Constants*, Journal of Integer
+Sequences 27 (2024), Article 24.6.6, Introduction. -/
+public def HasConsecutiveWeightedZeroSumSubseq {n k : ℕ} (A : Set (ZMod n))
+    (S : Fin k → ZMod n) : Prop :=
+  ∃ J : Finset (Fin k), J.Nonempty ∧
+    (∃ lo hi : ℕ, J = Finset.univ.filter fun i => lo ≤ i.1 ∧ i.1 ≤ hi) ∧
+    ∃ a : Fin k → ZMod n, (∀ i ∈ J, a i ∈ A) ∧ ∑ i ∈ J, a i * S i = 0
+
+/-- **Lengths forcing a consecutive weighted zero sum.** Let $n$ be a natural number and $A$ a
+subset of $\mathbb{Z}_n = \mathbb{Z}/n\mathbb{Z}$. This is the set of positive integers $k$ such
+that every sequence $(x_1, \dots, x_k)$ of elements of $\mathbb{Z}_n$ has a nonempty block of
+consecutive terms $x_i, \dots, x_j$ with weights $a_i, \dots, a_j \in A$ such that
+$a_i x_i + \dots + a_j x_j = 0$. Its least element, or $0$ when it is empty, is the $A$-weighted
+consecutive constant $C_A$ of $\mathbb{Z}_n$.
+
+Source: Krishnendu Paul and Shameek Paul, *Square-Weighted Zero-Sum Constants*, Journal of Integer
+Sequences 27 (2024), Article 24.6.6, Introduction. -/
+public def weightedConsecutiveDefiningSet (n : ℕ) (A : Set (ZMod n)) : Set ℕ :=
+  {k | 0 < k ∧ ∀ S : Fin k → ZMod n, HasConsecutiveWeightedZeroSumSubseq A S}
+
+/-- **Weighted consecutive zero-sum constant.** Let $n$ be a natural number and $A$ a subset of
+$\mathbb{Z}_n = \mathbb{Z}/n\mathbb{Z}$. The $A$-weighted consecutive constant $C_A$ of
+$\mathbb{Z}_n$ is the least positive integer $k$ such that every sequence $(x_1, \dots, x_k)$ of
+elements of $\mathbb{Z}_n$ has a nonempty block of consecutive terms $x_i, \dots, x_j$ with
+weights $a_i, \dots, a_j \in A$ such that $a_i x_i + \dots + a_j x_j = 0$; it is $0$ when no
+such $k$ exists.
+
+Source: Krishnendu Paul and Shameek Paul, *Square-Weighted Zero-Sum Constants*, Journal of Integer
+Sequences 27 (2024), Article 24.6.6, Introduction. -/
+public noncomputable def weightedConsecutiveConstant (n : ℕ) (A : Set (ZMod n)) : ℕ :=
+  sInf (weightedConsecutiveDefiningSet n A)
 
 end
 
@@ -385,5 +443,121 @@ public theorem squareWeightedZeroSum_of_primePower_reduction (n p r k : ℕ)
         ZMod.cast_id', id, hc]
     · exact Finset.dvd_sum fun i _ =>
         Dvd.dvd.mul_right (Dvd.dvd.pow (hme.mul_right _) two_ne_zero) _
+
+/-- **Membership in the nonzero square weights.** For a natural number $n$ and
+$x \in \mathbb{Z}/n\mathbb{Z}$, $x \in S(n)$ if and only if $x \ne 0$ and
+$x = y^2$ for some $y \in \mathbb{Z}/n\mathbb{Z}$. -/
+public theorem mem_squareSet_iff {n : ℕ} {x : ZMod n} :
+    x ∈ squareSet n ↔ x ≠ 0 ∧ ∃ y : ZMod n, x = y ^ 2 := Iff.rfl
+
+/-- **Consecutive weighted zero sums as closed intervals.** Let $A \subseteq \mathbb{Z}_n$ and
+let $S = (x_0, \ldots, x_{k-1})$ be a sequence in $\mathbb{Z}_n$. Then $S$ has an $A$-weighted
+consecutive zero-sum subsequence if and only if there are $0 \le s \le t < k$ and weights
+$a_i \in A$ for $s \le i \le t$ such that $\sum_{i=s}^t a_i x_i = 0$. -/
+public theorem hasConsecutiveWeightedZeroSumSubseq_iff {n k : ℕ} {A : Set (ZMod n)}
+    {S : Fin k → ZMod n} :
+    HasConsecutiveWeightedZeroSumSubseq A S ↔
+      ∃ s t : Fin k, s ≤ t ∧
+        ∃ a : Fin k → ZMod n, (∀ i ∈ Finset.Icc s t, a i ∈ A) ∧
+          ∑ i ∈ Finset.Icc s t, a i * S i = 0 := by
+  constructor
+  · rintro ⟨J, hJ, ⟨lo, hi, hI⟩, a, ha, hsum⟩
+    let s := J.min' hJ
+    let t := J.max' hJ
+    have hs : s ∈ J := J.min'_mem hJ
+    have ht : t ∈ J := J.max'_mem hJ
+    have heq : J = Finset.Icc s t := by
+      ext i
+      rw [Finset.mem_Icc]
+      refine ⟨fun hi' => ⟨J.min'_le i hi', J.le_max' i hi'⟩, ?_⟩
+      rintro ⟨hsi, hit⟩
+      rw [hI] at hs ht ⊢
+      simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hs ht ⊢
+      exact ⟨Nat.le_trans hs.1 hsi, Nat.le_trans hit ht.2⟩
+    exact ⟨s, t, J.le_max' s hs, a, heq ▸ ha, heq ▸ hsum⟩
+  · rintro ⟨s, t, hst, a, ha, hsum⟩
+    refine ⟨Finset.Icc s t, ⟨s, Finset.mem_Icc.mpr ⟨le_rfl, hst⟩⟩, ⟨s, t, ?_⟩, a, ha, hsum⟩
+    ext i
+    simp only [Finset.mem_Icc, Finset.mem_filter, Finset.mem_univ, true_and, Fin.le_def]
+
+/-- **Membership in the set of consecutive forcing lengths.** For $A \subseteq \mathbb{Z}_n$,
+$k$ lies in the defining set of $C_A$ if and only if $k > 0$ and every sequence
+$x_0, \dots, x_{k-1}$ in $\mathbb{Z}_n$ has an $A$-weighted consecutive zero-sum subsequence. -/
+public theorem mem_weightedConsecutiveDefiningSet {n k : ℕ} {A : Set (ZMod n)} :
+    k ∈ weightedConsecutiveDefiningSet n A ↔
+      0 < k ∧ ∀ S : Fin k → ZMod n, HasConsecutiveWeightedZeroSumSubseq A S := Iff.rfl
+
+/-- **Characterization of a positive weighted consecutive constant.** Let $A \subseteq \mathbb{Z}_n$
+and $k > 0$. Then $C_A = k$ if and only if $k$ is the least element of the set of positive
+lengths at which every sequence in $\mathbb{Z}_n$ has an $A$-weighted consecutive zero-sum
+subsequence. -/
+public theorem weightedConsecutiveConstant_eq_iff_isLeast {n k : ℕ} {A : Set (ZMod n)}
+    (hk : 0 < k) :
+    weightedConsecutiveConstant n A = k ↔ IsLeast (weightedConsecutiveDefiningSet n A) k := by
+  unfold weightedConsecutiveConstant
+  refine ⟨fun h => ?_, fun h => h.csInf_eq⟩
+  subst k
+  refine ⟨Nat.sInf_mem ?_, fun _ hj => Nat.sInf_le hj⟩
+  by_contra! hempty
+  rw [hempty, Nat.sInf_empty] at hk
+  exact (lt_irrefl 0) hk
+
+private theorem weightedConsecutiveDefiningSet_squareSet_nonempty {n : ℕ} (hn : 1 < n) :
+    (weightedConsecutiveDefiningSet n (squareSet n)).Nonempty := by
+  have : NeZero n := ⟨by omega⟩
+  have h := (consecutive_constant_eq_card (ZMod n)).1
+  rw [Set.mem_ofPred_eq, ZMod.card] at h
+  refine ⟨n, mem_weightedConsecutiveDefiningSet.mpr ⟨h.1, fun S => ?_⟩⟩
+  obtain ⟨s, t, hst, a, ha, hsum⟩ := h.2 S
+  refine hasConsecutiveWeightedZeroSumSubseq_iff.mpr ⟨s, t, hst, fun _ => 1, ?_, ?_⟩
+  · exact fun _ _ => ⟨fun hzero => hn.ne' (ZMod.one_eq_zero_iff.mp hzero), 1, by simp⟩
+  · simp only [one_mul]
+    exact (Finset.sum_congr rfl fun i hi => by
+      rw [Set.mem_singleton_iff.mp (ha i hi), one_zsmul]).symm.trans hsum
+
+private theorem hasConsecutiveWeightedZeroSumSubseq_of_primePower_reduction {n p r k : ℕ}
+    (hn : 2 ≤ n) (hp : p.Prime) (hpn : p ∣ n) (hval : n.factorization p = r)
+    {S : Fin k → ZMod n}
+    (h : HasConsecutiveWeightedZeroSumSubseq (squareSet (p ^ r))
+      (fun i => (ZMod.cast (S i) : ZMod (p ^ r)))) :
+    HasConsecutiveWeightedZeroSumSubseq (squareSet n) S := by
+  obtain ⟨J, hJ, hI, b, hb, hsum⟩ := h
+  -- Reindex only the chosen block to apply the whole-sequence lifting lemma.
+  let e : Fin (Fintype.card J) ≃ J := (Fintype.equivFin J).symm
+  have sum_reindex {m : ℕ} (f : Fin k → ZMod m) :
+      ∑ i, f (e i) = ∑ i ∈ J, f i :=
+    (e.sum_comp (fun j => f j)).trans (Finset.sum_coe_sort J f)
+  obtain ⟨a, ha, hsum'⟩ := squareWeightedZeroSum_of_primePower_reduction n p r _ hn hp hpn hval
+    (fun i => S (e i)) ⟨fun i => b (e i), fun i => hb _ (e i).property,
+      (sum_reindex _).trans hsum⟩
+  -- Transport the lifted weights back to the original positions.
+  let w (i : Fin k) : ZMod n := if h : i ∈ J then a (e.symm ⟨i, h⟩) else 0
+  have hw (i : Fin (Fintype.card J)) : w (e i) = a i := by simp [w]
+  refine ⟨J, hJ, hI, w, ?_, ?_⟩
+  · intro i hi
+    simpa [w, hi] using ha (e.symm ⟨i, hi⟩)
+  · rw [← sum_reindex]
+    simpa only [hw] using hsum'
+
+/-- **Prime-power bound for the square-weighted consecutive constant.** Let $n \ge 2$, let $p$ be a
+prime dividing $n$ and let $r = v_p(n)$ be the exponent of $p$ in $n$. For a natural number $m$,
+write $S(m)$ for the set of nonzero squares in $\mathbb{Z}_m = \mathbb{Z}/m\mathbb{Z}$ and
+$C_{S(m)}$ for the $S(m)$-weighted consecutive constant of $\mathbb{Z}_m$. Then
+$C_{S(n)} \le C_{S(p^r)}$.
+
+Source: Krishnendu Paul and Shameek Paul, *Square-Weighted Zero-Sum Constants*, Journal of Integer
+Sequences 27 (2024), Article 24.6.6, Corollary 8. -/
+public theorem weightedConsecutiveConstant_squareSet_le_primePower (n p r : ℕ)
+    (hn : 2 ≤ n) (hp : p.Prime) (hpn : p ∣ n) (hval : n.factorization p = r) :
+    weightedConsecutiveConstant n (squareSet n) ≤
+      weightedConsecutiveConstant (p ^ r) (squareSet (p ^ r)) := by
+  have hr : 0 < r := hval ▸ hp.factorization_pos_of_dvd (by omega) hpn
+  have hq : 1 < p ^ r := one_lt_pow₀ hp.one_lt hr.ne'
+  have hmin := Nat.sInf_mem (weightedConsecutiveDefiningSet_squareSet_nonempty hq)
+  obtain ⟨hk, hforce⟩ := mem_weightedConsecutiveDefiningSet.mp hmin
+  apply Nat.sInf_le
+  exact mem_weightedConsecutiveDefiningSet.mpr
+    ⟨hk, fun S => hasConsecutiveWeightedZeroSumSubseq_of_primePower_reduction
+      hn hp hpn hval (hforce (fun i => ZMod.cast (S i)))⟩
 
 end MetaMathlibExt

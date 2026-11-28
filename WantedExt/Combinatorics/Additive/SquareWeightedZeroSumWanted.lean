@@ -38,19 +38,6 @@ Source: Krishnendu Paul and Shameek Paul, *Square-Weighted Zero-Sum Constants*, 
 Sequences 27 (2024), Article 24.6.6, Introduction. -/
 public def unitSet (n : ℕ) : Set (ZMod n) := {x | IsUnit x}
 
-/-- **Consecutive weighted zero-sum subsequences.** Let $A \subseteq \mathbb{Z}/n\mathbb{Z}$ and let
-$S = (x_1, \dots, x_k)$ be a sequence in $\mathbb{Z}/n\mathbb{Z}$. Then $S$ has an $A$-weighted
-zero-sum consecutive subsequence if there are indices $1 \le l \le h \le k$ and weights
-$a_l, \dots, a_h \in A$ with $\sum_{i=l}^{h} a_i x_i = 0$.
-
-Source: Krishnendu Paul and Shameek Paul, *Square-Weighted Zero-Sum Constants*, Journal of Integer
-Sequences 27 (2024), Article 24.6.6, Introduction. -/
-public def HasConsecutiveWeightedZeroSumSubseq {n k : ℕ} (A : Set (ZMod n))
-    (S : Fin k → ZMod n) : Prop :=
-  ∃ J : Finset (Fin k), J.Nonempty ∧
-    (∃ lo hi : ℕ, J = Finset.univ.filter fun i => lo ≤ i.1 ∧ i.1 ≤ hi) ∧
-    ∃ a : Fin k → ZMod n, (∀ i ∈ J, a i ∈ A) ∧ ∑ i ∈ J, a i * S i = 0
-
 /-- **Representatives of a set of residues.** Let $n$ be a natural number and $A$ a subset of
 $\mathbb{Z}_n$. The representatives of $A$ form the finite set of natural numbers $a$ with
 $0 \le a < n$ whose residue modulo $n$ lies in $A$.
@@ -74,30 +61,6 @@ public theorem mem_zmodWeightReps {n : ℕ} {A : Set (ZMod n)} {a : ℕ} :
     a ∈ zmodWeightReps A ↔ a < n ∧ (a : ZMod n) ∈ A := by
   classical
   simp [zmodWeightReps]
-
-/-- **Lengths forcing a consecutive weighted zero sum.** Let $n$ be a natural number and $A$ a
-subset of $\mathbb{Z}_n = \mathbb{Z}/n\mathbb{Z}$. This is the set of positive integers $k$ such
-that every sequence $(x_1, \dots, x_k)$ of elements of $\mathbb{Z}_n$ has a nonempty block of
-consecutive terms $x_i, \dots, x_j$ with weights $a_i, \dots, a_j \in A$ such that
-$a_i x_i + \dots + a_j x_j = 0$. Its least element, or $0$ when it is empty, is the $A$-weighted
-consecutive constant $C_A$ of $\mathbb{Z}_n$.
-
-Source: Krishnendu Paul and Shameek Paul, *Square-Weighted Zero-Sum Constants*, Journal of Integer
-Sequences 27 (2024), Article 24.6.6, Introduction. -/
-public def weightedConsecutiveDefiningSet (n : ℕ) (A : Set (ZMod n)) : Set ℕ :=
-  {k | 0 < k ∧ ∀ S : Fin k → ZMod n, HasConsecutiveWeightedZeroSumSubseq A S}
-
-/-- **Weighted consecutive zero-sum constant.** Let $n$ be a natural number and $A$ a subset of
-$\mathbb{Z}_n = \mathbb{Z}/n\mathbb{Z}$. The $A$-weighted consecutive constant $C_A$ of
-$\mathbb{Z}_n$ is the least positive integer $k$ such that every sequence $(x_1, \dots, x_k)$ of
-elements of $\mathbb{Z}_n$ has a nonempty block of consecutive terms $x_i, \dots, x_j$ with
-weights $a_i, \dots, a_j \in A$ such that $a_i x_i + \dots + a_j x_j = 0$; it is $0$ when no
-such $k$ exists.
-
-Source: Krishnendu Paul and Shameek Paul, *Square-Weighted Zero-Sum Constants*, Journal of Integer
-Sequences 27 (2024), Article 24.6.6, Introduction. -/
-public noncomputable def weightedConsecutiveConstant (n : ℕ) (A : Set (ZMod n)) : ℕ :=
-  sInf (weightedConsecutiveDefiningSet n A)
 
 /-- **Weighted zero-sum subsequences are monotone in the weight set.** Let
 $A \subseteq B \subseteq \mathbb{Z}/n\mathbb{Z}$ and let $S$ be a finite sequence in
@@ -146,19 +109,6 @@ public theorem_wanted squareSet_primePower_decomposition (p r : ℕ) (hp : p.Pri
     let pieces : Fin (l + 1) → Set (ZMod (p ^ r)) := fun k =>
       ((p : ZMod (p ^ r)) ^ (2 * (k : ℕ))) • unitSquareSet (p ^ r)
     squareSet (p ^ r) = ⋃ k, pieces k ∧ Set.PairwiseDisjoint Set.univ pieces
-
-/-- **Prime-power bound for the square-weighted consecutive constant.** Let $n \ge 2$, let $p$ be a
-prime dividing $n$ and let $r = v_p(n)$ be the exponent of $p$ in $n$. For a natural number $m$,
-write $S(m)$ for the set of nonzero squares in $\mathbb{Z}_m = \mathbb{Z}/m\mathbb{Z}$ and
-$C_{S(m)}$ for the $S(m)$-weighted consecutive constant of $\mathbb{Z}_m$. Then
-$C_{S(n)} \le C_{S(p^r)}$.
-
-Source: Krishnendu Paul and Shameek Paul, *Square-Weighted Zero-Sum Constants*, Journal of Integer
-Sequences 27 (2024), Article 24.6.6, Corollary 8. -/
-public theorem_wanted weightedConsecutiveConstant_squareSet_le_primePower (n p r : ℕ)
-    (hn : 2 ≤ n) (hp : p.Prime) (hpn : p ∣ n) (hval : n.factorization p = r) :
-    weightedConsecutiveConstant n (squareSet n) ≤
-      weightedConsecutiveConstant (p ^ r) (squareSet (p ^ r))
 
 /-- **Square-weighted zero sums lift from $p$ to odd powers $p^r$.** Let $p \ge 2$ be a natural
 number and $r$ an odd natural number. Write $S(m)$ for the set of nonzero squares in
