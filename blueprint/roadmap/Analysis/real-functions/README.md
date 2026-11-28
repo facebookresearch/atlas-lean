@@ -6,3 +6,4 @@ Functions of one or several real variables: differentiation, partial derivatives
 - [Multivariable calculus](multivariable-calculus/README.md)
 - [Riemann integration and definite integrals](integration/README.md)
 - [Continuity, regularity and functional equations](continuity-and-functional-equations/README.md)
+- [Undecidable problems for elementary functions](undecidable-problems-for-elementary-functions/README.md)

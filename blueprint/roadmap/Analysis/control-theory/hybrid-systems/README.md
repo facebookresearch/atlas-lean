@@ -13,3 +13,7 @@
 - [Box and diamond are dual in differential dynamic logic](box-and-diamond-are-dual-in-differential-dynamic-logic.md)
 - [Initialization of rectangular automata is decidable](initialization-of-rectangular-automata-is-decidable.md)
 - [Executions of hybrid automata with half-open domains](executions-with-half-open-domains/README.md)
+- [CTL model checking of singular hybrid automata with two variables is undecidable](ctl-model-checking-of-two-variable-sha.md)
+- [Qualitative reachability for stochastic hybrid systems with simple features is undecidable](stochastic-hybrid-system-reachability.md)
+- [Reachability for constant-rate multi-mode systems with one added clock is undecidable](multi-mode-systems-with-one-clock.md)
+- [Reachability for piecewise-constant derivative systems is undecidable from dimension three](pcd-reachability-undecidable-in-dimension-three.md)
