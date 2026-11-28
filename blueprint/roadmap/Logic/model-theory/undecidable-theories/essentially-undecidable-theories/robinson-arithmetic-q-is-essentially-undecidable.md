@@ -13,11 +13,11 @@ In particular Q itself, and every consistent theory in the language of arithmeti
 
 ## Proof depends on
 
-None.
+- [Arithmetization of syntax and the diagonal lemma](../../../proof-theory/arithmetization-of-syntax-and-the-diagonal-lemma.md)
 
 ## Expansion
 
-The classical proof shows that every recursive function is representable in Q, and then applies a diagonal argument: a consistent decidable extension of Q would make the set of Gödel numbers of its theorems representable in it, which yields a sentence that is provable iff it is not. A good expansion links pages for the representability of recursive functions in Q and for the diagonal argument; the minimality clause needs, for each axiom, a decidable consistent extension of the remaining six (Chapter 2, Theorem 11 of the original).
+The classical proof shows that every recursive function is representable in Q, and then applies a diagonal argument: a consistent decidable extension of Q would make the set of Gödel numbers of its theorems representable in it, which yields a sentence that is provable iff it is not. Both steps are stated on the [arithmetization and diagonal-lemma page](../../../proof-theory/arithmetization-of-syntax-and-the-diagonal-lemma.md), linked above: strong representability in Q and the diagonalization lemma for systems containing Q. The minimality clause needs, for each axiom, a decidable consistent extension of the remaining six (Chapter 2, Theorem 11 of the original).
 
 ## Sources
 

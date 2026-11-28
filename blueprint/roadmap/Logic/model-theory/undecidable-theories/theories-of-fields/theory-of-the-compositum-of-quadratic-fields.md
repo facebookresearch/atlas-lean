@@ -15,7 +15,8 @@ This places $\mathbb Q^{(2)}$ among the infinite algebraic extensions of $\mathb
 
 ## Proof depends on
 
-None.
+- [Robinson arithmetic Q is essentially undecidable](../essentially-undecidable-theories/robinson-arithmetic-q-is-essentially-undecidable.md)
+- [Theories interpreting an essentially undecidable theory are undecidable](../essentially-undecidable-theories/theories-interpreting-an-essentially.md)
 
 ## Expansion
 

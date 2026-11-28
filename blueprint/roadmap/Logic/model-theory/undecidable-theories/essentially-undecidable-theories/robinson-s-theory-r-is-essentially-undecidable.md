@@ -2,7 +2,7 @@
 
 The Tarski–Mostowski–Robinson theory R, whose axioms are infinitely many true numerical facts about addition, multiplication and order, is essentially undecidable: every consistent extension of R in its language is undecidable.
 
-**The theory R.** The language has $0$, $\mathsf{S}$, $+$ and $\times$; numerals are $\underline{n} = \mathsf{S}^n 0$, and $u \leq t$ abbreviates $\exists w\,(w + u = t)$. The axioms of R are, for all natural numbers $m, n$:
+**The theory R.** The language is the [language of arithmetic](../../../first-order-logic/peano-arithmetic-and-robinson-s-q/arithmetic-language.md) with $0$, $\mathsf{S}$, $+$ and $\times$; [numerals](../../../first-order-logic/peano-arithmetic-and-robinson-s-q/numeral.md) are $\underline{n} = \mathsf{S}^n 0$, and $u \leq t$ abbreviates $\exists w\,(w + u = t)$. The axioms of R are, for all natural numbers $m, n$:
 
 1. $\underline{m} + \underline{n} = \underline{m + n}$;
 2. $\underline{m} \times \underline{n} = \underline{m \cdot n}$;
@@ -16,6 +16,8 @@ Cobham strengthened this: R is essentially hereditarily undecidable, that is, ev
 
 ## Depends on
 
+- [Language of arithmetic](../../../first-order-logic/peano-arithmetic-and-robinson-s-q/arithmetic-language.md)
+- [Numerals](../../../first-order-logic/peano-arithmetic-and-robinson-s-q/numeral.md)
 - [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 - [Recognizability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
 
@@ -25,7 +27,7 @@ None.
 
 ## Expansion
 
-R is strong enough to represent every recursive function, since representability only needs the numerical axioms and the bounded-quantifier axioms 4 and 5; the diagonal argument used for Q then applies to every consistent extension of R. A good expansion links pages for representability of recursive functions in R and for the diagonal argument.
+R is strong enough to represent every recursive function, since representability only needs the numerical axioms and the bounded-quantifier axioms 4 and 5; the diagonal argument used for Q then applies to every consistent extension of R. A good expansion links pages for representability of recursive functions in R and for the diagonal argument over R; the [diagonal lemma](../../../proof-theory/arithmetization-of-syntax-and-the-diagonal-lemma.md) is stated for systems containing Q, which R does not.
 
 ## Sources
 

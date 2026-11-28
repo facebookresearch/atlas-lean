@@ -16,7 +16,7 @@ In particular both fragments are undecidable. According to the source, $\Pi_2\te
 
 ## Proof depends on
 
-- [The ∃∀-theory of finite bipartite graphs is hereditarily undecidable](sigma-2-theory-of-finite-bipartite-graphs-is.md)
+- [The ∃∀-theory of finite nice bipartite graphs is hereditarily undecidable](sigma-2-theory-of-restricted-finite-bipartite.md)
 
 ## Expansion
 

@@ -2,7 +2,7 @@
 
 The elementary theory of Beklemishev's notation system for ε₀, built from words of reflection operators of the provability logic GLP, is undecidable, and so is the theory of the fragment for ω₄ and of every larger fragment with only the order and two of the operators.
 
-**Theorem (Pakhomov).** Let $W^\omega$ be the set of finite words over the alphabet $\mathbb N$, with $\Lambda$ the empty word, and for $\alpha \le \omega$ let $W^\alpha$ be the set of words whose letters are all at most $\alpha$. For a word $A = n_1 \cdots n_k$ let $A^\#$ be the letterless formula $\langle n_k\rangle \cdots \langle n_1\rangle\top$ of Japaridze's polymodal provability logic $\mathsf{GLP}$. Put $A \sim B$ iff $\mathsf{GLP} \vdash A^\# \leftrightarrow B^\#$, $A \prec B$ iff $\mathsf{GLP} \vdash B^\# \to \langle 0\rangle A^\#$, and $a_i(A) = Ai$, so that $(a_i(A))^\# = \langle i\rangle A^\#$. Then $(W^\omega/{\sim}, \prec)$ is isomorphic to $(\varepsilon_0, <)$, the fragments $W^n$ give notation systems for the towers $\omega_{n+1}$ ($\omega_0 = 1$, $\omega_{n+1} = \omega^{\omega_n}$), and:
+**Theorem (Pakhomov).** Let $W^\omega$ be the set of finite words over the alphabet $\mathbb N$, with $\Lambda$ the empty word, and for $\alpha \le \omega$ let $W^\alpha$ be the set of words whose letters are all at most $\alpha$. For a word $A = n_1 \cdots n_k$ let $A^\#$ be the [worm](../../modal-logic/reflection-calculus-and-worms/worm.md) $\langle n_k\rangle \cdots \langle n_1\rangle\top$, that is, the worm written by the reversed word. Put $A \sim B$ iff $\mathsf{GLP} \vdash A^\# \leftrightarrow B^\#$, $A \prec B$ iff $A^\# <_0 B^\#$ in the [order on worms](../../modal-logic/reflection-calculus-and-worms/worm-lt.md), that is, $\mathsf{GLP} \vdash B^\# \to \langle 0\rangle A^\#$, and $a_i(A) = Ai$, so that $(a_i(A))^\# = \langle i\rangle A^\#$. By the [order type of worms](../../modal-logic/reflection-calculus-and-worms/exists-worm-ordinal.md), $(W^\omega/{\sim}, \prec)$ is isomorphic to $(\varepsilon_0, <)$; the fragments $W^n$ give notation systems for the towers $\omega_{n+1}$ ($\omega_0 = 1$, $\omega_{n+1} = \omega^{\omega_n}$), and:
 
 1. the elementary theory $\mathrm{Th}(W^\omega/{\sim}, \prec, \Lambda, a_0, a_1, \ldots)$ is undecidable;
 2. for every $\alpha$ with $3 \le \alpha \le \omega$, the elementary theory $\mathrm{Th}(W^\alpha/{\sim}, \prec, a_1, a_3)$ is undecidable;
@@ -12,6 +12,8 @@ The source defines $\sim$, $\prec$ combinatorially and proves the agreement with
 
 ## Depends on
 
+- [Worm](../../modal-logic/reflection-calculus-and-worms/worm.md)
+- [The order `<₀` on worms](../../modal-logic/reflection-calculus-and-worms/worm-lt.md)
 - [Complete theory of a first-order structure](../../first-order-logic/theory-of-structure.md)
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 

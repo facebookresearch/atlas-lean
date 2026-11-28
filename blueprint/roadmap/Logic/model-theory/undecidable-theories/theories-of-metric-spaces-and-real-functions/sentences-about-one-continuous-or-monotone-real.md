@@ -1,4 +1,4 @@
-# Universal sentences about one continuous or monotone real function are undecidable
+# Sentences true of every continuous or monotone real function form an undecidable set
 
 For first-order sentences about a single unknown real function, with order and equality but no arithmetic, truth for all continuous functions is undecidable already for separated sentences with three quantifier alternations, and truth for all monotone functions with finitely many flat pieces is undecidable as well.
 

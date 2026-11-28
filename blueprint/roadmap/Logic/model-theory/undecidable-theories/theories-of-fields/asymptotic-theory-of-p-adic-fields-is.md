@@ -1,6 +1,6 @@
 # The asymptotic theory of p-adic fields with a cross-section is undecidable
 
-For a fixed prime $p$, the set of sentences of the language of valued fields with a cross-section that hold in all but finitely many finite extensions of $\mathbb{Q}_p$ is undecidable, already for existential-universal sentences, although each single finite extension, with a suitable cross-section, is decidable in that language.
+For a fixed prime $p$, the set of sentences of the language of valued fields with a cross-section that hold in all but finitely many finite extensions of the [field of $p$-adic numbers](../../../../NumberTheory/p-adic-numbers/p-adic-numbers.md) $\mathbb{Q}_p$ is undecidable, already for existential-universal sentences, although each single finite extension, with a suitable cross-section, is decidable in that language.
 
 **Language.** $L_{\mathrm{val}}$ is the three-sorted language of valued fields: a field sort and a residue field sort, each with the language of rings $\{0,1,+,\cdot\}$, a value group sort with $\{0,+,<\}$ and a constant $\infty$, and function symbols for the valuation $v$ and the residue map. $L_{\mathrm{val},\times}$ adds a symbol for a *cross-section*, a group homomorphism $s : \Gamma \to K^\times$ with $v \circ s = \mathrm{id}_\Gamma$ (extended by $s(\infty) = 0$). Each finite extension $K$ of $\mathbb{Q}_p$ is viewed as an $L_{\mathrm{val},\times}$-structure with its normalized valuation and a cross-section $s_K$, which exists and corresponds to a choice of uniformizer; the source fixes an arbitrary such choice for each $K$ (Convention 2.2.6), and the result holds for any fixed choice.
 
@@ -13,6 +13,7 @@ By contrast, by Ax–Kochen and Ershov each finite extension of $\mathbb{Q}_p$, 
 ## Depends on
 
 - [Field](../../../../Algebra/rings-and-fields/field.md)
+- [The field of p-adic numbers](../../../../NumberTheory/p-adic-numbers/p-adic-numbers.md)
 - [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on

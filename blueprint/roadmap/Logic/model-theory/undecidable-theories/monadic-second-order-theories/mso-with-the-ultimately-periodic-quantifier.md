@@ -2,12 +2,13 @@
 
 MSO+P extends monadic second-order logic over $\omega$-words by a quantifier $\mathsf{P} X.\,\varphi(X)$ that says $\varphi(X)$ is true for every ultimately periodic set $X$ of positions.
 
-**Definition.** A set $X \subseteq \mathbb{N}$ is *ultimately periodic* if there are a period $p \geq 1$ and a threshold $n_0$ such that for all $x \geq n_0$, $x \in X$ iff $x + p \in X$. *MSO+P* over $\omega$-words (structures $(\mathbb{N}, <, (P_a)_{a \in \Sigma})$ for a finite alphabet $\Sigma$) is [monadic second-order logic](../../../../TheoryOfComputation/omega-automata-and-games/logic-and-tree-automata/monadic-second-order-logic-over-words.md), with first-order and set quantifiers ranging over positions and arbitrary sets of positions, extended by formulas $\mathsf{P} X.\,\varphi(X)$, where $\varphi$ may have further free variables, with the semantics: $\mathsf{P} X.\,\varphi(X)$ is true iff $\varphi(X)$ is true for every ultimately periodic $X \subseteq \mathbb{N}$. The *satisfiability problem over $\omega$-words* asks whether a given sentence is true in some $\omega$-word.
+**Definition.** Sets $X \subseteq \mathbb{N}$ are [ultimately periodic](../../../../NumberTheory/digits-numeration/numeration-automatic/cobham-s-theorems-on-recognizable-sets/is-ultimately-periodic-set.md) as usual: there are a period $p \geq 1$ and a threshold $n_0$ such that for all $x \geq n_0$, $x \in X$ iff $x + p \in X$. *MSO+P* over $\omega$-words (structures $(\mathbb{N}, <, (P_a)_{a \in \Sigma})$ for a finite alphabet $\Sigma$) is [monadic second-order logic](../../../../TheoryOfComputation/omega-automata-and-games/logic-and-tree-automata/monadic-second-order-logic-over-words.md), with first-order and set quantifiers ranging over positions and arbitrary sets of positions, extended by formulas $\mathsf{P} X.\,\varphi(X)$, where $\varphi$ may have further free variables, with the semantics: $\mathsf{P} X.\,\varphi(X)$ is true iff $\varphi(X)$ is true for every ultimately periodic $X \subseteq \mathbb{N}$. The *satisfiability problem over $\omega$-words* asks whether a given sentence is true in some $\omega$-word.
 
 **Related predicate.** A set $X \subseteq \mathbb{N}$ satisfies the predicate $\mathsf{U}_1(X)$ if for every $k \in \mathbb{N}$ there are two consecutive elements of $X$ at distance at least $k$. *MSO+U$_1$* adds this predicate to MSO.
 
 ## Depends on
 
+- [Ultimately periodic sets of natural numbers](../../../../NumberTheory/digits-numeration/numeration-automatic/cobham-s-theorems-on-recognizable-sets/is-ultimately-periodic-set.md)
 - [Monadic second-order logic over words](../../../../TheoryOfComputation/omega-automata-and-games/logic-and-tree-automata/monadic-second-order-logic-over-words.md)
 
 ## Proof depends on

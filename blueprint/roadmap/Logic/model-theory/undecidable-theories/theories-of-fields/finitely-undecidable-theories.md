@@ -10,6 +10,7 @@ The source states the definition once for every finitely axiomatized subtheory a
 
 - [Complete theory of a first-order structure](../../../first-order-logic/theory-of-structure.md)
 - [Field](../../../../Algebra/rings-and-fields/field.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -17,7 +17,7 @@ For $\kappa = 1, 2$ the free lattice is finite (one or four elements), so its th
 
 ## Proof depends on
 
-None.
+- [The ∃∀-theory of finite nice bipartite graphs is hereditarily undecidable](../theories-of-finite-structures/sigma-2-theory-of-restricted-finite-bipartite.md)
 
 ## Expansion
 

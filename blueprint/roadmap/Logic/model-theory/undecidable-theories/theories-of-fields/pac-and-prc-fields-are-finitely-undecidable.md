@@ -19,7 +19,7 @@ Moreover no PAC field is finitely axiomatizable, even among the PAC fields of th
 
 ## Proof depends on
 
-None.
+- [The theory of graphs is hereditarily undecidable](../theories-of-finite-structures/theory-of-graphs-is-hereditarily-undecidable.md)
 
 ## Expansion
 
