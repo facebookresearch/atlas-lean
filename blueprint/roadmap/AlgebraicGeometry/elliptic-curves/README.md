@@ -30,3 +30,7 @@ Elliptic curves given by Weierstrass equations, their points over finite fields 
 - [Trivial $p$-torsion on a nodal cubic in characteristic $p$](eq-zero-of-prime-smul-eq-zero-of-is-node.md)
 - [Kernel ideal data for rationally represented point maps](kernel-ideal-set.md)
 - [Faltings height of an elliptic curve in terms of its discriminant and periods](faltings-height-of-an-elliptic-curve.md)
+
+- [Automorphism groups of elliptic curves](automorphism-group-of-an-elliptic-curve.md)
+- [Isogenies of elliptic curves](isogenies-of-elliptic-curves/README.md)
+- [Isogeny chains and supersingular isogeny graphs](isogeny-chains-and-supersingular-graphs/README.md)
