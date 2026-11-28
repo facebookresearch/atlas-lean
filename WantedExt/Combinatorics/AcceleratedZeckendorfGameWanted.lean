@@ -9,7 +9,6 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.Analysis.Real.Sqrt
 public import MathlibExt.Combinatorics.AcceleratedZeckendorfGame
 public import MathlibExt.Combinatorics.AcceleratedZeckendorfGameAccelZeckGameLowerBound
 public import MathlibExt.Combinatorics.AcceleratedZeckendorfGameFibonacci

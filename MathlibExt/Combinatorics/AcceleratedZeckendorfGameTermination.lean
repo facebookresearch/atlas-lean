@@ -14,8 +14,7 @@ import Mathlib.Data.Finset.Sort
 import Mathlib.Data.Finsupp.Weight
 import Mathlib.NumberTheory.Real.GoldenRatio
 import Mathlib.Tactic.LinearCombination
-import all MathlibExt.Combinatorics.AcceleratedZeckendorfGame
-import all MathlibExt.Combinatorics.AcceleratedZeckendorfGameAccelZeckGameLowerBound
+import MathlibExt.Combinatorics.AcceleratedZeckendorfGameAccelZeckGameLowerBound
 
 /-!
 # Termination and the length bound for the Accelerated Zeckendorf Game
@@ -39,11 +38,12 @@ This includes `n = 0`, for which the empty state is terminal and the bound is ze
 * Édouard Zeckendorf, *Représentation des nombres naturels par une somme de nombres de Fibonacci
   ou de nombres de Lucas*, Bulletin de la Société Royale des Sciences de Liège 41 (1972),
   pp. 179–182 (uniqueness of the decomposition, used via Mathlib's `Nat.zeckendorf_sum_fib`).
-* The Lean proof uses `accelZeckRank_lt` from `MathlibExt.Combinatorics.AcceleratedZeckendorfGame`
-  and `accelZeckGame_invariant`, `accelZeckTerminal_counts` and `accelZeckTerminal_adjacent` from
-  `MathlibExt.Combinatorics.AcceleratedZeckendorfGameAccelZeckGameLowerBound`. The move-by-move
+* The Lean proof uses `AccelZeckMove.not_infinite_play` and `zeckendorfState_apply` from
+  `MathlibExt.Combinatorics.AcceleratedZeckendorfGame` and `IsAccelZeckGame.value_eq_and_zero`,
+  `accelZeck_count_le_one_of_terminal`, and `accelZeck_count_eq_zero_of_succ_ne_zero_of_terminal`
+  from `MathlibExt.Combinatorics.AcceleratedZeckendorfGameAccelZeckGameLowerBound`. The move-by-move
   potential calculation uses the subtraction argument of `accelZeckRank_lt` and
-  `accelZeckRank_remove`.
+  `accelZeckRank_remove` in the first module.
 -/
 
 namespace MetaMathlibExt
@@ -59,14 +59,14 @@ private theorem accelZeckTerminal_sorted_support {s : ℕ →₀ ℕ} {n : ℕ}
     Finsupp.mem_support_iff.mp ((Finset.mem_sort (· ≥ ·)).mp hi)
   have hrep : (l.map (· + 1)).IsZeckendorfRep := by
     let : IsTrans ℕ (fun a b => b + 2 ≤ a) := ⟨fun _ _ _ hab hbc => by omega⟩
-    rw [List.IsZeckendorfRep, List.isChain_iff_pairwise, List.pairwise_append]
+    rw [List.IsZeckendorfRep.eq_def, List.isChain_iff_pairwise, List.pairwise_append]
     refine ⟨List.pairwise_map.mpr ?_, by simp, ?_⟩
     · refine (s.support.sortedGT_sort.pairwise).imp_of_mem (fun {a b} ha hb hab => ?_)
       by_contra! h
       have hnext : s (b + 1) ≠ 0 := by
         rw [show b + 1 = a by omega]
         exact hmem ha
-      exact hmem hb (accelZeckTerminal_adjacent s ht hzero b hnext)
+      exact hmem hb (accelZeck_count_eq_zero_of_succ_ne_zero_of_terminal s ht hzero b hnext)
     · intro a ha b hb
       obtain ⟨i, hi, rfl⟩ := List.mem_map.mp ha
       have hb' : b = 0 := by simpa using hb
@@ -95,7 +95,8 @@ private theorem accelZeckLengthPotential_step {s t : ℕ →₀ ℕ} (h : AccelZ
     apply eq_sub_of_add_eq
     rw [← nsmul_eq_mul, ← Finsupp.weight_single, ← map_add,
       tsub_add_cancel_of_le (Finsupp.single_le_iff.mpr hm)]
-  rcases h with ⟨m, hm, ⟨i, hi, h₁, h₂, rfl⟩ | ⟨h₁, rfl⟩ | ⟨h₂, rfl⟩ | ⟨i, hi, hᵢ, rfl⟩⟩
+  rcases accelZeckMove_iff.mp h with
+    ⟨m, hm, ⟨i, hi, h₁, h₂, rfl⟩ | ⟨h₁, rfl⟩ | ⟨h₂, rfl⟩ | ⟨i, hi, hᵢ, rfl⟩⟩
   · have hm' : (1 : ℝ) ≤ m := by exact_mod_cast hm
     have hi' : (1 : ℝ) ≤ i := by exact_mod_cast (show 1 ≤ i by omega)
     have h₂' : m ≤ (s - Finsupp.single (i - 1) m) i := by
@@ -181,43 +182,41 @@ public theorem accelZeckGame_terminates_at_zeckendorf (n : ℕ) :
             (1 + Real.sqrt 5) / 2 * (Nat.zeckendorf n).length := by
   constructor
   · rintro ⟨g, _, hmove⟩
-    obtain ⟨j, hj⟩ := WellFounded.not_rel_apply_succ (r := (· < ·))
-      (fun j => accelZeckRank (g j))
-    exact hj (accelZeckRank_lt (hmove j))
+    exact AccelZeckMove.not_infinite_play g hmove
   intro L g hg
+  obtain ⟨hstart, hmove, hterminal⟩ := isAccelZeckGame_iff.mp hg
   let s := g L
-  have hinv := accelZeckGame_invariant n L g hg L le_rfl
-  have hzero : s 0 = 0 := hinv.2 0 (Or.inl rfl)
+  obtain ⟨hval, hzero⟩ := hg.value_eq_and_zero (j := L) le_rfl
   have hpos {i : ℕ} (hi : i ∈ s.support) : 1 ≤ i := by
     by_contra! h
     exact Finsupp.mem_support_iff.mp hi (by rwa [show i = 0 by omega])
   have hcount {i : ℕ} (hi : i ∈ s.support) : s i = 1 := by
     have hne := Finsupp.mem_support_iff.mp hi
-    have hle := accelZeckTerminal_counts s hg.2.2 i (hpos hi)
+    have hle := accelZeck_count_le_one_of_terminal s hterminal i (hpos hi)
     omega
   have hsum : ∑ i ∈ s.support, Nat.fib (i + 1) = n := by
-    rw [← hinv.1]
-    change _ = ∑ i ∈ s.support, s i * Nat.fib (i + 1)
-    exact Finset.sum_congr rfl fun i hi => by rw [hcount hi, one_mul]
+    calc
+      _ = ∑ i ∈ s.support, s i * Nat.fib (i + 1) :=
+        Finset.sum_congr rfl fun i hi => by rw [hcount hi, one_mul]
+      _ = n := hval
   have hlist : (Nat.zeckendorf n).map (· - 1) = s.support.sort (· ≥ ·) :=
-    accelZeckTerminal_sorted_support hg.2.2 hzero hsum
+    accelZeckTerminal_sorted_support hterminal hzero hsum
   refine ⟨?_, ?_⟩
-  · change s = (↑((Nat.zeckendorf n).map (· - 1)) : Multiset ℕ).toFinsupp
-    rw [hlist, Finset.sort_eq]
-    ext i
-    rw [Multiset.toFinsupp_apply, Multiset.count_eq_of_nodup s.support.nodup]
+  · ext i
+    rw [zeckendorfState_apply, hlist, ← Multiset.coe_count, Finset.sort_eq,
+      Multiset.count_eq_of_nodup s.support.nodup]
     by_cases hi : i ∈ s.support
-    · simp [hi, hcount hi]
-    · simp [hi, Finsupp.notMem_support_iff.mp hi]
+    · simpa [hi] using hcount hi
+    · simpa [hi] using Finsupp.notMem_support_iff.mp hi
   have hsteps (j : ℕ) (hj : j ≤ L) : (j : ℝ) ≤ accelZeckLengthPotential (g j) := by
     induction j with
     | zero =>
-      rw [hg.1, Finsupp.weight_single]
+      rw [hstart, Finsupp.weight_single]
       norm_num [accelZeckLengthWeight, nsmul_eq_mul]
     | succ j ih =>
       rw [Nat.cast_succ]
       exact (add_le_add_left (ih (by omega)) 1).trans
-        (accelZeckLengthPotential_step (hg.2.1 j (by omega)))
+        (accelZeckLengthPotential_step (hmove j (by omega)))
   have hvalue : (∑ i ∈ s.support, (Nat.fib (i + 1) : ℝ)) = n := by exact_mod_cast hsum
   have hindices : (∑ i ∈ s.support, (i : ℝ)) =
       (((Nat.zeckendorf n).map (· - 1)).sum : ℕ) := by
@@ -236,7 +235,9 @@ public theorem accelZeckGame_terminates_at_zeckendorf (n : ℕ) :
     _ = _ := by
       rw [Finset.sum_sub_distrib, Finset.sum_sub_distrib, ← Finset.mul_sum, hvalue, hindices,
         Finset.sum_const, nsmul_eq_mul, hlength]
-      unfold Real.goldenRatio
+      have hφ : φ = (1 + Real.sqrt 5) / 2 := by
+        linarith only [Real.goldenRatio_add_goldenConj, Real.goldenRatio_sub_goldenConj]
+      rw [hφ]
       ring
 
 end
