@@ -95,7 +95,7 @@ private def inclusion (r : ℚ) : lower ⟶ middle r :=
     (fun n => match n with
       | 0 => 𝟙 Q
       | _ + 1 => 0)
-    (by intro n; cases n <;> simp [middle, middleD, ChainComplex.of_d])
+    (by intro n; cases n <;> simp [middle, middleD, ChainComplex.of.d])
 
 private def quotient (r : ℚ) : middle r ⟶ upper :=
   ChainComplex.ofHom
@@ -106,8 +106,8 @@ private def quotient (r : ℚ) : middle r ⟶ upper :=
     (by
       intro n
       cases n with
-      | zero => simp
-      | succ n => cases n <;> simp [middle, middleD, ChainComplex.of_d])
+      | zero => simp [ChainComplex.of.d, middleD]
+      | succ n => cases n <;> simp [middle, middleD, ChainComplex.of.d])
 
 private abbrev sequence (r : ℚ) : ShortComplex (ChainComplex C ℕ) :=
   ShortComplex.mk (inclusion r) (quotient r) (by
@@ -172,7 +172,7 @@ private def sourceCoordinate : upper.homology 1 ≅ Q := zeroCoordinate upper 1 
 private def targetCoordinate : lower.homology 0 ≅ Q := zeroCoordinate lower 0 lower_d
 
 private def sourceClass : Q ⟶ upper.homology 1 :=
-  upper.liftCycles (i := 1) (𝟙 Q) 0 next10 (by simp) ≫ upper.homologyπ 1
+  upper.liftCycles (i := 1) (𝟙 Q) 0 next10 (by simp [ChainComplex.of.d]) ≫ upper.homologyπ 1
 
 private lemma sourceClass_inverse : sourceClass = sourceCoordinate.inv := by
   apply (cancel_mono sourceCoordinate.hom).1
@@ -191,13 +191,14 @@ example : sourceClass.hom (1 : ℚ) ≠ 0 := by
 private lemma connecting_coordinate (r : ℚ) :
     sourceCoordinate.inv ≫ (sequence_shortExact r).δ 1 0 rel10 ≫
       targetCoordinate.hom = scalar r := by
-  have hδ := (sequence_shortExact r).δ_eq 1 0 rel10 (𝟙 Q) (by simp)
+  have hδ := (sequence_shortExact r).δ_eq 1 0 rel10 (𝟙 Q) (by simp [ChainComplex.of.d])
     (𝟙 Q) (by simp [sequence, quotient]) (scalar r)
-    (by simp [sequence, inclusion]) (shape.next 0) rfl
+    (by simp [sequence, inclusion, ChainComplex.of.d, middleD]) (shape.next 0) rfl
   change sourceClass ≫ (sequence_shortExact r).δ 1 0 rel10 = _ at hδ
   rw [← sourceClass_inverse]
   calc
-    _ = lower.liftCycles (i := 0) (scalar r) (shape.next 0) rfl (by simp) ≫ lower.homologyπ 0 ≫
+    _ = lower.liftCycles (i := 0) (scalar r) (shape.next 0) rfl
+        (by simp [ChainComplex.of.d]) ≫ lower.homologyπ 0 ≫
         targetCoordinate.hom := by
       simpa only [Category.assoc] using congrArg
         (fun z : Q ⟶ lower.homology 0 => z ≫ targetCoordinate.hom) hδ
