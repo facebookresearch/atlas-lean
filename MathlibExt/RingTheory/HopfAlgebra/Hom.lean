@@ -50,16 +50,20 @@ theorem comp_antipode (f : A →ₐc[R] B) :
           toConv f.toLinearMap = (1 : WithConv (A →ₗ[R] B)) := by
     have h := congrArg (f.toAlgHom.convPostcomp (C := A))
       (LinearMap.antipode_mul_id (R := R) (C := A))
-    simpa only [map_mul, map_one, AlgHom.convPostcomp,
-      WithConv.ofConv_toConv, LinearMap.comp_id] using h
+    rw [map_mul, map_one] at h
+    change toConv (f.toLinearMap.comp (HopfAlgebra.antipode R (A := A))) *
+      toConv (f.toLinearMap.comp LinearMap.id) = 1 at h
+    simpa only [LinearMap.comp_id] using h
   have hright :
       toConv f.toLinearMap *
           toConv ((HopfAlgebra.antipode R (A := B)).comp f.toLinearMap) =
         (1 : WithConv (A →ₗ[R] B)) := by
     have h := congrArg (f.toCoalgHom.convPrecomp (A := B))
       (LinearMap.id_mul_antipode (R := R) (C := B))
-    simpa only [map_mul, map_one, CoalgHom.convPrecomp,
-      WithConv.ofConv_toConv, LinearMap.id_comp] using h
+    rw [map_mul, map_one] at h
+    change toConv (LinearMap.id.comp f.toLinearMap) *
+      toConv ((HopfAlgebra.antipode R (A := B)).comp f.toLinearMap) = 1 at h
+    simpa only [LinearMap.id_comp] using h
   exact toConv_injective (left_inv_eq_right_inv hleft hright)
 
 /-- Element formula for a bialgebra morphism and antipodes.

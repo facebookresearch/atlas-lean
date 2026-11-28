@@ -59,7 +59,7 @@ private theorem insert_counit_tmul (t : T) (a : A) :
           (t ⊗ₜ[R] a)) = Coalgebra.counit (R := T) (t ⊗ₜ[R] a) := by
   simp only [TensorProduct.AlgebraTensorModule.cancelBaseChange_symm_tmul,
     TensorProduct.counit_tmul, CommSemiring.counit_apply, Algebra.smul_def,
-    map_mul, map_one, mul_one, ← IsScalarTower.algebraMap_apply R S T]
+    map_one, mul_one, ← IsScalarTower.algebraMap_apply R S T]
 
 private theorem insert_comul_tmul (t : T) (a : A) :
     _root_.TensorProduct.map
@@ -95,13 +95,15 @@ def cancelBaseChange : T ⊗[S] (S ⊗[R] A) ≃ₐc[T] T ⊗[R] A :=
             TensorProduct.AlgebraTensorModule.cancelBaseChange_symm_tmul,
             Algebra.TensorProduct.tmul_mul_tmul, one_mul])))
     (by
-      ext t a
+      apply Algebra.TensorProduct.ext'
+      intro t a
       change Coalgebra.counit (R := T)
           ((TensorProduct.AlgebraTensorModule.cancelBaseChange R S T T A).symm
             (t ⊗ₜ[R] a)) = Coalgebra.counit (R := T) (t ⊗ₜ[R] a)
       exact insert_counit_tmul R S T A t a)
     (by
-      ext t a
+      apply Algebra.TensorProduct.ext'
+      intro t a
       change _root_.TensorProduct.map
           (TensorProduct.AlgebraTensorModule.cancelBaseChange R S T T A).symm.toLinearMap
           (TensorProduct.AlgebraTensorModule.cancelBaseChange R S T T A).symm.toLinearMap
@@ -140,24 +142,7 @@ unit-insertion formulas. -/
 @[simp]
 theorem cancelBaseChange_toLinearEquiv :
     (cancelBaseChange R S T A).toCoalgEquiv.toLinearEquiv =
-      TensorProduct.AlgebraTensorModule.cancelBaseChange R S T T A := by
-  apply LinearEquiv.toLinearMap_injective
-  apply LinearMap.ext
-  intro x
-  change cancelBaseChange R S T A x =
-    (TensorProduct.AlgebraTensorModule.cancelBaseChange R S T T A) x
-  refine TensorProduct.induction_on x ?_ ?_ ?_
-  · simp only [map_zero]
-  · intro t y
-    refine TensorProduct.induction_on y ?_ ?_ ?_
-    · simp only [TensorProduct.tmul_zero, map_zero]
-    · intro s a
-      exact (cancelBaseChange_tmul R S T A t s a).trans
-        (TensorProduct.AlgebraTensorModule.cancelBaseChange_tmul R S T t a s).symm
-    · intro y y' hy hy'
-      simp only [TensorProduct.tmul_add, map_add, hy, hy']
-  · intro x y hx hy
-    simp only [map_add, hx, hy]
+      TensorProduct.AlgebraTensorModule.cancelBaseChange R S T T A := rfl
 
 /-- Naturality of bialgebra tower cancellation.
 
@@ -176,7 +161,11 @@ theorem cancelBaseChange_naturality
   change (Bialgebra.TensorProduct.map (BialgHom.id T T) f) (cancelBaseChange R S T A x) =
     cancelBaseChange R S T B ((Bialgebra.TensorProduct.map (BialgHom.id T T)
       (Bialgebra.TensorProduct.map (BialgHom.id S S) f)) x)
-  refine TensorProduct.induction_on x ?_ ?_ ?_
+  refine _root_.TensorProduct.induction_on
+    (motive := fun x : T ⊗[S] (S ⊗[R] A) =>
+      (Bialgebra.TensorProduct.map (BialgHom.id T T) f) (cancelBaseChange R S T A x) =
+        cancelBaseChange R S T B ((Bialgebra.TensorProduct.map (BialgHom.id T T)
+          (Bialgebra.TensorProduct.map (BialgHom.id S S) f)) x)) x ?_ ?_ ?_
   · simp only [map_zero]
   · intro t y
     refine TensorProduct.induction_on y ?_ ?_ ?_
