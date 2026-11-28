@@ -11,6 +11,8 @@ The construction turns an equivalence structure into a tree of height $2$ (a roo
 - [Automatic structure](automatic-structure.md)
 - [Arithmetical class $\Pi_n$](../../../degrees-and-hierarchies/arithmetical-hierarchy/is-pi.md)
 - [Equivalence relation](../../../../Order/ordered-sets/equivalence-relation.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Co-recognizability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-co-recognizable.md)
 
 ## Proof depends on
 

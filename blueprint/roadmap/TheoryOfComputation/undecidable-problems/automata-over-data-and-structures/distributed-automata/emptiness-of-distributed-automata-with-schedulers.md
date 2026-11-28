@@ -11,6 +11,7 @@ Since distributed automata are closed under intersection (Lemma 3 of the source)
 ## Depends on
 
 - [Distributed automata with schedulers and their classes](distributed-machines-with-schedulers.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

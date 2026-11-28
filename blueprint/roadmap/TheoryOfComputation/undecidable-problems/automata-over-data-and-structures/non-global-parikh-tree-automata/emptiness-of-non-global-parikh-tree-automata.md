@@ -10,6 +10,7 @@ Membership of a given tree is decidable even with a reset operation that sets a 
 
 - [Semilinear set](../../../context-free-languages/closure-and-pumping/parikh-images-and-semilinear-sets/is-semilinear.md)
 - [Bottom-up finite tree automata](../../../omega-automata-and-games/logic-and-tree-automata/bottom-up-finite-tree-automata.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

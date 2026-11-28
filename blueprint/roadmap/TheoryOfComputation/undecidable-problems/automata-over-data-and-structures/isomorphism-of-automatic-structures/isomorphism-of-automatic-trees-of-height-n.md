@@ -14,6 +14,7 @@ For $n = 1$ the problem is decidable (Proposition 7 of the source). For recursiv
 - [Automatic structure](automatic-structure.md)
 - [Arithmetical class $\Pi_n$](../../../degrees-and-hierarchies/arithmetical-hierarchy/is-pi.md)
 - [Partially ordered set](../../../../Order/ordered-sets/partial-order.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

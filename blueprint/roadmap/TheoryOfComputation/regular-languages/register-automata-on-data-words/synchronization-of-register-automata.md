@@ -4,13 +4,14 @@ No algorithm decides whether a given complete nondeterministic register automato
 
 **Definitions.** Fix an infinite data domain $D$ and a finite alphabet $\Sigma$; a *data word* is a finite word over $\Sigma \times D$. For a finite set $R$ of registers, *register constraints* are given by $\varphi ::= \mathrm{true} \mid {=}r \mid \varphi \wedge \varphi \mid \neg\varphi$ for $r \in R$, where a valuation $\nu : R \to D$ and an input value $d$ satisfy ${=}r$ if $\nu(r) = d$. A *register automaton* $\mathcal{R} = \langle L, R, \Sigma, T \rangle$ (as on the page on [register automata on data words](register-automata-on-data-words.md), here without initial and final locations) has a finite set $L$ of locations and transitions $(\ell, a, \varphi, \mathrm{up}, \ell') \in L \times \Sigma \times \Phi(R) \times 2^R \times L$. A configuration is a pair $(\ell, \nu) \in L \times D^{|R|}$; on input $(a, d)$ the transition may fire if $(\nu, d)$ satisfies $\varphi$, and leads to $(\ell', \nu[\mathrm{up} := d])$, which stores $d$ in the registers of $\mathrm{up}$. Write $\mathrm{post}(S, w)$ for the set of configurations reached from a set $S$ of configurations by the data word $w$. The automaton is *complete* if every configuration has a successor on every input, and *deterministic* if it has at most one. A data word $w \in (\Sigma \times D)^+$ is *synchronizing* for $\mathcal{R}$ if $\mathrm{post}(L \times D^{|R|}, w)$ is a single configuration. The *synchronization problem* asks, given $\mathcal{R}$, whether some synchronizing data word exists.
 
-**Theorem.** The synchronization problem for complete nondeterministic register automata is undecidable.
+**Theorem.** The synchronization problem for complete nondeterministic register automata is undecidable (Theorem 9 of the source).
 
 The number of registers is part of the input. With one register the problem is decidable and Ackermann-complete, and for deterministic register automata it is PSPACE-complete in general and NLOGSPACE-complete with one register.
 
 ## Depends on
 
 - [Register automata on data words](register-automata-on-data-words.md)
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

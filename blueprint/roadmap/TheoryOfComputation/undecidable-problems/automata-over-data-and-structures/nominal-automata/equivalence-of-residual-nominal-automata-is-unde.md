@@ -4,7 +4,7 @@ No algorithm decides whether two given residual nominal automata accept the same
 
 **Proposition.** Equivalence of [residual nominal automata](nominal-automata-and-residual-nominal-automata.md) is undecidable:
 given residual nominal automata $\mathcal{A}_1, \mathcal{A}_2$, it is undecidable whether $\mathcal{L}(\mathcal{A}_1) = \mathcal{L}(\mathcal{A}_2)$.
-The result also holds within the class of non-guessing automata.
+The result also holds within the class of non-guessing automata. The proof (Proposition 5.3 of the source) reduces universality of nondeterministic nominal automata, not of residual ones, which is decidable: from $\mathcal{A}$ it builds two residual automata that are equivalent exactly when $\mathcal{L}(\mathcal{A}) = \Sigma^*$.
 
 This contrasts with universality, which is decidable for residual nominal automata; equivalence of nondeterministic nominal
 automata is undecidable as well, and the result shows that residuality does not restore decidability.
@@ -12,6 +12,7 @@ automata is undecidable as well, and the result shows that residuality does not 
 ## Depends on
 
 - [Nominal automata and residual nominal automata](nominal-automata-and-residual-nominal-automata.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

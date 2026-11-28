@@ -4,7 +4,7 @@ No algorithm decides whether a given quasi-acyclic distributed automaton, whose 
 accepts some pointed graph.
 
 **Theorem.** The emptiness problem for quasi-acyclic [distributed automata](distributed-automata.md) is undecidable: given a
-quasi-acyclic automaton $\mathcal{A}$, it is undecidable whether some pointed graph is accepted by $\mathcal{A}$.
+quasi-acyclic automaton $\mathcal{A} = (Q, \iota, \delta, F)$ over $1$-relational graphs, the form in which quasi-acyclicity is defined, it is undecidable whether some pointed graph is accepted by $\mathcal{A}$.
 
 The source notes that its proof for directed paths does not go through for quasi-acyclic automata, so this result needs a
 different construction; it also gives a second proof that general emptiness is undecidable.
@@ -12,6 +12,7 @@ different construction; it also gives a second proof that general emptiness is u
 ## Depends on
 
 - [Distributed automata](distributed-automata.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

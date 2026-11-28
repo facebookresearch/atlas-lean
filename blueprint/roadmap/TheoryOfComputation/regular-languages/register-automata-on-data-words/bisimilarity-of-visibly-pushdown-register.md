@@ -2,13 +2,14 @@
 
 No algorithm decides whether two configurations of a visibly pushdown register automaton are bisimilar, already under the most restrictive register discipline, in contrast to automata without a stack, where bisimilarity is decidable.
 
-**Theorem.** Bisimilarity for [visibly pushdown register automata](visibly-pushdown-register-automata.md) under the SF register discipline is undecidable: no algorithm decides, given an $r$-VPDRA(SF) and two of its configurations, whether they are bisimilar. The reduction produces automata with $r=2$ registers.
+**Theorem.** Bisimilarity for [visibly pushdown register automata](visibly-pushdown-register-automata.md) under the SF register discipline is undecidable: no algorithm decides, given an $r$-VPDRA(SF) and two of its configurations, whether they are bisimilar. The reduction produces automata with $r=2$ registers. An instance is the automaton's finite tables and two configurations, whose stacks and register contents are finite sequences of data values; since the transition system only compares data values for equality, these may be written as natural numbers. In the reduction the two configurations have empty stacks and the same register assignment.
 
 Since SF is the most restrictive register discipline considered by the source, the undecidability extends to pushdown register automata under all the disciplines it studies.
 
 ## Depends on
 
 - [Visibly pushdown register automata](visibly-pushdown-register-automata.md)
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -20,4 +21,4 @@ The reduction is from emptiness of one-way universal register automata with two 
 
 ## Sources
 
-- Andrzej S. Murawski, Steven J. Ramsay and Nikos Tzevelekos, "Bisimilarity in fresh-register automata", *Logical Methods in Computer Science* 21(1), 2025, paper 13, doi:[10.46298/lmcs-21(1:13)2025](https://doi.org/10.46298/lmcs-21(1:13)2025); read in arXiv:2005.06411v5 ([arXiv](https://arxiv.org/abs/2005.06411v5)), cited by section: the theorem of the section on visibly pushdown automata with single assignment and filled registers, its proof, and the definition of one-way universal register automata recalled there.
+- Andrzej S. Murawski, Steven J. Ramsay and Nikos Tzevelekos, "Bisimilarity in fresh-register automata", *Logical Methods in Computer Science* 21(1), 2025, paper 13, doi:[10.46298/lmcs-21(1:13)2025](https://doi.org/10.46298/lmcs-21(1:13)2025); read in arXiv:2005.06411v5 ([arXiv](https://arxiv.org/abs/2005.06411v5)), whose numbering is used: Theorem 8.3 and its proof and Definition 8.2 (one-way universal register automata), in Section 8 (Visibly pushdown automata with single assignment and filled registers).

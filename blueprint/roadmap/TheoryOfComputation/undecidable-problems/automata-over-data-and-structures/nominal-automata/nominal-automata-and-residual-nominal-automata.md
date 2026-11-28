@@ -8,14 +8,13 @@ permutations of $\mathbb{A}$, those moving only finitely many atoms. A set $X$ w
 *nominal set* if every $x \in X$ has a finite *support*, a finite set $A \subseteq \mathbb{A}$ such that $\pi x = x$ for every
 permutation $\pi$ fixing $A$ pointwise; $\mathrm{supp}(x)$ is the least support. A subset, relation or function is *equivariant* if it
 is supported by the empty set. The *orbit* of $x$ is $\{\pi x : \pi \in \mathrm{Perm}(\mathbb{A})\}$, and $X$ is *orbit-finite* if it is a
-finite union of orbits. Orbit-finite sets have finite representations.
+finite union of orbits. Atoms carry only equality (the *equality atoms*); the source notes that some of its results fail for the ordered atoms $(\mathbb{Q}, \le)$. Orbit-finite sets over the equality atoms are finitely representable, so an automaton is given as input by such finite representations of $\Sigma$, $Q$, $I$, $F$ and $\delta$, and algorithms manipulate them by computation with atoms.
 
 **Automata.** A *nondeterministic nominal automaton* $\mathcal{A} = (\Sigma, Q, I, F, \delta)$ has an orbit-finite nominal alphabet
 $\Sigma$, an orbit-finite nominal set $Q$ of states, and equivariant subsets $I \subseteq Q$ of initial states, $F \subseteq Q$ of final
 states and $\delta \subseteq Q \times \Sigma \times Q$ of transitions. Acceptance is defined as for finite automata; $\mathcal{L}(\mathcal{A})$ is
 the language of $\mathcal{A}$ and $\mathcal{L}(q)$ the language accepted from a state $q$. For a language $L$ and a word $u$, the
-*derivative* is $u^{-1} L = \{ w : uw \in L \}$. The automaton is
-
+*derivative* is $u^{-1} L = \{ w : uw \in L \}$. The *empty* automaton ($I = \emptyset$) accepts the empty language. The automaton is
 - *deterministic* if $I = \{q_0\}$ and every pair $(q, a)$ admits a unique successor;
 - *residual* if for each state $q$ there is a word $w \in \Sigma^*$ with $\mathcal{L}(q) = w^{-1} \mathcal{L}(\mathcal{A})$;
 - *non-guessing* if $\mathrm{supp}(q_0) = \emptyset$ for every initial state $q_0$ and $\mathrm{supp}(q') \subseteq \mathrm{supp}(q) \cup \mathrm{supp}(a)$
@@ -26,7 +25,7 @@ problem is undecidable, even for non-guessing automata (Bojańczyk); universalit
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

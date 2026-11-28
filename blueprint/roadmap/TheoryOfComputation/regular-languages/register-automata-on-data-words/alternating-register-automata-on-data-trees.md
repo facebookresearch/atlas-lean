@@ -13,6 +13,7 @@ As an application, satisfiability of forward XPath with arbitrary DTDs over fini
 ## Depends on
 
 - [Register automata on data words](register-automata-on-data-words.md)
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

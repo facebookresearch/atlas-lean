@@ -16,13 +16,15 @@ which every color class is a regular language.
 1. it is undecidable, given an automatic graph, whether it has a $k$-regular coloring; more precisely, the problem is recursively enumerable-complete, also for connected automatic graphs;
 2. it is undecidable, given binary automatic relations $R$ and $R'$, whether some relation in $k\text{-PROD}$ separates $R$ from $R'$.
 
-For $k = 1$ the separability question is trivial. Whether two automatic relations can be separated by some recognizable relation, with no bound on the number of products, is open; the source shows
+For $k = 1$ the separability question is decidable: a relation in $1\text{-PROD}$ separates $R$ from $R'$ exactly when the product of the two projections of $R$ does. Whether two automatic relations can be separated by some recognizable relation, with no bound on the number of products, is open; the source shows
 it is polynomial-time equivalent to deciding whether an automatic graph has a finite coloring by regular languages. In contrast, the source shows that definability, whether a single automatic relation
 equals a relation of a bounded class, is decidable for its hierarchy of bounded recognizable relations.
 
 ## Depends on
 
 - [Automatic structure](../../../../undecidable-problems/automata-over-data-and-structures/isomorphism-of-automatic-structures/automatic-structure.md)
+- [Decidability by multi-stack machines](../../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Recognizability by multi-stack machines](../../../../computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
 
 ## Proof depends on
 
@@ -37,4 +39,4 @@ $(A \times B) \cup (B \times A)$ separates $E$ from the identity relation, which
 
 ## Sources
 
-- P. Barceló, D. Figueira and R. Morvan, "Separating automatic relations", in *48th International Symposium on Mathematical Foundations of Computer Science (MFCS 2023)*, LIPIcs 272, paper 17, 2023, doi:10.4230/LIPIcs.MFCS.2023.17; read in arXiv:2305.08727v2: the theorems on the undecidability of $k$-regular colorability and of $k$-PROD separability, stated in Section 1 and proved in the sections on the $k$-regular colorability problem and on separability for bounded recognizable relations, the equivalence theorem of Section 3, and the definability results for bounded recognizable relations.
+- P. Barceló, D. Figueira and R. Morvan, "Separating automatic relations", in *48th International Symposium on Mathematical Foundations of Computer Science (MFCS 2023)*, LIPIcs 272, paper 17, 2023, doi:10.4230/LIPIcs.MFCS.2023.17; read in arXiv:2305.08727v2: Theorem 4.4 ($k$-regular colorability) in Section 4.2 with Proposition 4.1 and Lemma 4.2 of Section 4.1, Theorem 5.6 ($k$-PROD separability) and Proposition 5.2 ($k = 1$) in Section 5, Theorem 3.1 (the equivalence) in Section 3, and Corollaries 6.2 and 6.4 (definability) in Section 6, with the numbering of that version.

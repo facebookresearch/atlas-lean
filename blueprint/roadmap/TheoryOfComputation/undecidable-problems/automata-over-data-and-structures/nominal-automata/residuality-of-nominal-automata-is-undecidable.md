@@ -13,6 +13,7 @@ PSPACE-complete (Denis, Lemay and Terlutte).
 ## Depends on
 
 - [Nominal automata and residual nominal automata](nominal-automata-and-residual-nominal-automata.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

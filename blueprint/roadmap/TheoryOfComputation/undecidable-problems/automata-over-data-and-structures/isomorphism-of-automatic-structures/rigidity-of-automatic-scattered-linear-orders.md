@@ -13,6 +13,7 @@ Both hardness results hold already when the order is fixed: for the order $\le^2
 
 - [Automatic structure](automatic-structure.md)
 - [Arithmetical class $\Pi_n$](../../../degrees-and-hierarchies/arithmetical-hierarchy/is-pi.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

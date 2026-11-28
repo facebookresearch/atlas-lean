@@ -13,6 +13,7 @@ In particular, functionality and equivalence of functional automata over $\mathc
 ## Depends on
 
 - [Bottom-up register automata over an algebra](bottom-up-register-automata-over-an-algebra.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -24,4 +25,4 @@ The reduction is from control-state reachability in a two-counter machine with s
 
 ## Sources
 
-- Adrien Boiret, Radosław Piórkowski and Janusz Schmude, "Reducing Transducer Equivalence to Register Automata Problems Solved by \"Hilbert Method\"", in *FSTTCS 2018*, LIPIcs 122, 2018, pp. 48:1–48:16, doi:[10.4230/LIPIcs.FSTTCS.2018.48](https://doi.org/10.4230/LIPIcs.FSTTCS.2018.48); numbering of arXiv:1806.04361v2 ([arXiv](https://arxiv.org/abs/1806.04361v2)): Section 4: the first theorem of the section (functionality and equivalence of functional automata over $(\mathbb Q[x],+,\times,\circ)$ are undecidable), the definition of two-counter machines and their reachability problem, and the strengthened theorem at the end of the section (deterministic monadic equivalence and one-letter functionality); the decidable case over $(\mathbb Q[X],+,\times)$ is the theorem at the end of Section 2.
+- Adrien Boiret, Radosław Piórkowski and Janusz Schmude, "Reducing Transducer Equivalence to Register Automata Problems Solved by \"Hilbert Method\"", in *FSTTCS 2018*, LIPIcs 122, 2018, pp. 48:1–48:16, doi:[10.4230/LIPIcs.FSTTCS.2018.48](https://doi.org/10.4230/LIPIcs.FSTTCS.2018.48); numbering of arXiv:1806.04361v2 ([arXiv](https://arxiv.org/abs/1806.04361v2)): Section 4: Theorem 17 (functionality and equivalence of functional automata over $(\mathbb Q[x],+,\times,\circ)$ are undecidable), the definition of two-counter machines and their reachability problem, and Theorem 20 at the end of the section (deterministic monadic equivalence and one-letter functionality); the decidable case over $(\mathbb Q[X],+,\times)$ is Corollary 5 at the end of Section 2.

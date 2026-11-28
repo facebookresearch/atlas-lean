@@ -25,7 +25,7 @@ initialization $\iota : \Sigma \to Q$ and one transition function $\delta : Q \t
 its state diagram contains no directed cycles other than self-loops: whenever $q_1, \dots, q_n$ with $q_1 = q_n$ satisfy
 $\delta(q_i, S_i) = q_{i+1}$ for some sets $S_i \subseteq Q$, all the $q_i$ are equal.
 
-**Problems.** The *emptiness problem* asks, for an automaton $\mathcal{A}$, whether some pointed graph is accepted; the
+**Problems.** An instance is an automaton given by finite data: the alphabet $\Sigma$, the number $r$, the state set and the transition tables of the $\delta_a$ (one value for each state and each $r$-tuple of subsets of $Q$). The *emptiness problem* asks, for an automaton $\mathcal{A}$, whether some pointed graph is accepted; the
 *directed-path emptiness problem* asks whether some pointed directed path is accepted.
 
 ## Depends on

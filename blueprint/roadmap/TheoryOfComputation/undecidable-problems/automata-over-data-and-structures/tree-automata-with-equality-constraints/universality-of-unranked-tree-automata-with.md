@@ -12,6 +12,7 @@ By contrast, the emptiness problem for nondeterministic UTACS is decidable (Theo
 
 - [Bottom-up finite tree automata](../../../omega-automata-and-games/logic-and-tree-automata/bottom-up-finite-tree-automata.md)
 - [Monadic second-order logic over words](../../../omega-automata-and-games/logic-and-tree-automata/monadic-second-order-logic-over-words.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

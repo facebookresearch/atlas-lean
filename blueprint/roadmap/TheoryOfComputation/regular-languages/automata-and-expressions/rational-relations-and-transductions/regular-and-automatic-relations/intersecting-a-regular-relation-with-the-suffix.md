@@ -23,6 +23,7 @@ with second projection $\Sigma^*$ and $f$ a non-constant strictly alphabetic mor
 ## Depends on
 
 - [Regular relations](regular-relations.md)
+- [Decidability by multi-stack machines](../../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

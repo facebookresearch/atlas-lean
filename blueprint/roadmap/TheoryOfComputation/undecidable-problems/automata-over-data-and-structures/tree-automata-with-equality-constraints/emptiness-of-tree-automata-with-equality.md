@@ -11,6 +11,7 @@ Emptiness becomes decidable under restrictions: for constraints between direct s
 ## Depends on
 
 - [Bottom-up finite tree automata](../../../omega-automata-and-games/logic-and-tree-automata/bottom-up-finite-tree-automata.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

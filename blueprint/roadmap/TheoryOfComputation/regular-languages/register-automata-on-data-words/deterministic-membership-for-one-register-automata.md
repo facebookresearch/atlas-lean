@@ -9,6 +9,7 @@ When the number $k$ of registers of the deterministic automaton is fixed, the pr
 ## Depends on
 
 - [Register automata on data words](register-automata-on-data-words.md)
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -20,4 +21,4 @@ The proof reduces the finiteness problem for lossy counter machines, which is un
 
 ## Sources
 
-- Lorenzo Clemente, Sławomir Lasota and Radosław Piórkowski, "Determinisability of register and timed automata", *Logical Methods in Computer Science* 18(2), 2022, paper 9, doi:[10.46298/lmcs-18(2:9)2022](https://doi.org/10.46298/lmcs-18(2:9)2022); numbering of arXiv:2104.03690v4 ([arXiv](https://arxiv.org/abs/2104.03690v4)): Theorem 1.4 (Section 1.3), its proof in the section on undecidability of DRA membership for one-register automata (encoding of lossy counter machine runs and the lemma relating finiteness to DRA membership); Theorems 1.2 and 1.6.
+- Lorenzo Clemente, Sławomir Lasota and Radosław Piórkowski, "Determinisability of register and timed automata", *Logical Methods in Computer Science* 18(2), 2022, paper 9, doi:[10.46298/lmcs-18(2:9)2022](https://doi.org/10.46298/lmcs-18(2:9)2022); numbering of arXiv:2104.03690v4 ([arXiv](https://arxiv.org/abs/2104.03690v4)): Theorem 1.4 (Section 1.3), its proof in Section 8.2 (encoding of lossy counter machine runs and Lemma 8.2, relating finiteness to DRA membership, with Corollary 8.3); Theorems 1.2 and 1.6.

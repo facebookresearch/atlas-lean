@@ -23,4 +23,4 @@ Without a stack, bisimilarity of register automata and of fresh-register automat
 
 ## Sources
 
-- Andrzej S. Murawski, Steven J. Ramsay and Nikos Tzevelekos, "Bisimilarity in fresh-register automata", *Logical Methods in Computer Science* 21(1), 2025, paper 13, doi:[10.46298/lmcs-21(1:13)2025](https://doi.org/10.46298/lmcs-21(1:13)2025); read in arXiv:2005.06411v5 ([arXiv](https://arxiv.org/abs/2005.06411v5)), cited by section: the introduction's classification of register disciplines and the section on visibly pushdown automata with single assignment and filled registers (definition of $r$-VPDRA(SF)).
+- Andrzej S. Murawski, Steven J. Ramsay and Nikos Tzevelekos, "Bisimilarity in fresh-register automata", *Logical Methods in Computer Science* 21(1), 2025, paper 13, doi:[10.46298/lmcs-21(1:13)2025](https://doi.org/10.46298/lmcs-21(1:13)2025); read in arXiv:2005.06411v5 ([arXiv](https://arxiv.org/abs/2005.06411v5)), whose numbering is used: the classification of register disciplines in Section 1 and Definition 8.1 ($r$-VPDRA(SF)) in Section 8.

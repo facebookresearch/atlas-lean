@@ -13,6 +13,7 @@ own current state, and on directed paths forgetful automata are equivalent to fi
 ## Depends on
 
 - [Distributed automata](distributed-automata.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

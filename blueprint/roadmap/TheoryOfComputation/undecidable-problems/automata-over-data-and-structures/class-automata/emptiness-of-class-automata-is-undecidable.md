@@ -14,6 +14,7 @@ By contrast, emptiness is decidable for data automata (Bojańczyk, David, Muscho
 
 - [Register automata on data words](../../../regular-languages/register-automata-on-data-words/register-automata-on-data-words.md)
 - [Rational relations and transducers](../../../regular-languages/automata-and-expressions/rational-relations-and-transductions/rational-relations-and-transducers.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

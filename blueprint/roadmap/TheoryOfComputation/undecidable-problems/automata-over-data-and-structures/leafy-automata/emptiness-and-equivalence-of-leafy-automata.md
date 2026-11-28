@@ -4,18 +4,18 @@ Leafy automata read words of tags paired with data values from an infinitely bra
 
 **Data values.** Let $\mathcal{D}$ be a countably infinite set with a parent function $\mathit{pred} \colon \mathcal{D} \to \mathcal{D} \cup \{\bot\}$ such that every $d \in \mathcal{D} \cup \{\bot\}$ has infinitely many children and every $d$ has a *level* $i$ with $\mathit{pred}^{i+1}(d) = \bot$.
 
-**Leafy automata.** A *level-$k$ leafy automaton* $(\Sigma, k, Q, \delta)$ has a finite alphabet $\Sigma = \Sigma_{\mathsf{Q}} + \Sigma_{\mathsf{A}}$ of questions and answers, finite sets $Q^{(0)}, \dots, Q^{(k)}$ of level-$i$ states, and finite transition relations $\delta^{(i)}_{\mathsf{Q}} \subseteq Q^{(0)} \times \dots \times Q^{(i-1)} \times \Sigma_{\mathsf{Q}} \times Q^{(0)} \times \dots \times Q^{(i)}$ and $\delta^{(i)}_{\mathsf{A}} \subseteq Q^{(0)} \times \dots \times Q^{(i)} \times \Sigma_{\mathsf{A}} \times Q^{(0)} \times \dots \times Q^{(i-1)}$ for $0 \le i \le k$. A configuration $(D, E, f)$ consists of the finite set $D$ of data values read so far, a finite rooted subtree $E$ of $\mathcal{D}$ and a level-preserving labeling $f \colon E \to Q$; the initial configuration is empty. Reading $(t, d)$ with $t$ a question and $d$ a fresh level-$i$ value whose parent is in $E$ adds $d$ as a leaf and updates the states on the branch from the root to $d$ according to $\delta^{(i)}_{\mathsf{Q}}$; reading $(t, d)$ with $t$ an answer and $d$ a leaf of $E$ of level $i$ deletes $d$ and updates the states on its branch according to $\delta^{(i)}_{\mathsf{A}}$. A word over $\Sigma \times \mathcal{D}$ is *accepted* if a nonempty sequence of such steps reads it from the empty configuration and ends with $E$ empty; $L(\mathcal{A})$ is the set of accepted words.
+**Leafy automata.** A *level-$k$ leafy automaton* $(\Sigma, k, Q, \delta)$ has a finite alphabet $\Sigma = \Sigma_{\mathsf{Q}} + \Sigma_{\mathsf{A}}$ of questions and answers, finite sets $Q^{(0)}, \dots, Q^{(k)}$ of level-$i$ states, and finite transition relations $\delta^{(i)}_{\mathsf{Q}} \subseteq Q^{(0)} \times \dots \times Q^{(i-1)} \times \Sigma_{\mathsf{Q}} \times Q^{(0)} \times \dots \times Q^{(i)}$ and $\delta^{(i)}_{\mathsf{A}} \subseteq Q^{(0)} \times \dots \times Q^{(i)} \times \Sigma_{\mathsf{A}} \times Q^{(0)} \times \dots \times Q^{(i-1)}$ for $0 \le i \le k$. A configuration $(D, E, f)$ consists of the finite set $D$ of data values read so far, a finite rooted subtree $E$ of $\mathcal{D}$ and a level-preserving labeling $f \colon E \to Q$; the initial configuration is empty. The first step reads a question $(t, d)$ with $d$ a level-$0$ value and a transition from the empty tuple to a level-$0$ state, creating the root; afterwards, reading $(t, d)$ with $t$ a question and $d$ a fresh level-$i$ value, $i \ge 1$, whose parent is in $E$ adds $d$ as a leaf and updates the states on the branch from the root to $d$ according to $\delta^{(i)}_{\mathsf{Q}}$; reading $(t, d)$ with $t$ an answer and $d$ a leaf of $E$ of level $i$ deletes $d$ and updates the states on its branch according to $\delta^{(i)}_{\mathsf{A}}$; for $i = 0$ this removes the root and returns to the empty configuration. A word over $\Sigma \times \mathcal{D}$ is *accepted* if a nonempty sequence of such steps reads it from the empty configuration and ends with $E$ empty; $L(\mathcal{A})$ is the set of accepted words.
 
 **Theorem (Dixon, Lazić, Murawski and Walukiewicz).**
 
-1. The emptiness problem for level-$2$ leafy automata is undecidable.
-2. The equivalence problem for level-$1$ leafy automata, which asks whether $L(\mathcal{A}_1) = L(\mathcal{A}_2)$, is undecidable.
+1. The emptiness problem for level-$2$ leafy automata is undecidable (Lemma 1 of the source).
+2. The equivalence problem for level-$1$ leafy automata, which asks whether $L(\mathcal{A}_1) = L(\mathcal{A}_2)$, is undecidable (Lemma 2).
 
 For level-$1$ leafy automata, emptiness is interreducible with reachability in vector addition systems with states, so it is decidable but not elementary.
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

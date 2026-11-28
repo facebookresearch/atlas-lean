@@ -10,13 +10,14 @@ $$
 
 where $f' = f[d \mapsto q, \mathrm{pred}(d) \mapsto q, \dots, \mathrm{pred}^{i-1}(d) \mapsto q]$, as in Definition 7 of the source. A run is accepting if it ends in a configuration $(q, f)$ with $q \in F_G$ and $f(d) \in F_L \cup \{\bot\}$ for every $d$. The NDCMA is *weak* if $F_L = Q$. Level-$1$ NDCMA are equivalent to ordinary class memory automata over (non-nested) data words.
 
-**Theorem.** The emptiness problem for nested data class memory automata is undecidable. Emptiness of weak nested data class memory automata is decidable, but Ackermann-hard.
+**Theorem.** The emptiness problem for nested data class memory automata is undecidable. Emptiness of weak nested data class memory automata is decidable, but Ackermann-hard (Theorem 9 of the source).
 
 Level-$1$ NDCMA are ordinary class memory automata, whose emptiness is decidable, being equivalent to reachability in Petri nets; the encoding of reset nets used in the proof needs data values of level $2$.
 
 ## Depends on
 
 - [Register automata on data words](register-automata-on-data-words.md)
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
