@@ -71488,6 +71488,7 @@
 "MathlibExt.Probability.Causality.integral_indicator_div_eq": "f7a3b592b535d5b8",
 "MathlibExt.Probability.Causality.integral_ipw_ate": "69d530eab9821e0c",
 "MathlibExt.Probability.Causality.integral_ipw_control": "a68464dda4e38b43",
+"MathlibExt.Probability.Causality.integral_ipw_eq_sum_standardized": "204ca78a2209a07e",
 "MathlibExt.Probability.Causality.integral_ipw_treated": "5245f0716d6a2def",
 "MathlibExt.Probability.Causality.integral_ipw_treated_condExp": "0f65ea54a8f99c6e",
 "MathlibExt.Probability.Causality.integral_observed_cond_control_of_indepFun": "1e3ec4ce5d805ab7",
