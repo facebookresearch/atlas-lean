@@ -1,0 +1,3 @@
+# Spanning subgraph of a multigraph on an edge set
+
+For a multigraph given by a set $V$ of vertices, a set $E$ of edges and an end map assigning to each edge an unordered pair of vertices (loops and parallel edges allowed), and a finite set $A$ of edges, the spanning subgraph on $A$ is the simple graph on $V$ in which distinct $u, v$ are adjacent exactly when some edge of $A$ has ends $\{u, v\}$ (loops and multiplicities dropped). Only $A$ needs to be finite. This is the [underlying simple graph](../../algebraic-graph-theory/part-01/oriented-incidence-matrices/underlying-graph.md) of the sub-multigraph on the edges of $A$, with either endpoint order.

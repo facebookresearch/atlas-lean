@@ -16,6 +16,7 @@ public import MathlibExt.NumberTheory.GeneralizedSylvester
 public import MathlibExt.NumberTheory.MillinSeries
 public import MathlibExt.NumberTheory.DoublyExponentialReciprocalSumExistsTailEqPseudoGreedyExpansion
 public import MathlibExt.NumberTheory.DoublyExponentialReciprocalSumEventuallyPseudoGreedyGapEqZero
+public import MathlibExt.NumberTheory.DoublyExponentialReciprocalSumSylvester
 public import MathlibExt.NumberTheory.DoublyExponentialReciprocalSumEqRoundInvRemainderAdd
 
 /-!
@@ -34,19 +35,6 @@ open Filter Topology
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Characterization of the Sylvester sequence.** Let $(a_n)_{n \ge 0}$ be a sequence of
-positive integers with $2/3 \le a_n^2 / a_{n+1} \le 4/3$ for all $n$ and $\sum_n 1 / a_n = 1$.
-Then $a_n = s_n(1)$ for all $n \ge 0$, where $(s_n(1))_{n \ge 0}$ is the generalized Sylvester
-sequence with parameter $1$, that is, the Sylvester sequence $2, 3, 7, 43, \ldots$.
-
-Source: Junnosuke Koizumi, *Irrationality of the Reciprocal Sum of Doubly Exponential
-Sequences*, INTEGERS 26 (2026), Article A28, Corollary 1 (`integers-2026-A28-cor-1`). -/
-public theorem_wanted eq_sylvester_of_ratio_mem_of_hasSum_one {a : ℕ → ℕ}
-    (hpos : ∀ n, 0 < a n)
-    (hratio : ∀ n, 2 / 3 ≤ (a n : ℝ) ^ 2 / a (n + 1) ∧ (a n : ℝ) ^ 2 / a (n + 1) ≤ 4 / 3)
-    (hsum : HasSum (fun n => 1 / (a n : ℝ)) 1) :
-    ∀ n, a n = Nat.generalizedSylvester 1 n
 
 /-- **Doubly exponential floors are Type 2 irrationality sequences for all but countably many
 bases.** For all real numbers $\alpha > 1$ outside a countable set, the sequence
