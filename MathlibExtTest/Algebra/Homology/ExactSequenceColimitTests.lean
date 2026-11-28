@@ -42,6 +42,8 @@ private abbrev E := ModuleCat.{1} ℤ
 private abbrev V := ULift.{1} (ZMod 6)
 private abbrev N : E := ModuleCat.of ℤ V
 private abbrev P : E := ModuleCat.of ℤ (V × V)
+
+private instance : HasLimits E := ModuleCat.hasLimitsOfSize.{1, 1, 1, 0}
 private abbrev Z : E := (0 : E)
 
 private def inclusion : N ⟶ P := ModuleCat.ofHom (LinearMap.inl ℤ V V)
@@ -93,8 +95,14 @@ private lemma row_exact : row.Exact where
 
 private abbrev exactRow : ExactSequences E 4 := ⟨row, row_exact⟩
 
-private abbrev diagram : Fin 2 ⥤ ExactSequences E 4 :=
-  mk₁ ((2 : ℕ) • (𝟙 exactRow))
+private abbrev diagram : Fin 2 ⥤ ExactSequences E 4 where
+  obj _ := exactRow
+  map {i j} _ := if i = j then 𝟙 exactRow else (2 : ℕ) • 𝟙 exactRow
+  map_id i := by simp
+  map_comp {i j k} f g := by
+    have hij := leOfHom f
+    have hjk := leOfHom g
+    fin_cases i <;> fin_cases j <;> fin_cases k <;> simp_all
 
 private abbrev terms (i : Fin 5) : Fin 2 ⥤ E :=
   (exactSequenceFourDiagram diagram).flip.obj i
@@ -277,11 +285,11 @@ private abbrev K : ChainComplex E ℕ where
   X _ := N
   d i j := if i = j + 1 then step j else 0
   shape i j hij := by
-    have hij' : i ≠ j + 1 := by simpa only [ComplexShape.down_Rel] using hij
+    have hij' : i ≠ j + 1 := by simpa only [ComplexShape.down_Rel, eq_comm] using hij
     exact ite_eq_right hij'
   d_comp_d' i j k hij hjk := by
     have hj : j ≠ 0 := by
-      have hjk' : j = k + 1 := by simpa only [ComplexShape.down_Rel] using hjk
+      have hjk' : j = k + 1 := by simpa only [ComplexShape.down_Rel, eq_comm] using hjk
       omega
     simp only [step, ite_eq_right hj, ite_self, zero_comp]
 
@@ -312,7 +320,7 @@ private lemma incoming_reduction : S.f ≫ reduction = 0 := by
   rw [map_nsmul]
   apply ULift.ext
   change (2 : ℕ) • (ZMod.castHom (by decide : 2 ∣ 6) (ZMod 2)) x.down = 0
-  have htwo : (2 : ZMod 2) = 0 := by decide
+  have htwo : ((2 : ℕ) : ZMod 2) = 0 := by decide
   simp only [nsmul_eq_mul, htwo, zero_mul]
 
 private lemma reduction_one : reduction.hom (ULift.up (1 : ZMod 6)) =
