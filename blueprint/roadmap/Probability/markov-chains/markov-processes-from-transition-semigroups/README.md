@@ -38,3 +38,4 @@
 - [Necessity half of Hille-Yosida: generators of contraction semigroups are dissipative](necessity-half-of-hille-yosida-generators-of-con.md)
 - [Semigroup convergence implies finite-dimensional convergence](semigroup-convergence-implies-finite-dimensional.md)
 - [Trotter-Kurtz: chain semigroups converge to a limit semigroup](trotter-kurtz-chain-semigroups-converge-to-a-lim.md)
+- [Contact process](contact-process/README.md)

@@ -10,3 +10,8 @@ Head normal forms, solvable terms and the separation results of the untyped λ-c
 - [The finite developments theorem](finite-developments-theorem.md)
 - [Böhm's theorem](bohm-s-theorem.md)
 - [Maximality of βη-conversion](maximality-of-beta-eta-conversion.md)
+- [Applicators keep normal terms normalizable](applicators-make-normal-terms-normalizable.md)
+- [Böhm transformations](bohm-transformations.md)
+- [Separating head normal forms of different shape](separating-head-normal-forms-of-different-shape.md)
+- [Böhm separation with applicators](bohm-separation-with-applicators.md)
+- [Equality in the λ-theory Hω is Π¹₁-complete](equality-in-h-omega-is-pi11-complete.md)
