@@ -17,7 +17,8 @@ its twist by a Dirichlet character.
 
 ## Main definitions
 
-* `ArithmeticFunction.sigmaR`
+* `ArithmeticFunction.sigmaR`: the complex-exponent divisor sum.
+* `ArithmeticFunction.sigmaPow`: the divisor sum in a semiring with a power operation.
 * `DirichletCharacter.sigmaR`: the twisted divisor sum `σ_{s,χ}(n) = ∑_{d ∣ n} χ d * d ^ s`
 
 ## Main statements
@@ -40,21 +41,35 @@ adapted from the Apache-2.0 licensed `ArithmeticFunction.sigmaR` declaration in
 
 namespace ArithmeticFunction
 
-/-- **Divisor-power sum.** Let `R` be a semiring with a power operation `R → R → R`.
-For `s : R`, this arithmetic function has value `∑ d ∈ n.divisors, (d : R) ^ s` at `n`.
-At `n = 0` the sum is empty. The main case is `R = ℂ`, as in PrimeNumberTheoremAnd. -/
-noncomputable def sigmaR {R : Type*} [Semiring R] [HPow R R R] (s : R) : ArithmeticFunction R where
+/-- **Divisor-power sum in a semiring.** Let `R` be a semiring with a power operation
+`R → R → R`. For `s : R`, this arithmetic function has value `∑ d ∈ n.divisors, (d : R) ^ s`
+at `n`. At `n = 0` the sum is empty. -/
+noncomputable def sigmaPow {R : Type*} [Semiring R] [HPow R R R] (s : R) :
+    ArithmeticFunction R where
   toFun := fun n => ∑ d ∈ n.divisors, (d : R) ^ s
   map_zero' := by simp
+
+/-- **Divisor-sum formula for `sigmaPow`.** The sum runs over the positive divisors of `n`,
+with an empty sum when `n = 0`. -/
+theorem sigmaPow_apply {R : Type*} [Semiring R] [HPow R R R] {n : ℕ} {s : R} :
+    sigmaPow s n = ∑ d ∈ n.divisors, (d : R) ^ s :=
+  rfl
+
+/-- **Divisor-power sum with complex exponent.** For a complex number $s$, $\sigma_s$ is the
+complex-valued arithmetic function with $\sigma_s(n) = \sum_{d \mid n} d^s$ for every natural
+number $n \ge 1$, where $d^s$ is the complex power, and $\sigma_s(0) = 0$. -/
+noncomputable def sigmaR (s : ℂ) : ArithmeticFunction ℂ := sigmaPow s
 
 @[inherit_doc]
 scoped[ArithmeticFunction] notation "σᴿ" => ArithmeticFunction.sigmaR
 
-/-- **Divisor-sum formula for `sigmaR`.** The sum runs over the positive divisors of `n`,
-with an empty sum when `n = 0`. -/
-theorem sigmaR_apply {R : Type*} [Semiring R] [HPow R R R] {n : ℕ} {s : R} :
-    sigmaR s n = ∑ d ∈ n.divisors, (d : R) ^ s := by
-  rfl
+/-- **Divisor-sum formula for the complex-exponent divisor sum.** For every natural number $n$
+and complex number $s$, the divisor-power sum $\sigma_s$ with complex exponent $s$ satisfies
+$\sigma_s(n) = \sum_{d \mid n} d^s$, the sum running over the positive divisors $d$ of $n$; for
+$n = 0$ the sum is empty, so $\sigma_s(0) = 0$. -/
+theorem sigmaR_apply {n : ℕ} {s : ℂ} :
+    sigmaR s n = ∑ d ∈ n.divisors, (d : ℂ) ^ s :=
+  sigmaPow_apply
 
 /-- **The complex-exponent divisor sum at one.** For every complex number $s$, the divisor-power
 sum $\sigma_s(n) = \sum_{d \mid n} d^s$ with complex exponent $s$ satisfies $\sigma_s(1) = 1$. -/

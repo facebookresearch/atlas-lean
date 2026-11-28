@@ -57,10 +57,15 @@ example (s : ℂ) : (1 : DirichletCharacter ℂ 4).sigmaR s 3 = sigmaR s 3 := by
     Nat.Prime.sum_divisors Nat.prime_three, h3]
   simp
 
--- `sigmaR_apply` holds for exponents in any semiring with a power operation, e.g. `ℕ`, where
--- `sigmaR k` is Mathlib's `σ k`.
-example (k n : ℕ) : ArithmeticFunction.sigmaR k n = ∑ d ∈ n.divisors, d ^ k :=
-  ArithmeticFunction.sigmaR_apply
+-- Without an exponent type annotation, `1 / 2` must still mean complex division.
+example :
+    let f := sigmaR (1 / 2)
+    f 4 = ∑ d ∈ (4 : ℕ).divisors, (d : ℂ) ^ (1 / 2 : ℂ) :=
+  sigmaR_apply
 
-example (k n : ℕ) : ArithmeticFunction.sigmaR k n = ArithmeticFunction.sigma k n := by
-  simp [ArithmeticFunction.sigmaR_apply, ArithmeticFunction.sigma_apply]
+-- The separate semiring API can use `ℕ`, where it agrees with Mathlib's `σ`.
+example (k n : ℕ) : ArithmeticFunction.sigmaPow k n = ∑ d ∈ n.divisors, d ^ k :=
+  ArithmeticFunction.sigmaPow_apply
+
+example (k n : ℕ) : ArithmeticFunction.sigmaPow k n = ArithmeticFunction.sigma k n := by
+  simp [ArithmeticFunction.sigmaPow_apply, ArithmeticFunction.sigma_apply]

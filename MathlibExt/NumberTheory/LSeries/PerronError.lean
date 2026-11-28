@@ -295,7 +295,7 @@ theorem norm_truncated_sub_perronStep_lt_rpow {x c R : ℝ} (hx : 0 < x)
 /-- **The truncated Perron kernel away from the jump.** For `x > 0`, `x ≠ 1`, `c > 0` and
 `R > 0`,
 `‖(1 / 2π) ∫_{-R}^{R} x ^ (c + it) / (c + it) dt - perronStep x‖ < x ^ c / (R |log x|)`. -/
-theorem norm_truncated_sub_perronStep_lt_rpow_div {x c R : ℝ} (hx : 0 < x)
+private theorem norm_truncated_sub_perronStep_lt_rpow_div {x c R : ℝ} (hx : 0 < x)
     (hx1 : x ≠ 1) (hc : 0 < c) (hR : 0 < R) :
     ‖((1 / (2 * π)) • ∫ t in (-R)..R,
           (x : ℂ) ^ ((c : ℂ) + (t : ℂ) * I) / ((c : ℂ) + (t : ℂ) * I)) -

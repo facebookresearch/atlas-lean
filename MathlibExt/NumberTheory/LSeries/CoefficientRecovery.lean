@@ -17,16 +17,18 @@ import Mathlib.Analysis.Normed.Group.Tannery
 /-!
 # Recovering Dirichlet coefficients from vertical mean values at real points
 
-For a Dirichlet series `L(a, s) = ∑ a n n^{-s}` and `σ` beyond the abscissa of absolute
-convergence, the mean value of `L(a, σ + it) y^{σ + it}` over `t ∈ [-T, T]` tends to the
+For a Dirichlet series `L(a, s) = ∑ a n n^{-s}` absolutely convergent on the line `Re s = σ`,
+the mean value of `L(a, σ + it) y^{σ + it}` over `t ∈ [-T, T]` tends to the
 coefficient `a y` when `y` is a positive integer, and to `0` for every other real `y > 0`.
 Expanding the series, the mean of `n^{-it} y^{it} = e^{i t log (y/n)}` is `1` if `n = y` and
 tends to `0` otherwise; dominated convergence passes the limit through the sum.
 
 ## Main statements
 
-* `LSeries.tendsto_mean_vertical_mul_cpow`: the coefficient-recovery formula
+* `LSeries.tendsto_mean_vertical_mul_cpow_of_summable`: the coefficient-recovery formula
   `(1/2T) ∫_{-T}^{T} L(a, σ + it) y^{σ + it} dt → a y` (or `0`).
+* `LSeries.tendsto_mean_vertical_mul_cpow`: the same formula beyond the abscissa of absolute
+  convergence.
 -/
 
 open Filter Topology Complex
@@ -113,15 +115,15 @@ private lemma tendsto_mean_exp_mul_I (l : ℝ) (hl : l ≠ 0) :
     _ = 1 / |l| * T⁻¹ := by field_simp
 
 open Classical in
-/-- **Coefficient recovery by vertical mean values.** For `σ` beyond the abscissa of absolute
-convergence of `L(a, s) = ∑ a n n^{-s}` and real `y > 0`, the mean value
+/-- **Coefficient recovery by vertical mean values.** If `L(a, s) = ∑ a n n^{-s}` converges
+absolutely on `Re s = σ`, then for real `y > 0` the mean value
 `(1/2T) ∫_{-T}^{T} L(a, σ + it) y^{σ + it} dt` tends to `a y` if `y` is a positive integer and
 to `0` otherwise.
 
 Source: T. M. Apostol, *Introduction to Analytic Number Theory*, Springer, 1976, Chapter 11,
 DOI 10.1007/978-1-4757-5579-4_12. Here stated for every real `y > 0`. -/
-theorem tendsto_mean_vertical_mul_cpow (a : ℕ → ℂ) {σ : ℝ} (hσ : abscissaOfAbsConv a < σ)
-    {y : ℝ} (hy : 0 < y) :
+theorem tendsto_mean_vertical_mul_cpow_of_summable (a : ℕ → ℂ) {σ : ℝ}
+    (hsσ : LSeriesSummable a σ) {y : ℝ} (hy : 0 < y) :
     Tendsto
       (fun T : ℝ => (1 / (2 * T)) * ∫ t in -T..T,
         LSeries a ((σ : ℂ) + (t : ℂ) * I) * (y : ℂ) ^ ((σ : ℂ) + (t : ℂ) * I))
@@ -131,8 +133,6 @@ theorem tendsto_mean_vertical_mul_cpow (a : ℕ → ℂ) {σ : ℝ} (hσ : absci
     ∫ t in -T..T, exp (((l * t : ℝ) : ℂ) * I) with hM
   set g : ℕ → ℂ := fun n => term a σ n * (y : ℂ) ^ (σ : ℂ) with hg
   set L : ℕ → ℝ := fun n => Real.log y - Real.log n with hL
-  have hsσ : LSeriesSummable a σ :=
-    LSeriesSummable_of_abscissaOfAbsConv_lt_re (by simpa using hσ)
   have hgs : Summable (fun n => ‖g n‖) := by
     simp only [hg, norm_mul]; exact hsσ.norm.mul_right _
   -- expansion of the mean as a series
@@ -154,7 +154,7 @@ theorem tendsto_mean_vertical_mul_cpow (a : ℕ → ℂ) {σ : ℝ} (hσ : absci
       intervalIntegrable_const
       (Eventually.of_forall fun t _ => by
         have hs : LSeriesSummable a ((σ : ℂ) + (t : ℂ) * I) :=
-          LSeriesSummable_of_abscissaOfAbsConv_lt_re (by simpa using hσ)
+          (LSeriesSummable_iff_of_re_eq_re (by simp [Complex.mul_re])).2 hsσ
         have := hs.hasSum.mul_right ((y : ℂ) ^ ((σ : ℂ) + (t : ℂ) * I))
         have hfun : (fun n => g n * exp (((L n * t : ℝ) : ℂ) * I)) =
             fun n => term a ((σ : ℂ) + (t : ℂ) * I) n * (y : ℂ) ^ ((σ : ℂ) + (t : ℂ) * I) := by
@@ -221,5 +221,17 @@ theorem tendsto_mean_vertical_mul_cpow (a : ℕ → ℂ) {σ : ℝ} (hσ : absci
     rcases Nat.eq_zero_or_pos n with rfl | h'
     · simp at h; linarith
     · exact h'
+
+open Classical in
+/-- The vertical-mean coefficient recovery formula beyond the abscissa of absolute
+convergence. -/
+theorem tendsto_mean_vertical_mul_cpow (a : ℕ → ℂ) {σ : ℝ} (hσ : abscissaOfAbsConv a < σ)
+    {y : ℝ} (hy : 0 < y) :
+    Tendsto
+      (fun T : ℝ => (1 / (2 * T)) * ∫ t in -T..T,
+        LSeries a ((σ : ℂ) + (t : ℂ) * I) * (y : ℂ) ^ ((σ : ℂ) + (t : ℂ) * I))
+      atTop (𝓝 (if ∃ n : ℕ, 0 < n ∧ (n : ℝ) = y then a ⌊y⌋₊ else 0)) :=
+  tendsto_mean_vertical_mul_cpow_of_summable a
+    (LSeriesSummable_of_abscissaOfAbsConv_lt_re (by simpa using hσ)) hy
 
 end LSeries

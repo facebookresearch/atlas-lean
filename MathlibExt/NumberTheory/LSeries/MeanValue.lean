@@ -12,6 +12,7 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Complex
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Sinc
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.NumberTheory.LSeries.Convergence
+public import MathlibExt.NumberTheory.LSeries.CoefficientRecovery
 import Mathlib.Analysis.Normed.Group.Tannery
 import Mathlib.Analysis.Normed.Ring.InfiniteSum
 import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
@@ -173,110 +174,12 @@ theorem tendsto_integral_LSeries_mul_cpow_atTop (ha : LSeriesSummable a σ) {m :
       (fun T : ℝ => (1 / (2 * (T : ℂ))) *
         ∫ t in (-T)..T, LSeries a (σ + t * I) * (m : ℂ) ^ ((σ : ℂ) + t * I))
       atTop (𝓝 (a m)) := by
-  have hm0 : (0 : ℝ) < (m : ℝ) := by exact_mod_cast Nat.pos_of_ne_zero hm
-  have ha' : Summable (LSeries.term a (σ : ℂ)) := ha
-  obtain ⟨u, hu⟩ : ∃ u : ℕ → ℝ, ∀ n, u n = if n = 0 then 1 else (m : ℝ) / (n : ℝ) :=
-    ⟨_, fun _ => rfl⟩
-  obtain ⟨C, hC⟩ : ∃ C : ℕ → ℂ, ∀ n, C n = LSeries.term a (σ : ℂ) n * (m : ℂ) ^ (σ : ℂ) :=
-    ⟨_, fun _ => rfl⟩
-  have hupos : ∀ n, 0 < u n := by
-    intro n
-    rw [hu]
-    split_ifs with h
-    · norm_num
-    · exact div_pos hm0 (by exact_mod_cast Nat.pos_of_ne_zero h)
-  have hC0 : C 0 = 0 := by rw [hC]; simp
-  have hCm : C m = a m := by
-    have hne : (m : ℂ) ^ (σ : ℂ) ≠ 0 := fun h =>
-      (Nat.cast_ne_zero.mpr hm) ((cpow_eq_zero_iff _ _).mp h).1
-    rw [hC, LSeries.term_of_ne_zero hm a (σ : ℂ)]
-    field_simp
-  have hCsum : Summable fun n => ‖C n‖ := by
-    have h1 : ∀ n, ‖C n‖ = ‖LSeries.term a (σ : ℂ) n‖ * ‖(m : ℂ) ^ (σ : ℂ)‖ := by
-      intro n; rw [hC, norm_mul]
-    simp only [h1]
-    exact ha'.norm.mul_right _
-  -- The integrand, split term by term: `a n / n ^ s * m ^ s = C n * (m / n) ^ (i t)`.
-  have hterm : ∀ (n : ℕ) (t : ℝ),
-      LSeries.term a ((σ : ℂ) + (t : ℂ) * I) n * (m : ℂ) ^ ((σ : ℂ) + (t : ℂ) * I)
-        = C n * ((u n : ℝ) : ℂ) ^ ((t : ℂ) * I) := by
-    intro n t
-    rcases eq_or_ne n 0 with rfl | hn
-    · simp [hC0]
-    · have hn0 : (0 : ℝ) < (n : ℝ) := by exact_mod_cast Nat.pos_of_ne_zero hn
-      have hun : u n = (m : ℝ) / (n : ℝ) := by rw [hu, ite_eq_right hn]
-      have hune : ((u n : ℝ) : ℂ) ≠ 0 := ofReal_ne_zero.mpr (hupos n).ne'
-      have h1 : ∀ s : ℂ, (m : ℂ) ^ s / (n : ℂ) ^ s = ((u n : ℝ) : ℂ) ^ s := by
-        intro s
-        rw [hun, ofReal_div, div_cpow_ofReal_nonneg hm0.le hn0.le]
-        push_cast
-        ring
-      rw [hC, LSeries.term_of_ne_zero hn a ((σ : ℂ) + (t : ℂ) * I),
-        LSeries.term_of_ne_zero hn a (σ : ℂ),
-        show a n / (n : ℂ) ^ ((σ : ℂ) + (t : ℂ) * I) * (m : ℂ) ^ ((σ : ℂ) + (t : ℂ) * I)
-            = a n * ((m : ℂ) ^ ((σ : ℂ) + (t : ℂ) * I) /
-              (n : ℂ) ^ ((σ : ℂ) + (t : ℂ) * I)) from by ring,
-        show a n / (n : ℂ) ^ (σ : ℂ) * (m : ℂ) ^ (σ : ℂ) * ((u n : ℝ) : ℂ) ^ ((t : ℂ) * I)
-            = a n * (((m : ℂ) ^ (σ : ℂ) / (n : ℂ) ^ (σ : ℂ)) *
-              ((u n : ℝ) : ℂ) ^ ((t : ℂ) * I)) from by ring,
-        h1, h1, ← cpow_add _ _ hune]
-  -- The mean value over `[-T, T]`, evaluated by the orthogonality integral.
-  have key : ∀ T : ℝ, 0 < T →
-      (1 / (2 * (T : ℂ))) * (∫ t in (-T)..T, LSeries a ((σ : ℂ) + (t : ℂ) * I) *
-          (m : ℂ) ^ ((σ : ℂ) + (t : ℂ) * I))
-        = ∑' n : ℕ, C n * ((Real.sinc (T * Real.log (u n)) : ℝ) : ℂ) := by
-    intro T hT
-    have hTne : (T : ℂ) ≠ 0 := ofReal_ne_zero.mpr hT.ne'
-    have hsplit : ∀ t : ℝ, LSeries a ((σ : ℂ) + (t : ℂ) * I) *
-        (m : ℂ) ^ ((σ : ℂ) + (t : ℂ) * I)
-          = ∑' n : ℕ, C n * ((u n : ℝ) : ℂ) ^ ((t : ℂ) * I) := by
-      intro t
-      simp only [LSeries]
-      rw [← tsum_mul_right]
-      exact tsum_congr fun n => hterm n t
-    simp only [hsplit]
-    rw [integral_tsum_mul_ofReal_cpow_mul_I hupos hCsum hT, ← tsum_mul_left]
-    refine tsum_congr fun n => ?_
-    push_cast
-    field_simp
-  -- Tannery's theorem: `sinc (T log (m / n)) → 0` for `n ≠ m`, and `= 1` for `n = m`.
-  have hlim : Tendsto (fun T : ℝ => ∑' n : ℕ, C n * ((Real.sinc (T * Real.log (u n)) : ℝ) : ℂ))
-      atTop (𝓝 (∑' n : ℕ, if n = m then a m else 0)) := by
-    refine tendsto_tsum_of_dominated_convergence hCsum ?_ ?_
-    · intro n
-      by_cases hnm : n = m
-      · have hn0 : n ≠ 0 := hnm ▸ hm
-        have hu1 : u n = 1 := by rw [hu, ite_eq_right hn0, hnm]; exact div_self hm0.ne'
-        have hval : ∀ T : ℝ, C n * ((Real.sinc (T * Real.log (u n)) : ℝ) : ℂ) = a m := by
-          intro T
-          rw [hu1, Real.log_one, mul_zero, Real.sinc_zero, ofReal_one, mul_one, hnm, hCm]
-        simp only [hval, ite_eq_left hnm]
-        exact tendsto_const_nhds
-      · simp only [ite_eq_right hnm]
-        rcases eq_or_ne n 0 with rfl | hn0
-        · simp only [hC0, zero_mul]
-          exact tendsto_const_nhds
-        · have hun : u n = (m : ℝ) / (n : ℝ) := by rw [hu, ite_eq_right hn0]
-          have hune : u n ≠ 1 := by
-            rw [hun]
-            intro h
-            have hnR : (n : ℝ) ≠ 0 := by exact_mod_cast hn0
-            have hmn : (m : ℝ) = (n : ℝ) := by field_simp at h; linarith
-            exact hnm (by exact_mod_cast hmn.symm)
-          have hL : Real.log (u n) ≠ 0 := fun h =>
-            hune (by rw [← Real.exp_log (hupos n), h, Real.exp_zero])
-          simpa using (tendsto_ofReal_sinc_mul_atTop_nhds_zero hL).const_mul (C n)
-    · refine Eventually.of_forall fun T n => ?_
-      have h1 : ‖((Real.sinc (T * Real.log (u n)) : ℝ) : ℂ)‖ ≤ 1 := by
-        simpa using Real.abs_sinc_le_one (T * Real.log (u n))
-      calc ‖C n * ((Real.sinc (T * Real.log (u n)) : ℝ) : ℂ)‖
-          = ‖C n‖ * ‖((Real.sinc (T * Real.log (u n)) : ℝ) : ℂ)‖ := norm_mul _ _
-        _ ≤ ‖C n‖ * 1 := mul_le_mul_of_nonneg_left h1 (norm_nonneg _)
-        _ = ‖C n‖ := mul_one _
-  rw [tsum_ite_eq] at hlim
-  refine hlim.congr' ?_
-  filter_upwards [eventually_gt_atTop (0 : ℝ)] with T hT
-  exact (key T hT).symm
+  classical
+  have hm0 := Nat.pos_of_ne_zero hm
+  have hmR : (0 : ℝ) < (m : ℝ) := by exact_mod_cast hm0
+  have hmatch : ∃ n : ℕ, 0 < n ∧ (n : ℝ) = (m : ℝ) := ⟨m, hm0, rfl⟩
+  simpa only [Complex.ofReal_natCast, ite_eq_left hmatch, Nat.floor_natCast] using
+    LSeries.tendsto_mean_vertical_mul_cpow_of_summable a ha hmR
 
 /-- **The mean square of a Dirichlet series on a vertical line.** If `f(s) = ∑ aₙ n⁻ˢ`
 converges absolutely on the line `re s = σ`, then
