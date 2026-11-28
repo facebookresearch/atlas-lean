@@ -7,6 +7,7 @@ For a natural number $k$, a [neural code](neural-codes-and-their-realizations.md
 ## Depends on
 
 - [Neural codes and their realizations](neural-codes-and-their-realizations.md)
+- [Finite abstract simplicial complex](../rational-homology-of-simplicial-complexes/is-simplicial-complex.md)
 
 ## Proof depends on
 

@@ -8,7 +8,7 @@ $$
 \{T_0,\ b_0T_1,\ b_0b_1T_2,\ b_0b_1b_2T_3,\ \dots\},
 $$
 
-where $cT=\{ct : t\in T\}$. Its sumset is always direct, and it is *complete* if it is an [additive system](additive-systems-for-a-commutative-monoid.md) for $\mathbb Z$. Writing $t_i(n)$ for the element of $T_i$ congruent to $n$ modulo $b_i$, the *canonical system* of the collection is the sequence of maps $f_i(n)=(n-t_i(n))/b_i$ on $\mathbb Z$, and the *trajectory* of $n$ is $n,\ f_0(n),\ f_1(f_0(n)),\ \dots$.
+where $cT=\{ct : t\in T\}$. Its sumset is always direct, and it is *complete* if it is an [additive system](additive-systems-for-a-commutative-monoid.md) for $\mathbb Z$. Writing $t_i(n)$ for the element of $T_i$ congruent to $n$ modulo $b_i$, the *canonical system* of the data $(b_i)$, $(T_i)$ (Definition 5; it depends on this ordered presentation, not only on the collection, by Fact 5 and Non-example 1) is the sequence of maps $f_i(n)=(n-t_i(n))/b_i$ on $\mathbb Z$, and the *trajectory* of $n$ is $n,\ f_0(n),\ f_1(f_0(n)),\ \dots$.
 
 For $T_i=\{0,1,\dots,b_i-1\}$ the collection is a mixed-radix number system for $\mathbb N_0$, and its sumset is $\mathbb N_0$, not $\mathbb Z$; the choices $T_i=\{0,(-1)^i\}$ with $b_i=2$ (negabinary), and $T_i=\{-1,0,1\}$ with $b_i=3$ (balanced ternary), give complete canonical collections. An integer $n$ lies in the sumset of a canonical collection iff its trajectory is eventually $0$ (Proposition 1 of the source), so the collection is complete iff every trajectory is eventually $0$ (Corollary 1).
 
