@@ -15,3 +15,4 @@ Methods for proving termination of term rewriting systems: the multiset extensio
 - [Dependency pair chains](dependency-pair-chains.md)
 - [Termination criterion via dependency pairs](termination-criterion-via-dependency-pairs.md)
 - [Proving termination with dependency pairs](proving-termination-with-dependency-pairs.md)
+- [Termination by linear interpretations is undecidable](termination-by-linear-interpretations-is.md)
