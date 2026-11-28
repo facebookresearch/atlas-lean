@@ -13,8 +13,8 @@ import Mathlib.Analysis.SpecificLimits.Basic
 import Mathlib.Tactic.LinearCombination
 import Mathlib.Topology.Algebra.InfiniteSum.Real
 public import MathlibExt.NumberTheory.Digits.BasePhiRepresentations
-import MathlibExt.NumberTheory.ChurchBicknellFibonacciConvolution
 import MathlibExt.NumberTheory.Digits.BasePhiConjugate
+import MathlibExt.NumberTheory.Digits.BasePhiLucasPowers
 public import MathlibExt.NumberTheory.Digits.BergmanLucasEvenAdd
 public import MathlibExt.NumberTheory.Digits.BergmanWordFib
 public import MathlibExt.NumberTheory.Digits.FibMemLucasIntervals
@@ -185,61 +185,6 @@ private theorem even_min_of_bergman {S : Finset ℤ} (hS : IsBergmanExpansion S)
   · exact h
   · exact absurd h hnotOdd
 
-private theorem psi_even_pow_pos (k : ℕ) : (0 : ℝ) < ψ ^ (2 * k) := by
-  have hψ2 : (0 : ℝ) < ψ ^ 2 := by
-    rw [pow_two]
-    exact mul_pos_of_neg_of_neg Real.goldenConj_neg Real.goldenConj_neg
-  calc (0 : ℝ) < (ψ ^ 2) ^ k := pow_pos hψ2 k
-    _ = ψ ^ (2 * k) := by rw [← pow_mul]
-
-private theorem lucas_even_gt (k : ℕ) :
-    φ ^ ((2 * k : ℕ) : ℤ) < (lucasNumber (2 * k) : ℝ) := by
-  rw [← cb_lucas_binet]
-  simp only [zpow_natCast]
-  have hψ := psi_even_pow_pos k
-  linarith
-
-private theorem lucas_odd_lt (k : ℕ) :
-    (lucasNumber (2 * k + 1) : ℝ) < φ ^ ((2 * k + 1 : ℕ) : ℤ) := by
-  rw [← cb_lucas_binet]
-  simp only [zpow_natCast]
-  have hodd : Odd (2 * k + 1) := ⟨k, rfl⟩
-  have hψr : ψ = -(-ψ) := by ring
-  have hpos : (0 : ℝ) < -ψ := by linarith [Real.goldenConj_neg]
-  have h2 : ψ ^ (2 * k + 1) = -((-ψ) ^ (2 * k + 1)) := by
-    conv_lhs => rw [hψr]
-    exact hodd.neg_pow (-ψ)
-  have h1 : (0 : ℝ) < (-ψ) ^ (2 * k + 1) := pow_pos hpos _
-  linarith
-
-private theorem lucas_odd_add_one_gt (k : ℕ) :
-    φ ^ ((2 * k + 1 : ℕ) : ℤ) < (lucasNumber (2 * k + 1) : ℝ) + 1 := by
-  rw [← cb_lucas_binet]
-  simp only [zpow_natCast]
-  have hodd : Odd (2 * k + 1) := ⟨k, rfl⟩
-  have hψr : ψ = -(-ψ) := by ring
-  have hr0 : (0 : ℝ) ≤ -ψ := le_of_lt (by linarith [Real.goldenConj_neg])
-  have hr1 : -ψ < 1 := by linarith [Real.neg_one_lt_goldenConj]
-  have h1 : (-ψ) ^ (2 * k + 1) < 1 := pow_lt_one₀ hr0 hr1 (by omega)
-  have h2 : ψ ^ (2 * k + 1) = -((-ψ) ^ (2 * k + 1)) := by
-    conv_lhs => rw [hψr]
-    exact hodd.neg_pow (-ψ)
-  linarith
-
-private theorem lucas_even_sub_one_lt (k : ℕ) :
-    (lucasNumber (2 * k + 2) : ℝ) - 1 < φ ^ ((2 * k + 2 : ℕ) : ℤ) := by
-  rw [← cb_lucas_binet]
-  simp only [zpow_natCast]
-  have hev : Even (2 * k + 2) := ⟨k + 1, by ring⟩
-  have hψr : ψ = -(-ψ) := by ring
-  have hr0 : (0 : ℝ) ≤ -ψ := le_of_lt (by linarith [Real.goldenConj_neg])
-  have hr1 : -ψ < 1 := by linarith [Real.neg_one_lt_goldenConj]
-  have h1 : (-ψ) ^ (2 * k + 2) < 1 := pow_lt_one₀ hr0 hr1 (by omega)
-  have h2 : ψ ^ (2 * k + 2) = (-ψ) ^ (2 * k + 2) := by
-    conv_lhs => rw [hψr]
-    exact hev.neg_pow (-ψ)
-  linarith
-
 private theorem phi_pow_bounds {S : Finset ℤ} (hS : IsBergmanExpansion S)
     {N : ℕ} (hSN : basePhiValue S = N) {R : ℤ} (hmem : R ∈ S)
     (hmin : ∀ i ∈ S, R ≤ i) :
@@ -303,13 +248,13 @@ public theorem bergman_lowest_position_lucasInterval (N n : ℕ) {S : Finset ℤ
     obtain ⟨hloN, hhiN⟩ := Set.mem_Icc.mp hN
     have hNlt : (N : ℝ) < φ ^ ((2 * n + 1 : ℕ) : ℤ) := by
       have h1 : (N : ℝ) ≤ (lucasNumber (2 * n + 1) : ℝ) := by exact_mod_cast hhiN
-      have h2 := bergman_lowest_position_lucasInterval.lucas_odd_lt n
+      have h2 := BasePhiLucasPowers.lucas_odd_lt n
       linarith
     have hexp1 : -R - 1 < ((2 * n + 1 : ℕ) : ℤ) :=
       (zpow_lt_zpow_iff_right₀ hφ).mp (lt_trans hlo hNlt)
     have hNgt : φ ^ ((2 * n : ℕ) : ℤ) < (N : ℝ) := by
       have h1 : (lucasNumber (2 * n) : ℝ) ≤ (N : ℝ) := by exact_mod_cast hloN
-      have h2 := bergman_lowest_position_lucasInterval.lucas_even_gt n
+      have h2 := BasePhiLucasPowers.lucas_even_gt n
       linarith
     have hexp2 : ((2 * n : ℕ) : ℤ) < -R + 1 :=
       (zpow_lt_zpow_iff_right₀ hφ).mp (lt_trans hNgt hhi)
@@ -320,7 +265,7 @@ public theorem bergman_lowest_position_lucasInterval (N n : ℕ) {S : Finset ℤ
     obtain ⟨hloN, hhiN⟩ := Set.mem_Icc.mp hN
     have hNgt : φ ^ ((2 * n + 1 : ℕ) : ℤ) < (N : ℝ) := by
       have h1 : (lucasNumber (2 * n + 1) : ℝ) + 1 ≤ (N : ℝ) := by exact_mod_cast hloN
-      have h2 := bergman_lowest_position_lucasInterval.lucas_odd_add_one_gt n
+      have h2 := BasePhiLucasPowers.lucas_odd_add_one_gt n
       linarith
     have hexp1 : ((2 * n + 1 : ℕ) : ℤ) < -R + 1 :=
       (zpow_lt_zpow_iff_right₀ hφ).mp (lt_trans hNgt hhi)
@@ -328,7 +273,7 @@ public theorem bergman_lowest_position_lucasInterval (N n : ℕ) {S : Finset ℤ
     have hN1 : N + 1 ≤ lucasNumber (2 * n + 2) := by omega
     have hNlt : (N : ℝ) < φ ^ ((2 * n + 2 : ℕ) : ℤ) := by
       have h1 : (N : ℝ) + 1 ≤ (lucasNumber (2 * n + 2) : ℝ) := by exact_mod_cast hN1
-      have h2 := bergman_lowest_position_lucasInterval.lucas_even_sub_one_lt n
+      have h2 := BasePhiLucasPowers.lucas_even_sub_one_lt n
       linarith
     have hexp2 : -R - 1 < ((2 * n + 2 : ℕ) : ℤ) :=
       (zpow_lt_zpow_iff_right₀ hφ).mp (lt_trans hlo hNlt)

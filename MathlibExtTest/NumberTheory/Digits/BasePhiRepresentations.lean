@@ -62,4 +62,25 @@ example : Relation.ReflTransGen IsGoldenMeanFlip {1, -2} {0, -1, -3, -4} := by
   rw [Finset.sum_insert (by decide), Finset.sum_insert (by decide), Finset.sum_pair (by decide),
     Finset.sum_insert (by decide), Finset.sum_pair (by decide), hcarry]
 
+-- The expansion 10.01 has value 2: its leading digit contributes at most 2, and its value
+-- is strictly below the contribution of a digit at the next position.
+example : φ ^ (1 : ℤ) ≤ (2 : ℝ) ∧ (2 : ℝ) < φ ^ (2 : ℤ) := by
+  rw [← basePhiValue_one_neg_two]
+  refine ⟨BasePhiRepresentations.value_pow_le_of_mem (by decide), ?_⟩
+  apply BasePhiRepresentations.bergman_value_lt isBergmanExpansion_one_neg_two
+  intro i hi
+  simp only [Finset.mem_insert, Finset.mem_singleton] at hi
+  omega
+
+-- Any Bergman expansion of 2 has exactly the two occupied positions of 10.01.
+example {S : Finset ℤ} (hS : IsBergmanExpansion S) (hval : basePhiValue S = 2) :
+    S = {1, -2} :=
+  BasePhiRepresentations.bergman_eq_of_value_eq hS isBergmanExpansion_one_neg_two
+    (hval.trans basePhiValue_one_neg_two.symm)
+
+-- The contribution of the two fractional digits in .11 is exactly one.
+example : φ ^ (-1 : ℤ) + φ ^ (-2 : ℤ) = 1 := by
+  simpa only [show (-1 : ℤ) - 1 = -2 by decide, neg_add_cancel, zpow_zero]
+    using BasePhiRepresentations.pow_add_prev (-1)
+
 end MetaMathlibExt
