@@ -1,0 +1,5 @@
+# Prenex sentences in the language of lattices
+
+A prenex sentence of the first-order language $\{\le\}$ of lattices is coded as a pair $(q, \varphi)$. The quantifier prefix $q = (q_0, q_1, \dots)$ is a finite list of booleans: $q_j = \mathrm{true}$ means $\forall$ and $q_j = \mathrm{false}$ means $\exists$, and the $j$-th quantifier binds the variable $x_j$. The matrix $\varphi$ is a finite list of clauses, read as their conjunction; each clause is a finite list of literals, read as their disjunction. A literal is a triple $(b, i, j)$ with $b$ a boolean and $i, j \in \mathbb{N}$; it reads $x_i \le x_j$ when $b = \mathrm{true}$ and $x_i \not\le x_j$ when $b = \mathrm{false}$.
+
+The code does not require the prefix to bind every index in the matrix. An index beyond the prefix keeps its initial value, which is the trivial subgroup in the interpretation on [truth of a lattice sentence in the subgroup lattice](holds-in-subgroup-lattice.md). For instance, the empty prefix with the single literal $x_0 \le x_1$ is a legal code, and there it says $\{0\} \le \{0\}$.

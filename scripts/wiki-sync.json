@@ -25869,6 +25869,7 @@
 "Cslib.LTL.PropFormula.toLTL": "f0eebddcae62a342",
 "Cslib.LTL.Safety": "bb125b4de32a63d1",
 "Cslib.LTL.Safety.toLTL": "260e4251ea17fd25",
+"Cslib.LTL.SafetyAutomatonWanted.safety_automaton_wanted": "5582e4fd18908f80",
 "Cslib.LTL.SafetyGeneralWanted.SafetyExt": "d85cbd6e160a59c2",
 "Cslib.LTL.SafetyGeneralWanted.SafetyExt.toLTL": "95c42675978744b5",
 "Cslib.LTL.SafetyGeneralWanted.safety_general_buchi_wanted": "fa62942eabfc7658",

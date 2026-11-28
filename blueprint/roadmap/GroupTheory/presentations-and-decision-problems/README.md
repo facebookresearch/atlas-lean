@@ -20,6 +20,7 @@ Combinatorial group theory: presentations, one-relator groups, HNN extensions an
 - [Higman–Neumann–Neumann embedding theorem](higman-neumann-neumann-embedding.md)
 - [Infinite finitely presented simple groups exist](higman-infinite-simple.md)
 - [SQ-universal group](is-squniversal.md)
+- [Universal theories of classes of groups](universal-theories-of-classes-of-groups/README.md)
 - [A group of type F-infinity containing every finitely presented group](universal-type-f-infinity-group.md)
 - [Coefficient injectivity for a unimodular one-relator quotient](unimodular-relator-coefficient-injectivity.md)
 - [Isomorphism, recognition and search problems](isomorphism-recognition-and-search-problems/README.md)
