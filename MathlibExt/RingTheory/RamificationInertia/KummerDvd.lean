@@ -35,11 +35,11 @@ public import Mathlib.RingTheory.DiscreteValuationRing.Basic
 
 @[expose] public section
 
-/-- If an element of the fraction field satisfies `a ^ n = u * ϖ ^ m`, where
-`ϖ` is a uniformizer of a discrete valuation ring `O`, `u` is a unit of `O`,
-and `m` is coprime to the positive integer `n`, then `n` divides the
-ramification index of any nonzero prime of a Dedekind overring `R` lying over
-the maximal ideal of `O`. -/
+/-- Let `ϖ` be a uniformizer of a discrete valuation ring `O` and `u` a unit of `O`, let `R`
+be a Dedekind domain with an `O`-algebra structure, `E` its fraction field, and `𝔓` a
+nonzero prime of `R` lying over the maximal ideal of `O`. If `a ∈ E` satisfies
+`a ^ n = u * ϖ ^ m` in `E`, with `m ∈ ℤ` coprime to the positive integer `n`, then `n`
+divides the ramification index of `𝔓` over the maximal ideal of `O`. -/
 theorem Ideal.dvd_ramificationIdx_of_pow_eq_unit_mul_zpow_of_isCoprime
     {O : Type*} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O]
     {R : Type*} [CommRing R] [IsDedekindDomain R] [Algebra O R]
