@@ -32,6 +32,18 @@ example : negRFibonacci 2 x y 9 = (↑y⁻¹ : A) ^ 4 + 3 * (↑y⁻¹ : A) ^ 3 
   rw [negRFibonacci_succ_eq_sum' (r := 2) (by decide) x y 8]
   norm_num [Finset.sum_filter, Finset.sum_range_succ, Nat.choose]
 
+-- Order zero takes the zero branch at the first positive index.
+example : negRLucas 0 x y 1 = 0 := by
+  rw [negRLucas.eq_2]
+  simp
+
+-- At order one the recurrence at index two uses both initial values.
+example : negRLucas 1 x y 2 = (↑y⁻¹ : A) ^ 2 - 2 * ↑y⁻¹ * x := by
+  rw [negRLucas_succ_of_le (r := 1) (n := 1) x y le_rfl le_rfl, Nat.sub_self,
+    negRLucas_self x y le_rfl, negRLucas_zero]
+  norm_num
+  ring
+
 -- At n = r the correction term is zero.
 example {r : ℕ} (hr : 2 ≤ r) : negRLucas r x y r = (r : A) * ↑y⁻¹ := by
   rw [negRLucas_eq hr le_rfl, negRFibonacci_succ_of_le x y (by omega : 1 ≤ r) le_rfl]
