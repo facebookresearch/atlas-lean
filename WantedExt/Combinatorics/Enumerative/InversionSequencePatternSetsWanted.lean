@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import MathlibExt.Combinatorics.Enumerative.InversionSequenceWilf201210
 public import MathlibExt.Combinatorics.Enumerative.InversionSequenceAvoid011102120
+public import MathlibExt.Combinatorics.Enumerative.InversionSequenceAvoidSeven
 public import Mathlib.Combinatorics.Enumerative.Catalan.Basic
 
 /-!
@@ -161,27 +162,6 @@ public theorem_wanted invSeq_wilf_102_110_six_class :
         : Set (Fin 3 → ℕ)) =
       invSeqAvoidCount ({![0, 1, 1], ![0, 2, 1], ![1, 0, 2], ![1, 1, 0], ![2, 0, 1], ![2, 1, 0]}
           : Set (Fin 3 → ℕ))
-
-/-- **A common generating function for three sets of seven patterns.** Let
-$B_1 = \{010, 011, 100, 101, 102, 201, 210\}$, $B_2 = \{010, 011, 100, 102, 110, 201, 210\}$ and
-$B_3 = \{010, 011, 101, 102, 110, 201, 210\}$, where a pattern is written as a digit string ($101$
-is the triple $(1, 0, 1)$). For a set $B$ of patterns let
-$F_B(x) = \sum_{n \ge 1} |I_n(B)| x^n \in \mathbb{Q}[[x]]$ be the generating function of the
-inversion sequences avoiding every pattern in $B$. Then for each $j \in \{1, 2, 3\}$,
-$$(1 - x)(1 - 2x)^2 F_{B_j}(x) = x(1 - 2x)^2 + x^2(1 - x)^2.$$
-
-Since $(1 - x)(1 - 2x)^2$ is a unit in $\mathbb{Q}[[x]]$, this says
-$F_{B_j}(x) = x/(1 - x) + x^2(1 - x)/(1 - 2x)^2$.
-
-Source: Toufik Mansour, *Inversion Sequences Avoiding a Set of Length-3 Patterns*, INTEGERS 24
-(2024), Article A76, Theorem 16 (`integers-2024-A76-thm-16`). -/
-public theorem_wanted invSeqAvoidGF_010_011_102_201_210_seven :
-    ∀ B : Set (Fin 3 → ℕ),
-      (B = {![0, 1, 0], ![0, 1, 1], ![1, 0, 0], ![1, 0, 1], ![1, 0, 2], ![2, 0, 1], ![2, 1, 0]} ∨
-        B = {![0, 1, 0], ![0, 1, 1], ![1, 0, 0], ![1, 0, 2], ![1, 1, 0], ![2, 0, 1], ![2, 1, 0]} ∨
-        B = {![0, 1, 0], ![0, 1, 1], ![1, 0, 1], ![1, 0, 2], ![1, 1, 0], ![2, 0, 1], ![2, 1, 0]}) →
-      (1 - X) * (1 - 2 * X) ^ 2 * invSeqAvoidGF B =
-        X * (1 - 2 * X) ^ 2 + X ^ 2 * (1 - X) ^ 2
 
 /-- **Eight-pattern sets differing in 201 and 210: equivalence and generating function.** Write a
 length-3 pattern as the word of its values, so $101$ is the pattern $(1, 0, 1)$. For a set $B$ of

@@ -57,8 +57,11 @@ noncomputable def interchangeGenerator (n : ℕ) :
           (SimpleGraph.hypercubeGraph n).Adj xy.1 xy.2).card : ℝ)
       else 0
 
-/-- The total variation distance at time `t` between the law `e^{tL}(id, ·)` of the interchange
-process started at the identity and the uniform distribution on permutations of the vertices. -/
+/-- Half the sum of the absolute differences between the identity row `e^{tL}(id, ·)` and the
+uniform weights on permutations of the vertices, for every real `t`. For `t ≥ 0` that row is the
+law at time `t` of the interchange process started at the identity, and this is its total variation
+distance to the uniform distribution; for `t < 0` the row need not be a probability law (it can
+have negative entries). -/
 noncomputable def interchangeDistToUniform (n : ℕ) (t : ℝ) : ℝ :=
   tvDist (fun τ => (NormedSpace.exp (t • interchangeGenerator n)) 1 τ)
     (fun _ => 1 / (Fintype.card (Equiv.Perm (Fin n → Bool)) : ℝ))
