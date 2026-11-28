@@ -14,13 +14,15 @@ $$
 \hat t_n:E(F)[n]\times E(F)/nE(F)\longrightarrow\mu_n .
 $$
 
-Equivalently, the unreduced pairing $t_n(P,R)=f(D_R)\cdot(F^\times)^n\in F^\times/(F^\times)^n$ is well defined, and $z\mapsto z^{(Q-1)/n}$ is an isomorphism $F^\times/(F^\times)^n\to\mu_n$. One may take $D_P=(P)-(O)$, so that $f$ is the Miller function $f_{n,P}$ up to a constant; then $D_R$ must avoid $\{O,P\}$, and a choice $D_R=(R+S)-(S)$ with $S$ rational need not exist, for instance on $y^2=x^3+2x^2+2$ over $\mathbb{F}_3$, whose rational points are $O$ and $P=(2,0)$, with $n=2$ and $R=P$, where both rational points are excluded. For a curve over $\mathbb{F}_q$ and $n$ prime to $q$, one takes $F=\mathbb{F}_{q^k}$ with $k=k(q,n)$ the embedding degree, so that $n\mid Q-1$.
+Equivalently, the unreduced pairing $t_n(P,R)=f(D_R)\cdot(F^\times)^n\in F^\times/(F^\times)^n$ is well defined, and $z\mapsto z^{(Q-1)/n}$ is an isomorphism $F^\times/(F^\times)^n\to\mu_n$. One may take $D_P=(P)-(O)$, so that $f$ is the Miller function $f_{n,P}$ up to a constant; then $D_R$ must avoid the support of $(P)-(O)$, which is $\{O,P\}$ for $P\ne O$ and empty for $P=O$ (where $f$ is constant and the value is $1$), and for $P\ne O$ a choice $D_R=(R+S)-(S)$ with $S$ rational need not exist, for instance on $y^2=x^3+2x^2+2$ over $\mathbb{F}_3$, whose rational points are $O$ and $P=(2,0)$, with $n=2$ and $R=P$, where both rational points are excluded. For a curve over $\mathbb{F}_q$ and $n$ prime to $q$, one takes $F=\mathbb{F}_{q^k}$ with $k=k(q,n)$ the embedding degree, so that $n\mid Q-1$.
 
 ## Depends on
 
 - [Miller functions](miller-functions.md)
 - [Embedding degree](../embedding-degree-and-pairing-attacks/embedding-degree.md)
 - [Evaluation of a divisor against a function](../../../../../AlgebraicGeometry/algebraic-curves/divisors-on-curves/evaluation-of-curve-divisors/eval.md)
+- [Quotient group](../../../../../GroupTheory/group-basics/quotient-group.md)
+- [Group homomorphisms](../../../../../GroupTheory/semigroups-and-monoids/group-homomorphism.md)
 
 ## Proof depends on
 

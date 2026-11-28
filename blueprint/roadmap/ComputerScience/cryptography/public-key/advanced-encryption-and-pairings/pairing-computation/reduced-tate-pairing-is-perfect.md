@@ -19,10 +19,11 @@ are isomorphisms. In particular, if $P\in E(F)[n]$ and $\hat t_n(P,R)=1$ for all
 ## Depends on
 
 - [Tate–Lichtenbaum pairing](tate-lichtenbaum-pairing.md)
+- [Abelian group of homomorphisms](../../../../../GroupTheory/semigroups-and-monoids/hom-group-abelian.md)
 
 ## Proof depends on
 
-None.
+- [The principal polarization of an elliptic curve](../../../../../AlgebraicGeometry/elliptic-curves/principal-polarization-of-an-elliptic-curve.md)
 
 ## Expansion
 

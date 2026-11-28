@@ -18,4 +18,4 @@ Bosma and Lenstra translate addition laws into functions on $E\times E$: the map
 
 ## Sources
 
-- W. Bosma and H. W. Lenstra, Jr., "Complete systems of two addition laws for elliptic curves", *Journal of Number Theory* 53(2):229–240, 1995, doi:10.1006/jnth.1995.1088, Sections 1–2 (pp. 229–233) and the Lemma of Section 2.
+- W. Bosma and H. W. Lenstra, Jr., "Complete systems of two addition laws for elliptic curves", *Journal of Number Theory* 53(2):229–240, 1995, doi:10.1006/jnth.1995.1088, author-hosted scan of the printed article, <https://www.math.ru.nl/~bosma/pubs/JNT1995.pdf>, Section 1 (pp. 229–230), including the paragraph between Theorems 1 and 2 on the zero law and equivalence (p. 230); Section 2 (pp. 231–232) with the Lemma (p. 232); and its explanation with the $(2,2)$ law from the chord formula (p. 233).

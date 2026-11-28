@@ -2,7 +2,7 @@
 
 Given points $P$ and $Q=[k]P\ne O$ on an elliptic curve over a finite field, with $k$ the minimal multiplier and $\operatorname{ord}(P)\ge4$, the EDS association problem asks for $W_{E,P}(k)=\psi_k(P)$, the value at $P$ of the $k$-th division polynomial, without being given $k$.
 
-Let $E$ be an elliptic curve over a finite field $K$ given by a Weierstrass equation, and let $P,Q\in E(K)$ with $P$ affine, $Q\in\langle P\rangle$, $Q\ne O$ and $\operatorname{ord}(P)\ge4$. Here $\psi_n$ ($n\in\mathbb{Z}$) are the division polynomials of the Weierstrass equation of $E$, normalized by $\psi_0=0$, $\psi_1=1$ and $\psi_{-n}=-\psi_n$, and $W_{E,P}(n)=\psi_n(x_P,y_P)$ for $P=(x_P,y_P)$ is the elliptic divisibility sequence of $P$; $W_{E,P}(n)=0$ exactly when $[n]P=O$. The *minimal multiplier* of $Q\in\langle P\rangle$ with respect to $P$ is the least integer $k\ge0$ with $Q=[k]P$. Let $k$ be the minimal multiplier of $Q$ with respect to $P$, so $0<k<\operatorname{ord}(P)$. The *EDS association problem* is: given $E$, $P$ and $Q$, determine
+Let $E$ be an elliptic curve over a finite field $K$ given by a Weierstrass equation, and let $P,Q\in E(K)$ with $P$ affine, $Q\in\langle P\rangle$, $Q\ne O$ and $\operatorname{ord}(P)\ge4$. Here $\psi_n$ ($n\in\mathbb{Z}$) are the integer-indexed division polynomials of the Weierstrass equation of $E$, and $W_{E,P}(n)=\psi_n(x_P,y_P)$ for $P=(x_P,y_P)$ is the elliptic divisibility sequence of $P$; $W_{E,P}(n)=0$ exactly when $[n]P=O$. The *minimal multiplier* of $Q\in\langle P\rangle$ with respect to $P$ is the least integer $k\ge0$ with $Q=[k]P$. Let $k$ be the minimal multiplier of $Q$ with respect to $P$, so $0<k<\operatorname{ord}(P)$. The *EDS association problem* is: given $E$, $P$ and $Q$, determine
 
 $$
 W_{E,P}(k)=\psi_k(x_P,y_P)\in K .
@@ -10,7 +10,7 @@ $$
 
 ## Depends on
 
-None.
+- [Elliptic-curve discrete logarithm problem](../elliptic-curve-discrete-logarithm-problem.md)
 
 ## Proof depends on
 
@@ -18,7 +18,7 @@ None.
 
 ## Expansion
 
-The sequence is the one given by the division polynomials of the fixed Weierstrass equation, not a rescaling of it. Given $k$, the term $W_{E,P}(k)$ is computable with $O(\log k)$ operations in $K$ by a double-and-add recurrence on blocks of consecutive terms (Lauter and Stange, Theorem 7, after Shipsey), so an ECDLP solver yields a solver for this problem. Prerequisites still to add to this graph: the division polynomials $\psi_n$ of a Weierstrass curve with their normalization and Ward recurrence, and the criterion that $\psi_n$ vanishes at a nonsingular affine point $P$ exactly when $[n]P=O$.
+The sequence is the one given by the division polynomials of the fixed Weierstrass equation, not a rescaling of it. Given $k$, the term $W_{E,P}(k)$ is computable with $O(\log k)$ operations in $K$ by a double-and-add recurrence on blocks of consecutive terms (Lauter and Stange, Theorem 7, after Shipsey), so an ECDLP solver yields a solver for this problem. Prerequisites still to add to this graph: a page for the integer-indexed division polynomials $\psi_n$ of a Weierstrass curve, and one for the criterion that $\psi_n$ vanishes at a nonsingular affine point $P$ exactly when $[n]P=O$.
 
 ## Sources
 

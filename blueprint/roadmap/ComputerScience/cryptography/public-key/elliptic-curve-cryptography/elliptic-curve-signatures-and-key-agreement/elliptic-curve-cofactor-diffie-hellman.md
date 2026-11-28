@@ -16,7 +16,7 @@ If $Q_U=[d_U]G$ and $Q_V=[d_V]G$ with $d_U,d_V\in[1,n-1]$, both parties compute 
 
 ## Proof depends on
 
-None.
+- [Lagrange's theorem](../../../../../GroupTheory/group-basics/lagrange-theorem.md)
 
 ## Expansion
 

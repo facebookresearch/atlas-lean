@@ -10,7 +10,7 @@ $$
 
 compute $\alpha$. Here $\alpha t_i\bmod p$ denotes the representative in $\{0,\dots,p-1\}$, and the $u_i$ may be any integers satisfying the error bound.
 
-In a different model, where an oracle returns exact information for multipliers chosen adaptively, the problem is easy: with a perfect oracle for $\mathrm{MSB}_1(\alpha t\bmod p)$, $\alpha$ is found with $O(\log p)$ queries, and with a perfect oracle for the least significant bit of $\alpha t\bmod p$, with $O(\log^2p)$ queries.
+In a different model, where an oracle returns exact information for multipliers chosen adaptively, the problem is easy. Here, for $x\in\{1,\dots,p-1\}$, the exact bit $\mathrm{MSB}_1(x)$ is $0$ if $x<p/2$ and $1$ otherwise, that is $\lfloor2x/p\rfloor$; it is not in general the leading bit of the binary representation of $x$, and it is distinct from the approximation $\mathrm{MSB}_k$ above, defined for $k>1$. With a perfect oracle for $\mathrm{MSB}_1(\alpha t\bmod p)$, $\alpha$ is found with $O(\log p)$ queries, and with a perfect oracle for the least significant bit of $\alpha t\bmod p$, with $O(\log^2p)$ queries.
 
 ## Depends on
 

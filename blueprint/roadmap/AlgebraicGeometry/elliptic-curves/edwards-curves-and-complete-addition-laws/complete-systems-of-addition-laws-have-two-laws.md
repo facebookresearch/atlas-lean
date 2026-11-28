@@ -20,4 +20,4 @@ Section 3: for a nonzero law of bidegree $(\mu,\nu)$ with $h=Z_3Z_1^{-\mu}Z_2^{-
 
 ## Sources
 
-- W. Bosma and H. W. Lenstra, Jr., "Complete systems of two addition laws for elliptic curves", *Journal of Number Theory* 53(2):229–240, 1995, doi:10.1006/jnth.1995.1088, Theorem 1, Section 3 (pp. 233–234) and the discussion after Theorem 2.
+- W. Bosma and H. W. Lenstra, Jr., "Complete systems of two addition laws for elliptic curves", *Journal of Number Theory* 53(2):229–240, 1995, doi:10.1006/jnth.1995.1088, author-hosted scan of the printed article, <https://www.math.ru.nl/~bosma/pubs/JNT1995.pdf>, Theorem 1 (p. 230), the first paragraph of p. 231, and Section 3 (pp. 233–234).

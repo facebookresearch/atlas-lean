@@ -7,11 +7,12 @@ For a supersingular elliptic curve over $\mathbb{F}_q$ there is $m\in\{1,2,3,4,6
 ## Depends on
 
 - [Supersingular elliptic curves](is-supersingular.md)
+- [Embedding degree](../../../ComputerScience/cryptography/public-key/advanced-encryption-and-pairings/embedding-degree-and-pairing-attacks/embedding-degree.md)
+- [Frobenius trace](../point-counts-and-frobenius-traces/frobenius-trace.md)
 
 ## Proof depends on
 
 - [Waterhouse's theorem on Frobenius traces](../point-counts-and-frobenius-traces/exists-is-elliptic-frobenius-trace-eq-if.md)
-- [Frobenius trace](../point-counts-and-frobenius-traces/frobenius-trace.md)
 
 ## Expansion
 

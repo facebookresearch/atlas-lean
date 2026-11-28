@@ -20,4 +20,4 @@ Section 4: let $s:E\times E\to E$ be subtraction and $\Delta=s^{-1}O$ the diagon
 
 ## Sources
 
-- W. Bosma and H. W. Lenstra, Jr., "Complete systems of two addition laws for elliptic curves", *Journal of Number Theory* 53(2):229–240, 1995, doi:10.1006/jnth.1995.1088, Theorem 2 (p. 230), the paragraph following it (p. 231) and Section 4 (pp. 234–235).
+- W. Bosma and H. W. Lenstra, Jr., "Complete systems of two addition laws for elliptic curves", *Journal of Number Theory* 53(2):229–240, 1995, doi:10.1006/jnth.1995.1088, author-hosted scan of the printed article, <https://www.math.ru.nl/~bosma/pubs/JNT1995.pdf>, Theorem 2 (p. 230), the paragraph following it (p. 231), and Section 4 (pp. 234–235).

@@ -1,6 +1,6 @@
 # MOV/Frey–Rück reduction of the ECDLP to a finite field
 
-Given an oracle for the reduced Tate–Lichtenbaum pairing over $\mathbb{F}_{q^k}$, the discrete logarithm problem in a subgroup of prime order $r$ of $E(\mathbb{F}_q)$ reduces to the discrete logarithm problem in the order-$r$ subgroup of $\mathbb{F}_{q^k}^*$, where $k$ is the embedding degree, with an expected $r/(r-1)+1$ oracle calls.
+The reduced Tate–Lichtenbaum pairing over $\mathbb{F}_{q^k}$ transfers the discrete logarithm problem in a subgroup of prime order $r$ of $E(\mathbb{F}_q)$ to the discrete logarithm problem in the order-$r$ subgroup of $\mathbb{F}_{q^k}^*$, where $k$ is the embedding degree: for a suitable $R$, $Q\mapsto\hat t_r(Q,R)$ is an isomorphism onto $\mu_r$.
 
 Let $E$ be an elliptic curve over $\mathbb{F}_q$, let $r$ be a prime with $r\mid\#E(\mathbb{F}_q)$ and $r\nmid q$, let $k=k(q,r)$ be the embedding degree, and let
 
@@ -11,10 +11,10 @@ $$
 be the reduced Tate–Lichtenbaum pairing of $E$ over $\mathbb{F}_{q^k}$, which is defined since $r\mid q^k-1$. Let $P\in E(\mathbb{F}_q)$ have order $r$. Then:
 
 1. For every $R\in E(\mathbb{F}_{q^k})$ the map $\langle P\rangle\to\mu_r$, $Q\mapsto\hat t_r(Q,R)$, is a group homomorphism.
-2. The map $R\mapsto \hat t_r(P,R)$ is a surjective homomorphism $E(\mathbb{F}_{q^k})\to\mu_r$; hence for $R$ uniform in $E(\mathbb{F}_{q^k})$, the value $z=\hat t_r(P,R)$ differs from $1$ with probability exactly $1-1/r$.
+2. The map $R\mapsto \hat t_r(P,R)$ is a surjective homomorphism $E(\mathbb{F}_{q^k})\to\mu_r$; in particular there is $R\in E(\mathbb{F}_{q^k})$ with $z=\hat t_r(P,R)\ne1$.
 3. If $z\ne1$ then $z$ generates $\mu_r$ and, for every $a\in\mathbb{Z}$, $\hat t_r([a]P,R)=z^a$. So $Q\mapsto\hat t_r(Q,R)$ is an isomorphism $\langle P\rangle\to\mu_r$, and the discrete logarithm of $Q$ to base $P$ equals, modulo $r$, the discrete logarithm of $\hat t_r(Q,R)$ to base $z$ in $\mathbb{F}_{q^k}^*$.
 
-Thus, given an oracle that evaluates $\hat t_r$ and a sampler for uniform points of $E(\mathbb{F}_{q^k})$, an ECDLP instance in $\langle P\rangle$ is solved by one discrete logarithm in the order-$r$ subgroup of $\mathbb{F}_{q^k}^*$, after an expected $r/(r-1)$ trials of sampling $R$ and evaluating $\hat t_r(P,R)$, plus one evaluation of $\hat t_r(Q,R)$. When $q$ is a proper prime power, $\mathbb{F}_{q^k}$ is an ambient target field, not necessarily the smallest field of characteristic $\operatorname{char}\mathbb{F}_q$ containing $\mu_r$.
+Thus an ECDLP instance in $\langle P\rangle$ is solved by one discrete logarithm in the order-$r$ subgroup of $\mathbb{F}_{q^k}^*$, once an $R$ with $\hat t_r(P,R)\ne1$ is known and $\hat t_r(Q,R)$ is evaluated. When $q$ is a proper prime power, $\mathbb{F}_{q^k}$ is an ambient target field, not necessarily the smallest field of characteristic $\operatorname{char}\mathbb{F}_q$ containing $\mu_r$.
 
 ## Depends on
 
@@ -22,6 +22,7 @@ Thus, given an oracle that evaluates $\hat t_r$ and a sampler for uniform points
 - [Embedding degree](../../advanced-encryption-and-pairings/embedding-degree-and-pairing-attacks/embedding-degree.md)
 - [Tate–Lichtenbaum pairing](../../advanced-encryption-and-pairings/pairing-computation/tate-lichtenbaum-pairing.md)
 - [Discrete-logarithm experiment](../../hardness-assumptions/dlog-game.md)
+- [Group homomorphisms](../../../../../GroupTheory/semigroups-and-monoids/group-homomorphism.md)
 
 ## Proof depends on
 
@@ -29,7 +30,7 @@ Thus, given an oracle that evaluates $\hat t_r$ and a sampler for uniform points
 
 ## Expansion
 
-Part 1 is linearity in the first argument. For part 2, linearity in the second argument makes $R\mapsto\hat t_r(P,R)$ a homomorphism, and perfectness with $P\ne O$ gives an $R$ with $\hat t_r(P,R)\ne1$; a nontrivial homomorphism onto a group of prime order $r$ is surjective with fibers of equal size, which gives the probability. Part 3 follows from part 1. Evaluating the oracle with Miller's algorithm on divisors with rational support is not always possible: on $y^2=x^3+2x^2+2$ over $\mathbb{F}_3$, with $r=2$ and $k=1$, the rational points are $O$ and $P=(2,0)$, and with $D_P=(P)-(O)$ no rational point is left for a shifted divisor representing $R=P$; a general evaluator needs divisors with points over extensions of $\mathbb{F}_{q^k}$ and arithmetic in those extensions. Menezes, Okamoto and Vanstone used the Weil pairing; Frey and Rück used the Tate–Lichtenbaum pairing, which needs only $E(\mathbb{F}_{q^k})$. For prime fields, the SEC 1 domain-parameter rules require $p^B\not\equiv1\pmod n$ for $1\le B<100$ to exclude small embedding degree.
+Part 1 is linearity in the first argument. For part 2, linearity in the second argument makes $R\mapsto\hat t_r(P,R)$ a homomorphism, and perfectness with $P\ne O$ gives an $R$ with $\hat t_r(P,R)\ne1$; a nontrivial homomorphism to a group of prime order $r$ is surjective. Part 3 follows from part 1. Calculation of the cost of finding $R$: the fibers of $R\mapsto\hat t_r(P,R)$ have equal size, so for $R$ uniform in $E(\mathbb{F}_{q^k})$ the value differs from $1$ with probability exactly $1-1/r$. With fresh independent uniform trials, one pairing evaluation per trial and one further evaluation on $Q$ after the first success, the expected number of pairing evaluations of that procedure is $r/(r-1)+1$. This counts pairing evaluations only, assumes an exact uniform sampler, and is not claimed to be optimal; it is derived here, not taken from the cited sources. Evaluating the pairing with Miller's algorithm on divisors with rational support is not always possible: on $y^2=x^3+2x^2+2$ over $\mathbb{F}_3$, with $r=2$ and $k=1$, the rational points are $O$ and $P=(2,0)$, and with $D_P=(P)-(O)$ no rational point is left for a shifted divisor representing $R=P$; a general evaluator needs divisors with points over extensions of $\mathbb{F}_{q^k}$ and arithmetic in those extensions. Menezes, Okamoto and Vanstone used the Weil pairing; Frey and Rück used the Tate–Lichtenbaum pairing, which needs only $E(\mathbb{F}_{q^k})$. For prime fields, the SEC 1 domain-parameter rules require $p^B\not\equiv1\pmod n$ for $1\le B<100$ to exclude small embedding degree.
 
 ## Sources
 

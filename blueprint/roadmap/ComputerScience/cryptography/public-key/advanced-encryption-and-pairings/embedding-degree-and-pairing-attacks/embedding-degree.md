@@ -20,9 +20,9 @@ None.
 
 ## Expansion
 
-$x^n-1$ is separable over $\mathbb{F}_q$ because $n$ is prime to the characteristic, so $\mu_n$ has $n$ elements and is cyclic. The group $\mathbb{F}_{q^j}^\times$ is cyclic of order $q^j-1$, so it contains a subgroup of order $n$, necessarily $\mu_n$, exactly when $n\mid q^j-1$, which holds exactly when the order of $q$ modulo $n$ divides $j$. The last remark applies the same argument with $p$ in place of $q$.
+$x^n-1$ is separable over $\mathbb{F}_q$ because $n$ is prime to the characteristic, so $\mu_n$ has $n$ elements and is cyclic. The group $\mathbb{F}_{q^j}^\times$ is cyclic of order $q^j-1$, so it contains a subgroup of order $n$, necessarily $\mu_n$, exactly when $n\mid q^j-1$, which holds exactly when the order of $q$ modulo $n$ divides $j$. The last remark applies the same argument with $p$ in place of $q$. This is Galbraith's Definition 26.3.7 (the least $k\ge1$ with $n\mid q^k-1$). Sutherland's Definition 23.32 is a different notion, the degree of the smallest extension over which all of $E[n]$ is rational; the discussion following it uses cyclicity of $\mathbb{F}_{q^k}^\times$ for the roots-of-unity criterion proved here.
 
 ## Sources
 
 - S. D. Galbraith, *Mathematics of Public Key Cryptography*, Cambridge University Press, 2012, doi:10.1017/CBO9781139012843; numbering from the author's extended and corrected version 2.0 chapters, <https://www.math.auckland.ac.nz/~sgal018/crypto-book/crypto-book.html>, Definition 26.3.7 and Section 26.4.
-- A. V. Sutherland, *18.783 Elliptic Curves*, Lecture 23 notes, MIT, Fall 2023, <https://math.mit.edu/classes/18.783/2023/LectureNotes23.pdf>, Section 23.7.
+- A. V. Sutherland, *18.783 Elliptic Curves*, Lecture 23 notes, MIT, Fall 2023, <https://math.mit.edu/classes/18.783/2023/LectureNotes23.pdf>, Section 23.7 (the discussion after Definition 23.32).

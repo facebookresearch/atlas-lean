@@ -1,13 +1,13 @@
 # Miller's algorithm
 
-Miller's algorithm evaluates $f_{n,P}$ at a divisor $D$ by a square-and-multiply loop over the binary digits of $n\ge1$, multiplying in one line-function value per doubling or addition step.
+For $P$ with $[n]P=O$, Miller's algorithm evaluates $f_{n,P}$ at a divisor $D$ by a square-and-multiply loop over the binary digits of $n\ge1$, multiplying in one line-function value per doubling or addition step.
 
-Let $E$ be an elliptic curve over a field $k$, $P\in E(k)$, $n=(1\,n_{m-1}\dots n_1n_0)_2\ge1$ with $m=\lfloor\log_2n\rfloor$, and $D$ a divisor on $E$ whose points are $k$-rational. With $G_{A,B}$ the line functions of the Miller-function page, the algorithm sets $f\leftarrow1$, $T\leftarrow P$ and, for $i=m-1,\dots,0$:
+Let $E$ be an elliptic curve over a field $k$, $n=(1\,n_{m-1}\dots n_1n_0)_2\ge1$ with $m=\lfloor\log_2n\rfloor$, $P\in E(k)$ with $[n]P=O$, and $D$ a divisor on $E$ whose points are $k$-rational. With $G_{A,B}$ the line functions of the Miller-function page, the algorithm sets $f\leftarrow1$, $T\leftarrow P$ and, for $i=m-1,\dots,0$:
 
 1. $f\leftarrow f^2\,G_{T,T}(D)$ and $T\leftarrow[2]T$;
 2. if $n_i=1$: $f\leftarrow f\,G_{T,P}(D)$ and $T\leftarrow T+P$.
 
-It returns $f$. If every line function $G_{T,T}$ and $G_{T,P}$ evaluated has neither a zero nor a pole at the points of $D$, the output equals $f_{n,P}(D)$. The loop has $\lfloor\log_2n\rfloor$ iterations; when $D$ has a bounded number of points with bounded coefficients, for instance $D=(Q)$, each iteration costs $O(1)$ operations in $k$, so $f_{n,P}(D)$ is computed with $O(\log n)$ field operations.
+It returns $f$. If every line function $G_{T,T}$ and $G_{T,P}$ evaluated has neither a zero nor a pole at the points of $D$, the output equals $f_{n,P}(D)$. The loop has $\lfloor\log_2n\rfloor$ iterations, each consisting of operations in $k$.
 
 ## Depends on
 
@@ -20,7 +20,7 @@ It returns $f$. If every line function $G_{T,T}$ and $G_{T,P}$ evaluated has nei
 
 ## Expansion
 
-Invariant: after processing the digits $n_{m-1},\dots,n_i$, with $j=(1n_{m-1}\dots n_i)_2$, one has $T=[j]P$ and $f=f_{j,P}(D)$. Doubling uses $f_{2j,P}=f_{j,P}^2G_{[j]P,[j]P}$ and the addition step uses $f_{j+1,P}=f_{j,P}G_{[j]P,P}$, both instances of the addition formula, evaluated at $D$ multiplicatively; the hypothesis on zeros and poles makes each evaluation a nonzero field element. Avoiding only the support of $f_{n,P}$ is not enough, because intermediate line functions can vanish or have poles at points of $D$. When $T=O$ or $P=O$ the line function is $1$. The values $G(X)$ are values of rational functions at regular points; substituting $X$ into an uncancelled quotient $l/v$ gives this value only when $v(X)\ne0$, and otherwise needs local cancellation.
+Invariant: after processing the digits $n_{m-1},\dots,n_i$, with $j=(1n_{m-1}\dots n_i)_2$, one has $T=[j]P$ and $f=f_{j,P}(D)$. Doubling uses $f_{2j,P}=f_{j,P}^2G_{[j]P,[j]P}$ and the addition step uses $f_{j+1,P}=f_{j,P}G_{[j]P,P}$, both instances of the addition formula, evaluated at $D$ multiplicatively; the hypothesis on zeros and poles makes each evaluation a nonzero field element. Avoiding only the support of $f_{n,P}$ is not enough, because intermediate line functions can vanish or have poles at points of $D$. When $T=O$ or $P=O$ the line function is $1$. Cost: each iteration evaluates one or two line functions at the points of $D$ and raises the values to the coefficients of $D$, so when $D$ has a bounded number of points with bounded coefficients the whole computation uses $O(\log n)$ operations in $k$; this count is derived from the loop, not taken from the cited statement. The same recurrence, without the hypothesis $[n]P=O$, evaluates $f_{n,P}$ at a single point: for every $n\ge1$ and $P,Q\in E(k)$, $f_{n,P}(Q)$ can be evaluated with $O(\log n)$ field operations in $k$ (Sutherland, Corollary 23.25), again when every intermediate line value at $Q$ is defined and nonzero. The values $G(X)$ are values of rational functions at regular points; substituting $X$ into an uncancelled quotient $l/v$ gives this value only when $v(X)\ne0$, and otherwise needs local cancellation.
 
 ## Sources
 

@@ -15,6 +15,7 @@ The hypothesis $r\nmid q-1$ cannot be dropped: when $r\mid q-1$ the embedding de
 ## Depends on
 
 - [Embedding degree](embedding-degree.md)
+- [Kernel of a group homomorphism](../../../../../GroupTheory/group-basics/group-homomorphism-kernel.md)
 
 ## Proof depends on
 

@@ -15,11 +15,12 @@ with target $u=(u_1,\dots,u_n,0)$. Then $\det L=p^n/2^{k+1}$ and $L$ contains $v
 ## Depends on
 
 - [Hidden number problem](hidden-number-problem.md)
+- [The Lenstra–Lenstra–Lovász algorithm](../../../../algebraic-and-numerical-algorithms/lattice-basis-reduction/the-lenstralenstralovasz-algorithm.md)
+- [Babai's nearest-plane algorithm](../../../../algebraic-and-numerical-algorithms/nearest-plane-and-lll-potential/babai-nearest-plane-algorithm.md)
 
 ## Proof depends on
 
-- [The Lenstra–Lenstra–Lovász algorithm](../../../../algebraic-and-numerical-algorithms/lattice-basis-reduction/the-lenstralenstralovasz-algorithm.md)
-- [Babai's nearest-plane algorithm](../../../../algebraic-and-numerical-algorithms/nearest-plane-and-lll-potential/babai-nearest-plane-algorithm.md)
+None.
 
 ## Expansion
 

@@ -13,6 +13,7 @@ Consequently, writing $c(P)$ for the constant term of the expansion of $\lambda(
 
 - [Divisors on a curve](../../../../../AlgebraicGeometry/algebraic-curves/divisors-on-curves/divisors-on-a-curve/curve-divisor.md)
 - [Order of an element at a place](../../../../../AlgebraicGeometry/algebraic-curves/divisors-on-curves/place/ord.md)
+- [Group homomorphisms](../../../../../GroupTheory/semigroups-and-monoids/group-homomorphism.md)
 
 ## Proof depends on
 
