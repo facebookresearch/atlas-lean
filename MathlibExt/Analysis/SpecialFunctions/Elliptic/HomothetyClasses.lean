@@ -10,6 +10,7 @@ module
 
 public import MathlibExt.NumberTheory.QuadraticForms.RootLattice
 public import MathlibExt.NumberTheory.QuadraticForms.ProperIdealRootLattice
+public import MathlibExt.Analysis.SpecialFunctions.Elliptic.JInvariant
 
 /-!
 # Homothety classes of period pairs
@@ -17,7 +18,8 @@ public import MathlibExt.NumberTheory.QuadraticForms.ProperIdealRootLattice
 For period pairs `L`, `L'` whose lattices satisfy `Λ' = cΛ` with `c ≠ 0`, the lattice invariants
 scale as `G_n(L') = c⁻ⁿ G_n(L)` for `n ≥ 3` (for `n ≤ 2` the series diverges and both sides are
 `0` by the `tsum` convention), so `g₂(L') = c⁻⁴ g₂(L)`, `g₃(L') = c⁻⁶ g₃(L)`, the discriminant
-`Δ = g₂³ - 27 g₃²` scales by `c⁻¹²`, and `1728 g₂³ / Δ` is unchanged. With
+`Δ = g₂³ - 27 g₃²` scales by `c⁻¹²`, and the $j$-invariant `PeriodPair.jInvariant`,
+`1728 g₂³ / Δ`, is unchanged. With
 `PeriodPair.exists_isHomothetic_ofTau` (every period pair is homothetic to `(1, τ)` for some `τ`
 in the upper half-plane) and `PeriodPair.isHomothetic_ofTau_iff` (when `(1, τ)` and `(1, τ')` are
 homothetic), this gives the three statements of Milne's Chapter III, §1–§3 used in the complex
@@ -105,10 +107,9 @@ theorem discriminant_eq_of_lattice_eq_smul {L L' : PeriodPair} {c : ℂ} (hc : c
   rw [g₂_eq_of_lattice_eq_smul hc h, g₃_eq_of_lattice_eq_smul hc h]
   ring
 
-/-- **The quotient $1728 g_2^3 / \Delta$ of homothetic lattices.** If the lattices of the period
-pairs $L$ and $L'$ satisfy $\Lambda' = c\Lambda$ with $c \ne 0$, then, with
-$\Delta = g_2^3 - 27 g_3^2$,
-$1728\, g_2(L')^3 / \Delta(L') = 1728\, g_2(L)^3 / \Delta(L)$.
+/-- **The $j$-invariant of homothetic lattices.** If the lattices of the period pairs $L$ and
+$L'$ satisfy $\Lambda' = c\Lambda$ with $c \ne 0$, then $j(L') = j(L)$ for the $j$-invariant
+`PeriodPair.jInvariant`, $j = 1728\, g_2^3 / \Delta$ with $\Delta = g_2^3 - 27 g_3^2$.
 
 The statement needs no hypothesis $\Delta(L) \ne 0$: if $\Delta(L) = 0$, then $\Delta(L') = 0$ and
 both sides are $0$ under Lean's convention $x / 0 = 0$.
@@ -117,8 +118,8 @@ Source: J. S. Milne, *Elliptic Curves*, 2nd ed., World Scientific, 2021, Chapter
 of Theorem 3.10, p. 96. -/
 theorem jInvariant_eq_of_lattice_eq_smul {L L' : PeriodPair} {c : ℂ} (hc : c ≠ 0)
     (h : (L'.lattice : Set ℂ) = c • (L.lattice : Set ℂ)) :
-    1728 * L'.g₂ ^ 3 / (L'.g₂ ^ 3 - 27 * L'.g₃ ^ 2) =
-      1728 * L.g₂ ^ 3 / (L.g₂ ^ 3 - 27 * L.g₃ ^ 2) := by
+    L'.jInvariant = L.jInvariant := by
+  unfold jInvariant
   rw [discriminant_eq_of_lattice_eq_smul hc h, g₂_eq_of_lattice_eq_smul hc h]
   have hc12 : c⁻¹ ^ 12 ≠ 0 := pow_ne_zero _ (inv_ne_zero hc)
   rw [show 1728 * (c⁻¹ ^ 4 * L.g₂) ^ 3 = c⁻¹ ^ 12 * (1728 * L.g₂ ^ 3) by ring,
@@ -142,8 +143,8 @@ $\Delta = g_2^3 - 27 g_3^2$:
 
 1. if the lattices of $L$ and $L'$ satisfy $\Lambda' = c\Lambda$ with $c \ne 0$, then
    $g_2(L') = c^{-4} g_2(L)$, $g_3(L') = c^{-6} g_3(L)$, $\Delta(L') = c^{-12}\Delta(L)$ and
-   $1728\, g_2(L')^3 / \Delta(L') = 1728\, g_2(L)^3 / \Delta(L)$ (with $x / 0 = 0$, so no
-   hypothesis $\Delta(L) \ne 0$ is needed);
+   $j(L') = j(L)$ for the $j$-invariant `PeriodPair.jInvariant`, $j = 1728\, g_2^3 / \Delta$
+   (with $x / 0 = 0$, so no hypothesis $\Delta(L) \ne 0$ is needed);
 2. every period pair is homothetic to $(1, \tau)$ for some $\tau$ in the upper half-plane;
 3. for $\tau, \tau' \in \mathbb{H}$, the period pairs $(1, \tau)$ and $(1, \tau')$ are homothetic
    if and only if $\tau' = \gamma\tau$ for some $\gamma \in \mathrm{SL}_2(\mathbb{Z})$
@@ -156,8 +157,7 @@ theorem homothety_classes :
     (∀ (L L' : PeriodPair) (c : ℂ), c ≠ 0 → (L'.lattice : Set ℂ) = c • (L.lattice : Set ℂ) →
       L'.g₂ = c⁻¹ ^ 4 * L.g₂ ∧ L'.g₃ = c⁻¹ ^ 6 * L.g₃ ∧
       L'.g₂ ^ 3 - 27 * L'.g₃ ^ 2 = c⁻¹ ^ 12 * (L.g₂ ^ 3 - 27 * L.g₃ ^ 2) ∧
-      1728 * L'.g₂ ^ 3 / (L'.g₂ ^ 3 - 27 * L'.g₃ ^ 2) =
-        1728 * L.g₂ ^ 3 / (L.g₂ ^ 3 - 27 * L.g₃ ^ 2)) ∧
+      L'.jInvariant = L.jInvariant) ∧
     (∀ L : PeriodPair, ∃ τ : ℍ, L.IsHomothetic (ofTau τ τ.im_pos.ne')) ∧
     (∀ τ τ' : ℍ, (ofTau τ τ.im_pos.ne').IsHomothetic (ofTau τ' τ'.im_pos.ne') ↔
       ∃ γ : SL(2, ℤ), τ' = γ • τ) :=
