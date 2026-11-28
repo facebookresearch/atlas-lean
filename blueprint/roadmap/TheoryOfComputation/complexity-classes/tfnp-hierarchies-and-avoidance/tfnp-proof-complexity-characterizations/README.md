@@ -2,6 +2,8 @@
 
 - [Query total search problems TFNP^dt, decision-tree formulations and the black-box classes](query-tfnp-and-formulations.md)
 - [The false-clause search problem S(F) of an unsatisfiable CNF and its universality for TFNP^dt](false-clause-search-problem.md)
+- [Characterizing a proof system by a black-box TFNP problem](tfnp-characterization-of-proof-systems.md)
+- [A closed proof system with short proofs of its own reflection principle is characterized by a black-box TFNP problem](reflection-principles-yield-tfnp-characterizations.md)
 - [PLS^dt is characterized by Resolution: PLS^dt(S(F)) = Θ(Res(F))](pls-dt-characterized-by-resolution.md)
 - [Reversible Resolution: a MaxSAT-style fragment of Resolution with consumed premises](reversible-resolution.md)
 - [Unary Nullstellensatz and unary Sherali–Adams refutations of CNF formulas](unary-nullstellensatz-and-unary-sherali-adams.md)

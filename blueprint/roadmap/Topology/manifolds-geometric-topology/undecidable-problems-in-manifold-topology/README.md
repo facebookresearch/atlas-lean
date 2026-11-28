@@ -12,3 +12,5 @@ Homeomorphism and recognition problems for triangulated manifolds, immersibility
 - [Deciding whether a finite simplicial complex is a manifold is undecidable](manifold-detection-is-undecidable.md)
 - [Embeddability of d- and (d−1)-dimensional complexes in d-space is undecidable for d at least five](embeddability-of-complexes-in-r-d-undecidable.md)
 - [Isomorphism problems for simply connected Liouville domains and contact manifolds are algorithmically unsolvable](liouville-and-contact-isomorphism-undecidable.md)
+- [Triangulations of an unrecognizable manifold are not connected within a computable number of moves](no-computably-ergodic-moves-for-triangulations.md)
+- [The number of triangulations of an algorithmically unrecognizable 4-manifold is not computable](number-of-triangulations-is-not-computable.md)

@@ -1,6 +1,6 @@
 # Variance of kinship-corrected gene diversity estimators
 
-**Setting.** As in [Unbiased gene diversity estimator from linear allele-frequency estimators](unbiased-gene-diversity-estimator-from-linear-allele-frequency-estimators.md): a locus with allele frequencies $p_1, \dots, p_I$, a sample of $n$ individuals of arbitrary ploidy, relatedness and inbreeding, a linear allele-frequency estimator $\breve p_i = \sum_k w_k X_k(i)$ with $\sum_k w_k = 1$, and the unbiased estimator $\breve H = (1 - \sum_i \breve p_i^2)/(1 - \rho_2)$. Besides the pairwise kinship $\Phi_{jk}$, let $\Phi_{jkj'}$ be the probability that three alleles drawn one each from $j, k, j'$ are all IBD, $\Phi_{jkj'k'}$ the probability that four alleles drawn one each from $j, k, j', k'$ are all IBD, and $\Phi_{jk,j'k'}$ the joint probability that the alleles from $j$ and $k$ are IBD and the alleles from $j'$ and $k'$ are IBD (individuals not necessarily distinct). Define the weighted mean coefficients
+**Setting.** As in [Unbiased gene diversity estimator from linear allele-frequency estimators](unbiased-gene-diversity-estimator-from-linear-allele-frequency-estimators.md): a locus with allele frequencies $p_1, \dots, p_I$, a sample of $n$ individuals of arbitrary ploidy, relatedness and inbreeding, a linear allele-frequency estimator $\breve p_i = \sum_k w_k X_k(i)$ with weights $0 \le w_k \le 1$ and $\sum_k w_k = 1$ (the source's Eq. 5), and the unbiased estimator $\breve H = (1 - \sum_i \breve p_i^2)/(1 - \rho_2)$. Besides the pairwise kinship $\Phi_{jk}$, let $\Phi_{jkj'}$ be the probability that three alleles drawn one each from $j, k, j'$ are all IBD, $\Phi_{jkj'k'}$ the probability that four alleles drawn one each from $j, k, j', k'$ are all IBD, and $\Phi_{jk,j'k'}$ the joint probability that the alleles from $j$ and $k$ are IBD and the alleles from $j'$ and $k'$ are IBD (individuals not necessarily distinct). Define the weighted mean coefficients
 
 $$\rho_2 = \sum_{j,k} w_j w_k \Phi_{jk}, \quad \rho_3 = \sum_{j,k,j'} w_j w_k w_{j'} \Phi_{jkj'}, \quad \rho_4 = \sum_{j,k,j',k'} w_j w_k w_{j'} w_{k'} \Phi_{jkj'k'}, \quad \rho_{2,2} = \sum_{j,k,j',k'} w_j w_k w_{j'} w_{k'} \Phi_{jk,j'k'} .$$
 
@@ -12,7 +12,7 @@ $$\operatorname{Var}\Big[1 - \sum_{i=1}^I \breve p_i^{\,2}\Big] = \rho_{2,2} - \
 
 $$\operatorname{Var}\Big[1 - \sum_{i=1}^I \breve p_i^{\,2}\Big] \approx 4\rho_2\Big[\sum_i p_i^3 - \Big(\sum_i p_i^2\Big)^2\Big].$$
 
-The sample-proportion estimator $\tilde H$ and the BLUE-based estimator $\tilde H_{\mathrm{BLUE}}$ are the cases $w_k = m_k/\sum_j m_j$ and $w = K^{-1}\mathbf 1/(\mathbf 1^{\mathsf T}K^{-1}\mathbf 1)$.
+The sample-proportion estimator $\tilde H$ and the BLUE-based estimator $\tilde H_{\mathrm{BLUE}}$ are the cases $w_k = m_k/\sum_j m_j$ and $w = K^{-1}\mathbf 1/(\mathbf 1^{\mathsf T}K^{-1}\mathbf 1)$, the latter when its weights lie in $[0,1]$.
 
 ## Depends on
 

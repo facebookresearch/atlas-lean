@@ -4,3 +4,4 @@ Individual-based model of daily serial transfer in long-term bacterial evolution
 
 - [Kingman limit of the neutral serial-transfer Cannings model](kingman-limit-of-the-serial-transfer-cannings-model.md)
 - [Fixation probability of a beneficial mutation under serial transfer](fixation-probability-of-a-beneficial-mutation-under-serial-transfer.md)
+- [Fitness trajectory of the long-term evolution experiment](fitness-trajectory-of-the-long-term-evolution-experiment/README.md)

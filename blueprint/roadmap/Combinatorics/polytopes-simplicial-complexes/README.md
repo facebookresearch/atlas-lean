@@ -20,3 +20,4 @@ Face numbers and h-vectors of simplicial spheres and polytopes (Dehn–Sommervil
 - [Bounded-degree coboundary expanders over F₂ in dimensions at least three](bounded-degree-coboundary-expanders.md)
 - [Coboundary and Cosystolic Expansion](coboundary-and-cosystolic-expansion/README.md)
 - [Local Spectral High-Dimensional Expanders](local-spectral-high-dimensional-expanders/README.md)
+- [Convex and good-cover neural codes](convex-and-good-cover-neural-codes/README.md)

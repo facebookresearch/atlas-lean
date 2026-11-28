@@ -8,3 +8,4 @@ Relational database design and querying (keys, prime attributes, normal forms, c
 - [Deadlock potential](deadlock-potential/README.md)
 - [k-anonymity](k-anonymity/README.md)
 - [Minimum cardinality key](minimum-cardinality-key/README.md)
+- [Storage, registers and deadlock](storage-registers-and-deadlock/README.md)

@@ -67,15 +67,6 @@ theorem_wanted sylvester_odd_index_mod_ten
     (i : ℕ) (hi : 1 ≤ i) :
     sylvesterNumber (2 * i + 1) % 10 = 3
 
-/-- **The only triangular Sylvester number is $3$.** Let $S_n$ denote the $n$-th Sylvester
-number. A natural number $x$ equals $S_n$ for some $n$ and satisfies $2x = m(m + 1)$ for some
-natural number $m \ge 1$ if and only if $x = 3$.
-
-Source: Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Corollary 1(b). -/
-theorem_wanted triangular_sylvester_values_eq :
-    {x : ℕ | ∃ n m : ℕ, 1 ≤ m ∧ x = sylvesterNumber n ∧
-      2 * x = m * (m + 1)} = {3}
-
 /-- **No Sylvester number is perfect.** For every natural number $n$, the $n$-th Sylvester number
 $S_n$ is not a perfect number.
 
