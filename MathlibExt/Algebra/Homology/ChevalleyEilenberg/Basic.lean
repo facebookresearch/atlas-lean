@@ -15,31 +15,21 @@ public import Mathlib.Algebra.Lie.Basic
 public import Mathlib.LinearAlgebra.ExteriorPower.Basic
 
 /-!
-# Exterior chain data and the Chevalley–Eilenberg bracket formula
+# Exterior chain complexes and Lie-map compatibility
 
-Let R be a commutative ring and L a Lie algebra over R. The degree-n
-trivial-coefficient chain object is Λ_R^n L. Differential data consist
-of R-linear maps d_n : Λ_R^{n+1} L → Λ_R^n L with d_n d_{n+1}=0.
-Their chain category is ModuleCat over R at max{u,v} for independent
-scalar and Lie-algebra carrier universes.
+For a commutative ring R and an R-Lie algebra L, the degree-n exterior chain object is
+Λ_R^n L. A square-zero family of R-linear maps Λ_R^{n+1}L → Λ_R^nL determines a
+nonnegative chain complex in ModuleCat at max{u,v}, with independent scalar and Lie
+carrier universes. Specified exterior coordinates transport the differential of a complex
+to such a family.
 
-A boundary prescription β_n assigns a value to each ordered (n+1)-tuple
-in L. Presented differential data satisfy
-d_n(x_0 ∧ ⋯ ∧ x_n)=β_n(x).
-The canonical bracket prescription is zero for n=0 and, for n≥1,
-β_n(x)=∑_{0≤i<j≤n} (−1)^{i+j}
-[x_i,x_j] ∧ (the remaining entries in their given order).
-Each bracket is put first; the boundary from degree two to one is
-−[x,y].
+A Lie homomorphism gives maps on these exterior powers. Compatibility with two differential
+families means that their differential squares commute, and supplies the corresponding
+chain map. Compatibility is stable under identity and composition.
 
-Exterior-power maps of a Lie homomorphism give a chain map whenever
-they commute with the supplied differentials. Naturality of the
-boundary prescriptions proves this compatibility for presented data.
-A complex with specified exterior-power coordinates can also be
-transported to these differential objects.
-
-Reference: C. Chevalley and S. Eilenberg, Cohomology theory of Lie groups
-and Lie algebras, Transactions of the AMS 63 (1948).
+The bracket prescription and its presentation are developed in Presentation, and its
+canonical realization and coefficient complex are constructed by the corresponding
+Chevalley–Eilenberg boundary owners.
 -/
 
 @[expose] public section
@@ -112,71 +102,6 @@ The square-zero condition on exterior chain data is
 D.d_n D.d_{n+1}=0:Λ_R^{n+2}L→Λ_R^nL for every n≥0. -/
   d_comp_d : ∀ n : ℕ, (d n).comp (d (n + 1)) = 0
 
-/-- Let R be a commutative ring and L a Lie algebra over R,
-with its Lie ring structure.
-A pure-boundary prescription is a family of functions
-β_n:L^{n+1}→Λ_R^nL on ordered tuples, one for each n≥0.
-PresentedData relates such a prescription to linear exterior differentials. -/
-abbrev PureBoundary := ∀ n : ℕ, (Fin (n + 1) → L) → (⋀[R]^n L)
-
-/-- Let R be a commutative ring and L a Lie algebra over R,
-with its Lie ring structure.
-The canonical bracket prescription is β_0(x)=0 and, for n≥1,
-β_n(x)=∑_{0≤i<j≤n}(−1)^{i+j}[x_i,x_j]∧x with entries i,j deleted.
-The bracket is first and the remaining entries retain their order;
-in exterior degree two this is −[x,y]. -/
-noncomputable def bracketBoundary : PureBoundary R L
-  | 0, _ => 0
-  | n + 1, v =>
-      ∑ i : Fin (n + 1), ∑ j ∈ Finset.Ici i,
-        ((-1 : R) ^ (i.val + j.val + 1)) •
-          exteriorPower.ιMulti R (n + 1)
-            (Matrix.vecCons ⁅v i.castSucc, v j.succ⁆
-              (j.removeNth (i.castSucc.removeNth v)))
-
-/-- Let R be a commutative ring and L a Lie algebra over R,
-with its Lie ring structure.
-For a prescription β, PresentedData is square-zero exterior
-chain data D satisfying D.d_n(x_0∧⋯∧x_n)=β_n(x)
-on every decomposable wedge. -/
-structure PresentedData (boundary : PureBoundary R L) extends ChainData R L where
-  /-- Let R be a commutative ring and L a Lie algebra over R,
-with its Lie ring structure.
-Presented exterior data D with prescription β satisfy
-D.d_n(x_0∧⋯∧x_n)=β_n(x) for every ordered (n+1)-tuple x. -/
-  d_apply_ιMulti : ∀ (n : ℕ) (v : Fin (n + 1) → L),
-    d n (exteriorPower.ιMulti R (n + 1) v) = boundary n v
-
-/-- Let R be a commutative ring and L a Lie algebra over R,
-with its Lie ring structure.
-If D and E are two exterior differential data presented by the
-same tuple prescription β, then D.d_n=E.d_n as R-linear maps
-in every degree n. -/
-theorem PresentedData.d_eq
-    {boundary : PureBoundary R L}
-    (D E : PresentedData R L boundary) (n : ℕ) : D.d n = E.d n := by
-  apply exteriorPower.linearMap_ext
-    (R := R) (n := n + 1) (M := L) (N := ⋀[R]^n L)
-  apply AlternatingMap.ext
-  intro v
-  change D.d n (exteriorPower.ιMulti R (n + 1) v) =
-    E.d n (exteriorPower.ιMulti R (n + 1) v)
-  rw [D.d_apply_ιMulti, E.d_apply_ιMulti]
-
-variable {R L} in
-/-- Let R be a commutative ring and L a Lie algebra over R,
-with its Lie ring structure.
-For data presented by the canonical bracket prescription,
-the differential Λ_R^1L→Λ_R^0L is zero. -/
-theorem PresentedData.d_zero
-    (D : PresentedData R L (bracketBoundary R L)) : D.d 0 = 0 := by
-  apply exteriorPower.linearMap_ext
-    (R := R) (n := 1) (M := L) (N := ⋀[R]^0 L)
-  apply AlternatingMap.ext
-  intro a
-  change D.d 0 (exteriorPower.ιMulti R 1 a) = 0
-  exact D.d_apply_ιMulti 0 a
-
 namespace ChainData
 
 /-- Let R be a commutative ring and L a Lie algebra over R,
@@ -225,7 +150,7 @@ def ofComplex
 with its Lie ring structure.
 Let L′ be another R-Lie algebra in the same carrier universe,
 D,D′ exterior differential data and f:L→L′ a Lie homomorphism.
-Compatibility means D′.d_n Λ^{n+1}f=Λ^n f D.d_n for all n. -/
+The proposition Hom D D′ f asserts D′.d_n Λ^{n+1}f=Λ^n f D.d_n for every n. -/
 structure Hom
     {L' : Type v} [LieRing L'] [LieAlgebra R L']
     (D : ChainData R L) (D' : ChainData R L')
@@ -238,74 +163,6 @@ in every exterior degree. -/
   comm : ∀ n : ℕ,
     (D'.d n).comp (exteriorPower.map (n + 1) f.toLinearMap) =
       (exteriorPower.map n f.toLinearMap).comp (D.d n)
-
-/-- Let R be a commutative ring and L a Lie algebra over R,
-with its Lie ring structure.
-For prescriptions β on L and β′ on L′, and a Lie homomorphism
-f:L→L′, boundary naturality means
-β′_n(f∘x)=Λ_R^n f(β_n(x)) for every ordered (n+1)-tuple x. -/
-def BoundaryNatural
-    {L' : Type v} [LieRing L'] [LieAlgebra R L']
-    (boundary : PureBoundary R L) (boundary' : PureBoundary R L')
-    (f : L →ₗ⁅R⁆ L') : Prop :=
-  ∀ (n : ℕ) (v : Fin (n + 1) → L),
-    exteriorPower.map n f.toLinearMap (boundary n v) =
-      boundary' n (fun i => f (v i))
-
-/-- Let R be a commutative ring and L a Lie algebra over R,
-with its Lie ring structure.
-Every Lie homomorphism f:L→L′ preserves the canonical bracket
-prescriptions: β^{L′}_n(f∘x)=Λ_R^n f(β^L_n(x)).
-The bracket-front placement and signs are the same on both sides. -/
-theorem bracketBoundary_natural
-    {L' : Type v} [LieRing L'] [LieAlgebra R L']
-    (f : L →ₗ⁅R⁆ L') :
-    BoundaryNatural R L (bracketBoundary R L) (bracketBoundary R L') f := by
-  intro n x
-  cases n with
-  | zero => simp [bracketBoundary]
-  | succ n =>
-      simp only [bracketBoundary, map_sum, map_smul,
-        exteriorPower.map_apply_ιMulti, Function.comp_def]
-      apply Finset.sum_congr rfl
-      intro i hi
-      apply Finset.sum_congr rfl
-      intro j hj
-      have hv :
-          (fun k => f (Matrix.vecCons ⁅x i.castSucc, x j.succ⁆
-            (j.removeNth (i.castSucc.removeNth x)) k)) =
-            Matrix.vecCons ⁅f (x i.castSucc), f (x j.succ)⁆
-              (j.removeNth (i.castSucc.removeNth fun i => f (x i))) := by
-        funext k
-        refine Fin.cases ?_ (fun k => ?_) k
-        · exact f.map_lie _ _
-        · rfl
-      congr 2
-
-/-- Let R be a commutative ring and L a Lie algebra over R,
-with its Lie ring structure.
-Let D,D′ be presented by β,β′ and let f:L→L′ be a Lie
-homomorphism with β′_n(f∘x)=Λ^n f(β_n(x)). Then the exterior
-maps commute with the differentials of D,D′ in every degree. -/
-theorem homOfBoundaryNatural
-    {L' : Type v} [LieRing L'] [LieAlgebra R L']
-    {boundary : PureBoundary R L} {boundary' : PureBoundary R L'}
-    (D : PresentedData R L boundary) (D' : PresentedData R L' boundary')
-    (f : L →ₗ⁅R⁆ L') (hf : BoundaryNatural R L boundary boundary' f) :
-    Hom (R := R) (L := L) D.toChainData D'.toChainData f where
-  comm n := by
-    apply exteriorPower.linearMap_ext
-      (R := R) (n := n + 1) (M := L) (N := ⋀[R]^n L')
-    apply AlternatingMap.ext
-    intro v
-    change D'.d n
-        (exteriorPower.map (n + 1) f.toLinearMap
-          (exteriorPower.ιMulti R (n + 1) v)) =
-      exteriorPower.map n f.toLinearMap
-        (D.d n (exteriorPower.ιMulti R (n + 1) v))
-    rw [exteriorPower.map_apply_ιMulti, D'.d_apply_ιMulti,
-      D.d_apply_ιMulti, hf n v]
-    rfl
 
 /-- Let R be a commutative ring and L a Lie algebra over R,
 with its Lie ring structure.

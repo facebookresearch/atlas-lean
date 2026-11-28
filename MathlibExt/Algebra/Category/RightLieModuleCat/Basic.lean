@@ -12,6 +12,7 @@ module
 public import MathlibExt.Algebra.Category.LieModuleCat.Basic
 public import Mathlib.Algebra.Lie.OfAssociative
 public import Mathlib.Algebra.Module.Submodule.Basic
+public import Mathlib.CategoryTheory.Equivalence
 import Mathlib.Tactic.Abel
 
 /-!
@@ -24,8 +25,9 @@ action satisfying `m · [x,y] = (m · x) · y - (m · y) · x`. Negation gives a
 A coefficient map over a Lie homomorphism `f : L → L'` is an `R`-linear map `g : M → N` with
 `g(m · x) = g(m) · f(x)`. Such maps form a linear submodule and compose over composite Lie
 maps. Over a fixed `L` and coefficient universe they give a preadditive `R`-linear category;
-negation of the action defines an additive `R`-linear functor to left Lie modules. The scalar,
-Lie-algebra, and coefficient universes are independent.
+negation of the action defines an additive R-linear equivalence with left Lie modules.
+Both directions retain the coefficient maps, and the unit and counit act by identity maps.
+The scalar, Lie-algebra, and coefficient universes are independent.
 -/
 
 @[expose] public section
@@ -134,10 +136,8 @@ def toLeft (M : RightLieModuleCat.{w} R L) : LieModuleCat.{w} R L := by
   letI : LieRingModule L M := negativeLieRingModule M
   letI : LieModule R L M :=
     { smul_lie := fun r x m => by
-        change -(M.action (r • x) m) = r • -(M.action x m)
         rw [M.action.map_smul, LinearMap.smul_apply, smul_neg]
       lie_smul := fun r x m => by
-        change -(M.action x (r • m)) = r • -(M.action x m)
         rw [(M.action x).map_smul, smul_neg] }
   exact LieModuleCat.of R L M
 
@@ -164,9 +164,8 @@ def fromLeft (M : LieModuleCat.{w} R L) : RightLieModuleCat.{w} R L where
   action := -(LieModule.toEnd R L M).toLinearMap
   right_lie x y m := by
     change -⁅⁅x, y⁆, m⁆ = -⁅y, -⁅x, m⁆⁆ - (-⁅x, -⁅y, m⁆⁆)
-    rw [lie_neg, lie_neg, neg_neg, neg_neg, leibniz_lie]
+    rw [lie_neg, lie_neg, neg_neg, neg_neg, lie_lie]
     abel
-    rw [neg_one_smul, ← lie_skew y x, neg_lie]
 
 /-- The sign formula for left-to-right Lie conversion.
 
@@ -375,6 +374,121 @@ instance toLeftFunctor_linear : (toLeftFunctor (R := R) (L := L)).Linear R where
     apply LieModuleHom.ext
     intro m
     rfl
+
+/-- A left Lie-module homomorphism intertwines the associated negative right actions.
+The source and target coefficient carriers may lie in independent universes. -/
+def fromLeftMap {M : LieModuleCat.{w} R L} {N : LieModuleCat.{w'} R L}
+    (g : M →ₗ⁅R,L⁆ N) :
+    HomOver (LieHom.id : L →ₗ⁅R⁆ L) (fromLeft M) (fromLeft N) :=
+  ⟨g.toLinearMap, by
+    intro x m
+    change g (-⁅x, m⁆) = -⁅x, g m⁆
+    rw [g.map_neg, g.map_lie]⟩
+
+/-- The right coefficient map associated to a left Lie-module homomorphism has the same
+value on each coefficient element. -/
+@[simp]
+theorem fromLeftMap_apply {M : LieModuleCat.{w} R L} {N : LieModuleCat.{w'} R L}
+    (g : M →ₗ⁅R,L⁆ N) (m : M) : (fromLeftMap g).toLinearMap m = g m := rfl
+
+/-- Negating the left action gives a functor to right Lie modules over the same R-Lie algebra.
+It preserves the coefficient carrier and the underlying linear maps. -/
+def fromLeftFunctor : LieModuleCat.{w} R L ⥤ RightLieModuleCat.{w} R L where
+  obj := fromLeft
+  map g := fromLeftMap g
+  map_id M := by
+    apply hom_ext
+    intro m
+    rfl
+  map_comp g h := by
+    apply hom_ext
+    intro m
+    rfl
+
+/-- Left-to-right conversion preserves sums of Lie-module homomorphisms. -/
+instance fromLeftFunctor_additive : (fromLeftFunctor (R := R) (L := L)).Additive where
+  map_add {M N} g h := by
+    apply hom_ext
+    intro m
+    rfl
+
+/-- Left-to-right conversion preserves scalar multiples of Lie-module homomorphisms. -/
+instance fromLeftFunctor_linear : (fromLeftFunctor (R := R) (L := L)).Linear R where
+  map_smul {M N} g r := by
+    apply hom_ext
+    intro m
+    rfl
+
+/-- Converting a right action to a negative left action and back gives an isomorphic
+right module. The unit isomorphism is the identity on its coefficient carrier. -/
+def toLeftUnitIso (M : RightLieModuleCat.{w} R L) : M ≅ fromLeft (toLeft M) where
+  hom := ⟨LinearMap.id, by
+    intro x m
+    change M.action x m = -(-(M.action x m))
+    simp only [neg_neg]⟩
+  inv := ⟨LinearMap.id, by
+    intro x m
+    change -(-(M.action x m)) = M.action x m
+    simp only [neg_neg]⟩
+  hom_inv_id := by
+    apply hom_ext
+    intro m
+    rfl
+  inv_hom_id := by
+    apply hom_ext
+    intro m
+    rfl
+
+/-- Converting a left action to a negative right action and back gives an isomorphic
+left module. The counit isomorphism is the identity on its coefficient carrier. -/
+def toLeftCounitIso (M : LieModuleCat.{w} R L) : toLeft (fromLeft M) ≅ M where
+  hom :=
+    { toLinearMap := LinearMap.id
+      map_lie' := by
+        intro x m
+        change -(-⁅x, m⁆) = ⁅x, m⁆
+        simp only [neg_neg] }
+  inv :=
+    { toLinearMap := LinearMap.id
+      map_lie' := by
+        intro x m
+        change ⁅x, m⁆ = -(-⁅x, m⁆)
+        simp only [neg_neg] }
+  hom_inv_id := by
+    apply LieModuleHom.ext
+    intro m
+    rfl
+  inv_hom_id := by
+    apply LieModuleHom.ext
+    intro m
+    rfl
+
+/-- For a commutative ring R and R-Lie algebra L, negation of the coefficient action gives
+an R-linear equivalence from right Lie modules to left Lie modules in any coefficient
+universe. Its inverse also negates the action; unit and counit are identity coefficient maps. -/
+def equivalence : RightLieModuleCat.{w} R L ≌ LieModuleCat.{w} R L where
+  functor := toLeftFunctor
+  inverse := fromLeftFunctor
+  unitIso := NatIso.ofComponents toLeftUnitIso (by
+    intro M N g
+    apply hom_ext
+    intro m
+    rfl)
+  counitIso := NatIso.ofComponents toLeftCounitIso (by
+    intro M N g
+    apply LieModuleHom.ext
+    intro m
+    rfl)
+  functor_unitIso_comp M := by
+    apply LieModuleHom.ext
+    intro m
+    rfl
+
+/-- The right-to-left conversion functor is an equivalence, hence fully faithful and
+essentially surjective, for every commutative ground ring and Lie algebra. -/
+instance toLeftFunctor_isEquivalence :
+    (toLeftFunctor (R := R) (L := L)).IsEquivalence :=
+  Equivalence.isEquivalence_functor (equivalence (R := R) (L := L))
 
 /-- The trivial right Lie action on a scalar module.
 

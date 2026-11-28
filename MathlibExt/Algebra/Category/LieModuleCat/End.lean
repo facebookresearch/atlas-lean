@@ -10,7 +10,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Algebra.Category.LieModuleCat.Basic
-public import MathlibExt.CategoryTheory.Preadditive.FunctorEnd
+public import Mathlib.Algebra.Algebra.Hom
 
 /-!
 # Coefficient actions by Lie-module endomorphisms
