@@ -263,7 +263,7 @@ private lemma weightNumerator_eq_prefix (k : ℕ) (hk : 2 < k) :
 
 -- At k = 24 the off-diagonal entry is nonzero, and the q³ difference is 400 times the modulus.
 set_option maxRecDepth 4096 in
-example :
+private lemma weight24_arithmetic :
     let C : Matrix (Fin 2) (Fin 2) ℚ := fun i j => b 24 (i.val + 1) (j.val + 1)
     C ≠ 1 ∧ modulus 24 = 236364091 ∧ (sigma₀ 24 3 - matrixSum 24 3) / modulus 24 = 400 := by
   intro C
@@ -340,6 +340,22 @@ example :
   norm_num [D, hb₁₃, hb₂₃, show sigma₀ 24 1 = 1 by decide +kernel,
     show sigma₀ 24 2 = 8388609 by decide +kernel, show sigma₀ 24 3 = 94143178828 by decide +kernel]
 
+-- Check the same weight-24 value in the convolution form, and pin the corollary's API.
+example :
+    let conv (i n : ℕ) := coeff n (delta ^ i * PowerSeries.mk (sigma₀ (24 - 12 * i)))
+    let C : Matrix (Fin 2) (Fin 2) ℚ := fun i j => b 24 (i.val + 1) (j.val + 1)
+    let γ := Matrix.vecMul (fun j : Fin 2 => sigma₀ 24 (j.val + 1)) C⁻¹
+    let q := (sigma₀ 24 3 - ∑ i : Fin 2,
+      γ i / sigma₀ (24 - 12 * (i.val + 1)) 0 * conv (i.val + 1) 3) / modulus 24
+    q = 400 ∧ q.den.Coprime (modulus 24) := by
+  intro conv C γ q
+  refine ⟨?_, MetaMathlibExt.sigma_congr_sum_tau_conv_sigma 24 (by decide) (by decide)
+    (by decide) 3 (by decide)⟩
+  have h := weight24_arithmetic.2.2
+  change (sigma₀ 24 3 - ∑ i : Fin 2,
+    γ i * (conv (i.val + 1) 3 / sigma₀ (24 - 12 * (i.val + 1)) 0)) / modulus 24 = 400 at h
+  simpa only [q, ← mul_div_assoc, div_mul_eq_mul_div] using h
+
 -- The lower weight 32 shares the prime 37 with weight 68; the modulus drops that factor.
 set_option maxRecDepth 4096 in
 example : 37 ∣ weightNumerator 68 ∧ 37 ∣ weightNumerator 32 ∧ ¬ 37 ∣ modulus 68 := by
@@ -371,7 +387,7 @@ example : ((sigma₀ 26 2 - matrixSumAt 26 1 2) / modulus 26).den.Coprime (modul
     (by decide) 2
 
 -- Match the public statement before specializing n: simplifying at n = 0 would hide the matrix.
--- Check both the constant term and a coefficient beyond the first m positive coefficients.
+-- Check both the constant term and a coefficient of degree greater than m.
 example :
     ((sigma₀ 24 0 - matrixSumAt 24 2 0) / modulus 24).den.Coprime (modulus 24) ∧
     ((sigma₀ 24 3 - matrixSumAt 24 2 3) / modulus 24).den.Coprime (modulus 24) := by
