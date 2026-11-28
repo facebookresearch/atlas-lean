@@ -1,6 +1,6 @@
 # Invasion rates and protected polymorphisms for patch-selection strategies
 
-A population lives in $n$ patches. Patch $i$ has intrinsic growth rate $\mu_i$ and carrying-capacity parameter $\kappa_i > 0$, and the patch noise is a Brownian motion with covariance matrix $\Sigma = (\sigma_{ij})$. A **patch-selection strategy** is a probability vector $\alpha \in \Delta_n$, the fraction of time spent in each patch. Write $\langle \alpha,\beta\rangle_\kappa = \sum_i \alpha_i\beta_i/\kappa_i$. Two morphs with strategies $\alpha$ and $\beta$ and abundances $X_t, Y_t$ obey
+A population lives in $n$ patches. Patch $i$ has intrinsic growth rate $\mu_i$ and strength of intraspecific competition $\kappa_i > 0$, and the patch noise is a Brownian motion with covariance matrix $\Sigma = (\sigma_{ij})$. A **patch-selection strategy** is a probability vector $\alpha \in \Delta_n$, the fraction of time spent in each patch. Write $\langle \alpha,\beta\rangle_\kappa = \sum_i \kappa_i\alpha_i\beta_i$. Two morphs with strategies $\alpha$ and $\beta$ and abundances $X_t, Y_t$ obey
 
 $$
 
@@ -25,7 +25,7 @@ and $\mathcal I(\alpha,\beta) = \beta\cdot(\mu - \Sigma\beta/2)$ if the resident
 
 **Theorem.**
 
-1. (Exclusion.) If $\alpha\cdot(\mu - \Sigma\alpha/2) > 0$ and $\mathcal I(\alpha,\beta) < 0$, then for every initial condition in $(0,\infty)^2$ the occupation measures of $(X_t,Y_t)$ converge weakly to $\rho_{\alpha}\otimes\delta_0$, where $\rho_\alpha$ is the resident's stationary law: the $\beta$-morph is displaced.
+1. (Exclusion.) If $\alpha\cdot(\mu - \Sigma\alpha/2) > 0$ and $\mathcal I(\alpha,\beta) < 0$, then for every initial condition $(x,y) \in (0,\infty)^2$ the time-averaged laws $\frac1t\int_0^t P^{(x,y)}\{(X_s,Y_s) \in \cdot\}\,ds$ converge weakly as $t \to \infty$ to $\rho_{\alpha}\otimes\delta_0$, where $\rho_\alpha$ is the resident's stationary law: the $\beta$-morph is displaced.
 2. (Protected polymorphism.) If $\mathcal I(\alpha,\beta) > 0$ and $\mathcal I(\beta,\alpha) > 0$, there is a unique stationary distribution $\pi$ on $(0,\infty)^2$, absolutely continuous, and time averages of every bounded measurable function of $(X_t,Y_t)$ converge almost surely to their $\pi$-averages.
 
 ## Expansion

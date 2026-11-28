@@ -10,7 +10,7 @@ $$
 \end{aligned}
 $$
 
-where $\alpha_j>\gamma_j>0$ (so $\gamma_j/\alpha_j$ is the probability of passing stage $j$), $r$ is the number of merozoites per bursting cell, $u\ge 0$ is the mean number of merozoites lost per invasion, and $\varphi(x)=f(x)-\mu_xx$ is $C^1$ with a unique $x^*>0$ such that $\varphi>0$ on $[0,x^*)$ and $\varphi<0$ on $(x^*,\infty)$ (homeostatic RBC production). Define
+where all rates are positive (when $\alpha_j$ is $\gamma_j$ plus a stage mortality, $\gamma_j/\alpha_j$ is the probability of passing stage $j$, but the theorem needs no assumption such as $\alpha_j>\gamma_j$: by the source's Remark 1 its only hypothesis is positivity of the parameters), $r$ is the number of merozoites per bursting cell, $u\ge 0$ is the mean number of merozoites lost per invasion, and $\varphi(x)=f(x)-\mu_xx$ is $C^1$ with a unique $x^*>0$ such that $\varphi>0$ on $[0,x^*)$ and $\varphi<0$ on $(x^*,\infty)$ (homeostatic RBC production). Define
 
 $$
 \mathcal R_0 = \frac{r\beta x^*}{\mu_m+u\beta x^*}\,\frac{\gamma_1\cdots\gamma_k}{\alpha_1\cdots\alpha_k}.

@@ -10,7 +10,7 @@ $$dY_t = V^{(2)}_{\mathrm{eff}}(Y_t)\,dt + \text{(vertical Brownian noise)}, \qq
 
 with $T^\chi_{1D}$ the hitting time of the strip $[L/2 - \delta, L/2 + \delta]$.
 
-**Theorem.** Let $u \in C^2(\mathbb T)$ have $u(L/2) = 0$ and be strictly monotone near the target level, $\min_{|y - L/2| \le 2\delta}|u'(y)| \ge u_d > 0$, with finitely many critical points, all non-degenerate.
+**Theorem.** Let $u \in C^2(\mathbb T)$ have $u(L/2) = 0$ and be strictly monotone near the target level, $\min_{|y - L/2| \le 2\delta}|u'(y)| \ge u_d > 0$. Items 2 and 3 assume in addition that $u$ has finitely many critical points, all non-degenerate.
 
 1. (Passive search, $\chi = 0$.) $\displaystyle\lim_{A\to\infty}\mathbb E^{(x_0,y_0)}T^{A}_{2D} = \mathbb E^{y_0}T_{1D}$.
 2. (Horizontal homogenization of the attractant.) For $i \in \{0,1,2\}$ and $j \in \{0,1\}$,

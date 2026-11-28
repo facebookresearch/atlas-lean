@@ -16,7 +16,7 @@ $$\dot p = f(p) + u\,g(p), \qquad p(0) = 0,$$
 
 $$f(p) = p(1-p)\,\frac{d_1b_2^0 - d_2b_1^0(1 - s_hp)}{b_1^0(1-p)(1-s_hp) + b_2^0p}, \qquad g(p) = \frac1K\,\frac{b_1^0(1-p)(1-s_hp)}{b_1^0(1-p)(1-s_hp) + b_2^0p}.$$
 
-Here $f$ is bistable with invasion threshold $\theta = \frac1{s_h}\bigl(1 - \frac{d_1b_2^0}{d_2b_1^0}\bigr) \in (0,1)$. The costs $J^\varepsilon$ $\Gamma$-converge to $J^0(u) = K^2(1-p(T))^2$. Minimizers of the full problem converge strongly in $L^1(0,T)$, up to subsequences, to minimizers of $\inf_{u\in\mathcal U_{T,C,M}}(1-p(T))^2$.
+Assume $1 - s_h < \frac{d_1b_2^0}{d_2b_1^0} < 1$ (condition (6) of the source, under which a coexistence equilibrium exists). Then $f$ is bistable with invasion threshold $\theta = \frac1{s_h}\bigl(1 - \frac{d_1b_2^0}{d_2b_1^0}\bigr) \in (0,1)$. The costs $J^\varepsilon$ $\Gamma$-converge to $J^0(u) = K^2(1-p(T))^2$. Minimizers of the full problem converge strongly in $L^1(0,T)$, up to subsequences, to minimizers of $\inf_{u\in\mathcal U_{T,C,M}}(1-p(T))^2$.
 
 **Theorem (reduced problem).** Assume $T > C/M$. Every optimal release uses the whole stock, $\int_0^T u = C$, and is bang-bang ($u \in \{0, M\}$ a.e.). If $M \le \max_{p\in[0,\theta]}(-f(p)/g(p))$, the unique optimum is $u^* = M\mathbb 1_{[T-C/M,\,T]}$. Otherwise, with
 

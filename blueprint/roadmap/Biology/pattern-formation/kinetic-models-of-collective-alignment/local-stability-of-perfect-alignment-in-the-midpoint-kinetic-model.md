@@ -10,7 +10,7 @@ In the **midpoint model** $K(\cdot, x_*, x_*') = \delta_{x_m}$ with $x_m = (x_* 
 
 $$W_2(\rho_t, \delta_{x_\infty}) \le C_1\,W_2(\rho_0, \delta_{x_0})\,e^{-t/4} \quad \text{for all } t \ge 0.$$
 
-The limiting direction $x_\infty$ need not equal $x_0$, since nothing is conserved on the sphere. In $\mathbb R^n$ the same model conserves the center of mass $\bar x$ and contracts exactly: $W_2(\delta_{\bar x}, \rho_t) = W_2(\delta_{\bar x}, \rho_0)\,e^{-t/4}$. The local result extends to complete Riemannian manifolds with bounded curvature and positive injectivity radius, and to non-midpoint kernels satisfying a contraction condition with parameter $\beta < 1$, with rate $e^{-(1-\beta)t/4}$.
+The limiting direction $x_\infty$ need not equal $x_0$, since nothing is conserved on the sphere. In $\mathbb R^n$ the same model conserves the center of mass $\bar x$ and contracts exactly: $W_2(\delta_{\bar x}, \rho_t) = W_2(\delta_{\bar x}, \rho_0)\,e^{-t/4}$. The local result extends to complete Riemannian manifolds with positive injectivity radius that satisfy Assumptions 5.5, 5.6 and 5.8 of the source, which include sectional curvature bounded above and below by positive constants (Theorem 5.9), and to non-midpoint kernels satisfying a contraction condition with parameter $\beta < 1$, with rate $e^{-(1-\beta)t/4}$.
 
 ## Expansion
 

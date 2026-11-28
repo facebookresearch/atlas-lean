@@ -30,6 +30,10 @@ the age distribution of an individual found in phase $j$ in a stationary populat
 
 So the answer to "how old is an individual in phase $j$" depends on the observation scheme, and the stationary-population answer is the limit of rare observation.
 
+## Proof depends on
+
+- [Conditional age given the phase under Poisson observation](conditional-age-given-the-phase-under-poisson-observation.md)
+
 ## Expansion
 
 Under uniform observation the joint density of observation age $s \in [0,t]$ and phase $j$ is $t^{-1}\boldsymbol\alpha e^{\mathbf{Q}s}\mathbf{e}_j$; integrating with $\int_s^t e^{\mathbf{Q}u}du = (e^{\mathbf{Q}s}-e^{\mathbf{Q}t})(-\mathbf{Q})^{-1}$ gives the formula. The rare-observation limit sends $e^{\mathbf{Q}t} \to 0$, since $\mathbf{Q}$ is a transient sub-generator. These formulas were applied to reconstruct the age pyramid of the Chatham Island black robin during intensive conservation management.

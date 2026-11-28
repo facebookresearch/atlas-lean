@@ -17,7 +17,7 @@ i.e. iff both mutation rates exceed the error thresholds $\mu_0 > 1 - f_2/f_0$ a
 
 $$f_0Q - f_1Q', \qquad f_2 - f_1Q', \qquad -f_1Q',$$
 
-the last transverse to the simplex.
+the last transverse to the simplex. This corrects (9) of arXiv:1411.6531, which prints the last two eigenvalues as $\lambda_2 = \frac{f_1(f_2 - f_1Q')}{f_1 - f_2}$ and $\lambda_3 = \frac{2f_1f_2Q' - f_1^2Q' - f_2^2}{f_1 - f_2}$; the values above follow from the source's Jacobian (7) at this equilibrium.
 
 3. **Full coexistence**, where $\Phi = f_0Q$, given by
 

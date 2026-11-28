@@ -23,7 +23,7 @@ d_G(a,b)^2\,\mathrm{Mod}(a,b) \le \varepsilon(a,b), \qquad\text{hence}\qquad \va
 
 $$
 
-The discrepancy $\delta(a,b) = R_{\mathrm{eff}}(a,b)\,\varepsilon(a,b)/d_G(a,b)^2 \ge 1$ grows linearly in the number of vertices for paths and stars, but can grow faster on denser graphs.
+The discrepancy $\delta(a,b) = R_{\mathrm{eff}}(a,b)\,\varepsilon(a,b)/d_G(a,b)^2 \ge 1$ stays between $2$ and $4$ on paths, grows linearly in the number of vertices on stars and complete graphs, and can grow quadratically for a complete graph with a pendant vertex (Examples 7.1 and 7.2).
 
 ## Expansion
 

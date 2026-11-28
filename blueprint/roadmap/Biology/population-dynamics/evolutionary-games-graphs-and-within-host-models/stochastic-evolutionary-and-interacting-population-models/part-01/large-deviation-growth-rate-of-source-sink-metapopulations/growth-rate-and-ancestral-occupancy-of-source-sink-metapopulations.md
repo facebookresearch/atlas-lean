@@ -7,7 +7,7 @@ $$R(f)=\sum_{i=1}^Kf_i\log m_i,\qquad I(f)=\sup_{v\gg0}\sum_{i=1}^Kf_i\log\frac{
 **Theorem.**
 
 1. $\displaystyle\log\rho=\max_{f\in\mathcal F}\bigl\{R(f)-I(f)\bigr\}.$
-2. If $\rho>1$, then conditionally on survival up to time $n$, the fraction of generations that the ancestral line of a uniformly chosen individual alive at time $n$ spent in patch $i$ converges in probability to $\varphi_i$, where $\varphi\in\mathcal F$ is the unique maximizer: $\log\rho=R(\varphi)-I(\varphi)$.
+2. If $\rho>1$, then conditionally on survival up to time $n$, the fraction of generations that the ancestral line of a uniformly chosen individual alive at time $n$ spent in patch $i$ converges in probability to $\varphi_i$, where $\varphi\in\mathcal F$ is the unique maximizer: $\log\rho=R(\varphi)-I(\varphi)$. (Theorem 4.1 of the source prints this clause "if ρ > 0", which holds for every metapopulation since all $m_i>0$; its proof in Appendix A uses $Z_n\sim W\rho^n$ with a non-degenerate limit $W$, which requires the supercritical case $\rho>1$, so the page states the clause for $\rho>1$.)
 3. $\varphi$ equals the stationary distribution $u$ of the random disperser if and only if $m_1=\dots=m_K$; otherwise ancestral lines of survivors over-occupy source patches relative to a typical disperser.
 
 The formula decouples demography ($R$) from dispersal ($I$): the growth rate is the best trade-off between the fitness payoff of occupying good patches and the large-deviation cost for a random walk of occupying them with atypical frequencies. Analogous formulas hold in periodic or random (Markovian) environments, with the rate function of the joint patch–environment chain, and they show that two time-averaged sinks can jointly allow survival.

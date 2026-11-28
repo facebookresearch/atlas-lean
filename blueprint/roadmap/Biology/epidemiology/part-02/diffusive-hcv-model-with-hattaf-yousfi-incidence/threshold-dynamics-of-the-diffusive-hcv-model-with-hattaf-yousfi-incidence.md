@@ -1,6 +1,6 @@
 # Threshold dynamics of the diffusive hepatitis C model with Hattaf–Yousfi incidence
 
-**Model.** On a bounded smooth domain $\Omega \subset \mathbb R^n$ with homogeneous Neumann boundary conditions, healthy hepatocytes $H$, infected hepatocytes $I$ and free virions $V$ satisfy
+**Model.** On a bounded smooth domain $\Omega \subset \mathbb R^3$ (the liver) with homogeneous Neumann boundary conditions, healthy hepatocytes $H$, infected hepatocytes $I$ and free virions $V$ satisfy
 
 $$\begin{aligned} \partial_t H &= D_1 \Delta H + \lambda - dH - f(H,V) + \rho I, \\ \partial_t I &= D_2 \Delta I + f(H,V) - (\alpha + \rho) I, \\ \partial_t V &= D_3 \Delta V + (1-\varepsilon) k I - \mu V - u f(H,V), \end{aligned}$$
 

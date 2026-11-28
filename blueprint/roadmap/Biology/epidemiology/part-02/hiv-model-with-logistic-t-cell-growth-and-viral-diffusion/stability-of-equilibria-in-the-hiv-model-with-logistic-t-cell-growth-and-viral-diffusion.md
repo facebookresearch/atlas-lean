@@ -24,6 +24,10 @@ Let $\mathcal{U} = \{(N,r) : R_0 < 1\}$ and $\mathcal{I} = \{(N,r) : R_0 > 1\}$;
 
 So the stability of the infected state is decided by the zero Fourier mode, exactly as in the model without diffusion: viral diffusion does not enlarge the stability region.
 
+## Proof depends on
+
+- [Routh–Hurwitz criterion for cubic polynomials](../../../../Analysis/control-theory/feedback-stability-and-classical-design/routh-hurwitz-criterion-for-cubic-polynomials.md)
+
 ## Expansion
 
 The linearization at an equilibrium is a sectorial operator on $(L^2)^3$ generating an analytic semigroup, so the linearized stability principle applies. Expanding the resolvent equation in the Fourier modes of the periodic Laplacian, with eigenvalues $-\lambda_k$, $\lambda_k = 4\pi^2(k_1^2 + k_2^2)/\ell^2$, reduces the spectrum to the roots of a family of cubic polynomials, one per mode, in which $d_V\lambda_k$ is added to the viral clearance rate. Each mode is analysed with the Routh–Hurwitz criterion: the first and third Hurwitz determinants stay positive in $\mathcal{I}$, while the second is negative only on a set $\mathcal{P}_k$. These sets are nested, $\mathcal{P}_{K_2} \subseteq \cdots \subseteq \mathcal{P}_1 \subseteq \mathcal{P}_0 = \mathcal{P}$, and empty for large $k$, so the zero mode is the first to destabilize. At the uninfected state, the mode equation $d_V\Delta V = c(\lambda)V$ with $c(\lambda) = \lambda + \mu_V - \gamma\mu_I N T_u/(\lambda + \mu_I)$ has a positive root exactly when $R_0 > 1$.

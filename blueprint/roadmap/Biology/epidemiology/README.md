@@ -87,7 +87,6 @@ Compartmental, renewal and branching-process models of infectious disease transm
 - [Evolutionary vaccination games with premature vaccines](part-03/evolutionary-vaccination-games-with-premature-vaccines/README.md)
 - [Heterogeneous SIS dynamics and early warning signs](part-03/heterogeneous-sis-dynamics-and-early-warning-signs/README.md)
 - [Integral input-to-state stability of epidemic models](part-03/integral-input-to-state-stability-of-epidemic-models/README.md)
-- [Jump-diffusion SIS model](part-03/jump-diffusion-sis-model/README.md)
 - [Leaky vaccination with asymptomatic and isolated classes](part-03/leaky-vaccination-with-asymptomatic-and-isolated-classes/README.md)
 - [Moment-closure bounds for the stochastic SIS epidemic](part-03/moment-closure-bounds-for-the-stochastic-sis-epidemic/README.md)
 - [Multi-group SAIRS epidemic models](part-03/multi-group-sairs-epidemic-models/README.md)

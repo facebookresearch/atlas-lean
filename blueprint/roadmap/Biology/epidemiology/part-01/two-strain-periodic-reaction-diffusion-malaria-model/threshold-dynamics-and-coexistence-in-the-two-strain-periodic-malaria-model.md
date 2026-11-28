@@ -1,6 +1,6 @@
 # Threshold dynamics and coexistence in the two-strain periodic malaria model
 
-On a bounded domain $\Omega \subset \mathbb{R}^n$ with smooth boundary and Neumann conditions, let $I_1, I_2$ be humans infected with the sensitive and the resistant strain and $I_{v1}, I_{v2}$ the correspondingly infected mosquitoes. Total human density is at its stable steady state $N(x)$ and total mosquito density at its globally stable $\omega$-periodic state $M^*(t,x)$. With vector-bias parameters $p > l > 0$ (probabilities that a mosquito picks an infectious, resp. susceptible, human), biting rate $\beta(t,x)$ ($\omega$-periodic), and $Q = p(I_1+I_2) + l(N - I_1 - I_2)$,
+On a bounded domain $\Omega \subset \mathbb{R}^n$ with smooth boundary and Neumann conditions, let $I_1, I_2$ be humans infected with the sensitive and the resistant strain and $I_{v1}, I_{v2}$ the correspondingly infected mosquitoes. Total human density is at its stable steady state $N(x)$ and total mosquito density at its globally stable $\omega$-periodic state $M^*(t,x)$. With vector-bias parameters $p \ge l > 0$ (probabilities that a mosquito picks an infectious, resp. susceptible, human), biting rate $\beta(t,x)$ ($\omega$-periodic), and $Q = p(I_1+I_2) + l(N - I_1 - I_2)$,
 
 $$
 

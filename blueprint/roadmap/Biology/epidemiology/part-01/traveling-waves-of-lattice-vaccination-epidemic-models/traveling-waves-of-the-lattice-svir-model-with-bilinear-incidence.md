@@ -10,7 +10,7 @@ $$
 \end{aligned}
 $$
 
-and a decoupled equation for $R_n$. Here $\Lambda$ is recruitment, $\alpha$ the vaccination rate, $\gamma_1$ the rate at which vaccinees become fully immune, $\beta_2 < \beta_1$ the reduced susceptibility of vaccinees, $\gamma$ recovery, $\mu$ death, and $d > 0$ the motility of infectives relative to the normalised motility $1$ of the other classes. Set $\mu_1 = \alpha + \mu$, $\mu_2 = \gamma_1 + \mu$ and $\mu_3 = \gamma + \mu$. The spatially homogeneous system has the disease-free equilibrium $E_0 = (S_0, V_0, 0) = \left(\frac{\Lambda}{\mu_1}, \frac{\Lambda\alpha}{\mu_1\mu_2}, 0\right)$ and
+and a decoupled equation for $R_n$. Here $\Lambda$ is recruitment, $\alpha$ the vaccination rate, $\gamma_1$ the rate at which vaccinees become fully immune, $\beta_1$ and $\beta_2$ the transmission rates to susceptibles and to vaccinees, $\gamma$ recovery, $\mu$ death, and $d > 0$ the motility of infectives relative to the normalised motility $1$ of the other classes. Set $\mu_1 = \alpha + \mu$, $\mu_2 = \gamma_1 + \mu$ and $\mu_3 = \gamma + \mu$. The spatially homogeneous system has the disease-free equilibrium $E_0 = (S_0, V_0, 0) = \left(\frac{\Lambda}{\mu_1}, \frac{\Lambda\alpha}{\mu_1\mu_2}, 0\right)$ and
 
 $$
 \mathcal{R}_0 = \frac{\beta_1S_0 + \beta_2V_0}{\mu_3}.

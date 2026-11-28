@@ -6,7 +6,6 @@
 - [Evolutionary vaccination games with premature vaccines](evolutionary-vaccination-games-with-premature-vaccines/README.md)
 - [Heterogeneous SIS dynamics and early warning signs](heterogeneous-sis-dynamics-and-early-warning-signs/README.md)
 - [Integral input-to-state stability of epidemic models](integral-input-to-state-stability-of-epidemic-models/README.md)
-- [Jump-diffusion SIS model](jump-diffusion-sis-model/README.md)
 - [Leaky vaccination with asymptomatic and isolated classes](leaky-vaccination-with-asymptomatic-and-isolated-classes/README.md)
 - [Moment-closure bounds for the stochastic SIS epidemic](moment-closure-bounds-for-the-stochastic-sis-epidemic/README.md)
 - [Multi-group SAIRS epidemic models](multi-group-sairs-epidemic-models/README.md)

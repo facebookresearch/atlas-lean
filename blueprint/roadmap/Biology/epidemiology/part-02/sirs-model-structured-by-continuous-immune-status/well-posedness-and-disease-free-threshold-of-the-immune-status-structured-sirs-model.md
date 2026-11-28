@@ -1,6 +1,6 @@
 # Well-posedness and disease-free threshold of the immune-status-structured SIRS model
 
-**Model.** Immune hosts carry a continuous immune status $z \in [z_m, z_M]$ with density $r(t,z)$; immunity wanes deterministically at speed $g(z) > 0$ and is boosted by contact with infectives. With susceptibles $S$, infectives $I$ and total population $N = S + I + \int r\,dz$,
+**Model.** Immune hosts carry a continuous immune status $z \in [z_m, z_M]$ with density $r(t,z)$; immunity wanes deterministically at speed $g(z)$, where $g : [z_m, z_M] \to (0, K_g]$, $K_g < \infty$, is continuously differentiable (Assumption 3 of the source), and is boosted by contact with infectives. With susceptibles $S$, infectives $I$ and total population $N = S + I + \int r\,dz$,
 
 $$S' = b(N) - \beta\frac{SI}{N} - dS + g(z_m)\,r(t,z_m), \qquad I' = \beta\frac{SI}{N} - (\gamma + d + d_I)\,I,$$
 

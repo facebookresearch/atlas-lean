@@ -1,12 +1,12 @@
 # Reaction–diffusion limit and phase diagram of weak-selection spatial games
 
-**Voter model perturbations.** On $\mathbb Z^d$ each site holds a strategy in a finite set $S$; with a finite-range symmetric kernel $p$, let $f_i(x,\xi) = \sum_y p(y-x)\mathbf 1(\xi(y) = i)$. The voter model flips $x$ from $i$ to $j$ at rate $\mathbf 1(\xi(x) = i) f_j(x,\xi)$. A spatial evolutionary game with payoff matrix $\mathbf 1 + \varepsilon^2 G$ under Birth–Death or Death–Birth updating has flip rates $c^v_{i,j} + \varepsilon^2 h^\varepsilon_{i,j}$ for explicit perturbations $h$.
+**Voter model perturbations.** On $\mathbb Z^d$ each site holds a strategy in a finite set $S$; with a finite-range symmetric kernel $p$ ($p(0)=0$) whose covariance matrix is $\sigma^2I$, let $f_i(x,\xi) = \sum_y p(y-x)\mathbf 1(\xi(y) = i)$. The voter model flips $x$ from $i$ to $j$ at rate $\mathbf 1(\xi(x) = i) f_j(x,\xi)$. A spatial evolutionary game with payoff matrix $\mathbf 1 + \varepsilon^2 G$ under Birth–Death or Death–Birth updating has flip rates $c^v_{i,j} + \varepsilon^2 h^\varepsilon_{i,j}$ for explicit perturbations $h$.
 
 **Theorem (PDE limit).** Let $d \ge 3$. Rescale space by $\varepsilon$ and time by $\varepsilon^{-2}$, and start from configurations with continuous local densities $v_i$ ($\sum_i v_i = 1$). Then $u^\varepsilon_i(t,x) = \mathbb P\big(\xi^\varepsilon_{t\varepsilon^{-2}}(x) = i\big)$ converges to the solution of
 
 $$\partial_t u_i = \frac{\sigma^2}{2}\Delta u_i + \phi_i(u), \qquad u_i(0,\cdot) = v_i,$$
 
-where $\phi_i(u) = \sum_{j\ne i}\big\langle \mathbf 1(\xi(0) = j)h_{j,i}(0,\xi) - \mathbf 1(\xi(0) = i)h_{i,j}(0,\xi)\big\rangle_u$ is an expectation under the voter-model stationary law with densities $u$. For Birth–Death updating $\sigma = 1$, for Death–Birth updating $\sigma = (\kappa+1)/(\kappa-1)$ with $\kappa$ the neighborhood size.
+where $\phi_i(u) = \sum_{j\ne i}\big\langle \mathbf 1(\xi(0) = j)h_{j,i}(0,\xi) - \mathbf 1(\xi(0) = i)h_{i,j}(0,\xi)\big\rangle_u$ is an expectation under the voter-model stationary law with densities $u$.
 
 The reaction term is itself a replicator vector field for a **modified game**. For the $2\times2$ game $\begin{pmatrix}\alpha & \beta\\ \gamma & \delta\end{pmatrix}$, with $u$ the frequency of strategy $1$, the replicator equation is $\dot u = u(1-u)(\beta - \delta + \Gamma u)$ with $\Gamma = \alpha - \beta - \gamma + \delta$, and the limit reaction term is the replicator field of
 

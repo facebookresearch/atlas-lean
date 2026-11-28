@@ -2,7 +2,7 @@
 
 **Individual-based model.** A community has $d$ prey types with traits $x_1,\dots,x_d$ and $m$ predator types with traits $y_1,\dots,y_m$, and $\mathbf Z^K = K^{-1}(N^K_1,\dots,N^K_d,H^K_1,\dots,H^K_m)$ is the rescaled vector of their numbers. A prey of trait $x$ gives birth at rate $b(x)$ and dies at rate $d(x) + \sum_i c(x,x_i)N^K_i/K + \sum_l B(x,y_l)H^K_l/K$ (intrinsic death, competition, predation); a predator of trait $y$ gives birth at rate $r\sum_iB(x_i,y)N^K_i/K$ (conversion efficiency $r < 1$) and dies at rate $D(y)$.
 
-**Large-population limit.** If $\mathbf Z^K(0)\to\mathbf z(0)$ in probability, then on every $[0,T]$, $\mathbf Z^K$ converges in law to the solution $(n,h)$ of the system $\mathrm{LVP}(\mathbf x,\mathbf y)$:
+**Large-population limit.** Assume (Assumption A of the source) that $b$, $d$, $c$, $B$ and $D$ are continuous, positive and bounded, with $c$, $B$ and $D$ bounded below by positive constants, and (Assumption B) that $\sup_K\mathbb E\big[(N^K(0))^3 + (H^K(0))^3\big] < \infty$, where $N^K = \sum_iN^K_i$ and $H^K = \sum_lH^K_l$. If $\mathbf Z^K(0)\to\mathbf z(0)$ in probability, then on every $[0,T]$, $\mathbf Z^K$ converges in law to the solution $(n,h)$ of the system $\mathrm{LVP}(\mathbf x,\mathbf y)$:
 
 $$\dot n_i = n_i\Big(b_i - d_i - \sum_{j}c_{ij}n_j - \sum_l B_{il}h_l\Big), \qquad \dot h_l = h_l\Big(r\sum_i B_{il}n_i - D_l\Big),$$
 

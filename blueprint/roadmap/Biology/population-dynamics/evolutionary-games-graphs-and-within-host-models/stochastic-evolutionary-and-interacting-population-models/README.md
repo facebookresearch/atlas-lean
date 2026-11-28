@@ -3,7 +3,6 @@
 Stochastic population processes, evolutionary dynamics and games, and models of interacting species, structured populations and pest control.
 
 ## [Branching and stochastic population processes](part-01/README.md)
-- [Bak–Sneppen model of coevolution](part-01/bak-sneppen-model-of-coevolution/README.md)
 - [Bifurcating processes with dependent lifetimes](part-01/bifurcating-processes-with-dependent-lifetimes/README.md)
 - [Birth–death process with weak competition](part-01/birth-death-process-with-weak-competition/README.md)
 - [Branching process for virus survival](part-01/branching-process-for-virus-survival/README.md)
@@ -37,11 +36,9 @@ Stochastic population processes, evolutionary dynamics and games, and models of 
 - [Slow–fast piecewise deterministic prey–predator model](part-02/slow-fast-piecewise-deterministic-prey-predator-model/README.md)
 - [Spatial evolutionary games under weak selection](part-02/spatial-evolutionary-games-under-weak-selection/README.md)
 - [Stationary stability in finite-population evolutionary dynamics](part-02/stationary-stability-in-finite-population-evolutionary-dynamics/README.md)
-- [Stochastic replicator dynamics with random jumps](part-02/stochastic-replicator-dynamics-with-random-jumps/README.md)
 - [Two-scale selection ball-and-urn process](part-02/two-scale-selection-ball-and-urn-process/README.md)
 ## [Interacting species, structured populations and pest control](part-03/README.md)
 - [Aquatic-stage feedback control of age-structured mosquito populations](part-03/aquatic-stage-feedback-control-of-age-structured-mosquito-populations/README.md)
-- [Beverton–Holt competition with Allee effects](part-03/beverton-holt-competition-with-allee-effects/README.md)
 - [Capacity–predation number and the paradox of enrichment](part-03/capacity-predation-number-and-the-paradox-of-enrichment/README.md)
 - [Discrete plant–herbivore maps with monotone plant growth](part-03/discrete-plant-herbivore-maps-with-monotone-plant-growth/README.md)
 - [Division- and label-structured population models](part-03/division-and-label-structured-population-models/README.md)
@@ -52,7 +49,6 @@ Stochastic population processes, evolutionary dynamics and games, and models of 
 - [Minimal-release control of sterile mosquitoes](part-03/minimal-release-control-of-sterile-mosquitoes/README.md)
 - [Obligate mutualism of leaf-cutter ants and their fungus garden](part-03/obligate-mutualism-of-leaf-cutter-ants-and-fungus/README.md)
 - [Optimal Wolbachia release protocols](part-03/optimal-wolbachia-release-protocols/README.md)
-- [Permanence of discrete two-species models with Allee effects](part-03/permanence-of-discrete-two-species-models-with-allee-effects/README.md)
 - [Persistence of structured populations in random environments](part-03/persistence-of-structured-populations-in-random-environments/README.md)
 - [Predator dispersal driven by predation strength](part-03/predator-dispersal-driven-by-predation-strength/README.md)
 - [Pseudo-Leslie form of stage-structured matrices](part-03/pseudo-leslie-form-of-stage-structured-matrices/README.md)

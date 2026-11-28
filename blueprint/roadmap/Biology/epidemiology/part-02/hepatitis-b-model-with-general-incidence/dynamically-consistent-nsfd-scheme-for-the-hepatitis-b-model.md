@@ -20,6 +20,10 @@ which is explicit: each line is linear in the new value.
 2. The scheme has exactly the equilibria of the ODE; the disease-free equilibrium is locally asymptotically stable if $\mathcal R_0 \le 1$ and unstable if $\mathcal R_0 > 1$, and the endemic equilibrium is locally asymptotically stable whenever $\mathcal R_0 > 1$.
 3. The scheme converges with order $1$: there are constants $\tau, m > 0$ with $|S(t_n)-S_n| + |I(t_n)-I_n| + |R(t_n)-R_n| \le \frac{\tau\Delta t}{2m}\,(e^{m t_n}-1)$.
 
+## Depends on
+
+- [Global threshold dynamics of the hepatitis B model with general incidence](global-threshold-dynamics-of-the-hepatitis-b-model-with-general-incidence.md)
+
 ## Expansion
 
 Solving each line for the new value gives $S_{n+1} = (S_n + \varphi\Lambda)/(1 + \varphi f^*(S_n,I_n) + \varphi(\mu_0+\nu))$, and similarly for $I_{n+1}$ and $R_{n+1}$; all are ratios of nonnegative quantities, which gives positivity for every step. Adding the first two lines yields a linear recursion for $S_n + I_n$ that is bounded between geometric sequences, giving the bounds. Local stability follows from the Jacobian of the map at the equilibria, using $f^*(S^0,0) = 0$, $\partial_I f^*(S^0,0) = \partial_I f(S^0,0)/S^0$ and the Jury conditions. Convergence of order one is the usual consistency-plus-stability argument, since $\varphi(\Delta t) = \Delta t + O(\Delta t^2)$.

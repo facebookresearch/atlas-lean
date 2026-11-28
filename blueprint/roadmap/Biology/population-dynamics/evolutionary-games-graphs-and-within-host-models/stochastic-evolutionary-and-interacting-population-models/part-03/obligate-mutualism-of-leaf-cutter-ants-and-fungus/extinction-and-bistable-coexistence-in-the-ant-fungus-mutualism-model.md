@@ -47,4 +47,4 @@ Interior equilibria lie on the ant nullcline $F = \tfrac{d_a}{r_a}A$; substituti
 
 ## Sources
 
-- Yun Kang, Michael Makiyama, Rebecca Clark, Jennifer Fewell, "Mathematical Modeling on Obligate Mutualism: Interactions between leaf-cutter ants and their fungus garden", arXiv (2011); Journal of Biological Systems (2011). Section 3 (Lemma 3.1, Propositions 3.1–3.2, Theorems 3.1–3.3, Corollary 3.1). <https://doi.org/10.48550/arXiv.1102.2296>. Published version: Journal of Theoretical Biology 289 (2011), 116–127, <https://doi.org/10.1016/j.jtbi.2011.08.027>; locators above refer to the arXiv version.
+- Yun Kang, Michael Makiyama, Rebecca Clark, Jennifer Fewell, "Mathematical Modeling on Obligate Mutualism: Interactions between leaf-cutter ants and their fungus garden", arXiv (2011). Section 3 (Lemma 3.1, Propositions 3.1–3.2, Theorems 3.1–3.3, Corollary 3.1). <https://doi.org/10.48550/arXiv.1102.2296>. Published version: Journal of Theoretical Biology 289 (2011), 116–127, <https://doi.org/10.1016/j.jtbi.2011.08.027>; locators above refer to the arXiv version.

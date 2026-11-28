@@ -16,9 +16,9 @@ $$\mathcal R_2 = \int_0^\infty k_2(x)U(x)e^{-\gamma x}\int_0^x\gamma_1e^{(\gamma
 
 2. (Disease elimination.) The functional $V = \int_0^\infty[\alpha_1(a)e + \alpha_2(a)q + \alpha_3(a)i]\,da$, with weights $\alpha_3(a) = \int_a^\infty k_2(x)U(x)e^{\gamma(a-x)}dx$, $\alpha_2(a) = \int_a^\infty\gamma_1\alpha_3(z)e^{(\gamma_1+\gamma_2)(a-z)}dz$ and $\alpha_1(a) = \int_a^\infty(q_1\alpha_2 + \mu_1\alpha_3)(z)\,e^{(\mu_1+q_1)(a-z)}dz$, satisfies
 
-$$\dot V \le (R_0 - 1)\int_0^\infty k_1(b)\,i(b,t)\,U(b)\,db .$$
+$$\dot V \le (R_0 - 1)\int_0^\infty k_2(b)\,i(b,t)\,U(b)\,db .$$
 
-Hence the disease-free state attracts all solutions when $R_0 \le 1$.
+The source prints this bound, (3.22) and (3.30), with $k_1(b)$ in place of $k_2(b)$; its own (3.20)–(3.21), $\alpha_3'-\gamma\alpha_3=-k_2U$ and $\phi=k_1\int k_2Ui$, give $\dot V=\bigl(\int_0^\infty\alpha_1sk_1\,da-1\bigr)\int_0^\infty k_2(b)i(b,t)U(b)\,db$, so the page corrects the weight to $k_2$. Hence the disease-free state attracts all solutions when $R_0 \le 1$.
 
 3. (Constant mortality and homogeneous mixing.) If $\mu(a) \equiv \mu$, so $U(a) = \mu e^{-\mu a}$, and $k_1 \equiv 1$, $k_2$ constant, then
 
@@ -26,7 +26,7 @@ $$R_0 = \frac{k_2\,\mu_1}{(\mu + \gamma)(\mu + \mu_1 + q_1)} + \frac{k_2\,\gamma
 
 which reduces to $k_2\mu_1/((\mu+\gamma)(\mu+\mu_1))$ without quarantine.
 
-4. (Optimal vaccination.) For the corresponding SEIR model with age-specific vaccination $v(a)$ and no quarantine, there is an optimal vaccination strategy, among those reducing the reproduction number to one, that vaccinates at most three ages: $v(a) = c_1\delta_{A_1}(a) + c_2\delta_{A_2}(a) + c_3\delta_{A_3}(a)$ with $0 \le A_1 < A_2 < A_3$. If all $c_j \ne 0$, every remaining susceptible is vaccinated at age $A_3$.
+4. (Optimal vaccination.) For the corresponding SEIR model with age-specific vaccination $v(a)$ and no quarantine, consider minimizing the vaccination cost (4.6) of the source over vaccination strategies subject to an upper bound on the weighted prevalence $\int_0^\infty f(a)I(a)\,da$ and to the constraint (4.8), $\tilde H(v)=h$, which fixes the level $h$ of $\int_0^\infty k_2(a)I(a)\,da$ (the source uses these constraints "instead of considering basic reproduction number"). This problem has an optimal strategy that vaccinates at most three ages: $v(a) = c_1\delta_{A_1}(a) + c_2\delta_{A_2}(a) + c_3\delta_{A_3}(a)$ with $0 \le A_1 < A_2 < A_3$. If all $c_j \ne 0$, every remaining susceptible is vaccinated at age $A_3$.
 
 ## Expansion
 

@@ -3,9 +3,9 @@
 Let $T_1, T_2$ be rooted phylogenetic trees (not necessarily binary) on the same taxon set $X$, $n = |X|$, each with a root leaf $\rho$ attached above the original root. For $Y \subseteq X$, $T_i|Y$ is the minimal subtree spanning $Y$ with degree-2 vertices suppressed. An **agreement forest** is a partition $\mathcal F = \{F_\rho, F_1, \dots, F_k\}$ of $X \cup \{\rho\}$ such that:
 
 1. for each component $F$, the trees $T_1|F$ and $T_2|F$ have a common refinement;
-2. the subtrees $T_i(F)$, $F \in \mathcal F$, are vertex-disjoint in $T_i$ for $i = 1,2$.
+2. the subtrees $T_i(F)$, $F \in \mathcal F$, are edge-disjoint in $T_i$ for $i = 1,2$.
 
-A **maximum agreement forest** (MAF) has the fewest components. It is **acyclic** if the inheritance graph on components (an arc $F \to F'$ when the root of $T_i(F)$ is an ancestor of the root of $T_i(F')$ in some $T_i$) is acyclic; a maximum acyclic agreement forest (MAAF) of $T_1,T_2$ has $|\mathcal F| - 1$ equal to the hybridization number $h(T_1,T_2)$ (minimum number of reticulations in a network displaying refinements of both trees).
+A **maximum agreement forest** (MAF) has the fewest components. It is **acyclic** if the inheritance graph on components (an arc $F \to F'$ when, for some $i \in \{1,2\}$, the path in $T_i$ from the root of $T_i(F)$ to the root of $T_i(F')$ contains an edge of $T_i(F)$) is acyclic; a maximum acyclic agreement forest (MAAF) of $T_1,T_2$ has $|\mathcal F| - 1$ equal to the hybridization number $h(T_1,T_2)$ (minimum number of reticulations in a network displaying refinements of both trees).
 
 **Theorem.**
 

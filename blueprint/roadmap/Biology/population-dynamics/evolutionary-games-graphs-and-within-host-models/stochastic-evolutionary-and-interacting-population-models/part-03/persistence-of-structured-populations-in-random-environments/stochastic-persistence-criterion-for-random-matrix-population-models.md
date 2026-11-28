@@ -24,7 +24,11 @@ The model is **stochastically persistent** if for every $\varepsilon > 0$ there 
 2. there exist $p_1,\dots,p_m > 0$ with $\sum_i p_i\,r_i(\mu) > 0$ for every ergodic invariant measure supported on $S_0$;
 3. there exist $p_1,\dots,p_m > 0$ with $\sum_i p_i\,r_i(x) > 0$ almost surely for every $x \in S_0$.
 
-**Single species.** If $m = 1$ and the entries of $A(\xi,x)$ are non-increasing in $x$, then the population is stochastically persistent when $r_1(0) > 0$ and converges to $0$ almost surely when $r_1(0) < 0$. For the stochastic larva–pupa–adult (LPA) flour-beetle model there is a critical mean fecundity $b_{\mathrm{crit}}$ separating extinction from persistence, and $b_{\mathrm{crit}} = \mu_a/(1-\mu_l)$ when the log-survival fluctuations of all stages are identical with mean zero.
+**Single species.** If $m = 1$ and the entries of $A(\xi,x)$ are non-increasing in $x$, then the population is stochastically persistent when $r_1(0) > 0$ and converges to $0$ almost surely when $r_1(0) < 0$. For the stochastic larva–pupa–adult (LPA) flour-beetle model (the source's (14))
+
+$$\ell_{t+1} = ba_t\exp\Bigl(-\frac{\kappa_{el}\ell_t + \kappa_{ea}a_t}{V_{t+1}} + \xi^l_t\Bigr),\qquad p_{t+1} = (1-\mu_l)\ell_t\exp(\xi^p_t),\qquad a_{t+1} = \Bigl(p_t\exp\Bigl(-\frac{\kappa_{pa}a_t}{V_{t+1}}\Bigr) + (1-\mu_a)a_t\Bigr)\exp(\xi^a_t),$$
+
+with $\kappa_{el},\kappa_{ea},\kappa_{pa} > 0$, $\mu_l,\mu_a \in (0,1)$, and $\xi^l_t,\xi^p_t,\xi^a_t$ and $V_t$ ergodic stationary sequences with $\xi^i_t,\log V_t \in (-M,M)$ for some $M > 0$ and $(1-\mu_a)e^{\xi^a_t} \le 1-\delta$ for some $\delta > 0$ almost surely, there is a critical fecundity $b_{\mathrm{crit}} > 0$ such that $(\ell_t,p_t,a_t) \to 0$ almost surely if $b < b_{\mathrm{crit}}$ and the model is stochastically persistent if $b > b_{\mathrm{crit}}$; if moreover $\xi^l_t = \xi^p_t = \xi^a_t$ almost surely with $\mathbb E\xi^l_t = 0$, then $b_{\mathrm{crit}} = \mu_a/(1-\mu_l)$ (Theorem 5.2). These bounded-noise hypotheses exclude the normally distributed noise of the classical LPA experiments, for which the source states the conclusion only as a conjecture.
 
 ## Expansion
 

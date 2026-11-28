@@ -4,7 +4,7 @@
 
 $$\dot A = \phi F_{W,S} - (\gamma + \mu_{A,1} + \mu_{A,2}A)A, \qquad \dot M = (1-r)\gamma A - \mu_M M, \qquad \dot F_{W,S} = \frac{M + \varepsilon M_S^*}{M + M_S^*}\, r\gamma A - \mu_S F_{W,S},$$
 
-with basic offspring number $\mathcal N = r\gamma\phi/(\mu_S(\gamma+\mu_{A,1}))$ and $\mathcal Q = \mu_{A,2}\mu_M/((\gamma+\mu_{A,1})(1-r)\gamma)$. Without SIT, if $\mathcal N > 1$ the wild equilibrium has aquatic density $A^* = (\gamma+\mu_{A,1})(\mathcal N - 1)/\mu_{A,2}$. Released sterile females do not reproduce, but they bite humans and can acquire and transmit the virus. Let $\mathcal R_0^2$ be the squared basic reproduction number of the virus with the wild vector at its SIT-free equilibrium.
+with basic offspring number $\mathcal N = r\gamma\phi/(\mu_S(\gamma+\mu_{A,1}))$ and $\mathcal Q = \mu_{A,2}\mu_M/((\gamma+\mu_{A,1})(1-r)\gamma)$. Without SIT, if $\mathcal N > 1$ the wild equilibrium has aquatic density $A^* = (\gamma+\mu_{A,1})(\mathcal N - 1)/\mu_{A,2}$. Released sterile females do not reproduce, but they bite humans and can acquire and transmit the virus. Let $\mathcal R_0^2$ be the squared basic reproduction number of the virus with the wild vector at its SIT-free equilibrium. Throughout, $\mathcal N>1$, as in the source ("In the sequel, we assume that N > 1").
 
 **Theorem.**
 
@@ -12,7 +12,7 @@ with basic offspring number $\mathcal N = r\gamma\phi/(\mu_S(\gamma+\mu_{A,1}))$
 
 $$\Lambda_M^{\mathrm{crit}} = \frac{\mu_{M_S}}{\mathcal Q}\Bigl(\sqrt{\mathcal N(1-\varepsilon)} - \sqrt{1 - \mathcal N\varepsilon}\Bigr)^2 .$$
 
-If $(1-\epsilon_F)\Lambda_{\mathrm{tot}} > \Lambda_M^{\mathrm{crit}}$, the elimination equilibrium of the wild population is globally asymptotically stable. If $(1-\epsilon_F)\Lambda_{\mathrm{tot}} < \Lambda_M^{\mathrm{crit}}$, there are two positive equilibria $E_1 < E_2$ and the system is bistable: the order interval below $E_1$ lies in the basin of elimination and the region above $E_1$ in the basin of $E_2$. If $\mathcal N\varepsilon > 1$, a unique positive wild equilibrium exists for every release rate, so sterile males alone cannot eliminate the population.
+If $(1-\epsilon_F)\Lambda_{\mathrm{tot}} > \Lambda_M^{\mathrm{crit}}$, the elimination equilibrium of the wild population is globally asymptotically stable. If $0 < (1-\epsilon_F)\Lambda_{\mathrm{tot}} < \Lambda_M^{\mathrm{crit}}$, there are two positive equilibria $E_1 < E_2$ and the system is bistable: the order interval below $E_1$ lies in the basin of elimination and the region above $E_1$ in the basin of $E_2$. If $\mathcal N\varepsilon > 1$, a unique positive wild equilibrium exists for every release rate, so sterile males alone cannot eliminate the population.
 
 2. (Contamination bound.) Suppose $\mathcal N\varepsilon \le 1$ and $(1-\epsilon_F)\Lambda_{\mathrm{tot}} > \Lambda_M^{\mathrm{crit}}$, so the wild vector is eliminated. The reproduction number of the virus carried only by released sterile females is below $1$ if and only if
 

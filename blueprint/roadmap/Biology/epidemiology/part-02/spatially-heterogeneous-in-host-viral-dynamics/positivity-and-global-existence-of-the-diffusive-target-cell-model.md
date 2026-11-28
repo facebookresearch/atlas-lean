@@ -10,7 +10,7 @@ $$\partial_t V - D_V \Delta V = N\mu_I I - \mu_V V,$$
 
 for $x \in \Omega$, $t \ge 0$, with homogeneous Dirichlet or homogeneous Neumann boundary conditions for all three components. Here $k, N, \mu_T, \mu_I, \mu_V, D_T, D_I, D_V > 0$, $N$ is the burst size, and $\lambda \in C^\infty(\Omega)$ with $\lambda \ge 0$, $\lambda \not\equiv 0$. Initial data $T_0, I_0, V_0$ are continuous, positive and bounded on $\overline{\Omega}$.
 
-**Theorem (local existence).** There is $t^* \in (0, \infty]$ such that the problem has a unique positive classical solution with each component in $C^1((0,t^*); C^2(\Omega))$.
+**Theorem (local existence).** There is $t^* \in (0, \infty]$ such that the problem has a unique positive classical solution with each component in $C^1((0,t^*); C^2(\Omega))$. This corrects Theorem 2.1 of arXiv:1508.07617, which prints $t^* \in [0,\infty]$; the value $t^*=0$ would assert nothing, and the source's contraction argument gives a positive existence time.
 
 **Theorem (positivity, bounds, global existence).** For every $t^* > 0$ the solution exists on $(0, t^*) \times \Omega$, satisfies $T, I, V > 0$, and there are constants $C, C_{t^*} > 0$ with
 

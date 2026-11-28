@@ -1,6 +1,6 @@
 # Phylogenetic inference and comparison
 
-These articles concern inference of evolutionary trees, networks and recorded cell lineages, inference of species trees from gene trees under the multispecies coalescent and gene transfer, and comparison of trees by agreement subtrees, parsimony and quartet distances, cospeciation and tanglegrams. Their observation and sampling models are separate; reading order does not assert a mathematical dependency.
+These articles concern inference of evolutionary trees, networks and recorded cell lineages, inference of species trees from gene trees under the multispecies coalescent and gene transfer, and comparison of trees by agreement subtrees, parsimony and quartet distances, agreement forests and tanglegrams. Their observation and sampling models are separate; reading order does not assert a mathematical dependency.
 
 ## Tree inference
 
@@ -14,7 +14,6 @@ These articles concern inference of evolutionary trees, networks and recorded ce
 - [Inconsistency of concatenated maximum likelihood](inconsistency-of-concatenated-maximum-likelihood/README.md)
 - [Latent tree reconstruction in the Kesten–Stigum regime](latent-tree-reconstruction-in-the-kesten-stigum-regime/README.md)
 - [Rates-across-sites models](rates-across-sites-models/README.md)
-- [Stochastic safety radius of distance methods](stochastic-safety-radius-of-distance-methods/README.md)
 
 ## Networks and recorded lineages
 

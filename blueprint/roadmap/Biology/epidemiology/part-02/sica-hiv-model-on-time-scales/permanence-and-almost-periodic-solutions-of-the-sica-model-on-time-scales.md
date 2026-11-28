@@ -16,8 +16,10 @@ with $\Gamma_1,\Gamma_2$ positively regressive on $\mathbb T$.
 
 **Theorem.**
 
-1. (Permanence.) Under $(H_1)$, every positive solution is eventually bounded, $x_i(t)\le M$ for $t\ge T$, and the system is permanent: there are $0 < m\le M$ with $m\le x_i(t)\le M$ eventually for $i = 1,\dots,4$; moreover $N(t)\le\Lambda/\nu$ is preserved.
-2. (Almost periodic attractor.) Under $(H_1)$ and $(H_2)$, the system has a unique almost periodic solution in the invariant set $\{m\le x_i\le M,\ N\le\Lambda/\nu\}$, and it is uniformly asymptotically stable.
+1. (Permanence.) Under $(H_1)$, every positive solution is eventually bounded, $x_i(t)\le M$ for $t\ge T$, and the system is permanent: there are $0 < m\le M$ with $m\le x_i(t)\le M$ eventually for $i = 1,\dots,4$. On $\mathbb T = \mathbb R$, moreover, $N(t_0)\le\Lambda/\nu$ implies $N(t)\le\Lambda/\nu$ for all $t\ge t_0$.
+2. (Almost periodic attractor.) Under $(H_1)$ and $(H_2)$, the system has a unique almost periodic solution with values in $\{m\le x_i\le M\}$, and it is uniformly asymptotically stable.
+
+The source states that $N\le\Lambda/\nu$ is preserved on every time scale and places the almost periodic solution in the invariant set $\{m\le x_i\le M,\ N\le\Lambda/\nu\}$. Both fail on $\mathbb T = h\mathbb Z$: on $\mathbb Z$ with $\Lambda=\beta=1$, $\nu=0.1$, $\rho=\phi=\omega=\gamma=d=0.01$, $\eta_C=\eta_A=1$, $\lambda\equiv0.1$ and $x(t_0)=(8.9,1,0.05,0.05)$, so that $N=10=\Lambda/\nu$, one step gives $N=10.046$. The page therefore restricts the first claim to $\mathbb T=\mathbb R$ and drops the second.
 
 On $\mathbb T = \mathbb R$ this gives a globally attracting almost periodic HIV/AIDS regime for seasonally or irregularly forced transmission; on $\mathbb T = \mathbb Z$ it gives the same conclusion for the discrete-time model.
 

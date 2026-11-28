@@ -1,6 +1,6 @@
 # Invasion fitness and coexistence in the multi-resource chemostat
 
-In the [multi-resource chemostat system](global-convergence-of-the-multi-resource-chemostat-system.md) $\mathrm{CH}(n;x_1,\dots,x_n)$ under assumptions (A3)–(A4), let $(\bar u(\mathbf x), \bar R(\mathbf x))$ be its globally attracting saturated equilibrium, $\mathbf x = (x_1,\dots,x_n)$. The traits **coexist** if $\bar u_i(\mathbf x) > 0$ for all $i$; write $\mathcal D_n \subset \mathcal X^n$ for the coexistence domain ($\mathcal D_1 = \mathcal X$). The **invasion fitness** of a mutant trait $y$ in the resident community $\mathbf x$ is its per-capita growth rate at the resident resource levels,
+In the [multi-resource chemostat system](global-convergence-of-the-multi-resource-chemostat-system.md) $\mathrm{CH}(n;x_1,\dots,x_n)$ under assumptions (A3)–(A4), with $d$ and $\eta_k$ of class $C^2$ and positive on $\mathcal X$ (the source's (2.6)), let $(\bar u(\mathbf x), \bar R(\mathbf x))$ be its globally attracting saturated equilibrium, $\mathbf x = (x_1,\dots,x_n)$. The traits **coexist** if $\bar u_i(\mathbf x) > 0$ for all $i$; write $\mathcal D_n \subset \mathcal X^n$ for the coexistence domain ($\mathcal D_1 = \mathcal X$). The **invasion fitness** of a mutant trait $y$ in the resident community $\mathbf x$ is its per-capita growth rate at the resident resource levels,
 
 $$f(y; x_1,\dots,x_n) = -d(y) + \sum_{k=1}^r \eta_k(y)\,\bar R_k(\mathbf x).$$
 

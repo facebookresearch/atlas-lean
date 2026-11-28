@@ -1,7 +1,6 @@
 # Models of sequence, trait and lineage evolution
 
 - [Anagenetic and cladogenetic trait change on Yule trees](anagenetic-and-cladogenetic-trait-change-on-yule-trees/README.md)
-- [Cophenetic distance between random trees](cophenetic-distance-between-random-trees/README.md)
 - [Disentangling number of tree mixtures](disentangling-number-of-tree-mixtures/README.md)
 - [Hadamard conjugation for group-based models](hadamard-conjugation-for-group-based-models/README.md)
 - [Large-tree limit of phylogenetic mixtures](large-tree-limit-of-phylogenetic-mixtures/README.md)

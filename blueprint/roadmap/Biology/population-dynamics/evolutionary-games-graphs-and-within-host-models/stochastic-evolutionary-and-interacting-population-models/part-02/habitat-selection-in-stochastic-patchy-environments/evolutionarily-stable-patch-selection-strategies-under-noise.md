@@ -1,10 +1,10 @@
 # Evolutionarily stable patch-selection strategies under environmental noise
 
-In the stochastic patch model with growth rates $\mu \in \mathbb{R}^n$, carrying-capacity parameters $\kappa_i > 0$, noise covariance $\Sigma = (\sigma_{ij})$, and invasion rate
+In the stochastic patch model with growth rates $\mu \in \mathbb{R}^n$, intraspecific competition strengths $\kappa_i > 0$, noise covariance $\Sigma = (\sigma_{ij})$, and invasion rate
 
 $$
 
-\mathcal I(\alpha,\beta) = \beta\cdot\Big(\mu - \frac{\Sigma\beta}{2}\Big) - \frac{\langle\alpha,\beta\rangle_\kappa}{\langle\alpha,\alpha\rangle_\kappa}\;\alpha\cdot\Big(\mu - \frac{\Sigma\alpha}{2}\Big), \qquad \langle\alpha,\beta\rangle_\kappa = \sum_i \frac{\alpha_i\beta_i}{\kappa_i},
+\mathcal I(\alpha,\beta) = \beta\cdot\Big(\mu - \frac{\Sigma\beta}{2}\Big) - \frac{\langle\alpha,\beta\rangle_\kappa}{\langle\alpha,\alpha\rangle_\kappa}\;\alpha\cdot\Big(\mu - \frac{\Sigma\alpha}{2}\Big), \qquad \langle\alpha,\beta\rangle_\kappa = \sum_i \kappa_i\alpha_i\beta_i,
 
 $$
 
@@ -32,7 +32,7 @@ $$
 
 3. (Two patches.) For $n = 2$, a mixed ESS exists whenever the reverse strict inequalities hold for both $i = 1,2$ ($j \ne i$).
 
-Compared with the deterministic ideal free distribution ($\alpha_i \propto \kappa_i$ restricted to source patches), noise makes the ESS spend less time in patches with large carrying capacity and can make it use sink patches with $\mu_i < 0$: spatial bet hedging.
+Compared with the deterministic ideal free distribution ($\alpha_i \propto \mu_i/\kappa_i$ on the patches with $\mu_i > 0$), noise can make the ESS use sink patches with $\mu_i < 0$: spatial bet hedging.
 
 ## Expansion
 

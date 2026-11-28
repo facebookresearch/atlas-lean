@@ -16,9 +16,13 @@ exist uniformly in $t_0$. If $\lambda_1<\bar\beta/\bar\gamma$, the infection die
 
 $$\frac{d\beta_v}{dt}=\rho\,i_v(t),\qquad\rho>0,$$
 
-then the infection dies out from every initial configuration, and the cumulative infection is bounded:
+then the infection dies out from every initial configuration, and the cumulative infection $\int_0^\infty\sum_{v=1}^ni_v(s)\,ds$ is finite.
 
-$$\int_0^\infty\sum_{v=1}^ni_v(s)\,ds\le\frac{(n-1)^2\gamma_m}{\rho}+\frac{n-1}{\rho}\sqrt{\sum_{v=1}^ni_v(0)+\frac{(n-1)^3\gamma_m^2}{2\rho}},\qquad\gamma_m=\sup_t\gamma(t).$$
+Proposition 1 of the source also prints the explicit bound (2.10),
+
+$$\int_0^\infty\sum_{v=1}^ni_v(s)\,ds\le\frac{(n-1)^2\gamma_m}{\rho}+\frac{n-1}{\rho}\sqrt{\sum_{v=1}^ni_v(0)+\frac{(n-1)^3\gamma_m^2}{2\rho}},\qquad\gamma_m=\sup_t\gamma(t),$$
+
+which this page does not state because it is false: for two nodes with $\gamma\equiv0$, $i(0)=(1,1)$ and $\beta(0)=0$, the quantity $i_v+\beta_v^2/(2\rho)$ is constant, so $\int_0^\infty\sum_vi_v=2\sqrt{2/\rho}$, which exceeds the printed right-hand side $\sqrt2/\rho$ when $\rho>1/4$. The page keeps only the finiteness of the cumulative infection.
 
 A modified adaptive law can also steer the infection to a prescribed endemic level instead of zero.
 

@@ -27,7 +27,7 @@ $$
 $$
 
 and, when the contact network is strongly connected,
-$\mathcal{R}_0^2 = \rho\left(\mathrm{diag}(\mu_h+\gamma_h)^{-1}\mathrm{diag}(\bar N_h)L\,\mathrm{diag}(\mu_v)^{-1}\mathrm{diag}(\bar N_v)M\right)$, the host-to-host reproduction number over two transmission steps.
+$\mathcal{R}_0^2 = \rho\left(\mathrm{diag}(\mu_h+\gamma_h)^{-1}\mathrm{diag}(\bar N_h)L\,\mathrm{diag}(\mu_v)^{-1}\mathrm{diag}(\bar N_v)M\right)$, the host-to-host reproduction number over two transmission steps (Proposition 2.1 of the source applied to the displayed next-generation matrix). This corrects Remark 3.1 of arXiv:1409.1470, which prints $\mathcal R_0^2=\rho\big(\mathrm{diag}(\mu_h+\gamma_h)^{-1}\mathrm{diag}(\mu_v)^{-1}\mathrm{diag}(\bar N_h)L\,\mathrm{diag}(\bar N_v)M\big)$; that expression differs in general from the square of the spectral radius above (6.533 against 8.300 in a numerical check).
 
 **Theorem.** Assume the host–vector contact network $\begin{pmatrix}0 & L\\ M & 0\end{pmatrix}$ is irreducible. For the reduced system:
 1. There is a unique endemic equilibrium, with all components positive, if and only if $\mathcal{R}_0 > 1$; when it exists it is locally asymptotically stable.

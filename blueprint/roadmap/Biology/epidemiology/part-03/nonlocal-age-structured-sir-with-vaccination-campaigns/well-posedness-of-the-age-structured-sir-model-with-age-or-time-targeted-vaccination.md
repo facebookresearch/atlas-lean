@@ -15,7 +15,7 @@ Assume $\lambda$ is continuous, bounded and Lipschitz in the age of the suscepti
 
 $$(S, I, R) \in C^{0,1}\big(\mathbb I; L^1(\mathbb R^+; \mathbb R^3)\big), \qquad S, I, R \ge 0,$$
 
-depending Lipschitz continuously on the initial datum in $L^1$ and on the control in $L^\infty$.
+with $(S,I,R)(t) \in \mathrm{BV}(\mathbb R^+;\mathbb R^3)$ for every $t \in \mathbb I$, satisfying the source's explicit a priori bounds in terms of the data, the rates and $T$: the total-variation bounds (2.2) and (2.4) on $\mathrm{TV}\big((S,I,R)(t)\big)$, uniform in $t \in \mathbb I$, and the bound (2.6) on $\|(S,I,R)\|_{C^0(\mathbb I;L^1)}$; and depending Lipschitz continuously on the initial datum in $L^1$ and on the control in $L^\infty$.
 
 The Lipschitz dependence on the vaccination controls is what makes cost functionals of the form "infections plus vaccination cost" continuous on the control set, the basis for optimizing vaccination ages or campaign times.
 

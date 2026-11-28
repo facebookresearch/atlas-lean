@@ -16,7 +16,7 @@ with $\hat D_0(x,y) = \frac12\|x-y\|^2$ and $\hat D_1(x,y) = \sum_i x_i\log(x_i/
 
 1. *(Two types.)* For a continuous incentive and mutation matrix there is $N_0$ such that for $N > N_0$ every local maximum or minimum of the stationary distribution of the incentive process is a local minimum of $D_d$ for $0 \le d < 1$, and interior extrema are local minima of the relative entropy $D_1$. The same holds for the $k$-fold process (the $k$-th power of the transition matrix).
 2. *($n$ types.)* For a continuous incentive and mutation matrix and $N$ large enough, states that are *probability-flow neutral* (inflow and outflow of stationary probability approximately balance, which holds at extrema of $s$ for large $N$) are local minima of $D_d$ for $0 \le d < 1$, and interior ones of $D_1$.
-3. *(Wright–Fisher.)* If the stationary distribution of the Wright–Fisher process has a global maximum at $a$, is symmetric about it and is otherwise vanishingly small, then for large $N$, $a$ is an ISS candidate and a minimum of $D_d$.
+3. *(Wright–Fisher.)* For a continuous incentive and mutation matrix, if the stationary distribution of the Wright–Fisher process has a global maximum at $a$, is symmetric about it and is otherwise vanishingly small, then for large $N$, $a$ is an ISS candidate and a minimum of $D_d$.
 
 For two types, linear landscapes and the Moran process with $\mu \to 0$ as $N \to \infty$, there is asymptotically at most one interior stationary stable state; in the large-population limit the replicator-equation stability theory, with the relative entropy as Lyapunov function, is recovered.
 

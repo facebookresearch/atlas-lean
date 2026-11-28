@@ -1,6 +1,6 @@
 # Voronoi and UPGMA regions around a tritomy
 
-Near a tree metric with a single tritomy $T$, dissimilarity space decomposes as $\operatorname{span} C_T \oplus \operatorname{span} K_T$, where $K_T$ is the planar fan of the three binary resolution cones (see [angles between resolution cones](angles-between-resolution-cones-at-a-tritomy.md)), spanned by the orthogonal projections $p_{AB}, p_{AC}, p_{BC}$ of the resolution directions. A distance-based method assigns each data point to one resolution; the **Voronoi cell** of a resolution cone is the set of dissimilarity maps closer in Euclidean distance to it than to the other two (the least-squares choice).
+Near a tree metric with a single tritomy $T$, tree space has the local form $\operatorname{span} C_T \times K_T$, where $K_T$ is the planar fan of the three binary resolution cones (see [angles between resolution cones](angles-between-resolution-cones-at-a-tritomy.md)), spanned by the orthogonal projections $p_{AB}, p_{AC}, p_{BC}$ of the resolution directions. A distance-based method assigns each data point to one resolution; the **Voronoi cell** of a resolution cone is the set of dissimilarity maps closer in Euclidean distance to it than to the other two (the least-squares choice).
 
 **Proposition.** The boundary between the Voronoi cells of $C_{T_{AB}}$ and $C_{T_{AC}}$ is determined by the angle bisector of $p_{AB}$ and $p_{AC}$ in $\operatorname{span} K_T$.
 

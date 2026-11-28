@@ -7,7 +7,7 @@
 - an immune cell immigrates at each site independently with probability $\alpha$;
 - a site becomes $2$ if it receives an immune cell, otherwise $1$ if it receives a bacterium, otherwise $0$.
 
-So immune cells evolve autonomously, as subcritical oriented percolation reinforced by immigration, and form a dynamical hostile environment in which the bacteria try to grow as an oriented percolation. Let $\vec p_c(d+1)$ be the critical value of oriented site–bond percolation on $\mathbb Z^d \times \mathbb N$. Starting from one bacterium at $0$ and immune cells on $E \subset \mathbb Z^d\setminus\{0\}$, let $\tau_1^{0,E}$ be the bacterial extinction time and $t_1^{0,E}(x)$ the first time site $x$ is occupied by bacteria.
+So immune cells evolve autonomously, as subcritical oriented percolation reinforced by immigration, and form a dynamical hostile environment in which the bacteria try to grow as an oriented percolation. Let $\vec p_c(d+1)$ be the critical value of independent oriented bond percolation on $\mathbb Z^d \times \mathbb N$ with an oriented edge from $(z,n)$ to $(z',n+1)$ whenever $\|z'-z\|_1 \le 1$. Starting from one bacterium at $0$ and immune cells on $E \subset \mathbb Z^d\setminus\{0\}$, let $\tau_1^{0,E}$ be the bacterial extinction time and $t_1^{0,E}(x)$ the first time site $x$ is occupied by bacteria.
 
 **Theorem.** Let $p > \vec p_c(d+1)$ (bacteria supercritical) and $q < \vec p_c(d+1)$ (immune cells subcritical without immigration).
 

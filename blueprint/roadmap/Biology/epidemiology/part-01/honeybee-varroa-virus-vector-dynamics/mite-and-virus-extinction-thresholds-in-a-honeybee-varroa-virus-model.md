@@ -13,7 +13,7 @@ $$N^* = c\,\frac{r/d + \sqrt{(r/d)^2 - 4\hat K}}{2}, \qquad \bar N_h^{c,*} = \fr
 1. (Boundedness.) If $r/d > 2\sqrt{\hat K}$, the nonnegative orthant is invariant and, for large times, $c(S_h + I_h) + (S_m + I_m) \le N^*$. If $r/(2\sqrt{\hat K}) < d_h$, the colony collapses: all populations go to $0$.
 2. (Mite extinction.) If $N^* < d_m/\alpha$, the mites go extinct, and the dynamics reduce to the two-dimensional bee–virus system on the mite-free set.
 3. (Bee persistence with healthy-mite extinction.) If $r/(2\sqrt{\hat K}) > d_h$, $\bar N_h^* < d_m/(\alpha c)$ and the initial number of healthy bees exceeds an explicit threshold, the bees persist while the virus-free mites go extinct.
-4. (Colony survival.) If $r/(2\sqrt{\hat K}) > d_h$, $N^* < d_m/\alpha$ and $\mathcal R_0^V < 1$, the full system converges to the disease- and mite-free set, where $S_h' = rS_h^2/(\hat K + S_h^2) - d_hS_h$. The colony then tends to $\bar N_h^*$ if $S_h(0) > \bar N_h^c$ and collapses if $S_h(0) < \bar N_h^c$.
+4. (Colony survival.) If $r/(2\sqrt{\hat K}) > d_h$, $N^* < d_m/\alpha$ and $\mathcal R_0^V < 1$, the full system converges to the disease- and mite-free set, where $S_h' = rS_h^2/(\hat K + S_h^2) - d_hS_h$. For this one-dimensional equation, solutions tend to $\bar N_h^*$ if $S_h(0) > \bar N_h^c$ and to $0$ if $S_h(0) < \bar N_h^c$.
 
 The virus-free bee–mite subsystem has one, three or four equilibria, and the mite-free bee–virus subsystem has one, three or five, with explicit existence and stability conditions. The origin (colony collapse) is always locally stable because of the Allee effect.
 
@@ -23,4 +23,4 @@ Adding $c$ times the bee equations to the mite equations cancels the parasitism 
 
 ## Sources
 
-- Yun Kang, Krystal Blanco, Talia Davies, Ying Wang, "Disease dynamics of Honeybees with Varroa destructor as parasite and virus vector", arXiv (2015). Section 2 (rescaled model), Section 3: definitions of $N^*$ and $\bar N_h^{c,*}$, Theorems 3.1–3.6. <https://doi.org/10.48550/arXiv.1505.03742>. Published version: Mathematical Biosciences 275 (2016), 71–92, <https://doi.org/10.1016/j.mbs.2016.02.012>; locators above refer to the arXiv version.
+- Yun Kang, Krystal Blanco, Talia Davis, Ying Wang, Gloria DeGrandi-Hoffman, "Disease dynamics of Honeybees with Varroa destructor as parasite and virus vector", arXiv (2015). Section 2 (rescaled model), Section 3: definitions of $N^*$ and $\bar N_h^{c,*}$, Theorems 3.1–3.6. <https://doi.org/10.48550/arXiv.1505.03742>. Published version: Mathematical Biosciences 275 (2016), 71–92, <https://doi.org/10.1016/j.mbs.2016.02.012>; locators above refer to the arXiv version.

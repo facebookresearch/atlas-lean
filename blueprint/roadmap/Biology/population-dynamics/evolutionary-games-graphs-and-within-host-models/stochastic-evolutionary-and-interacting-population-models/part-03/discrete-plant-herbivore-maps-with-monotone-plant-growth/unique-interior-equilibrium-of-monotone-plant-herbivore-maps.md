@@ -16,7 +16,7 @@ Under H1, let $0=\bar P^0<\bar P^1<\dots<\bar P^n$ be the non-degenerate fixed p
 
 **Theorem.**
 
-1. *(Model I.)* If H1 and H2 hold, Model I has at most one interior equilibrium, namely the crossing in the open quadrant of the decreasing nullcline $P=f^{-1}(e^{aH})$ and the increasing nullcline $P=H/(1-e^{-aH})$. Since these start at $P=f^{-1}(1)=\bar P^1$ and $P=1/a$ when $H=0$, one exists exactly when $a\bar P^1>1$ (the source states this condition with a misprint, as $f^{-1}(0)>1/a$).
+1. *(Model I.)* If H1 and H2 hold, Model I has at most one interior equilibrium, namely the crossing in the open quadrant of the decreasing nullcline $P=f^{-1}(e^{aH})$ and the increasing nullcline $P=H/(1-e^{-aH})$. Since these start at $P=f^{-1}(1)=\bar P^1$ and $P=1/a$ when $H=0$, one exists when $a\bar P^1>1$ (the source states this condition with a misprint, as $f^{-1}(0)>1/a$).
 2. *(Model II.)* If H1 holds, Model II has at most one interior equilibrium, which exists when $F^{-1}(1/a)<1/a$; it lies on the intersection of the decreasing nullcline $P=H/(e^{aH}-1)$ and the increasing nullcline $P=F^{-1}\big(H/(1-e^{-aH})\big)$.
 3. *(Transcritical origin.)* In both models the interior equilibrium emerges generically through a transcritical bifurcation from the largest plant-only equilibrium $(\bar P^n,0)$ when $a\bar P^n=1$.
 

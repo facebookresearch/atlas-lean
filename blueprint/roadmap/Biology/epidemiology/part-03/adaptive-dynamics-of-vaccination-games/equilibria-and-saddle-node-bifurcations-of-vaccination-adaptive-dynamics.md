@@ -4,7 +4,7 @@
 
 $$E(P,p)=-rP-\pi(p)\,(1-P),$$
 
-where $0<r<1$ is the relative risk of vaccination versus infection, and $\pi(p)$ is the probability that an unvaccinated individual is eventually infected at uptake $p$: $\pi$ is smooth and non-increasing on $[0,1]$, $\pi(0)=1$, and $\pi(p)=0$ for $p\ge p^\ast$, the herd-immunity threshold. If a fraction $\epsilon\in[0,1]$ of the population plays $P$ and the rest plays $Q$, then $p=\epsilon P+(1-\epsilon)Q$, and the adaptive dynamics $\dot P=\partial_PE(P,\epsilon P+(1-\epsilon)Q)\big|_{P=Q}$ is the scalar ODE
+where $0<r<1$ is the relative risk of vaccination versus infection, and $\pi(p)$ is the probability that an unvaccinated individual is eventually infected at uptake $p$: $\pi$ is smooth and non-increasing on $[0,1]$, $\pi(0)=1$, and $\pi(p)=0$ for $p\ge p^\ast$, the herd-immunity threshold. (The source also lists $0<\pi(p)<1$ on $[0,1]$ among its assumptions; that contradicts $\pi(0)=1$ and $\pi=0$ beyond $p^\ast$, its proofs do not use it, and the page drops it.) If a fraction $\epsilon\in[0,1]$ of the population plays $P$ and the rest plays $Q$, then $p=\epsilon P+(1-\epsilon)Q$, and the adaptive dynamics $\dot P=\partial_PE(P,\epsilon P+(1-\epsilon)Q)\big|_{P=Q}$ is the scalar ODE
 
 $$\dot P=f(P):=\pi(P)-r-\epsilon\,\pi'(P)\,(1-P).$$
 
@@ -17,7 +17,7 @@ $$P_0\in\bigl[\pi^{-1}(r),\ p^\ast\bigr).$$
 
 (The source's upper bound also involves $(\pi')^{-1}\bigl(\frac{1-r}{\epsilon}\bigr)$, but $\pi'\le0$ never takes the positive value $\frac{1-r}{\epsilon}$, so that term is undefined and is dropped here.)
 
-3. For general $\pi$, there is an odd number of non-degenerate equilibria, and they alternate between stable and unstable starting with a stable one at the lowest uptake.
+3. For general $\pi$, if all equilibria are non-degenerate, their number is odd and they alternate between stable and unstable, starting with a stable one at the lowest uptake.
 4. As $r$ or $\epsilon$ varies, the only bifurcations are saddle-node bifurcations, creating or annihilating a stable–unstable pair. The bifurcation diagram in $r$ is the graph of $P\mapsto\pi(P)-\epsilon\pi'(P)(1-P)$ rotated by $\pi/2$ and cut off at the levels $0$ and $1$; for $r\neq0$ the diagram in $\epsilon$ is likewise the rotated graph of $P\mapsto\frac{\pi(P)-r}{\pi'(P)(1-P)}$ cut off at $0$ and $1$.
 
 As $r\to0$ the equilibrium uptake tends to $p^\ast$ and as $r\to1$ it tends to $0$, so no bounds independent of $r$ and $\epsilon$ hold.

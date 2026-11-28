@@ -18,7 +18,7 @@ $$\mathcal R_0 = \frac{\beta}{d + \gamma}.$$
 4. (No immunity, $\tau = 0$.) The limiting SIS system has the same $\mathcal R_0$; the disease-free equilibrium is globally asymptotically stable if $\mathcal R_0\le1$, and the unique endemic equilibrium is globally asymptotically stable off the disease-free line if $\mathcal R_0 > 1$.
 5. (Characteristic roots.) Any characteristic root $\lambda$ of the linearization at the endemic equilibrium with $\Re\lambda > 0$ satisfies $|\lambda|\le\max\{1,\hat a + \hat b + \hat c\}$ with $\hat a = d + \beta(\nu+1)$, $\hat b = \beta(\gamma + \beta(2\nu+1))$, $\hat c = 2\nu\beta^2(\gamma + \nu\beta)$, which localizes the roots for a continuation analysis in $\tau$.
 
-Numerically, with boosting the endemic equilibrium undergoes multiple stability switches (Hopf bifurcations giving sustained oscillations, and restabilizations) as $\tau$ increases, a phenomenon absent without boosting.
+Numerically, with boosting the endemic equilibrium undergoes multiple stability switches (Hopf bifurcations giving sustained oscillations, and restabilizations) as $\tau$ increases.
 
 ## Expansion
 

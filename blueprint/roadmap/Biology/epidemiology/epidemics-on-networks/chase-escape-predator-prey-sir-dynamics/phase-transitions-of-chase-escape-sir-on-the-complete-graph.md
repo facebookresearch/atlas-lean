@@ -9,7 +9,7 @@ $$ \mathbb P(E^N_{\mathrm{ext}}) \xrightarrow[N\to\infty]{} \begin{cases} 0, & 0
 **Theorem (final state).** As $N \to \infty$:
 
 1. If $0 < \lambda < 1$: $S^{(N)}/N^{1-\lambda} \Rightarrow \mathrm{Exp}(1)^{\lambda}$, $(N - R^{(N)})/N^{1-\lambda} \Rightarrow \mathrm{Exp}(1)^\lambda$ and $I^{(N)} \to 0$ in probability.
-2. If $\lambda = 1$: $\mathbb P(S^{(N)} = i) \to 2^{-(i+1)}$ for $i \ge 0$; $R^{(N)}/N \Rightarrow \tfrac12\delta_1 + (1+x)^{-2}\mathbf 1_{[0,1]}(x)\,dx$; $I^{(N)}/N$ converges in distribution to a law with density $(2-x)^{-2}$ on $[0,1]$ (total mass $\tfrac12$) and an atom $\tfrac12$ at $0$ (the event that the infection dies out).
+2. If $\lambda = 1$: $\mathbb P(S^{(N)} = i) \to 2^{-(i+1)}$ for $i \ge 0$; $R^{(N)}/N \Rightarrow \tfrac12\delta_1 + (1+x)^{-2}\mathbf 1_{[0,1]}(x)\,dx$; $I^{(N)}/N$ converges in distribution to a law with density $(2-x)^{-2}$ on $[0,1]$ (total mass $\tfrac12$) and an atom $\tfrac12$ at $0$ (the event that the infection dies out). This corrects the source's display (5), which prints only the density $(2-x)^{-2}\mathbf 1_{[0,1]}(x)\,dx$, a measure of total mass $\tfrac12$; the atom follows from Proposition 1.2(iii) and Theorem 1 of the source, since the infection dies out with limiting probability $\tfrac12$ and then $I^{(N)} = 0$.
 3. If $\lambda > 1$: $S^{(N)} \to 0$ in probability, $R^{(N)}/N^{1/\lambda} \Rightarrow \mathrm{Exp}\big(\mathrm{Exp}(1)^{1/\lambda}\big)$ (an exponential variable with independent random rate) and $(N - I^{(N)})/N^{1/\lambda}$ has the same limit law.
 
 **Theorem (mean outbreak sizes; two more transitions).** For $0 < \lambda < 1$,
@@ -24,4 +24,4 @@ On the complete graph, a susceptible is infected at rate $\lambda I S$ and an in
 
 ## Sources
 
-- Igor Kortchemski, "A predator-prey SIR type dynamics on large complete graphs with three phase transitions", arXiv:1312.5678 (2013), Introduction (Theorems 1–4), Section 1 (Theorem 1.1, the Athreya–Karlin decoupling; Propositions 1.2–1.4 on Yule processes), Section 3 (Theorems 5–7). <https://doi.org/10.48550/arXiv.1312.5678>. Published version: Stochastic Processes and their Applications 125(3) (2015), 886–917, <https://doi.org/10.1016/j.spa.2014.10.005>; locators above refer to the arXiv version.
+- Igor Kortchemski, "A predator-prey SIR type dynamics on large complete graphs with three phase transitions", arXiv:1312.5678 (2013), Introduction (Theorems 1–4), Section 1 (Theorem 1.1, the Athreya–Karlin decoupling; Propositions 1.2–1.4 on Yule processes), Section 4.1 (Theorems 5–7). <https://doi.org/10.48550/arXiv.1312.5678>. Published version: Stochastic Processes and their Applications 125(3) (2015), 886–917, <https://doi.org/10.1016/j.spa.2014.10.005>; locators above refer to the arXiv version.

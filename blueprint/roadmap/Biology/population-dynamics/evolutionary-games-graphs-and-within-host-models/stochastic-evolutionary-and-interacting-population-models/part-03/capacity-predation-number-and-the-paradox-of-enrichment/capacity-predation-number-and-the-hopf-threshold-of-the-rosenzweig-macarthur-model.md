@@ -23,7 +23,7 @@ $$
 u_* = \frac{r}{1-r}H,\qquad v_* = (1-u_*)(u_*+H).
 $$
 
-2. The linearization at $(u_*,v_*)$ has eigenvalues $\lambda=r\Big[\tfrac12(1-2u_*-H)\pm\sqrt{\tfrac14(1-2u_*-H)^2-kH\frac{1-u_*}{u_*}}\Big]$, so the coexistence equilibrium is locally asymptotically stable for $\frac{1-r}{1+r}<H<\frac{1-r}{r}$ and unstable for $0<H<\frac{1-r}{1+r}$, with a Hopf bifurcation at $H=\frac{1-r}{1+r}$ (equivalently, $u_*$ crosses the vertex $\tfrac12(1-H)$ of the prey-nullcline parabola).
+2. The linearization at $(u_*,v_*)$ has eigenvalues $\lambda=r\Big[\tfrac12(1-2u_*-H)\pm\sqrt{\tfrac14(1-2u_*-H)^2-kH\frac{1-u_*}{u_*}}\Big]$, so the coexistence equilibrium is locally asymptotically stable for $\frac{1-r}{1+r}<H<\frac{1-r}{r}$ and unstable for $0<H<\frac{1-r}{1+r}$, with a Hopf bifurcation at $H=\frac{1-r}{1+r}$ (equivalently, $u_*$ crosses the vertex $\tfrac12(1-H)$ of the prey-nullcline parabola). This corrects (4.4) of arXiv:1104.4355, which prints these eigenvalues without the factor $r$; the factor follows from the displayed linearization, since $u_*/(u_*+H)=r$.
 3. For $0<H<\frac{2}{1+r}-1$, the $\omega$-limit set of every point of the open quadrant other than $(u_*,v_*)$ is a periodic orbit; if all these limit sets are one stable limit cycle, it encircles $(u_*,v_*)$.
 
 **Paradox of enrichment, recast.** Increasing $b$ with the other parameters fixed decreases $H$ and eventually destabilizes coexistence, producing a limit cycle that approaches the $v$-axis, so prey densities get dangerously small. Since $H=h/b$, the same effect is produced by decreasing the half-saturation $h$, i.e. by more aggressive predation, for which instability is unsurprising.

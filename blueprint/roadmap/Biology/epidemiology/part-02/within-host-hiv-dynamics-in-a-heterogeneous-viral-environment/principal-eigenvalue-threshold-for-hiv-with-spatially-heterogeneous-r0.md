@@ -4,7 +4,7 @@
 
 $$T_t = \alpha(x) - \gamma V T - \mu_T T, \qquad I_t = \gamma V T - \mu_I I, \qquad V_t = N\mu_I I - \mu_V V + d_V \Delta V,$$
 
-where the supply of target cells $\alpha(x) > 0$ varies in space (e.g. lymphoid tissue), $\gamma$ is the infection rate, $N$ the burst size, and $\mu_T, \mu_I, \mu_V, d_V > 0$. The **heterogeneous reproductive ratio** is
+where the supply of target cells $\alpha(x) > 0$ varies in space (e.g. lymphoid tissue) and is piecewise continuous and $\ell$-periodic in each variable, $\gamma$ is the infection rate, $N$ the burst size, and $\mu_T, \mu_I, \mu_V, d_V > 0$. The **heterogeneous reproductive ratio** is
 
 $$R_0(x) = \frac{\gamma N \alpha(x)}{\mu_T \mu_V};$$
 
@@ -21,7 +21,7 @@ If $R_0$ is constant, $\lambda_0 = \mu_V(R_0 - 1)$.
 $$T_i = \frac{\alpha}{\gamma V_i + \mu_T}, \qquad I_i = \frac{\gamma \alpha V_i}{\mu_I(\gamma V_i + \mu_T)}.$$
 
 2. (Dynamics.) The uninfected state is stable if $\lambda_0 < 0$ and unstable if $\lambda_0 > 0$; for $\lambda_0 > 0$ and $\alpha \in W^{1,\infty}$ the evolution semigroup has a connected universal attractor.
-3. (Homogenization.) Let $R_0^\varepsilon(x) = R_0(x/\varepsilon)$ for a fixed periodic profile $R_0$ on the unit cell with cell mean $\mathcal M_y(R_0) > 1$. Then for small $\varepsilon$ the infected viral steady state $V^\varepsilon$ exists and, as $\varepsilon \to 0$,
+3. (Homogenization.) Let $R_0^\varepsilon(x) = R_0(x/\varepsilon)$ for a fixed piecewise continuous profile $R_0$, periodic with period $1$ in each variable, with cell mean $\mathcal M_y(R_0) > 1$. Then for small $\varepsilon$ the infected viral steady state $V^\varepsilon$ exists and, as $\varepsilon \to 0$,
 
 $$V^\varepsilon \to V^0 = \frac{\mu_T}{\gamma}\big(\mathcal M_y(R_0) - 1\big)$$
 

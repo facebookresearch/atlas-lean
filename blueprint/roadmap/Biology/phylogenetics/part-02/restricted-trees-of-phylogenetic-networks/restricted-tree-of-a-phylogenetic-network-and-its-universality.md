@@ -8,7 +8,7 @@ For an acyclic $X$-network $N$, let $R(v)$ be the smallest restricted set contai
 2. If $f: N \to T$ is any restricted CSD map onto an $X$-network $T$, then $T$ has no vertex of indegree at least 2, so $T$ is an $X$-tree (Theorem 4.1). In particular $\mathrm{ResTr}(N)$ is an $X$-tree (Corollary 4.2).
 3. There is a wired lift of $\mathrm{ResTr}(N)$ into $N$: a subgraph of the undirected graph of $N$ that contains, for each arc of $\mathrm{ResTr}(N)$, exactly one arc of $N$ mapping onto it, joined inside each fiber by a tree, so that $\mathrm{ResTr}(N)$ embeds in $N$ as an undirected network up to resolution (Corollary 4.3).
 4. A composition of restricted CSD maps is a restricted CSD map (Theorem 4.5).
-5. Universality: for every restricted CSD map $g: N \to T$, the kernel partition $\{R'(v)\}$ of $\phi$ refines the kernel partition of $g$, and $g = h \circ \phi$ for a CSD map $h: \mathrm{ResTr}(N) \to T$ (Theorem 4.6).
+5. Universality: for every restricted CSD map $g: N \to T$, the kernel partition $\{R'(v)\}$ of $\phi$ refines the kernel partition of $g$, and $g = h \circ \phi$ for a unique restricted CSD map $h: \mathrm{ResTr}(N) \to T$ (Theorem 4.6: $\phi$ is universal for restricted maps).
 
 ## Depends on
 

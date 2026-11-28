@@ -6,7 +6,7 @@ A mixture $\mathcal M^*_{\mathcal T}$ **weakly mimics** $\mathcal M^*_{\mathcal 
 
 **Theorem.** Let $\mathcal T$ consist of $\kappa - 1$ copies of a tree $T_1$ and $\mathcal S = \{T_2\}$. Under the $\kappa$-state general continuous-time model, $\mathcal M_{\mathcal T}$ and $\mathcal M_{\mathcal S}^{+}$ have no distribution in common unless $T_1$ is a refinement of $T_2$.
 
-For nucleotide models ($\kappa = 4$, including GTR), a mixture of up to three classes on one topology therefore never reproduces the data of a different unmixed topology with positive internal branches. The property propagates: weak mimicking is preserved under fusing trees along common ends, and for quartets differing by an NNI move, mimicking between $r$ copies of $T_{12|34}$ and $s$ copies of $T_{13|24}$ lifts to $r$ copies of $T$ versus $s$ copies of $T'$ for any trees $T, T'$ differing by an NNI.
+For nucleotide models ($\kappa = 4$, including GTR), a mixture of up to three classes on one topology therefore never reproduces the data of a different unmixed topology with positive internal branches, unless the mixture's topology refines that one. The property propagates: weak mimicking is preserved under fusing trees along common ends, and for quartets differing by an NNI move, mimicking between $r$ copies of $T_{12|34}$ and $s$ copies of $T_{13|24}$ lifts to $r$ copies of $T$ versus $s$ copies of $T'$ for any trees $T, T'$ differing by an NNI.
 
 ## Expansion
 

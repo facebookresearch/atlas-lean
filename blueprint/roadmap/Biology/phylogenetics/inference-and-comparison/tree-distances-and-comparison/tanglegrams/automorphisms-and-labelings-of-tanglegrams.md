@@ -3,10 +3,10 @@
 Let $Y$ be a tanglegram on trees $T$ and $S$ with $n$ leaves, given by a bijection $\phi: L(T) \to L(S)$, and let $\mathrm{Aut}_L(T)$ be the group of leaf permutations induced by automorphisms of $T$. An automorphism of an ordered tanglegram is an automorphism of the graph formed by the two trees and the between-leaf edges that maps each tree to itself; for an unordered tanglegram it may also exchange the two trees; for rooted tanglegrams roots are preserved. Let $\mathrm{Aut}_L(Y)$ be the induced group of permutations of $L(T)$ and set
 
 $$
-H = \mathrm{Aut}_L(T) \cap \phi^{-1}\,\mathrm{Aut}_L(T)\,\phi ,
+H = \mathrm{Aut}_L(T) \cap \phi^{-1}\,\mathrm{Aut}_L(S)\,\phi ,
 $$
 
-where, when $T$ and $S$ are isomorphic, $L(S)$ is identified with $L(T)$ through a fixed tree isomorphism.
+with $\mathrm{Aut}_L(S)$ the group of leaf permutations induced by automorphisms of $S$. When $T$ and $S$ are isomorphic, $L(S)$ is identified with $L(T)$ through a fixed tree isomorphism, and then $H = \mathrm{Aut}_L(T) \cap \phi^{-1}\,\mathrm{Aut}_L(T)\,\phi$. Proposition 19 of the source prints this last form in all cases; for $T \not\cong S$ it does not typecheck, and the source's derivation ($g = \phi^{-1}h\phi$ with $h \in \mathrm{Aut}_L(S)$) gives the form above.
 
 1. If $Y$ is unordered, an automorphism exchanging the two trees exists if and only if $T \cong S$ and $\phi\,\mathrm{Aut}_L(T)\,\phi \cap \mathrm{Aut}_L(T) \neq \emptyset$ (Proposition 18).
 2. If $Y$ is ordered, or $T \not\cong S$, then $\mathrm{Aut}_L(Y) = H$. If $Y$ is unordered and $T \cong S$, then $\mathrm{Aut}_L(Y)$ contains $H$ as a subgroup of index 2 when $\mathrm{Aut}_L(T) \cap \phi\,\mathrm{Aut}_L(T)\,\phi \neq \emptyset$, and equals $H$ otherwise (Proposition 19).

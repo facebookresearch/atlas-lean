@@ -13,7 +13,7 @@ $$c_1 + c_2 < \frac{p'}{1-p+p'}\, b_1 + \frac{1-p}{1-p+p'}\, b_2 \;\Rightarrow\;
 
 and the reverse strict inequality gives survival with positive probability. This sharpens Klebaner's bounds ($c_1 + c_2 < \min(b_1,b_2)$ for extinction, $c_1 + c_2 > \max(b_1,b_2)$ for survival).
 
-**Proposition (Adam, Proposition 3.1; immigration).** A critical multitype Galton–Watson process with immigration (i.i.d. immigrant vectors $A_n$ with $E(A_1) = a$, finite $2+\delta$ moments) is recurrent if $2au < u^\top V(v)u$ and transient if $2au > u^\top V(v)u$, recovering Kawazu's criterion.
+**Proposition (Adam, Proposition 3.1; immigration).** Let $(Z_n)$ be a critical multitype Galton–Watson process with immigration: offspring vectors are independent with laws depending only on the parent's type, $P(X_{i,j} = 0) > 0$ for all $i, j$, the mean matrix $M$ is non-negative and primitive with Perron root $1$, and at each generation an immigrant vector $A_n$ arrives, the $A_n$ being i.i.d., independent of all offspring variables, with $P(A_1 = 0) > 0$, $E(A_1) = a$ and $\operatorname{Var}(A_1u) < \infty$; assume $E(X_{i,j}^{2+\delta}) < \infty$ and $E((A_1u)^{2+\delta}) < \infty$ for some $\delta > 0$. Then $(Z_n)$ is recurrent if $2au < u^\top V(v)u$ and transient if $2au > u^\top V(v)u$, recovering Kawazu's criterion.
 
 ## Depends on
 

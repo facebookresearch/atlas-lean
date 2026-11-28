@@ -18,7 +18,7 @@ The extinction probabilities solve, for $i=1,\dots,k$,
 
 $$-\frac{\partial p_i(t,T)}{\partial t} = d_i - \Bigl(\sum_{j=1}^k b_i^{ij}+d_i\Bigr)p_i(t,T) + \sum_{j=1}^k b_i^{ij}\,p_i(t,T)\,p_j(t,T),$$
 
-with $p_i(T,T)=0$; the minus sign reflects that $t$ runs forward, so $p_i(t,T)$ decreases to $0$ as $t\uparrow T$ (for a pure death process $p(t,T)=1-e^{-d(T-t)}$). With one type this reduces to the classical fact that the reconstructed tree of a birth–death process is a pure birth process with rate $b(1-p(t,T))$.
+with $p_i(T,T)=0$; the minus sign reflects that $t$ runs forward, so $p_i(t,T)$ decreases to $0$ as $t\uparrow T$ (for a pure death process $p(t,T)=1-e^{-d(T-t)}$). This corrects Remark 3.3 of arXiv:1409.2957, which prints this equation with the opposite sign on the left-hand side: its right-hand side is the derivative of $p_i$ in the remaining time $T-t$, not in $t$. With one type this reduces to the classical fact that the reconstructed tree of a birth–death process is a pure birth process with rate $b(1-p(t,T))$.
 
 Unlike the single-type case, no deterministic time change turns the reconstructed process into a constant-rate multi-type Yule process, because the required time scale depends on the random type of the lineage that branches next; ignoring edge lengths therefore produces discrete trees with both binary and unary (type-change) branch points. Near the present, $p_i(t,T)\approx 0$, so $q_i^{ij}\approx b_i^{ij}$ and $q_i^{j}\approx 0$, which is what allows birth rates to be inferred from typed cherries near the tips.
 

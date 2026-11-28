@@ -4,7 +4,7 @@
 
 $$dX_t = -\alpha\,(X_t - \mu)\,dt + \sigma\,dB_t,$$
 
-with selection strength $\alpha > 0$, optimum $\mu$, and stationary variance $\gamma = \sigma^2/(2\alpha)$. The root value is drawn from $\mathcal N(\mu, \gamma)$, and at each branching point independent copies continue along the daughter edges; the data are the trait values at the leaves. Let $\hat\mu$ be the maximum likelihood estimator of $\mu$ given $\alpha$. For a sequence of trees $(\mathcal T_k)$ with $n_k$ leaves and heights $T_k$, define the upper growth rate $\overline\Lambda^{g} = \limsup_k \frac{\log n_k}{T_k}$ (and the lower one with $\liminf$).
+with selection strength $\alpha > 0$, optimum $\mu$, and stationary variance $\gamma = \sigma^2/(2\alpha)$. The root value is drawn from $\mathcal N(\mu, \gamma)$, and at each branching point independent copies continue along the daughter edges; the data are the trait values at the leaves. Let $\hat\mu$ be the maximum likelihood estimator of $\mu$ given $\alpha$. For a sequence of trees $(\mathcal T_k)$ with $n_k$ leaves and heights $T_k$, assume throughout, as the source does (Assumption 1), that $n_k \le n_{k+1}$, $T_k \le T_{k+1}$ and $n_k, T_k \to \infty$, and define the upper growth rate $\overline\Lambda^{g} = \limsup_k \frac{\log n_k}{T_k}$ (and the lower one with $\liminf$).
 
 **Theorem.**
 
@@ -14,7 +14,7 @@ with selection strength $\alpha > 0$, optimum $\mu$, and stationary variance $\g
 $$\mathrm{Var}_{\mathcal T}[\hat\mu] \ \ge\ \gamma\Big(e^{-2\alpha T} + \frac{1 - e^{-2\alpha T}}{n}\Big).$$
 
 3. (Supercritical regime.) If $\overline\Lambda^{g} > 2\alpha$, then for every $\varepsilon > 0$ there is a subsequence along which $\mathrm{Var}[\hat\mu^{(k)}] \ge \gamma\,n_k^{-2\alpha/(\overline\Lambda^{g} - \varepsilon)}$, so $\hat\mu$ is not $\sqrt{n_k}$-consistent.
-4. (Subcritical regime.) If $\overline\Lambda^{g} < 2\alpha$, then $\mathrm{Var}[\hat\mu^{(k)}] = \Omega(n_k^{-1})$, and it is $O(n_k^{-1+\varepsilon})$ when the growth rate equals the branching number of the sequence.
+4. (Subcritical regime.) If $\overline\Lambda^{g} < 2\alpha$, then $\mathrm{Var}[\hat\mu^{(k)}] = \Omega(n_k^{-1})$, and if moreover the branching number $\Lambda^b$ of the sequence satisfies $\Lambda^b = \overline\Lambda^{g} > 0$, then $\mathrm{Var}[\hat\mu^{(k)}] = O(n_k^{-1+\varepsilon})$ for every $\varepsilon > 0$.
 
 **Corollary (Yule trees).** For a Yule tree with speciation rate $\lambda$, almost surely $\hat\mu$ is consistent; it is $\sqrt{n}$-consistent if $\lambda < 2\alpha$; and if $\lambda > 2\alpha$, for every $\varepsilon > 0$,
 

@@ -30,7 +30,13 @@ $$
 
 $$
 
-where $2L(\gamma) = 1$ has a unique root $\nu$, $L$ is differentiable at $\nu$ with $L'(\nu) < 0$, $\sum_n 2^n r_n(\gamma,u)$ converges uniformly near $\nu$, and the stated integrability conditions hold. Then $e^{-\nu t}N_t \to W$ almost surely, with $W$ of finite variance and
+where $2L(\gamma) = 1$ has a unique root $\nu$, $L$ is differentiable at $\nu$ with $L'(\nu) < 0$, $\sum_n 2^n r_n(\gamma,u)$ converges uniformly in $\gamma$ in a neighborhood of $\nu$ and uniformly in $u$, the maps $u \mapsto \alpha(\gamma,u)$ and $u \mapsto r_n(\gamma,u)$ are $\mu$-integrable uniformly in the other variables, and $(y,z) \mapsto \alpha(\nu,y)\alpha(\nu,z)$ is $P(x,\cdot)$-integrable uniformly in $x$ (Definition 3.3, whose item 5 writes $a(\nu,y)a(\nu,z)$ for this product). Let
+$B_\nu(t,u) = e^{-\nu t}\sum_{n\ge1}2^{n-1}\mathbb P[S_n \le t \mid T_\emptyset = u]$ with Laplace transform $\tilde B_\nu(\gamma,u)$, and assume:
+
+- (C1) there are $\delta, \epsilon > 0$, with $\delta$ not depending on $u$, such that for every $u$ the function $\tilde B_\nu(\cdot,u)$ is analytic on $\{|\operatorname{Re} z| < \delta + \epsilon\} \setminus \{0\}$, has a simple pole at $0$ with residue $C(u) = -\alpha(\nu,u)/(4\nu L'(\nu))$, satisfies $\int_{-\infty}^\infty|\tilde B_\nu(\delta + iy,u)|\,dy < \infty$ and $\tilde B_\nu(x + iy,u) \to 0$ as $y \to \pm\infty$ uniformly in $x \in [-\delta,\delta]$, and $\psi(u) = \int_{-\infty}^\infty|\tilde B_\nu(-\delta + iy,u)|\,dy < \infty$;
+- (C2) $(y,z) \mapsto \alpha(\nu,y)\psi(z)$ is $P(x,\cdot)$-integrable uniformly in $x$.
+
+Then $e^{-\nu t}N_t \to W$ almost surely, with $W$ of finite variance and
 
 $$
 
@@ -38,7 +44,7 @@ $$
 
 $$
 
-**Comparison.** If the lineage lifetimes $(T_{0^n})_{n\ge1}$ are associated (positively dependent) and $\nu^*, C^*$ are the parameters for independent lifetimes with the same marginals, then $\nu^* \le \nu$ and $C \le C^*$; for negatively associated lifetimes the inequalities reverse.
+**Comparison.** Under the hypotheses of Theorem 2.1 (a birth-stationary process with $\nu$ and $C$ positive and finite), if the lineage lifetimes $(T_{0^n})_{n\ge1}$ are associated (positively dependent) and $\nu^*, C^*$ are the parameters for independent lifetimes with the same marginals, then $\nu^* \le \nu$ and $C \le C^*$; for negatively associated lifetimes the inequalities reverse.
 
 In the i.i.d. case $L(\gamma) = \mathbb{E}[e^{-\gamma T}]$, $\alpha \equiv 1$, and the theorem reduces to the classical formulas.
 

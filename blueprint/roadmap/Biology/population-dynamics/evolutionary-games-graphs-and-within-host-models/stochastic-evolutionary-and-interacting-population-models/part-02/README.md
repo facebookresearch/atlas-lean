@@ -14,5 +14,4 @@
 - [Slow–fast piecewise deterministic prey–predator model](slow-fast-piecewise-deterministic-prey-predator-model/README.md)
 - [Spatial evolutionary games under weak selection](spatial-evolutionary-games-under-weak-selection/README.md)
 - [Stationary stability in finite-population evolutionary dynamics](stationary-stability-in-finite-population-evolutionary-dynamics/README.md)
-- [Stochastic replicator dynamics with random jumps](stochastic-replicator-dynamics-with-random-jumps/README.md)
 - [Two-scale selection ball-and-urn process](two-scale-selection-ball-and-urn-process/README.md)

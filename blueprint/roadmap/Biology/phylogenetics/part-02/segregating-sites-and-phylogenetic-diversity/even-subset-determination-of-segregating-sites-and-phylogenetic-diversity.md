@@ -20,11 +20,13 @@ $$
 s_A = \sum_{\substack{B \subset A\\ |B| \text{ even}}} \frac{\mathbb{T}_{|A|-|B|}}{2^{|A|-|B|}}\, s_B, \qquad \delta_A = \sum_{\substack{B \subset A\\ |B| \text{ even}}} \frac{\mathbb{T}_{|A|-|B|}}{2^{|A|-|B|}}\, \delta_B .
 $$
 
-2. The symmetrized pattern probabilities and the split weights are recovered by Möbius-type inversion: for all $B \subseteq X$ (Theorems 2 and 4)
+2. The symmetrized pattern probabilities and the split weights are recovered by Möbius-type inversion: for all nonempty $B \subsetneq X$ (Theorems 2 and 4)
 
 $$
 \tilde p_B = \frac{1}{2}\sum_{A \supseteq B} (-1)^{|A|-|B|+1} s_A, \qquad \tilde w_B = \frac{1}{2}\sum_{A \supseteq B} (-1)^{|A|-|B|+1} \delta_A .
 $$
+
+Theorems 2 and 4 print these inversions "for all $B\subseteq X$", but their proof covers only nonempty proper subsets, and the formulas fail at $B=X$ (the right-hand side is $-s_X/2\le0$, while $\tilde p_X=\frac12$ when every site is constant) and at $B=\emptyset$; the page restricts them accordingly.
 
 Thus segregating-site probabilities have exactly the $2^{|X|-1}-1$ degrees of freedom of the symmetrized pattern probabilities, although there are $2^{|X|}-|X|-1$ subsets with at least two elements.
 

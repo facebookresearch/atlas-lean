@@ -4,7 +4,7 @@ Let $\mathbf X_t = (X^1_t,\dots,X^n_t)^\top$ be abundances in $n$ patches with m
 
 $$d\mathbf X_t = \mathrm{diag}(\mathbf X_t)\big(\mu\,dt + \Gamma^\top d\mathbf B_t\big) + D^\top\mathbf X_t\,dt,$$
 
-with $\mathbf B$ a vector of independent standard Brownian motions. Let $S_t = \sum_i X^i_t$ and $\mathbf Y_t = \mathbf X_t/S_t$ the patch distribution. Without space ($n = 1$) the stochastic growth rate is $\mu - \sigma^2/2$.
+with $\mathbf B$ a vector of independent standard Brownian motions. Assume, as the source does, that $D$ is irreducible and $\Sigma$ has full rank (with $D = 0$, for instance, the occupation measure of $\mathbf Y$ need not converge almost surely). Let $S_t = \sum_i X^i_t$ and $\mathbf Y_t = \mathbf X_t/S_t$ the patch distribution. Without space ($n = 1$) the stochastic growth rate is $\mu - \sigma^2/2$.
 
 **Proposition.** If $\mathbf X_0 \ne 0$, then
 

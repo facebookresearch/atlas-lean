@@ -21,8 +21,10 @@ $$\mathcal R_0 = \frac{S_0 f'(0) + V_0 h'(0)}{\gamma+\mu+c}.$$
 
 1. For any nonnegative continuous initial history the system has a unique nonnegative global solution.
 2. If $\mathcal R_0 > 1$ there is a unique endemic equilibrium $E^* = (S^*,V^*,I^*)$ with $S^* = \Lambda/(f(I^*)+\mu+\alpha)$ and $V^* = \alpha\Lambda/\big((h(I^*)+\gamma_1+\mu)(f(I^*)+\mu+\alpha)\big)$.
-3. Under $(H_1)$–$(H_2)$, $E_0$ is globally asymptotically stable if and only if $\mathcal R_0 < 1$.
+3. Under $(H_1)$–$(H_2)$, $E_0$ is globally asymptotically stable if $\mathcal R_0 < 1$.
 4. If $\mathcal R_0 > 1$, $E^*$ is globally asymptotically stable.
+
+Theorem 3 of the source prints "globally asymptotically stable if and only if $\mathcal R_0<1$"; its proof gives only the "if" direction, and its Lyapunov functional also has nonpositive derivative at $\mathcal R_0=1$, where LaSalle's principle gives global stability of $E_0$ as well, so the printed "only if" fails at $\mathcal R_0=1$. Item 3 therefore states the sufficient condition only.
 
 Diffusion and the distribution of the latency delay do not affect the threshold.
 

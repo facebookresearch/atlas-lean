@@ -1,6 +1,6 @@
 # Global convergence of the multi-resource chemostat system
 
-Let $n$ consumer phenotypes $x_1,\dots,x_n$ (distinct points of a compact trait space $\mathcal X$) share $r$ resources in a chemostat. With consumer densities $u_i \ge 0$, resource concentrations $R_k \ge 0$, death rates $d(x) > 0$, consumption efficiencies $\eta_k(x) \ge 0$ and resource inflow concentrations $g_k > 0$, the **chemostat system** $\mathrm{CH}(n; x_1,\dots,x_n)$ is
+Let $n$ consumer phenotypes $x_1,\dots,x_n$ (distinct points of a compact trait space $\mathcal X$) share $r$ resources in a chemostat. With consumer densities $u_i \ge 0$, resource concentrations $R_k \ge 0$, death rates $d(x) > 0$, consumption efficiencies $\eta_k(x) > 0$ (with $d$ and $\eta_k$ of class $C^2$ on $\mathcal X$, so bounded below by positive constants, as in the source's (2.6)) and resource inflow concentrations $g_k > 0$, the **chemostat system** $\mathrm{CH}(n; x_1,\dots,x_n)$ is
 
 $$\dot u_i = u_i\Big(-d(x_i) + \sum_{k=1}^r \eta_k(x_i) R_k\Big), \qquad \dot R_k = g_k - R_k\Big(1 + \sum_{j=1}^n \eta_k(x_j) u_j\Big).$$
 

@@ -4,7 +4,7 @@
 
 $$F(u,v) = \min_{1\le k\le4}\, a_k\big[(u-u_k)^2 + (v-v_k)^2\big],$$
 
-used through a smooth mollification $F_\varepsilon$ (of class $C^3$, coercive, with isolated minima and positive-definite Hessians at the minima). Let $\tilde f = -\partial_u F_\varepsilon$, $\tilde g = -\partial_v F_\varepsilon$.
+used through a smooth mollification $F_\varepsilon$ (of class $C^3$, coercive, with isolated minima and positive-definite Hessians at the minima). Assume that $F_\varepsilon = F$ in a neighborhood of each of the four minima $(u_k,v_k)$ of $F$ and $F_\varepsilon > 0$ away from these points, so that they are the absolute minima of $F_\varepsilon$ as well. Let $\tilde f = -\partial_u F_\varepsilon$, $\tilde g = -\partial_v F_\varepsilon$.
 
 **Stochastic model.** On a one-dimensional tissue $\mathcal O = [0,R]$ (periodic, i.e. the circle $\mathbb T$, or Neumann conditions),
 
@@ -19,9 +19,11 @@ with $d_1, d_2 > 0$ and independent space-time white noises $w_1, w_2$ of equal 
 
 $$\nu^0\big(\hat\varphi^{(k)}\big) = \frac{\Delta_k^{-1}}{\sum_{j=1}^4\Delta_j^{-1}}.$$
 
+Theorem 1(ii) of the source prints these weights for the minima of $F$ without the assumption $F_\varepsilon = F$ near them. The dynamics use $F_\varepsilon$, so by Freidlin's theorem as the source recalls it (Section 4.1) $\nu^\sigma$ concentrates on the absolute minima of $F_\varepsilon$; for the source's Gaussian mollification these minimum values are $2a_k\varepsilon^2$, so with distinct $a_k$ only the state with the smallest $a_k$ carries mass. The page therefore adds the assumption, under which the printed weights hold.
+
 3. Each constant state $\varphi_0 \equiv \hat\varphi^{(k)}$ is an asymptotically stable equilibrium of the noiseless system, and the corresponding phenotype regions are invariant. If $D \subset C(\mathbb T;\mathbb R^2)$ is a regular region containing $\varphi_0$ whose deterministic trajectories stay in $D$ and converge to $\varphi_0$, and
 
-$$U(\varphi) = \int_{\mathbb T}\Big[\tfrac12\sum_{k=1}^2 d_k\big(\varphi_k'(x)\big)^2 + F(\varphi(x))\Big]dx,$$
+$$U(\varphi) = \int_{\mathbb T}\Big[\tfrac12\sum_{k=1}^2 d_k\big(\varphi_k'(x)\big)^2 + F_\varepsilon(\varphi(x))\Big]dx,$$
 
 then the exit time $\tau^\sigma$ of the process from $D$ satisfies, for $g \in D$,
 
@@ -31,7 +33,7 @@ Narrow basins (large $a_k$) are selected less often in the small-noise limit, an
 
 ## Expansion
 
-The drift is the gradient of $-U$ in $L^2$, so for equal noise intensities the system is a gradient SPDE whose stationary law is formally proportional to $\exp(-2U/\sigma^2)$. All four minima have $F = 0$, so as $\sigma \to 0$ the competition between constant states is decided by the Gaussian fluctuation volume around each minimum, which is inversely proportional to the Hessian determinant $\Delta_k$. The exit-time asymptotics are the Freidlin–Wentzell large-deviation estimate for reaction–diffusion equations perturbed by white noise, with quasi-potential given by the energy barrier $U(\varphi) - U(\varphi_0)$. A companion part of the paper derives stochastic maximum principles for controlled versions of the model.
+The drift is the gradient of $-U$ in $L^2$, so for equal noise intensities the system is a gradient SPDE whose stationary law is formally proportional to $\exp(-2U/\sigma^2)$. All four minima have $F_\varepsilon = F = 0$, so as $\sigma \to 0$ the competition between constant states is decided by the Gaussian fluctuation volume around each minimum, which is inversely proportional to the Hessian determinant $\Delta_k$. The exit-time asymptotics are the Freidlin–Wentzell large-deviation estimate for reaction–diffusion equations perturbed by white noise, with quasi-potential given by the energy barrier $U(\varphi) - U(\varphi_0)$. A companion part of the paper derives stochastic maximum principles for controlled versions of the model.
 
 ## Sources
 

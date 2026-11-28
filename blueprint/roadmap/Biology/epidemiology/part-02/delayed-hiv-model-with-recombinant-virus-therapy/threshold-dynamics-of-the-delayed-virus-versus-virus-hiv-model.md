@@ -26,6 +26,10 @@ which is biologically meaningful iff $\mathcal{R}_0 > 1$; and the double-infecti
 
 Thus the equilibria exchange stability through transcritical bifurcations at $\mathcal{R}_0 = 1$ and $\mathcal{R}_0 = R_1$. Since the delay lowers $\mathcal{R}_0$, it can move the system from the oscillatory regime back to a stable equilibrium.
 
+## Proof depends on
+
+- [Routh–Hurwitz criterion](../../../../Analysis/numerical-analysis/linear-multistep-methods/absolute-stability-and-a-stability/routh-hurwitz-criterion.md)
+
 ## Expansion
 
 At $E_0$ the linearization factors, and the $(y, v)$ block has characteristic equation $(\xi + a)(\xi + p) = k\beta(\lambda/d)e^{-a\tau}e^{-\xi\tau}$, which has a positive root iff $\mathcal{R}_0 > 1$. Global stability of $E_0$ uses the Lyapunov functional

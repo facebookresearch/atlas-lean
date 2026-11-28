@@ -16,6 +16,10 @@ Let $X$ be a set of $m$ taxa and $S = f_1 \cdots f_n$ an alignment of characters
 
 So optimal phylogenies are not built up from optimal smaller phylogenies: adding or removing an outgroup can change the best topology of the remaining taxa, and quartet-based inductive or dynamic-programming arguments for MP and ML cannot rely on heredity.
 
+## Proof depends on
+
+- [No-common-mechanism maximum likelihood trees are maximum parsimony trees (Tuffley–Steel)](../../../not-yet-classified/no-common-mechanism-parsimony/ncm-ml-iff-mp.md)
+
 ## Expansion
 
 For homoplasy-free alignments the restricted tree attains the trivial lower bound $|f(Y)| - 1$ on every character, so it is optimal. The five-taxon binary case is an exhaustive comparison of the parsimony scores of the $15$ trees on five taxa against the $3$ quartets after deleting the middle taxon, using that binary characters split into a small number of patterns. The counterexamples come from writing the score of an alignment as $\sum_i x_i\,l_{\mathcal T}(f_i)$ over character patterns $f_i$ with multiplicities $x_i$: the requirements "$\mathcal T$ is the unique MP tree and no restriction is MP" become a system of linear inequalities in the $x_i$, solved by computer algebra and checked by exhaustive tree search (for six taxa, an explicit binary alignment whose unique MP tree $(((1,2),3),(4,(5,6)))$ has no MP five- or four-taxon subtree); the ML statements transfer the parsimony counterexamples through the Tuffley–Steel theorems.

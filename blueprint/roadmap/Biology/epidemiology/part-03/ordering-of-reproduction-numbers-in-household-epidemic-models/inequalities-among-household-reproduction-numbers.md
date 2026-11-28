@@ -11,7 +11,7 @@ In the households SIR/SEIR model the population is partitioned into households (
 
 **Theorem (households model).**
 
-(a) $R_* = 1 \iff R_I = 1 \iff R_0 = 1 \iff R_2 = 1 \iff R_{HI} = 1$, and these imply $R_V = 1$.
+(a) $R_* = 1 \iff R_I = 1 \iff R_0 = 1 \iff R_2 = 1 \iff R_{HI} = 1$, and these imply $R_V = 1$. This corrects Theorem 1(a) of the source, which prints "$R_2 = 0$" in this chain; the function defining $R_2$ equals $1 - R_*$ at $\lambda = 1$, so $R_2 = 1$ exactly when $R_* = 1$.
 
 (b) In a growing epidemic ($R_0 > 1$),
 

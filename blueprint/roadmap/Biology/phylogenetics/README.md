@@ -32,7 +32,6 @@ Reconstruction of evolutionary trees from sequence data: substitution models, li
 - [Trinet encoding of phylogenetic networks](trinet-encoding-of-phylogenetic-networks/README.md)
 ## [Models of sequence, trait and lineage evolution](part-01/README.md)
 - [Anagenetic and cladogenetic trait change on Yule trees](part-01/anagenetic-and-cladogenetic-trait-change-on-yule-trees/README.md)
-- [Cophenetic distance between random trees](part-01/cophenetic-distance-between-random-trees/README.md)
 - [Disentangling number of tree mixtures](part-01/disentangling-number-of-tree-mixtures/README.md)
 - [Hadamard conjugation for group-based models](part-01/hadamard-conjugation-for-group-based-models/README.md)
 - [Large-tree limit of phylogenetic mixtures](part-01/large-tree-limit-of-phylogenetic-mixtures/README.md)

@@ -20,7 +20,7 @@ a convex, non-smooth function of $\bar u$, with subdifferential
 $$\partial J(\bar u) = \Big\{2\bar\sigma_{\mathrm{cl}}\sum_i\alpha_iD_u^{T}\,\mathrm{diag}\big(A_{\mathrm{cl}}^{-1}Bv_iw_i^{T}Q^{1/2}A_{\mathrm{cl}}^{-1}\big) + 2R\bar u\Big\},$$
 
 over unit pairs $(w_i,v_i)$ attaining the top singular value and convex weights $\alpha$, so $u^\star$ can be computed by a subgradient method.
-3. (Robust design.) If $-D(u)$ has nonnegative diagonal for $u\ge0$ and the entries of $A$ and of the drug efficacies are uncertain within element-wise bounds, then, provided $(A + \tilde A - D(\beta)) + D(\bar u)$ is Hurwitz for some $\bar u$ (with $\tilde A$ and $\beta$ the element-wise uncertainty bounds), the minimax problem $\min_u\max_{\Delta}J(u;\Delta)$ is solved by the nominal problem for the worst-case system matrix $A + \tilde A - D(\beta)$, so robust dosing is no harder than nominal dosing.
+3. (Robust design.) Let $-D(u)$ have nonnegative diagonal for $u\ge0$, and consider the uncertain system $\dot x = \big((A + \Delta_A) + D(u - \delta_u)\big)x + Bd$, with an additive error $\Delta_A = (\delta_{ij})$ in the system matrix, $|\delta_{ij}| \le \alpha_{ij}$, and an additive error $\delta_u$ in the delivered doses, $|\delta_{u,k}| \le \beta_k$. Then, provided $(A + \tilde A - D(\beta)) + D(\bar u)$ is Hurwitz for some $\bar u$ (with $\tilde A = (\alpha_{ij})$ and $\beta = (\beta_k)$), the minimax problem $\min_u\max_{(\Delta_A,\delta_u)}J(u;\Delta_A,\delta_u)$ is solved by the nominal problem for the worst-case system matrix $A + \tilde A - D(\beta)$, so robust dosing is no harder than nominal dosing.
 
 ## Expansion
 

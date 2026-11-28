@@ -14,6 +14,10 @@ $$d_{\mathrm{TV}}\bigl(\nu^K, G^K\bigr) \le \frac{C}{\sqrt K} \qquad \text{for a
 
 So, conditioned on survival, the population fluctuates around $Kx_*$ with Gaussian fluctuations of order $\sqrt K$ and variance $K/H''(x_*)$. This is the variance of the stationary linear-noise (Ornstein–Uhlenbeck) approximation at the equilibrium.
 
+## Depends on
+
+- [Sharp mean extinction time from the quasi-stationary distribution](sharp-mean-extinction-time-from-the-quasi-stationary-distribution.md)
+
 ## Expansion
 
 Since $\nu_n \propto \pi_n\varphi_n$ and the principal eigenvector $\varphi$ is uniformly close to an explicit profile that equals $1$ above the equilibrium and decays only near $0$, the shape of $\nu^K$ is that of $\pi_n$ away from $0$. Taking logarithms, $\log\pi_n = -K H(n/K) + O(\log n)$. Expanding $H$ to second order at $x_*$ gives the Gaussian with variance $K/H''(x_*)$, and the bound on $H'''$ controls the remainder at the scale $|n - Kx_*| \lesssim \sqrt K\log K$. The mass outside this window is exponentially small in $K$.

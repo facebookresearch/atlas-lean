@@ -9,7 +9,7 @@ $$
 \end{aligned}
 $$
 
-with nonnegative parameters, $c_{SS},\bar c_{II}>0$. Define the disease-free carrying capacity, the invasion threshold and the facilitation threshold
+with nonnegative parameters, $c_{SS},\bar c_{II}>0$ and $0<\bar a<1$ (the source assumes $0<a_V<a_U<1$ for the stage fertilities, Section 2.3, so the aggregated residual fertility satisfies $0<\bar a<1$). Define the disease-free carrying capacity, the invasion threshold and the facilitation threshold
 
 $$
 S_1^* = \frac{r-m}{c_{SS}},\qquad \bar A = \frac{m+\bar\gamma+\bar\mu}{\bar\beta-\bar c_{IS}},\qquad \bar B = \frac{\bar a r+\bar\gamma}{\bar c_{SI}+\bar\beta}.

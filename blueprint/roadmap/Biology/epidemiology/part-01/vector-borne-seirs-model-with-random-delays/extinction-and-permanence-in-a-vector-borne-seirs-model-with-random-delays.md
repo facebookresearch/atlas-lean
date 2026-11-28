@@ -1,4 +1,4 @@
-# Extinction and permanence in a vector-borne SEIRS model with random delays
+# Extinction in a vector-borne SEIRS model with random delays
 
 **Model.** Consider a dimensionless model of a vector-borne infection in which only the host compartments $S, E, I, R$ are tracked and the infectious vector population at time $t$ is taken proportional to the infectious host population one vector incubation period earlier. Three delays are random: the incubation period $T_1$ in the vector with density $f_{T_1}$ on $[t_0, h_1]$, the incubation period $T_2$ in the host with density $f_{T_2}$ on $[t_0, h_2]$, and the immunity period $T_3$ with density $f_{T_3}$ on $[t_0, \infty)$. Host births occur at constant rate $B$, natural and disease deaths at rates $\mu$ and $d$, recovery at rate $\alpha$, vector deaths at rate $\mu_v$, and $\beta > 0$ is the effective contact rate. After normalisation $B/\mu = 1$. The decoupled $S$–$I$ system is
 
@@ -28,13 +28,12 @@ $$
 
 3. *(Extinction.)* If either $R_0^* < 1$, or $R_0^* \ge 1$ and $\mathbb{E}\left(e^{-(\mu_v T_1+\mu T_2)}\right) < 1/R_0^*$, then $\limsup_{t\to\infty}\frac1t\log I(t) < -\lambda$ for some $\lambda > 0$, so $I(t) \to 0$ exponentially fast.
 4. *(Susceptibles under extinction.)* Under the same conditions the susceptibles are stable in the mean, $\lim_{t\to\infty}\frac1t\int_{t_0}^t S(\xi)\,d\xi = B/\mu = 1$, and the disease-free equilibrium $(S, I) = (1, 0)$ is Lyapunov stable.
-5. *(Permanence.)* When an endemic equilibrium $(S_1^*, I_1^*)$ exists (which requires $R_0^* > 1$ and a sufficiently large ESPR), then under additional technical conditions every positive solution satisfies $\liminf_{t\to\infty}I(t) \ge qI_1^*e^{-(\mu+d+\alpha)(\rho+1)h} > 0$ with $h = h_1 + h_2$ and constants $0 < q < 1$, $\rho > 0$, so the infection is strongly permanent for every total delay $h$.
 
 Item 3 shows that a large basic reproduction number does not by itself sustain transmission: if the vector and host are unlikely to survive the two incubation periods, the infection still dies out.
 
 ## Expansion
 
-For item 2 take the Lyapunov functional $\tilde V(t) = \log I(t) + \beta W(t)$, where $W$ collects the double delay integrals $\int\int f_{T_2}(u)f_{T_1}(s)e^{-(\mu_v s + \mu u)}\int_{t-u}^t S(\theta)G(I(\theta-s))/I(t)\,d\theta\,ds\,du$ and its companion with window $[t-s, t]$. Differentiating along solutions, the delayed incidence terms cancel against the derivatives of $W$, and the bounds $S \le B/\mu$ and $G(I) \le I$ leave $\dot{\tilde V} \le \beta(B/\mu)\mathbb{E}(e^{-(\mu_v T_1+\mu T_2)}) - (\mu+d+\alpha)$; integrating and dividing by $t$ gives the bound. Both conditions in item 3 make the right side negative. Item 4 then follows from integrating the $S$ equation once $I \to 0$ exponentially. Item 5 uses a contradiction argument: if $I$ stays below a fraction of $I_1^*$ on an interval longer than the total delay $h$, the delayed incidence forces $I$ back up, which gives the explicit lower bound.
+For item 2 take the Lyapunov functional $\tilde V(t) = \log I(t) + \beta W(t)$, where $W$ collects the double delay integrals $\int\int f_{T_2}(u)f_{T_1}(s)e^{-(\mu_v s + \mu u)}\int_{t-u}^t S(\theta)G(I(\theta-s))/I(t)\,d\theta\,ds\,du$ and its companion with window $[t-s, t]$. Differentiating along solutions, the delayed incidence terms cancel against the derivatives of $W$, and the bounds $S \le B/\mu$ and $G(I) \le I$ leave $\dot{\tilde V} \le \beta(B/\mu)\mathbb{E}(e^{-(\mu_v T_1+\mu T_2)}) - (\mu+d+\alpha)$; integrating and dividing by $t$ gives the bound. Both conditions in item 3 make the right side negative. Item 4 then follows from integrating the $S$ equation once $I \to 0$ exponentially.
 
 ## Sources
 

@@ -22,6 +22,10 @@ and, with bifurcation parameter $\mu=1/v-1/v_0$, the transversality condition $\
 
 For five specific choices of the nonlinearities (systems A–E), supercritical bifurcations give stable periodic wavetrains, while subcritical ones can give spatially coherent wavetrains with chaotic temporal dynamics when the subcritical bifurcation ends the stability regime.
 
+## Proof depends on
+
+- [Routh–Hurwitz criterion](../../../Analysis/numerical-analysis/linear-multistep-methods/absolute-stability-and-a-stability/routh-hurwitz-criterion.md)
+
 ## Expansion
 
 The Jacobian of the spatial system at the coexistence point gives a quartic characteristic polynomial $\lambda^4+b_1\lambda^3+b_2\lambda^2+b_3\lambda+b_4$ with $b_1=(D_1+D_2)v/(D_1D_2)$ and $b_2,b_3,b_4$ depending on $v$ through $v^2$ and $v$. A purely imaginary pair exists exactly when the Hurwitz determinant $b_1b_2b_3-b_3^2-b_1^2b_4$ vanishes, which reduces to $v^2(Av^2+B)=0$. At $v=v_\mp$ one has $b_4=b_2b_3/b_1-b_3^2/b_1^2$, giving the factorization with $\omega^2=b_3/b_1$; the discriminant of the quartic is then negative, confirming one imaginary pair and two real roots. Implicit differentiation of $g(\lambda(v),v)=0$ at $\lambda=i\omega$ yields $\frac{d\operatorname{Re}\lambda}{dv}=\omega^2\Psi/(\cdots)$ with $\Psi$ proportional to $-\omega^2(D_1+D_2)$, so $\operatorname{Re}\lambda$ decreases in $v$; since $dv/d\mu<0$, the eigenvalues cross the imaginary axis with positive speed in $\mu$, and the Hopf theorem applies.

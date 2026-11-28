@@ -23,4 +23,4 @@ Rooting at a fixed leaf reduces unrooted lists to rooted ones at the cost of one
 
 ## Sources
 
-- Seth Sullivant, "The disentangling number for phylogenetic mixtures", arXiv (2011); Discrete Mathematics 312 (2012). Theorem 2, Proposition 3, Theorem 4, Theorem 5 (Kahle's bound). <https://doi.org/10.48550/arXiv.1107.2880>. Published version: SIAM Journal on Discrete Mathematics 26(2) (2012), 856–859, <https://doi.org/10.1137/110843459>; locators above refer to the arXiv version.
+- Seth Sullivant, "The disentangling number for phylogenetic mixtures", arXiv (2011). Theorem 2, Proposition 3, Theorem 4, Theorem 5 (Kahle's bound). <https://doi.org/10.48550/arXiv.1107.2880>. Published version: SIAM Journal on Discrete Mathematics 26(2) (2012), 856–859, <https://doi.org/10.1137/110843459>; locators above refer to the arXiv version.

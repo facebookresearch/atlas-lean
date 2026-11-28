@@ -1,6 +1,5 @@
 # Branching and stochastic population processes
 
-- [Bak–Sneppen model of coevolution](bak-sneppen-model-of-coevolution/README.md)
 - [Bifurcating processes with dependent lifetimes](bifurcating-processes-with-dependent-lifetimes/README.md)
 - [Birth–death process with weak competition](birth-death-process-with-weak-competition/README.md)
 - [Branching process for virus survival](branching-process-for-virus-survival/README.md)

@@ -4,7 +4,7 @@
 
 $$\partial_tI(t,\omega) = \big(\beta(\omega)J(t) + \eta(\omega)\big)\big(f(\omega) - I(t,\omega)\big) - \gamma(\omega)I(t,\omega), \qquad J(t) = \int_\Omega q(\omega)I(t,\omega)\,d\omega,$$
 
-where $q\ge0$ weighs each h-state's contribution to the force of infection (normalized so that $\int qf = 1$), $\beta(\omega)$ is the transmission rate, $\gamma(\omega)$ the recovery rate (both bounded and bounded below by some $\varepsilon > 0$) and $\eta(\omega)\ge0$ an external import rate of infection. Write $\eta > 0$ if $\eta f > 0$ on a set of positive measure, and $\eta = 0$ otherwise.
+where $q > 0$ almost everywhere weighs each h-state's contribution to the force of infection (normalized so that $\int qf = 1$), $\beta(\omega)$ is the transmission rate, $\gamma(\omega)$ the recovery rate (both bounded and bounded below by some $\varepsilon > 0$) and $\eta(\omega)\ge0$ a bounded external import rate of infection. Write $\eta > 0$ if $\eta f > 0$ on a set of positive measure, and $\eta = 0$ otherwise.
 
 **Theorem.**
 
