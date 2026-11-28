@@ -27,10 +27,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.CliqueClawFreeWanted
-public import WantedExt.Complexity.NPComplete.IndependentSetDuallyChordalWanted
+public import CSLibExt.Complexity.NPComplete.CliqueDuallyChordalDefs
 
 @[expose] public section
 
@@ -82,22 +79,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range) that is dually
-chordal, and `0 < K ≤ |V|`. -/
-def WellFormed (i : CliqueClawFreeInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    DuallyChordal (Graph i) ∧ 0 < i.2.2 ∧ i.2.2 ≤ i.1
-
-open Classical in
-/-- CLIQUE on dually chordal graphs as a decision problem over bitstrings. -/
-noncomputable def cliqueDuallyChordalDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := CliqueClawFreeInstance) x with
-  | some i => decide (WellFormed i ∧ CliqueClawFreeFeasible i)
-  | none => false
 
 /-- **CLIQUE on dually chordal graphs is NP-complete.** Source: Brandstädt, Chepoi and Dragan
 (1998); Leitert (2012); ISGCI (`gc_185`); Garey and Johnson (1979), [GT19] (parent problem). -/

@@ -21,11 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MinBisectionWanted
-public import Mathlib.Combinatorics.SimpleGraph.Finite
+public import CSLibExt.Complexity.NPComplete.MinBisectionCubicDefs
 
 @[expose] public section
 
@@ -66,25 +62,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : MinBisectionInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-open Classical in
-/-- Well-formedness of an instance: well-formed for MINIMUM BISECTION (`n` even, a simple edge
-list on `0, …, n - 1`), and the graph is 3-regular. -/
-def WellFormed (i : MinBisectionInstance) : Prop :=
-  MinBisection.WellFormed i ∧ (Graph i).IsRegularOfDegree 3
-
-open Classical in
-/-- MINIMUM BISECTION on 3-regular graphs as a decision problem over bitstrings. -/
-noncomputable def minBisectionCubicDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MinBisectionInstance) x with
-  | some i => decide (WellFormed i ∧ MinBisectionFeasible i)
-  | none => false
 
 /-- **MINIMUM BISECTION on 3-regular graphs is NP-complete.** Source: Bui, Chaudhuri, Leighton
 and Sipser (1987), as recorded by Lichev and Mitsche (2023); Garey and Johnson (1979), [ND17]. -/

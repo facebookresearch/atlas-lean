@@ -19,11 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import WantedExt.Complexity.NPComplete.IntervalGraphCompletionWanted
-public import WantedExt.Complexity.NPComplete.PrecoloringExtensionWanted
+public import CSLibExt.Complexity.NPComplete.PrecoloringExtensionIntervalGraphsDefs
 
 @[expose] public section
 
@@ -63,23 +59,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed PRECOLORING EXTENSION instance whose graph is
-an interval graph, with `0 < K`, every precolor at most `K`, and no edge joining two vertices
-with the same precolor. -/
-def WellFormed (i : PrecoloringExtensionInstance) : Prop :=
-  PrecoloringExtension.WellFormed i ∧
-    IsIntervalGraph (Cslib.Complexity.Karp.edgeGraph i.1 i.2.1) ∧ 0 < i.2.2.2 ∧
-    (∀ v < i.1, i.2.2.1.getD v 0 ≤ i.2.2.2) ∧
-    ∀ e ∈ i.2.1, i.2.2.1.getD e.1 0 ≠ 0 → i.2.2.1.getD e.1 0 ≠ i.2.2.1.getD e.2 0
-
-open Classical in
-/-- PRECOLORING EXTENSION ON INTERVAL GRAPHS as a decision problem over bitstrings. -/
-noncomputable def precoloringExtensionIntervalGraphsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := PrecoloringExtensionInstance) x with
-  | some i => decide (WellFormed i ∧ PrecoloringExtension.PrecoloringExtensionFeasible i)
-  | none => false
 
 /-- **PRECOLORING EXTENSION ON INTERVAL GRAPHS is NP-complete.** Source: Biró, Hujter, and Tuza
 (1992). -/

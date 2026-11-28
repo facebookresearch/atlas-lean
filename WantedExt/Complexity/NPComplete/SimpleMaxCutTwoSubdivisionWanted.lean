@@ -24,10 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.MaxCutDefs
-public import WantedExt.Complexity.NPComplete.MinimumCutLinearArrangementTwoSubdivisionPlanarWanted
+public import CSLibExt.Complexity.NPComplete.SimpleMaxCutTwoSubdivisionDefs
 
 @[expose] public section
 
@@ -73,20 +70,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed MAXIMUM CUT instance (a simple edge list on
-the vertices `0, ..., n - 1`) whose graph is a 2-subdivision, and `0 < K`. -/
-def WellFormed (i : MaxCutInstance) : Prop :=
-  MaxCut.WellFormed i ∧ IsTwoSubdivision (Cslib.Complexity.Karp.edgeGraph i.1 i.2.1) ∧
-    0 < i.2.2
-
-open Classical in
-/-- SIMPLE MAX CUT on 2-subdivision graphs as a decision problem over bitstrings. -/
-noncomputable def simpleMaxCutTwoSubdivisionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := MaxCutInstance) x with
-  | some i => decide (WellFormed i ∧ MaxCutFeasible i)
-  | none => false
 
 /-- **SIMPLE MAX CUT on 2-subdivision graphs is NP-complete.** Source: ISGCI, class gc_472,
 reference [1648]; Garey, Johnson and Stockmeyer (1976); Garey and Johnson (1979), [ND16]. -/

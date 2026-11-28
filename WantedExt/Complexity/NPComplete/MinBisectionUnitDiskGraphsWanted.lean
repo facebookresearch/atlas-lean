@@ -18,10 +18,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MaxCutUnitDiskGraphsWanted
-public import WantedExt.Complexity.NPComplete.MinBisectionWanted
+public import CSLibExt.Complexity.NPComplete.MinBisectionUnitDiskGraphsDefs
 
 @[expose] public section
 
@@ -60,15 +57,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-open Classical in
-/-- MINIMUM BISECTION on unit disk graphs as a decision problem over bitstrings. -/
-noncomputable def minBisectionUnitDiskGraphsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MaxCutUnitDiskGraphsInstance) x with
-  | some i => decide (MaxCutUnitDiskGraphs.WellFormed i ∧ MinBisectionFeasible (toMaxCut i))
-  | none => false
 
 /-- **MINIMUM BISECTION on unit disk graphs is NP-complete.** Source: Díaz and Mertzios (2017). -/
 public theorem_wanted minBisectionUnitDiskGraphs_npComplete :

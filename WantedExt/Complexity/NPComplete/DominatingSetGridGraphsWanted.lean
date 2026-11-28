@@ -19,10 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.DominatingSetDefs
-public import WantedExt.Complexity.NPComplete.GridGraphHamiltonianCircuitWanted
+public import CSLibExt.Complexity.NPComplete.DominatingSetGridGraphsDefs
 
 @[expose] public section
 
@@ -61,31 +58,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the points of `V` (each a pair of integer coordinates, each coordinate an
-integer `a - b` given as the pair `(a, b)`) and the bound `K`. -/
-abbrev DominatingSetGridGraphsInstance := GridGraphHamiltonianCircuitInstance × ℕ
-
-/-- The grid graph and the bound as a DOMINATING SET instance: `|V|` vertices, the grid edges,
-and `K`. -/
-def toDominatingSetInstance (i : DominatingSetGridGraphsInstance) :
-    DominatingSet.DominatingSetInstance :=
-  (i.1.length, gridEdges i.1, i.2)
-
-/-- Well-formedness of an instance: the listed points are pairwise distinct (`V` is a set), and
-`0 < K ≤ |V|`. -/
-def WellFormed (i : DominatingSetGridGraphsInstance) : Prop :=
-  GridGraphHamiltonianCircuit.WellFormed i.1 ∧ 0 < i.2 ∧ i.2 ≤ i.1.length
-
-open Classical in
-/-- DOMINATING SET for grid graphs as a decision problem over bitstrings. -/
-noncomputable def dominatingSetGridGraphsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := DominatingSetGridGraphsInstance) x with
-  | some i =>
-    decide (WellFormed i ∧ DominatingSet.DominatingSetFeasible (toDominatingSetInstance i))
-  | none => false
 
 /-- **DOMINATING SET for grid graphs is NP-complete.** Source: Clark, Colbourn and Johnson
 (1990); Garey and Johnson (1979), [GT2]. -/

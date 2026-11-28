@@ -23,10 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.SteinerTreeWanted
-public import WantedExt.Complexity.NPComplete.DominatingSetK33FreeWanted
+public import CSLibExt.Complexity.NPComplete.SteinerTreeK33FreeDefs
 
 @[expose] public section
 
@@ -67,23 +64,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed STEINER TREE IN GRAPHS instance in which every
-edge has weight `1`, with at least one vertex and `K > 0`, whose graph has no subgraph homeomorphic
-to `K₃,₃`. -/
-def WellFormed (i : SteinerTreeInstance) : Prop :=
-  SteinerTree.WellFormed i ∧ (∀ e ∈ i.2.1, e.2.2 = 1) ∧ 0 < i.1 ∧ 0 < i.2.2.2 ∧
-    ¬ HasK33Subdivision (SteinerTree.Graph i i.2.1)
-
-open Classical in
-/-- STEINER TREE IN GRAPHS (unit weights) for K₃,₃-free graphs as a decision problem over
-bitstrings. -/
-noncomputable def steinerTreeK33FreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SteinerTreeInstance) x with
-  | some i => decide (WellFormed i ∧ SteinerTreeFeasible i)
-  | none => false
 
 /-- **STEINER TREE IN GRAPHS (unit weights) for K₃,₃-free graphs is NP-complete.** Source: Garey and
 Johnson (1979), [ND12], comment; Johnson (1985), Table 1; de Figueiredo, de Melo, Sasaki and Silva

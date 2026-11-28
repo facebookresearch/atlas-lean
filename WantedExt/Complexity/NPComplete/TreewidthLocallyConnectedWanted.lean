@@ -23,9 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.TreewidthWanted
+public import CSLibExt.Complexity.NPComplete.TreewidthLocallyConnectedDefs
 
 @[expose] public section
 
@@ -76,20 +74,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed TREEWIDTH instance (simple edge list) whose
-graph is locally connected (every open neighbourhood induces a connected graph). -/
-def LocallyConnectedWellFormed (i : TreewidthInstance) : Prop :=
-  WellFormed i ∧ ∀ v, ((Graph i).induce ((Graph i).neighborSet v)).Connected
-
-open Classical in
-/-- TREEWIDTH on locally connected graphs as a decision problem over bitstrings. -/
-noncomputable def treewidthLocallyConnectedDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TreewidthInstance) x with
-  | some i => decide (LocallyConnectedWellFormed i ∧ TreewidthFeasible i)
-  | none => false
 
 /-- **TREEWIDTH on locally connected graphs is NP-complete.** Source: ISGCI, class gc_932,
 reference [1506]; Arnborg, Corneil and Proskurowski (1987) (TREEWIDTH). -/

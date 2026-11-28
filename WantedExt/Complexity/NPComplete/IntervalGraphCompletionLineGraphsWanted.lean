@@ -19,10 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import MathlibExt.Combinatorics.SimpleGraph.LineGraph
-public import WantedExt.Complexity.NPComplete.IntervalGraphCompletionWanted
+public import CSLibExt.Complexity.NPComplete.IntervalGraphCompletionLineGraphsDefs
 
 @[expose] public section
 
@@ -61,20 +58,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed INTERVAL GRAPH COMPLETION instance whose
-graph is an edge graph. -/
-def WellFormed (i : IntervalGraphCompletionInstance) : Prop :=
-  IntervalGraphCompletion.WellFormed i ∧ MetaMathlibExt.SimpleGraph.IsLineGraph (Graph i)
-
-open Classical in
-/-- INTERVAL GRAPH COMPLETION for edge graphs as a decision problem over bitstrings. -/
-noncomputable def intervalGraphCompletionLineGraphsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := IntervalGraphCompletionInstance) x with
-  | some i => decide (WellFormed i ∧ IntervalGraphCompletionFeasible i)
-  | none => false
 
 /-- **INTERVAL GRAPH COMPLETION for edge graphs is NP-complete.** Source: Garey and Johnson
 (1979), [GT35], comment. -/

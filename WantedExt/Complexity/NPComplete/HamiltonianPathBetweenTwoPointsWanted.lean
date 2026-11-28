@@ -22,11 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Hamiltonian
-public import WantedExt.Complexity.NPComplete.HamiltonianPathUndirectedWanted
+public import CSLibExt.Complexity.NPComplete.HamiltonianPathBetweenTwoPointsDefs
 
 @[expose] public section
 
@@ -64,35 +60,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`), edge list, start vertex `u`, end
-vertex `v`. -/
-abbrev HamiltonianPathBetweenTwoPointsInstance := ℕ × List (ℕ × ℕ) × ℕ × ℕ
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : HamiltonianPathBetweenTwoPointsInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- Well-formedness of an instance: the vertex count and edge list form a well-formed
-HAMILTONIAN PATH instance (`0 < n`, no duplicate edges in either orientation, no self-loops,
-endpoints in range), and `u` and `v` are vertices below `n`. -/
-def WellFormed (i : HamiltonianPathBetweenTwoPointsInstance) : Prop :=
-  HamiltonianPathUndirected.WellFormed (i.1, i.2.1) ∧ i.2.2.1 < i.1 ∧ i.2.2.2 < i.1
-
-/-- Some walk from `u` to `v` visits every vertex exactly once. -/
-def HamiltonianPathBetweenTwoPointsFeasible (i : HamiltonianPathBetweenTwoPointsInstance) :
-    Prop :=
-  ∃ (hu : i.2.2.1 < i.1) (hv : i.2.2.2 < i.1)
-    (p : (Graph i).Walk ⟨i.2.2.1, hu⟩ ⟨i.2.2.2, hv⟩), p.IsHamiltonian
-
-open Classical in
-/-- HAMILTONIAN PATH BETWEEN TWO POINTS as a decision problem over bitstrings. -/
-noncomputable def hamiltonianPathBetweenTwoPointsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := HamiltonianPathBetweenTwoPointsInstance) x with
-  | some i => decide (WellFormed i ∧ HamiltonianPathBetweenTwoPointsFeasible i)
-  | none => false
 
 /-- **HAMILTONIAN PATH BETWEEN TWO POINTS is NP-complete.** Source: Garey and Johnson (1979),
 [GT39] and Section 3.1.4; Karp (1972). -/

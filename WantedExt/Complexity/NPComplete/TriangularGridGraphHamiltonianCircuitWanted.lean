@@ -23,10 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.GridGraphHamiltonianCircuitWanted
-public import CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs
+public import CSLibExt.Complexity.NPComplete.TriangularGridGraphHamiltonianCircuitDefs
 
 @[expose] public section
 
@@ -77,39 +74,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Adjacency in the triangular lattice in the coordinates `(a, b)` of the point
-`a • (1, 0) + b • (1/2, √3/2)`: the squared distance `Δa² + Δa Δb + Δb²` is `1`. -/
-def TriAdj (x y : StatMech.Lattice.Site 2) : Prop :=
-  (x 0 - y 0) * (x 0 - y 0) + (x 0 - y 0) * (x 1 - y 1) + (x 1 - y 1) * (x 1 - y 1) = 1
-
-instance (x y : StatMech.Lattice.Site 2) : Decidable (TriAdj x y) :=
-  inferInstanceAs (Decidable (_ = _))
-
-/-- The edges of the triangular grid graph: the pairs `(u, v)` with `u < v < |V|` whose sites
-are adjacent in the triangular lattice. -/
-def triangularEdges (i : GridGraphHamiltonianCircuitInstance) : List (ℕ × ℕ) :=
-  (List.range i.length).flatMap fun u =>
-    ((List.range i.length).filter fun v =>
-      decide (u < v ∧ TriAdj (site (i.getD u ((0, 0), (0, 0))))
-        (site (i.getD v ((0, 0), (0, 0)))))).map fun v => (u, v)
-
-/-- The triangular grid graph as a HAMILTONIAN CIRCUIT instance: `|V|` vertices and the edges
-`triangularEdges`. -/
-def toHamiltonianInstance (i : GridGraphHamiltonianCircuitInstance) :
-    HamiltonianCycleUndirectedInstance :=
-  (i.length, triangularEdges i)
-
-open Classical in
-/-- HAMILTONIAN CIRCUIT IN TRIANGULAR GRID GRAPHS as a decision problem over bitstrings. -/
-noncomputable def triangularGridGraphHamiltonianCircuitDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := GridGraphHamiltonianCircuitInstance) x with
-  | some i =>
-    decide (GridGraphHamiltonianCircuit.WellFormed i ∧
-      HamiltonianCycleUndirectedFeasible (toHamiltonianInstance i))
-  | none => false
 
 /-- **HAMILTONIAN CIRCUIT IN TRIANGULAR GRID GRAPHS is NP-complete.**
 Source: Garey and Johnson (1979), [GT37];

@@ -33,10 +33,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Copy
-public import WantedExt.Complexity.NPComplete.TriangleFreeIndependentSetWanted
+public import CSLibExt.Complexity.NPComplete.IndependentSetBannerFreeDefs
 
 @[expose] public section
 
@@ -83,27 +80,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- ISGCI's small graph `P` (the banner, graph6 `DrG`): the cycle `0, 1, 3, 2` with the pendant
-vertex `4` attached at `2`. -/
-def graphP : SimpleGraph (Fin 5) :=
-  Cslib.Complexity.Karp.edgeGraph 5 [(0, 1), (0, 2), (1, 3), (2, 3), (2, 4)]
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range) with no induced `P`,
-and `0 < K ≤ |V|`. -/
-def WellFormed (i : TriangleFreeIndependentSetInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    ¬ graphP.IsIndContained (Graph i) ∧ 0 < i.2.2 ∧ i.2.2 ≤ i.1
-
-open Classical in
-/-- INDEPENDENT SET on `P`-free graphs as a decision problem over bitstrings. -/
-noncomputable def independentSetBannerFreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TriangleFreeIndependentSetInstance) x with
-  | some i => decide (WellFormed i ∧ TriangleFreeIndependentSetFeasible i)
-  | none => false
 
 /-- **INDEPENDENT SET on `P`-free (banner-free) graphs is NP-complete.** Source: Garey and
 Johnson (1979), [GT20], comment; Poljak (1974); Alekseev (1983); ISGCI (`gc_814`). -/

@@ -25,10 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.GraphThicknessWanted
-public import CSLibExt.Complexity.NPComplete.PartitionIntoCliquesDefs
+public import CSLibExt.Complexity.NPComplete.ThicknessPartitionIntoCliquesDefs
 
 @[expose] public section
 
@@ -72,22 +69,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance for the thickness bound `k`: a well-formed PARTITION INTO CLIQUES
-instance (a simple edge list on `0, ..., n - 1` and `0 < K ≤ n`) whose graph has thickness at most
-`k`. -/
-def WellFormed (k : ℕ) (i : PartitionIntoCliques.PartitionIntoCliquesInstance) : Prop :=
-  PartitionIntoCliques.WellFormed i ∧ GraphThickness.GraphThicknessFeasible (i.1, i.2.1, k)
-
-open Classical in
-/-- PARTITION INTO CLIQUES for graphs of thickness at most `k`, as a decision problem over
-bitstrings. -/
-noncomputable def thicknessPartitionIntoCliquesDec (k : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PartitionIntoCliques.PartitionIntoCliquesInstance) x with
-  | some i => decide (WellFormed k i ∧ PartitionIntoCliques.PartitionIntoCliquesFeasible i)
-  | none => false
 
 /-- **PARTITION INTO CLIQUES for graphs of thickness at most `k` is NP-complete, for every fixed
 `k ≥ 1`.** Source: Garey and Johnson (1979), [GT15]; Cerioli et al. (2008); Johnson (1985), Table 1.

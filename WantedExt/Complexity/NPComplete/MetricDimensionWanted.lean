@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Metric
+public import CSLibExt.Complexity.NPComplete.MetricDimensionDefs
 
 @[expose] public section
 
@@ -51,35 +48,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`), edge list, bound `K`. -/
-abbrev MetricDimensionInstance := ℕ × List (ℕ × ℕ) × ℕ
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : MetricDimensionInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range), the graph is
-connected, and `0 < K ≤ |V|`. -/
-def WellFormed (i : MetricDimensionInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    (Graph i).Connected ∧ 0 < i.2.2 ∧ i.2.2 ≤ i.1
-
-/-- Some set of at most `K` vertices resolves every pair of distinct vertices: for distinct `u`
-and `v` it contains a vertex `w` with `d(u, w) ≠ d(w, v)`. -/
-def MetricDimensionFeasible (i : MetricDimensionInstance) : Prop :=
-  ∃ S : Finset (Fin i.1), S.card ≤ i.2.2 ∧
-    ∀ u v, u ≠ v → ∃ w ∈ S, (Graph i).dist u w ≠ (Graph i).dist w v
-
-open Classical in
-/-- METRIC DIMENSION as a decision problem over bitstrings. -/
-noncomputable def metricDimensionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MetricDimensionInstance) x with
-  | some i => decide (WellFormed i ∧ MetricDimensionFeasible i)
-  | none => false
 
 /-- **METRIC DIMENSION is NP-complete.** Source: Garey and Johnson (1979), [GT61]; Khuller,
 Raghavachari, and Rosenfeld (1996). -/

@@ -19,10 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Combinatorics.SimpleGraph.Clique
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.PathwidthChordalGraphsWanted
+public import CSLibExt.Complexity.NPComplete.PathwidthChordalDominoDefs
 
 @[expose] public section
 
@@ -67,21 +64,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed instance of `PathwidthChordalGraphsWanted` (a
-simple edge list, a chordal graph, `0 < K`) in which every vertex lies in at most two maximal
-cliques. -/
-def WellFormed (i : PathwidthChordalGraphsInstance) : Prop :=
-  PathwidthChordalGraphs.WellFormed i ∧
-    ∀ v : Fin i.1, {s : Set (Fin i.1) | Maximal (Graph i).IsClique s ∧ v ∈ s}.ncard ≤ 2
-
-open Classical in
-/-- PATHWIDTH OF CHORDAL DOMINOES as a decision problem over bitstrings. -/
-noncomputable def pathwidthChordalDominoDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := PathwidthChordalGraphsInstance) x with
-  | some i => decide (WellFormed i ∧ PathwidthChordalGraphs.PathwidthChordalGraphsFeasible i)
-  | none => false
 
 /-- **PATHWIDTH OF CHORDAL DOMINOES is NP-complete.**
 Source: Kloks, Kratsch and Müller (1995). -/

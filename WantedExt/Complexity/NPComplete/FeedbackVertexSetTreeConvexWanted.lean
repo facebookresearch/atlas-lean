@@ -26,11 +26,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Combinatorics.SimpleGraph.Acyclic
-public import Mathlib.Combinatorics.SimpleGraph.Bipartite
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.FeedbackVertexSetWanted
+public import CSLibExt.Complexity.NPComplete.FeedbackVertexSetTreeConvexDefs
 
 @[expose] public section
 
@@ -77,26 +73,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- `G` is a tree convex bipartite graph: for some vertex set `X` with every edge joining `X` to
-its complement, there is a tree `T` on `X` in which the neighbourhood of every vertex outside `X`
-induces a connected subgraph (a subtree). -/
-def IsTreeConvex {n : ℕ} (G : SimpleGraph (Fin n)) : Prop :=
-  ∃ X : Set (Fin n), G.IsBipartiteWith X Xᶜ ∧
-    ∃ T : SimpleGraph X, T.IsTree ∧ ∀ y ∉ X, (T.induce {x : X | G.Adj y x}).Connected
-
-/-- Well-formedness of an instance: a well-formed FEEDBACK VERTEX SET instance whose graph is
-tree convex bipartite. -/
-def WellFormed (i : FeedbackVertexSetInstance) : Prop :=
-  FeedbackVertexSet.WellFormed i ∧ IsTreeConvex (Graph i)
-
-open Classical in
-/-- FEEDBACK VERTEX SET IN TREE CONVEX BIPARTITE GRAPHS as a decision problem over bitstrings. -/
-noncomputable def feedbackVertexSetTreeConvexDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := FeedbackVertexSetInstance) x with
-  | some i => decide (WellFormed i ∧ FeedbackVertexSet.FeedbackVertexSetFeasible i)
-  | none => false
 
 /-- **FEEDBACK VERTEX SET IN TREE CONVEX BIPARTITE GRAPHS is NP-complete.**
 Source: Garey and Johnson (1979), [GT7];

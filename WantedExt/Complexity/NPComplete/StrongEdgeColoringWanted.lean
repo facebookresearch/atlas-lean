@@ -19,9 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.EdgeColoringWanted
+public import CSLibExt.Complexity.NPComplete.StrongEdgeColoringDefs
 
 @[expose] public section
 
@@ -64,31 +62,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- The edges `e` and `f` (vertex pairs) are within distance one in the graph with edge list
-`es`: they share an endpoint, or some edge of `es` joins an endpoint of `e` to an endpoint of
-`f`. -/
-def Near (es : List (ℕ × ℕ)) (e f : ℕ × ℕ) : Prop :=
-  e.1 = f.1 ∨ e.1 = f.2 ∨ e.2 = f.1 ∨ e.2 = f.2 ∨
-    ∃ g ∈ es, ((g.1 = e.1 ∨ g.1 = e.2) ∧ (g.2 = f.1 ∨ g.2 = f.2)) ∨
-      ((g.2 = e.1 ∨ g.2 = e.2) ∧ (g.1 = f.1 ∨ g.1 = f.2))
-
-/-- A strong edge coloring with at most `K` colors: one color below `K` per listed edge, distinct
-on any two distinct positions whose edges are `Near`. -/
-def StrongEdgeColoringFeasible (i : EdgeColoringInstance) : Prop :=
-  ∃ coloring : List ℕ, coloring.length = i.2.1.length ∧ (∀ c ∈ coloring, c < i.2.2) ∧
-    ∀ a < i.2.1.length, ∀ b < i.2.1.length, a ≠ b →
-      Near i.2.1 (i.2.1.getD a (0, 0)) (i.2.1.getD b (0, 0)) →
-        coloring.getD a 0 ≠ coloring.getD b 0
-
-open Classical in
-/-- STRONG EDGE COLORING as a decision problem over bitstrings. -/
-noncomputable def strongEdgeColoringDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := EdgeColoringInstance) x with
-  | some i => decide (WellFormed i ∧ StrongEdgeColoringFeasible i)
-  | none => false
 
 /-- **STRONG EDGE COLORING is NP-complete.** Source: Mahdian (2002); Hocquard, Ochem and
 Valicov (2013). -/

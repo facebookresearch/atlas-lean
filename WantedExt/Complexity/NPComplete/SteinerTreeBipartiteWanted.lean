@@ -24,10 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.SteinerTreeWanted
-public import Mathlib.Combinatorics.SimpleGraph.Bipartite
+public import CSLibExt.Complexity.NPComplete.SteinerTreeBipartiteDefs
 
 @[expose] public section
 
@@ -74,22 +71,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: it is a well-formed STEINER TREE IN GRAPHS instance, every
-edge has weight `1`, its graph is bipartite, it has at least one vertex, and `K` is positive. -/
-def WellFormed (i : SteinerTreeInstance) : Prop :=
-  SteinerTree.WellFormed i ∧ (∀ e ∈ i.2.1, e.2.2 = 1) ∧
-    (SteinerTree.Graph i i.2.1).IsBipartite ∧ 0 < i.1 ∧ 0 < i.2.2.2
-
-open Classical in
-/-- STEINER TREE IN GRAPHS with unit weights on bipartite graphs as a decision problem over
-bitstrings. -/
-noncomputable def steinerTreeBipartiteDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SteinerTreeInstance) x with
-  | some i => decide (WellFormed i ∧ SteinerTreeFeasible i)
-  | none => false
 
 /-- **STEINER TREE IN GRAPHS with unit weights on bipartite graphs is NP-complete.** Source:
 Garey and Johnson (1979), [ND12]; Müller and Brandstädt (1987). -/

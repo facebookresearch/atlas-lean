@@ -26,10 +26,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Combinatorics.SimpleGraph.Coloring.Vertex
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.SegmentIntersectionCliqueWanted
+public import CSLibExt.Complexity.NPComplete.ThreeColorabilitySegmentIntersectionDefs
 
 @[expose] public section
 
@@ -73,33 +70,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the list of segments. -/
-abbrev ThreeColorabilitySegmentIntersectionInstance := List Seg
-
-/-- The intersection graph of the segments: `SegmentIntersectionClique.Graph`, whose bound
-component (here `0`) does not affect the graph. -/
-def Graph (i : ThreeColorabilitySegmentIntersectionInstance) : SimpleGraph (Fin i.length) :=
-  SegmentIntersectionClique.Graph (i, 0)
-
-/-- Well-formedness of an instance: every segment has distinct endpoints, and the segments are
-pairwise distinct as point sets. -/
-def WellFormed (i : ThreeColorabilitySegmentIntersectionInstance) : Prop :=
-  (∀ σ ∈ i, toPoint σ.1 ≠ toPoint σ.2) ∧ (i.map segPoints).Nodup
-
-/-- The intersection graph of the segments is `3`-colorable. -/
-def ThreeColorabilitySegmentIntersectionFeasible
-    (i : ThreeColorabilitySegmentIntersectionInstance) : Prop :=
-  (Graph i).Colorable 3
-
-open Classical in
-/-- GRAPH 3-COLORABILITY of segment intersection graphs as a decision problem over bitstrings. -/
-noncomputable def threeColorabilitySegmentIntersectionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ThreeColorabilitySegmentIntersectionInstance) x with
-  | some i => decide (WellFormed i ∧ ThreeColorabilitySegmentIntersectionFeasible i)
-  | none => false
 
 /-- **GRAPH 3-COLORABILITY of segment intersection graphs is NP-complete.** Source: Garey and
 Johnson (1979), [GT4]; Ehrlich, Even and Tarjan (1976); Ossona de Mendez (1999). -/

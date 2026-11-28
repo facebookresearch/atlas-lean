@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.DominatingSetUndirectedPathGraphsWanted
-public import WantedExt.Complexity.NPComplete.HamiltonianPathUndirectedWanted
+public import CSLibExt.Complexity.NPComplete.HamiltonianPathUndirectedPathGraphsDefs
 
 @[expose] public section
 
@@ -62,21 +59,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the parent's (a simple edge list on `Fin n`, `0 < n`), and
-the graph is an undirected path graph. -/
-def WellFormed (i : HamiltonianPathUndirectedInstance) : Prop :=
-  HamiltonianPathUndirected.WellFormed i ∧
-    DominatingSetUndirectedPathGraphs.IsUndirectedPathGraph (HamiltonianPathUndirected.Graph i)
-
-open Classical in
-/-- HAMILTONIAN PATH for undirected path graphs as a decision problem over bitstrings. -/
-noncomputable def hamiltonianPathUndirectedPathGraphsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := HamiltonianPathUndirectedInstance) x with
-  | some i => decide (WellFormed i ∧ HamiltonianPathUndirectedFeasible i)
-  | none => false
 
 /-- **HAMILTONIAN PATH for undirected path graphs is NP-complete.** Source: Bertossi and
 Bonuccelli (1986); ISGCI (gc_129); Garey and Johnson (1979), [GT39]. -/

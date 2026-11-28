@@ -17,10 +17,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Order.Defs.Unbundled
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.IntervalGraphSandwichWanted
+public import CSLibExt.Complexity.NPComplete.ComparabilityGraphSandwichDefs
 
 @[expose] public section
 
@@ -52,27 +49,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- `H` is a comparability graph: some strict partial order `r` on the vertices makes two
-vertices adjacent exactly when they are comparable (`r` orients each edge transitively). -/
-def IsComparabilityGraph {V : Type*} (H : SimpleGraph V) : Prop :=
-  ∃ r : V → V → Prop, IsStrictOrder V r ∧ ∀ u v, H.Adj u v ↔ r u v ∨ r v u
-
-/-- Some comparability graph `H` on the same vertices contains every required edge and only
-allowed edges. -/
-def ComparabilityGraphSandwichFeasible
-    (i : IntervalGraphSandwich.IntervalGraphSandwichInstance) : Prop :=
-  ∃ H : SimpleGraph (Fin i.1), IntervalGraphSandwich.Lower i ≤ H ∧
-    H ≤ IntervalGraphSandwich.Upper i ∧ IsComparabilityGraph H
-
-open Classical in
-/-- COMPARABILITY GRAPH SANDWICH as a decision problem over bitstrings. -/
-noncomputable def comparabilityGraphSandwichDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := IntervalGraphSandwich.IntervalGraphSandwichInstance) x with
-  | some i => decide (IntervalGraphSandwich.WellFormed i ∧ ComparabilityGraphSandwichFeasible i)
-  | none => false
 
 /-- **COMPARABILITY GRAPH SANDWICH is NP-complete.** Source: Golumbic, Kaplan and Shamir
 (1995). -/

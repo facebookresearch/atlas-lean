@@ -20,12 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import MathlibExt.Combinatorics.SimpleGraph.Planarity
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Finite
-public import WantedExt.Complexity.NPComplete.MinimumCutLinearArrangementWanted
+public import CSLibExt.Complexity.NPComplete.MinimumCutLinearArrangementPlanarMaxDegreeThreeDefs
 
 @[expose] public section
 
@@ -66,24 +61,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-open Classical in
-/-- Well-formedness of an instance: the parent's (the edge list describes a simple graph on
-`0, ..., n - 1`, and `0 < K`), and the graph is planar with every vertex degree at most `3`. -/
-def WellFormed (i : MinimumCutLinearArrangementInstance) : Prop :=
-  MinimumCutLinearArrangement.WellFormed i ∧
-    (Cslib.Complexity.Karp.edgeGraph i.1 i.2.1).IsPlanar ∧
-      ∀ v, (Cslib.Complexity.Karp.edgeGraph i.1 i.2.1).degree v ≤ 3
-
-open Classical in
-/-- MINIMUM CUT LINEAR ARRANGEMENT for planar graphs of maximum degree 3 as a decision problem
-over bitstrings. -/
-noncomputable def minimumCutLinearArrangementPlanarMaxDegreeThreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MinimumCutLinearArrangementInstance) x with
-  | some i => decide (WellFormed i ∧ MinimumCutLinearArrangementFeasible i)
-  | none => false
 
 /-- **MINIMUM CUT LINEAR ARRANGEMENT (CUTWIDTH) for planar graphs of maximum degree 3 is
 NP-complete.** Source: Monien and Sudborough (1988); Garey and Johnson (1979), [GT44]. -/

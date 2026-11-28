@@ -23,10 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs
-public import WantedExt.Complexity.NPComplete.DominatingSetK33FreeWanted
+public import CSLibExt.Complexity.NPComplete.HamiltonianCircuitK33FreeDefs
 
 @[expose] public section
 
@@ -65,20 +62,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed HAMILTONIAN CIRCUIT instance (`n > 0`, simple
-edge list) whose graph has no subgraph homeomorphic to `K₃,₃`. -/
-def WellFormed (i : HamiltonianCycleUndirectedInstance) : Prop :=
-  HamiltonianCycleUndirected.WellFormed i ∧ ¬ HasK33Subdivision (Graph i)
-
-open Classical in
-/-- HAMILTONIAN CIRCUIT for K₃,₃-free graphs as a decision problem over bitstrings. -/
-noncomputable def hamiltonianCircuitK33FreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := HamiltonianCycleUndirectedInstance) x with
-  | some i => decide (WellFormed i ∧ HamiltonianCycleUndirectedFeasible i)
-  | none => false
 
 /-- **HAMILTONIAN CIRCUIT for K₃,₃-free graphs is NP-complete.** Source: Garey and Johnson (1979),
 [GT37], comment; Johnson (1985), Table 1; de Figueiredo, de Melo, Sasaki and Silva (2022), Table 1.

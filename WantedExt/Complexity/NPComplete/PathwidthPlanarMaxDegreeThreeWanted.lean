@@ -20,11 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Combinatorics.SimpleGraph.Finite
-public import MathlibExt.Combinatorics.SimpleGraph.Planarity
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.PathwidthChordalGraphsWanted
+public import CSLibExt.Complexity.NPComplete.PathwidthPlanarMaxDegreeThreeDefs
 
 @[expose] public section
 
@@ -66,21 +62,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-open Classical in
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n`, the
-graph is planar with every vertex degree at most `3`, and `0 < K`. -/
-def WellFormed (i : PathwidthChordalGraphsInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    (Graph i).IsPlanar ∧ (∀ v, (Graph i).degree v ≤ 3) ∧ 0 < i.2.2
-
-open Classical in
-/-- PATHWIDTH OF PLANAR GRAPHS OF MAXIMUM DEGREE 3 as a decision problem over bitstrings. -/
-noncomputable def pathwidthPlanarMaxDegreeThreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := PathwidthChordalGraphsInstance) x with
-  | some i => decide (WellFormed i ∧ PathwidthChordalGraphs.PathwidthChordalGraphsFeasible i)
-  | none => false
 
 /-- **PATHWIDTH OF PLANAR GRAPHS OF MAXIMUM DEGREE 3 is NP-complete.** Source: Monien and
 Sudborough (1988); Kinnersley (1992). -/

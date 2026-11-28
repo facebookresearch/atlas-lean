@@ -26,12 +26,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.PathwidthChordalGraphsWanted
-public import Mathlib.Combinatorics.SimpleGraph.Bipartite
-public import Mathlib.Combinatorics.SimpleGraph.Maps
-public import Mathlib.Combinatorics.SimpleGraph.Metric
+public import CSLibExt.Complexity.NPComplete.PathwidthBipartiteDistanceHereditaryDefs
 
 @[expose] public section
 
@@ -73,26 +68,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- `G` is distance-hereditary: every connected induced subgraph preserves distances. -/
-def IsDistanceHereditary {V : Type*} (G : SimpleGraph V) : Prop :=
-  ∀ S : Set V, (G.induce S).Connected → ∀ u v : S, (G.induce S).dist u v = G.dist u v
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range), the graph is bipartite
-and distance-hereditary, and `0 < K`. -/
-def WellFormed (i : PathwidthChordalGraphsInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    (Graph i).IsBipartite ∧ IsDistanceHereditary (Graph i) ∧ 0 < i.2.2
-
-open Classical in
-/-- PATHWIDTH OF BIPARTITE DISTANCE-HEREDITARY GRAPHS as a decision problem over bitstrings. -/
-noncomputable def pathwidthBipartiteDistanceHereditaryDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PathwidthChordalGraphsInstance) x with
-  | some i => decide (WellFormed i ∧ PathwidthChordalGraphsFeasible i)
-  | none => false
 
 /-- **PATHWIDTH OF BIPARTITE DISTANCE-HEREDITARY GRAPHS is NP-complete.** Source: Kloks,
 Bodlaender, Müller and Kratsch (1993). -/

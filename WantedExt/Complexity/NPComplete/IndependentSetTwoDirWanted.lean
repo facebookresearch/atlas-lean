@@ -23,10 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.TriangleFreeIndependentSetWanted
-public import WantedExt.Complexity.NPComplete.TwoDirRecognitionWanted
+public import CSLibExt.Complexity.NPComplete.IndependentSetTwoDirDefs
 
 @[expose] public section
 
@@ -73,21 +70,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n`
-(`TwoDirRecognition.WellFormed`), the graph is a 2-DIR graph, and `0 < K ≤ n`. -/
-def WellFormed (i : TriangleFreeIndependentSetInstance) : Prop :=
-  TwoDirRecognition.WellFormed (i.1, i.2.1) ∧ TwoDirRecognition.IsTwoDir (Graph i) ∧
-    0 < i.2.2 ∧ i.2.2 ≤ i.1
-
-open Classical in
-/-- INDEPENDENT SET on 2-DIR graphs as a decision problem over bitstrings. -/
-noncomputable def independentSetTwoDirDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TriangleFreeIndependentSetInstance) x with
-  | some i => decide (WellFormed i ∧ TriangleFreeIndependentSetFeasible i)
-  | none => false
 
 /-- **INDEPENDENT SET on 2-DIR graphs is NP-complete.** Source: Kratochvíl and Nešetřil (1990),
 Theorem 1; ISGCI (`gc_864`); Garey and Johnson (1979), [GT20] (parent problem). -/

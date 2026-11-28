@@ -23,10 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import MathlibExt.Combinatorics.SimpleGraph.Domination
-public import WantedExt.Complexity.NPComplete.PlanarKMeansWanted
+public import CSLibExt.Complexity.NPComplete.UnitDiskDominatingSetDefs
 
 @[expose] public section
 
@@ -62,33 +59,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the points of `P` (pairs of rational coordinates) and the bound `K`. -/
-abbrev UnitDiskDominatingSetInstance := List (RatCode × RatCode) × ℕ
-
-/-- The unit disk graph of a list of points: two distinct points are adjacent when their
-Euclidean distance is at most `1`. -/
-noncomputable def unitDiskGraph (P : List (RatCode × RatCode)) : SimpleGraph (Fin P.length) :=
-  SimpleGraph.fromRel fun a b => dist (point P[a]) (point P[b]) ≤ 1
-
-/-- Well-formedness of an instance: all denominators are positive, the points are distinct (as
-points of the plane), and `1 ≤ K ≤ |P|`. -/
-def WellFormed (i : UnitDiskDominatingSetInstance) : Prop :=
-  (∀ p ∈ i.1, 0 < p.1.2 ∧ 0 < p.2.2) ∧ (i.1.map fun p => (p.1.val, p.2.val)).Nodup ∧
-    1 ≤ i.2 ∧ i.2 ≤ i.1.length
-
-/-- The unit disk graph of `P` has a dominating set of at most `K` points. -/
-def UnitDiskDominatingSetFeasible (i : UnitDiskDominatingSetInstance) : Prop :=
-  ∃ D : Finset (Fin i.1.length), D.card ≤ i.2 ∧ (unitDiskGraph i.1).IsDominating ↑D
-
-open Classical in
-/-- DOMINATING SET IN UNIT DISK GRAPHS as a decision problem over bitstrings. -/
-noncomputable def unitDiskDominatingSetDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := UnitDiskDominatingSetInstance) x with
-  | some i => decide (WellFormed i ∧ UnitDiskDominatingSetFeasible i)
-  | none => false
 
 /-- **DOMINATING SET IN UNIT DISK GRAPHS is NP-complete.** Source: Clark, Colbourn and Johnson
 (1990). -/

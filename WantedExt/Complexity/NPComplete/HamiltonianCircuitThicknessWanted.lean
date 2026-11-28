@@ -24,10 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.GraphThicknessWanted
-public import CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs
+public import CSLibExt.Complexity.NPComplete.HamiltonianCircuitThicknessDefs
 
 @[expose] public section
 
@@ -71,28 +68,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- The GRAPH THICKNESS instance with the same vertex count and edge list and the bound `k`. -/
-def withThickness (k : ℕ) (i : HamiltonianCycleUndirectedInstance) :
-    GraphThickness.GraphThicknessInstance :=
-  (i.1, i.2, k)
-
-/-- Well-formedness of an instance for the fixed thickness bound `k`: a well-formed HAMILTONIAN
-CIRCUIT instance (a simple edge list on `Fin n`, `n > 0`) whose graph has thickness at most
-`k`. -/
-def WellFormed (k : ℕ) (i : HamiltonianCycleUndirectedInstance) : Prop :=
-  HamiltonianCycleUndirected.WellFormed i ∧
-    GraphThickness.GraphThicknessFeasible (withThickness k i)
-
-open Classical in
-/-- HAMILTONIAN CIRCUIT on graphs of thickness at most `k`, for the fixed `k`, as a decision
-problem over bitstrings. -/
-noncomputable def hamiltonianCircuitThicknessDec (k : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := HamiltonianCycleUndirectedInstance) x with
-  | some i => decide (WellFormed k i ∧ HamiltonianCycleUndirectedFeasible i)
-  | none => false
 
 /-- **HAMILTONIAN CIRCUIT on graphs of thickness at most `k` is NP-complete for every fixed
 `k ≥ 1`.** Source: Garey and Johnson (1979), [GT37], comment; Garey, Johnson and Tarjan (1976);

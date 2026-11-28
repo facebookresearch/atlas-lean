@@ -20,14 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Combinatorics.SimpleGraph.Bipartite
-public import Mathlib.Combinatorics.SimpleGraph.Finite
-public import Mathlib.Combinatorics.SimpleGraph.LineGraph
-public import Mathlib.Combinatorics.SimpleGraph.Maps
-public import MathlibExt.Combinatorics.SimpleGraph.Planarity
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.FeedbackVertexSetWanted
+public import CSLibExt.Complexity.NPComplete.FeedbackVertexSetLineGraphPlanarCubicBipartiteDefs
 
 @[expose] public section
 
@@ -76,28 +69,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-open Classical in
-/-- `G` is the line graph of a planar cubic bipartite graph: some planar, bipartite, 3-regular
-graph `H` on `Fin m` has a line graph isomorphic to `G`. -/
-def IsLineGraphOfPlanarCubicBipartite {n : ℕ} (G : SimpleGraph (Fin n)) : Prop :=
-  ∃ (m : ℕ) (H : SimpleGraph (Fin m)),
-    H.IsPlanar ∧ H.IsBipartite ∧ H.IsRegularOfDegree 3 ∧ Nonempty (G ≃g H.lineGraph)
-
-/-- Well-formedness of an instance: a well-formed FEEDBACK VERTEX SET instance whose graph is the
-line graph of a planar cubic bipartite graph. -/
-def WellFormed (i : FeedbackVertexSetInstance) : Prop :=
-  FeedbackVertexSet.WellFormed i ∧ IsLineGraphOfPlanarCubicBipartite (Graph i)
-
-open Classical in
-/-- FEEDBACK VERTEX SET on line graphs of planar cubic bipartite graphs as a decision problem
-over bitstrings. -/
-noncomputable def feedbackVertexSetLineGraphPlanarCubicBipartiteDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := FeedbackVertexSetInstance) x with
-  | some i => decide (WellFormed i ∧ FeedbackVertexSetFeasible i)
-  | none => false
 
 /-- **FEEDBACK VERTEX SET on line graphs of planar cubic bipartite graphs is NP-complete.**
 Source: Garey and Johnson (1979), [GT7]; Munaro (2017), Theorem 24. -/

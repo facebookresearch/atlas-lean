@@ -17,8 +17,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.EdgeColoringDefs
 
 @[expose] public section
 
@@ -41,52 +40,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- **Edge coloring instances.** An instance of EDGE COLORING is a triple $(n, E, K)$ consisting
-of a natural number $n$, the number of vertices, a finite list $E$ of ordered pairs of natural
-numbers, the edges, and a natural number $K$, the bound on the number of colors. -/
-abbrev EdgeColoringInstance := ℕ × List (ℕ × ℕ) × ℕ
-
-
-/-- **Adjacency in an edge coloring edge list.** Given a list $E$ of ordered pairs of natural
-numbers and natural numbers $u$ and $v$, the boolean adjacency of $u$ and $v$ in $E$ is true
-exactly when $(u, v)$ or $(v, u)$ occurs in $E$. -/
-def Adj (edges : List (ℕ × ℕ)) (u v : ℕ) : Bool :=
-  edges.contains (u, v) || edges.contains (v, u)
-
-
-/-- **Well-formed edge coloring instances.** An edge coloring instance $(n, E, K)$ is well formed
-when the list $E$ has no repeated entries and every pair $(a, b)$ in $E$ satisfies $a < n$,
-$b < n$ and $a \ne b$, and $(b, a)$ does not occur in $E$. -/
-def WellFormed (i : EdgeColoringInstance) : Prop :=
-  i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1
-
-/-- **Feasible edge coloring instances.** Let $(n, E, K)$ be an edge coloring instance with edge
-list $E = (e_0, \dots, e_{m-1})$, where the endpoints of a pair $(x, y)$ are $x$ and $y$. The
-instance is feasible when there is a list $(c_0, \dots, c_{m-1})$ of natural numbers with
-$c_j < K$ for every $j$ such that $c_a \ne c_b$ for all distinct $a, b < m$ for which $e_a$ and
-$e_b$ share an endpoint. -/
-def EdgeColoringFeasible
-    (i : EdgeColoringInstance) : Prop :=
-  ∃ coloring : List ℕ, coloring.length = i.2.1.length ∧ (∀ c ∈ coloring, c < i.2.2) ∧
-    ∀ a < i.2.1.length, ∀ b < i.2.1.length, a ≠ b →
-      ((i.2.1.getD a (0, 0)).1 = (i.2.1.getD b (0, 0)).1 ∨
-        (i.2.1.getD a (0, 0)).1 = (i.2.1.getD b (0, 0)).2 ∨
-        (i.2.1.getD a (0, 0)).2 = (i.2.1.getD b (0, 0)).1 ∨
-        (i.2.1.getD a (0, 0)).2 = (i.2.1.getD b (0, 0)).2) →
-      coloring.getD a 0 ≠ coloring.getD b 0
-
-open Classical in
-/-- **EDGE COLORING as a decision problem.** The EDGE COLORING decision problem accepts a
-bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding of edge coloring
-instances, to an instance that is well formed and feasible. Bitstrings that do not decode are
-rejected. -/
-noncomputable def edgeColoringDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := EdgeColoringInstance) x with
-  | some i => decide (WellFormed i ∧ EdgeColoringFeasible i)
-  | none => false
 
 /-- **EDGE COLORING is NP-complete.** The EDGE COLORING decision problem belongs to NP, and every
 decision problem in NP has a polynomial-time many-one reduction to it.

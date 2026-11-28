@@ -25,11 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Basic.Real.Basic
-public import MathlibExt.Combinatorics.SimpleGraph.Planarity
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.KDirGraphRecognitionDefs
 
 @[expose] public section
 
@@ -71,42 +67,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`) and edge list. -/
-abbrev KDirGraphRecognitionInstance := ℕ × List (ℕ × ℕ)
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : KDirGraphRecognitionInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range). -/
-def WellFormed (i : KDirGraphRecognitionInstance) : Prop :=
-  i.2.Nodup ∧ ∀ e ∈ i.2, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2
-
-/-- `H` is a `k`-DIR graph: there are slopes `s j` (`j : Fin k`) and, for each vertex `v`, a
-non-degenerate closed segment from `a v` to `b v` whose slope is `s (c v)`, such that two
-distinct vertices are adjacent in `H` exactly when their segments intersect. -/
-def IsKDirGraph (k : ℕ) {n : ℕ} (H : SimpleGraph (Fin n)) : Prop :=
-  ∃ (s : Fin k → ℝ) (a b : Fin n → ℝ × ℝ) (c : Fin n → Fin k),
-    (∀ v, (a v).1 < (b v).1 ∧ (b v).2 - (a v).2 = s (c v) * ((b v).1 - (a v).1)) ∧
-      ∀ u v, u ≠ v →
-        (H.Adj u v ↔
-          (SimpleGraph.Segment (a u) (b u) ∩ SimpleGraph.Segment (a v) (b v)).Nonempty)
-
-/-- The graph of the instance is a `k`-DIR graph. -/
-def KDirGraphRecognitionFeasible (k : ℕ) (i : KDirGraphRecognitionInstance) : Prop :=
-  IsKDirGraph k (Graph i)
-
-open Classical in
-/-- k-DIR GRAPH RECOGNITION, for the fixed number of slopes `k`, as a decision problem over
-bitstrings. -/
-noncomputable def kDirGraphRecognitionDec (k : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := KDirGraphRecognitionInstance) x with
-  | some i => decide (WellFormed i ∧ KDirGraphRecognitionFeasible k i)
-  | none => false
 
 /-- **k-DIR GRAPH RECOGNITION is NP-complete for every fixed `k ≥ 2`.** Source: Kratochvíl and
 Matoušek (1989), Theorem 1; Kratochvíl (1994) for `k = 2`; membership in NP: Kratochvíl and

@@ -20,6 +20,7 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.Order.Archimedean.Real.Basic
 public import Mathlib.Combinatorics.SimpleGraph.Acyclic
 public import Mathlib.Order.Filter.AtTopBot.Defs
+public import MathlibExt.GraphTheory.AcyclicChromaticMaxDegreeErdosProblem797Defs
 
 @[expose] public section
 
@@ -35,11 +36,6 @@ large `d`, every graph of maximum degree at most `d` has an acyclic coloring wit
 (the maximum over degree exactly `d` is the same). formal-conjectures has no statement of this
 problem.
 -/
-
-/-- An acyclic coloring: a proper coloring in which the union of any two color classes induces a
-forest, i.e. no cycle uses only two colors. -/
-def IsAcyclicColoring {V : Type*} (G : SimpleGraph V) {k : ℕ} (c : V → Fin k) : Prop :=
-  (∀ u v, G.Adj u v → c u ≠ c v) ∧ ∀ i j : Fin k, (G.induce {v | c v = i ∨ c v = j}).IsAcyclic
 
 open Classical in
 /-- Erdős Problem 797: `f(d) = o(d²)`, where `f(d)` is the largest acyclic chromatic number of a

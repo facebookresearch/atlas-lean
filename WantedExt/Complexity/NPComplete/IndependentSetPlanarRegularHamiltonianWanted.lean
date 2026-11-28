@@ -28,12 +28,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Finite
-public import Mathlib.Combinatorics.SimpleGraph.Hamiltonian
-public import MathlibExt.Combinatorics.SimpleGraph.Planarity
-public import WantedExt.Complexity.NPComplete.TriangleFreeIndependentSetWanted
+public import CSLibExt.Complexity.NPComplete.IndependentSetPlanarRegularHamiltonianDefs
 
 @[expose] public section
 
@@ -82,25 +77,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-open Classical in
-/-- Well-formedness of an instance for a fixed `k`: the edge list describes a simple graph on
-`Fin n` (no duplicate edges in either orientation, no self-loops, endpoints in range),
-`0 < K ≤ |V|`, and the graph is planar, `k`-regular and Hamiltonian. -/
-def WellFormed (k : ℕ) (i : TriangleFreeIndependentSetInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    0 < i.2.2 ∧ i.2.2 ≤ i.1 ∧ (Graph i).IsPlanar ∧ (Graph i).IsRegularOfDegree k ∧
-      (Graph i).IsHamiltonian
-
-open Classical in
-/-- INDEPENDENT SET on planar `k`-regular Hamiltonian graphs as a decision problem over
-bitstrings. -/
-noncomputable def independentSetPlanarRegularHamiltonianDec (k : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TriangleFreeIndependentSetInstance) x with
-  | some i => decide (WellFormed k i ∧ TriangleFreeIndependentSetFeasible i)
-  | none => false
 
 /-- **INDEPENDENT SET on planar `k`-regular Hamiltonian graphs is NP-complete for `k = 4` and
 `k = 5`.** Source: Fleischner, Sabidussi and Sarvanov (2010) (`k = 4`); Cavallaro (2019),

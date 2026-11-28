@@ -18,10 +18,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.DominatingSetUndirectedPathGraphsWanted
-public import WantedExt.Complexity.NPComplete.TotalDominatingSetWanted
+public import CSLibExt.Complexity.NPComplete.TotalDominatingSetUndirectedPathGraphsDefs
 
 @[expose] public section
 
@@ -68,20 +65,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the parent's (a simple edge list on `Fin n`), `0 < K`, no
-isolated vertex, and the graph is an undirected path graph. -/
-def WellFormed (i : TotalDominatingSetInstance) : Prop :=
-  TotalDominatingSet.WellFormed i ∧ 0 < i.2.2 ∧ (∀ v : Fin i.1, ∃ u, (Graph i).Adj v u) ∧
-    DominatingSetUndirectedPathGraphs.IsUndirectedPathGraph (Graph i)
-
-open Classical in
-/-- TOTAL DOMINATING SET for undirected path graphs as a decision problem over bitstrings. -/
-noncomputable def totalDominatingSetUndirectedPathGraphsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := TotalDominatingSetInstance) x with
-  | some i => decide (WellFormed i ∧ TotalDominatingSetFeasible i)
-  | none => false
 
 /-- **TOTAL DOMINATING SET for undirected path graphs is NP-complete.** Source: Laskar, Pfaff,
 Hedetniemi and Hedetniemi (1984). -/

@@ -22,10 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.GridGraphHamiltonianCircuitWanted
-public import WantedExt.Complexity.NPComplete.HamiltonianPathUndirectedWanted
+public import CSLibExt.Complexity.NPComplete.GridGraphHamiltonianPathDefs
 
 @[expose] public section
 
@@ -67,21 +64,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the listed points are pairwise distinct, and the grid graph
-is a well-formed HAMILTONIAN PATH instance (at least one point). -/
-def WellFormed (i : GridGraphHamiltonianCircuitInstance) : Prop :=
-  GridGraphHamiltonianCircuit.WellFormed i ∧
-    HamiltonianPathUndirected.WellFormed (toHamiltonianInstance i)
-
-open Classical in
-/-- HAMILTONIAN PATH IN GRID GRAPHS as a decision problem over bitstrings. -/
-noncomputable def gridGraphHamiltonianPathDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := GridGraphHamiltonianCircuitInstance) x with
-  | some i => decide (WellFormed i ∧ HamiltonianPathUndirectedFeasible (toHamiltonianInstance i))
-  | none => false
 
 /-- **HAMILTONIAN PATH IN GRID GRAPHS is NP-complete.** Source: Itai, Papadimitriou and Szwarcfiter
 (1982); ISGCI

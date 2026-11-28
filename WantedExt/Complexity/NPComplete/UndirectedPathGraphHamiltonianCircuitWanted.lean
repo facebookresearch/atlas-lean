@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.DominatingSetUndirectedPathGraphsWanted
-public import CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs
+public import CSLibExt.Complexity.NPComplete.UndirectedPathGraphHamiltonianCircuitDefs
 
 @[expose] public section
 
@@ -66,20 +63,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed HAMILTONIAN CIRCUIT instance whose graph is an
-undirected path graph. -/
-def WellFormed (i : HamiltonianCycleUndirectedInstance) : Prop :=
-  HamiltonianCycleUndirected.WellFormed i ∧
-    DominatingSetUndirectedPathGraphs.IsUndirectedPathGraph (Graph i)
-
-open Classical in
-/-- HAMILTONIAN CIRCUIT IN UNDIRECTED PATH GRAPHS as a decision problem over bitstrings. -/
-noncomputable def undirectedPathGraphHamiltonianCircuitDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := HamiltonianCycleUndirectedInstance) x with
-  | some i => decide (WellFormed i ∧ HamiltonianCycleUndirectedFeasible i)
-  | none => false
 
 /-- **HAMILTONIAN CIRCUIT IN UNDIRECTED PATH GRAPHS is NP-complete.**
 Source: Garey and Johnson (1979), [GT37];

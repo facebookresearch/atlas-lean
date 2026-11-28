@@ -25,12 +25,8 @@ doi:10.1016/j.dam.2021.05.021, Table 1.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.Complexity.Karp.Color
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Combinatorics.SimpleGraph.ClawFreeIndependencePoly
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.EdgeColoringWanted
+public import CSLibExt.Complexity.NPComplete.ChromaticIndexClawFreeDefs
 
 @[expose] public section
 
@@ -78,21 +74,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed EDGE COLORING instance (a simple edge list on
-the vertices `0, ..., n - 1`) whose graph is claw-free, and `0 < K`. -/
-def WellFormed (i : EdgeColoringInstance) : Prop :=
-  EdgeColoring.WellFormed i ∧
-    (Cslib.Complexity.Karp.edgeGraph i.1 i.2.1).IsClawFree ∧ 0 < i.2.2
-
-open Classical in
-/-- CHROMATIC INDEX for claw-free graphs as a decision problem over bitstrings. -/
-noncomputable def chromaticIndexClawFreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := EdgeColoringInstance) x with
-  | some i => decide (WellFormed i ∧ EdgeColoringFeasible i)
-  | none => false
 
 /-- **CHROMATIC INDEX for claw-free graphs is NP-complete.** Source: Cai and Ellis (1991);
 Galby, Lima, Paulusma and Ries (2019), Theorem 4; de Figueiredo, de Melo, Sasaki and Silva

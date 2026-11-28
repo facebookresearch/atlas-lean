@@ -20,10 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Clique
-public import WantedExt.Complexity.NPComplete.DominatingSetCircleGraphWanted
+public import CSLibExt.Complexity.NPComplete.PartitionIntoCliquesCircleGraphDefs
 
 @[expose] public section
 
@@ -66,30 +63,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the chords, one per vertex, each given by its endpoints `(a, b)`, and the bound
-`K`. -/
-abbrev PartitionIntoCliquesCircleGraphInstance := List (ℕ × ℕ) × ℕ
-
-/-- Well-formedness of an instance: every chord has endpoints `a < b`, all endpoints of all
-chords are distinct, and `0 < K ≤ |V|`. -/
-def WellFormed (i : PartitionIntoCliquesCircleGraphInstance) : Prop :=
-  (∀ c ∈ i.1, c.1 < c.2) ∧ (i.1.flatMap fun c => [c.1, c.2]).Nodup ∧ 0 < i.2 ∧ i.2 ≤ i.1.length
-
-/-- The vertices of the circle graph split into at most `K` cliques: for some `k ≤ K` there is a
-block map `c` whose blocks `c⁻¹(j)`, `j : Fin k`, are cliques of the circle graph. -/
-def PartitionIntoCliquesCircleGraphFeasible (i : PartitionIntoCliquesCircleGraphInstance) :
-    Prop :=
-  ∃ k ≤ i.2, ∃ c : Fin i.1.length → Fin k, ∀ j : Fin k, (circleGraph i.1).IsClique {v | c v = j}
-
-open Classical in
-/-- PARTITION INTO CLIQUES on circle graphs as a decision problem over bitstrings. -/
-noncomputable def partitionIntoCliquesCircleGraphDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PartitionIntoCliquesCircleGraphInstance) x with
-  | some i => decide (WellFormed i ∧ PartitionIntoCliquesCircleGraphFeasible i)
-  | none => false
 
 /-- **PARTITION INTO CLIQUES on circle graphs is NP-complete.** Source: Keil and Stewart (2006),
 Theorem 2.1; Garey and Johnson (1979), [GT15]. -/

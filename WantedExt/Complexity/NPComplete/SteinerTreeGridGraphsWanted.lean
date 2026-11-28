@@ -22,12 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Copy
-public import Mathlib.Combinatorics.SimpleGraph.Hasse
-public import Mathlib.Combinatorics.SimpleGraph.Prod
-public import WantedExt.Complexity.NPComplete.SteinerTreeWanted
+public import CSLibExt.Complexity.NPComplete.SteinerTreeGridGraphsDefs
 
 @[expose] public section
 
@@ -70,24 +65,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the parent's (simple weighted edge list, terminals listed
-once and below `n`), every edge weight is 1, the graph is a subgraph of the grid up to
-isomorphism, `K` is positive, and the graph has a vertex. -/
-def WellFormed (i : SteinerTreeInstance) : Prop :=
-  SteinerTree.WellFormed i ∧ (∀ e ∈ i.2.1, e.2.2 = 1) ∧
-    (SteinerTree.Graph i i.2.1).IsContained (SimpleGraph.hasse ℤ □ SimpleGraph.hasse ℤ) ∧
-    0 < i.2.2.2 ∧ 0 < i.1
-
-open Classical in
-/-- STEINER TREE IN GRAPHS with unit weights on grid graphs as a decision problem over
-bitstrings. -/
-noncomputable def steinerTreeGridGraphsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SteinerTreeInstance) x with
-  | some i => decide (WellFormed i ∧ SteinerTreeFeasible i)
-  | none => false
 
 /-- **STEINER TREE IN GRAPHS with unit weights is NP-complete for grid graphs.** Source: Garey
 and Johnson (1979), [ND12]; Johnson, NP-completeness column (1985), Table 1; Garey and Johnson

@@ -25,12 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Basic.Real.Basic
-public import Mathlib.Data.Set.Card
-public import Mathlib.Order.Interval.Set.Basic
+public import CSLibExt.Complexity.NPComplete.IntervalGraphCompletionDefs
 
 @[expose] public section
 
@@ -58,40 +53,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`), edge list, bound `K`. -/
-abbrev IntervalGraphCompletionInstance := ℕ × List (ℕ × ℕ) × ℕ
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : IntervalGraphCompletionInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range), and `0 < K`. -/
-def WellFormed (i : IntervalGraphCompletionInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    0 < i.2.2
-
-/-- `H` is an interval graph: there are closed real intervals `[l v, r v]`, one per vertex, such
-that two distinct vertices are adjacent in `H` exactly when their intervals intersect. -/
-def IsIntervalGraph {n : ℕ} (H : SimpleGraph (Fin n)) : Prop :=
-  ∃ l r : Fin n → ℝ, (∀ v, l v ≤ r v) ∧
-    ∀ u v, u ≠ v → (H.Adj u v ↔ (Set.Icc (l u) (r u) ∩ Set.Icc (l v) (r v)).Nonempty)
-
-/-- Some interval graph `H` on the same vertices contains the graph and has at most `K` edges
-that are not edges of the graph. -/
-def IntervalGraphCompletionFeasible (i : IntervalGraphCompletionInstance) : Prop :=
-  ∃ H : SimpleGraph (Fin i.1), Graph i ≤ H ∧
-    (H.edgeSet \ (Graph i).edgeSet).ncard ≤ i.2.2 ∧ IsIntervalGraph H
-
-open Classical in
-/-- INTERVAL GRAPH COMPLETION as a decision problem over bitstrings. -/
-noncomputable def intervalGraphCompletionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := IntervalGraphCompletionInstance) x with
-  | some i => decide (WellFormed i ∧ IntervalGraphCompletionFeasible i)
-  | none => false
 
 /-- **INTERVAL GRAPH COMPLETION is NP-complete.** Source: Garey and Johnson (1979), [GT35];
 Yamaguchi, Araki, and Kashiwabara (1995); Villanger, Heggernes, Paul, and Telle (2009). -/

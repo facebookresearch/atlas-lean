@@ -19,12 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Bipartite
-public import Mathlib.Combinatorics.SimpleGraph.LineGraph
-public import Mathlib.Combinatorics.SimpleGraph.Maps
-public import WantedExt.Complexity.NPComplete.HamiltonianPathUndirectedWanted
+public import CSLibExt.Complexity.NPComplete.BipartiteLineGraphHamiltonianPathDefs
 
 @[expose] public section
 
@@ -72,25 +67,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- `G` is the line graph of a bipartite graph: isomorphic to `L(H)` for a bipartite graph `H`
-on some `Fin k`. -/
-def IsBipartiteLineGraph {V : Type*} (G : SimpleGraph V) : Prop :=
-  ∃ (k : ℕ) (H : SimpleGraph (Fin k)), H.IsBipartite ∧ Nonempty (G ≃g H.lineGraph)
-
-/-- Well-formedness of an instance: a well-formed HAMILTONIAN PATH instance whose graph is the
-line graph of a bipartite graph. -/
-def WellFormed (i : HamiltonianPathUndirectedInstance) : Prop :=
-  HamiltonianPathUndirected.WellFormed i ∧ IsBipartiteLineGraph (Graph i)
-
-open Classical in
-/-- HAMILTONIAN PATH on line graphs of bipartite graphs as a decision problem over bitstrings. -/
-noncomputable def bipartiteLineGraphHamiltonianPathDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := HamiltonianPathUndirectedInstance) x with
-  | some i => decide (WellFormed i ∧ HamiltonianPathUndirectedFeasible i)
-  | none => false
 
 /-- **HAMILTONIAN PATH on line graphs of bipartite graphs is NP-complete.** Source: Lai and Wei
 (1993); Garey and Johnson (1979), [GT39]. -/

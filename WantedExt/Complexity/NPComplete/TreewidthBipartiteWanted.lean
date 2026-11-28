@@ -26,10 +26,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.TreewidthWanted
-public import Mathlib.Combinatorics.SimpleGraph.Bipartite
+public import CSLibExt.Complexity.NPComplete.TreewidthBipartiteDefs
 
 @[expose] public section
 
@@ -63,20 +60,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed TREEWIDTH instance (simple edge list) whose
-graph is bipartite: its vertices split into two independent sets. -/
-def BipartiteWellFormed (i : TreewidthInstance) : Prop :=
-  WellFormed i ∧ (Graph i).IsBipartite
-
-open Classical in
-/-- TREEWIDTH OF BIPARTITE GRAPHS as a decision problem over bitstrings. -/
-noncomputable def treewidthBipartiteDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TreewidthInstance) x with
-  | some i => decide (BipartiteWellFormed i ∧ TreewidthFeasible i)
-  | none => false
 
 /-- **TREEWIDTH OF BIPARTITE GRAPHS is NP-complete.** Source: Bodlaender et al. (2025),
 Section 1; Bodlaender (1993), Table 1; Arnborg, Corneil and Proskurowski (1987). -/

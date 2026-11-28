@@ -20,10 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.TreewidthWanted
-public import Mathlib.Combinatorics.SimpleGraph.Finite
+public import CSLibExt.Complexity.NPComplete.TreewidthCubicDefs
 
 @[expose] public section
 
@@ -53,21 +50,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-open Classical in
-/-- Well-formedness of an instance: a well-formed TREEWIDTH instance (simple edge list) whose
-graph is cubic: every vertex has degree exactly 3. -/
-def CubicWellFormed (i : TreewidthInstance) : Prop :=
-  WellFormed i ∧ (Graph i).IsRegularOfDegree 3
-
-open Classical in
-/-- TREEWIDTH OF CUBIC GRAPHS as a decision problem over bitstrings. -/
-noncomputable def treewidthCubicDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TreewidthInstance) x with
-  | some i => decide (CubicWellFormed i ∧ TreewidthFeasible i)
-  | none => false
 
 /-- **TREEWIDTH OF CUBIC GRAPHS is NP-complete.** Source: Bodlaender et al. (2025),
 Theorem 4.1. -/

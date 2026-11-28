@@ -23,10 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import MathlibExt.Combinatorics.SimpleGraph.LineGraph
-public import WantedExt.Complexity.NPComplete.SteinerTreeWanted
+public import CSLibExt.Complexity.NPComplete.SteinerTreeLineGraphsDefs
 
 @[expose] public section
 
@@ -67,23 +64,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the parent's (simple weighted edge list, terminals listed
-once and below `n`), every edge weight is 1, the graph is a line graph, `K` is positive, and the
-graph has a vertex. -/
-def WellFormed (i : SteinerTreeInstance) : Prop :=
-  SteinerTree.WellFormed i ∧ (∀ e ∈ i.2.1, e.2.2 = 1) ∧
-    MetaMathlibExt.SimpleGraph.IsLineGraph (SteinerTree.Graph i i.2.1) ∧ 0 < i.2.2.2 ∧
-      0 < i.1
-
-open Classical in
-/-- STEINER TREE IN GRAPHS (unit weights) for line graphs as a decision problem over bitstrings. -/
-noncomputable def steinerTreeLineGraphsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SteinerTreeInstance) x with
-  | some i => decide (WellFormed i ∧ SteinerTreeFeasible i)
-  | none => false
 
 /-- **STEINER TREE IN GRAPHS with unit weights is NP-complete for line graphs.** Source: Garey
 and Johnson (1979), [ND12]; Johnson, NP-completeness column (1985), Table 1; Bodlaender et al.

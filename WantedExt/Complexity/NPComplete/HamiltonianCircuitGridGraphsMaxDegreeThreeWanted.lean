@@ -22,11 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Combinatorics.SimpleGraph.Finite
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.GridGraphHamiltonianCircuitWanted
-public import CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs
+public import CSLibExt.Complexity.NPComplete.HamiltonianCircuitGridGraphsMaxDegreeThreeDefs
 
 @[expose] public section
 
@@ -67,23 +63,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-open Classical in
-/-- Well-formedness of an instance: a well-formed HAMILTONIAN CIRCUIT IN GRID GRAPHS instance
-(pairwise distinct points) whose grid graph has every vertex of degree at most 3. -/
-def WellFormed (i : GridGraphHamiltonianCircuitInstance) : Prop :=
-  GridGraphHamiltonianCircuit.WellFormed i ∧
-    ∀ v, (HamiltonianCycleUndirected.Graph (toHamiltonianInstance i)).degree v ≤ 3
-
-open Classical in
-/-- HAMILTONIAN CIRCUIT IN GRID GRAPHS OF MAXIMUM DEGREE 3 as a decision problem over bitstrings. -/
-noncomputable def hamiltonianCircuitGridGraphsMaxDegreeThreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := GridGraphHamiltonianCircuitInstance) x with
-  | some i => decide (WellFormed i ∧ HamiltonianCycleUndirected.HamiltonianCycleUndirectedFeasible
-      (toHamiltonianInstance i))
-  | none => false
 
 /-- **HAMILTONIAN CIRCUIT IN GRID GRAPHS OF MAXIMUM DEGREE 3 is NP-complete.** Source: Papadimitriou
 and Vazirani (1984); Itai, Papadimitriou and Szwarcfiter (1982). -/

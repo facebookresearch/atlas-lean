@@ -21,11 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Bipartite
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.EdgeColoringWanted
+public import CSLibExt.Complexity.NPComplete.BipartiteEdgeColoringConflictPartitionDefs
 
 @[expose] public section
 
@@ -73,38 +69,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: a CHROMATIC INDEX instance (vertex count, edge list, bound `K`) and the list of
-partition labels, one per listed edge. -/
-abbrev BipartiteEdgeColoringConflictPartitionInstance := EdgeColoringInstance × List ℕ
-
-/-- Well-formedness of an instance: the edge list is a simple edge list on `Fin n`, the graph is
-bipartite, there is one partition label per edge, and `K` is positive. -/
-def WellFormed (i : BipartiteEdgeColoringConflictPartitionInstance) : Prop :=
-  EdgeColoring.WellFormed i.1 ∧ (Cslib.Complexity.Karp.edgeGraph i.1.1 i.1.2.1).IsBipartite ∧
-    i.2.length = i.1.2.1.length ∧ 0 < i.1.2.2
-
-/-- A coloring of the edges with colors below `K` in which two edges at distinct positions get
-distinct colors whenever they share an endpoint or have the same partition label. -/
-def BipartiteEdgeColoringConflictPartitionFeasible
-    (i : BipartiteEdgeColoringConflictPartitionInstance) : Prop :=
-  ∃ coloring : List ℕ, coloring.length = i.1.2.1.length ∧ (∀ c ∈ coloring, c < i.1.2.2) ∧
-    ∀ a < i.1.2.1.length, ∀ b < i.1.2.1.length, a ≠ b →
-      ((i.1.2.1.getD a (0, 0)).1 = (i.1.2.1.getD b (0, 0)).1 ∨
-        (i.1.2.1.getD a (0, 0)).1 = (i.1.2.1.getD b (0, 0)).2 ∨
-        (i.1.2.1.getD a (0, 0)).2 = (i.1.2.1.getD b (0, 0)).1 ∨
-        (i.1.2.1.getD a (0, 0)).2 = (i.1.2.1.getD b (0, 0)).2 ∨
-        i.2.getD a 0 = i.2.getD b 0) →
-      coloring.getD a 0 ≠ coloring.getD b 0
-
-open Classical in
-/-- BIPARTITE EDGE COLORING WITH CONFLICT PARTITION as a decision problem over bitstrings. -/
-noncomputable def bipartiteEdgeColoringConflictPartitionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := BipartiteEdgeColoringConflictPartitionInstance) x with
-  | some i => decide (WellFormed i ∧ BipartiteEdgeColoringConflictPartitionFeasible i)
-  | none => false
 
 /-- **BIPARTITE EDGE COLORING WITH CONFLICT PARTITION is NP-complete.** Source: Johnson (1984),
 Section 2, CHROMATIC INDEX (Bertossi 1983). -/

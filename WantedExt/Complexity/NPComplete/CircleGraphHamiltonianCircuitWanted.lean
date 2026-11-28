@@ -19,10 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Hamiltonian
-public import WantedExt.Complexity.NPComplete.DominatingSetCircleGraphWanted
+public import CSLibExt.Complexity.NPComplete.CircleGraphHamiltonianCircuitDefs
 
 @[expose] public section
 
@@ -60,28 +57,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the chords, one per vertex, each given by its endpoints `(a, b)`. -/
-abbrev CircleGraphHamiltonianCircuitInstance := List (ℕ × ℕ)
-
-/-- Well-formedness of an instance: every chord has endpoints `a < b`, and all endpoints of all
-chords are distinct. -/
-def WellFormed (i : CircleGraphHamiltonianCircuitInstance) : Prop :=
-  (∀ c ∈ i, c.1 < c.2) ∧ (i.flatMap fun c => [c.1, c.2]).Nodup
-
-/-- The circle graph has a Hamiltonian circuit (at least three vertices, as in
-`HamiltonianCycleUndirectedFeasible`). -/
-def CircleGraphHamiltonianCircuitFeasible (i : CircleGraphHamiltonianCircuitInstance) : Prop :=
-  3 ≤ i.length ∧ (circleGraph i).IsHamiltonian
-
-open Classical in
-/-- HAMILTONIAN CIRCUIT on circle graphs as a decision problem over bitstrings. -/
-noncomputable def circleGraphHamiltonianCircuitDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := CircleGraphHamiltonianCircuitInstance) x with
-  | some i => decide (WellFormed i ∧ CircleGraphHamiltonianCircuitFeasible i)
-  | none => false
 
 /-- **HAMILTONIAN CIRCUIT on circle graphs is NP-complete.** Source: Garey and Johnson (1979),
 [GT37]; Damaschke (1989). -/

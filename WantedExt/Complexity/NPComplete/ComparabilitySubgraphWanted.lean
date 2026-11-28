@@ -22,10 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import WantedExt.Complexity.NPComplete.ComparabilityGraphSandwichWanted
+public import CSLibExt.Complexity.NPComplete.ComparabilitySubgraphDefs
 
 @[expose] public section
 
@@ -63,35 +60,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`), edge list, bound `K`. -/
-abbrev ComparabilitySubgraphInstance := ℕ × List (ℕ × ℕ) × ℕ
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : ComparabilitySubgraphInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range), and
-`0 < K ≤ |E|`, the length of the edge list. -/
-def WellFormed (i : ComparabilitySubgraphInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    0 < i.2.2 ∧ i.2.2 ≤ i.2.1.length
-
-/-- Some sublist `E'` of the edge list with at least `K` entries spans a comparability graph
-`(V, E')`. -/
-def ComparabilitySubgraphFeasible (i : ComparabilitySubgraphInstance) : Prop :=
-  ∃ es : List (ℕ × ℕ), es.Sublist i.2.1 ∧ i.2.2 ≤ es.length ∧
-    ComparabilityGraphSandwich.IsComparabilityGraph (Cslib.Complexity.Karp.edgeGraph i.1 es)
-
-open Classical in
-/-- COMPARABILITY SUBGRAPH as a decision problem over bitstrings. -/
-noncomputable def comparabilitySubgraphDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ComparabilitySubgraphInstance) x with
-  | some i => decide (WellFormed i ∧ ComparabilitySubgraphFeasible i)
-  | none => false
 
 /-- **COMPARABILITY SUBGRAPH is NP-complete.** Source: Garey and Johnson (1979), [GT29],
 comment; Yannakakis (1978), Theorem 14; Yannakakis (1981). -/

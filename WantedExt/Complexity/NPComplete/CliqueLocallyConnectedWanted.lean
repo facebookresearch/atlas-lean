@@ -21,11 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
-public import Mathlib.Combinatorics.SimpleGraph.Maps
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.CliqueClawFreeWanted
+public import CSLibExt.Complexity.NPComplete.CliqueLocallyConnectedDefs
 
 @[expose] public section
 
@@ -71,22 +67,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range) that is locally
-connected (the neighbourhood of every vertex induces a connected graph), and `0 < K ≤ |V|`. -/
-def WellFormed (i : CliqueClawFreeInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    (∀ v, ((Graph i).induce ((Graph i).neighborSet v)).Connected) ∧ 0 < i.2.2 ∧ i.2.2 ≤ i.1
-
-open Classical in
-/-- CLIQUE on locally connected graphs as a decision problem over bitstrings. -/
-noncomputable def cliqueLocallyConnectedDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := CliqueClawFreeInstance) x with
-  | some i => decide (WellFormed i ∧ CliqueClawFreeFeasible i)
-  | none => false
 
 /-- **CLIQUE on locally connected graphs is NP-complete.** Source: ISGCI (`gc_932`, note
 `ref_1506`); Garey and Johnson (1979), [GT19] (parent problem). -/

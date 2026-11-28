@@ -23,9 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.UnitDiskDominatingSetWanted
+public import CSLibExt.Complexity.NPComplete.UnitDiskIndependentSetDefs
 
 @[expose] public section
 
@@ -60,28 +58,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the points of `P` (pairs of rational coordinates) and the bound `K`. -/
-abbrev UnitDiskIndependentSetInstance := List (RatCode × RatCode) × ℕ
-
-/-- Well-formedness of an instance: all denominators are positive, the points are distinct (as
-points of the plane), and `1 ≤ K ≤ |P|`. -/
-def WellFormed (i : UnitDiskIndependentSetInstance) : Prop :=
-  (∀ p ∈ i.1, 0 < p.1.2 ∧ 0 < p.2.2) ∧ (i.1.map fun p => (p.1.val, p.2.val)).Nodup ∧
-    1 ≤ i.2 ∧ i.2 ≤ i.1.length
-
-/-- The unit disk graph of `P` has an independent set of at least `K` points. -/
-def UnitDiskIndependentSetFeasible (i : UnitDiskIndependentSetInstance) : Prop :=
-  ∃ S : Finset (Fin i.1.length), i.2 ≤ S.card ∧ (unitDiskGraph i.1).IsIndepSet ↑S
-
-open Classical in
-/-- INDEPENDENT SET IN UNIT DISK GRAPHS as a decision problem over bitstrings. -/
-noncomputable def unitDiskIndependentSetDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := UnitDiskIndependentSetInstance) x with
-  | some i => decide (WellFormed i ∧ UnitDiskIndependentSetFeasible i)
-  | none => false
 
 /-- **INDEPENDENT SET IN UNIT DISK GRAPHS is NP-complete.** Source: Clark, Colbourn and Johnson
 (1990). -/

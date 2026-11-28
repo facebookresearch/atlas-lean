@@ -22,10 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.IndependentSetDuallyChordalWanted
-public import WantedExt.Complexity.NPComplete.TreewidthWanted
+public import CSLibExt.Complexity.NPComplete.TreewidthDuallyChordalDefs
 
 @[expose] public section
 
@@ -69,20 +66,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed TREEWIDTH instance (simple edge list) whose
-graph is dually chordal (has a maximum neighbourhood ordering). -/
-def DuallyChordalWellFormed (i : TreewidthInstance) : Prop :=
-  WellFormed i ∧ DuallyChordal (Graph i)
-
-open Classical in
-/-- TREEWIDTH OF DUALLY CHORDAL GRAPHS as a decision problem over bitstrings. -/
-noncomputable def treewidthDuallyChordalDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TreewidthInstance) x with
-  | some i => decide (DuallyChordalWellFormed i ∧ TreewidthFeasible i)
-  | none => false
 
 /-- **TREEWIDTH OF DUALLY CHORDAL GRAPHS is NP-complete.** Source: Brandstädt, Chepoi and
 Dragan (1998), Theorem 9.2; Arnborg, Corneil and Proskurowski (1987). -/

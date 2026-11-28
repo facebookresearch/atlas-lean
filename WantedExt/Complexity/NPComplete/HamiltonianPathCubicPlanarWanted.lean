@@ -26,11 +26,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import MathlibExt.Combinatorics.SimpleGraph.Planarity
-public import Mathlib.Combinatorics.SimpleGraph.Finite
-public import WantedExt.Complexity.NPComplete.HamiltonianPathUndirectedWanted
+public import CSLibExt.Complexity.NPComplete.HamiltonianPathCubicPlanarDefs
 
 @[expose] public section
 
@@ -68,21 +64,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-open Classical in
-/-- Well-formedness of an instance: a well-formed HAMILTONIAN PATH instance whose graph is
-cubic (every vertex has degree exactly `3`) and planar. -/
-def CubicPlanarWellFormed (i : HamiltonianPathUndirectedInstance) : Prop :=
-  WellFormed i ∧ (Graph i).IsRegularOfDegree 3 ∧ (Graph i).IsPlanar
-
-open Classical in
-/-- HAMILTONIAN PATH on cubic planar graphs as a decision problem over bitstrings. -/
-noncomputable def hamiltonianPathCubicPlanarDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := HamiltonianPathUndirectedInstance) x with
-  | some i => decide (CubicPlanarWellFormed i ∧ HamiltonianPathUndirectedFeasible i)
-  | none => false
 
 /-- **HAMILTONIAN PATH on cubic planar graphs is NP-complete.** Source: Garey and Johnson (1979),
 [GT39],
