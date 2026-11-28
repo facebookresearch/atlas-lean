@@ -48,13 +48,11 @@ private abbrev K : ChainComplex (ModuleCat.{0} ℤ) ℕ :=
   ChainComplex.of (fun _ => M) (fun _ => 0) (by intro n; simp)
 
 private lemma endpoint : K.d 1 0 = 0 := by
-  simp [K, ChainComplex.of.d] <;> rfl
+  simp [K, ChainComplex.of.d]
 
 private def positiveHomologyComparison :
     (K.restriction ChainComplex.kernelTailEmbedding).homology 0 ≅ K.homology 1 :=
   K.positiveRestrictionHomologyZeroIso endpoint
-
-example : IsIso positiveHomologyComparison.hom := inferInstance
 
 example :
     (K.positiveTruncLEToStupidIso endpoint).hom ≫
@@ -74,8 +72,6 @@ example :
   rw [Iso.inv_hom_id]
   rfl
 
-example : (1 : ZMod 6) ≠ 0 := by decide
-
 private abbrev Z : ModuleCat.{0} ℤ := ModuleCat.of ℤ ℤ
 private abbrev P : CochainComplex (ModuleCat.{0} ℤ) ℤ :=
   CochainComplex.of (fun _ => Z) (fun _ => 0) (by intro n; simp)
@@ -90,8 +86,15 @@ private abbrev Q : CochainComplex (ModuleCat.{0} ℤ) ℤ :=
       simp [qDifferential]
     · simp [qDifferential, hn])
 
-example : (Q.d 0 1).hom (1 : ℤ) = (3 : ℤ) := by
-  norm_num [Q, CochainComplex.of_d, qDifferential, three]
+private lemma q_zero_differential : Q.d 0 1 = three :=
+  CochainComplex.of_d (fun _ => Z) qDifferential (0 : ℤ)
+
+private lemma q_zero_value : (Q.d 0 1).hom (1 : ℤ) = (3 : ℤ) := by
+  rw [q_zero_differential]
+  change (3 : ℤ) • (1 : ℤ) = (3 : ℤ)
+  norm_num
+
+example : (Q.d 0 1).hom (1 : ℤ) = (3 : ℤ) := q_zero_value
 
 -- A genuine differential in the second factor acquires the minus sign at first degree one.
 example :
@@ -101,11 +104,12 @@ example :
   have h := CochainComplex.ModuleTensor.d_mkAt ℤ P Q
     1 0 1 rfl (1 : ℤ) (1 : ℤ)
   have hp : (P.d 1 2).hom (1 : ℤ) = 0 := by
-    simp [P, CochainComplex.of.d] <;> rfl
-  have hq : (Q.d 0 1).hom (1 : ℤ) = (3 : ℤ) := by
-    norm_num [Q, CochainComplex.of_d, qDifferential, three]
+    simp [P, CochainComplex.of.d]
+  have hq : (Q.d 0 1).hom (1 : ℤ) = (3 : ℤ) := q_zero_value
   have hz : CochainComplex.ModuleTensor.mkAt ℤ P Q 2 0 2 rfl (0 : ℤ) (1 : ℤ) = 0 := by
-    simp [CochainComplex.ModuleTensor.mkAt, TensorProduct.zero_tmul]
+    dsimp only [CochainComplex.ModuleTensor.mkAt]
+    rw [TensorProduct.zero_tmul]
+    exact map_zero _
   simpa [hp, hq, hz, Units.smul_def] using h
 
 private abbrev S : ShortComplex (CochainComplex (ModuleCat.{0} ℤ) ℤ) :=
@@ -114,22 +118,22 @@ private abbrev S : ShortComplex (CochainComplex (ModuleCat.{0} ℤ) ℤ) :=
 example :
     ((ShortComplex.π₁ :
       ShortComplex (ModuleCat.{0} ℤ) ⥤ ModuleCat.{0} ℤ).mapHomologicalComplex
-        (ComplexShape.up ℤ)).obj S.cochainFlip = P :=
-  S.cochainFlip_π₁
+        (ComplexShape.up ℤ)).obj S.flip = P :=
+  S.flip_π₁
 
 example :
     ((ShortComplex.π₂ :
       ShortComplex (ModuleCat.{0} ℤ) ⥤ ModuleCat.{0} ℤ).mapHomologicalComplex
-        (ComplexShape.up ℤ)).obj S.cochainFlip = P :=
-  S.cochainFlip_π₂
+        (ComplexShape.up ℤ)).obj S.flip = P :=
+  S.flip_π₂
 
-example : ((S.cochainFlip).X 7).f.hom (1 : ℤ) = (1 : ℤ) := rfl
-example : ((S.cochainFlip).X 7).g.hom (1 : ℤ) = (0 : ℤ) := rfl
+example : ((S.flip).X 7).f.hom (1 : ℤ) = (1 : ℤ) := rfl
+example : ((S.flip).X 7).g.hom (1 : ℤ) = (0 : ℤ) := rfl
 
 -- The public transpose works for an arbitrary shape with only zero morphisms.
 example {C : Type*} [Category C] [HasZeroMorphisms C] {I : Type*} {c : ComplexShape I}
     (T : ShortComplex (HomologicalComplex C c)) :
-    ((ShortComplex.π₃ : ShortComplex C ⥤ C).mapHomologicalComplex c).obj T.cochainFlip = T.X₃ :=
-  T.cochainFlip_π₃
+    ((ShortComplex.π₃ : ShortComplex C ⥤ C).mapHomologicalComplex c).obj T.flip = T.X₃ :=
+  T.flip_π₃
 
 end MathlibExtTest.EmbeddingTensorTransport

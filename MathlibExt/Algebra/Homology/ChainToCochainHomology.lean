@@ -102,6 +102,10 @@ noncomputable def chainToCochainHomologyFunctorIso
     (ComplexShape.embeddingUpIntDownInt.prev_f rfl)
     (ComplexShape.embeddingUpIntDownInt.next_f rfl)
 
+/-- In a category with zero morphisms, let f : K → L be a map of integer chain
+complexes. Suppose homology exists for K and L in degree -i and for their
+degree-negated cochain reindexings in degree i. The opcycles comparisons commute
+with the opcycles maps of f and its reindexing. -/
 @[reassoc]
 theorem chainToCochainOpcyclesIso_naturality
     {C : Type u} [Category.{v} C] [HasZeroMorphisms C]
