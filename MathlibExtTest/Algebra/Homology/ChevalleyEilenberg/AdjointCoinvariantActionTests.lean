@@ -41,6 +41,14 @@ local instance : LieRingModule Mat Mat := lieRingSelfModule
 local instance : LieModule ℤ Mat Mat := lieAlgebraSelfModule
 local instance : HasFiniteBiproducts (ModuleCat ℤ) :=
   CategoryTheory.Abelian.hasFiniteBiproducts (C := ModuleCat ℤ)
+local instance : MonoidalCategoryStruct (ModuleCat ℤ) :=
+  ModuleCat.UniverseTensor.tensorStructure.{0,0} (R := ℤ)
+local instance : MonoidalCategory (ModuleCat ℤ) :=
+  ModuleCat.UniverseTensor.monoidalCategory.{0,0} (R := ℤ)
+local instance : MonoidalPreadditive (ModuleCat ℤ) :=
+  ModuleCat.UniverseTensor.monoidalPreadditive.{0,0} (R := ℤ)
+local instance : MonoidalLinear ℤ (ModuleCat ℤ) :=
+  ModuleCat.UniverseTensor.monoidalLinear.{0,0} (R := ℤ)
 local instance : MonoidalClosed (ModuleCat ℤ) :=
   ModuleCat.UniverseScalarRestriction.monoidalClosed.{0,0} (R := ℤ)
 
@@ -142,7 +150,9 @@ private lemma flip_trace : readQ ((flipQ.f 1).hom identityClass) = -2 := by
   have hp : (flipQ.f 1).hom identityClass =
       (q.f 1).hom (oneWord (flip (1 : Mat))) := h
   exact (congrArg readQ hp).trans ((readQ_projection (flip (1 : Mat))).trans (by
-    norm_num [flip]))
+    change Matrix.trace (-Matrix.transpose (1 : Mat)) = (-2 : ℤ)
+    rw [Matrix.trace_neg, Matrix.trace_transpose]
+    norm_num))
 example : readQ ((flipQ.f 1).hom identityClass) = -2 := flip_trace
 example : flipQ ≠ 𝟙 Q := by
   intro hz
@@ -184,6 +194,13 @@ example : readAction (coefficientDegreeRingAction ℤ Mat X rho rho_commutes 1 2
       (oneWord e01 ⊗ₜ[ℤ] e10) = oneWord e01 ⊗ₜ[ℤ] (2 • e10) :=
     coefficientComplexRingAction_f_tmul ℤ Mat X rho rho_commutes 2 1 (oneWord e01) e10
   rw [h]
-  norm_num [readAction, oneWord, entry, e01, e10, TensorProduct.map_tmul]
+  change (TensorProduct.lid ℤ ℤ) (TensorProduct.map
+    ((entry 0 1).comp (exteriorPower.oneEquiv ℤ Mat).toLinearMap) (entry 1 0)
+      (oneWord e01 ⊗ₜ[ℤ] (2 • e10))) = 2
+  rw [TensorProduct.map_tmul, TensorProduct.lid_tmul]
+  change (exteriorPower.oneEquiv ℤ Mat (oneWord e01)) 0 1 * (2 • e10) 1 0 = 2
+  have he : exteriorPower.oneEquiv ℤ Mat (oneWord e01) = e01 := by simp [oneWord]
+  rw [he]
+  norm_num [e01, e10]
 
 end MathlibExtTest.AdjointCoinvariantAction
