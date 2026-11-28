@@ -10,13 +10,13 @@ mating units: the mating function is indexed by the current number of mating uni
 
 **Results.**
 
-- For every non-trivial process, $\tau$ is unbounded: its right endpoint is $+\infty$.
+- If $p_m,p_f\in(0,1)$, the family $(L_k)$ is superadditive across sizes, $\mathbb P\big(L_1(f_{1,0},m_{1,0})\ge1\big)>0$, and the process starts from $Z_0=N\ge1$ mating units, then $\tau$ is unbounded: its right endpoint is $+\infty$ (source, Proposition 1). Each of the last two conditions is needed, and the source's proof uses both ($Z_0=N$ and $\mathbb P[L_1(f_{1,0},m_{1,0})<1]<1$): from $Z_0=0$ one has $\tau=0$, and with $L_k\equiv0$, which satisfies every other condition, $\tau=1$ almost surely.
 - If $r<1$, the law of $\tau$, being integer-valued, belongs to no max-domain of attraction of an extreme value distribution.
 - Under the hypotheses, with $F_\tau$ the distribution function of $\tau$ (so $F_\tau^m$ is that of the maximum of $m$ independent copies), for all $k\ge1$
 
 $$\exp\{-e^{-\theta k}\} \le \liminf_{m\to\infty} F_\tau^m(k+1+m).$$
 
-  The source's Theorem 1, (8), also prints the upper bound $\limsup_{m\to\infty} F_\tau^m(k+1+m) \le \exp\{-e^{-\theta(k+1)}\}$, which cannot hold: its Proposition 2 gives $\mathbb P(\tau>t\mid Z_0=j)\le jr^t$, so $F_\tau^m(k+1+m)\ge1-mjr^{k+1+m}\to1$. Since $\tau$ is unbounded, $F_\tau(k)^m \to 0$ for every fixed $k$, which is why the argument is shifted by $m$.
+  The source's Theorem 1, (8), also prints the upper bound $\limsup_{m\to\infty} F_\tau^m(k+1+m) \le \exp\{-e^{-\theta(k+1)}\}$, which cannot hold: its Proposition 2 gives $\mathbb P(\tau>t\mid Z_0=j)\le jr^t$, so $F_\tau^m(k+1+m)\ge1-mjr^{k+1+m}\to1$. Since $\tau$ is unbounded under the conditions of the first item, $F_\tau(k)^m \to 0$ for every fixed $k$, which is why the argument is shifted by $m$.
 
 ## Expansion
 

@@ -18,13 +18,15 @@ $$\lim_{t\to\infty} \frac1t \ln\big(\tilde N_1(t) + \dots + \tilde N_n(t)\big) =
 
 **Slow and fast dispersal.** With uniform dispersal of a fraction $\eta$, $D = (1-\eta)I + \eta U_n$ ($U_n$ the matrix with all entries $1/n$), $M(\eta)$ is continuous in $\eta$, with
 
-$$M(0) = \max_i \mathbb E\ln r_i, \qquad M(1) = \mathbb E\ln\Big(\frac1n\sum_{i=1}^n r_i\Big) > \frac1n\sum_{i=1}^n \mathbb E\ln r_i.$$
+$$M(0) = \max_i \mathbb E\ln r_i, \qquad M(1) = \mathbb E\ln\Big(\frac1n\sum_{i=1}^n r_i\Big) \ge \frac1n\sum_{i=1}^n \mathbb E\ln r_i,$$
+
+where the inequality (for $\mathbb E\ln r_i$ finite) is strict unless $r_1 = \dots = r_n$ almost surely, in which case both sides equal $\mathbb E\ln r_1$. The source prints it as strict without this exception (Section 2.4, and likewise (15) for two patches with $\delta = 1/2$): with $n = 2$ and $r_1 = r_2 = R$ a.s., $M(1) = \mathbb E\ln R = \tfrac12(\mathbb E\ln r_1 + \mathbb E\ln r_2)$.
 
 So with small dispersal one source patch ($\mathbb E\ln r_i > 0$) keeps the whole system alive, and with near-complete mixing even all-sink systems ($\mathbb E\ln r_i < 0$ for every $i$) can persist.
 
 ## Expansion
 
-Primitivity makes the patches survive or die together, so the $n$-dimensional system behaves like a single species and the general persistence theory for random products of nonlinear positive maps applies once a Lyapunov-type function $V$ with $V(A(\xi,x)x) \le \alpha(\xi)V(x) + \beta(\xi)$, $\mathbb E\ln\alpha < 0$, controls large populations and the entries of $A$ are decreasing in $\mathbf N$ (Assumption 2.2, Theorem 2.2). The Beverton-Holt and Hassell bounds verify these hypotheses (Appendices B and C). The values of $M(0)$ and $M(1)$ come from the decoupled and the fully mixed linearizations; Jensen's inequality gives the strict inequality for $M(1)$. The deterministic threshold in Theorem 2.1 is $\lambda(D\Lambda(0)) > 1$ for growth of the linearization at zero; the printed statement compares the spectral radius with $0$, which is automatic for a primitive positive matrix.
+Primitivity makes the patches survive or die together, so the $n$-dimensional system behaves like a single species and the general persistence theory for random products of nonlinear positive maps applies once a Lyapunov-type function $V$ with $V(A(\xi,x)x) \le \alpha(\xi)V(x) + \beta(\xi)$, $\mathbb E\ln\alpha < 0$, controls large populations and the entries of $A$ are decreasing in $\mathbf N$ (Assumption 2.2, Theorem 2.2). The Beverton-Holt and Hassell bounds verify these hypotheses (Appendices B and C). The values of $M(0)$ and $M(1)$ come from the decoupled and the fully mixed linearizations; Jensen's inequality for the strictly concave $\ln$ gives the inequality for $M(1)$, with equality exactly when the $r_i$ coincide almost surely. The deterministic threshold in Theorem 2.1 is $\lambda(D\Lambda(0)) > 1$ for growth of the linearization at zero; the printed statement compares the spectral radius with $0$, which is automatic for a primitive positive matrix.
 
 ## Sources
 

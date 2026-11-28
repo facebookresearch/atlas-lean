@@ -4,7 +4,7 @@
 
 $$\mathbb{E}[X_j(i)X_k(i)] = \Phi_{jk}\,p_i + (1 - \Phi_{jk})\,p_i^2 .$$
 
-Let $K = (\Phi_{jk})$ be the $n \times n$ kinship matrix. A linear estimator of $p_i$ is $\breve p_i = \sum_{k=1}^n w_k X_k(i)$ with weights summing to one, $\sum_k w_k = 1$ (the source takes $0 \le w_k \le 1$); it is unbiased.
+Let $K = (\Phi_{jk})$ be the $n \times n$ kinship matrix. A linear estimator of $p_i$ is $\breve p_i = \sum_{k=1}^n w_k X_k(i)$ with weights $0 \le w_k \le 1$ summing to one, $\sum_k w_k = 1$, as in the source's definition (Eq. 5); it is unbiased. (The moment computations below use only $\sum_k w_k = 1$.)
 
 **Proposition 1 (general estimator).** Let $\rho_2 = \sum_{j=1}^n \sum_{k=1}^n w_j w_k \Phi_{jk} = w^{\mathsf T} K w$ and suppose $\rho_2 < 1$. Then
 
@@ -14,7 +14,7 @@ is an unbiased estimator of $H$, for any ploidies, inbreeding and relatedness.
 
 **Corollary 2 (sample proportions).** With $w_k = m_k / \sum_j m_j$, $\breve p_i$ is the sample proportion $\hat p_i$ and $\tilde H = (1 - \sum_i \hat p_i^2)/(1 - \bar\Phi_2)$, $\bar\Phi_2 = \sum_{j,k} \frac{m_j m_k}{(\sum_x m_x)^2}\Phi_{jk}$, is unbiased.
 
-**Corollary 3 (BLUE).** With $w = K^{-1}\mathbf 1 / (\mathbf 1^{\mathsf T} K^{-1} \mathbf 1)$, $\breve p_i$ is the best linear unbiased estimator $\tilde p_i$ of $p_i$ and
+**Corollary 3 (BLUE).** With $w = K^{-1}\mathbf 1 / (\mathbf 1^{\mathsf T} K^{-1} \mathbf 1)$, provided these weights satisfy $0 \le w_k \le 1$ (the formula can give a negative weight for some positive-definite $K$, e.g. $K = \begin{pmatrix} 0.5 & 0.3 & 0.3 \\ 0.3 & 0.5 & 0 \\ 0.3 & 0 & 0.5 \end{pmatrix}$ gives $w_1 < 0$), $\breve p_i$ is the best linear unbiased estimator $\tilde p_i$ of $p_i$ and
 
 $$\tilde H_{\mathrm{BLUE}} = \frac{1}{1 - \kappa_2}\Big(1 - \sum_{i=1}^I \tilde p_i^{\,2}\Big), \qquad \kappa_2 = w^{\mathsf T} K w = \frac{1}{\mathbf 1^{\mathsf T} K^{-1}\mathbf 1},$$
 

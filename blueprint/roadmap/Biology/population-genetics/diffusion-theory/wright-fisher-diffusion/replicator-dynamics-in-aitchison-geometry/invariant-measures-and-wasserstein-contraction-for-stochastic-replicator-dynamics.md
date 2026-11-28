@@ -12,9 +12,15 @@ In the Aitchison geometry of $\Delta$ (perturbation $\oplus$, inner product $\la
 
 $$ A = -\lambda I + u\otimes\mathbf{1} + \mathbf{1}\otimes v \qquad \text{for some } u, v \in \mathbb{R}^n,\ \lambda \ge 0 . $$
 
-If $\lambda > 0$, additionally $W_\Delta(\mu_t,\mu'_t) \le e^{-\lambda t}W_A(\mu_0,\mu'_0)$ for the Euclidean Wasserstein distance $W_\Delta$. No payoff matrix gives exponential contraction $W_A(\mu_t,\mu'_t) \le e^{-\lambda t}W_A(\mu_0,\mu'_0)$ with $\lambda > 0$.
+If $\lambda > 0$, additionally, with $W_\Delta$ the quadratic Wasserstein distance for the Euclidean metric of $\Delta$,
 
-3. (Deterministic counterpart.) For such $A$ with $\lambda > 0$, any two solutions of the replicator equation satisfy $\|p(t)\ominus q(t)\|_A^2 + 2\lambda\int_0^t\|p(s) - q(s)\|^2\,ds \le \|p\ominus q\|_A^2$ and $\|p(t) - q(t)\| \le e^{-\lambda t}\|p\ominus q\|$, but again no $A$ gives exponential contraction in $\|\cdot\|_A$.
+$$W_A(\mu_t,\mu'_t)^2 + 2\lambda\int_0^t W_\Delta(\mu_s,\mu'_s)^2\,ds \le W_A(\mu_0,\mu'_0)^2, \qquad t \ge 0 .$$
+
+No payoff matrix gives exponential contraction $W_A(\mu_t,\mu'_t) \le e^{-\lambda t}W_A(\mu_0,\mu'_0)$ with $\lambda > 0$.
+
+3. (Deterministic counterpart.) For such $A$ with $\lambda > 0$, any two solutions of the replicator equation satisfy $\|p(t)\ominus q(t)\|_A^2 + 2\lambda\int_0^t\|p(s) - q(s)\|^2\,ds \le \|p\ominus q\|_A^2$, but again no $A$ gives exponential contraction in $\|\cdot\|_A$.
+
+*Correction to the source.* The source also claims $\|p(t) - q(t)\| \le e^{-\lambda t}\|p\ominus q\|_A$ (Corollary 24) and $W_\Delta(\mu_t,\mu'_t) \le e^{-\lambda t}W_A(\mu_0,\mu'_0)$ (Theorem 25, (104)). Both are false, and both proofs apply Grönwall's inequality to $u(t) \le C - 2\lambda\int_0^t u(s)\,ds$, which does not imply $u(t) \le Ce^{-2\lambda t}$. They are omitted above. In log-ratio coordinates the drift is $-\lambda$ times the centred softmax map, whose derivative at the barycentre is $\frac{\lambda}{n}$ times the identity on centred vectors, so nearby solutions approach each other only at rate about $\lambda/n$. Example: $n = 3$, $A = -I$ ($\lambda = 1$, $u = v = 0$), $p = (0.98, 0.01, 0.01)$, $q = (\tfrac13,\tfrac13,\tfrac13)$. Then $\|p\ominus q\|_A \approx 3.744$, so the claimed bound at $t = 7$ is $e^{-7}\cdot 3.744 \approx 0.0034$, but numerical integration gives $\|p(7) - q(7)\| \approx 0.137$. For the diffusions started at $\delta_p$ and $\delta_q$, a Monte Carlo estimate (4000 synchronously coupled paths) gives $|\mathbb E Y^1_7 - \mathbb E Y'^1_7| \approx 0.124 \pm 0.001$, a lower bound for $W_\Delta(\mu_7,\mu'_7)$ that is again far above $e^{-7}W_A(\delta_p,\delta_q) \approx 0.0034$. The integral estimates stated above are what the source's differential inequalities $\frac{d}{dt}\|Y_t\ominus Y'_t\|_A^2 \le -2\lambda\|Y_t - Y'_t\|^2$ (its (109), and the deterministic analogue) give, after optimizing over the initial coupling.
 
 ## Depends on
 
@@ -25,7 +31,7 @@ If $\lambda > 0$, additionally $W_\Delta(\mu_t,\mu'_t) \le e^{-\lambda t}W_A(\mu
 
 ## Expansion
 
-Since the noise is the intrinsic Brownian motion of the flat Aitchison space, synchronous coupling of two solutions cancels the noise, and $W_A$-contraction reduces to monotonicity of the drift in the Aitchison inner product: $\langle F(p)\ominus F(q), p\ominus q\rangle_A \le 0$. Writing the replicator drift in log-ratio coordinates shows this holds exactly for the stated matrix family. The invariance criterion follows from the stationary Fokker–Planck equation with respect to $\lambda_A$, which requires the drift to be divergence-free in Aitchison coordinates.
+Since the noise is the intrinsic Brownian motion of the flat Aitchison space, synchronous coupling of two solutions cancels the noise, and $W_A$-contraction reduces to monotonicity of the drift in the Aitchison inner product: $\langle F(p)\ominus F(q), p\ominus q\rangle_A \le 0$. Writing the replicator drift in log-ratio coordinates shows this holds exactly for the stated matrix family; for $\lambda > 0$ the drift is $-\lambda$ times the gradient of the convex, $1$-smooth log-sum-exp function (plus a constant), and its co-coercivity gives the $-2\lambda\|p - q\|^2$ dissipation behind the integral estimates. The invariance criterion follows from the stationary Fokker–Planck equation with respect to $\lambda_A$, which requires the drift to be divergence-free in Aitchison coordinates.
 
 ## Sources
 
