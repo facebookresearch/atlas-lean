@@ -46,6 +46,23 @@ def IsRamseyFamily (F : Set (Set S)) : Prop :=
   F.Nonempty ∧ ∅ ∉ F ∧ (∀ A B, A ∈ F → A ⊆ B → B ∈ F) ∧
     ∀ A B, A ∪ B ∈ F → A ∈ F ∨ B ∈ F
 
+/-- **A union criterion for the Ramsey property.** A collection $F$ of subsets of $S$ has the
+Ramsey property if and only if $S \in F$, $\emptyset \notin F$, and for every $A,B \subseteq S$
+one has $A \cup B \in F$ exactly when $A \in F$ or $B \in F$. In particular, the reverse
+implication of the union equivalence already implies closure under supersets. -/
+theorem isRamseyFamily_iff_univ_empty_union {F : Set (Set S)} :
+    IsRamseyFamily F ↔ Set.univ ∈ F ∧ ∅ ∉ F ∧
+      ∀ A B, A ∪ B ∈ F ↔ A ∈ F ∨ B ∈ F := by
+  constructor
+  · rintro ⟨⟨A, hA⟩, hempty, hmono, hsplit⟩
+    exact ⟨hmono A _ hA (Set.subset_univ _), hempty, fun B C =>
+      ⟨hsplit B C, fun h => h.elim (fun hB => hmono B _ hB Set.subset_union_left)
+        (fun hC => hmono C _ hC Set.subset_union_right)⟩⟩
+  · rintro ⟨huniv, hempty, hunion⟩
+    refine ⟨⟨_, huniv⟩, hempty, ?_, fun A B => (hunion A B).mp⟩
+    intro A B hA hAB
+    simpa only [Set.union_eq_right.mpr hAB] using (hunion A B).mpr (.inl hA)
+
 /-- **The set β(F) of ultrafilters inside a family.** For a family $\mathcal F$ of subsets of a
 set $S$, $\beta(\mathcal F)$ is the set of ultrafilters $p$ on $S$ all of whose members lie in
 $\mathcal F$, that is, $A \in \mathcal F$ for every $A \in p$.

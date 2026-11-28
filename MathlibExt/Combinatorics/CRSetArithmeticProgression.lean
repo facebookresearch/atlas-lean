@@ -10,7 +10,9 @@ module
 
 public import Mathlib.Algebra.Group.Prod
 public import Mathlib.Data.Finset.Basic
+public import Mathlib.Data.Fintype.Defs
 public import Mathlib.Logic.Function.Iterate
+import Mathlib.Data.Fintype.EquivFin
 import Mathlib.Data.List.Basic
 import Mathlib.Logic.Equiv.Fin.Basic
 
@@ -58,6 +60,24 @@ def IsCRSet (A : Set S) : Prop :=
     ∃ s : S, ∀ j, (α.toList.map fun i => M i j).foldl (· + ·) s ∈ A
 
 end
+
+/-- **CR-sets tested over finite column types.** A set $A$ in a commutative semigroup $(S,+)$
+is combinatorially rich if and only if for every finite column type $K$ there is a row count $r$
+such that every matrix $M : \{0,\ldots,r-1\} \times K \to S$ has a nonempty set of rows $I$
+and a shift $s \in S$ with $s + \sum_{i \in I} M(i,j) \in A$ for every $j \in K$.
+The shift is required even for $K = \emptyset$; the sum with its shift is a left fold. -/
+public theorem isCRSet_iff_fintype {S : Type*} [AddCommSemigroup S] {A : Set S} :
+    IsCRSet A ↔ ∀ (κ : Type) [Fintype κ], ∃ r : ℕ, ∀ M : Fin r → κ → S,
+      ∃ α : Finset (Fin r), α.Nonempty ∧
+        ∃ s : S, ∀ j, (α.toList.map fun i => M i j).foldl (· + ·) s ∈ A := by
+  classical
+  refine ⟨?_, fun h n => h (Fin n)⟩
+  intro h κ _
+  let e := Fintype.equivFin κ
+  obtain ⟨r, hr⟩ := h (Fintype.card κ)
+  refine ⟨r, fun M => ?_⟩
+  obtain ⟨α, hα, s, hs⟩ := hr fun i j => M i (e.symm j)
+  exact ⟨α, hα, s, fun j => by simpa only [Equiv.symm_apply_apply] using hs (e j)⟩
 
 /-- **Arithmetic progressions in CR-sets.** If $A$ is a CR-set in a commutative semigroup
 $(S, +)$ and $l$ is a natural number, then the set of pairs $(a, b) \in S \times S$ such that
