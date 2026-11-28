@@ -15,7 +15,7 @@ The maximum likelihood estimator is $\hat s_T=\arg\sup_{s\in\mathcal S}d\mathbb 
 - $\lim_{\varepsilon\to0}\nu(s+\varepsilon,x)/\nu(s,x)=1$ for all $x\in[0,1]$;
 - for every $M\ge2$ there is a constant $C_1 = C_1(M) > 0$ such that for every $u$ with $s+u/\sqrt T\in\mathcal S$,
 
-$$\mathbb P^{(s)}_\nu\Bigl[\log\frac{\nu(s+u/\sqrt T,X_0)}{\nu(s,X_0)}>\tfrac1{48}\,\mathbb E^{(s)}[\xi(1-\xi)]\,|u|^2\Bigr]\le\frac{C_1}{|u|^M};$$
+$$\mathbb P^{(s)}_\nu\Bigl[\bigl|\log\frac{\nu(s+u/\sqrt T,X_0)}{\nu(s,X_0)}\bigr|>\tfrac1{48}\,\mathbb E^{(s)}[\xi(1-\xi)]\,|u|^2\Bigr]\le\frac{C_1}{|u|^M};$$
 
 - for every $R>0$ there is a constant $C_2 = C_2(R) > 0$ such that for all $u,v$ with $s+u/\sqrt T,\ s+v/\sqrt T\in\mathcal S$ and $|u|,|v|<R$,
 
