@@ -46,13 +46,13 @@ structure RightLieModuleCat (R : Type u) (L : Type v)
 This type carries the additive group, scalar action, and bilinear right Lie action in its
 specified universe. -/
   carrier : Type w
-/-- The additive group of right Lie coefficients.
+  /-- The additive group of right Lie coefficients.
 
-The coefficient carrier is an additive commutative group. -/
+  The coefficient carrier is an additive commutative group. -/
   [addCommGroup : AddCommGroup carrier]
-/-- The scalar module of right Lie coefficients.
+  /-- The scalar module of right Lie coefficients.
 
-The coefficient carrier is a module over the commutative ground ring `R`. -/
+  The coefficient carrier is a module over the commutative ground ring `R`. -/
   [moduleStructure : Module R carrier]
   /-- The endomorphism-valued right Lie action.
 
