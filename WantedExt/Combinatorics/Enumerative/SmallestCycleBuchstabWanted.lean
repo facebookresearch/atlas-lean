@@ -39,30 +39,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Variance of the smallest cycle length.** Let $\omega$ be a real function with
-$\omega(x) = 1/x$ for $1 \le x \le 2$ and $x\,\omega(x) = 1 + \int_1^{x-1} \omega(t)\,dt$ for
-$x \ge 2$, and for $n \ge 1$ let $X_n$ be the length of the smallest cycle of a uniformly random
-permutation of $\{1, \dots, n\}$. There are real constants $\varepsilon > 0$ and $C$ such that for
-every $n \ge 1$
-
-$$\left| \operatorname{Var}(X_n) - 2n \int_1^\infty \frac{\omega(x)}{x^2}\,dx \right|
-\le C\, n \cdot n^{-\varepsilon}.$$
-
-Source: Claude Gravel and Daniel Panario, *Evaluating the Generalized Buchstab
-Function and Revisiting the Variance of the Distribution of the Smallest
-Components of Combinatorial Objects*, INTEGERS 24 (2024), Article A7, Theorem 2
-(`integers-2024-A7-thm-2`). -/
-public theorem_wanted smallest_cycle_variance_asymp (ω : ℝ → ℝ)
-    (hω₁ : ∀ x ∈ Set.Icc (1 : ℝ) 2, ω x = 1 / x)
-    (hω₂ : ∀ x : ℝ, 2 ≤ x → x * ω x = 1 + ∫ t in (1 : ℝ)..(x - 1), ω t) :
-    ∃ ε C : ℝ, 0 < ε ∧ ∀ n : ℕ, 1 ≤ n →
-      |((∑ σ : Equiv.Perm (Fin n), ((⨅ x, Function.minimalPeriod σ x : ℕ) : ℝ) ^ 2) /
-            (n.factorial : ℝ) -
-          ((∑ σ : Equiv.Perm (Fin n), ((⨅ x, Function.minimalPeriod σ x : ℕ) : ℝ)) /
-            (n.factorial : ℝ)) ^ 2) -
-          n * (2 * ∫ x in Set.Ioi (1 : ℝ), ω x / x ^ 2)|
-        ≤ C * (n : ℝ) * (n : ℝ) ^ (-ε)
-
 end
 
 end MetaMathlibExt

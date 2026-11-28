@@ -13,25 +13,16 @@ Up to signs, a Clifford circuit acts on Pauli operators as a binary symplectic m
 track the signs as well: $I$ and $X$ induce the same binary matrix but give opposite deterministic outcomes when $Z$ is
 measured on $|0\rangle$.
 
-## Expansion
-
-A good expansion adds a page for surjectivity: every symplectic matrix over $\mathbb{F}_2$ is $\sigma_U$ for some
-Clifford unitary $U$. Gottesman's thesis (Section 5.3) states that the automorphisms of the Pauli group
-are induced by Clifford unitaries, citing other work (this needs the automorphisms that fix the scalars pointwise: complex
-conjugation is an automorphism sending $iI$ to $-iI$, which no conjugation by a unitary does), and Gottesman (2010) states the isomorphism without proof; a proof, for instance
-from the generation of $\mathrm{Sp}(2n, \mathbb{F}_2)$ by symplectic transvections together with
-[conjugation by $H$, $S$ and CNOT](conjugation-of-pauli-operators-by-h-s-and-cnot.md), still has to be stated and
-checked. The kernel and the preservation of $\omega$ follow from the pages listed below.
-
 ## Depends on
 
-- [Pauli group, Clifford group and stabilizer states](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/pauli-group-clifford-group-and-stabilizer-states.md)
+- [The Clifford group on $n$ qubits](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/clifford-group-on-n-qubits.md)
 - [Symplectic product of Pauli operators](../stabilizer-formalism/symplectic-product-of-pauli-operators.md)
 
 ## Proof depends on
 
 - [Pauli operators commute exactly when their symplectic product vanishes](../stabilizer-formalism/pauli-operators-commute-iff-symplectic-product-vanishes.md)
 - [A unitary is determined up to phase by its conjugation action on Pauli operators](unitary-determined-up-to-phase-by-conjugation-of-paulis.md)
+- [Canonical form of Clifford circuits](canonical-form-of-clifford-circuits.md)
 
 ## Informally uses
 

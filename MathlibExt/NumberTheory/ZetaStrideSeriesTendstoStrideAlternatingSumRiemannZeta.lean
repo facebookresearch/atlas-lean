@@ -79,7 +79,9 @@ public theorem strideAlternatingSum_add {q t n : ℕ} (hq : 0 < q) (hn : 0 < n) 
     rw [(by rw [Nat.mul_succ]; omega : n + q - q * (i + 1) = n - q * i), pow_succ]
     ring
 
-private theorem alternating_bound (a : ℕ → ℝ) (K : ℕ)
+/-- If `a 0, …, a K` are nonnegative and nondecreasing, the norm of their alternating sum
+is at most twice the last term `a K`. -/
+public theorem norm_sum_range_neg_one_pow_mul_le_two_mul (a : ℕ → ℝ) (K : ℕ)
     (ha : ∀ i ≤ K, 0 ≤ a i) (hm : ∀ i < K, a i ≤ a (i + 1)) :
     ‖∑ i ∈ Finset.range (K + 1), (-1 : ℝ) ^ i * a i‖ ≤ 2 * a K := by
   have hid : (∑ i ∈ Finset.range (K + 1), (-1 : ℝ) ^ i * a i) =
@@ -133,7 +135,8 @@ private theorem stride_bound (q t n : ℕ) (hq : 0 < q) (hn : 0 < n) :
         ‖∑ i ∈ Finset.range (K + 1), (-1 : ℝ) ^ i *
           (1 / ((n - q * i : ℕ) : ℝ) ^ t)‖ := by
       simp [strideAlternatingSum, hK, div_eq_mul_inv]
-    _ ≤ 2 * (1 / ((n - q * K : ℕ) : ℝ) ^ t) := alternating_bound _ K ha hm
+    _ ≤ 2 * (1 / ((n - q * K : ℕ) : ℝ) ^ t) :=
+      norm_sum_range_neg_one_pow_mul_le_two_mul _ K ha hm
     _ ≤ 2 := by linarith
 
 private theorem weighted_term (q t n : ℕ) (hq : 0 < q) (hn : 0 < n) :

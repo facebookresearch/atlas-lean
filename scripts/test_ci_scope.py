@@ -34,6 +34,7 @@ SKIPPED = [
     "scripts/taxonomy.json",
     "scripts/wiki-sync.json",
     "scripts/card-moves.jsonl",
+    "scripts/card-moves.d/20261126T000000Z-moved-pages.jsonl",
     "scripts/mathgraph-map.jsonl",
     "README.md",
     "REVIEWING.md",
@@ -53,6 +54,11 @@ BUILT = [
     "scripts/ci_scope.py",
     "scripts/README.md",
     "scripts/taxonomy.jsonl",
+    "scripts/card-moves.d/nested/20261126T000000Z-moved-pages.jsonl",
+    "scripts/card-moves.d/20261126T000000Z-moved-pages.json",
+    "scripts/card-moves.d/README.md",
+    "scripts/card-moves.d",
+    "scripts/card-moves.jsonl.d/20261126T000000Z-moved-pages.jsonl",
     ".github/workflows/ci.yml",
     ".github/pull_request_template.md",
     ".gitattributes",
@@ -79,6 +85,7 @@ LEAN = [
 TOOL_TESTS = [
     "scripts/import_optimizer test_*.py",
     "scripts test_quality_eval.py",
+    "scripts test_quality_review.py",
     "scripts test_audit_parallel.py",
     "scripts test_formal_math_sync.py",
     "scripts test_public_references.py",
@@ -146,6 +153,17 @@ class NeedsBuildTests(unittest.TestCase):
                              "build=true\ntool_tests=false\nsite_tests=false\n")
             self.assertEqual(decide(b"docs/a.md", b"scripts/x.py"), "build=true\ntool_tests=true\nsite_tests=true\n")
             self.assertEqual(decide(), "build=true\ntool_tests=true\nsite_tests=true\n")
+            # A pull request that only moves pages: its roadmap files, its annotations and its fragment of the move
+            # ledger are graph data, which the site-script tests read and the build and the tool tests do not.
+            self.assertEqual(decide(b"blueprint/roadmap/Algebra/old.md", b"blueprint/roadmap/Algebra/groups/old.md",
+                                    b"blueprint/links/Algebra.jsonl",
+                                    b"scripts/card-moves.d/20261126T000000Z-moved-pages.jsonl"),
+                             "build=false\ntool_tests=false\nsite_tests=true\n")
+            # Anything else below the folder of fragments is no fragment: nested, or not a .jsonl file.
+            for other in (b"scripts/card-moves.d/nested/20261126T000000Z-moved-pages.jsonl",
+                          b"scripts/card-moves.d/20261126T000000Z-moved-pages.json"):
+                self.assertEqual(decide(b"blueprint/roadmap/Algebra/old.md", other),
+                                 "build=true\ntool_tests=true\nsite_tests=true\n")
             result = subprocess.run([sys.executable, "-I", str(ROOT / "scripts/ci_scope.py")],
                                     capture_output=True, text=True)
             self.assertEqual((result.returncode, result.stdout), (2, ""))

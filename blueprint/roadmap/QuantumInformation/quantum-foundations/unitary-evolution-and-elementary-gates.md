@@ -6,12 +6,9 @@ gates are the Pauli gates $X, Y, Z$, the Hadamard gate $H$, the phase gates $S$ 
 and the Toffoli gate; a gate acting on some registers acts on a product register by the tensor product with
 the identity on the others.
 
-## Expansion
+## Depends on
 
-This node states a precise result. A good expansion adds a page for each of the following
-prerequisites and links it under the dependency sections below:
-
-- Statement prerequisite: Finite-dimensional quantum state (pure and mixed).
+- [Density matrices, pure states and reduced states](../quantum-states-distances-and-entropy/density-matrices-and-fidelity/density-matrices-and-reduced-states.md)
 
 ## Sources
 
