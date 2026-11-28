@@ -769,6 +769,15 @@
       "upstream_sha256": "5e00cee812960e6abd80fb5f5e0e7fc54d26f8af0ddd87f9e51f10ef2a17a358"
     },
     {
+      "path": "MathlibExt/CategoryTheory/Comonad/CobarCosimplicial.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "f93dc2ed94e521a896dea052b52ac72d5100a04c15d7d66aef497ce25bf91a55",
+      "rationale": "Import the general Hochschild, Eulerian, and Chevalley–Eilenberg API with Atlas mathematical documentation, preserving its original hypotheses, signs, and source attribution. Give PBW reduction, comonad/comodule/cosimplicial, normalization and endomorphism prerequisites exact mathematical docstrings, preserving coefficient rings, orientations, cutoffs, universes, all proof/code/import/option/privacy and legal/author tokens.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "019af585ae93751edd74fa21a862c3bb4e7cd3a16f9ac5d54f027ba975f70759"
+    },
+    {
       "path": "MathlibExt/CategoryTheory/Comonad/Comodule.lean",
       "backport": "pending",
       "disposition": "diverged",
