@@ -9,7 +9,7 @@ module
 
 public import MathlibExtTest.LinearAlgebra.Basis.FiniteFiltration
 import MathlibExt.LinearAlgebra.Determinant.FiltrationUnipotent
-import Mathlib.LinearAlgebra.Matrix.ToLin
+public import Mathlib.LinearAlgebra.Matrix.ToLin
 import Mathlib.Tactic.NormNum
 
 /-!
@@ -30,28 +30,35 @@ def shear : V →ₗ[ℚ] V := Matrix.toLin' !![1, 1; 0, 1]
 
 @[simp]
 theorem shear_apply (x : V) : shear x = ![x 0 + x 1, x 1] := by
+  rw [shear, Matrix.toLin'_apply]
   ext i
-  fin_cases i <;> simp [shear, Matrix.mulVec, dotProduct, Fin.sum_univ_two]
+  fin_cases i <;> simp [Matrix.mulVec, dotProduct, Fin.sum_univ_two]
 
 theorem shear_sub_mem (i : Fin 2) (x : V) (hx : x ∈ flag (i.val + 1)) :
     shear x - x ∈ flag i.val := by
   fin_cases i
-  · have hx1 : x 1 = 0 := by simpa [flag] using hx
-    have hz : shear x - x = 0 := by
-      ext j
-      fin_cases j <;> simp [shear_apply, hx1]
-    simpa [flag] using hz
-  · simp [flag, shear_apply]
+  · have hx1 : x 1 = 0 := by exact hx
+    change shear x - x = 0
+    ext j
+    fin_cases j
+    · change (shear x) 0 - x 0 = 0
+      rw [shear_apply]
+      change x 0 + x 1 - x 0 = 0
+      simp only [hx1, add_zero, sub_self]
+    · change (shear x) 1 - x 1 = 0
+      rw [shear_apply]
+      change x 1 - x 1 = 0
+      exact sub_self _
+  · change (shear x) 1 - x 1 = 0
+    rw [shear_apply]
+    change x 1 - x 1 = 0
+    exact sub_self _
 
 example : shear (Pi.single 1 1) = ![1, 1] := by simp [Pi.single]
 
 example : shear.det = 1 := by
-  apply LinearMap.det_eq_one_of_sub_mem_ofFiltration
-    (κ := GradeIndex) flag rfl 2 flag_le gradedBasis rfl shear
-  intro i a
-  apply shear_sub_mem i
-  simpa only [Module.Basis.ofFiltration_apply] using
-    Module.Basis.ofFiltrationStage_mem flag rfl GradeIndex 2 flag_le gradedBasis i a
+  exact LinearMap.det_eq_one_of_forall_sub_mem
+    (κ := GradeIndex) flag flag_zero 2 flag_le gradedBasis flag_two_top shear shear_sub_mem
 
 example : (0 : (Fin 0 → ℚ) →ₗ[ℚ] (Fin 0 → ℚ)).det = 1 := by
   let F : ℕ → Submodule ℚ (Fin 0 → ℚ) := fun _ => ⊥

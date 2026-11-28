@@ -13,13 +13,13 @@ public import MathlibExt.LinearAlgebra.Basis.FiniteFiltration
 public import MathlibExt.LinearAlgebra.Determinant.FiniteFiltration
 
 /-!
-# Determinant one from a filtration-unipotent basis condition
+# Filtration stability and determinant one
 
-Let R be a commutative ring and 0=F_0⊆⋯⊆F_n a finite filtration in M, with quotient bases b_i
-indexed by κ_i. Write B for the assembled basis whose grade-i vector represents b_i in
-F_(i+1)/F_i. Assume F_n=M. Suppose every κ_i is finite and U(B_(i,a))-B_(i,a)∈F_i for each
-grade and basis index. Then all stages are U-invariant, every graded quotient action is the
-identity, and det(U)=1.
+Let R be a commutative ring and 0=F_0⊆⋯⊆F_n=M a finite filtration, with quotient bases b_i
+indexed by κ_i. If U(B_(i,a))-B_(i,a)∈F_i for each assembled grade-i basis vector, every stage
+is U-invariant and every graded quotient action is the identity. The κ_i may be infinite for
+these conclusions. If every κ_i is finite, det(U)=1. For finite κ_i, the stagewise condition
+U x-x∈F_i for every x∈F_(i+1) also gives determinant one, without referring to chosen lifts.
 -/
 
 @[expose] public section
@@ -262,7 +262,7 @@ Let R be a commutative ring and 0=F_0⊆⋯⊆F_n=M a finite filtration, with a 
 finite κ_i for each quotient F_(i+1)/F_i. If U x-x belongs to F_i for every x∈F_(i+1), then
 det(U)=1. The hypothesis concerns every stage vector and does not depend on chosen lifts.
 -/
-theorem det_eq_one_of_sub_mem_ofFiltrationStage
+theorem det_eq_one_of_forall_sub_mem
     (F : ℕ → Submodule R M) (hzero : F 0 = ⊥)
     (n : ℕ)
     (hF : ∀ i : Fin n, F i.val ≤ F (i.val + 1))
