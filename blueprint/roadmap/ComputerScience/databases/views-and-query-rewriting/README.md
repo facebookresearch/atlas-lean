@@ -14,3 +14,7 @@
 - [Determinacy of regular path queries is undecidable](determinacy-of-regular-path-queries-is-undecidable.md)
 - [Finite determinacy of conjunctive queries is undecidable](finite-determinacy-of-cqs-is-undecidable.md)
 - [Unrestricted determinacy of conjunctive queries is undecidable](unrestricted-cq-determinacy-is-undecidable.md)
+- [Disjunctive mappings and UCQ rewritings over the source](disjunctive-mappings-and-source-rewritings.md)
+- [Disjunctive mapping rewritability is undecidable](disjunctive-mapping-rewritability-undecidable.md)
+- [First-order queries over unary conjunctive views](first-order-unary-conjunctive-view-queries.md)
+- [Finite satisfiability of first-order queries over unary conjunctive views with inequalities is undecidable](ucv-queries-with-inequality-views-undecidable.md)

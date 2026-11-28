@@ -1,0 +1,32 @@
+# Finiteness of complexity measures of computable function classes is undecidable
+
+Given a computable description of a binary-valued function class, no algorithm decides whether the class has finite VC dimension, finite teaching dimension or finite Littlestone dimension, or whether it has an infinite Littlestone tree; so PAC, exact and online learnability are undecidable from such descriptions.
+
+**Setting (Caro).** A class $\mathcal{G}$ of functions $\mathbb{N} \to \mathbb{N}$ is *computable* if there is a total computable $G : \mathbb{N} \times \mathbb{N} \to \mathbb{N}$ with $\mathcal{G} = \{ n \mapsto G(m, n) : m \in \mathbb{N} \}$; a code of $G$ for a fixed universal machine serves as a description of $\mathcal{G}$. Let $c_c(\{0,1\})$ be the set of $\{0,1\}$-valued sequences with finite support. For a Turing machine $M$ and $a \in c_c(\{0,1\})$, let $h_a(n) = a(n)$ if $M$ does not halt within $n$ steps on the empty input and $h_a(n) = 0$ otherwise, and let $\mathcal{H}_M = \{ h_a : a \in c_c(\{0,1\}) \}$. For a class $\mathcal{G} \subseteq \{0,1\}^{\mathbb{N}}$, the *VC dimension* is the supremum in $\mathbb{N} \cup \{\infty\}$ of the sizes of finite sets on which $\mathcal{G}$ realizes all labelings (Definition 2.2 of the source); the *teaching dimension* is the supremum over $g \in \mathcal{G}$ of the least size of a set of labeled points consistent with $g$ and with no other member of $\mathcal{G}$; a *Littlestone tree* of depth $d \le \infty$ is a complete binary tree of depth $d$ whose nodes are labeled by points such that, for every finite path from the root, some member of $\mathcal{G}$ labels each node on the path by the turn (left $0$, right $1$) the path takes there; only finite paths count, also for a tree of infinite depth (Definition 2.5 of the source). The *Littlestone dimension* is the supremum in $\mathbb{N} \cup \{\infty\}$ of the depths of finite Littlestone trees (Definition 2.7), and $\mathcal{G}$ *has an infinite Littlestone tree* if it has one of depth $\infty$.
+
+**Theorem (Caro).** There is no Turing machine that, given the code of a computable class from the family $\{\mathcal{H}_M\}_M$, decides any one of the following:
+
+1. whether the class is finite (equivalently, whether it differs from $c_c(\{0,1\})$);
+2. whether it has finite VC dimension;
+3. whether it has finite teaching dimension;
+4. whether it has finite Littlestone dimension;
+5. whether it has an infinite Littlestone tree.
+
+By the characterizations of PAC learnability for binary classification by finite VC dimension, of uniform online learnability by finite Littlestone dimension, and of universal online learnability by the absence of infinite Littlestone trees, the source concludes that these forms of learnability are undecidable from computable descriptions. The source also proves analogous independence results for formal systems satisfying further hypotheses it states (for instance Corollary 4.2: recursively enumerable, consistent, containing elementary arithmetic, able to reason about the constructed class, with infinitely many provable theorems).
+
+## Depends on
+
+- [Decidability by multi-stack machines](../../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [The Littlestone dimension is the optimal mistake bound](../../../online-learning-and-boosting/the-littlestone-dimension-is-the-optimal-mistake-bound.md)
+
+## Proof depends on
+
+- [Halting is undecidable](../../../../../TheoryOfComputation/computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halts.md)
+
+## Expansion
+
+If $M$ halts on the empty input after $N$ steps, every $h_a$ vanishes beyond $N$, so $\mathcal{H}_M$ is finite and all four measures are finite; if $M$ never halts, $\mathcal{H}_M = c_c(\{0,1\})$, which shatters every finite set, has infinite teaching dimension and has an infinite Littlestone tree. The function $(M, m, n) \mapsto h_{a_m}(n)$, for a computable enumeration $(a_m)$ of $c_c(\{0,1\})$, is computable, so a code of $\mathcal{H}_M$ is computable from $M$. A decision procedure for any of the five properties would therefore decide whether $M$ halts on the empty input.
+
+## Sources
+
+- Matthias C. Caro, *From undecidability of non-triviality and finiteness to undecidability of learnability*, International Journal of Approximate Reasoning 163 (2023), article 109057, https://doi.org/10.1016/j.ijar.2023.109057; the definitions of computable function classes, of $\mathcal{H}_M$, of the teaching dimension and of Littlestone trees, the finiteness corollary of Section 3.2 and the Turing-undecidability corollaries of Section 4, read in arXiv:2106.01382v3. Locators in arXiv:2106.01382v3: Corollaries 3.14, 4.4, 4.13, 4.17 and 4.21.

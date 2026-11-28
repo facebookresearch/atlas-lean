@@ -17,3 +17,5 @@ Mathematical theory of learning from data, including the probabilistic modelling
 - [Algorithmic fairness](algorithmic-fairness/README.md)
 - [Distribution shift and robustness](distribution-shift-and-robustness/README.md)
 - [Transformers and language models](transformers-and-language-models/README.md)
+- [Neural-network control systems](neural-network-control-systems/README.md)
+- [Verification of graph neural networks](graph-neural-network-verification/README.md)
