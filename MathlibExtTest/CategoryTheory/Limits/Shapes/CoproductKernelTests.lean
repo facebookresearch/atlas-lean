@@ -71,7 +71,7 @@ private theorem component_value (i j a : ℤ) :
     coproductKernelIso_hom_ι F i
   have hk : k ≫ kernel.ι f = b := kernel.lift_ι f b b_f
   have hp : CategoryTheory.Limits.Sigma.ι X i ≫ projection j = if i = j then q else 0 :=
-    CategoryTheory.Limits.Sigma.ι_desc (fun i : ℤ => if i = j then q else 0) i
+    CategoryTheory.Limits.Sigma.ι_comp_desc (fun i : ℤ => if i = j then q else 0) i
   have h :
       k ≫ CategoryTheory.Limits.Sigma.ι K i ≫ e.hom ≫ kernel.ι (CategoryTheory.Limits.Sigma.map F)
         ≫ projection j =
@@ -83,14 +83,14 @@ private theorem component_value (i j a : ℤ) :
       _ = b ≫ (if i = j then q else 0) := by rw [hk, hp]
       _ = _ := by
         by_cases hi : i = j
-        · simpa only [if_pos hi] using b_q
-        · simp only [if_neg hi, comp_zero]
+        · simpa only [ite_eq_left hi] using b_q
+        · simp only [ite_eq_right hi, comp_zero]
   have hpoint := ConcreteCategory.congr_hom h a
   change (evaluate j).hom (e.hom.hom ((CategoryTheory.Limits.Sigma.ι K i).hom (k.hom a))) =
     (if i = j then (𝟙 Z) else 0).hom a at hpoint
   by_cases hi : i = j
-  · simpa only [if_pos hi, ModuleCat.hom_id, LinearMap.id_apply] using hpoint
-  · simpa only [if_neg hi, ModuleCat.hom_zero, LinearMap.zero_apply] using hpoint
+  · simpa only [ite_eq_left hi, ModuleCat.hom_id, LinearMap.id_apply] using hpoint
+  · simpa only [ite_eq_right hi, ModuleCat.hom_zero, LinearMap.zero_apply] using hpoint
 
 private def source (a b : ℤ) : ((∐ K) : ModuleCat.{0} ℤ) :=
   (CategoryTheory.Limits.Sigma.ι K (-1)).hom (k.hom a) + (CategoryTheory.Limits.Sigma.ι K 2).hom

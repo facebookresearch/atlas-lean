@@ -12,24 +12,25 @@ module
 
 public import MathlibExt.Algebra.Homology.HomologicalComplex.EndpointCofreeBasic
 public import Mathlib.CategoryTheory.Adjunction.FullyFaithful
+public import Mathlib.Algebra.Homology.HomologicalComplexLimits
 public import Mathlib.CategoryTheory.Preadditive.Injective.Preserves
 
 /-!
 # The adjunction for endpoint cofree complexes
 
-Let C be an abelian category and c a complex shape on an arbitrary index type ι.
-The functor forgetting the differential is left adjoint to the endpoint cofree
-complex functor on GradedObject ι C. The right adjoint uses the cofree terms
-Iᵢ ⊕ Eᵢ, where Eᵢ is I(c.next i) on an outgoing edge and zero at an endpoint.
+Let C have zero morphisms, a zero object and binary biproducts, and let c be a
+complex shape on an arbitrary index type ι. Forgetting the differential is left
+adjoint to the cofree functor on GradedObject ι C. Its value on I has terms
+Iᵢ ⊞ Eᵢ, where Eᵢ is I(c.next i) along an outgoing edge and zero otherwise.
 
-The hom equivalence is the existing coefficient-family equivalence, with its
-orientation reversed. The unit has first coefficient the identity and second
-coefficient the source differential along an outgoing edge. The counit is the
-family of first projections. Faithfulness of the forgetful functor makes the
-unit a monomorphism of complexes.
+The adjunction identifies coefficient families Kᵢ → Iᵢ with complex maps
+K → D(I). The unit has identity first coefficients and the outgoing source
+differentials as second coefficients. The counit consists of first projections.
+The forgetful functor is faithful, so the unit is a monomorphism.
 
-The index, object and morphism universes are independent. The construction
-uses the existing cofree complex and coefficient maps for every shape.
+If C also has finite limits, forgetting differentials preserves monomorphisms,
+and the cofree right adjoint preserves injective objects. The index and both
+category universes are independent.
 -/
 
 @[expose] public section
@@ -44,27 +45,28 @@ namespace HomologicalComplex
 
 universe u v w
 
-variable (C : Type u) [Category.{v} C] [Abelian C]
+variable (C : Type u) [Category.{v} C]
+  [HasZeroMorphisms C] [HasZeroObject C] [HasBinaryBiproducts C]
   {ι : Type w} (c : ComplexShape ι)
 
-/-- The endpoint cofree construction is a functor from coefficient families to
-complexes of any shape. Its coefficient maps are the existing cofree maps. -/
+/-- The functor from coefficient families to c-shaped cofree complexes. A family
+map aᵢ : Iᵢ → Jᵢ induces the complex map whose first coefficient is aᵢ. -/
 def endpointCofreeFunctor : GradedObject ι C ⥤ HomologicalComplex C c where
-  obj I := endpointCofree (c := c) I
-  map a := endpointCofreeMap (c := c) a
-  map_id I := endpointCofreeMap_id (c := c) I
-  map_comp a b := (endpointCofreeMap_comp (c := c) a b).symm
+  obj I := endpointCofree c I
+  map a := endpointCofreeMap c a
+  map_id I := endpointCofreeMap_id c I
+  map_comp a b := (endpointCofreeMap_comp c a b).symm
 
-/-- Forgetting the differential is left adjoint to the endpoint cofree functor,
-using the existing bijection between complex maps and coefficient families. -/
+/-- The adjunction identifying maps of graded families K.X → I with complex
+maps K → D(I), by taking or prescribing their first coefficients. -/
 def endpointCofreeAdjunction : forget C c ⊣ endpointCofreeFunctor C c :=
   Adjunction.mkOfHomEquiv
     { homEquiv K I := (endpointCofreeHomEquiv K I).symm
       homEquiv_naturality_left_symm := by
         intro K' K I f g
         funext i
-        change (f.f i ≫ g.f i) ≫ endpointCofreeProjection (c := c) I i =
-          f.f i ≫ (g.f i ≫ endpointCofreeProjection (c := c) I i)
+        change (f.f i ≫ g.f i) ≫ endpointCofreeProjection c I i =
+          f.f i ≫ (g.f i ≫ endpointCofreeProjection c I i)
         exact Category.assoc _ _ _
       homEquiv_naturality_right := by
         intro K I J a b
@@ -81,16 +83,16 @@ instance endpointCofreeFunctor_isRightAdjoint :
     (endpointCofreeFunctor C c).IsRightAdjoint where
   exists_leftAdjoint := ⟨forget C c, ⟨endpointCofreeAdjunction C c⟩⟩
 
-/-- The native adjunction hom equivalence is the existing coefficient-family
-equivalence with its orientation reversed. -/
+/-- The adjunction correspondence sends a coefficient family aᵢ : Kᵢ → Iᵢ
+to the cofree complex map with these first coefficients. -/
 theorem endpointCofreeAdjunction_homEquiv (K : HomologicalComplex C c)
     (I : GradedObject ι C) :
     (endpointCofreeAdjunction C c).homEquiv K I = (endpointCofreeHomEquiv K I).symm := by
   unfold endpointCofreeAdjunction
   exact congrFun (congrFun (Adjunction.mkOfHomEquiv_homEquiv _) K) I
 
-/-- A coefficient family is sent by the native adjunction equivalence to the
-existing prescribed cofree complex morphism. -/
+/-- The image of a coefficient family under the adjunction is the complex map
+whose first components are that family. -/
 @[simp]
 theorem endpointCofreeAdjunction_homEquiv_apply (K : HomologicalComplex C c)
     (I : GradedObject ι C) (a : (forget C c).obj K ⟶ I) :
@@ -99,30 +101,30 @@ theorem endpointCofreeAdjunction_homEquiv_apply (K : HomologicalComplex C c)
     (fun e : ((forget C c).obj K ⟶ I) ≃ (K ⟶ (endpointCofreeFunctor C c).obj I) => e a)
     (endpointCofreeAdjunction_homEquiv C c K I)
 
-/-- The inverse native adjunction equivalence takes the first coefficient of a
-complex morphism in each degree. -/
+/-- The inverse adjunction correspondence takes the first projection of a
+complex morphism in every degree. -/
 @[simp]
 theorem endpointCofreeAdjunction_homEquiv_symm_apply (K : HomologicalComplex C c)
     (I : GradedObject ι C) (f : K ⟶ (endpointCofreeFunctor C c).obj I) :
     ((endpointCofreeAdjunction C c).homEquiv K I).symm f =
-      fun i => f.f i ≫ endpointCofreeProjection (c := c) I i :=
+      fun i => f.f i ≫ endpointCofreeProjection c I i :=
   congrArg
     (fun e : ((forget C c).obj K ⟶ I) ≃ (K ⟶ (endpointCofreeFunctor C c).obj I) => e.symm f)
     (endpointCofreeAdjunction_homEquiv C c K I)
 
-/-- The native adjunction unit maps each complex into the cofree complex on its
-underlying graded family. -/
+/-- The adjunction unit sends K to D(K.X), with identity first coefficients
+and K's differentials as outgoing second coefficients. -/
 abbrev endpointCofreeUnit :
     𝟭 (HomologicalComplex C c) ⟶ forget C c ⋙ endpointCofreeFunctor C c :=
   (endpointCofreeAdjunction C c).unit
 
-/-- The native adjunction counit is a morphism of coefficient families from the
-underlying graded object of a cofree complex to its coefficients. -/
+/-- The adjunction counit in degree i is the first projection
+D(I)ᵢ = Iᵢ ⊞ Eᵢ → Iᵢ. -/
 abbrev endpointCofreeCounit :
     endpointCofreeFunctor C c ⋙ forget C c ⟶ 𝟭 (GradedObject ι C) :=
   (endpointCofreeAdjunction C c).counit
 
-/-- The unit is the prescribed cofree map with identity first coefficients. -/
+/-- The unit component at K is the cofree map with identity first coefficients. -/
 @[simp]
 theorem endpointCofreeUnit_app (K : HomologicalComplex C c) :
     (endpointCofreeUnit C c).app K =
@@ -136,7 +138,7 @@ theorem endpointCofreeUnit_app (K : HomologicalComplex C c) :
 @[reassoc (attr := simp)]
 theorem endpointCofreeUnit_fst (K : HomologicalComplex C c) (i : ι) :
     ((endpointCofreeUnit C c).app K).f i ≫
-        endpointCofreeProjection (c := c) K.X i = 𝟙 (K.X i) := by
+        endpointCofreeProjection c K.X i = 𝟙 (K.X i) := by
   rw [endpointCofreeUnit_app]
   exact endpointCofreeHom_fst K K.X (fun i => 𝟙 (K.X i)) i
 
@@ -146,7 +148,7 @@ the next source term, is the source differential. -/
 theorem endpointCofreeUnit_snd_of_rel (K : HomologicalComplex C c)
     {i j : ι} (hij : c.Rel i j) :
     (((endpointCofreeUnit C c).app K).f i ≫
-        endpointCofreeSecondProjection (c := c) K.X i) ≫
+        endpointCofreeSecondProjection c K.X i) ≫
         (endpointCofreeNextTermIso K.X hij).hom = K.d i j := by
   rw [endpointCofreeUnit_app]
   exact (endpointCofreeHom_snd_of_rel K K.X (fun i => 𝟙 (K.X i)) hij).trans
@@ -158,11 +160,10 @@ the zero morphism to the optional zero term. -/
 theorem endpointCofreeUnit_snd_of_no_next (K : HomologicalComplex C c) (i : ι)
     (hi : ¬ c.Rel i (c.next i)) :
     ((endpointCofreeUnit C c).app K).f i ≫
-        endpointCofreeSecondProjection (c := c) K.X i = 0 :=
+        endpointCofreeSecondProjection c K.X i = 0 :=
   (endpointCofreeNextTerm_isZero K.X i hi).eq_of_tgt _ _
 
-/-- The cofree unit is a monomorphism of complexes, by the native theorem for a
-faithful left adjoint. -/
+/-- The cofree unit is a monomorphism because its forgetful left adjoint is faithful. -/
 theorem endpointCofreeUnit_mono (K : HomologicalComplex C c) :
     Mono ((endpointCofreeUnit C c).app K) :=
   Adjunction.unit_mono_of_L_faithful (endpointCofreeAdjunction C c) K
@@ -171,7 +172,7 @@ theorem endpointCofreeUnit_mono (K : HomologicalComplex C c) :
 coefficient object Iᵢ. -/
 @[simp]
 theorem endpointCofreeCounit_app (I : GradedObject ι C) (i : ι) :
-    ((endpointCofreeCounit C c).app I) i = endpointCofreeProjection (c := c) I i := by
+    ((endpointCofreeCounit C c).app I) i = endpointCofreeProjection c I i := by
   have h := (endpointCofreeAdjunction C c).homEquiv_symm_id I
   have h' := endpointCofreeAdjunction_homEquiv_symm_apply C c
     ((endpointCofreeFunctor C c).obj I) I (𝟙 _)
@@ -183,9 +184,11 @@ followed by the corresponding coefficient map. -/
 @[reassoc (attr := simp)]
 theorem endpointCofreeFunctor_map_fst {I J : GradedObject ι C} (a : I ⟶ J) (i : ι) :
     ((endpointCofreeFunctor C c).map a).f i ≫
-        endpointCofreeProjection (c := c) J i =
-      endpointCofreeProjection (c := c) I i ≫ a i :=
-  endpointCofreeMap_fst (c := c) a i
+        endpointCofreeProjection c J i =
+      endpointCofreeProjection c I i ≫ a i :=
+  endpointCofreeMap_fst c a i
+
+variable [HasFiniteLimits C]
 
 /-- Forgetting a complex's differential preserves monomorphisms: cancellation
 holds degreewise in the underlying graded family. -/

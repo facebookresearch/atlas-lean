@@ -23,9 +23,9 @@ indexed by ℕ has multiplication by two from degree one to degree zero and
 zero differentials elsewhere. Its adjunction unit has a nonzero first
 coefficient at the endpoint and a nonzero second coefficient along that edge.
 
-The native counit recovers the endpoint coefficient. The native right triangle
+The counit recovers the endpoint coefficient. The right triangle
 recovers the unit's nonzero second coordinate. A coefficient family given by
-multiplication by two has a native adjunction mate whose corresponding second
+multiplication by two has an adjunction mate whose corresponding second
 coordinate is four; the inverse equivalence recovers its coefficient two.
 The category object, morphism and index universes are distinct.
 -/
@@ -52,14 +52,14 @@ private abbrev K : HomologicalComplex A c where
     by_cases h : i = 1 ∧ j = 0
     · rcases h with ⟨rfl, rfl⟩
       exact (hij (by decide)).elim
-    · exact if_neg h
+    · exact ite_eq_right h
   d_comp_d' i j k _ _ := by
     by_cases h : i = 1 ∧ j = 0
     · have h' : ¬ (j = 1 ∧ k = 0) := by
         intro hj
         exact Nat.zero_ne_one (h.2.symm.trans hj.1)
-      simp only [if_pos h, if_neg h', comp_zero]
-    · simp only [if_neg h, zero_comp]
+      simp only [ite_eq_left h, ite_eq_right h', comp_zero]
+    · simp only [ite_eq_right h, zero_comp]
 
 private abbrev I : GradedObject ℕ A := K.X
 private abbrev D : HomologicalComplex A c := (endpointCofreeFunctor A c).obj I
@@ -80,22 +80,22 @@ private lemma twice_one : twice.hom one = ULift.up (2 : ZMod 6) := by
 private lemma differential_one_zero :
     (K.d 1 0).hom one = ULift.up (2 : ZMod 6) := by
   change (if (1 : ℕ) = 1 ∧ (0 : ℕ) = 0 then twice else 0).hom one = _
-  rw [if_pos (by decide)]
+  rw [ite_eq_left (by decide)]
   exact twice_one
 
 private lemma unit_first_value :
-    (U.f 0 ≫ endpointCofreeProjection (c := c) I 0).hom one = one := by
+    (U.f 0 ≫ endpointCofreeProjection c I 0).hom one = one := by
   change (((endpointCofreeUnit A c).app K).f 0 ≫
-    endpointCofreeProjection (c := c) K.X 0).hom one = one
+    endpointCofreeProjection c K.X 0).hom one = one
   rw [endpointCofreeUnit_fst A c K 0]
   rfl
 
 private lemma unit_second_value :
-    ((U.f 1 ≫ endpointCofreeSecondProjection (c := c) I 1) ≫
+    ((U.f 1 ≫ endpointCofreeSecondProjection c I 1) ≫
       (endpointCofreeNextTermIso I rel_one_zero).hom).hom one =
         ULift.up (2 : ZMod 6) := by
   change ((((endpointCofreeUnit A c).app K).f 1 ≫
-    endpointCofreeSecondProjection (c := c) K.X 1) ≫
+    endpointCofreeSecondProjection c K.X 1) ≫
       (endpointCofreeNextTermIso K.X rel_one_zero).hom).hom one = _
   rw [endpointCofreeUnit_snd_of_rel A c K rel_one_zero]
   exact differential_one_zero
@@ -104,26 +104,26 @@ example : (endpointCofreeFunctor A c).IsRightAdjoint := inferInstance
 
 example : Mono U := endpointCofreeUnit_mono A c K
 
-example : (U.f 0 ≫ endpointCofreeSecondProjection (c := c) I 0) = 0 :=
+example : (U.f 0 ≫ endpointCofreeSecondProjection c I 0) = 0 :=
   endpointCofreeUnit_snd_of_no_next A c K 0 no_next_zero
 
-example : (U.f 0 ≫ endpointCofreeProjection (c := c) I 0).hom one = one :=
+example : (U.f 0 ≫ endpointCofreeProjection c I 0).hom one = one :=
   unit_first_value
 
-example : (U.f 0 ≫ endpointCofreeProjection (c := c) I 0).hom one ≠ 0 := by
+example : (U.f 0 ≫ endpointCofreeProjection c I 0).hom one ≠ 0 := by
   rw [unit_first_value]
   intro h
   exact (by decide : (1 : ZMod 6) ≠ 0) (congrArg ULift.down h)
 
 example :
-    ((U.f 1 ≫ endpointCofreeSecondProjection (c := c) I 1) ≫
+    ((U.f 1 ≫ endpointCofreeSecondProjection c I 1) ≫
       (endpointCofreeNextTermIso I rel_one_zero).hom).hom one =
         ULift.up (2 : ZMod 6) :=
   unit_second_value
 
 example : (U.f 1).hom one ≠ 0 := by
   intro h
-  let p : D.X 1 ⟶ I 0 := endpointCofreeSecondProjection (c := c) I 1 ≫
+  let p : D.X 1 ⟶ I 0 := endpointCofreeSecondProjection c I 1 ≫
     (endpointCofreeNextTermIso I rel_one_zero).hom
   have hv : p.hom ((U.f 1).hom one) = ULift.up (2 : ZMod 6) := unit_second_value
   have hz : p.hom ((U.f 1).hom one) = 0 :=
@@ -134,7 +134,7 @@ example : (U.f 1).hom one ≠ 0 := by
 example :
     (((endpointCofreeCounit A c).app I) 0).hom ((U.f 0).hom one) = one := by
   rw [endpointCofreeCounit_app]
-  change (U.f 0 ≫ endpointCofreeProjection (c := c) I 0).hom one = one
+  change (U.f 0 ≫ endpointCofreeProjection c I 0).hom one = one
   exact unit_first_value
 
 private abbrev recovered : D ⟶ D :=
@@ -147,12 +147,12 @@ private lemma recovered_id : recovered = 𝟙 D :=
 example : recovered = 𝟙 D := recovered_id
 
 example :
-    ((recovered.f 1 ≫ endpointCofreeSecondProjection (c := c) I 1) ≫
+    ((recovered.f 1 ≫ endpointCofreeSecondProjection c I 1) ≫
       (endpointCofreeNextTermIso I rel_one_zero).hom).hom ((U.f 1).hom one) =
         ULift.up (2 : ZMod 6) := by
   rw [recovered_id]
   simp only [HomologicalComplex.id_f, Category.id_comp]
-  change ((U.f 1 ≫ endpointCofreeSecondProjection (c := c) I 1) ≫
+  change ((U.f 1 ≫ endpointCofreeSecondProjection c I 1) ≫
     (endpointCofreeNextTermIso I rel_one_zero).hom).hom one = _
   exact unit_second_value
 
@@ -164,22 +164,22 @@ private abbrev mate : K ⟶ D :=
 example : U ≫ (endpointCofreeFunctor A c).map doubleCoefficients = mate := rfl
 
 example :
-    (mate.f 0 ≫ endpointCofreeProjection (c := c) I 0).hom one =
+    (mate.f 0 ≫ endpointCofreeProjection c I 0).hom one =
       ULift.up (2 : ZMod 6) := by
   have hm : mate = endpointCofreeHom K I doubleCoefficients :=
     endpointCofreeAdjunction_homEquiv_apply A c K I doubleCoefficients
-  have hf : mate.f 0 ≫ endpointCofreeProjection (c := c) I 0 = twice := by
+  have hf : mate.f 0 ≫ endpointCofreeProjection c I 0 = twice := by
     rw [hm]
     exact endpointCofreeHom_fst K I doubleCoefficients 0
   exact (ConcreteCategory.congr_hom hf one).trans twice_one
 
 example :
-    ((mate.f 1 ≫ endpointCofreeSecondProjection (c := c) I 1) ≫
+    ((mate.f 1 ≫ endpointCofreeSecondProjection c I 1) ≫
       (endpointCofreeNextTermIso I rel_one_zero).hom).hom one =
         ULift.up (4 : ZMod 6) := by
   have hm : mate = endpointCofreeHom K I doubleCoefficients :=
     endpointCofreeAdjunction_homEquiv_apply A c K I doubleCoefficients
-  have hs : ((mate.f 1 ≫ endpointCofreeSecondProjection (c := c) I 1) ≫
+  have hs : ((mate.f 1 ≫ endpointCofreeSecondProjection c I 1) ≫
       (endpointCofreeNextTermIso I rel_one_zero).hom) = K.d 1 0 ≫ twice := by
     rw [hm]
     exact endpointCofreeHom_snd_of_rel K I doubleCoefficients rel_one_zero
