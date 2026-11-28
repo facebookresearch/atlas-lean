@@ -21,3 +21,6 @@
 - [Message channel semantics](message-channel-semantics.md)
 - [Ring Election, Distributed MST, Paxos Quorums and Logical Clocks](rings-trees-quorums-and-clocks/README.md)
 - [Parameterized and infinite-state verification](parameterized-and-infinite-state-verification/README.md)
+- [Broadcast networks](broadcast-networks/README.md)
+- [Communicating finite-state machines](communicating-finite-state-machines/README.md)
+- [Message sequence chart graphs](message-sequence-chart-graphs/README.md)
