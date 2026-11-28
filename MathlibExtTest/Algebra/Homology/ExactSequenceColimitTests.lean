@@ -40,6 +40,7 @@ private abbrev E := ModuleCat.{1} ℤ
 private abbrev V := ULift.{1} (ZMod 6)
 private abbrev N : E := ModuleCat.of ℤ V
 private abbrev P : E := ModuleCat.of ℤ (V × V)
+private abbrev Z : E := zeroObject E
 
 private def inclusion : N ⟶ P := ModuleCat.ofHom (LinearMap.inl ℤ V V)
 private def projection : P ⟶ N := ModuleCat.ofHom (LinearMap.snd ℤ V V)
@@ -55,18 +56,18 @@ private instance projection_epi : Epi projection := by
   exact ⟨(0, y), rfl⟩
 
 private def row : ComposableArrows E 4 :=
-  mk₄ (0 : (0 : E) ⟶ N) inclusion projection (0 : N ⟶ (0 : E))
+  mk₄ (0 : Z ⟶ N) inclusion projection (0 : N ⟶ Z)
 
 private lemma row_complex : row.IsComplex where
   zero i hi := by
     have h : i = 0 ∨ i = 1 ∨ i = 2 := by omega
     rcases h with rfl | rfl | rfl
-    · change (0 : (0 : E) ⟶ N) ≫ inclusion = 0
+    · change (0 : Z ⟶ N) ≫ inclusion = 0
       simp
     · change inclusion ≫ projection = 0
       ext x
       rfl
-    · change projection ≫ (0 : N ⟶ (0 : E)) = 0
+    · change projection ≫ (0 : N ⟶ Z) = 0
       simp
 
 private lemma row_exact : row.Exact where
@@ -74,7 +75,7 @@ private lemma row_exact : row.Exact where
   exact i hi := by
     have h : i = 0 ∨ i = 1 ∨ i = 2 := by omega
     rcases h with rfl | rfl | rfl
-    · change (ShortComplex.mk (0 : (0 : E) ⟶ N) inclusion (by simp)).Exact
+    · change (ShortComplex.mk (0 : Z ⟶ N) inclusion (by simp)).Exact
       exact (ShortComplex.exact_iff_mono _ rfl).2 (by infer_instance)
     · change (ShortComplex.mk inclusion projection (by ext x; rfl)).Exact
       apply (ShortComplex.ShortExact.moduleCat_exact_iff_function_exact _).2
@@ -85,7 +86,7 @@ private lemma row_exact : row.Exact where
         exact ⟨x.1, Prod.ext rfl hx.symm⟩
       · rintro ⟨y, hy⟩
         exact (congrArg Prod.snd hy).symm
-    · change (ShortComplex.mk projection (0 : N ⟶ (0 : E)) (by simp)).Exact
+    · change (ShortComplex.mk projection (0 : N ⟶ Z) (by simp)).Exact
       exact (ShortComplex.exact_iff_epi _ rfl).2 (by infer_instance)
 
 private def exactRow : ExactSequences E 4 := ⟨row, row_exact⟩
@@ -97,9 +98,47 @@ private abbrev terms (i : Fin 5) : Fin 2 ⥤ E :=
   (exactSequenceFourDiagram diagram).flip.obj i
 
 private instance : HasExactColimitsOfShape (Fin 2) E :=
-  HasExactColimitsOfShape.domain_of_functor (Fin 2) (forget₂ E AddCommGrpCat.{1})
+  HasExactColimitsOfShape.domain_of_functor (C := E) (D := AddCommGrpCat.{1})
+    (Fin 2) (show E ⥤ AddCommGrpCat.{1} from forget₂ E AddCommGrpCat.{1})
 
 private abbrev sequenceColimit := exactSequenceFourColimit diagram
+
+private abbrev arrow12 : colimit (terms 1) ⟶ colimit (terms 2) :=
+  colim.map ((exactSequenceFourDiagram diagram).flip.map
+    (homOfLE (show (1 : Fin 5) ≤ 2 from by decide)))
+
+private abbrev arrow23 : colimit (terms 2) ⟶ colimit (terms 3) :=
+  colim.map ((exactSequenceFourDiagram diagram).flip.map
+    (homOfLE (show (2 : Fin 5) ≤ 3 from by decide)))
+
+private lemma arrow12_is_sequence_map : sequenceColimit.map' 1 2 = arrow12 :=
+  exactSequenceFourColimit_map_one_two diagram
+
+private lemma arrow23_is_sequence_map : sequenceColimit.map' 2 3 = arrow23 :=
+  exactSequenceFourColimit_map_two_three diagram
+
+private lemma two_apply (x : V) : ((2 : ℕ) • (𝟙 N)).hom x = x + x := by
+  simpa only [two_nsmul]
+
+private lemma two_one : ((2 : ℕ) • (𝟙 N)).hom (ULift.up (1 : ZMod 6)) =
+    ULift.up (2 : ZMod 6) := by
+  calc
+    _ = (ULift.up (1 : ZMod 6) : V) + ULift.up (1 : ZMod 6) := two_apply _
+    _ = ULift.up (2 : ZMod 6) := by apply ULift.ext; decide
+
+private lemma two_three : ((2 : ℕ) • (𝟙 N)).hom (ULift.up (3 : ZMod 6)) = 0 := by
+  calc
+    _ = (ULift.up (3 : ZMod 6) : V) + ULift.up (3 : ZMod 6) := two_apply _
+    _ = 0 := by apply ULift.ext; decide
+
+private lemma two_pair : ((2 : ℕ) • (𝟙 P)).hom
+    (ULift.up (1 : ZMod 6), ULift.up (0 : ZMod 6)) =
+      (ULift.up (2 : ZMod 6), ULift.up (0 : ZMod 6)) := by
+  calc
+    _ = (ULift.up (1 : ZMod 6), ULift.up (0 : ZMod 6)) +
+        (ULift.up (1 : ZMod 6), ULift.up (0 : ZMod 6)) := by simpa only [two_nsmul]
+    _ = (ULift.up (2 : ZMod 6), ULift.up (0 : ZMod 6)) := by
+      apply Prod.ext <;> apply ULift.ext <;> decide
 
 private def atLast (D : Fin 2 ⥤ E) : Cocone D where
   pt := D.obj 1
@@ -110,8 +149,7 @@ private def atLast (D : Fin 2 ⥤ E) : Cocone D where
         dsimp
         simp only [Category.comp_id]
         rw [← D.map_comp]
-        congr 1
-        apply Subsingleton.elim }
+        exact congrArg D.map (Subsingleton.elim _ _) }
 
 private def observe (i : Fin 5) : colimit (terms i) ⟶ (terms i).obj 1 :=
   colimit.desc (terms i) (atLast (terms i))
@@ -119,12 +157,12 @@ private def observe (i : Fin 5) : colimit (terms i) ⟶ (terms i).obj 1 :=
 private lemma observe_coprojection (i : Fin 5) (j : Fin 2) :
     colimit.ι (terms i) j ≫ observe i =
       (terms i).map (homOfLE (show j ≤ (1 : Fin 2) from Fin.le_last j)) :=
-  colimit.ι_desc _ _ _
+  colimit.ι_desc (atLast (terms i)) j
 
-private def one : colimit (terms 1) :=
+private def one : ↥(colimit (terms 1)) :=
   (colimit.ι (terms 1) 0).hom (ULift.up (1 : ZMod 6))
 
-private def three : colimit (terms 1) :=
+private def three : ↥(colimit (terms 1)) :=
   (colimit.ι (terms 1) 0).hom (ULift.up (3 : ZMod 6))
 
 private lemma observe_one : (observe 1).hom one = ULift.up (2 : ZMod 6) := by
@@ -132,72 +170,110 @@ private lemma observe_one : (observe 1).hom one = ULift.up (2 : ZMod 6) := by
     (observe_coprojection 1 0)
   change (observe 1).hom one =
     ((2 : ℕ) • (𝟙 N)).hom (ULift.up (1 : ZMod 6)) at h
-  simpa using h
+  exact h.trans two_one
 
 example : sequenceColimit.Exact := exactSequenceFourColimit_exact diagram
 
 example : (observe 1).hom one ≠ 0 ∧ (observe 1).hom one ≠ ULift.up (1 : ZMod 6) := by
   rw [observe_one]
-  constructor <;> decide
+  constructor
+  · intro h
+    exact (by decide : (2 : ZMod 6) ≠ 0) (congrArg ULift.down h)
+  · intro h
+    exact (by decide : (2 : ZMod 6) ≠ 1) (congrArg ULift.down h)
 
 example : one ≠ 0 := by
   intro h
   have he := congrArg (observe 1).hom h
   rw [observe_one, map_zero] at he
-  exact (by decide : (ULift.up (2 : ZMod 6) : V) ≠ 0) he
+  exact (by decide : (2 : ZMod 6) ≠ 0) (congrArg ULift.down he)
 
 example : three = 0 := by
   have h := congrArg (fun f => f.hom (ULift.up (3 : ZMod 6)))
     (colimit.w (terms 1) (homOfLE (show (0 : Fin 2) ≤ 1 from by decide)))
   change (colimit.ι (terms 1) 1).hom
       (((2 : ℕ) • (𝟙 N)).hom (ULift.up (3 : ZMod 6))) = three at h
-  have hz : ((2 : ℕ) • (𝟙 N)).hom (ULift.up (3 : ZMod 6)) = 0 := by decide
-  rw [hz, map_zero] at h
+  rw [two_three, map_zero] at h
   exact h.symm
 
 private lemma first_coordinate :
-    colimit.ι (terms 1) 0 ≫ sequenceColimit.map' 1 2 ≫ observe 2 =
+    colimit.ι (terms 1) 0 ≫ arrow12 ≫ observe 2 =
       inclusion ≫ ((2 : ℕ) • (𝟙 P)) := by
-  rw [← Category.assoc, exactSequenceFourColimit_ι_map_one_two]
-  rw [Category.assoc, observe_coprojection]
-  rfl
+  have h := exactSequenceFourColimit_ι_map_one_two diagram 0
+  change colimit.ι (terms 1) 0 ≫ arrow12 =
+    inclusion ≫ colimit.ι (terms 2) 0 at h
+  calc
+    _ = (colimit.ι (terms 1) 0 ≫ arrow12) ≫ observe 2 := (Category.assoc _ _ _).symm
+    _ = inclusion ≫ colimit.ι (terms 2) 0 ≫ observe 2 := by
+      simp only [h, Category.assoc]
+    _ = inclusion ≫ (terms 2).map
+        (homOfLE (show (0 : Fin 2) ≤ 1 from by decide)) :=
+      congrArg (inclusion ≫ ·) (observe_coprojection 2 0)
+    _ = inclusion ≫ ((2 : ℕ) • (𝟙 P)) := rfl
 
 example : (observe 2).hom ((sequenceColimit.map' 1 2).hom one) =
     (ULift.up (2 : ZMod 6), ULift.up (0 : ZMod 6)) := by
+  change (observe 2).hom (arrow12.hom one) =
+    (ULift.up (2 : ZMod 6), ULift.up (0 : ZMod 6))
   have h := congrArg (fun f => f.hom (ULift.up (1 : ZMod 6))) first_coordinate
-  change (observe 2).hom ((sequenceColimit.map' 1 2).hom one) = _ at h
-  simpa using h
+  change (observe 2).hom (arrow12.hom one) =
+    ((2 : ℕ) • (𝟙 P)).hom (ULift.up (1 : ZMod 6), ULift.up (0 : ZMod 6)) at h
+  exact h.trans two_pair
 
 private lemma second_coordinate :
-    colimit.ι (terms 2) 0 ≫ sequenceColimit.map' 2 3 ≫ observe 3 =
+    colimit.ι (terms 2) 0 ≫ arrow23 ≫ observe 3 =
       projection ≫ ((2 : ℕ) • (𝟙 N)) := by
-  rw [← Category.assoc, exactSequenceFourColimit_ι_map_two_three]
-  rw [Category.assoc, observe_coprojection]
-  rfl
+  have h := exactSequenceFourColimit_ι_map_two_three diagram 0
+  change colimit.ι (terms 2) 0 ≫ arrow23 =
+    projection ≫ colimit.ι (terms 3) 0 at h
+  calc
+    _ = (colimit.ι (terms 2) 0 ≫ arrow23) ≫ observe 3 := (Category.assoc _ _ _).symm
+    _ = projection ≫ colimit.ι (terms 3) 0 ≫ observe 3 := by
+      simp only [h, Category.assoc]
+    _ = projection ≫ (terms 3).map
+        (homOfLE (show (0 : Fin 2) ≤ 1 from by decide)) :=
+      congrArg (projection ≫ ·) (observe_coprojection 3 0)
+    _ = projection ≫ ((2 : ℕ) • (𝟙 N)) := rfl
 
 example : (observe 3).hom ((sequenceColimit.map' 2 3).hom
     ((colimit.ι (terms 2) 0).hom
       (ULift.up (0 : ZMod 6), ULift.up (1 : ZMod 6)))) = ULift.up (2 : ZMod 6) := by
+  change (observe 3).hom (arrow23.hom
+    ((colimit.ι (terms 2) 0).hom
+      (ULift.up (0 : ZMod 6), ULift.up (1 : ZMod 6)))) = ULift.up (2 : ZMod 6)
   have h := congrArg (fun f => f.hom
     (ULift.up (0 : ZMod 6), ULift.up (1 : ZMod 6))) second_coordinate
-  simpa using h
+  change (observe 3).hom (arrow23.hom
+    ((colimit.ι (terms 2) 0).hom
+      (ULift.up (0 : ZMod 6), ULift.up (1 : ZMod 6)))) =
+        ((2 : ℕ) • (𝟙 N)).hom (ULift.up (1 : ZMod 6)) at h
+  exact h.trans two_one
 
 section DegreeZero
 
 private def step (n : ℕ) : N ⟶ N := if n = 0 then (2 : ℕ) • 𝟙 N else 0
 
-private def K : ChainComplex E ℕ :=
-  ChainComplex.of (fun _ => N) step (by intro n; simp [step])
+private abbrev K : ChainComplex E ℕ where
+  X _ := N
+  d i j := if i = j + 1 then step j else 0
+  shape i j hij := by
+    exact ite_eq_right hij
+  d_comp_d' i j k hij hjk := by
+    have hj : j ≠ 0 := by
+      change j = k + 1 at hjk
+      omega
+    simp only [step, ite_eq_right hj, ite_self, zero_comp]
 
-private abbrev S : ShortComplex E := K.sc' 1 0 0
+private abbrev S : ShortComplex E :=
+  ShortComplex.mk ((2 : ℕ) • 𝟙 N) (0 : N ⟶ N) (by simp)
+
+private lemma degree_zero_window : K.sc' 1 0 0 = S := rfl
 
 private lemma incoming : S.f = (2 : ℕ) • 𝟙 N := by
-  change K.d 1 0 = (2 : ℕ) • 𝟙 N
-  simp [K, step]
+  rfl
 
 private lemma outgoing : S.g = 0 := by
-  change K.d 0 0 = 0
-  exact K.shape 0 0 (by decide)
+  rfl
 
 private abbrev N2 : E := ModuleCat.of ℤ (ULift.{1} (ZMod 2))
 
@@ -208,15 +284,26 @@ private def reduction : N ⟶ N2 := ModuleCat.ofHom
 
 private lemma incoming_reduction : S.f ≫ reduction = 0 := by
   rw [incoming]
-  ext x
+  apply ModuleCat.hom_ext
+  apply LinearMap.ext
+  intro x
   change reduction.hom ((2 : ℕ) • x) = 0
   rw [map_nsmul]
   apply ULift.ext
   change (2 : ℕ) • (ZMod.castHom (by decide : 2 ∣ 6) (ZMod 2)) x.down = 0
-  rw [nsmul_eq_mul]
-  norm_num
+  norm_num [nsmul_eq_mul]
 
-private def liftOne : N ⟶ S.cycles := S.liftCycles (𝟙 N) (by rw [outgoing]; simp)
+private lemma reduction_one : reduction.hom (ULift.up (1 : ZMod 6)) =
+    ULift.up (1 : ZMod 2) := by
+  apply ULift.ext
+  change (ZMod.castHom (by decide : 2 ∣ 6) (ZMod 2)) (1 : ZMod 6) = 1
+  exact RingHom.map_one _
+
+private def liftOne : N ⟶ S.cycles :=
+  S.liftCycles (𝟙 N) (by simp only [outgoing, comp_zero])
+
+private lemma liftOne_i : liftOne ≫ S.iCycles = 𝟙 N :=
+  S.liftCycles_i _ _
 
 private def detect : S.homology ⟶ N2 :=
   S.descHomology (S.iCycles ≫ reduction) (by
@@ -224,16 +311,24 @@ private def detect : S.homology ⟶ N2 :=
     exact incoming_reduction)
 
 private lemma detect_lift : liftOne ≫ S.homologyπ ≫ detect = reduction := by
-  simp only [detect, ShortComplex.π_descHomology]
-  simp [liftOne]
+  change liftOne ≫ S.homologyπ ≫
+    S.descHomology (S.iCycles ≫ reduction) _ = reduction
+  rw [ShortComplex.π_descHomology, ← Category.assoc, liftOne_i, Category.id_comp]
 
 private abbrev F : E ⥤ ModuleCat.{2} ℤ := ModuleCat.uliftFunctor.{2, 1} ℤ
 
 private def mappedLift : F.obj N ⟶ (S.map F).cycles :=
   (S.map F).liftCycles (𝟙 (F.obj N)) (by
     change 𝟙 (F.obj N) ≫ F.map S.g = 0
-    rw [outgoing]
-    simp)
+    simp only [outgoing, Functor.map_zero, Category.id_comp])
+
+private lemma mappedLift_i : mappedLift ≫ (S.map F).iCycles = 𝟙 (F.obj N) :=
+  (S.map F).liftCycles_i _ _
+
+private lemma mapped_reduction_one : (F.map reduction).hom
+    (ULift.up (ULift.up (1 : ZMod 6))) = ULift.up (ULift.up (1 : ZMod 2)) := by
+  change ULift.up (reduction.hom (ULift.up (1 : ZMod 6))) = _
+  rw [reduction_one]
 
 private def cyclesIso : (S.map F).cycles ≅ F.obj S.cycles :=
   ShortComplex.leftExactCyclesComparisonIso F S
@@ -241,10 +336,8 @@ private def cyclesIso : (S.map F).cycles ≅ F.obj S.cycles :=
 private lemma lift_comparison : mappedLift ≫ cyclesIso.hom = F.map liftOne := by
   change mappedLift ≫ ShortComplex.leftExactCyclesComparison F S = F.map liftOne
   apply (cancel_mono (F.map S.iCycles)).mp
-  rw [Category.assoc, ShortComplex.leftExactCyclesComparison_i]
-  simp only [mappedLift, ShortComplex.liftCycles_i]
-  rw [← F.map_comp]
-  simp [liftOne]
+  rw [Category.assoc, ShortComplex.leftExactCyclesComparison_i, mappedLift_i,
+    ← F.map_comp, liftOne_i, F.map_id]
 
 private def mappedClass : (S.map F).homology :=
   ((mappedLift ≫ (S.map F).homologyπ).hom)
@@ -258,8 +351,9 @@ private lemma edge_coordinate_map :
         ShortComplex.leftExactHomologyEdge F S) ≫ F.map detect := by
       simp only [Category.assoc]
     _ = mappedLift ≫ (cyclesIso.hom ≫ F.map S.homologyπ) ≫ F.map detect := by
-      rw [ShortComplex.leftExactHomologyEdge_characteristic]
-      rfl
+      simpa only [cyclesIso, ShortComplex.leftExactCyclesComparisonIso_hom] using
+        congrArg (fun t => mappedLift ≫ t ≫ F.map detect)
+          (ShortComplex.leftExactHomologyEdge_characteristic F S)
     _ = (mappedLift ≫ cyclesIso.hom) ≫ F.map (S.homologyπ ≫ detect) := by
       simp only [Functor.map_comp, Category.assoc]
     _ = F.map liftOne ≫ F.map (S.homologyπ ≫ detect) := by rw [lift_comparison]
@@ -272,14 +366,14 @@ example : K.d 0 0 = 0 ∧ (K.d 1 0).hom (ULift.up (1 : ZMod 6)) =
   · exact outgoing
   · change S.f.hom (ULift.up (1 : ZMod 6)) = ULift.up (2 : ZMod 6)
     rw [incoming]
-    decide
+    exact two_one
 
 example : (F.map S.iCycles).hom ((cyclesIso.hom).hom
     (mappedLift.hom (ULift.up (ULift.up (1 : ZMod 6))))) =
       ULift.up (ULift.up (1 : ZMod 6)) := by
-  have h := congrArg (fun f => f.hom (ULift.up (ULift.up (1 : ZMod 6))))
-    (congrArg (fun f => f ≫ F.map S.iCycles) lift_comparison)
-  simpa [liftOne, mappedLift, ← F.map_comp] using h
+  have h : mappedLift ≫ cyclesIso.hom ≫ F.map S.iCycles = 𝟙 (F.obj N) := by
+    rw [← Category.assoc, lift_comparison, ← F.map_comp, liftOne_i, F.map_id]
+  exact ConcreteCategory.congr_hom h (ULift.up (ULift.up (1 : ZMod 6)))
 
 private lemma edge_value : (F.map detect).hom
     ((ShortComplex.leftExactHomologyEdge F S).hom mappedClass) =
@@ -287,8 +381,9 @@ private lemma edge_value : (F.map detect).hom
   have h := congrArg (fun f => f.hom (ULift.up (ULift.up (1 : ZMod 6))))
     edge_coordinate_map
   change (F.map detect).hom
-    ((ShortComplex.leftExactHomologyEdge F S).hom mappedClass) = _ at h
-  simpa [F, reduction] using h
+    ((ShortComplex.leftExactHomologyEdge F S).hom mappedClass) =
+      (F.map reduction).hom (ULift.up (ULift.up (1 : ZMod 6))) at h
+  exact h.trans mapped_reduction_one
 
 example : (F.map detect).hom
     ((ShortComplex.leftExactHomologyEdge F S).hom mappedClass) =
@@ -298,7 +393,8 @@ example : (ShortComplex.leftExactHomologyEdge F S).hom mappedClass ≠ 0 := by
   intro h
   have hc := congrArg (F.map detect).hom h
   rw [edge_value, map_zero] at hc
-  exact (by decide : (ULift.up (ULift.up (1 : ZMod 2)) : F.obj N2) ≠ 0) hc
+  have h' : (1 : ZMod 2) = 0 := congrArg (fun x => x.down.down) hc
+  exact (by decide : (1 : ZMod 2) ≠ 0) h'
 
 end DegreeZero
 

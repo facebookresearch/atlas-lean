@@ -48,6 +48,7 @@ example : LinearMap.mapCoker (0 : F →ₗ[F] F) 0 twice compatible
   have hz := (Submodule.Quotient.mk_eq_zero _).mp h
   simp only [LinearMap.range_zero, Submodule.mem_bot] at hz
   norm_num [twice] at hz
+  exact (by decide : (2 : ZMod 5) ≠ 0) hz
 
 example : LinearMap.mapCoker (0 : F →ₗ[F] F) 0 twice compatible
     (Submodule.Quotient.mk (1 : F)) ≠ Submodule.Quotient.mk (1 : F) := by
@@ -56,6 +57,7 @@ example : LinearMap.mapCoker (0 : F →ₗ[F] F) 0 twice compatible
   have hz := (Submodule.Quotient.eq _).mp h
   simp only [LinearMap.range_zero, Submodule.mem_bot] at hz
   norm_num [twice] at hz
+  exact (by decide : (1 : ZMod 5) ≠ 0) hz
 
 variable {K L : ChainComplex (ModuleCat F) ℕ} (f : K ⟶ L)
 
