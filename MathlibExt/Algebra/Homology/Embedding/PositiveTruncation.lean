@@ -56,8 +56,6 @@ variable [HasZeroMorphisms C]
 variable (K : HomologicalComplex C c') (e : c.Embedding c') [e.IsTruncLE]
   [∀ i', K.HasHomology i']
 
-attribute [reassoc] truncLE'ToRestriction_f_eq_iso_hom_iCycles_iso_inv
-attribute [reassoc] truncLE'ToRestriction_f_eq_iso_hom_iso_inv
 
 variable [HasZeroObject C]
 
@@ -183,7 +181,7 @@ section Positive
 
 variable [Abelian C]
 
-local notation "e₊" => ComplexShape.positiveNatEmbedding
+local notation "e₊" => ChainComplex.kernelTailEmbedding
 
 private theorem positive_boundary_zero : e₊.BoundaryLE 0 :=
   e₊.boundaryLE (k' := 0) (by change 0 + 1 = 0 + 1; rfl)
