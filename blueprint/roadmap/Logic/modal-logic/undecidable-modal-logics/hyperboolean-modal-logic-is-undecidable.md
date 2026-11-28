@@ -10,6 +10,7 @@ This answers the question of decidability of hyperboolean modal logic posed by G
 
 - [Associative normal modal logic](associative-normal-modal-logic.md)
 - [Boolean algebra](../../../Order/lattices-boolean-algebras/boolean-algebra.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

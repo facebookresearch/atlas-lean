@@ -9,6 +9,7 @@ These are cases of the general theorem of the source: $L_{\mathrm{RCC8}}(\mathca
 ## Depends on
 
 - [Modal logics of topological relations](modal-logics-of-topological-relations.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -20,4 +21,4 @@ The proof reduces the domino problem for the first quadrant of the plane to sati
 
 ## Sources
 
-- C. Lutz and F. Wolter, "Modal logics of topological relations", *Logical Methods in Computer Science* 2(2), Paper 5, 2006, doi:10.2168/LMCS-2(2:5)2006; read as arXiv:cs/0605064v2, <https://arxiv.org/abs/cs/0605064v2>: the main theorem of Section 5 of arXiv:cs/0605064v2 (classes containing some $\mathfrak{R}(\mathbb{R}^n, U)$ with $\mathbb{R}^n_{\mathrm{rect}} \subseteq U$), its corollary listing the logics above, and the generalization to domino-ready structures; the undecidability theorem for finite region structures in Section 7.
+- C. Lutz and F. Wolter, "Modal logics of topological relations", *Logical Methods in Computer Science* 2(2), Paper 5, 2006, doi:10.2168/LMCS-2(2:5)2006; read as arXiv:cs/0605064v2, <https://arxiv.org/abs/cs/0605064v2>: Theorem 5 in Section 5 of arXiv:cs/0605064v2 (classes containing some $\mathfrak{R}(\mathbb{R}^n, U)$ with $\mathbb{R}^n_{\mathrm{rect}} \subseteq U \subseteq \mathbb{R}^n_{\mathrm{reg}}$), Corollary 6 (the logics above), Theorem 11 and Lemma 12 (domino-ready structures), and Theorem 19 and Corollary 20 in Section 7 (finite region structures).

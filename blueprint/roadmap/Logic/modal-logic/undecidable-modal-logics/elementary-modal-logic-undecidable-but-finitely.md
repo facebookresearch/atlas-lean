@@ -9,6 +9,7 @@ The source gives $\Gamma_1$ explicitly: $\Gamma^{\mathrm{two}}_1 \Rightarrow \Ga
 ## Depends on
 
 - [Global satisfiability over elementary frame classes](global-satisfiability-over-elementary-frames.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

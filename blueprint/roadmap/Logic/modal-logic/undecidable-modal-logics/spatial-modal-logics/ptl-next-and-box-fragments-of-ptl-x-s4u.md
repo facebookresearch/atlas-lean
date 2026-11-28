@@ -12,6 +12,7 @@ The proofs show that both statements already hold for the future fragments of th
 ## Depends on
 
 - [Topological temporal models and the spatio-temporal logic PTL × S4u](spatio-temporal-logic-ptl-x-s4u.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -9,6 +9,7 @@ The source gives $\Gamma_2$ explicitly as $(\Gamma^{\mathrm{refram}}_2 \Rightarr
 ## Depends on
 
 - [Global satisfiability over elementary frame classes](global-satisfiability-over-elementary-frames.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

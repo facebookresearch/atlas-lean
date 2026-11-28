@@ -9,6 +9,7 @@ By contrast, the logics of substructures of these concrete region structures are
 ## Depends on
 
 - [Modal logics of topological relations](modal-logics-of-topological-relations.md)
+- [Recognizability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
 
 ## Proof depends on
 
@@ -20,4 +21,4 @@ The undecidability reduction is extended to the recurrent domino problem, in whi
 
 ## Sources
 
-- C. Lutz and F. Wolter, "Modal logics of topological relations", *Logical Methods in Computer Science* 2(2), Paper 5, 2006, doi:10.2168/LMCS-2(2:5)2006; read as arXiv:cs/0605064v2, <https://arxiv.org/abs/cs/0605064v2>: the $\Pi^1_1$-hardness theorem of Section 6 of arXiv:cs/0605064v2 and its proof, with the recursive enumerability theorems of the same section.
+- C. Lutz and F. Wolter, "Modal logics of topological relations", *Logical Methods in Computer Science* 2(2), Paper 5, 2006, doi:10.2168/LMCS-2(2:5)2006; read as arXiv:cs/0605064v2, <https://arxiv.org/abs/cs/0605064v2>: Theorem 15 in Section 6 of arXiv:cs/0605064v2 and its proof, with Theorems 13 and 14 (recursive enumerability) of the same section.

@@ -14,6 +14,7 @@ For continuous maps, satisfiability in models with finite iterations is decidabl
 
 - [Topological space](../../../../Topology/topological-spaces/topological-space.md)
 - [Homeomorphism](../../../../Topology/topological-spaces/homeomorphism.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

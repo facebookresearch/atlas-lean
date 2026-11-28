@@ -9,6 +9,7 @@ Whether these consequence relations are $\Pi^0_2$-complete, like the tautologies
 ## Depends on
 
 - [Global modal many-valued logics are undecidable](global-modal-many-valued-logics.md)
+- [Recognizability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
 
 ## Proof depends on
 

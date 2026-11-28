@@ -10,6 +10,7 @@ For every $n \geq 3$ and every set of $n$-modal formulas between $\mathbf{K}^n$ 
 ## Depends on
 
 - [products and commutators of modal logics](products-and-commutators-of-modal-logics.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

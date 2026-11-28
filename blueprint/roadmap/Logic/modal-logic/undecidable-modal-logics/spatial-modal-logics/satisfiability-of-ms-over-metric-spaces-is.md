@@ -9,6 +9,7 @@ In particular, satisfiability of MS formulas over metric spaces is undecidable, 
 ## Depends on
 
 - [The logic MS of distance spaces](the-logic-ms-of-distance-spaces.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

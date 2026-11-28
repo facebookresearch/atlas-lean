@@ -15,6 +15,7 @@ The logic $\mathbf{S5}^n$ does not even have the finite model property for $n \g
 ## Depends on
 
 - [products and commutators of modal logics](products-and-commutators-of-modal-logics.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

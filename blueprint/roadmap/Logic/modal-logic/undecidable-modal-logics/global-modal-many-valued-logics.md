@@ -12,7 +12,7 @@ The same holds over any class of transitive frames containing isomorphic copies 
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

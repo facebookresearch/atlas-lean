@@ -9,6 +9,7 @@ The same holds for any class of normal unimodal logics containing Thomason's sim
 ## Depends on
 
 - [Boolean algebra](../../../Order/lattices-boolean-algebras/boolean-algebra.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

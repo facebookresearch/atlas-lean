@@ -2,7 +2,7 @@
 
 There is no algorithm that decides, for a modal formula $\varphi$, whether the normal modal logic axiomatized over $\mathbf{K}$ by $\varphi$ is decidable, whether it has the finite model property, or whether it is tabular.
 
-**Setting.** As for [Kripke completeness of finitely axiomatized logics](kripke-completeness-of-finitely-axiomatized.md): $\mathrm{NExt}\,\mathbf{K}$ is the lattice of normal extensions of $\mathbf{K}$, $\mathbf{K} \oplus \varphi$ is the least normal modal logic containing $\varphi$, and a property is decidable in $\mathrm{NExt}\,\mathbf{K}$ if some algorithm decides, given $\varphi$, whether $\mathbf{K} \oplus \varphi$ has it. A logic is *tabular* if it is the logic of a single finite frame.
+**Setting.** For [modal formulas](../kripke-semantics/formula.md) over [Kripke models](../kripke-semantics/kripke-model.md): $\mathrm{NExt}\,\mathbf{K}$ is the lattice of normal extensions of $\mathbf{K}$, $\mathbf{K} \oplus \varphi$ is the least normal modal logic containing $\varphi$, and a property is decidable in $\mathrm{NExt}\,\mathbf{K}$ if some algorithm decides, given $\varphi$, whether $\mathbf{K} \oplus \varphi$ has it. A logic is *tabular* if it is the logic of a single finite frame.
 
 **Theorem (Kracht and Wolter).** In $\mathrm{NExt}\,\mathbf{K}$, each of the following properties is undecidable: decidability, the finite model property, and tabularity.
 
@@ -10,13 +10,17 @@ Chagrov and his coauthors proved these and further properties undecidable in $\m
 
 ## Depends on
 
-- [Kripke completeness of finitely axiomatized normal modal logics is undecidable](kripke-completeness-of-finitely-axiomatized.md)
+- [Modal formulas](../kripke-semantics/formula.md)
+- [Kripke model](../kripke-semantics/kripke-model.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
 None.
 
 ## Expansion
+
+Kripke completeness of finitely axiomatized normal modal logics is [undecidable as well](kripke-completeness-of-finitely-axiomatized.md).
 
 The proof goes through the Thomason simulation, which embeds polymodal, in particular bimodal, logics into unimodal ones while preserving properties such as decidability, the finite model property and tabularity; undecidability of these properties for bimodal logics then transfers to $\mathrm{NExt}\,\mathbf{K}$. The copy read cites the result without proof; a good expansion links the simulation and the bimodal undecidability results, which have no pages.
 

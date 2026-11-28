@@ -11,6 +11,7 @@ Here $\mathbf{K}$ is the logic of all frames and is the horizontal component, $L
 - [Delta-products of modal logics](delta-products-of-modal-logics.md)
 - [Extra axioms of the modal logic K](../../normal-modal-logics/k.md)
 - [Extra axioms of S5](../../normal-modal-logics/s5.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

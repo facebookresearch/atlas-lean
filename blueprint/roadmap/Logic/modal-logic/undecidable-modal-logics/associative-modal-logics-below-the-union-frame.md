@@ -9,6 +9,7 @@ The same holds with $(\mathcal P(\mathbb N), \cup)$ replaced by $(\mathcal P(\ma
 ## Depends on
 
 - [Associative normal modal logic](associative-normal-modal-logic.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

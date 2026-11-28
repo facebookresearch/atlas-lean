@@ -9,6 +9,7 @@ The same holds for the variety $\mathsf{BSl}$ of Boolean semilattices, the assoc
 ## Depends on
 
 - [Associative normal modal logic](associative-normal-modal-logic.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -9,6 +9,8 @@ $\mathbf{K}^n$ has the finite model property for every $n$ (Gabbay and Shehtman)
 ## Depends on
 
 - [products and commutators of modal logics](products-and-commutators-of-modal-logics.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Recognizability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
 
 ## Proof depends on
 

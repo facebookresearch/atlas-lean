@@ -9,6 +9,7 @@ Validity in $\mathbf{K} \times \mathbf{K}$ is decidable (Gabbay and Shehtman), b
 ## Depends on
 
 - [products and commutators of modal logics](products-and-commutators-of-modal-logics.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

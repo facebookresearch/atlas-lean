@@ -15,6 +15,7 @@ The frame class $\mathcal K_\Gamma$ is fixed and the modal formula is the input.
 ## Depends on
 
 - [Global satisfiability over elementary frame classes](global-satisfiability-over-elementary-frames.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

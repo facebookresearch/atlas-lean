@@ -15,6 +15,7 @@ The frames $\mathfrak{H}_k$ (successor chain on $k$ with a spy point) and $k$-fa
 ## Depends on
 
 - [Delta-products of modal logics](delta-products-of-modal-logics.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

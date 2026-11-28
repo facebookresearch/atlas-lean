@@ -9,6 +9,7 @@ The source remarks that the proof goes through without the width term $\omega$, 
 ## Depends on
 
 - [Multi-lane spatial logic](multi-lane-spatial-logic.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

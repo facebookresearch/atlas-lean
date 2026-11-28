@@ -17,6 +17,8 @@ All these problems are therefore undecidable. By contrast, satisfiability of $\m
 ## Depends on
 
 - [Topological space](../../../../Topology/topological-spaces/topological-space.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Recognizability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
 
 ## Proof depends on
 

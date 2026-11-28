@@ -11,6 +11,7 @@ In the corollary, $\alpha = \Box\bot \wedge \blacksquare\bot$ works for the firs
 ## Depends on
 
 - [Normal extensions of transitive tense logic](normal-extensions-of-transitive-tense-logic.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

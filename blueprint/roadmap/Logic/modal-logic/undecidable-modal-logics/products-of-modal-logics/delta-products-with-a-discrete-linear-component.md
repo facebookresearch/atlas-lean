@@ -9,6 +9,7 @@ Here $\mathbf{DisK4.3}$ is the logic of modally discrete linear orders, and $\Pi
 ## Depends on
 
 - [Delta-products of modal logics](delta-products-of-modal-logics.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

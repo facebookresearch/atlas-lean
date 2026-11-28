@@ -11,6 +11,7 @@ The source also shows that local consequence of modal Łukasiewicz logic over al
 ## Depends on
 
 - [Kripke model](../kripke-semantics/kripke-model.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

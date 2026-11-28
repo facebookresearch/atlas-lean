@@ -12,6 +12,7 @@ As surveyed in the source, Kripke completeness, the finite model property and de
 
 - [Theorems of a normal modal logic](../normal-modal-logics/derivable.md)
 - [Kripke model](../kripke-semantics/kripke-model.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

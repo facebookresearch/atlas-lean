@@ -9,6 +9,7 @@ By contrast, LFD itself is decidable. The source also states that LFD becomes un
 ## Depends on
 
 - [Logic of functional dependence](logic-of-functional-dependence.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
