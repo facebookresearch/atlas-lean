@@ -11,6 +11,9 @@ import MathlibExt.CategoryTheory.ExactCategory.Abelian
 import MathlibExt.CategoryTheory.ExactCategory.Bicartesian
 import MathlibExt.CategoryTheory.ExactCategory.Functor
 import Mathlib.Algebra.Category.ModuleCat.Abelian
+import MathlibExt.CategoryTheory.HomologicalComplex.FunctorRelativeResolutionComparison.Homology
+import Mathlib.Algebra.Homology.SingleHomology
+meta import Mathlib.Tactic.NormNum
 
 /-!
 # Tests of the maximal exact structure on integer modules
@@ -19,6 +22,13 @@ The canonical Abelian instance supplies the exact structure on `ModuleCat ℤ`.
 The split sequence `ℤ → ℤ ⊞ ℤ → ℤ` has nonzero inclusion and projection.
 A triangular middle map with identity endpoints gives both a pullback and
 a pushout. Exact identity functors preserve the sequence and these maps.
+An arbitrary short exact complex is admissible for the inferred instance,
+distinguishing this maximal structure from the split exact structure.
+
+The identity-augmented degree-zero integer complex supplies a genuine
+relative-resolution comparison over multiplication by two. Its full chain
+augmentation equation and degree-zero homology map retain that endpoint map;
+the canonical homology coordinate sends `1` to `2` and is nonzero.
 -/
 
 open CategoryTheory CategoryTheory.Limits CategoryTheory.Preadditive
@@ -80,7 +90,8 @@ example : (𝟭 (ModuleCat ℤ)).IsExact := inferInstance
 example : IsAdmissibleExact (S.map (𝟭 (ModuleCat ℤ))) :=
   (𝟭 (ModuleCat ℤ)).map_admissibleExact S admissible_S
 
-/-- The exact-functor pushout interface preserves the triangular square along its admissible inclusion. -/
+/-- The exact-functor pushout interface preserves the triangular square along its admissible
+inclusion. -/
 example : IsPushout ((𝟭 (ModuleCat ℤ)).map (𝟙 Z))
     ((𝟭 (ModuleCat ℤ)).map S.f) ((𝟭 (ModuleCat ℤ)).map S.f)
     ((𝟭 (ModuleCat ℤ)).map middle) := by
@@ -89,5 +100,124 @@ example : IsPushout ((𝟭 (ModuleCat ℤ)).map (𝟙 Z))
     isPushout_f_of_isAdmissibleExact_of_isIso_right shear admissible_S admissible_S
   exact (𝟭 (ModuleCat ℤ)).map_isPushout_of_isAdmissibleMono hpo.flip
     (isAdmissibleMono_f admissible_S)
+
+
+/-- The inferred abelian exact structure admits every short exact complex. -/
+example (T : ShortComplex (ModuleCat ℤ)) (hT : T.ShortExact) :
+    IsAdmissibleExact T := hT
+
+namespace RelativeComparison
+
+/-- The identity restriction functor on integer modules. -/
+abbrev U : ModuleCat ℤ ⥤ ModuleCat ℤ := 𝟭 _
+
+/-- The integer complex concentrated in degree zero. -/
+abbrev Q : ChainComplex (ModuleCat ℤ) ℕ := (ChainComplex.single₀ (ModuleCat ℤ)).obj Z
+
+/-- Its identity augmentation has an actual contracting splitting. -/
+def splitting : Functor.AugmentationSplit U Q Z (𝟙 Q) where
+  section_ := 𝟙 Z
+  s _ := 0
+  section_comp := by simp
+  zero := by simp
+  succ n := by
+    have hz : IsZero (Q.X (n + 1)) :=
+      HomologicalComplex.isZero_single_obj_X (ComplexShape.down ℕ) 0 Z (n + 1) (by simp)
+    exact hz.eq_of_src _ _
+
+/-- The identity adjunction proves relative projectivity of every source term. -/
+lemma relativeTerms (n : ℕ) : U.IsRelativeProjective (Q.X n) :=
+  (Adjunction.id (C := ModuleCat ℤ)).isRelativeProjective_obj (Q.X n)
+
+/-- Identity restriction preserves each displayed differential kernel. -/
+def preservesKernels (n : ℕ) : PreservesLimit (parallelPair (Q.d (n + 1) n) 0) U :=
+  inferInstance
+
+/-- The prescribed endpoint map doubles integers. -/
+def twice : Z ⟶ Z := (2 : ℤ) • 𝟙 Z
+
+/-- The general relative-resolution constructor lifts the doubling map. -/
+def comparisonTwice : Q ⟶ Q :=
+  Functor.comparison U Q Q Z Z (𝟙 Q) (𝟙 Q) splitting relativeTerms preservesKernels twice
+
+/-- The complete chain augmentation equation includes the specified endpoint map. -/
+example : comparisonTwice ≫ 𝟙 Q =
+    𝟙 Q ≫ (ChainComplex.single₀ (ModuleCat ℤ)).map twice :=
+  Functor.comparison_augmentation U Q Q Z Z (𝟙 Q) (𝟙 Q)
+    splitting relativeTerms preservesKernels twice
+
+/-- Identity augmentation forces the entire comparison to be the single-complex map. -/
+lemma comparisonTwice_eq : comparisonTwice =
+    (ChainComplex.single₀ (ModuleCat ℤ)).map twice := by
+  have h := Functor.comparison_augmentation U Q Q Z Z (𝟙 Q) (𝟙 Q)
+    splitting relativeTerms preservesKernels twice
+  simpa only [Category.comp_id, Category.id_comp] using h
+
+/-- The chain comparison has a nonzero degree-zero coordinate. -/
+example : (comparisonTwice.f 0).hom (1 : ℤ) = 2 := by
+  rw [comparisonTwice_eq, ChainComplex.single₀_map_f_zero]
+  norm_num [twice]
+
+/-- The general homology API induces the comparison map in degree zero. -/
+def homologyTwice : (Functor.mappedResolution U Q).homology 0 ⟶
+    (Functor.mappedResolution U Q).homology 0 :=
+  Functor.comparisonHomologyMap U U Q Q Z Z (𝟙 Q) (𝟙 Q)
+    splitting relativeTerms preservesKernels twice 0
+
+/-- This homology map equals the native homology map of the known augmented lift. -/
+lemma homologyTwice_eq : homologyTwice =
+    HomologicalComplex.homologyMap
+      ((U.mapHomologicalComplex (ComplexShape.down ℕ)).map
+        ((ChainComplex.single₀ (ModuleCat ℤ)).map twice)) 0 :=
+  Functor.comparisonHomologyMap_eq_of_augmentation U U Q Q Z Z (𝟙 Q) (𝟙 Q)
+    splitting relativeTerms preservesKernels twice
+    ((ChainComplex.single₀ (ModuleCat ℤ)).map twice) (by simp) 0
+
+/-- Canonical identity-functor transport followed by the native single-complex homology coordinate.
+-/
+def homologyIso : (Functor.mappedResolution U Q).homology 0 ≅ Z :=
+  (HomologicalComplex.homologyFunctor (ModuleCat ℤ) (ComplexShape.down ℕ) 0).mapIso
+    ((Functor.mapHomologicalComplexIdIso (ModuleCat ℤ) (ComplexShape.down ℕ)).app Q) ≪≫
+      HomologicalComplex.singleObjHomologySelfIso (ComplexShape.down ℕ) 0 Z
+
+/-- The comparison homology map retains doubling under that canonical coordinate. -/
+lemma homologyTwice_naturality : homologyTwice ≫ homologyIso.hom = homologyIso.hom ≫ twice := by
+  rw [homologyTwice_eq]
+  have hn := (isoWhiskerRight
+    (Functor.mapHomologicalComplexIdIso (ModuleCat ℤ) (ComplexShape.down ℕ))
+    (HomologicalComplex.homologyFunctor (ModuleCat ℤ) (ComplexShape.down ℕ) 0)).hom.naturality
+      ((ChainComplex.single₀ (ModuleCat ℤ)).map twice)
+  change HomologicalComplex.homologyMap
+      ((U.mapHomologicalComplex (ComplexShape.down ℕ)).map
+        ((ChainComplex.single₀ (ModuleCat ℤ)).map twice)) 0 ≫
+    (((HomologicalComplex.homologyFunctor (ModuleCat ℤ) (ComplexShape.down ℕ) 0).mapIso
+      ((Functor.mapHomologicalComplexIdIso (ModuleCat ℤ) (ComplexShape.down ℕ)).app Q)).hom ≫
+        (HomologicalComplex.singleObjHomologySelfIso (ComplexShape.down ℕ) 0 Z).hom) =
+    (((HomologicalComplex.homologyFunctor (ModuleCat ℤ) (ComplexShape.down ℕ) 0).mapIso
+      ((Functor.mapHomologicalComplexIdIso (ModuleCat ℤ) (ComplexShape.down ℕ)).app Q)).hom ≫
+        (HomologicalComplex.singleObjHomologySelfIso (ComplexShape.down ℕ) 0 Z).hom) ≫ twice
+  rw [← Category.assoc, hn, Category.assoc,
+    HomologicalComplex.singleObjHomologySelfIso_hom_naturality, ← Category.assoc]
+
+/-- Conjugating the comparison homology map by its canonical coordinate gives doubling. -/
+lemma homologyTwice_coordinate : homologyIso.inv ≫ homologyTwice ≫ homologyIso.hom = twice := by
+  rw [Category.assoc, homologyTwice_naturality]
+  simp
+
+/-- The actual degree-zero homology map sends the coordinate `1` to `2`. -/
+example : (homologyIso.inv ≫ homologyTwice ≫ homologyIso.hom).hom (1 : ℤ) = 2 := by
+  rw [homologyTwice_coordinate]
+  norm_num [twice]
+
+/-- The induced homology map is genuinely nonzero. -/
+example : homologyTwice ≠ 0 := by
+  intro h
+  have hc : (homologyIso.inv ≫ homologyTwice ≫ homologyIso.hom).hom (1 : ℤ) = 2 := by
+    rw [homologyTwice_coordinate]
+    norm_num [twice]
+  rw [h] at hc
+  norm_num at hc
+
+end RelativeComparison
 
 end MathlibExtTest.CategoryTheory.ExactCategory.AbelianInterface
