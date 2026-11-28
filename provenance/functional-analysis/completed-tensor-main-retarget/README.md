@@ -1,0 +1,21 @@
+This retarget preserves PR 8965 at source head `0dbd15bbf39e21f168ba566e1d46483307f64038`.
+It rebuilds on Main `b5c89c8d8f075ac2a08359fd8133131e5a11bd8c` with 16 unchanged Lean files (1955 lines).
+
+The source records retain current file hashes and source author notices. Literal original
+MathlibExt snapshots are copied from verified existing provenance records. Each adaptation
+record remains historical and refers to its old source snapshot location. The JSON contains
+the same original bytes as UTF-8 text, with hashes checked after decoding.
+
+Six added provider files have no verified upstream archive binding in the scoped ledgers.
+Their literal snapshots are explicitly existing ATLAS source at the retained head; no
+Formal-Math commit or upstream-original identity is claimed.
+
+Fourteen unchanged files have matching earlier native exit-zero evidence under Lean 4.36 and
+Mathlib `fc4f59e577feb1a4956671bc04ac18aaaf8cd842`. These records do not certify a fresh-Main run or
+artifact reuse. Root validation and hosted checks decide the new branch acceptance.
+
+The old PR history, original archives, and article IDs remain in custody. Root canonical
+tools preserve IDs when composing the retarget; this source packet generates no IDs.
+
+Compact and InsideCompletion have only whitespace wraps from those earlier source hashes.
+Their tokens, types, proofs and norms are unchanged; fresh afterimage validation is pending.
