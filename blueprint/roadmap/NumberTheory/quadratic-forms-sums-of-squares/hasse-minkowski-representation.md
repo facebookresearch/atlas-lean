@@ -37,7 +37,7 @@ A good expansion states and links:
   (Serre, Chapter VI, §4.1; in Mathlib as `Nat.forall_exists_prime_gt_and_eq_mod`);
 - the invariants $d$ and $\varepsilon$ of a form over $\mathbb{Q}_p$ (Serre, Chapter IV, §2.1), the
   criteria for representing $0$ in four and more variables (Serre, Chapter IV, §2), and the real case
-  by signature (Serre, Chapter IV, §2.4); the ternary case is a node of its own.
+  by signature (Serre, Chapter IV, §2.4); the ternary case, over $\mathbb{Q}_p$ and over $\mathbb{R}$, is a result of its own.
 
 ## Depends on
 
@@ -45,9 +45,9 @@ A good expansion states and links:
 
 ## Proof depends on
 
-- [Representation by ternary quadratic forms over $\mathbb{Q}_p$ and $\mathbb{R}$](ternary-form-local-representation.md), for the local criteria in three variables
-- [Formula for the $p$-adic Hilbert symbol at an odd prime](../p-adic-numbers/hilbert-symbol/padic-hilbert-symbol-formula.md), for the local Hilbert symbols at odd primes in the product formula and the existence theorem
-- [Formula for the $2$-adic Hilbert symbol](../p-adic-numbers/hilbert-symbol/dyadic-hilbert-symbol-formula.md), for the local Hilbert symbol at $2$ in the product formula and the existence theorem
+- [Representation by diagonal ternary forms over $\mathbb{Q}_p$](../p-adic-numbers/hilbert-symbol/diagonal-binary-and-ternary-forms-over-p-and-thr/ternary-criteria.md) and [over $\mathbb{R}$](../p-adic-numbers/hilbert-symbol/diagonal-binary-and-ternary-forms-over-p-and-thr/ternary-criteria-2.md), for the local criteria in three variables
+- [Formula for the $p$-adic Hilbert symbol at an odd prime](../p-adic-numbers/hilbert-symbol/odd-formula/eq-formula-of-ne-two.md), for the local Hilbert symbols at odd primes in the product formula and the existence theorem
+- [Formula for the $2$-adic Hilbert symbol](../p-adic-numbers/hilbert-symbol/two-formula/eq-formula-two.md), for the local Hilbert symbol at $2$ in the product formula and the existence theorem
 
 The rest of its proof is that of the sources below, as the Expansion describes.
 
