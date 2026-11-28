@@ -29,13 +29,15 @@ The statements already proved, such as the oddness of every positive `n` with
 `MathlibExt/NumberTheory/CollatzArithmeticDerivative.lean`, except
 `IsCompatibleSemiprimePair.mod_five`, which lives in
 `MathlibExt/NumberTheory/CollatzArithmeticDerivativeModFive.lean`,
+`IsCompatibleSemiprimePair.mod_ten`, which lives in
+`MathlibExt/NumberTheory/CollatzArithmeticDerivativeModTen.lean`,
 `IsCompatibleSemiprimePair.bounds`, which lives in
 `MathlibExt/NumberTheory/CollatzArithmeticDerivativeBounds.lean`,
 `arithmeticDerivative_bounds`, which lives in
 `MathlibExt/NumberTheory/CollatzArithmeticDerivativeArithmeticDerivativeBounds.lean`, and
 `arithmeticDerivative_collatz_comm_prime_tetration_iff`, which lives in
-`MathlibExt/NumberTheory/CollatzArithmeticDerivativePrimeTetration.lean`; this module imports
-all five publicly. It also publicly imports the prime-roots criterion from
+`MathlibExt/NumberTheory/CollatzArithmeticDerivativePrimeTetration.lean`; this module publicly
+imports each of these modules. It also publicly imports the prime-roots criterion from
 `MathlibExt/NumberTheory/CollatzArithmeticDerivativePrimeRoots.lean`.
 -/
 module
