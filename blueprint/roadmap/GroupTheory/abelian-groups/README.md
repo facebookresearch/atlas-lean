@@ -10,5 +10,6 @@ Structure of abelian groups: finite and finitely generated abelian groups (invar
 - [Increasing unions of isomorphic subgroups](increasing-unions-of-isomorphic-subgroups/README.md)
 - [Structure of finitely generated abelian groups](structure-of-finitely-generated-abelian-groups/README.md)
 - [Two-power ranks of finite abelian groups](two-power-ranks-of-finite-abelian-groups/README.md)
+- [Units of a field modulo roots of unity](units-of-a-field-modulo-roots-of-unity/README.md)
 - [Cardinality of the $n$-torsion of a vector space modulo a lattice](nat-card-torsion-by-quotient-eq-pow-finr.md)
 - [Pure subgroups of abelian groups](is-pure-subgroup.md)
