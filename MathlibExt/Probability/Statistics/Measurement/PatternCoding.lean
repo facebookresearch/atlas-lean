@@ -30,9 +30,9 @@ private theorem zeroOneCoord_nonneg {ι : Type*} (s : ι → Bool) :
     ∀ i, 0 ≤ (if s i then (1 : ℝ) else 0) := by
   intro i
   by_cases h : s i
-  · simp only [if_pos h]
+  · simp only [ite_eq_left h]
     exact zero_le_one
-  · simp only [if_neg h]
+  · simp only [ite_eq_right h]
     exact le_refl _
 
 /-- Zero/one coordinate probabilities are at most one. Private helper for the production statement. -/
@@ -40,9 +40,9 @@ private theorem zeroOneCoord_le_one {ι : Type*} (s : ι → Bool) :
     ∀ i, (if s i then (1 : ℝ) else 0) ≤ 1 := by
   intro i
   by_cases h : s i
-  · simp only [if_pos h]
+  · simp only [ite_eq_left h]
     exact le_refl _
-  · simp only [if_neg h]
+  · simp only [ite_eq_right h]
     exact zero_le_one
 
 /-- Deterministic pattern coding. For any law `p` on finite response

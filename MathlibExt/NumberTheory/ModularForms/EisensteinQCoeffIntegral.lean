@@ -97,7 +97,7 @@ public theorem ModularForm.eisenstein_qCoeff_p_integral_dvd (p : ℕ) [Fact p.Pr
   refine ⟨-(2 * k * D * (σ (k - 1) m : ℤ)) * Nb.sign, Nb.natAbs, ?_, ?_, ?_⟩
   · intro h
     exact hpNb (Int.natCast_dvd.mpr h)
-  · rw [EisensteinSeries.E_qExpansion_coeff hk hk2 m, if_neg hm.ne']
+  · rw [EisensteinSeries.E_qExpansion_coeff hk hk2 m, ite_eq_right hm.ne']
     have hs : ((Nb.natAbs : ℕ) : ℚ) = (Nb.sign : ℚ) * Nb := by
       have hz : ((Nb.natAbs : ℕ) : ℤ) = Nb.sign * Nb := by
         rcases lt_or_gt_of_ne hNb0 with hneg | hpos

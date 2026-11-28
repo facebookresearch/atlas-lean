@@ -9,7 +9,7 @@ $\bowtie[AB, BC, CD]$, whose join of projections also contains $0001$.
 
 ## Depends on
 
-- [Multivalued and join dependencies; 4NF](../dependencies-and-the-chase/multivalued-and-join-dependencies-4nf.md)
+- [Join dependencies and multivalued dependencies](../dependencies-and-the-chase/multivalued-and-join-dependencies/join-dependencies-and-multivalued-dependencies.md)
 - [Characterizations of acyclic database schemas](../join-processing/characterizations-of-acyclic-database-schemas.md)
 
 ## Proof depends on

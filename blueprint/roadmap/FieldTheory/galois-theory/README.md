@@ -4,6 +4,8 @@ Galois theory relates a field extension to its group of automorphisms, covering 
 
 - [Additive Hilbert's theorem 90](additive-hilbert-s-theorem-90/README.md)
 - [Essential dimension of symmetric groups](essential-dimension-of-symmetric-groups/README.md)
+- [Galois correspondence and fixed fields](galois-correspondence-and-fixed-fields/README.md)
+- [Galois descent](galois-descent/README.md)
 - [Galois extensions of the real numbers](galois-extensions-of-the-real-numbers/README.md)
 - [Gauss–Wantzel theorem on constructible polygons](gauss-wantzel-theorem-on-constructible-polygons/README.md)
 - [Solvability by radicals](solvability-by-radicals/README.md)
@@ -15,3 +17,4 @@ Galois theory relates a field extension to its group of automorphisms, covering 
 - [Normal basis theorem](normal-basis-theorem.md)
 - [The closure of a Galois subgroup is the fixing group of its fixed field](topological-closure-eq-fixing-subgroup-f.md)
 - [Four equivalent characterizations of finite Galois extensions](galois-extension-characterization.md)
+- [Injectivity of the Bogomolov–Pop reconstruction correspondence](bogomolov-pop-graph-injectivity.md)

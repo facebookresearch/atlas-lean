@@ -15,6 +15,7 @@ Parts 1-2 follow from the eigenvalue formula; part 3 from the Schmidt decomposit
 ## Depends on
 
 - [Von Neumann entropy and Holevo information](von-neumann-entropy-and-holevo-information.md)
+- [Density matrices, pure states and reduced states](../../quantum-states-distances-and-entropy/density-matrices-and-fidelity/density-matrices-and-reduced-states.md)
 
 ## Proof depends on
 

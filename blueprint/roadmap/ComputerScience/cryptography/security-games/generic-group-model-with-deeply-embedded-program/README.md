@@ -35,3 +35,5 @@
 - [The exponentiation program issues exactly m queries](length-queries-of-pow-prog.md)
 - [Environment extension commutes with relabeling](snoc-env-congr-phi.md)
 - [Generic-group evaluation is invariant under relabeling](eval-natural.md)
+- [Generic group experiments with random bit-string identifiers](generic-group-experiments-with-random-bit-string/README.md)
+- [Prime Power Agreement](aff-eval-eq-card-le-prime-pow.md)
