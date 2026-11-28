@@ -1,8 +1,8 @@
 # Orphan-message-free asynchronous session subtyping is undecidable
 
-The asynchronous subtyping of Chen, Dezani-Ciancaglini, Scalas and Yoshida, which carries payload types on choices and forbids delaying supertype inputs forever (no orphan messages), is undecidable.
+The asynchronous subtyping of Chen, Dezani-Ciancaglini and Yoshida (PPDP 2014), which carries payload types on choices and forbids delaying supertype inputs forever (no orphan messages), is undecidable.
 
-**Session types with carried types.** Types are $T ::= \oplus\{l_i\langle U_i \rangle : T_i\}_{i \in I} \mid \&\{l_i\langle U_i \rangle : T_i\}_{i \in I} \mid \mu \mathbf{t}.T \mid \mathbf{t} \mid \mathbf{end}$ with carried types $U ::= T \mid \mathsf{bool} \mid \mathsf{nat} \mid \cdots$; unfolding and input contexts are as for [asynchronous subtyping](asynchronous-subtyping-of-binary-session-types.md).
+**Session types with carried types.** Types are $T ::= \oplus\{l_i\langle U_i \rangle : T_i\}_{i \in I} \mid \&\{l_i(U_i) : T_i\}_{i \in I} \mid \mu \mathbf{t}.T \mid \mathbf{t} \mid \mathbf{end}$ with carried types $U ::= T \mid \mathsf{bool} \mid \mathsf{nat} \mid \cdots$; unfolding is as for [asynchronous subtyping](asynchronous-subtyping-of-binary-session-types.md), and input contexts carry payloads on their branchings, $\mathcal{A} ::= [\,]^n \mid \&\{l_i(U_i) : \mathcal{A}_i\}_{i \in I}$ (Definitions 4.3 and 4.4 of the source).
 
 **Orphan-message-free subtyping $\le_o$.** A relation $\mathcal{R}$ on session and primitive types qualifies if $(T, S) \in \mathcal{R}$ implies clauses 1 and 4 of asynchronous subtyping and:
 

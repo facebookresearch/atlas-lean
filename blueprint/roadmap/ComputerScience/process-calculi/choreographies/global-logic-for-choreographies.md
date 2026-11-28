@@ -10,6 +10,8 @@ $$
 
 where $\exists$ ranges over channels, participants, labels and expression placeholders. Satisfaction $C \models_\sigma \phi$: $\mathsf{end}$ is true if $C \equiv \mathbf 0$; $e_1@A = e_2@B$ if both evaluate in $\sigma$ to the same value; $\langle \ell \rangle \phi$ if $(\sigma, C) \xrightarrow{\ell} (\sigma', C')$ with $C' \models_{\sigma'} \phi$; $\Diamond \phi$ if $(\sigma, C) \to^* (\sigma', C')$ with $C' \models_{\sigma'} \phi$, where $\to^*$ is the transitive closure of the transition relation, as in Section 2.2 of the source, so $\Diamond$ requires at least one step; $\phi \mid \chi$ if $C \equiv C_1 \mid C_2$ with $C_1 \models_\sigma \phi$ and $C_2 \models_\sigma \chi$; the Boolean connectives and $\exists$ (for some value of the appropriate sort) as usual.
 
+From Section 3 on, the source considers only well-typed choreographies (Assumption 2.5). The satisfaction clauses do not depend on this assumption.
+
 ## Depends on
 
 - [The global calculus of choreographies](global-calculus.md)
@@ -24,4 +26,4 @@ The logic extends Hennessy–Milner logic with first-order quantification, the e
 
 ## Sources
 
-- Marco Carbone, Davide Grohmann, Thomas T. Hildebrandt and Hugo A. López, "A Logic for Choreographies", in *Proceedings of the 3rd Workshop on Programming Language Approaches to Concurrency and Communication-cEntric Software (PLACES 2010)*, Electronic Proceedings in Theoretical Computer Science 69, 2011, pp. 29–43, <https://doi.org/10.4204/EPTCS.69.3>; read in arXiv:1110.4159v1, <https://arxiv.org/abs/1110.4159v1>: Sections 3.1–3.2 with Definition 3.7 (syntax and satisfaction of the global logic), in the numbering of that version.
+- Marco Carbone, Davide Grohmann, Thomas T. Hildebrandt and Hugo A. López, "A Logic for Choreographies", in *Proceedings of the 3rd Workshop on Programming Language Approaches to Concurrency and Communication-cEntric Software (PLACES 2010)*, Electronic Proceedings in Theoretical Computer Science 69, 2011, pp. 29–43, <https://doi.org/10.4204/EPTCS.69.3>; read in arXiv:1110.4159v1, <https://arxiv.org/abs/1110.4159v1>: Table 2 in Section 3.1 (syntax), Table 3 in Section 3.2 (satisfaction), Definition 3.7 (satisfiability, validity and logical consequence) and Assumption 2.5, in the numbering of that version.

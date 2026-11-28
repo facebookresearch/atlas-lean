@@ -19,8 +19,8 @@ The π-calculus is Turing-complete, so termination of π-calculus terms is undec
 
 This is an obstacle to using the fragment directly, since membership has to be established by hand; the source's type system gives a sufficient, decidable criterion (typably hierarchical terms) instead.
 
-A good expansion links the undecidability of termination of π-calculus terms and the decidability of termination for depth-bounded terms (Theorem 1 of the source).
+The reduction uses Lemma 1 (every terminating term is hierarchical) and Theorem 3 (every hierarchical term is depth-bounded) of the source. A good expansion links the undecidability of termination of π-calculus terms and the decidability of termination for depth-bounded terms (Theorem 1 of the source).
 
 ## Sources
 
-- Emanuele D'Osualdo and C.-H. Luke Ong, "On Hierarchical Communication Topologies in the π-calculus", in *Programming Languages and Systems (ESOP 2016)*, Lecture Notes in Computer Science 9632, Springer, 2016, pp. 149–175, <https://doi.org/10.1007/978-3-662-49498-1_7>; read as arXiv:1601.01725v2, <https://arxiv.org/abs/1601.01725v2>: Theorem 4 and Lemma 1 in Section 3, and Theorem 1 (decidability of termination for depth-bounded terms, cited from earlier work) in Section 2.3, in the numbering of that version.
+- Emanuele D'Osualdo and C.-H. Luke Ong, "On Hierarchical Communication Topologies in the π-calculus", in *Programming Languages and Systems (ESOP 2016)*, Lecture Notes in Computer Science 9632, Springer, 2016, pp. 149–175, <https://doi.org/10.1007/978-3-662-49498-1_7>; read as arXiv:1601.01725v2, <https://arxiv.org/abs/1601.01725v2>: Theorems 3 and 4 and Lemma 1 in Section 3, and Theorem 1 (decidability of termination for depth-bounded terms, cited from earlier work) in Section 2.3, in the numbering of that version.

@@ -13,5 +13,3 @@
 - [Test of the true assertion is the identity relation](test-set-univ.md)
 - [Test of a negated assertion is the complement within identity](test-set-compl.md)
 - [Test of a union of assertions is the union of tests](test-set-union.md)
-- [Propositional while programs with graph loop](propositional-while-programs-with-graph-loop.md)
-- [Emptiness of deterministic propositional while programs with graph loop is Π⁰₁-complete](emptiness-of-deterministic-pwp-with-loop.md)

@@ -17,10 +17,11 @@ $R$ is *consistent* if $\sum_{s \in \Sigma^*} R(s) = 1$.
 3. *equivalence*: given RNNs $R$ and $R'$, is $R(s) = R'(s)$ for all $s \in \Sigma^*$?
 4. *minimization*: given an RNN $R$ and $n \in \mathbb{N}$, is there an RNN with at most $n$ neurons computing the same weighted language?
 
-Moreover, no computable function bounds the length of a highest-weighted string of a consistent RNN in terms of the size of the RNN. In contrast, the best string problem is decidable for consistent RNNs, and NP-complete when restricted to strings of polynomial length.
+Moreover, no computable function bounds the length of a highest-weighted string of a consistent RNN in terms of the size of the RNN. In contrast, the best string problem is decidable for consistent RNNs (Theorem 9), and identifying the best string among strings of length polynomial in the size of the network's encoding is NP-complete for consistent RNNs (Theorem 11).
 
 ## Depends on
 
+- [Softmax](../../not-yet-classified/basic/part-06/softmax.md)
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
@@ -29,7 +30,7 @@ Moreover, no computable function bounds the length of a highest-weighted string 
 
 ## Expansion
 
-All four reductions start from Siegelmann and Sontag's theorem that, for every deterministic Turing machine $M$, a network with saturated linear activation over a one-letter alphabet has a neuron that takes the value $1$ exactly at step $T$ if $M$ halts on empty input after $T$ steps, and stays $0$ if $M$ does not halt. Since saturated linear activation is a difference of two ReLUs, a ReLU network with two designated neurons simulates it. Feeding the difference of these neurons into the predictions of a small example network yields an RNN that is consistent, has a string of weight above $0.25$, differs from a fixed trivial network, and needs at least one neuron, each exactly when $M$ halts. A good expansion links a page for the Siegelmann–Sontag simulation of Turing machines by recurrent networks.
+All four reductions start from Siegelmann and Sontag's theorem that, for every deterministic Turing machine $M$, a network with saturated linear activation over a one-letter alphabet has a neuron that takes the value $1$ exactly at step $T$ if $M$ halts on empty input after $T$ steps, and stays $0$ if $M$ does not halt. Since saturated linear activation is a difference of two ReLUs, a ReLU network with two designated neurons simulates it. Two readouts of this difference are used. For consistency and best string (Theorems 6 and 8), it is fed into the predictions of a small example network, giving an RNN that is consistent, and has a string of weight above $0.25$, exactly when $M$ halts; when $M$ does not halt this RNN is inconsistent. For equivalence and minimization (Theorems 12 and 13), it is fed into the end-marker prediction, so that when $M$ does not halt the RNN is consistent and computes the same weighted language as a trivial network with no neurons, and when $M$ halts it differs from it. A good expansion links a page for the Siegelmann–Sontag simulation of Turing machines by recurrent networks.
 
 ## Sources
 

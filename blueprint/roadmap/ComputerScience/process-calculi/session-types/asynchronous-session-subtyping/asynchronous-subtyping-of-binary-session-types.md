@@ -1,6 +1,6 @@
 # Asynchronous subtyping of binary session types
 
-Asynchronous subtyping relates binary session types built from labeled selection, branching and recursion: a subtype may anticipate an output that the supertype performs only after some inputs, since outputs are buffered. It is the largest relation closed under four simulation clauses.
+Asynchronous subtyping relates binary session types built from labeled selection, branching and recursion: a subtype may anticipate an output that the supertype performs only after some inputs, since outputs are buffered. It is the largest relation satisfying four simulation clauses.
 
 **Session types.** Over a set $L$ of labels, binary session types are given by
 
@@ -33,7 +33,7 @@ None.
 
 ## Expansion
 
-Clause 2 is output anticipation: the supertype $\&\{l_1 : \oplus\{l : T_1\}, l_2 : \oplus\{l : T_2\}\}$ has the subtype $\oplus\{l : \&\{l_1 : T_1, l_2 : T_2\}\}$, with input context $\&\{l_1 : [\,]^1, l_2 : [\,]^2\}$. Outputs are covariant ($I \subseteq J_k$) and inputs contravariant ($J \subseteq I$). Requiring $\mathcal{A} = [\,]^1$ in clause 2 gives synchronous subtyping in the style of Gay and Hole. The relation follows Mostrous and Yoshida, with input contexts as in Chen, Dezani-Ciancaglini, Scalas and Yoshida.
+Clause 2 is output anticipation: the supertype $\&\{l_1 : \oplus\{l : T_1\}, l_2 : \oplus\{l : T_2\}\}$ has the subtype $\oplus\{l : \&\{l_1 : T_1, l_2 : T_2\}\}$, with input context $\&\{l_1 : [\,]^1, l_2 : [\,]^2\}$. Outputs are covariant ($I \subseteq J_k$) and inputs contravariant ($J \subseteq I$). Requiring $\mathcal{A} = [\,]^1$ in clause 2 gives synchronous subtyping in the style of Gay and Hole. The relation follows Mostrous and Yoshida, with input contexts as in Chen, Dezani-Ciancaglini and Yoshida (PPDP 2014).
 
 ## Sources
 
