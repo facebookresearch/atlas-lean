@@ -17,8 +17,9 @@ public import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
 public import Mathlib.NumberTheory.NumberField.InfinitePlace.TotallyRealComplex
 public import Mathlib.NumberTheory.NumberField.Units.DirichletTheorem
 public import Mathlib.RingTheory.Polynomial.Cyclotomic.Roots
-public import Mathlib.Tactic.IntervalCases
-public import MathlibExt.NumberTheory.NumberField.OrderIdeals
+public import MathlibExt.NumberTheory.NumberField.Order
+import Mathlib.Tactic.IntervalCases
+import MathlibExt.NumberTheory.NumberField.FiniteUnits
 
 @[expose] public section
 
@@ -145,26 +146,6 @@ private theorem exists_isPrimitiveRoot_natCard_units (S : Subalgebra ℤ K) [Fin
   refine ⟨g, hg, ?_⟩
   rcases hc with h | h | h | h | h <;> omega
 
-/-- The unit rank of an imaginary quadratic field is zero. -/
-private theorem rank_eq_zero (hK : Module.finrank ℚ K = 2) [IsTotallyComplex K] :
-    Units.rank K = 0 := by
-  have h1 := InfinitePlace.card_add_two_mul_card_eq_rank K
-  have h0 : InfinitePlace.nrRealPlaces K = 0 := nrRealPlaces_eq_zero_iff.mpr ‹_›
-  rw [Units.rank, InfinitePlace.card_eq_nrRealPlaces_add_nrComplexPlaces]
-  omega
-
-/-- The unit group of the ring of integers of an imaginary quadratic field is finite. -/
-private theorem finite_units (hK : Module.finrank ℚ K = 2) [IsTotallyComplex K] :
-    Finite (integralClosure ℤ K)ˣ := by
-  have hr := rank_eq_zero hK
-  have hsurj : Function.Surjective ((↑) : Units.torsion K → (𝓞 K)ˣ) := by
-    intro x
-    obtain ⟨⟨ζ, e⟩, hx, -⟩ := Units.exist_unique_eq_mul_prod K x
-    refine ⟨ζ, ?_⟩
-    have : IsEmpty (Fin (Units.rank K)) := by rw [hr]; infer_instance
-    rw [hx, Finset.univ_eq_empty, Finset.prod_empty, mul_one]
-  exact Finite.of_surjective _ hsurj
-
 /-- If an order `O` of `K`, `[K : ℚ] = 2`, contains a primitive `p ^ k`-th root of unity with
 `φ(p ^ k) = 2`, then `O` contains the ring of integers. -/
 private theorem integralClosure_le_of_isPrimitiveRoot (hK : Module.finrank ℚ K = 2) {p k : ℕ}
@@ -201,7 +182,7 @@ which fields have $4$ or $6$ units. -/
 theorem natCard_units_integralClosure (hK : Module.finrank ℚ K = 2) [IsTotallyComplex K] :
     Nat.card (integralClosure ℤ K)ˣ = 2 ∨ Nat.card (integralClosure ℤ K)ˣ = 4 ∨
       Nat.card (integralClosure ℤ K)ˣ = 6 := by
-  have := finite_units hK
+  have : Finite (integralClosure ℤ K)ˣ := NumberField.Units.finite_of_finrank_eq_two hK
   exact (exists_isPrimitiveRoot_natCard_units _ hK).choose_spec.2
 
 /-- The units of an order inject into the units of the ring of integers. -/
@@ -219,7 +200,7 @@ K. Conrad, *Dirichlet's unit theorem*, Example 2.2 (p. 2), quoted at
 `NumberField.IsOrder.natCard_units_integralClosure`. -/
 theorem natCard_units_of_ne (hO : NumberField.IsOrder K O) (hK : Module.finrank ℚ K = 2)
     [IsTotallyComplex K] (hne : O ≠ integralClosure ℤ K) : Nat.card Oˣ = 2 := by
-  have := finite_units hK
+  have : Finite (integralClosure ℤ K)ˣ := NumberField.Units.finite_of_finrank_eq_two hK
   have : Finite Oˣ := Finite.of_injective _ (units_map_injective hO)
   obtain ⟨g, hg, h | h | h⟩ := exists_isPrimitiveRoot_natCard_units O hK
   · exact h
@@ -252,7 +233,7 @@ theorem index_units_range (hO : NumberField.IsOrder K O) (hK : Module.finrank �
     (U.index = 1 ∨ U.index = 2 ∨ U.index = 3) ∧ (O = integralClosure ℤ K → U.index = 1) ∧
       (O ≠ integralClosure ℤ K → U.index * 2 = Nat.card (integralClosure ℤ K)ˣ) := by
   intro U
-  have := finite_units hK
+  have : Finite (integralClosure ℤ K)ˣ := NumberField.Units.finite_of_finrank_eq_two hK
   have hcard : Nat.card U = Nat.card Oˣ :=
     (Nat.card_congr (MonoidHom.ofInjective (units_map_injective hO)).toEquiv).symm
   have hmul := U.card_mul_index

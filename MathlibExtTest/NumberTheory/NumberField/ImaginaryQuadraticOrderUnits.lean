@@ -21,7 +21,7 @@ namespace NumberField.IsOrder.ImaginaryQuadraticOrderUnitsTest
 #check @NumberField.IsOrder.natCard_units_of_ne
 #check @NumberField.IsOrder.index_units_range
 
-instance : IsCyclotomicExtension {4} ℚ (CyclotomicField 4 ℚ) :=
+local instance : IsCyclotomicExtension {4} ℚ (CyclotomicField 4 ℚ) :=
   have : NeZero ((4 : ℕ) : ℚ) := ⟨by norm_num⟩
   CyclotomicField.isCyclotomicExtension 4 ℚ
 
@@ -30,7 +30,7 @@ theorem finrank_cyclotomicField_four : Module.finrank ℚ (CyclotomicField 4 ℚ
   rw [IsCyclotomicExtension.Rat.finrank 4 (CyclotomicField 4 ℚ)]
   decide
 
-instance : NumberField.IsTotallyComplex (CyclotomicField 4 ℚ) :=
+local instance : NumberField.IsTotallyComplex (CyclotomicField 4 ℚ) :=
   IsCyclotomicExtension.Rat.isTotallyComplex (n := 4) (CyclotomicField 4 ℚ) (by norm_num)
 
 -- The ring of integers of `ℚ(i)` has `2`, `4` or `6` units.
@@ -54,6 +54,14 @@ example : NumberField.IsOrder (CyclotomicField 4 ℚ) (integralClosure ℤ (Cycl
 example (O : Subalgebra ℤ (CyclotomicField 4 ℚ)) (hO : NumberField.IsOrder _ O)
     (hne : O ≠ integralClosure ℤ (CyclotomicField 4 ℚ)) : Nat.card Oˣ = 2 :=
   NumberField.IsOrder.natCard_units_of_ne hO finrank_cyclotomicField_four hne
+
+-- For a non-maximal order of `ℚ(i)`, twice the unit index is the number of units of `ℤ[i]`.
+example (O : Subalgebra ℤ (CyclotomicField 4 ℚ)) (hO : NumberField.IsOrder _ O)
+    (hne : O ≠ integralClosure ℤ (CyclotomicField 4 ℚ)) :
+    (Units.map (MonoidHom.ofClass
+      (Subalgebra.inclusion hO.le_integralClosure))).range.index * 2 =
+      Nat.card (integralClosure ℤ (CyclotomicField 4 ℚ))ˣ :=
+  (NumberField.IsOrder.index_units_range hO finrank_cyclotomicField_four).2.2 hne
 
 end NumberField.IsOrder.ImaginaryQuadraticOrderUnitsTest
 
