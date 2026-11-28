@@ -15,6 +15,7 @@ public import MathlibExt.Algebra.Homology.HomCochainComplexQuasiIso
 public import MathlibExt.Algebra.Homology.HomCochainComplexShortExact
 public import MathlibExt.Algebra.Homology.HomCochainComplexSingle
 public import Mathlib.Algebra.Category.ModuleCat.Biproducts
+public import Mathlib.Algebra.Category.ModuleCat.Projective
 public meta import Mathlib.Tactic.NormNum
 
 /-!
@@ -35,7 +36,7 @@ morphisms, together with their relevant instance inference.
 noncomputable section
 set_option autoImplicit false
 
-open CategoryTheory CategoryTheory.Limits HomologicalComplex
+open CategoryTheory CategoryTheory.Limits HomologicalComplex ZeroObject
 
 namespace HomCochainComplexClients
 
@@ -47,22 +48,24 @@ private def twice : Z ⟶ Z := ModuleCat.ofHom ((2 : ℤ) • (LinearMap.id : �
 private def three : Z ⟶ Z := ModuleCat.ofHom ((3 : ℤ) • (LinearMap.id : ℤ →ₗ[ℤ] ℤ))
 
 private def twoTerm : ChainComplex C ℕ :=
-  ChainComplex.mk Z Z (0 : C) twice 0 (by simp)
-    (fun _ => ⟨0, 0, by simp⟩)
+  ChainComplex.mk Z Z (0_ C) twice 0 (by simp)
+    (fun _ => ⟨0_ C, 0, by simp⟩)
 
 private abbrev homTwo : CochainComplex AddCommGrpCat ℕ :=
   (homCochainComplexFunctor C Z).obj (Opposite.op twoTerm)
 
-example : (homTwo.d 0 1).hom (𝟙 Z) (3 : ℤ) = 6 := by
-  change (twoTerm.d 1 0 ≫ 𝟙 Z).hom 3 = 6
-  simp [twoTerm, twice]
+example : (show Z ⟶ Z from (homTwo.d 0 1).hom (𝟙 Z)).hom (3 : ℤ) = (6 : ℤ) := by
+  change (twice ≫ 𝟙 Z).hom (3 : ℤ) = (6 : ℤ)
+  norm_num [twice]
 
 private def tripleChain : twoTerm ⟶ twoTerm := (3 : ℤ) • 𝟙 twoTerm
 
 example :
-    (((homCochainComplexFunctor C Z).map tripleChain.op).f 0).hom twice (3 : ℤ) = 18 := by
-  change (tripleChain.f 0 ≫ twice).hom 3 = 18
-  norm_num [tripleChain, twoTerm, twice]
+    (show Z ⟶ Z from
+      (((homCochainComplexFunctor C Z).map tripleChain.op).f 0).hom twice).hom (3 : ℤ) =
+        (18 : ℤ) := by
+  change (((3 : ℤ) • 𝟙 Z) ≫ twice).hom (3 : ℤ) = (18 : ℤ)
+  norm_num [twice]
 
 private def includeFirst : Z ⟶ ZZ :=
   ModuleCat.ofHom (LinearMap.inl ℤ ℤ ℤ)
@@ -84,17 +87,22 @@ private def coefficientSplitting : coefficientSequence.Splitting where
   s_g := by apply ModuleCat.hom_ext; apply LinearMap.ext; intro z; rfl
   id := by
     apply ModuleCat.hom_ext
-    apply LinearMap.ext
-    intro z
-    simp [coefficientSequence, includeFirst, projectSecond]
+    change (LinearMap.inl ℤ ℤ ℤ).comp (LinearMap.fst ℤ ℤ ℤ) +
+      (LinearMap.inr ℤ ℤ ℤ).comp (LinearMap.snd ℤ ℤ ℤ) = LinearMap.id
+    ext z
+    rcases z with ⟨a, b⟩
+    simp
 
 private theorem coefficient_shortExact : coefficientSequence.ShortExact :=
   coefficientSplitting.shortExact
 
-private def singleFunctor : C ⥤ ChainComplex C ℕ :=
+private abbrev singleFunctor : C ⥤ ChainComplex C ℕ :=
   HomologicalComplex.single C (ComplexShape.down ℕ) 1
 
 private abbrev singleChain : ChainComplex C ℕ := singleFunctor.obj Z
+
+private instance : Projective Z :=
+  ModuleCat.projective_of_free (Module.Free.chooseBasis ℤ ℤ)
 
 private instance (n : ℕ) : Projective (singleChain.X n) := by
   by_cases hn : n = 1
@@ -154,12 +162,13 @@ example : exactWindow.obj.map' 2 3 = coefficientHom_shortExact.δ 0 1 (by simp) 
 
 -- The supported coefficient arrow is the literal nonzero inclusion on Hom groups.
 example :
-    (((homCochainComplexCoefficientFunctor singleChain).map includeFirst).f 1).hom
-      ((HomologicalComplex.singleObjXSelf (ComplexShape.down ℕ) 1 Z).hom ≫ three)
-        ((HomologicalComplex.singleObjXSelf (ComplexShape.down ℕ) 1 Z).inv.hom (2 : ℤ)) =
-      (6, 0) := by
-  simp [homCochainComplexCoefficientFunctor, homCochainComplexBifunctor,
-    homCochainComplexFunctor, includeFirst, three]
+    (show singleChain.X 1 ⟶ ZZ from
+      (((homCochainComplexCoefficientFunctor singleChain).map includeFirst).f 1).hom
+        ((HomologicalComplex.singleObjXSelf (ComplexShape.down ℕ) 1 Z).hom ≫ three)).hom
+          ((HomologicalComplex.singleObjXSelf (ComplexShape.down ℕ) 1 Z).inv.hom (2 : ℤ)) =
+      ((6 : ℤ), (0 : ℤ)) := by
+  change includeFirst.hom (three.hom (2 : ℤ)) = ((6 : ℤ), (0 : ℤ))
+  norm_num [includeFirst, three]
 
 private def negativeIso : singleChain ≅ singleChain :=
   singleFunctor.mapIso ((LinearEquiv.neg ℤ : ℤ ≃ₗ[ℤ] ℤ).toModuleIso)
@@ -213,7 +222,7 @@ example :
     ((homCochainComplexHomologyNatIsoOfProjectiveQuasiIso negativeIso.hom 1).app Z).hom_inv_id
     homologyValue
   have hzero : homologyValue = 0 := by
-    simpa only [map_zero] using hround.symm.trans hh
+    simpa only [map_zero, CategoryTheory.ConcreteCategory.id_apply] using hround.symm.trans hh
   have h' := congrArg supportedHomologyIso.hom.hom hzero
   rw [homologyValue_coordinate, map_zero] at h'
   have h'' := congrArg (fun f : Z ⟶ Z => f.hom (1 : ℤ)) h'
