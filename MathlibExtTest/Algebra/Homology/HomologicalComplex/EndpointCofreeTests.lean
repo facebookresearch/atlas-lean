@@ -96,17 +96,17 @@ private abbrev step (n : ℕ) : N ⟶ N :=
 private lemma step_square (n : ℕ) : step (n + 1) ≫ step n = 0 := by
   by_cases h : n % 2 = 0
   · have hn : (n + 1) % 2 ≠ 0 := by omega
-    simpa only [step, if_pos h, if_neg hn] using three_two
+    simpa only [step, ite_eq_left h, ite_eq_right hn] using three_two
   · have hn : (n + 1) % 2 = 0 := by omega
-    simpa only [step, if_neg h, if_pos hn] using two_three
+    simpa only [step, ite_eq_right h, ite_eq_left hn] using two_three
 
 private abbrev K : ChainComplex A ℕ where
   X _ := N
   d i j := if c.Rel i j then step j else 0
-  shape i j hij := by simp only [if_neg hij]
+  shape i j hij := by simp only [ite_eq_right hij]
   d_comp_d' i j k hij hjk := by
     have h : k + 1 = j := hjk
-    simp only [if_pos hij, if_pos hjk]
+    simp only [ite_eq_left hij, ite_eq_left hjk]
     rw [← h]
     exact step_square k
 
@@ -120,7 +120,7 @@ private lemma rel_two_one : c.Rel 2 1 := by decide
 
 private abbrev I : ℕ → A := fun _ => J
 private abbrev a : ∀ i : ℕ, K.X i ⟶ I i := fun _ => Injective.ι N
-private abbrev D : ChainComplex A ℕ := endpointCofree (c := c) I
+private abbrev D : ChainComplex A ℕ := endpointCofree c I
 private abbrev embedding : K ⟶ D := endpointCofreeHom K I a
 
 private instance coefficient_injective : ∀ i, Injective (I i) :=
@@ -131,20 +131,20 @@ private instance coefficient_mono : ∀ i, Mono (a i) :=
 
 private lemma d_one_zero : (K.d 1 0).hom (ULift.up 1) = ULift.up (2 : ZMod 6) := by
   change (if c.Rel 1 0 then step 0 else 0).hom (ULift.up 1) = _
-  rw [if_pos rel_one_zero]
+  rw [ite_eq_left rel_one_zero]
   change (2 : ℤ) • (ULift.up (1 : ZMod 6) : V) = ULift.up (2 : ZMod 6)
   exact two_one
 
 private lemma d_two_one : (K.d 2 1).hom (ULift.up 1) = ULift.up (3 : ZMod 6) := by
   change (if c.Rel 2 1 then step 1 else 0).hom (ULift.up 1) = _
-  rw [if_pos rel_two_one]
-  simp only [step, if_neg (by decide : ¬ (1 : ℕ) % 2 = 0)]
+  rw [ite_eq_left rel_two_one]
+  simp only [step, ite_eq_right (by decide : ¬ (1 : ℕ) % 2 = 0)]
   change (3 : ℤ) • (ULift.up (1 : ZMod 6) : V) = ULift.up (3 : ZMod 6)
   apply ULift.ext
   decide
 
 private lemma embedding_second_one :
-    ((embedding.f 1 ≫ endpointCofreeSecondProjection (c := c) I 1) ≫
+    ((embedding.f 1 ≫ endpointCofreeSecondProjection c I 1) ≫
       (endpointCofreeNextTermIso I rel_one_zero).hom).hom (ULift.up 1) =
         (Injective.ι N).hom (ULift.up (2 : ZMod 6)) := by
   rw [endpointCofreeHom_snd_of_rel K I a rel_one_zero]
@@ -152,14 +152,14 @@ private lemma embedding_second_one :
   rw [d_one_zero]
 
 private lemma embedding_second_two :
-    ((embedding.f 2 ≫ endpointCofreeSecondProjection (c := c) I 2) ≫
+    ((embedding.f 2 ≫ endpointCofreeSecondProjection c I 2) ≫
       (endpointCofreeNextTermIso I rel_two_one).hom).hom (ULift.up 1) =
         (Injective.ι N).hom (ULift.up (3 : ZMod 6)) := by
   rw [endpointCofreeHom_snd_of_rel K I a rel_two_one]
   change (Injective.ι N).hom ((K.d 2 1).hom (ULift.up 1)) = _
   rw [d_two_one]
 
-example : endpointCofreeNextTerm (c := c) I 0 = (0 : A) :=
+example : endpointCofreeNextTerm c I 0 = (0 : A) :=
   endpointCofreeNextTerm_of_no_next I 0 no_next_zero
 
 example : D.X 0 ≅ J :=
@@ -183,7 +183,7 @@ example : K.d 2 1 ≫ K.d 1 0 = 0 := K.d_comp_d 2 1 0
 
 example : EnoughInjectives (HomologicalComplex A c) := inferInstance
 
-example : Injective D := endpointCofree_injective I
+example : Injective D := endpointCofree_injective c I
 
 example : Mono embedding := endpointCofreeHom_mono K I a
 
@@ -194,18 +194,18 @@ example :
   exact cover_ne_zero (by decide : (1 : ZMod 6) ≠ 0)
 
 example :
-    ((embedding.f 1 ≫ endpointCofreeSecondProjection (c := c) I 1) ≫
+    ((embedding.f 1 ≫ endpointCofreeSecondProjection c I 1) ≫
       (endpointCofreeNextTermIso I rel_one_zero).hom).hom (ULift.up 1) =
         (Injective.ι N).hom (ULift.up (2 : ZMod 6)) ∧
-    ((embedding.f 2 ≫ endpointCofreeSecondProjection (c := c) I 2) ≫
+    ((embedding.f 2 ≫ endpointCofreeSecondProjection c I 2) ≫
       (endpointCofreeNextTermIso I rel_two_one).hom).hom (ULift.up 1) =
         (Injective.ι N).hom (ULift.up (3 : ZMod 6)) :=
   ⟨embedding_second_one, embedding_second_two⟩
 
 example :
-    ((embedding.f 1 ≫ endpointCofreeSecondProjection (c := c) I 1) ≫
+    ((embedding.f 1 ≫ endpointCofreeSecondProjection c I 1) ≫
       (endpointCofreeNextTermIso I rel_one_zero).hom).hom (ULift.up 1) ≠ 0 ∧
-    ((embedding.f 2 ≫ endpointCofreeSecondProjection (c := c) I 2) ≫
+    ((embedding.f 2 ≫ endpointCofreeSecondProjection c I 2) ≫
       (endpointCofreeNextTermIso I rel_two_one).hom).hom (ULift.up 1) ≠ 0 := by
   rw [embedding_second_one, embedding_second_two]
   exact ⟨cover_ne_zero (by decide : (2 : ZMod 6) ≠ 0),
@@ -215,14 +215,14 @@ private abbrev coefficientDouble : ∀ i : ℕ, I i ⟶ I i :=
   fun _ => (2 : ℤ) • 𝟙 J
 
 example :
-    ((embedding ≫ endpointCofreeMap (c := c) coefficientDouble).f 0 ≫
-      endpointCofreeProjection (c := c) I 0).hom (ULift.up 1) =
+    ((embedding ≫ endpointCofreeMap c coefficientDouble).f 0 ≫
+      endpointCofreeProjection c I 0).hom (ULift.up 1) =
         (Injective.ι N).hom (ULift.up (2 : ZMod 6)) ∧
-    ((embedding ≫ endpointCofreeMap (c := c) coefficientDouble).f 0 ≫
-      endpointCofreeProjection (c := c) I 0).hom (ULift.up 1) ≠ 0 := by
+    ((embedding ≫ endpointCofreeMap c coefficientDouble).f 0 ≫
+      endpointCofreeProjection c I 0).hom (ULift.up 1) ≠ 0 := by
   have hvalue :
-      ((embedding ≫ endpointCofreeMap (c := c) coefficientDouble).f 0 ≫
-        endpointCofreeProjection (c := c) I 0).hom (ULift.up 1) =
+      ((embedding ≫ endpointCofreeMap c coefficientDouble).f 0 ≫
+        endpointCofreeProjection c I 0).hom (ULift.up 1) =
           (Injective.ι N).hom (ULift.up (2 : ZMod 6)) := by
     rw [endpointCofreeHom_naturality K a coefficientDouble, endpointCofreeHom_fst]
     change (2 : ℤ) • (Injective.ι N).hom (ULift.up (1 : ZMod 6)) = _
@@ -247,24 +247,24 @@ private lemma step_square {i j : ZMod 2} (hij : c.Rel i j) : step i ≫ step j =
   fin_cases i <;> fin_cases j
   · exact False.elim ((by decide : ¬ c.Rel 0 0) hij)
   · change step (0 : ZMod 2) ≫ step (1 : ZMod 2) = 0
-    simpa only [step, if_pos rfl, if_neg (by decide : (1 : ZMod 2) ≠ 0), ite_true]
+    simpa only [step, ite_eq_left rfl, ite_eq_right (by decide : (1 : ZMod 2) ≠ 0), ite_true]
       using two_three
   · change step (1 : ZMod 2) ≫ step (0 : ZMod 2) = 0
-    simpa only [step, if_pos rfl, if_neg (by decide : (1 : ZMod 2) ≠ 0), ite_true]
+    simpa only [step, ite_eq_left rfl, ite_eq_right (by decide : (1 : ZMod 2) ≠ 0), ite_true]
       using three_two
   · exact False.elim ((by decide : ¬ c.Rel 1 1) hij)
 
 private abbrev K : HomologicalComplex A c where
   X _ := N
   d i j := if c.Rel i j then step i else 0
-  shape i j hij := by simp only [if_neg hij]
+  shape i j hij := by simp only [ite_eq_right hij]
   d_comp_d' i j k hij hjk := by
-    simp only [if_pos hij, if_pos hjk]
+    simp only [ite_eq_left hij, ite_eq_left hjk]
     exact step_square hij
 
 private abbrev I : ZMod 2 → A := fun _ => J
 private abbrev a : ∀ i : ZMod 2, K.X i ⟶ I i := fun _ => Injective.ι N
-private abbrev D : HomologicalComplex A c := endpointCofree (c := c) I
+private abbrev D : HomologicalComplex A c := endpointCofree c I
 private abbrev embedding : K ⟶ D := endpointCofreeHom K I a
 
 private instance coefficient_injective : ∀ i, Injective (I i) :=
@@ -275,20 +275,20 @@ private instance coefficient_mono : ∀ i, Mono (a i) :=
 
 private lemma d_zero_one : (K.d 0 1).hom (ULift.up 1) = ULift.up (2 : ZMod 6) := by
   change (if c.Rel 0 1 then step 0 else 0).hom (ULift.up 1) = _
-  rw [if_pos rel_zero_one]
+  rw [ite_eq_left rel_zero_one]
   change (2 : ℤ) • (ULift.up (1 : ZMod 6) : V) = ULift.up (2 : ZMod 6)
   exact two_one
 
 private lemma d_one_zero : (K.d 1 0).hom (ULift.up 1) = ULift.up (3 : ZMod 6) := by
   change (if c.Rel 1 0 then step 1 else 0).hom (ULift.up 1) = _
-  rw [if_pos rel_one_zero]
-  simp only [step, if_neg (by decide : (1 : ZMod 2) ≠ 0)]
+  rw [ite_eq_left rel_one_zero]
+  simp only [step, ite_eq_right (by decide : (1 : ZMod 2) ≠ 0)]
   change (3 : ℤ) • (ULift.up (1 : ZMod 6) : V) = ULift.up (3 : ZMod 6)
   apply ULift.ext
   decide
 
 private lemma embedding_second_zero :
-    ((embedding.f 0 ≫ endpointCofreeSecondProjection (c := c) I 0) ≫
+    ((embedding.f 0 ≫ endpointCofreeSecondProjection c I 0) ≫
       (endpointCofreeNextTermIso I rel_zero_one).hom).hom (ULift.up 1) =
         (Injective.ι N).hom (ULift.up (2 : ZMod 6)) := by
   rw [endpointCofreeHom_snd_of_rel K I a rel_zero_one]
@@ -296,7 +296,7 @@ private lemma embedding_second_zero :
   rw [d_zero_one]
 
 private lemma embedding_second_one :
-    ((embedding.f 1 ≫ endpointCofreeSecondProjection (c := c) I 1) ≫
+    ((embedding.f 1 ≫ endpointCofreeSecondProjection c I 1) ≫
       (endpointCofreeNextTermIso I rel_one_zero).hom).hom (ULift.up 1) =
         (Injective.ι N).hom (ULift.up (3 : ZMod 6)) := by
   rw [endpointCofreeHom_snd_of_rel K I a rel_one_zero]
@@ -319,14 +319,14 @@ example : K.d 0 1 ≫ K.d 1 0 = 0 ∧ K.d 1 0 ≫ K.d 0 1 = 0 :=
 
 example : EnoughInjectives (HomologicalComplex A c) := inferInstance
 
-example : Injective D := endpointCofree_injective I
+example : Injective D := endpointCofree_injective c I
 
 example : Mono embedding := endpointCofreeHom_mono K I a
 
 example :
-    ((embedding.f 0 ≫ endpointCofreeSecondProjection (c := c) I 0) ≫
+    ((embedding.f 0 ≫ endpointCofreeSecondProjection c I 0) ≫
       (endpointCofreeNextTermIso I rel_zero_one).hom).hom (ULift.up 1) ≠ 0 ∧
-    ((embedding.f 1 ≫ endpointCofreeSecondProjection (c := c) I 1) ≫
+    ((embedding.f 1 ≫ endpointCofreeSecondProjection c I 1) ≫
       (endpointCofreeNextTermIso I rel_one_zero).hom).hom (ULift.up 1) ≠ 0 := by
   rw [embedding_second_zero, embedding_second_one]
   exact ⟨cover_ne_zero (by decide : (2 : ZMod 6) ≠ 0),
@@ -334,16 +334,16 @@ example :
 
 example :
     (endpointCofreeNextTermIso I rel_zero_one).inv ≫
-      (biprod.inr : endpointCofreeNextTerm (c := c) I 0 ⟶ D.X 0) ≫
-        D.d 0 1 ≫ endpointCofreeProjection (c := c) I 1 = 𝟙 J := by
+      (biprod.inr : endpointCofreeNextTerm c I 0 ⟶ D.X 0) ≫
+        D.d 0 1 ≫ endpointCofreeProjection c I 1 = 𝟙 J := by
   rw [endpointCofree_d I rel_zero_one]
   change (endpointCofreeNextTermIso I rel_zero_one).inv ≫
-    (biprod.inr : endpointCofreeNextTerm (c := c) I 0 ⟶
-      I 0 ⊞ endpointCofreeNextTerm (c := c) I 0) ≫
-    ((biprod.snd : I 0 ⊞ endpointCofreeNextTerm (c := c) I 0 ⟶
-      endpointCofreeNextTerm (c := c) I 0) ≫
+    (biprod.inr : endpointCofreeNextTerm c I 0 ⟶
+      I 0 ⊞ endpointCofreeNextTerm c I 0) ≫
+    ((biprod.snd : I 0 ⊞ endpointCofreeNextTerm c I 0 ⟶
+      endpointCofreeNextTerm c I 0) ≫
       (endpointCofreeNextTermIso I rel_zero_one).hom ≫ biprod.inl) ≫
-    (biprod.fst : I 1 ⊞ endpointCofreeNextTerm (c := c) I 1 ⟶ I 1) = 𝟙 J
+    (biprod.fst : I 1 ⊞ endpointCofreeNextTerm c I 1 ⟶ I 1) = 𝟙 J
   simp only [Category.assoc, biprod.inr_snd_assoc, biprod.inl_fst,
     Category.comp_id, Iso.inv_hom_id]
 
