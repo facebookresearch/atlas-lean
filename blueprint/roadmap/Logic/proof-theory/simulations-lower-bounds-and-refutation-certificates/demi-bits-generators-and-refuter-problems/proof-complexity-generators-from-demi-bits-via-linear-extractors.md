@@ -24,6 +24,7 @@ In the same paper, $1/2$-secure demi-bits generators $G:\{0,1\}^n\to\{0,1\}^{100
 ## Depends on
 
 - [Demi-bits generators](demi-bits-generator.md)
+- [Proof complexity generators and their tau-formulas](../../resolution-tradeoffs-lifting-and-qbf/proof-complexity-generators/proof-complexity-generators.md)
 - [Cook–Reckhow propositional proof systems](../../../propositional-logic/propositional-proof-complexity/cookreckhow-propositional-proof-systems.md)
 
 ## Proof depends on

@@ -33,6 +33,7 @@ Similar upper bounds hold for Tseitin formulas on expanders, XOR-lifted formulas
 
 - [Refuter problems for resolution lower bounds](resolution-lower-bound-refuter-problems.md)
 - [Query total search problems TFNP^dt, decision-tree formulations and the black-box classes](../../../../TheoryOfComputation/complexity-classes/tfnp-hierarchies-and-avoidance/tfnp-proof-complexity-characterizations/query-tfnp-and-formulations.md)
+- [Cook's theory PV of polynomial-time reasoning](../../../../TheoryOfComputation/hierarchy-theorems-and-barriers/meta-complexity-barriers-and-unprovability/bounded-arithmetic-and-witnessing/cooks-theory-pv.md)
 
 ## Proof depends on
 

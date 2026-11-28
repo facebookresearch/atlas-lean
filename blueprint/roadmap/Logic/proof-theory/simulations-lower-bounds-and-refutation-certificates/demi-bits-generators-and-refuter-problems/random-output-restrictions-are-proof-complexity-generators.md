@@ -25,6 +25,7 @@ Unlike the extractor-based transformation, which needs closure under simple pari
 ## Depends on
 
 - [Demi-bits generators](demi-bits-generator.md)
+- [Proof complexity generators and their tau-formulas](../../resolution-tradeoffs-lifting-and-qbf/proof-complexity-generators/proof-complexity-generators.md)
 - [Cook–Reckhow propositional proof systems](../../../propositional-logic/propositional-proof-complexity/cookreckhow-propositional-proof-systems.md)
 
 ## Proof depends on
