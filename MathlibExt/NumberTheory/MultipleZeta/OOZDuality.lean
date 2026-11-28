@@ -28,7 +28,7 @@ invariant under the duality transported from Schlesinger–Zudilin words by the 
 change of basis.
 
 For any number $r \ge 0$ of blocks with positive entries $k_j, d_j$, the coefficient of $q^N$
-in the Schlesinger–Zudilin qMZV of $(k_1, {0}^{d_1-1}, \dots, k_r, {0}^{d_r-1})$ is a sum
+in the Schlesinger–Zudilin qMZV of $(k_1, \{0\}^{d_1-1}, \dots, k_r, \{0\}^{d_r-1})$ is a sum
 of binomial products over $m_1 > \dots > m_r > 0$ and $n_j \ge 1$ with $\sum_j m_j n_j = N$,
 where the last gap is measured from $m_{r+1} = 0$. The paper states the generating series for
 $r \ge 1$; at $r = 0$ both sides give the coefficient of the constant series $1$.

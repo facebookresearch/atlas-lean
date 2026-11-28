@@ -114,6 +114,14 @@ private lemma coeff_weight_mul (a b n : ℕ) :
 example : coeff 0 (szQMZV []) = 1 ∧ coeff 1 (szQMZV []) = 0 := by
   simp [szQMZV_nil, coeff_one]
 
+-- At depth zero the empty tuple contributes only in degree zero.
+example : coeff 0 (szQMZV []) = 1 ∧ coeff 1 (szQMZV []) = 0 := by
+  let v : Fin 0 → ℕ := ![]
+  have hindex : szBlockIndex (List.ofFn fun j => (v j, v j)) = [] := by decide
+  rw [← hindex, coeff_szQMZV_szBlockIndex_eq_sum_choose 0 v v (by decide) (by decide) 0,
+    coeff_szQMZV_szBlockIndex_eq_sum_choose 0 v v (by decide) (by decide) 1]
+  decide +kernel
+
 example : coeff 0 (szQMZV [2, 0]) = 0 := by
   rw [coeff_szQMZV_eq_coeff_partial, szQMZVPartial_cons, show Ioo 0 1 = ∅ by decide]
   simp
