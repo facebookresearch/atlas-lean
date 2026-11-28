@@ -13,5 +13,7 @@ Extensions and complements (Schur–Zassenhaus), splitting of extensions, homolo
 - [Schur–Zassenhaus theorem: conjugacy of complements](schur-zassenhaus-conjugate-complements.md)
 
 - [Cohomological dimension two but geometric dimension three](eilenberg-ganea-counterexample.md)
+- [Bounded cohomology of groups](bounded-cohomology-of-groups/README.md)
+- [Computability of group homology](computability-of-group-homology/README.md)
 - [Vanishing of `H^1` for `SL(2, F)` on trace-zero matrices in characteristic 3](subsingleton-h1-special-linear-group-fin.md)
 - [H1 vanishing](subsingleton-of-is-unit-card.md)

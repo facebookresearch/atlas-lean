@@ -5,4 +5,5 @@ Free groups and free metabelian groups: subgroups (inert, compressed, retracts, 
 - [Subgroups and elements of free groups](subgroups-of-free-groups/README.md)
 - [Automorphisms of free groups](automorphisms-of-free-groups/README.md)
 - [Cartesian powers of free groups](cartesian-powers-of-free-groups/README.md)
+- [Relative orders in free groups](relative-orders-in-free-groups/README.md)
 - [Kurosh rank](kurosh-rank/README.md)
