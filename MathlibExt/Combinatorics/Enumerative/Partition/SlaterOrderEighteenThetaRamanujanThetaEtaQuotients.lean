@@ -23,11 +23,21 @@ import MathlibExt.Analysis.SpecialFunctions.JacobiTripleProduct
 # Eta-quotients of Ramanujan's theta functions
 
 This file proves the seven eta-product identities of `ramanujanTheta_eta_quotients`,
-with denominators cleared on the open unit disk.
+with denominators cleared for complex `q` with `‖q‖ < 1`. On the same disk,
+`ramanujanTheta_one_five` expresses `f(q, q⁵)` as `χ(q) ψ(-q³)`.
 
-Source: A. Vanitha, M. P. Chaudhary, and Madiha Khanum, *Modular Relations for the
-Rogers-Ramanujan-Slater Type Functions of Order Eighteen with Applications to Partitions*,
-INTEGERS 24 (2024), Article A103, Lemma 1 (quoted from Berndt).
+## References
+
+* A. Vanitha, M. P. Chaudhary, and Madiha Khanum, *Modular Relations for the
+  Rogers-Ramanujan-Slater Type Functions of Order Eighteen with Applications to Partitions*,
+  INTEGERS 24 (2024), Article A103, pp. 1–17, Lemma 1 and Lemma 3, Equation (9).
+* C. Adiga, B. C. Berndt, S. Bhargava, and G. N. Watson, *Chapter 16 of Ramanujan's Second
+  Notebook: Theta-Functions and q-Series*, Memoirs of the American Mathematical Society
+  53 (1985), no. 315, pp. 1–85. This is the source cited for Lemmas 1 and 3; Entry 19 gives
+  the Jacobi triple product used here.
+* The proof of `ramanujanTheta_one_five` reuses `theta_product_of_ne_zero`, `pochhammer_split`,
+  `pochhammer_pair`, and the zero-point argument of `ramanujanTheta_eta_quotients` in this module,
+  `SlaterOrderEighteenThetaRamanujanThetaEtaQuotients`.
 -/
 
 namespace MetaMathlibExt
@@ -238,6 +248,59 @@ public theorem ramanujanTheta_eta_quotients {q : ℂ} (hq : ‖q‖ < 1) :
       _ = P (q ^ 2) (q ^ 2) *
           (P (-q) (q ^ 2) * (P q q * P (q ^ 4) (q ^ 4))) := by ring
       _ = _ := by rw [hchi]; ring
+
+/-- **Ramanujan's theta function at $(q, q^5)$.** Let
+$f(a,b) = \sum_{n \in \mathbb{Z}} a^{n(n+1)/2} b^{n(n-1)/2}$ be Ramanujan's theta function and
+$(a;q)_\infty = \prod_{n \ge 0} (1 - a q^n)$. For every complex number $q$ with $|q| < 1$,
+$f(q,q^5) = (-q;q^2)_\infty \, f(-q^3,-q^9)$, that is, $f(q,q^5) = \chi(q) \psi(-q^3)$ with
+$\chi(q) = (-q;q^2)_\infty$ and $\psi(q) = f(q,q^3)$.
+
+Source: A. Vanitha, M. P. Chaudhary, and Madiha Khanum, *Modular Relations for the
+Rogers-Ramanujan-Slater Type Functions of Order Eighteen with Applications to Partitions*,
+INTEGERS 24 (2024), Article A103, Lemma 3, Equation (9) (`integers-2024-A103-lem-3`). -/
+public theorem ramanujanTheta_one_five {q : ℂ} (hq : ‖q‖ < 1) :
+    ramanujanThetaRaw q (q ^ 5) =
+      qPochhammerInfRaw (-q) (q ^ 2) * ramanujanThetaRaw (-q ^ 3) ((-q ^ 3) ^ 3) := by
+  by_cases hq0 : q = 0
+  · subst q
+    have ht : ramanujanThetaRaw 0 0 = 1 := by
+      simpa [qPochhammerInfRaw] using theta_product 1 0 one_ne_zero (by simp)
+    simp [qPochhammerInfRaw, ht]
+  have h₂ : ‖q ^ 2‖ < 1 := norm_pow_lt_one hq two_ne_zero
+  have h₆ : ‖q ^ 6‖ < 1 := norm_pow_lt_one hq (by decide)
+  have h₁₂ : ‖q ^ 12‖ < 1 := norm_pow_lt_one hq (by decide)
+  have hprod₆ : q * q ^ 5 = q ^ 6 := by ring
+  have hcube : (-q ^ 3) ^ 3 = -q ^ 9 := by ring
+  have hprod₁₂ : (-q ^ 3) * (-q ^ 9) = q ^ 12 := by ring
+  rw [theta_product_of_ne_zero hq0 (pow_ne_zero 5 hq0) (hprod₆ ▸ h₆), hprod₆, hcube,
+    theta_product_of_ne_zero (neg_ne_zero.mpr (pow_ne_zero 3 hq0))
+      (neg_ne_zero.mpr (pow_ne_zero 9 hq0)) (hprod₁₂ ▸ h₁₂), hprod₁₂, neg_neg, neg_neg]
+  have hsplitχ : P (-q) (q ^ 2) =
+      P (-q) (q ^ 6) * P (-q ^ 3) (q ^ 6) * P (-q ^ 5) (q ^ 6) := by
+    simpa only [Fin.prod_univ_three, Fin.val_zero, Fin.val_one, show (2 : Fin 3).val = 2 by decide,
+      pow_zero, pow_one, mul_one, show (q ^ 2) ^ 3 = q ^ 6 by rw [← pow_mul],
+      show -q * q ^ 2 = -q ^ 3 by ring, show -q * (q ^ 2) ^ 2 = -q ^ 5 by ring] using
+      pochhammer_split (-q) (q ^ 2) h₂ 3
+  have hpow₆ : (q ^ 3) ^ 2 = q ^ 6 := by rw [← pow_mul]
+  have hpow₁₂ : (q ^ 6) ^ 2 = q ^ 12 := by rw [← pow_mul]
+  have hsplit₃ : P (q ^ 3) (q ^ 6) = P (q ^ 3) (q ^ 12) * P (q ^ 9) (q ^ 12) := by
+    have hs := pochhammer_split (q ^ 3) (q ^ 6) h₆ 2
+    simp only [Fin.prod_univ_two, Fin.val_zero, Fin.val_one, pow_zero, pow_one, mul_one,
+      hpow₁₂] at hs
+    rwa [show q ^ 3 * q ^ 6 = q ^ 9 by ring] at hs
+  have hsplit₆ : P (q ^ 6) (q ^ 6) = P (q ^ 6) (q ^ 12) * P (q ^ 12) (q ^ 12) := by
+    have hs := pochhammer_split (q ^ 6) (q ^ 6) h₆ 2
+    simp only [Fin.prod_univ_two, Fin.val_zero, Fin.val_one, pow_zero, pow_one, mul_one,
+      hpow₁₂] at hs
+    rwa [show q ^ 6 * q ^ 6 = q ^ 12 by ring] at hs
+  have hpair : P (-q ^ 3) (q ^ 6) * P (q ^ 3) (q ^ 6) = P (q ^ 6) (q ^ 12) := by
+    have hp := pochhammer_pair (-q ^ 3) (q ^ 6) h₆
+    rwa [neg_neg, neg_sq, hpow₆, hpow₁₂] at hp
+  symm
+  calc
+    _ = (P (-q ^ 3) (q ^ 6) * P (q ^ 3) (q ^ 6)) * P (q ^ 12) (q ^ 12) *
+        P (-q) (q ^ 6) * P (-q ^ 5) (q ^ 6) := by rw [hsplitχ, hsplit₃]; ac_rfl
+    _ = _ := by rw [hpair, ← hsplit₆]
 
 end
 
