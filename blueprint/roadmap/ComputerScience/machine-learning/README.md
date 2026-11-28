@@ -6,6 +6,7 @@ For neural networks, begin with [the forward pass](supervised-learning/backpropa
 [Backpropagation](supervised-learning/backpropagation/backward-eq.md) explains how to differentiate it;
 [universal approximation](../../Analysis/approximation-theory/universal-approximation.md) asks which functions a network can represent.
 
+- [Deep learning fundamentals](deep-learning-foundations/README.md)
 - [PAC learning](pac-learning/README.md)
 - [Online learning and boosting](online-learning-and-boosting/README.md)
 - [Reinforcement learning theory](reinforcement-learning/README.md)

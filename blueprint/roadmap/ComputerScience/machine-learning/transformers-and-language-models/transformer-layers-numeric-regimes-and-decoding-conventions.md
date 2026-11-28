@@ -3,6 +3,8 @@
 This node covers transformer layers built from attention, together with the numeric regimes, attention variants and
 output conventions that expressivity results fix; softmax single-head attention itself is defined separately.
 
+For the ordinary softmax architecture, see [the encoder and decoder blocks](transformer-encoder-and-decoder-blocks.md) and [the visibility masks](transformer-visibility-patterns.md). The precision, hard-attention and recognition conventions below are separate choices.
+
 ## Expansion
 
 A sound expansion has separate pages for:
