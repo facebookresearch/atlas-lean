@@ -1,4 +1,4 @@
-# WEIGHTED GRAPH EMBEDDABILITY on the line (K = 1) is NP-complete
+# Weighted graph embeddability on the line
 
 - [Instances of WEIGHTED GRAPH EMBEDDABILITY on the line](weighted-graph-embeddability-line-instan.md)
 - [Well-formed WEIGHTED GRAPH EMBEDDABILITY instances](well-formed.md)

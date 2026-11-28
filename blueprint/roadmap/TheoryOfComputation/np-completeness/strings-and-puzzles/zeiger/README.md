@@ -1,4 +1,4 @@
-# ZEIGER is NP-complete
+# Zeiger
 
 - [ZEIGER instance encoding](zeiger-instance.md)
 - [Cells along an arrow in a ZEIGER grid](ray.md)
@@ -9,4 +9,4 @@
 
 ## Related topics
 
-- [Number of rows](../yosenabe-is-np-complete/rows.md), [number of columns](../yosenabe-is-np-complete/cols.md) and [cell contents](../yosenabe-is-np-complete/cell-2.md) of a grid given as a list of rows of pairs, shared with Yosenabe.
+- [Number of rows](../yosenabe/rows.md), [number of columns](../yosenabe/cols.md) and [cell contents](../yosenabe/cell-2.md) of a grid given as a list of rows of pairs, shared with Yosenabe.

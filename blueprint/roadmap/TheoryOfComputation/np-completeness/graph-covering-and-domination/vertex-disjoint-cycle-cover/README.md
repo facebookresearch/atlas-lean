@@ -1,4 +1,4 @@
-# VERTEX DISJOINT CYCLE COVER is NP-complete
+# Vertex-disjoint cycle cover
 
 The graph of an instance is the [simple graph of its vertex count and edge list](../../graph-coloring-and-partitioning/graph-3-coloring/part-01/edge-graph.md).
 

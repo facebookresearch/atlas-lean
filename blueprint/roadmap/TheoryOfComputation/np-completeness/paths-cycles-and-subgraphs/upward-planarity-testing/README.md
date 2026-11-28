@@ -1,4 +1,4 @@
-# UPWARD PLANARITY TESTING is NP-complete
+# Upward planarity testing
 - [Well-formed UPWARD PLANARITY TESTING instances](well-formed.md)
 - [Planar straight-line upward drawings](is-upward-planar-drawing.md)
 - [Feasibility for UPWARD PLANARITY TESTING](upward-planarity-testing-feasible.md)

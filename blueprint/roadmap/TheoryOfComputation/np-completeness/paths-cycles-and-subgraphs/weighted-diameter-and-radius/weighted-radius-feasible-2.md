@@ -4,4 +4,4 @@ An instance $(n, E, C, K)$ is feasible when there is a rearrangement $w$ of the 
 
 This expresses that, with these edge lengths, the graph has radius at least $K$.
 
-Here an edge $\{a, b\}$ has the length $w_j$ of the first index $j < \min(|E|, |w|)$ with $e_j = (a, b)$ or $e_j = (b, a)$, and $0$ if there is none ([edge length](edge-length.md)); no well-formedness is assumed, so for $n = 2$, $E = ((0, 1))$ and $C$ empty the edge has length $0$.
+Here an edge $\{a, b\}$ has the length $w_j$ of the first index $j < \min(|E|, |w|)$ with $e_j = (a, b)$ or $e_j = (b, a)$, and $0$ if there is none ([edge length](edge-length-2.md)); no well-formedness is assumed, so for $n = 2$, $E = ((0, 1))$ and $C$ empty the edge has length $0$.

@@ -11,4 +11,3 @@ The grammar $g$ is LL(1) when for every nonterminal $A$ and every two distinct p
 ## Sources
 
 - A. V. Aho, M. S. Lam, R. Sethi, and J. D. Ullman, *Compilers: Principles, Techniques, and Tools*, 2nd ed., Chapter 4.
-- J. E. Hopcroft, R. Motwani, and J. D. Ullman, *Introduction to Automata Theory, Languages, and Computation*, 3rd ed., Chapter 5.

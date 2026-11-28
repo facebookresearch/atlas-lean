@@ -1,4 +1,4 @@
-# UPGRADING SPANNING TREE is NP-complete
+# Upgrading spanning tree
 
 - [Instances of UPGRADING SPANNING TREE](upgrading-spanning-tree-instance.md)
 - [Graph of a weighted edge list](edges-graph.md)

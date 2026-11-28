@@ -7,4 +7,4 @@ The transducer $T$ ranges over all functions from finite input words to output l
 ## Sources
 
 - A. Church, "Logic, arithmetic, and automata", Proceedings of the International Congress of Mathematicians 1962, 23-35 (the synthesis problem).
-- J. R. Büchi and L. H. Landweber, "Solving sequential conditions by finite-state strategies", Transactions of the AMS 138 (1969), 295-311 (decidability via parity games).
+- J. R. Büchi and L. H. Landweber, "Solving sequential conditions by finite-state strategies", Transactions of the AMS 138 (1969), 295-311 (decidability via finite-state strategies).

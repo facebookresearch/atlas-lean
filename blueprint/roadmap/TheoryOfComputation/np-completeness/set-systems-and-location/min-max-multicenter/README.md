@@ -11,3 +11,6 @@
 - [Feasible MIN-MAX MULTICENTER instances](min-max-multicenter-feasible.md)
 - [The decision problem MIN-MAX MULTICENTER](min-max-multicenter-dec.md)
 - [MIN-MAX MULTICENTER is NP-complete](min-max-multicenter-np-complete.md)
+- [Feasibility for vertex MIN-MAX MULTICENTER](vertex-min-max-multicenter-feasible.md)
+- [Vertex MIN-MAX MULTICENTER as a decision problem](vertex-min-max-multicenter-dec.md)
+- [VERTEX MIN-MAX MULTICENTER (centers at vertices) is NP-complete](vertex-min-max-multicenter-np-complete.md)

@@ -1,4 +1,4 @@
-# YOSENABE is NP-complete
+# Yosenabe
 
 - [Yosenabe instances](yosenabe-instance.md)
 - [Number of rows of a Yosenabe puzzle](rows.md)

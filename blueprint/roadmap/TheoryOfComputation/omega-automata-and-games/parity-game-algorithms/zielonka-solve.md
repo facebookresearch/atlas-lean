@@ -3,3 +3,7 @@
 For an encoded parity game $G$ on positions $\{0, \dots, n-1\}$ (an owner in $\{\text{even}, \text{odd}\}$ for each position, a Boolean move matrix and a priority in $\mathbb{N}$ for each position) and a finite set $U$ of positions, the live arena, the Zielonka solver returns a pair $(W_{\mathrm{even}}, W_{\mathrm{odd}})$ of finite sets of positions, intended as the winning regions of the even and the odd player in the subgame on $U$.
 
 The solver is characterized by the requirement that $W_{\mathrm{even}}$ and $W_{\mathrm{odd}}$ are disjoint subsets of $U$ with union $U$, together with the recurrence of Zielonka's algorithm for nonempty $U$: with $d$ the maximal priority on $U$, $p$ the player whose parity is that of $d$, $A$ the attractor for $p$ inside $U$ of the positions of priority $d$, and $W'$ the solution on $U \setminus A$, if the opponent's part of $W'$ is empty then $p$ wins all of $U$; otherwise, with $B$ the opponent's attractor inside $U$ of that part and $W''$ the solution on $U \setminus B$, the result is $W''$ with $B$ added to the opponent's region.
+
+## Sources
+
+- W. Zielonka, "Infinite games on finitely coloured graphs with applications to automata on infinite trees", Theoretical Computer Science 200 (1998), 135-183 (the recursive solver).
