@@ -13194,6 +13194,7 @@
   "MathlibExt/InformationTheory/Pinsker": {"to": "InformationTheory/information-inequalities", "title": "Pinsker's inequality"},
   "MathlibExt/InformationTheory/PrefixFree": {"to": "InformationTheory/source-coding", "title": "Prefix codes"},
   "MathlibExt/InformationTheory/RandomCodingBound": {"to": "InformationTheory/channel-coding", "title": "Random coding bound and Gallager's exponent"},
+  "MathlibExt/InformationTheory/RenyiDivergence": {"to": "InformationTheory/information-inequalities", "title": "Rényi divergence"},
   "MathlibExt/InformationTheory/ShannonSourceCoding": {"to": "InformationTheory/source-coding", "title": "Shannon's source coding theorem"},
   "MathlibExt/InformationTheory/Shearer": {"to": "InformationTheory/information-inequalities", "title": "Shearer's entropy inequality"},
   "MathlibExt/InformationTheory/StrongDataProcessing": {"to": "InformationTheory/information-inequalities", "title": "Strong data processing and Dobrushin's coefficient"},

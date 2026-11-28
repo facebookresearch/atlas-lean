@@ -13,6 +13,7 @@ Inequalities relating entropies, divergences and mutual information, such as the
 - [Strong data processing and Dobrushin's coefficient](strong-data-processing-and-dobrushin-s-coefficie/README.md)
 - [Binary Pinsker inequality on the closed interval](binary-pinsker-of-mem-icc.md)
 - [I-projections](i-projections/README.md)
+- [Rényi divergence](r-nyi-divergence/README.md)
 - [f-divergences](f-divergences/README.md)
 - [Bosonic Fock states and the passive beam-splitter output condition](beam-splitter-fock-model.md)
 
