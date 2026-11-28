@@ -194,7 +194,7 @@ theorem horizontalBottomRelativeHomologyStageIso_hom
           (horizontalBottomMappingConeToStage K i) (-(n : ℤ)) ≫
         ((horizontalCompleteFilteredTotalComplex K i).extendHomologyIso
           ComplexShape.embeddingDownNat (by simp)).hom := by
-  simp [horizontalBottomRelativeHomologyStageIso, id]
+  simp [horizontalBottomRelativeHomologyStageIso, id, Iso.trans_hom, isoOfQuasiIsoAt_hom]
 
 /-- Let C be an abelian category in arbitrary universes and K a bicomplex of shape (down ℕ,down ℕ).
 Let G_i be its complete filtered total chain stage and F_i its cochain extension along n↦-n, for
