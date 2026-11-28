@@ -77,8 +77,9 @@ theorem processCapabilityIndices_midpoint {L U μ σ : ℝ} (_hLU : L ≤ U) (h�
     have hz : C.1 = 0 := by change (U - L) / (6 * σ) = 0; rw [heq, sub_self, zero_div]
     exact ⟨hz, hle.trans_eq hz⟩
 
-/-- Positive affine changes of units preserve `Cₚ` and `Cₚₖ` when the mean, standard deviation,
-and both limits are expressed in the new units. -/
+/-- For ordered specification limits `L ≤ U` and positive standard deviation `σ`, an affine
+change of units `x ↦ a + b * x` with `0 < b` preserves `Cₚ` and `Cₚₖ` when the mean,
+standard deviation, and both limits are expressed in the new units. -/
 theorem processCapabilityIndices_affine {L U μ σ : ℝ} (_hLU : L ≤ U) (hσ : 0 < σ)
     (a : ℝ) {b : ℝ} (hb : 0 < b) :
     processCapabilityIndices (a + b * L) (a + b * U) (a + b * μ) (b * σ) =
@@ -117,10 +118,11 @@ theorem processCapability_pass_events {Ω : Type*} (X : Ω → ℝ) (L U a b : �
     intro ω hω
     exact (not_le_of_gt hUL) (hω.1.trans hω.2)
 
-/-- If a quality characteristic is square-integrable and has positive population standard
- deviation, the actual mean and standard deviation after positive affine recoding are
-`a + b * μ` and `b * σ`. Thus evaluating the indices from the recoded characteristic and
-recoded limits gives the original pair. -/
+/-- Let `X` be square-integrable under a probability measure, with positive population
+standard deviation `σ`, and let the specification limits satisfy `L ≤ U`. After the affine
+recoding `Y = a + b * X` with `0 < b`, the population mean and standard deviation are
+`a + b * μ` and `b * σ`, where `μ` is the population mean of `X`. Evaluating the indices
+using the recoded moments and limits gives the original pair. -/
 theorem processCapabilityIndices_affine_moments {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
     [IsProbabilityMeasure P] {X : Ω → ℝ} (hX : MemLp X 2 P) {L U : ℝ} (hLU : L ≤ U)
     (hσ : 0 < populationSD P X) (a : ℝ) {b : ℝ} (hb : 0 < b) :
