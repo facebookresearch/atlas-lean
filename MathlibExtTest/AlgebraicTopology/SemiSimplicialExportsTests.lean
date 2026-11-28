@@ -17,6 +17,8 @@ import MathlibExt.AlgebraicTopology.SemiSimplicialObject.TruncatedAlternatingFac
 import MathlibExt.AlgebraicTopology.AlternatingFaceMapComplex.HomologyZero
 import MathlibExt.AlgebraicTopology.SimplicialObject.HomOfComponents
 import MathlibExt.CategoryTheory.Comma.Over.Diagram
+import Mathlib.Algebra.Category.ModuleCat.Abelian
+import Mathlib.Algebra.Homology.ShortComplex.Abelian
 import Mathlib.Data.ZMod.Basic
 import Mathlib.Tactic.NormNum
 
@@ -64,7 +66,8 @@ example :
       (β_ Z1 Z1).hom ((ULift.up (2 : ℤ)) ⊗ₜ[ℤ] (ULift.up (3 : ℤ))) =
         (ULift.up (3 : ℤ)) ⊗ₜ[ℤ] (ULift.up (2 : ℤ)) := by
   letI : MonoidalPreadditive (ModuleCat.{1} ℤ) := inferInstance
-  letI : MonoidalLinear ℤ (ModuleCat.{1} ℤ) := inferInstance
+  letI : MonoidalLinear ℤ (ModuleCat.{1} ℤ) :=
+    ModuleCat.UniverseTensor.monoidalLinear.{0, 1} (R := ℤ)
   constructor
   · rw [ModuleCat.UniverseTensor.rightUnitor_tmul]
     rfl
@@ -83,7 +86,7 @@ example :
   constructor
   · have h := LinearMap.congr_fun
       (ModuleCat.compatibleRestrictScalarsEquiv_naturality ℤ R6 R6 doubleMod)
-      (1 : (ModuleCat.restrictScalars (algebraMap ℤ R6)).obj (ModuleCat.of R6 R6))
+      ((ModuleCat.compatibleRestrictScalarsEquiv ℤ R6 R6).symm (1 : R6))
     change ModuleCat.compatibleRestrictScalarsEquiv ℤ R6 R6
         (((ModuleCat.restrictScalars (algebraMap ℤ R6)).map
           (ModuleCat.ofHom doubleMod)) (1 : R6)) = doubleMod (1 : R6) at h
@@ -104,6 +107,9 @@ example :
         DirectSum.internalGrade ℤ ℕ GF 3 ∧
       DirectSum.of GF 1 a3 • DirectSum.of GF 2 a2 = DirectSum.of GF 3 a6 ∧
       Module.Finite ℤ (DirectSum.internalGrade ℤ ℕ GF 1) := by
+  letI : SetLike.GradedSMul (DirectSum.internalGrade ℤ ℕ GF)
+      (DirectSum.internalGrade ℤ ℕ GF) :=
+    DirectSum.internalGradeGradedSMul ℤ GF GF
   constructor
   · simpa using DirectSum.coe_decompose_internalGrade ℤ ℕ GF
       (DirectSum.of GF 1 a3) 1
@@ -114,7 +120,7 @@ example :
         (DirectSum.mem_internalGrade_iff ℤ ℕ GF _ _).mpr ⟨a2, rfl⟩
       exact SetLike.GradedSMul.smul_mem h3 h2
     · constructor
-      · rw [DirectSum.Gmodule.of_smul_of]
+      · rw [DirectSum.Gmodule.of_smul_of GF GF a3 a2]
         rfl
       · exact Module.Finite.range (DirectSum.lof ℤ ℕ GF 1)
 
