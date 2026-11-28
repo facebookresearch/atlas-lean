@@ -90,8 +90,15 @@ private abbrev Q : CochainComplex (ModuleCat.{0} ℤ) ℤ :=
       simp [qDifferential]
     · simp [qDifferential, hn])
 
-example : (Q.d 0 1).hom (1 : ℤ) = (3 : ℤ) := by
-  norm_num [Q, CochainComplex.of_d, qDifferential, three]
+private lemma q_zero_differential : Q.d 0 1 = three :=
+  CochainComplex.of_d (fun _ => Z) qDifferential (0 : ℤ)
+
+private lemma q_zero_value : (Q.d 0 1).hom (1 : ℤ) = (3 : ℤ) := by
+  rw [q_zero_differential]
+  change (3 : ℤ) • (1 : ℤ) = (3 : ℤ)
+  norm_num
+
+example : (Q.d 0 1).hom (1 : ℤ) = (3 : ℤ) := q_zero_value
 
 -- A genuine differential in the second factor acquires the minus sign at first degree one.
 example :
@@ -102,10 +109,11 @@ example :
     1 0 1 rfl (1 : ℤ) (1 : ℤ)
   have hp : (P.d 1 2).hom (1 : ℤ) = 0 := by
     simp [P, CochainComplex.of.d] <;> rfl
-  have hq : (Q.d 0 1).hom (1 : ℤ) = (3 : ℤ) := by
-    norm_num [Q, CochainComplex.of_d, qDifferential, three]
+  have hq : (Q.d 0 1).hom (1 : ℤ) = (3 : ℤ) := q_zero_value
   have hz : CochainComplex.ModuleTensor.mkAt ℤ P Q 2 0 2 rfl (0 : ℤ) (1 : ℤ) = 0 := by
-    simp [CochainComplex.ModuleTensor.mkAt, TensorProduct.zero_tmul]
+    dsimp only [CochainComplex.ModuleTensor.mkAt]
+    rw [TensorProduct.zero_tmul]
+    exact map_zero _
   simpa [hp, hq, hz, Units.smul_def] using h
 
 private abbrev S : ShortComplex (CochainComplex (ModuleCat.{0} ℤ) ℤ) :=
