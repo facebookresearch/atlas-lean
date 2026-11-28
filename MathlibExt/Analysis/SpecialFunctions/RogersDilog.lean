@@ -44,6 +44,7 @@ $$
 L(x) = \sum_{n=0}^{\infty} \frac{x^{n+1}}{(n+1)^2} + \frac{1}{2}\log x\,\log(1-x).
 $$
 
+The series term is `0` when the series is not summable; the logarithmic term is still included.
 On $[0, 1]$ this agrees with the usual Rogers dilogarithm, using Lean's $\log 0 = 0$
 at the endpoints. -/
 public theorem rogersDilog_eq_tsum_add_log_mul_log (x : ℝ) :
