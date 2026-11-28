@@ -12,7 +12,12 @@ $$\operatorname{sign}W^{\mathrm{lro}}_j=\operatorname{sign}W^0_j,\qquad |W^{\mat
 
 Then, conditional on $|W^{\mathrm{lro}}|$, the signs of $W^{\mathrm{lro}}_j$ for all true nulls $H^0_j$ are i.i.d. coin flips, so the knockoff filter applied to $W^{\mathrm{lro}}$ controls the FDR in the target population.
 
-**Proposition 2.2 (weighted lasso).** Let prior weights $\phi_1,\dots,\phi_{2p}>0$ depend only on external data or prior knowledge, with $\phi_j=\phi_{j+p}$. Fit on the target data the weighted lasso $\min_b\ \tfrac12\|Y^0-[X^0,\tilde X^0]b\|_2^2+\lambda\sum_{k=1}^{2p}\phi_k|b_k|$ and set $W^{\mathrm{wl}}_j=|\hat b_j|-|\hat b_{j+p}|$. Then the null signs of $W^{\mathrm{wl}}$ are i.i.d. coin flips conditional on $|W^{\mathrm{wl}}|$, and FDR is controlled. **Proposition 2.3:** the same holds when $\phi$ is fitted on the pooled data from all environments including the target, provided every variable null in the target is null in every environment.
+**Proposition 2.2 (weighted lasso).** Let prior weights $\phi_1,\dots,\phi_{2p}>0$ depend only on external data or prior knowledge, with $\phi_j=\phi_{j+p}$. Fit on the target data the weighted lasso $\min_b\ \tfrac12\|Y^0-[X^0,\tilde X^0]b\|_2^2+\lambda\sum_{k=1}^{2p}\phi_k|b_k|$ and set $W^{\mathrm{wl}}_j=|\hat b_j|-|\hat b_{j+p}|$. Then the null signs of $W^{\mathrm{wl}}$ are i.i.d. coin flips conditional on $|W^{\mathrm{wl}}|$, and FDR is controlled. **Proposition 2.3:** the same holds when $\phi=\phi(Y^0,X^0,\tilde X^0,Y^{\mathrm{ext}},X^{\mathrm{ext}},\tilde X^{\mathrm{ext}})$ is computed on the pooled data from all environments including the target, with model-X knockoffs $\tilde X^e$ generated in every environment, provided
+
+1. every variable null in the target is null in every environment, and
+2. $\phi$ is invariant under the simultaneous knockoff swap: for every set $S$ of target-null variables, swapping $X^e_j$ with $\tilde X^e_j$ for all $j\in S$ in **every** environment $e=0,\dots,E$ leaves $\phi$ unchanged. This holds, for example, for $\phi_j=\phi_{j+p}=1/(0.05+|\hat b^{\mathrm{pool}}_j|+|\hat b^{\mathrm{pool}}_{j+p}|)$ when the pooled sparse fit on $[X,\tilde X]$ exchanges the coefficients of swapped columns.
+
+The source's statement of Proposition 2.3 lists only condition 1; its proof uses condition 2 ("$\phi$ is symmetric in $(X^0,X^{\mathrm{ext}})$ and $(\tilde X^0,\tilde X^{\mathrm{ext}})$") to get the flip-sign identity after the swap, so it is stated here as a hypothesis.
 
 ## Depends on
 
@@ -21,7 +26,7 @@ Then, conditional on $|W^{\mathrm{lro}}|$, the signs of $W^{\mathrm{lro}}_j$ for
 
 ## Expansion
 
-Proposition 2.1: by the flip-sign property and exchangeability, the null signs of $W^0$ are i.i.d. coin flips given $|W^0|$; $W^{\mathrm{ext}}$ is independent of the target data, so conditioning additionally on it, and hence on $|W^{\mathrm{lro}}|$, leaves them fair. External evidence thus only reorders hypotheses, moving likely non-nulls to the end of the sequence the filter scans, which raises power without affecting validity. Proposition 2.2: the symmetric penalty $\phi_j=\phi_{j+p}$ makes the weighted lasso equivariant under swapping a variable with its knockoff, preserving the flip-sign property. Proposition 2.3 swaps null variables with their knockoffs simultaneously in all environments, which leaves the pooled joint law invariant exactly when nulls are shared.
+Proposition 2.1: by the flip-sign property and exchangeability, the null signs of $W^0$ are i.i.d. coin flips given $|W^0|$; $W^{\mathrm{ext}}$ is independent of the target data, so conditioning additionally on it, and hence on $|W^{\mathrm{lro}}|$, leaves them fair. External evidence thus only reorders hypotheses, moving likely non-nulls to the end of the sequence the filter scans, which raises power without affecting validity. Proposition 2.2: the symmetric penalty $\phi_j=\phi_{j+p}$ makes the weighted lasso equivariant under swapping a variable with its knockoff, preserving the flip-sign property. Proposition 2.3 swaps null variables with their knockoffs simultaneously in all environments: condition 2 keeps $\phi$ fixed, so the swapped statistics are the sign-flipped ones, and condition 1, with independence across environments, makes the swap leave the pooled joint law invariant.
 
 ## Sources
 

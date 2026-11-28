@@ -4,7 +4,7 @@ A sexual population occupies two demes $\alpha, \beta$. In deme $\gamma$ the Mal
 
 $$w_\gamma(G) = w_0 - s(G - P_\gamma)^2, \qquad s > 0,$$
 
-with symmetric optima $P_\beta = -P_\alpha = P \in [0,1]$ and symmetric migration rate $m_\alpha = m_\beta = m \ge 0$. The trait is additive in two diallelic loci $A/a$ and $B/b$ with effects scaled so that the phenotypic range is $[-1,1]$ and the ratio of locus effects is $\kappa = c_2/c_1 \le 1$ ($A$ is the major locus). In the haploid model the four haplotypes $AB, Ab, aB, ab$ have genotypic values $-1, -\frac{1-\kappa}{1+\kappa}, \frac{1-\kappa}{1+\kappa}, 1$. With haplotype frequencies $x_{i,\gamma}$, linkage disequilibrium $D_\gamma = x_{1,\gamma}x_{4,\gamma} - x_{2,\gamma}x_{3,\gamma}$ and recombination rate $r \ge 0$, the dynamics are
+with symmetric optima $P_\beta = -P_\alpha = P \in [0,1]$ and symmetric migration rate $m_\alpha = m_\beta = m \ge 0$. The trait is additive in two diallelic loci $A/a$ and $B/b$ with allelic effects $\mp c_1$ at $A/a$ and $\mp c_2$ at $B/b$, where $c_1, c_2 > 0$ and $c_1 + c_2 = 1$ (so the phenotypic range is $[-1,1]$), and the ratio of locus effects is $\kappa = c_2/c_1$ with $0 < \kappa \le 1$ ($A$ is the major locus). The bound $\kappa > 0$ (both loci affect the trait) is needed below: at $\kappa = 0$, $Ab$ and $aB$ have the same values as $AB$ and $ab$, the condition $0 \le P < \kappa/(1+\kappa)$ in item 3 is empty, and the formula in item 4 divides by zero. In the haploid model the four haplotypes $AB, Ab, aB, ab$ have genotypic values $-1, -\frac{1-\kappa}{1+\kappa}, \frac{1-\kappa}{1+\kappa}, 1$. With haplotype frequencies $x_{i,\gamma}$, linkage disequilibrium $D_\gamma = x_{1,\gamma}x_{4,\gamma} - x_{2,\gamma}x_{3,\gamma}$ and recombination rate $r \ge 0$, the dynamics are
 
 $$\dot x_{i,\gamma} = x_{i,\gamma}\left(w_{i,\gamma} - \bar w_\gamma\right) - \eta_i\,r\,D_\gamma + m\left(x_{i,\gamma^*} - x_{i,\gamma}\right),$$
 
@@ -14,7 +14,7 @@ where $\eta_1 = \eta_4 = -\eta_2 = -\eta_3 = 1$ and $\gamma^*$ is the other deme
 
 1. the monomorphic equilibrium $M_{1,\alpha}$ (fixation of $AB$ in deme $\alpha$; by symmetry $M_{4,\beta}$) is globally asymptotically stable if and only if $P > 1/(1+\kappa)$;
 2. there is at most one internal equilibrium $F_\gamma$, and it is unstable whenever it exists;
-3. $F_\gamma$ exists exactly when both $M_{2,\gamma}$ and $M_{3,\gamma}$ (fixation of $Ab$ and $aB$) are asymptotically stable, which requires in particular $r > \tilde r = \frac{4s(1-\kappa)P}{1+\kappa}$;
+3. $F_\gamma$ exists exactly when both $M_{2,\gamma}$ and $M_{3,\gamma}$ (fixation of $Ab$ and $aB$) are asymptotically stable, which is the case if and only if $0 \le P < \frac{\kappa}{1+\kappa}$ and $r > \tilde r = \frac{4s(1-\kappa)P}{1+\kappa}$;
 4. for uniform selection ($P = 0$), $F_\gamma$ is $\hat p = \hat q = \tfrac12$ with
 
 $$\hat D = \frac{r}{s}\frac{(1+\kappa)^2}{16\kappa} - \sqrt{\frac{1}{16} + \left(\frac{r}{s}\frac{(1+\kappa)^2}{16\kappa}\right)^2}.$$

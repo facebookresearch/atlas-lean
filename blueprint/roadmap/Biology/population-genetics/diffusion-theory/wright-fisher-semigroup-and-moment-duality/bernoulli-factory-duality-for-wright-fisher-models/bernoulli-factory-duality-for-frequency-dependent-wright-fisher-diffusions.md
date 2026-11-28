@@ -16,9 +16,20 @@ for explicit functions $f_k$ and finite integers $\eta(f,k)$; this needs $f$ con
 
     $$Gh(n)=\binom n2\big[h(n-1)-h(n)\big]+\sigma n\sum_{k\ge1}\Big(\tfrac34\Big)^{k-1}\tfrac14\big[h(n+\eta(f,k)-1)-h(n)\big].$$
 
-3. *(Duality.)* Let $\mathbf B_n(y)$ be the vector of Bernstein polynomials of degree $n$. There is a vector-valued process $V_t$, carried along this ancestral process, such that
+3. *(Duality.)* Let $\mathbf B_n(y)=\big(\binom ni y^i(1-y)^{n-i}\big)_{i=0}^n$ be the vector of Bernstein polynomials of degree $n$ and $\langle\mathbf u,\mathbf v\rangle=\sum_i u_iv_i$. Let $(\mathbf V_t)_{t\ge0}$ be the Markov jump process of Bernstein coefficient vectors whose transitions from a vector $\mathbf v=(v_0,\dots,v_m)$ of length $m+1$ are:
+
+    - *(branching)* for each $k\ge1$, at rate $m\sigma(\tfrac34)^{k-1}\tfrac14$, with $\eta=\eta(f,k)$, the jump to the vector $\mathbf v'=(v'_0,\dots,v'_{m+\eta-1})$ given by
+
+        $$v'_i=\sum_{j=0}^{i\wedge\eta}\frac{\binom ij\binom{m+\eta-1-i}{\eta-j}}{\binom{m+\eta-1}{\eta}}\Big[\mathbf 1\Big\{f_k\Big(\tfrac j\eta\Big)\ge\tfrac12\Big\}v_{i+1-j}+\mathbf 1\Big\{f_k\Big(\tfrac j\eta\Big)<\tfrac12\Big\}v_{i-j}\Big],$$
+
+        with $v_l:=0$ for $l\notin\{0,\dots,m\}$; the weight is the hypergeometric probability that $j$ of the $\eta$ new ancestors carry $A$ when $i$ of the $m+\eta-1$ lineages do;
+    - *(coalescence)* at rate $\binom m2$, the jump to $\mathbf v'=(v'_0,\dots,v'_{m-1})$ with $v'_i=\frac{i}{m-1}v_{i+1}+\frac{m-1-i}{m-1}v_i$.
+
+    Then, with $Y$ the diffusion of item 1, for all $t\ge0$, every $y\in[0,1]$, every $n\in\mathbb N$ and every $\mathbf v\in\mathbb R^{n+1}$,
 
     $$\mathbb E\big[\langle\mathbf B_n(Y_t),\mathbf v\rangle\,\big|\,Y_0=y\big]=\mathbb E\big[\langle\mathbf B_{\dim(\mathbf V_t)-1}(y),\mathbf V_t\rangle\,\big|\,\mathbf V_0=\mathbf v\big].$$
+
+    The dimension $\dim(\mathbf V_t)-1$ is the ancestral process $A_t$ of item 2 started from $A_0=n$. The source prints the hypergeometric weight in an equivalent arrangement.
 
 4. *(Allen–Cahn.)* On a Lipschitz domain $\Omega\subseteq\mathbb R^d$, run a branching Brownian motion (speed $2$, so its generator is $\Delta$) reflected at $\partial\Omega$, started from one particle at $x$ and branching at rate $\lambda>0$ into $\eta(f,L)$ offspring with $L\sim\mathrm{Geo}(1/4)$. At time $t$ each leaf at $z$ independently carries allele $A$ with probability $u_0(z)$, and alleles propagate rootwards: a branch with $\eta(f,k)$ offspring, $j$ of them $A$, carries $A$ if $f_k(j/\eta(f,k))\ge\tfrac12$, so each branching event uses the Bernoulli factory as a voting rule and turns $u$-coins into an $f(u)$-coin. The probability $u(x,t)=\mathbb P(F(x,t)=A)$ that the root ends up with allele $A$ solves
 

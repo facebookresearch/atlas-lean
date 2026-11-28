@@ -8,17 +8,32 @@ where $\alpha_j \ne 0$ means instrument $j$ is **invalid** (a direct, pleiotropi
 
 $$\pi_j = \frac{\Gamma_j}{\gamma_j} = \beta + \frac{\alpha_j}{\gamma_j}.$$
 
-$\beta$ is identified when the valid instruments form the largest group of equal $\pi_j$; a sufficient condition is $s < L/2$. The Lasso approach (sisVIVE) estimates $\alpha$ by $\ell_1$-penalized regression of $y$ on $Z$ after projecting out $\hat d = Z\hat\gamma$.
+$\beta$ is identified when the valid instruments form the largest group of equal $\pi_j$; a sufficient condition is $s < L/2$.
+
+**Assumptions** (source, Assumptions 1–4), with $Z_{i\cdot}$ the $i$-th row of $Z$, $D_i$ the exposure and $u_i = (\varepsilon_i, v_i)'$; the parameters $\beta, \alpha, \gamma$ and the number $L$ of instruments are fixed as $n \to \infty$:
+
+1. $\mathbb{E}[Z_{i\cdot}Z_{i\cdot}'] = Q$ is finite and of full rank;
+2. $\mathbb{E}[u_i] = 0$ and $\mathbb{E}[u_iu_i'] = \Sigma$ has finite entries;
+3. $n^{-1}Z'Z \to_p Q$, $n^{-1}Z'd \to_p \mathbb{E}[Z_{i\cdot}D_i]$, $n^{-1}Z'\varepsilon \to_p 0$, $n^{-1}Z'v \to_p 0$, $n^{-1}\sum_i u_i \to_p 0$ and $n^{-1}\sum_i u_iu_i' \to_p \Sigma$;
+4. $\gamma = Q^{-1}\mathbb{E}[Z_{i\cdot}D_i]$ with $\gamma_j \ne 0$ for every $j = 1, \dots, L$.
+
+The ratio estimates are $\hat\pi_j = \hat\Gamma_j/\hat\gamma_j$, from the least-squares reduced-form and first-stage coefficients $\hat\Gamma = (Z'Z)^{-1}Z'y$ and $\hat\gamma = (Z'Z)^{-1}Z'd$. The Lasso approach (sisVIVE) estimates $\alpha$ by $\ell_1$-penalized regression of $y$ on $Z$ after projecting out $\hat d = Z\hat\gamma$.
 
 **Selection failure of the Lasso.** Consistent selection by the Lasso requires an irrepresentable condition $\|C_{21}C_{11}^{-1}\operatorname{sign}(\alpha_1)\|_\infty < 1$ on the limit $C$ of $n^{-1}\tilde Z^\top \tilde Z$, where $\tilde Z$ is $Z$ with $\hat d$ projected out. This depends on the instrument strengths as well as their correlations: if $|\gamma_1^\top \operatorname{sign}(\alpha_1)| > \|\gamma_2\|_1$ ($\gamma_1$, $\gamma_2$ the first-stage coefficients of the invalid and valid instruments), the condition fails. With equal-strength instruments the condition can fail for some sign configurations of $\alpha_1$ once $s > L/2$; for uncorrelated equal-strength instruments it holds for every configuration when $s < L/2$. With $s < L/2$ it can still fail when the instrument strengths differ (as in the condition above) or the instruments are correlated, so the Lasso can select the wrong instruments even when $\beta$ is identified.
 
-**Theorem (median estimator).** If $s < L/2$, then $\hat\beta_m = \operatorname{median}(\hat\pi_1,\dots,\hat\pi_L)$ is consistent for $\beta$, and $\sqrt n(\hat\beta_m - \beta)$ converges to an order statistic of the limiting normal distribution of the valid instruments' $\sqrt n(\hat\pi_j - \beta)$, generally with a nonzero asymptotic bias.
+**Theorem (median estimator; source Theorem 1).** Under Assumptions 1–4, if $s < L/2$, then $\hat\beta_m = \operatorname{median}(\hat\pi_1,\dots,\hat\pi_L)$ satisfies $\operatorname{plim}\hat\beta_m = \beta$. Order the instruments so that $1, \dots, s$ are the invalid ones, and let $\hat\pi_2$ be the vector of the $L - s$ valid ratios $\hat\pi_j$, $j = s+1, \dots, L$. Then $\sqrt n(\hat\beta_m - \beta) \to_d q_{[l],L-s}$, where:
 
-**Proposition (adaptive Lasso).** With weights $w_j = |\hat\alpha_{m,j}|^{-\nu}$ built from the median-based estimates $\hat\alpha_m = \hat\Gamma - \hat\gamma\hat\beta_m$, and a tuning parameter $\lambda_n = o(\sqrt n)$ with $n^{(\nu-1)/2}\lambda_n \to \infty$, the adaptive Lasso selects $A$ with probability tending to one, and $\sqrt n(\hat\alpha_{ad,A} - \alpha_A)$ is asymptotically normal. Consequently $\sqrt n(\hat\beta_{ad} - \beta) \to N(0, \sigma^2_{\beta,\mathrm{or}})$, the limit of the oracle two-stage least squares estimator that knows which instruments are invalid.
+- for $L$ odd, $q_{[l],L-s}$ is the $l$-th order statistic of the limiting normal distribution of $\sqrt n(\hat\pi_2 - \beta\iota_{L-s})$, with $l$ determined by $L$, $s$ and the signs of $\delta_j = \alpha_j/\gamma_j$, $j = 1, \dots, s$;
+- for $L$ even, $q_{[l],L-s}$ is the average of two neighbouring order statistics of that distribution, either the $[l]$-th and $[l-1]$-th or the $[l]$-th and $[l+1]$-th.
+
+For even $L$ the limit is generally not a single order statistic: with $L = 2$ and $s = 0$ it is the mean of the two coordinates of a bivariate normal vector. The limit is generally not centred at zero, so $\hat\beta_m$ has an asymptotic bias.
+
+**Proposition (adaptive Lasso; source Proposition 3 and Corollary 2).** Under Assumptions 1–4 and $s < L/2$ (so that $\sqrt n(\hat\alpha_m - \alpha) = O_p(1)$ by the Theorem), with weights $w_j = |\hat\alpha_{m,j}|^{-\nu}$ built from the median-based estimates $\hat\alpha_m = \hat\Gamma - \hat\gamma\hat\beta_m$, and a tuning parameter $\lambda_n = o(\sqrt n)$ with $n^{(\nu-1)/2}\lambda_n \to \infty$, the adaptive Lasso selects $A$ with probability tending to one, and $\sqrt n(\hat\alpha_{ad,A} - \alpha_A)$ is asymptotically normal. Consequently $\sqrt n(\hat\beta_{ad} - \beta) \to N(0, \sigma^2_{\beta,\mathrm{or}})$, the limit of the oracle two-stage least squares estimator that knows which instruments are invalid.
 
 ## Depends on
 
 - [Linear moment model for instrumental variables](linear-moment-model.md)
+- [The sisVIVE estimator](sisvive-estimator.md)
 
 ## Proof depends on
 

@@ -10,11 +10,11 @@ Then
 
 $$\rho(r, S_N) = \frac{N-1}{N}\cdot\frac{h_l - 1}{h_c\,h_l^{\,N-1} - 1} + \frac1N\cdot\frac{h_c - 1}{h_c\,h_l^{\,N-1} - 1},$$
 
-and for large $N$
+and for $r \ge 1$ and large $N$ (as in the source; for $0 < r < 1$ the ratio $\rho(r, S_N) / \frac{1 - r^{-2}}{1 - r^{-2N}}$ does not tend to $1$)
 
 $$\rho(r, S_N) \simeq \frac{1 - r^{-2}}{1 - r^{-2N}},$$
 
-the Clique formula with $r$ replaced by $r^2$. For $r > 1$ the Star therefore amplifies selection; in the limit $N \to \infty$ its fixation probability tends to $1 - r^{-2}$ instead of $1 - r^{-1}$.
+matching the Clique formula with $r$ replaced by $r^2$. For $r > 1$ the Star therefore amplifies selection; in the limit $N \to \infty$ its fixation probability tends to $1 - r^{-2}$ instead of $1 - r^{-1}$.
 
 ## Depends on
 

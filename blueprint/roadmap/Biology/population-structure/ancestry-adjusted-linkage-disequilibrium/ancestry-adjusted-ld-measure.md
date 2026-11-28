@@ -10,13 +10,15 @@ $$(D^n_{\mathrm{adj}})_{st} = \frac{1}{2n} \sum_{i=1}^{n} \operatorname{Cov}(G_{
 
 where in the second the individual parameters $\mathbf{p}_{st}$ are drawn from a population distribution $P_{st}$. By the law of large numbers $(D^n_{\mathrm{adj}})_{st} \to (D_{\mathrm{adj}})_{st}$ as $n \to \infty$; if $P_{st}$ is degenerate (a homogeneous population), $D_{\mathrm{adj}} = D_{\mathrm{std}}$.
 
-**Theorem (Bercovich et al., Theorem 1).** Suppose the population is made of $k$ source sub-populations with standard LD $(D^{\ell}_{\mathrm{std}})_{st}$, $\ell = 1, \dots, k$. For a haplotype drawn from an individual with parameters $\mathbf{p}_{st}$, let $Z_s, Z_t \in \{1, \dots, k\}$ be the local ancestries of its alleles $A_s, A_t$ at $s$ and $t$, and assume that given $(Z_s, Z_t) = (\ell, \ell')$ the pair $(A_s, A_t)$ has the law of source $\ell$ at $s$ and source $\ell'$ at $t$, with independent alleles when $\ell \ne \ell'$. Let $w^{\ell}_{st} = P(Z_s = Z_t = \ell)$, let $q^{\ell}_s$ be the reference-allele frequency of source $\ell$ at $s$, and let
+**Theorem (generalizing Bercovich et al., Theorem 1).** Suppose the population is made of $k$ source sub-populations with standard LD $(D^{\ell}_{\mathrm{std}})_{st}$, $\ell = 1, \dots, k$. For a haplotype drawn from an individual with parameters $\mathbf{p}_{st}$, let $Z_s, Z_t \in \{1, \dots, k\}$ be the local ancestries of its alleles $A_s, A_t$ at $s$ and $t$, and assume that given $(Z_s, Z_t) = (\ell, \ell')$ the pair $(A_s, A_t)$ has the law of source $\ell$ at $s$ and source $\ell'$ at $t$, with independent alleles when $\ell \ne \ell'$. Let $w^{\ell}_{st} = P(Z_s = Z_t = \ell)$, let $q^{\ell}_s$ be the reference-allele frequency of source $\ell$ at $s$, and let
 
 $$C_{st} = \mathbb{E}\big[\operatorname{Cov}\big(q^{Z_s}_s, q^{Z_t}_t \,\big|\, \mathbf{p}_{st}\big)\big]$$
 
 be the average covariance of the source-specific means given the individual. Then $\sum_{\ell} w^{\ell}_{st} \le 1$ and
 
 $$(D_{\mathrm{adj}})_{st} = \sum_{\ell=1}^{k} w^{\ell}_{st}\, (D^{\ell}_{\mathrm{std}})_{st} + C_{st}.$$
+
+**Departure from the source.** The term $C_{st}$, its definition and the hypothesis $C_{st} = 0$ below are **not** in Bercovich et al.'s Theorem 1, which states only the decomposition $(D_{\mathrm{adj}})_{st} = \sum_\ell w^{\ell}_{st}(D^{\ell}_{\mathrm{std}})_{st}$ and the squared bound. They are added here because the source's proof conditions on both local ancestries and so omits the between-ancestry covariance; the general identity above follows from the law of total covariance (see the Expansion), and the source's form is the special case $C_{st} = 0$.
 
 If $C_{st} = 0$, as when the individual parameters determine the local ancestries $(Z_s, Z_t)$ (the source's proof conditions on both local ancestries), then
 
