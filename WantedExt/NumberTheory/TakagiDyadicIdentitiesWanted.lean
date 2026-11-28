@@ -20,6 +20,7 @@ public import MathlibExt.NumberTheory.TakagiDNodeOddSuccessor
 public import MathlibExt.NumberTheory.TakagiDNodeSuccessor
 public import MathlibExt.NumberTheory.TakagiDNodeLevelPred
 public import MathlibExt.NumberTheory.TakagiDyadicIdentities
+public import MathlibExt.NumberTheory.TakagiDyadicSlope
 public import MathlibExt.NumberTheory.TakagiDNodeTreeCount
 
 /-!
@@ -177,18 +178,6 @@ public theorem_wanted takagi_dyadic_eq_sum_digit_weight (k r : ℕ) (hr : r < 2 
         (∑ i ∈ range k,
           2 ^ i * (((2 ^ k + r) / 2 ^ i % 2 : ℕ) : ℝ) *
             ((k : ℝ) - i - 2 * (Nat.digits 2 ((2 ^ k + r) / 2 ^ i)).sum + 4)) / 2 ^ k
-
-/-- **Binary digit sum from consecutive Takagi values.** Let $k$ and $r$ be natural numbers
-with $r < 2^k$, let $n = 2^k + r$, and let $s_1(n)$ be the sum of the binary digits of $n$.
-Writing $\tau(m, k - 1)$ for the Takagi value of the dyadic presentation $m / 2^k$, one has
-$s_1(n) = 2^{k-1} \bigl(\tau(r, k - 1) - \tau(r + 1, k - 1)\bigr) + (k + 2)/2$.
-
-Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
-Sequences 27 (2024), Article 24.2.7, Theorem 28 (`jis-2024-24.2.7-thm-28`). -/
-public theorem_wanted hammingWeight_eq_takagi_diff (k r : ℕ) (hr : r < 2 ^ k) :
-    ((Nat.digits 2 (2 ^ k + r)).sum : ℝ) =
-      2 ^ k / 2 * (takagiNewdef r ((k : ℤ) - 1) - takagiNewdef (r + 1) ((k : ℤ) - 1)) +
-        ((k : ℝ) + 2) / 2
 
 /-- **Trollope's formula via the Takagi function.** For a natural number $m$, write $s_1(m)$ for
 the sum of the binary digits of $m$ and $S_1(m) = \sum_{i=0}^{m-1} s_1(i)$. Let $k$ and $r$ be
