@@ -17,7 +17,7 @@ By contrast, the logics of substructures of these concrete region structures are
 
 ## Expansion
 
-The undecidability reduction is extended to the recurrent domino problem, in which a distinguished tile $t_0$ must occur infinitely often in the first column; Harel showed this variant $\Sigma^1_1$-hard. An extra conjunct forces an infinite sequence of regions $r_1, r_2, \dots$ with $r_i \mathrel{\mathrm{ntpp}} r_{i+1}$, all on the wall and carrying $t_0$; for the full structures listed, a model of the extended formula exists whenever the recurrent domino system has a solution. Satisfiability is thus $\Sigma^1_1$-hard and validity $\Pi^1_1$-hard.
+The undecidability reduction is extended to the recurrent domino problem, in which a distinguished tile $t_0$ must occur infinitely often in the first column; Harel showed this variant $\Sigma^1_1$-hard. An extra conjunct forces an infinite sequence of regions $r_1, r_2, \dots$ with $r_i \mathrel{\mathrm{ntpp}} r_{i+1}$, all on the wall and carrying $t_0$; for the full structures listed, a model of the extended formula exists whenever the recurrent domino system has a solution. Satisfiability is thus $\Sigma^1_1$-hard and validity $\Pi^1_1$-hard. A good expansion links Harel's $\Sigma^1_1$-hardness of the recurrent domino problem. A good expansion also needs, as a statement prerequisite, the analytical hierarchy ($\Sigma^1_1$ and $\Pi^1_1$ sets) and hardness under many-one reductions, which the statement uses.
 
 ## Sources
 

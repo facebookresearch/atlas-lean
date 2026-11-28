@@ -1,6 +1,6 @@
 # Spatial modal logics
 
-Modal logics of topological relations between regions and multi-lane spatial logic, whose satisfiability problems are undecidable.
+Spatial and spatio-temporal modal logics with undecidable satisfiability problems: modal logics of topological relations between regions (RCC8), multi-lane spatial logic, dynamic topological logic, the spatio-temporal logic PTL × S4u, the logic MS of metric spaces, and topological logic with connectedness over Euclidean polyhedra.
 
 - [Modal logics of topological relations](modal-logics-of-topological-relations.md)
 - [Modal logics of RCC8 relations over full region structures are Π¹₁-hard](modal-logics-of-rcc8-relations-are-pi-1-1-hard.md)

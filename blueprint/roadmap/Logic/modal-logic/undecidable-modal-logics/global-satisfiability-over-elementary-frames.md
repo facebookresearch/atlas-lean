@@ -4,13 +4,13 @@ For a first-order sentence Φ about a binary relation, the elementary modal logi
 
 **Definition.** Let $\Phi$ be a first-order sentence, possibly with equality, over the signature $\{R\}$ of one binary relation symbol, and let $\mathcal K_\Phi$ be the class of Kripke frames $(W, R)$, with $W$ nonempty, satisfying $\Phi$; on an empty set of worlds every formula would hold globally. $\Phi$ is *universal* if it has the form $\forall x_1 \cdots \forall x_n\,\psi$ with $\psi$ quantifier-free. A unimodal formula $\varphi$ (built from propositional variables by Boolean connectives and $\lozenge$, with $\square = \neg\lozenge\neg$) is *globally satisfiable* over $\mathcal K_\Phi$ if there are a frame $(W, R) \in \mathcal K_\Phi$ and a valuation such that $\varphi$ holds at every world of $W$, and *finitely globally satisfiable* if moreover $W$ can be chosen finite. The problems $\mathcal K_\Phi$-SAT and $\mathcal K_\Phi$-FINSAT ask, for a given modal formula, whether it is globally satisfiable, respectively finitely globally satisfiable, over $\mathcal K_\Phi$; here $\Phi$ is fixed and the modal formula is the input.
 
-Global satisfiability of $\varphi$ over $\mathcal K_\Phi$ amounts to first-order satisfiability of $\Phi \wedge \forall x\,\mathrm{st}_x(\varphi)$, where $\mathrm{st}$ is the standard translation, so the problems are decidable whenever $\Phi$ lies in a decidable fragment, for instance two-variable logic. For frame classes defined by universal Horn sentences, such as the reflexive, transitive, symmetric or Euclidean frames, local satisfiability of modal formulas is decidable, in PSPACE, by results the source cites.
+Global satisfiability of $\varphi$ over $\mathcal K_\Phi$ amounts to first-order satisfiability of $\Phi \wedge \forall x\,\mathrm{st}_x(\varphi)$, where $\mathrm{st}$ is the standard translation, so both problems are decidable when $\Phi$ is a two-variable sentence: $\Phi \wedge \forall x\,\mathrm{st}_x(\varphi)$ is then a two-variable sentence, and that fragment is decidable and has the finite model property. Membership of $\Phi$ alone in a decidable fragment does not suffice, since the conjunction can leave it: every universal sentence lies in the decidable Bernays–Schönfinkel–Ramsey class, yet some universal $\Phi$ give undecidable problems (Theorem 5 of the source). For frame classes defined by universal Horn sentences, such as the reflexive, transitive, symmetric or Euclidean frames, local satisfiability of modal formulas is decidable, in PSPACE, by results the source cites.
 
 ## Depends on
 
 - [Kripke model](../kripke-semantics/kripke-model.md)
 - [Modal formulas](../kripke-semantics/formula.md)
-
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 ## Proof depends on
 
 None.

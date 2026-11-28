@@ -20,7 +20,7 @@ None.
 
 ## Expansion
 
-The $\Sigma^1_1$ lower bound is proved by a reduction of the $\Sigma^1_1$-complete recurrent tiling problem; the terms used in the proof may denote arbitrary, not necessarily connected, sets. A good expansion links the $\Sigma^1_1$-completeness of the recurrent tiling problem and the upper bound, which places satisfiability in $\Sigma^1_1$. Restricting terms to regular closed sets (regions) is what yields decidable spatio-temporal logics in the same papers.
+The $\Sigma^1_1$ lower bound is proved by a reduction of the $\Sigma^1_1$-complete recurrent tiling problem; the terms used in the proof may denote arbitrary, not necessarily connected, sets. A good expansion links the $\Sigma^1_1$-completeness of the recurrent tiling problem and the upper bound, which places satisfiability in $\Sigma^1_1$. A good expansion also needs, as a statement prerequisite, the analytical hierarchy ($\Sigma^1_1$ and $\Pi^1_1$ sets) and hardness under many-one reductions, which the statement uses. Restricting terms to regular closed sets (regions) is what yields decidable spatio-temporal logics in the same papers.
 
 ## Sources
 

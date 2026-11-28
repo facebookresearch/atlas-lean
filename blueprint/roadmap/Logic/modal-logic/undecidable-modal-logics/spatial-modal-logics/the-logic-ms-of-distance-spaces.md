@@ -28,7 +28,7 @@ None.
 
 ## Expansion
 
-Over metric spaces MS is as expressive as the two-variable fragment of first-order logic with equality, constants, unary predicates for the region variables and binary predicates $d(x, y) < a$ and $d(x, y) = a$, by an effective translation. The operator $\exists^{<b}_{>a}$ (the "doughnut") is not definable from $\exists^{<b}$ and $\exists^{>a}$; the fragment with only $\exists^{\le a}$ and $\exists^{>a}$ behaves much better.
+Over metric spaces MS is as expressive as the two-variable fragment of first-order logic with equality, constants, unary predicates for the region variables and binary predicates $d(x, y) < a$ and $d(x, y) = a$, by an effective translation. The operator $\exists^{<b}_{>a}$ (the "doughnut") is not the intersection of $\exists^{<b}$ and $\exists^{>a}$: in general $\exists^{<b}_{>a}\tau \ne \exists^{<b}\tau \sqcap \exists^{>a}\tau$ (Section 3.3 and Figure 1.6 of the survey); the fragment with only $\exists^{\le a}$ and $\exists^{>a}$ behaves much better.
 
 ## Sources
 

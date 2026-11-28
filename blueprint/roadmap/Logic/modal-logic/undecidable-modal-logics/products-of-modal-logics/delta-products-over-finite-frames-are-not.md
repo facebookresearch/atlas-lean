@@ -15,7 +15,6 @@ The frames $\mathfrak{H}_k$ (successor chain on $k$ with a spy point) and $k$-fa
 ## Depends on
 
 - [Delta-products of modal logics](delta-products-of-modal-logics.md)
-- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 - [Recognizability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
 
 ## Proof depends on
@@ -29,4 +28,4 @@ The proof modifies the grid-and-faulty-runs encoding of the $\mathbf{K}$-compone
 
 ## Sources
 
-- Christopher Hampson, Stanislav Kikot and Agi Kurucz, "The decision problem of modal product logics with a diagonal, and faulty counter machines", *Studia Logica* 104(3):455–486, 2016, doi:10.1007/s11225-015-9647-7; read as arXiv:1509.02060v1, <https://arxiv.org/abs/1509.02060v1>: Theorem 3 and its proof sketch in Section 4 of arXiv:1509.02060v1.
+- Christopher Hampson, Stanislav Kikot and Agi Kurucz, "The decision problem of modal product logics with a diagonal, and faulty counter machines", *Studia Logica* 104(3):455–486, 2016, doi:10.1007/s11225-015-9647-7; read as arXiv:1509.02060v1, <https://arxiv.org/abs/1509.02060v1>: Theorem 3 and its proof sketch in Section 5 of arXiv:1509.02060v1.

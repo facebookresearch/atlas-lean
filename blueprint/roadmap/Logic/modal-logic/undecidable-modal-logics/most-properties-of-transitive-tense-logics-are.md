@@ -6,7 +6,7 @@ Over the minimal transitive tense logic $\mathsf{K4}_t$, it is undecidable wheth
 
 **Theorem (Chen and Takahashi).** Let $P$ be a property of logics in [$\mathrm{NExt}\,\mathsf{K4}_t$](normal-extensions-of-transitive-tense-logic.md) and $\alpha \in \mathcal{L}_t$ a formula such that $\mathsf{K4}_t \oplus \alpha$ has $P$, $\mathfrak{G} \not\models \alpha$, and every logic with $P$ is Kripke complete or decidable. Then the set $\{\varphi \in \mathcal{L}_t : \mathsf{K4}_t \oplus \varphi \text{ has } P\}$ is undecidable (Theorem 3.5 of the source).
 
-**Corollary.** Each of the following sets is undecidable: the $\varphi$ such that $\mathsf{K4}_t \oplus \varphi$ is Kripke complete; canonical; first-order definable; has the finite model property; is locally tabular; is tabular; is decidable; equals a fixed tabular logic $L$; is consistent. The same properties are undecidable in $\mathrm{NExt}\,\mathsf{K}_t$.
+**Corollary.** Each of the following sets is undecidable: the $\varphi$ such that $\mathsf{K4}_t \oplus \varphi$ is Kripke complete; canonical; first-order definable; has the finite model property; is locally tabular; is tabular; is decidable; equals a fixed tabular logic $L$; is consistent (Corollary 3.13). The same properties are undecidable in $\mathrm{NExt}\,\mathsf{K}_t$ (Remark 3.14).
 
 In the corollary, $\alpha = \Box\bot \wedge \blacksquare\bot$ works for the first seven properties: $\mathsf{K4}_t \oplus \alpha$ is the logic of the one-point irreflexive frame, which is tabular and so has all of them, and $\mathfrak{G}$ refutes it. In contrast, consistency is decidable in $\mathrm{NExt}\,\mathsf{K}$, and consistency, Kripke completeness, the finite model property and decidability are decidable in the lattice of extensions of the tense logic of linear frames.
 
@@ -25,4 +25,4 @@ The proof adapts the method of Chagrov and Shehtman. There is a deterministic tw
 
 ## Sources
 
-- Q. Chen and T. Takahashi, "Most properties are undecidable for transitive tense logics", Electronic Proceedings in Theoretical Computer Science 447, 2026, pp. 189–202, doi:10.4204/EPTCS.447.11; read as arXiv:2606.31863v1, <https://arxiv.org/abs/2606.31863v1>: the main theorem of Section 3 (label thm:reduction-K4t-P), the corollary listing the undecidable properties (label Thm:undec-properties) with its proof, and the remark extending them to $\mathrm{NExt}\,\mathsf{K}_t$.
+- Q. Chen and T. Takahashi, "Most properties are undecidable for transitive tense logics", Electronic Proceedings in Theoretical Computer Science 447, 2026, pp. 189–202, doi:10.4204/EPTCS.447.11; read as arXiv:2606.31863v1, <https://arxiv.org/abs/2606.31863v1>: Definition 3.1 (the frame $\mathfrak{G}$), Theorem 3.5, Corollary 3.13 with its proof, and Remark 3.14 extending them to $\mathrm{NExt}\,\mathsf{K}_t$.

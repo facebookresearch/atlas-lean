@@ -9,14 +9,15 @@ As a consequence the source obtains (Corollary 3.4) that satisfiability of one-v
 ## Depends on
 
 - [Products of linear orders and difference frames](products-of-linear-orders-and-difference-frames.md)
-
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Recognizability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
 ## Proof depends on
 
 - [Recurring computations of two-counter machines are Σ¹₁-hard](../../../../TheoryOfComputation/equivalence-of-models/counter-machines/recurring-computations-of-two-counter-machines.md)
 
 ## Expansion
 
-The lower bound reduces counter machine recurrence (does a machine have a run from a given state with zero counters visiting a given state infinitely often), which is $\Sigma^1_1$-hard by Alur and Henzinger. In a model on $\omega \times W$ a formula forces a forward-going infinite diagonal staircase of points; the value of counter $i$ at step $m$ is the number of points in the $m$-th column carrying a proposition $c_i$. The difference modality can say that a proposition holds at exactly one point of a column ($\Diamond_1^+(\phi \wedge \Box_1\neg\phi)$), which lets the formula control increments and decrements by one, and the linear order carries the run forward in time; recurrence is a $\Box_0\Diamond_0$ condition. The upper bound holds because satisfiability over $\omega \times W$ can be written as a $\Sigma^1_1$ formula over $\omega$, quantifying over the valuation of the finitely many propositions on a countable model.
+The lower bound reduces counter machine recurrence (does a machine have a run from a given state with zero counters visiting a given state infinitely often), which is $\Sigma^1_1$-hard by Alur and Henzinger. In a model on $\omega \times W$ a formula forces a forward-going infinite diagonal staircase of points; the value of counter $i$ at step $m$ is the number of points in the $m$-th column carrying a proposition $c_i$. The difference modality can say that a proposition holds at exactly one point of a column ($\Diamond_1^+(\phi \wedge \Box_1\neg\phi)$), which lets the formula control increments and decrements by one, and the linear order carries the run forward in time; recurrence is a $\Box_0\Diamond_0$ condition. The upper bound holds because satisfiability over $\omega \times W$ can be written as a $\Sigma^1_1$ formula over $\omega$, quantifying over the valuation of the finitely many propositions on a countable model. A good expansion links the $\Sigma^1_1$ upper bound. A good expansion also needs, as a statement prerequisite, the analytical hierarchy ($\Sigma^1_1$ and $\Pi^1_1$ sets) and hardness under many-one reductions, which the statement uses.
 
 ## Sources
 

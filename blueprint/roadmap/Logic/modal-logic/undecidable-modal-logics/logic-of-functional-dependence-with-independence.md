@@ -4,7 +4,7 @@ Adding independence atoms to the decidable logic of functional dependence produc
 
 **Theorem (Baltag and van Benthem).** The logic LFDI, the set of formulas of the [logic of functional dependence](logic-of-functional-dependence.md) extended with independence atoms $I_X y$ that are valid in all dependence models, is undecidable. Equivalently, satisfiability of LFDI formulas in dependence models is undecidable.
 
-By contrast, LFD itself is decidable. The source also states that LFD becomes undecidable when extended with the Commutation axiom $\exists x \exists y\, \varphi \to \exists y \exists x\, \varphi$ (from Németi's undecidability of the corresponding CRS logic) or with the Stepwise axiom $\mathbb{E}_{X \cap Y}\varphi \to \mathbb{E}_X\mathbb{E}_Y\varphi$, where $\mathbb{E}$ is the dual of $\mathbb{D}$; these are separate statements.
+By contrast, LFD itself is decidable. The source also states that LFD becomes undecidable when extended with the Commutation axiom $\mathbb{E}_X \mathbb{E}_Y \varphi \to \mathbb{E}_Y \mathbb{E}_X \varphi$ (Example 5.12 and Fact 5.14 of the source, from Németi's undecidability of the CRS logic with the commutation axiom $\exists x \exists y\, \varphi \to \exists y \exists x\, \varphi$) or with the Stepwise axiom $\mathbb{E}_{X \cap Y}\varphi \to \mathbb{E}_X\mathbb{E}_Y\varphi$, where $\mathbb{E}$ is the dual of $\mathbb{D}$; these are separate statements.
 
 ## Depends on
 

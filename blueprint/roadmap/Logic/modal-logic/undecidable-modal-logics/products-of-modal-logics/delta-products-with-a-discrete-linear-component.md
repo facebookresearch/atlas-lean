@@ -9,7 +9,6 @@ Here a frame $(W, R)$ is *modally discrete* if there are no points $x_0, x_1, \d
 ## Depends on
 
 - [Delta-products of modal logics](delta-products-of-modal-logics.md)
-- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 - [Recognizability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
 
 ## Proof depends on
@@ -19,8 +18,8 @@ Here a frame $(W, R)$ is *modally discrete* if there are no points $x_0, x_1, \d
 
 ## Expansion
 
-The proof modifies that of the linear-component theorem: in a modally discrete horizontal component the generated grid points $x_n$ satisfy $x_n \neq x_{n+1}$, so one can additionally force that a designated control state recurs infinitely often. This reduces the $\Sigma^1_1$-hard recurrence problem for counter machines to satisfiability, so validity is $\Pi^1_1$-hard.
+The proof modifies that of the linear-component theorem: in a modally discrete horizontal component the generated grid points $x_n$ satisfy $x_n \neq x_{n+1}$, so one can additionally force that a designated control state recurs infinitely often. This reduces the $\Sigma^1_1$-hard recurrence problem for counter machines to satisfiability, so validity is $\Pi^1_1$-hard. A good expansion needs, as a statement prerequisite, the analytical hierarchy ($\Sigma^1_1$ and $\Pi^1_1$ sets) and hardness under many-one reductions, which the statement uses.
 
 ## Sources
 
-- Christopher Hampson, Stanislav Kikot and Agi Kurucz, "The decision problem of modal product logics with a diagonal, and faulty counter machines", *Studia Logica* 104(3):455–486, 2016, doi:10.1007/s11225-015-9647-7; read as arXiv:1509.02060v1, <https://arxiv.org/abs/1509.02060v1>: Theorem 5 and its proof sketch in Section 5 of arXiv:1509.02060v1.
+- Christopher Hampson, Stanislav Kikot and Agi Kurucz, "The decision problem of modal product logics with a diagonal, and faulty counter machines", *Studia Logica* 104(3):455–486, 2016, doi:10.1007/s11225-015-9647-7; read as arXiv:1509.02060v1, <https://arxiv.org/abs/1509.02060v1>: Theorem 5 and its proof sketch in Section 6 of arXiv:1509.02060v1.

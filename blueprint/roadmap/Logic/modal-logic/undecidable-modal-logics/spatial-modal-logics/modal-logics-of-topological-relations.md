@@ -12,7 +12,7 @@ The modal logic of the RCC8 relations over a class of region structures has one 
 - [Topological space](../../../../Topology/topological-spaces/topological-space.md)
 - [Interior of a subset](../../../../Topology/topological-spaces/open-and-closed-sets/interior-of-subset.md)
 - [Closure of a subset](../../../../Topology/topological-spaces/open-and-closed-sets/closure-of-subset.md)
-
+- [Convex set](../../../../Geometry/convex-geometry/convex-set.md)
 ## Proof depends on
 
 None.
