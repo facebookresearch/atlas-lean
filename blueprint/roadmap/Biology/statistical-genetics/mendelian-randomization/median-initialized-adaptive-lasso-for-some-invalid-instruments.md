@@ -10,14 +10,14 @@ $$\pi_j = \frac{\Gamma_j}{\gamma_j} = \beta + \frac{\alpha_j}{\gamma_j}.$$
 
 $\beta$ is identified when the valid instruments form the largest group of equal $\pi_j$; a sufficient condition is $s < L/2$.
 
-**Assumptions** (source, Section 2 and Assumptions 1–4). The data $(y_i, D_i, Z_{i\cdot})$, $i = 1, \dots, n$, are an **i.i.d. sample**, with $Z_{i\cdot}$ the $i$-th row of $Z$ (a $1 \times L$ row vector), $D_i$ the exposure and $u_i = (\varepsilon_i, v_i)^{\mathsf T}$. The errors have **conditional mean zero** and **constant conditional variance**: $\mathbb{E}[u_i \mid Z_{i\cdot}] = 0$ and $\mathbb{E}[u_iu_i^{\mathsf T} \mid Z_{i\cdot}] = \Sigma$; these are the standing hypotheses under which the source states the oracle variance $\sigma^2_{\beta,\mathrm{or}}$ below. The parameters $\beta, \alpha, \gamma$ and the number $L$ of instruments are fixed as $n \to \infty$, and:
+**Assumptions** (source, Section 2 and Assumptions 1–4). The data $(y_i, D_i, Z_{i\cdot})$, $i = 1, \dots, n$, are an **i.i.d. sample**, with $Z_{i\cdot}$ the $i$-th row of $Z$ (a $1 \times L$ row vector), $D_i$ the exposure and $u_i = (\varepsilon_i, v_i)^{\mathsf T}$. The outcome error has **conditional mean zero** and **constant conditional variance**, $\mathbb{E}[\varepsilon_i \mid Z_{i\cdot}] = 0$ and $\mathbb{E}[\varepsilon_i^2 \mid Z_{i\cdot}] = \sigma_\varepsilon^2$ (source, after (3)), while the first-stage coefficient $\gamma = Q^{-1}\mathbb{E}[Z_{i\cdot}^{\mathsf T}D_i]$ is defined by linear projection so $\mathbb{E}[Z_{i\cdot}^{\mathsf T}v_i] = 0$ (source, after (8)), and Assumption 2 specifies the unconditional second-moment matrix $\mathbb{E}[u_iu_i^{\mathsf T}] = \Sigma$ (without imposing $\mathbb{E}[v_i^2 \mid Z_{i\cdot}]$ constant). The parameters $\beta, \alpha, \gamma$ and the number $L$ of instruments are fixed as $n \to \infty$, and:
 
 1. $\mathbb{E}[Z_{i\cdot}^{\mathsf T}Z_{i\cdot}] = Q$ is a finite $L \times L$ matrix of full rank;
 2. $\mathbb{E}[u_i] = 0$ and $\mathbb{E}[u_iu_i^{\mathsf T}] = \Sigma$ has finite entries;
 3. $n^{-1}Z^{\mathsf T}Z \to_p Q$, $n^{-1}Z^{\mathsf T}d \to_p \mathbb{E}[Z_{i\cdot}^{\mathsf T}D_i]$, $n^{-1}Z^{\mathsf T}\varepsilon \to_p 0$, $n^{-1}Z^{\mathsf T}v \to_p 0$, $n^{-1}\sum_i u_i \to_p 0$ and $n^{-1}\sum_i u_iu_i^{\mathsf T} \to_p \Sigma$;
 4. $\gamma = Q^{-1}\mathbb{E}[Z_{i\cdot}^{\mathsf T}D_i]$ with $\gamma_j \ne 0$ for every $j = 1, \dots, L$.
 
-The probability limits in 3 are laws of large numbers only; the $\sqrt n$ limits below also use the i.i.d. sampling and the conditional moment hypotheses, through a central limit theorem for $n^{-1/2}Z^{\mathsf T}u$.
+The probability limits in 3 are laws of large numbers only; the $\sqrt n$ limits below also use the i.i.d. sampling, outcome-error conditional moments, and first-stage projection assumptions, through a central limit theorem for $n^{-1/2}Z^{\mathsf T}u$.
 
 The ratio estimates are $\hat\pi_j = \hat\Gamma_j/\hat\gamma_j$, from the least-squares reduced-form and first-stage coefficients $\hat\Gamma = (Z^{\mathsf T}Z)^{-1}Z^{\mathsf T}y$ and $\hat\gamma = (Z^{\mathsf T}Z)^{-1}Z^{\mathsf T}d$. The Lasso approach (sisVIVE) estimates $\alpha$ by $\ell_1$-penalized regression of $y$ on $Z$ after projecting out $\hat d = Z\hat\gamma$.
 

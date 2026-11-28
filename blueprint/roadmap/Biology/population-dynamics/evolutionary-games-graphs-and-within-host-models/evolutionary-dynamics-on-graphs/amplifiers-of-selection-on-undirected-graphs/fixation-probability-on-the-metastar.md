@@ -6,9 +6,11 @@ Consider the generalized Moran process of [Fixation probability on the Star grap
 
 **Metastar.** For $n \ge 1$, the Metastar $\mathcal{M}^{G_m}_{N(n)}$ on $N(n) = nm + 1$ vertices consists of $n$ disjoint copies of $G_m$ and a root vertex $s$ joined by one edge to the attachment vertex of each copy. With $m = 1$ it is the Star $S_{n+1}$.
 
-**Theorem.** For a fixed graph $G_m$ with attachment vertex $v$ and mutant fitness $r \ge 1$,
+**Theorem.** For a fixed graph $G_m$ with attachment vertex $v$ and mutant fitness $r \ge 1$, set $x = r^{-2}(\alpha/\beta)$. Then
 
-$$\rho\big(r, \mathcal{M}^{G_m}_{N(n)}\big) \;\ge\; p\cdot\frac{1 - r^{-2}(\alpha/\beta)}{1 - \big(r^{-2}(\alpha/\beta)\big)^{n}}\,\big(1 + o(1)\big) \quad (n \to \infty),$$
+$$\rho\big(r, \mathcal{M}^{G_m}_{N(n)}\big) \;\ge\; p\cdot\frac{1}{1 + x + \cdots + x^{n-1}}\,\big(1 + o(1)\big) \quad (n \to \infty),$$
+
+where the factor $1/(1 + x + \cdots + x^{n-1})$ equals $\frac{1 - x}{1 - x^n}$ for $x \ne 1$ and $1/n$ at $x = 1$ (avoiding the $0/0$ indeterminacy of the quotient at neutrality $r = 1$, where $\alpha = \beta$; for a uniformly placed neutral mutant on any connected undirected graph of size $N = nm + 1$, the exact fixation probability is $1/(nm+1)$),
 
 so that
 
