@@ -55,8 +55,10 @@ reduction from every language in `NP`
 -/
 
 /-- An instance: the number of states `n` (states `Fin n`), the alphabet size `k` (letters
-`Fin k`), the transition table (row `q` lists `δ(q, a)` for each letter `a`), and the bound
-`m`. -/
+`Fin k`), a transition table as a list of lists of naturals (row `q` lists `δ(q, a)` for each
+letter `a`), and the bound `m`. The table need not be complete: `automaton` reads a missing
+row or entry as `0` and any entry modulo `n`. One row per state, one entry per letter and
+entries below `n` belong to `WellFormed`. -/
 abbrev ShortSynchronizingWordInstance := ℕ × ℕ × List (List ℕ) × ℕ
 
 /-- Well-formedness of an instance: the table has one row per state, every row has one entry

@@ -56,7 +56,10 @@ reduction from every language in `NP`
 -/
 
 /-- An instance: the word list `W` (letters are natural numbers), the side length `n`, and
-the matrix `A` as a list of rows, with `true` for a `1` and `false` for a `0`. -/
+the matrix `A` as a list of rows, with `true` for a `1` and `false` for a `0`. The data are
+raw: `W` may repeat a word, and `A` need not have `n` rows of length `n` (`Fillable` reads a
+square outside the rows as a `1`); distinct words and the `n × n` shape belong to
+`WellFormed`. -/
 abbrev CrosswordPuzzleConstructionInstance := List (List ℕ) × ℕ × List (List Bool)
 
 /-- Well-formedness of an instance: `W` lists distinct words, and `A` has `n` rows of length

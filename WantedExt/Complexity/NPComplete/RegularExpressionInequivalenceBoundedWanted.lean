@@ -92,8 +92,10 @@ strings `w₁, ..., w_k` with `L ⊆ w₁* w₂* ⋯ w_k*`. -/
 def IsBounded (L : Language ℕ) : Prop :=
   ∃ ws : List (List ℕ), L ≤ (ws.map fun w => ({w} : Language ℕ)∗).prod
 
-/-- An instance: the alphabet size `m` (letters `0, ..., m - 1`) and the postfix token lists of
-`E₁` and `E₂`. -/
+/-- An instance: the alphabet size `m` (letters `0, ..., m - 1`) and two raw lists of natural
+pairs, read as the postfix token lists of `E₁` and `E₂`. A list may be empty, fail to parse or
+use letters outside the alphabet; that both lists spell regular expressions over the alphabet
+(`ExprOver`) and that one of them represents a bounded language belong to `WellFormed`. -/
 abbrev RegularExpressionInequivalenceBoundedInstance := ℕ × List (ℕ × ℕ) × List (ℕ × ℕ)
 
 /-- Well-formedness of an instance: the token lists spell regular expressions `E₁` and `E₂` over

@@ -66,8 +66,11 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- An instance: the placed tiles, each a position `(a, b)` and a color sequence (six colors,
-read clockwise). -/
+/-- An instance: the placed tiles, each a position `(a, b)` and a list of naturals read as its
+color sequence (six colors, read clockwise). The data are raw: two tiles may share a position,
+and a color list need not be a Tantrix tile (`IsTantrixTile`: six colors below `4`, each
+twice, not repeating after three edges); distinct positions and Tantrix tiles belong to
+`WellFormed`. -/
 abbrev TantrixRotationPuzzleInstance := List ((ℕ × ℕ) × List ℕ)
 
 /-- The color sequence of one of the 56 Tantrix tiles: six colors among `0, 1, 2, 3`, each

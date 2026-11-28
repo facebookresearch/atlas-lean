@@ -75,7 +75,10 @@ reduction from every language in `NP`
 
 /-- An instance: the number of regions `R`, and the grid row by row, each cell
 `(region, clue)` with clue `0` (no circle), `1` (circle without a number) or `d + 2` (circle
-with number `d`). -/
+with number `d`). The grid is raw: it may be empty, its rows may have different lengths (`cols`
+is the length of the first row, and `cell` reads a missing cell as `(0, 0)`), and a region
+index may be `R` or more; a nonempty rectangular grid, region indices below `R` and nonempty
+connected regions belong to `WellFormed`. -/
 abbrev SatogaeriInstance := ℕ × List (List (ℕ × ℕ))
 
 /-- The number of rows. -/

@@ -59,9 +59,13 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- An instance: the number `k` of terminals (`Σ = {0, ..., k - 1}`), the grammars `G₁` and
-`G₂` over `Σ`, the size `m` of the second alphabet (`Γ = {0, ..., m - 1}`), the function
-`h : Σ → Γ` as the list `[h 0, ..., h (k - 1)]`, and the string `w`. -/
+/-- An instance: the number `k` of terminals (`Σ = {0, ..., k - 1}`), the raw data of two
+grammars `G₁` and `G₂`, the size `m` of the second alphabet (`Γ = {0, ..., m - 1}`), a list of
+naturals read as the images `[h 0, ..., h (k - 1)]` of a function `h : Σ → Γ`, and the string
+`w`. The list need not be a total map:
+`QuasiRealTimeLanguageMembershipTwoGrammarsFeasible` maps a letter without an image to `0`.
+Grammars over `Σ`, one image per letter, and images and letters of `w` below `m` belong to
+`WellFormed`. -/
 abbrev QuasiRealTimeLanguageMembershipTwoGrammarsInstance :=
   ℕ × GrammarData × GrammarData × ℕ × List ℕ × List ℕ
 

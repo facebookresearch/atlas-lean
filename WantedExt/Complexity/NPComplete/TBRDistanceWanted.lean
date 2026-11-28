@@ -76,8 +76,11 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- A tree: the number of vertices `n`, the edge list on `Fin n`, and the list whose `x`-th
-entry is the vertex that is the leaf of taxon `x`. -/
+/-- A tree: the number of vertices `n`, a list of natural pairs read as the edge list on
+`Fin n`, and a list of naturals whose `x`-th entry is read as the leaf of taxon `x`. The data
+are raw: an edge may repeat, be a loop or have an endpoint outside `Fin n`, and the leaf list
+may have any length; `IsPhyloTree m` states when the data describe a tree, and `WellFormed`
+requires it of both trees. -/
 abbrev TreeData := ℕ × List (ℕ × ℕ) × List ℕ
 
 /-- An instance: the number of taxa `m`, the trees `T₁` and `T₂`, and the bound `K`. -/
