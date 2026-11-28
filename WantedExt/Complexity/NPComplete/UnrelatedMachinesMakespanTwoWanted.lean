@@ -23,9 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
+public import CSLibExt.Complexity.NPComplete.UnrelatedMachinesMakespanTwoDefs
 
 @[expose] public section
 
@@ -58,40 +56,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number `m` of machines, and for each job the list of its processing times
-`p_1j, …, p_mj` on the `m` machines. -/
-abbrev UnrelatedMachinesMakespanTwoInstance := ℕ × List (List ℕ)
-
-/-- The jobs of the instance, `Fin n` for `n` listed rows. -/
-abbrev Job (i : UnrelatedMachinesMakespanTwoInstance) : Type := Fin i.2.length
-
-/-- The machines of the instance, `Fin m`. -/
-abbrev Machine (i : UnrelatedMachinesMakespanTwoInstance) : Type := Fin i.1
-
-/-- The processing time `p_ij` of job `j` on machine `k`: entry `k` of row `j`. -/
-def processingTime (i : UnrelatedMachinesMakespanTwoInstance) (j : Job i) (k : Machine i) : ℕ :=
-  (i.2.get j).getD k 0
-
-/-- Well-formedness of an instance: `m` is positive, every job lists one processing time per
-machine, and every processing time is a positive integer. -/
-def WellFormed (i : UnrelatedMachinesMakespanTwoInstance) : Prop :=
-  0 < i.1 ∧ ∀ row ∈ i.2, row.length = i.1 ∧ ∀ p ∈ row, 0 < p
-
-/-- Some assignment of the jobs to machines gives every machine total processing time at most
-`2`. -/
-def UnrelatedMachinesMakespanTwoFeasible (i : UnrelatedMachinesMakespanTwoInstance) : Prop :=
-  ∃ σ : Job i → Machine i, ∀ k : Machine i,
-    ∑ j ∈ Finset.univ.filter (fun j => σ j = k), processingTime i j k ≤ 2
-
-open Classical in
-/-- UNRELATED PARALLEL MACHINES WITH MAKESPAN 2 as a decision problem over bitstrings. -/
-noncomputable def unrelatedMachinesMakespanTwoDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := UnrelatedMachinesMakespanTwoInstance) x with
-  | some i => decide (WellFormed i ∧ UnrelatedMachinesMakespanTwoFeasible i)
-  | none => false
 
 /-- **UNRELATED PARALLEL MACHINES WITH MAKESPAN 2 is NP-complete.** Source: Lenstra, Shmoys and
 Tardos (1990), Theorem 5; Garey and Johnson (1979), [SS8] (identical machines). -/

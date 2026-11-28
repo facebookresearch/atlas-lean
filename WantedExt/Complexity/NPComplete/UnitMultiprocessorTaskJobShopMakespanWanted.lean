@@ -24,9 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.UnitMultiPurposeJobShopMakespanWanted
+public import CSLibExt.Complexity.NPComplete.UnitMultiprocessorTaskJobShopMakespanDefs
 
 @[expose] public section
 
@@ -80,35 +78,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- A schedule of the unit-time multiprocessor-task job shop: start times `σ` such that two
-different tasks whose processor sets share a processor start at different times (with unit
-processing times, they do not overlap), and every task of a job starts after the previous task
-of the job completes. -/
-def IsUnitMPTSchedule (i : UnitMultiPurposeJobShopInstance) (σ : Operation i → ℕ) : Prop :=
-  (∀ t t', t ≠ t' → (∃ M, M ∈ eligible i t ∧ M ∈ eligible i t') → σ t ≠ σ t') ∧
-    ∀ j (k k' : Fin (i.2.1.get j).length), k'.1 = k.1 + 1 → σ ⟨j, k⟩ + 1 ≤ σ ⟨j, k'⟩
-
-/-- Well-formedness of an instance: `m = 2`, and the instance describes a job shop whose tasks
-have nonempty processor sets in `{1, …, m}` (`IsMPMInstance`). -/
-def WellFormed (i : UnitMultiPurposeJobShopInstance) : Prop :=
-  i.1 = 2 ∧ IsMPMInstance i
-
-/-- Some schedule completes every task by `K`: the last task of every job, which completes after
-the job's other tasks, ends by `K`. -/
-def UnitMultiprocessorTaskJobShopMakespanFeasible (i : UnitMultiPurposeJobShopInstance) :
-    Prop :=
-  ∃ σ : Operation i → ℕ, IsUnitMPTSchedule i σ ∧
-    ∀ j (k : Fin (i.2.1.get j).length), k.1 + 1 = (i.2.1.get j).length → σ ⟨j, k⟩ + 1 ≤ i.2.2
-
-open Classical in
-/-- MULTIPROCESSOR-TASK JOB SHOP `JMPT2|p_ij=1|C_max` as a decision problem over bitstrings. -/
-noncomputable def unitMultiprocessorTaskJobShopMakespanDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := UnitMultiPurposeJobShopInstance) x with
-  | some i => decide (WellFormed i ∧ UnitMultiprocessorTaskJobShopMakespanFeasible i)
-  | none => false
 
 /-- **MULTIPROCESSOR-TASK JOB SHOP `JMPT2|p_ij=1|C_max` is NP-complete.** Source: Brucker (2007),
 Section 11.2; Brucker and Krämer (1995); Brucker and Knust, scheduling classification, class

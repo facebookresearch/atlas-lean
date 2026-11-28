@@ -23,8 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.UnitMultiPurposeJobShopMakespanDefs
 
 @[expose] public section
 
@@ -68,55 +67,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number `m` of machines; the jobs, job `j` being the list of its operations
-in order, each operation given by the list of its eligible machines (numbered `1, …, m`); and
-the bound `K`. -/
-abbrev UnitMultiPurposeJobShopInstance := ℕ × List (List (List ℕ)) × ℕ
-
-/-- An operation `O_{jk}` of the instance: a job `j` and a position `k < n_j`. -/
-abbrev Operation (i : UnitMultiPurposeJobShopInstance) : Type :=
-  (j : Fin i.2.1.length) × Fin (i.2.1.get j).length
-
-/-- The eligible machines `μ_{jk}` of an operation. -/
-def eligible (i : UnitMultiPurposeJobShopInstance) (t : Operation i) : List ℕ :=
-  (i.2.1.get t.1).get t.2
-
-/-- A schedule of the unit-time multi-purpose job shop: machine `μ t` and start time `σ t` for
-every operation `t`, with every operation on an eligible machine, operations on the same
-machine at different start times, and every operation of a job starting after the previous
-operation of the job completes. -/
-def IsUnitMPMSchedule (i : UnitMultiPurposeJobShopInstance) (μ σ : Operation i → ℕ) : Prop :=
-  (∀ t, μ t ∈ eligible i t) ∧
-    (∀ t t', μ t = μ t' → σ t = σ t' → t = t') ∧
-    ∀ j (k k' : Fin (i.2.1.get j).length), k'.1 = k.1 + 1 → σ ⟨j, k⟩ + 1 ≤ σ ⟨j, k'⟩
-
-/-- An instance describes a multi-purpose job shop: every job has at least one operation, every
-operation has a nonempty set of eligible machines, and every eligible machine lies in
-`{1, …, m}`. -/
-def IsMPMInstance (i : UnitMultiPurposeJobShopInstance) : Prop :=
-  (∀ job ∈ i.2.1, job ≠ []) ∧ (∀ job ∈ i.2.1, ∀ μ ∈ job, μ ≠ []) ∧
-    ∀ job ∈ i.2.1, ∀ μ ∈ job, ∀ M ∈ μ, 1 ≤ M ∧ M ≤ i.1
-
-/-- Well-formedness of an instance: `m = 3`, and the instance describes a multi-purpose job
-shop (`IsMPMInstance`). -/
-def WellFormed (i : UnitMultiPurposeJobShopInstance) : Prop :=
-  i.1 = 3 ∧ IsMPMInstance i
-
-/-- Some schedule completes every operation by `K`: the last operation of every job, which
-completes after the job's other operations, ends by `K`. -/
-def UnitMultiPurposeJobShopMakespanFeasible (i : UnitMultiPurposeJobShopInstance) : Prop :=
-  ∃ μ σ : Operation i → ℕ, IsUnitMPMSchedule i μ σ ∧
-    ∀ j (k : Fin (i.2.1.get j).length), k.1 + 1 = (i.2.1.get j).length → σ ⟨j, k⟩ + 1 ≤ i.2.2
-
-open Classical in
-/-- MULTIPURPOSE-MACHINE JOB SHOP `JMPM3|p_ij=1|C_max` as a decision problem over bitstrings. -/
-noncomputable def unitMultiPurposeJobShopMakespanDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := UnitMultiPurposeJobShopInstance) x with
-  | some i => decide (WellFormed i ∧ UnitMultiPurposeJobShopMakespanFeasible i)
-  | none => false
 
 /-- **MULTIPURPOSE-MACHINE JOB SHOP `JMPM3|p_ij=1|C_max` is NP-complete.** Source: Garey and
 Johnson (1979), [SS18], comment; Lenstra and Rinnooy Kan (1979); Brucker and Knust,
