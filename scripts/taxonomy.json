@@ -16232,6 +16232,7 @@
   "MathlibExt/Topology/Algebra/StrongCompleteness": {"to": "GroupTheory/profinite-and-topological-groups", "title": "Strong completeness of profinite groups"},
   "MathlibExt/Topology/ArithmeticalSelfSimilarCompactSet": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Arithmetical self-similar compact sets"},
   "MathlibExt/Topology/ArithmeticalSelfSimilarCompactSetDerived": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Arithmetical self-similar compact sets"},
+  "MathlibExt/Topology/ArithmeticalSelfSimilarCompactSetIsArithmeticalCompactSetDerivedSetIterate": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Arithmetical self-similar compact sets"},
   "MathlibExt/Topology/ArithmeticalSelfSimilarCompactSetLayerEnumTendsto": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Arithmetical self-similar compact sets"},
   "MathlibExt/Topology/BrouwerFixedPoint": {"to": "Topology/algebraic-topology", "title": "Brouwer fixed-point theorem"},
   "MathlibExt/Topology/Compactification/OnePoint/ProjectiveLineThreePoints": {"to": "AlgebraicGeometry/algebraic-curves", "title": "Javanpeykar's bound for Belyi curves"},
