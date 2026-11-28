@@ -10,6 +10,8 @@ module
 
 public import Mathlib.Analysis.SpecialFunctions.Log.Summable
 public import Mathlib.Analysis.SpecificLimits.Normed
+import Mathlib.Logic.Equiv.Fin.Basic
+import Mathlib.Topology.Algebra.InfiniteSum.Constructions
 
 /-!
 # Infinite q-Pochhammer products
@@ -30,7 +32,13 @@ out-of-domain `q` cannot be passed silently.
 ## Main statements
 
 * `MetaMathlibExt.QPochhammer.hasProd_qPochhammerInf`
+* `MetaMathlibExt.QPochhammer.qPochhammerInfRaw_split`
 * `MetaMathlibExt.QPochhammer.qPochhammerInfRaw_two_one`
+
+## References
+
+The residue-class splitting proof generalizes the former `diagonal_split` in
+`MathlibExt.NumberTheory.ModularForms.JacobiTheta.RamanujanOneTwo`.
 -/
 
 @[expose] public section
@@ -80,6 +88,23 @@ theorem hasProd_qPochhammerInf (a q : ℂ) (hq : ‖q‖ < 1) :
   have hm : Multipliable (fun n : ℕ => 1 + (-a) * q ^ n) :=
     Complex.multipliable_one_add_of_summable hsa
   simpa [qPochhammerInf, qPochhammerInfRaw, sub_eq_add_neg] using hm.hasProd
+
+/-- For `‖q‖ < 1` and a positive modulus `d`, splitting the indices into their residue classes
+modulo `d` expresses `(a; q)∞` as the product of `(a * q^i; q^d)∞` for `0 ≤ i < d`. -/
+theorem qPochhammerInfRaw_split (a q : ℂ) (hq : ‖q‖ < 1) (d : ℕ) [NeZero d] :
+    qPochhammerInfRaw a q = ∏ i : Fin d, qPochhammerInfRaw (a * q ^ i.val) (q ^ d) := by
+  let e := (Equiv.prodComm (Fin d) ℕ).trans (Nat.divModEquiv d).symm
+  have hp := e.hasProd_iff.mpr (hasProd_qPochhammerInf a q hq)
+  have hd : ‖q ^ d‖ < 1 := by
+    rw [norm_pow]
+    exact pow_lt_one₀ (norm_nonneg _) hq (NeZero.ne d)
+  have hf := hp.prod_fiberwise (g := fun i : Fin d => qPochhammerInfRaw (a * q ^ i.val) (q ^ d)) (by
+    intro i
+    apply (hasProd_qPochhammerInf _ _ hd).congr_fun
+    intro n
+    simp [e, pow_add, pow_mul, mul_comm n d]
+    ring)
+  exact hf.unique (hasProd_fintype _)
 
 /-- **The q-Pochhammer symbol vanishes at a = 1 and q = 0.** The infinite q-Pochhammer symbol
 satisfies $(1;0)_\infty = 0$, because its factor for $n = 0$ is $1 - 1 \cdot 0^0 = 0$ (with the

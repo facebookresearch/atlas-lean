@@ -10,14 +10,30 @@ module
 
 public import MathlibExt.Analysis.SpecialFunctions.QPochhammer
 import MathlibExt.Analysis.SpecialFunctions.JacobiTripleProduct
-import MathlibExt.NumberTheory.ModularForms.JacobiTheta.RamanujanProduct
+import MathlibExt.NumberTheory.ModularForms.JacobiTheta.RamanujanProductSum
+import MathlibExt.NumberTheory.ModularForms.JacobiTheta.RamanujanProductDifference
+import Mathlib.Algebra.BigOperators.Fin
+import Mathlib.Analysis.Complex.Polynomial.Basic
 import Mathlib.Tactic.LinearCombination
 
 /-!
 # Ramanujan's function $k$
 
 The product defining `ramanujanK` satisfies a modular equation relating its values at
-$q$ and $q^2$ throughout the open unit disk.
+$q$ and $q^2$ throughout the open unit disk. For $0 < |q| < 1$, the difference of the
+ratios $k(q)/k(q^2)$ and $k(q^2)/k(q)$ is an eta quotient. The proof expresses the
+ratios in terms of theta products and groups the Euler factors modulo five and ten.
+
+## References
+
+* Russelle Guadalupe, *New Proofs of Certain Theta Function Identities via Ramanujan's Function*,
+  INTEGERS 26 (2026), Article A41, pp. 1–7, Section 1, Lemma 3, and Theorem 4.
+* A. Vanitha, M. P. Chaudhary, and Madiha Khanum, *Modular Relations for the
+  Rogers-Ramanujan-Slater Type Functions of Order Eighteen with Applications to Partitions*,
+  INTEGERS 24 (2024), Article A103, pp. 1–17, Equation (5) and Lemma 2, Equations (6)–(7).
+* C. Adiga, B. C. Berndt, S. Bhargava, and G. N. Watson, *Chapter 16 of Ramanujan's Second
+  Notebook: Theta-Functions and q-Series*, Mem. Amer. Math. Soc. 53 (1985), no. 315, pp. 1–85,
+  Entries 19 and 29 (Jacobi triple product and theta addition formulas).
 -/
 
 namespace MetaMathlibExt
@@ -131,16 +147,22 @@ private noncomputable def minusTheta (q : ℂ) (i : ℕ) : ℂ := θ (-q ^ i) (-
 
 private noncomputable def plusTheta (q : ℂ) (i : ℕ) : ℂ := θ (q ^ i) (q ^ (10 - i))
 
-private lemma theta_ten {q a b : ℂ} (hq : ‖q‖ < 1) (hq0 : q ≠ 0) (ha : a ≠ 0)
-    (hab : a * b = q ^ 10) :
-    θ a b = euler q * (P (-a) (q ^ 10) * P (-b) (q ^ 10)) := by
-  have h₁ : a / q ^ 5 * q ^ 5 = a := div_mul_cancel₀ _ (pow_ne_zero _ hq0)
-  have h₂ : (a / q ^ 5)⁻¹ * q ^ 5 = b := by
+private lemma theta_prod_of_mul_eq_sq {t a b : ℂ} (ht : ‖t‖ < 1) (ht0 : t ≠ 0)
+    (ha : a ≠ 0) (hab : a * b = t ^ 2) :
+    θ a b = P (t ^ 2) (t ^ 2) * (P (-a) (t ^ 2) * P (-b) (t ^ 2)) := by
+  have h₁ : a / t * t = a := div_mul_cancel₀ _ ht0
+  have h₂ : (a / t)⁻¹ * t = b := by
     rw [inv_div]
     field_simp
     linear_combination -hab
-  have h := theta_prod (norm_pow_lt (n := 5) hq (by decide)) (div_ne_zero ha (pow_ne_zero 5 hq0))
-  simpa only [h₁, h₂, ← pow_mul, euler] using h
+  simpa only [h₁, h₂] using theta_prod ht (div_ne_zero ha ht0)
+
+private lemma theta_ten {q a b : ℂ} (hq : ‖q‖ < 1) (hq0 : q ≠ 0) (ha : a ≠ 0)
+    (hab : a * b = q ^ 10) :
+    θ a b = euler q * (P (-a) (q ^ 10) * P (-b) (q ^ 10)) := by
+  simpa only [← pow_mul, euler] using theta_prod_of_mul_eq_sq
+    (norm_pow_lt (n := 5) hq (by decide)) (pow_ne_zero 5 hq0) ha
+    (by simpa only [← pow_mul] using hab)
 
 private noncomputable def pair (q : ℂ) (i : ℕ) : ℂ :=
   P (q ^ i) (q ^ 10) * P (q ^ (10 - i)) (q ^ 10)
@@ -275,5 +297,154 @@ public theorem ramanujanK_sq_relation (q : ℂ) (hq : ‖q‖ < 1) :
     (theta_pair hq hq0 1) (theta_pair hq hq0 2) (theta_pair hq hq0 3) (theta_pair hq hq0 4)
     _ h₂.2 h₂.1
   linear_combination h₁.1 - h₁.2
+
+namespace ramanujanK_div_sub_div_sq
+
+local notation "P" => qPochhammerInfRaw
+local notation "θ" => ramanujanThetaRaw
+
+private lemma plusTheta_ne_zero {q : ℂ} (hq : ‖q‖ < 1) (hq0 : q ≠ 0)
+    (i : ℕ) (hi : 0 < i := by decide) (hi' : i < 10 := by decide) : plusTheta q i ≠ 0 := by
+  intro h
+  have h₂ := norm_pow_lt hq two_ne_zero
+  have hz := theta_pair hq hq0 i hi'.le
+  rw [h, mul_zero] at hz
+  exact mul_ne_zero (div_ne_zero (pow_ne_zero 2 (euler_ne_zero hq)) (euler_ne_zero h₂))
+    (minus_ne_zero h₂ (pow_ne_zero 2 hq0) i hi hi') hz.symm
+
+-- Converting the negative-parameter theta values at q² to paired values at q
+-- cancels the negative-parameter values in the quotient.
+private lemma k_ratio {q : ℂ} (hq : ‖q‖ < 1) (hq0 : q ≠ 0) :
+    ramanujanK q / ramanujanK (q ^ 2) =
+      (plusTheta q 3 * plusTheta q 4) / (q * plusTheta q 1 * plusTheta q 2) := by
+  have h₂ := norm_pow_lt hq two_ne_zero
+  have hE := div_ne_zero (pow_ne_zero 2 (euler_ne_zero hq)) (euler_ne_zero h₂)
+  have hpair (i : ℕ) (hi : i ≤ 10 := by decide) :
+      minusTheta (q ^ 2) i = minusTheta q i * plusTheta q i / (euler q ^ 2 / euler (q ^ 2)) := by
+    apply (eq_div_iff hE).2
+    rw [mul_comm]
+    exact (theta_pair hq hq0 i hi).symm
+  rw [k_eq hq hq0, k_eq h₂ (pow_ne_zero 2 hq0), hpair 1, hpair 2, hpair 3, hpair 4]
+  field_simp [hq0, euler_ne_zero hq, euler_ne_zero h₂,
+    minus_ne_zero hq hq0 1, minus_ne_zero hq hq0 2,
+    minus_ne_zero hq hq0 3, minus_ne_zero hq hq0 4,
+    plusTheta_ne_zero hq hq0 1, plusTheta_ne_zero hq hq0 2,
+    plusTheta_ne_zero hq hq0 3, plusTheta_ne_zero hq hq0 4]
+
+-- The common Pochhammer factors at the four nonzero residues modulo five.
+private noncomputable def levelFiveFactors (q s : ℂ) : ℂ :=
+  P (s * q ^ 1) (q ^ 5) * P (s * q ^ 2) (q ^ 5) *
+    P (s * q ^ 3) (q ^ 5) * P (s * q ^ 4) (q ^ 5)
+
+private lemma euler_split_five {q : ℂ} (hq : ‖q‖ < 1) :
+    P q q = P (q ^ 5) (q ^ 5) * levelFiveFactors q 1 := by
+  rw [qPochhammerInfRaw_split q q hq 5]
+  simp only [levelFiveFactors, Fin.prod_univ_succ, Fin.prod_univ_zero, Fin.val_succ,
+    Fin.val_zero, Nat.reduceAdd, one_mul, mul_one, ← pow_succ', pow_one]
+  ring
+
+private lemma plusTheta_prod {q : ℂ} (hq : ‖q‖ < 1) (hq0 : q ≠ 0) :
+    plusTheta q 3 * plusTheta q 4 * (plusTheta q 1 * plusTheta q 2) =
+      euler q ^ 4 * levelFiveFactors q (-1) := by
+  have hθ (i : ℕ) (hi : i ≤ 10 := by decide) :
+      plusTheta q i = euler q * (P (-q ^ i) (q ^ 10) * P (-q ^ (10 - i)) (q ^ 10)) :=
+    theta_ten hq hq0 (pow_ne_zero _ hq0) (by rw [← pow_add, Nat.add_sub_of_le hi])
+  have hsplit (i : ℕ) : P (-q ^ i) (q ^ 5) = P (-q ^ i) (q ^ 10) * P (-q ^ (i + 5)) (q ^ 10) := by
+    have h₅ := norm_pow_lt (n := 5) hq (by decide)
+    simpa only [Fin.prod_univ_two, Fin.val_zero, Fin.val_one, pow_zero, pow_one, mul_one,
+      ← pow_mul, Nat.reduceMul, neg_mul, ← pow_add, Nat.add_zero] using
+      qPochhammerInfRaw_split (-q ^ i) _ h₅ 2
+  rw [hθ 1, hθ 2, hθ 3, hθ 4]
+  simp only [levelFiveFactors, neg_one_mul, Nat.reduceSub, hsplit, Nat.reduceAdd]
+  ring
+
+private lemma theta_prod_five {q : ℂ} (hq : ‖q‖ < 1) (hq0 : q ≠ 0) (s : ℂ) (hs : s * s = 1) :
+    θ (s * q ^ 1) (s * q ^ 4) * θ (s * q ^ 2) (s * q ^ 3) =
+      P (q ^ 5) (q ^ 5) ^ 2 * levelFiveFactors q (-s) := by
+  obtain ⟨t, ht⟩ := IsAlgClosed.exists_pow_nat_eq (q ^ 5) zero_lt_two
+  have ht0 : t ≠ 0 := by rintro rfl; exact pow_ne_zero 5 hq0 (by simpa using ht.symm)
+  have htn : ‖t‖ < 1 := (sq_lt_one_iff₀ (norm_nonneg _)).mp (by
+    rw [← norm_pow, ht]
+    exact norm_pow_lt hq (by decide))
+  have hs0 : s ≠ 0 := by rintro rfl; simp at hs
+  have hθ (i j : ℕ) (hij : i + j = 5 := by decide) :
+      θ (s * q ^ i) (s * q ^ j) = P (q ^ 5) (q ^ 5) * (P (-s * q ^ i) (q ^ 5) *
+        P (-s * q ^ j) (q ^ 5)) := by
+    simpa only [ht, neg_mul] using theta_prod_of_mul_eq_sq htn ht0
+      (mul_ne_zero hs0 (pow_ne_zero _ hq0)) (b := s * q ^ j)
+      (by rw [mul_mul_mul_comm, hs, one_mul, ← pow_add, hij, ht])
+  rw [hθ 1 4, hθ 2 3, levelFiveFactors]
+  ring
+
+-- The sum and difference formulas at parameters (q, q⁴, q², q³).
+private lemma theta_dissection_five {q : ℂ} (hq : ‖q‖ < 1) (hq0 : q ≠ 0) :
+    (plusTheta q 3 * plusTheta q 4) ^ 2 - (q * plusTheta q 1 * plusTheta q 2) ^ 2 =
+      P (q ^ 5) (q ^ 5) ^ 4 * levelFiveFactors q 1 * levelFiveFactors q (-1) := by
+  let S := θ (q ^ 1) (q ^ 4) * θ (q ^ 2) (q ^ 3)
+  let T := θ (-q ^ 1) (-q ^ 4) * θ (-q ^ 2) (-q ^ 3)
+  let A := plusTheta q 3 * plusTheta q 4
+  let B := q * plusTheta q 1 * plusTheta q 2
+  have hab : q ^ 1 * q ^ 4 = q ^ 2 * q ^ 3 := by rw [← pow_add, ← pow_add]
+  have hn : ‖q ^ 1 * q ^ 4‖ < 1 := by rw [← pow_add]; exact norm_pow_lt hq (by decide)
+  have hsum : S + T = 2 * A := by
+    have h := ramanujanTheta_mul_add_mul_neg hab hn
+    simp only [← pow_add, Nat.reduceAdd] at h
+    simpa only [S, T, A, plusTheta, Nat.reduceSub, mul_assoc] using h
+  have hsub : S - T = 2 * B := by
+    have h42 : q ^ 4 / q ^ 2 = q ^ 2 := by field_simp
+    have h43 : q ^ 4 / q ^ 3 = q ^ 1 := by field_simp
+    have h := ramanujanTheta_mul_sub_mul_neg hab hn (pow_ne_zero _ hq0) (pow_ne_zero _ hq0)
+    simp only [h42, h43, ← pow_mul, Nat.reduceMul, ← pow_add, Nat.reduceAdd] at h
+    rw [show S - T = _ from h]
+    dsimp only [B, plusTheta]
+    simp only [Nat.reduceSub, pow_one]
+    ring
+  have hs : S = A + B := by linear_combination (hsum + hsub) / 2
+  have ht : T = A - B := by linear_combination (hsum - hsub) / 2
+  have hp := theta_prod_five hq hq0 1 (by simp)
+  have hm := theta_prod_five hq hq0 (-1) (by norm_num)
+  simp only [one_mul, neg_one_mul, neg_neg] at hp hm
+  change A ^ 2 - B ^ 2 = _
+  calc
+    _ = S * T := by rw [hs, ht]; ring
+    _ = _ := by rw [show S = _ from hp, show T = _ from hm]; ring
+
+end ramanujanK_div_sub_div_sq
+
+open ramanujanK_div_sub_div_sq in
+/-- **Ramanujan's function $k$ at $q$ and $q^2$ as an eta quotient.** For every complex number
+$q$ with $0 < |q| < 1$, Ramanujan's function $k$ satisfies
+$$
+\frac{k(q)}{k(q^2)} - \frac{k(q^2)}{k(q)} =
+\frac{(q;q)_\infty (q^5;q^5)_\infty^3}{q\,(q^{10};q^{10})_\infty^4},
+$$
+where $(a;x)_\infty = \prod_{n \ge 0} (1 - a x^n)$ is the infinite q-Pochhammer product.
+
+Source: Russelle Guadalupe, *New Proofs of Certain Theta Function Identities via Ramanujan's
+Function*, INTEGERS 26 (2026), Article A41, Lemma 3 (`integers-2026-A41-lem-3`). -/
+public theorem ramanujanK_div_sub_div_sq (q : ℂ) (hq : ‖q‖ < 1) (hq0 : q ≠ 0) :
+    ramanujanK q / ramanujanK (q ^ 2) - ramanujanK (q ^ 2) / ramanujanK q =
+      qPochhammerInfRaw q q * qPochhammerInfRaw (q ^ 5) (q ^ 5) ^ 3 /
+        (q * qPochhammerInfRaw (q ^ 10) (q ^ 10) ^ 4) := by
+  let A := plusTheta q 3 * plusTheta q 4
+  let B := q * plusTheta q 1 * plusTheta q 2
+  have hA : A ≠ 0 := mul_ne_zero (plusTheta_ne_zero hq hq0 3) (plusTheta_ne_zero hq hq0 4)
+  have hB : B ≠ 0 := mul_ne_zero (mul_ne_zero hq0 (plusTheta_ne_zero hq hq0 1))
+    (plusTheta_ne_zero hq hq0 2)
+  have hr : ramanujanK q / ramanujanK (q ^ 2) = A / B := k_ratio hq hq0
+  have hs : ramanujanK (q ^ 2) / ramanujanK q = B / A := by
+    rw [← inv_div (ramanujanK q), hr, inv_div]
+  have hden : A * B = q * (euler q ^ 4 * levelFiveFactors q (-1)) := by
+    rw [← plusTheta_prod hq hq0]
+    dsimp only [A, B]
+    ring
+  rw [hr, hs]
+  calc
+    _ = (A ^ 2 - B ^ 2) / (A * B) := by field_simp
+    _ = _ := by
+      have hEuler : q * euler q ^ 4 ≠ 0 := mul_ne_zero hq0 (pow_ne_zero 4 (euler_ne_zero hq))
+      apply (div_eq_div_iff (mul_ne_zero hA hB) hEuler).2
+      rw [show A ^ 2 - B ^ 2 = _ from theta_dissection_five hq hq0, hden, euler_split_five hq]
+      ring
 
 end MetaMathlibExt

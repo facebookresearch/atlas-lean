@@ -96,19 +96,6 @@ private lemma one_two_product {q : ℂ} (hq : ‖q‖ < 1) :
     rw [inv_div, div_mul_eq_mul_div, ← sq, hr, pow_succ, mul_div_cancel_right₀ _ hq0]
   simpa only [ha, hb, hr] using theta_product (q / r) r (div_ne_zero hq0 hr0) hr1
 
--- Group the factors of the Euler product by their positive residues 1, ..., d.
-private lemma diagonal_split (q : ℂ) (hq : ‖q‖ < 1) (d : ℕ) [NeZero d] :
-    P q q = ∏ i : Fin d, P (q ^ (i.val + 1)) (q ^ d) := by
-  let e := (Equiv.prodComm (Fin d) ℕ).trans (Nat.divModEquiv d).symm
-  have hp := e.hasProd_iff.mpr (hasProd_qPochhammerInf q q hq)
-  have hf := hp.prod_fiberwise (g := fun i : Fin d => P (q ^ (i.val + 1)) (q ^ d)) (by
-    intro i
-    apply (hasProd_qPochhammerInf _ _ (norm_pow_lt_one hq (NeZero.ne d))).congr_fun
-    intro n
-    simp [e, pow_add, pow_mul, mul_comm n d]
-    ring)
-  exact hf.unique (hasProd_fintype _)
-
 private lemma pair_product (a q : ℂ) (hq : ‖q‖ < 1) :
     P a q * P (-a) q = P (a ^ 2) (q ^ 2) := by
   have hp := (hasProd_qPochhammerInf a q hq).mul (hasProd_qPochhammerInf (-a) q hq)
@@ -152,14 +139,18 @@ public theorem ramanujanTheta_one_two {q : ℂ} (hq : ‖q‖ < 1) :
     simp only [one_mul, inv_one, neg_neg, neg_sq] at h
     rwa [h₆] at h
   have hsplit₂ : P q q = P q (q ^ 2) * P (q ^ 2) (q ^ 2) := by
-    simpa [Fin.prod_univ_two] using diagonal_split q hq 2
+    simpa [Fin.prod_univ_two, pow_two] using qPochhammerInfRaw_split q q hq 2
   have hsplit₃ : P q q = P q (q ^ 3) * P (q ^ 2) (q ^ 3) * P (q ^ 3) (q ^ 3) := by
-    simpa [Fin.prod_univ_three, mul_assoc] using diagonal_split q hq 3
+    simpa [Fin.prod_univ_three, pow_succ', mul_assoc] using qPochhammerInfRaw_split q q hq 3
   have hsplit₂₃ : P (q ^ 2) (q ^ 2) =
       P (q ^ 2) (q ^ 6) * P (q ^ 4) (q ^ 6) * P (q ^ 6) (q ^ 6) := by
-    simpa [Fin.prod_univ_three, ← pow_mul, mul_assoc] using diagonal_split (q ^ 2) h₂ 3
+    have h := qPochhammerInfRaw_split (q ^ 2) (q ^ 2) h₂ 3
+    simp only [← pow_succ'] at h
+    simpa [Fin.prod_univ_three, ← pow_mul, mul_assoc] using h
   have hsplit₃₂ : P (q ^ 3) (q ^ 3) = P (q ^ 3) (q ^ 6) * P (q ^ 6) (q ^ 6) := by
-    simpa [Fin.prod_univ_two, h₆] using diagonal_split (q ^ 3) h₃ 2
+    have h := qPochhammerInfRaw_split (q ^ 3) (q ^ 3) h₃ 2
+    simp only [← pow_succ'] at h
+    simpa [Fin.prod_univ_two, h₆] using h
   have hpair₁ : P q (q ^ 3) * P (-q) (q ^ 3) = P (q ^ 2) (q ^ 6) := by
     simpa only [h₆] using pair_product q (q ^ 3) h₃
   have hpair₂ : P (q ^ 2) (q ^ 3) * P (-q ^ 2) (q ^ 3) = P (q ^ 4) (q ^ 6) := by
