@@ -109,9 +109,13 @@ public def slowANimGame (n : ℕ) (A : Finset ℕ) : SpragueGrundy.ImpartialGame
   rank_lt := sum_lt_of_mem_slowANimMoves A
   start := fun _ => 0
 
-/-- **Moves removing one or two tokens in Slow A-Nim.** An option never increases a stack
-height or decreases it by more than one, and decreases the total number of tokens by one
-or two. Conversely, any change satisfying these bounds is such an option. -/
+/-- **Options in Slow$\{1, 2\}$-Nim.** In Slow$A$-Nim with $A = \{1, 2\}$ on $k$ labelled
+stacks (the Princess and the Roses game), a position $q$ is an option of $p$ if and only if
+$q_i \le p_i \le q_i + 1$ for every stack $i$ and
+$\sum_i q_i < \sum_i p_i \le \sum_i q_i + 2$.
+
+Source: Zev Friedman, *Sprague-Grundy Values for 4-Pile Princess and the Roses*,
+INTEGERS 26 (2026), Article G4, Section 2.1 (the move rules). -/
 public theorem mem_slowANimGame_moves_one_two_iff {k : ℕ} {p q : Fin k → ℕ} :
     q ∈ (slowANimGame k {1, 2}).moves p ↔
       (∀ i, q i ≤ p i ∧ p i ≤ q i + 1) ∧

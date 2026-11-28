@@ -275,8 +275,13 @@ private theorem sum_mem_right (G H : ImpartialGame) (a : G.Pos) (b : H.Pos)
   right
   exact Finset.mem_image.mpr ⟨b', h, rfl⟩
 
-/-- **Moves in a sum of impartial games.** An option of `(a, b)` in the game sum is either
-`(a', b)`, where `a'` is an option of `a`, or `(a, b')`, where `b'` is an option of `b`. -/
+/-- **Options in a sum of impartial games.** Let $G$ and $H$ be impartial games and let $a$ and
+$b$ be positions of $G$ and $H$, respectively. A position $q$ of $G + H$ is an option of $(a, b)$
+if and only if $q = (a', b)$ for some option $a'$ of $a$ in $G$, or $q = (a, b')$ for some option
+$b'$ of $b$ in $H$.
+
+Source: Zev Friedman, *Sprague-Grundy Values for 4-Pile Princess and the Roses*,
+INTEGERS 26 (2026), Article G4, Section 1.5 (the sum of games). -/
 theorem mem_gameSum_moves_iff (G H : ImpartialGame) (a : G.Pos) (b : H.Pos)
     (q : (gameSum G H).Pos) :
     q ∈ (gameSum G H).moves ((a, b) : (gameSum G H).Pos) ↔
