@@ -36,6 +36,7 @@ public import Mathlib.MeasureTheory.Measure.Typeclasses.NoAtoms
 public import Mathlib.Probability.Distributions.Gaussian.Real
 public import Mathlib.Probability.Independence.Basic
 public import MathlibExt.Probability.Statistics.Measurement.Scales
+public import MathlibExt.Probability.Statistics.WilcoxonSignedRank
 
 @[expose] public section
 
@@ -48,12 +49,6 @@ open MathlibExt.Probability.Statistics.Measurement (sampleRank)
 `sampleRank (fun j => |x j|) i = 1 + #{j | |x_j| < |x_i|}` of `|x_i|`. -/
 noncomputable def signedRankStatistic {n : ℕ} (x : Fin n → ℝ) : ℕ :=
   ∑ i ∈ Finset.univ.filter (fun i => 0 < x i), sampleRank (fun j => |x j|) i
-
-/-- **Number of subsets with a given sum.** The number `c_n(t)` of subsets of `{1, …, n}` with
-sum `t`. -/
-def subsetSumCount (n t : ℕ) : ℕ :=
-  ((Finset.univ : Finset (Finset (Fin n))).filter
-    fun S : Finset (Fin n) => (∑ j ∈ S, ((j : ℕ) + 1)) = t).card
 
 /-- **Exact null law of the signed-rank statistic.** Let `μ` be a probability
 measure and `D_1, …, D_n : Ω → ℝ` independent measurable random variables, each with a law that
@@ -92,15 +87,5 @@ public theorem_wanted subsetSum_moments_symm (n : ℕ) :
       (∑ S : Finset (Fin n), (((∑ j ∈ S, ((j : ℕ) + 1) : ℕ) : ℝ) - n * (n + 1) / 4) ^ 2) /
           (2 : ℝ) ^ n = n * (n + 1) * (2 * n + 1) / 24 ∧
       ∀ t, t ≤ n * (n + 1) / 2 → subsetSumCount n t = subsetSumCount n (n * (n + 1) / 2 - t)
-
-/-- **Wilcoxon's worked cases.** For `15` pairs, `∑_{t ≤ 24} c_15(t) = 676`, so
-`P(W⁺ ≤ 24) = 676 / 32768 ≈ 0.0206`, inside the source's range `[0.019, 0.054]`; for `8` pairs,
-`∑_{t ≤ 3} c_8(t) = 5`, so `P(W⁺ ≤ 3) = 5 / 256`.
-
-Sources: F. Wilcoxon, "Individual comparisons by ranking methods", Biometrics Bull. 1 (1945) 80–83,
-Table II and the worked examples. -/
-public theorem_wanted subsetSumCount_examples :
-    ∑ t ∈ Finset.range 25, subsetSumCount 15 t = 676 ∧
-      ∑ t ∈ Finset.range 4, subsetSumCount 8 t = 5
 
 end WantedExt.Probability.Statistics.WilcoxonSignedRankWanted
