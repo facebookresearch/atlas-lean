@@ -73,7 +73,7 @@ theorem coproductKernelIso_hom_ι (i : I) :
     Discrete.natIso (fun i => PreservesKernel.iso ((evaluation (Discrete I) C).obj i) d)
   let χ : Discrete.functor (fun i => kernel (f i)) ⟶ Discrete.functor X := e.inv ≫ kernel.ι d
   change Sigma.ι (fun i => kernel (f i)) i ≫
-      G.map e.inv ≫ (PreservesKernel.iso G d).hom ≫ kernel.ι (G.map d) = _
+      (G.map e.inv ≫ (PreservesKernel.iso G d).hom) ≫ kernel.ι (G.map d) = _
   rw [PreservesKernel.iso_hom]
   simp only [Category.assoc]
   rw [kernelComparison_comp_ι, ← G.map_comp]
@@ -106,7 +106,7 @@ theorem kernel_lift_coproductKernelIso_inv (i : I) :
         (coproductKernelIso f).inv =
       Sigma.ι (fun i => kernel (f i)) i := by
   rw [← ι_coproductKernelIso_hom f i]
-  simp only [Category.assoc, Iso.hom_inv_id_assoc]
+  simp only [Category.assoc, Iso.hom_inv_id, Category.comp_id]
 
 /-- Let C be abelian with exact I-indexed coproducts. For families
 fᵢ : Xᵢ → Yᵢ and gᵢ : X′ᵢ → Y′ᵢ, suppose uᵢ : Xᵢ → X′ᵢ and

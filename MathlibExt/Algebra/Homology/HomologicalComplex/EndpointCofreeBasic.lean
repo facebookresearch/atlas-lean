@@ -82,7 +82,7 @@ theorem endpointCofreeNextTerm_isZero (I : ι → C) (i : ι)
     (hi : ¬ c.Rel i (c.next i)) :
     IsZero (endpointCofreeNextTerm (c := c) I i) := by
   rw [endpointCofreeNextTerm_of_no_next I i hi]
-  exact isZero_zero C
+  exact isZero_zero
 
 /-- For a family I in an abelian category and any complex shape c, form
 the complex with term Iᵢ ⊕ Eᵢ, where Eᵢ is I(c.next i) on an outgoing
@@ -182,13 +182,15 @@ def endpointCofreeHom (K : HomologicalComplex C c) (I : ι → C)
   comm' i j hij := by
     obtain rfl := c.next_eq' hij
     rw [endpointCofree_d I hij]
+    change biprod.lift (a i) (endpointCofreeSecondCoefficient K I a i) ≫
+        (biprod.snd ≫ (endpointCofreeNextTermIso I hij).hom ≫ biprod.inl) =
+      K.d i (c.next i) ≫ biprod.lift (a (c.next i))
+        (endpointCofreeSecondCoefficient K I a (c.next i))
     apply biprod.hom_ext
-    · simp only [Category.assoc, endpointCofreeInclusion, endpointCofreeSecondProjection,
-        biprod.inl_fst, Category.comp_id, biprod.lift_snd, biprod.lift_snd_assoc,
-        biprod.lift_fst,
+    · simp only [Category.assoc, biprod.inl_fst, Category.comp_id,
+        biprod.lift_snd_assoc, biprod.lift_fst,
         endpointCofreeSecondCoefficient, dif_pos hij, Iso.inv_hom_id]
-    · simp only [Category.assoc, endpointCofreeInclusion, endpointCofreeSecondProjection,
-        biprod.inl_snd, comp_zero, biprod.lift_snd]
+    · simp only [Category.assoc, biprod.inl_snd, comp_zero, biprod.lift_snd]
       by_cases hj : c.Rel (c.next i) (c.next (c.next i))
       · simp only [endpointCofreeSecondCoefficient, dif_pos hj,
           ← Category.assoc, K.d_comp_d, zero_comp]
@@ -257,8 +259,13 @@ theorem endpointCofree_hom_ext (I : ι → C)
   intro i
   apply biprod.hom_ext
   · exact h i
-  · by_cases hi : c.Rel i (c.next i)
-    · rw [endpointCofree_snd K I f i hi, endpointCofree_snd K I g i hi, h (c.next i)]
+  · change f.f i ≫ endpointCofreeSecondProjection (c := c) I i =
+      g.f i ≫ endpointCofreeSecondProjection (c := c) I i
+    by_cases hi : c.Rel i (c.next i)
+    · rw [endpointCofree_snd K I f i hi, endpointCofree_snd K I g i hi]
+      simpa only [Category.assoc] using congrArg
+        (fun z : K.X (c.next i) ⟶ I (c.next i) =>
+          K.d i (c.next i) ≫ z ≫ (endpointCofreeNextTermIso I hi).inv) (h (c.next i))
     · exact (endpointCofreeNextTerm_isZero I i hi).eq_of_tgt _ _
 
 /-- For a c-shaped complex K and a family I in an abelian category,
@@ -318,6 +325,7 @@ theorem endpointCofreeHom_naturality (K : HomologicalComplex C c) {I J : ι → 
   intro i
   simp only [HomologicalComplex.comp_f, Category.assoc, endpointCofreeMap_fst]
   rw [← Category.assoc, endpointCofreeHom_fst]
+  rw [endpointCofreeHom_fst]
 
 /-- For a family I in an abelian category and any complex shape c,
 the cofree morphism induced by the identity on every Iᵢ is the
