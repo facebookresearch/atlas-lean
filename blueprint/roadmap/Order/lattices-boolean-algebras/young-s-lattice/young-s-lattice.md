@@ -1,27 +1,10 @@
 # Young's lattice
 
-Young's lattice is the set of all integer partitions, including the empty partition, ordered by containment of their Young diagrams.
+Young's lattice is the set of Young diagrams, the finite lower sets of $\mathbb N \times \mathbb N$, ordered by inclusion; equivalently, the set of all integer partitions ordered by containment of their diagrams.
 
-**Definition.** A [partition](../../../Combinatorics/tilings-board-placements/tilings-of-the-symmetric-group-by-transpositions/partition-shape.md) of $n \in \mathbb N$ is a finite non-increasing sequence $\pi = (n_1, \ldots, n_t)$ of positive integers with $n_1 + \cdots + n_t = n$; the empty partition has no parts. For partitions $\sigma = (s_1, \ldots, s_r)$ and $\pi = (n_1, \ldots, n_t)$ set
+A *Young diagram* is a finite subset $\mu \subseteq \mathbb N \times \mathbb N$ that is a lower set: if $(i, j) \in \mu$, $i' \le i$ and $j' \le j$, then $(i', j') \in \mu$. Young diagrams are ordered by inclusion, $\mu \le \nu \iff \mu \subseteq \nu$, and the ordered set $\mathbf Y$ of all Young diagrams is *Young's lattice*; it is a distributive lattice, with meet and join given by intersection and union.
 
-$$
-\sigma \le \pi \iff r \le t \text{ and } s_i \le n_i \text{ for all } i \le r,
-$$
-
-which says that the Young diagram of $\sigma$ is contained in that of $\pi$. This is a [partial order](../../ordered-sets/partial-order.md) on the set $\mathcal P$ of all partitions, and the ordered set $\mathbf Y = \langle \mathcal P, \le \rangle$ is *Young's lattice*. It is a distributive lattice, graded by the size $|\pi| = n$: $\pi$ covers $\sigma$ exactly when $\sigma \le \pi$ and $|\pi| = |\sigma| + 1$. Transposing Young diagrams gives the conjugate partition $\pi^\partial$, and $\pi \mapsto \pi^\partial$ is an automorphism of $\mathbf Y$.
-
-## Depends on
-
-- [Partially ordered set](../../ordered-sets/partial-order.md)
-- [Integer partition as a list of row lengths](../../../Combinatorics/tilings-board-placements/tilings-of-the-symmetric-group-by-transpositions/partition-shape.md)
-
-## Proof depends on
-
-None.
-
-## Expansion
-
-This node states a definition; that containment of Young diagrams is a partial order is immediate from the componentwise description.
+Reading off the lengths of the nonempty rows matches Young diagrams with integer partitions, the finite non-increasing sequences $(n_1, \ldots, n_t)$ of positive integers, the empty diagram giving the empty partition. Under this matching, $\sigma = (s_1, \ldots, s_r) \le \pi = (n_1, \ldots, n_t)$ exactly when $r \le t$ and $s_i \le n_i$ for all $i \le r$, and $\mathbf Y$ is graded by the size $|\pi| = n_1 + \cdots + n_t$: $\pi$ covers $\sigma$ exactly when $\sigma \le \pi$ and $|\pi| = |\sigma| + 1$. Transposing diagrams, $(i, j) \mapsto (j, i)$, gives the conjugate partition $\pi^\partial$, and $\pi \mapsto \pi^\partial$ is an order automorphism of $\mathbf Y$.
 
 ## Sources
 

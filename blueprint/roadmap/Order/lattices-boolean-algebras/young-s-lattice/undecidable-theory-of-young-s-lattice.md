@@ -1,12 +1,12 @@
 # The elementary theory of Young's lattice is undecidable
 
-The first-order theory of Young's lattice, as an ordered set, is undecidable and inherently non-finitely axiomatizable; with the constant [1]+[1] added, already its Σ₄ part is undecidable.
+The first-order theory of Young's lattice, as an ordered set, is undecidable; with the constant [1]+[1] added, already its Σ₄ part is undecidable.
 
-**Theorem (Wires).** The elementary (first-order) theory of [Young's lattice](young-s-lattice.md) $\mathbf Y = \langle \mathcal P, \le \rangle$ in the language of the order relation is undecidable and inherently non-finitely axiomatizable (Theorem 3.16 of the source).
+**Theorem (Wires).** The elementary (first-order) theory of [Young's lattice](young-s-lattice.md) $\mathbf Y = \langle \mathcal P, \le \rangle$ in the language of the order relation is undecidable (Theorem 3.16 of the source).
 
 The proof goes through a sharper result: with $\mathbf Y^\ast = \langle \mathcal P, \le, [1] + [1] \rangle$, Young's lattice with a constant for the partition $(1, 1)$, the set of $\Sigma_4$ sentences true in $\mathbf Y^\ast$ is undecidable (Theorem 3.15).
 
-Here a $\Sigma_n$ sentence is one equivalent to a prenex sentence with $n$ alternating blocks of quantifiers beginning with an existential block. The constant is needed to break the symmetry of conjugation, since $[2]^\partial = [1] + [1]$. The same paper shows that $\mathbf Y^\ast$ has the maximal definability property: its definable relations are exactly the arithmetically definable ones under a suitable coding of partitions by natural numbers (Theorem 4.4). It conjectures that the $\Sigma_1$ theory of $\mathbf Y$ is NP-complete (Conjecture 5.1) and that the $\Sigma_1$ theory with constants for all partitions is undecidable (Conjecture 5.3).
+Theorem 3.16 also states that this theory is "inherently non-finitely axiomatizable", a property the source derives from results of Tarski, Mostowski and Robinson on interpretations of arithmetic without defining it; that clause is left out of the statement above. Here a $\Sigma_n$ sentence is one equivalent to a prenex sentence with $n$ alternating blocks of quantifiers beginning with an existential block. The constant is needed to break the symmetry of conjugation, since $[2]^\partial = [1] + [1]$. The same paper shows that $\mathbf Y^\ast$ has the maximal definability property: its definable relations are exactly the arithmetically definable ones under a suitable coding of partitions by natural numbers (Theorem 4.4). It conjectures that the $\Sigma_1$ theory of $\mathbf Y$ is NP-complete (Conjecture 5.1) and that the $\Sigma_1$ theory with constants for all partitions is undecidable (Conjecture 5.3).
 
 ## Depends on
 
@@ -17,10 +17,11 @@ Here a $\Sigma_n$ sentence is one equivalent to a prenex sentence with $n$ alter
 ## Proof depends on
 
 - [Davis–Putnam–Robinson–Matiyasevich theorem](../../../TheoryOfComputation/undecidable-problems/diophantine-sets-and-hilbert-s-tenth-problem/dprm-theorem.md)
+- [Halting is undecidable](../../../TheoryOfComputation/computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halts.md)
 
 ## Expansion
 
-The proof interprets $\langle \mathbb N, +, \times \rangle$ in $\mathbf Y^\ast$: the partitions $[n]$ with a single part represent the natural numbers, and the ternary relations of addition and multiplication restricted to them are defined by $\Pi_3$ formulas. Undecidability of the positive existential theory of $\langle \mathbb N, +, \times \rangle$ (Matiyasevich) then gives the undecidability of the $\Sigma_4$ theory of $\mathbf Y^\ast$. Since the elementary theory of a fixed structure is complete, general results on interpretations of arithmetic transfer this to undecidability and inherent non-finite axiomatizability of the theory of $\mathbf Y$; those interpretation results have no page here.
+The proof interprets $\langle \mathbb N, +, \times \rangle$ in $\mathbf Y^\ast$: the partitions $[n]$ with a single part represent the natural numbers, and the ternary relations of addition and multiplication restricted to them are defined by $\Pi_3$ formulas. Undecidability of the positive existential theory of $\langle \mathbb N, +, \times \rangle$, which follows from the Davis–Putnam–Robinson–Matiyasevich theorem together with the undecidability of the halting problem, then gives the undecidability of the $\Sigma_4$ theory of $\mathbf Y^\ast$. Since the elementary theory of a fixed structure is complete, general results on interpretations of arithmetic (Tarski, Mostowski and Robinson) transfer this to undecidability of the theory of $\mathbf Y$. A good expansion links those interpretation results and the definability of addition and multiplication on single-part partitions.
 
 ## Sources
 
