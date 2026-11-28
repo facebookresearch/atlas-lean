@@ -1,0 +1,3 @@
+# The Fisher information quadratic form along a line
+
+Let $E$ be a finite-dimensional real inner product space, $\nu$ a measure, $p_\theta$ ($\theta \in E$) densities with respect to $\nu$, $P_\theta = p_\theta\,\nu$, $s_\theta = \nabla_\theta\log p_\theta$ the score and $I(\theta)$ the Fisher information operator. Suppose $p_\theta > 0$, $p_\theta$ is measurable, $t \mapsto p_t(x)$ is differentiable at $\theta$ for every $x$, and $s_\theta$ is square integrable. Then for every $u$, $\langle I(\theta)u, u\rangle$ is the one-parameter Fisher information at $t = 0$ of the submodel $t \mapsto p_{\theta + tu}$.

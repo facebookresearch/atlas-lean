@@ -1,0 +1,3 @@
+# Identification of the average treatment effect from the observational law by inverse probability weighting
+
+Let $\mu$ be a probability measure, $T$ a measurable treatment event, $X$ a measurable covariate with values in a finite set (singletons measurable), and $Y_0, Y_1$ measurable integrable potential outcomes. Assume strong ignorability: $T$ is conditionally independent of $(Y_0, Y_1)$ given $X$, and $0 < P(T \mid X = w) < 1$ for every $w$ with $P(X = w) > 0$. Then $\mathbb{E}[Y_1 - Y_0]$ equals the inverse-probability-weighted functional of the observational law of $(X, \mathbf 1_T, Y)$.

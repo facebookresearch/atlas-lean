@@ -18,7 +18,7 @@ Consequently the site statistic is a noisier estimator of $\mu\, \mathrm{Branch}
 
 ## Proof depends on
 
-- [Total variance splits into true-score and error variance](../../../Probability/not-yet-classified/part-15/true-score/variance-eq-variance-cond-exp-add-varian.md)
+- [Total variance splits into true-score and error variance](../../../Probability/statistical-estimation/item-response-models/reliability-and-generalizability/variance-eq-variance-cond-exp-add-varian.md)
 - [Poisson process](../../../Probability/point-processes/poisson-processes/is-poisson-process.md)
 
 ## Expansion

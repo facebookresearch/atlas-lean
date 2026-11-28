@@ -1,5 +1,8 @@
 # Factor analysis and structural equation models
 
+- [Recursive structural equation models](structural-equation/README.md)
+- [The one-factor model](the-one-factor-model/README.md)
+- [Factor-model reparametrization and group invariance](factor-model-reparametrization-and-group-invarian/README.md)
 - [Differential item functioning and group impact are logically independent](differential-item-functioning-versus-impact.md)
 - [Identification of a one-factor model from three indicators](identification-of-the-one-factor-model.md)
 - [Orthogonal rotations of factor loadings leave the covariance unchanged](rotation-indeterminacy-of-factor-loadings.md)

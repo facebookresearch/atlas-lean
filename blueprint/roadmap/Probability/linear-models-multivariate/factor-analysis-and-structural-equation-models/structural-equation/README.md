@@ -1,0 +1,17 @@
+# Recursive structural equation models
+
+- [Nilpotency of DAG-supported coefficient matrices](pow-card-eq-zero-of-topological-order.md)
+- [Inverse of I - B for DAG-supported B](inv-one-sub-eq-sum-pow-of-topological-or.md)
+- [Gaussian discrepancy is nonnegative](gaussian-discrepancy-nonneg.md)
+- [Gaussian discrepancy vanishes exactly at equality](gaussian-discrepancy-eq-zero-iff.md)
+- [Growth identified](growth-identified.md)
+- [Reduced form of linear structural equations](reduced-form-of-structural.md)
+- [Covariance implied by linear structural equations](covariance-structural.md)
+- [Higher powers of an acyclic coefficient matrix vanish](pow-eq-zero-of-topological-order.md)
+- [Geometric series inverse for an acyclic coefficient matrix](one-sub-mul-sum-pow-of-topological-order.md)
+- [The determinant of I − B is a unit for an acyclic B](is-unit-det-one-sub-of-topological-order.md)
+- [Gaussian covariance-fit discrepancy](gaussian-discrepancy.md)
+- [The Gaussian discrepancy vanishes at a perfect fit](gaussian-discrepancy-self.md)
+- [Loading matrix of a linear growth model](growth-loading.md)
+- [Covariance of the three-point linear growth model](growth-loading-cov-apply.md)
+- [Recovering linear growth parameters from the covariance](growth-recover.md)

@@ -29,7 +29,7 @@ If $G$ is in Hardy–Weinberg proportions with allele frequency $p$, then $\oper
 ## Proof depends on
 
 - [Tower property of conditional expectation](../../../Probability/foundations/conditional-expectation/tower-property/tower-property.md)
-- [Total variance splits into true-score and error variance](../../../Probability/not-yet-classified/part-15/true-score/variance-eq-variance-cond-exp-add-varian.md)
+- [Total variance splits into true-score and error variance](../../../Probability/statistical-estimation/item-response-models/reliability-and-generalizability/variance-eq-variance-cond-exp-add-varian.md)
 
 ## Expansion
 

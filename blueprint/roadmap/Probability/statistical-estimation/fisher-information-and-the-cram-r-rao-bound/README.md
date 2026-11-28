@@ -8,6 +8,7 @@
 - [Directional Cramér–Rao inequality](sq-inner-le-quad-form-mul.md)
 - [Cramér–Rao inequality for a real estimand of a vector parameter](cramer-rao-multiparameter.md)
 - [Wald's consistency theorem for maximum likelihood](ae-tendsto-maximum-likelihood.md)
+- [Likelihood inference with a vector parameter](likelihood-inference-with-a-vector-parameter/README.md)
 
 ## Related topics
 

@@ -1,0 +1,3 @@
+# The average treatment effect is identified by the observational law
+
+For a family of settings $\theta$, let $\mu_\theta$, $T_\theta$, $X_\theta$, $Y_{0,\theta}$, $Y_{1,\theta}$ each satisfy the hypotheses of inverse-probability-weighting identification: a probability measure, a measurable treatment event, a measurable covariate with values in a finite set, measurable integrable potential outcomes, and strong ignorability (conditional independence of treatment and potential outcomes given the covariate, with overlap). Then the average treatment effect $\mathbb{E}_{\mu_\theta}[Y_{1,\theta} - Y_{0,\theta}]$ is identified by the observational laws of $(X_\theta, \mathbf 1_{T_\theta}, Y_\theta)$.

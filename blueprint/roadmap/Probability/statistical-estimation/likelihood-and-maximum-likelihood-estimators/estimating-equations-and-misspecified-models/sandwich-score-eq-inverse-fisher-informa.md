@@ -1,0 +1,3 @@
+# The sandwich is the inverse information for a correct score
+
+For a density family $p_\theta$ on a finite-dimensional real inner product space of parameters with score $s_\theta = \nabla_\theta\log p_\theta$ and Fisher information $I(\theta_0) = \int s_{\theta_0}s_{\theta_0}^\top dP_{\theta_0}$, suppose the information identity $\int D_\theta s_\theta|_{\theta_0}\,dP_{\theta_0} = -I(\theta_0)$ holds and $I(\theta_0)$ is invertible. Then the sandwich covariance with bread $D = \int D_\theta s_\theta|_{\theta_0}dP_{\theta_0}$ and meat $V = \int s_{\theta_0}s_{\theta_0}^\top dP_{\theta_0}$ equals $I(\theta_0)^{-1}$.

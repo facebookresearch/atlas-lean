@@ -1,0 +1,3 @@
+# The expected score vanishes at an interior maximum
+
+Let $E$ be a finite-dimensional real inner product space, $\mu$ a measure, $\ell_\theta(x)$ real functions and $\theta_0$ a local maximum of $\theta \mapsto \int\ell_\theta\,d\mu$. Suppose that for some $\delta > 0$, every $x$ and every $\theta \in B(\theta_0, \delta)$, $\theta \mapsto \ell_\theta(x)$ has gradient $\psi_\theta(x)$ with $\|\psi_\theta(x)\| \le G(x)$ for an integrable $G$, each $\ell_\theta$ ($\theta$ in the ball) is almost everywhere strongly measurable, $\ell_{\theta_0}$ is integrable and $\psi_{\theta_0}$ is almost everywhere strongly measurable. Then $\int\psi_{\theta_0}\,d\mu = 0$.

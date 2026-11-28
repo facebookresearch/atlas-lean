@@ -4,6 +4,8 @@
 - [Hoeffding projection of a kernel](hoeffding-proj.md)
 - [Unbiasedness](integral-u-statistic.md)
 - [Hoeffding's variance formula](variance-u-statistic.md)
+- [Degeneracy of a U-statistic kernel](zeta1-eq-zero-iff.md)
+- [Variance of a degenerate U-statistic](variance-degenerate-rate.md)
 - [Hájek projection of a U-statistic](hajek-projection.md)
 - [Hájek projection of a symmetric kernel](hajek-projection-eq-of-symm.md)
 - [The first Hoeffding projection of a square-integrable kernel is square-integrable](mem-lp-hoeffding-proj-one.md)

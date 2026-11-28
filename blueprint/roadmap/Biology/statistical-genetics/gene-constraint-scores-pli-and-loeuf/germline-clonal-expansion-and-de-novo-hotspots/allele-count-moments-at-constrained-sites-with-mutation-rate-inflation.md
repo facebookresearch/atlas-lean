@@ -22,7 +22,7 @@ Thus population allele counts at constrained sites scale linearly in $\kappa$ in
 - [Mean of the gamma law](../../../../Probability/distributions/continuous/gamma-distribution/gamma-moments/integral-id-gamma-measure.md)
 - [Variance of the gamma law](../../../../Probability/distributions/continuous/gamma-distribution/gamma-moments/variance-id-gamma-measure.md)
 - [Mean of the Poisson distribution](../../../population-genetics/haldane-s-survival-probability-of-a-beneficial-m/mean-poisson-measure.md)
-- [Total variance splits into true-score and error variance](../../../../Probability/not-yet-classified/part-15/true-score/variance-eq-variance-cond-exp-add-varian.md): the law of total variance
+- [Total variance splits into true-score and error variance](../../../../Probability/statistical-estimation/item-response-models/reliability-and-generalizability/variance-eq-variance-cond-exp-add-varian.md): the law of total variance
 
 ## Expansion
 

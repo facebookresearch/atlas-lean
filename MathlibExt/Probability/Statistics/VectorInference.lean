@@ -135,9 +135,9 @@ private theorem continuous_rankOne_self :
 /-- The **Fisher information operator** of the family `p` at `θ`: the second moment
 `E_θ [s sᵀ]` of the score `s = score p θ` under the law `p θ ν` (the Bochner integral of the
 rank-one operators `InnerProductSpace.rankOne ℝ s s : v ↦ ⟪s, v⟫ • s`), as a continuous linear
-map `E →L[ℝ] E`. Its quadratic form is `⟪I(θ) u, u⟫ = E_θ ⟪s, u⟫²`
-(`inner_fisherInformation_apply`). If the score is not square integrable the Bochner integral
-takes its junk value `0`. -/
+map `E →L[ℝ] E`. When the score is square integrable under `p θ ν`, its quadratic form is
+`⟪I(θ) u, u⟫ = E_θ ⟪s, u⟫²` (`inner_fisherInformation_apply`). If the score is not square
+integrable the Bochner integral takes its junk value `0`. -/
 noncomputable def fisherInformation (ν : Measure 𝓧) (p : E → 𝓧 → ℝ) (θ : E) : E →L[ℝ] E :=
   ∫ x, InnerProductSpace.rankOne ℝ (score p θ x) (score p θ x) ∂(lawOf ν p θ)
 
@@ -249,10 +249,10 @@ theorem inner_fisherInformation_self {ν : Measure 𝓧} {p : E → 𝓧 → ℝ
 
 variable [MeasurableSpace E] [BorelSpace E]
 
-/-- **Cramér–Rao inequality, directional form.** Let `p θ'` be positive probability densities
-with respect to `ν` for `θ'` near `θ`, differentiable in the parameter at `θ`, with a
-measurable score of finite second moment under `p θ ν`, and let `T` be an estimator with
-finite second moment that is unbiased for `g θ'` near `θ`, with `g` differentiable at `θ`. If,
+/-- **Cramér–Rao inequality, directional form.** Let `p θ' x > 0` for every `θ'` and `x`, with
+`∫ p θ' dν = 1` for `θ'` near `θ`, `p θ` measurable and `p · x` differentiable at `θ` for every
+`x`, with a measurable score of finite second moment under `p θ ν`, and let `T` be an estimator
+with finite second moment that is unbiased for `g θ'` near `θ`, with `g` differentiable at `θ`. If,
 along the line through `θ` in direction `u`, `∫ p dν` and `∫ T p dν` can be differentiated
 under the integral sign at `θ`, then `(Dg(θ) u)² ≤ ⟪I(θ) u, u⟫ · Var_θ T`.
 

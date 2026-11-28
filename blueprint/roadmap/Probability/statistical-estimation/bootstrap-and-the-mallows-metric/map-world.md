@@ -1,0 +1,3 @@
+# Transforming bootstrap draws
+
+For data $x_0, x_1, \dots$ in a measurable space with a zero element and $n \in \mathbb{N}$, let $\hat P_n = \frac1n\sum_{i<n}\delta_{x_i}$ be the empirical distribution ($\hat P_0 = \delta_0$). The bootstrap world of the data is the probability measure on arrays $\omega = (\omega_{n,k})_{n,k \in \mathbb{N}}$ under which all entries are independent and each $\omega_{n,k}$ has law $\hat P_n$; the resample at size $n$ is $(\omega_{n,0}, \dots, \omega_{n,n-1})$. Let $f$ be a measurable map to another such space with $f(0) = 0$, singletons measurable in both. Then the image of the bootstrap world of $x$ under $\omega \mapsto (f(\omega_{n,k}))_{n,k}$ is the bootstrap world of the data $(f(x_i))_i$.

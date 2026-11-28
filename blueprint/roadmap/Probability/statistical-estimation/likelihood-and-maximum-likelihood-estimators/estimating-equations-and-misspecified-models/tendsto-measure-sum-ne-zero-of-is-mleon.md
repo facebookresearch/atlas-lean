@@ -1,0 +1,3 @@
+# The maximum-likelihood estimator solves the likelihood equation with probability tending to one
+
+Let $\hat\theta_n$ be a maximum-likelihood estimator on a set $K$ of a finite-dimensional real inner product space for a log-likelihood $\ell$ and observations $X_i$ on a measure space with measure $P$ (expectations are integrals against $P$), converging in probability to a point $\theta^*$ of the interior of $K$, and suppose that for some $\delta > 0$, $\theta \mapsto \ell_\theta(x)$ has gradient $\psi_\theta(x)$ at every $\theta \in B(\theta^*, \delta)$ and every $x$. Then $P\big(\sum_{i<n}\psi_{\hat\theta_n}(X_i) \ne 0\big) \to 0$.

@@ -1,0 +1,3 @@
+# Identifiability of the population criterion from identifiability of the law
+
+For a log-likelihood $\ell_\theta(x)$ and observations $X_0, X_1, \dots$ on a probability space, write $Q(\theta) = \mathbb{E}[\ell_\theta(X_0)]$ for the population criterion. Let $K$ be a parameter set containing $\theta_0$, $X_0$ almost everywhere measurable with law $\mu_{\theta_0}$, and for every $\theta \in K$ let $\mu_\theta$ be a probability measure with $\mu_{\theta_0} \ll \mu_\theta$, $\ell_\theta$ $\mu_{\theta_0}$-integrable and $\ell_{\theta_0} - \ell_\theta = \log\frac{d\mu_{\theta_0}}{d\mu_\theta}$ $\mu_{\theta_0}$-almost everywhere. If $\mu_\theta = \mu_{\theta_0}$ with $\theta \in K$ forces $\theta = \theta_0$, then $\theta_0$ is the unique maximizer of $Q$ on $K$.

@@ -15,3 +15,5 @@
 - [Response PMF eq rasch](response-pmf-eq-rasch.md)
 - [Two PLAbility Log Likelihood](two-plability-log-likelihood.md)
 - [Two PLAbility Score](two-plability-score.md)
+- [Reliability and generalizability](reliability-and-generalizability/README.md)
+- [Scales of measurement](scales-of-measurement/README.md)

@@ -1,0 +1,3 @@
+# Wald covers from local envelopes on a compact set
+
+For a log-likelihood $\ell_\theta(x)$, $\theta$ in a pseudometric space, and observations $X_0, X_1, \dots$ on a measure space with measure $P$ (expectations are integrals against $P$), write $Q(\theta) = \mathbb{E}[\ell_\theta(X_0)]$. Let $X_0$ be almost everywhere measurable, $K$ compact, and for every $\theta \in K \setminus \{\theta_0\}$ let $\ell_\theta(X_0)$ be integrable, $Q(\theta) < Q(\theta_0)$, and let local envelopes exist at $\theta$ on $S$. If one measurable envelope $u_T \ge \ell_\theta$ for all $\theta \in S \setminus K$ has $u_T(X_0)$ integrable and $\mathbb{E}[u_T(X_0)] < Q(\theta_0)$, then $S$ has a Wald cover away from $\theta_0$ at every radius $\varepsilon > 0$.

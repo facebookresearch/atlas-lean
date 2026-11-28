@@ -1,0 +1,3 @@
+# Conditional multivariate central limit theorem for the bootstrap mean
+
+Let $E$ be a finite-dimensional real inner product space. For data $x_0, x_1, \dots \in E$ let $\bar x_n = \frac1n\sum_{i<n}x_i$ and, under the bootstrap world of the data, $\bar x^*_n = \frac1n\sum_{k<n}\omega_{n,k}$. Let $Z$ be a random vector in $E$ whose projections satisfy $\langle Z, t\rangle \sim \mathcal N(0, v(t))$ for every $t$ (the covariance may be singular). Suppose that for every direction $t$ the projected data $\langle x_i, t\rangle$ have plug-in variances converging to $v(t)$ and satisfy the Lindeberg condition. Then, under the bootstrap world of the data, $\sqrt n\,(\bar x^*_n - \bar x_n)$ converges in distribution to $Z$.
