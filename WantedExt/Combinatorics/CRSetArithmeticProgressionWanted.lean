@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Data.PNat.Basic
 public import MathlibExt.Combinatorics.CRSetArithmeticProgression
+public import MathlibExt.Combinatorics.EssentialCRSet
 public import MathlibExt.Combinatorics.EssentialSetSequence
 public import MathlibExt.Combinatorics.RamseyFamily
 public import MathlibExt.Combinatorics.RamseyFamilyIdempotent
@@ -75,16 +76,6 @@ Source: De and Debnath, *Abundance of Arithmetic Progressions in CR-Sets*, INTEG
 def IsJSet (A : Set S) : Prop :=
   ∀ F : Finset (ℕ → S), ∃ a : S, ∃ H : List ℕ, H.Nodup ∧ H ≠ [] ∧
     ∀ f ∈ F, (H.map f).foldl (· + ·) a ∈ A
-
-/-- **Essential CR-set.** Let $(S, +)$ be a commutative semigroup, and add ultrafilters on $S$ by
-the rule that $E \in p + q$ if and only if $\{x \in S : \{y \in S : x + y \in E\} \in q\} \in p$.
-A subset $A$ of $S$ is an essential CR-set when there is an ultrafilter $p$ on $S$ with
-$p + p = p$, all of whose members are CR-sets, such that $A \in p$.
-
-Source: De and Debnath, *Abundance of Arithmetic Progressions in CR-Sets*, INTEGERS
-25 (2025), Article A4, Section 2 (definition of essential CR-sets before Theorem 7). -/
-def IsEssentialCRSet (A : Set S) : Prop :=
-  ∃ p : Ultrafilter S, p + p = p ∧ (∀ B ∈ p, IsCRSet B) ∧ A ∈ p
 
 /-- **The whole commutative semigroup is thick.** If $S$ is a nonempty commutative semigroup,
 then $S$ itself is a thick subset of $S$.
@@ -177,21 +168,6 @@ Source: De and Debnath, *Abundance of Arithmetic Progressions in CR-Sets*, INTEG
 25 (2025), Article A4, Theorem 2 (`integers-2025-A4-thm-2`). -/
 public theorem_wanted IsJSet.arithmeticProgressions_pnat {S : Set ℕ+} (hS : IsJSet S) (k : ℕ) :
     IsJSet {p : ℕ+ × ℕ+ | ∀ i ≤ k, (· + p.2)^[i] p.1 ∈ S}
-
-/-- **Essential CR-sets via decreasing sequences.** Let $S$ be a countable commutative semigroup
-and let $A \subseteq S$. Then $A$ is an essential CR-set if and only if there is a decreasing
-sequence $C_0 \supseteq C_1 \supseteq C_2 \supseteq \cdots$ of CR-sets contained in $A$ such that
-for every $n$ and every $x \in C_n$ there is an $m$ with $C_m \subseteq -x + C_n$, where
-$-x + C_n = \{y \in S : x + y \in C_n\}$.
-
-The sequence is indexed from $0$ rather than $1$.
-
-Source: De and Debnath, *Abundance of Arithmetic Progressions in CR-Sets*, INTEGERS
-25 (2025), Article A4, Theorem 7 (`integers-2025-A4-thm-7`). -/
-public theorem_wanted isEssentialCRSet_iff_exists_decreasing_sequence {S : Type*}
-    [AddCommSemigroup S] [Countable S] (A : Set S) :
-    IsEssentialCRSet A ↔ ∃ C : ℕ → Set S, Antitone C ∧ (∀ n, C n ⊆ A) ∧
-      (∀ n, ∀ x ∈ C n, ∃ m, C m ⊆ {y : S | x + y ∈ C n}) ∧ ∀ n, IsCRSet (C n)
 
 /-- **Arithmetic progressions in essential CR-sets of the positive integers.** Let $\mathbb{N}^+$
 denote the positive integers under addition. If $A \subseteq \mathbb{N}^+$ is an essential CR-set
