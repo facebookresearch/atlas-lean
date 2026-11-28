@@ -48,7 +48,7 @@ variable (R : Type u) [CommRing R] (A : Type u) [Ring A] [Algebra R A]
 private abbrev M := ModuleCat.of R A
 
 /-- The coefficients occur in every natural degree, with zero differentials. -/
-private def K : CochainComplex (ModuleCat.{u} R) ℕ where
+private abbrev K : CochainComplex (ModuleCat.{u} R) ℕ where
   X _ := M R A
   d _ _ := 0
   shape _ _ _ := rfl
@@ -108,7 +108,7 @@ private lemma product_coordinate (p q : ℕ) (x y : A) :
     cycle_inclusion, cycle_inclusion]
   rfl
 
-private def coefficient (a : R) : K R A ⟶ K R A where
+private abbrev coefficient (a : R) : K R A ⟶ K R A where
   f _ := ModuleCat.ofHom (a • LinearMap.id)
   comm' _ _ _ := by simp [K]
 

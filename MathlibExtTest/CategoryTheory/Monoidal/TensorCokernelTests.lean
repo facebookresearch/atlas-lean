@@ -69,14 +69,14 @@ private lemma kills_relations :
     intro x y
     change castA ((2 : ℤ) • x) * castB y = 0
     rw [map_zsmul, zsmul_eq_mul]
-    have htwo : (2 : ZMod 2) = 0 := by decide
+    have htwo : ((2 : ℤ) : ZMod 2) = 0 := by decide
     rw [htwo, zero_mul, zero_mul]
   · rw [coprod.inr_desc_assoc, comp_zero]
     apply tensor_ext
     intro x y
     change castA x * castB ((2 : ℤ) • y) = 0
     rw [map_zsmul, zsmul_eq_mul]
-    have htwo : (2 : ZMod 2) = 0 := by decide
+    have htwo : ((2 : ℤ) : ZMod 2) = 0 := by decide
     rw [htwo, zero_mul, mul_zero]
 
 private def descended : cokernel twiceA ⊗ cokernel twiceB ⟶ D :=

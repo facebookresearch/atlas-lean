@@ -69,8 +69,9 @@ private theorem detector_pi (n : ℕ) (z : K.cycles n) :
   have h₂ := (data n).cyclesIso_hom_comp_i
   have h : K.homologyπ n ≫ (data n).homologyIso.hom = K.iCycles n :=
     h₁.trans (by
-      simpa only [data, ShortComplex.LeftHomologyData.ofZeros_i,
-        ShortComplex.LeftHomologyData.ofZeros_π] using h₂)
+      simpa only [data, ShortComplex.LeftHomologyData.ofZeros_H,
+        ShortComplex.LeftHomologyData.ofZeros_i, ShortComplex.LeftHomologyData.ofZeros_π,
+        HomologicalComplex.iCycles] using h₂)
   have hv := congrArg (fun f => f.hom z) h
   change (data n).homologyIso.hom.hom ((K.homologyπ n).hom z) =
     (K.iCycles n).hom z at hv
