@@ -33,4 +33,4 @@ since a continuous cochain with values in the discrete module $A$ is locally con
 
 - J. Neukirch, A. Schmidt, K. Wingberg, *Cohomology of Number Fields*, 2nd ed., electronic edition, version 2.3
   (May 2020), <https://www.mathi.uni-heidelberg.de/~schmidt/NSW2e/>: Chapter I, §2, the construction before
-  Proposition (1.2.5), p. 20, and Proposition (1.2.5) with its proof, pp. 21–22.
+  Proposition (1.2.5), p. 20, and Proposition (1.2.5) with its proof, p. 21.
