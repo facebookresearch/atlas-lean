@@ -10,9 +10,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
+public import CSLibExt.Complexity.NPComplete.CliqueCoverDefs
 
 @[expose] public section
 
@@ -38,34 +36,6 @@ NP-completeness is stated in the same form as the proved results in
 `CSLibExt.Computability.Complexity.Karp`: membership in `MetaMathlibExt.ComplexityTheory.NP`, plus
 a polynomial-time many-one reduction from every language in `NP` (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- **A clique-cover instance.** A vertex count `n`, a list of edges on the vertices
-`0, …, n - 1`, and the bound `ℓ` on the number of cliques (Karp 1972, problem 13). -/
-abbrev CliqueCoverInstance := ℕ × List (ℕ × ℕ) × ℕ
-
-/-- **The graph of a clique-cover instance.** The simple graph on `Fin n` whose edges are the
-listed pairs, read in either orientation. -/
-def Graph (i : CliqueCoverInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- **Well-formed clique-cover instances.** The edge list has no repeated entry, and every listed
-edge joins two distinct vertices below `n` and is not also listed in the reverse orientation. -/
-def WellFormed (i : CliqueCoverInstance) : Prop :=
-  i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1
-
-/-- **Feasible clique-cover instances.** The vertices can be labelled with `ℓ` labels so that
-any two distinct vertices with the same label are adjacent: the vertex set is the union of `ℓ` or
-fewer cliques (Karp 1972, problem 13). -/
-def CliqueCoverFeasible (i : CliqueCoverInstance) : Prop :=
-  ∃ c : Fin i.1 → Fin i.2.2, ∀ u v, u ≠ v → c u = c v → (Graph i).Adj u v
-
-open Classical in
-/-- **The CLIQUE COVER decision problem.** It accepts a bitstring exactly when it decodes to a
-well-formed, feasible clique-cover instance. -/
-noncomputable def cliqueCoverDec : MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := CliqueCoverInstance) x with
-  | some i => decide (WellFormed i ∧ CliqueCoverFeasible i)
-  | none => false
 
 /-- **CLIQUE COVER is NP-complete.** The CLIQUE COVER decision problem lies in NP, and every
 problem in NP reduces to it by a polynomial-time many-one reduction (R. M. Karp, "Reducibility

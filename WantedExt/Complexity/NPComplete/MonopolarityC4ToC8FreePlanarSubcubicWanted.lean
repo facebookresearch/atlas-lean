@@ -22,14 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Copy
-public import Mathlib.Combinatorics.SimpleGraph.CycleGraph
-public import Mathlib.Combinatorics.SimpleGraph.Finite
-public import MathlibExt.Combinatorics.SimpleGraph.Planarity
-public import WantedExt.Complexity.NPComplete.PartitionIntoCliquesMonopolarWanted
+public import CSLibExt.Complexity.NPComplete.MonopolarityC4ToC8FreePlanarSubcubicDefs
 
 @[expose] public section
 
@@ -71,36 +64,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the vertex count `n` (vertices `0, …, n - 1`) and the edge list. -/
-abbrev MonopolarityInstance := ℕ × List (ℕ × ℕ)
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : MonopolarityInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2
-
-open Classical in
-/-- Well-formedness of an instance: a simple edge list on `Fin n` (no duplicate edges in either
-orientation, no self-loops, endpoints in range) whose graph is planar, has no vertex of degree
-exceeding `3`, and has no induced cycle of length `4` to `8`. -/
-def WellFormed (i : MonopolarityInstance) : Prop :=
-  (i.2.Nodup ∧ ∀ e ∈ i.2, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2) ∧
-    (Graph i).IsPlanar ∧ (∀ v, (Graph i).degree v ≤ 3) ∧
-    ∀ k, 4 ≤ k → k ≤ 8 → ¬ (SimpleGraph.cycleGraph k).IsIndContained (Graph i)
-
-/-- The graph is monopolar: a stable set whose complement induces a disjoint union of cliques. -/
-def MonopolarityFeasible (i : MonopolarityInstance) : Prop :=
-  PartitionIntoCliquesMonopolar.IsMonopolar (Graph i)
-
-open Classical in
-/-- MONOPOLARITY on `(C₄, …, C₈)`-free planar graphs of maximum degree 3 as a decision problem
-over bitstrings. -/
-noncomputable def monopolarityC4ToC8FreePlanarSubcubicDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MonopolarityInstance) x with
-  | some i => decide (WellFormed i ∧ MonopolarityFeasible i)
-  | none => false
 
 /-- **MONOPOLARITY on (C₄, …, C₈)-free planar graphs of maximum degree 3 is NP-complete.**
 Source: Le and Nevries (2011, 2014). -/

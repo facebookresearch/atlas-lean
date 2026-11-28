@@ -20,12 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import WantedExt.Complexity.NPComplete.BandwidthWanted
-public import Mathlib.Combinatorics.SimpleGraph.Acyclic
-public import Mathlib.Combinatorics.SimpleGraph.Finite
+public import CSLibExt.Complexity.NPComplete.BandwidthTreesMaxDegreeThreeDefs
 
 @[expose] public section
 
@@ -59,26 +54,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : Bandwidth.BandwidthInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-open Classical in
-/-- Well-formedness of an instance: the parent's (a simple edge list on `Fin n`), the graph is a
-tree with every vertex of degree at most `3`, and `0 < K ≤ n`. -/
-def WellFormed (i : Bandwidth.BandwidthInstance) : Prop :=
-  Bandwidth.WellFormed i ∧ (Graph i).IsTree ∧ (∀ v, (Graph i).degree v ≤ 3) ∧
-    0 < i.2.2 ∧ i.2.2 ≤ i.1
-
-open Classical in
-/-- BANDWIDTH for trees of maximum degree 3 as a decision problem over bitstrings. -/
-noncomputable def bandwidthTreesMaxDegreeThreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := Bandwidth.BandwidthInstance) x with
-  | some i => decide (WellFormed i ∧ Bandwidth.BandwidthFeasible i)
-  | none => false
 
 /-- **BANDWIDTH for trees of maximum degree 3 is NP-complete.** Source: Garey and Johnson
 (1979), [GT40]; Garey, Graham, Johnson and Knuth (1978). -/

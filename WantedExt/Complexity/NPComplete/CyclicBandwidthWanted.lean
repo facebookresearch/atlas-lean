@@ -22,9 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.BandwidthWanted
+public import CSLibExt.Complexity.NPComplete.CyclicBandwidthDefs
 
 @[expose] public section
 
@@ -59,30 +57,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- The distance between positions `a` and `b` on a cycle of `n > 0` positions `0, …, n - 1`, the
-shorter way around. Positions are taken modulo `n`, so every pair of naturals denotes two cycle
-positions; for `a, b < n` this is `min(|a - b|, n - |a - b|)`. -/
-def cyclicDist (n a b : ℕ) : ℕ :=
-  min (Nat.dist (a % n) (b % n)) (n - Nat.dist (a % n) (b % n))
-
-/-- Well-formedness of an instance: a well-formed BANDWIDTH instance (simple edge list) with
-`0 < K ≤ n`. -/
-def WellFormed (i : BandwidthInstance) : Prop :=
-  Bandwidth.WellFormed i ∧ 0 < i.2.2 ∧ i.2.2 ≤ i.1
-
-/-- A circular layout in which the endpoints of every edge are at cyclic distance at most `K`. -/
-def CyclicBandwidthFeasible (i : BandwidthInstance) : Prop :=
-  ∃ perm : List ℕ, perm.Perm (List.range i.1) ∧
-    ∀ e ∈ i.2.1, cyclicDist i.1 (perm.idxOf e.1) (perm.idxOf e.2) ≤ i.2.2
-
-open Classical in
-/-- CYCLIC BANDWIDTH as a decision problem over bitstrings. -/
-noncomputable def cyclicBandwidthDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := BandwidthInstance) x with
-  | some i => decide (WellFormed i ∧ CyclicBandwidthFeasible i)
-  | none => false
 
 /-- **CYCLIC BANDWIDTH is NP-complete.** Source: Leung, Vornberger and Witthoff (1984); Garey and
 Johnson (1979), [GT40] (linear version). -/

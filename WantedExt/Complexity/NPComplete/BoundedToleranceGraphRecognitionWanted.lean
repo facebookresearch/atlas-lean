@@ -19,9 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.ToleranceGraphRecognitionWanted
+public import CSLibExt.Complexity.NPComplete.BoundedToleranceGraphRecognitionDefs
 
 @[expose] public section
 
@@ -60,21 +58,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- The graph of the instance is a bounded tolerance graph: it has a tolerance representation
-in which every tolerance is at most the length of its vertex's interval. -/
-def BoundedToleranceGraphRecognitionFeasible (i : ToleranceGraphRecognitionInstance) : Prop :=
-  ∃ l r t : Fin i.1 → ℝ, IsToleranceRepresentation (Graph i) l r t ∧ ∀ v, t v ≤ r v - l v
-
-open Classical in
-/-- BOUNDED TOLERANCE GRAPH RECOGNITION as a decision problem over bitstrings. -/
-noncomputable def boundedToleranceGraphRecognitionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ToleranceGraphRecognitionInstance) x with
-  | some i =>
-    decide (ToleranceGraphRecognition.WellFormed i ∧ BoundedToleranceGraphRecognitionFeasible i)
-  | none => false
 
 /-- **BOUNDED TOLERANCE GRAPH RECOGNITION is NP-complete.** Source: Mertzios, Sau and Zaks
 (2011). -/

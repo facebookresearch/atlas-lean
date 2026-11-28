@@ -24,12 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.ClusterDeletionWanted
-public import CSLibExt.Complexity.NPComplete.GraphColoringDefs
-public import Mathlib.Combinatorics.SimpleGraph.Clique
-public import Mathlib.Combinatorics.SimpleGraph.Maps
+public import CSLibExt.Complexity.NPComplete.ThreeColorabilityMonopolarDefs
 
 @[expose] public section
 
@@ -68,36 +63,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `0, …, n - 1`) and edge list. -/
-abbrev ThreeColorabilityMonopolarInstance := ℕ × List (ℕ × ℕ)
-
-/-- The GRAPH COLORING instance with the same graph and bound `K = 3`. -/
-abbrev withThreeColors (i : ThreeColorabilityMonopolarInstance) : GraphColoringInstance :=
-  (i.1, i.2, 3)
-
-/-- `G` is monopolar: its vertex set splits into a stable set `A` and the rest `Aᶜ`, which induces a
-union of vertex-disjoint cliques (a cluster graph). -/
-def IsMonopolar {n : ℕ} (G : SimpleGraph (Fin n)) : Prop :=
-  ∃ A : Set (Fin n), G.IsIndepSet A ∧ ClusterDeletion.IsClusterGraph (G.induce Aᶜ)
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (GRAPH
-COLORING's well-formedness), and the graph is monopolar. -/
-def WellFormed (i : ThreeColorabilityMonopolarInstance) : Prop :=
-  GraphColoring.WellFormed (withThreeColors i) ∧ IsMonopolar (Graph (withThreeColors i))
-
-/-- The graph is properly 3-colorable. -/
-def ThreeColorabilityMonopolarFeasible (i : ThreeColorabilityMonopolarInstance) : Prop :=
-  GraphColoringFeasible (withThreeColors i)
-
-open Classical in
-/-- 3-COLORABILITY OF MONOPOLAR GRAPHS as a decision problem over bitstrings. -/
-noncomputable def threeColorabilityMonopolarDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ThreeColorabilityMonopolarInstance) x with
-  | some i => decide (WellFormed i ∧ ThreeColorabilityMonopolarFeasible i)
-  | none => false
 
 /-- **3-COLORABILITY OF MONOPOLAR GRAPHS is NP-complete.** Source: Barbato and Bezzi (2021);
 Garey and Johnson (1979), [GT4] (parent problem); ISGCI, class "monopolar". -/

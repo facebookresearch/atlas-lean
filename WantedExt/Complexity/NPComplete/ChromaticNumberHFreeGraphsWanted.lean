@@ -21,12 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Combinatorics.SimpleGraph.Copy
-public import Mathlib.Combinatorics.SimpleGraph.Hasse
-public import Mathlib.Combinatorics.SimpleGraph.Sum
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.GraphColoringDefs
+public import CSLibExt.Complexity.NPComplete.ChromaticNumberHFreeGraphsDefs
 
 @[expose] public section
 
@@ -62,22 +57,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance for the forbidden graph `H`: it is a well-formed GRAPH
-COLORING instance (a simple graph given by an edge list), `K` is positive, and `H` is not an
-induced subgraph of its graph. -/
-def WellFormed {h : ℕ} (H : SimpleGraph (Fin h)) (i : GraphColoring.GraphColoringInstance) :
-    Prop :=
-  GraphColoring.WellFormed i ∧ 0 < i.2.2 ∧ ¬ H.IsIndContained (GraphColoring.Graph i)
-
-open Classical in
-/-- CHROMATIC NUMBER OF `H`-FREE GRAPHS as a decision problem over bitstrings. -/
-noncomputable def chromaticNumberHFreeGraphsDec {h : ℕ} (H : SimpleGraph (Fin h)) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := GraphColoring.GraphColoringInstance) x with
-  | some i => decide (WellFormed H i ∧ GraphColoring.GraphColoringFeasible i)
-  | none => false
 
 /-- **CHROMATIC NUMBER OF `H`-FREE GRAPHS is NP-complete** for every graph `H` that is not an
 induced subgraph of `P₄` or of `P₁ + P₃`. Source: Garey and Johnson (1979), [GT4]; Král',

@@ -22,8 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.EdgeDeletionKPartitionDefs
 
 @[expose] public section
 
@@ -64,37 +63,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n`, weighted edge list `(u, v, w)` and bound `K`. -/
-abbrev EdgeDeletionKPartitionInstance := ℕ × List (ℕ × ℕ × ℕ) × ℕ
-
-/-- The unweighted edges of an instance. -/
-def edges (i : EdgeDeletionKPartitionInstance) : List (ℕ × ℕ) :=
-  i.2.1.map fun e => (e.1, e.2.1)
-
-/-- Well-formedness of an instance: the edges are distinct, in range, without loops or repeated
-pairs; every weight is positive; and `0 < K`. -/
-def WellFormed (i : EdgeDeletionKPartitionInstance) : Prop :=
-  (edges i).Nodup ∧
-    (∀ e ∈ edges i, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ edges i) ∧
-    (∀ e ∈ i.2.1, 0 < e.2.2) ∧ 0 < i.2.2
-
-/-- The weight of the edges whose endpoints get the same color under `c`. -/
-def monochromaticWeight (i : EdgeDeletionKPartitionInstance) (c : List ℕ) : ℕ :=
-  ((i.2.1.filter fun e => c.getD e.1 0 = c.getD e.2.1 0).map fun e => e.2.2).sum
-
-/-- Some assignment of colors below `k` to the vertices has monochromatic weight at most `K`. -/
-def EdgeDeletionKPartitionFeasible (k : ℕ) (i : EdgeDeletionKPartitionInstance) : Prop :=
-  ∃ c : List ℕ, c.length = i.1 ∧ (∀ v < i.1, c.getD v 0 < k) ∧ monochromaticWeight i c ≤ i.2.2
-
-open Classical in
-/-- EDGE DELETION k-PARTITION, for the fixed `k`, as a decision problem over bitstrings. -/
-noncomputable def edgeDeletionKPartitionDec (k : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := EdgeDeletionKPartitionInstance) x with
-  | some i => decide (WellFormed i ∧ EdgeDeletionKPartitionFeasible k i)
-  | none => false
 
 /-- **EDGE DELETION k-PARTITION is NP-complete for every fixed `k ≥ 2`.** Source: Crescenzi and
 Kann, MINIMUM EDGE DELETION K-PARTITION; Kann, Khanna, Lagergren and Panconesi (1997); Garey and

@@ -18,14 +18,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Copy
-public import Mathlib.Combinatorics.SimpleGraph.CycleGraph
-public import Mathlib.Combinatorics.SimpleGraph.Hasse
-public import Mathlib.Combinatorics.SimpleGraph.Sum
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.PolarityTriangleFreeWanted
+public import CSLibExt.Complexity.NPComplete.PolarityTwoKTwoCFiveFreeDefs
 
 @[expose] public section
 
@@ -66,34 +59,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`) and edge list. -/
-abbrev PolarityTwoKTwoCFiveFreeInstance := ℕ × List (ℕ × ℕ)
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : PolarityTwoKTwoCFiveFreeInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range) with no induced `2K₂`
-and no induced `C₅`. -/
-def WellFormed (i : PolarityTwoKTwoCFiveFreeInstance) : Prop :=
-  (i.2.Nodup ∧ ∀ e ∈ i.2, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2) ∧
-    ¬ (SimpleGraph.pathGraph 2 ⊕g SimpleGraph.pathGraph 2).IsIndContained (Graph i) ∧
-    ¬ (SimpleGraph.cycleGraph 5).IsIndContained (Graph i)
-
-/-- The graph is polar. -/
-def PolarityTwoKTwoCFiveFreeFeasible (i : PolarityTwoKTwoCFiveFreeInstance) : Prop :=
-  IsPolar (Graph i)
-
-open Classical in
-/-- POLARITY OF (2K₂, C₅)-FREE GRAPHS as a decision problem over bitstrings. -/
-noncomputable def polarityTwoKTwoCFiveFreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PolarityTwoKTwoCFiveFreeInstance) x with
-  | some i => decide (WellFormed i ∧ PolarityTwoKTwoCFiveFreeFeasible i)
-  | none => false
 
 /-- **POLARITY OF (2K₂, C₅)-FREE GRAPHS is NP-complete.** Source: Le and Nevries (2014). -/
 public theorem_wanted polarityTwoKTwoCFiveFree_npComplete :

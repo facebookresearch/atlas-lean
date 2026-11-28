@@ -19,10 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Data.PNat.Basic
-public import CSLibExt.Complexity.NPComplete.GraphColoringDefs
+public import CSLibExt.Complexity.NPComplete.ChromaticSumDefs
 
 @[expose] public section
 
@@ -63,24 +60,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n`
-(`GraphColoring.WellFormed`), and `0 < K`. -/
-def WellFormed (i : GraphColoringInstance) : Prop :=
-  GraphColoring.WellFormed i ∧ 0 < i.2.2
-
-/-- Some proper coloring of the graph by positive integers has sum at most `K`. -/
-def ChromaticSumFeasible (i : GraphColoringInstance) : Prop :=
-  ∃ c : (Graph i).Coloring ℕ+, ∑ v, (c v : ℕ) ≤ i.2.2
-
-open Classical in
-/-- CHROMATIC SUM as a decision problem over bitstrings. -/
-noncomputable def chromaticSumDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := GraphColoringInstance) x with
-  | some i => decide (WellFormed i ∧ ChromaticSumFeasible i)
-  | none => false
 
 /-- **CHROMATIC SUM is NP-complete.** Source: Kubicka and Schwenk (1989); Marx (2005). -/
 public theorem_wanted chromaticSum_npComplete :

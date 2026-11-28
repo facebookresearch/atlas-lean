@@ -18,9 +18,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Data.Fintype.Prod
+public import CSLibExt.Complexity.NPComplete.CorrelationClusteringDefs
 
 @[expose] public section
 
@@ -57,42 +55,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the rows of the `n × n` label matrix (`true` is `+`, `false` is `-`) and the
-bound `K`. -/
-abbrev CorrelationClusteringInstance := List (List Bool) × ℕ
-
-/-- The label of the edge `{u, v}`: entry `(u, v)` of the matrix (`false` outside it). -/
-def label (i : CorrelationClusteringInstance) (u v : ℕ) : Bool :=
-  (i.1.getD u []).getD v false
-
-/-- Well-formedness of an instance: the label matrix is square and symmetric. -/
-def WellFormed (i : CorrelationClusteringInstance) : Prop :=
-  (∀ row ∈ i.1, row.length = i.1.length) ∧
-    ∀ u < i.1.length, ∀ v < i.1.length, label i u v = label i v u
-
-/-- The number of disagreements of the clustering `c`: the edges `{u, v}` (`u < v`) labeled `+`
-whose endpoints lie in different clusters, plus those labeled `-` whose endpoints lie in the
-same cluster. -/
-def disagreements (i : CorrelationClusteringInstance) (c : Fin i.1.length → Fin i.1.length) :
-    ℕ :=
-  ((Finset.univ : Finset (Fin i.1.length × Fin i.1.length)).filter fun e =>
-    e.1 < e.2 ∧
-      ((label i e.1 e.2 = true ∧ c e.1 ≠ c e.2) ∨
-        (label i e.1 e.2 = false ∧ c e.1 = c e.2))).card
-
-/-- Some clustering has at most `K` disagreements. -/
-def CorrelationClusteringFeasible (i : CorrelationClusteringInstance) : Prop :=
-  ∃ c : Fin i.1.length → Fin i.1.length, disagreements i c ≤ i.2
-
-open Classical in
-/-- CORRELATION CLUSTERING as a decision problem over bitstrings. -/
-noncomputable def correlationClusteringDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := CorrelationClusteringInstance) x with
-  | some i => decide (WellFormed i ∧ CorrelationClusteringFeasible i)
-  | none => false
 
 /-- **CORRELATION CLUSTERING is NP-complete.** Source: Bansal, Blum and Chawla (2004),
 Section 3. -/

@@ -24,12 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Combinatorics.SimpleGraph.Copy
-public import Mathlib.Combinatorics.SimpleGraph.CycleGraph
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.ChromaticNumberHFreeGraphsWanted
-public import CSLibExt.Complexity.NPComplete.GraphColoringDefs
+public import CSLibExt.Complexity.NPComplete.ThreeColorabilityC4C5FreeDefs
 
 @[expose] public section
 
@@ -76,21 +71,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed CHROMATIC NUMBER OF H-FREE GRAPHS instance for
-`H = C_4` (a simple edge list, a positive bound, and no induced `C_4` in the graph) whose graph
-also has no induced `C_5`, and whose bound is `K = 3`. -/
-def WellFormed (i : GraphColoringInstance) : Prop :=
-  ChromaticNumberHFreeGraphs.WellFormed (SimpleGraph.cycleGraph 4) i ∧
-    ¬ (SimpleGraph.cycleGraph 5).IsIndContained (GraphColoring.Graph i) ∧ i.2.2 = 3
-
-open Classical in
-/-- 3-COLORABILITY OF (C4,C5)-FREE GRAPHS as a decision problem over bitstrings. -/
-noncomputable def threeColorabilityC4C5FreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := GraphColoringInstance) x with
-  | some i => decide (WellFormed i ∧ GraphColoring.GraphColoringFeasible i)
-  | none => false
 
 /-- **3-COLORABILITY OF (C4,C5)-FREE GRAPHS is NP-complete.** Source: Garey and Johnson (1979),
 [GT4]; Král', Kratochvíl, Tuza and Woeginger (2001); Emden-Weinert, Hougardy and Kreuter

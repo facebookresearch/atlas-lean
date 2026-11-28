@@ -23,12 +23,8 @@ problem).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.Complexity.Karp.Color
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Combinatorics.SimpleGraph.Lattice.HypercubicLattice
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.BandwidthWanted
+public import CSLibExt.Complexity.NPComplete.TwoDimensionalBandwidthDefs
 
 @[expose] public section
 
@@ -77,22 +73,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Some one-to-one map of the vertices into `ℤ²` puts the endpoints of every edge at `ℓ¹`
-distance at most `K`. -/
-def TwoDimensionalBandwidthFeasible (i : BandwidthInstance) : Prop :=
-  ∃ f : Fin i.1 → StatMech.Lattice.Site 2, Function.Injective f ∧
-    ∀ u v, (Cslib.Complexity.Karp.edgeGraph i.1 i.2.1).Adj u v →
-      ∑ j, (f u j - f v j).natAbs ≤ i.2.2
-
-open Classical in
-/-- 2-DIMENSIONAL BANDWIDTH as a decision problem over bitstrings. -/
-noncomputable def twoDimensionalBandwidthDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := BandwidthInstance) x with
-  | some i => decide (Bandwidth.WellFormed i ∧ TwoDimensionalBandwidthFeasible i)
-  | none => false
 
 /-- **2-DIMENSIONAL BANDWIDTH is NP-complete.** Source: Miller and Orlin (1985); Bhatt and
 Cosmadakis (1987). -/

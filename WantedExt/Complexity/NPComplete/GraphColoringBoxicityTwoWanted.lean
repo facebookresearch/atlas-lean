@@ -24,10 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.BoxicityTwoWanted
-public import CSLibExt.Complexity.NPComplete.GraphColoringDefs
+public import CSLibExt.Complexity.NPComplete.GraphColoringBoxicityTwoDefs
 
 @[expose] public section
 
@@ -71,21 +68,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed GRAPH K-COLORABILITY instance with `0 < K ≤ |V|`
-whose graph has boxicity at most `2` (`BoxicityTwo.BoxicityTwoFeasible` on its vertex count and
-edge list). -/
-def WellFormed (i : GraphColoringInstance) : Prop :=
-  GraphColoring.WellFormed i ∧ (0 < i.2.2 ∧ i.2.2 ≤ i.1) ∧
-    BoxicityTwo.BoxicityTwoFeasible (i.1, i.2.1)
-
-open Classical in
-/-- GRAPH K-COLORABILITY ON GRAPHS OF BOXICITY AT MOST 2 as a decision problem over bitstrings. -/
-noncomputable def graphColoringBoxicityTwoDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := GraphColoringInstance) x with
-  | some i => decide (WellFormed i ∧ GraphColoring.GraphColoringFeasible i)
-  | none => false
 
 /-- **GRAPH K-COLORABILITY ON GRAPHS OF BOXICITY AT MOST 2 is NP-complete.** Source: Garey and
 Johnson (1979), [GT4]; Imai and Asano (1983); Catanzaro et al. (2017). -/

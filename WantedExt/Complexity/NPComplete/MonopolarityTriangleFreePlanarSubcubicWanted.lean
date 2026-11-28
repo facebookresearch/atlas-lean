@@ -17,13 +17,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Clique
-public import Mathlib.Combinatorics.SimpleGraph.Finite
-public import MathlibExt.Combinatorics.SimpleGraph.Planarity
-public import WantedExt.Complexity.NPComplete.PartitionIntoCliquesMonopolarWanted
+public import CSLibExt.Complexity.NPComplete.MonopolarityTriangleFreePlanarSubcubicDefs
 
 @[expose] public section
 
@@ -61,35 +55,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the vertex count `n` (vertices `0, …, n - 1`) and the edge list. -/
-abbrev MonopolarityInstance := ℕ × List (ℕ × ℕ)
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : MonopolarityInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2
-
-open Classical in
-/-- Well-formedness of an instance: a simple edge list on `Fin n` (no duplicate edges in either
-orientation, no self-loops, endpoints in range) whose graph is planar, triangle-free, and has no
-vertex of degree exceeding `3`. -/
-def WellFormed (i : MonopolarityInstance) : Prop :=
-  (i.2.Nodup ∧ ∀ e ∈ i.2, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2) ∧
-    (Graph i).IsPlanar ∧ (Graph i).CliqueFree 3 ∧ ∀ v, (Graph i).degree v ≤ 3
-
-/-- The graph is monopolar: a stable set whose complement induces a disjoint union of cliques. -/
-def MonopolarityFeasible (i : MonopolarityInstance) : Prop :=
-  PartitionIntoCliquesMonopolar.IsMonopolar (Graph i)
-
-open Classical in
-/-- MONOPOLARITY on triangle-free planar graphs of maximum degree 3 as a decision problem over
-bitstrings. -/
-noncomputable def monopolarityTriangleFreePlanarSubcubicDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MonopolarityInstance) x with
-  | some i => decide (WellFormed i ∧ MonopolarityFeasible i)
-  | none => false
 
 /-- **MONOPOLARITY on triangle-free planar graphs of maximum degree 3 is NP-complete.** Source:
 Le and Nevries (2014). -/

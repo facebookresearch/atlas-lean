@@ -18,9 +18,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.ConsecutiveOnesMatrixAugmentationWanted
+public import CSLibExt.Complexity.NPComplete.ConsecutiveOnesMatrixPartitionDefs
 
 @[expose] public section
 
@@ -56,36 +54,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number of columns `n` and the rows of `A` (each a list of `n` entries,
-`true` for `1`). -/
-abbrev ConsecutiveOnesMatrixPartitionInstance := ℕ × List (List Bool)
-
-/-- Well-formedness of an instance: every row has exactly `n` entries. -/
-def WellFormed (i : ConsecutiveOnesMatrixPartitionInstance) : Prop :=
-  ∀ row ∈ i.2, row.length = i.1
-
-/-- The entry `a_rc` of `A` in row `r` and column `c` (indices from `0`). -/
-def entry (i : ConsecutiveOnesMatrixPartitionInstance) (r : Fin i.2.length) (c : Fin i.1) :
-    Bool :=
-  (i.2.get r).getD c false
-
-/-- The rows can be split into the group `g r = true` and the group `g r = false` so that the
-matrix of each group has the consecutive ones property. -/
-def ConsecutiveOnesMatrixPartitionFeasible (i : ConsecutiveOnesMatrixPartitionInstance) :
-    Prop :=
-  ∃ g : Fin i.2.length → Bool,
-    ConsecutiveOnesMatrixAugmentation.HasConsecutiveOnes (fun r c => g r && entry i r c) ∧
-      ConsecutiveOnesMatrixAugmentation.HasConsecutiveOnes (fun r c => !g r && entry i r c)
-
-open Classical in
-/-- CONSECUTIVE ONES MATRIX PARTITION as a decision problem over bitstrings. -/
-noncomputable def consecutiveOnesMatrixPartitionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ConsecutiveOnesMatrixPartitionInstance) x with
-  | some i => decide (WellFormed i ∧ ConsecutiveOnesMatrixPartitionFeasible i)
-  | none => false
 
 /-- **CONSECUTIVE ONES MATRIX PARTITION is NP-complete.** Source: Garey and Johnson (1979),
 [SR15]; Lipski (1978, private communication). -/

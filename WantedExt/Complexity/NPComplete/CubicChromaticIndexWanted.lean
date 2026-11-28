@@ -21,12 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Coloring.Vertex
-public import Mathlib.Combinatorics.SimpleGraph.Finite
-public import Mathlib.Combinatorics.SimpleGraph.LineGraph
+public import CSLibExt.Complexity.NPComplete.CubicChromaticIndexDefs
 
 @[expose] public section
 
@@ -58,35 +53,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `0, …, n - 1`) and edge list. -/
-abbrev CubicChromaticIndexInstance := ℕ × List (ℕ × ℕ)
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : CubicChromaticIndexInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2
-
-open Classical in
-/-- Well-formedness of an instance: the edge list describes a simple graph (no duplicate edges
-in either orientation, no self-loops, endpoints in range), and the graph is cubic: every vertex
-has degree exactly 3. -/
-def WellFormed (i : CubicChromaticIndexInstance) : Prop :=
-  (i.2.Nodup ∧ ∀ e ∈ i.2, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2) ∧
-    (Graph i).IsRegularOfDegree 3
-
-/-- The edges can be colored with 3 colors, edges sharing an endpoint getting different
-colors: the line graph is 3-colorable (chromatic index at most 3). -/
-def CubicChromaticIndexFeasible (i : CubicChromaticIndexInstance) : Prop :=
-  (Graph i).lineGraph.Colorable 3
-
-open Classical in
-/-- CHROMATIC INDEX of cubic graphs as a decision problem over bitstrings. -/
-noncomputable def cubicChromaticIndexDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := CubicChromaticIndexInstance) x with
-  | some i => decide (WellFormed i ∧ CubicChromaticIndexFeasible i)
-  | none => false
 
 /-- **CHROMATIC INDEX of cubic graphs is NP-complete.** Source: Garey and Johnson (1979),
 [GT4]; Holyer (1981). -/

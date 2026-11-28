@@ -22,11 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import MathlibExt.Combinatorics.SimpleGraph.Connectivity
-public import Mathlib.Combinatorics.SimpleGraph.Paths
-public import CSLibExt.Complexity.NPComplete.GraphColoringDefs
+public import CSLibExt.Complexity.NPComplete.ChromaticNumberK33FreeDefs
 
 @[expose] public section
 
@@ -66,29 +62,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- `G` has a subgraph homeomorphic to `K₃,₃`: distinct branch vertices `a i`, `b j`
-(`i, j : Fin 3`) and paths `P i j` from `a i` to `b j`, pairwise internally disjoint, whose
-interiors (`support.tail.dropLast`) avoid every branch vertex. -/
-def HasK33Subdivision {V : Type*} (G : SimpleGraph V) : Prop :=
-  ∃ (a b : Fin 3 → V) (P : ∀ i j, G.Walk (a i) (b j)),
-    Function.Injective (Sum.elim a b) ∧ (∀ i j, (P i j).IsPath) ∧
-      (∀ i j i' j', (i, j) ≠ (i', j') → SimpleGraph.InternallyDisjoint (P i j) (P i' j')) ∧
-      ∀ i j k, a k ∉ (P i j).support.tail.dropLast ∧ b k ∉ (P i j).support.tail.dropLast
-
-/-- Well-formedness of an instance: the parent's simple edge list on vertices below `n`, `K` is
-positive, and the graph has no subgraph homeomorphic to `K₃,₃`. -/
-def WellFormed (i : GraphColoringInstance) : Prop :=
-  GraphColoring.WellFormed i ∧ 0 < i.2.2 ∧ ¬ HasK33Subdivision (Graph i)
-
-open Classical in
-/-- CHROMATIC NUMBER for `K₃,₃`-free graphs as a decision problem over bitstrings. -/
-noncomputable def chromaticNumberK33FreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := GraphColoringInstance) x with
-  | some i => decide (WellFormed i ∧ GraphColoringFeasible i)
-  | none => false
 
 /-- **CHROMATIC NUMBER is NP-complete for `K₃,₃`-free graphs.** Source: Garey and Johnson
 (1979), [GT4]; Johnson, NP-completeness column (1985), Table 1. -/

@@ -22,9 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.GraphColoringDefs
+public import CSLibExt.Complexity.NPComplete.CutCoverDefs
 
 @[expose] public section
 
@@ -62,19 +60,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Some collection of at most `K` vertex subsets `V₀, ..., Vₘ₋₁` cuts every edge: for each edge
-`uv`, some `Vⱼ` contains exactly one of `u` and `v`. -/
-def CutCoverFeasible (i : GraphColoringInstance) : Prop :=
-  ∃ m ≤ i.2.2, ∃ V : Fin m → Finset (Fin i.1), ∀ u v, (Graph i).Adj u v →
-    ∃ j, (u ∈ V j ∧ v ∉ V j) ∨ (u ∉ V j ∧ v ∈ V j)
-
-open Classical in
-/-- CUT COVER as a decision problem over bitstrings. -/
-noncomputable def cutCoverDec : MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := GraphColoringInstance) x with
-  | some i => decide (WellFormed i ∧ CutCoverFeasible i)
-  | none => false
 
 /-- **CUT COVER is NP-complete.** Source: Motwani and Naor (1994), Theorem 2.1; Crescenzi and
 Kann, MINIMUM CUT COVER. -/

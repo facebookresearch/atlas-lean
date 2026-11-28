@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.Digraph.Basic
+public import CSLibExt.Complexity.NPComplete.DigraphDMorphismDefs
 
 @[expose] public section
 
@@ -51,41 +49,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count and arc list of `G`, vertex count and arc list of `H`. -/
-abbrev DigraphDMorphismInstance := ℕ × List (ℕ × ℕ) × ℕ × List (ℕ × ℕ)
-
-/-- The digraph `G` as a `Digraph (Fin n₁)`: `u → v` is an arc when `(u, v)` is listed. -/
-def DigraphG (i : DigraphDMorphismInstance) : Digraph (Fin i.1) where
-  Adj u v := ((u : ℕ), (v : ℕ)) ∈ i.2.1
-
-/-- The digraph `H` as a `Digraph (Fin n₂)`: `u → v` is an arc when `(u, v)` is listed. -/
-def DigraphH (i : DigraphDMorphismInstance) : Digraph (Fin i.2.2.1) where
-  Adj u v := ((u : ℕ), (v : ℕ)) ∈ i.2.2.2
-
-/-- Well-formedness of an instance: every arc of `G` joins two distinct vertices below `n₁`,
-and every arc of `H` joins two distinct vertices below `n₂` (no loops). -/
-def WellFormed (i : DigraphDMorphismInstance) : Prop :=
-  (∀ a ∈ i.2.1, a.1 < i.1 ∧ a.2 < i.1 ∧ a.1 ≠ a.2) ∧
-    ∀ a ∈ i.2.2.2, a.1 < i.2.2.1 ∧ a.2 < i.2.2.1 ∧ a.1 ≠ a.2
-
-/-- There is a D-morphism from `G` to `H`: every arc of `G` is sent to an arc of `H` in one
-of the two directions, and every arc of `H` leaving the image `f u` of a vertex `u` ends at
-the image of some out-neighbor of `u`. -/
-def DigraphDMorphismFeasible (i : DigraphDMorphismInstance) : Prop :=
-  ∃ f : Fin i.1 → Fin i.2.2.1,
-    (∀ u v, (DigraphG i).Adj u v →
-      (DigraphH i).Adj (f u) (f v) ∨ (DigraphH i).Adj (f v) (f u)) ∧
-    ∀ u v', (DigraphH i).Adj (f u) v' → ∃ v, f v = v' ∧ (DigraphG i).Adj u v
-
-open Classical in
-/-- DIGRAPH D-MORPHISM as a decision problem over bitstrings. -/
-noncomputable def digraphDMorphismDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := DigraphDMorphismInstance) x with
-  | some i => decide (WellFormed i ∧ DigraphDMorphismFeasible i)
-  | none => false
 
 /-- **DIGRAPH D-MORPHISM is NP-complete.** Source: Garey and Johnson (1979), [GT53];
 Fraenkel and Yesha (1979). -/

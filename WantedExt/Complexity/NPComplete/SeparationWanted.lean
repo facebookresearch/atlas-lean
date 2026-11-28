@@ -26,9 +26,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.BandwidthWanted
+public import CSLibExt.Complexity.NPComplete.SeparationDefs
 
 @[expose] public section
 
@@ -63,24 +61,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed BANDWIDTH instance (simple edge list) with
-`0 < K`. -/
-def WellFormed (i : BandwidthInstance) : Prop :=
-  Bandwidth.WellFormed i ∧ 0 < i.2.2
-
-/-- A linear layout in which the endpoints of every edge are at distance greater than `K`. -/
-def SeparationFeasible (i : BandwidthInstance) : Prop :=
-  ∃ perm : List ℕ, perm.Perm (List.range i.1) ∧
-    ∀ e ∈ i.2.1, i.2.2 < Nat.dist (perm.idxOf e.1) (perm.idxOf e.2)
-
-open Classical in
-/-- SEPARATION as a decision problem over bitstrings. -/
-noncomputable def separationDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := BandwidthInstance) x with
-  | some i => decide (WellFormed i ∧ SeparationFeasible i)
-  | none => false
 
 /-- **SEPARATION is NP-complete.** Source: Leung, Vornberger and Witthoff (1984); Miller and
 Pritikin (1989); Garey and Johnson (1979), [GT40] (the dual problem). -/

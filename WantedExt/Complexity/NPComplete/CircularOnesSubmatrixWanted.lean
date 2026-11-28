@@ -22,9 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.ConsecutiveBlockMinimizationWanted
+public import CSLibExt.Complexity.NPComplete.CircularOnesSubmatrixDefs
 
 @[expose] public section
 
@@ -63,29 +61,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- In the column order `f`, the entries of `row` equal to `b` occur consecutively: if the
-entries in columns `f j₁` and `f j₃` are `b` and `j₁ ≤ j₂ ≤ j₃`, then the entry in column
-`f j₂` is `b`. -/
-def EntriesConsecutive {K n : ℕ} (row : List Bool) (f : Fin K → Fin n) (b : Bool) : Prop :=
-  ∀ j₁ j₂ j₃ : Fin K, j₁ ≤ j₂ → j₂ ≤ j₃ →
-    row.getD (f j₁) false = b → row.getD (f j₃) false = b → row.getD (f j₂) false = b
-
-/-- Some `K` distinct columns of `A`, in some order `f`, form a matrix in which, in every row,
-the `1`'s occur consecutively or the `0`'s occur consecutively. -/
-def CircularOnesSubmatrixFeasible (i : ConsecutiveBlockMinimizationInstance) : Prop :=
-  ∃ f : Fin i.2.2 → Fin i.1, Function.Injective f ∧
-    ∀ row ∈ i.2.1, EntriesConsecutive row f true ∨ EntriesConsecutive row f false
-
-open Classical in
-/-- CIRCULAR ONES SUBMATRIX as a decision problem over bitstrings. -/
-noncomputable def circularOnesSubmatrixDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ConsecutiveBlockMinimizationInstance) x with
-  | some i => decide (ConsecutiveBlockMinimization.WellFormed i ∧
-      CircularOnesSubmatrixFeasible i)
-  | none => false
 
 /-- **CIRCULAR ONES SUBMATRIX is NP-complete.** Source: Garey and Johnson (1979), [SR14],
 comment; Booth (1975). -/

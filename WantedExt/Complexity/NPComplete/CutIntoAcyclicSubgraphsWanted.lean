@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Combinatorics.SimpleGraph.Dichromatic
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.CutIntoAcyclicSubgraphsDefs
 
 @[expose] public section
 
@@ -67,36 +65,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `0, …, n - 1`) and the arc list (an entry `(u, v)`
-is the arc `u → v`). -/
-abbrev CutIntoAcyclicSubgraphsInstance := ℕ × List (ℕ × ℕ)
-
-/-- The arc relation of the digraph on `Fin n`: `Arc i u v` when `(u, v)` is a listed arc. -/
-def Arc (i : CutIntoAcyclicSubgraphsInstance) (u v : Fin i.1) : Prop :=
-  ((u : ℕ), (v : ℕ)) ∈ i.2
-
-/-- Well-formedness of an instance: the arc list describes a digraph on `0, …, n - 1` without
-loops or repeated arcs (no arc listed twice, both endpoints below `n`, no arc from a vertex to
-itself). -/
-def WellFormed (i : CutIntoAcyclicSubgraphsInstance) : Prop :=
-  i.2.Nodup ∧ ∀ a ∈ i.2, a.1 < i.1 ∧ a.2 < i.1 ∧ a.1 ≠ a.2
-
-/-- Some partition of the vertices into two classes (a colouring `c : Fin n → Fin 2`) leaves no
-directed cycle (closed directed walk of positive length, `SimpleGraph.IsDirectedCycle`) inside
-one class, so both classes induce acyclic subgraphs. -/
-def CutIntoAcyclicSubgraphsFeasible (i : CutIntoAcyclicSubgraphsInstance) : Prop :=
-  ∃ c : Fin i.1 → Fin 2, ∀ (m : ℕ) (f : Fin (m + 2) → Fin i.1),
-    SimpleGraph.IsDirectedCycle (Arc i) m f → ¬ ∃ col, ∀ j, c (f j) = col
-
-open Classical in
-/-- CUT INTO ACYCLIC SUBGRAPHS as a decision problem over bitstrings. -/
-noncomputable def cutIntoAcyclicSubgraphsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := CutIntoAcyclicSubgraphsInstance) x with
-  | some i => decide (WellFormed i ∧ CutIntoAcyclicSubgraphsFeasible i)
-  | none => false
 
 /-- **CUT INTO ACYCLIC SUBGRAPHS is NP-complete.** Source: Johnson (1982), problem [7] (Gács);
 Bokal, Fijavž, Juvan, Kayll and Mohar (2004). -/

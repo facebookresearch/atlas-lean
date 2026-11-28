@@ -21,12 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import WantedExt.Complexity.NPComplete.BandwidthWanted
-public import Mathlib.Combinatorics.SimpleGraph.Acyclic
-public import Mathlib.Combinatorics.SimpleGraph.Metric
+public import CSLibExt.Complexity.NPComplete.BandwidthCaterpillarsHairLengthThreeDefs
 
 @[expose] public section
 
@@ -67,33 +62,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : Bandwidth.BandwidthInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-open Classical in
-/-- `G` is a caterpillar with hairs of length at most `h`: a tree with a path `body` (a list of
-distinct vertices, consecutive ones adjacent) such that every vertex off the body has degree at
-most `2` and is within distance `h` of some body vertex. -/
-def IsCaterpillarWithHairLength (h : ℕ) {n : ℕ} (G : SimpleGraph (Fin n)) : Prop :=
-  G.IsTree ∧ ∃ body : List (Fin n), body.Nodup ∧ body.IsChain G.Adj ∧
-    ∀ v, v ∉ body → G.degree v ≤ 2 ∧ ∃ b ∈ body, G.dist v b ≤ h
-
-/-- Well-formedness of an instance: the parent's (a simple edge list on `Fin n`), the graph is a
-caterpillar with hairs of length at most `3`, and `0 < K ≤ n`. -/
-def WellFormed (i : Bandwidth.BandwidthInstance) : Prop :=
-  Bandwidth.WellFormed i ∧ IsCaterpillarWithHairLength 3 (Graph i) ∧ 0 < i.2.2 ∧ i.2.2 ≤ i.1
-
-open Classical in
-/-- BANDWIDTH for caterpillars with hairs of length at most 3 as a decision problem over
-bitstrings. -/
-noncomputable def bandwidthCaterpillarsHairLengthThreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := Bandwidth.BandwidthInstance) x with
-  | some i => decide (WellFormed i ∧ Bandwidth.BandwidthFeasible i)
-  | none => false
 
 /-- **BANDWIDTH for caterpillars with hairs of length at most 3 is NP-complete.** Source:
 Monien (1986); Garey and Johnson (1979), [GT40] (parent problem). -/

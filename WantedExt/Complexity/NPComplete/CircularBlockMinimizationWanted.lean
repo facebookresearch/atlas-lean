@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.ConsecutiveBlockMinimizationWanted
+public import CSLibExt.Complexity.NPComplete.CircularBlockMinimizationDefs
 
 @[expose] public section
 
@@ -61,24 +59,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Some permutation `σ` of the columns gives a matrix `B` with at most `K` entries `b_rj = 1`
-such that `b_{r, j+1} = 0` (with `B` extended by `0` beyond the last column) and, if `j` is the
-last column `n - 1`, also `b_{r, 0} = 0`. -/
-def CircularBlockMinimizationFeasible (i : ConsecutiveBlockMinimizationInstance) : Prop :=
-  ∃ σ : Equiv.Perm (Fin i.1),
-    ((Finset.range i.2.1.length ×ˢ Finset.range i.1).filter fun p =>
-      permutedEntry i σ p.1 p.2 = true ∧ permutedEntry i σ p.1 (p.2 + 1) = false ∧
-        (p.2 + 1 = i.1 → permutedEntry i σ p.1 0 = false)).card ≤ i.2.2
-
-open Classical in
-/-- CIRCULAR BLOCK MINIMIZATION as a decision problem over bitstrings. -/
-noncomputable def circularBlockMinimizationDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ConsecutiveBlockMinimizationInstance) x with
-  | some i => decide (WellFormed i ∧ CircularBlockMinimizationFeasible i)
-  | none => false
 
 /-- **CIRCULAR BLOCK MINIMIZATION is NP-complete.** Source: Garey and Johnson (1979), [SR17],
 comment; Booth (1975). -/

@@ -27,10 +27,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Combinatorics.SimpleGraph.LineGraph
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.GraphColoringDefs
+public import CSLibExt.Complexity.NPComplete.ChromaticNumberLineGraphsDefs
 
 @[expose] public section
 
@@ -69,21 +66,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed GRAPH COLORING instance (simple edge list) whose
-graph is a line graph, with `0 < K ≤ |V|`. -/
-def WellFormed (i : GraphColoringInstance) : Prop :=
-  GraphColoring.WellFormed i ∧ MetaMathlibExt.SimpleGraph.IsLineGraph (Graph i) ∧
-    0 < i.2.2 ∧ i.2.2 ≤ i.1
-
-open Classical in
-/-- CHROMATIC NUMBER for line graphs as a decision problem over bitstrings. -/
-noncomputable def chromaticNumberLineGraphsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := GraphColoringInstance) x with
-  | some i => decide (WellFormed i ∧ GraphColoringFeasible i)
-  | none => false
 
 /-- **CHROMATIC NUMBER is NP-complete for line graphs.** Source: Holyer (1981); Garey and Johnson
 (1979), [GT4]; Johnson (1985), Table 1; de Figueiredo, de Melo, Sasaki and Silva (2022),
