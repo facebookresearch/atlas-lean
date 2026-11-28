@@ -145,13 +145,6 @@ namespace IsAdmissibleLuckySet
 
 open MathlibExt.Combinatorics.Enumerative.LuckyCarsWanted
 
-private theorem nextFreeSpot_of_notMem {m : ℕ} {occ : Finset (Fin m)} {a : Fin m}
-    (ha : a ∉ occ) : nextFreeSpot occ a = a := by
-  have hmem : a ∈ Finset.univ.filter (fun q : Fin m => a ≤ q ∧ q ∉ occ) := by simp [ha]
-  have h := Finset.min'_mem _ ⟨a, hmem⟩
-  rw [nextFreeSpot, dite_eq_left ⟨a, hmem⟩]
-  exact le_antisymm (Finset.min'_le _ _ hmem) (Finset.mem_filter.mp h).2.1
-
 private theorem parkSpots_first {m : ℕ} (f : Fin m → Fin m) (i : Fin m) (hi : i.val = 0) :
     parkSpots f i = f i := by
   cases m with
@@ -298,12 +291,7 @@ private theorem prefs_le_spots {m : ℕ} (l : List (Fin m)) (occ : Finset (Fin m
   induction l generalizing occ with
   | nil => exact .nil
   | cons a l ih =>
-    refine .cons ?_ (ih _)
-    unfold nextFreeSpot
-    split
-    · rename_i hfree
-      exact (Finset.mem_filter.mp (Finset.min'_mem _ hfree)).2.1
-    · exact le_rfl
+    exact .cons (le_nextFreeSpot occ a) (ih _)
 
 /-- A missing spot was never requested. If every car could have used it, each car
 occupies a fresh spot, so fewer than a full lot of spots have been taken. -/
@@ -320,7 +308,7 @@ private theorem missing_spot {m : ℕ} (q : Fin m) (l : List (Fin m)) (occ : Fin
     · simp only [List.mem_cons, not_or]
       refine ⟨?_, hn⟩
       rintro rfl
-      exact hhead (IsAdmissibleLuckySet.nextFreeSpot_of_notMem hq).symm
+      exact hhead (nextFreeSpot_of_notMem hq).symm
     · intro hle
       have ha : a ≤ q := hle a List.mem_cons_self
       have hfree : (Finset.univ.filter (fun s : Fin m => a ≤ s ∧ s ∉ occ)).Nonempty :=

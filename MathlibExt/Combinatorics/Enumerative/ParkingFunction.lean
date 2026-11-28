@@ -48,6 +48,14 @@ instance (n : ℕ) (f : Fin n → Fin n) : Decidable (IsParkingFunction n f) := 
   unfold IsParkingFunction
   infer_instance
 
+/-- **Upper-tail characterization of parking functions.** For $n$ cars and $n$ spots numbered
+$0, \ldots, n-1$, a preference map is a parking function if and only if, for every spot $k$, at
+most $n-k$ cars prefer a spot at or after $k$. -/
+theorem isParkingFunction_iff_card_filter_ge (n : ℕ) (f : Fin n → Fin n) :
+    IsParkingFunction n f ↔
+      ∀ k : Fin n, (Finset.univ.filter (fun i : Fin n ↦ k ≤ f i)).card ≤ n - k.val :=
+  Iff.rfl
+
 /-- **Lower-tail characterization of parking functions.** Let $n \in \mathbb{N}$, number
 the $n$ spots $0, \dots, n-1$, and let $f : \{0, \dots, n-1\} \to \{0, \dots, n-1\}$ give the
 preferred spot of each of $n$ cars. Then $f$ is a parking function if and only if, for every

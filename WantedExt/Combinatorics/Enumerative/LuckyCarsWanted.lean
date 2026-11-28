@@ -51,6 +51,7 @@ public import MathlibExt.Combinatorics.Enumerative.LuckyCarCountByCar
 public import MathlibExt.Combinatorics.Enumerative.LuckyCarFactorialMoments
 public import MathlibExt.Combinatorics.Enumerative.LuckyCarPrescriptions
 public import MathlibExt.Combinatorics.Enumerative.LuckyCars
+public import MathlibExt.Combinatorics.Enumerative.LuckyCarsDecreasing
 public import MathlibExt.Combinatorics.Enumerative.LuckyCarsIncreasing
 
 set_option autoImplicit false
@@ -141,24 +142,6 @@ theorem_wanted card_dec_lucky_spot_eq_sum (n : ℕ) (j : Fin n) :
             ((n + 1 - i) * (n - j.val)) *
           Nat.choose (n - i + j.val) j.val *
           Nat.choose (n - j.val + i - 2) (i - 1)
-
-/-- **Lucky spots of weakly decreasing parking functions as a Catalan convolution.** Number the
-cars and spots $0, \dots, n-1$. For cars $i$ and spots $j$, let $q^d_n(i, j)$ be the number of
-weakly decreasing parking functions $f$ of length $n$ (that is, $f(0) \ge f(1) \ge \dots \ge
-f(n-1)$) with $f(i) = j$ in which car $i$ is lucky. Then for every spot $j$,
-$$\sum_{i=0}^{n-1} q^d_n(i, j) = \sum_{k=0}^{n-j-1} C_{n-1-k} \, C_k,$$
-where $C_m$ is the $m$-th Catalan number.
-
-The left side counts the weakly decreasing parking functions in which spot $j$ is lucky, that
-is, taken by a car that prefers it.
-
-Source: Steve Butler et al., "Lucky Cars and Lucky Spots in
-Parking Functions", Theorem 24. -/
-theorem_wanted card_dec_lucky_spot_eq_sum_catalan (n : ℕ)
-    (j : Fin n) :
-    (∑ i : Fin n, (qDec n i j : ℚ)) =
-      ∑ k ∈ Finset.range (n - j.val),
-        ((catalan (n - 1 - k) * catalan k : ℕ) : ℚ)
 
 /-- **Expected number of lucky cars in weakly decreasing parking functions.** For $n \ge 1$, the
 sum of the numbers of lucky cars over all weakly decreasing parking functions $f$ of length $n$

@@ -14,6 +14,7 @@ public import Mathlib.Data.Rat.Defs
 public import Mathlib.Order.Interval.Finset.Nat
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import MathlibExt.Combinatorics.Enumerative.KNaplesParking
+public import MathlibExt.Combinatorics.Enumerative.ParkingFunction
 import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
 import Mathlib.Data.Finset.Sort
 import Mathlib.Order.Interval.Finset.Fin
@@ -29,6 +30,21 @@ import Mathlib.Tactic.LinearCombination
 Descending parking preferences are encoded by the positions of the Up steps. This gives
 `descendingNaplesCount_eq_card_kDyckPath`, equating the two counts.
 Counting the bounded paths gives the binomial formulas in `descendingNaplesCount_eq_choose`.
+For `j : Fin n`, ordinary weakly decreasing parking functions with a car preferring `j`
+correspond to paths having an Up step preceded by exactly `j.val` Down steps.
+
+## References
+
+* J. P. Carvalho, P. E. Harris, G. Rojas Kirby, N. Tripeny, and A. R. Vindas Meléndez,
+  *Enumerating k-Naples Parking Functions through Catalan Objects*, INTEGERS 24 (2024),
+  Article A44, pp. 1–18, Section 3, Proposition 2 and Theorem 7.
+* A. Christensen, P. E. Harris, Z. Jones, M. Loving, A. Ramos Rodríguez, J. Rennie,
+  and G. Rojas Kirby, *A Generalization of Parking Functions Allowing Backward Movement*,
+  Electronic Journal of Combinatorics 27(1) (2020), Article P1.33, pp. 1–20, Theorem 1.3
+  (the bounded-path correspondence cited in Proposition 2).
+* Steve Butler, Kimberly Hadaway, Victoria Lenius, Preston Martens, and Marshall Moats,
+  *Lucky Cars and Lucky Spots in Parking Functions*, Journal of Integer Sequences 29 (2026),
+  Article 26.1.1, pp. 1–18, Section 4, for the ordinary parking correspondence.
 -/
 
 namespace MetaMathlibExt
@@ -408,7 +424,112 @@ private theorem card_kDyckPath {n k : ℕ} (hn : 1 ≤ n) :
     have hg := good_decode hn e (Finset.mem_filter.mp hp).2
     exact ⟨decode e, mem_parkingSet.mpr hg, congrArg word (encode_decode e _)⟩
 
+private abbrev DecreasingParking (n : ℕ) :=
+  {f : Fin n → Fin n // IsParkingFunction n f ∧ Antitone f}
+
+private lemma good_zero_iff_parking {n : ℕ} (f : Fin n → Fin n) (hf : Antitone f) :
+    Good 0 (fun i => (f i).val + 1) ↔ IsParkingFunction n f := by
+  rw [isParkingFunction_iff_card_filter_ge]
+  constructor
+  · intro hg j
+    have hsub : Finset.univ.filter (fun i => j ≤ f i) ⊆ Finset.Iic j.rev := by
+      intro i hi
+      have hji := Fin.le_def.mp (Finset.mem_filter.mp hi).2
+      have hb := hg.bound i
+      have hj := j.isLt
+      exact Finset.mem_Iic.mpr (Fin.le_def.mpr (by rw [Fin.val_rev]; omega))
+    refine (Finset.card_le_card hsub).trans_eq ?_
+    rw [Fin.card_Iic, Fin.val_rev]
+    have := j.isLt
+    omega
+  · intro hp
+    refine ⟨fun i => ⟨by omega, by have := (f i).isLt; omega⟩,
+      fun _ _ h => Nat.succ_le_succ (Fin.le_def.mp (hf h)), ?_⟩
+    intro i
+    have hsub : Finset.Iic i ⊆ Finset.univ.filter (fun t => f i ≤ f t) := by
+      intro t ht
+      exact Finset.mem_filter.mpr ⟨Finset.mem_univ _, hf (Finset.mem_Iic.mp ht)⟩
+    have h := (Finset.card_le_card hsub).trans (hp (f i))
+    rw [Fin.card_Iic] at h
+    omega
+
+private def classicalParkingPath {n : ℕ} (f : DecreasingParking n) :
+    {p : Fin (2 * n) → Bool // IsKDyckPath n 0 p} := by
+  have hg := (good_zero_iff_parking f.1 f.2.2).mpr f.2.1
+  exact ⟨word (encode hg), word_encode hg⟩
+
+private noncomputable def classicalParkingPathEquiv {n : ℕ} (hn : 1 ≤ n) :
+    DecreasingParking n ≃ {p : Fin (2 * n) → Bool // IsKDyckPath n 0 p} := by
+  refine Equiv.ofBijective classicalParkingPath ⟨?_, ?_⟩
+  · intro f g h
+    have hw := congrArg Subtype.val h
+    change word (encode ((good_zero_iff_parking f.1 f.2.2).mpr f.2.1)) =
+      word (encode ((good_zero_iff_parking g.1 g.2.2).mpr g.2.1)) at hw
+    have hd := congrArg decode (word_injective hw)
+    rw [decode_encode, decode_encode] at hd
+    exact Subtype.ext (funext fun i => Fin.ext (by have := congrFun hd i; omega))
+  · rintro ⟨p, hp⟩
+    obtain ⟨e, rfl⟩ := exists_word hp
+    have hg := good_decode hn e hp
+    let f (i : Fin n) : Fin n := ⟨downs e i.rev, Nat.lt_of_succ_le (hg.valid i).2⟩
+    have hdec : (fun i => (f i).val + 1) = decode e := rfl
+    have hgood : Good 0 (fun i => (f i).val + 1) := hdec ▸ hg
+    have ha : Antitone f := fun _ _ h => by
+      have hh := hgood.anti h
+      exact Fin.le_def.mpr (Nat.succ_le_succ_iff.mp hh)
+    refine ⟨⟨f, (good_zero_iff_parking f ha).mp hgood, ha⟩, Subtype.ext ?_⟩
+    have he : encode hgood = e := encode_decode e hg
+    exact congrArg word he
+
+private lemma word_column_iff {n : ℕ} (e : Fin n ↪o Fin (2 * n)) (j : ℕ) :
+    (∃ t : Fin (2 * n), word e t = true ∧
+      (t.val : ℤ) - latticeHeight (word e) t.val = 2 * (j : ℤ)) ↔ ∃ i, downs e i = j := by
+  have hcol (i : Fin n) : (e i).val - latticeHeight (word e) (e i).val =
+      2 * (downs e i : ℤ) := by
+    rw [height_word e (e i).isLt.le, before_up, Fin.card_Iio]
+    have := index_le e i
+    unfold downs
+    omega
+  constructor
+  · rintro ⟨t, ht, hj⟩
+    obtain ⟨i, rfl⟩ := of_decide_eq_true ht
+    rw [hcol] at hj
+    exact ⟨i, by omega⟩
+  · rintro ⟨i, rfl⟩
+    exact ⟨e i, by simp [word], hcol i⟩
+
+private lemma classicalParkingPath_column_iff {n : ℕ} (f : DecreasingParking n) (j : Fin n) :
+    (∃ t : Fin (2 * n), (classicalParkingPath f).1 t = true ∧
+      (t.val : ℤ) - latticeHeight (classicalParkingPath f).1 t.val = 2 * (j.val : ℤ)) ↔
+      ∃ i, f.1 i = j := by
+  let hg := (good_zero_iff_parking f.1 f.2.2).mpr f.2.1
+  change (∃ t : Fin (2 * n), word (encode hg) t = true ∧
+      (t.val : ℤ) - latticeHeight (word (encode hg)) t.val = 2 * (j.val : ℤ)) ↔ _
+  rw [word_column_iff]
+  have hd (i : Fin n) : downs (encode hg) i = (f.1 i.rev).val := by
+    change i.val + ((f.1 i.rev).val + 1 - 1) - i.val = (f.1 i.rev).val
+    omega
+  simp only [hd]
+  exact ⟨fun ⟨i, hi⟩ => ⟨i.rev, Fin.ext hi⟩, fun ⟨i, hi⟩ => ⟨i.rev, by simp [hi]⟩⟩
+
 end descendingNaplesCount_eq_card_kDyckPath
+
+open descendingNaplesCount_eq_card_kDyckPath in
+/-- **Decreasing parking functions with a prescribed preferred spot and Dyck paths.** For
+$0 \le j < n$, the weakly decreasing parking functions of length $n$ that contain preference $j$
+correspond to paths of $2n$ steps that stay nonnegative, end at height $0$, end with a Down
+step, and contain an Up step preceded by exactly $j$ Down steps. If a step is at zero-based index
+$t$ with starting height $h$, the number of earlier Down steps is $(t-h)/2$.
+
+Source: Steve Butler et al., *Lucky Cars and Lucky Spots in Parking Functions*,
+Journal of Integer Sequences 29 (2026), Article 26.1.1, Section 4. -/
+public noncomputable def decreasingParkingPreferenceEquivPath {n : ℕ} (j : Fin n) :
+    {f : {f : Fin n → Fin n // IsParkingFunction n f ∧ Antitone f} // ∃ i, f.1 i = j} ≃
+      {p : {p : Fin (2 * n) → Bool // IsKDyckPath n 0 p} //
+        ∃ t : Fin (2 * n), p.1 t = true ∧
+          (t.val : ℤ) - latticeHeight p.1 t.val = 2 * (j.val : ℤ)} :=
+  (classicalParkingPathEquiv (Nat.one_le_of_lt j.isLt)).subtypeEquiv fun f =>
+    (classicalParkingPath_column_iff f j).symm
 
 set_option linter.unusedVariables false in
 open descendingNaplesCount_eq_card_kDyckPath in
