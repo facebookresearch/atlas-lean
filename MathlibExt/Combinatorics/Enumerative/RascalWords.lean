@@ -299,6 +299,49 @@ theorem sum_rascalGen_row (j n : ℕ) :
         exact and_congr_right (fun _ => and_iff_right_of_imp (fun h => by omega))
   rw [← Nat.cast_sum, ← Nat.cast_sum, sum_rascalGen_eq_card, hflags, hcount]
 
+/-- **Forward differences of generalized Rascal row sums.** Fix a natural number $j$. For natural
+numbers $n$ and $k$ let $R^{(j)}_{n,k}$ be the number of binary words of length $n$ with exactly
+$k$ ones and at most $j$ ascents, and let $S(n) = \sum_{k=0}^{n} R^{(j)}_{n,k}$. Then
+$(\Delta^{2j+1} S)(n) = 1$ for every natural number $n$, where $\Delta$ is the forward
+difference $(\Delta a)(n) = a(n+1) - a(n)$.
+
+Source: Amelia Gibbs and Brian K. Miceli, "Two Combinatorial
+Interpretations of Rascal Numbers", Corollary 22. -/
+theorem iterate_forwardDiff_sum_rascalGen (j n : ℕ) :
+    ((fun a : ℕ → ℤ => fun m => a (m + 1) - a m)^[2 * j + 1]
+      (fun m => ∑ k ∈ Finset.range (m + 1),
+        rascalGenZ j (m : ℤ) (k : ℤ))) n = 1 := by
+  let Δ : (ℕ → ℤ) → (ℕ → ℤ) := fun a m => a (m + 1) - a m
+  let B (d m : ℕ) : ℤ := ∑ i ∈ Finset.range (d + 1), (m.choose i : ℤ)
+  have hstep (d : ℕ) : Δ (B (d + 1)) = B d := by
+    funext m
+    change (∑ i ∈ Finset.range (d + 1 + 1), ((m + 1).choose i : ℤ)) -
+      (∑ i ∈ Finset.range (d + 1 + 1), (m.choose i : ℤ)) = B d m
+    rw [Finset.sum_range_succ' (fun i => ((m + 1).choose i : ℤ)) (d + 1),
+      Finset.sum_range_succ' (fun i => (m.choose i : ℤ)) (d + 1)]
+    simp only [Nat.choose_succ_succ, Nat.choose_zero_right, Nat.cast_add, Nat.cast_one,
+      Finset.sum_add_distrib, B]
+    simp only [Nat.succ_eq_add_one]
+    omega
+  have hdiff (d : ℕ) : Δ^[d] (B d) n = 1 := by
+    induction d with
+    | zero => simp [B]
+    | succ d ih => rw [Function.iterate_succ_apply, hstep, ih]
+  have hrow : (fun m : ℕ => ∑ k ∈ Finset.range (m + 1), rascalGenZ j (m : ℤ) (k : ℤ)) =
+      B (2 * j + 1) := by
+    funext m
+    calc
+      _ = ∑ k ∈ Finset.range (m + 1), (rascalGen j k m : ℤ) := by
+        apply Finset.sum_congr rfl
+        intro k hk
+        have hkm : k ≤ m := Nat.le_of_lt_succ (Finset.mem_range.mp hk)
+        have hcast : (k : ℤ) ≤ (m : ℤ) := by exact_mod_cast hkm
+        simp [rascalGenZ, hcast]
+      _ = B (2 * j + 1) m := sum_rascalGen_row j m
+  change Δ^[2 * j + 1] _ n = 1
+  rw [hrow]
+  exact hdiff _
+
 /-- **A power-of-two row sum of generalized Rascal numbers.** Write $R^{(j)}_{n,k}$ for the number
 of binary words of length $n$ with exactly $k$ ones and at most $j$ ascents (positions where a
 $0$ is immediately followed by a $1$). For every natural number $j$,

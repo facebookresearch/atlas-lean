@@ -97,4 +97,26 @@ example :
   change [0, 1, 2, 2, 1, 1] ≠ List.range 2 ++ List.replicate (6 - 2) 2
   decide
 
+-- The first difference at the empty row is one at ascent bound zero.
+example : (∑ k ∈ Finset.range 2, rascalGenZ 0 1 (k : ℤ)) -
+    (∑ k ∈ Finset.range 1, rascalGenZ 0 0 (k : ℤ)) = 1 := by
+  exact iterate_forwardDiff_sum_rascalGen 0 0
+
+-- At ascent bound one the third difference at the next row uses rows one through four.
+example : (∑ k ∈ Finset.range 5, rascalGenZ 1 4 (k : ℤ)) -
+    3 * (∑ k ∈ Finset.range 4, rascalGenZ 1 3 (k : ℤ)) +
+    3 * (∑ k ∈ Finset.range 3, rascalGenZ 1 2 (k : ℤ)) -
+    (∑ k ∈ Finset.range 2, rascalGenZ 1 1 (k : ℤ)) = 1 := by
+  have h := iterate_forwardDiff_sum_rascalGen 1 1
+  change
+    (((∑ k ∈ Finset.range 5, rascalGenZ 1 4 (k : ℤ)) -
+        (∑ k ∈ Finset.range 4, rascalGenZ 1 3 (k : ℤ))) -
+      ((∑ k ∈ Finset.range 4, rascalGenZ 1 3 (k : ℤ)) -
+        (∑ k ∈ Finset.range 3, rascalGenZ 1 2 (k : ℤ)))) -
+    (((∑ k ∈ Finset.range 4, rascalGenZ 1 3 (k : ℤ)) -
+        (∑ k ∈ Finset.range 3, rascalGenZ 1 2 (k : ℤ))) -
+      ((∑ k ∈ Finset.range 3, rascalGenZ 1 2 (k : ℤ)) -
+        (∑ k ∈ Finset.range 2, rascalGenZ 1 1 (k : ℤ)))) = 1 at h
+  omega
+
 end MathlibExt.Combinatorics.Enumerative.RascalNumbersWanted
