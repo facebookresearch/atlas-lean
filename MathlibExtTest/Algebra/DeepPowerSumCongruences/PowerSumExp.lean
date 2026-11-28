@@ -92,4 +92,59 @@ example (σ : Type*) [Fintype σ] :
   rw [esymm_eq_sum_partitions, huniv, Finset.sum_insert (by simpa using hne), Finset.sum_singleton]
   norm_num [ones, two, Multiset.count_cons, pow_two, sub_eq_add_neg, neg_smul]
 
+section EsymmSeries
+
+open PowerSeries
+
+private noncomputable def signedSeries (σ : Type*) [Fintype σ] :
+    PowerSeries (MvPolynomial σ ℚ) :=
+  PowerSeries.mk fun n ↦ if n = 0 then 0 else ((-1 : ℚ) ^ (n - 1) / n) • MvPolynomial.psum σ ℚ n
+
+-- Even with no variables, both series have constant term 1.
+example : coeff 0 ((exp ℚ).subst (signedSeries (Fin 0))) = 1 := by
+  have hz : constantCoeff (signedSeries (Fin 0)) = 0 := by simp [signedSeries]
+  rw [coeff_zero_eq_constantCoeff]
+  change MvPowerSeries.constantCoeff ((exp ℚ).subst (signedSeries (Fin 0))) = 1
+  rw [constantCoeff_subst_of_constantCoeff_zero hz, constantCoeff_exp, map_one]
+
+example : coeff 0 (PowerSeries.mk (MvPolynomial.esymm (Fin 0) ℚ)) = 1 := by
+  simp
+
+-- Compute the quadratic coefficient on each side independently, at x₀ = 2 and x₁ = 3.
+example : MvPolynomial.aeval (fun i : Fin 2 ↦ (i.val : ℚ) + 2)
+    (coeff 2 ((exp ℚ).subst (signedSeries (Fin 2)))) = 6 := by
+  let p := signedSeries (Fin 2)
+  have hp : constantCoeff p = 0 := by simp [p, signedSeries]
+  have hs : (fun d : ℕ ↦ coeff d (exp ℚ) • coeff 2 (p ^ d)).support ⊆
+      (Finset.range 3 : Set ℕ) := by
+    intro d hd
+    simp only [Finset.mem_coe, Finset.mem_range]
+    by_contra! h
+    have hdvd : (X : PowerSeries (MvPolynomial (Fin 2) ℚ)) ^ d ∣ p ^ d :=
+      pow_dvd_pow_of_dvd (X_dvd_iff.mpr hp) d
+    apply hd
+    change coeff d (exp ℚ) • coeff 2 (p ^ d) = 0
+    rw [X_pow_dvd_iff.mp hdvd 2 (by omega), smul_zero]
+  have h₂ : coeff 2 (p ^ 2) = (coeff 1 p) ^ 2 := by
+    have hanti : Finset.antidiagonal 2 = {(0, 2), (1, 1), (2, 0)} := by decide
+    rw [pow_two, coeff_mul, hanti]
+    simp [Finset.sum_insert, coeff_zero_eq_constantCoeff, hp, pow_two]
+  change MvPolynomial.aeval _ (coeff 2 ((exp ℚ).subst p)) = 6
+  rw [coeff_subst' (.of_constantCoeff_zero' hp), finsum_eq_sum_of_support_subset _ hs,
+    Finset.sum_range_succ, Finset.sum_range_succ, Finset.sum_range_one, h₂]
+  norm_num [p, signedSeries, MvPolynomial.psum, Fin.sum_univ_two, map_smul]
+
+example : MvPolynomial.aeval (fun i : Fin 2 ↦ (i.val : ℚ) + 2)
+    (coeff 2 (PowerSeries.mk (MvPolynomial.esymm (Fin 2) ℚ))) = 6 := by
+  have hs : (Finset.univ : Finset (Fin 2)).powersetCard 2 = {Finset.univ} := by
+    simpa using Finset.powersetCard_self (Finset.univ : Finset (Fin 2))
+  norm_num [MvPolynomial.esymm, hs, Fin.prod_univ_two]
+
+-- The public identity applies to the entire two-variable series.
+example : (exp ℚ).subst (signedSeries (Fin 2)) =
+    PowerSeries.mk (MvPolynomial.esymm (Fin 2) ℚ) :=
+  exp_signedPowerSumSeries_eq_esymmSeries (Fin 2)
+
+end EsymmSeries
+
 end MetaMathlibExt.PowerSumExpTest
