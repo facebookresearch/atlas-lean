@@ -67,6 +67,24 @@
       "upstream_sha256": "9b573239e558ff710154e31390e6cc8748e1298257a71b8219fcef66f638920a"
     },
     {
+      "path": "MathlibExt/LinearAlgebra/ExteriorAlgebra/CoalgebraDiagonal.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "2c59d625af7abc586a0f958ca3b78fb05d3d8a17e2aa63981f87804de669d889",
+      "rationale": "Consolidate the general homogeneous exterior-involution law in the lightweight projection owner with backward-compatible implicit binders; de Rham and coalgebra modules reuse it while preserving their other maps and source attribution. Give exterior-algebra APIs self-contained mathematical docstrings with their actual graded interchange signs, regular-scalar torsion conditions, surjectivity/free/projective hypotheses, colimit coherence and coordinate formulas. Preserve all noncomment Lean tokens, names, imports, options and legal notices. Wrap Lean continuations to 100 columns without changing source tokens, maps, hypotheses or universes.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "3c046e2b97ea0b18414a6d6385c558336d2770d7c0d96eb5d342bb28e8831e60"
+    },
+    {
+      "path": "MathlibExt/LinearAlgebra/ExteriorAlgebra/CoalgebraGrading.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "9ebb8315bd8fdd46b03f25fa5e0751f1a3078a588c69bf9993687f1a72647628",
+      "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Give exterior-algebra APIs self-contained mathematical docstrings with their actual graded interchange signs, regular-scalar torsion conditions, surjectivity/free/projective hypotheses, colimit coherence and coordinate formulas. Preserve all noncomment Lean tokens, names, imports, options and legal notices.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "64bbfa8c9720f4bb32e58b5fb35bfde92cba77b1ec443c8a99ac256158dd22e3"
+    },
+    {
       "path": "MathlibExt/LinearAlgebra/ExteriorAlgebra/DirectLimit.lean",
       "backport": "pending",
       "disposition": "diverged",
@@ -121,6 +139,15 @@
       "upstream_sha256": "430c75a1c291de5160a527cdf194a6f1981d87436a42cb484a202a10cadfeae6"
     },
     {
+      "path": "MathlibExt/LinearAlgebra/ExteriorPower/Coordinates.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "c1cff0c834194df265a9e7b44fe1da728179f4e9949fbef02f027a60692282e1",
+      "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Give exterior-algebra APIs self-contained mathematical docstrings with their actual graded interchange signs, regular-scalar torsion conditions, surjectivity/free/projective hypotheses, colimit coherence and coordinate formulas. Preserve all noncomment Lean tokens, names, imports, options and legal notices.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "0509e3b1ace54b38b8b5f19d041e79da5a6770688e2d2156437d3fa5f47f84a7"
+    },
+    {
       "path": "MathlibExt/LinearAlgebra/ExteriorPower/Deletion.lean",
       "backport": "not-needed",
       "disposition": "diverged",
@@ -166,6 +193,15 @@
       "upstream_sha256": "a789cbcf1dcc70750bb6c3e4549c675dcc2350820ca4e6f9c002a54342af9872"
     },
     {
+      "path": "MathlibExt/LinearAlgebra/ExteriorPower/FixedSlot.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "ea3ead135c3b5a98898ab007aa995874896e6e1af79a6692cfc7210d269f0ffe",
+      "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Give exterior-algebra APIs self-contained mathematical docstrings with their actual graded interchange signs, regular-scalar torsion conditions, surjectivity/free/projective hypotheses, colimit coherence and coordinate formulas. Preserve all noncomment Lean tokens, names, imports, options and legal notices. Wrap Lean continuations to 100 columns without changing source tokens, maps, hypotheses or universes.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "d4fcc5de810bde09ec267fa83bf53b1a7c8ae1b2184caad5c06c9373b5371642"
+    },
+    {
       "path": "MathlibExt/LinearAlgebra/ExteriorPower/Kernel.lean",
       "backport": "pending",
       "disposition": "diverged",
@@ -175,6 +211,42 @@
       "upstream_sha256": "09941d9e14c54cd81ce10fb86e2d341486808db25691d5d6521330abefb68591"
     },
     {
+      "path": "MathlibExt/LinearAlgebra/ExteriorPower/Product.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "7768ba14413edc96f197a62b8a093c8bfb5e2f030eba93e86ea3fb0264f00d28",
+      "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Give exterior-algebra APIs self-contained mathematical docstrings with their actual graded interchange signs, regular-scalar torsion conditions, surjectivity/free/projective hypotheses, colimit coherence and coordinate formulas. Preserve all noncomment Lean tokens, names, imports, options and legal notices. Wrap Lean continuations to 100 columns without changing source tokens, maps, hypotheses or universes.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "12088182e0abd25ee5de0f2a79bdbdcb7bd1fa074d73501490acf714b6983bae"
+    },
+    {
+      "path": "MathlibExt/LinearAlgebra/ExteriorPower/ProductFiltration.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "1ab78dd0c8dc036f0c56aa69f560780e0a9dc7d78f4cc9de7968e9fef17eacfe",
+      "rationale": "Use native exterior-degree and scalar-extension coordinates and canonical native quotient group/module structures for the adjacent-stage quotient aliases. Bind carriers, actual submodules, and tensor-piece targets explicitly in the quotient transports and representative formulas. Preserve the original filtration, mixed-injection order, maps, ring/module hypotheses, and independent universes. Mathematical source docstrings replace workflow prose. Backport and Native verification pending. Give the two adjacent-stage quotient types ordinary definition heads, retaining their quotient bodies byte-for-byte and their exact canonical native quotient group/module dictionaries. This isolates instance matching from the reducible raw quotient relation without new transparency/resource settings, hypotheses, scalar data or map changes. Native recheck pending. Bind the canonical native Submodule.addCommGroup factory explicitly to the existing scalar ring R for exterior powers and the two stage families. These module-local selectors carry the same native subgroup structures and avoid inferring an erased scalar parameter; no Module.addCommMonoidToAddCommGroup reconstruction, new ring/module/universe hypotheses, resource settings, quotient values or map changes. Native recheck pending. Qualify the native exterior-power submodule as ExteriorAlgebra.exteriorPower and bind all three canonical subgroup factory ambient carriers explicitly. This addresses the completed current68 union compiler diagnostics without changing any quotient, filtration, projection, transport, hypothesis or universe. Native recheck pending.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "62807779224eb1dd42d41bfe19eea64c1fe389e2e246ea6beefb02506b7837da"
+    },
+    {
+      "path": "MathlibExt/LinearAlgebra/ExteriorPower/ProductFiltration/BaseMultiplication.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "a8fd37c621b3400dda7ddb0cb7e82cb7ca6d9b80b5df3a3ca5f0b6529b7810c4",
+      "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Give exterior-algebra APIs self-contained mathematical docstrings with their actual graded interchange signs, regular-scalar torsion conditions, surjectivity/free/projective hypotheses, colimit coherence and coordinate formulas. Preserve all noncomment Lean tokens, names, imports, options and legal notices. Wrap Lean continuations to 100 columns without changing source tokens, maps, hypotheses or universes.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "ba250a86ec5190a17f9a5074ec0e28cb9606bd5db136416846012a27db5e4dbd"
+    },
+    {
+      "path": "MathlibExt/LinearAlgebra/ExteriorPower/ProductFiltration/RelativeProjection.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "fe1df093e2c97fd680516e3d4d4567158220ba004cd23db4d687519ff8ff80fe",
+      "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Give exterior-algebra APIs self-contained mathematical docstrings with their actual graded interchange signs, regular-scalar torsion conditions, surjectivity/free/projective hypotheses, colimit coherence and coordinate formulas. Preserve all noncomment Lean tokens, names, imports, options and legal notices. Wrap Lean continuations to 100 columns without changing source tokens, maps, hypotheses or universes.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "c0f6489c200043527fe9a10d9659b1b19f255c08abf9d3c7c4f0d6ff31bd417f"
+    },
+    {
       "path": "MathlibExt/LinearAlgebra/ExteriorPower/ProductOne.lean",
       "backport": "not-needed",
       "disposition": "diverged",
@@ -182,6 +254,24 @@
       "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary.",
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "ff37092a442c361febebaf0b78d0cf6753d23d4b865d08745c9da970f72cefa9"
+    },
+    {
+      "path": "MathlibExt/LinearAlgebra/ExteriorPower/Projection.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "523f9e339eee67e940c69405c1e173670d7837ea305edfca4d16e89f68418718",
+      "rationale": "Consolidate the general homogeneous exterior-involution law in the lightweight projection owner using exterior-generator extensionality and the original implicit binder interface; existing de Rham and coalgebra callers reuse this canonical proof. Reuse the canonical native exterior/Finsupp decomposition and scalar-extension coordinates, and remove noncanonical local additive-group instances. Public mathematical maps, assumptions and universes preserved. Native verification pending. Give the general pairing/projection API self-contained mathematical docstrings with exact degrees, hypotheses, signs and coordinate maps. This documentation-only refinement preserves every noncomment Lean token.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "b24418fb94947e1e0ab29d054c5c516b108d7b2b118b552c728fa1f3de89cdaf"
+    },
+    {
+      "path": "MathlibExt/LinearAlgebra/ExteriorPower/Projective.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "e668634b4713a447f581834e098569800c9f5b504f7c172904b3e238642cd0ae",
+      "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Give exterior-algebra APIs self-contained mathematical docstrings with their actual graded interchange signs, regular-scalar torsion conditions, surjectivity/free/projective hypotheses, colimit coherence and coordinate formulas. Preserve all noncomment Lean tokens, names, imports, options and legal notices.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "93794abbd1ad9e6770c788df951782f9f8e36d3da1c3e43ec69097f33c0d1a4f"
     },
     {
       "path": "MathlibExt/LinearAlgebra/ExteriorPower/RankOneSplitting.lean",
@@ -200,6 +290,15 @@
       "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary.",
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "6e0e400d815ed7fc390f7b936942af183add0a85e1d200e700d72ff70f0292f3"
+    },
+    {
+      "path": "MathlibExt/LinearAlgebra/ExteriorPower/Unshuffle.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "27307d7d1c8747cd8d626b1a4d63baf37e936a0ae66e5fa9acac576ab2402395",
+      "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Give exterior-algebra APIs self-contained mathematical docstrings with their actual graded interchange signs, regular-scalar torsion conditions, surjectivity/free/projective hypotheses, colimit coherence and coordinate formulas. Preserve all noncomment Lean tokens, names, imports, options and legal notices.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "6160b82a5e3df83bad8402138c9f045004fde808067e9e3b101564d849ae1c3c"
     },
     {
       "path": "MathlibExt/LinearAlgebra/GeneralPosition.lean",

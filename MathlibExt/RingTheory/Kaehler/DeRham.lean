@@ -11,6 +11,7 @@ public import Mathlib.Algebra.TrivSqZeroExt.Basic
 public import Mathlib.LinearAlgebra.CliffordAlgebra.Conjugation
 public import Mathlib.RingTheory.Kaehler.Basic
 public import MathlibExt.LinearAlgebra.ExteriorPowerSemilinear
+public import MathlibExt.LinearAlgebra.ExteriorPower.Projection
 
 /-!
 # The algebraic de Rham differential
@@ -63,16 +64,6 @@ theorem ι_mul_eq_involute_mul (v : M) (x : ExteriorAlgebra A M) :
   | ι m => rw [involute_ι, neg_mul, eq_neg_iff_add_eq_zero, ι_add_mul_swap]
   | mul x y hx hy => rw [← mul_assoc, hx, mul_assoc, hy, ← mul_assoc, map_mul]
   | add x y hx hy => rw [mul_add, hx, hy, map_add, add_mul]
-
-/-- The grade involution acts on `⋀ⁿ` by the sign `(-1)ⁿ`. -/
-theorem involute_of_mem_exteriorPower {n : ℕ} {x : ExteriorAlgebra A M} (hx : x ∈ ⋀[A]^n M) :
-    CliffordAlgebra.involute x = (-1 : A) ^ n • x := by
-  induction hx using Submodule.pow_induction_on_left' with
-  | algebraMap r => rw [AlgHom.commutes, pow_zero, one_smul]
-  | add x y i _ _ hx hy => rw [map_add, hx, hy, smul_add]
-  | mem_mul m hm i x _ ih =>
-      obtain ⟨m₀, rfl⟩ := hm
-      rw [map_mul, involute_ι, ih, neg_mul, mul_smul_comm, pow_succ, mul_neg_one, neg_smul]
 
 /-- Elements of `⋀²` are fixed by the grade involution. -/
 theorem involute_of_mem_exteriorPower_two {x : ExteriorAlgebra A M} (hx : x ∈ ⋀[A]^2 M) :
