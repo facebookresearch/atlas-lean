@@ -25,4 +25,4 @@ None.
 
 ## Sources
 
-- Detlef Plump, "Termination of graph rewriting is undecidable", *Fundamenta Informaticae* 33(2), 201–209, 1998, <https://doi.org/10.3233/FI-1998-33204>; read as the accepted version, <https://eprints.whiterose.ac.uk/id/eprint/243324/>, which carries the journal's numbering: Section 2 (the definitions above).
+- Detlef Plump, "Termination of graph rewriting is undecidable", *Fundamenta Informaticae* 33(2), 201–209, 1998, <https://doi.org/10.3233/FI-1998-33204>; read as the accepted version, <https://eprints.whiterose.ac.uk/id/eprint/243324/>, which carries the journal's numbering: Section 2 (graph rewriting and termination), Section 4 before Theorem 4.1 (cyclicity) and Section 1 (the $ab \to ba$ example).
