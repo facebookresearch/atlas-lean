@@ -139,6 +139,44 @@ example : (2, 3) ∈ fibonacciPairOrbit (0, 1) :=
 example : (-1, 1) ∈ fibonacciPairOrbit (0, 1) :=
   ⟨2, Or.inr rfl⟩
 
+-- One forward step from (-6, 4) and one backward step from (4, 6) give the same ratio.
+example :
+    (-2 : ℚ) ∈ {x : ℚ | ∃ v ∈ fibonacciPairOrbit (-6, 4), v.2 ≠ 0 ∧ x = (v.1 : ℚ) / v.2} ∧
+    (-2 : ℚ) ∈ {x : ℚ | ∃ w ∈ fibonacciPairOrbit (4, 6), w.1 ≠ 0 ∧ x = -(w.2 : ℚ) / w.1} := by
+  constructor
+  · exact ⟨(4, -2), (mem_fibonacciPairOrbit_iff _ _).mpr ⟨1, Or.inl (by decide)⟩,
+      by decide, by norm_num⟩
+  · exact ⟨(2, 4), (mem_fibonacciPairOrbit_iff _ _).mpr ⟨1, Or.inr (by decide)⟩,
+      by decide, by norm_num⟩
+
+-- Two backward steps from (-6, 4) match two forward steps from (4, 6).
+example :
+    (-8 / 5 : ℚ) ∈ {x : ℚ | ∃ v ∈ fibonacciPairOrbit (-6, 4), v.2 ≠ 0 ∧ x = (v.1 : ℚ) / v.2} ∧
+    (-8 / 5 : ℚ) ∈ {x : ℚ | ∃ w ∈ fibonacciPairOrbit (4, 6), w.1 ≠ 0 ∧ x = -(w.2 : ℚ) / w.1} := by
+  constructor
+  · exact ⟨(-16, 10), (mem_fibonacciPairOrbit_iff _ _).mpr ⟨2, Or.inr (by decide)⟩,
+      by decide, by norm_num⟩
+  · exact ⟨(10, 16), (mem_fibonacciPairOrbit_iff _ _).mpr ⟨2, Or.inl (by decide)⟩,
+      by decide, by norm_num⟩
+
+-- For zero seeds both denominator restrictions exclude every orbit pair.
+example :
+    {x : ℚ | ∃ v ∈ fibonacciPairOrbit (0, 0), v.2 ≠ 0 ∧ x = (v.1 : ℚ) / v.2} = ∅ ∧
+    {x : ℚ | ∃ w ∈ fibonacciPairOrbit (0, 0), w.1 ≠ 0 ∧ x = -(w.2 : ℚ) / w.1} = ∅ := by
+  have orbit_zero {v : ℤ × ℤ} (hv : v ∈ fibonacciPairOrbit (0, 0)) : v = (0, 0) := by
+    rcases (mem_fibonacciPairOrbit_iff _ _).mp hv with ⟨n, rfl | rfl⟩
+    · exact Function.iterate_fixed (f := fibonacciPairStep) (by decide) n
+    · exact Function.iterate_fixed (f := fibonacciPairStepBack) (by decide) n
+  constructor <;> apply Set.eq_empty_iff_forall_notMem.mpr <;>
+    rintro x ⟨v, hv, hne, _⟩ <;> cases orbit_zero hv <;> exact hne rfl
+
+-- A client can transport the backward-orbit ratio to the shifted family.
+example : (-2 : ℚ) ∈
+    {x : ℚ | ∃ v ∈ fibonacciPairOrbit (-6, 4), v.2 ≠ 0 ∧ x = (v.1 : ℚ) / v.2} := by
+  rw [gibonacci_shifted_ratios_eq_negated_ratios 4 6]
+  exact ⟨(2, 4), (mem_fibonacciPairOrbit_iff _ _).mpr ⟨1, Or.inr (by decide)⟩,
+    by decide, by norm_num⟩
+
 example : knappM 1 11 1 2 = 58 := by
   norm_num [knappM]
 
