@@ -33,7 +33,7 @@ example : ∃ ξ ∈ Ioo (1 : ℝ) 2,
   have hlt : (1 : ℝ) < 1 + 1 := by norm_num
   have hx := square_contDiff.differentiable (by decide) (1 : ℝ)
   have hWithin := hx.derivWithin (uniqueDiffOn_uIcc hlt.ne 1 left_mem_uIcc)
-  obtain ⟨ξ, hξ, heq⟩ := derivWithin_eq_oneSidedDifference_sub_remainder
+  obtain ⟨ξ, hξ, heq⟩ := exists_derivWithin_eq_oneSidedDifference_sub_remainder
     (f := fun t : ℝ ↦ t ^ 2) (x := 1) (h := 1) (by norm_num) square_contDiff.contDiffOn
   rw [uIoo_of_lt hlt] at hξ
   rw [hWithin, deriv_square] at heq
@@ -45,7 +45,7 @@ example : ∃ ξ ∈ Ioo (0 : ℝ) 1,
     (2 : ℝ) = 1 + 1 / 2 * iteratedDeriv 2 (fun t : ℝ ↦ t ^ 2) ξ := by
   have hgt : (1 : ℝ) + (-1) < 1 := by norm_num
   have hx := square_contDiff.differentiable (by decide) (1 : ℝ)
-  obtain ⟨ξ, hξ, heq⟩ := deriv_eq_oneSidedDifference_sub_remainder
+  obtain ⟨ξ, hξ, heq⟩ := exists_deriv_eq_oneSidedDifference_sub_remainder
     (x := 1) (h := -1) (by norm_num) square_contDiff.contDiffOn hx
   rw [uIoo_of_gt hgt] at hξ
   norm_num [deriv_square, sub_eq_add_neg] at hξ heq
@@ -83,7 +83,7 @@ example : ∃ ξ ∈ Ioo (0 : ℝ) 1,
   have hx : derivWithin (abs : ℝ → ℝ) (uIcc 0 (0 + 1)) 0 = 1 := by
     rw [derivWithin_congr hOn (hOn left_mem_uIcc)]
     exact derivWithin_id 0 _ (uniqueDiffOn_uIcc hlt.ne 0 left_mem_uIcc)
-  obtain ⟨ξ, hξ, heq⟩ := derivWithin_eq_oneSidedDifference_sub_remainder (by norm_num) hf
+  obtain ⟨ξ, hξ, heq⟩ := exists_derivWithin_eq_oneSidedDifference_sub_remainder (by norm_num) hf
   rw [uIoo_of_lt hlt] at hξ
   rw [hx] at heq
   norm_num at hξ heq

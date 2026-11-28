@@ -35,7 +35,7 @@ namespace MetaMathlibExt
 /-- Exact one-sided difference quotient formula with the degree-one Lagrange remainder.
 The step `h` may have either sign. Only the derivative at `x` is taken within the closed interval;
 the ordinary second derivative is evaluated at a point strictly between `x` and `x + h`. -/
-theorem derivWithin_eq_oneSidedDifference_sub_remainder {f : ℝ → ℝ} {x h : ℝ} (hh : h ≠ 0)
+theorem exists_derivWithin_eq_oneSidedDifference_sub_remainder {f : ℝ → ℝ} {x h : ℝ} (hh : h ≠ 0)
     (hf : ContDiffOn ℝ 2 f (uIcc x (x + h))) :
     ∃ ξ ∈ uIoo x (x + h), derivWithin f (uIcc x (x + h)) x =
       (f (x + h) - f x) / h - h / 2 * iteratedDeriv 2 f ξ := by
@@ -49,13 +49,13 @@ theorem derivWithin_eq_oneSidedDifference_sub_remainder {f : ℝ → ℝ} {x h :
 
 /-- If `f` is differentiable at the expansion point in the ambient real line, the exact formula
 for the one-sided difference quotient uses the ordinary derivative there. -/
-theorem deriv_eq_oneSidedDifference_sub_remainder {f : ℝ → ℝ} {x h : ℝ} (hh : h ≠ 0)
+theorem exists_deriv_eq_oneSidedDifference_sub_remainder {f : ℝ → ℝ} {x h : ℝ} (hh : h ≠ 0)
     (hf : ContDiffOn ℝ 2 f (uIcc x (x + h))) (hx : DifferentiableAt ℝ f x) :
     ∃ ξ ∈ uIoo x (x + h), deriv f x =
       (f (x + h) - f x) / h - h / 2 * iteratedDeriv 2 f ξ := by
   have hne : x ≠ x + h := fun heq ↦ hh (add_left_cancel (heq.symm.trans (add_zero x).symm))
   simpa only [hx.derivWithin (uniqueDiffOn_uIcc hne x left_mem_uIcc)] using
-    derivWithin_eq_oneSidedDifference_sub_remainder hh hf
+    exists_derivWithin_eq_oneSidedDifference_sub_remainder hh hf
 
 /-- An absolute bound `M` on the second derivative in the open interval bounds the error of the
 one-sided difference quotient by `|h| / 2 * M`. -/
@@ -63,7 +63,7 @@ theorem abs_oneSidedDifference_sub_derivWithin_le {f : ℝ → ℝ} {x h M : ℝ
     (hf : ContDiffOn ℝ 2 f (uIcc x (x + h)))
     (hM : ∀ ξ ∈ uIoo x (x + h), |iteratedDeriv 2 f ξ| ≤ M) :
     |(f (x + h) - f x) / h - derivWithin f (uIcc x (x + h)) x| ≤ |h| / 2 * M := by
-  obtain ⟨ξ, hξ, hDeriv⟩ := derivWithin_eq_oneSidedDifference_sub_remainder hh hf
+  obtain ⟨ξ, hξ, hDeriv⟩ := exists_derivWithin_eq_oneSidedDifference_sub_remainder hh hf
   rw [hDeriv, sub_sub_cancel, abs_mul, abs_div, abs_of_nonneg (by norm_num : (0 : ℝ) ≤ 2)]
   exact mul_le_mul_of_nonneg_left (hM ξ hξ) (div_nonneg (abs_nonneg h) (by norm_num))
 
