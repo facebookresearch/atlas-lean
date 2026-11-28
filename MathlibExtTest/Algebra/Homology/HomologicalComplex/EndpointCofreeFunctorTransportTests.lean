@@ -23,8 +23,8 @@ import Mathlib.Data.ZMod.Basic
 Take the integer module ℤ/6 and the natural-number chain with multiplication by
 two from degree one to degree zero, and zero differentials elsewhere. An
 injective presentation of its graded family gives an injective presentation of
-the chain through the native cofree adjunction. Its value at one in degree zero
-is nonzero, as is its endpoint coefficient under the native comonad counit.
+the chain through the cofree adjunction. Its value at one in degree zero
+is nonzero, as is its endpoint coefficient under the comonad counit.
 
 The additive universe-lift functor from integer modules with carriers in
 universe zero to carriers in universe one transports this cofree target. The
@@ -54,14 +54,14 @@ private abbrev K : HomologicalComplex C₀ c where
     by_cases h : i = 1 ∧ j = 0
     · rcases h with ⟨rfl, rfl⟩
       exact (hij (by decide)).elim
-    · exact if_neg h
+    · exact ite_eq_right h
   d_comp_d' i j k _ _ := by
     by_cases h : i = 1 ∧ j = 0
     · have h' : ¬ (j = 1 ∧ k = 0) := by
         intro hj
         exact Nat.zero_ne_one (h.2.symm.trans hj.1)
-      simp only [if_pos h, if_neg h', comp_zero]
-    · simp only [if_neg h, zero_comp]
+      simp only [ite_eq_left h, ite_eq_right h', comp_zero]
+    · simp only [ite_eq_right h, zero_comp]
 
 private lemma no_next_zero : ¬ c.Rel 0 (c.next 0) := by
   intro h
@@ -72,7 +72,7 @@ private lemma rel_one_zero : c.Rel 1 0 := by decide
 
 private lemma differential_value : (K.d 1 0).hom (1 : ZMod 6) = 2 := by
   change (if (1 : ℕ) = 1 ∧ (0 : ℕ) = 0 then twice else 0).hom (1 : ZMod 6) = _
-  rw [if_pos (by decide)]
+  rw [ite_eq_left (by decide)]
   change (2 : ℤ) • (1 : ZMod 6) = 2
   decide
 
@@ -108,13 +108,13 @@ example : Mono presentation.f := presentation.mono
 example : originalPoint ≠ 0 := originalPoint_ne_zero
 
 example (i : ℕ) :
-    presentation.f.f i ≫ endpointCofreeProjection (c := c) I i = gradedPresentation.f i := by
+    presentation.f.f i ≫ endpointCofreeProjection c I i = gradedPresentation.f i := by
   change ((endpointCofreeAdjunction C₀ c).homEquiv K I gradedPresentation.f).f i ≫
-    endpointCofreeProjection (c := c) I i = gradedPresentation.f i
+    endpointCofreeProjection c I i = gradedPresentation.f i
   rw [endpointCofreeAdjunction_homEquiv_apply]
   exact endpointCofreeHom_fst K I gradedPresentation.f i
 
-example : endpointCofreeNextTerm (c := c) I 0 = (0 : C₀) :=
+example : endpointCofreeNextTerm c I 0 = (0 : C₀) :=
   endpointCofreeNextTerm_of_no_next I 0 no_next_zero
 
 example : (endpointCofreeFunctor C₀ c).PreservesInjectiveObjects := inferInstance
@@ -123,11 +123,11 @@ example : PreservesLimitsOfSize.{1, 1} (endpointCofreeFunctor C₀ c) := inferIn
 
 private abbrev T : Comonad (GradedObject ℕ C₀) := (endpointCofreeAdjunction C₀ c).toComonad
 
-example : (T.ε.app I) 0 = endpointCofreeProjection (c := c) I 0 :=
+example : (T.ε.app I) 0 = endpointCofreeProjection c I 0 :=
   endpointCofreeCounit_app C₀ c I 0
 
 example : ((T.ε.app I) 0).hom originalPoint ≠ 0 := by
-  change (endpointCofreeProjection (c := c) I 0).hom originalPoint ≠ 0
+  change (endpointCofreeProjection c I 0).hom originalPoint ≠ 0
   let e : E.X 0 ≅ I 0 := endpointCofreeXIsoOfNoNext I 0 no_next_zero
   intro h
   change e.hom.hom originalPoint = 0 at h
@@ -136,7 +136,7 @@ example : ((T.ε.app I) 0).hom originalPoint ≠ 0 := by
 
 example : (T.δ.app I) 0 ≫ (T.ε.app (T.obj I)) 0 = 𝟙 ((T.obj I) 0) := by
   change ((endpointCofreeUnit C₀ c).app E).f 0 ≫
-    endpointCofreeProjection (c := c) E.X 0 = 𝟙 (E.X 0)
+    endpointCofreeProjection c E.X 0 = 𝟙 (E.X 0)
   exact endpointCofreeUnit_fst C₀ c E 0
 
 private abbrev F : C₀ ⥤ C₁ := ModuleCat.uliftFunctor.{1, 0} ℤ
@@ -165,7 +165,7 @@ example :
     let KL := (F.mapHomologicalComplex c).obj K
     let J : GradedObject ℕ C₁ := KL.X
     (((((endpointCofreeUnit C₁ c).app KL).f 1 ≫
-      endpointCofreeSecondProjection (c := c) J 1) ≫
+      endpointCofreeSecondProjection c J 1) ≫
         (endpointCofreeNextTermIso J rel_one_zero).hom).hom
           (ULift.up (1 : ZMod 6))) = ULift.up (2 : ZMod 6) := by
   dsimp only
