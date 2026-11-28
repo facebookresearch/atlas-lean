@@ -15,3 +15,4 @@ Infinite-volume states of the Ising model and its phase transition: weak limits 
 - [Continuum free energy of radial pair potentials](continuum-radial-potentials/README.md)
 - [The exact factor-of-IID threshold for the free Ising law on a regular tree](free-ising-tree-factor-threshold.md)
 - [The free Ising cylinder law on a regular tree](free-ising-tree-cylinder-law.md)
+- [Translation-invariant extensions of measures](translation-invariant-extensions-of-measures/README.md)

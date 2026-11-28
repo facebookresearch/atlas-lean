@@ -9,3 +9,4 @@ First-order dependent types: the system λP of the λ-cube, strong normalization
 - [Inhabitation in λP is undecidable](inhabitation-in-lambda-p-is-undecidable.md)
 - [Translating λP into simple types](translating-lambda-p-into-simple-types.md)
 - [Subject reduction for Curry-style λP](subject-reduction-for-curry-style-lambda-p.md)
+- [Typability of pure terms in a given context of λP is undecidable](typability-in-a-given-context-in-lambda-p.md)
