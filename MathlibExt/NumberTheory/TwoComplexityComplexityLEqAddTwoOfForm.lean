@@ -102,27 +102,12 @@ private theorem build_fixed_form (m : ℕ) (hm : 10 ≤ m) :
   · omega
   · simp only [add_mul, ← pow_add, h₁, h₂, h₃, h₄]
 
-private theorem largest_exponent (m n a b : ℕ) (hab : a ≤ b)
-    (hn1 : 2 ^ m < n) (hn2 : n ≤ 2 ^ (m + 1)) (heq : n = 2 ^ a + 2 ^ b) : b = m := by
-  have hle : b ≤ m := by
-    by_contra h
-    have hp := Nat.pow_le_pow_right (n := 2) (by decide) (show m + 1 ≤ b by omega)
-    have hpos := Nat.two_pow_pos a
-    omega
-  have hge : m ≤ b := by
-    by_contra h
-    have hp := Nat.pow_le_pow_right (n := 2) (by decide) (show b + 1 ≤ m by omega)
-    have hp' := Nat.pow_le_pow_right (n := 2) (by decide) hab
-    rw [pow_succ] at hp
-    omega
-  omega
-
 private theorem not_two_powers (m n c : ℕ)
     (hn1 : 2 ^ m < n) (hn2 : n ≤ 2 ^ (m + 1))
     (hc1 : 2 ^ m + 2 ^ c < n) (hc2 : n < 2 ^ m + 2 ^ (c + 1)) :
     ¬ ∃ a b : ℕ, a ≤ b ∧ n = 2 ^ a + 2 ^ b := by
   rintro ⟨a, b, hab, heq⟩
-  have hb := largest_exponent m n a b hab hn1 hn2 heq
+  have hb := largest_exponent_of_two_pow_add_two_pow m n a b hab hn1 hn2 heq
   subst b
   by_cases hac : a ≤ c
   · have hp := Nat.pow_le_pow_right (n := 2) (by decide) hac

@@ -37,6 +37,7 @@ public import Mathlib.Order.Interval.Finset.Nat
 public import MathlibExt.NumberTheory.TwoComplexityLowerBound
 public import MathlibExt.NumberTheory.TwoComplexitySum
 public import MathlibExt.NumberTheory.TwoComplexityComplexityLDecomp
+public import MathlibExt.NumberTheory.TwoComplexityComplexityLEqAddOneIff
 public import MathlibExt.NumberTheory.TwoComplexityComplexityLEqAddTwoOfForm
 public import MathlibExt.NumberTheory.TwoComplexityComplexityLPowAddPow
 public import MathlibExt.NumberTheory.TwoComplexityLogbTwoBounds
@@ -57,21 +58,6 @@ theorem_wanted logb_le_complexityL_le (l n : ℕ) (hl : 1 < l)
     (hln : l ∣ n) (hn : 1 ≤ n) :
     Real.logb l n ≤ (complexityL l n : ℝ) ∧
       (complexityL l n : ℝ) ≤ l * Real.logb l n - 1
-
-/-- **Even $n$ with $2^m < n \le 2^{m+1}$ and 2-complexity $m + 1$.** Write $\|n\|_2$ for the
-2-complexity of $n$. Let $m \ge 1$ and let $n$ be an even natural number with
-$2^m < n \le 2^{m+1}$. Then $\|n\|_2 = m + 1$ if and only if $n = 2^m + 2^t$ for some natural
-number $t$ with $1 \le t \le m$.
-
-The case $t = m$ gives $n = 2^{m+1}$.
-
-Source: Pengcheng Zhang, "The 2-Complexity of Even Positive
-Integers", Proposition 3 and Theorem 1. -/
-theorem_wanted complexityL_eq_add_one_iff (m n : ℕ)
-    (hm : 1 ≤ m) (h2n : 2 ∣ n) (hn1 : 2 ^ m < n)
-    (hn2 : n ≤ 2 ^ (m + 1)) :
-    complexityL 2 n = m + 1 ↔
-      ∃ t : ℕ, 1 ≤ t ∧ t ≤ m ∧ n = 2 ^ m + 2 ^ t
 
 /-- **Even numbers in $(2^m, 2^{m+1}]$ with 2-complexity $m + 2$.** Write $\|n\|_2$ for the
 2-complexity of $n$. Let $m \ge 3$ and let $n$ be an even natural number with
