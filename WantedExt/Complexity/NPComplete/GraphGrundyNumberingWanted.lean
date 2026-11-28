@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Combinatorics.Digraph.Basic
-public import Mathlib.Order.Bounds.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.GraphGrundyNumberingDefs
 
 @[expose] public section
 
@@ -50,33 +47,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the vertex count `n` and the arc list `A` (pairs `(u, v)` for arcs `u → v`). -/
-abbrev GraphGrundyNumberingInstance := ℕ × List (ℕ × ℕ)
-
-/-- The digraph of the instance on `Fin n`: `u → v` is an arc iff `(u, v)` is in the arc
-list. -/
-def Graph (i : GraphGrundyNumberingInstance) : Digraph (Fin i.1) where
-  Adj u v := ((u : ℕ), (v : ℕ)) ∈ i.2
-
-/-- Well-formedness of an instance: the arc list has no repeated arcs, its endpoints are
-vertices, and it has no loops. -/
-def WellFormed (i : GraphGrundyNumberingInstance) : Prop :=
-  i.2.Nodup ∧ ∀ a ∈ i.2, a.1 < i.1 ∧ a.2 < i.1 ∧ a.1 ≠ a.2
-
-/-- A Grundy numbering: for every vertex `v`, `f v` is the least natural number that is not
-the value of `f` at an out-neighbor of `v`. -/
-def GraphGrundyNumberingFeasible (i : GraphGrundyNumberingInstance) : Prop :=
-  ∃ f : Fin i.1 → ℕ, ∀ v, IsLeast (f '' {u | (Graph i).Adj v u})ᶜ (f v)
-
-open Classical in
-/-- GRAPH GRUNDY NUMBERING as a decision problem over bitstrings. -/
-noncomputable def graphGrundyNumberingDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := GraphGrundyNumberingInstance) x with
-  | some i => decide (WellFormed i ∧ GraphGrundyNumberingFeasible i)
-  | none => false
 
 /-- **GRAPH GRUNDY NUMBERING is NP-complete.** Source: Garey and Johnson (1979), [GT56];
 van Leeuwen (1976); Fraenkel (1981). -/

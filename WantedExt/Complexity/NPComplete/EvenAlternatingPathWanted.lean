@@ -19,9 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.EvenLengthPathWanted
+public import CSLibExt.Complexity.NPComplete.EvenAlternatingPathDefs
 
 @[expose] public section
 
@@ -61,39 +59,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: an EVEN LENGTH PATH instance (vertex count `n`, arc list, `s`, `t`) and the
-list of red arcs; the other arcs are blue. -/
-abbrev EvenAlternatingPathInstance :=
-  EvenLengthPath.EvenLengthPathInstance × List (ℕ × ℕ)
-
-/-- Well-formedness of an instance: a well-formed EVEN LENGTH PATH instance
-(`EvenLengthPath.WellFormed`), and the red arcs are distinct listed arcs. -/
-def WellFormed (i : EvenAlternatingPathInstance) : Prop :=
-  EvenLengthPath.WellFormed i.1 ∧ i.2.Nodup ∧ ∀ a ∈ i.2, a ∈ i.1.2.1
-
-/-- The arc `u → v` is red: `(u, v)` is in the red list. -/
-def IsRed (i : EvenAlternatingPathInstance) (u v : Fin i.1.1) : Prop :=
-  ((u : ℕ), (v : ℕ)) ∈ i.2
-
-/-- Some simple directed path from `s` to `t` has an even number of arcs whose colors
-alternate: a chain of arcs `p` from the vertex `s` to the vertex `t` with distinct vertices, an
-even number `p.length - 1` of arcs, and consecutive arcs (consecutive entries of `p.zip p.tail`)
-of different colors. -/
-def EvenAlternatingPathFeasible (i : EvenAlternatingPathInstance) : Prop :=
-  ∃ s t : Fin i.1.1, (s : ℕ) = i.1.2.2.1 ∧ (t : ℕ) = i.1.2.2.2 ∧
-    ∃ p : List (Fin i.1.1), p.IsChainFromTo (EvenLengthPath.Graph i.1).Adj s t ∧ p.Nodup ∧
-      Even (p.length - 1) ∧
-      (p.zip p.tail).IsChain fun a b => (IsRed i a.1 a.2 ↔ ¬ IsRed i b.1 b.2)
-
-open Classical in
-/-- EVEN ALTERNATING PATH as a decision problem over bitstrings. -/
-noncomputable def evenAlternatingPathDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := EvenAlternatingPathInstance) x with
-  | some i => decide (WellFormed i ∧ EvenAlternatingPathFeasible i)
-  | none => false
 
 /-- **EVEN ALTERNATING PATH (2-arc-colored digraphs) is NP-complete.** Source: Johnson (1982),
 comment to problem [3] (Vornberger 1980). -/

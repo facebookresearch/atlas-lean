@@ -21,11 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Logic.Relation
-public import WantedExt.Complexity.NPComplete.PathWithForbiddenPairsWanted
-public import WantedExt.Complexity.NPComplete.DirectedTwoDisjointConnectingPathsWanted
+public import CSLibExt.Complexity.NPComplete.RoutingWithMustPairsDefs
 
 @[expose] public section
 
@@ -66,30 +62,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the parent's (arcs, `s`, `t` and must-pairs use vertices
-below `n`), the digraph is acyclic, and every must-pair `(u, v)` is in the transitive closure
-of the arcs. -/
-def WellFormed (i : PathWithForbiddenPairs.PathWithForbiddenPairsInstance) : Prop :=
-  PathWithForbiddenPairs.WellFormed i ∧
-    (∀ v, ¬ Relation.TransGen (fun u w => (u, w) ∈ i.2.1) v v) ∧
-    ∀ m ∈ i.2.2.2.2, Relation.TransGen (fun u w => (u, w) ∈ i.2.1) m.1 m.2
-
-/-- Some path `P` from `s` to `t` passes through `v` whenever it passes through `u`, for every
-must-pair `(u, v)`. -/
-def RoutingWithMustPairsFeasible
-    (i : PathWithForbiddenPairs.PathWithForbiddenPairsInstance) : Prop :=
-  ∃ p : List ℕ, DirectedTwoDisjointConnectingPaths.IsDirectedPath i.2.1 i.2.2.1 i.2.2.2.1 p ∧
-    ∀ m ∈ i.2.2.2.2, m.1 ∈ p → m.2 ∈ p
-
-open Classical in
-/-- ROUTING WITH MUST PAIRS as a decision problem over bitstrings. -/
-noncomputable def routingWithMustPairsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PathWithForbiddenPairs.PathWithForbiddenPairsInstance) x with
-  | some i => decide (WellFormed i ∧ RoutingWithMustPairsFeasible i)
-  | none => false
 
 /-- **ROUTING WITH MUST PAIRS is NP-complete.** Source: Johnson, NP-completeness column (1982),
 problem [2]; Ntafos and Hakimi (1979). -/

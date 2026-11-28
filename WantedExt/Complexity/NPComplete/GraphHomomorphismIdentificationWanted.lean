@@ -20,10 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Clique
+public import CSLibExt.Complexity.NPComplete.GraphHomomorphismIdentificationDefs
 
 @[expose] public section
 
@@ -60,41 +57,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count and edge list of `G`, vertex count and edge list of `H`. -/
-abbrev GraphHomomorphismIdentificationInstance := ℕ × List (ℕ × ℕ) × ℕ × List (ℕ × ℕ)
-
-/-- The graph `G` as a `SimpleGraph (Fin n₁)`. -/
-def GraphG (i : GraphHomomorphismIdentificationInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- The graph `H` as a `SimpleGraph (Fin n₂)`. -/
-def GraphH (i : GraphHomomorphismIdentificationInstance) : SimpleGraph (Fin i.2.2.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.2.2.1 i.2.2.2
-
-/-- Well-formedness of an instance: both edge lists are simple (in range, no loops, no
-repeated edge in either orientation). -/
-def WellFormed (i : GraphHomomorphismIdentificationInstance) : Prop :=
-  i.2.1.Nodup ∧ (∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    i.2.2.2.Nodup ∧
-      ∀ e ∈ i.2.2.2, e.1 < i.2.2.1 ∧ e.2 < i.2.2.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.2.2
-
-/-- `H` is obtained from `G` by identifying nonadjacent vertices: some surjective map
-`f : V₁ → V₂` has fibers that are independent sets of `G`, and the quotient of `G` by its
-fibers is `H`. -/
-def GraphHomomorphismIdentificationFeasible (i : GraphHomomorphismIdentificationInstance) :
-    Prop :=
-  ∃ f : Fin i.1 → Fin i.2.2.1, Function.Surjective f ∧
-    (∀ x, (GraphG i).IsIndepSet {v | f v = x}) ∧ (GraphG i).map f = GraphH i
-
-open Classical in
-/-- GRAPH HOMOMORPHISM ([GT52]) as a decision problem over bitstrings. -/
-noncomputable def graphHomomorphismIdentificationDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := GraphHomomorphismIdentificationInstance) x with
-  | some i => decide (WellFormed i ∧ GraphHomomorphismIdentificationFeasible i)
-  | none => false
 
 /-- **GRAPH HOMOMORPHISM (identification of nonadjacent vertices) is NP-complete.** Source:
 Garey and Johnson (1979), [GT52]; Levin (1973). -/

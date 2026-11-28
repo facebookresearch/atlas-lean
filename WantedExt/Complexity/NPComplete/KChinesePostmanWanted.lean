@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.ChinesePostmanMixedGraphsWanted
+public import CSLibExt.Complexity.NPComplete.KChinesePostmanDefs
 
 @[expose] public section
 
@@ -60,44 +58,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n`, the edges `(u, v, l)`, the initial vertex `s`, the number `k`
-of cycles, and the bound `K`. -/
-abbrev KChinesePostmanInstance := ℕ × List (ℕ × ℕ × ℕ) × ℕ × ℕ × ℕ
-
-/-- The multigraph as a mixed graph with no directed edges, whose steps are reused. -/
-def mixed (i : KChinesePostmanInstance) : ChinesePostmanMixedGraphsInstance :=
-  (i.1, [], i.2.1, i.2.2.2.2)
-
-/-- A closed walk from `s`, possibly empty: a list of undirected steps along edges of the
-multigraph in which consecutive steps meet and, if the list is nonempty, the first step starts
-at `s` and the last step ends at `s`. -/
-def IsCycleFrom (i : KChinesePostmanInstance) (w : List Step) : Prop :=
-  (∀ st ∈ w, st.1 = false ∧ st.2.1 < i.2.1.length) ∧
-    w.IsChain (fun a b => (stepEnds (mixed i) a).2 = (stepEnds (mixed i) b).1) ∧
-    (∀ st ∈ w.head?, (stepEnds (mixed i) st).1 = i.2.2.1) ∧
-    ∀ st ∈ w.getLast?, (stepEnds (mixed i) st).2 = i.2.2.1
-
-/-- Well-formedness of an instance: every edge joins vertices below `n`, `s` is a vertex, and `k`
-and `K` are positive. -/
-def WellFormed (i : KChinesePostmanInstance) : Prop :=
-  (∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2.1 < i.1) ∧ i.2.2.1 < i.1 ∧ 0 < i.2.2.2.1 ∧ 0 < i.2.2.2.2
-
-/-- Some `k` closed walks from `s`, possibly empty, each of length at most `K`, together traverse
-every edge. -/
-def KChinesePostmanFeasible (i : KChinesePostmanInstance) : Prop :=
-  ∃ cycles : List (List Step), cycles.length = i.2.2.2.1 ∧
-    (∀ w ∈ cycles, IsCycleFrom i w ∧ (w.map (stepLength (mixed i))).sum ≤ i.2.2.2.2) ∧
-    ∀ j < i.2.1.length, ∃ w ∈ cycles, ∃ st ∈ w, st.2.1 = j
-
-open Classical in
-/-- k-CHINESE POSTMAN as a decision problem over bitstrings. -/
-noncomputable def kChinesePostmanDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := KChinesePostmanInstance) x with
-  | some i => decide (WellFormed i ∧ KChinesePostmanFeasible i)
-  | none => false
 
 /-- **k-CHINESE POSTMAN is NP-complete.** Source: Crescenzi and Kann, MINIMUM K-CHINESE POSTMAN
 PROBLEM; Frederickson, Hecht and Kim (1978). -/

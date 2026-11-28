@@ -22,9 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.UnitLengthTreeGridEmbeddingWanted
+public import CSLibExt.Complexity.NPComplete.PartialGridRecognitionDefs
 
 @[expose] public section
 
@@ -67,21 +65,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range); the graph need not be
-a tree. -/
-def WellFormed (i : UnitLengthTreeGridEmbeddingInstance) : Prop :=
-  i.2.Nodup ∧ ∀ e ∈ i.2, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2
-
-open Classical in
-/-- PARTIAL GRID GRAPH RECOGNITION as a decision problem over bitstrings. -/
-noncomputable def partialGridRecognitionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := UnitLengthTreeGridEmbeddingInstance) x with
-  | some i => decide (WellFormed i ∧ UnitLengthTreeGridEmbeddingFeasible i)
-  | none => false
 
 /-- **PARTIAL GRID GRAPH RECOGNITION is NP-complete.** Source: de Sá, da Fonseca, Machado and de
 Figueiredo (2011); Bhatt and Cosmadakis (1987). -/

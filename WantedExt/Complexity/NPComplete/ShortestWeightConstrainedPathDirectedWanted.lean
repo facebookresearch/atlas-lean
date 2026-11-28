@@ -19,10 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.ShortestWeightConstrainedPathWanted
-public import WantedExt.Complexity.NPComplete.DirectedTwoDisjointConnectingPathsWanted
+public import CSLibExt.Complexity.NPComplete.ShortestWeightConstrainedPathDirectedDefs
 
 @[expose] public section
 
@@ -58,39 +55,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- The arcs of the instance as `(tail, head)` pairs. -/
-def arcs (i : ShortestWeightConstrainedPathInstance) : List (ℕ × ℕ) :=
-  i.2.1.map fun e => (e.1, e.2.1)
-
-/-- The `(length, weight)` of the listed arc from `a` to `b`; `(0, 0)` if there is none. Under
-`WellFormed` at most one listed arc goes from `a` to `b`. -/
-def arcData (i : ShortestWeightConstrainedPathInstance) (a b : ℕ) : ℕ × ℕ :=
-  ((i.2.1.find? fun e => decide ((e.1, e.2.1) = (a, b))).map fun e => e.2.2).getD (0, 0)
-
-/-- Well-formedness of an instance: the arcs join distinct in-range vertices, no two listed arcs
-have the same tail and head, every length and weight is positive, `s, t ∈ V`, and `K, W` are
-positive. -/
-def WellFormed (i : ShortestWeightConstrainedPathInstance) : Prop :=
-  (∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2.1 < i.1 ∧ e.1 ≠ e.2.1 ∧ 0 < e.2.2.1 ∧ 0 < e.2.2.2) ∧
-    (arcs i).Nodup ∧ i.2.2.1 < i.1 ∧ i.2.2.2.1 < i.1 ∧ 0 < i.2.2.2.2.1 ∧ 0 < i.2.2.2.2.2
-
-/-- A simple directed path from `s` to `t` whose total weight is at most `W` and whose total
-length is at most `K`. -/
-def ShortestWeightConstrainedPathDirectedFeasible
-    (i : ShortestWeightConstrainedPathInstance) : Prop :=
-  ∃ p : List ℕ, DirectedTwoDisjointConnectingPaths.IsDirectedPath (arcs i) i.2.2.1 i.2.2.2.1 p ∧
-    ((p.zip p.tail).map fun e => (arcData i e.1 e.2).2).sum ≤ i.2.2.2.2.2 ∧
-    ((p.zip p.tail).map fun e => (arcData i e.1 e.2).1).sum ≤ i.2.2.2.2.1
-
-open Classical in
-/-- SHORTEST WEIGHT-CONSTRAINED PATH for directed graphs as a decision problem over bitstrings. -/
-noncomputable def shortestWeightConstrainedPathDirectedDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ShortestWeightConstrainedPathInstance) x with
-  | some i => decide (WellFormed i ∧ ShortestWeightConstrainedPathDirectedFeasible i)
-  | none => false
 
 /-- **SHORTEST WEIGHT-CONSTRAINED PATH is NP-complete for directed graphs.** Source: Garey and
 Johnson (1979), [ND30], comment (Megiddo, 1977, private communication). -/

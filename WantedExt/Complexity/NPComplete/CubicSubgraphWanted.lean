@@ -20,10 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Finite
+public import CSLibExt.Complexity.NPComplete.CubicSubgraphDefs
 
 @[expose] public section
 
@@ -48,34 +45,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`), edge list. -/
-abbrev CubicSubgraphInstance := ℕ × List (ℕ × ℕ)
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : CubicSubgraphInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range). -/
-def WellFormed (i : CubicSubgraphInstance) : Prop :=
-  i.2.Nodup ∧ ∀ e ∈ i.2, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2
-
-open Classical in
-/-- Some spanning subgraph `H ≤ G` has at least one edge, and every vertex has degree 0 or 3
-in `H`. -/
-def CubicSubgraphFeasible (i : CubicSubgraphInstance) : Prop :=
-  ∃ H : SimpleGraph (Fin i.1), H ≤ Graph i ∧ H.edgeSet.Nonempty ∧
-    ∀ v, H.degree v = 0 ∨ H.degree v = 3
-
-open Classical in
-/-- CUBIC SUBGRAPH as a decision problem over bitstrings. -/
-noncomputable def cubicSubgraphDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := CubicSubgraphInstance) x with
-  | some i => decide (WellFormed i ∧ CubicSubgraphFeasible i)
-  | none => false
 
 /-- **CUBIC SUBGRAPH is NP-complete.** Source: Garey and Johnson (1979), [GT32];
 Stewart (1994). -/

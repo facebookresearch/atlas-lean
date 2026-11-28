@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.BusRoutingWanted
+public import CSLibExt.Complexity.NPComplete.BusRoutingMinGridDefs
 
 @[expose] public section
 
@@ -65,35 +63,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- `a` is an arc of the `h × w` grid directed south or east: from the vertex `r * w + c` (row
-`r < h`, column `c < w`) to its eastern neighbor `r * w + c + 1` or its southern neighbor
-`(r + 1) * w + c`. -/
-def IsGridArc (h w : ℕ) (a : ℕ × ℕ) : Prop :=
-  ∃ r < h, ∃ c < w, (c + 1 < w ∧ a = (r * w + c, r * w + c + 1)) ∨
-    (r + 1 < h ∧ a = (r * w + c, (r + 1) * w + c))
-
-/-- Well-formedness of an instance: a well-formed BUS ROUTING instance (`BusRouting.WellFormed`)
-whose digraph is an `h × w` grid (`h, w ≥ 1`, `n = h * w`, the arcs exactly the south and east
-grid arcs), with `s` the northwest corner `0` and `t` the southeast corner `h * w - 1`. -/
-def WellFormed (i : BusRouting.BusRoutingInstance) : Prop :=
-  BusRouting.WellFormed i ∧
-    ∃ h w, 0 < h ∧ 0 < w ∧ i.1 = h * w ∧ (∀ a, a ∈ i.2.1 ↔ IsGridArc h w a) ∧
-      i.2.2.1 = 0 ∧ i.2.2.2.1 = h * w - 1
-
-/-- Some path `P` from `s` to `t` has `∑_{a ∈ P*} w(a) ≤ B`. -/
-def BusRoutingMinGridFeasible (i : BusRouting.BusRoutingInstance) : Prop :=
-  ∃ p : List ℕ, DirectedTwoDisjointConnectingPaths.IsDirectedPath i.2.1 i.2.2.1 i.2.2.2.1 p ∧
-    BusRouting.closureWeight i.2.2.2.2.1 p ≤ i.2.2.2.2.2
-
-open Classical in
-/-- BUS ROUTING (minimization, grid) as a decision problem over bitstrings. -/
-noncomputable def busRoutingMinGridDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := BusRouting.BusRoutingInstance) x with
-  | some i => decide (WellFormed i ∧ BusRoutingMinGridFeasible i)
-  | none => false
 
 /-- **BUS ROUTING (minimization, grid) is NP-complete.** Source: Johnson, NP-completeness column
 (1982), comment to problem [1]; Rock (1982). -/

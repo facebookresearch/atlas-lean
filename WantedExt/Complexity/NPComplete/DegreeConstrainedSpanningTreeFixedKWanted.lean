@@ -18,9 +18,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.DegreeConstrainedSpanningTreeWanted
+public import CSLibExt.Complexity.NPComplete.DegreeConstrainedSpanningTreeFixedKDefs
 
 @[expose] public section
 
@@ -54,30 +52,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`) and edge list; the bound `K` is fixed. -/
-abbrev DegreeConstrainedSpanningTreeFixedKInstance := ℕ × List (ℕ × ℕ)
-
-/-- The [ND1] instance `(n, E, K)` of a graph `(n, E)` and the fixed bound `K`. -/
-def withBound (K : ℕ) (i : DegreeConstrainedSpanningTreeFixedKInstance) :
-    DegreeConstrainedSpanningTree.DegreeConstrainedSpanningTreeInstance :=
-  (i.1, i.2, K)
-
-/-- Well-formedness of an instance for the fixed bound `K`: the [ND1] well-formedness of
-`(n, E, K)` (`0 < n`, simple edge list) and Garey and Johnson's `K ≤ |V|`. -/
-def WellFormed (K : ℕ) (i : DegreeConstrainedSpanningTreeFixedKInstance) : Prop :=
-  DegreeConstrainedSpanningTree.WellFormed (withBound K i) ∧ K ≤ i.1
-
-open Classical in
-/-- DEGREE CONSTRAINED SPANNING TREE for a fixed bound `K` as a decision problem over
-bitstrings. -/
-noncomputable def degreeConstrainedSpanningTreeFixedKDec (K : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := DegreeConstrainedSpanningTreeFixedKInstance) x with
-  | some i => decide (WellFormed K i ∧
-      DegreeConstrainedSpanningTree.DegreeConstrainedSpanningTreeFeasible (withBound K i))
-  | none => false
 
 /-- **DEGREE CONSTRAINED SPANNING TREE is NP-complete for every fixed `K ≥ 2`.** Source: Garey
 and Johnson (1979), [ND1], comment. -/

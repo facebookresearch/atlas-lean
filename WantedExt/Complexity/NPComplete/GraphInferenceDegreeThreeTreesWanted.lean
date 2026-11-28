@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Acyclic
-public import Mathlib.Data.Set.Card
+public import CSLibExt.Complexity.NPComplete.GraphInferenceDegreeThreeTreesDefs
 
 @[expose] public section
 
@@ -65,31 +62,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the string `x` of colors and the bound `K` on the number of edges. -/
-abbrev GraphInferenceInstance := List ℕ × ℕ
-
-/-- Well-formedness of an instance: `K` is positive. -/
-def WellFormed (i : GraphInferenceInstance) : Prop :=
-  0 < i.2
-
-open Classical in
-/-- Some tree of bounded degree 3 with at most `K` edges, with an edge-coloring, has a walk that
-traverses every edge and whose trace is `x`. -/
-def GraphInferenceFeasible (i : GraphInferenceInstance) : Prop :=
-  ∃ m : ℕ, ∃ G : SimpleGraph (Fin m), ∃ c : Sym2 (Fin m) → ℕ,
-    G.IsTree ∧ (∀ v, G.degree v ≤ 3) ∧ G.edgeSet.ncard ≤ i.2 ∧
-      ∃ u v : Fin m, ∃ w : G.Walk u v, (∀ e ∈ G.edgeSet, e ∈ w.edges) ∧ w.edges.map c = i.1
-
-open Classical in
-/-- GRAPH INFERENCE FROM A WALK FOR TREES OF DEGREE AT MOST 3 as a decision problem over
-bitstrings. -/
-noncomputable def graphInferenceDegreeThreeTreesDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := GraphInferenceInstance) x with
-  | some i => decide (WellFormed i ∧ GraphInferenceFeasible i)
-  | none => false
 
 /-- **GRAPH INFERENCE FROM A WALK FOR TREES OF DEGREE AT MOST 3 is NP-complete.** Source:
 Maruyama and Miyano (1995), Theorem 1; Crescenzi and Kann, MINIMUM GRAPH INFERENCE. -/

@@ -19,9 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.PathConstrainedNetworkFlowWanted
+public import CSLibExt.Complexity.NPComplete.PathConstrainedNetworkFlowUnitDefs
 
 @[expose] public section
 
@@ -55,22 +53,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the parent's (a directed graph on `0, ..., n - 1` with
-positive capacities, distinct vertices `s` and `t`, every member of `P` a directed path in `G`,
-`0 < R`) and every capacity is `1`. -/
-def WellFormed (i : PathConstrainedNetworkFlowInstance) : Prop :=
-  PathConstrainedNetworkFlow.WellFormed i ∧ ∀ a ∈ i.2.1, a.2.2 = 1
-
-open Classical in
-/-- PATH CONSTRAINED NETWORK FLOW with unit capacities as a decision problem over bitstrings. -/
-noncomputable def pathConstrainedNetworkFlowUnitDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PathConstrainedNetworkFlowInstance) x with
-  | some i =>
-    decide (WellFormed i ∧ PathConstrainedNetworkFlow.PathConstrainedNetworkFlowFeasible i)
-  | none => false
 
 /-- **PATH CONSTRAINED NETWORK FLOW is NP-complete with unit capacities.** Source: Garey and
 Johnson (1979), [ND34], comment (Prömel, 1978). -/

@@ -22,10 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.HamPath
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.HamiltonianCycleDirectedWanted
+public import CSLibExt.Complexity.NPComplete.DirectedHamiltonianPathDefs
 
 @[expose] public section
 
@@ -66,20 +63,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Some list of the vertices is a directed Hamiltonian path of the digraph, between some start
-vertex `s` and some end vertex `t` (`Cslib.Complexity.Karp.IsHamPath`). -/
-def DirectedHamiltonianPathFeasible (i : HamiltonianCycleDirectedInstance) : Prop :=
-  ∃ s t : ℕ, ∃ p : List ℕ, Cslib.Complexity.Karp.IsHamPath i.1 i.2 s t p
-
-open Classical in
-/-- DIRECTED HAMILTONIAN PATH as a decision problem over bitstrings. -/
-noncomputable def directedHamiltonianPathDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := HamiltonianCycleDirectedInstance) x with
-  | some i => decide (WellFormed i ∧ DirectedHamiltonianPathFeasible i)
-  | none => false
 
 /-- **DIRECTED HAMILTONIAN PATH is NP-complete.** Source: Garey and Johnson (1979), [GT39] and
 Section 3.1.4; Karp (1972). -/

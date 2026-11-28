@@ -22,10 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Paths
+public import CSLibExt.Complexity.NPComplete.DisjointConnectingPathsDefs
 
 @[expose] public section
 
@@ -58,39 +55,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `0, ..., n - 1`), edge list, and the list of vertex
-pairs `(sᵢ, tᵢ)`. -/
-abbrev DisjointConnectingPathsInstance := ℕ × List (ℕ × ℕ) × List (ℕ × ℕ)
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : DisjointConnectingPathsInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- Well-formedness of an instance: the edge list is simple (endpoints in range, no self-loops,
-no repeated or reversed edges), every `sᵢ` and `tᵢ` is a vertex, and the pairs are disjoint:
-the `2k` vertices `s₁, t₁, ..., sₖ, tₖ` are pairwise distinct. -/
-def WellFormed (i : DisjointConnectingPathsInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    (∀ p ∈ i.2.2, p.1 < i.1 ∧ p.2 < i.1) ∧
-    (i.2.2.flatMap fun p => [p.1, p.2]).Nodup
-
-/-- There are paths `pⱼ`, one for each pair `(sⱼ, tⱼ)`, where `pⱼ` is a path in `G` from `sⱼ` to
-`tⱼ`, and the paths of different pairs have no vertex in common. -/
-def DisjointConnectingPathsFeasible (i : DisjointConnectingPathsInstance) : Prop :=
-  ∃ paths : Fin i.2.2.length → (u : Fin i.1) × (v : Fin i.1) × (Graph i).Walk u v,
-    (∀ j, ((paths j).1 : ℕ) = (i.2.2.get j).1 ∧ ((paths j).2.1 : ℕ) = (i.2.2.get j).2 ∧
-      (paths j).2.2.IsPath) ∧
-    ∀ j l, j ≠ l → (paths j).2.2.support.Disjoint (paths l).2.2.support
-
-open Classical in
-/-- DISJOINT CONNECTING PATHS as a decision problem over bitstrings. -/
-noncomputable def disjointConnectingPathsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := DisjointConnectingPathsInstance) x with
-  | some i => decide (WellFormed i ∧ DisjointConnectingPathsFeasible i)
-  | none => false
 
 /-- **DISJOINT CONNECTING PATHS is NP-complete.** Source: Garey and Johnson (1979), [ND40];
 Karp (1975); Lynch (1975). -/

@@ -21,11 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import MathlibExt.Combinatorics.SimpleGraph.Planarity
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.ChinesePostmanMixedGraphsWanted
+public import CSLibExt.Complexity.NPComplete.ChinesePostmanMixedGraphsPlanarDegreeThreeDefs
 
 @[expose] public section
 
@@ -75,33 +71,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- The underlying simple graph on `Fin n`: two vertices are adjacent exactly when a directed
-or an undirected edge joins them. -/
-def underlyingGraph (i : ChinesePostmanMixedGraphsInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 ((i.2.1 ++ i.2.2.1).map fun e => (e.1, e.2.1))
-
-/-- The degree of `v` in the mixed graph: the number of directed and undirected edges with `v`
-as an endpoint. -/
-def mixedDegree (i : ChinesePostmanMixedGraphsInstance) (v : ℕ) : ℕ :=
-  (i.2.1 ++ i.2.2.1).countP fun e => e.1 = v ∨ e.2.1 = v
-
-/-- Well-formedness of an instance: a well-formed CHINESE POSTMAN FOR MIXED GRAPHS instance in
-which all edge lengths are equal, the underlying graph is planar, and every vertex has degree at
-most 3. -/
-def WellFormed (i : ChinesePostmanMixedGraphsInstance) : Prop :=
-  ChinesePostmanMixedGraphs.WellFormed i ∧ (∃ c, ∀ e ∈ i.2.1 ++ i.2.2.1, e.2.2 = c) ∧
-    (underlyingGraph i).IsPlanar ∧ ∀ v, mixedDegree i v ≤ 3
-
-open Classical in
-/-- CHINESE POSTMAN FOR MIXED GRAPHS, planar, maximum degree 3, equal lengths, as a decision
-problem over bitstrings. -/
-noncomputable def chinesePostmanMixedGraphsPlanarDegreeThreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ChinesePostmanMixedGraphsInstance) x with
-  | some i => decide (WellFormed i ∧ ChinesePostmanMixedGraphsFeasible i)
-  | none => false
 
 /-- **CHINESE POSTMAN FOR MIXED GRAPHS is NP-complete for planar graphs of maximum degree 3
 with equal edge lengths.** Source: Garey and Johnson (1979), [ND25]; Papadimitriou (1976). -/

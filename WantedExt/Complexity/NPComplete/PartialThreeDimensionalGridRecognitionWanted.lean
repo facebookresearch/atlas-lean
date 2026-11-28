@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Combinatorics.SimpleGraph.Lattice.HypercubicLattice
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.PartialGridRecognitionWanted
+public import CSLibExt.Complexity.NPComplete.PartialThreeDimensionalGridRecognitionDefs
 
 @[expose] public section
 
@@ -69,21 +66,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- The graph is a subgraph of the infinite three-dimensional grid: it is contained in
-`hypercubicLattice 3`. -/
-def PartialThreeDimensionalGridFeasible (i : UnitLengthTreeGridEmbeddingInstance) : Prop :=
-  (Graph i).IsContained (StatMech.Lattice.hypercubicLattice 3)
-
-open Classical in
-/-- PARTIAL 3D GRID GRAPH RECOGNITION as a decision problem over bitstrings. -/
-noncomputable def partialThreeDimensionalGridRecognitionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := UnitLengthTreeGridEmbeddingInstance) x with
-  | some i => decide (PartialGridRecognition.WellFormed i ∧
-      PartialThreeDimensionalGridFeasible i)
-  | none => false
 
 /-- **PARTIAL 3D GRID GRAPH RECOGNITION is NP-complete.** Source: de Sá, da Fonseca, Machado and
 de Figueiredo (2011). -/

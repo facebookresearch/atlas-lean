@@ -20,13 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.Digraph.Basic
-public import Mathlib.Combinatorics.Digraph.Orientation
-public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
-public import Mathlib.Data.Set.Card
-public import WantedExt.Complexity.NPComplete.TransitiveSubgraphWanted
+public import CSLibExt.Complexity.NPComplete.ConnectedTransitiveSubgraphDefs
 
 @[expose] public section
 
@@ -70,23 +64,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Some subdigraph `H ≤ G` on the same vertices has at least `K` arcs, a transitive arc
-relation, and a connected underlying undirected graph. -/
-def ConnectedTransitiveSubgraphFeasible (i : TransitiveSubgraph.TransitiveSubgraphInstance) :
-    Prop :=
-  ∃ H : Digraph (Fin i.1), H ≤ TransitiveSubgraph.Graph i ∧
-    i.2.2 ≤ {a : Fin i.1 × Fin i.1 | H.Adj a.1 a.2}.ncard ∧ IsTrans (Fin i.1) H.Adj ∧
-      H.toSimpleGraphInclusive.Connected
-
-open Classical in
-/-- CONNECTED TRANSITIVE SUBGRAPH as a decision problem over bitstrings. -/
-noncomputable def connectedTransitiveSubgraphDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TransitiveSubgraph.TransitiveSubgraphInstance) x with
-  | some i => decide (TransitiveSubgraph.WellFormed i ∧ ConnectedTransitiveSubgraphFeasible i)
-  | none => false
 
 /-- **CONNECTED TRANSITIVE SUBGRAPH is NP-complete.** Source: Garey and Johnson (1979), [GT29],
 comment; Yannakakis (1978), Theorem 15 and the end of Section 4. -/

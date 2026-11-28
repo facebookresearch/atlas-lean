@@ -20,10 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Combinatorics.SimpleGraph.Planarity
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.DisjointConnectingPathsWanted
+public import CSLibExt.Complexity.NPComplete.DisjointConnectingPathsPlanarDefs
 
 @[expose] public section
 
@@ -64,21 +61,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed DISJOINT CONNECTING PATHS instance (a simple
-edge list on `Fin n`, pairs of vertices, the `2k` paired vertices pairwise distinct) whose graph
-is planar (`SimpleGraph.IsPlanar`). -/
-def WellFormed (i : DisjointConnectingPathsInstance) : Prop :=
-  DisjointConnectingPaths.WellFormed i ∧ (Graph i).IsPlanar
-
-open Classical in
-/-- DISJOINT CONNECTING PATHS for planar graphs as a decision problem over bitstrings. -/
-noncomputable def disjointConnectingPathsPlanarDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := DisjointConnectingPathsInstance) x with
-  | some i => decide (WellFormed i ∧ DisjointConnectingPathsFeasible i)
-  | none => false
 
 /-- **DISJOINT CONNECTING PATHS for planar graphs is NP-complete.** Source: Garey and Johnson
 (1979), [ND40], comment; Lynch (1975). -/

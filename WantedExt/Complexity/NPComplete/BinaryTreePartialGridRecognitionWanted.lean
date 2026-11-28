@@ -24,9 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.UnitLengthTreeGridEmbeddingWanted
+public import CSLibExt.Complexity.NPComplete.BinaryTreePartialGridRecognitionDefs
 
 @[expose] public section
 
@@ -71,21 +69,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed instance of `UnitLengthTreeGridEmbeddingWanted`
-(a simple edge list whose graph is a tree) in which every vertex has degree at most `3`. -/
-def WellFormed (i : UnitLengthTreeGridEmbeddingInstance) : Prop :=
-  UnitLengthTreeGridEmbedding.WellFormed i ∧ ∀ v : Fin i.1, ((Graph i).neighborSet v).ncard ≤ 3
-
-open Classical in
-/-- BINARY TREE ∩ PARTIAL GRID RECOGNITION as a decision problem over bitstrings. -/
-noncomputable def binaryTreePartialGridRecognitionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := UnitLengthTreeGridEmbeddingInstance) x with
-  | some i =>
-    decide (WellFormed i ∧ UnitLengthTreeGridEmbedding.UnitLengthTreeGridEmbeddingFeasible i)
-  | none => false
 
 /-- **BINARY TREE ∩ PARTIAL GRID RECOGNITION is NP-complete.** Source: Gregori (1989); de Sá,
 da Fonseca, Machado and de Figueiredo (2011). -/

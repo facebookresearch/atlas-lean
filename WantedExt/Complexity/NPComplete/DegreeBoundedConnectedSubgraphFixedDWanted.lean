@@ -24,9 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.DegreeBoundedConnectedSubgraphWanted
+public import CSLibExt.Complexity.NPComplete.DegreeBoundedConnectedSubgraphFixedDDefs
 
 @[expose] public section
 
@@ -57,24 +55,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance for the fixed degree bound `d`: the parent's (a simple edge
-list on `Fin n`, degree bound at most `|V|`, `0 < K ≤ |E|`) and the instance's degree bound is
-`d`. -/
-def WellFormed (d : ℕ)
-    (i : DegreeBoundedConnectedSubgraph.DegreeBoundedConnectedSubgraphInstance) : Prop :=
-  DegreeBoundedConnectedSubgraph.WellFormed i ∧ i.2.2.1 = d
-
-open Classical in
-/-- DEGREE-BOUNDED CONNECTED SUBGRAPH with the degree bound fixed to `d`, as a decision problem
-over bitstrings. -/
-noncomputable def degreeBoundedConnectedSubgraphFixedDDec (d : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := DegreeBoundedConnectedSubgraph.DegreeBoundedConnectedSubgraphInstance) x with
-  | some i => decide (WellFormed d i ∧
-      DegreeBoundedConnectedSubgraph.DegreeBoundedConnectedSubgraphFeasible i)
-  | none => false
 
 /-- **DEGREE-BOUNDED CONNECTED SUBGRAPH is NP-complete for every fixed degree bound `d ≥ 2`.**
 Source: Garey and Johnson (1979), [GT26], comment; Yannakakis (1978); Yannakakis (1981). -/

@@ -22,11 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import MathlibExt.Combinatorics.SimpleGraph.Planarity
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Logic.Relation
+public import CSLibExt.Complexity.NPComplete.DirectedSteinerTreePlanarAcyclicDefs
 
 @[expose] public section
 
@@ -68,40 +64,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n`, arc list `A`, source `s`, sink list `T` and bound `B`. -/
-abbrev DirectedSteinerTreePlanarAcyclicInstance := ℕ × List (ℕ × ℕ) × ℕ × List ℕ × ℕ
-
-/-- The arc relation of an arc list: `u → v` when `(u, v)` is in the list. -/
-def ArcRel (A : List (ℕ × ℕ)) (u v : ℕ) : Prop := (u, v) ∈ A
-
-/-- The underlying undirected simple graph: `u` and `v` are adjacent when `u ≠ v` and `u → v`
-or `v → u` is an arc. -/
-def UnderlyingGraph (i : DirectedSteinerTreePlanarAcyclicInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- Well-formedness of an instance: the arcs are distinct with endpoints in range; the digraph
-is acyclic and planar; the source and the distinct sinks are vertices; and `0 < B`. -/
-def WellFormed (i : DirectedSteinerTreePlanarAcyclicInstance) : Prop :=
-  i.2.1.Nodup ∧ (∀ a ∈ i.2.1, a.1 < i.1 ∧ a.2 < i.1) ∧
-    (∀ v, ¬ Relation.TransGen (ArcRel i.2.1) v v) ∧ (UnderlyingGraph i).IsPlanar ∧
-    i.2.2.1 < i.1 ∧ i.2.2.2.1.Nodup ∧ (∀ t ∈ i.2.2.2.1, t < i.1) ∧ 0 < i.2.2.2.2
-
-/-- Some set of at most `B` arcs of `G` contains a directed path from `s` to every sink. -/
-def DirectedSteinerTreePlanarAcyclicFeasible
-    (i : DirectedSteinerTreePlanarAcyclicInstance) : Prop :=
-  ∃ A' : List (ℕ × ℕ), A'.Sublist i.2.1 ∧ A'.length ≤ i.2.2.2.2 ∧
-    ∀ t ∈ i.2.2.2.1, Relation.ReflTransGen (ArcRel A') i.2.2.1 t
-
-open Classical in
-/-- DIRECTED STEINER TREE in planar acyclic graphs with equal weights as a decision problem over
-bitstrings. -/
-noncomputable def directedSteinerTreePlanarAcyclicDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := DirectedSteinerTreePlanarAcyclicInstance) x with
-  | some i => decide (WellFormed i ∧ DirectedSteinerTreePlanarAcyclicFeasible i)
-  | none => false
 
 /-- **DIRECTED STEINER TREE in planar acyclic graphs with equal weights is NP-complete.**
 Source: Johnson (1984), STEINER TREE IN GRAPHS [ND12] (Provan, 1983). -/

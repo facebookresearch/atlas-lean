@@ -23,12 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Data.Finset.Card
-public import Mathlib.Data.Fintype.Prod
-public import Mathlib.Logic.Relation
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.FaultDetectionDirectedGraphsWanted
+public import CSLibExt.Complexity.NPComplete.MinimumTestSetLinkFailuresDefs
 
 @[expose] public section
 
@@ -70,33 +65,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- The test `p = (u, v)` fails when the link `(a, b)` fails: `u` reaches `a` and `b` reaches
-`v`. This does not test that `a → b` is an arc; when it is, as for the links of the well-formed
-DAG, the condition says the link lies on a directed path from `u` to `v`. -/
-def TestFails (i : FaultDetectionDirectedGraphsInstance) (p : Fin i.1 × Fin i.1)
-    (a b : Fin i.1) : Prop :=
-  Relation.ReflTransGen (Graph i).Adj p.1 a ∧ Relation.ReflTransGen (Graph i).Adj b p.2
-
-/-- Some set `T` of at most `K` tests, each joining two distinct vertices, locates any single
-failed link: every link fails some test, and every two distinct links are separated by a test
-that fails for exactly one of them. -/
-def MinimumTestSetLinkFailuresFeasible (i : FaultDetectionDirectedGraphsInstance) : Prop :=
-  ∃ T : Finset (Fin i.1 × Fin i.1), T.card ≤ i.2.2 ∧ (∀ p ∈ T, p.1 ≠ p.2) ∧
-    ∀ a b, (Graph i).Adj a b →
-      (∃ p ∈ T, TestFails i p a b) ∧
-        ∀ a' b', (Graph i).Adj a' b' → (a, b) ≠ (a', b') →
-          ∃ p ∈ T, ¬ (TestFails i p a b ↔ TestFails i p a' b')
-
-open Classical in
-/-- MINIMUM TEST SET FOR LOCATING SINGLE LINK FAILURES as a decision problem over bitstrings. -/
-noncomputable def minimumTestSetLinkFailuresDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := FaultDetectionDirectedGraphsInstance) x with
-  | some i => decide (FaultDetectionDirectedGraphs.WellFormed i ∧
-      MinimumTestSetLinkFailuresFeasible i)
-  | none => false
 
 /-- **MINIMUM TEST SET FOR LOCATING SINGLE LINK FAILURES is NP-complete.** Source: Ibaraki,
 Kameda and Toida (1981); Johnson (1985). -/
