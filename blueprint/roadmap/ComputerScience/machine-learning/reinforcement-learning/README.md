@@ -26,6 +26,8 @@ Theory of reinforcement learning in finite discounted Markov decision processes,
 - [Single-cue error-correction learning and zero-discount TD(0)](td0-with-zero-discount-is-error-correction-learning.md)
 
 
+- [Preference and group-relative policy optimization](preference-and-group-relative-optimization/README.md)
+
 ## Related topics
 
 - [Value iteration](../../heuristic-search-and-planning/value-iteration/README.md)
