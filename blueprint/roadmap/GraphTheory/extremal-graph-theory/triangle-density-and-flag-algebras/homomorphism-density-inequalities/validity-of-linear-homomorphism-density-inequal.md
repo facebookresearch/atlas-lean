@@ -23,7 +23,7 @@ Since products of homomorphism densities are densities of disjoint unions, the s
 
 - [Finite simple graph](../../../planar-graphs-and-minors/graph-minors/fin-graph.md)
 - [Homomorphism density](../../../random-graphs/graph-limits/hom-density.md)
-- [Homomorphism density counts homomorphisms](../../../random-graphs/graph-limits/hom-density-adj-weight.md)
+- [Edge weight of a simple graph](../../../random-graphs/graph-limits/adj-weight.md)
 - [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
