@@ -11,6 +11,7 @@ Rational points of varieties over number fields: torsion and rank of elliptic cu
 - [Manin's conjecture for cubic surfaces](manin-s-conjecture-for-cubic-surfaces/README.md)
 - [Mazur's torsion theorem](mazur-s-torsion-theorem/README.md)
 - [Ranks of the elliptic curves $y^2 = x^3 - 2pqx$](ranks-of-the-elliptic-curves-y-x-2pqx/README.md)
+- [Mordell–Weil rank of an elliptic curve](mordell-weil-rank-of-an-elliptic-curve.md)
 - [The Heegner point of an elliptic curve over an imaginary quadratic field](heegner-point-of-an-elliptic-curve.md)
 - [Gross–Zagier formula for the Heegner point](gross-zagier-formula.md)
 - [Gross–Zagier–Zhang formula: when the Heegner point has infinite order](gross-zagier-zhang-formula.md)
