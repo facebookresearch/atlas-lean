@@ -25,4 +25,6 @@
 ## Further topics
 
 - [Limits of inference on population-size histories](limits-of-inference-on-population-size-histories/README.md)
+- [Gaussian process inference of population size trajectories](gaussian-process-inference-of-population-size-trajectories/README.md)
+- [IBD-based estimation of recent effective population size](ibd-based-estimation-of-recent-effective-size/README.md)
 - [Skygrid multilocus coalescent model](skygrid-multilocus-coalescent-model.md)

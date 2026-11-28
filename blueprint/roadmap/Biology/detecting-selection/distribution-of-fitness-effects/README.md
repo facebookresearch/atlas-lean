@@ -37,9 +37,8 @@
 
 - [Monotonicity of the deleterious F-based rate model](nearly-neutral-theory-substitution-rate-decrease.md)
 - [Gamma-DFE power law for the F-based substitution rate](gamma-dfe-power-law-dependence-of-substitution-r.md)
+- [Adaptive proportion from a full distribution of fitness effects](adaptive-proportion-from-a-full-dfe.md)
+- [Full-DFE model of polymorphism and divergence counts](full-dfe-model-of-polymorphism-and-divergence-counts.md)
 - [Gamma-DFE power law for the nonsynonymous-to-synonymous diversity ratio](gamma-dfe-power-law-for-the-nonsynonymous-diversity-ratio.md)
 - [Gamma-plus-lethal DFE and the among-species ratio of N_e](gamma-plus-lethal-dfe-and-the-among-species-ratio-of-ne.md)
-
-## Efficacy of selection between populations
-
 - [Derived-allele accumulation ratio](derived-allele-accumulation-ratio/README.md)
