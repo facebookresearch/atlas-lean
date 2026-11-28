@@ -10,7 +10,7 @@ LICENSE file in the root directory of this source tree.
 # The Hausdorff–Hildebrandt–Schoenberg moment theorem, The Hausdorff positivity
 (complete-monotonicity) criterion
 
-The positivity criterion and the shared definitions live in
+Both Hausdorff moment criteria and their shared definitions live in
 `MathlibExt/Analysis/HausdorffMoments.lean`, which this module re-exports.
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -48,38 +48,11 @@ Knill, *Some fundamental theorems in mathematics*, §115.
 -/
 module
 
-public import Batteries.Util.ProofWanted
-public import Mathlib
 public import MathlibExt.Analysis.HausdorffMoments
 
-@[expose] public section
-
-namespace MathlibExt.Analysis.HausdorffMomentsWanted
-namespace Analysis
-
 /-!
-# The Hausdorff moment problem on the cube
+# Compatibility import for the Hausdorff moment criteria
 
-`hausdorff_hildebrandt_schoenberg` is the Hausdorff–Hildebrandt–Schoenberg
-theorem (1933): a multi-indexed real sequence is the moment sequence of a
-signed bounded-variation Borel measure on the unit cube `Iᵈ = [0,1]ᵈ` iff it is
-*Hausdorff bounded*. `hausdorff_positivity` is the Hausdorff positivity
-criterion (1921): it comes from a *positive* finite measure iff it is completely
-monotone (all iterated backward differences nonnegative).
-
-A signed bounded-variation measure is encoded by its Jordan decomposition (a
-difference of two finite positive measures); the moment integrals are taken over
-the cube, so only the restriction to `Iᵈ` matters; the iterated backward
-difference `Δᵏ` is given in closed form (the `ℕ`-subtraction `n − j` is genuine
-in the `k ≤ n` regime the criteria use).
-
-The shared definitions and the positivity criterion are in
-`MathlibExt.Analysis.HausdorffMoments`.
-
-These are category-(b) candidates from §115 of the Knill survey
-(`sections/115-moments.md`).
+This module only re-exports the signed and positive Hausdorff moment criteria and their shared
+definitions from `MathlibExt.Analysis.HausdorffMoments`.
 -/
-
-end Analysis
-
-end MathlibExt.Analysis.HausdorffMomentsWanted

@@ -13,7 +13,8 @@ Portions of this file are adapted from:
 38361be884302c7edce1908c4aef8296eb2cb27e, via `WantedExt/Analysis/HausdorffMomentsWanted.lean`.
 Copyright 2026 Lean FRO, LLC. Authors: Kim Morrison.
 Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
-The adapted portions are the moment and difference definitions and the criterion's statement.
+The adapted portions are the moment and difference definitions and the statements of
+`hausdorff_positivity` and `hausdorff_hildebrandt_schoenberg`.
 -/
 
 module
@@ -55,9 +56,12 @@ pairs of continuous functions and applies positive measure representation to eac
   (1923), 220–248, for the interval.
 * Oliver Knill, *Some Fundamental Theorems in Mathematics*, §115 ("Moments"), for the signed
   formulation with backward differences.
-* The signed proof reuses the Bernstein coefficient limit and Riesz representation argument of
-  `hausdorff_positivity` in `MathlibExt.Analysis.HausdorffMoments`, and the basis expansion
-  `MvPolynomial.eq_sum_bernstein` from `MathlibExt.RingTheory.MvPolynomial.Bernstein`.
+
+## Implementation notes
+
+The signed proof reuses the Bernstein coefficient limit and Riesz representation argument of
+`hausdorff_positivity`, and the basis expansion `MvPolynomial.eq_sum_bernstein` from
+`MathlibExt.RingTheory.MvPolynomial.Bernstein`.
 -/
 
 @[expose] public section
@@ -121,6 +125,13 @@ noncomputable def diff {d : ℕ} (a : (Fin d → ℕ) → ℝ) (k n : Fin d → 
     (-1 : ℝ) ^ (∑ i, (k i - j i)) * (multiChoose k j : ℝ) * a (n - j)
 
 set_option linter.dupNamespace false in
+/-- The iterated backward difference of a pointwise difference is the difference of the
+iterated backward differences. -/
+public theorem diff_sub {d : ℕ} (a b : (Fin d → ℕ) → ℝ) (k n : Fin d → ℕ) :
+    diff (fun m => a m - b m) k n = diff a k n - diff b k n := by
+  simp only [diff, mul_sub, Finset.sum_sub_distrib]
+
+set_option linter.dupNamespace false in
 /-- **Hausdorff-bounded sequences.** A real sequence $a$ indexed by $\mathbb{N}^d$ is Hausdorff
 bounded if there is a real constant $M$ such that for every multi-index $n \in \mathbb{N}^d$,
 $$\sum_{k \le n} \left| \binom{n}{k} (\Delta^k a)_n \right| \le M,$$
@@ -130,6 +141,14 @@ $\Delta^k a$ is the iterated backward difference of $a$. -/
 def HausdorffBounded {d : ℕ} (a : (Fin d → ℕ) → ℝ) : Prop :=
   ∃ C : ℝ, ∀ n : Fin d → ℕ,
     ∑ k ∈ Finset.Iic n, |(multiChoose n k : ℝ) * diff a k n| ≤ C
+
+set_option linter.dupNamespace false in
+/-- A sequence is Hausdorff bounded exactly when the absolute binomial-weighted differences
+have a uniform sum bound over all degree boxes. -/
+public theorem hausdorffBounded_iff {d : ℕ} (a : (Fin d → ℕ) → ℝ) :
+    HausdorffBounded a ↔ ∃ C : ℝ, ∀ n : Fin d → ℕ,
+      ∑ k ∈ Finset.Iic n, |(multiChoose n k : ℝ) * diff a k n| ≤ C :=
+  Iff.rfl
 
 set_option linter.dupNamespace false in
 /-- **Moment sequences of positive measures on the cube.** A real sequence $a$ indexed by
@@ -191,6 +210,17 @@ private theorem kernel_expand {R : Type*} [CommRing R] [Algebra ℝ R] (x : Fin 
   apply sum_congr rfl
   intro j _
   simp [prod_mul_distrib, ← Finset.prod_pow_eq_pow_sum, multiChoose, Algebra.smul_def]
+
+set_option linter.dupNamespace false in
+/-- For the monomial sequence of a point, the binomial-weighted backward difference at
+`k ≤ n` is the product of the coordinate Bernstein weights at complementary indices. -/
+public theorem weighted_diff_prod_pow (x : Fin d → ℝ) {k n : Fin d → ℕ} (h : k ≤ n) :
+    (multiChoose n k : ℝ) * diff (fun m => ∏ i, x i ^ m i) k n =
+      ∏ i, ((n i).choose (k i) : ℝ) * x i ^ (n i - k i) * (1 - x i) ^ k i := by
+  have hd : diff (fun m => ∏ i, x i ^ m i) k n =
+      ∏ i, x i ^ (n i - k i) * (1 - x i) ^ k i := by
+    simpa only [diff, Pi.sub_apply, smul_eq_mul] using (kernel_expand x h).symm
+  simp only [hd, multiChoose, Nat.cast_prod, ← Finset.prod_mul_distrib, mul_assoc]
 
 private theorem diff_moment_nonneg {μ : Measure (EuclideanSpace ℝ (Fin d))} [IsFiniteMeasure μ]
     {k n : Fin d → ℕ} (h : k ≤ n) : 0 ≤ diff (momentOf μ) k n := by
@@ -446,13 +476,12 @@ private theorem hausdorffBounded_of_moments {a : (Fin d → ℕ) → ℝ}
       have hk : (fun i => (k i : ℕ)) ≤ n := fun i => Nat.le_of_lt_succ (k i).isLt
       simp only [functional_bernstein _ hk]
       have hkn : n - (fun i => (k i : ℕ)) ≤ n := fun i => Nat.sub_le _ _
-      have hdiff (l : Fin d → ℕ) : diff a l n = diff (momentOf μ) l n - diff (momentOf ν) l n := by
-        simp only [diff, ha, mul_sub, sum_sub_distrib]
+      have hdiff : a = fun m => momentOf μ m - momentOf ν m := funext ha
       have hμk : 0 ≤ (multiChoose n (fun i => (k i : ℕ)) : ℝ) * diff (momentOf μ) _ n :=
         mul_nonneg (Nat.cast_nonneg _) (diff_moment_nonneg hkn)
       have hνk : 0 ≤ (multiChoose n (fun i => (k i : ℕ)) : ℝ) * diff (momentOf ν) _ n :=
         mul_nonneg (Nat.cast_nonneg _) (diff_moment_nonneg hkn)
-      rw [hdiff, mul_sub, abs_le]
+      rw [hdiff, diff_sub, mul_sub, abs_le]
       exact ⟨by linarith, by linarith⟩
     _ = _ := by rw [sum_add_distrib, ← map_sum, ← map_sum, hsum]
 
