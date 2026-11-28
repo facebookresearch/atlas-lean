@@ -3,6 +3,9 @@
 Modular and cusp forms, congruence subgroups, cusps, Eisenstein series congruences, Ramanujan–Petersson conjecture, spectral gaps.
 
 - [Congruences between Eisenstein series and cusp forms](congruences-between-eisenstein-series-and-cusp-f/README.md)
+- [Eichler integrals](eichler-integrals/README.md)
+- [Fourier expansions of modular forms](fourier-expansions-of-modular-forms/README.md)
+- [Fundamental domains for subgroups of the modular group](fundamental-domains-for-subgroups-of-the-modular/README.md)
 - [Existence of normalized eigenforms of weight two](existence-of-normalized-eigenforms-of-weight-two/README.md)
 - [Formal Hecke operators and reduction modulo 3 of weight-two cusp forms](formal-hecke-operators-and-reduction-modulo-3-of/README.md)
 - [From a deformation ring onto a local Hecke algebra](from-a-deformation-ring-onto-a-local-hecke-algeb/README.md)
@@ -11,6 +14,8 @@ Modular and cusp forms, congruence subgroups, cusps, Eisenstein series congruenc
 - [Integrality of the Hecke algebra of cusp forms on Γ₀(N)](integrality-of-the-hecke-algebra-of-cusp-forms-o/README.md)
 - [Modular functions](modular-functions/README.md)
 - [Modular group and congruence subgroups](modular-group-and-congruence-subgroups/README.md)
+- [Oldforms and level raising](oldforms-and-level-raising/README.md)
+- [Petersson inner product](petersson-inner-product/README.md)
 - [Normalized Hecke eigenforms of weight two on Γ₀(N)](normalized-hecke-eigenforms-of-weight-two-on-n/README.md)
 - [Ramanujan tau function](ramanujan-tau-function/README.md)
 - [Rankin–Selberg coefficients in arithmetic progressions](rankin-selberg-coefficients-in-arithmetic-progre/README.md)
@@ -39,7 +44,14 @@ Modular and cusp forms, congruence subgroups, cusps, Eisenstein series congruenc
 - [Hecke operators $T_n$ on weight-two cusp forms for a group of level $N$](hecke-operators-of-level-n.md)
 - [Hecke endomorphisms $\xi_n$ of the Jacobian of a modular curve](hecke-endomorphisms-of-the-modular-jacobian.md)
 - [Shimura's abelian variety attached to a weight-two eigenform](shimura-abelian-variety-of-an-eigenform.md)
+- [Modular forms for cocompact groups](modular-form-eq-const-and-eq-zero-of-is.md)
+- [p-integrality of Eisenstein series coefficients](eisenstein-q-coeff-p-integral-dvd.md)
+- [Exponential of the logarithm series of the Dedekind eta function](exp-log-eta.md)
+- [Sturm bound for Γ₀(N)](sturm-bound-gamma0.md)
 - [Modular parametrization of an elliptic curve over $\mathbb{Q}$](modular-parametrization-of-an-elliptic-curve.md)
 - [Peaked exponents for Siegel units](exists-peaked-exponent.md)
 - [The trace from Γ₀(p) to level one](exists-level-one-coe-eq-zpow-smul-add-he.md)
 - [`q`-expansion coefficients determine a modular form](eq-of-forall-q-coeff-eq.md)
+
+- [Atkin–Lehner involutions](atkin-lehner-involutions/README.md)
+- [Automorphic forms on adelic GL₂](automorphic-forms-on-adelic-gl/README.md)

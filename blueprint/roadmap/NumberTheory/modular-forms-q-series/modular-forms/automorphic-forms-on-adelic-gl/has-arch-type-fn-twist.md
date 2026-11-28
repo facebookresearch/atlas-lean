@@ -1,0 +1,3 @@
+# Twisting preserves the archimedean type
+
+Let $F$ be a number field, $\eta : \mathbb{A}_F^\times \to \mathbb{C}^\times$ a character and $(\chi_w)_w$ characters of the determinant-one row isometries of $\mathrm{GL}_2(F_w)$ at the infinite places. If $\varphi : \mathrm{GL}_2(\mathbb{A}_F) \to \mathbb{C}$ has archimedean type $(\chi_w)$, then so does $g \mapsto \eta(\det g)\varphi(g)$; here $\varphi$ has archimedean character $\chi_w$ at an infinite place $w$ when $\varphi(g\,\iota_w(k)) = \chi_w(k)\varphi(g)$ for every $g \in \mathrm{GL}_2(\mathbb{A}_F)$ and every row isometry $k \in \mathrm{GL}_2(F_w)$ of determinant $1$, where $\iota_w$ places $k$ at $w$ and the identity elsewhere.

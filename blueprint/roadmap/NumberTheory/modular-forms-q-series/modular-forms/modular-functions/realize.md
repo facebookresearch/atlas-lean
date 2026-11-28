@@ -1,0 +1,3 @@
+# Realizing a Laurent series as a quotient of modular forms
+
+For a natural number $N$, a complex Laurent series $x$ and $\tau$ in the upper half-plane, the value is $g(\tau)/h(\tau)$ for some pair of modular forms $g, h$ of the same weight for $\Gamma_0(N)$ such that the same pair satisfies both conditions: their $q$-expansions satisfy $x \cdot \tilde h = \tilde g$, and $h(\tau) \ne 0$. It is $0$ when no pair satisfying both conditions exists at $\tau$. The condition $h(\tau) \ne 0$ matters: for a nonzero form $h$, the pair $(h, h)$ has formal quotient $1$, but at a zero of $h$ it would give $0/0$, while the pair of constant forms $(1, 1)$ gives $1$. See [the realization as a quotient](realize-eq-div.md).

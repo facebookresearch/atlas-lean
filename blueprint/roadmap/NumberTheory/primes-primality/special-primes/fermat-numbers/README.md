@@ -2,6 +2,11 @@
 
 - [Fermat prime](is-fermat-prime.md)
 - [Preperiod and period of Fermat numbers modulo an odd prime](fermat-number-mod-prime-exact-preperiod.md)
+- [Periods of later tails of a sequence](tail-of-le.md)
+- [Moving a period to an earlier periodic tail](tail-of-periodic-tail-of-le.md)
+- [Recurrence of Fermat numbers](cast-fermat-number-succ.md)
+- [Uniqueness of the decomposition 2^s a with a odd](two-pow-mul-odd-inj.md)
+- [Removing one power of a prime from a divisor bound](dvd-pow-mul-of-dvd-pow-succ-mul.md)
 - [Two of $F_0, \dots, F_p$ are congruent modulo $p$](fermat-number-mod-eq-exists-repeat.md)
 - [Congruences between Fermat numbers propagate](fermat-number-mod-eq-add.md)
 - [Non-congruence of Fermat numbers passes to smaller indices](fermat-number-not-mod-eq-add-of-le.md)

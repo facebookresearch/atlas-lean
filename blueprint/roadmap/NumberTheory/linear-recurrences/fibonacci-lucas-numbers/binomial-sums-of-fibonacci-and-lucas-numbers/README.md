@@ -1,5 +1,6 @@
 # Binomial sums of Fibonacci and Lucas numbers
 
+- [Binomial sums of shifted Fibonacci numbers](sum-range-choose-mul-fib-add.md)
 - [Pascal's rule for binomial coefficients](choose-succ-int.md)
 - [Fibonacci step in the alternating binomial sum](fib-conv-step.md)
 - [Alternating binomial sum of Fibonacci numbers](binomial-fibonacci-convolution.md)
