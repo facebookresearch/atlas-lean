@@ -8,3 +8,4 @@ Turing and many-one reducibility, Turing degrees and the jump, recursive isomorp
 - [Arithmetical hierarchy](arithmetical-hierarchy/README.md)
 - [Completeness of the halting set](completeness-of-the-halting-set/README.md)
 - [Turing degrees and the Turing jump](turing-degrees-and-the-turing-jump/README.md)
+- [The theory of the primitive recursive m-degrees of computable sets is hereditarily undecidable](the-theory-of-the-primitive-recursive-m-degrees.md)
