@@ -351,9 +351,10 @@ section TwoTagLim
 
 variable {F G h g : ℝ → ℝ} {a b I : ℝ}
 
-/-- The limit of the two-tag sums along `refinementUltrafilter`. It is the two-tag integral when
-that exists (`HasTwoTagRSIntegral.twoTagLim_eq`) and is linear in `h` on integrators with bounded
-sums; otherwise its value is a convention. Both endpoints are inserted into every partition
+/-- The limit of the two-tag sums along `refinementUltrafilter` when they converge along it, as
+bounded sums do (`tendsto_refinementUltrafilter`), and otherwise an unspecified real number. It is
+the two-tag integral when that exists (`HasTwoTagRSIntegral.twoTagLim_eq`) and is linear in `h` on
+integrators with bounded sums. Both endpoints are inserted into every partition
 (`partitionPts a b s`): for `a > b` the point set is `{b, a}`, with the single cell `(b, a]`, so
 this is not an oriented integral, and `twoTagLim F G h a b = F b * (h a - h b) * G a` there. -/
 noncomputable def twoTagLim (F G h : ℝ → ℝ) (a b : ℝ) : ℝ :=
