@@ -16,7 +16,8 @@ PROGRAMS WITHOUT NESTING;
 R. L. Constable, H. B. Hunt III, and S. Sahni, "On the computational complexity of program
 scheme equivalence", SIAM Journal on Computing 9 (1980), 396-416, doi:10.1137/0209031
 (journal version of Cornell report TR 74-201 (1974), which Garey and Johnson cite; NP-hardness
-of equivalence for the Loop 1 language);
+of inequivalence, not of equivalence, for the Loop 1 language, by the report's inequivalence
+reduction, §4, Definition 4.2 and Theorem 4.1);
 D. Tsichritzis, "The equivalence problem of simple programs", Journal of the ACM 17 (1970),
 729-738, doi:10.1145/321607.321621 (membership in NP).
 -/
@@ -84,9 +85,14 @@ def step (s : ℕ → ℕ) (c : Instruction) : ℕ → ℕ :=
   | 2 => Function.update s c.2.1 0
   | _ => s
 
-/-- Runs a program on the store `s`. The second argument is `none` outside a loop and
-`some (x, b)` inside `loop x`, with `b` the body read so far; at the matching `end` the body
-runs `s x` times, `s` being the store on entering the loop. -/
+/-- Runs a program on the store `s` in one left-to-right scan. The second argument is `none`
+outside a loop and `some (x, b)` inside `loop x`, with `b` the body read so far. Outside a loop,
+opcode `3` starts an empty body for its variable `x`, and every other instruction is applied by
+`step` (an `end` there changes nothing). Inside a loop, every instruction other than `4` is
+buffered, a `3` included (as a body instruction it then changes nothing); at the `end` (`4`) the
+body runs `s x` times, `s` being the store on entering the loop, and the scan resumes outside
+the loop. At the end of the program the current store is returned: an unfinished body (a `loop`
+without its `end`) is discarded, so its instructions never run. -/
 def run : (ℕ → ℕ) → Option (ℕ × List Instruction) → List Instruction → ℕ → ℕ
   | s, _, [] => s
   | s, none, c :: p =>
@@ -128,7 +134,9 @@ noncomputable def inequivalenceLoopProgramsDec :
   | none => false
 
 /-- **INEQUIVALENCE OF LOOP PROGRAMS WITHOUT NESTING is NP-complete.** Source: Garey and
-Johnson (1979), [PO14]; Constable, Hunt and Sahni (1974, 1980); Tsichritzis (1970). -/
+Johnson (1979), [PO14]; NP-hardness of inequivalence (not of equivalence) by the inequivalence
+reduction of Constable, Hunt and Sahni, Cornell TR 74-201 (1974), §4, Definition 4.2 and
+Theorem 4.1 (journal version 1980); membership in NP, Tsichritzis (1970). -/
 public theorem_wanted inequivalenceLoopPrograms_npComplete :
     inequivalenceLoopProgramsDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

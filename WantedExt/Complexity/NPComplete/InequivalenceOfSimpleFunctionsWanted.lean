@@ -18,8 +18,9 @@ D. Tsichritzis, "The equivalence problem of simple programs", Journal of the ACM
 729-738, doi:10.1145/321607.321621 (the simple functions are the functions of the loop
 programs without nesting, `L₁`);
 R. L. Constable, H. B. Hunt III and S. Sahni, "On the computational complexity of program
-scheme equivalence", SIAM Journal on Computing 9 (1980), 396-416, doi:10.1137/0209031 (the
-equivalence problem for `L₁` programs is NP-complete).
+scheme equivalence", SIAM Journal on Computing 9 (1980), 396-416, doi:10.1137/0209031
+(inequivalence, not equivalence, of `L₁` programs is NP-complete; the transformation from
+INEQUIVALENCE OF LOOP PROGRAMS WITHOUT NESTING preserves inequivalence).
 -/
 module
 
@@ -122,8 +123,11 @@ def IsExpr (nX : ℕ) (ts : List (ℕ × ℕ × ℕ)) : Prop :=
 def WellFormed (i : InequivalenceOfSimpleFunctionsInstance) : Prop :=
   IsExpr i.1 i.2.1 ∧ IsExpr i.1 i.2.2
 
-/-- Some assignment of non-negative integers to the variables gives `f` and `g` different
-values. -/
+/-- There are expression trees `f` and `g` whose prefix token lists (`SimpleExpr.tokens`) are
+exactly the two stored lists, and one assignment `a : ℕ → ℕ` of non-negative integers to every
+variable index under which their values differ. An empty list is the token list of no tree, so
+it is never feasible; the bounds on variable indices belong to `WellFormed`, so at `|X| = 0` the
+trees `var 0` and `var 1` can still be separated. -/
 def InequivalenceOfSimpleFunctionsFeasible (i : InequivalenceOfSimpleFunctionsInstance) :
     Prop :=
   ∃ f g : SimpleExpr, f.tokens = i.2.1 ∧ g.tokens = i.2.2 ∧
