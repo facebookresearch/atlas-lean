@@ -21,9 +21,14 @@ public import Mathlib.RingTheory.Binomial
 /-!
 # Binomial extensions of Wolstenholme's theorem
 
-The ATLAS wiki attributes these binomial identities and the coefficient bound for divided
-derivatives to Walid Kehila, *An Extension of Wolstenholme's Theorem by Binomial Coefficients*,
-INTEGERS 26 (2026).
+This module gives binomial product and coefficient identities and a coefficient bound for divided
+derivatives. For prime `p`, an offset `a : ℕ` and `0 < k`, `choose_mul_prod_ascFactorial` clears
+the denominator of the block quotient for `((a + k) * p).choose (k * p)`.
+
+## References
+
+* Walid Kehila, *An Extension of Wolstenholme's Theorem by Binomial Coefficients*, INTEGERS
+  26 (2026), Article A32, pp. 1–28, Lemmas 1, 2, 5 and 6.
 -/
 
 namespace MetaMathlibExt
@@ -74,6 +79,39 @@ public theorem choose_mul_prime_eq_prod_div_prod (p m n : ℕ) (hp : p.Prime) (h
   simp_rw [Nat.choose_mul_right hp.ne_zero, Nat.cast_mul]
   rw [Finset.prod_mul_distrib, Finset.prod_mul_distrib, mul_div_mul_comm, ← linearFactors,
     mul_div_assoc]
+
+/-- **Block form of Kehila's quotient formula.** Let $p$ be a prime and let $a$ and $k$ be
+natural numbers with $k \ge 1$. For $c \in \mathbb{N}$ let
+$B(c) = (cp + 1)(cp + 2) \cdots (cp + p - 1)$ be the product of the $p - 1$ integers strictly
+between $cp$ and $(c + 1)p$. Then
+
+$$\binom{(a + k)p}{kp} \prod_{j=0}^{k-1} B(j) = \binom{a + k}{k} \prod_{j=0}^{k-1} B(a + j).$$
+
+The proof of Lemma 6 gives the quotient of these block products. Since
+$B(c) = (p - 1)! \binom{(c + 1)p - 1}{p - 1}$, the identity also follows by clearing the
+first formula's denominator and multiplying both sides by $((p - 1)!)^k$.
+
+Source: Walid Kehila, *An Extension of Wolstenholme's Theorem by Binomial Coefficients*,
+INTEGERS 26 (2026), Article A32, Lemma 6 and its proof. -/
+public theorem choose_mul_prod_ascFactorial (p a k : ℕ) (hp : p.Prime) (hk : 0 < k) :
+    ((a + k) * p).choose (k * p) * ∏ j ∈ Finset.range k, (j * p + 1).ascFactorial (p - 1) =
+      (a + k).choose k * ∏ j ∈ Finset.range k, ((a + j) * p + 1).ascFactorial (p - 1) := by
+  have h := (choose_mul_prime_eq_prod_div_prod p k (a + k) hp hk (Nat.le_add_left k a)).1
+  simp only [Nat.add_sub_cancel] at h
+  have hd : (∏ j ∈ Finset.range k, (((j + 1) * p - 1).choose (p - 1) : ℚ)) ≠ 0 :=
+    Finset.prod_ne_zero_iff.mpr fun j _ => by
+      have hle : p ≤ (j + 1) * p := Nat.le_mul_of_pos_left p (Nat.succ_pos j)
+      exact_mod_cast (Nat.choose_pos (Nat.sub_le_sub_right hle 1)).ne'
+  rw [eq_div_iff hd] at h
+  have hnat : ((a + k) * p).choose (k * p) *
+      ∏ j ∈ Finset.range k, ((j + 1) * p - 1).choose (p - 1) =
+        (a + k).choose k * ∏ j ∈ Finset.range k, ((a + j + 1) * p - 1).choose (p - 1) := by
+    exact_mod_cast h
+  have index (j : ℕ) : j * p + (p - 1) = (j + 1) * p - 1 := by
+    rw [Nat.add_mul, one_mul, Nat.add_sub_assoc hp.pos]
+  simp only [Nat.ascFactorial_eq_factorial_mul_choose, index, Finset.prod_mul_distrib,
+    Finset.prod_const, Finset.card_range]
+  rw [mul_left_comm, hnat, mul_left_comm]
 
 /-- **Coefficient bound for the divided derivatives $D^n/n!$.** Let $p$ be a prime and $B$ a
 normed vector space over $\mathbb{Q}_p$ whose norm is ultrametric. Let $(a_k)_{k \ge 0}$ be a

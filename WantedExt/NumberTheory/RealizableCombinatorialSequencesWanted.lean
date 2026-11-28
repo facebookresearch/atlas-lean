@@ -17,6 +17,7 @@ public import MathlibExt.NumberTheory.ArithmeticFunction.BinomialPowerRealizabil
 public import MathlibExt.NumberTheory.ArithmeticFunction.MoebiusGeometricGrowth
 public import MathlibExt.NumberTheory.DoldPrimePowerCongruences
 public import MathlibExt.NumberTheory.HelouTerjanianLargePrime
+public import MathlibExt.NumberTheory.HelouTerjanianThree
 public import MathlibExt.NumberTheory.HelouTerjanianTwo
 public import Mathlib.NumberTheory.ArithmeticFunction.Moebius
 public import Mathlib.NumberTheory.Padics.PadicVal.Basic
@@ -58,18 +59,6 @@ Source: Geng-Rui Zhang, *Realizability of Some Combinatorial Sequences*, Journal
 Sequences 27 (2024), Article 24.3.3, Theorem 15 (`jis-2024-24.3.3-thm-15`). -/
 public theorem_wanted doldRealizable_dombTypeSum (r s t : ℕ) (hr : 1 ≤ r) :
     doldRealizable fun n => ((dombTypeSum n r s t : ℕ) : ℤ)
-
-/-- **Helou–Terjanian congruence for $p = 3$.** Let $m$ and $n$ be integers with $0 < m < n$.
-Then $\binom{3n}{3m} \equiv \binom{n}{m} \pmod{3^e}$, where
-$e = 2 + \max(\nu_3(m), \nu_3(n - m)) + \nu_3\big(\binom{n}{m}\big)$ and $\nu_3$ is the $3$-adic
-valuation.
-
-Source: Geng-Rui Zhang, *Realizability of Some Combinatorial Sequences*, Journal of Integer
-Sequences 27 (2024), Article 24.3.3, Lemma 26 (2) (`jis-2024-24.3.3-lem-26`). -/
-public theorem_wanted choose_three_mul_modEq (n m : ℕ) (hm : 0 < m) (hmn : m < n) :
-    (3 * n).choose (3 * m) ≡ n.choose m
-      [MOD 3 ^ (2 + max (padicValNat 3 m) (padicValNat 3 (n - m)) +
-        padicValNat 3 (n.choose m))]
 
 /-- **Even-binomial-type sums are Dold realizable.** Let $r \ge 1$, $s$, $t$ and $u$ be natural
 numbers with $t + u \ge 1$, and let
