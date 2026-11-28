@@ -153,6 +153,233 @@ private theorem evaluate_blockEncoder {F : Type u} [Field F] {q : ℕ}
     simp only [blockEncoder, ArithmeticCircuit.evaluate_linearCombination,
       matrixInput, Sum.elim_inr, encRight, Matrix.of_apply]
 
+/-- The recursive circuit computes matrix multiplication whenever `terms` is a
+trilinear decomposition of the `q`-by-`q` multiplication tensor. -/
+theorem recursiveCircuit_isMatrixMultiplication {F : Type u} [Field F] {q : ℕ}
+    (terms : List (MatrixMultiplicationExponent.RankOneTrilinearTerm F
+      (MatrixMultiplicationExponent.MatrixCoordinate q q)
+      (MatrixMultiplicationExponent.MatrixCoordinate q q)
+      (MatrixMultiplicationExponent.MatrixCoordinate q q)))
+    (hterms : ∀ a b c, MatrixMultiplicationExponent.squareMatrixMultiplicationTensor F q a b c =
+      (terms.map fun term ↦ term.eval a b c).sum)
+    (k : ℕ) : IsMatrixMultiplication (recursiveCircuit terms k) := by
+  induction k with
+  | zero => exact outerMatrixCircuit_correct 1 1
+  | succ k ih =>
+      intro A B I L
+      show ((blockDecoder terms k).subst
+        (((recursiveCircuit terms k).parallel terms.length).subst
+          (blockEncoder terms k))).evaluate (matrixInput A B) (I, L) =
+        (A * B) I L
+      obtain ⟨i, a, heI⟩ : ∃ i a, (finPowSuccEquiv q k) I = (i, a) :=
+        ⟨_, _, rfl⟩
+      obtain ⟨l, b, heL⟩ : ∃ l b, (finPowSuccEquiv q k) L = (l, b) :=
+        ⟨_, _, rfl⟩
+      have hsymI : (finPowSuccEquiv q k).symm (i, a) = I := by
+        rw [← heI]
+        exact Equiv.symm_apply_apply _ _
+      have hsymL : (finPowSuccEquiv q k).symm (l, b) = L := by
+        rw [← heL]
+        exact Equiv.symm_apply_apply _ _
+      simp only [IsMatrixMultiplication] at ih
+      simp only [blockDecoder, ArithmeticCircuit.evaluate_subst,
+        ArithmeticCircuit.evaluate_linearCombination,
+        ArithmeticCircuit.evaluate_parallel, evaluate_blockEncoder, ih]
+      simp only [heI, heL, Matrix.mul_apply, encLeft, encRight,
+        Matrix.of_apply, Finset.sum_mul, Finset.mul_sum]
+      have hswap1 : (∑ t : Fin terms.length, ∑ c : Fin (q ^ k),
+            ∑ y : MatrixMultiplicationExponent.MatrixCoordinate q q,
+            ∑ x : MatrixMultiplicationExponent.MatrixCoordinate q q,
+            (terms[t]).right (l, i) *
+              ((terms[t]).left x *
+                  A ((finPowSuccEquiv q k).symm (x.1, a))
+                    ((finPowSuccEquiv q k).symm (x.2, c)) *
+                ((terms[t]).middle y *
+                  B ((finPowSuccEquiv q k).symm (y.1, c))
+                    ((finPowSuccEquiv q k).symm (y.2, b))))) =
+          (∑ c : Fin (q ^ k), ∑ t : Fin terms.length,
+            ∑ y : MatrixMultiplicationExponent.MatrixCoordinate q q,
+            ∑ x : MatrixMultiplicationExponent.MatrixCoordinate q q,
+            (terms[t]).right (l, i) *
+              ((terms[t]).left x *
+                  A ((finPowSuccEquiv q k).symm (x.1, a))
+                    ((finPowSuccEquiv q k).symm (x.2, c)) *
+                ((terms[t]).middle y *
+                  B ((finPowSuccEquiv q k).symm (y.1, c))
+                    ((finPowSuccEquiv q k).symm (y.2, b))))) :=
+        Finset.sum_comm
+      rw [hswap1]
+      have hswap2 : ∀ c : Fin (q ^ k), (∑ t : Fin terms.length,
+            ∑ y : MatrixMultiplicationExponent.MatrixCoordinate q q,
+            ∑ x : MatrixMultiplicationExponent.MatrixCoordinate q q,
+            (terms[t]).right (l, i) *
+              ((terms[t]).left x *
+                  A ((finPowSuccEquiv q k).symm (x.1, a))
+                    ((finPowSuccEquiv q k).symm (x.2, c)) *
+                ((terms[t]).middle y *
+                  B ((finPowSuccEquiv q k).symm (y.1, c))
+                    ((finPowSuccEquiv q k).symm (y.2, b))))) =
+          (∑ y : MatrixMultiplicationExponent.MatrixCoordinate q q,
+            ∑ t : Fin terms.length,
+            ∑ x : MatrixMultiplicationExponent.MatrixCoordinate q q,
+            (terms[t]).right (l, i) *
+              ((terms[t]).left x *
+                  A ((finPowSuccEquiv q k).symm (x.1, a))
+                    ((finPowSuccEquiv q k).symm (x.2, c)) *
+                ((terms[t]).middle y *
+                  B ((finPowSuccEquiv q k).symm (y.1, c))
+                    ((finPowSuccEquiv q k).symm (y.2, b))))) :=
+        fun c => Finset.sum_comm
+      simp only [hswap2]
+      have hswap3 : ∀ c : Fin (q ^ k),
+          ∀ y : MatrixMultiplicationExponent.MatrixCoordinate q q,
+          (∑ t : Fin terms.length,
+            ∑ x : MatrixMultiplicationExponent.MatrixCoordinate q q,
+            (terms[t]).right (l, i) *
+              ((terms[t]).left x *
+                  A ((finPowSuccEquiv q k).symm (x.1, a))
+                    ((finPowSuccEquiv q k).symm (x.2, c)) *
+                ((terms[t]).middle y *
+                  B ((finPowSuccEquiv q k).symm (y.1, c))
+                    ((finPowSuccEquiv q k).symm (y.2, b))))) =
+          (∑ x : MatrixMultiplicationExponent.MatrixCoordinate q q,
+            ∑ t : Fin terms.length,
+            (terms[t]).right (l, i) *
+              ((terms[t]).left x *
+                  A ((finPowSuccEquiv q k).symm (x.1, a))
+                    ((finPowSuccEquiv q k).symm (x.2, c)) *
+                ((terms[t]).middle y *
+                  B ((finPowSuccEquiv q k).symm (y.1, c))
+                    ((finPowSuccEquiv q k).symm (y.2, b))))) :=
+        fun c y => Finset.sum_comm
+      simp only [hswap3]
+      have hfactor : ∀ c : Fin (q ^ k),
+          ∀ y : MatrixMultiplicationExponent.MatrixCoordinate q q,
+          ∀ x : MatrixMultiplicationExponent.MatrixCoordinate q q,
+          (∑ t : Fin terms.length,
+            (terms[t]).right (l, i) *
+              ((terms[t]).left x *
+                  A ((finPowSuccEquiv q k).symm (x.1, a))
+                    ((finPowSuccEquiv q k).symm (x.2, c)) *
+                ((terms[t]).middle y *
+                  B ((finPowSuccEquiv q k).symm (y.1, c))
+                    ((finPowSuccEquiv q k).symm (y.2, b))))) =
+          (∑ t : Fin terms.length,
+            (terms[t]).left x * (terms[t]).middle y *
+              (terms[t]).right (l, i)) *
+            A ((finPowSuccEquiv q k).symm (x.1, a))
+              ((finPowSuccEquiv q k).symm (x.2, c)) *
+            B ((finPowSuccEquiv q k).symm (y.1, c))
+              ((finPowSuccEquiv q k).symm (y.2, b)) := by
+        intro c y x
+        calc (∑ t : Fin terms.length,
+                (terms[t]).right (l, i) *
+                  ((terms[t]).left x *
+                      A ((finPowSuccEquiv q k).symm (x.1, a))
+                        ((finPowSuccEquiv q k).symm (x.2, c)) *
+                    ((terms[t]).middle y *
+                      B ((finPowSuccEquiv q k).symm (y.1, c))
+                        ((finPowSuccEquiv q k).symm (y.2, b))))) =
+              ∑ t : Fin terms.length,
+                ((terms[t]).left x * (terms[t]).middle y *
+                  (terms[t]).right (l, i)) *
+                  A ((finPowSuccEquiv q k).symm (x.1, a))
+                    ((finPowSuccEquiv q k).symm (x.2, c)) *
+                  B ((finPowSuccEquiv q k).symm (y.1, c))
+                    ((finPowSuccEquiv q k).symm (y.2, b)) :=
+              Finset.sum_congr rfl (fun t _ => by ring)
+          _ = (∑ t : Fin terms.length,
+                (terms[t]).left x * (terms[t]).middle y *
+                  (terms[t]).right (l, i)) *
+              A ((finPowSuccEquiv q k).symm (x.1, a))
+                ((finPowSuccEquiv q k).symm (x.2, c)) *
+              B ((finPowSuccEquiv q k).symm (y.1, c))
+                ((finPowSuccEquiv q k).symm (y.2, b)) := by
+              rw [← Finset.sum_mul, ← Finset.sum_mul]
+      simp only [hfactor]
+      have hterms'' : ∀ x y : MatrixMultiplicationExponent.MatrixCoordinate q q,
+          (∑ t : Fin terms.length,
+            (terms[t]).left x * (terms[t]).middle y *
+              (terms[t]).right (l, i)) =
+          MatrixMultiplicationExponent.squareMatrixMultiplicationTensor F q x y
+            (l, i) := by
+        intro x y
+        rw [hterms x y (l, i)]
+        exact Fin.sum_univ_fun_getElem terms
+          (fun term ↦ term.eval x y (l, i))
+      simp only [hterms'']
+      have hcontract : ∀ c : Fin (q ^ k),
+          (∑ y : MatrixMultiplicationExponent.MatrixCoordinate q q,
+            ∑ x : MatrixMultiplicationExponent.MatrixCoordinate q q,
+            MatrixMultiplicationExponent.squareMatrixMultiplicationTensor F q x y
+                (l, i) *
+              A ((finPowSuccEquiv q k).symm (x.1, a))
+                ((finPowSuccEquiv q k).symm (x.2, c)) *
+              B ((finPowSuccEquiv q k).symm (y.1, c))
+                ((finPowSuccEquiv q k).symm (y.2, b))) =
+          ((sliceLeft A a c) * (sliceRight B c b)) i l := by
+        intro c
+        calc (∑ y : MatrixMultiplicationExponent.MatrixCoordinate q q,
+                ∑ x : MatrixMultiplicationExponent.MatrixCoordinate q q,
+                MatrixMultiplicationExponent.squareMatrixMultiplicationTensor F q
+                  x y (l, i) *
+                  A ((finPowSuccEquiv q k).symm (x.1, a))
+                    ((finPowSuccEquiv q k).symm (x.2, c)) *
+                  B ((finPowSuccEquiv q k).symm (y.1, c))
+                    ((finPowSuccEquiv q k).symm (y.2, b))) =
+              (∑ x : MatrixMultiplicationExponent.MatrixCoordinate q q,
+                ∑ y : MatrixMultiplicationExponent.MatrixCoordinate q q,
+                MatrixMultiplicationExponent.squareMatrixMultiplicationTensor F q
+                  x y (l, i) *
+                  A ((finPowSuccEquiv q k).symm (x.1, a))
+                    ((finPowSuccEquiv q k).symm (x.2, c)) *
+                  B ((finPowSuccEquiv q k).symm (y.1, c))
+                    ((finPowSuccEquiv q k).symm (y.2, b))) :=
+              Finset.sum_comm
+          _ = MatrixMultiplicationExponent.matrixMultiplicationTensorContraction F
+                (sliceLeft A a c) (sliceRight B c b) i l := by
+              simp only [MatrixMultiplicationExponent.matrixMultiplicationTensorContraction,
+                MatrixMultiplicationExponent.squareMatrixMultiplicationTensor,
+                sliceLeft, sliceRight, Matrix.of_apply]
+          _ = ((sliceLeft A a c) * (sliceRight B c b)) i l :=
+              MatrixMultiplicationExponent.matrixMultiplicationTensorContraction_eq_mul
+                F (sliceLeft A a c) (sliceRight B c b) i l
+      simp only [hcontract]
+      simp only [Matrix.mul_apply, sliceLeft, sliceRight, Matrix.of_apply,
+        hsymI, hsymL]
+      have hreindex : (∑ c : Fin (q ^ k), ∑ j : Fin q,
+            A I ((finPowSuccEquiv q k).symm (j, c)) *
+              B ((finPowSuccEquiv q k).symm (j, c)) L)
+          = ∑ j : Fin (q ^ (k + 1)), A I j * B j L := by
+        rw [Finset.sum_comm]
+        have hprod : (∑ j : Fin q, ∑ c : Fin (q ^ k),
+              A I ((finPowSuccEquiv q k).symm (j, c)) *
+                B ((finPowSuccEquiv q k).symm (j, c)) L)
+            = ∑ p : Fin q × Fin (q ^ k),
+              A I ((finPowSuccEquiv q k).symm p) *
+                B ((finPowSuccEquiv q k).symm p) L :=
+          (Fintype.sum_prod_type (fun p : Fin q × Fin (q ^ k) =>
+            A I ((finPowSuccEquiv q k).symm p) *
+              B ((finPowSuccEquiv q k).symm p) L)).symm
+        rw [hprod]
+        exact Equiv.sum_comp (finPowSuccEquiv q k).symm
+          (fun j : Fin (q ^ (k + 1)) => A I j * B j L)
+      exact hreindex
+
+/-- Any rank bound on the `q`-by-`q` tensor yields recursive multiplication
+circuits of every size `q ^ k` with at most `r` recursive products per level. -/
+theorem exists_recursiveCircuit_isMatrixMultiplication {F : Type u} [Field F]
+    {q r : ℕ}
+    (h : MatrixMultiplicationExponent.HasTrilinearRankAtMost
+      (MatrixMultiplicationExponent.squareMatrixMultiplicationTensor F q) r) (k : ℕ) :
+    ∃ terms : List (MatrixMultiplicationExponent.RankOneTrilinearTerm F
+      (MatrixMultiplicationExponent.MatrixCoordinate q q)
+      (MatrixMultiplicationExponent.MatrixCoordinate q q)
+      (MatrixMultiplicationExponent.MatrixCoordinate q q)), terms.length ≤ r ∧
+      IsMatrixMultiplication (recursiveCircuit terms k) := by
+  obtain ⟨terms, hlength, hterms⟩ := h
+  exact ⟨terms, hlength, recursiveCircuit_isMatrixMultiplication terms hterms k⟩
+
 end
 
 end Cslib.Complexity.Algebraic
