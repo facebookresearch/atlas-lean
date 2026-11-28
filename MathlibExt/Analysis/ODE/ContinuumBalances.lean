@@ -441,7 +441,8 @@ lemma iteratedDeriv_two_heatMode (D : ℝ) (k : ℕ+) (t x : ℝ) :
   rw [iteratedDeriv_succ, iteratedDeriv_one, h1, deriv_const_mul _ (hd x), h2, heatMode]
   ring
 
-/-- Heat modes are smooth in `(t, x)`. -/
+/-- Heat modes are real analytic in `(t, x)` on `ℝ²`, not only smooth: the conclusion is
+`ContDiff ℝ ⊤` with `⊤ = ω`. -/
 lemma contDiff_heatMode (D : ℝ) (k : ℕ+) : ContDiff ℝ ⊤ (Function.uncurry (heatMode D k)) :=
   ((contDiff_const.mul contDiff_fst).exp).mul ((dirichletSine_contDiff k).comp contDiff_snd)
 

@@ -167,9 +167,10 @@ private theorem finite_weighted_fiber (N : ℤ) (e₁ e₂ : ℕ)
       nlinarith
     · nlinarith [abs_nonneg t, abs_nonneg N]
 
-/-- A summable positive weighted lattice-line family with an eventual shell
-recurrence has a Laurent polynomial numerator after multiplication by a
-nonzero polynomial. Supports and recurrence cutoffs remain independent. -/
+/-- A weighted lattice-line family with positive generators `e₁` and `e₂` and an
+eventual shell recurrence has, at every nonzero `X` where its series is summable, a
+Laurent polynomial numerator after multiplication by a nonzero polynomial. Supports
+and recurrence cutoffs remain independent. -/
 public theorem exists_laurent_of_recurrence_weighted_line
     (w : ℤ × ℤ → ℂ) (N₁ : ℤ)
     (hw : ∀ n : ℤ × ℤ, (n.1 < N₁ ∨ n.2 < N₁) → w n = 0)

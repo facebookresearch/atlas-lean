@@ -112,7 +112,8 @@ points (MF11.1). Mathlib's `stdSimplex` is deprecated, so the set is written out
 def simplex (n : ℕ) : Set (Fin n → ℝ) :=
   {x | (∀ i, 0 ≤ x i) ∧ ∑ i, x i = 1}
 
-/-- The centre `(n⁻¹, …, n⁻¹)` of `simplex n`, the uniform weight. -/
+/-- The point `(n⁻¹, …, n⁻¹)`. For `n ≠ 0` it is the centre of `simplex n`, the uniform weight
+(`simplexCenter_mem_simplex`); `simplex 0` is empty, so `simplexCenter 0` is not in it. -/
 noncomputable def simplexCenter (n : ℕ) : Fin n → ℝ :=
   fun _ => (n : ℝ)⁻¹
 

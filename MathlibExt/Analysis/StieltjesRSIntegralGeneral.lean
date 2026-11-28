@@ -353,7 +353,9 @@ variable {F G h g : ℝ → ℝ} {a b I : ℝ}
 
 /-- The limit of the two-tag sums along `refinementUltrafilter`. It is the two-tag integral when
 that exists (`HasTwoTagRSIntegral.twoTagLim_eq`) and is linear in `h` on integrators with bounded
-sums; otherwise its value is a convention. -/
+sums; otherwise its value is a convention. Both endpoints are inserted into every partition
+(`partitionPts a b s`): for `a > b` the point set is `{b, a}`, with the single cell `(b, a]`, so
+this is not an oriented integral, and `twoTagLim F G h a b = F b * (h a - h b) * G a` there. -/
 noncomputable def twoTagLim (F G h : ℝ → ℝ) (a b : ℝ) : ℝ :=
   limUnder (refinementUltrafilter : Filter (Finset ℝ))
     fun s => twoTagSum F G h (partitionPts a b s)
@@ -420,7 +422,10 @@ theorem abs_extendIcc_le (h : 𝔻[τ]) (x : ℝ) : |extendIcc h x| ≤ ‖h‖ 
     exact lp.norm_apply_le_norm ENNReal.top_ne_zero h _
   · simp [extendIcc, hx]
 
-/-- The value `Ψ A B h t`: the ultrafilter limit of the Duhamel sums of `h` on `[0, t]`. -/
+/-- The value `Ψ A B h t`: the limit along `refinementUltrafilter` of the Duhamel (two-tag) sums
+of `h` on `[0, t]` when they converge along it, as they do when the sums are bounded (for
+instance when `A` and `B` have bounded variation on `[0, τ]`, `bddSum_psi`). Otherwise it is an
+unspecified real number. -/
 noncomputable def psiFun (τ : ℝ) (A B : ℝ → ℝ) (h : 𝔻[τ]) (t : Set.Icc (0 : ℝ) τ) : ℝ :=
   twoTagLim (productIntegral A 0) (fun x => productIntegral B x t) (extendIcc h) 0 t
 

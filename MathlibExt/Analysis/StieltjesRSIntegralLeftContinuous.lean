@@ -157,7 +157,10 @@ left-endpoint sums converge to `I` along refinement of partitions. -/
 def HasLeftRSIntegral (f h : ℝ → ℝ) (a b I : ℝ) : Prop :=
   Tendsto (leftPartitionSum f h a b) atTop (𝓝 I)
 
-/-- The left-endpoint integral of `f` against `h` on `[a, b]` exists. -/
+/-- The left-endpoint integral of `f` against `h` on `[a, b]` exists. Both endpoints are inserted
+into every partition (`partitionPts a b s`): for `a > b` the point set is `{b, a}`, with the
+single cell `(b, a]`, so this is not an oriented integral, and the left-endpoint integral always
+exists there, with value `f b * (h a - h b)`. -/
 def LeftRSIntegrable (f h : ℝ → ℝ) (a b : ℝ) : Prop :=
   ∃ I, HasLeftRSIntegral f h a b I
 
