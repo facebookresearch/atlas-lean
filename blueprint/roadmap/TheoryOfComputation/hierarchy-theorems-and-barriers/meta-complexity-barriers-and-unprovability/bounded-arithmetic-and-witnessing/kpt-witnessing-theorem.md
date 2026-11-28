@@ -12,7 +12,7 @@ For $T = \mathsf{T}_{\mathsf{PV}}$ (or $\mathsf{PV}$) the terms are polynomial-t
 
 ## Proof sketch
 
-The disjunction is a student–teacher protocol: the student proposes $t_1(x)$; if it fails, the teacher returns a counterexample $z_1$ with $\neg\varphi(x, t_1(x), z_1)$, the student proposes $t_2(x, z_1)$, and so on, and the student succeeds within $l$ rounds. Pich and Santhanam describe the theorem as a form of Herbrand's theorem, in its general form for universal theories, applied to the Herbrandized sentence. For the $\mathsf{APC}_1$ variants one first Skolemizes the dual weak pigeonhole principle and then replaces queries to the Skolem function by random strings, or, without parameters, by polynomially many non-uniform advice strings outside the range.
+The disjunction is a student–teacher protocol: the student proposes $t_1(x)$; if it fails, the teacher returns a counterexample $z_1$ with $\neg\varphi(x, t_1(x), z_1)$, the student proposes $t_2(x, z_1)$, and so on, and the student succeeds within $l$ rounds. Pich and Santhanam describe the theorem as "a form of Herbrand's theorem". For the $\mathsf{APC}_1$ variants one first Skolemizes the dual weak pigeonhole principle and then replaces queries to the Skolem function by random strings, or, without parameters, by polynomially many non-uniform advice strings outside the range.
 
 ## Depends on
 

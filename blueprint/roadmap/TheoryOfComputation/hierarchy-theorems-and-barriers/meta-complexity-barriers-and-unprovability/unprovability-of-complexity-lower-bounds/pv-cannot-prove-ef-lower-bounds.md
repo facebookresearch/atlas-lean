@@ -21,7 +21,7 @@ The proof is model-theoretic. In a model $M$ of $\mathsf{PV}$, a formula has no 
 
 ## Proof depends on
 
-None.
+- [Compactness theorem for first-order logic](../../../../Logic/model-theory/compactness-theorem-for-first-order-logic.md)
 
 ## Sources
 

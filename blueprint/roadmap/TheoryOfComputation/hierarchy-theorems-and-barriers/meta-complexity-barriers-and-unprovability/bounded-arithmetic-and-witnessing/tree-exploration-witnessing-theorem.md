@@ -20,7 +20,7 @@ None.
 
 ## Proof depends on
 
-None.
+- [Completeness for arbitrary languages](../../../../Logic/first-order-logic/g-del-s-completeness-theorem/provable-of-models-general.md)
 
 ## Informally uses
 

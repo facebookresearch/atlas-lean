@@ -31,6 +31,7 @@ Already $\mathrm{LB}^1$ is a $\forall\Sigma^b_4$-sentence, beyond the reach of K
 ## Proof depends on
 
 - [Game-theoretic witnessing for sentences with arbitrarily many quantifiers](../bounded-arithmetic-and-witnessing/tree-exploration-witnessing-theorem.md)
+- [Soundness for theories](../../../../Logic/first-order-logic/first-order-natural-deduction/models.md)
 
 ## Sources
 

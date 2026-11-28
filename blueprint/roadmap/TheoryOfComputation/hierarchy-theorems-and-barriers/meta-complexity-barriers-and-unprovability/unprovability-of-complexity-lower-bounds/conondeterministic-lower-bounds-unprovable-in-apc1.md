@@ -23,6 +23,7 @@ The proof shows that provability implies falsity. From a proof, the KPT theorem 
 ## Proof depends on
 
 - [The KPT witnessing theorem](../bounded-arithmetic-and-witnessing/kpt-witnessing-theorem.md)
+- [Soundness for theories](../../../../Logic/first-order-logic/first-order-natural-deduction/models.md)
 
 ## Sources
 

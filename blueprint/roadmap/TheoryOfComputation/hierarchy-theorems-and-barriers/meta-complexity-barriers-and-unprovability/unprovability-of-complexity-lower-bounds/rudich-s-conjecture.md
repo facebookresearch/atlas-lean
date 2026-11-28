@@ -1,6 +1,6 @@
 # Rudich's conjecture
 
-Rudich's conjecture says that, for some constant $c$, every language decided by polynomial-size nondeterministic circuits that contains only truth tables of functions without circuits of size $n^c$ is very sparse: it holds at most a $1/N^{\omega(1)}$ fraction of the strings of each length $N$.
+Rudich's conjecture says that, for some constant $c$, every language decided by polynomial-size nondeterministic circuits that contains only truth tables of functions without circuits of size $n^c$ is very sparse: it holds at most a $1/N^{\omega(1)}$ fraction of the strings of length $N$ for every sufficiently large $N$.
 
 Given a string $y$ of length $N$, $\mathrm{fn}(y)$ is the Boolean function on $n = \lfloor \log N \rfloor$ bits whose truth table is the initial $2^n$-bit prefix of $y$, and for a size function $s$, $\mathrm{MCSP}[s]$ is the set of strings $y$ such that $\mathrm{fn}(y)$ has Boolean circuits of size at most $s(n)$; $\overline{\mathrm{MCSP}[s]}$ is its complement. The $N$-slice of a language $L$ is $L_N = L \cap \{0,1\}^N$, and for $\epsilon \colon \mathbb{N} \to [0,1]$ the language $L$ is $\epsilon$-sparse if $|L_N|/2^N \le \epsilon(N)$ for every large enough $N$. $\mathsf{NSIZE}(\mathrm{poly})$ is the class of languages decided by nondeterministic circuits of polynomial size.
 
