@@ -18,6 +18,7 @@ public import MathlibExt.NumberTheory.InfiniteRieselRepintegers
 public import MathlibExt.NumberTheory.PrimitiveDivisor
 public import MathlibExt.NumberTheory.RieselRepdigit101
 public import MathlibExt.NumberTheory.SierpinskiRepinteger18107
+public import MathlibExt.NumberTheory.SierpinskiRieselRepdigitsInfiniteRieselRepunitsModTwoPow64SubOne
 public import MathlibExt.NumberTheory.SierpinskiRieselRepdigitsInfiniteSierpinskiRepdigits
 
 /-!
@@ -127,18 +128,6 @@ public theorem_wanted infinite_riesel_repunits_of_primitive_divisors (τ : ℕ) 
     (hcase : q ∣ b ∨ b ≡ 1 [MOD q] ∨
       (¬ q ∣ b ∧ ¬ b ≡ 1 [MOD q] ∧
         Nat.Coprime (∏ j ∈ Finset.Icc 1 τ, p j) (orderOf (b : ZMod q)))) :
-    {N : ℕ | ∃ t : ℕ, 1 ≤ t ∧ N = repstring b 1 0 t ∧ IsRieselNumber N}.Infinite
-
-/-- **Infinitely many Riesel repunits in bases $b \equiv 16518444216571 \pmod{2^{64} - 1}$.**
-Let $b$ be a natural number with $b \equiv 16518444216571 \pmod{18446744073709551615}$, where
-$18446744073709551615 = 2^{64} - 1$. Then there are infinitely many Riesel numbers among the
-$b$-repunits $(b^t - 1)/(b - 1)$ with $t \ge 1$.
-
-Source: Bispels, Cohen, Harrington, Lowrance, Pontes, Schaumann and Wong, *On Sierpiński and
-Riesel Repdigits and Repintegers*, INTEGERS 26 (2026), Article A12, Corollary 3.14
-(`integers-2026-A12-cor-3-14`). -/
-public theorem_wanted infinite_riesel_repunits_mod_two_pow_64_sub_one {b : ℕ}
-    (hb : b ≡ 16518444216571 [MOD 18446744073709551615]) :
     {N : ℕ | ∃ t : ℕ, 1 ≤ t ∧ N = repstring b 1 0 t ∧ IsRieselNumber N}.Infinite
 
 /-- **Binary repstrings of 659 that are Sierpiński numbers.** For every natural number $t$ with
