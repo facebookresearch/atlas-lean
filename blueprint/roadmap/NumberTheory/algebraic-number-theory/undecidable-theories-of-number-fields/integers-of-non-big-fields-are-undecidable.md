@@ -19,6 +19,7 @@ Conventions: every number field is non-big, so the theorem contains a uniform ve
 - [Complete theory of a first-order structure](../../../Logic/first-order-logic/theory-of-structure.md)
 - [Integral closure of ℤ in a field and the ring of integers of a number field](../number-fields-embeddings/ring-of-integers.md)
 - [Field](../../../Algebra/rings-and-fields/field.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -26,8 +27,8 @@ None.
 
 ## Expansion
 
-One idea behind the proof is the identity $\frac{x^n - 1}{x - 1} \equiv n \pmod{x - 1}$ in $\mathbb{Z}[x]$: if $x$ is a unit of a ring of integers then so is $x^n$, and the residues $n$ modulo $x - 1$ recover rational integers from units, the same mechanism as in the Pell-equation methods of Julia Robinson, Davis, Denef and Lipshitz. The source first shows how to pass, by first-order formulas, from suitable definable submonoids of a ring of integers to definable subrings, and then computes the relevant objects for rings of integers of non-big fields, where for some prime the degrees of the number fields inside $K$ have bounded valuation. This yields one formula with prefix $\forall\forall\exists\cdots\exists$ that defines $\mathbb{Z}$ in all these rings. Since the theory of $\mathbb{Z}$ is undecidable, so is the theory of each $\mathcal{O}_K$. When $\mathcal{O}_K$ is also definable in $K$, the theory of $K$ is undecidable too; the source deduces in this way the undecidability of fields such as the field of constructible numbers.
+One idea behind the proof is the identity $\frac{x^n - 1}{x - 1} \equiv n \pmod{x - 1}$ in $\mathbb{Z}[x]$: if $x$ is a unit of a ring of integers then so is $x^n$, and the residues $n$ modulo $x - 1$ recover rational integers from units, the same mechanism as in the Pell-equation methods of Julia Robinson, Davis, Denef and Lipshitz. The source first shows how to pass, by first-order formulas, from suitable definable submonoids of a ring of integers to definable subrings, and then computes the relevant objects for rings of integers of non-big fields, where for some prime the degrees of the number fields inside $K$ have bounded valuation. This yields one formula with prefix $\forall\forall\exists\cdots\exists$ that defines $\mathbb{Z}$ in all these rings. Since the theory of $\mathbb{Z}$ is undecidable, so is the theory of each $\mathcal{O}_K$. When $\mathcal{O}_K$ is also definable in $K$, the theory of $K$ is undecidable too; the source deduces in this way the undecidability of fields such as the field of constructible numbers. A good expansion links pages for the passage from definable submonoids of a ring of integers to definable subrings (Section 2 of the source), for the computation for non-big fields that proves Theorem 4.8 (Section 4), and for the undecidability of the first-order theory of the ring $\mathbb{Z}$.
 
 ## Sources
 
-- Barry Mazur, Karl Rubin and Alexandra Shlapentokh, *Defining $\mathbb{Z}$ using unit groups*, Acta Arith. 214 (2024), 235–255, https://doi.org/10.4064/aa230505-6-6; the Main Theorem in the introduction of arXiv:2303.02521v3, with the definition of big fields stated just before it.
+- Barry Mazur, Karl Rubin and Alexandra Shlapentokh, *Defining $\mathbb{Z}$ using unit groups*, Acta Arith. 214 (2024), 235–255, https://doi.org/10.4064/aa230505-6-6; Theorem 4.8, stated in Section 1.5 and proved in Section 4 of arXiv:2303.02521v3, with Definition 1.8 (big fields).

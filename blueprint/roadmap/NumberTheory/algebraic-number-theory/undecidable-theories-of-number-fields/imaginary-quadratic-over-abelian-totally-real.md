@@ -19,6 +19,7 @@ The case of $\mathbb{Q}^{(2)}$, the compositum of all quadratic fields, was prov
 - [Complete theory of a first-order structure](../../../Logic/first-order-logic/theory-of-structure.md)
 - [Field](../../../Algebra/rings-and-fields/field.md)
 - [Integral closure of ℤ in a field and the ring of integers of a number field](../number-fields-embeddings/ring-of-integers.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -26,8 +27,8 @@ None.
 
 ## Expansion
 
-The proof combines three facts. The ring of integers $\mathcal{O}_L$ is first-order definable in $L$ because $L$ is a compositum of extensions of bounded degree (a definability theorem of Shlapentokh), so it suffices to show that $\mathcal{O}_L$ is undecidable. By a result of Vidaux and Videla on the Northcott property, $\mathrm{JR}(\mathcal{O}_K) = \infty$, where the JR-number is the infimum of the $t$ for which infinitely many elements of $\mathcal{O}_K$ have all conjugates in $(0, t)$; this makes $\mathcal{O}_K$ undecidable by Julia Robinson's method. To transfer this to $\mathcal{O}_L$, the roots of the $f_a$ are units, and a polynomial whose values are power sums of these units cuts out, inside $\mathcal{O}_L$, a definable set of totally real elements large enough to run the Robinson–Henson criterion: a ring of algebraic integers is undecidable once a family of subsets parametrized by one formula contains finite sets of arbitrarily large cardinality.
+The proof combines three facts. The ring of integers $\mathcal{O}_L$ is first-order definable in $L$ because $L$ is a compositum of extensions of bounded degree (a definability theorem of Shlapentokh, Theorem 2.1 of the source), so it suffices to show that $\mathcal{O}_L$ is undecidable. By Bombieri and Zannier, $F^{(d)}_{\mathrm{ab}}$ has the Northcott property (Theorem 2.5), hence so does its subfield $K$, and by a result of Vidaux and Videla (Proposition 2.4) $\mathrm{JR}(\mathcal{O}_K) = \infty$, where the JR-number is the infimum of the $t$ for which infinitely many elements of $\mathcal{O}_K$ have all conjugates in $(0, t)$; this makes $\mathcal{O}_K$ undecidable by Julia Robinson's method. To transfer this to $\mathcal{O}_L$, the roots of the $f_a$ are units, and a polynomial whose values are power sums of these units cuts out, inside $\mathcal{O}_L$, a definable set of totally real elements large enough to run the Robinson–Henson criterion: a ring of algebraic integers is undecidable once a family of subsets parametrized by one formula contains finite sets of arbitrarily large cardinality (Lemma 2.2; the transfer is Theorem 3.5). A good expansion links pages for Theorem 2.1, the Bombieri–Zannier theorem, Proposition 2.4, the Robinson–Henson criterion and Theorem 3.5.
 
 ## Sources
 
-- Caleb Springer, *Undecidability, unit groups, and some totally imaginary infinite extensions of $\mathbb{Q}$*, Proc. Amer. Math. Soc. 148 (2020), 4705–4715, https://doi.org/10.1090/proc/15153; the theorem stated in the introduction of arXiv:1910.01239v2 and proved there as Theorem 3.6.
+- Caleb Springer, *Undecidability, unit groups, and some totally imaginary infinite extensions of $\mathbb{Q}$*, Proc. Amer. Math. Soc. 148 (2020), 4705–4715, https://doi.org/10.1090/proc/15153; the theorem stated in the introduction of arXiv:1910.01239v2 and proved there as Theorem 3.6, from Theorem 2.1, Lemma 2.2, Proposition 2.4, Theorem 2.5 and Theorem 3.5.

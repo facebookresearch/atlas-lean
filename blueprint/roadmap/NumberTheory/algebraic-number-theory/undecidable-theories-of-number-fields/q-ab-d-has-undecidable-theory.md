@@ -10,6 +10,7 @@ The case $d = 2$, the compositum $\mathbb{Q}^{(2)}$ of all quadratic fields, is 
 
 - [Complete theory of a first-order structure](../../../Logic/first-order-logic/theory-of-structure.md)
 - [Field](../../../Algebra/rings-and-fields/field.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

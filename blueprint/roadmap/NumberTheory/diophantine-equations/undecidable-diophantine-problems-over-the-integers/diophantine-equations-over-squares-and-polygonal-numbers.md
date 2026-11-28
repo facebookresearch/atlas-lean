@@ -17,6 +17,7 @@ Conventions: equivalently, for squares, there is no algorithm deciding whether $
 ## Depends on
 
 - [Polygonal numbers](../../quadratic-forms-sums-of-squares/waring-figurate/polygonal-numbers/polygonal-number.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -24,7 +25,7 @@ Conventions: equivalently, for squares, there is no algorithm deciding whether $
 
 ## Expansion
 
-Sun proves that every recursively enumerable set $\mathcal{A} \subseteq \mathbb{N}$ has a representation with unknowns from these sets: there is a polynomial $P_4(z_0, z_1, \dots, z_{17})$ with integer coefficients such that, for every $a \in \mathbb{N}$, $a \in \mathcal{A}$ exactly when $P_4(a, z_1, \dots, z_{17}) = 0$ for some $z_1, \dots, z_{17} \in \square$, and similar polynomials $P_3$, $P_5$, $P_8$ in $18$ unknowns for $\mathrm{Tri}$, $\mathrm{Pen}$ and $\mathrm{Octa}$. The proof modifies the proof of Sun's representation theorem in nine integer unknowns so that the unknowns appear through squares, and uses identities such as $8 T_z + 1 = (2z + 1)^2$, $3 p_8(z) + 1 = (3z - 1)^2$ and $24 p_5(z) + 1 = (6z - 1)^2$ to pass between squares and polygonal numbers, together with representations of integers such as $2^{\delta}(x^2 - y^2)$ with $\delta \in \{0, 1\}$. Taking $\mathcal{A}$ recursively enumerable but not recursive gives the undecidability.
+Sun proves that every recursively enumerable set $\mathcal{A} \subseteq \mathbb{N}$ has a representation with unknowns from these sets: there is a polynomial $P_4(z_0, z_1, \dots, z_{17})$ with integer coefficients such that, for every $a \in \mathbb{N}$, $a \in \mathcal{A}$ exactly when $P_4(a, z_1, \dots, z_{17}) = 0$ for some $z_1, \dots, z_{17} \in \square$, and similar polynomials $P_3$, $P_5$, $P_8$ in $18$ unknowns for $\mathrm{Tri}$, $\mathrm{Pen}$ and $\mathrm{Octa}$. The proof modifies the proof of Sun's representation theorem in nine integer unknowns so that the unknowns appear through squares, and uses identities such as $8 T_z + 1 = (2z + 1)^2$, $3 p_8(z) + 1 = (3z - 1)^2$ and $24 p_5(z) + 1 = (6z - 1)^2$ to pass between squares and polygonal numbers, together with representations of integers such as $2^{\delta}(x^2 - y^2)$ with $\delta \in \{0, 1\}$. Taking $\mathcal{A}$ recursively enumerable but not recursive gives the undecidability. A good expansion links pages for Sun's representation of recursively enumerable sets with nine integer unknowns, which the proof of Theorem 1.6 modifies, for Lemma 6.1 and for the existence of a recursively enumerable set that is not recursive.
 
 ## Sources
 

@@ -14,7 +14,7 @@ Conventions: the quantifier prefix $\exists\exists\forall\exists$, with exactly 
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -22,7 +22,7 @@ None.
 
 ## Expansion
 
-By the Davis–Putnam–Robinson–Matiyasevich theorem there is a recursively enumerable set $A \subseteq \mathbb{N}$ that is not recursive and is Diophantine. Matiyasevich and Robinson gave universal representations of recursively enumerable sets with three quantifiers in front of a single polynomial equation, which yield the prefix $\exists\exists\forall\exists$ for such sets; Jones's classification of quantifier prefixes over Diophantine equations records this case. Substituting each fixed $a$ into a representation of $A$ yields a sentence of the stated form, and an algorithm deciding these sentences would decide membership in $A$.
+By the Davis–Putnam–Robinson–Matiyasevich theorem there is a recursively enumerable set $A \subseteq \mathbb{N}$ that is not recursive and is Diophantine. Matiyasevich and Robinson gave universal representations of recursively enumerable sets with three quantifiers in front of a single polynomial equation, which yield the prefix $\exists\exists\forall\exists$ for such sets; Jones's classification of quantifier prefixes over Diophantine equations records this case. Substituting each fixed $a$ into a representation of $A$ yields a sentence of the stated form, and an algorithm deciding these sentences would decide membership in $A$. A good expansion links a page for the Matiyasevich–Robinson universal three-quantifier representation, from which the prefix $\exists\exists\forall\exists$ follows.
 
 ## Sources
 

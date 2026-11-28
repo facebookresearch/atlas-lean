@@ -23,7 +23,7 @@ Conventions: undecidability of a prefix passes to every prefix containing it as 
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -31,7 +31,7 @@ None.
 
 ## Expansion
 
-For a recursively enumerable set $A \subseteq \mathbb{N}$, Sun constructs representations of $A$, or of its complement, by integer polynomials under each listed prefix: for instance, $A$ has an $\exists^2 \forall \exists^3$-representation over $\mathbb{Z}$, so that $a \in A$ exactly when $\exists x_1 \exists x_2 \forall x_3 \exists x_4 \exists x_5 \exists x_6 \; P(a, x_1, \dots, x_6) = 0$, and the complement of $A$ has a $\forall^2 \exists^4$-representation. The constructions rest on an auxiliary representation theorem for recursively enumerable sets proved in the source, combined with ways of expressing sign conditions and inequalities over $\mathbb{Z}$ by few quantified variables. Taking $A$ recursively enumerable but not recursive, and substituting each fixed $a$, an algorithm for the prefix would decide membership in $A$.
+For a recursively enumerable set $A \subseteq \mathbb{N}$, Sun constructs representations of $A$, or of its complement, by integer polynomials under each listed prefix: for instance, $A$ has an $\exists^2 \forall \exists^3$-representation over $\mathbb{Z}$, so that $a \in A$ exactly when $\exists x_1 \exists x_2 \forall x_3 \exists x_4 \exists x_5 \exists x_6 \; P(a, x_1, \dots, x_6) = 0$, and the complement of $A$ has a $\forall^2 \exists^4$-representation. The constructions rest on an auxiliary representation theorem for recursively enumerable sets proved in the source, combined with ways of expressing sign conditions and inequalities over $\mathbb{Z}$ by few quantified variables. Taking $A$ recursively enumerable but not recursive, and substituting each fixed $a$, an algorithm for the prefix would decide membership in $A$ (for a representation of the complement, membership in $\bar A$, hence in $A$). A good expansion links pages for the auxiliary representation theorem of Section 2 of the source, for Theorems 1.2–1.4 (proved in Sections 3–5), and for the existence of a recursively enumerable set that is not recursive.
 
 ## Sources
 

@@ -18,6 +18,7 @@ The converse holds trivially, so the Diophantine sets over $\mathbb{F}_q[Z]$ are
 
 - [Commutative ring with identity](../../../Algebra/rings-and-fields/commutative-ring-with-identity.md)
 - [Diophantine subsets of a ring](../../../TheoryOfComputation/undecidable-problems/diophantine-sets-and-hilbert-s-tenth-problem/is-diophantine-set.md)
+- [Recognizability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
 
 ## Proof depends on
 
@@ -25,7 +26,7 @@ None.
 
 ## Expansion
 
-An earlier paper of the author shows that every recursively enumerable relation over $\mathbb{F}_q[Z]$ is Diophantine over the two-variable ring $\mathbb{F}_q[W, Z]$. The new step is a Diophantine interpretation of $\mathbb{F}_q[W, Z]$ over $\mathbb{F}_q[Z]$ (Sections 2 to 4 of the copy read), in which polynomials in two variables are encoded by triples in a Diophantine set $M$ of $(w, s)$-representations. Transporting the Diophantine definition of $S(V) \subseteq \mathbb{F}_q[V, W]$ through this interpretation gives a Diophantine definition of an r.e. set $S \subseteq \mathbb{F}_q[Z]$; the case $k \ge 2$ follows with the Diophantine pairing function $(A, B) \mapsto A^p Z + B^p$, an injection of $\mathbb{F}_q[Z]^2$ into $\mathbb{F}_q[Z]$ (Section 5). A good expansion links the two-variable result of the earlier paper (Demeyer, Journal of Algebra 310 (2007), 801–828, https://doi.org/10.1016/j.jalgebra.2006.09.030), which has no page.
+An earlier paper of the author shows that every recursively enumerable relation over $\mathbb{F}_q[Z]$ is Diophantine over the two-variable ring $\mathbb{F}_q[W, Z]$. The new step is a Diophantine interpretation of $\mathbb{F}_q[W, Z]$ over $\mathbb{F}_q[Z]$ (Sections 2 to 4 of the copy read), in which polynomials in two variables are encoded by triples in a Diophantine set $M$ of $(w, s)$-representations. Transporting the Diophantine definition of $S(V) \subseteq \mathbb{F}_q[V, W]$ through this interpretation gives a Diophantine definition of an r.e. set $S \subseteq \mathbb{F}_q[Z]$; the case $k \ge 2$ follows with the Diophantine pairing function $(A, B) \mapsto A^p Z + B^p$, an injection of $\mathbb{F}_q[Z]^2$ into $\mathbb{F}_q[Z]$ (Section 5). A good expansion links the two-variable result of the earlier paper (Demeyer, Journal of Algebra 310 (2007), 801–828, https://doi.org/10.1016/j.jalgebra.2006.09.030).
 
 ## Sources
 

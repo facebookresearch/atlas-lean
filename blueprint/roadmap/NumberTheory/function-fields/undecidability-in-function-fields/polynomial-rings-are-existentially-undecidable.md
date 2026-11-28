@@ -11,6 +11,7 @@ The ring $R$ is arbitrary and fixed; only the existential sentence is the input,
 ## Depends on
 
 - [Commutative ring with identity](../../../Algebra/rings-and-fields/commutative-ring-with-identity.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -18,7 +19,7 @@ None.
 
 ## Expansion
 
-The sources read state the theorem without proof. For the function fields $\mathbb{R}(t)$ and $\mathbb{C}(t_1, t_2)$, Koenigsmann describes the route of an existential definition of $\mathbb{Z}$ followed by the Davis–Putnam–Robinson–Matiyasevich theorem; in positive characteristic, where $\mathbb{Z}$ is not a subset of the ring, the integers have to be interpreted existentially instead. A good expansion links the result the proof reduces from (the undecidability of Hilbert's tenth problem over $\mathbb{Z}$, or of the corresponding existential theory of the integers with addition and a divisibility-type relation in positive characteristic) together with the existential definition or interpretation of the integers in $R[t]$ that Denef constructs, which has no page.
+The sources read state the theorem without proof. For the function fields $\mathbb{R}(t)$ and $\mathbb{C}(t_1, t_2)$, Koenigsmann describes the route of an existential definition of $\mathbb{Z}$ followed by the Davis–Putnam–Robinson–Matiyasevich theorem; in positive characteristic, where $\mathbb{Z}$ is not a subset of the ring, the integers have to be interpreted existentially instead. A good expansion links the result the proof reduces from (the undecidability of Hilbert's tenth problem over $\mathbb{Z}$, or of the corresponding existential theory of the integers with addition and a divisibility-type relation in positive characteristic) together with the existential definition or interpretation of the integers in $R[t]$ that Denef constructs.
 
 ## Sources
 
