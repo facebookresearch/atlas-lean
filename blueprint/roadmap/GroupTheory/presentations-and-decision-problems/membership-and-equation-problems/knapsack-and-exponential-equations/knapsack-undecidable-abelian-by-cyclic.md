@@ -4,7 +4,7 @@ There is a finitely generated abelian-by-cyclic group $\mathcal{A} \rtimes \math
 
 There exist a finitely generated abelian-by-cyclic group $\mathcal{A} \rtimes \mathbb{Z}$ and elements $g_1, \dots, g_m$ of it such that it is undecidable, given $g \in \mathcal{A} \rtimes \mathbb{Z}$, whether there exist $z_1, \dots, z_m \in \mathbb{N}$ with $g_1^{z_1} g_2^{z_2} \cdots g_m^{z_m} = g$ (Theorem 1.5 of the source). In particular the knapsack problem is undecidable in this group. Mishchenko and Treier gave an earlier example; the source gives a different and more direct proof.
 
-By contrast, coset intersection is decidable in all finitely generated abelian-by-cyclic groups (Theorem 1.6), and knapsack is decidable in $G \wr \mathbb{Z}$ for non-trivial finitely generated abelian $G$ (Figelius, Ganardi, König, Lohrey and Zetzsche, as the introduction of the source recalls).
+By contrast, coset intersection is decidable in all finitely generated abelian-by-cyclic groups (Theorem 1.6), and knapsack is decidable in $G \wr \mathbb{Z}$ for non-trivial finitely generated abelian $G$ (Ganardi, König, Lohrey and Zetzsche, as the introduction of the source recalls).
 
 ## Depends on
 

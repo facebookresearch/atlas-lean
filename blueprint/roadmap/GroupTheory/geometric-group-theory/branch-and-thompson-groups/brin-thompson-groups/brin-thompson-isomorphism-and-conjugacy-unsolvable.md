@@ -23,7 +23,7 @@ The source does not settle these problems for Thompson's group $V$ itself and no
 
 ## Expansion
 
-The source proves that every finitely generated right-angled Artin group, the group of a finite graph, embeds in $nV$ for some $n$ (indeed every virtually special group does). Bridson's undecidability results for right-angled Artin groups, an unsolvable isomorphism problem for finitely presented subgroups and a subgroup with unsolvable conjugacy and membership problems, then transfer to $nV$. The embedding theorem is the source's main result and has no page on main yet.
+The source proves that every finitely generated right-angled Artin group, the group of a finite graph, embeds in $nV$ for some $n$ (indeed every virtually special group does). Bridson's undecidability results for right-angled Artin groups, an unsolvable isomorphism problem for finitely presented subgroups and a subgroup with unsolvable conjugacy and membership problems, then transfer to $nV$. The embedding theorem is the source's main result; a good expansion links a page for it.
 
 ## Sources
 

@@ -19,7 +19,7 @@ Adding the inverses of the generators shows that membership in finitely generate
 
 ## Expansion
 
-The group $F_2 \times F_2$ embeds in $\mathrm{SL}(4, \mathbb{Z})$: $\mathrm{SL}(2, \mathbb{Z})$ contains a free subgroup of rank $2$, and block-diagonal matrices realize the direct product. An undecidable problem of $F_2 \times F_2$ therefore stays undecidable in $\mathrm{SL}(4, \mathbb{Z})$, as the survey notes. Mikhailova's theorem for $F_2 \times F_2$ embeds the word problem of a finitely presented group with undecidable word problem. A good expansion would also link a page for the free subgroup of $\mathrm{SL}(2, \mathbb{Z})$, which has none.
+The group $F_2 \times F_2$ embeds in $\mathrm{SL}(4, \mathbb{Z})$: $\mathrm{SL}(2, \mathbb{Z})$ contains a free subgroup of rank $2$, and block-diagonal matrices realize the direct product. An undecidable problem of $F_2 \times F_2$ therefore stays undecidable in $\mathrm{SL}(4, \mathbb{Z})$, as the survey notes. Mikhailova's theorem for $F_2 \times F_2$ embeds the word problem of a finitely presented group with undecidable word problem. A good expansion would also link a page for the free subgroup of $\mathrm{SL}(2, \mathbb{Z})$.
 
 ## Sources
 

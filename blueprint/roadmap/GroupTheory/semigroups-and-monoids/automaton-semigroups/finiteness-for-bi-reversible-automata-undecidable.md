@@ -23,7 +23,7 @@ This strengthens [the undecidability of finiteness for automaton semigroups](fin
 
 ## Expansion
 
-The source first relates finiteness of $\mathscr{S}(\mathcal{T})$ to the dynamics on $\Sigma^\omega$: in general the semigroup is infinite exactly when the orbital graphs on $\omega$-words have unbounded size (Proposition 4.1), and for the automaton associated with a SW-deterministic aperiodic tile set it is infinite exactly when the tile set tiles the plane, and exactly when some $\omega$-word has an infinite orbit (Proposition 4.6). It then reduces from Lukkarila's theorem that the tiling problem for Wang tiles remains undecidable for 4-way deterministic aperiodic tile sets, building from such a tile set a bi-reversible and bi-deterministic automaton in the spirit of Gillibert's construction. A good expansion links Lukkarila's theorem on 4-way deterministic tile sets, which has no page on main yet.
+The source first relates finiteness of $\mathscr{S}(\mathcal{T})$ to the dynamics on $\Sigma^\omega$: in general the semigroup is infinite exactly when the orbital graphs on $\omega$-words have unbounded size (Proposition 4.1), and for the automaton associated with a SW-deterministic aperiodic tile set it is infinite exactly when the tile set tiles the plane, and exactly when some $\omega$-word has an infinite orbit (Proposition 4.6). It then reduces from Lukkarila's theorem that the tiling problem for Wang tiles remains undecidable for 4-way deterministic aperiodic tile sets, building from such a tile set a bi-reversible and bi-deterministic automaton in the spirit of Gillibert's construction. A good expansion links Lukkarila's theorem on 4-way deterministic tile sets.
 
 ## Sources
 

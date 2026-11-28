@@ -28,7 +28,7 @@ None.
 
 ## Expansion
 
-The proof reduces from the existential theory of $(\mathbb{N}, +, (x, y) \mapsto x \cdot 2^y)$, which Büchi and Senger showed undecidable: the proof generalizes to $(x, y) \mapsto x \cdot q^y$, and in $\mathrm{BS}(1, q)$ the atomic formulas become exponent equations: $x + y = z$ as $a^x a^y a^{-z} = 1$, $x < y$ as $\exists z\, a^x a^z a\, a^{-y} = 1$, and $x \cdot q^y = z$ as $t^y a^x t^{-y} a^{-z} = 1$. The Büchi–Senger theorem has no page on main yet. Exponent equations govern knapsack for wreath products: knapsack is decidable for $\mathbb{Z} \wr G$ exactly when solvability of systems of exponent equations is decidable for $G$, which the source notes follows from work of Ganardi, König, Lohrey and Zetzsche. Systems of exponent equations are also undecidable for the discrete Heisenberg group (König, Lohrey and Zetzsche).
+The proof reduces from the existential theory of $(\mathbb{N}, +, (x, y) \mapsto x \cdot 2^y)$, which Büchi and Senger showed undecidable: the proof generalizes to $(x, y) \mapsto x \cdot q^y$, and in $\mathrm{BS}(1, q)$ the atomic formulas become exponent equations: $x + y = z$ as $a^x a^y a^{-z} = 1$, $x < y$ as $\exists z\, a^x a^z a\, a^{-y} = 1$, and $x \cdot q^y = z$ as $t^y a^x t^{-y} a^{-z} = 1$. A good expansion links a page for the Büchi–Senger theorem. Exponent equations govern knapsack for wreath products: knapsack is decidable for $\mathbb{Z} \wr G$ exactly when solvability of systems of exponent equations is decidable for $G$, which the source notes follows from work of Ganardi, König, Lohrey and Zetzsche. Systems of exponent equations are also undecidable for the discrete Heisenberg group (König, Lohrey and Zetzsche).
 
 ## Sources
 

@@ -26,7 +26,7 @@ None.
 
 ## Expansion
 
-Otto constructed a finite special rewriting system $S$ without nontrivial critical pairs such that the Diophantine problem for the monoid $M_S$ it presents is undecidable, by encoding an instance of the Post correspondence problem (Theorem 1 of the source). A finite special system without nontrivial critical pairs presents a monoid with trivial group of units, because each defining word is then a single minimal invertible piece (Lemma 1). A special monoid with trivial group of units has context-free word problem by an earlier theorem of the author, and context-free monoids are word-hyperbolic. A good expansion links Otto's undecidability theorem for $M_S$ and the author's theorem that a finitely presented special monoid with trivial group of units has context-free word problem, which have no pages on main yet.
+Otto constructed a finite special rewriting system $S$ without nontrivial critical pairs such that the Diophantine problem for the monoid $M_S$ it presents is undecidable, by encoding an instance of the Post correspondence problem (Theorem 1 of the source). A finite special system without nontrivial critical pairs presents a monoid with trivial group of units, because each defining word is then a single minimal invertible piece (Lemma 1). A special monoid with trivial group of units has context-free word problem by an earlier theorem of the author, and context-free monoids are word-hyperbolic. A good expansion links Otto's undecidability theorem for $M_S$ and the author's theorem that a finitely presented special monoid with trivial group of units has context-free word problem.
 
 ## Sources
 

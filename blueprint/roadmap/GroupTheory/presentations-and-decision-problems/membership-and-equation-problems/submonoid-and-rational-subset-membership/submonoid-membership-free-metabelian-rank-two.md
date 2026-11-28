@@ -17,7 +17,7 @@ None.
 
 ## Expansion
 
-The derived subgroup $[M_2, M_2]$, viewed as a module over a finite-index subgroup $m\mathbb{Z} \times \mathbb{Z}$ of the abelianization $\mathbb{Z}^2$, contains a free module of rank $m - 1$ as a direct summand. This lets the source reduce the subsemimodule membership problem of Theorem 4 to the submonoid membership problem for $M_2$. The result for $\mathbb{Z} \wr (\mathbb{Z} \times \mathbb{Z})$ on [the sibling page](submonoid-membership-wreath-z-by-z-squared.md) is a parallel consequence of Theorem 4, not a prerequisite; a good expansion adds and links a page for Theorem 4, which has no page on main yet.
+The derived subgroup $[M_2, M_2]$, viewed as a module over a finite-index subgroup $m\mathbb{Z} \times \mathbb{Z}$ of the abelianization $\mathbb{Z}^2$, contains a free module of rank $m - 1$ as a direct summand. This lets the source reduce the subsemimodule membership problem of Theorem 4 to the submonoid membership problem for $M_2$. The result for $\mathbb{Z} \wr (\mathbb{Z} \times \mathbb{Z})$ on [the sibling page](submonoid-membership-wreath-z-by-z-squared.md) is a parallel consequence of Theorem 4, not a prerequisite; a good expansion adds and links a page for Theorem 4.
 
 ## Sources
 

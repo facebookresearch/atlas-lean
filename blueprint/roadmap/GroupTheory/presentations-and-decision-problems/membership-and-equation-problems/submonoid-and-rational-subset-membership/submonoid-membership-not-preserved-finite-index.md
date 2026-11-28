@@ -19,7 +19,7 @@ The source proves (Theorem 3.1) that, for a prime $p$, submonoid membership is d
 
 ## Expansion
 
-Lohrey and Steinberg give a fixed rational subset $S$ of $L$ with undecidable membership (Theorem 10 of their paper on tilings and submonoids of metabelian groups, the [linked page](rational-subset-membership-lamplighter-z-squared.md)). Shafrir reduces membership in a fixed rational subset of a group $L$ to membership in a fixed finitely generated submonoid of $L \times H$ with $H$ an explicitly constructed finitely generated virtually abelian group (Theorem 8.1 of his paper, as the source recalls), so $G$ has undecidable submonoid membership. A good expansion adds and links a page for Shafrir's reduction and for Theorem 3.1 of the source, neither of which has a page on main yet. On the other side, the source deduces decidability in $L \times \mathbb{Z}^d$ from its decidability theorem for groups $\mathcal{Y} \rtimes \mathbb{Z}^n$.
+Lohrey and Steinberg give a fixed rational subset $S$ of $L$ with undecidable membership (Theorem 10 of their paper on tilings and submonoids of metabelian groups, the [linked page](rational-subset-membership-lamplighter-z-squared.md)). Shafrir reduces membership in a fixed rational subset of a group $L$ to membership in a fixed finitely generated submonoid of $L \times H$ with $H$ an explicitly constructed finitely generated virtually abelian group (Theorem 8.1 of his paper, as the source recalls), so $G$ has undecidable submonoid membership. A good expansion adds and links a page for Shafrir's reduction and for Theorem 3.1 of the source. On the other side, the source deduces decidability in $L \times \mathbb{Z}^d$ from its decidability theorem for groups $\mathcal{Y} \rtimes \mathbb{Z}^n$.
 
 ## Sources
 

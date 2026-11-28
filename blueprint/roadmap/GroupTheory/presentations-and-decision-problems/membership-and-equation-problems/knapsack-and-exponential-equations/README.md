@@ -4,7 +4,6 @@ Knapsack problems and exponential equations ask whether a product of powers of g
 
 - [Knapsack problem for a finitely generated group](knapsack-problem-for-a-group.md)
 - [A finitely presented group with decidable power problem but undecidable power problem of order two](decidable-power-problem-undecidable-order-two.md)
-- [Knapsack is undecidable for class-two nilpotent groups with large derived subgroup](knapsack-undecidable-class-two-nilpotent.md)
 - [Knapsack is undecidable for wreath products over the Heisenberg group](knapsack-undecidable-wreath-over-heisenberg.md)
 - [Knapsack is undecidable for direct powers of the Heisenberg group](knapsack-undecidable-direct-powers-heisenberg.md)
 - [Knapsack is undecidable in some finitely generated abelian-by-cyclic group](knapsack-undecidable-abelian-by-cyclic.md)
