@@ -145,3 +145,6 @@
 - [Label-switching unidentifiability of bidirectional introgression](label-switching-unidentifiability-of-bidirectional-introgression.md)
 - [Gene-tree density under the multispecies coalescent with introgression](multispecies-coalescent-with-introgression-gene-tree-density.md)
 - [Compact coalescent histories](compact-coalescent-histories/README.md)
+- [Nested fragmentation processes](nested-fragmentation-processes/README.md)
+- [Nested Kingman coalescent](nested-kingman-coalescent/README.md)
+- [Coalescent histories of lodgepole species trees](coalescent-histories-of-lodgepole-species-trees/README.md)

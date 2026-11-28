@@ -16,3 +16,4 @@ the uniqueness of a canonical realization up to similarity.
 - [Transfer poles of a minimal realization are its eigenvalues](transfer-poles-of-a-minimal-realization-are-its-eigenvalues.md)
 - [The z-transform of the state of a discrete-time linear system](z-transform-of-the-state-of-a-discrete-time-linear-system.md)
 - [Exponential polynomials that do not decay are not integrable](exponential-polynomials-that-do-not-decay-are-not-integrable.md)
+- [Transfer functions and realizations](transfer-functions-and-realizations/README.md)

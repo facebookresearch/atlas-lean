@@ -31,7 +31,9 @@ algebraic results hold for arbitrary real weights.
   variables are fixed. `marginal_marginal`: marginalizing `p` to `W` and then to `U ⊆ W` gives the
   `U`-marginal of `p` up to the number of values of the variables outside `W`, so
   `condIndep_marginal_iff`: conditional independence among variables in `W` can be read off the
-  `W`-marginal.
+  `W`-marginal. `marginal_univ`: the marginal on all variables is the weight itself;
+  `marginal_marginal_of_union_eq_univ`: if `U ∪ W` covers all variables, the two-step
+  marginal is the `U ∩ W`-marginal with no counting factor.
 * `CondIndep p A B S`: `p(x_A, x_B, x_S) p(x_S) = p(x_A, x_S) p(x_B, x_S)` for every `x`.
   `CondIndep.cond_eq_mul` divides it into the conditional-probability form wherever
   `p(x_S) ≠ 0`; for a nonnegative weight, where `p(x_S) = 0` every marginal fixing `S` vanishes
@@ -83,6 +85,21 @@ theorem marginal_anti {p : (V → α) → ℝ} (hp : ∀ x, 0 ≤ p x) {U U' : S
   refine sum_le_sum_of_subset_of_nonneg (fun y hy => ?_) fun y _ _ => hp y
   simp only [mem_filter, mem_univ, true_and] at hy ⊢
   exact fun v hv => hy v (h hv)
+
+/-- **Marginal on all variables.** Let $V$ and $\alpha$ be finite types and let $p$ be a
+real-valued weight on the configurations $x : V \to \alpha$. The marginal of $p$ on all of $V$
+at a configuration $x$, the total weight of the configurations that agree with $x$ on every
+variable, is $p(x)$. -/
+theorem marginal_univ (p : (V → α) → ℝ) (x : V → α) : marginal p Set.univ x = p x := by
+  unfold marginal
+  simp only [Finset.sum_filter]
+  refine (Finset.sum_eq_single x ?h0 ?h1).trans (ite_eq_left (fun v _ => rfl))
+  · intro b _ hb
+    refine ite_eq_right ?_
+    intro hcon
+    exact hb (funext fun v => hcon v (Set.mem_univ v))
+  · intro hcon
+    exact absurd (Finset.mem_univ x) hcon
 
 /-- **Conditional independence for a finite weight.** Let $V$ and $\alpha$ be finite types, let $p$
 be a real-valued weight on the configurations $x : V \to \alpha$, and for $U \subseteq V$ write
@@ -307,6 +324,57 @@ theorem marginal_marginal (p : (V → α) → ℝ) {U W : Set V} (h : U ⊆ W) (
       exact ⟨fun v hv => (hz v hv).symm, fun v hv => (hz v (h hv)).trans (hy v hv)⟩
     · rintro ⟨hy, hz⟩
       exact ⟨fun v hv => (hy v (h hv)).trans (hz v hv), fun v hv => (hy v hv).symm⟩
+
+/-- **Marginalizing in two steps, no variable summed twice.** Let $V$ and $\alpha$ be finite
+types, let $p$ be a real-valued weight on the configurations $x : V \to \alpha$, let
+$U, W \subseteq V$ with $U \cup W = V$, and let $p_W$ be the $W$-marginal of $p$, the weight
+sending $x$ to the total weight of the configurations that agree with $x$ on $W$. Then for every
+configuration $x$, the $U$-marginal of $p_W$ at $x$ equals the $(U \cap W)$-marginal of $p$ at
+$x$. When instead $U \subseteq W$, the two-step marginal picks up a counting factor
+(`marginal_marginal`). -/
+theorem marginal_marginal_of_union_eq_univ (p : (V → α) → ℝ) {U W : Set V}
+    (h : U ∪ W = Set.univ) (x : V → α) :
+    marginal (marginal p W) U x = marginal p (U ∩ W) x := by
+  classical
+  unfold marginal
+  refine (Finset.sum_comm'
+    (t' := Finset.univ.filter (fun z : V → α => ∀ v ∈ U ∩ W, z v = x v))
+    (s' := fun (z : V → α) => {fun v => if v ∈ U then x v else z v}) ?h).trans ?_
+  · intro y z
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_singleton]
+    constructor
+    · rintro ⟨hy, hz⟩
+      refine ⟨?_, ?_⟩
+      · funext v
+        by_cases hvU : v ∈ U
+        · simp only [ite_eq_left hvU]
+          exact hy v hvU
+        · simp only [ite_eq_right hvU]
+          have huv : v ∈ U ∨ v ∈ W := by
+            have hh : v ∈ U ∪ W := by rw [h]; exact Set.mem_univ v
+            rwa [Set.mem_union] at hh
+          rcases huv with hU | hW
+          · exact absurd hU hvU
+          · exact (hz v hW).symm
+      · intro v hv
+        have hvU : v ∈ U := Set.mem_of_mem_inter_left hv
+        have hvW : v ∈ W := Set.mem_of_mem_inter_right hv
+        exact (hz v hvW).trans (hy v hvU)
+    · rintro ⟨heq, hzC⟩
+      refine ⟨?_, ?_⟩
+      · intro v hvU
+        simp only [heq, ite_eq_left hvU]
+      · intro v hvW
+        simp only [heq]
+        by_cases hvU : v ∈ U
+        · simp only [ite_eq_left hvU]
+          exact hzC v (Set.mem_inter hvU hvW)
+        · simp only [ite_eq_right hvU]
+  · refine Finset.sum_congr ?hCC ?_
+    · ext z
+      simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+    · intro z _
+      simp only [Finset.sum_singleton]
 
 open Classical in
 /-- **Conditional independence can be read off a marginal.** Let $V$ and $\alpha$ be finite types,

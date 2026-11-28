@@ -2,10 +2,12 @@
 
 Minimum spanning trees (Kruskal, Prim), maximum flow and minimum cut (Edmonds-Karp), bipartite matching by augmenting paths, and Gale-Shapley stable matching.
 
+- [Bounded circulations](bounded-circulations/README.md)
 - [Edmonds–Karp algorithm](edmonds-karp-algorithm/README.md)
 - [Gale–Shapley algorithm](gale-shapley-algorithm/README.md)
 - [Kruskal's algorithm](kruskal-s-algorithm/README.md)
 - [Maximum bipartite matching](maximum-bipartite-matching/README.md)
+- [Minimum-cost flows and residual potentials](minimum-cost-flows-and-residual-potentials/README.md)
 - [Prim's algorithm](prim-s-algorithm/README.md)
 
 - [Hoffman's circulation theorem](hoffman-circulation-theorem.md)
@@ -22,3 +24,4 @@ Minimum spanning trees (Kruskal, Prim), maximum flow and minimum cut (Edmonds-Ka
 - [Minimum-Weight Outgoing Edges and MST Uniqueness](minimum-weight-outgoing-edges-and-mst-uniqueness/README.md)
 - [Optimum Arborescences and Branchings](optimum-arborescences-and-branchings/README.md)
 - [The Auction Algorithm for Assignment](auction-algorithm-for-assignment/README.md)
+- [Fixed-value flow rerouting](fixed-value-flow-rerouting/README.md)
