@@ -31,14 +31,14 @@ set_option warningAsError true
 
 namespace CategoryTheory.Monad.BarChangeClient
 
-@[expose]
-private abbrev identityMonad : Monad (Type) := ofTypeMonad Id
+/-- The identity Type monad used by the concrete client. -/
+abbrev identityMonad : Monad (Type) := ofTypeMonad Id
 
-@[expose]
-private abbrev optionMonad : Monad (Type) := ofTypeMonad Option
+/-- The option Type monad used by the concrete client. -/
+abbrev optionMonad : Monad (Type) := ofTypeMonad Option
 
-@[expose]
-private abbrev listMonad : Monad (Type) := ofTypeMonad List
+/-- The list Type monad used by the concrete client. -/
+abbrev listMonad : Monad (Type) := ofTypeMonad List
 
 private def idToOption : identityMonad ⟶ optionMonad where
   app X := ↾(fun x : X => some x)
