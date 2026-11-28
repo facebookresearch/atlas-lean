@@ -8,8 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.NumberTheory.CountingAppearancesProgressions
-import MathlibExt.NumberTheory.CountingAppearancesProgressionsFreeCount
+public import MathlibExt.NumberTheory.CountingAppearancesProgressionsFreeCount
 import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Algebra.Order.BigOperators.GroupWithZero.Finset
@@ -20,21 +19,29 @@ import Mathlib.Data.Nat.ModEq
 import Mathlib.Tactic.Ring
 
 /-!
-# Available integers for distinct primes
+# Available and free integers for distinct primes
 
 For pairwise distinct primes `p : Fin k → ℕ` with `2 ≤ k` and any residues `r`, the number
-of available integers in `[1, ∏ i, p i]` equals the ones-diagonal determinant. The count
-satisfies the Chinese remainder recurrence in the last prime, the free count is the product
-of the decremented primes, and the determinant satisfies the same recurrence; induction from
-the two-prime case gives the equality.
+of available integers in `[1, ∏ i, p i]` equals the ones-diagonal determinant, and the number
+of free integers equals the signed bordered determinant. The Chinese remainder theorem gives
+recurrences for both counts and expresses the free count as the product of the decremented
+primes. The available-count identity follows by induction from the two-prime case. For the
+free-count identity, moving the border to the bottom reduces to the determinant of a
+ones-diagonal matrix whose last column is all ones, already used in the available-count proof.
 
 ## Main statements
 
 * `availableCount_distinct_primes`: for distinct primes, the available count equals
   `onesDiagDet`.
+* `freeCount_distinct_primes`: for distinct primes, the free count equals `borderedOnesDiagDet`.
 
-The statement comes from Florian Pausinger, *Counting Appearances of Integers in Sets of
-Arithmetic Progressions*, INTEGERS 26 (2026), Article A50 (preprint arXiv:2512.16358).
+## References
+
+* Florian Pausinger, *Counting Appearances of Integers in Sets of Arithmetic Progressions*,
+  INTEGERS **26** (2026), Article A50, pp. 1–10, Theorem 2 and Lemmas 1–5.
+  <https://math.colgate.edu/~integers/aa50/aa50.pdf>
+* G. Shilov, *Linear Algebra*, Prentice-Hall, Englewood Cliffs, 1971, Chapter 1, cited by
+  Pausinger for Laplace expansion.
 -/
 
 set_option autoImplicit false
@@ -455,5 +462,35 @@ theorem availableCount_distinct_primes (k : ℕ) (hk : 2 ≤ k)
     rw [Nat.cast_sub hq1, Nat.cast_one] at havZ
     rw [ih', hfreeZ] at havZ
     rw [havZ, hdet]
+
+/-- **Theorem 2, free count.** Let $k \ge 2$, let $p_1, \dots, p_k$ be distinct primes and
+let $r_1, \dots, r_k$ be natural numbers. Then the number of integers $n$ with
+$1 \le n \le p_1 p_2 \cdots p_k$ such that $n \not\equiv r_i \pmod{p_i}$ for every $i$ equals
+$F_k(p_1, \dots, p_k) = (-1)^k \det B$, where $B$ is the $(k+1) \times (k+1)$ integer matrix
+whose first row consists of ones and whose row $i + 1$, for $1 \le i \le k$, has $p_i$ in
+column $i$ and $1$ in every other column.
+
+Source: Florian Pausinger, "Counting Appearances of Integers in
+Sets of Arithmetic Progressions", Theorem 2. -/
+theorem freeCount_distinct_primes (k : ℕ) (hk : 2 ≤ k)
+    (p : Fin k → ℕ) (hprime : ∀ i, (p i).Prime)
+    (hinj : Function.Injective p) (r : Fin k → ℕ) :
+    (freeCount p r : ℤ) = borderedOnesDiagDet p := by
+  have _ := hk -- Both computations work even for fewer than two primes.
+  rw [freeCount_eq_prod k p r hprime hinj, Nat.cast_prod,
+    borderedOnesDiagDet_eq_det_snoc_one]
+  let q : Fin (k + 1) → ℕ := Fin.snoc p 1
+  let M : Matrix (Fin (k + 1)) (Fin (k + 1)) ℤ :=
+    fun i j => if i = j then (q i : ℤ) else 1
+  have hcol : (fun i => M i (Fin.last k)) = fun _ => 1 := by
+    funext i
+    by_cases hi : i = Fin.last k <;> simp [M, q, hi]
+  have hdet : (M.updateCol (Fin.last k) (fun _ => 1)).det =
+      ∏ i, ((q (Fin.castSucc i) : ℤ) - 1) := det_updateCol_one q
+  rw [← hcol, Matrix.updateCol_eq_self] at hdet
+  change _ = M.det
+  rw [hdet]
+  exact Finset.prod_congr rfl fun i _ => by
+    simp [q, Nat.cast_sub (hprime i).one_le]
 
 end MathlibExt.NumberTheory.CountingAppearancesProgressionsWanted
