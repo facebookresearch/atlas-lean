@@ -63,7 +63,8 @@ reduction from every language in `NP`
 -/
 
 /-- An instance: the number of ranks `k`, the numbers of cards on the foundations (entry
-`i - 1` for the `i`-foundation), the tableau piles and the stock (top card first). -/
+`i - 1` for the `i`-foundation), the tableau piles and the stock, each listed top card
+first. -/
 abbrev CalculationSolitaireInstance := ℕ × List ℕ × List (List ℕ) × List ℕ
 
 /-- The `t`-th card (`t ≥ 1`) of the `i`-foundation: the rank in `1, …, k` congruent to `i t`

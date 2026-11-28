@@ -54,7 +54,7 @@ reduction from every language in `NP`
 -/
 
 /-- An instance: the dimension `d`, the points (each a list of `d` coordinates), and the bound
-`B`. -/
+`B`; the points are the entries of the list, so a point listed twice counts as two points. -/
 abbrev EuclideanTwoMeansInstance := ℕ × List (List RatCode) × RatCode
 
 /-- The points of the instance, `Fin n` for `n` listed points. -/
@@ -73,13 +73,13 @@ centroid. -/
 def clusterCost (i : EuclideanTwoMeansInstance) (C : Finset (Point i)) : ℚ :=
   ∑ x ∈ C, ∑ c, (coord i x c - centroid i C c) ^ 2
 
-/-- Well-formedness of an instance: at least two points, every point has `d` coordinates, and
-every encoded rational has a positive denominator. -/
+/-- Well-formedness of an instance: at least two listed points, every point has `d`
+coordinates, and every encoded rational has a positive denominator. -/
 def WellFormed (i : EuclideanTwoMeansInstance) : Prop :=
   2 ≤ i.2.1.length ∧ (∀ x ∈ i.2.1, x.length = i.1 ∧ ∀ q ∈ x, 0 < q.2) ∧ 0 < i.2.2.2
 
-/-- Some partition of the points into two nonempty clusters `S`, `Sᶜ` has total
-within-cluster sum of squares at most `B`. -/
+/-- Some partition of the entries of the list of points into two nonempty clusters `S`, `Sᶜ`
+has total within-cluster sum of squares at most `B`. -/
 def EuclideanTwoMeansFeasible (i : EuclideanTwoMeansInstance) : Prop :=
   ∃ S : Finset (Point i), S.Nonempty ∧ Sᶜ.Nonempty ∧
     clusterCost i S + clusterCost i Sᶜ ≤ ratVal i.2.2
