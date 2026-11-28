@@ -16,7 +16,7 @@ $$
 1. Emptiness of probabilistic limsup automata under positive semantics is undecidable.
 2. Emptiness of probabilistic liminf automata under almost-sure semantics and universality of probabilistic limsup automata under positive semantics are undecidable.
 
-In contrast, emptiness of almost-sure limsup automata, universality of positive liminf automata and emptiness of positive liminf automata are decidable, as the same paper shows.
+In contrast, emptiness of almost-sure limsup automata and universality of positive liminf automata are decidable, as the same paper shows (Theorem 8).
 
 ## Depends on
 

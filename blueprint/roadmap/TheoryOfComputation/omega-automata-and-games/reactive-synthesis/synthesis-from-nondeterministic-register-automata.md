@@ -6,7 +6,7 @@ No algorithm decides whether a specification given by a nondeterministic registe
 1. $\mathrm{Real}(\mathrm{NRA},\mathrm{RT})$ is undecidable: no algorithm decides whether a specification given by a nondeterministic parity register automaton is realized by some register transducer;
 2. for every fixed $k\ge1$, $\mathrm{Real}(\mathrm{NRA},\mathrm{RT}[k])$ is undecidable.
 
-For deterministic specification automata whose output data are copies of input data, unbounded synthesis is decidable (the source's subclass of DRA), and the source's bounded-synthesis results for URA specifications and for test-free NRA specifications are decidable as well; the undecidability above comes from nondeterminism with data.
+For deterministic specification automata with input-driven outputs, in which every output transition tests the output datum for equality with some register (so the output datum is the content of a register), unbounded synthesis is decidable (the class $\mathrm{DRA}_{\mathrm{ido}}$ of Definition 3.4 of the source), and the source's bounded-synthesis results for URA specifications and for test-free NRA specifications are decidable as well; the undecidability above comes from nondeterminism with data.
 
 ## Depends on
 

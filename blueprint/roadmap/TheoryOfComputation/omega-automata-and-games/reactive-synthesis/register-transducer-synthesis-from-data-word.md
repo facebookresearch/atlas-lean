@@ -10,7 +10,7 @@ Let $\mathcal D$ be a countably infinite set of data with a distinguished value 
 
 ## Depends on
 
-None.
+- [Even max-parity condition](../parity-condition-on-infinite-sequences/parity-even.md)
 
 ## Proof depends on
 

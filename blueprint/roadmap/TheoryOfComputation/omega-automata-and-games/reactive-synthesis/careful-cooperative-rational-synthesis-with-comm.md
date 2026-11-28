@@ -30,6 +30,7 @@ have the form $\Diamond p$ for an atomic proposition $p$.
 ## Depends on
 
 - [Arenas, strategies and memory structures](../muller-rabin-and-streett-games/arenas-strategies-and-memory-structures.md)
+- [Formulas of linear temporal logic](../../../Logic/temporal-logic/linear-temporal-logic/formula.md)
 
 ## Proof depends on
 

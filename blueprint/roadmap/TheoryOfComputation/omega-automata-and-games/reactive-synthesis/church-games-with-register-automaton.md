@@ -9,6 +9,7 @@ The games become decidable, over $(\mathbb Q, \le)$ and over $(\mathbb N, \le)$,
 ## Depends on
 
 - [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Even max-parity condition](../parity-condition-on-infinite-sequences/parity-even.md)
 
 ## Proof depends on
 

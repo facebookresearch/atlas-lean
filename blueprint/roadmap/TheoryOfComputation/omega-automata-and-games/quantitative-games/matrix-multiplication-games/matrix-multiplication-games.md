@@ -10,7 +10,7 @@ $$
 
 where $\lVert \cdot \rVert$ is the $1$-norm (any other norm gives the same growth rate). The game is *determined with value $V$* if Adam has a strategy $\sigma_0$ with $P(\sigma_0, \tau) \le V$ for every $\tau$ and Eve has a strategy $\tau_0$ with $P(\sigma, \tau_0) \ge V$ for every $\sigma$. A player *ensures* a bound if some strategy of theirs guarantees it against every strategy of the opponent.
 
-When Adam's set is $\{I\}$, the value is the joint spectral radius $\hat\rho(\mathcal{E}) = \lim_{n \to \infty} \sup \{ \lVert E_1 \cdots E_n \rVert^{1/n} : E_i \in \mathcal{E} \}$. MMGs whose sets of non-negative matrices have independent row uncertainty are determined, with optimal strategies that always play the same matrix, and they are equivalent to the entropy games of the same source.
+When Adam's set is $\{I\}$, the value is the joint spectral radius $\hat\rho(\mathcal{E}) = \lim_{n \to \infty} \sup \{ \lVert E_1 \cdots E_n \rVert^{1/n} : E_i \in \mathcal{E} \}$. MMGs whose sets are compact sets of non-negative matrices with independent row uncertainty are determined, with optimal strategies that always play the same matrix (Theorem 13 of the source), and the source reduces its entropy games to such MMGs.
 
 ## Depends on
 

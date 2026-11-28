@@ -24,6 +24,8 @@ The proof also shows that, for a suitable fixed $\omega$-regular language $L$, i
 ## Proof depends on
 
 - [The value-1 problem for probabilistic automata is undecidable](../../regular-languages/automata-and-expressions/weighted-automata-and-rational-series/value-1-problem-for-probabilistic-automata.md)
+- [Büchi automata are closed under complementation](../boolean-closure-of-b-chi-automata/exists-buchi-compl.md)
+- [Nonempty Büchi languages contain ultimately periodic words](../emptiness-of-b-chi-automata/exists-lasso-word-of-nonempty.md)
 
 ## Expansion
 

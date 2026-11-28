@@ -21,9 +21,9 @@ undecidability comes from integer, possibly negative, register updates.
 
 ## Expansion
 
-From a two-counter machine $M$, the *halting gadget* $G_M$ has the program locations of $M$ plus four challenge states, input symbols that
+The source uses two-counter machines with integer-valued counters, both initially $0$, whose instructions are increments, decrements, sign tests "if $c \ge 0$ goto $l_1$ else goto $l_2$", and halt; their halting problem is undecidable, since they simulate the usual machines with zero tests. From such a machine $M$, the *halting gadget* $G_M$ has the program locations of $M$ plus four challenge states, input symbols that
 claim the signs of the two counters, and registers $v_i, m_i$ tracking each counter $c_i$ and its negation, and a register $z$ that stays
-$0$. At a zero test the system claims the result and the environment may either follow the claimed branch or jump to a challenge state
+$0$. At a sign test the system claims the result and the environment may either follow the claimed branch or jump to a challenge state
 whose output, $v_i + 1$ or $m_i$, exceeds the budget $0$ exactly when the claim was false. Halting locations output $z = 0$. So the system
 wins with budget $0$ exactly when it can follow the run of $M$ honestly to a halting location, that is, when $M$ halts.
 
