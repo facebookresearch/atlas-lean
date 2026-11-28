@@ -25,11 +25,16 @@ A palindrome with leading half `h` is congruent to `2 * h` for even digit length
 The latter sequence skips one integer at each multiple of the base. Counting the even prefixes,
 the interval spanned by the odd prefixes, and its skipped values gives three interval counts.
 Each has discrepancy at most one, and the skipped interval is empty below the square of the base.
+
+## References
+
+* Kritkhajohn Onphaeng, Tammatada Khemaratchatakumthorn, Phakhinkon Napp Phunphayap and
+  Prapanpong Pongsriiam, *Exact Formulas for the Number of Palindromes in Certain Arithmetic
+  Progressions*, Journal of Integer Sequences 27 (2024), Article 24.4.8, pp. 1–29,
+  Definition 1, Theorem 9 and Corollaries 11 and 12.
 -/
 
 namespace MetaMathlibExt
-
-@[expose] public section
 
 /-- **Palindromes in an arithmetic progression.** For natural numbers $b$, $m$, $q$ and $r$,
 $A_b(m, q, r)$ is the number of base-$b$ palindromes $n$ with $1 \le n \le m$ and
@@ -39,17 +44,25 @@ digits reads the same in both directions.
 Source: K. Onphaeng, T. Khemaratchatakumthorn, P. N. Phunphayap and P. Pongsriiam, *Exact
 Formulas for the Number of Palindromes in Certain Arithmetic Progressions*, Journal of Integer
 Sequences 27 (2024), Article 24.4.8, Section 1. -/
-public def palindromeAPCount (b m q r : ℕ) : ℕ :=
+@[expose] public def palindromeAPCount (b m q r : ℕ) : ℕ :=
   ((Finset.Icc 1 m).filter fun n => (Nat.digits b n).Palindrome ∧ n ≡ r [MOD q]).card
 
 namespace abs_palindromeAPCount_sub_le
 
 open Finset
 
--- With no central digit, mirror all of the prefix. With a central digit, omit it from the copy.
-private def mirror (b e h : ℕ) : ℕ :=
+/-- Append a reversed copy of the base-`b` digits of `h` to its right, omitting the `e`
+least significant digits from the copy. For `e = 0` no digit is omitted, and for `e = 1`
+the least significant digit of `h` is the center. -/
+public def mirror (b e h : ℕ) : ℕ :=
   let ds := Nat.digits b h
   Nat.ofDigits b ((ds.drop e).reverse ++ ds)
+
+/-- The numeric value of a mirror is obtained by putting the reversed copy at lower place values
+than the original prefix. The lists passed to `Nat.ofDigits` are little-endian. -/
+public theorem mirror_eq (b e h : ℕ) :
+    mirror b e h = Nat.ofDigits b (((b.digits h).drop e).reverse ++ b.digits h) := by
+  rw [mirror]
 
 private theorem digits_mirror {b : ℕ} (hb : 2 ≤ b) (e h : ℕ) :
     (b.digits (mirror b e h)) = ((b.digits h).drop e).reverse ++ b.digits h := by
@@ -124,10 +137,12 @@ private theorem exists_mirror {b n : ℕ} (hb : 2 ≤ b) (hn : 0 < n)
     change Nat.ofDigits b _ = n
     simp only [hd, hrev, hi, List.take_append_drop, ds, Nat.ofDigits_digits]
 
-private def cutoff (b e m : ℕ) : ℕ :=
+/-- The greatest prefix `h ≤ m` whose mirror with `e` omitted digits does not exceed `m`. -/
+public def cutoff (b e m : ℕ) : ℕ :=
   Nat.findGreatest (fun h => mirror b e h ≤ m) m
 
-private theorem le_cutoff {b e h m : ℕ} (hb : 2 ≤ b) :
+/-- In base `b ≥ 2`, a prefix is at most the cutoff if and only if its mirror is at most `m`. -/
+public theorem le_cutoff {b e h m : ℕ} (hb : 2 ≤ b) :
     h ≤ cutoff b e m ↔ mirror b e h ≤ m := by
   have hmono := mirror_strictMono hb e
   constructor
@@ -182,11 +197,22 @@ private theorem count_split {b : ℕ} (hb : 2 ≤ b) (m q r : ℕ) :
   simp only [t, card_image_of_injective _ (mirror_strictMono hb _).injective]
   rfl
 
+/-- When `b ≥ 2`, the count of positive base-`b` palindromes at most `m` congruent to `r`
+modulo `q` is the sum of the counts of positive prefixes with even- and odd-length mirrors,
+each bounded by its own cutoff. -/
+public theorem count_split_card {b : ℕ} (hb : 2 ≤ b) (m q r : ℕ) :
+    palindromeAPCount b m q r =
+      ((Ioc 0 (cutoff b 0 m)).filter fun h => mirror b 0 h ≡ r [MOD q]).card +
+      ((Ioc 0 (cutoff b 1 m)).filter fun h => mirror b 1 h ≡ r [MOD q]).card :=
+  count_split hb m q r
+
 private theorem count_total {b : ℕ} (hb : 2 ≤ b) (m : ℕ) :
     palindromeAPCount b m 1 0 = cutoff b 0 m + cutoff b 1 m := by
   simp [count_split hb, countTo, Nat.modEq_one]
 
-private theorem mirror_modEq {b q : ℕ} (hb : 2 ≤ b) (hbq : b ≡ 1 [MOD q]) (e h : ℕ) :
+/-- For `b ≥ 2` and `b ≡ 1 [MOD q]`, mirroring a prefix adds the residue of the prefix
+after dropping the `e` digits omitted from the copy. -/
+public theorem mirror_modEq {b q : ℕ} (hb : 2 ≤ b) (hbq : b ≡ 1 [MOD q]) (e h : ℕ) :
     mirror b e h ≡ h + h / b ^ e [MOD q] := by
   have digitSum (l : List ℕ) : Nat.ofDigits b l ≡ l.sum [MOD q] := by
     simpa [Nat.ofDigits_one] using Nat.ofDigits_modEq' b 1 q hbq l
@@ -222,7 +248,9 @@ private theorem residue_error {q : ℕ} (hq : 0 < q) (r n : ℕ) :
   simpa only [Rat.cast_abs, Rat.cast_sub, Rat.cast_natCast, Rat.cast_div, Rat.cast_one] using
     (Rat.cast_le (K := ℝ)).mpr H
 
-private theorem double_iff {q : ℕ} (hq : Odd q) (x r : ℕ) :
+/-- If `q` is odd, multiplying a residue by `(q + 1) / 2` inverts multiplication by two
+modulo `q`. -/
+public theorem double_iff {q : ℕ} (hq : Odd q) (x r : ℕ) :
     2 * x ≡ r [MOD q] ↔ x ≡ ((q + 1) / 2) * r [MOD q] := by
   let u := (q + 1) / 2
   have hu : u * 2 ≡ 1 [MOD q] := by
@@ -302,7 +330,9 @@ private theorem cutoff_lt_base {b m : ℕ} (hb : 2 ≤ b) (hm : m < b ^ 2) :
   simp [mirror, hd, Nat.ofDigits_cons] at H
   nlinarith
 
-private theorem cutoff_base_pow {b k e : ℕ} (hb : 2 ≤ b) (hk : 1 ≤ k) (he : e ≤ 1) :
+/-- For `b ≥ 2`, `k ≥ 1` and `e ≤ 1`, the largest prefix whose mirror is at most `b ^ k`
+is `b ^ ((k + e) / 2) - 1`. -/
+public theorem cutoff_base_pow {b k e : ℕ} (hb : 2 ≤ b) (hk : 1 ≤ k) (he : e ≤ 1) :
     cutoff b e (b ^ k) = b ^ ((k + e) / 2) - 1 := by
   have hendpoint : ¬ (b.digits (b ^ k)).Palindrome := by
     obtain ⟨j, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (by omega : k ≠ 0)
@@ -435,7 +465,5 @@ public theorem abs_palindromeAPCount_sub_le {b q r : ℕ} (hb : 2 ≤ b) (hq : O
       exact hlog₂
     rw [abs_le]
     constructor <;> linarith
-
-end
 
 end MetaMathlibExt

@@ -22,6 +22,13 @@ At a fixed digit length, a palindrome is determined by its upper half, including
 middle digit if there is one. Group these prefixes by their leading digit. All blocks
 before the leading digit of the bound are unrestricted; the last block ends at the
 bound's prefix, which is counted exactly when its reflection does not exceed the bound.
+
+## References
+
+* Kritkhajohn Onphaeng, Tammatada Khemaratchatakumthorn, Phakhinkon Napp Phunphayap and
+  Prapanpong Pongsriiam, *Exact Formulas for the Number of Palindromes in Certain Arithmetic
+  Progressions*, Journal of Integer Sequences 27 (2024), Article 24.4.8, pp. 1–29,
+  Definition 1 and Theorem 7.
 -/
 
 namespace MetaMathlibExt
@@ -117,6 +124,14 @@ private theorem halfCopy_ofDigits (b m : ℕ) :
   rw [palindromicHalfCopy, ofDigits_sum, reflectDigits_length]
   exact sum_congr rfl fun _ hi => by rw [reflectDigits_getD _ (mem_range.mp hi)]
 
+/-- The palindromic half copy is the value of the leading half with its reflection appended
+on the right, without repeating the center. The lists passed to `Nat.ofDigits` are little-endian. -/
+public theorem halfCopy_eq_ofDigits (b m : ℕ) :
+    palindromicHalfCopy b m = Nat.ofDigits b
+      (((b.digits m).drop ((b.digits m).length / 2 + (b.digits m).length % 2)).reverse ++
+        (b.digits m).drop ((b.digits m).length / 2)) :=
+  halfCopy_ofDigits b m
+
 private theorem last_drop_ne_zero (b n t : ℕ) (h : (b.digits n).drop t ≠ []) :
     ((b.digits n).drop t).getLast h ≠ 0 := by
   have hn : n ≠ 0 := by
@@ -126,7 +141,8 @@ private theorem last_drop_ne_zero (b n t : ℕ) (h : (b.digits n).drop t ≠ [])
   have he : (b.digits n).take t ++ (b.digits n).drop t = b.digits n := List.take_append_drop ..
   simpa only [← List.getLast_append_of_right_ne_nil ((b.digits n).take t) _ h, he] using H
 
-private theorem digits_drop_div {b : ℕ} (hb : 2 ≤ b) (n t : ℕ) :
+/-- In base `b ≥ 2`, division by `b ^ t` drops the `t` least significant digits. -/
+public theorem digits_drop_div {b : ℕ} (hb : 2 ≤ b) (n t : ℕ) :
     b.digits (n / b ^ t) = (b.digits n).drop t := by
   rw [Nat.self_div_pow_eq_ofDigits_drop _ _ hb]
   exact Nat.digits_ofDigits b hb _ (fun _ hx => Nat.digits_lt_base hb (List.mem_of_mem_drop hx))
@@ -175,7 +191,9 @@ private theorem halfCopy_eq_of_prefix {b x y : ℕ} (hb : 2 ≤ b)
   simp only [digits_drop_div hb, hlen] at hd
   simp only [halfCopy_ofDigits, reflectDigits, ← List.drop_drop, hlen, hd]
 
-private theorem length_digits_eq {b n k : ℕ} (hb : 2 ≤ b) (hn : n ≠ 0) :
+/-- For `b ≥ 2` and `n ≠ 0`, the base-`b` expansion of `n` has `k + 1` digits precisely when
+`b ^ k ≤ n < b ^ (k + 1)`. -/
+public theorem length_digits_eq {b n k : ℕ} (hb : 2 ≤ b) (hn : n ≠ 0) :
     (b.digits n).length = k + 1 ↔ b ^ k ≤ n ∧ n < b ^ (k + 1) := by
   rw [Nat.length_digits b n hb hn, ← Nat.le_log_iff_pow_le hb hn,
     ← Nat.log_lt_iff_lt_pow hb hn]
@@ -436,7 +454,9 @@ private theorem count_by_leading_digit {b m k q r : ℕ} (hb : 2 ≤ b) (hq : q 
     prefix_card hb hq hm hm',
     prefix_partial hw hwh _ _ _ (by split <;> decide), hlead, add_assoc]
 
-private theorem prefix_as_sum {b m k : ℕ} (hb : 2 ≤ b) (hk : (b.digits m).length = k + 1) :
+/-- If `b ≥ 2` and `m` has `k + 1` base-`b` digits, the leading half, including a center if
+present, is the weighted sum of the first `k / 2 + 1` digits in most-significant-first order. -/
+public theorem prefix_as_sum {b m k : ℕ} (hb : 2 ≤ b) (hk : (b.digits m).length = k + 1) :
     (m / b ^ ((k + 1) / 2) : ℕ) =
       ∑ i ∈ range (k / 2 + 1), (b.digits m).getD (k - i) 0 * b ^ (k / 2 - i) := by
   let d := (k + 1) / 2

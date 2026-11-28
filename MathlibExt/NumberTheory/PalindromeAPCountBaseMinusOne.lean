@@ -9,10 +9,9 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.NumberTheory.PalindromeAPCountOfDvdBase
-import all MathlibExt.NumberTheory.PalindromeAPCountOfDvdBase
-import all MathlibExt.NumberTheory.PalindromesArithmeticProgressions
-import all MathlibExt.NumberTheory.DigitSumCongruenceCount
 import Mathlib.Algebra.BigOperators.ModEq
+import Mathlib.Data.List.GetD
+import MathlibExt.NumberTheory.DigitSumCongruenceCount
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring
@@ -35,9 +34,9 @@ only use congruences at a center, where no division of `r` is needed.
   Progressions*, Journal of Integer Sequences 27 (2024), Article 24.4.8, pp. 1–29,
   Theorem 9 and Lemmas 2 and 4.
 * `MathlibExt.NumberTheory.PalindromesArithmeticProgressions` supplies the mirror and cutoff
-  enumeration (`mirror`, `count_split`, `mirror_modEq`, and `cutoff_base_pow`). The bound on
+  enumeration (`mirror_eq`, `count_split_card`, `mirror_modEq`, and `cutoff_base_pow`). The bound on
   the low digits follows the argument in `mirror_strictMono`.
-* `MathlibExt.NumberTheory.PalindromeAPCountOfDvdBase` supplies `halfCopy_ofDigits`,
+* `MathlibExt.NumberTheory.PalindromeAPCountOfDvdBase` supplies `halfCopy_eq_ofDigits`,
   `digits_drop_div` and `prefix_as_sum` for translating between prefixes and digits.
 * `MathlibExt.NumberTheory.DigitSumCongruenceCount` supplies the interval residue sums
   `sum_residueIndicator_range` and `sum_residueIndicator_base`.
@@ -59,12 +58,13 @@ private def centeredPrefix (b q r n : ℕ) : ℚ :=
 
 private theorem residueIndicator_congr_left {q : ℕ} {r x y : ℤ} (h : x ≡ y [ZMOD q]) :
     residueIndicator q r x = residueIndicator q r y := by
-  simp only [residueIndicator, show (x ≡ r [ZMOD q]) ↔ (y ≡ r [ZMOD q]) from
+  simp only [residueIndicator_eq, show (x ≡ r [ZMOD q]) ↔ (y ≡ r [ZMOD q]) from
     ⟨h.symm.trans, h.trans⟩]
 
 private theorem doubledPrefix_odd {q : ℕ} (hq : Odd q) (r n : ℕ) :
     doubledPrefix q r n = residuePrefix q (((q + 1) / 2 * r : ℕ) : ℤ) n := by
-  simp only [doubledPrefix, residuePrefix, residueIndicator, Int.natCast_modEq_iff, double_iff hq]
+  simp only [doubledPrefix, residuePrefix, residueIndicator_eq, Int.natCast_modEq_iff,
+    double_iff hq]
 
 private theorem doubledIndicator_even_odd {q r x : ℕ} (hq : Even q) (hr : Odd r) :
     ¬ (2 * x ≡ r [MOD q]) := by
@@ -76,7 +76,7 @@ private theorem doubledPrefix_even_odd {q r : ℕ} (hq : Even q) (hr : Odd r) (n
     doubledPrefix q r n = 0 := by
   apply sum_eq_zero
   intro x _
-  simp only [residueIndicator, Int.natCast_modEq_iff]
+  simp only [residueIndicator_eq, Int.natCast_modEq_iff]
   exact ite_eq_right (doubledIndicator_even_odd hq hr)
 
 private theorem double_iff_half_modulus {q r x : ℕ} (hq : Even q) (hr : Even r) :
@@ -89,7 +89,7 @@ private theorem double_iff_half_modulus {q r x : ℕ} (hq : Even q) (hr : Even r
 
 private theorem doubledPrefix_even_even {q r : ℕ} (hq : Even q) (hr : Even r) (n : ℕ) :
     doubledPrefix q r n = residuePrefix (q / 2) ((r / 2 : ℕ) : ℤ) n := by
-  simp only [doubledPrefix, residuePrefix, residueIndicator, Int.natCast_modEq_iff,
+  simp only [doubledPrefix, residuePrefix, residueIndicator_eq, Int.natCast_modEq_iff,
     double_iff_half_modulus hq hr]
 
 -- Count complete center blocks first, then count the centers of the last, partial block.
@@ -114,7 +114,7 @@ private theorem centeredPrefix_eq {b q : ℕ} (hb : 2 ≤ b) (hq : 0 < q)
     | succ v ih =>
       rw [Nat.mul_succ, centeredPrefix, sum_range_add, ← centeredPrefix, ih, hblock v b le_rfl,
         show residuePrefix q ((r : ℤ) - 2 * v) b = _ from
-          sum_residueIndicator_base (by omega) hq hbq _, residueIndicator_sub_zero]
+          sum_residueIndicator_base (by omega) hq hbq _, ← residueIndicator_add, add_zero]
       simp only [doubledPrefix, sum_range_succ, Nat.cast_succ, Nat.cast_mul]
       norm_num only [Nat.cast_ofNat]
       ring
@@ -185,7 +185,7 @@ private theorem mirror_bounds {b : ℕ} (hb : 2 ≤ b) (e x : ℕ) :
   have hlt : Nat.ofDigits b low < b ^ low.length :=
     Nat.ofDigits_lt_base_pow_length hb fun _ hi =>
       Nat.digits_lt_base hb (List.mem_of_mem_drop (List.mem_reverse.mp hi))
-  rw [← hl]
+  rw [← hl, mirror_eq]
   change _ ≤ Nat.ofDigits b (low ++ b.digits x) ∧ Nat.ofDigits b (low ++ b.digits x) < _
   rw [Nat.ofDigits_append, Nat.ofDigits_digits, Nat.mul_succ]
   exact ⟨Nat.le_add_left _ _, by omega⟩
@@ -203,7 +203,7 @@ private theorem active_cutoff {b m k : ℕ} (hb : 2 ≤ b) (hk : (b.digits m).le
     simp only [H, digits_drop_div hb, List.length_drop, hk, e, t]
     omega
   have hcopy : mirror b e H = palindromicHalfCopy b m := by
-    simp only [mirror, H, digits_drop_div hb, List.drop_drop, halfCopy_ofDigits, reflectDigits, hk,
+    simp only [mirror_eq, H, digits_drop_div hb, List.drop_drop, halfCopy_eq_ofDigits, hk,
       e, t]
   refine ⟨hcopy, ?_⟩
   have ht : 0 < b ^ t := by positivity
@@ -259,15 +259,14 @@ private theorem inactive_cutoff {b m k : ℕ} (hb : 2 ≤ b) (hm : 1 ≤ m)
       at hlower
     omega
 
-private theorem sum_range_countTo (n : ℕ) (p : ℕ → Prop) [DecidablePred p] :
+private theorem sum_range_eq_filter_Ioc (n : ℕ) (p : ℕ → Prop) [DecidablePred p] :
     (∑ x ∈ range (n + 1), if p x then (1 : ℚ) else 0) =
-      (countTo n p : ℚ) + if p 0 then 1 else 0 := by
+      (((Ioc 0 n).filter p).card : ℚ) + if p 0 then 1 else 0 := by
   have h : range (n + 1) = insert 0 (Ioc 0 n) := by
     ext x
     simp only [mem_range, mem_insert, mem_Ioc]
     omega
   rw [h, sum_insert (by simp), ← sum_filter, sum_const, nsmul_one, add_comm]
-  rfl
 
 private theorem mirror_center_modEq {b q : ℕ} (hb : 2 ≤ b) (hbq : b ≡ 1 [MOD q]) (x : ℕ) :
     mirror b 1 x ≡ 2 * (x / b) + x % b [MOD q] := by
@@ -297,8 +296,8 @@ private theorem count_mirrorPrefixes {b m q r k : ℕ} (hb : 2 ≤ b) (hm : 1 �
   let z : ℚ := if r = 0 then 1 else 0
   let w : ℚ := if C ≤ m ∧ C ≡ r [MOD q] then 1 else 0
   have hz (e : ℕ) : (if mirror b e 0 ≡ r [MOD q] then (1 : ℚ) else 0) = z := by
-    simp [z, mirror, Nat.ModEq, Nat.mod_eq_of_lt hr, eq_comm]
-  have hsum (e : ℕ) := sum_range_countTo (cutoff b e m) (fun x => mirror b e x ≡ r [MOD q])
+    simp [z, mirror_eq, Nat.ModEq, Nat.mod_eq_of_lt hr, eq_comm]
+  have hsum (e : ℕ) := sum_range_eq_filter_Ioc (cutoff b e m) (fun x => mirror b e x ≡ r [MOD q])
   have hactive := active_cutoff hb hk
   change mirror b ((k + 1) % 2) H = C ∧ cutoff b ((k + 1) % 2) m + 1 = H + _ at hactive
   have hinactive := inactive_cutoff hb hm hk
@@ -312,20 +311,20 @@ private theorem count_mirrorPrefixes {b m q r k : ℕ} (hb : 2 ≤ b) (hm : 1 �
     · simp [C, hc, w]
   have he (n : ℕ) :
       (∑ x ∈ range n, if mirror b 0 x ≡ r [MOD q] then (1 : ℚ) else 0) = doubledPrefix q r n := by
-    simp only [doubledPrefix, residueIndicator, Int.natCast_modEq_iff]
+    simp only [doubledPrefix, residueIndicator_eq, Int.natCast_modEq_iff]
     exact sum_congr rfl fun x _ => by
       simp only [show (mirror b 0 x ≡ r [MOD q]) ↔ (2 * x ≡ r [MOD q]) from
         ⟨(mirror_zero_modEq hb hbq x).symm.trans, (mirror_zero_modEq hb hbq x).trans⟩]
   have ho (n : ℕ) :
       (∑ x ∈ range n, if mirror b 1 x ≡ r [MOD q] then (1 : ℚ) else 0) =
         centeredPrefix b q r n := by
-    simp only [centeredPrefix, residueIndicator, Int.natCast_modEq_iff]
+    simp only [centeredPrefix, residueIndicator_eq, Int.natCast_modEq_iff]
     exact sum_congr rfl fun x _ => by
       simp only [show (mirror b 1 x ≡ r [MOD q]) ↔ (2 * (x / b) + x % b ≡ r [MOD q]) from
         ⟨(mirror_center_modEq hb hbq x).symm.trans, (mirror_center_modEq hb hbq x).trans⟩]
   have hsub : (if r = 0 then (2 : ℚ) else 0) = z + z := by
     by_cases hr' : r = 0 <;> norm_num [z, hr']
-  rw [count_split hb, Nat.cast_add, hsub]
+  rw [count_split_card hb, Nat.cast_add, hsub]
   change _ = doubledPrefix q r (if Odd k then H else P) +
     centeredPrefix b q r (if Odd k then P else H) - (z + z) + w
   by_cases hodd : Odd k
@@ -350,7 +349,8 @@ private theorem doubledPrefix_one {q r : ℕ} (hr : r < q) :
     doubledPrefix q r 1 = if r = 0 then 1 else 0 := by
   unfold doubledPrefix
   rw [show (1 : ℕ) = 0 + 1 from rfl, sum_range_succ]
-  simp only [range_zero, sum_empty, zero_add, mul_zero, residueIndicator, Int.natCast_modEq_iff,
+  simp only [range_zero, sum_empty, zero_add, mul_zero, residueIndicator_eq,
+    Int.natCast_modEq_iff,
     Nat.ModEq, Nat.zero_mod, Nat.mod_eq_of_lt hr, eq_comm]
 
 private theorem doubledPrefix_pow_odd {b q r : ℕ} (hb : 2 ≤ b) (hr : r < q) (hq : Odd q)

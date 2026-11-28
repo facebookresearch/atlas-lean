@@ -22,6 +22,11 @@ example : palindromeAPCount 2 1 1 0 = 1 ∧ palindromeAPCount 5 4 4 0 = 1 := by
 example : palindromeAPCount 5 87 4 0 = 6 ∧ palindromeAPCount 5 88 4 0 = 7 := by
   decide +kernel
 
+-- The remaining parity branches, counted directly from the digits rather than the formula.
+example : palindromeAPCount 4 38 3 2 = 5 ∧ palindromeAPCount 5 17 4 1 = 1 ∧
+    palindromeAPCount 5 17 4 2 = 2 ∧ palindromeAPCount 5 88 4 3 = 4 := by
+  decide +kernel
+
 -- Odd modulus, with a center and an included endpoint.
 example : (palindromeAPCount 4 38 3 2 : ℚ) = 5 := by
   have h := (palindromeAPCount_of_modEq_one (b := 4) (m := 38) (q := 3) (r := 2)
