@@ -12,3 +12,4 @@ Systems of polynomial difference equations solved in rings of sequences indexed 
 - [Radical difference ideal membership is undecidable](radical-difference-ideal-membership.md)
 - [Consistency of equations over sequences indexed by the plane grid is undecidable](consistency-of-equations-over-grid-sequences.md)
 - [Consistency of equations over functions on words is undecidable](consistency-of-equations-over-functions-on-words.md)
+- [Twisted telescoping for an iterated ring endomorphism](one-sub-prod-iterate-mul-eq-sum-prod-ite.md)

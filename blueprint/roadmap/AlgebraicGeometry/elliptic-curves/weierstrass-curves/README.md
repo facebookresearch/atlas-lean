@@ -9,6 +9,7 @@
 - [Variable changes transform nonsingular points](nonsingular-map-affine-coordinates-iff.md)
 - [Variable changes give additive equivalences of points](variable-change-add-equiv.md)
 - [The ideal of a point on a Weierstrass curve is nonzero](xyideal-ne-bot.md)
+- [Point ideals on a Weierstrass curve determine the point](xyideal-eq-xyideal-iff.md)
 - [The Weierstrass polynomial after a variable change](eval-eval-polynomial-variable-change.md)
 - [The partial derivatives of the Weierstrass polynomial after a variable change](eval-eval-partials-variable-change.md)
 - [The partial derivatives of a nonsingular Weierstrass polynomial generate the unit ideal](exists-mul-add-mul-eq-one-of-ne-zero.md)

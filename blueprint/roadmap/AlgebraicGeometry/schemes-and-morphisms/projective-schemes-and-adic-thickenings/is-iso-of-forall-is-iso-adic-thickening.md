@@ -1,0 +1,5 @@
+# Over a Noetherian I-adically complete base, isomorphisms of projective schemes are detected on adic thickenings
+
+Let $R$ be a Noetherian commutative ring that is $I$-adically complete for an ideal $I$. For $m \in \mathbb{N}$ write $\mathbb{P}^m_R = \operatorname{Proj} R[x_0, \dots, x_m]$ for projective space over $R$ with its structure morphism to $\operatorname{Spec} R$, and $X_n$ for the $n$-th adic thickening $X \times_{\operatorname{Spec} R} \operatorname{Spec}(R / I^{n+1})$ of a scheme over $\operatorname{Spec} R$.
+
+Let $\gamma : \Gamma \to \operatorname{Spec} R$ and $f : X \to \operatorname{Spec} R$ be morphisms, and assume there are closed immersions $\Gamma \to \mathbb{P}^N_R$ and $X \to \mathbb{P}^{N'}_R$ whose composites with the structure morphisms are $\gamma$ and $f$. Let $\psi : \Gamma \to X$ satisfy $f \circ \psi = \gamma$, and for each $n \in \mathbb{N}$ let $\psi_n : \Gamma_n \to X_n$ be a morphism compatible with $\psi$ under the inclusions $\Gamma_n \to \Gamma$, $X_n \to X$ and with the structure morphisms to $\operatorname{Spec}(R / I^{n+1})$. If every $\psi_n$ is an isomorphism, then $\psi$ is an isomorphism.

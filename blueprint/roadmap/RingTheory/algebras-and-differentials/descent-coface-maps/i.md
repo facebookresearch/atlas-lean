@@ -1,0 +1,3 @@
+# First inclusion into the tensor square
+
+For commutative rings $A$ and $B$ with $B$ an $A$-algebra, $i_1 : B \to B \otimes_A B$ is the ring homomorphism $b \mapsto b \otimes 1$, as a morphism of commutative rings.
