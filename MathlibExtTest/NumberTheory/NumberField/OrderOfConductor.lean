@@ -51,6 +51,13 @@ example (K : Type*) [Field K] [NumberField K] (hK : 2 ≤ Module.finrank ℚ K) 
       Ideal.span {((6 : ℕ) : integralClosure ℤ K)} :=
   NumberField.conductorIdeal_orderOfConductor 6 hK
 
+-- At `f = 0` the subring `ℤ + 0 · 𝒪_K` is the image of `ℤ`, which is not an order when the
+-- degree is at least `2`; its conductor in `𝒪_K` is still defined, and it is the zero ideal.
+example (K : Type*) [Field K] [NumberField K] (hK : 2 ≤ Module.finrank ℚ K) :
+    ((NumberField.orderOfConductor K 0).comap (integralClosure ℤ K).val).conductorIdeal = ⊥ := by
+  rw [NumberField.conductorIdeal_orderOfConductor 0 hK, Nat.cast_zero,
+    Ideal.span_singleton_eq_bot]
+
 example (K : Type*) [Field K] [NumberField K] (hK : 2 ≤ Module.finrank ℚ K) :
     ((NumberField.orderOfConductor K 6).comap
       (integralClosure ℤ K).val).toSubmodule.toAddSubgroup.index =

@@ -10,7 +10,7 @@ module
 
 public import MathlibExt.NumberTheory.NumberField.OrderIdeals
 public import Mathlib.Data.ZMod.QuotientRing
-public import Mathlib.FieldTheory.Finite.Basic
+public import Mathlib.RingTheory.Flat.FaithfullyFlat.Algebra
 
 @[expose] public section
 
@@ -83,13 +83,10 @@ private theorem orderOfConductor_le (f : ℕ) : orderOfConductor K f ≤ integra
 /-- Every element of `K` has a nonzero integer multiple in `𝒪_K`. -/
 private theorem exists_intCast_mul_mem (x : K) :
     ∃ n : ℤ, n ≠ 0 ∧ (n : K) * x ∈ integralClosure ℤ K := by
-  have := (isOrder_integralClosure K).isLocalization
-  obtain ⟨⟨a, _, n, hn, rfl⟩, h⟩ :=
-    IsLocalization.surj (Algebra.algebraMapSubmonoid (integralClosure ℤ K) (nonZeroDivisors ℤ)) x
-  refine ⟨n, nonZeroDivisors.ne_zero hn, ?_⟩
-  rw [← IsScalarTower.algebraMap_apply ℤ (integralClosure ℤ K) K, eq_intCast] at h
-  rw [mul_comm, h]
-  exact a.2
+  obtain ⟨n, hn, h⟩ := exists_integral_multiples ℤ ℚ ({x} : Finset K)
+  have hx : IsIntegral ℤ ((n : K) * x) := by
+    simpa [zsmul_eq_mul] using h x (Finset.mem_singleton_self x)
+  exact ⟨n, hn, hx⟩
 
 /-- An algebraic integer of `K` whose product with a nonzero integer is an integer is itself an
 integer (`ℤ` is integrally closed). -/
@@ -102,9 +99,9 @@ private theorem exists_intCast_eq_of_mul_eq {z : K} (hz : IsIntegral ℤ z) {n k
   have hq : IsIntegral ℤ ((k : ℚ) / n) :=
     (isIntegral_algHom_iff ((Algebra.ofId ℚ K).restrictScalars ℤ)
       (fun a b hab => (algebraMap ℚ K).injective hab)).mp hz
-  obtain ⟨y, hy⟩ := IsIntegrallyClosed.isIntegral_iff.mp hq
+  obtain ⟨y, hy⟩ := hq.mem_range_ratCast_iff.mp ⟨(k : ℚ) / n, rfl⟩
   refine ⟨y, ?_⟩
-  rw [hzq, ← hy, eq_intCast, map_intCast]
+  rw [hzq, ← hy, map_intCast]
 
 /-- **$\mathbb{Z} + f\mathcal{O}_K$ is an order.** Let $K$ be a number field with ring of
 integers $\mathcal{O}_K$ and let $f$ be a positive integer. Then $\mathbb{Z} + f\mathcal{O}_K$
@@ -224,24 +221,11 @@ $f \geq 0$ is allowed. -/
 theorem comap_algebraMap_span_natCast (f : ℕ) :
     (Ideal.span {(f : integralClosure ℤ K)}).comap (algebraMap ℤ (integralClosure ℤ K)) =
       Ideal.span {(f : ℤ)} := by
-  ext k
-  rw [Ideal.mem_comap, eq_intCast, Ideal.mem_span_singleton', Ideal.mem_span_singleton]
-  constructor
-  · rintro ⟨a, ha⟩
-    have haK : ((f : ℤ) : K) * (a : K) = (k : K) := by
-      have := congrArg Subtype.val ha
-      push_cast at this ⊢
-      linear_combination this
-    rcases Nat.eq_zero_or_pos f with rfl | hf
-    · have hk : (k : K) = 0 := by rw [← haK]; simp
-      rw [Int.cast_eq_zero] at hk
-      simp [hk]
-    · obtain ⟨y, hy⟩ := exists_intCast_eq_of_mul_eq a.2 (by exact_mod_cast hf.ne') haK
-      refine ⟨y, ?_⟩
-      rw [hy] at haK
-      exact_mod_cast haK.symm
-  · rintro ⟨c, rfl⟩
-    exact ⟨c, by push_cast; ring⟩
+  have : Module.FaithfullyFlat ℤ (integralClosure ℤ K) :=
+    inferInstanceAs (Module.FaithfullyFlat ℤ (NumberField.RingOfIntegers K))
+  have h := Ideal.comap_map_eq_self_of_faithfullyFlat (B := integralClosure ℤ K)
+    (Ideal.span {(f : ℤ)})
+  rwa [Ideal.map_span, Set.image_singleton, map_natCast] at h
 
 /-- **The conductor of $\mathbb{Z} + f\mathcal{O}_K$.** Let $K \neq \mathbb{Q}$ be a number field
 ($[K : \mathbb{Q}] \geq 2$) with ring of integers $\mathcal{O}_K$ (`integralClosure ℤ K`), and let
@@ -342,15 +326,10 @@ theorem quotientLift_intCastRingHom_bijective_orderOfConductor (f : ℕ) (hf : 0
           (Subalgebra.inclusion (isOrder_orderOfConductor f hf).le_integralClosure))))
       fun _ ha => RingHom.mem_ker.mp
         ((ker_intCastRingHom_quotient_orderOfConductor f hf hK).ge ha)) := by
-  refine ⟨?_, fun q => ?_⟩
-  · rw [injective_iff_map_eq_zero]
-    intro x ha
-    obtain ⟨a, rfl⟩ := Ideal.Quotient.mk_surjective x
-    rw [Ideal.Quotient.lift_mk] at ha
-    rw [Ideal.Quotient.eq_zero_iff_mem, ← ker_intCastRingHom_quotient_orderOfConductor f hf hK]
-    exact ha
-  · obtain ⟨k, hk⟩ := intCastRingHom_quotient_surjective f hf hK q
-    exact ⟨Ideal.Quotient.mk _ k, by rw [Ideal.Quotient.lift_mk]; exact hk⟩
+  exact ⟨RingHom.lift_injective_of_ker_le_ideal _ _
+      (ker_intCastRingHom_quotient_orderOfConductor f hf hK).le,
+    Ideal.Quotient.lift_surjective_of_surjective _ _
+      (intCastRingHom_quotient_surjective f hf hK)⟩
 
 /-- **The units of $(\mathbb{Z} + f\mathcal{O}_K)/\mathfrak{c}$.** Let $K \neq \mathbb{Q}$ be a
 number field ($[K : \mathbb{Q}] \geq 2$) with ring of integers $\mathcal{O}_K$, let $f$ be a
