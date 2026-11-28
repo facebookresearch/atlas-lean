@@ -1,0 +1,27 @@
+# Online regret and exploration
+
+Learning to act in an unknown finite MDP from the learner's own trajectories: regret in episodic and average-reward settings, optimistic algorithms and the variance techniques behind their sharp bounds, lower bounds (matched up to logarithmic factors for episodic regret), and reward-free exploration.
+
+- [Episodic Markov decision process with stage-dependent transitions](episodic-mdp-with-stage-dependent-transitions.md)
+- [Online episodic learning and regret](online-episodic-learning-and-regret.md)
+- [Law of total variance for episodic returns](law-of-total-variance-for-episodic-returns.md)
+- [Upper confidence bound value iteration (UCBVI)](upper-confidence-bound-value-iteration.md)
+- [Regret bound for UCBVI with Hoeffding bonuses](ucbvi-hoeffding-regret-bound.md)
+- [Regret bound for UCBVI with Bernstein bonuses](ucbvi-bernstein-regret-bound.md)
+- [Q-learning with upper-confidence exploration bonuses](optimistic-q-learning-with-ucb-bonuses.md)
+- [Learning-rate weights of optimistic Q-learning](learning-rate-weights-of-optimistic-q-learning.md)
+- [Regret bound for Q-learning with Hoeffding bonuses](optimistic-q-learning-hoeffding-regret-bound.md)
+- [Regret bound for Q-learning with Bernstein bonuses](optimistic-q-learning-bernstein-regret-bound.md)
+- [Minimax regret lower bound for episodic MDPs with stage-dependent transitions](episodic-minimax-regret-lower-bound.md)
+- [Minimax-optimal episodic regret without burn-in](minimax-regret-without-burn-in.md)
+- [Horizon-free sample complexity for stationary episodic MDPs](horizon-free-sample-complexity.md)
+- [Diameter of a Markov decision process](diameter-of-an-mdp.md)
+- [Regret against the optimal average reward](regret-against-optimal-average-reward.md)
+- [Finite-step optimal values have span at most the diameter](finite-step-value-span-at-most-diameter.md)
+- [UCRL2 and extended value iteration](ucrl2-and-extended-value-iteration.md)
+- [UCRL2 confidence sets contain the true MDP with high probability](ucrl2-confidence-sets-contain-true-mdp.md)
+- [Regret bound for UCRL2](ucrl2-regret-bound.md)
+- [Regret lower bound for MDPs with a given diameter](regret-lower-bound-for-given-diameter.md)
+- [Reward-free exploration](reward-free-exploration.md)
+- [Sample complexity of reward-free exploration](reward-free-exploration-upper-bound.md)
+- [Lower bound for reward-free exploration](reward-free-exploration-lower-bound.md)
