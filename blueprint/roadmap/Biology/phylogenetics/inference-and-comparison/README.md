@@ -34,3 +34,4 @@ These articles concern inference of evolutionary trees, networks and recorded ce
 
 - [Monte Carlo phylogenetic bootstrap support](phylogenetic-bootstrap-support-definition-and-no.md)
 - [Phylogenetic network identifiability, recombination tests, and tree-space geometry](phylogenetic-network-identifiability-and-geometry/README.md)
+- [Constrained tree merging and skyline models](constrained-tree-merging-and-skyline-models/README.md)

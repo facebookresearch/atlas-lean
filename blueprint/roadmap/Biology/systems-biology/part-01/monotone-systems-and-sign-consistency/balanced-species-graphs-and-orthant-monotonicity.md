@@ -1,0 +1,21 @@
+# Balanced species graphs and orthant monotonicity
+
+**Species graph.** For a system $\dot x = f(x)$ of $n$ species, the species graph $G$ has one node $v_i$ per species and an edge $v_j \to v_i$ ($j \neq i$) whenever $\partial f_i / \partial x_j$ is not identically zero, labeled $+1$ if $\partial f_i/\partial x_j \ge 0$ everywhere and $-1$ if $\partial f_i/\partial x_j \le 0$ everywhere. Self-loops (diagonal Jacobian entries) are omitted for differential equations; a sign-changing entry is split into an activating and an inhibiting path through an added intermediate node, so $G$ has no multiple edges.
+
+**Consistency.** A spin assignment is a map $\sigma : \{v_1, \dots, v_n\} \to \{+1, -1\}$. An edge $v_j \to v_i$ with label $J_{ij}$ is consistent with $\sigma$ if $J_{ij}\, \sigma_i \sigma_j = +1$: positive edges join equal spins and negative edges join opposite spins. The system is called monotone (with respect to an orthant order) if some spin assignment makes every edge consistent.
+
+**Theorem (balance criterion).** $G$ admits a consistent spin assignment if and only if every undirected loop of $G$ (edges may be traversed backward) carries an even number, possibly zero, of negative edges; equivalently, any two undirected paths between the same two nodes have the same sign. If $G$ is connected, there are then exactly two consistent assignments, each the spin flip of the other.
+
+**Kamke's theorem.** Let $\sigma$ be consistent, let $x(t)$ be a solution, and let $z(t)$ be the solution from the initial state obtained by increasing only coordinate $i$, with $\sigma_i = +1$: $z_i(0) > x_i(0)$ and $z_j(0) = x_j(0)$ for $j \neq i$. Then for all $t \ge 0$, $z_j(t) \ge x_j(t)$ for every $j$ with $\sigma_j = +1$ and $z_j(t) \le x_j(t)$ for every $j$ with $\sigma_j = -1$, with at least one inequality strict.
+
+**Convergence.** Continuous-time monotone systems admit no attracting periodic orbits. If the Jacobian is irreducible at every state (the graph is strongly connected and every non-identically-zero entry is nonzero everywhere), the system is strongly monotone, and by Hirsch's generic convergence theorem almost every bounded solution converges to the set of steady states. If all solutions are bounded and any two states have a least upper bound and a greatest lower bound in the state space (for example, a box for the order), a unique steady state is globally asymptotically stable (Dancer).
+
+## Expansion
+
+If $\sigma$ is consistent, multiply $J_{ij} = \sigma_i \sigma_j$ around any undirected loop: each spin appears twice, so the product of the edge signs is $+1$. Conversely, on a connected balanced graph, fix $\sigma(v_1) = +1$ and give every other node the sign of any path from $v_1$; path independence makes this well defined and every edge consistent. The only freedom is the choice at $v_1$, hence two assignments. Balance can be checked by a linear-time traversal, so testing monotonicity never requires trying all $2^n$ assignments.
+
+Kamke's theorem formalizes predictable responses: an up-perturbation of one species propagates as an unambiguous rise or fall of every other species, whatever the kinetic constants or rate laws, because every path between two nodes has the same sign. In a planar cooperative system, a periodic orbit would require $\dot x$ to have opposite signs at two points with the same $x$ and ordered $y$, contradicting monotonicity; Hirsch's theorem extends this one-dimensional-like behavior to arbitrary dimension. Monotonicity allows positive feedback and negative self-loops (degradation) but forbids negative loops between distinct species.
+
+## Sources
+
+- E. D. Sontag, "Monotone and near-monotone biochemical networks", Systems and Synthetic Biology 1 (2007) 59 to 87, sections "The graph associated to a system", "Spin assignments and consistency" (balance criterion, quoting Theorem 3 of Harary 1953), "Monotone systems", "Consistent response to perturbations" (Kamke's theorem) and "Dynamical behavior of monotone systems" (planar argument, Hirsch generic convergence, Dancer's unique-equilibrium result) and "Step-input steady-state responses (characteristics) of open-loop systems", <https://doi.org/10.1007/s11693-007-9005-9>, PMCID PMC2533521.

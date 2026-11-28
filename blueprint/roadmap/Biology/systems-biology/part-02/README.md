@@ -1,0 +1,26 @@
+# Gene regulatory networks: dynamics, control and inference
+
+Oscillation, stability, robustness and control of gene regulatory circuits, dominating sets and controllability of networks, and inference of regulatory networks from data.
+
+- [Change points in switching gene regulatory networks](change-points-in-switching-gene-regulatory-networks/README.md)
+- [Conditional Granger causality network inference](conditional-granger-causality-network-inference/README.md)
+- [Critical and redundant nodes of minimum dominating sets](critical-and-redundant-nodes-of-minimum-dominating-sets/README.md)
+- [Cyclic repressor ring oscillators](cyclic-repressor-ring-oscillators/README.md)
+- [Effective networks from steady-state perturbations](effective-networks-from-steady-state-perturbations/README.md)
+- [Experiment design for distinguishing regulatory programs](experiment-design-for-distinguishing-regulatory-programs/README.md)
+- [Fast promoter binding limit of gene oscillators](fast-promoter-binding-limit-of-gene-oscillators/README.md)
+- [Graphical Granger models of gene regulation](graphical-granger-models-of-gene-regulation/README.md)
+- [Huber group lasso for multi-dataset gene networks](huber-group-lasso-for-multi-dataset-gene-networks/README.md)
+- [Intein-based integral feedback control](intein-based-integral-feedback-control/README.md)
+- [Minimum dominating sets of multilayer networks](minimum-dominating-sets-of-multilayer-networks/README.md)
+- [Nested effects models](nested-effects-models/README.md)
+- [Passivity-based stability of gene regulatory networks](passivity-based-stability-of-gene-regulatory-networks/README.md)
+- [Recursive elastic net for VAR gene networks](recursive-elastic-net-for-var-gene-networks/README.md)
+- [Reporter gene transcription reconstruction](reporter-gene-transcription-reconstruction/README.md)
+- [Robust synchronization of stochastic genetic oscillators](robust-synchronization-of-stochastic-genetic-oscillators/README.md)
+- [Stochastic robustness of gene regulatory networks](stochastic-robustness-of-gene-regulatory-networks/README.md)
+- [Structural controllability with nodal dynamics](structural-controllability-with-nodal-dynamics/README.md)
+- [Symmetric limit cycles of circular negative-feedback networks](symmetric-limit-cycles-of-circular-negative-feedback-networks/README.md)
+- [Threshold Boolean automata networks](threshold-boolean-automata-networks/README.md)
+- [Time-delay Boolean networks](time-delay-boolean-networks/README.md)
+- [Upstream regulator inference on causal graphs](upstream-regulator-inference-on-causal-graphs/README.md)

@@ -20,7 +20,7 @@ Let $Z_{cc} = \{(\kappa, b) : \mathbb{V}_{>0}(F_{\kappa,b}) \ne \varnothing\}$.
 
 ## Depends on
 
-- [Nondegeneracy Conjecture for reaction networks](../../nondegeneracy-conjecture-for-reaction-networks.md)
+- [Nondegeneracy Conjecture for reaction networks](../../part-01/nondegeneracy-conjecture-for-reaction-networks.md)
 
 ## Expansion
 

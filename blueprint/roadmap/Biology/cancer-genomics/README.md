@@ -25,3 +25,4 @@ Mathematical models for tumour sequencing data: purity and copy number, cancer c
 - [Controllability of adaptive cancer therapy](controllability-of-adaptive-cancer-therapy/README.md)
 - [Immune extinction threshold models](immune-extinction-threshold-models/README.md)
 - [Minimum uncovering branching](minimum-uncovering-branching/README.md)
+- [Subclonal trees and copy-number decomposition](subclonal-trees-and-copy-number-decomposition/README.md)
