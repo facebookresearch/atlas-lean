@@ -1,0 +1,5 @@
+# Uniqueness of the Gaussian heat solution in the exponential-growth class
+
+For an initial datum $f$, the heat evolution is $Hf(s, x) = \int G_s(x - y)\,f(y)\,dy$ for $s > 0$ ($G_s$ the one-dimensional heat kernel) and $Hf(s, x) = f(x)$ for $s \le 0$. A function $f$ has exponential growth when $|f(x)| \le M e^{c|x|}$ for all $x$, and a field $u(t, x)$ has exponential growth on the strip $[0, T]$ when $|u(t, x)| \le M e^{c|x|}$ for all $t \in [0, T]$ and all $x$, in both cases for some $M, c \ge 0$.
+
+Let $\nu > 0$, $T \in \mathbb{R}$, and $f$ continuous with exponential growth. Let $u, u_t : \mathbb{R}^2 \to \mathbb{R}$ with $u$ jointly continuous on $[0, T] \times \mathbb{R}$, $u(0, x) = f(x)$ for all $x$, and $u$ of exponential growth on the strip $[0, T]$. Suppose that for every $t \in (0, T]$ and every $x$, $u(t, \cdot)$ is $C^2$ at $x$, $u_t(t, x)$ is the left time derivative of $s \mapsto u(s, x)$ at $t$ (derivative within $(-\infty, t]$), and $u_t(t, x) = \nu\,\partial_x^2 u(t, x)$. Then $u(t, x) = Hf(\nu t, x)$ for every $t \in [0, T]$ and every $x$.

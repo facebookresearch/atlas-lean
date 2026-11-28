@@ -8,3 +8,5 @@ Groups acting on rooted trees, branch and just-infinite groups of intermediate g
 - [Just infinite groups](just-infinite-groups/README.md)
 - [Maximal subgroups of branch groups](maximal-subgroups-of-branch-groups/README.md)
 - [Thompson's group F](thompson-s-group-f/README.md)
+- [Conjugacy problem in branch groups](conjugacy-problem-in-branch-groups/README.md)
+- [Brin–Thompson groups](brin-thompson-groups/README.md)

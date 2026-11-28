@@ -9,3 +9,5 @@ Braid groups, pure braid groups and Artin–Tits groups of Coxeter matrices: end
 - [Endomorphisms of braid groups](endomorphisms-of-braid-groups/README.md)
 - [Pure braid groups](pure-braid-groups/README.md)
 - [Roots in braid groups](roots-in-braid-groups/README.md)
+- [Decision problems for subgroups of braid groups](decision-problems-for-subgroups-of-braid-groups/README.md)
+- [Decision problems for subgroups of right-angled Artin groups](subgroups-of-right-angled-artin-groups/README.md)
