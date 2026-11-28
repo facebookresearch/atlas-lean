@@ -15,7 +15,8 @@ import MathlibExt.RingTheory.Length.FiniteColength
 import MathlibExt.RingTheory.Length.FiniteFractionSubmodule
 import MathlibExt.RingTheory.Length.DoubleQuotient
 import MathlibExt.RingTheory.Length.ExactEulerChain
-import Mathlib.Data.Rat.Basic
+import Mathlib.Data.Rat.Defs
+import Mathlib.Algebra.Field.Rat
 import Mathlib.Data.ZMod.Basic
 import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.NormNum
