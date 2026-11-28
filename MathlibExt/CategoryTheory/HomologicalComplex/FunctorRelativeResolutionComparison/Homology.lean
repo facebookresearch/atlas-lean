@@ -9,19 +9,29 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.CategoryTheory.HomologicalComplex.FunctorRelativeResolutionComparison.Coherence
+public import
+  MathlibExt.CategoryTheory.HomologicalComplex.FunctorRelativeResolutionComparison.Coherence
 public import Mathlib.Algebra.Homology.ShortComplex.HomologicalComplex
 
 /-!
 # Homology maps of split relative-resolution comparisons
 
-Let `D` be preadditive with a zero object and kernels, `C,E`
-preadditive, and `U : D → C`, `T : D → E` additive. Relative
-comparison maps into a `U`-split augmented complex, under preservation
-of its displayed kernels, are unique up to chain homotopy.
-Applying `T` gives equal maps wherever the displayed homologies exist.
-Identity and composition therefore hold on homology, and two split
-relative resolutions give a homology isomorphism.
+Let `D` be preadditive with a zero object and kernels, `C,E` preadditive,
+and `U : D → C`, `T : D → E` additive. Let `α : Q → X[0]` and
+`β : P → Y[0]` be chain augmentations. Assume every term of `Q` is
+`U`-relative-projective, `β` has a contracting splitting after `U`, and
+`U` preserves the kernel of `β₀` and every differential kernel of `P`.
+Two maps `Q → P` lifting the same endpoint map `f : X → Y` are homotopic.
+After applying `T`, they induce equal degree-`n` homology maps when the
+homologies of `T(Q)` and `T(P)` exist. The corresponding relative-projective,
+splitting, kernel-preservation and homology-existence hypotheses give
+identity and composition coherence on homology.
+
+For a homology isomorphism, both complexes augment to the same object `X`,
+both have `U`-relative-projective terms and contracting splittings after `U`,
+and `U` preserves both sets of augmentation and differential kernels.
+The degree-`n` homologies of both `T(Q)` and `T(P)` must exist.
+The comparison maps over `𝟙 X` then induce inverse homology maps.
 -/
 
 @[expose] public section
@@ -45,7 +55,8 @@ abbrev mappedResolution (Q : ChainComplex D ℕ) : ChainComplex E ℕ :=
 preadditive, and `U : D → C`, `T : D → E` additive. Let
 `α : Q → X[0]`, `β : P → Y[0]` be chain augmentations, with
 `U(P → Y[0])` contractingly split, all `Q_n` `U`-relative-projective,
-and `U` preserving the kernels of `β₀` and every differential of `P`. For `f : X → Y`, applying `T` to the relative comparison
+and `U` preserving the kernels of `β₀` and every differential of `P`. For `f : X → Y`, applying `T`
+to the relative comparison
 gives a chain map `T(Q) → T(P)`. -/
 def mappedRelativeComparison (Q P : ChainComplex D ℕ) (X Y : D)
     (α : Q ⟶ (ChainComplex.single₀ D).obj X) (β : P ⟶ (ChainComplex.single₀ D).obj Y)
@@ -60,7 +71,8 @@ def mappedRelativeComparison (Q P : ChainComplex D ℕ) (X Y : D)
 preadditive, and `U : D → C`, `T : D → E` additive. Let
 `α : Q → X[0]`, `β : P → Y[0]` be chain augmentations, with
 `U(P → Y[0])` contractingly split, all `Q_n` `U`-relative-projective,
-and `U` preserving the kernels of `β₀` and every differential of `P`. Suppose the degree-`n` homologies of `T(Q),T(P)` exist. For `f : X → Y`, the mapped relative comparison induces
+and `U` preserving the kernels of `β₀` and every differential of `P`. Suppose the degree-`n`
+homologies of `T(Q),T(P)` exist. For `f : X → Y`, the mapped relative comparison induces
 `H_n(T(Q)) → H_n(T(P))`. -/
 def comparisonHomologyMap (Q P : ChainComplex D ℕ) (X Y : D)
     (α : Q ⟶ (ChainComplex.single₀ D).obj X) (β : P ⟶ (ChainComplex.single₀ D).obj Y)
@@ -75,7 +87,8 @@ def comparisonHomologyMap (Q P : ChainComplex D ℕ) (X Y : D)
 preadditive, and `U : D → C`, `T : D → E` additive. Let
 `α : Q → X[0]`, `β : P → Y[0]` be chain augmentations, with
 `U(P → Y[0])` contractingly split, all `Q_n` `U`-relative-projective,
-and `U` preserving the kernels of `β₀` and every differential of `P`. Suppose the degree-`n` homologies of `T(Q),T(P)` exist. Any two chain maps `g,h : Q → P` over the same `f : X → Y`
+and `U` preserving the kernels of `β₀` and every differential of `P`. Suppose the degree-`n`
+homologies of `T(Q),T(P)` exist. Any two chain maps `g,h : Q → P` over the same `f : X → Y`
 induce equal maps on degree-`n` homology after `T`. -/
 theorem mappedHomologyMap_independent (Q P : ChainComplex D ℕ) (X Y : D)
     (α : Q ⟶ (ChainComplex.single₀ D).obj X) (β : P ⟶ (ChainComplex.single₀ D).obj Y)
@@ -94,7 +107,8 @@ theorem mappedHomologyMap_independent (Q P : ChainComplex D ℕ) (X Y : D)
 preadditive, and `U : D → C`, `T : D → E` additive. Let
 `α : Q → X[0]`, `β : P → Y[0]` be chain augmentations, with
 `U(P → Y[0])` contractingly split, all `Q_n` `U`-relative-projective,
-and `U` preserving the kernels of `β₀` and every differential of `P`. Suppose the degree-`n` homologies of `T(Q),T(P)` exist. Any chain map `g : Q → P` over `f : X → Y` computes the
+and `U` preserving the kernels of `β₀` and every differential of `P`. Suppose the degree-`n`
+homologies of `T(Q),T(P)` exist. Any chain map `g : Q → P` over `f : X → Y` computes the
 canonical comparison homology map as `H_n(T(g))`. -/
 theorem comparisonHomologyMap_eq_of_augmentation (Q P : ChainComplex D ℕ) (X Y : D)
     (α : Q ⟶ (ChainComplex.single₀ D).obj X) (β : P ⟶ (ChainComplex.single₀ D).obj Y)
@@ -126,10 +140,12 @@ theorem comparisonHomologyMap_id (Q : ChainComplex D ℕ) (X : D)
   simpa only [Functor.map_id, homologyMap_id] using h
 
 /-- Let `D` be preadditive with a zero object and kernels, `C`
-preadditive, and `U : D → C` additive. Let `Q → X[0]`, `P → Y[0]`, `R → Z[0]` be chain augmentations,
+preadditive, and `U : D → C` additive. Let `Q → X[0]`, `P → Y[0]`, `R → Z[0]` be chain
+augmentations,
 with the augmentations of `P,R` contractingly split after `U`,
 all terms of `Q,P` `U`-relative-projective, and `U` preserving the
-augmentation and differential kernels of `P,R`. For additive `T : D → E` with `E` preadditive and existing
+augmentation and differential kernels of `P,R`. For additive `T : D → E` with `E` preadditive and
+existing
 `H_n(T(Q)),H_n(T(P)),H_n(T(R))`, comparison over `f ≫ g` is the
 composite of comparison over `f : X → Y` and over `g : Y → Z`. -/
 theorem comparisonHomologyMap_comp (Q P R : ChainComplex D ℕ) (X Y Z : D)
@@ -156,7 +172,8 @@ preadditive, and `U : D → C`, `T : D → E` additive. Let
 `Q → X[0]`, `P → X[0]` have contracting splittings after `U`,
 with all terms `U`-relative-projective, and `U` preserving each
 augmentation kernel and differential kernel of both complexes.
-Suppose the degree-`n` homologies of `T(Q),T(P)` exist. The inverse comparisons over `𝟙 X` give a canonical
+Suppose the degree-`n` homologies of `T(Q),T(P)` exist. The inverse comparisons over `𝟙 X` give a
+canonical
 isomorphism `H_n(T(Q)) ≅ H_n(T(P))`. -/
 def comparisonHomologyIso (Q P : ChainComplex D ℕ) (X : D)
     (α : Q ⟶ (ChainComplex.single₀ D).obj X) (β : P ⟶ (ChainComplex.single₀ D).obj X)
@@ -174,7 +191,8 @@ preadditive, and `U : D → C`, `T : D → E` additive. Let
 `Q → X[0]`, `P → X[0]` have contracting splittings after `U`,
 with all terms `U`-relative-projective, and `U` preserving each
 augmentation kernel and differential kernel of both complexes.
-Suppose the degree-`n` homologies of `T(Q),T(P)` exist. The forward map of the canonical homology isomorphism
+Suppose the degree-`n` homologies of `T(Q),T(P)` exist. The forward map of the canonical homology
+isomorphism
 is the comparison homology map from `Q` to `P` over `𝟙 X`. -/
 theorem comparisonHomologyIso_hom (Q P : ChainComplex D ℕ) (X : D)
     (α : Q ⟶ (ChainComplex.single₀ D).obj X) (β : P ⟶ (ChainComplex.single₀ D).obj X)
@@ -191,7 +209,8 @@ theorem comparisonHomologyIso_hom (Q P : ChainComplex D ℕ) (X : D)
 preadditive, and `U : D → C`, `T : D → E` additive. Let
 `α : Q → X[0]`, `β : P → Y[0]` be chain augmentations, with
 `U(P → Y[0])` contractingly split, all `Q_n` `U`-relative-projective,
-and `U` preserving the kernels of `β₀` and every differential of `P`. For `f : X → Y`, the mapped chain comparison satisfies
+and `U` preserving the kernels of `β₀` and every differential of `P`. For `f : X → Y`, the mapped
+chain comparison satisfies
 `T(comparison_f) ≫ T(β) = T(α) ≫ T(f[0])`. -/
 theorem mappedRelativeComparison_augmentation (Q P : ChainComplex D ℕ) (X Y : D)
     (α : Q ⟶ (ChainComplex.single₀ D).obj X) (β : P ⟶ (ChainComplex.single₀ D).obj Y)
@@ -211,9 +230,10 @@ theorem mappedRelativeComparison_augmentation (Q P : ChainComplex D ℕ) (X Y : 
 preadditive, and `U : D → C`, `T : D → E` additive. Let
 `α : Q → X[0]`, `β : P → Y[0]` be chain augmentations, with
 `U(P → Y[0])` contractingly split, all `Q_n` `U`-relative-projective,
-and `U` preserving the kernels of `β₀` and every differential of `P`. Suppose the degree-`n` homologies of `T(Q),T(P)` exist. Suppose also the degree-`n` homologies of `T(X[0]),T(Y[0])`
+and `U` preserving the kernels of `β₀` and every differential of `P`. Suppose the degree-`n`
+homologies of `T(Q),T(P)` exist. Suppose also the degree-`n` homologies of `T(X[0]),T(Y[0])`
 exist. The comparison homology map satisfies
-`H_n(comparison_f) ≫ H_n(T(β)) = H_n(T(α)) ≫ H_n(T(f[0]))`. -/
+`H_n(T(comparison_f)) ≫ H_n(T(β)) = H_n(T(α)) ≫ H_n(T(f[0]))`. -/
 theorem comparisonHomologyMap_augmentation (Q P : ChainComplex D ℕ) (X Y : D)
     (α : Q ⟶ (ChainComplex.single₀ D).obj X) (β : P ⟶ (ChainComplex.single₀ D).obj Y)
     (σP : AugmentationSplit U P Y β) (hQ : ∀ n, U.IsRelativeProjective (Q.X n))
@@ -225,7 +245,8 @@ theorem comparisonHomologyMap_augmentation (Q P : ChainComplex D ℕ) (X Y : D)
     comparisonHomologyMap U T Q P X Y α β σP hQ kP f n ≫
         homologyMap ((T.mapHomologicalComplex (ComplexShape.down ℕ)).map β) n =
       homologyMap ((T.mapHomologicalComplex (ComplexShape.down ℕ)).map α) n ≫
-        homologyMap ((T.mapHomologicalComplex (ComplexShape.down ℕ)).map ((ChainComplex.single₀ D).map f)) n := by
+        homologyMap ((T.mapHomologicalComplex (ComplexShape.down ℕ)).map
+          ((ChainComplex.single₀ D).map f)) n := by
   have h := congrArg (fun z => homologyMap z n)
     (mappedRelativeComparison_augmentation U T Q P X Y α β σP hQ kP f)
   dsimp only [comparisonHomologyMap]

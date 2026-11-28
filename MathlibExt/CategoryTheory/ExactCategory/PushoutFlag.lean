@@ -32,7 +32,7 @@ namespace CategoryTheory.ExactCategory
 
 variable {C : Type u} [Category.{v} C] [Preadditive C]
 
-/-- In an additive exact category `C`, let `P` be a pushout of
+/-- In a preadditive category `C`, let `P` be a pushout of
 `p : A → X` and `r : A → Y`, with legs `x : X → P`, `y : Y → P`.
 For `q : Y → Q` satisfying `r ≫ q = 0`, the induced map `P → Q`
 is uniquely characterized by `x ≫ map = 0` and `y ≫ map = q`. -/
@@ -42,7 +42,7 @@ noncomputable def pushoutQuotientMap
     (sq : IsPushout p r x y) : P ⟶ Q :=
   sq.desc (0 : X ⟶ Q) q (by simp [wr])
 
-/-- For the pushout of `p : A → X`, `r : A → Y` in an additive exact
+/-- For the pushout of `p : A → X`, `r : A → Y` in a preadditive
 category `C` and a map `q : Y → Q` with `r ≫ q = 0`, the induced
 quotient map `P → Q` has zero composite with the pushout leg `x : X → P`. -/
 @[reassoc (attr := simp)]
@@ -54,7 +54,7 @@ theorem pushoutQuotientMap_x
   unfold pushoutQuotientMap
   exact sq.inl_desc _ _ _
 
-/-- For the pushout of `p : A → X`, `r : A → Y` in an additive exact
+/-- For the pushout of `p : A → X`, `r : A → Y` in a preadditive
 category `C` and `q : Y → Q` with `r ≫ q = 0`, the induced
 quotient map restricts on `y : Y → P` to `q`: `y ≫ map = q`. -/
 @[reassoc (attr := simp)]

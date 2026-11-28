@@ -323,6 +323,8 @@
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "591acfa75dd705be863ff642835c28b7e7d7ad3d225afc43b2c3277873213621"
     },
+    {"path": "MathlibExt/Algebra/Category/ModuleCat/RingHomInduction/BalancedRelativeResolutionComparison.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "0808bc2f8197acee6ee000ae204a4ec9d2adb32cb2efa1a310dab92b4118f82c", "rationale": "Introduce the verified general relative-resolution and transport API prepared for MathlibExt, adapted to Atlas documentation; historical source snapshot does not yet contain this new module. Expand declaration and module docstrings into self-contained mathematical statements with their exact hypotheses, objects, maps, signs and conventions; move implementation prose to ordinary comments. All noncomment Lean tokens, declaration names/privacy and proofs are unchanged."},
+    {"path": "MathlibExt/Algebra/Category/ModuleCat/RingHomInduction/BalancedRelativeResolutionComparison/Coherence.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "cb90ea9d99858f35524aa19c7c40679f5d16f02750e36d441e42a0ba6765679d", "rationale": "Introduce the verified general relative-resolution and transport API prepared for MathlibExt, adapted to Atlas documentation; historical source snapshot does not yet contain this new module. Expand declaration and module docstrings into self-contained mathematical statements with their exact hypotheses, objects, maps, signs and conventions; move implementation prose to ordinary comments. All noncomment Lean tokens, declaration names/privacy and proofs are unchanged."},
     {
       "path": "MathlibExt/Algebra/Category/ModuleCat/RingHomInduction/Basic.lean",
       "backport": "not-needed",
@@ -895,6 +897,7 @@
       "published_sha256": "c227441eec8562db75a5a3abdf05efd194fdcf683de825cf6eb6e1e63b14448f",
       "upstream_sha256": "46bcc50aca40259892072820951beac30708d2b6eac0f04c638e45f602268790"
     },
+    {"path": "MathlibExt/Algebra/Homology/FiniteResolutionComparison.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "dc6ab6ea5001d8d59e47ff62df2d26b21cfef16539c5c04b5893dbe37a5a1d72", "rationale": "Import the reusable general homological algebra API with Atlas copyright and mathematical documentation, preserving its public hypotheses and eliminating source-campaign commentary. Expand declaration and module docstrings into self-contained mathematical statements with their exact hypotheses, objects, maps, signs and conventions; move implementation prose to ordinary comments. All noncomment Lean tokens, declaration names/privacy and proofs are unchanged.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "4c62c020cbedae23c2862a9cf8fea291345185044276335e9528f9df0441b762"},
     {
       "path": "MathlibExt/Algebra/Homology/FirstQuadrantTotalQuasiIso.lean",
       "backport": "not-needed",
