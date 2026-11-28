@@ -43,3 +43,4 @@
 - [The Michaelis–Menten QSSA contract](the-michaelis-menten-qssa-contract-small-paramet/README.md)
 - [Global positive trajectories of the Michaelis–Menten system](global-positive-trajectories-of-the-michaelis-me/README.md)
 - [Predominance of the standard QSSA and the Van Slyke-Cullen constant](predominance-of-the-standard-qssa-and-the-van-slyke-cullen-constant.md)
+- [Enzyme inhibition mechanisms](enzyme-inhibition-mechanisms/README.md)
