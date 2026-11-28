@@ -29,3 +29,13 @@ configurations, the cost model and the ordered group of values; the data-structu
   union by rank with path compression, whose inverse-Ackermann bound is an amortized one.
 - [List update problem](../../online-algorithms/list-update-problem/README.md): move-to-front,
   analysed with the inversion potential.
+
+- [Amortized-analysis examples (1)](amortized-analysis-examples-1/README.md)
+
+- [Amortized-analysis examples (2)](amortized-analysis-examples-2/README.md)
+
+- [Logarithm lemmas](logarithm-lemmas/README.md)
+
+- [The generic amortized framework](the-generic-amortized-framework/README.md)
+
+- [The unary (sequence) amortized framework](the-unary-sequence-amortized-framework/README.md)
