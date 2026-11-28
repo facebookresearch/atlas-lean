@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import MathlibExt.Combinatorics.Enumerative.Partition.MercaDistinctPartsSum
 public import MathlibExt.Combinatorics.Enumerative.Partition.MercaSignedTriangularSum
+public import MathlibExt.Combinatorics.Enumerative.Partition.MercaSquareSum
 public import MathlibExt.Combinatorics.Enumerative.Partition.MercaTwiceSquareSum
 
 /-!
@@ -29,26 +30,6 @@ whose shifted argument is nonnegative. `q_odd(k)` is `(Nat.Partition.oddDistinct
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Different parts in a residue class and even-minus-odd partition counts.** Let $m$, $r$ and
-$n$ be natural numbers with $r < m$, and for $k \ge 0$ let $a_{r,m}(k)$ be the sum, over all
-partitions of $k$, of the different parts congruent to $r$ modulo $m$, each counted once per
-partition whatever its multiplicity. Let $p_{e-o}(k) = \sum_{\mu} (-1)^{\ell(\mu)}$, the sum over
-the partitions $\mu$ of $k$ with $\ell(\mu)$ the number of parts of $\mu$; it is the number of
-partitions of $k$ with an even number of parts minus the number with an odd number of parts. Then
-$$a_{r,m}(n) + 2 \sum_{k \ge 1,\ k^2 \le n} (-1)^k a_{r,m}(n - k^2)
-= \sum_{j \ge 0,\ mj + r \le n} (mj + r)\, p_{e-o}(n - mj - r).$$
-
-Source: Cristina Ballantine, *Combinatorial Proofs of Merca's Identities Involving the Sum of
-Different Parts Congruent to r Modulo m in All Partitions of n*, INTEGERS 24 (2024),
-Article A15, Theorem 2 (`integers-2024-A15-thm-2`). -/
-public theorem_wanted sumDistinctPartsModEq_square_eq_evenOdd (m r n : ℕ) (hrm : r < m) :
-    (sumDistinctPartsModEq m r n : ℤ)
-        + 2 * ∑ k ∈ (Finset.Icc 1 n).filter (fun k => k ^ 2 ≤ n),
-          (-1 : ℤ) ^ k * (sumDistinctPartsModEq m r (n - k ^ 2) : ℤ)
-      = ∑ j ∈ (Finset.range (n + 1)).filter (fun j => m * j + r ≤ n),
-          ((m * j + r : ℕ) : ℤ) *
-            ∑ μ : Nat.Partition (n - (m * j + r)), (-1 : ℤ) ^ μ.parts.card
 
 /-- **Signed triangular sum of $s_m$ and distinct partitions.** Let $m \ge 1$ and $n$ be natural
 numbers. Write $s_m(k)$ for the sum of the different parts that appear at least $m$ times in

@@ -84,4 +84,30 @@ public theorem expectation_chapman {N n₁ n₂ : ℕ} (hn₁ : n₁ ≤ N) (hn�
       field_simp [hden']
       ring
 
+/-- **Exact unbiasedness and strict bias of Chapman's estimate.** For
+`n₁ ≤ N` and `n₂ ≤ N`, with `m` hypergeometric: if `n₁ + n₂ ≥ N` then
+`E[(n₁ + 1)(n₂ + 1)/(m + 1) - 1] = N`, and if `n₁ + n₂ < N` then this expectation is strictly less
+than `N`.
+
+Sources: D. G. Chapman, "Some properties of the hypergeometric distribution with applications to
+zoological sample censuses", Univ. California Publ. Statist. 1 (1951) 131–160; the closed form is
+derived. -/
+public theorem chapman_unbiased_iff {N n₁ n₂ : ℕ} (hn₁ : n₁ ≤ N) (hn₂ : n₂ ≤ N) :
+    (N ≤ n₁ + n₂ →
+        ∑ k ∈ Finset.range (n₂ + 1), hypergeometricReal N n₁ n₂ k * chapman n₁ n₂ k = N) ∧
+      (n₁ + n₂ < N →
+        ∑ k ∈ Finset.range (n₂ + 1), hypergeometricReal N n₁ n₂ k * chapman n₁ n₂ k < N) := by
+  rw [expectation_chapman hn₁ hn₂]
+  constructor
+  · intro h
+    rw [Nat.choose_eq_zero_of_lt (show N - n₁ < n₂ + 1 by omega)]
+    simp
+  · intro h
+    have hnum : (0 : ℝ) < (N - n₁).choose (n₂ + 1) := by
+      exact_mod_cast Nat.choose_pos (show n₂ + 1 ≤ N - n₁ by omega)
+    have hden : (0 : ℝ) < (N + 1).choose (n₂ + 1) := by
+      exact_mod_cast Nat.choose_pos (Nat.succ_le_succ hn₂)
+    have hscale : (0 : ℝ) < (N : ℝ) + 1 := by positivity
+    exact sub_lt_self _ (div_pos (mul_pos hscale hnum) hden)
+
 end WantedExt.Biology.Ecology.CaptureRecaptureWanted

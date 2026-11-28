@@ -11,11 +11,12 @@ public import Mathlib.Analysis.Calculus.Deriv.Add
 public import Mathlib.Analysis.Calculus.Deriv.Mul
 public import Mathlib.Basic.Real.Basic
 
+import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 
 /-!
-# Reactive balances: stock and concentration forms
+# Reactive balances: stock, concentration and volume forms
 
 ## i. Overview
 
@@ -28,6 +29,17 @@ variable-volume contribution and does not vanish for constant
 concentration. Division into concentration form needs nonzero volume at
 the instant. Derivatives are hypotheses; no existence claim is made.
 
+The liquid mass balance relates to the volume balance in the same way.
+With supplied derivatives of the density `rho` and the volume `V`, nonzero
+density at the instant, and the mass balance
+`(rho * V)' = rho_in * Qin - rho * Qout` (inflow of density `rho_in`,
+outflow at the vessel density), the volume derivative is
+`V' = (rho_in / rho) * Qin - Qout - V * rho' / rho`. Under the
+constant-density closure `rho = rho_in = rho0` this reduces to the volume
+law `V' = Qin - Qout`. The closure is sufficient, not necessary: the law
+also holds whenever the two corrections cancel,
+`(rho_in - rho) * Qin = V * rho'`.
+
 ## ii. Key results
 
 - `ReactiveBalance.stock_iff_concentration`: the stock and concentration
@@ -36,10 +48,16 @@ the instant. Derivatives are hypotheses; no existence claim is made.
   stock balance determines the concentration derivative.
 - `ReactiveBalance.closed_constant_volume`: the closed constant-volume
   specialization `V0 * c' i = G`.
+- `ReactiveBalance.volume_balance_of_const_density`: under the
+  constant-density closure, the liquid mass balance gives the volume law
+  `V' = Qin - Qout`. Without that closure, `ReactiveBalance.volume_deriv_eq`
+  gives `V' = (rho_in / rho) * Qin - Qout - V * rho' / rho`, which keeps the
+  factor `rho_in / rho` on `Qin` and the term `-V * rho' / rho`.
 
 ## iii. Table of contents
 
 - A. Stock and concentration balances
+- B. Mass versus volume balance
 
 ## iv. References
 
@@ -56,7 +74,7 @@ namespace Engineering.Process.ReactiveBalance
 
 /-- Product rule for one species stock `V * c i`: its derivative is
 `V' * c i + V * c' i` at the instant `t`. -/
-theorem stock_deriv_eq {ι : Type*} {V : ℝ → ℝ} {c : ℝ → ι → ℝ}
+lemma stock_deriv_eq {ι : Type*} {V : ℝ → ℝ} {c : ℝ → ι → ℝ}
     {V' : ℝ} {c' : ι → ℝ} {t : ℝ}
     (hV : HasDerivAt V V' t) (i : ι)
     (hc : HasDerivAt (fun t => c t i) (c' i) t) :
@@ -109,5 +127,36 @@ theorem closed_constant_volume {ι : Type*} {V0 : ℝ} {c : ℝ → ι → ℝ}
   · intro heq
     rw [← heq]
     exact h
+
+/-! ## B. Mass versus volume balance -/
+
+/-- **Volume derivative from the mass balance.** If `rho` and `V` have
+derivatives `rho'` and `V'` at the instant `t`, `rho t ≠ 0`, and the mass
+`rho * V` has derivative `rho_in * Qin - rho t * Qout` at `t` (inflow of
+density `rho_in`, outflow at the vessel density), then
+`V' = (rho_in / rho t) * Qin - Qout - V t * rho' / rho t`. This shows why mass
+conservation alone is insufficient for a volume law when the density
+changes. -/
+lemma volume_deriv_eq {rho V : ℝ → ℝ} {rho' V' t : ℝ}
+    (hrho : HasDerivAt rho rho' t) (hV : HasDerivAt V V' t)
+    (hrho0 : rho t ≠ 0) (rho_in Qin Qout : ℝ)
+    (hmass : HasDerivAt (fun t => rho t * V t)
+      (rho_in * Qin - rho t * Qout) t) :
+    V' = rho_in / rho t * Qin - Qout - V t * rho' / rho t := by
+  have hmul := hrho.mul hV
+  have heq := hmass.unique hmul
+  field_simp
+  linarith
+
+/-- **Volume balance under the constant-density closure.** If `V` has
+derivative `V'` at the instant `t`, the density is a constant `rho0 > 0`
+equal to the inflow density, and the mass `rho0 * V` has derivative
+`rho0 * Qin - rho0 * Qout` at `t`, then `V' = Qin - Qout`. -/
+theorem volume_balance_of_const_density {V : ℝ → ℝ} {V' t rho0 : ℝ}
+    (hV : HasDerivAt V V' t) (hrho0 : 0 < rho0) (Qin Qout : ℝ)
+    (hmass : HasDerivAt (fun t => rho0 * V t) (rho0 * Qin - rho0 * Qout) t) :
+    V' = Qin - Qout := by
+  have h := volume_deriv_eq (hasDerivAt_const t rho0) hV hrho0.ne' rho0 Qin Qout hmass
+  simpa [hrho0.ne'] using h
 
 end Engineering.Process.ReactiveBalance

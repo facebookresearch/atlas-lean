@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Algebra.BigOperators.Intervals
 public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.Nat.Nth
@@ -28,12 +29,17 @@ requested term of the complementary sequence. More generally, an interleaving fu
 locates the gap containing the requested term for any sequence with sufficiently large gaps.
 Rounding $\sqrt{2n}$ to the nearest integer locates the gap of the triangular numbers containing
 the $n$-th non-triangular number.
+For $k > 1$ and $n \ge 1$, an integer $(k+1)$-st root narrows the search to two gaps for the $n$-th
+positive integer outside the values $m + \sum_{i=1}^m i^k$ for $m \ge 1$.
 
 ## References
 
 * Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025), Article A95,
   Section 2.1, Theorems 1 and 2 (pp. 4–5). The two-step proof uses the gap comparison from
   Theorem 2.
+* Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025), Article A95,
+  Section 2.2.5, Theorem 11 (p. 13, third equivalent form). The proof here uses discrete
+  power bounds and this module's `nthNonValue_pyramidal_two_case_le_eight.nthNonValue_of_gap`.
 * J. Lambek and L. Moser, *Inverse and Complementary Sequences of Natural Numbers*,
   The American Mathematical Monthly 61 (1954), pp. 454–458. Wu credits this paper for the
   iteration method and its two-step bound.
@@ -470,6 +476,77 @@ public theorem nthNonValue_sq_eq_round (n : ℕ) (hn : 1 ≤ n) :
   change n + j < (j + 1) ^ 2
   rw [show (j + 1) ^ 2 = j ^ 2 + 2 * j + 1 by ring]
   omega
+
+/-- **Integers not of the form $m + 1^k + \cdots + m^k$.** Let $k > 1$. For $n \ge 1$ let $a(n)$
+be the $n$-th positive integer that is not of the form $m + \sum_{i=1}^m i^k$ with $m \ge 1$, and
+let $h = \lfloor ((k + 1) n)^{1/(k+1)} \rfloor$. Then $a(n) = n + h - 1$ if
+$n \le \sum_{i=1}^h i^k$, and $a(n) = n + h$ otherwise.
+
+Source: Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025),
+Article A95, Theorem 11 (third equivalent form). -/
+public theorem nthNonValue_add_sumPow (k : ℕ) (hk : 1 < k) (n : ℕ) (hn : 1 ≤ n) :
+    let h := Nat.nthRoot (k + 1) ((k + 1) * n)
+    nthNonValue (fun j => j + ∑ i ∈ Finset.Icc 1 j, i ^ k) n =
+      if n ≤ ∑ i ∈ Finset.Icc 1 h, i ^ k then n + h - 1 else n + h := by
+  intro h
+  let S (j : ℕ) := ∑ i ∈ Finset.Icc 1 j, i ^ k
+  change nthNonValue (fun j => j + S j) n = if n ≤ S h then n + h - 1 else n + h
+  have hS (j : ℕ) : S (j + 1) = S j + (j + 1) ^ k :=
+    Finset.sum_Icc_succ_top (by omega) _
+  -- Bernoulli's inequality at +1 and -1 bounds the successive power difference
+  -- by (k + 1) times the k-th power at each endpoint.
+  have hstep (j : ℕ) :
+      j ^ (k + 1) + (k + 1) * j ^ k ≤ (j + 1) ^ (k + 1) ∧
+        (j + 1) ^ (k + 1) ≤ j ^ (k + 1) + (k + 1) * (j + 1) ^ k := by
+    constructor
+    · simpa using pow_add_mul_le_add_pow (R := ℕ) (a := j) (b := 1)
+        (Nat.zero_le _) (Nat.zero_le _) (k + 1)
+    · have hb := pow_add_mul_le_add_pow (R := ℤ) (a := (j : ℤ) + 1) (b := -1)
+        (by omega) (by omega) (k + 1)
+      simp only [Nat.add_sub_cancel, mul_neg_one, add_neg_cancel_right] at hb
+      rw [← sub_eq_add_neg] at hb
+      exact_mod_cast (sub_le_iff_le_add.mp hb)
+  -- Telescoping from 1 retains a strict left bound even at an exact root.
+  have hlower (j : ℕ) : (k + 1) * S j + 1 ≤ (j + 1) ^ (k + 1) := by
+    induction j with
+    | zero => simp [S]
+    | succ j ih =>
+      rw [hS, Nat.mul_add]
+      have := (hstep (j + 1)).1
+      omega
+  have hupper (j : ℕ) : j ^ (k + 1) ≤ (k + 1) * S j := by
+    induction j with
+    | zero => simp [S]
+    | succ j ih =>
+      rw [hS, Nat.mul_add]
+      exact (hstep j).2.trans (Nat.add_le_add_right ih _)
+  have hk' : k + 1 ≠ 0 := by omega
+  have hh : 1 ≤ h := by
+    apply (Nat.le_nthRoot_iff hk').2
+    simpa using Nat.mul_le_mul (hk.le.trans (Nat.le_succ k)) hn
+  have hleft : S (h - 1) < n := by
+    have hpow : h ^ (k + 1) ≤ (k + 1) * n := Nat.pow_nthRoot_le_iff.mpr (Or.inl hk')
+    have hb := hlower (h - 1)
+    rw [show h - 1 + 1 = h by omega] at hb
+    exact lt_of_not_ge fun hc => by
+      have := Nat.mul_le_mul_left (k + 1) hc
+      omega
+  have hright : n < S (h + 1) := by
+    have hpow : (k + 1) * n < (h + 1) ^ (k + 1) := Nat.lt_pow_nthRoot_add_one hk' _
+    exact lt_of_not_ge fun hc => hpow.not_ge ((hupper (h + 1)).trans (Nat.mul_le_mul_left _ hc))
+  have hmono : StrictMono (fun j => j + S j) := by
+    apply strictMono_nat_of_lt_succ
+    intro j
+    rw [hS]
+    omega
+  have hzero : 0 + S 0 = 0 := by simp [S]
+  split_ifs with hnS
+  · rw [show n + h - 1 = n + (h - 1) by omega]
+    refine nthNonValue_of_gap hmono hzero (show h - 1 + S (h - 1) < _ by omega) ?_
+    rw [show h - 1 + 1 = h by omega]
+    omega
+  · exact nthNonValue_of_gap hmono hzero (show h + S h < _ by omega)
+      (show n + h < h + 1 + S (h + 1) by omega)
 
 end
 
