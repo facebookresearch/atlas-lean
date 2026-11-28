@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.NumberTheory.LegendreSymbol.JacobiSymbol
 public import Mathlib.NumberTheory.LucasLehmer
 public import MathlibExt.NumberTheory.LehmerCompanionMersenneDivisibility
+public import MathlibExt.NumberTheory.LehmerCompanionMersennePrimality
 public import MathlibExt.NumberTheory.LucasLehmerInfiniteSeeds
 public import MathlibExt.NumberTheory.MersenneEtaCondition
 public import MathlibExt.NumberTheory.MersenneEtaConditionResidues
@@ -66,20 +67,6 @@ the case `R = 2`, `Q = -1` after Theorem 6). -/
 theorem lehmerV_two_neg_one :
     lehmerV 2 (-1) 2 = 4 ∧ lehmerV 2 (-1) 4 = 14 ∧ lehmerV 2 (-1) 8 = 194 := by
   decide
-
-/-- **Lehmer-sequence primality criterion for Mersenne numbers.** Let $n \ge 3$ be odd, let
-$M_n = 2^n - 1$, and let $R$ and $Q$ be integers with $\gcd(M_n, Q) = 1$. If $M_n$ divides
-Lehmer's companion term $\bar V_{2^{n-1}}(R, Q)$, then $M_n$ is prime.
-
-Here $2^{n-1} = (M_n + 1)/2$. No coprimality of $R$ and $Q$ and no condition on $D = R - 4Q$
-is assumed.
-
-Source: E. L. Roettger and H. C. Williams, *Some Remarks Concerning the Lucas-Lehmer Primality
-Test*, Journal of Integer Sequences 28 (2025), Article 25.2.5, Lemma 4. -/
-public theorem_wanted mersenne_prime_of_dvd_lehmerV {n : ℕ} (hn : Odd n) (h3 : 3 ≤ n)
-    (R Q : ℤ) (hQ : Int.gcd (mersenne n) Q = 1)
-    (hV : (mersenne n : ℤ) ∣ lehmerV R Q (2 ^ (n - 1))) :
-    (mersenne n).Prime
 
 /-- **Divisibility of Lehmer's companion sequence by a Mersenne prime.** Let $n \ge 3$ be an odd
 natural number such that $M_n = 2^n - 1$ is prime, let $R$ and $Q$ be integers, let
