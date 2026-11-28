@@ -89,6 +89,15 @@ A randomized algorithm (a *mechanism*) is differentially private when changing o
 - [Tardos score](tardos-score.md)
 - [Tardos accusation](tardos-accuses.md)
 
+## Soundness of the Tardos accusation for a fixed bias vector
+
+- [Tardos Weight mean eq zero](tardos-weight-mean-eq-zero.md)
+- [Tardos Weight sq mean eq one](tardos-weight-sq-mean-eq-one.md)
+- [Tardos Weight exp mean le](tardos-weight-exp-mean-le.md)
+- [Sum bias Codebook PMF mul exp tardos Score](sum-bias-codebook-pmf-mul-exp-tardos-sco.md)
+- [Tardos Accuses prob le](tardos-accuses-prob-le.md)
+- [Tardos soundness fixed bias](tardos-soundness-fixed-bias.md)
+
 ## Related topics
 
 - [Laplace and exponential mechanisms](../laplace-and-exponential-mechanisms/README.md): the basic mechanisms that achieve pure differential privacy, built on this definition.
