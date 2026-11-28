@@ -17,6 +17,7 @@
 - [Number of parking functions in which a given car is lucky](sum-q-eq.md)
 - [Number of parking functions in which the second spot is lucky](sum-q-second-spot.md)
 - [Increasing lucky-car counts (Lemma 18)](q-inc-eq.md)
+- [Card monotone le id eq self](card-monotone-le-id-eq-self.md)
 - [Ballot paths](ballot-path.md)
 - [Number of ballot paths](card-ballot-path.md)
 - [Decreasing lucky-car counts (Lemma 22)](q-dec-eq.md)

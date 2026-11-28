@@ -1,7 +1,17 @@
 # Russo–Seymour–Welsh theory
 
 - [Rectangles, crossings, annuli and the box-crossing property on $\mathbb{Z}^2$](rectangles-crossings-annuli-and-the-box-crossing/README.md)
+- [Submultiplicative sequences: stretched-exponential decay implies exponential decay](submultiplicative-sequences-stretched-exponentia/README.md)
+- [Polynomial decay from geometric decay over dyadic scales](polynomial-decay-from-geometric-decay-over-dyadi/README.md)
+- [From "no exponential decay" (P4) to the box-crossing property (P5), abstractly](from-no-exponential-decay-p4-to-the-box-crossing/README.md)
+- [Equivalent forms of the box-crossing property (abstract implications)](equivalent-forms-of-the-box-crossing-property-ab/README.md)
+- [Iterated multiplicative lower bounds ("pushing" crossings)](iterated-multiplicative-lower-bounds-pushing-cro/README.md)
+- [Renormalization: squaring recursions give doubly exponential decay](renormalization-squaring-recursions-give-doubly/README.md)
+- [Self-duality on ℤ²: the self-dual point and primal/dual blocking](self-duality-on-the-self-dual-point-and-primal-d/README.md)
 - [The left region of a rectangle cut by an open cluster](the-left-region-of-a-rectangle-cut-by-an-open-cl/README.md)
+- [Elementary box-crossing bounds on ℤ²](elementary-box-crossing-bounds-on/README.md)
+- [Vanishing of a quantity dominated by a decaying one-arm bound](vanishing-of-a-quantity-dominated-by-a-decaying/README.md)
 - [Gluing crossings of adjacent rectangles](gluing-crossings-of-adjacent-rectangles/README.md)
+- [Case analysis for strip crossings (pigeonhole and symmetry)](case-analysis-for-strip-crossings-pigeonhole-and/README.md)
 - [Russo–Seymour–Welsh bounds for critical bond percolation on $\mathbb{Z}^2$](russo-seymour-welsh-bounds-for-critical-bond-per/README.md)
 - [Separating set for a lattice rectangle](arc-separating-set.md)
