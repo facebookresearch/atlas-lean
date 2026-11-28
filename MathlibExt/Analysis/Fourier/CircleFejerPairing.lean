@@ -167,7 +167,7 @@ theorem circleFejerPairing_equicontinuous
     ((ContinuousLinearMap.mul ℂ ℂ).lpPairing AddCircle.haarAddCircle ∞ 1)
       (circleFejerLp f N)
   change Equicontinuous ((↑) ∘ L)
-  apply ((NormedSpace.equicontinuous_tfae L).out 5 1).mp
+  apply ((NormedSpace.equicontinuous_tfae L).out 6 2).mp
   exact ⟨‖f‖, fun N =>
     (circleLpPairing_norm_le _).trans (circleFejerLp_norm_le f N)⟩
 
