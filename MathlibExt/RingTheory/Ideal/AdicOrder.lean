@@ -19,8 +19,6 @@ Let `R` be a Noetherian local commutative ring and let `I` be a proper ideal. Th
 of the powers of `I` is zero. Consequently, every nonzero `x : R` has a degree `n : ℕ` such
 that `x ∈ I^n` and `x ∉ I^(n+1)`, so its class in `I^n/I^(n+1)` is nonzero.
 
-The zero element belongs to every ideal power.
-
 Reference: Atiyah and Macdonald, *Introduction to Commutative Algebra*, Chapter 10.
 -/
 

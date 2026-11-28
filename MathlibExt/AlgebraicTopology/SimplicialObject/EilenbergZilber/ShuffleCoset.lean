@@ -145,7 +145,7 @@ theorem cosetLeftPositions_injective : Function.Injective (cosetLeftPositions p 
       have hj' : σ (Sum.inl j) = τ (Sum.inl i) := (finSumFinEquiv : B ≃ Fin (p + q)).injective hj
       refine ⟨j, ?_⟩
       apply σ.injective
-      simp only [Equiv.Perm.coe_mul, Function.comp_apply, Equiv.apply_symm_apply]
+      simp only [Equiv.Perm.coe_mul, Function.comp_apply]
       exact hj'.trans (σ.apply_symm_apply (τ (Sum.inl i))).symm
 
 /-- Let p, q : ℕ, B = Fin p ⊕ Fin q, and e : B ≃ Fin (p + q) be finSumFinEquiv. Let H be the

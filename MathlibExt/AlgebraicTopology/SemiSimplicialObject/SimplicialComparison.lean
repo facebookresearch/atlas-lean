@@ -8,13 +8,23 @@ LICENSE file in the root directory of this source tree.
 
 
 /-
-Copyright (c) 2025 Fabian Odermatt. All rights reserved.
-Released under Apache 2.0 license as described in the file LICENSE.
-Author: @toskua
+Portions of this file are adapted from:
 
-This source adapts the native simplicial homotopy arguments by Fabian
-Odermatt while retaining the existing semisimplicial model and complexes.
+`Mathlib/AlgebraicTopology/SimplicialObject/Homotopy.lean` (Mathlib):
+Copyright (c) 2025 Fabian Odermatt. All rights reserved.
+Licensed under the Apache License, Version 2.0
+(https://www.apache.org/licenses/LICENSE-2.0).
+Authors: Fabian Odermatt
+Homotopy endpoint and face interfaces used by the semisimplicial restriction.
+
+`Mathlib/AlgebraicTopology/SimplicialObject/ChainHomotopy.lean` (Mathlib):
+Copyright (c) 2025 Fabian Odermatt. All rights reserved.
+Licensed under the Apache License, Version 2.0
+(https://www.apache.org/licenses/LICENSE-2.0).
+Authors: Fabian Odermatt
+Alternating prism formulas used in the chain-homotopy comparison.
 -/
+-- Adapter: @toskua
 module
 
 public import MathlibExt.AlgebraicTopology.SemiSimplicialObject.Homotopy
