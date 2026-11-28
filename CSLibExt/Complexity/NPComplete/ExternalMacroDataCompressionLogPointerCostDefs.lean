@@ -7,8 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# EXTERNAL MACRO DATA COMPRESSION with a fixed alphabet and logarithmic pointer cost is: definitions
-NP-complete
+# EXTERNAL MACRO DATA COMPRESSION with a fixed alphabet and logarithmic pointer cost: definitions
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the
