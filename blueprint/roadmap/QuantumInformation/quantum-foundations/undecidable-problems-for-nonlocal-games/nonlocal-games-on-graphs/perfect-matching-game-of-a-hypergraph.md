@@ -26,4 +26,4 @@ None.
 
 ## Sources
 
-- David Cui, Laura Mančinska, Seyed Sajjad Nezhadi and David E. Roberson, "Quantum perfect matchings", *Annales Henri Poincaré* 27(11):4069–4094, 2026 (online 2025), doi:[10.1007/s00023-025-01632-5](https://doi.org/10.1007/s00023-025-01632-5). Numbering of the version read, arXiv:2502.05136v1: Definition 3.8, Theorem 3.9 and Definition 2.4 (quantum tensor strategies).
+- David Cui, Laura Mančinska, Seyed Sajjad Nezhadi and David E. Roberson, "Quantum perfect matchings", *Annales Henri Poincaré* 27(11):4069–4094, 2026 (online 2025), doi:[10.1007/s00023-025-01632-5](https://doi.org/10.1007/s00023-025-01632-5). Numbering of the version read, arXiv:2502.05136v1: Definition 3.8, Theorem 3.9, Definition 2.4 (quantum tensor strategies), and Theorems 6.4 and 6.11 with the proof of Theorem 6.11.

@@ -1,6 +1,6 @@
 # Nonlocal games on graphs and hypergraphs
 
-Nonlocal games built from graphs and hypergraphs, and undecidable decision problems about their perfect and approximately perfect quantum strategies: isomorphism, 3-coloring and perfect matching games.
+Nonlocal games built from graphs and hypergraphs: undecidable decision problems about perfect and approximately perfect quantum strategies of isomorphism and 3-coloring games, and the perfect matching game of a hypergraph.
 
 - [Quantum commuting isomorphism of graphs](quantum-commuting-isomorphism-of-graphs.md)
 - [Quantum commuting isomorphism of graphs is undecidable](quantum-commuting-isomorphism-is-undecidable.md)
