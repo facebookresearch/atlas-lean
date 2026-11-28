@@ -41,3 +41,4 @@
 ## Thue systems
 
 - [The word problem of a Thue system](thue-wp.md)
+- [A three-rule semi-Thue system has an undecidable individual word problem](a-three-rule-semi-thue-system-has-undecidable.md)

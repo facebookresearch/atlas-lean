@@ -8,3 +8,4 @@ is universal.
 - [Tag systems and cyclic tag systems](tag-systems-and-cyclic-tag-systems.md)
 - [Tag systems emulate Turing machines](tag-systems-emulate-turing-machines.md)
 - [Cyclic tag systems emulate tag systems](cyclic-tag-systems-emulate-tag-systems.md)
+- [The halting problem for binary tag systems is undecidable](the-halting-problem-for-binary-tag-systems-is-un.md)

@@ -22,3 +22,4 @@ automata as continuous shift-commuting maps are in
 - [Nilpotency of cellular automata is undecidable](nilpotency-of-cellular-automata-is-undecidable.md)
 - [The Game of Life is computationally universal](the-game-of-life-is-computationally-universal.md)
 - [Rule 110 is computationally universal](rule-110-is-computationally-universal.md)
+- [Dynamical properties of cellular automata](dynamical-properties-of-cellular-automata/README.md)

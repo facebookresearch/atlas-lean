@@ -79,3 +79,5 @@
 - [The unary code of an injective indexing is uniquely decodable](unary-hom-injective.md)
 - [PCP over a finite alphabet many-one reduces to PCP over the binary alphabet](many-one-reducible-pcp-bool.md)
 - [The Post correspondence problem is undecidable over the binary alphabet](not-tm2-decidable-pcp-bool.md)
+- [The Post correspondence problem is undecidable for five pairs of words](the-post-correspondence-problem-is-undecidable-f.md)
+- [The Post correspondence problem is undecidable for Claus instances of size 7](pcp-is-undecidable-for-claus-instances-of-size-7.md)
