@@ -28,19 +28,33 @@ import MathlibExt.NumberTheory.SymmetricContinuantParity
 /-!
 # Symmetric periods of quadratic irrational continued fractions
 
-The parities of three continuants determine when a prescribed symmetric block occurs in the
-period of the regular continued fraction of `(1 + √d) / 2` with `d ≡ 1` modulo four.
-For an even period length, the obstruction is exactly that the middle digit is even.
+For a symmetric block of positive digits, continuant parities determine whether there is a
+nonsquare natural number `d` such that the block followed by the closing digit repeats in the
+regular continued fraction. For `(1 + √d) / 2` with `d ≡ 1` modulo four and even period length
+at least two, the obstruction is exactly that the middle digit is even. For `√d` at even length
+at least two, the block is realizable if the middle digit is even or if it and the final
+continuant are both odd.
+
+For `√d`, we quantify `d` existentially as in Lee's 2024 Theorem 2 (ii), which the 2026 paper
+cites in Theorem 1 (ii). The closing digit can be made larger than all the prescribed digits
+by increasing the integer part along the same congruence class. Thus allowing a nonminimal
+period in `HasPeriodicCF` does not change the existence criterion.
 
 ## References
 
 - Jun Ho Lee, *Nonexistence of the Continued Fraction of a Quadratic Irrational Number with a
-  Given Sequence*, INTEGERS 26 (2026), Article A69, pp. 1–9, Theorem 6 and Corollary 1.
+  Given Sequence*, INTEGERS 26 (2026), Article A69, pp. 1–9, Theorems 1 (ii) and 6 and Corollary 1.
 - Jun Ho Lee, *Classification for Existence of the Continued Fraction Expansions of √D and
-  (1 + √D)/2*, INTEGERS 24 (2024), Article A50, pp. 1–7, Proposition 2 and Theorem 3 (ii).
+  (1 + √D)/2*, INTEGERS 24 (2024), Article A50, pp. 1–7, Proposition 2 and Theorems 2 (ii) and
+  3 (ii).
+- Ryūta Hashimoto, *Ankeny–Artin–Chowla Conjecture and Continued Fraction Expansion*,
+  J. Number Theory 90 (1) (2001), pp. 143–153. This is the source Lee credits for the square-root
+  realizability criterion in Proposition 1 of the 2024 and 2026 articles.
 - Jun Ho Lee, *Existence of the Continued Fractions of √d and Its Applications*,
   Bull. Korean Math. Soc. 59 (3) (2022), pp. 697–707. This is the source of the
   realizability criterion cited as Proposition 2 in Lee's 2024 paper.
+- The square-root proof adapts `canonical`, `unique_value`, `odd_digit_iff`, `realizable_iff`
+  and the midpoint parity argument of `exists_iff_middle_odd` in this module.
 -/
 
 namespace MetaMathlibExt.half_one_add_sqrt_hasPeriodicCF_exists_iff_parity
@@ -423,6 +437,75 @@ private theorem realizable_iff (n : ℕ) (a : ℕ → ℕ)
     refine ⟨d, k + 1, hd, nonsquare_of_periodic hper, ?_⟩
     rwa [show 2 * (k + 1) - 1 = c by dsimp [c]; omega]
 
+-- With c = 2b the fixed-point equation gives d = b² + (Bc + D)/A.
+private theorem sqrt_realizable_iff (n : ℕ) (a : ℕ → ℕ)
+    (hp : ∀ i, 1 ≤ i → i < n + 2 → 0 < a i)
+    (hs : ∀ i, 1 ≤ i → i < n + 2 → a i = a (n + 2 - i)) :
+    let A := convergentDen a (n + 1)
+    let B := convergentDen a n
+    let D := innerDen a n
+    (∃ d b : ℕ, ¬IsSquare d ∧ HasPeriodicCF √(d : ℝ) b a (n + 2) (2 * b)) ↔
+      ∃ b : ℕ, 0 < b ∧ A ∣ B * (2 * b) + D := by
+  intro A B D
+  constructor
+  · rintro ⟨d, b, _, hcf⟩
+    have hb : 0 < b := by
+      by_contra! hb
+      have he := GenContFract.of_one_le_get?_partDen (hcf.2 (n + 1))
+      norm_num [Nat.eq_zero_of_le_zero hb, Nat.mod_self] at he
+    obtain ⟨y, _, _, hper, he⟩ := canonical n a hp hs b (2 * b) (by omega)
+    change (A : ℝ) * y * ((↑(2 * b) : ℝ) + y) = (B : ℝ) * ↑(2 * b) + D at he
+    have hsq := Real.sq_sqrt (Nat.cast_nonneg d : 0 ≤ (d : ℝ))
+    rw [unique_value hcf hper] at hsq
+    have hd : A * d = B * (2 * b) + D + A * b ^ 2 := by
+      suffices (A : ℝ) * d = (B : ℝ) * (2 * b) + D + A * (b : ℝ) ^ 2 by exact_mod_cast this
+      push_cast at he
+      linear_combination he - (A : ℝ) * hsq
+    exact ⟨b, hb, (Nat.dvd_add_left (dvd_mul_right A (b ^ 2))).mp (hd ▸ dvd_mul_right A d)⟩
+  · rintro ⟨b, hb, t, ht⟩
+    obtain ⟨y, hy, hy', hper, he⟩ := canonical n a hp hs b (2 * b) (by omega)
+    change (A : ℝ) * y * ((↑(2 * b) : ℝ) + y) = (B : ℝ) * ↑(2 * b) + D at he
+    have ht' : (B : ℝ) * ↑(2 * b) + D = A * t := by exact_mod_cast ht
+    have hA := den_pos a (n + 1) fun i hi hi' => hp i hi (by omega)
+    have hA' : (A : ℝ) ≠ 0 := by exact_mod_cast hA.ne'
+    have hyt : y * ((↑(2 * b) : ℝ) + y) = t := by
+      apply mul_left_cancel₀ hA'
+      simpa only [← mul_assoc] using he.trans ht'
+    let d := b ^ 2 + t
+    have hr : √(d : ℝ) = (b : ℝ) + y := by
+      rw [Real.sqrt_eq_iff_eq_sq (by positivity) (by positivity)]
+      dsimp [d]
+      push_cast at hyt ⊢
+      linear_combination -hyt
+    refine ⟨d, b, ?_, hr.symm ▸ hper⟩
+    rintro ⟨w, hw⟩
+    rw [hw, Nat.cast_mul, Real.sqrt_mul_self (Nat.cast_nonneg w)] at hr
+    have hlo : b < w := by exact_mod_cast (show (b : ℝ) < w by linarith)
+    have hhi : w < b + 1 := by exact_mod_cast (show (w : ℝ) < (b : ℝ) + 1 by linarith)
+    omega
+
+-- Subtract one from the positive even closing digit to use the odd-digit congruence.
+private theorem even_digit_iff (A B D : ℕ) (hA : 0 < A) (hcop : A.Coprime B) :
+    (∃ b : ℕ, 0 < b ∧ A ∣ B * (2 * b) + D) ↔ Odd A ∨ Even D := by
+  have h (k : ℕ) : B * (2 * (k + 1)) + D = B * (2 * k + 1) + (D + B) := by ring
+  have he : (∃ b : ℕ, 0 < b ∧ A ∣ B * (2 * b) + D) ↔
+      ∃ k : ℕ, A ∣ B * (2 * k + 1) + (D + B) := by
+    constructor
+    · rintro ⟨b, hb, hd⟩
+      obtain ⟨k, rfl⟩ := Nat.exists_eq_succ_of_ne_zero hb.ne'
+      exact ⟨k, h k ▸ hd⟩
+    · rintro ⟨k, hk⟩
+      exact ⟨k + 1, Nat.succ_pos _, (h k).symm ▸ hk⟩
+  rw [he, odd_digit_iff _ _ _ hA hcop]
+  by_cases ha : Odd A
+  · simp [ha]
+  · have ha' := Nat.not_odd_iff_even.mp ha
+    have hb := (hcop.of_dvd_left ha'.two_dvd).odd_of_left
+    have hDB : Odd (D + B) ↔ Even D := by
+      rw [← Nat.not_even_iff_odd, Nat.even_add', iff_true_intro hb, iff_true,
+        Nat.not_odd_iff_even]
+    simp [ha, ha', hb, hDB]
+
 end MetaMathlibExt.half_one_add_sqrt_hasPeriodicCF_exists_iff_parity
 
 namespace MetaMathlibExt
@@ -477,17 +560,12 @@ private theorem prefix_dens_coprime (a : ℕ → ℕ) (n : ℕ) :
       simpa [Matrix.mul_apply, Fin.sum_univ_two, step] using (top_row (fun i => a (i + 1)) n).1
   simpa only [(top_row a n).1, h] using first_col_coprime (block a (n + 1))
 
-private theorem exists_iff_middle_odd (l : ℕ) (hl : Even l) (hl0 : 0 < l)
-    (a : ℕ → ℕ) (hp : ∀ i, 1 ≤ i → i < l → 0 < a i)
-    (hs : ∀ i, 1 ≤ i → i < l → a i = a (l - i)) :
-    (∃ d b : ℕ, d % 4 = 1 ∧ ¬IsSquare d ∧
-      HasPeriodicCF ((1 + √(d : ℝ)) / 2) b a l (2 * b - 1)) ↔ Odd (a (l / 2)) := by
+private theorem odd_den_or_inner_iff_middle (l : ℕ) (hl : Even l) (hl0 : 0 < l)
+    (a : ℕ → ℕ) (hs : ∀ i, 1 ≤ i → i < l → a i = a (l - i)) :
+    (Odd (convergentDen a (l - 1)) ∨ Odd (innerDen a (l - 2))) ↔ Odd (a (l / 2)) := by
   by_cases h₂ : l = 2
   · subst l
-    -- For the one-digit block the fixed-point condition is a₁ ∣ c, with c odd.
-    simpa [convergentDen_zero, convergentDen_one, innerDen] using
-      (realizable_iff 0 a hp hs).trans
-        (odd_digit_iff (a 1) 1 0 (hp 1 le_rfl (by decide)) (Nat.coprime_one_right _))
+    simp [convergentDen_one, innerDen]
   have ⟨k, hk⟩ := hl
   have hl₄ : 4 ≤ l := by omega
   have hA : Odd (convergentDen a (l - 1)) ↔
@@ -495,28 +573,46 @@ private theorem exists_iff_middle_odd (l : ℕ) (hl : Even l) (hl0 : 0 < l)
     rw [← Nat.odd_mul]
     simp only [Nat.odd_iff]
     rw [show _ % 2 = _ from convergentDen_parity_of_even l hl hl0 a hs]
-  have hD : Odd (convergentDen (fun i => a (i + 1)) (l - 3)) ↔
+  have hD : Odd (innerDen a (l - 2)) ↔
       Odd (a (l / 2)) ∧ Odd (convergentDen (fun i => a (i + 1)) (l / 2 - 2)) := by
-    rw [← Nat.odd_mul]
+    rw [show l - 2 = (l - 3) + 1 by omega, innerDen, ← Nat.odd_mul]
     simp only [Nat.odd_iff]
     rw [show _ % 2 = _ from shifted_convergentDen_parity_of_even l hl hl₄ a hs]
-  rw [half_one_add_sqrt_hasPeriodicCF_exists_iff_parity l (by omega) a hp hs]
   constructor
-  · rintro (h | ⟨_, h, _⟩)
+  · rintro (h | h)
     · exact (hA.mp h).1
     · exact (hD.mp h).1
   · intro hm
-    by_cases hq : Odd (convergentDen a (l - 1))
-    · exact Or.inl hq
-    have hq' := Nat.not_odd_iff_even.mp hq
-    have hB := coprime_den a (l - 2)
-    rw [show l - 2 + 1 = l - 1 by omega] at hB
+    by_cases hq : Odd (convergentDen a (l / 2 - 1))
+    · exact Or.inl (hA.mpr ⟨hm, hq⟩)
     have hprefix := prefix_dens_coprime a (l / 2 - 2)
     rw [show l / 2 - 2 + 1 = l / 2 - 1 by omega] at hprefix
-    have he : Even (convergentDen a (l / 2 - 1)) :=
-      Nat.not_odd_iff_even.mp fun h => hq (hA.mpr ⟨hm, h⟩)
-    exact Or.inr ⟨(hB.of_dvd_left hq'.two_dvd).odd_of_left,
-      hD.mpr ⟨hm, (hprefix.of_dvd_left he.two_dvd).odd_of_left⟩, hq'⟩
+    have hq' := Nat.not_odd_iff_even.mp hq
+    exact Or.inr (hD.mpr ⟨hm, (hprefix.of_dvd_left hq'.two_dvd).odd_of_left⟩)
+
+private theorem exists_iff_middle_odd (l : ℕ) (hl : Even l) (hl0 : 0 < l)
+    (a : ℕ → ℕ) (hp : ∀ i, 1 ≤ i → i < l → 0 < a i)
+    (hs : ∀ i, 1 ≤ i → i < l → a i = a (l - i)) :
+    (∃ d b : ℕ, d % 4 = 1 ∧ ¬IsSquare d ∧
+      HasPeriodicCF ((1 + √(d : ℝ)) / 2) b a l (2 * b - 1)) ↔ Odd (a (l / 2)) := by
+  have ⟨k, hk⟩ := hl
+  obtain ⟨n, rfl⟩ : ∃ n, l = n + 2 := ⟨l - 2, by omega⟩
+  have hcop := coprime_den a n
+  have hreal := realizable_iff n a hp hs
+  dsimp only at hreal
+  rw [hreal, odd_digit_iff _ _ _
+    (den_pos a (n + 1) fun i hi hi' => hp i hi (by omega)) hcop,
+    ← odd_den_or_inner_iff_middle _ hl hl0 a hs]
+  constructor
+  · rintro (h | ⟨_, hd, _⟩)
+    · exact Or.inl h
+    · exact Or.inr hd
+  · rintro (h | hd)
+    · exact Or.inl h
+    · by_cases h : Odd (convergentDen a (n + 1))
+      · exact Or.inl h
+      · have ha := Nat.not_odd_iff_even.mp h
+        exact Or.inr ⟨(hcop.of_dvd_left ha.two_dvd).odd_of_left, hd, ha⟩
 
 private theorem exists_pattern_iff_last_one (l : ℕ) (hl : Even l) (hm : 0 < l / 2)
     (v : Fin (l / 2) → ZMod 2) :
@@ -577,6 +673,38 @@ private theorem ncard_last_zero (m : ℕ) (hm : 0 < m) :
   rw [Nat.card_congr e, Nat.card_eq_fintype_card, Fintype.card_pi_const, ZMod.card]
 
 end half_one_add_sqrt_hasPeriodicCF_exists_iff_parity
+
+/-- **Parity criterion for $\sqrt{d}$ with a given symmetric period, even length.** Let $l \ge 2$
+be even and let $a_1, \dots, a_{l-1}$ be positive integers with $a_i = a_{l-i}$ for
+$1 \le i \le l - 1$. For $0 \le i \le l - 1$ let $q_i = K(a_1, \dots, a_i)$ be the continuant,
+given by $q_0 = 1$, $q_1 = a_1$ and $q_{i+2} = a_{i+2} q_{i+1} + q_i$. Then there are a natural
+number $d$ that is not a perfect square and a natural number $a_0$ with
+$\sqrt{d} = [a_0; \overline{a_1, \dots, a_{l-1}, 2a_0}]$ if and only if either $a_{l/2}$ and
+$q_{l-1}$ are both odd, or $a_{l/2}$ is even.
+
+Source: Jun Ho Lee, *Nonexistence of the Continued Fraction of a Quadratic Irrational
+Number with a Given Sequence*, INTEGERS 26 (2026), Article A69, Theorem 1 (ii)
+(`integers-2026-A69-thm-1`). -/
+public theorem sqrt_hasPeriodicCF_exists_iff_of_even (l : ℕ) (hl : Even l) (hl0 : 0 < l)
+    (a : ℕ → ℕ) (hpos : ∀ i, 1 ≤ i → i < l → 0 < a i)
+    (hsymm : ∀ i, 1 ≤ i → i < l → a i = a (l - i)) :
+    (∃ d a₀ : ℕ, ¬IsSquare d ∧ HasPeriodicCF √(d : ℝ) a₀ a l (2 * a₀)) ↔
+      (Odd (a (l / 2)) ∧ Odd (convergentDen a (l - 1))) ∨ Even (a (l / 2)) := by
+  have ⟨k, hk⟩ := hl
+  obtain ⟨n, rfl⟩ : ∃ n, l = n + 2 := ⟨l - 2, by omega⟩
+  have hreal := sqrt_realizable_iff n a hpos hsymm
+  dsimp only at hreal
+  rw [hreal, even_digit_iff _ _ _
+    (den_pos a (n + 1) fun i hi hi' => hpos i hi (by omega)) (coprime_den a n)]
+  have hm := odd_den_or_inner_iff_middle (n + 2) hl hl0 a hsymm
+  let m := a ((n + 2) / 2)
+  change (Odd (convergentDen a (n + 1)) ∨ Odd (innerDen a n)) ↔ Odd m at hm
+  change (Odd (convergentDen a (n + 1)) ∨ Even (innerDen a n)) ↔
+    (Odd m ∧ Odd (convergentDen a (n + 1))) ∨ Even m
+  by_cases hA : Odd (convergentDen a (n + 1))
+  · exact ⟨fun _ => Or.inl ⟨hm.mp (Or.inl hA), hA⟩, fun _ => Or.inl hA⟩
+  · have hD : Odd (innerDen a n) ↔ Odd m := by simpa [hA] using hm
+    simp only [hA, false_or, and_false, ← Nat.not_odd_iff_even, hD]
 
 /-- **Unrealizable parity patterns for $(1 + \sqrt d)/2$ with even $l$.** Let $l \ge 2$ be
 even. Call a parity pattern $(v_1, \dots, v_{l/2}) \in (\mathbb{Z}/2)^{l/2}$ realizable if there

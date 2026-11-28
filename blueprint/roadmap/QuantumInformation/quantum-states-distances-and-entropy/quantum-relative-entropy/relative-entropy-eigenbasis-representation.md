@@ -8,6 +8,7 @@ The squared overlaps $|\langle u_j, v_i\rangle|^2$ form a doubly stochastic matr
 
 ## Depends on
 
+- [Density matrices, pure states and reduced states](../density-matrices-and-fidelity/density-matrices-and-reduced-states.md)
 - [Support inclusion and Umegaki relative entropy](umegaki-relative-entropy.md)
 - [Kullback–Leibler divergence on a finite space](../../../InformationTheory/entropy-and-mutual-information/shannon-entropy-and-kullback-leibler-divergence/to-real-kl-div-eq-sum.md)
 

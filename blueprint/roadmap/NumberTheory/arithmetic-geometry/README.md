@@ -4,6 +4,7 @@ Rational points of varieties over number fields: torsion and rank of elliptic cu
 
 - [Cassels–Tate pairing](cassels-tate-pairing/README.md)
 - [Hasse principle for random Fano hypersurfaces](hasse-principle-for-random-fano-hypersurfaces/README.md)
+- [Heegner point construction](heegner-point-construction/README.md)
 - [Heights of rational points on elliptic curves](heights-of-rational-points-on-elliptic-curves/README.md)
 - [Local-global conjecture for Apollonian circle packings](local-global-conjecture-for-apollonian-circle-pa/README.md)
 - [Mazur's torsion theorem](mazur-s-torsion-theorem/README.md)

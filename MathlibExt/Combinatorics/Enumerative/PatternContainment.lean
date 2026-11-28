@@ -8,6 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Data.Fintype.Fin
+public import Mathlib.Data.Fintype.Pi
 public import Mathlib.Data.Nat.Notation
 public import Mathlib.Logic.Equiv.Defs
 
@@ -15,6 +17,14 @@ public import Mathlib.Logic.Equiv.Defs
 # Classical permutation pattern containment
 
 `HasPattern` expresses classical pattern containment by an increasing sequence of positions.
+The decision procedure checks the index and value comparisons on the finite set of position maps.
+
+## References
+
+* Juan B. Gil, Felix H. Xu, and William Y. Zhu, *Odd-Indexed Fibonacci Numbers via Pattern-Avoiding
+  Permutations*, INTEGERS 25 (2025), Article A79, pp. 1–19, Section 1.
+* Tian Han, *Joint Distributions of 10 Classical Statistics over Permutations Avoiding Two Patterns
+  of Length 3*, INTEGERS 26 (2026), Article A18, pp. 1–22, Section 1.
 -/
 
 @[expose] public section
@@ -32,3 +42,16 @@ def HasPattern {n k : ℕ} (σ : Equiv.Perm (Fin n))
     ∀ i j : Fin k, σ (e i) < σ (e j) ↔ π i < π j
 
 end MathlibExt.Combinatorics.Enumerative.OddFibonacciWanted
+
+namespace MetaMathlibExt
+
+open MathlibExt.Combinatorics.Enumerative.OddFibonacciWanted (HasPattern)
+
+/-- Classical pattern containment `HasPattern σ π` is decidable by checking each map of
+pattern indices to positions for strictly increasing positions and matching value comparisons. -/
+instance instDecidableHasPattern {n k : ℕ} (σ : Equiv.Perm (Fin n)) (π : Fin k → Fin k) :
+    Decidable (HasPattern σ π) := by
+  unfold HasPattern
+  infer_instance
+
+end MetaMathlibExt
