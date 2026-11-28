@@ -22,12 +22,14 @@ model (LFMM) writes the `n × p` response matrix `Y` as `Y = X Bᵀ + W + E`, wi
 matrix `X` of primary variables, effect sizes `B` (`p × d`), a latent confounder matrix `W` of
 rank at most `K` and residuals `E`. Caye, Jumentier, Lepeule and François (LFMM 2) estimate
 `(W, B)` by minimizing the ridge loss `‖Y - W - X Bᵀ‖² + λ ‖B‖²` (Frobenius norms) over
-`rank W ≤ K`, and give the minimizer in closed form: for a full singular value decomposition
+`rank W ≤ K`, and give a minimizer in closed form: for a full singular value decomposition
 `X = Q Σ Rᵀ` with singular values `σ₁, …, σ_d` and
 `D_λ = diag(√(λ / (λ + σ₁²)), …, √(λ / (λ + σ_d²)), 1, …, 1)`, a minimizer is
-`Ŵ = Q D_λ⁻¹ svd_K(D_λ Qᵀ Y)`, `B̂ᵀ = (XᵀX + λ I)⁻¹ Xᵀ (Y - Ŵ)`, unique when the `K`-th and
-`(K+1)`-th singular values of `D_λ Qᵀ Y` differ. Here `svd_K` is the rank-`K` truncated singular
-value decomposition `Matrix.EckartYoungFrobenius.truncSVD`.
+`Ŵ = Q D_λ⁻¹ svd_K(D_λ Qᵀ Y)`, `B̂ᵀ = (XᵀX + λ I)⁻¹ Xᵀ (Y - Ŵ)`. Here `svd_K` is the rank-`K`
+truncated singular value decomposition `Matrix.EckartYoungFrobenius.truncSVD`. The paper asserts
+uniqueness for every `λ > 0`; it holds when the `K`-th and `(K+1)`-th singular values of
+`D_λ Qᵀ Y` differ, and fails when they are equal and positive, as the best rank-`K` approximation
+is then not unique.
 
 For fixed `W`, minimizing over `B` is ridge regression of `Y - W` on `X`, with minimum value
 `‖D_λ Qᵀ (Y - W)‖²`, since `I - X (XᵀX + λ I)⁻¹ Xᵀ = Q D_λ² Qᵀ`. As `D_λ Qᵀ` is invertible,
@@ -299,7 +301,8 @@ squares enter, so their signs do not matter). With `D_λ = shrinkage n λ σ`, t
 `B̂ᵀ = (XᵀX + λ I)⁻¹ Xᵀ (Y - Ŵ)` (`effectEstimate`) minimizes the ridge loss
 `‖Y - W - X Bᵀ‖² + λ ‖B‖²` (`ridgeLoss`) over all `W` of rank at most `K` and all `B`: `Ŵ` has
 rank at most `K`, and no such pair has a smaller loss. It is the only minimizer whenever the
-`K`-th and `(K+1)`-th singular values of `D_λ Qᵀ Y` differ. With these singular values written
+`K`-th and `(K+1)`-th singular values of `D_λ Qᵀ Y` differ (the paper asserts uniqueness for every
+`λ > 0` without this condition). With these singular values written
 `s₀ ≥ s₁ ≥ ⋯` (Mathlib's `singularValues`, counted from `0`), the hypothesis reads `sᵢ ≠ s_K` for
 all `i < K`: for `K ≥ 1` this is `s_{K-1} ≠ s_K`, as the singular values are nonincreasing, and
 for `K = 0` it is no condition. -/
