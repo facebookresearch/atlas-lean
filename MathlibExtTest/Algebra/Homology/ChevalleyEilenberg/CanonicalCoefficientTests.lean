@@ -60,6 +60,7 @@ private def entry (i j : Fin 2) : Mat →ₗ[ℤ] ℤ :=
   (LinearMap.proj j : (Fin 2 → ℤ) →ₗ[ℤ] ℤ).comp
     ((LinearMap.proj i : (Fin 2 → Fin 2 → ℤ) →ₗ[ℤ] (Fin 2 → ℤ)).comp
       (Matrix.ofLinearEquiv ℤ).symm.toLinearMap)
+@[simp] private lemma entry_apply (i j : Fin 2) (a : Mat) : entry i j a = a i j := rfl
 private def degreeOneProjection : E →ₗ[ℤ] ⋀[ℤ]^1 Mat :=
   (DirectSum.component ℤ ℕ (fun n => ↥(⋀[ℤ]^n Mat)) 1).comp
     (DirectSum.decomposeLinearEquiv (fun n : ℕ => ⋀[ℤ]^n Mat)).toLinearMap
@@ -79,6 +80,21 @@ private def readZero : ((⋀[ℤ]^0 Mat) ⊗[ℤ] Mat) →ₗ[ℤ] Mat :=
     (TensorProduct.map (exteriorPower.zeroEquiv ℤ Mat).toLinearMap LinearMap.id)
 private def readOne : (E ⊗[ℤ] Mat) →ₗ[ℤ] ℤ :=
   (TensorProduct.lid ℤ ℤ).toLinearMap.comp (TensorProduct.map firstEntry (entry 0 1))
+@[simp] private lemma readZero_zeroWord_tmul (m : Mat) : readZero (zeroWord ⊗ₜ[ℤ] m) = m := by
+  unfold readZero
+  rw [LinearMap.comp_apply, TensorProduct.map_tmul]
+  change TensorProduct.lid ℤ Mat
+    ((exteriorPower.zeroEquiv ℤ Mat zeroWord) ⊗ₜ[ℤ] m) = m
+  have h : exteriorPower.zeroEquiv ℤ Mat zeroWord = 1 := by simp [zeroWord]
+  rw [h, TensorProduct.lid_tmul, one_smul]
+@[simp] private lemma readOne_ι_tmul (a b : Mat) :
+    readOne (ExteriorAlgebra.ι ℤ a ⊗ₜ[ℤ] b) = a 0 0 * b 0 1 := by
+  unfold readOne
+  rw [LinearMap.comp_apply, TensorProduct.map_tmul]
+  change TensorProduct.lid ℤ ℤ
+    (firstEntry (ExteriorAlgebra.ι ℤ a) ⊗ₜ[ℤ] entry 0 1 b) = _
+  rw [firstEntry_ι, TensorProduct.lid_tmul, entry_apply]
+  rfl
 private lemma firstBoundary : (K.d 1 0).hom (oneWord e01 ⊗ₜ[ℤ] e10) =
     -(zeroWord ⊗ₜ[ℤ] diagonal) := by
   rw [coefficientComplex_d_succ]
@@ -86,8 +102,7 @@ private lemma firstBoundary : (K.d 1 0).hom (oneWord e01 ⊗ₜ[ℤ] e10) =
     (congrArg (fun x : Mat => -(zeroWord ⊗ₜ[ℤ] x)) bracket_pair)
 private lemma firstValue : readZero ((K.d 1 0).hom (oneWord e01 ⊗ₜ[ℤ] e10)) =
     -diagonal := by
-  rw [firstBoundary]
-  simp [readZero, zeroWord, TensorProduct.map_tmul]
+  rw [firstBoundary, LinearMap.map_neg, readZero_zeroWord_tmul]
 example : ⁅e01, e10⁆ ≠ 0 := by
   rw [bracket_pair]
   exact (by decide : diagonal ≠ 0)
@@ -118,8 +133,9 @@ private lemma secondAmbient : ((⋀[ℤ]^1 Mat).subtype.rTensor Mat)
   simpa only [LinearMap.rTensor_tmul, Submodule.subtype_apply, pair_coe] using boundary_pair
 private lemma secondValue : readOne (((⋀[ℤ]^1 Mat).subtype.rTensor Mat)
     ((K.d 2 1).hom (pair ⊗ₜ[ℤ] e01))) = -1 := by
-  rw [secondAmbient]
-  norm_num [readOne, entry, TensorProduct.map_tmul, diagonal, e01]
+  rw [secondAmbient, LinearMap.map_sub, LinearMap.map_neg,
+    readOne_ι_tmul, readOne_ι_tmul]
+  norm_num [diagonal, e01]
 example : readOne (((⋀[ℤ]^1 Mat).subtype.rTensor Mat)
     ((K.d 2 1).hom (pair ⊗ₜ[ℤ] e01))) = -1 := secondValue
 example : (K.d 2 1).hom (pair ⊗ₜ[ℤ] e01) ≠ 0 := by
@@ -127,7 +143,8 @@ example : (K.d 2 1).hom (pair ⊗ₜ[ℤ] e01) ≠ 0 := by
   have h := congrArg (fun x : (⋀[ℤ]^1 Mat) ⊗[ℤ] Mat =>
     readOne (((⋀[ℤ]^1 Mat).subtype.rTensor Mat) x)) hz
   have h0 : readOne (((⋀[ℤ]^1 Mat).subtype.rTensor Mat)
-      (0 : (⋀[ℤ]^1 Mat) ⊗[ℤ] Mat)) = 0 := by simp
+      (0 : (⋀[ℤ]^1 Mat) ⊗[ℤ] Mat)) = 0 := by
+    rw [LinearMap.map_zero, LinearMap.map_zero]
   exact (by decide : (-1 : ℤ) ≠ 0) (secondValue.symm.trans (h.trans h0))
 example : K.d 2 1 ≫ K.d 1 0 = 0 := K.d_comp_d 2 1 0
 example : (K.d 1 0).hom ((K.d 2 1).hom (pair ⊗ₜ[ℤ] e01)) = 0 := by
