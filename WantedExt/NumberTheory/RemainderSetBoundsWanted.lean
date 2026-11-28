@@ -15,6 +15,7 @@ public import MathlibExt.NumberTheory.IteratedRemainderSet
 public import MathlibExt.NumberTheory.PrimeSquareTail
 public import MathlibExt.NumberTheory.RemainderSet
 public import MathlibExt.NumberTheory.RemainderSetBoundsCardLeastPrimeFactorIntervalError
+public import MathlibExt.NumberTheory.RemainderSetBoundsPrimeCounting
 
 /-!
 # Bounds for sets of remainders (statements)
@@ -84,15 +85,6 @@ public theorem_wanted remainderCount_asymptotic :
         (fun n : ℕ => (n : ℝ) / (Real.log n * Real.log (Real.log n))) ∧
       Filter.Tendsto (fun n : ℕ => (remainderCount n : ℝ) / n) Filter.atTop
         (nhds remainderConstant)
-
-/-- **Upper bound $1.3\, n / \log n$ for the prime-counting function.** For every natural
-number $n \ge 2$, the number $\pi(n)$ of primes at most $n$ satisfies
-$\pi(n) \le 1.3\, n / \log n$, where $\log$ is the natural logarithm.
-
-Source: Omkar Baraskar and Ingrid Vukusic, *Bounds for Sets of Remainders*, Journal of
-Integer Sequences 29 (2026), Article 26.1.4, Lemma 7 (`lem:primecounting_ub`). -/
-public theorem_wanted primeCounting_le_thirteen_tenths {n : ℕ} (hn : 2 ≤ n) :
-    (Nat.primeCounting n : ℝ) ≤ 13 / 10 * n / Real.log n
 
 /-- **The first iterated remainder set is the remainder set.** For every natural number $n$, the
 iterated remainder set $S_1(n)$ equals the remainder set
