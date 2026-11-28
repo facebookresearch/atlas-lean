@@ -17,7 +17,7 @@ This answers an open question of Doyen, Henzinger and Raskin. The same paper sho
 
 - [The emptiness problem for probabilistic automata is undecidable](../../../TheoryOfComputation/regular-languages/automata-and-expressions/weighted-automata-and-rational-series/emptiness-problem-for-probabilistic-automata.md)
 
-## Expansion
+## Proof sketch
 
 The proof reduces the universality problem for probabilistic automata: whether every word over $\{a, b\}$ is accepted with probability at least $\frac{1}{2}$. Exchanging accepting and rejecting states turns this into the complement of the emptiness problem with cut-point $\frac{1}{2}$, which is undecidable. From an automaton $\mathcal{A}$ the authors build an MDP $\mathcal{D}(\mathcal{A})$ on the states of $\mathcal{A}$ and two new states $q_c, q_d$. In an accepting state there are two moves, each emitting $a$ or $b$ with probability $\frac{1}{4}$ while simulating $\mathcal{A}$ on that letter, and with the remaining probability $\frac{1}{2}$ emitting $c$ and moving to $q_c$, or emitting $d$ and moving to $q_d$; a non-accepting state has a single move that emits $a$ or $b$ in the same way and with probability $\frac{1}{2}$ emits $d$ and moves to $q_d$. A fixed MC $\mathcal{C}$ emits the letters with matching probabilities. Then $\mathcal{A}$ is universal exactly when $\mathcal{C} \sqsubseteq \mathcal{D}(\mathcal{A})$.
 

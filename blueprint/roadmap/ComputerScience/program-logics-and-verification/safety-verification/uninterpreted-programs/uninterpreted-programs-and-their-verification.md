@@ -24,7 +24,7 @@ None.
 
 None.
 
-## Expansion
+## Remarks
 
 Verifying an uninterpreted program means verifying it under every interpretation of its functions, which covers abstractions of heap updates and data-structure operations. For coherent programs the verification problem is decidable and PSPACE-complete: feasible coherent executions are recognized by a finite automaton that tracks a congruence on the current variables only. Whether a program is coherent is itself decidable.
 

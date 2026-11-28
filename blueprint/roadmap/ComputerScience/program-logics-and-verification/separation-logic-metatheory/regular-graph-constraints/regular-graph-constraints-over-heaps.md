@@ -16,9 +16,9 @@ None.
 
 None.
 
-## Expansion
+## Remarks
 
-A homomorphism is a coloring: the color $h(x)$ of a node restricts the colors of its $s_1$- and $s_2$-successors. For instance a graph is $k$-colorable iff it maps to the complete loop-free graph on $k$ colors. Regular graph constraints are strictly less expressive than existential monadic second-order logic over graphs. Satisfiability over heaps is decidable, and implication over the class of all graphs is decidable because $G_1$ implies $G_2$ over all graphs iff $G_1 \to G_2$.
+A homomorphism is a coloring: the color $h(x)$ of a node restricts the colors of its $s_1$- and $s_2$-successors. For instance a graph is $k$-colorable iff it maps to the complete loop-free graph on $k$ colors. Regular graph constraints form a fragment of existential monadic second-order logic over graphs (SAS paper, abstract); the abstract of the technical report says the fragment is strictly less expressive. Satisfiability over heaps is decidable, and implication over the class of all graphs is decidable because $G_1$ implies $G_2$ over all graphs iff $G_1 \to G_2$.
 
 ## Sources
 

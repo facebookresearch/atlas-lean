@@ -28,7 +28,7 @@ Its elements are the *polynomial moment invariants* of the loop. It is an ideal 
 
 None.
 
-## Expansion
+## Remarks
 
 For a non-probabilistic loop the analogue is the invariant ideal, the set of polynomials vanishing on every reachable valuation; the paper shows that moment invariants generalize it: for a non-probabilistic loop, where the expected value of a monomial is the monomial itself, the moment invariant ideal is the invariant ideal under this identification (Lemma 5.5). Ideal membership is decidable from a basis via Gröbner bases, so an algorithm computing bases would decide whether a given polynomial is a moment invariant.
 

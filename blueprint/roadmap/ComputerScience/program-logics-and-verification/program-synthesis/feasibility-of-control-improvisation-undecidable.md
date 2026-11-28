@@ -6,8 +6,10 @@ A control improvisation problem asks for a random generator of words accepted by
 
 **Theorem (Fremont, Donzé, Seshia and Wessel).**
 
-1. For instances whose $\alpha$ is given by a Turing machine that halts on every input, there is a procedure that, given such an instance, halts exactly when the instance is feasible, and no procedure decides feasibility for all such instances (Corollaries 3.3 and 3.4 of the source). The set of all such instances that are feasible is not itself computably enumerable, since it would then contain a fixed feasible instance exactly when the given machine is total.
+1. For instances whose $\alpha$ is given by a Turing machine that halts on every input, there is a procedure that, given such an instance, halts exactly when the instance is feasible, and no procedure decides feasibility for all such instances (Corollaries 3.3 and 3.4 of the source).
 2. For each of the classes $\mathcal{P}_1$ and $\mathcal{P}_2$, determining whether an instance is feasible is undecidable.
+
+Read literally, Corollary 3.4 says that the set of feasible instances is computably enumerable; this holds only in the promise form of clause 1. The following is a remark of this page, not stated in the source: the set of feasible instances whose $\alpha$ is given by a machine $M$ halting on every input is not computably enumerable. With $\mathcal{T}$ the DFA accepting $\Sigma^*$, the instance $(\mathcal{T}, M, 1, 1)$ is feasible by Theorem 3.1 exactly when $M$ is such a machine, and the machines that halt on every input do not form a computably enumerable set.
 
 Feasibility holds exactly when $|I| \ge 1/\rho$ and $|A| \ge (1 - \epsilon)/\rho$. When both components are given by DFAs, the same paper gives a polynomial-time improvisation scheme.
 
@@ -28,4 +30,4 @@ By the characterization of feasibility through the sizes of $I$ and $A$, the ins
 
 ## Sources
 
-- Daniel J. Fremont, Alexandre Donzé, Sanjit A. Seshia and David Wessel, *Control Improvisation*, 35th IARCS Annual Conference on Foundations of Software Technology and Theoretical Computer Science (FSTTCS 2015), LIPIcs 45, 2015, pp. 463–474, https://doi.org/10.4230/LIPIcs.FSTTCS.2015.463; the definitions of control improvisation and feasibility, the feasibility theorem with its corollaries, and the undecidability theorem for probabilistic automata with its proof in the appendix, read in arXiv:1411.0698v5. Locators in arXiv:1411.0698v5: Theorem 3.1, Corollary 3.4 and Theorem 5.3.
+- Daniel J. Fremont, Alexandre Donzé, Sanjit A. Seshia and David Wessel, *Control Improvisation*, 35th IARCS Annual Conference on Foundations of Software Technology and Theoretical Computer Science (FSTTCS 2015), LIPIcs 45, 2015, pp. 463–474, https://doi.org/10.4230/LIPIcs.FSTTCS.2015.463; the definitions of control improvisation and feasibility, the feasibility theorem with its corollaries, and the undecidability theorem for probabilistic automata with its proof in the appendix, read in arXiv:1411.0698v5. Locators in arXiv:1411.0698v5: Theorem 3.1, Corollaries 3.3 and 3.4 and Theorem 5.3.

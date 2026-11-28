@@ -22,7 +22,7 @@ None.
 
 None.
 
-## Expansion
+## Remarks
 
 The Monniaux problem asks, for a class of programs and an abstract domain of candidate invariants, whether a given program has an inductive invariant in that domain separating the initial configuration from a bad one. For convex polyhedra with a uniformly bounded number of faces it is decidable through the first-order theory of the reals; the semilinear domain allows finite unions of polyhedra without a bound.
 
