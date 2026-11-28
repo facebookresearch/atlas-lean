@@ -7,7 +7,7 @@ Ollinger's conjecture and improves his bound of eleven polyominoes.
 decides whether the plane can be tiled by translated copies of polyominoes from the set, in the sense of
 [translational tilings](translational-tilings-by-finitely-many-tiles.md) (translations only, tiles matched by shape).
 
-The number of polyominoes is fixed at $8$; their shapes are the input. For one polyomino the problem is decidable, since a
+The number of polyominoes is fixed at $8$; their shapes, each given as a finite set of unit cells, are the input. For one polyomino the problem is decidable, since a
 polyomino that tiles the plane by translations tiles it periodically (Beauquier and Nivat). Ollinger proved undecidability
 for $11$ polyominoes, and the first author of the source earlier for $10$ and for $9$ polyominoes (the case of $9$ in a manuscript in Chinese).
 

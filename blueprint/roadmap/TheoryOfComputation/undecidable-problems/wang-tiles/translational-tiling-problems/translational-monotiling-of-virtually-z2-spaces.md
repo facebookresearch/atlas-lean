@@ -5,7 +5,7 @@ $F \subseteq \mathbb{Z}^2 \times G_0$, whether the single tile $F$ tiles $\mathb
 
 **Theorem.** There is no algorithm which, upon any input of
 
-- a finite abelian group $G_0$,
+- a finite abelian group $G_0$, given as a product of cyclic groups,
 - a set $E \subseteq G_0$,
 - a finite set $F \subseteq \mathbb{Z}^2 \times G_0$,
 
@@ -23,6 +23,8 @@ conjecture for $\mathbb{Z}^2$).
 - [Translational tilings by finitely many tiles](translational-tilings-by-finitely-many-tiles.md)
 - [Abelian group](../../../../GroupTheory/group-basics/abelian-group.md)
 - [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Turing degree of a predicate](../../../degrees-and-hierarchies/turing-degrees-and-the-turing-jump/turing-degree-of.md)
+- [The Turing jump](../../../degrees-and-hierarchies/turing-degrees-and-the-turing-jump/jump.md)
 
 ## Proof depends on
 

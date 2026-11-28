@@ -4,7 +4,7 @@ No algorithm decides, given a set of seven polyominoes, whether translated copie
 
 **Theorem.** The $7$-polyomino tiling problem is undecidable: there is no algorithm which, given a set of $7$ polyominoes, decides whether the plane can be tiled by translated copies of polyominoes from the set, in the sense of [translational tilings](translational-tilings-by-finitely-many-tiles.md) (translations only; no rotations or reflections).
 
-The number of polyominoes is fixed at $7$ and their shapes are the input. A polyomino is a finite union of unit squares glued edge to edge. For one polyomino the problem is decidable, since a polyomino that tiles the plane by translations tiles it periodically. The source deduces (Corollary 1) that there are sets of $7$ polyominoes that tile the plane by translations but only non-periodically.
+The number of polyominoes is fixed at $7$ and their shapes are the input. A polyomino is a finite union of unit squares glued edge to edge, that is, a [polycube](../../../../Combinatorics/tilings-board-placements/fixed-polycubes/is-polycube-cells.md) in $\mathbb Z^2$ (nonempty and connected through shared edges). For one polyomino the problem is decidable, since a polyomino that tiles the plane by translations tiles it periodically. The source deduces (Corollary 1) that there are sets of $7$ polyominoes that tile the plane by translations but only non-periodically.
 
 ## Depends on
 

@@ -15,8 +15,7 @@ A \oplus F = E .
 $$
 
 A set $E \subseteq G$ is *periodic* (strongly periodic) if it is invariant under translation by a subgroup of finite index
-in $G$. For finitely generated $G$ a periodic set is described by finitely many data, so it can be part of the input of an
-algorithm. A *translational tiling problem* asks, for given tiles and a given periodic region $E$, whether a translational
+in $G$. As inputs of an algorithm these objects are finite data: a finite abelian group $G_0$ is given as a product $\mathbb{Z}/n_1 \times \cdots \times \mathbb{Z}/n_r$ by the list $(n_1, \dots, n_r)$, elements of $\mathbb{Z}^d \times G_0$ by their coordinates, finite sets (tiles, subsets of $G_0$) by lists of elements, and a periodic set $E \subseteq \mathbb{Z}^d$ by a basis of a sublattice $\Lambda \subseteq \mathbb{Z}^d$ of finite index together with a finite set $R$ of representatives, $E = R + \Lambda$. A polyomino is given by its finite set of unit cells. A *translational tiling problem* asks, for given tiles and a given periodic region $E$, whether a translational
 tiling of $E$ exists.
 
 **Polyominoes in the plane.** A *polyomino* is a finite union of closed unit squares of the integer lattice in

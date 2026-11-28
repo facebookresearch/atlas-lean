@@ -6,7 +6,7 @@ their sides, tiles the hyperbolic plane with matching sides.
 **Theorem (Margenstern).** The domino problem of the hyperbolic plane is undecidable: there is no algorithm that, given a finite set of prototiles
 whose shape is the regular heptagon of the *heptagrid*, the regular tessellation $\{7,3\}$ of the hyperbolic plane, each side carrying a
 marking, decides whether the hyperbolic plane can be tiled by copies of the prototiles placed on the cells of the heptagrid so that any
-two tiles sharing a side carry matching markings on it.
+two tiles sharing a side carry matching markings on it. As in the source, a copy is the image of a prototile under a shift of the heptagrid; rotations are excluded (Theorem 1 of the source).
 
 The question is the hyperbolic analogue of Wang's general tiling problem, with no fixed initial tile; Robinson had shown in 1978 that the
 origin-constrained version is undecidable in the hyperbolic plane and asked about the general one. The result was first proved by Margenstern in 2008 with a different tiling. The new proof also gives a non-periodic tiling of the heptagrid built from $157$ prototiles.

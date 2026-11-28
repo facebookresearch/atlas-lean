@@ -6,7 +6,7 @@ whether the single tile $F$ tiles $E$ by translations.
 **Theorem.** There is no algorithm which, upon any input of
 
 - an integer $d \ge 3$,
-- a periodic set $E \subseteq \mathbb{Z}^d$,
+- a periodic set $E \subseteq \mathbb{Z}^d$, given by a finite-index sublattice and a finite set of representatives,
 - a finite set $F \subseteq \mathbb{Z}^d$,
 
 decides in finite time whether $F$ tiles $E$, that is, whether $A \oplus F = E$ for some $A \subseteq \mathbb{Z}^d$, in the
