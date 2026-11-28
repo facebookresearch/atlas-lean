@@ -1,12 +1,12 @@
 # Response-time analysis for fixed-priority periodic tasks
 
-Consider tasks $\tau_1, \dots, \tau_m$ of the [Liu–Layland periodic task model](../the-liu-layland-periodic-task-model.md), with periods $T_j > 0$ and run-times $C_j > 0$, scheduled by the [preemptive priority-driven schedules](../produce-schedule.md) of a [fixed-priority rule](../is-fixed-priority.md) in which every task has its own priority, and let $hp(i)$ be the set of tasks of higher priority than $\tau_i$. For $r > 0$ put
+Consider tasks $\tau_1, \dots, \tau_m$ of the [Liu–Layland periodic task model](../the-liu-layland-periodic-task-model.md), with periods $T_j > 0$ and run-times $C_j > 0$, scheduled by the [preemptive priority-driven schedules](../periodic-task-model/produce-schedule.md) of a [fixed-priority rule](../periodic-task-model/is-fixed-priority.md) in which every task has its own priority, and let $hp(i)$ be the set of tasks of higher priority than $\tau_i$. For $r > 0$ put
 
 $$
 W_i(r) = C_i + \sum_{j \in hp(i)} \left\lceil \frac{r}{T_j} \right\rceil C_j .
 $$
 
-Then the priority assignment is feasible whatever the phases if and only if, for every task $\tau_i$, $W_i(r) = r$ for some $r \in (0, T_i]$. In that case the largest [response time](../response-time.md) of a request of $\tau_i$, over all phases, is the least $r > 0$ with $W_i(r) = r$.
+Then the priority assignment is feasible whatever the phases if and only if, for every task $\tau_i$, $W_i(r) = r$ for some $r \in (0, T_i]$. In that case the largest [response time](../periodic-task-model/response-time.md) of a request of $\tau_i$, over all phases, is the least $r > 0$ with $W_i(r) = r$.
 
 The criterion is stated for the whole task set: for a single task it can fail here, since a request that is not fulfilled by its deadline is dropped. With $(C, T) = (2, 5), (1, 2), (1, 6)$ in decreasing priority, no request of the third task overflows, whatever the phases, although $W_3(5) = 6$ and $W_3(6) = 8$, so that $W_3$ has no fixed point in $(0, 6]$; the requests of the second task can overflow, as $W_2$ has no fixed point in $(0, 2]$.
 
@@ -15,9 +15,9 @@ The fixed-point equation describes a request of $\tau_i$ made at a critical inst
 ## Depends on
 
 - [The Liu–Layland periodic task model](../the-liu-layland-periodic-task-model.md)
-- [Preemptive priority-driven schedules](../produce-schedule.md)
-- [Fixed-priority rules](../is-fixed-priority.md)
-- [Response time of a request](../response-time.md)
+- [Preemptive priority-driven schedules](../periodic-task-model/produce-schedule.md)
+- [Fixed-priority rules](../periodic-task-model/is-fixed-priority.md)
+- [Response time of a request](../periodic-task-model/response-time.md)
 
 ## Proof depends on
 

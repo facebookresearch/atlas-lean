@@ -5,8 +5,8 @@ For every list of rational utilizations $U_1, \dots, U_n$ with $0 < U_i \le 1$ a
 ## Depends on
 
 - [The Liu–Layland periodic task model](../the-liu-layland-periodic-task-model.md)
-- [Preemptive priority-driven schedules](../produce-schedule.md)
-- [Fixed-priority rules](../is-fixed-priority.md)
+- [Preemptive priority-driven schedules](../periodic-task-model/produce-schedule.md)
+- [Fixed-priority rules](../periodic-task-model/is-fixed-priority.md)
 - [The hyperbolic bound for rate-monotonic scheduling](the-hyperbolic-bound-for-rate-monotonic-scheduling.md)
 
 ## Sources

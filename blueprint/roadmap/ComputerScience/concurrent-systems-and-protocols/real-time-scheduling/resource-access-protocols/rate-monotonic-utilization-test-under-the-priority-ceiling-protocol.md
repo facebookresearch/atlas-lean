@@ -13,7 +13,7 @@ then every job of every task meets its deadline, the next request of its task. A
 ## Depends on
 
 - [The Liu–Layland periodic task model](../the-liu-layland-periodic-task-model.md)
-- [Fixed-priority rules](../is-fixed-priority.md)
+- [Fixed-priority rules](../periodic-task-model/is-fixed-priority.md)
 - [The priority ceiling protocol](the-priority-ceiling-protocol.md)
 
 ## Proof depends on

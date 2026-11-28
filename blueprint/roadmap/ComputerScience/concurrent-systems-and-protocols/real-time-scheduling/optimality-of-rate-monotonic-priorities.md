@@ -5,8 +5,8 @@ In the Liu–Layland periodic task model (over intervals in which no non-periodi
 ## Depends on
 
 - [The Liu–Layland periodic task model](the-liu-layland-periodic-task-model.md)
-- [Preemptive priority-driven schedules](produce-schedule.md)
-- [Fixed-priority rules](is-fixed-priority.md)
+- [Preemptive priority-driven schedules](periodic-task-model/produce-schedule.md)
+- [Fixed-priority rules](periodic-task-model/is-fixed-priority.md)
 
 ## Proof depends on
 

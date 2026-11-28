@@ -11,8 +11,8 @@ The sum is the processor demand of jobs of $\tau_1, \dots, \tau_i$ released in t
 ## Depends on
 
 - [The Liu–Layland periodic task model](../the-liu-layland-periodic-task-model.md)
-- [Preemptive priority-driven schedules](../produce-schedule.md)
-- [Fixed-priority rules](../is-fixed-priority.md)
+- [Preemptive priority-driven schedules](../periodic-task-model/produce-schedule.md)
+- [Fixed-priority rules](../periodic-task-model/is-fixed-priority.md)
 
 ## Proof depends on
 

@@ -1,6 +1,6 @@
 # The critical instant theorem
 
-In the Liu–Layland periodic task model (over intervals in which no non-periodic routine runs), consider the [preemptive priority-driven schedules](produce-schedule.md) of a [fixed-priority rule](is-fixed-priority.md), which order the tasks by priority, ties broken by task index, for tasks of given run-times and request periods, under every choice of their phases, and suppose that in each of these schedules every request is fulfilled before the next request of the same task, that is, by its deadline: the priority rule is feasible whatever the phases. A *critical instant* of $\tau_i$ is an instant at which a request for $\tau_i$ has the largest [response time](response-time.md) that a request for $\tau_i$ has in these schedules. A critical instant for $\tau_i$ occurs whenever $\tau_i$ is requested simultaneously with requests for all tasks that precede $\tau_i$ in this order.
+In the Liu–Layland periodic task model (over intervals in which no non-periodic routine runs), consider the [preemptive priority-driven schedules](periodic-task-model/produce-schedule.md) of a [fixed-priority rule](periodic-task-model/is-fixed-priority.md), which order the tasks by priority, ties broken by task index, for tasks of given run-times and request periods, under every choice of their phases, and suppose that in each of these schedules every request is fulfilled before the next request of the same task, that is, by its deadline: the priority rule is feasible whatever the phases. A *critical instant* of $\tau_i$ is an instant at which a request for $\tau_i$ has the largest [response time](periodic-task-model/response-time.md) that a request for $\tau_i$ has in these schedules. A critical instant for $\tau_i$ occurs whenever $\tau_i$ is requested simultaneously with requests for all tasks that precede $\tau_i$ in this order.
 
 Liu and Layland's remark following the theorem needs no such hypothesis: if, when all tasks are first requested at time $0$, the first request of every task is fulfilled by its deadline, the priority rule is feasible whatever the phases of the tasks. The remark concerns overflows alone, and a schedule up to its first overflow does not depend on what becomes of a request once it overflows.
 
@@ -9,9 +9,9 @@ The hypothesis of the theorem is needed because a request that is not fulfilled 
 ## Depends on
 
 - [The Liu–Layland periodic task model](the-liu-layland-periodic-task-model.md)
-- [Preemptive priority-driven schedules](produce-schedule.md)
-- [Fixed-priority rules](is-fixed-priority.md)
-- [Response time of a request](response-time.md)
+- [Preemptive priority-driven schedules](periodic-task-model/produce-schedule.md)
+- [Fixed-priority rules](periodic-task-model/is-fixed-priority.md)
+- [Response time of a request](periodic-task-model/response-time.md)
 
 ## Sources
 
