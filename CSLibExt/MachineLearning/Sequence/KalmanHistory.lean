@@ -105,19 +105,19 @@ theorem update_cov_fin_one (H R : ℝ) (y : EuclideanSpace ℝ (Fin 1)) (b : Bel
   rw [← gain_fin_one]
   simp [update, Matrix.mul_apply, Matrix.sub_apply]
 
-/-- Prior mean of the final state `x1 = F * x0 + w`. -/
+/-- Formula for the prior mean of the final state `x1 = F * x0 + w`. -/
 noncomputable def BatchMeanX (F : ℝ) (m0 : ℝ) : ℝ :=
   F * m0
 
-/-- Prior variance of `x1`: `F^2 * P0 + Q`. -/
+/-- Formula for the prior variance of `x1`: `F^2 * P0 + Q`. -/
 noncomputable def BatchVarX (F Q P0 : ℝ) : ℝ :=
   F ^ 2 * P0 + Q
 
-/-- Prior mean of the observation pair `(y0, y1)`. -/
+/-- Formula for the prior mean of the observation pair `(y0, y1)`. -/
 noncomputable def BatchMeanY (F H0 H1 : ℝ) (m0 : ℝ) : Fin 2 → ℝ :=
   ![H0 * m0, H1 * (F * m0)]
 
-/-- Covariance matrix of the observation pair `(y0, y1)`:
+/-- Formula for the covariance matrix of the observation pair `(y0, y1)`:
 `Var(y0) = H0^2 P0 + R0`,
 `Cov(y0, y1) = H0 * H1 * F * P0`,
 `Var(y1) = H1^2 * (F^2 * P0 + Q) + R1`. -/
@@ -126,14 +126,17 @@ noncomputable def BatchCovY (F H0 H1 R0 R1 Q P0 : ℝ) :
   !![H0 ^ 2 * P0 + R0, H0 * H1 * F * P0;
       H0 * H1 * F * P0, H1 ^ 2 * (F ^ 2 * P0 + Q) + R1]
 
-/-- Cross-covariance vector `Cov(x1, (y0, y1))`:
+/-- Formula for the cross-covariance vector `Cov(x1, (y0, y1))`:
 `Cov(x1, y0) = F * H0 * P0`,
 `Cov(x1, y1) = H1 * (F^2 * P0 + Q)`. -/
 noncomputable def BatchCovXY (F H0 H1 Q P0 : ℝ) : Fin 2 → ℝ :=
   ![F * H0 * P0, H1 * (F ^ 2 * P0 + Q)]
 
-/-- Batch (joint) Gaussian conditioning: conditional mean of `x1`
-given `(y0, y1)`, by the Schur-complement formula. -/
+/-- Batch conditioning formula for the mean of `x1` given `(y0, y1)`: the
+Schur-complement expression, with the inverse taken as `0` when `BatchCovY` is
+singular. It is the conditional mean for independent, jointly Gaussian
+variables with centred noises and invertible `BatchCovY` (see
+`KalmanFilter.condDistrib_observationHistory`). -/
 noncomputable def BatchMean (F H0 H1 R0 R1 Q P0 m0 : ℝ)
     (y : Fin 2 → ℝ) : ℝ :=
   BatchMeanX F m0 +
@@ -141,8 +144,11 @@ noncomputable def BatchMean (F H0 H1 R0 R1 Q P0 m0 : ℝ)
       ((BatchCovY F H0 H1 R0 R1 Q P0)⁻¹ *ᵥ
         (y - BatchMeanY F H0 H1 m0))
 
-/-- Batch (joint) Gaussian conditioning: conditional variance of `x1`
-given `(y0, y1)`, by the Schur-complement formula. -/
+/-- Batch conditioning formula for the variance of `x1` given `(y0, y1)`: the
+Schur-complement expression, with the inverse taken as `0` when `BatchCovY` is
+singular. It is the conditional variance for independent, jointly Gaussian
+variables with centred noises and invertible `BatchCovY` (see
+`KalmanFilter.condDistrib_observationHistory`). -/
 noncomputable def BatchVar (F H0 H1 R0 R1 Q P0 : ℝ) : ℝ :=
   BatchVarX F Q P0 -
     (BatchCovXY F H0 H1 Q P0) ⬝ᵥ
