@@ -17,9 +17,6 @@ Topics added since this subject's fields were last revised.
 - [Canonical](part-02/canonical/README.md)
 - [Component Observations](part-02/component-observations/README.md)
 
-## [Part 3 of 17](part-03/README.md)
-
-
 ## [Part 4 of 17](part-04/README.md)
 
 - [De Groot](part-04/de-groot/README.md)
@@ -70,9 +67,6 @@ Topics added since this subject's fields were last revised.
 ## [Part 12 of 17](part-12/README.md)
 
 - [Product Moments](part-12/product-moments/README.md)
-
-## [Part 13 of 17](part-13/README.md)
-
 
 ## [Part 14 of 17](part-14/README.md)
 

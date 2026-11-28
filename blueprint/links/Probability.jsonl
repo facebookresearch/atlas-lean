@@ -7733,7 +7733,6 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/Probability/not-yet-classified/part-14/spatial-predictor/predictor-unbiased-and-error-variance.md"}], "id": "af_8160a1bf4bc4d16f2c155a13", "object": [{"location": {"declaration": "SpatialPredictor.predictor_unbiased_and_error_variance"}}], "extensions": {"org.atlas-wiki": {"from": "docstring"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Probability/not-yet-classified/part-01/README.md"}], "id": "af_65fac31a0bd4a3255a3c4f60", "extensions": {"org.autoform": {"navigation": "transparent"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Probability/not-yet-classified/part-02/README.md"}], "id": "af_ecc053f47fc76d9fdf59f69a", "extensions": {"org.autoform": {"navigation": "transparent"}}}
-{"subject": [{"type": "generic", "uri": "../roadmap/Probability/not-yet-classified/part-03/README.md"}], "id": "af_a5415a4680ad04d2a14a5713", "extensions": {"org.autoform": {"navigation": "transparent"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Probability/not-yet-classified/part-04/README.md"}], "id": "af_10aa4e65f04734673e893bc6", "extensions": {"org.autoform": {"navigation": "transparent"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Probability/not-yet-classified/part-05/README.md"}], "id": "af_844c91bc6d33085ff82cb808", "extensions": {"org.autoform": {"navigation": "transparent"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Probability/not-yet-classified/part-06/README.md"}], "id": "af_2be842117553fa2cdd2f55ce", "extensions": {"org.autoform": {"navigation": "transparent"}}}
@@ -7743,7 +7742,6 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/Probability/not-yet-classified/part-10/README.md"}], "id": "af_9177163953f3e61de87ecf26", "extensions": {"org.autoform": {"navigation": "transparent"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Probability/not-yet-classified/part-11/README.md"}], "id": "af_97ec3b42cb3c7e455634a20e", "extensions": {"org.autoform": {"navigation": "transparent"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Probability/not-yet-classified/part-12/README.md"}], "id": "af_260edb3377b64f97ec653368", "extensions": {"org.autoform": {"navigation": "transparent"}}}
-{"subject": [{"type": "generic", "uri": "../roadmap/Probability/not-yet-classified/part-13/README.md"}], "id": "af_cca9a783f0baee77f0866add", "extensions": {"org.autoform": {"navigation": "transparent"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Probability/not-yet-classified/part-14/README.md"}], "id": "af_aacd04e6cb8c3889c3d9e6b5", "extensions": {"org.autoform": {"navigation": "transparent"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Probability/not-yet-classified/part-15/README.md"}], "id": "af_250578a5b4f467b6a5f4f4c9", "extensions": {"org.autoform": {"navigation": "transparent"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Probability/not-yet-classified/part-16/README.md"}], "id": "af_b6f99d1e419fba947553f31f", "extensions": {"org.autoform": {"navigation": "transparent"}}}
