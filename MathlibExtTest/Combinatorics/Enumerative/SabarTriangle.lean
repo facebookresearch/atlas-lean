@@ -41,6 +41,11 @@ example : sabarNumber 1 0 = 1 ∧ (List.range 2).map (sabarNumber 2) = [0, 2] �
     (List.range 3).map (sabarNumber 3) = [1, 1, 3] := by
   decide +kernel
 
+-- Consecutive entries in column 2, starting with the empty diagonal entry at `d = 0`.
+example : ∀ d ∈ Finset.range 5,
+    sabarNumber (2 + d + 1) 2 = ((2 + d + 1).choose 2 : ℤ) - sabarNumber (2 + d) 2 := by
+  decide +kernel
+
 -- At `n = 2` both sides are `5 / 6`. With the opposite sign `(-1)^(n-i)` (the printed sign, per
 -- the theorem's docstring), the right side would be `1 + s(1, 0) / (2 * 3) = 7 / 6` instead.
 example : lhs 2 = 5 / 6 ∧ rhs 2 = 5 / 6 := by

@@ -76,6 +76,8 @@ is checked directly.
   Journal of Integer Sequences 14 (2011), Article 11.2.6, §2, equations (9)–(10).
 - H. W. Gould and Jocelyn Quaintance, *On the Binomial Identities of Frisch and Klamkin*,
   Journal of Integer Sequences 19 (2016), Article 16.7.7, §1, equation (2) (Frisch's identity).
+- The proof of `sabarNumber_add_succ` comes from the former private lemma of the same name in
+  `MathlibExt.Combinatorics.Enumerative.SabarFineNumberDifference`.
 
 ## Implementation notes
 
@@ -101,6 +103,22 @@ Source: Sabar Taoufik, *A New Triangle of Numbers: Properties and Observations*,
 (2026), Article A27, Section 2 (definition of `s(n, i)`). -/
 public def sabarNumber (n i : ℕ) : ℤ :=
   ∑ j ∈ Finset.Ioc i n, (-1) ^ (n - j) * (j.choose i : ℤ)
+
+/-- **Consecutive rows in a column of Sabar's triangle.** For natural numbers $m$ and $d$,
+$$s(m+d+1,m)=\binom{m+d+1}{m}-s(m+d,m).$$
+
+Source: Sabar Taoufik, *A New Triangle of Numbers: Properties and Observations*, INTEGERS 26
+(2026), Article A27, Section 2 (the first identity after the definition of the triangle). -/
+public lemma sabarNumber_add_succ (m d : ℕ) :
+    sabarNumber (m + d + 1) m = ((m + d + 1).choose m : ℤ) - sabarNumber (m + d) m := by
+  unfold sabarNumber
+  rw [Finset.sum_Ioc_succ_top (by omega), Nat.sub_self, pow_zero, one_mul, add_comm,
+    sub_eq_add_neg, ← Finset.sum_neg_distrib]
+  congr 1
+  refine Finset.sum_congr rfl fun j hj => ?_
+  rw [Finset.mem_Ioc] at hj
+  rw [show m + d + 1 - j = m + d - j + 1 by omega, pow_succ]
+  ring
 
 /-- **Rows 5 and 10 of Sabar's triangle.** The entries $s(5, i)$ of Sabar's triangle for
 $i = 0, 1, \dots, 4$ are $1, 2, 7, 6, 5$, and the entries $s(10, i)$ for $i = 0, 1, \dots, 9$
@@ -370,6 +388,11 @@ private lemma alternatingColumn_diag (n : ℕ) :
   rw [show n + (j + 1) = n + 1 + j by omega,
     show 2 * n - (n + 1 + j) = n - (j + 1) by omega]
 
+private lemma central_choose_succ (n : ℕ) :
+    ((2 * (n + 1)).choose (n + 1) : ℚ) = 2 * ((2 * n + 1).choose n : ℚ) := by
+  rw [show 2 * (n + 1) = 2 * n + 1 + 1 by omega, Nat.choose_succ_succ', Nat.choose_symm_half,
+    Nat.cast_add, two_mul ((2 * n + 1).choose n : ℚ)]
+
 private def centralColumnDifference (n : ℕ) : ℚ :=
   3 * alternatingColumn n n - 2 * ((2 * n).choose n : ℚ)
 
@@ -379,9 +402,6 @@ private lemma centralColumnDifference_succ (n : ℕ) :
   have hcolumn := two_mul_alternatingColumn_succ n (n + 1)
   rw [alternatingColumn_succ n, show n + 1 + (n + 1) = 2 * (n + 1) by omega,
     show n + (n + 1) = 2 * n + 1 by omega] at hcolumn
-  have hmiddle : ((2 * (n + 1)).choose (n + 1) : ℚ) = 2 * ((2 * n + 1).choose n : ℚ) := by
-    rw [show 2 * (n + 1) = 2 * n + 1 + 1 by omega, Nat.choose_succ_succ', Nat.choose_symm_half,
-      Nat.cast_add, two_mul ((2 * n + 1).choose n : ℚ)]
   have hnear : ((2 * n + 1).choose n : ℚ) + catalan n = 2 * ((2 * n).choose n : ℚ) := by
     have habsorb := Nat.choose_mul_succ_eq (2 * n) n
     rw [show 2 * n + 1 - n = n + 1 by omega] at habsorb
@@ -392,7 +412,7 @@ private lemma centralColumnDifference_succ (n : ℕ) :
     apply mul_left_cancel₀ (show (n : ℚ) + 1 ≠ 0 by positivity)
     linear_combination hcatalan - hchoose
   unfold centralColumnDifference
-  linear_combination 3 * hcolumn - hmiddle + hnear
+  linear_combination 3 * hcolumn - central_choose_succ n + hnear
 
 /-- **Central entries of Sabar's triangle and Whitt's numbers.** Let $C(2, m)$ denote Whitt's
 generalized Catalan numbers at $\alpha = 2$. For every natural number $n \ge 1$, the central
@@ -483,20 +503,13 @@ public theorem sabarNumber_central_eq_fineNumber (n : ℕ) (hn : 1 ≤ n) :
   -- Adding the two consecutive rows in the same column cancels all but the last term.
   have hrow : (sabarNumber (2 * n) n : ℚ) =
       ((2 * n).choose n : ℚ) - sabarNumber (2 * n - 1) n := by
-    simp only [sabarNumber]
-    push_cast
-    have htop := Finset.sum_Ioc_succ_top (show n ≤ 2 * n - 1 by omega)
-      (fun j => (-1 : ℚ) ^ (2 * n - j) * (j.choose n : ℚ))
-    rw [show 2 * n - 1 + 1 = 2 * n by omega] at htop
-    rw [htop, Nat.sub_self, pow_zero, one_mul, sub_eq_neg_add, ← Finset.sum_neg_distrib]
-    congr 1
-    refine Finset.sum_congr rfl fun j hj => ?_
-    rw [Finset.mem_Ioc] at hj
-    rw [show 2 * n - j = (2 * n - 1 - j) + 1 by omega, pow_succ, mul_neg_one, neg_mul]
+    have h := sabarNumber_add_succ n (n - 1)
+    rw [show n + (n - 1) = 2 * n - 1 by omega, show 2 * n - 1 + 1 = 2 * n by omega] at h
+    exact_mod_cast h
   have hmiddle : ((2 * n).choose n : ℚ) = 2 * ((2 * n - 1).choose n : ℚ) := by
     obtain ⟨m, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (by omega : n ≠ 0)
-    rw [show 2 * (m + 1) = (2 * m + 1) + 1 by omega, Nat.add_sub_cancel,
-      Nat.choose_succ_succ', Nat.choose_symm_half, Nat.cast_add, ← two_mul]
+    simpa only [show 2 * (m + 1) - 1 = 2 * m + 1 by omega, Nat.choose_symm_half]
+      using central_choose_succ m
   rw [pow_succ (-1 : ℚ) n, mul_neg_one] at hthird
   linear_combination hrow - hthird + (1 / 3) * hmiddle
 
