@@ -12,24 +12,17 @@ import MathlibExt.NumberTheory.PFrobeniusStarNumbersPSylvesterCountOneStar
 
 open MathlibExt.NumberTheory.PFrobeniusStarNumbersWanted
 
--- For 541, 661, 793, enumerate the third coefficients. The inverse of 661 modulo 541 is 2430.
-private def countAtTen (N : ℕ) : ℕ :=
-  (List.range (N / 793 + 1)).countP fun z =>
-    let r := N - z * 793
-    decide ((r * 2430) % 541 * 661 ≤ r)
-
-private theorem starRepCount_ten_eq (N : ℕ) (hN : N < 541 * 661) :
-    starRepCount 10 N = countAtTen N :=
-  starRepCount_eq_countP 10 N (by decide +kernel) hN
-
 -- Check the count at `g` and above it in every residue modulo 541. Adding further
 -- copies of 541 preserves those representations, so the check covers every `N > g`.
 private theorem checkedFrobeniusAtTen (p g : ℕ) (hbound : g + 541 < 541 * 661)
-    (hcount : countAtTen g = p)
-    (hwindow : (List.range 541).all (fun i => decide (p < countAtTen (g + i + 1))) = true) :
+    (hcount : starRepCountCandidates 10 g = p)
+    (hwindow : (List.range 541).all
+      (fun i => decide (p < starRepCountCandidates 10 (g + i + 1))) = true) :
     IsPFrobeniusStarNumber p 10 g := by
   apply isPFrobeniusStarNumber_iff.mpr
-  refine ⟨by rw [starRepCount_ten_eq g (by omega), hcount], ?_⟩
+  refine ⟨?_, ?_⟩
+  · have hg : g < 541 * 661 := by omega
+    rw [starRepCount_eq_countCandidates 10 g hg, hcount]
   intro N hN
   let i := (N - (g + 1)) % 541
   let k := (N - (g + 1)) / 541
@@ -41,7 +34,7 @@ private theorem checkedFrobeniusAtTen (p g : ℕ) (hbound : g + 541 < 541 * 661)
     dsimp [i, k]
     omega
   have hhere := of_decide_eq_true (List.all_eq_true.mp hwindow i (List.mem_range.mpr hi))
-  rw [← starRepCount_ten_eq _ hle] at hhere
+  rw [← starRepCount_eq_countCandidates 10 _ hle] at hhere
   exact hhere.trans_le (hsplit ▸ starRepCount_le_add_mul 10 (g + i + 1) k)
 
 -- The formula and both count conditions are checked without the general theorem.

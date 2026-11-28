@@ -117,15 +117,21 @@ private def inverse (n : ℕ) : ℕ := 3 * n * (n - 1) ^ 2
 
 private def secondCoeff (n remaining : ℕ) : ℕ := (remaining * inverse n) % star n
 
-private def countCandidates (n N : ℕ) : ℕ :=
+/-- The computable candidate count for `N` below `S_n S_{n+1}`. For each third coefficient,
+use the inverse of `S_{n+1}` modulo `S_n` to find the only possible second coefficient and
+count it if its contribution fits. -/
+def starRepCountCandidates (n N : ℕ) : ℕ :=
   (List.range (N / star (n + 2) + 1)).countP fun z =>
     let remaining := N - z * star (n + 2)
-    decide (secondCoeff n remaining * star (n + 1) ≤ remaining)
+    let y := (remaining * (3 * n * (n - 1) ^ 2)) % star n
+    decide (y * star (n + 1) ≤ remaining)
 
-private theorem starRepCount_eq_countCandidates (n N : ℕ)
-    (hinv : star (n + 1) * inverse n ≡ 1 [MOD star n])
+/-- Below `S_n S_{n+1}`, the candidate count equals the number of representing triples. -/
+theorem starRepCount_eq_countCandidates (n N : ℕ)
     (hN : N < star n * star (n + 1)) :
-    starRepCount n N = countCandidates n N := by
+    starRepCount n N = starRepCountCandidates n N := by
+  have hinv : star (n + 1) * inverse n ≡ 1 [MOD star n] :=
+    MetaMathlibExt.StarNumber.star_succ_mul_inverse_modEq n
   let a := star n
   let b := star (n + 1)
   let c := star (n + 2)
@@ -154,7 +160,7 @@ private theorem starRepCount_eq_countCandidates (n N : ℕ)
     · change secondCoeff n (N - z * c) * b ≤ N - z * c
       rw [second_eq h]
       omega
-  change Nat.card (Representation n N) = countCandidates n N
+  change Nat.card (Representation n N) = starRepCountCandidates n N
   calc
     Nat.card (Representation n N) = Nat.card ↥candidates := by
       refine Nat.card_eq_of_bijective project ⟨?_, ?_⟩
@@ -185,20 +191,9 @@ private theorem starRepCount_eq_countCandidates (n N : ℕ)
         change (remaining - y * b) / a * a + y * b + z * c = N
         dsimp only [remaining] at hdiv ⊢
         omega
-    _ = countCandidates n N := by
+    _ = starRepCountCandidates n N := by
       rw [Nat.card_eq_fintype_card, Fintype.card_coe, List.nodup_range.card_eq_countP]
       rfl
-
-/-- Below `S_n S_{n+1}`, each third coefficient gives at most one representation.
-If `3n(n-1)^2` is an inverse for `S_{n+1}` modulo `S_n`, it determines the second coefficient,
-so it suffices to count the third coefficients for which that second coefficient fits. -/
-theorem starRepCount_eq_countP (n N : ℕ)
-    (hinv : star (n + 1) * (3 * n * (n - 1) ^ 2) ≡ 1 [MOD star n])
-    (hN : N < star n * star (n + 1)) :
-    starRepCount n N = (List.range (N / star (n + 2) + 1)).countP (fun z =>
-      let R := N - z * star (n + 2)
-      decide ((R * (3 * n * (n - 1) ^ 2)) % star n * star (n + 1) ≤ R)) :=
-  starRepCount_eq_countCandidates n N hinv hN
 
 private def thresholdSum (n p : ℕ) : ℕ :=
   2 * n * star (n + 1) + (p + 2) * n * star (n + 2)
@@ -207,10 +202,10 @@ private def thresholdSum (n p : ℕ) : ℕ :=
 private theorem checkThreshold (n p : ℕ) (hn : 6 ≤ n) (hn9 : n ≤ 9) (hp : p ≤ 2) :
     let g := thresholdSum n p - star n
     star n ≤ thresholdSum n p ∧
-    star (n + 1) * inverse n ≡ 1 [MOD star n] ∧
     g + star n < star n * star (n + 1) ∧
-    countCandidates n g ≤ p ∧
-    (List.range (star n)).all (fun i => decide (p < countCandidates n (g + i + 1))) = true := by
+    starRepCountCandidates n g ≤ p ∧
+    (List.range (star n)).all
+      (fun i => decide (p < starRepCountCandidates n (g + i + 1))) = true := by
   interval_cases n <;> interval_cases p <;> decide +kernel
 
 /-- **Frobenius numbers of three consecutive star numbers for $6 \le n \le 9$.** Write $S_m$ for
@@ -228,10 +223,10 @@ theorem exists_isPFrobeniusNumber_star_of_le_nine
       (g : ℤ) = 2 * n * star (n + 1) + (p + 2) * n * star (n + 2) -
         star n := by
   have hp2 : p ≤ 2 := by omega
-  obtain ⟨hsub, hinv, hprod, hcount, hwindow⟩ := checkThreshold n p hn hn9 hp2
+  obtain ⟨hsub, hprod, hcount, hwindow⟩ := checkThreshold n p hn hn9 hp2
   let g := thresholdSum n p - star n
   refine ⟨g, ⟨?_, ?_⟩, ?_⟩
-  · rw [starRepCount_eq_countCandidates n g hinv (by omega)]
+  · rw [starRepCount_eq_countCandidates n g (by omega)]
     exact hcount
   · intro N hN
     let i := (N - (g + 1)) % star n
@@ -241,9 +236,9 @@ theorem exists_isPFrobeniusNumber_star_of_le_nine
     have hsplit : g + i + 1 + k * star n = N := by
       rw [Nat.mul_comm k]
       omega
-    have hbase : p < countCandidates n (g + i + 1) := of_decide_eq_true
+    have hbase : p < starRepCountCandidates n (g + i + 1) := of_decide_eq_true
       (List.all_eq_true.mp hwindow i (List.mem_range.mpr hi))
-    rw [← starRepCount_eq_countCandidates n (g + i + 1) hinv (by omega)] at hbase
+    rw [← starRepCount_eq_countCandidates n (g + i + 1) (by omega)] at hbase
     exact hbase.trans_le (hsplit ▸ starRepCount_le_add_mul n (g + i + 1) k)
   · change ((thresholdSum n p - star n : ℕ) : ℤ) = _
     rw [Int.ofNat_sub hsub]

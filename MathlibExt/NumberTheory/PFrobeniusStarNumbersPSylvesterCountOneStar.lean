@@ -472,37 +472,62 @@ private theorem canonical_minimum (n : ℕ) (hn : 6 ≤ n) (p : Canonical n)
       exact ⟨hw.le, fun h => (h rfl).elim⟩
   exact main _ y z rfl hm
 
-private theorem exists_second_pair (n : ℕ) (hn : 6 ≤ n) (y z : ℕ) :
-    ∃ q : ℕ × ℕ, q ≠ (y, z) ∧
-      pairWeight n q = pairWeight n (y, z) + secondGap n y z * star n := by
-  by_cases hz : n ≤ z
-  · refine ⟨(y + (2 * n + 1), z - n), ?_, ?_⟩
-    · intro h
-      have := congrArg Prod.fst h
-      omega
-    · have he := reduce_left n (y + (2 * n + 1)) (z - n) hn (by omega)
-      have h0 : y + (2 * n + 1) - (2 * n + 1) = y := by omega
-      have h1 : z - n + n = z := Nat.sub_add_cancel hz
-      simpa [h0, h1, secondGap, hz] using he.symm
-  by_cases hy : y < 11
-  · refine ⟨(y + (2 * n - 10), z + (2 * n + 1)), ?_, ?_⟩
-    · intro h
-      have := congrArg Prod.snd h
-      omega
-    · have he := reduce_middle n (y + (2 * n - 10)) (z + (2 * n + 1)) hn
-        (by omega) (by omega)
-      simpa [secondGap, hz, hy] using he.symm
-  · refine ⟨(y - 11, z + (3 * n + 1)), ?_, ?_⟩
-    · intro h
-      have := congrArg Prod.snd h
-      omega
-    · have he := reduce_right n (y - 11) (z + (3 * n + 1)) hn (by omega)
-      have h0 : y - 11 + 11 = y := by omega
-      simpa [h0, secondGap, hz, hy] using he.symm
+private def leftPair (n : ℕ) (q : ℕ × ℕ) : ℕ × ℕ :=
+  (q.1 + (2 * n + 1), q.2 - n)
+
+private def rightPair (n : ℕ) (q : ℕ × ℕ) : ℕ × ℕ :=
+  (q.1 - 11, q.2 + (3 * n + 1))
+
+private def middlePair (n : ℕ) (q : ℕ × ℕ) : ℕ × ℕ :=
+  (q.1 + (2 * n - 10), q.2 + (2 * n + 1))
+
+private theorem leftPair_weight (n : ℕ) (hn : 6 ≤ n) (q : ℕ × ℕ) (hz : n ≤ q.2) :
+    pairWeight n (leftPair n q) = pairWeight n q + (n + 1) * star n := by
+  obtain ⟨y, z⟩ := q
+  simpa only [leftPair, Prod.fst, Prod.snd, Nat.add_sub_cancel, Nat.sub_add_cancel hz] using
+    (reduce_left n (y + (2 * n + 1)) (z - n) hn (by omega)).symm
+
+private theorem rightPair_weight (n : ℕ) (hn : 6 ≤ n) (q : ℕ × ℕ) (hy : 11 ≤ q.1) :
+    pairWeight n (rightPair n q) = pairWeight n q + (3 * n + 2) * star n := by
+  obtain ⟨y, z⟩ := q
+  simpa only [rightPair, Prod.fst, Prod.snd, Nat.add_sub_cancel, Nat.sub_add_cancel hy] using
+    (reduce_right n (y - 11) (z + (3 * n + 1)) hn (by omega)).symm
+
+private theorem middlePair_weight (n : ℕ) (hn : 6 ≤ n) (q : ℕ × ℕ) :
+    pairWeight n (middlePair n q) = pairWeight n q + (4 * n + 3) * star n := by
+  obtain ⟨y, z⟩ := q
+  simpa only [middlePair, Prod.fst, Prod.snd, Nat.add_sub_cancel] using
+    (reduce_middle n (y + (2 * n - 10)) (z + (2 * n + 1)) hn (by omega) (by omega)).symm
+
+private def secondPairOf (n : ℕ) (q : ℕ × ℕ) : ℕ × ℕ :=
+  if n ≤ q.2 then leftPair n q else if q.1 < 11 then middlePair n q else rightPair n q
+
+private theorem secondPairOf_weight (n : ℕ) (hn : 6 ≤ n) (q : ℕ × ℕ) :
+    pairWeight n (secondPairOf n q) = pairWeight n q + secondGap n q.1 q.2 * star n := by
+  unfold secondPairOf secondGap
+  split_ifs with hz hy
+  · exact leftPair_weight n hn q hz
+  · exact middlePair_weight n hn q
+  · exact rightPair_weight n hn q (Nat.le_of_not_gt hy)
+
+private theorem secondGap_pos (n y z : ℕ) : 0 < secondGap n y z := by
+  unfold secondGap
+  split_ifs <;> omega
+
+private def secondPair (n : ℕ) (p : Canonical n) : ℕ × ℕ :=
+  secondPairOf n (canonicalPair n p)
 
 private def secondWeight (n : ℕ) (p : Canonical n) : ℕ :=
   pairWeight n (canonicalPair n p) +
     secondGap n (canonicalPair n p).1 (canonicalPair n p).2 * star n
+
+private theorem secondPair_weight (n : ℕ) (hn : 6 ≤ n) (p : Canonical n) :
+    pairWeight n (secondPair n p) = secondWeight n p :=
+  secondPairOf_weight n hn (canonicalPair n p)
+
+private theorem secondWeight_lt (n : ℕ) (p : Canonical n) :
+    pairWeight n (canonicalPair n p) < secondWeight n p :=
+  Nat.lt_add_of_pos_right (Nat.mul_pos (secondGap_pos n _ _) (star_pos n))
 
 private theorem rep_le_one_iff_secondWeight (n N : ℕ) (hn : 6 ≤ n) (p : Canonical n)
     (hm : N ≡ pairWeight n (canonicalPair n p) [MOD star n]) :
@@ -516,16 +541,16 @@ private theorem rep_le_one_iff_secondWeight (n N : ℕ) (hn : 6 ≤ n) (p : Cano
         (secondGap n (canonicalPair n p).1 (canonicalPair n p).2 * star n)
       exact hle.trans hlarge
     obtain ⟨x, hx⟩ := (Nat.modEq_iff_exists_eq_add hle0).mp hm.symm
-    obtain ⟨q, hqne, hq⟩ := exists_second_pair n hn
-      (canonicalPair n p).1 (canonicalPair n p).2
+    let q := secondPair n p
+    have hq : pairWeight n q = secondWeight n p := secondPair_weight n hn p
     have hmq : pairWeight n q ≡ N [MOD star n] := by
-      rw [hq]
+      rw [hq, secondWeight]
       exact (by simp [Nat.ModEq] :
         pairWeight n (canonicalPair n p) +
           secondGap n (canonicalPair n p).1 (canonicalPair n p).2 * star n ≡
             pairWeight n (canonicalPair n p) [MOD star n]).trans hm.symm
     obtain ⟨x', hx'⟩ :=
-      (Nat.modEq_iff_exists_eq_add (by simpa [hq, secondWeight] using hlarge)).mp hmq
+      (Nat.modEq_iff_exists_eq_add (hq.le.trans hlarge)).mp hmq
     have hu : x * star n + (canonicalPair n p).1 * star (n + 1) +
         (canonicalPair n p).2 * star (n + 2) = N := by
       rw [Nat.mul_comm (star n) x] at hx
@@ -537,7 +562,9 @@ private theorem rep_le_one_iff_secondWeight (n N : ℕ) (hn : 6 ≤ n) (p : Cano
       omega
     have he := h (x, (canonicalPair n p).1, (canonicalPair n p).2) (x', q.1, q.2) hu hv
     have hpair := congrArg (fun u : ℕ × ℕ × ℕ => u.2) he
-    exact hqne hpair.symm
+    have hweight : pairWeight n (canonicalPair n p) = pairWeight n q :=
+      congrArg (pairWeight n) hpair
+    exact (secondWeight_lt n p).ne (hweight.trans hq)
   · intro hN u v hu hv
     have canonical (t : ℕ × ℕ × ℕ)
         (ht : t.1 * star n + t.2.1 * star (n + 1) + t.2.2 * star (n + 2) = N) :
@@ -626,37 +653,6 @@ private theorem exceptional_card_eq_sum (n : ℕ) (hn : 6 ≤ n) :
     Nat.card_eq_fintype_card, Fintype.card_sigma]
   simp only [Fintype.card_fin]
 
-private def secondPair (n : ℕ) : Canonical n → ℕ × ℕ
-  | Sum.inl p => (2 * n + 1 + p.1.val, p.2.val)
-  | Sum.inr (Sum.inl p) => (2 * n + 1 + p.1.val, n + 1 + p.2.val)
-  | Sum.inr (Sum.inr (Sum.inl p)) => (2 * n - 10 + p.1.val, 2 * n + 1 + p.2.val)
-  | Sum.inr (Sum.inr (Sum.inr p)) => (p.1.val, 3 * n + 1 + p.2.val)
-
-private theorem secondPair_weight (n : ℕ) (hn : 6 ≤ n) (p : Canonical n) :
-    pairWeight n (secondPair n p) = secondWeight n p := by
-  rcases p with p | p | p | p
-  · have he := reduce_left n (2 * n + 1 + p.1.val) p.2.val hn (by omega)
-    have h0 : 2 * n + 1 + p.1.val - (2 * n + 1) = p.1.val := by omega
-    simpa [secondPair, secondWeight, canonicalPair, secondGap, h0, Nat.add_comm] using he.symm
-  · have he := reduce_left n (2 * n + 1 + p.1.val) (n + 1 + p.2.val) hn (by omega)
-    have h0 : 2 * n + 1 + p.1.val - (2 * n + 1) = p.1.val := by omega
-    have h1 : n + 1 + p.2.val + n = 2 * n + 1 + p.2.val := by omega
-    simpa [secondPair, secondWeight, canonicalPair, secondGap, h0, h1,
-      show n ≤ 2 * n + 1 + p.2.val by omega] using he.symm
-  · have hy := p.1.isLt
-    have hz := p.2.isLt
-    have he := reduce_middle n (2 * n - 10 + p.1.val) (2 * n + 1 + p.2.val) hn
-      (by omega) (by omega)
-    have h0 : 2 * n - 10 + p.1.val - (2 * n - 10) = p.1.val := by omega
-    have h1 : 2 * n + 1 + p.2.val - (2 * n + 1) = p.2.val := by omega
-    simpa [secondPair, secondWeight, canonicalPair, secondGap, h0, h1, show ¬n ≤ p.2.val by omega,
-      show p.1.val < 11 from hy] using he.symm
-  · have hz := p.2.isLt
-    have he := reduce_right n p.1.val (3 * n + 1 + p.2.val) hn (by omega)
-    have h0 : 3 * n + 1 + p.2.val - (3 * n + 1) = p.2.val := by omega
-    simpa [secondPair, secondWeight, canonicalPair, secondGap, h0, show ¬n ≤ p.2.val by omega,
-      show ¬11 + p.1.val < 11 by omega, Nat.add_comm] using he.symm
-
 private theorem fin_sum_twice (m : ℕ) :
     2 * (∑ i : Fin m, i.val) = m * (m - 1) := by
   rw [show (∑ i : Fin m, i.val) = ∑ i ∈ Finset.range m, i from
@@ -683,7 +679,14 @@ private theorem secondWeight_sum_twice (n : ℕ) (hn : 6 ≤ n) :
     intro p _
     exact (secondPair_weight n hn p).symm
   rw [hsum]
-  simp only [Fintype.sum_sum_type, Fintype.sum_prod_type, secondPair, pairWeight]
+  have hlow (z : Fin n) : ¬ n ≤ z.val := z.isLt.not_ge
+  have hleft (z : Fin n) : n ≤ 2 * n + 1 + z.val := by omega
+  have hsub (z : Fin n) : 2 * n + 1 + z.val - n = n + 1 + z.val := by omega
+  have hsmall (y : Fin 11) : y.val < 11 := y.isLt
+  have hlarge (y : Fin (2 * n - 10)) : ¬ 11 + y.val < 11 := by omega
+  simp only [Fintype.sum_sum_type, Fintype.sum_prod_type, secondPair, secondPairOf, canonicalPair,
+    Nat.le_add_right, ite_true, hlow, hleft, hsmall, hlarge, ite_false,
+    leftPair, rightPair, middlePair, Nat.add_sub_cancel_left, hsub, pairWeight]
   have hA := rectangle_sum_twice (star (n + 1)) (star (n + 2)) (2 * n + 1) (n + 1)
     (2 * n + 1) 0
   have hB := rectangle_sum_twice (star (n + 1)) (star (n + 2)) (2 * n - 10) n
@@ -692,7 +695,10 @@ private theorem secondWeight_sum_twice (n : ℕ) (hn : 6 ≤ n) :
     (2 * n - 10) (2 * n + 1)
   have hD := rectangle_sum_twice (star (n + 1)) (star (n + 2)) (2 * n - 10) n
     0 (3 * n + 1)
-  simp only [Nat.zero_add] at hA hD
+  simp only [Nat.zero_add, Nat.add_comm (2 * n + 1)] at hA
+  simp only [Nat.add_comm (2 * n + 1)] at hB
+  simp only [Nat.add_comm (2 * n - 10), Nat.add_comm (2 * n + 1)] at hC
+  simp only [Nat.zero_add, Nat.add_comm (3 * n + 1)] at hD
   rw [Nat.mul_add, Nat.mul_add, Nat.mul_add, hA, hB, hC, hD]
   obtain ⟨k, rfl⟩ : ∃ k, n = k + 6 := ⟨n - 6, by omega⟩
   rw [show 2 * (k + 6) - 10 = 2 * k + 2 by omega]
@@ -802,51 +808,6 @@ private theorem canonicalWeight_le_threshold (n : ℕ) (hn : 10 ≤ n) (c : Cano
   simp only [Nat.zero_add]
   omega
 
-private def leftPair (n : ℕ) (q : ℕ × ℕ) : ℕ × ℕ :=
-  (q.1 + (2 * n + 1), q.2 - n)
-
-private def rightPair (n : ℕ) (q : ℕ × ℕ) : ℕ × ℕ :=
-  (q.1 - 11, q.2 + (3 * n + 1))
-
-private def middlePair (n : ℕ) (q : ℕ × ℕ) : ℕ × ℕ :=
-  (q.1 + (2 * n - 10), q.2 + (2 * n + 1))
-
-private theorem leftPair_weight (n : ℕ) (hn : 6 ≤ n) (q : ℕ × ℕ) (hz : n ≤ q.2) :
-    pairWeight n (leftPair n q) = pairWeight n q + (n + 1) * star n := by
-  obtain ⟨y, z⟩ := q
-  simpa only [leftPair, Prod.fst, Prod.snd, Nat.add_sub_cancel, Nat.sub_add_cancel hz] using
-    (reduce_left n (y + (2 * n + 1)) (z - n) hn (by omega)).symm
-
-private theorem rightPair_weight (n : ℕ) (hn : 6 ≤ n) (q : ℕ × ℕ) (hy : 11 ≤ q.1) :
-    pairWeight n (rightPair n q) = pairWeight n q + (3 * n + 2) * star n := by
-  obtain ⟨y, z⟩ := q
-  simpa only [rightPair, Prod.fst, Prod.snd, Nat.add_sub_cancel, Nat.sub_add_cancel hy] using
-    (reduce_right n (y - 11) (z + (3 * n + 1)) hn (by omega)).symm
-
-private theorem middlePair_weight (n : ℕ) (hn : 6 ≤ n) (q : ℕ × ℕ) :
-    pairWeight n (middlePair n q) = pairWeight n q + (4 * n + 3) * star n := by
-  obtain ⟨y, z⟩ := q
-  simpa only [middlePair, Prod.fst, Prod.snd, Nat.add_sub_cancel] using
-    (reduce_middle n (y + (2 * n - 10)) (z + (2 * n + 1)) hn (by omega) (by omega)).symm
-
-private theorem secondPair_eq (n : ℕ) (c : Canonical n) :
-    secondPair n c =
-      if n ≤ (canonicalPair n c).2 then leftPair n (canonicalPair n c)
-      else if (canonicalPair n c).1 < 11 then middlePair n (canonicalPair n c)
-      else rightPair n (canonicalPair n c) := by
-  rcases c with p | p | p | p
-  · simp [secondPair, canonicalPair, leftPair, Nat.add_comm]
-  · split
-    · apply Prod.ext <;> dsimp [secondPair, leftPair, canonicalPair] <;> omega
-    · rename_i hz
-      change ¬n ≤ 2 * n + 1 + p.2.val at hz
-      omega
-  · have hz := p.2.isLt
-    have hy := p.1.isLt
-    simp [secondPair, canonicalPair, middlePair, hz.not_ge, hy, Nat.add_comm]
-  · have hz := p.2.isLt
-    simp [secondPair, canonicalPair, rightPair, hz.not_ge, Nat.add_comm]
-
 private theorem secondWeight_le_threshold (n : ℕ) (hn : 10 ≤ n) (c : Canonical n) :
     secondWeight n c ≤ frobeniusThreshold n 1 := by
   have h6 : 6 ≤ n := by omega
@@ -854,7 +815,7 @@ private theorem secondWeight_le_threshold (n : ℕ) (hn : 10 ≤ n) (c : Canonic
   by_cases hz : n ≤ (canonicalPair n c).2
   · rw [secondWeight, secondGap, ite_eq_left hz, frobeniusThreshold_succ n 0]
     exact Nat.add_le_add (canonicalWeight_le_threshold n hn c) (leftGap_mul_le n h6)
-  rw [← secondPair_weight n h6, secondPair_eq, ite_eq_right hz]
+  rw [← secondPair_weight n h6, secondPair, secondPairOf, ite_eq_right hz]
   apply pairWeight_le_threshold n 1 hn
   simp only [Nat.reduceAdd]
   split_ifs
@@ -877,7 +838,7 @@ private theorem exists_third_pair_bounded (n : ℕ) (hn : 10 ≤ n) (c : Canonic
     pairWeight n q ≤ frobeniusThreshold n 2 ∧ pairWeight n q ≡ pairWeight n r [MOD star n]
   by_cases hz : r.2 < n ∨ 2 * n ≤ r.2
   · have hsecond : n ≤ (secondPair n c).2 := by
-      rw [secondPair_eq]
+      rw [secondPair, secondPairOf]
       change n ≤ (if n ≤ r.2 then leftPair n r
         else if r.1 < 11 then middlePair n r else rightPair n r).2
       split_ifs <;> dsimp [leftPair, middlePair, rightPair] <;> omega
@@ -982,11 +943,8 @@ private theorem repCount_gt_above_threshold (n p N : ℕ) (hn : 10 ≤ n)
   · obtain ⟨q, hq, hqmax, hqmod⟩ := exists_third_pair_bounded n hn c
     let f : Fin 3 → ℕ × ℕ := ![r, secondPair n c, q]
     have hrs : pairWeight n r < pairWeight n (secondPair n c) := by
-      rw [secondPair_weight n h6, secondWeight]
-      have hg : 0 < secondGap n (canonicalPair n c).1 (canonicalPair n c).2 := by
-        unfold secondGap
-        split_ifs <;> omega
-      exact Nat.lt_add_of_pos_right (Nat.mul_pos hg (star_pos n))
+      rw [secondPair_weight n h6]
+      exact secondWeight_lt n c
     have hsq : pairWeight n (secondPair n c) < pairWeight n q := by
       rw [secondPair_weight n h6]
       exact hq
