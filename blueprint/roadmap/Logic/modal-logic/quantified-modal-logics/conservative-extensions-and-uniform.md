@@ -12,6 +12,7 @@ The inputs are the two formulas (for the (S)CEP) or a formula and a finite signa
 ## Depends on
 
 - [One-variable first-order modal logics Q¹K and Q¹S5](one-variable-first-order-modal-logics-q1k-and.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

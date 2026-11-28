@@ -14,6 +14,7 @@ Whether the satisfiability problem of AAUL is itself co-recursively enumerable i
 - [Arrow update logic and arbitrary arrow update logic](arrow-update-logic-and-arbitrary-arrow-update.md)
 - [Recognizability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
 - [Co-recognizability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-co-recognizable.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

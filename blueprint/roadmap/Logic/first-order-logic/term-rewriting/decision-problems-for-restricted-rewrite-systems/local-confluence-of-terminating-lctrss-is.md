@@ -2,7 +2,7 @@
 
 Unlike for finite terminating term rewriting systems, where Knuth and Bendix's critical pair criterion decides confluence, local confluence of terminating logically constrained rewrite systems is undecidable, even with constraints from linear integer arithmetic, a decidable theory.
 
-**Theorem (Schöpf, Mitterwallner and Middeldorp).** There is no algorithm that decides, given a finite terminating [LCTRS](logically-constrained-term-rewriting-system.md), whether it is locally confluent. This holds already for LCTRSs over the theory of integers whose rules use the theory symbols $>$, $+$, $\cdot$, $=$ and $\wedge$, in constraints that lie in the decidable fragment of linear integer arithmetic (every multiplication has a constant factor).
+**Theorem (Schöpf, Mitterwallner and Middeldorp).** There is no algorithm that decides, given a finite terminating [LCTRS](logically-constrained-term-rewriting-system.md), whether it is locally confluent. This holds already for LCTRSs over the theory of integers whose rules use the theory symbols $>$, $+$, $\cdot$, $=$ and $\wedge$, in constraints that lie in the decidable fragment of linear integer arithmetic (every multiplication has a constant factor). An instance is a finite set of constrained rules, written as finite terms with integer value constants. The proof (Theorem 1 of the source) reduces from the Post correspondence problem over $\{0, 1\}$.
 
 Since a terminating relation is confluent iff it is locally confluent ([Newman's lemma](../newman-s-lemma.md)), confluence of terminating LCTRSs is undecidable as well, as the source states. For finite terminating plain term rewriting systems confluence is decidable by joinability of critical pairs.
 
@@ -11,6 +11,7 @@ Since a terminating relation is confluent iff it is locally confluent ([Newman's
 - [Logically constrained term rewriting system](logically-constrained-term-rewriting-system.md)
 - [Confluence of a relation](../confluence-of-a-relation.md)
 - [Term rewriting systems](../../automated-deduction/term-rewriting-systems.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

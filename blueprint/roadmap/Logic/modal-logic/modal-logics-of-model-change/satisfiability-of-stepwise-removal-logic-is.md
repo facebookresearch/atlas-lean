@@ -9,6 +9,7 @@ The source remarks that the two diamonds can be reduced to one by standard techn
 ## Depends on
 
 - [Modal logic of stepwise removal](modal-logic-of-stepwise-removal.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

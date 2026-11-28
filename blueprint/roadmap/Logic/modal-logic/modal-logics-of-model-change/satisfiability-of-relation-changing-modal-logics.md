@@ -9,6 +9,7 @@ The survey statement read is the one of Areces, Fervari, Hoffmann and Martel, wh
 ## Depends on
 
 - [Relation-changing modal logics](relation-changing-modal-logics.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

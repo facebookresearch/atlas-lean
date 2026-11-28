@@ -12,6 +12,7 @@ The first-order modal logics of the rationals and the reals ordered by $\leq$ or
 
 - [First-order modal logics of single Kripke frames](first-order-modal-logics-of-linear-frames.md)
 - [The arithmetical class $\Sigma_n$](../../../TheoryOfComputation/degrees-and-hierarchies/arithmetical-hierarchy/is-sigma.md)
+- [The arithmetical class $\Pi_n$](../../../TheoryOfComputation/degrees-and-hierarchies/arithmetical-hierarchy/is-pi.md)
 
 ## Proof depends on
 

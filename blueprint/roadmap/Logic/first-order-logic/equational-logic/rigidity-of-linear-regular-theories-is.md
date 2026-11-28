@@ -17,6 +17,7 @@ For example, the theories of monoids and of monoids with an anti-involution are 
 ## Depends on
 
 - [Equational calculus](equational-calculus.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

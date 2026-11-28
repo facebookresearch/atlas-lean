@@ -15,6 +15,7 @@ The first two intervals are Theorem 2.6 and the third is Theorem 2.11 of the sou
 ## Depends on
 
 - [Quantified modal logic $\mathbf{Q}L$](quantified-modal-logic-ql.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

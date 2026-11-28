@@ -12,9 +12,9 @@ The refereed version proves part 3 for one-rule systems and shows by the same re
 
 ## Depends on
 
-- [Monotone interpretations give reduction orderings](../monotone-interpretations-give-reduction-orderings.md)
 - [Term rewriting systems](../../automated-deduction/term-rewriting-systems.md)
 - [Knuth–Bendix ordering](../knuth-bendix-ordering.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

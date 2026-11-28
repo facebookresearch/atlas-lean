@@ -12,6 +12,7 @@ Termination of general finite systems is [undecidable](../termination-of-term-re
 ## Depends on
 
 - [Term rewriting systems](../../automated-deduction/term-rewriting-systems.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

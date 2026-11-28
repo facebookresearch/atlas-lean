@@ -12,6 +12,7 @@ Since $\varphi$ is satisfiable exactly when $\neg\varphi \notin L$, each such lo
 ## Depends on
 
 - [First-order modal logics of single Kripke frames](first-order-modal-logics-of-linear-frames.md)
+- [Recognizability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
 
 ## Proof depends on
 

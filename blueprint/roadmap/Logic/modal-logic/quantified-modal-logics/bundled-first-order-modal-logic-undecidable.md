@@ -18,6 +18,7 @@ By contrast, the source shows that $\mathrm{BFOML}^{\exists\Box}$ is decidable o
 
 - [Kripke model](../kripke-semantics/kripke-model.md)
 - [Quantified modal logic QL](quantified-modal-logic-ql.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
