@@ -8,3 +8,4 @@ Matrix product operators and projected entangled pair states, and the undecidabi
 - [The matrix product operator threshold problem is undecidable](mpo-threshold-problem-is-undecidable.md)
 - [Positivity of a translation-invariant MPDO for all system sizes is undecidable](positivity-of-translation-invariant-mpdos.md)
 - [Zero testing of projected entangled pair states is undecidable](peps-zero-testing-is-undecidable.md)
+- [Invariance of a PEPS under an on-site symmetry is undecidable](invariance-of-a-peps-under-an-on-site-symmetry-i.md)
