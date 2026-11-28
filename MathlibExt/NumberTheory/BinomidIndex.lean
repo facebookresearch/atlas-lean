@@ -22,6 +22,15 @@ the entry `e_i` for `i ≥ 1` is `η (i - 1)`, and the partial sum `s_n = e_1 + 
 is `∑ i ∈ Finset.range n, η i`. Their definitions of binomid indices, lex-minimal extensions
 and the right shift appear in Section 1 of *On the monoid of lexicographically minimal
 extensions* (arXiv:2505.20018).
+
+## References
+
+* Jonathan Caalim and Yu-ichi Tanaka, *Lexicographically Minimal Extension of a Finite
+  Binomid Index*, INTEGERS 24 (2024), Article A53, pp. 1–13, Sections 1–2: binomid indices
+  and lex-minimal extensions.
+* Jonathan Caalim and Yu-ichi Tanaka, *Generalized Binomial Coefficients and the Monoid of
+  Lexicographically Minimal Extensions*, INTEGERS 26 (2026), Article A113, pp. 1–14,
+  Sections 1–2: the restatement of these definitions and the partial-sum notation.
 -/
 
 namespace MetaMathlibExt
@@ -71,6 +80,17 @@ in arXiv:2505.20018, Section 1. -/
 public def IsLexMinimalExtensionOf (η : ℕ → ℕ) (m : ℕ) : Prop :=
   IsBinomidIndex η ∧ ∀ γ : ℕ → ℕ, IsBinomidIndex γ → (∀ i < m, γ i = η i) →
     η = γ ∨ ∃ j, (∀ i < j, η i = γ i) ∧ η j < γ j
+
+/-- **A lex-minimal extension is a binomid index.** Let $m \ge 0$ and let
+$\eta = (e_1, e_2, \dots)$ be a sequence of nonnegative integers. If $\eta$ is the lex-minimal
+extension of $(e_1, \dots, e_m)$, then $\eta$ is a binomid index: for all $1 \le k \le n$,
+$\sum_{i=1}^k e_i \le \sum_{i=n-k+1}^n e_i$.
+
+Source: Jonathan Caalim and Yu-ichi Tanaka, *Lexicographically Minimal Extension of a Finite
+Binomid Index*, INTEGERS 24 (2024), Article A53, Section 2 (definition of lex-minimal extension). -/
+public theorem IsLexMinimalExtensionOf.isBinomidIndex {η : ℕ → ℕ} {m : ℕ}
+    (hη : IsLexMinimalExtensionOf η m) : IsBinomidIndex η :=
+  hη.1
 
 /-- **Lex-minimal extensions.** A sequence $e = (e_1, e_2, \dots)$ of nonnegative integers is a
 lex-minimal extension when, for some $m \ge 0$, it is the lex-minimal extension of

@@ -58,26 +58,6 @@ public theorem_wanted isLexMinimalExtensionOf_iff_forall_lt {η : ℕ → ℕ} {
         ∑ l ∈ Finset.range i, η l + ∑ l ∈ Finset.range j, η l
           = ∑ l ∈ Finset.range r, η l
 
-/-- **Partial sums of a lex-minimal extension solve a knapsack problem.** Let $m \ge 1$, let
-$\eta = (e_1, e_2, \dots)$ be the lex-minimal extension of its first $m$ entries, and write
-$S_i = e_1 + \dots + e_i$. Then for every $c \ge 1$ there are nonnegative integers
-$n_1, \dots, n_m$ with $\sum_{i=1}^m n_i i = c$ and $S_c = \sum_{i=1}^m n_i S_i$ that solve the
-unbounded knapsack problem with values $S_i$, weights $i$ and capacity $c$: all nonnegative
-integers $n'_1, \dots, n'_m$ with $\sum_{i=1}^m n'_i i \le c$ satisfy
-$\sum_{i=1}^m n'_i S_i \le \sum_{i=1}^m n_i S_i$.
-
-Source: Caalim and Tanaka, *Generalized Binomial Coefficients and the Monoid
-of Lexicographically Minimal Extensions*, INTEGERS 26 (2026), Article A113,
-Proposition 2 (`integers-2026-A113-prop-2`). -/
-public theorem_wanted IsLexMinimalExtensionOf.exists_knapsack {η : ℕ → ℕ} {m : ℕ}
-    (hη : IsLexMinimalExtensionOf η m) (hm : 1 ≤ m) {c : ℕ} (hc : 1 ≤ c) :
-    ∃ n : ℕ → ℕ, ∑ i ∈ Finset.Icc 1 m, n i * i = c ∧
-      ∑ l ∈ Finset.range c, η l
-        = ∑ i ∈ Finset.Icc 1 m, n i * ∑ l ∈ Finset.range i, η l ∧
-      ∀ n' : ℕ → ℕ, ∑ i ∈ Finset.Icc 1 m, n' i * i ≤ c →
-        ∑ i ∈ Finset.Icc 1 m, n' i * ∑ l ∈ Finset.range i, η l
-          ≤ ∑ i ∈ Finset.Icc 1 m, n i * ∑ l ∈ Finset.range i, η l
-
 /-- **A preperiod bound for lex-minimal extensions.** Let $m \ge 0$, let
 $\eta = (e_1, e_2, \dots)$ be the lex-minimal extension of its first $m$ entries, with averages
 $A_i = (e_1 + \dots + e_i)/i$, and let $1 \le k \le m$ with
