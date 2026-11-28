@@ -13,11 +13,11 @@ Huet and Lucchesi proved this independently, and Goldfarb later lowered the orde
 
 ## Proof depends on
 
-- [The Post correspondence problem is undecidable](../../../TheoryOfComputation/undecidable-problems/post-correspondence-problem/exists-not-tm2-decidable-pcp.md)
+- [MPCP is undecidable](../../../TheoryOfComputation/undecidable-problems/post-correspondence-problem/exists-not-tm2-decidable-mpcp.md)
 
 ## Expansion
 
-Both original proofs reduce Post's correspondence problem. Spies and Forster give a simplified version of Huet's proof as a reduction from the modified correspondence problem, in which a solution must start with a fixed first pair (their Theorem 4.7). The reduction produces third-order unification problems that are solvable exactly when the correspondence instance has a solution.
+Both original proofs reduce Post's correspondence problem. Spies and Forster give a simplified version of Huet's proof as a reduction from the modified correspondence problem, in which a solution must start with a fixed first pair (their Theorem 4.7). The reduction produces third-order unification problems that are solvable exactly when the correspondence instance has a solution. A good expansion links a page for the reduction of the modified correspondence problem to third-order unification (Theorem 4.7 of Spies and Forster).
 
 ## Sources
 

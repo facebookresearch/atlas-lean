@@ -15,10 +15,12 @@ By contrast, unification modulo the theory of Boolean rings is decidable: NP-com
 ## Proof depends on
 
 - [Davis–Putnam–Robinson–Matiyasevich theorem](../../../TheoryOfComputation/undecidable-problems/diophantine-sets-and-hilbert-s-tenth-problem/dprm-theorem.md)
+- [Some multi-stack machine has an undecidable halting set](../../../TheoryOfComputation/computability/halting-problem-and-rice-s-theorem/exists-not-tm2-decidable-tm2-halts-on.md)
+- [Lagrange's four-square theorem](../../../NumberTheory/quadratic-forms-sums-of-squares/sums-of-squares/lagrange-four-square-theorem.md)
 
 ## Expansion
 
-The source calls the undecidability an easy consequence of the undecidability of Hilbert's tenth problem (Matiyasevich; Davis), as sketched by Baader and Siekmann. Terms over the ring signature without free constants denote polynomials with integer coefficients, and an elementary problem $s =^?_{\mathrm{CRU}} t$ asks for a substitution of such terms for the variables that makes $s$ and $t$ equal modulo $\mathrm{CRU}$, which is a question about integer solutions of the polynomial equation $s = t$.
+The source calls the undecidability an easy consequence of the undecidability of Hilbert's tenth problem (Matiyasevich; Davis), as sketched by Baader and Siekmann. Terms over the ring signature without free constants denote polynomials with integer coefficients, and an elementary problem $s =^?_{\mathrm{CRU}} t$ asks for a substitution of such terms for the variables that makes $s$ and $t$ equal modulo $\mathrm{CRU}$, which is a question about integer solutions of the polynomial equation $s = t$. Hilbert's tenth problem over the integers is undecidable because an undecidable recursively enumerable set of natural numbers is Diophantine (the DPRM theorem) and the natural numbers are Diophantine in the integers, as the sums of four squares (Lagrange).
 
 ## Sources
 

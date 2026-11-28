@@ -1,13 +1,13 @@
-# First-order tautologies of infinite NM-chains are not recursively enumerable
+# First-order tautologies of countably infinite complete NM-chains are not recursively enumerable
 
-For every countable complete subalgebra of the nilpotent minimum algebra on $[0,1]$, the set of first-order tautologies is not recursively enumerable, and for most infinite complete subalgebras even the monadic tautologies are undecidable; in contrast, finite NM-chains have recursively axiomatizable first-order logics.
+For every countably infinite complete subalgebra of the nilpotent minimum algebra on $[0,1]$, the set of first-order tautologies is not recursively enumerable, and for most infinite complete subalgebras even the monadic tautologies are undecidable; in contrast, finite NM-chains have recursively axiomatizable first-order logics.
 
 **Theorem (Bianchi).** For the [first-order nilpotent minimum logics](first-order-nilpotent-minimum-logic.md):
 
-1. If $\mathcal{A}$ is a countable topologically closed (equivalently, countable complete) subalgebra of $[0,1]_{\mathrm{NM}}$, then $\mathrm{TAUT}_{\mathcal{A}}\forall$ is not recursively enumerable (Theorem 18). In particular this holds for $\mathcal{A} \in \{NM_\infty, NM_\infty^-, NM'_\infty\}$ (Corollary 6).
+1. If $\mathcal{A}$ is a countably infinite topologically closed (equivalently, countably infinite complete) subalgebra of $[0,1]_{\mathrm{NM}}$, then $\mathrm{TAUT}_{\mathcal{A}}\forall$ is not recursively enumerable (Theorem 18). In particular this holds for $\mathcal{A} \in \{NM_\infty, NM_\infty^-, NM'_\infty\}$ (Corollary 6).
 2. If $\mathcal{A}$ is an infinite complete subalgebra of $[0,1]_{\mathrm{NM}}$ other than $NM_\infty$ and $NM_\infty^-$, then $\mathrm{monTAUT}_{\mathcal{A}}\forall$ is undecidable (Theorem 21); in particular $\mathrm{monTAUT}_{NM'_\infty}\forall$ is undecidable (Corollary 7).
 
-For finite NM-chains, the first-order tautologies are recursively axiomatizable (Theorem 14) and the monadic ones are decidable (Theorem 19). The cases $NM_\infty$ and $NM_\infty^-$ in clause 2, and the arithmetical complexity of $\mathrm{TAUT}_{NM'^-_\infty}\forall$, are left open by the source.
+The source prints Theorem 18 for countable complete subalgebras without the word "infinite", but the hypothesis is needed: every finite NM-chain $NM_n$ is a complete subalgebra of $[0,1]_{\mathrm{NM}}$, and for finite NM-chains the first-order tautologies are recursively axiomatizable (Theorem 14), so recursively enumerable; for $NM_2 = \{0, 1\}$ they are the classical first-order validities. The monadic tautologies of finite NM-chains are decidable (Theorem 19). The whole chain $[0,1]_{\mathrm{NM}}$ is uncountable, and its first-order tautologies are the theorems of the recursively axiomatized logic $\mathrm{NM}\forall$ (Theorem 3 of the source), so they are recursively enumerable. The cases $NM_\infty$ and $NM_\infty^-$ in clause 2, and the arithmetical complexity of $\mathrm{TAUT}_{NM'^-_\infty}\forall$, are left open by the source.
 
 ## Depends on
 
@@ -22,7 +22,7 @@ None.
 
 ## Expansion
 
-The proof transfers results on first-order Gödel logics, whose truth values form a Gödel chain with $x * y = \min(x,y)$: by results cited in the source (Theorems 17 and 20), the first-order tautologies of a countable complete subalgebra of $[0,1]_{\mathrm{G}}$ are not recursively enumerable, and the monadic tautologies of an infinite complete subalgebra of $[0,1]_{\mathrm{G}}$ other than $G_\uparrow$ are undecidable. A "connected rotation" turns a Gödel chain $\mathcal{B}$ into an NM-chain $\mathcal{B}_{\mathrm{NM}}$ with a negation fixpoint, and the translation $\varphi \mapsto \varphi^*$, which squares atoms, implications and universal formulas, satisfies $\mathcal{B} \models \varphi$ iff $\mathcal{B}_{\mathrm{NM}} \models \varphi^*$ (Corollary 5). A complete subalgebra of $[0,1]_{\mathrm{NM}}$ with a fixpoint is of the form $\mathcal{B}_{\mathrm{NM}}$; a chain without fixpoint is handled by adding one (Theorem 15). $G_\uparrow$ corresponds to $NM_\infty$, which explains the exception in clause 2.
+The proof transfers results on first-order Gödel logics, whose truth values form a Gödel chain with $x * y = \min(x,y)$: by results cited in the source (Theorems 17 and 20), the first-order tautologies of a countably infinite complete subalgebra of $[0,1]_{\mathrm{G}}$ are not recursively enumerable, and the monadic tautologies of an infinite complete subalgebra of $[0,1]_{\mathrm{G}}$ other than $G_\uparrow$ are undecidable. A "connected rotation" turns a Gödel chain $\mathcal{B}$ into an NM-chain $\mathcal{B}_{\mathrm{NM}}$ with a negation fixpoint, and the translation $\varphi \mapsto \varphi^*$, which squares atoms, implications and universal formulas, satisfies $\mathcal{B} \models \varphi$ iff $\mathcal{B}_{\mathrm{NM}} \models \varphi^*$ (Corollary 5). A complete subalgebra of $[0,1]_{\mathrm{NM}}$ with a fixpoint is of the form $\mathcal{B}_{\mathrm{NM}}$; a chain without fixpoint is handled by adding one (Theorem 15). $G_\uparrow$ corresponds to $NM_\infty$, which explains the exception in clause 2.
 
 ## Sources
 

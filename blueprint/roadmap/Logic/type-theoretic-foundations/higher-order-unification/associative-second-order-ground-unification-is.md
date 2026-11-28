@@ -14,10 +14,11 @@ The proof uses a signature containing a constant $a$ and a binary symbol $g$ wit
 ## Proof depends on
 
 - [Davis–Putnam–Robinson–Matiyasevich theorem](../../../TheoryOfComputation/undecidable-problems/diophantine-sets-and-hilbert-s-tenth-problem/dprm-theorem.md)
+- [Some multi-stack machine has an undecidable halting set](../../../TheoryOfComputation/computability/halting-problem-and-rice-s-theorem/exists-not-tm2-decidable-tm2-halts-on.md)
 
 ## Expansion
 
-The proof reduces Hilbert's tenth problem over the natural numbers. A polynomial equation $p(x_1, \dots, x_n) = 0$ with integer coefficients is computably encoded as a unification problem with one function variable $F$ of arity $n$, whose $i$-th argument stands for the unknown $x_i$; the example in the source encodes $(x-1)(x-2)(y-1)(y-2) = 0$ by one equation. A substitution $F \mapsto \lambda y_1 \dots y_n.\, t$ is relevant only through how often each $y_i$ occurs in $t$, and an "$n$-counter" construction (Section 3) tracks how these numbers determine the number of occurrences of the constant $a$ on each side. Since $g$ is associative and $a$ is the only other symbol, the two sides are equal modulo $\mathcal{A}$ exactly when they contain equally many occurrences of $a$, which happens exactly for the substitutions coming from natural-number solutions of $p = 0$.
+The proof reduces Hilbert's tenth problem over the natural numbers (Theorem 2.2 of the source), which is undecidable by the DPRM theorem applied to an undecidable recursively enumerable set. A polynomial equation $p(x_1, \dots, x_n) = 0$ with integer coefficients is computably encoded as a unification problem with one function variable $F$ of arity $n$, whose $i$-th argument stands for the unknown $x_i$; the example in the source encodes $(x-1)(x-2)(y-1)(y-2) = 0$ by one equation. A substitution $F \mapsto \lambda y_1 \dots y_n.\, t$ is relevant only through how often each $y_i$ occurs in $t$, and an "$n$-counter" construction (Section 3) tracks how these numbers determine the number of occurrences of the constant $a$ on each side. Since $g$ is associative and $a$ is the only other symbol, the two sides are equal modulo $\mathcal{A}$ exactly when they contain equally many occurrences of $a$, which happens exactly for the substitutions coming from natural-number solutions of $p = 0$.
 
 ## Sources
 

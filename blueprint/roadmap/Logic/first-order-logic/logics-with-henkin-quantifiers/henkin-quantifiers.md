@@ -14,7 +14,7 @@ is true iff there are functions $f_1, \dots, f_k$ on $M$ such that $M \models \f
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -22,7 +22,7 @@ None.
 
 ## Expansion
 
-Ehrenfeucht's sentence $\neg\exists t\, \mathsf{H}_2 xzyw\, ((y = w \leftrightarrow x = z) \wedge t \neq y)$ says that every injection of the universe into itself is onto, that is, the universe is finite. Enderton and Walkoe showed that the logic of all Henkin quantifiers lies strictly between $\Sigma^1_1$ and $\Delta^1_2$ in expressive power. $L_\sigma(\mathsf{H}_2)$ is decidable for monadic $\sigma$ and undecidable for $\sigma$ with one unary function symbol (Krynicki and Lachlan).
+Ehrenfeucht's sentence $\neg\exists t\, \mathsf{H}_2 xzyw\, ((y = w \leftrightarrow x = z) \wedge t \neq y)$ says that every injection of the universe into itself is onto, that is, the universe is finite. For the logic of all Henkin quantifiers, $\Sigma^1_1 \le L(\mathcal H) \le \Delta^1_2$ in expressive power (Enderton; Walkoe; Theorem 1 of the source). Both inequalities are strict: the first because $L(\mathcal H)$ is closed under negation and $\Sigma^1_1$ is not, the second by a theorem of M. Mostowski. $L_\sigma(\mathsf{H}_2)$ is decidable for monadic $\sigma$ and undecidable for $\sigma$ with one unary function symbol (Krynicki and Lachlan).
 
 ## Sources
 

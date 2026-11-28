@@ -14,8 +14,6 @@ of equations between $F$-terms. An *$E$-unifier* of $\Gamma$ is a substitution $
 
 **Kinds of problems.** $\Gamma$ is an *elementary* $E$-unification problem if $F = \mathrm{Sig}(E)$; an $E$-unification problem *with constants* if $F \setminus \mathrm{Sig}(E)$ consists of constant symbols; and a *general* $E$-unification problem if $F \setminus \mathrm{Sig}(E)$ may contain arbitrary function symbols. *$E$-unification* (elementary, with constants, or general) is the decision problem whether a given problem of that kind is $E$-unifiable. *Matching modulo $E$* asks, for terms $s$ and $t$, whether some substitution $\sigma$ has $s\sigma =_E t$.
 
-**Some theories.** For binary symbols $f, g$, a unary symbol $h$ and a constant $e$: $A_g = \{g(g(x,y),z) \approx g(x,g(y,z))\}$ (associativity), $C_g = \{g(x,y) \approx g(y,x)\}$, $AC_g = A_g \cup C_g$, $U_f = \{f(x,e) \approx x, f(e,x) \approx x\}$ (a unit $e$ for $f$, and $U_g$ likewise for $g$), $ACU_g = AC_g \cup U_g$; $D^l_{f,g} = \{f(x, g(y,z)) \approx g(f(x,y), f(x,z))\}$ and $D^r_{f,g} = \{f(g(y,z),x) \approx g(f(y,x), f(z,x))\}$ (left and right distributivity of $f$ over $g$), $D_{f,g} = D^l_{f,g} \cup D^r_{f,g}$; $\mathrm{End}_{h,g} = \{h(g(x,y)) \approx g(h(x), h(y))\}$ and $\mathrm{End}_{h,e} = \{h(e) \approx e\}$.
-
 ## Depends on
 
 - [Equational calculus](../equational-logic/equational-calculus.md)
@@ -30,4 +28,4 @@ Syntactic unification is the case $E = \emptyset$. For general unification a sys
 
 ## Sources
 
-- F. Baader and W. Snyder, "Unification theory", in A. Robinson and A. Voronkov (eds.), *Handbook of Automated Reasoning*, Vol. I, Elsevier, 2001, Chapter 8, pp. 445–533, doi:10.1016/B978-044450813-3/50010-2; read in the authors' open-access copy at <https://lat.inf.tu-dresden.de/research/papers/2001/BaaderSnyderHandbook.pdf>: Section 3.1 (Definition 3.1), Section 3.2.2 (Definition 3.9), Section 3.2.3, Section 3.4 (the theories listed) and Section 7 (matching).
+- F. Baader and W. Snyder, "Unification theory", in A. Robinson and A. Voronkov (eds.), *Handbook of Automated Reasoning*, Vol. I, Elsevier, 2001, Chapter 8, pp. 445–533, doi:10.1016/B978-044450813-3/50010-2; read in the authors' open-access copy at <https://lat.inf.tu-dresden.de/research/papers/2001/BaaderSnyderHandbook.pdf>: Section 3.1 (Definition 3.1), Section 3.2.2 (Definition 3.9), Section 3.2.3, Section 7 (matching).
