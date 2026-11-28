@@ -65,10 +65,12 @@ private def detector (n : ℕ) : K.homology n →ₗ[R] R :=
 
 private theorem detector_pi (n : ℕ) (z : K.cycles n) :
     detector n ((K.homologyπ n).hom z) = (K.iCycles n).hom z := by
-  have h : K.homologyπ n ≫ (data n).homologyIso.hom = K.iCycles n := by
-    rw [(data n).homologyπ_comp_homologyIso_hom]
-    simpa only [data, Category.comp_id] using (data n).cyclesIso_hom_comp_i
-  exact ConcreteCategory.congr_hom h z
+  have h₁ := (data n).homologyπ_comp_homologyIso_hom
+  have h₂ := (data n).cyclesIso_hom_comp_i
+  have h : K.homologyπ n ≫ (data n).homologyIso.hom = K.iCycles n :=
+    h₁.trans (by simpa only [data, Category.comp_id] using h₂)
+  simpa only [ModuleCat.hom_comp, LinearMap.comp_apply, detector] using
+    congrArg (fun f => f.hom z) h
 
 private theorem detector_class (n : ℕ) (a : R) : detector n (classOf n a) = a := by
   rw [classOf, detector_pi, cycle_value]
@@ -78,7 +80,9 @@ private theorem detector_injective (n : ℕ) : Function.Injective (detector n) :
 
 private def pairing : CochainGradedPairing K K K where
   pair _ _ := ModuleCat.ofHom (TensorProduct.lid R R).toLinearMap
-  leibniz _ _ := by simp [K]
+  leibniz _ _ := by
+    simp only [K, MonoidalPreadditive.zero_tensor, MonoidalPreadditive.tensor_zero,
+      Category.comp_zero, Category.zero_comp, zsmul_zero, add_zero]
 
 private theorem pair_coordinate (p q : ℕ) (a b : R) :
     detector (p + q)
@@ -104,15 +108,17 @@ example : classOf 2 (3 : R) ≠ 0 := by
 example :
     (pairing.pairHomology 1 2).hom (classOf 1 (2 : R) ⊗ₜ[R] classOf 2 (3 : R)) = 0 := by
   apply detector_injective 3
-  rw [pair_coordinate, map_zero]
-  norm_num
+  have h := pair_coordinate 1 2 (2 : R) (3 : R)
+  norm_num at h
+  simpa only [map_zero] using h
 
 example :
     (pairing.pairHomology 1 2).hom (classOf 1 (1 : R) ⊗ₜ[R] classOf 2 (2 : R)) ≠ 0 := by
   intro h
   have h' := congrArg (detector 3) h
-  rw [pair_coordinate, map_zero] at h'
-  norm_num at h'
+  have hc := pair_coordinate 1 2 (1 : R) (2 : R)
+  have hz := hc.symm.trans h'
+  norm_num at hz
 
 example :
     detector 0 (CochainGradedPairing.homologyUnitClass R (cycle 0 (1 : R))) = 1 := by
@@ -130,7 +136,9 @@ example :
   change detector 0 ((K.homologyπ 0).hom
     ((cyclesMap (scale (3 : R)) 0).hom (cycle 0 (1 : R)))) = 3
   rw [detector_pi]
-  have h := ConcreteCategory.congr_hom (cyclesMap_i (scale (3 : R)) 0) (cycle 0 (1 : R))
+  have h := congrArg (fun f => f.hom (cycle 0 (1 : R)))
+    (cyclesMap_i (scale (3 : R)) 0)
+  simp only [ModuleCat.hom_comp, LinearMap.comp_apply] at h
   rw [cycle_value] at h
   simpa [scale, smul_eq_mul] using h
 
