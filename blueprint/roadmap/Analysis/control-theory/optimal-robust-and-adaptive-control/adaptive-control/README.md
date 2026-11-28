@@ -4,3 +4,4 @@ Control of systems with unknown parameters: model-reference adaptive control, Ly
 
 - [Barbălat's lemma](barbalat-s-lemma.md)
 - [Scalar model-reference adaptive tracking](scalar-model-reference-adaptive-tracking.md)
+- [Energy derivative for scalar model-reference adaptive control](scalar-mracenergy-has-deriv-at.md)

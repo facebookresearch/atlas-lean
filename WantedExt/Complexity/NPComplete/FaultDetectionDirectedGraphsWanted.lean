@@ -9,11 +9,13 @@ LICENSE file in the root directory of this source tree.
 /-
 # FAULT DETECTION IN DIRECTED GRAPHS is NP-complete
 
-Source:
+Sources:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the Theory of
 NP-Completeness*, W. H. Freeman (1979), problem [MS18] FAULT DETECTION IN DIRECTED GRAPHS,
-p. 283, crediting T. Ibaraki, T. Kameda and S. Toida, "NP-complete diagnosis problems on systems
-graphs", unpublished manuscript (1977) (transformation from X3C).
+p. 283, crediting T. Ibaraki, T. Kameda and S. Toida (transformation from X3C).
+
+T. Ibaraki, T. Kameda and S. Toida, "NP-complete diagnosis problems on system graphs",
+Transactions of the IECE of Japan E62 (1979), 81–88.
 -/
 module
 

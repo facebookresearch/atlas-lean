@@ -58,4 +58,30 @@ theorem mem_higherUnitsAt_iff {n : ℕ} {u : (v.adicCompletion K)ˣ} :
       (n = 0 ∨ Valued.v ((u : v.adicCompletion K) - 1) ≤ WithZero.exp (-(n : ℤ))) :=
   Iff.rfl
 
+variable (K : Type) [Field K] [NumberField K] (v : HeightOneSpectrum (𝓞 K))
+
+theorem mem_higherUnitsAt_zero_iff {u : (v.adicCompletion K)ˣ} :
+    u ∈ higherUnitsAt K v 0 ↔ Valued.v (u : v.adicCompletion K) = 1 := by
+  simp [mem_higherUnitsAt_iff]
+
+theorem one_mem_higherUnitsAt (n : ℕ) :
+    (1 : (v.adicCompletion K)ˣ) ∈ higherUnitsAt K v n := by
+  refine ⟨by simp, ?_⟩
+  rcases Nat.eq_zero_or_pos n with h | h
+  · exact Or.inl h
+  · right
+    simp only [Units.val_one, sub_self, map_zero]
+    exact zero_le
+
+theorem higherUnitsAt_antitone : Antitone (higherUnitsAt K v) := by
+  intro m n hmn u hu
+  obtain ⟨hval, hball⟩ := hu
+  refine ⟨hval, ?_⟩
+  rcases Nat.eq_zero_or_pos m with hm | hm
+  · exact Or.inl hm
+  · right
+    rcases hball with hn0 | hle
+    · omega
+    · exact hle.trans (WithZero.exp_le_exp.mpr (by omega))
+
 end LanglandsTunnell.TateLocal

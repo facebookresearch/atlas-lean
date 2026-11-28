@@ -23,7 +23,7 @@ the model undergoes a backward bifurcation at $\mathcal R_0 = 1$ when $a > 0$, $
 
 $$\lambda > \lambda^{\mathrm{crit}} = \frac{\beta_0^*\Pi\mu\psi^2\eta^2[(1-\delta)+\delta\kappa(2+\delta)]}{\alpha\theta\Lambda^2(\mu_P+\rho)[\delta\kappa+(1-\delta)]}.$$
 
-Then a stable endemic equilibrium coexists with the stable disease-free equilibrium for $\mathcal R_0 < 1$.
+Here backward bifurcation is in the sense of Castillo-Chavez and Song (Theorem 4.1(i), $a>0$, $b>0$): for $\beta_0<\beta_0^*$ close to $\beta_0^*$ ($\mathcal R_0<1$ close to $1$) the disease-free equilibrium $\mathcal E^0$ is locally asymptotically stable and an unstable positive equilibrium bifurcates from it, while for $\beta_0>\beta_0^*$ close to $\beta_0^*$ the equilibrium $\mathcal E^0$ is unstable. The theorem gives no stable endemic equilibrium. That a stable endemic equilibrium coexists with the stable $\mathcal E^0$ on a range of $\mathcal R_0<1$ is shown only numerically, for the parameter values of the source's Table 2. In that bifurcation diagram the stable branch extends below $\mathcal R_0=1$ and meets the unstable branch at a fold at a very small $\mathcal R_0>0$, which the source reports but does not display; below the fold the endemic equilibria disappear, so the coexistence does not hold for every $\mathcal R_0<1$.
 
 ## Expansion
 
