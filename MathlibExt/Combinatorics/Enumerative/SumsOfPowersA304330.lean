@@ -52,11 +52,20 @@ and taking its coefficient of degree `2k`. Opposite exponents contribute equally
 The proof of Knuth's formula (Proposition 3) takes first differences and expands the
 resulting even power in the central factorial basis.
 
+Cereceda's Proposition 12 gives the Faulhaber form of the even power sums for exponents
+`2k` with `k ≥ 1` and `n : ℕ`. The even and odd Faulhaber expansions both use the
+binomial expansion (20) in the signed Legendre–Stirling basis.
+
 ## References
 
 * José L. Cereceda, *Sums of Powers of Integers and the Sequence A304330*,
-  Journal of Integer Sequences 28 (2025), Article 25.1.3, especially Proposition 3,
-  equation (5), and Section 2.2.
+  Journal of Integer Sequences 28 (2025), Article 25.1.3, pp. 1–21, especially Proposition 3,
+  equation (5), Section 2.2, Proposition 12, and Proposition 15.
+* G. E. Andrews, W. Gawronski, and L. L. Littlejohn, *The Legendre-Stirling numbers*,
+  Discrete Mathematics 311 (2011), 1255–1272, Theorem 5.5.
+* M. W. Coffey and M. C. Lettington, *On Fibonacci Polynomial Expressions for Sums of mth
+  Powers, their implications for Faulhaber's Formula and some Theorems of Fermat*,
+  arXiv:1510.05402 (2015), Equation (5.1).
 * Donald E. Knuth, *Johann Faulhaber and Sums of Powers*, Mathematics of Computation
   61 (1993), 277–294, pp. 284–286.
 * P. L. Butzer, M. Schmidt, E. L. Stark, and L. Vogt,
@@ -1080,10 +1089,6 @@ private theorem legendrePoly_eval (m : ℕ) (x : ℚ) :
 private theorem legendrePoly_eval_eq_sum (m : ℕ) (hm : 1 ≤ m) (x : ℚ) :
     eval₂ (Int.castRingHom ℚ) x (legendreStirlingFirstPoly m) =
       ∑ r ∈ Icc 1 m, (legendreStirlingFirst m r : ℚ) * x ^ r := by
-  have hzero : (legendreStirlingFirst m 0 : ℚ) = 0 := by
-    change (Int.castRingHom ℚ) ((legendreStirlingFirstPoly m).coeff 0) = 0
-    rw [← eval₂_at_zero, legendrePoly_eval]
-    exact prod_eq_zero (mem_range.mpr hm) (by simp)
   rw [eval₂_eq_sum, Polynomial.sum]
   apply sum_congr_of_eq_on_inter
   · intro r hr h
@@ -1094,7 +1099,8 @@ private theorem legendrePoly_eval_eq_sum (m : ℕ) (hm : 1 ≤ m) (x : ℚ) :
     have : r = 0 := by simp only [mem_Icc] at h; omega
     subst r
     change (legendreStirlingFirst m 0 : ℚ) * x ^ 0 = 0
-    rw [hzero, zero_mul]
+    obtain ⟨j, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (Nat.ne_of_gt hm)
+    rw [legendreStirlingFirst_succ_zero j, Int.cast_zero, zero_mul]
   · intro r _ hr
     have hz : (legendreStirlingFirstPoly m).coeff r = 0 := by
       simpa only [mem_support_iff, not_ne_iff] using hr
@@ -1110,6 +1116,53 @@ private theorem two_mul_powerSum_one (n : ℕ) :
   | succ n ih =>
     simp only [powerSum, sum_Icc_succ_top (Nat.succ_pos n), pow_one, Nat.cast_succ] at ih ⊢
     linear_combination ih
+
+/-- For positive `m` and natural `n`, the binomial coefficient `choose (n + m) (2 * m)` is
+expanded in powers of twice `S₁(n)`, with signed first-kind Legendre–Stirling coefficients
+scaled by `(2m)!`. This is equation (20) of Cereceda's *Sums of Powers of Integers and the
+Sequence A304330*. -/
+theorem choose_eq_legendreStirlingFirst_sum (n m : ℕ) (hm : 1 ≤ m) :
+    ((n + m).choose (2 * m) : ℚ) =
+      (∑ r ∈ Icc 1 m, (legendreStirlingFirst m r : ℚ) * (2 * powerSum 1 n) ^ r) /
+        ((2 * m).factorial : ℚ) := by
+  apply (eq_div_iff (by positivity)).2
+  rw [mul_comm, ← legendreProduct_eq_factorial_mul_choose, ← legendrePoly_eval,
+    two_mul_powerSum_one, legendrePoly_eval_eq_sum m hm]
+
+-- With the constant coefficient zero, the recurrence multiplies the linear coefficient
+-- in row m by `-m * (m + 1)` to give the linear coefficient in row m + 1.
+private theorem legendreStirlingFirst_cast_one (m : ℕ) :
+    (legendreStirlingFirst (m + 1) 1 : ℚ) =
+      (-1 : ℚ) ^ m * (m.factorial : ℚ) * ((m + 1).factorial : ℚ) := by
+  induction m with
+  | zero => simp [legendreStirlingFirst_diag]
+  | succ m ih =>
+    rw [legendreStirlingFirst_succ (m + 1) 0]
+    push_cast
+    rw [legendreStirlingFirst_succ_zero m, Int.cast_zero, ih, zero_sub,
+      pow_succ (-1 : ℚ), Nat.factorial_succ (m + 1), Nat.factorial_succ m]
+    push_cast
+    ring
+
+/-- For `k ≥ 2`, the signed Legendre–Stirling coefficients of degree one cancel in the odd
+power-sum expansion: their sum weighted by `R(k,m) / ((2m)! m)` is zero. This is equation
+(21) of Cereceda's *Sums of Powers of Integers and the Sequence A304330*, with row index
+`k` in place of `k + 1`. -/
+theorem sum_arrayR_legendreStirlingFirst_one_eq_zero (k : ℕ) (hk : 2 ≤ k) :
+    (∑ m ∈ Icc 1 k, (1 / (((2 * m).factorial : ℚ) * m)) *
+      (arrayR k m : ℚ) * (legendreStirlingFirst m 1 : ℚ)) = 0 := by
+  have hterm (m : ℕ) (hm : m ∈ Icc 1 k) :
+      (1 / (((2 * m).factorial : ℚ) * m)) * (arrayR k m : ℚ) *
+          (legendreStirlingFirst m 1 : ℚ) =
+        -((-1 : ℚ) ^ m * ((Nat.factorial (m - 1) : ℚ) ^ 2 / ((2 * m).factorial : ℚ)) *
+          (arrayR k m : ℚ)) := by
+    have hm₀ : m ≠ 0 := Nat.ne_of_gt (mem_Icc.mp hm).1
+    obtain ⟨j, rfl⟩ := Nat.exists_eq_succ_of_ne_zero hm₀
+    rw [legendreStirlingFirst_cast_one, Nat.factorial_succ j, pow_succ (-1 : ℚ),
+      Nat.succ_sub_one]
+    push_cast
+    field_simp
+  rw [sum_congr rfl hterm, sum_neg_distrib, sum_neg_factorial_sq_div_arrayR_eq_zero k hk, neg_zero]
 
 private theorem six_mul_powerSum_two (n : ℕ) :
     (2 * (n : ℚ) + 1) * ((n : ℚ) * (n + 1)) = 6 * powerSum 2 n := by
@@ -1154,13 +1207,7 @@ theorem powerSum_even_faulhaber (k : ℕ) (hk : 1 ≤ k)
     _ = ∑ m ∈ Icc 1 k, ∑ r ∈ Icc 1 m, term m r := by
       refine sum_congr rfl fun m hm ↦ ?_
       have hfac : ((2 * m).factorial : ℚ) ≠ 0 := by positivity
-      have hchoose : ((n + m).choose (2 * m) : ℚ) =
-          (∑ r ∈ Icc 1 m, (legendreStirlingFirst m r : ℚ) * (2 * powerSum 1 n) ^ r) /
-            ((2 * m).factorial : ℚ) := by
-        apply (eq_div_iff hfac).2
-        rw [mul_comm, ← legendreProduct_eq_factorial_mul_choose, ← legendrePoly_eval,
-          two_mul_powerSum_one, legendrePoly_eval_eq_sum m (mem_Icc.mp hm).1]
-      rw [hchoose, sum_div, mul_sum]
+      rw [choose_eq_legendreStirlingFirst_sum n m (mem_Icc.mp hm).1, sum_div, mul_sum]
       refine sum_congr rfl fun r hr ↦ ?_
       have hpow : (2 * powerSum 1 n) ^ r =
           2 ^ r * powerSum 1 n * (powerSum 1 n) ^ (r - 1) := by

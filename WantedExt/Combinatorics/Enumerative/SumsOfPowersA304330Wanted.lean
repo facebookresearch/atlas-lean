@@ -49,28 +49,4 @@ set_option autoImplicit false
 
 namespace MathlibExt.Combinatorics.Enumerative.SumsOfPowersA304330Wanted
 
-/-- **The Faulhaber coefficients $c_{k,r}$.** For natural numbers $p$ and $q$, let
-$R(p, q) = \sum_{j=0}^{q} (-1)^j \binom{2q}{j} (q - j)^{2p}$, and for natural numbers $q$
-and $s$ let $\mathrm{Ps}_q^{(s)}$ be the Legendre–Stirling number of the first kind, the
-coefficient of $x^s$ in $\prod_{i=0}^{q-1} (x - i(i+1))$. For natural numbers $k$ and $r$,
-$c_{k,r}$ is the rational number
-$\sum_{m=r}^{k} \frac{2^{r+1}}{(2m+2)!\,(m+1)}\, R(k+1, m+1)\, \mathrm{Ps}_{m+1}^{(r+1)}$. -/
-noncomputable def faulhaberC (k r : ℕ) : ℚ :=
-  ∑ m ∈ Finset.Icc r k,
-    (2 ^ (r + 1) / ((Nat.factorial (2 * m + 2) : ℚ) * (m + 1))) *
-      (arrayR (k + 1) (m + 1) : ℚ) * (MetaMathlibExt.legendreStirlingFirst (m + 1) (r + 1) : ℚ)
-
-/-- **Faulhaber form of the odd power sums.** For all natural numbers $k \ge 1$ and $n$,
-writing $S_j(n) = 1^j + 2^j + \cdots + n^j$ for the power sums and $c_{k,r}$ for the Faulhaber
-coefficients of Proposition 12, the rational numbers satisfy
-$S_{2k+1}(n) = S_1(n)^2 \sum_{r=1}^{k} c_{k,r} \, S_1(n)^{r-1}$.
-
-Source: José L. Cereceda, "Sums of Powers of Integers and the
-Sequence A304330", Proposition 12. -/
-theorem_wanted powerSum_odd_faulhaber (k : ℕ) (hk : 1 ≤ k)
-    (n : ℕ) :
-    powerSum (2 * k + 1) n =
-      (powerSum 1 n) ^ 2 * ∑ r ∈ Finset.Icc 1 k,
-        faulhaberC k r * (powerSum 1 n) ^ (r - 1)
-
 end MathlibExt.Combinatorics.Enumerative.SumsOfPowersA304330Wanted

@@ -10,6 +10,18 @@ module
 public import Mathlib.Data.Real.Basic
 public import Mathlib.Algebra.Polynomial.Coeff
 
+/-!
+# First-kind Jacobi–Stirling numbers
+
+These signed coefficients expand the product of the linear factors `X - i(i + ζ)`
+for `0 ≤ i < n` over a commutative ring with parameter `ζ`.
+
+## References
+
+* Yoann Gelineau and Jiang Zeng, *Combinatorial interpretations of the Jacobi-Stirling numbers*,
+  The Electronic Journal of Combinatorics 17 (2010), Research Paper 70, equation (1.3).
+-/
+
 open scoped BigOperators
 
 namespace MetaMathlibExt
@@ -46,6 +58,13 @@ public theorem jacobiStirlingFirst_initial_row {R : Type*} [CommRing R]
     jacobiStirlingFirst 0 k ζ = if k = 0 then 1 else 0 := by
   unfold jacobiStirlingFirst jacobiStirlingFirstPoly
   simp [Polynomial.coeff_one]
+
+/-- In every positive row the first-kind Jacobi–Stirling number in column zero vanishes:
+its generating polynomial has `X` as the factor indexed by `0`. -/
+theorem jacobiStirlingFirst_succ_zero {R : Type*} [CommRing R] (n : ℕ) (ζ : R) :
+    jacobiStirlingFirst (n + 1) 0 ζ = 0 := by
+  simp [jacobiStirlingFirst, jacobiStirlingFirstPoly, Finset.prod_range_succ',
+    Polynomial.mul_coeff_zero]
 
 /-- **Recurrence for the first-kind Jacobi–Stirling numbers.** For every commutative ring $R$,
 every $\zeta \in R$ and all natural numbers $n$ and $k$, the first-kind Jacobi–Stirling numbers
