@@ -14,8 +14,8 @@ public import Mathlib.Analysis.PSeries
 /-!
 # Continued fractions of alternating series
 
-The alternating series formed from successive three-step pattern denominators has the
-prescribed continued fraction. The two-step and three-step denominator sequences are
+The alternating series formed from successive two-step or three-step pattern denominators has
+the prescribed continued fraction. The two-step and three-step denominator sequences are
 defined by their continuant recurrences.
 -/
 
@@ -284,6 +284,59 @@ public theorem threeStepPattern_alternatingSeries_contFract (β : ℕ) (ω : ℕ
   · simpa [a, Nat.add_mod] using hdigit (3 * n + 2)
   · have hdiv : (3 * n + 2) / 3 = n := by omega
     simpa [a, Nat.add_mod, hdiv] using hdigit (3 * n + 3)
+
+/-- **Two-step pattern as an alternating series.** Let $\beta$ be a natural number, let
+$(\omega_n)_{n \ge 0}$ be positive integers, and let $(q_n)_{n \ge 0}$ be the convergent
+denominators of the two-step pattern for $\beta$ and $(\omega_n)$. Then the series
+$\sum_{i \ge 0} (-1)^i / (q_i q_{i+1})$ converges absolutely, and its sum $x$ has continued
+fraction expansion $[a_0; a_1, a_2, \dots]$ with $a_0 = 0$, $a_1 = \omega_0$, and
+$a_{2n+2} = 1$ and $a_{2n+3} = \omega_{n+1} q_{2n+1}^\beta$ for every $n \ge 0$; that is,
+$x = [0; \omega_0, 1, \omega_1 q_1^\beta, 1, \omega_2 q_3^\beta, 1, \dots]$.
+
+The paper assumes $\beta \ge 1$; the statement here also allows $\beta = 0$.
+
+Source: Khalil Ayadi, Chiheb Ben Bechir, and Maher Saadaoui, *Continued Fractions with
+Predictable Patterns and Transcendental Numbers*, Journal of Integer Sequences 28 (2025),
+Article 25.1.4, Proposition 2, under the hypotheses (e2) of Section 2.1. -/
+public theorem twoStepPattern_alternatingSeries_contFract (β : ℕ) (ω : ℕ → ℕ)
+    (hω : ∀ n, 0 < ω n) :
+    let q := twoStepPatternDen β ω
+    let x := ∑' i : ℕ, (-1 : ℝ) ^ i / ((q i : ℝ) * q (i + 1))
+    Summable (fun i : ℕ => (-1 : ℝ) ^ i / ((q i : ℝ) * q (i + 1))) ∧
+      (GenContFract.of x).h = 0 ∧ (GenContFract.of x).partDens.get? 0 = some (ω 0 : ℝ) ∧
+      ∀ n : ℕ, (GenContFract.of x).partDens.get? (2 * n + 1) = some 1 ∧
+        (GenContFract.of x).partDens.get? (2 * n + 2) =
+          some ((ω (n + 1) : ℝ) * q (2 * n + 1) ^ β) := by
+  intro q x
+  let a : ℕ → ℕ
+    | 0 => ω 0
+    | n + 1 => if n % 2 = 0 then 1 else ω (n / 2 + 1) * q n ^ β
+  have qpos (n : ℕ) : 0 < q n := by
+    induction n using Nat.twoStepInduction with
+    | zero => exact Nat.zero_lt_one
+    | one => exact hω 0
+    | more n ih _ =>
+      change 0 < twoStepPatternDen β ω (n + 2)
+      rw [twoStepPatternDen]
+      split <;> exact Nat.add_pos_right _ ih
+  have apos (n : ℕ) : 0 < a n := by
+    cases n with
+    | zero => exact hω 0
+    | succ n =>
+      dsimp [a]
+      split
+      · decide
+      · exact Nat.mul_pos (hω _) (pow_pos (qpos n) β)
+  have hrec (n : ℕ) : q (n + 2) = a (n + 1) * q (n + 1) + q n := by
+    dsimp only [q, a]
+    rw [twoStepPatternDen]
+    split <;> simp_all only [one_mul]
+  obtain ⟨hs, hhead, hdigit⟩ :=
+    threeStepPattern_alternatingSeries_contFract.digits_of_denominators q a rfl apos rfl hrec
+  refine ⟨hs, hhead, hdigit 0, fun n => ⟨?_, ?_⟩⟩
+  · simpa [a] using hdigit (2 * n + 1)
+  · have hdiv : (2 * n + 1) / 2 = n := by omega
+    simpa [a, Nat.add_mod, hdiv] using hdigit (2 * n + 2)
 
 end
 
