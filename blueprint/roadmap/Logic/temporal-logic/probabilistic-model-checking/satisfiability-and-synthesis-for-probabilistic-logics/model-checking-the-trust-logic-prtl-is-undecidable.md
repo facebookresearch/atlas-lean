@@ -14,7 +14,7 @@ $$
 \psi::=\phi\mid\neg\psi\mid\psi\lor\psi\mid\mathtt X\psi\mid\psi\,\mathtt U\,\psi,
 $$
 
-with $p$ an atomic proposition, $A,B$ agents, $\bowtie\in\{<,\le,>,\ge\}$ and $q\in[0,1]$. Here $\mathtt B_A^{\bowtie q}\psi$ says that agent $A$ believes $\psi$ with probability $\bowtie q$, and $\mathtt{CT}_{A,B}^{\bowtie q}\psi$ and $\mathtt{DT}_{A,B}^{\bowtie q}\psi$ express competence trust and disposition trust of $A$ in $B$ for the task $\psi$; $\mathtt G_A$, $\mathtt I_A$ and $\mathtt C_A$ quantify over the goals, intentions and cognitive states that $A$ may adopt. The *model checking problem* asks, given a finite ASMAS and a formula, whether the formula holds at the initial states.
+with $p$ an atomic proposition, $A,B$ agents, $\bowtie\in\{<,\le,>,\ge\}$ and $q\in[0,1]$. Here $\mathtt B_A^{\bowtie q}\psi$ says that agent $A$ believes $\psi$ with probability $\bowtie q$, and $\mathtt{CT}_{A,B}^{\bowtie q}\psi$ and $\mathtt{DT}_{A,B}^{\bowtie q}\psi$ express competence trust and disposition trust of $A$ in $B$ for the task $\psi$; $\mathtt G_A$, $\mathtt I_A$ and $\mathtt C_A$ quantify over the goals, intentions and cognitive states that $A$ may adopt. The *model checking problem* asks, given a finite ASMAS and a formula, whether the formula holds at the initial states; instances are finite, with rational probabilities and thresholds $q$. The proof (Appendix A of the source) reduces the emptiness and strict emptiness problems of probabilistic automata, which are undecidable already with rational transition probabilities and rational thresholds.
 
 **Theorem (Huang, Kwiatkowska and Olejnik).** Model checking PRTL* over ASMAS is undecidable, even if the guarding mechanism is trivial (Theorem 5 of the source).
 
