@@ -14,7 +14,8 @@ open MeasureTheory
 open scoped UpperHalfPlane
 
 #check @PeriodPair.covolume
-#check @PeriodPair.volume_fundamentalParallelogram_eq_covolume
+#check @PeriodPair.covolume_congr
+#check @PeriodPair.covolume_eq
 #check @PeriodPair.covolume_pos
 #check @PeriodPair.covolume_ofTau
 #check @PeriodPair.covolume_ofTau_upperHalfPlane
@@ -28,6 +29,8 @@ open scoped UpperHalfPlane
 #check @WeierstrassCurve.UniformizationDatum.normSq
 #check @WeierstrassCurve.UniformizationDatum.normSq_pos
 #check @WeierstrassCurve.UniformizationDatum.discriminant_eq
+#check @WeierstrassCurve.UniformizationDatum.Δ_ne_zero
+#check @WeierstrassCurve.UniformizationDatum.isElliptic
 #check @WeierstrassCurve.UniformizationDatum.normSq_pow_six
 #check @WeierstrassCurve.UniformizationDatum.log_normSq
 #check @WeierstrassCurve.UniformizationDatum.normSq_eq_of_lattice_eq_smul
@@ -53,8 +56,11 @@ example (L : PeriodPair) (α : ℂˣ) : (L.scale α).covolume = ‖(α : ℂ)‖
   covolume_eq_of_lattice_eq_smul α.ne_zero (L.lattice_scale α)
 
 -- The fundamental parallelogram has measure the covolume.
-example (L : PeriodPair) : volume (L.fundamentalParallelogram 0) = ENNReal.ofReal L.covolume :=
-  volume_fundamentalParallelogram_eq_covolume L 0
+example (L : PeriodPair) : volume (L.fundamentalParallelogram 0) = ENNReal.ofReal L.covolume := by
+  rw [volume_fundamentalParallelogram, covolume_eq]
+
+-- The curve of a lattice is elliptic, with no hypothesis.
+example (L : PeriodPair) : L.weierstrassCurve.IsElliptic := inferInstance
 
 -- `‖Δ‖ covol⁶` is unchanged by scaling.
 example (L : PeriodPair) (α : ℂˣ) :
@@ -83,8 +89,11 @@ example (W : WeierstrassCurve ℂ) (D : W.UniformizationDatum) (C' : VariableCha
   norm_num
 
 -- Two data for `W` whose lattices differ by scaling give the same squared norm.
-example (W : WeierstrassCurve ℂ) (hW : W.Δ ≠ 0) (D : W.UniformizationDatum) (α : ℂˣ)
+example (W : WeierstrassCurve ℂ) (D : W.UniformizationDatum) (α : ℂˣ)
     (D' : W.UniformizationDatum) (hL : D'.L = D.L.scale α) : D'.normSq = D.normSq :=
-  normSq_eq_of_lattice_eq_smul hW D D' α.ne_zero (hL ▸ D.L.lattice_scale α)
+  normSq_eq_of_lattice_eq_smul D D' α.ne_zero (hL ▸ D.L.lattice_scale α)
+
+-- A curve with a uniformization datum has nonzero discriminant.
+example (W : WeierstrassCurve ℂ) (D : W.UniformizationDatum) : W.Δ ≠ 0 := D.Δ_ne_zero
 
 end WeierstrassCurve.UniformizationDatum
