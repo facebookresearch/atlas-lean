@@ -23,12 +23,19 @@ import Mathlib.Tactic.Ring
 This module proves that positive strings of length three have no nontrivial symmetry and that
 there are infinitely many positive strings with nontrivial symmetries at every length at least
 four. It also proves that positive strings of the same length parity have equal Gauss–Kuzmin
-masses exactly when their characteristic numbers agree. Private lemmas relate the mass to the
-characteristic number and construct stable strings.
+masses exactly when their characteristic numbers agree, and constructs infinite families of stable
+strings at each length at least two.
 
-Source: Shreyas Singh, Zhuo Zhang and AJ Hildebrand, *An Elementary Characterization of the
-Gauss-Kuzmin Measure in the Theory of Continued Fractions*, INTEGERS 25 (2025), Article A89,
-Lemma 5.2 and Theorem 3.
+## References
+
+* Shreyas Singh, Zhuo Zhang and AJ Hildebrand, *An Elementary Characterization of the
+  Gauss-Kuzmin Measure in the Theory of Continued Fractions*, INTEGERS 25 (2025), Article A89,
+  pp. 1–32, Lemma 2.2(i), Lemma 5.2, Lemma 5.5 and Theorem 3.
+* Karma Dajani and Cor Kraaikamp, *Ergodic Theory of Numbers*, Carus Mathematical Monographs 29,
+  Mathematical Association of America, 2002, §1.3.2; cited for the convergent matrix product in
+  equation (2.5) of Singh, Zhang and Hildebrand.
+* Oskar Perron, *Die Lehre von den Kettenbrüchen. Bd I. Elementare Kettenbrüche*, B. G. Teubner,
+  1954, §5; cited for an equivalent form of the convergent matrix product.
 -/
 
 namespace MetaMathlibExt
@@ -345,6 +352,15 @@ private theorem plus_symmetry (a : List ℕ) (ha : ∀ x ∈ a, 0 < x) (hne : a 
     (congrArg (· % 2) hp.length_eq)).2
   simpa [hap] using hc
 
+private theorem stable_pair (t : ℕ) : IsStableString [t, 2 * t] := by
+  simp [IsStableString, convergentMatrix_cons, convergentMatrix_nil, Matrix.mul_apply,
+    Fin.sum_univ_two]
+
+private theorem stable_triple (t : ℕ) : IsStableString [t, 1, 2 * t + 1] := by
+  simp [IsStableString, convergentMatrix_cons, convergentMatrix_nil, Matrix.mul_apply,
+    Fin.sum_univ_two]
+  ring
+
 private theorem stable_family (n : ℕ) (hn : 2 ≤ n) :
     ∃ f : ℕ → List ℕ, Function.Injective f ∧
       ∀ t, (f t).length = n ∧ (∀ x ∈ f t, 0 < x) ∧ IsStableString (f t) := by
@@ -357,10 +373,9 @@ private theorem stable_family (n : ℕ) (hn : 2 ≤ n) :
         have he := congrArg List.head? h
         simpa using he
       · intro t
-        refine ⟨rfl, ?_, ?_⟩
-        · simp only [List.mem_cons, List.mem_nil_iff, or_false]
-          rintro x (rfl | rfl) <;> omega
-        · simp [IsStableString, convergentMatrix]
+        refine ⟨rfl, ?_, stable_pair (t + 1)⟩
+        simp only [List.mem_cons, List.mem_nil_iff, or_false]
+        rintro x (rfl | rfl) <;> omega
     · by_cases h3 : n = 3
       · subst n
         refine ⟨fun t => [t + 1, 1, 2 * (t + 1) + 1], ?_, ?_⟩
@@ -368,11 +383,9 @@ private theorem stable_family (n : ℕ) (hn : 2 ≤ n) :
           have he := congrArg List.head? h
           simpa using he
         · intro t
-          refine ⟨rfl, ?_, ?_⟩
-          · simp only [List.mem_cons, List.mem_nil_iff, or_false]
-            rintro x (rfl | rfl | rfl) <;> omega
-          · simp [IsStableString, convergentMatrix]
-            ring
+          refine ⟨rfl, ?_, stable_triple (t + 1)⟩
+          simp only [List.mem_cons, List.mem_nil_iff, or_false]
+          rintro x (rfl | rfl | rfl) <;> omega
       · obtain ⟨f, -, hf⟩ := ih (n - 2) (by omega) (by omega)
         obtain ⟨hlen, hpos, hstable⟩ := hf 0
         let a := f 0
@@ -418,6 +431,29 @@ public theorem nontrivialSymmetry_length_three_and_infinite :
         {a : List ℕ | a.length = n ∧ (∀ x ∈ a, 0 < x) ∧ HasNontrivialSymmetry a}.Infinite
     := by
   exact ⟨length_three, infinite_symmetries⟩
+
+/-- **Families of stable strings.** (i) For every positive integer $t$, the strings $(t, 2t)$ and
+$(t, 1, 2t + 1)$ are stable. (ii) If $a = (a_1, \dots, a_m)$ is a stable string of positive
+integers, then for every positive integer $t$ the string $(t, a_m, \dots, a_1, 2t)$, obtained from
+the reverse of $a$ by adding $t$ at the front and $2t$ at the end, is stable. (iii) For every
+$n \ge 2$ there are infinitely many stable strings of $n$ positive integers.
+
+Source: Shreyas Singh, Zhuo Zhang and AJ Hildebrand, *An Elementary Characterization of the
+Gauss-Kuzmin Measure in the Theory of Continued Fractions*, INTEGERS 25 (2025), Article A89,
+Lemma 5.5 (`integers-2025-A89-lem-5-5`). -/
+public theorem isStableString_families :
+    (∀ t : ℕ, 1 ≤ t → IsStableString [t, 2 * t] ∧ IsStableString [t, 1, 2 * t + 1]) ∧
+      (∀ a : List ℕ, (∀ x ∈ a, 0 < x) → IsStableString a → ∀ t : ℕ, 1 ≤ t →
+        IsStableString (t :: a.reverse ++ [2 * t])) ∧
+      ∀ n : ℕ, 2 ≤ n →
+        {a : List ℕ | a.length = n ∧ (∀ x ∈ a, 0 < x) ∧ IsStableString a}.Infinite := by
+  refine ⟨fun t _ => ⟨stable_pair t, stable_triple t⟩,
+    fun a ha hs t _ => stable_extend a ha hs t, ?_⟩
+  intro n hn
+  obtain ⟨f, hf, hmem⟩ := stable_family n hn
+  refine (Set.infinite_range_of_injective hf).mono ?_
+  rintro _ ⟨t, rfl⟩
+  exact hmem t
 
 end
 
