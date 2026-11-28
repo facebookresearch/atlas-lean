@@ -77,8 +77,9 @@ In particular, if the upper Perron class is empty, then
 
 P̅_Ω f(x)=+∞.
 
-For continuous boundary data on bounded Euclidean domains, the data are resolutive, so the upper and
-lower Perron solutions agree; their common finite value is the Perron solution P_Ω f.
+This defines a value for every dimension and every set; it asserts neither that the class is
+nonempty nor that the infimum is finite. For n = 0 and Ω = ℝ⁰, a bounded domain with empty boundary,
+no function is superharmonic on Ω, so the value is +∞.
 -/
 noncomputable def upperPerronSolution
     {n : ℕ}
@@ -100,8 +101,9 @@ noncomputable def upperPerronSolution
 
 /-- Let Ω⊂ℝⁿ be a bounded domain and let x∈Ω.
 
-The harmonic measure ω_Ωˣ is the probability measure concentrated on ∂Ω which represents the
-generalized Dirichlet solution.
+A probability measure μ is a harmonic measure ω_Ωˣ when it is concentrated on ∂Ω and represents
+the generalized Dirichlet solution. This is a predicate on a candidate measure, not a statement that
+one exists; for n = 0 and Ω = ℝ⁰ the boundary is empty and no measure qualifies.
 
 More precisely, for every continuous boundary datum f:∂Ω→ℝ, one has
 
@@ -110,9 +112,8 @@ H_f(x)=∫_{∂Ω} f dω_Ωˣ,
 where H_f is the Perron, or generalized, solution of the Dirichlet problem on Ω with boundary data
 f.
 
-For continuous finite-valued boundary data on a bounded Euclidean domain, the Perron solution is
-finite, so although the formal `upperPerronSolution` is naturally `EReal`-valued, its value in this
-representation agrees with the coercion to `EReal` of the ordinary real-valued integral.
+The formal `upperPerronSolution` is `EReal`-valued; the predicate requires it to equal the
+coercion to `EReal` of the ordinary real-valued integral.
 -/
 def IsHarmonicMeasure
     {n : ℕ}

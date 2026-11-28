@@ -13,6 +13,7 @@
 - [Anderson paving from the finite MSS bound](anderson-paving-of-finite-mss.md)
 - [Stability of the determinant polynomial](mixed-det-polynomial-is-stable-of-pos-se.md)
 - [Real stability of the determinant polynomial](mixed-det-polynomial-is-real-stable-of-p.md)
+- [Mixed characteristic polynomials are monic of degree the matrix size](mixed-characteristic-polynomial-is-monic.md)
 - [Mixed characteristic polynomials are monic](mixed-characteristic-polynomial-monic.md)
 - [Degree of a mixed characteristic polynomial](mixed-characteristic-polynomial-nat-degr.md)
 - [Mixed characteristic polynomials of positive semidefinite matrices are real-rooted](mixed-characteristic-polynomial-is-real.md)

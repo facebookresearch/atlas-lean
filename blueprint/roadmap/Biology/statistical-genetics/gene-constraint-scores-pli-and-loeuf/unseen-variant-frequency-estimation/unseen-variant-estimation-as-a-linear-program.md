@@ -14,7 +14,7 @@ the problem becomes minimising $\sum_i w_i e_i$ over the polyhedron in $(h, e)$,
 
 - [Expected frequency spectrum and discovery curve of a variant-frequency histogram](expected-frequency-spectrum-and-discovery-curve.md)
 - [Binomial probability mass function](../../../cancer-genomics/detection-power-for-somatic-mutations/binom-pmf.md)
-- [A linear program attaining its minimum attains it at a basic point](../../../../Analysis/not-yet-classified/linear-programming-basic/exists-basic-optimal.md): the optimal vertex
+- [A linear program attaining its minimum attains it at a basic point](../../../../Geometry/convex-geometry/linear-programming/basic-feasible-solutions/exists-basic-optimal.md): the optimal vertex
 
 ## Expansion
 

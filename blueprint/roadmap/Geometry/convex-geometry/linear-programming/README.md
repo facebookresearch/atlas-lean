@@ -1,6 +1,7 @@
 # Linear programming
 
 - [Strong linear programming duality](strong-linear-programming-duality.md)
+- [Weak duality for linear programs](weak-linear-programming-duality.md)
 - [Exists nonneg mul Vec le iff](exists-nonneg-mul-vec-le-iff.md)
 - [Exists nonneg mul Vec eq iff](exists-nonneg-mul-vec-eq-iff.md)
 - [Linear program](linear-program.md)
@@ -19,6 +20,7 @@
 - [Deterministic equivalent of a two-stage stochastic linear program](deterministic-equivalent-of-a-two-stage-program.md)
 - [Consistency of sample average approximation over finitely many decisions](consistency-of-sample-average-approximation.md)
 - [Validity and attainment of Benders cuts](validity-of-benders-cuts.md)
+- [Basic feasible solutions](basic-feasible-solutions/README.md)
 
 ## Related topics
 

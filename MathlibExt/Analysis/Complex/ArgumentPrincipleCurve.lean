@@ -136,10 +136,11 @@ namespace MeromorphicOn
 
 /-- **Argument principle** for a simple closed curve. Let `f` be meromorphic on an open set `Ω`,
 and let `γ` be a positively oriented simple closed piecewise `C¹` curve in `Ω` whose inside lies
-in `Ω` and which passes through no zero or pole of `f`. Then `f` has finitely many zeros and poles
-inside `γ`, and `(2πi)⁻¹ ∫_γ f'(z) / f(z) dz = N - P`, where `N` and `P` are the numbers of zeros
-and of poles of `f` inside `γ`, counted with multiplicity: the sums of the positive and negative
-parts of the divisor of `f` over the inside of `γ`.
+in `Ω` and on which `f` has meromorphic order `0` at every point. Then `f` has finitely many zeros
+and poles (points of nonzero meromorphic order) inside `γ`, and
+`(2πi)⁻¹ ∫_γ f'(z) / f(z) dz = N - P`, where `N` and `P` are the numbers of zeros and of poles of
+`f` inside `γ`, counted with multiplicity: the sums of the positive and negative parts of the
+divisor of `f` over the inside of `γ`.
 
 Positive orientation, implicit in the source, is the hypothesis that the winding number
 `n(γ, w)` is `1` for every `w` inside `γ`, the same encoding as in the residue theorem

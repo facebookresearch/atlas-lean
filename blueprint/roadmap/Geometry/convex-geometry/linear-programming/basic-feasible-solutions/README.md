@@ -1,0 +1,6 @@
+# Basic feasible solutions
+
+- [Basic points of a linear system](is-basic-pt.md)
+- [Finitely many basic feasible points](finite-basic.md)
+- [A linear program attaining its minimum attains it at a basic point](exists-basic-optimal.md)
+- [Basic feasible points are the extreme points](is-basic-pt-iff-mem-extreme-points.md)

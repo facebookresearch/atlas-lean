@@ -14,6 +14,10 @@ The proof combines Cauchy's theorem on the Jordan domain $D$ with the residue of
 
 - [Argument principle on a closed disc](argument-principle-closed-ball-general.md): the disc case, which this statement extends to piecewise-smooth Jordan contours
 
+## Proof depends on
+
+- [Argument principle for a simple closed curve](argument-principle.md): supplies the equality of the logarithmic-derivative integral with the zero and pole count; the remaining step identifies that integral with the winding number about $0$ of $f \circ \Gamma$
+
 ## Sources
 
 - K. J. Åström and R. M. Murray, *Feedback Systems: An Introduction for Scientists and Engineers*, 2nd ed., Princeton University Press, 2021 (electronic edition v3.0i, <http://fbsbook.org>), Section 10.2, Theorem 10.3 (principle of variation of the argument: for a closed bounded region $D$ with boundary $\Gamma$ and $f$ analytic in $D$ and on $\Gamma$ except at finitely many poles and zeros, the winding number is $\frac{1}{2\pi}\Delta\arg_\Gamma f = \frac{1}{2\pi i}\oint_\Gamma f'/f = Z - P$, p. 10-11).

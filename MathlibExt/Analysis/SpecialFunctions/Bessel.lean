@@ -39,7 +39,8 @@ first kind is defined by
 J_ν(z)=∑ₖ₌₀^∞((-1)ᵏ)/(k!Γ(ν+k+1))(z/2)^{2k+ν}.
 
 For noninteger ν, the complex power is interpreted using the principal
-branch.
+branch. At a pole of Γ the Gamma value, and so the coefficient, is read as 0, and at z = 0 the
+complex power 0^w is 0 for w ≠ 0 and 1 for w = 0.
 -/
 noncomputable def besselJ
     (ν : ℝ)

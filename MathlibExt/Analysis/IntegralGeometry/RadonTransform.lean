@@ -48,7 +48,8 @@ and t∈ℝ, define the Euclidean Radon transform by
 
 Rf(ξ,t)=∫_{{x∈ℝⁿ:⟨ x,ξ⟩=t}} f(x) dℋⁿ⁻¹(x),
 
-where ℋⁿ⁻¹ denotes (n-1)-dimensional Euclidean Hausdorff measure.
+where ℋⁿ⁻¹ denotes Euclidean Hausdorff measure of the natural-number dimension n - 1 (0 when
+n = 0). The integral is a Bochner integral, read as 0 when f is not integrable on the level set.
 
 When ‖ξ‖=1, the parameter t is the signed distance of the hyperplane from the origin.
 -/
@@ -72,10 +73,11 @@ a direction
 
 and t∈ℝ, define
 
-A_K(ξ,t)=volₙ₋₁(K∩{x:⟨ x,ξ⟩=t}).
+A_K(ξ,t)=volₙ₋₁(K∩{x:⟨ x,ξ⟩=t}) ∈ [0, +∞],
 
-For unit ξ, this is the (n-1)-dimensional volume of the section of K by the hyperplane at signed
-distance t from the origin.
+the Euclidean Hausdorff measure of the natural-number dimension n - 1 (0 when n = 0). For unit ξ,
+this is the (n-1)-dimensional volume of the section of K by the hyperplane at signed distance t
+from the origin.
 -/
 noncomputable def sectionalVolume
     {n : ℕ}

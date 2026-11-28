@@ -24,3 +24,4 @@
 - [Lower bound for $|t + z|$ in the outer sector](outer-sector-distance.md)
 - [Outer-sector bound for the quadratic integral remainder](integral-remainder-bound.md)
 - [Two-term remainder bound for $E_1$ in the outer sector](principal-exponential-integral-e1-two-te.md)
+- [Real exponential integral Ei](real-exponential-integral.md)

@@ -13,5 +13,6 @@ Spectra and spectral theorems: self-adjoint, normal and compact self-adjoint spe
 - [Spectrum of rank-one operators](spectrum-of-rank-one-operators/README.md)
 - [Spectrum of self-adjoint operators](spectrum-of-self-adjoint-operators/README.md)
 - [Krein–Rutman theorem for $C(K)$](krein-rutman.md)
+- [Numerical range of a matrix](numerical-range.md)
 - [Spectral theorem for compact normal operators](compact-normal-hilbert-basis.md)
 - [Spectral theorem for unbounded self-adjoint operators, and trace-class operators](unbounded-self-adjoint-and-trace-class-operators.md)

@@ -954,8 +954,8 @@ private theorem ch7Entry1Constant_eq_zeta
     · exact hequ ⟨hu, him⟩
   · exact heqd ⟨hgt, hu⟩
 
-/-- The exact power-sum expansion with its constant identified as `ζ(-r)`.
-The integral tail converges when `r.re < 2 * N`; the expansion starts at `N = 1`, `n = 2`.
+/-- The exact power-sum expansion with its constant identified as `ζ(-r)`, for `r ≠ -1`, `1 ≤ N`,
+`2 ≤ n` and `r.re < 2 * N` (the condition under which the integral tail converges).
 -/
 theorem chapter7PowerSum_exact_expansion
     (r : ℂ) (N n : ℕ) (hr : r ≠ -1) (hN : 0 < N) (hu : r.re < 2 * N)

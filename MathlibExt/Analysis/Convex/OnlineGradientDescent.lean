@@ -37,10 +37,11 @@ noncomputable def ogdIter {E : Type*} [NormedAddCommGroup E] [InnerProductSpace 
   | t + 1 => proj (ogdIter proj g η x0 t - η • g t (ogdIter proj g η x0 t))
 
 /-- Zinkevich's regret bound for projected online gradient descent:
-with a nonexpansive projection fixing the comparator `xstar`, and
-subgradients satisfying the convexity inequality, the regret against
+with step size `η > 0`, a 1-Lipschitz map `proj` with `proj xstar = xstar`, and
+`f t x + ⟪g t x, xstar - x⟫ ≤ f t xstar` for every `t` and `x`, the regret against
 `xstar` over `T` rounds is at most
-`‖x0 - xstar‖² / (2η) + (η / 2) ∑ ‖g t (x t)‖²`. -/
+`‖x0 - xstar‖² / (2η) + (η / 2) ∑ ‖g t (x t)‖²`. No idempotence of `proj` and no
+inequality at other comparators is needed. -/
 theorem ogd_regret {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
     {proj : E → E} {f : ℕ → E → ℝ} {g : ℕ → E → E} {η : ℝ} (hη : 0 < η)
     (hproj : LipschitzWith 1 proj)

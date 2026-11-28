@@ -8,6 +8,7 @@ Convergence tests (root test, rearrangement theorem, Stolz–Cesàro), normal an
 - [Normal convergence of series of functions](normal-convergence-of-series-of-functions/README.md)
 - [Riemann rearrangement theorem](riemann-rearrangement-theorem/README.md)
 - [Root test](root-test/README.md)
+- [Dirichlet's test for series](exists-tendsto-sum-range-mul-of-bounded.md)
 - [Convergence of an alternating weighted series in the plane](exists-tendsto-sum-inv-sq-smul-alternati.md)
 - [Kronecker's lemma](tendsto-sum-range-mul-div-of-tendsto.md)
 - [Monotone functions on a closed interval with a continuous pointwise limit converge uniformly](monotone-and-tendsto-uniformly-of-monoto.md)

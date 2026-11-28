@@ -8,10 +8,6 @@ Topics added since this subject's fields were last revised.
 - [Part 4 of 20](part-01/part-04/README.md)
 - [Part 10 of 20](part-01/part-10/README.md)
 
-## [Part 2 of 5](part-02/README.md)
-
-- [Part 16 of 20](part-02/part-16/README.md)
-
 ## [Part 3 of 5](part-03/README.md)
 
 - [Part 7 of 20](part-03/part-07/README.md)

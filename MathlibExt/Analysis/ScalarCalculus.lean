@@ -231,9 +231,9 @@ lemma hasDerivAt_gaussian (a x : ℝ) :
 
 /-! ## E. Rational rates -/
 
-/-- **Rational rates.** Over `[0, t]`, the Lorentzian rate `1 / (1 + x ^ 2)` integrates to
-`arctan t` for every real `t`, and the hyperbolic rate `1 / (1 + x)` integrates to
-`log (1 + t)` whenever the logarithm argument `1 + t` is positive (in particular for `0 ≤ t`). -/
+/-- **Rational rates.** For every real `t`, the oriented integral `∫ x in 0..t` (reversed when
+`t < 0`) of the Lorentzian rate `1 / (1 + x ^ 2)` is `arctan t`, and that of the hyperbolic rate
+`1 / (1 + x)` is `log (1 + t)` whenever `0 < 1 + t` (in particular for `0 ≤ t`). -/
 lemma integral_rationalRates (t : ℝ) :
     ∫ x in (0)..t, 1 / (1 + x ^ 2) = Real.arctan t ∧
       (0 < 1 + t → ∫ x in (0)..t, 1 / (1 + x) = Real.log (1 + t)) := by

@@ -10,3 +10,4 @@ Hardy, Bergman, Dirichlet and Fock spaces and their reproducing kernels, H^∞, 
 - [Lacunary power series on the unit disc](lacunary-power-series-on-the-unit-disc/README.md)
 - [F. and M. Riesz theorem](riesz-brothers-theorem.md)
 - [Fatou's theorem on radial limits](fatou-radial-limit.md)
+- [Hölder boundary values from derivative growth in the disc](holder-with-circle-map-of-norm-fderiv-le.md)

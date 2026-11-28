@@ -15,7 +15,7 @@ Princeton University Press, 1963, strong duality theorem.
 
 ## Background
 
-- [Weak duality](../../../Analysis/convex-analysis-and-variations/lagrange-duality/dual-value-le-primal-value.md): every $x \ge 0$ with $Ax \le b$ and every $y \ge 0$ with $A^{\mathsf{T}} y \ge c$
+- [Weak duality](weak-linear-programming-duality.md): every $x \ge 0$ with $Ax \le b$ and every $y \ge 0$ with $A^{\mathsf{T}} y \ge c$
   satisfy $c \cdot x \le b \cdot y$.
 - Linear programming duality is the special case of Lagrange duality for a linear
   objective and linear constraints (Boyd–Vandenberghe §5.2.4); strong duality for linear programs
