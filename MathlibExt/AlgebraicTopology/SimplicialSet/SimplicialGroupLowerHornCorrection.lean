@@ -102,7 +102,8 @@ theorem lowerError_face_one {n : ℕ} {k j : Fin (n + 2)} (hkj : k < j)
   have hm := (G.map (SimplexCategory.δ k).op).hom.map_mul (((underlying G).δ (Fin.castSucc j)
     x)⁻¹) a
   have hi := (G.map (SimplexCategory.δ k).op).hom.map_inv ((underlying G).δ (Fin.castSucc j) x)
-  exact hm.trans ((congrArg₂ (fun y z => y * z) (hi.trans (congrArg Inv.inv hd)) hc).trans
+  exact hm.trans ((congrArg₂ (fun (y z : (underlying G) _⦋n⦌) => y * z)
+      (hi.trans (congrArg Inv.inv hd)) hc).trans
     (inv_mul_cancel _))
 
 /-- Let `G : SimplicialObject GrpCat.{u}`, `n : ℕ`, `k, j : Fin (n + 2)`, and `hkj : k < j`. For
@@ -129,7 +130,8 @@ theorem correctLower_preserves {n : ℕ} {k j : Fin (n + 2)} (hkj : k < j)
       ((G.map (SimplexCategory.σ p).op).hom.map_one))
   have hm := (G.map (SimplexCategory.δ (Fin.castSucc k)).op).hom.map_mul x
     ((underlying G).σ j (lowerError G j x a))
-  exact hm.trans ((congrArg₂ (fun y z => y * z) hx hz).trans (mul_one b))
+  exact hm.trans ((congrArg₂
+    (fun (y z : (underlying G) _⦋n + 1⦌) => y * z) hx hz).trans (mul_one b))
 
 /-- Let `G : SimplicialObject GrpCat.{u}`, `n : ℕ`, `i : Fin (n + 3)`, and `h : Fin (n + 3) →
 (underlying G) _⦋n + 1⦌`. The predicate `FaceCompatible G i h` requires that for every `k :

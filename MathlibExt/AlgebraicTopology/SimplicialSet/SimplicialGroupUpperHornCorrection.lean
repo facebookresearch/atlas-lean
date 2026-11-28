@@ -85,7 +85,8 @@ theorem upperError_lower_face_one {n : ℕ} {k j : Fin (n + 2)} (hkj : k < j)
     simpa only [Fin.pred_succ, CategoryTheory.types_comp_apply] using hh.trans h
   have hm := (G.map (SimplexCategory.δ k).op).hom.map_mul (((underlying G).δ j.succ x)⁻¹) a
   have hi := (G.map (SimplexCategory.δ k).op).hom.map_inv ((underlying G).δ j.succ x)
-  exact hm.trans ((congrArg₂ (fun y z => y * z) (hi.trans (congrArg Inv.inv hd)) hc).trans
+  exact hm.trans ((congrArg₂ (fun (y z : (underlying G) _⦋n⦌) => y * z)
+      (hi.trans (congrArg Inv.inv hd)) hc).trans
     (inv_mul_cancel _))
 
 /-- Let `G : SimplicialObject GrpCat.{u}`, `n : ℕ`, `k, j : Fin (n + 2)`, and `hkj : k < j`. For
@@ -110,7 +111,8 @@ theorem correctUpper_preserves_lower {n : ℕ} {k j : Fin (n + 2)} (hkj : k < j)
     ((G.map (SimplexCategory.σ p).op).hom.map_one))
   have hm := (G.map (SimplexCategory.δ (Fin.castSucc k)).op).hom.map_mul x ((underlying G).σ j
     (upperError G j x a))
-  exact hm.trans ((congrArg₂ (fun y z => y * z) hx hz).trans (mul_one b))
+  exact hm.trans ((congrArg₂
+    (fun (y z : (underlying G) _⦋n + 1⦌) => y * z) hx hz).trans (mul_one b))
 
 /-- For `n : ℕ`, `j : Fin (n + 2)`, `k : Fin (n + 3)`, and `hjk : j.succ < k`, the index
 `upperTailDeg hjk : Fin (n + 1)` is `j` with its bound tightened. The inequality implies `j <
@@ -139,7 +141,8 @@ theorem upperError_later_face_one {n : ℕ} {j : Fin (n + 2)} {k : Fin (n + 3)} 
     j.succ x)⁻¹) a
   have hi := (G.map (SimplexCategory.δ (k.pred hjk.ne_zero)).op).hom.map_inv ((underlying G).δ
     j.succ x)
-  exact hm.trans ((congrArg₂ (fun y z => y * z) (hi.trans (congrArg Inv.inv hd)) hc.symm).trans
+  exact hm.trans ((congrArg₂ (fun (y z : (underlying G) _⦋n⦌) => y * z)
+      (hi.trans (congrArg Inv.inv hd)) hc.symm).trans
     (inv_mul_cancel _))
 
 /-- Let `G : SimplicialObject GrpCat.{u}`, `n : ℕ`, `j : Fin (n + 2)`, `k : Fin (n + 3)`, and `hjk
@@ -160,7 +163,8 @@ theorem correctUpper_preserves_later {n : ℕ} {j : Fin (n + 2)} {k : Fin (n + 3
       ((G.map (SimplexCategory.σ (upperTailDeg hjk)).op).hom.map_one))
   have hm := (G.map (SimplexCategory.δ k).op).hom.map_mul x ((underlying G).σ j (upperError G j x
     a))
-  exact hm.trans ((congrArg₂ (fun y z => y * z) hx hz).trans (mul_one b))
+  exact hm.trans ((congrArg₂
+    (fun (y z : (underlying G) _⦋n + 1⦌) => y * z) hx hz).trans (mul_one b))
 
 /-- For `G : SimplicialObject GrpCat.{u}`, `n : ℕ`, missing index `i : Fin (n + 3)`, and `h : Fin
 (n + 3) → (underlying G) _⦋n + 1⦌`, `upperPass G i h r` is an `(n + 2)`-simplex at stage `r :
