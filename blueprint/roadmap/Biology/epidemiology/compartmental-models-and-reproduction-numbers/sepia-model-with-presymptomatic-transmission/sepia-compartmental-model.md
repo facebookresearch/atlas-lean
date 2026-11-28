@@ -21,7 +21,7 @@ $$
 \dot A &= (1-\sigma)\delta_P P - \gamma_A A, &
 \dot H &= (1-\zeta)\eta I - (\gamma_H + \alpha_H) H, \\
 \dot Q &= \zeta \eta I - \gamma_Q Q, &
-\dot R &= \gamma_I I + \gamma_A A + \gamma_H H, \\
+\dot R &= \gamma_I I + \gamma_A A + \gamma_H H + \gamma_Q Q, \\
 \dot D &= \alpha_I I + \alpha_H H .
 \end{aligned}
 $$
@@ -30,6 +30,12 @@ Here $\delta_E$ is the rate of leaving latency, $\delta_P$ the rate of leaving t
 stage, $\eta$ the isolation rate of symptomatic cases, $\gamma_X$ recovery rates and $\alpha_X$
 disease-induced death rates. Isolated ($H$, $Q$) and dead individuals do not transmit and are
 excluded from the mixing denominator.
+
+The term $\gamma_Q Q$ in $\dot R$ corrects the source's Eq. 1, which prints
+$\dot R = \gamma_I I + \gamma_A A + \gamma_H H$. The source's text says that home-quarantined
+individuals leave $Q$ upon recovery at rate $\gamma_Q$ and that recovered individuals enter $R$
+independently of their compartment of origin, so the outflow $\gamma_Q Q$ from $Q$ enters $R$ and
+the right-hand sides sum to zero.
 
 ## Expansion
 
