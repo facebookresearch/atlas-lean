@@ -8,6 +8,7 @@ For every normal modal logic $L$ with $\mathbf{K}_u \subseteq L \subseteq \mathb
 
 - [Normal modal logics with the universal modality](normal-modal-logics-with-the-universal-modality.md)
 - [Admissibility problem for inference rules](admissibility-problem-for-inference-rules.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

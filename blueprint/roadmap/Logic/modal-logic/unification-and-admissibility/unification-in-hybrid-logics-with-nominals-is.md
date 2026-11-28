@@ -11,6 +11,7 @@ The theorem needs two boxes: with the universal modality available instead of no
 - [Hybrid logics with two boxes and nominals](hybrid-logics-with-two-boxes-and-nominals.md)
 - [Unification problem for a modal logic](unification-problem-for-a-modal-logic.md)
 - [Admissibility problem for inference rules](admissibility-problem-for-inference-rules.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

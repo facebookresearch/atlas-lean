@@ -10,6 +10,7 @@ The source remarks that the same proof works for the multimodal versions of $\ma
 
 - [Normal modal logics with the universal modality](normal-modal-logics-with-the-universal-modality.md)
 - [Unification problem for a modal logic](unification-problem-for-a-modal-logic.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -23,7 +24,7 @@ $$
 \psi(\mathfrak{b}) = \big(AxP \wedge \exists\varepsilon(\mathfrak{a})\big) \to \exists\varepsilon(\mathfrak{b}),
 $$
 
-where $\varepsilon(\cdot)$ describes the point coding a configuration. The key lemma (Lemma 2.3) says that, for every $L$ in the interval, $P$ reaches $\mathfrak{b}$ from $\mathfrak{a}$ iff $\psi(\mathfrak{b})$ is unifiable in $L$. If $\mathfrak{b}$ is unreachable, every substitution instance of $\psi(\mathfrak{b})$ is refuted in $\mathfrak{F}$ (its consequent is variable-free and false there), so no substitution instance of $\psi(\mathfrak{b})$ belongs to a logic contained in $\mathbf{K4}_u$. If $\mathfrak{b}$ is reachable, an explicit substitution for the two variables, built from formulas saying where the simulation of the computation first breaks down, puts $\sigma(\psi(\mathfrak{b}))$ into $\mathbf{K}_u$.
+where $\varepsilon(\cdot)$ describes the point coding a configuration. The key lemma (Lemma 2.4) says that, for every $L$ in the interval, $P$ reaches $\mathfrak{b}$ from $\mathfrak{a}$ iff $\psi(\mathfrak{b})$ is unifiable in $L$. If $\mathfrak{b}$ is unreachable, every substitution instance of $\psi(\mathfrak{b})$ is refuted in $\mathfrak{F}$ (its consequent is variable-free and false there), so no substitution instance of $\psi(\mathfrak{b})$ belongs to a logic contained in $\mathbf{K4}_u$. If $\mathfrak{b}$ is reachable, an explicit substitution for the two variables, built from formulas saying where the simulation of the computation first breaks down, puts $\sigma(\psi(\mathfrak{b}))$ into $\mathbf{K}_u$.
 
 ## Sources
 

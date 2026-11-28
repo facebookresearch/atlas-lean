@@ -10,6 +10,7 @@ Without concrete domains, consistency of $\mathcal{ALCSCC}^{++}$ TBoxes is NEXPT
 
 - [The description logic ALCSCC](the-description-logic-alcscc.md)
 - [The description logic ALCSCC++ with global and local cardinality constraints](alcscc-with-global-and-local-cardinality.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

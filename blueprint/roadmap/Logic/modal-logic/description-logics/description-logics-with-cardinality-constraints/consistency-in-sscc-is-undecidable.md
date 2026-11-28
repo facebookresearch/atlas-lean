@@ -9,6 +9,7 @@ Without transitivity axioms, consistency of ALCSCC TBoxes is EXPTIME-complete. T
 ## Depends on
 
 - [The description logic ALCSCC](the-description-logic-alcscc.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

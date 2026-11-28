@@ -15,6 +15,7 @@ Clause 1 gives a very restricted fragment of constant-free, equality-free two-va
 
 - [ALC syntax, semantics and reasoning tasks](../alc-syntax-semantics-and-reasoning-tasks.md)
 - [The description logic ALCSCC++ with global and local cardinality constraints](description-logics-with-cardinality-constraints/alcscc-with-global-and-local-cardinality.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

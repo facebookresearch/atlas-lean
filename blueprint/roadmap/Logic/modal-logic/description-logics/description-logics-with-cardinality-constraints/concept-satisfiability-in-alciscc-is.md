@@ -9,6 +9,7 @@ Without inverse roles, satisfiability of $\mathcal{ALCSCC}^{++}$ concepts is NEX
 ## Depends on
 
 - [The description logic ALCSCC++ with global and local cardinality constraints](alcscc-with-global-and-local-cardinality.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

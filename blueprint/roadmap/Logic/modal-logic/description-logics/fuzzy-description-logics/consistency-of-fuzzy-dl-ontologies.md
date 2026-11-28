@@ -13,6 +13,7 @@ In particular this holds for the product t-norm itself ($q = 1$). Whether consis
 ## Depends on
 
 - [Fuzzy description logic with residuated implication](fuzzy-dl-with-residuated-implication.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -13,6 +13,7 @@ Under the original semantics, satisfiability in $\mathcal{ALCHI}^{abs}$ is decid
 ## Depends on
 
 - [Description logics with abstraction and refinement](description-logics-with-abstraction-and.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

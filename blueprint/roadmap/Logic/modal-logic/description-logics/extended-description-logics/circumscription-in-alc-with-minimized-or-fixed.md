@@ -13,6 +13,7 @@ By contrast, in ALCIO and ALCQO instance checking, satisfiability and subsumptio
 ## Depends on
 
 - [Circumscribed description logic knowledge bases](circumscribed-description-logic-knowledge-bases.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

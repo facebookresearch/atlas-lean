@@ -13,6 +13,7 @@ In ALCQI, without nominals, the problem is 2EXPTIME-complete. If conservative ex
 ## Depends on
 
 - [ALC syntax, semantics and reasoning tasks](../alc-syntax-semantics-and-reasoning-tasks.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

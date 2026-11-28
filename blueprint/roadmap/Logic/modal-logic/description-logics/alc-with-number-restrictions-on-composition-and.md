@@ -17,6 +17,7 @@ On the other side of the boundary, concept satisfiability is decidable for $\mat
 ## Depends on
 
 - [ALC syntax, semantics and reasoning tasks](../alc-syntax-semantics-and-reasoning-tasks.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -18,6 +18,7 @@ Finite and unrestricted entailment differ: the SHOIF knowledge base with $\mathr
 
 - [ALC syntax, semantics and reasoning tasks](../alc-syntax-semantics-and-reasoning-tasks.md)
 - [Answers of a conjunctive query](../../../ComputerScience/databases/conjunctive-queries/answers-of-a-conjunctive-query.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
