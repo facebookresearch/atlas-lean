@@ -17,10 +17,28 @@ import Mathlib.Analysis.Calculus.Deriv.MeanValue
 import Mathlib.Analysis.SpecificLimits.Basic
 
 /-!
-# Local convergence of Newton's method
+# Convergence of Newton's method
 
-This file proves quadratic convergence of Newton iteration near a simple real root.  It also
-provides a one-step error estimate under a Lipschitz bound on the derivative.
+For a twice continuously differentiable real function with a simple root, Newton iterates started
+sufficiently close to that root stay near it and converge quadratically. The one-step estimate
+assumes differentiability, a Lipschitz bound on the derivative between the root and the iterate,
+and a positive lower bound on the absolute derivative at the iterate.
+
+If $f : \mathbb{R} \to \mathbb{R}$ is twice continuously differentiable, $f'(x) > 0$ and
+$f''(x) > 0$ for every $x$, and $f(r) = 0$, then $r$ is the unique zero. Newton iterates from any
+real starting point converge to $r$, with $x_n \ge r$ and $x_{n+1} \le x_n$ for every $n \ge 1$.
+The derivative inequalities are the explicit hypotheses used in Levy's proof. The weak
+inequalities on iterates include the case when the iteration starts at or reaches the root and
+then stays there. The proof uses a first-order mean-value bound in place of the Taylor remainder.
+
+## References
+
+* Doron Levy, *Introduction to Numerical Analysis*, lecture notes, Department of Mathematics,
+  University of Maryland, 4 January 2021, §2.4, Theorem 2.8, pp. 13–14 ([author copy][levy]).
+* Wikipedia, [Newton's method](https://en.wikipedia.org/wiki/Newton%27s_method),
+  “Proof of quadratic convergence for Newton's iterative method” (the local argument).
+
+[levy]: https://www.math.umd.edu/~dlevy/resources/notes.pdf
 -/
 
 @[expose] public section
@@ -292,5 +310,64 @@ theorem newton_method_local_quadratic_convergence
   have hn := hstay n
   rw [abs_lt] at hn
   exact ⟨by linarith [hn.1], by linarith [hn.2]⟩
+
+/-- **Global convergence of Newton's method for increasing convex functions** (Levy,
+*Introduction to Numerical Analysis*, Theorem 2.8). Let `f : ℝ → ℝ` be twice continuously
+differentiable with `f' x > 0` and `f'' x > 0` for every `x`, and let `r` be a zero of `f`.
+Then `r` is the only zero of `f`, and every sequence of Newton iterates
+`X (n + 1) = X n - f (X n) / f' (X n)`, whatever its starting point `X 0`, converges to `r`;
+moreover `X n ≥ r` and `X (n + 1) ≤ X n` for every `n ≥ 1`. -/
+theorem newton_method_global_convergence {f : ℝ → ℝ} {r : ℝ} (hf : ContDiff ℝ 2 f)
+    (hf' : ∀ x, 0 < deriv f x) (hf'' : ∀ x, 0 < deriv (deriv f) x) (hr : f r = 0) :
+    (∀ s, f s = 0 → s = r) ∧
+      ∀ X : ℕ → ℝ, (∀ n, X (n + 1) = X n - f (X n) / deriv f (X n)) →
+        Filter.Tendsto X Filter.atTop (nhds r) ∧ (∀ n ≥ 1, r ≤ X n) ∧
+          ∀ n ≥ 1, X (n + 1) ≤ X n := by
+  have hmono := strictMono_of_deriv_pos hf'
+  have hmono' := (strictMono_of_deriv_pos hf'').monotone
+  have hunique (s : ℝ) (hs : f s = 0) : s = r := hmono.injective (hs.trans hr.symm)
+  refine ⟨hunique, ?_⟩
+  intro X hX
+  -- The tangent at any iterate crosses the axis at or to the right of the root.
+  have hstep (x : ℝ) : r ≤ x - f x / deriv f x := by
+    rw [le_sub_comm, div_le_iff₀ (hf' x)]
+    obtain ⟨ξ, hξ, hfx, -⟩ := newton_exists_mean_value_point
+      (hf.differentiable (by norm_num)) hr (x := x)
+    rw [hfx, mul_comm (x - r)]
+    rcases mem_uIcc.mp hξ with h | h
+    · exact mul_le_mul_of_nonneg_right (hmono' h.2) (sub_nonneg.mpr (h.1.trans h.2))
+    · exact mul_le_mul_of_nonpos_right (hmono' h.1) (sub_nonpos.mpr (h.1.trans h.2))
+  have hbound (n : ℕ) (hn : 1 ≤ n) : r ≤ X n := by
+    cases n with
+    | zero => omega
+    | succ n =>
+      rw [hX n]
+      exact hstep (X n)
+  have hdesc (n : ℕ) (hn : 1 ≤ n) : X (n + 1) ≤ X n := by
+    have hfx : 0 ≤ f (X n) := hr ▸ hmono.monotone (hbound n hn)
+    rw [hX n]
+    exact sub_le_self _ (div_nonneg hfx (hf' _).le)
+  refine ⟨?_, hbound, hdesc⟩
+  -- Only the tail is antitone: the starting point may be below the root.
+  have hanti : Antitone (fun n : ℕ => X (n + 1)) :=
+    antitone_nat_of_succ_le fun n => hdesc (n + 1) (Nat.succ_pos n)
+  have hbdd : BddBelow (range (fun n : ℕ => X (n + 1))) :=
+    ⟨r, by
+      rintro _ ⟨n, rfl⟩
+      exact hbound (n + 1) (Nat.succ_pos n)⟩
+  let l : ℝ := ⨅ n : ℕ, X (n + 1)
+  have htail : Filter.Tendsto (fun n => X (n + 1)) Filter.atTop (nhds l) :=
+    tendsto_atTop_ciInf hanti hbdd
+  have hlim : Filter.Tendsto X Filter.atTop (nhds l) :=
+    (Filter.tendsto_add_atTop_iff_nat 1).mp htail
+  have hquot : Filter.Tendsto (fun n => f (X n) / deriv f (X n)) Filter.atTop
+      (nhds (f l / deriv f l)) :=
+    (hf.continuous.continuousAt.tendsto.comp hlim).div
+      ((hf.continuous_deriv (by norm_num)).continuousAt.tendsto.comp hlim) (hf' l).ne'
+  have hfix : l = l - f l / deriv f l :=
+    tendsto_nhds_unique htail ((hlim.sub hquot).congr fun n => (hX n).symm)
+  have hzero : f l / deriv f l = 0 := by linarith
+  have hl : l = r := hunique l ((div_eq_zero_iff.mp hzero).resolve_right (hf' l).ne')
+  simpa only [hl] using hlim
 
 end MetaMathlibExt
