@@ -30,7 +30,9 @@ $\{0, 1, \infty\}$ turns that morphism into a Belyi map of the same degree. So t
 - [Branch points of a polynomial map of the projective line](branch-points-of-a-polynomial-map.md),
   for the branch points of $p$ and $p(\infty) = \infty$
 - [Moving finitely many rational points to $0$, $1$ and $\infty$](three-point-reduction.md),
-  for $q$
+  for $q$ over $\mathbb{C}$, whose construction is run over $\bar K$
+- [Values and derivative of the polynomial $c \, z^m (1 - z)^n$](belyi-polynomial.md), for the
+  polynomials $q_1$ of that construction over $\bar K$
 - [Branch locus of a composite](branch-locus-of-a-composite.md), for $p \circ t'$
   and $q \circ p \circ t'$
 - [A finite morphism of curves has constant degree](degree-of-a-finite-morphism-of-curves.md),
@@ -44,15 +46,22 @@ $S$ of closed points, that is, of elements of $\bar K \cup \{\infty\}$. As $\bar
 closure of $\mathbb{Q}$, there is a nonconstant $p \in \mathbb{Q}[z]$ with $p(S \setminus
 \{\infty\}) \subset \mathbb{Q}$ and $p(r) \in \mathbb{Q}$ at the zeros $r$ of $p'$; the morphism
 $p \circ t'$ is then unramified outside the finite set $T = p(S) \cup \{p(r) : p'(r) = 0\} \cup
-\{\infty\} \subset \mathbb{P}^1(\mathbb{Q})$. A Belyi map $q \colon \mathbb{P}^1_{\bar K} \to
-\mathbb{P}^1_{\bar K}$ over $\bar K$ with $q(T) \subset \{0, 1, \infty\}$, finite and unramified
-outside $\{0, 1, \infty\}$, makes $t = q \circ p \circ t'$ unramified outside $\{0, 1, \infty\}$. It is finite, as
+\{\infty\} \subset \mathbb{P}^1(\mathbb{Q})$. Köck's Lemma 3.6 gives a finite $q$ with $q(T) \subset \{0, 1, \infty\}$
+and critical values in $\{0, 1, \infty\}$ over $\mathbb{C}$. His proof builds $q$ from fractional
+linear transformations and the polynomials $q_1 = c \, z^m (1 - z)^n \in \mathbb{Q}[z]$; the same
+construction over $\bar K$, where the values and derivative of $q_1$, the branch points of a
+polynomial map and the branch locus of a composite are as over $\mathbb{C}$, gives a Belyi map $q
+\colon \mathbb{P}^1_{\bar K} \to \mathbb{P}^1_{\bar K}$ over $\bar K$ with $q(T) \subset \{0, 1,
+\infty\}$. Then $t = q \circ p \circ t'$ is unramified outside $\{0, 1, \infty\}$. It is finite, as
 a composite of finite morphisms, and has constant degree.
 
 ## Sources
 
 - A. Javanpeykar, *Polynomial bounds for Arakelov invariants of Belyi curves*, Algebra Number Theory 8 (2014), 89–140, <https://doi.org/10.2140/ant.2014.8.89>, §1.1, p. 89 (statement of Belyi's theorem and definition of the Belyi degree).
-- B. Köck, *Belyi's theorem revisited*, Beitr. Algebra Geom. 45 (2004), no. 1, 253–265, <https://www.emis.de/ft/11086>, Theorem 3.3 and its proof, p. 262, with Lemmas 3.5 and 3.6, pp. 262–263. Köck
+- B. Köck, *Belyi's theorem revisited*, Beitr. Algebra Geom. 45 (2004), no. 1, 253–265, <https://www.emis.de/ft/11086>, Theorem 3.3 and its proof, p. 262, with Lemmas 3.5 and 3.6, pp. 262–263; in the proof of Lemma 3.6, p. 263, "there is a fractional
+  linear transformation $q$ with $q(T) \subseteq \{0, 1, \infty\}$" when $T$ has at most three
+  elements, and otherwise $q = q_2 \circ q_1$ with "$q_1(z) := \frac{(m+n)^{m+n}}{m^m n^n}
+  z^m (1 - z)^n \in \mathbb{Q}[z]$". Köck
   works with complex curves defined over $\overline{\mathbb{Q}}$ and their critical values; his
   Lemma 3.4, that these are $\overline{\mathbb{Q}}$-rational, is not needed over $\bar K$, where
   closed points are rational.

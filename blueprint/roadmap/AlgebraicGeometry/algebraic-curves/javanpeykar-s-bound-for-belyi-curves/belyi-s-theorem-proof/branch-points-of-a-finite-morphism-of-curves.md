@@ -29,5 +29,11 @@ This node is still to be broken down. A good expansion states and links:
 ## Sources
 
 - The Stacks project, Lemma 53.12.1 (Tag 0C1C), <https://stacks.math.columbia.edu/tag/0C1C>.
+- R. Vakil, *The Rising Sea: Foundations of Algebraic Geometry*, draft of October 21, 2025, <https://math.stanford.edu/~vakil/216blog/FOAGoct2125public.pdf>, §21.4, pp. 617–618: for a generically separable morphism of smooth varieties of
+  the same dimension, "We call the locus of non-smoothness (in $X$) the ramification locus, and its
+  image (in $Y$) the branch locus", and "Suppose now that $X$ and $Y$ are dimension 1. Then the
+  ramification locus is a finite set (ramification points) of $X$, and the branch locus is a finite
+  set (branch points) of $Y$"; Definition 21.4.1: "finite morphisms of integral schemes are
+  automatically separable in characteristic 0".
 - B. Köck, *Belyi's theorem revisited*, Beitr. Algebra Geom. 45 (2004), no. 1, 253–265, <https://www.emis.de/ft/11086>, proof of Theorem 3.3, p. 262, where the critical values of the chosen morphism
   form the finite set to which Lemma 3.5 is applied.
