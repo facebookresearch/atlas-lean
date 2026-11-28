@@ -5,8 +5,8 @@ In the latent class model $\mathcal M(r; k_1, \dots, k_p)$, $p \ge 3$ observed v
 ## Expansion
 
 1. The model: latent class models, their parameters, generic identifiability up to label swapping, and the Kruskal rank of a matrix.
-2. Kruskal's theorem on the uniqueness of three-way tensor decompositions (Theorem 1), stated in [Kruskal's theorem](../../../../Biology/phylogenetics/inference-and-comparison/identifiability-of-latent-structure-models/kruskal-theorem.md), and its reformulation for three-variable latent class models (Corollary 2).
-3. Grouping observed variables into three composite variables by row-wise tensor products (Lemma 12), and the generic Kruskal ranks $\min(r, \kappa_i)$, giving Theorem 4: [Generic identifiability of latent class models](../../../../Biology/phylogenetics/inference-and-comparison/identifiability-of-latent-structure-models/generic-identifiable.md) states it with the mixing proportions among the parameters, and the variant with the mixing proportions held fixed and positive is a separate statement.
+2. Kruskal's theorem on the uniqueness of three-way tensor decompositions (Theorem 1), stated in [Kruskal's theorem](../../../../Biology/phylogenetics/inference-and-comparison/identifiability-of-phylogenetic-tree-mixtures/identifiability-of-latent-structure-models/kruskal-theorem.md), and its reformulation for three-variable latent class models (Corollary 2).
+3. Grouping observed variables into three composite variables by row-wise tensor products (Lemma 12), and the generic Kruskal ranks $\min(r, \kappa_i)$, giving Theorem 4: [Generic identifiability of latent class models](../../../../Biology/phylogenetics/inference-and-comparison/identifiability-of-phylogenetic-tree-mixtures/identifiability-of-latent-structure-models/generic-identifiable.md) states it with the mixing proportions among the parameters, and the variant with the mixing proportions held fixed and positive is a separate statement.
 4. The hidden Markov model application (Theorem 6), by grouping the observations before and after a middle time.
 5. Random graph mixtures (Theorem 7) and nonparametric mixtures, as separate statements.
 

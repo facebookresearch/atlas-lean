@@ -16027,7 +16027,7 @@
   "WantedExt/Biology/ComputationalBiology/HannenhalliPevznerWanted": {"to": "Biology/bioinformatics/genome-rearrangements", "title": "Signed reversal distance"},
   "WantedExt/Biology/ComputationalBiology/TranspositionWanted": {"to": "Biology/bioinformatics/genome-rearrangements", "title": "Sorting by transpositions"},
   "WantedExt/Biology/ComputationalBiology/MyersBitVectorWanted": {"to": "Biology/bioinformatics", "title": "Approximate string matching"},
-  "WantedExt/Biology/ComputationalBiology/KruskalIdentifiabilityWanted": {"to": "Biology/phylogenetics/inference-and-comparison", "title": "Identifiability of latent structure models"},
+  "WantedExt/Biology/ComputationalBiology/KruskalIdentifiabilityWanted": {"to": "Biology/phylogenetics/inference-and-comparison", "title": "Identifiability of phylogenetic tree mixtures"},
   "WantedExt/CategoryTheory/FundamentalToposWanted": {"to": "CategoryTheory/topos-theory", "title": "Elementary toposes"},
   "WantedExt/Combinatorics/AcceleratedZeckendorfGameWanted": {"to": "GameTheory/combinatorial-games", "title": "Accelerated Zeckendorf game"},
   "WantedExt/Combinatorics/AccessibleSetsWanted": {"to": "Combinatorics/ramsey-theory/van-der-waerden-theorems", "title": "Accessible sets and diffsequences"},
