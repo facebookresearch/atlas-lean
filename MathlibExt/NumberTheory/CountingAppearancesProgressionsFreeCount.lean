@@ -11,14 +11,24 @@ module
 public import MathlibExt.NumberTheory.CountingAppearancesProgressions
 import Mathlib.Data.Finset.Prod
 import Mathlib.Data.Nat.ModEq
+import Mathlib.GroupTheory.Perm.Fin
 import Mathlib.Tactic.Ring
 
 /-!
-# Free integers for two distinct primes
+# Bordered determinants and free integers for two distinct primes
 
-The theorem `freeCount_two_primes` identifies the number of integers avoiding two chosen
-residue classes with the bordered ones-diagonal determinant. The Chinese remainder theorem
-identifies these integers with pairs of remainders that avoid the chosen class in each coordinate.
+Rotating the first row to the bottom turns the signed bordered determinant for any natural
+moduli into the determinant of a symmetric ones-diagonal matrix with a final diagonal entry
+of one. For two distinct primes and any two residues, `freeCount_two_primes` identifies this
+signed determinant with the number of integers between one and the product of the primes
+that avoid both chosen classes. The Chinese remainder theorem gives one representative per
+pair of remainders in that interval.
+
+## References
+
+* Florian Pausinger, *Counting Appearances of Integers in Sets of Arithmetic Progressions*,
+  INTEGERS **26** (2026), Article A50, pp. 1–10, Lemmas 1 and 5 and Section 5.
+  <https://math.colgate.edu/~integers/aa50/aa50.pdf>
 -/
 
 set_option autoImplicit false
@@ -45,6 +55,29 @@ $p_1, \dots, p_k$: the $(k+1) \times (k+1)$ integer matrix whose first row consi
 whose row $i + 1$, for $1 \le i \le k$, has $p_i$ in column $i$ and $1$ in every other column. -/
 def borderedOnesDiagDet {k : ℕ} (p : Fin k → ℕ) : ℤ :=
   (-1 : ℤ) ^ k * (borderedOnesDiag p).det
+
+/-- **Bordered determinant with a symmetric border.** For natural numbers $p_1, \dots, p_k$,
+the signed bordered determinant is the determinant of the $(k+1) \times (k+1)$ matrix with
+$p_1, \dots, p_k, 1$ on the diagonal and $1$ in every off-diagonal entry. -/
+theorem borderedOnesDiagDet_eq_det_snoc_one {k : ℕ} (p : Fin k → ℕ) :
+    borderedOnesDiagDet p =
+      (Matrix.of (fun i j : Fin (k + 1) =>
+        if i = j then ((Fin.snoc p 1 : Fin (k + 1) → ℕ) i : ℤ) else 1)).det := by
+  have hrot : (borderedOnesDiag p).submatrix (finRotate (k + 1)) id =
+      Matrix.of (fun i j : Fin (k + 1) =>
+        if i = j then ((Fin.snoc p 1 : Fin (k + 1) → ℕ) i : ℤ) else 1) := by
+    ext i j
+    simp only [Matrix.submatrix_apply, id_eq, Matrix.of_apply]
+    refine Fin.lastCases ?_ (fun i => ?_) i
+    · simp [borderedOnesDiag]
+    · rw [show finRotate (k + 1) i.castSucc = i.succ from finRotate_of_lt i.isLt]
+      by_cases hij : i.castSucc = j
+      · subst j
+        simp [borderedOnesDiag]
+      · have hval : j.val ≠ i.val := fun h => hij (Fin.ext h.symm)
+        simp [borderedOnesDiag, hij, hval]
+  rw [← hrot, borderedOnesDiagDet, Matrix.det_permute]
+  simp
 
 /-- **Free count.** For natural numbers $p_1, \dots, p_k$ and $r_1, \dots, r_k$, let $\gamma(n)$
 be the number of indices $i$ with $n \equiv r_i \pmod{p_i}$. The free count is the number of

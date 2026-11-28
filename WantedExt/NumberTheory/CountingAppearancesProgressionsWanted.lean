@@ -121,18 +121,4 @@ theorem_wanted availableCount_three_primes (p q s : ℕ)
     (hps : p ≠ s) (hqs : q ≠ s) (r : Fin 3 → ℕ) :
     (availableCount ![p, q, s] r : ℤ) = onesDiagDet ![p, q, s]
 
-/-- **Theorem 2, free count.** Let $k \ge 2$, let $p_1, \dots, p_k$ be distinct primes and
-let $r_1, \dots, r_k$ be natural numbers. Then the number of integers $n$ with
-$1 \le n \le p_1 p_2 \cdots p_k$ such that $n \not\equiv r_i \pmod{p_i}$ for every $i$ equals
-$F_k(p_1, \dots, p_k) = (-1)^k \det B$, where $B$ is the $(k+1) \times (k+1)$ integer matrix
-whose first row consists of ones and whose row $i + 1$, for $1 \le i \le k$, has $p_i$ in
-column $i$ and $1$ in every other column.
-
-Source: Florian Pausinger, "Counting Appearances of Integers in
-Sets of Arithmetic Progressions", Theorem 2. -/
-theorem_wanted freeCount_distinct_primes (k : ℕ) (hk : 2 ≤ k)
-    (p : Fin k → ℕ) (hprime : ∀ i, (p i).Prime)
-    (hinj : Function.Injective p) (r : Fin k → ℕ) :
-    (freeCount p r : ℤ) = borderedOnesDiagDet p
-
 end MathlibExt.NumberTheory.CountingAppearancesProgressionsWanted
