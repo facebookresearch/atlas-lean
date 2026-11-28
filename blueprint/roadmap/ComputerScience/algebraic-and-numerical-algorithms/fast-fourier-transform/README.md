@@ -91,7 +91,6 @@
 - [The last entry of FFT linear convolution is zero (MIT/CLRS sign)](fft-linear-std-add-char-one-last.md)
 - [Inverse FFT after FFT at the positive root is the identity](ifft-fft-std-add-char-one.md)
 - [FFT after inverse FFT at the positive root is the identity](fft-ifft-std-add-char-one.md)
-- [Overlap-add block convolution with a finite FFT size](overlap-add-block-convolution-with-a-finite-fft/README.md)
 
 ## Planned results
 
