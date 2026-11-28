@@ -160,6 +160,7 @@ private lemma shiftedAugmentation_eq : shiftedAugmentation = 𝟙 E := by
   simp only [Functor.id_map, hx, Iso.refl_hom, Category.id_comp, Category.assoc,
     Iso.inv_hom_id_assoc]
   simp [identityResolution, Tests.identityResolution, augmentation₀]
+  exact (identityResolution.cochainShiftTermIso (1 : ℤ) 0).inv_hom_id
 
 example : ModuleCat.Hom.hom shiftedAugmentation (1 : ℤ) = 1 := by
   rw [shiftedAugmentation_eq]
@@ -310,7 +311,9 @@ private lemma boundaryMap_eq : boundaryMap = negativeBoundary := by
       exact h
     _ = negativeBoundary := by
       dsimp only [Cocycle.mappedShiftedHom, ShiftedHom.map]
-      rw [Cocycle.equivHomShift_symm_postcomp_rightUnshift]
+      erw [Cocycle.equivHomShift_symm_postcomp_rightUnshift
+        (K := singleZero) (L := singleZero) (M := singleOne) (q := 0)
+        identityCocycle negativeBoundary]
       simp [identityCocycle]
 
 private lemma boundaryNormalized :
