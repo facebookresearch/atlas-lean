@@ -308,11 +308,12 @@ private theorem power_sum_sub_bernoulli_norm {p l : ℕ} [Fact p.Prime] (hp2 : p
     _ ≤ padicNorm p ((p : ℚ) ^ 2) * 1 := mul_le_mul_of_nonneg_left hr (padicNorm.nonneg _)
     _ = (p : ℚ) ^ (-2 : ℤ) := by simp [pow_two, zpow_neg]
 
-/-- **Theorem 2**: let `p = 2l + 1` be an odd prime and `a = p(p - 1)/2`. The
-Faulhaber polynomial `F ∈ ℚ[a]` with `∑_{k=1}^{n} k^p = F(n(n+1)/2)` for all `n`
-exists, and its coefficients `c_i(l)` of `a^(i+1)` (`1 ≤ i ≤ l`) satisfy
-(i) `c_i(l) ∈ ℤ_p` and (ii) `(p - 1)! ≡ c_1(l)/2 - p (mod p^2)`, both read in
-`ℚ` through the `p`-adic norm. The identity at `n = p - 1` is the paper's (3).
+/-- **Theorem 2**: let `p = 2l + 1` be an odd prime. The Faulhaber polynomial
+`F ∈ ℚ[X]` with `∑_{k=1}^{n} k^p = F(n(n+1)/2)` for all `n` exists, and its coefficients
+`c_i(l)` of `X^(i+1)` (`1 ≤ i ≤ l`) satisfy (i) `c_i(l) ∈ ℤ_p` and
+(ii) `(p - 1)! ≡ c_1(l)/2 - p (mod p^2)`, both read in `ℚ` through the `p`-adic norm.
+At `n = p - 1`, the identity evaluates `F` at `a = p(p - 1)/2` as in equation (3)
+of the paper, without a separate claim about the degree or which coefficients vanish.
 
 Source: Claire Levaillant, *Wilson's Theorem Modulo p^2 Derived from Faulhaber
 Polynomials*, INTEGERS 24 (2024), Article A87, Theorem 2. -/

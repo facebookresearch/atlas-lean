@@ -36,15 +36,40 @@ example : (X ^ 2 : ℚ[X]).eval 0 = 0 ∧ (X ^ 2 : ℚ[X]).eval 3 = 9 ∧
   simp only [padicNorm.div, padicNorm.mul, h2, h3, div_one]
   norm_num [zpow_neg]
 
+private theorem triangular_cast (n : ℕ) :
+    ((n * (n + 1) / 2 : ℕ) : ℚ) = (n : ℚ) * (n + 1) / 2 := by
+  have h := Nat.cast_choose_two (K := ℚ) (n + 1)
+  rw [Nat.choose_two_right, Nat.add_sub_cancel, mul_comm (n + 1) n] at h
+  rw [h, Nat.cast_add, Nat.cast_one, add_sub_cancel_right, mul_comm]
+
+private theorem cubePowerPoly_eval (n : ℕ) :
+    (∑ k ∈ Icc 1 n, (k : ℚ) ^ 3) = (X ^ 2 : ℚ[X]).eval ((n * (n + 1) / 2 : ℕ) : ℚ) := by
+  simp only [triangular_cast, eval_pow, eval_X]
+  induction n with
+  | zero => norm_num
+  | succ n ih =>
+    rw [sum_Icc_succ_top (by omega : 1 ≤ n + 1), ih, Nat.cast_succ]
+    ring
+
+-- Apply both conclusions to the explicit cubic power-sum polynomial.
+example : padicNorm 3 1 ≤ 1 ∧
+    padicNorm 3 (2 - (1 / 2 - 3)) ≤ (3 : ℚ) ^ (-2 : ℤ) := by
+  obtain ⟨hc, hw⟩ :=
+    (faulhaber_coeff_integral_and_wilson 3 1 (by decide) rfl).2 (X ^ 2) cubePowerPoly_eval
+  refine ⟨?_, ?_⟩
+  · have hi := hc 1 (by decide)
+    rw [show (X ^ 2 : ℚ[X]).coeff (1 + 1) = 1 by simp [coeff_X_pow]] at hi
+    exact hi
+  · have hfac : Nat.factorial (3 - 1) = 2 := by decide
+    rw [hfac] at hw
+    norm_num [coeff_X_pow] at hw ⊢
+    exact hw
+
 private noncomputable def fifthPowerPoly : ℚ[X] := C (4 / 3) * X ^ 3 - C (1 / 3) * X ^ 2
 
 private theorem fifthPowerPoly_eval (n : ℕ) :
     (∑ k ∈ Icc 1 n, (k : ℚ) ^ 5) = fifthPowerPoly.eval ((n * (n + 1) / 2 : ℕ) : ℚ) := by
-  have ht (m : ℕ) : ((m * (m + 1) / 2 : ℕ) : ℚ) = (m : ℚ) * (m + 1) / 2 := by
-    have h := Nat.cast_choose_two (K := ℚ) (m + 1)
-    rw [Nat.choose_two_right, Nat.add_sub_cancel, mul_comm (m + 1) m] at h
-    rw [h, Nat.cast_add, Nat.cast_one, add_sub_cancel_right, mul_comm]
-  simp only [ht, fifthPowerPoly, eval_sub, eval_mul, eval_C, eval_pow, eval_X]
+  simp only [triangular_cast, fifthPowerPoly, eval_sub, eval_mul, eval_C, eval_pow, eval_X]
   induction n with
   | zero => norm_num
   | succ n ih =>
