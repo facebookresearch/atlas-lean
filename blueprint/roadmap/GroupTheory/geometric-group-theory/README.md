@@ -23,3 +23,4 @@ Large-scale and analytic properties of finitely generated groups: growth, word-h
 - [Coarse recognition of virtually polycyclic groups](quasi-isometric-recognition-virtually-polycyclic.md)
 - [Uniform bounded height for self quasi-isometries of solvable Lie models](uniform-bounded-height-solvable-lie-group.md)
 - [Coarse recognition of finite-covolume solvable lattices](coarse-recognition-solvable-lattices.md)
+- [Domino problem on groups](domino-problem-on-groups/README.md)

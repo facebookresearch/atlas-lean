@@ -17,3 +17,8 @@
 - [Kourovka Problem 4.20(a) (m-reducibility of the Cartesian square of a normal subgroup)](cartesian-square-many-one-reducible.md)
 - [The Cartesian square of a normal subgroup of a free group need not be m-reducible to it](cartesian-square-many-one-reducible-refu.md)
 - [Conjugacy problem for groups](conjugacy-problem-for-groups/README.md)
+- [A finitely presented group with undecidable word problem and almost quadratic Dehn function](undecidable-word-problem-almost-quadratic-dehn.md)
+- [A stackable group with unsolvable word problem](stackable-group-unsolvable-word-problem.md)
+- [Infinite finitely generated algorithmically finite groups have unsolvable generic word problem](algorithmically-finite-group-unsolvable-generic-word-problem.md)
+- [Some finitely presented solvable group has unsolvable generic equality problem](solvable-group-unsolvable-generic-equality.md)
+- [A finitely presented amenable group with unsolvable word problem has unsolvable word problem on every exponentially generic set](amenable-unsolvable-word-problem-not-exponentially-generic.md)

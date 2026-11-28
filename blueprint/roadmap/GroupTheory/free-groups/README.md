@@ -7,3 +7,4 @@ Free groups and free metabelian groups: subgroups (inert, compressed, retracts, 
 - [Cartesian powers of free groups](cartesian-powers-of-free-groups/README.md)
 - [Free soluble groups](free-soluble-groups/README.md)
 - [Residual properties of free groups](residual-properties-of-free-groups/README.md)
+- [Relative orders in free groups](relative-orders-in-free-groups/README.md)

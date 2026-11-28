@@ -35,3 +35,6 @@ Dynamics of biochemical reaction networks and gene regulatory circuits: mass-act
 - [Identifiability and inference](identifiability-and-inference/README.md)
 - [Stochastic biochemical dynamics](stochastic-biochemical-dynamics/README.md)
 - [Regulatory and signalling circuits](regulatory-and-signalling-circuits/README.md)
+- [Operon dynamics with state-dependent delays](operon-dynamics-with-state-dependent-delays/README.md)
+- [Slowest first passage times](slowest-first-passage-times/README.md)
+- [Sparse-regression equation learning](sparse-regression-equation-learning/README.md)
