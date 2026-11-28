@@ -1,6 +1,6 @@
 # Soundness of LBI for Kripke resource models with an inconsistent world
 
-The sequent calculus LBI is sound for Kripke resource models with an inconsistent world: for every provable sequent $\Gamma \vdash \varphi$, possibly containing $\bot$, every world that forces the formula of $\Gamma$ forces $\varphi$, in every preordered commutative monoid model whose greatest element $\pi$ absorbs composition and alone forces $\bot$.
+The sequent calculus LBI is sound for Kripke resource models with an inconsistent world: every provable sequent $\Gamma \vdash \varphi$, possibly containing $\bot$, is valid, every world forcing the formula of $\Gamma$ forcing $\varphi$, in models whose greatest world $\pi$ absorbs composition and where $\bot$ is forced exactly at the worlds equivalent to $\pi$.
 
 For every [bunch](formulas-and-bunches-of-bi.md) $\Gamma$ and BI proposition $\varphi$, if $\Gamma \vdash \varphi$ is provable in [LBI](sequent-calculus-lbi.md), then for every [Kripke resource model with an inconsistent world](kripke-resource-models-with-inconsistency.md) and every world $m$ of it, $m \models \Phi_\Gamma$ gives $m \models \varphi$, where $\Phi_\Gamma$ is the formula of $\Gamma$. In particular, every theorem $\varphi$ of BI, one with $\emptyset_m \vdash \varphi$ provable, is forced at the unit $e$ of every such model.
 
