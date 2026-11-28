@@ -1,0 +1,3 @@
+# The SUBGRAPH ISOMORPHISM for connected outerplanar graphs decision problem
+
+The SUBGRAPH ISOMORPHISM for connected outerplanar graphs decision problem accepts a bitstring exactly when it decodes, under the canonical bitstring encoding, to an instance that is [well formed for connected outerplanar graphs](well-formed-2.md) (that is, a well-formed SUBGRAPH ISOMORPHISM instance whose host graph $G$ and pattern graph $H$ are both connected and outerplanar) and [feasible](../../paths-cycles-and-subgraphs/subgraph-isomorphism/subgraph-isomorphism-feasible.md) as an instance of SUBGRAPH ISOMORPHISM. Bitstrings that do not decode to an instance are rejected. A yes-instance of SUBGRAPH ISOMORPHISM in which either graph is disconnected or not outerplanar is rejected.

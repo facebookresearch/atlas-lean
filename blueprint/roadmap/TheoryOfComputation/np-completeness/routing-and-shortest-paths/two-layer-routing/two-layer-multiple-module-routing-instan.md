@@ -1,0 +1,3 @@
+# Instances of TWO-LAYER MULTIPLE MODULE ROUTING
+
+An instance of TWO-LAYER MULTIPLE MODULE ROUTING is a quadruple $(\mathcal M, P, m, B)$ of a list $\mathcal M$ of modules, each given by four coordinates $(x_1, y_1, x_2, y_2)$ read as its lower-left corner $(x_1, y_1)$ and its upper-right corner $(x_2, y_2)$; a list $P$ of terminals, each a point $(x, y)$ with a natural net label $k$; the number $m$ of nets; and the area bound $B$, a natural number. Every coordinate is any two naturals $(a, b)$ representing the integer $a - b$; the code is not canonical, so $(2, 1)$ and $(1, 0)$ both represent $1$.

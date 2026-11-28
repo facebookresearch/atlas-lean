@@ -1,0 +1,3 @@
+# Unit disk graph of a list of points in DOMINATING SET IN UNIT DISK GRAPHS
+
+In DOMINATING SET IN UNIT DISK GRAPHS, the unit disk graph of a list $P = (p_0, \dots, p_{m-1})$ of points with rational-code coordinates has the list indices $0, \dots, m - 1$ as vertices: two distinct indices $a \ne b$ are adjacent when the Euclidean distance between $p_a$ and $p_b$ is at most $1$. Each coordinate is the value of its rational code, and a code with denominator $0$ has value $0$. Distinctness refers to list indices, not to points of the plane: two equal listed points give two adjacent vertices. Distinctness of the listed points is checked separately, by [well-formedness](well-formed-23.md).

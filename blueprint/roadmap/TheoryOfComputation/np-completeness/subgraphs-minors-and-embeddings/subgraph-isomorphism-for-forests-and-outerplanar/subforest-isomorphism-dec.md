@@ -1,0 +1,3 @@
+# The SUBFOREST ISOMORPHISM decision problem
+
+The SUBFOREST ISOMORPHISM decision problem accepts a bitstring exactly when it decodes, under the canonical bitstring encoding, to an instance that is [well formed for SUBFOREST ISOMORPHISM](well-formed.md) (that is, a well-formed SUBGRAPH ISOMORPHISM instance whose host graph $G$ is a tree and whose pattern graph $H$ is a forest) and [feasible](../../paths-cycles-and-subgraphs/subgraph-isomorphism/subgraph-isomorphism-feasible.md) as an instance of SUBGRAPH ISOMORPHISM. Bitstrings that do not decode to an instance are rejected. A yes-instance of SUBGRAPH ISOMORPHISM whose host is not a tree, or whose pattern has a cycle, is rejected.

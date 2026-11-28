@@ -1,0 +1,3 @@
+# Feasible instances of STACKER-CRANE
+
+An instance of STACKER-CRANE is feasible when there is a possibly empty cyclic list $c$ of indices into the allowed [moves](moves.md) in which each move ends where the next move (cyclically) starts, that is, for every position $j < |c|$ the destination of the move at position $j$ equals the origin of the move at position $(j + 1) \bmod |c|$, every directed edge (index less than $|A|$) occurs in $c$, and the total length of the moves in $c$ is at most $B$. In particular, when there are no required directed edges ($|A| = 0$), the empty list is accepted (including on the empty graph with budget $B \ge 1$). Feasibility does not include well-formedness; the decision problem requires both.

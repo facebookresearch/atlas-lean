@@ -1,0 +1,3 @@
+# Intersection graph of unit squares
+
+In INDEPENDENT SET OF UNIT SQUARES, the intersection graph of the closed axis-parallel unit squares centered at the listed points $P = (p_0, \dots, p_{m-1})$ has the list indices $0, \dots, m - 1$ as vertices: two distinct indices $a \ne b$ are adjacent when both coordinates of their centers differ by at most $1$, that is, $|x_a - x_b| \le 1$ and $|y_a - y_b| \le 1$, with the differences taken in $\mathbb{Q}$. Each coordinate is the value of its rational code, and a code with denominator $0$ has value $0$. Distinctness refers to list indices, not to squares or centers: two equal listed centers give two adjacent vertices. Distinctness of the listed centers is checked separately, by well-formedness.

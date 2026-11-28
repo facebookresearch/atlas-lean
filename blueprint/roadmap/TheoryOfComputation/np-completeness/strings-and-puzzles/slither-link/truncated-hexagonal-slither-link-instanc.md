@@ -1,0 +1,3 @@
+# Instances of TRUNCATED HEXAGONAL SLITHER LINK
+
+An instance of TRUNCATED HEXAGONAL SLITHER LINK is a pair of lists of lists of natural numbers: the dodecagon clue grid (row $r$, entry $c$ for dodecagon $(c, r)$) and the triangle clue grid (row $y$, entry $x$ for the triangle slot at hex vertex $(x, y)$); an entry $0$ means no clue and $v + 1$ means clue value $v$. The board has $h$ rows, the number of rows of the dodecagon clue grid, of $w$ dodecagons, where $w$ is the [width](width-2.md) of the first row. The rows as stored need not all have $w$ entries: positions $c < w$ beyond the end of a shorter row read as $0$, entries beyond $w$ are not consulted, and equal row lengths are a condition of [well-formedness](well-formed-3.md).

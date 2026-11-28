@@ -1,0 +1,11 @@
+# Total discrepancy (earliness and tardiness)
+
+- [Instances of TOTAL DISCREPANCY](total-discrepancy-instance.md)
+- [Tasks of the instance in TOTAL DISCREPANCY](task.md)
+- [Length `lᵢ` of task `t` in TOTAL DISCREPANCY](task-length.md)
+- [Preferred midtime `Mᵢ` of task `t` in TOTAL DISCREPANCY](preferred-midtime.md)
+- [Real starting times forming a one-processor schedule in TOTAL DISCREPANCY](is-schedule.md)
+- [Well-formed instances of TOTAL DISCREPANCY](well-formed.md)
+- [Feasible instances of TOTAL DISCREPANCY](total-discrepancy-feasible.md)
+- [The TOTAL DISCREPANCY decision problem](total-discrepancy-dec.md)
+- [TOTAL DISCREPANCY is NP-complete](total-discrepancy-np-complete.md)

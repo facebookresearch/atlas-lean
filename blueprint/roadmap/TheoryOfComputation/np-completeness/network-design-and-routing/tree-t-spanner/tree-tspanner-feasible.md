@@ -1,0 +1,5 @@
+# Feasible instances of TREE t-SPANNER
+
+For a natural number $t$, an instance $(n, E)$ of TREE t-SPANNER is feasible when its graph $G$, the [graph of the edge list](../../graph-coloring-and-partitioning/partition-into-triangles/graph.md) $E$ on the vertices $0, \dots, n - 1$, has a tree $t$-spanner: a tree $T$ on all of the vertices $0, \dots, n - 1$ whose edges are edges of $G$, with $d_T(u, v) \le t \cdot d_G(u, v)$ for all vertices $u$ and $v$, where $d_T$ and $d_G$ are the path-length distances in $T$ and in $G$. Because $T$ is connected and is contained in $G$, both distances are finite. The definition applies to every natural number $t$; for example, the graph with two vertices and one edge between them is its own tree $1$-spanner. A tree has at least one vertex, so an instance with $n = 0$ is not feasible, and neither is an instance whose graph is disconnected.
+
+Feasibility does not include well-formedness: the graph of the edge list ignores self-loops and pairs with an endpoint at least $n$. The decision problem requires both.

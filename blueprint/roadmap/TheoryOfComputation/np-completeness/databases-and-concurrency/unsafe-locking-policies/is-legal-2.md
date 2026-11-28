@@ -1,0 +1,3 @@
+# Legal schedules in UNSAFE LOCKING POLICY
+
+For an instance of UNSAFE LOCKING POLICY, a list $\sigma$ of transaction indices is legal when between any two occurrences of $\mathrm{lock}(x)$ there is an occurrence of $\mathrm{unlock}(x)$: for all positions $p < q < |\sigma|$ such that the steps at $p$ and at $q$ are both $\mathrm{lock}(x)$, some position $r$ with $p < r < q$ has step $\mathrm{unlock}(x)$. The step at a position is that of the step-at-a-position lookup, whichever transactions the two locks belong to; an occurrence of $t$ beyond the steps of $T_t$, possible only when $\sigma$ is not a schedule, reads as $\mathrm{lock}(0)$.

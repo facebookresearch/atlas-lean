@@ -1,0 +1,3 @@
+# Feasible instances of SHORTEST WEIGHT-CONSTRAINED PATH
+
+An instance $(n, E, s, t, K, W)$ of SHORTEST WEIGHT-CONSTRAINED PATH is feasible when $s < n$, $t < n$, and there is a simple path from $s$ to $t$ in the [graph of the instance](graph.md) whose total weight is at most $W$ and whose total length is at most $K$. Each step of the path between $u$ and $v$ contributes the [length and weight of the edge joining them](edge-data.md), taken from the first entry of $E$ joining $u$ and $v$ in either orientation. For a [well-formed](well-formed-2.md) instance each edge has a single entry. Feasibility does not include well-formedness; the decision problem requires both.

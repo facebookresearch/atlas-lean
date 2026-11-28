@@ -1,0 +1,3 @@
+# Step at a position of a schedule, with its transaction, in UNSAFE LOCKING POLICY
+
+For an instance of UNSAFE LOCKING POLICY with transactions $T_0, \dots, T_{n-1}$, a list $\sigma$ of transaction indices and a position $p$, the result is a transaction index $t$ together with a step. The index $t$ is the entry of $\sigma$ at position $p$, or $0$ when $p \ge |\sigma|$. Let $k$ be the number of occurrences of $t$ among the first $p$ entries of $\sigma$ (all of $\sigma$ when $p \ge |\sigma|$). The step is step $k$ of $T_t$, counting from $0$, so the $k$-th occurrence of $t$ executes the $k$-th step of $T_t$; it is the step $(0, 0)$, that is, $\mathrm{lock}(0)$, when $t \ge n$ or $T_t$ has at most $k$ steps.

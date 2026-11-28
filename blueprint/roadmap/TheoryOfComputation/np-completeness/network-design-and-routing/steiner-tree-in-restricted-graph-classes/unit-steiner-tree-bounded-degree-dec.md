@@ -1,0 +1,3 @@
+# The STEINER TREE IN GRAPHS with unit weights on graphs of maximum degree at most k decision problem
+
+For each natural number $k$, the STEINER TREE IN GRAPHS with unit weights on graphs of maximum degree at most $k$ decision problem with parameter $k$ accepts a bitstring exactly when it decodes, under the canonical bitstring encoding, to an instance that is [well formed](well-formed-14.md) for $k$ and [feasible](../../paths-cycles-and-subgraphs/steiner-tree/steiner-tree-feasible.md) as a STEINER TREE IN GRAPHS instance. Bitstrings that do not decode to an instance are rejected. Each value of $k$ gives a separate decision problem.

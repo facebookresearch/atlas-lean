@@ -1,0 +1,3 @@
+# The SCHEDULING WITH INDIVIDUAL DEADLINES for out-tree precedence decision problem
+
+The SCHEDULING WITH INDIVIDUAL DEADLINES for out-tree precedence decision problem accepts a bitstring exactly when it decodes, under the canonical bitstring encoding, to an instance that is [well formed for out-tree precedence](well-formed.md) (that is, a [well-formed](../precedence-constrained-multiprocessor-scheduling/well-formed-5.md) instance of SCHEDULING WITH INDIVIDUAL DEADLINES in which no task has more than one immediate predecessor) and [feasible](../precedence-constrained-multiprocessor-scheduling/scheduling-with-individual-deadlines-fea.md) as an instance of SCHEDULING WITH INDIVIDUAL DEADLINES. Bitstrings that do not decode to an instance are rejected.

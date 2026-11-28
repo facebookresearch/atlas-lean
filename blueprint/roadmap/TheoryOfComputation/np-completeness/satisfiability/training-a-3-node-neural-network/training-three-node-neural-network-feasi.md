@@ -1,0 +1,3 @@
+# Feasible instances of TRAINING A 3-NODE NEURAL NETWORK
+
+An instance of TRAINING A 3-NODE NEURAL NETWORK with $n$ inputs is feasible when there are real weight vectors $a_1, a_2 \in \mathbb{R}^n$, real thresholds $t_1, t_2$, weights $c \in \mathbb{R}^2$ and a threshold $c_0 \in \mathbb{R}$ such that the network [output](output.md) on the [real input vector](inputs.md) of every example is $+1$ if the example is positive and $-1$ if it is negative. Each example's Boolean list is read through that vector: only its first $n$ entries count, and a shorter list is padded with zeros, so an example of the wrong length is still tested, on its truncated or padded vector. Feasibility does not include well-formedness; the decision problem requires both.

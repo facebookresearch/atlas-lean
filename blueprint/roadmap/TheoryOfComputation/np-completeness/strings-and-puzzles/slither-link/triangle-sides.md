@@ -1,0 +1,3 @@
+# Sides of the triangle slot at a hex vertex in TRUNCATED HEXAGONAL SLITHER LINK
+
+In TRUNCATED HEXAGONAL SLITHER LINK, the triangle slot at hex vertex $p = (x, y)$ has the three candidate sides $\{(p, a), (p, b)\}$, $\{(p, b), (p, d)\}$ and $\{(p, a), (p, d)\}$, where $a = (x - 1, y)$ and $b = (x + 1, y)$, and $d = (x, y + 1)$ if $x + y$ is even and $d = (x, y - 1)$ if $x + y$ is odd. These sides are defined for every point $p$; the triangle is a face of the [grid](graph-2.md) only when all three of them are edges of the grid. Subtraction is natural-number subtraction, so $x - 1 = 0$ when $x = 0$ and $y - 1 = 0$ when $y = 0$.

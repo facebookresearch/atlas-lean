@@ -1,0 +1,3 @@
+# Clue entry of the triangle slot at a hex vertex in TRUNCATED HEXAGONAL SLITHER LINK
+
+For an instance of TRUNCATED HEXAGONAL SLITHER LINK, the clue entry at hex vertex $(x, y)$ is entry $x$ of row $y$ of the triangle clue grid, or $0$ when the grid has no row $y$ or that row has no entry $x$. The position $(x, y)$ is a candidate slot: it names the triangle at hex vertex $(x, y)$, with its three [sides](triangle-sides.md), whether or not that triangle is a face of the grid (all three sides being edges of the [grid](graph-2.md)). Only [well-formedness](well-formed-3.md) requires a nonzero entry to sit at a face.

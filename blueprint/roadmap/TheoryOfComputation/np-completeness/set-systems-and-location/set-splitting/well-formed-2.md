@@ -1,0 +1,3 @@
+# Well-formed instances of SET SPLITTING for partial Steiner triple systems
+
+An instance $(n, C)$ of SET SPLITTING for partial Steiner triple systems is well formed when it is a [well-formed SET SPLITTING instance](well-formed.md) (every member of $C$ is a list of distinct natural numbers less than $n$), and the members of $C$, read as subsets of $\{0, \dots, n-1\}$, form a partial Steiner triple system, also called a linear triple system: every member has exactly three elements, and two distinct members share at most one element, so every pair of elements lies in at most one member. A member listed twice in $C$ counts as the same member.

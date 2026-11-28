@@ -1,3 +1,5 @@
 # Well-formed instances of GRAPH COLORING ON GRAPHS OF THICKNESS AT MOST k
 
 Fix a natural number $k$. An instance $(n, E, K)$ is well-formed for GRAPH COLORING ON GRAPHS OF THICKNESS AT MOST $k$ when it is a well-formed GRAPH COLORING instance (the list $E$ has no repeated entries, and every pair $(u, v)$ in $E$ satisfies $u < n$, $v < n$, $u \ne v$ and $(v, u) \notin E$), $0 < K \le n$, and the entries of $E$ can be assigned to $k$ classes so that, for each class, the graph on the vertices $0, \dots, n-1$ formed by the edges of that class has a straight-line planar drawing: an injective placement of the vertices in $\mathbb{R}^2$ in which the segments of two distinct edges meet at most in common endpoints.
+
+PARTITION INTO CLIQUES for graphs of thickness at most $k$ uses this same test on the same encoded triple: a simple edge list on $0, \dots, n-1$, $0 < K \le n$, and thickness at most $k$.

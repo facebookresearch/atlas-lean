@@ -1,0 +1,3 @@
+# Triangle graphs in RECOGNITION OF TRIANGLE GRAPHS (PI* GRAPHS)
+
+In RECOGNITION OF TRIANGLE GRAPHS (PI* GRAPHS), a graph $H$ is a triangle graph when each vertex $v$ can be assigned real numbers $a_v \le b_v$ and $c_v \le d_v$ with $a_v = b_v$ or $c_v = d_v$, such that two distinct vertices are adjacent in $H$ exactly when their regions intersect. The region of $v$ is the convex hull of the closed interval $[a_v, b_v]$ on the line $y = 1$ and the closed interval $[c_v, d_v]$ on the line $y = 0$, that is, of the points $(a_v, 1)$, $(b_v, 1)$, $(c_v, 0)$ and $(d_v, 0)$. At least one of the two sides is a single point, so the region is a triangle with its apex on either line; both sides may be single points, and then the region is a segment between the two lines.

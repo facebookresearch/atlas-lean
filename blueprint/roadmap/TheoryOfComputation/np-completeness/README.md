@@ -11,6 +11,8 @@ Karp's 21 complete problems ("Reducibility among combinatorial problems", 1972, 
 - [Paths, cycles, trees and subgraph problems](paths-cycles-and-subgraphs/README.md)
 - [Network design, spanning trees and routing](network-design-and-routing/README.md)
 - [Code generation and register allocation](code-generation/README.md)
+- [Shortest paths and two-layer routing](routing-and-shortest-paths/README.md)
+- [Subgraphs, minors and embeddings](subgraphs-minors-and-embeddings/README.md)
 - [Number partitioning, knapsack and packing](number-and-packing-problems/README.md)
 - [Set systems, assignment and location](set-systems-and-location/README.md)
 - [Databases, concurrency control and protection](databases-and-concurrency/README.md)

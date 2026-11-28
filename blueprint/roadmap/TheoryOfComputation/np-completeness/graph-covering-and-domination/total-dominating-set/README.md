@@ -6,3 +6,7 @@
 - [Feasibility of a total dominating set instance](total-dominating-set-feasible.md)
 - [The decision problem TOTAL DOMINATING SET](total-dominating-set-dec.md)
 - [TOTAL DOMINATING SET is NP-complete](total-dominating-set-np-complete.md)
+- [Well-formed instances of TOTAL DOMINATING SET on bipartite graphs](well-formed-2.md)
+- [The TOTAL DOMINATING SET on bipartite graphs decision problem](total-dominating-set-bipartite-dec.md)
+- [Well-formed instances of TOTAL DOMINATING SET for undirected path graphs](well-formed-2-2.md)
+- [The TOTAL DOMINATING SET for undirected path graphs decision problem](total-dominating-set-undirected-path-gra.md)

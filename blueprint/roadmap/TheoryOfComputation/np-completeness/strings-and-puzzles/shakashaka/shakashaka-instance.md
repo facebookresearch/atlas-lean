@@ -1,0 +1,3 @@
+# Instances of SHAKASHAKA
+
+An instance of SHAKASHAKA is a list of lists of natural numbers, the board row by row: entry $0$ is a white square, $1$ an unnumbered black square, and $2 + i$ a black square containing the number $i$. The board that takes part in the puzzle is the rectangle of $m$ rows and $n$ columns, where $m$ is the number of stored rows and $n$ is the length of the first row ($0$ when there are no rows). The stored rows need not have length $n$: a position $(r, c)$ with $r < m$ and $c < n$ beyond the end of a shorter row reads as the [entry](cell.md) default $1$ (an unnumbered black square), and entries of a longer row beyond column $n$ do not take part. That every row has length $n$ is a condition of [well-formedness](well-formed.md).

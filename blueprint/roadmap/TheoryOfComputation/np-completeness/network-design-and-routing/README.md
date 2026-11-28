@@ -1,10 +1,16 @@
 # Network design, spanning trees and routing
 
-Constrained spanning trees and forests (bounded diameter, bounded components, capacities), connectivity and diameter augmentation, superconcentrators, phylogenetic tree construction, and arc, postman, bus and delivery routing. The classical spanning tree, Steiner tree, traveling salesperson and vehicle routing problems are under Paths, cycles, trees and subgraph problems.
+Constrained spanning trees and forests (bounded diameter, bounded components, capacities, few branch vertices, shortest total path length), tree spanners, Steiner trees on restricted graph classes, single-sink edge installation, connectivity and diameter augmentation, superconcentrators, phylogenetic tree construction, and arc, rural and stacker-crane postman, bus and delivery routing. The classical spanning tree, Steiner tree, traveling salesperson and vehicle routing problems on general graphs are under Paths, cycles, trees and subgraph problems.
 
 - [Bounded component spanning forest](bounded-component-spanning-forest/README.md)
 - [Bounded diameter spanning tree](bounded-diameter-spanning-tree/README.md)
 - [Capacitated spanning tree](capacitated-spanning-tree/README.md)
+- [Shortest total path length spanning tree](../network-design-and-routing/shortest-total-path-length-spanning-tree/README.md)
+- [Single-sink edge installation](../network-design-and-routing/single-sink-edge-installation/README.md)
+- [Spanning tree with few branch vertices](../network-design-and-routing/spanning-tree-with-few-branch-vertices/README.md)
+- [Steiner tree in restricted graph classes](../network-design-and-routing/steiner-tree-in-restricted-graph-classes/README.md)
+- [Strong connectivity augmentation](../network-design-and-routing/strong-connectivity-augmentation/README.md)
+- [Tree t-spanner](../network-design-and-routing/tree-t-spanner/README.md)
 - [Biconnectivity augmentation](biconnectivity-augmentation/README.md)
 - [Bridge-connectivity augmentation](bridge-connectivity-augmentation/README.md)
 - [Bounded diameter augmentation](bounded-diameter-augmentation/README.md)
@@ -16,3 +22,5 @@ Constrained spanning trees and forests (bounded diameter, bounded components, ca
 - [Chinese postman for mixed graphs](chinese-postman-for-mixed-graphs/README.md)
 - [Delivery van routing](delivery-van-routing/README.md)
 - [Directed rural postman](directed-rural-postman/README.md)
+- [Rural postman problem](rural-postman-problem/README.md)
+- [Stacker-crane problem](stacker-crane-problem/README.md)

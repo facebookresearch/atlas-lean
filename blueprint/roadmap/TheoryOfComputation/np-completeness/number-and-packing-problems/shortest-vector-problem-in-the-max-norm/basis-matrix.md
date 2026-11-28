@@ -1,0 +1,3 @@
+# Square integer matrix of a SHORTEST VECTOR PROBLEM IN THE MAX NORM instance
+
+For an instance $i$ of SHORTEST VECTOR PROBLEM IN THE MAX NORM with $k$ stored rows, the $k \times k$ integer matrix whose entry in row $a$ and column $j$, for $0 \le a, j < k$, is [$\mathrm{entry}(i, a, j)$](entry.md). The size of the matrix is the number of stored rows: a stored row shorter than $k$ is padded with zeros, and only the first $k$ coordinates of a longer row are used. For example, the single stored row $[1, 2]$ gives the $1 \times 1$ matrix $[1]$. In a [well-formed](well-formed.md) instance every stored row has exactly $k$ coordinates, and the rows of the matrix are the basis vectors.

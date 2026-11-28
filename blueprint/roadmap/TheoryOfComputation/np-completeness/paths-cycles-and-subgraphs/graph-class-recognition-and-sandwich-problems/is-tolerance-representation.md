@@ -1,0 +1,3 @@
+# Tolerance representations in TOLERANCE GRAPH RECOGNITION
+
+In TOLERANCE GRAPH RECOGNITION, real numbers $l_v$, $r_v$ and $t_v$ for the vertices $v$ of a graph $G$ form a tolerance representation of $G$ when every vertex has $l_v \le r_v$ and $t_v > 0$, and two distinct vertices $u$ and $v$ are adjacent in $G$ if and only if $\min(t_u, t_v) \le \max(0, \min(r_u, r_v) - \max(l_u, l_v))$, the [length of the overlap](overlap.md) of the closed intervals $[l_u, r_u]$ and $[l_v, r_v]$. The condition $l_v \le r_v$ is required at every vertex: a single vertex with $l = 1$, $r = 0$ and $t = 1$ satisfies positivity and the pairwise condition but is not a tolerance representation.

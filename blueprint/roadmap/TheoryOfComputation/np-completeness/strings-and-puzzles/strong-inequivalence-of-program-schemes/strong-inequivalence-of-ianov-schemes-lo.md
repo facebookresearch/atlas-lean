@@ -1,0 +1,3 @@
+# The STRONG INEQUIVALENCE OF IANOV SCHEMES (loop-free, trivial $P_2$) decision problem
+
+The STRONG INEQUIVALENCE OF IANOV SCHEMES (loop-free, trivial $P_2$) decision problem accepts a bitstring exactly when it decodes, under the canonical bitstring encoding, to an instance that is [well formed for this restriction](well-formed-2.md) (that is, [well formed](well-formed-3.md) as an instance of STRONG INEQUIVALENCE OF IANOV SCHEMES, with neither scheme [containing a loop](loop-free.md) and with the second scheme equal to the one-instruction scheme $\mathrm{halt}$, encoded $[(2, 0, 0, 0)]$) and [feasible](strong-inequivalence-of-ianov-schemes-fe.md) as an instance of STRONG INEQUIVALENCE OF IANOV SCHEMES. Bitstrings that do not decode to an instance are rejected.

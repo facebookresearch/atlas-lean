@@ -5,6 +5,7 @@
 - [3-dimensional matching](3-dimensional-matching/README.md)
 - [Coalition formation](coalition-formation/README.md)
 - [Consecutive ones and block minimization](consecutive-ones-and-block-minimization/README.md)
+- [Election manipulation and bribery](election-manipulation-and-bribery/README.md)
 - [Exact cover](exact-cover/README.md)
 - [Exact cover by 3-sets](exact-cover-by-3-sets/README.md)
 - [Exact hitting set](exact-hitting-set/README.md)
@@ -20,6 +21,9 @@
 - [Set cover](set-cover/README.md)
 - [Set packing](set-packing/README.md)
 - [Set splitting](set-splitting/README.md)
+- [Side-chain positioning](side-chain-positioning/README.md)
+- [Stable matching with ties and in three dimensions](stable-matching-with-ties-and-in-three-dimension/README.md)
+- [Terrain guarding](terrain-guarding/README.md)
 - [Approval bribery](approval-bribery/README.md)
 - [Banks winner](banks-winner/README.md)
 - [Borda weighted coalitional manipulation with three candidates](borda-weighted-coalitional-manipulation-with-thr/README.md)
@@ -44,3 +48,5 @@
 - [Stable marriage with ties and incomplete lists](stable-marriage-with-ties-and-incomplete-lists/README.md)
 - [Unweighted coalitional manipulation under Borda with two manipulators](unweighted-coalitional-manipulation-under-borda/README.md)
 - [Veto weighted coalitional manipulation with three candidates](veto-weighted-coalitional-manipulation-with-thre/README.md)
+
+- [2-dimensional consecutive sets](2-dimensional-consecutive-sets/README.md)

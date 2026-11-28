@@ -1,0 +1,3 @@
+# The 3-DIMENSIONAL MATCHING with at most three occurrences per element decision problem
+
+The 3-DIMENSIONAL MATCHING with at most three occurrences per element decision problem accepts a bitstring exactly when it decodes, under the canonical bitstring encoding, to an instance that is [well formed with at most three occurrences per element](well-formed-2-2.md) (well formed as an instance of 3-DIMENSIONAL MATCHING, with distinct triples, and with every element occurring in at most three triples in each coordinate) and [feasible](three-dimensional-matching-feasible.md) as an instance of 3-DIMENSIONAL MATCHING. Bitstrings that do not decode to an instance are rejected.

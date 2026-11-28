@@ -1,0 +1,3 @@
+# Rational codes in TERRAIN GUARDING
+
+In TERRAIN GUARDING, a rational code is a triple $((a, b), d)$ of natural numbers. It stands for the rational number $(a - b)/d$ (its [value](val.md)): the integer $a - b$ is the numerator and $d$ the denominator. The pair $(a, b)$ is any two naturals representing the integer $a - b$, not a canonical split into positive and negative parts: for example, $((2, 1), 1)$ and $((1, 0), 1)$ both stand for $1$, and nothing forces $a$ or $b$ to be zero. Codes need not be in lowest terms. A rational code is a code, not a rational number: different codes can have the same value, and only [well-formedness](well-formed.md) requires the denominators of the coordinates in an instance to be positive.

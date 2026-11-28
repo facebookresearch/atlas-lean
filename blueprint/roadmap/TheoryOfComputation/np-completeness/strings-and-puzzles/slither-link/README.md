@@ -1,0 +1,15 @@
+# Slither Link
+
+- [Instances of TRUNCATED HEXAGONAL SLITHER LINK](truncated-hexagonal-slither-link-instanc.md)
+- [Vertex of the truncated grid in TRUNCATED HEXAGONAL SLITHER LINK](point-2.md)
+- [Number of rows `h` in TRUNCATED HEXAGONAL SLITHER LINK](height-2.md)
+- [Width of the first dodecagon row in TRUNCATED HEXAGONAL SLITHER LINK](width-2.md)
+- [Clue entry of dodecagon `(c, r)` in TRUNCATED HEXAGONAL SLITHER LINK](dodecagon-clue.md)
+- [Clue entry of the triangle slot at a hex vertex in TRUNCATED HEXAGONAL SLITHER LINK](triangle-clue.md)
+- [Sides of a dodecagon in TRUNCATED HEXAGONAL SLITHER LINK](dodecagon-sides.md)
+- [Sides of the triangle slot at a hex vertex in TRUNCATED HEXAGONAL SLITHER LINK](triangle-sides.md)
+- [Truncated hexagonal grid in TRUNCATED HEXAGONAL SLITHER LINK](graph-2.md)
+- [Well-formed instances of TRUNCATED HEXAGONAL SLITHER LINK](well-formed-3.md)
+- [Feasible instances of TRUNCATED HEXAGONAL SLITHER LINK](truncated-hexagonal-slither-link-feasibl.md)
+- [The TRUNCATED HEXAGONAL SLITHER LINK decision problem](truncated-hexagonal-slither-link-dec.md)
+- [TRUNCATED HEXAGONAL SLITHER LINK is NP-complete](truncated-hexagonal-slither-link-np-comp.md)

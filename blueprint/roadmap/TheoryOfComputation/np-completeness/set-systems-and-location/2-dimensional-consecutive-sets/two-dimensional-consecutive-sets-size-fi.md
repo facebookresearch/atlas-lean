@@ -1,0 +1,3 @@
+# The 2-DIMENSIONAL CONSECUTIVE SETS with sets of size at most 5 decision problem
+
+The 2-DIMENSIONAL CONSECUTIVE SETS with sets of size at most 5 decision problem accepts a bitstring exactly when it decodes, under the canonical bitstring encoding, to an instance that is [well formed with sets of size at most 5](well-formed.md) (that is, well formed as an instance of 2-DIMENSIONAL CONSECUTIVE SETS, and every subset list has length at most $5$) and [feasible](two-dimensional-consecutive-sets-feasibl.md) as an instance of 2-DIMENSIONAL CONSECUTIVE SETS. Bitstrings that do not decode to an instance are rejected, and so are decoded instances with a subset list longer than $5$, even when they are feasible.
