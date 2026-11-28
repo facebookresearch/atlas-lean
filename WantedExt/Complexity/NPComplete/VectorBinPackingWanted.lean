@@ -20,7 +20,7 @@ M. R. Garey, R. L. Graham, D. S. Johnson and A. C.-C. Yao, "Resource constrained
 generalized bin packing", Journal of Combinatorial Theory, Series A 21 (1976), 257-298,
 doi:10.1016/0097-3165(76)90001-7 (the model);
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the Theory of
-NP-Completeness*, W. H. Freeman (1979), problem [SR1] BIN PACKING (the case `d = 1`).
+NP-Completeness*, W. H. Freeman (1979), problem [SR1] BIN PACKING (the one-dimensional problem).
 -/
 module
 
@@ -95,7 +95,7 @@ noncomputable def vectorBinPackingDec :
   | none => false
 
 /-- **VECTOR BIN PACKING is NP-complete.** Source: Woeginger (1997); Garey, Graham, Johnson and
-Yao (1976); Garey and Johnson (1979), [SR1] (the case `d = 1`). -/
+Yao (1976); Garey and Johnson (1979), [SR1] (embedded in dimension `2`). -/
 public theorem_wanted vectorBinPacking_npComplete :
     vectorBinPackingDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

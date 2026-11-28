@@ -1,0 +1,3 @@
+# COST-PARAMETRIC LINEAR PROGRAMMING WITH FIXED q as a decision problem
+
+Fix a rational number $q$. The decision problem COST-PARAMETRIC LINEAR PROGRAMMING WITH FIXED q accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding of quadruples (a dimension, a constraint list, a coordinate list and a rational bound), to an instance that is [well-formed](well-formed.md) for bound $q$ and feasible for COST-PARAMETRIC LINEAR PROGRAMMING; well-formedness for $q$ requires that the bound encoded in the instance equal $q$. It rejects every bitstring that does not decode to such an instance.

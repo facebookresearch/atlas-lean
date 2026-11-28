@@ -20,6 +20,7 @@
 - [Set cover](set-cover/README.md)
 - [Set packing](set-packing/README.md)
 - [Set splitting](set-splitting/README.md)
+- [Set systems and covering](set-systems-and-covering/README.md)
 - [Approval bribery](approval-bribery/README.md)
 - [Banks winner](banks-winner/README.md)
 - [Borda weighted coalitional manipulation with three candidates](borda-weighted-coalitional-manipulation-with-thr/README.md)

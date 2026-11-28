@@ -25,7 +25,7 @@ of conjunctive queries by taking $\Sigma$ empty.
 - [The chase for functional dependencies runs in polynomial time](../dependency-reasoning/chase-for-functional-and-inclusion-dependencies/the-fd-chase-runs-in-polynomial-time.md)
 - [Universality of the chase for functional dependencies](../dependency-reasoning/chase-for-functional-and-inclusion-dependencies/universality-of-the-fd-chase.md)
 - [Homomorphism theorem for conjunctive queries with constants](cores-and-minimization/homomorphism-theorem-for-conjunctive-queries-with-constants.md)
-- [CONJUNCTIVE QUERY CONTAINMENT is NP-complete](../../../TheoryOfComputation/not-yet-classified/part-01/part-10/conjunctive-query-containment/conjunctive-query-containment-np-complet.md)
+- [CONJUNCTIVE QUERY CONTAINMENT is NP-complete](../../../TheoryOfComputation/np-completeness/databases-and-concurrency/databases-and-concurrency/conjunctive-query-containment-np-complet.md)
 
 ## Sources
 

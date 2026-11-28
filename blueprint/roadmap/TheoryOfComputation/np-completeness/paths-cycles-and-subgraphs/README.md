@@ -3,6 +3,7 @@
 Hamiltonian paths and cycles, longest paths and cycles, disjoint paths and path covers, constrained spanning and Steiner trees, minimum equivalent digraph, traveling salesperson and vehicle routing, and (induced) subgraph isomorphism.
 
 - [Asymmetric traveling salesperson problem](asymmetric-traveling-salesperson-problem/README.md)
+- [Bottleneck wandering salesperson](bottleneck-wandering-salesperson/README.md)
 - [Capacitated vehicle routing](capacitated-vehicle-routing/README.md)
 - [Degree-constrained spanning tree](degree-constrained-spanning-tree/README.md)
 - [Directed Hamiltonian cycle](directed-hamiltonian-cycle/README.md)
@@ -24,6 +25,7 @@ Hamiltonian paths and cycles, longest paths and cycles, disjoint paths and path 
 - [Traveling salesperson problem](traveling-salesperson-problem/README.md)
 - [Undirected Hamiltonian cycle](undirected-hamiltonian-cycle/README.md)
 - [Undirected Hamiltonian path](undirected-hamiltonian-path/README.md)
+- [Undirected, unsplittable and quadratic-cost flows](undirected-unsplittable-and-quadratic-cost-flows/README.md)
 - [Vertex-disjoint paths in digraphs](vertex-disjoint-paths-in-digraphs/README.md)
 - [Fixed-point-free graph involutions](fixed-point-free-graph-involutions/README.md)
 - [Defective concentrators](defective-concentrators/README.md)

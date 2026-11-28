@@ -66,7 +66,8 @@ def WellFormed (i : MinimumSumOfSquaresInstance) : Prop :=
 def sumOfSquares (s : List ℕ) {K : ℕ} (f : Fin s.length → Fin K) : ℕ :=
   ∑ k : Fin K, (∑ a ∈ Finset.univ.filter (fun a => f a = k), s.get a) ^ 2
 
-/-- Some partition of `A` into `K` disjoint sets has sum of squares at most `J`. -/
+/-- Some assignment of `A` to `K` bins, not necessarily onto (empty bins contribute `0`), has sum
+of squares at most `J`. -/
 def MinimumSumOfSquaresFeasible (i : MinimumSumOfSquaresInstance) : Prop :=
   ∃ f : Fin i.1.length → Fin i.2.1, sumOfSquares i.1 f ≤ i.2.2
 

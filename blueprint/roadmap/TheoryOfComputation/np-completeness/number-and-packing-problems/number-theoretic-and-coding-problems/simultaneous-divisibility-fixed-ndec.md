@@ -1,0 +1,3 @@
+# SIMULTANEOUS DIVISIBILITY OF LINEAR POLYNOMIALS WITH n DIVISIBILITIES as a decision problem
+
+Fix a natural number $n$. The decision problem SIMULTANEOUS DIVISIBILITY OF LINEAR POLYNOMIALS WITH n DIVISIBILITIES accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding of pairs of a variable count and a list of coefficient-vector pairs, to an instance that is [well-formed](well-formed-19.md) for $n$ and [feasible](simultaneous-divisibility-feasible.md) for SIMULTANEOUS DIVISIBILITY OF LINEAR POLYNOMIALS WITH n DIVISIBILITIES. It rejects every bitstring that does not decode to such an instance.

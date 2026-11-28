@@ -1,0 +1,3 @@
+# TRAVELING TOURNAMENT WITH AT MOST THREE CONSECUTIVE HOME OR AWAY GAMES as a decision problem
+
+The decision problem TRAVELING TOURNAMENT WITH AT MOST THREE CONSECUTIVE HOME OR AWAY GAMES accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding of pairs of a distance matrix and a bound, to an instance that is well-formed for UNCONSTRAINED TRAVELING TOURNAMENT (there is an even number $n \ge 2$ of teams and the $n \times n$ distance matrix has zero diagonal, is symmetric, and satisfies the triangle inequality) and [feasible](traveling-tournament-three-feasible.md) for TRAVELING TOURNAMENT WITH AT MOST THREE CONSECUTIVE HOME OR AWAY GAMES. It rejects every bitstring that does not decode to such an instance.

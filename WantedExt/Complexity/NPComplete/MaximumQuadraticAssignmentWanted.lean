@@ -68,7 +68,8 @@ abbrev MaximumQuadraticAssignmentInstance :=
 def entry (M : List (List ℕ)) (k l : ℕ) : ℕ :=
   (M.getD k []).getD l 0
 
-/-- The `n × n` matrix `M` is symmetric. -/
+/-- `M k l = M l k` for all `k, l < n`, missing entries reading as `0` (the shape of `M` is not
+tested). -/
 def IsSymmetric (n : ℕ) (M : List (List ℕ)) : Prop :=
   ∀ k < n, ∀ l < n, entry M k l = entry M l k
 

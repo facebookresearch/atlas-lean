@@ -1,0 +1,3 @@
+# Distance to a point at most r
+
+For a vertex $v$, a triple $p = (a, b, t)$ and a real $r$: either some walk from $v$ to $a$ has length $\ell$ with $\ell + t \le r$, or some walk from $v$ to $b$ has length $\ell$ with $\ell + (l(\{a, b\}) - t) \le r$, where $l(\{a, b\})$ is the length of the edge $\{a, b\}$ ($0$ if there is none). When $p$ is a point of the network (a vertex, or a point at offset $0 \le t \le l(\{a, b\})$ on an edge, the condition the feasibility predicate imposes separately), this says that the shortest-path distance from $v$ to $p$ is at most $r$. For a raw triple it need not: at an isolated vertex $v$, the triple $(v, v, 1)$ satisfies the second inequality with $r = -1$ but is not a point of the network.

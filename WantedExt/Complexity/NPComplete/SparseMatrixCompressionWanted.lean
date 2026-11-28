@@ -63,8 +63,8 @@ abbrev SparseMatrixCompressionInstance := ℕ × List (List Bool) × ℕ
 def WellFormed (i : SparseMatrixCompressionInstance) : Prop :=
   (∀ row ∈ i.2.1, row.length = i.1) ∧ 0 < i.2.2 ∧ i.2.2 ≤ i.2.1.length * i.1
 
-/-- A sequence `b` of `n + K` integers in `{0, …, m}` and shifts `s` such that `a_rc = 1` exactly
-when `b` holds `r + 1` at position `s r + c`. -/
+/-- A sequence `b` of `n + K` integers in `{0, …, m}` and shifts `s r < K` such that `a_rc = 1`
+exactly when `b` holds `r + 1` at position `s r + c`. -/
 def SparseMatrixCompressionFeasible (i : SparseMatrixCompressionInstance) : Prop :=
   ∃ b : List ℕ, b.length = i.1 + i.2.2 ∧ (∀ x ∈ b, x ≤ i.2.1.length) ∧
     ∃ s : Fin i.2.1.length → Fin i.2.2, ∀ r : Fin i.2.1.length, ∀ c : Fin i.1,

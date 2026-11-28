@@ -1,0 +1,3 @@
+# Feasible instances of MIN-SUM MULTICENTER
+
+An instance is feasible when some set $P$ of at most $K$ points on the graph and some bounds $r(v)$ satisfy: every vertex $v$, including vertices of weight $0$, reaches some point of $P$ within distance $r(v)$ ([distance at most](dist-le.md)), and $\sum_v w(v) \cdot r(v) \le B$. Taking $r(v) = d(v)$, the distance from $v$ to its closest point, this is $\sum_v w(v) d(v) \le B$ when every vertex reaches $P$; a placement that leaves some vertex unable to reach any point is rejected even when that vertex has weight $0$. The bound $B = p/q$ is read with $p/0 = 0$; well-formedness requires $q > 0$.

@@ -63,8 +63,9 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- An instance: the prime `q`, the number `n` of variables, the polynomials of `P` (each a list
-of terms `(a, t)`, with coefficient `a` and variable-index list `t`), and the bound `K`. -/
+/-- An instance: the modulus `q` (prime when well formed), the number `n` of variables, the
+polynomials of `P` (each a list of terms `(a, t)`, with coefficient `a` and variable-index list
+`t`), and the bound `K`. -/
 abbrev QuadraticEquationsInstance := ℕ × ℕ × List (List (ℕ × List ℕ)) × ℕ
 
 /-- The variable `x_j` in `MvPolynomial (Fin n) (ZMod q)`. An index `j ≥ n`, which `WellFormed`

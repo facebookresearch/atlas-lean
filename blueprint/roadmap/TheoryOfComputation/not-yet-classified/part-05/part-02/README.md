@@ -1,7 +1,6 @@
 # Part 2 of 6
 
 - [Varieties](varieties/README.md)
-- [View Serializability](view-serializability/README.md)
 - [Threshold Counter](threshold-counter/README.md)
 - [Coding](coding/README.md)
 - [Cov Lower Bound](cov-lower-bound/README.md)
