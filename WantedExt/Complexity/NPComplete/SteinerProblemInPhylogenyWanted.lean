@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import MathlibExt.Combinatorics.SimpleGraph.HypercubeExtremal
-public import Mathlib.Combinatorics.SimpleGraph.Acyclic
+public import CSLibExt.Complexity.NPComplete.SteinerProblemInPhylogenyDefs
 
 @[expose] public section
 
@@ -55,32 +52,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the sequence length `m`, the species' sequences, and the bound `K`. -/
-abbrev SteinerProblemInPhylogenyInstance := ℕ × List (List Bool) × ℕ
-
-/-- A listed sequence as a vertex `Fin m → Bool` of the hypercube `Q_m`. -/
-def toVertex (m : ℕ) (s : List Bool) : Fin m → Bool :=
-  fun k => s.getD k false
-
-/-- Well-formedness of an instance: there is at least one species, and every species is a
-sequence of length `m`. -/
-def WellFormed (i : SteinerProblemInPhylogenyInstance) : Prop :=
-  i.2.1 ≠ [] ∧ ∀ s ∈ i.2.1, s.length = i.1
-
-/-- Some subtree of the hypercube `Q_m` contains every species and has at most `K` edges. -/
-def SteinerProblemInPhylogenyFeasible (i : SteinerProblemInPhylogenyInstance) : Prop :=
-  ∃ T : (SimpleGraph.hypercubeGraph i.1).Subgraph, T.coe.IsTree ∧
-    (∀ s ∈ i.2.1, toVertex i.1 s ∈ T.verts) ∧ T.edgeSet.ncard ≤ i.2.2
-
-open Classical in
-/-- STEINER PROBLEM IN PHYLOGENY as a decision problem over bitstrings. -/
-noncomputable def steinerProblemInPhylogenyDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SteinerProblemInPhylogenyInstance) x with
-  | some i => decide (WellFormed i ∧ SteinerProblemInPhylogenyFeasible i)
-  | none => false
 
 /-- **STEINER PROBLEM IN PHYLOGENY is NP-complete.** Source: Foulds and Graham (1982). -/
 public theorem_wanted steinerProblemInPhylogeny_npComplete :

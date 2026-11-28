@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import MathlibExt.Combinatorics.SimpleGraph.Domination
+public import CSLibExt.Complexity.NPComplete.SplitConnectedDominatingSetDefs
 
 @[expose] public section
 
@@ -53,35 +50,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`), edge list, bound `K`. -/
-abbrev SplitConnectedDominatingSetInstance := ℕ × List (ℕ × ℕ) × ℕ
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : SplitConnectedDominatingSetInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range), the graph is a split
-graph (some vertex set `C` is a clique and its complement is an independent set), and `0 < K`. -/
-def WellFormed (i : SplitConnectedDominatingSetInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    (∃ C : Set (Fin i.1), (Graph i).IsClique C ∧ (Graph i).IsIndepSet Cᶜ) ∧
-    0 < i.2.2
-
-/-- Some dominating set `V'` of at most `K` vertices induces a connected subgraph. -/
-def SplitConnectedDominatingSetFeasible (i : SplitConnectedDominatingSetInstance) : Prop :=
-  ∃ S : Finset (Fin i.1), S.card ≤ i.2.2 ∧ (Graph i).IsDominating (↑S : Set (Fin i.1)) ∧
-    ((Graph i).induce (↑S : Set (Fin i.1))).Connected
-
-open Classical in
-/-- CONNECTED DOMINATING SET ON SPLIT GRAPHS as a decision problem over bitstrings. -/
-noncomputable def splitConnectedDominatingSetDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SplitConnectedDominatingSetInstance) x with
-  | some i => decide (WellFormed i ∧ SplitConnectedDominatingSetFeasible i)
-  | none => false
 
 /-- **CONNECTED DOMINATING SET ON SPLIT GRAPHS is NP-complete.** Source: White, Farber and
 Pulleyblank (1985); Mohanapriya, Renjith and Sadagopan (2024). -/

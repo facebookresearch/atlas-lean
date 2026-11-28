@@ -18,11 +18,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import MathlibExt.Combinatorics.SimpleGraph.Domination
-public import Mathlib.Order.Defs.Unbundled
-public import CSLibExt.Complexity.NPComplete.DominatingSetDefs
+public import CSLibExt.Complexity.NPComplete.UpperDominationDefs
 
 @[expose] public section
 
@@ -64,24 +60,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n`
-(`DominatingSet.WellFormed`), and `0 < K ≤ n`. -/
-def WellFormed (i : DominatingSetInstance) : Prop :=
-  DominatingSet.WellFormed i ∧ 0 < i.2.2 ∧ i.2.2 ≤ i.1
-
-/-- Some minimal dominating set has at least `K` vertices. -/
-def UpperDominationFeasible (i : DominatingSetInstance) : Prop :=
-  ∃ S : Finset (Fin i.1), i.2.2 ≤ S.card ∧ Minimal (Graph i).IsDominating (S : Set (Fin i.1))
-
-open Classical in
-/-- UPPER DOMINATION as a decision problem over bitstrings. -/
-noncomputable def upperDominationDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := DominatingSetInstance) x with
-  | some i => decide (WellFormed i ∧ UpperDominationFeasible i)
-  | none => false
 
 /-- **UPPER DOMINATION is NP-complete.** Source: Cheston, Fricke, Hedetniemi and Jacobs
 (1990). -/

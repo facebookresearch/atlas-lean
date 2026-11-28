@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
+public import CSLibExt.Complexity.NPComplete.PowerDominatingSetDefs
 
 @[expose] public section
 
@@ -53,44 +51,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`), edge list, bound `K`. -/
-abbrev PowerDominatingSetInstance := ℕ × List (ℕ × ℕ) × ℕ
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : PowerDominatingSetInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range), and `0 < K`. -/
-def WellFormed (i : PowerDominatingSetInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    0 < i.2.2
-
-/-- The vertices of `G` observed from `S`: the least set containing the closed neighborhood
-`N[S]` and closed under propagation (an observed vertex whose neighbors other than `u` are all
-observed makes its neighbor `u` observed). -/
-inductive Observed {n : ℕ} (G : SimpleGraph (Fin n)) (S : Finset (Fin n)) : Fin n → Prop
-  /-- Every vertex of `S` is observed. -/
-  | mem {v : Fin n} : v ∈ S → Observed G S v
-  /-- Every neighbor of a vertex of `S` is observed. -/
-  | adj {s v : Fin n} : s ∈ S → G.Adj s v → Observed G S v
-  /-- An observed vertex `v` with no unobserved neighbor other than `u` makes `u` observed. -/
-  | propagate {v u : Fin n} : Observed G S v → G.Adj v u →
-      (∀ w, G.Adj v w → w ≠ u → Observed G S w) → Observed G S u
-
-/-- Some set `S` of at most `K` vertices observes every vertex. -/
-def PowerDominatingSetFeasible (i : PowerDominatingSetInstance) : Prop :=
-  ∃ S : Finset (Fin i.1), S.card ≤ i.2.2 ∧ ∀ v, Observed (Graph i) S v
-
-open Classical in
-/-- POWER DOMINATING SET as a decision problem over bitstrings. -/
-noncomputable def powerDominatingSetDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PowerDominatingSetInstance) x with
-  | some i => decide (WellFormed i ∧ PowerDominatingSetFeasible i)
-  | none => false
 
 /-- **POWER DOMINATING SET is NP-complete.** Source: Haynes, Hedetniemi, Hedetniemi, and
 Henning (2002). -/

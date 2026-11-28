@@ -23,10 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Data.Set.Card
+public import CSLibExt.Complexity.NPComplete.TargetSetSelectionDefs
 
 @[expose] public section
 
@@ -70,45 +67,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`), edge list, thresholds `t(0), …, t(n - 1)`,
-bound `K`. -/
-abbrev TargetSetSelectionInstance := ℕ × List (ℕ × ℕ) × List ℕ × ℕ
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : TargetSetSelectionInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- The threshold `t(v)` of vertex `v`. -/
-def threshold (i : TargetSetSelectionInstance) (v : Fin i.1) : ℕ :=
-  i.2.2.1.getD v 0
-
-/-- The active vertices after `k` rounds, starting from `S`: a vertex becomes active once at
-least `t(v)` of its neighbors are active, and stays active. -/
-def activated (i : TargetSetSelectionInstance) (S : Set (Fin i.1)) : ℕ → Set (Fin i.1)
-  | 0 => S
-  | k + 1 => activated i S k ∪
-      {v | threshold i v ≤ ((Graph i).neighborSet v ∩ activated i S k).ncard}
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range), there is one positive
-threshold per vertex, and `0 < K ≤ n`. -/
-def WellFormed (i : TargetSetSelectionInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    i.2.2.1.length = i.1 ∧ (∀ t ∈ i.2.2.1, 0 < t) ∧ 0 < i.2.2.2 ∧ i.2.2.2 ≤ i.1
-
-/-- Some target set of at most `K` vertices activates every vertex within `n` rounds. -/
-def TargetSetSelectionFeasible (i : TargetSetSelectionInstance) : Prop :=
-  ∃ S : Finset (Fin i.1), S.card ≤ i.2.2.2 ∧ activated i S i.1 = Set.univ
-
-open Classical in
-/-- TARGET SET SELECTION as a decision problem over bitstrings. -/
-noncomputable def targetSetSelectionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TargetSetSelectionInstance) x with
-  | some i => decide (WellFormed i ∧ TargetSetSelectionFeasible i)
-  | none => false
 
 /-- **TARGET SET SELECTION is NP-complete.** Source: Dreyer and Roberts (2009); Chen (2009);
 Kynčl, Lidický and Vyskočil (2017). -/

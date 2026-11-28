@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Bipartite
-public import WantedExt.Complexity.NPComplete.PartialFeedbackEdgeSetWanted
+public import CSLibExt.Complexity.NPComplete.PartialFeedbackEdgeSetBipartiteFixedLDefs
 
 @[expose] public section
 
@@ -55,31 +52,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance for a fixed cycle-length bound: vertex count `n` (vertices `Fin n`), edge list,
-bound `K`. -/
-abbrev BipartiteFixedLInstance := ℕ × List (ℕ × ℕ) × ℕ
-
-/-- The PARTIAL FEEDBACK EDGE SET instance given by `i` and the cycle-length bound `L`. -/
-abbrev withBound (i : BipartiteFixedLInstance) (L : ℕ) :
-    PartialFeedbackEdgeSet.PartialFeedbackEdgeSetInstance :=
-  (i.1, i.2.1, i.2.2, L)
-
-/-- Well-formedness for the fixed bound `L`: the PARTIAL FEEDBACK EDGE SET instance
-`withBound i L` is well formed and its graph is bipartite. -/
-def WellFormed (i : BipartiteFixedLInstance) (L : ℕ) : Prop :=
-  PartialFeedbackEdgeSet.WellFormed (withBound i L) ∧
-    (PartialFeedbackEdgeSet.Graph (withBound i L)).IsBipartite
-
-open Classical in
-/-- PARTIAL FEEDBACK EDGE SET for bipartite graphs with the cycle-length bound fixed to `L`, as
-a decision problem over bitstrings. -/
-noncomputable def bipartiteFixedLDec (L : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := BipartiteFixedLInstance) x with
-  | some i => decide (WellFormed i L ∧
-      PartialFeedbackEdgeSet.PartialFeedbackEdgeSetFeasible (withBound i L))
-  | none => false
 
 /-- **PARTIAL FEEDBACK EDGE SET for bipartite graphs is NP-complete for every fixed `L ≥ 4`.**
 Source: Garey and Johnson (1979), [GT9], comment; Yannakakis (1978). -/

@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Paths
+public import CSLibExt.Complexity.NPComplete.PartialFeedbackEdgeSetDefs
 
 @[expose] public section
 
@@ -51,38 +48,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`), edge list, bound `K`, cycle-length
-bound `L`. -/
-abbrev PartialFeedbackEdgeSetInstance := ℕ × List (ℕ × ℕ) × ℕ × ℕ
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : PartialFeedbackEdgeSetInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range),
-`0 < K ≤ |E|`, the length of the edge list, and `0 < L ≤ |V| = n`. -/
-def WellFormed (i : PartialFeedbackEdgeSetInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    0 < i.2.2.1 ∧ i.2.2.1 ≤ i.2.1.length ∧ 0 < i.2.2.2 ∧ i.2.2.2 ≤ i.1
-
-/-- Some set `E'` of at most `K` edges of the graph contains an edge of every cycle of length
-at most `L`. -/
-def PartialFeedbackEdgeSetFeasible (i : PartialFeedbackEdgeSetInstance) : Prop :=
-  ∃ E' : Finset (Sym2 (Fin i.1)), (↑E' : Set (Sym2 (Fin i.1))) ⊆ (Graph i).edgeSet ∧
-    E'.card ≤ i.2.2.1 ∧
-      ∀ (u : Fin i.1) (c : (Graph i).Walk u u), c.IsCycle → c.length ≤ i.2.2.2 →
-        ∃ e ∈ c.edges, e ∈ E'
-
-open Classical in
-/-- PARTIAL FEEDBACK EDGE SET as a decision problem over bitstrings. -/
-noncomputable def partialFeedbackEdgeSetDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PartialFeedbackEdgeSetInstance) x with
-  | some i => decide (WellFormed i ∧ PartialFeedbackEdgeSetFeasible i)
-  | none => false
 
 /-- **PARTIAL FEEDBACK EDGE SET is NP-complete.** Source: Garey and Johnson (1979), [GT9];
 Yannakakis (1978). -/
