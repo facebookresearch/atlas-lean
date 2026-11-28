@@ -17,6 +17,7 @@ measures on products of Borel sets, a π-system that generates the Borel sets of
 ## Statements
 
 - [Joint law of a finite independent family of random variables](map-fun-eq-pi-map.md)
+- [Robust objective of a piecewise-constant surrogate](expectation-of-a-finite-box-partition.md) — Finite-valued expectation formula for the product-law model.
 
 ## Background
 

@@ -13,6 +13,7 @@ Quantum operations and channels covers the physically allowed transformations of
 - [Holevo–Helstrom theorem](holevohelstrom-theorem.md)
 - [Capacity comparison: $Q(\Phi) \le C(\Phi) \le \log_2 \dim X$](remaining-clauses-of-operational-capacities-and-converse-bou.md)
 - [Solovay-Kitaev Gate Compilation](solovay-kitaev-gate-compilation/README.md)
+- [Parameterized quantum gates](parameterized-quantum-gates/README.md)
 
 ## Related topics
 

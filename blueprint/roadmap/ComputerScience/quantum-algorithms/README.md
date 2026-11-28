@@ -10,6 +10,7 @@ Algorithms for quantum computers and their analysis: Fourier sampling with the D
 
 - [Quantum query lower bounds](quantum-query-lower-bounds/README.md)
 - [Quantum phase estimation](quantum-phase-estimation.md)
+- [Variational quantum eigensolver](variational-quantum-eigensolver.md)
 - [Simon's algorithm](simon-s-algorithm.md)
 - [Classical lower bound for Simon's problem](classical-lower-bound-for-simon-s-problem.md)
 - [Amplitude amplification](amplitude-amplification.md)
@@ -21,6 +22,8 @@ Algorithms for quantum computers and their analysis: Fourier sampling with the D
 - [Shor success budget after approximation and repetition](shor-success-budget-after-approximation-and-repetition.md)
 - [Counting good outcomes of Shor period finding](counting-good-outcomes-of-shor-period-finding.md)
 - [Outcome distribution of Shor period finding when the order divides q](outcome-distribution-of-shor-period-finding-when-the-order-divides-q.md)
+- [Fermion-to-qubit encodings](fermion-to-qubit-encodings/README.md)
+- [Fermionic circuit networks](fermionic-circuit-networks/README.md)
 
 ## Planned results
 

@@ -10,3 +10,11 @@ Quantum models of atoms and molecules and their spectra: angular momentum, the r
 - [Optimal Lieb–Oxford constant](optimal-lieb-oxford-constant.md)
 
 - [Continuum Coulomb energy](continuum-coulomb-energy/README.md)
+- [Density-functional theory](density-functional-theory/README.md)
+- [Electron correlation](electron-correlation/README.md)
+- [Gaussian basis sets](gaussian-basis-sets/README.md)
+- [Hartree–Fock theory](hartree-fock-theory/README.md)
+- [Molecular Hamiltonian and Born–Oppenheimer separation](molecular-hamiltonian-and-born-oppenheimer/README.md)
+- [Photophysics of molecular emitters](photophysics-of-molecular-emitters/README.md)
+- [Quantum algorithms for electronic structure](quantum-algorithms-for-electronic-structure/README.md)
+- [Slater determinants and second quantization](slater-determinants-and-second-quantization/README.md)
