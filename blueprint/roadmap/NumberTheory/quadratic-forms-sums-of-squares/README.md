@@ -9,7 +9,6 @@ Representations by quadratic forms: sums of two, three and four squares, binary 
 - [Quadratic packing polynomials](quadratic-packing-polynomials/README.md)
 - [Legendre's theorem on $a x^2 + b y^2 + c z^2 = 0$](exists-ternary-eq-zero-iff.md)
 - [Local–global principle for Hermitian spaces over a quadratic extension](hermitian-local-global-principle.md)
-- [Hasse–Minkowski theorem for representations of rationals](hasse-minkowski-representation.md)
 - [Strong approximation for special unitary groups](strong-approximation-special-unitary.md)
 - [Mass and local factors of definite Hermitian lattices](hermitian-lattice-mass-and-local-factors.md)
 - [Siegel's mass formula for definite Hermitian lattices over a quadratic extension](hermitian-siegel-mass-formula.md)
