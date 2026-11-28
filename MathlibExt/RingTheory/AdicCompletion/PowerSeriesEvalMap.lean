@@ -17,16 +17,13 @@ Licensed under the Apache License, Version 2.0.
 module
 
 public import MathlibExt.RingTheory.AdicCompletion.PowerSeriesEval
-public import MathlibExt.RingTheory.Perfectoid.Functoriality
 
 /-!
 # Values of power series in an adic completion
 
 Further properties of the evaluation `AdicCompletion.evalPowerSeries I hx : A⟦X⟧ →+* Â_I` at an
-element `x ∈ I`: the values of constants and of `X`, a criterion for two series to have the same
-value (`AdicCompletion.evalPowerSeries_eq_of_coeff_mul_pow_eq`), and the naturality of the
-evaluation along the maps of adic completions induced by ring maps
-(`AdicCompletion.mapRingHom_evalPowerSeries`).
+element `x ∈ I`: the values of constants and of `X`, and a criterion for two series to have the
+same value (`AdicCompletion.evalPowerSeries_eq_of_coeff_mul_pow_eq`).
 -/
 
 @[expose] public noncomputable section
@@ -56,17 +53,5 @@ theorem evalPowerSeries_eq_of_coeff_mul_pow_eq {y : A} (hx : x ∈ I) (hy : y �
     rw [evalₐ_evalPowerSeries, evalₐ_evalPowerSeries, Polynomial.eval, Polynomial.eval,
       eval₂_trunc_eq_sum_range, eval₂_trunc_eq_sum_range]
     simp only [RingHom.id_apply, h]
-
-/-- **Naturality of the evaluation**: for a ring map `g : A →+* B` with `I.map g ≤ J`, the map of
-completions `mapRingHom I J g h` sends the value of `f` at `x ∈ I` to the value of the series
-`f.map g` at `g x ∈ J`. -/
-theorem mapRingHom_evalPowerSeries {B : Type*} [CommRing B] (J : Ideal B) (g : A →+* B)
-    (h : I.map g ≤ J) (hx : x ∈ I) (f : A⟦X⟧) :
-    mapRingHom I J g h (evalPowerSeries I hx f) =
-      evalPowerSeries J (h (Ideal.mem_map_of_mem g hx)) (PowerSeries.map g f) :=
-  ext_evalₐ fun n => by
-    rw [evalₐ_mapRingHom, evalₐ_evalPowerSeries, evalₐ_evalPowerSeries,
-      MathlibExt.RingTheory.AdicCompletionMaps.quotientMap_mk, trunc_map, Polynomial.eval_map,
-      Polynomial.eval₂_at_apply]
 
 end AdicCompletion

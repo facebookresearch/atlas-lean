@@ -34,7 +34,8 @@ inverses of the nonzero periods `log [ε]`, `ε♯ = 1`, `ε ≠ 1`. We show:
   `[ε] - 1 = ξ c`, then `log [ε] = Σ_{n ≥ 1} (-1)^(n+1) (pⁿ/n) cⁿ βⁿ` with `pⁿ/n → 0` in `ℤ_p`;
 * `A_max`, `B_max^+` and `B_max` are stable under `Gal(ℚ̄_p/ℚ_p)`
   (`PadicComplexInt.galoisBDeRhamPlus_mem_aMax`, `PadicComplexInt.bMaxPlus_le_comap`,
-  `PadicComplexInt.bMax_le_comap`);
+  `PadicComplexInt.bMax_le_comap`), by the naturality of the evaluation of power series along
+  the maps of adic completions induced by ring maps (`AdicCompletion.mapRingHom_evalPowerSeries`);
 * `σ(log [p̃]) = log [p̃] + log [u_σ]` with `σ(p̃) = p̃ u_σ` and `u_σ♯ = 1`
   (`PadicComplexInt.galoisBDeRhamPlus_logPTilde`), by the additivity of the logarithm.
 
@@ -48,6 +49,23 @@ périodes p-adiques*, Astérisque 223 (1994), Exposé II, §4.3.2 p. 88 (the rin
 @[expose] public noncomputable section
 
 open Ideal WittVector PowerSeries MathlibExt.AlgebraicGeometry.HodgeTateComparison
+
+namespace AdicCompletion
+
+/-- **Naturality of the evaluation**: for commutative rings `A` and `B`, ideals `I` of `A` and `J`
+of `B`, and a ring map `g : A →+* B` with `I.map g ≤ J`, the map of completions
+`mapRingHom I J g h` sends the value of a series `f` over `A` at `x ∈ I` to the value of the series
+`f.map g` at `g x ∈ J`. -/
+theorem mapRingHom_evalPowerSeries {A B : Type*} [CommRing A] [CommRing B] (I : Ideal A)
+    (J : Ideal B) (g : A →+* B) (h : I.map g ≤ J) {x : A} (hx : x ∈ I) (f : A⟦X⟧) :
+    mapRingHom I J g h (evalPowerSeries I hx f) =
+      evalPowerSeries J (h (Ideal.mem_map_of_mem g hx)) (PowerSeries.map g f) :=
+  ext_evalₐ fun n => by
+    rw [evalₐ_mapRingHom, evalₐ_evalPowerSeries, evalₐ_evalPowerSeries,
+      MathlibExt.RingTheory.AdicCompletionMaps.quotientMap_mk, trunc_map, Polynomial.eval_map,
+      Polynomial.eval₂_at_apply]
+
+end AdicCompletion
 
 namespace PadicComplexInt
 
