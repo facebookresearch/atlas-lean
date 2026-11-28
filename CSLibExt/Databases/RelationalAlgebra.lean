@@ -44,7 +44,8 @@ The standard algebraic equivalences used by query optimizers:
 * `select_union`, `select_sdiff`, `project_union`;
 * `join_eq_inter`: on a common schema the join is the intersection;
 * `Expr.select_comm`, `Expr.select_union`, `Expr.select_diff`, `Expr.project_union`,
-  `Expr.select_project`, `Expr.select_join_right`: distribution laws as query rewrites.
+  `Expr.select_project`, `Expr.select_join_right`: commutation and distribution laws as query
+  rewrites.
 
 `Expr` is the syntax of relational algebra queries over named base relations, with its
 evaluation `Expr.eval` on a database and its schema inference `Expr.schema`; `Expr.eval_isOver`
@@ -52,7 +53,9 @@ says a query that type-checks evaluates to a relation over the inferred schema o
 conforming to the database schema. `Expr.Equiv` is query equivalence: both queries are
 well-formed with the same schema and agree on every conforming database. Join commutativity and
 associativity, selection pushdown, and the cascades of selections and of projections are restated
-as query rewrites, under the well-formedness hypotheses that make both sides type-check.
+as query rewrites, under the well-formedness hypotheses that make both sides type-check,
+together with `Expr.select_comm`, `Expr.select_union`, `Expr.select_diff`, `Expr.project_union`,
+`Expr.select_project` and `Expr.select_join_right`.
 
 ## References
 
@@ -695,10 +698,12 @@ theorem project_project {sch : N → Finset A} {e : Expr N A D} {S T T' : Finset
   ⟨T, by simp [schema, he, hT', hT], by simp [schema, he, hT.trans hT'],
     fun _ _ => project_project_of_subset hT _⟩
 
-/-- **Selections commute as a query rewrite.** Fix a schema `sch`. Let `e` be a well-formed query
-with schema `S`, and let `c` and `c'` be selection conditions whose attributes lie in `S`. Then
-`select c (select c' e)` is equivalent to `select c' (select c e)`: both are well-formed with the
-same schema, and they have equal values on every database conforming to `sch`. -/
+/-- **Selections commute as a query rewrite.** Fix a database schema $\mathrm{sch}$ assigning a
+finite set of attributes to each base relation name. Let $e$ be a well-formed query with schema
+$S$, and let $c$ and $c'$ be selection conditions all of whose attributes lie in $S$. Then the
+query $\sigma_c(\sigma_{c'}(e))$ is equivalent to the query $\sigma_{c'}(\sigma_c(e))$: both are
+well-formed with the same schema, and they have equal values on every database conforming to
+$\mathrm{sch}$. -/
 theorem select_comm {sch : N → Finset A} {e : Expr N A D} {S : Finset A}
     (he : e.schema sch = some S) {c c' : Cond A D} (hc : c.attrs ⊆ S) (hc' : c'.attrs ⊆ S) :
     Equiv sch (select c (select c' e)) (select c' (select c e)) := by
@@ -706,11 +711,12 @@ theorem select_comm {sch : N → Finset A} {e : Expr N A D} {S : Finset A}
   intro db _
   exact Databases.select_comm _ _ _
 
-/-- **Selection distributes over union as a query rewrite.** Fix a schema `sch`. Let `e` and `e'`
-be well-formed queries with the same schema `S`, and let `c` be a selection condition whose
-attributes lie in `S`. Then `select c (union e e')` is equivalent to
-`union (select c e) (select c e')`: both are well-formed with the same schema, and they have equal
-values on every database conforming to `sch`. -/
+/-- **Selection distributes over union as a query rewrite.** Fix a database schema
+$\mathrm{sch}$ assigning a finite set of attributes to each base relation name. Let $e$ and $e'$
+be well-formed queries with the same schema $S$, and let $c$ be a selection condition all of whose
+attributes lie in $S$. Then the query $\sigma_c(e \cup e')$ is equivalent to the query
+$\sigma_c(e) \cup \sigma_c(e')$: both are well-formed with the same schema, and they have equal
+values on every database conforming to $\mathrm{sch}$. -/
 theorem select_union {sch : N → Finset A} {e e' : Expr N A D} {S : Finset A}
     (he : e.schema sch = some S) (he' : e'.schema sch = some S)
     {c : Cond A D} (hc : c.attrs ⊆ S) :
@@ -719,11 +725,12 @@ theorem select_union {sch : N → Finset A} {e e' : Expr N A D} {S : Finset A}
   intro db _
   exact Databases.select_union _ _ _
 
-/-- **Selection distributes over difference as a query rewrite.** Fix a schema `sch`. Let `e` and
-`e'` be well-formed queries with the same schema `S`, and let `c` be a selection condition whose
-attributes lie in `S`. Then `select c (diff e e')` is equivalent to
-`diff (select c e) (select c e')`: both are well-formed with the same schema, and they have equal
-values on every database conforming to `sch`. -/
+/-- **Selection distributes over difference as a query rewrite.** Fix a database schema
+$\mathrm{sch}$ assigning a finite set of attributes to each base relation name. Let $e$ and $e'$
+be well-formed queries with the same schema $S$, and let $c$ be a selection condition all of whose
+attributes lie in $S$. Then the query $\sigma_c(e \setminus e')$ is equivalent to the query
+$\sigma_c(e) \setminus \sigma_c(e')$: both are well-formed with the same schema, and they have
+equal values on every database conforming to $\mathrm{sch}$. -/
 theorem select_diff {sch : N → Finset A} {e e' : Expr N A D} {S : Finset A}
     (he : e.schema sch = some S) (he' : e'.schema sch = some S)
     {c : Cond A D} (hc : c.attrs ⊆ S) :
@@ -732,11 +739,12 @@ theorem select_diff {sch : N → Finset A} {e e' : Expr N A D} {S : Finset A}
   intro db _
   exact select_sdiff _ _ _
 
-/-- **Projection distributes over union as a query rewrite.** Fix a schema `sch`. Let `e` and `e'`
-be well-formed queries with the same schema `S`, and let `T` be a subset of `S`. Then
-`project T (union e e')` is equivalent to `union (project T e) (project T e')`: both are
-well-formed with the same schema, and they have equal values on every database conforming to
-`sch`. -/
+/-- **Projection distributes over union as a query rewrite.** Fix a database schema
+$\mathrm{sch}$ assigning a finite set of attributes to each base relation name. Let $e$ and $e'$
+be well-formed queries with the same schema $S$, and let $T \subseteq S$. Then the query
+$\pi_T(e \cup e')$ is equivalent to the query $\pi_T(e) \cup \pi_T(e')$: both are well-formed
+with the same schema, and they have equal values on every database conforming to
+$\mathrm{sch}$. -/
 theorem project_union {sch : N → Finset A} {e e' : Expr N A D} {S T : Finset A}
     (he : e.schema sch = some S) (he' : e'.schema sch = some S) (hT : T ⊆ S) :
     Equiv sch (project T (union e e')) (union (project T e) (project T e')) := by
@@ -744,11 +752,12 @@ theorem project_union {sch : N → Finset A} {e e' : Expr N A D} {S T : Finset A
   intro db _
   exact Databases.project_union _ _ _
 
-/-- **Selection commutes with projection as a query rewrite.** Fix a schema `sch`. Let `e` be a
-well-formed query with schema `S`, let `T` be a subset of `S`, and let `c` be a selection
-condition whose attributes lie in `T` (the projection keeps them). Then `select c (project T e)`
-is equivalent to `project T (select c e)`: both are well-formed with the same schema, and they
-have equal values on every database conforming to `sch`. -/
+/-- **Selection commutes with projection as a query rewrite.** Fix a database schema
+$\mathrm{sch}$ assigning a finite set of attributes to each base relation name. Let $e$ be a
+well-formed query with schema $S$, let $T \subseteq S$, and let $c$ be a selection condition all
+of whose attributes lie in $T$, so the projection keeps them. Then the query
+$\sigma_c(\pi_T(e))$ is equivalent to the query $\pi_T(\sigma_c(e))$: both are well-formed with
+the same schema, and they have equal values on every database conforming to $\mathrm{sch}$. -/
 theorem select_project {sch : N → Finset A} {e : Expr N A D} {S T : Finset A}
     (he : e.schema sch = some S) (hT : T ⊆ S) {c : Cond A D} (hc : c.attrs ⊆ T) :
     Equiv sch (select c (project T e)) (project T (select c e)) := by
@@ -756,11 +765,13 @@ theorem select_project {sch : N → Finset A} {e : Expr N A D} {S T : Finset A}
   intro db _
   exact Databases.select_project _ _ hc
 
-/-- **Selection pushdown into the right operand of a join, as a query rewrite.** Fix a schema
-`sch`. Let `e` and `e'` be well-formed queries with schemas `S` and `S'`, and let `c` be a
-selection condition whose attributes lie in `S'`, the right operand's schema. Then
-`select c (join e e')` is equivalent to `join e (select c e')`: both are well-formed with the same
-schema, and they have equal values on every database conforming to `sch`. -/
+/-- **Selection pushdown into the right operand of a join, as a query rewrite.** Fix a database
+schema $\mathrm{sch}$ assigning a finite set of attributes to each base relation name. Let $e$
+and $e'$ be well-formed queries with schemas $S$ and $S'$, and let $c$ be a selection condition
+all of whose attributes lie in $S'$. Then the query $\sigma_c(e \bowtie e')$, the selection by
+$c$ of the natural join of $e$ and $e'$, is equivalent to the query $e \bowtie \sigma_c(e')$:
+both are well-formed with the same schema, and they have equal values on every database
+conforming to $\mathrm{sch}$. -/
 theorem select_join_right {sch : N → Finset A} {e e' : Expr N A D} {S S' : Finset A}
     (he : e.schema sch = some S) (he' : e'.schema sch = some S') (c : Cond A D)
     (hc : c.attrs ⊆ S') :

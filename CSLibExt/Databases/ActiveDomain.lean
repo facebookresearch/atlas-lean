@@ -20,14 +20,15 @@ contained in the active domain of the database (`adom_eval_subset`), for every d
 conformance hypothesis.
 
 This is the relational-algebra model's notion of active domain, over partial tuples; it is
-unrelated to `RelationalSchema.Instance.activeDomain` in `InclusionDependencies`, which uses
+distinct from `RelationalSchema.Instance.activeDomain` in `InclusionDependencies`, which uses
 total tuples over a named schema.
 
 ## References
 
 Serge Abiteboul, Richard Hull, and Victor Vianu, _Foundations of Databases_ (Addison-Wesley,
 1995): Section 4.2 (p. 41) for the active domain, where the active domain of a query result is
-contained in the union of the active domains of the query and the instance.
+contained in the union of the active domains of the query and the instance (stated there for
+rule-based conjunctive queries).
 -/
 
 @[expose] public section
@@ -40,7 +41,9 @@ section adom
 
 variable [Fintype A] [DecidableEq D]
 
-/-- The **active domain** of a relation: the set of values occurring in its tuples. -/
+/-- **Active domain of a set of tuples.** For a finite set $r$ of tuples of the relational
+algebra (partial assignments of values to attributes), the active domain of $r$ is the set of
+values that some tuple of $r$ takes at some attribute. -/
 def adom (r : Finset (Tuple A D)) : Finset D :=
   r.biUnion fun t => Finset.univ.biUnion fun a => (t a).toFinset
 
@@ -57,8 +60,9 @@ private theorem adom_mono {r s : Finset (Tuple A D)} (h : r ⊆ s) : adom r ⊆ 
 
 end adom
 
-/-- The **active domain** of a database `db`: the values occurring in any of its relations. No
-conformance hypothesis is needed. -/
+/-- **Active domain of a relational-algebra database.** For a database $\mathrm{db}$ assigning a
+finite set of tuples to each of finitely many relation names, the active domain of
+$\mathrm{db}$ is the union of the active domains of the sets $\mathrm{db}(n)$. -/
 def adomDB [Fintype N] [Fintype A] [DecidableEq D] (db : N → Finset (Tuple A D)) : Finset D :=
   Finset.univ.biUnion fun n => adom (db n)
 
@@ -68,9 +72,13 @@ theorem mem_adomDB [Fintype N] [Fintype A] [DecidableEq D] {db : N → Finset (T
   simp only [adomDB, Finset.mem_biUnion, Finset.mem_univ, true_and, mem_adom]
 
 /-- **Queries create no values.** For every database `db` (conforming or not) and every query
-`e`, every value in the result already occurs in `db`. Constants occur only in selection
-conditions, which filter tuples; no constructor of `Expr` builds a tuple from a constant, so the
-query's own active domain contributes nothing (compare the reference in the module docstring). -/
+`e`, every value in the result already occurs in `db`. The source's bound also allows the
+constants of the query; here they contribute nothing, because constants occur only in selection
+conditions, which filter tuples, and no constructor of `Expr` builds a tuple from a constant.
+
+Source: S. Abiteboul, R. Hull and V. Vianu, *Foundations of Databases*, Addison-Wesley, 1995,
+Section 4.2, p. 41, where adom(q(I)) ⊆ adom(q) ∪ adom(I) is stated for rule-based conjunctive
+queries. -/
 theorem adom_eval_subset [Fintype N] [Fintype A] [DecidableEq A] [DecidableEq D]
     (db : N → Finset (Tuple A D)) (e : Expr N A D) : adom (e.eval db) ⊆ adomDB db := by
   induction e with
