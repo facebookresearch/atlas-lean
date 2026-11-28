@@ -4,7 +4,7 @@ Bimodal satisfiability over products of finite linear orders with difference fra
 
 **Theorem (Hampson and Kurucz).** $\mathcal{C}_{\mathrm{lin}}^{\mathrm{fin}} \times \mathcal{C}_{\mathrm{diff}}$-satisfiability, whether a given bimodal formula is satisfied in some model based on the [product](products-of-linear-orders-and-difference-frames.md) of a finite linear order with a difference frame, is recursively enumerable but undecidable.
 
-Consequently satisfiability of one-variable first-order linear temporal logic with counting to two is recursively enumerable but undecidable over the class of all finite linear orders, with constant or decreasing domains (Corollary 3.4 of the source). With expanding domains over finite linear orders the source shows the problem is Ackermann-hard (Theorem 5.3).
+Consequently satisfiability of one-variable first-order linear temporal logic with counting to two is recursively enumerable but undecidable over the class of all finite linear orders, with constant or decreasing domains (Corollary 3.4 of the source). With expanding domains over finite linear orders the source shows the problem is Ackermann-hard (Corollary 5.4; Theorem 5.3 is its bimodal form, Ackermann-hardness of $\mathcal{C}_{\mathrm{lin}} \times \mathcal{C}_{\mathrm{diff}}$-satisfiability).
 
 ## Depends on
 
@@ -23,4 +23,4 @@ Undecidability reduces counter machine reachability (from a configuration with z
 
 ## Sources
 
-- C. Hampson and A. Kurucz, "Undecidable propositional bimodal logics and one-variable first-order linear temporal logics with counting", *ACM Transactions on Computational Logic* 16(3):1–36, 2015, doi:10.1145/2757285; read as arXiv:1407.1386v3, <https://arxiv.org/abs/1407.1386v3>: Theorem 3.2 of arXiv:1407.1386v3 and its proof in Section 3, with the finite product model claim in its proof, Corollary 3.4 and Theorem 5.3.
+- C. Hampson and A. Kurucz, "Undecidable propositional bimodal logics and one-variable first-order linear temporal logics with counting", *ACM Transactions on Computational Logic* 16(3):1–36, 2015, doi:10.1145/2757285; read as arXiv:1407.1386v3, <https://arxiv.org/abs/1407.1386v3>: Theorem 3.2 of arXiv:1407.1386v3 and its proof in Section 3, with the finite product model claim in its proof, Corollary 3.4, Theorem 5.3 and Corollary 5.4.

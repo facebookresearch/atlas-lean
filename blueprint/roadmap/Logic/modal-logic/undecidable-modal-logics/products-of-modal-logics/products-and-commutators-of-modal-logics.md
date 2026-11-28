@@ -4,7 +4,7 @@ The product of Kripke complete modal logics is the logic of all product frames b
 
 **Product frames.** For unimodal frames $\mathfrak{F}_i = \langle W_i, R_i\rangle$, $i = 1, \dots, n$ with $n \geq 2$, the product $\mathfrak{F}_1 \times \cdots \times \mathfrak{F}_n$ is the $n$-frame $\langle W_1 \times \cdots \times W_n, \bar{R}_1, \dots, \bar{R}_n\rangle$ with $\langle u_1, \dots, u_n\rangle \bar{R}_i \langle v_1, \dots, v_n\rangle$ iff $u_i R_i v_i$ and $u_k = v_k$ for all $k \neq i$.
 
-**Product logics.** $n$-modal formulas have boxes $\Box_1, \dots, \Box_n$, interpreted in $n$-frames as usual; $\mathrm{Log}\,\mathcal{C}$ is the set of formulas valid in all frames of a class $\mathcal{C}$, and $\mathrm{Fr}\,L$ the class of frames for a logic $L$. For Kripke complete unimodal logics $L_1, \dots, L_n$, the *product* is
+**Product logics.** $n$-modal formulas, built from a countably infinite set of propositional variables, have boxes $\Box_1, \dots, \Box_n$, interpreted in $n$-frames as usual; $\mathrm{Log}\,\mathcal{C}$ is the set of formulas valid in all frames of a class $\mathcal{C}$, and $\mathrm{Fr}\,L$ the class of frames for a logic $L$. For Kripke complete unimodal logics $L_1, \dots, L_n$, the *product* is
 
 $$
 L_1 \times \cdots \times L_n = \mathrm{Log}\{\mathfrak{F}_1 \times \cdots \times \mathfrak{F}_n : \mathfrak{F}_i \in \mathrm{Fr}\,L_i\}.

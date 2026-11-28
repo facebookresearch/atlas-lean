@@ -22,6 +22,7 @@ and for classes $\mathcal{C}_h$, $\mathcal{C}_v$ of frames, $\mathrm{Log}(\mathc
 - [Modal formulas](../../kripke-semantics/formula.md)
 - [Products and commutators of modal logics](products-and-commutators-of-modal-logics.md)
 - [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+
 ## Proof depends on
 
 None.

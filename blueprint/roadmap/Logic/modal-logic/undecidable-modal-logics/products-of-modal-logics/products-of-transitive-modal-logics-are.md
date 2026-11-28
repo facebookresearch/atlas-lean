@@ -9,6 +9,7 @@ Since $\mathbf{K4} \times \mathbf{K4} = [\mathbf{K4}, \mathbf{K4}]$, it is a fin
 ## Depends on
 
 - [products and commutators of modal logics](products-and-commutators-of-modal-logics.md)
+- [Extra axioms of K4](../../soundness-and-completeness-of-normal-modal-logic/k4.md)
 - [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on

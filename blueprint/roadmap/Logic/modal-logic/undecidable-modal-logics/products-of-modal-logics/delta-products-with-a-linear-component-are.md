@@ -10,6 +10,7 @@ Here $\mathbf{K4.3}$ is the unimodal logic of linear orders, whose frames are th
 
 - [Delta-products of modal logics](delta-products-of-modal-logics.md)
 - [Extra axioms of S5](../../normal-modal-logics/s5.md)
+- [Extra axioms of the modal logic K](../../normal-modal-logics/k.md)
 - [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on

@@ -2,7 +2,7 @@
 
 The spatio-temporal logic PTL × S4u combines propositional temporal logic with the topological logic S4u: regions evolve in time, and terms may apply Boolean, interior and temporal operators to regions; its fragments restrict which temporal operators may build terms.
 
-**Topological temporal models.** A *flow of time* is a strict linear order $\mathfrak F = (W, <)$, such as $(\mathbb N, <)$, $(\mathbb Z, <)$ or a finite order. A *topological space* is a pair $\mathfrak T = (U, \mathbb I)$ of a nonempty set $U$ and an interior operator $\mathbb I$ on its subsets satisfying the Kuratowski axioms. A *topological temporal model* (tt-model) is a triple $\mathfrak M = (\mathfrak F, \mathfrak T, \mathfrak U)$ in which the valuation $\mathfrak U$ assigns to every spatial variable $p$ and time point $w \in W$ a set $\mathfrak U(p, w) \subseteq U$.
+**Topological temporal models.** A *flow of time* is a strict linear order $\mathfrak F = (W, <)$, such as $(\mathbb N, <)$, $(\mathbb Z, <)$ or a finite order. A *topological space* is a pair $\mathfrak T = (U, \mathbb I)$ of a nonempty set $U$ and an interior operator $\mathbb I$ on its subsets satisfying the Kuratowski axioms. A *topological temporal model* (tt-model) is a triple $\mathfrak M = (\mathfrak F, \mathfrak T, \mathfrak U)$ in which the valuation $\mathfrak U$ assigns to every spatial variable $p$ (from a countably infinite set $p_0, p_1, \dots$) and time point $w \in W$ a set $\mathfrak U(p, w) \subseteq U$.
 
 **Terms and formulas.** The spatio-temporal terms and the formulas of $\mathrm{PTL} \times \mathrm{S4}_u$ are
 
@@ -25,6 +25,7 @@ with $\mathcal S$ the mirror image towards the past; on a discrete flow the next
 - [Topological space](../../../../Topology/topological-spaces/topological-space.md)
 - [Interior of a subset](../../../../Topology/topological-spaces/open-and-closed-sets/interior-of-subset.md)
 - [Formulas of linear temporal logic](../../../temporal-logic/linear-temporal-logic/formula.md)
+- [Strict total order](../../../../Order/ordered-sets/strict-total-orders/strict-total-order.md)
 
 ## Proof depends on
 
@@ -32,7 +33,7 @@ None.
 
 ## Expansion
 
-$\mathrm{PTL} \times \mathrm{S4}_u$ contains propositional temporal logic and $\mathrm{S4}_u$, the logic of topological spaces with the universal modality, each of which is PSPACE-complete; its terms can describe how regions change over time, for example "the region where it will be raining ever and ever again", $\Box_F\Diamond_F\mathit{Rain}$. A $\mathrm{PTL} \times \mathrm{S4}_u$ formula is satisfiable in a tt-model with FSA iff it is satisfiable in one based on a finite (Aleksandrov) topological space.
+$\mathrm{PTL} \times \mathrm{S4}_u$ contains propositional temporal logic and $\mathrm{S4}_u$, the logic of topological spaces with the universal modality, each of which is PSPACE-complete; its terms can describe how regions change over time, for example "the region where it will be raining ever and ever again", $\Box_F\Diamond_F\mathit{Rain}$. A $\mathrm{PTL} \times \mathrm{S4}_u$ formula is satisfiable in a tt-model with FSA based on a flow of time $\mathfrak F$ iff it is satisfiable in a tt-model based on the same flow of time $\mathfrak F$ and a finite (Aleksandrov) topological space (Proposition 3.4).
 
 ## Sources
 

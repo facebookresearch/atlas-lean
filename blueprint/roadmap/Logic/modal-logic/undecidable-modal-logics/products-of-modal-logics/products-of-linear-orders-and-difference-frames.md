@@ -2,7 +2,7 @@
 
 The product of a frame $(T, <)$ and a difference frame $(W, \neq)$ is the 2-frame on $T \times W$ whose first relation moves along $<$ in the first coordinate and whose second relation moves to any different point in the second coordinate; bimodal formulas with $\Diamond_0$, $\Diamond_1$ are interpreted on it.
 
-**Bimodal formulas** are $\phi ::= p \mid \neg\phi \mid \phi \wedge \phi \mid \Diamond_0\phi \mid \Diamond_1\phi$. A *2-frame* $\langle W, R_0, R_1\rangle$ interprets $\Diamond_i$ by $R_i$ in the usual Kripke way, and a formula is *satisfied* in a model if it is true at some point.
+**Bimodal formulas** are $\phi ::= p \mid \neg\phi \mid \phi \wedge \phi \mid \Diamond_0\phi \mid \Diamond_1\phi$, where $p$ ranges over a countably infinite set of propositional variables. A *2-frame* $\langle W, R_0, R_1\rangle$ interprets $\Diamond_i$ by $R_i$ in the usual Kripke way, and a formula is *satisfied* in a model if it is true at some point.
 
 **Products.** For frames $\mathfrak{F}_0 = (W_0, R_0)$ and $\mathfrak{F}_1 = (W_1, R_1)$ the *product* $\mathfrak{F}_0 \times \mathfrak{F}_1$ is the 2-frame of the binary case of the [product of frames](products-and-commutators-of-modal-logics.md), with $\bar{R}_0$ acting in the first coordinate and $\bar{R}_1$ in the second. For classes $\mathcal{C}_0$, $\mathcal{C}_1$ of frames, $\mathcal{C}_0 \times \mathcal{C}_1$ is the class of products of members, and *$\mathcal{C}_0 \times \mathcal{C}_1$-satisfiability* asks whether a given bimodal formula is satisfied in some model based on a frame of $\mathcal{C}_0 \times \mathcal{C}_1$.
 
@@ -11,9 +11,10 @@ The product of a frame $(T, <)$ and a difference frame $(W, \neq)$ is the 2-fram
 ## Depends on
 
 - [Kripke model](../../kripke-semantics/kripke-model.md)
-- [Partially ordered set](../../../../Order/ordered-sets/partial-order.md)
 - [Modal formulas](../../kripke-semantics/formula.md)
 - [Products and commutators of modal logics](products-and-commutators-of-modal-logics.md)
+- [Strict total order](../../../../Order/ordered-sets/strict-total-orders/strict-total-order.md)
+
 ## Proof depends on
 
 None.
