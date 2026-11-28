@@ -20,3 +20,4 @@ Infinite groups defined by torsion and finiteness conditions: Burnside problems 
 - [Weak chain conditions on subgroups](weak-chain-conditions-on-subgroups/README.md)
 - [An infinite finitely presented periodic Steinberg group](characteristic-two-periodic-steinberg-group.md)
 - [An infinite finitely presented periodic group](infinite-finitely-presented-periodic-group.md)
+- [Decision problems in Burnside varieties](decision-problems-in-burnside-varieties/README.md)
