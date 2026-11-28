@@ -7,7 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# K-COLORABILITY OF TRIANGLE-FREE GRAPHS is NP-complete for every fixed K ≥ 3: definitions
+# K-COLORABILITY OF TRIANGLE-FREE GRAPHS: definitions
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the

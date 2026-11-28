@@ -7,7 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# TOTAL COLORING OF REGULAR BIPARTITE GRAPHS is NP-complete for every fixed k ≥ 3: definitions
+# TOTAL COLORING OF REGULAR BIPARTITE GRAPHS: definitions
 
 Source:
 C. J. H. McDiarmid and A. Sánchez-Arroyo, "Total colouring regular bipartite graphs is
