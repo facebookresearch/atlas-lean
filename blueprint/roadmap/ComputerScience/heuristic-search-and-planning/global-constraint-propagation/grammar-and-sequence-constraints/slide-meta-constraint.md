@@ -17,7 +17,7 @@ Let $C$ be a constraint of arity $k\ge1$ and $X_1,\dots,X_n$ distinct variables,
 
 ## Proof depends on
 
-- [Greedy assignment on a tree CSP](../../../../ComputerScience/not-yet-classified/tree-csp/greedy-ne-none-iff.md): on a binary constraint network whose arcs form a forest, consistent arcs let a greedy root-first assignment extend any value of the root, after rerooting at the variable to be supported; used for item 2.
+- [Greedy assignment on a tree CSP](../../tree-csps-directional-arc-consistency-makes-gree/greedy-ne-none-iff.md): on a binary constraint network whose arcs form a forest, consistent arcs let a greedy root-first assignment extend any value of the root, after rerooting at the variable to be supported; used for item 2.
 
 ## Expansion
 
