@@ -17,4 +17,4 @@
 - [Containment of conjunctive queries under functional dependencies is NP-complete](cq-containment-under-fds-is-np-complete.md)
 - [Finite controllability of conjunctive-query containment under inclusion dependencies](finite-controllability-of-cq-containment-under-inds.md)
 - [Containment of conjunctive queries under inclusion dependencies is PSPACE-complete](cq-containment-under-inds-is-pspace-complete.md)
-- [CQ minimization (cores) and UCQ containment](cq-minimization-and-ucq-containment.md)
+- [Cores and minimization of conjunctive queries](cores-and-minimization/README.md)
