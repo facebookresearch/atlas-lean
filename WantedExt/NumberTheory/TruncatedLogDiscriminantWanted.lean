@@ -9,8 +9,6 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.NumberTheory.Harmonic.Defs
-public import Mathlib.NumberTheory.Padics.PadicVal.Basic
 public import MathlibExt.NumberTheory.TruncatedLogDiscriminantPrimePower
 public import MathlibExt.NumberTheory.TruncatedLogResultantPos
 public import MathlibExt.NumberTheory.TruncatedLogResultantPrimePower

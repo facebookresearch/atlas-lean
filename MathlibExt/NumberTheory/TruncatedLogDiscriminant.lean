@@ -19,7 +19,7 @@ import Mathlib.Tactic.Primality
 # Nonsquare discriminants of truncated logarithmic polynomials
 
 We prove that the discriminants of the truncated logarithmic polynomials of degrees
-`3 * q`, `5 * q`, and `7 * q` are nonsquares for every prime `q`. For $q$ prime, $1\le m<q$
+`3 * q`, `5 * q`, and `7 * q` are nonsquares for every prime `q`. For $q$ prime, $m<q$
 and $mq$ odd, nonvanishing of the reduced resultant also rules out a square discriminant
 in degree $mq$.
 
@@ -825,16 +825,17 @@ private lemma nonsquare_seven {q : ℕ} (hq : q.Prime) :
 end not_isSquare_discr_truncatedLog_three_five_seven_mul
 
 open not_isSquare_discr_truncatedLog_three_five_seven_mul in
-/-- **Nonsquare discriminant from a reduced resultant.** Let $q$ be prime and $1\le m<q$,
-and suppose $mq$ is odd. Write $R=\mathbb{Z}/q\mathbb{Z}$. If
+/-- **Nonsquare discriminant from a reduced resultant.** Let $q$ be prime, let $m<q$, and suppose
+$mq$ is odd, which forces $m\ge 1$. Write $R=\mathbb{Z}/q\mathbb{Z}$. If
 $\operatorname{Res}(\sum_{j=0}^{mq-1} x^j,\sum_{j=1}^m j^{-1}x^j)\ne 0$ in $R$, then the
 discriminant of $F_{mq}(x)=1+x+x^2/2+\cdots+x^{mq}/(mq)$ is not a square in $\mathbb{Q}$. -/
 public lemma not_isSquare_discr_truncatedLog_mul_prime_of_resultant_ne_zero {m q : ℕ}
-    (hq : q.Prime) (hm : 1 ≤ m) (hmq : m < q) (hodd : Odd (m * q))
+    (hq : q.Prime) (hmq : m < q) (hodd : Odd (m * q))
     (hres : resultant (∑ j ∈ Finset.range (m * q), (X : (ZMod q)[X]) ^ j)
       (∑ j ∈ Finset.Icc 1 m, C ((j : ZMod q)⁻¹) * X ^ j) ≠ 0) :
     ¬ IsSquare (truncatedLogPolynomial (m * q)).discr := by
   have : Fact q.Prime := ⟨hq⟩
+  have hm : 1 ≤ m := Nat.one_le_iff_ne_zero.mpr fun h => by simp [h] at hodd
   have hlo : q ^ 1 ≤ m * q := by
     rw [pow_one]
     exact Nat.le_mul_of_pos_left q hm

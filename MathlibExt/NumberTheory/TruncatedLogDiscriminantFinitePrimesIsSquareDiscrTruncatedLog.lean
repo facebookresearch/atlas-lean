@@ -22,7 +22,7 @@ import Mathlib.Data.Nat.Prime.Factorial
 # Discriminants of truncated logarithmic polynomials at prime multiples
 
 For a natural number $m$ and a prime $q>m$ with $mq \equiv 1 \pmod 4$, if $q$ divides neither
-numerator of $X(m)$ and $H_m$, then the discriminant of
+the numerator of $X(m)$ nor that of $H_m$, then the discriminant of
 $F_{mq}(x)=1+x+x^2/2+\cdots+x^{mq}/(mq)$ is not a square in $\mathbb{Q}$. Here $X(m)$ is the
 product over the nontrivial $m$-th roots of unity in Section 4, and $H_m$ is the $m$-th harmonic
 number. The congruence forces $m\ge 1$, and $q>m$ ensures that the factorial clearing the
@@ -265,7 +265,7 @@ private lemma dvd_excR_of_resultant_eq_zero {m q : ℕ} (hq : q.Prime) (hm : 1 �
   rw [cast_excR hm, excG_map hq hlt, resultant_C_mul_right,
     resultant_geom_unpad hm (logSum_natDegree_le m), h0, mul_zero]
 
-private lemma redPolyC_ne_zero_of_pow {m : ℕ} (hm : 2 ≤ m) {θ : ℂ} (hpow : θ ^ m = 1) :
+private lemma logSum_eval_ne_zero_of_pow {m : ℕ} (hm : 2 ≤ m) {θ : ℂ} (hpow : θ ^ m = 1) :
     logSum(ℂ, m).eval θ ≠ 0 := by
   obtain ⟨n, rfl⟩ : ∃ n, m = n + 1 := ⟨m - 1, by omega⟩
   have hn : 1 ≤ n := by omega
@@ -348,7 +348,7 @@ private lemma excR_ne_zero {m : ℕ} (hm : 1 ≤ m) : excR m ≠ 0 := by
       rw [h1, heval1] at h0
       exact hmC h0
     by_cases hm2 : 2 ≤ m
-    · exact redPolyC_ne_zero_of_pow hm2 hpow
+    · exact logSum_eval_ne_zero_of_pow hm2 hpow
     · have hm1 : m = 1 := by omega
       rw [hm1, pow_one] at hpow
       exact absurd hpow hne
@@ -374,7 +374,7 @@ private lemma key_nonsquare {m q : ℕ} (hq : q.Prime) (hm : 1 ≤ m) (hlt : m <
     (h4 : m * q % 4 = 1) (hA : ¬ (q : ℤ) ∣ excA m) (hR : ¬ (q : ℤ) ∣ excR m) :
     ¬ IsSquare (truncatedLogPolynomial (m * q)).discr := by
   have : Fact q.Prime := ⟨hq⟩
-  refine not_isSquare_discr_truncatedLog_mul_prime_of_resultant_ne_zero hq hm hlt
+  refine not_isSquare_discr_truncatedLog_mul_prime_of_resultant_ne_zero hq hlt
     (Nat.odd_iff.mpr (by omega)) ?_
   rw [resultant_geom_factor hq hm]
   exact mul_ne_zero (pow_ne_zero _ fun h => hA (dvd_excA_of_eval_eq_zero hq hlt h))

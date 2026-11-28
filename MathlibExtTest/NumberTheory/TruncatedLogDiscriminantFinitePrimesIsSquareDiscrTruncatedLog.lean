@@ -207,7 +207,7 @@ example : truncatedLogAuxProduct 1 = 1 := by norm_num [truncatedLogAuxProduct]
 
 example : ¬ IsSquare (truncatedLogPolynomial 5).discr := by
   refine not_isSquare_discr_truncatedLog_mul_prime_of_resultant_ne_zero (m := 1) (q := 5)
-    (by decide) (by decide) (by decide) (by decide) ?_
+    (by decide) (by decide) (by decide) ?_
   have : Fact (1 < (5 : ℕ)) := ⟨by decide⟩
   let f : (ZMod 5)[X] := ∑ j ∈ Finset.range 5, X ^ j
   have hlog : (∑ j ∈ Finset.Icc (1 : ℕ) 1, C ((j : ZMod 5)⁻¹) * X ^ j) = X := by simp
