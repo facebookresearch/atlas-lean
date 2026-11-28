@@ -1808,6 +1808,7 @@
   "CSLibExt/Foundations/Nominal/Basic": {"to": "ComputerScience/programming-language-semantics", "title": "Nominal sets"},
   "CSLibExt/Foundations/Relation/OutputReachability": {"to": "TheoryOfComputation/complexity-classes", "title": "Time- and resource-bounded runs of abstract machines"},
   "CSLibExt/Foundations/RelationAlgebra/Tests": {"to": "ComputerScience/program-logics-and-verification", "title": "Kleene algebra with tests"},
+  "CSLibExt/Foundations/Semantics/CacheCoherence": {"to": "ComputerScience/computer-systems", "title": "Memory models and coherence"},
   "CSLibExt/Foundations/Semantics/IOAutomaton": {"to": "ComputerScience/process-calculi", "title": "Input/output automata"},
   "CSLibExt/Foundations/Semantics/LTS/Abstraction": {"to": "ComputerScience/process-calculi", "title": "Existential abstraction of labelled transition systems"},
   "CSLibExt/Foundations/Semantics/LTS/Basic": {"to": "ComputerScience/process-calculi", "title": "Labelled transition systems"},
