@@ -11,6 +11,7 @@ module
 public import Mathlib.Algebra.Free
 public import MathlibExt.Combinatorics.SemigroupLargeness
 import Mathlib.Algebra.BigOperators.Fin
+import Mathlib.Algebra.BigOperators.Group.Finset.Sigma
 import Mathlib.Combinatorics.HalesJewett
 import Mathlib.Data.Fintype.Pi
 import Mathlib.Data.List.OfFn
@@ -24,6 +25,28 @@ word over any given finite level of an increasing alphabet. In a J-set a sequenc
 realize ordered finite products of prescribed variable patterns or finite sums of prescribed counts.
 In a C-set one can choose the words so that all ordered products of their substitutions belong
 to the set.
+
+For an increasing sequence of finite alphabets with union `A`, a C-set of nonempty words over
+`A`, and a sequence of positive integers, one sequence of one-variable words has both
+properties: all nonempty increasing products of substitutions by letters from the respective
+alphabet levels lie in the C-set, and the total variable count over any nonempty finite set of
+levels is a nonempty finite sum from the input sequence.
+
+## References
+
+- Aninda Chakraborty and Sayan Goswami, *An Analogue to the Infinitary Hales-Jewett Theorem*,
+  INTEGERS **24** (2024), Article A74, pp. 1–12, §3. Corollary 3.8 combines the idempotent
+  induction of Theorem 3.5 with the variable-count condition of Theorem 3.7.
+- Aninda Chakraborty and Sayan Goswami, *Hales-Jewett type configurations in small sets*,
+  European Journal of Combinatorics **104** (2022), Article 103539, Lemma 2.1, the
+  J-set transference argument cited in Fact 3.1 of the preceding paper.
+- Neil Hindman, Dona Strauss, and Luca Q. Zamboni, *Combining extensions of the Hales-Jewett
+  Theorem with Ramsey Theory in other structures*, Electronic Journal of Combinatorics
+  **26** (2019), no. 4, Article P4.23, Corollary 16 (the fixed-alphabet pattern result).
+
+The proof of Corollary 3.8 reuses `exists_variableWords_prod_mem_of_isCSet_aux` and shares the
+one-stage count construction and index pairing with
+`exists_variableWords_subst_mem_sum_count_mem_finiteSums_of_isMulJSet`, both in this module.
 -/
 
 namespace MetaMathlibExt
@@ -342,6 +365,40 @@ public theorem exists_variableWords_subst_mem_prod_pattern_mem_finiteProducts_of
   exact exists_ordered_pattern_product y _ start (fun m => r m (start m)) (fun m => t m (start m))
     (fun m => ht m _) (fun m => hstart m _) (fun _ => Nat.lt_succ_self _) (fun m => hpat m _) m hm
 
+private theorem exists_count_stage {α : Type*} (A : ℕ → Finset α) (hA : Monotone A)
+    (hcover : ∀ x, ∃ i, x ∈ A i) {D : Set (FreeSemigroup α)} (hD : IsMulJSet D)
+    (x : ℕ → ℕ) (hx : ∀ j, 0 < x j) (m : ℕ) :
+    ∃ w : FreeSemigroup (α ⊕ Fin 1),
+      (∃ H : Finset ℕ, H.Nonempty ∧ (letters w).countP Sum.isRight = ∑ j ∈ H, x j) ∧
+      (∀ i, Sum.inr i ∈ letters w) ∧
+      ∀ a : Fin 1 → α, (∀ i, a i ∈ A m) → FreeSemigroup.map (Sum.elim id a) w ∈ D := by
+  let runs (j : ℕ) := List.replicate (x j) (0 : Fin 1)
+  have hruns (j : ℕ) (i : Fin 1) : i ∈ runs j :=
+    List.mem_replicate.mpr ⟨(hx _).ne', Subsingleton.elim _ _⟩
+  obtain ⟨w, r, t, ht, _, hvars, hmem, hpat⟩ :=
+    exists_stage A hA hcover (k := 1) (n := 1) le_rfl le_rfl runs hruns hD m 0
+  refine ⟨w, ⟨Finset.univ.image t, Finset.univ_nonempty.image t, ?_⟩, hvars, hmem⟩
+  have hright : (fun a : α ⊕ Fin 1 => (project 1 a).isSome) = Sum.isRight := by
+    funext a
+    cases a <;> simp [project]
+  rw [Finset.sum_image ht.injective.injOn]
+  simpa only [pattern, List.length_filterMap_eq_countP, hright, List.length_flatten,
+    List.map_ofFn, Function.comp_def, runs, List.length_replicate, List.sum_ofFn] using
+    congrArg List.length hpat
+
+-- Pair the level and its local input index so that the sum never reuses an input index.
+private theorem exists_sum_eq_of_pair_blocks (x c : ℕ → ℕ)
+    (hblocks : ∀ m, ∃ H : Finset ℕ, H.Nonempty ∧ c m = ∑ j ∈ H, x (Nat.pair m j))
+    (G : Finset ℕ) (hG : G.Nonempty) :
+    ∃ H : Finset ℕ, H.Nonempty ∧ ∑ m ∈ G, c m = ∑ j ∈ H, x j := by
+  classical
+  choose block hne hsum using hblocks
+  let pair := ((Equiv.sigmaEquivProd ℕ ℕ).trans Nat.pairEquiv).toEmbedding
+  obtain ⟨m, hm⟩ := hG
+  refine ⟨(G.sigma block).map pair, (Finset.sigma_nonempty.mpr ⟨m, hm, hne m⟩).map, ?_⟩
+  rw [Finset.sum_map, Finset.sum_sigma]
+  exact Finset.sum_congr rfl fun m _ => hsum m
+
 /-- **Variable-count sums of variable words in J-sets.** Let $A_0 \subseteq A_1 \subseteq \cdots$
 be finite sets with union $A$, and let $S_0$ be the semigroup of nonempty finite words over $A$
 under concatenation. A variable word over $A$ is a nonempty finite word over $A \cup \{v\}$, for a
@@ -362,39 +419,10 @@ public theorem exists_variableWords_subst_mem_sum_count_mem_finiteSums_of_isMulJ
       (∀ k a, a ∈ A k → FreeSemigroup.map (Sum.elim id fun _ => a) (w k) ∈ D) ∧
       ∀ G : Finset ℕ, G.Nonempty → ∃ H : Finset ℕ, H.Nonempty ∧
         ∑ k ∈ G, ((w k).head :: (w k).tail).countP Sum.isRight = ∑ j ∈ H, x j := by
-  classical
-  -- Allocate disjoint input indices to the levels. At level m, the j-th pattern consists
-  -- of x (Nat.pair m j) copies of the sole variable.
-  let runs (m j : ℕ) := List.replicate (x (Nat.pair m j)) (0 : Fin 1)
-  have hruns (m j : ℕ) (i : Fin 1) : i ∈ runs m j :=
-    List.mem_replicate.mpr ⟨(hx _).ne', Subsingleton.elim _ _⟩
-  choose w r t ht _ hvar hmem hpat using fun m =>
-    exists_stage A hA hcover (k := 1) (n := 1) le_rfl le_rfl (runs m) (hruns m) hD m 0
-  let index (m : ℕ) (j : Fin (r m + 1)) := Nat.pair m (t m j)
-  let block (m : ℕ) := Finset.univ.image (index m)
-  have hright : (fun a : α ⊕ Fin 1 => (project 1 a).isSome) = Sum.isRight := by
-    funext a
-    cases a <;> simp [project]
-  have hcount (m : ℕ) : (letters (w m)).countP Sum.isRight = ∑ j ∈ block m, x j := by
-    have hinj : Function.Injective (index m) :=
-      fun _ _ h => (ht m).injective (Nat.pair_eq_pair.mp h).2
-    rw [Finset.sum_image hinj.injOn]
-    simpa only [pattern, List.length_filterMap_eq_countP, hright, List.length_flatten,
-      List.map_ofFn, Function.comp_def, runs, List.length_replicate, List.sum_ofFn, index] using
-      congrArg List.length (hpat m)
-  refine ⟨w, fun m => hvar m 0, fun m a ha => hmem m (fun _ => a) (fun _ => ha), ?_⟩
-  intro G hG
-  refine ⟨G.biUnion block, Finset.biUnion_nonempty.mpr
-    ⟨hG.choose, hG.choose_spec, Finset.univ_nonempty.image _⟩, ?_⟩
-  have hdisjoint : (G : Set ℕ).PairwiseDisjoint block := by
-    intro a _ b _ hab
-    apply Finset.disjoint_left.mpr
-    intro j hj hj'
-    obtain ⟨i, _, rfl⟩ := Finset.mem_image.mp hj
-    obtain ⟨i', _, he⟩ := Finset.mem_image.mp hj'
-    exact hab (Nat.pair_eq_pair.mp he.symm).1
-  rw [Finset.sum_biUnion hdisjoint]
-  exact Finset.sum_congr rfl fun m _ => hcount m
+  choose w hw using fun m => exists_count_stage A hA hcover hD (fun j => x (Nat.pair m j))
+    (fun j => hx (Nat.pair m j)) m
+  exact ⟨w, fun m => (hw m).2.1 0, fun m a ha => (hw m).2.2 (fun _ => a) (fun _ => ha),
+    exists_sum_eq_of_pair_blocks x _ (fun m => (hw m).1)⟩
 
 -- If each factor sends the next set into the current one by left multiplication,
 -- then a product along any increasing subsequence belongs to its first set.
@@ -541,5 +569,41 @@ public theorem exists_variableWords_prod_mem_prod_pattern_mem_finiteProducts_of_
   choose r t ht hstart hend hpat using hblocks
   exact ⟨w, hvars, fun l m hm => ⟨fun a => hmem l m a hm,
     exists_ordered_pattern_product y w start r t ht hstart hend hpat m hm⟩⟩
+
+/-- **Variable-count sums of variable words in C-sets.** Let $A_0 \subseteq A_1 \subseteq \cdots$
+be finite sets with union $A$, and let $S_0$ be the semigroup of nonempty finite words over $A$
+under concatenation. A variable word over $A$ is a nonempty finite word over $A \cup \{v\}$, for a
+variable $v \notin A$, in which $v$ occurs; for $a \in A$, the word $w(a) \in S_0$ is obtained from
+$w$ by replacing each occurrence of $v$ by $a$, and $|w|_v$ is the number of occurrences of $v$ in
+$w$. If $D \subseteq S_0$ is a $C$-set and $x_0, x_1, \dots$ are positive integers, then there is
+a sequence $w_0, w_1, \dots$ of variable words over $A$ such that
+$w_{m_0}(a_0) w_{m_1}(a_1) \cdots w_{m_l}(a_l) \in D$ for all $l \in \mathbb{N}$, all
+$m_0 < m_1 < \cdots < m_l$ in $\mathbb{N}$ and all $a_j \in A_{m_j}$, $j = 0, \dots, l$, and such
+that for every nonempty finite $G \subseteq \mathbb{N}$ there is a nonempty finite
+$H \subseteq \mathbb{N}$ with $\sum_{k \in G} |w_k|_v = \sum_{j \in H} x_j$.
+
+Source: Aninda Chakraborty and Sayan Goswami, *An Analogue to the Infinitary Hales–Jewett
+Theorem*, INTEGERS 24 (2024), Article A74, Corollary 3.8. -/
+public theorem exists_variableWords_prod_mem_sum_count_mem_finiteSums_of_isCSet
+    {α : Type*} (A : ℕ → Finset α) (hA : Monotone A) (hcover : ∀ x, ∃ i, x ∈ A i)
+    {D : Set (FreeSemigroup α)} (hD : IsCSet D) (x : ℕ → ℕ) (hx : ∀ j, 0 < x j) :
+    ∃ w : ℕ → FreeSemigroup (α ⊕ Fin 1), (∀ k, Sum.inr 0 ∈ (w k).head :: (w k).tail) ∧
+      (∀ (l : ℕ) (m : Fin (l + 1) → ℕ) (a : Fin (l + 1) → α), StrictMono m →
+        (∀ j, a j ∈ A (m j)) →
+        (List.ofFn fun j : Fin l =>
+            FreeSemigroup.map (Sum.elim id fun _ => a j.succ) (w (m j.succ))).foldl
+          (· * ·) (FreeSemigroup.map (Sum.elim id fun _ => a 0) (w (m 0))) ∈ D) ∧
+      ∀ G : Finset ℕ, G.Nonempty → ∃ H : Finset ℕ, H.Nonempty ∧
+        ∑ k ∈ G, ((w k).head :: (w k).tail).countP Sum.isRight = ∑ j ∈ H, x j := by
+  let P (m : ℕ) (w : FreeSemigroup (α ⊕ Fin 1)) : Prop :=
+    ∃ H : Finset ℕ, H.Nonempty ∧ (letters w).countP Sum.isRight = ∑ j ∈ H, x (Nat.pair m j)
+  obtain ⟨w, _, hblocks, hvars, hmem⟩ :=
+    exists_variableWords_prod_mem_of_isCSet_aux A hD () (fun m _ _ => P m) (by
+      intro m _ B hB
+      obtain ⟨w, hcount, hvars, hmem⟩ :=
+        exists_count_stage A hA hcover hB (fun j => x (Nat.pair m j)) (fun j => hx (Nat.pair m j)) m
+      exact ⟨w, (), hcount, hvars, hmem⟩)
+  exact ⟨w, fun m => hvars m 0, fun l m a hm ha => hmem l m (fun j _ => a j) hm (fun j _ => ha j),
+    exists_sum_eq_of_pair_blocks x _ hblocks⟩
 
 end MetaMathlibExt
