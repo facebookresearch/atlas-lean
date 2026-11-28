@@ -19,7 +19,7 @@ Since distributed automata are closed under intersection (Lemma 3 of the source)
 
 ## Expansion
 
-The proof exhibits a family $\{G_n\}$ of labeled graphs (numbered line graphs, or weaker variants for the classes with existence detection or halting acceptance) together with an automaton $A^L$ recognizing exactly the family and an automaton $A^H$ that on $G_n$ simulates $T$ on a tape of $n$ cells and accepts iff $T$ halts within those cells; the product automaton recognizing $L(A^L)\cap L(A^H)$ is nonempty iff $T$ halts. The constructions are given for synchronous scheduling and transferred to liberal scheduling and to strong fairness using the expressive-power results of Esparza and Reiter, which have no page.
+The proof exhibits a family $\{G_n\}$ of labeled graphs (numbered line graphs, or weaker variants for the classes with existence detection or halting acceptance) together with an automaton $A^L$ recognizing exactly the family and an automaton $A^H$ that on $G_n$ simulates $T$ on a tape of $n$ cells and accepts iff $T$ halts within those cells; the product automaton recognizing $L(A^L)\cap L(A^H)$ is nonempty iff $T$ halts. The constructions are given for synchronous scheduling and transferred to liberal scheduling and to strong fairness using the expressive-power results of Esparza and Reiter.
 
 ## Sources
 

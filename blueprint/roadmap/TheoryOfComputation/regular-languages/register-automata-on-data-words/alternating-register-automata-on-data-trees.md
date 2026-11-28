@@ -21,7 +21,7 @@ None.
 
 ## Expansion
 
-The decidability results translate ATRA$_1$ into nondeterministic tree automata with faulty (incrementing) counters, whose nonemptiness is decidable by well-quasi-ordering arguments. The undecidability follows from lower-bound results for register automata on data words, which are special data trees: the source derives it from lower-bound results for register automata and logics on data words (Neven, Schwentick and Vianu; David; Demri and Lazić), and the weak-acceptance case from the undecidability over infinite data words of Demri and Lazić. None of these results has a page.
+The decidability results translate ATRA$_1$ into nondeterministic tree automata with faulty (incrementing) counters, whose nonemptiness is decidable by well-quasi-ordering arguments. The undecidability follows from lower-bound results for register automata on data words, which are special data trees: the source derives it from lower-bound results for register automata and logics on data words (Neven, Schwentick and Vianu; David; Demri and Lazić), and the weak-acceptance case from the undecidability over infinite data words of Demri and Lazić. A good expansion links pages for these results.
 
 ## Sources
 

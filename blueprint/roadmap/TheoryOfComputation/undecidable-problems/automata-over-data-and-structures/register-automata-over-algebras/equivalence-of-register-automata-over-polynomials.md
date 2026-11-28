@@ -4,7 +4,7 @@ For register automata whose registers hold univariate rational polynomials updat
 
 Let $\mathcal C=(\mathbb Q[x],+,\times,\circ)$ and consider [bottom-up register automata over an algebra](bottom-up-register-automata-over-an-algebra.md) with $\mathcal A=\mathcal C$.
 
-**Theorem.**
+**Theorem.** Instances are finite: each transition carries a polynomial function of $\mathcal C$ given by a term over $+$, $\times$, $\circ$ and the register variables, whose constants are polynomials in $\mathbb Q[x]$ given by their lists of rational coefficients; output functions are given the same way.
 1. The equivalence problem for deterministic register automata over $\mathcal C$ is undecidable, even with a monadic input alphabet: no algorithm decides, given two deterministic automata over $\mathcal C$ whose input symbols have rank at most $1$, whether they define the same partial function.
 2. The functionality problem for register automata over $\mathcal C$ is undecidable, even with a monadic input alphabet having one unary letter $a$ and one constant $\bot$, i.e. inputs $a^k\bot$.
 

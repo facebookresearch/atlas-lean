@@ -5,7 +5,7 @@ languages, nor whether an automatic graph has a proper coloring with $k$ colors 
 
 **Automatic and recognizable relations.** Let $\mathbb{A}$ be a finite alphabet and $\bot \notin \mathbb{A}$. For words $w_1, w_2 \in \mathbb{A}^*$, the *convolution* $w_1 \otimes w_2$ is the word over $(\mathbb{A} \cup \{\bot\})^2$ obtained by padding the
 shorter word with $\bot$ and reading both letter by letter. A relation $R \subseteq \mathbb{A}^* \times \mathbb{A}^*$ is *automatic* if $\{u \otimes v : (u, v) \in R\}$ is a regular language, and *recognizable* if
-$R = \bigcup_{i=1}^n A_i \times B_i$ for regular languages $A_i, B_i \subseteq \mathbb{A}^*$; for fixed $k$, $k\text{-PROD}$ is the class of recognizable relations that are unions of at most $k$ such products. A relation $S$
+$R = \bigcup_{i=1}^n A_i \times B_i$ for regular languages $A_i, B_i \subseteq \mathbb{A}^*$; for fixed $k$, $k\text{-PROD}$ is the class of recognizable relations that are unions of at most $k$ such products. As inputs, automatic relations and the vertex sets of automatic graphs are given by finite automata for the corresponding regular languages. A relation $S$
 *separates* $R$ from $R'$ if $R \subseteq S$ and $R' \cap S = \emptyset$.
 
 **Automatic graphs.** An *automatic graph* has as vertices a regular set of words and as edges a binary automatic relation. A *$k$-regular coloring* is a proper coloring of its vertices with $k$ colors in
@@ -33,7 +33,7 @@ equals a relation of a bounded class, is decidable for its hierarchy of bounded 
 ## Expansion
 
 Item 1 reduces the *reachable regularity problem*: whether the set of configurations reachable from the initial configuration of a well-founded reversible Turing machine is regular, which is
-undecidable by reduction from the halting problem for deterministic reversible Turing machines (Lecerf), which has no page. The configuration graph of such a machine is an automatic graph that is a disjoint union of paths, and the set of nodes without predecessor is regular, which
+undecidable by reduction from the halting problem for deterministic reversible Turing machines (Lecerf). The configuration graph of such a machine is an automatic graph that is a disjoint union of paths, and the set of nodes without predecessor is regular, which
 lets regular colorings detect the reachable set. Item 2 reduces item 1: for a symmetric relation $E$, two regular sets $A, B$ form a coloring of the automatic graph with edges $E$ exactly when
 $(A \times B) \cup (B \times A)$ separates $E$ from the identity relation, which gives the case $k = 2$ by taking the symmetric closure of the edge relation.
 

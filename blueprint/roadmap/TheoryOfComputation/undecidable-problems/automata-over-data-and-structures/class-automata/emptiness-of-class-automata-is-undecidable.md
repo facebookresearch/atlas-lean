@@ -22,7 +22,7 @@ By contrast, emptiness is decidable for data automata (Bojańczyk, David, Muscho
 
 ## Expansion
 
-Both sources note that emptiness can be shown undecidable directly by encoding runs of two-counter machines in data words, since the class condition sees the whole relabeled word around each marked class; neither writes the encoding out. The route given in detail is the main theorem of Bojańczyk and Lasota, which translates every unary XPath query over data trees into a class automaton, combined with the undecidability of XPath satisfiability over data words (Benedikt, Fan and Geerts), which has no page.
+Both sources note that emptiness can be shown undecidable directly by encoding runs of two-counter machines in data words, since the class condition sees the whole relabeled word around each marked class; neither writes the encoding out. The route given in detail is the main theorem of Bojańczyk and Lasota, which translates every unary XPath query over data trees into a class automaton, combined with the undecidability of XPath satisfiability over data words (Benedikt, Fan and Geerts).
 
 ## Sources
 

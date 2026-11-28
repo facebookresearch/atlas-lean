@@ -8,7 +8,7 @@ undecidable whether $\mathcal{A}$ is residual. The result also holds within the 
 
 So residuality, a semantic property, cannot be characterized syntactically; this is why the source values learning algorithms that
 produce automata which are residual by construction. For ordinary nondeterministic finite automata checking residuality is
-PSPACE-complete (Denis, Lemay and Terlutte).
+[PSPACE](../../../complexity-classes/time-and-space-complexity-classes/pspace.md)-complete (Denis, Lemay and Terlutte).
 
 ## Depends on
 
