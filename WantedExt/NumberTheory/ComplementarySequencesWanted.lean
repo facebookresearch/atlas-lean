@@ -19,6 +19,7 @@ public import MathlibExt.NumberTheory.AscFactorialBounds
 public import MathlibExt.NumberTheory.ComplementarySequences
 public import MathlibExt.NumberTheory.ComplementarySequencesInterleaveNear
 public import MathlibExt.NumberTheory.ComplementarySequencesNthNonCenteredPolygonal
+public import MathlibExt.NumberTheory.ComplementarySequencesInterleaveFar
 public import MathlibExt.NumberTheory.NonSecondPentagonal
 
 /-!
@@ -40,24 +41,6 @@ Article A95.
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Interleaving formula when $f(m) - \alpha(m) \ge m$.** Let
-$f : \mathbb{N} \to \mathbb{N}$ satisfy $f(1) \ge 1$ and $f(m + 1) \ge f(m) + m$ for all $m \ge 1$,
-and for $n \ge 1$ let $f_P(n)$ be the $n$-th positive integer that is not a value $f(m)$ with
-$m \ge 1$. Let $\alpha : \mathbb{N} \to \mathbb{R}$ satisfy $f(m - 1) \le \alpha(m) \le f(m)$ for
-all $m \ge 2$, and let $h : \mathbb{N} \to \mathbb{N}$ satisfy $h(n) \ge 1$ and
-$\alpha(h(n)) \le n < \alpha(h(n) + 1)$ for all $n \ge 1$.
-Suppose moreover that $f(m) - \alpha(m) \ge m$ for all $m \ge 2$. Then for every $n \ge 1$,
-$f_P(n) = n + h(n)$ if $f(h(n)) < n + h(n)$, and $f_P(n) = n + h(n) - 1$ otherwise.
-
-Source: Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025),
-Article A95, Corollary 2. -/
-public theorem_wanted nthNonValue_eq_interleave_of_le_sub (f : ℕ → ℕ) (hf1 : 1 ≤ f 1)
-    (hgap : ∀ m, 1 ≤ m → f m + m ≤ f (m + 1)) (α : ℕ → ℝ)
-    (hα : ∀ m, 2 ≤ m → (f (m - 1) : ℝ) ≤ α m ∧ α m ≤ f m) (h : ℕ → ℕ)
-    (hh : ∀ n, 1 ≤ n → 1 ≤ h n ∧ α (h n) ≤ n ∧ (n : ℝ) < α (h n + 1))
-    (hfar : ∀ m : ℕ, 2 ≤ m → (m : ℝ) ≤ f m - α m) (n : ℕ) (hn : 1 ≤ n) :
-    nthNonValue f n = if f (h n) < n + h n then n + h n else n + h n - 1
 
 /-- **Formula for the non-polygonal numbers.** Let $k \ge 3$, and for $j \ge 1$ let
 $T(k, j) = (k - 2) j (j - 1)/2 + j$ be the $k$-gonal numbers. For every integer $n \ge 1$, put
@@ -166,18 +149,6 @@ public theorem_wanted nthNonValue_sumPow (k : ℕ) (hk : 1 < k) (n : ℕ) (hn : 
     let h := Nat.nthRoot (k + 1) ((k + 1) * n)
     nthNonValue (fun j => ∑ i ∈ Finset.Icc 1 j, i ^ k) n =
       if n ≤ ∑ i ∈ Finset.Icc 1 h, (i ^ k - 1) then n + h - 1 else n + h
-
-/-- **Integers not of the form $m + 1^k + \cdots + m^k$.** Let $k > 1$. For $n \ge 1$ let $a(n)$
-be the $n$-th positive integer that is not of the form $m + \sum_{i=1}^m i^k$ with $m \ge 1$, and
-let $h = \lfloor ((k + 1) n)^{1/(k+1)} \rfloor$. Then $a(n) = n + h - 1$ if
-$n \le \sum_{i=1}^h i^k$, and $a(n) = n + h$ otherwise.
-
-Source: Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025),
-Article A95, Theorem 11 (third equivalent form). -/
-public theorem_wanted nthNonValue_add_sumPow (k : ℕ) (hk : 1 < k) (n : ℕ) (hn : 1 ≤ n) :
-    let h := Nat.nthRoot (k + 1) ((k + 1) * n)
-    nthNonValue (fun j => j + ∑ i ∈ Finset.Icc 1 j, i ^ k) n =
-      if n ≤ ∑ i ∈ Finset.Icc 1 h, i ^ k then n + h - 1 else n + h
 
 /-- **Formula for the non-simplex numbers.** Let $k$ satisfy $1 < k \le 5$, $k = 7$ or $k = 9$.
 For every integer $n \ge 1$, put $R = \lfloor (k!\, n)^{1/k} \rfloor$ and let

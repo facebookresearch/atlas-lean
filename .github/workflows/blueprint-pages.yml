@@ -96,6 +96,7 @@ jobs:
             scripts/pages_packing.js
             scripts/pages_size.sh
             scripts/cards.py
+            scripts/card_moves.py
             scripts/test_generate_wiki_navigation.py
             scripts/test_generate_wiki_docstrings.py
             scripts/test_sync_wiki.py
@@ -151,15 +152,16 @@ jobs:
             # The wiki, whose pages, annotations and site inputs the build checks,
             # and what only a PR's build can check, since main's runs have
             # no base commit and check Mathlib source links without failing: the
-            # import map and the card move ledger, which its checks compare with
-            # the base commit's, the moves and card retirements of the wiki's
-            # pages and annotations since the base, which the card check
-            # compares with the move ledger, and the wiki's Mathlib source links,
-            # which must match their declarations' titles
-            # (docs/mathgraph-import.md#the-map, docs/cards.md#move-ledger,
-            # docs/mathlib-pages.md).
+            # import map and the card move ledger (its frozen file and its
+            # fragments), which its checks compare with the base commit's, the
+            # moves and card retirements of the wiki's pages and annotations
+            # since the base, which the card check compares with the move
+            # ledger, and the wiki's Mathlib source links, which must match
+            # their declarations' titles (docs/mathgraph-import.md#the-map,
+            # docs/cards.md#move-ledger, docs/mathlib-pages.md).
             scripts/mathgraph-map.jsonl
             scripts/card-moves.jsonl
+            scripts/card-moves.d/**
             blueprint/**
         run: |
           set -euo pipefail
@@ -1118,9 +1120,11 @@ jobs:
           --with markdown==3.10.3
           python -m unittest scripts.test_cards
 
-      # The move ledger only grows, and every address that changed since the
-      # base commit needs its row: the check reads the base commit's ledger and
-      # annotations. A scheduled or manual build of main has no base; its
+      # The move ledger's frozen file and the fragments the base commit has
+      # stay as they are, and every address that changed since the base commit
+      # needs its row in a fragment the base does not have: the check reads the
+      # base commit's ledger, its frozen file and its folder of fragments, and
+      # its annotations. A scheduled or manual build of main has no base; its
       # ledger was checked when it merged.
       - name: Read the move ledger and annotations the base commit published
         env:
@@ -1128,19 +1132,22 @@ jobs:
         run: |
           set -euo pipefail
           [[ -n "$BASE" ]] || exit 0
-          mkdir -p build/base
+          mkdir -p build/base/scripts
           git fetch --no-tags --depth=1 origin "$BASE"
-          if git cat-file -e "$BASE:scripts/card-moves.jsonl" 2>/dev/null; then
-            git show "$BASE:scripts/card-moves.jsonl" > build/base-card-moves.jsonl
-          else
-            : > build/base-card-moves.jsonl
+          # A base whose frozen file cannot be read stops the check: it is no
+          # empty ledger. The folder of fragments may be absent at an older
+          # base; a tree Git cannot read stops the step too.
+          git show "$BASE:scripts/card-moves.jsonl" > build/base/scripts/card-moves.jsonl
+          fragments="$(git ls-tree "$BASE" -- scripts/card-moves.d)"
+          if [[ -n "$fragments" ]]; then
+            git archive "$BASE" scripts/card-moves.d | tar -x -C build/base
           fi
           git archive "$BASE" blueprint/links | tar -x -C build/base
           # Git's renames are the evidence of a move whose page had no id.
           git -c diff.renameLimit=0 diff --name-status -M "$BASE" HEAD -- blueprint/roadmap \
             > build/base-renames.tsv
           {
-            echo "BASE_LEDGER=build/base-card-moves.jsonl"
+            echo "BASE_LEDGER=build/base/scripts"
             echo "BASE_LINKS=build/base/blueprint/links"
             echo "BASE_RENAMES=build/base-renames.tsv"
           } >> "$GITHUB_ENV"
