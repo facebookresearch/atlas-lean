@@ -8,11 +8,13 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-import MathlibExt.Combinatorics.Enumerative.Avoid2313124
 import Mathlib.Data.Fintype.Perm
-import Mathlib.Data.Fintype.Pi
+import MathlibExt.Combinatorics.Enumerative.Avoid2313124
 
 open MathlibExt.Combinatorics.Enumerative.OddFibonacciWanted
+
+-- Enumerate the permutations using the public decision procedure for pattern containment.
+local instance {n : ℕ} : Fintype (Equiv.Perm (Fin n)) := fintypePerm
 
 -- Putting zero first leaves exactly the choices for the remaining three entries.
 example :
@@ -25,23 +27,8 @@ example :
 example :
     Nat.card {σ : Equiv.Perm (Fin 4) //
       ¬ HasPattern σ pat231 ∧ ¬ HasPattern σ pat3124 ∧ σ 2 = 0} = 3 := by
-  have singleton {k : ℕ} (hk : 1 < k) (π : Fin k → Fin k) :
-      ¬ HasPattern (Equiv.refl (Fin 1)) π := by
-    rintro ⟨e, he, _⟩
-    exact (Subsingleton.elim _ _ : e ⟨0, by omega⟩ = e ⟨1, hk⟩) |>.not_lt
-      (he _ _ (show (⟨0, by omega⟩ : Fin k) < ⟨1, hk⟩ by exact Nat.zero_lt_one))
-  have hcard := Nat.card_of_subsingleton
-    (⟨Equiv.refl _, singleton (by decide) pat231, singleton (by decide) pat3124⟩ :
-      {σ : Equiv.Perm (Fin 1) // ¬ HasPattern σ pat231 ∧ ¬ HasPattern σ pat3124})
-  simpa [hcard] using card_avoid_231_3124_pos_zero 4 (by decide) 2 (by decide)
-
--- Enumerate the permutations and test classical containment directly.
-local instance {n k : ℕ} (σ : Equiv.Perm (Fin n)) (π : Fin k → Fin k) :
-    Decidable (HasPattern σ π) := by
-  unfold HasPattern
-  infer_instance
-
-local instance {n : ℕ} : Fintype (Equiv.Perm (Fin n)) := fintypePerm
+  rw [Nat.card_eq_fintype_card]
+  decide +kernel
 
 -- The two initial counts, before either forbidden pattern can occur.
 example : Nat.card {σ : Equiv.Perm (Fin 1) // ¬ HasPattern σ pat231 ∧ ¬ HasPattern σ pat3124} =
