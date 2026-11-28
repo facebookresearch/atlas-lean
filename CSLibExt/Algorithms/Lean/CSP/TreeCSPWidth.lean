@@ -35,8 +35,8 @@ on the empty set:
 * `treeSolve_orderParent_ne_none_iff`: along an ordering of width at most one, the tree-CSP
   algorithm succeeds iff the CSP has a solution, and then returns one
   (`isSolution_of_treeSolve_eq_some`).
-* `exists_treeSolve_ne_none_iff_of_isAcyclic` (**forests are backtrack-free**): the same for
-  some root-first order whenever the constraint graph is acyclic.
+* `exists_treeSolve_ne_none_iff_of_isAcyclic` (**forests are backtrack-free**): for a fixed such
+  selector, the same for some root-first order whenever the constraint graph is acyclic.
 * `treeSolveT_ret`, `treeSolveT_time_le`: with both phases charged, the algorithm returns what
   `treeSolve` returns and charges at most `n · d² + n · d` relation checks for `n` variables and
   domains of size at most `d` (a budget under the declared charges, not an exact trace of calls).
@@ -334,11 +334,11 @@ private theorem cw_aux_a_treeSolve_ne_none_iff_aux {X D : Type*} [DecidableEq X]
 
 omit [Fintype X] in
 /-- **Forests are backtrack-free.** Let `P` have finitely many variables, symmetric constraints,
-no arc joining a variable to itself, and an acyclic simple constraint graph. Then there are a
-parent map and a root-first order for it such that every arc joins a variable and its parent
-and, for all domains and any selector that picks a member of each nonempty candidate set and
-returns `none` on the empty set, the tree-CSP algorithm succeeds exactly when `P` has a solution
-within the domains. -/
+no arc joining a variable to itself, and an acyclic simple constraint graph. Fix a selector that
+picks a member of each nonempty candidate set and returns `none` on the empty set. Then there are
+a parent map and a root-first order for it such that every arc joins a variable and its parent
+and, for all domains, the tree-CSP algorithm succeeds exactly when `P` has a solution within the
+domains. -/
 theorem exists_treeSolve_ne_none_iff_of_isAcyclic [Finite X] [Inhabited D]
     {sel : Finset D → Option D} (hsel : IsSelector sel) (hsym : Symmetric P)
     (hdist : ∀ e ∈ P.arcs, e.1 ≠ e.2) (hacyc : P.constraintGraph.IsAcyclic) :
