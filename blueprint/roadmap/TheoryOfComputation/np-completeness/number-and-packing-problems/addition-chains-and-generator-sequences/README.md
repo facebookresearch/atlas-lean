@@ -7,6 +7,7 @@
 - [ADDITION CHAIN FOR A SEQUENCE as a decision problem](addition-chain-sequence-dec.md)
 - [ADDITION CHAIN FOR A SEQUENCE is NP-complete](addition-chain-sequence-np-complete.md)
 - [Instances of MINIMUM LENGTH GENERATOR SEQUENCE](minimum-length-generator-sequence-instan.md)
+- [Lookup in a list of values with a default](apply.md)
 - [Product of a generator word](product.md)
 - [Generator words with a given product](generates.md)
 - [Well-formed instances of MINIMUM LENGTH GENERATOR SEQUENCE](well-formed-2.md)

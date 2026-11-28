@@ -229,7 +229,8 @@ the number of `Λf` points in the closed set `conventionalCell Λc`. Meaningful 
 noncomputable def pointsPerCell (Λc Λf : BravaisLattice) : ℕ :=
   Nat.card (↥Λf.lattice ⧸ (Λc.lattice.comap Λf.lattice.subtype))
 
-/-- The lattice homomorphism to the subtype, for `latticeEquivInt`. -/
+/-- The additive group homomorphism from integer cell indices to the lattice: `n ↦ B *ᵥ n`, sending
+an integer triple to its lattice vector in `Λ`. It underlies `latticeEquivInt`. -/
 noncomputable def latticeHom (Λ : BravaisLattice) : (Fin 3 → ℤ) →+ Λ.lattice where
   toFun n := ⟨Λ.latticeVector n, (Λ.mem_lattice_iff _).mpr ⟨n, rfl⟩⟩
   map_zero' := Subtype.ext (map_zero Λ.latticeVector)

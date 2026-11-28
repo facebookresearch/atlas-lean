@@ -40,6 +40,7 @@
 - [GRAPH K-COLORABILITY ON CIRCLE GRAPHS as a decision problem](graph-coloring-circle-graph-dec.md)
 - [GRAPH K-COLORABILITY ON CIRCLE GRAPHS is NP-complete](graph-coloring-circle-graph-np-complete.md)
 - [Instances of H-COLORING](hcoloring-instance.md)
+- [H-coloring as a graph homomorphism instance](with-pattern.md)
 - [Valid H-COLORING patterns](valid-pattern.md)
 - [H-COLORING as a decision problem](h-coloring-dec.md)
 - [H-COLORING is NP-complete](h-coloring-np-complete.md)

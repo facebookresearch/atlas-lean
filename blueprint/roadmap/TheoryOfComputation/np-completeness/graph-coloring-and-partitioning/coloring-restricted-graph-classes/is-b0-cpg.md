@@ -1,0 +1,5 @@
+# $B_0$-CPG graphs
+
+A simple graph $G$ on $\{0, \dots, n-1\}$ is a $B_0$-CPG graph when it has a $B_0$-CPG representation: each vertex $v$ is assigned a horizontal or vertical segment between two distinct points of the integer grid $\mathbb{Z}^2$, the segments of distinct vertices have disjoint interiors (their points other than their endpoints), and two distinct vertices are adjacent exactly when their segments share a grid point that is an endpoint of at least one of the two segments.
+
+The same class is described in PARTITION INTO CLIQUES ON $B_0$-CPG GRAPHS by ordered segments between points of $\mathbb{N}^2$ whose interiors are compared on the grid refined by a factor of $2$. The two descriptions agree: the finitely many integer endpoints can be translated into $\mathbb{N}^2$ and each segment ordered; a crossing of two perpendicular interiors is a grid point, and an overlap of positive length of two collinear interiors contains a half-integer point, so the refined grid detects every interior intersection, and once the interiors are disjoint any common point is an endpoint contact.

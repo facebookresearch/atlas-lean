@@ -4,12 +4,15 @@
 
 - [Basis matrix of three vectors](cartesian-matrix.md)
 - [Entries of the basis matrix](cartesian-matrix-apply.md)
+- [Coordinates of a vector of ℝ³ in a basis](eq-sum-repr-smul.md)
 - [Coordinates in a basis exist and are unique](eq-sum-smul-iff.md)
 - [Change of basis for coordinates](repr-eq-inv-mul-vec-repr.md)
 - [Basis matrices under a change of basis](cartesian-matrix-eq-mul.md)
 - [Oriented volume under a change of basis](det-cartesian-matrix-eq-det-mul-det.md)
 - [Three vectors form a basis exactly when their determinant is nonzero](det-cartesian-matrix-ne-zero-iff.md)
 - [Volume of a parallelepiped](volume-parallelepiped.md)
+- [Orbit sizes add up to the size of a finite set](sum-card-orbit-eq-card.md)
+- [Orbits with trivial stabilizer](card-orbit-eq-card-group-of-stabilizer-e.md)
 
 ## C. Bravais lattices
 

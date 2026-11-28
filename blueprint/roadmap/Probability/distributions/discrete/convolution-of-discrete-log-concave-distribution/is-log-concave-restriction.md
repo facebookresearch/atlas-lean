@@ -1,0 +1,3 @@
+# Restrictions of log-concave functions to $\mathbb{Z}^d$
+
+Let $d \in \mathbb{N}$. A function $p : \mathbb{Z}^d \to \mathbb{R}$ is a log-concave restriction if there is a log-concave function $f : \mathbb{R}^d \to \mathbb{R}$ with $p(z) = f(z)$ for every $z \in \mathbb{Z}^d$, where $\mathbb{Z}^d \subset \mathbb{R}^d$. Here $f$ is log-concave when $f \ge 0$ and $f((1-t)x + ty) \ge f(x)^{1-t} f(y)^t$ for all $x, y \in \mathbb{R}^d$ and $t \in [0, 1]$. For a probability mass function this is the definition of a log-concave probability mass function on $\mathbb{Z}^d$ used by Fradelizi, Gavalakis and Rapaport.

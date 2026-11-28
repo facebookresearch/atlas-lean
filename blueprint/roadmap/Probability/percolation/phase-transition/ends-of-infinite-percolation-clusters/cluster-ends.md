@@ -1,0 +1,3 @@
+# Ends of an open percolation cluster
+
+Let $G$ be a simple graph with vertex set $V$, let $\omega$ assign open or closed to every unordered pair of vertices, and let $x \in V$. Let $C_x$ be the open cluster of $x$, viewed as the graph on $C_x$ whose edges are the open edges of $G$ between its vertices. The ends of the cluster are the ends of this graph: consistent choices, for every finite set $K \subseteq C_x$, of a connected component of the graph induced on $C_x \setminus K$, with the component for $K$ containing the component for any larger finite set (Benjamini and Schramm, Definition 1).

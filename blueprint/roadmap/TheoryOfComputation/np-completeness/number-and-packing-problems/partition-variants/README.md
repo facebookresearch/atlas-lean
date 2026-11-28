@@ -1,6 +1,7 @@
 # Partition variants
 
 - [Instances of ARRAY PARTITION](array-partition-instance.md)
+- [Entry of an array given by its rows](entry.md)
 - [Divider sequences](is-dividers.md)
 - [Block sum of an array partition](block-sum.md)
 - [Well-formed instances of ARRAY PARTITION](well-formed.md)
@@ -18,6 +19,7 @@
 - [EQUAL CARDINALITY PARTITION is NP-complete](equal-cardinality-partition-np-complete.md)
 - [Instances of PAIRED PARTITION](paired-partition-instance.md)
 - [Well-formed instances of PAIRED PARTITION](well-formed-4.md)
+- [Size of the element chosen from a pair](chosen.md)
 - [Feasible instances of PAIRED PARTITION](paired-partition-feasible.md)
 - [PAIRED PARTITION as a decision problem](paired-partition-dec.md)
 - [PAIRED PARTITION is NP-complete](paired-partition-np-complete.md)

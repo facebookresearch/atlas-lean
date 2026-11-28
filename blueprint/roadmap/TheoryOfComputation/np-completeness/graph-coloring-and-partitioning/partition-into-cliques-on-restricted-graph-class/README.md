@@ -1,8 +1,11 @@
 # Partition into cliques on restricted graph classes
 
+- [Doubling a grid point on the refined grid](double.md)
+- [Interior points of a grid segment on the refined grid](interior-points.md)
 - [Well-formed instances of PARTITION INTO CLIQUES ON B_0-CPG GRAPHS](well-formed.md)
 - [PARTITION INTO CLIQUES ON B_0-CPG GRAPHS as a decision problem](partition-into-cliques-bzero-cpgdec.md)
 - [PARTITION INTO CLIQUES ON B_0-CPG GRAPHS is NP-complete](partition-into-cliques-bzero-cpg-np-comp.md)
+- [Instances of partition into cliques on circle graphs](partition-into-cliques-circle-graph-inst.md)
 - [Well-formed instances of PARTITION INTO CLIQUES ON CIRCLE GRAPHS](well-formed-2.md)
 - [Feasible instances of PARTITION INTO CLIQUES ON CIRCLE GRAPHS](partition-into-cliques-circle-graph-feas.md)
 - [PARTITION INTO CLIQUES ON CIRCLE GRAPHS as a decision problem](partition-into-cliques-circle-graph-dec.md)

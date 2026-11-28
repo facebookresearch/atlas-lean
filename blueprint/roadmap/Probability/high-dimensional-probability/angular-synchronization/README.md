@@ -1,7 +1,13 @@
 # Angular synchronization
 
+- [Entrywise phase projection](phase-projection.md)
+- [Iterates of the projected power method](power-iterate.md)
+- [Leading eigenvectors scaled to norm $\sqrt{n}$](is-scaled-leading-eigenvector.md)
+- [Success of the projected power method](power-method-succeeds.md)
 - [Convergence of the projected power method for angular synchronization](projected-power-method-converges.md)
 - [The projected power method succeeds up to the noise level √(n / log n)](projected-power-method-converges-holds.md)
+- [Feasible matrices for the angular synchronization SDP](is-sdpfeasible.md)
+- [Tightness of the angular synchronization SDP](sdpis-tight.md)
 - [Tightness of the semidefinite relaxation of angular synchronization](angular-synchronization-sdptight.md)
 - [The semidefinite relaxation is tight up to the noise level √(n / log n)](angular-synchronization-sdptight-holds.md)
 - [Noise distribution for angular synchronization](noise-measure.md)

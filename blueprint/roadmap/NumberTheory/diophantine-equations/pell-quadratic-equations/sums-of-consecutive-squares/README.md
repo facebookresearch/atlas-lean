@@ -10,4 +10,7 @@
 - [Infinitely many solutions with $c - a$ even](so-cs-even-span-infinite.md)
 - [The $3$-$4$-$5$ right triangle is an arithmetic polygon without reflex angles](exists-is-arithmetic-polygon-two-three.md)
 - [At most $2(N - 1)$ solutions with $c - a = N$](so-cs-card-le.md)
+- [Arithmetic polygons](is-arithmetic-polygon.md)
+- [Non-self-intersecting closed polygons](is-simple-closed-polygon.md)
+- [Number of reflex angles of a closed polygon](polygon-reflex-count.md)
 - [No finitely many planes contain all solutions](so-cs-not-finite-planes.md)

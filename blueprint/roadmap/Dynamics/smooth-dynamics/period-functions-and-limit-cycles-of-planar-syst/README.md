@@ -7,6 +7,7 @@
 - [Period annulus of the center of the equivariant planar field](period-annulus.md)
 - [Gasull’s question on the period function of an equivariant center](period-function-decreasing.md)
 - [The period function of the equivariant center is monotonically decreasing](period-function-decreasing-holds.md)
+- [Linear trigonometric polynomial $c_0 + c_1\sin t + c_2\cos t$](trig-coeff.md)
 - [Periodic solutions of trigonometric Abel equations with linear coefficients](is-periodic-solution.md)
 - [Limit cycles of trigonometric Abel equations](is-limit-cycle.md)
 - [Initial values of limit cycles of a trigonometric Abel equation](limit-cycle-values.md)

@@ -14,6 +14,7 @@
 - [Families good for multiple recurrence of a single transformation](is-good-for-recurrence.md)
 - [Frantzikinakis’s Problem 25 on recurrence along Hardy sequences](conjecture-3.md)
 - [Multiple recurrence along separated Hardy-field sequences of polynomial growth](conjecture-holds-2.md)
+- [Integer parts of fractional prime powers](prime-power-floor.md)
 - [Multiple recurrence along integer parts of prime powers](prime-fractional-power-multiple-recurren.md)
 - [Mean convergence along integer parts of prime powers](prime-fractional-power-multiple-converge.md)
 - [Multiple recurrence holds along integer parts of fractional prime powers](prime-fractional-power-multiple-recurren-2.md)

@@ -69,7 +69,8 @@ abbrev Job (i : UnrelatedMachinesMakespanTwoInstance) : Type := Fin i.2.length
 /-- The machines of the instance, `Fin m`. -/
 abbrev Machine (i : UnrelatedMachinesMakespanTwoInstance) : Type := Fin i.1
 
-/-- The processing time `p_ij` of job `j` on machine `k`: entry `k` of row `j`. -/
+/-- The processing time `p_kj` of job `j` on machine `k`, machine first: entry `k` of row `j`, read
+as `0` when the row has no entry `k`. -/
 def processingTime (i : UnrelatedMachinesMakespanTwoInstance) (j : Job i) (k : Machine i) : ℕ :=
   (i.2.get j).getD k 0
 

@@ -1,0 +1,7 @@
+# Differential entropy of a real random variable
+
+Let $(\Omega, P)$ be a measure space, not necessarily a probability space, and $X : \Omega \to \mathbb{R}$ a function. The image measure $X_\# P$ is totalised: it is the usual pushforward when $X$ is almost everywhere measurable, the zero measure when $P = 0$, and otherwise an arbitrary Dirac mass. So it exists even when preimages under $X$ are not measurable, for example for a function taking the values $0$ and $1$ on a two-point probability space with the trivial $\sigma$-algebra. Let $g$ be the Radon–Nikodym derivative of $X_\# P$ with respect to Lebesgue measure, with values in $[0, \infty]$ and equal to $0$ when $X_\# P$ has no Lebesgue decomposition with respect to Lebesgue measure, and let $f = \tilde g$ be its real version, with $\tilde\infty = 0$. The differential entropy of $X$ is
+
+$$H(X) = -\int_{\mathbb{R}} f(x) \log f(x)\, dx,$$
+
+with $0 \log 0 = 0$, and $H(X) = 0$ when $f \log f$ is not Lebesgue integrable. The expression assumes neither measurability of $X$ nor a density: for a constant $X$ the derivative $g$ is zero almost everywhere and $H(X) = 0$. When $X$ is a random variable on a probability space whose law has a Lebesgue density with $f \log f$ integrable (see [finite-entropy densities](has-finite-entropy-density.md)), $X_\# P$ is the law of $X$, $f$ is its density, and $H(X)$ is the usual differential entropy of that density.

@@ -16,6 +16,7 @@
 - [Well-formed instances of FEEDBACK VERTEX SET ON LINE GRAPHS OF PLANAR CUBIC BIPARTITE GRAPHS](well-formed-5.md)
 - [FEEDBACK VERTEX SET ON LINE GRAPHS OF PLANAR CUBIC BIPARTITE GRAPHS as a decision problem](feedback-vertex-set-line-graph-planar-cu.md)
 - [FEEDBACK VERTEX SET ON LINE GRAPHS OF PLANAR CUBIC BIPARTITE GRAPHS is NP-complete](feedback-vertex-set-line-graph-planar-cu-2.md)
+- [Endpoints of a list of edges](endpoints.md)
 - [Bisimplicial edges in an induced subgraph](is-bisimplicial-in.md)
 - [Perfect edge elimination orderings](is-perfect-edge-elimination-ordering.md)
 - [Perfect elimination bipartite graphs](is-perfect-elimination-bipartite.md)

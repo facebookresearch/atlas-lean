@@ -2,3 +2,5 @@
 
 For interarrival times $T_0, T_1, \dots$ (real random variables), the $n$-th arrival time is
 $S_n = T_0 + \dots + T_{n-1}$, with $S_0 = 0$.
+
+In renewal theory these partial sums are called renewal epochs (`renewalEpoch`).

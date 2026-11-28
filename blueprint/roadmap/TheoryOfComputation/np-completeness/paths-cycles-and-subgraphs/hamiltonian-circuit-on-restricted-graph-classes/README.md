@@ -33,6 +33,7 @@
 - [Well-formed instances of HAMILTONIAN CIRCUIT ON k-REGULAR GRAPHS](well-formed-11.md)
 - [HAMILTONIAN CIRCUIT ON k-REGULAR GRAPHS as a decision problem](hamiltonian-circuit-regular-dec.md)
 - [HAMILTONIAN CIRCUIT ON k-REGULAR GRAPHS is NP-complete](hamiltonian-circuit-regular-np-complete.md)
+- [Hamiltonian circuit as a graph thickness instance](with-thickness.md)
 - [Well-formed instances of HAMILTONIAN CIRCUIT ON GRAPHS OF THICKNESS AT MOST k](well-formed-12.md)
 - [HAMILTONIAN CIRCUIT ON GRAPHS OF THICKNESS AT MOST k as a decision problem](hamiltonian-circuit-thickness-dec.md)
 - [HAMILTONIAN CIRCUIT ON GRAPHS OF THICKNESS AT MOST k is NP-complete](hamiltonian-circuit-thickness-np-complet.md)

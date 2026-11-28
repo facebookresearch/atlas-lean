@@ -6,6 +6,8 @@
 - [CHINESE POSTMAN FOR PLANAR MIXED GRAPHS OF DEGREE AT MOST 3 as a decision problem](chinese-postman-mixed-graphs-planar-degr.md)
 - [CHINESE POSTMAN FOR PLANAR MIXED GRAPHS OF DEGREE AT MOST 3 is NP-complete](chinese-postman-mixed-graphs-planar-degr-2.md)
 - [Instances of DIRECTED STEINER TREE FOR PLANAR ACYCLIC DIGRAPHS](directed-steiner-tree-planar-acyclic-ins.md)
+- [Arc relation of an arc list](arc-rel.md)
+- [Underlying undirected graph of a directed Steiner tree instance](underlying-graph-2.md)
 - [Well-formed instances of DIRECTED STEINER TREE FOR PLANAR ACYCLIC DIGRAPHS](well-formed-2.md)
 - [Feasible instances of DIRECTED STEINER TREE FOR PLANAR ACYCLIC DIGRAPHS](directed-steiner-tree-planar-acyclic-fea.md)
 - [DIRECTED STEINER TREE FOR PLANAR ACYCLIC DIGRAPHS as a decision problem](directed-steiner-tree-planar-acyclic-dec.md)

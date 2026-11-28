@@ -15,6 +15,7 @@
 - [Sublattice of a Bravais lattice](is-sublattice-of.md)
 - [Conventional cell](conventional-cell.md)
 - [Lattice points per conventional cell](points-per-cell.md)
+- [Lattice vectors of integer cell indices](lattice-hom.md)
 - [Integer indexing of lattice vectors](lattice-equiv-int.md)
 - [The integer indexing sends an index to its lattice vector](coe-lattice-equiv-int.md)
 - [Points per conventional cell as a volume ratio](points-per-cell-eq-volume-ratio.md)
@@ -34,6 +35,11 @@
 - [Translated Wigner–Seitz cells have disjoint interiors](wigner-seitz-cell-disjoint-interior-tran.md)
 - [Overlaps of Wigner–Seitz cells lie on the boundary](wigner-seitz-cell-overlap-mem-boundary.md)
 - [Closed Wigner–Seitz cells can overlap](wigner-seitz-cell-exists-overlap.md)
+- [Crystal systems](crystal-system.md)
+- [Centring types of Bravais lattices](centring-type.md)
+- [Bravais lattice type label](bravais-entry.md)
+- [Table of the 14 Bravais lattice types](bravais-metadata-table.md)
+- [The 14 Bravais entries are distinct](bravais-metadata-table-injective.md)
 
 ## F. Bravais metadata table and further lattice constructors
 
