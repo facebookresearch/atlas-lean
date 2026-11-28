@@ -36,25 +36,6 @@ namespace MetaMathlibExt
 
 open Filter
 
-/-- **Height levels are counted by coloured partitions.** Let $H$ be a height function and, for
-$\ell \ge 1$, let $\pi_\ell$ be the number of primes $p$ with $H(p) = \ell$. For every $n \ge 0$,
-the number of positive integers $m$ with $H(m) = n$ equals the number of families
-$(\alpha_{\ell,j})$ of nonnegative integers indexed by $1 \le \ell \le n$ and $0 \le j < \pi_\ell$
-with $\sum_{\ell,j} \ell\, \alpha_{\ell,j} = n$, that is, the number of partitions of $n$ in which
-a part of size $\ell$ comes in $\pi_\ell$ colours.
-
-This is the level-by-level form of the statement that $H$ induces a height-preserving bijection
-between the positive integers and such coloured partitions.
-
-Source: Hartosh Singh Bal, *Completely Additive Height Functions: Profile Laws, Matula Bounds,
-and Inverse Growth*, INTEGERS 26 (2026), Article A116, Proposition 1
-(`integers-2026-A116-prop-1`). -/
-public theorem_wanted heightLevel_card_eq_multipartitions {H : ℕ → ℕ} (hH : IsHeightFunction H)
-    (n : ℕ) :
-    Nat.card {m : ℕ // 0 < m ∧ H m = n} =
-      Nat.card {α : (Σ ℓ : Fin n, Fin {p : ℕ | p.Prime ∧ H p = ℓ.1 + 1}.ncard) → ℕ //
-        ∑ x, (x.1.1 + 1) * α x = n}
-
 /-- **Largest number at a given Matula height.** Write $p_i$ for the $i$-th prime, indexed from
 one ($p_1 = 2$), and let $H$ be a function from the natural numbers to themselves that is
 completely additive on the positive integers and satisfies $H(p_i) = H(i) + 1$ for every $i \ge 1$

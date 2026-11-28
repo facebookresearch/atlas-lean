@@ -13,6 +13,7 @@ public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.NumberTheory.PrimeCounting
 public import Mathlib.NumberTheory.LSeries.Basic
 public import Mathlib.Analysis.Asymptotics.AsymptoticEquivalent
+public import Mathlib.Data.Set.Card
 import Mathlib.NumberTheory.Chebyshev
 import Mathlib.Data.Nat.Factorization.Induction
 import Mathlib.Data.Nat.Prime.Factorial
@@ -25,6 +26,18 @@ import MathlibExt.NumberTheory.PrimeGapLiminf
 For the constant profile, the height of a prime is its one-based index. Chebyshev bounds
 on the prime count control the prime-harmonic sum. Complete additivity turns the sum of
 heights up to an integer into the height of its factorial.
+
+For a completely additive height $H$ on the positive integers, with positive prime heights
+and finite prime fibers, the level at any $n \ge 0$ is counted by coloured partitions of $n$.
+The colour multiplicity at size $\ell$ is the number of primes of height $\ell$. Prime
+exponents give the part multiplicities, with $1$ corresponding to the empty partition at $n=0$.
+This is the fixed-level counting consequence of the bijection in Proposition 1.
+
+## References
+
+* Hartosh Singh Bal, *Completely Additive Height Functions: Profile Laws, Matula Bounds, and
+  Inverse Growth*, INTEGERS 26 (2026), Article A116, pp. 1–45. The multipartition correspondence
+  is Proposition 1 (pp. 4–5); the ordinary partition profile growth laws are Corollary 3.
 -/
 
 namespace MetaMathlibExt
@@ -231,6 +244,106 @@ private theorem sum_height_eq_factorization_sum {H : ℕ → ℕ} (hH : IsComple
   exact Nat.mem_primesLE.mpr ⟨hprime.dvd_factorial.mp hdvd, hprime⟩
 
 end sum_height_eq_sum_prime_powers
+
+/-- **Height levels are counted by coloured partitions.** Let $H$ be a height function and, for
+$\ell \ge 1$, let $\pi_\ell$ be the number of primes $p$ with $H(p) = \ell$. For every $n \ge 0$,
+the number of positive integers $m$ with $H(m) = n$ equals the number of families
+$(\alpha_{\ell,j})$ of nonnegative integers indexed by $1 \le \ell \le n$ and $0 \le j < \pi_\ell$
+with $\sum_{\ell,j} \ell\, \alpha_{\ell,j} = n$, that is, the number of partitions of $n$ in which
+a part of size $\ell$ comes in $\pi_\ell$ colours.
+
+This is the level-by-level form of the statement that $H$ induces a height-preserving bijection
+between the positive integers and such coloured partitions.
+
+Source: Hartosh Singh Bal, *Completely Additive Height Functions: Profile Laws, Matula Bounds,
+and Inverse Growth*, INTEGERS 26 (2026), Article A116, Proposition 1
+(`integers-2026-A116-prop-1`). -/
+public theorem heightLevel_card_eq_multipartitions {H : ℕ → ℕ} (hH : IsHeightFunction H)
+    (n : ℕ) :
+    Nat.card {m : ℕ // 0 < m ∧ H m = n} =
+      Nat.card {α : (Σ ℓ : Fin n, Fin {p : ℕ | p.Prime ∧ H p = ℓ.1 + 1}.ncard) → ℕ //
+        ∑ x, (x.1.1 + 1) * α x = n} := by
+  classical
+  let fiber (ℓ : Fin n) : Set ℕ := {p | p.Prime ∧ H p = ℓ.1 + 1}
+  let Labels := Σ ℓ : Fin n, Fin (fiber ℓ).ncard
+  let e (ℓ : Fin n) : Fin (fiber ℓ).ncard ≃ fiber ℓ := by
+    letI : Finite (fiber ℓ) := (hH.finite_primes (ℓ.1 + 1) (Nat.succ_pos _)).to_subtype
+    exact (Finite.equivFin (fiber ℓ)).symm
+  let primeOf (i : Labels) : ℕ := (e i.1 i.2).1
+  have hprime (i : Labels) : (primeOf i).Prime := (e i.1 i.2).2.1
+  have hweight (i : Labels) : H (primeOf i) = i.1.1 + 1 := (e i.1 i.2).2.2
+  let p : Labels ↪ ℕ := ⟨primeOf, by
+    rintro ⟨i, a⟩ ⟨j, b⟩ h
+    have hij : i = j := Fin.ext (Nat.succ.inj ((hweight ⟨i, a⟩).symm.trans
+      ((congrArg H h).trans (hweight ⟨j, b⟩))))
+    subst j
+    exact congrArg (Sigma.mk i) ((e i).injective (Subtype.ext h))⟩
+  -- Every prime divisor of a positive integer at level n has a label.
+  have hsupp (m : {m : ℕ // 0 < m ∧ H m = n}) :
+      ↑m.1.factorization.support ⊆ Set.range p := by
+    intro q hq
+    obtain ⟨hqprime, hqdvd, _⟩ := Nat.mem_primeFactors.mp (by simpa using hq)
+    obtain ⟨k, hk⟩ := hqdvd
+    have hkpos : 0 < k := Nat.pos_of_mul_pos_left (hk ▸ m.2.1)
+    have hqle : H q ≤ n := by
+      rw [← m.2.2, hk, hH.additive q k hqprime.pos hkpos]
+      exact Nat.le_add_right _ _
+    have hqpos := hH.prime_pos q hqprime
+    let ℓ : Fin n := ⟨H q - 1, by omega⟩
+    let r : fiber ℓ := ⟨q, hqprime, by dsimp [ℓ]; omega⟩
+    exact ⟨⟨ℓ, (e ℓ).symm r⟩, congrArg Subtype.val ((e ℓ).apply_symm_apply r)⟩
+  have sum_labels (f : ℕ →₀ ℕ) (hf : ↑f.support ⊆ Set.range p) :
+      f.sum (fun q a => a * H q) = ∑ i : Labels, (i.1.1 + 1) * f (p i) := by
+    have hs : f.support ⊆ Finset.univ.map p := by
+      intro q hq
+      obtain ⟨i, rfl⟩ := hf hq
+      exact Finset.mem_map.mpr ⟨i, Finset.mem_univ _, rfl⟩
+    rw [Finsupp.sum_of_support_subset f hs (fun q a => a * H q) (fun _ _ => zero_mul _),
+      Finset.sum_map]
+    exact Finset.sum_congr rfl fun i _ => by rw [show H (p i) = _ from hweight i, Nat.mul_comm]
+  -- Extend the multiplicities by zero outside the labelled primes before inverting factorization.
+  let extend (a : Labels → ℕ) : ℕ →₀ ℕ := (Finsupp.equivFunOnFinite.symm a).embDomain p
+  have extend_support (a : Labels → ℕ) : ↑(extend a).support ⊆ Set.range p := by
+    simp only [extend, Finsupp.support_embDomain, Finset.coe_map]
+    exact Set.image_subset_range _ _
+  let factors (a : Labels → ℕ) : {f : ℕ →₀ ℕ // ∀ q ∈ f.support, q.Prime} :=
+    ⟨extend a, fun q hq => by
+      obtain ⟨i, rfl⟩ := extend_support a hq
+      exact hprime i⟩
+  let rebuild (a : Labels → ℕ) : ℕ+ := Nat.factorizationEquiv.symm (factors a)
+  have hfac (a : Labels → ℕ) : (rebuild a : ℕ).factorization = extend a :=
+    congrArg Subtype.val (Nat.factorizationEquiv.apply_symm_apply (factors a))
+  refine Nat.card_congr
+    { toFun := fun m => ⟨fun i => m.1.factorization (p i), ?_⟩
+      invFun := fun a => ⟨rebuild a.1, (rebuild a.1).2, ?_⟩
+      left_inv := ?_
+      right_inv := ?_ }
+  · rw [← sum_labels _ (hsupp m), ← additiveOfPrimeValues,
+      ← sum_height_eq_sum_prime_powers.height_eq_prime_values hH.additive _ m.2.1]
+    exact m.2.2
+  · calc
+      H (rebuild a.1) = additiveOfPrimeValues H (rebuild a.1) :=
+        sum_height_eq_sum_prime_powers.height_eq_prime_values hH.additive _ (rebuild a.1).2
+      _ = n := by
+        rw [additiveOfPrimeValues, hfac, sum_labels _ (extend_support a.1)]
+        simpa only [extend, Finsupp.embDomain_apply_self, Finsupp.coe_equivFunOnFinite_symm]
+          using a.2
+  · intro m
+    apply Subtype.ext
+    apply Nat.factorization_inj (show (rebuild _ : ℕ) ≠ 0 from (rebuild _).2.ne') m.2.1.ne'
+    rw [hfac]
+    change extend (fun i => m.1.factorization (p i)) = m.1.factorization
+    rw [show (fun i => m.1.factorization (p i)) =
+      ⇑(Finsupp.comapDomain p m.1.factorization p.injective.injOn) from rfl]
+    dsimp only [extend]
+    rw [Finsupp.equivFunOnFinite_symm_coe]
+    exact Finsupp.embDomain_comapDomain (hsupp m)
+  · intro a
+    apply Subtype.ext
+    funext i
+    change (rebuild a.1 : ℕ).factorization (p i) = a.1 i
+    rw [hfac]
+    simp only [extend, Finsupp.embDomain_apply_self, Finsupp.coe_equivFunOnFinite_symm]
 
 /-- **Prime-power decomposition of summatory heights.** Let $H : \mathbb{N} \to \mathbb{N}$ be
 completely additive on the positive integers, and let $x \ge 2$ be a natural number. Then
