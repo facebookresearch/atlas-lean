@@ -19,9 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.DistinguishingStringSelectionWanted
+public import CSLibExt.Complexity.NPComplete.FarthestStringDefs
 
 @[expose] public section
 
@@ -55,45 +53,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: alphabet size `q` (symbols `0, ..., q - 1`), string length `L`, the strings
-`s₁, ..., s_k`, and the distance bound `d`. -/
-abbrev FarthestStringInstance := ℕ × ℕ × List (List ℕ) × ℕ
-
-/-- The DISTINGUISHING STRING SELECTION instance with no bad strings, close threshold `0`, the
-given strings as the good strings, and far threshold `d`. -/
-def toDistinguishing (i : FarthestStringInstance) : DistinguishingStringSelectionInstance :=
-  (i.1, i.2.1, [], i.2.2.1, 0, i.2.2.2)
-
-/-- Well-formedness of an instance: every string has length `L` over the alphabet
-`{0, ..., q - 1}` (the well-formedness of `toDistinguishing i`). -/
-def WellFormed (i : FarthestStringInstance) : Prop :=
-  DistinguishingStringSelection.WellFormed (toDistinguishing i)
-
-/-- A string `t ∈ Σ^L` at Hamming distance at least `d` from every given string (the question of
-`toDistinguishing i`). -/
-def FarthestStringFeasible (i : FarthestStringInstance) : Prop :=
-  DistinguishingStringSelectionFeasible (toDistinguishing i)
-
-/-- The question unfolded: some word `t` of length `L` over `{0, ..., q - 1}` has Hamming
-distance at least `d` from every given string. -/
-theorem farthestStringFeasible_iff (i : FarthestStringInstance) :
-    FarthestStringFeasible i ↔ ∃ t : List ℕ, IsWord i.1 i.2.1 t ∧
-      ∀ s ∈ i.2.2.1, i.2.2.2 ≤ hammingDist (asWord i.2.1 t) (asWord i.2.1 s) := by
-  constructor
-  · rintro ⟨t, ht, -, h⟩
-    exact ⟨t, ht, h⟩
-  · rintro ⟨t, ht, h⟩
-    exact ⟨t, ht, by simp [toDistinguishing], h⟩
-
-open Classical in
-/-- FARTHEST STRING as a decision problem over bitstrings. -/
-noncomputable def farthestStringDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := FarthestStringInstance) x with
-  | some i => decide (WellFormed i ∧ FarthestStringFeasible i)
-  | none => false
 
 /-- **FARTHEST STRING is NP-complete.** Source: Lanctot, Li, Ma, Wang, and Zhang (2003). -/
 public theorem_wanted farthestString_npComplete :

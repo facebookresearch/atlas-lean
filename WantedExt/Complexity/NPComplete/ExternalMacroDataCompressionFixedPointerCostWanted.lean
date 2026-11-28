@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.ExternalMacroDataCompressionWanted
+public import CSLibExt.Complexity.NPComplete.ExternalMacroDataCompressionFixedPointerCostDefs
 
 @[expose] public section
 
@@ -58,27 +56,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the alphabet size `k` (`Σ = {0, …, k - 1}`), the string `s`, and the bound
-`B`; the pointer cost `h` is fixed. -/
-abbrev ExternalMacroDataCompressionFixedPointerCostInstance := ℕ × List ℕ × ℕ
-
-/-- The [SR22] instance `(k, s, h, B)` of an instance `(k, s, B)` and the fixed pointer cost
-`h`. -/
-abbrev withCost (h : ℕ) (i : ExternalMacroDataCompressionFixedPointerCostInstance) :
-    ExternalMacroDataCompression.ExternalMacroDataCompressionInstance :=
-  (i.1, i.2.1, h, i.2.2)
-
-open Classical in
-/-- EXTERNAL MACRO DATA COMPRESSION for a fixed pointer cost `h` as a decision problem over
-bitstrings. -/
-noncomputable def externalMacroDataCompressionFixedPointerCostDec (h : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ExternalMacroDataCompressionFixedPointerCostInstance) x with
-  | some i => decide (ExternalMacroDataCompression.WellFormed (withCost h i) ∧
-      ExternalMacroDataCompression.ExternalMacroDataCompressionFeasible (withCost h i))
-  | none => false
 
 /-- **EXTERNAL MACRO DATA COMPRESSION is NP-complete for every fixed pointer cost `h ≥ 2`.**
 Source: Garey and Johnson (1979), [SR22], comment; Storer and Szymanski (1982). -/

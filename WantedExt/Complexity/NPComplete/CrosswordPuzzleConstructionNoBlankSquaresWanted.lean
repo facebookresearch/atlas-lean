@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.CrosswordPuzzleConstructionWanted
+public import CSLibExt.Complexity.NPComplete.CrosswordPuzzleConstructionNoBlankSquaresDefs
 
 @[expose] public section
 
@@ -60,21 +58,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed CROSSWORD PUZZLE CONSTRUCTION instance in
-which every entry of `A` is `0`. -/
-def WellFormed (i : CrosswordPuzzleConstructionInstance) : Prop :=
-  CrosswordPuzzleConstruction.WellFormed i ∧ ∀ row ∈ i.2.2, ∀ a ∈ row, a = false
-
-open Classical in
-/-- CROSSWORD PUZZLE CONSTRUCTION with no blank squares as a decision problem over
-bitstrings. -/
-noncomputable def crosswordPuzzleConstructionNoBlankSquaresDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := CrosswordPuzzleConstructionInstance) x with
-  | some i => decide (WellFormed i ∧ CrosswordPuzzleConstructionFeasible i)
-  | none => false
 
 /-- **CROSSWORD PUZZLE CONSTRUCTION with no blank squares is NP-complete.** Source: Garey and
 Johnson (1979), [GP14], comment; Lewis and Papadimitriou (1978). -/

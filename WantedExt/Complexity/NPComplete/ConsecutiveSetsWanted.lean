@@ -19,8 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.ConsecutiveSetsDefs
 
 @[expose] public section
 
@@ -49,29 +48,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the alphabet size `s` (symbols `0, ..., s - 1`), the subsets `Σᵢ` (each a list
-of symbols), and the bound `K`. -/
-abbrev ConsecutiveSetsInstance := ℕ × List (List ℕ) × ℕ
-
-/-- Well-formedness of an instance: every subset lists distinct symbols of the alphabet, and
-`K` is positive. -/
-def WellFormed (i : ConsecutiveSetsInstance) : Prop :=
-  (∀ S ∈ i.2.1, S.Nodup ∧ ∀ x ∈ S, x < i.1) ∧ 0 < i.2.2
-
-/-- Some string `w` over the alphabet with `|w| ≤ K` has, for each subset `Σᵢ`, a contiguous
-block that is a permutation of `Σᵢ`. -/
-def ConsecutiveSetsFeasible (i : ConsecutiveSetsInstance) : Prop :=
-  ∃ w : List ℕ, w.length ≤ i.2.2 ∧ (∀ x ∈ w, x < i.1) ∧
-    ∀ S ∈ i.2.1, ∃ b : List ℕ, b <:+: w ∧ b.Perm S
-
-open Classical in
-/-- CONSECUTIVE SETS as a decision problem over bitstrings. -/
-noncomputable def consecutiveSetsDec : MetaMathlibExt.ComplexityTheory.DecisionProblem :=
-  fun x =>
-    match MetaMathlibExt.BitstringEncoding.bitDecode (α := ConsecutiveSetsInstance) x with
-    | some i => decide (WellFormed i ∧ ConsecutiveSetsFeasible i)
-    | none => false
 
 /-- **CONSECUTIVE SETS is NP-complete.** Source: Garey and Johnson (1979), [SR18]; Kou
 (1977). -/

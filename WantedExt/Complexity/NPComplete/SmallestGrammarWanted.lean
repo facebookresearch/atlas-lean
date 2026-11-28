@@ -20,10 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import Mathlib.Computability.ContextFreeGrammar
+public import CSLibExt.Complexity.NPComplete.SmallestGrammarDefs
 
 @[expose] public section
 
@@ -62,26 +59,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the string `w` and the bound `K`. -/
-abbrev SmallestGrammarInstance := List ℕ × ℕ
-
-/-- The size of a grammar: the total number of symbols on the right sides of all its rules. -/
-def grammarSize (g : ContextFreeGrammar ℕ) : ℕ :=
-  ∑ r ∈ g.rules, r.output.length
-
-/-- Some context-free grammar of size at most `K` generates exactly the string `w`. -/
-def SmallestGrammarFeasible (i : SmallestGrammarInstance) : Prop :=
-  ∃ g : ContextFreeGrammar ℕ, g.language = {i.1} ∧ grammarSize g ≤ i.2
-
-open Classical in
-/-- SMALLEST GRAMMAR as a decision problem over bitstrings. -/
-noncomputable def smallestGrammarDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SmallestGrammarInstance) x with
-  | some i => decide (SmallestGrammarFeasible i)
-  | none => false
 
 /-- **SMALLEST GRAMMAR is NP-complete.** Source: Charikar, Lehman, Liu, Panigrahy, Prabhakaran,
 Sahai, and Shelat (2005); Storer and Szymanski (1982). -/

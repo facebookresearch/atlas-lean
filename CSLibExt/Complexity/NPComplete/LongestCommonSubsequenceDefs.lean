@@ -1,0 +1,51 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+# LONGEST COMMON SUBSEQUENCE: definitions
+
+Source:
+M. R. Garey and D. S. Johnson, *Computers and Intractability* (1979), LONGEST COMMON
+SUBSEQUENCE; D. Maier, "The complexity of some problems on subsequences and supersequences"
+(1978).
+-/
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+
+@[expose] public section
+
+namespace MetaMathlibExt.Complexity.NPComplete.LongestCommonSubsequence
+
+/-- **Longest-common-subsequence instances.** A longest-common-subsequence instance is a pair
+$(R, K)$ of a finite list $R$ of binary strings (finite lists of booleans) and a natural number
+$K$. -/
+abbrev LongestCommonSubsequenceInstance := List (List Bool) × ℕ
+
+/-- **Feasible longest-common-subsequence instances.** A longest-common-subsequence instance
+$(R, K)$ is feasible when there is a binary string $w$ of length at least $K$ that is a
+subsequence of every string in $R$, that is, $w$ is obtained from each string in $R$ by deleting
+some of its entries. -/
+def LongestCommonSubsequenceFeasible
+    (i : LongestCommonSubsequenceInstance) : Prop :=
+  ∃ common : List Bool, i.2 ≤ common.length ∧ ∀ s ∈ i.1, common.Sublist s
+
+open Classical in
+/-- **The LONGEST COMMON SUBSEQUENCE decision problem.** LONGEST COMMON SUBSEQUENCE is the
+decision problem that accepts a bitstring $x$ exactly when $x$ decodes, under the canonical
+bitstring encoding, to a feasible longest-common-subsequence instance. Bitstrings that do not
+decode are rejected. -/
+noncomputable def longestCommonSubsequenceDec :
+    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
+  match MetaMathlibExt.BitstringEncoding.bitDecode
+      (α := LongestCommonSubsequenceInstance) x with
+  | some i => decide (LongestCommonSubsequenceFeasible i)
+  | none => false
+
+end MetaMathlibExt.Complexity.NPComplete.LongestCommonSubsequence

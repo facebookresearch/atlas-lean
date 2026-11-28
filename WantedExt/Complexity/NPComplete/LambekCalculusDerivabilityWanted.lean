@@ -17,8 +17,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.LambekCalculusDerivabilityDefs
 
 @[expose] public section
 
@@ -55,77 +54,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Types of the Lambek calculus: primitive types `pₖ`, products `A · B`, and the divisions
-`B / A` (`over B A`) and `A \ B` (`under A B`). -/
-inductive LType : Type where
-  | prim (k : ℕ) : LType
-  | mul (A B : LType) : LType
-  | over (B A : LType) : LType
-  | under (A B : LType) : LType
-  deriving DecidableEq
-
-/-- Derivability `L ⊢ Γ → A` in the Lambek calculus `L` (Pentus, Section 1): the axiom
-`A → A`, the cut rule, and the left and right rules for `/`, `\` and `·`; the right rules for
-`/` and `\` require a nonempty context `Π`. -/
-inductive Derivable : List LType → LType → Prop where
-  /-- `A → A`. -/
-  | ax (A : LType) : Derivable [A] A
-  /-- (CUT): from `Φ → B` and `Γ B Δ → A` infer `Γ Φ Δ → A`. -/
-  | cut {Φ Γ Δ : List LType} {A B : LType} :
-      Derivable Φ B → Derivable (Γ ++ B :: Δ) A → Derivable (Γ ++ Φ ++ Δ) A
-  /-- `(→/)`: from `Π A → B` infer `Π → B / A`, for nonempty `Π` (named `Ψ` here, since `Π` is
-  reserved syntax). -/
-  | rightOver {Ψ : List LType} {A B : LType} :
-      Ψ ≠ [] → Derivable (Ψ ++ [A]) B → Derivable Ψ (.over B A)
-  /-- `(/→)`: from `Φ → A` and `Γ B Δ → C` infer `Γ (B / A) Φ Δ → C`. -/
-  | leftOver {Φ Γ Δ : List LType} {A B C : LType} :
-      Derivable Φ A → Derivable (Γ ++ B :: Δ) C → Derivable (Γ ++ .over B A :: Φ ++ Δ) C
-  /-- `(→\)`: from `A Π → B` infer `Π → A \ B`, for nonempty `Π` (named `Ψ` here). -/
-  | rightUnder {Ψ : List LType} {A B : LType} :
-      Ψ ≠ [] → Derivable (A :: Ψ) B → Derivable Ψ (.under A B)
-  /-- `(\→)`: from `Φ → A` and `Γ B Δ → C` infer `Γ Φ (A \ B) Δ → C`. -/
-  | leftUnder {Φ Γ Δ : List LType} {A B C : LType} :
-      Derivable Φ A → Derivable (Γ ++ B :: Δ) C → Derivable (Γ ++ Φ ++ .under A B :: Δ) C
-  /-- `(→·)`: from `Γ → A` and `Δ → B` infer `Γ Δ → A · B`. -/
-  | rightMul {Γ Δ : List LType} {A B : LType} :
-      Derivable Γ A → Derivable Δ B → Derivable (Γ ++ Δ) (.mul A B)
-  /-- `(·→)`: from `Γ A B Δ → C` infer `Γ (A · B) Δ → C`. -/
-  | leftMul {Γ Δ : List LType} {A B C : LType} :
-      Derivable (Γ ++ A :: B :: Δ) C → Derivable (Γ ++ .mul A B :: Δ) C
-
-/-- An instance: the token lists of the types of `Γ`, in order, and the token list of `A`. -/
-abbrev LambekCalculusDerivabilityInstance := List (List ℕ) × List ℕ
-
-/-- Read a postfix token list onto a stack of types: `0`, `1`, `2` pop `Y` and `X` and push
-`X · Y`, `X / Y` and `X \ Y`, and `k + 3` pushes `pₖ`. The result is the single type left on the
-stack, or `none` when a token lacks its operands or the final stack does not contain exactly
-one type. -/
-def parse : List ℕ → List LType → Option LType
-  | [], [X] => some X
-  | [], _ => none
-  | 0 :: rest, Y :: X :: stack => parse rest (.mul X Y :: stack)
-  | 1 :: rest, Y :: X :: stack => parse rest (.over X Y :: stack)
-  | 2 :: rest, Y :: X :: stack => parse rest (.under X Y :: stack)
-  | (k + 3) :: rest, stack => parse rest (.prim k :: stack)
-  | _ :: _, _ => none
-
-/-- Well-formedness of an instance: every token list is a type. -/
-def WellFormed (i : LambekCalculusDerivabilityInstance) : Prop :=
-  (∀ t ∈ i.1, (parse t []).isSome) ∧ (parse i.2 []).isSome
-
-/-- The sequent `Γ → A` spelled by the instance is derivable in `L`. -/
-def LambekCalculusDerivabilityFeasible (i : LambekCalculusDerivabilityInstance) : Prop :=
-  ∃ Γ A, i.1.mapM (fun t => parse t []) = some Γ ∧ parse i.2 [] = some A ∧ Derivable Γ A
-
-open Classical in
-/-- LAMBEK CALCULUS DERIVABILITY as a decision problem over bitstrings. -/
-noncomputable def lambekCalculusDerivabilityDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := LambekCalculusDerivabilityInstance) x with
-  | some i => decide (WellFormed i ∧ LambekCalculusDerivabilityFeasible i)
-  | none => false
 
 /-- **LAMBEK CALCULUS DERIVABILITY is NP-complete.** Source: Pentus (2006). -/
 public theorem_wanted lambekCalculusDerivability_npComplete :

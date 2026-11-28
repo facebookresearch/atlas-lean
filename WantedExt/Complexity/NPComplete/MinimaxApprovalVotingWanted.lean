@@ -24,9 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.InformationTheory.Hamming
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.MinimaxApprovalVotingDefs
 
 @[expose] public section
 
@@ -61,29 +59,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number `m` of candidates, the votes (`0`-`1` strings of length `m`), the
-committee size `k` and the distance bound `d`. -/
-abbrev MinimaxApprovalVotingInstance := ℕ × List (List Bool) × ℕ × ℕ
-
-/-- Well-formedness of an instance: every vote has length `m`. -/
-def WellFormed (i : MinimaxApprovalVotingInstance) : Prop :=
-  ∀ v ∈ i.2.1, v.length = i.1
-
-/-- Some string `s ∈ {0, 1}ᵐ` with exactly `k` ones is within Hamming distance `d` of every
-vote. -/
-def MinimaxApprovalVotingFeasible (i : MinimaxApprovalVotingInstance) : Prop :=
-  ∃ s : Fin i.1 → Bool, (Finset.univ.filter fun j => s j = true).card = i.2.2.1 ∧
-    ∀ v ∈ i.2.1, hammingDist s (fun j : Fin i.1 => v.getD j false) ≤ i.2.2.2
-
-open Classical in
-/-- MINIMAX APPROVAL VOTING as a decision problem over bitstrings. -/
-noncomputable def minimaxApprovalVotingDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MinimaxApprovalVotingInstance) x with
-  | some i => decide (WellFormed i ∧ MinimaxApprovalVotingFeasible i)
-  | none => false
 
 /-- **MINIMAX APPROVAL VOTING is NP-complete.** Source: LeGrand (2004); LeGrand, Markakis and
 Mehta (2007); problem as defined by Cygan, Kowalik, Socała and Sornat (2017). -/

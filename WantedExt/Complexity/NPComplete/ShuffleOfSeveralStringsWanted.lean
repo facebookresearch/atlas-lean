@@ -19,9 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Languages.RegularShuffle
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.ShuffleOfSeveralStringsDefs
 
 @[expose] public section
 
@@ -52,27 +50,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the strings `u₁, …, u_k` and the string `w`. -/
-abbrev ShuffleOfSeveralStringsInstance := List (List ℕ) × List ℕ
-
-/-- The shuffle `u₁ ⧢ u₂ ⧢ ⋯ ⧢ u_k` of the strings of the list, as a language: the
-right-nested shuffle of the singleton languages `{uᵢ}`, ending with `{ε}`. -/
-def shuffleAll (us : List (List ℕ)) : Language ℕ :=
-  us.foldr (fun u L => Cslib.Language.shuffle {u} L) 1
-
-/-- `w` is in the shuffle of `u₁, …, u_k`. -/
-def ShuffleOfSeveralStringsFeasible (i : ShuffleOfSeveralStringsInstance) : Prop :=
-  i.2 ∈ shuffleAll i.1
-
-open Classical in
-/-- SHUFFLE OF SEVERAL STRINGS as a decision problem over bitstrings. -/
-noncomputable def shuffleOfSeveralStringsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ShuffleOfSeveralStringsInstance) x with
-  | some i => decide (ShuffleOfSeveralStringsFeasible i)
-  | none => false
 
 /-- **SHUFFLE OF SEVERAL STRINGS is NP-complete.** Source: Warmuth and Haussler (1984);
 Mansfield (1983). -/

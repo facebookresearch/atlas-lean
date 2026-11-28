@@ -19,9 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Data.Finset.Card
+public import CSLibExt.Complexity.NPComplete.StringBarcodingDefs
 
 @[expose] public section
 
@@ -53,29 +51,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the alphabet size `|Σ|`, the strings `v₁, ..., vₙ`, and the bound `K`. -/
-abbrev StringBarcodingInstance := ℕ × List (List ℕ) × ℕ
-
-/-- Well-formedness of an instance: the strings are over `Σ` and pairwise distinct (`V` is a
-set). -/
-def WellFormed (i : StringBarcodingInstance) : Prop :=
-  (∀ v ∈ i.2.1, ∀ a ∈ v, a < i.1) ∧ i.2.1.Nodup
-
-/-- A testing set of at most `K` strings over `Σ` exists: a set `Π` such that any two
-distinct strings of `V` are separated by some `π ∈ Π` occurring as a substring in exactly one
-of them. -/
-def StringBarcodingFeasible (i : StringBarcodingInstance) : Prop :=
-  ∃ P : Finset (List ℕ), P.card ≤ i.2.2 ∧ (∀ π ∈ P, ∀ a ∈ π, a < i.1) ∧
-    ∀ v ∈ i.2.1, ∀ w ∈ i.2.1, v ≠ w → ∃ π ∈ P, ¬ (π <:+: v ↔ π <:+: w)
-
-open Classical in
-/-- STRING BARCODING as a decision problem over bitstrings. -/
-noncomputable def stringBarcodingDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := StringBarcodingInstance) x with
-  | some i => decide (WellFormed i ∧ StringBarcodingFeasible i)
-  | none => false
 
 /-- **STRING BARCODING is NP-complete.** Source: Lancia and Rizzi (2006); Rash and Gusfield
 (2002). -/

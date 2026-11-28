@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Data.List.Chain
+public import CSLibExt.Complexity.NPComplete.StringToStringCorrectionDefs
 
 @[expose] public section
 
@@ -52,36 +50,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the alphabet size `s` (symbols `0, ..., s - 1`), the strings `x` and `y`, and
-the bound `K`. -/
-abbrev StringToStringCorrectionInstance := ℕ × List ℕ × List ℕ × ℕ
-
-/-- Well-formedness of an instance: `x` and `y` are strings over the alphabet, and `K` is
-positive. -/
-def WellFormed (i : StringToStringCorrectionInstance) : Prop :=
-  (∀ a ∈ i.2.1, a < i.1) ∧ (∀ a ∈ i.2.2.1, a < i.1) ∧ 0 < i.2.2.2
-
-/-- One operation: `b` is `a` with a single symbol deleted, or `a` with two adjacent symbols
-interchanged. -/
-def Step (a b : List ℕ) : Prop :=
-  (∃ (l₁ l₂ : List ℕ) (c : ℕ), a = l₁ ++ c :: l₂ ∧ b = l₁ ++ l₂) ∨
-    ∃ (l₁ l₂ : List ℕ) (c d : ℕ), a = l₁ ++ c :: d :: l₂ ∧ b = l₁ ++ d :: c :: l₂
-
-/-- `y` is derived from `x` by at most `K` operations: there is a list of strings from `x` to
-`y` with at most `K + 1` entries, each obtained from the previous one by one `Step`. -/
-def StringToStringCorrectionFeasible (i : StringToStringCorrectionInstance) : Prop :=
-  ∃ ws : List (List ℕ), ws.head? = some i.2.1 ∧ ws.getLast? = some i.2.2.1 ∧
-    ws.length ≤ i.2.2.2 + 1 ∧ ws.IsChain Step
-
-open Classical in
-/-- STRING-TO-STRING CORRECTION as a decision problem over bitstrings. -/
-noncomputable def stringToStringCorrectionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := StringToStringCorrectionInstance) x with
-  | some i => decide (WellFormed i ∧ StringToStringCorrectionFeasible i)
-  | none => false
 
 /-- **STRING-TO-STRING CORRECTION is NP-complete.** Source: Garey and Johnson (1979), [SR20];
 Wagner (1975). -/

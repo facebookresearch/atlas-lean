@@ -18,8 +18,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.PancakeFlippingDefs
 
 @[expose] public section
 
@@ -51,30 +50,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the permutation `π = x₁, …, xₙ` (as a list) and the bound `K`. -/
-abbrev PancakeFlippingInstance := List ℕ × ℕ
-
-/-- The flip (prefix reversal) of length `r`: reverse the first `r` elements. -/
-def flip (r : ℕ) (s : List ℕ) : List ℕ := (s.take r).reverse ++ s.drop r
-
-/-- Well-formedness of an instance: `π` is a permutation of `1, …, n`. -/
-def WellFormed (i : PancakeFlippingInstance) : Prop := i.1.Perm (List.range' 1 i.1.length)
-
-/-- Some sequence of at most `K` flips, each of a length `r` with `1 ≤ r ≤ n`, applied in order,
-turns `π` into the identity `1, 2, …, n`. -/
-def PancakeFlippingFeasible (i : PancakeFlippingInstance) : Prop :=
-  ∃ rs : List ℕ, rs.length ≤ i.2 ∧ (∀ r ∈ rs, 1 ≤ r ∧ r ≤ i.1.length) ∧
-    rs.foldl (fun s r => flip r s) i.1 = List.range' 1 i.1.length
-
-open Classical in
-/-- SORTING BY PREFIX REVERSALS (PANCAKE FLIPPING) as a decision problem over bitstrings. -/
-noncomputable def pancakeFlippingDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PancakeFlippingInstance) x with
-  | some i => decide (WellFormed i ∧ PancakeFlippingFeasible i)
-  | none => false
 
 /-- **SORTING BY PREFIX REVERSALS (PANCAKE FLIPPING) is NP-complete.** Source: Bulteau, Fertin and
 Rusu (2015), Theorem 2. -/

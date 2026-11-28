@@ -19,10 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import MathlibExt.Combinatorics.SimpleGraph.Lattice.HypercubicLattice
-public import WantedExt.Complexity.NPComplete.HPFoldingWanted
+public import CSLibExt.Complexity.NPComplete.StringFoldingDefs
 
 @[expose] public section
 
@@ -65,40 +62,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the string `s` (symbols as natural numbers) and the bound `K`. -/
-abbrev StringFoldingInstance := List ℕ × ℕ
-
-/-- Well-formedness of an instance: `0 < K`. -/
-def WellFormed (i : StringFoldingInstance) : Prop :=
-  0 < i.2
-
-/-- `f` is a folding of `s` in `ℤ^d`: `HPFolding.IsFolding` (one-to-one, consecutive residues at
-adjacent sites), which depends only on the length of the string, applied to `f` along the cast
-`Fin |s.map (fun _ => true)| → Fin |s|`. -/
-def IsFolding (d : ℕ) (s : List ℕ) (f : Fin s.length → StatMech.Lattice.Site d) : Prop :=
-  HPFolding.IsFolding d (s.map fun _ => true) (f ∘ Fin.cast (List.length_map _))
-
-open Classical in
-/-- The contacts of `f`: the pairs `(a, b)` of residues with `a + 1 < b` (so not adjacent in
-`s`) that carry equal symbols and that `f` maps to adjacent lattice sites. -/
-noncomputable def contacts (d : ℕ) (s : List ℕ) (f : Fin s.length → StatMech.Lattice.Site d) :
-    Finset (Fin s.length × Fin s.length) :=
-  Finset.univ.filter fun ab => ab.1.1 + 1 < ab.2.1 ∧ s.get ab.1 = s.get ab.2 ∧
-    (StatMech.Lattice.hypercubicLattice d).Adj (f ab.1) (f ab.2)
-
-/-- Some folding of the string in `ℤ^d` has at least `K` contacts. -/
-def StringFoldingFeasible (d : ℕ) (i : StringFoldingInstance) : Prop :=
-  ∃ f : Fin i.1.length → StatMech.Lattice.Site d,
-    IsFolding d i.1 f ∧ i.2 ≤ (contacts d i.1 f).card
-
-open Classical in
-/-- STRING FOLDING on the lattice `ℤ^d`, as a decision problem over bitstrings. -/
-noncomputable def stringFoldingDec (d : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := StringFoldingInstance) x with
-  | some i => decide (WellFormed i ∧ StringFoldingFeasible d i)
-  | none => false
 
 /-- **STRING FOLDING (cubic lattice) is NP-complete.** Source: Paterson and Przytycka (1996);
 Crescenzi and Kann, MAXIMUM STRING FOLDING. -/

@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.ReductionOfIncompletelySpecifiedAutomataWanted
+public import CSLibExt.Complexity.NPComplete.ReductionOfIncompletelySpecifiedAutomataFixedKDefs
 
 @[expose] public section
 
@@ -55,26 +53,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance for a fixed bound: state count `n` (states `Fin n`), alphabet size `m` (letters
-`Fin m`), the specified transitions `((q, a), q')`, start state `q₀`, and accept states `F`. -/
-abbrev FixedBoundInstance := ℕ × ℕ × List ((ℕ × ℕ) × ℕ) × ℕ × List ℕ
-
-/-- The REDUCTION OF INCOMPLETELY SPECIFIED AUTOMATA instance given by the automaton `i` and the
-bound `K`. -/
-abbrev withBound (i : FixedBoundInstance) (K : ℕ) :
-    ReductionOfIncompletelySpecifiedAutomataInstance :=
-  (i.1, i.2.1, i.2.2.1, i.2.2.2.1, i.2.2.2.2, K)
-
-open Classical in
-/-- REDUCTION OF INCOMPLETELY SPECIFIED AUTOMATA with the bound fixed to `K`, as a decision
-problem over bitstrings. -/
-noncomputable def fixedBoundDec (K : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := FixedBoundInstance) x with
-  | some i => decide (WellFormed (withBound i K) ∧
-      ReductionOfIncompletelySpecifiedAutomataFeasible (withBound i K))
-  | none => false
 
 /-- **REDUCTION OF INCOMPLETELY SPECIFIED AUTOMATA is NP-complete for every fixed `K ≥ 6`.**
 Source: Garey and Johnson (1979), [AL7], comment; Pfleeger (1973). -/

@@ -20,10 +20,8 @@ doi:10.1016/j.jda.2004.08.015 (bounded and binary alphabets).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Algorithms.Lean.DynamicProgramming.EditDistance.Algorithm
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.MedianStringEditDistanceDefs
 
 @[expose] public section
 
@@ -56,28 +54,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the alphabet size `|Σ|`, the strings `s₁, …, sₙ`, and the bound `K`. -/
-abbrev MedianStringEditDistanceInstance := ℕ × List (List ℕ) × ℕ
-
-/-- Well-formedness of an instance: the alphabet is nonempty, the list of strings is nonempty,
-and every letter of every string lies in `Σ`. -/
-def WellFormed (i : MedianStringEditDistanceInstance) : Prop :=
-  0 < i.1 ∧ i.2.1 ≠ [] ∧ ∀ s ∈ i.2.1, ∀ a ∈ s, a < i.1
-
-/-- Some string `t` over `Σ` has total edit distance at most `K` to the strings `sᵢ`. -/
-def MedianStringEditDistanceFeasible (i : MedianStringEditDistanceInstance) : Prop :=
-  ∃ t : List ℕ, (∀ a ∈ t, a < i.1) ∧
-    (i.2.1.map fun s => (Cslib.Algorithms.Lean.editDistance t s).ret.distance).sum ≤ i.2.2
-
-open Classical in
-/-- MEDIAN STRING under the edit distance as a decision problem over bitstrings. -/
-noncomputable def medianStringEditDistanceDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MedianStringEditDistanceInstance) x with
-  | some i => decide (WellFormed i ∧ MedianStringEditDistanceFeasible i)
-  | none => false
 
 /-- **MEDIAN STRING under the edit distance is NP-complete.** Source: de la Higuera and
 Casacuberta (2000); Nicolas and Rivals (2005). -/

@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.ExternalMacroDataCompressionWanted
+public import CSLibExt.Complexity.NPComplete.InternalMacroDataCompressionDefs
 
 @[expose] public section
 
@@ -62,24 +60,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Some string `C` over `Σ ∪ {p₁, …, p_|s|}` with `|C| + (h - 1) · (pointer occurrences in C)
-≤ B`, and substrings `σ p` of `C` for the pointers, such that repeated replacement leads from `C`
-to `s`. -/
-def InternalMacroDataCompressionFeasible (i : ExternalMacroDataCompressionInstance) : Prop :=
-  ∃ C : List MacroSymbol, IsOver i.1 i.2.1.length C ∧
-    C.length + (i.2.2.1 - 1) * pointerCount C ≤ i.2.2.2 ∧
-    ∃ σ : ℕ → List MacroSymbol, (∀ p < i.2.1.length, σ p <:+: C) ∧
-      Relation.ReflTransGen (ReplaceStep σ) C (i.2.1.map Sum.inl)
-
-open Classical in
-/-- INTERNAL MACRO DATA COMPRESSION as a decision problem over bitstrings. -/
-noncomputable def internalMacroDataCompressionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ExternalMacroDataCompressionInstance) x with
-  | some i => decide (WellFormed i ∧ InternalMacroDataCompressionFeasible i)
-  | none => false
 
 /-- **INTERNAL MACRO DATA COMPRESSION is NP-complete.** Source: Garey and Johnson (1979),
 [SR23]; Storer and Szymanski (1982). -/

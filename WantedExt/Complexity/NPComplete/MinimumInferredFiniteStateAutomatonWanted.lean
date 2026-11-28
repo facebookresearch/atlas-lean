@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Computability.DFA
+public import CSLibExt.Complexity.NPComplete.MinimumInferredFiniteStateAutomatonDefs
 
 @[expose] public section
 
@@ -48,32 +46,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: alphabet size `m` (letters `Fin m`), the strings `S` to accept, the strings
-`T` to reject, and the state count `K`. -/
-abbrev MinimumInferredFiniteStateAutomatonInstance :=
-  ℕ × List (List ℕ) × List (List ℕ) × ℕ
-
-/-- Well-formedness of an instance: every letter of every string in `S` and `T` is below `m`,
-and `K` is positive. -/
-def WellFormed (i : MinimumInferredFiniteStateAutomatonInstance) : Prop :=
-  (∀ w ∈ i.2.1, ∀ a ∈ w, a < i.1) ∧ (∀ w ∈ i.2.2.1, ∀ a ∈ w, a < i.1) ∧ 0 < i.2.2.2
-
-/-- Some `DFA` with `K` states accepts every string of `S` and rejects every string of `T`. -/
-def MinimumInferredFiniteStateAutomatonFeasible
-    (i : MinimumInferredFiniteStateAutomatonInstance) : Prop :=
-  ∃ A : DFA (Fin i.1) (Fin i.2.2.2),
-    (∀ w : List (Fin i.1), w.map Fin.val ∈ i.2.1 → w ∈ A.accepts) ∧
-      ∀ w : List (Fin i.1), w.map Fin.val ∈ i.2.2.1 → w ∉ A.accepts
-
-open Classical in
-/-- MINIMUM INFERRED FINITE STATE AUTOMATON as a decision problem over bitstrings. -/
-noncomputable def minimumInferredFiniteStateAutomatonDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MinimumInferredFiniteStateAutomatonInstance) x with
-  | some i => decide (WellFormed i ∧ MinimumInferredFiniteStateAutomatonFeasible i)
-  | none => false
 
 /-- **MINIMUM INFERRED FINITE STATE AUTOMATON is NP-complete.** Source: Garey and Johnson
 (1979), [AL8]; Gold (1978). -/

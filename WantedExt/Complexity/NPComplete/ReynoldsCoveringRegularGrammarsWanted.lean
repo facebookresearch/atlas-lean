@@ -22,9 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.ReynoldsCoveringWanted
+public import CSLibExt.Complexity.NPComplete.ReynoldsCoveringRegularGrammarsDefs
 
 @[expose] public section
 
@@ -58,29 +56,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- A production `(A, w)` is right-linear when every symbol of `w` except possibly the last is
-a terminal: it has the form `A → x₁ ⋯ xⱼ` or `A → x₁ ⋯ xⱼ B` with terminals `xᵢ`. -/
-def IsRightLinearProduction (p : ℕ × List (Bool × ℕ)) : Prop :=
-  ∀ x ∈ p.2.dropLast, x.1 = true
-
-/-- A grammar is regular (right-linear) when every production is right-linear. -/
-def IsRegularGrammar (g : ReynoldsCovering.GrammarData) : Prop :=
-  ∀ p ∈ g.2.2, IsRightLinearProduction p
-
-/-- Well-formedness of an instance: the instance is well-formed for REYNOLDS COVERING FOR
-CONTEXT-FREE GRAMMARS, and both grammars are regular. -/
-def WellFormed (i : ReynoldsCovering.ReynoldsCoveringInstance) : Prop :=
-  ReynoldsCovering.WellFormed i ∧ IsRegularGrammar i.2.1 ∧ IsRegularGrammar i.2.2
-
-open Classical in
-/-- REYNOLDS COVERING FOR REGULAR GRAMMARS as a decision problem over bitstrings. -/
-noncomputable def reynoldsCoveringRegularGrammarsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ReynoldsCovering.ReynoldsCoveringInstance) x with
-  | some i => decide (WellFormed i ∧ ReynoldsCovering.ReynoldsCoveringFeasible i)
-  | none => false
 
 /-- **REYNOLDS COVERING FOR REGULAR GRAMMARS is NP-complete.** Source: Garey and Johnson
 (1979), [AL11], comment; Hunt and Rosenkrantz (1977). -/

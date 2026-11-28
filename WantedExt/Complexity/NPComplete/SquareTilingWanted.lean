@@ -21,8 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.SquareTilingDefs
 
 @[expose] public section
 
@@ -52,35 +51,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the color list `C`, the tile list `T` (a tile `(a, b, c, d)` is top, right,
-bottom, left), and the side length `N`. -/
-abbrev SquareTilingInstance := List ℕ × List (ℕ × ℕ × ℕ × ℕ) × ℕ
-
-/-- Well-formedness of an instance: `C` lists distinct colors, `T` lists distinct tiles, every
-tile color is in `C`, and `0 < N ≤ |C|`. -/
-def WellFormed (i : SquareTilingInstance) : Prop :=
-  i.1.Nodup ∧ i.2.1.Nodup ∧
-    (∀ t ∈ i.2.1, t.1 ∈ i.1 ∧ t.2.1 ∈ i.1 ∧ t.2.2.1 ∈ i.1 ∧ t.2.2.2 ∈ i.1) ∧
-    0 < i.2.2 ∧ i.2.2 ≤ i.1.length
-
-/-- An `N × N` tiling: every position `(x, y)` with `x, y < N` gets a tile of `T`; the right
-color of `f x y` equals the left color of `f (x + 1) y`, and the bottom color of `f x y`
-equals the top color of `f x (y + 1)`, whenever both positions are in the square. -/
-def SquareTilingFeasible (i : SquareTilingInstance) : Prop :=
-  ∃ f : ℕ → ℕ → ℕ × ℕ × ℕ × ℕ,
-    (∀ x < i.2.2, ∀ y < i.2.2, f x y ∈ i.2.1) ∧
-    (∀ x y, x + 1 < i.2.2 → y < i.2.2 → (f x y).2.1 = (f (x + 1) y).2.2.2) ∧
-    (∀ x y, x < i.2.2 → y + 1 < i.2.2 → (f x y).2.2.1 = (f x (y + 1)).1)
-
-open Classical in
-/-- SQUARE-TILING as a decision problem over bitstrings. -/
-noncomputable def squareTilingDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SquareTilingInstance) x with
-  | some i => decide (WellFormed i ∧ SquareTilingFeasible i)
-  | none => false
 
 /-- **SQUARE-TILING is NP-complete.** Source: Garey and Johnson (1979), [GP13]; Demaine and
 Demaine (2007). -/

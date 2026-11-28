@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Decidability.PCP
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.BoundedPostCorrespondenceDefs
 
 @[expose] public section
 
@@ -58,28 +56,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the size `|Σ|` of the alphabet, the pairs `(aᵢ, bᵢ)`, and the bound `K`. -/
-abbrev BoundedPostCorrespondenceInstance := ℕ × List (Domino ℕ) × ℕ
-
-/-- Well-formedness of an instance: all strings are over the alphabet `{0, …, |Σ| - 1}`, and
-`0 < K ≤ n`. -/
-def WellFormed (i : BoundedPostCorrespondenceInstance) : Prop :=
-  (∀ d ∈ i.2.1, (∀ x ∈ d.1, x < i.1) ∧ ∀ x ∈ d.2, x < i.1) ∧ 0 < i.2.2 ∧ i.2.2 ≤ i.2.1.length
-
-/-- A nonempty sequence of at most `K` pairs of the instance whose `a`-strings and `b`-strings
-concatenate to the same string. -/
-def BoundedPostCorrespondenceFeasible (i : BoundedPostCorrespondenceInstance) : Prop :=
-  ∃ s : List (Domino ℕ), IsSolution i.2.1 s ∧ s.length ≤ i.2.2
-
-open Classical in
-/-- BOUNDED POST CORRESPONDENCE PROBLEM as a decision problem over bitstrings. -/
-noncomputable def boundedPostCorrespondenceDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := BoundedPostCorrespondenceInstance) x with
-  | some i => decide (WellFormed i ∧ BoundedPostCorrespondenceFeasible i)
-  | none => false
 
 /-- **BOUNDED POST CORRESPONDENCE PROBLEM is NP-complete.** Source: Garey and Johnson (1979),
 [SR11]; Constable, Hunt and Sahni (1974). -/
