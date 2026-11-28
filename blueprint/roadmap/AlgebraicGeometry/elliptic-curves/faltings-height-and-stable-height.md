@@ -35,7 +35,7 @@ the same constant $\frac{g}{2} \log \pi$.
 - [Néron model of an abelian variety](../abelian-varieties/neron-model.md), for the Néron mapping
   property, which gives the morphism from the base change of the Néron model over $\mathcal{O}_L$ to
   the Néron model over $\mathcal{O}_{L'}$
-- [Néron model of an abelian variety over the ring of integers of a number field](../abelian-varieties/neron-model-over-a-ring-of-integers.md),
+- [Néron model of an abelian variety over the ring of integers of a number field](../abelian-varieties/stable-faltings-height/neron-model-over-a-ring-of-integers.md),
   for good reduction outside finitely many maximal ideals and the localization of the Néron model
 - [Semistable reduction theorem for abelian varieties](../abelian-varieties/semistable-reduction-theorem.md),
   for semistable reduction after a finite extension at each of the finitely many remaining maximal

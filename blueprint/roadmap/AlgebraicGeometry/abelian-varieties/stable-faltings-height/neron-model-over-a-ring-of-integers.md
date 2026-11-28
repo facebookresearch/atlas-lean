@@ -1,8 +1,8 @@
 # Néron model of an abelian variety over the ring of integers of a number field
 
 Let $L$ be a number field with ring of integers $\mathcal{O}_L$, and let $A$ be an
-[abelian variety](abelian-scheme.md) of dimension $g$ over $L$. A **Néron model** of $A$ over
-$\mathcal{O}_L$ is a [finite-type Néron model](../not-yet-classified/neron-models/finite-type-neron-model.md) of $A$ over
+[abelian variety](../abelian-scheme.md) of dimension $g$ over $L$. A **Néron model** of $A$ over
+$\mathcal{O}_L$ is a [finite-type Néron model](../../not-yet-classified/neron-models/finite-type-neron-model.md) of $A$ over
 $\mathcal{O}_L$ and its fraction field $L$, that is, a smooth separated scheme $\mathcal{A}$ of finite
 type over $\mathcal{O}_L$ with generic fibre identified with $A$ that represents the functor
 
@@ -10,9 +10,9 @@ $$S \longmapsto \operatorname{Hom}_L(S \times_{\operatorname{Spec} \mathcal{O}_L
 
 on smooth $\mathcal{O}_L$-schemes $S$: every morphism from the generic fibre of a smooth
 $\mathcal{O}_L$-scheme $S$ to $A$ extends uniquely to an $\mathcal{O}_L$-morphism $S \to \mathcal{A}$,
-with a commutative [group structure](../not-yet-classified/neron-models/group-structure.md) for which the identification of its
+with a commutative [group structure](../../not-yet-classified/neron-models/group-structure.md) for which the identification of its
 generic fibre with $A$ is a homomorphism.
-This is the definition of the [Néron model over a discrete valuation ring](neron-model.md), with
+This is the definition of the [Néron model over a discrete valuation ring](../neron-model.md), with
 $\mathcal{O}_L$ in place of the discrete valuation ring; by the Yoneda lemma a Néron model is unique
 up to unique isomorphism.
 
@@ -34,21 +34,21 @@ up to unique isomorphism.
 
 ## Depends on
 
-- [Néron model of an abelian variety](neron-model.md), for the Néron model over a discrete valuation
+- [Néron model of an abelian variety](../neron-model.md), for the Néron model over a discrete valuation
   ring and good reduction
-- [Abelian scheme](abelian-scheme.md), for abelian varieties and abelian schemes
-- [Finite-type Néron model](../not-yet-classified/neron-models/finite-type-neron-model.md), over
+- [Abelian scheme](../abelian-scheme.md), for abelian varieties and abelian schemes
+- [Finite-type Néron model](../../not-yet-classified/neron-models/finite-type-neron-model.md), over
   $\mathcal{O}_L$ and its fraction field $L$, for the Néron model $\mathcal{A}$
-- [Group structure on a Néron model](../not-yet-classified/neron-models/group-structure.md), for the
+- [Group structure on a Néron model](../../not-yet-classified/neron-models/group-structure.md), for the
   group law of $\mathcal{A}$ and its zero section $\varepsilon$
 
 ## Proof depends on
 
-- [Néron model of an abelian variety](neron-model.md), for the existence of the Néron models over
+- [Néron model of an abelian variety](../neron-model.md), for the existence of the Néron models over
   the local rings $\mathcal{O}_{L,\mathfrak{p}}$
-- [Abelian varieties are projective](abelian-varieties-are-projective.md), for a projective
+- [Abelian varieties are projective](../abelian-varieties-are-projective.md), for a projective
   embedding of $A$, which spreads out with the group law over some $\mathcal{O}_L[1/f]$
-- [Representing objects are unique up to isomorphism](../../CategoryTheory/categories-and-functors/uniqueness-of-representing-objects.md),
+- [Representing objects are unique up to isomorphism](../../../CategoryTheory/categories-and-functors/uniqueness-of-representing-objects.md),
   for the uniqueness of the Néron model
 
 ## Expansion

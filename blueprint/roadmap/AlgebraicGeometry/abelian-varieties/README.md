@@ -18,7 +18,6 @@ Abelian varieties over fields: duals and polarizations, Zarhin's trick, the Nér
 - [Zarhin's trick](zarhin-trick.md)
 - [Zarhin's trick for abelian schemes](zarhin-trick-for-abelian-schemes.md)
 - [Néron model of an abelian variety](neron-model.md)
-- [Néron model of an abelian variety over the ring of integers of a number field](neron-model-over-a-ring-of-integers.md)
 - [Semistable reduction theorem for abelian varieties](semistable-reduction-theorem.md)
 - [Homomorphisms and Lie algebras of semi-abelian schemes](homomorphisms-and-lie-algebras-of-semi-abelian-schemes.md)
 - [Deformations and p-divisible groups](deformations-and-p-divisible-groups/README.md)

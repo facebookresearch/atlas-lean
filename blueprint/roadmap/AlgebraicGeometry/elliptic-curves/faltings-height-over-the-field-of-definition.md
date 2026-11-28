@@ -2,7 +2,7 @@
 
 Let $L$ be a number field with ring of integers $\mathcal{O}_L$, let $E$ be an elliptic curve over
 $L$, and let $\mathcal{E}$ be the
-[Néron model of $E$ over $\mathcal{O}_L$](../abelian-varieties/neron-model-over-a-ring-of-integers.md),
+[Néron model of $E$ over $\mathcal{O}_L$](../abelian-varieties/stable-faltings-height/neron-model-over-a-ring-of-integers.md),
 with zero section $\varepsilon$. The invertible $\mathcal{O}_L$-module
 $\omega = \varepsilon^* \Omega^1_{\mathcal{E}/\mathcal{O}_L}$ has
 $\omega \otimes_{\mathcal{O}_L} L = H^0(E, \Omega^1_{E/L})$, and
@@ -41,7 +41,7 @@ $h_{\mathrm{Fal}}(E/L) + \frac{1}{2} \log \pi$.
 
 ## Depends on
 
-- [Néron model of an abelian variety over the ring of integers of a number field](../abelian-varieties/neron-model-over-a-ring-of-integers.md),
+- [Néron model of an abelian variety over the ring of integers of a number field](../abelian-varieties/stable-faltings-height/neron-model-over-a-ring-of-integers.md),
   for $\mathcal{E}$ and the invertible module $\omega$ with its generic and complex fibres
 - [Arithmetic varieties and hermitian vector bundles](../arakelov-geometry/arithmetic-variety.md),
   for hermitian line bundles on $\operatorname{Spec} \mathcal{O}_L$
