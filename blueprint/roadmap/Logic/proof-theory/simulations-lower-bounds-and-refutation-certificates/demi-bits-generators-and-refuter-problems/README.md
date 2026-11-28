@@ -6,4 +6,4 @@ Demi-bits generators as a source of proof complexity generators, and the total s
 - [Demi-bits generators against a parity-closed proof system yield proof complexity generators](proof-complexity-generators-from-demi-bits-via-linear-extractors.md)
 - [Random output restrictions of a demi-bits generator are proof complexity generators](random-output-restrictions-are-proof-complexity-generators.md)
 - [Refuter problems for resolution lower bounds](resolution-lower-bound-refuter-problems.md)
-- [Refuting short resolution proofs is complete for $\mathrm{rwPHP}(\mathsf{PLS})$](refuting-short-resolution-proofs-is-rwphp-pls-complete.md)
+- [Refuting short resolution proofs is $\mathrm{rwPHP}(\mathsf{PLS})$-hard, and complete for the pigeonhole principle](refuting-short-resolution-proofs-is-rwphp-pls-complete.md)

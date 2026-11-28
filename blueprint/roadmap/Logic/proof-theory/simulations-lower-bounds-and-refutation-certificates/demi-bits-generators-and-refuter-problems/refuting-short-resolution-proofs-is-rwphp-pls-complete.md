@@ -1,6 +1,6 @@
-# Refuting short resolution proofs is complete for $\mathrm{rwPHP}(\mathsf{PLS})$
+# Refuting short resolution proofs is $\mathrm{rwPHP}(\mathsf{PLS})$-hard, and complete for the pigeonhole principle
 
-Finding an invalid step in a purported resolution refutation that is shorter than a true size lower bound is hard for the class $\mathrm{rwPHP}(\mathsf{PLS})$ for every hard formula, and for the pigeonhole principle it is complete. Hence $T^1_2+\mathrm{dwPHP}(\mathsf{PV})$ captures the reasoning needed for resolution size lower bounds.
+Finding an invalid step in a purported resolution refutation that is shorter than a true size lower bound is hard for the class $\mathrm{rwPHP}(\mathsf{PLS})$ for every hard formula, and for the pigeonhole principle it is complete. Hence $T^1_2+\mathrm{dwPHP}(\mathsf{PV})$ captures the reasoning needed for the easiest resolution size lower bounds, such as Haken's, and its reasoning is necessary for every resolution size lower bound.
 
 **The class $\mathrm{rwPHP}(\mathsf{PLS})$.** An instance of $\mathrm{Iter}$ is a function $S:[L]\to[L]$; a solution is $x\in[L]$ with $x=0$ and $S(0)=0$, or $S(x)<x$, or $S(x)>x$ and $S(S(x))=S(x)$. $\mathsf{PLS}$ is the class of decision-tree total search problems with a polylogarithmic-depth decision-tree reduction to $\mathrm{Iter}$. An instance of $\mathrm{rwPHP}(\mathsf{PLS})$ with $M\le N/2$ consists of a purported surjection $f:[M]\to[N]$ and, for each $y\in[N]$, an $\mathrm{Iter}$ instance $I_y=(L,S_y)$ together with a map $g_y:[L]\to[M]$ on its solutions; a solution is a pair $(y,ans)$ with $y\in[N]$, $ans$ a solution of $I_y$, and $f(g_y(ans))\ne y$. Totality is the retraction weak pigeonhole principle applied to $y\mapsto g_y(ans(y))$.
 
