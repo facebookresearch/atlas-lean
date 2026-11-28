@@ -43,6 +43,7 @@ public import Mathlib.Order.Interval.Finset.Nat
 public import MathlibExt.NumberTheory.ArithmeticFunction.UnitaryConvolution
 public import MathlibExt.NumberTheory.Recurrences.ABFibonacciIdentities
 public import MathlibExt.NumberTheory.Recurrences.ABFibonacciIdentitiesConvolutionLucasABFibAB
+public import MathlibExt.NumberTheory.Recurrences.ABFibonacciIdentitiesConvolutionSpecializations
 
 set_option autoImplicit false
 
@@ -138,35 +139,6 @@ theorem_wanted sum_neg_one_pow_k_lucasAB (k : ℂ) (m n : ℕ)
     ∑ i ∈ Finset.range (n + 1),
         (-1 : ℂ) ^ i * lucasAB k 1 (2 * (i + m)) =
       (-1) ^ n * fibAB k 1 (2 * (n + m) + 1) + fibAB k 1 (2 * m - 1)
-
-/-- **Fibonacci, Jacobsthal and Pell convolution identities.** Write $F_n$ and $L_n$ for the
-Fibonacci and Lucas numbers (the $(1,1)$-Fibonacci and $(1,1)$-Lucas numbers), $J_n$ and $j_n$
-for the Jacobsthal and Jacobsthal–Lucas numbers (the $(1,2)$-Fibonacci and $(1,2)$-Lucas
-numbers), and $P_n$ and $Q_n$ for the Pell and Pell–Lucas numbers (the $(2,1)$-Fibonacci and
-$(2,1)$-Lucas numbers), all as complex numbers. Then for every natural number $n$:
-(i) $\sum_{i=1}^{n} L_{n-i} J_i = j_{n+1} - L_{n+1}$ and
-$\sum_{i=1}^{n} j_{n-i} F_i = j_{n+1} - L_{n+1}$;
-(ii) $2 \sum_{i=1}^{n} P_i = (Q_{n+1} - 2)/2$ and $\sum_{i=1}^{n} i \, Q_{n-i} = (Q_{n+1} - 2)/2$;
-(iii) $\sum_{i=1}^{n} L_{2(n-i)} (2^i - 1) = L_{2n+2} - 2^{n+1} - 1$ and
-$\sum_{i=1}^{n} (2^{n-i} + 1) F_{2i} = L_{2n+2} - 2^{n+1} - 1$.
-
-Source: Emil Daniel Schwab, "Fibonacci Numbers
-via Dirichlet Convolution and Lucas Numbers via
-Unitary Convolution", Corollary 14(b). -/
-theorem_wanted convolution_specializations (n : ℕ) :
-    (∑ i ∈ Finset.Icc 1 n, lucasAB 1 1 (n - i) * fibAB 1 2 i =
-        lucasAB 1 2 (n + 1) - lucasAB 1 1 (n + 1) ∧
-      ∑ i ∈ Finset.Icc 1 n, lucasAB 1 2 (n - i) * fibAB 1 1 i =
-        lucasAB 1 2 (n + 1) - lucasAB 1 1 (n + 1)) ∧
-    (2 * ∑ i ∈ Finset.Icc 1 n, fibAB 2 1 i =
-        (lucasAB 2 1 (n + 1) - 2) / 2 ∧
-      ∑ i ∈ Finset.Icc 1 n, (i : ℂ) * lucasAB 2 1 (n - i) =
-        (lucasAB 2 1 (n + 1) - 2) / 2) ∧
-    (∑ i ∈ Finset.Icc 1 n,
-        lucasAB 1 1 (2 * (n - i)) * (2 ^ i - 1) =
-        lucasAB 1 1 (2 * n + 2) - 2 ^ (n + 1) - 1 ∧
-      ∑ i ∈ Finset.Icc 1 n, (2 ^ (n - i) + 1) * fibAB 1 1 (2 * i) =
-        lucasAB 1 1 (2 * n + 2) - 2 ^ (n + 1) - 1)
 
 /-- **Lemma 6**: `H_m^{a,b}((-b)ⁿ, 0) = (-1)ⁿ b^{n+1} F_{m-1}^{a,b}`,
 stated for `m + 1` (every `m ≥ 1`) and, for `b ≠ 0`, at
