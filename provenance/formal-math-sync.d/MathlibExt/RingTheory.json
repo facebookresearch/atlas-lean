@@ -1,110 +1,864 @@
 {
   "rows": [
-    {"path": "MathlibExt/RingTheory/AdjoinRoot/LocalMaximal.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "16131d6bed74c10da9b49fe33292512b79f9ee0340703c10d1115a2764e25d80", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "07015fd31b049a9978e6f981427bfd28bcc99019cdd9a8bd1dd756786b6ab828"},
-    {"path": "MathlibExt/RingTheory/ClassGroup/CoprimeRepresentative.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "0d82c1fc80beba85caa19630e1d58258bda84e4f205632928af910bca36eab3e", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991). Also: Adapted to the Lean, Mathlib, CSLib and Physlib v4.36.0 API changes (toolchain bump); formal-math needs the same changes when it moves to v4.36.0. Mathlib v4.36.0 declares ClassGroup.exists_mk0_eq_and_isCoprime, so ATLAS's theorem of that name is removed; its wiki page credits Mathlib's theorem.", "upstream_sha256": "814f07e4f058bbbaf55a0da8ffd47812bd4730fea61a227079e1e6f46523bfb3"},
-    {"path": "MathlibExt/RingTheory/ConductorIdeal.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "37e809f377f00cbf950848b76d4ee9b59a2d0ff0fcd679123cc1c4dd2c6ba47e", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "7a76f0441cbecb5f570d72ef21d17fe63513223aa7648fd3fe8c4f3690047697"},
-    {"path": "MathlibExt/RingTheory/ConductorResidue.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "6397934097932007298666e053e05231c8326eea9651a17cf901929d4e30f1c1", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_commit": "88b1da92115ae896b78e79de002a99705ff0b03a", "upstream_sha256": "dcd1799f03e46c3cb45515d6ea01f57e7c680569cecad34c6086ffa5fd3b6eaf"},
-    {"path": "MathlibExt/RingTheory/ConeRing.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "1328149a85f2ddc6d996155fd40bf634185c45dd136c61dbde826c096da55367", "rationale": "Disambiguate the locally finite matrix addition law used by the scalar homomorphism proof on Lean 4.36; preserve the actual diagonal map.", "upstream_commit": "11faf00241b371826000ec82975d096d2ab584d0", "upstream_sha256": "54b1c438de5b22e6e0701646be2a810f922b55335e5f5b8395627611a0221ad2"},
-    {"path": "MathlibExt/RingTheory/ConeRing/InfiniteSum.lean", "disposition": "identical", "published_sha256": "00145f45c79dba49d5eab3637186c555e8743ebe8e56cb89fe7edec4e69ba15c", "upstream_sha256": "d0c2f6ac7b3f6c762d62f6cd8fd6d1aa6961d53626464e92303b8739525a1e69"},
-    {"path": "MathlibExt/RingTheory/DedekindDomain/AdicCompletionIntegers.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "0704eec3b698912118b3459d1f9572d86ae23535a7b207269578c48076f55ac1", "rationale": "ATLAS-side addition not in formal-math: the production module adds `adicCompletionIntegers_isAdicComplete` (the valuation ring of the `v`-adic completion of the fraction field of a Dedekind domain is complete for the adic topology of its maximal ideal, with no finiteness hypothesis on the residue field), adapted from anthropics/fermats-last-theorem with that project's Apache 2.0 notice after the Meta header and the imports its proof needs; its proof takes the discrete valuation ring instance of that valuation ring from Mathlib instead of reproving it, and the module docstring describes both results; the test module adds consumers of it over an arbitrary Dedekind domain and in higher universes. The production module also keeps its restated docstrings (Atlas wiki audit, #991).", "upstream_sha256": "a486a77463cc6504ca4f7030cda5d68775f7b1691e4f5c7aeb7f41c1b5edb45f"},
-    {"path": "MathlibExt/RingTheory/DedekindDomain/AdicCompletionResidueField.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "f4df2bb8e24387766ec9ab2f23db125699e52a788987c9481cc9f4ad88ff6a5b", "rationale": "ATLAS-side edit not in formal-math; last ATLAS change 8efc5507b (Migrate ATLAS root libraries to Lean 4.35.0); Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "1277a05ed74d9b6ab63e28fd103dda5f7debbcbbdc8361808dbec6ae84deea97"},
-    {"path": "MathlibExt/RingTheory/DedekindDomain/AdicValuation.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "1f766fcbc6a805fe85ce98f0ee06ea01524adb0f9063e29868f84bb18524ae78", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "ce68dd209dd6604e0ee43090dda38dff6dcaabbbaea8bd764c519f6a0f032740"},
-    {"path": "MathlibExt/RingTheory/DedekindDomain/DifferentDual.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "cd3235b826d528a2357f21e521511a99b5639bdbaca43a60187eba550a3e9281", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "27a440695275700151308cf8441b1c5743864730855d497aa3345adc28c05133"},
-    {"path": "MathlibExt/RingTheory/DedekindDomain/DifferentLocalization.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "b4ef050408f501cdeeb24d049f1cc0f1e8a4ec6b692567979bd0812bb8f45eb0", "rationale": "ATLAS-side rename in #3965: anonymous instances get explicit `_mathlibExt` names, stable under a consumer import prefix. Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "1d39b62a3097be24891b5dfd4ea88226cf35fd23c98da86a0a1576fe41e48729"},
-    {"path": "MathlibExt/RingTheory/DedekindDomain/ElementDifferent.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "c9ccb2df7e1a6b60a3ef699edb418d127b0fcf633c69a556f96cf9da91a3e7a6", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "fc1ba8ec00a531c45bb69a786f3d6de80a19fda8b7117afeb145aefe88cc5599"},
-    {"path": "MathlibExt/RingTheory/DedekindDomain/FactorizationEquiv.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "50490fa03c7b1de3a4eef8c521210ad263002f9abe8e7d7fa5eb3b7c10c4b2ce", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "4839c6214cb109a4d37ea78df1e7da68aedcd1afec2d2d1dc90ca844474f37dc"},
-    {"path": "MathlibExt/RingTheory/DedekindDomain/FiniteApproximation.lean", "disposition": "behind", "published_sha256": "6ff2a220d5ef7014a6afd8e293ec4276929a62f79a3444f9d00a38e1a7c77069", "upstream_commit": "011ef4af9e0106c3ed1d4ccf4f0b83f3eb1e2580", "upstream_sha256": "bf219d159ebb6baca9573584aea979448ae7815d3c8c55d3f0597e65b869230e"},
-    {"path": "MathlibExt/RingTheory/DedekindDomain/POrdering.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "a47cda7f2fe5c9191dfa75901aa3cfa005ab15200310a8a932652251f1dc4c2a", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "4798a5b0cf84f127e9cadbf86a59921f48de6bfb6ee48456ea007c73042b6341"},
-    {"path": "MathlibExt/RingTheory/DedekindDomain/PrincipalIdealQuotient.lean", "disposition": "identical", "published_sha256": "e27040804729ad32ae0ead8ccc28b8500a2edc9bfa6c8591855dd408d27e7ad4", "upstream_sha256": "77f99bf1778c85422dfa351ad7d3adac1583fcf51a082a008cb0e877ea1f33cc"},
-    {"path": "MathlibExt/RingTheory/DiscreteValuationRing/FiniteExtensionComplete.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "ea50a3c15377ce2cb1f61d65addd20edd9b24d9ceee713a7152d7b6bf11a5a94", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_commit": "5c0d33b268a9f4c41520b2244b94cf12fcb5887a", "upstream_sha256": "12298a67cbab3fdf411abf210dfabdccd96b4ad99cfb32e4f6a0b4a228b08ae9"},
-    {"path": "MathlibExt/RingTheory/DiscreteValuationRing/Hensel.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "659bc68ea601ab645dd38a651d00dd66752110a3bcc5dc0c2b956b5d79b2ab9c", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "fa07828803feadbc546c43842aeef965298e63994e427e898f046606b9f20810"},
-    {"path": "MathlibExt/RingTheory/DiscreteValuationRing/IntegralClosureComplete.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "34ecef632e9c53aede2f4eac8117c0726a74c8ccab0dc10843cb86ef8e0a5b3c", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_commit": "02df719e88e86ffc09f5aa1a639c3e26162d2aac", "upstream_sha256": "3574cddd1b04ed643de9cadc20e3921788a2ee371a407b8e9dccf7c0bdf0de28"},
-    {"path": "MathlibExt/RingTheory/DiscreteValuationRing/MaximalIdealGradedPiece.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "7fc651e81a64b87b589c5ff19f0b5c83baa824753a831bb572975c1f973739b7", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_commit": "ae1ddfac93950e9a106f95f9c83f089d32b9cdd1", "upstream_sha256": "c8d87218486a444e1ee3b13bad571a5f2c8d09bc7b87c7a54966d2e37ccb5411"},
-    {"path": "MathlibExt/RingTheory/DiscreteValuationRing/MaximalIdealGradedPieceMul.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "db47b0ec4332913ea95fa511eb388838a0c55e116101d16d97aaf8b2853304e8", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "2d3548ce412cc990c021a3342ea27ed99094dce268a24b8f29cde1680bf664e8"},
-    {"path": "MathlibExt/RingTheory/DiscreteValuationRing/MaximalIdealPowFactor.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "eaa84b57ba77813eb7036321c174f3631ac5922f31b4b327298394837b21d96c", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "c994e19abe95a966717f3e53d681fda13e752608e2b0cdfc8809b57f5897b7f6"},
-    {"path": "MathlibExt/RingTheory/DiscreteValuationRing/MaximalIdealPowQuotientTrace.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "6f33ee2c2a6ac838137c7cef8b5311cf5060f6759ccadf3d5a654264a25b35cd", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "8a1cb3b262b6205285e47d5a218f837b4fdf486455d06416bf8e5a39cba7d166"},
-    {"path": "MathlibExt/RingTheory/DiscreteValuationRing/Monogenic.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "638f5459d07dc62693d9ce0ce5967645e3ef1a163ec0d3a572daf8808bf74ebd", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "b344d0aeb5a723fc136f91bf41b8f22370717d87c849600e7b37679e28046d98"},
-    {"path": "MathlibExt/RingTheory/DiscreteValuationRing/RamificationFiltration.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "04a36e183fe4bfe5e8b7e4af2ca8ac22ff7cadafad9373bd91c2cb9809eab97a", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "f3e853c20f27319052850458d9dec10a4fe5890e6cef18dce4af73a18e30cf6d"},
-    {"path": "MathlibExt/RingTheory/DiscreteValuationRing/TameDifferent.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "995950634f57196cb5bfbb4e2a907f16529e79f602efb712d1c29569b7386971", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_commit": "ed2a08861b45ce7ce1522434c64c1dac46365416", "upstream_sha256": "68658191787d3294763a3ee341b8d0e05eb099cf3bd7fcaa985b03289a9558ca"},
-    {"path": "MathlibExt/RingTheory/Etale/SemisimpleBaseChange.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "8975500649af29ee09e083247d7df547cb14e80a50ba2dd6e66752629e83ab67", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "54ea834861f2b428e4a362304996f8849a835220f62af3648c6009c5e68899c3"},
-    {"path": "MathlibExt/RingTheory/Flat/KernelOfFlatSurjection.lean", "backport": "not-needed", "disposition": "diverged", "published_sha256": "91d3f0692cb2d6a60d1fa16dba6235c17b1000e649500f7410b7b67961c92b9d", "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "06f856ec87d71cbf3fe3e64675b645b27c9a2d0c23a6a1006597a6c9215fb733"},
-    {"path": "MathlibExt/RingTheory/FractionalIdeal/Dual.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "5726e57c10b0fc69ea4009e111d990788c2f1b239215f848bbd1798ec64c03fb", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_commit": "edc44ba5c6e8c68b8c8736396e9828ccc2c9c0b1", "upstream_sha256": "a98f7467e70e022ce5042e77fe7de43706fbfdddd28085655cb1451f50098a6a"},
-    {"path": "MathlibExt/RingTheory/FractionalIdeal/Extended.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "e9a6e88653304cced3d756326b637bab8e355146196fed2b0cb50e81ad198091", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "058a733760f5849917427459a329decb87d97f34fa285c9c767291c41879f195"},
-    {"path": "MathlibExt/RingTheory/FractionalIdeal/GroupAction.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "080c8beda0b4a3003d8fa7bcbd327d2b74f96b5c36d0271b736b9e96c749933b", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "0e71a173a042a427cf172e7b306df242a998eb57d2c662abb537b2fe84b9addb"},
-    {"path": "MathlibExt/RingTheory/FractionalIdeal/PrimeTo.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "a633422e69c6ebf8fcbaea043230c9f6f7745caae39f278313eb71a115cf75d1", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "8483ee3383a57ac8864f20f9f36f198d92da642bd70a6f84438d330af924adf0"},
-    {"path": "MathlibExt/RingTheory/FractionalIdeal/Spectrum.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "f772892e80374b52d35776cba8b8b56a2583693ac67cc20fb7708f1b02d87f52", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "c29ce37985f30cd9898283c37916d2e51456cc2bca70a27c38ff06e661e7cdd5"},
-    {"path": "MathlibExt/RingTheory/Frobenius/Abelian.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "ae2a035fd91ff1f106bd1d772ef6febff581f1e1f8abf71ec03af42863916e27", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "a6af6557233323a724b94620404d985f8da95e3bdb427eca9baf6b3301970977"},
-    {"path": "MathlibExt/RingTheory/Frobenius/ConjugacyClass.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "65c5241744e1e6172ac5c5ec185e5dd69d1f88e8a0c436e2b9dd8cb2156a9547", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "46734e218b6823629f8bc539bd058a27d8bc33dc9798bafe9990e56cf8704d16"},
-    {"path": "MathlibExt/RingTheory/Frobenius/Restriction.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "6af3a04defac7fc94ba3e9dd439b32aac176daff7f24d32487981c24d0f70f6a", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_commit": "24c2d01eacd151a9e996f131a6088925e057b87b", "upstream_sha256": "759d06bd368519e23400e95ff7d388bfe7583edfa2392ed1f86acff4a861fe6b"},
-    {"path": "MathlibExt/RingTheory/Frobenius/Splitting.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "b06191debd64d00c566c9639285f4480c8fa8e5394b8b73d4bb16ccdffdb1d6e", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "72ff75b8605b6833c799f5446961ed102d422c62c68ba08c715d4a3a3a5e4086"},
-    {"path": "MathlibExt/RingTheory/Frobenius/Unique.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "509b03d991c0323c44e212b26997283b2c96e3178cae8c8db58a4eb18a6a08f7", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "bc37d2907602531b080f62ad4deaaa7d6908ab03bd15473b041b94a2348767de"},
-    {"path": "MathlibExt/RingTheory/GradedAlgebra/FiniteHomogeneousGenerators.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "c923f8aa645f8f67798718973a32379142cf4dd4120a2e9207cbb4086430dc67", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_commit": "4b49e9e621caefb28b41cf75a833fa8652afb3ae", "upstream_sha256": "415e04ac66de84edf3eb5cede2af9026155f5f15e1dd380c2ab745771ec09cb9"},
-    {"path": "MathlibExt/RingTheory/GradedAlgebra/MultigradedBaseChangedDegreeComplex.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "5f4d087496e18a38c99ed4cbb1ea72be202554c392a5269e95f49f3006f1d82f", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "c3002fcc36427df8ab6f25eb943b08c4bedd999201cbfad3d88646c64807f95d"},
-    {"path": "MathlibExt/RingTheory/GradedAlgebra/MultigradedBaseChangedDegreePieceFinite.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "ca3eaea6f63442479c812aae02d882440f657adc5eed33c30127e91353ccf762", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "eb3b8bc3ff336516655ba51a821603f7d6e5b626c96ef336e0a84c242d044e16"},
-    {"path": "MathlibExt/RingTheory/GradedAlgebra/MultigradedBaseChangedDifferential.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "5f822f592eadadaee6f602d02035e4e648e1c5c5369515868bc937762ce77ed4", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "701e7fe7538c9e57fd87b6ef434565eda44c4b64f2f447c0009fa5af5db9706d"},
-    {"path": "MathlibExt/RingTheory/GradedAlgebra/MultigradedBaseChangedTermDecomposition.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "b261c878fa395fb88553bfe3c0febdd2f39acb804def346df9fb1d085abfde44", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "8a30f9ce4b1df80650e2cb41d90318e4f89a3a8746974f8a663dfaf066e3c85d"},
-    {"path": "MathlibExt/RingTheory/GradedAlgebra/MultigradedBetti.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "393dd7916a6bdaba77e3362904553a543cbf5ec06d284506b82b282a9c1b37d1", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "b679cccbfa5076ae4540acd6d21c221fd589a8b32a1f65b532cea596b6a4b30e"},
-    {"path": "MathlibExt/RingTheory/GradedAlgebra/MultigradedBettiInvariance.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "15c7fdeb543786c874aaf4839bb1f8fd174d4b99d60a4d40457a5851e06f6793", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "e16b415ee0a175dfa7be6e23145bfa98298a04b39ddfa71acdad86e2a1edc8e7"},
-    {"path": "MathlibExt/RingTheory/GradedAlgebra/MultigradedBettiResolutionInvariance.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "e45ad4362858fb416e486af3a165f8a03607c8efefd5d5c3d31ad65d5e451016", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "9d431195cfee1b94aa95dbe86963e8c4abf12da17d4e953d1120261541e51c1b"},
-    {"path": "MathlibExt/RingTheory/GradedAlgebra/MultigradedFreeResolution.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "72764dc28a84239f1f592ce8e161f40f55635173252c3a21dbb2e3bb28a9c37b", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "c6342891a9b32e2e60804e83e95fff96c7ebaf377f9c970421eab0e9e97b5f72"},
-    {"path": "MathlibExt/RingTheory/GradedAlgebra/MultigradedHilbertSyzygy.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "64ff704c993647154580027362511d5e57557bedf949623c3de742139c52409e", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991). Also adapted to the Lean, Mathlib, CSLib and Physlib v4.36.0 API changes (toolchain bump); formal-math needs the same changes when it moves to v4.36.0.", "upstream_sha256": "17b45f1852e217946aab7bbb1427d0908b374e1149459bba58ed3f12fa90d2fa"},
-    {"path": "MathlibExt/RingTheory/GradedAlgebra/MultigradedPoincareCoefficients.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "d7bdbcb1816620382908b7387168d030d0bb9a1ff4086dc4e050dbfa60e92e8c", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "7c8a9b85628ca8016dce06c084a57dab99b7d45c7b5f0c1ef52683a690b2af35"},
-    {"path": "MathlibExt/RingTheory/GradedAlgebra/MultigradedPoincareFiniteSupport.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "f36c3f7a0be3bf12ea1cbab5b2f3189ed6a739d37e49817e12300907fbe85584", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "f37e601fe6ea541458024a460361d10d06bb60cb1327264531dcc161793155a6"},
-    {"path": "MathlibExt/RingTheory/GradedAlgebra/MultigradedPoincarePolynomial.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "552e8f89f34c60a0a9a71425eca6e0fedff2a6bff0e36bcc8d3e9f92e2847303", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "eaadcec3864514d05269163483d5c8e4e7fe4985c788fd81b12c36e684ae4324"},
-    {"path": "MathlibExt/RingTheory/GradedAlgebra/MultigradedPolynomialModule.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "ae42c6ee0a198826d2a6dc7b3a9c48f9f42c2b1a245f4e75fe0b463e4afea422", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "197b69dc704ce0a58010917030c2d8910831bd1ceee9d84745cff4d189da22e1"},
-    {"path": "MathlibExt/RingTheory/GradedAlgebra/MultigradedZeroEvalBaseChange.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "736e9ff45d90d37de9187605c4fd2d39d9febcc07ebca8037d0131c4889af404", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "3c6ce0912cc30c2a7d74ff6874425351a45639206f89003dd7b24b4a1ea88542"},
-    {"path": "MathlibExt/RingTheory/Ideal/FlatCotangentBaseChange.lean", "backport": "not-needed", "disposition": "diverged", "published_sha256": "4195d8ff3c544715d61c705a435a68ae5093cbf336d8734e6ff3cc5c23d481ed", "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "d203e314e0806d41771b08d552e7a83043db90aa9b37f93b90f8479db88eb6eb"},
-    {"path": "MathlibExt/RingTheory/Ideal/IntegralKrullDim.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "9c41c7f62c5f8cf00189dc273cdaa384b3ca44ded5c509c371701a649ac3cdc7", "rationale": "ATLAS-side edit not in formal-math; last ATLAS change 2d4d53f8f (Expose integral Krull-dimension equality); Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "69c08ec314e78aa353b0f130fb94caf8e300219aff542fcb0ab6de96dd7ae38b"},
-    {"path": "MathlibExt/RingTheory/Ideal/PrimeExtension.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "9f38e124264f490085075c6df26f7c7fafaeba26dc018beb4ca3e3d41c3dd8f4", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "0246291789af36824bdde74d09bc5bd468fdac2f79c11f3d10f5498b3c972b6e"},
-    {"path": "MathlibExt/RingTheory/Ideal/WeakRegularCotangent.lean", "backport": "not-needed", "disposition": "diverged", "published_sha256": "50e91f567f3d1e9f70aedb6cb4dafb5a89cf24f108d431287c8d1af141da2d49", "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "328531a63438da309d028cba2c9b3e2086905e98079be054a780b39ba3e44754"},
-    {"path": "MathlibExt/RingTheory/Kaehler/DeRhamDifferential.lean", "backport": "not-needed", "disposition": "diverged", "published_sha256": "e5e4768e6ebf051f382e5f5ae13152bcd4056703518c23c9cedade84953fa92e", "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "ba46fcce96118ec4efc48c58db9924a380749123edcc97d48089fa6a48ff3bdf"},
-    {"path": "MathlibExt/RingTheory/Kaehler/DeRhamDifferential/ExteriorPower.lean", "backport": "not-needed", "disposition": "diverged", "published_sha256": "2893238d0fda91f64f74b971e85e4edfdca5bdfd7fed3bdb18ce2bdb13d4c85e", "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "2c74b7e3b99015bb9539fac5547dfed6ca76f06bfb39d571c2243f93fbf1bfb6"},
-    {"path": "MathlibExt/RingTheory/Kaehler/DeRhamDifferential/OneForm.lean", "backport": "not-needed", "disposition": "diverged", "published_sha256": "b694b93be82433a7f21ab20d90a1421cf12fef70362492d2a6226446b4c8d7e5", "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "239814c596a4be287ff9ec40fc9e627611fba6a9ad151bb1cc8c43932c2be12b"},
-    {"path": "MathlibExt/RingTheory/Kaehler/EtaleFormsBaseChange/Basic.lean", "backport": "not-needed", "disposition": "diverged", "published_sha256": "ccd647d97acbad5783121c72a79d952d9f3490fed4be0686800b6f07c3345859", "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "2fcef07e1a21611480a64d2ef03f77e3653940d13643898e4752c7f5a0982134"},
-    {"path": "MathlibExt/RingTheory/Length/AnnihilatorQuotient.lean", "backport": "not-needed", "disposition": "diverged", "published_sha256": "cc674d30522a662617343719a16e4a5a4dad86c7b39970b12c6033eaf92241ca", "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "63e6c38b77462557fb23757545a5249078eccc43291e784c4c9ab3c875b7cba6"},
-    {"path": "MathlibExt/RingTheory/Length/ExactEulerChain.lean", "backport": "not-needed", "disposition": "diverged", "published_sha256": "c3af52719c5d23a18ceb0f993c2522a8e63bc6ed3a2d29fa5093cfb9cdf020e1", "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary; the docstring of alternating_length_of_exact_chain states its hypothesis that every module through degree n has finite length.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "3a21b5f18cc1187c2d41a9b30164a95f1351a61e17f46cbf74b1bad0a3ca987d"},
-    {"path": "MathlibExt/RingTheory/LocalRing/Etale.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "ef3365a7a3423a2751aa2ee29373a365e52e21c338dad1806517908db6020c24", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "372a09c12081bec58a8523cc69b8b40952cd361475c28fd482fdfc46b7b3c559"},
-    {"path": "MathlibExt/RingTheory/LocalRing/Henselian.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "8c4ace5b9e687a9b1dc7ccc210acb6790f783f56c47a3c3ec1965ee7c086250d", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_commit": "4910fe7988c0e47f1f1e3d6e85b2e96dab29f07a", "upstream_sha256": "dd0fd09cb108d2fda73a1f9e2ad4152567c4aa1de0108261c497ff5ff18da320"},
-    {"path": "MathlibExt/RingTheory/LocalRing/ResidueField/AdjoinRootLift.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "d96a52934b747d64af1821b69d24b9d2d63d7a2e3307a435c83644c0513acc35", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "be6e5252116a5147b032daa623e38f53c7d8d1d789f5e2059be5709a7cbd9ae3"},
-    {"path": "MathlibExt/RingTheory/LocalRing/ResidueField/DVR.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "f2779ccf6453b6fb75808f987d3f325c6f6dd028cc6215e180b257b171ef990c", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_commit": "3cfea18727f0a71c218bf7396648f784ae7b8681", "upstream_sha256": "04c88f5ca97a7ba802a6041771f5430f6b8f68115430dd1df62ff7d29030ce71"},
-    {"path": "MathlibExt/RingTheory/LocalRing/ResidueField/DVRBijective.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "cc0ef6ee59d14fc48bb1e6520e424235238258722c314d302fafd5fd1913866c", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "62bbe7a8ebd98887308b8d0cf9102a62c60561a514757ce77dfeca371ba71cf4"},
-    {"path": "MathlibExt/RingTheory/LocalRing/ResidueField/DVRComplete.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "c391d3ddb00657cb0325e9a3763a215ff2ebfa343adc58f8255acffacda7d01d", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "864dcf7fd2c050ff95c2cd23d1062027c6f9bbf2fc000c46fdcafe89a39fa6fd"},
-    {"path": "MathlibExt/RingTheory/LocalRing/ResidueField/DVREquivalencePackage.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "6424543065b01628f39af359e16266996c20192ea729e83d31ef51e052b18618", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "751b162a0bcd94ad57548d756afa431351e52c2ce665f9f5887f5bfd2350c4b9"},
-    {"path": "MathlibExt/RingTheory/LocalRing/ResidueField/DVRFull.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "fefaa78bd61685a13430425529983ab05a367c0bfb4d77a49ea4c78ac049dc90", "rationale": "ATLAS-side edit not in formal-math; last ATLAS change 8efc5507b (Migrate ATLAS root libraries to Lean 4.35.0); Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "9782e590282b6949cb24ef7071ed6a098d27378906a8f2d7e347e5cd428846cf"},
-    {"path": "MathlibExt/RingTheory/Localization/AtPrime/Multiplicity.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "44a2820a449581b7aa1518c16433206980f44160bab358cf45219883f7f9c7ef", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "6d13d97a9b82c775ebea98670b54db746d7488cec9130ba6a388bc66e000a2f1"},
-    {"path": "MathlibExt/RingTheory/Localization/AtPrimeSurjective.lean", "backport": "not-needed", "disposition": "diverged", "published_sha256": "b7e177de981e900eec64463468a16c7df90931a1ac7c40f6de39ba62d948bcfc", "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "51539612b82dbb95c9487c41d82a208f504d60eea8ee38d54f6eb6b8aca6ada5"},
-    {"path": "MathlibExt/RingTheory/Localization/RegularAt.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "f8595b0a328a0dbde0fc71733401f21050f4deaeb1c65758f325bf23be85762a", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "8185304f6eb74ab164b2e5fd1ea55538f71ef7ed95bd72817f494a6d42376452"},
-    {"path": "MathlibExt/RingTheory/PiFieldDecomposition.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "be1add94f6a98a22ab66e453b8bd21c10b24cc4bab0a3ed8bfc1bfe485ed6f6d", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "b870ee2dbe12824281a6605bcde03dd761662fc4b6254f94c31bd20eab2eb974"},
-    {"path": "MathlibExt/RingTheory/PiFieldQuotient.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "4ebf6a038077b629c1059e53dafc023549e39496e376e2c252e9311bbdf02657", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "721f7079b79ec236e94e13d9de8e2468befc2f198b03f31570a560d5f1cab419"},
-    {"path": "MathlibExt/RingTheory/Polynomial/AdjoinRootTensorProduct.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "329172f29028dc1a8977146fec7608b788512485f9ef87f48a785c9e5474e1c2", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "8c3a023dbdfc14f3476f87266113e4be2443cd7553e5773fafb7869b5aaaf6ff"},
-    {"path": "MathlibExt/RingTheory/Polynomial/Eisenstein/AdjoinRoot.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "54c9184fb3b8300a5185d06ae4228ff49977180febe5c25d86e9bf72267a7255", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "e1d6e80d502dd082e716a5d3b589eee12a8c9058709eb6332139d44b3aca5730"},
-    {"path": "MathlibExt/RingTheory/Polynomial/HilbertSyzygy.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "2c446e28046eedd44d68ae7800f02178772b85bc328af4b69813dc075b2398d8", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991). Also adapted to the Lean, Mathlib, CSLib and Physlib v4.36.0 API changes (toolchain bump); formal-math needs the same changes when it moves to v4.36.0.", "upstream_sha256": "4617313548fd113538069c429f1b554487a29b38c2eda33649dc8b7a56d2f245"},
-    {"path": "MathlibExt/RingTheory/Polynomial/MorganVoycePolynomial.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "fe3b745ab9b0584bd604c29a1701903f99811ff62221e678be9c32b6de3e52fe", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "fac854f2f4bd07797ed87a1c73b20fcd10a2defba30e860397fc04d3e5e5878b"},
-    {"path": "MathlibExt/RingTheory/Polynomial/PairwiseSumResultant.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "64ce68adbfcbc10e97934af596d9a2ca574abde62884a1b958c33a0c2902b2f9", "rationale": "Moved from WantedExt/Algebra/PowerSeries/BinomialConvolutionRationalWanted.lean when the pairwise-sum resultant identity was proved, with the same declaration name and statement. Also: When `prod_one_sub_add_eq_resultant` moved here in #6322, its docstring carried the Atlas wiki audit restatement of #992, which the row of WantedExt/Algebra/PowerSeries/BinomialConvolutionRationalWanted.lean records as a pending backport; Formal-Math does not have that text yet (its backport is still owed)."},
-    {"path": "MathlibExt/RingTheory/PowerSeries/BellRiordanCentralCoefficient.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "de0ea45d19d3fdceafb8201202a5f947238d35605dbd9bec6aaa2c953b22eb7b", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_commit": "07bfc58092567cb1b35f4b053d271700f39588b8", "upstream_sha256": "743a073b0365639e70a5c63179f50aefa0c30172bdde69e2f9a36efbe3ab3041"},
-    {"path": "MathlibExt/RingTheory/PowerSeries/BinomialProduct.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "9254b586bb50491671b02d519484cb141f8e97fef3bfb0fc36be03a95b00fe18", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "15a2837c10afe28df0ecabd1d0a5bbb26250211195af1621d04191c672af5c0a"},
-    {"path": "MathlibExt/RingTheory/PowerSeries/BinomialProductGeometric.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "2f858486c023d7fb372a847e8e18a33a40e0d40c98bf6ec7b6a7f6711e8d227a", "rationale": "Moved from WantedExt/Algebra/PowerSeries/BinomialConvolutionRationalWanted.lean when the shifted geometric series identity was proved, with the same declaration name and statement. Also: Proved the geometric-parameter identity of Gessel and Kar, Corollary 5, with its original declaration name and statement."},
-    {"path": "MathlibExt/RingTheory/PowerSeries/BinomialProductMonomial.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "01a4125d80b6292d968fb62ad98b4aae71043d6c4e6be06cfcd2a522b2024b9f", "rationale": "Moved from WantedExt/Algebra/PowerSeries/BinomialConvolutionRationalWanted.lean when the binomial product with a monomial was proved, with the same declaration name and statement. Also: The moved docstring keeps ATLAS-side text from WantedExt/Algebra/PowerSeries/BinomialConvolutionRationalWanted.lean that Formal-Math does not have yet (its backport is still owed)."},
-    {"path": "MathlibExt/RingTheory/PowerSeries/BinomialProductRationalGeneral.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "1168a8ca10488a5670a390fba26442eee80de1dbf8e11b5036da88a8e6ea1992", "rationale": "Moved from WantedExt/Algebra/PowerSeries/BinomialConvolutionRationalWanted.lean when the binomial product theorem for arbitrary rational series was proved, with the same declaration name and statement. Also: The moved docstring keeps ATLAS-side text from WantedExt/Algebra/PowerSeries/BinomialConvolutionRationalWanted.lean that Formal-Math does not have yet (its backport is still owed)."},
-    {"path": "MathlibExt/RingTheory/PowerSeries/BinomialTransformGeneratingFunction.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "8d13b60e58345ffe59392ed5de9b1234e087505bb80124d32b496a9a47dba879", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "9b05153db3bd5f1091e535bda5a6399bb20e67dfbcde52429f8b29d88e469bbd"},
-    {"path": "MathlibExt/RingTheory/PowerSeries/Christol.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "0f7aa264b5db1c753abbeb2f770b6b31ce5c44868bd9453239a7501f3e0e5414", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991). Also adapted to the Lean, Mathlib, CSLib and Physlib v4.36.0 API changes (toolchain bump); formal-math needs the same changes when it moves to v4.36.0.", "upstream_sha256": "553ea93b22d5ffd968959bc9168a18704ea053b85b07f511f170baaee77f998a"},
-    {"path": "MathlibExt/RingTheory/PowerSeries/HadamardFibonacciProduct.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "a851c494b4c8de601fc9aafeb61273e0bff853853bb8f5b6643ed4f06a255508", "rationale": "Record the ATLAS-side changes already merged in 5a030cc0faeb0949db37b2d51cc38cb02d2bec7d (MathlibExt: retire private copies of Mathlib lemmas); the previous published hash predates those changes. Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "3acc52febdfe3f1dc37b0c1f7d45bc29dee5dc4d9c3acfa19657a3f835a85de0"},
-    {"path": "MathlibExt/RingTheory/PowerSeries/HadamardProductRational.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "cc8a4221fb23c53e1272737beddb4c07c292743d82a394189dd258b8d321e924", "rationale": "Moved from WantedExt/Algebra/PowerSeries/BinomialConvolutionRationalWanted.lean when the Hadamard product rationality theorem was proved, with the same declaration name and statement. The moved docstring keeps ATLAS-side text from WantedExt/Algebra/PowerSeries/BinomialConvolutionRationalWanted.lean that Formal-Math does not have yet (its backport is still owed)."},
-    {"path": "MathlibExt/RingTheory/PowerSeries/HermiteLagrangeDiagonal.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "0eb0aea5923d35ece493faadec8af0ec4428100ff46796f92fcd979150667dc9", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "238ee40662a50b2f6ec86ccd024f86f541e5df48171f2755874d0995d74d57f6"},
-    {"path": "MathlibExt/RingTheory/PowerSeries/HermiteLagrangeSeries.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "c7e93c7f91ca71034778a837540ebfde3c9d5fd5363b771fc80157e16e7d5b11", "rationale": "ATLAS-side edit not in formal-math; last ATLAS change 93f20f31c (Apply the copyright header rule to MathlibExt, MathlibExtTest, CSLibExt, CSLibExtTest and WantedExt) Record the ATLAS-side changes already merged in 5a030cc0faeb0949db37b2d51cc38cb02d2bec7d (MathlibExt: retire private copies of Mathlib lemmas); the previous published hash predates those changes. The author comment also names the AI as Meta Muse. Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "ca5325a307a8e08b87ba76e54ce59eff52cbefb0bc04c511c8656af9670ea4ab"},
-    {"path": "MathlibExt/RingTheory/PowerSeries/KaluzaCoefficientBounds.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "df7c07d546c58c775e2fb189911974d436983dc0a2618b783a29bebe5c7fb745", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "781aa2aa3f6d3f638e5383a98df81e5af507458a238753d6f19190368bf69203"},
-    {"path": "MathlibExt/RingTheory/PowerSeries/LagrangeBurmannCoefficient.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "e8f9b6e1e98ff866953772ecb17ea09981d16bcbe88118ca095f43e73c3feaf5", "rationale": "Record the ATLAS-side changes already merged in 5a030cc0faeb0949db37b2d51cc38cb02d2bec7d (MathlibExt: retire private copies of Mathlib lemmas); the previous published hash predates those changes. Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "10e7d5772aedaa1950f6637ad898c689bd1443ddcd9780483b20f73f9a0ad632"},
-    {"path": "MathlibExt/RingTheory/PowerSeries/PowerRecursion.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "be68b33f3cc63e4eeee01bd14e820fe9f264e6cb530bff5be80c58a4b7d8d239", "rationale": "Moved the positive-exponent power recursion from WantedExt/NumberTheory/GlaisherDivisorsInfiniteProductsWanted.lean into a proved module with the same declaration name and statement. Also: When `power_coeff_convolution_pow` moved here in #6237, its docstring carried the Atlas wiki audit restatement of #984, which the row of WantedExt/NumberTheory/GlaisherDivisorsInfiniteProductsWanted.lean records as a pending backport; Formal-Math does not have that text yet (its backport is still owed)."},
-    {"path": "MathlibExt/RingTheory/PowerSeries/PowerRecursionZPow.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "77d0f99ddf9179d44a37d96a6ad7eaa29a24c939c2e850bd53ed9c0478024725", "rationale": "The moved docstring keeps ATLAS-side text from WantedExt/NumberTheory/GlaisherDivisorsInfiniteProductsWanted.lean that Formal-Math does not have yet (its backport is still owed)."},
-    {"path": "MathlibExt/RingTheory/PowerSeries/RationalityDescent.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "4e6b95de21a3e7ab00040633966253532b998be30d3e7e4d155c5f508fe09554", "rationale": "Moved the rationality descent theorem from WantedExt/Algebra/PowerSeries/BinomialConvolutionRationalWanted.lean when proving Gessel and Kar's Theorem 1, with the same declaration name, statement, and ATLAS docstring. The proof and retained ATLAS docstring remain to be backported."},
-    {"path": "MathlibExt/RingTheory/PowerSeries/SeriesDivisorCalculus.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "51eaa2086442582211a45cabc1494bd31cbf6aa571e9be024a8bed8350d047aa", "rationale": "Moved and proved `series_divisor_calculus` from WantedExt/NumberTheory/GlaisherDivisorsInfiniteProductsWanted.lean, preserving its name, statement and docstring. The moved docstring retains the pending backport recorded for the wanted module."},
-    {"path": "MathlibExt/RingTheory/PowerSeries/SeriesDivisorInverseConvolution.lean", "backport": "not-needed", "disposition": "diverged", "published_sha256": "b288699fdf71b813da1b8ed88caa3cb46de0b8931139e74a2631ee5709ef3ef0", "rationale": "Moved the inverse convolution identities from WantedExt/NumberTheory/GlaisherDivisorsInfiniteProductsWanted.lean into a proved module with the same declaration name and statement."},
-    {"path": "MathlibExt/RingTheory/PowerSeries/SeriesDivisorPowRecursion.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "230afcc2763e4ebb366645b7b4c3e8dce367730a947d78732e10728dc7e65153", "rationale": "Moved the coefficient recursion for powers from WantedExt/NumberTheory/GlaisherDivisorsInfiniteProductsWanted.lean into a proved module with the same declaration name and statement. Also: The moved docstring keeps ATLAS-side text from WantedExt/NumberTheory/GlaisherDivisorsInfiniteProductsWanted.lean that Formal-Math does not have yet (its backport is still owed)."},
-    {"path": "MathlibExt/RingTheory/PowerSeries/SeriesDivisorProduct.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "059fae346b880f9035f5fa565904f0469b7f2a18d70ef86cbc97d61c537d3155", "rationale": "Moved the series-divisor product law from WantedExt/NumberTheory/GlaisherDivisorsInfiniteProductsWanted.lean into a proved module with the same declaration name and statement. Also: When `series_divisor_add_of_mul` moved here in #6450, its docstring carried the Atlas wiki audit restatement of #984, which the row of WantedExt/NumberTheory/GlaisherDivisorsInfiniteProductsWanted.lean records as a pending backport; Formal-Math does not have that text yet (its backport is still owed)."},
-    {"path": "MathlibExt/RingTheory/PowerSeries/TaylorFormula.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "a12ad88540e7ac36277c808a40c79c5533c102d73b47ee41d61698e7495e0994", "rationale": "ATLAS-side edit not in formal-math; last ATLAS change 93f20f31c (Apply the copyright header rule to MathlibExt, MathlibExtTest, CSLibExt, CSLibExtTest and WantedExt); Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "8bcc7e0998eb522872664c8adb00aa66e3687ebcf772bd1db2a21bd0971cf7ff"},
-    {"path": "MathlibExt/RingTheory/RamificationInertia/Valuation.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "7c35553526515eda517d2c259594c646a7b1989700793804a92077d33113cb17", "rationale": "ATLAS-side edit not in formal-math; last ATLAS change 8efc5507b (Migrate ATLAS root libraries to Lean 4.35.0); Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "c6227f2e3d7d025481dd64c1bff7bb94328280f18151365d423fa8636e4a0c97"},
-    {"path": "MathlibExt/RingTheory/RelativePDerivation.lean", "disposition": "identical", "published_sha256": "b07a4fb2a8f955adba2bf4306daaf878f466cfcc9dd0de5fa3f6038efb4b1b57", "upstream_sha256": "a39175617ffab1b086cffd49f143f5aa265a83d338608b73ff73f0927530cec0"},
-    {"path": "MathlibExt/RingTheory/Spectrum/Prime/GroupAction.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "6eda40235f1d09bbb5fad29d1f6f34ef9209af6c396cbfdfa4b6a06227867c86", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "7b37270d69aea2a9d53662ba30c5f39a982febe515e00e7c56749c9dd7b3ffb5"},
-    {"path": "MathlibExt/RingTheory/ZeroDivisorGraph.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "6aae4cf695425270120290edf8ab24dd6c433d6f2115fa4851ae5f49df9a0d7a", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "27ec6733e093de9da4a10b67bbb59e808602dae794b3fbeb382b5f0a5705e043"}
+    {
+      "path": "MathlibExt/RingTheory/AdjoinRoot/LocalMaximal.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "16131d6bed74c10da9b49fe33292512b79f9ee0340703c10d1115a2764e25d80",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "07015fd31b049a9978e6f981427bfd28bcc99019cdd9a8bd1dd756786b6ab828"
+    },
+    {
+      "path": "MathlibExt/RingTheory/ClassGroup/CoprimeRepresentative.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "0d82c1fc80beba85caa19630e1d58258bda84e4f205632928af910bca36eab3e",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991). Also: Adapted to the Lean, Mathlib, CSLib and Physlib v4.36.0 API changes (toolchain bump); formal-math needs the same changes when it moves to v4.36.0. Mathlib v4.36.0 declares ClassGroup.exists_mk0_eq_and_isCoprime, so ATLAS's theorem of that name is removed; its wiki page credits Mathlib's theorem.",
+      "upstream_sha256": "814f07e4f058bbbaf55a0da8ffd47812bd4730fea61a227079e1e6f46523bfb3"
+    },
+    {
+      "path": "MathlibExt/RingTheory/ConductorIdeal.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "37e809f377f00cbf950848b76d4ee9b59a2d0ff0fcd679123cc1c4dd2c6ba47e",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "7a76f0441cbecb5f570d72ef21d17fe63513223aa7648fd3fe8c4f3690047697"
+    },
+    {
+      "path": "MathlibExt/RingTheory/ConductorResidue.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "6397934097932007298666e053e05231c8326eea9651a17cf901929d4e30f1c1",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_commit": "88b1da92115ae896b78e79de002a99705ff0b03a",
+      "upstream_sha256": "dcd1799f03e46c3cb45515d6ea01f57e7c680569cecad34c6086ffa5fd3b6eaf"
+    },
+    {
+      "path": "MathlibExt/RingTheory/ConeRing.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "1328149a85f2ddc6d996155fd40bf634185c45dd136c61dbde826c096da55367",
+      "rationale": "Disambiguate the locally finite matrix addition law used by the scalar homomorphism proof on Lean 4.36; preserve the actual diagonal map.",
+      "upstream_commit": "11faf00241b371826000ec82975d096d2ab584d0",
+      "upstream_sha256": "54b1c438de5b22e6e0701646be2a810f922b55335e5f5b8395627611a0221ad2"
+    },
+    {
+      "path": "MathlibExt/RingTheory/ConeRing/InfiniteSum.lean",
+      "disposition": "identical",
+      "published_sha256": "00145f45c79dba49d5eab3637186c555e8743ebe8e56cb89fe7edec4e69ba15c",
+      "upstream_sha256": "d0c2f6ac7b3f6c762d62f6cd8fd6d1aa6961d53626464e92303b8739525a1e69"
+    },
+    {
+      "path": "MathlibExt/RingTheory/DedekindDomain/AdicCompletionIntegers.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "0704eec3b698912118b3459d1f9572d86ae23535a7b207269578c48076f55ac1",
+      "rationale": "ATLAS-side addition not in formal-math: the production module adds `adicCompletionIntegers_isAdicComplete` (the valuation ring of the `v`-adic completion of the fraction field of a Dedekind domain is complete for the adic topology of its maximal ideal, with no finiteness hypothesis on the residue field), adapted from anthropics/fermats-last-theorem with that project's Apache 2.0 notice after the Meta header and the imports its proof needs; its proof takes the discrete valuation ring instance of that valuation ring from Mathlib instead of reproving it, and the module docstring describes both results; the test module adds consumers of it over an arbitrary Dedekind domain and in higher universes. The production module also keeps its restated docstrings (Atlas wiki audit, #991).",
+      "upstream_sha256": "a486a77463cc6504ca4f7030cda5d68775f7b1691e4f5c7aeb7f41c1b5edb45f"
+    },
+    {
+      "path": "MathlibExt/RingTheory/DedekindDomain/AdicCompletionResidueField.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "f4df2bb8e24387766ec9ab2f23db125699e52a788987c9481cc9f4ad88ff6a5b",
+      "rationale": "ATLAS-side edit not in formal-math; last ATLAS change 8efc5507b (Migrate ATLAS root libraries to Lean 4.35.0); Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "1277a05ed74d9b6ab63e28fd103dda5f7debbcbbdc8361808dbec6ae84deea97"
+    },
+    {
+      "path": "MathlibExt/RingTheory/DedekindDomain/AdicValuation.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "1f766fcbc6a805fe85ce98f0ee06ea01524adb0f9063e29868f84bb18524ae78",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "ce68dd209dd6604e0ee43090dda38dff6dcaabbbaea8bd764c519f6a0f032740"
+    },
+    {
+      "path": "MathlibExt/RingTheory/DedekindDomain/DifferentDual.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "cd3235b826d528a2357f21e521511a99b5639bdbaca43a60187eba550a3e9281",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "27a440695275700151308cf8441b1c5743864730855d497aa3345adc28c05133"
+    },
+    {
+      "path": "MathlibExt/RingTheory/DedekindDomain/DifferentLocalization.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "b4ef050408f501cdeeb24d049f1cc0f1e8a4ec6b692567979bd0812bb8f45eb0",
+      "rationale": "ATLAS-side rename in #3965: anonymous instances get explicit `_mathlibExt` names, stable under a consumer import prefix. Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "1d39b62a3097be24891b5dfd4ea88226cf35fd23c98da86a0a1576fe41e48729"
+    },
+    {
+      "path": "MathlibExt/RingTheory/DedekindDomain/ElementDifferent.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "c9ccb2df7e1a6b60a3ef699edb418d127b0fcf633c69a556f96cf9da91a3e7a6",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "fc1ba8ec00a531c45bb69a786f3d6de80a19fda8b7117afeb145aefe88cc5599"
+    },
+    {
+      "path": "MathlibExt/RingTheory/DedekindDomain/FactorizationEquiv.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "50490fa03c7b1de3a4eef8c521210ad263002f9abe8e7d7fa5eb3b7c10c4b2ce",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "4839c6214cb109a4d37ea78df1e7da68aedcd1afec2d2d1dc90ca844474f37dc"
+    },
+    {
+      "path": "MathlibExt/RingTheory/DedekindDomain/FiniteApproximation.lean",
+      "disposition": "behind",
+      "published_sha256": "6ff2a220d5ef7014a6afd8e293ec4276929a62f79a3444f9d00a38e1a7c77069",
+      "upstream_commit": "011ef4af9e0106c3ed1d4ccf4f0b83f3eb1e2580",
+      "upstream_sha256": "bf219d159ebb6baca9573584aea979448ae7815d3c8c55d3f0597e65b869230e"
+    },
+    {
+      "path": "MathlibExt/RingTheory/DedekindDomain/POrdering.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "a47cda7f2fe5c9191dfa75901aa3cfa005ab15200310a8a932652251f1dc4c2a",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "4798a5b0cf84f127e9cadbf86a59921f48de6bfb6ee48456ea007c73042b6341"
+    },
+    {
+      "path": "MathlibExt/RingTheory/DedekindDomain/PrincipalIdealQuotient.lean",
+      "disposition": "identical",
+      "published_sha256": "e27040804729ad32ae0ead8ccc28b8500a2edc9bfa6c8591855dd408d27e7ad4",
+      "upstream_sha256": "77f99bf1778c85422dfa351ad7d3adac1583fcf51a082a008cb0e877ea1f33cc"
+    },
+    {
+      "path": "MathlibExt/RingTheory/DiscreteValuationRing/FiniteExtensionComplete.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "ea50a3c15377ce2cb1f61d65addd20edd9b24d9ceee713a7152d7b6bf11a5a94",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_commit": "5c0d33b268a9f4c41520b2244b94cf12fcb5887a",
+      "upstream_sha256": "12298a67cbab3fdf411abf210dfabdccd96b4ad99cfb32e4f6a0b4a228b08ae9"
+    },
+    {
+      "path": "MathlibExt/RingTheory/DiscreteValuationRing/Hensel.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "659bc68ea601ab645dd38a651d00dd66752110a3bcc5dc0c2b956b5d79b2ab9c",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "fa07828803feadbc546c43842aeef965298e63994e427e898f046606b9f20810"
+    },
+    {
+      "path": "MathlibExt/RingTheory/DiscreteValuationRing/IntegralClosureComplete.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "34ecef632e9c53aede2f4eac8117c0726a74c8ccab0dc10843cb86ef8e0a5b3c",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_commit": "02df719e88e86ffc09f5aa1a639c3e26162d2aac",
+      "upstream_sha256": "3574cddd1b04ed643de9cadc20e3921788a2ee371a407b8e9dccf7c0bdf0de28"
+    },
+    {
+      "path": "MathlibExt/RingTheory/DiscreteValuationRing/MaximalIdealGradedPiece.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "7fc651e81a64b87b589c5ff19f0b5c83baa824753a831bb572975c1f973739b7",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_commit": "ae1ddfac93950e9a106f95f9c83f089d32b9cdd1",
+      "upstream_sha256": "c8d87218486a444e1ee3b13bad571a5f2c8d09bc7b87c7a54966d2e37ccb5411"
+    },
+    {
+      "path": "MathlibExt/RingTheory/DiscreteValuationRing/MaximalIdealGradedPieceMul.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "db47b0ec4332913ea95fa511eb388838a0c55e116101d16d97aaf8b2853304e8",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "2d3548ce412cc990c021a3342ea27ed99094dce268a24b8f29cde1680bf664e8"
+    },
+    {
+      "path": "MathlibExt/RingTheory/DiscreteValuationRing/MaximalIdealPowFactor.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "eaa84b57ba77813eb7036321c174f3631ac5922f31b4b327298394837b21d96c",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "c994e19abe95a966717f3e53d681fda13e752608e2b0cdfc8809b57f5897b7f6"
+    },
+    {
+      "path": "MathlibExt/RingTheory/DiscreteValuationRing/MaximalIdealPowQuotientTrace.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "6f33ee2c2a6ac838137c7cef8b5311cf5060f6759ccadf3d5a654264a25b35cd",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "8a1cb3b262b6205285e47d5a218f837b4fdf486455d06416bf8e5a39cba7d166"
+    },
+    {
+      "path": "MathlibExt/RingTheory/DiscreteValuationRing/Monogenic.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "638f5459d07dc62693d9ce0ce5967645e3ef1a163ec0d3a572daf8808bf74ebd",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "b344d0aeb5a723fc136f91bf41b8f22370717d87c849600e7b37679e28046d98"
+    },
+    {
+      "path": "MathlibExt/RingTheory/DiscreteValuationRing/RamificationFiltration.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "04a36e183fe4bfe5e8b7e4af2ca8ac22ff7cadafad9373bd91c2cb9809eab97a",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "f3e853c20f27319052850458d9dec10a4fe5890e6cef18dce4af73a18e30cf6d"
+    },
+    {
+      "path": "MathlibExt/RingTheory/DiscreteValuationRing/TameDifferent.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "995950634f57196cb5bfbb4e2a907f16529e79f602efb712d1c29569b7386971",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_commit": "ed2a08861b45ce7ce1522434c64c1dac46365416",
+      "upstream_sha256": "68658191787d3294763a3ee341b8d0e05eb099cf3bd7fcaa985b03289a9558ca"
+    },
+    {
+      "path": "MathlibExt/RingTheory/Etale/SemisimpleBaseChange.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "8975500649af29ee09e083247d7df547cb14e80a50ba2dd6e66752629e83ab67",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "54ea834861f2b428e4a362304996f8849a835220f62af3648c6009c5e68899c3"
+    },
+    {
+      "path": "MathlibExt/RingTheory/FilteredAlgebra/AssociatedGraded.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "331ed16dbcd933b1085f9cee2fff2b240065810921cb471a210a983ba96dc203",
+      "rationale": "Atlas adaptation of the general natural-number associated-graded algebra API, retaining actual @toskua author attribution in the source header. Quotient multiplication uses native LinearMap.liftQ₂ and its representative rule with explicit reduction of the filtered-stage representative. The symbol map, additive induction and linear-map extensionality are placed before ring-filtration and multiplicative instances, so their statements require no ring-filtration hypothesis. Mathematical documentation cites the verified preceding-stage convention as background and does not assume exhaustivity. The original source origin is preserved.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "f8646c32e80f38da288210c40492467bfe96094f8aee85390333f37234163082"
+    },
+    {
+      "path": "MathlibExt/RingTheory/Flat/KernelOfFlatSurjection.lean",
+      "backport": "not-needed",
+      "disposition": "diverged",
+      "published_sha256": "91d3f0692cb2d6a60d1fa16dba6235c17b1000e649500f7410b7b67961c92b9d",
+      "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "06f856ec87d71cbf3fe3e64675b645b27c9a2d0c23a6a1006597a6c9215fb733"
+    },
+    {
+      "path": "MathlibExt/RingTheory/FractionalIdeal/Dual.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "5726e57c10b0fc69ea4009e111d990788c2f1b239215f848bbd1798ec64c03fb",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_commit": "edc44ba5c6e8c68b8c8736396e9828ccc2c9c0b1",
+      "upstream_sha256": "a98f7467e70e022ce5042e77fe7de43706fbfdddd28085655cb1451f50098a6a"
+    },
+    {
+      "path": "MathlibExt/RingTheory/FractionalIdeal/Extended.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "e9a6e88653304cced3d756326b637bab8e355146196fed2b0cb50e81ad198091",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "058a733760f5849917427459a329decb87d97f34fa285c9c767291c41879f195"
+    },
+    {
+      "path": "MathlibExt/RingTheory/FractionalIdeal/GroupAction.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "080c8beda0b4a3003d8fa7bcbd327d2b74f96b5c36d0271b736b9e96c749933b",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "0e71a173a042a427cf172e7b306df242a998eb57d2c662abb537b2fe84b9addb"
+    },
+    {
+      "path": "MathlibExt/RingTheory/FractionalIdeal/PrimeTo.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "a633422e69c6ebf8fcbaea043230c9f6f7745caae39f278313eb71a115cf75d1",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "8483ee3383a57ac8864f20f9f36f198d92da642bd70a6f84438d330af924adf0"
+    },
+    {
+      "path": "MathlibExt/RingTheory/FractionalIdeal/Spectrum.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "f772892e80374b52d35776cba8b8b56a2583693ac67cc20fb7708f1b02d87f52",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "c29ce37985f30cd9898283c37916d2e51456cc2bca70a27c38ff06e661e7cdd5"
+    },
+    {
+      "path": "MathlibExt/RingTheory/Frobenius/Abelian.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "ae2a035fd91ff1f106bd1d772ef6febff581f1e1f8abf71ec03af42863916e27",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "a6af6557233323a724b94620404d985f8da95e3bdb427eca9baf6b3301970977"
+    },
+    {
+      "path": "MathlibExt/RingTheory/Frobenius/ConjugacyClass.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "65c5241744e1e6172ac5c5ec185e5dd69d1f88e8a0c436e2b9dd8cb2156a9547",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "46734e218b6823629f8bc539bd058a27d8bc33dc9798bafe9990e56cf8704d16"
+    },
+    {
+      "path": "MathlibExt/RingTheory/Frobenius/Restriction.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "6af3a04defac7fc94ba3e9dd439b32aac176daff7f24d32487981c24d0f70f6a",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_commit": "24c2d01eacd151a9e996f131a6088925e057b87b",
+      "upstream_sha256": "759d06bd368519e23400e95ff7d388bfe7583edfa2392ed1f86acff4a861fe6b"
+    },
+    {
+      "path": "MathlibExt/RingTheory/Frobenius/Splitting.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "b06191debd64d00c566c9639285f4480c8fa8e5394b8b73d4bb16ccdffdb1d6e",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "72ff75b8605b6833c799f5446961ed102d422c62c68ba08c715d4a3a3a5e4086"
+    },
+    {
+      "path": "MathlibExt/RingTheory/Frobenius/Unique.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "509b03d991c0323c44e212b26997283b2c96e3178cae8c8db58a4eb18a6a08f7",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "bc37d2907602531b080f62ad4deaaa7d6908ab03bd15473b041b94a2348767de"
+    },
+    {
+      "path": "MathlibExt/RingTheory/GradedAlgebra/FiniteHomogeneousGenerators.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "c923f8aa645f8f67798718973a32379142cf4dd4120a2e9207cbb4086430dc67",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_commit": "4b49e9e621caefb28b41cf75a833fa8652afb3ae",
+      "upstream_sha256": "415e04ac66de84edf3eb5cede2af9026155f5f15e1dd380c2ab745771ec09cb9"
+    },
+    {
+      "path": "MathlibExt/RingTheory/GradedAlgebra/MultigradedBaseChangedDegreeComplex.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "5f4d087496e18a38c99ed4cbb1ea72be202554c392a5269e95f49f3006f1d82f",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "c3002fcc36427df8ab6f25eb943b08c4bedd999201cbfad3d88646c64807f95d"
+    },
+    {
+      "path": "MathlibExt/RingTheory/GradedAlgebra/MultigradedBaseChangedDegreePieceFinite.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "ca3eaea6f63442479c812aae02d882440f657adc5eed33c30127e91353ccf762",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "eb3b8bc3ff336516655ba51a821603f7d6e5b626c96ef336e0a84c242d044e16"
+    },
+    {
+      "path": "MathlibExt/RingTheory/GradedAlgebra/MultigradedBaseChangedDifferential.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "5f822f592eadadaee6f602d02035e4e648e1c5c5369515868bc937762ce77ed4",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "701e7fe7538c9e57fd87b6ef434565eda44c4b64f2f447c0009fa5af5db9706d"
+    },
+    {
+      "path": "MathlibExt/RingTheory/GradedAlgebra/MultigradedBaseChangedTermDecomposition.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "b261c878fa395fb88553bfe3c0febdd2f39acb804def346df9fb1d085abfde44",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "8a30f9ce4b1df80650e2cb41d90318e4f89a3a8746974f8a663dfaf066e3c85d"
+    },
+    {
+      "path": "MathlibExt/RingTheory/GradedAlgebra/MultigradedBetti.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "393dd7916a6bdaba77e3362904553a543cbf5ec06d284506b82b282a9c1b37d1",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "b679cccbfa5076ae4540acd6d21c221fd589a8b32a1f65b532cea596b6a4b30e"
+    },
+    {
+      "path": "MathlibExt/RingTheory/GradedAlgebra/MultigradedBettiInvariance.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "15c7fdeb543786c874aaf4839bb1f8fd174d4b99d60a4d40457a5851e06f6793",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "e16b415ee0a175dfa7be6e23145bfa98298a04b39ddfa71acdad86e2a1edc8e7"
+    },
+    {
+      "path": "MathlibExt/RingTheory/GradedAlgebra/MultigradedBettiResolutionInvariance.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "e45ad4362858fb416e486af3a165f8a03607c8efefd5d5c3d31ad65d5e451016",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "9d431195cfee1b94aa95dbe86963e8c4abf12da17d4e953d1120261541e51c1b"
+    },
+    {
+      "path": "MathlibExt/RingTheory/GradedAlgebra/MultigradedFreeResolution.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "72764dc28a84239f1f592ce8e161f40f55635173252c3a21dbb2e3bb28a9c37b",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "c6342891a9b32e2e60804e83e95fff96c7ebaf377f9c970421eab0e9e97b5f72"
+    },
+    {
+      "path": "MathlibExt/RingTheory/GradedAlgebra/MultigradedHilbertSyzygy.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "64ff704c993647154580027362511d5e57557bedf949623c3de742139c52409e",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991). Also adapted to the Lean, Mathlib, CSLib and Physlib v4.36.0 API changes (toolchain bump); formal-math needs the same changes when it moves to v4.36.0.",
+      "upstream_sha256": "17b45f1852e217946aab7bbb1427d0908b374e1149459bba58ed3f12fa90d2fa"
+    },
+    {
+      "path": "MathlibExt/RingTheory/GradedAlgebra/MultigradedPoincareCoefficients.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "d7bdbcb1816620382908b7387168d030d0bb9a1ff4086dc4e050dbfa60e92e8c",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "7c8a9b85628ca8016dce06c084a57dab99b7d45c7b5f0c1ef52683a690b2af35"
+    },
+    {
+      "path": "MathlibExt/RingTheory/GradedAlgebra/MultigradedPoincareFiniteSupport.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "f36c3f7a0be3bf12ea1cbab5b2f3189ed6a739d37e49817e12300907fbe85584",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "f37e601fe6ea541458024a460361d10d06bb60cb1327264531dcc161793155a6"
+    },
+    {
+      "path": "MathlibExt/RingTheory/GradedAlgebra/MultigradedPoincarePolynomial.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "552e8f89f34c60a0a9a71425eca6e0fedff2a6bff0e36bcc8d3e9f92e2847303",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "eaadcec3864514d05269163483d5c8e4e7fe4985c788fd81b12c36e684ae4324"
+    },
+    {
+      "path": "MathlibExt/RingTheory/GradedAlgebra/MultigradedPolynomialModule.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "ae42c6ee0a198826d2a6dc7b3a9c48f9f42c2b1a245f4e75fe0b463e4afea422",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "197b69dc704ce0a58010917030c2d8910831bd1ceee9d84745cff4d189da22e1"
+    },
+    {
+      "path": "MathlibExt/RingTheory/GradedAlgebra/MultigradedZeroEvalBaseChange.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "736e9ff45d90d37de9187605c4fd2d39d9febcc07ebca8037d0131c4889af404",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "3c6ce0912cc30c2a7d74ff6874425351a45639206f89003dd7b24b4a1ea88542"
+    },
+    {
+      "path": "MathlibExt/RingTheory/Ideal/FlatCotangentBaseChange.lean",
+      "backport": "not-needed",
+      "disposition": "diverged",
+      "published_sha256": "4195d8ff3c544715d61c705a435a68ae5093cbf336d8734e6ff3cc5c23d481ed",
+      "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "d203e314e0806d41771b08d552e7a83043db90aa9b37f93b90f8479db88eb6eb"
+    },
+    {
+      "path": "MathlibExt/RingTheory/Ideal/IntegralKrullDim.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "9c41c7f62c5f8cf00189dc273cdaa384b3ca44ded5c509c371701a649ac3cdc7",
+      "rationale": "ATLAS-side edit not in formal-math; last ATLAS change 2d4d53f8f (Expose integral Krull-dimension equality); Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "69c08ec314e78aa353b0f130fb94caf8e300219aff542fcb0ab6de96dd7ae38b"
+    },
+    {
+      "path": "MathlibExt/RingTheory/Ideal/PrimeExtension.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "9f38e124264f490085075c6df26f7c7fafaeba26dc018beb4ca3e3d41c3dd8f4",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "0246291789af36824bdde74d09bc5bd468fdac2f79c11f3d10f5498b3c972b6e"
+    },
+    {
+      "path": "MathlibExt/RingTheory/Ideal/WeakRegularCotangent.lean",
+      "backport": "not-needed",
+      "disposition": "diverged",
+      "published_sha256": "50e91f567f3d1e9f70aedb6cb4dafb5a89cf24f108d431287c8d1af141da2d49",
+      "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "328531a63438da309d028cba2c9b3e2086905e98079be054a780b39ba3e44754"
+    },
+    {
+      "path": "MathlibExt/RingTheory/Kaehler/DeRhamDifferential.lean",
+      "backport": "not-needed",
+      "disposition": "diverged",
+      "published_sha256": "e5e4768e6ebf051f382e5f5ae13152bcd4056703518c23c9cedade84953fa92e",
+      "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "ba46fcce96118ec4efc48c58db9924a380749123edcc97d48089fa6a48ff3bdf"
+    },
+    {
+      "path": "MathlibExt/RingTheory/Kaehler/DeRhamDifferential/ExteriorPower.lean",
+      "backport": "not-needed",
+      "disposition": "diverged",
+      "published_sha256": "2893238d0fda91f64f74b971e85e4edfdca5bdfd7fed3bdb18ce2bdb13d4c85e",
+      "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "2c74b7e3b99015bb9539fac5547dfed6ca76f06bfb39d571c2243f93fbf1bfb6"
+    },
+    {
+      "path": "MathlibExt/RingTheory/Kaehler/DeRhamDifferential/OneForm.lean",
+      "backport": "not-needed",
+      "disposition": "diverged",
+      "published_sha256": "b694b93be82433a7f21ab20d90a1421cf12fef70362492d2a6226446b4c8d7e5",
+      "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "239814c596a4be287ff9ec40fc9e627611fba6a9ad151bb1cc8c43932c2be12b"
+    },
+    {
+      "path": "MathlibExt/RingTheory/Kaehler/EtaleFormsBaseChange/Basic.lean",
+      "backport": "not-needed",
+      "disposition": "diverged",
+      "published_sha256": "ccd647d97acbad5783121c72a79d952d9f3490fed4be0686800b6f07c3345859",
+      "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "2fcef07e1a21611480a64d2ef03f77e3653940d13643898e4752c7f5a0982134"
+    },
+    {
+      "path": "MathlibExt/RingTheory/Length/AnnihilatorQuotient.lean",
+      "backport": "not-needed",
+      "disposition": "diverged",
+      "published_sha256": "cc674d30522a662617343719a16e4a5a4dad86c7b39970b12c6033eaf92241ca",
+      "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "63e6c38b77462557fb23757545a5249078eccc43291e784c4c9ab3c875b7cba6"
+    },
+    {
+      "path": "MathlibExt/RingTheory/Length/ExactEulerChain.lean",
+      "backport": "not-needed",
+      "disposition": "diverged",
+      "published_sha256": "c3af52719c5d23a18ceb0f993c2522a8e63bc6ed3a2d29fa5093cfb9cdf020e1",
+      "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary; the docstring of alternating_length_of_exact_chain states its hypothesis that every module through degree n has finite length.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "3a21b5f18cc1187c2d41a9b30164a95f1351a61e17f46cbf74b1bad0a3ca987d"
+    },
+    {
+      "path": "MathlibExt/RingTheory/LocalRing/Etale.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "ef3365a7a3423a2751aa2ee29373a365e52e21c338dad1806517908db6020c24",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "372a09c12081bec58a8523cc69b8b40952cd361475c28fd482fdfc46b7b3c559"
+    },
+    {
+      "path": "MathlibExt/RingTheory/LocalRing/Henselian.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "8c4ace5b9e687a9b1dc7ccc210acb6790f783f56c47a3c3ec1965ee7c086250d",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_commit": "4910fe7988c0e47f1f1e3d6e85b2e96dab29f07a",
+      "upstream_sha256": "dd0fd09cb108d2fda73a1f9e2ad4152567c4aa1de0108261c497ff5ff18da320"
+    },
+    {
+      "path": "MathlibExt/RingTheory/LocalRing/ResidueField/AdjoinRootLift.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "d96a52934b747d64af1821b69d24b9d2d63d7a2e3307a435c83644c0513acc35",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "be6e5252116a5147b032daa623e38f53c7d8d1d789f5e2059be5709a7cbd9ae3"
+    },
+    {
+      "path": "MathlibExt/RingTheory/LocalRing/ResidueField/DVR.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "f2779ccf6453b6fb75808f987d3f325c6f6dd028cc6215e180b257b171ef990c",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_commit": "3cfea18727f0a71c218bf7396648f784ae7b8681",
+      "upstream_sha256": "04c88f5ca97a7ba802a6041771f5430f6b8f68115430dd1df62ff7d29030ce71"
+    },
+    {
+      "path": "MathlibExt/RingTheory/LocalRing/ResidueField/DVRBijective.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "cc0ef6ee59d14fc48bb1e6520e424235238258722c314d302fafd5fd1913866c",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "62bbe7a8ebd98887308b8d0cf9102a62c60561a514757ce77dfeca371ba71cf4"
+    },
+    {
+      "path": "MathlibExt/RingTheory/LocalRing/ResidueField/DVRComplete.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "c391d3ddb00657cb0325e9a3763a215ff2ebfa343adc58f8255acffacda7d01d",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "864dcf7fd2c050ff95c2cd23d1062027c6f9bbf2fc000c46fdcafe89a39fa6fd"
+    },
+    {
+      "path": "MathlibExt/RingTheory/LocalRing/ResidueField/DVREquivalencePackage.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "6424543065b01628f39af359e16266996c20192ea729e83d31ef51e052b18618",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "751b162a0bcd94ad57548d756afa431351e52c2ce665f9f5887f5bfd2350c4b9"
+    },
+    {
+      "path": "MathlibExt/RingTheory/LocalRing/ResidueField/DVRFull.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "fefaa78bd61685a13430425529983ab05a367c0bfb4d77a49ea4c78ac049dc90",
+      "rationale": "ATLAS-side edit not in formal-math; last ATLAS change 8efc5507b (Migrate ATLAS root libraries to Lean 4.35.0); Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "9782e590282b6949cb24ef7071ed6a098d27378906a8f2d7e347e5cd428846cf"
+    },
+    {
+      "path": "MathlibExt/RingTheory/Localization/AtPrime/Multiplicity.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "44a2820a449581b7aa1518c16433206980f44160bab358cf45219883f7f9c7ef",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "6d13d97a9b82c775ebea98670b54db746d7488cec9130ba6a388bc66e000a2f1"
+    },
+    {
+      "path": "MathlibExt/RingTheory/Localization/AtPrimeSurjective.lean",
+      "backport": "not-needed",
+      "disposition": "diverged",
+      "published_sha256": "b7e177de981e900eec64463468a16c7df90931a1ac7c40f6de39ba62d948bcfc",
+      "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "51539612b82dbb95c9487c41d82a208f504d60eea8ee38d54f6eb6b8aca6ada5"
+    },
+    {
+      "path": "MathlibExt/RingTheory/Localization/RegularAt.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "f8595b0a328a0dbde0fc71733401f21050f4deaeb1c65758f325bf23be85762a",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "8185304f6eb74ab164b2e5fd1ea55538f71ef7ed95bd72817f494a6d42376452"
+    },
+    {
+      "path": "MathlibExt/RingTheory/PiFieldDecomposition.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "be1add94f6a98a22ab66e453b8bd21c10b24cc4bab0a3ed8bfc1bfe485ed6f6d",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "b870ee2dbe12824281a6605bcde03dd761662fc4b6254f94c31bd20eab2eb974"
+    },
+    {
+      "path": "MathlibExt/RingTheory/PiFieldQuotient.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "4ebf6a038077b629c1059e53dafc023549e39496e376e2c252e9311bbdf02657",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "721f7079b79ec236e94e13d9de8e2468befc2f198b03f31570a560d5f1cab419"
+    },
+    {
+      "path": "MathlibExt/RingTheory/Polynomial/AdjoinRootTensorProduct.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "329172f29028dc1a8977146fec7608b788512485f9ef87f48a785c9e5474e1c2",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "8c3a023dbdfc14f3476f87266113e4be2443cd7553e5773fafb7869b5aaaf6ff"
+    },
+    {
+      "path": "MathlibExt/RingTheory/Polynomial/Eisenstein/AdjoinRoot.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "54c9184fb3b8300a5185d06ae4228ff49977180febe5c25d86e9bf72267a7255",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "e1d6e80d502dd082e716a5d3b589eee12a8c9058709eb6332139d44b3aca5730"
+    },
+    {
+      "path": "MathlibExt/RingTheory/Polynomial/HilbertSyzygy.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "2c446e28046eedd44d68ae7800f02178772b85bc328af4b69813dc075b2398d8",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991). Also adapted to the Lean, Mathlib, CSLib and Physlib v4.36.0 API changes (toolchain bump); formal-math needs the same changes when it moves to v4.36.0.",
+      "upstream_sha256": "4617313548fd113538069c429f1b554487a29b38c2eda33649dc8b7a56d2f245"
+    },
+    {
+      "path": "MathlibExt/RingTheory/Polynomial/MorganVoycePolynomial.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "fe3b745ab9b0584bd604c29a1701903f99811ff62221e678be9c32b6de3e52fe",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "fac854f2f4bd07797ed87a1c73b20fcd10a2defba30e860397fc04d3e5e5878b"
+    },
+    {
+      "path": "MathlibExt/RingTheory/Polynomial/PairwiseSumResultant.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "64ce68adbfcbc10e97934af596d9a2ca574abde62884a1b958c33a0c2902b2f9",
+      "rationale": "Moved from WantedExt/Algebra/PowerSeries/BinomialConvolutionRationalWanted.lean when the pairwise-sum resultant identity was proved, with the same declaration name and statement. Also: When `prod_one_sub_add_eq_resultant` moved here in #6322, its docstring carried the Atlas wiki audit restatement of #992, which the row of WantedExt/Algebra/PowerSeries/BinomialConvolutionRationalWanted.lean records as a pending backport; Formal-Math does not have that text yet (its backport is still owed)."
+    },
+    {
+      "path": "MathlibExt/RingTheory/PowerSeries/BellRiordanCentralCoefficient.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "de0ea45d19d3fdceafb8201202a5f947238d35605dbd9bec6aaa2c953b22eb7b",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_commit": "07bfc58092567cb1b35f4b053d271700f39588b8",
+      "upstream_sha256": "743a073b0365639e70a5c63179f50aefa0c30172bdde69e2f9a36efbe3ab3041"
+    },
+    {
+      "path": "MathlibExt/RingTheory/PowerSeries/BinomialProduct.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "9254b586bb50491671b02d519484cb141f8e97fef3bfb0fc36be03a95b00fe18",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "15a2837c10afe28df0ecabd1d0a5bbb26250211195af1621d04191c672af5c0a"
+    },
+    {
+      "path": "MathlibExt/RingTheory/PowerSeries/BinomialProductGeometric.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "2f858486c023d7fb372a847e8e18a33a40e0d40c98bf6ec7b6a7f6711e8d227a",
+      "rationale": "Moved from WantedExt/Algebra/PowerSeries/BinomialConvolutionRationalWanted.lean when the shifted geometric series identity was proved, with the same declaration name and statement. Also: Proved the geometric-parameter identity of Gessel and Kar, Corollary 5, with its original declaration name and statement."
+    },
+    {
+      "path": "MathlibExt/RingTheory/PowerSeries/BinomialProductMonomial.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "01a4125d80b6292d968fb62ad98b4aae71043d6c4e6be06cfcd2a522b2024b9f",
+      "rationale": "Moved from WantedExt/Algebra/PowerSeries/BinomialConvolutionRationalWanted.lean when the binomial product with a monomial was proved, with the same declaration name and statement. Also: The moved docstring keeps ATLAS-side text from WantedExt/Algebra/PowerSeries/BinomialConvolutionRationalWanted.lean that Formal-Math does not have yet (its backport is still owed)."
+    },
+    {
+      "path": "MathlibExt/RingTheory/PowerSeries/BinomialProductRationalGeneral.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "1168a8ca10488a5670a390fba26442eee80de1dbf8e11b5036da88a8e6ea1992",
+      "rationale": "Moved from WantedExt/Algebra/PowerSeries/BinomialConvolutionRationalWanted.lean when the binomial product theorem for arbitrary rational series was proved, with the same declaration name and statement. Also: The moved docstring keeps ATLAS-side text from WantedExt/Algebra/PowerSeries/BinomialConvolutionRationalWanted.lean that Formal-Math does not have yet (its backport is still owed)."
+    },
+    {
+      "path": "MathlibExt/RingTheory/PowerSeries/BinomialTransformGeneratingFunction.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "8d13b60e58345ffe59392ed5de9b1234e087505bb80124d32b496a9a47dba879",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "9b05153db3bd5f1091e535bda5a6399bb20e67dfbcde52429f8b29d88e469bbd"
+    },
+    {
+      "path": "MathlibExt/RingTheory/PowerSeries/Christol.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "0f7aa264b5db1c753abbeb2f770b6b31ce5c44868bd9453239a7501f3e0e5414",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991). Also adapted to the Lean, Mathlib, CSLib and Physlib v4.36.0 API changes (toolchain bump); formal-math needs the same changes when it moves to v4.36.0.",
+      "upstream_sha256": "553ea93b22d5ffd968959bc9168a18704ea053b85b07f511f170baaee77f998a"
+    },
+    {
+      "path": "MathlibExt/RingTheory/PowerSeries/HadamardFibonacciProduct.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "a851c494b4c8de601fc9aafeb61273e0bff853853bb8f5b6643ed4f06a255508",
+      "rationale": "Record the ATLAS-side changes already merged in 5a030cc0faeb0949db37b2d51cc38cb02d2bec7d (MathlibExt: retire private copies of Mathlib lemmas); the previous published hash predates those changes. Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "3acc52febdfe3f1dc37b0c1f7d45bc29dee5dc4d9c3acfa19657a3f835a85de0"
+    },
+    {
+      "path": "MathlibExt/RingTheory/PowerSeries/HadamardProductRational.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "cc8a4221fb23c53e1272737beddb4c07c292743d82a394189dd258b8d321e924",
+      "rationale": "Moved from WantedExt/Algebra/PowerSeries/BinomialConvolutionRationalWanted.lean when the Hadamard product rationality theorem was proved, with the same declaration name and statement. The moved docstring keeps ATLAS-side text from WantedExt/Algebra/PowerSeries/BinomialConvolutionRationalWanted.lean that Formal-Math does not have yet (its backport is still owed)."
+    },
+    {
+      "path": "MathlibExt/RingTheory/PowerSeries/HermiteLagrangeDiagonal.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "0eb0aea5923d35ece493faadec8af0ec4428100ff46796f92fcd979150667dc9",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "238ee40662a50b2f6ec86ccd024f86f541e5df48171f2755874d0995d74d57f6"
+    },
+    {
+      "path": "MathlibExt/RingTheory/PowerSeries/HermiteLagrangeSeries.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "c7e93c7f91ca71034778a837540ebfde3c9d5fd5363b771fc80157e16e7d5b11",
+      "rationale": "ATLAS-side edit not in formal-math; last ATLAS change 93f20f31c (Apply the copyright header rule to MathlibExt, MathlibExtTest, CSLibExt, CSLibExtTest and WantedExt) Record the ATLAS-side changes already merged in 5a030cc0faeb0949db37b2d51cc38cb02d2bec7d (MathlibExt: retire private copies of Mathlib lemmas); the previous published hash predates those changes. The author comment also names the AI as Meta Muse. Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "ca5325a307a8e08b87ba76e54ce59eff52cbefb0bc04c511c8656af9670ea4ab"
+    },
+    {
+      "path": "MathlibExt/RingTheory/PowerSeries/KaluzaCoefficientBounds.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "df7c07d546c58c775e2fb189911974d436983dc0a2618b783a29bebe5c7fb745",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "781aa2aa3f6d3f638e5383a98df81e5af507458a238753d6f19190368bf69203"
+    },
+    {
+      "path": "MathlibExt/RingTheory/PowerSeries/LagrangeBurmannCoefficient.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "e8f9b6e1e98ff866953772ecb17ea09981d16bcbe88118ca095f43e73c3feaf5",
+      "rationale": "Record the ATLAS-side changes already merged in 5a030cc0faeb0949db37b2d51cc38cb02d2bec7d (MathlibExt: retire private copies of Mathlib lemmas); the previous published hash predates those changes. Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "10e7d5772aedaa1950f6637ad898c689bd1443ddcd9780483b20f73f9a0ad632"
+    },
+    {
+      "path": "MathlibExt/RingTheory/PowerSeries/PowerRecursion.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "be68b33f3cc63e4eeee01bd14e820fe9f264e6cb530bff5be80c58a4b7d8d239",
+      "rationale": "Moved the positive-exponent power recursion from WantedExt/NumberTheory/GlaisherDivisorsInfiniteProductsWanted.lean into a proved module with the same declaration name and statement. Also: When `power_coeff_convolution_pow` moved here in #6237, its docstring carried the Atlas wiki audit restatement of #984, which the row of WantedExt/NumberTheory/GlaisherDivisorsInfiniteProductsWanted.lean records as a pending backport; Formal-Math does not have that text yet (its backport is still owed)."
+    },
+    {
+      "path": "MathlibExt/RingTheory/PowerSeries/PowerRecursionZPow.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "77d0f99ddf9179d44a37d96a6ad7eaa29a24c939c2e850bd53ed9c0478024725",
+      "rationale": "The moved docstring keeps ATLAS-side text from WantedExt/NumberTheory/GlaisherDivisorsInfiniteProductsWanted.lean that Formal-Math does not have yet (its backport is still owed)."
+    },
+    {
+      "path": "MathlibExt/RingTheory/PowerSeries/RationalityDescent.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "4e6b95de21a3e7ab00040633966253532b998be30d3e7e4d155c5f508fe09554",
+      "rationale": "Moved the rationality descent theorem from WantedExt/Algebra/PowerSeries/BinomialConvolutionRationalWanted.lean when proving Gessel and Kar's Theorem 1, with the same declaration name, statement, and ATLAS docstring. The proof and retained ATLAS docstring remain to be backported."
+    },
+    {
+      "path": "MathlibExt/RingTheory/PowerSeries/SeriesDivisorCalculus.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "51eaa2086442582211a45cabc1494bd31cbf6aa571e9be024a8bed8350d047aa",
+      "rationale": "Moved and proved `series_divisor_calculus` from WantedExt/NumberTheory/GlaisherDivisorsInfiniteProductsWanted.lean, preserving its name, statement and docstring. The moved docstring retains the pending backport recorded for the wanted module."
+    },
+    {
+      "path": "MathlibExt/RingTheory/PowerSeries/SeriesDivisorInverseConvolution.lean",
+      "backport": "not-needed",
+      "disposition": "diverged",
+      "published_sha256": "b288699fdf71b813da1b8ed88caa3cb46de0b8931139e74a2631ee5709ef3ef0",
+      "rationale": "Moved the inverse convolution identities from WantedExt/NumberTheory/GlaisherDivisorsInfiniteProductsWanted.lean into a proved module with the same declaration name and statement."
+    },
+    {
+      "path": "MathlibExt/RingTheory/PowerSeries/SeriesDivisorPowRecursion.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "230afcc2763e4ebb366645b7b4c3e8dce367730a947d78732e10728dc7e65153",
+      "rationale": "Moved the coefficient recursion for powers from WantedExt/NumberTheory/GlaisherDivisorsInfiniteProductsWanted.lean into a proved module with the same declaration name and statement. Also: The moved docstring keeps ATLAS-side text from WantedExt/NumberTheory/GlaisherDivisorsInfiniteProductsWanted.lean that Formal-Math does not have yet (its backport is still owed)."
+    },
+    {
+      "path": "MathlibExt/RingTheory/PowerSeries/SeriesDivisorProduct.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "059fae346b880f9035f5fa565904f0469b7f2a18d70ef86cbc97d61c537d3155",
+      "rationale": "Moved the series-divisor product law from WantedExt/NumberTheory/GlaisherDivisorsInfiniteProductsWanted.lean into a proved module with the same declaration name and statement. Also: When `series_divisor_add_of_mul` moved here in #6450, its docstring carried the Atlas wiki audit restatement of #984, which the row of WantedExt/NumberTheory/GlaisherDivisorsInfiniteProductsWanted.lean records as a pending backport; Formal-Math does not have that text yet (its backport is still owed)."
+    },
+    {
+      "path": "MathlibExt/RingTheory/PowerSeries/TaylorFormula.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "a12ad88540e7ac36277c808a40c79c5533c102d73b47ee41d61698e7495e0994",
+      "rationale": "ATLAS-side edit not in formal-math; last ATLAS change 93f20f31c (Apply the copyright header rule to MathlibExt, MathlibExtTest, CSLibExt, CSLibExtTest and WantedExt); Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "8bcc7e0998eb522872664c8adb00aa66e3687ebcf772bd1db2a21bd0971cf7ff"
+    },
+    {
+      "path": "MathlibExt/RingTheory/RamificationInertia/Valuation.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "7c35553526515eda517d2c259594c646a7b1989700793804a92077d33113cb17",
+      "rationale": "ATLAS-side edit not in formal-math; last ATLAS change 8efc5507b (Migrate ATLAS root libraries to Lean 4.35.0); Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "c6227f2e3d7d025481dd64c1bff7bb94328280f18151365d423fa8636e4a0c97"
+    },
+    {
+      "path": "MathlibExt/RingTheory/RelativePDerivation.lean",
+      "disposition": "identical",
+      "published_sha256": "b07a4fb2a8f955adba2bf4306daaf878f466cfcc9dd0de5fa3f6038efb4b1b57",
+      "upstream_sha256": "a39175617ffab1b086cffd49f143f5aa265a83d338608b73ff73f0927530cec0"
+    },
+    {
+      "path": "MathlibExt/RingTheory/Spectrum/Prime/GroupAction.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "6eda40235f1d09bbb5fad29d1f6f34ef9209af6c396cbfdfa4b6a06227867c86",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "7b37270d69aea2a9d53662ba30c5f39a982febe515e00e7c56749c9dd7b3ffb5"
+    },
+    {
+      "path": "MathlibExt/RingTheory/ZeroDivisorGraph.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "6aae4cf695425270120290edf8ab24dd6c433d6f2115fa4851ae5f49df9a0d7a",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "27ec6733e093de9da4a10b67bbb59e808602dae794b3fbeb382b5f0a5705e043"
+    }
   ]
 }
