@@ -1,7 +1,7 @@
 # Shimura's abelian subvariety $C$ and the quotient $(A, \nu, \theta)$
 
 Let $N$ be a positive integer, $\Gamma$ a group of level $N$, $J$ the Jacobian of its
-[modular curve](../../../NumberTheory/modular-forms-q-series/modular-forms/modular-curve-of-a-group-of-level-n.md), defined over $\mathbb{Q}$, $\mathfrak{T}$ its
+[modular curve](../../../NumberTheory/modular-forms-q-series/modular-forms/modular-curves-and-hecke-operators-of-level-n/modular-curve-of-a-group-of-level-n.md), defined over $\mathbb{Q}$, $\mathfrak{T}$ its
 [Hecke algebra](hecke-algebra-of-the-modular-jacobian.md), $f = \sum a_n e^{2 \pi i n z}$ a normalized common eigenfunction
 of the $T_n$ in $S_2(\Gamma)$ with field $K$, and $\rho$, $\rho' \colon K \to \mathfrak{K}_1$ and $\mathfrak{U}$ as in
 [the ideal $\mathfrak{U}$](ideal-of-the-hecke-algebra-attached-to-an-eigenform.md). For a subset $X$ of
@@ -19,7 +19,7 @@ $\alpha \in \mathfrak{U} \cap \mathrm{End}(J)$. Then:
 
 ## Depends on
 
-- [Modular curve of a group of level $N$ and its standard model over $\mathbb{Q}$](../../../NumberTheory/modular-forms-q-series/modular-forms/modular-curve-of-a-group-of-level-n.md), for $J$ over $\mathbb{Q}$
+- [Modular curve of a group of level $N$ and its standard model over $\mathbb{Q}$](../../../NumberTheory/modular-forms-q-series/modular-forms/modular-curves-and-hecke-operators-of-level-n/modular-curve-of-a-group-of-level-n.md), for $J$ over $\mathbb{Q}$
 - [Hecke algebra of the Jacobian of a modular curve](hecke-algebra-of-the-modular-jacobian.md)
 - [The ideal $\mathfrak{U}$ of the Hecke algebra attached to an eigenform](ideal-of-the-hecke-algebra-attached-to-an-eigenform.md)
 - [Quotient of an abelian variety by an abelian subvariety](../../abelian-varieties/quotient-by-an-abelian-subvariety.md)
@@ -28,7 +28,7 @@ $\alpha \in \mathfrak{U} \cap \mathrm{End}(J)$. Then:
 ## Proof depends on
 
 - [Quotient of an abelian variety by an abelian subvariety](../../abelian-varieties/quotient-by-an-abelian-subvariety.md), for the existence of the quotient over $\mathbb{Q}$ and its universal property
-- [Hecke endomorphisms $\xi_n$ of the Jacobian of a modular curve](../../../NumberTheory/modular-forms-q-series/modular-forms/hecke-endomorphisms-of-the-modular-jacobian.md), for the rationality of the $\xi_n$ over $\mathbb{Q}$
+- [Hecke endomorphisms $\xi_n$ of the Jacobian of a modular curve](../../../NumberTheory/modular-forms-q-series/modular-forms/modular-curves-and-hecke-operators-of-level-n/hecke-endomorphisms-of-the-modular-jacobian.md), for the rationality of the $\xi_n$ over $\mathbb{Q}$
 - [The ideal $\mathfrak{U}$ of the Hecke algebra attached to an eigenform](ideal-of-the-hecke-algebra-attached-to-an-eigenform.md), for the ideal $\mathfrak{U}$ and $\xi_n - \rho'(a_n) \in \mathfrak{U}$
 
 ## Expansion

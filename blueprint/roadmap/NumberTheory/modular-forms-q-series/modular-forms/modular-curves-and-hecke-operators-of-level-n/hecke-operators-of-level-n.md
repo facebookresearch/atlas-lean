@@ -14,7 +14,7 @@ $\Gamma \alpha \Gamma = \bigsqcup_\nu \Gamma \alpha_\nu$ of right cosets, and
 $$f \mid [\Gamma \alpha \Gamma]_2 = \sum_\nu f \mid_2 \alpha_\nu \qquad (f \in S_2(\Gamma)),$$
 
 which does not depend on the choice of the $\alpha_\nu$ and lies in $S_2(\Gamma)$. This is the
-[Hecke operator](hecke-operators/hecke-operator.md) $T(g)$ for $U = V = \Gamma$, $g = \alpha^{-1}$ and the
+[Hecke operator](../hecke-operators/hecke-operator.md) $T(g)$ for $U = V = \Gamma$, $g = \alpha^{-1}$ and the
 left action $\gamma \cdot f = f \mid_2 \gamma^{-1}$, restricted to $S_2(\Gamma)$: if
 $\Gamma \alpha^{-1} \Gamma = \bigsqcup_i g_i \Gamma$, then $\Gamma \alpha \Gamma = \bigsqcup_i \Gamma g_i^{-1}$.
 
@@ -34,7 +34,7 @@ $n \ge 1$.
 - [Cusp form](cusp-form.md), for $S_2(\Gamma)$
 - [Congruence subgroup $\Gamma_0(N)$](congruence-subgroup-gamma0.md)
 - [Congruence subgroup $\Gamma_1(N)$](congruence-subgroup-gamma1.md)
-- [Hecke operator](hecke-operators/hecke-operator.md), for $[\Gamma \alpha \Gamma]_2$
+- [Hecke operator](../hecke-operators/hecke-operator.md), for $[\Gamma \alpha \Gamma]_2$
 
 ## Proof depends on
 

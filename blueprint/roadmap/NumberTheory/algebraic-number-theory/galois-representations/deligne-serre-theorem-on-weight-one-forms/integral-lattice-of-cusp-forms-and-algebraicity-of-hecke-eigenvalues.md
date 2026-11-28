@@ -28,9 +28,9 @@ with the classical ones above (formula (2.5.1) for $T_p$).
 
 ## Depends on
 
-- [Cusp form](../../../modular-forms-q-series/modular-forms/cusp-form.md), for the cusp forms of weight $k$ on $\Gamma_1(N)$ that make up $S$
-- [Congruence subgroup $\Gamma_1(N)$](../../../modular-forms-q-series/modular-forms/congruence-subgroup-gamma1.md), for the group of $S$
-- [Congruence subgroup $\Gamma_0(N)$](../../../modular-forms-q-series/modular-forms/congruence-subgroup-gamma0.md), for the operators $R_d$
+- [Cusp form](../../../modular-forms-q-series/modular-forms/modular-curves-and-hecke-operators-of-level-n/cusp-form.md), for the cusp forms of weight $k$ on $\Gamma_1(N)$ that make up $S$
+- [Congruence subgroup $\Gamma_1(N)$](../../../modular-forms-q-series/modular-forms/modular-curves-and-hecke-operators-of-level-n/congruence-subgroup-gamma1.md), for the group of $S$
+- [Congruence subgroup $\Gamma_0(N)$](../../../modular-forms-q-series/modular-forms/modular-curves-and-hecke-operators-of-level-n/congruence-subgroup-gamma0.md), for the operators $R_d$
 - [Free module](../../../../LinearAlgebra/bases-and-dimension/free-module.md), for the free $\mathbb{Z}$-module $L$
 - [Eigenvalues of a linear map](../../../../LinearAlgebra/eigenvalues-and-canonical-forms/eigenvalues-and-eigenspaces/eigenvalues-and-eigenvectors/eigenvalues.md), for the eigenvalues of the $T_p$ on $S$
 

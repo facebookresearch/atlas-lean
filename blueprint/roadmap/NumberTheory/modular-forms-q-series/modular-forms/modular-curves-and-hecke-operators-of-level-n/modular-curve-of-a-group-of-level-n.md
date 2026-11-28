@@ -27,7 +27,7 @@ variety $J$ of $\mathfrak{H}^*/\Gamma$, which is thereby defined over $\mathbb{Q
 
 - [Congruence subgroup $\Gamma_0(N)$](congruence-subgroup-gamma0.md)
 - [Congruence subgroup $\Gamma_1(N)$](congruence-subgroup-gamma1.md)
-- [The ring of p-adic integers](../../p-adic-numbers/p-adic-integers.md), for $\mathrm{GL}_2(\mathbb{Z}_p)$
+- [The ring of p-adic integers](../../../p-adic-numbers/p-adic-integers.md), for $\mathrm{GL}_2(\mathbb{Z}_p)$
 
 ## Proof depends on
 

@@ -2,10 +2,10 @@
 
 Let $N$ be a positive integer and $\Gamma$ a group of level $N$, that is,
 $\Gamma_1(N) \subset \Gamma \subset \Gamma_0(N)$. Let $J$ be the Jacobian of the
-[modular curve $X_\Gamma$](modular-curve-of-a-group-of-level-n.md) over $\mathbb{Q}$, let
-$\xi_n \in \mathrm{End}(J)$ be the [Hecke endomorphisms](hecke-endomorphisms-of-the-modular-jacobian.md)
-and $T_n$ the [Hecke operators](hecke-operators-of-level-n.md) on the space $S_2(\Gamma)$ of
-[cusp forms](cusp-form.md) of weight $2$ for $\Gamma$. Let
+[modular curve $X_\Gamma$](modular-curves-and-hecke-operators-of-level-n/modular-curve-of-a-group-of-level-n.md) over $\mathbb{Q}$, let
+$\xi_n \in \mathrm{End}(J)$ be the [Hecke endomorphisms](modular-curves-and-hecke-operators-of-level-n/hecke-endomorphisms-of-the-modular-jacobian.md)
+and $T_n$ the [Hecke operators](modular-curves-and-hecke-operators-of-level-n/hecke-operators-of-level-n.md) on the space $S_2(\Gamma)$ of
+[cusp forms](modular-curves-and-hecke-operators-of-level-n/cusp-form.md) of weight $2$ for $\Gamma$. Let
 
 $$f(z) = \sum_{n = 1}^{\infty} a_n e^{2 \pi i n z}, \qquad a_1 = 1,$$
 
@@ -49,13 +49,13 @@ $\prod_\sigma \sum_n a_n^\sigma n^{-s}$ up to finitely many Euler factors; neith
 
 ## Depends on
 
-- [Modular curve of a group of level $N$ and its standard model over $\mathbb{Q}$](modular-curve-of-a-group-of-level-n.md)
+- [Modular curve of a group of level $N$ and its standard model over $\mathbb{Q}$](modular-curves-and-hecke-operators-of-level-n/modular-curve-of-a-group-of-level-n.md)
 - [Jacobian of a smooth proper curve](../../../AlgebraicGeometry/algebraic-curves/jacobians-of-curves/jacobian.md), for $J$
-- [Hecke endomorphisms $\xi_n$ of the Jacobian of a modular curve](hecke-endomorphisms-of-the-modular-jacobian.md)
-- [Hecke operators $T_n$ on weight-two cusp forms for a group of level $N$](hecke-operators-of-level-n.md)
-- [Cusp form](cusp-form.md), for $S_2(\Gamma)$
-- [Congruence subgroup $\Gamma_0(N)$](congruence-subgroup-gamma0.md)
-- [Congruence subgroup $\Gamma_1(N)$](congruence-subgroup-gamma1.md)
+- [Hecke endomorphisms $\xi_n$ of the Jacobian of a modular curve](modular-curves-and-hecke-operators-of-level-n/hecke-endomorphisms-of-the-modular-jacobian.md)
+- [Hecke operators $T_n$ on weight-two cusp forms for a group of level $N$](modular-curves-and-hecke-operators-of-level-n/hecke-operators-of-level-n.md)
+- [Cusp form](modular-curves-and-hecke-operators-of-level-n/cusp-form.md), for $S_2(\Gamma)$
+- [Congruence subgroup $\Gamma_0(N)$](modular-curves-and-hecke-operators-of-level-n/congruence-subgroup-gamma0.md)
+- [Congruence subgroup $\Gamma_1(N)$](modular-curves-and-hecke-operators-of-level-n/congruence-subgroup-gamma1.md)
 - [Quotient of an abelian variety by an abelian subvariety](../../../AlgebraicGeometry/abelian-varieties/quotient-by-an-abelian-subvariety.md)
 - [Abelian scheme](../../../AlgebraicGeometry/abelian-varieties/abelian-scheme.md), for abelian varieties over $\mathbb{Q}$ and their dimension
 - [Homomorphisms of abelian schemes and commutativity](../../../AlgebraicGeometry/abelian-varieties/homomorphisms-of-abelian-schemes.md), for $\mathrm{Hom}(J, A)$ and $\mathrm{End}(A)$

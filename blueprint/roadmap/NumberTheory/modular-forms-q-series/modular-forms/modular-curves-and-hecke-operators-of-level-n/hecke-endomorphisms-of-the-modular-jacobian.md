@@ -2,7 +2,7 @@
 
 Let $N$ be a positive integer, $\Gamma$ a group of level $N$, and $J$ the Jacobian of the
 [modular curve $X_\Gamma$](modular-curve-of-a-group-of-level-n.md), with $J(\mathbb{C})$ the
-[Jacobian](../../../AlgebraicGeometry/algebraic-curves/jacobians-of-compact-riemann-surfaces/jacobian.md)
+[Jacobian](../../../../AlgebraicGeometry/algebraic-curves/jacobians-of-compact-riemann-surfaces/jacobian.md)
 of the compact Riemann surface $\mathfrak{H}^*/\Gamma$.
 
 For $\alpha \in \mathrm{GL}_2(\mathbb{Q})$ with $\det \alpha > 0$, let $\Gamma_\alpha = \Gamma \cap \alpha^{-1} \Gamma
@@ -14,8 +14,8 @@ $\Gamma \times \Gamma$, and the endomorphism of $J$ it defines is
 
 $$\{\Gamma \alpha \Gamma\} = (\pi_2)_* \circ \pi_1^* \colon J \to J,$$
 
-with $\pi_1^*$ the [pullback](../../../AlgebraicGeometry/algebraic-curves/jacobians-of-compact-riemann-surfaces/pullback.md)
-and $(\pi_2)_*$ the [pushforward](../../../AlgebraicGeometry/algebraic-curves/jacobians-of-compact-riemann-surfaces/pushforward.md)
+with $\pi_1^*$ the [pullback](../../../../AlgebraicGeometry/algebraic-curves/jacobians-of-compact-riemann-surfaces/pullback.md)
+and $(\pi_2)_*$ the [pushforward](../../../../AlgebraicGeometry/algebraic-curves/jacobians-of-compact-riemann-surfaces/pushforward.md)
 on Jacobians. On divisors, it sends the point $[z]$ of $\mathfrak{H}^*/\Gamma$, for $z \in \mathfrak{H}$
 whose image is not a branch point of $\pi_1$, to $\sum_\nu [\alpha_\nu z]$, where
 $\Gamma \alpha \Gamma = \bigsqcup_\nu \Gamma \alpha_\nu$.
@@ -34,12 +34,12 @@ identity.
 ## Depends on
 
 - [Modular curve of a group of level $N$ and its standard model over $\mathbb{Q}$](modular-curve-of-a-group-of-level-n.md)
-- [Jacobian of a smooth proper curve](../../../AlgebraicGeometry/algebraic-curves/jacobians-of-curves/jacobian.md), for $J$
-- [Jacobian of a compact Riemann surface](../../../AlgebraicGeometry/algebraic-curves/jacobians-of-compact-riemann-surfaces/jacobian.md), for $J(\mathbb{C})$
-- [Pullback on Jacobians](../../../AlgebraicGeometry/algebraic-curves/jacobians-of-compact-riemann-surfaces/pullback.md)
-- [Pushforward on Jacobians](../../../AlgebraicGeometry/algebraic-curves/jacobians-of-compact-riemann-surfaces/pushforward.md)
+- [Jacobian of a smooth proper curve](../../../../AlgebraicGeometry/algebraic-curves/jacobians-of-curves/jacobian.md), for $J$
+- [Jacobian of a compact Riemann surface](../../../../AlgebraicGeometry/algebraic-curves/jacobians-of-compact-riemann-surfaces/jacobian.md), for $J(\mathbb{C})$
+- [Pullback on Jacobians](../../../../AlgebraicGeometry/algebraic-curves/jacobians-of-compact-riemann-surfaces/pullback.md)
+- [Pushforward on Jacobians](../../../../AlgebraicGeometry/algebraic-curves/jacobians-of-compact-riemann-surfaces/pushforward.md)
 - [Hecke operators $T_n$ on weight-two cusp forms for a group of level $N$](hecke-operators-of-level-n.md), for the double cosets $\Gamma \beta \Gamma$
-- [Homomorphisms of abelian schemes and commutativity](../../../AlgebraicGeometry/abelian-varieties/homomorphisms-of-abelian-schemes.md), for endomorphisms of $J$
+- [Homomorphisms of abelian schemes and commutativity](../../../../AlgebraicGeometry/abelian-varieties/homomorphisms-of-abelian-schemes.md), for endomorphisms of $J$
 
 ## Proof depends on
 
