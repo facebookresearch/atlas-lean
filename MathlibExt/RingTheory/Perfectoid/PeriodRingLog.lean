@@ -37,8 +37,9 @@ show that `log` is additive: `log((1 + y)(1 + z)) = log(1 + y) + log(1 + z)`
   (`PadicComplexInt.logTeichmuller`), which is nonzero for `ε ≠ 1`
   (`PadicComplexInt.logTeichmuller_ne_zero`); for `ε = (1, ζ_p, ζ_{p²}, …)` this is Fontaine's
   period `t` of `ℤ_p(1)`;
-* `log [p̃] = log([p̃]/p) = log(1 - ξ/p)` (`PadicComplexInt.logPTilde`), where `p̃ = p♭` is a
-  chosen element of the tilt with `p̃♯ = p` (`PadicComplexInt.pFlat`) and `ξ = p - [p̃]`.
+* `log [p̃] = log([p̃]/p) = log(1 - ξ/p)` for the normalization `log p = 0` (Fontaine, Exposé II,
+  §4.2.2 p. 85 and §4.2.5 c) p. 86) (`PadicComplexInt.logPTilde`), where `p̃ = p♭` is a chosen
+  element of the tilt with `p̃♯ = p` (`PadicComplexInt.pFlat`) and `ξ = p - [p̃]`.
 
 These are the logarithms of J.-M. Fontaine, *Le corps des périodes p-adiques*, Astérisque 223
 (1994), Exposé II, §1.5.4 (the period `t`) and §4.3.1 (the element `log([u₀]/p)`).
@@ -444,8 +445,10 @@ theorem logTeichmuller_ne_zero {ε : PreTilt 𝓞_ℂ_[p] p} (h : ε.untilt = 1)
   apply hw
   rw [hw', map_mul, fontaineTheta_xi, zero_mul]
 
-/-- **`log [p̃]`**, Fontaine's `log([p̃]/p) = Σ_{n ≥ 1} (-1)^(n+1) ([p̃]/p - 1)^n / n ∈ B_dR^+`,
-where `p̃ = p♭ = (p, p^{1/p}, …)` (`PadicComplexInt.pFlat`) and `[p̃]/p - 1 = -ξ/p`. -/
+/-- **`log [p̃]`**, for a prime `p`: the element
+`log([p̃]/p) = Σ_{n ≥ 1} (-1)^(n+1) ([p̃]/p - 1)^n / n ∈ B_dR^+`, which is Fontaine's `log [p̃]` for
+the normalization `log p = 0` (Exposé II, §4.2.2 p. 85 and §4.2.5 c) p. 86), where
+`p̃ = p♭ = (p, p^{1/p}, …)` (`PadicComplexInt.pFlat`) and `[p̃]/p - 1 = -ξ/p`. -/
 def logPTilde : 𝔹⁺ :=
   logOneAdd p (neg_mem (xiDivP_mem_ker p))
 

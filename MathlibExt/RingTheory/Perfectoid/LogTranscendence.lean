@@ -27,8 +27,9 @@ public import MathlibExt.RingTheory.Perfectoid.MaximalPeriodRing
 /-!
 # The transcendence of `log [p̃]`
 
-Let `u = log [p̃] = log([p̃]/p) ∈ B_dR^+` (`PadicComplexInt.logPTilde`), where `p̃ = p♭` is a
-chosen element of the tilt of `𝓞_ℂ_[p]` with `p̃♯ = p`. We prove:
+Let `p` be a prime and `u = log [p̃] = log([p̃]/p) ∈ B_dR^+` (`PadicComplexInt.logPTilde`), for the
+normalization `log p = 0` (Fontaine, Exposé II, §4.2.2 p. 85 and §4.2.5 c) p. 86), where `p̃ = p♭`
+is a chosen element of the tilt of `𝓞_ℂ_[p]` with `p̃♯ = p`. We prove:
 
 * **Fontaine's Lemme 4.3.1**: `u` is not in the fraction field of `B_max` inside the field `B_dR`
   (`PadicComplexInt.mul_algebraMap_logPTilde_ne`): there are no `a ≠ 0` and `b` in `B_max` with
@@ -360,8 +361,9 @@ theorem mul_algebraMap_logPTilde_ne {a b : 𝔹} (ha : a ∈ bMax p) (hb : b ∈
 /-! ### The transcendence of `log [p̃]` -/
 
 /-- **The transcendence of `log [p̃]`** (Fontaine, *Le corps des périodes p-adiques*, Exposé II,
-§4.3.3, there over `B_cris`): `log [p̃] = log([p̃]/p)` is transcendental over `B_max`, inside the
-field `B_dR`. -/
+§4.3.3, there over `B_cris`): for a prime `p`, `log [p̃] = log([p̃]/p)` (for the normalization
+`log p = 0`, Exposé II, §4.2.2 p. 85 and §4.2.5 c) p. 86) is transcendental over `B_max`, inside
+the field `B_dR`. -/
 theorem transcendental_logPTilde : Transcendental (bMax p) (algebraMap 𝔹⁺ 𝔹 (logPTilde p)) :=
   transcendental_of_forall_mul_ne p (bMax p)
     (fun σ x hx => bMax_le_comap p σ hx)
