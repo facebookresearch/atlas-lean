@@ -914,19 +914,6 @@ public theorem_wanted sum_neg_one_pow_sub_choose_four_pow_div_succ (n : ℕ) :
     ∑ k ∈ range (n + 1), (-1 : ℚ) ^ (n - k) * (n.choose k : ℚ) * 2 ^ (2 * k) / (k + 1) =
       ∑ k ∈ range (n / 2 + 1), (n.choose (2 * k) : ℚ) * 2 ^ (2 * k) / (2 * k + 1)
 
-/-- **Alternating sum of $\binom{n}{k} \frac{2(2k+1)}{k+2} C_k$.** Let
-$C_k = \frac{1}{k+1}\binom{2k}{k}$ denote the $k$-th Catalan number. For every natural number
-$n$, the following identity holds in $\mathbb{Q}$:
-$$\sum_{k=0}^{n} (-1)^{n-k} \binom{n}{k} \frac{2(2k+1)}{k+2}\, C_k
-= \sum_{k=0}^{\lfloor n/2 \rfloor} \binom{n}{2k} C_k.$$
-
-Source: Kunle Adegoke, *A Short Proof of Knuth's Old Sum, Generalizations and Related
-Sums*, INTEGERS 26 (2026), Article A19, Proposition 6 (`integers-2026-A19-prop-6`). -/
-public theorem_wanted sum_neg_one_pow_sub_choose_catalan (n : ℕ) :
-    ∑ k ∈ range (n + 1), (-1 : ℚ) ^ (n - k) * (n.choose k : ℚ) * (2 * (2 * k + 1)) / (k + 2) *
-        catalan k =
-      ∑ k ∈ range (n / 2 + 1), (n.choose (2 * k) : ℚ) * catalan k
-
 /-- **Even-index identity for generalized central binomial coefficients.**
 Write $\binom{u}{w} = \Gamma(u+1)/(\Gamma(w+1)\Gamma(u-w+1))$ for the generalized binomial
 coefficient of complex $u$, $w$, which for natural $u$, $w$ is the ordinary binomial coefficient.
