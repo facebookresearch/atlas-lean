@@ -65,7 +65,7 @@ example : ∃ e : (Δ[1] : SSet.{0}) ⟶ Δ[2],
   have hshared :
       SSet.stdSimplex.δ (0 : Fin 2) ≫ SSet.stdSimplex.δ (2 : Fin 3) =
         SSet.stdSimplex.δ (1 : Fin 2) ≫ SSet.stdSimplex.δ (0 : Fin 3) := by
-    simpa only using
+    simpa only [Fin.succ_one_eq_two, Fin.castSucc_zero] using
       (SSet.stdSimplex.{0}).δ_comp_δ (i := (0 : Fin 2)) (j := (1 : Fin 2)) (by decide)
   obtain ⟨e, hfirst, hlast, hover⟩ :=
     SSet.exists_path_composition_above_of_fibration (𝟙 (Δ[2] : SSet.{0}))
@@ -87,7 +87,7 @@ example {X Y E B : SSet.{u}} (i : X ⟶ Y) (hi : SSet.anodyneExtensions i)
       HasLiftingPropertyFixedBot (SSet.horn (n + 1) j).ι p (σ ≫ b))
     (a : X ⟶ E) (ha : CommSq a i p b) :
     ∃ ℓ : Y ⟶ E, i ≫ ℓ = a ∧ ℓ ≫ p = b := by
-  letI := (SSet.anodyneExtensions.hasLiftingPropertyFixedBot_of_simplices hi p b h) a ha
+  let _ := (SSet.anodyneExtensions.hasLiftingPropertyFixedBot_of_simplices hi p b h) a ha
   exact ⟨ha.lift, ha.fac_left, ha.fac_right⟩
 
 end MathlibExtTest.StandardSimplexAttachmentEndpoints
