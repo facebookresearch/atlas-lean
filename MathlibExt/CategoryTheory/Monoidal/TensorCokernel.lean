@@ -168,7 +168,7 @@ lemma tensor_cokernel_π_comp_tensorCokernelDesc {Z : C} (k : Y₁ ⊗ Y₂ ⟶ 
     (hk : coprod.desc (f₁ ▷ Y₂) (Y₁ ◁ f₂) ≫ k = 0) :
     (cokernel.π f₁ ⊗ₘ cokernel.π f₂) ≫ tensorCokernelDesc f₁ f₂ k hk = k := by
   simpa only [tensorCokernelDesc, CokernelCofork.tensor,
-    CokernelCofork.ofπ, Cofork.ofπ_pt, Cofork.π_ofπ] using
+    CokernelCofork.ofπ, Cofork.ofπ_pt, Cofork.π_ofπ, Cofork.π, Cofork.ofπ] using
     Cofork.IsColimit.π_desc (t := CokernelCofork.ofπ k hk)
       (tensorCokernelIsColimit f₁ f₂)
 
@@ -292,6 +292,6 @@ lemma tensor_cokernel_π_comp_tensorCokernelIso_hom :
       (IsColimit.coconePointUniqueUpToIso (t := c)
         (tensorCokernelIsColimit f₁ f₂) hc).hom = c.π at h
   simpa only [tensorCokernelIso, c, hc, CokernelCofork.tensor,
-    CokernelCofork.ofπ, Cofork.ofπ_pt, Cofork.π_ofπ] using h
+    CokernelCofork.ofπ, Cofork.ofπ_pt, Cofork.π_ofπ, Cofork.π, Cofork.ofπ] using h
 
 end CategoryTheory.Limits
