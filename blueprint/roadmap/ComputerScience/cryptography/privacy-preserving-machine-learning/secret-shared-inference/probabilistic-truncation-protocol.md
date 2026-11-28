@@ -22,8 +22,8 @@ Then $a'=(\bar a\bmod2^m)-u2^m$ with $u=\mathbf 1\{(\bar a\bmod2^m)+r'\ge2^m\}$,
 
 ## Expansion
 
-Correctness and the rounding law are the computation in step 4 and the uniformity of $r'$. Not ready: the generation of shared uniform bits ($\mathrm{PRandBitL}$) and of the shared sum-of-uniforms integer by pseudo-random replicated sharing ($\mathrm{PRandInt}$) have no pages. The source's statistical privacy claim relies on those building blocks and on a masking lemma for this joint mask distribution, conditioned on a coalition's view; independence of the bits and summands is essential (marginally uniform but correlated masks can fail to hide).
+Correctness and the rounding law are the computation in step 4 and the uniformity of $r'$. Not ready: the expansion must add the generation of shared uniform bits ($\mathrm{PRandBitL}$) and of the shared sum-of-uniforms integer by pseudo-random replicated sharing ($\mathrm{PRandInt}$). The source's statistical privacy claim relies on those building blocks and on a masking lemma for this joint mask distribution, conditioned on a coalition's view, which the expansion must also add; independence of the bits and summands is essential (marginally uniform but correlated masks can fail to hide).
 
 ## Sources
 
-- Octavian Catrina, Amitabh Saxena, "Secure Computation with Fixed-Point Numbers", Financial Cryptography and Data Security 2010, LNCS 6052, DOI 10.1007/978-3-642-14577-3_6, §§2.1–2.3, §3.1 (Protocol 3.1) and Tables 2–3.
+- Octavian Catrina, Amitabh Saxena, "Secure Computation with Fixed-Point Numbers", Financial Cryptography and Data Security 2010, LNCS 6052, DOI 10.1007/978-3-642-14577-3_6, [conference copy](https://ifca.ai/pub/fc10/31_47.pdf), §§2.1–2.3, §3.1 (Protocol 3.1) and Tables 2–3.

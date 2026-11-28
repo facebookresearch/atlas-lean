@@ -18,5 +18,5 @@ A definition of the sharing and of the multiplication procedure; no security sta
 
 ## Sources
 
-- Payman Mohassel, Peter Rindal, "ABY3: A Mixed Protocol Framework for Machine Learning", ACM CCS 2018, DOI 10.1145/3243734.3243760, §3.2.1.
-- Toshinori Araki, Jun Furukawa, Yehuda Lindell, Ariel Nof, Kazuma Ohara, "High-Throughput Semi-Honest Secure Three-Party Computation with an Honest Majority", ACM CCS 2016, DOI 10.1145/2976749.2978331, §§2.2–2.3 and §3 (Theorem 3.4).
+- Payman Mohassel, Peter Rindal, "ABY3: A Mixed Protocol Framework for Machine Learning", ACM CCS 2018, DOI 10.1145/3243734.3243760; authors' full paper [IACR ePrint 2018/403](https://eprint.iacr.org/2018/403), §3.2.1 ("Secret Sharing Based"), before Table 2.
+- Toshinori Araki, Jun Furukawa, Yehuda Lindell, Ariel Nof, Kazuma Ohara, "High-Throughput Semi-Honest Secure Three-Party Computation with an Honest Majority", ACM CCS 2016, DOI 10.1145/2976749.2978331; authors' full paper [IACR ePrint 2016/768](https://eprint.iacr.org/2016/768), §§2.2–2.3 and §3 (Theorem 3.4, after Definition 3.2).

@@ -24,8 +24,8 @@ None.
 
 ## Expansion
 
-A definition. Ducas and Stehlé realize it by iterating a bootstrap-and-rerandomize step; their Theorem 3.3 bounds the distance after $\kappa$ iterations by $\delta^\kappa$ under a one-step contraction hypothesis and message preservation, a separate result.
+A definition. Ducas and Stehlé's realization, a separate result, iterates $\mathsf{Wash}(pk,c)=\mathsf{Rerand}(pk,\mathsf{Refresh}(pk,c))$ $\kappa$ times. With $\mathcal{C}_\mu$ the ciphertexts decrypting to $\mu$ and $\mathcal{C}^*_\mu=\mathsf{Refresh}(pk,\mathcal{C}_\mu)$, their Theorem 3.3 assumes their Eq. (1), that $\mathsf{Rerand}(pk,c)\in\mathcal{C}_\mu$ for every $c\in\mathcal{C}^*_\mu$, and that $\Delta(\mathsf{Rerand}(pk,c),\mathsf{Rerand}(pk,c'))\le\delta$ for all $\mu$ and all $c,c'\in\mathcal{C}^*_\mu$, and concludes $\Delta(\mathsf{Sanitize}(pk,c),\mathsf{Sanitize}(pk,c'))\le\delta^\kappa$; when Eq. (1) holds only with overwhelming probability the source adds an error term (after Lemma 3.2).
 
 ## Sources
 
-- Léo Ducas, Damien Stehlé, "Sanitization of FHE Ciphertexts", EUROCRYPT 2016, LNCS 9665, DOI 10.1007/978-3-662-49890-3_12; numbers from IACR ePrint 2016/164: §1, Definition 3.1 and Theorem 3.3.
+- Léo Ducas, Damien Stehlé, "Sanitization of FHE Ciphertexts", EUROCRYPT 2016, LNCS 9665, pp. 294–310, DOI 10.1007/978-3-662-49890-3_12, [publisher chapter](https://link.springer.com/chapter/10.1007/978-3-662-49890-3_12); same numbering in the authors' [IACR ePrint 2016/164](https://eprint.iacr.org/2016/164): §1, §2 (every ciphertext decrypts to a message), §3 Definition 3.1, §3.1 Eq. (1) and Lemma 3.2, §3.2 Theorem 3.3.

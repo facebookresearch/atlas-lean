@@ -30,4 +30,4 @@ Write $r=r_12^{\ell_D}+r_2$ and $x=x_12^{\ell_D}+x_2$ (or $x=2^\ell-x_12^{\ell_D
 
 ## Sources
 
-- Payman Mohassel, Yupeng Zhang, "SecureML: A System for Scalable Privacy-Preserving Machine Learning", IEEE Symposium on Security and Privacy 2017, DOI 10.1109/SP.2017.12, §II-B, §IV-A (Theorem 1, "Vectorization in the Shared Setting") and Appendix B.
+- Payman Mohassel, Yupeng Zhang, "SecureML: A System for Scalable Privacy-Preserving Machine Learning", IEEE Symposium on Security and Privacy 2017, DOI 10.1109/SP.2017.12, [conference copy](https://www.ieee-security.org/TC/SP2017/papers/466.pdf), §IV-A, Theorem 1 (PDF p. 7) and Appendix B (PDF p. 17).

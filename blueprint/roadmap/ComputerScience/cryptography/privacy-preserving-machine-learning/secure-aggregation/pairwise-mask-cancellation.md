@@ -20,8 +20,8 @@ None.
 
 ## Expansion
 
-Induction on $n$, as the source indicates: for $n=1$ both sides are the point $x_u$. For $n\ge2$ fix the masks not involving the last user $u^*$; the masks $p_{u,u^*}$ for $u\ne u^*$ are independent uniform and enter only $y_u$ and (negated) $y_{u^*}$, so $(y_u)_{u\ne u^*}$ is uniform and $y_{u^*}$ is determined by the sum.
+A direct conditioning argument (the source omits the proof, remarking that it follows by induction on $n$): for $n=1$ both sides are the point $x_u$. For $n\ge2$ condition on the masks not involving a fixed user $u^*$; the masks $p_{u,u^*}$ for $u\ne u^*$ are independent uniform and enter only $y_u$ and (negated) $y_{u^*}$, so $(y_u)_{u\ne u^*}$ is uniform and $y_{u^*}$ is determined by the sum.
 
 ## Sources
 
-- Keith Bonawitz, Vladimir Ivanov, Ben Kreuter, Antonio Marcedone, H. Brendan McMahan, Sarvar Patel, Daniel Ramage, Aaron Segal, Karn Seth, "Practical Secure Aggregation for Privacy-Preserving Machine Learning", ACM CCS 2017, DOI 10.1145/3133956.3133982; numbers from the full version, IACR ePrint 2017/281: Lemma 6.1.
+- Keith Bonawitz, Vladimir Ivanov, Ben Kreuter, Antonio Marcedone, H. Brendan McMahan, Sarvar Patel, Daniel Ramage, Aaron Segal, Karn Seth, "Practical Secure Aggregation for Privacy-Preserving Machine Learning", ACM CCS 2017, DOI 10.1145/3133956.3133982; numbers from the full version, [IACR ePrint 2017/281](https://eprint.iacr.org/2017/281): Lemma 6.1.

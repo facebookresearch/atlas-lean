@@ -14,7 +14,7 @@ None.
 
 ## Expansion
 
-If $a_0+a_1\le n-1$ then $a=a_0+a_1$ as integers and $a$ is nonnegative iff $a_0+a_1\le(n-1)/2$; otherwise $a=a_0+a_1-n$ and the threshold shifts by $n$. A check over all shares for several odd $n$ agrees. The two algorithms are separate protocol pages.
+If $a_0+a_1\le n-1$ then $a=a_0+a_1$ as integers and $a$ is nonnegative iff $a_0+a_1\le(n-1)/2$; otherwise $a=a_0+a_1-n$ and the threshold shifts by $n$. The two algorithms are separate protocol pages.
 
 ## Sources
 

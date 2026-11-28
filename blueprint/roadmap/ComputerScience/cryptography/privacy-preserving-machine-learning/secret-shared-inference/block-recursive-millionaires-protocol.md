@@ -21,8 +21,8 @@ None.
 
 ## Expansion
 
-Not ready: the leaves use 1-out-of-$2^w$ oblivious transfer for block widths $w$, while main defines only 1-out-of-2, batched and 1-out-of-4 transfer. The AND steps use the shared-multiplication functionality's interface (uniform XOR shares of the product), not a particular implementation. The source's semi-honest security claim in the ideal-OT and ideal-AND hybrid is a separate statement.
+Not ready: the expansion must add the 1-out-of-$2^w$ oblivious transfer functionality for the block widths $w$ used at the leaves. The AND steps use the shared-multiplication functionality's interface (uniform XOR shares of the product), not a particular implementation. The source's semi-honest security claim in the ideal-OT and ideal-AND hybrid is a separate statement.
 
 ## Sources
 
-- Deevashwer Rathee, Mayank Rathee, Nishant Kumar, Nishanth Chandran, Divya Gupta, Aseem Rastogi, Rahul Sharma, "CrypTFlow2: Practical 2-Party Secure Inference", ACM CCS 2020, DOI 10.1145/3372297.3417274; numbers and equations from the author-deposited arXiv:2010.06457v1: rendered p. 5, §3.1, Equation (1) and Algorithm 1.
+- Deevashwer Rathee, Mayank Rathee, Nishant Kumar, Nishanth Chandran, Divya Gupta, Aseem Rastogi, Rahul Sharma, "CrypTFlow2: Practical 2-Party Secure Inference", ACM CCS 2020, DOI 10.1145/3372297.3417274; numbers and equations from the author-deposited [arXiv:2010.06457v1](https://arxiv.org/pdf/2010.06457v1): rendered p. 5, §3.1, Equation (1) and Algorithm 1.

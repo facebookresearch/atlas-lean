@@ -23,7 +23,7 @@ None.
 
 ## Expansion
 
-A definition. Realizations (Gentry's randomization, Chapter 20; noise flooding; [sanitization](ciphertext-sanitization.md)) are separate results.
+A definition. Gentry's Definition 2.1.1 fixes the key pair, circuit and input ciphertexts and takes the negligible error over the coins of $\mathsf{Evaluate}$; it does not say whether one negligible bound must serve all circuits or each circuit may have its own. The graph's [uniform correctness](../../public-key/homomorphic-encryption/correct.md) and [fixed-circuit correctness](../../public-key/homomorphic-encryption/fixed-circuit-correct.md) pages are those two readings; neither is imposed here. Realizations (Gentry's randomization, Chapter 20; noise flooding; [sanitization](ciphertext-sanitization.md)) are separate results.
 
 ## Sources
 
