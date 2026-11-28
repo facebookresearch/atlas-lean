@@ -33,7 +33,7 @@ The number of matrices in item 3 was later reduced to eight in [the identity pro
 ## Expansion
 
 The proof of item 1 reduces a restricted Post correspondence problem, in which a solution must start with the first pair, end with the last and use the others in between (undecidable for $7$ pairs by results of Matiyasevich and Sénizergues
-and of Halava, Harju and Hirvensalo: the solutions of a [Claus instance](../../post-correspondence-problem/pcp-is-undecidable-for-claus-instances-of-size-7.md) of size $7$ have exactly this form), through an index-coding variant in which a designated pair is used exactly once. The pairs are encoded over a free group with border letters whose inverses cancel only along a well-formed solution.
+and of Halava, Harju and Hirvensalo: the minimal solutions of a [Claus instance](../../post-correspondence-problem/pcp-is-undecidable-for-claus-instances-of-size-7.md) of size $7$ have exactly this form), through an index-coding variant in which a designated pair is used exactly once. The pairs are encoded over a free group with border letters whose inverses cancel only along a well-formed solution.
 Item 2 follows from the same construction, for which the generated semigroup is a group exactly when the identity is reached; item 3 embeds pairs of free-group words into $4 \times 4$ integer matrices through a free subgroup of $\mathrm{SL}(2, \mathbb{Z})$, and item 4 uses
 a free group of rational quaternions. A complete expansion links the index-coding Post correspondence problem.
 

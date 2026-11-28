@@ -20,7 +20,7 @@ The SFTs produced by the reductions are two-dimensional. A further reduction giv
 
 ## Depends on
 
-- [Subshifts and the aperiodic domino problem](../../wang-tiles/aperiodic-domino-problem/subshifts-and-the-aperiodic-domino-problem.md)
+- [Subshifts of finite type, sofic and effective subshifts](../../wang-tiles/aperiodic-domino-problem/subshifts-and-the-aperiodic-domino-problem.md)
 - [The arithmetical class $\Pi_n$](../../../degrees-and-hierarchies/arithmetical-hierarchy/is-pi.md)
 - [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 

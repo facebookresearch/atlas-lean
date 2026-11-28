@@ -8,7 +8,8 @@ Every arithmetical problem is in $\Sigma^1_1$, and a $\Sigma^1_1$-complete probl
 
 ## Depends on
 
-None.
+- [The arithmetical class $\Sigma_n$](arithmetical-hierarchy/is-sigma.md)
+- [The arithmetical class $\Pi_n$](arithmetical-hierarchy/is-pi.md)
 
 ## Proof depends on
 

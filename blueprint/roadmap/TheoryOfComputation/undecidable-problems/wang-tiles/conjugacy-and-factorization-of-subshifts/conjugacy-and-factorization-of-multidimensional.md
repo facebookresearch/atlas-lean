@@ -11,7 +11,7 @@ Already for fixed simple targets factorization is hard: whether a given SFT fact
 
 ## Depends on
 
-- [Subshifts and the aperiodic domino problem](../aperiodic-domino-problem/subshifts-and-the-aperiodic-domino-problem.md)
+- [Subshifts of finite type, sofic and effective subshifts](../aperiodic-domino-problem/subshifts-and-the-aperiodic-domino-problem.md)
 - [Arithmetical class $\Sigma_n$](../../../degrees-and-hierarchies/arithmetical-hierarchy/is-sigma.md)
 - [Arithmetical class $\Pi_n$](../../../degrees-and-hierarchies/arithmetical-hierarchy/is-pi.md)
 

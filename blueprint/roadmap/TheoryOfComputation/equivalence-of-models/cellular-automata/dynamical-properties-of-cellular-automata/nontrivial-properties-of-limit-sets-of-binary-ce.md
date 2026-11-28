@@ -29,7 +29,7 @@ automata, and the same holds for every fixed alphabet with at least two letters.
 
 ## Expansion
 
-The proof reduces nilpotency of cellular automata with a spreading state, which is undecidable. Given two nonsurjective binary automata $G_0$ and $G_1$ sharing a quiescent state,
+A good expansion links a page for the undecidability of nilpotency for cellular automata with a spreading state (Theorem 2.2 of the source), which the proof reduces; the general nilpotency theorem does not give it, since the automata with a spreading state are a subclass. Given two nonsurjective binary automata $G_0$ and $G_1$ sharing a quiescent state,
 with $\Omega_{G_0} \in \mathcal{P}$ and $\Omega_{G_1} \notin \mathcal{P}$, and an automaton $N$ with spreading state, it builds binary automata $F_0$ and $F_1$ with $\Omega_{F_i} = \Omega_{G_i}$ when $N$ is nilpotent and
 $\Omega_{F_0} = \Omega_{F_1}$ otherwise. The construction simulates $N$ and a firing-squad automaton inside zones delimited by strongly freezing words, so that the binary alphabet
 suffices. A decision procedure for $\mathcal{P}$ would then decide nilpotency of $N$.

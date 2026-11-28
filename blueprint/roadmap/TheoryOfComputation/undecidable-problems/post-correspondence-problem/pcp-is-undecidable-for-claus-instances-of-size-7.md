@@ -8,19 +8,20 @@ $$
 h(b_i) \in (dA)^* \ (i < n), \qquad h(b_n) = dd, \qquad g(b_1) = d, \qquad g(b_i) \in (Ad)^* \ (1 < i < n), \qquad g(b_n) \in (Ad)^+ d .
 $$
 
-Every nonempty solution of a Claus instance has the form $b_1 u b_n$ with $u$ a word over $\{b_2, \dots, b_{n-1}\}$ (Lemma 1 of the source).
+The nonempty solutions of a Claus instance are exactly the concatenations of one or more solutions of the form $b_1 u b_n$ with $u$ a word over $\{b_2, \dots, b_{n-1}\}$ (Lemma 1 of the source); in particular every minimal nonempty solution has this form.
 
 **Theorem (Halava, Harju and Hirvensalo, after Claus).**
 
 1. If some semi-Thue system with $n$ rules has an undecidable individual word problem, then the Post correspondence problem is undecidable for Claus instances of size $n + 4$ (Theorem 4 of the source).
 2. The Post correspondence problem is undecidable for Claus instances of size $7$ (Theorem 5).
-3. There are a word $v_1 \in \Gamma^*$ and six pairs $(u_2, v_2), \dots, (u_7, v_7) \in \Gamma^* \times \Gamma^*$ such that it is undecidable, for a given word $u_1 \in \Gamma^*$, whether $u_1 u_{i_2} \cdots u_{i_m} u_7 = v_1 v_{i_2} \cdots v_{i_m} v_7$ for some $i_2, \dots, i_m \in \{2, \dots, 6\}$; for every $u_1$ the instance with $h(b_i) = u_i$ and $g(b_i) = v_i$ is a Claus instance (Theorem 6).
+3. There are a word $v_1 \in \Gamma^*$ and six pairs $(u_2, v_2), \dots, (u_7, v_7) \in \Gamma^* \times \Gamma^*$ such that it is undecidable, for a given word $u_1 \in (dA)^*$, whether $u_1 u_{i_2} \cdots u_{i_m} u_7 = v_1 v_{i_2} \cdots v_{i_m} v_7$ for some $i_2, \dots, i_m \in \{2, \dots, 6\}$; for every such $u_1$ the instance with $h(b_i) = u_i$ and $g(b_i) = v_i$ is a Claus instance (Theorem 6).
 
-Item 2 follows from item 1 and the three-rule semi-Thue system of Matiyasevich and Sénizergues. By the form of the solutions, these instances are also instances of the restricted Post correspondence problem, in which a solution must start with the first pair, end with the last and use only the others in between.
+Item 2 follows from item 1 and the three-rule semi-Thue system of Matiyasevich and Sénizergues. By the form of their minimal solutions, these instances are also instances of the restricted Post correspondence problem, in which a solution must start with the first pair, end with the last and use only the others in between.
 
 ## Depends on
 
 - [The Post correspondence problem](pcp.md)
+- [Derivations in a string rewriting system](../string-rewriting-systems/derives.md)
 - [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
@@ -29,7 +30,7 @@ Item 2 follows from item 1 and the three-rule semi-Thue system of Matiyasevich a
 
 ## Expansion
 
-A good expansion links pages for Lemma 1 of the source (the form of the solutions of a Claus instance) and for Claus's construction behind item 1. From a semi-Thue system $T = (\{a, b\}, R)$ whose rules are encoded in $A^*$, an input word $w$ and the fixed word $w_0$, with the marker $f = aa$ and the morphisms $\ell_d(x) = dx$ and $r_d(x) = xd$, it sets $h(x) = \ell_d(x)$ and $g(x) = r_d(x)$ for the letters $x$, $h(t_i) = \ell_d(v_i)$ and $g(t_i) = r_d(u_i)$ for the rules $t_i = (u_i, v_i)$, $h(c) = \ell_d(wf)$ and $g(c) = d$, and $h(e) = dd$ and $g(e) = r_d(f w_0) d$ (Equation (2.1) of the source). The solutions are the words $c\, w_1 f w_2 f \cdots f w_m\, e$ that spell a derivation $w = w_1 \to_T^* \cdots \to_T^* w_m = w_0$, and only $h(c)$ depends on the input $w$, which gives item 3.
+A good expansion links pages for Lemma 1 of the source (the solutions of a Claus instance are the concatenations of minimal solutions $b_1 u b_n$) and for Claus's construction behind item 1. From a semi-Thue system $T = (\{a, b\}, R)$ whose rules are encoded in $A^*$, an input word $w$ and the fixed word $w_0$, with the marker $f = aa$ and the morphisms $\ell_d(x) = dx$ and $r_d(x) = xd$, it sets $h(x) = \ell_d(x)$ and $g(x) = r_d(x)$ for the letters $x$, $h(t_i) = \ell_d(v_i)$ and $g(t_i) = r_d(u_i)$ for the rules $t_i = (u_i, v_i)$, $h(c) = \ell_d(wf)$ and $g(c) = d$, and $h(e) = dd$ and $g(e) = r_d(f w_0) d$ (Equation (2.1) of the source). The solutions are the words $c\, w_1 f w_2 f \cdots f w_m\, e$ that spell a derivation $w = w_1 \to_T^* \cdots \to_T^* w_m = w_0$, and only $h(c)$ depends on the input $w$, which gives item 3.
 
 ## Sources
 

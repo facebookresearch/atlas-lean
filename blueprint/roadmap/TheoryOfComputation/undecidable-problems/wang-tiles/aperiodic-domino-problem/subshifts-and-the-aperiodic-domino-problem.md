@@ -18,7 +18,7 @@ Every SFT is sofic and every sofic subshift is effective. A vector $p \in \mathb
 
 ## Depends on
 
-None.
+- [Recognizability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
 
 ## Proof depends on
 
