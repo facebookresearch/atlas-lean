@@ -82,7 +82,11 @@ private def coefficientSplitting : coefficientSequence.Splitting where
   s := ModuleCat.ofHom (LinearMap.inr ℤ ℤ ℤ)
   f_r := by apply ModuleCat.hom_ext; apply LinearMap.ext; intro z; rfl
   s_g := by apply ModuleCat.hom_ext; apply LinearMap.ext; intro z; rfl
-  id := by apply ModuleCat.hom_ext; apply LinearMap.ext; intro z; rfl
+  id := by
+    apply ModuleCat.hom_ext
+    apply LinearMap.ext
+    intro z
+    simp [coefficientSequence, includeFirst, projectSecond]
 
 private theorem coefficient_shortExact : coefficientSequence.ShortExact :=
   coefficientSplitting.shortExact
