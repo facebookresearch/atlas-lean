@@ -10,7 +10,8 @@ module
 
 public import Mathlib.Analysis.Real.Sqrt
 public import MathlibExt.NumberTheory.ComplementarySequences
-import Mathlib.Data.Nat.Choose.Basic
+import Mathlib.Algebra.Group.Nat.Even
+import Mathlib.Data.Nat.Choose.Cast
 import Mathlib.Tactic.Linarith
 import MathlibExt.NumberTheory.PolygonalNumber
 
@@ -31,15 +32,6 @@ $(k - 2)j(j - 1)/2 + j$ for $j \ge 1$.
 
 namespace MetaMathlibExt
 
-private theorem twice_mul_choose_two (a j : ℕ) : 2 * (a * j.choose 2) = a * j * (j - 1) := by
-  calc
-    2 * (a * j.choose 2) = a * (2 * j.choose 2) := mul_left_comm ..
-    _ = a * j.descFactorial 2 := by
-      rw [Nat.descFactorial_eq_factorial_mul_choose, show (2 : ℕ).factorial = 2 by decide]
-    _ = a * j * (j - 1) := by
-      rw [show 2 = 1 + 1 by decide, Nat.descFactorial_succ, Nat.descFactorial_one,
-        mul_comm (j - 1) j, mul_assoc]
-
 private theorem polygonal_round_bounds (a : ℕ) (ha : 0 < a) (ha' : a ≤ 8) (n : ℕ) (hn : 1 ≤ n) :
     let s := ⌊Real.sqrt (2 * n / (a : ℝ)) + 1 / 2⌋₊
     1 ≤ s ∧ a * s.choose 2 < n ∧ n ≤ a * (s + 1).choose 2 := by
@@ -52,14 +44,12 @@ private theorem polygonal_round_bounds (a : ℕ) (ha : 0 < a) (ha' : a ≤ 8) (n
   have hhi : x < ((s : ℝ) + 1 / 2) ^ 2 :=
     (Real.sqrt_lt' (by positivity)).mp (by linarith only [hfloorHi])
   have hmulHi : (2 * n : ℝ) < ((s : ℝ) + 1 / 2) ^ 2 * a := (div_lt_iff₀ haR).mp hhi
-  have hdoubleHi := congrArg (fun t : ℕ => (t : ℝ)) (twice_mul_choose_two a (s + 1))
-  simp only [Nat.add_sub_cancel, Nat.cast_mul, Nat.cast_add, Nat.cast_one, Nat.cast_ofNat]
-    at hdoubleHi
   -- Both doubled quantities are even, so the strict error bound of two gives an exact cutoff.
   have hu : 2 * n < 2 * (a * (s + 1).choose 2) + 2 := by
     exact_mod_cast (show (2 * n : ℝ) < 2 * (a * (s + 1).choose 2 : ℕ) + 2 by
       push_cast only [Nat.cast_mul]
-      nlinarith only [hdoubleHi, hmulHi, haR'])
+      rw [Nat.cast_choose_two ℝ, Nat.cast_add, Nat.cast_one]
+      nlinarith only [hmulHi, haR'])
   have hupper : n ≤ a * (s + 1).choose 2 := by omega
   have hs : 1 ≤ s := by
     by_contra! h
@@ -73,12 +63,11 @@ private theorem polygonal_round_bounds (a : ℕ) (ha : 0 < a) (ha' : a ≤ 8) (n
   have hlo : ((s : ℝ) - 1 / 2) ^ 2 ≤ x :=
     (Real.le_sqrt (by linarith only [hsR]) hx).mp (by linarith only [hfloorLo])
   have hmulLo : ((s : ℝ) - 1 / 2) ^ 2 * a ≤ 2 * n := (le_div_iff₀ haR).mp hlo
-  have hdoubleLo := congrArg (fun t : ℕ => (t : ℝ)) (twice_mul_choose_two a s)
-  push_cast [Nat.cast_sub hs] at hdoubleLo
   have hl : 2 * (a * s.choose 2) < 2 * n := by
     exact_mod_cast (show (2 : ℝ) * (a * s.choose 2 : ℕ) < 2 * n by
       push_cast only [Nat.cast_mul]
-      nlinarith only [hdoubleLo, hmulLo, haR])
+      rw [Nat.cast_choose_two ℝ]
+      nlinarith only [hmulLo, haR])
   exact ⟨hs, by omega, hupper⟩
 
 /-- **Rounding formula for the non-$k$-gonal numbers, $3 \le k \le 10$.** Let $3 \le k \le 10$;
@@ -97,10 +86,9 @@ public theorem nthNonValue_polygonal_eq_round (k : ℕ) (hk : 3 ≤ k) (hk' : k 
   have hf (j : ℕ) : f j = a * j.choose 2 + j := Nat.polygonalNumber_eq k j
   have heq : (fun j : ℕ => (k - 2) * j * (j - 1) / 2 + j) = f := by
     funext j
-    have hd := twice_mul_choose_two a j
+    have hdiv : 2 ∣ j * (j - 1) := even_iff_two_dvd.mp (Nat.even_mul_pred_self j)
     change a * j * (j - 1) / 2 + j = f j
-    rw [hf]
-    omega
+    rw [hf, Nat.choose_two_right, mul_assoc a, Nat.mul_div_assoc _ hdiv]
   let h (m : ℕ) := ⌊Real.sqrt (2 * m / (a : ℝ)) + 1 / 2⌋₊
   have ha : 0 < a := by omega
   have ha' : a ≤ 8 := by omega
