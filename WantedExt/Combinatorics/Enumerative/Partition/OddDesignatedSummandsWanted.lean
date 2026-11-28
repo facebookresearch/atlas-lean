@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.RingTheory.PowerSeries.Inverse
 public import MathlibExt.Combinatorics.Enumerative.Partition.QEulerProduct
+public import MathlibExt.Combinatorics.Enumerative.Partition.OddDesignatedSummandsF1MulF3TwoDissection
 
 /-!
 # Congruences modulo powers of 2 for 2-regular partitions with designated summands
@@ -35,7 +36,9 @@ reference is this article); the arXiv text numbers results by section (Theorem 1
 The paper's Lemmas 1, 2 and 4 are already stated in this library:
 `one_div_f1_pow_four_eight_twelve_two_dissection` (first conjunct),
 `f1_sq_two_dissection`, and `qEulerProduct_pow_prime_pow_congruence`; the first identity of its
-Lemma 3 is `one_div_f1_f3_two_dissection`.
+Lemma 3 is `one_div_f1_f3_two_dissection`, and its second identity is
+`f1_mul_f3_two_dissection`, proved in
+`MathlibExt.Combinatorics.Enumerative.Partition.OddDesignatedSummandsF1MulF3TwoDissection`.
 -/
 
 open PowerSeries
@@ -104,21 +107,6 @@ theorem oddDesignatedSummandsCount_zero : oddDesignatedSummandsCount 0 = 1 := by
     constantCoeff_qEulerProduct (by norm_num : 1 ≤ 4),
     constantCoeff_qEulerProduct (by norm_num : 1 ≤ 6), one_pow, one_mul] at h
   simpa using h
-
-/-- **The 2-dissection of $f_1 f_3$.** Let $f_k = \prod_{m \ge 1} (1 - q^{km})$ denote the Euler
-products in the ring of integer power series in $q$. Then
-$$f_1 f_2 f_3 f_4^2 f_6 f_8^2 f_{12}^2 f_{24}^2 = f_2^2 f_8^4 f_{12}^6 - q f_4^6 f_6^2 f_{24}^4.$$
-Since every $f_k$ with $k \ge 1$ has constant term $1$ and so is invertible, this is Hirschhorn's
-identity $f_1 f_3 = \frac{f_2 f_8^2 f_{12}^4}{f_4^2 f_6 f_{24}^2} -
-q \frac{f_4^4 f_6 f_{24}^2}{f_2 f_8^2 f_{12}^2}$ (*The Power of q*, eq. (30.12.1)) multiplied
-through by $f_2 f_4^2 f_6 f_8^2 f_{12}^2 f_{24}^2$.
-
-Source: James A. Sellers, *New Infinite Families of Congruences Modulo Powers of 2 for 2-Regular
-Partitions with Designated Summands*, INTEGERS 24 (2024), Article A16, Lemma 3
-(`integers-2024-A16-lem-3`). -/
-public theorem_wanted f1_mul_f3_two_dissection :
-    𝔣 1 * 𝔣 3 * 𝔣 2 * 𝔣 4 ^ 2 * 𝔣 6 * 𝔣 8 ^ 2 * 𝔣 12 ^ 2 * 𝔣 24 ^ 2 =
-      𝔣 2 ^ 2 * 𝔣 8 ^ 4 * 𝔣 12 ^ 6 - X * 𝔣 4 ^ 6 * 𝔣 6 ^ 2 * 𝔣 24 ^ 4
 
 /-- **$\mathrm{PD}_2(2^\alpha (4n + 3))$ is divisible by 4.** Write $\mathrm{PD}_2(m)$ for the
 number of partitions of $m$ with designated summands in which every part is odd. For all natural

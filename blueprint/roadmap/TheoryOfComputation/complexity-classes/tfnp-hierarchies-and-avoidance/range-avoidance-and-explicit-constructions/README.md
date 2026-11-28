@@ -1,6 +1,7 @@
 # Range Avoidance and Explicit Constructions
 
 - [The range avoidance problem Avoid and its restriction C-Avoid to a circuit class](range-avoidance-problem.md)
+- [Demi-bits generators make range avoidance hard for nondeterministic algorithms](demi-bits-imply-range-avoidance-hardness.md)
 - [The total function class TFΣ2P and the explicit-construction class APEPP](tfsigma2p-and-apepp.md)
 - [Avoid is solved by a random guess with probability 1/2 and lies in FZPP^NP](avoid-random-guess-and-fzpp-np.md)
 - [Ghentiyala–Li–Stephens-Davidowitz: an AM protocol upper-bounding the image size of a circuit](am-protocol-upper-bound-image-size.md)

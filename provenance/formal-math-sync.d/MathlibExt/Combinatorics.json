@@ -2781,6 +2781,7 @@
       "published_sha256": "ff866e843c9da94076ae17fb26076d52ee23563b5a504ae582dde73712f1b15d",
       "rationale": "Moved from WantedExt/Combinatorics/Enumerative/HypersequenceElementarySymmetricWanted.lean when the recurrence and Stirling formulas at zero were proved, with the same names and statements for the theorem, the matrix entries and their row lemmas. Also: The moved docstring keeps ATLAS-side text from WantedExt/Combinatorics/Enumerative/HypersequenceElementarySymmetricWanted.lean that Formal-Math does not have yet (its backport is still owed). Also: Move and prove `hyperseqB_recurrence_closed_form_row_sums` here, preserving its name, statement and docstring."
     },
+    {"path": "MathlibExt/Combinatorics/Enumerative/HypersequenceMatrixProduct.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "86c2e67a11803cc334be3cc054d46dbf0a039ea3c158ba498c788e95e59c5fa7", "rationale": "Move the proved sum_hyperseqB_mul_hyperseqC from WantedExt/Combinatorics/Enumerative/HypersequenceElementarySymmetricWanted.lean, preserving its full name, statement, and docstring."},
     {
       "path": "MathlibExt/Combinatorics/Enumerative/HypersequenceRecurrence.lean",
       "backport": "not-needed",
@@ -3741,13 +3742,8 @@
       "published_sha256": "8ad18adf7293ad28d1dd47ffb690b3396330bae382a43a3bd43aee04e117c0c3",
       "rationale": "Move the generalized cubic partition series, count, generating function identity, and zero formula from WantedExt/Combinatorics/Enumerative/Partition/GeneralizedCubicPartitionWanted.lean, preserving their names, statements, and docstrings. Prove the congruence for primes congruent to 5 or 7 modulo 8 without changing its statement or docstring. Also: Credit OddDistinctsPentagonalRecurrence for the adapted Lean proofs."
     },
-    {
-      "path": "MathlibExt/Combinatorics/Enumerative/Partition/KTupleRegularPartitions.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "02dc57b558d190e4e7f3e3a1df1da174fdea7665f9ef37bc5ff6419b1a1f7f85",
-      "rationale": "Move the regular-partition count definitions, their proved recurrence and initial values, and the parity theorem from WantedExt/Combinatorics/Enumerative/KTupleRegularPartitionsWanted.lean, preserving their names and statements. Prove the parity characterization in Paudel, Sellers, and Wang, INTEGERS 26 (2026), Article A4, Lemma 8. The moved docstrings retain documentation changes not yet backported to Formal-Math."
-    },
+    {"path": "MathlibExt/Combinatorics/Enumerative/Partition/KTupleRegularPartitionPrimePower.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "eae2827f106f740aac15428e339fd2ea13b3e3fcdbb3abd424c6fcaa0056d6c1", "rationale": "Move and prove the prime-power congruence for tuples of regular partitions from KTupleRegularPartitionsWanted, keeping its name and statement and citing the published Theorem 3. Also: Preserve the original wanted declaration layout verbatim. Also: Use the documented public generating-series API instead of importing private declarations."},
+    {"path": "MathlibExt/Combinatorics/Enumerative/Partition/KTupleRegularPartitions.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "94d778624bcbd79f080cb5147b2e16f7f9d9edad2606ae60136119e6e4f5aa9d", "rationale": "Move the regular-partition count definitions, their proved recurrence and initial values, and the parity theorem from WantedExt/Combinatorics/Enumerative/KTupleRegularPartitionsWanted.lean, preserving their names and statements. Prove the parity characterization in Paudel, Sellers, and Wang, INTEGERS 26 (2026), Article A4, Lemma 8. The moved docstrings retain documentation changes not yet backported to Formal-Math. Also: Document and expose the existing regular-partition generating series and its coefficient formula without changing their definitions or argument. Also: Expose the defining coefficient formula for the single regular-partition generating series."},
     {
       "path": "MathlibExt/Combinatorics/Enumerative/Partition/Landau.lean",
       "backport": "pending",

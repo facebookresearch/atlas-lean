@@ -21,3 +21,5 @@
 - [Diameter Bound](diameter-bound.md)
 - [Diameter](diameter.md)
 - [Exists Finally At Length](exists-finally-at-length.md)
+- [Data-aware dynamic systems](data-aware-dynamic-systems/README.md)
+- [Decision problems for invariants and programs](decision-problems-for-invariants-and-programs/README.md)

@@ -21,6 +21,7 @@ Logics for proving programs correct: Hoare logic for partial and total correctne
 - [User model and machine model composition](user-model-and-machine-model-composition.md)
 
 - [Safety verification](safety-verification/README.md)
+- [Model checking hyperproperties and multi-agent logics](hyperproperty-and-multi-agent-model-checking/README.md)
 - [Termination analysis](termination-analysis/README.md)
 - [Expected run-time calculus](expected-run-time-calculus/README.md)
 - [Testing and runtime verification](testing-and-runtime-verification/README.md)

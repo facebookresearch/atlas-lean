@@ -7,9 +7,11 @@
 
 **Statement.**
 
-1. $C_d(\lambda)$ survives ($\psi_d < 1$) if and only if
+1. Let $d \ge 2$. Then $C_d(\lambda)$ survives ($\psi_d < 1$) if and only if
 
 $$\frac{d^2}{d-1}\ln\Big(\frac{\lambda + d}{d}\Big) < \lambda.$$
+
+(For $d = 1$ the left side is undefined. There a catastrophe replaces a colony by at most one colony, and by none with positive probability, so $C_1(\lambda)$ dies out for every $\lambda > 0$.)
 
 For $d = 2$ this reads $4\ln(1 + \lambda/2) < \lambda$, and then
 
@@ -36,8 +38,8 @@ $$\mathbb{E}[\tau_\ast] = \frac1\lambda\int_0^\lambda \frac{x^2}{\lambda\ln(1+x)
 
 ## Expansion
 
-Colonies evolve independently, so the number of colonies is a continuous-time Galton–Watson process whose offspring is the number of distinct children chosen by the survivors. In $C_\ast$ the offspring is $N$ itself, with mean $\lambda/2$, so survival holds exactly when $\lambda > 2$, and $\psi_\ast$ is the smallest fixed point of $\mathbb{E}(s^N) = \ln(1+\lambda(1-s))/(\lambda(1-s))$, which rearranges to the stated equation. In $C_d$, given $N = n$ the number of occupied children is the number of occupied boxes when $n$ balls go into $d$ boxes, with mean $d\big(1 - (1 - 1/d)^n\big)$; averaging with the generating function of $N$ at $s = 1 - 1/d$ gives mean offspring $d - \frac{d^2}{\lambda}\ln\big(1 + \frac{\lambda}{d}\big)$, and the criterion mean $> 1$ is exactly the stated inequality. Mean extinction times follow from integrating the backward equation of the colony-count process.
+Colonies evolve independently, so the number of colonies is a continuous-time Galton–Watson process whose offspring is the number of distinct children chosen by the survivors. In $C_\ast$ the offspring is $N$ itself, with mean $\lambda/2$, so survival holds exactly when $\lambda > 2$, and $\psi_\ast$ is the smallest fixed point of $\mathbb{E}(s^N) = \ln(1+\lambda(1-s))/(\lambda(1-s))$, which rearranges to the stated equation. In $C_d$, given $N = n$ the number of occupied children is the number of occupied boxes when $n$ balls go into $d$ boxes, with mean $d\big(1 - (1 - 1/d)^n\big)$; averaging with the generating function of $N$ at $s = 1 - 1/d$ gives mean offspring $d - \frac{d^2}{\lambda}\ln\big(1 + \frac{\lambda}{d}\big)$, and for $d \ge 2$ the criterion mean $> 1$ is exactly the stated inequality (dividing by $d - 1$), while for $d = 1$ the mean $1 - \ln(1+\lambda)/\lambda$ is below $1$ for every $\lambda$. Mean extinction times follow from integrating the backward equation of the colony-count process.
 
 ## Sources
 
-- J. Amaya, V. V. Junior, F. P. Machado and A. Roldán-Correa, "Growth models under uniform catastrophes", *Journal of Statistical Physics* 193(11) (2026), 162, Theorems 2.3, 2.4, 2.5, 2.6 and 2.8; Remark 2.7, <https://doi.org/10.1007/s10955-026-03718-8> (preprint arXiv:2602.06649).
+- J. Amaya, V. V. Junior, F. P. Machado and A. Roldán-Correa, "Growth models under uniform catastrophes", *Journal of Statistical Physics* 193(11) (2026), 162, Theorems 2.3, 2.4, 2.5, 2.6 and 2.8; Remark 2.7 (Theorem 2.4 is stated without a range for $d$, but its criterion divides by $d - 1$, so it is restricted here to $d \ge 2$), <https://doi.org/10.1007/s10955-026-03718-8> (preprint arXiv:2602.06649).
