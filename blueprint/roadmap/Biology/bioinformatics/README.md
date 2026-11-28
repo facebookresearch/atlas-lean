@@ -3,6 +3,7 @@
 Algorithms and statistical models on biological sequences and data: sequence alignment, genome assembly, motifs, RNA secondary structure, clustering and network reconstruction.
 
 - [Sequence alignment](sequence-alignment/README.md)
+- [Approximate string matching](approximate-string-matching/README.md)
 - [ARACNE gene network reconstruction](aracne-gene-network-reconstruction/README.md)
 - [ChromHMM chromatin-state model](chromhmm-chromatin-state-model/README.md)
 - [De Bruijn graph genome assembly](de-bruijn-graph-genome-assembly/README.md)
@@ -22,7 +23,6 @@ Algorithms and statistical models on biological sequences and data: sequence ali
 - [Genome rearrangements](genome-rearrangements/README.md)
 - [Time and space bounds for alignment dynamic programs](time-and-space-bounds-for-alignment-dynamic-programs.md)
 - [q-gram (seed) filtering lemma for approximate matching](q-gram-filtering-lemma-for-approximate-matching.md)
-- [Signed reversal distance: the Hannenhalli–Pevzner formula and polynomial-time sorting](remaining-clauses-of-complexity-of-reversal-distance-signed.md)
 - [Shortest common superstring via maximum-overlap Hamiltonian paths](remaining-clauses-of-shortest-common-superstring-via-maximum.md)
 - [Activity-by-contact model of enhancer–gene regulation](activity-by-contact-enhancer-gene-model/README.md)
 - [Collinear block detection](collinear-block-detection/README.md)
