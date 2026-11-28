@@ -19,6 +19,7 @@ public import Mathlib.RingTheory.PowerSeries.Inverse
 public import MathlibExt.NumberTheory.ChooseAddModEqPrime
 public import MathlibExt.NumberTheory.FourRegularPartitionParity
 public import MathlibExt.NumberTheory.GeneralizedTau
+public import MathlibExt.NumberTheory.GeneralizedTauPentagonalVanishing
 public import MathlibExt.NumberTheory.GeneralizedTauPrimeSquare
 public import MathlibExt.NumberTheory.NineRegularPartitionIteration
 public import MathlibExt.NumberTheory.PartitionConvolutionModThree
@@ -359,19 +360,6 @@ Generalized Tau Function, and Partition Function Weighted Composition Sums*, INT
 Article A39, Corollary 8 (`integers-2024-A39-cor-8`). -/
 public theorem_wanted ramanujanTau_seven_mul_modEq_zero (n : ℕ) (hn : 0 < n) :
     generalizedTau 24 (7 * n) ≡ 0 [ZMOD 7]
-
-/-- **Vanishing of $\tau_k(n)$ modulo the prime $k - 1$.** Let $n \ge 1$ and let $k$ be a natural
-number such that $k - 1$ is prime. For an integer $t$ let $P(t) = t(3t - 1)/2$ be the generalized
-pentagonal number. If $k - 1$ does not divide $n - 1 - P(t)$ for any integer $t$ with
-$P(t) \le n - 1$, then the generalized tau function satisfies $\tau_k(n) \equiv 0 \pmod{k - 1}$.
-
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
-Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
-Article A39, Proposition 1 (`integers-2024-A39-prop-1`). -/
-public theorem_wanted generalizedTau_modEq_zero_of_pentagonal (n : ℕ) (hn : 0 < n) (k : ℕ)
-    (hk : (k - 1).Prime)
-    (h : ∀ t : ℤ, pentagonal t ≤ n - 1 → ¬ (k - 1) ∣ n - 1 - pentagonal t) :
-    generalizedTau k n ≡ 0 [ZMOD ((k - 1 : ℕ) : ℤ)]
 
 /-- **Ramanujan's tau function modulo divisors of $24$.** Let $\tau(n) = \tau_{24}(n)$ be
 Ramanujan's tau function, the generalized tau function with $k = 24$. For every integer
