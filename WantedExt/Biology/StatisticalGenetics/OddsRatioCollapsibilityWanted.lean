@@ -35,52 +35,10 @@ public import Mathlib.Basic.Real.Basic
 
 namespace WantedExt.Biology.StatisticalGenetics.OddsRatioCollapsibilityWanted
 
-/-- The marginal mass `P(X = x)` of a joint mass function `p x y z` of binary `X, Y, Z`. -/
-def massX (p : Bool → Bool → Bool → ℝ) (x : Bool) : ℝ :=
-  ∑ y, ∑ z, p x y z
-
-/-- The marginal mass `P(Z = z)`. -/
-def massZ (p : Bool → Bool → Bool → ℝ) (z : Bool) : ℝ :=
-  ∑ x, ∑ y, p x y z
-
-/-- The joint mass `P(X = x, Z = z)`. -/
-def massXZ (p : Bool → Bool → Bool → ℝ) (x z : Bool) : ℝ :=
-  ∑ y, p x y z
-
-/-- The crude risk `P(Y = 1 | X = x)`. It is meaningful when `P(X = x) > 0`; if `P(X = x) = 0`,
-Lean's convention `x / 0 = 0` makes the value `0`. -/
-noncomputable def crudeRisk (p : Bool → Bool → Bool → ℝ) (x : Bool) : ℝ :=
-  (∑ z, p x true z) / massX p x
-
-/-- The stratum risk `P(Y = 1 | X = x, Z = z)`. It is meaningful when `P(X = x, Z = z) > 0`; if that
-mass is `0`, Lean's convention `x / 0 = 0` makes the value `0`. -/
-noncomputable def stratumRisk (p : Bool → Bool → Bool → ℝ) (x z : Bool) : ℝ :=
-  p x true z / massXZ p x z
-
 /-- The odds `t / (1 - t)` of a probability `t`. It is meaningful for `t ≠ 1` (a probability in
 `[0, 1)`); at `t = 1`, Lean's convention `x / 0 = 0` makes the value `0`. -/
 noncomputable def odds (t : ℝ) : ℝ :=
   t / (1 - t)
-
-/-- **Common-weight mixture identity under `X ⊥ Z`** (Greenland, Robins and Pearl 1999, p. 38).
-Let `p x y z ≥ 0` be a joint mass function of binary `X, Y, Z` with total mass `1`, with observed
-independence `X ⊥ Z` (`P(X = x, Z = z) = P(X = x) P(Z = z)` for all `x, z`) and
-`P(X = x, Z = z) > 0` for all `x, z`, and suppose the crude risk for `X = 0` is positive,
-`P(Y = 1 | X = 0) > 0`. Then for each `x`,
-`P(Y = 1 | X = x) = ∑_z P(Z = z) P(Y = 1 | X = x, Z = z)` (a common-weight mixture over `Z`), and
-the risk ratio standardized to `P(Z)`,
-`∑_z P(z) P(Y = 1 | 1, z) / ∑_z P(z) P(Y = 1 | 0, z)`, equals the crude risk ratio
-`P(Y = 1 | X = 1) / P(Y = 1 | X = 0)` (an observed-data identity; causal exchangeability is not
-assumed or implied). By the mixture identity both denominators equal `P(Y = 1 | X = 0)`, so
-neither is zero.
-
-Source: Greenland, Robins and Pearl (1999), pp. 37–38. -/
-public theorem_wanted crudeRisk_eq_mixture (p : Bool → Bool → Bool → ℝ) (hp : ∀ x y z, 0 ≤ p x y z)
-    (hsum : ∑ x, ∑ y, ∑ z, p x y z = 1) (hind : ∀ x z, massXZ p x z = massX p x * massZ p z)
-    (hpos : ∀ x z, 0 < massXZ p x z) (hrisk : 0 < crudeRisk p false) :
-    (∀ x, crudeRisk p x = ∑ z, massZ p z * stratumRisk p x z) ∧
-      (∑ z, massZ p z * stratumRisk p true z) / (∑ z, massZ p z * stratumRisk p false z) =
-        crudeRisk p true / crudeRisk p false
 
 /-- **Noncollapsibility of the odds ratio** (Greenland, Robins and Pearl 1999, p. 39; Gail 1986).
 Let `q ∈ (0, 1)` be `P(Z = 1)`, let every stratum risk `r x z` lie in `(0, 1)`, and let
