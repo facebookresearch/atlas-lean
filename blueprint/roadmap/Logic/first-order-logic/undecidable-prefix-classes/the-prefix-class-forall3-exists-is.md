@@ -9,6 +9,7 @@ In the first class the sentences may use any number of monadic relation symbols 
 ## Depends on
 
 - [Prefix-vocabulary classes](prefix-vocabulary-classes.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

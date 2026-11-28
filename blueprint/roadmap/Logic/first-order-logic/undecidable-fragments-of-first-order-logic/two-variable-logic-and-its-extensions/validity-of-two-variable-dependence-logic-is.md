@@ -10,6 +10,7 @@ The satisfiability and finite satisfiability problems of $\mathcal D^2$ are NEXP
 
 - [Two-variable logic and its counting extension](two-variable-logic-and-its-counting-extension.md)
 - [The arithmetical class $\Sigma_n$](../../../../TheoryOfComputation/degrees-and-hierarchies/arithmetical-hierarchy/is-sigma.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

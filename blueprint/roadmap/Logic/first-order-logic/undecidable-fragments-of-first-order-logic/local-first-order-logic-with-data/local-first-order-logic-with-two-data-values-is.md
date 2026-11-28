@@ -12,6 +12,7 @@ That is, there is no algorithm that decides, given a finite set $\Sigma$ and a s
 ## Depends on
 
 - [Local first-order logic with data](local-first-order-logic-with-data.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

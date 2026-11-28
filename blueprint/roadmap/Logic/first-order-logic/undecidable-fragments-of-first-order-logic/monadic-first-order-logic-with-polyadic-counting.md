@@ -12,11 +12,11 @@ Interpreted over finite structures, the resulting logic is called $\mathsf{MFO}^
 
 **Theorem (van Benthem and Icard).** The satisfiability problem for $\mathsf{MFO}^\phi(\sharp)$, deciding whether a given formula of $\mathcal L^1_\sharp$ has a finite model, is undecidable. Moreover, the set of valid sentences of $\mathsf{MFO}^\phi(\sharp)$ is not computably enumerable, so $\mathsf{MFO}^\phi(\sharp)$ is not computably axiomatizable.
 
-The polyadic comparisons are what matter: with counting over single variables only, the monadic logic over finite models expresses only Boolean combinations of linear inequalities between the sizes of regions. The source also recalls Härtig's theorem that the validities of full first-order logic with unary counting are neither $\Pi^1_2$ nor $\Sigma^1_2$.
+The polyadic comparisons are what matter: with counting over single variables only, the monadic logic over finite models expresses only Boolean combinations of linear inequalities between the sizes of regions. The source also recalls the theorem of Herre et al. (1991) that the validities of first-order logic with the Härtig counting quantifier are neither $\Pi^1_2$ nor $\Sigma^1_2$.
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -28,4 +28,4 @@ Every Diophantine inequality $m_1(\mathbf v)+\dots+m_k(\mathbf v)\ge m'_1(\mathb
 
 ## Sources
 
-- J. van Benthem and T. Icard, "Interleaving logic and counting", *The Bulletin of Symbolic Logic* 29(4), pp. 503–587, 2023, doi:[10.1017/bsl.2023.30](https://doi.org/10.1017/bsl.2023.30); read in arXiv:2507.05219v1 ([arXiv](https://arxiv.org/abs/2507.05219v1)), whose numbering is used: the definition of $\mathcal L^1_\sharp$ in the section "Counting Sequences", Lemma 6 (Diophantine inequalities are expressible) and Propositions 4 and 5, and Theorem 1 (Härtig) for the recalled background.
+- J. van Benthem and T. Icard, "Interleaving logic and counting", *The Bulletin of Symbolic Logic* 29(4), pp. 503–587, 2023, doi:[10.1017/bsl.2023.30](https://doi.org/10.1017/bsl.2023.30); read in arXiv:2507.05219v1 ([arXiv](https://arxiv.org/abs/2507.05219v1)), whose numbering is used: the definition of $\mathcal L^1_\sharp$ in the section "Counting Sequences", Lemma 6 (Diophantine inequalities are expressible) and Propositions 4 and 5, and Theorem 1 (Herre et al., on first-order logic with the Härtig quantifier) for the recalled background.

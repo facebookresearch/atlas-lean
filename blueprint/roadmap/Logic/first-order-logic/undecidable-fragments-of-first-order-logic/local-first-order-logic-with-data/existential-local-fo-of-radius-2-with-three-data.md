@@ -9,6 +9,7 @@ The radius is fixed at $2$ and the number of data values at $3$. With two data v
 ## Depends on
 
 - [Local first-order logic over data structures](local-first-order-logic-over-data-structures.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -16,6 +16,7 @@ For single formulas both classes are decidable (Ramsey; Gurevich). The source al
 ## Depends on
 
 - [Prefix-vocabulary classes](../undecidable-prefix-classes/prefix-vocabulary-classes.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -28,4 +29,4 @@ For the EPR class the proof reduces the Post correspondence problem over $\{0,1\
 
 ## Sources
 
-- U. Mathur, D. Mestel and M. Viswanathan, "The decision problem for regular first-order theories", *Proceedings of the ACM on Programming Languages* 9(POPL):986–1012, 2025, doi:10.1145/3704870; read as arXiv:2410.17185v2, <https://arxiv.org/abs/2410.17185v2>: Theorems 1.2 and 1.3 (Section 1.1), Section 2 (prefix-vocabulary classes, theories, conjunctive and disjunctive satisfiability, regular theories) and Section 4 (the undecidable classes).
+- U. Mathur, D. Mestel and M. Viswanathan, "The decision problem for regular first-order theories", *Proceedings of the ACM on Programming Languages* 9(POPL):986–1012, 2025, doi:10.1145/3704870; read as arXiv:2410.17185v2, <https://arxiv.org/abs/2410.17185v2>: Theorems 1.2 and 1.3 (Section 1.1), Section 3 (preliminaries: prefix-vocabulary classes, theories, conjunctive and disjunctive satisfiability, regular theories) and Section 5 (the undecidable classes).

@@ -14,6 +14,7 @@ The formula, and for model checking the Kripke structure, are the input; the set
 
 - [LTL with percentage operators](ltl-with-percentage-operators.md)
 - [Kripke model](../../modal-logic/kripke-semantics/kripke-model.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -9,6 +9,7 @@ UNFO itself has the finite model property and a 2ExpTime-complete satisfiability
 ## Depends on
 
 - [Unary negation fragment and unary negation fixpoint logic](unary-negation-fragment-and-fixpoint-logic.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

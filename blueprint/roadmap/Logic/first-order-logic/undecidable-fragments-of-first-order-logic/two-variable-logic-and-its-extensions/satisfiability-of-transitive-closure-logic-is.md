@@ -10,6 +10,7 @@ Two-variable first-order logic $\mathrm{FO}^2$ itself is decidable, NEXPTIME-com
 
 - [Formulas of first-order logic with transitive closure](../../../../TheoryOfComputation/descriptive-complexity/transitive-closure-logic-and-nl/tcfo.md)
 - [Two-variable logic and its counting extension](two-variable-logic-and-its-counting-extension.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

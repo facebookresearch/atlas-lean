@@ -10,7 +10,10 @@ The reduction uses one fixed CQ with four variables. In description-logic terms,
 
 ## Depends on
 
+- [Fluted fragment](fluted-fragment.md)
+- [Two-variable guarded fragment](two-variable-guarded-fragment.md)
 - [Answers of a conjunctive query](../../../../ComputerScience/databases/conjunctive-queries/answers-of-a-conjunctive-query.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

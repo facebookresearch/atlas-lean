@@ -10,6 +10,7 @@ Each of the two special relations alone is harmless: with one transitive relatio
 
 - [Two-variable guarded fragment](two-variable-guarded-fragment.md)
 - [Equivalence relation](../../../../Order/ordered-sets/equivalence-relation.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -23,4 +24,4 @@ The Kieroński–Tendera survey lists this case among the undecidable extensions
 
 - E. Kieroński, J. Michaliszyn, I. Pratt-Hartmann and L. Tendera, "Two-variable first-order logic with equivalence closure", *SIAM Journal on Computing* 43(3):1012–1063, 2014, doi:[10.1137/120900095](https://doi.org/10.1137/120900095) (original source, cited as recalled in the survey).
 
-- E. Kieroński and L. Tendera, "Finite satisfiability of the two-variable guarded fragment with transitive guards and related variants", *ACM Transactions on Computational Logic* 19(2), Article 8, 2018, doi:[10.1145/3174805](https://doi.org/10.1145/3174805). Numbering of the version read, arXiv:1611.03267v3: Section 1 and Table 1 (row "1 trans. + 1 equiv.").
+- E. Kieroński and L. Tendera, "Finite satisfiability of the two-variable guarded fragment with transitive guards and related variants", *ACM Transactions on Computational Logic* 19(2), Article 8, 2018, doi:[10.1145/3174805](https://doi.org/10.1145/3174805). Numbering of the version read, arXiv:1611.03267v3: Section 1 and Table I (row "1 trans. + 1 equiv.").

@@ -17,6 +17,7 @@ This sharpens Lange's undecidability result for full first-order logic with majo
 ## Depends on
 
 - [Two-variable logic and its counting extension](two-variable-logic-and-its-counting-extension.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

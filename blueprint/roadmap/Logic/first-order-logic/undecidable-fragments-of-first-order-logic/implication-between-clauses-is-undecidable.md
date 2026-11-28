@@ -10,7 +10,7 @@ There is no algorithm that decides, for two first-order clauses $C$ and $D$, whe
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -8,7 +8,7 @@ This is the least undecidable case along both of its restrictions: monadic first
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

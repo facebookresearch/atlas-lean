@@ -9,6 +9,7 @@ The same holds for the two-variable guarded fragment with individual constants a
 ## Depends on
 
 - [Equivalence relation](../../../../Order/ordered-sets/equivalence-relation.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

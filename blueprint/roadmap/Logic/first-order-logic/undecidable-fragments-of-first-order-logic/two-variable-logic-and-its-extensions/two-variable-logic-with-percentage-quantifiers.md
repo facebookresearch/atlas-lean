@@ -12,6 +12,7 @@ By contrast, finite satisfiability is decidable for $\mathrm{GF}^2_{\mathrm{pres
 ## Depends on
 
 - [Two-variable logic and its counting extension](two-variable-logic-and-its-counting-extension.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

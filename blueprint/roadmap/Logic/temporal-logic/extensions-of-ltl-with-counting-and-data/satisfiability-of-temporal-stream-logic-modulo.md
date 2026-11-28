@@ -9,6 +9,7 @@ Here the formula is the input, and the cells and symbols are those occurring in 
 ## Depends on
 
 - [Temporal stream logic modulo theories](temporal-stream-logic-modulo-theories.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

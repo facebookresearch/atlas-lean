@@ -10,6 +10,8 @@ The uniform one-dimensional fragment $\mathrm{UF}_1$, which differs only by the 
 
 - [General one-dimensional fragment of first-order logic](general-one-dimensional-fragment.md)
 - [The arithmetical class $\Pi_n$](../../../../TheoryOfComputation/degrees-and-hierarchies/arithmetical-hierarchy/is-pi.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Co-recognizability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-co-recognizable.md)
 
 ## Proof depends on
 

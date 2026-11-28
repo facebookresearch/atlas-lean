@@ -9,6 +9,7 @@ Kahr, Moore and Wang had reduced the decision problem to the ∀∃∀ case; the
 ## Depends on
 
 - [Prefix-vocabulary classes](prefix-vocabulary-classes.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

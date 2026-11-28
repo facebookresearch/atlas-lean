@@ -9,6 +9,7 @@ By contrast, the two-variable guarded fragment extended by number restrictions, 
 ## Depends on
 
 - [Guarded fragment of first-order logic](guarded-fragment.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

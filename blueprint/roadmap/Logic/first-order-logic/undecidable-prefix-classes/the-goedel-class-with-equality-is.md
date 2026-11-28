@@ -9,6 +9,7 @@ Without equality the Gödel class $[\exists^*\forall^2\exists^*, \mathrm{all}, (
 ## Depends on
 
 - [Prefix-vocabulary classes](prefix-vocabulary-classes.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

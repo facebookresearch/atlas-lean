@@ -9,6 +9,7 @@ In contrast, the same paper shows that with one linear order and its successor, 
 ## Depends on
 
 - [Two-variable logic and its counting extension](two-variable-logic-and-its-counting-extension.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -16,7 +17,7 @@ None.
 
 ## Expansion
 
-Manuel proved that FO² over finite structures with two linear orders and their successor relations, and no other binary symbols, has an undecidable finite satisfiability problem. In C², a fresh binary symbol $s$ is forced to be the successor of $<_i$ by saying that $s \subseteq {<_i}$ and that every element except the least has exactly one $s$-predecessor and every element except the greatest exactly one $s$-successor (Lemma 1); in a finite structure this pins $s$ down. Replacing the two successors in Manuel's formulas by two such defined symbols gives a linear-time reduction to $\mathrm{C}^2(*, 2, \{<_1, <_2\})$ (Corollary 2).
+Manuel proved that FO² over finite structures with two linear orders and their successor relations, and no other binary symbols, has an undecidable finite satisfiability problem. In C², a fresh binary symbol $s$ is forced to be the successor of $<_i$ by saying that $s \subseteq {<_i}$ and that every element except the least has exactly one $s$-predecessor and every element except the greatest exactly one $s$-successor (Lemma 3.1); in a finite structure this pins $s$ down. Replacing the two successors in Manuel's formulas by two such defined symbols gives a linear-time reduction to $\mathrm{C}^2(*, 2, \{<_1, <_2\})$ (Corollary 3.2).
 
 ## Sources
 

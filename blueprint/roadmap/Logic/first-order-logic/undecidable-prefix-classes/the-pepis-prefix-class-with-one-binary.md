@@ -9,6 +9,7 @@ The number of universal quantifiers is not bounded in this class. The title of t
 ## Depends on
 
 - [Prefix-vocabulary classes](prefix-vocabulary-classes.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

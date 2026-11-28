@@ -11,6 +11,7 @@ With one equivalence relation the problems are NExpTime-complete and the logic h
 - [Two-variable guarded fragment](two-variable-guarded-fragment.md)
 - [Equivalence relation](../../../../Order/ordered-sets/equivalence-relation.md)
 - [Two-variable logic and its counting extension](../two-variable-logic-and-its-extensions/two-variable-logic-and-its-counting-extension.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -24,4 +25,4 @@ The Kieroński–Tendera survey lists this case among the undecidable extensions
 
 - E. Kieroński and M. Otto, "Small substructures and decidability issues for first-order logic with two variables", *The Journal of Symbolic Logic* 77(3):729–765, 2012, doi:[10.2178/jsl/1344862160](https://doi.org/10.2178/jsl/1344862160) (original source, cited as recalled in the survey).
 
-- E. Kieroński and L. Tendera, "Finite satisfiability of the two-variable guarded fragment with transitive guards and related variants", *ACM Transactions on Computational Logic* 19(2), Article 8, 2018, doi:[10.1145/3174805](https://doi.org/10.1145/3174805). Numbering of the version read, arXiv:1611.03267v3: Section 1 and Table 1 (rows "1 equivalence r.", "2 equivalence r." and "3 equivalence r.").
+- E. Kieroński and L. Tendera, "Finite satisfiability of the two-variable guarded fragment with transitive guards and related variants", *ACM Transactions on Computational Logic* 19(2), Article 8, 2018, doi:[10.1145/3174805](https://doi.org/10.1145/3174805). Numbering of the version read, arXiv:1611.03267v3: Section 1 and Table I (rows "1 equivalence r.", "2 equivalence r." and "3 equivalence r.").

@@ -12,6 +12,7 @@ By contrast, the source shows that finite satisfiability of $\mathrm{FO}^2(\leq_
 ## Depends on
 
 - [Two-variable logic and its counting extension](two-variable-logic-and-its-counting-extension.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -23,4 +24,4 @@ Both clauses are proved by reductions from the Post correspondence problem over 
 
 ## Sources
 
-- T. Schwentick and T. Zeume, "Two-variable logic with two order relations", *Logical Methods in Computer Science* 8(1), Paper 15, 2012, doi:10.2168/LMCS-8(1:15)2012; read as arXiv:1110.1439v3, <https://arxiv.org/abs/1110.1439v3>: the two theorems of the subsection "Undecidable Extensions" of arXiv:1110.1439v3 (finite satisfiability of $\mathrm{FO}^2(\precsim_1, \precsim_2)$ and of $\mathrm{FO}^2(\leq_1, \leq_2, \precsim_3)$ is undecidable) and their proofs.
+- T. Schwentick and T. Zeume, "Two-variable logic with two order relations", *Logical Methods in Computer Science* 8(1), Paper 15, 2012, doi:10.2168/LMCS-8(1:15)2012; read as arXiv:1110.1439v3, <https://arxiv.org/abs/1110.1439v3>: Theorems 4.2 and 4.3 in Section 4.2 ("Undecidable Extensions") of arXiv:1110.1439v3 (finite satisfiability of $\mathrm{FO}^2(\precsim_1, \precsim_2)$ and of $\mathrm{FO}^2(\leq_1, \leq_2, \precsim_3)$ is undecidable) and their proofs.

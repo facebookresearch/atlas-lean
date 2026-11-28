@@ -11,6 +11,9 @@ The equational theory of $\mathrm{PCoR}$ is decidable (Andréka and Bredikhin), 
 ## Depends on
 
 - [Calculus of relations](calculus-of-relations.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Co-recognizability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-co-recognizable.md)
+- [The arithmetical class $\Pi_n$](../../../../TheoryOfComputation/degrees-and-hierarchies/arithmetical-hierarchy/is-pi.md)
 
 ## Proof depends on
 

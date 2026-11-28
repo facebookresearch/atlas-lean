@@ -14,7 +14,7 @@ A class is *decidable* if satisfiability of its sentences is decidable, and *und
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -27,6 +27,6 @@ By Church and Turing, satisfiability of first-order sentences is undecidable, an
 ## Sources
 
 - Yu. Sh. Gurevich, "The decision problem for the logic of predicates and of operations", *Algebra and Logic* 8(3):160–174, 1969, doi:[10.1007/BF02306690](https://doi.org/10.1007/BF02306690), read in the author's copy of the English translation at <https://web.eecs.umich.edu/~gurevich/Opera/13en.pdf>: Theorems 6 and 7, which classify the classes $\Phi(\Pi, \xi, \eta)$ given by a prefix set $\Pi$ and the numbers $\xi$ of relation symbols and $\eta$ of function symbols of each arity, without equality.
-- Y. Gurevich, "The decision problem for standard classes", *The Journal of Symbolic Logic* 41(2):460–464, 1976, doi:[10.2307/2272244](https://doi.org/10.2307/2272244), read in the author's copy at <https://web.eecs.umich.edu/~gurevich/Opera/21.pdf>: Sections 1 and 2 (standard classes with equality and function symbols, and the Main Theorem listing the decidable classes $[\exists^*, \mathrm<built-in function all>, \mathrm<built-in function all>]_=$ and $[\mathrm<built-in function all>, (\omega), (1)]_=$).
+- Y. Gurevich, "The decision problem for standard classes", *The Journal of Symbolic Logic* 41(2):460–464, 1976, doi:[10.2307/2272244](https://doi.org/10.2307/2272244), read in the author's copy at <https://web.eecs.umich.edu/~gurevich/Opera/21.pdf>: Sections 1 and 2 (standard classes with equality and function symbols, and the Main Theorem listing the decidable classes $[\exists^*, \mathrm{all}, \mathrm{all}]_=$ and $[\mathrm{all}, (\omega), (1)]_=$).
 - E. Grädel, "Decidable fragments of first-order and fixed-point logic", lecture slides, also read at <https://iccl.inf.tu-dresden.de/w/images/1/15/FMT-Lecture9.pdf>: the slide "Prefix-vocabulary classes" (notation and example) and the slides "The complete classification: decidable cases".
 - E. Börger, E. Grädel and Y. Gurevich, *The Classical Decision Problem*, Perspectives in Mathematical Logic, Springer, 1997, doi:[10.1007/978-3-642-59207-2](https://doi.org/10.1007/978-3-642-59207-2), the standard reference for the classification, cited beside the copies read.

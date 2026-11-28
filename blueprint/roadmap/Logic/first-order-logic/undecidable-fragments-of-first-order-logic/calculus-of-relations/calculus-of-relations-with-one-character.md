@@ -9,6 +9,7 @@ The same holds with the identity constant added (Theorem 12 of the source, signa
 ## Depends on
 
 - [Calculus of relations](calculus-of-relations.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

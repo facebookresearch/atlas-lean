@@ -10,6 +10,7 @@ The source notes that the proof gives witnesses in the two-variable guarded frag
 
 - [Conservative extensions and Σ-entailment in fragments of first-order logic](conservative-extensions-and-sigma-entailment.md)
 - [Guarded fragment of first-order logic](../guarded-and-fluted-fragments/guarded-fragment.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

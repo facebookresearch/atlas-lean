@@ -15,6 +15,7 @@ Any abstract logic that extends two-variable first-order logic or the fluted fra
 
 - [Fluted fragment](../guarded-and-fluted-fragments/fluted-fragment.md)
 - [Two-variable logic and its counting extension](../two-variable-logic-and-its-extensions/two-variable-logic-and-its-counting-extension.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
