@@ -14,10 +14,11 @@ public import Mathlib.Data.Nat.PadicValNat
 public import Mathlib.Data.Nat.Prime.Defs
 import Mathlib.Algebra.BigOperators.Intervals
 import Mathlib.Algebra.BigOperators.ModEq
+import Mathlib.Data.Nat.Factorial.BigOperators
 import Mathlib.Data.Nat.GCD.BigOperators
 import Mathlib.FieldTheory.Finite.Basic
 import Mathlib.Tactic.LinearCombination
-import MathlibExt.NumberTheory.HelouTerjanianBlockProduct
+import MathlibExt.NumberTheory.WolstenholmeBinomialExtension
 
 /-!
 # The Helou–Terjanian congruence at primes at least five
@@ -39,17 +40,30 @@ using that the inverse squares of `1, …, p - 1` sum to `0` modulo `p` when `p 
 `p * D` divides `F (a + c) ^ 2 - F c ^ 2`. As `F (a + c) + F c` is prime to `p`, this gives
 `F (a + c) ≡ F c` modulo `p ^ (3 + ν_p a)`. Multiplying by `(a + k).choose k` adds its valuation
 to the exponent; exchanging `m` and `n - m` gives the maximum.
+
+## References
+
+* Geng-Rui Zhang, *Realizability of Some Combinatorial Sequences*, Journal of Integer Sequences
+  27 (2024), Article 24.3.3, pp. 1–25, Lemma 26 (1).
+* Charles Helou and Guy Terjanian, *On Wolstenholme's theorem and its converse*, Journal of Number
+  Theory 128 (2008), pp. 475–499, Corollary on p. 490 (the result cited by Zhang).
+* Walid Kehila, *An Extension of Wolstenholme's Theorem by Binomial Coefficients*, INTEGERS
+  26 (2026), Article A32, pp. 1–28, Lemma 6 (the quotient formula for the block products).
 -/
 
 namespace MetaMathlibExt
 
-open HelouTerjanian (blockProd blockProd_eq_prod choose_mul_prod_blockProd)
-
 namespace choose_mul_prime_modEq_of_five_le
+
+-- Use the interval indexing to pair the factors `r` and `p - r`.
+private theorem ascFactorial_block_eq_prod_Ico (p c : ℕ) :
+    (c * p + 1).ascFactorial (p - 1) = ∏ r ∈ Finset.Ico 1 p, (c * p + r) := by
+  rw [Nat.ascFactorial_eq_prod_range, Finset.prod_Ico_eq_prod_range]
+  exact Finset.prod_congr rfl fun r _ => by ring
 
 -- Pairing `r` with `p - r` turns the square of a block product into quadratic factors.
 private theorem blockProd_sq (p c : ℕ) :
-    (blockProd p c : ℤ) ^ 2 =
+    ((c * p + 1).ascFactorial (p - 1) : ℤ) ^ 2 =
       ∏ r ∈ Finset.Ico 1 p, ((r : ℤ) * (p - r) + c * (c + 1) * p ^ 2) := by
   have hrefl : ∏ r ∈ Finset.Ico 1 p, ((c : ℤ) * p + r) =
       ∏ r ∈ Finset.Ico 1 p, ((c : ℤ) * p + (p - r)) := by
@@ -57,7 +71,7 @@ private theorem blockProd_sq (p c : ℕ) :
     simp only [Nat.add_sub_cancel_left, Nat.add_sub_cancel] at h
     rw [← h]
     exact Finset.prod_congr rfl fun r hr => by rw [Nat.cast_sub (Finset.mem_Ico.mp hr).2.le]
-  rw [sq, blockProd_eq_prod]
+  rw [sq, ascFactorial_block_eq_prod_Ico]
   push_cast
   nth_rewrite 2 [hrefl]
   rw [← Finset.prod_mul_distrib]
@@ -115,7 +129,8 @@ private theorem sum_inv_sq_eq_zero (p : ℕ) [hp : Fact p.Prime] (hp5 : 5 ≤ p)
 
 -- Shifting a block by `a` places changes its product by a multiple of `p ^ (3 + ν_p a)`.
 private theorem blockProd_modEq (p a c : ℕ) (hp : p.Prime) (hp5 : 5 ≤ p) :
-    blockProd p (a + c) ≡ blockProd p c [MOD p ^ (3 + padicValNat p a)] := by
+    ((a + c) * p + 1).ascFactorial (p - 1) ≡ (c * p + 1).ascFactorial (p - 1)
+      [MOD p ^ (3 + padicValNat p a)] := by
   have := Fact.mk hp
   let y : ℕ → ℤ := fun r => (r : ℤ) * (p - r) + c * (c + 1) * p ^ 2
   let D : ℤ := a * (a + 2 * c + 1) * p ^ 2
@@ -134,8 +149,10 @@ private theorem blockProd_modEq (p a c : ℕ) (hp : p.Prime) (hp5 : 5 ≤ p) :
     simp only [hres, inv_neg, Finset.sum_neg_distrib, sum_inv_sq_eq_zero p hp5, neg_zero,
       mul_zero]
   -- The difference of the two block products, times their sum, is `D * T`.
-  have hsq : ((blockProd p (a + c) : ℤ) - blockProd p c) *
-      ((blockProd p (a + c) : ℤ) + blockProd p c) = D * T := by
+  have hsq : ((((a + c) * p + 1).ascFactorial (p - 1) : ℤ) -
+        (c * p + 1).ascFactorial (p - 1)) *
+      ((((a + c) * p + 1).ascFactorial (p - 1) : ℤ) +
+        (c * p + 1).ascFactorial (p - 1)) = D * T := by
     have h1 := blockProd_sq p (a + c)
     have h0 := blockProd_sq p c
     have hshift : ∏ r ∈ Finset.Ico 1 p,
@@ -156,10 +173,12 @@ private theorem blockProd_modEq (p a c : ℕ) (hp : p.Prime) (hp5 : 5 ≤ p) :
     ring
   -- The sum of the two block products is prime to `p`.
   have hcop : IsCoprime ((p : ℤ) ^ (3 + padicValNat p a))
-      ((blockProd p (a + c) : ℤ) + blockProd p c) := by
-    have hres' (A : ℕ) : (blockProd p A : ZMod p) = ∏ r ∈ Finset.Ico 1 p, (r : ZMod p) := by
-      simp [blockProd_eq_prod]
-    have hnd : ¬ p ∣ blockProd p (a + c) + blockProd p c := by
+      ((((a + c) * p + 1).ascFactorial (p - 1) : ℤ) + (c * p + 1).ascFactorial (p - 1)) := by
+    have hres' (A : ℕ) : ((A * p + 1).ascFactorial (p - 1) : ZMod p) =
+        ∏ r ∈ Finset.Ico 1 p, (r : ZMod p) := by
+      simp [ascFactorial_block_eq_prod_Ico]
+    have hnd : ¬ p ∣ ((a + c) * p + 1).ascFactorial (p - 1) +
+        (c * p + 1).ascFactorial (p - 1) := by
       rw [← ZMod.natCast_eq_zero_iff, Nat.cast_add, hres', hres', ← two_mul]
       refine mul_ne_zero ?_
         (Finset.prod_ne_zero_iff.mpr fun r hr => natCast_ne_zero_of_mem_Ico hr)
@@ -177,17 +196,18 @@ private theorem blockProd_modEq (p a c : ℕ) (hp : p.Prime) (hp5 : 5 ≤ p) :
 private theorem choose_mul_modEq_add (p a k : ℕ) (hp : p.Prime) (hp5 : 5 ≤ p) (hk : 0 < k) :
     ((a + k) * p).choose (k * p) ≡ (a + k).choose k
       [MOD p ^ (3 + padicValNat p a + padicValNat p ((a + k).choose k))] := by
-  have hprod : ∏ j ∈ Finset.range k, blockProd p (a + j) ≡
-      ∏ j ∈ Finset.range k, blockProd p j [MOD p ^ (3 + padicValNat p a)] :=
+  have hprod : (∏ j ∈ Finset.range k, ((a + j) * p + 1).ascFactorial (p - 1)) ≡
+      (∏ j ∈ Finset.range k, (j * p + 1).ascFactorial (p - 1)) [MOD p ^ (3 + padicValNat p a)] :=
     Nat.ModEq.prod fun j _ => blockProd_modEq p a j hp hp5
-  have hcop : Nat.Coprime p (∏ j ∈ Finset.range k, blockProd p j) := by
-    simp only [blockProd_eq_prod]
-    refine Nat.Coprime.prod_right fun j _ => Nat.Coprime.prod_right fun r hr => ?_
-    obtain ⟨h1, h2⟩ := Finset.mem_Ico.mp hr
-    rw [Nat.mul_comm, Nat.coprime_mul_left_add_right]
-    exact Nat.coprime_of_lt_prime (by omega) h2 hp
+  have hcop : Nat.Coprime p (∏ j ∈ Finset.range k, (j * p + 1).ascFactorial (p - 1)) := by
+    refine Nat.Coprime.prod_right fun j _ => hp.coprime_iff_not_dvd.mpr fun hd => ?_
+    obtain ⟨i, hi, hdiv⟩ := hp.dvd_ascFactorial_iff.mp hd
+    have hc : Nat.Coprime p (j * p + 1 + i) := by
+      rw [Nat.add_assoc, Nat.mul_comm j p, Nat.coprime_mul_left_add_right]
+      exact Nat.coprime_of_lt_prime (by omega) (by omega) hp
+    exact hp.coprime_iff_not_dvd.mp hc hdiv
   apply Nat.ModEq.cancel_right_of_coprime (hcop.pow_left _)
-  rw [choose_mul_prod_blockProd p a k hp hk]
+  rw [choose_mul_prod_ascFactorial p a k hp hk]
   -- Multiplication by the binomial coefficient contributes its own power of `p`.
   apply (hprod.mul_left' _).of_dvd
   rw [pow_add, mul_comm]

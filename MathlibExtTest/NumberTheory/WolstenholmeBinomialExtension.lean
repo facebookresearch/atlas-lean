@@ -27,6 +27,15 @@ example : (70 : ℚ) = 6 * (5 * 7) / (1 * 3) ∧ (70 : ℚ) = (15 * 28) / (1 * 6
   simp only [Finset.prod_range_succ, Finset.prod_range_zero, one_mul] at h
   exact h
 
+-- For two blocks at p = 3, check both cleared-denominator expressions independently.
+example : (9 : ℕ).choose 6 * (∏ j ∈ Finset.range 2, (j * 3 + 1).ascFactorial 2) = 3360 ∧
+    (3 : ℕ).choose 2 * (∏ j ∈ Finset.range 2, ((1 + j) * 3 + 1).ascFactorial 2) = 3360 :=
+  by decide
+
+example : (9 : ℕ).choose 6 * (∏ j ∈ Finset.range 2, (j * 3 + 1).ascFactorial 2) =
+    (3 : ℕ).choose 2 * (∏ j ∈ Finset.range 2, ((1 + j) * 3 + 1).ascFactorial 2) :=
+  choose_mul_prod_ascFactorial 3 1 2 Nat.prime_three (by decide)
+
 -- For the first derivative of a quadratic term over ℚ₂, the multiplier is two.
 example (x : ℚ_[2]) : ‖x + x‖ ≤ ‖x‖ := by
   simpa only [Nat.choose_one_right, add_nsmul, one_nsmul] using

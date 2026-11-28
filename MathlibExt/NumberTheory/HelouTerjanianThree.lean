@@ -11,11 +11,10 @@ module
 public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.Data.Nat.ModEq
 public import Mathlib.Data.Nat.PadicValNat
-import Mathlib.Algebra.BigOperators.Intervals
 import Mathlib.Algebra.BigOperators.ModEq
 import Mathlib.Data.Nat.GCD.BigOperators
 import Mathlib.Tactic.Ring
-import MathlibExt.NumberTheory.HelouTerjanianBlockProduct
+import MathlibExt.NumberTheory.WolstenholmeBinomialExtension
 
 /-!
 # The Helou–Terjanian congruence at three
@@ -40,38 +39,39 @@ by `9 * a * (2 * j + a + 1)`. The block product identity then gives the congruen
   Theory 128 (2008), pp. 475–499, Corollary on p. 490 (the result cited by Zhang).
 * Walid Kehila, *An Extension of Wolstenholme's Theorem by Binomial Coefficients*, INTEGERS
   26 (2026), Article A32, pp. 1–28, Lemma 6 (the quotient formula for the block products).
-* `MathlibExt.NumberTheory.HelouTerjanianBlockProduct`: the proof uses the shared `blockProd`,
-  `blockProd_eq_prod`, and `choose_mul_prod_blockProd`.
+* `MathlibExt.NumberTheory.WolstenholmeBinomialExtension`: the proof uses
+  `choose_mul_prod_ascFactorial`, the block quotient formula with its denominator cleared.
 * `MathlibExt.NumberTheory.HelouTerjanianLargePrime`: the proof specializes the congruence argument
   of `choose_mul_modEq_add` and `choose_mul_prime_modEq_of_five_le` to the two factors at three.
 -/
 
 namespace MetaMathlibExt
 
-open HelouTerjanian (blockProd blockProd_eq_prod choose_mul_prod_blockProd)
-
-private theorem blockProd_three_eq (j : ℕ) : blockProd 3 j = 2 + 3 ^ 2 * j * (j + 1) := by
-  norm_num [blockProd_eq_prod, Finset.prod_Ico_eq_prod_range, Finset.prod_range_succ]
+private theorem ascFactorial_three_block (j : ℕ) :
+    (j * 3 + 1).ascFactorial 2 = 2 + 3 ^ 2 * j * (j + 1) := by
+  simp only [Nat.ascFactorial_succ, Nat.ascFactorial_zero, Nat.add_zero, mul_one]
   ring
 
 -- First use only the valuation of the complementary index `a`.
 private theorem choose_three_mul_modEq_add (a k : ℕ) (hk : 0 < k) :
     (3 * (a + k)).choose (3 * k) ≡ (a + k).choose k
       [MOD 3 ^ (2 + padicValNat 3 a + padicValNat 3 ((a + k).choose k))] := by
-  have shift (j : ℕ) : blockProd 3 (a + j) = blockProd 3 j + 3 ^ 2 * a * (2 * j + a + 1) := by
-    simp only [blockProd_three_eq]
+  have shift (j : ℕ) : ((a + j) * 3 + 1).ascFactorial 2 =
+      (j * 3 + 1).ascFactorial 2 + 3 ^ 2 * a * (2 * j + a + 1) := by
+    simp only [ascFactorial_three_block]
     ring
-  have hprod : (∏ j ∈ Finset.range k, blockProd 3 (a + j)) ≡
-      (∏ j ∈ Finset.range k, blockProd 3 j) [MOD 3 ^ (2 + padicValNat 3 a)] := by
+  have hprod : (∏ j ∈ Finset.range k, ((a + j) * 3 + 1).ascFactorial 2) ≡
+      (∏ j ∈ Finset.range k, (j * 3 + 1).ascFactorial 2) [MOD 3 ^ (2 + padicValNat 3 a)] := by
     refine Nat.ModEq.prod fun j _ => ?_
     rw [shift, Nat.add_modEq_left_iff, pow_add, mul_assoc, Nat.padicValNat_def]
     exact mul_dvd_mul_left _ ((pow_multiplicity_dvd 3 a).trans (dvd_mul_right a _))
-  have hcop : Nat.Coprime 3 (∏ j ∈ Finset.range k, blockProd 3 j) := by
+  have hcop : Nat.Coprime 3 (∏ j ∈ Finset.range k, (j * 3 + 1).ascFactorial 2) := by
     refine Nat.Coprime.prod_right fun j _ => ?_
-    rw [blockProd_three_eq, show (3 : ℕ) ^ 2 * j * (j + 1) = 3 * (3 * j * (j + 1)) by ring,
+    rw [ascFactorial_three_block,
+      show (3 : ℕ) ^ 2 * j * (j + 1) = 3 * (3 * j * (j + 1)) by ring,
       Nat.coprime_add_mul_left_right]
     decide
-  have hblocks := choose_mul_prod_blockProd 3 a k Nat.prime_three hk
+  have hblocks := choose_mul_prod_ascFactorial 3 a k Nat.prime_three hk
   rw [Nat.mul_comm (a + k) 3, Nat.mul_comm k 3] at hblocks
   apply Nat.ModEq.cancel_right_of_coprime (hcop.pow_left _)
   rw [hblocks]
