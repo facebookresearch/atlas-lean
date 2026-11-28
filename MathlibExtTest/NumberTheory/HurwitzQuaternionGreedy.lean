@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import MathlibExt.NumberTheory.HurwitzGeometricProgressionFreeQuaternionGreedyNeNormPreimage
 import MathlibExt.NumberTheory.HurwitzQuaternionGreedy
 import MathlibExt.NumberTheory.QuadraticForms.LegendreThreeSquareConverse
 import Mathlib.Algebra.Order.Ring.Abs
@@ -116,5 +117,58 @@ example (Gq : Set (Quaternion ℚ)) (hGq : IsQuaternionGreedy Gq) :
   · exact Or.inl ⟨7, 0, 0, 0, rfl, rfl, rfl, rfl⟩
   · exact Quaternion.normSq_coe (x := (7 : ℚ))
   · exact scalar_seven_not_unit_mul_sq
+
+-- Check Rankin membership directly, using the ternary digits of 2 and 4.
+example : ((7 : ℕ) : Quaternion ℚ) ∉ 𝐒ᴳ 𝐆ʳ ∧ ((49 : ℕ) : Quaternion ℚ) ∈ 𝐒ᴳ 𝐆ʳ := by
+  constructor
+  · rintro ⟨_, n, hn, hnorm⟩
+    rw [Quaternion.normSq_natCast, ← Nat.cast_pow] at hnorm
+    have hn49 : n = 7 ^ 2 := by exact_mod_cast hnorm.symm
+    have hdigits := hn.2 7 Nat.prime_seven
+    rw [hn49, Nat.prime_seven.factorization_pow, Finsupp.single_eq_same] at hdigits
+    exact hdigits (by decide)
+  · refine ⟨Or.inl ⟨49, 0, 0, 0, rfl, rfl, rfl, rfl⟩, 7 ^ 4, ⟨by decide, ?_⟩, ?_⟩
+    · intro p _
+      rw [Nat.prime_seven.factorization_pow, Finsupp.single_apply]
+      split <;> decide
+    · rw [Quaternion.normSq_natCast]
+      norm_num
+
+-- Check the progression that excludes 49 once the greedy set contains 1 and 7.
+example : ∃ r ∈ 𝐇, r ≠ 0 ∧ Quaternion.normSq r = 49 ∧
+    (1 : Quaternion ℚ) * r = ((7 : ℕ) : Quaternion ℚ) ∧
+    (1 : Quaternion ℚ) * r ^ 2 = ((49 : ℕ) : Quaternion ℚ) := by
+  refine ⟨((7 : ℕ) : Quaternion ℚ), Or.inl ⟨7, 0, 0, 0, rfl, rfl, rfl, rfl⟩, ?_, ?_, ?_, ?_⟩
+  · apply Quaternion.normSq_ne_zero.mp
+    rw [Quaternion.normSq_natCast]
+    norm_num
+  · rw [Quaternion.normSq_natCast]
+    norm_num
+  · simp
+  · rw [one_mul, ← Nat.cast_pow]
+    rfl
+
+-- The first two primes in this congruence class give distinct scalars and distinct squares.
+example : Nat.Prime 7 ∧ 7 % 8 = 7 ∧ Nat.Prime 23 ∧ 23 % 8 = 7 ∧
+    ((7 : ℕ) : Quaternion ℚ) ≠ ((23 : ℕ) : Quaternion ℚ) ∧
+    (((7 : ℕ) : Quaternion ℚ) ^ 2) ≠ (((23 : ℕ) : Quaternion ℚ) ^ 2) := by
+  refine ⟨by decide, by decide, by decide, by decide, ?_, ?_⟩
+  · intro h
+    have hre := congrArg (fun q : Quaternion ℚ => q.re) h
+    simp only [Quaternion.re_natCast] at hre
+    norm_num at hre
+  · rw [← Nat.cast_pow, ← Nat.cast_pow]
+    intro h
+    have hre := congrArg (fun q : Quaternion ℚ => q.re) h
+    simp only [Quaternion.re_natCast] at hre
+    norm_num at hre
+
+-- The two differences remain nonempty after removing the initial witnesses.
+example (Gq : Set (Quaternion ℚ)) (hGq : IsQuaternionGreedy Gq) :
+    (∃ q ∈ Gq \ 𝐒ᴳ 𝐆ʳ, q ≠ ((7 : ℚ) : Quaternion ℚ)) ∧
+      (∃ q ∈ 𝐒ᴳ 𝐆ʳ \ Gq, q ≠ ((49 : ℚ) : Quaternion ℚ)) := by
+  obtain ⟨hleft, hright⟩ := quaternionGreedy_diff_rankin_infinite Gq hGq
+  exact ⟨by simpa using hleft.exists_notMem_finite (Set.finite_singleton ((7 : ℚ) : Quaternion ℚ)),
+    by simpa using hright.exists_notMem_finite (Set.finite_singleton ((49 : ℚ) : Quaternion ℚ))⟩
 
 end MetaMathlibExt.quaternionGreedy_mem_of_not_unit_mul_sq
