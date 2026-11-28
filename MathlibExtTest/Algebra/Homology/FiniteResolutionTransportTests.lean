@@ -133,7 +133,7 @@ private lemma signedDifferential_eq : signedDifferential = -(𝟙 E) := by
   have h := cochainShiftTermIso_d splitResolution (1 : ℤ) 0
   rw [splitResolution_d] at h
   have hsign : (-(1 : ℤ)).negOnePow • (𝟙 E) = -(𝟙 E) := by
-    ext x
+    ext
     norm_num [Units.smul_def]
   exact (show signedDifferential = (-(1 : ℤ)).negOnePow • (𝟙 E) from h).trans hsign
 
@@ -157,9 +157,9 @@ private lemma shiftedAugmentation_eq : shiftedAugmentation = 𝟙 E := by
     rfl
   dsimp only [shiftedAugmentation]
   erw [cochainShiftAugmentation_f]
-  simp only [Functor.id_map, hx, Iso.refl_hom, Category.id_comp, Category.assoc,
-    Iso.inv_hom_id_assoc]
+  simp only [Functor.id_map, hx, Iso.refl_hom]
   simp [identityResolution, Tests.identityResolution, augmentation₀]
+  exact (identityResolution.cochainShiftTermIso (1 : ℤ) 0).inv_hom_id
 
 example : ModuleCat.Hom.hom shiftedAugmentation (1 : ℤ) = 1 := by
   rw [shiftedAugmentation_eq]
@@ -271,13 +271,12 @@ example : Cochain.ofHom doubleFold = Cochain.ofHom twiceFold := by
   intro j
   rw [← Cochain.ofHom_comp, ← Cochain.ofHom_comp]
   congr 1
-  simp [doubleFold, twiceFold, comp_zsmul]
+  simp [doubleFold, twiceFold]
 
 example : ModuleCat.Hom.hom
     (singleZeroX.inv ≫ ((Limits.Sigma.ι family 0) ≫ doubleFold).f 0 ≫ singleZeroX.hom)
     (1 : ℤ) = 2 := by
-  simp [doubleFold, HomologicalComplex.zsmul_f_apply, comp_zsmul, zsmul_comp,
-    Category.assoc]
+  simp [doubleFold]
 
 private def shiftCoordinate : singleOne⟦(1 : ℤ)⟧ ≅ singleZero :=
   ((CochainComplex.singleFunctors M).shiftIso 1 0 1 (by norm_num)).app E
@@ -310,19 +309,21 @@ private lemma boundaryMap_eq : boundaryMap = negativeBoundary := by
       exact h
     _ = negativeBoundary := by
       dsimp only [Cocycle.mappedShiftedHom, ShiftedHom.map]
-      rw [Cocycle.equivHomShift_symm_postcomp_rightUnshift]
+      erw [Cocycle.equivHomShift_symm_postcomp_rightUnshift
+        (K := singleZero) (L := singleZero) (M := singleOne) (q := 0)
+        identityCocycle negativeBoundary]
       simp [identityCocycle]
 
 private lemma boundaryNormalized :
     boundaryMap ≫ shiftCoordinate.hom = (-2 : ℤ) • 𝟙 singleZero := by
   rw [boundaryMap_eq]
-  simp [negativeBoundary, Category.assoc]
+  simp [negativeBoundary]
 
 example : ModuleCat.Hom.hom
     (singleZeroX.inv ≫ (boundaryMap ≫ shiftCoordinate.hom).f 0 ≫ singleZeroX.hom)
     (1 : ℤ) = -2 := by
   rw [boundaryNormalized]
-  simp [HomologicalComplex.zsmul_f_apply, comp_zsmul, zsmul_comp, Category.assoc]
+  simp
 
 example :
     (preadditiveCoyoneda.obj
