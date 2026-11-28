@@ -11,10 +11,10 @@ module
 public import MathlibExt.NumberTheory.PolygonalNumber
 public import MathlibExt.NumberTheory.PracticalNumber
 import Mathlib.Data.Nat.Log
+import MathlibExt.NumberTheory.ArithmeticFunction.SigmaTwoPow
 import MathlibExt.NumberTheory.OddSquareTriangular
 import MathlibExt.NumberTheory.PracticalPolygonalSums
 import MathlibExt.NumberTheory.PracticalPolygonalSumsIsPracticalNumberMulOfLeSigmaAddOne
-import MathlibExt.NumberTheory.TwoNearPerfectTwoNearPerfectTwoPowMulPrimeCases
 
 /-!
 # Positive integers as sums of a practical number and a triangular number
@@ -36,8 +36,7 @@ small enough for the product to be practical.
 
 The practical-power induction uses the same small-factor argument as `isPracticalNumber_primorial`
 in `MathlibExt.NumberTheory.PracticalPolygonalSumsEventuallyTwo`. The divisor-sum calculation
-uses `sigma_two_pow_add_one` from
-`MathlibExt.NumberTheory.TwoNearPerfectTwoNearPerfectTwoPowMulPrimeCases`.
+uses `sigma_two_pow_add_one` from `MathlibExt.NumberTheory.ArithmeticFunction.SigmaTwoPow`.
 -/
 
 namespace MetaMathlibExt
