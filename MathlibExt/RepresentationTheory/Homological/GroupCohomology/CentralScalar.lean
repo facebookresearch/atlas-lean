@@ -9,21 +9,21 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.RepresentationTheory.Homological.GroupCohomology.LowDegree
-public import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Defs
 public import Mathlib.Data.ZMod.Basic
+public import MathlibExt.LinearAlgebra.Matrix.GeneralLinearGroup.StdRep
 import Mathlib.Algebra.Field.ZMod
 import Mathlib.Data.Nat.Prime.Defs
 
 /-!
 # Low-degree cohomology vanishes when a central element acts by a scalar
 
-Let `A` be a `k`-linear representation of a group `G`, and let `z ∈ G` be central and act on `A`
-as multiplication by `c ∈ k` with `c - 1` a unit. Then `H⁰(G, A) = 0`
-(`groupCohomology.isZero_H0_of_central_smul`) and `H¹(G, A) = 0`
-(`groupCohomology.isZero_H1_of_central_smul`).
+Let `A` be a `k`-linear representation of a group `G`, and let `z ∈ G` act on `A` as
+multiplication by `c ∈ k` with `c - 1` a unit. Then `H⁰(G, A) = 0`
+(`groupCohomology.isZero_H0_of_smul`); this needs no centrality. If moreover `z` lies in the
+centre of `G`, then `H¹(G, A) = 0` (`groupCohomology.isZero_H1_of_central_smul`).
 
-For a commutative ring `R` in which `2` is a unit, the homothety `2 · 1` of `GL_n(R)` acts on
-`Rⁿ` by `2`, with `2 - 1 = 1`, so `H⁰(GL_n(R), Rⁿ) = H¹(GL_n(R), Rⁿ) = 0`
+For a commutative ring `R` in which `2` is a unit, the homothety `2 · 1` of `GL_n(R)` is central
+and acts on `Rⁿ` by `2`, with `2 - 1 = 1`, so `H⁰(GL_n(R), Rⁿ) = H¹(GL_n(R), Rⁿ) = 0`
 (`Matrix.GeneralLinearGroup.isZero_H0_and_H1_stdRep`); in particular for
 `GL₂(ℤ/pℤ)` acting on `(ℤ/pℤ)²`, `p` an odd prime
 (`Matrix.GeneralLinearGroup.isZero_H0_and_H1_stdRep_zmod`). These are the degrees `n = 0, 1`
@@ -52,13 +52,16 @@ set_option autoImplicit false
 
 open CategoryTheory
 
+universe u
+
 namespace groupCohomology
 
-variable {k G : Type} [CommRing k] [Group G] (A : Rep k G)
+variable {k G : Type u} [CommRing k] [Group G] (A : Rep k G)
 
 /-- **`H⁰` vanishes when an element acts by a scalar `c` with `c - 1` a unit.** If some `z ∈ G`
-acts on `A` as multiplication by `c ∈ k` and `c - 1` is a unit of `k`, then `H⁰(G, A) = 0`. -/
-theorem isZero_H0_of_central_smul (z : G) (c : k) (hc : IsUnit (c - 1))
+acts on `A` as multiplication by `c ∈ k` and `c - 1` is a unit of `k`, then `H⁰(G, A) = 0`.
+No centrality of `z` is needed. -/
+theorem isZero_H0_of_smul {z : G} {c : k} (hc : IsUnit (c - 1))
     (hρ : ∀ v, A.ρ z v = c • v) : Limits.IsZero (H0 A) := by
   have : Subsingleton A.ρ.invariants := by
     refine subsingleton_of_forall_eq 0 fun x => ?_
@@ -71,11 +74,10 @@ theorem isZero_H0_of_central_smul (z : G) (c : k) (hc : IsUnit (c - 1))
     rwa [← hu, smul_smul, Units.inv_mul, one_smul] at h''
   exact Limits.IsZero.of_iso (ModuleCat.isZero_of_subsingleton _) (H0Iso A)
 
-/-- **`H¹` vanishes when a central element acts by a scalar `c` with `c - 1` a unit.** If
-`z ∈ G` commutes with every element of `G` and acts on `A` as multiplication by `c ∈ k`, and
-`c - 1` is a unit of `k`, then `H¹(G, A) = 0`: every `1`-cocycle is the coboundary of
-`(c - 1)⁻¹ • f z`. -/
-theorem isZero_H1_of_central_smul (z : G) (hz : ∀ g, z * g = g * z) (c : k)
+/-- **`H¹` vanishes when a central element acts by a scalar `c` with `c - 1` a unit.** If `z`
+lies in the centre of `G` and acts on `A` as multiplication by `c ∈ k`, and `c - 1` is a unit
+of `k`, then `H¹(G, A) = 0`: every `1`-cocycle `f` is the coboundary of `(c - 1)⁻¹ • f z`. -/
+theorem isZero_H1_of_central_smul {z : G} (hz : z ∈ Subgroup.center G) {c : k}
     (hc : IsUnit (c - 1)) (hρ : ∀ v, A.ρ z v = c • v) : Limits.IsZero (H1 A) := by
   have : Subsingleton (H1 A) := by
     refine subsingleton_of_forall_eq 0 fun x => ?_
@@ -87,7 +89,7 @@ theorem isZero_H1_of_central_smul (z : G) (hz : ∀ g, z * g = g * z) (c : k)
       refine ⟨(↑u⁻¹ : k) • (f : G → A) z, funext fun g => ?_⟩
       rw [d₀₁_hom_apply, map_smul, ← smul_sub]
       have h1 := hf z g
-      rw [hz g, hf g z, hρ] at h1
+      rw [← Subgroup.mem_center_iff.1 hz g, hf g z, hρ] at h1
       have key : (c - 1) • (f : G → A) g = A.ρ g ((f : G → A) z) - (f : G → A) z := by
         rw [sub_smul, one_smul]
         exact sub_eq_sub_iff_add_eq_add.2 h1.symm
@@ -98,33 +100,21 @@ end groupCohomology
 
 namespace Matrix.GeneralLinearGroup
 
-/-- The **standard representation** of `GL_n(R)` on `Rⁿ = n → R`, by `g • v = g *ᵥ v`. -/
-noncomputable def stdRep (n : Type) [Fintype n] [DecidableEq n] (R : Type) [CommRing R] :
-    Representation R (GL n R) (n → R) :=
-  (Units.coeHom _).comp toLin.toMonoidHom
-
-/-- The standard representation acts by matrix-vector multiplication. -/
-theorem stdRep_apply (n : Type) [Fintype n] [DecidableEq n] (R : Type) [CommRing R]
-    (g : GL n R) (v : n → R) : stdRep n R g v = (g : Matrix n n R).mulVec v :=
-  rfl
-
 /-- **`H⁰` and `H¹` of `GL_n(R)` on `Rⁿ` vanish when `2` is a unit of `R`.** For a commutative
 ring `R` with `2 ∈ Rˣ` and the standard representation of `GL_n(R)` on `n → R`, `H⁰` and `H¹`
 are zero: the central homothety `2 · 1` acts by `2`, and `2 - 1 = 1`. -/
-theorem isZero_H0_and_H1_stdRep (n : Type) [Fintype n] [DecidableEq n] (R : Type)
-    [CommRing R] (h2 : IsUnit (2 : R)) :
+theorem isZero_H0_and_H1_stdRep (n R : Type u) [Fintype n] [DecidableEq n] [CommRing R]
+    (h2 : IsUnit (2 : R)) :
     Limits.IsZero (groupCohomology.H0 (Rep.of (stdRep n R))) ∧
       Limits.IsZero (groupCohomology.H1 (Rep.of (stdRep n R))) := by
   obtain ⟨u, hu⟩ := h2
-  let z : GL n R := scalar n u
-  have hz : ∀ g, z * g = g * z := fun g => by
-    ext i j
-    simp [z, scalar, mul_comm]
-  have hρ : ∀ v, (Rep.of (stdRep n R)).ρ z v = (2 : R) • v := fun v => by
-    simp [z, stdRep_apply, scalar, hu]
+  have hz : scalar n u ∈ Subgroup.center (GL n R) :=
+    Subgroup.mem_center_iff.2 fun g => (scalar_commute u g).symm
+  have hρ : ∀ v, (Rep.of (stdRep n R)).ρ (scalar n u) v = (2 : R) • v := fun v => by
+    simp [scalar, hu]
   have hc : IsUnit ((2 : R) - 1) := by norm_num
-  exact ⟨groupCohomology.isZero_H0_of_central_smul _ z 2 hc hρ,
-    groupCohomology.isZero_H1_of_central_smul _ z hz 2 hc hρ⟩
+  exact ⟨groupCohomology.isZero_H0_of_smul _ hc hρ,
+    groupCohomology.isZero_H1_of_central_smul _ hz hc hρ⟩
 
 /-- **`H⁰(GL₂(ℤ/pℤ), (ℤ/pℤ)²) = H¹(GL₂(ℤ/pℤ), (ℤ/pℤ)²) = 0` for an odd prime `p`**, for the
 standard representation of `GL₂(ℤ/pℤ)` on `Fin 2 → ℤ/pℤ`. -/
