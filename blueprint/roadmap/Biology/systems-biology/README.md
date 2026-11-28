@@ -27,9 +27,12 @@ Dynamics of biochemical reaction networks and gene regulatory circuits: mass-act
 - [CRNs as computing devices](crns-as-computing-devices.md)
 - [Gillespie propensities and the mass-action Markov chain of a reaction network](remaining-clauses-of-stochastic-chemical-reaction-networks.md)
 - [Computational power of stochastic CRNs: universal with error, limited without](computational-power-of-stochastic-crns-universal-with-error.md)
-
+- [Reaction network structure and dynamics](reaction-network-structure/README.md)
+- [Molecular computation](molecular-computation/README.md)
+- [Identifiability and inference](identifiability-and-inference/README.md)
+- [Stochastic biochemical dynamics](stochastic-biochemical-dynamics/README.md)
+- [Regulatory and signalling circuits](regulatory-and-signalling-circuits/README.md)
 ## [Stochastic cell biology, transport and inference](stochastic-cell-biology-transport-and-inference/README.md)
-
 - [Aldous–Shields model of cellular ageing](stochastic-cell-biology-transport-and-inference/aldous-shields-model-of-cellular-ageing/README.md)
 - [Brassinosteroid signalling pathway models](stochastic-cell-biology-transport-and-inference/brassinosteroid-signalling-pathway-models/README.md)
 - [Conditional first passage times under fast inactivation](stochastic-cell-biology-transport-and-inference/conditional-first-passage-times-under-fast-inactivation/README.md)

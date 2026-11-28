@@ -54,8 +54,9 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- An instance: the number `n` of variables (and assignments), the operand sets
-`B₁, ..., Bₙ` as lists of variable indices, and the bound `K`. -/
+/-- An instance `(n, B, K)`: the number `n` of variables `v₀, …, v_{n-1}`, a 0-based list `B`
+of operand sets as lists of variable indices (written `B₀, …, B_{n-1}` when there are `n`
+assignments, with assignment `i` being `vᵢ ← op(Bᵢ)`), and the bound `K`. -/
 abbrev CodeGenerationParallelAssignmentsInstance := ℕ × List (List ℕ) × ℕ
 
 /-- Well-formedness of an instance: there are exactly `n` operand sets, each a list of

@@ -15,9 +15,17 @@ Mathematical models for tumour sequencing data: purity and copy number, cancer c
 
 - [Identifiability of tumor histories with copy-number change and mutation loss](identifiability-of-tumor-histories-with-copy-number-change-and-mutation-loss.md)
 - [Number of samples for unique clone-tree reconstruction](number-of-samples-for-unique-clone-tree-reconstruction.md)
-
+- [Post-selection inference for changepoints](post-selection-inference-for-changepoints/README.md)
+- [Age-structured microlesion model of tumour growth](age-structured-microlesion-model-of-tumour-growth/README.md)
+- [Consecutive seeding of metastases](consecutive-seeding-of-metastases/README.md)
+- [Driver mutations in a two-type branching process](driver-mutations-in-a-two-type-branching-process/README.md)
+- [Excess-mutation tests for regulatory elements](excess-mutation-tests-for-regulatory-elements/README.md)
+- [Recurrent mutation in regulatory elements](recurrent-mutation-in-regulatory-elements/README.md)
+- [Regional somatic mutation burden](regional-somatic-mutation-burden/README.md)
+- [Controllability of adaptive cancer therapy](controllability-of-adaptive-cancer-therapy/README.md)
+- [Immune extinction threshold models](immune-extinction-threshold-models/README.md)
+- [Minimum uncovering branching](minimum-uncovering-branching/README.md)
 ## [Tumour growth models and their optimal control](tumour-growth-models-and-their-control/README.md)
-
 - [Boundary-controlled chemotherapy in reaction–diffusion models](tumour-growth-models-and-their-control/boundary-controlled-chemotherapy-reaction-diffusion/README.md)
 - [Cahn–Hilliard–Keller–Segel tumor growth](tumour-growth-models-and-their-control/cahn-hilliard-keller-segel-tumor-growth/README.md)
 - [Diet-dependent anti-hormonal therapy of breast cancer](tumour-growth-models-and-their-control/diet-dependent-anti-hormonal-therapy-of-breast-cancer/README.md)
