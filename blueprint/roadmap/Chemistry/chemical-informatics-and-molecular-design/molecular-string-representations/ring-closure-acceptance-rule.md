@@ -7,11 +7,12 @@ Let a derivation of a $\nu$-admissible partial graph produce, in order, ring-clo
 - if $m_1 = 0$, or $m_2 = 0$, or $u_j = v_j$, the candidate is rejected;
 - otherwise, if $u_j$ and $v_j$ are not yet joined, a bond of order
 
-$$
-d_0 = \min\big(d(\beta_j), m_1, m_2\big)
-$$
+    $$
+    d_0 = \min\big(d(\beta_j), m_1, m_2\big)
+    $$
 
-is added;
+    is added;
+
 - otherwise the existing bond, of order $d_1$, is promoted to $\min(3, d_1 + d_0)$.
 
 The rule preserves $\nu$-admissibility. A new bond raises each endpoint's degree by $d_0 \le \min(m_1, m_2)$; a promotion raises both endpoints by $\min(3, d_1 + d_0) - d_1$, which is at most $d_0$ and so again within budget. The cap keeps orders in $\{1,2,3\}$, and the increment can be zero, as it is when $d_1 = 3$.

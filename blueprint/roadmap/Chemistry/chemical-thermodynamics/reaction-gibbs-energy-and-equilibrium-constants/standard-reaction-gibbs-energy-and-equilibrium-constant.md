@@ -12,9 +12,9 @@ states:
 2. hence every state of reaction equilibrium has the same quotient, and the
    [equilibrium constant](reaction-quotient-and-equilibrium-constant.md) is
 
-$$K=\exp\!\Big(-\frac{\Delta_rG^\circ}{RT}\Big),\qquad \Delta_rG^\circ=-RT\ln K,$$
+    $$K=\exp\!\Big(-\frac{\Delta_rG^\circ}{RT}\Big),\qquad \Delta_rG^\circ=-RT\ln K,$$
 
-a function of $T$ alone (neither pressure nor composition changes it);
+    a function of $T$ alone (neither pressure nor composition changes it);
 
 3. $K>1$ if and only if $\Delta_rG^\circ<0$, and $K<1$ if and only if $\Delta_rG^\circ>0$.
 

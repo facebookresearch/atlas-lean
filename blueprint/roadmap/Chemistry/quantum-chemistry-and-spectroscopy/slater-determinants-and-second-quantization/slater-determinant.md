@@ -18,7 +18,7 @@ so $\|\Phi\|^2$ is the Gram determinant of the orbitals, $\Phi=0$ if and only if
 
 ## Context
 
-Undergraduate. The Hartree–Fock reference, the configuration-interaction basis and the computational basis states of fermion-to-qubit encodings are Slater determinants. For real finite-dimensional spaces the overlap formula is the Gram-determinant inner product on exterior powers in Mathlib (`exteriorPower.inner_ιMulti_ιMulti`, with the transposed matrix convention), recorded as a counterpart only.
+Undergraduate. The Hartree–Fock reference, the configuration-interaction basis and the computational basis states of fermion-to-qubit encodings are Slater determinants. For real finite-dimensional spaces the overlap formula agrees with the Gram-determinant inner product on exterior powers in Mathlib (`exteriorPower.inner_ιMulti_ιMulti`, with the transposed matrix convention); the comparison is informal.
 
 ## Depends on
 

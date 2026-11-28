@@ -10,7 +10,7 @@ $$
 
 This is a stipulated approximation presented by its authors as an estimated upper bound, not an identity. Its assumptions do not form a consistent exact kinetic scheme: unit intersystem-crossing yield alongside a nonzero fluorescence rate cannot be a branching fraction of the same state, so the expression is a screening estimate whose accuracy the source discusses separately. The factor is the equilibrium singlet fraction of this chapter, so $k_{\mathrm{TADF}}$ increases as the gap shrinks and as $k_{\mathrm{f}}$ grows, and at $\Delta E_{\mathrm{ST}} = 0$ it is $k_{\mathrm{f}}/4$.
 
-$k_{\mathrm{f}}$ is an input here. The source computes it from the oscillator strength of the singlet transition, the refractive index of the medium and the emission wavelength, through a radiative-rate relation of transition-strength type; that relation, with its conventions for degeneracy, lineshape and dielectric environment, is not stated in this chapter, and any page that computes $k_{\mathrm{f}}$ rather than receiving it needs it as a prerequisite. In real emitters the two factors trade against each other, since separating the frontier orbitals shrinks the gap and lowers the oscillator strength; that trade-off is an observation about molecules, not a consequence of the display.
+$k_{\mathrm{f}}$ is an input here. The source computes it from the oscillator strength of the singlet transition, the refractive index of the medium and the emission wavelength, through a radiative-rate relation of transition-strength type; that relation, with its conventions for degeneracy, lineshape and dielectric environment, is a prerequisite of any page that computes $k_{\mathrm{f}}$ rather than receiving it. In real emitters the two factors trade against each other, since separating the frontier orbitals shrinks the gap and lowers the oscillator strength; that trade-off is an observation about molecules, not a consequence of the display.
 
 ## Depends on
 
@@ -23,7 +23,7 @@ None.
 
 ## Expansion
 
-A formal development takes $k_{\mathrm{f}} > 0$, a real gap and $T > 0$, and defines $k_{\mathrm{TADF}}$ as the product of $k_{\mathrm{f}}$ with the equilibrium singlet fraction, inheriting that factor's monotonicity and its value $1/4$ at zero gap. A development that also derives $k_{\mathrm{f}}$ needs the radiative-rate relation between absorption strength and spontaneous emission, which is the bridge this chapter lacks; an empirical ranking of screened candidates is not part of the statement.
+A formal development takes $k_{\mathrm{f}} > 0$, a real gap and $T > 0$, and defines $k_{\mathrm{TADF}}$ as the product of $k_{\mathrm{f}}$ with the equilibrium singlet fraction, inheriting that factor's monotonicity and its value $1/4$ at zero gap. A development that also derives $k_{\mathrm{f}}$ needs the radiative-rate relation between absorption strength and spontaneous emission as a prerequisite; an empirical ranking of screened candidates is not part of the statement.
 
 ## Context
 

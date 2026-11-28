@@ -1,8 +1,8 @@
-# Robust objective of a piecewise-constant surrogate
+# Expectation of a simple function on a box partition
 
-For a surrogate that is constant on the tiles of an axis-aligned partition, the expectation over input uncertainty is a finite sum: each tile contributes its value times the probability that the realized input lands in it, and with independent coordinates that probability is a product of increments of one-dimensional distribution functions.
+For a function that is constant on the boxes of a finite axis-aligned partition, its expectation is a finite sum: each box contributes its value times its probability, and under a product law that probability is a product of increments of one-dimensional distribution functions.
 
-Let $\{\mathcal{T}_m\}_{m=1}^{M}$, $M \ge 1$, be disjoint axis-aligned boxes covering $\mathbb{R}^{D}$, each $\mathcal{T}_m = \prod_{d=1}^{D} (a_{m,d}, b_{m,d}]$ with $-\infty \le a_{m,d} < b_{m,d} \le +\infty$, and let $f$ take the constant value $f_m$ on $\mathcal{T}_m$. For a target $\boldsymbol{x}_k$ let the realized input have law $P_k$ on $\mathbb{R}^{D}$. Then
+Let $\{\mathcal{T}_m\}_{m=1}^{M}$, $M \ge 1$, be disjoint axis-aligned boxes covering $\mathbb{R}^{D}$, each $\mathcal{T}_m = \prod_{d=1}^{D} (a_{m,d}, b_{m,d}]$ with $-\infty \le a_{m,d} < b_{m,d} \le +\infty$, and let $f$ take the constant value $f_m$ on $\mathcal{T}_m$. Let the random vector $\tilde{\boldsymbol{x}}_k$ have probability law $P_k$ on $\mathbb{R}^{D}$. Then
 
 $$
 \mathbb{E}\big[f(\tilde{\boldsymbol{x}}_k)\big] = \sum_{m=1}^{M} f_m \, P_k(\mathcal{T}_m) .
@@ -28,7 +28,7 @@ None. The finite partition and coordinate laws are stipulated in the statement.
 
 ## Proof depends on
 
-- [Mass of a half-open interval via the cdf](../../../distributions/distribution-functions/cumulative-distribution-function/measure-ioc-eq-of-real-cdf.md)
+- [Mass of a half-open interval via the cdf](../../distributions/distribution-functions/cumulative-distribution-function/measure-ioc-eq-of-real-cdf.md)
 
 ## Expansion
 

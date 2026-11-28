@@ -7,11 +7,11 @@ Fix nuclei and let $\{\varphi_p\}_{p\in P}$ be a finite orthonormal family of ad
 1. every Slater determinant $\Phi$ of $N\ge1$ distinct members lies in $\mathcal A_N(R)$;
 2. for determinants $\Phi,\Psi$ of members, $\mathcal E_R(\Phi,\Psi)$ equals the sum of the one-electron Slater–Condon expression with $h_{pq}$ and the two-electron Slater–Condon expression with $g_{pqrs}$. In particular
 
-$$
-E_R(\Phi)=\sum_{i=1}^{N}h_{ii}+\sum_{1\le i<j\le N}\bigl(g_{ijij}-g_{ijji}\bigr),
-$$
+    $$
+    E_R(\Phi)=\sum_{i=1}^{N}h_{ii}+\sum_{1\le i<j\le N}\bigl(g_{ijij}-g_{ijji}\bigr),
+    $$
 
-the single-replacement element is $h_{ik}+\sum_j(g_{ijkj}-g_{ijjk})$, the double-replacement element is $g_{ijkl}-g_{ijlk}$, and determinants differing in three or more orbitals give $0$ (same-row replacement convention).
+    the single-replacement element is $h_{ik}+\sum_j(g_{ijkj}-g_{ijjk})$, the double-replacement element is $g_{ijkl}-g_{ijlk}$, and determinants differing in three or more orbitals give $0$ (same-row replacement convention).
 
 ## Context
 

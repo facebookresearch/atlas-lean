@@ -12,7 +12,7 @@ The matrix is symmetric, and the off-diagonal entries are finite because the pos
 
 Its invariances are immediate. Relabelling the nuclei by a permutation $P$ replaces $\mathbf{M}$ by $P\mathbf{M}P^{\top}$. Applying any Euclidean isometry of $\mathbb{R}^{3}$, a reflection included, leaves $\mathbf{M}$ unchanged, since only interatomic distances enter; two enantiomers therefore share a Coulomb matrix, and nothing about bonding or stereochemistry is recorded. The entries also determine the data they are built from: the diagonal determines each $Z_I$, because $z \mapsto 0.5 z^{2.4}$ is strictly increasing on the positive reals, and the off-diagonal entries then determine every interatomic distance.
 
-That a labelled point configuration is itself determined, up to Euclidean isometries including reflections, by its matrix of pairwise distances is a standard fact of distance geometry. It is context here, not a result of this page: proving it needs the centred Gram reconstruction and an extension-of-isometry argument, which this chapter does not state.
+That a labelled point configuration is itself determined, up to Euclidean isometries including reflections, by its matrix of pairwise distances is a standard fact of distance geometry. It is context here, not a result of this page: proving it needs the centred Gram reconstruction and an extension-of-isometry argument.
 
 ## Depends on
 

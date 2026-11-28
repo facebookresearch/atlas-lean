@@ -33,8 +33,8 @@ A formal development takes a measurable domain of positive finite volume, positi
 
 ## Context
 
-Graduate. The acquisition function of Häse, Roch, Kreisbeck and Aspuru-Guzik for self-driving laboratories, where batches of parallel experiments must be proposed cheaply; the categorical extension and the hierarchical scalarisation of this chapter build on it.
+Graduate. The acquisition function of Häse, Roch, Kreisbeck and Aspuru-Guzik for self-driving laboratories, where batches of parallel experiments must be proposed cheaply.
 
 ## Sources
 
-- Florian Häse, Loïc M. Roch, Christoph Kreisbeck and Alán Aspuru-Guzik, *PHOENICS: A Universal Deep Bayesian Optimizer*, ACS Central Science 4 (2018) 1134–1145, Eqs. 10–12 and Section III B–C, including the sampled search with local refinement. DOI [10.1021/acscentsci.8b00307](https://doi.org/10.1021/acscentsci.8b00307), arXiv:[1801.01469v1](https://arxiv.org/abs/1801.01469v1).
+- Florian Häse, Loïc M. Roch, Christoph Kreisbeck and Alán Aspuru-Guzik, *Phoenics: A Bayesian Optimizer for Chemistry*, ACS Central Science 4 (2018) 1134–1145; numbers from arXiv:1801.01469v1, Eqs. 10–12 and Section III B–C, including the sampled search with local refinement. DOI [10.1021/acscentsci.8b00307](https://doi.org/10.1021/acscentsci.8b00307), arXiv:[1801.01469v1](https://arxiv.org/abs/1801.01469v1).

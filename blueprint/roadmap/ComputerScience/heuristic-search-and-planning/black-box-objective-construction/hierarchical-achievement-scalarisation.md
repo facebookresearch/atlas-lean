@@ -48,7 +48,7 @@ A formal development takes finitely many objectives, a finite nonempty observati
 
 ## Context
 
-Graduate. The multi-objective scalarisation of Häse, Roch and Aspuru-Guzik for self-driving laboratories, where a chemist states a priority order and tolerances rather than weights; it feeds a single-objective planner such as the kernel-density acquisition of this chapter.
+Graduate. The multi-objective scalarisation of Häse, Roch and Aspuru-Guzik for self-driving laboratories, where a chemist states a priority order and tolerances rather than weights; it feeds a single-objective planner such as kernel-density acquisition.
 
 ## Sources
 

@@ -18,7 +18,7 @@ assumed integrable over $\mathcal{D}$.
 
 Scope. The source trains encoder, decoder and predictor jointly, with the variational term annealed, and reports latent-space design by fitting a separate Gaussian-process surrogate on encoded training molecules and optimizing that surrogate; the constant weight, the squared loss and its evaluation at the encoder mean are this page's specialization, not a formula the source prints. Nothing here implies that a neighbourhood of a code decodes to related molecules, which is an empirical property of a trained model, and with an unconstrained string representation decoded strings need not parse at all, which the source handles by a validity filter. A deterministic encoder is not a boundary case of the display: a point mass against an atomless prior is not absolutely continuous and the second integral is not finite, so dropping the variational setup gives a different model, an autoencoder with a regression head, rather than a limit of this one. Setting $\gamma = 0$ does leave the plain variational objective.
 
-The graph's existing evidence-lower-bound pages are stated for finite latent sets and do not cover the continuous bound used here, which is why it is written out above; a canonical continuous-latent bound, with the encoder, decoder and reparameterization, is the prerequisite this page would link once it exists.
+The bound is written out above because it is the continuous-latent one, over a latent space with a base measure, rather than the finite-latent bound of a discrete model.
 
 ## Depends on
 
@@ -30,7 +30,7 @@ None.
 
 ## Expansion
 
-A formal development fixes the latent dimension, the measures and densities named above, defines $\mathcal{L}$ by the displayed integrals with their finiteness hypotheses, and defines the objective as the $\mathcal{D}$-expectation of the displayed integrand. Worth recording are the hypotheses that make each term meaningful: absolute continuity of the encoder with respect to the prior for the second integral, finiteness of the encoder mean for the regression term, and integrability over $\mathcal{D}$ for the objective. The surrogate-based design loop of the source is a separate object and belongs on its own page if it is stated.
+A canonical continuous-latent evidence lower bound, together with the encoder, decoder and reparameterization, is the prerequisite this construction takes once it is available. A formal development fixes the latent dimension, the measures and densities named above, defines $\mathcal{L}$ by the displayed integrals with their finiteness hypotheses, and defines the objective as the $\mathcal{D}$-expectation of the displayed integrand. Worth recording are the hypotheses that make each term meaningful: absolute continuity of the encoder with respect to the prior for the second integral, finiteness of the encoder mean for the regression term, and integrability over $\mathcal{D}$ for the objective. The surrogate-based design loop of the source is a separate object and belongs on its own page if it is stated.
 
 ## Context
 

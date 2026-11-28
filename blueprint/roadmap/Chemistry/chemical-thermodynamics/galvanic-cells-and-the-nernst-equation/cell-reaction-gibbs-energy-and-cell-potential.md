@@ -10,10 +10,10 @@ indexed by the phase it occupies. Assume:
    electron chemical potential in each is $\mu_e(\mathrm T)=\mu_e^{(0)}-F\phi_{\mathrm T}$ with one common $\mu_e^{(0)}$;
 2. **zero-current equilibrium:** each electrode reaction is at equilibrium,
 
-$$\sum_{i\in\mathrm L}\nu_i\mu_i+z\,\mu_e(\mathrm{LE})=0,\qquad \sum_{j\in\mathrm R}\nu_j\mu_j-z\,\mu_e(\mathrm{RE})=0,$$
+    $$\sum_{i\in\mathrm L}\nu_i\mu_i+z\,\mu_e(\mathrm{LE})=0,\qquad \sum_{j\in\mathrm R}\nu_j\mu_j-z\,\mu_e(\mathrm{RE})=0,$$
 
-   and electrons are in transfer equilibrium between each electron conductor and its terminal,
-   $\mu_e(\mathrm{LE})=\mu_e(\mathrm{LT})$, $\mu_e(\mathrm{RE})=\mu_e(\mathrm{RT})$.
+    and electrons are in transfer equilibrium between each electron conductor and its terminal,
+    $\mu_e(\mathrm{LE})=\mu_e(\mathrm{LT})$, $\mu_e(\mathrm{RE})=\mu_e(\mathrm{RT})$.
 
 Then
 
