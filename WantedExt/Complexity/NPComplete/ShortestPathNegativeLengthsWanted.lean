@@ -25,10 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Paths
+public import CSLibExt.Complexity.NPComplete.ShortestPathNegativeLengthsDefs
 
 @[expose] public section
 
@@ -62,45 +59,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`), the edge list with lengths (an entry
-`(u, v, (l⁺, l⁻))` is the edge `{u, v}` of length `l⁺ - l⁻`), the bound `K` as `(K⁺, K⁻)`, with
-`K = K⁺ - K⁻`, and the endpoints `s` and `t`. -/
-abbrev ShortestPathNegativeLengthsInstance :=
-  ℕ × List (ℕ × ℕ × (ℕ × ℕ)) × (ℕ × ℕ) × ℕ × ℕ
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : ShortestPathNegativeLengthsInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 (i.2.1.map fun e => (e.1, e.2.1))
-
-/-- The length of an edge `s`: the integer length recorded for the list entry whose endpoints
-are the endpoints of `s` (unique under `WellFormed`). -/
-def edgeLength (i : ShortestPathNegativeLengthsInstance) (s : Sym2 (Fin i.1)) : ℤ :=
-  ((i.2.1.find? fun e => s.map Fin.val = s(e.1, e.2.1)).map
-    fun e => (e.2.2.1 : ℤ) - e.2.2.2).getD 0
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range), and `s, t < n`. -/
-def WellFormed (i : ShortestPathNegativeLengthsInstance) : Prop :=
-  ((i.2.1.map fun e => (e.1, e.2.1)).Nodup ∧
-    ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2.1 < i.1 ∧ e.1 ≠ e.2.1 ∧
-      (e.2.1, e.1) ∉ i.2.1.map fun e => (e.1, e.2.1)) ∧
-    i.2.2.2.1 < i.1 ∧ i.2.2.2.2 < i.1
-
-/-- Some simple path from `s` to `t` has total length at most `K`. -/
-def ShortestPathNegativeLengthsFeasible (i : ShortestPathNegativeLengthsInstance) : Prop :=
-  ∃ s t : Fin i.1, (s : ℕ) = i.2.2.2.1 ∧ (t : ℕ) = i.2.2.2.2 ∧
-    ∃ p : (Graph i).Walk s t, p.IsPath ∧
-      (p.edges.map (edgeLength i)).sum ≤ (i.2.2.1.1 : ℤ) - i.2.2.1.2
-
-open Classical in
-/-- SHORTEST PATH with negative lengths as a decision problem over bitstrings. -/
-noncomputable def shortestPathNegativeLengthsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ShortestPathNegativeLengthsInstance) x with
-  | some i => decide (WellFormed i ∧ ShortestPathNegativeLengthsFeasible i)
-  | none => false
 
 /-- **SHORTEST PATH with negative lengths is NP-complete.** Source: Garey and Johnson (1979),
 [ND29], comment, and [GT39]; Karp (1972). -/

@@ -22,11 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
-public import WantedExt.GraphTheory.BookThicknessOfSubdivisionsWanted
+public import CSLibExt.Complexity.NPComplete.ConnectedOuterplanarSubgraphDefs
 
 @[expose] public section
 
@@ -70,34 +66,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`), edge list, bound `K`. -/
-abbrev ConnectedOuterplanarSubgraphInstance := ℕ × List (ℕ × ℕ) × ℕ
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range), and
-`0 < K ≤ |E|`, the length of the edge list. -/
-def WellFormed (i : ConnectedOuterplanarSubgraphInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    0 < i.2.2 ∧ i.2.2 ≤ i.2.1.length
-
-/-- Some sublist `E'` of the edge list with at least `K` entries forms, on the endpoints of its
-edges, a connected outerplanar graph. -/
-def ConnectedOuterplanarSubgraphFeasible (i : ConnectedOuterplanarSubgraphInstance) : Prop :=
-  ∃ es : List (ℕ × ℕ), es.Sublist i.2.1 ∧ i.2.2 ≤ es.length ∧
-    ((Cslib.Complexity.Karp.edgeGraph i.1 es).induce
-        (Cslib.Complexity.Karp.edgeGraph i.1 es).support).Connected ∧
-      HasBookEmbedding ((Cslib.Complexity.Karp.edgeGraph i.1 es).induce
-        (Cslib.Complexity.Karp.edgeGraph i.1 es).support) 1
-
-open Classical in
-/-- CONNECTED OUTERPLANAR SUBGRAPH as a decision problem over bitstrings. -/
-noncomputable def connectedOuterplanarSubgraphDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ConnectedOuterplanarSubgraphInstance) x with
-  | some i => decide (WellFormed i ∧ ConnectedOuterplanarSubgraphFeasible i)
-  | none => false
 
 /-- **CONNECTED OUTERPLANAR SUBGRAPH is NP-complete.** Source: Garey and Johnson (1979), [GT27],
 comment; Yannakakis (1978), Theorem 10. -/

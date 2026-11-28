@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import WantedExt.GraphTheory.BookThicknessOfSubdivisionsWanted
+public import CSLibExt.Complexity.NPComplete.BookThicknessTwoDefs
 
 @[expose] public section
 
@@ -57,31 +54,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`) and edge list. -/
-abbrev BookThicknessTwoInstance := ℕ × List (ℕ × ℕ)
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : BookThicknessTwoInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range). -/
-def WellFormed (i : BookThicknessTwoInstance) : Prop :=
-  i.2.Nodup ∧ ∀ e ∈ i.2, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2
-
-/-- The graph has a 2-page book embedding (`HasBookEmbedding` with `k = 2`). -/
-def BookThicknessTwoFeasible (i : BookThicknessTwoInstance) : Prop :=
-  MathlibExt.GraphTheory.BookThicknessOfSubdivisionsWanted.HasBookEmbedding (Graph i) 2
-
-open Classical in
-/-- BOOK THICKNESS AT MOST 2 as a decision problem over bitstrings. -/
-noncomputable def bookThicknessTwoDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := BookThicknessTwoInstance) x with
-  | some i => decide (WellFormed i ∧ BookThicknessTwoFeasible i)
-  | none => false
 
 /-- **BOOK THICKNESS AT MOST 2 is NP-complete.** Source: Chung, Leighton and Rosenberg (1987),
 Corollary 4.4 (from Wigderson (1982)). -/

@@ -12,6 +12,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Combinatorics.SimpleGraph.Basic
+public import MathlibExt.GraphTheory.BookThicknessOfSubdivisionsDefs
 public import Batteries.Util.ProofWanted
 
 @[expose] public section
@@ -20,22 +21,6 @@ namespace MathlibExt.GraphTheory.BookThicknessOfSubdivisionsWanted
 
 /-! Source record `OPG-34908`. Book thickness of a graph versus its once-subdivided graph:
 whether `bt(G)` is bounded by a function of `bt(G')`. -/
-
-/-- Two unordered pairs `e₁ e₂` cross with respect to the spine relation `r`:
-    some two distinct endpoints `v ≺ x ≺ w ≺ y` interleave, i.e. `e₁ = {v, w}`
-    and `e₂ = {x, y}` with `r v x ∧ r x w ∧ r w y` (or the symmetric pattern
-    with the roles of the edges exchanged). -/
-def IsCrossing {V : Type} (r : V → V → Prop) (e₁ e₂ : Sym2 V) : Prop :=
-  ∃ v w x y : V, v ∈ e₁ ∧ w ∈ e₁ ∧ v ≠ w ∧ x ∈ e₂ ∧ y ∈ e₂ ∧ x ≠ y ∧
-    ((r v x ∧ r x w ∧ r w y) ∨ (r x v ∧ r v y ∧ r y w))
-
-/-- A `k`-page book embedding of `G`: a spine embedding plus a (non-proper)
-    `k`-colouring of the edges such that same-colour edges never cross. -/
-def HasBookEmbedding {V : Type} (G : SimpleGraph V) (k : ℕ) : Prop :=
-  ∃ (pos : V → ℕ) (_ : Function.Injective pos) (color : ↥G.edgeSet → Fin k),
-    ∀ e₁ e₂ : ↥G.edgeSet,
-      IsCrossing (fun a b => pos a < pos b) (↑e₁ : Sym2 V) (↑e₂ : Sym2 V) →
-        color e₁ ≠ color e₂
 
 /-- `G'` is the graph obtained by subdividing each edge of `G` exactly once:
     every vertex of `G'` is either an old vertex (`old a`) or a new midpoint

@@ -24,9 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Basic.Real.Basic
+public import CSLibExt.Complexity.NPComplete.WeightedGraphEmbeddabilityLineDefs
 
 @[expose] public section
 
@@ -62,33 +60,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number of vertices `n` and the weighted edges `(u, v, w)`. -/
-abbrev WeightedGraphEmbeddabilityLineInstance := ℕ × List (ℕ × ℕ × ℕ)
-
-/-- Well-formedness of an instance: the endpoint pairs describe a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range), and every weight is
-positive. -/
-def WellFormed (i : WeightedGraphEmbeddabilityLineInstance) : Prop :=
-  (i.2.map fun e => (e.1, e.2.1)).Nodup ∧
-    ∀ e ∈ i.2, e.1 < i.1 ∧ e.2.1 < i.1 ∧ e.1 ≠ e.2.1 ∧
-      (e.2.1, e.1) ∉ (i.2.map fun e => (e.1, e.2.1)) ∧ 0 < e.2.2
-
-/-- Some placement `f` of the vertices on the real line puts the ends of every edge at distance
-equal to the edge's weight. -/
-def WeightedGraphEmbeddabilityLineFeasible (i : WeightedGraphEmbeddabilityLineInstance) :
-    Prop :=
-  ∃ f : Fin i.1 → ℝ, ∀ e ∈ i.2, ∀ (hu : e.1 < i.1) (hv : e.2.1 < i.1),
-    |f ⟨e.1, hu⟩ - f ⟨e.2.1, hv⟩| = (e.2.2 : ℝ)
-
-open Classical in
-/-- WEIGHTED GRAPH EMBEDDABILITY on the line as a decision problem over bitstrings. -/
-noncomputable def weightedGraphEmbeddabilityLineDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := WeightedGraphEmbeddabilityLineInstance) x with
-  | some i => decide (WellFormed i ∧ WeightedGraphEmbeddabilityLineFeasible i)
-  | none => false
 
 /-- **WEIGHTED GRAPH EMBEDDABILITY on the line (K = 1) is NP-complete.** Source: Johnson,
 NP-completeness columns (1982, problem [5]; 1984); Saxe (1979, 1980). -/

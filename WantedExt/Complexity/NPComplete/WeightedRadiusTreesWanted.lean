@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.WeightedDiameterWanted
-public import Mathlib.Combinatorics.SimpleGraph.Acyclic
+public import CSLibExt.Complexity.NPComplete.WeightedRadiusTreesDefs
 
 @[expose] public section
 
@@ -65,28 +62,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the parent's (a simple edge list on `Fin n`, `|C| = |E|`,
-`0 < K`) and the graph is a tree. -/
-def WellFormed (i : WeightedDiameterInstance) : Prop :=
-  WeightedDiameter.WellFormed i ∧ (Graph i).IsTree
-
-/-- Some assignment of the members of `C` to the edges, one member per edge, gives `G` radius at
-most `K`: a rearrangement `ℓ` of `C` (the `k`-th listed edge gets length `ℓ[k]`) and a centre `c`
-joined to every vertex by a path of length at most `K`. -/
-def WeightedRadiusFeasible (i : WeightedDiameterInstance) : Prop :=
-  ∃ ℓ : List ℕ, ℓ.Perm i.2.2.1 ∧
-    ∃ c : Fin i.1, ∀ v : Fin i.1,
-      ∃ p : (Graph i).Walk c v, p.IsPath ∧ weightedLength i ℓ p ≤ i.2.2.2
-
-open Classical in
-/-- WEIGHTED RADIUS for trees as a decision problem over bitstrings. -/
-noncomputable def weightedRadiusTreesDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := WeightedDiameterInstance) x with
-  | some i => decide (WellFormed i ∧ WeightedRadiusFeasible i)
-  | none => false
 
 /-- **WEIGHTED RADIUS is NP-complete for trees.** Source: Garey and Johnson (1979), [GT65],
 comment (Perl and Zaks, 1978). -/

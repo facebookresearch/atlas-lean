@@ -19,9 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MinimumEdgeCostFlowWanted
+public import CSLibExt.Complexity.NPComplete.MinimumEdgeCostFlowTwoZeroOneDefs
 
 @[expose] public section
 
@@ -54,22 +52,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the parent's (a directed graph on `0, ..., n - 1`, positive
-capacities, distinct vertices `s` and `t`, `0 < R`, `0 < B`), every capacity is `2`, and every
-price is `0` or `1`. -/
-def WellFormed (i : MinimumEdgeCostFlowInstance) : Prop :=
-  MinimumEdgeCostFlow.WellFormed i ∧ ∀ a ∈ i.2.1, a.2.2.1 = 2 ∧ (a.2.2.2 = 0 ∨ a.2.2.2 = 1)
-
-open Classical in
-/-- MINIMUM EDGE-COST FLOW with capacities `2` and prices `0`/`1` as a decision problem over
-bitstrings. -/
-noncomputable def minimumEdgeCostFlowTwoZeroOneDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MinimumEdgeCostFlowInstance) x with
-  | some i => decide (WellFormed i ∧ MinimumEdgeCostFlow.MinimumEdgeCostFlowFeasible i)
-  | none => false
 
 /-- **MINIMUM EDGE-COST FLOW is NP-complete with capacities `2` and prices `0`/`1`.** Source:
 Garey and Johnson (1979), [ND32], comment (Even and Johnson, 1977, unpublished). -/

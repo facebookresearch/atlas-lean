@@ -22,11 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Metric
-public import Mathlib.Data.Set.Card
+public import CSLibExt.Complexity.NPComplete.MinimumTSpannerDefs
 
 @[expose] public section
 
@@ -66,35 +62,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `0, …, n - 1`), edge list, and the bound `K`. -/
-abbrev MinimumTSpannerInstance := ℕ × List (ℕ × ℕ) × ℕ
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : MinimumTSpannerInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- Well-formedness of an instance: the edge list describes a simple graph (no duplicate
-edges in either orientation, no self-loops, endpoints in range), the graph is connected, and
-`K` is positive. -/
-def WellFormed (i : MinimumTSpannerInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    (Graph i).Connected ∧ 0 < i.2.2
-
-/-- `G` has a `t`-spanner with at most `K` edges: a subgraph `H ≤ G` on the same vertices with
-at most `K` edges and `d_H(u, v) ≤ t · d_G(u, v)` for all `u, v`. -/
-def MinimumTSpannerFeasible (t : ℕ) (i : MinimumTSpannerInstance) : Prop :=
-  ∃ H : SimpleGraph (Fin i.1), H ≤ Graph i ∧ H.edgeSet.ncard ≤ i.2.2 ∧
-    ∀ u v, H.edist u v ≤ (t : ℕ∞) * (Graph i).edist u v
-
-open Classical in
-/-- MINIMUM `t`-SPANNER, for the fixed `t`, as a decision problem over bitstrings. -/
-noncomputable def minimumTSpannerDec (t : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MinimumTSpannerInstance) x with
-  | some i => decide (WellFormed i ∧ MinimumTSpannerFeasible t i)
-  | none => false
 
 /-- **MINIMUM t-SPANNER is NP-complete for every fixed `t ≥ 2`.** Source: Peleg and Schäffer
 (1989) for `t = 2`; Cai (1994) for every fixed `t ≥ 2`; Ahmed et al. (2020), Section 3.1. -/

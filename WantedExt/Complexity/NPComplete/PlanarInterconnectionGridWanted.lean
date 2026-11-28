@@ -26,11 +26,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import MathlibExt.Combinatorics.SimpleGraph.Lattice.HypercubicLattice
-public import Mathlib.Combinatorics.SimpleGraph.Paths
-public import Mathlib.Data.Fin.VecNotation
+public import CSLibExt.Complexity.NPComplete.PlanarInterconnectionGridDefs
 
 @[expose] public section
 
@@ -69,37 +65,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An encoded grid point: its x- and y-coordinates, each as (positive part, negative part). -/
-abbrev EncodedPoint := (ℕ × ℕ) × (ℕ × ℕ)
-
-/-- An instance: the list of pairs `(pᵢ, qᵢ)` of grid points to connect. -/
-abbrev PlanarInterconnectionGridInstance := List (EncodedPoint × EncodedPoint)
-
-/-- The grid point `(x, y) ∈ ℤ²` an encoded point stands for. -/
-def toSite (p : EncodedPoint) : StatMech.Lattice.Site 2 :=
-  ![(p.1.1 : ℤ) - p.1.2, (p.2.1 : ℤ) - p.2.2]
-
-/-- Well-formedness of an instance: the pairs are disjoint, i.e. the `2n` grid points
-`p₁, q₁, ..., pₙ, qₙ` are pairwise distinct. -/
-def WellFormed (i : PlanarInterconnectionGridInstance) : Prop :=
-  (i.flatMap fun pq => [toSite pq.1, toSite pq.2]).Nodup
-
-/-- Every pair `(pⱼ, qⱼ)` is joined by a grid path, and the paths of different pairs share no
-grid point. -/
-def PlanarInterconnectionGridFeasible (i : PlanarInterconnectionGridInstance) : Prop :=
-  ∃ paths : ∀ j : Fin i.length,
-      (StatMech.Lattice.hypercubicLattice 2).Walk (toSite (i.get j).1) (toSite (i.get j).2),
-    (∀ j, (paths j).IsPath) ∧ ∀ j l, j ≠ l → (paths j).support.Disjoint (paths l).support
-
-open Classical in
-/-- PLANAR INTERCONNECTION ON A GRID as a decision problem over bitstrings. -/
-noncomputable def planarInterconnectionGridDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PlanarInterconnectionGridInstance) x with
-  | some i => decide (WellFormed i ∧ PlanarInterconnectionGridFeasible i)
-  | none => false
 
 /-- **PLANAR INTERCONNECTION ON A GRID is NP-complete.** Source: Johnson, NP-completeness column
 (1982), problem [6]; Richards (1984); Kramer and van Leeuwen (1982). -/

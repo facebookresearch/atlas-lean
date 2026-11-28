@@ -20,10 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Paths
+public import CSLibExt.Complexity.NPComplete.WeightedDiameterDefs
 
 @[expose] public section
 
@@ -55,49 +52,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`), the edge list, the collection `C` of edge
-lengths as a list (repetitions allowed), and the bound `K`. -/
-abbrev WeightedDiameterInstance := ℕ × List (ℕ × ℕ) × List ℕ × ℕ
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : WeightedDiameterInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range), `C` has `|E|`
-members, and `K` is positive. -/
-def WellFormed (i : WeightedDiameterInstance) : Prop :=
-  i.2.1.Nodup ∧ (∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    i.2.2.1.length = i.2.1.length ∧ 0 < i.2.2.2
-
-/-- The length of the edge joining `a` and `b` when the `k`-th listed edge has length `ℓ[k]`:
-the length paired with the first listed edge equal to `(a, b)` or `(b, a)` (`0` if there is
-none). Under `WellFormed`, exactly one listed edge joins two adjacent vertices. -/
-def edgeLength (i : WeightedDiameterInstance) (ℓ : List ℕ) (a b : ℕ) : ℕ :=
-  (((i.2.1.zip ℓ).find? fun p => decide (p.1 = (a, b) ∨ p.1 = (b, a))).map Prod.snd).getD 0
-
-/-- The length of a walk when the `k`-th listed edge has length `ℓ[k]`: the sum of the lengths
-of the edges it traverses. -/
-def weightedLength (i : WeightedDiameterInstance) (ℓ : List ℕ) {u v : Fin i.1}
-    (p : (Graph i).Walk u v) : ℕ :=
-  (p.darts.map fun d => edgeLength i ℓ d.fst d.snd).sum
-
-/-- Some assignment of the members of `C` to the edges, one member per edge, gives `G`
-diameter at most `K`: a rearrangement `ℓ` of `C` (the `k`-th listed edge gets length `ℓ[k]`)
-under which every pair of vertices is joined by a path of length at most `K`. -/
-def WeightedDiameterFeasible (i : WeightedDiameterInstance) : Prop :=
-  ∃ ℓ : List ℕ, ℓ.Perm i.2.2.1 ∧
-    ∀ u v : Fin i.1, ∃ p : (Graph i).Walk u v, p.IsPath ∧ weightedLength i ℓ p ≤ i.2.2.2
-
-open Classical in
-/-- WEIGHTED DIAMETER as a decision problem over bitstrings. -/
-noncomputable def weightedDiameterDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := WeightedDiameterInstance) x with
-  | some i => decide (WellFormed i ∧ WeightedDiameterFeasible i)
-  | none => false
 
 /-- **WEIGHTED DIAMETER is NP-complete.** Source: Garey and Johnson (1979), [GT65]; Perl and
 Zaks (1982). -/

@@ -20,11 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.SubgraphIsomorphismWanted
-public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
-public import WantedExt.GraphTheory.BookThicknessOfSubdivisionsWanted
+public import CSLibExt.Complexity.NPComplete.SubgraphIsomorphismOuterplanarDefs
 
 @[expose] public section
 
@@ -70,27 +66,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- The pattern graph `H` of the instance. -/
-def GraphPattern (i : SubgraphIsomorphismInstance) : SimpleGraph (Fin i.2.2.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.2.2.1 i.2.2.2
-
-/-- Well-formedness of an instance: it is a well-formed SUBGRAPH ISOMORPHISM instance (both edge
-lists simple), and the host `G` and the pattern `H` are connected and outerplanar (have a
-one-page book embedding). -/
-def WellFormed (i : SubgraphIsomorphismInstance) : Prop :=
-  SubgraphIsomorphism.WellFormed i ∧ (GraphHost i).Connected ∧ HasBookEmbedding (GraphHost i) 1 ∧
-    (GraphPattern i).Connected ∧ HasBookEmbedding (GraphPattern i) 1
-
-open Classical in
-/-- SUBGRAPH ISOMORPHISM for connected outerplanar graphs as a decision problem over
-bitstrings. -/
-noncomputable def subgraphIsomorphismOuterplanarDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SubgraphIsomorphismInstance) x with
-  | some i => decide (WellFormed i ∧ SubgraphIsomorphism.SubgraphIsomorphismFeasible i)
-  | none => false
 
 /-- **SUBGRAPH ISOMORPHISM is NP-complete for connected outerplanar graphs.** Source: Garey and
 Johnson (1979), [GT48]; Sysło (1982). -/

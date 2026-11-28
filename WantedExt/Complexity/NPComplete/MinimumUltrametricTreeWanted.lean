@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Bioinformatics.Phylogenetics.Splits
+public import CSLibExt.Complexity.NPComplete.MinimumUltrametricTreeDefs
 
 @[expose] public section
 
@@ -72,41 +70,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the rows of the matrix `M` and the bound `K`. -/
-abbrev MinimumUltrametricTreeInstance := List (List ℕ) × ℕ
-
-/-- The entry `M[i, j]` of the matrix. -/
-def entry (i : MinimumUltrametricTreeInstance) (a b : ℕ) : ℕ :=
-  (i.1.getD a []).getD b 0
-
-/-- Well-formedness of an instance: there is at least one species, `M` is square, and it is a
-metric: zero diagonal, positive and symmetric off-diagonal entries, and the triangle
-inequality. -/
-def WellFormed (i : MinimumUltrametricTreeInstance) : Prop :=
-  0 < i.1.length ∧ (∀ row ∈ i.1, row.length = i.1.length) ∧
-    ∀ a < i.1.length, ∀ b < i.1.length, (a = b ↔ entry i a b = 0) ∧
-      entry i a b = entry i b a ∧ ∀ c < i.1.length, entry i a c ≤ entry i a b + entry i b c
-
-/-- Some dated hierarchy (an ultrametric tree with leaves `Fin n`) has every leaf distance at
-least the matrix entry and total edge weight at most `K`. -/
-def MinimumUltrametricTreeFeasible (i : MinimumUltrametricTreeInstance) : Prop :=
-  ∃ (H : Finset (Finset (Fin i.1.length))) (h : Finset (Fin i.1.length) → ℝ)
-    (par : Finset (Fin i.1.length) → Finset (Fin i.1.length)),
-    IsHierarchy Finset.univ H ∧ (∀ x, h {x} = 0) ∧ (∀ C ∈ H, ∀ D ∈ H, C ⊂ D → h C < h D) ∧
-    (∀ C ∈ H, C ≠ Finset.univ → par C ∈ H ∧ C ⊂ par C ∧ ∀ D ∈ H, C ⊂ D → par C ⊆ D) ∧
-    (∀ x y, x ≠ y → ∀ C ∈ H, x ∈ C → y ∈ C → (∀ D ∈ H, x ∈ D → y ∈ D → C ⊆ D) →
-      (entry i x y : ℝ) ≤ h C) ∧
-    ∑ C ∈ H.erase Finset.univ, (h (par C) - h C) / 2 ≤ i.2
-
-open Classical in
-/-- MINIMUM ULTRAMETRIC TREE as a decision problem over bitstrings. -/
-noncomputable def minimumUltrametricTreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MinimumUltrametricTreeInstance) x with
-  | some i => decide (WellFormed i ∧ MinimumUltrametricTreeFeasible i)
-  | none => false
 
 /-- **MINIMUM ULTRAMETRIC TREE is NP-complete.** Source: Wu, Chao and Tang (1999). -/
 public theorem_wanted minimumUltrametricTree_npComplete :

@@ -19,10 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MultipleChoiceBranchingWanted
-public import Mathlib.Logic.Relation
+public import CSLibExt.Complexity.NPComplete.MultipleChoiceBranchingStronglyConnectedEqualWeightsDefs
 
 @[expose] public section
 
@@ -60,25 +57,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- `G` is strongly connected: every vertex reaches every vertex along arcs of `G`. -/
-def StronglyConnected (i : MultipleChoiceBranchingInstance) : Prop :=
-  ∀ u < i.1, ∀ v < i.1, Relation.ReflTransGen (fun x y => ∃ a ∈ i.2.1, a.1 = x ∧ a.2.1 = y) u v
-
-/-- Well-formedness of an instance: a well-formed MULTIPLE CHOICE BRANCHING instance whose
-digraph is strongly connected and whose arcs all have the same weight. -/
-def WellFormed (i : MultipleChoiceBranchingInstance) : Prop :=
-  MultipleChoiceBranching.WellFormed i ∧ StronglyConnected i ∧
-    ∀ a ∈ i.2.1, ∀ b ∈ i.2.1, a.2.2.1 = b.2.2.1
-
-open Classical in
-/-- MULTIPLE CHOICE BRANCHING on strongly connected digraphs with equal weights as a decision
-problem over bitstrings. -/
-noncomputable def multipleChoiceBranchingStronglyConnectedEqualWeightsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := MultipleChoiceBranchingInstance) x with
-  | some i => decide (WellFormed i ∧ MultipleChoiceBranchingFeasible i)
-  | none => false
 
 /-- **MULTIPLE CHOICE BRANCHING on strongly connected digraphs with equal weights is
 NP-complete.** Source: Garey and Johnson (1979), [ND11], comment. -/

@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.OptimumCommunicationSpanningTreeWanted
+public import CSLibExt.Complexity.NPComplete.OptimumCommunicationSpanningTreeEqualRequirementsDefs
 
 @[expose] public section
 
@@ -58,23 +56,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the parent's (at least one vertex; symmetric weight and
-requirement matrices with zero diagonal), and some `c` is the requirement of every pair of
-distinct vertices. -/
-def WellFormed (i : OptimumCommunicationSpanningTreeInstance) : Prop :=
-  OptimumCommunicationSpanningTree.WellFormed i ∧
-    ∃ c : ℕ, ∀ u v : Fin i.1, u ≠ v → requirement i u v = c
-
-open Classical in
-/-- OPTIMUM COMMUNICATION SPANNING TREE with equal requirements as a decision problem over
-bitstrings. -/
-noncomputable def optimumCommunicationSpanningTreeEqualRequirementsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := OptimumCommunicationSpanningTreeInstance) x with
-  | some i => decide (WellFormed i ∧ OptimumCommunicationSpanningTreeFeasible i)
-  | none => false
 
 /-- **OPTIMUM COMMUNICATION SPANNING TREE is NP-complete with equal requirements.** Source:
 Garey and Johnson (1979), [ND7], comment; Johnson, Lenstra and Rinnooy Kan (1978). -/

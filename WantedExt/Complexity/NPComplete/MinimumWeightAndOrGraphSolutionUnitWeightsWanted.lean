@@ -19,9 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MinimumWeightAndOrGraphSolutionWanted
+public import CSLibExt.Complexity.NPComplete.MinimumWeightAndOrGraphSolutionUnitWeightsDefs
 
 @[expose] public section
 
@@ -58,25 +56,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the parent's (`s < n`; arcs join vertices below `n`, have
-positive weights and distinct `(tail, head)` pairs; the graph is acyclic; `s` is the only vertex
-of in-degree `0`; one label per vertex; `0 < K`), and every arc `(tail, head, weight)` has
-weight `1`. -/
-def WellFormed (i : MinimumWeightAndOrGraphSolutionInstance) : Prop :=
-  MinimumWeightAndOrGraphSolution.WellFormed i ∧ ∀ a ∈ i.2.2.1, a.2.2 = 1
-
-open Classical in
-/-- MINIMUM WEIGHT AND/OR GRAPH SOLUTION with unit weights as a decision problem over
-bitstrings. -/
-noncomputable def minimumWeightAndOrGraphSolutionUnitWeightsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MinimumWeightAndOrGraphSolutionInstance) x with
-  | some i =>
-    decide (WellFormed i ∧
-      MinimumWeightAndOrGraphSolution.MinimumWeightAndOrGraphSolutionFeasible i)
-  | none => false
 
 /-- **MINIMUM WEIGHT AND/OR GRAPH SOLUTION is NP-complete with unit weights.** Source: Garey
 and Johnson (1979), [MS16], comment (Garey and Johnson, unpublished). -/

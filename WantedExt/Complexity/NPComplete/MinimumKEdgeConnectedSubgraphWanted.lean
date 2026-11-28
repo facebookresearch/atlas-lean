@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Connectivity.EdgeConnectivity
-public import WantedExt.Complexity.NPComplete.MinimumKConnectedSubgraphWanted
+public import CSLibExt.Complexity.NPComplete.MinimumKEdgeConnectedSubgraphDefs
 
 @[expose] public section
 
@@ -71,21 +68,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Some spanning subgraph `H ≤ G` has at most `B` edges and is `K`-edge-connected: any two
-vertices stay reachable after deleting any set of fewer than `K` edges. -/
-def MinimumKEdgeConnectedSubgraphFeasible (i : MinimumKConnectedSubgraphInstance) : Prop :=
-  ∃ H : SimpleGraph (Fin i.1), H ≤ Graph i ∧ H.edgeSet.ncard ≤ i.2.2.2 ∧
-    H.IsEdgeConnected (i.2.2.1 : ℕ∞)
-
-open Classical in
-/-- MINIMUM K-EDGE-CONNECTED SUBGRAPH as a decision problem over bitstrings. -/
-noncomputable def minimumKEdgeConnectedSubgraphDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MinimumKConnectedSubgraphInstance) x with
-  | some i => decide (WellFormed i ∧ MinimumKEdgeConnectedSubgraphFeasible i)
-  | none => false
 
 /-- **MINIMUM K-EDGE-CONNECTED SUBGRAPH is NP-complete.** Source: Garey and Johnson (1979),
 [GT31]; Khuller and Vishkin (1994). -/

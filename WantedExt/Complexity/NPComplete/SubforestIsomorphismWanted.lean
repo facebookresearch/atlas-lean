@@ -19,10 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Acyclic
-public import WantedExt.Complexity.NPComplete.SubgraphIsomorphismWanted
+public import CSLibExt.Complexity.NPComplete.SubforestIsomorphismDefs
 
 @[expose] public section
 
@@ -68,22 +65,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: it is a well-formed SUBGRAPH ISOMORPHISM instance (both edge
-lists simple), the host `G` is a tree, and the pattern `H`, the graph
-`Cslib.Complexity.Karp.edgeGraph |V₂| E₂`, is a forest. -/
-def WellFormed (i : SubgraphIsomorphismInstance) : Prop :=
-  SubgraphIsomorphism.WellFormed i ∧ (GraphHost i).IsTree ∧
-    (Cslib.Complexity.Karp.edgeGraph i.2.2.1 i.2.2.2).IsAcyclic
-
-open Classical in
-/-- SUBFOREST ISOMORPHISM as a decision problem over bitstrings. -/
-noncomputable def subforestIsomorphismDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SubgraphIsomorphismInstance) x with
-  | some i => decide (WellFormed i ∧ SubgraphIsomorphism.SubgraphIsomorphismFeasible i)
-  | none => false
 
 /-- **SUBFOREST ISOMORPHISM is NP-complete.** Source: Garey and Johnson (1979), Theorem 4.6 and
 [GT48], comment. -/
