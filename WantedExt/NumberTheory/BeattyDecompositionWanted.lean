@@ -23,6 +23,7 @@ public import MathlibExt.NumberTheory.Beatty.SelfBetween
 public import MathlibExt.NumberTheory.Beatty.SelfBetweenIncrement
 public import MathlibExt.NumberTheory.Beatty.SkippingFiberIndicator
 public import MathlibExt.NumberTheory.BeattyDecompositionBeattyFloorFiberCardEqOrEqSucc
+public import MathlibExt.NumberTheory.BeattyDecompositionBeattyCardComplBetweenIsBeatty
 
 /-! # Decomposition of Beatty and complementary sequences (Polanco)
 
@@ -41,23 +42,6 @@ namespace MetaMathlibExt
 @[expose] public section
 
 open Set
-
-/-- **The $\beta$-Beatty counts between $\lfloor n\alpha\rfloor$ and $\lfloor n\beta\rfloor$ form a
-Beatty sequence.** Let $\alpha$ be an irrational number with $1 < \alpha < 2$, let $\beta$ be a
-real number with $\alpha^{-1} + \beta^{-1} = 1$, and let $B$ be the set of the numbers
-$\lfloor k\beta\rfloor$ for positive integers $k$. Then there is a real number $r$ with
-$0 < r < 1$ such that for every positive integer $n$, the number of elements of $B$ in the open
-interval $(\lfloor n\alpha\rfloor, \lfloor n\beta\rfloor)$ equals $\lfloor nr\rfloor$.
-
-By Beatty's theorem, the Beatty sequences of $\alpha$ and $\beta$ are then complementary.
-
-Source: Geremias Polanco, *Decomposition of Beatty and Complementary Sequences*,
-INTEGERS 25 (2025), Article A104, Corollary 3 (`integers-2025-A104-cor-3`). -/
-public theorem_wanted beatty_card_compl_between_isBeatty {α β : ℝ} (hirr : Irrational α)
-    (hα1 : 1 < α) (hα2 : α < 2) (hαβ : α⁻¹ + β⁻¹ = 1) :
-    ∃ r : ℝ, 0 < r ∧ r < 1 ∧ ∀ n : ℤ, 0 < n →
-      ((Ioo (beattySeq α n) (beattySeq β n) ∩ {beattySeq β k | k > 0}).ncard : ℤ) =
-        beattySeq r n
 
 end
 
