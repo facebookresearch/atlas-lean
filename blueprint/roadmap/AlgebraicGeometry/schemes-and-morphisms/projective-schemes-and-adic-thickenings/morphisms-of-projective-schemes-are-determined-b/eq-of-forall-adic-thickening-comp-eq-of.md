@@ -1,0 +1,5 @@
+# Over a Noetherian I-adically complete base, morphisms of projective schemes are determined by adic thickenings
+
+Let $R$ be a Noetherian commutative ring that is $I$-adically complete for an ideal $I$. For $m \in \mathbb{N}$ write $\mathbb{P}^m_R = \operatorname{Proj} R[x_0, \dots, x_m]$ for projective space over $R$ with its structure morphism to $\operatorname{Spec} R$, and $X_n$ for the $n$-th adic thickening $X \times_{\operatorname{Spec} R} \operatorname{Spec}(R / I^{n+1})$ of a scheme over $\operatorname{Spec} R$.
+
+Let $f : X \to \operatorname{Spec} R$ and $g : Y \to \operatorname{Spec} R$ be morphisms, and assume there are closed immersions $X \to \mathbb{P}^N_R$ and $Y \to \mathbb{P}^{N'}_R$ whose composites with the structure morphisms are $f$ and $g$. If $\psi, \psi' : X \to Y$ satisfy $g \circ \psi = f = g \circ \psi'$ and $\psi \circ \iota_n = \psi' \circ \iota_n$ for every $n \in \mathbb{N}$, where $\iota_n : X_n \to X$ is the inclusion of the $n$-th adic thickening of $X$ along $I$, then $\psi = \psi'$.

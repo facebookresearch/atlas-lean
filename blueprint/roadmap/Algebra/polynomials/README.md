@@ -18,6 +18,7 @@ Univariate and multivariate polynomials and formal power series as algebraic obj
 - [Polynomial maps between affine spaces](polynomial-maps-between-affine-spaces/README.md)
 - [Polynomials with coefficients in arithmetic progression](polynomials-with-coefficients-in-arithmetic-prog/README.md)
 - [Reciprocal 0,1-polynomials](reciprocal-0-1-polynomials/README.md)
+- [Single-cue error-correction convergence](single-cue-error-correction-convergence/README.md)
 - [Squares of sparse polynomials](squares-of-sparse-polynomials/README.md)
 - [Weighted derivations of monoid algebras](weighted-derivations-of-monoid-algebras/README.md)
 - [Univariate polynomial arithmetic](univariate-polynomial-arithmetic/README.md)

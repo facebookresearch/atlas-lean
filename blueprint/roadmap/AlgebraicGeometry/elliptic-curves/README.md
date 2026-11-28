@@ -3,6 +3,7 @@
 Elliptic curves given by Weierstrass equations, their points over finite fields and number fields, torsion, reduction and Galois representations.
 
 - [Elliptic curves in projective coordinates](elliptic-curves-in-projective-coordinates/README.md)
+- [Frey curves](frey-curves/README.md)
 - [Galois action on torsion points](galois-action-on-torsion-points/README.md)
 - [Genus-one place gate and the point class equivalence](genus-one-place-gate-and-the-point-class-equival/README.md)
 - [Isogeny volcanoes](isogeny-volcanoes/README.md)
@@ -12,11 +13,13 @@ Elliptic curves given by Weierstrass equations, their points over finite fields 
 - [Point counts and Frobenius traces](point-counts-and-frobenius-traces/README.md)
 - [Rationally represented point maps](rationally-represented-point-maps/README.md)
 - [Rubin–Silverberg families](rubin-silverberg-families/README.md)
+- [Selmer bound for the elliptic curve 15a1](selmer-bound-for-the-elliptic-curve-15a1/README.md)
 - [Supersingular elliptic curves](supersingular-elliptic-curves/README.md)
 - [Transport of affine Weierstrass points](transport-of-affine-weierstrass-points/README.md)
 - [Unramified residual representations of Weierstrass curves](unramified-residual-representations-of-weierstra/README.md)
 - [Weierstrass curves](weierstrass-curves/README.md)
 - [Normalizing a prime-exponent Fermat solution](exists-of-fermat-counterexample.md)
+- [Tangent line of a Weierstrass curve over the dual numbers](exists-ne-zero-forall-equation-dual-numb.md)
 - [Hasse bound](hasse-bound/README.md)
 - [Hasse invariant and the Legendre curve](hasse-invariant-and-the-legendre-curve/README.md)
 - [Invariant differential at infinity proof](invariant-differential-at-infinity-proof/README.md)

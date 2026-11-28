@@ -1,0 +1,3 @@
+# Transition morphism between adic thickenings
+
+Let $R$ be a commutative ring, $I \subseteq R$ an ideal, $X$ a scheme and $f : X \to \operatorname{Spec} R$ a morphism. For $n \in \mathbb{N}$, the transition morphism $X_n \to X_{n+1}$ between consecutive adic thickenings is the morphism into the fiber product $X_{n+1} = X \times_{\operatorname{Spec} R} \operatorname{Spec}(R / I^{n+2})$ whose first component is the inclusion $X_n \to X$ and whose second component is the structure morphism $X_n \to \operatorname{Spec}(R / I^{n+1})$ followed by the closed immersion $\operatorname{Spec}(R / I^{n+1}) \to \operatorname{Spec}(R / I^{n+2})$ induced by the quotient map $R / I^{n+2} \to R / I^{n+1}$.

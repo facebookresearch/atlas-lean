@@ -1,0 +1,13 @@
+# Casimir elements of gl(3)
+
+- [First Casimir element of a three-by-three family](casimir1.md)
+- [Second Casimir element of a three-by-three family](casimir2.md)
+- [Third Casimir element of a three-by-three family](casimir3.md)
+- [Bracket relations of the general linear Lie algebra in dimension three](is-bracket-family.md)
+- [First Casimir element commutes with the generators](casimir1-commute-generator.md)
+- [Second Casimir element commutes with the generators](casimir2-commute-generator.md)
+- [Third Casimir element commutes with the generators](casimir3-commute-generator.md)
+- [The first and second Casimir elements commute](commute-casimir1-casimir2.md)
+- [The first and third Casimir elements commute](commute-casimir1-casimir3.md)
+- [The second and third Casimir elements commute](commute-casimir2-casimir3.md)
+- [The three Casimir elements commute with the generators and with one another](casimir-comm-and-generator-comm.md)
