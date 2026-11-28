@@ -6,7 +6,7 @@ An $n$-*dimensional knot* is a smooth embedding of $S^n$ in $\mathbb{R}^{n+2}$ (
 
 **Theorem (Nabutovsky–Weinberger).** For every $n \ge 3$ there is no algorithm that decides whether a given $n$-dimensional knot is unknotted. Since unknotting is a subproblem of equivalence, the equivalence problem for $n$-dimensional knots is undecidable for $n \ge 3$.
 
-Conventions: the dimension $n$ is fixed and the knot is the input. For classical knots ($n = 1$), Haken gave an algorithm deciding unknotting and, with Hemion's completion, equivalence; the equivalence problem for $2$-dimensional knots is left open by Nabutovsky and Weinberger.
+Conventions: the dimension $n$ is fixed and the knot is the input. For classical knots the survey read gives the input format, a finite sequence of distinct points of $\mathbb{Q}^3$ joined by segments; for $n \ge 3$ it gives none, and the format is that of Nabutovsky and Weinberger's paper, which is not restated there. For classical knots ($n = 1$), Haken gave an algorithm deciding unknotting and, with Hemion's completion, equivalence; the equivalence problem for $2$-dimensional knots is left open by Nabutovsky and Weinberger.
 
 ## Depends on
 

@@ -23,7 +23,7 @@ None.
 
 ## Remarks
 
-Recognizability depends only on the homeomorphism type of $M$, since any two triangulations of the input can be compared with $M$ through the same algorithm. The last item holds because a decision procedure for the homeomorphism problem, run with a fixed triangulation of $M$ as one of the two inputs, would decide the recognition problem for $M$. In dimension $n \le 3$ the homeomorphism problem, and hence every recognition problem, is decidable by the classification theorems, in dimension $3$ through Perelman's proof of geometrization; that the $3$-sphere is recognizable was shown earlier by Rubinstein and Thompson.
+If $M$ admits no triangulation, no input is homeomorphic to $M$, so $M$ is recognizable for the trivial reason that the answer is always no; results on unrecognizability are therefore stated for manifolds $M$ given by a finite triangulation, as in Poonen's formulation, where the fixed manifold is itself a finite simplicial complex. Recognizability depends only on the homeomorphism type of $M$, since any two triangulations of the input can be compared with $M$ through the same algorithm. The last item holds because a decision procedure for the homeomorphism problem, run with a fixed triangulation of $M$ as one of the two inputs, would decide the recognition problem for $M$. In dimension $n \le 3$ the homeomorphism problem, and hence every recognition problem, is decidable by the classification theorems, in dimension $3$ through Perelman's proof of geometrization; that the $3$-sphere is recognizable was shown earlier by Rubinstein and Thompson.
 
 ## Sources
 

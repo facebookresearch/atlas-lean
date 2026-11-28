@@ -4,7 +4,7 @@ There is no algorithm that decides whether a given finite $2$-dimensional simpli
 
 A finite simplicial complex is given by its vertex set and its list of simplices. A path-connected space is *simply connected* if its fundamental group is trivial.
 
-**Theorem.** There is no algorithm that takes as input a finite connected simplicial complex $K$ of dimension at most $2$ and decides whether $|K|$ is simply connected. Consequently no algorithm decides simple connectivity of finite simplicial complexes of any dimension.
+**Theorem.** There is no algorithm that takes as input a finite connected simplicial complex $K$ of dimension at most $2$ and decides whether $|K|$ is simply connected. Consequently no algorithm decides simple connectivity of finite simplicial complexes with no dimension bound; it is not undecidability in each fixed dimension, since a connected complex of dimension at most $1$, a connected graph, is simply connected exactly when it is a tree, which is decidable.
 
 Conventions: the input complexes are finite and connected (connectedness is decidable from the complex). The analogous problem for contractibility of $2$-complexes is related to the triviality problem for balanced presentations, whose decidability is open.
 
@@ -19,7 +19,7 @@ None.
 
 ## Expansion
 
-Rabin and Adian proved that no algorithm decides, given a finite presentation $\langle g_1, \dots, g_k \mid r_1, \dots, r_l \rangle$, whether the group it presents is trivial. From such a presentation one effectively builds the presentation complex: one vertex, one edge for each generator and one $2$-cell for each relator, attached along the corresponding word; after barycentric subdivision this is a finite simplicial $2$-complex whose fundamental group is the presented group, by van Kampen's theorem. An algorithm deciding simple connectivity of finite $2$-complexes would therefore decide triviality of finite presentations. A good expansion links the undecidability of triviality, the presentation complex and van Kampen's theorem, which have no pages here.
+Rabin and Adian proved that no algorithm decides, given a finite presentation $\langle g_1, \dots, g_k \mid r_1, \dots, r_l \rangle$, whether the group it presents is trivial. From such a presentation one effectively builds the presentation complex: one vertex, one edge for each generator and one $2$-cell for each relator, attached along the corresponding word; after barycentric subdivision this is a finite simplicial $2$-complex whose fundamental group is the presented group, by van Kampen's theorem. An algorithm deciding simple connectivity of finite $2$-complexes would therefore decide triviality of finite presentations. A good expansion links the undecidability of triviality, the presentation complex and van Kampen's theorem.
 
 ## Sources
 
