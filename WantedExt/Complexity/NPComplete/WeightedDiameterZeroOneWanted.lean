@@ -22,9 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.WeightedDiameterWanted
+public import CSLibExt.Complexity.NPComplete.WeightedDiameterZeroOneDefs
 
 @[expose] public section
 
@@ -57,20 +55,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the parent's (a simple edge list on `Fin n`, `|C| = |E|`,
-`0 < K`), every member of `C` is `0` or `1`, and `K = 2`. -/
-def WellFormed (i : WeightedDiameterInstance) : Prop :=
-  WeightedDiameter.WellFormed i ∧ (∀ c ∈ i.2.2.1, c = 0 ∨ c = 1) ∧ i.2.2.2 = 2
-
-open Classical in
-/-- WEIGHTED DIAMETER with 0/1 lengths and `K = 2` as a decision problem over bitstrings. -/
-noncomputable def weightedDiameterZeroOneDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := WeightedDiameterInstance) x with
-  | some i => decide (WellFormed i ∧ WeightedDiameter.WeightedDiameterFeasible i)
-  | none => false
 
 /-- **WEIGHTED DIAMETER with 0/1 lengths is NP-complete for `K = 2`.** Source: Garey and Johnson
 (1979), [GT65], comment (Perl and Zaks, 1978). -/

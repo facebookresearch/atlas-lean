@@ -23,10 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Paths
+public import CSLibExt.Complexity.NPComplete.ShortestCircuitNegativeLengthsDefs
 
 @[expose] public section
 
@@ -58,43 +55,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`), the edge list with lengths (an entry
-`(u, v, (l⁺, l⁻))` is the edge `{u, v}` of length `l⁺ - l⁻`), and the bound `K` as
-`(K⁺, K⁻)`, with `K = K⁺ - K⁻`. -/
-abbrev ShortestCircuitNegativeLengthsInstance := ℕ × List (ℕ × ℕ × (ℕ × ℕ)) × (ℕ × ℕ)
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : ShortestCircuitNegativeLengthsInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 (i.2.1.map fun e => (e.1, e.2.1))
-
-/-- The length of an edge `s`: the integer length recorded for the list entry whose endpoints
-are the endpoints of `s` (unique under `WellFormed`). -/
-def edgeLength (i : ShortestCircuitNegativeLengthsInstance) (s : Sym2 (Fin i.1)) : ℤ :=
-  ((i.2.1.find? fun e => s.map Fin.val = s(e.1, e.2.1)).map
-    fun e => (e.2.2.1 : ℤ) - e.2.2.2).getD 0
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range). -/
-def WellFormed (i : ShortestCircuitNegativeLengthsInstance) : Prop :=
-  (i.2.1.map fun e => (e.1, e.2.1)).Nodup ∧
-    ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2.1 < i.1 ∧ e.1 ≠ e.2.1 ∧
-      (e.2.1, e.1) ∉ i.2.1.map fun e => (e.1, e.2.1)
-
-/-- Some simple circuit has total length at most `K`. -/
-def ShortestCircuitNegativeLengthsFeasible (i : ShortestCircuitNegativeLengthsInstance) :
-    Prop :=
-  ∃ v, ∃ c : (Graph i).Walk v v, c.IsCycle ∧
-    (c.edges.map (edgeLength i)).sum ≤ (i.2.2.1 : ℤ) - i.2.2.2
-
-open Classical in
-/-- SHORTEST CIRCUIT with negative lengths as a decision problem over bitstrings. -/
-noncomputable def shortestCircuitNegativeLengthsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ShortestCircuitNegativeLengthsInstance) x with
-  | some i => decide (WellFormed i ∧ ShortestCircuitNegativeLengthsFeasible i)
-  | none => false
 
 /-- **SHORTEST CIRCUIT with negative lengths is NP-complete.** Source: Garey and Johnson (1979),
 [ND28], comment, and [GT37]; Karp (1972). -/

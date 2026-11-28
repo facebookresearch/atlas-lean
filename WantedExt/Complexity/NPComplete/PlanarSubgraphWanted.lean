@@ -23,10 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import MathlibExt.Combinatorics.SimpleGraph.Planarity
+public import CSLibExt.Complexity.NPComplete.PlanarSubgraphDefs
 
 @[expose] public section
 
@@ -54,35 +51,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`), edge list, bound `K`. -/
-abbrev PlanarSubgraphInstance := ℕ × List (ℕ × ℕ) × ℕ
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : PlanarSubgraphInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range), and
-`0 < K ≤ |E|`, the length of the edge list. -/
-def WellFormed (i : PlanarSubgraphInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    0 < i.2.2 ∧ i.2.2 ≤ i.2.1.length
-
-/-- Some sublist `E'` of the edge list with at least `K` entries spans a planar subgraph
-`(V, E')`. -/
-def PlanarSubgraphFeasible (i : PlanarSubgraphInstance) : Prop :=
-  ∃ es : List (ℕ × ℕ), es.Sublist i.2.1 ∧ i.2.2 ≤ es.length ∧
-    (Cslib.Complexity.Karp.edgeGraph i.1 es).IsPlanar
-
-open Classical in
-/-- PLANAR SUBGRAPH as a decision problem over bitstrings. -/
-noncomputable def planarSubgraphDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PlanarSubgraphInstance) x with
-  | some i => decide (WellFormed i ∧ PlanarSubgraphFeasible i)
-  | none => false
 
 /-- **PLANAR SUBGRAPH is NP-complete.** Source: Garey and Johnson (1979), [GT27];
 Liu and Geldmacher (1979); Yannakakis (1978), Theorem 11. -/

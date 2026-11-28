@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
+public import CSLibExt.Complexity.NPComplete.PerfectlyOrderableGraphDefs
 
 @[expose] public section
 
@@ -53,38 +51,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`) and edge list. -/
-abbrev PerfectlyOrderableGraphInstance := ℕ × List (ℕ × ℕ)
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : PerfectlyOrderableGraphInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range). -/
-def WellFormed (i : PerfectlyOrderableGraphInstance) : Prop :=
-  i.2.Nodup ∧ ∀ e ∈ i.2, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2
-
-/-- The vertex order given by the ranks `rank` has no obstruction: no induced path
-`a - b - c - d` of `G` has `a` before `b` and `d` before `c`. -/
-def IsPerfectOrder {n : ℕ} (G : SimpleGraph (Fin n)) (rank : Fin n → ℕ) : Prop :=
-  ∀ a b c d, G.Adj a b → G.Adj b c → G.Adj c d → ¬ G.Adj a c → ¬ G.Adj b d → ¬ G.Adj a d →
-    ¬ (rank a < rank b ∧ rank d < rank c)
-
-/-- The graph is perfectly orderable: some linear order of its vertices (distinct ranks) is a
-perfect order. -/
-def PerfectlyOrderableGraphFeasible (i : PerfectlyOrderableGraphInstance) : Prop :=
-  ∃ rank : Fin i.1 → ℕ, Function.Injective rank ∧ IsPerfectOrder (Graph i) rank
-
-open Classical in
-/-- PERFECTLY ORDERABLE GRAPH RECOGNITION as a decision problem over bitstrings. -/
-noncomputable def perfectlyOrderableGraphDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PerfectlyOrderableGraphInstance) x with
-  | some i => decide (WellFormed i ∧ PerfectlyOrderableGraphFeasible i)
-  | none => false
 
 /-- **PERFECTLY ORDERABLE GRAPH RECOGNITION is NP-complete.** Source: Middendorf and Pfeiffer
 (1990). -/

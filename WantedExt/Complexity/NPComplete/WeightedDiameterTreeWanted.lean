@@ -20,10 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Acyclic
-public import WantedExt.Complexity.NPComplete.WeightedDiameterWanted
+public import CSLibExt.Complexity.NPComplete.WeightedDiameterTreeDefs
 
 @[expose] public section
 
@@ -61,20 +58,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the parent's (a simple edge list in range, `C` with `|E|`
-members, `K` positive), and the graph is a tree. -/
-def WellFormed (i : WeightedDiameterInstance) : Prop :=
-  WeightedDiameter.WellFormed i ∧ (Graph i).IsTree
-
-open Classical in
-/-- WEIGHTED DIAMETER on trees as a decision problem over bitstrings. -/
-noncomputable def weightedDiameterTreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := WeightedDiameterInstance) x with
-  | some i => decide (WellFormed i ∧ WeightedDiameterFeasible i)
-  | none => false
 
 /-- **WEIGHTED DIAMETER is NP-complete on trees.** Source: Garey and Johnson (1979), [GT65],
 comment; Perl and Zaks (1982). -/

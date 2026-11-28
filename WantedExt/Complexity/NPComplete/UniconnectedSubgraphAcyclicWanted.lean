@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.UniconnectedSubgraphWanted
+public import CSLibExt.Complexity.NPComplete.UniconnectedSubgraphAcyclicDefs
 
 @[expose] public section
 
@@ -65,21 +63,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed UNICONNECTED SUBGRAPH instance (a loop-free arc
-list without duplicates on `Fin n`, and `0 < K ≤ |A|`) whose digraph is acyclic: no vertex
-reaches itself by a nonempty sequence of arcs. -/
-def WellFormed (i : UniconnectedSubgraphInstance) : Prop :=
-  UniconnectedSubgraph.WellFormed i ∧ ∀ v, ¬ Relation.TransGen (Graph i).Adj v v
-
-open Classical in
-/-- UNICONNECTED SUBGRAPH for acyclic directed graphs as a decision problem over bitstrings. -/
-noncomputable def uniconnectedSubgraphAcyclicDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := UniconnectedSubgraphInstance) x with
-  | some i => decide (WellFormed i ∧ UniconnectedSubgraphFeasible i)
-  | none => false
 
 /-- **UNICONNECTED SUBGRAPH for acyclic directed graphs is NP-complete.** Source: Garey and
 Johnson (1979), [GT30]; Maheshwari (1976), Lemma 1. -/

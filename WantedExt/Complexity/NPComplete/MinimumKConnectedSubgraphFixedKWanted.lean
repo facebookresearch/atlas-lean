@@ -19,9 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MinimumKConnectedSubgraphWanted
+public import CSLibExt.Complexity.NPComplete.MinimumKConnectedSubgraphFixedKDefs
 
 @[expose] public section
 
@@ -53,25 +51,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`), edge list, edge budget `B`; the
-connectivity `K` is fixed. -/
-abbrev MinimumKConnectedSubgraphFixedKInstance := ℕ × List (ℕ × ℕ) × ℕ
-
-/-- The [GT31] instance `(n, E, K, B)` of an instance `(n, E, B)` and the fixed `K`. -/
-def withK (K : ℕ) (i : MinimumKConnectedSubgraphFixedKInstance) :
-    MinimumKConnectedSubgraph.MinimumKConnectedSubgraphInstance :=
-  (i.1, i.2.1, K, i.2.2)
-
-open Classical in
-/-- MINIMUM K-CONNECTED SUBGRAPH for a fixed `K` as a decision problem over bitstrings. -/
-noncomputable def minimumKConnectedSubgraphFixedKDec (K : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MinimumKConnectedSubgraphFixedKInstance) x with
-  | some i => decide (MinimumKConnectedSubgraph.WellFormed (withK K i) ∧
-      MinimumKConnectedSubgraph.MinimumKConnectedSubgraphFeasible (withK K i))
-  | none => false
 
 /-- **MINIMUM K-CONNECTED SUBGRAPH is NP-complete for every fixed `K ≥ 2`.** Source: Garey and
 Johnson (1979), [GT31], comment (Chung and Graham, 1977). -/

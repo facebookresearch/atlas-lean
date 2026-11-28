@@ -23,10 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import MathlibExt.Combinatorics.SimpleGraph.CycleCover
+public import CSLibExt.Complexity.NPComplete.VertexDisjointCycleCoverDefs
 
 @[expose] public section
 
@@ -69,33 +66,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `0, …, n - 1`), edge list, and the bound `K`. -/
-abbrev VertexDisjointCycleCoverInstance := ℕ × List (ℕ × ℕ) × ℕ
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : VertexDisjointCycleCoverInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- Well-formedness of an instance: the edge list describes a simple graph (no duplicate
-edges in either orientation, no self-loops, endpoints in range), and `K` is positive. -/
-def WellFormed (i : VertexDisjointCycleCoverInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    0 < i.2.2
-
-/-- Some family of `k ≤ K` cycles `c j` of `G` covers every vertex exactly once: each vertex
-lies on exactly one of the cycles. -/
-def VertexDisjointCycleCoverFeasible (i : VertexDisjointCycleCoverInstance) : Prop :=
-  ∃ k ≤ i.2.2, ∃ c : Fin k → SimpleGraph.Cycle (Graph i), ∀ v, ∃! j, v ∈ (c j).walk.support
-
-open Classical in
-/-- VERTEX DISJOINT CYCLE COVER as a decision problem over bitstrings. -/
-noncomputable def vertexDisjointCycleCoverDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := VertexDisjointCycleCoverInstance) x with
-  | some i => decide (WellFormed i ∧ VertexDisjointCycleCoverFeasible i)
-  | none => false
 
 /-- **VERTEX DISJOINT CYCLE COVER is NP-complete.** Source: Crescenzi and Kann (2000), MINIMUM
 VERTEX DISJOINT CYCLE COVER; Garey and Johnson (1979), [GT13], comment; Karp (1972). -/

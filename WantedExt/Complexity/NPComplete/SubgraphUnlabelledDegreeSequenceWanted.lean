@@ -23,10 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Finite
+public import CSLibExt.Complexity.NPComplete.SubgraphUnlabelledDegreeSequenceDefs
 
 @[expose] public section
 
@@ -63,35 +60,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`), edge list, and the list of desired
-degrees. -/
-abbrev SubgraphUnlabelledDegreeSequenceInstance := ℕ × List (ℕ × ℕ) × List ℕ
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range), and there are `n`
-desired degrees. -/
-def WellFormed (i : SubgraphUnlabelledDegreeSequenceInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    i.2.2.length = i.1
-
-open Classical in
-/-- Some sublist `E'` of the edge list spans a subgraph `(V, E')` whose multiset of vertex
-degrees equals the multiset of desired degrees. -/
-def SubgraphUnlabelledDegreeSequenceFeasible (i : SubgraphUnlabelledDegreeSequenceInstance) :
-    Prop :=
-  ∃ es : List (ℕ × ℕ), es.Sublist i.2.1 ∧
-    (Finset.univ : Finset (Fin i.1)).val.map
-        (fun v => (Cslib.Complexity.Karp.edgeGraph i.1 es).degree v) = (i.2.2 : Multiset ℕ)
-
-open Classical in
-/-- SUBGRAPH WITH GIVEN UNLABELLED DEGREE SEQUENCE as a decision problem over bitstrings. -/
-noncomputable def subgraphUnlabelledDegreeSequenceDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SubgraphUnlabelledDegreeSequenceInstance) x with
-  | some i => decide (WellFormed i ∧ SubgraphUnlabelledDegreeSequenceFeasible i)
-  | none => false
 
 /-- **SUBGRAPH WITH GIVEN UNLABELLED DEGREE SEQUENCE is NP-complete.** Source: Johnson (1985),
 NP-completeness column, DEGREE CONSTRAINED SUBGRAPH; Camerini and Maffioli (1984). -/

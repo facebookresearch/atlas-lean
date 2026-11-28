@@ -22,8 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.PathWithForbiddenPairsOfArcsDefs
 
 @[expose] public section
 
@@ -55,33 +54,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `m`, arc list, source `s`, target `t`, and the list `C` of pairs
-of arcs. -/
-abbrev PathWithForbiddenPairsOfArcsInstance :=
-  ℕ × List (ℕ × ℕ) × ℕ × ℕ × List ((ℕ × ℕ) × (ℕ × ℕ))
-
-/-- Well-formedness of an instance: the arcs, `s` and `t` use vertices below `m`, and both
-members of every pair in `C` are arcs of `A`. -/
-def WellFormed (i : PathWithForbiddenPairsOfArcsInstance) : Prop :=
-  (∀ a ∈ i.2.1, a.1 < i.1 ∧ a.2 < i.1) ∧ i.2.2.1 < i.1 ∧ i.2.2.2.1 < i.1 ∧
-    ∀ c ∈ i.2.2.2.2, c.1 ∈ i.2.1 ∧ c.2 ∈ i.2.1
-
-/-- A directed path from `s` to `t` containing at most one arc from each pair of `C`; the arcs
-of the path `p` are the consecutive pairs `p.zip p.tail`. -/
-def PathWithForbiddenPairsOfArcsFeasible (i : PathWithForbiddenPairsOfArcsInstance) : Prop :=
-  ∃ p : List ℕ, p.head? = some i.2.2.1 ∧ p.getLast? = some i.2.2.2.1 ∧
-    p.IsChain (fun u v => (u, v) ∈ i.2.1) ∧ p.Nodup ∧
-      ∀ c ∈ i.2.2.2.2, c.1 ∈ p.zip p.tail → c.2 ∈ p.zip p.tail → c.1 = c.2
-
-open Classical in
-/-- PATH WITH FORBIDDEN PAIRS OF ARCS as a decision problem over bitstrings. -/
-noncomputable def pathWithForbiddenPairsOfArcsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PathWithForbiddenPairsOfArcsInstance) x with
-  | some i => decide (WellFormed i ∧ PathWithForbiddenPairsOfArcsFeasible i)
-  | none => false
 
 /-- **PATH WITH FORBIDDEN PAIRS OF ARCS is NP-complete.** Source: Garey and Johnson (1979),
 [GT54], comment; Gabow, Maheshwari and Osterweil (1976). -/

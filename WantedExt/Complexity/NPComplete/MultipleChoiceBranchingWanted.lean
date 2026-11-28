@@ -19,10 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.List.Basic
-public import Mathlib.Logic.Relation
+public import CSLibExt.Complexity.NPComplete.MultipleChoiceBranchingDefs
 
 @[expose] public section
 
@@ -55,34 +52,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `0, ..., n - 1`), arc list
-`(tail, head, weight, class)`, `K`. -/
-abbrev MultipleChoiceBranchingInstance := ℕ × List (ℕ × ℕ × ℕ × ℕ) × ℕ
-
-/-- Well-formedness of an instance: the arcs form a directed graph on `{0, ..., n - 1}` (no
-self-loops, no arc listed twice), every weight is positive, and `0 < K`. -/
-def WellFormed (i : MultipleChoiceBranchingInstance) : Prop :=
-  (i.2.1.map fun a => (a.1, a.2.1)).Nodup ∧
-    (∀ a ∈ i.2.1, a.1 < i.1 ∧ a.2.1 < i.1 ∧ a.1 ≠ a.2.1 ∧ 0 < a.2.2.1) ∧ 0 < i.2.2
-
-/-- A sublist `A'` of the arcs with total weight at least `K`, no two arcs entering the same
-vertex, no directed cycle, and at most one arc from each class. -/
-def MultipleChoiceBranchingFeasible (i : MultipleChoiceBranchingInstance) : Prop :=
-  ∃ A' : List (ℕ × ℕ × ℕ × ℕ), A'.Sublist i.2.1 ∧
-    i.2.2 ≤ (A'.map fun a => a.2.2.1).sum ∧
-    (∀ a ∈ A', ∀ b ∈ A', a.2.1 = b.2.1 → a = b) ∧
-    (∀ v, ¬ Relation.TransGen (fun x y => ∃ a ∈ A', a.1 = x ∧ a.2.1 = y) v v) ∧
-    ∀ a ∈ A', ∀ b ∈ A', a.2.2.2 = b.2.2.2 → a = b
-
-open Classical in
-/-- MULTIPLE CHOICE BRANCHING as a decision problem over bitstrings. -/
-noncomputable def multipleChoiceBranchingDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MultipleChoiceBranchingInstance) x with
-  | some i => decide (WellFormed i ∧ MultipleChoiceBranchingFeasible i)
-  | none => false
 
 /-- **MULTIPLE CHOICE BRANCHING is NP-complete.** Source: Garey and Johnson (1979), [ND11]. -/
 public theorem_wanted multipleChoiceBranching_npComplete :

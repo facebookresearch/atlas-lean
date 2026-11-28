@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Acyclic
-public import Mathlib.Combinatorics.SimpleGraph.Metric
+public import CSLibExt.Complexity.NPComplete.RootedTreeStorageAssignmentDefs
 
 @[expose] public section
 
@@ -56,35 +53,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the size `N` of `X = Fin N`, the sets `X₁, …, Xₙ` as lists, and the bound
-`K`. -/
-abbrev RootedTreeStorageAssignmentInstance := ℕ × List (List ℕ) × ℕ
-
-/-- Well-formedness of an instance: every set lists distinct elements of `X = Fin N`, and
-`0 < K`. -/
-def WellFormed (i : RootedTreeStorageAssignmentInstance) : Prop :=
-  (∀ S ∈ i.2.1, S.Nodup ∧ ∀ x ∈ S, x < i.1) ∧ 0 < i.2.2
-
-/-- Supersets `Xᵢ' ⊇ Xᵢ` with at most `K` added elements in total, and a tree `T` on `X` with
-root `r` in which every `Xᵢ'` is the vertex set of a simple path `p` from `u` to `v` running away
-from the root (`dist(r, v) = dist(r, u) + length(p)`). -/
-def RootedTreeStorageAssignmentFeasible (i : RootedTreeStorageAssignmentInstance) : Prop :=
-  ∃ X' : Fin i.2.1.length → Finset (Fin i.1),
-    (∀ j, ∀ x : Fin i.1, (x : ℕ) ∈ i.2.1[j] → x ∈ X' j) ∧
-    ∑ j, ((X' j).filter fun x : Fin i.1 => (x : ℕ) ∉ i.2.1[j]).card ≤ i.2.2 ∧
-    ∃ T : SimpleGraph (Fin i.1), T.IsTree ∧ ∃ r : Fin i.1,
-      ∀ j, ∃ u v : Fin i.1, ∃ p : T.Walk u v, p.IsPath ∧ p.support.toFinset = X' j ∧
-        T.dist r v = T.dist r u + p.length
-
-open Classical in
-/-- ROOTED TREE STORAGE ASSIGNMENT as a decision problem over bitstrings. -/
-noncomputable def rootedTreeStorageAssignmentDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := RootedTreeStorageAssignmentInstance) x with
-  | some i => decide (WellFormed i ∧ RootedTreeStorageAssignmentFeasible i)
-  | none => false
 
 /-- **ROOTED TREE STORAGE ASSIGNMENT is NP-complete.** Source: Garey and Johnson (1979), [SR5];
 Gavril (1977). -/

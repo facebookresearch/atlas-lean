@@ -23,10 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Combinatorics.SimpleGraph.Walk.Traversal
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.PlanarInterconnectionGridWanted
+public import CSLibExt.Complexity.NPComplete.MonotonePlanarInterconnectionGridDefs
 
 @[expose] public section
 
@@ -70,33 +67,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- A walk in the square grid is horizontally monotone when the x-coordinate of its `k`-th
-vertex never decreases in `k`, or never increases in `k`: read from its left end to its right
-end, it never turns back. (`SimpleGraph.Walk.getVert k` is the end vertex for every `k` past
-the length, so only the walk's own vertices matter.) -/
-def IsHorizontallyMonotone {p q : StatMech.Lattice.Site 2}
-    (w : (StatMech.Lattice.hypercubicLattice 2).Walk p q) : Prop :=
-  Monotone (fun k => w.getVert k 0) ∨ Antitone (fun k => w.getVert k 0)
-
-/-- Every pair `(pⱼ, qⱼ)` is joined by a horizontally monotone grid path, and the paths of
-different pairs share no grid point. -/
-def MonotonePlanarInterconnectionGridFeasible (i : PlanarInterconnectionGridInstance) :
-    Prop :=
-  ∃ paths : ∀ j : Fin i.length,
-      (StatMech.Lattice.hypercubicLattice 2).Walk (toSite (i.get j).1) (toSite (i.get j).2),
-    (∀ j, (paths j).IsPath ∧ IsHorizontallyMonotone (paths j)) ∧
-      ∀ j l, j ≠ l → (paths j).support.Disjoint (paths l).support
-
-open Classical in
-/-- PLANAR INTERCONNECTION ON A GRID with horizontally monotone paths as a decision problem over
-bitstrings. -/
-noncomputable def monotonePlanarInterconnectionGridDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PlanarInterconnectionGridInstance) x with
-  | some i => decide (WellFormed i ∧ MonotonePlanarInterconnectionGridFeasible i)
-  | none => false
 
 /-- **PLANAR INTERCONNECTION ON A GRID with horizontally monotone paths is NP-complete.**
 Source: Johnson, NP-completeness column (tenth edition, 1984), update to PLANAR INTERCONNECTION

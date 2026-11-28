@@ -22,11 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
-public import Mathlib.Data.Set.Card
+public import CSLibExt.Complexity.NPComplete.MinimumKConnectedSubgraphDefs
 
 @[expose] public section
 
@@ -59,37 +55,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`), edge list, connectivity `K`, edge
-budget `B`. -/
-abbrev MinimumKConnectedSubgraphInstance := ℕ × List (ℕ × ℕ) × ℕ × ℕ
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : MinimumKConnectedSubgraphInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range), `0 < K ≤ |V|`, and
-`0 < B ≤ |E|`, the length of the edge list. -/
-def WellFormed (i : MinimumKConnectedSubgraphInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    0 < i.2.2.1 ∧ i.2.2.1 ≤ i.1 ∧ 0 < i.2.2.2 ∧ i.2.2.2 ≤ i.2.1.length
-
-/-- Some spanning subgraph `H ≤ G` has at most `B` edges and stays connected after removing
-any set of fewer than `K` vertices. -/
-def MinimumKConnectedSubgraphFeasible (i : MinimumKConnectedSubgraphInstance) : Prop :=
-  ∃ H : SimpleGraph (Fin i.1), H ≤ Graph i ∧ H.edgeSet.ncard ≤ i.2.2.2 ∧
-    ∀ S : Finset (Fin i.1), S.card < i.2.2.1 →
-      (H.induce (S : Set (Fin i.1))ᶜ).Connected
-
-open Classical in
-/-- MINIMUM K-CONNECTED SUBGRAPH as a decision problem over bitstrings. -/
-noncomputable def minimumKConnectedSubgraphDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MinimumKConnectedSubgraphInstance) x with
-  | some i => decide (WellFormed i ∧ MinimumKConnectedSubgraphFeasible i)
-  | none => false
 
 /-- **MINIMUM K-CONNECTED SUBGRAPH is NP-complete.** Source: Garey and Johnson (1979),
 [GT31]; Karp (1972); Khuller and Vishkin (1994). -/

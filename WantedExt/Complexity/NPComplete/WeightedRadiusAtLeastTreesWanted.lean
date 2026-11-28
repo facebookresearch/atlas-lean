@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Acyclic
+public import CSLibExt.Complexity.NPComplete.WeightedRadiusAtLeastTreesDefs
 
 @[expose] public section
 
@@ -60,47 +57,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`), the edge list, the collection `C` of edge
-lengths as a list, and the bound `K`. -/
-abbrev WeightedRadiusInstance := ℕ × List (ℕ × ℕ) × List ℕ × ℕ
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : WeightedRadiusInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- The length of the edge `s` when the `j`-th edge of the edge list has length `w[j]`: the
-length paired with the list entry whose endpoints are the endpoints of `s` (unique under
-`WellFormed`). -/
-def edgeLength (i : WeightedRadiusInstance) (w : List ℕ) (s : Sym2 (Fin i.1)) : ℕ :=
-  (((i.2.1.zip w).find? fun e => s.map Fin.val = s(e.1.1, e.1.2)).map fun e => e.2).getD 0
-
-/-- The length of a walk under the edge lengths `w`: the sum of the lengths of its edges. -/
-def walkLength (i : WeightedRadiusInstance) (w : List ℕ) {u v : Fin i.1}
-    (p : (Graph i).Walk u v) : ℕ :=
-  (p.edges.map (edgeLength i w)).sum
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range), that graph is a tree,
-`C` has `|E|` members, and `K` is positive. -/
-def WellFormed (i : WeightedRadiusInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    (Graph i).IsTree ∧ i.2.2.1.length = i.2.1.length ∧ 0 < i.2.2.2
-
-/-- Some rearrangement `w` of `C`, taken as the edge lengths, gives `G` radius `K` or greater:
-for every vertex `v` some vertex `u` has every path from `v` to `u` of length at least `K`. -/
-def WeightedRadiusFeasible (i : WeightedRadiusInstance) : Prop :=
-  ∃ w : List ℕ, w.Perm i.2.2.1 ∧ ∀ v : Fin i.1, ∃ u : Fin i.1,
-    ∀ p : (Graph i).Walk v u, p.IsPath → i.2.2.2 ≤ walkLength i w p
-
-open Classical in
-/-- WEIGHTED DIAMETER, radius `K` or greater for trees, as a decision problem over bitstrings. -/
-noncomputable def weightedRadiusAtLeastTreesDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := WeightedRadiusInstance) x with
-  | some i => decide (WellFormed i ∧ WeightedRadiusFeasible i)
-  | none => false
 
 /-- **WEIGHTED DIAMETER, radius `K` or greater for trees, is NP-complete.** Source: Garey and
 Johnson (1979), [GT65], comment (Perl and Zaks, 1978). -/

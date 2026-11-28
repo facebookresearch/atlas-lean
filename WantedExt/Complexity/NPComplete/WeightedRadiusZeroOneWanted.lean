@@ -22,9 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.WeightedRadiusTreesWanted
+public import CSLibExt.Complexity.NPComplete.WeightedRadiusZeroOneDefs
 
 @[expose] public section
 
@@ -59,20 +57,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the parent's (a simple edge list on `Fin n`, `|C| = |E|`,
-`0 < K`), every member of `C` is `0` or `1`, and `K = 1`. -/
-def WellFormed (i : WeightedDiameterInstance) : Prop :=
-  WeightedDiameter.WellFormed i ∧ (∀ c ∈ i.2.2.1, c = 0 ∨ c = 1) ∧ i.2.2.2 = 1
-
-open Classical in
-/-- WEIGHTED RADIUS with 0/1 lengths and `K = 1` as a decision problem over bitstrings. -/
-noncomputable def weightedRadiusZeroOneDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := WeightedDiameterInstance) x with
-  | some i => decide (WellFormed i ∧ WeightedRadiusTrees.WeightedRadiusFeasible i)
-  | none => false
 
 /-- **WEIGHTED RADIUS with 0/1 lengths is NP-complete for `K = 1`.** Source: Garey and Johnson
 (1979), [GT65], comment (Perl and Zaks, 1978). -/
