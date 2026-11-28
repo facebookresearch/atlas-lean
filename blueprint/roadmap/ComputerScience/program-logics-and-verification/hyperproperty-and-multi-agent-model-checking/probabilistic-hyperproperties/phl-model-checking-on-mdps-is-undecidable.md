@@ -22,11 +22,11 @@ The schedulers range over all (history-dependent, randomized) schedulers. The pa
 
 ## Depends on
 
-- [Markov decision processes and adversaries](../../../../../Logic/temporal-logic/probabilistic-model-checking/markov-decision-processes-and-adversaries.md)
-- [Discrete-time Markov chains](../../../../../Logic/temporal-logic/probabilistic-model-checking/discrete-time-markov-chains.md)
-- [Formulas of linear temporal logic](../../../../../Logic/temporal-logic/linear-temporal-logic/formula.md)
-- [HyperCTL*](../../../../../Logic/temporal-logic/temporal-specification/hyperctl-star.md)
-- [Decidability by multi-stack machines](../../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Markov decision processes and adversaries](../../../../Logic/temporal-logic/probabilistic-model-checking/markov-decision-processes-and-adversaries.md)
+- [Discrete-time Markov chains](../../../../Logic/temporal-logic/probabilistic-model-checking/discrete-time-markov-chains.md)
+- [Formulas of linear temporal logic](../../../../Logic/temporal-logic/linear-temporal-logic/formula.md)
+- [HyperCTL*](../../../../Logic/temporal-logic/temporal-specification/hyperctl-star.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

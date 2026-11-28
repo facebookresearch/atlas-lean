@@ -23,7 +23,7 @@ $$
 M_i = \begin{bmatrix} 1 & [u^{(i)}] & -[v^{(i)}] \\ 0 & 4^{-|u^{(i)}|} & 0 \\ 0 & 0 & 4^{-|v^{(i)}|} \end{bmatrix}, \qquad x = (0, 1, 1), \quad y = (0, 0, 0),
 $$
 
-so that a product along a finite word $w$ sends $x$ to $([u^{(w)}] - [v^{(w)}], 4^{-|u^{(w)}|}, 4^{-|v^{(w)}|})$. If the instance has an infinite solution, the images of $x$ along its prefixes converge to $y$, so every closed invariant containing $x$ contains $y$. If it has none, König's lemma gives a bound $n_0$ such that every infinite word shows a mismatch within the first $n_0$ letters, and the union of the finitely many images of $x$ along words of length at most $n_0 + 1$ with the closed semilinear set $\{(s, c, d) : |s| \ge 4(c + d) + 4^{-n_0-1},\ c \ge 0,\ d \ge 0\}$ is a separating invariant.
+so that a product along a finite word $w$ sends $x$ to $([u^{(w)}] - [v^{(w)}], 4^{-|u^{(w)}|}, 4^{-|v^{(w)}|})$. If the instance has an infinite solution, the images of $x$ along its prefixes converge to $y$, so every closed invariant containing $x$ contains $y$. If it has none, König's lemma gives a bound $n_0$ such that every infinite word shows a mismatch within the first $n_0$ letters, and the union of the finitely many images of $x$ along words of length at most $n_0 + 1$ with the closed semilinear set $\{(s, c, d) : |s| \ge 4(c + d) + 4^{-n_0-1},\ c \ge 0,\ d \ge 0\}$ is a separating invariant. A good expansion links pages for the undecidability of the infinite Post correspondence problem for nine pairs (Halava and Harju) and for König's lemma.
 
 ## Sources
 

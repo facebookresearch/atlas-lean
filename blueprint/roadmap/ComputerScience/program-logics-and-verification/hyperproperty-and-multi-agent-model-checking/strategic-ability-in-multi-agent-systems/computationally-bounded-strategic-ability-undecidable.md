@@ -13,17 +13,17 @@ For a single game, uniform ability and the paper's adaptive ability coincide, so
 
 ## Depends on
 
-- [Decidability by multi-stack machines](../../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
-- [Formulas of linear temporal logic](../../../../../Logic/temporal-logic/linear-temporal-logic/formula.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Formulas of linear temporal logic](../../../../Logic/temporal-logic/linear-temporal-logic/formula.md)
 
 ## Proof depends on
 
-- [Halting is undecidable](../../../../../TheoryOfComputation/computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halts.md)
+- [Halting is undecidable](../../../../TheoryOfComputation/computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halts.md)
 
 ## Expansion
 
-For part 1, the template generated from a deterministic Turing machine consists of the finite prefixes of its unique run from the empty tape, with one agent having a single idle action and accepting configurations labeled; the only strategy, of constant complexity, enforces "always not accepting" exactly when the machine does not halt. For part 2, the proof recalls an earlier undecidability construction for imperfect-information games: from a machine $M$ it builds a three-agent iCGS in which the adversary picks a tape cell, and agents $1$ and $2$ must simulate the evolution of that cell and of the head along the run of $M$; the coalition $\{1, 2\}$ can keep the proposition $\mathit{ok}$ true forever exactly when $M$ halts, and the paper shows that the winning strategy can be implemented in polynomial time.
+For part 1, the template generated from a deterministic Turing machine consists of the finite prefixes of its unique run from the empty tape, with one agent having a single idle action and accepting configurations labeled; the only strategy, of constant complexity, enforces "always not accepting" exactly when the machine does not halt. For part 2, the proof recalls an earlier undecidability construction for imperfect-information games: from a machine $M$ it builds a three-agent iCGS in which the adversary picks a tape cell, and agents $1$ and $2$ must simulate the evolution of that cell and of the head along the run of $M$; the coalition $\{1, 2\}$ can keep the proposition $\mathit{ok}$ true forever exactly when $M$ never halts, and the paper shows that the winning strategy can be implemented in polynomial time. A good expansion links pages for the undecidability of halting of deterministic Turing machines started on the blank tape and for the Dima–Tiplea encoding of Turing machine runs into three-agent iCGS with imperfect information, from which the proof of Theorem 5.3 starts.
 
 ## Sources
 
-- Catalin Dima and Wojciech Jamroga, "Computationally Feasible Strategies", Proceedings of the 22nd International Conference on Autonomous Agents and Multiagent Systems (AAMAS 2023), pp. 784–792, 2023, <https://doi.org/10.65109/xzdv5972>; Definition 2.1 (iCGS) and Definitions 3.1 to 3.11 (model templates, computational strategies, their complexity and uniform ability), Definition 4.3 (adaptive ability), and Definition 5.1 (model checking) with Theorems 5.2 and 5.3 in Section 5.2 of Section 5 ("Model Checking for Computational Strategies") of arXiv:2310.17234v1, read at <https://arxiv.org/abs/2310.17234v1>.
+- Catalin Dima and Wojciech Jamroga, "Computationally Feasible Strategies", Proceedings of the 22nd International Conference on Autonomous Agents and Multiagent Systems (AAMAS 2023), pp. 784–792, 2023, <https://doi.org/10.65109/xzdv5972>; Definition 2.1 (iCGS) and Definitions 3.1 to 3.11 (model templates, computational strategies, their complexity and uniform ability), Definition 4.3 (adaptive ability), and Definition 5.1 (model checking) with Theorem 5.2 in Section 5.2 and Theorem 5.3 in Section 5.3 of Section 5 ("Model Checking for Computational Strategies") of arXiv:2310.17234v1, read at <https://arxiv.org/abs/2310.17234v1>.

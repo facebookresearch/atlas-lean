@@ -12,22 +12,22 @@ with policy variables $\pi_i$, state variables $s_i$, $n \le m$, quantifiers $Q_
 
 **Theorem (Pontiggia, Macák, Andriushchenko, Chiari and Češka).** PHyperLTL model checking is undecidable.
 
-The proof uses a formula with a single probability constraint; the authors note that the earlier undecidability proofs for the logics PHL and HyperPCTL need two constraints or nested probability operators, which PHyperLTL lacks. As a corollary, planning for factored, observation-independent, locally fully observable decentralized MDPs under the infinite-horizon total reward criterion is undecidable.
+The proof uses a formula with a single probability constraint; the authors note that the earlier proof for HyperPCTL uses nested probability operators, which PHyperLTL lacks, and that the formula of the proof for PHL can be rewritten in PHyperLTL only with at least two probability constraints. As a corollary, planning for factored, observation-independent, locally fully observable decentralized MDPs under the infinite-horizon total reward criterion is undecidable.
 
 ## Depends on
 
-- [Markov decision processes and adversaries](../../../../../Logic/temporal-logic/probabilistic-model-checking/markov-decision-processes-and-adversaries.md)
-- [Discrete-time Markov chains](../../../../../Logic/temporal-logic/probabilistic-model-checking/discrete-time-markov-chains.md)
-- [Formulas of linear temporal logic](../../../../../Logic/temporal-logic/linear-temporal-logic/formula.md)
-- [Decidability by multi-stack machines](../../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Markov decision processes and adversaries](../../../../Logic/temporal-logic/probabilistic-model-checking/markov-decision-processes-and-adversaries.md)
+- [Discrete-time Markov chains](../../../../Logic/temporal-logic/probabilistic-model-checking/discrete-time-markov-chains.md)
+- [Formulas of linear temporal logic](../../../../Logic/temporal-logic/linear-temporal-logic/formula.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
-- [The emptiness problem for probabilistic automata is undecidable](../../../../../TheoryOfComputation/regular-languages/automata-and-expressions/weighted-automata-and-rational-series/emptiness-problem-for-probabilistic-automata.md)
+- [The emptiness problem for probabilistic automata is undecidable](../../../../TheoryOfComputation/regular-languages/automata-and-expressions/weighted-automata-and-rational-series/emptiness-problem-for-probabilistic-automata.md)
 
 ## Expansion
 
-The reduction is from emptiness of probabilistic finite automata: given an automaton with an absorbing accepting state and a threshold $\lambda \in (0, 1)$, whether some word is accepted with probability greater than $\lambda$. The constructed MDP is the disjoint union of a part that mimics runs of the automaton, with its input letters as actions and states recording the last letter read, and a deterministic part that only records the letters chosen; a formula with a single probability constraint, over agents started in the two parts, holds exactly when some word is accepted with probability greater than $\lambda$.
+The reduction is from emptiness of probabilistic finite automata: given an automaton with an absorbing accepting state and a threshold $\lambda \in (0, 1)$, whether some word is accepted with probability greater than $\lambda$. The constructed MDP is the disjoint union of a part that mimics runs of the automaton, with its input letters as actions and states recording the last letter read, and a deterministic part that only records the letters chosen; a formula with a single probability constraint, over agents started in the two parts, holds exactly when some word is accepted with probability greater than $\lambda$. A good expansion links a page for the emptiness problem of probabilistic finite automata restricted to automata with an absorbing accepting state, the variant the reduction starts from.
 
 ## Sources
 

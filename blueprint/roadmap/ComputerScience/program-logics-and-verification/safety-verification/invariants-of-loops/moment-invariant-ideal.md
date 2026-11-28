@@ -30,7 +30,7 @@ None.
 
 ## Expansion
 
-For a non-probabilistic loop the analogue is the invariant ideal, the set of polynomials vanishing on every reachable valuation; the paper shows that moment invariants generalize it, since replacing each probabilistic transition by a nondeterministic one relates the two notions. Ideal membership is decidable from a basis via Gröbner bases, so an algorithm computing bases would decide whether a given polynomial is a moment invariant.
+For a non-probabilistic loop the analogue is the invariant ideal, the set of polynomials vanishing on every reachable valuation; the paper shows that moment invariants generalize it: for a non-probabilistic loop, where the expected value of a monomial is the monomial itself, the moment invariant ideal is the invariant ideal under this identification (Lemma 5.5). Ideal membership is decidable from a basis via Gröbner bases, so an algorithm computing bases would decide whether a given polynomial is a moment invariant.
 
 ## Sources
 

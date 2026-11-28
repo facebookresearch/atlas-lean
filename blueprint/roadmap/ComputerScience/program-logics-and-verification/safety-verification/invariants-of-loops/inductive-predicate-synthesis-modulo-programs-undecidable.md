@@ -18,7 +18,7 @@ The same paper reduces IPS-MP to constrained Horn clause solving and identifies 
 
 ## Expansion
 
-The reduction is from the halting problem of two-counter machines. With variables $x, y$ for the counters and $z$ for the program counter, the program's main function runs a loop `while (true)` whose body dispatches on $z$: increments and decrements update a counter and advance $z$, a jump instruction sets $z$ according to whether a counter is $0$, and the halt instruction becomes `assert(false)`. The program has no partial predicates, so the IPS-MP problem has a solution exactly when the program is correct, that is, exactly when the machine does not halt.
+The reduction is from the halting problem of two-counter machines. With variables $x, y$ for the counters and $z$ for the program counter, the program's main function runs a loop `while (true)` whose body dispatches on $z$: increments and decrements update a counter and advance $z$, a jump instruction sets $z$ according to whether a counter is $0$, and the halt instruction becomes `assert(false)`. The program has no partial predicates, so the IPS-MP problem has a solution exactly when the program is correct, that is, exactly when the machine does not halt. A good expansion links a page for the undecidability of halting of two-counter machines started with both counters at $0$, which follows from the linked universality theorem together with the undecidability of halting of Turing machines on the blank tape.
 
 ## Sources
 

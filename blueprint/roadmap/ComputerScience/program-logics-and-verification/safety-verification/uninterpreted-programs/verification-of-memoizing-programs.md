@@ -15,7 +15,7 @@ The verification problem stays undecidable for uninterpreted programs all of who
 
 ## Expansion
 
-The proof is again a reduction from the halting problem for two-counter machines. The counters are simulated on terms built from a variable $x$ standing for $0$ without any equality assumption, so they live in a free model, while a fake counter on a second copy $y$ of $0$ forces $g$ to invert $f$ and auxiliary functions to behave as needed for zero tests. When the machine halts, a single assumption $x = y$ merges the two models and makes the simulation correct. Executions are memoizing, and already one assumption that is not early suffices for undecidability. By contrast, the problem is decidable for coherent programs, which are both memoizing and have early assumes.
+The proof is again a reduction from the halting problem for two-counter machines. The counters are simulated on terms built from a variable $x$ standing for $0$ without any equality assumption, so they live in a free model, while a fake counter on a second copy $y$ of $0$ forces $g$ to invert $f$ and auxiliary functions to behave as needed for zero tests. When the machine halts, a single assumption $x = y$ merges the two models and makes the simulation correct. Executions are memoizing, and already one assumption that is not early suffices for undecidability. By contrast, the problem is decidable for coherent programs, which are both memoizing and have early assumes. A good expansion links a page for the undecidability of halting of two-counter machines started with both counters at $0$, which follows from the linked universality theorem together with the undecidability of halting of Turing machines on the blank tape.
 
 ## Sources
 

@@ -6,13 +6,11 @@ One labelled Markov decision process refines another when every behavior of the 
 
 **Theorem (Fijalkow, Kiefer and Shirmohammadi).** The problem $\mathsf{MC} \sqsubseteq \mathsf{MDP}$, which asks for an MC $\mathcal{D}$ and an MDP $\mathcal{E}$ whether $\mathcal{D} \sqsubseteq \mathcal{E}$, is undecidable. Hence the general problem $\mathsf{MDP} \sqsubseteq \mathsf{MDP}$ is undecidable.
 
-This answers an open question of Doyen, Henzinger and Raskin. When $\mathcal{E}$ is an MC, refinement is decidable in NC, and the same paper studies the cases where $\mathcal{E}$ is restricted to memoryless or pure memoryless strategies.
+This answers an open question of Doyen, Henzinger and Raskin. The same paper shows that mutual refinement, deciding both $\mathcal{D} \sqsubseteq \mathcal{E}$ and $\mathcal{E} \sqsubseteq \mathcal{D}$, is undecidable (Theorem 3.2). When $\mathcal{E}$ is an MC, refinement is decidable in NC, and the same paper studies the cases where $\mathcal{E}$ is restricted to memoryless or pure memoryless strategies.
 
 ## Depends on
 
-- [Probabilistic automata and cut-point languages](../../../TheoryOfComputation/regular-languages/automata-and-expressions/weighted-automata-and-rational-series/probabilistic-automata-and-cut-point-languages.md)
 - [Markov decision processes and adversaries](../../../Logic/temporal-logic/probabilistic-model-checking/markov-decision-processes-and-adversaries.md)
-- [Markov decision process](../../heuristic-search-and-planning/value-iteration/mdp.md)
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
