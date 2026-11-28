@@ -49,6 +49,8 @@ set_option autoImplicit false
 
 namespace MathlibExt.NumberTheory.PFrobeniusStarNumbersWanted
 
+open MetaMathlibExt.StarNumber (star_succ_eq)
+
 export MetaMathlibExt.StarNumber (star)
 
 private theorem star_pos (n : ℕ) : 0 < star n := by
@@ -95,19 +97,13 @@ private theorem rep_le_one_iff (n N : ℕ) :
   · intro h
     exact ⟨fun u v => Subtype.ext (h u.val v.val u.property v.property)⟩
 
-private theorem star_succ_eq (n : ℕ) (hn : 1 ≤ n) :
-    star (n + 1) = star n + 12 * n := by
-  obtain ⟨k, rfl⟩ : ∃ k, n = k + 1 := ⟨n - 1, by omega⟩
-  change 6 * (k + 2) * (k + 1) + 1 = 6 * (k + 1) * k + 1 + 12 * (k + 1)
-  ring
-
-private theorem star_coprime_succ (n : ℕ) (hn : 1 ≤ n) :
+private theorem star_coprime_succ (n : ℕ) :
     (star n).Coprime (star (n + 1)) := by
   let g := Nat.gcd (star n) (star (n + 1))
   have h0 : g ∣ star n := Nat.gcd_dvd_left _ _
   have h1 : g ∣ star (n + 1) := Nat.gcd_dvd_right _ _
   have h12 : g ∣ 12 * n := by
-    rw [star_succ_eq n hn] at h1
+    rw [star_succ_eq n] at h1
     exact (Nat.dvd_add_right h0).mp h1
   have htwo : g ∣ 2 := by
     have h : 2 * star n = 12 * n * (n - 1) + 2 := by unfold star; ring
@@ -308,10 +304,10 @@ private theorem canonical_card (n : ℕ) (hn : 6 ≤ n) :
 private def pairWeight (n : ℕ) (p : ℕ × ℕ) : ℕ :=
   p.1 * star (n + 1) + p.2 * star (n + 2)
 
-private theorem pairWeight_mod (n : ℕ) (hn : 6 ≤ n) (y z : ℕ) :
+private theorem pairWeight_mod (n : ℕ) (y z : ℕ) :
     pairWeight n (y, z) ≡ 12 * (n * y + (2 * n + 1) * z) [MOD star n] := by
-  have hb := star_succ_eq n (by omega)
-  have hc := star_succ_eq (n + 1) (by omega)
+  have hb := star_succ_eq n
+  have hc := star_succ_eq (n + 1)
   have heq : pairWeight n (y, z) =
       12 * (n * y + (2 * n + 1) * z) + (y + z) * star n := by
     simp only [pairWeight, hb, hc]
@@ -319,9 +315,9 @@ private theorem pairWeight_mod (n : ℕ) (hn : 6 ≤ n) (y z : ℕ) :
   rw [heq]
   simp [Nat.ModEq]
 
-private theorem star_coprime_twelve (n : ℕ) (hn : 6 ≤ n) : (star n).Coprime 12 := by
-  have h := star_coprime_succ n (by omega)
-  rw [star_succ_eq n (by omega), Nat.coprime_self_add_right] at h
+private theorem star_coprime_twelve (n : ℕ) : (star n).Coprime 12 := by
+  have h := star_coprime_succ n
+  rw [star_succ_eq n, Nat.coprime_self_add_right] at h
   exact h.of_dvd_right (dvd_mul_right 12 n)
 
 private def weightResidue (n : ℕ) (p : Canonical n) : Fin (star n) :=
@@ -332,9 +328,9 @@ private theorem weightResidue_injective (n : ℕ) (hn : 6 ≤ n) :
   intro p q hpq
   have hw : pairWeight n (canonicalPair n p) ≡ pairWeight n (canonicalPair n q)
       [MOD star n] := congrArg Fin.val hpq
-  have hp := pairWeight_mod n hn (canonicalPair n p).1 (canonicalPair n p).2
-  have hq := pairWeight_mod n hn (canonicalPair n q).1 (canonicalPair n q).2
-  have h := Nat.ModEq.cancel_left_of_coprime (star_coprime_twelve n hn)
+  have hp := pairWeight_mod n (canonicalPair n p).1 (canonicalPair n p).2
+  have hq := pairWeight_mod n (canonicalPair n q).1 (canonicalPair n q).2
+  have h := Nat.ModEq.cancel_left_of_coprime (star_coprime_twelve n)
     (hp.symm.trans (hw.trans hq))
   exact canonicalResidue_injective n hn h
 
@@ -761,7 +757,7 @@ private theorem eleven_mul_star_succ_le (n : ℕ) (hn : 10 ≤ n) :
   · subst n
     decide +kernel
   have hbc : star (n + 1) ≤ star (n + 2) := by
-    rw [star_succ_eq (n + 1) (by omega)]
+    rw [star_succ_eq (n + 1)]
     exact Nat.le_add_right _ _
   exact Nat.mul_le_mul (by omega) hbc
 
@@ -769,7 +765,7 @@ private theorem eleven_mul_star_succ_le (n : ℕ) (hn : 10 ≤ n) :
 private theorem leftGap_mul_le (n : ℕ) (hn : 6 ≤ n) :
     (n + 1) * star n ≤ n * star (n + 2) := by
   have hab : star n ≤ star (n + 1) := by
-    rw [star_succ_eq n (by omega)]
+    rw [star_succ_eq n]
     exact Nat.le_add_right _ _
   have hrow : (3 * n + 13) * star n ≤ (3 * n + 1) * star (n + 2) := by
     rw [star_relation_right n hn]
@@ -1020,7 +1016,7 @@ private theorem star_le_frobeniusThreshold (n p : ℕ) (hn : 10 ≤ n) :
   have h := Nat.mul_le_mul_right (star (n + 1)) (show 1 ≤ 2 * n - 11 by omega)
   rw [Nat.one_mul] at h
   have hab : star n ≤ star (n + 1) := by
-    rw [star_succ_eq n (by omega)]
+    rw [star_succ_eq n]
     exact Nat.le_add_right _ _
   exact hab.trans (h.trans (Nat.le_add_right _ _))
 

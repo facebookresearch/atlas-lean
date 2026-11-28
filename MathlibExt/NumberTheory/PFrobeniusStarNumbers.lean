@@ -35,15 +35,18 @@ namespace MetaMathlibExt.StarNumber
 def star (n : ℕ) : ℕ :=
   6 * n * (n - 1) + 1
 
+/-- **Successive star numbers.** For every natural number `n`, the next star number is
+obtained by adding `12 * n` to the current one. -/
+theorem star_succ_eq (n : ℕ) : star (n + 1) = star n + 12 * n := by
+  cases n with
+  | zero => rfl
+  | succ k =>
+    simp only [star, Nat.add_sub_cancel]
+    ring
+
 /-- `3 * n * (n - 1)^2` is an inverse of the next star number modulo the current one. -/
 theorem star_succ_mul_inverse_modEq (n : ℕ) :
     star (n + 1) * (3 * n * (n - 1) ^ 2) ≡ 1 [MOD star n] := by
-  have hstep : star (n + 1) = star n + 12 * n := by
-    cases n with
-    | zero => rfl
-    | succ k =>
-      simp only [star, Nat.add_sub_cancel]
-      ring
   let m := 6 * n * (n - 1)
   have hm : m + 1 ≡ 0 [MOD star n] := Nat.modulus_modEq_zero
   have hsq : m * m + m ≡ 0 [MOD star n] := by
@@ -51,7 +54,7 @@ theorem star_succ_mul_inverse_modEq (n : ℕ) :
   calc
     star (n + 1) * (3 * n * (n - 1) ^ 2) ≡ (12 * n) * (3 * n * (n - 1) ^ 2)
         [MOD star n] := by
-      rw [hstep]
+      rw [star_succ_eq n]
       exact ((Nat.modulus_add_modEq_iff).mpr (Nat.ModEq.refl _)).mul_right _
     _ = m * m := by dsimp [m]; ring
     _ ≡ 1 [MOD star n] := (Nat.ModEq.add_right_cancel' m)
