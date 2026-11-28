@@ -18,7 +18,13 @@ import Mathlib.Tactic.LinearCombination
 # Two Delannoy triangle entries modulo a prime cube
 
 The theorem `delannoy_two_mul` evaluates the central entry in row `2 * p` and its
-neighbor in row `2 * p - 1` using the Fermat quotient of two.
+neighbor in row `2 * p - 1` modulo `p ^ 3` for primes `p ≥ 5`, using the Fermat
+quotient of two (with the coprimality witness required by `Int.fermatQuotient`).
+
+## References
+
+* Chahinaze Djadi and Hacène Belbachir, *Congruence Properties for the Delannoy Triangle
+  Coefficients*, Journal of Integer Sequences 29 (2026), Article 26.5.2, Theorem 1.
 -/
 
 namespace MathlibExt.NumberTheory.DelannoyTriangleWanted

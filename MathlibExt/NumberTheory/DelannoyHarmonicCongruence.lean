@@ -24,11 +24,17 @@ import Mathlib.Tactic.Ring
 /-!
 # A harmonic Fermat-quotient congruence
 
-Over the field with `p` elements we compare derivatives of the finite logarithm,
-finite dilogarithm, and a polynomial weighted by harmonic numbers. Bounds on
+Over the field with `p` elements for a prime `p ≥ 5`, we compare derivatives of the finite
+logarithm, finite dilogarithm, and a polynomial weighted by harmonic numbers. Bounds on
 the degrees and evaluations at zero and one determine the integration constants.
 At two the harmonic part with the lagged weight vanishes, and an integer binomial
 expansion relates the finite logarithm to the Fermat quotient.
+
+## References
+
+* Chahinaze Djadi and Hacène Belbachir, *Congruence Properties for the Delannoy Triangle
+  Coefficients*, Journal of Integer Sequences 29 (2026), Article 26.5.2, Lemma 7 and the
+  vanishing harmonic sum at the end of the proof of Theorem 4.
 -/
 
 namespace MathlibExt.NumberTheory.DelannoyTriangleWanted
@@ -548,6 +554,23 @@ private theorem finiteHarmonic_eq_neg_comp (p : ℕ) [Fact p.Prime] (hp5 : 5 ≤
       (X_mul_finiteDilog_derivative p hp5)
     simpa only [mul_comp, X_comp, finiteLog_symm p hp5] using h.symm
   · simp [finiteHarmonic, eval_finsetSum, eval_comp, finiteDilog_eval_one p hp5]
+
+/-- **The lagged harmonic sum at two vanishes modulo $p$.** For any prime $p \ge 5$, write
+$H_j = \sum_{i=1}^j i^{-1}$ in $\mathbb{Z}/p\mathbb{Z}$. Then
+$\sum_{j=0}^{p-2} H_j\,2^{j+1}/(j+1) = 0$ in $\mathbb{Z}/p\mathbb{Z}$.
+
+Source: Chahinaze Djadi and Hacène Belbachir, *Congruence Properties for the Delannoy Triangle
+Coefficients*, vanishing sum at the end of the proof of Theorem 4. -/
+public theorem sum_lagged_harmonic_two_pow_div_eq_zero (p : ℕ)
+    (hp : p.Prime) (hp5 : 5 ≤ p) :
+    (∑ j ∈ range (p - 1), harmonicMod p j * (2 : ZMod p) ^ (j + 1) *
+      ((j + 1 : ℕ) : ZMod p)⁻¹) = 0 := by
+  let : Fact p.Prime := ⟨hp⟩
+  have h : (finiteHarmonic p).eval 2 = 0 := by
+    rw [finiteHarmonic_eq_neg_comp p hp5, eval_neg, eval_comp]
+    simp [show (1 : ZMod p) - 2 = -1 by ring, finiteDilog_eval_neg_one p hp5]
+  rw [finiteHarmonic, eval_finsetSum] at h
+  simpa only [eval_mul, eval_C, eval_pow, eval_X, mul_right_comm] using h
 
 private theorem harmonicSum_eq_evals (p : ℕ) :
     (∑ k ∈ Icc 1 (p - 1), harmonicMod p k * (2 : ZMod p) ^ k * (k : ZMod p)⁻¹) =

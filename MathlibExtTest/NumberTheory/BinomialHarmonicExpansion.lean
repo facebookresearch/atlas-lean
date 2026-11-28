@@ -18,6 +18,10 @@ example (m : ℕ) : harmonicMod m 0 = 0 ∧ harmonic2Mod m 0 = 0 := by
 -- At the upper endpoint for p = 3, the second term contributes 1/2 or 1/4 modulo 27.
 example : harmonicMod 27 2 = 15 ∧ harmonic2Mod 27 2 = 8 := by decide +kernel
 
+-- Reduction also preserves H₂ when both moduli are composite and both denominators are units.
+example : ZMod.castHom (by decide : 15 ∣ 225) (ZMod 15) (harmonicMod 225 2) =
+    harmonicMod 15 2 := by decide +kernel
+
 -- For s = -1 and k = 3, the quadratic correction contributes to the residue of (-6 choose 3).
 example : (∏ i ∈ Finset.Icc 1 (3 : ℕ), (((-1 : ℤ) * (5 : ℤ) - (i : ℤ)) : ZMod (5 ^ 3))) *
     (Nat.factorial 3 : ZMod (5 ^ 3))⁻¹ = 69 := by
