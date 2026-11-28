@@ -5,7 +5,7 @@ relational schema is written $\mathrm{Answer}(\bar x) \mathrel{:-} R_1(\bar u_1)
 where each $\bar u_i$ is a tuple of constants and variables, every variable of the head tuple $\bar x$ occurs in some
 $\bar u_i$, and the arity of $q$ is the length of $\bar x$; the variables of the body that are not in $\bar x$ are
 existentially quantified, and $q$ is Boolean when $\bar x$ is empty. This extends the constant-free syntax of
-[CQ](../../not-yet-classified/conjunctive-queries/cq.md) by constants in atoms. An assignment for $q$ over a database
+[CQ](conjunctive-queries-and-the-chandra-merlin-theor/cq.md) by constants in atoms. An assignment for $q$ over a database
 $D$ maps each variable of $q$ to an element of the active domain $\mathrm{Dom}(D)$ and is extended to constants as the
 identity; it is consistent with $D$ when it maps every body atom to a fact of $D$. The answer set of $q$ on $D$ is
 
@@ -17,8 +17,8 @@ that are the identity on constants and send every body atom to a fact of $D$.
 
 ## Depends on
 
-- [CQ](../../not-yet-classified/conjunctive-queries/cq.md)
-- [Satisfaction of a conjunctive-query body](../../not-yet-classified/conjunctive-queries/satisfies.md)
+- [CQ](conjunctive-queries-and-the-chandra-merlin-theor/cq.md)
+- [Satisfaction of a conjunctive-query body](conjunctive-queries-and-the-chandra-merlin-theor/satisfies.md)
 
 ## Sources
 

@@ -7,7 +7,7 @@ $$q \subseteq q' \iff (q', \bar x') \to (q, \bar x).$$
 Equivalently, let $G$ be a bijection from the variables of $q$ to constants that occur neither in $q$ nor in $q'$, extended
 by the identity on constants; then $q \subseteq q'$ if and only if $G(\bar x) \in q'(G(A_q))$, that is, the frozen head
 tuple of $q$ is an answer of $q'$ on the frozen body of $q$. For queries without constants this is the
-[Chandra–Merlin containment criterion](../../../not-yet-classified/conjunctive-queries/contained-iff-hom.md).
+[Chandra–Merlin containment criterion](../conjunctive-queries-and-the-chandra-merlin-theor/contained-iff-hom.md).
 
 ## Depends on
 

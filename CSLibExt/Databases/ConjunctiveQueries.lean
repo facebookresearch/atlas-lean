@@ -43,8 +43,8 @@ structure CQ where
   head : List ℕ
   body : List (ℕ × List ℕ)
 
-/-- A finite database: for each relation name, a finite set of
-tuples. Domains are `ℕ` throughout. -/
+/-- A database: for each relation name `ℕ`, a finite set of tuples; infinitely many relation
+names may be nonempty. Domains are `ℕ` throughout. -/
 abbrev DB := ℕ → Finset (List ℕ)
 
 /-- An assignment of variables extends to terms (variables

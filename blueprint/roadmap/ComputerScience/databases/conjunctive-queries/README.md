@@ -23,3 +23,4 @@
 - [Bag containment of Boolean CQs up to any factor 1 + ε is undecidable](scaled-bag-containment-of-cqs.md)
 - [Bag containment with one inequality is undecidable](bag-containment-with-one-inequality.md)
 - [Conjunctive regular path queries](conjunctive-regular-path-queries/README.md)
+- [Conjunctive queries and the Chandra-Merlin theorem](conjunctive-queries-and-the-chandra-merlin-theor/README.md)

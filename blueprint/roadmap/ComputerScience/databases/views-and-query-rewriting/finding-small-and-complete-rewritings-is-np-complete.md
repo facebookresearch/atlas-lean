@@ -16,7 +16,7 @@ and let $k$ be smaller than the number of atoms in the body of $Q$. Each of the 
 
 - [Locally minimal rewritings reuse the query's atoms, and their view atoms can use the query's variables](locally-minimal-rewritings-reuse-the-query-atoms.md)
 - [Locally minimal complete rewritings have at most as many atoms as the query](complete-rewritings-have-at-most-as-many-atoms-as-the-query.md)
-- [Chandra-Merlin containment criterion](../../not-yet-classified/conjunctive-queries/contained-iff-hom.md)
+- [Chandra-Merlin containment criterion](../conjunctive-queries/conjunctive-queries-and-the-chandra-merlin-theor/contained-iff-hom.md)
 - [A query has a rewriting using a view exactly when its Boolean projection is contained in the view's](existence-of-a-rewriting-using-a-view.md)
 - [CONJUNCTIVE QUERY CONTAINMENT is NP-complete](../../../TheoryOfComputation/not-yet-classified/part-01/part-10/conjunctive-query-containment/conjunctive-query-containment-np-complet.md)
 

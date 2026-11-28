@@ -3,6 +3,8 @@
 Session types for the π-calculus: binary protocols and their duality, linear endpoint typing with ownership contexts, subject reduction, progress by priorities, typing up to protocol equivalence, and shared and recursive services.
 
 - [Binary session types with labelled branching](binary-session-types-with-labelled-branching/README.md)
+- [Classical processes: session reading of propositions](classical-processes-session-reading-of-propositi/README.md)
+- [Classical processes: typing](classical-processes-typing/README.md)
 - [Finite binary sessions](finite-binary-sessions/README.md)
 - [Linear endpoint typing for the π-calculus](linear-endpoint-typing-for-the-calculus/README.md)
 - [Multiparty session types: finite global types and projection](multiparty-session-types-finite-global-types-and/README.md)
