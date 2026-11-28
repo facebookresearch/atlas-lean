@@ -38,7 +38,7 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
   {K₁ K₂ K₃ : ChainComplex C ℕ} (P : ChainGradedPairing K₁ K₂ K₃)
   (h₁ : K₁.d 1 0 = 0)
 
-local notation "e₊" => ComplexShape.positiveNatEmbedding
+local notation "e₊" => ChainComplex.kernelTailEmbedding
 
 /-- For a pairing `P : K₁ ⊗ K₂ ⟶ K₃` with `K₁.d 1 0 = 0`, restrict its
 first factor to the positive stupid truncation of `K₁` and retain all of `K₂`.

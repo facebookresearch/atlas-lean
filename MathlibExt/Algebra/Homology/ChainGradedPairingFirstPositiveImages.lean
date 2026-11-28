@@ -43,7 +43,7 @@ variable {R : Type u} [Ring R]
   {K₁ K₂ K₃ : ChainComplex (ModuleCat.{v} R) ℕ}
   (P : ChainGradedPairing K₁ K₂ K₃) (h₁ : K₁.d 1 0 = 0)
 
-local notation "e₊" => ComplexShape.positiveNatEmbedding
+local notation "e₊" => ChainComplex.kernelTailEmbedding
 
 /-- Bidegrees contributing to total degree `n` in a first-positive pairing:
 pairs `(p, q)` of natural numbers with `p > 0` and `p + q = n`.

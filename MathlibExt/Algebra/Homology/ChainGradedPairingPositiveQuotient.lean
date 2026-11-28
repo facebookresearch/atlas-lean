@@ -241,8 +241,8 @@ theorem strictPositivePairing_comp_positiveImageProjection :
   change (strictPositivePairing P h₁ h₂).f n ≫
     (positiveImageProjection P h₁ h₂).f n = 0
   apply HomologicalComplex.mapBifunctor.hom_ext
-    (K₁ := K₁.stupidTrunc ComplexShape.positiveNatEmbedding)
-    (K₂ := K₂.stupidTrunc ComplexShape.positiveNatEmbedding)
+    (K₁ := K₁.stupidTrunc ChainComplex.kernelTailEmbedding)
+    (K₂ := K₂.stupidTrunc ChainComplex.kernelTailEmbedding)
     (F := curriedTensor (ModuleCat.{v} R)) (c := ComplexShape.down ℕ)
   intro p q h
   simp only [comp_zero]
@@ -270,8 +270,8 @@ theorem range_strictPositivePairing (n : ℕ) :
     change ((positiveImageProjection P h₁ h₂).f n).hom
       (((strictPositivePairing P h₁ h₂).f n).hom x) = 0
     have h := congrArg
-      (fun f : tensorObj (K₁.stupidTrunc ComplexShape.positiveNatEmbedding)
-          (K₂.stupidTrunc ComplexShape.positiveNatEmbedding) ⟶
+      (fun f : tensorObj (K₁.stupidTrunc ChainComplex.kernelTailEmbedding)
+          (K₂.stupidTrunc ChainComplex.kernelTailEmbedding) ⟶
           positiveImageQuotient P h₁ h₂ => f.f n)
       (strictPositivePairing_comp_positiveImageProjection P h₁ h₂)
     change (strictPositivePairing P h₁ h₂).f n ≫
@@ -287,18 +287,18 @@ theorem range_strictPositivePairing (n : ℕ) :
       | zero => omega
       | succ q =>
         rintro z ⟨x, rfl⟩
-        let e₁ := K₁.stupidTruncXIso ComplexShape.positiveNatEmbedding
+        let e₁ := K₁.stupidTruncXIso ChainComplex.kernelTailEmbedding
           (i := p) (i' := p + 1) rfl
-        let e₂ := K₂.stupidTruncXIso ComplexShape.positiveNatEmbedding
+        let e₂ := K₂.stupidTruncXIso ChainComplex.kernelTailEmbedding
           (i := q) (i' := q + 1) rfl
         let eT :
-            (K₁.stupidTrunc ComplexShape.positiveNatEmbedding).X (p + 1) ⊗
-              (K₂.stupidTrunc ComplexShape.positiveNatEmbedding).X (q + 1) ≅
+            (K₁.stupidTrunc ChainComplex.kernelTailEmbedding).X (p + 1) ⊗
+              (K₂.stupidTrunc ChainComplex.kernelTailEmbedding).X (q + 1) ≅
             K₁.X (p + 1) ⊗ K₂.X (q + 1) :=
           MonoidalCategory.tensorIso e₁ e₂
         let y := eT.inv.hom x
-        refine ⟨(ιTensorObj (K₁.stupidTrunc ComplexShape.positiveNatEmbedding)
-          (K₂.stupidTrunc ComplexShape.positiveNatEmbedding) (p + 1) (q + 1) n hn).hom y, ?_⟩
+        refine ⟨(ιTensorObj (K₁.stupidTrunc ChainComplex.kernelTailEmbedding)
+          (K₂.stupidTrunc ChainComplex.kernelTailEmbedding) (p + 1) (q + 1) n hn).hom y, ?_⟩
         have h := pairAt_strictPositivePairing P h₁ h₂ (p + 1) (q + 1) n hn
         rw [K₁.positiveStupidTruncInclusion_f h₁ (i := p) rfl,
           K₂.positiveStupidTruncInclusion_f h₂ (i := q) rfl] at h
@@ -368,7 +368,7 @@ chain pairing P with both degree-one boundaries zero, the smart-positive truncat
 quotient is canonically isomorphic to the quotient by all component images in bidegrees
 p,q>0. This is the composite of the smart/strict and strict/image comparisons. -/
 def truncationQuotientIsoPositiveImageQuotient :
-    truncationQuotient ComplexShape.positiveNatEmbedding P ≅ positiveImageQuotient P h₁ h₂ :=
+    truncationQuotient ChainComplex.kernelTailEmbedding P ≅ positiveImageQuotient P h₁ h₂ :=
   truncationQuotientIsoStrictPositiveCokernel P h₁ h₂ ≪≫
     strictPositiveCokernelIsoPositiveImageQuotient P h₁ h₂
 
@@ -377,7 +377,7 @@ zero degree-one boundaries in both inputs, the smart-positive projection followe
 its comparison with the positive image quotient equals the positive image projection. -/
 @[reassoc]
 theorem truncationProjection_isoPositiveImage_hom :
-    truncationProjection ComplexShape.positiveNatEmbedding P ≫
+    truncationProjection ChainComplex.kernelTailEmbedding P ≫
         (truncationQuotientIsoPositiveImageQuotient P h₁ h₂).hom =
       positiveImageProjection P h₁ h₂ := by
   rw [truncationQuotientIsoPositiveImageQuotient, Iso.trans_hom, ← Category.assoc,
@@ -395,22 +395,22 @@ theorem truncationQuotientIsoPositiveImageQuotient_naturality
     (g₁ : L₁.d 1 0 = 0) (g₂ : L₂.d 1 0 = 0)
     (f₁ : K₁ ⟶ L₁) (f₂ : K₂ ⟶ L₂) (f₃ : K₃ ⟶ L₃)
     (hf : tensorHom f₁ f₂ ≫ Q = P ≫ f₃) :
-    truncationQuotientMap ComplexShape.positiveNatEmbedding P Q f₁ f₂ f₃ hf ≫
+    truncationQuotientMap ChainComplex.kernelTailEmbedding P Q f₁ f₂ f₃ hf ≫
         (truncationQuotientIsoPositiveImageQuotient Q g₁ g₂).hom =
       (truncationQuotientIsoPositiveImageQuotient P h₁ h₂).hom ≫
         positiveImageQuotientMap P h₁ h₂ Q g₁ g₂ f₁ f₂ f₃ hf := by
-  let _ : Epi (truncationProjection ComplexShape.positiveNatEmbedding P) := by
-    change Epi (cokernel.π (truncationPairing ComplexShape.positiveNatEmbedding P))
+  let _ : Epi (truncationProjection ChainComplex.kernelTailEmbedding P) := by
+    change Epi (cokernel.π (truncationPairing ChainComplex.kernelTailEmbedding P))
     infer_instance
-  apply (cancel_epi (truncationProjection ComplexShape.positiveNatEmbedding P)).1
+  apply (cancel_epi (truncationProjection ChainComplex.kernelTailEmbedding P)).1
   calc
-    truncationProjection ComplexShape.positiveNatEmbedding P ≫
-        (truncationQuotientMap ComplexShape.positiveNatEmbedding P Q f₁ f₂ f₃ hf ≫
+    truncationProjection ChainComplex.kernelTailEmbedding P ≫
+        (truncationQuotientMap ChainComplex.kernelTailEmbedding P Q f₁ f₂ f₃ hf ≫
           (truncationQuotientIsoPositiveImageQuotient Q g₁ g₂).hom) =
-        (truncationProjection ComplexShape.positiveNatEmbedding P ≫
-          truncationQuotientMap ComplexShape.positiveNatEmbedding P Q f₁ f₂ f₃ hf) ≫
+        (truncationProjection ChainComplex.kernelTailEmbedding P ≫
+          truncationQuotientMap ChainComplex.kernelTailEmbedding P Q f₁ f₂ f₃ hf) ≫
             (truncationQuotientIsoPositiveImageQuotient Q g₁ g₂).hom := (Category.assoc _ _ _).symm
-    _ = (f₃ ≫ truncationProjection ComplexShape.positiveNatEmbedding Q) ≫
+    _ = (f₃ ≫ truncationProjection ChainComplex.kernelTailEmbedding Q) ≫
         (truncationQuotientIsoPositiveImageQuotient Q g₁ g₂).hom := by
           rw [truncationProjection_map]
     _ = f₃ ≫ positiveImageProjection Q g₁ g₂ := by
@@ -418,7 +418,7 @@ theorem truncationQuotientIsoPositiveImageQuotient_naturality
     _ = positiveImageProjection P h₁ h₂ ≫
         positiveImageQuotientMap P h₁ h₂ Q g₁ g₂ f₁ f₂ f₃ hf :=
       (positiveImageProjection_map P h₁ h₂ Q g₁ g₂ f₁ f₂ f₃ hf).symm
-    _ = truncationProjection ComplexShape.positiveNatEmbedding P ≫
+    _ = truncationProjection ChainComplex.kernelTailEmbedding P ≫
         ((truncationQuotientIsoPositiveImageQuotient P h₁ h₂).hom ≫
           positiveImageQuotientMap P h₁ h₂ Q g₁ g₂ f₁ f₂ f₃ hf) := by
             rw [← Category.assoc, truncationProjection_isoPositiveImage_hom]

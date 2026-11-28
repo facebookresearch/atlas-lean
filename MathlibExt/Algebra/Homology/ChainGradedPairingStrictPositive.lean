@@ -39,7 +39,7 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
   {K₁ K₂ K₃ : ChainComplex C ℕ} (P : ChainGradedPairing K₁ K₂ K₃)
   (h₁ : K₁.d 1 0 = 0) (h₂ : K₂.d 1 0 = 0)
 
-local notation "e₊" => ComplexShape.positiveNatEmbedding
+local notation "e₊" => ChainComplex.kernelTailEmbedding
 
 /-- Restrict the actual pairing by the earned native inclusions of the whole positive part. -/
 def strictPositivePairing :

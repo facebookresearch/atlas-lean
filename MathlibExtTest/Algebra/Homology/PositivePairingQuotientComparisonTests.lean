@@ -243,7 +243,7 @@ private lemma relations_two :
     exact hy
 
 private abbrev inputBoundaryZero : source.d 1 0 = 0 := by rfl
-private abbrev e₊ := ComplexShape.positiveNatEmbedding
+private abbrev e₊ := ChainComplex.kernelTailEmbedding
 private abbrev smartQuotient :=
   truncationQuotient e₊ (pairing 2)
 private abbrev strictQuotient :=
