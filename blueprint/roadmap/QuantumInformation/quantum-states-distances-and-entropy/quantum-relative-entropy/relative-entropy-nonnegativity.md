@@ -8,6 +8,7 @@ If the support test fails the value is $+\infty$. Otherwise the eigenbasis repre
 
 ## Depends on
 
+- [Density matrices, pure states and reduced states](../density-matrices-and-fidelity/density-matrices-and-reduced-states.md)
 - [Support inclusion and Umegaki relative entropy](umegaki-relative-entropy.md)
 - [Klein's inequality for the matrix relative entropy](../../../LinearAlgebra/positive-definite-matrices/matrix-relative-entropy/re-trace-mul-cfc-log-sub-le.md)
 

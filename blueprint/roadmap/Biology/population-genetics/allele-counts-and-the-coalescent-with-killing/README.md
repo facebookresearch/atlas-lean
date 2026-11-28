@@ -30,3 +30,4 @@
 ## Further results
 
 - [Ancestral selection graph with mutation](ancestral-selection-graph-with-mutation/README.md)
+- [Sequential loss of allelic diversity](sequential-loss-of-allelic-diversity/README.md)

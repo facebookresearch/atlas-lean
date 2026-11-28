@@ -29,32 +29,13 @@ public import MathlibExt.NumberTheory.Recurrences.LucasRatioLowerBound
 public import MathlibExt.NumberTheory.Recurrences.LucasRootPower
 public import Mathlib.Analysis.SpecialFunctions.Log.Base
 public import Mathlib.NumberTheory.Padics.PadicVal.Basic
+public import MathlibExt.NumberTheory.Recurrences.LucasWeightedPowerSumAlphaBounds
 public import MathlibExt.NumberTheory.Recurrences.LucasWeightedPowerSumExistsRemaindersWeightedPowerSum
+public import MathlibExt.NumberTheory.Recurrences.LucasWeightedPowerSumParameterBound
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Bounds on Lucas sequences by powers of the dominant root.** Let $x$ and $y \neq 0$ be
-integers with $x \geq 1$, $|y + 1| \leq x$ and $D = x^2 - 4y > 0$, let $(U_n)$ and $(V_n)$ be the
-Lucas sequences with parameters $(x, y)$, given by $U_0 = 0$, $U_1 = 1$, $V_0 = 2$, $V_1 = x$
-and $W_{n+2} = x W_{n+1} - y W_n$ for $W = U, V$, and put $\alpha = (x + \sqrt{D})/2$. Then for
-every $n \geq 2$ we have $x \alpha^{n-2} \leq U_n$; if $y \leq 0$, then $U_n \leq \alpha^{n-1}$
-and $x \alpha^{n-1} \leq V_n \leq \alpha^{n+1}/x$; and if $y \geq 0$, then
-$U_n \leq \alpha^n/\sqrt{D}$ and $\alpha^n \leq V_n \leq \alpha^{n+1}/\sqrt{D}$.
-
-Source: Benjamin Earp-Lynch, Simon Earp-Lynch, Omar Kihel and Puntani Pongsumpun, *Extension of the
-Equation ∑ j F_j^p = F_n^q to a Family of Lucas Sequences*, The Fibonacci Quarterly 62 (2024),
-no. 3, Lemma 2.2 (`fq-2024-earplynch07182024-lem-2.2`). -/
-public theorem_wanted lucasU_lucasV_alpha_bounds (P : LucasSequenceParams) (hx : 1 ≤ P.p)
-    (hy : |P.q + 1| ≤ P.p) (hD : 0 < P.p ^ 2 - 4 * P.q) {n : ℕ} (hn : 2 ≤ n) :
-    let α : ℝ := (P.p + Real.sqrt (P.p ^ 2 - 4 * P.q)) / 2
-    (P.p : ℝ) * α ^ (n - 2) ≤ lucasU P n ∧
-      (P.q ≤ 0 → (lucasU P n : ℝ) ≤ α ^ (n - 1)) ∧
-      (0 ≤ P.q → (lucasU P n : ℝ) ≤ α ^ n / Real.sqrt (P.p ^ 2 - 4 * P.q)) ∧
-      (P.q ≤ 0 → (P.p : ℝ) * α ^ (n - 1) ≤ lucasV P n ∧ (lucasV P n : ℝ) ≤ α ^ (n + 1) / P.p) ∧
-      (0 ≤ P.q → α ^ n ≤ (lucasV P n : ℝ) ∧
-        (lucasV P n : ℝ) ≤ α ^ (n + 1) / Real.sqrt (P.p ^ 2 - 4 * P.q))
 
 /-- **Logarithmic bounds for weighted Lucas power sums when $y < 0$.** Let $x \ge 1$ and $y < 0$
 be integers with $|y + 1| \le x$, let $(U_m)$ be the Lucas sequence with parameters $(x, y)$,
@@ -184,27 +165,6 @@ public theorem_wanted weighted_power_sum_ne_lucasU_pow (P : LucasSequenceParams)
     (hy : (P.q = -1 ∧ 2 ≤ P.p) ∨ (P.q = 1 ∧ 3 ≤ P.p)) {n k p q : ℕ} (hn : 0 < n)
     (hp : 0 < p) (hq : 0 < q) (hp11 : p ≤ 11) (hq11 : q ≤ 11) (hk : 3 ≤ k) :
     ∑ j ∈ Finset.Icc 1 k, (j : ℤ) * lucasU P j ^ p ≠ lucasU P n ^ q
-
-/-- **Bound on the parameter in the weighted power-sum equation for Lucas sequences.** Let $x$
-be a positive integer, let $y \in \{1, -1\}$, and let $(U_n)$ be the Lucas sequence with
-parameters $(x, y)$, given by $U_0 = 0$, $U_1 = 1$ and $U_{n+2} = x U_{n+1} - y U_n$.
-If $n, p, q$ are positive integers and $k \geq 3$ is an integer with
-$$
-\sum_{j=1}^{k} j \, U_j^p = U_n^q,
-$$
-then $x \leq (k + 1)^2/4 + 1$.
-
-The hypothesis $k \geq 3$ cannot be dropped entirely: for $k = 1$ and $y = -1$,
-$(n, p, q, x) = (1, 1, 1, 5)$ is a solution and $5 > (1 + 1)^2/4 + 1 = 2$.
-
-Source: Benjamin Earp-Lynch, Simon Earp-Lynch, Omar Kihel and Puntani Pongsumpun, *Extension of the
-Equation ∑ j F_j^p = F_n^q to a Family of Lucas Sequences*, The Fibonacci Quarterly 62 (2024),
-no. 3, Lemma 4.4 (`fq-2024-earplynch07182024-lem-4.4`). -/
-public theorem_wanted le_of_weighted_power_sum_eq (P : LucasSequenceParams)
-    (hy : P.q = 1 ∨ P.q = -1) (hx : 0 < P.p) {n k p q : ℕ} (hn : 0 < n) (hp : 0 < p)
-    (hq : 0 < q) (hk : 3 ≤ k)
-    (hsol : ∑ j ∈ Finset.Icc 1 k, (j : ℤ) * lucasU P j ^ p = lucasU P n ^ q) :
-    (P.p : ℚ) ≤ ((k : ℚ) + 1) ^ 2 / 4 + 1
 
 /-- **Remainder bound for weighted Lucas power sums when $y = -1$.** Let $x$ be a positive
 integer, let $(U_m)$ be the Lucas sequence with parameters $(x, -1)$, given by $U_0 = 0$,
