@@ -6,8 +6,30 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.SetPackingDefs
+
+/-!
 # SET PACKING with sets of size at most 3: definitions
+
+INSTANCE: a collection `C` of finite sets, all `c ∈ C` with `|c| ≤ 3`, and a positive integer
+`K ≤ |C|`. QUESTION: does `C` contain at least `K` mutually disjoint sets?
+
+This is the restriction of `WantedExt.Complexity.NPComplete.SetPackingWanted` to sets of at
+most three elements. The instance type, the parent well-formedness condition and the question
+are that module's (`SetPacking.SetPackingInstance`, `SetPacking.WellFormed`,
+`SetPacking.SetPackingFeasible`): the sets are duplicate-free lists over a universe
+`{0, ..., n - 1}`, and the question asks for a duplicate-free sublist of at least `K` pairwise
+disjoint sets. `WellFormed` adds the restriction `|c| ≤ 3` (a duplicate-free list has as many
+entries as elements) and Garey and Johnson's bound `0 < K ≤ |C|`, with `|C|` the number of
+listed sets.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the
@@ -16,11 +38,6 @@ Theory of NP-Completeness*, W. H. Freeman (1979), p. 221, problem [SP3] SET PACK
 R. M. Karp, "Reducibility among combinatorial problems", in *Complexity of Computer
 Computations*, Plenum Press (1972), 85-103, doi:10.1007/978-1-4684-2001-2_9.
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.SetPackingDefs
 
 @[expose] public section
 

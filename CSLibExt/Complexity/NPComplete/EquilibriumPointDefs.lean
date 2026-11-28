@@ -6,8 +6,44 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import Mathlib.Algebra.MvPolynomial.Eval
+public import MathlibExt.GameTheory.StrategicGame
+
+/-!
 # EQUILIBRIUM POINT: definitions
+
+INSTANCE: a set `X = {x₁, ..., xₙ}` of variables, a collection `{Fᵢ : 1 ≤ i ≤ n}` of product
+polynomials over `X` and the integers, and a finite range-set `Mᵢ ⊆ ℤ` for `1 ≤ i ≤ n`.
+QUESTION: is there a sequence `y₁, ..., yₙ` of integers, with `yᵢ ∈ Mᵢ`, such that for
+`1 ≤ i ≤ n` and all `y ∈ Mᵢ`,
+`Fᵢ(y₁, ..., yᵢ₋₁, yᵢ, yᵢ₊₁, ..., yₙ) ≥ Fᵢ(y₁, ..., yᵢ₋₁, y, yᵢ₊₁, ..., yₙ)`?
+
+This is the existence of a pure Nash equilibrium of the `n`-player game `game` in which player
+`i` chooses `xᵢ ∈ Mᵢ` and receives payoff `Fᵢ`. The question is stated with the repository's
+`MathlibExt.GameTheory.StrategicGame.IsNash`, which by `isNash_iff_update_le` says exactly that
+no unilateral deviation `Function.update σ i t` raises the deviator's payoff. Payoffs are the
+integer values of the `Fᵢ`, cast to `ℝ` as `StrategicGame` requires (the cast preserves `≤`).
+
+Players and variables are indexed `0, ..., n - 1`. A product polynomial is a polynomial given
+as a product of polynomials (Garey and Johnson use the term the same way in [AN11] NUMBER OF
+ROOTS FOR A PRODUCT POLYNOMIAL), here `productPoly`, a product of factors `factorPoly`, each a
+sum of integer multiples of monomials. A monomial is given by the list of its variables, each
+listed as often as its exponent, so exponents are written in unary and a payoff is evaluated in
+polynomial time; Sahni's reduction uses range-sets `{0, 1}`, on which exponents are immaterial.
+Polynomials and their evaluation are Mathlib's `MvPolynomial ℕ ℤ` and `MvPolynomial.eval`; a
+strategy profile `σ` assigns to player `i : Fin n` an element of `Mᵢ` and is evaluated at
+`xᵢ = σ i` (`assignment`; no variable has an index `≥ n`). Integers are given as pairs of
+naturals `(positive part, negative part)` and each range-set as a finite list of integers. A
+profile exists only when every `Mᵢ` is nonempty; an empty `Mᵢ` leaves no sequence `y` with
+`yᵢ ∈ Mᵢ`, so such instances are no-instances, as in the source.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the
@@ -17,12 +53,6 @@ S. Sahni, "Computationally related problems", SIAM Journal on Computing 3 (1974)
 262-279, doi:10.1137/0203021, Section 2.4, Theorem 2.4.1 (existence of an
 equilibrium point of an n-person game with polynomial payoffs is NP-complete).
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.MvPolynomial.Eval
-public import MathlibExt.GameTheory.StrategicGame
 
 @[expose] public section
 

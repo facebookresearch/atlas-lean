@@ -6,8 +6,31 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.MinimumTestSetDefs
+
+/-!
 # MINIMUM TEST SET with unions of tests: definitions
+
+INSTANCE: a collection `C` of subsets of a finite set `S`, and a positive integer `K ≤ |C|`.
+QUESTION: is there a collection `C'` with `|C'| ≤ K`, each member of which is a member of `C` or
+a union of members of `C` (the comment's variant: `C'` can contain unions of subsets in `C` as
+well as subsets in `C`), such that for each pair of distinct elements `u, v ∈ S` there is some
+set `c ∈ C'` that contains exactly one of `u` and `v`?
+
+The instance is that of `MinimumTestSetWanted`: `S = {0, …, n - 1}`, and `C` is a list of
+duplicate-free lists of elements of `S`. A test of `C'` is given by the sublist `t` of `C` whose
+union it is (a single member of `C` is the union of a one-element sublist); an element lies in
+that test when it lies in some member of `t`. `WellFormed` adds that the members of `C` are
+distinct as sets (so the list length is `|C|`) and Garey and Johnson's bound `0 < K ≤ |C|`,
+neither of which the parent module imposes.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the
@@ -16,11 +39,6 @@ comment: the variant in which `C'` can contain unions of subsets in `C` as well 
 `C` is also NP-complete (reference: T. Ibaraki, T. Kameda, and S. Toida, "NP-complete diagnosis
 problems on system graphs", unpublished manuscript (1977)).
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.MinimumTestSetDefs
 
 @[expose] public section
 

@@ -6,8 +6,40 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+
+/-!
 # K-SUPPLIER: definitions
+
+INSTANCE: a complete graph `G = (V, E)`, distances `d(vᵢ, vⱼ) ∈ ℕ` satisfying the triangle
+inequality, a center construction cost `c(v) ∈ ℕ` and a usage weight `w(v) ∈ ℕ` for each
+`v ∈ V`, a cost bound `L ∈ ℕ`, and a positive integer `K`.
+QUESTION: is there a supplier set `S ⊆ V` of legal cost, `∑_{v ∈ S} c(v) ≤ L`, whose measure
+`max_{v ∈ V} min_{s ∈ S} w(v) d(v, s)` (the maximum weighted distance from a vertex to its
+nearest supplier) is at most `K`?
+
+This is the decision version of the compendium's MINIMUM K-SUPPLIER. It is NP-complete in the
+strong sense: with all costs and weights `1`, `L = k`, distance `1` between adjacent vertices of
+a graph `H`, `2` between distinct non-adjacent vertices and `0` from a vertex to itself (a metric,
+since `2 ≤ 1 + 1`), and `K = 1`, a legal supplier set is a set of at most `k` vertices dominating
+`H`, so DOMINATING SET ([GT2]) reduces to it; this is the transformation behind the vertex
+`p`-center variant of [ND50] (Kariv and Hakimi). An explicit supplier set is a certificate for
+membership in NP.
+
+The vertices are `0, …, n - 1`. The distances are an `n × n` matrix, symmetric (the graph is
+undirected), with zero diagonal (the distance from a vertex to itself, which the measure uses
+when `v ∈ S`) and satisfying `d(a, c) ≤ d(a, b) + d(b, c)`, as in `TravelingRepairmanWanted`. The
+costs and the weights are lists of length `n`. "The maximum over `v` of the minimum over `s ∈ S`
+is at most `K`" is stated as: every vertex `v` has a supplier `s ∈ S` with `w(v) · d(v, s) ≤ K`.
+`WellFormed` also requires `0 < K` (the record's "positive integer K").
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems* (web edition,
@@ -21,11 +53,6 @@ Theory of NP-Completeness*, W. H. Freeman (1979), problem [ND50] MIN-MAX MULTICE
 (the vertex `p`-center variant, transformation from DOMINATING SET [GT2]; O. Kariv and
 S. L. Hakimi, SIAM J. Appl. Math. 37 (1979), 513-538).
 -/
-module
-
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
 
 @[expose] public section
 

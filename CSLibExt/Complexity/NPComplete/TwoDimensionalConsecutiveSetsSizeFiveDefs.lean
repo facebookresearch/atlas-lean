@@ -6,8 +6,33 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.TwoDimensionalConsecutiveSetsDefs
+
+/-!
 # 2-DIMENSIONAL CONSECUTIVE SETS with sets of size at most 5: definitions
+
+INSTANCE: a finite alphabet `Σ` and a collection `C = {Σ₁, Σ₂, ..., Σₙ}` of subsets of `Σ` with
+`|Σⱼ| ≤ 5` for every `Σⱼ ∈ C`.
+QUESTION: is there a partition of `Σ` into disjoint sets `X₁, X₂, ..., X_k` such that each `Xᵢ`
+has at most one element in common with each `Σⱼ` and such that, for each `Σⱼ ∈ C`, there is an
+index `l(j)` such that `Σⱼ` is contained in `X_{l(j)} ∪ X_{l(j)+1} ∪ ... ∪ X_{l(j)+|Σⱼ|-1}`?
+
+This is the restriction of 2-DIMENSIONAL CONSECUTIVE SETS
+(`WantedExt.Complexity.NPComplete.TwoDimensionalConsecutiveSetsWanted`) to subsets of size at
+most `5`, from Garey and Johnson's comment to [SR19]. The instance type, the parent
+well-formedness condition and the question are that module's
+(`TwoDimensionalConsecutiveSets.TwoDimensionalConsecutiveSetsInstance`,
+`TwoDimensionalConsecutiveSets.WellFormed`,
+`TwoDimensionalConsecutiveSets.TwoDimensionalConsecutiveSetsFeasible`); the restriction is
+added to `WellFormed`. Each subset `Σⱼ` is a list of distinct symbols, so `|Σⱼ|` is its length.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the
@@ -18,11 +43,6 @@ W. Lipski, Jr., "One more polynomial complete consecutive retrieval problem", In
 Processing Letters 6 (1977), 91-93, doi:10.1016/0020-0190(77)90034-5 (Garey and Johnson's
 reference for [SR19]; its text was not available to check the bound `5`).
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.TwoDimensionalConsecutiveSetsDefs
 
 @[expose] public section
 

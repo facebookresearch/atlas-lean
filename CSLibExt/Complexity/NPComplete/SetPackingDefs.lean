@@ -6,17 +6,26 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+
+/-!
 # SET PACKING: definitions
+
+A list of subsets of a universe of size `n` and a bound `K`. The question is whether at least
+`K` of the subsets are pairwise disjoint. The chosen sublist must have no duplicate sets: two
+copies of the same set do not count as disjoint.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability* (1979), SET PACKING; R. M. Karp,
 "Reducibility among combinatorial problems" (1972).
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
 
 @[expose] public section
 

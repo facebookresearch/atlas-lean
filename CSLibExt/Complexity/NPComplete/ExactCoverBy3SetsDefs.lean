@@ -6,16 +6,24 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-# EXACT COVER BY 3-SETS: definitions
-
-Source:
-M. R. Garey and D. S. Johnson, *Computers and Intractability* (1979), EXACT COVER BY 3-SETS.
--/
 module
 
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
+
+/-!
+# EXACT COVER BY 3-SETS: definitions
+
+A universe of size `3q` (elements `0, …, 3q - 1`) and a list of three-element subsets. The
+question is whether some subcollection covers every element exactly once.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
+
+Source:
+M. R. Garey and D. S. Johnson, *Computers and Intractability* (1979), EXACT COVER BY 3-SETS.
+-/
 
 @[expose] public section
 

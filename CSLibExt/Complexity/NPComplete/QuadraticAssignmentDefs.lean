@@ -6,17 +6,26 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+
+/-!
 # QUADRATIC ASSIGNMENT: definitions
+
+Nonnegative integer flow and distance matrices and a bound `K`. The question is whether some
+permutation (assignment of facilities to locations) has total cost at most `K`: the sum over
+all pairs of flow times distance between the assigned locations.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability* (1979), QUADRATIC ASSIGNMENT
 PROBLEM; S. Sahni and T. Gonzalez, "P-complete approximation problems" (1976).
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
 
 @[expose] public section
 

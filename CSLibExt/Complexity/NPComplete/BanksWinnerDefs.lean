@@ -6,8 +6,28 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import Mathlib.Data.Finset.Insert
+public import Mathlib.Order.Defs.Unbundled
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+
+/-!
 # BANKS WINNER: definitions
+
+INSTANCE: a tournament `T` on a finite vertex set `C` (an irreflexive, antisymmetric and
+complete dominance relation), and a vertex `c ∈ C`.
+QUESTION: is `c` a Banks winner of `T`, i.e., is `c` the top vertex (the vertex dominating all
+others) of some maximal transitive subtournament of `T`? A set `X ⊆ C` is transitive when the
+dominance relation is transitive on `X`, and maximal when no transitive set strictly contains it.
+
+The vertices are `Fin n`, and the tournament is its list of arcs: `(a, b)` means that `a`
+dominates `b`. Maximality is Mathlib's `Maximal` for inclusion of `Finset`s.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 G. J. Woeginger, "Banks winners in tournaments are difficult to recognize", Social Choice and
@@ -17,12 +37,6 @@ F. Brandt, F. Fischer and P. Harrenstein, "Recognizing members of the tournament
 set is NP-hard", arXiv:0711.2961 (2007), Definition 1 (the Banks set) and Section 4 (an
 alternative proof of Woeginger's result, by a reduction from 3SAT).
 -/
-module
-
-public import Mathlib.Data.Finset.Insert
-public import Mathlib.Order.Defs.Unbundled
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
 
 @[expose] public section
 

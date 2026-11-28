@@ -6,8 +6,36 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-# MIN-SUM MULTICENTER with unit weights and lengths on planar graphs of maximum degree 3: definitions
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import MathlibExt.Combinatorics.SimpleGraph.Planarity
+public import Mathlib.Combinatorics.SimpleGraph.Finite
+public import CSLibExt.Complexity.NPComplete.MinSumMulticenterDefs
+
+/-!
+# MIN-SUM MULTICENTER with unit weights and lengths on planar graphs of maximum degree 3:
+definitions
+
+INSTANCE: a planar graph `G = (V, E)` with maximum vertex degree at most `3`, the weight
+`w(v) = 1` for each `v ∈ V`, the length `l(e) = 1` for each `e ∈ E`, a positive integer
+`K ≤ |V|`, and a positive rational `B`. QUESTION: is there a set `P` of `K` "points on `G`"
+such that, if `d(v)` is the length of the shortest path from `v` to the closest point in `P`,
+then `∑_{v ∈ V} d(v) · w(v) ≤ B`?
+
+This is the restriction of MIN-SUM MULTICENTER ([ND51], `MinSumMulticenterWanted`) to unit
+weights and lengths ([ND51]'s comment) on planar graphs of maximum degree `3` (the class of
+Kariv and Hakimi's hardness result). The instance type, `MinSumMulticenter.WellFormed`, the
+points on `G`, the distances and `MinSumMulticenter.MinSumMulticenterFeasible` are the parent's,
+unchanged, with its two disclosed conventions (at most `K` points; every vertex must reach a
+point). `WellFormed` adds the weights and lengths, planarity as the repository's
+`SimpleGraph.IsPlanar` (a crossing-free straight-line drawing, which by Fáry's theorem exists
+exactly for planar graphs), and the degree bound as Mathlib's `SimpleGraph.degree`.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the
@@ -18,13 +46,6 @@ p-medians", SIAM Journal on Applied Mathematics 37 (1979), 539-560, doi:10.1137/
 (NP-hard "even when the network has a simple structure (e.g., planar graph of maximum vertex
 degree 3)").
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import MathlibExt.Combinatorics.SimpleGraph.Planarity
-public import Mathlib.Combinatorics.SimpleGraph.Finite
-public import CSLibExt.Complexity.NPComplete.MinSumMulticenterDefs
 
 @[expose] public section
 

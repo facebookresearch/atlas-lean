@@ -6,17 +6,25 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+
+/-!
 # MAXIMUM COVERAGE: definitions
+
+A universe of size `n`, a list of subsets, a bound `K` on the number of sets, and a target `M`.
+The question is whether at most `K` subsets cover at least `M` universe elements.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability* (1979), SET COVER: maximum
 coverage with target `M = n` is exactly set cover (at most `K` sets covering all `n` elements).
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
 
 @[expose] public section
 

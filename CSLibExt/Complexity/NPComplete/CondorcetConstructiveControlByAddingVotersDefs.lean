@@ -6,8 +6,33 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import MathlibExt.GameTheory.SocialChoice.CondorcetCycle
+
+/-!
 # CONDORCET CONSTRUCTIVE CONTROL BY ADDING VOTERS: definitions
+
+INSTANCE: a set `C` of candidates and a distinguished candidate `c ∈ C`, a set `V` of registered
+voters, an additional set `W` of yet unregistered voters (both `V` and `W` have preferences over
+`C`), and a positive integer `k ≤ ‖W‖`. QUESTION: are there `k` or fewer voters from `W` whose
+registration would make `c` the (unique) Condorcet winner, i.e., for each candidate `d ≠ c`, a
+strict majority of the voters prefers `c` to `d`?
+
+Representation. The candidates are `C = {0, ..., m - 1}`. A vote is a list of candidates, best
+first; a well-formed vote lists every candidate exactly once (`List.Perm` of
+`List.range m`), so voters have strict, complete and transitive preferences. `V` and `W` are lists
+of votes (two voters may cast the same vote), and the voters added from `W` are a sublist of `W`.
+The election `V ++ W'` is turned into a profile `Fin |V ++ W'| → StrictTotalOrder (Fin m)` of the
+repository's social-choice library (`MathlibExt.GameTheory.SocialChoice`), and "strict
+majority" is that library's `CondorcetCycle.MajorityPrefers`. A Condorcet winner is unique
+whenever it exists, so "the unique winner" and "a Condorcet winner" coincide.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 J. J. Bartholdi III, C. A. Tovey, and M. A. Trick, "How hard is it to control an election?",
@@ -16,11 +41,6 @@ E. Hemaspaandra, L. A. Hemaspaandra, and J. Rothe, "Anyone but him: The complexi
 precluding an alternative", Proceedings of the 20th National Conference on Artificial
 Intelligence (AAAI 2005), 95-101 (Table 1 records the Bartholdi-Tovey-Trick result).
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import MathlibExt.GameTheory.SocialChoice.CondorcetCycle
 
 @[expose] public section
 
@@ -50,8 +70,8 @@ def profile (m : ℕ) (E : List (List ℕ)) :
     MathlibExt.GameTheory.SocialChoice.ArrowWanted.Profile (Fin m) (Fin E.length) :=
   fun j => voteOrder E[j]
 
-/-- Candidate `c` is the Condorcet winner of the election `E`: for each candidate `d ≠ c`, a
-strict majority of the voters of `E` prefers `c` to `d`. -/
+/-- For `c < m`, every other candidate loses the pairwise majority vote against `c` in `E`.
+For `c ≥ m` the comparison is vacuous; `WellFormed` excludes this case. -/
 def IsCondorcetWinner (m : ℕ) (E : List (List ℕ)) (c : ℕ) : Prop :=
   ∀ a d : Fin m, (a : ℕ) = c → d ≠ a →
     MathlibExt.GameTheory.SocialChoice.CondorcetCycle.MajorityPrefers (profile m E) a d
@@ -62,8 +82,8 @@ def WellFormed (i : CondorcetConstructiveControlByAddingVotersInstance) : Prop :
   (∀ v ∈ i.2.1, v.Perm (List.range i.1)) ∧ (∀ v ∈ i.2.2.1, v.Perm (List.range i.1)) ∧
     i.2.2.2.1 < i.1 ∧ 0 < i.2.2.2.2 ∧ i.2.2.2.2 ≤ i.2.2.1.length
 
-/-- At most `k` voters `W' ⊆ W` whose registration makes `c` the Condorcet winner of
-`V ++ W'`. -/
+/-- For `c < m`, adding at most `k` voters from `W` makes `c` the Condorcet winner.
+For `c ≥ m`, adding no voters satisfies the predicate; `WellFormed` excludes this case. -/
 def CondorcetConstructiveControlByAddingVotersFeasible
     (i : CondorcetConstructiveControlByAddingVotersInstance) : Prop :=
   ∃ W' : List (List ℕ), W'.Sublist i.2.2.1 ∧ W'.length ≤ i.2.2.2.2 ∧

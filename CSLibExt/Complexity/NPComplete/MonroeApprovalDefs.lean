@@ -6,8 +6,33 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import Mathlib.Data.Fintype.Card
+
+/-!
 # MONROE MULTIWINNER (approval misrepresentation): definitions
+
+Winner determination for Monroe's proportional representation scheme. INSTANCE: a set `C` of
+candidates, a multiset `V` of `n` voters, the approval misrepresentation function `r`, a
+misrepresentation bound `R`, and a positive integer `k`. QUESTION: is there a subset `C' ⊆ C` of
+size `k` and an assignment `w : V → C` of voters to representatives that respects the Monroe
+criterion, with `w(V) = C'` and `∑_{v ∈ V} r(v, w(v)) ≤ R`? The assignment respects the Monroe
+criterion if `|w(V)| = k` and `w` assigns at least `⌊n/k⌋` and at most `⌈n/k⌉` voters to every
+candidate of `w(V)`. Under the approval misrepresentation function a voter's misrepresentation
+is `0` when represented by a candidate it approves and `1` otherwise, so the total
+misrepresentation is the number of voters whose representative they do not approve.
+
+The candidates are `0, …, m - 1`, and each voter is given by its approval vector, a list of `m`
+Booleans (entry `c` is `true` when the voter approves candidate `c`); `V` is a list, so equal
+votes may repeat. The total misrepresentation is an integer, so the bound `R` (a non-negative
+rational in the source) is given as a natural number. `⌈n/k⌉` is `(n + k - 1) / k` for `k > 0`.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 A. D. Procaccia, J. S. Rosenschein and A. Zohar, "On the complexity of achieving proportional
@@ -16,11 +41,6 @@ N. Betzler, A. Slinko and J. Uhlmann, "On the computation of fully proportional
 representation", Journal of Artificial Intelligence Research 47 (2013), 475-519,
 doi:10.1613/jair.3896, Section 1.1 (problem M-Multiwinner) and Theorem 1.
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Data.Fintype.Card
 
 @[expose] public section
 

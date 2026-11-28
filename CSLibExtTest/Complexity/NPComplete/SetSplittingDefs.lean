@@ -39,4 +39,15 @@ example :
     subst s
     exact ⟨⟨0, by simp, by simp⟩, ⟨1, by simp, by decide⟩⟩
 
+/-- No choice of the splitting set can put a single element on both sides. -/
+example : setSplittingDec (bitEncode ((1, [[0]]) : SetSplittingInstance)) = false := by
+  have h : ¬ SetSplittingFeasible ((1, [[0]]) : SetSplittingInstance) := by
+    rintro ⟨S, _, h⟩
+    obtain ⟨⟨x, hx, hxS⟩, y, hy, hyS⟩ := h [0] (by simp)
+    simp only [List.mem_singleton] at hx hy
+    subst x
+    subst y
+    exact hyS hxS
+  simp [setSplittingDec, h]
+
 end MetaMathlibExt.Complexity.NPComplete.SetSplitting

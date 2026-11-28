@@ -6,8 +6,30 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.SetSplittingDefs
+
+/-!
 # SET SPLITTING with sets of size at most 3: definitions
+
+INSTANCE: a collection `C` of subsets of a finite set `S`, all `c ∈ C` with `|c| ≤ 3`.
+QUESTION: is there a partition of `S` into two subsets `S₁` and `S₂` such that no subset in `C`
+is entirely contained in either `S₁` or `S₂`?
+
+This is the restriction of `WantedExt.Complexity.NPComplete.SetSplittingWanted` to sets of at
+most three elements. The instance type, the parent well-formedness condition and the question
+are that module's (`SetSplitting.SetSplittingInstance`, `SetSplitting.WellFormed`,
+`SetSplitting.SetSplittingFeasible`): `S = {0, ..., n - 1}`, the sets are duplicate-free lists
+of elements of `S`, and the question asks for a part `S₁ ⊆ S` (with `S₂ = S \ S₁`) that every
+set meets and does not contain. `WellFormed` adds the restriction `|c| ≤ 3` (a duplicate-free
+list has as many entries as elements).
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the
@@ -17,11 +39,6 @@ L. Lovász, "Coverings and colorings of hypergraphs", in *Proceedings of the Fou
 Southeastern Conference on Combinatorics, Graph Theory, and Computing*, Utilitas Mathematica
 (1973), 3-12.
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.SetSplittingDefs
 
 @[expose] public section
 

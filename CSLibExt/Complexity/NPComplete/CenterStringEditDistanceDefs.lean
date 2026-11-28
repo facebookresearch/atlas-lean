@@ -6,8 +6,31 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import CSLibExt.Algorithms.Lean.DynamicProgramming.EditDistance.Algorithm
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+
+/-!
 # CENTER STRING under the edit distance: definitions
+
+INSTANCE: a finite alphabet `Σ`, a nonempty finite list of strings `s₁, …, sₙ` over `Σ`, and a
+non-negative integer `K`.
+QUESTION: is there a string `t` over `Σ` with `d_E(t, sᵢ) ≤ K` for every `i`, where `d_E` is
+the unit-cost edit (Levenshtein) distance, the smallest number of single-letter deletions,
+insertions and substitutions transforming one string into the other? Equivalently, is the
+radius `R(W) = inf_{γ ∈ Σ*} max_{w ∈ W} d_E(γ, w)` of `W = {s₁, …, sₙ}` at most `K`?
+
+The alphabet is `Σ = {0, …, |Σ| - 1}`, given by its size, and strings are lists of letters.
+The edit distance is CSLib's unit-cost Levenshtein distance
+`(Cslib.Algorithms.Lean.editDistance x y).ret.distance`, which
+`Cslib.Algorithms.Lean.editDistance_minimal` and `Cslib.Algorithms.Lean.editDistance_script_cost`
+identify with the least cost of an edit script of deletions, insertions and substitutions.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 F. Nicolas and E. Rivals, "Complexities of the centre and median string problems",
@@ -18,11 +41,6 @@ F. Nicolas and E. Rivals, "Hardness results for the center and median string pro
 the weighted and unweighted edit distances", Journal of Discrete Algorithms 3 (2005), 390-415,
 doi:10.1016/j.jda.2004.08.015 (journal version).
 -/
-module
-
-public import CSLibExt.Algorithms.Lean.DynamicProgramming.EditDistance.Algorithm
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
 
 @[expose] public section
 

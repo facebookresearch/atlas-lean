@@ -6,8 +6,42 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Data.Fintype.Basic
+
+/-!
 # MULTI-ITEM CAPACITATED LOT SIZING WITH SETUP TIMES: FEASIBILITY: definitions
+
+INSTANCE: `T` periods and `N` items; for item `i` a processing time `a_i` per unit, a setup
+time `s_i` and demands `d_{it}`; a single resource with capacity `C_t` in period `t`.
+QUESTION: is there a production plan without backlogging, i.e. production quantities
+`x_{it} ≥ 0` whose cumulative production `∑_{u ≤ t} x_{iu}` covers the cumulative demand
+`∑_{u ≤ t} d_{iu}` of every item `i` in every period `t` (starting from zero inventory), such
+that in every period the processing time `∑_i a_i x_{it}` plus the setup times `s_i` of the
+items with `x_{it} > 0` is at most `C_t`?
+
+This is the feasibility problem of the capacitated lot-sizing problem with setup times
+(CLST), in the formulation recorded by Fragkos, Degraeve and De Reyck (Section 3):
+production quantities are nonnegative reals and a setup indicator `y_{it} ∈ {0, 1}` must be
+`1` whenever `x_{it} > 0`. Trigeiro, Thomas and McClain call this feasibility test NP-complete
+(p. 359, quoted by Fragkos, Degraeve and De Reyck, Section 6.5.1). The restriction to setup
+and processing times that depend only on the item keeps it NP-hard: BIN PACKING with `N`
+pieces and `0 < K < N` bins reduces to it with one period per bin, of capacity the bin size,
+and one item per piece, with setup time the piece size, processing time `0` and demand `1` in
+the last period (the output has `O(N²)` numbers); a BIN PACKING instance with `K = 0` (a
+yes-instance iff `N = 0`) or `K ≥ N` (one piece per bin, a yes-instance iff every piece fits a
+bin) is decided directly and mapped to a fixed yes- or no-instance. Membership in NP: given
+the setup indicators, the remaining constraints are a linear program. Data are natural
+numbers in the canonical binary encoding; items and periods are numbered from `0` below.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 W. W. Trigeiro, L. J. Thomas and J. O. McClain, "Capacitated lot sizing with setup times",
@@ -16,13 +50,6 @@ I. Fragkos, Z. Degraeve and B. De Reyck, "A horizon decomposition approach for t
 capacitated lot-sizing problem with setup times", INFORMS Journal on Computing 28 (2016),
 465-482, doi:10.1287/ijoc.2016.0691, Sections 3 and 6.5.1.
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import Mathlib.Basic.Real.Basic
-public import Mathlib.Data.Fintype.Basic
 
 @[expose] public section
 

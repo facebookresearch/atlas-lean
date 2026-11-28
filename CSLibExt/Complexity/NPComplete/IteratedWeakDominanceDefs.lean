@@ -6,20 +6,43 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-# IWD-STRATEGY-ELIMINATION (eliminability by iterated weak dominance): definitions
-
-Source:
-V. Conitzer and T. Sandholm, "Complexity of (iterated) dominance", Proceedings of the 6th ACM
-Conference on Electronic Commerce (EC 2005), 88-97, doi:10.1145/1064009.1064019,
-Definition 3 and Theorem 1.
--/
 module
 
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Logic.Relation
+
+/-!
+# IWD-STRATEGY-ELIMINATION (eliminability by iterated weak dominance): definitions
+
+A two-player normal-form game: the row player has pure strategies `0, …, m - 1`, the column
+player has pure strategies `0, …, n - 1`, and each player has a utility for each pair of pure
+strategies. A strategy `σ'` of a player is weakly dominated by a strategy `σ` of the same
+player if `σ` gives that player at least the utility of `σ'` against every strategy of the
+opponent and strictly more against at least one. In iterated weak dominance, strategies are
+eliminated one at a time; at each step the eliminated strategy must be weakly dominated by a
+strategy of the same player that has not been eliminated, with the comparison made only
+against the opponent's strategies that have not been eliminated. Given a game and a
+distinguished pure strategy `σ*`, IWD-STRATEGY-ELIMINATION asks whether some such sequence of
+eliminations eliminates `σ*` (Conitzer and Sandholm 2005, Definition 3). Their Theorem 1
+proves it NP-complete even with two players and utilities in `{0, 1}`, whether or not
+dominance by mixed strategies is allowed; the decision language models the two-player problem with
+dominance by pure strategies and integer utilities.
+
+Utilities are integers, each encoded as a pair of naturals `(positive part, negative part)`
+representing their difference, as in `ZeroOneILPWanted`. A state of the elimination is the
+pair of sets of strategies not yet eliminated.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
+
+Source:
+V. Conitzer and T. Sandholm, "Complexity of (iterated) dominance", Proceedings of the 6th ACM
+Conference on Electronic Commerce (EC 2005), 88-97, doi:10.1145/1064009.1064019,
+Definition 3 and Theorem 1.
+-/
 
 @[expose] public section
 
@@ -74,8 +97,10 @@ def WellFormed (i : IteratedWeakDominanceInstance) : Prop :=
   0 < i.1 ∧ 0 < i.2.1 ∧ i.2.2.1.length = i.1 ∧ (∀ row ∈ i.2.2.1, row.length = i.2.1) ∧
     (if i.2.2.2.1 then i.2.2.2.2 < i.2.1 else i.2.2.2.2 < i.1)
 
-/-- Some sequence of iterated weak dominance steps, starting from the whole game, reaches a
-state in which the distinguished strategy has been eliminated. -/
+/-- A sequence of zero or more weak dominance eliminations reaches a state in which the
+distinguished index is absent from its player’s surviving strategies. If the index was in
+range, its strategy has been eliminated. Otherwise the initial state already suffices;
+`WellFormed` requires the index to be in range. -/
 def IteratedWeakDominanceFeasible (i : IteratedWeakDominanceInstance) : Prop :=
   ∃ S, Relation.ReflTransGen (EliminationStep i) (Finset.univ, Finset.univ) S ∧
     if i.2.2.2.1 then ∀ c ∈ S.2, (c : ℕ) ≠ i.2.2.2.2 else ∀ r ∈ S.1, (r : ℕ) ≠ i.2.2.2.2

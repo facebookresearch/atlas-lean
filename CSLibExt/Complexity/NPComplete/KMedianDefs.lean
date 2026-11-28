@@ -6,17 +6,31 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+
+/-!
 # k-MEDIAN (GENERALIZED, NONMETRIC): definitions
+
+Generalized, nonmetric k-median: client-to-location costs (an arbitrary rectangular matrix of
+natural numbers, one row per client, no metric assumed, clients and facilities distinct sets),
+a bound `K` on the number of open locations, and a budget `B`. The question is whether at most
+`K` locations can be opened so that the sum of each client's cost to its assigned open location
+is at most `B`, witnessed by an assignment of each client to an open location. The metric
+p-median problem of Kariv-Hakimi is the special case of a metric cost matrix; hardness follows
+from that subclass (e.g. the dominating-set reduction with costs 1 on edges, 2 on nonedges, 0
+on the diagonal).
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 O. Kariv and S. L. Hakimi, "An algorithmic approach to network location problems. II: The
 p-medians", SIAM Journal on Applied Mathematics 37 (1979), 539-560.
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
 
 @[expose] public section
 

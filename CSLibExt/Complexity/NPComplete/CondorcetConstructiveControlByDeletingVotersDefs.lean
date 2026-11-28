@@ -6,8 +6,33 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.CondorcetConstructiveControlByAddingVotersDefs
+
+/-!
 # CONDORCET CONSTRUCTIVE CONTROL BY DELETING VOTERS: definitions
+
+INSTANCE: a set `C` of candidates, a distinguished candidate `c ∈ C`, a set `V` of voters with
+preferences over `C`, and a positive integer `k ≤ ‖V‖`. QUESTION: are there `k` or fewer voters
+in `V` whose disenfranchisement would make `c` the (unique) Condorcet winner, i.e., for each
+candidate `d ≠ c`, a strict majority of the remaining voters prefers `c` to `d`?
+
+The votes, the profile of an election and the Condorcet winner are those of
+`CondorcetConstructiveControlByAddingVotersDefs`
+(`CondorcetConstructiveControlByAddingVoters.voteOrder`,
+`CondorcetConstructiveControlByAddingVoters.profile`,
+`CondorcetConstructiveControlByAddingVoters.IsCondorcetWinner`, built on
+`MathlibExt.GameTheory.SocialChoice.CondorcetCycle.MajorityPrefers`): the candidates are
+`C = {0, ..., m - 1}`, a vote is a list of all candidates, best first, and `V` is a list of votes.
+The voters who keep their vote are a sublist `V'` of `V`, and at most `k` are deleted when
+`‖V‖ ≤ ‖V'‖ + k`.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 J. J. Bartholdi III, C. A. Tovey, and M. A. Trick, "How hard is it to control an election?",
@@ -16,11 +41,6 @@ E. Hemaspaandra, L. A. Hemaspaandra, and J. Rothe, "Anyone but him: The complexi
 precluding an alternative", Proceedings of the 20th National Conference on Artificial
 Intelligence (AAAI 2005), 95-101 (Table 1 records the Bartholdi-Tovey-Trick result).
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.CondorcetConstructiveControlByAddingVotersDefs
 
 @[expose] public section
 
@@ -36,8 +56,8 @@ def WellFormed (i : CondorcetConstructiveControlByDeletingVotersInstance) : Prop
   (∀ v ∈ i.2.1, v.Perm (List.range i.1)) ∧ i.2.2.1 < i.1 ∧ 0 < i.2.2.2 ∧
     i.2.2.2 ≤ i.2.1.length
 
-/-- At most `k` voters of `V` whose deletion makes `c` the Condorcet winner of the remaining
-votes `V'`. -/
+/-- For `c < m`, removing at most `k` voters from `V` makes `c` the Condorcet winner.
+For `c ≥ m`, retaining every voter satisfies the predicate; `WellFormed` excludes this case. -/
 def CondorcetConstructiveControlByDeletingVotersFeasible
     (i : CondorcetConstructiveControlByDeletingVotersInstance) : Prop :=
   ∃ V' : List (List ℕ), V'.Sublist i.2.1 ∧ i.2.1.length ≤ V'.length + i.2.2.2 ∧

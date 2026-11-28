@@ -6,8 +6,32 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.SetCoverDefs
+
+/-!
 # MINIMUM COVER with sets of size at most 3: definitions
+
+INSTANCE: a collection `C` of subsets of a finite set `S`, all `c ∈ C` with `|c| ≤ 3`, and a
+positive integer `K ≤ |C|`. QUESTION: does `C` contain a cover for `S` of size `K` or less,
+i.e., a subset `C' ⊆ C` with `|C'| ≤ K` such that every element of `S` belongs to at least one
+member of `C'`?
+
+This is the restriction of `WantedExt.Complexity.NPComplete.SetCoverWanted` (Garey and
+Johnson's MINIMUM COVER) to sets of at most three elements. The instance type, the parent
+well-formedness condition and the question are that module's (`SetCover.SetCoverInstance`,
+`SetCover.WellFormed`, `SetCover.SetCoverFeasible`): `S = {0, ..., n - 1}`, the sets are
+duplicate-free lists of elements of `S`, and the question asks for a sublist of at most `K` sets
+whose union is `S`. `WellFormed` adds the restriction `|c| ≤ 3` (a duplicate-free list has as
+many entries as elements) and Garey and Johnson's bound `0 < K ≤ |C|`, with `|C|` the number
+of listed sets.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the
@@ -16,11 +40,6 @@ Theory of NP-Completeness*, W. H. Freeman (1979), p. 222, problem [SP5] MINIMUM 
 R. M. Karp, "Reducibility among combinatorial problems", in *Complexity of Computer
 Computations*, Plenum Press (1972), 85-103, doi:10.1007/978-1-4684-2001-2_9.
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.SetCoverDefs
 
 @[expose] public section
 

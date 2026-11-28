@@ -6,8 +6,27 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+
+/-!
 # HITTING STRING: definitions
+
+INSTANCE: a finite set `A` of strings over `{0, 1, *}`, all having the same length `n`.
+QUESTION: is there a string `x ∈ {0, 1}*` with `|x| = n` such that for each string `a ∈ A`
+there is some `i`, `1 ≤ i ≤ n`, for which the `i`-th symbol of `a` and the `i`-th symbol of `x`
+are identical?
+
+A string of `A` is a list of numbers, `0` and `1` for the symbols `0` and `1` and `2` for `*`;
+the string `x` is a list of `n` truth values, `false` for `0` and `true` for `1`, so its `i`-th
+symbol is `Bool.toNat` of its `i`-th entry. Positions are indexed from `0`. The symbol `*` is
+identical to no symbol of `x`.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the Theory of
@@ -17,10 +36,6 @@ R. Fagin, "Generalized first-order spectra and polynomial-time recognizable sets
 *Complexity of Computation* (R. M. Karp, ed.), SIAM-AMS Proceedings 7 (1974), 43-73, Section 10,
 Theorem 36.
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
 
 @[expose] public section
 

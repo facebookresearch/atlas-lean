@@ -6,8 +6,32 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import Mathlib.Data.Fintype.Prod
+
+/-!
 # MAX CARDINALITY SMTI (maximum stable marriage with ties and incomplete lists): definitions
+
+INSTANCE: `n` men and `n` women, a preference list of women for each man and a preference list
+of men for each woman, each list possibly incomplete and possibly with ties, and an integer
+`K ∈ ℤ⁺`. QUESTION: does the instance admit a stable matching `M` with `|M| ≥ K`?
+
+Person `p` is acceptable to `q` if `p` appears on `q`'s list. A matching is a set of
+(man, woman) pairs, each person in at most one pair, such that in every pair each finds the
+other acceptable. It is (weakly) stable if there is no pair `(m, w)` each of whom is either
+unmatched and finds the other acceptable, or strictly prefers the other to their partner.
+
+The men and the women are `Fin n`. A preference list is a list of ties, each tie a list of
+people in the tie, best first: `p` is acceptable to `q` iff `p` is in some tie of `q`'s list,
+and `q` strictly prefers `p` to `p'` iff `p` is acceptable to `q` and lies in an earlier tie
+than `p'`.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 D. F. Manlove, R. W. Irving, K. Iwama, S. Miyazaki, and Y. Morita, "Hard variants of stable
@@ -18,11 +42,6 @@ K. Iwama, D. Manlove, S. Miyazaki, and Y. Morita, "Stable marriage with incomple
 ties", Proc. ICALP 1999, Lecture Notes in Computer Science 1644 (1999), 443-452,
 doi:10.1007/3-540-48523-6_41.
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Data.Fintype.Prod
 
 @[expose] public section
 

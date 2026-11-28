@@ -6,9 +6,47 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Combinatorics.SimpleGraph.Planarity
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import Mathlib.Data.Set.Card
+public import CSLibExt.Complexity.NPComplete.MinMaxMulticenterDefs
+
+/-!
 # MIN-MAX MULTICENTER with unit weights and lengths on planar graphs of maximum degree 3:
 definitions
+
+INSTANCE: a planar graph `G = (V, E)` in which no vertex has degree exceeding 3, weights
+`w(v) = 1` for all `v ∈ V`, lengths `l(e) = 1` for all `e ∈ E`, a positive integer `K ≤ |V|`,
+and a positive rational `B`.
+QUESTION: is there a set `P` of `K` "points on `G`" (a point on `G` is either a vertex in `V` or
+a point on an edge `e ∈ E`, with `e` regarded as a line segment of length `l(e)`) such that, if
+`d(v)` is the length of the shortest path from `v` to the closest point in `P`, then
+`max {d(v) · w(v) : v ∈ V} ≤ B`?
+
+This is MIN-MAX MULTICENTER ([ND50], `MinMaxMulticenterWanted`) restricted to unit weights and
+lengths, the restriction of the entry's comment, on planar graphs of maximum degree 3, the class
+for which Kariv and Hakimi show that the (absolute or vertex) `p`-center problem stays NP-hard.
+Kolen (Theorem 1) gives the reduction from DOMINATING SET that Garey and Johnson's comment
+records: the same graph, unit weights and lengths, `K` points and `B = 1`. A dominating set of
+size at most `K` gives `K` vertices within distance 1 of every vertex, and conversely moving each
+point of `P` to the closest endpoint of its edge keeps every vertex within distance 1, which
+gives a dominating set. The graph is unchanged, so DOMINATING SET on planar graphs of maximum
+degree 3 ([GT2], comment) reduces to this restricted problem.
+
+The instance type, `MinMaxMulticenter.WellFormed` (simple edge list, one weight per vertex,
+`0 < K ≤ |V|`, `B = p / q` with `p, q > 0`) and `MinMaxMulticenter.MinMaxMulticenterFeasible`
+(points on edges at real positions, with the parent's two disclosed conventions) are reused
+unchanged. `WellFormed` adds the restriction: every weight is `1`, every edge length is `1`, the
+graph is planar (the shared MathlibExt predicate `SimpleGraph.IsPlanar`, a crossing-free
+straight-line drawing; by Fáry's theorem this is planarity for finite simple graphs), and every
+vertex has at most 3 neighbours.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the
@@ -21,13 +59,6 @@ p-centers", SIAM Journal on Applied Mathematics 37 (1979), 513-538, doi:10.1137/
 A. Kolen, "Complexity of location problems on networks", Report BW 107/79, Mathematisch Centrum,
 Amsterdam (1979), Theorem 1.
 -/
-module
-
-public import MathlibExt.Combinatorics.SimpleGraph.Planarity
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Data.Set.Card
-public import CSLibExt.Complexity.NPComplete.MinMaxMulticenterDefs
 
 @[expose] public section
 

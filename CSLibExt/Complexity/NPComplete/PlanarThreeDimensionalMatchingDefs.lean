@@ -6,8 +6,34 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import MathlibExt.Combinatorics.SimpleGraph.Planarity
+public import CSLibExt.Complexity.NPComplete.ThreeDimensionalMatchingDefs
+
+/-!
 # PLANAR 3-DIMENSIONAL MATCHING: definitions
+
+INSTANCE: an instance of [SP1] 3-DIMENSIONAL MATCHING, a set `M ⊆ W × X × Y` where `W`, `X`, `Y`
+are disjoint sets with `|W| = |X| = |Y| = q`, whose element-triple incidence graph is planar: the
+bipartite graph with a vertex for each element of `W ∪ X ∪ Y` and for each triple of `M`, and an
+edge joining each triple to the three elements it contains.
+QUESTION: does `M` contain a matching of size `q`, that is, `M' ⊆ M` with `|M'| = q` and no two
+triples of `M'` agreeing in any coordinate?
+
+The instance, its well-formedness and the matching question are those of
+`ThreeDimensionalMatchingDefs` (elements `0, …, q - 1` of each
+of `W`, `X`, `Y`; triples as a list). Here the triples are distinct (`M` is a set), and planarity
+is `SimpleGraph.IsPlanar` (a crossing-free straight-line drawing; by Fáry's theorem the same as
+planarity) of `incidenceGraph`, whose vertices are `w` (`0 ≤ w < q`), `q + x`, `2q + y`, and
+`3q + j` for the `j`-th triple. Dyer and Frieze prove NP-completeness even when every element
+occurs in at most three triples; those instances belong to this class.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 M. E. Dyer and A. M. Frieze, "Planar 3DM is NP-complete", Journal of Algorithms 7(2) (1986),
@@ -19,12 +45,6 @@ Frieze);
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the Theory of
 NP-Completeness*, W. H. Freeman (1979), problem [SP1] 3-DIMENSIONAL MATCHING.
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import MathlibExt.Combinatorics.SimpleGraph.Planarity
-public import CSLibExt.Complexity.NPComplete.ThreeDimensionalMatchingDefs
 
 @[expose] public section
 

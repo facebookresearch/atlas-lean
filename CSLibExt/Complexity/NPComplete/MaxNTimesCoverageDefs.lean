@@ -6,17 +6,28 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+
+/-!
 # MAXIMUM n-TIMES COVERAGE: definitions
+
+An instance is `(n, rows, weights, k, τ)`: each row lists, for one overlay, how many times it
+covers each element; `weights` are the element weights. The question is whether at most `k`
+overlays cover elements of total weight at least `τ` at least `n` times each (the decision
+version of the problem of Liu et al.; the objective is `nCoverage` in
+`CSLibExt/Algorithms/Lean/Approximation/MaxNTimesCoverage.lean`). For `n = 1` and unit
+multiplicities this contains maximum coverage, hence SET COVER.
+
+The decision language decodes instances using `MetaMathlibExt.BitstringEncoding` and rejects
+bitstrings that do not decode or represent a malformed instance.
 
 Source:
 G. Liu, A. Dimitrakakis, B. Carter and D. Gifford, "Maximum n-times coverage for vaccine design",
 *International Conference on Learning Representations (ICLR)* (2022).
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
 
 @[expose] public section
 

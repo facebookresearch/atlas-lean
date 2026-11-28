@@ -6,8 +6,35 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.ThreeDimensionalMatchingDefs
+
+/-!
 # 3-DIMENSIONAL MATCHING with at most three occurrences per element: definitions
+
+INSTANCE: a set `M ⊆ W × X × Y`, where `W`, `X` and `Y` are disjoint sets having the same
+number `q` of elements, such that no element of `W ∪ X ∪ Y` occurs in more than three triples
+of `M`. QUESTION: does `M` contain a matching, that is, a subset `M' ⊆ M` with `|M'| = q` such
+that no two elements of `M'` agree in any coordinate?
+
+The instance, its well-formedness and the matching question are those of
+`ThreeDimensionalMatchingDefs` (elements `0, …, q - 1` of each
+of `W`, `X`, `Y`; triples as a list). Here the triples are distinct (`M` is a set), so the
+number of triples of `M` in which an element occurs is the number of list entries with that
+element in its coordinate; it is at most 3 for every element of each of `W`, `X` and `Y`.
+
+The [SP1] comment records the result as unpublished work of Garey and Johnson. Dyer and Frieze
+prove 3-DIMENSIONAL MATCHING NP-complete for planar instances in which every element occurs in
+at most three triples (`PlanarThreeDimensionalMatchingWanted`); those instances belong to this
+class, so their reduction is also a reduction to this problem. Membership in NP is inherited:
+the matching is a certificate.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the
@@ -18,11 +45,6 @@ solvable in polynomial time if no element occurs in more than two triples [Garey
 M. E. Dyer and A. M. Frieze, "Planar 3DM is NP-complete", Journal of Algorithms 7(2) (1986),
 174-184, doi:10.1016/0196-6774(86)90002-7.
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.ThreeDimensionalMatchingDefs
 
 @[expose] public section
 

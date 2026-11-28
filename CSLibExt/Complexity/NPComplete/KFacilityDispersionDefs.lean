@@ -6,8 +6,38 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.MetricKCenterDefs
+
+/-!
 # K-FACILITY DISPERSION: definitions
+
+INSTANCE: a complete graph `G = (V, E)` with distances `d(vᵢ, vⱼ) ∈ ℕ` satisfying the triangle
+inequality, an integer `k` with `2 ≤ k ≤ |V|`, and a positive integer `K`.
+QUESTION: is there a set of `k` facilities, i.e. a subset `F ⊆ V` with `|F| = k`, such that the
+minimum distance between two facilities, `min_{f₁, f₂ ∈ F, f₁ ≠ f₂} d(f₁, f₂)`, is at least `K`?
+
+This is the decision version of MAXIMUM K-FACILITY DISPERSION from the Crescenzi-Kann
+compendium, the MAX-MIN facility dispersion problem (MMFD) of Ravi, Rosenkrantz and
+Tayi. Their instance has `p` facilities with `2 ≤ p ≤ n`, so the minimum over pairs of distinct
+facilities is defined. They record that MMFD is NP-hard when the distances satisfy the triangle
+inequality, and prove (Theorem 3) that no polynomial-time algorithm has a performance guarantee
+below 2 for that case unless P = NP.
+
+The instance class is the one of METRIC K-CENTER
+(`WantedExt.Complexity.NPComplete.MetricKCenterWanted`, the same compendium wording), and the
+module reuses its instance `(d, k, K)`, its distance accessor and its `WellFormed` unchanged: a
+square matrix, one row per vertex, that is a metric (zero exactly on the diagonal, symmetric,
+triangle inequality), `0 < k ≤ |V|` and `0 < K`. It adds `2 ≤ k`. RRT allow a zero distance
+between distinct nodes, which these metric conditions exclude; their hardness constructions use
+positive distances only.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 P. Crescenzi and V. Kann, *A compendium of NP optimization problems*, problem
@@ -15,11 +45,6 @@ MAXIMUM K-FACILITY DISPERSION;
 S. S. Ravi, D. J. Rosenkrantz, and G. K. Tayi, "Heuristic and special case algorithms for
 dispersion problems", Operations Research 42 (1994), 299-310, doi:10.1287/opre.42.2.299.
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.MetricKCenterDefs
 
 @[expose] public section
 

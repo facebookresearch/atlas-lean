@@ -6,19 +6,43 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.ThreeDimensionalMatchingDefs
+
+/-!
 # 3-DIMENSIONAL MATCHING for pairwise consistent triples: definitions
+
+INSTANCE: a set `M ⊆ W × X × Y`, where `W`, `X`, and `Y` are disjoint sets having the same
+number `q` of elements, such that `M` is pairwise consistent: for all elements `a`, `b`, `c`,
+whenever there exist elements `w`, `x`, and `y` such that `(a, b, w) ∈ M`, `(a, x, c) ∈ M`, and
+`(y, b, c) ∈ M`, then `(a, b, c) ∈ M`. QUESTION: does `M` contain a matching, i.e., a subset
+`M' ⊆ M` such that `|M'| = q` and no two elements of `M'` agree in any coordinate?
+
+This is 3-DIMENSIONAL MATCHING (`WantedExt.Complexity.NPComplete.ThreeDimensionalMatchingWanted`,
+Garey and Johnson [SP1]) restricted as in the [SP1] comment: "Remains NP-complete if `M` is
+'pairwise consistent,' ... (this follows from the proof of Theorem 3.1.2)", that is, from the
+transformation from 3SAT in Section 3.1.2, whose triples are pairwise consistent. Garey and
+Johnson give no other reference; their entry is the literature record. (Their comment prints
+"elements `w`, `z`, and `y`"; the `z` is a misprint for the `x` of `(a, x, c)`.)
+
+The instance (`q` and the list of triples, the three coordinates ranging over `0, …, q - 1`),
+`ThreeDimensionalMatching.WellFormed` and
+`ThreeDimensionalMatching.ThreeDimensionalMatchingFeasible` are reused unchanged; pairwise
+consistency is added to well-formedness, with the three witnesses as list entries
+`t₁ = (a, b, w)`, `t₂ = (a, x, c)` and `t₃ = (y, b, c)`.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the
 Theory of NP-Completeness*, W. H. Freeman (1979), problem [SP1] 3-DIMENSIONAL MATCHING, comment,
 and the transformation from 3SAT in Section 3.1.2.
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.ThreeDimensionalMatchingDefs
 
 @[expose] public section
 

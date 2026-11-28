@@ -6,8 +6,38 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.IntersectionPatternDefs
+
+/-!
 # INTERSECTION PATTERN with all diagonal entries 3: definitions
+
+INSTANCE: an `n × n` matrix `A = (a_ij)` with entries in `ℤ₀⁺` and `a_ii = 3` for
+`1 ≤ i ≤ n`.
+QUESTION: is there a collection `C = {C₁, C₂, ..., Cₙ}` of sets such that for all `i, j`,
+`1 ≤ i, j ≤ n`, `a_ij = |Cᵢ ∩ Cⱼ|`?
+
+This is the restriction of `WantedExt.Complexity.NPComplete.IntersectionPatternWanted` ([SP9])
+to matrices whose diagonal entries all equal `3`. The instance type, the parent
+well-formedness condition and the question are that module's (`IntersectionPatternInstance`,
+`IntersectionPattern.WellFormed`, `IntersectionPatternFeasible`): the matrix is the square list
+of its rows, indexed from `0`, and the question asks for finite sets of natural numbers
+`C : Fin n → Finset ℕ` with `|Cᵢ ∩ Cⱼ| = a_ij` for all `i, j`. `WellFormed` adds the
+restriction `a_ii = 3` for every row index `i`. Since `a_ii = |Cᵢ ∩ Cᵢ| = |Cᵢ|`, every `Cᵢ` of a
+solution has exactly three elements, so every off-diagonal entry of a yes-instance is at most
+`3`; larger entries are allowed in the instance and make it a no-instance.
+
+Garey and Johnson record the restriction in their comment on [SP9], whose reference is
+Chvátal's paper (cited there as 1978, published 1980); the comment adds that the case
+`a_ii = 2` is solvable in polynomial time. With every set of size three, a certificate lists
+at most `3n` elements, so membership in NP holds for this restriction.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the Theory of
@@ -16,11 +46,6 @@ NP-Completeness*, W. H. Freeman (1979), p. 222, problem [SP9] INTERSECTION PATTE
 V. Chvátal, "Recognizing intersection patterns", Annals of Discrete Mathematics 8 (1980),
 249-251, doi:10.1016/S0167-5060(08)70883-5.
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.IntersectionPatternDefs
 
 @[expose] public section
 

@@ -6,8 +6,27 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import Mathlib.Data.Fintype.Card
+
+/-!
 # HITTING SET: definitions
+
+INSTANCE: a collection `C` of subsets of a finite set `S`, and a positive integer `K ≤ |S|`.
+QUESTION: is there a subset `S' ⊆ S` with `|S'| ≤ K` such that `S'` contains at least one
+element from each subset in `C`?
+
+The finite set is `S = {0, ..., n - 1}`; the collection `C` is a list of subsets, each given as
+a list of elements without repetition, and the hitting set `S'` is a `Finset (Fin n)`.
+Garey and Johnson obtain the result from VERTEX COVER (Karp 1972): the instances in which every
+subset has two elements are exactly the vertex cover instances.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the
@@ -16,11 +35,6 @@ R. M. Karp, "Reducibility among combinatorial problems", in *Complexity of
 Computer Computations*, Plenum Press (1972), 85-103,
 doi:10.1007/978-1-4684-2001-2_9.
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Data.Fintype.Card
 
 @[expose] public section
 

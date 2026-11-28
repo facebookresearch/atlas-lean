@@ -6,18 +6,28 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+
+/-!
 # FACILITY LOCATION: definitions
+
+Facilities with opening costs and clients with assignment costs to each facility, and a budget
+`B`. The question is whether facilities can be opened and every client assigned to an open
+facility with total cost (opening plus assignment) at most `B`. Costs are natural numbers (a
+finite rationally-encoded decision version).
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 G. Cornuéjols, G. L. Nemhauser, and L. A. Wolsey, "The uncapacitated facility location
 problem", in P. B. Mirchandani and R. L. Francis, eds., Discrete Location Theory, Wiley, 1990,
 119-171.
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
 
 @[expose] public section
 

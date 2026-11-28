@@ -6,8 +6,35 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import Batteries.Data.List.Basic
+public import Mathlib.Logic.Equiv.Defs
+
+/-!
 # THREE-DIMENSIONAL STABLE MATCHING: definitions
+
+The three-gender stable marriage problem (3GSM). INSTANCE: three disjoint sets `A` (women),
+`B` (men) and `D` (dogs) with `|A| = |B| = |D| = n`; every woman `a ∈ A` has a strict total
+order over the pairs `B × D`, every man over `A × D`, and every dog over `A × B`. A family is a
+triple `abd` with `a ∈ A`, `b ∈ B`, `d ∈ D`; a marriage is a set of `n` pairwise disjoint
+families, so that every agent lies in exactly one family. A triple `abd` is unstable for a
+marriage `M` if `a`, `b` and `d` each strictly prefer the triple `abd` to their assigned family
+in `M`: `a` prefers `bd` to its partners in `M`, `b` prefers `ad` to its partners, and `d`
+prefers `ab` to its partners. QUESTION: is there a stable marriage, i.e., a marriage with no
+unstable triple?
+
+The agents of each gender are `0, ..., n - 1`. An agent's preference is the list of all `n²`
+pairs of agents of the other two genders, each exactly once, from most to least preferred, so
+`x` is preferred to `y` when `x` occurs before `y`. A marriage is given by two bijections
+`μ ν : Fin n ≃ Fin n`: woman `a` is in the family `(a, μ a, ν a)`. Then man `b` is in the family
+of woman `μ⁻¹ b` and dog `d` in the family of woman `ν⁻¹ d`.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 C. Ng and D. S. Hirschberg, "Three-dimensional stable matching problems", SIAM Journal on
@@ -16,12 +43,6 @@ problem definition as restated by R. Ostrovsky and W. Rosenbaum, "It's not easy 
 the approximability of three-dimensional stable matching problems", arXiv:1412.1130 (2014),
 Section 2.1.
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Batteries.Data.List.Basic
-public import Mathlib.Logic.Equiv.Defs
 
 @[expose] public section
 

@@ -6,18 +6,36 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+
+/-!
 # APPROVAL BRIBERY: definitions
+
+INSTANCE: a set `C` of candidates, a collection `V` of voters specified by their approval
+vectors (each voter approves or disapproves of each candidate), a distinguished candidate
+`p ∈ C`, and a nonnegative integer `k`. QUESTION: is it possible to make `p` a winner of the
+approval election by changing the approval vectors of at most `k` voters? In approval voting
+the candidates with the most approvals win; `p` is a winner when no candidate has more
+approvals than `p` (the nonunique-winner model, the paper's default). A bribed voter's approval
+vector may be replaced by any approval vector. Voters are unweighted and unpriced.
+
+The candidates are `0, ..., c - 1`, and an approval vector is a list of `c` Booleans, entry `x`
+being `true` when the voter approves of candidate `x`. `V` is a list (a multiset: equal votes
+may repeat), and the voters whose vectors change are the positions at which the new list
+differs from the old one.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 P. Faliszewski, E. Hemaspaandra and L. A. Hemaspaandra, "How hard is bribery in elections?",
 Journal of Artificial Intelligence Research 35 (2009), 485-532, doi:10.1613/jair.2676,
 Theorem 4.2 (approval-bribery is NP-complete).
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
 
 @[expose] public section
 

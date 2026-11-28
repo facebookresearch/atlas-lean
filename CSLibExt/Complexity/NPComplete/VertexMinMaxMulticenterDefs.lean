@@ -6,8 +6,39 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.MinMaxMulticenterDefs
+
+/-!
 # VERTEX MIN-MAX MULTICENTER (centers at vertices): definitions
+
+INSTANCE: a graph `G = (V, E)`, a weight `w(v) ∈ ℤ₀⁺` for each `v ∈ V`, a length
+`l(e) ∈ ℤ₀⁺` for each `e ∈ E`, a positive integer `K ≤ |V|`, and a positive rational `B`.
+QUESTION: is there a set `P ⊆ V` of `K` vertices such that, if `d(v)` is the length of the
+shortest path from `v` to the closest vertex in `P`, then `max {d(v) · w(v) : v ∈ V} ≤ B`?
+
+This is the variant of [ND50] MIN-MAX MULTICENTER
+(`WantedExt.Complexity.NPComplete.MinMaxMulticenterWanted`) in which the centers must be
+vertices: the vertex-weighted vertex `p`-center problem, which Kariv and Hakimi prove NP-hard
+(for vertex-weighted and vertex-unweighted networks, even on planar graphs of maximum degree 3).
+The instance type, `Graph`, `walkLength` (the total length of a `SimpleGraph.Walk`), `weight`
+and `MinMaxMulticenter.WellFormed` (simple edge list, one weight per vertex, `0 < K ≤ |V|`,
+`B = p / q` with `p, q > 0`) are reused unchanged from the parent, and the parent's two disclosed
+conventions carry over. `P`
+has at most `K` vertices: adding centers never increases any `d(v)`, and `K ≤ |V|` vertices are
+available, so "at most `K`" and "exactly `K`" agree. `d(v)` is defined only when some path joins
+`v` to `P`, so every vertex must reach a vertex of `P`, whatever its weight. Since
+`d(v) = min_{p ∈ P} min_W len(W)` over walks `W` from `v` to `p`, and `w(v) ≥ 0`, the question
+reads: every vertex `v` has a center `p ∈ P` and a walk `W` from `v` to `p` with
+`w(v) · len(W) ≤ B`. Binary encoding of all numbers.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances. The rational `B` is a pair
+`(p, q)` of naturals with `q > 0`, standing for `p / q`.
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the
@@ -17,11 +48,6 @@ fixed `K` and for trees [Slater, 1976]";
 O. Kariv and S. L. Hakimi, "An algorithmic approach to network location problems. I: The
 p-centers", SIAM Journal on Applied Mathematics 37 (1979), 513-538, doi:10.1137/0137040.
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.MinMaxMulticenterDefs
 
 @[expose] public section
 

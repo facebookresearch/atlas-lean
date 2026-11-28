@@ -6,8 +6,40 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.KCenterDefs
+
+/-!
 # METRIC K-CENTER: definitions
+
+INSTANCE: a complete graph `G = (V, E)` with distances `d(vᵢ, vⱼ) ∈ ℕ` satisfying the triangle
+inequality, a positive integer `k ≤ |V|`, and a positive integer `B`.
+QUESTION: is there a `k`-center set, i.e. a subset `C ⊆ V` with `|C| = k`, such that
+`max_{v ∈ V} min_{c ∈ C} d(v, c) ≤ B`?
+
+This is the decision version of MINIMUM K-CENTER from the Crescenzi-Kann compendium.
+Its NP-hardness is the vertex p-center result of Kariv and Hakimi (the shortest-path distances
+of a connected network with positive edge lengths form a metric).
+
+The module restricts the generalized, nonmetric k-center problem
+`WantedExt.Complexity.NPComplete.KCenterWanted` (whose docstring names the metric problem as its
+special case): it reuses the parent's instance and feasibility condition unchanged and extends
+the parent's `WellFormed`. The instance `(d, k, B)` is the distance matrix, one row per vertex,
+the number of centers and the radius. `WellFormed` adds the metric conditions: the matrix is
+square, `d(u, v) = 0` exactly when `u = v` (the distance from a vertex to itself is zero; the
+complete graph has no loops), it is symmetric (the graph is undirected) and it satisfies the
+triangle inequality; and the bounds `0 < k ≤ |V|` and `0 < B`. With rows and columns both
+indexed by `V`, the parent's condition (at most `k` distinct centers and an assignment of every
+vertex to a center within distance `B`) says that some `C ⊆ V` with `|C| ≤ k` has
+`min_{c ∈ C} d(v, c) ≤ B` for every `v`; since `k ≤ |V|` and adding centers never increases a
+distance to the nearest center, this is the same as `|C| = k`.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 P. Crescenzi and V. Kann, *A compendium of NP optimization problems*, problem
@@ -15,11 +47,6 @@ MINIMUM K-CENTER;
 O. Kariv and S. L. Hakimi, "An algorithmic approach to network location problems. I: The
 p-centers", SIAM Journal on Applied Mathematics 37 (1979), 513-538, doi:10.1137/0137040.
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.KCenterDefs
 
 @[expose] public section
 
