@@ -15,11 +15,11 @@ $$N_{eE} = \frac{1}{2\,(1 - \lambda_{\max}(A))}.$$
 
 2. Such a recursion holds whenever the backward subpopulation ancestry of two distinct genes before coalescence is a Markov chain with transition matrix $Q = (Q_{ij,kl})$ on pairs of subpopulations. Let $\nu_{ki}$ be the number of offspring in subpopulation $i$ of one gene of subpopulation $k$ in the previous generation, $V_{kii} = \mathbb{E}[\nu_{ki}(\nu_{ki} - 1)]$ and $V_{kij} = \mathbb{E}[\nu_{ki}\nu_{kj}]$ for $i \ne j$. The probability that two genes from $i$ and $j$ whose parents both lie in $k$ have the same parent is
 
-   $$p_{ijk} = \Bigl(1 - \frac{1}{2Nu_i}\Bigr)^{-\mathbf{1}\{i=j\}} \frac{V_{kij}\,u_k}{2N u_i u_j Q_{ij,kk}},$$
+$$p_{ijk} = \Bigl(1 - \frac{1}{2Nu_i}\Bigr)^{-\mathbf{1}\{i=j\}} \frac{V_{kij}\,u_k}{2N u_i u_j Q_{ij,kk}},$$
 
-   and the recursion holds with
+and the recursion holds with
 
-   $$A_{ij,kl} = \Bigl(1 - \frac{1}{2Nu_i}\Bigr)^{\mathbf{1}\{i=j\}} \Bigl(\frac{1 - p_{ijk}}{1 - 1/(2Nu_k)}\Bigr)^{\mathbf{1}\{k=l\}} Q_{ij,kl}.$$
+$$A_{ij,kl} = \Bigl(1 - \frac{1}{2Nu_i}\Bigr)^{\mathbf{1}\{i=j\}} \Bigl(\frac{1 - p_{ijk}}{1 - 1/(2Nu_k)}\Bigr)^{\mathbf{1}\{k=l\}} Q_{ij,kl}.$$
 
 3. (Large populations.) Let $N \to \infty$ with $u$ and the migration matrices fixed and the assumptions of the Setting holding for each $N$; put $\epsilon = 1/(2N^\beta)$ for a fixed $0 < \beta \le 1$, and let $A = A(\epsilon)$ and $Q = Q(\epsilon)$ be the matrices of item 2. Assume that
    - $Q(\epsilon) = Q(0) + \dot Q\,\epsilon + o(\epsilon)$ as $\epsilon \to 0$;
