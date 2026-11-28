@@ -7,7 +7,7 @@ The asynchronous subtyping of Chen, Dezani-Ciancaglini and Yoshida (PPDP 2014), 
 **Orphan-message-free subtyping $\le_o$.** A relation $\mathcal{R}$ on session and primitive types qualifies if $(T, S) \in \mathcal{R}$ implies clauses 1 and 4 of asynchronous subtyping and:
 
 - (2) if $T = \oplus\{l_i\langle U_i \rangle : T_i\}_{i \in I}$, then there are $n \ge 0$ and $\mathcal{A}$ with $\mathrm{unfold}^n(S) = \mathcal{A}[\oplus\{l_j\langle V_{kj} \rangle : S_{kj}\}_{j \in J_k}]^{k \in \{1, \dots, m\}}$ such that $\mathcal{A} = [\,]^1$ whenever some $T_j$ ($j \in I$) contains no input branching, $I \subseteq J_k$ for every $k$, $(V_{ki}, U_i) \in \mathcal{R}$ for all $i \in I$ and $k$, and $(T_i, \mathcal{A}[S_{ki}]^{k \in \{1, \dots, m\}}) \in \mathcal{R}$ for all $i \in I$;
-- (3) if $T = \&\{l_i\langle U_i \rangle : T_i\}_{i \in I}$, then $\mathrm{unfold}^n(S) = \&\{l_j\langle V_j \rangle : S_j\}_{j \in J}$ for some $n \ge 0$ with $J \subseteq I$ and $(U_j, V_j), (T_j, S_j) \in \mathcal{R}$ for all $j \in J$;
+- (3) if $T = \&\{l_i(U_i) : T_i\}_{i \in I}$, then $\mathrm{unfold}^n(S) = \&\{l_j(V_j) : S_j\}_{j \in J}$ for some $n \ge 0$ with $J \subseteq I$ and $(U_j, V_j), (T_j, S_j) \in \mathcal{R}$ for all $j \in J$;
 - (5) if $T$ is a primitive type, then $S = T$.
 
 $T \le_o S$ if $(T, S)$ lies in some such relation.
