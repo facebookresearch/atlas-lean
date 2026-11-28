@@ -168,28 +168,6 @@ public theorem_wanted leadingReciprocal_hasSum_complementaryMoments
         complementaryMoment b d (k - digitCount b d n) m hd /
           ((n : ℝ) + 1) ^ (m + 1))
 
-/-- **Digit decomposition of the Irwin measure, zero index.** Let $b > 1$ and $d < b$ be natural
-numbers, and let $\mu_0$ be the Irwin measure of base $b$ and digit $d$ with index $0$. For every
-measurable function $f : \mathbb{R} \to \mathbb{R}$ that is bounded on $[0, b)$,
-$$\int_{[0,1)} f(bx)\, d\mu_0(x) = f(0) +
-\frac{1}{b} \sum_{a \ne d} \int_{[0,1)} f(a + x)\, d\mu_0(x),$$
-where $a$ ranges over the digits $0, 1, \dots, b - 1$ other than $d$.
-
-Measurability of $f$ is a hypothesis added to the paper's boundedness assumption.
-
-Source:
-Jean-François Burnol, *Measures for the Summation of Irwin Series*, INTEGERS 26
-(2026), Article A11, Lemma 1. -/
-public theorem_wanted integral_irwinMeasure_zero
-    (b d : ℕ) (hb : 1 < b) (hd : d < b) (f : ℝ → ℝ)
-    (hf_measurable : Measurable f)
-    (hf_bounded : Bornology.IsBounded (f '' Set.Ico (0 : ℝ) b)) :
-    (∫ x in Set.Ico (0 : ℝ) 1, f (b * x) ∂irwinMeasure b d 0 hd) =
-      f 0 + (1 / (b : ℝ)) *
-        ∑ a ∈ Finset.range b,
-          if a = d then 0 else
-            ∫ x in Set.Ico (0 : ℝ) 1, f (a + x) ∂irwinMeasure b d 0 hd
-
 /-- **Local structure of the Irwin measures on half-open intervals.** Let $b > 1$ and $d < b$ be
 natural numbers, and for each natural number $k$ let $\mu_k$ be the Irwin measure of base $b$ and
 digit $d$ with index $k$. Let $x \in [0, 1)$ have base-$b$ depth $l$, that is, $l$ is the least
