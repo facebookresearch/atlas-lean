@@ -46,7 +46,7 @@ $K_f$, extended to $K_{f,\lambda}$.
 
 This node is still to be broken down. A good expansion states and links:
 
-- Deligne–Serre's Théorème 4.1, whose proof is planned in
+- Deligne–Serre's Théorème 4.1 and its proof,
   [The Deligne–Serre theorem on modular forms of weight one](../deligne-serre-theorem-on-weight-one-forms/README.md);
 - the realizability of $\rho$ over $K_f$ (Deligne–Serre, footnote (2), p. 521): the image of $\rho$ contains $\rho(c)$,
   whose eigenvalues $1$ and $-1$ are rational and distinct, so the Schur index of $\rho$ is $1$ (Schur, IX a, as cited
