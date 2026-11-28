@@ -19,7 +19,7 @@ A threshold labelling the larger of two points $1$ labels the smaller one $1$ to
 ## Proof depends on
 
 - [Littlestone's theorem for arbitrary label sets: optimal mistake bound equals the multiclass Littlestone dimension](multiclass-littlestone-theorem.md)
-- [Halving mistake bound](../../../not-yet-classified/halving/halving-mistakes-bound.md)
+- [Halving mistake bound](../the-halving-algorithm-mistake-bound/halving-mistakes-bound.md)
 - [The fundamental theorem of PAC learning](../../pac-learning/is-paclearnable-realizable-family-iff-ha.md)
 
 ## Sources

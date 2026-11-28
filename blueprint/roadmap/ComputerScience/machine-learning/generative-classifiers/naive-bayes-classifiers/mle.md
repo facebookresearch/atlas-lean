@@ -1,0 +1,3 @@
+# Maximum likelihood parameters of categorical naive Bayes
+
+Consider a naive Bayes model with a finite nonempty set of classes $C$, finitely many features $i \in \iota$ with finite value sets $V_i$, a prior on classes, and for each class and feature a distribution of the feature value. Assume every value set $V_i$ is nonempty and let $(y_k, x_k)_{k < m}$ be labelled data. The maximum likelihood estimate takes the normalized class counts as the prior and, for each class and feature, the normalized counts of the feature values among the examples of the class; a class without examples gets uniform feature distributions, and without data the prior is uniform.

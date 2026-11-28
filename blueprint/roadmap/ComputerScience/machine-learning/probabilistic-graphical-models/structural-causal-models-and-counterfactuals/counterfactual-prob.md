@@ -1,0 +1,3 @@
+# Conditional counterfactual probability
+
+For a finite structural causal model with independent noise laws $\mu$, evidence $E$ and a target event $F$, the conditional counterfactual probability $P(X_{k \leftarrow a} \in F \mid E)$: the probability that the factual solution satisfies $E$ and the counterfactual solution after $do(X_k = a)$, at the same noise value, satisfies $F$, divided by the probability of $E$. The sum runs over the product of the supports of the noise laws, so the noise sets need not be finite. It is a conditional probability when $E$ has positive probability; when $E$ has probability zero the division by zero makes the value $0$ by convention.

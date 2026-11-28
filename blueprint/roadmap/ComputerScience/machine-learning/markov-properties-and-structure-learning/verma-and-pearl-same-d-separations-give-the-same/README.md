@@ -1,0 +1,15 @@
+# Verma and Pearl: same d-separations give the same skeleton and v-structures
+
+- [Blocking ignores the direction of traversal](blocked-at-pa-comm.md)
+- [The reverse of a path is a path](is-path-pa-reverse.md)
+- [Reversing a path keeps it blocked](path-blocked-pa-reverse.md)
+- [d-separation is symmetric](symm.md)
+- [Adjacent nodes are never d-separated in a structure](not-d-separated-pa-of-adjacent.md)
+- [Local Markov separator](d-separated-pa-local-markov.md)
+- [Nonadjacent nodes are separated by parents](d-separated-pa-parents-of-not-adjacent.md)
+- [Adjacent exactly when no set d-separates](adjacent-iff-forall-not-d-separated-pa.md)
+- [Collider exactly when outside a separating set](collider-iff-not-mem-of-d-separated-pa.md)
+- [Same d-separations give the same adjacencies](adjacent-iff-of-d-separated-pa-iff.md)
+- [Same d-separations give the same v-structures](is-vstructure-iff-of-d-separated-pa-iff.md)
+- [Verma–Pearl characterization of Markov equivalence](markov-equivalent-iff-d-separated-pa-iff.md)
+- [Verma–Pearl characterization of Markov equivalence for Bayesian networks](markov-equivalent-iff-d-separated-iff.md)

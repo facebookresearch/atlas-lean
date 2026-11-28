@@ -1,0 +1,3 @@
+# Comparing joint densities compares the discriminants
+
+Consider Gaussian discriminant analysis on $\mathbb{R}^\iota$, for a finite index set $\iota$, with a finite set of classes $C$, prior weights $\pi_c$, class means $\mu_c$ and a shared precision matrix $S$ that is positive definite. The joint density of class $c$ and features $x$ is $\pi_c\, \mathcal{N}(x; \mu_c, S^{-1})$, and the discriminant of class $c$ is $\delta_c(x) = \log \pi_c + (S \mu_c)^\top x - \tfrac12 \mu_c^\top S \mu_c$. For classes $c, c'$ with $\pi_c > 0$ and $\pi_{c'} > 0$ and every $x \in \mathbb{R}^\iota$, the joint density of $c$ at $x$ is at most that of $c'$ if and only if $\delta_c(x) \le \delta_{c'}(x)$.
