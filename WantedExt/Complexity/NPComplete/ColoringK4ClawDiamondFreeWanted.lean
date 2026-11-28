@@ -24,12 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Combinatorics.SimpleGraph.Clique
-public import Mathlib.Combinatorics.SimpleGraph.Copy
-public import Mathlib.Combinatorics.SimpleGraph.DeleteEdges
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.GraphColoringDefs
+public import CSLibExt.Complexity.NPComplete.ColoringK4ClawDiamondFreeDefs
 
 @[expose] public section
 
@@ -68,27 +63,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- The diamond: `K_4` on `Fin 4` minus the edge `{0, 1}`. -/
-abbrev diamond : SimpleGraph (Fin 4) := (⊤ : SimpleGraph (Fin 4)).deleteEdges {s(0, 1)}
-
-/-- Well-formedness of an instance: a well-formed GRAPH K-COLORABILITY instance (a simple graph
-given by an edge list), `K` is positive, the graph has no `K_4`, and neither the claw
-`K_{1,3}` nor the diamond is an induced subgraph of it. -/
-def WellFormed (i : GraphColoring.GraphColoringInstance) : Prop :=
-  GraphColoring.WellFormed i ∧ 0 < i.2.2 ∧ (GraphColoring.Graph i).CliqueFree 4 ∧
-    ¬ (completeBipartiteGraph (Fin 1) (Fin 3)).IsIndContained (GraphColoring.Graph i) ∧
-    ¬ diamond.IsIndContained (GraphColoring.Graph i)
-
-open Classical in
-/-- GRAPH K-COLORABILITY on `(K_4, claw, diamond)`-free graphs as a decision problem over
-bitstrings. -/
-noncomputable def coloringK4ClawDiamondFreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := GraphColoring.GraphColoringInstance) x with
-  | some i => decide (WellFormed i ∧ GraphColoring.GraphColoringFeasible i)
-  | none => false
 
 /-- **GRAPH K-COLORABILITY on `(K_4, claw, diamond)`-free graphs is NP-complete.** Source:
 Král', Kratochvíl, Tuza and Woeginger (2001); Golovach, Johnson, Paulusma and Song (2017). -/

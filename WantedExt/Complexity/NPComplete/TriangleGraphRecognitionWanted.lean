@@ -19,10 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.DominatingSetCoTrapezoidGraphsWanted
+public import CSLibExt.Complexity.NPComplete.TriangleGraphRecognitionDefs
 
 @[expose] public section
 
@@ -67,41 +64,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `0, …, n - 1`) and edge list. -/
-abbrev TriangleGraphRecognitionInstance := ℕ × List (ℕ × ℕ)
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : TriangleGraphRecognitionInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `0, …, n - 1` (no
-duplicate edges in either orientation, no self-loops, endpoints in range). -/
-def WellFormed (i : TriangleGraphRecognitionInstance) : Prop :=
-  i.2.Nodup ∧ ∀ e ∈ i.2, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2
-
-/-- `H` is a triangle graph: each vertex `v` has a trapezoid between the lines `y = 1` and
-`y = 0` with top side `[a v, b v]` and bottom side `[c v, d v]`, one of which is a single point
-(so the trapezoid is a triangle with its apex on either line), and two distinct vertices are
-adjacent exactly when their triangles intersect. -/
-def IsTriangleGraph {V : Type*} (H : SimpleGraph V) : Prop :=
-  ∃ a b c d : V → ℝ, (∀ v, a v ≤ b v ∧ c v ≤ d v ∧ (a v = b v ∨ c v = d v)) ∧
-    ∀ u v, u ≠ v → (H.Adj u v ↔
-      (DominatingSetCoTrapezoidGraphs.trapezoid (a u) (b u) (c u) (d u) ∩
-        DominatingSetCoTrapezoidGraphs.trapezoid (a v) (b v) (c v) (d v)).Nonempty)
-
-/-- The graph of the instance is a triangle graph. -/
-def TriangleGraphRecognitionFeasible (i : TriangleGraphRecognitionInstance) : Prop :=
-  IsTriangleGraph (Graph i)
-
-open Classical in
-/-- RECOGNITION OF TRIANGLE GRAPHS as a decision problem over bitstrings. -/
-noncomputable def triangleGraphRecognitionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TriangleGraphRecognitionInstance) x with
-  | some i => decide (WellFormed i ∧ TriangleGraphRecognitionFeasible i)
-  | none => false
 
 /-- **RECOGNITION OF TRIANGLE GRAPHS (PI* GRAPHS) is NP-complete.** Source: Mertzios (2012);
 ISGCI gc_290. -/

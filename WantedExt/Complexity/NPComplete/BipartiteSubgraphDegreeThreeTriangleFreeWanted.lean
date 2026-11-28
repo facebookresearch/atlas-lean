@@ -21,12 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Bipartite
-public import Mathlib.Combinatorics.SimpleGraph.Clique
-public import Mathlib.Combinatorics.SimpleGraph.Finite
+public import CSLibExt.Complexity.NPComplete.BipartiteSubgraphDegreeThreeTriangleFreeDefs
 
 @[expose] public section
 
@@ -69,39 +64,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`), edge list, bound `K`. -/
-abbrev BipartiteSubgraphDegreeThreeTriangleFreeInstance := ℕ × List (ℕ × ℕ) × ℕ
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : BipartiteSubgraphDegreeThreeTriangleFreeInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-open Classical in
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range), no vertex has degree
-exceeding 3, the graph has no triangles, and `0 < K ≤ |E|`, the length of the edge list. -/
-def WellFormed (i : BipartiteSubgraphDegreeThreeTriangleFreeInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    (∀ v, (Graph i).degree v ≤ 3) ∧ (Graph i).CliqueFree 3 ∧
-    0 < i.2.2 ∧ i.2.2 ≤ i.2.1.length
-
-/-- Some sublist `E'` of the edge list with at least `K` entries spans a bipartite subgraph
-`(V, E')`. -/
-def BipartiteSubgraphDegreeThreeTriangleFreeFeasible
-    (i : BipartiteSubgraphDegreeThreeTriangleFreeInstance) : Prop :=
-  ∃ es : List (ℕ × ℕ), es.Sublist i.2.1 ∧ i.2.2 ≤ es.length ∧
-    (Cslib.Complexity.Karp.edgeGraph i.1 es).IsBipartite
-
-open Classical in
-/-- BIPARTITE SUBGRAPH on triangle-free graphs of maximum degree 3 as a decision problem over
-bitstrings. -/
-noncomputable def bipartiteSubgraphDegreeThreeTriangleFreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := BipartiteSubgraphDegreeThreeTriangleFreeInstance) x with
-  | some i => decide (WellFormed i ∧ BipartiteSubgraphDegreeThreeTriangleFreeFeasible i)
-  | none => false
 
 /-- **BIPARTITE SUBGRAPH on triangle-free graphs of maximum degree 3 is NP-complete.**
 Source: Garey and Johnson (1979), [GT25], comment; Yannakakis (1978), Theorem 13. -/

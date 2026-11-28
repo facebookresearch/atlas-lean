@@ -19,9 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.ClickomaniaWanted
+public import CSLibExt.Complexity.NPComplete.ClickomaniaTwoColorsTwoColumnsDefs
 
 @[expose] public section
 
@@ -56,19 +54,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed CLICKOMANIA board (a full rectangle with at
-least one block) with at most two columns and at most two colors. -/
-def WellFormed (B : Board) : Prop :=
-  Clickomania.WellFormed B ∧ B.length ≤ 2 ∧ ∃ a b : ℕ, ∀ col ∈ B, ∀ x ∈ col, x = a ∨ x = b
-
-open Classical in
-/-- CLICKOMANIA with two colors and two columns as a decision problem over bitstrings. -/
-noncomputable def clickomaniaTwoColorsTwoColumnsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := Board) x with
-  | some i => decide (WellFormed i ∧ ClickomaniaFeasible i)
-  | none => false
 
 /-- **CLICKOMANIA with two colors and two columns is NP-complete.** Source: Adler, Demaine,
 Hesterberg, Liu and Rudoy (2017), Theorem 1. -/

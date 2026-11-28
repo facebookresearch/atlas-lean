@@ -20,10 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.ThreeColorabilityMonopolarWanted
+public import CSLibExt.Complexity.NPComplete.MonopolarGraphRecognitionDefs
 
 @[expose] public section
 
@@ -65,31 +62,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`) and edge list. -/
-abbrev MonopolarGraphRecognitionInstance := ℕ × List (ℕ × ℕ)
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : MonopolarGraphRecognitionInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range). -/
-def WellFormed (i : MonopolarGraphRecognitionInstance) : Prop :=
-  i.2.Nodup ∧ ∀ e ∈ i.2, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2
-
-/-- The graph of the instance is monopolar. -/
-def MonopolarGraphRecognitionFeasible (i : MonopolarGraphRecognitionInstance) : Prop :=
-  ThreeColorabilityMonopolar.IsMonopolar (Graph i)
-
-open Classical in
-/-- MONOPOLAR GRAPH RECOGNITION as a decision problem over bitstrings. -/
-noncomputable def monopolarGraphRecognitionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MonopolarGraphRecognitionInstance) x with
-  | some i => decide (WellFormed i ∧ MonopolarGraphRecognitionFeasible i)
-  | none => false
 
 /-- **MONOPOLAR GRAPH RECOGNITION is NP-complete.** Source: Farrugia (2004), Theorem 2; ISGCI,
 class `gc_1272`. -/

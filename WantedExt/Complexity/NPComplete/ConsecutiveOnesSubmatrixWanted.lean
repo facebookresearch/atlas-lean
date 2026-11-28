@@ -22,9 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.ConsecutiveBlockMinimizationWanted
+public import CSLibExt.Complexity.NPComplete.ConsecutiveOnesSubmatrixDefs
 
 @[expose] public section
 
@@ -58,25 +56,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Some `K` distinct columns of `A`, in some order `f`, form a matrix in which the `1`'s of
-every row occur consecutively: if the entries in columns `f j₁` and `f j₃` of a row are `1` and
-`j₁ ≤ j₂ ≤ j₃`, then the entry in column `f j₂` is `1`. -/
-def ConsecutiveOnesSubmatrixFeasible (i : ConsecutiveBlockMinimizationInstance) : Prop :=
-  ∃ f : Fin i.2.2 → Fin i.1, Function.Injective f ∧
-    ∀ row ∈ i.2.1, ∀ j₁ j₂ j₃ : Fin i.2.2, j₁ ≤ j₂ → j₂ ≤ j₃ →
-      row.getD (f j₁) false = true → row.getD (f j₃) false = true →
-        row.getD (f j₂) false = true
-
-open Classical in
-/-- CONSECUTIVE ONES SUBMATRIX as a decision problem over bitstrings. -/
-noncomputable def consecutiveOnesSubmatrixDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ConsecutiveBlockMinimizationInstance) x with
-  | some i => decide (ConsecutiveBlockMinimization.WellFormed i ∧
-      ConsecutiveOnesSubmatrixFeasible i)
-  | none => false
 
 /-- **CONSECUTIVE ONES SUBMATRIX is NP-complete.** Source: Garey and Johnson (1979), [SR14];
 Hajiaghayi and Ganjali (2002). -/

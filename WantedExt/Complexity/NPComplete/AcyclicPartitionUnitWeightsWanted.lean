@@ -19,9 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.AcyclicPartitionWanted
+public import CSLibExt.Complexity.NPComplete.AcyclicPartitionUnitWeightsDefs
 
 @[expose] public section
 
@@ -57,19 +55,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed ACYCLIC PARTITION instance in which every
-vertex weight and every arc cost is `1`. -/
-def WellFormed (i : AcyclicPartitionInstance) : Prop :=
-  AcyclicPartition.WellFormed i ∧ (∀ x ∈ i.2.1, x = 1) ∧ ∀ a ∈ i.2.2.1, a.2.2 = 1
-
-open Classical in
-/-- ACYCLIC PARTITION with unit weights and costs as a decision problem over bitstrings. -/
-noncomputable def acyclicPartitionUnitWeightsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := AcyclicPartitionInstance) x with
-  | some i => decide (WellFormed i ∧ AcyclicPartitionFeasible i)
-  | none => false
 
 /-- **ACYCLIC PARTITION with unit weights and costs is NP-complete.** Source: Garey and
 Johnson (1979), [ND15], comment. -/

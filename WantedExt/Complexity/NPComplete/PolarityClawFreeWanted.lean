@@ -18,10 +18,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Combinatorics.SimpleGraph.ClawFreeIndependencePoly
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.PolarityTwoKTwoCFiveFreeWanted
+public import CSLibExt.Complexity.NPComplete.PolarityClawFreeDefs
 
 @[expose] public section
 
@@ -60,22 +57,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range), and the graph is
-claw-free. -/
-def WellFormed (i : PolarityTwoKTwoCFiveFreeInstance) : Prop :=
-  (i.2.Nodup ∧ ∀ e ∈ i.2, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2) ∧
-    (Graph i).IsClawFree
-
-open Classical in
-/-- POLARITY OF CLAW-FREE GRAPHS as a decision problem over bitstrings. -/
-noncomputable def polarityClawFreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PolarityTwoKTwoCFiveFreeInstance) x with
-  | some i => decide (WellFormed i ∧ PolarityTwoKTwoCFiveFreeFeasible i)
-  | none => false
 
 /-- **POLARITY OF CLAW-FREE GRAPHS is NP-complete.** Source: Churchley and Huang (2014). -/
 public theorem_wanted polarityClawFree_npComplete :

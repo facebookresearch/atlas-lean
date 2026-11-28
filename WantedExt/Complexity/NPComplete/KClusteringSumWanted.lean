@@ -25,9 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.ClusteringSumOfDistancesWanted
+public import CSLibExt.Complexity.NPComplete.KClusteringSumDefs
 
 @[expose] public section
 
@@ -62,25 +60,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the parent's conditions (`Clustering.WellFormed`), distance
-`0` exactly on the diagonal, and the triangle inequality `d(x, z) ≤ d(x, y) + d(y, z)` for all
-elements `x, y, z`. -/
-def WellFormed (i : Clustering.ClusteringInstance) : Prop :=
-  Clustering.WellFormed i ∧
-    (∀ x < i.1.length, ∀ y < i.1.length, Clustering.distance i x y = 0 ↔ x = y) ∧
-    ∀ x < i.1.length, ∀ y < i.1.length, ∀ z < i.1.length,
-      Clustering.distance i x z ≤ Clustering.distance i x y + Clustering.distance i y z
-
-open Classical in
-/-- K-CLUSTERING SUM as a decision problem over bitstrings. -/
-noncomputable def kClusteringSumDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := Clustering.ClusteringInstance) x with
-  | some i => decide (WellFormed i ∧
-      ClusteringSumOfDistances.ClusteringSumOfDistancesFeasible i)
-  | none => false
 
 /-- **K-CLUSTERING SUM is NP-complete.** Source: Crescenzi and Kann, MINIMUM K-CLUSTERING SUM;
 Fernandez de la Vega and Kenyon (2001). -/

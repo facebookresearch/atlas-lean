@@ -24,10 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MonopolarityTriangleFreePlanarSubcubicWanted
-public import WantedExt.Complexity.NPComplete.PolarityTriangleFreeWanted
+public import CSLibExt.Complexity.NPComplete.PolarityPlanarSubcubicTriangleFreeDefs
 
 @[expose] public section
 
@@ -65,17 +62,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-open Classical in
-/-- POLARITY ON PLANAR TRIANGLE-FREE GRAPHS OF MAXIMUM DEGREE 3 as a decision problem over
-bitstrings. -/
-noncomputable def polarityPlanarSubcubicTriangleFreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PolarityTriangleFreeInstance) x with
-  | some i => decide (MonopolarityTriangleFreePlanarSubcubic.WellFormed i ∧
-      PolarityTriangleFreeFeasible i)
-  | none => false
 
 /-- **POLARITY ON PLANAR TRIANGLE-FREE GRAPHS OF MAXIMUM DEGREE 3 is NP-complete.** Source: Le and
 Nevries (2014); ISGCI, class `gc_1274`, problem Polarity. -/

@@ -19,10 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.GraphColoringDefs
-public import Mathlib.Combinatorics.SimpleGraph.Diam
+public import CSLibExt.Complexity.NPComplete.DiametersDecompositionDefs
 
 @[expose] public section
 
@@ -70,25 +67,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: well-formed for GRAPH COLORING (the edge list describes a
-simple graph on `Fin n`), `n ≥ 1`, and `0 < K`. -/
-def WellFormed (i : GraphColoringInstance) : Prop :=
-  GraphColoring.WellFormed i ∧ 0 < i.1 ∧ 0 < i.2.2
-
-/-- The graph decomposes into two edge-disjoint factors `F₁`, `F₂` with equal diameters, the
-diameter of `F₁` being at most `K`. -/
-def DiametersDecompositionFeasible (i : GraphColoringInstance) : Prop :=
-  ∃ F₁ F₂ : SimpleGraph (Fin i.1), F₁ ⊔ F₂ = Graph i ∧ Disjoint F₁ F₂ ∧
-    F₁.ediam = F₂.ediam ∧ F₁.ediam ≤ (i.2.2 : ℕ∞)
-
-open Classical in
-/-- DIAMETERS DECOMPOSITION as a decision problem over bitstrings. -/
-noncomputable def diametersDecompositionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := GraphColoringInstance) x with
-  | some i => decide (WellFormed i ∧ DiametersDecompositionFeasible i)
-  | none => false
 
 /-- **DIAMETERS DECOMPOSITION is NP-complete.** Source: Plesník (1982), Theorem 1 and Section 5;
 Crescenzi and Kann, MINIMUM DIAMETERS DECOMPOSITION. -/

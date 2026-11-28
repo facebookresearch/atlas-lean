@@ -20,13 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import WantedExt.Complexity.NPComplete.ClusterDeletionWanted
-public import Mathlib.Combinatorics.SimpleGraph.Clique
-public import Mathlib.Combinatorics.SimpleGraph.CompleteMultipartite
-public import Mathlib.Combinatorics.SimpleGraph.Maps
+public import CSLibExt.Complexity.NPComplete.PolarityTriangleFreeDefs
 
 @[expose] public section
 
@@ -61,38 +55,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`) and edge list. -/
-abbrev PolarityTriangleFreeInstance := ℕ × List (ℕ × ℕ)
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : PolarityTriangleFreeInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2
-
-/-- `G` is polar: its vertex set splits into a part `A` inducing a complete multipartite graph and
-the rest `Aᶜ`, which induces a disjoint union of cliques (a cluster graph). -/
-def IsPolar {V : Type*} (G : SimpleGraph V) : Prop :=
-  ∃ A : Set V, (G.induce A).IsCompleteMultipartite ∧ ClusterDeletion.IsClusterGraph (G.induce Aᶜ)
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range), and the graph is
-triangle-free. -/
-def WellFormed (i : PolarityTriangleFreeInstance) : Prop :=
-  (i.2.Nodup ∧ ∀ e ∈ i.2, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2) ∧
-    (Graph i).CliqueFree 3
-
-/-- The graph is polar. -/
-def PolarityTriangleFreeFeasible (i : PolarityTriangleFreeInstance) : Prop :=
-  IsPolar (Graph i)
-
-open Classical in
-/-- POLARITY ON TRIANGLE-FREE GRAPHS as a decision problem over bitstrings. -/
-noncomputable def polarityTriangleFreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PolarityTriangleFreeInstance) x with
-  | some i => decide (WellFormed i ∧ PolarityTriangleFreeFeasible i)
-  | none => false
 
 /-- **POLARITY ON TRIANGLE-FREE GRAPHS is NP-complete.** Source: Churchley and Huang (2014);
 ISGCI, class "triangle-free", problem Polarity. -/

@@ -22,13 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.ColoringK4ClawDiamondFreeWanted
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import Mathlib.Combinatorics.SimpleGraph.Clique
-public import Mathlib.Combinatorics.SimpleGraph.Copy
+public import CSLibExt.Complexity.NPComplete.WeightedIndependentSetK14DiamondFreeDefs
 
 @[expose] public section
 
@@ -73,42 +67,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`), edge list, vertex weights (the `v`-th
-entry is the weight of vertex `v`), bound `k`. -/
-abbrev WeightedIndependentSetInstance := ℕ × List (ℕ × ℕ) × List ℕ × ℕ
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : WeightedIndependentSetInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- The weight of vertex `v`: the `v`-th entry of the weight list. -/
-def weight (i : WeightedIndependentSetInstance) (v : Fin i.1) : ℕ :=
-  i.2.2.1.getD v 0
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range), there is one weight
-per vertex, and the graph has neither `K_1,4` nor the diamond as an induced subgraph. -/
-def WellFormed (i : WeightedIndependentSetInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    i.2.2.1.length = i.1 ∧
-    ¬ (completeBipartiteGraph (Fin 1) (Fin 4)).IsIndContained (Graph i) ∧
-    ¬ ColoringK4ClawDiamondFree.diamond.IsIndContained (Graph i)
-
-/-- Some set of pairwise non-adjacent vertices has total weight at least `k`. -/
-def WeightedIndependentSetFeasible (i : WeightedIndependentSetInstance) : Prop :=
-  ∃ s : Finset (Fin i.1), (Graph i).IsIndepSet (s : Set (Fin i.1)) ∧
-    i.2.2.2 ≤ ∑ v ∈ s, weight i v
-
-open Classical in
-/-- WEIGHTED INDEPENDENT SET on `(K_1,4, diamond)`-free graphs as a decision problem over
-bitstrings. -/
-noncomputable def weightedIndependentSetK14DiamondFreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := WeightedIndependentSetInstance) x with
-  | some i => decide (WellFormed i ∧ WeightedIndependentSetFeasible i)
-  | none => false
 
 /-- **WEIGHTED INDEPENDENT SET on `(K_1,4, diamond)`-free graphs is NP-complete.** Source:
 Corneil (1985); Brandstädt, Le and Mahfud (2007); ISGCI (`gc_413`). -/

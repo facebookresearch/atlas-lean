@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Acyclic
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.CaterpillarArboricityTwoDefs
 
 @[expose] public section
 
@@ -66,38 +63,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`) and edge list. -/
-abbrev CaterpillarArboricityTwoInstance := ℕ × List (ℕ × ℕ)
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : CaterpillarArboricityTwoInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range). -/
-def WellFormed (i : CaterpillarArboricityTwoInstance) : Prop :=
-  i.2.Nodup ∧ ∀ e ∈ i.2, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2
-
-/-- `H` is a caterpillar forest: a forest in which every connected component has a path such
-that every vertex of the component is on the path or adjacent to a vertex of the path. -/
-def IsCaterpillarForest {V : Type*} (H : SimpleGraph V) : Prop :=
-  H.IsAcyclic ∧ ∀ c : H.ConnectedComponent, ∃ (a b : V) (p : H.Walk a b), p.IsPath ∧
-    ∀ v ∈ c.supp, v ∈ p.support ∨ ∃ w ∈ p.support, H.Adj v w
-
-/-- The graph decomposes into two edge-disjoint caterpillar forests. -/
-def CaterpillarArboricityTwoFeasible (i : CaterpillarArboricityTwoInstance) : Prop :=
-  ∃ H₁ H₂ : SimpleGraph (Fin i.1), H₁ ⊔ H₂ = Graph i ∧ Disjoint H₁ H₂ ∧
-    IsCaterpillarForest H₁ ∧ IsCaterpillarForest H₂
-
-open Classical in
-/-- CATERPILLAR ARBORICITY AT MOST 2 as a decision problem over bitstrings. -/
-noncomputable def caterpillarArboricityTwoDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := CaterpillarArboricityTwoInstance) x with
-  | some i => decide (WellFormed i ∧ CaterpillarArboricityTwoFeasible i)
-  | none => false
 
 /-- **CATERPILLAR ARBORICITY AT MOST 2 is NP-complete.** Source: Shermer (1996), Theorem 3.2;
 ISGCI gc_732. -/

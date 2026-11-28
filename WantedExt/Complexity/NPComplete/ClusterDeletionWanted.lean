@@ -19,11 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
-public import Mathlib.Data.Set.Card
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.ClusterDeletionDefs
 
 @[expose] public section
 
@@ -52,37 +48,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `0, …, n - 1`), edge list, and the bound `K`. -/
-abbrev ClusterDeletionInstance := ℕ × List (ℕ × ℕ) × ℕ
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : ClusterDeletionInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- Well-formedness of an instance: the edge list describes a simple graph (no duplicate edges
-in either orientation, no self-loops, endpoints in range). -/
-def WellFormed (i : ClusterDeletionInstance) : Prop :=
-  i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1
-
-/-- `H` is a cluster graph: every connected component is complete, i.e. any two distinct
-vertices joined by a walk are adjacent. -/
-def IsClusterGraph {V : Type*} (H : SimpleGraph V) : Prop :=
-  ∀ u v, u ≠ v → H.Reachable u v → H.Adj u v
-
-/-- Deleting at most `K` edges of `G` leaves a cluster graph. -/
-def ClusterDeletionFeasible (i : ClusterDeletionInstance) : Prop :=
-  ∃ H : SimpleGraph (Fin i.1), H ≤ Graph i ∧
-    ((Graph i).edgeSet \ H.edgeSet).ncard ≤ i.2.2 ∧ IsClusterGraph H
-
-open Classical in
-/-- CLUSTER DELETION as a decision problem over bitstrings. -/
-noncomputable def clusterDeletionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ClusterDeletionInstance) x with
-  | some i => decide (WellFormed i ∧ ClusterDeletionFeasible i)
-  | none => false
 
 /-- **CLUSTER DELETION is NP-complete.** Source: Shamir, Sharan and Tsur (2004), Theorem 12;
 Natanzon (1999). -/

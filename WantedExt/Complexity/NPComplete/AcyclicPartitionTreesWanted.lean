@@ -20,11 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Acyclic
-public import WantedExt.Complexity.NPComplete.AcyclicPartitionWanted
+public import CSLibExt.Complexity.NPComplete.AcyclicPartitionTreesDefs
 
 @[expose] public section
 
@@ -68,27 +64,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- The underlying undirected graph of the instance on `Fin n`: an edge `{u, v}` for each arc
-`(u, v)`. -/
-def underlyingGraph (i : AcyclicPartition.AcyclicPartitionInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 (i.2.2.1.map fun a => (a.1, a.2.1))
-
-/-- Well-formedness of an instance: ACYCLIC PARTITION well-formedness, no two arcs in opposite
-directions between the same two vertices, and the underlying undirected graph is a tree. -/
-def WellFormed (i : AcyclicPartition.AcyclicPartitionInstance) : Prop :=
-  AcyclicPartition.WellFormed i ∧
-    (∀ a ∈ i.2.2.1, (a.2.1, a.1) ∉ i.2.2.1.map fun a => (a.1, a.2.1)) ∧
-    (underlyingGraph i).IsTree
-
-open Classical in
-/-- ACYCLIC PARTITION for trees as a decision problem over bitstrings. -/
-noncomputable def acyclicPartitionTreesDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := AcyclicPartition.AcyclicPartitionInstance) x with
-  | some i => decide (WellFormed i ∧ AcyclicPartition.AcyclicPartitionFeasible i)
-  | none => false
 
 /-- **ACYCLIC PARTITION is NP-complete for trees.** Source: Garey and Johnson (1979), [ND15],
 comment. -/

@@ -21,11 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import WantedExt.Complexity.NPComplete.BoxicityTwoWanted
-public import Mathlib.Combinatorics.SimpleGraph.Clique
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.IndependentSetBoxicityTwoDefs
 
 @[expose] public section
 
@@ -69,33 +65,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`), edge list, bound `K`. -/
-abbrev IndependentSetBoxicityTwoInstance := ℕ × List (ℕ × ℕ) × ℕ
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : IndependentSetBoxicityTwoInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n`
-(`BoxicityTwo.WellFormed`), the graph has boxicity at most 2 (`BoxicityTwo.BoxicityTwoFeasible`),
-and `0 < K ≤ |V|`. -/
-def WellFormed (i : IndependentSetBoxicityTwoInstance) : Prop :=
-  BoxicityTwo.WellFormed (i.1, i.2.1) ∧ BoxicityTwo.BoxicityTwoFeasible (i.1, i.2.1) ∧
-    0 < i.2.2 ∧ i.2.2 ≤ i.1
-
-/-- Some set of at least `K` vertices contains no two adjacent vertices. -/
-def IndependentSetBoxicityTwoFeasible (i : IndependentSetBoxicityTwoInstance) : Prop :=
-  ∃ s : Finset (Fin i.1), i.2.2 ≤ s.card ∧ (Graph i).IsIndepSet (s : Set (Fin i.1))
-
-open Classical in
-/-- INDEPENDENT SET on boxicity-2 graphs as a decision problem over bitstrings. -/
-noncomputable def independentSetBoxicityTwoDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := IndependentSetBoxicityTwoInstance) x with
-  | some i => decide (WellFormed i ∧ IndependentSetBoxicityTwoFeasible i)
-  | none => false
 
 /-- **INDEPENDENT SET on boxicity-2 graphs is NP-complete.**
 Source: Garey and Johnson (1979), [GT20];

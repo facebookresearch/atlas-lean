@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.IntervalNumberAtMostKWanted
+public import CSLibExt.Complexity.NPComplete.UnitTwoIntervalGraphRecognitionDefs
 
 @[expose] public section
 
@@ -67,29 +65,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- `H` is a unit 2-interval graph: each vertex `v` is assigned two disjoint closed intervals
-`[l v 0, l v 0 + 1]` and `[l v 1, l v 1 + 1]` of length `1`, and two distinct vertices are
-adjacent in `H` exactly when the unions of their intervals intersect. -/
-def IsUnitTwoIntervalGraph {n : ℕ} (H : SimpleGraph (Fin n)) : Prop :=
-  ∃ l : Fin n → Fin 2 → ℝ,
-    (∀ v, Set.Icc (l v 0) (l v 0 + 1) ∩ Set.Icc (l v 1) (l v 1 + 1) = ∅) ∧
-      ∀ u v, u ≠ v →
-        (H.Adj u v ↔
-          ((⋃ j, Set.Icc (l u j) (l u j + 1)) ∩ (⋃ j, Set.Icc (l v j) (l v j + 1))).Nonempty)
-
-/-- The graph of the instance is a unit 2-interval graph. -/
-def UnitTwoIntervalGraphRecognitionFeasible (i : IntervalNumberAtMostKInstance) : Prop :=
-  IsUnitTwoIntervalGraph (Graph i)
-
-open Classical in
-/-- UNIT 2-INTERVAL GRAPH RECOGNITION as a decision problem over bitstrings. -/
-noncomputable def unitTwoIntervalGraphRecognitionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := IntervalNumberAtMostKInstance) x with
-  | some i => decide (WellFormed i ∧ UnitTwoIntervalGraphRecognitionFeasible i)
-  | none => false
 
 /-- **UNIT 2-INTERVAL GRAPH RECOGNITION is NP-complete.** Source: Ardévol Martínez, Rizzi,
 Sikora and Vialette (2025), Theorem 17. -/

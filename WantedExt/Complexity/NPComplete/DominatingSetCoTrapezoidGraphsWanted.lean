@@ -22,11 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Analysis.Convex.Hull
-public import Mathlib.Basic.Real.Basic
-public import CSLibExt.Complexity.NPComplete.DominatingSetDefs
+public import CSLibExt.Complexity.NPComplete.DominatingSetCoTrapezoidGraphsDefs
 
 @[expose] public section
 
@@ -63,34 +59,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- The trapezoid between the lines `y = 1` and `y = 0` with top side `[a, b]` and bottom side
-`[c, d]`: the convex hull of its corners `(a, 1)`, `(b, 1)`, `(c, 0)`, `(d, 0)`. -/
-def trapezoid (a b c d : ℝ) : Set (ℝ × ℝ) :=
-  convexHull ℝ {(a, 1), (b, 1), (c, 0), (d, 0)}
-
-/-- `H` is a trapezoid graph: each vertex `v` has a trapezoid with top side `[a v, b v]` and
-bottom side `[c v, d v]`, and two distinct vertices are adjacent exactly when their trapezoids
-intersect. -/
-def IsTrapezoidGraph {V : Type*} (H : SimpleGraph V) : Prop :=
-  ∃ a b c d : V → ℝ, (∀ v, a v ≤ b v ∧ c v ≤ d v) ∧
-    ∀ u v, u ≠ v → (H.Adj u v ↔
-      (trapezoid (a u) (b u) (c u) (d u) ∩ trapezoid (a v) (b v) (c v) (d v)).Nonempty)
-
-/-- Well-formedness of an instance: the parent's (a simple edge list on `Fin n`), the complement
-of the graph is a trapezoid graph, and `0 < K ≤ n`. -/
-def WellFormed (i : DominatingSet.DominatingSetInstance) : Prop :=
-  DominatingSet.WellFormed i ∧ IsTrapezoidGraph (DominatingSet.Graph i)ᶜ ∧
-    0 < i.2.2 ∧ i.2.2 ≤ i.1
-
-open Classical in
-/-- DOMINATING SET for co-trapezoid graphs as a decision problem over bitstrings. -/
-noncomputable def dominatingSetCoTrapezoidGraphsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := DominatingSet.DominatingSetInstance) x with
-  | some i => decide (WellFormed i ∧ DominatingSet.DominatingSetFeasible i)
-  | none => false
 
 /-- **DOMINATING SET for co-trapezoid graphs is NP-complete.** Source: Keil and Belleville
 (2004); Garey and Johnson (1979), [GT2]. -/

@@ -20,11 +20,8 @@ ISGCI, class "2-interval" (gc_40), problem Maximum cut, NP-complete.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.Complexity.Karp.Color
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.IntervalNumberAtMostKWanted
-public import CSLibExt.Complexity.NPComplete.MaxCutDefs
+public import CSLibExt.Complexity.NPComplete.SimpleMaxCutTwoIntervalDefs
 
 @[expose] public section
 
@@ -68,26 +65,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed MAXIMUM CUT instance (a simple edge list on
-the vertices `0, ..., n - 1`) whose graph is a 2-interval graph, and `1 ≤ K ≤ |E|`. -/
-def WellFormed (i : MaxCutInstance) : Prop :=
-  MaxCut.WellFormed i ∧ IsMultipleIntervalGraph 2 (Cslib.Complexity.Karp.edgeGraph i.1 i.2.1) ∧
-    1 ≤ i.2.2 ∧ i.2.2 ≤ i.2.1.length
-
-/-- A partition `A = S`, `B = V - S` with at least `K` edges between the two sets (the MAXIMUM
-CUT question). -/
-def SimpleMaxCutTwoIntervalFeasible (i : MaxCutInstance) : Prop :=
-  MaxCutFeasible i
-
-open Classical in
-/-- SIMPLE MAX CUT on 2-interval graphs as a decision problem over bitstrings. -/
-noncomputable def simpleMaxCutTwoIntervalDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MaxCutInstance) x with
-  | some i => decide (WellFormed i ∧ SimpleMaxCutTwoIntervalFeasible i)
-  | none => false
 
 /-- **SIMPLE MAX CUT on 2-interval graphs is NP-complete.** Source: Adhikary, Bose, Mukherjee
 and Roy (2023), Theorem 1 (interval graphs are 2-interval graphs); ISGCI (gc_40). -/

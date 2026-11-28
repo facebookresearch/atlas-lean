@@ -20,11 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Basic.Real.Basic
-public import Mathlib.Order.Interval.Set.Basic
+public import CSLibExt.Complexity.NPComplete.BoxicityTwoDefs
 
 @[expose] public section
 
@@ -54,34 +50,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`) and edge list. -/
-abbrev BoxicityTwoInstance := ℕ × List (ℕ × ℕ)
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : BoxicityTwoInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range). -/
-def WellFormed (i : BoxicityTwoInstance) : Prop :=
-  i.2.Nodup ∧ ∀ e ∈ i.2, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2
-
-/-- The graph is an intersection graph of closed axis-parallel rectangles: vertex `v` gets the
-nonempty rectangle `Set.Icc (lo v) (hi v)` of `ℝ × ℝ`, and two distinct vertices are adjacent
-exactly when their rectangles intersect. -/
-def BoxicityTwoFeasible (i : BoxicityTwoInstance) : Prop :=
-  ∃ lo hi : Fin i.1 → ℝ × ℝ, (∀ v, lo v ≤ hi v) ∧
-    ∀ u v, u ≠ v → ((Graph i).Adj u v ↔ (Set.Icc (lo u) (hi u) ∩ Set.Icc (lo v) (hi v)).Nonempty)
-
-open Classical in
-/-- BOXICITY AT MOST 2 as a decision problem over bitstrings. -/
-noncomputable def boxicityTwoDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := BoxicityTwoInstance) x with
-  | some i => decide (WellFormed i ∧ BoxicityTwoFeasible i)
-  | none => false
 
 /-- **BOXICITY AT MOST 2 is NP-complete.** Source: Kratochvíl (1994). -/
 public theorem_wanted boxicityTwo_npComplete :

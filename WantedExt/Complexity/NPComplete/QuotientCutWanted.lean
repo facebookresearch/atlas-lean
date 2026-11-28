@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.BBalancedCutWanted
+public import CSLibExt.Complexity.NPComplete.QuotientCutDefs
 
 @[expose] public section
 
@@ -61,38 +59,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the vertex count `n`, the vertex weights, the edges `(u, v, c(e))`, and the
-bound `K`. -/
-abbrev QuotientCutInstance := ℕ × List ℕ × List (ℕ × ℕ × ℕ) × ℕ
-
-/-- The same graph, weights, costs and bound as a `b`-balanced-cut instance, with `b = 1/2`. -/
-def toBBalancedCut (i : QuotientCutInstance) : BBalancedCut.BBalancedCutInstance :=
-  (i.1, i.2.1, i.2.2.1, (1, 2), i.2.2.2)
-
-/-- Well-formedness of an instance (`BBalancedCut.WellFormed`): one weight per vertex; every
-edge joins two different vertices below `n`, with at most one edge per unordered pair; and
-`0 < K`. -/
-def WellFormed (i : QuotientCutInstance) : Prop :=
-  BBalancedCut.WellFormed (toBBalancedCut i)
-
-/-- Some cut `C ⊆ V` has `min {w(C), w(V − C)} > 0` and quotient at most `K`. -/
-def QuotientCutFeasible (i : QuotientCutInstance) : Prop :=
-  ∃ C : Finset ℕ, (∀ v ∈ C, v < i.1) ∧
-    0 < min (BBalancedCut.weight (toBBalancedCut i) C)
-      (BBalancedCut.weight (toBBalancedCut i) (Finset.range i.1 \ C)) ∧
-    BBalancedCut.cutCost (toBBalancedCut i) C ≤
-      i.2.2.2 * min (BBalancedCut.weight (toBBalancedCut i) C)
-        (BBalancedCut.weight (toBBalancedCut i) (Finset.range i.1 \ C))
-
-open Classical in
-/-- QUOTIENT CUT as a decision problem over bitstrings. -/
-noncomputable def quotientCutDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := QuotientCutInstance) x with
-  | some i => decide (WellFormed i ∧ QuotientCutFeasible i)
-  | none => false
 
 /-- **QUOTIENT CUT is NP-complete.** Source: Crescenzi and Kann, MINIMUM QUOTIENT CUT; Park and
 Phillips (1993). -/

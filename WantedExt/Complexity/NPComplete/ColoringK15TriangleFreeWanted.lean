@@ -25,11 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Combinatorics.SimpleGraph.Clique
-public import Mathlib.Combinatorics.SimpleGraph.Copy
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.GraphColoringDefs
+public import CSLibExt.Complexity.NPComplete.ColoringK15TriangleFreeDefs
 
 @[expose] public section
 
@@ -68,23 +64,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed GRAPH K-COLORABILITY instance (a simple graph
-given by an edge list), `K` is positive, the graph has no triangle, and `K_{1,5}` is not an
-induced subgraph of it. -/
-def WellFormed (i : GraphColoring.GraphColoringInstance) : Prop :=
-  GraphColoring.WellFormed i ∧ 0 < i.2.2 ∧ (GraphColoring.Graph i).CliqueFree 3 ∧
-    ¬ (completeBipartiteGraph (Fin 1) (Fin 5)).IsIndContained (GraphColoring.Graph i)
-
-open Classical in
-/-- GRAPH K-COLORABILITY on `(K_{1,5}, triangle)`-free graphs as a decision problem over
-bitstrings. -/
-noncomputable def coloringK15TriangleFreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := GraphColoring.GraphColoringInstance) x with
-  | some i => decide (WellFormed i ∧ GraphColoring.GraphColoringFeasible i)
-  | none => false
 
 /-- **GRAPH K-COLORABILITY on `(K_{1,5}, triangle)`-free graphs is NP-complete.** Source:
 Maffray and Preissmann (1996); Golovach, Johnson, Paulusma and Song (2017), Theorem 21(i).6. -/

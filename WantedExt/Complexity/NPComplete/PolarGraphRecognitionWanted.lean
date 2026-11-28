@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.PolarityTriangleFreeWanted
+public import CSLibExt.Complexity.NPComplete.PolarGraphRecognitionDefs
 
 @[expose] public section
 
@@ -66,31 +63,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`) and edge list. -/
-abbrev PolarGraphRecognitionInstance := ℕ × List (ℕ × ℕ)
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : PolarGraphRecognitionInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range). -/
-def WellFormed (i : PolarGraphRecognitionInstance) : Prop :=
-  i.2.Nodup ∧ ∀ e ∈ i.2, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2
-
-/-- The graph of the instance is polar. -/
-def PolarGraphRecognitionFeasible (i : PolarGraphRecognitionInstance) : Prop :=
-  IsPolar (Graph i)
-
-open Classical in
-/-- POLAR GRAPH RECOGNITION as a decision problem over bitstrings. -/
-noncomputable def polarGraphRecognitionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PolarGraphRecognitionInstance) x with
-  | some i => decide (WellFormed i ∧ PolarGraphRecognitionFeasible i)
-  | none => false
 
 /-- **POLAR GRAPH RECOGNITION is NP-complete.** Source: Chernyak and Chernyak (1986); Le and
 Nevries (2014). -/

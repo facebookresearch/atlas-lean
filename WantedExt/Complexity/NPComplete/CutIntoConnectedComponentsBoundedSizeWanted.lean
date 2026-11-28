@@ -22,10 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
-public import CSLibExt.Complexity.NPComplete.GraphColoringDefs
+public import CSLibExt.Complexity.NPComplete.CutIntoConnectedComponentsBoundedSizeDefs
 
 @[expose] public section
 
@@ -68,29 +65,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance `(n, E, K)`: a simple edge list on the vertices
-`0, …, n - 1` (`GraphColoring.WellFormed`), and the bound `K ≥ |V| / 2`, that is
-`n ≤ 2 K`. -/
-def WellFormed (i : GraphColoring.GraphColoringInstance) : Prop :=
-  GraphColoring.WellFormed i ∧ i.1 ≤ 2 * i.2.2
-
-/-- Some set `V₁` with complement `V₂` has `|V₁| ≤ K`, `|V₂| ≤ K`, and both induced subgraphs
-connected. -/
-def CutIntoConnectedComponentsBoundedSizeFeasible (i : GraphColoring.GraphColoringInstance) :
-    Prop :=
-  ∃ V₁ : Finset (Fin i.1), V₁.card ≤ i.2.2 ∧ V₁ᶜ.card ≤ i.2.2 ∧
-    ((GraphColoring.Graph i).induce (V₁ : Set (Fin i.1))).Connected ∧
-    ((GraphColoring.Graph i).induce ((V₁ᶜ : Finset (Fin i.1)) : Set (Fin i.1))).Connected
-
-open Classical in
-/-- CUT INTO CONNECTED COMPONENTS OF BOUNDED SIZE as a decision problem over bitstrings. -/
-noncomputable def cutIntoConnectedComponentsBoundedSizeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := GraphColoring.GraphColoringInstance) x with
-  | some i => decide (WellFormed i ∧ CutIntoConnectedComponentsBoundedSizeFeasible i)
-  | none => false
 
 /-- **CUT INTO CONNECTED COMPONENTS OF BOUNDED SIZE is NP-complete.** Source: Johnson (1982),
 problem [6] (Frieze); Dyer and Frieze (1985), Theorem 2.2. -/

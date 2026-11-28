@@ -22,8 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.ClusteringDefs
 
 @[expose] public section
 
@@ -51,35 +50,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the rows of the distance matrix (`n` rows of length `n`), the number of
-parts `K`, and the bound `B`. -/
-abbrev ClusteringInstance := List (List ℕ) × ℕ × ℕ
-
-/-- The distance `d(x, y)`: entry `(x, y)` of the matrix (`0` outside it). -/
-def distance (i : ClusteringInstance) (x y : ℕ) : ℕ := (i.1.getD x []).getD y 0
-
-/-- Well-formedness of an instance: the matrix is square, symmetric, and zero on the diagonal,
-and `0 < K`, `0 < B`. -/
-def WellFormed (i : ClusteringInstance) : Prop :=
-  (∀ row ∈ i.1, row.length = i.1.length) ∧
-    (∀ x < i.1.length, ∀ y < i.1.length, distance i x y = distance i y x) ∧
-    (∀ x < i.1.length, distance i x x = 0) ∧ 0 < i.2.1 ∧ 0 < i.2.2
-
-/-- Some surjective assignment `c` of the `n` elements to `K` parts puts only elements at
-distance at most `B` into a common part. -/
-def ClusteringFeasible (i : ClusteringInstance) : Prop :=
-  ∃ c : Fin i.1.length → Fin i.2.1, Function.Surjective c ∧
-    ∀ x y, c x = c y → distance i x y ≤ i.2.2
-
-open Classical in
-/-- CLUSTERING as a decision problem over bitstrings. -/
-noncomputable def clusteringDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ClusteringInstance) x with
-  | some i => decide (WellFormed i ∧ ClusteringFeasible i)
-  | none => false
 
 /-- **CLUSTERING is NP-complete.** Source: Garey and Johnson (1979), [MS9]; Brucker (1978);
 Gonzalez (1985). -/

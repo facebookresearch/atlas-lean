@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Paths
-public import CSLibExt.Complexity.NPComplete.GraphColoringDefs
+public import CSLibExt.Complexity.NPComplete.DistanceDChromaticNumberDefs
 
 @[expose] public section
 
@@ -59,27 +56,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance `(n, E, K)`: the edge list describes a simple graph on
-`Fin n` (`GraphColoring.WellFormed`) and `0 < K ≤ n`. -/
-def WellFormed (i : GraphColoring.GraphColoringInstance) : Prop :=
-  GraphColoring.WellFormed i ∧ 0 < i.2.2 ∧ i.2.2 ≤ i.1
-
-/-- There is a partition of the vertices into `K` blocks (`c v` is the block of `v`) such that
-no two distinct vertices of a block are joined by a path of length `d` or less. -/
-def DistanceDChromaticNumberFeasible (d : ℕ) (i : GraphColoring.GraphColoringInstance) :
-    Prop :=
-  ∃ c : Fin i.1 → Fin i.2.2, ∀ u v : Fin i.1, u ≠ v → c u = c v →
-    ∀ p : (GraphColoring.Graph i).Walk u v, p.IsPath → d < p.length
-
-open Classical in
-/-- DISTANCE-`d` CHROMATIC NUMBER as a decision problem over bitstrings. -/
-noncomputable def distanceDChromaticNumberDec (d : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := GraphColoring.GraphColoringInstance) x with
-  | some i => decide (WellFormed i ∧ DistanceDChromaticNumberFeasible d i)
-  | none => false
 
 /-- **DISTANCE-d CHROMATIC NUMBER (fixed d ≥ 2) is NP-complete.** For every fixed `d ≥ 2`.
 Source: Johnson (1982), NP-completeness column; McCormick (1983). -/

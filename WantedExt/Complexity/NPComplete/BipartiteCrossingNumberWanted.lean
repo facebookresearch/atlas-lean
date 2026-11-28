@@ -22,9 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.OneSidedCrossingMinimizationWanted
+public import CSLibExt.Complexity.NPComplete.BipartiteCrossingNumberDefs
 
 @[expose] public section
 
@@ -69,30 +67,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the vertices of `V₁`, the vertices of `V₂`, the edges `(u, w)` (repetitions
-allowed), and the bound `K`. -/
-abbrev BipartiteCrossingNumberInstance := List ℕ × List ℕ × List (ℕ × ℕ) × ℕ
-
-/-- Well-formedness of an instance: `V₁` and `V₂` are listed without repetition, and every edge
-joins a vertex of `V₁` to a vertex of `V₂`. -/
-def WellFormed (i : BipartiteCrossingNumberInstance) : Prop :=
-  i.1.Nodup ∧ i.2.1.Nodup ∧ ∀ e ∈ i.2.2.1, e.1 ∈ i.1 ∧ e.2 ∈ i.2.1
-
-/-- Some order of `V₁` and some order of `V₂` give a two-sided drawing with at most `K`
-crossings. -/
-def BipartiteCrossingNumberFeasible (i : BipartiteCrossingNumberInstance) : Prop :=
-  ∃ order₁ order₂ : List ℕ, order₁.Perm i.1 ∧ order₂.Perm i.2.1 ∧
-    crossings order₁ order₂ i.2.2.1 ≤ i.2.2.2
-
-open Classical in
-/-- BIPARTITE CROSSING NUMBER as a decision problem over bitstrings. -/
-noncomputable def bipartiteCrossingNumberDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := BipartiteCrossingNumberInstance) x with
-  | some i => decide (WellFormed i ∧ BipartiteCrossingNumberFeasible i)
-  | none => false
 
 /-- **BIPARTITE CROSSING NUMBER is NP-complete.** Source: Garey and Johnson (1983). -/
 public theorem_wanted bipartiteCrossingNumber_npComplete :

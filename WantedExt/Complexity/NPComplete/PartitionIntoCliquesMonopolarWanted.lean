@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.ClusterDeletionWanted
-public import CSLibExt.Complexity.NPComplete.PartitionIntoCliquesDefs
+public import CSLibExt.Complexity.NPComplete.PartitionIntoCliquesMonopolarDefs
 
 @[expose] public section
 
@@ -63,24 +60,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- A graph is monopolar: its vertex set splits into a stable set `A` and its complement `B`
-such that every connected component of `G[B]` is complete. -/
-def IsMonopolar {V : Type*} (G : SimpleGraph V) : Prop :=
-  ∃ A : Set V, G.IsIndepSet A ∧ ClusterDeletion.IsClusterGraph (G.induce Aᶜ)
-
-/-- Well-formedness of an instance: a well-formed PARTITION INTO CLIQUES instance whose graph is
-monopolar. -/
-def MonopolarWellFormed (i : PartitionIntoCliquesInstance) : Prop :=
-  WellFormed i ∧ IsMonopolar (Graph i)
-
-open Classical in
-/-- PARTITION INTO CLIQUES on monopolar graphs as a decision problem over bitstrings. -/
-noncomputable def partitionIntoCliquesMonopolarDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := PartitionIntoCliquesInstance) x with
-  | some i => decide (MonopolarWellFormed i ∧ PartitionIntoCliquesFeasible i)
-  | none => false
 
 /-- **PARTITION INTO CLIQUES on monopolar graphs is NP-complete.** Source: Barbato and Bezzi
 (2021); Garey and Johnson (1979), [GT15]; ISGCI, class `gc_1272`. -/

@@ -22,10 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import WantedExt.Complexity.NPComplete.ClusteringWanted
+public import CSLibExt.Complexity.NPComplete.ClusteringSumOfDistancesDefs
 
 @[expose] public section
 
@@ -60,23 +57,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Some surjective assignment `c` of the `n` elements to `K` parts makes the sum, over the
-parts `Xⱼ = {x : c x = j}`, of `Σ_{x, y ∈ Xⱼ} d(x, y)` at most `B`. -/
-def ClusteringSumOfDistancesFeasible (i : ClusteringInstance) : Prop :=
-  ∃ c : Fin i.1.length → Fin i.2.1, Function.Surjective c ∧
-    ∑ j : Fin i.2.1, ∑ x ∈ Finset.univ.filter (fun x => c x = j),
-      ∑ y ∈ Finset.univ.filter (fun y => c y = j), Clustering.distance i x y ≤ i.2.2
-
-open Classical in
-/-- CLUSTERING with the sum of within-cluster distances as a decision problem over
-bitstrings. -/
-noncomputable def clusteringSumOfDistancesDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ClusteringInstance) x with
-  | some i => decide (Clustering.WellFormed i ∧ ClusteringSumOfDistancesFeasible i)
-  | none => false
 
 /-- **CLUSTERING with the sum of within-cluster distances is NP-complete.** Source: Garey and
 Johnson (1979), [MS9], comment; Brucker (1978). -/
