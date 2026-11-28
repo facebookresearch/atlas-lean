@@ -60,7 +60,7 @@ private theorem choose_cast_eq_expansion {p s k : ℕ} (hp : p.Prime) (hp5 : 5 �
     ∃ c : R p, ((s * p - 1).choose k : R p) =
       (-1) ^ k * (1 - (s : R p) * (p : R p) * harmonicMod (p ^ 3) k + (p : R p) ^ 2 * c) := by
   rcases eq_or_ne k 0 with rfl | hk0
-  · exact ⟨0, by simp [harmonicMod]⟩
+  · exact ⟨0, by simp [harmonicMod_zero]⟩
   have hsp : p ≤ s * p := Nat.le_mul_of_pos_left p hs
   have hprod : ∏ i ∈ Icc 1 k, ((s : R p) * p - (i : R p)) =
       ((s * p - 1).descFactorial k : R p) := by
@@ -125,9 +125,9 @@ private theorem summand_expansion {p s j : ℕ} (hp : p.Prime) (hp5 : 5 ≤ p)
 -- Reduce the lagged harmonic sum modulo `p` before lifting its vanishing to the cube.
 private theorem lagged_sum_zero {p : ℕ} (hp : p.Prime) (hp5 : 5 ≤ p) :
     (p : R p) ^ 2 * ∑ j ∈ range (p - 1), harmonicMod (p ^ 3) j * delannoyWeight p j = 0 := by
-  let : Fact p.Prime := ⟨hp⟩
   let : NeZero (p ^ 3) := ⟨pow_ne_zero 3 hp.ne_zero⟩
-  let f : R p →+* ZMod p := ZMod.castHom (dvd_pow_self p (by decide : (3 : ℕ) ≠ 0)) _
+  have hd : p ∣ p ^ 3 := dvd_pow_self p (by decide)
+  let f : R p →+* ZMod p := ZMod.castHom hd _
   have hf (k : ℕ) (hk : 0 < k) (hkp : k < p) :
       f ((k : R p)⁻¹) = (k : ZMod p)⁻¹ := by
     symm
@@ -141,10 +141,10 @@ private theorem lagged_sum_zero {p : ℕ} (hp : p.Prime) (hp5 : 5 ≤ p) :
     refine sum_congr rfl fun j hj => ?_
     have hj' := mem_range.mp hj
     have hh : f (harmonicMod (p ^ 3) j) = harmonicMod p j := by
-      simp only [harmonicMod, map_sum]
-      refine sum_congr rfl fun i hi => ?_
-      have hi' := mem_Icc.mp hi
-      exact hf i (by omega) (by omega)
+      apply castHom_harmonicMod_of_isUnit hd
+      intro i hi
+      obtain ⟨hi1, hij⟩ := mem_Icc.mp hi
+      exact unit_of_lt hp (by omega) (by omega)
     rw [hh, hf (j + 1) (by omega) (by omega), mul_assoc]
   have hz := hx.trans (sum_lagged_harmonic_two_pow_div_eq_zero p hp hp5)
   -- A residue in the kernel is a multiple of `p`, so multiplication by `p²` kills it.
