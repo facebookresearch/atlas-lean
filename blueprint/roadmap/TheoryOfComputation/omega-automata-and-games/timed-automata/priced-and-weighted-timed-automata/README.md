@@ -2,7 +2,7 @@
 
 Timed automata and timed games whose runs accumulate costs or weights, and the undecidability of optimal reachability, mean-payoff, negative-price and constrained-price problems for them.
 
-- [Cost-optimal reachability in nonlinearly priced timed automata is undecidable](cost-optimal-reachability-with-nonlinear-prices.md)
+- [Zero-cost reachability in nonlinearly priced timed automata is undecidable](cost-optimal-reachability-with-nonlinear-prices.md)
 - [Mean-payoff games on timed automata with three clocks are undecidable](mean-payoff-games-on-timed-automata-with-three.md)
 - [Pareto domination for multi-priced timed automata is undecidable](pareto-domination-for-multi-priced-timed.md)
 - [Priced timed automata with nonlinear prices](priced-timed-automata-with-nonlinear-prices.md)

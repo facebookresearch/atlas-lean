@@ -2,7 +2,7 @@
 
 No algorithm decides whether the first player of a recursive (pushdown) game with multidimensional mean-payoff objectives has a modular winning strategy, already for six dimensions, three modules, no recursion and single exits.
 
-A *weighted recursive game graph* is a tuple of game modules $A_0,A_1,\dots,A_n$; each module has nodes with entry and exit nodes, *boxes* that call other modules, a partition of nodes and boxes between player 1 and player 2, and a transition relation from nodes and returns of boxes to nodes and calls of boxes, with weights in $\mathbb Z^k$ on transitions; $A_0$ is the initial module. The configurations (a stack of boxes and a node) form the global game graph, which is isomorphic to a pushdown game graph computable in polynomial time. A *modular strategy* for player 1 is a family of local strategies $\tau_i$, one per module, where the next move depends only on the *local history*, the sequence of nodes visited in the current invocation of the module, and not on the calling context; player 2 plays general strategies. Player 1 wins if the mean payoff of the play is $\ge\vec0$ in every dimension (see [classical quantitative objectives](../classical-quantitative-objectives.md)).
+A *weighted recursive game graph* is a tuple of game modules $A_0,A_1,\dots,A_n$; each module has nodes with entry and exit nodes, *boxes* that call other modules, a partition of nodes and boxes between player 1 and player 2, and a transition relation from nodes and returns of boxes to nodes and calls of boxes, with weights in $\mathbb Z^k$ on transitions; $A_0$ is the initial module. The configurations (a stack of boxes and a node) form the global game graph, which is isomorphic to a pushdown game graph computable in polynomial time. A *modular strategy* for player 1 is a family of local strategies $\tau_i$, one per module, where the next move depends only on the *local history*, the sequence of nodes visited in the current invocation of the module, and not on the calling context; player 2 plays general strategies. Player 1 wins if the lim-inf mean payoff ($\mathrm{MeanPayoff}^-$, the source's $\mathrm{LimInfAvg}$) of the play is $\ge\vec0$ in every dimension (see [classical quantitative objectives](../classical-quantitative-objectives.md)).
 
 **Theorem.** Deciding whether player 1 has a modular winning strategy in a weighted recursive game graph with multidimensional mean-payoff objectives is undecidable, even for hierarchical games (no recursive calls) with six dimensions, three modules, and at most one exit per module (Theorem 4 of the source).
 
@@ -10,7 +10,7 @@ For one-dimensional mean-payoff objectives the modular winning strategy problem 
 
 ## Depends on
 
-- [Classical quantitative objectives](../classical-quantitative-objectives.md)
+- [Shortest-path, mean-payoff, total-payoff, energy and discounted-payoff objectives](../classical-quantitative-objectives.md)
 - [Modular games on recursive game graphs](../../infinite-state-games/modular-games-on-recursive-game-graphs/modular-games-on-recursive-game-graphs.md)
 - [Arenas, strategies and memory structures](../../muller-rabin-and-streett-games/arenas-strategies-and-memory-structures.md)
 - [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)

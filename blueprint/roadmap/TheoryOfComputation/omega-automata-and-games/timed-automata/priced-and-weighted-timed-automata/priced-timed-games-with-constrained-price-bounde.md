@@ -23,7 +23,7 @@ satisfies the objective.
 
 1. *Constrained-price reachability* $\mathrm{Reach}({\bowtie} K)$, for ${\bowtie} \in \{<, \le, =, \ge, >\}$ and $K \in \mathbb{N}$: reach
    a target with a price $p$ satisfying $p \bowtie K$.
-2. *Bounded-time reachability* $\mathrm{BReach}(K, T)$, for $K, T \in \mathbb{N}$: reach a target with price at most $K$ while the total
+2. *Bounded-time reachability* $\mathrm{TBReach}(K, T)$, for $K, T \in \mathbb{N}$: reach a target with price at most $K$ while the total
    elapsed time stays within $T$.
 3. *Repeated reachability* $\mathrm{RReach}(\eta)$, for a nonnegative rational $\eta$ given as a fraction of integers (the source lets $\eta$ range over the nonnegative reals; a decision problem needs a finite input): in plays that continue forever, visit target locations infinitely
    often, each time with a payoff in $[-\eta, \eta]$.

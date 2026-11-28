@@ -8,7 +8,7 @@ $$
 L(\mathcal A)=\{w\in A^\omega:\ \text{some path }\pi\text{ labeled }w\text{ has a prefix }p\text{ with }\gamma(p)=0\text{ that reaches a state of }F\}.
 $$
 
-In *reverse acceptance* the weight is computed on the reversed prefix $p^R$; this gives the language $L_R(\mathcal A)$. The *universality problem* asks whether $L(\mathcal A)=A^\omega$.
+In *reverse acceptance* the weight is computed on the reversed prefix $p^R$, still with $R(p) \in F$; this gives the language $L_R(\mathcal A)$. The *universality problem* asks whether $L(\mathcal A)=A^\omega$.
 
 ## Depends on
 

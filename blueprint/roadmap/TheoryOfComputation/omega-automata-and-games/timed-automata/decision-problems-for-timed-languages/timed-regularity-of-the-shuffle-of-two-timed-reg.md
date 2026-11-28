@@ -35,7 +35,7 @@ $(\mathcal{R} \times \Sigma)^\star . 1 . c . R_1$. If $L$ is universal, $\mathca
 timed words containing a letter $1 . b$ followed later by a letter $s . b$; this is timed regular (the source says it is the set of
 all timed words, which is not the case, since each of its words contains the two $b$'s, but the theorem is unaffected); otherwise a word $u \notin L$ forces $\mathcal{L} \bowtie R_2$ to contain, after $u . 1 . c$, the
 non-regular language above, so it is not timed regular. This reduces the universality problem for timed automata over finite
-timed words, which is undecidable (Alur and Dill).
+timed words, which is undecidable (Alur and Dill). For the bounded-resource problems the source argues that in the first case a deterministic automaton without clocks accepts $\mathcal{L} \bowtie R_2$; with the corrected first case that is false, but a deterministic automaton with one clock, reset at every letter, and constant $1$ accepts it (it waits for a $b$ read with the clock equal to $1$, then for a later $b$ read with the clock positive). So the same reduction, with $n = K = 1$ in the first problem and $n = 2$ in the second, gives all three bounded-resource undecidability results.
 
 ## Sources
 

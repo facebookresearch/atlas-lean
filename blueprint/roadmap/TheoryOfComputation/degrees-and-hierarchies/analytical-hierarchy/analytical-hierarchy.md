@@ -34,7 +34,7 @@ None.
 
 ## Expansion
 
-For each $n \ge 1$: $\Sigma^1_n \cup \Pi^1_n \subsetneq \Sigma^1_{n+1} \cap \Pi^1_{n+1}$, a set is in $\Sigma^1_n$ iff its
+For each $n \ge 1$: $\Sigma^1_n \cup \Pi^1_n \subseteq \Sigma^1_{n+1} \cap \Pi^1_{n+1}$, a set is in $\Sigma^1_n$ iff its
 complement is in $\Pi^1_n$, and both $\Sigma^1_n \setminus \Pi^1_n$ and $\Pi^1_n \setminus \Sigma^1_n$ are nonempty.
 Adjacent quantifiers of the same kind and type merge, a number quantifier can be replaced by a function quantifier of the
 same kind, and $\exists^0 \forall^1$ can be swapped to $\forall^1 \exists^0$ (dually $\forall^0 \exists^1$ to

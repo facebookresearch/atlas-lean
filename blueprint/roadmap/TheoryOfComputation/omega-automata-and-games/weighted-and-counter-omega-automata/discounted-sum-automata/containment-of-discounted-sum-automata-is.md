@@ -1,11 +1,11 @@
 # Containment of discounted-sum automata with multiple discount factors is undecidable
 
-Whether one discounted-sum automaton with integral discount factors is below a deterministic one on every word is undecidable, on finite words for both strict and non-strict comparison and on infinite words for non-strict comparison.
+Whether one discounted-sum automaton with integral discount factors is below a deterministic one on every word is undecidable, on nonempty finite words for both strict and non-strict comparison and on infinite words for non-strict comparison.
 
 Consider [discounted-sum automata with multiple discount factors](discounted-sum-automata-with-multiple-discount.md).
 
 **Theorem.**
-1. On finite words, no algorithm decides, given an integral NMDA $\mathcal N$ and an integral DMDA $\mathcal D$, whether $\mathcal N(w)\le\mathcal D(w)$ for all finite words $w$; nor whether $\mathcal N(w)<\mathcal D(w)$ for all finite words $w$.
+1. On finite words, no algorithm decides, given an integral NMDA $\mathcal N$ and an integral DMDA $\mathcal D$, whether $\mathcal N(w)\le\mathcal D(w)$ for all nonempty finite words $w \in \Sigma^+$; nor whether $\mathcal N(w)<\mathcal D(w)$ for all nonempty finite words $w \in \Sigma^+$. The source's Theorem 1 says "all finite words" but is meant for $\Sigma^+$, as its reduction (Section 3.1) quantifies over $w \in \Sigma^+$: on the empty word a DMDA has value $0$ and an NMDA has value $0$ or $+\infty$, so strict containment over all finite words never holds.
 2. On infinite words, no algorithm decides, given an integral NMDA $\mathcal N$ and an integral DMDA $\mathcal D$, whether $\mathcal N(w)\le\mathcal D(w)$ for all infinite words $w$.
 
 Since non-strict containment reduces to equivalence (compare $\mathcal A$ with the union of $\mathcal A$ and $\mathcal B$), equivalence of integral NMDAs is undecidable on finite and on infinite words (Theorem 3 of the source). Strict containment on infinite words is left open. By contrast, comparing a $\lambda_A$-NDA with a $\lambda_D$-DDA, each automaton having a single discount factor, is decidable in PSPACE (Theorem 4 of the source), and containment and equivalence of integral NDAs with different discount factors are decidable (Corollary 1).

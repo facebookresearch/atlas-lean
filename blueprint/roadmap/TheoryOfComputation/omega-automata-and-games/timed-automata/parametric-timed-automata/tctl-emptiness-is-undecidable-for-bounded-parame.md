@@ -11,7 +11,7 @@ For parametric timed automata whose parameters appear only in invariants of the 
 1. $\mathsf{EF}$-emptiness (reachability of a location) is undecidable for PTAs with only invariants (Theorem 1 of the source).
 2. $\mathsf{EG}\,\mathsf{AF}_{=0}\,p$-emptiness, for an atomic proposition $p$, is undecidable for bounded PTAs with only upper-bound invariants (Theorem 4).
 
-Hence the full TCTL-emptiness problem is undecidable for bounded PTAs with only upper-bound invariants, whereas the same paper shows that reachability ($\mathsf{EF}$) emptiness is decidable for this class, with exact synthesis of the satisfying valuations.
+Hence the full TCTL-emptiness problem is undecidable for bounded PTAs with only upper-bound invariants, whereas the same paper shows that reachability ($\mathsf{EF}$) emptiness is decidable, with exact synthesis of the satisfying valuations, for PTAs with only upper-bound invariants and no parameter bounds (Theorems 2 and 3 of the source); for a bounded PTA, intersecting the set computed by Theorem 3 with the parameter bounds then decides $\mathsf{EF}$-emptiness.
 
 ## Depends on
 

@@ -4,6 +4,8 @@ No algorithm decides whether a relation between infinite words accepted by a Bü
 
 Let $R\subseteq\Sigma^\omega\times\Gamma^\omega$ be an [infinitary rational relation](infinitary-rational-relations-and-omega-rational.md). A partial function $f:\Sigma^\omega\to\Gamma^\omega$ *uniformizes* $R$ if $\mathrm{dom}(f)=\mathrm{dom}(R)$ and $(\alpha,f(\alpha))\in R$ for every $\alpha\in\mathrm{dom}(R)$. A function $f$ is *computable* if a deterministic machine with a one-way read-only input tape, a two-way work tape and a one-way write-only output tape, visiting every input cell, produces for every $\alpha\in\mathrm{dom}(f)$ and every $i$, after reading some finite prefix of $\alpha$, an output extending the first $i$ letters of $f(\alpha)$ (Weihrauch). A function is *sequential* if a deterministic finite-state transducer computes it, and *letter-to-letter sequential* if that transducer outputs exactly one letter per input letter.
 
+The source states its results for nondeterministic parity transducers, which define the same relations as Büchi transducers.
+
 **Theorem.**
 1. It is undecidable, given a Büchi transducer, whether its infinitary rational relation is uniformized by some computable function, even for relations with total domain $\Sigma^\omega$.
 2. It is undecidable whether it is uniformized by some sequential function, respectively by some letter-to-letter sequential function, even for relations with total domain; the reduction also covers continuous uniformizers.

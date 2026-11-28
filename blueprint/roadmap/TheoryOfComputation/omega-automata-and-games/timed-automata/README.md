@@ -26,4 +26,3 @@ all Boolean operations. Emptiness is decided by the region construction, in
 - [Priced and weighted timed automata](priced-and-weighted-timed-automata/README.md)
 - [Probabilistic timed automata](probabilistic-timed-automata/README.md)
 - [Quantitative reachability in stochastic timed games is undecidable](quantitative-reachability-in-stochastic-timed-ga.md)
-- [Reachability of timed automata with an irrational guard constant is undecidable](reachability-of-timed-automata-with-irrational.md)

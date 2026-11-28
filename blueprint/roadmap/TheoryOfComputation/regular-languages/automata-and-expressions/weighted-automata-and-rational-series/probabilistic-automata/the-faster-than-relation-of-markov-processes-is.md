@@ -2,13 +2,13 @@
 
 No algorithm decides, for a finite labeled Markov process (given with rational transition probabilities) and two of its states, whether the first is faster than the second: whether every output word is at least as likely from the first state. The same holds for semi-Markov processes with any class of timing distributions.
 
-**Processes.** A *semi-Markov process* $\mathcal{M} = (S, A, \Delta, \rho)$ has a finite set $S$ of states, a finite set $A$ of output labels, a transition function $\Delta$ assigning to each state $s$ a probability distribution $\Delta(s)$ on $S \times A$, and a residence-time function $\rho$ assigning to each state a [probability measure](../../../../../Probability/foundations/probability-measures/is-probability-measure.md) $\rho(s)$ on $\mathbb{R}_{\ge 0}$, its timing distribution, identified with its cumulative distribution function. In state $s$ the process fires a transition within time $t$ with probability $\rho(s)(t)$, moving to $s'$ while outputting $a$ with probability $\Delta(s)(s', a)$. For a word $w \in A^*$ the timing distribution $P_{\mathcal{M}}(s, w)$, the probability that the output from $s$ starts with $w$ within a given total time, is defined by $P_{\mathcal{M}}(s, \varepsilon) = 1$ and
+**Processes.** A *semi-Markov process* $\mathcal{M} = (S, A, \Delta, \rho)$ has a finite set $S$ of states, a finite set $A$ of output labels, a transition function $\Delta$ assigning to each state $s$ a subprobability distribution $\Delta(s)$ on $S \times A$ (nonnegative weights of total mass at most $1$), and a residence-time function $\rho$ assigning to each state a Borel [measure](../../../../../MeasureTheory/measures/measures-and-countable-additivity/measures/measure.md) $\rho(s)$ on $\mathbb{R}_{\ge 0}$ of total mass at most $1$, its timing distribution, identified with its cumulative distribution function. In state $s$ the process fires a transition within time $t$ with probability $\rho(s)(t)$, moving to $s'$ while outputting $a$ with probability $\Delta(s)(s', a)$. For a word $w \in A^*$ the timing distribution $P_{\mathcal{M}}(s, w)$, the probability that the output from $s$ starts with $w$ within a given total time, is defined by $P_{\mathcal{M}}(s, \varepsilon) = 1$ and
 
 $$
 P_{\mathcal{M}}(s, aw) = \sum_{s' \in S} \Delta(s)(s', a) \cdot \bigl(\rho(s) * P_{\mathcal{M}}(s', w)\bigr),
 $$
 
-where $*$ is the convolution of timing distributions (the [convolution of probability measures](../../../../../Probability/statistical-estimation/bootstrap-and-the-mallows-metric/conv.md)); write $P_{\mathcal{M}}(s, w, t)$ for its value at $t$. A *Markov process* $(S, A, \Delta)$ is the same without timing: $P_{\mathcal{M}}(s, \varepsilon) = 1$ and $P_{\mathcal{M}}(s, aw) = \sum_{s'} \Delta(s)(s', a) P_{\mathcal{M}}(s', w)$.
+where $*$ is the convolution of timing distributions, the image of the product measure under addition, as for the [convolution of probability measures](../../../../../Probability/statistical-estimation/bootstrap-and-the-mallows-metric/conv.md); write $P_{\mathcal{M}}(s, w, t)$ for its value at $t$. Subdistributions are needed: in the reduction behind Theorem 1, states $(p, \ell)$ with $p$ not accepting have outgoing mass $\tfrac12$, states $(p, r)$ have $\tfrac34$, and the new state $\top$ has no transitions (Section 2 and Definition 1 of the source). A *Markov process* $(S, A, \Delta)$ is the same without timing: $P_{\mathcal{M}}(s, \varepsilon) = 1$ and $P_{\mathcal{M}}(s, aw) = \sum_{s'} \Delta(s)(s', a) P_{\mathcal{M}}(s', w)$.
 
 **The faster-than problem.** A state $s$ is *faster than* a state $s'$, written $s \preceq s'$, if $P_{\mathcal{M}}(s, w, t) \ge P_{\mathcal{M}}(s', w, t)$ for every word $w$ and every time $t$; for a Markov process, if $P_{\mathcal{M}}(s, w) \ge P_{\mathcal{M}}(s', w)$ for every word $w$. The *faster-than problem* asks, given a process and two states $s, s'$, whether $s \preceq s'$. As inputs, transition probabilities are rational, and for semi-Markov processes the timing distributions are taken from a fixed class $C$ whose members are described by finitely many rational parameters.
 
@@ -22,7 +22,7 @@ The source also shows that the problem cannot be approximated up to a multiplica
 ## Depends on
 
 - [Probabilistic automata and cut-point languages](../probabilistic-automata-and-cut-point-languages.md)
-- [Probability measure](../../../../../Probability/foundations/probability-measures/is-probability-measure.md)
+- [Measure](../../../../../MeasureTheory/measures/measures-and-countable-additivity/measures/measure.md)
 - [Convolution of probability measures](../../../../../Probability/statistical-estimation/bootstrap-and-the-mallows-metric/conv.md)
 - [Decidability by multi-stack machines](../../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 

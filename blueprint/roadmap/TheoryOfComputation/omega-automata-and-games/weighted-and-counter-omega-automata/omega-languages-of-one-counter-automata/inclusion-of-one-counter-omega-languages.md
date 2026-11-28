@@ -6,6 +6,8 @@ Whether the $\omega$-language of one real-time Büchi one-counter automaton is i
 1. $\{(y,z)\in\mathbb N^2: L(\mathcal C_y)\subseteq L(\mathcal C_z)\}$ is $\Pi^1_2$-complete;
 2. $\{(y,z)\in\mathbb N^2: L(\mathcal C_y)=L(\mathcal C_z)\}$ is $\Pi^1_2$-complete.
 
+Subsets of $\mathbb N^2$ are identified with subsets of $\mathbb N$ through a computable pairing function, so the classes and reductions of the analytical hierarchy apply to them.
+
 Both problems are also $\Pi^1_2$-complete for Büchi pushdown automata (Corollary 3.16 of the source).
 
 ## Depends on

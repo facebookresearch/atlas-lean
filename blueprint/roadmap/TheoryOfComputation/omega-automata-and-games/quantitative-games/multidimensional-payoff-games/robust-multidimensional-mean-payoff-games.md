@@ -2,7 +2,7 @@
 
 When the winning condition is an arbitrary Boolean combination of threshold conditions on the liminf mean payoffs of several weight dimensions, no algorithm decides the winner of a finite two-player game, already with ten dimensions; the same holds for games over mean-payoff expressions.
 
-A *robust multidimensional mean-payoff game* is a finite two-player game graph with a weight function $w:E\to\mathbb Q^k$ and a winning condition that is a Boolean formula over atoms $\mathrm{LimInfAvg}_i\sim\nu_i$ with $\sim\in\{\ge,>,\le,<\}$ and $\nu_i\in\mathbb Q$, where $\mathrm{LimInfAvg}_i(\pi)$ is the $\liminf$ of the averages of dimension $i$ along the play (see [classical quantitative objectives](../classical-quantitative-objectives.md)). Equivalently, the condition is a positive Boolean formula over atoms $\mathrm{LimInfAvg}_i\ge\nu_i$, $\mathrm{LimSupAvg}_i\ge\nu_i$ and their strict versions, since $\liminf$ of a sequence is minus the $\limsup$ of its negation. Player 1 wins if he has a strategy, with arbitrary memory, ensuring the condition against every strategy of player 2.
+A *robust multidimensional mean-payoff game* is a finite two-player game graph, in which every vertex has at least one outgoing edge, with a weight function $w:E\to\mathbb Q^k$ and a winning condition that is a Boolean formula over atoms $\mathrm{LimInfAvg}_i\sim\nu_i$ with $\sim\in\{\ge,>,\le,<\}$ and $\nu_i\in\mathbb Q$, where $\mathrm{LimInfAvg}_i(\pi)$ is the $\liminf$ of the averages of dimension $i$ along the play (see [classical quantitative objectives](../classical-quantitative-objectives.md)). Equivalently, the condition is a positive Boolean formula over atoms $\mathrm{LimInfAvg}_i\ge\nu_i$, $\mathrm{LimSupAvg}_i\ge\nu_i$ and their strict versions, since $\liminf$ of a sequence is minus the $\limsup$ of its negation. Player 1 wins if he has a strategy, with arbitrary memory, ensuring the condition against every strategy of player 2.
 
 **Theorem.** Deciding the winner of a robust multidimensional mean-payoff game with ten dimensions is undecidable (Theorem 1 of the source); thresholds $0$ and non-strict inequalities suffice.
 
@@ -12,7 +12,7 @@ For positive formulas over $\mathrm{LimInfAvg}$ atoms only (only $\ge$ and $>$ i
 
 ## Depends on
 
-- [Classical quantitative objectives](../classical-quantitative-objectives.md)
+- [Shortest-path, mean-payoff, total-payoff, energy and discounted-payoff objectives](../classical-quantitative-objectives.md)
 - [Arenas, strategies and memory structures](../../muller-rabin-and-streett-games/arenas-strategies-and-memory-structures.md)
 - [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 

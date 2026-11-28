@@ -2,7 +2,7 @@
 
 No algorithm decides whether the first player of a finite two-player game with five-dimensional integer weights can ensure that the infimum, or the supremum, total payoff reaches a given threshold vector, although the corresponding mean-payoff problems are decidable.
 
-A *multi-weighted game structure* is a finite directed graph whose vertices are split between player 1 and player 2, with a weight function assigning a vector in $\mathbb Z^k$ to each edge (weights in binary). For a play $\pi=s_0s_1\cdots$, the total payoff of a prefix is the sum of its edge weights, and the *infimum* and *supremum total payoff* of $\pi$ are the componentwise $\liminf$ and $\limsup$ of these sums (the one-dimensional objectives are recalled in [classical quantitative objectives](../classical-quantitative-objectives.md)). The *threshold problem* asks, given the game, an initial vertex and a threshold vector $v\in\mathbb Q^k$, whether player 1 has a strategy ensuring that the infimum (respectively supremum) total payoff is $\ge v$ in every dimension against every strategy of player 2.
+A *multi-weighted game structure* is a finite directed graph in which every vertex has an outgoing edge, so that plays are infinite, whose vertices are split between player 1 and player 2, with a weight function assigning a vector in $\mathbb Z^k$ to each edge (weights in binary). For a play $\pi=s_0s_1\cdots$, the total payoff of a prefix is the sum of its edge weights, and the *infimum* and *supremum total payoff* of $\pi$ are the componentwise $\liminf$ and $\limsup$ of these sums (the one-dimensional objectives are recalled in [classical quantitative objectives](../classical-quantitative-objectives.md)). The *threshold problem* asks, given the game, an initial vertex and a threshold vector $v\in\mathbb Q^k$, whether player 1 has a strategy ensuring that the infimum (respectively supremum) total payoff is $\ge v$ in every dimension against every strategy of player 2.
 
 **Theorem.** The threshold problem for infimum and for supremum total-payoff objectives is undecidable in multi-weighted games with five dimensions (Theorem 1 of the source).
 
@@ -10,7 +10,7 @@ In one dimension total-payoff and mean-payoff games are closely related and solv
 
 ## Depends on
 
-- [Classical quantitative objectives](../classical-quantitative-objectives.md)
+- [Shortest-path, mean-payoff, total-payoff, energy and discounted-payoff objectives](../classical-quantitative-objectives.md)
 - [Arenas, strategies and memory structures](../../muller-rabin-and-streett-games/arenas-strategies-and-memory-structures.md)
 - [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 

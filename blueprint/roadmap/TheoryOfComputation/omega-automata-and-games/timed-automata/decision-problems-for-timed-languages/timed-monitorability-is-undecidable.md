@@ -14,7 +14,7 @@ For properties given by deterministic timed Muller automata, strong and weak mon
 
 ## Depends on
 
-- [Timed Büchi automata](../timed-buchi-automata.md)
+- [Timed Büchi automata and timed regular languages](../timed-buchi-automata.md)
 - [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
