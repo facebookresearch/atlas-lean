@@ -22,9 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.SchedulingWithIndividualDeadlinesWanted
+public import CSLibExt.Complexity.NPComplete.SchedulingWithIndividualDeadlinesOutTreeDefs
 
 @[expose] public section
 
@@ -60,33 +58,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- `t` is an immediate predecessor of `t'`: `t < t'`, and no task `c` has `t < c < t'`. -/
-def ImmediatePredecessor
-    (i : SchedulingWithIndividualDeadlines.SchedulingWithIndividualDeadlinesInstance)
-    (t t' : SchedulingWithIndividualDeadlines.Task i) : Prop :=
-  SchedulingWithIndividualDeadlines.Prec i t t' ∧
-    ∀ c, ¬ (SchedulingWithIndividualDeadlines.Prec i t c ∧
-      SchedulingWithIndividualDeadlines.Prec i c t')
-
-/-- Well-formedness of an instance: it is a well-formed SCHEDULING WITH INDIVIDUAL DEADLINES
-instance (`0 < m`, listed pairs name tasks and form a strict partial order, positive deadlines),
-and no task has more than one immediate predecessor. -/
-def WellFormed (i : SchedulingWithIndividualDeadlines.SchedulingWithIndividualDeadlinesInstance) :
-    Prop :=
-  SchedulingWithIndividualDeadlines.WellFormed i ∧
-    ∀ t' a b, ImmediatePredecessor i a t' → ImmediatePredecessor i b t' → a = b
-
-open Classical in
-/-- SCHEDULING WITH INDIVIDUAL DEADLINES for out-tree precedence as a decision problem over
-bitstrings. -/
-noncomputable def schedulingWithIndividualDeadlinesOutTreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SchedulingWithIndividualDeadlines.SchedulingWithIndividualDeadlinesInstance) x with
-  | some i => decide (WellFormed i ∧
-      SchedulingWithIndividualDeadlines.SchedulingWithIndividualDeadlinesFeasible i)
-  | none => false
 
 /-- **SCHEDULING WITH INDIVIDUAL DEADLINES is NP-complete for out-tree precedence.** Source:
 Garey and Johnson (1979), [SS11], comment; Brucker, Garey and Johnson (1977). -/

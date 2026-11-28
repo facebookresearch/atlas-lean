@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.SequencingToMinimizeMaximumCumulativeCostWanted
+public import CSLibExt.Complexity.NPComplete.SequencingToMinimizeMaximumCumulativeCostTernaryCostsDefs
 
 @[expose] public section
 
@@ -60,22 +58,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed SEQUENCING TO MINIMIZE MAXIMUM CUMULATIVE COST
-instance in which every cost is `-1`, `0` or `1`. -/
-def WellFormed (i : SequencingToMinimizeMaximumCumulativeCostInstance) : Prop :=
-  SequencingToMinimizeMaximumCumulativeCost.WellFormed i ∧
-    ∀ t : Task i, cost i t = -1 ∨ cost i t = 0 ∨ cost i t = 1
-
-open Classical in
-/-- SEQUENCING TO MINIMIZE MAXIMUM CUMULATIVE COST with costs in `{-1, 0, 1}` as a decision
-problem over bitstrings. -/
-noncomputable def sequencingToMinimizeMaximumCumulativeCostTernaryCostsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SequencingToMinimizeMaximumCumulativeCostInstance) x with
-  | some i => decide (WellFormed i ∧ SequencingToMinimizeMaximumCumulativeCostFeasible i)
-  | none => false
 
 /-- **SEQUENCING TO MINIMIZE MAXIMUM CUMULATIVE COST is NP-complete with costs in `{-1, 0, 1}`.**
 Source: Garey and Johnson (1979), [SS7], comment; Abdel-Wahab (1976). -/

@@ -21,8 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.TwoStageHybridFlowShopDefs
 
 @[expose] public section
 
@@ -64,35 +63,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the jobs, job `j` given as `(a_j, b_j)` (stage-1 and stage-2 processing
-times), and the bound `K` on the makespan. -/
-abbrev TwoStageHybridFlowShopInstance := List (ℕ × ℕ) × ℕ
-
-/-- Well-formedness of an instance: all processing times are positive. -/
-def WellFormed (i : TwoStageHybridFlowShopInstance) : Prop :=
-  ∀ job ∈ i.1, 0 < job.1 ∧ 0 < job.2
-
-/-- There is a nonpreemptive schedule with makespan at most `K`: a stage-1 machine `μ j` for
-every job and start times `s₁ j`, `s₂ j` such that distinct jobs on the same stage-1 machine
-and distinct jobs at stage 2 occupy disjoint intervals, each job starts stage 2 after finishing
-stage 1, and every job finishes stage 2 by `K`. -/
-def TwoStageHybridFlowShopFeasible (i : TwoStageHybridFlowShopInstance) : Prop :=
-  ∃ (μ : Fin i.1.length → Fin 2) (s₁ s₂ : Fin i.1.length → ℕ),
-    (∀ j k, j ≠ k → μ j = μ k →
-      s₁ j + (i.1.get j).1 ≤ s₁ k ∨ s₁ k + (i.1.get k).1 ≤ s₁ j) ∧
-    (∀ j k, j ≠ k → s₂ j + (i.1.get j).2 ≤ s₂ k ∨ s₂ k + (i.1.get k).2 ≤ s₂ j) ∧
-    (∀ j, s₁ j + (i.1.get j).1 ≤ s₂ j) ∧
-    ∀ j, s₂ j + (i.1.get j).2 ≤ i.2
-
-open Classical in
-/-- TWO-STAGE HYBRID FLOW SHOP as a decision problem over bitstrings. -/
-noncomputable def twoStageHybridFlowShopDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TwoStageHybridFlowShopInstance) x with
-  | some i => decide (WellFormed i ∧ TwoStageHybridFlowShopFeasible i)
-  | none => false
 
 /-- **TWO-STAGE HYBRID FLOW SHOP is NP-complete.** Source: Gupta (1988) (model); Garey and
 Johnson (1979), [SP12] (reduction in the module docstring). -/

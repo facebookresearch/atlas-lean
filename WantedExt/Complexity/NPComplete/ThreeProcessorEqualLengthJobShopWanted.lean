@@ -23,9 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.JobShopSchedulingDefs
+public import CSLibExt.Complexity.NPComplete.ThreeProcessorEqualLengthJobShopDefs
 
 @[expose] public section
 
@@ -59,21 +57,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance of the restriction: the instance is a well-formed JOB-SHOP
-SCHEDULING instance, `m = 3`, and all tasks have the same length `ℓ`. -/
-def RestrictedWellFormed (i : JobShopSchedulingInstance) : Prop :=
-  WellFormed i ∧ i.1 = 3 ∧ ∃ ℓ, ∀ job ∈ i.2.1, ∀ t ∈ job, t.1 = ℓ
-
-open Classical in
-/-- THREE-PROCESSOR JOB-SHOP SCHEDULING with equal task lengths, as a decision
-problem over bitstrings. -/
-noncomputable def threeProcessorEqualLengthJobShopDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := JobShopSchedulingInstance) x with
-  | some i => decide (RestrictedWellFormed i ∧ JobShopSchedulingFeasible i)
-  | none => false
 
 /-- **JOB-SHOP SCHEDULING remains NP-complete with `m = 3` processors when all tasks have the
 same length.** Source: Garey and Johnson (1979), [SS18], comment; Lenstra and Rinnooy Kan

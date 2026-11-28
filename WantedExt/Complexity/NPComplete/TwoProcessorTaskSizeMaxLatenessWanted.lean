@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Data.Fintype.Card
-public import Mathlib.Order.Interval.Finset.Nat
+public import CSLibExt.Complexity.NPComplete.TwoProcessorTaskSizeMaxLatenessDefs
 
 @[expose] public section
 
@@ -66,38 +63,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the tasks, task `j` being the `j`-th triple `(p_j, size_j, d_j)` of its
-processing time, its size and its due date, and the bound `K` as a pair `(K⁺, K⁻)` with
-`K = K⁺ - K⁻`. -/
-abbrev TwoProcessorTaskSizeMaxLatenessInstance := List (ℕ × ℕ × ℕ) × (ℕ × ℕ)
-
-/-- Well-formedness of an instance: there is at least one task, and every task has size `1` or
-`2`. -/
-def WellFormed (i : TwoProcessorTaskSizeMaxLatenessInstance) : Prop :=
-  i.1 ≠ [] ∧ ∀ x ∈ i.1, x.2.1 = 1 ∨ x.2.1 = 2
-
-/-- Some schedule, with start times `S j` and processor sets `π j ⊆ {0, 1}` of `size_j`
-processors, runs two different tasks that share a processor during disjoint intervals
-`[S j, S j + p_j)`, and completes every task `j` with lateness `C_j - d_j ≤ K⁺ - K⁻`, that is
-`S j + p_j + K⁻ ≤ d_j + K⁺`. -/
-def TwoProcessorTaskSizeMaxLatenessFeasible (i : TwoProcessorTaskSizeMaxLatenessInstance) :
-    Prop :=
-  ∃ S : Fin i.1.length → ℕ, ∃ π : Fin i.1.length → Finset (Fin 2),
-    (∀ j, (π j).card = (i.1.get j).2.1) ∧
-    (∀ j k, j ≠ k → ¬ Disjoint (π j) (π k) →
-      Disjoint (Finset.Ico (S j) (S j + (i.1.get j).1))
-        (Finset.Ico (S k) (S k + (i.1.get k).1))) ∧
-    ∀ j, S j + (i.1.get j).1 + i.2.2 ≤ (i.1.get j).2.2 + i.2.1
-
-open Classical in
-/-- `P2|size_i|Lmax` as a decision problem over bitstrings. -/
-noncomputable def twoProcessorTaskSizeMaxLatenessDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TwoProcessorTaskSizeMaxLatenessInstance) x with
-  | some i => decide (WellFormed i ∧ TwoProcessorTaskSizeMaxLatenessFeasible i)
-  | none => false
 
 /-- **ONE- AND TWO-PROCESSOR TASKS ON TWO PROCESSORS, maximum lateness (`P2|size_i|Lmax`) is
 NP-complete.** Source: Lee and Cai (1999), Appendix, as recorded in the Brucker-Knust

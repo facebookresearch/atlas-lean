@@ -25,9 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.RobotFlowShopThreeMachinesEqualReleaseMakespanWanted
+public import CSLibExt.Complexity.NPComplete.RobotFlowShopThreeMachinesEqualLatenessDefs
 
 @[expose] public section
 
@@ -78,48 +76,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the jobs `(t_i1, t_i2, d_i)` (transport times from `M_1` to `M_2` and from `M_2`
-to `M_3`, due date), one per entry, the processing time `p`, and the bound `y` as a pair
-`(y⁺, y⁻)` with `y = y⁺ - y⁻`. -/
-abbrev RobotFlowShopThreeMachinesEqualLatenessInstance := List (ℕ × ℕ × ℕ) × ℕ × (ℕ × ℕ)
-
-/-- The jobs of the instance, `Fin n` for `n` listed jobs. -/
-abbrev Job (i : RobotFlowShopThreeMachinesEqualLatenessInstance) : Type := Fin i.1.length
-
-/-- The transport time `t_i1` of job `i` from `M_1` to `M_2`. -/
-def firstTransport (i : RobotFlowShopThreeMachinesEqualLatenessInstance) (j : Job i) : ℕ :=
-  (i.1.get j).1
-
-/-- The transport time `t_i2` of job `i` from `M_2` to `M_3`. -/
-def secondTransport (i : RobotFlowShopThreeMachinesEqualLatenessInstance) (j : Job i) : ℕ :=
-  (i.1.get j).2.1
-
-/-- The due date `d_i` of job `i`. -/
-def dueDate (i : RobotFlowShopThreeMachinesEqualLatenessInstance) (j : Job i) : ℕ :=
-  (i.1.get j).2.2
-
-/-- Well-formedness: the processing time `p` is positive, and there is at least one job, so that
-`L_max` is a maximum over a nonempty set (transport times and due dates are non-negative
-integers, and the bound `y⁺ - y⁻` is an arbitrary integer). -/
-def WellFormed (i : RobotFlowShopThreeMachinesEqualLatenessInstance) : Prop :=
-  0 < i.2.1 ∧ i.1 ≠ []
-
-/-- Some single-robot schedule with operations of length `p` completes every job `j` with
-lateness `C_j - d_j ≤ y⁺ - y⁻`, where `C_j = f j + p`. -/
-def RobotFlowShopThreeMachinesEqualLatenessFeasible
-    (i : RobotFlowShopThreeMachinesEqualLatenessInstance) : Prop :=
-  ∃ a b c e f, IsEqualRobotSchedule i.2.1 (firstTransport i) (secondTransport i) a b c e f ∧
-    ∀ j, f j + i.2.1 + i.2.2.2 ≤ dueDate i j + i.2.2.1
-
-open Classical in
-/-- `F3;R1|p_ij=p;t_ik|L_max` as a decision problem over bitstrings. -/
-noncomputable def robotFlowShopThreeMachinesEqualLatenessDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := RobotFlowShopThreeMachinesEqualLatenessInstance) x with
-  | some i => decide (WellFormed i ∧ RobotFlowShopThreeMachinesEqualLatenessFeasible i)
-  | none => false
 
 /-- **ROBOT FLOW SHOP, EQUAL PROCESSING TIMES, MAXIMUM LATENESS `F3;R1|p_ij=p;t_ik|L_max` is
 NP-complete.** Source: Knust (1999), as recorded by Brucker and Knust; Hurink and Knust (2001)

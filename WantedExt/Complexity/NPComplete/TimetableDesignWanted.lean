@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Data.Fintype.Card
+public import CSLibExt.Complexity.NPComplete.TimetableDesignDefs
 
 @[expose] public section
 
@@ -55,38 +53,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the numbers `|H|`, `|C|`, `|T|` of work periods, craftsmen and tasks, the
-lists `A(c)` of available hours of the craftsmen, the lists `A(t)` of available hours of the
-tasks, and the requirement matrix `R`, one row `[R(c, 0), …, R(c, |T| - 1)]` per craftsman. -/
-abbrev TimetableDesignInstance :=
-  ℕ × ℕ × ℕ × List (List ℕ) × List (List ℕ) × List (List ℕ)
-
-/-- Well-formedness of an instance: there is one list of available hours per craftsman and
-per task, every available hour lies in `H`, and `R` is a `|C| × |T|` matrix. -/
-def WellFormed (i : TimetableDesignInstance) : Prop :=
-  i.2.2.2.1.length = i.2.1 ∧ (∀ a ∈ i.2.2.2.1, ∀ h ∈ a, h < i.1) ∧
-    i.2.2.2.2.1.length = i.2.2.1 ∧ (∀ a ∈ i.2.2.2.2.1, ∀ h ∈ a, h < i.1) ∧
-    i.2.2.2.2.2.length = i.2.1 ∧ ∀ row ∈ i.2.2.2.2.2, row.length = i.2.2.1
-
-/-- There is a timetable `f : C × T × H → {0, 1}` satisfying conditions (1)-(4). -/
-def TimetableDesignFeasible (i : TimetableDesignInstance) : Prop :=
-  ∃ f : Fin i.2.1 → Fin i.2.2.1 → Fin i.1 → Bool,
-    (∀ c t h, f c t h = true →
-      (h : ℕ) ∈ i.2.2.2.1.getD c [] ∧ (h : ℕ) ∈ i.2.2.2.2.1.getD t []) ∧
-    (∀ h c t t', f c t h = true → f c t' h = true → t = t') ∧
-    (∀ h t c c', f c t h = true → f c' t h = true → c = c') ∧
-    ∀ c t, (Finset.univ.filter fun h => f c t h = true).card =
-      (i.2.2.2.2.2.getD c []).getD t 0
-
-open Classical in
-/-- TIMETABLE DESIGN as a decision problem over bitstrings. -/
-noncomputable def timetableDesignDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TimetableDesignInstance) x with
-  | some i => decide (WellFormed i ∧ TimetableDesignFeasible i)
-  | none => false
 
 /-- **TIMETABLE DESIGN is NP-complete.** Source: Garey and Johnson (1979), [SS19]; Even, Itai,
 and Shamir (1976). -/

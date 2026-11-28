@@ -24,11 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
-public import Mathlib.Logic.Relation
-public import CSLibExt.Complexity.NPComplete.JobShopSchedulingDefs
+public import CSLibExt.Complexity.NPComplete.TwoProcessorUnitJobShopChainsCompletionTimeDefs
 
 @[expose] public section
 
@@ -78,62 +74,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the [SS18] instance of `JobShopSchedulingDefs` (the number of processors,
-the jobs as lists of `(l(t), p(t))` pairs, and, in the place of the deadline, the bound `K`),
-and the arcs `(j, j')` of the chains, `j` the immediate predecessor of `j'`. -/
-abbrev TwoProcessorUnitJobShopChainsCompletionTimeInstance :=
-  JobShopSchedulingInstance × List (ℕ × ℕ)
-
-/-- The arc relation of the chains: `j` is the immediate predecessor of `j'` when the pair
-`(j, j')` is listed. -/
-def Arc (i : TwoProcessorUnitJobShopChainsCompletionTimeInstance)
-    (j j' : Fin i.1.2.1.length) : Prop :=
-  ((j : ℕ), (j' : ℕ)) ∈ i.2
-
-/-- Well-formedness of an instance: the [SS18] instance is well-formed (`0 < m`, `1 ≤ n_j`,
-processors in `{1, …, m}`, consecutive tasks of a job on different processors, `0 < K`),
-`m = 2`, every task has length `1`, every arc names two jobs, no two distinct arcs share their
-tail (at most one immediate successor) or their head (at most one immediate predecessor), and
-the arcs have no cycle. -/
-def WellFormed (i : TwoProcessorUnitJobShopChainsCompletionTimeInstance) : Prop :=
-  JobShopScheduling.WellFormed i.1 ∧ i.1.1 = 2 ∧ (∀ job ∈ i.1.2.1, ∀ t ∈ job, t.1 = 1) ∧
-    (∀ a ∈ i.2, a.1 < i.1.2.1.length ∧ a.2 < i.1.2.1.length) ∧
-    (∀ a ∈ i.2, ∀ b ∈ i.2, a.1 = b.1 → a = b) ∧
-    (∀ a ∈ i.2, ∀ b ∈ i.2, a.2 = b.2 → a = b) ∧
-    ∀ j, ¬ Relation.TransGen (Arc i) j j
-
-/-- There is a job-shop schedule meeting the chains with total completion time at most
-`K`: start times `σ` that are one-to-one on the tasks of each processor, such that a task of a
-processor starting after another task `t'` of that processor starts no earlier than `t'`
-finishes, each task of a job starts no earlier than the previous task of that job finishes, the
-first task of a job starts no earlier than the last task of its immediate predecessor finishes,
-and the completion times `C j` (the finishing times of the last tasks) sum to at most `K`. -/
-def TwoProcessorUnitJobShopChainsCompletionTimeFeasible
-    (i : TwoProcessorUnitJobShopChainsCompletionTimeInstance) : Prop :=
-  ∃ σ : JobShopScheduling.Task i.1 → ℕ,
-    (∀ t t', taskProcessor i.1 t = taskProcessor i.1 t' → σ t = σ t' → t = t') ∧
-    (∀ t t', taskProcessor i.1 t = taskProcessor i.1 t' → σ t' < σ t →
-      σ t' + taskLength i.1 t' ≤ σ t) ∧
-    (∀ j (k k' : Fin (i.1.2.1.get j).length), k'.1 = k.1 + 1 →
-      σ ⟨j, k⟩ + taskLength i.1 ⟨j, k⟩ ≤ σ ⟨j, k'⟩) ∧
-    (∀ j j', Arc i j j' → ∀ (k : Fin (i.1.2.1.get j).length)
-      (k' : Fin (i.1.2.1.get j').length), k.1 + 1 = (i.1.2.1.get j).length → k'.1 = 0 →
-        σ ⟨j, k⟩ + taskLength i.1 ⟨j, k⟩ ≤ σ ⟨j', k'⟩) ∧
-    ∃ C : Fin i.1.2.1.length → ℕ,
-      (∀ j (k : Fin (i.1.2.1.get j).length), k.1 + 1 = (i.1.2.1.get j).length →
-        C j = σ ⟨j, k⟩ + taskLength i.1 ⟨j, k⟩) ∧
-      ∑ j, C j ≤ i.1.2.2
-
-open Classical in
-/-- TWO-PROCESSOR UNIT-TIME JOB-SHOP TOTAL COMPLETION TIME WITH CHAINS as a decision
-problem over bitstrings. -/
-noncomputable def twoProcessorUnitJobShopChainsCompletionTimeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TwoProcessorUnitJobShopChainsCompletionTimeInstance) x with
-  | some i => decide (WellFormed i ∧ TwoProcessorUnitJobShopChainsCompletionTimeFeasible i)
-  | none => false
 
 /-- **TWO-PROCESSOR UNIT-TIME JOB-SHOP TOTAL COMPLETION TIME WITH CHAINS is
 NP-complete.** Source: Timkovsky (1998); Brucker and Knust's classification

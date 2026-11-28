@@ -22,10 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
-public import Mathlib.Data.Fintype.Basic
+public import CSLibExt.Complexity.NPComplete.TwoProcessorFixedAllocationTotalCompletionDefs
 
 @[expose] public section
 
@@ -69,34 +66,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the tasks, task `i` being the `i`-th pair `(pᵢ, fixᵢ)` of its processing time
-and its list of required processors, and the bound `K`. -/
-abbrev TwoProcessorFixedAllocationTotalCompletionInstance := List (ℕ × List ℕ) × ℕ
-
-/-- Well-formedness of an instance: every task has a positive processing time and a nonempty
-set of required processors, listed without repetitions, all below `2`. -/
-def WellFormed (i : TwoProcessorFixedAllocationTotalCompletionInstance) : Prop :=
-  ∀ t ∈ i.1, 0 < t.1 ∧ t.2 ≠ [] ∧ t.2.Nodup ∧ ∀ k ∈ t.2, k < 2
-
-/-- There are start times `s` such that any two different tasks with a common required processor
-are processed in disjoint time intervals, and the total completion time
-`∑ᵢ (s i + pᵢ)` is at most `K`. -/
-def TwoProcessorFixedAllocationTotalCompletionFeasible
-    (i : TwoProcessorFixedAllocationTotalCompletionInstance) : Prop :=
-  ∃ s : Fin i.1.length → ℕ,
-    (∀ j j', j ≠ j' → (∃ k ∈ (i.1.get j).2, k ∈ (i.1.get j').2) →
-      s j + (i.1.get j).1 ≤ s j' ∨ s j' + (i.1.get j').1 ≤ s j) ∧
-    ∑ j, (s j + (i.1.get j).1) ≤ i.2
-
-open Classical in
-/-- `P2|fixᵢ|∑Cᵢ` as a decision problem over bitstrings. -/
-noncomputable def twoProcessorFixedAllocationTotalCompletionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TwoProcessorFixedAllocationTotalCompletionInstance) x with
-  | some i => decide (WellFormed i ∧ TwoProcessorFixedAllocationTotalCompletionFeasible i)
-  | none => false
 
 /-- **TWO-PROCESSOR MULTIPROCESSOR-TASK SCHEDULING TO MINIMIZE TOTAL COMPLETION TIME
 (`P2|fixᵢ|∑Cᵢ`) is NP-complete.** Source: Cai, Lee and Li (1998); Hoogeveen, van de Velde and

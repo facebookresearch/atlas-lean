@@ -20,8 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.SingleMachineChainsTimeLagsTotalCompletionDefs
 
 @[expose] public section
 
@@ -50,46 +49,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the chains (chain `c` is the list of processing times of its jobs, in chain
-order), the time lag `l`, and the bound `K`. Job `(c, k)` is the `k`-th job of chain `c`. -/
-abbrev SingleMachineChainsTimeLagsTotalCompletionInstance := List (List ℕ) × ℕ × ℕ
-
-/-- The processing time of job `(c, k)`. -/
-def ptime (i : SingleMachineChainsTimeLagsTotalCompletionInstance) (c k : ℕ) : ℕ :=
-  (i.1.getD c []).getD k 0
-
-/-- The number of jobs in chain `c`. -/
-def chainLength (i : SingleMachineChainsTimeLagsTotalCompletionInstance) (c : ℕ) : ℕ :=
-  (i.1.getD c []).length
-
-/-- Well-formedness of an instance: every chain has at least one job. -/
-def WellFormed (i : SingleMachineChainsTimeLagsTotalCompletionInstance) : Prop :=
-  ∀ c ∈ i.1, c ≠ []
-
-/-- A schedule with total completion time at most `K`: start times `S c k` such that the
-machine processes one job at a time, consecutive jobs of a chain respect the time lag, and the
-completion times `S c k + p_{c,k}` sum to at most `K`. -/
-def SingleMachineChainsTimeLagsTotalCompletionFeasible
-    (i : SingleMachineChainsTimeLagsTotalCompletionInstance) : Prop :=
-  ∃ S : ℕ → ℕ → ℕ,
-    (∀ c < i.1.length, ∀ k < chainLength i c, ∀ c' < i.1.length, ∀ k' < chainLength i c',
-      (c, k) ≠ (c', k') →
-        S c k + ptime i c k ≤ S c' k' ∨ S c' k' + ptime i c' k' ≤ S c k) ∧
-    (∀ c < i.1.length, ∀ k, k + 1 < chainLength i c →
-      S c k + ptime i c k + i.2.1 ≤ S c (k + 1)) ∧
-    (Finset.range i.1.length).sum (fun c =>
-      (Finset.range (chainLength i c)).sum (fun k => S c k + ptime i c k)) ≤ i.2.2
-
-open Classical in
-/-- SINGLE-MACHINE CHAINS WITH CONSTANT TIME LAGS AND TOTAL COMPLETION TIME as a decision problem
-over bitstrings. -/
-noncomputable def singleMachineChainsTimeLagsTotalCompletionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SingleMachineChainsTimeLagsTotalCompletionInstance) x with
-  | some i => decide (WellFormed i ∧ SingleMachineChainsTimeLagsTotalCompletionFeasible i)
-  | none => false
 
 /-- **SINGLE-MACHINE CHAINS WITH CONSTANT TIME LAGS AND TOTAL COMPLETION TIME is NP-complete.**
 Source: Brucker and Knust (1999); Brucker and Knust (classification tables). -/

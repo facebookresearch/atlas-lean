@@ -22,10 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Data.Finset.Card
-public import WantedExt.Complexity.NPComplete.ReleaseDeadlinesSchedulingWanted
+public import CSLibExt.Complexity.NPComplete.SequencingWithReleaseTimesAndDeadlinesTwoValuesDefs
 
 @[expose] public section
 
@@ -64,24 +61,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: every length `l(t)` and every deadline `d(t)` is positive,
-the set `{r(t) : t ∈ T}` of release times has at most two elements, and the set
-`{d(t) : t ∈ T}` of deadlines has at most two elements. -/
-def WellFormed (i : ReleaseDeadlinesScheduling.ReleaseDeadlinesSchedulingInstance) : Prop :=
-  (∀ t ∈ i, 0 < t.1 ∧ 0 < t.2.2) ∧ (i.map fun t => t.2.1).toFinset.card ≤ 2 ∧
-    (i.map fun t => t.2.2).toFinset.card ≤ 2
-
-open Classical in
-/-- SEQUENCING WITH RELEASE TIMES AND DEADLINES with two release times and two deadlines as a
-decision problem over bitstrings. -/
-noncomputable def sequencingWithReleaseTimesAndDeadlinesTwoValuesDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ReleaseDeadlinesScheduling.ReleaseDeadlinesSchedulingInstance) x with
-  | some i => decide (WellFormed i ∧
-      ReleaseDeadlinesScheduling.ReleaseDeadlinesSchedulingFeasible i)
-  | none => false
 
 /-- **SEQUENCING WITH RELEASE TIMES AND DEADLINES is NP-complete with two release times and two
 deadlines.** Source: Garey and Johnson (1979), [SS1], comment, and Theorem 3.8. -/

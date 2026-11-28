@@ -22,11 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Data.Fintype.Card
-public import Mathlib.Order.Defs.Unbundled
-public import CSLibExt.Complexity.NPComplete.SequencingToMinimizeWeightedTardinessDefs
+public import CSLibExt.Complexity.NPComplete.SequencingToMinimizeTardyTasksDefs
 
 @[expose] public section
 
@@ -67,48 +63,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the pairs `(l(t), d(t))` of length and deadline of the tasks `0, …, n - 1`,
-the pairs `(t, t')` with `t < t'`, and the bound `K`. -/
-abbrev SequencingToMinimizeTardyTasksInstance := List (ℕ × ℕ) × List (ℕ × ℕ) × ℕ
-
-/-- The tasks of the instance, `Fin n` for `n` listed tasks. -/
-abbrev Task (i : SequencingToMinimizeTardyTasksInstance) : Type := Fin i.1.length
-
-/-- The length `l(t)` of task `t`. -/
-def length (i : SequencingToMinimizeTardyTasksInstance) (t : Task i) : ℕ :=
-  (i.1.get t).1
-
-/-- The deadline `d(t)` of task `t`. -/
-def deadline (i : SequencingToMinimizeTardyTasksInstance) (t : Task i) : ℕ :=
-  (i.1.get t).2
-
-/-- The precedence relation: `t < t'` when the pair `(t, t')` is listed. -/
-def Prec (i : SequencingToMinimizeTardyTasksInstance) (t t' : Task i) : Prop :=
-  ((t : ℕ), (t' : ℕ)) ∈ i.2.1
-
-/-- Well-formedness of an instance: every length and deadline is positive, `0 < K ≤ |T|`, every
-listed pair names two tasks, and the listed pairs form a strict partial order. -/
-def WellFormed (i : SequencingToMinimizeTardyTasksInstance) : Prop :=
-  (∀ x ∈ i.1, 0 < x.1 ∧ 0 < x.2) ∧ 0 < i.2.2 ∧ i.2.2 ≤ i.1.length ∧
-    (∀ p ∈ i.2.1, p.1 < i.1.length ∧ p.2 < i.1.length) ∧ IsStrictOrder (Task i) (Prec i)
-
-/-- Some one-processor schedule obeys the precedence constraints and has at most `K` tardy
-tasks, those with `σ(t) + l(t) > d(t)`. -/
-def SequencingToMinimizeTardyTasksFeasible (i : SequencingToMinimizeTardyTasksInstance) :
-    Prop :=
-  ∃ σ : Task i → ℕ, IsOneProcessorSchedule (length i) σ ∧
-    (∀ t t', Prec i t t' → σ t + length i t ≤ σ t') ∧
-    (Finset.univ.filter fun t => deadline i t < σ t + length i t).card ≤ i.2.2
-
-open Classical in
-/-- SEQUENCING TO MINIMIZE TARDY TASKS as a decision problem over bitstrings. -/
-noncomputable def sequencingToMinimizeTardyTasksDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SequencingToMinimizeTardyTasksInstance) x with
-  | some i => decide (WellFormed i ∧ SequencingToMinimizeTardyTasksFeasible i)
-  | none => false
 
 /-- **SEQUENCING TO MINIMIZE TARDY TASKS is NP-complete.** Source: Garey and Johnson
 (1979), [SS2] and Section 3.2.3; Lenstra and Rinnooy Kan (1980), Theorem 1. -/

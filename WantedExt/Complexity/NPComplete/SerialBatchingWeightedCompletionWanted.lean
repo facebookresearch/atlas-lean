@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import CSLibExt.Complexity.NPComplete.SerialBatchingWeightedCompletionDefs
 
 @[expose] public section
 
@@ -56,58 +54,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the setup time `s`, the jobs as pairs `(p_j, w_j)` of
-processing time and weight, and the bound `K`. -/
-abbrev SerialBatchingWeightedCompletionInstance := ℕ × List (ℕ × ℕ) × ℕ
-
-/-- The number of jobs. -/
-abbrev numJobs (i : SerialBatchingWeightedCompletionInstance) : ℕ := i.2.1.length
-
-/-- The processing time of job `j`. -/
-def proc (i : SerialBatchingWeightedCompletionInstance) (j : Fin (numJobs i)) : ℕ :=
-  (i.2.1.get j).1
-
-/-- The completion time of batch `k` when job `j` is in batch `b j` and batch `k` starts its setup
-at `S k`: setup, then the jobs of the batch one after another. -/
-def batchCompletion (i : SerialBatchingWeightedCompletionInstance)
-    (b : Fin (numJobs i) → ℕ) (S : ℕ → ℕ) (k : ℕ) : ℕ :=
-  S k + i.1 + ∑ j ∈ Finset.univ.filter (fun j => b j = k), proc i j
-
-/-- The batches are processed one after another in the order of their indices: a batch starts
-its setup only after every nonempty batch with a smaller index has completed. -/
-def IsBatchSchedule (i : SerialBatchingWeightedCompletionInstance)
-    (b : Fin (numJobs i) → ℕ) (S : ℕ → ℕ) : Prop :=
-  ∀ j j', b j < b j' → batchCompletion i b S (b j) ≤ S (b j')
-
-/-- The completion time of job `j`: the completion time of its batch. -/
-def completion (i : SerialBatchingWeightedCompletionInstance)
-    (b : Fin (numJobs i) → ℕ) (S : ℕ → ℕ) (j : Fin (numJobs i)) : ℕ :=
-  batchCompletion i b S (b j)
-
-/-- The weight of job `j`. -/
-def weight (i : SerialBatchingWeightedCompletionInstance) (j : Fin (numJobs i)) : ℕ :=
-  (i.2.1.get j).2
-
-/-- Well-formedness of an instance: the setup time `s` is positive. -/
-def WellFormed (i : SerialBatchingWeightedCompletionInstance) : Prop :=
-  0 < i.1
-
-/-- Some serial-batching schedule has total weighted completion time at most `K`. -/
-def SerialBatchingWeightedCompletionFeasible
-    (i : SerialBatchingWeightedCompletionInstance) : Prop :=
-  ∃ (b : Fin (numJobs i) → ℕ) (S : ℕ → ℕ), IsBatchSchedule i b S ∧
-    ∑ j, weight i j * completion i b S j ≤ i.2.2
-
-open Classical in
-/-- SERIAL-BATCHING TOTAL WEIGHTED COMPLETION TIME as a decision problem over
-bitstrings. -/
-noncomputable def serialBatchingWeightedCompletionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SerialBatchingWeightedCompletionInstance) x with
-  | some i => decide (WellFormed i ∧ SerialBatchingWeightedCompletionFeasible i)
-  | none => false
 
 /-- **SERIAL-BATCHING TOTAL WEIGHTED COMPLETION TIME is NP-complete.**
 Source: Albers and Brucker (1993), as recorded by Baptiste and Jouglet (2001), Table 1. -/

@@ -24,11 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import Mathlib.Data.Fintype.Defs
-public import CSLibExt.Complexity.NPComplete.SequencingToMinimizeWeightedTardinessDefs
+public import CSLibExt.Complexity.NPComplete.TotalTardinessWithReleaseTimesDefs
 
 @[expose] public section
 
@@ -74,50 +70,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the tasks, task `t` being the `t`-th triple `(l(t), r(t), d(t))` of length,
-release time and deadline, and the bound `K`. -/
-abbrev TotalTardinessWithReleaseTimesInstance := List (ℕ × ℕ × ℕ) × ℕ
-
-/-- The tasks of the instance, `Fin n` for `n` listed triples. -/
-abbrev Task (i : TotalTardinessWithReleaseTimesInstance) : Type := Fin i.1.length
-
-/-- The length `l(t)` of task `t`. -/
-def taskLength (i : TotalTardinessWithReleaseTimesInstance) (t : Task i) : ℕ :=
-  (i.1.get t).1
-
-/-- The release time `r(t)` of task `t`. -/
-def releaseTime (i : TotalTardinessWithReleaseTimesInstance) (t : Task i) : ℕ :=
-  (i.1.get t).2.1
-
-/-- The deadline `d(t)` of task `t`. -/
-def deadline (i : TotalTardinessWithReleaseTimesInstance) (t : Task i) : ℕ :=
-  (i.1.get t).2.2
-
-/-- Well-formedness of an instance: every length and deadline is positive, and `K` is
-positive. -/
-def WellFormed (i : TotalTardinessWithReleaseTimesInstance) : Prop :=
-  (∀ x ∈ i.1, 0 < x.1 ∧ 0 < x.2.2) ∧ 0 < i.2
-
-/-- Some one-processor schedule starts every task no earlier than its release time and has
-total tardiness at most `K`: the sum, over the tasks with `σ(t) + l(t) > d(t)`, of
-`σ(t) + l(t) - d(t)` is at most `K`. -/
-def TotalTardinessWithReleaseTimesFeasible (i : TotalTardinessWithReleaseTimesInstance) :
-    Prop :=
-  ∃ σ : Task i → ℕ, IsOneProcessorSchedule (taskLength i) σ ∧
-    (∀ t, releaseTime i t ≤ σ t) ∧
-    ∑ t ∈ Finset.univ.filter (fun t => deadline i t < σ t + taskLength i t),
-      (σ t + taskLength i t - deadline i t) ≤ i.2
-
-open Classical in
-/-- SEQUENCING TO MINIMIZE TOTAL TARDINESS WITH RELEASE TIMES as a decision problem over
-bitstrings. -/
-noncomputable def totalTardinessWithReleaseTimesDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TotalTardinessWithReleaseTimesInstance) x with
-  | some i => decide (WellFormed i ∧ TotalTardinessWithReleaseTimesFeasible i)
-  | none => false
 
 /-- **SEQUENCING TO MINIMIZE TOTAL TARDINESS WITH RELEASE TIMES is NP-complete.** Source:
 Garey and Johnson (1979), [SS5], comment, and [SS1]; Lenstra, Rinnooy Kan, and Brucker (1977),

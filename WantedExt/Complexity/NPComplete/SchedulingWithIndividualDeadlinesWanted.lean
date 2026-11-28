@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Data.Fintype.Card
-public import Mathlib.Order.Defs.Unbundled
+public import CSLibExt.Complexity.NPComplete.SchedulingWithIndividualDeadlinesDefs
 
 @[expose] public section
 
@@ -54,48 +51,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number of processors `m`, the pairs `(t, t')` with `t < t'`, and the
-deadlines `d(0), …, d(n - 1)` (tasks `Fin n`). -/
-abbrev SchedulingWithIndividualDeadlinesInstance := ℕ × List (ℕ × ℕ) × List ℕ
-
-/-- The tasks of the instance, `Fin n` for `n` deadlines. -/
-abbrev Task (i : SchedulingWithIndividualDeadlinesInstance) : Type := Fin i.2.2.length
-
-/-- The precedence relation: `t < t'` when the pair `(t, t')` is listed. -/
-def Prec (i : SchedulingWithIndividualDeadlinesInstance) (t t' : Task i) : Prop :=
-  ((t : ℕ), (t' : ℕ)) ∈ i.2.1
-
-/-- The deadline `d(t)` of task `t`. -/
-def deadline (i : SchedulingWithIndividualDeadlinesInstance) (t : Task i) : ℕ :=
-  i.2.2.getD t 0
-
-/-- The tasks running at time `u` under `σ`: `σ(t) ≤ u < σ(t) + l(t)` with `l(t) = 1`. -/
-def running (i : SchedulingWithIndividualDeadlinesInstance) (σ : Task i → ℕ) (u : ℕ) :
-    Finset (Task i) :=
-  Finset.univ.filter fun t => σ t ≤ u ∧ u < σ t + 1
-
-/-- Well-formedness of an instance: `0 < m`, every listed pair names two tasks, the listed pairs
-form a strict partial order, and every deadline is positive. -/
-def WellFormed (i : SchedulingWithIndividualDeadlinesInstance) : Prop :=
-  0 < i.1 ∧ (∀ p ∈ i.2.1, p.1 < i.2.2.length ∧ p.2 < i.2.2.length) ∧
-    IsStrictOrder (Task i) (Prec i) ∧ ∀ d ∈ i.2.2, 0 < d
-
-/-- Some `m`-processor schedule of the unit-length tasks obeys the precedence constraints and
-meets every task's deadline. -/
-def SchedulingWithIndividualDeadlinesFeasible (i : SchedulingWithIndividualDeadlinesInstance) :
-    Prop :=
-  ∃ σ : Task i → ℕ, (∀ u, (running i σ u).card ≤ i.1) ∧
-    (∀ t t', Prec i t t' → σ t + 1 ≤ σ t') ∧ ∀ t, σ t + 1 ≤ deadline i t
-
-open Classical in
-/-- SCHEDULING WITH INDIVIDUAL DEADLINES as a decision problem over bitstrings. -/
-noncomputable def schedulingWithIndividualDeadlinesDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SchedulingWithIndividualDeadlinesInstance) x with
-  | some i => decide (WellFormed i ∧ SchedulingWithIndividualDeadlinesFeasible i)
-  | none => false
 
 /-- **SCHEDULING WITH INDIVIDUAL DEADLINES is NP-complete.** Source: Garey and Johnson
 (1979), [SS11]; Brucker, Garey and Johnson (1977). -/

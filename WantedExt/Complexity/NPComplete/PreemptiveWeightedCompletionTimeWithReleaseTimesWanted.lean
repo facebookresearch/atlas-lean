@@ -26,14 +26,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import Mathlib.Data.Finset.Card
-public import Mathlib.Data.Finset.Lattice.Fold
-public import Mathlib.Data.Fintype.Defs
-public import Mathlib.Logic.Pairwise
-public import WantedExt.Complexity.NPComplete.WeightedCompletionTimeWithReleaseTimesWanted
+public import CSLibExt.Complexity.NPComplete.PreemptiveWeightedCompletionTimeWithReleaseTimesDefs
 
 @[expose] public section
 
@@ -88,35 +81,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- A preemptive one-processor schedule for tasks with lengths `l` (Garey and Johnson, [SS12],
-with integer start times): task `t` is processed in the unit time slots `[u, u + 1)` for
-`u ∈ S t`, exactly `l(t)` of them, and no slot is used by two different tasks. -/
-def IsPreemptiveOneProcessorSchedule {n : ℕ} (l : Fin n → ℕ) (S : Fin n → Finset ℕ) : Prop :=
-  (∀ t, (S t).card = l t) ∧ Pairwise fun t t' => Disjoint (S t) (S t')
-
-/-- The completion time of task `t` in the slot schedule `S`: the end `u + 1` of its last slot
-`u`. -/
-def completionTime {n : ℕ} (S : Fin n → Finset ℕ) (t : Fin n) : ℕ :=
-  (S t).sup id + 1
-
-/-- Some preemptive one-processor schedule processes no task before its release time and has
-weighted completion time `∑ₜ w(t) · C(t)` at most `K`. -/
-def PreemptiveWeightedCompletionTimeWithReleaseTimesFeasible
-    (i : WeightedCompletionTimeWithReleaseTimesInstance) : Prop :=
-  ∃ S : Task i → Finset ℕ, IsPreemptiveOneProcessorSchedule (taskLength i) S ∧
-    (∀ t, ∀ u ∈ S t, releaseTime i t ≤ u) ∧
-    ∑ t, weight i t * completionTime S t ≤ i.2
-
-open Classical in
-/-- PREEMPTIVE SEQUENCING TO MINIMIZE WEIGHTED COMPLETION TIME WITH RELEASE TIMES as a
-decision problem over bitstrings. -/
-noncomputable def preemptiveWeightedCompletionTimeWithReleaseTimesDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := WeightedCompletionTimeWithReleaseTimesInstance) x with
-  | some i => decide (WellFormed i ∧ PreemptiveWeightedCompletionTimeWithReleaseTimesFeasible i)
-  | none => false
 
 /-- **PREEMPTIVE SEQUENCING TO MINIMIZE WEIGHTED COMPLETION TIME WITH RELEASE TIMES is
 NP-complete.** Source: Garey and Johnson (1979), [SS4], comment; Labetoulle, Lawler, Lenstra,

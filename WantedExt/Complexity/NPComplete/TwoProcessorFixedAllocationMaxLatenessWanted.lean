@@ -20,8 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.TwoProcessorFixedAllocationMaxLatenessDefs
 
 @[expose] public section
 
@@ -69,36 +68,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the tasks, task `i` being the `i`-th triple `(pᵢ, fixᵢ, dᵢ)` of its processing
-time, its list of required processors and its due date, and the bound `y` as a pair
-`(y⁺, y⁻)` with `y = y⁺ - y⁻`. -/
-abbrev TwoProcessorFixedAllocationMaxLatenessInstance := List (ℕ × List ℕ × ℕ) × (ℕ × ℕ)
-
-/-- Well-formedness of an instance: there is at least one task, and every task has a positive
-processing time and a nonempty set of required processors, listed without repetitions, all below
-`2`. -/
-def WellFormed (i : TwoProcessorFixedAllocationMaxLatenessInstance) : Prop :=
-  i.1 ≠ [] ∧ ∀ t ∈ i.1, 0 < t.1 ∧ t.2.1 ≠ [] ∧ t.2.1.Nodup ∧ ∀ k ∈ t.2.1, k < 2
-
-/-- There are start times `s` such that any two different tasks with a common required processor
-are processed in disjoint time intervals, and every task `i` has lateness
-`(s i + pᵢ) - dᵢ ≤ y⁺ - y⁻`. -/
-def TwoProcessorFixedAllocationMaxLatenessFeasible
-    (i : TwoProcessorFixedAllocationMaxLatenessInstance) : Prop :=
-  ∃ s : Fin i.1.length → ℕ,
-    (∀ j j', j ≠ j' → (∃ k ∈ (i.1.get j).2.1, k ∈ (i.1.get j').2.1) →
-      s j + (i.1.get j).1 ≤ s j' ∨ s j' + (i.1.get j').1 ≤ s j) ∧
-    ∀ j, s j + (i.1.get j).1 + i.2.2 ≤ (i.1.get j).2.2 + i.2.1
-
-open Classical in
-/-- `P2|fixᵢ|L_max` as a decision problem over bitstrings. -/
-noncomputable def twoProcessorFixedAllocationMaxLatenessDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TwoProcessorFixedAllocationMaxLatenessInstance) x with
-  | some i => decide (WellFormed i ∧ TwoProcessorFixedAllocationMaxLatenessFeasible i)
-  | none => false
 
 /-- **TWO-PROCESSOR MULTIPROCESSOR-TASK SCHEDULING TO MINIMIZE MAXIMUM LATENESS
 (`P2|fixᵢ|L_max`) is NP-complete.** Source: Hoogeveen, van de Velde and Veltman (1994),

@@ -23,9 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.TwoMachineSingleServerUnitWeightedTardinessWanted
+public import CSLibExt.Complexity.NPComplete.TwoMachineSingleServerUnitTotalTardinessDefs
 
 @[expose] public section
 
@@ -70,28 +68,6 @@ NP-completeness is stated in the same form as the proved results in
 `CSLibExt.Computability.Complexity.Karp`: membership in `MetaMathlibExt.ComplexityTheory.NP`, plus a
 polynomial-time many-one reduction from every language in `NP` (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance `(jobs, K)`: job `j` is the `j`-th pair `(s_j, d_j)` of setup time and due date
-(every processing time is `1`), and `K` is the bound. -/
-abbrev TwoMachineSingleServerUnitTotalTardinessInstance := List (ℕ × ℕ) × ℕ
-
-/-- Some schedule on two machines with a single server and unit processing times has total tardiness
-`Σ_j max(0, C_j - d_j)` at most `K`, where `C_j = t j + s_j + 1` (natural-number subtraction
-truncates at `0`). -/
-def TwoMachineSingleServerUnitTotalTardinessFeasible
-    (i : TwoMachineSingleServerUnitTotalTardinessInstance) : Prop :=
-  ∃ μ : Fin i.1.length → Fin 2, ∃ t : Fin i.1.length → ℕ,
-    IsSingleServerSchedule 2 (fun j => (i.1.get j).1) (fun _ => 1) μ t ∧
-      (∑ j, (t j + (i.1.get j).1 + 1 - (i.1.get j).2)) ≤ i.2
-
-open Classical in
-/-- `P2;S1|p_i=1|ΣT_i` as a decision problem over bitstrings. -/
-noncomputable def twoMachineSingleServerUnitTotalTardinessDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TwoMachineSingleServerUnitTotalTardinessInstance) x with
-  | some i => decide (TwoMachineSingleServerUnitTotalTardinessFeasible i)
-  | none => false
 
 /-- **TWO PARALLEL MACHINES WITH A SINGLE SERVER, unit processing times, total tardiness
 (`P2;S1|p_i=1|ΣT_i`) is NP-complete.** Source: Hall, Potts and Sriskandarajah (2000), as recorded in

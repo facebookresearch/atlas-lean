@@ -26,9 +26,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import CSLibExt.Complexity.NPComplete.TwoProcessorTaskSizeTotalCompletionDefs
 
 @[expose] public section
 
@@ -71,35 +69,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the tasks `(p_i, size_i)` (processing time, size), one per entry, and the
-bound `K`. -/
-abbrev TwoProcessorTaskSizeTotalCompletionInstance := List (ℕ × ℕ) × ℕ
-
-/-- Well-formedness: every task has size `1` or `2`. -/
-def WellFormed (i : TwoProcessorTaskSizeTotalCompletionInstance) : Prop :=
-  ∀ t ∈ i.1, 1 ≤ t.2 ∧ t.2 ≤ 2
-
-/-- Start times `s` of the tasks `(p_j, size_j)` fit on two processors: at every time `t`, the
-tasks running at `t` (`s j ≤ t < s j + p_j`) have total size at most `2`. -/
-def FitsOnTwoProcessors (tasks : List (ℕ × ℕ)) (s : Fin tasks.length → ℕ) : Prop :=
-  ∀ t : ℕ, ∑ j ∈ Finset.univ.filter (fun j => s j ≤ t ∧ t < s j + (tasks.get j).1),
-    (tasks.get j).2 ≤ 2
-
-/-- There are start times `s` that fit on two processors with total completion time
-`∑_j (s j + p_j) ≤ K`. -/
-def TwoProcessorTaskSizeTotalCompletionFeasible
-    (i : TwoProcessorTaskSizeTotalCompletionInstance) : Prop :=
-  ∃ s : Fin i.1.length → ℕ, FitsOnTwoProcessors i.1 s ∧ ∑ j, (s j + (i.1.get j).1) ≤ i.2
-
-open Classical in
-/-- `P2|size_i|ΣC_i` as a decision problem over bitstrings. -/
-noncomputable def twoProcessorTaskSizeTotalCompletionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TwoProcessorTaskSizeTotalCompletionInstance) x with
-  | some i => decide (WellFormed i ∧ TwoProcessorTaskSizeTotalCompletionFeasible i)
-  | none => false
 
 /-- **TWO-PROCESSOR TASKS, TOTAL COMPLETION TIME `P2|size_i|ΣC_i` is NP-complete.** Source: Lee
 and Cai (1999), as recorded in the Brucker-Knust classification. -/

@@ -23,11 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Algebra.BigOperators.Intervals
-public import Mathlib.Combinatorics.Digraph.Basic
-public import Mathlib.Logic.Relation
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.StorageTimeSequencingDefs
 
 @[expose] public section
 
@@ -70,45 +66,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the task lengths `l(0), …, l(n - 1)`, the edges `(t₁, t₂, w)` (arc `⟨t₁, t₂⟩`
-with weight `w`), and the bound `K`. -/
-abbrev StorageTimeSequencingInstance := List ℕ × List (ℕ × ℕ × ℕ) × ℕ
-
-/-- The precedence digraph on the tasks `Fin n`: an arc `⟨t₁, t₂⟩` for every edge. -/
-def Graph (i : StorageTimeSequencingInstance) : Digraph (Fin i.1.length) where
-  Adj u v := ∃ e ∈ i.2.1, e.1 = u ∧ e.2.1 = v
-
-/-- Well-formedness of an instance: every length is positive, every edge joins two tasks, no
-arc carries two weights (the arcs of the edge list are distinct), the precedence digraph is
-acyclic (no task reaches itself by a nonempty directed path), and `K` is positive. -/
-def WellFormed (i : StorageTimeSequencingInstance) : Prop :=
-  (∀ x ∈ i.1, 0 < x) ∧ (∀ e ∈ i.2.1, e.1 < i.1.length ∧ e.2.1 < i.1.length) ∧
-    (i.2.1.map fun e => (e.1, e.2.1)).Nodup ∧
-    (∀ v, ¬ Relation.TransGen (Graph i).Adj v v) ∧ 0 < i.2.2
-
-/-- The total storage-time product of the processing order `perm`: for each edge
-`(t₁, t₂, w)`, the weight `w` times the total length of the tasks in the positions from
-`min(p₁, p₂)` to `max(p₁, p₂)`. -/
-def storageTime (i : StorageTimeSequencingInstance) (perm : List ℕ) : ℕ :=
-  (i.2.1.map fun e => e.2.2 *
-    ∑ k ∈ Finset.Icc (min (perm.idxOf e.1) (perm.idxOf e.2.1))
-      (max (perm.idxOf e.1) (perm.idxOf e.2.1)), i.1.getD (perm.getD k 0) 0).sum
-
-/-- Some processing order of the tasks obeys every precedence constraint and has storage-time
-product at most `K`. -/
-def StorageTimeSequencingFeasible (i : StorageTimeSequencingInstance) : Prop :=
-  ∃ perm : List ℕ, perm.Perm (List.range i.1.length) ∧
-    (∀ e ∈ i.2.1, perm.idxOf e.1 < perm.idxOf e.2.1) ∧ storageTime i perm ≤ i.2.2
-
-open Classical in
-/-- STORAGE-TIME SEQUENCING as a decision problem over bitstrings. -/
-noncomputable def storageTimeSequencingDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := StorageTimeSequencingInstance) x with
-  | some i => decide (WellFormed i ∧ StorageTimeSequencingFeasible i)
-  | none => false
 
 /-- **STORAGE-TIME SEQUENCING is NP-complete.** Source: Crescenzi and Kann, MINIMUM
 STORAGE-TIME SEQUENCING; Rao and Richa (2005); Garey and Johnson (1979), [GT43] (special case). -/

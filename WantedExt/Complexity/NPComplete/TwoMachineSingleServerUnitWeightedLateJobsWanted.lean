@@ -24,9 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.TwoMachineSingleServerUnitWeightedTardinessWanted
+public import CSLibExt.Complexity.NPComplete.TwoMachineSingleServerUnitWeightedLateJobsDefs
 
 @[expose] public section
 
@@ -75,25 +73,6 @@ NP-completeness is stated in the same form as the proved results in
 `CSLibExt.Computability.Complexity.Karp`: membership in `MetaMathlibExt.ComplexityTheory.NP`, plus a
 polynomial-time many-one reduction from every language in `NP` (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Some schedule on two machines with a single server and unit processing times has total weight of
-late jobs at most `K`: the sum of `w_j` over the jobs with `C_j = t j + s_j + 1 > d_j` is at most
-`K`. -/
-def TwoMachineSingleServerUnitWeightedLateJobsFeasible
-    (i : TwoMachineSingleServerUnitInstance) : Prop :=
-  ∃ μ : Fin i.1.length → Fin 2, ∃ t : Fin i.1.length → ℕ,
-    IsSingleServerSchedule 2 (fun j => (i.1.get j).1) (fun _ => 1) μ t ∧
-      (∑ j ∈ Finset.univ.filter (fun j => (i.1.get j).2.2 < t j + (i.1.get j).1 + 1),
-        (i.1.get j).2.1) ≤ i.2
-
-open Classical in
-/-- `P2;S1|p_i=1|Σw_iU_i` as a decision problem over bitstrings. -/
-noncomputable def twoMachineSingleServerUnitWeightedLateJobsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TwoMachineSingleServerUnitInstance) x with
-  | some i => decide (TwoMachineSingleServerUnitWeightedLateJobsFeasible i)
-  | none => false
 
 /-- **TWO PARALLEL MACHINES WITH A SINGLE SERVER, unit processing times, weighted number of late
 jobs (`P2;S1|p_i=1|Σw_iU_i`) is NP-complete.** Source: Hall, Potts and Sriskandarajah (2000), as

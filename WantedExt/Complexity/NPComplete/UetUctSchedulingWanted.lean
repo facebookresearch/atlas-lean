@@ -23,9 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Logic.Relation
+public import CSLibExt.Complexity.NPComplete.UetUctSchedulingDefs
 
 @[expose] public section
 
@@ -64,42 +62,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number `m` of processors, the processing times `[p_1, …, p_n]` of the
-tasks (all `1`), the arcs `(j, k)` of the precedence graph (`k` needs data from `j`), and the
-bound `d`. -/
-abbrev UetUctSchedulingInstance := ℕ × List ℕ × List (ℕ × ℕ) × ℕ
-
-/-- The arc relation of the precedence graph: `j → k` when the pair `(j, k)` is listed. -/
-def Arc (i : UetUctSchedulingInstance) (j k : Fin i.2.1.length) : Prop :=
-  ((j : ℕ), (k : ℕ)) ∈ i.2.2.1
-
-/-- Well-formedness of an instance: `0 < m`, every processing time is `1`, every arc names two
-tasks, and the precedence graph is acyclic (the transitive closure `Relation.TransGen` of the arc
-relation is irreflexive). -/
-def WellFormed (i : UetUctSchedulingInstance) : Prop :=
-  0 < i.1 ∧ (∀ p ∈ i.2.1, p = 1) ∧ (∀ a ∈ i.2.2.1, a.1 < i.2.1.length ∧ a.2 < i.2.1.length) ∧
-    ∀ j, ¬ Relation.TransGen (Arc i) j j
-
-/-- Some schedule, a start time `S j` (task `j` occupies `[S j, S j + 1)`) and a processor
-`P j` for every task, runs at most one task at a time on each processor, respects every arc
-`j → k` (`S j + 1 ≤ S k` on a common processor, `S j + 1 + 1 ≤ S k` on different
-processors), and completes every task by `d`. -/
-def UetUctSchedulingFeasible (i : UetUctSchedulingInstance) : Prop :=
-  ∃ (S : Fin i.2.1.length → ℕ) (P : Fin i.2.1.length → Fin i.1),
-    (∀ j k, j ≠ k → P j = P k → S j ≠ S k) ∧
-    (∀ j k, Arc i j k → P j = P k → S j + 1 ≤ S k) ∧
-    (∀ j k, Arc i j k → P j ≠ P k → S j + 1 + 1 ≤ S k) ∧
-    ∀ j, S j + 1 ≤ i.2.2.2
-
-open Classical in
-/-- UET-UCT SCHEDULING as a decision problem over bitstrings. -/
-noncomputable def uetUctSchedulingDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := UetUctSchedulingInstance) x with
-  | some i => decide (WellFormed i ∧ UetUctSchedulingFeasible i)
-  | none => false
 
 /-- **UET-UCT SCHEDULING (UNIT COMMUNICATION DELAYS) is NP-complete.** Source: Rayward-Smith
 (1987); Hoogeveen, Lenstra, and Veltman (1994), Theorem 2. -/

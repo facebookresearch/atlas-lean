@@ -20,8 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.SingleMachineChainsTimeLagMakespanDefs
 
 @[expose] public section
 
@@ -63,37 +62,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: processing times `p`, chains of job indices, time lag `l`, and bound `K`. -/
-abbrev SingleMachineChainsTimeLagMakespanInstance := List ℕ × List (List ℕ) × ℕ × ℕ
-
-/-- The processing time of job `j`. -/
-def pt (i : SingleMachineChainsTimeLagMakespanInstance) (j : ℕ) : ℕ := i.1.getD j 0
-
-/-- Well-formedness of an instance: the chains consist of job indices, and no job occurs twice
-(in one chain or in two chains), so the chains are disjoint. -/
-def WellFormed (i : SingleMachineChainsTimeLagMakespanInstance) : Prop :=
-  i.2.1.flatten.Nodup ∧ ∀ j ∈ i.2.1.flatten, j < i.1.length
-
-/-- Some start times `S` complete every job by `K`, never run two jobs at once, and start each
-job in a chain at least `l` after its immediate predecessor completes. -/
-def SingleMachineChainsTimeLagMakespanFeasible
-    (i : SingleMachineChainsTimeLagMakespanInstance) : Prop :=
-  ∃ S : ℕ → ℕ,
-    (∀ j < i.1.length, S j + pt i j ≤ i.2.2.2) ∧
-    (∀ a < i.1.length, ∀ b < i.1.length, a ≠ b →
-      S a + pt i a ≤ S b ∨ S b + pt i b ≤ S a) ∧
-    ∀ c ∈ i.2.1, ∀ k, k + 1 < c.length →
-      S (c.getD k 0) + pt i (c.getD k 0) + i.2.2.1 ≤ S (c.getD (k + 1) 0)
-
-open Classical in
-/-- `1|chains(l)|Cmax` as a decision problem over bitstrings. -/
-noncomputable def singleMachineChainsTimeLagMakespanDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SingleMachineChainsTimeLagMakespanInstance) x with
-  | some i => decide (WellFormed i ∧ SingleMachineChainsTimeLagMakespanFeasible i)
-  | none => false
 
 /-- **`1|chains(l)|Cmax` is NP-complete.** Source: Wikum, Llewellyn, and Nemhauser (1994); Brucker
 and Knust. -/

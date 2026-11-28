@@ -22,9 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.TwoMachineSingleServerUnitWeightedTardinessWanted
+public import CSLibExt.Complexity.NPComplete.TwoMachineSingleServerEqualProcessingMakespanDefs
 
 @[expose] public section
 
@@ -65,31 +63,6 @@ NP-completeness is stated in the same form as the proved results in
 `CSLibExt.Computability.Complexity.Karp`: membership in `MetaMathlibExt.ComplexityTheory.NP`, plus a
 polynomial-time many-one reduction from every language in `NP` (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance `(p, s, K)`: the common processing time `p`, the setup times `s_j` of the jobs
-`0, …, n - 1` (`n` is the length of the list), and the bound `K`. -/
-abbrev TwoMachineSingleServerEqualProcessingMakespanInstance := ℕ × List ℕ × ℕ
-
-/-- Well-formedness of an instance: the common processing time is positive. -/
-def WellFormed (i : TwoMachineSingleServerEqualProcessingMakespanInstance) : Prop :=
-  0 < i.1
-
-/-- Some schedule on two machines with a single server and processing times `p` completes every job
-by `K`: `C_j = t j + s_j + p ≤ K`. -/
-def TwoMachineSingleServerEqualProcessingMakespanFeasible
-    (i : TwoMachineSingleServerEqualProcessingMakespanInstance) : Prop :=
-  ∃ μ : Fin i.2.1.length → Fin 2, ∃ t : Fin i.2.1.length → ℕ,
-    IsSingleServerSchedule 2 (fun j => i.2.1.get j) (fun _ => i.1) μ t ∧
-      ∀ j, t j + i.2.1.get j + i.1 ≤ i.2.2
-
-open Classical in
-/-- `P2;S1|p_i=p|C_max` as a decision problem over bitstrings. -/
-noncomputable def twoMachineSingleServerEqualProcessingMakespanDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TwoMachineSingleServerEqualProcessingMakespanInstance) x with
-  | some i => decide (WellFormed i ∧ TwoMachineSingleServerEqualProcessingMakespanFeasible i)
-  | none => false
 
 /-- **TWO PARALLEL MACHINES WITH A SINGLE SERVER, equal processing times, makespan
 (`P2;S1|p_i=p|C_max`) is NP-complete.** Source: Brucker, Dhaenens-Flipo, Knust, Kravchenko and

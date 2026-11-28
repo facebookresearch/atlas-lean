@@ -23,10 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.ThreeProcessorJobShopThreeJobsWanted
-public import WantedExt.Complexity.NPComplete.TwoProcessorJobShopMeanFlowTimeWanted
+public import CSLibExt.Complexity.NPComplete.ThreeProcessorJobShopThreeJobsMeanFlowTimeDefs
 
 @[expose] public section
 
@@ -69,17 +66,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-open Classical in
-/-- THREE-PROCESSOR JOB-SHOP MEAN FLOW TIME with three jobs, as a decision problem over
-bitstrings. -/
-noncomputable def threeProcessorJobShopThreeJobsMeanFlowTimeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := JobShopSchedulingInstance) x with
-  | some i => decide (ThreeProcessorJobShopThreeJobs.RestrictedWellFormed i ∧
-      TwoProcessorJobShopMeanFlowTime.TwoProcessorJobShopMeanFlowTimeFeasible i)
-  | none => false
 
 /-- **THREE-PROCESSOR JOB-SHOP MEAN FLOW TIME with three jobs (`J3|n=3|ΣC_i`) is
 NP-complete.** Source: Sotskov and Shakhlevich (1995); Brucker and Knust's classification;

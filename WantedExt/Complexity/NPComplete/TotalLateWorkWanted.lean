@@ -20,10 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
-public import CSLibExt.Complexity.NPComplete.SequencingToMinimizeWeightedTardinessDefs
+public import CSLibExt.Complexity.NPComplete.TotalLateWorkDefs
 
 @[expose] public section
 
@@ -60,42 +57,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the jobs, job `j` being the `j`-th pair `(p_j, d_j)` of processing time and
-due date, and the bound `K`. -/
-abbrev TotalLateWorkInstance := List (ℕ × ℕ) × ℕ
-
-/-- The jobs of the instance, `Fin n` for `n` listed pairs. -/
-abbrev Job (i : TotalLateWorkInstance) : Type := Fin i.1.length
-
-/-- The processing time `p_j` of job `j`. -/
-def processingTime (i : TotalLateWorkInstance) (j : Job i) : ℕ :=
-  (i.1.get j).1
-
-/-- The due date `d_j` of job `j`. -/
-def dueDate (i : TotalLateWorkInstance) (j : Job i) : ℕ :=
-  (i.1.get j).2
-
-/-- The late work `V_j = min(p_j, max(0, C_j - d_j))` of job `j` when it completes at time `C`
-(natural-number subtraction is `max(0, C - d_j)`). -/
-def lateWork (i : TotalLateWorkInstance) (j : Job i) (C : ℕ) : ℕ :=
-  min (processingTime i j) (C - dueDate i j)
-
-/-- Some one-processor schedule `σ` (start times) has total late work
-`∑ j, V_j` at most `K`, where job `j` completes at `σ(j) + p_j`. -/
-def TotalLateWorkFeasible (i : TotalLateWorkInstance) : Prop :=
-  ∃ σ : Job i → ℕ,
-    SequencingToMinimizeWeightedTardiness.IsOneProcessorSchedule (processingTime i) σ ∧
-      ∑ j, lateWork i j (σ j + processingTime i j) ≤ i.2
-
-open Classical in
-/-- SINGLE-MACHINE TOTAL LATE WORK as a decision problem over bitstrings. -/
-noncomputable def totalLateWorkDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TotalLateWorkInstance) x with
-  | some i => decide (TotalLateWorkFeasible i)
-  | none => false
 
 /-- **SINGLE-MACHINE TOTAL LATE WORK is NP-complete.** Source: Potts and Van Wassenhove
 (1992). -/
