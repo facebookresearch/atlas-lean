@@ -49,15 +49,17 @@ private abbrev H₀ : ComposableArrows (Type 0) 1 :=
 private def α₀ : F₀ ⟶ G₀ :=
   ComposableArrows.homMk₁ (↾fun x : ℚ => x + 1)
     (↾fun x : ℚ => (3 / 2 : ℚ) * x + 3) (by
+      change (↾fun x : ℚ => (3 / 2 : ℚ) * (2 * x) + 3) =
+        (↾fun x : ℚ => 3 * (x + 1))
       ext x
-      change (3 / 2 : ℚ) * (2 * x) + 3 = 3 * (x + 1)
       ring)
 
 private def β₀ : G₀ ⟶ H₀ :=
   ComposableArrows.homMk₁ (↾fun x : ℚ => 2 * x + 1)
     (↾fun x : ℚ => (10 / 3 : ℚ) * x + 5) (by
+      change (↾fun x : ℚ => (10 / 3 : ℚ) * (3 * x) + 5) =
+        (↾fun x : ℚ => 5 * (2 * x + 1))
       ext x
-      change (10 / 3 : ℚ) * (3 * x) + 5 = 5 * (2 * x + 1)
       ring)
 
 private abbrev D := ULiftHom.{1} (Type 0)
