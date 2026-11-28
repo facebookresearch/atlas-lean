@@ -6,6 +6,8 @@ Representations by quadratic forms: sums of two, three and four squares, binary 
 - [Binary and higher quadratic forms](binary-quaternary-forms/README.md)
 - [Waring's problem and figurate numbers](waring-figurate/README.md)
 - [Hasse–Minkowski](hasse-minkowski/README.md)
+- [Oppenheim conjecture](oppenheim-conjecture/README.md)
+- [Pencils of quadrics](pencils-of-quadrics/README.md)
 - [Quadratic packing polynomials](quadratic-packing-polynomials/README.md)
 - [Legendre's theorem on $a x^2 + b y^2 + c z^2 = 0$](exists-ternary-eq-zero-iff.md)
 - [Local–global principle for Hermitian spaces over a quadratic extension](hermitian-local-global-principle.md)

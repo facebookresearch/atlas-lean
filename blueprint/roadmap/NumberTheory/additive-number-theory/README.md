@@ -3,6 +3,7 @@
 Representing integers as sums from special sets, and the density of integer sets: sumsets of integers, subset sums and complete sequences, primitive sets, natural and logarithmic density, Romanoff's theorem; additive bases and complements and zero-sum constants go to additive combinatorics.
 
 - [Distinct multiples in an interval](distinct-multiples-in-an-interval/README.md)
+- [Equal differences in sparse sets](equal-differences-in-sparse-sets/README.md)
 - [Erdős minimum overlap problem](erd-s-minimum-overlap-problem/README.md)
 - [Geometric-progression-free sets of Hurwitz quaternions](geometric-progression-free-sets-of-hurwitz-quate/README.md)
 - [Natural and logarithmic density](natural-and-logarithmic-density/README.md)
@@ -20,3 +21,6 @@ Representing integers as sums from special sets, and the density of integer sets
 - [Odd numbers $1 < n < 2^{50}$ are squarefree plus a power of two](exists-squarefree-add-two-pow-of-odd-lt.md)
 - [Joint Dickman law for consecutive integers](joint-dickman-law/README.md)
 - [Additive indecomposability of the primes](additive-indecomposability-of-the-primes/README.md)
+- [Complete sequences](complete-sequences/README.md)
+- [Subset sums of sets of integers](subset-sums-of-sets-of-integers/README.md)
+- [Divisibility and products in sets of integers](divisibility-and-products-in-sets-of-integers/README.md)

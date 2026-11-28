@@ -11,6 +11,7 @@ Congruences for factorials, quotients and power sums (Wilson, Wolstenholme, Ferm
 - [Primitive roots modulo prime powers](primitive-roots-modulo-prime-powers/README.md)
 - [Primitive λ-roots](primitive-roots/README.md)
 - [Small solutions of diagonal congruences](small-solutions-of-diagonal-congruences/README.md)
+- [Sums of inverses of small integers modulo p](sums-of-inverses-of-small-integers-modulo-p/README.md)
 - [Thue's lemma](thue-s-lemma/README.md)
 - [Wilson quotients](wilson-quotients/README.md)
 - [Wolstenholme's theorem](wolstenholme-s-theorem/README.md)

@@ -18,3 +18,4 @@
 - [Positive solutions of $x^2 - 3y^2 = -2$](pell-three-eq-neg-two-positive-solutions.md)
 - [No cube whose neighbours are prime cubes times squares](not-exists-prime-cube-square-neighbors-o.md)
 - [No integer solutions of $64x^6 - 1 = p^3 q^3 y^2$ with $p$, $q$ prime](not-exists-sixty-four-mul-pow-six-sub-on.md)
+- [Walker's theorem on consecutive powerful numbers](infinite-consecutive-powerful-pairs-neit.md)

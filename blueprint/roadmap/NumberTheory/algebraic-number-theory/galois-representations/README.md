@@ -18,3 +18,4 @@
 - [Galois representations attached to polarized regular algebraic cuspidal representations over CM fields](galois-representations-attached-to-polarized-cuspidal-representations.md)
 - [Window bound for Tate–Shafarevich groups of Tate twists over subfields of cyclotomic fields](tate-shafarevich-window-bound-over-cyclotomic-subfields.md)
 - [Derivation of the Tate–Shafarevich window bound from automorphic Galois representations](derivation-of-the-tate-shafarevich-window-bound.md)
+- [Arboreal Galois representations](arboreal-galois-representations/README.md)

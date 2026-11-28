@@ -15,3 +15,5 @@
 - [A size criterion for a large Zsigmondy prime](exists-is-large-zsigmondy-prime-of-lt.md)
 - [Large Zsigmondy primes for exponents $n > 1$ outside six values](exists-is-large-zsigmondy-prime-of-not-m.md)
 - [Avcı's classification of large Zsigmondy primes](exists-is-large-zsigmondy-prime-iff.md)
+- [Erdős Problem 977 (the greatest prime factor of 2^n − 1)](mersenne-greatest-prime-factor-over-n.md)
+- [The greatest prime factor of 2^n − 1 grows faster than n](mersenne-greatest-prime-factor-over-n-ho.md)

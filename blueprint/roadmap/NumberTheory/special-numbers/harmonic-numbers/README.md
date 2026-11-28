@@ -10,6 +10,7 @@ Harmonic, hyperharmonic and multiple harmonic sums, binomial-harmonic identities
 - [Hyperharmonic numbers and sums over primes](hyperharmonic-numbers-and-sums-over-primes/README.md)
 - [Multiple harmonic sums](multiple-harmonic-sums/README.md)
 - [Odd harmonic numbers](odd-harmonic-numbers/README.md)
+- [Partial sums of the harmonic series](partial-sums-of-the-harmonic-series/README.md)
 - [Ramanujan's binomial–harmonic identity](ramanujan-s-binomial-harmonic-identity/README.md)
 - [Ramanujan's harmonic sum identities](ramanujan-s-harmonic-sum-identities/README.md)
 - [Higher-order harmonic numbers](higher-harmonic.md)

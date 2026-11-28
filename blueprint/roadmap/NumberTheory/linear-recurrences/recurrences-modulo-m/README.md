@@ -6,4 +6,5 @@ Pisano periods, periods and zero indices of recurrences modulo primes and prime 
 - [Periods and averages of Lucas sequences modulo n](periods-and-averages-of-lucas-sequences-modulo-n/README.md)
 - [Pisano periods](pisano-periods/README.md)
 - [Residues of Lucas numbers](residues-of-lucas-numbers/README.md)
+- [Uniform distribution of recurrences modulo m](uniform-distribution-of-recurrences-modulo-m/README.md)
 - [Subsequences of a second-order linear recurrence](subsequence-second-order-recurrence.md)

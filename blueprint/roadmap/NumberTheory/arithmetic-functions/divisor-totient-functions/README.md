@@ -29,6 +29,18 @@
 
 ## [Part 2 of 2](part-02/README.md)
 
+- [Chains of divisors congruent to one](part-02/chains-of-divisors-congruent-to-one/README.md)
+- [Common values of the totient and divisor-sum functions](part-02/common-values-of-the-totient-and-divisor-sum-fun/README.md)
+- [Divisor function at consecutive integers](part-02/divisor-function-at-consecutive-integers/README.md)
+- [Divisors from a prescribed set](part-02/divisors-from-a-prescribed-set/README.md)
+- [Divisors in residue classes](part-02/divisors-in-residue-classes/README.md)
+- [Fibers of Euler's totient function](part-02/fibers-of-euler-s-totient-function/README.md)
+- [Fibers of the sum-of-divisors function](part-02/fibers-of-the-sum-of-divisors-function/README.md)
+- [Gaps between reduced residues](part-02/gaps-between-reduced-residues/README.md)
+- [Iterates and compositions of the totient function](part-02/iterates-and-compositions-of-the-totient-functio/README.md)
+- [Monotone subsequences of the totient function](part-02/monotone-subsequences-of-the-totient-function/README.md)
+- [Patterns in consecutive totient values](part-02/patterns-in-consecutive-totient-values/README.md)
+- [Sums of smallest divisors](part-02/sums-of-smallest-divisors/README.md)
 - [Gronwall's theorem](part-02/gronwall-sigma-limsup.md)
 - [Relatively prime subset counts](part-02/mobius-formula-relatively-prime-subset-c.md)
 - [Totient-counting asymptotics](totient-counting-asymptotics/README.md)

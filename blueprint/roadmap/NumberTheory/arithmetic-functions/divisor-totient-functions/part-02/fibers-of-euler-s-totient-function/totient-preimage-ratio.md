@@ -1,0 +1,3 @@
+# Ratio of the largest and smallest totient preimages
+
+For a natural number $n$, the ratio $f_{\max}(n)/f_{\min}(n)$ of the largest and the smallest $m$ with $\varphi(m) = n$, where $\varphi$ is Euler's totient function; for $n \ge 1$ in the image of $\varphi$ the preimage is finite and nonempty. The function takes every natural number: when no $m$ has $\varphi(m) = n$, as for $n = 3$, the largest and smallest elements of the empty preimage are taken to be $0$ and the value is $0/0 = 0$. With the convention $\varphi(0) = 0$, the only preimage of $0$ is $0$, so the value at $n = 0$ is also $0/0 = 0$.

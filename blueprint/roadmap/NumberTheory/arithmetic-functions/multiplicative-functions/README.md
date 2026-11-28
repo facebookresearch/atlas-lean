@@ -2,6 +2,7 @@
 
 Dirichlet and unitary convolution, completely multiplicative and additive functions, Wintner and Euler-product mean values, additive uniqueness sets, Mertens bounds.
 
+- [Additive functions with bounded differences](additive-functions-with-bounded-differences/README.md)
 - [Additive uniqueness of multiplicative functions](additive-uniqueness-of-multiplicative-functions/README.md)
 - [Completely additive height functions](completely-additive-height-functions/README.md)
 - [Completely multiplicative functions](completely-multiplicative-functions/README.md)

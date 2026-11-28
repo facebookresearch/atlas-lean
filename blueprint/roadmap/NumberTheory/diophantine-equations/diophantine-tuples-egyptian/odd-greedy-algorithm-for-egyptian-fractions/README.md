@@ -10,3 +10,5 @@
 - [Characterization of the odd greedy choice](is-odd-greedy-choice-iff.md)
 - [Even sums of odd unit fractions have even numerator](even-num-of-even-sum-unit-fractions.md)
 - [Odd greedy choice at a fraction](is-odd-greedy-choice-iff-2.md)
+- [Rationals with a two-term odd greedy expansion](two-term-odd-greedy-iff.md)
+- [Reduced fractions with a two-term odd greedy expansion](two-term-odd-greedy-reduced-iff.md)

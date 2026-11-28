@@ -1,0 +1,3 @@
+# Coefficients of Saito's eta products
+
+For natural numbers $h$ and $j$, $c_h(j)$ is the coefficient of $q^j$ in $\prod_{m \ge 1}\big[(1 - q^{hm})^{\varphi(h)} \prod_{d \mid h}(1 - q^{dm})^{-\mu(d)}\big]$, where $\varphi$ is Euler's totient function and $\mu$ the Möbius function. For $h \ge 1$ this is the product side of the eta product $\eta(h\tau)^{\varphi(h)}\prod_{d \mid h}\eta(d\tau)^{-\mu(d)}$ without its power of $q$. The definition is total: at $h = 0$, where $\eta(0 \cdot \tau)$ is not defined, $\varphi(0) = 0$, the product over the divisors of $0$ is empty by convention, and every factor is $1$, so $c_0(0) = 1$ and $c_0(j) = 0$ for $j \ge 1$.

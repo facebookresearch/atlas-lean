@@ -5,3 +5,5 @@
 - [Sums of a power of two and a prime](prime-representable.md)
 - [Erdős Problem 851](statement.md)
 - [Erdős Problem 851 is true](statement-holds.md)
+- [Odd integers not of the form p + 2^k](odd-integers-not-of-the-form-p-2-k/README.md)
+- [Powers of two plus integers with few prime factors](powers-of-two-plus-integers-with-few-prime-facto/README.md)
