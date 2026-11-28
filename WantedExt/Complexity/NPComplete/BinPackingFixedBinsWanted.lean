@@ -26,7 +26,7 @@ public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.BinPacking
+public import CSLibExt.Complexity.NPComplete.BinPackingFixedBinsDefs
 
 @[expose] public section
 
@@ -58,25 +58,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the item sizes and the bin capacity `B`. -/
-abbrev BinPackingFixedBinsInstance := List ℕ × ℕ
-
-/-- The BIN PACKING instance with the fixed number `K` of bins appended. -/
-def withBins (i : BinPackingFixedBinsInstance) (K : ℕ) : BinPacking.BinPackingInstance :=
-  (i.1, i.2, K)
-
-/-- Well-formedness of an instance: every item size is positive, and `B` is positive. -/
-def WellFormed (i : BinPackingFixedBinsInstance) : Prop :=
-  (∀ s ∈ i.1, 0 < s) ∧ 0 < i.2
-
-open Classical in
-/-- BIN PACKING with the number of bins fixed to `K`, as a decision problem over bitstrings. -/
-noncomputable def binPackingFixedBinsDec (K : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := BinPackingFixedBinsInstance) x with
-  | some i => decide (WellFormed i ∧ BinPacking.BinPackingFeasible (withBins i K))
-  | none => false
 
 /-- **BIN PACKING is NP-complete for every fixed number `K ≥ 2` of bins.** Source: Garey and
 Johnson (1979), [SR1], comment; Karp (1972), PARTITION. -/
