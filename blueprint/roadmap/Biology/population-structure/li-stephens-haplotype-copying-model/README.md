@@ -24,3 +24,5 @@
 - [FLARE hidden Markov model for local ancestry](flare-local-ancestry-hmm.md)
 - [MaCH mosaic model: per-marker crossover and error parameters, genotype emissions and read-count likelihood](mach-genotype-error-emission-and-read-count-likelihood.md)
 - [MaCH imputed dosage and the estimated imputation $r^2$](mach-imputed-dosage-and-estimated-imputation-r2.md)
+- [HAPMIX local-ancestry hidden Markov model](hapmix-local-ancestry-hidden-markov-model.md)
+- [Archaic introgression detection](archaic-introgression-detection/README.md)
