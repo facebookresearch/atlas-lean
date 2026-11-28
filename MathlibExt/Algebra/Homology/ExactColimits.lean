@@ -34,14 +34,15 @@ noncomputable section
 open CategoryTheory Limits
 universe w w' v u t
 
-namespace HomologicalComplex
+namespace CategoryTheory.HasExactColimitsOfShape
+
 variable {J : Type w} [Category.{w'} J] {C : Type u} [Category.{v} C] [Abelian C]
-  {ι : Type t} {c : ComplexShape ι} [HasColimitsOfShape J C]
+  [HasColimitsOfShape J C]
 
 -- Keep this implication explicit, since the converse is a native typeclass instance.
 /-- In an abelian category C with J-shaped colimits, preservation of short-complex homology
 by colim implies exactness of those colimits. -/
-theorem hasExactColimitsOfShape_of_colim_preservesHomology
+theorem of_colim_preservesHomology
     [(colim (J := J) (C := C)).PreservesHomology] :
     HasExactColimitsOfShape J C where
   preservesFiniteLimits := by
@@ -50,6 +51,14 @@ theorem hasExactColimitsOfShape_of_colim_preservesHomology
     let _ : (colim (J := J) (C := C)).Additive :=
       preservesFiniteColimits_le_additiveFunctor (J ⥤ C) C _ (by infer_instance)
     exact Functor.preservesFiniteLimits_of_preservesHomology (colim (J := J) (C := C))
+
+
+end CategoryTheory.HasExactColimitsOfShape
+
+namespace HomologicalComplex
+variable {J : Type w} [Category.{w'} J] {C : Type u} [Category.{v} C] [Abelian C]
+  {ι : Type t} {c : ComplexShape ι} [HasColimitsOfShape J C]
+
 
 variable [HasExactColimitsOfShape J C]
 
