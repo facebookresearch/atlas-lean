@@ -32,6 +32,10 @@ public import Mathlib.Data.Rat.Floor
 * With `p = 3`, `qmin = -4` and `qmax = 0`, the tiny product `(1/2) × (7/16) = 7/32` rounds to
   `1/4`, the smallest normal number, to nearest and toward `+∞`, and raises underflow and inexact,
   as tininess is detected before rounding.
+* In the same format, `(3/8) × (5/8) = 15/64` separates the two tininess policies: it rounds to
+  `1/4` even with an unbounded exponent, so only tininess detected before rounding, as here, raises
+  underflow; it gives `1/4` with underflow and inexact. To nearest, `7 + 1/4` gives `7`, the largest
+  finite number, with inexact only, and `7 + 1/2` gives `+∞` with overflow and inexact.
 * In binary64, multiplication is not associative.
 * Comparison: NaN is unordered with everything, `+0` and `-0` are equal, `-∞ < x < +∞`; `+0 ≤ -0`
   and `-0 ≤ +0` with `+0 ≠ -0`, so `≤` is not antisymmetric even without NaN.
@@ -419,6 +423,116 @@ example : (Operation.mul (.finite false (1 / 2) (by norm_num) half_mem)
     (.finite false (7 / 16) (by norm_num) seven_sixteenths_mem)).eval .towardPositive =
       (.finite false (1 / 4) (by norm_num) quarter_mem, { underflow := true, inexact := true }) :=
   eval_tiny_product _ (Int.ceil_eq_iff.2 (by norm_num))
+
+-- `15/64` separates the two tininess policies: with an unbounded exponent it already rounds to
+-- `1/4`, the smallest normal number, so tininess detected after rounding would raise no underflow;
+-- detected before rounding, as here, the result `1/4` raises underflow and inexact
+example : fl 3 (15 / 64 : ℚ) = 1 / 4 := by decide +kernel
+
+private theorem three_eighths_mem : IsFloatIn fmt3.prec fmt3.qmin fmt3.qmax (3 / 8 : ℝ) :=
+  ⟨3, -3, by norm_num [fmt3], by norm_num [fmt3], by norm_num [fmt3], by norm_num⟩
+
+private theorem five_eighths_mem : IsFloatIn fmt3.prec fmt3.qmin fmt3.qmax (5 / 8 : ℝ) :=
+  ⟨5, -3, by norm_num [fmt3], by norm_num [fmt3], by norm_num [fmt3], by norm_num⟩
+
+example : (Operation.mul (.finite false (3 / 8) (by norm_num) three_eighths_mem)
+    (.finite false (5 / 8) (by norm_num) five_eighths_mem)).eval .nearestEven =
+      (.finite false (1 / 4) (by norm_num) quarter_mem,
+        { underflow := true, inexact := true }) := by
+  -- `15/64 = 3.75 · 2^-4` is below `1/4`, so it is rounded at the last place `2^-4`, up to `4`
+  have hlog : Int.log 2 |(15 / 64 : ℝ)| < -1 :=
+    (Int.lt_zpow_iff_log_lt (b := 2) (by norm_num) (by norm_num)).1 (by norm_num)
+  have he : max (ulpExp 3 (15 / 64 : ℝ)) (-4) = -4 :=
+    max_eq_right (by unfold ulpExp; push_cast; omega)
+  have hrne : rne (15 / 4 : ℝ) = 4 := by
+    have hfl : ⌊(15 / 4 : ℝ)⌋ = 3 := Int.floor_eq_iff.2 (by norm_num)
+    simp only [rne, hfl]
+    norm_num
+  have hround :
+      RoundingMode.nearestEven.round fmt3.prec fmt3.qmin ((3 / 8 : ℝ) * (5 / 8)) = 1 / 4 := by
+    rw [show (3 / 8 : ℝ) * (5 / 8) = 15 / 64 by norm_num]
+    change RoundingMode.nearestEven.round 3 (-4) (15 / 64 : ℝ) = 1 / 4
+    rw [RoundingMode.round, he, RoundingMode.roundInt,
+      show (15 / 64 : ℝ) / 2 ^ (-4 : ℤ) = 15 / 4 by norm_num, hrne]
+    norm_num
+  rw [Operation.eval_mul_finite]
+  simp only [Bool.false_eq_true, ↓reduceIte, Bool.xor_false]
+  unfold roundResult
+  split_ifs with h₀ h₁ h₂
+  · norm_num at h₀
+  · rw [hround] at h₁
+    norm_num [BinaryFormat.maxFinite, fmt3] at h₁
+  · rw [hround] at h₂
+    norm_num at h₂
+  · simp only [hround, Prod.mk.injEq]
+    refine ⟨by norm_num, ?_⟩
+    norm_num [fmt3]
+
+/-! ## The overflow boundary to nearest -/
+
+private theorem seven_mem : IsFloatIn fmt3.prec fmt3.qmin fmt3.qmax (7 : ℝ) :=
+  ⟨7, 0, by norm_num [fmt3], by norm_num [fmt3], by norm_num [fmt3], by norm_num⟩
+
+-- `7` is the largest finite number of `fmt3`
+example : fmt3.maxFinite = 7 := by norm_num [BinaryFormat.maxFinite, fmt3]
+
+-- in `fmt3`, a number in `[4, 8)` is rounded at the last place `2^0`, to an integer
+private theorem round_of_four_le_of_lt_eight (r : RoundingMode) {x : ℝ} (h₁ : 4 ≤ x)
+    (h₂ : x < 8) : r.round 3 (-4) x = (r.roundInt x : ℝ) := by
+  have hx : 0 < |x| := by rw [abs_of_pos (by linarith)]; linarith
+  have hlo : (2 : ℤ) ≤ Int.log 2 |x| := by
+    have : ((2 : ℕ) : ℝ) ^ (2 : ℤ) ≤ |x| := by rw [abs_of_pos (by linarith)]; norm_num; linarith
+    exact (Int.zpow_le_iff_le_log (b := 2) (by norm_num) hx).1 this
+  have hhi : Int.log 2 |x| < 3 := by
+    have : |x| < ((2 : ℕ) : ℝ) ^ (3 : ℤ) := by rw [abs_of_pos (by linarith)]; norm_num; linarith
+    exact (Int.lt_zpow_iff_log_lt (b := 2) (by norm_num) hx).1 this
+  have he : max (ulpExp 3 x) (-4) = 0 := by
+    unfold ulpExp
+    push_cast
+    omega
+  rw [RoundingMode.round, he]
+  simp
+
+-- `7 + 1/4` rounds down to `7`, at most the largest finite number: inexact only
+example : (Operation.add (.finite false 7 (by norm_num) seven_mem)
+    (.finite false (1 / 4) (by norm_num) quarter_mem)).eval .nearestEven =
+      (.finite false 7 (by norm_num) seven_mem, { inexact := true }) := by
+  have hround : RoundingMode.nearestEven.round fmt3.prec fmt3.qmin ((7 : ℝ) + 1 / 4) = 7 := by
+    change RoundingMode.nearestEven.round 3 (-4) ((7 : ℝ) + 1 / 4) = 7
+    rw [round_of_four_le_of_lt_eight _ (by norm_num) (by norm_num)]
+    have hfl : ⌊((7 : ℝ) + 1 / 4)⌋ = 7 := Int.floor_eq_iff.2 (by norm_num)
+    simp only [RoundingMode.roundInt, rne, hfl]
+    norm_num
+  rw [Operation.eval_add_finite]
+  simp only [Bool.false_eq_true, ↓reduceIte]
+  unfold roundResult
+  split_ifs with h₀ h₁ h₂
+  · norm_num at h₀
+  · rw [hround] at h₁
+    norm_num [BinaryFormat.maxFinite, fmt3] at h₁
+  · rw [hround] at h₂
+    norm_num at h₂
+  · simp only [hround, Prod.mk.injEq]
+    refine ⟨by norm_num, ?_⟩
+    norm_num [fmt3]
+
+-- `7 + 1/2 = 15/2` is a tie between `7` and `8` and goes to the even `8`, beyond the largest finite
+-- number `7`: to nearest it overflows to `+∞`, with overflow and inexact
+example : (Operation.add (.finite false 7 (by norm_num) seven_mem)
+    (.finite false (1 / 2) (by norm_num) half_mem)).eval .nearestEven =
+      (.inf false, { overflow := true, inexact := true }) := by
+  have hround : RoundingMode.nearestEven.round fmt3.prec fmt3.qmin ((7 : ℝ) + 1 / 2) = 8 := by
+    change RoundingMode.nearestEven.round 3 (-4) ((7 : ℝ) + 1 / 2) = 8
+    rw [round_of_four_le_of_lt_eight _ (by norm_num) (by norm_num)]
+    have hfl : ⌊((7 : ℝ) + 1 / 2)⌋ = 7 := Int.floor_eq_iff.2 (by norm_num)
+    simp only [RoundingMode.roundInt, rne, hfl]
+    norm_num
+    decide
+  rw [Operation.eval_add_finite]
+  simp only [Bool.false_eq_true, ↓reduceIte]
+  rw [roundResult_of_lt _ _ _ (by norm_num)
+    (by rw [hround]; norm_num [BinaryFormat.maxFinite, fmt3])]
+  norm_num [roundResult.overflow]
 
 /-! ## binary64 -/
 
