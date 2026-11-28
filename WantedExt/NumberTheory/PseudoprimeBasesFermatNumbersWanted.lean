@@ -25,6 +25,7 @@ public import MathlibExt.NumberTheory.StrongPseudoprimePrimitivePart
 public import MathlibExt.NumberTheory.StrongPseudoprimePrimitivePartPowers
 public import MathlibExt.NumberTheory.StrongPseudoprimeZPowNeg
 public import MathlibExt.NumberTheory.PseudoprimeBasesFermatNumbersFermatNumberStrongPseudoprimeBasesSubgroup
+public import MathlibExt.NumberTheory.PseudoprimeBasesFermatNumbersDensity
 
 /-!
 # Pseudoprime bases and Fermat numbers
@@ -76,16 +77,6 @@ public theorem_wanted strongPseudoprime_bases_subgroup_tfae {n : ℕ} (hn : 1 < 
         {b : ℕ | 1 ≤ b ∧ b < n ∧ Nat.FermatPsp n b}.ncard,
       v = 1 ∨ r = 1,
       (∃ p : ℕ, p.Prime ∧ p ∣ n ∧ p % 4 = 3) ∨ IsPrimePow n].TFAE
-
-/-- **Strong pseudoprime bases almost always form a subgroup.** The set of odd composite natural
-numbers $n$ for which the units $b$ of $\mathbb{Z}/n\mathbb{Z}$ such that $n$ is a strong
-pseudoprime to the base $b$ do not form a subgroup of the unit group has natural density $0$.
-
-Source: Samuel S. Wagstaff, Jr., *Pseudoprimes and Fermat Numbers*, INTEGERS 24 (2024),
-Article A23, Corollary 2 (`integers-2024-A23-cor-2`). -/
-public theorem_wanted hasDensity_zero_strongPseudoprime_bases_not_subgroup :
-    Set.HasDensity {n : ℕ | 1 < n ∧ ¬n.Prime ∧ Odd n ∧
-      ¬∃ H : Subgroup (ZMod n)ˣ, ∀ u : (ZMod n)ˣ, u ∈ H ↔ IsStrongPseudoprime n (u : ZMod n)} 0
 
 /-- **The subgroup criteria for strong pseudoprime bases hold almost always.** For an odd
 composite natural number $n$, let $r$ be the number of distinct prime divisors of $n$, let $v$ be
