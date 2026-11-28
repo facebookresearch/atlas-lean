@@ -23,4 +23,14 @@ example {S : Finset (Fin 13 × Fin 13)} (hS : placementPenult takHasRoad S) : 22
   have hbound := impartialTak_penult_card_ge_weightedCross (by decide) hS
   omega
 
+-- The same constant works both below the weighted bound's range and on a larger board.
+example :
+    ∃ C : ℝ,
+      (∀ S : Finset (Fin 4 × Fin 4), placementPenult takHasRoad S →
+        (4 : ℝ) ^ 2 / 4 - C * 4 ≤ S.card) ∧
+      (∀ S : Finset (Fin 16 × Fin 16), placementPenult takHasRoad S →
+        (16 : ℝ) ^ 2 / 4 - C * 16 ≤ S.card) := by
+  obtain ⟨C, hC⟩ := impartialTak_penult_card_ge_quarter
+  exact ⟨C, hC 4, hC 16⟩
+
 end MetaMathlibExt

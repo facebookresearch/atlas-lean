@@ -2,16 +2,20 @@
 
 Operational and denotational semantics of programming languages and correctness of compilation: the IMP language (syntax, big- and small-step, heap semantics, denotational semantics, stack-machine compilation), PCF with adequacy and contextual equivalence, models of the untyped λ-calculus in Scott's graph model, CPS translation and closure conversion.
 
+- [0-CFA control-flow analysis](0-cfa-control-flow-analysis/README.md)
 - [Abstract interpretation](abstract-interpretation/README.md)
 - [Abstract rewriting systems](abstract-rewriting-systems/README.md)
 - [An imperative language with arrays](an-imperative-language-with-arrays/README.md)
 - [Bounded symbolic execution for IMP](bounded-symbolic-execution-for-imp/README.md)
+- [Call-by-need evaluation](call-by-need-evaluation/README.md)
 - [CEK machine](cek-machine/README.md)
 - [Closure conversion](closure-conversion/README.md)
 - [Continuation-passing style translation](continuation-passing-style-translation/README.md)
 - [Dataflow analysis by Kleene iteration](dataflow-analysis-by-kleene-iteration/README.md)
 - [Liveness and dead-assignment elimination for IMP](liveness-and-dead-assignment-elimination-for-imp/README.md)
 - [Nominal sets](nominal-sets/README.md)
+- [Normal forms of the untyped lambda calculus](normal-forms-of-the-untyped-lambda-calculus/README.md)
+- [Omega and normalization examples](omega-and-normalization-examples/README.md)
 - [Operational semantics of IMP](operational-semantics-of-imp/README.md)
 - [Coinductive big-step semantics](coinductive-big-step-semantics/README.md)
 - [Compiling IMP to a stack machine](compiling-imp-to-a-stack-machine/README.md)

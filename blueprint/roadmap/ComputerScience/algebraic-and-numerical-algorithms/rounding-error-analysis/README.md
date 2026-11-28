@@ -50,8 +50,24 @@ A sum of $n$ rounded products is accurate to $\gamma_n = nu/(1 - nu)$ relative t
 - [Kahan compensated summation error bound](kahan-compensated-summation-error-bound.md)
 - [Pairwise (tree) summation and reduction-order contracts](pairwise-summation-and-reduction-order-contracts.md)
 
+## Probabilistic error analysis
+
+- [Probabilistic rounding error analysis](probabilistic-rounding-error-analysis/README.md)
+
 ## Related topics
 
 - [Floating-point rounding](../floating-point-rounding/README.md): the rounding model.
 - [Perturbation theory for linear systems](../../../LinearAlgebra/matrix-decompositions/perturbation-theory-for-linear-systems/README.md): condition numbers, which turn backward errors into forward errors.
 - [LU decomposition](../../../LinearAlgebra/matrix-decompositions/lu-decomposition/README.md): the exact factorization.
+
+- [Factors](factors.md)
+
+- [Factor](factor.md)
+
+- [Multiplier](multiplier.md)
+
+- [Pivot Row](pivot-row.md)
+
+- [Pivoted](pivoted.md)
+
+- [Schur](schur.md)

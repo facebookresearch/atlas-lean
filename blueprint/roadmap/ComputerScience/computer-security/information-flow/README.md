@@ -20,3 +20,4 @@
 - [Termination-insensitive noninterference for programs with output](termination-insensitive-noninterference-for-programs-with-output.md)
 - [Termination-insensitive noninterference cannot leak a secret reliably in polynomial time](tini-programs-cannot-leak-reliably-in-polynomial-time.md)
 - [Termination-sensitive noninterference](termination-sensitive-noninterference.md)
+- [Low-security observational determinism](observational-determinism.md)

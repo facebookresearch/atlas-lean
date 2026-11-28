@@ -113,7 +113,7 @@ public theorem divChiNeg2Sum_prime_pow_two (e : ℕ) :
     have hmod : (2 ^ (c + 1)) % 2 = 0 := by
       rw [Nat.pow_mod]
       norm_num
-    rw [ZMod.χ₈'_nat_eq_if_mod_eight, if_pos hmod]
+    rw [ZMod.χ₈'_nat_eq_if_mod_eight, ite_eq_left hmod]
   · intro h
     simp at h
 
@@ -171,7 +171,7 @@ public theorem divChiNeg2Sum_prime_pow_split {p e : ℕ} (hp : p.Prime)
         simp
       · rw [Nat.pow_mod, h, pow_three_mod_eight]
         by_cases hj : Even j <;> simp [hj]
-    rw [ZMod.χ₈'_nat_eq_if_mod_eight, if_neg hm2, if_pos hm8]
+    rw [ZMod.χ₈'_nat_eq_if_mod_eight, ite_eq_right hm2, ite_eq_left hm8]
   rw [Finset.sum_congr rfl hall]
   simp
 
@@ -205,16 +205,16 @@ public theorem divChiNeg2Sum_prime_pow_inert {q f : ℕ} (hp : q.Prime)
       · rw [Nat.pow_mod, h, pow_five_mod_eight]
       · rw [Nat.pow_mod, h, pow_seven_mod_eight]
     by_cases hj : Even j
-    · rw [if_pos hj] at hm8
-      rw [ZMod.χ₈'_nat_eq_if_mod_eight, if_neg hm2,
-        if_pos (Or.inl hm8), hj.neg_one_pow]
-    · rw [if_neg hj] at hm8
+    · rw [ite_eq_left hj] at hm8
+      rw [ZMod.χ₈'_nat_eq_if_mod_eight, ite_eq_right hm2,
+        ite_eq_left (Or.inl hm8), hj.neg_one_pow]
+    · rw [ite_eq_right hj] at hm8
       have hodd' : Odd j := by
         rcases Nat.even_or_odd j with h | h
         · exact absurd h hj
         · exact h
-      rw [ZMod.χ₈'_nat_eq_if_mod_eight, if_neg hm2,
-        if_neg (by rcases h with h | h <;> omega),
+      rw [ZMod.χ₈'_nat_eq_if_mod_eight, ite_eq_right hm2,
+        ite_eq_right (by rcases h with h | h <;> omega),
         hodd'.neg_one_pow]
   rw [Finset.sum_congr rfl hall]
   exact sum_neg_one_pow_range f

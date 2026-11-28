@@ -15,7 +15,11 @@ Then $N$ is an $\varepsilon$-net for $x$ with probability at least $1 - \varphi$
 - [Chebyshev's inequality](../../../Probability/moments/chebyshev-s-inequality/meas-ge-le-variance-div-sq.md)
 - [Sauer-Shelah bound on traces](../../not-yet-classified/growth/card-trace-family-le-sum-vc-dim.md)
 
+## Related topics
+
+- [The epsilon-net theorem](../../machine-learning/pac-learning/sample-complexity-and-combinatorial-dimensions/vc-sample-complexity-and-epsilon-nets/epsilon-net-theorem.md): the version for function classes and an arbitrary probability measure, with other constants.
+
 ## Sources
 
 - S. Har-Peled, *Geometric Approximation Algorithms*, revised online chapter "On complexity, sampling, ε-nets and ε-samples" (Chapter 7), <https://sarielhp.org/book/chapters/vc_dim.pdf>: Theorem 7.3.4 (ε-net theorem) and its proof in Section 7.5, Claims 7.5.1–7.5.2 (Chebyshev's inequality for the second sample and the bound on the number of traces)
-- D. Haussler and E. Welzl, "ε-nets and simplex range queries", *Proceedings of the Second Annual Symposium on Computational Geometry*, ACM, 1986, Corollary 3.8
+- D. Haussler and E. Welzl, "ε-nets and simplex range queries", *Discrete & Computational Geometry* 2 (1987), 127–151, <https://doi.org/10.1007/BF02187876>: the source to which Har-Peled credits Theorem 7.3.4; the displayed constants are Har-Peled's

@@ -15,17 +15,20 @@ public import Mathlib.Order.Basic
 public import Mathlib.Data.Fin.VecNotation
 public import MathlibExt.Combinatorics.MisereCubeRotationNim
 public import MathlibExt.Combinatorics.MisereCubeFaceNim
+public import MathlibExt.Combinatorics.MisereCubeVertexNim
 public import MathlibExt.Combinatorics.SlowCubeEdgeNim
 public import MathlibExt.Combinatorics.SlowCubeFaceNim
 public import MathlibExt.Combinatorics.SlowCubeVertexNim
 public import MathlibExt.Combinatorics.CubeRotationNimCubeEdgeNimPPositions
+public import MathlibExt.Combinatorics.CubeRotationPPositions
 
 /-!
 # Nim games on a cube
 
 Statement-only targets from Balaji R. Kadam and A. J. Shaiju, *Variations of the Nim Game
 Played on a Cube*, INTEGERS 25 (2025), Article G2. The theorem `cubeEdgeNim_pPositions` is
-proved in `MathlibExt.Combinatorics.CubeRotationNimCubeEdgeNimPPositions`.
+proved in `MathlibExt.Combinatorics.CubeRotationNimCubeEdgeNimPPositions`, and
+`cubeRotationNim_pPositions` is proved in `MathlibExt.Combinatorics.CubeRotationPPositions`.
 
 A position `p : Fin 6 → ℕ` lists the token counts `(a, b, c, A, B, C)` on the faces
 `f_a, f_b, f_c, f_A, f_B, f_C` (indices `0, …, 5`; `f_A` is opposite `f_a`, and so on). In the
@@ -46,41 +49,6 @@ the normalized positions the paper fixes.
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **P-positions of rotation Nim on a cube.** Write positions of the game $C_R$ as tuples
-$(a, b, c, A, B, C)$ of numbers of tokens on the faces $f_a, f_b, f_c, f_A, f_B, f_C$, where
-$f_A$, $f_B$, $f_C$ are opposite $f_a$, $f_b$, $f_c$. Let $\mathcal P$ be the set of positions with
-$a + A = b + B = c + C$. Then no rotation move leads from a position in $\mathcal P$ to a position
-in $\mathcal P$, and from every position outside $\mathcal P$ there is a rotation move to a
-position in $\mathcal P$.
-
-Every move removes a token, so the game terminates and $\mathcal P$ is exactly the set of
-P-positions (second-player wins) under normal play.
-
-Source: Balaji R. Kadam and A. J. Shaiju, *Variations of the Nim Game Played on a Cube*,
-INTEGERS 25 (2025), Article G2, Theorem 5 (`integers-2025-G2-thm-5`). -/
-public theorem_wanted cubeRotationNim_pPositions :
-    let P : Set (Fin 6 → ℕ) := {p | p 0 + p 3 = p 1 + p 4 ∧ p 1 + p 4 = p 2 + p 5}
-    (∀ p q, p ∈ P → CubeRotationMove p q → q ∉ P) ∧
-      ∀ p, p ∉ P → ∃ q, CubeRotationMove p q ∧ q ∈ P
-
-/-- **Misère P-positions of vertex Nim on a cube.** Write a position of the cube game as
-$p = (a, b, c, A, B, C)$, the numbers of tokens on the six faces of a cube, where the faces
-carrying $A$, $B$, $C$ are opposite those carrying $a$, $b$, $c$; a vertex move removes at
-least one token in total from the three faces at one vertex (one face from each opposite pair).
-Let $P$ be any set of positions such that $p \in P$ if and only if $p$ has a vertex move and
-no vertex move from $p$ leads to a position in $P$ (the misère P-positions). Then for every
-position $p$ with $a \le A$, $b \le B$, $a \le b$ and $C$ at least every entry of $p$, we have
-$p \in P$ if and only if either $a = A$, $b = B$, $c = C$ and $C \ge 2$ all hold, or $p$ is one
-of $(0, 0, 0, 0, 0, 1)$, $(0, 1, 1, 0, 1, 1)$ and $(1, 1, 1, 1, 1, 1)$.
-
-Source: Balaji R. Kadam and A. J. Shaiju, *Variations of the Nim Game Played on a Cube*,
-INTEGERS 25 (2025), Article G2, Theorem 6 (`integers-2025-G2-thm-6`). -/
-public theorem_wanted cubeVertexNim_misere_pPositions (P : Set (Fin 6 → ℕ))
-    (hP : ∀ p, p ∈ P ↔ (∃ q, CubeVertexMove p q) ∧ ∀ q, CubeVertexMove p q → q ∉ P)
-    (p : Fin 6 → ℕ) (hC : ∀ k, p k ≤ p 5) (ha : p 0 ≤ p 3) (hb : p 1 ≤ p 4) (hab : p 0 ≤ p 1) :
-    p ∈ P ↔ (p 0 = p 3 ∧ p 1 = p 4 ∧ p 2 = p 5 ∧ 2 ≤ p 5) ∨ p = ![0, 0, 0, 0, 0, 1] ∨
-      p = ![0, 1, 1, 0, 1, 1] ∨ p = ![1, 1, 1, 1, 1, 1]
 
 /-- **P-positions of slow rotation Nim on a cube.** Write a position of the cube game as
 $p = (a, b, c, A, B, C)$, the numbers of tokens on the six faces of a cube, where the faces
