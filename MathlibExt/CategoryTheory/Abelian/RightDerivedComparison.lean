@@ -16,6 +16,8 @@ Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/
 The source files carry no per-file copyright notice or author list.
 Modified: the natural derived-functor comparisons are kept as a standalone module;
 no Stacks package is imported.
+The injective-resolution constructor is generalized by Toskua and Avocado
+to the preadditive setting, retaining its augmentation and mapped complex.
 -/
 module
 
@@ -159,16 +161,21 @@ def rightDerivedCompIsoOfPreservesLeftHomology {D : Type*} [Category* D] (P : D 
       ((HomologicalComplex.shortComplexFunctor B (ComplexShape.up ℕ) n).map
         ((F.mapHomologicalComplex (ComplexShape.up ℕ)).map ψ)) E
 
-/-- The image of an injective resolution under an additive functor which preserves homology and
-injective objects is an injective resolution of the image. -/
+/-- For preadditive categories with zero objects, and homology in the target, an additive
+functor preserving homology and injective objects maps an injective resolution to an
+injective resolution of the image. No abelian-category assumption is needed. -/
+@[simps cocomplex ι]
 noncomputable def mapInjectiveResolution {A' B'' : Type*} [Category* A'] [Category* B'']
-    [Abelian A'] [Abelian B''] (G : A' ⥤ B'') [G.Additive] [G.PreservesHomology]
+    [HasZeroObject A'] [Preadditive A'] [HasZeroObject B''] [Preadditive B'']
+    [CategoryWithHomology B''] (G : A' ⥤ B'') [G.Additive] [G.PreservesHomology]
     [G.PreservesInjectiveObjects] {F : A'} (R : InjectiveResolution F) :
     InjectiveResolution (G.obj F) where
   cocomplex := (G.mapHomologicalComplex (.up ℕ)).obj R.cocomplex
-  injective n := G.injective_obj_of_injective (R.injective n)
+  injective n := PreservesInjectiveObjects.injective_obj (R.injective n)
+  hasHomology _ := inferInstance
   ι := (HomologicalComplex.singleMapHomologicalComplex G (.up ℕ) 0).inv.app F ≫
     (G.mapHomologicalComplex (.up ℕ)).map R.ι
+  quasiIso := inferInstance
 
 /-- **Precomposing with an exact functor which preserves injective objects.** For additive
 functors `G : A ⥤ B` and `H : B ⥤ C` with `G` preserving homology and injective objects, the

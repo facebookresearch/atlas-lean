@@ -12,6 +12,7 @@ module
 public import Mathlib.CategoryTheory.Abelian.Injective.Resolution
 public import Mathlib.CategoryTheory.Preadditive.Injective.Preserves
 public import MathlibExt.CategoryTheory.Abelian.Injective.ResolutionComparison
+public import MathlibExt.CategoryTheory.Abelian.RightDerivedComparison
 
 /-!
 # Mapping injective resolutions
@@ -42,21 +43,6 @@ namespace CategoryTheory.Functor
 variable {C : Type u} [Category.{v} C] [HasZeroObject C] [Preadditive C]
 variable {D : Type u'} [Category.{v'} D] [HasZeroObject D] [Preadditive D]
   [CategoryWithHomology D]
-
-/-- Let `C`, `D` be preadditive categories with zero objects and with
-homology in `D`. If additive `F : C → D` preserves homology and
-injective objects, an injective resolution `I` of `Z ∈ C` maps to
-an injective resolution of `F(Z)` in `D`. -/
-@[simps cocomplex ι]
-noncomputable def mapInjectiveResolution (F : C ⥤ D) [F.Additive]
-    [F.PreservesInjectiveObjects] [F.PreservesHomology]
-    {Z : C} (I : InjectiveResolution Z) : InjectiveResolution (F.obj Z) where
-  cocomplex := (F.mapHomologicalComplex _).obj I.cocomplex
-  injective n := PreservesInjectiveObjects.injective_obj (I.injective n)
-  hasHomology _ := inferInstance
-  ι := (HomologicalComplex.singleMapHomologicalComplex _ _ _).inv.app _ ≫
-    (F.mapHomologicalComplex _).map I.ι
-  quasiIso := inferInstance
 
 set_option backward.isDefEq.respectTransparency.types false in
 /-- For preadditive `C`, `D` with zero objects and homology in `D`, let
