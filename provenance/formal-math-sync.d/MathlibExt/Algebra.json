@@ -490,6 +490,13 @@
       "rationale": "Holds pow_mem_prime_pow_padicValNat_factorial_iff (Proposition 3), padicValNat_sum_le_add_padicValNat_multinomial (Corollary 24) and padicValNat_multinomial_eq_sum_carries (Kummer's theorem for multinomial coefficients), moved from WantedExt/Algebra/DeepPowerSumCongruencesWanted.lean, which keeps its other wanted statements, when they were proved; same names and statements. The moved docstrings keep the Atlas wiki audit restatement recorded for that wanted file, still pending backport."
     },
     {
+      "path": "MathlibExt/Algebra/DeepPowerSumCongruences/ArtinHasse.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "b459679f88f4eba527e70599880b5f8728c373ebc6f6467e918c991b88b4324b",
+      "rationale": "Move and prove artinHasse_eq_prod_one_sub_pow (Proposition 27) from WantedExt/Algebra/DeepPowerSumCongruencesWanted.lean, preserving its public name, statement, and docstring."
+    },
+    {
       "path": "MathlibExt/Algebra/DeepPowerSumCongruences/DVRMaximalIdeal.lean",
       "backport": "pending",
       "disposition": "diverged",
