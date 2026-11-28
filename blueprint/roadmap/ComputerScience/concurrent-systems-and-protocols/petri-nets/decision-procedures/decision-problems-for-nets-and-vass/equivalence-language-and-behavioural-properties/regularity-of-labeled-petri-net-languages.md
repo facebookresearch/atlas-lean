@@ -6,7 +6,7 @@ It is undecidable whether the language of a labeled Petri net with respect to a 
 
 **Theorem (Valk and Vidal-Naquet).** The regularity problem for languages of labeled ordinary Petri nets is undecidable.
 
-By contrast, it is decidable whether the trace set (the set of all firing sequences from $M_0$) of an unlabeled Petri net is regular (Ginzburg and Yoeli; Valk and Vidal-Naquet), though not primitive recursive, and context-freeness of such trace sets is decidable (Schwer).
+By contrast, it is decidable whether the trace set (the set of all firing sequences from $M_0$) of an unlabeled Petri net is regular (Ginzburg and Yoeli; Valk and Vidal-Naquet), and context-freeness of such trace sets is decidable (Schwer).
 
 ## Depends on
 

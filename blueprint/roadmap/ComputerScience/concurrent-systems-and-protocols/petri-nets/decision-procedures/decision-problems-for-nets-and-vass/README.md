@@ -2,5 +2,5 @@
 
 Undecidable verification, equivalence and language problems for Petri nets, their extensions and vector addition systems.
 
-- [equivalence-language-and-behavioural-properties](equivalence-language-and-behavioural-properties/README.md)
-- [extended-nets-and-affine-vass](extended-nets-and-affine-vass/README.md)
+- [Equivalence, language and behavioural properties of Petri nets](equivalence-language-and-behavioural-properties/README.md)
+- [Extended Petri nets and affine vector addition systems](extended-nets-and-affine-vass/README.md)

@@ -18,7 +18,7 @@ For the remaining classes, the same paper proves integer reachability NP-complet
 
 ## Proof depends on
 
-- [The Post correspondence problem is undecidable](../../../../../../TheoryOfComputation/undecidable-problems/post-correspondence-problem/exists-not-tm2-decidable-pcp.md)
+- [The Post correspondence problem is undecidable over the binary alphabet](../../../../../../TheoryOfComputation/undecidable-problems/post-correspondence-problem/not-tm2-decidable-pcp-bool.md)
 - [Two-counter machines are universal](../../../../../../TheoryOfComputation/equivalence-of-models/counter-machines/two-counter-machines-are-universal.md)
 - [Reachability for Petri nets with two reset, transfer or doubling arcs is undecidable](reachability-with-two-reset-or-transfer-arcs.md)
 - [Halting is undecidable](../../../../../../TheoryOfComputation/computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halts.md)
