@@ -2,7 +2,7 @@
 
 A matroid multilinear over a field is one represented, for some integer $c \ge 1$, by subspaces whose spanned dimensions are $c$ times its ranks; $c = 1$ gives linear representations.
 
-Let $F$ be a [field](../../../Algebra/rings-and-fields/field.md) and $M = (E, r)$ a [matroid](matroids-given-by-rank-functions.md). $M$ is *multilinear over $F$* if there are an integer $c \ge 1$, a vector space $V$ over $F$ and subspaces $W_e \subseteq V$, $e \in E$, such that
+Let $F$ be a [field](../../../Algebra/rings-and-fields/field.md) and a finite [matroid](matroids-given-by-rank-functions.md) $M$ with ground set $E$ and rank function $r$ (in Mathlib, a `Matroid` with `Matroid.Finite`, and $r$ given by `Matroid.eRk`). $M$ is *multilinear over $F$* if there are an integer $c \ge 1$, a vector space $V$ over $F$ and subspaces $W_e \subseteq V$, $e \in E$, such that
 
 $$
 r(S) = \frac{1}{c} \dim \Big( \sum_{e \in S} W_e \Big) \qquad \text{for all } S \subseteq E;

@@ -27,7 +27,7 @@ None.
 
 ## Expansion
 
-Over a field, the equivalence with linear representations goes as follows. If the span of the $k$-kernel has a basis $g_1,\dots,g_r$ of kernel sequences, each sequence $(g_j(kn+d))_{n\ge0}$ with $0\le d<k$ lies in the span again, which defines the matrices $M_d$; conversely the entries of the sequences $vM_{n_0}\cdots M_{n_{s-1}}$ span a finite-dimensional space containing the $k$-kernel. A good expansion links this equivalence, Theorem 2.2 of Allouche and Shallit as recalled by Krenn and Shallit.
+Over a field, the equivalence with linear representations goes as follows. If the span of the $k$-kernel has a basis $g_1,\dots,g_r$ of kernel sequences, each sequence $(g_j(kn+d))_{n\ge0}$ with $0\le d<k$ lies in the span again, which defines the matrices $M_d$; conversely, for $n\ge1$, $f(k^en+i)=vM_{i_0}\cdots M_{i_{e-1}}M_{n_0}\cdots M_{n_{s-1}}w$, where $i_{e-1}\cdots i_0$ is $i$ written with $e$ digits, so the entries of the column vectors $M_{n_0}\cdots M_{n_{s-1}}w$, together with the sequence that is $1$ at $n=0$ and $0$ elsewhere, span a finite-dimensional space containing the $k$-kernel. A good expansion links this equivalence, Theorem 2.2 of Allouche and Shallit as recalled by Krenn and Shallit.
 
 ## Sources
 

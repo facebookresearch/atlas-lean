@@ -2,7 +2,7 @@
 
 A matroid is almost multilinear when, for every $\varepsilon > 0$, a scaled rank function of a subspace arrangement approximates its rank function within $\varepsilon$.
 
-A *polymatroid* $(E, \tilde r)$ is a finite set $E$ with a function $\tilde r \colon \mathcal{P}(E) \to \mathbb{R}_{\ge 0}$ that is monotone and submodular; it is *linear* over a [field](../../../Algebra/rings-and-fields/field.md) $F$ if $\tilde r(S) = \dim \sum_{e \in S} W_e$ for subspaces $W_e$ of a vector space over $F$. A [matroid](matroids-given-by-rank-functions.md) $M = (E, r)$ is *almost multilinear* if for every $\varepsilon > 0$ there are a linear polymatroid $(E, \tilde r)$ and an integer $c \ge 1$ with
+A *polymatroid* $(E, \tilde r)$ is a finite set $E$ with a function $\tilde r \colon \mathcal{P}(E) \to \mathbb{R}_{\ge 0}$ that is monotone and submodular; it is *linear* over a [field](../../../Algebra/rings-and-fields/field.md) $F$ if $\tilde r(S) = \dim \sum_{e \in S} W_e$ for subspaces $W_e$ of a vector space over $F$. A finite [matroid](matroids-given-by-rank-functions.md) $M$ with ground set $E$ and rank function $r$ (in Mathlib, a `Matroid` with `Matroid.Finite`, and $r$ given by `Matroid.eRk`) is *almost multilinear* if for every $\varepsilon > 0$ there are a linear polymatroid $(E, \tilde r)$ and an integer $c \ge 1$ with
 
 $$
 \max_{S \subseteq E} \big| r(S) - \tilde r(S)/c \big| < \varepsilon .
