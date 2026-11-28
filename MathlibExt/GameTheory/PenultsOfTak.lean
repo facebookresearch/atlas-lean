@@ -47,6 +47,8 @@ penults.
 * The road contraction adapts the former `road_after_reply` in
   `MathlibExt.GameTheory.PenultsOfTak.WeightedCrossBound`, in the proof of
   `impartialTak_penult_card_ge_weightedCross`.
+* `impartialTak_isGreatest_penult_card.road_of_full_row` was originally proved in
+  `MathlibExt.GameTheory.PenultsOfTak.LargestPenult`.
 -/
 
 namespace MetaMathlibExt
@@ -247,19 +249,25 @@ public theorem takAdjacent_iff_dist_eq_one {n : ℕ} {p q : Fin n × Fin n} :
   simp only [takAdjacent, Fin.ext_iff, Nat.dist]
   omega
 
--- A full nonempty board has the straight road down its first column.
-private theorem takHasRoad_full {n : ℕ} (hn : 0 < n) :
-    takHasRoad (Finset.univ : Finset (Fin n × Fin n)) := by
-  let a : Fin n := ⟨0, hn⟩
-  let b : Fin n := ⟨n - 1, by omega⟩
-  have walk (i : ℕ) (hi : i < n) : Relation.ReflTransGen
-      (fun x y : Fin n × Fin n => takAdjacent x y ∧ y ∈ (Finset.univ : Finset _))
-      (a, a) (⟨i, hi⟩, a) := by
-    induction i with
+namespace impartialTak_isGreatest_penult_card
+
+/-- **A full row gives an Impartial Tak road.** Let $S \subseteq \{0,\ldots,n-1\}^2$ be the
+occupied cells of an $n \times n$ board, and let $r \in \{0,\ldots,n-1\}$. If $(r,c) \in S$ for
+all $c \in \{0,\ldots,n-1\}$, then $S$ contains a Tak road: the cells $(r,0),\ldots,(r,n-1)$
+form an orthogonal path from the first column to the last. -/
+public theorem road_of_full_row {n : ℕ} {S : Finset (Fin n × Fin n)} (r : Fin n)
+    (h : ∀ c, (r, c) ∈ S) : takHasRoad S := by
+  have hn := r.isLt
+  let first : Fin n := ⟨0, by omega⟩
+  let last : Fin n := ⟨n - 1, by omega⟩
+  have walk (j : ℕ) (hj : j < n) : Relation.ReflTransGen
+      (fun x y : Fin n × Fin n => takAdjacent x y ∧ y ∈ S) (r, first) (r, ⟨j, hj⟩) := by
+    induction j with
     | zero => exact .refl
-    | succ i ih =>
-      exact (ih (by omega)).tail ⟨Or.inr ⟨rfl, Or.inl rfl⟩, Finset.mem_univ _⟩
-  exact ⟨(a, a), Finset.mem_univ _, (b, a), walk _ _, Or.inr ⟨rfl, by dsimp [b]; omega⟩⟩
+    | succ i ih => exact (ih (by omega)).tail ⟨Or.inl ⟨rfl, Or.inl rfl⟩, h _⟩
+  exact ⟨(r, first), h _, (r, last), walk _ _, Or.inl ⟨rfl, by dsimp [last]; omega⟩⟩
+
+end impartialTak_isGreatest_penult_card
 
 /-- **A cut obstructs an Impartial Tak penult.** Let $S$ be a position on the $n \times n$ board,
 let $p \notin S$ be an empty cell, and let $A$ be a set of board cells. If $p \notin A$, every
@@ -280,7 +288,7 @@ public theorem not_takPenult_of_cut {n : ℕ} {S : Finset (Fin n × Fin n)}
     rcases hterminal with h | h
     · exact h
     rw [h]
-    exact takHasRoad_full ((Nat.zero_le p.1.val).trans_lt p.1.isLt)
+    exact impartialTak_isGreatest_penult_card.road_of_full_row p.1 (fun _ => Finset.mem_univ _)
   -- Collapse the side containing p to the reply q; edges either survive or contract.
   let f (x : Fin n × Fin n) := if x ∈ A then x else q
   have hmem {x} (hx : x ∈ insert q (insert p S)) : f x ∈ insert q S := by

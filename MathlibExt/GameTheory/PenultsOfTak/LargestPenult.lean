@@ -25,18 +25,6 @@ namespace MetaMathlibExt.impartialTak_isGreatest_penult_card
 
 private abbrev Cell (n : ℕ) := Fin n × Fin n
 
-private theorem road_of_full_row {n : ℕ} {S : Finset (Cell n)} (r : Fin n)
-    (h : ∀ c, (r, c) ∈ S) : takHasRoad S := by
-  have hn := r.isLt
-  let first : Fin n := ⟨0, by omega⟩
-  let last : Fin n := ⟨n - 1, by omega⟩
-  have walk (j : ℕ) (hj : j < n) : Relation.ReflTransGen
-      (fun x y : Cell n => takAdjacent x y ∧ y ∈ S) (r, first) (r, ⟨j, hj⟩) := by
-    induction j with
-    | zero => exact .refl
-    | succ i ih => exact (ih (by omega)).tail ⟨Or.inl ⟨rfl, Or.inl rfl⟩, h _⟩
-  exact ⟨(r, first), h _, (r, last), walk _ _, Or.inl ⟨rfl, by dsimp [last]; omega⟩⟩
-
 private theorem exists_hole {n : ℕ} {S : Finset (Cell n)} (h : ¬ placementTerminal takHasRoad S)
     (r : Fin n) : ∃ c, (r, c) ∉ S := by
   by_contra! hf

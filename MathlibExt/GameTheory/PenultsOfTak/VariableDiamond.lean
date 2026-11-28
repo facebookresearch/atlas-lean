@@ -9,7 +9,6 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.GameTheory.PenultsOfTak
-import all MathlibExt.GameTheory.PenultsOfTak.LargestPenult
 import all MathlibExt.GameTheory.PenultsOfTakImpartialTakNotFirstPlayerWinsOfEven
 import Mathlib.Data.Finset.Card
 import Mathlib.Order.Interval.Finset.Nat
@@ -30,7 +29,7 @@ penult with `n^2 - 2*n - k - l + 6` tokens. These boards realize every count fro
   INTEGERS 25 (2025), Article G1, pp. 1–18, Proposition 6 and Figure 7.
 * The path arguments reuse `Walk`, `walk_mem`, `walk_reverse` and `adjacent_symm` from
   `MathlibExt.GameTheory.PenultsOfTakImpartialTakNotFirstPlayerWinsOfEven`, and
-  `road_of_full_row` from `MathlibExt.GameTheory.PenultsOfTak.LargestPenult`.
+  `impartialTak_isGreatest_penult_card.road_of_full_row` from `MathlibExt.GameTheory.PenultsOfTak`.
 -/
 
 namespace MetaMathlibExt
