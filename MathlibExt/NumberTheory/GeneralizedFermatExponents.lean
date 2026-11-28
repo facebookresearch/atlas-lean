@@ -495,7 +495,15 @@ private theorem curve_x {x y : ℚ} (hx : 0 < x) (he : OnCurve (-3) 3 x y) : x =
       rcases hr' with rfl | rfl <;> norm_num at h ⊢ <;> exact h
     exact h1.imp id (fun h3 ↦ by simpa using ((div_eq_iff hx.ne').mp h3).symm)
 
-private theorem mordell_x {x y : ℚ} (hx : x ≠ 0) (hy : y ≠ 0)
+end generalizedFermat_three_six_two_mul
+
+open generalizedFermat_three_six_two_mul in
+/-- **Nonzero rational points on the Mordell curve $y^2 = x^3 + 1$.** If $x$ and $y$ are
+nonzero rationals with $y^2 = x^3 + 1$, then $x = 2$.
+
+Source: Keith Conrad, *Examples of Mordell's Equation*, Example 3.6, footnote 4
+(<https://kconrad.math.uconn.edu/blurbs/gradnumthy/mordelleqn1.pdf>). -/
+public theorem eq_two_of_sq_eq_cube_add_one {x y : ℚ} (hx : x ≠ 0) (hy : y ≠ 0)
     (he : y ^ 2 = x ^ 3 + 1) : x = 2 := by
   have hcurve : OnCurve (-3) 3 (x + 1) y := by
     unfold OnCurve
@@ -509,6 +517,8 @@ private theorem mordell_x {x y : ℚ} (hx : x ≠ 0) (hy : y ≠ 0)
   rcases curve_x (curve_x_pos hxp hcurve) hcurve with h | h
   · exact (hx (by linarith)).elim
   · linarith
+
+namespace generalizedFermat_three_six_two_mul
 
 private theorem exponents_of_solution {s t w : ℕ} {x y z : ℤ} (hx : x ≠ 0) (hy : y ≠ 0)
     (hz : z ≠ 0) (he : x ^ (3 * s) + y ^ (6 * t) = z ^ (2 * w)) :
@@ -528,7 +538,7 @@ private theorem exponents_of_solution {s t w : ℕ} {x y z : ℤ} (hx : x ≠ 0)
     field_simp [hy']
     linear_combination -hcast
   -- A nonzero solution gives the x-coordinate 2 and y-coordinate ±3 on the curve.
-  have hX2 := mordell_x hX hY hE
+  have hX2 := eq_two_of_sq_eq_cube_add_one hX hY hE
   have hY9 : Y ^ 2 = (3 : ℚ) ^ 2 := by rw [hE, hX2]; norm_num
   have val_x (p : ℕ) [Fact p.Prime] : (s : ℤ) * padicValRat p (x : ℚ) =
       (if p = 2 then 1 else 0) + 2 * t * padicValRat p (y : ℚ) := by

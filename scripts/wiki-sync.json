@@ -93564,6 +93564,7 @@
 "MetaMathlibExt.eq_scaled_zeroInterval_of_extremal": "8baad311ab5299c9",
 "MetaMathlibExt.eq_sub_one_of_not_isLargeZsigmondyPrime": "481843a28d43fd55",
 "MetaMathlibExt.eq_sylvester_of_ratio_mem_of_hasSum_one": "8ef8fd14ebbdbe83",
+"MetaMathlibExt.eq_two_of_sq_eq_cube_add_one": "3a3501462edf0886",
 "MetaMathlibExt.eq_two_of_two_pow_add_one_dvd": "4d9e09eea6e24e64",
 "MetaMathlibExt.eq_two_or_eq_three_of_isSpoofLehmer_replicate": "07a0795c8611fdbd",
 "MetaMathlibExt.eq_zero_of_color_eq_color_zero_of_rainbowFree_powDiff": "644368d5c332fae9",

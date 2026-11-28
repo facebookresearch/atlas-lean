@@ -39,22 +39,5 @@ public import MathlibExt.NumberTheory.PellThreeNegTwo
 public import MathlibExt.NumberTheory.PellThreeOne
 public import MathlibExt.NumberTheory.PowerfulNumbers
 public import MathlibExt.NumberTheory.PrimeCubeSquareNeighbors
+public import MathlibExt.NumberTheory.PrimeCubeSquareProduct
 public import MathlibExt.NumberTheory.QuarticToCubic
-
-set_option autoImplicit false
-
-@[expose] public section
-
-namespace MathlibExt.NumberTheory.PowerfulNumbersWanted
-
-/-- **No integer solutions of $64x^6 - 1 = p^3 q^3 y^2$ with $p$, $q$ prime.** There are no
-integers $x$, $y$ and primes $p$, $q$ with $64 x^6 - 1 = p^3 q^3 y^2$.
-
-Source: Tsz Ho Chan, "A Note on Three Consecutive Powerful Numbers",
-Corollary 1. -/
-theorem_wanted not_exists_sixty_four_mul_pow_six_sub_one_eq :
-    ¬ ∃ (p q : ℕ) (x y : ℤ),
-      p.Prime ∧ q.Prime ∧
-        64 * x ^ 6 - 1 = (p : ℤ) ^ 3 * (q : ℤ) ^ 3 * y ^ 2
-
-end MathlibExt.NumberTheory.PowerfulNumbersWanted
