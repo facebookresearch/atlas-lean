@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
+public import MathlibExt.NumberTheory.AlternatingHyperharmonic
 public import MathlibExt.NumberTheory.AlternatingHyperharmonicTypeII
 public import MathlibExt.NumberTheory.AlternatingHyperharmonicTypeIIISquarefree
 public import MathlibExt.Analysis.Asymptotics.Jakimczuk
@@ -25,14 +26,14 @@ public import MathlibExt.NumberTheory.Harmonic.HyperharmonicAsymptotic
 # Sums over primes II (statements)
 
 Statement-only targets from Rusen Li, *Sums over Primes II*: the asymptotics of the `n`-th
-(squarefree) number with exactly `k` prime factors, two power-log summation asymptotics, the
-explicit formulas and asymptotics of the generalized (alternating) hyperharmonic numbers
-`H_n^{(p,r)}` and `H_n^{(p,r,i)}` (`i = 1, 2, 3`), and the asymptotics of sums over primes and over
-squarefree numbers with `k` prime factors weighted by powers of these numbers.
+(squarefree) number with exactly `k` prime factors, two power-log summation asymptotics,
+explicit formulas for the type I and III generalized alternating hyperharmonic numbers,
+asymptotics for the type I numbers, and weighted sums over primes and squarefree numbers with
+`k` prime factors.
 
-The asymptotic of the type III
-numbers `H_n^{(p,r,3)}`, `alternatingHyperharmonic_typeIII_isEquivalent`, is not a target here:
-it is proved in `MathlibExt.NumberTheory.AlternatingHyperharmonicTypeIIISquarefree`.
+This module re-exports the asymptotics of `H_n^{(p,r)}` and `H_n^{(p,r,2)}` from
+`MathlibExt.NumberTheory.AlternatingHyperharmonic` and that of `H_n^{(p,r,3)}` from
+`MathlibExt.NumberTheory.AlternatingHyperharmonicTypeIIISquarefree`.
 -/
 
 namespace MetaMathlibExt
@@ -237,18 +238,6 @@ Article 24.4.1, Definition 5. -/
 public theorem liCoeffB1_one_zero_zero_three : liCoeffB1 1 0 0 3 = 0 := by
   simp [liCoeffB1]
 
-
-/-- **Asymptotic of generalized hyperharmonic numbers.** For a natural number $p$ let
-$H_n^{(p)} = \sum_{i=1}^{n} 1/i^p$ be the generalized harmonic numbers, and let the generalized
-hyperharmonic numbers be $H_n^{(p,1)} = H_n^{(p)}$ and $H_n^{(p,r+1)} = \sum_{k=1}^{n} H_k^{(p,r)}$.
-Then for all natural numbers $p \ge 2$ and $r \ge 1$, $H_n^{(p,r)} \sim n^{r-1} \zeta(p) / (r-1)!$
-as $n \to \infty$, where $\zeta(p) = \sum_{i \ge 1} 1/i^p$.
-
-Source: Rusen Li, *Sums over Primes II*, Journal of Integer Sequences 27 (2024),
-Article 24.4.1, Lemma 2 (`jis-2024-24.4.1-lem-2`). -/
-public theorem_wanted generalizedHyperharmonic_isEquivalent {p r : ℕ} (hp : 2 ≤ p) (hr : 1 ≤ r) :
-    (fun n : ℕ => signedIteratedPartialSum false (generalizedHarmonic p) r n) ~[atTop]
-      fun n : ℕ => (n : ℝ) ^ (r - 1) * (∑' i : ℕ, 1 / (i : ℝ) ^ p) / (r - 1).factorial
 
 /-- **Explicit formulas for type I and type III alternating hyperharmonic numbers.** For real $s$
 write $H_n^{(s)} = \sum_{i=1}^{n} 1/i^s$ and $\overline{H}_n^{(s)} = \sum_{i=1}^{n} (-1)^{i-1}/i^s$
