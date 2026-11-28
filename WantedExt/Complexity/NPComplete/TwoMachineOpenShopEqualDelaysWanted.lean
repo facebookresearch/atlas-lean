@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.TwoMachineOpenShopTwoDelayValuesWanted
+public import CSLibExt.Complexity.NPComplete.TwoMachineOpenShopEqualDelaysDefs
 
 @[expose] public section
 
@@ -67,20 +65,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness: the two delay values coincide (`T₁ = T₂ = T`), and every job's delay is
-`T₁` or `T₂` (`TwoMachineFlowShopTwoDelayValues.WellFormed`), i.e. equals `T`. -/
-def WellFormed (i : TwoMachineFlowShopTwoDelayValuesInstance) : Prop :=
-  i.1 = i.2.1 ∧ TwoMachineFlowShopTwoDelayValues.WellFormed i
-
-open Classical in
-/-- TWO-MACHINE OPEN SHOP WITH EQUAL DELAYS as a decision problem over bitstrings. -/
-noncomputable def twoMachineOpenShopEqualDelaysDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TwoMachineFlowShopTwoDelayValuesInstance) x with
-  | some i => decide (WellFormed i ∧ TwoMachineOpenShopTwoDelayValuesFeasible i)
-  | none => false
 
 /-- **TWO-MACHINE OPEN SHOP WITH EQUAL DELAYS is NP-complete.** Source: Yu (1996), Chapter 2,
 Appendix, Theorem 5; Brucker and Knust (classification tables). -/

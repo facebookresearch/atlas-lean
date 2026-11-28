@@ -22,9 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.TwoProcessorFlowShopMaximumLatenessWanted
+public import CSLibExt.Complexity.NPComplete.TwoProcessorOpenShopMaximumLatenessDefs
 
 @[expose] public section
 
@@ -68,27 +66,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Some schedule, with starting times `s₁ j` on `M₁` and `s₂ j` on `M₂`, runs one operation at
-a time on each machine, never runs the two operations of a job at the same time, and completes
-both operations of every job `j` with lateness `Cⱼ - dⱼ ≤ y⁺ - y⁻`. -/
-def TwoProcessorOpenShopMaximumLatenessFeasible
-    (i : TwoProcessorFlowShopMaximumLatenessInstance) : Prop :=
-  ∃ s₁ s₂ : Job i → ℕ,
-    (∀ j k, j ≠ k → s₁ j + time₁ i j ≤ s₁ k ∨ s₁ k + time₁ i k ≤ s₁ j) ∧
-    (∀ j k, j ≠ k → s₂ j + time₂ i j ≤ s₂ k ∨ s₂ k + time₂ i k ≤ s₂ j) ∧
-    (∀ j, s₁ j + time₁ i j ≤ s₂ j ∨ s₂ j + time₂ i j ≤ s₁ j) ∧
-    ∀ j, s₁ j + time₁ i j + i.2.2 ≤ dueDate i j + i.2.1 ∧
-      s₂ j + time₂ i j + i.2.2 ≤ dueDate i j + i.2.1
-
-open Classical in
-/-- OPEN SHOP O2||Lmax as a decision problem over bitstrings. -/
-noncomputable def twoProcessorOpenShopMaximumLatenessDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TwoProcessorFlowShopMaximumLatenessInstance) x with
-  | some i => decide (WellFormed i ∧ TwoProcessorOpenShopMaximumLatenessFeasible i)
-  | none => false
 
 /-- **OPEN SHOP O2||Lmax is NP-complete.** Source: Lawler, Lenstra, and Rinnooy Kan (1981;
 erratum 1982); Brucker and Knust's classification (`O2||L_max`, strongly NP-hard). -/

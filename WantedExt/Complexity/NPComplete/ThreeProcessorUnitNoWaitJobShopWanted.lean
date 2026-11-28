@@ -26,9 +26,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.ThreeProcessorEqualLengthJobShopWanted
+public import CSLibExt.Complexity.NPComplete.ThreeProcessorUnitNoWaitJobShopDefs
 
 @[expose] public section
 
@@ -68,37 +66,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the instance is a well-formed THREE-PROCESSOR JOB-SHOP
-SCHEDULING instance with equal task lengths (a well-formed [SS18] instance with `m = 3` whose
-tasks all have one length), and every task has length `1`. -/
-def WellFormed (i : JobShopSchedulingInstance) : Prop :=
-  ThreeProcessorEqualLengthJobShop.RestrictedWellFormed i ∧ ∀ job ∈ i.2.1, ∀ t ∈ job, t.1 = 1
-
-/-- There is a no-wait job-shop schedule meeting the deadline: start times `σ` that are
-one-to-one on the tasks of each processor, such that a task of a processor starting after
-another task `t'` of that processor starts no earlier than `t'` finishes, each task of a job
-starts exactly when the previous task of that job finishes, and the last task of every job
-finishes by `D`. -/
-def ThreeProcessorUnitNoWaitJobShopFeasible (i : JobShopSchedulingInstance) : Prop :=
-  ∃ σ : JobShopScheduling.Task i → ℕ,
-    (∀ t t', taskProcessor i t = taskProcessor i t' → σ t = σ t' → t = t') ∧
-    (∀ t t', taskProcessor i t = taskProcessor i t' → σ t' < σ t →
-      σ t' + taskLength i t' ≤ σ t) ∧
-    (∀ j (k k' : Fin (i.2.1.get j).length), k'.1 = k.1 + 1 →
-      σ ⟨j, k'⟩ = σ ⟨j, k⟩ + taskLength i ⟨j, k⟩) ∧
-    ∀ j (k : Fin (i.2.1.get j).length), k.1 + 1 = (i.2.1.get j).length →
-      σ ⟨j, k⟩ + taskLength i ⟨j, k⟩ ≤ i.2.2
-
-open Classical in
-/-- THREE-PROCESSOR UNIT-TIME NO-WAIT JOB-SHOP SCHEDULING as a decision problem over
-bitstrings. -/
-noncomputable def threeProcessorUnitNoWaitJobShopDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := JobShopSchedulingInstance) x with
-  | some i => decide (WellFormed i ∧ ThreeProcessorUnitNoWaitJobShopFeasible i)
-  | none => false
 
 /-- **THREE-PROCESSOR UNIT-TIME NO-WAIT JOB-SHOP SCHEDULING (`J3|p_ij=1;no-wait|C_max`) is
 NP-complete.** Source: Sriskandarajah and Ladet (1986); Brucker and Knust's classification;

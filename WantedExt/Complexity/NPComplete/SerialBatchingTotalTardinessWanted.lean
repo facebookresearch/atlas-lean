@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import CSLibExt.Complexity.NPComplete.SerialBatchingTotalTardinessDefs
 
 @[expose] public section
 
@@ -56,59 +54,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the setup time `s`, the jobs as pairs `(p_j, d_j)` of
-processing time and due date, and the bound `K`. -/
-abbrev SerialBatchingTotalTardinessInstance := ℕ × List (ℕ × ℕ) × ℕ
-
-/-- The number of jobs. -/
-abbrev numJobs (i : SerialBatchingTotalTardinessInstance) : ℕ := i.2.1.length
-
-/-- The processing time of job `j`. -/
-def proc (i : SerialBatchingTotalTardinessInstance) (j : Fin (numJobs i)) : ℕ :=
-  (i.2.1.get j).1
-
-/-- The completion time of batch `k` when job `j` is in batch `b j` and batch `k` starts its setup
-at `S k`: setup, then the jobs of the batch one after another. -/
-def batchCompletion (i : SerialBatchingTotalTardinessInstance)
-    (b : Fin (numJobs i) → ℕ) (S : ℕ → ℕ) (k : ℕ) : ℕ :=
-  S k + i.1 + ∑ j ∈ Finset.univ.filter (fun j => b j = k), proc i j
-
-/-- The batches are processed one after another in the order of their indices: a batch starts
-its setup only after every nonempty batch with a smaller index has completed. -/
-def IsBatchSchedule (i : SerialBatchingTotalTardinessInstance)
-    (b : Fin (numJobs i) → ℕ) (S : ℕ → ℕ) : Prop :=
-  ∀ j j', b j < b j' → batchCompletion i b S (b j) ≤ S (b j')
-
-/-- The completion time of job `j`: the completion time of its batch. -/
-def completion (i : SerialBatchingTotalTardinessInstance)
-    (b : Fin (numJobs i) → ℕ) (S : ℕ → ℕ) (j : Fin (numJobs i)) : ℕ :=
-  batchCompletion i b S (b j)
-
-/-- The due date of job `j`. -/
-def due (i : SerialBatchingTotalTardinessInstance) (j : Fin (numJobs i)) : ℕ :=
-  (i.2.1.get j).2
-
-/-- Well-formedness of an instance: the setup time `s` is positive. -/
-def WellFormed (i : SerialBatchingTotalTardinessInstance) : Prop :=
-  0 < i.1
-
-/-- Some serial-batching schedule has total tardiness at most `K`; the truncated difference
-`C_j - d_j` of natural numbers is the tardiness `max(0, C_j - d_j)`. -/
-def SerialBatchingTotalTardinessFeasible
-    (i : SerialBatchingTotalTardinessInstance) : Prop :=
-  ∃ (b : Fin (numJobs i) → ℕ) (S : ℕ → ℕ), IsBatchSchedule i b S ∧
-    ∑ j, (completion i b S j - due i j) ≤ i.2.2
-
-open Classical in
-/-- SERIAL-BATCHING TOTAL TARDINESS as a decision problem over
-bitstrings. -/
-noncomputable def serialBatchingTotalTardinessDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SerialBatchingTotalTardinessInstance) x with
-  | some i => decide (WellFormed i ∧ SerialBatchingTotalTardinessFeasible i)
-  | none => false
 
 /-- **SERIAL-BATCHING TOTAL TARDINESS is NP-complete.**
 Source: Baptiste and Jouglet (2001); Du and Leung (1990). -/

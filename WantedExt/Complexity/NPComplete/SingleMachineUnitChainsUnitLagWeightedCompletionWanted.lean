@@ -21,11 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import CSLibExt.Complexity.NPComplete.SequencingToMinimizeWeightedTardinessDefs
-public import WantedExt.Complexity.NPComplete.SingleMachineChainsTimeLagMakespanWanted
+public import CSLibExt.Complexity.NPComplete.SingleMachineUnitChainsUnitLagWeightedCompletionDefs
 
 @[expose] public section
 
@@ -75,34 +71,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- The weight `w_j` of job `j`: the `j`-th listed number. -/
-def weight (i : SingleMachineChainsTimeLagMakespanInstance) (j : ℕ) : ℕ := i.1.getD j 0
-
-/-- Well-formedness of an instance: well-formed for `1|chains(l)|C_max` (the chains consist of
-job indices, and no job occurs twice), and the time lag is `1`. -/
-def WellFormed (i : SingleMachineChainsTimeLagMakespanInstance) : Prop :=
-  SingleMachineChainsTimeLagMakespan.WellFormed i ∧ i.2.2.1 = 1
-
-/-- Some start times `S` never run two unit jobs at once, start each job in a chain at least the
-lag `1` after its immediate predecessor completes, and have total weighted completion time
-`Σ_j w_j (S j + 1)` at most `K`. -/
-def SingleMachineUnitChainsUnitLagWeightedCompletionFeasible
-    (i : SingleMachineChainsTimeLagMakespanInstance) : Prop :=
-  ∃ S : ℕ → ℕ,
-    IsOneProcessorSchedule (fun _ : Fin i.1.length => 1) (fun j => S j) ∧
-    (∀ c ∈ i.2.1, ∀ k, k + 1 < c.length →
-      S (c.getD k 0) + 1 + i.2.2.1 ≤ S (c.getD (k + 1) 0)) ∧
-    ∑ j ∈ Finset.range i.1.length, weight i j * (S j + 1) ≤ i.2.2.2
-
-open Classical in
-/-- `1|chains(1);p_i=1|Σw_iC_i` as a decision problem over bitstrings. -/
-noncomputable def singleMachineUnitChainsUnitLagWeightedCompletionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SingleMachineChainsTimeLagMakespanInstance) x with
-  | some i => decide (WellFormed i ∧ SingleMachineUnitChainsUnitLagWeightedCompletionFeasible i)
-  | none => false
 
 /-- **`1|chains(1);p_i=1|Σw_iC_i` is NP-complete.** Source: Brucker and Knust (classification
 tables), citing Tanaev, Sotskov and Strusevich (1994). -/

@@ -24,9 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.SingleServerTwoMachinesEqualSetupMakespanWanted
+public import CSLibExt.Complexity.NPComplete.SingleServerTwoMachinesUnitSetupMakespanDefs
 
 @[expose] public section
 
@@ -66,20 +64,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: it is a well-formed `P2;S1|s_i=s|C_max` instance whose
-common setup time is `s = 1`. -/
-def WellFormed (i : SingleServerTwoMachinesEqualSetupMakespanInstance) : Prop :=
-  SingleServerTwoMachinesEqualSetupMakespan.WellFormed i ∧ i.1 = 1
-
-open Classical in
-/-- `P2;S1|s_i=1|Cmax` as a decision problem over bitstrings. -/
-noncomputable def singleServerTwoMachinesUnitSetupMakespanDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SingleServerTwoMachinesEqualSetupMakespanInstance) x with
-  | some i => decide (WellFormed i ∧ SingleServerTwoMachinesEqualSetupMakespanFeasible i)
-  | none => false
 
 /-- **TWO PARALLEL MACHINES WITH A SINGLE SERVER, unit setups, makespan (`P2;S1|s_i=1|Cmax`) is
 NP-complete.** Source: Kravchenko and Werner (1997); Hall, Potts and Sriskandarajah (2000); as

@@ -27,10 +27,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
-public import Mathlib.Order.Interval.Finset.Nat
+public import CSLibExt.Complexity.NPComplete.TwoMachineSingleServerUnitWeightedTardinessDefs
 
 @[expose] public section
 
@@ -75,39 +72,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance `(jobs, K)`: job `j` is the `j`-th triple `(s_j, w_j, d_j)` of setup time,
-weight and due date (every processing time is `1`), and `K` is the bound. -/
-abbrev TwoMachineSingleServerUnitInstance := List (ℕ × ℕ × ℕ) × ℕ
-
-/-- A schedule of the jobs `Fin n`, with setup times `s` and processing times `p`, on `m`
-identical parallel machines with a single server: job `j` is processed on machine `μ j`, and
-its setup starts at `t j`, occupying the server during `[t j, t j + s j)`, immediately followed
-by its processing; job `j` occupies machine `μ j` during `[t j, t j + s j + p j)`. Setups of
-different jobs are disjoint, and different jobs on the same machine are disjoint. -/
-def IsSingleServerSchedule (m : ℕ) {n : ℕ} (s p : Fin n → ℕ) (μ : Fin n → Fin m)
-    (t : Fin n → ℕ) : Prop :=
-  (∀ j k, j ≠ k → Disjoint (Finset.Ico (t j) (t j + s j)) (Finset.Ico (t k) (t k + s k))) ∧
-    ∀ j k, j ≠ k → μ j = μ k →
-      Disjoint (Finset.Ico (t j) (t j + s j + p j)) (Finset.Ico (t k) (t k + s k + p k))
-
-/-- Some schedule on two machines with a single server and unit processing times has total
-weighted tardiness `Σ_j w_j · max(0, C_j - d_j)` at most `K`, where `C_j = t j + s_j + 1`
-(natural-number subtraction truncates at `0`). -/
-def TwoMachineSingleServerUnitWeightedTardinessFeasible
-    (i : TwoMachineSingleServerUnitInstance) : Prop :=
-  ∃ μ : Fin i.1.length → Fin 2, ∃ t : Fin i.1.length → ℕ,
-    IsSingleServerSchedule 2 (fun j => (i.1.get j).1) (fun _ => 1) μ t ∧
-      (∑ j, (i.1.get j).2.1 * (t j + (i.1.get j).1 + 1 - (i.1.get j).2.2)) ≤ i.2
-
-open Classical in
-/-- `P2;S1|p_i=1|Σw_iT_i` as a decision problem over bitstrings. -/
-noncomputable def twoMachineSingleServerUnitWeightedTardinessDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TwoMachineSingleServerUnitInstance) x with
-  | some i => decide (TwoMachineSingleServerUnitWeightedTardinessFeasible i)
-  | none => false
 
 /-- **TWO PARALLEL MACHINES WITH A SINGLE SERVER, unit processing times, total weighted
 tardiness (`P2;S1|p_i=1|Σw_iT_i`) is NP-complete.** Source: Hall, Potts and Sriskandarajah

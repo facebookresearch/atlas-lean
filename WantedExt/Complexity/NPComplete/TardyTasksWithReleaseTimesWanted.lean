@@ -24,10 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Data.Fintype.Card
-public import CSLibExt.Complexity.NPComplete.SequencingToMinimizeWeightedTardinessDefs
+public import CSLibExt.Complexity.NPComplete.TardyTasksWithReleaseTimesDefs
 
 @[expose] public section
 
@@ -71,47 +68,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the tasks, task `t` being the `t`-th triple `(l(t), r(t), d(t))` of length,
-release time and deadline, and the bound `K`. -/
-abbrev TardyTasksWithReleaseTimesInstance := List (ℕ × ℕ × ℕ) × ℕ
-
-/-- The tasks of the instance, `Fin n` for `n` listed triples. -/
-abbrev Task (i : TardyTasksWithReleaseTimesInstance) : Type := Fin i.1.length
-
-/-- The length `l(t)` of task `t`. -/
-def taskLength (i : TardyTasksWithReleaseTimesInstance) (t : Task i) : ℕ :=
-  (i.1.get t).1
-
-/-- The release time `r(t)` of task `t`. -/
-def releaseTime (i : TardyTasksWithReleaseTimesInstance) (t : Task i) : ℕ :=
-  (i.1.get t).2.1
-
-/-- The deadline `d(t)` of task `t`. -/
-def deadline (i : TardyTasksWithReleaseTimesInstance) (t : Task i) : ℕ :=
-  (i.1.get t).2.2
-
-/-- Well-formedness of an instance: every length and deadline is positive, and
-`0 < K ≤ |T|`. -/
-def WellFormed (i : TardyTasksWithReleaseTimesInstance) : Prop :=
-  (∀ x ∈ i.1, 0 < x.1 ∧ 0 < x.2.2) ∧ 0 < i.2 ∧ i.2 ≤ i.1.length
-
-/-- Some one-processor schedule starts every task no earlier than its release time and has at
-most `K` tardy tasks, those with `σ(t) + l(t) > d(t)`. -/
-def TardyTasksWithReleaseTimesFeasible (i : TardyTasksWithReleaseTimesInstance) : Prop :=
-  ∃ σ : Task i → ℕ, IsOneProcessorSchedule (taskLength i) σ ∧
-    (∀ t, releaseTime i t ≤ σ t) ∧
-    (Finset.univ.filter fun t => deadline i t < σ t + taskLength i t).card ≤ i.2
-
-open Classical in
-/-- SEQUENCING TO MINIMIZE TARDY TASKS WITH RELEASE TIMES as a decision problem over
-bitstrings. -/
-noncomputable def tardyTasksWithReleaseTimesDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TardyTasksWithReleaseTimesInstance) x with
-  | some i => decide (WellFormed i ∧ TardyTasksWithReleaseTimesFeasible i)
-  | none => false
 
 /-- **SEQUENCING TO MINIMIZE TARDY TASKS WITH RELEASE TIMES is NP-complete.** Source: Garey
 and Johnson (1979), [SS2], comment, and [SS1]; Lenstra, Rinnooy Kan, and Brucker (1977),

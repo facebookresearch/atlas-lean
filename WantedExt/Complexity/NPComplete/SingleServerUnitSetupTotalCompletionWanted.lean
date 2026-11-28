@@ -25,9 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import CSLibExt.Complexity.NPComplete.SingleServerUnitSetupTotalCompletionDefs
 
 @[expose] public section
 
@@ -64,35 +62,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance `(m, p, K)`: the number `m` of machines, the processing times `p_i` of the jobs
-`0, …, n - 1` (`n` is the length of the list), and the bound `K`. -/
-abbrev SingleServerUnitSetupTotalCompletionInstance := ℕ × List ℕ × ℕ
-
-/-- Well-formedness of an instance: there is at least one machine. -/
-def WellFormed (i : SingleServerUnitSetupTotalCompletionInstance) : Prop :=
-  0 < i.1
-
-/-- Some schedule, a machine `μ j` and a setup start time `t j` for each job `j`, has total
-completion time `Σ_j (t j + 1 + p_j)` at most `K`: different jobs start their unit setups at
-different times (single server), and different jobs on the same machine occupy disjoint
-intervals `[t j, t j + 1 + p_j)` (setup followed immediately by processing). -/
-def SingleServerUnitSetupTotalCompletionFeasible
-    (i : SingleServerUnitSetupTotalCompletionInstance) : Prop :=
-  ∃ μ : Fin i.2.1.length → Fin i.1, ∃ t : Fin i.2.1.length → ℕ,
-    (∀ j k, j ≠ k → t j ≠ t k) ∧
-    (∀ j k, j ≠ k → μ j = μ k →
-      t j + 1 + i.2.1.get j ≤ t k ∨ t k + 1 + i.2.1.get k ≤ t j) ∧
-    (∑ j, (t j + 1 + i.2.1.get j)) ≤ i.2.2
-
-open Classical in
-/-- `P;S1|s_i=1|ΣC_i` as a decision problem over bitstrings. -/
-noncomputable def singleServerUnitSetupTotalCompletionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SingleServerUnitSetupTotalCompletionInstance) x with
-  | some i => decide (WellFormed i ∧ SingleServerUnitSetupTotalCompletionFeasible i)
-  | none => false
 
 /-- **PARALLEL MACHINES WITH A SINGLE SERVER, unit setups, total completion time
 (`P;S1|s_i=1|ΣC_i`) is NP-complete.** Source: Brucker, Dhaenens-Flipo, Knust, Kravchenko and

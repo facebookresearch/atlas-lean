@@ -26,10 +26,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
-public import CSLibExt.Complexity.NPComplete.JobShopSchedulingDefs
+public import CSLibExt.Complexity.NPComplete.TwoProcessorNoWaitJobShopTotalCompletionTimeDefs
 
 @[expose] public section
 
@@ -69,45 +66,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the parent's (`0 < m`, `1 ≤ n_j`, processors in
-`{1, …, m}`, consecutive tasks of a job on different processors, `0 < K` in the last component)
-and `m = 2`. -/
-def WellFormed (i : JobShopScheduling.JobShopSchedulingInstance) : Prop :=
-  JobShopScheduling.WellFormed i ∧ i.1 = 2
-
-open JobShopScheduling (Task taskLength taskProcessor) in
-/-- There is a no-wait job-shop schedule with total completion time at most `K`: start times
-`σ` that are one-to-one on the tasks of each processor, such that a task of a processor starting
-after another task `t'` of that processor starts no earlier than `t'` finishes, each task of a
-job starts no earlier than the previous task of that job finishes, and each task of a job after
-the first starts exactly when the previous task of that job finishes, together with completion
-times `C j` equal to the finishing time of the last task of job `j`, whose sum is at most
-`K`. -/
-def TwoProcessorNoWaitJobShopTotalCompletionTimeFeasible
-    (i : JobShopScheduling.JobShopSchedulingInstance) : Prop :=
-  ∃ σ : Task i → ℕ,
-    (∀ t t', taskProcessor i t = taskProcessor i t' → σ t = σ t' → t = t') ∧
-    (∀ t t', taskProcessor i t = taskProcessor i t' → σ t' < σ t →
-      σ t' + taskLength i t' ≤ σ t) ∧
-    (∀ j (k k' : Fin (i.2.1.get j).length), k'.1 = k.1 + 1 →
-      σ ⟨j, k⟩ + taskLength i ⟨j, k⟩ ≤ σ ⟨j, k'⟩) ∧
-    (∀ j (k k' : Fin (i.2.1.get j).length), k'.1 = k.1 + 1 →
-      σ ⟨j, k'⟩ = σ ⟨j, k⟩ + taskLength i ⟨j, k⟩) ∧
-    ∃ C : Fin i.2.1.length → ℕ,
-      (∀ j (k : Fin (i.2.1.get j).length), k.1 + 1 = (i.2.1.get j).length →
-        C j = σ ⟨j, k⟩ + taskLength i ⟨j, k⟩) ∧
-      ∑ j, C j ≤ i.2.2
-
-open Classical in
-/-- TWO-PROCESSOR NO-WAIT JOB-SHOP TOTAL COMPLETION TIME as a decision problem over
-bitstrings. -/
-noncomputable def twoProcessorNoWaitJobShopTotalCompletionTimeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := JobShopScheduling.JobShopSchedulingInstance) x with
-  | some i => decide (WellFormed i ∧ TwoProcessorNoWaitJobShopTotalCompletionTimeFeasible i)
-  | none => false
 
 /-- **TWO-PROCESSOR NO-WAIT JOB-SHOP TOTAL COMPLETION TIME is NP-complete.** Source: Röck
 (1984); Brucker and Knust, class table "Job-shop problems with nowait"; Garey and Johnson

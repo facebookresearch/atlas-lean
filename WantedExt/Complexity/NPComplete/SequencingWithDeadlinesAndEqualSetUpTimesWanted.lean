@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.SequencingWithDeadlinesAndSetUpTimesWanted
+public import CSLibExt.Complexity.NPComplete.SequencingWithDeadlinesAndEqualSetUpTimesDefs
 
 @[expose] public section
 
@@ -47,32 +45,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance, as in `SequencingWithDeadlinesAndSetUpTimesWanted`: the set-up times `l(c)` of
-the compilers, and the tasks `(l(t), d(t), k(t))`. -/
-abbrev SequencingWithDeadlinesAndEqualSetUpTimesInstance :=
-  SequencingWithDeadlinesAndSetUpTimes.SequencingWithDeadlinesAndSetUpTimesInstance
-
-/-- Well-formedness of an instance: the SEQUENCING WITH DEADLINES AND SET-UP TIMES instance is
-well-formed and all set-up times are equal. -/
-def WellFormed (i : SequencingWithDeadlinesAndEqualSetUpTimesInstance) : Prop :=
-  SequencingWithDeadlinesAndSetUpTimes.WellFormed i ∧ ∀ a ∈ i.1, ∀ b ∈ i.1, a = b
-
-/-- Some one-processor schedule meets every deadline and the set-up constraint, exactly as in
-`SequencingWithDeadlinesAndSetUpTimesWanted`. -/
-def SequencingWithDeadlinesAndEqualSetUpTimesFeasible
-    (i : SequencingWithDeadlinesAndEqualSetUpTimesInstance) : Prop :=
-  SequencingWithDeadlinesAndSetUpTimes.SequencingWithDeadlinesAndSetUpTimesFeasible i
-
-open Classical in
-/-- SEQUENCING WITH DEADLINES AND SET-UP TIMES with equal set-up times as a decision problem
-over bitstrings. -/
-noncomputable def sequencingWithDeadlinesAndEqualSetUpTimesDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SequencingWithDeadlinesAndEqualSetUpTimesInstance) x with
-  | some i => decide (WellFormed i ∧ SequencingWithDeadlinesAndEqualSetUpTimesFeasible i)
-  | none => false
 
 /-- **SEQUENCING WITH DEADLINES AND SET-UP TIMES with equal set-up times is NP-complete.**
 Source: Garey and Johnson (1979), [SS6]; Bruno and Downey (1978). -/

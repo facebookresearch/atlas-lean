@@ -20,10 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import WantedExt.Complexity.NPComplete.SerialBatchingWeightedCompletionWanted
+public import CSLibExt.Complexity.NPComplete.SerialBatchingWeightedLateJobsDefs
 
 @[expose] public section
 
@@ -63,34 +60,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the instance of `SerialBatchingWeightedCompletionWanted` (setup time `s`, pairs
-`(p_j, w_j)`, bound `K`) and the due dates `d_j`, one per job. -/
-abbrev SerialBatchingWeightedLateJobsInstance := SerialBatchingWeightedCompletionInstance × List ℕ
-
-/-- The due date `d_j` of job `j`. -/
-def dueDate (i : SerialBatchingWeightedLateJobsInstance) (j : Fin (numJobs i.1)) : ℕ :=
-  i.2.getD j 0
-
-/-- Well-formedness of an instance: the setup time is positive, and there is one due date per
-job. -/
-def WellFormed (i : SerialBatchingWeightedLateJobsInstance) : Prop :=
-  SerialBatchingWeightedCompletion.WellFormed i.1 ∧ i.2.length = numJobs i.1
-
-/-- Some serial-batching schedule has total weight of late jobs (`d_j < C_j`) at most `K`. -/
-def SerialBatchingWeightedLateJobsFeasible (i : SerialBatchingWeightedLateJobsInstance) : Prop :=
-  ∃ (b : Fin (numJobs i.1) → ℕ) (S : ℕ → ℕ), IsBatchSchedule i.1 b S ∧
-    ∑ j ∈ Finset.univ.filter (fun j => dueDate i j < completion i.1 b S j), weight i.1 j ≤
-      i.1.2.2
-
-open Classical in
-/-- SERIAL-BATCHING WEIGHTED NUMBER OF LATE JOBS as a decision problem over bitstrings. -/
-noncomputable def serialBatchingWeightedLateJobsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SerialBatchingWeightedLateJobsInstance) x with
-  | some i => decide (WellFormed i ∧ SerialBatchingWeightedLateJobsFeasible i)
-  | none => false
 
 /-- **SERIAL-BATCHING WEIGHTED NUMBER OF LATE JOBS (`1|s-batch|∑ w_i U_i`) is NP-complete.**
 Source: Brucker and Kovalyov (1996); Karp (1972). -/

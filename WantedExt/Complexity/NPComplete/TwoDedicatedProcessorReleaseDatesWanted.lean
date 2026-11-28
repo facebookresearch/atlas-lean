@@ -21,8 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.TwoDedicatedProcessorReleaseDatesDefs
 
 @[expose] public section
 
@@ -60,33 +59,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the tasks `(p_i, fix_i, r_i)` (processing time, processors used, release date),
-one per entry, and the bound `K`. -/
-abbrev TwoDedicatedProcessorReleaseDatesInstance := List (ℕ × List ℕ × ℕ) × ℕ
-
-/-- Well-formedness: every task has a positive processing time and uses a nonempty set of
-processors, listed without repetitions, all among the two processors `0, 1`. -/
-def WellFormed (i : TwoDedicatedProcessorReleaseDatesInstance) : Prop :=
-  ∀ t ∈ i.1, 0 < t.1 ∧ t.2.1 ≠ [] ∧ t.2.1.Nodup ∧ ∀ k ∈ t.2.1, k < 2
-
-/-- There are start times `s` such that every task starts no earlier than its release date and
-completes by `K`, and any two different tasks with a common processor are processed in disjoint
-time intervals. -/
-def TwoDedicatedProcessorReleaseDatesFeasible (i : TwoDedicatedProcessorReleaseDatesInstance) :
-    Prop :=
-  ∃ s : Fin i.1.length → ℕ, (∀ j, (i.1.get j).2.2 ≤ s j ∧ s j + (i.1.get j).1 ≤ i.2) ∧
-    ∀ j j', j ≠ j' → (∃ k ∈ (i.1.get j).2.1, k ∈ (i.1.get j').2.1) →
-      s j + (i.1.get j).1 ≤ s j' ∨ s j' + (i.1.get j').1 ≤ s j
-
-open Classical in
-/-- `P2|r_i;fix_i|Cmax` as a decision problem over bitstrings. -/
-noncomputable def twoDedicatedProcessorReleaseDatesDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TwoDedicatedProcessorReleaseDatesInstance) x with
-  | some i => decide (WellFormed i ∧ TwoDedicatedProcessorReleaseDatesFeasible i)
-  | none => false
 
 /-- **TWO DEDICATED PROCESSORS WITH RELEASE DATES `P2|r_i;fix_i|Cmax` is NP-complete.** Source:
 Hoogeveen, van de Velde and Veltman (1994), Theorem 2.8; Brucker and Knust (classification

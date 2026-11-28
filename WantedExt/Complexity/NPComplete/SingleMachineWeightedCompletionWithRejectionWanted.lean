@@ -19,10 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Data.Finset.Sort
-public import CSLibExt.Complexity.NPComplete.SequencingToMinimizeWeightedTardinessDefs
+public import CSLibExt.Complexity.NPComplete.SingleMachineWeightedCompletionWithRejectionDefs
 
 @[expose] public section
 
@@ -58,47 +55,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the jobs as `(p_j, w_j, e_j)`, and the bound `K`. -/
-abbrev SingleMachineWeightedCompletionWithRejectionInstance := List (ℕ × ℕ × ℕ) × ℕ
-
-/-- The jobs of the instance. -/
-abbrev Job (i : SingleMachineWeightedCompletionWithRejectionInstance) : Type := Fin i.1.length
-
-/-- The processing time `p_j` of job `j`. -/
-def processingTime (i : SingleMachineWeightedCompletionWithRejectionInstance) (j : Job i) : ℕ :=
-  (i.1.get j).1
-
-/-- The weight `w_j` of job `j`. -/
-def weight (i : SingleMachineWeightedCompletionWithRejectionInstance) (j : Job i) : ℕ :=
-  (i.1.get j).2.1
-
-/-- The rejection penalty `e_j` of job `j`. -/
-def penalty (i : SingleMachineWeightedCompletionWithRejectionInstance) (j : Job i) : ℕ :=
-  (i.1.get j).2.2
-
-/-- Well-formedness of an instance: every processing time is positive. -/
-def WellFormed (i : SingleMachineWeightedCompletionWithRejectionInstance) : Prop :=
-  ∀ x ∈ i.1, 0 < x.1
-
-/-- Some set `S` of accepted jobs (the others are rejected) and start times `σ` that form a
-one-processor schedule of the accepted jobs give `∑_{j ∈ S} w_j (σ_j + p_j) + ∑_{j ∉ S} e_j`
-at most `K`. -/
-def SingleMachineWeightedCompletionWithRejectionFeasible
-    (i : SingleMachineWeightedCompletionWithRejectionInstance) : Prop :=
-  ∃ S : Finset (Job i), ∃ σ : Job i → ℕ,
-    IsOneProcessorSchedule (fun k => processingTime i (S.orderEmbOfFin rfl k))
-      (fun k => σ (S.orderEmbOfFin rfl k)) ∧
-    ∑ j ∈ S, weight i j * (σ j + processingTime i j) + ∑ j ∈ Sᶜ, penalty i j ≤ i.2
-
-open Classical in
-/-- SINGLE-MACHINE SCHEDULING WITH REJECTION as a decision problem over bitstrings. -/
-noncomputable def singleMachineWeightedCompletionWithRejectionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SingleMachineWeightedCompletionWithRejectionInstance) x with
-  | some i => decide (WellFormed i ∧ SingleMachineWeightedCompletionWithRejectionFeasible i)
-  | none => false
 
 /-- **SINGLE-MACHINE SCHEDULING WITH REJECTION (weighted completion time) is NP-complete.**
 Source: Engels, Karger, Kolliopoulos, Sengupta, Uma and Wein (2003). -/

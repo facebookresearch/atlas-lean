@@ -23,8 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.ThreeDedicatedProcessorSchedulingDefs
 
 @[expose] public section
 
@@ -62,32 +61,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the tasks, each with its length and its list of required processors, and the
-bound `K`. -/
-abbrev ThreeDedicatedProcessorSchedulingInstance := List (ℕ × List ℕ) × ℕ
-
-/-- Well-formedness of an instance: every task has a positive length and a nonempty set of
-required processors, listed without repetitions, all below `3`; and `0 < K`. -/
-def WellFormed (i : ThreeDedicatedProcessorSchedulingInstance) : Prop :=
-  (∀ t ∈ i.1, 0 < t.1 ∧ t.2 ≠ [] ∧ t.2.Nodup ∧ ∀ k ∈ t.2, k < 3) ∧ 0 < i.2
-
-/-- There are start times `s` with makespan at most `K` such that any two different tasks with a
-common required processor are processed in disjoint time intervals. -/
-def ThreeDedicatedProcessorSchedulingFeasible (i : ThreeDedicatedProcessorSchedulingInstance) :
-    Prop :=
-  ∃ s : Fin i.1.length → ℕ, (∀ j, s j + (i.1.get j).1 ≤ i.2) ∧
-    ∀ j j', j ≠ j' → (∃ k ∈ (i.1.get j).2, k ∈ (i.1.get j').2) →
-      s j + (i.1.get j).1 ≤ s j' ∨ s j' + (i.1.get j').1 ≤ s j
-
-open Classical in
-/-- 3-DEDICATED PROCESSOR SCHEDULING as a decision problem over bitstrings. -/
-noncomputable def threeDedicatedProcessorSchedulingDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ThreeDedicatedProcessorSchedulingInstance) x with
-  | some i => decide (WellFormed i ∧ ThreeDedicatedProcessorSchedulingFeasible i)
-  | none => false
 
 /-- **3-DEDICATED PROCESSOR SCHEDULING is NP-complete.** Source: Hoogeveen, van de Velde and
 Veltman (1994), Theorem 2.3; Błażewicz, Dell'Olmo, Drozdowski and Speranza (1992). -/

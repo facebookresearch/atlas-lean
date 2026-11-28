@@ -24,9 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.RobotFlowShopThreeMachinesWeightedTardinessWanted
+public import CSLibExt.Complexity.NPComplete.RobotFlowShopThreeMachinesWeightedLateJobsDefs
 
 @[expose] public section
 
@@ -68,23 +66,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Some schedule has late jobs (`d_j < f j + 1`) of total weight at most `K`. -/
-def RobotFlowShopThreeMachinesWeightedLateJobsFeasible
-    (i : RobotFlowShopThreeMachinesWeightedTardinessInstance) : Prop :=
-  ∃ a b c e f, IsRobotSchedule i a b c e f ∧
-    ∑ j ∈ Finset.univ.filter (fun j => (i.1.get j).2.2.1 < f j + 1), (i.1.get j).2.2.2 ≤
-      i.2
-
-open Classical in
-/-- `F3;R1|p_ij=1;t_ik|Σw_iU_i` as a decision problem over bitstrings; every decoded instance is
-well formed. -/
-noncomputable def robotFlowShopThreeMachinesWeightedLateJobsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := RobotFlowShopThreeMachinesWeightedTardinessInstance) x with
-  | some i => decide (RobotFlowShopThreeMachinesWeightedLateJobsFeasible i)
-  | none => false
 
 /-- **ROBOT FLOW SHOP, WEIGHTED NUMBER OF LATE JOBS `F3;R1|p_ij=1;t_ik|Σw_iU_i` is
 NP-complete.** Source: Knust (1999), as recorded by Brucker and Knust; Hurink and Knust (2001)

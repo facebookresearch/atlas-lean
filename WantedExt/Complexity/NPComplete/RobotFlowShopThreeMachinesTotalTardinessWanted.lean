@@ -24,9 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.RobotFlowShopThreeMachinesWeightedTardinessWanted
+public import CSLibExt.Complexity.NPComplete.RobotFlowShopThreeMachinesTotalTardinessDefs
 
 @[expose] public section
 
@@ -68,19 +66,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: every job has weight `1`. -/
-def WellFormed (i : RobotFlowShopThreeMachinesWeightedTardinessInstance) : Prop :=
-  ∀ x ∈ i.1, x.2.2.2 = 1
-
-open Classical in
-/-- `F3;R1|p_ij=1;t_ik|ΣT_i` as a decision problem over bitstrings. -/
-noncomputable def robotFlowShopThreeMachinesTotalTardinessDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := RobotFlowShopThreeMachinesWeightedTardinessInstance) x with
-  | some i => decide (WellFormed i ∧ RobotFlowShopThreeMachinesWeightedTardinessFeasible i)
-  | none => false
 
 /-- **ROBOT FLOW SHOP, TOTAL TARDINESS `F3;R1|p_ij=1;t_ik|ΣT_i` is NP-complete.** Source: Knust
 (1999), as recorded by Brucker and Knust; Hurink and Knust (2001) for the model. -/

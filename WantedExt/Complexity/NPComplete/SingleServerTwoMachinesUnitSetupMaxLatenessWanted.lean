@@ -22,9 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.SingleServerTwoMachinesEqualSetupMakespanWanted
+public import CSLibExt.Complexity.NPComplete.SingleServerTwoMachinesUnitSetupMaxLatenessDefs
 
 @[expose] public section
 
@@ -69,31 +67,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the jobs, job `j` being the `j`-th pair `(p_j, d_j)` of its processing time and
-its due date, and the bound `K` as a pair `(K⁺, K⁻)` with `K = K⁺ - K⁻`. -/
-abbrev SingleServerTwoMachinesUnitSetupMaxLatenessInstance := List (ℕ × ℕ) × (ℕ × ℕ)
-
-/-- Well-formedness of an instance: there is at least one job. -/
-def WellFormed (i : SingleServerTwoMachinesUnitSetupMaxLatenessInstance) : Prop :=
-  i.1 ≠ []
-
-/-- Some single-server schedule on two machines, with setup time `1` for every job, completes
-every job `j` with lateness `C_j - d_j ≤ K⁺ - K⁻`, that is `t j + 1 + p_j + K⁻ ≤ d_j + K⁺`. -/
-def SingleServerTwoMachinesUnitSetupMaxLatenessFeasible
-    (i : SingleServerTwoMachinesUnitSetupMaxLatenessInstance) : Prop :=
-  ∃ μ : Fin i.1.length → Fin 2, ∃ t : Fin i.1.length → ℕ,
-    IsSingleServerSchedule (fun _ => 1) (fun j => (i.1.get j).1) μ t ∧
-      ∀ j, t j + 1 + (i.1.get j).1 + i.2.2 ≤ (i.1.get j).2 + i.2.1
-
-open Classical in
-/-- `P2;S1|s_i=1|Lmax` as a decision problem over bitstrings. -/
-noncomputable def singleServerTwoMachinesUnitSetupMaxLatenessDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SingleServerTwoMachinesUnitSetupMaxLatenessInstance) x with
-  | some i => decide (WellFormed i ∧ SingleServerTwoMachinesUnitSetupMaxLatenessFeasible i)
-  | none => false
 
 /-- **TWO PARALLEL MACHINES WITH A SINGLE SERVER, unit setups, maximum lateness
 (`P2;S1|s_i=1|Lmax`) is NP-complete.** Source: Hall, Potts and Sriskandarajah (2000), as

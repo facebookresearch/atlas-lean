@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.JobShopSchedulingDefs
+public import CSLibExt.Complexity.NPComplete.TwoProcessorJobShopThreeTasksDefs
 
 @[expose] public section
 
@@ -54,22 +52,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the parent's (`0 < m`, `1 ≤ n_j`, processors in
-`{1, …, m}`, consecutive tasks of a job on different processors, `0 < D`), `m = 2`, and every
-job has at most three tasks. -/
-def WellFormed (i : JobShopScheduling.JobShopSchedulingInstance) : Prop :=
-  JobShopScheduling.WellFormed i ∧ i.1 = 2 ∧ ∀ job ∈ i.2.1, job.length ≤ 3
-
-open Classical in
-/-- JOB-SHOP SCHEDULING with two processors and at most three tasks per job, as a decision
-problem over bitstrings. -/
-noncomputable def twoProcessorJobShopThreeTasksDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := JobShopScheduling.JobShopSchedulingInstance) x with
-  | some i => decide (WellFormed i ∧ JobShopScheduling.JobShopSchedulingFeasible i)
-  | none => false
 
 /-- **JOB-SHOP SCHEDULING with two processors and at most three tasks per job is
 NP-complete.** Source: Garey and Johnson (1979), [SS18], comment; Gonzalez and Sahni (1978). -/

@@ -22,10 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import WantedExt.Complexity.NPComplete.SingleServerTwoMachinesEqualSetupMakespanWanted
+public import CSLibExt.Complexity.NPComplete.SingleServerTwoMachinesEqualSetupTotalCompletionDefs
 
 @[expose] public section
 
@@ -68,23 +65,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Some single-server schedule on two machines, with setup time `s` for every job, has total
-completion time `Σ_j (t j + s + p_j)` at most `K`. -/
-def SingleServerTwoMachinesEqualSetupTotalCompletionFeasible
-    (i : SingleServerTwoMachinesEqualSetupMakespanInstance) : Prop :=
-  ∃ μ : Fin i.2.1.length → Fin 2, ∃ t : Fin i.2.1.length → ℕ,
-    IsSingleServerSchedule (fun _ => i.1) i.2.1.get μ t ∧
-      (∑ j, (t j + i.1 + i.2.1.get j)) ≤ i.2.2
-
-open Classical in
-/-- `P2;S1|s_i=s|ΣC_i` as a decision problem over bitstrings. -/
-noncomputable def singleServerTwoMachinesEqualSetupTotalCompletionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SingleServerTwoMachinesEqualSetupMakespanInstance) x with
-  | some i => decide (WellFormed i ∧ SingleServerTwoMachinesEqualSetupTotalCompletionFeasible i)
-  | none => false
 
 /-- **TWO PARALLEL MACHINES WITH A SINGLE SERVER, equal setups, total completion time
 (`P2;S1|s_i=s|ΣC_i`) is NP-complete.** Source: Hall, Potts and Sriskandarajah (2000), as

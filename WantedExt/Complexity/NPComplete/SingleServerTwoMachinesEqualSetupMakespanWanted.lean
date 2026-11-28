@@ -25,9 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Order.Interval.Finset.Nat
+public import CSLibExt.Complexity.NPComplete.SingleServerTwoMachinesEqualSetupMakespanDefs
 
 @[expose] public section
 
@@ -68,42 +66,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- A single-server schedule of the jobs `Fin n` on the machines `Fin m`, with setup times `s`
-and processing times `p`: job `j` is set up on machine `μ j` during `[t j, t j + s j)` and then
-processed there during `[t j + s j, t j + s j + p j)`. The server performs one setup at a time
-(the setup intervals of different jobs are disjoint), and each machine handles one job at a time
-(different jobs on the same machine occupy disjoint intervals `[t j, t j + s j + p j)`). -/
-def IsSingleServerSchedule {n m : ℕ} (s p : Fin n → ℕ) (μ : Fin n → Fin m) (t : Fin n → ℕ) :
-    Prop :=
-  (∀ j k, j ≠ k → Disjoint (Finset.Ico (t j) (t j + s j)) (Finset.Ico (t k) (t k + s k))) ∧
-    ∀ j k, j ≠ k → μ j = μ k →
-      Disjoint (Finset.Ico (t j) (t j + s j + p j)) (Finset.Ico (t k) (t k + s k + p k))
-
-/-- An instance `(s, p, K)`: the common setup time `s`, the processing times `p_i` of the jobs
-`0, …, n - 1`, one per entry (`n` is the length of the list), and the bound `K`. -/
-abbrev SingleServerTwoMachinesEqualSetupMakespanInstance := ℕ × List ℕ × ℕ
-
-/-- Every instance is well-formed: the setup time, the processing times and the bound are
-nonnegative integers by their type. -/
-def WellFormed (_i : SingleServerTwoMachinesEqualSetupMakespanInstance) : Prop := True
-
-/-- Some single-server schedule on two machines, with setup time `s` for every job, completes
-every job `j` by `K`: `t j + s + p_j ≤ K`. -/
-def SingleServerTwoMachinesEqualSetupMakespanFeasible
-    (i : SingleServerTwoMachinesEqualSetupMakespanInstance) : Prop :=
-  ∃ μ : Fin i.2.1.length → Fin 2, ∃ t : Fin i.2.1.length → ℕ,
-    IsSingleServerSchedule (fun _ => i.1) i.2.1.get μ t ∧
-      ∀ j, t j + i.1 + i.2.1.get j ≤ i.2.2
-
-open Classical in
-/-- `P2;S1|s_i=s|Cmax` as a decision problem over bitstrings. -/
-noncomputable def singleServerTwoMachinesEqualSetupMakespanDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SingleServerTwoMachinesEqualSetupMakespanInstance) x with
-  | some i => decide (WellFormed i ∧ SingleServerTwoMachinesEqualSetupMakespanFeasible i)
-  | none => false
 
 /-- **TWO PARALLEL MACHINES WITH A SINGLE SERVER, equal setups, makespan (`P2;S1|s_i=s|Cmax`)
 is NP-complete.** Source: Hall, Potts and Sriskandarajah (2000), as recorded in the
