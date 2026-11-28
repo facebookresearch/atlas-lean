@@ -38,6 +38,7 @@ public import Mathlib.LinearAlgebra.Matrix.Symmetric
 public import Mathlib.MeasureTheory.Measure.WithDensity
 public import Mathlib.Probability.Independence.Basic
 public import Mathlib.Probability.Moments.Covariance
+public import MathlibExt.LinearAlgebra.Matrix.AitkenBlockIdentity
 
 @[expose] public section
 
@@ -71,21 +72,5 @@ public theorem_wanted indepFun_and_map_residual_selected (μ : Measure Ω) [IsPr
     (hX : Measurable X) (hE : Measurable E) (hw : Measurable w) (hind : IndepFun X E μ)
     (hnorm : ∫⁻ ω, w (X ω) ∂μ = 1) :
     IndepFun X E (selectedMeasure μ X w) ∧ (selectedMeasure μ X w).map E = μ.map E
-
-/-- **Aitken's block identity** (Aitken 1934, (7)). Let `Σ_XX` be a symmetric `p × p` real
-matrix with nonzero determinant, let `Σ_XY` be a `p × q` and `Σ_YY` a `q × q` real matrix, and
-let `V` be any `p × p` real matrix (the selected covariance of `X`). Put `B = Σ_XYᵀ Σ_XX⁻¹`.
-Then `V Bᵀ = V Σ_XX⁻¹ Σ_XY`, and
-`B V Bᵀ + (Σ_YY - Σ_XYᵀ Σ_XX⁻¹ Σ_XY) = Σ_YY - Σ_XYᵀ (Σ_XX⁻¹ - Σ_XX⁻¹ V Σ_XX⁻¹) Σ_XY`.
-So the regression-form selected covariance blocks, with the population regression coefficient `B`
-and residual covariance `Σ_YY - Σ_XYᵀ Σ_XX⁻¹ Σ_XY`, are Aitken's blocks.
-
-Source: Aitken (1934), p. 109, equation (7). -/
-public theorem_wanted aitken_block_identity (Sxx : Matrix (Fin p) (Fin p) ℝ)
-    (Sxy : Matrix (Fin p) (Fin q) ℝ) (Syy : Matrix (Fin q) (Fin q) ℝ)
-    (V : Matrix (Fin p) (Fin p) ℝ) (hsym : Sxx.IsSymm) (hdet : IsUnit Sxx.det) :
-    V * (Sxyᵀ * Sxx⁻¹)ᵀ = V * Sxx⁻¹ * Sxy ∧
-      Sxyᵀ * Sxx⁻¹ * V * (Sxyᵀ * Sxx⁻¹)ᵀ + (Syy - Sxyᵀ * Sxx⁻¹ * Sxy) =
-        Syy - Sxyᵀ * (Sxx⁻¹ - Sxx⁻¹ * V * Sxx⁻¹) * Sxy
 
 end WantedExt.Biology.StatisticalGenetics.PearsonAitkenLawleySelectionWanted
