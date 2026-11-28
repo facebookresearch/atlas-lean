@@ -11,6 +11,7 @@
 - [Variable elimination is exact](sum-weight-mul-eq.md)
 - [Variable elimination computes the partition function](partition-eq.md)
 - [Variable elimination computes the unnormalized root marginal](root-marginal-eq.md)
+- [Le induced Graph](le-induced-graph.md)
 - [Removing the last vertex](drop-last.md)
 - [Summing out the last vertex preserves weighted sums at the other vertices](sum-weight-mul-eliminate-cast-succ.md)
 - [Sum-product belief](belief.md)

@@ -16,16 +16,6 @@ Aliferis, Gottesman and Preskill's gadgets for Steane's code with a count of mal
 $\varepsilon_0 \ge 2.73 \times 10^{-5}$. Aharonov and Ben-Or, and Knill, Laflamme and Zurek, proved earlier threshold theorems for
 probabilistic and quasi-independent noise.
 
-## Expansion
-
-A good expansion adds pages for the remaining definitions and steps of Gottesman's proof: fault-tolerant measurement,
-preparation, gate and error-correction gadgets (Definitions 1–5); the fault-tolerant simulation of a circuit and extended
-rectangles, good and correct (Definitions 6–10); "good implies correct" (Theorem 6) and the reduction of a circuit of good
-extended rectangles to the ideal circuit (Theorems 7–8); level reduction for local stochastic noise (Theorem 9); and
-fault-tolerant gadgets for a universal gate set for one distance-3 code, for instance the
-[transversal Clifford gates of Steane's code](../fault-tolerant-gates/steane-code-has-transversal-clifford-gates.md) with
-[magic-state injection](../fault-tolerant-gates/magic-state-injection.md) of a fault-tolerantly prepared magic state.
-
 ## Depends on
 
 - [Local stochastic error model](local-stochastic-error-model.md)
@@ -35,6 +25,12 @@ fault-tolerant gadgets for a universal gate set for one distance-3 code, for ins
 ## Proof depends on
 
 - [Error recursion for concatenated fault-tolerant codes](../error-recursion-for-concatenated-fault-tolerant-codes.md)
+- [The threshold theorem from fault-tolerant gadgets](threshold-theorem-from-fault-tolerant-gadgets.md)
+- [Steane error correction](steane-error-correction.md)
+- [Transversal gates are fault tolerant](../fault-tolerant-gates/transversal-gates-are-fault-tolerant.md)
+- [Steane's code has transversal Clifford gates](../fault-tolerant-gates/steane-code-has-transversal-clifford-gates.md)
+- [Magic-state injection](../fault-tolerant-gates/magic-state-injection.md)
+- [Fault-tolerant preparation of encoded ancilla states for the seven-qubit code](../fault-tolerant-gates/fault-tolerant-preparation-of-encoded-ancilla-states.md)
 - [Concatenated quantum code](concatenated-quantum-code.md)
 
 ## Sources

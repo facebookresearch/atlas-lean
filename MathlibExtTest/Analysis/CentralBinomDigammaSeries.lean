@@ -12,7 +12,7 @@ import MathlibExt.Analysis.CentralBinomDigammaSeries
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring
 
-/-! # The central binomial digamma series at one half -/
+/-! # Special values of the central binomial and cotangent series -/
 
 namespace MetaMathlibExt.CentralBinomDigammaSeries
 
@@ -34,5 +34,24 @@ example :
   simp_rw [show ∀ n : ℕ, (n : ℂ) - 1 / 2 + 1 = n + 1 / 2 from fun n ↦ by ring] at h
   rw [h]
   ring
+
+-- The endpoint k = 2 evaluates to zero.
+example :
+    ((2 : ℝ) - 2) * (1 + ∑' n : ℕ, 1 / ((n : ℝ) + 2) *
+        ∏ j ∈ Finset.Icc 1 (n + 1), (2 * (j : ℝ) - (2 - 2)) / (2 * j + 1)) = 0 :=
+  (sub_two_mul_one_add_tsum_prod_eq_pi_mul_cot (k := 2) (by decide)).trans <| by
+    norm_num [Real.cot_eq_cos_div_sin, Real.cos_pi_div_two]
+
+-- The first positive-prefactor case is the paper's series for π / √3.
+example :
+    1 + ∑' n : ℕ, 1 / ((n : ℝ) + 2) *
+        ∏ j ∈ Finset.Icc 1 (n + 1), (3 * (j : ℝ) - 1) / (3 * j + 1) =
+      Real.pi / Real.sqrt 3 := by
+  have hcot : Real.cot (Real.pi / 3) = 1 / Real.sqrt 3 := by
+    rw [Real.cot_eq_cos_div_sin, Real.cos_pi_div_three, Real.sin_pi_div_three]
+    field_simp
+  have h₁ : (3 : ℝ) - 2 = 1 := by norm_num
+  simpa only [Nat.cast_ofNat, h₁, one_mul, hcot, mul_one_div] using
+    sub_two_mul_one_add_tsum_prod_eq_pi_mul_cot (k := 3) (by decide)
 
 end MetaMathlibExt.CentralBinomDigammaSeries
