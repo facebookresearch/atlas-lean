@@ -92,18 +92,6 @@ Article 24.5.8, Theorem 2. -/
 public theorem_wanted isLeast_pebblingAllNTotals_completeThree (k : ℕ) (hk : 0 < k) :
     IsLeast (pebblingAllNTotals (⊤ : SimpleGraph (Fin 3)) k) (6 * k + 1)
 
-/-- **Pebbling on the triangle: a single pile of 2k+3 pebbles is a P-position.** Let $k$ be a
-positive integer and consider the $(k+1:k)$-pebbling game on the complete graph $K_3$, where a
-move removes $k+1$ pebbles from one vertex and adds $k$ pebbles to another. Every position with
-$2k + 3$ pebbles on one vertex and none on the other two is a P-position.
-
-Source: Barker, DeStefano, Fiorini, Gohn, Miller, Roeder, and Wong, *Generalized Impartial
-Two-player Pebbling Games on `K_3` and `C_4`*, Journal of Integer Sequences 27 (2024),
-Article 24.5.8, Lemma 4. -/
-public theorem_wanted pebbling_completeThree_isP_twoKAddThree (k : ℕ) (hk : 0 < k)
-    (σ : Equiv.Perm (Fin 3)) :
-    IsP (pebblingGame (⊤ : SimpleGraph (Fin 3)) k) (![2 * k + 3, 0, 0] ∘ σ)
-
 /-- **Pebbling on the triangle: a two-parameter family of P-positions.** Let $k$ be a positive
 integer and consider the $(k+1:k)$-pebbling game on the complete graph $K_3$, where a move removes
 $k+1$ pebbles from one vertex and adds $k$ pebbles to another. Let $\ell_1 \le \ell_2$ be

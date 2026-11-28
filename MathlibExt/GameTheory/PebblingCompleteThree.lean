@@ -22,6 +22,9 @@ total `6 * k - 1` in which every pile has at most `4 * k` pebbles.
 `pebbling_completeThree_isP_of_le` shows that a position of even total in the stated range is a
 P-position if no pile exceeds half the total.
 
+`pebbling_completeThree_isP_twoKAddThree` gives the single-pile P-position with
+`2 * k + 3` pebbles for positive `k`.
+
 ## References
 
 * Kayla Barker, Mia DeStefano, Eugene Fiorini, Michael Gohn, Joe Miller, Jacob Roeder, and
@@ -30,6 +33,8 @@ P-position if no pile exceeds half the total.
   (<https://cs.uwaterloo.ca/journals/JIS/VOL27/Wong/wong43.pdf>). Lemma 9 and Corollary 10
   (p. 6) give the winning-position criteria, using the reply in Lemma 7 and the even-total
   P-position criterion in Lemma 8 (pp. 5–6).
+  Section 2, Lemma 4 gives the single-pile P-position
+  (<https://cs.uwaterloo.ca/journals/JIS/VOL27/Wong/wong43.html>).
 * Eugene Fiorini, Max Lind, Andrew Woldar, and Tony W. H. Wong,
   *Characterizing Winning Positions in the Impartial Two-Player Pebbling Game on Complete Graphs*,
   Journal of Integer Sequences 24 (2021), Article 21.6.4, pp. 1–10, §1, for the original
@@ -86,6 +91,70 @@ public theorem pebbling_completeThree_isP_of_le (k ℓ : ℕ) (hk : 0 < k)
     IsP (pebblingGame (⊤ : SimpleGraph (Fin 3)) k) a := by
   exact pebbling_completeThree_isN_of_le_fourK.isP_of_half_total k hk (3 * k - ℓ)
     (Nat.sub_le _ _) a (by omega) hmax
+
+/-- **Pebbling on the triangle: a single pile of 2k+3 pebbles is a P-position.** Let $k$ be a
+positive integer and consider the $(k+1:k)$-pebbling game on the complete graph $K_3$, where a
+move removes $k+1$ pebbles from one vertex and adds $k$ pebbles to another. Every position with
+$2k + 3$ pebbles on one vertex and none on the other two is a P-position.
+
+Source: Barker, DeStefano, Fiorini, Gohn, Miller, Roeder, and Wong, *Generalized Impartial
+Two-player Pebbling Games on `K_3` and `C_4`*, Journal of Integer Sequences 27 (2024),
+Article 24.5.8, Lemma 4. -/
+public theorem pebbling_completeThree_isP_twoKAddThree (k : ℕ) (hk : 0 < k)
+    (σ : Equiv.Perm (Fin 3)) :
+    IsP (pebblingGame (⊤ : SimpleGraph (Fin 3)) k) (![2 * k + 3, 0, 0] ∘ σ) := by
+  let a : Fin 3 → ℕ := ![2 * k + 3, 0, 0] ∘ σ
+  let s := σ.symm 0
+  have ha_s : a s = 2 * k + 3 := by simp [a, s]
+  have ne_zero (x : Fin 3) (hx : x ≠ s) : σ x ≠ 0 := by
+    simpa [s] using (σ.injective.ne hx : σ x ≠ σ s)
+  have ha_zero (x : Fin 3) (hx : x ≠ s) : a x = 0 := by
+    have hx' := ne_zero x hx
+    change ![2 * k + 3, 0, 0] (σ x) = 0
+    generalize σ x = v at hx' ⊢
+    fin_cases v
+    · exact (hx' rfl).elim
+    · rfl
+    · rfl
+  let game := pebblingGame (⊤ : SimpleGraph (Fin 3)) k
+  refine (isP_iff game a).2 fun b hb hPb => ?_
+  obtain ⟨i, j, hadj, hi, rfl⟩ := (mem_pebblingMoves (⊤ : SimpleGraph (Fin 3)) k a b).1 hb
+  -- Only the original pile can supply the first move.
+  have his : i = s := by
+    by_contra h
+    rw [ha_zero i h] at hi
+    omega
+  subst i
+  have hsj : s ≠ j := hadj.ne
+  -- Reply from the same source to the vertex untouched by the first move.
+  have third : ∀ v : Fin 3, v ≠ 0 → ∃ t : Fin 3, t ≠ 0 ∧ t ≠ v := by decide
+  obtain ⟨t, ht0, htj⟩ := third (σ j) (ne_zero j hsj.symm)
+  let w := σ.symm t
+  have hws : w ≠ s := σ.symm.injective.ne ht0
+  have hwj : w ≠ j := by simpa [w] using σ.symm.injective.ne htj
+  let b := pebblingStep k a s j
+  have hb_s : b s = k + 2 := by
+    simp only [b, pebblingStep, Function.update_of_ne hsj, Function.update_self, ha_s]
+    omega
+  have hb_w : b w = 0 := by simp [b, pebblingStep, hws, hwj, ha_zero w hws]
+  let c := pebblingStep k b s w
+  have hc := (mem_pebblingMoves (⊤ : SimpleGraph (Fin 3)) k b c).2
+    ⟨s, w, hws.symm, by omega, rfl⟩
+  apply (isP_iff game b).1 hPb c hc
+  -- The reply leaves one pebble at the source and k at each recipient.
+  apply pebblingGame_isP_of_forall_le
+  intro v
+  by_cases hvw : v = w
+  · subst v
+    simp [c, pebblingStep, hb_w]
+  by_cases hvs : v = s
+  · subst v
+    simp only [c, pebblingStep, Function.update_of_ne hws.symm, Function.update_self, hb_s]
+    omega
+  by_cases hvj : v = j
+  · subst v
+    simp [c, b, pebblingStep, hvw, hvs, ha_zero j hsj.symm]
+  · simp [c, b, pebblingStep, hvw, hvs, hvj, ha_zero v hvs]
 
 /-- **Pebbling on the triangle: total 6k-1 with every pile at most 4k.** Let $k$ be a positive
 integer and consider the $(k+1:k)$-pebbling game on the complete graph $K_3$, where a move removes
