@@ -1,6 +1,6 @@
 # Undecidable theories of geometries and fields
 
-Ziegler's theorem on finite subtheories of the theory of the real field, and its transfer to axiomatic plane geometries through bi-interpretations with fields.
+Ziegler's theorem on finite subtheories of the theory of the real field and its transfer to axiomatic plane geometries through bi-interpretations with fields, and the undecidability of expansions of affine betweenness structures by unary predicates through reductions from tiling problems.
 
 - [Finite subtheories of the theory of the real field are undecidable](finite-subtheories-of-the-real-field-are.md)
 - [Metric Wu planes and ordered origami planes](metric-wu-planes-and-ordered-origami-planes.md)

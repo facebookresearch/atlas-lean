@@ -21,4 +21,4 @@ Metric Wu planes and Pythagorean fields of characteristic $0$ are bi-interpretab
 
 ## Sources
 
-- L. Beklemishev, A. Dmitrieva and J. A. Makowsky, "Axiomatizing origami planes", in *Larisa Maksimova on Implication, Interpolation, and Definability*, Outstanding Contributions to Logic 28, Springer, 2024, pp. 353–377, doi:10.1007/978-3-031-47921-2_12; read as arXiv:2012.03250v2, <https://arxiv.org/abs/2012.03250v2>: the geometric version of Ziegler's theorem (label G-Ziegler) and the corollary on metric Wu planes in the section "Undecidability", with the bi-interpretation theorem in the section "Metric Wu planes and Pythagorean fields".
+- L. Beklemishev, A. Dmitrieva and J. A. Makowsky, "Axiomatizing origami planes", in *Dick de Jongh on Intuitionistic and Provability Logics* (eds. N. Bezhanishvili, R. Iemhoff and F. Yang), Outstanding Contributions to Logic, Springer, 2024, pp. 353–377, doi:10.1007/978-3-031-47921-2_12; read as arXiv:2012.03250v2, <https://arxiv.org/abs/2012.03250v2>: Theorem 3 (the geometric version of Ziegler's theorem) and Corollary 2 in Section 6, "Undecidability", with Theorem 1, the bi-interpretation theorem of Section 5.

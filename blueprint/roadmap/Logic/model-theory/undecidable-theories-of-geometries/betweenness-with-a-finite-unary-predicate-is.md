@@ -23,4 +23,4 @@ The proof reduces the complement of the periodic tiling problem, which is $\Sigm
 ## Sources
 
 - A. Kuusisto, J. Meyers and J. Virtema, "Undecidable First-Order Theories of Affine Geometries", *Logical Methods in Computer Science* 9(4), 2013, paper 26, pp. 1–23, <https://doi.org/10.2168/LMCS-9(4:26)2013>; numbers from arXiv:1310.8200v3, <https://arxiv.org/abs/1310.8200v3>: Section 5: Lemmas 5.5 and 5.6, Theorem 5.7; Theorem 2.4 (periodic tiling).
-- Y. Gurevich and I. O. Koryakov, "Remarks on Berger's paper on the domino problem", *Siberian Mathematical Journal* 13(2):319–321, 1972, <https://doi.org/10.1007/BF00971620>: the periodic tiling problem, as recalled in Section 2.2 of the version of the first source read.
+- Y. Gurevich and I. O. Koryakov, "Remarks on Berger's paper on the domino problem", *Siberian Mathematical Journal* 13(2):319–321, 1972, <https://doi.org/10.1007/BF00971620>: the periodic tiling problem, as recalled in Section 2.4 (Theorem 2.4) of the version of the first source read.
