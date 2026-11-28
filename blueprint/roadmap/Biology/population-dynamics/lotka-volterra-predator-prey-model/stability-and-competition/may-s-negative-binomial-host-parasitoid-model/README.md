@@ -8,4 +8,3 @@
 - [Is Unstable](is-unstable.md)
 - [The positive equilibrium and its Nicholson–Bailey limit](equilibrium-spec.md)
 - [May's stability criterion, stable side](stable-of-lt-one.md)
-- [May's stability criterion, unstable side](unstable-of-one-lt.md)

@@ -7,23 +7,29 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# May's negative-binomial host–parasitoid model: stable for `k < 1`, unstable for `k > 1`
+# May's negative-binomial host–parasitoid model: the equilibrium, stable for `k < 1`
 
 May (1978) replaced the Poisson encounter law of the Nicholson–Bailey model by a negative
 binomial with clumping parameter `k > 0`:
 `H_{t+1} = F H_t (1 + a P_t / k)^{-k}` and `P_{t+1} = H_t - H_{t+1} / F` (eqs. 3–4), with host
 growth factor `F > 1` and searching efficiency `a > 0`. The positive equilibrium is
 `a P* = k (F^{1/k} - 1)` and `H* = (F / (F - 1)) P*` (eqs. 5–6); as `k → ∞` it tends to the
-Nicholson–Bailey value `a P* = ln F`. The equilibrium "is stable against small disturbances if,
-and only if, `k < 1`", whatever `F` and `a`; for `k > 1` arbitrarily small disturbances lead to
-diverging oscillations (p. 839 and Appendix 2, by linearization).
+Nicholson–Bailey value `a P* = ln F`. Singh (2021) gives the same equilibrium as the non-trivial
+fixed point (eq. (5)) of his model (3)–(4), which is May's map with one parasitoid per
+parasitized host, `R = F`, `c̄ = a` and `CV² = 1/k`, and with hosts counted before their growth
+by `F`, so that May's `H*` is `F` times his; the limit is his `c̄ P* = (R^{CV²} - 1) / CV² → ln R`
+as `CV → 0`. The equilibrium is stable against small disturbances for `k < 1`, whatever `F` and
+`a` (p. 839 and Appendix 2, by linearization).
 
-Recorded here: the equilibrium and its `k → ∞` limit, local asymptotic stability for `k < 1`
-and instability for `k > 1`, both for the nonlinear map on the open positive quadrant. The case
-`k = 1` (eigenvalues of modulus `1`) and May's numerical global remarks are not claimed.
+Recorded here: the equilibrium and its `k → ∞` limit, and local asymptotic stability for `k < 1`,
+for the nonlinear map on the open positive quadrant. Not stated here: instability for `k > 1`
+(May 1978), in the sense of `IsUnstable`, which no available source passage was found to state;
+the case `k = 1` (eigenvalues of modulus `1`); and May's numerical global remarks.
 
 Sources: R. M. May, "Host-parasitoid systems in patchy environments: a phenomenological model",
-J. Anim. Ecol. 47 (1978) 833–844, doi:10.2307/3674, eqs. 3–7 and Appendix 2.
+J. Anim. Ecol. 47 (1978) 833–844, doi:10.2307/3674, eqs. 3–7 and Appendix 2; A. Singh,
+"Stochasticity in host-parasitoid models informs mechanisms regulating population dynamics",
+Sci. Rep. 11 (2021) 16749, doi:10.1038/s41598-021-96212-y, eqs. (3)–(5).
 -/
 module
 
@@ -45,15 +51,18 @@ noncomputable def step (F a k : ℝ) (z : ℝ × ℝ) : ℝ × ℝ :=
   (F * z.1 * (1 + a * z.2 / k) ^ (-k), z.1 - F * z.1 * (1 + a * z.2 / k) ^ (-k) / F)
 
 /-- **Parasitoid density of May's positive equilibrium.** The formula
-`P* = k (F^{1/k} - 1) / a` (May 1978, eq. 5), a total function of real `F`, `a` and `k`. For
-`F > 1`, `a > 0` and `k > 0` it is the parasitoid coordinate of the positive equilibrium of May's
-map (`equilibrium_spec`); for other parameters it need not be. -/
+`P* = k (F^{1/k} - 1) / a` (May 1978, eq. 5; Singh 2021, eq. (5), with `R = F`, `c̄ = a` and
+`CV² = 1/k`), a total function of real `F`, `a` and `k`. For `F > 1`, `a > 0` and `k > 0` it is
+the parasitoid coordinate of the positive equilibrium of May's map (`equilibrium_spec`); for
+other parameters it need not be. -/
 noncomputable def parasitoidEq (F a k : ℝ) : ℝ := k * (F ^ (1 / k) - 1) / a
 
 /-- **Host density of May's positive equilibrium.** The formula `H* = (F / (F - 1)) P*`
-(May 1978, eq. 6), a total function of real `F`, `a` and `k`. For `F > 1`, `a > 0` and `k > 0`
-it is the host coordinate of the positive equilibrium of May's map (`equilibrium_spec`); for
-other parameters it need not be. -/
+(May 1978, eq. 6; Singh 2021, eq. (5), with one parasitoid per parasitized host, `R = F`,
+`c̄ = a` and `CV² = 1/k`: `F` times his `H*`, since May counts hosts at the stage exposed to
+parasitism), a total function of real `F`, `a` and `k`. For `F > 1`, `a > 0` and `k > 0` it is
+the host coordinate of the positive equilibrium of May's map (`equilibrium_spec`); for other
+parameters it need not be. -/
 noncomputable def hostEq (F a k : ℝ) : ℝ := F / (F - 1) * parasitoidEq F a k
 
 /-- **May's positive equilibrium.** The point `(H*, P*)` with `H* = (F / (F - 1)) P*` and
@@ -84,13 +93,16 @@ def IsUnstable (T : ℝ × ℝ → ℝ × ℝ) (zs : ℝ × ℝ) : Prop :=
     ∃ ε : ℝ, 0 < ε ∧ ∀ δ : ℝ, 0 < δ → ∃ z : ℝ × ℝ, 0 < z.1 ∧ 0 < z.2 ∧ dist z zs < δ ∧
       ∃ n : ℕ, ε ≤ dist (T^[n] z) zs
 
-/-- **The positive equilibrium and its Nicholson–Bailey limit** (May 1978, eqs. 5–6): let
-`F > 1`, `a > 0` and `k > 0`. Then `(H*, P*)`, with `P* = k (F^{1/k} - 1) / a` and
+/-- **The positive equilibrium and its Nicholson–Bailey limit** (May 1978, eqs. 5–6; Singh 2021,
+eq. (5)): let `F > 1`, `a > 0` and `k > 0`. Then `(H*, P*)`, with `P* = k (F^{1/k} - 1) / a` and
 `H* = (F / (F - 1)) P*`, has both coordinates positive, is a fixed point of May's map, and is the
 only fixed point with both coordinates positive; moreover, for fixed `F > 1` and `a > 0`,
-`a P*` tends to `ln F` as `k → ∞`.
+`a P*` tends to `ln F` as `k → ∞`. Singh's model (3)–(4) is May's map with one parasitoid per
+parasitized host, `R = F`, `c̄ = a` and `CV² = 1/k`, and with hosts counted before their growth
+by `F`, so that his `H*` is this `H*` divided by `F`; the limit is his
+`c̄ P* = (R^{CV²} - 1) / CV² → ln R` as `CV → 0`.
 
-Source: May (1978), eqs. 5–6. -/
+Sources: May (1978), eqs. 5–6; Singh (2021), Sci. Rep. 11, 16749, eq. (5). -/
 public theorem_wanted equilibrium_spec (F a k : ℝ) (hF : 1 < F) (ha : 0 < a) (hk : 0 < k) :
     0 < hostEq F a k ∧ 0 < parasitoidEq F a k ∧ step F a k (equilibrium F a k) = equilibrium F a k ∧
       (∀ z : ℝ × ℝ, 0 < z.1 → 0 < z.2 → step F a k z = z → z = equilibrium F a k) ∧
@@ -105,15 +117,5 @@ Source: May (1978), p. 839 and Appendix 2. -/
 public theorem_wanted stable_of_lt_one (F a k : ℝ) (hF : 1 < F) (ha : 0 < a) (hk₀ : 0 < k)
     (hk₁ : k < 1) :
     IsLocallyAsymptoticallyStable (step F a k) (equilibrium F a k)
-
-/-- **May's stability criterion, unstable side** (May 1978, eq. 7 and Appendix 2): let `F > 1`,
-`a > 0` and `k > 1`. Then the equilibrium `(H*, P*)` has both coordinates positive, is a fixed
-point of May's map, and is Lyapunov unstable on the open positive quadrant (arbitrarily small
-positive disturbances move a fixed distance away). (The borderline case `k = 1` is not
-claimed.)
-
-Source: May (1978), p. 839 and Appendix 2. -/
-public theorem_wanted unstable_of_one_lt (F a k : ℝ) (hF : 1 < F) (ha : 0 < a) (hk : 1 < k) :
-    IsUnstable (step F a k) (equilibrium F a k)
 
 end WantedExt.Biology.Ecology.MayHostParasitoidWanted
