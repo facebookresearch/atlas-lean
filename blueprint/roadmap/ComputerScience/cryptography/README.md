@@ -35,3 +35,4 @@ Cryptographic schemes and their correctness and security reductions: the game-ba
 
 - [Entropy and randomness extraction](randomness-extraction/README.md)
 - [Program obfuscation](program-obfuscation/README.md)
+- [Cryptographic private machine learning](privacy-preserving-machine-learning/README.md)
