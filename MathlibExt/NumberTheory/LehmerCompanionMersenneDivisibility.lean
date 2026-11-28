@@ -58,7 +58,7 @@ recurrence (2)). -/
 
 /-- **Fourth-order recurrence of Lehmer's companion sequence.** For all integers $R$ and $Q$ and
 every natural number $k$, Lehmer's companion sequence satisfies
-$\bar V_{k+4}(R, Q) = (R - 2Q)\,\bar V_{k+2} - Q^2\,\bar V_k$.
+$\bar V_{k+4}(R, Q) = (R - 2Q)\,\bar V_{k+2}(R, Q) - Q^2\,\bar V_k(R, Q)$.
 
 Source: E. L. Roettger and H. C. Williams, *Some Remarks Concerning the Lucas-Lehmer Primality
 Test*, Journal of Integer Sequences 28 (2025), Article 25.2.5, Section 2, recurrence (2). -/
@@ -123,9 +123,13 @@ public theorem mersenne_dvd_lehmerV_of_diophantine {n : ℕ} (hn : Odd n) (h3 : 
       (fun h => ZMod.exists_sq_eq_neg_one_iff.mp h hm4)
     rw [neg_eq_neg_one_mul, map_mul, hneg, hchar_four, mul_one]
   have hrd' : χ ((r : ZMod m) * d) = -1 := by
-    simpa [χ, legendreSym] using (jacobiSym.legendreSym.to_jacobiSym m (r * d)).trans hrd
+    apply quadraticChar_neg_one_iff_not_isSquare.mpr
+    simpa only [Int.cast_mul] using (legendreSym.eq_neg_one_iff m).mp
+      ((jacobiSym.legendreSym.to_jacobiSym m (r * d)).trans hrd)
   have hqr' : χ ((q : ZMod m) * r) = -1 := by
-    simpa [χ, legendreSym] using (jacobiSym.legendreSym.to_jacobiSym m (q * r)).trans hqr
+    apply quadraticChar_neg_one_iff_not_isSquare.mpr
+    simpa only [Int.cast_mul] using (legendreSym.eq_neg_one_iff m).mp
+      ((jacobiSym.legendreSym.to_jacobiSym m (q * r)).trans hqr)
   have hr : (r : ZMod m) ≠ 0 := by
     intro h
     simp [χ, h] at hqr'
@@ -196,8 +200,17 @@ public theorem mersenne_dvd_lehmerV_of_diophantine {n : ℕ} (hn : Odd n) (h3 : 
     rw [← jacobiSym.legendreSym.to_jacobiSym m (s₁ + 2),
       ← jacobiSym.legendreSym.to_jacobiSym m (s₁ - 2)]
     constructor
-    · simpa [χ, legendreSym, hs₁] using hplus
-    · simpa [χ, legendreSym, hs₁] using hminus
+    · apply (legendreSym.eq_neg_one_iff m).mpr
+      simpa only [Int.cast_add, Int.cast_ofNat, hs₁] using
+        quadraticChar_neg_one_iff_not_isSquare.mp hplus
+    · have hs_sub : ((s₁ - 2 : ℤ) : ZMod m) = s - 2 := by simp [hs₁]
+      have hne : s - 2 ≠ 0 := by
+        intro hz
+        have hzero : χ (s - 2) = 0 := quadraticChar_eq_zero_iff.mpr hz
+        exact zero_ne_one (hzero.symm.trans hminus)
+      apply (legendreSym.eq_one_iff m (a := s₁ - 2) (by rwa [hs_sub])).mpr
+      rw [hs_sub]
+      exact (quadraticChar_one_iff_isSquare hne).mp hminus
   have hdiv := (acceptableSeed_of_jacobi n hn h3 s₁ hseed).mp hp
   have hcast : Function.Semiconj (fun a : ℤ => (a : ZMod m))
       (fun a => a ^ 2 - 2) (fun a => a ^ 2 - 2) := by
