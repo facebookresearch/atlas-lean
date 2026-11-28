@@ -32,6 +32,7 @@ interaction studies: when does association imply mechanistic interaction?", Gene
 module
 
 public import Batteries.Util.ProofWanted
+public import Domains.Biology.StatisticalGenetics.AssociationTests.CaseOnlyInteraction
 public import Mathlib.Order.Filter.Basic
 public import Mathlib.Topology.Instances.Real.Lemmas
 
@@ -40,25 +41,6 @@ public import Mathlib.Topology.Instances.Real.Lemmas
 namespace WantedExt.Biology.StatisticalGenetics.CaseOnlyInteractionWanted
 
 open Filter Topology
-
-/-- The risk-ratio interaction `SRR = RR_ge / (RR_g RR_e)` for cell masses `a, …, h` (cases and
-non-cases at `(G, E) = (0, 0), (1, 0), (0, 1), (1, 1)`), where each relative risk compares the risk
-in a cell with the risk `a / (a + b)` in the doubly unexposed cell. It is meaningful for positive
-cell masses; if any denominator is `0`, Lean's convention `x / 0 = 0` applies. -/
-noncomputable def riskRatioInteraction (a b c d e f g h : ℝ) : ℝ :=
-  (g / (g + h) / (a / (a + b))) /
-    ((c / (c + d) / (a / (a + b))) * (e / (e + f) / (a / (a + b))))
-
-/-- The odds-ratio interaction `SOR = OR_ge / (OR_g OR_e)`, with `OR_g = b c / (a d)`,
-`OR_e = b e / (a f)` and `OR_ge = b g / (a h)`. It is meaningful for positive cell masses; if any
-denominator is `0`, Lean's convention `x / 0 = 0` applies. -/
-noncomputable def oddsRatioInteraction (a b c d e f g h : ℝ) : ℝ :=
-  (b * g / (a * h)) / ((b * c / (a * d)) * (b * e / (a * f)))
-
-/-- The case-only odds ratio `a g / (c e)` between genotype and exposure among the cases. It is
-meaningful when `c e ≠ 0`; if `c e = 0`, Lean's convention `x / 0 = 0` makes the value `0`. -/
-noncomputable def caseOnlyOddsRatio (a c e g : ℝ) : ℝ :=
-  a * g / (c * e)
 
 /-- **Case-only odds ratio under non-case independence** (Piegorsch, Weinberg and Taylor 1994;
 VanderWeele et al. 2010, Appendix A). Let the eight cell masses `a, b, c, d, e, f, g, h` be
@@ -100,18 +82,5 @@ public theorem_wanted tendsto_oddsRatioInteraction_rare {πG πE ρ10 ρ01 ρ11 
         (ε * ρ01 * ((1 - πG) * πE)) ((1 - ε * ρ01) * ((1 - πG) * πE))
         (ε * ρ11 * (πG * πE)) ((1 - ε * ρ11) * (πG * πE)))
       (𝓝[>] 0) (𝓝 (ρ11 / (ρ10 * ρ01)))
-
-/-- **Under dependence, the case-only odds ratio can differ from `1` without interaction.** There
-are positive cell masses `a, b, c, d, e, f, g, h` with no multiplicative interaction on either
-scale, `SRR = 1` and `SOR = 1`, whose case-only odds ratio `a g / (c e)` is not `1`; in such a law
-`G` and `E` are dependent (VanderWeele et al. 2010). This is a counterexample: it exhibits one
-such law, not a failure in every law where `G` and `E` are dependent.
-
-Source: VanderWeele et al. (2010), on the sensitivity of the design to the independence
-assumption; the example is derived. -/
-public theorem_wanted exists_caseOnly_ne_one :
-    ∃ a b c d e f g h : ℝ, 0 < a ∧ 0 < b ∧ 0 < c ∧ 0 < d ∧ 0 < e ∧ 0 < f ∧ 0 < g ∧ 0 < h ∧
-      riskRatioInteraction a b c d e f g h = 1 ∧ oddsRatioInteraction a b c d e f g h = 1 ∧
-      caseOnlyOddsRatio a c e g ≠ 1
 
 end WantedExt.Biology.StatisticalGenetics.CaseOnlyInteractionWanted

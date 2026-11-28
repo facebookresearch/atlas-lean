@@ -16,7 +16,7 @@ $$\rho(K_N, r, \mathrm U) = \rho(K_N, r, \mathrm T) = \frac{1 - 1/r}{1 - 1/r^N} 
 
 A graph is a *uniform (temperature) amplifier* if its fixation probability exceeds that of $K_N$ for every $r > 1$. A sequence $G_1, G_2, \dots$ of graphs of increasing size is a **strong amplifier** under a given initialization if $\rho(G_i, r, \cdot) \to 1$ for every fixed $r > 1$.
 
-**Examples.** Every isothermal graph (all $t_h = 1$) has exactly the well-mixed fixation probability, so it neither amplifies nor suppresses. The Star $S_N$ (a centre joined to $N - 1$ leaves) satisfies $\rho(S_N, r, \mathrm U) \to 1 - 1/r^2$, so it is a uniform amplifier, but $\rho(S_N, r, \mathrm T) \to 0$, so it is not a temperature amplifier.
+**Examples.** Every strongly connected isothermal graph (all $t_h = 1$, and every vertex reachable from every other along edges of positive weight; for undirected graphs, connected) has exactly the well-mixed fixation probability under both initializations, so it neither amplifies nor suppresses. The sources work with connected graphs throughout, and the connectivity is needed: for even $N$, two disjoint copies of $K_{N/2}$ form an isothermal graph on which a single mutant can never fix, so its fixation probability is $0$. The Star $S_N$ (a centre joined to $N - 1$ leaves) satisfies $\rho(S_N, r, \mathrm U) \to 1 - 1/r^2$, so it is a uniform amplifier, but $\rho(S_N, r, \mathrm T) \to 0$, so it is not a temperature amplifier.
 
 ## Depends on
 

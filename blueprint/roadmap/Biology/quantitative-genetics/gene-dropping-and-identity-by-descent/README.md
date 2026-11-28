@@ -16,3 +16,4 @@
 - [Gene-dropping kinship agrees with the tabular method](ibd-model-kinship-eq-kinship.md)
 - [The GRM is unbiased under pedigree gene dropping](integral-grm-ibd-model.md)
 - [The GRM is unbiased for twice the tabular kinship](integral-grm-ibd-model-eq-kinship.md)
+- [Genome-wide IBD sharing between distant relatives](genome-wide-ibd-sharing-between-distant-relatives.md)

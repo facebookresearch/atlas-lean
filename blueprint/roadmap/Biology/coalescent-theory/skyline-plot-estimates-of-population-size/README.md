@@ -26,3 +26,5 @@
 
 - [Limits of inference on population-size histories](limits-of-inference-on-population-size-histories/README.md)
 - [Gaussian process inference of population size trajectories](gaussian-process-inference-of-population-size-trajectories/README.md)
+- [IBD-based estimation of recent effective population size](ibd-based-estimation-of-recent-effective-size/README.md)
+- [Forward-backward coalescent with competitive interactions](forward-backward-coalescent-with-competitive-interactions/README.md)

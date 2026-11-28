@@ -17,3 +17,4 @@ Complex dynamics studies the iteration of holomorphic maps, especially polynomia
 - [Siegel linearization theorem](siegel-linearization-theorem/README.md)
 - [Tricorn](tricorn/README.md)
 - [Wandering domains in higher-dimensional complex dynamics](wandering-domains-in-higher-dimensional-complex/README.md)
+- [Computability in complex dynamics](computability-in-complex-dynamics/README.md)

@@ -11,6 +11,7 @@ module
 public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.LogPairs
 public import MathlibExt.AlgebraicGeometry.LogPairDiscrepancyCanonicalFrameIndependence
+public import MathlibExt.AlgebraicGeometry.LogPairDiscrepancyDiscrepancyAdjointIndependence
 
 /-!
 # General canonical and discrepancy proof contracts
@@ -18,8 +19,11 @@ public import MathlibExt.AlgebraicGeometry.LogPairDiscrepancyCanonicalFrameIndep
 These requests use actual normal finite-type schemes, rational differentials,
 codimension-one orders, Cartier cocycles and line bundles. The computed
 discrepancy is `1 + canonical order - pulled adjoint order`. Source/model
-and adjoint-presentation invariance are explicit proof obligations; a klt
-or discrepancy value is not supplied as an uninterpreted predicate or field.
+invariance is an explicit proof obligation; adjoint-presentation invariance
+is proved in
+`MathlibExt.AlgebraicGeometry.LogPairDiscrepancyDiscrepancyAdjointIndependence`.
+A klt or discrepancy value is not supplied as an uninterpreted predicate or
+field.
 
 References: Hartshorne, *Algebraic Geometry*, II.6; Kollár--Mori,
 *Birational Geometry of Algebraic Varieties*, §2.3. Native function fields,
@@ -55,18 +59,6 @@ fields is a $k$-isomorphism, and $W$ has canonical data whose rational top form 
 that of $P$. -/
 public def_wanted model_calculus (k : Type u) [Field k] [CharZero k]
     (n : ℕ) (P : LogPair k n) : HasModelCalculus P
-
-/-- The log discrepancy does not depend on the Cartier representation of $K + \Delta$: for a field
-$k$ of characteristic zero, a log pair $P$ over $k$, a proper birational model `M` of $P$ and a real
-Cartier combination $D$ on the variety of $P$ whose divisor is $K + \Delta$ (the canonical divisor
-of $P$ plus its boundary), every prime divisor of `M` has the same log discrepancy when computed
-with $D$ in place of the adjoint combination of $P$. -/
-public theorem_wanted discrepancy_adjoint_independence (k : Type u) [Field k] [CharZero k]
-    (n : ℕ) (P : LogPair k n) (M : BirationalModel P)
-    (D : CartierCombination P.variety)
-    (h : D.divisor = realCast (canonicalDivisor P.canonical) + P.boundary)
-    (p : PrimePoint M.variety) :
-    logDiscrepancy M p = logDiscrepancy (M.withAdjoint D h) p
 
 /-- The log discrepancy depends only on the divisorial valuation: for a field $k$ of characteristic
 zero and a log pair $P$ over $k$, if prime divisors $p$ and $q$ on two proper birational models of
