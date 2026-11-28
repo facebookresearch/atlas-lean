@@ -21,7 +21,7 @@ None.
 
 *Safe realizability* asks for a stronger implementation. A configuration of the product is a *deadlock* if no accepting configuration is reachable from it, and the product is *deadlock-free* if no configuration reachable from its initial configuration is a deadlock. $L$ is safely realizable if $L$ is exactly the set of MSCs accepted by some deadlock-free product (Section 3.2 of the source). Weak realizability does not require deadlock-freedom.
 
-For a finite set of MSCs, weak realizability is coNP-complete and safe realizability is decidable in polynomial time (Alur, Etessami and Yannakakis, ICSE 2000, as recalled in Section 3.1 of the source). For bounded MSC graphs, safe realizability is in EXPSPACE (Theorem 3 of the source).
+For a finite set of MSCs, weak realizability is coNP-complete and safe realizability is decidable in polynomial time (Alur, Etessami and Yannakakis, ICSE 2000, as recalled in Sections 3.1 and 3.2 of the source). For bounded MSC graphs, safe realizability is in EXPSPACE (Theorem 3 of the source).
 
 ## Sources
 
