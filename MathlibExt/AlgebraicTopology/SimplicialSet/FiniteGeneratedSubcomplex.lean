@@ -31,22 +31,11 @@ universe u
 
 variable (Y : SSet.{u})
 
-/-- Let `Y : SSet.{u}`, `n : ℕ`, and `x∈Y_n`. The smallest subcomplex `ofSimplex x` containing `x`
-is finite in the simplicial sense: it has only finitely many nondegenerate simplices across
-all dimensions. -/
-theorem finite_ofSimplex {n : ℕ} (x : Y _⦋n⦌) :
-    SSet.Finite ((ofSimplex x : Y.Subcomplex) : SSet.{u}) := by
-  have h : SSet.Finite (Subcomplex.range (SSet.yonedaEquiv.symm x) : Y.Subcomplex) :=
-    inferInstance
-  simpa [Subcomplex.range_eq_ofSimplex, Equiv.apply_symm_apply] using h
-
 /-- Let `Y : SSet.{u}`, `ι` a finite type, and `s : ι → Σ n, Y_n` a dimension-varying family of
 simplices. The subcomplex `⨆ i, ofSimplex (s i).2` is finite, meaning that its nondegenerate
 simplices form a finite type. -/
 theorem finite_iSup_ofSimplex {ι : Type*} [Finite ι] (s : ι → Σ n, Y _⦋n⦌) :
     SSet.Finite ((⨆ i, ofSimplex (s i).2 : Y.Subcomplex) : SSet.{u}) := by
-  rw [SSet.finite_iSup_iff]
-  intro i
-  exact finite_ofSimplex Y (s i).2
+  exact (SSet.finite_iSup_iff _).2 (fun i => inferInstance)
 
 end SSet.Subcomplex

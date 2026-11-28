@@ -310,37 +310,12 @@ private lemma pushout_of_minimal_relMissing {X : SSet.{u}} {A J : X.Subcomplex}
   }
   exact ⟨B, hlt, hBJ, rfl, t, b, hIsPushout⟩
 
-/-- One boundary attachment inside a larger subcomplex.
-
-For subcomplexes A < J of X, there exist B with A < B ≤ J, a natural dimension n and maps t :
-∂Δ[n] → A, b : Δ[n] → B such that the square (t,boundary inclusion,A → B,b) is a pushout. The
-construction attaches a minimal-dimensional nondegenerate simplex of J missing from A. -/
-theorem exists_isPushout_of_lt {X : SSet.{u}} (A J : X.Subcomplex) (h : A < J) :
-    ∃ (B : X.Subcomplex) (hAB : A < B) (_ : B ≤ J) (n : ℕ)
-      (t : (SSet.boundary n : SSet.{u}) ⟶ (A : SSet.{u}))
-      (b : (Δ[n] : SSet.{u}) ⟶ (B : SSet.{u})),
-      IsPushout t (SSet.boundary n).ι (SSet.Subcomplex.homOfLE hAB.le) b := by
-  classical
-  have hAJ : A ≤ J := h.le
-  have hExists : ∃ n, relMissingPred X A J n := exists_relMissing_of_lt h
-  let n₀ := Nat.find hExists
-  have hP_n₀ : relMissingPred X A J n₀ := Nat.find_spec hExists
-  obtain ⟨x₀, hxJ, hx₀⟩ := hP_n₀
-  have hMin : ∀ m, m < n₀ → ∀ y : X.nonDegenerate m,
-      y.1 ∈ J.obj (Opposite.op ⦋m⦌) → y.1 ∈ A.obj (Opposite.op ⦋m⦌) := by
-    intro m hm y hyJ
-    by_contra hyA
-    exact Nat.find_min hExists hm ⟨y, hyJ, hyA⟩
-  obtain ⟨B, hAB, hBJ, _, t, b, hPush⟩ :=
-    pushout_of_minimal_relMissing hAJ hxJ hx₀ hMin
-  exact ⟨B, hAB, hBJ, n₀, t, b, hPush⟩
-
 /-- Boundary attachment with a minimal nondegenerate witness.
 
-For A < J, choose x ∈ J_n nondegenerate and outside A, with every nondegenerate simplex of J
-in smaller dimension lying in A. Then B = A ⊔ ofSimplex(x) satisfies A < B ≤ J and is the
-pushout of ∂Δ[n] → A along ∂Δ[n] → Δ[n]. The result retains x, both membership conditions,
-minimality and the join equality. -/
+For A < J, there exist a dimension n, a nondegenerate simplex x of J outside A and a
+subcomplex B = A ⊔ ofSimplex(x) with A < B ≤ J. Every lower-dimensional nondegenerate simplex
+of J lies in A. The square ∂Δ[n] → A, ∂Δ[n] → Δ[n], A → B, Δ[n] → B is a pushout. The result
+retains the chosen x, both membership conditions, minimality and the join equality. -/
 theorem exists_isPushout_of_lt_with_witness {X : SSet.{u}} (A J : X.Subcomplex)
     (h : A < J) :
     ∃ (B : X.Subcomplex) (hAB : A < B) (_ : B ≤ J) (n : ℕ)
@@ -367,6 +342,20 @@ theorem exists_isPushout_of_lt_with_witness {X : SSet.{u}} (A J : X.Subcomplex)
   obtain ⟨B, hAB, hBJ, hJoin, t, b, hPush⟩ :=
     pushout_of_minimal_relMissing hAJ hxJ hx₀ hMin
   exact ⟨B, hAB, hBJ, n₀, x₀, hxJ, hx₀, hMin, hJoin, t, b, hPush⟩
+
+/-- One boundary attachment inside a larger subcomplex.
+
+For subcomplexes A < J of X, there exist B with A < B ≤ J, a natural dimension n and maps t :
+∂Δ[n] → A, b : Δ[n] → B such that the square (t,boundary inclusion,A → B,b) is a pushout. The
+construction attaches a minimal-dimensional nondegenerate simplex of J missing from A. -/
+theorem exists_isPushout_of_lt {X : SSet.{u}} (A J : X.Subcomplex) (h : A < J) :
+    ∃ (B : X.Subcomplex) (hAB : A < B) (_ : B ≤ J) (n : ℕ)
+      (t : (SSet.boundary n : SSet.{u}) ⟶ (A : SSet.{u}))
+      (b : (Δ[n] : SSet.{u}) ⟶ (B : SSet.{u})),
+      IsPushout t (SSet.boundary n).ι (SSet.Subcomplex.homOfLE hAB.le) b := by
+  obtain ⟨B, hAB, hBJ, n, _, _, _, _, _, t, b, hPush⟩ :=
+    exists_isPushout_of_lt_with_witness A J h
+  exact ⟨B, hAB, hBJ, n, t, b, hPush⟩
 
 /-- Boundary attachment to a proper simplicial subcomplex.
 

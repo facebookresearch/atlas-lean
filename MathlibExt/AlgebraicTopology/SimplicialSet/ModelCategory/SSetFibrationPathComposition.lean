@@ -13,14 +13,14 @@ import MathlibExt.AlgebraicTopology.SimplicialSet.StdSimplexCompat
 public import Mathlib.AlgebraicTopology.SimplicialSet.CategoryWithFibrations
 
 /-!
-# Composition and completion of edges above a simplicial fibration
+# Connecting edges above a simplicial fibration
 
 Let `p : X ⟶ Y` be a simplicial fibration in universe `u`. Two edges of `X` that agree at
 their shared vertex and project to two faces of a specified `2`-simplex of `Y` extend to its
 remaining edge. The three cases fill edges `02`, `12`, and `01`; the equations use `δ 1` for
 the initial vertex and `δ 0` for the terminal vertex of an edge.
 
-If edge `01` is constant over the base, the chosen composite `02` projects to the image of
+If edge `01` is constant over the base, the chosen connecting edge `02` projects to the image of
 edge `12`. If edges `01` and `02`, or edges `02` and `12`, have equal base images, the missing
 edge can be chosen constant over the base.
 -/

@@ -10,7 +10,7 @@ module
 
 -- Author: @toskua
 public import MathlibExt.AlgebraicTopology.SimplicialSet.SimplicialGroupUpperHornCorrection
-public import Mathlib.Tactic.FinCases
+public import MathlibExt.CategoryTheory.DGSourceMore.SimplicialGroupKan
 
 /-!
 # Kan horn filling for simplicial groups
@@ -19,7 +19,10 @@ For every simplicial group `G : SimplicialObject GrpCat.{u}`, the underlying sim
 `underlying G` is a Kan complex. A compatible family of horn-face maps determines elements of
 the degree groups through Yoneda evaluation. In dimension `n + 2`, these elements satisfy the
 face equations needed for the lower and upper group corrections, which yield a simplex having
-all the prescribed nonmissing faces.
+all the prescribed nonmissing faces. This is Moore's horn construction. The canonical Kan
+instance and its original source attribution are supplied by
+`MathlibExt.CategoryTheory.DGSourceMore.SimplicialGroupKan`; the explicit filler data and face
+laws remain in the correction modules.
 -/
 
 @[expose] public section
@@ -44,12 +47,14 @@ def groupFaces {n : ℕ} (i : Fin (n + 3))
     (j : Fin (n + 3)) : (underlying G) _⦋n + 1⦌ :=
   if hj : j ≠ i then SSet.yonedaEquiv (f j hj) else 1
 
-/-- For `G : SimplicialObject GrpCat.{u}`, `n : ℕ`, `i : Fin (n + 3)`, and a family of maps `f j hj : Δ[n + 1] ⟶ underlying G` indexed by `j ≠ i`,
+/-- For `G : SimplicialObject GrpCat.{u}`, `n : ℕ`, `i : Fin (n + 3)`, and a family of maps `f j
+hj : Δ[n + 1] ⟶ underlying G` indexed by `j ≠ i`,
 `groupFaces G i f j = yonedaEquiv (f j hj)`
 whenever `hj : j ≠ i`. Thus every prescribed face retains its Yoneda value. -/
 theorem groupFaces_at {n : ℕ} (i : Fin (n + 3))
     (f : ∀ (j : Fin (n + 3)) (_ : j ≠ i), (Δ[n + 1] : SSet.{u}) ⟶ underlying G)
-    (j : Fin (n + 3)) (hj : j ≠ i) : groupFaces G i f j = SSet.yonedaEquiv (f j hj) := dite_eq_left hj
+    (j : Fin (n + 3)) (hj : j ≠ i) : groupFaces G i f j = SSet.yonedaEquiv (f j hj) :=
+      dite_eq_left hj
 
 /-- Let `G : SimplicialObject GrpCat.{u}`, `n : ℕ`, and `i : Fin (n + 3)`. Suppose the maps `f j
 hj : Δ[n + 1] ⟶ underlying G`, for `j ≠ i`, form a compatible horn family
@@ -66,43 +71,7 @@ theorem groupFaces_compatible {n : ℕ} (i : Fin (n + 3))
       (underlying G).δ (j.pred hkj.ne_zero) (SSet.yonedaEquiv (f (Fin.castSucc k) hk)) := by
     simpa only [SSet.stdSimplex.yonedaEquiv_δ_comp, Fin.castPred_castSucc] using h.symm
   exact (congrArg ((underlying G).δ k) (groupFaces_at G i f j hj)).trans
-    (hh.trans (congrArg ((underlying G).δ (j.pred hkj.ne_zero)) (groupFaces_at G i f (Fin.castSucc k) hk)).symm)
-
-/-- For any `G : SimplicialObject GrpCat.{u}`, the underlying simplicial set `underlying G` is a
-Kan complex. Equivalently, for every `n : ℕ` and `i : Fin (n + 2)`, every simplicial map from
-the horn `Λ_i[n + 1]` to `underlying G` extends to `Δ[n + 1]`. The groups of `G` need not be
-commutative. -/
-theorem underlying_isKan : SSet.KanComplex (underlying G) := by
-  apply SSet.KanComplex.iff.mpr
-  intro q i f hf
-  cases q with
-  | zero =>
-    fin_cases i
-    · let z := SSet.yonedaEquiv (f (1 : Fin 2) (by decide))
-      refine ⟨SSet.yonedaEquiv.symm ((underlying G).σ (0 : Fin 1) z), ?_⟩
-      intro j hj
-      fin_cases j
-      · exact (hj rfl).elim
-      · exact (SSet.stdSimplex.δ_comp_yonedaEquiv_symm _ _).trans
-          ((congrArg SSet.yonedaEquiv.symm (face_degeneracy_succ G (0 : Fin 1) z)).trans
-            (SSet.yonedaEquiv.symm_apply_apply _))
-    · let z := SSet.yonedaEquiv (f (0 : Fin 2) (by decide))
-      refine ⟨SSet.yonedaEquiv.symm ((underlying G).σ (0 : Fin 1) z), ?_⟩
-      intro j hj
-      fin_cases j
-      · exact (SSet.stdSimplex.δ_comp_yonedaEquiv_symm _ _).trans
-          ((congrArg SSet.yonedaEquiv.symm (face_degeneracy_self G (0 : Fin 1) z)).trans
-            (SSet.yonedaEquiv.symm_apply_apply _))
-      · exact (hj rfl).elim
-  | succ n =>
-    let h := groupFaces G i f
-    have hc := groupFaces_compatible G i f hf
-    refine ⟨SSet.yonedaEquiv.symm (hornFiller G i h), ?_⟩
-    intro k hki
-    have hk := hornFiller_face G i h hc k hki
-    exact (SSet.stdSimplex.δ_comp_yonedaEquiv_symm _ _).trans
-      ((congrArg SSet.yonedaEquiv.symm hk).trans
-        ((congrArg SSet.yonedaEquiv.symm (groupFaces_at G i f k hki)).trans
-          (SSet.yonedaEquiv.symm_apply_apply _)))
+    (hh.trans (congrArg ((underlying G).δ (j.pred hkj.ne_zero)) (groupFaces_at G i f (Fin.castSucc
+      k) hk)).symm)
 
 end SSet.SimplicialGroupHorn
