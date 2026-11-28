@@ -73,6 +73,14 @@ private theorem cutoff_of_pow_lt (n m : ℕ) (hn : 1 < n)
   rw [mul_rpow (by norm_num) (exp_pos _).le, ← exp_mul] at hroot
   simpa only [hcast, ← div_eq_mul_inv, one_div] using hroot
 
+/-
+The `hWa` step of `lt_of_cutoff` is copied verbatim from the proof of
+`MetaMathlibExt.two_mul_sub_four_lt_lambertSequence` in
+`MathlibExt/NumberTheory/GoldenRatioLambertSequence.lean` of `facebookresearch/atlas-lean`,
+revision `cca70c14b1f8e88a540322e98726162cfe1e1115` (lines 99 to 106 there). The exponential
+comparison after it (`huv`, `hcmp` and `hscaled`) adapts the same argument from that proof, with
+`a` and `b` interchanged.
+-/
 private theorem lt_of_cutoff (n : ℕ) (hn : 1 < n) (a b : ℝ)
     (ha : (n : ℝ) - 1 ≤ a)
     (hW : lambertMap (-a / ((n : ℝ) - 1)) =
