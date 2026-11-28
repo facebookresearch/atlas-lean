@@ -63,7 +63,8 @@ theorem initialHeatProfile_hasExpGrowth {u₀ : ℝ → ℝ} (hb : ∃ M, ∀ x,
         (hi.trans (mul_le_mul_of_nonneg_left (abs_sub x x₀) hM0)) (by positivity)
     _ = _ := by dsimp [c]; ring
 
-/-- The derivative of the anchored profile has exponential growth as well. -/
+/-- For a bounded continuous velocity and positive viscosity, the derivative of the anchored
+profile has exponential growth as well. -/
 theorem initialHeatProfile_deriv_hasExpGrowth {u₀ : ℝ → ℝ} (hu : Continuous u₀)
     (hb : ∃ M, ∀ x, |u₀ x| ≤ M) {ν : ℝ} (hν : 0 < ν) (x₀ : ℝ) :
     HasExpGrowth (deriv (initialHeatProfile ν u₀ x₀)) := by
@@ -93,7 +94,8 @@ theorem burgersFromHeat_contDiffOn_of_exp_growth {f : ℝ → ℝ} (hf : Continu
     (fun s y => heatSolution f (ν * s) y) (heatProfile_contDiffOn_growth hf hg hν)
     (fun p _ => ne_of_gt (heatSolution_pos_of_exp_growth hf hg hp (ν * p.1) p.2))
 
-/-- The Cole–Hopf field of a positive exponentially growing profile solves Burgers. -/
+/-- The Cole–Hopf field of a continuous, positive, exponentially growing profile solves Burgers
+at every positive time, for positive viscosity. -/
 theorem burgersFromHeat_burgers_of_exp_growth {f : ℝ → ℝ} (hf : Continuous f)
     (hg : HasExpGrowth f) (hp : ∀ x, 0 < f x) {ν : ℝ} (hν : 0 < ν)
     (t x : ℝ) (ht : 0 < t) :

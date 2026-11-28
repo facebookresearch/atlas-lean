@@ -39,7 +39,8 @@ instance : CoeSort SumRelCat.{u} (Type u) := ⟨SumRelCat.carrier⟩
 /-- Regard a type as an object of the disjoint-union relation category. -/
 abbrev of (X : Type u) : SumRelCat.{u} := ⟨X⟩
 
-/-- Relational morphisms retain their source and target object tags. -/
+/-- A morphism `X ⟶ Y` is an arbitrary relation between the underlying sets of `X` and `Y`,
+tagged with its source and target objects. -/
 structure Hom (X Y : SumRelCat.{u}) : Type u where
   /-- Construct a morphism from a relation. -/
   ofRel ::
@@ -74,10 +75,12 @@ abbrev sum (X Y : SumRelCat.{u}) : SumRelCat.{u} := of (Sum X Y)
 /-- The empty relation object. -/
 abbrev zero : SumRelCat.{u} := of PEmpty
 
-/-- The first relational projection is defined exactly on the left summand. -/
+/-- The first relational projection relates `s : X ⊕ Y` to `x : X` exactly when
+`s = Sum.inl x`, so it is defined only on the left summand. -/
 def fst (X Y : SumRelCat.{u}) : sum X Y ⟶ X := .ofRel {p | p.1 = Sum.inl p.2}
 
-/-- The second relational projection is defined exactly on the right summand. -/
+/-- The second relational projection relates `s : X ⊕ Y` to `y : Y` exactly when
+`s = Sum.inr y`, so it is defined only on the right summand. -/
 def snd (X Y : SumRelCat.{u}) : sum X Y ⟶ Y := .ofRel {p | p.1 = Sum.inr p.2}
 
 /-- Pair two relations by selecting the relation indexed by the output summand. -/
@@ -138,8 +141,7 @@ theorem hom_ext {X Y Z : SumRelCat.{u}} {f g : Z ⟶ sum X Y}
   | inl x => simpa using congrArg (fun h : Z ⟶ X => (z, x) ∈ h.rel) hf
   | inr y => simpa using congrArg (fun h : Z ⟶ Y => (z, y) ∈ h.rel) hg
 
-/-- The chosen disjoint union has the binary product universal property.
-This is an abbreviation so the chosen tensor object reduces to its sum carrier. -/
+/-- The chosen disjoint union has the binary product universal property. -/
 abbrev binaryProduct (X Y : SumRelCat.{u}) : LimitCone (Limits.pair X Y) where
   cone := BinaryFan.mk (fst X Y) (snd X Y)
   isLimit := BinaryFan.IsLimit.mk _ (fun f g => pair f g)
@@ -202,7 +204,8 @@ def desc {X Y Z : SumRelCat.{u}} (f : X ⟶ Z) (g : Y ⟶ Z) : sum X Y ⟶ Z :=
   rw [inr_comp_rel]
   rfl
 
-/-- A relation out of a sum is determined by its two injections. -/
+/-- Two relations `f g : sum X Y ⟶ Z` out of a sum are equal when their composites with the
+injections agree: `inl X Y ≫ f = inl X Y ≫ g` and `inr X Y ≫ f = inr X Y ≫ g`. -/
 theorem hom_ext_out {X Y Z : SumRelCat.{u}} {f g : sum X Y ⟶ Z}
     (hf : inl X Y ≫ f = inl X Y ≫ g) (hg : inr X Y ≫ f = inr X Y ≫ g) : f = g := by
   apply Hom.ext
@@ -287,12 +290,14 @@ theorem whiskerRight_rel {X Y : SumRelCat.{u}} (f : X ⟶ Y) (Z : SumRelCat.{u})
   rw [tensor_rel]
   cases x <;> cases y <;> rfl
 
-/-- The associator is determined by the three relational projections. -/
+/-- The associator is the pairing `⟨π₁ ≫ π₁, ⟨π₁ ≫ π₂, π₂⟩⟩` of the projections
+`(X ⊕ Y) ⊕ Z ⟶ X ⊕ (Y ⊕ Z)`. -/
 theorem associator_hom_eq_pair (X Y Z : SumRelCat.{u}) :
     (α_ X Y Z).hom = pair (fst (sum X Y) Z ≫ fst X Y)
       (pair (fst (sum X Y) Z ≫ snd X Y) (snd (sum X Y) Z)) := rfl
 
-/-- The inverse associator is determined by the same three projections. -/
+/-- The inverse associator is the pairing `⟨⟨π₁, π₂ ≫ π₁⟩, π₂ ≫ π₂⟩` of the projections
+`X ⊕ (Y ⊕ Z) ⟶ (X ⊕ Y) ⊕ Z`. -/
 theorem associator_inv_eq_pair (X Y Z : SumRelCat.{u}) :
     (α_ X Y Z).inv = pair (pair (fst X (sum Y Z)) (snd X (sum Y Z) ≫ fst Y Z))
       (snd X (sum Y Z) ≫ snd Y Z) := rfl

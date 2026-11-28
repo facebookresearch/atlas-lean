@@ -4,15 +4,19 @@
     git diff-tree -r -z --no-commit-id --name-only HEAD^1 HEAD -- > PATHS
     python3 -I scripts/ci_scope.py PATHS >> "$GITHUB_OUTPUT"
 
-.github/workflows/ci.yml runs it on pull requests only: merge groups, pushes and manual runs run
-every check without asking. It prints one line per check it can skip:
+.github/workflows/ci.yml and blueprint-pages.yml run it on pull requests only: merge groups, pushes,
+scheduled and manual runs run every check without asking. It prints one line per check it can skip:
 
-- `build=false` when every changed path is one that the build never reads: graph data (blueprint/
-  and the graph's data files in scripts/), or documentation (Markdown outside scripts/ and
-  .github/, and the agent guidance in .agents/ and .claude/);
+- `build=false` when every changed path is one that the build never reads: graph data (blueprint/,
+  the graph's data files in scripts/ and the card move ledger's fragments, the .jsonl files directly
+  in scripts/card-moves.d/), or documentation (Markdown outside blueprint/, scripts/ and .github/,
+  and the agent guidance in .agents/ and .claude/);
 - `tool_tests=false` when every changed path is graph data, documentation, a Lean source of the
   nine libraries or provenance/: the tool tests of scripts/test_scripts.sh read only scripts,
-  workflows and the pins.
+  workflows and the pins;
+- `site_tests=false` when every changed path is documentation, a Lean source of the nine libraries
+  or provenance/, and none of the files in SITE_TEST_READS: the site-script tests of
+  .github/workflows/blueprint-pages.yml read the graph's data, their own code and those files.
 
 Any other path, or no path at all, prints `true`. The workflow skips a check only on `false`, so a
 failure here, or of its step, runs everything as before. Changed paths are never printed.
@@ -34,8 +38,17 @@ GRAPH_FILES = frozenset({
 })
 
 
+# The folder of the card move ledger's fragments: each fragment, a .jsonl file directly in it, is graph data, as the
+# frozen file in GRAPH_FILES is; anything else below it is not.
+FRAGMENTS = "scripts/card-moves.d/"
+
+
+def fragment(path: str) -> bool:
+    return path.startswith(FRAGMENTS) and path.count("/") == 2 and path.endswith(".jsonl")
+
+
 def graph(path: str) -> bool:
-    return path.startswith("blueprint/") or path in GRAPH_FILES
+    return path.startswith("blueprint/") or path in GRAPH_FILES or fragment(path)
 
 
 LIBRARIES = ("MathlibExt", "MathlibExtTest", "CSLibExt", "CSLibExtTest", "PhyslibExt", "PhyslibExtTest",
@@ -46,10 +59,22 @@ def library_source(path: str) -> bool:
     return path.endswith(".lean") and path.split("/", 1)[0] in LIBRARIES
 
 
+# What the site-script tests read besides the graph's data and their own code, from traces of their
+# runs: scripts/test_blueprint_taxonomy.py indexes four Lean modules, and the importer's tests compare
+# its schemas with docs/mathgraph-import.md.
+SITE_TEST_READS = frozenset({
+    "MathlibExt/Probability/Causality/PotentialOutcomes.lean",
+    "MathlibExt/Probability/ChineseRestaurant.lean",
+    "MathlibExt/Combinatorics/SimpleGraph/TreeMetric.lean",
+    "Domains/Biology/StatisticalGenetics/MendelianRandomization.lean",
+    "docs/mathgraph-import.md",
+})
+
+
 def documentation(path: str) -> bool:
     if path.startswith((".agents/", ".claude/")):
         return True
-    return path.endswith(".md") and not path.startswith(("scripts/", ".github/"))
+    return path.endswith(".md") and not path.startswith(("blueprint/", "scripts/", ".github/"))
 
 
 def needs_build(paths: list[str]) -> bool:
@@ -61,17 +86,24 @@ def needs_tool_tests(paths: list[str]) -> bool:
                                 or path.startswith("provenance/") for path in paths)
 
 
+def needs_site_tests(paths: list[str]) -> bool:
+    return not paths or not all((documentation(path) or library_source(path) or path.startswith("provenance/"))
+                                and path not in SITE_TEST_READS for path in paths)
+
+
 def main(argv: list[str]) -> int:
     if len(argv) != 2:
         print("usage: scripts/ci_scope.py PATHS (NUL-separated, as git diff-tree -z writes them)", file=sys.stderr)
         return 2
     with open(argv[1], "rb") as listing:
         paths = [path.decode("utf-8", "surrogateescape") for path in listing.read().split(b"\0") if path]
-    build, tool_tests = needs_build(paths), needs_tool_tests(paths)
+    build, tool_tests, site_tests = needs_build(paths), needs_tool_tests(paths), needs_site_tests(paths)
     print(f"build={'true' if build else 'false'}")
     print(f"tool_tests={'true' if tool_tests else 'false'}")
+    print(f"site_tests={'true' if site_tests else 'false'}")
     print(f"Changed paths: {len(paths)}. build: {'runs' if build else 'skipped'}; "
-          f"tool tests: {'run' if tool_tests else 'skipped'}.", file=sys.stderr)
+          f"tool tests: {'run' if tool_tests else 'skipped'}; "
+          f"site-script tests: {'run' if site_tests else 'skipped'}.", file=sys.stderr)
     return 0
 
 

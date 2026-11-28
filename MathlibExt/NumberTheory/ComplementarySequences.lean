@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Algebra.BigOperators.Intervals
 public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.Nat.Nth
@@ -28,6 +29,20 @@ requested term of the complementary sequence. More generally, an interleaving fu
 locates the gap containing the requested term for any sequence with sufficiently large gaps.
 Rounding $\sqrt{2n}$ to the nearest integer locates the gap of the triangular numbers containing
 the $n$-th non-triangular number.
+For $k > 1$ and $n \ge 1$, an integer $(k+1)$-st root narrows the search to two gaps for the $n$-th
+positive integer outside the values $m + \sum_{i=1}^m i^k$ for $m \ge 1$.
+
+## References
+
+* Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025), Article A95,
+  Section 2.1, Theorems 1 and 2 (pp. 4–5). The two-step proof uses the gap comparison from
+  Theorem 2.
+* Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025), Article A95,
+  Section 2.2.5, Theorem 11 (p. 13, third equivalent form). The proof here uses discrete
+  power bounds and this module's `nthNonValue_pyramidal_two_case_le_eight.nthNonValue_of_gap`.
+* J. Lambek and L. Moser, *Inverse and Complementary Sequences of Natural Numbers*,
+  The American Mathematical Monthly 61 (1954), pp. 454–458. Wu credits this paper for the
+  iteration method and its two-step bound.
 -/
 
 namespace MetaMathlibExt
@@ -242,6 +257,32 @@ private theorem nthNonValue_eq_one_step.exists_strictMono_extension (f : ℕ →
       omega
   exact ⟨g, gzero, gpos, hg⟩
 
+-- The positive indices below a cutoff are exactly the interval up to the last such index.
+private theorem card_filter_Icc_eq_of_bounds {f g : ℕ → ℕ}
+    (gpos : ∀ m, 1 ≤ m → g m = f m) (hg : StrictMono g) {x k : ℕ}
+    (hlast : g k ≤ x) (hnext : x < g (k + 1)) :
+    ((Finset.Icc 1 x).filter (fun m => f m ≤ x)).card = k := by
+  have hset : ((Finset.Icc 1 x).filter fun m => f m ≤ x) = Finset.Icc 1 k := by
+    ext m
+    simp only [Finset.mem_filter, Finset.mem_Icc, and_assoc]
+    refine and_congr_right fun hm => ?_
+    rw [← gpos m hm]
+    constructor
+    · rintro ⟨_, hmx⟩
+      exact Nat.lt_succ_iff.mp (hg.lt_iff_lt.mp (hmx.trans_lt hnext))
+    · intro hmk
+      have hmx := (hg.monotone hmk).trans hlast
+      exact ⟨hg.le_apply.trans hmx, hmx⟩
+  simp [hset]
+
+private theorem nthNonValue_eq_one_step.exists_count_cutoff {f g : ℕ → ℕ}
+    (gzero : g 0 = 0) (gpos : ∀ m, 1 ≤ m → g m = f m) (hg : StrictMono g) (x : ℕ) :
+    ∃ k, g k ≤ x ∧ x < g (k + 1) ∧ ((Finset.Icc 1 x).filter (fun m => f m ≤ x)).card = k := by
+  obtain ⟨k, hk, hnext⟩ := Nat.exists_not_and_succ_of_not_zero_of_exists
+    (p := fun m => x < g m) (by simp [gzero]) ⟨x + 1, (Nat.lt_succ_self x).trans_le hg.le_apply⟩
+  have hlast := le_of_not_gt hk
+  exact ⟨k, hlast, hnext, card_filter_Icc_eq_of_bounds gpos hg hlast hnext⟩
+
 /-- **Complementary sequences from one evaluation of the counting function.** Let
 $f : \mathbb{N} \to \mathbb{N}$ satisfy $f(1) \ge 1$ and $f(m + 1) \ge f(m) + m$ for all
 $m \ge 1$, let $C(x)$ be the number of $m$ with $1 \le m \le x$ and $f(m) \le x$, and for
@@ -257,22 +298,8 @@ public theorem nthNonValue_eq_one_step (f : ℕ → ℕ) (hf1 : 1 ≤ f 1)
     nthNonValue f n = if f (C n + 1) ≤ n + C n then n + C n + 1 else n + C n := by
   intro C
   obtain ⟨g, gzero, gpos, hg⟩ := nthNonValue_eq_one_step.exists_strictMono_extension f hf1 hgap
-  -- The indices counted at n form the initial interval from 1 to k.
-  obtain ⟨k, hk, hnext⟩ := Nat.exists_not_and_succ_of_not_zero_of_exists
-    (p := fun m => n < g m) (by simp [gzero]) ⟨n + 1, (Nat.lt_succ_self n).trans_le hg.le_apply⟩
-  have hlast : g k ≤ n := le_of_not_gt hk
-  have hindex (m : ℕ) : g m ≤ n ↔ m ≤ k :=
-    ⟨fun h => Nat.lt_succ_iff.mp (hg.lt_iff_lt.mp (h.trans_lt hnext)),
-      fun h => (hg.monotone h).trans hlast⟩
-  have hC : C n = k := by
-    have hset : ((Finset.Icc 1 n).filter fun m => f m ≤ n) = Finset.Icc 1 k := by
-      ext m
-      simp only [Finset.mem_filter, Finset.mem_Icc, and_assoc]
-      refine and_congr_right fun hm => ?_
-      rw [← gpos m hm, hindex]
-      exact and_iff_right_of_imp fun h => h.trans (hg.le_apply.trans hlast)
-    change ((Finset.Icc 1 n).filter _).card = k
-    simp [hset]
+  obtain ⟨k, hlast, hnext, hC⟩ := nthNonValue_eq_one_step.exists_count_cutoff gzero gpos hg n
+  change C n = k at hC
   have heq : nthNonValue f n = nthNonValue g n := by
     simp +contextual only [nthNonValue, gpos]
   rw [heq, hC, ← gpos (k + 1) (by omega)]
@@ -287,6 +314,46 @@ public theorem nthNonValue_eq_one_step (f : ℕ → ℕ) (hf1 : 1 ≤ f 1)
     cases k with
     | zero => simpa [gzero] using (show 0 < n by omega)
     | succ k => omega
+
+/-- **Complementary sequences in two Lambek–Moser steps.** Let $f : \mathbb{N} \to \mathbb{N}$
+satisfy $f(1) \ge 1$ and $f(m + 1) \ge f(m) + m$ for all $m \ge 1$, let $C(x)$ be the number of
+$m$ with $1 \le m \le x$ and $f(m) \le x$, and for $n \ge 1$ let $f_P(n)$ be the $n$-th positive
+integer that is not a value $f(m)$ with $m \ge 1$. Then $f_P(n) = n + C(n + C(n))$ for every
+$n \ge 1$.
+
+Under the hypotheses, $f(m) \ge m$ for all $m \ge 1$, so $C(x)$ is the number of all $m \ge 1$
+with $f(m) \le x$, the counting function of the values of $f$.
+
+Source: Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025),
+Article A95, Theorem 1. -/
+public theorem nthNonValue_eq_two_step (f : ℕ → ℕ) (hf1 : 1 ≤ f 1)
+    (hgap : ∀ m, 1 ≤ m → f m + m ≤ f (m + 1)) (n : ℕ) (hn : 1 ≤ n) :
+    let C : ℕ → ℕ := fun x => ((Finset.Icc 1 x).filter (fun m => f m ≤ x)).card
+    nthNonValue f n = n + C (n + C n) := by
+  intro C
+  obtain ⟨g, gzero, gpos, hg⟩ := nthNonValue_eq_one_step.exists_strictMono_extension f hf1 hgap
+  obtain ⟨k, hlast, hnext, hC⟩ := nthNonValue_eq_one_step.exists_count_cutoff gzero gpos hg n
+  change C n = k at hC
+  have hstep : nthNonValue f n =
+      if f (C n + 1) ≤ n + C n then n + C n + 1 else n + C n :=
+    nthNonValue_eq_one_step f hf1 hgap n hn
+  rw [hstep, hC]
+  -- The second count keeps the first k indices and can include at most one more.
+  split_ifs with h
+  · have hlo : g (k + 1) ≤ n + k := by rwa [gpos _ (by omega)]
+    have hgap' := hgap (k + 1) (by omega)
+    rw [← gpos _ (by omega), ← gpos _ (by omega)] at hgap'
+    have hhi : n + k < g (k + 1 + 1) := by omega
+    have hc : C (n + k) = k + 1 :=
+      card_filter_Icc_eq_of_bounds gpos hg hlo hhi
+    rw [hc, Nat.add_assoc]
+  · have hlo : g k ≤ n + k := hlast.trans (Nat.le_add_right _ _)
+    have hhi : n + k < g (k + 1) := by
+      rw [gpos _ (by omega)]
+      exact lt_of_not_ge h
+    have hc : C (n + k) = k :=
+      card_filter_Icc_eq_of_bounds gpos hg hlo hhi
+    rw [hc]
 
 /-- **Complementary sequences from an interleaving function.** Let
 $f : \mathbb{N} \to \mathbb{N}$ satisfy $f(1) \ge 1$ and $f(m + 1) \ge f(m) + m$ for all $m \ge 1$,
@@ -378,6 +445,108 @@ public theorem nthNonValue_triangular_eq_round (n : ℕ) (hn : 1 ≤ n) :
     omega
   · rw [show (s + 1) * (s + 1 + 1) = s * s + 3 * s + 2 by ring]
     omega
+
+/-- **Formula for the non-square numbers.** For every integer $n \ge 1$, the $n$-th positive
+integer that is not a perfect square is $n + \lfloor \sqrt{n} + 1/2 \rfloor$.
+
+Source: Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025),
+Article A95, Corollary 3. -/
+public theorem nthNonValue_sq_eq_round (n : ℕ) (hn : 1 ≤ n) :
+    nthNonValue (fun j => j ^ 2) n = n + ⌊Real.sqrt n + 1 / 2⌋₊ := by
+  let j := ⌊Real.sqrt n + 1 / 2⌋₊
+  have hnReal : (1 : ℝ) ≤ n := by exact_mod_cast hn
+  have hsqrt : 1 ≤ Real.sqrt n := (Real.le_sqrt' one_pos).mpr (by simpa using hnReal)
+  have hj : 1 ≤ j := Nat.le_floor (by push_cast; linarith)
+  have hjReal : (1 : ℝ) ≤ j := by exact_mod_cast hj
+  have hfloor : (j : ℝ) ≤ Real.sqrt n + 1 / 2 := Nat.floor_le (by positivity)
+  have hfloorSucc : Real.sqrt n + 1 / 2 < (j : ℝ) + 1 := Nat.lt_floor_add_one _
+  have hlo : ((j : ℝ) - 1 / 2) ^ 2 ≤ (n : ℝ) :=
+    (Real.le_sqrt (by linarith) (by positivity)).mp (by linarith)
+  have hhi : (n : ℝ) < ((j : ℝ) + 1 / 2) ^ 2 :=
+    (Real.sqrt_lt' (by positivity)).mp (by linarith)
+  -- The quarter terms give strict bounds between integers, hence j² - j < n ≤ j² + j.
+  have hleft : j ^ 2 < n + j := by
+    exact_mod_cast (show (j : ℝ) ^ 2 < (n : ℝ) + j by nlinarith only [hlo])
+  have hright : n < j ^ 2 + j + 1 := by
+    exact_mod_cast (show (n : ℝ) < (j : ℝ) ^ 2 + j + 1 by nlinarith only [hhi])
+  have hmono : StrictMono (fun k : ℕ => k ^ 2) := by
+    intro a b hab
+    exact Nat.pow_lt_pow_left hab (by decide)
+  refine nthNonValue_of_gap hmono (by simp) hleft ?_
+  change n + j < (j + 1) ^ 2
+  rw [show (j + 1) ^ 2 = j ^ 2 + 2 * j + 1 by ring]
+  omega
+
+/-- **Integers not of the form $m + 1^k + \cdots + m^k$.** Let $k > 1$. For $n \ge 1$ let $a(n)$
+be the $n$-th positive integer that is not of the form $m + \sum_{i=1}^m i^k$ with $m \ge 1$, and
+let $h = \lfloor ((k + 1) n)^{1/(k+1)} \rfloor$. Then $a(n) = n + h - 1$ if
+$n \le \sum_{i=1}^h i^k$, and $a(n) = n + h$ otherwise.
+
+Source: Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025),
+Article A95, Theorem 11 (third equivalent form). -/
+public theorem nthNonValue_add_sumPow (k : ℕ) (hk : 1 < k) (n : ℕ) (hn : 1 ≤ n) :
+    let h := Nat.nthRoot (k + 1) ((k + 1) * n)
+    nthNonValue (fun j => j + ∑ i ∈ Finset.Icc 1 j, i ^ k) n =
+      if n ≤ ∑ i ∈ Finset.Icc 1 h, i ^ k then n + h - 1 else n + h := by
+  intro h
+  let S (j : ℕ) := ∑ i ∈ Finset.Icc 1 j, i ^ k
+  change nthNonValue (fun j => j + S j) n = if n ≤ S h then n + h - 1 else n + h
+  have hS (j : ℕ) : S (j + 1) = S j + (j + 1) ^ k :=
+    Finset.sum_Icc_succ_top (by omega) _
+  -- Bernoulli's inequality at +1 and -1 bounds the successive power difference
+  -- by (k + 1) times the k-th power at each endpoint.
+  have hstep (j : ℕ) :
+      j ^ (k + 1) + (k + 1) * j ^ k ≤ (j + 1) ^ (k + 1) ∧
+        (j + 1) ^ (k + 1) ≤ j ^ (k + 1) + (k + 1) * (j + 1) ^ k := by
+    constructor
+    · simpa using pow_add_mul_le_add_pow (R := ℕ) (a := j) (b := 1)
+        (Nat.zero_le _) (Nat.zero_le _) (k + 1)
+    · have hb := pow_add_mul_le_add_pow (R := ℤ) (a := (j : ℤ) + 1) (b := -1)
+        (by omega) (by omega) (k + 1)
+      simp only [Nat.add_sub_cancel, mul_neg_one, add_neg_cancel_right] at hb
+      rw [← sub_eq_add_neg] at hb
+      exact_mod_cast (sub_le_iff_le_add.mp hb)
+  -- Telescoping from 1 retains a strict left bound even at an exact root.
+  have hlower (j : ℕ) : (k + 1) * S j + 1 ≤ (j + 1) ^ (k + 1) := by
+    induction j with
+    | zero => simp [S]
+    | succ j ih =>
+      rw [hS, Nat.mul_add]
+      have := (hstep (j + 1)).1
+      omega
+  have hupper (j : ℕ) : j ^ (k + 1) ≤ (k + 1) * S j := by
+    induction j with
+    | zero => simp [S]
+    | succ j ih =>
+      rw [hS, Nat.mul_add]
+      exact (hstep j).2.trans (Nat.add_le_add_right ih _)
+  have hk' : k + 1 ≠ 0 := by omega
+  have hh : 1 ≤ h := by
+    apply (Nat.le_nthRoot_iff hk').2
+    simpa using Nat.mul_le_mul (hk.le.trans (Nat.le_succ k)) hn
+  have hleft : S (h - 1) < n := by
+    have hpow : h ^ (k + 1) ≤ (k + 1) * n := Nat.pow_nthRoot_le_iff.mpr (Or.inl hk')
+    have hb := hlower (h - 1)
+    rw [show h - 1 + 1 = h by omega] at hb
+    exact lt_of_not_ge fun hc => by
+      have := Nat.mul_le_mul_left (k + 1) hc
+      omega
+  have hright : n < S (h + 1) := by
+    have hpow : (k + 1) * n < (h + 1) ^ (k + 1) := Nat.lt_pow_nthRoot_add_one hk' _
+    exact lt_of_not_ge fun hc => hpow.not_ge ((hupper (h + 1)).trans (Nat.mul_le_mul_left _ hc))
+  have hmono : StrictMono (fun j => j + S j) := by
+    apply strictMono_nat_of_lt_succ
+    intro j
+    rw [hS]
+    omega
+  have hzero : 0 + S 0 = 0 := by simp [S]
+  split_ifs with hnS
+  · rw [show n + h - 1 = n + (h - 1) by omega]
+    refine nthNonValue_of_gap hmono hzero (show h - 1 + S (h - 1) < _ by omega) ?_
+    rw [show h - 1 + 1 = h by omega]
+    omega
+  · exact nthNonValue_of_gap hmono hzero (show h + S h < _ by omega)
+      (show n + h < h + 1 + S (h + 1) by omega)
 
 end
 

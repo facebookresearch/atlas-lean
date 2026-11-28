@@ -14,3 +14,7 @@
 - [Local stability of frequency-dependent selection and a mean-fitness counterexample](local-stability-of-frequency-dependent-haploid-s.md)
 
 - [Haldane's cline in a step environment](stationary-cline-in-a-step-environment.md)
+
+- [Sub-inhibitory selection of antibiotic resistance](sub-inhibitory-selection-of-antibiotic-resistance/README.md)
+- [Poissonian interacting trajectories](poissonian-interacting-trajectories/README.md)
+- [Selection as multiplicative weights](selection-as-multiplicative-weights/README.md)

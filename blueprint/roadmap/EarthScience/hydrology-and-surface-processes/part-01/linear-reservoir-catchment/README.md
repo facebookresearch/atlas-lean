@@ -14,3 +14,7 @@
 
 - [Linear reservoir with variable inflow](linear-reservoir-with-variable-inflow.md)
 - [Further reservoir routing problems](further-reservoir-routing-problems.md)
+
+## Linear reservoir with variable inflow
+
+- [Is Reservoir Storage On](is-reservoir-storage-on.md)

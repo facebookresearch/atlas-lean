@@ -15,6 +15,7 @@ public import Mathlib.Tactic.NormNum
 public import Mathlib.Tactic.Ring
 public import MathlibExt.NumberTheory.GenLeonardo
 public import WantedExt.NumberTheory.LeonardoPWanted
+public import MathlibExt.NumberTheory.GenLeonardoGenLeonardoBinomialAlternating
 
 namespace MetaMathlibExt
 
@@ -57,18 +58,6 @@ public theorem_wanted genLeonardo_cross (k : ℤ) (n : ℕ) (hn : 1 ≤ n) :
         - genLeonardo k (n + 1) * genLeonardoCompanion k (n - 1)
       = (k + 1) * genLeonardo k (2 * n) - k * genLeonardo k n + k
 
-/-- **Square-difference identity for generalized Leonardo numbers.** For every integer $k$ and
-every natural number $n \ge 1$, the generalized Leonardo numbers $L_{k,n}$ and the dual
-generalized Leonardo numbers $M_{k,n}$ satisfy
-$$M_{k,n}^2 - L_{k,n}^2 = 4 L_{k,n-1} L_{k,n+1} + 2k L_{k,n} + k^2.$$
-
-Source: Kuhapatanakul, *Note on the Generalized Leonardo Numbers*, Fibonacci
-Quarterly (2024), Theorem 2.4 (`fq-2024-kuhapatanakul05292024-thm-2.4`). -/
-public theorem_wanted genLeonardo_sq_sub_sq (k : ℤ) (n : ℕ) (hn : 1 ≤ n) :
-    genLeonardoCompanion k n ^ 2 - genLeonardo k n ^ 2
-      = 4 * genLeonardo k (n - 1) * genLeonardo k (n + 1)
-        + 2 * k * genLeonardo k n + k ^ 2
-
 /-- **Binomial convolution identities for generalized Leonardo numbers.** Let $k$ be an integer,
 and let $L_{k,n}$ and $M_{k,n}$ denote the generalized Leonardo numbers and the dual generalized
 Leonardo numbers. For all natural numbers $n$ and $r$,
@@ -109,26 +98,6 @@ public theorem_wanted genLeonardo_binomial_sum_two_mul (k : ℤ) (m r : ℕ) :
     (∑ i ∈ Finset.range (2 * m + 1),
         (Nat.choose (2 * m) i : ℤ) * genLeonardoCompanion k (2 * i + r)
       = 5 ^ m * genLeonardoCompanion k (2 * m + r) + 2 * k * (5 ^ m - 2 ^ (2 * m)))
-
-/-- **Alternating binomial identities for generalized Leonardo numbers.** Let $k$ be an integer,
-and let $L_{k,n}$ and $M_{k,n}$ denote the generalized Leonardo numbers and the dual generalized
-Leonardo numbers. For all natural numbers $n \ge 1$ and $r$,
-$$\sum_{i=0}^{n} \binom{n}{i} (-1)^{n-i} L_{k,2i+r} = L_{k,n+r} + k$$
-and
-$$\sum_{i=0}^{n} \binom{n}{i} (-1)^{n-i} M_{k,2i+r} = M_{k,n+r} + 2k.$$
-
-The hypothesis $n \ge 1$ is needed: for $n = 0$ the two sums equal $L_{k,r}$ and $M_{k,r}$.
-
-Source: Kuhapatanakul, *Note on the Generalized Leonardo Numbers*, Fibonacci
-Quarterly (2024), Theorem 3.3 (`fq-2024-kuhapatanakul05292024-thm-3.3`). -/
-public theorem_wanted genLeonardo_binomial_alternating (k : ℤ) (n r : ℕ)
-    (hn : 1 ≤ n) :
-    (∑ i ∈ Finset.range (n + 1),
-        (Nat.choose n i : ℤ) * (-1) ^ (n - i) * genLeonardo k (2 * i + r)
-      = genLeonardo k (n + r) + k) ∧
-    (∑ i ∈ Finset.range (n + 1),
-        (Nat.choose n i : ℤ) * (-1) ^ (n - i) * genLeonardoCompanion k (2 * i + r)
-      = genLeonardoCompanion k (n + r) + 2 * k)
 
 /-- **Binomial identities with steps three and four for generalized Leonardo numbers.** Let $k$ be
 an integer, and let $L_{k,n}$ and $M_{k,n}$ denote the generalized Leonardo numbers and the dual

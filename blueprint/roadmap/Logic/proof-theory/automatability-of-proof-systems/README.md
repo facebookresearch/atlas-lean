@@ -1,0 +1,15 @@
+# Automatability of Proof Systems
+
+- [Automatable proof systems](automatable-proof-system.md)
+- [Alekhnovich–Razborov: resolution is not automatable unless W[P] is tractable](alekhnovich-razborov.md)
+- [The Atserias–Müller reduction from SAT to resolution proof size](am-reduction-formula.md)
+- [Automatability implies feasible interpolation for systems closed under restriction](automatability-implies-interpolation.md)
+- [Sum-of-squares proofs need not have small coefficients](sos-bit-complexity.md)
+- [Tree-like resolution is quasi-polynomially automatable](tree-resolution-quasi-automatable.md)
+- [Atserias–Müller: automating resolution is NP-hard](atserias-muller.md)
+- [Frege-type systems are not automatable under cryptographic assumptions](bpr-frege-non-automatable.md)
+- [Mertz–Pitassi–Wei: short tree-like resolution proofs are hard to find under ETH](mpw-tree-eth.md)
+- [de Rezende et al.: automating Nullstellensatz and Polynomial Calculus is NP-hard](drgnprs-algebraic.md)
+- [Garlík: Res(k) is not automatable unless P = NP](garlik-resk.md)
+- [Göös–Koroth–Mertz–Pitassi: automating cutting planes is NP-hard](gkmp-cutting-planes.md)
+- [Meta-Complexity of Proof Search](meta-complexity-of-proof-search/README.md)
