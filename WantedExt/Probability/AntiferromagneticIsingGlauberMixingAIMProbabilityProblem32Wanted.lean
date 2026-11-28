@@ -54,9 +54,10 @@ noncomputable def isingGibbs {n : ℕ} (G : SimpleGraph (Fin n)) [DecidableRel G
     (σ : Fin n → Bool) : ℝ :=
   isingWeight G β σ / ∑ τ, isingWeight G β τ
 
-/-- The transition matrix of the Glauber (heat-bath) dynamics: pick a uniform vertex `v` and
-resample the spin at `v` from the Gibbs distribution given the other spins, so
-`P(σ, τ) = (1/n) ∑_v [τ = σ off v] w(τ) / (w(τ) + w(τ with the spin at v flipped))`. -/
+/-- For `n > 0`, the transition matrix of the Glauber (heat-bath) dynamics: pick a uniform vertex
+`v` and resample the spin at `v` from the Gibbs distribution given the other spins, so
+`P(σ, τ) = (1/n) ∑_v [τ = σ off v] w(τ) / (w(τ) + w(τ with the spin at v flipped))`. For `n = 0`
+the factor `1/n` is `0`, so the single entry is `0` and the matrix is not stochastic. -/
 noncomputable def glauberMatrix {n : ℕ} (G : SimpleGraph (Fin n)) [DecidableRel G.Adj] (β : ℝ) :
     Matrix (Fin n → Bool) (Fin n → Bool) ℝ :=
   fun σ τ => (1 / n : ℝ) * ∑ v, if ∀ u, u ≠ v → τ u = σ u then
