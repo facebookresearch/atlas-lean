@@ -142,7 +142,7 @@ private theorem comparison_routes :
 example :
     (((sourceMap.f 0 ≫ coefficientMap.f 0).hom unitCochain).hom sample) =
       (2 : ZMod 4) := by
-  dsimp only [sourceMap, coefficientMap]
+  dsimp only [coefficientMap]
   rw [ModuleCat.hom_comp, LinearMap.comp_apply, linearHomCochainComparison_f_apply]
   simp only [HomologicalComplex.id_f, Category.id_comp, ModuleCat.hom_comp,
     LinearMap.comp_apply]
@@ -154,7 +154,7 @@ example :
     (((coefficientMap.f 0 ≫ sourceMap.f 0).hom unitCochain).hom sample) =
       (2 : ZMod 4) := by
   rw [← comparison_routes]
-  dsimp only [sourceMap, coefficientMap]
+  dsimp only [coefficientMap]
   rw [ModuleCat.hom_comp, LinearMap.comp_apply, linearHomCochainComparison_f_apply]
   simp only [HomologicalComplex.id_f, Category.id_comp, ModuleCat.hom_comp,
     LinearMap.comp_apply]
