@@ -246,7 +246,7 @@ end
 /-! ## Correctness -/
 
 mutual
-/-- **Alpha-beta is correct** (Knuth and Moore 1975, Theorem 1): for `a ≤ b`, the result of
+/-- **Alpha-beta is correct** (Knuth and Moore 1975, conditions (9)): for `a ≤ b`, the result of
 alpha-beta agrees with the minimax value after clamping both to the window `[a, b]`. -/
 theorem alphaBeta_spec : ∀ (p : Bool) (a b : α) (t : GameTree α), a ≤ b →
     max a (min b (alphaBeta p a b t).ret) = max a (min b (minimax p t))
