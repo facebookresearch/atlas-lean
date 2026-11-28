@@ -28,9 +28,10 @@ structural lemmas, its `O(log log n)` drop bound, and its iterated-set bounds ar
 `FormalizedPapers/NumberTheory/BaraskarVukusic2026` (there `S 1 n` is this `remainderSet n`);
 `WantedExt` and `MathlibExt` may not import `FormalizedPapers`, so the set is restated in
 `MathlibExt.NumberTheory.RemainderSet`, which also proves the theorem on consecutive
-differences. This file states the asymptotic `s(n) = cn + O(n/(log n log log n))`
-and one auxiliary analytic lemma. The other auxiliary lemma,
-`card_leastPrimeFactor_interval_error`, is proved in
+differences. This file states the asymptotic `s(n) = cn + O(n/(log n log log n))`.
+The upper bound on the prime-counting function is proved in
+`MathlibExt.NumberTheory.RemainderSetBoundsPrimeCounting`. The auxiliary lemma
+`card_leastPrimeFactor_interval_error` is proved in
 `MathlibExt.NumberTheory.RemainderSetBoundsCardLeastPrimeFactorIntervalError`.
 The inverse-prime-square tail bound is proved in
 `MathlibExt.NumberTheory.PrimeSquareTail`. The iterated remainder sets `S_j(n)` are defined, and

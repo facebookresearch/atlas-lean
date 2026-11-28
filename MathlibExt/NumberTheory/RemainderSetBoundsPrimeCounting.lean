@@ -10,7 +10,7 @@ module
 
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.NumberTheory.PrimeCounting
-import all MathlibExt.NumberTheory.PrimeCounting.LaishramRamanujanPrimeBound
+import MathlibExt.NumberTheory.PrimeCounting.ExplicitPrimeEstimates
 import Mathlib.Analysis.Complex.ExponentialBounds
 import Mathlib.Analysis.SpecialFunctions.Log.Monotone
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
@@ -35,15 +35,15 @@ and a rational majorant for the logarithm at opposite ends of consecutive interv
 * P. L. Chebyshev, *Mémoire sur les nombres premiers*, Journal de Mathématiques Pures et
   Appliquées 17 (1852), 366–390, p. 379, the source of the theta estimates in Lemma 8.
 * The tail argument adapts `primeCounting_upper` and `thetaIntegral_bound` from
-  `MathlibExt.NumberTheory.PrimeCounting.LaishramRamanujanPrimeBound`. It reuses that
-  module's `theta_estimates`, `theta_large`, `theta_base`, `primeCounting_base`, `log_65536`,
-  `primeFlag` and `primeFlag_eq`.
+  `MathlibExt.NumberTheory.PrimeCounting.LaishramRamanujanPrimeBound`. The theta
+  estimates and the bounded primality indicator are shared in
+  `MathlibExt.NumberTheory.PrimeCounting.ExplicitPrimeEstimates`.
 -/
 
 namespace MetaMathlibExt
 
 open Real Chebyshev MeasureTheory
-open laishram_ramanujan_prime_bound
+open ExplicitPrimeEstimates
 
 private lemma log_4096 : log 4096 = 12 * log 2 := by
   rw [show (4096 : ℝ) = 2 ^ 12 by norm_num, log_pow]
@@ -66,7 +66,7 @@ private lemma theta_le_114 {x : ℝ} (hx : 4096 ≤ x) : theta x ≤ 1.14 * x :=
     calc
       _ ≤ √x * √x := mul_le_mul_of_nonneg_right hs hp.le
       _ = x := mul_self_sqrt hx₀
-  nlinarith only [hlog, hsq, hsx, sq_sqrt hx₀, hx, (theta_estimates x (by linarith)).1]
+  nlinarith only [hlog, hsq, hsx, sq_sqrt hx₀, hx, (theta_bounds x (by linarith)).1]
 
 -- On this interval the derivative of `0.16 * t / log t` majorizes the theta integrand.
 private lemma theta_integral_le {x : ℝ} (hx : 4096 ≤ x)
@@ -118,11 +118,11 @@ private lemma primeCounting_large {x : ℝ} (hx : 65536 ≤ x) :
   have hlog : 0 < log x := log_pos (by linarith)
   have hlogbase : 0 < log 4096 := log_pos (by norm_num)
   have hbase := primeCounting_eq_theta_div_log_add_integral (by norm_num : (2 : ℝ) ≤ 4096)
-  rw [show ⌊(4096 : ℝ)⌋₊ = 4096 by norm_num, primeCounting_base] at hbase
+  rw [show ⌊(4096 : ℝ)⌋₊ = 4096 by norm_num, primeCounting_4096] at hbase
   have hsmall : (∫ t in (2 : ℝ)..4096, theta t / (t * log t ^ 2)) -
       0.16 * 4096 / log 4096 ≤ 81 := by
     have : 483 * log 4096 ≤ theta 4096 + 0.16 * 4096 := by
-      linarith [log_4096, log_two_lt_d9, theta_base]
+      linarith [log_4096, log_two_lt_d9, le_theta_4096]
     apply (mul_le_mul_iff_left₀ hlogbase).mp
     field_simp at hbase ⊢
     linarith
@@ -138,7 +138,9 @@ private lemma primeCounting_large {x : ℝ} (hx : 65536 ≤ x) :
     have he : exp 1 ≤ (65536 : ℝ) := exp_one_lt_three.le.trans (by norm_num)
     have hm := log_div_self_antitoneOn he (he.trans hx) hx
     change log x / x ≤ log 65536 / 65536 at hm
-    rw [div_le_div_iff₀ hx₀ (by norm_num), log_65536] at hm
+    rw [div_le_div_iff₀ hx₀ (by norm_num),
+      show (65536 : ℝ) = 2 ^ 16 by norm_num, log_pow] at hm
+    norm_num at hm
     have hb : 16 * log 2 ≤ 12 := by linarith [log_two_lt_d9]
     linarith only [hm, mul_le_mul_of_nonneg_right hb hx₀.le, hx₀.le]
   have hsum : (∫ t in (2 : ℝ)..x, theta t / (t * log t ^ 2)) ≤ 81 + 0.16 * x / log x := by
@@ -147,7 +149,7 @@ private lemma primeCounting_large {x : ℝ} (hx : 65536 ≤ x) :
   have hsum' := mul_le_mul_of_nonneg_right hsum hlog.le
   rw [add_mul, div_mul_cancel₀ _ hlog.ne'] at hsum'
   rw [primeCounting_eq_theta_div_log_add_integral hx₂, add_mul, div_mul_cancel₀ _ hlog.ne']
-  linarith [(theta_large x hx).1]
+  linarith [(theta_bounds_of_65536_le x hx).1]
 
 -- Put `d = 2 ^ log₂ a` and split `a / d` as `(a + d) / (2 * d) * (2 * a) / (a + d)`.
 -- Applying `log z ≤ z - 1` to each positive factor gives a rational upper bound.
