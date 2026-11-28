@@ -23,8 +23,11 @@ inverted pair removes exactly one inversion. The weight
 `inversionOffset (n + 1) = inversionOffset n + n*n + 1`, also decreases when
 two adjacent letters are replaced by one arbitrary letter. The order on
 the alphabet need not be a well-order, and the alphabet may be infinite.
-The natural-valued weight below encodes length first and inversion count second;\nits explicit
-inequalities let contraction lower the measure without comparing letters.\n\n-/
+The natural-valued weight below encodes length first and inversion count second;
+its explicit
+inequalities let contraction lower the measure without comparing letters.
+
+-/
 
 @[expose] public section
 
