@@ -60,8 +60,9 @@ are arbitrary functions, so message size and local computation are unrestricted.
 * `Cslib.Distributed.LocalModel.LocalAlgorithm.stateAfter`,
   `Cslib.Distributed.LocalModel.LocalAlgorithm.output`.
 
-`IdAssignment` and `LocalAlgorithm.stateAfter` carry comments instead of docstrings
-(`nolint docBlame`): the docstring of `LocalAlgorithm.output` states the whole model.
+`IdAssignment`, `LocalAlgorithm.stateAfter` and `LocalAlgorithm.broadcast` carry comments instead
+of docstrings (`nolint docBlame`): the docstring of `LocalAlgorithm.output` states the whole
+model.
 
 ## Main results
 
@@ -219,8 +220,8 @@ theorem broadcast_output (A : LocalAlgorithm I S M O) (t : ℕ → ℕ) (G : Sim
   rfl
 
 omit [Fintype V] in
-/-- A walk step: a node within distance `r` of a neighbour of `v` is within distance `r + 1`
-of `v`. -/
+/-- A walk step: a node at distance less than `r` from a neighbour of `v` is at distance less
+than `r + 1` from `v`. -/
 private theorem edist_lt_succ_of_adj {G : SimpleGraph V} {v u w : V} {r : ℕ} (huv : G.Adj v u)
     (h : G.edist u w < r) : G.edist v w < (r + 1 : ℕ) := by
   have htri : G.edist v w ≤ G.edist v u + G.edist u w := SimpleGraph.edist_triangle

@@ -28,14 +28,16 @@ public import Mathlib.Data.Fintype.EquivFin
   receives (`degreeAlg_output`); `decide` evaluates it on the path `0 - 1 - 2`.
 * Flooding the largest identifier: on the path `0 - 1 - 2 - 3`, after two rounds node `0` holds
   the largest identifier of the nodes `0, 1, 2` and after three rounds that of all four.
-* Locality: changing the identifier of a node at distance more than one does not change the
-  output of a one-round algorithm, and node `1` of the path `0 - 1 - 2 - 3` and of the
+* Locality: changing the identifier of node `3` from `4` to `5`, with no inputs, does not change
+  the output of a one-round algorithm at node `0` of the path `0 - 1 - 2 - 3`; and with the same
+  identifier assignment and the same inputs in both runs, node `1` of that path and of the
   four-cycle gets the same output from any one-round algorithm, although the graphs differ.
 * Locality needs the neighbours of the centre: node `0` has different degrees on the path and on
   the cycle.
-* Edges between two boundary nodes are free: adding the edge `{0, 2}` to the path
-  `0 - 1 - 2 - 3`, between two nodes at distance one from node `1`, changes no one-round output
-  at node `1`, although it changes the degree of node `0`.
+* Edges between two boundary nodes are free: with the same identifier assignment and the same
+  inputs in both runs, adding the edge `{0, 2}` to the path `0 - 1 - 2 - 3`, between two nodes at
+  distance one from node `1`, changes no one-round output at node `1`, although it changes the
+  degree of node `0`.
 -/
 
 @[expose] public section
@@ -109,7 +111,7 @@ theorem degreeAlg_output {V : Type} [Fintype V] (G : SimpleGraph V) [DecidableRe
   simp [LocalAlgorithm.output, LocalAlgorithm.stateAfter_succ, degreeAlg,
     SimpleGraph.card_neighborFinset_eq_degree]
 
-/-- On the path `0 - 1 - 2` the degrees are `1, 2, 1`. -/
+/-- Run for one round on the path `0 - 1 - 2`, `degreeAlg` outputs the degrees `1, 2, 1`. -/
 example : (List.finRange 3).map (degreeAlg.output (fun _ => 1) (pathGraph 3) (idFin 3)
     fun _ => ()) = [1, 2, 1] := by
   decide
@@ -138,14 +140,15 @@ theorem counterAlg_output {V : Type} [Fintype V] (G : SimpleGraph V) [DecidableR
         rfl
   exact h _ v
 
-/-- On the edgeless graph on three nodes, the round counter outputs `3`. -/
+/-- On the edgeless graph on three nodes, run for three rounds (`t = id`), the round counter
+outputs `3` at node `0`. -/
 example : counterAlg.output id (⊥ : SimpleGraph (Fin 3)) (idFin 3) (fun _ => ()) 0 = 3 := by
   decide
 
 /-! ### Sending every neighbour the same message -/
 
-/-- The broadcast form of `degreeAlg` also outputs the degrees `1, 2, 1` on the path
-`0 - 1 - 2`. -/
+/-- Run for one round, the broadcast form of `degreeAlg` also outputs the degrees `1, 2, 1` on
+the path `0 - 1 - 2`. -/
 example : (List.finRange 3).map (degreeAlg.broadcast.output (fun _ => 1) (pathGraph 3) (idFin 3)
     fun _ => ()) = [1, 2, 1] := by
   decide
@@ -158,7 +161,7 @@ def recipientAlg : LocalAlgorithm Unit ℕ ℕ ℕ where
   update _ m := m.sum
   out s := s
 
-/-- `recipientAlg` sends different messages to neighbours with different identifiers. -/
+/-- In state `0`, `recipientAlg` sends different messages to the identifiers `1` and `3`. -/
 example : recipientAlg.send 0 1 ≠ recipientAlg.send 0 3 := by
   decide
 
@@ -200,8 +203,9 @@ def ids4' : IdAssignment (Fin 4) 2 where
   injective := by decide
   mem_Icc v := by fin_cases v <;> simp
 
-/-- Changing the identifier of node `3`, at distance three from node `0` on the path
-`0 - 1 - 2 - 3`, does not change the output of a one-round algorithm at node `0`. -/
+/-- Changing the identifier of node `3` from `4` to `5` (`ids4` to `ids4'`), with no inputs, does
+not change the output of a one-round algorithm at node `0` of the path `0 - 1 - 2 - 3`, at
+distance three from node `3`. The general result is `output_congr_ball`. -/
 example {S M O : Type} (A : LocalAlgorithm Unit S M O) :
     A.output (fun _ => 1) (pathGraph 4) ids4 (fun _ => ()) 0 =
       A.output (fun _ => 1) (pathGraph 4) ids4' (fun _ => ()) 0 := by
@@ -214,7 +218,8 @@ example {S M O : Type} (A : LocalAlgorithm Unit S M O) :
   · exact absurd hu (by decide)
 
 /-- Node `1` has the same neighbours `0` and `2` on the path `0 - 1 - 2 - 3` and on the
-four-cycle, so any one-round algorithm outputs the same at node `1` on both graphs. -/
+four-cycle, so, with the same identifier assignment and the same inputs in both runs, any
+one-round algorithm outputs the same at node `1` on both graphs. -/
 example {I S M O : Type} (A : LocalAlgorithm I S M O) (ids : IdAssignment (Fin 4) 1)
     (x : Fin 4 → I) :
     A.output (fun _ => 1) (pathGraph 4) ids x 1 = A.output (fun _ => 1) (cycleGraph 4) ids x 1 := by
@@ -224,8 +229,8 @@ example {I S M O : Type} (A : LocalAlgorithm I S M O) (ids : IdAssignment (Fin 4
   revert w
   decide
 
-/-- The neighbours of the centre matter: node `0` has degree `1` on the path `0 - 1 - 2 - 3`
-and degree `2` on the four-cycle. -/
+/-- The neighbours of the centre matter: run for one round, `degreeAlg` outputs `1` at node `0`
+of the path `0 - 1 - 2 - 3` and `2` at node `0` of the four-cycle. -/
 example : degreeAlg.output (fun _ => 1) (pathGraph 4) (idFin 4) (fun _ => ()) 0 = 1 ∧
     degreeAlg.output (fun _ => 1) (cycleGraph 4) (idFin 4) (fun _ => ()) 0 = 2 := by
   decide
@@ -246,8 +251,8 @@ example : ¬ (pathGraph 4).Adj 0 2 ∧ path4Chord.Adj 0 2 ∧ (pathGraph 4).Adj 
   decide
 
 /-- An edge between two nodes on the boundary of the radius-one ball around node `1` is not
-seen there: any one-round algorithm outputs the same at node `1` with or without the edge
-`{0, 2}`. -/
+seen there: with the same identifier assignment and the same inputs in both runs, any one-round
+algorithm outputs the same at node `1` with or without the edge `{0, 2}`. -/
 example {I S M O : Type} (A : LocalAlgorithm I S M O) (ids : IdAssignment (Fin 4) 1)
     (x : Fin 4 → I) :
     A.output (fun _ => 1) (pathGraph 4) ids x 1 = A.output (fun _ => 1) path4Chord ids x 1 := by
@@ -257,8 +262,8 @@ example {I S M O : Type} (A : LocalAlgorithm I S M O) (ids : IdAssignment (Fin 4
   revert w
   decide
 
-/-- The extra edge is seen at node `0`, one of its endpoints: its degree changes from `1` to
-`2`. -/
+/-- The extra edge is seen at node `0`, one of its endpoints: run for one round, `degreeAlg`
+outputs `1` there without the edge and `2` with it. -/
 example : degreeAlg.output (fun _ => 1) (pathGraph 4) (idFin 4) (fun _ => ()) 0 = 1 ∧
     degreeAlg.output (fun _ => 1) path4Chord (idFin 4) (fun _ => ()) 0 = 2 := by
   decide
