@@ -64,3 +64,17 @@ example : Nat.card {w : {w : DyckWord // w.semilength = 3} //
 example : dyckStepHeight [U, D, D] 3 = -1 ∧ dyckStepHeight [U, U, D] 2 = 2 ∧
     dyckStepHeight [U, U, D] 5 = 1 := by
   decide +kernel
+
+-- Check append and Up-step simplification at symbolic indices, including after simplifying length.
+example (l r : List DyckStep) (j : ℕ) :
+    dyckStepHeight (l ++ r) j = dyckStepHeight l j + dyckStepHeight r (j - l.length) := by
+  simp
+
+example (l r : List DyckStep) :
+    dyckStepHeight (l ++ r) (l ++ r).length =
+      dyckStepHeight l (l.length + r.length) + dyckStepHeight r r.length := by
+  simp
+
+example (l : List DyckStep) (j : ℕ) :
+    dyckStepHeight (U :: l) (j + 1) = dyckStepHeight l j + 1 := by
+  simp

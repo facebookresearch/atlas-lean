@@ -62,7 +62,26 @@ Article A44, Section 3. -/
 @[expose] public def dyckStepHeight (l : List DyckStep) (j : ℕ) : ℤ :=
   ((l.take j).count DyckStep.U : ℤ) - ((l.take j).count DyckStep.D : ℤ)
 
-local notation:max "height[" l "]" => dyckStepHeight l (List.length l)
+/-- The height after `j` steps is the signed difference of the Up and Down counts in that prefix. -/
+public theorem dyckStepHeight_eq (l : List DyckStep) (j : ℕ) :
+    dyckStepHeight l j = ((l.take j).count U : ℤ) - ((l.take j).count D : ℤ) := rfl
+
+/-- The height before taking any steps is zero. -/
+@[simp] public theorem dyckStepHeight_zero (l : List DyckStep) : dyckStepHeight l 0 = 0 := by
+  simp [dyckStepHeight]
+
+/-- Taking an initial Up step adds one to the height after the remaining `j` steps. -/
+@[simp] public theorem dyckStepHeight_cons_U (l : List DyckStep) (j : ℕ) :
+    dyckStepHeight (U :: l) (j + 1) = dyckStepHeight l j + 1 := by
+  simp [dyckStepHeight]
+  omega
+
+/-- A prefix of a concatenation takes up to `j` steps from the first word and the remaining
+`j - l.length` steps from the second. Its height adds the contributions of those prefixes. -/
+@[simp] public theorem dyckStepHeight_append (l r : List DyckStep) (j : ℕ) :
+    dyckStepHeight (l ++ r) j = dyckStepHeight l j + dyckStepHeight r (j - l.length) := by
+  simp only [dyckStepHeight_eq, List.take_append, List.count_append, Int.natCast_add]
+  omega
 
 /-- The final height of a word is its Up count minus its Down count, as integers. -/
 public theorem dyckStepHeight_full_eq (l : List DyckStep) :
@@ -81,23 +100,23 @@ public theorem dyckStepHeight_full_cons_U (l : List DyckStep) :
   omega
 
 /-- The final height of a concatenation is the sum of the two final heights. -/
-@[simp] public theorem dyckStepHeight_full_append (l r : List DyckStep) :
+public theorem dyckStepHeight_full_append (l r : List DyckStep) :
     dyckStepHeight (l ++ r) (l ++ r).length =
       dyckStepHeight l l.length + dyckStepHeight r r.length := by
   simp only [dyckStepHeight_full_eq, List.count_append, Int.natCast_add]
   omega
 
 private theorem dyckStepHeight_steps {m : ℕ} (p : Fin m → Bool) (j : ℕ) :
-    height[(steps p).take j] = latticeHeight p j := by
+    dyckStepHeight (steps p) j = latticeHeight p j := by
   induction m generalizing j with
   | zero => simp [steps, dyckStepHeight_nil, latticeHeight]
   | succ m ih =>
     cases j with
-    | zero => simp [dyckStepHeight_nil, latticeHeight]
+    | zero => simp [latticeHeight]
     | succ j =>
-      simp only [steps, List.ofFn_succ, List.take_succ_cons]
-      change height[[stepEquiv (p 0)] ++ (steps fun i => p i.succ).take j] = _
-      rw [dyckStepHeight_full_append, ih]
+      have hs : steps p = [stepEquiv (p 0)] ++ steps (fun i => p i.succ) := by
+        simp [steps, List.ofFn_succ]
+      rw [hs, dyckStepHeight_append, show j + 1 - [stepEquiv (p 0)].length = j by simp, ih]
       simp only [latticeHeight, Fin.sum_univ_succ, Fin.val_zero, Fin.val_succ,
         Nat.zero_lt_succ, ite_true, Nat.succ_lt_succ_iff]
       cases p 0 <;> simp [dyckStepHeight, stepEquiv]
@@ -113,41 +132,43 @@ private def pad (k : ℕ) (l : List DyckStep) : List DyckStep :=
 @[simp] private theorem length_pad (k : ℕ) (l : List DyckStep) :
     (pad k l).length = k + (l.length + k) := by simp [pad]
 
-@[simp] private theorem dyckStepHeight_pad (k : ℕ) (l : List DyckStep) :
-    height[pad k l] = height[l] := by
+private theorem dyckStepHeight_pad (k : ℕ) (l : List DyckStep) :
+    dyckStepHeight (pad k l) (pad k l).length = dyckStepHeight l l.length := by
   simp only [dyckStepHeight_full_eq]
   simp [pad, List.count_replicate]
   omega
 
 /-- A prefix height is the contribution of each of the three blocks. -/
 private theorem dyckStepHeight_take_pad (k : ℕ) (l : List DyckStep) (j : ℕ) :
-    height[(pad k l).take j] =
-      (min j k : ℕ) + height[l.take (j - k)] - (min (j - k - l.length) k : ℕ) := by
-  simp only [dyckStepHeight_full_eq]
+    dyckStepHeight (pad k l) j =
+      (min j k : ℕ) + dyckStepHeight l (j - k) - (min (j - k - l.length) k : ℕ) := by
+  simp only [dyckStepHeight_eq]
   simp [pad, List.take_append, List.count_replicate]
   omega
 
 private def toPaddedWord {n k : ℕ} {p : Fin (2 * n) → Bool} (hp : IsKDyckPath n k p) :
     {w : DyckWord // w.semilength = n + k} := by
-  have hbal : height[steps p] = 0 := by
-    have htake : (steps p).take (2 * n) = steps p := List.take_of_length_le (by simp)
-    simpa only [htake] using (dyckStepHeight_steps p (2 * n)).trans hp.1
-  have hprefix (j : ℕ) : 0 ≤ height[(pad k (steps p)).take j] := by
+  have hbal : dyckStepHeight (steps p) (steps p).length = 0 := by
+    rw [length_steps, dyckStepHeight_steps]
+    exact hp.1
+  have hprefix (j : ℕ) : 0 ≤ dyckStepHeight (pad k (steps p)) j := by
     rw [dyckStepHeight_take_pad, length_steps]
     by_cases hj : j ≤ k
-    · simp [Nat.sub_eq_zero_of_le hj, dyckStepHeight_nil]
+    · simp [Nat.sub_eq_zero_of_le hj]
     by_cases hj' : j - k ≤ 2 * n
     · rw [dyckStepHeight_steps]
       have := hp.2.1 (j - k) hj'
       omega
-    · rw [List.take_of_length_le (by rw [length_steps]; omega), hbal]
+    · have hh : dyckStepHeight (steps p) (j - k) = 0 := by
+        rw [dyckStepHeight_eq, List.take_of_length_le (by rw [length_steps]; omega),
+          ← dyckStepHeight_full_eq, hbal]
       omega
   let w : DyckWord := ⟨pad k (steps p), by
     have h := (dyckStepHeight_pad k (steps p)).trans hbal
     rw [dyckStepHeight_full_eq] at h
     omega, fun j => by
     have h := hprefix j
-    rw [dyckStepHeight_full_eq] at h
+    rw [dyckStepHeight_eq] at h
     omega⟩
   refine ⟨w, ?_⟩
   have h := w.two_mul_semilength_eq_length
@@ -196,12 +217,11 @@ private theorem exists_walk {n k : ℕ} (w : DyckWord) {l : List DyckStep}
     · intro i hi _
       simp [steps, p, List.getElem_ofFn]
   refine ⟨p, ⟨?_, ?_, ?_⟩, hsteps⟩
-  · rw [← dyckStepHeight_steps, hsteps, List.take_of_length_le hlen.le,
-      ← dyckStepHeight_pad k l, ← h]
+  · rw [← dyckStepHeight_steps, hsteps, ← hlen, ← dyckStepHeight_pad k l, ← h]
     simp [dyckStepHeight_full_eq, w.count_U_eq_count_D]
   · intro j hj
-    have hnonneg : 0 ≤ height[w.toList.take (k + j)] := by
-      rw [dyckStepHeight_full_eq]
+    have hnonneg : 0 ≤ dyckStepHeight w.toList (k + j) := by
+      rw [dyckStepHeight_eq]
       have := w.count_D_le_count_U (k + j)
       omega
     rw [h, dyckStepHeight_take_pad, hlen, Nat.add_sub_cancel_left, ← hsteps,
@@ -273,7 +293,7 @@ private noncomputable def classicalPathEquivDyck {n : ℕ} (hn : 1 ≤ n) :
 
 private lemma twice_count_D_before {n : ℕ} (p : Fin (2 * n) → Bool) (t : Fin (2 * n)) :
     (t.val : ℤ) - latticeHeight p t.val = 2 * (((steps p).take t.val).count D : ℤ) := by
-  rw [← dyckStepHeight_steps]
+  rw [← dyckStepHeight_steps, dyckStepHeight_eq]
   let l := (steps p).take t.val
   have hlen : l.length = t.val := by simp [l]
   have hc : l.length = l.count D + l.count U := by
@@ -281,8 +301,7 @@ private lemma twice_count_D_before {n : ℕ} (p : Fin (2 * n) → Bool) (t : Fin
       funext s
       cases s <;> rfl
     simpa only [List.count, hcompl] using l.length_eq_countP_add_countP (· == D)
-  change (t.val : ℤ) - height[l] = 2 * (l.count D : ℤ)
-  rw [dyckStepHeight_full_eq]
+  change (t.val : ℤ) - ((l.count U : ℤ) - (l.count D : ℤ)) = 2 * (l.count D : ℤ)
   omega
 
 private lemma steps_column_iff {n : ℕ} (p : Fin (2 * n) → Bool) (j : ℕ) :

@@ -35,3 +35,9 @@ example : directLuckySpotCount 3 2 = 2 := by decide +kernel
 example : directLuckySpotCount 3 1 =
     ∑ k ∈ Finset.range 2, catalan (3 - 1 - k) * catalan k := by
   decide +kernel
+
+-- Apply the public formula to the same spot counted independently above.
+example : (∑ i : Fin 3, (qDec 3 i 1 : ℚ)) = 3 := by
+  rw [card_dec_lucky_spot_eq_sum_catalan, ← Nat.cast_sum]
+  norm_cast
+  decide +kernel

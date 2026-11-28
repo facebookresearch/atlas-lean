@@ -34,8 +34,7 @@ an ordered pair of Dyck words; the column determines where to insert the removed
   cited in Section 4 for the Catalan enumeration.
 * ATLAS modules `LuckyCars` (`exists_lucky_of_preferred`, `isLuckyCar_iff_parkSpots_eq`,
   `parkSpots_injective_of_antitone`) and `DescendingNaplesPaddedDyckWord`
-  (`decreasingParkingPreferenceEquivDyckWord`, `dyckStepHeight_full_eq`, `dyckStepHeight_nil`,
-  `dyckStepHeight_full_cons_U`, `dyckStepHeight_full_append`).
+  (`decreasingParkingPreferenceEquivDyckWord` and the public Dyck-step height lemmas).
 -/
 
 set_option autoImplicit false
@@ -74,25 +73,23 @@ private abbrev SizedDyck (n : ℕ) := {p : DyckWord // p.semilength = n}
 private def HasColumn (j : ℕ) (p : List DyckStep) : Prop :=
   ∃ a t, p = a ++ U :: t ∧ a.count D = j
 
-local notation:max "height[" l "]" => dyckStepHeight l (List.length l)
-
-private lemma dyck_height (p : DyckWord) : height[p.toList] = 0 := by
+private lemma dyck_height (p : DyckWord) : dyckStepHeight p.toList p.toList.length = 0 := by
   simp [dyckStepHeight_full_eq, p.count_U_eq_count_D]
 
-private lemma dyck_prefix_height (p : DyckWord) (i : ℕ) : 0 ≤ height[p.toList.take i] := by
+private lemma dyck_prefix_height (p : DyckWord) (i : ℕ) : 0 ≤ dyckStepHeight p.toList i := by
   have := p.count_D_le_count_U i
-  rw [dyckStepHeight_full_eq]
+  rw [dyckStepHeight_eq]
   omega
 
 -- A walk with negative final height crosses down from its starting height. Everything before
 -- that first crossing is a Dyck word. An initial Up step is paired before continuing the search.
-private lemma split_negative (t : List DyckStep) (h : height[t] < 0) :
+private lemma split_negative (t : List DyckStep) (h : dyckStepHeight t t.length < 0) :
     ∃ (b : DyckWord) (c : List DyckStep), t = b.toList ++ D :: c := by
   match t with
-  | [] => simp [dyckStepHeight_nil] at h
+  | [] => simp at h
   | D :: t => exact ⟨0, t, rfl⟩
   | U :: t =>
-    have ht : height[t] < 0 := by
+    have ht : dyckStepHeight t t.length < 0 := by
       rw [dyckStepHeight_full_cons_U] at h
       omega
     obtain ⟨b, c, hb⟩ := split_negative t ht
@@ -174,26 +171,27 @@ private lemma column_cut_unique {a b c d : List DyckStep} (h : a ++ c = b ++ d)
 -- Prefixes of the spliced list are prefixes of the outer list with a (possibly empty)
 -- prefix of the inserted word added. The displayed index skips the inserted steps.
 private lemma dyckStepHeight_take_splice (a b c : List DyckStep) (i : ℕ) :
-    height[(a ++ b ++ c).take i] =
-      height[(a ++ c).take (i - min (i - a.length) b.length)] +
-        height[b.take (i - a.length)] := by
-  by_cases hi : i ≤ a.length
-  · rw [List.append_assoc, List.take_append_of_le_length hi, Nat.sub_eq_zero_of_le hi]
-    simp [List.take_append_of_le_length hi, dyckStepHeight_nil]
-  · have h₁ : a.length ≤ i - min (i - a.length) b.length := by omega
-    have h₂ : i - min (i - a.length) b.length - a.length = i - a.length - b.length := by omega
-    simp only [List.append_assoc, List.take_append, dyckStepHeight_full_append,
-      List.take_of_length_le (show a.length ≤ i by omega), List.take_of_length_le h₁, h₂]
-    omega
+    dyckStepHeight (a ++ b ++ c) i =
+      dyckStepHeight (a ++ c) (i - min (i - a.length) b.length) +
+        dyckStepHeight b (i - a.length) := by
+  have hindex : i - min (i - a.length) b.length - a.length = i - a.length - b.length := by omega
+  have hpre : dyckStepHeight a (i - min (i - a.length) b.length) = dyckStepHeight a i := by
+    by_cases hi : i ≤ a.length
+    · simp [Nat.sub_eq_zero_of_le hi]
+    · have h₁ : a.length ≤ i - min (i - a.length) b.length := by omega
+      simp only [dyckStepHeight_eq, List.take_of_length_le h₁,
+        List.take_of_length_le (show a.length ≤ i by omega)]
+  simp only [List.append_assoc, dyckStepHeight_append, hindex, hpre]
+  omega
 
-private lemma dyck_of_height (w : List DyckStep) (h : height[w] = 0)
-    (hp : ∀ i, 0 ≤ height[w.take i]) : ∃ p : DyckWord, p.toList = w := by
+private lemma dyck_of_height (w : List DyckStep) (h : dyckStepHeight w w.length = 0)
+    (hp : ∀ i, 0 ≤ dyckStepHeight w i) : ∃ p : DyckWord, p.toList = w := by
   refine ⟨⟨w, ?_, ?_⟩, rfl⟩
   · rw [dyckStepHeight_full_eq] at h
     omega
   · intro i
     have hi := hp i
-    rw [dyckStepHeight_full_eq] at hi
+    rw [dyckStepHeight_eq] at hi
     omega
 
 private lemma splice_dyck (p b : DyckWord) {a c : List DyckStep} (h : p.toList = a ++ c) :
@@ -213,12 +211,14 @@ private lemma erase_dyck (p b : DyckWord) {a c : List DyckStep}
   · intro i
     by_cases hi : i ≤ a.length
     · have hp := dyck_prefix_height p i
-      rw [h, List.append_assoc, List.take_append_of_le_length hi] at hp
-      rwa [List.take_append_of_le_length hi]
+      rw [h] at hp
+      simpa only [List.append_assoc, dyckStepHeight_append, Nat.sub_eq_zero_of_le hi,
+        Nat.zero_sub, dyckStepHeight_zero, add_zero] using hp
     · have hp := dyck_prefix_height p (i + b.toList.length)
       have hb : b.toList.length ≤ i + b.toList.length - a.length := by omega
-      rw [h, dyckStepHeight_take_splice, min_eq_right hb, Nat.add_sub_cancel,
-        List.take_of_length_le hb, dyck_height, add_zero] at hp
+      have hzero : dyckStepHeight b.toList (i + b.toList.length - a.length) = 0 := by
+        rw [dyckStepHeight_eq, List.take_of_length_le hb, ← dyckStepHeight_full_eq, dyck_height]
+      rw [h, dyckStepHeight_take_splice, min_eq_right hb, Nat.add_sub_cancel, hzero, add_zero] at hp
       exact hp
 
 private lemma nested_cut_unique {b b' : DyckWord} {c c' : List DyckStep}
@@ -295,10 +295,10 @@ private noncomputable def spliceColumnEquiv (n j : ℕ) : CatalanPairs n j ≃ C
     exact congrArg (Sigma.mk k) hh
   · rintro ⟨⟨p, hp⟩, hm⟩
     obtain ⟨a, t, hcut, ha, hbound⟩ := column_cut_with_up hm
-    have ht : height[t] < 0 := by
+    have ht : dyckStepHeight t t.length < 0 := by
       have hbal := dyck_height p
       have hpre := dyck_prefix_height p a.length
-      rw [hcut, List.take_left] at hpre
+      rw [hcut, dyckStepHeight_append, Nat.sub_self, dyckStepHeight_zero, add_zero] at hpre
       rw [hcut, dyckStepHeight_full_append, dyckStepHeight_full_cons_U] at hbal
       omega
     obtain ⟨b, c, hbc⟩ := split_negative t ht
