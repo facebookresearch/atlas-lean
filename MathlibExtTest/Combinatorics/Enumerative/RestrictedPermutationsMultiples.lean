@@ -104,3 +104,41 @@ example : Nat.card {π : Equiv.Perm (Fin 5) // HasRestrictedExcedances 2 1 2 π}
     (oneTBonacciPolynomial 1 2 * oneTBonacciPolynomial 1 3).coeff 2 := by
   simpa only [Nat.reduceSub, pow_one] using
     card_strongPerms_multiples_excedance_eq_coeff 2 1 2 1 2 (by decide) (by decide)
+
+-- Count both distributions directly, without using the coefficient formula.
+example :
+    ((List.range 4).map (fun k => Nat.card {π : Equiv.Perm (Fin 5) //
+      HasRestrictedExcedances 3 1 k π}) = [1, 2, 1, 0]) ∧
+    ((List.range 4).map (fun k => Nat.card {π : Equiv.Perm (Fin 4) //
+      HasRestrictedExcedances 2 1 k π}) = [1, 2, 1, 0]) := by
+  simp only [Nat.card_eq_fintype_card, Fintype.card_subtype]
+  decide
+
+private theorem bonacciOne : oneTBonacciPolynomial 1 1 = 1 :=
+  (oneTBonacciPolynomial_succ_of_lt 1 0 (by decide)).trans (oneTBonacciPolynomial_zero 1)
+
+private theorem coeffs_bonacciTwo_sq :
+    (List.range 4).map (fun k => (oneTBonacciPolynomial 1 2 ^ 2).coeff k) = [1, 2, 1, 0] := by
+  have h : oneTBonacciPolynomial 1 2 = 1 + Polynomial.X := by
+    rw [oneTBonacciPolynomial_succ_of_le 1 1 (by decide), bonacciOne]
+    simp [oneTBonacciPolynomial_zero]
+  rw [h, show ((1 + Polynomial.X) ^ 2 : Polynomial ℕ) =
+      1 + Polynomial.C 2 * Polynomial.X + Polynomial.X ^ 2 by
+    rw [Polynomial.C_ofNat]
+    ring]
+  norm_num [List.range_succ, Polynomial.coeff_add, Polynomial.coeff_C_mul,
+    Polynomial.coeff_one, Polynomial.coeff_X, Polynomial.coeff_X_pow]
+
+-- Two longer classes of size two contribute the square; the size-one class contributes one.
+example : (List.range 4).map (fun k => Nat.card {π : Equiv.Perm (Fin 5) //
+    HasRestrictedExcedances 3 1 k π}) = [1, 2, 1, 0] := by
+  have h (k : ℕ) :=
+    card_strongPerms_multiples_excedance_eq_coeff 3 1 1 2 k (by decide) (by decide)
+  simpa only [h, Nat.reduceSub, pow_one, bonacciOne, one_mul] using coeffs_bonacciTwo_sq
+
+-- With no longer classes, only the two shorter classes of size two contribute factors.
+example : (List.range 4).map (fun k => Nat.card {π : Equiv.Perm (Fin 4) //
+    HasRestrictedExcedances 2 1 k π}) = [1, 2, 1, 0] := by
+  have h (k : ℕ) :=
+    card_strongPerms_multiples_excedance_eq_coeff 2 1 2 0 k (by decide) (by decide)
+  simpa only [h, Nat.sub_zero, pow_zero, mul_one] using coeffs_bonacciTwo_sq
