@@ -984,6 +984,7 @@
   }
  },
  "placements": {
+  "MathlibExt/GameTheory/MixedNashSupport": {"to": "GameTheory/noncooperative-games", "title": "Mixed equilibrium support condition"},
   "WantedExt/LinearAlgebra/Matrix/HadamardCubeFibersWanted": {"to": "LinearAlgebra/special-matrices", "title": "Complex Hadamard matrices"},
   "WantedExt/Combinatorics/EuclideanRamseyCosphericalWanted": {"to": "Combinatorics/ramsey-theory/structural-ramsey", "title": "Euclidean Ramsey configurations are cospherical"},
   "WantedExt/Combinatorics/SimpleGraph/RamseyThreeThreeWanted": {"to": "GraphTheory/graph-ramsey-theory", "title": "Small Ramsey numbers"},
