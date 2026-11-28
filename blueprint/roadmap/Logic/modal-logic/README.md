@@ -4,7 +4,6 @@ Logics of necessity and possibility interpreted on Kripke models, their axiomati
 
 - [Epistemic logic](epistemic-logic/README.md)
 - [Kripke semantics](kripke-semantics/README.md)
-- [Announcement elimination](announcement-elimination/README.md)
 - [Bisimulation](bisimulation/README.md)
 - [Common knowledge](common-knowledge/README.md)
 - [Modal μ-calculus](modal-calculus/README.md)
@@ -12,7 +11,6 @@ Logics of necessity and possibility interpreted on Kripke models, their axiomati
 - [Normal modal logics](normal-modal-logics/README.md)
 - [Propositional dynamic logic](propositional-dynamic-logic/README.md)
 - [Provability logic GL](provability-logic-gl/README.md)
-- [Public announcements](public-announcements/README.md)
 - [Reflection calculus and worms](reflection-calculus-and-worms/README.md)
 - [Sahlqvist formulas](sahlqvist-formulas/README.md)
 - [Soundness and completeness of normal modal logics](soundness-and-completeness-of-normal-modal-logic/README.md)

@@ -8,3 +8,5 @@ Modal logics with operators that delete points or change links of a model, such 
 - [Relation-changing modal logics](relation-changing-modal-logics.md)
 - [Satisfiability of arbitrary arrow update logic is co-r.e.-hard](satisfiability-of-arbitrary-arrow-update-logic.md)
 - [Satisfiability of relation-changing modal logics is undecidable](satisfiability-of-relation-changing-modal-logics.md)
+- [Public announcements](public-announcements/README.md)
+- [Announcement elimination](announcement-elimination/README.md)
