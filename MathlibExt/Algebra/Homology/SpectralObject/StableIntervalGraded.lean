@@ -258,13 +258,13 @@ theorem stableIntervalDelta_comp_toStable_zero
     _ = biprod.inr ≫ 0 := congrArg (fun k => biprod.inr ≫ k) S.zero
     _ = 0 := by simp)
 
-private theorem stableIntervalKernelZero (n : ℤ) (i₂ : ι) :
+theorem stableIntervalKernelZero (n : ℤ) (i₂ : ι) :
     Y.δ (stableIntervalLeftMiddle i₂) (stableIntervalRight i₂)
       (n - 1) n (by omega) ≫ Y.stableIntervalStepToAbutment n i₂ = 0 :=
   Y.zero₁ (stableIntervalLeftMiddle i₂) (stableIntervalRight i₂)
     (stableIntervalFull (ι := ι)) (Subsingleton.elim _ _) (n - 1) n
 
-private theorem stableIntervalKernelExact (n : ℤ) (i₂ : ι) :
+theorem stableIntervalKernelExact (n : ℤ) (i₂ : ι) :
     (ShortComplex.mk
       (Y.δ (stableIntervalLeftMiddle i₂) (stableIntervalRight i₂)
         (n - 1) n (by omega))
@@ -272,12 +272,19 @@ private theorem stableIntervalKernelExact (n : ℤ) (i₂ : ι) :
   Y.exact₁ (stableIntervalLeftMiddle i₂) (stableIntervalRight i₂)
     (stableIntervalFull (ι := ι)) (Subsingleton.elim _ _) (n - 1) n (by omega)
 
-private theorem stableIntervalCokernelSequence_exact
+theorem stableIntervalCokernelSequence_exact
     (n : ℤ) {i₁ i₂ : ι} (h : i₁ ≤ i₂) :
     (Y.stableIntervalCokernelSequence n h).Exact :=
   Y.cokernelSequenceE_exact (stableIntervalLeft i₁) (stableIntervalMiddle h)
     (stableIntervalRight i₂) (stableIntervalLeftMiddle i₂)
     (stableIntervalLeft_comp_middle h) (n - 1) n (n + 1) (by omega) (by omega)
+
+theorem stableIntervalCokernelSequence_f
+    (n : ℤ) {i₁ i₂ : ι} (h : i₁ ≤ i₂) :
+    (Y.stableIntervalCokernelSequence n h).f =
+      biprod.desc (Y.stableIntervalStepMap n h)
+        (Y.δ (stableIntervalLeftMiddle i₂) (stableIntervalRight i₂)
+          (n - 1) n (by omega)) := rfl
 
 noncomputable def stableIntervalStepCokernelIso
     (n : ℤ) {i₁ i₂ : ι} (h : i₁ ≤ i₂) :
@@ -289,7 +296,7 @@ noncomputable def stableIntervalStepCokernelIso
     (cokernelIsCokernel (Y.stableIntervalCokernelSequence n h).f)
     (stableIntervalCokernelSequence_exact Y n h).gIsCokernel).symm
 
-private theorem cokernel_π_stableIntervalStepCokernelIso_inv
+theorem cokernel_π_stableIntervalStepCokernelIso_inv
     (n : ℤ) {i₁ i₂ : ι} (h : i₁ ≤ i₂) :
     cokernel.π (Y.stableIntervalCokernelSequence n h).f ≫
       (Y.stableIntervalStepCokernelIso n h).inv = Y.stableIntervalStepToStable n h := by
@@ -303,7 +310,7 @@ private theorem cokernel_π_stableIntervalStepCokernelIso_inv
       (cokernelIsCokernel (Y.stableIntervalCokernelSequence n h).f)
       (stableIntervalCokernelSequence_exact Y n h).gIsCokernel WalkingParallelPair.one)
 
-private theorem stableIntervalStepToStable_comp_stepCokernelIso
+theorem stableIntervalStepToStable_comp_stepCokernelIso
     (n : ℤ) {i₁ i₂ : ι} (h : i₁ ≤ i₂) :
     Y.stableIntervalStepToStable n h ≫ (Y.stableIntervalStepCokernelIso n h).hom =
       cokernel.π (Y.stableIntervalCokernelSequence n h).f := by
@@ -410,7 +417,7 @@ noncomputable def stableIntervalOrderedImageCokernelIso
       rw [Y.stableIntervalImageMap_comp_ι, imageCompMap_ι]
       exact Limits.image.eq_fac (Y.stableIntervalStepMap_comp_toAbutment n h).symm)
 
-private theorem cokernel_π_stableIntervalOrderedImageCokernelIso_inv
+theorem cokernel_π_stableIntervalOrderedImageCokernelIso_inv
     (n : ℤ) {i₁ i₂ : ι} (h : i₁ ≤ i₂) :
     cokernel.π (imageCompMap (Y.stableIntervalStepMap n h)
         (Y.stableIntervalStepToAbutment n i₂)) ≫
@@ -451,7 +458,8 @@ theorem stableIntervalImageToStable_comp_iso_hom
         (Y.stableIntervalStepToAbutment n i₂) (stableIntervalKernelZero Y n i₂) ≫
       (Y.stableIntervalOrderedImageCokernelIso n h).inv = _
   rw [← Category.assoc, stableIntervalStepToStable_comp_stepCokernelIso Y,
-    ← Category.assoc, cokernel_π_imageQuotientForward, Category.assoc,
+    ← Category.assoc, Y.stableIntervalCokernelSequence_f,
+    cokernel_π_imageQuotientForward, Category.assoc,
     cokernel_π_stableIntervalOrderedImageCokernelIso_inv Y]
 
 /-- The descended stable quotient is a cokernel of the ordered image inclusion.

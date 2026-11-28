@@ -140,7 +140,11 @@ private lemma component_d (f : verticalRow ⟶ verticalRow) :
     upperComponent f ≫ (K₁ f).d 1 0 = f.f 0 ≫ oldComponent f := by
   dsimp only [upperComponent, oldComponent]
   apply (cancel_mono (((B f).partialTotalι 1).f 0)).1
-  rw [← ((B f).partialTotalι 1).comm 1 0]
+  change ((B f).partialTotalComponent 1 ⟨1, by decide⟩ 0 1 rfl ≫
+      ((B f).partialTotal 1).d 1 0) ≫ ((B f).partialTotalι 1).f 0 =
+    (f.f 0 ≫ (B f).partialTotalComponent 1 ⟨0, by decide⟩ 0 0 rfl) ≫
+      ((B f).partialTotalι 1).f 0
+  rw [Category.assoc, ← ((B f).partialTotalι 1).comm 1 0]
   rw [← Category.assoc, (B f).partialTotalComponent_comp_partialTotalι]
   rw [HomologicalComplex₂.total_d, comp_add, HomologicalComplex₂.ι_D₁,
     HomologicalComplex₂.ι_D₂]
@@ -171,7 +175,7 @@ private lemma quotient_lift (f : verticalRow ⟶ verticalRow) :
     (HomologicalComplex.extendMap ((B f).partialTotalRowQuotient 1) e).f (-1) =
       (row₁ObjectIso f).inv ≫ ((R₁ f).extendXIso e (i := 1) (i' := -1) rfl).inv
   rw [HomologicalComplex.extendMap_f _ e (i := 1) (i' := -1) rfl]
-  simp only [Category.assoc, Iso.inv_hom_id_assoc]
+  simp only [Iso.inv_hom_id_assoc]
   dsimp only [upperComponent, row₁ObjectIso]
   rw [(B f).partialTotalComponent_comp_partialTotalRowQuotient_assoc]
 
@@ -213,7 +217,9 @@ private lemma boundary_coordinate (f : verticalRow ⟶ verticalRow) :
   simp only [Category.assoc, Iso.inv_hom_id_assoc]
   dsimp only [lowerComponent, row₀ObjectIso]
   rw [(B f).partialTotalComponent_comp_partialTotalRowQuotient_assoc]
-  simp only [Category.assoc, Iso.inv_hom_id, Category.comp_id]
+  rw [Iso.inv_hom_id]
+  change f.f 0 ≫ (𝟙 Q) = f.f 0
+  exact Category.comp_id (f.f 0)
 
 private lemma step₁_row_iso_refl (f : verticalRow ⟶ verticalRow) :
     (B f).partialTotalStepCochainX₃Iso 1 = Iso.refl ((R₁ f).extend e) := by
@@ -237,10 +243,11 @@ private lemma connecting_model (f : verticalRow ⟶ verticalRow) :
         HomologicalComplex.homologyMap (quotient₀ f) 0 ≫
         ((R₀ f).extendHomologyIso e (j := 0) (j' := 0) rfl).hom := by
   unfold HomologicalComplex₂.partialTotalE₁ConnectingDifferential
-  rw [step₁_row_iso_refl, adjacent_iso_refl, step₀_row_iso_refl, step₀_quotient]
-  simp only [HomologicalComplex.homologyMapIso, Iso.refl_hom, Iso.refl_inv,
-    HomologicalComplex.homologyMap_id,
-    Category.id_comp, Category.comp_id]
+  rw [step₁_row_iso_refl, adjacent_iso_refl, step₀_row_iso_refl]
+  dsimp only
+  rw [step₀_quotient]
+  simpa only [HomologicalComplex.homologyMapIso, Iso.refl_hom, Iso.refl_inv,
+    HomologicalComplex.homologyMap_id, Category.id_comp, Category.comp_id]
 
 /-- The actual adjacent-row connecting map in rational coordinates is the horizontal map. -/
 theorem connecting_coordinate (f : verticalRow ⟶ verticalRow) :
@@ -257,7 +264,7 @@ theorem connecting_coordinate (f : verticalRow ⟶ verticalRow) :
   have hclass : c₃ ≫ (zeroHomologyIso ((R₁ f).extend e) (-1) h₁).hom =
       sourceRepresentative f := by
     dsimp only [c₃]
-    simpa only [Category.assoc] using
+    simpa only [show (-1 : ℤ) + 1 = 0 from rfl, Category.assoc] using
       cycle_coordinate ((R₁ f).extend e) (-1) h₁ (sourceRepresentative f)
   have hsource : c₃ ≫ (zeroHomologyIso ((R₁ f).extend e) (-1) h₁).hom ≫
       (row₁ExtendedObjectIso f).hom = 𝟙 Q := by
@@ -275,6 +282,7 @@ theorem connecting_coordinate (f : verticalRow ⟶ verticalRow) :
       rw [h₁, comp_zero])
     (upperLift f) (quotient_lift f) (boundaryRepresentative f) (boundary_lift f)
     1 ((ComplexShape.up ℤ).next_eq' (show (ComplexShape.up ℤ).Rel 0 1 from rfl))
+  change c₃ ≫ ((B f).partialTotalStepCochainShortExact 1).δ (-1) 0 (by decide) = _ at hδ
   have htarget : c₃ ≫
       ((B f).partialTotalStepCochainShortExact 1).δ (-1) 0 (by decide) ≫
       HomologicalComplex.homologyMap (quotient₀ f) 0 ≫
@@ -295,8 +303,7 @@ theorem connecting_coordinate (f : verticalRow ⟶ verticalRow) :
   rw [connecting_model]
   unfold row₁HomologyCoordinate row₀HomologyCoordinate
   simp only [Iso.trans_inv, Iso.trans_hom, Iso.symm_inv, Iso.symm_hom, Category.assoc,
-    Iso.hom_inv_id_assoc, Iso.inv_hom_id_assoc, Iso.hom_inv_id, Iso.inv_hom_id,
-    Category.comp_id, Category.id_comp]
+    Iso.hom_inv_id_assoc]
   rw [hc₃] at htarget
   simpa only [Category.assoc] using htarget
 
@@ -305,8 +312,12 @@ theorem identity_connecting :
     (row₁HomologyCoordinate (𝟙 verticalRow)).inv ≫
       horizontalIdentity.partialTotalE₁ConnectingDifferential 0 0 ≫
       (row₀HomologyCoordinate (𝟙 verticalRow)).hom = 𝟙 Q := by
-  simpa only [B, horizontalIdentity, verticalRow, Q, HomologicalComplex.id_f] using
-    connecting_coordinate (𝟙 verticalRow)
+  apply ModuleCat.hom_ext
+  apply LinearMap.ext
+  intro x
+  have h := congrArg (fun z : Q ⟶ Q => z.hom x) (connecting_coordinate (𝟙 verticalRow))
+  simpa only [B, horizontalIdentity, HomologicalComplex.id_f, ModuleCat.hom_id,
+    LinearMap.id_apply] using h
 
 /-- In particular the nonzero class with coordinate one is sent to positive one. -/
 example : ((row₁HomologyCoordinate (𝟙 verticalRow)).inv ≫

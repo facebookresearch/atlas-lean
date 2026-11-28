@@ -1168,7 +1168,11 @@ theorem emExtra_s' (alg : T.Algebra) : (emExtra alg).s' = T.η.app alg.A := by
       (Opposite.op (SimplexCategory.mk 0)) ≫
     (emLiteralResolutionIso alg).inv.left.app
       (Opposite.op (SimplexCategory.mk 0)) = 𝟙 _ at hi
-  rw [emLiteralResolutionIso_hom_left_app, Category.id_comp] at hi
+  rw [emLiteralResolutionIso_hom_left_app] at hi
+  change 𝟙 (T.obj alg.A) ≫
+    (emLiteralResolutionIso alg).inv.left.app (Opposite.op (SimplexCategory.mk 0)) =
+      𝟙 (T.obj alg.A) at hi
+  rw [Category.id_comp] at hi
   rw [hi, Category.comp_id]
 
 /-- The transported section splits the actual forgotten EM augmentation. -/
