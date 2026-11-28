@@ -47,6 +47,10 @@ The polygonal interpretation assumes $s \ge 3$; this definition extends the form
 natural number $s$. -/
 def polygonalNumber (s n : ℕ) : ℕ := (s - 2) * Nat.choose n 2 + n
 
+/-- The binomial formula for `polygonalNumber`, with natural subtraction in `s - 2`. -/
+theorem polygonalNumber_eq (s n : ℕ) :
+    polygonalNumber s n = (s - 2) * n.choose 2 + n := rfl
+
 /-- **Polygonal numbers at zero.** For every natural number $s$, $p_s(0) = 0$, where $p_s(n)$ is
 the $n$-th $s$-gonal number.
 

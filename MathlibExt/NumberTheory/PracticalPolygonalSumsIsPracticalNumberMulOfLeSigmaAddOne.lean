@@ -100,7 +100,8 @@ private theorem subset_sum_of_le_sum (D : Finset ℕ) : ∀ M : ℕ,
         rw [Finset.sum_empty] at hk
         omega
 
-private theorem le_sigma_one (m : ℕ) (hm : 0 < m) : m ≤ sigma 1 m := by
+/-- A positive natural number is at most the sum of its positive divisors. -/
+public theorem le_sigma_one (m : ℕ) (hm : 0 < m) : m ≤ sigma 1 m := by
   rw [sigma_one_apply]
   exact Finset.single_le_sum (fun i _ => Nat.zero_le i)
     (Nat.mem_divisors_self m (by omega))

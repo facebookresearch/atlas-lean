@@ -17,7 +17,7 @@ import Mathlib.NumberTheory.SumPrimeReciprocals
 import MathlibExt.NumberTheory.PolygonalSumModPrimePow
 import MathlibExt.NumberTheory.PolygonalSumParity
 import MathlibExt.NumberTheory.PracticalPolygonalSums
-import all MathlibExt.NumberTheory.PracticalPolygonalSumsIsPracticalNumberMulOfLeSigmaAddOne
+import MathlibExt.NumberTheory.PracticalPolygonalSumsIsPracticalNumberMulOfLeSigmaAddOne
 
 /-!
 # Large integers as sums of a practical number and two polygonal numbers
@@ -51,7 +51,7 @@ open scoped BigOperators
 private theorem isPracticalNumber_primorial (b : ℕ) : IsPracticalNumber (primorial b) := by
   induction b with
   | zero =>
-    rw [primorial_zero]
+    rw [primorial_zero, isPracticalNumber_iff]
     refine ⟨by decide, fun m hm hle ↦ ?_⟩
     have : m = 1 := by omega
     subst m
@@ -61,7 +61,7 @@ private theorem isPracticalNumber_primorial (b : ℕ) : IsPracticalNumber (primo
     split_ifs with hprime
     · rw [prod_insert (Nat.notMem_primesLE b), ← primorial_eq_prod_primesLE, mul_comm]
       exact isPracticalNumber_mul_of_le_sigma_add_one _ _ ih (Nat.succ_pos _) <|
-        Nat.succ_le_succ (le_primorial_self.trans (le_sigma_one _ ih.1))
+        Nat.succ_le_succ (le_primorial_self.trans (le_sigma_one _ (primorial_pos b)))
     · rwa [← primorial_eq_prod_primesLE]
 
 /-- Prime reciprocals give a lower bound for the divisor sum of every nonzero multiple of a
@@ -104,8 +104,8 @@ private theorem polygonalNumber_modEq_of_coprime_two (s : ℕ) {m x y : ℕ}
   have hchoose : x.choose 2 ≡ y.choose 2 [MOD m] := by
     apply Nat.ModEq.cancel_left_of_coprime hm
     apply h.add_right_cancel
-    simpa only [← Nat.polygonalNumber_four, Nat.polygonalNumber, Nat.reduceSub] using h.pow 2
-  exact (hchoose.mul_left (s - 2)).add h
+    simpa only [← Nat.polygonalNumber_four, Nat.polygonalNumber_eq, Nat.reduceSub] using h.pow 2
+  simpa only [Nat.polygonalNumber_eq] using (hchoose.mul_left (s - 2)).add h
 
 /-- Put the local solutions together, using modulus four on the indices at the prime two. -/
 private theorem exists_bounded_polygonal_sum_modEq (s n r p j : ℕ) (hs : 3 < s) (hn : 0 < n)
@@ -206,9 +206,13 @@ public theorem eventually_practical_add_two_polygonal (s : ℕ) (hs : 3 < s) :
   have hM (j : ℕ) : 0 < M j := mul_pos (primorial_pos _) (pow_pos hp.pos _)
   have hM_succ (j : ℕ) : M (j + 1) = M j * p := by simp [M, pow_succ, mul_assoc]
   have hM_dvd (j : ℕ) : primorial r ∣ M j := dvd_mul_right _ _
-  have hP (k : ℕ) : k ≤ Nat.polygonalNumber s k := Nat.le_add_left _ _
-  have hmono : Monotone (Nat.polygonalNumber s) := fun _ _ h ↦
-    Nat.add_le_add (Nat.mul_le_mul_left _ (Nat.choose_le_choose 2 h)) h
+  have hP (k : ℕ) : k ≤ Nat.polygonalNumber s k := by
+    rw [Nat.polygonalNumber_eq]
+    exact Nat.le_add_left _ _
+  have hmono : Monotone (Nat.polygonalNumber s) := by
+    intro a b hab
+    simp only [Nat.polygonalNumber_eq]
+    exact Nat.add_le_add (Nat.mul_le_mul_left _ (Nat.choose_le_choose 2 hab)) hab
   have hpractical (j : ℕ) : IsPracticalNumber (M j) := by
     induction j with
     | zero => simpa [M] using isPracticalNumber_primorial r
