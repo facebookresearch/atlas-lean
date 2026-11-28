@@ -6,6 +6,7 @@ Büchi, generalized Büchi, parity, Rabin, Streett and Muller automata on infini
 - [Emptiness of Büchi automata](emptiness-of-b-chi-automata/README.md)
 - [Boolean closure of Büchi automata](boolean-closure-of-b-chi-automata/README.md)
 - [Lower bounds for complementing Büchi automata](complementation-lower-bounds/README.md)
+- [Büchi emptiness via Kosaraju–Sharir](buchi-kosaraju-emptiness/README.md)
 - [Generalized Büchi automata](generalized-b-chi-automata/README.md)
 - [Parity condition on infinite sequences](parity-condition-on-infinite-sequences/README.md)
 - [Parity automata](parity-automata/README.md)
@@ -20,6 +21,7 @@ Büchi, generalized Büchi, parity, Rabin, Streett and Muller automata on infini
 - [Alternating automata](alternating-automata/README.md)
 - [Probabilistic Büchi automata](probabilistic-buchi-automata/README.md)
 - [Timed automata](timed-automata/README.md)
+- [Small progress measures for parity games: a costed verifier](small-progress-measures-for-parity-games-a-coste/README.md)
 
 - [Polynomial-time solvability of mean-payoff games](polynomial-time-solvability-of-mean-payoff-games.md)
 

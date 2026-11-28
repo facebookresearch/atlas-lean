@@ -1,0 +1,3 @@
+# A larger number is again a pumping length
+
+Words are finite lists over an alphabet, and a language is a set of words. A language is regular when it is recognized by a deterministic finite automaton. For words $x, y, z$ and $i \ge 0$, pumping gives the word $x y^i z$, in which $y$ is repeated $i$ times. A natural number $n$ is a pumping length for a language $L$ when every word $w \in L$ with $|w| \ge n$ can be written as $w = xyz$ with $|xy| \le n$ and $y$ nonempty, such that $x y^i z \in L$ for every $i \ge 0$. If $n$ is a pumping length for $L$ and $n \le m$, then $m$ is a pumping length for $L$. Equivalently, $n$ is a pumping length for $L$ if and only if every $m \ge n$ is.

@@ -2,7 +2,7 @@
 
 No algorithm decides, given a strongly terminating rewrite game and a regular language of starting positions, whether the language contains a position that is a win for the player to move, even when the language is star-free.
 
-**Theorem (Duchêne, Marsault, Parreau and Rigo).** The following problem is undecidable. Input: a [strongly terminating rewrite game](rewrite-games.md) $G$, given by its finite alphabet and finite rule set, and a regular language $L$ of starting positions, given by a finite automaton. Question: does $L$ contain an N-position of $G$, that is, a word that is not a [P-position](../sprague-grundy-theorem/is-p.md)? The problem stays undecidable when $L$ is restricted to [star-free](../../../TheoryOfComputation/not-yet-classified/part-05/part-02/varieties/is-star-free.md) languages.
+**Theorem (Duchêne, Marsault, Parreau and Rigo).** The following problem is undecidable. Input: a [strongly terminating rewrite game](rewrite-games.md) $G$, given by its finite alphabet and finite rule set, and a regular language $L$ of starting positions, given by a finite automaton. Question: does $L$ contain an N-position of $G$, that is, a word that is not a [P-position](../sprague-grundy-theorem/is-p.md)? The problem stays undecidable when $L$ is restricted to [star-free](../../../TheoryOfComputation/regular-languages/minimization/eilenberg-varieties-pseudovarieties-and-sch-tzen/is-star-free.md) languages.
 
 For a single strongly terminating game and a single word the outcome is computable, by exhaustive search of the finite game tree; the undecidability comes from the infinite language of starting positions. The source conjectures that it is also undecidable whether the set of winning positions of a strongly terminating game is a regular language.
 
@@ -10,7 +10,7 @@ For a single strongly terminating game and a single word the outcome is computab
 
 - [Rewrite games](rewrite-games.md)
 - [P-positions](../sprague-grundy-theorem/is-p.md)
-- [Star-free languages](../../../TheoryOfComputation/not-yet-classified/part-05/part-02/varieties/is-star-free.md)
+- [Star-free languages](../../../TheoryOfComputation/regular-languages/minimization/eilenberg-varieties-pseudovarieties-and-sch-tzen/is-star-free.md)
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on

@@ -1,0 +1,16 @@
+# The pumping lemma for regular languages
+
+- [Pumping a word decomposition](pump.md)
+- [Pumping lengths of a language](is-pumping-length.md)
+- [A larger number is again a pumping length](mono.md)
+- [A strict bound on all word lengths is a pumping length](of-forall-length-lt.md)
+- [Zero is a pumping length only for the empty language](is-pumping-length-zero-iff.md)
+- [Pumped words lie in a language containing x y* z](mem-of-pumping-language-le.md)
+- [Least pumping length of a regular language](pumping-length.md)
+- [The least pumping length is a pumping length](pumping-length-spec.md)
+- [Nothing below the least pumping length is a pumping length](not-is-pumping-length-of-lt.md)
+- [The least pumping length is zero exactly for the empty language](pumping-length-eq-zero-iff.md)
+- [The pumping lemma for regular languages](pumping.md)
+- [The pumping criterion for non-regularity](not-is-regular-of-pumping.md)
+- [Non-regularity from one fixed pumping exponent per length](not-is-regular-of-fixed-pump.md)
+- [Non-regularity by deleting the middle part](not-is-regular-of-pump-zero.md)

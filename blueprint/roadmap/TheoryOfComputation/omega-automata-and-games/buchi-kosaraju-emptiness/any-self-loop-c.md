@@ -1,0 +1,3 @@
+# Self-loop scan with entry counting
+
+A directed graph is given by a duplicate-free list of all its vertices and, for each vertex, a list of its successors (its adjacency list); there is an edge from $s$ to $t$ when $t$ occurs in the adjacency list of $s$. The vertex type has decidable equality. The costed self-loop scan of a block returns a Boolean and a count of examined adjacency entries, by recursion on the block: the empty block gives false with count $0$; for a block starting with $s$, it searches the adjacency list of $s$ for $s$ itself, stopping at the first match and counting the entries examined; if $s$ is found the result is true with that count, and otherwise the result is that of the rest of the block with the count added.
