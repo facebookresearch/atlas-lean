@@ -33,4 +33,4 @@ where the first inequality uses that no deterministic stationary policy beats th
 
 ## Sources
 
-- A. Agarwal, S. Kakade and L. F. Yang, "Model-Based Reinforcement Learning with a Generative Model is Minimax Optimal", *Proceedings of the Thirty Third Conference on Learning Theory*, PMLR 125 (2020), 67–83, [proceedings.mlr.press](https://proceedings.mlr.press/v125/agarwal20b.html): Section 4.2 (definition of $M_{s,u}$ and $\hat M_{s,u}$), Lemma 7 (independence and Bernstein bound), Lemma 8 and Lemma 9 with their proofs.
+- A. Agarwal, S. Kakade and L. F. Yang, "Model-Based Reinforcement Learning with a Generative Model is Minimax Optimal", *Proceedings of the Thirty Third Conference on Learning Theory*, PMLR 125 (2020), 67–83, [proceedings.mlr.press](https://proceedings.mlr.press/v125/agarwal20b.html): Section 4.2 (definition of $M_{s,u}$ and $\hat M_{s,u}$), Lemma 7 (independence and Bernstein bound), Lemma 8 and Lemma 9 with their proofs; Lemmas 8 and 9 are stated there for all stationary policies, stochastic ones included, of which the deterministic case here is a special case.

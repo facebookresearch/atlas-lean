@@ -30,5 +30,5 @@ where the last step writes $(I - \gamma P^\pi)^{-1} = ((1-\gamma)(I - \gamma P^\
 
 ## Sources
 
-- A. Agarwal, S. Kakade and L. F. Yang, "Model-Based Reinforcement Learning with a Generative Model is Minimax Optimal", *Proceedings of the Thirty Third Conference on Learning Theory*, PMLR 125 (2020), 67–83, [proceedings.mlr.press](https://proceedings.mlr.press/v125/agarwal20b.html): Lemma 2 and Lemma 5 (Sections 4 and 4.1), with the proof of Lemma 5 in the appendix.
-- M. G. Azar, R. Munos and H. J. Kappen, "Minimax PAC bounds on the sample complexity of reinforcement learning with a generative model", *Machine Learning* 91 (2013), 325–349, doi:10.1007/s10994-013-5368-1: Lemma 8, equations (18)–(21) (pp. 337–338).
+- A. Agarwal, S. Kakade and L. F. Yang, "Model-Based Reinforcement Learning with a Generative Model is Minimax Optimal", *Proceedings of the Thirty Third Conference on Learning Theory*, PMLR 125 (2020), 67–83, [proceedings.mlr.press](https://proceedings.mlr.press/v125/agarwal20b.html): Lemma 2 and Lemma 5 (Sections 4 and 4.1), with the proof of Lemma 5 in the appendix; they state Lemma 5 for stochastic stationary policies, of which the deterministic case here is a special case, and cite Lemmas 2 and 5 as Lemma 7 of Azar, Munos and Kappen.
+- M. G. Azar, R. Munos and H. J. Kappen, "Minimax PAC bounds on the sample complexity of reinforcement learning with a generative model", *Machine Learning* 91 (2013), 325–349, doi:10.1007/s10994-013-5368-1: Lemma 8, equations (18)–(21) (pp. 337–338), numbered as in the journal version.

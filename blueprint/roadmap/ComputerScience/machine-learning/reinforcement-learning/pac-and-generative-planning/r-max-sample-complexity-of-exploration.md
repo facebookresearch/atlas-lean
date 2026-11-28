@@ -1,6 +1,6 @@
 # Sample complexity of exploration of R-max
 
-With an optimistic initial value $U \ge Q^*$ bounded by $V_{\max}$, R-max in a discounted MDP is $\varepsilon$-optimal on all but $\tilde O(|\{(s,a) : U(s,a) \ge V^*(s) - \varepsilon\}|\, S\, V_{\max}^3/(\varepsilon^3(1-\gamma)^3))$ steps, which is $\tilde O(S^2 A/(\varepsilon^3(1-\gamma)^6))$ when $U \equiv 1/(1-\gamma)$.
+With an optimistic initial value $U \ge Q^*$ bounded by $V_{\max}$, R-max with suitable inputs in a discounted MDP is, with probability $1-\delta$, $\varepsilon$-optimal on all but $\tilde O(|\{(s,a) : U(s,a) \ge V^*(s) - \varepsilon\}|\, S\, V_{\max}^3/(\varepsilon^3(1-\gamma)^3))$ steps, which is $\tilde O(S^2 A/(\varepsilon^3(1-\gamma)^6))$ when $U \equiv 1/(1-\gamma)$.
 
 **Setting.** Let $M = \langle S, A, T, R, \gamma\rangle$ be a finite MDP with reward distributions in $[0, 1]$ and $0 \le \gamma < 1$, and let $U$ be an admissible heuristic: $Q^*(s, a) \le U(s, a) \le V_{\max} \le 1/(1-\gamma)$ for all pairs. R-max with inputs $m$ (a visit threshold) and $\varepsilon_1$ (a planning accuracy) counts the experiences $n(s, a)$ of each pair, capped at $m$, and keeps the empirical mean reward $\hat R(s, a)$ and empirical next-state distribution $\hat T(\cdot \mid s, a)$ of the first $m$ experiences. Its action values approximately solve, to accuracy $\varepsilon_1$ by value iteration,
 

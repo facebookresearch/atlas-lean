@@ -16,13 +16,19 @@ The initialization matters: the iteration count rests on the contraction bound $
 
 - [Generative model of an MDP](generative-model-of-an-mdp.md)
 - [Q-value of an action](../../../heuristic-search-and-planning/value-iteration/q-value.md)
+- [Optimal value of a discounted Markov decision process](../../../heuristic-search-and-planning/value-iteration/optimal-value.md)
+- [Value of a policy](../../../heuristic-search-and-planning/value-iteration/policy-value.md)
+- [Policy iteration](../../../heuristic-search-and-planning/policy-iteration/policy-iteration.md)
 
 ## Proof depends on
 
 - [Bellman equation for the return variance](bellman-equation-for-the-return-variance.md)
 - [Total-variance bound](total-variance-bound.md)
-- [Bennett's one-step moment generating function bound](../../../../Probability/concentration-inequalities/adaptive-martingale-tail-bounds/bennett-one-step-mgf-bound.md)
-- [Bennett's inequality and its Bernstein relaxation](../../../../Probability/concentration-inequalities/adaptive-martingale-tail-bounds/bennett-inequality.md)
+- [Bernstein's bound on the moment generating function of a bounded variable](../../../../Probability/concentration-inequalities/sub-exponential-variables-and-bernstein-s-inequa/mgf-le-of-abs-le.md)
+- [Sums of independent sub-exponential variables](../../../../Probability/concentration-inequalities/sub-exponential-variables-and-bernstein-s-inequa/sum-of-i-indep-fun.md)
+- [Sub-exponential tail bound, Gaussian regime](../../../../Probability/concentration-inequalities/sub-exponential-variables-and-bernstein-s-inequa/measure-real-ge-le-of-le.md)
+- [Sub-exponential tail bound, exponential regime](../../../../Probability/concentration-inequalities/sub-exponential-variables-and-bernstein-s-inequa/measure-real-ge-le-of-ge.md)
+- [Negation of a sub-exponential variable](../../../../Probability/concentration-inequalities/sub-exponential-variables-and-bernstein-s-inequa/neg.md)
 - [Two-sided Hoeffding inequality for averages of bounded variables](../../../../Probability/concentration-inequalities/hoeffding-s-inequality/measure-real-abs-avg-sub-ge-le.md)
 - [Bellman's operator is a contraction](../../../heuristic-search-and-planning/value-iteration/bellman-contracting.md)
 - [Simulation lemma](../simulation-lemma/stoch-value-sub-stoch-value-eq.md)
@@ -34,7 +40,7 @@ The error splits as $\|Q^* - Q_k\|_\infty \le \|Q^* - \hat Q^*\|_\infty + \gamma
 
 $$\gamma(I - \gamma\hat P^{\hat\pi^*})^{-1}(P - \hat P)V^* \le Q^* - \hat Q^* \le \gamma(I - \gamma\hat P^{\pi^*})^{-1}(P - \hat P)V^*,$$
 
-with $\pi^*$ and $\hat\pi^*$ optimal in the true and the empirical model; both sides come from the simulation-lemma identity together with $\hat Q^* \ge \hat Q^{\pi^*}$ and the greediness of $\pi^*$. Bernstein's inequality for the average of $n$ independent bounded samples (Bennett's inequality in its Bernstein form) bounds $|(P - \hat P)V^*|$ by $\sqrt{2\log(N/\delta)\mathrm{Var}_P(V^*)/n}$ plus a term of order $\beta\log(N/\delta)/n$; Hoeffding's inequality shows the empirical variances of the relevant value functions are close to the true ones, and the total-variance bound turns $(I - \gamma P^\pi)^{-1}\sqrt{\sigma_{V^\pi}}$ into $O(\beta^{3/2})$ instead of $O(\beta^2)$. Hence $\|Q^* - \hat Q^*\|_\infty = O(\sqrt{\beta^3\log(N/\delta)/n})$ plus lower-order terms, and solving for $n$ gives the budget. The crude bound via Hoeffding alone loses a factor $\beta$ in the budget. A matching lower bound shows the rate is minimax for estimating $Q^*$.
+with $\pi^*$ and $\hat\pi^*$ optimal in the true and the empirical model; both sides come from the simulation-lemma identity together with $\hat Q^* \ge \hat Q^{\pi^*}$ and the greediness of $\pi^*$. The source's Bernstein step bounds $|(P - \hat P)V^*|$ by $\sqrt{2\log(N/\delta)\mathrm{Var}_P(V^*)/n}$ plus a term of order $\beta\log(N/\delta)/n$. In the graph the bound comes from a sub-exponential chain: centered samples bounded by $b$ with variance at most $\sigma^2$ are sub-exponential with parameters $(\sqrt2\sigma, 2b)$ by Bernstein's bound on the moment generating function (for $2b|t| < 1$ the factor $1/(1 - b|t|)$ is at most $2$), a sum of $n$ independent ones is sub-exponential with parameters $(\sqrt{2n}\sigma, 2b)$, and the two tail regimes, applied to the sum and to its negation, give for the average $\bar X$ and every $\ell > 0$ the one-sided bounds $\Pr(\pm\bar X \ge 2\sigma\sqrt{\ell/n} + 4b\ell/n) \le e^{-\ell}$. With $b = \beta$ and $\ell$ of order $\log(N/\delta)$ this is the source's bound with different absolute constants, which the theorem leaves unspecified; Hoeffding's inequality shows the empirical variances of the relevant value functions are close to the true ones, and the total-variance bound turns $(I - \gamma P^\pi)^{-1}\sqrt{\sigma_{V^\pi}}$ into $O(\beta^{3/2})$ instead of $O(\beta^2)$. Hence $\|Q^* - \hat Q^*\|_\infty = O(\sqrt{\beta^3\log(N/\delta)/n})$ plus lower-order terms, and solving for $n$ gives the budget. The crude bound via Hoeffding alone loses a factor $\beta$ in the budget. A matching lower bound shows the rate is minimax for estimating $Q^*$.
 
 ## Sources
 

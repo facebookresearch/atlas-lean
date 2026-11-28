@@ -19,19 +19,23 @@ The source states the result as "there exists an algorithm" after fixing $M$; it
 - [Generative model of an MDP](generative-model-of-an-mdp.md)
 - [Bellman operator of a policy](../../../heuristic-search-and-planning/value-iteration/policy-bellman.md)
 - [Value of a policy](../../../heuristic-search-and-planning/value-iteration/policy-value.md)
+- [Optimal value of a discounted Markov decision process](../../../heuristic-search-and-planning/value-iteration/optimal-value.md)
 
 ## Proof depends on
 
 - [Total-variance bound](total-variance-bound.md)
 - [A policy's Bellman operator is monotone](../../../heuristic-search-and-planning/value-iteration/policy-bellman-mono.md)
 - [A policy's Bellman operator is a contraction](../../../heuristic-search-and-planning/value-iteration/policy-bellman-contracting.md)
-- [Bennett's one-step moment generating function bound](../../../../Probability/concentration-inequalities/adaptive-martingale-tail-bounds/bennett-one-step-mgf-bound.md)
-- [Bennett's inequality and its Bernstein relaxation](../../../../Probability/concentration-inequalities/adaptive-martingale-tail-bounds/bennett-inequality.md)
+- [Bernstein's bound on the moment generating function of a bounded variable](../../../../Probability/concentration-inequalities/sub-exponential-variables-and-bernstein-s-inequa/mgf-le-of-abs-le.md)
+- [Sums of independent sub-exponential variables](../../../../Probability/concentration-inequalities/sub-exponential-variables-and-bernstein-s-inequa/sum-of-i-indep-fun.md)
+- [Sub-exponential tail bound, Gaussian regime](../../../../Probability/concentration-inequalities/sub-exponential-variables-and-bernstein-s-inequa/measure-real-ge-le-of-le.md)
+- [Sub-exponential tail bound, exponential regime](../../../../Probability/concentration-inequalities/sub-exponential-variables-and-bernstein-s-inequa/measure-real-ge-le-of-ge.md)
+- [Negation of a sub-exponential variable](../../../../Probability/concentration-inequalities/sub-exponential-variables-and-bernstein-s-inequa/neg.md)
 - [Two-sided Hoeffding inequality for averages of bounded variables](../../../../Probability/concentration-inequalities/hoeffding-s-inequality/measure-real-abs-avg-sub-ge-le.md)
 
 ## Expansion
 
-Three ideas combine. *Monotonicity:* keeping $v^{(i)} \le \mathcal T_{\pi^{(i)}}v^{(i)}$ gives $v^{(i)} \le V^{\pi^{(i)}}$, so a $u$-accurate value yields a $u$-optimal policy without the usual loss of a factor $1/(1-\gamma)$; the one-sided (downward shifted) estimates preserve it with high probability. *Variance reduction:* $Pv^{(0)}$ is estimated once to high accuracy, while each round only needs $P(v^{(i)} - v^{(0)})$ with $\|v^{(i)} - v^{(0)}\|_\infty = O(u)$, which costs $\tilde O((1-\gamma)^{-2})$ samples per pair independently of $u$. *Total variance:* the per-round errors are of order $\sqrt{\mathrm{Var}_P(V^*)/m_1}$, and their accumulation $(I - \gamma P^{\pi^*})^{-1}\sqrt{\mathrm{Var}_P(V^*)}$ is $O((1-\gamma)^{-3/2})$ rather than $O((1-\gamma)^{-2})$, which removes the last factor $1/(1-\gamma)$. Bernstein's bound for averages of independent bounded samples (from Bennett's inequality) and Hoeffding's inequality control the empirical means and variances, and each halving round succeeds with probability $1-\delta$ in time $O((u^{-2} + \log(1/((1-\gamma)u)))\,|S||A|\log(|S||A|/\delta)/(1-\gamma)^3)$.
+Three ideas combine. *Monotonicity:* keeping $v^{(i)} \le \mathcal T_{\pi^{(i)}}v^{(i)}$ gives $v^{(i)} \le V^{\pi^{(i)}}$, so a $u$-accurate value yields a $u$-optimal policy without the usual loss of a factor $1/(1-\gamma)$; the one-sided (downward shifted) estimates preserve it with high probability. *Variance reduction:* $Pv^{(0)}$ is estimated once to high accuracy, while each round only needs $P(v^{(i)} - v^{(0)})$ with $\|v^{(i)} - v^{(0)}\|_\infty = O(u)$, which costs $\tilde O((1-\gamma)^{-2})$ samples per pair independently of $u$. *Total variance:* the per-round errors are of order $\sqrt{\mathrm{Var}_P(V^*)/m_1}$, and their accumulation $(I - \gamma P^{\pi^*})^{-1}\sqrt{\mathrm{Var}_P(V^*)}$ is $O((1-\gamma)^{-3/2})$ rather than $O((1-\gamma)^{-2})$, which removes the last factor $1/(1-\gamma)$. Bernstein-type bounds for averages of independent bounded samples and Hoeffding's inequality control the empirical means and variances. The source uses Bernstein's inequality with its sharp constants; in the graph the bound comes from a sub-exponential chain: centered samples bounded by $b$ with variance at most $\sigma^2$ are sub-exponential with parameters $(\sqrt2\sigma, 2b)$ by Bernstein's bound on the moment generating function (for $2b|t| < 1$ the factor $1/(1 - b|t|)$ is at most $2$), a sum of $n$ independent ones is sub-exponential with parameters $(\sqrt{2n}\sigma, 2b)$, and the two tail regimes, applied to the sum and to its negation, give for the average $\bar X$ and every $\ell > 0$ the one-sided bounds $\Pr(\pm\bar X \ge 2\sigma\sqrt{\ell/n} + 4b\ell/n) \le e^{-\ell}$, which changes only the absolute constants in $m_1$, $m_2$ and the confidence widths. Each halving round then succeeds with probability $1-\delta$ in time $O((u^{-2} + \log(1/((1-\gamma)u)))\,|S||A|\log(|S||A|/\delta)/(1-\gamma)^3)$.
 
 ## Sources
 

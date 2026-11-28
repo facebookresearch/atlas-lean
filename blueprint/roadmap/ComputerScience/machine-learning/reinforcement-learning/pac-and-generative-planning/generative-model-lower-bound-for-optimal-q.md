@@ -1,6 +1,6 @@
 # Lower bound for estimating optimal action values
 
-For discount factors $\gamma \in [0.4, 1)$, every algorithm that estimates the optimal action-value function to sup-norm accuracy $\varepsilon$ with probability $1-\delta$ on a suitable class of MDPs with $N$ state-action pairs needs at least of order $N(1-\gamma)^{-3}\varepsilon^{-2}\log(N/\delta)$ transition samples, matching model-based Q-value iteration.
+For discount factors $\gamma \in [0.4, 1)$ and all sufficiently small $\varepsilon$ and $\delta$, every algorithm that estimates the optimal action-value function to sup-norm accuracy $\varepsilon$ with probability $1-\delta$ on a suitable class of MDPs with $N$ state-action pairs needs at least of order $N(1-\gamma)^{-3}\varepsilon^{-2}\log(N/\delta)$ transition samples, matching model-based Q-value iteration.
 
 **Setting.** Discounted MDPs with finite state and action sets, $N$ state-action pairs, deterministic rewards in $[0, 1]$, discount $\gamma$ with $0.4 \le \gamma < 1$, and $\beta = 1/(1-\gamma)$. An algorithm $\mathcal A$ observes state-transition samples and outputs $Q^{\mathcal A} : S \times A \to \mathbb R$; it is $(\varepsilon, \delta)$-correct on a class $\mathcal M$ of MDPs if $\|Q^* - Q^{\mathcal A}\|_\infty \le \varepsilon$ with probability at least $1-\delta$ for every $M \in \mathcal M$.
 
@@ -14,6 +14,7 @@ The authors note that the argument does not depend on how samples are collected,
 
 - [Generative model of an MDP](generative-model-of-an-mdp.md)
 - [Q-value of an action](../../../heuristic-search-and-planning/value-iteration/q-value.md)
+- [Optimal value of a discounted Markov decision process](../../../heuristic-search-and-planning/value-iteration/optimal-value.md)
 
 ## Proof depends on
 

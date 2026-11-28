@@ -8,7 +8,7 @@ Let $M = (S, A, P, r, \gamma)$ be a discounted MDP with finite state and action 
 
 **Uniform sampling.** For an integer $N \ge 1$, calling the oracle $N$ times at every pair produces states $s^1_{s,a}, \dots, s^N_{s,a}$ for each $(s, a)$, using $N|S||A|$ calls in total. The family $(s^i_{s,a})_{(s,a) \in S \times A,\ 1 \le i \le N}$ is independent, and each $s^i_{s,a}$ has law $P(\cdot \mid s, a)$.
 
-When the rewards are not known in advance, the source definition also returns a reward with each sample; the pages of this topic take $r$ known and deterministic, as their sources do. Model-based methods plug the samples into the empirical MDP $\hat M$, which keeps the rewards and the discount of $M$ and replaces each transition row by the empirical frequencies of its $N$ samples, $\hat P(s' \mid s, a) = \frac1N\sum_{i=1}^N \mathbf 1\{s^i_{s,a} = s'\}$; with $N \ge 1$ its rows are probability distributions.
+When the rewards are not known in advance, the source definition also returns a reward with each sample; the planning pages of this topic take $r$ known and deterministic, as their sources do. Model-based methods plug the samples into the empirical MDP $\hat M$, which keeps the rewards and the discount of $M$ and replaces each transition row by the empirical frequencies of its $N$ samples, $\hat P(s' \mid s, a) = \frac1N\sum_{i=1}^N \mathbf 1\{s^i_{s,a} = s'\}$; with $N \ge 1$ its rows are probability distributions.
 
 ## Depends on
 

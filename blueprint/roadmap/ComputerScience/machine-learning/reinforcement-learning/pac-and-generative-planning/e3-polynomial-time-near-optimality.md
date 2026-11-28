@@ -15,6 +15,7 @@ The source's proof constructs $A$ from the E3 algorithm, with a known-state visi
 
 - [Explicit Explore or Exploit algorithm](explicit-explore-or-exploit-algorithm.md)
 - [Epsilon-return mixing time](epsilon-return-mixing-time.md)
+- [Optimal value of a discounted Markov decision process](../../../heuristic-search-and-planning/value-iteration/optimal-value.md)
 
 ## Proof depends on
 
