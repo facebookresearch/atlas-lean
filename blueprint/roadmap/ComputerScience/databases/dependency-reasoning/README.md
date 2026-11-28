@@ -10,3 +10,6 @@
 - [Inference rules for multivalued dependencies alone are sound and complete](mvd-inference-rules-are-sound-and-complete.md)
 - [The chase for functional and inclusion dependencies](chase-for-functional-and-inclusion-dependencies/README.md)
 - [Guarded tuple-generating dependencies](guarded-tgds/README.md)
+- [Chase termination](chase-termination/README.md)
+- [Conjunctive query entailment over quad-systems with bridge rules is undecidable](ccq-entailment-over-quad-systems-undecidable.md)
+- [Conservative extensions for linear and guarded tgds are undecidable](conservative-extensions-for-linear-tgds-undecidable.md)

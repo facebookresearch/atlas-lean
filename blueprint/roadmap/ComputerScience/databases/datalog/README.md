@@ -21,3 +21,6 @@
 - [Semi-naive evaluation is correct](semi-naive-evaluation-is-correct.md)
 - [Magic-set rewriting of Datalog queries is correct](magic-set-rewriting-is-correct.md)
 - [Polynomial data complexity of stratified Datalog with negation](remaining-clauses-of-stratified-datalog-with-negation.md)
+- [Answer set programming](answer-set-programming/README.md)
+- [Temporal datalog](temporal-datalog/README.md)
+- [Undecidable properties of datalog programs](undecidable-properties-of-datalog-programs/README.md)
