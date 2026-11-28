@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Topology.Algebra.InfiniteSum.Defs
+import all MathlibExt.NumberTheory.Recurrences.BrousseauFibonacciReciprocal
 import all MathlibExt.NumberTheory.SanfordSymmetricSeries
 
 /-!
@@ -31,6 +32,8 @@ shift would make both sides vanish; the statement uses positive natural shifts.
   `step_mem`, `mul_mem`, `L_nonneg`, `L_continuousOn`, and `L_zero` in the namespace
   `rogersDilog_sanford_symmetric_series`. The passage from finite sums to `HasSum` adapts
   `hasSum_products` in that namespace.
+* `MathlibExt.NumberTheory.Recurrences.BrousseauFibonacciReciprocal` supplies
+  `MetaMathlibExt.partial_telescope` for the two finite shifted sums.
 -/
 
 open Filter Real Set
@@ -110,18 +113,11 @@ public theorem rogersDilog_hoorfarQi_series {p q : ℕ} (hp : 0 < p) (hq : 0 < q
     rw [(hstep (hz n)).1, (hstep (hz n)).2, hzb, hza] at h
     change U n + V n = S n + U (n + q) + V (n + p) at h
     linarith
-  have telescope (f : ℕ → ℝ) (N k : ℕ) :
-      (∑ n ∈ Finset.range N, (f n - f (n + k))) =
-        (∑ n ∈ Finset.range k, f n) - ∑ n ∈ Finset.range k, f (N + n) := by
-    rw [Finset.sum_sub_distrib]
-    have h := Finset.sum_range_add f k N
-    rw [Nat.add_comm k N, Finset.sum_range_add f N k] at h
-    simp only [Nat.add_comm k] at h
-    linarith
   have hpartial (N : ℕ) : ∑ n ∈ Finset.range N, S n =
       ((∑ n ∈ Finset.range q, U n) - ∑ n ∈ Finset.range q, U (N + n)) +
         ((∑ n ∈ Finset.range p, V n) - ∑ n ∈ Finset.range p, V (N + n)) := by
-    simp only [hterm, Finset.sum_add_distrib, telescope]
+    simp only [hterm, Finset.sum_add_distrib, MetaMathlibExt.partial_telescope U q N,
+      MetaMathlibExt.partial_telescope V p N]
   have hzlim : Tendsto z atTop (𝓝 0) := by
     simpa only [z, mul_zero] using
       (tendsto_pow_atTop_nhds_zero_of_lt_one hθ₀.le hθ₁).const_mul β
