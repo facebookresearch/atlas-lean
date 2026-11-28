@@ -42,8 +42,9 @@ section adom
 variable [Fintype A] [DecidableEq D]
 
 /-- **Active domain of a set of tuples.** For a finite set $r$ of tuples of the relational
-algebra (partial assignments of values to attributes), the active domain of $r$ is the set of
-values that some tuple of $r$ takes at some attribute. -/
+algebra (partial assignments of values to attributes) over a finite attribute type, with
+decidable value equality (the definition enumerates all attributes), the active domain of $r$
+is the set of values that some tuple of $r$ takes at some attribute. -/
 def adom (r : Finset (Tuple A D)) : Finset D :=
   r.biUnion fun t => Finset.univ.biUnion fun a => (t a).toFinset
 
@@ -61,8 +62,9 @@ private theorem adom_mono {r s : Finset (Tuple A D)} (h : r ⊆ s) : adom r ⊆ 
 end adom
 
 /-- **Active domain of a relational-algebra database.** For a database $\mathrm{db}$ assigning a
-finite set of tuples to each of finitely many relation names, the active domain of
-$\mathrm{db}$ is the union of the active domains of the sets $\mathrm{db}(n)$. -/
+finite set of tuples to each of finitely many relation names over a finite attribute type, with
+decidable value equality, the active domain of $\mathrm{db}$ is the union of the active domains
+of the sets $\mathrm{db}(n)$. -/
 def adomDB [Fintype N] [Fintype A] [DecidableEq D] (db : N → Finset (Tuple A D)) : Finset D :=
   Finset.univ.biUnion fun n => adom (db n)
 
@@ -72,7 +74,10 @@ theorem mem_adomDB [Fintype N] [Fintype A] [DecidableEq D] {db : N → Finset (T
   simp only [adomDB, Finset.mem_biUnion, Finset.mem_univ, true_and, mem_adom]
 
 /-- **Queries create no values.** For every database `db` (conforming or not) and every query
-`e`, every value in the result already occurs in `db`. The source's bound also allows the
+`e`, every value in the result already occurs in `db`. Both the relation-name type and the
+attribute type are finite, and attribute and value equality are decidable; each individual
+relation being a finite set would not by itself bound the values across infinitely many names
+or attributes. The source's bound also allows the
 constants of the query; here they contribute nothing, because constants occur only in selection
 conditions, which filter tuples, and no constructor of `Expr` builds a tuple from a constant.
 

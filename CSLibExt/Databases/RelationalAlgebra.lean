@@ -699,7 +699,8 @@ theorem project_project {sch : N → Finset A} {e : Expr N A D} {S T T' : Finset
     fun _ _ => project_project_of_subset hT _⟩
 
 /-- **Selections commute as a query rewrite.** Fix a database schema $\mathrm{sch}$ assigning a
-finite set of attributes to each base relation name. Let $e$ be a well-formed query with schema
+finite set of attributes to each base relation name. The attribute type is finite, and attribute
+and value equality are decidable. Let $e$ be a well-formed query with schema
 $S$, and let $c$ and $c'$ be selection conditions all of whose attributes lie in $S$. Then the
 query $\sigma_c(\sigma_{c'}(e))$ is equivalent to the query $\sigma_{c'}(\sigma_c(e))$: both are
 well-formed with the same schema, and they have equal values on every database conforming to
@@ -712,7 +713,8 @@ theorem select_comm {sch : N → Finset A} {e : Expr N A D} {S : Finset A}
   exact Databases.select_comm _ _ _
 
 /-- **Selection distributes over union as a query rewrite.** Fix a database schema
-$\mathrm{sch}$ assigning a finite set of attributes to each base relation name. Let $e$ and $e'$
+$\mathrm{sch}$ assigning a finite set of attributes to each base relation name. The attribute
+type is finite, and attribute and value equality are decidable. Let $e$ and $e'$
 be well-formed queries with the same schema $S$, and let $c$ be a selection condition all of whose
 attributes lie in $S$. Then the query $\sigma_c(e \cup e')$ is equivalent to the query
 $\sigma_c(e) \cup \sigma_c(e')$: both are well-formed with the same schema, and they have equal
@@ -726,7 +728,8 @@ theorem select_union {sch : N → Finset A} {e e' : Expr N A D} {S : Finset A}
   exact Databases.select_union _ _ _
 
 /-- **Selection distributes over difference as a query rewrite.** Fix a database schema
-$\mathrm{sch}$ assigning a finite set of attributes to each base relation name. Let $e$ and $e'$
+$\mathrm{sch}$ assigning a finite set of attributes to each base relation name. The attribute
+type is finite, and attribute and value equality are decidable. Let $e$ and $e'$
 be well-formed queries with the same schema $S$, and let $c$ be a selection condition all of whose
 attributes lie in $S$. Then the query $\sigma_c(e \setminus e')$ is equivalent to the query
 $\sigma_c(e) \setminus \sigma_c(e')$: both are well-formed with the same schema, and they have
@@ -740,7 +743,8 @@ theorem select_diff {sch : N → Finset A} {e e' : Expr N A D} {S : Finset A}
   exact select_sdiff _ _ _
 
 /-- **Projection distributes over union as a query rewrite.** Fix a database schema
-$\mathrm{sch}$ assigning a finite set of attributes to each base relation name. Let $e$ and $e'$
+$\mathrm{sch}$ assigning a finite set of attributes to each base relation name. The attribute
+type is finite, and attribute and value equality are decidable. Let $e$ and $e'$
 be well-formed queries with the same schema $S$, and let $T \subseteq S$. Then the query
 $\pi_T(e \cup e')$ is equivalent to the query $\pi_T(e) \cup \pi_T(e')$: both are well-formed
 with the same schema, and they have equal values on every database conforming to
@@ -753,7 +757,8 @@ theorem project_union {sch : N → Finset A} {e e' : Expr N A D} {S T : Finset A
   exact Databases.project_union _ _ _
 
 /-- **Selection commutes with projection as a query rewrite.** Fix a database schema
-$\mathrm{sch}$ assigning a finite set of attributes to each base relation name. Let $e$ be a
+$\mathrm{sch}$ assigning a finite set of attributes to each base relation name. The attribute
+type is finite, and attribute and value equality are decidable. Let $e$ be a
 well-formed query with schema $S$, let $T \subseteq S$, and let $c$ be a selection condition all
 of whose attributes lie in $T$, so the projection keeps them. Then the query
 $\sigma_c(\pi_T(e))$ is equivalent to the query $\pi_T(\sigma_c(e))$: both are well-formed with
@@ -766,7 +771,8 @@ theorem select_project {sch : N → Finset A} {e : Expr N A D} {S T : Finset A}
   exact Databases.select_project _ _ hc
 
 /-- **Selection pushdown into the right operand of a join, as a query rewrite.** Fix a database
-schema $\mathrm{sch}$ assigning a finite set of attributes to each base relation name. Let $e$
+schema $\mathrm{sch}$ assigning a finite set of attributes to each base relation name. The
+attribute type is finite, and attribute and value equality are decidable. Let $e$
 and $e'$ be well-formed queries with schemas $S$ and $S'$, and let $c$ be a selection condition
 all of whose attributes lie in $S'$. Then the query $\sigma_c(e \bowtie e')$, the selection by
 $c$ of the natural join of $e$ and $e'$, is equivalent to the query $e \bowtie \sigma_c(e')$:

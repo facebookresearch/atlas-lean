@@ -90,8 +90,8 @@ example : (9 : ℕ) ∈ adomDB db ∧ (10 : ℕ) ∉ adomDB db := by
 
 /-- Selecting on a literal absent from the database: the result, and so its active domain, is
 empty. The constant `10` does not leak into the output. -/
-example : adom ((Expr.select (.eqConst 1 10) (.rel 1) :
-    Expr (Fin 3) (Fin 4) ℕ).eval db) = ∅ := by
+example : (Expr.select (.eqConst 1 10) (.rel 1) : Expr (Fin 3) (Fin 4) ℕ).eval db = ∅ ∧
+adom ((Expr.select (.eqConst 1 10) (.rel 1) : Expr (Fin 3) (Fin 4) ℕ).eval db) = ∅ := by
   decide
 
 /-- `adom_eval_subset` applied to a query (apply the theorem, not `decide`). -/
