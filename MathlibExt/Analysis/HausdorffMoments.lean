@@ -164,40 +164,53 @@ open scoped CompactlySupported
 variable {d : ℕ}
 
 set_option linter.dupNamespace false in
-/-- In function coordinates, the closed unit cube is the interval from the zero vector
-to the vector of ones. -/
+/-- **The unit cube in function coordinates.** Let $u$ send a Euclidean vector to its
+coordinate function. The closed unit cube $I^d = [0,1]^d$ is the preimage
+$u^{-1}([\mathbf{0},\mathbf{1}])$ of the interval in the pointwise order on coordinate
+functions. -/
 lemma cube_eq_preimage_Icc :
     cube d = WithLp.ofLp ⁻¹' Set.Icc (0 : Fin d → ℝ) 1 := by
   ext x
   exact forall_and
 
 set_option linter.dupNamespace false in
-/-- The multivariate monomial evaluates to the product of the coordinate powers. -/
+/-- **Evaluation of a mixed monomial.** For a multi-index $n \in \mathbb{N}^d$ and a vector
+$x \in \mathbb{R}^d$, the monomial $x^n$ evaluates to the product of the coordinate powers
+$\prod_i x_i^{n_i}$. -/
 lemma monomial_apply (n : Fin d → ℕ) (x : EuclideanSpace ℝ (Fin d)) :
     monomial n x = ∏ i, (x i) ^ (n i) := rfl
 
 set_option linter.dupNamespace false in
-/-- The moment of a measure at a multi-index is the integral of its monomial over the cube. -/
+/-- **Mixed moments as cube integrals.** For a measure $\mu$ on $\mathbb{R}^d$ and a multi-index
+$n \in \mathbb{N}^d$, the moment $m_\mu(n)$ is $\int_{[0,1]^d} x^n \, d\mu(x)$, the set
+integral of the corresponding monomial over the closed unit cube. -/
 lemma momentOf_eq_integral (μ : Measure (EuclideanSpace ℝ (Fin d))) (n : Fin d → ℕ) :
     momentOf μ n = ∫ x in cube d, monomial n x ∂μ := rfl
 
 set_option linter.dupNamespace false in
-/-- A positive moment configuration is witnessed by a finite measure with the prescribed moments
-on the cube. -/
+/-- **Characterization of positive moment configurations.** A real sequence $a$ indexed by
+$\mathbb{N}^d$ is a positive moment configuration if and only if there exists a finite positive
+measure $\mu$ on $\mathbb{R}^d$ with $a_n = m_\mu(n)$ for every multi-index $n$, where
+$m_\mu(n)$ is the moment on the closed unit cube. -/
 lemma isPositiveMomentConfiguration_iff (a : (Fin d → ℕ) → ℝ) :
     IsPositiveMomentConfiguration a ↔
       ∃ μ : Measure (EuclideanSpace ℝ (Fin d)), IsFiniteMeasure μ ∧ ∀ n, a n = momentOf μ n :=
   Iff.rfl
 
 set_option linter.dupNamespace false in
-/-- Backward differences distribute over a constant multiple of one sequence minus another. -/
+/-- **Backward differences of a scaled subtraction.** For real multi-index sequences $a,b$,
+a scalar $c \in \mathbb{R}$, and multi-indices $k,n$, the backward difference of $ca-b$ is
+$(\Delta^k(ca-b))_n = c(\Delta^k a)_n - (\Delta^k b)_n$. Indices in the defining sums use
+coordinatewise truncated subtraction in $\mathbb{N}$. -/
 lemma diff_const_mul_sub (c : ℝ) (a b : (Fin d → ℕ) → ℝ) (k n : Fin d → ℕ) :
     diff (fun j => c * a j - b j) k n = c * diff a k n - diff b k n := by
   simp only [diff, Finset.mul_sum, ← Finset.sum_sub_distrib]
   exact Finset.sum_congr rfl fun j _ => by ring
 
 set_option linter.dupNamespace false in
-/-- The backward difference of order zero at the origin is the value at the origin. -/
+/-- **The zeroth backward difference at the origin.** For every real sequence $a$ indexed by
+$\mathbb{N}^d$, the backward difference of order zero at the zero multi-index is the original
+value: $(\Delta^0 a)_0 = a_0$. -/
 lemma diff_zero_zero (a : (Fin d → ℕ) → ℝ) : diff a 0 0 = a 0 := by
   have hIic : Finset.Iic (0 : Fin d → ℕ) = {0} := Finset.Iic_bot
   have hsub : (0 : Fin d → ℕ) - 0 = 0 := funext fun _ => Nat.sub_zero 0
@@ -213,7 +226,8 @@ private theorem continuous_embedBox : Continuous (embedBox (d := d)) :=
     (continuous_apply i))
 
 set_option linter.dupNamespace false in
-/-- The closed unit cube is compact. -/
+/-- **Compactness of the closed unit cube.** For every natural number $d$, the closed unit cube
+$I^d = [0,1]^d$ is compact in Euclidean space $\mathbb{R}^d$. -/
 lemma isCompact_cube : IsCompact (cube d) := by
   have heq : cube d = Set.range (embedBox (d := d)) := by
     ext x
@@ -226,7 +240,8 @@ lemma isCompact_cube : IsCompact (cube d) := by
   exact isCompact_range continuous_embedBox
 
 set_option linter.dupNamespace false in
-/-- Every multivariate monomial is continuous on Euclidean space. -/
+/-- **Continuity of multivariate monomials.** For every multi-index $n \in \mathbb{N}^d$,
+the map $x \mapsto \prod_i x_i^{n_i}$ is continuous on Euclidean space $\mathbb{R}^d$. -/
 lemma continuous_monomial (n : Fin d → ℕ) : Continuous (monomial n) :=
   continuous_finsetProd _ fun i _ => (PiLp.continuous_apply 2 _ i).pow _
 

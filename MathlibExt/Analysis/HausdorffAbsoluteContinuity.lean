@@ -72,8 +72,9 @@ def UniformlyAbsolutelyContinuous {d : ℕ}
 end
 
 set_option linter.dupNamespace false in
-/-- Uniform absolute continuity is equivalent to domination by a nonnegative multiple of
-the reference measure. -/
+/-- **Uniform absolute continuity and measure domination.** A measure $\mu$ on $\mathbb{R}^d$
+is uniformly absolutely continuous with respect to a measure $\nu$ if and only if there is a
+constant $C \ge 0$ such that $\mu(S) \le C\,\nu(S)$ for every measurable set $S$. -/
 public lemma uniformlyAbsolutelyContinuous_iff {d : ℕ}
     {μ ν : Measure (EuclideanSpace ℝ (Fin d))} :
     UniformlyAbsolutelyContinuous μ ν ↔ ∃ C : ℝ≥0, μ ≤ C • ν :=
