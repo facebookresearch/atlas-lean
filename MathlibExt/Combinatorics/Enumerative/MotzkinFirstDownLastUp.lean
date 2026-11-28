@@ -61,6 +61,7 @@ private theorem good_snoc {n : ℕ} (x : Fin 3) (p : Word n) :
 
 private theorem first_cons {n : ℕ} (x : Fin 3) (p : Word n) :
     FirstNonupStepDown _ (Fin.cons x p) ↔ x = 0 ∨ x = 2 ∧ FirstNonupStepDown n p := by
+  simp only [firstNonupStepDown_iff]
   constructor
   · rintro ⟨i, hi, hj⟩
     cases i using Fin.cases with
@@ -78,6 +79,7 @@ private theorem first_cons {n : ℕ} (x : Fin 3) (p : Word n) :
 
 private theorem last_snoc {n : ℕ} (x : Fin 3) (p : Word n) :
     LastNonflatStepUp _ (Fin.snoc p x) ↔ x = 2 ∨ x = 1 ∧ LastNonflatStepUp n p := by
+  simp only [lastNonflatStepUp_iff]
   constructor
   · rintro ⟨i, hi, hj⟩
     cases i using Fin.lastCases with
@@ -107,7 +109,9 @@ private theorem height_le {n : ℕ} (p : Word n) : motzkinPrefixHeight p n ≤ n
 private theorem height_first {n : ℕ} (p : Word n) (h : FirstNonupStepDown n p) :
     motzkinPrefixHeight p n + 2 ≤ n := by
   induction n with
-  | zero => exact Fin.elim0 h.choose
+  | zero =>
+    obtain ⟨i, _, _⟩ := (firstNonupStepDown_iff 0 p).mp h
+    exact Fin.elim0 i
   | succ n ih =>
     obtain ⟨⟨x, p⟩, rfl⟩ := (Fin.consEquiv (n := n) (fun _ => Fin 3)).surjective p
     change FirstNonupStepDown _ (Fin.cons x p) at h
