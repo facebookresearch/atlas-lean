@@ -40,7 +40,7 @@ operation at a time. QUESTION: is there a schedule whose makespan `max_j C_j` is
 where `C_j` is the completion time of job `j`?
 
 Each job is listed with its processing times `(p_j1, …, p_jm)`, all equal to `1`, as in the
-flow-shop encoding of `FlowShopSchedulingWanted`. Machines are `Fin m` (`M_1, …, M_m` as
+flow-shop encoding of `FlowShopScheduling`. Machines are `Fin m` (`M_1, …, M_m` as
 `0, …, m - 1`) and jobs `Fin n` for `n` listed jobs; the precedence relation is given by its arcs
 `(i, j)` and is the relation they generate (`Relation.TransGen`). A schedule gives each operation
 an integer start time: with unit lengths and integer data, rounding the start times of any

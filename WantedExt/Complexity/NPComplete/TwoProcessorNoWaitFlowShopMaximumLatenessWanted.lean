@@ -47,11 +47,11 @@ This is `F2|no-wait|Lmax` (`n|2|F,no wait|Lmax` in the notation of Lenstra, Rinn
 With the deadline objective in place of `L_max` the two-machine no-wait problem is solvable in
 polynomial time (Gilmore and Gomory 1964; Garey and Johnson, [SS16]). A schedule is given by the
 starting times `s₁ⱼ`, `s₂ⱼ ∈ ℤ₀⁺` of the two operations of job `j`. That each machine handles at
-most one job at a time is read, as in `FlowShopSchedulingWanted`, as non-overlap of the operations
+most one job at a time is read, as in `FlowShopScheduling`, as non-overlap of the operations
 of two distinct jobs on the same machine (`s + p ≤ s'` or `s' + p' ≤ s`). The bound `y` is an
 integer, encoded as a pair `(y⁺, y⁻)` of naturals representing `y⁺ - y⁻`, as in `ZeroOneILPWanted`;
 `Cⱼ - dⱼ ≤ y⁺ - y⁻` is stated over `ℕ` as `Cⱼ + y⁻ ≤ dⱼ + y⁺`. The flow-shop schedule predicates of
-`FlowShopSchedulingWanted` and `NoWaitFlowShopSchedulingWanted` carry the overall deadline in their
+`FlowShopScheduling` and `NoWaitFlowShopSchedulingWanted` carry the overall deadline in their
 instance and schedule conditions, so they do not apply to a lateness objective. Jobs are `Fin n`.
 Binary encoding of all numbers.
 
