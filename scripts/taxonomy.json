@@ -14762,6 +14762,7 @@
   "MathlibExt/Probability/ItoDensity": {"to": "Probability/stochastic-calculus", "title": "Itô integral"},
   "MathlibExt/Probability/ItoFormula": {"to": "Probability/stochastic-calculus", "title": "Itô's formula"},
   "MathlibExt/Probability/ItoIntegral": {"to": "Probability/stochastic-calculus", "title": "Itô integral"},
+  "MathlibExt/Probability/SDE/LipschitzIntegrands": {"to": "Probability/stochastic-calculus", "title": "Lipschitz stochastic integrands"},
   "MathlibExt/Probability/ItoIntegralContinuous": {"to": "Probability/stochastic-calculus", "title": "Itô integral"},
   "MathlibExt/Probability/ItoIntegralProperties": {"to": "Probability/stochastic-calculus", "title": "Itô integral"},
   "MathlibExt/Probability/ItoRiemannSums": {"to": "Probability/stochastic-calculus", "title": "Itô integral"},
