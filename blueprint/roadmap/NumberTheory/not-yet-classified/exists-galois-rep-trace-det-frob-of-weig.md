@@ -47,6 +47,14 @@ and the determinant are asserted for every such $\sigma$ and $\mathfrak{p}$. Irr
 no line of $\mathbb{C}^2$ is stable under every $\rho(\sigma)$, and $f$ is a cusp form when some
 `CuspForm (Gamma1 N) 1` has the same underlying function.
 
+## Informally uses
+
+- [Galois representation of a weight-one Eisenstein eigenform](../algebraic-number-theory/galois-representations/deligne-serre-theorem-on-weight-one-forms/galois-representation-of-a-weight-one-eisenstein-eigenform.md), for an $f$ that is not a cusp form, through its Eisenstein part (Deligne–Serre, §8.1)
+- [Representations modulo ℓ attached to a weight-one cuspidal eigenform](../algebraic-number-theory/galois-representations/deligne-serre-theorem-on-weight-one-forms/representations-mod-l-of-a-weight-one-cuspidal-eigenform.md), for the representations in characteristic $\ell$ of a cusp form $f$ (§8.2)
+- [Uniform bound on the images of the representations modulo ℓ](../algebraic-number-theory/galois-representations/deligne-serre-theorem-on-weight-one-forms/uniform-bound-on-the-images-of-the-representations-mod-l.md), for the bound on their images (§§8.3–8.4)
+- [Galois representation of a weight-one cuspidal eigenform](../algebraic-number-theory/galois-representations/deligne-serre-theorem-on-weight-one-forms/galois-representation-of-a-weight-one-cuspidal-eigenform.md), for the representation of a cusp form $f$ (§§8.5–8.6)
+- [Irreducibility of the Galois representation of a weight-one cusp form](../algebraic-number-theory/galois-representations/deligne-serre-theorem-on-weight-one-forms/irreducibility-of-the-galois-representation-of-a-weight-one-cusp-form.md), for its irreducibility (§8.7)
+
 ## Sources
 
 - P. Deligne and J.-P. Serre, *Formes modulaires de poids 1*, Ann. Sci. École Norm. Sup. (4) 7 (1974), 507–530, [Théorème 4.1 and (4.1.1), pp. 513–514](https://doi.org/10.24033/asens.1277), with modular forms and cusp forms as in §1.2 (p. 508), forms of type $(k, \varepsilon)$ as in §1.5 (p. 509), the operators $T_p$ as in (1.6.1) (p. 509), and linear representations, unramifiedness and the Frobenius substitution as in §3.1 and Remarque 3.3 (pp. 512–513); the footnote to §3.1 (p. 513) fixes Artin's convention for the Frobenius substitution.
