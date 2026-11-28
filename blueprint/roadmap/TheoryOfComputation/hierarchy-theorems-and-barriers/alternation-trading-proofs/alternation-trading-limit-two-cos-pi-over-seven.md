@@ -12,7 +12,7 @@ $$
 c^3 - c^2 - 2c + 1 < 0 .
 $$
 
-Consequently alternation-trading proofs give $\mathrm{SAT} \notin \mathrm{DTS}(n^c)$ for every $c < 2\cos(\pi/7)$, and no such proof gives it for any $c \ge 2\cos(\pi/7)$, in particular not for exponents approaching $2$, as folklore had expected.
+Consequently alternation-trading proofs give $\mathrm{SAT} \notin \mathrm{DTS}(n^c)$ for every $c < 2\cos(\pi/7)$, and no such proof gives it for any $c \ge 2\cos(\pi/7)$, in particular not for exponents approaching $2$, contrary to the folklore conjecture that the method could reach every exponent below $2$.
 
 ## Expansion
 
