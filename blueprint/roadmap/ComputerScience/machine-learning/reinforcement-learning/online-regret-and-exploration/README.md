@@ -1,6 +1,6 @@
 # Online regret and exploration
 
-Learning to act in an unknown finite MDP from the learner's own trajectories: regret in episodic and average-reward settings, optimistic algorithms and the variance techniques behind their sharp bounds, lower bounds (matched up to logarithmic factors in the episodic setting), and reward-free exploration.
+Learning to act in an unknown finite MDP from the learner's own trajectories: regret in episodic and average-reward settings, optimistic algorithms and the variance techniques behind their sharp bounds, lower bounds (matched up to logarithmic factors for episodic regret), and reward-free exploration.
 
 - [Episodic Markov decision process with stage-dependent transitions](episodic-mdp-with-stage-dependent-transitions.md)
 - [Online episodic learning and regret](online-episodic-learning-and-regret.md)
