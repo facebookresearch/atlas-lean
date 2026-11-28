@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Domains.Biology.Ecology.BoundaryESSStabilityTendstoOfPos
+import Domains.Biology.Dynamics.AsymmetricESS
 import Domains.Biology.Dynamics.ReplicatorStability
 import Mathlib.Analysis.Calculus.Deriv.MeanValue
 import Mathlib.Analysis.SpecialFunctions.Log.Deriv
@@ -29,6 +30,8 @@ grow at a uniformly positive rate, despite the frequency being bounded by one.
   40 (2003), no. 4, 479–519, §2.3(d), p. 482; see also §2.1, eq. (2), and §2.2, eq. (3).
 * Peter D. Taylor and Leo B. Jonker, *Evolutionarily stable strategies and game dynamics*,
   Math. Biosci. 40 (1978), 145–156, §3, eq. (2) (credited in §2.2 of the survey).
+* `Domains.Biology.Dynamics.AsymmetricESS` supplies `isMixed_single` and `IsMixed.dotProduct_le`
+  for the pure-reply criterion.
 -/
 
 namespace WantedExt.Biology.Ecology.EvolutionaryFolkTheoremWanted
@@ -54,6 +57,7 @@ def IsLyapunovStable (A : Matrix ι ι ℝ) (p : ι → ℝ) : Prop :=
 
 end
 
+open MathlibExt.Biology.Dynamics.AsymmetricESS (isMixed_iff isMixed_single)
 open MathlibExt.Biology.Dynamics.Replicator
   (continuous_mulVec_fitness exists_isSolution_mulVec meanFitness_mulVec)
 
@@ -65,17 +69,10 @@ public theorem isNash_iff_forall_pure_payoff_le {A : Matrix ι ι ℝ} {p : ι �
   constructor
   · intro hp
     refine ⟨hp.1, fun i => ?_⟩
-    have he : (Pi.single i 1 : ι → ℝ) ∈ simplex ι :=
-      mem_simplex_iff.mpr ⟨Pi.single_nonneg.mpr zero_le_one, by simp⟩
+    have he := mem_simplex_iff.mpr (isMixed_iff.mp (isMixed_single i))
     simpa [single_dotProduct] using hp.2 _ he
   · rintro ⟨hp, hpayoff⟩
-    refine ⟨hp, fun q hq => ?_⟩
-    obtain ⟨hq_nonneg, hq_sum⟩ := mem_simplex_iff.mp hq
-    calc
-      q ⬝ᵥ A *ᵥ p = ∑ i, q i * (A *ᵥ p) i := rfl
-      _ ≤ ∑ i, q i * (p ⬝ᵥ A *ᵥ p) :=
-        Finset.sum_le_sum fun i _ => mul_le_mul_of_nonneg_left (hpayoff i) (hq_nonneg i)
-      _ = p ⬝ᵥ A *ᵥ p := by rw [← Finset.sum_mul, hq_sum, one_mul]
+    exact ⟨hp, fun q hq => (isMixed_iff.mpr (mem_simplex_iff.mp hq)).dotProduct_le hpayoff⟩
 
 /-- **Neighborhood criterion for Lyapunov stability.** A simplex state is stable when each
 positive radius admits a neighborhood of initial states whose forward solutions stay within
@@ -128,12 +125,12 @@ public theorem isNash_of_isLyapunovStable {A : Matrix ι ι ℝ} {p : ι → ℝ
     apply hclose
     simpa [Real.dist_eq, abs_of_pos hs] using hsη
   have hp' := mem_simplex_iff.mp hp
+  have he : (∀ j, 0 ≤ e j) ∧ ∑ j, e j = 1 := isMixed_iff.mp (isMixed_single i)
   have hy' : (∀ j, 0 ≤ y s j) ∧ ∑ j, y s j = 1 := by
     constructor
     · intro j
-      have hej : 0 ≤ e j := by by_cases h : j = i <;> simp [e, h]
-      exact add_nonneg (mul_nonneg (sub_nonneg.mpr hs₁) (hp'.1 j)) (mul_nonneg hs.le hej)
-    · simp [y, e, Finset.sum_add_distrib, ← Finset.mul_sum, hp'.2]
+      exact add_nonneg (mul_nonneg (sub_nonneg.mpr hs₁) (hp'.1 j)) (mul_nonneg hs.le (he.1 j))
+    · simp [y, Finset.sum_add_distrib, ← Finset.mul_sum, hp'.2, he.2]
   obtain ⟨x, hx0, hx⟩ := exists_isSolution_mulVec A hy'
   have hx0' : (∀ j, 0 ≤ x 0 j) ∧ ∑ j, x 0 j = 1 := hx0.symm ▸ hy'
   have hxi0 : 0 < x 0 i := by simpa [hx0, y, e, hpi] using hs

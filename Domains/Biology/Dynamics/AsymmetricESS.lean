@@ -95,6 +95,11 @@ condition used by `Replicator.IsNash` and `Replicator.IsESS`. -/
 def IsMixed (p : ι → ℝ) : Prop :=
   (∀ i, 0 ≤ p i) ∧ ∑ i, p i = 1
 
+/-- **Mixed-strategy weights.** A finite strategy vector is mixed exactly when its weights
+are nonnegative and sum to one. -/
+theorem isMixed_iff {p : ι → ℝ} : IsMixed p ↔ (∀ i, 0 ≤ p i) ∧ ∑ i, p i = 1 :=
+  Iff.rfl
+
 /-- The payoff of the behavior strategy `s = (p, q)` against `t = (p', q')` in the role game
 where a contestant is in role I with probability `ρ` and in role II with probability `1 - ρ`:
 `ρ * (p · A q') + (1 - ρ) * (q · B p')`. The expected-payoff reading needs `0 ≤ ρ ≤ 1` and mixed
