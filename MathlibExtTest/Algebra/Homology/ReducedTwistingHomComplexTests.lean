@@ -134,7 +134,7 @@ private lemma first_zero : ι₀ ≫ scalarMap = 0 := by
 private lemma scalar_first_zero : scalarMap ≫ p₀ = 0 := by
   have h : p₀.op ≫ prod.lift (0 : I ⟶ A).op secondScalar.op = 0 := by
     apply prod.hom_ext
-    · simp [Category.assoc]
+    · simp
     · rw [Category.assoc, prod.lift_snd]
       change (secondScalar ≫ p₀).op = 0
       have hz : secondScalar ≫ p₀ = 0 := by
@@ -143,7 +143,7 @@ private lemma scalar_first_zero : scalarMap ≫ p₀ = 0 := by
         exact prod.lift_fst _ _
       exact congrArg (fun f : I ⟶ I => f.op) hz
   change (p₀.op ≫ prod.lift (0 : I ⟶ A).op secondScalar.op).unop = 0
-  exact congrArg (fun f : op A ⟶ op I ⨯ op I => f.unop) h
+  exact congrArg (fun f : op I ⟶ op I ⨯ op I => f.unop) h
 
 private lemma second_coordinate : ι₁ ≫ scalarMap ≫ p₁ = (2 : ℤ) • 𝟙 I := by
   have hs : ι₁ ≫ scalarMap = secondScalar := by
