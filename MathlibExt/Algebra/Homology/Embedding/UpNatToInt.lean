@@ -52,7 +52,7 @@ cochain complex K to integer degrees along n↦(n:ℤ), with zero terms at negat
 n∈ℕ, the cycles of the extension in integer degree n are canonically isomorphic to Zⁿ(K).
 These comparisons are natural in K.
 -/
-noncomputable def HomologicalComplex.cyclesFunctorExtendUpNatIso
+noncomputable abbrev HomologicalComplex.cyclesFunctorExtendUpNatIso
     {C : Type*} [Category C] [HasZeroMorphisms C] [HasZeroObject C]
     [CategoryWithHomology C] (n : ℕ) :
     ComplexShape.embeddingUpNat.extendFunctor C ⋙
@@ -67,7 +67,7 @@ cochain complex K to integer degrees along n↦(n:ℤ), with zero terms at negat
 n∈ℕ, opcycles of the extension in integer degree n are canonically isomorphic to the original
 quotient of Kⁿ by incoming boundaries. The comparisons are natural in K.
 -/
-noncomputable def HomologicalComplex.opcyclesFunctorExtendUpNatIso
+noncomputable abbrev HomologicalComplex.opcyclesFunctorExtendUpNatIso
     {C : Type*} [Category C] [HasZeroMorphisms C] [HasZeroObject C]
     [CategoryWithHomology C] (n : ℕ) :
     ComplexShape.embeddingUpNat.extendFunctor C ⋙
@@ -82,7 +82,7 @@ cochain complex K to integer degrees along n↦(n:ℤ), with zero terms at negat
 n∈ℕ, the extension has homology canonically isomorphic to Hⁿ(K). This is a natural isomorphism
 of the extension–homology composite with natural-degree homology.
 -/
-noncomputable def HomologicalComplex.homologyFunctorExtendUpNatIso
+noncomputable abbrev HomologicalComplex.homologyFunctorExtendUpNatIso
     {C : Type*} [Category C] [HasZeroMorphisms C] [HasZeroObject C]
     [CategoryWithHomology C] (n : ℕ) :
     ComplexShape.embeddingUpNat.extendFunctor C ⋙
