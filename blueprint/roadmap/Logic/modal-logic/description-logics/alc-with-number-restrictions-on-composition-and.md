@@ -1,4 +1,4 @@
-# Concept satisfiability in ALC with number restrictions on compositions and inverses is undecidable
+# Concept satisfiability in ALC with inverse roles in value restrictions and number restrictions on compositions and inverses is undecidable
 
 Adding to the description logic ALC number restrictions on role compositions is harmless, but also allowing inverse roles both in number and in value restrictions makes concept satisfiability undecidable.
 
@@ -12,7 +12,7 @@ Thus $\mathcal{ALCN}(M)\subseteq\mathcal{ALC\bar N}(M)\subseteq\mathcal{ALCQ}(M)
 
 **Theorem (Grandi).** Concept satisfiability, and hence subsumption, is undecidable for $\mathcal{ALC\bar N}(\circ,{}^-)$ and for $\mathcal{ALCQ}(\circ,{}^-)$.
 
-On the other side of the boundary, concept satisfiability is decidable for $\mathcal{ALCQ}(\circ)$, by a tableau algorithm given in the same paper (its Theorem 2 covers an extension with unions and intersections of role chains of equal length), and hence for $\mathcal{ALC\bar N}(\circ)$ and $\mathcal{ALCN}(\circ)$; the decidability of $\mathcal{ALCN}(\circ)$ and the undecidability of $\mathcal{ALCN}(\circ,\sqcap)$ and $\mathcal{ALCN}(\circ,{}^-,\sqcup)$ are due to Baader and Sattler.
+On the other side of the boundary, concept satisfiability is decidable for $\mathcal{ALCQ}(\circ)$, by a tableau algorithm given in the same paper (its Theorem 2 covers an extension with unions and intersections of role chains of equal length), and hence for $\mathcal{ALC\bar N}(\circ)$ and $\mathcal{ALCN}(\circ)$; the decidability of $\mathcal{ALCN}(\circ)$ and the undecidability of $\mathcal{ALCN}(\circ,\sqcap)$ and $\mathcal{ALCN}(\circ,{}^-,\sqcup)$ are due to Baader and Sattler. Decidability of $\mathcal{ALCN}(\circ,{}^-)$, with compositions and inverses only in number restrictions, is left open in the source (Sections 1 and 4).
 
 ## Depends on
 

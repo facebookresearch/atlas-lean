@@ -1,4 +1,4 @@
-# Admissibility in modal logics with the universal modality is undecidable
+# Admissibility in modal logics between K_u and K4_u is undecidable
 
 For every normal modal logic $L$ with $\mathbf{K}_u \subseteq L \subseteq \mathbf{K4}_u$, there is no algorithm that decides whether a given inference rule $\varphi_1, \dots, \varphi_n / \varphi$ in the language with $\Box$ and the universal modality is admissible in $L$.
 
@@ -12,7 +12,7 @@ For every normal modal logic $L$ with $\mathbf{K}_u \subseteq L \subseteq \mathb
 
 ## Proof depends on
 
-- [Unification in modal logics with the universal modality is undecidable](unification-in-modal-logics-with-the-universal.md)
+- [Unification in modal logics between K_u and K4_u is undecidable](unification-in-modal-logics-with-the-universal.md)
 
 ## Expansion
 

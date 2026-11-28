@@ -1,4 +1,4 @@
-# Consistency of product-based fuzzy description logic ontologies is undecidable
+# Witnessed and finite-model consistency of ∗-ALE ontologies is undecidable for t-norms starting with the product t-norm
 
 For the fuzzy description logic $*$-ALE with general concept inclusions, interpreted with any continuous t-norm whose first summand is the product t-norm on $[0, q]$ for a rational $q$, consistency with respect to witnessed, quasi-witnessed, weakly witnessed, strongly witnessed or finite models is undecidable.
 
@@ -21,7 +21,7 @@ In particular this holds for the product t-norm itself ($q = 1$). Whether consis
 
 ## Expansion
 
-The proof reduces the Post correspondence problem. Words over $\{1, \dots, m\}$ index the elements of a tree-shaped model, and for each node $\mu$ the degrees of two concept names encode the concatenations $v_\mu$ and $w_\mu$ as numbers: $A^\mathcal{I}(\delta_\mu) = q \cdot 2^{-v_\mu}$ and $B^\mathcal{I}(\delta_\mu) = q \cdot 2^{-w_\mu}$, where words over an alphabet of size $s$ are read as numbers in base $s + 1$, so that concatenation $uu'$ corresponds to $u \cdot (s+1)^{|u'|} + u'$. On $[0, q]$ the t-norm acts as rescaled multiplication and the residuum as rescaled division, which lets GCIs force, for each node and each pair $(v_i, w_i)$, a successor encoding the extended words. The ontology $\mathcal{O}_P$ always has a witnessed model, and adding a GCI that forces $A^\mathcal{I} \neq B^\mathcal{I}$ everywhere makes it inconsistent exactly when $P$ has a solution. For strongly witnessed models a different ontology is used, which has a strongly witnessed model iff it has a finite one.
+The proof reduces the Post correspondence problem. Words over $\{1, \dots, m\}$ index the elements of a tree-shaped model, and for each node $\mu$ the degrees of two concept names encode the concatenations $v_\mu$ and $w_\mu$ as numbers: $A^\mathcal{I}(\delta_\mu) = q \cdot 2^{-v_\mu}$ and $B^\mathcal{I}(\delta_\mu) = q \cdot 2^{-w_\mu}$, where words over an alphabet of size $s$ are read as numbers in base $s + 1$, so that concatenation $uu'$ corresponds to $u \cdot (s+1)^{|u'|} + u'$. On $[0, q]$ the t-norm acts as rescaled multiplication and the residuum as rescaled division, which lets GCIs force, for each node and each pair $(v_i, w_i)$, a successor encoding the extended words. The ontology $\mathcal{O}_P$ always has a witnessed model, and adding the GCIs $\langle \top \sqsubseteq \forall r_i.(((A \to B) \sqcap (B \to A)) \to H) \geq 1\rangle$, which force $A^\mathcal{I} \neq B^\mathcal{I}$ at every node reached by some $r_i$ (at the root both encode the empty word and are equal), makes it inconsistent exactly when $P$ has a solution. For strongly witnessed models a different ontology is used, which has a strongly witnessed model iff it has a finite one.
 
 ## Sources
 

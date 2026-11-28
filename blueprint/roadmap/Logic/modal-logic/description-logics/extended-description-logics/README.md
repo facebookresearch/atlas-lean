@@ -6,4 +6,4 @@ Description logics extended by circumscription or by abstraction and refinement,
 - [Circumscription in ALC with minimized or fixed roles is undecidable](circumscription-in-alc-with-minimized-or-fixed.md)
 - [Description logics with abstraction and refinement](description-logics-with-abstraction-and.md)
 - [Variations of description logics with abstraction and refinement are undecidable](variations-of-description-logics-with.md)
-- [PTime query evaluation for ALCF ontologies is undecidable](ptime-query-evaluation-for-alcf-ontologies-is.md)
+- [PTime query evaluation for ALCF ontologies is undecidable unless PTime = NP](ptime-query-evaluation-for-alcf-ontologies-is.md)

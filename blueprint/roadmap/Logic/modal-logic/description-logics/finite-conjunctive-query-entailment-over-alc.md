@@ -23,7 +23,7 @@ Clause 1 gives a very restricted fragment of constant-free, equality-free two-va
 
 ## Expansion
 
-The reduction is from the looping problem for deterministic Turing machines started on the empty tape (whether the run never halts). For a machine $\mathcal{M}$ one builds an $\mathcal{ALC}^{\mathrm{cov}}$ TBox $\mathcal{T}$ and a CQ $Q$ such that $\mathcal{M}$ loops iff some finite model of $\mathcal{T}$ does not satisfy $Q$ (Proposition 24); the TBox and query use only two variables, no constants and no equality. Clause 2 follows because $\mathcal{ALCSCC}^{++}$ subsumes $\mathcal{ALC}^{\mathrm{cov}}$ and has only finite interpretations, so its entailment is finite entailment.
+The reduction is from the looping problem for deterministic Turing machines started on the empty tape (whether its run from the empty tape repeats a configuration, and so, by determinism, runs forever periodically; the source notes that this problem is undecidable). For a machine $\mathcal{M}$ one builds an $\mathcal{ALC}^{\mathrm{cov}}$ TBox $\mathcal{T}$ and a CQ $Q$ such that $\mathcal{M}$ loops iff some finite model of $\mathcal{T}$ does not satisfy $Q$ (Proposition 24); the TBox uses only two variables, no constants and no equality, while the query $Q = \exists x, y, x', y'.\, v(x,y) \wedge h(x,x') \wedge h(y,y') \wedge v(x',y')$ (query (5) of the source) has four variables. Clause 2 follows because $\mathcal{ALCSCC}^{++}$ subsumes $\mathcal{ALC}^{\mathrm{cov}}$ and has only finite interpretations, so its entailment is finite entailment.
 
 ## Sources
 

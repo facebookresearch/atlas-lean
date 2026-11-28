@@ -23,7 +23,7 @@ None.
 
 *Parts 1 and 2.* The proof reduces the tiling problem for the quadrant $\mathbb N \times \mathbb N$ (Definition 26): for a tiling problem $P$ a role-minimizing cKB in ALC is built such that a concept is satisfiable with respect to it iff $P$ has a solution. For ALCI with empty TBox, the "spy-point" technique of Areces, Blackburn and Marx lets an ABox with inverse roles simulate the TBox. A good expansion links the undecidability of tiling the quadrant $\mathbb N \times \mathbb N$.
 
-*Part 3.* An effective translation of monadic second-order sentences with a binary relation $r$ into role-fixing cKBs in ALC (Theorem 20) shows that MSO consequence reduces to the instance problem; a good expansion links the undecidability of consequence in monadic second-order logic with a binary relation.
+*Part 3.* Thomason's effective translation of monadic second-order sentences with a binary relation $r$ into ALC concepts (Theorem 20) reduces consequence in MSO($r$) to semantic consequence of modal logic over frames; Lemma 21 (using the universal role) and Theorem 22 then reduce this to the instance problem for role-fixing cKBs in ALC, even with empty TBox and preference relation; a good expansion links the undecidability of consequence in monadic second-order logic with a binary relation.
 
 ## Sources
 

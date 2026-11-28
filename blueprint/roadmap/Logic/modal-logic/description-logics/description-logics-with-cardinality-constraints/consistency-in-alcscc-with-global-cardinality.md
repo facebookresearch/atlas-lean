@@ -1,4 +1,4 @@
-# Consistency in ALCSCC++ with a concrete domain is undecidable
+# Consistency in ALCSCC++ with an infinite concrete domain that defines equality is undecidable
 
 With global cardinality constraints over the whole domain and feature roles of an infinite concrete domain that can define equality, TBox consistency in ALCSCC++(D) is undecidable.
 
@@ -15,6 +15,7 @@ Without concrete domains, consistency of $\mathcal{ALCSCC}^{++}$ TBoxes is NEXPT
 ## Proof depends on
 
 - [Davis–Putnam–Robinson–Matiyasevich theorem](../../../../TheoryOfComputation/undecidable-problems/diophantine-sets-and-hilbert-s-tenth-problem/dprm-theorem.md)
+- [Some multi-stack machine has an undecidable halting set](../../../../TheoryOfComputation/computability/halting-problem-and-rice-s-theorem/exists-not-tm2-decidable-tm2-halts-on.md)
 
 ## Expansion
 

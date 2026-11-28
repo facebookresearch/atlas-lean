@@ -1,4 +1,4 @@
-# PTime query evaluation for ALCF ontologies is undecidable
+# PTime query evaluation for ALCF ontologies is undecidable unless PTime = NP
 
 Unless PTime = NP, no algorithm decides whether a given ontology in the description logic ALCF admits polynomial-time (data complexity) evaluation of conjunctive queries; deciding coNP-hardness of query evaluation and Datalog rewritability is undecidable as well.
 
@@ -15,6 +15,9 @@ The source also shows that there is no PTime/coNP dichotomy for query evaluation
 ## Depends on
 
 - [ALC syntax, semantics and reasoning tasks](../../alc-syntax-semantics-and-reasoning-tasks.md)
+- [Answers of a conjunctive query](../../../../ComputerScience/databases/conjunctive-queries/answers-of-a-conjunctive-query.md)
+- [The complexity class P](../../../../TheoryOfComputation/complexity-classes/the-classes-p-np-and-conp/p.md)
+- [The complexity class NP](../../../../TheoryOfComputation/complexity-classes/the-classes-p-np-and-conp/np.md)
 - [The class coNP](../../../../TheoryOfComputation/complexity-classes/the-classes-p-np-and-conp/co-np.md)
 - [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 

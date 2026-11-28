@@ -1,4 +1,4 @@
-# Unification in modal logics with the universal modality is undecidable
+# Unification in modal logics between K_u and K4_u is undecidable
 
 For every normal modal logic $L$ with $\mathbf{K}_u \subseteq L \subseteq \mathbf{K4}_u$, there is no algorithm that decides, given a formula $\varphi$ of the language with $\Box$ and the universal modality $\forall$, whether some substitution $\sigma$ satisfies $\sigma(\varphi) \in L$.
 

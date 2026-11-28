@@ -2,6 +2,8 @@
 
 The description logic ALCHI^abs describes a domain at several levels of abstraction organized in a tree: each level carries an ordinary interpretation, and refinement and abstraction statements relate an object on a coarser level to an ensemble of objects on a finer level described by a conjunctive query.
 
+**Concepts, roles and queries.** A *role* is a role name $r$ or its inverse $r^-$, interpreted as $\{(e, d) : (d, e) \in r^{\mathcal I}\}$. ALCI concepts are the [ALC](../../alc-syntax-semantics-and-reasoning-tasks.md) concepts with roles in place of role names, and EL concepts are built from concept names and $\top$ by $\sqcap$ and $\exists r.C$ with role names $r$. A conjunctive query $q(\bar x)$ here is a finite conjunction of atoms $A(x)$ and $r(x, y)$ over concept and role names; it is *full* if all its variables are answer variables, and *connected* if the graph on its variables with an edge for each atom $r(x, y)$ is connected. Its answers $q(\mathcal I)$ in an interpretation $\mathcal I$, read as a database with a unary relation for each concept name and a binary relation for each role name, are the [answers of a conjunctive query](../../../../ComputerScience/databases/conjunctive-queries/answers-of-a-conjunctive-query.md): the tuples of elements to which some assignment satisfying every atom maps $\bar x$.
+
 **Ontologies.** Fix a countable set $\mathbb A$ of abstraction levels. An $\mathcal{ALCHI}^{abs}$-ontology is a finite set of statements of the forms
 
 - labeled concept inclusions $C \sqsubseteq_L D$ and labeled role inclusions $R \sqsubseteq_L S$;
@@ -17,6 +19,7 @@ where $L, L' \in \mathbb A$, $C, D$ are ALCI concepts, $R, S$ are roles, $q$ ran
 ## Depends on
 
 - [ALC syntax, semantics and reasoning tasks](../../alc-syntax-semantics-and-reasoning-tasks.md)
+- [Answers of a conjunctive query](../../../../ComputerScience/databases/conjunctive-queries/answers-of-a-conjunctive-query.md)
 
 ## Proof depends on
 

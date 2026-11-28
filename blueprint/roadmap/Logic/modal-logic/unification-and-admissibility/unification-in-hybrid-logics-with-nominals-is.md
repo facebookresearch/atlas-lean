@@ -1,10 +1,10 @@
-# Unification in hybrid logics with nominals is undecidable
+# Unification in hybrid logics with two boxes and nominals between K_H2 and K_H2 ⊕ 45 is undecidable
 
 For every logic $L$ with $\mathbf{K}_{\mathcal{H}_2} \subseteq L \subseteq \mathbf{K}_{\mathcal{H}_2} \oplus 45$, in the language with two boxes and nominals, both the unification problem and the admissibility problem for inference rules are undecidable.
 
 **Theorem (Wolter and Zakharyaschev).** Let $L$ be a logic in the language $\mathcal{H}_2$ of [hybrid logic with two boxes and nominals](hybrid-logics-with-two-boxes-and-nominals.md) such that $\mathbf{K}_{\mathcal{H}_2} \subseteq L \subseteq \mathbf{K}_{\mathcal{H}_2} \oplus 45$. Then the [unification problem](unification-problem-for-a-modal-logic.md) for $L$ is undecidable and, therefore, so is the [admissibility problem](admissibility-problem-for-inference-rules.md) for $L$. Substitutions replace propositional variables by $\mathcal{H}_2$-formulas and leave nominals unchanged; the source notes that allowing nominals to be replaced by nominals does not affect the result.
 
-The theorem needs two boxes: with the universal modality available instead of nominals, the corresponding result holds already for one relational box.
+The proof uses the second box $\Box_h$; the source does not discuss the case of one box with nominals. With the universal modality available instead of nominals, the corresponding result holds already for one relational box.
 
 ## Depends on
 
