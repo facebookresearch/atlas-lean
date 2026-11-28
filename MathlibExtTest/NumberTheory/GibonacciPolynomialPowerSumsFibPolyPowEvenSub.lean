@@ -8,18 +8,19 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-import MathlibExt.NumberTheory.GibonacciPolynomialPowerSumsFibPolyPowEvenSub
+import Mathlib.Algebra.Polynomial.Eval.Defs
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring
+import MathlibExt.NumberTheory.GibonacciPolynomialPowerSumsFibPolyPowEvenSub
 
 /-!
-# Tests for even powers of Fibonacci polynomials
+# Tests for even powers of Fibonacci and Lucas polynomials
 
-These examples apply the finite power-sum identity at its boundary cases and at
+These examples apply the finite power-sum identities at their boundary cases and at
 indices giving each sign in the second summand.
 
 Source: Yinqi Lin and Bo Zhou, *Infinite Sums Involving Powers of Gibonacci Polynomials*,
-The Fibonacci Quarterly 62 (2024), no. 2, 147–156, Lemma 3.1.
+The Fibonacci Quarterly 62 (2024), no. 2, 147–156, Lemmas 3.1 and 3.2.
 -/
 
 namespace MathlibExtTest.NumberTheory.GibonacciPolynomialPowerSumsFibPolyPowEvenSub
@@ -48,5 +49,48 @@ example : (X ^ 2 + 4) * 𝔣 2 ^ 4 = 𝔣 4 ^ 2 - 4 * 𝔣 2 ^ 2 := by
 example : (X ^ 2 + 4) * (𝔣 3 ^ 4 - 1) = 𝔣 4 * 𝔣 8 + 4 * 𝔣 2 * 𝔣 4 := by
   have h := fibPoly_pow_even_sub (n := 2) (k := 1) (by decide) 2
   convert h using 1 <;> norm_num [Finset.sum_range_succ, generalizedFibonacciPolynomial]
+
+/-! ## Lucas polynomial examples -/
+
+local notation "𝔩" => generalizedFibonacciPolynomial 2 X X 1
+
+-- The zero exponent gives an empty sum even when the two indices differ.
+example {n k : ℕ} (hk : k ≤ n) : 𝔩 (n + k) ^ (2 * 0) - 𝔩 (n - k) ^ (2 * 0) = 0 :=
+  (lucasPoly_pow_even_sub hk 0).trans (by simp)
+
+-- The two indices coincide at zero shift, so the full weighted sum vanishes.
+example (n m : ℕ) :
+    (X ^ 2 + 4) * ∑ j ∈ Finset.range m, ((2 * m).choose j : ℤ[X]) * (-1) ^ (n * j) *
+      𝔣 0 * 𝔣 (2 * n * (m - j)) = 0 := by
+  simpa only [Nat.add_zero, Nat.sub_zero, Nat.mul_zero, Nat.zero_mul, sub_self] using
+    (lucasPoly_pow_even_sub (k := 0) (Nat.zero_le n) m).symm
+
+-- The first positive exponent gives the product of the two even-index Fibonacci polynomials.
+example {n k : ℕ} (hk : k ≤ n) :
+    𝔩 (n + k) ^ 2 - 𝔩 (n - k) ^ 2 = (X ^ 2 + 4) * (𝔣 (2 * k) * 𝔣 (2 * n)) := by
+  simpa using lucasPoly_pow_even_sub hk 1
+
+-- For `n = k = 1`, the lower Lucas index is zero and the second term has a plus sign.
+example : 𝔩 2 ^ 4 - 𝔩 0 ^ 4 = (X ^ 2 + 4) * (𝔣 4 ^ 2 + 4 * 𝔣 2 ^ 2) := by
+  rw [lucasPoly_pow_even_sub (n := 1) (k := 1) (by decide) 2]
+  congr 1
+  norm_num [Finset.sum_range_succ]
+  ring
+
+-- For `n = 2` and `k = 1`, the second term instead has a minus sign.
+example : 𝔩 3 ^ 4 - 𝔩 1 ^ 4 = (X ^ 2 + 4) * (𝔣 4 * 𝔣 8 - 4 * 𝔣 2 * 𝔣 4) := by
+  rw [lucasPoly_pow_even_sub (n := 2) (k := 1) (by decide) 2]
+  congr 1
+  norm_num [Finset.sum_range_succ]
+  ring
+
+-- Evaluate the two polynomial differences at `X = 1` and check the values independently.
+example : eval 1 (𝔩 2 ^ 4 - 𝔩 0 ^ 4) = 65 := by
+  rw [lucasPoly_pow_even_sub (n := 1) (k := 1) (by decide) 2]
+  norm_num [Finset.sum_range_succ, generalizedFibonacciPolynomial]
+
+example : eval 1 (𝔩 3 ^ 4 - 𝔩 1 ^ 4) = 255 := by
+  rw [lucasPoly_pow_even_sub (n := 2) (k := 1) (by decide) 2]
+  norm_num [Finset.sum_range_succ, generalizedFibonacciPolynomial]
 
 end MathlibExtTest.NumberTheory.GibonacciPolynomialPowerSumsFibPolyPowEvenSub
