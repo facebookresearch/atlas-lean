@@ -1,22 +1,159 @@
 {
   "rows": [
-    {"path": "MathlibExt/Data/BitEncoding.lean", "disposition": "identical", "published_sha256": "9a6c22647e19a8fb7d412b93765acdd25a454d0cad30fc6f915b2a2f72fc6e5c", "upstream_sha256": "a075d32f3a26c4e080b753a0bb0abd620681947adc31764af1f21c80a146c08c"},
-    {"path": "MathlibExt/Data/Fin/SuccAbove.lean", "disposition": "identical", "published_sha256": "ebdbb8c2de234af8423f996b61b754beb9833b92be5f4baa094769bae4144f8b", "upstream_sha256": "aaba0976686ab159cf521a7f4bd0687c2f34130ea02c75ca35b94295ffdfb268"},
-    {"path": "MathlibExt/Data/Finset/PropertyB.lean", "disposition": "identical", "published_sha256": "af3010a03027ac6eb3e13aa16e2cdde56b88cc28d6b6e27eeee7079de95272d5", "upstream_sha256": "bdadda074296e6c07995b8d3c5ee2aab7655edda9dd4fb5c4457e24f5c3781a4"},
-    {"path": "MathlibExt/Data/Finset/SubfamilyUnionFree.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "c4de95b3301447b3c0231d69b376eeab96c04e3503e8d063a7e2cf2b6b45d8bb", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #990)", "upstream_sha256": "5022f4d115a1132731a967c6d118329433b82e969b5a5ec4c550e869cfd73a3f"},
-    {"path": "MathlibExt/Data/Int/GCD.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "cfc21b1b40c7da9edd81693e578a86b72e2da80bb1643429ae4cd70f59661322", "rationale": "Move the integer product divisibility criterion from WantedExt/Combinatorics/Enumerative/IdentityProductNecklaceWanted.lean to a proved module, preserving its name and statement. Also: When `int_dvd_mul_iff_div_gcd_dvd` moved here in #6321, its docstring carried the Atlas wiki audit restatement of #976, which the row of WantedExt/Combinatorics/Enumerative/IdentityProductNecklaceWanted.lean records as a pending backport; Formal-Math does not have that text yet (its backport is still owed)."},
-    {"path": "MathlibExt/Data/List/ToChunks.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "ff998b93b2a521c0df309a99acc20313979354e36f1dd346b51f9da02014e8dc", "rationale": "ATLAS-side edit not in formal-math; last ATLAS change 8efc5507b (Migrate ATLAS root libraries to Lean 4.35.0); Restate docstrings to match the Lean statements (Atlas wiki audit, #990)", "upstream_sha256": "56a6f734d5e2f423134fd7256fd0e8d047b5ff37d43886bb8066aa31bd12ba42"},
-    {"path": "MathlibExt/Data/Nat/Choose/AlternatingRowSums.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "6a811e2dd846b2ee1b9dcc43fec4f428998cb114b1f6fae508ea144c08e31ac2", "rationale": "Moved from WantedExt/NumberTheory/Recurrences/GFPCatalanIdentitiesWanted.lean when the alternating sum of binomial row sums was proved, preserving its name, statement and docstring. The moved docstring keeps ATLAS-side text from WantedExt/NumberTheory/Recurrences/GFPCatalanIdentitiesWanted.lean that Formal-Math does not have yet (its backport is still owed)."},
-    {"path": "MathlibExt/Data/Nat/Choose/AlternatingShiftedSum.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "afcc49d1fb76298e8fa8641414b37f8b8ebd21526c6286a98a2c23c6ad379ee5", "rationale": "Moved from WantedExt/NumberTheory/Recurrences/GFPCatalanIdentitiesWanted.lean when the alternating sum of shifted binomial coefficients was proved, preserving its name and statement. Also: in alternating_sum_choose_mul_choose_sub, rename _hℓ and _hjn back to the wanted binder names hℓ and hjn so that named arguments work, with set_option linter.unusedVariables false scoped to that theorem. Also: The moved docstring keeps ATLAS-side text from WantedExt/NumberTheory/Recurrences/GFPCatalanIdentitiesWanted.lean that Formal-Math does not have yet (its backport is still owed)."},
-    {"path": "MathlibExt/Data/Nat/Choose/HockeyStickConvolution.lean", "disposition": "identical", "published_sha256": "767a98a24b2073fed539cb06e1d3df6746aa6ec325dd17a4a560d8b689231973", "upstream_sha256": "7a3b5ebf171f2a33b9bc92e398c150a243563a20552f1f4b1f0c9a0de28901ca"},
-    {"path": "MathlibExt/Data/Nat/Digits/Reverse.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "92191714619d5989009a068215df3b219fbb8eb997bd2c87318e11999dd9cf30", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #990)", "upstream_sha256": "1273b50716a06d9833965d8cddf8af39ad0c782315a1d605f2cd72d1fd6b0e06"},
-    {"path": "MathlibExt/Data/Nat/DyadicBlock.lean", "backport": "not-needed", "disposition": "diverged", "published_sha256": "337bc497c01065063ae94caf5ec356541e2d89b428632cc5f9f0a8caeb3d95c5", "rationale": "Moved div_two_pow_eq_iff_exists_block from ChocolateBarNSPropertyWanted to DyadicBlock when it was proved, preserving its name and statement. Also: moved exists_split_of_div_two_pow_lt to DyadicBlock when it was proved, preserving its name, statement and docstring. Also: Moved `min_div_two_pow_eq_of_div_two_pow_eq` from WantedExt/GameTheory/ChocolateBarNSPropertyWanted.lean when proved, with the same names and statements."},
-    {"path": "MathlibExt/Data/Nat/Factorial/Iterate.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "3c5e6ce231efcd1aff3c4715f3a5cc117b507bd6e620a26ef1d6cf444fe3024b", "rationale": "Moved from WantedExt/Analysis/ExponentialVersusFactorialWanted.lean when its wanted statement on the comparison of iterated factorials was proved: same name, statement and docstring, with the proof. The other wanted declarations stay in place. Also: The moved docstring keeps ATLAS-side text from WantedExt/Analysis/ExponentialVersusFactorialWanted.lean that Formal-Math does not have yet (its backport is still owed)."},
-    {"path": "MathlibExt/Data/Nat/ProgressionIntersection.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "48f4282dd5763c38a9265e66a936cf57792a342d09046ad25d52ed75a700d96b", "rationale": "Moved the progression intersection theorem from WantedExt/Algebra/LocallyIntegerPolynomialWanted.lean to a proved module with the same declaration name and statement. Also: The moved docstring keeps ATLAS-side text from WantedExt/Algebra/LocallyIntegerPolynomialWanted.lean that Formal-Math does not have yet (its backport is still owed)."},
-    {"path": "MathlibExt/Data/Set/Density.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "4bafa61440711bf860e9b13e57b7010547e66189eac402bda35dad559166b998", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #990)", "upstream_sha256": "538c227dbc50f6555fe2875d7f4e17eeadd820f833c5bd81b40f244b23520db8"},
-    {"path": "MathlibExt/Data/Set/Interval.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "b7ec885a90be13f670c00e283a7b423cc35adca54be349133dd9e5979f480145", "rationale": "ATLAS-side rename in #3965: the two anonymous `Fintype (S ∩ Iio b)` / `(S ∩ Icc a b)` instances get explicit `_mathlibExt` names, stable under a consumer import prefix.", "upstream_sha256": "1547b7d4a69c82ab0de822f895f3593517393b02decc8d9feb4ff949bb89f456"},
-    {"path": "MathlibExt/Data/Set/PowersetCard.lean", "disposition": "identical", "published_sha256": "ccb24391a22890f1294ee24066515928f3283b652112371faddc3a5dda1ba47a", "upstream_sha256": "80c33d8ae7c9b3044814ff7a0d5cbb21ea1968248a3242f43bce388806f923d9"},
-    {"path": "MathlibExt/Data/Set/Triplewise.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "084134f0cef365b7e68b1643d4bdddaee682d726a889e387709309e561cd1160", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #990)", "upstream_sha256": "1a178d9e4f78193648101365c015e3c3e72491f4a34aa8080c691b5c4bd2e07e"},
-    {"path": "MathlibExt/Data/Sym/Sym2.lean", "backport": "not-needed", "disposition": "diverged", "published_sha256": "d3b68ed13984ee9d9ebca3ec43871ef2918ba877c08b54f84223b1bf615606e0", "rationale": "Metadata-only divergence: the formal-math author block after the kept Formal Conjectures Apache-2.0 header credits @toskua and Meta Muse; every other byte, including that license header, is identical to upstream at the pin.", "upstream_sha256": "c28114134312eb52d24c657497b87ad437d2a04f587396dd03fde2bd31f11bf9"}
+    {
+      "path": "MathlibExt/Data/BitEncoding.lean",
+      "disposition": "identical",
+      "published_sha256": "9a6c22647e19a8fb7d412b93765acdd25a454d0cad30fc6f915b2a2f72fc6e5c",
+      "upstream_sha256": "a075d32f3a26c4e080b753a0bb0abd620681947adc31764af1f21c80a146c08c"
+    },
+    {
+      "path": "MathlibExt/Data/Fin/SuccAbove.lean",
+      "disposition": "identical",
+      "published_sha256": "ebdbb8c2de234af8423f996b61b754beb9833b92be5f4baa094769bae4144f8b",
+      "upstream_sha256": "aaba0976686ab159cf521a7f4bd0687c2f34130ea02c75ca35b94295ffdfb268"
+    },
+    {
+      "path": "MathlibExt/Data/Fin/Tuple/StableSort.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "baba7e87953d5a44046fcc7426b6b71592d0934f36158b5faba56287df9771d7",
+      "rationale": "Import the general coefficient, permutation, multilinear, and Hochschild API with Atlas documentation; use native Lean 4.36 scalar coefficient formulas, implicit stability indices, identity-ring-hom multilinearity, tensor projectivity, and explicit typed semilinear data without changing public hypotheses or limits. Replace procedural permutation/coordinate descriptions with exact self-contained mathematical docstrings, retaining every noncomment Lean token, declaration, privacy, option, import and legal notice. Wrap mathematical comments and Lean continuation lines to 100 columns while preserving every noncomment token, statement, hypothesis, sign and universe.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "fe05ea09a3e7878686e263883c3f18d4022f9d49fc11248c1f441bb1ffe491ae"
+    },
+    {
+      "path": "MathlibExt/Data/Finset/PropertyB.lean",
+      "disposition": "identical",
+      "published_sha256": "af3010a03027ac6eb3e13aa16e2cdde56b88cc28d6b6e27eeee7079de95272d5",
+      "upstream_sha256": "bdadda074296e6c07995b8d3c5ee2aab7655edda9dd4fb5c4457e24f5c3781a4"
+    },
+    {
+      "path": "MathlibExt/Data/Finset/SubfamilyUnionFree.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "c4de95b3301447b3c0231d69b376eeab96c04e3503e8d063a7e2cf2b6b45d8bb",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #990)",
+      "upstream_sha256": "5022f4d115a1132731a967c6d118329433b82e969b5a5ec4c550e869cfd73a3f"
+    },
+    {
+      "path": "MathlibExt/Data/Int/GCD.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "cfc21b1b40c7da9edd81693e578a86b72e2da80bb1643429ae4cd70f59661322",
+      "rationale": "Move the integer product divisibility criterion from WantedExt/Combinatorics/Enumerative/IdentityProductNecklaceWanted.lean to a proved module, preserving its name and statement. Also: When `int_dvd_mul_iff_div_gcd_dvd` moved here in #6321, its docstring carried the Atlas wiki audit restatement of #976, which the row of WantedExt/Combinatorics/Enumerative/IdentityProductNecklaceWanted.lean records as a pending backport; Formal-Math does not have that text yet (its backport is still owed)."
+    },
+    {
+      "path": "MathlibExt/Data/List/ToChunks.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "ff998b93b2a521c0df309a99acc20313979354e36f1dd346b51f9da02014e8dc",
+      "rationale": "ATLAS-side edit not in formal-math; last ATLAS change 8efc5507b (Migrate ATLAS root libraries to Lean 4.35.0); Restate docstrings to match the Lean statements (Atlas wiki audit, #990)",
+      "upstream_sha256": "56a6f734d5e2f423134fd7256fd0e8d047b5ff37d43886bb8066aa31bd12ba42"
+    },
+    {
+      "path": "MathlibExt/Data/Nat/Choose/AlternatingRowSums.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "6a811e2dd846b2ee1b9dcc43fec4f428998cb114b1f6fae508ea144c08e31ac2",
+      "rationale": "Moved from WantedExt/NumberTheory/Recurrences/GFPCatalanIdentitiesWanted.lean when the alternating sum of binomial row sums was proved, preserving its name, statement and docstring. The moved docstring keeps ATLAS-side text from WantedExt/NumberTheory/Recurrences/GFPCatalanIdentitiesWanted.lean that Formal-Math does not have yet (its backport is still owed)."
+    },
+    {
+      "path": "MathlibExt/Data/Nat/Choose/AlternatingShiftedSum.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "afcc49d1fb76298e8fa8641414b37f8b8ebd21526c6286a98a2c23c6ad379ee5",
+      "rationale": "Moved from WantedExt/NumberTheory/Recurrences/GFPCatalanIdentitiesWanted.lean when the alternating sum of shifted binomial coefficients was proved, preserving its name and statement. Also: in alternating_sum_choose_mul_choose_sub, rename _hℓ and _hjn back to the wanted binder names hℓ and hjn so that named arguments work, with set_option linter.unusedVariables false scoped to that theorem. Also: The moved docstring keeps ATLAS-side text from WantedExt/NumberTheory/Recurrences/GFPCatalanIdentitiesWanted.lean that Formal-Math does not have yet (its backport is still owed)."
+    },
+    {
+      "path": "MathlibExt/Data/Nat/Choose/HockeyStickConvolution.lean",
+      "disposition": "identical",
+      "published_sha256": "767a98a24b2073fed539cb06e1d3df6746aa6ec325dd17a4a560d8b689231973",
+      "upstream_sha256": "7a3b5ebf171f2a33b9bc92e398c150a243563a20552f1f4b1f0c9a0de28901ca"
+    },
+    {
+      "path": "MathlibExt/Data/Nat/Digits/Reverse.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "92191714619d5989009a068215df3b219fbb8eb997bd2c87318e11999dd9cf30",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #990)",
+      "upstream_sha256": "1273b50716a06d9833965d8cddf8af39ad0c782315a1d605f2cd72d1fd6b0e06"
+    },
+    {
+      "path": "MathlibExt/Data/Nat/DyadicBlock.lean",
+      "backport": "not-needed",
+      "disposition": "diverged",
+      "published_sha256": "337bc497c01065063ae94caf5ec356541e2d89b428632cc5f9f0a8caeb3d95c5",
+      "rationale": "Moved div_two_pow_eq_iff_exists_block from ChocolateBarNSPropertyWanted to DyadicBlock when it was proved, preserving its name and statement. Also: moved exists_split_of_div_two_pow_lt to DyadicBlock when it was proved, preserving its name, statement and docstring. Also: Moved `min_div_two_pow_eq_of_div_two_pow_eq` from WantedExt/GameTheory/ChocolateBarNSPropertyWanted.lean when proved, with the same names and statements."
+    },
+    {
+      "path": "MathlibExt/Data/Nat/Factorial/Iterate.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "3c5e6ce231efcd1aff3c4715f3a5cc117b507bd6e620a26ef1d6cf444fe3024b",
+      "rationale": "Moved from WantedExt/Analysis/ExponentialVersusFactorialWanted.lean when its wanted statement on the comparison of iterated factorials was proved: same name, statement and docstring, with the proof. The other wanted declarations stay in place. Also: The moved docstring keeps ATLAS-side text from WantedExt/Analysis/ExponentialVersusFactorialWanted.lean that Formal-Math does not have yet (its backport is still owed)."
+    },
+    {
+      "path": "MathlibExt/Data/Nat/ProgressionIntersection.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "48f4282dd5763c38a9265e66a936cf57792a342d09046ad25d52ed75a700d96b",
+      "rationale": "Moved the progression intersection theorem from WantedExt/Algebra/LocallyIntegerPolynomialWanted.lean to a proved module with the same declaration name and statement. Also: The moved docstring keeps ATLAS-side text from WantedExt/Algebra/LocallyIntegerPolynomialWanted.lean that Formal-Math does not have yet (its backport is still owed)."
+    },
+    {
+      "path": "MathlibExt/Data/Set/Density.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "4bafa61440711bf860e9b13e57b7010547e66189eac402bda35dad559166b998",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #990)",
+      "upstream_sha256": "538c227dbc50f6555fe2875d7f4e17eeadd820f833c5bd81b40f244b23520db8"
+    },
+    {
+      "path": "MathlibExt/Data/Set/Interval.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "b7ec885a90be13f670c00e283a7b423cc35adca54be349133dd9e5979f480145",
+      "rationale": "ATLAS-side rename in #3965: the two anonymous `Fintype (S ∩ Iio b)` / `(S ∩ Icc a b)` instances get explicit `_mathlibExt` names, stable under a consumer import prefix.",
+      "upstream_sha256": "1547b7d4a69c82ab0de822f895f3593517393b02decc8d9feb4ff949bb89f456"
+    },
+    {
+      "path": "MathlibExt/Data/Set/PowersetCard.lean",
+      "disposition": "identical",
+      "published_sha256": "ccb24391a22890f1294ee24066515928f3283b652112371faddc3a5dda1ba47a",
+      "upstream_sha256": "80c33d8ae7c9b3044814ff7a0d5cbb21ea1968248a3242f43bce388806f923d9"
+    },
+    {
+      "path": "MathlibExt/Data/Set/Triplewise.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "084134f0cef365b7e68b1643d4bdddaee682d726a889e387709309e561cd1160",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #990)",
+      "upstream_sha256": "1a178d9e4f78193648101365c015e3c3e72491f4a34aa8080c691b5c4bd2e07e"
+    },
+    {
+      "path": "MathlibExt/Data/Sym/Containing.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "da5c648368326006e6dec90ced6a1bd661c7e69a3d89911f8aff0ebd70e0a40e",
+      "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Replace procedural permutation/coordinate descriptions with exact self-contained mathematical docstrings, retaining every noncomment Lean token, declaration, privacy, option, import and legal notice.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "b63e6ef9600e1360f32431e83b88bd47f58d119c98a9de0acc44e5404e96c55a"
+    },
+    {
+      "path": "MathlibExt/Data/Sym/SortedTuple.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "5b9c7b2a7459584758e785b46839d8b1ae78365ea72e53479b943abe625765bf",
+      "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Replace procedural permutation/coordinate descriptions with exact self-contained mathematical docstrings, retaining every noncomment Lean token, declaration, privacy, option, import and legal notice.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "bd7f7a1b23bc772fe7b53fdc73553c6386882bb4044801e26dccd938dcaee488"
+    },
+    {
+      "path": "MathlibExt/Data/Sym/Sym2.lean",
+      "backport": "not-needed",
+      "disposition": "diverged",
+      "published_sha256": "d3b68ed13984ee9d9ebca3ec43871ef2918ba877c08b54f84223b1bf615606e0",
+      "rationale": "Metadata-only divergence: the formal-math author block after the kept Formal Conjectures Apache-2.0 header credits @toskua and Meta Muse; every other byte, including that license header, is identical to upstream at the pin.",
+      "upstream_sha256": "c28114134312eb52d24c657497b87ad437d2a04f587396dd03fde2bd31f11bf9"
+    }
   ]
 }
