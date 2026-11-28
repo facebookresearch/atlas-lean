@@ -100,10 +100,12 @@ For stochastic reaction networks:
 
 ## Implementation notes
 
-Two lemmas are verbatim copies of private lemmas: `tendsto_div_of_eq_add_sum'` of
-`StochasticCRNErgodicity.tendsto_div_of_eq_add_sum`, and `propensity_eq_zero_of_not_le` of
-`SystemsBiology.propensity_eq_zero`. Making those two originals public would let the copies be
-deleted. The step-sequence lemmas (`ProbabilityTheory.measurable_ctmcShift`,
+Only `tendsto_div_of_eq_add_sum'` remains a verbatim copy of a private lemma
+(`StochasticCRNErgodicity.tendsto_div_of_eq_add_sum`); making that original public would let
+the copy be deleted. `propensity_eq_zero_of_not_le` and `propensity_nonneg_of_nonneg` restate
+the shared `ReactionNetwork.propensity_eq_zero_of_not_le` and `ReactionNetwork.propensity_nonneg`
+of `MathlibExt.Dynamics.PolynomialNetworks.StochasticMassAction` for the alias
+`SystemsBiology.propensity`. The step-sequence lemmas (`ProbabilityTheory.measurable_ctmcShift`,
 `ProbabilityTheory.ctmc_indep_infinitePi`, `ProbabilityTheory.ctmc_map_shift_infinitePi`) are
 used from `ContinuousTimeMarkovChain/Path.lean`.
 
@@ -2108,19 +2110,13 @@ variable {S ρ : Type*} [Fintype S] [Fintype ρ]
 
 omit [Fintype ρ] in
 theorem propensity_eq_zero_of_not_le (N : ReactionNetwork S ρ) {κ : ρ → ℝ} {r : ρ}
-    {x : S → ℕ} (h : ¬ N.src r ≤ x) : propensity N κ r x = 0 := by
-  obtain ⟨s, hs⟩ : ∃ s, x s < N.src r s := by
-    by_contra h'
-    push Not at h'
-    exact h h'
-  simp only [propensity]
-  rw [Finset.prod_eq_zero (Finset.mem_univ s) (by simp [Nat.descFactorial_eq_zero_iff_lt.2 hs]),
-    mul_zero]
+    {x : S → ℕ} (h : ¬ N.src r ≤ x) : propensity N κ r x = 0 :=
+  ReactionNetwork.propensity_eq_zero_of_not_le N h
 
 omit [Fintype ρ] in
 theorem propensity_nonneg_of_nonneg (N : ReactionNetwork S ρ) {κ : ρ → ℝ} (hκ : ∀ r, 0 ≤ κ r)
     (r : ρ) (x : S → ℕ) : 0 ≤ propensity N κ r x :=
-  mul_nonneg (hκ r) (prod_nonneg fun _ _ => Nat.cast_nonneg _)
+  ReactionNetwork.propensity_nonneg N hκ r x
 
 /-- The **stochastic mass-action chain** of the reaction network `N` with rate constants
 `κ ≥ 0`: the `StochasticCRN` of `Domains.Biology.Dynamics.StochasticCRNNonExplosion` with the
@@ -2136,7 +2132,7 @@ omit [Fintype ρ] in
 theorem jump_massAction (N : ReactionNetwork S ρ) (κ : ρ → ℝ) (hκ : ∀ r, 0 ≤ κ r) (r : ρ)
     (x : S → ℕ) : (massAction N κ hκ).jump r x = fire N r x := by
   funext s
-  simp [StochasticCRN.jump, fire, massAction]
+  simp [StochasticCRN.jump, fire, ReactionNetwork.fire, massAction]
 
 /-- The rate-weighted jump kernel of a stochastic CRN: `q(x) K(x, y)` is the total propensity of
 the reactions leading from `x` to `y`, plus the fictitious self-loop at an absorbing state. -/
@@ -2179,7 +2175,8 @@ theorem tsum_ite_fire_eq (N : ReactionNetwork S ρ) {κ : ρ → ℝ} (c : S →
       else 0 := by
   split_ifs with hy
   · rw [tsum_eq_single (unfire N r y)]
-    · rw [ite_eq_left ((fire_eq_iff N (fun s => by simp [unfire])).2 ⟨hy, rfl⟩)]
+    · rw [ite_eq_left ((fire_eq_iff N (fun s => by simp [unfire,
+        ReactionNetwork.unfire])).2 ⟨hy, rfl⟩)]
     · intro x hx
       split_ifs with hj
       · by_cases hs : N.src r ≤ x
@@ -2192,7 +2189,7 @@ theorem tsum_ite_fire_eq (N : ReactionNetwork S ρ) {κ : ρ → ℝ} (c : S →
       apply hy
       rw [← hj]
       intro s
-      simp [fire]
+      simp [fire, ReactionNetwork.fire]
     · rfl
 
 /-- **Balance of the product-form law for the jump–hold chain**: for `κ ≥ 0` and `c ≥ 0`,
@@ -2283,7 +2280,7 @@ theorem hasSum_poissonWeight_mul_propensity (N : ReactionNetwork S ρ) (κ : ρ 
   have h' : HasSum (fun x : S → ℕ => κ r * ∏ s, (c s ^ x s * Real.exp (-c s) / (x s).factorial *
       ((x s).descFactorial (N.src r s) : ℝ))) (κ r * ∏ s, c s ^ N.src r s) := h.mul_left (κ r)
   refine h'.congr_fun fun x => ?_
-  simp only [poissonWeight, propensity]
+  simp only [poissonWeight, propensity, ReactionNetwork.propensity]
   rw [mul_left_comm, ← prod_mul_distrib]
 
 theorem tsum_ofReal_poissonWeight_mul_holdRate_ne_top (N : ReactionNetwork S ρ) {κ : ρ → ℝ}

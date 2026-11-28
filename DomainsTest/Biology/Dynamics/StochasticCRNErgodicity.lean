@@ -96,8 +96,8 @@ theorem master_birthDeath_zero {k₁ k₂ : ℝ} (hk₂ : 0 < k₂) :
           propensity birthDeath (kBD k₁ k₂) r (unfire birthDeath r (st 0)) := by
   rw [Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_two]
   simp only [propensity, birthDeath_src_zero, birthDeath_src_one, birthDeath_prod_zero,
-    birthDeath_prod_one, kBD, st_le_iff]
-  simp [poissonWeight, cBD, st, unfire]
+    birthDeath_prod_one, kBD, st_le_iff, ReactionNetwork.propensity]
+  simp [poissonWeight, cBD, st, unfire, ReactionNetwork.unfire]
   field_simp
 
 /-- The ergodic theorem for birth–death: every chain satisfying the hypotheses is positive
@@ -242,8 +242,10 @@ theorem not_isStationaryMasterSolution_birthPair {k₁ k₂ : ℝ} (hk₁ : k₁
   have h0 := h (st 0)
   have h1 := h (st 1)
   simp only [Finset.sum_filter, Fin.sum_univ_two, propensity, birthPair_src_zero,
-    birthPair_src_one, birthPair_prod_zero, birthPair_prod_one, st_le_iff] at h0 h1
-  simp [poissonWeight, st, unfire, Nat.descFactorial, Nat.factorial] at h0 h1
+    birthPair_src_one, birthPair_prod_zero, birthPair_prod_one, st_le_iff,
+    ReactionNetwork.propensity] at h0 h1
+  simp [poissonWeight, st, unfire, Nat.descFactorial, Nat.factorial,
+    ReactionNetwork.unfire] at h0 h1
   have he : Real.exp (-c ()) ≠ 0 := (Real.exp_pos _).ne'
   apply hk₁
   have e0 : c () ^ 2 * k₂ = k₁ := by
@@ -267,7 +269,7 @@ def autocat : ReactionNetwork Unit Unit where
 
 theorem propensity_autocat (k : ℝ) (n : ℕ) :
     propensity autocat (fun _ => k) () (st (n + 2)) = k * ((n + 2) * (n + 1)) := by
-  simp [propensity, autocat, st]
+  simp [propensity, autocat, st, ReactionNetwork.propensity]
   left
   ring
 
@@ -321,7 +323,7 @@ theorem not_isStationaryMasterSolution_autocat {k : ℝ} (hk : 0 < k) {c : Unit 
   have hout : poissonWeight c (st 2) * ∑ r, propensity autocat (fun _ => k) r (st 2) =
       poissonWeight c (st 2) * (k * 2) := by
     congr 1
-    simp [propensity, autocat, st, Nat.descFactorial]
+    simp [propensity, autocat, st, Nat.descFactorial, ReactionNetwork.propensity]
   rw [hin, hout] at h2
   have : 0 < poissonWeight c (st 2) * (k * 2) := by positivity
   linarith

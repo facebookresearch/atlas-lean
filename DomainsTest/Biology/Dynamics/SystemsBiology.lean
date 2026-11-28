@@ -50,10 +50,12 @@ theorem isComplexBalanced_dimer : dimer.IsComplexBalanced kDimer cDimer := by
 /-- The closed class `{(2, 0), (0, 1)}` of the conservation law `x_A + 2 x_B = 2`. -/
 def classTwo : Finset (Fin 2 → ℕ) := {![2, 0], ![0, 1]}
 
-theorem classTwo_fwd : ∀ x ∈ classTwo, ∀ r, dimer.src r ≤ x → fire dimer r x ∈ classTwo := by
+theorem classTwo_fwd : ∀ x ∈ classTwo, ∀ r, dimer.src r ≤ x →
+    MathlibExt.Biology.Dynamics.SystemsBiology.fire dimer r x ∈ classTwo := by
   decide
 
-theorem classTwo_bwd : ∀ x ∈ classTwo, ∀ r, dimer.prod r ≤ x → unfire dimer r x ∈ classTwo := by
+theorem classTwo_bwd : ∀ x ∈ classTwo, ∀ r, dimer.prod r ≤ x →
+    MathlibExt.Biology.Dynamics.SystemsBiology.unfire dimer r x ∈ classTwo := by
   decide
 
 /-- **Non-vacuity witness** for the finite-class theorem: every hypothesis holds for the
@@ -77,13 +79,17 @@ theorem poissonWeight_dimer :
   ring
 
 /-- Global balance at `(2, 0)`: outflow `2 · π(2,0) = 4 · π(0,1)` (propensities `2` and `4`). -/
-example : propensity dimer kDimer 0 ![2, 0] = 2 ∧ propensity dimer kDimer 1 ![0, 1] = 4 := by
-  constructor <;> simp [propensity, dimer, kDimer, Fin.prod_univ_two, Nat.descFactorial]
+example : MathlibExt.Biology.Dynamics.SystemsBiology.propensity dimer kDimer 0 ![2, 0] = 2 ∧
+    MathlibExt.Biology.Dynamics.SystemsBiology.propensity dimer kDimer 1 ![0, 1] = 4 := by
+  constructor <;> simp [MathlibExt.Biology.Dynamics.SystemsBiology.propensity,
+                      ReactionNetwork.propensity, dimer, kDimer, Fin.prod_univ_two,
+                      Nat.descFactorial]
 
 /-- Boundary case: a reaction whose source does not fit has propensity `0`
 (`B → 2A` in state `(2, 0)`). -/
-example : propensity dimer kDimer 1 ![2, 0] = 0 := by
-  simp [propensity, dimer, Fin.prod_univ_two]
+example : MathlibExt.Biology.Dynamics.SystemsBiology.propensity dimer kDimer 1 ![2, 0] = 0 := by
+  simp [MathlibExt.Biology.Dynamics.SystemsBiology.propensity, ReactionNetwork.propensity, dimer,
+      Fin.prod_univ_two]
 
 /-! ### Metabolic control analysis -/
 

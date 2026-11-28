@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Domains.Biology.Dynamics.ComplexBalanced
+public import MathlibExt.Dynamics.PolynomialNetworks.StochasticMassAction
 public import MathlibExt.Probability.Process.ContinuousTimeMarkovChain.RateMatrix
 public import Mathlib.Analysis.Calculus.FDeriv.Basic
 public import Mathlib.Analysis.Calculus.ContDiff.Defs
@@ -137,17 +138,22 @@ variable {S ρ : Type*} [Fintype S] [Fintype ρ] (N : ReactionNetwork S ρ)
 /-- The stochastic mass-action propensity of reaction `r` in state `x` (molecule counts):
 `k r * ∏_s x_s (x_s - 1) ⋯ (x_s - src_s + 1)`, the falling factorial
 `Nat.descFactorial x_s src_s` (it vanishes when `x_s < src_s`). Anderson, Craciun & Kurtz
-(2010), §2. -/
-noncomputable def propensity (k : ρ → ℝ) (r : ρ) (x : S → ℕ) : ℝ :=
-  k r * ∏ s, ((x s).descFactorial (N.src r s) : ℝ)
+(2010), §2.
+
+Defined in MathlibExt.Dynamics.PolynomialNetworks.StochasticMassAction. -/
+noncomputable abbrev propensity (k : ρ → ℝ) (r : ρ) (x : S → ℕ) : ℝ := N.propensity k r x
 
 /-- The state reached from `x` by one firing of reaction `r`, `x - src r + prod r`
-(meaningful when `src r ≤ x`, the only case in which the propensity is nonzero). -/
-def fire (r : ρ) (x : S → ℕ) : S → ℕ := fun s => x s - N.src r s + N.prod r s
+(meaningful when `src r ≤ x`, the only case in which the propensity is nonzero).
+
+Defined in MathlibExt.Dynamics.PolynomialNetworks.StochasticMassAction. -/
+abbrev fire (r : ρ) (x : S → ℕ) : S → ℕ := N.fire r x
 
 /-- The state from which one firing of reaction `r` leads to `x`, `x - prod r + src r`
-(meaningful when `prod r ≤ x`). -/
-def unfire (r : ρ) (x : S → ℕ) : S → ℕ := fun s => x s - N.prod r s + N.src r s
+(meaningful when `prod r ≤ x`).
+
+Defined in MathlibExt.Dynamics.PolynomialNetworks.StochasticMassAction. -/
+abbrev unfire (r : ρ) (x : S → ℕ) : S → ℕ := N.unfire r x
 
 /-- The product-form Poisson weight `∏_s c_s ^ x_s e^{-c_s} / Nat.factorial x_s` of a
 state `x`. -/
@@ -169,14 +175,7 @@ private noncomputable def residual (c : S → ℝ) (x z : S → ℕ) : ℝ :=
 omit [Fintype ρ] in
 /-- The propensity vanishes unless the source complex fits into the state. -/
 private theorem propensity_eq_zero {k : ρ → ℝ} {r : ρ} {x : S → ℕ} (h : ¬ N.src r ≤ x) :
-    propensity N k r x = 0 := by
-  obtain ⟨s, hs⟩ : ∃ s, x s < N.src r s := by
-    by_contra h'
-    push Not at h'
-    exact h h'
-  simp only [propensity]
-  rw [Finset.prod_eq_zero (Finset.mem_univ s) (by simp [Nat.descFactorial_eq_zero_iff_lt.2 hs]),
-    mul_zero]
+    propensity N k r x = 0 := N.propensity_eq_zero_of_not_le h
 
 omit [Fintype ρ] in
 /-- The outflow term: `π(x) λ_r(x) = e^{-Σ c} · rate_r(c) · residual c x (src r)`. -/
@@ -184,7 +183,8 @@ private theorem poissonWeight_mul_propensity (k : ρ → ℝ) (c : S → ℝ) (r
     poissonWeight c x * propensity N k r x =
       (∏ s, Real.exp (-c s)) * N.rate k c r * residual c x (N.src r) := by
   by_cases h : N.src r ≤ x
-  · simp only [residual, h, ↓reduceIte, ReactionNetwork.rate, poissonWeight, propensity]
+  · simp only [residual, h, ↓reduceIte, ReactionNetwork.rate, poissonWeight, propensity,
+      ReactionNetwork.propensity]
     rw [mul_left_comm, ← Finset.prod_mul_distrib]
     have : ∀ s, c s ^ x s * Real.exp (-c s) / ((x s).factorial : ℝ) *
         ((x s).descFactorial (N.src r s) : ℝ) = Real.exp (-c s) * c s ^ N.src r s *
@@ -209,7 +209,7 @@ private theorem poissonWeight_mul_propensity (k : ρ → ℝ) (c : S → ℝ) (r
 omit [Fintype S] [Fintype ρ] in
 /-- The state `unfire r x` contains the source complex of `r`. -/
 private theorem src_le_unfire {r : ρ} {x : S → ℕ} : N.src r ≤ unfire N r x :=
-  fun s => by simp [unfire]
+  fun s => by simp [unfire, ReactionNetwork.unfire]
 
 omit [Fintype ρ] in
 /-- The residual factor of the inflow term. -/
@@ -217,7 +217,7 @@ private theorem residual_unfire (c : S → ℝ) {r : ρ} {x : S → ℕ} (h : N.
     residual c (unfire N r x) (N.src r) = residual c x (N.prod r) := by
   simp only [residual, src_le_unfire N, h, ↓reduceIte]
   refine Finset.prod_congr rfl fun s _ => ?_
-  have : unfire N r x s - N.src r s = x s - N.prod r s := by simp [unfire]
+  have : unfire N r x s - N.src r s = x s - N.prod r s := by simp [unfire, ReactionNetwork.unfire]
   rw [this]
 
 /-- **Global balance of the product-form Poisson weights** (Anderson, Craciun & Kurtz 2010,
@@ -298,17 +298,17 @@ theorem poissonWeight_vecMul_classGenerator {k : ρ → ℝ} {c : S → ℝ}
             refine ⟨funext fun s => ?_, fun s => ?_⟩
             · have h1 := congrFun hf s
               have h2 : N.src r s ≤ (x : S → ℕ) s := hs s
-              simp only [unfire, fire] at h1 ⊢
+              simp only [unfire, fire, ReactionNetwork.unfire, ReactionNetwork.fire] at h1 ⊢
               omega
             · have h1 := congrFun hf s
-              simp only [fire] at h1
+              simp only [fire, ReactionNetwork.fire] at h1
               change N.prod r s ≤ (y : S → ℕ) s
               omega
           · rintro ⟨hx, hp⟩
             funext s
             have h1 := congrFun hx s
             have h2 : N.prod r s ≤ (y : S → ℕ) s := hp s
-            simp only [unfire, fire] at h1 ⊢
+            simp only [unfire, fire, ReactionNetwork.unfire, ReactionNetwork.fire] at h1 ⊢
             omega
         by_cases hc : (x : S → ℕ) = unfire N r y ∧ N.prod r ≤ y
         · have hf := hiff.2 hc

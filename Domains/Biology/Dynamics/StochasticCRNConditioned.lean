@@ -119,7 +119,7 @@ theorem isReactionClosed_compatClass (x₀ : S → ℕ) : IsReactionClosed N (co
     change (fun s => (fire N r x s : ℝ) - x₀ s) ∈ N.stoichiometricSubspace
     convert hv using 1
     funext s
-    simp only [fire, Pi.add_apply]
+    simp only [fire, ReactionNetwork.fire, Pi.add_apply]
     rw [Nat.cast_add, Nat.cast_sub (hr s)]
     ring
   unfire_mem x hx r hr := by
@@ -128,13 +128,13 @@ theorem isReactionClosed_compatClass (x₀ : S → ℕ) : IsReactionClosed N (co
     change (fun s => (unfire N r x s : ℝ) - x₀ s) ∈ N.stoichiometricSubspace
     convert hv using 1
     funext s
-    simp only [unfire, Pi.sub_apply]
+    simp only [unfire, ReactionNetwork.unfire, Pi.sub_apply]
     rw [Nat.cast_add, Nat.cast_sub (hr s)]
     ring
 
 /-- The source complex of `r` fits into the predecessor `unfire N r x`. -/
 theorem src_le_unfire (r : ρ) (x : S → ℕ) : N.src r ≤ unfire N r x :=
-  fun s => by simp [unfire]
+  fun s => by simp [unfire, ReactionNetwork.unfire]
 
 /-- The states with total molecule count `n`. -/
 def totalClass [Fintype S] (n : ℕ) : Set (S → ℕ) :=
@@ -149,7 +149,7 @@ theorem isReactionClosed_totalClass [Fintype S]
     have h1 : ∑ s, (fire N r x s + N.src r s) = ∑ s, (x s + N.prod r s) :=
       Finset.sum_congr rfl fun s _ => by
         have h : N.src r s ≤ x s := hr s
-        simp only [fire]
+        simp only [fire, ReactionNetwork.fire]
         omega
     rw [Finset.sum_add_distrib, Finset.sum_add_distrib] at h1
     have h2 := hN r
@@ -160,7 +160,7 @@ theorem isReactionClosed_totalClass [Fintype S]
     have h1 : ∑ s, (unfire N r x s + N.prod r s) = ∑ s, (x s + N.src r s) :=
       Finset.sum_congr rfl fun s _ => by
         have h : N.prod r s ≤ x s := hr s
-        simp only [unfire]
+        simp only [unfire, ReactionNetwork.unfire]
         omega
     rw [Finset.sum_add_distrib, Finset.sum_add_distrib] at h1
     have h2 := hN r
