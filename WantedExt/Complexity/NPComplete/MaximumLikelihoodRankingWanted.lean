@@ -19,13 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
-public import Mathlib.Algebra.Order.Group.Int
-public import Mathlib.Data.Fintype.Prod
-public import Mathlib.LinearAlgebra.Matrix.Defs
-public import Mathlib.Logic.Equiv.Defs
+public import CSLibExt.Complexity.NPComplete.MaximumLikelihoodRankingDefs
 
 @[expose] public section
 
@@ -53,40 +47,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: `n`, the matrix `A` (rows of `(positive part, negative part)` pairs), and the
-bound `B`. -/
-abbrev MaximumLikelihoodRankingInstance := ℕ × List (List (ℕ × ℕ)) × ℕ
-
-/-- The entry `aᵣ꜀` of `A`. -/
-def entry (i : MaximumLikelihoodRankingInstance) (r c : Fin i.1) : ℤ :=
-  (((i.2.1.getD r []).getD c (0, 0)).1 : ℤ) - (((i.2.1.getD r []).getD c (0, 0)).2 : ℤ)
-
-/-- The matrix `A` as a Mathlib `Matrix`. -/
-def matrix (i : MaximumLikelihoodRankingInstance) : Matrix (Fin i.1) (Fin i.1) ℤ :=
-  Matrix.of (entry i)
-
-/-- Well-formedness of an instance: `A` has `n` rows of length `n`, `aᵢⱼ + aⱼᵢ = 0` for all
-`i, j`, and `B` is positive. -/
-def WellFormed (i : MaximumLikelihoodRankingInstance) : Prop :=
-  i.2.1.length = i.1 ∧ (∀ row ∈ i.2.1, row.length = i.1) ∧
-    (∀ r c : Fin i.1, entry i r c + entry i c r = 0) ∧ 0 < i.2.2
-
-/-- Some simultaneous row and column permutation `B' = A.submatrix π π` of `A` has
-`∑_{i < j} min {bᵢⱼ, 0} ≥ -B`. -/
-def MaximumLikelihoodRankingFeasible (i : MaximumLikelihoodRankingInstance) : Prop :=
-  ∃ π : Equiv.Perm (Fin i.1),
-    -(i.2.2 : ℤ) ≤ ∑ p ∈ Finset.univ.filter (fun p : Fin i.1 × Fin i.1 => p.1 < p.2),
-      min ((matrix i).submatrix π π p.1 p.2) 0
-
-open Classical in
-/-- MAXIMUM LIKELIHOOD RANKING as a decision problem over bitstrings. -/
-noncomputable def maximumLikelihoodRankingDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MaximumLikelihoodRankingInstance) x with
-  | some i => decide (WellFormed i ∧ MaximumLikelihoodRankingFeasible i)
-  | none => false
 
 /-- **MAXIMUM LIKELIHOOD RANKING is NP-complete.** Source: Garey and Johnson (1979), [MS11];
 Rafsky (1977). -/

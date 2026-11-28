@@ -23,9 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.ProductionPlanningWanted
+public import CSLibExt.Complexity.NPComplete.ProductionPlanningEqualDemandsDefs
 
 @[expose] public section
 
@@ -59,23 +57,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance of the restriction: the instance is a well-formed PRODUCTION
-PLANNING instance, all periods have the same demand and the same set-up cost, and every
-inventory cost coefficient is `0`. -/
-def RestrictedWellFormed (i : ProductionPlanningInstance) : Prop :=
-  WellFormed i ∧ (∀ p ∈ i.2.1, ∀ q ∈ i.2.1, p.1 = q.1 ∧ p.2.2.1 = q.2.2.1) ∧
-    ∀ p ∈ i.2.1, p.2.2.2.2 = 0
-
-open Classical in
-/-- PRODUCTION PLANNING with equal demands, equal set-up costs and no inventory costs, as a decision
-problem over bitstrings. -/
-noncomputable def productionPlanningEqualDemandsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ProductionPlanningInstance) x with
-  | some i => decide (RestrictedWellFormed i ∧ ProductionPlanningFeasible i)
-  | none => false
 
 /-- **PRODUCTION PLANNING remains NP-complete when all demands are equal, all set-up costs are
 equal, and all inventory costs are `0`.** Source: Garey and Johnson (1979), [SS21], comment;

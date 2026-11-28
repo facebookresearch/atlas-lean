@@ -22,11 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
-public import Mathlib.Data.Fintype.Basic
-public import Mathlib.Order.Defs.Unbundled
+public import CSLibExt.Complexity.NPComplete.PossibleWinnerBordaDefs
 
 @[expose] public section
 
@@ -59,43 +55,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the alternatives `C`, the partial orders (each the list of its pairs `(a, b)`
-with `a ≻ b`), and the alternative `c`. -/
-abbrev PossibleWinnerBordaInstance := List ℕ × List (List (ℕ × ℕ)) × ℕ
-
-/-- The voters of the instance, `Fin n` for `n` listed partial orders. -/
-abbrev Voter (i : PossibleWinnerBordaInstance) : Type := Fin i.2.1.length
-
-/-- Voter `v`'s partial order: `a ≻ b` when `(a, b)` is listed. -/
-def Pref (i : PossibleWinnerBordaInstance) (v : Voter i) (a b : ℕ) : Prop :=
-  (a, b) ∈ i.2.1.get v
-
-/-- The Borda score of `a` when voter `v` casts the linear order `P v`: the sum over the votes of
-`m - 1 - (position of a)`, for `m = |C|` alternatives. -/
-def bordaScore (i : PossibleWinnerBordaInstance) (P : Voter i → List ℕ) (a : ℕ) : ℕ :=
-  ∑ v, (i.1.length - 1 - (P v).idxOf a)
-
-/-- Well-formedness of an instance: the alternatives are distinct, `c` is an alternative, every
-listed pair names two alternatives, and every voter's pairs form a strict partial order. -/
-def WellFormed (i : PossibleWinnerBordaInstance) : Prop :=
-  i.1.Nodup ∧ i.2.2 ∈ i.1 ∧ (∀ O ∈ i.2.1, ∀ q ∈ O, q.1 ∈ i.1 ∧ q.2 ∈ i.1) ∧
-    ∀ v, IsStrictOrder ℕ (Pref i v)
-
-/-- Some profile of linear orders extending the partial orders makes `c` the unique Borda
-winner. -/
-def PossibleWinnerBordaFeasible (i : PossibleWinnerBordaInstance) : Prop :=
-  ∃ P : Voter i → List ℕ, (∀ v, (P v).Perm i.1) ∧
-    (∀ v a b, Pref i v a b → (P v).idxOf a < (P v).idxOf b) ∧
-    ∀ a ∈ i.1, a ≠ i.2.2 → bordaScore i P a < bordaScore i P i.2.2
-
-open Classical in
-/-- POSSIBLE WINNER for Borda as a decision problem over bitstrings. -/
-noncomputable def possibleWinnerBordaDec : MetaMathlibExt.ComplexityTheory.DecisionProblem :=
-  fun x =>
-    match MetaMathlibExt.BitstringEncoding.bitDecode (α := PossibleWinnerBordaInstance) x with
-    | some i => decide (WellFormed i ∧ PossibleWinnerBordaFeasible i)
-    | none => false
 
 /-- **POSSIBLE WINNER for Borda is NP-complete.** Source: Xia and Conitzer (2011), Theorem 1;
 Betzler and Dorn (2010). -/

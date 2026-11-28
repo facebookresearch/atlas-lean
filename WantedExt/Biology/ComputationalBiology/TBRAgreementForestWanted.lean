@@ -19,8 +19,9 @@ of TBR operations transforming `T` into `T'` (Definition 2.6). An agreement fore
 `d_TBR(T, T') = m(T, T')`; in particular `m` is a metric.
 
 Agreement forests, and restrictions compared through displayed quartets, are those of
-`WantedExt.Complexity.NPComplete.TBRDistanceWanted` (`IsAgreementForest`), which uses the same
-theorem to phrase the NP-complete TBR DISTANCE problem but does not record the theorem itself.
+`CSLibExt.Complexity.NPComplete.TBRDistanceDefs` (`IsAgreementForest`), the definitions of
+`WantedExt.Complexity.NPComplete.TBRDistanceWanted`, which uses the same theorem to phrase the
+NP-complete TBR DISTANCE problem but does not record the theorem itself.
 Trees are the repository's `UnrootedBinaryTree`, with edge splits and quartets from
 `CSLibExt.Bioinformatics.Phylogenetics.Splits`.
 
@@ -49,7 +50,7 @@ Combinatorics 8 (2005) 409–423, doi:10.1007/s00026-004-0229-z.
 module
 
 public import Batteries.Util.ProofWanted
-public import WantedExt.Complexity.NPComplete.TBRDistanceWanted
+public import CSLibExt.Complexity.NPComplete.TBRDistanceDefs
 
 @[expose] public section
 

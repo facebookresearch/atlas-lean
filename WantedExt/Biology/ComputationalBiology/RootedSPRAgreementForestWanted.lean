@@ -29,7 +29,7 @@ whose label sets `L_ρ, L₁, …, L_k` partition `X ∪ {ρ}` with `ρ ∈ L_ρ
 likewise `T'(Lᵢ)`; `m(T, T')` is the least `k`. Rooted restrictions to `L` are compared by their
 rooted triplets, which are the quartets `ab|cρ` with `a, b, c ∈ L \ {ρ}`; a rooted binary tree is
 determined by its triplets (`Splits.eq_of_displaysTriplet_iff`, for cluster systems). The
-minimal subtree `T(L)` is `spanVerts T L` of `WantedExt.Complexity.NPComplete.TBRDistanceWanted`.
+minimal subtree `T(L)` is `spanVerts T L` of `CSLibExt.Complexity.NPComplete.TBRDistanceDefs`.
 
 Recorded: Theorem 2.1 (`d_rSPR = m`) and Corollary 2.2 (the rSPR distance decision problem is
 NP-complete; NP-hardness is Theorem 1.1). Not recorded: Theorem 1.2 and Section 3 (fixed-parameter
@@ -45,7 +45,7 @@ doi:10.1016/S0166-218X(96)00062-5.
 module
 
 public import Batteries.Util.ProofWanted
-public import WantedExt.Complexity.NPComplete.TBRDistanceWanted
+public import CSLibExt.Biology.ComputationalBiology.RootedSPRAgreementForestDefs
 
 @[expose] public section
 
@@ -57,45 +57,6 @@ open MetaMathlibExt.Complexity.NPComplete.TBRDistance
 
 variable {Y : Type} [Fintype Y] [DecidableEq Y]
 
-/-- The rooted restrictions of the `ρ`-augmented trees `T` and `T'` to `L` agree: they display
-the same rooted triplets `ab|c`, that is, the same quartets `ab|cρ`, for distinct `a, b, c` in
-`L` other than `ρ`. -/
-def RootedRestrictionsAgree (ρ : Y) (T T' : UnrootedBinaryTree Y) (L : Finset Y) : Prop :=
-  ∀ a ∈ L, ∀ b ∈ L, ∀ c ∈ L, [a, b, c, ρ].Nodup →
-    (DisplaysQuartet T a b c ρ ↔ DisplaysQuartet T' a b c ρ)
-
-/-- `T'` is obtained from `T` by one **rooted subtree prune and regraft**: the pruned leaf set
-`A`, not containing `ρ`, is a side of an edge of both trees, the remaining trees agree on `Aᶜ`,
-and the pruned subtree keeps its rooted shape (agreement on `A ∪ {ρ}`). -/
-def IsRSPRStep (ρ : Y) (T T' : UnrootedBinaryTree Y) : Prop :=
-  ∃ A : Finset Y, ρ ∉ A ∧ A ∈ edgeSplits T ∧ A ∈ edgeSplits T' ∧
-    RootedRestrictionsAgree ρ T T' Aᶜ ∧ RootedRestrictionsAgree ρ T T' (insert ρ A)
-
-/-- `T` is transformed into a tree isomorphic to `T'` by `k` rSPR operations. -/
-def RSPRReachIn (ρ : Y) (k : ℕ) (T T' : UnrootedBinaryTree Y) : Prop :=
-  ∃ f : Fin (k + 1) → UnrootedBinaryTree Y, f 0 = T ∧ (f (Fin.last k)).Iso T' ∧
-    ∀ i : Fin k, IsRSPRStep ρ (f i.castSucc) (f i.succ)
-
-/-- The **rSPR distance** `d_rSPR(T, T')`: the least number of rSPR operations transforming `T`
-into `T'`. -/
-noncomputable def rsprDist (ρ : Y) (T T' : UnrootedBinaryTree Y) : ℕ :=
-  sInf {k | RSPRReachIn ρ k T T'}
-
-/-- The partition `F` of `X ∪ {ρ}` is a **rooted agreement forest** for `T` and `T'`: on each
-part the rooted restrictions agree, and for each tree the minimal subtrees spanned by distinct
-parts are vertex-disjoint. (The part containing `ρ` is `L_ρ`.) -/
-def IsRootedAgreementForest (ρ : Y) (T T' : UnrootedBinaryTree Y)
-    (F : Finpartition (Finset.univ : Finset Y)) : Prop :=
-  (∀ L ∈ F.parts, RootedRestrictionsAgree ρ T T' L) ∧
-  ∀ L ∈ F.parts, ∀ L' ∈ F.parts, L ≠ L' →
-    Disjoint (spanVerts T L) (spanVerts T L') ∧ Disjoint (spanVerts T' L) (spanVerts T' L')
-
-/-- The **maximum agreement forest number** `m(T, T')`: the least `k` such that some rooted
-agreement forest has `k + 1` parts (`L_ρ, L₁, …, L_k`). -/
-noncomputable def rootedMafNumber (ρ : Y) (T T' : UnrootedBinaryTree Y) : ℕ :=
-  sInf {k | ∃ F : Finpartition (Finset.univ : Finset Y), IsRootedAgreementForest ρ T T' F ∧
-    F.parts.card = k + 1}
-
 /-- **rSPR distance equals the maximum agreement forest number** (Bordewich and Semple 2005,
 Theorem 2.1): for rooted binary phylogenetic trees `T` and `T'` on the same taxa, given as
 `ρ`-augmented unrooted binary trees, `d_rSPR(T, T') = m(T, T')`.
@@ -103,24 +64,6 @@ Theorem 2.1): for rooted binary phylogenetic trees `T` and `T'` on the same taxa
 Source: Bordewich and Semple (2005), Theorem 2.1. -/
 public theorem_wanted rsprDist_eq_rootedMafNumber (ρ : Y) (T T' : UnrootedBinaryTree Y) :
     rsprDist ρ T T' = rootedMafNumber ρ T T'
-
-/-- An rSPR distance instance: the number of taxa `m` other than the root, two trees on the
-labels `Fin (m + 1)` (the root leaf `ρ` is the label `m`), and the bound `K`. Trees use the
-encoding of `TBRDistanceWanted` (`TreeData`, `IsPhyloTree`). -/
-abbrev RSPRDistanceInstance := ℕ × TreeData × TreeData × ℕ
-
-/-- Some sequence of at most `K` rSPR operations transforms `T₁` into `T₂`. -/
-def RSPRDistanceFeasible (i : RSPRDistanceInstance) : Prop :=
-  ∃ (h₁ : IsPhyloTree (i.1 + 1) i.2.1) (h₂ : IsPhyloTree (i.1 + 1) i.2.2.1),
-    rsprDist (Fin.last i.1) (toTree h₁) (toTree h₂) ≤ i.2.2.2
-
-open Classical in
-/-- rSPR DISTANCE as a decision problem over bitstrings: undecodable bitstrings, and bitstrings
-decoding to instances with fewer than two taxa or malformed trees, are no-instances. -/
-noncomputable def rsprDistanceDec : MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := RSPRDistanceInstance) x with
-  | some i => decide (2 ≤ i.1 ∧ RSPRDistanceFeasible i)
-  | none => false
 
 /-- **rSPR DISTANCE is NP-complete** (Bordewich and Semple 2005, Theorem 1.1 and Corollary 2.2,
 by the reduction of Hein, Jiang, Wang and Zhang 1996, Theorem 8): the decision problem "is

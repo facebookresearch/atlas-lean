@@ -23,9 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.PluralityConstructiveControlDeletingCandidatesWanted
+public import CSLibExt.Complexity.NPComplete.PluralityConstructiveControlAddingCandidatesDefs
 
 @[expose] public section
 
@@ -59,32 +57,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number of candidates `m`, the registered candidates `C`, the distinguished
-candidate `p`, the voters' preference lists (most preferred first), and the bound `k`. -/
-abbrev PluralityConstructiveControlAddingCandidatesInstance :=
-  ℕ × List ℕ × ℕ × List (List ℕ) × ℕ
-
-/-- Well-formedness of an instance: the registered candidates are candidates, `p` is registered,
-and every voter's list contains every candidate exactly once. -/
-def WellFormed (i : PluralityConstructiveControlAddingCandidatesInstance) : Prop :=
-  (∀ c ∈ i.2.1, c < i.1) ∧ i.2.2.1 ∈ i.2.1 ∧ ∀ l ∈ i.2.2.2.1, l.Perm (List.range i.1)
-
-/-- Adding some set `E` of at most `k` spoiler candidates makes `p` the unique plurality winner
-of `C ∪ E`. -/
-def PluralityConstructiveControlAddingCandidatesFeasible
-    (i : PluralityConstructiveControlAddingCandidatesInstance) : Prop :=
-  ∃ E : Finset ℕ, E ⊆ Finset.range i.1 \ i.2.1.toFinset ∧ E.card ≤ i.2.2.2.2 ∧
-    IsUniquePluralityWinner i.2.2.2.1 (i.2.1.toFinset ∪ E) i.2.2.1
-
-open Classical in
-/-- PLURALITY CONSTRUCTIVE CONTROL BY ADDING CANDIDATES as a decision problem over bitstrings. -/
-noncomputable def pluralityConstructiveControlAddingCandidatesDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PluralityConstructiveControlAddingCandidatesInstance) x with
-  | some i => decide (WellFormed i ∧ PluralityConstructiveControlAddingCandidatesFeasible i)
-  | none => false
 
 /-- **PLURALITY CONSTRUCTIVE CONTROL BY ADDING CANDIDATES is NP-complete.** Source: Bartholdi,
 Tovey and Trick (1992); Faliszewski, Hemaspaandra, Hemaspaandra and Rothe (2009), Table 1. -/

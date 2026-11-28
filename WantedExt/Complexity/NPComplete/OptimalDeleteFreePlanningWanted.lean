@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Data.Finset.Basic
+public import CSLibExt.Complexity.NPComplete.OptimalDeleteFreePlanningDefs
 
 @[expose] public section
 
@@ -56,34 +54,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the actions `(pre(o), add(o))`, the initial state `I`, the goals `G`, and the
-bound `K`. -/
-abbrev OptimalDeleteFreePlanningInstance := List (List ℕ × List ℕ) × List ℕ × List ℕ × ℕ
-
-/-- `Result(S, ⟨o⟩)`: `S ∪ add(o)` if `pre(o) ⊆ S`, undefined otherwise. -/
-def applyAction (S : Finset ℕ) (o : List ℕ × List ℕ) : Option (Finset ℕ) :=
-  if o.1.toFinset ⊆ S then some (S ∪ o.2.toFinset) else none
-
-/-- `Result(S, ⟨o₁, …, oₙ⟩)`: the actions applied from left to right, undefined as soon as one
-of them is inapplicable. -/
-def result (O : List (List ℕ × List ℕ)) (S : Finset ℕ) : List (Fin O.length) → Option (Finset ℕ)
-  | [] => some S
-  | a :: p => (applyAction S O[a]).bind fun S' => result O S' p
-
-/-- Some plan of at most `K` actions of `O`, applied to `I`, reaches a state containing `G`. -/
-def OptimalDeleteFreePlanningFeasible (i : OptimalDeleteFreePlanningInstance) : Prop :=
-  ∃ p : List (Fin i.1.length), p.length ≤ i.2.2.2 ∧
-    ∃ S, result i.1 i.2.1.toFinset p = some S ∧ i.2.2.1.toFinset ⊆ S
-
-open Classical in
-/-- OPTIMAL DELETE-FREE PLANNING as a decision problem over bitstrings. -/
-noncomputable def optimalDeleteFreePlanningDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := OptimalDeleteFreePlanningInstance) x with
-  | some i => decide (OptimalDeleteFreePlanningFeasible i)
-  | none => false
 
 /-- **OPTIMAL DELETE-FREE PLANNING is NP-complete.** Source: Bylander (1994); Hoffmann and Nebel
 (2001). -/

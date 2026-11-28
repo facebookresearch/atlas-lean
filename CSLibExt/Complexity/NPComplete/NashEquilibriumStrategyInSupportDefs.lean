@@ -1,0 +1,81 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+# NASH EQUILIBRIUM WITH A GIVEN STRATEGY IN THE SUPPORT: definitions
+
+Source:
+V. Conitzer and T. Sandholm, "New complexity results about Nash equilibria", Games and
+Economic Behavior 63 (2008), 621-641, doi:10.1016/j.geb.2008.02.015 (technical report version
+CMU-CS-02-135, arXiv:cs/0205074, Corollary 6: even in symmetric 2-player games it is NP-hard to
+determine whether there is an equilibrium where player 1 sometimes plays `x ∈ Σ₁`);
+I. Gilboa and E. Zemel, "Nash and correlated equilibria: some complexity considerations",
+Games and Economic Behavior 1 (1989), 80-93, doi:10.1016/0899-8256(89)90006-7;
+V. Bilò and M. Mavronicolas, "The complexity of computational problems about Nash equilibria
+in symmetric win-lose games", Algorithmica 83 (2021), 447-530, doi:10.1007/s00453-020-00763-6,
+arXiv:1907.10468, §2.3 (membership in NP of these decision problems for bimatrix games).
+-/
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import MathlibExt.GameTheory.MixedNashExistence
+
+@[expose] public section
+
+namespace MetaMathlibExt.Complexity.NPComplete.NashEquilibriumStrategyInSupport
+
+open Convexity MathlibExt.GameTheory.MixedNashExistence
+
+/-- A rational number `(a - b) / q`, given as `((a, b), q)`. -/
+abbrev RatCode := (ℕ × ℕ) × ℕ
+
+/-- The real value `(a - b) / q` of `((a, b), q)`. -/
+noncomputable def ratValue (r : RatCode) : ℝ := ((r.1.1 : ℝ) - r.1.2) / r.2
+
+/-- An instance: the numbers `m₁` and `m₂` of pure strategies, the payoff matrices `R` and `C`
+(each a list of `m₁` rows of `m₂` entries), and the pure strategy `s` of player 1. -/
+abbrev NashEquilibriumStrategyInSupportInstance :=
+  ℕ × ℕ × List (List RatCode) × List (List RatCode) × ℕ
+
+/-- An `m₁ × m₂` matrix of rationals with positive denominators. -/
+def IsMatrix (m₁ m₂ : ℕ) (M : List (List RatCode)) : Prop :=
+  M.length = m₁ ∧ ∀ row ∈ M, row.length = m₂ ∧ ∀ q ∈ row, 0 < q.2
+
+/-- Well-formedness of an instance: both players have at least one pure strategy, `R` and `C`
+are `m₁ × m₂` matrices of rationals, and `s` is a pure strategy of player 1 (`s < m₁`). -/
+def WellFormed (i : NashEquilibriumStrategyInSupportInstance) : Prop :=
+  0 < i.1 ∧ 0 < i.2.1 ∧ IsMatrix i.1 i.2.1 i.2.2.1 ∧ IsMatrix i.1 i.2.1 i.2.2.2.1 ∧
+    i.2.2.2.2 < i.1
+
+/-- The pure strategies of player `p` (`0` is player 1, `1` is player 2). -/
+abbrev Strategy (i : NashEquilibriumStrategyInSupportInstance) (p : Fin 2) : Type :=
+  Fin (if p = 0 then i.1 else i.2.1)
+
+/-- The payoff of player `p` at the pure profile `a`: the entry of `R` (for player 1) or `C`
+(for player 2) in row `a 0` and column `a 1`. -/
+noncomputable def utility (i : NashEquilibriumStrategyInSupportInstance) (p : Fin 2)
+    (a : ∀ q, Strategy i q) : ℝ :=
+  ratValue (((if p = 0 then i.2.2.1 else i.2.2.2.1).getD (a 0) []).getD (a 1) ((0, 0), 1))
+
+/-- Some mixed Nash equilibrium gives the pure strategy `s` of player 1 positive probability. -/
+def NashEquilibriumStrategyInSupportFeasible (i : NashEquilibriumStrategyInSupportInstance) :
+    Prop :=
+  ∃ σ : ∀ p, StdSimplex ℝ (Strategy i p), IsMixedNash (utility i) σ ∧
+    ∃ x : Strategy i 0, (x : ℕ) = i.2.2.2.2 ∧ 0 < (σ 0).weights x
+
+open Classical in
+/-- NASH EQUILIBRIUM WITH A GIVEN STRATEGY IN THE SUPPORT as a decision problem over bitstrings. -/
+noncomputable def nashEquilibriumStrategyInSupportDec :
+    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
+  match MetaMathlibExt.BitstringEncoding.bitDecode
+      (α := NashEquilibriumStrategyInSupportInstance) x with
+  | some i => decide (WellFormed i ∧ NashEquilibriumStrategyInSupportFeasible i)
+  | none => false
+
+end MetaMathlibExt.Complexity.NPComplete.NashEquilibriumStrategyInSupport

@@ -22,9 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Data.Finset.Basic
+public import CSLibExt.Complexity.NPComplete.PluralityConstructiveControlDeletingCandidatesDefs
 
 @[expose] public section
 
@@ -56,41 +54,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number of candidates `m`, the distinguished candidate `p`, the voters'
-preference lists (most preferred first), and the bound `k`. -/
-abbrev PluralityConstructiveControlDeletingCandidatesInstance := ℕ × ℕ × List (List ℕ) × ℕ
-
-/-- The plurality score of `a` among the remaining candidates `S`: the number of voters whose
-first remaining candidate is `a`. -/
-def pluralityScore (V : List (List ℕ)) (S : Finset ℕ) (a : ℕ) : ℕ :=
-  (V.filter fun l => l.find? (· ∈ S) = some a).length
-
-/-- `p` is the unique plurality winner among the remaining candidates `S`. -/
-def IsUniquePluralityWinner (V : List (List ℕ)) (S : Finset ℕ) (p : ℕ) : Prop :=
-  p ∈ S ∧ ∀ a ∈ S, a ≠ p → pluralityScore V S a < pluralityScore V S p
-
-/-- Well-formedness of an instance: `p` is a candidate, and every voter's list contains every
-candidate exactly once. -/
-def WellFormed (i : PluralityConstructiveControlDeletingCandidatesInstance) : Prop :=
-  i.2.1 < i.1 ∧ ∀ l ∈ i.2.2.1, l.Perm (List.range i.1)
-
-/-- Deleting some set `E` of at most `k` candidates other than `p` makes `p` the unique
-plurality winner of the remaining candidates. -/
-def PluralityConstructiveControlDeletingCandidatesFeasible
-    (i : PluralityConstructiveControlDeletingCandidatesInstance) : Prop :=
-  ∃ E : Finset ℕ, E ⊆ Finset.range i.1 ∧ i.2.1 ∉ E ∧ E.card ≤ i.2.2.2 ∧
-    IsUniquePluralityWinner i.2.2.1 (Finset.range i.1 \ E) i.2.1
-
-open Classical in
-/-- PLURALITY CONSTRUCTIVE CONTROL BY DELETING CANDIDATES as a decision problem over
-bitstrings. -/
-noncomputable def pluralityConstructiveControlDeletingCandidatesDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PluralityConstructiveControlDeletingCandidatesInstance) x with
-  | some i => decide (WellFormed i ∧ PluralityConstructiveControlDeletingCandidatesFeasible i)
-  | none => false
 
 /-- **PLURALITY CONSTRUCTIVE CONTROL BY DELETING CANDIDATES is NP-complete.** Source:
 Bartholdi, Tovey and Trick (1992); Faliszewski, Hemaspaandra, Hemaspaandra and Rothe (2009),

@@ -21,8 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.RegisterSufficiencyForLoopsDefs
 
 @[expose] public section
 
@@ -56,34 +55,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the loop length `N`, the list of variables as (start time, duration) pairs,
-and the number `K` of registers. -/
-abbrev RegisterSufficiencyForLoopsInstance := ℕ × List (ℕ × ℕ) × ℕ
-
-/-- Well-formedness of an instance: `N`, every duration, and `K` are positive. -/
-def WellFormed (i : RegisterSufficiencyForLoopsInstance) : Prop :=
-  0 < i.1 ∧ (∀ v ∈ i.2.1, 0 < v.2) ∧ 0 < i.2.2
-
-/-- Two variables `(s, l)` and `(s', l')` overlap on a loop of length `N`: some time slot is
-occupied by both, modulo `N`. -/
-def Overlap (N : ℕ) (u v : ℕ × ℕ) : Prop :=
-  ∃ t₁ < u.2, ∃ t₂ < v.2, (u.1 + t₁) % N = (v.1 + t₂) % N
-
-/-- An assignment of the variables to `K` registers in which distinct variables sharing a
-register never overlap. -/
-def RegisterSufficiencyForLoopsFeasible (i : RegisterSufficiencyForLoopsInstance) : Prop :=
-  ∃ f : Fin i.2.1.length → Fin i.2.2, ∀ u v, u ≠ v → f u = f v →
-    ¬ Overlap i.1 (i.2.1.get u) (i.2.1.get v)
-
-open Classical in
-/-- REGISTER SUFFICIENCY FOR LOOPS as a decision problem over bitstrings. -/
-noncomputable def registerSufficiencyForLoopsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := RegisterSufficiencyForLoopsInstance) x with
-  | some i => decide (WellFormed i ∧ RegisterSufficiencyForLoopsFeasible i)
-  | none => false
 
 /-- **REGISTER SUFFICIENCY FOR LOOPS is NP-complete.** Source: Garey and Johnson (1979), [PO3];
 Garey, Johnson, Miller, and Papadimitriou (1980). -/

@@ -22,9 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.OrientedDiameterWanted
+public import CSLibExt.Complexity.NPComplete.OrientedRadiusDefs
 
 @[expose] public section
 
@@ -59,22 +57,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Some orientation of the graph has radius at most `K`: some centre `c` reaches every vertex,
-and is reached from every vertex, along at most `K` arcs (hence the orientation is strongly
-connected). -/
-def OrientedRadiusFeasible (i : OrientedDiameter.OrientedDiameterInstance) : Prop :=
-  ∃ D : Digraph (Fin i.1), (OrientedDiameter.Graph i).IsOrientation D.Adj ∧
-    ∃ c, ∀ v, OrientedDiameter.ReachWithin D i.2.2 c v ∧ OrientedDiameter.ReachWithin D i.2.2 v c
-
-open Classical in
-/-- ORIENTED RADIUS as a decision problem over bitstrings. -/
-noncomputable def orientedRadiusDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := OrientedDiameter.OrientedDiameterInstance) x with
-  | some i => decide (OrientedDiameter.WellFormed i ∧ OrientedRadiusFeasible i)
-  | none => false
 
 /-- **ORIENTED RADIUS is NP-complete.** Source: Garey and Johnson (1979), [GT64], comment;
 Chvátal and Thomassen (1978). -/

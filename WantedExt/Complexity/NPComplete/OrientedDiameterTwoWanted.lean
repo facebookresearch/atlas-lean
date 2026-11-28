@@ -22,9 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.OrientedDiameterWanted
+public import CSLibExt.Complexity.NPComplete.OrientedDiameterTwoDefs
 
 @[expose] public section
 
@@ -52,20 +50,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the parent's (a simple edge list on `Fin n` and
-`0 < K ≤ |V|`) and `K = 2`. -/
-def WellFormed (i : OrientedDiameter.OrientedDiameterInstance) : Prop :=
-  OrientedDiameter.WellFormed i ∧ i.2.2 = 2
-
-open Classical in
-/-- ORIENTED DIAMETER with `K = 2` as a decision problem over bitstrings. -/
-noncomputable def orientedDiameterTwoDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := OrientedDiameter.OrientedDiameterInstance) x with
-  | some i => decide (WellFormed i ∧ OrientedDiameter.OrientedDiameterFeasible i)
-  | none => false
 
 /-- **ORIENTED DIAMETER is NP-complete for `K = 2`.** Source: Garey and Johnson (1979), [GT64],
 comment; Chvátal and Thomassen (1978). -/

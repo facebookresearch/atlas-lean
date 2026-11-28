@@ -22,10 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.PrunedTrieSpaceMinimizationWanted
-public import Mathlib.Order.Bounds.Defs
+public import CSLibExt.Complexity.NPComplete.PrunedTrieAccessTimeMinimizationDefs
 
 @[expose] public section
 
@@ -63,27 +60,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- `L(a) = l`: `l` is the least `i` for which no other `b ∈ S = Fin s` has the same `i`-tuple
-`(f₁(b), …, fᵢ(b))` as `a`. -/
-def IsAccessTime (s : ℕ) (fs : List (List ℕ)) (a : Fin s) (l : ℕ) : Prop :=
-  IsLeast {i : ℕ | ∀ b : Fin s, b ≠ a → prefixTuple fs i b ≠ prefixTuple fs i a} l
-
-/-- Some sequence of functions from `F` distinguishes every two elements of `S` and has
-`∑_{a ∈ S} L(a) ≤ K`. -/
-def PrunedTrieAccessTimeMinimizationFeasible (i : PrunedTrieSpaceMinimizationInstance) :
-    Prop :=
-  ∃ fs : List (List ℕ), (∀ f ∈ fs, f ∈ i.2.1) ∧ Distinguishes i.1 fs ∧
-    ∃ L : Fin i.1 → ℕ, (∀ a, IsAccessTime i.1 fs a (L a)) ∧ ∑ a, L a ≤ i.2.2
-
-open Classical in
-/-- PRUNED TRIE ACCESS TIME MINIMIZATION as a decision problem over bitstrings. -/
-noncomputable def prunedTrieAccessTimeMinimizationDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PrunedTrieSpaceMinimizationInstance) x with
-  | some i => decide (WellFormed i ∧ PrunedTrieAccessTimeMinimizationFeasible i)
-  | none => false
 
 /-- **PRUNED TRIE ACCESS TIME MINIMIZATION is NP-complete.** Source: Garey and Johnson (1979),
 [SR3] (comment); Comer and Sethi (1977). -/

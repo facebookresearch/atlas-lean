@@ -22,9 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Logic.Equiv.Defs
+public import CSLibExt.Complexity.NPComplete.PermutationGenerationDefs
 
 @[expose] public section
 
@@ -53,36 +51,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the image list `[σ 0, ..., σ (N - 1)]` of `σ` (so `N` is its length), and the
-subsets `S₁, ..., Sₘ`, each as a list of elements. -/
-abbrev PermutationGenerationInstance := List ℕ × List (List ℕ)
-
-/-- Well-formedness of an instance: `N ≥ 1`, the image list is a permutation of
-`[0, ..., N - 1]`, there is at least one subset (`m ≥ 1`), and every listed subset element is
-below `N`. -/
-def WellFormed (i : PermutationGenerationInstance) : Prop :=
-  0 < i.1.length ∧ i.1.Perm (List.range i.1.length) ∧ 0 < i.2.length ∧
-    ∀ s ∈ i.2, ∀ x ∈ s, x < i.1.length
-
-/-- There are permutations `τ k` of `Fin N`, one for each subset, each fixing every element
-outside its subset, such that applying `τ 0`, then `τ 1`, ..., then `τ (m - 1)` sends every `x`
-to `σ x`. -/
-def PermutationGenerationFeasible (i : PermutationGenerationInstance) : Prop :=
-  ∃ τ : Fin i.2.length → Equiv.Perm (Fin i.1.length),
-    (∀ k (x : Fin i.1.length), (x : ℕ) ∉ i.2.get k → τ k x = x) ∧
-    ∀ x : Fin i.1.length,
-      (((List.ofFn τ).foldl (fun (y : Fin i.1.length) s => s y) x : Fin i.1.length) : ℕ) =
-        i.1.getD x 0
-
-open Classical in
-/-- PERMUTATION GENERATION as a decision problem over bitstrings. -/
-noncomputable def permutationGenerationDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PermutationGenerationInstance) x with
-  | some i => decide (WellFormed i ∧ PermutationGenerationFeasible i)
-  | none => false
 
 /-- **PERMUTATION GENERATION is NP-complete.** Source: Garey and Johnson (1979), [MS6];
 Garey, Johnson, Miller, and Papadimitriou (1980). -/

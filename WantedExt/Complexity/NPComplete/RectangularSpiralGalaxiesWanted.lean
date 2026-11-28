@@ -18,9 +18,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.SpiralGalaxiesWanted
+public import CSLibExt.Complexity.NPComplete.RectangularSpiralGalaxiesDefs
 
 @[expose] public section
 
@@ -49,32 +47,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: a Spiral Galaxies puzzle, drawn on its doubled lattice
-(`SpiralGalaxies.SpiralGalaxiesInstance`). -/
-abbrev RectangularSpiralGalaxiesInstance := SpiralGalaxies.SpiralGalaxiesInstance
-
-/-- Well-formedness: that of the Spiral Galaxies puzzle (a board with `m, n ≥ 1`). -/
-def WellFormed (i : RectangularSpiralGalaxiesInstance) : Prop :=
-  SpiralGalaxies.WellFormed i
-
-/-- The puzzle has a Spiral Galaxies solution (`SpiralGalaxies.IsSolution`) all of whose galaxies
-are rectangles of cells. -/
-def RectangularSpiralGalaxiesFeasible (i : RectangularSpiralGalaxiesInstance) : Prop :=
-  ∃ g : Fin (SpiralGalaxies.rows i) × Fin (SpiralGalaxies.cols i) →
-      Fin (SpiralGalaxies.centres i).length, SpiralGalaxies.IsSolution i g ∧
-    ∀ j : Fin (SpiralGalaxies.centres i).length, ∃ r₁ r₂ c₁ c₂ : ℕ,
-      ∀ p : Fin (SpiralGalaxies.rows i) × Fin (SpiralGalaxies.cols i),
-      g p = j ↔ (r₁ ≤ (p.1 : ℕ) ∧ (p.1 : ℕ) < r₂ ∧ c₁ ≤ (p.2 : ℕ) ∧ (p.2 : ℕ) < c₂)
-
-open Classical in
-/-- RECTANGULAR SPIRAL GALAXIES as a decision problem over bitstrings. -/
-noncomputable def rectangularSpiralGalaxiesDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := RectangularSpiralGalaxiesInstance) x with
-  | some i => decide (WellFormed i ∧ RectangularSpiralGalaxiesFeasible i)
-  | none => false
 
 /-- **RECTANGULAR SPIRAL GALAXIES is NP-complete.** Source: Demaine, Löffler and Schmidt (2023),
 Theorem 2. -/

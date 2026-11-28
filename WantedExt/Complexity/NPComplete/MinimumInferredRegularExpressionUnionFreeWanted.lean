@@ -23,10 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Languages.KleeneConverse
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MinimumInferredRegularExpressionWanted
+public import CSLibExt.Complexity.NPComplete.MinimumInferredRegularExpressionUnionFreeDefs
 
 @[expose] public section
 
@@ -61,35 +58,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- `E` contains no `∪` (`RegularExpression.plus`) operation. -/
-def UnionFree {α : Type*} : RegularExpression α → Prop
-  | .zero => True
-  | .epsilon => True
-  | .char _ => True
-  | .plus _ _ => False
-  | .comp P Q => UnionFree P ∧ UnionFree Q
-  | .star P => UnionFree P
-
-/-- Some union-free regular expression over the alphabet `{0, ..., k - 1}` with at most `K`
-symbol occurrences matches every word of `S` and no word of `T`. -/
-def MinimumInferredRegularExpressionUnionFreeFeasible
-    (i : MinimumInferredRegularExpressionInstance) : Prop :=
-  ∃ E : RegularExpression ℕ, UnionFree E ∧
-    (∀ a ∈ Cslib.Language.KleeneConverse.regexLetters E, a < i.1) ∧
-      symbolOccurrences E ≤ i.2.2.2 ∧
-      (∀ s ∈ i.2.1, s ∈ E.matches') ∧
-      ∀ t ∈ i.2.2.1, t ∉ E.matches'
-
-open Classical in
-/-- MINIMUM INFERRED UNION-FREE REGULAR EXPRESSION as a decision problem over bitstrings. -/
-noncomputable def minimumInferredRegularExpressionUnionFreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MinimumInferredRegularExpressionInstance) x with
-  | some i => decide (MinimumInferredRegularExpression.WellFormed i ∧
-      MinimumInferredRegularExpressionUnionFreeFeasible i)
-  | none => false
 
 /-- **MINIMUM INFERRED UNION-FREE REGULAR EXPRESSION is NP-complete.** Source: Garey and Johnson
 (1979), [AL10]; Angluin (1978), Corollary 3. -/

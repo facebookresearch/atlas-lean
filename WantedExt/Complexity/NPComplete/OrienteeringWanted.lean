@@ -22,9 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Paths
+public import CSLibExt.Complexity.NPComplete.OrienteeringDefs
 
 @[expose] public section
 
@@ -69,43 +67,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number `n` of vertices, the travel-time matrix (row `u`, column `v`), the
-start `s`, the end `t`, the scores, the time limit `T` and the target score `S`. -/
-abbrev OrienteeringInstance := ℕ × List (List ℕ) × ℕ × ℕ × List ℕ × ℕ × ℕ
-
-/-- The travel time between `u` and `v`. -/
-def travelTime (i : OrienteeringInstance) (u v : ℕ) : ℕ :=
-  (i.2.1.getD u []).getD v 0
-
-/-- The score of vertex `v`. -/
-def score (i : OrienteeringInstance) (v : ℕ) : ℕ :=
-  i.2.2.2.2.1.getD v 0
-
-/-- Well-formedness of an instance: the travel-time matrix is `n × n` and symmetric, `s` and
-`t` are different vertices, there is one score per vertex, and `s` and `t` have score `0`. -/
-def WellFormed (i : OrienteeringInstance) : Prop :=
-  i.2.1.length = i.1 ∧ (∀ row ∈ i.2.1, row.length = i.1) ∧
-    (∀ u < i.1, ∀ v < i.1, travelTime i u v = travelTime i v u) ∧
-    i.2.2.1 < i.1 ∧ i.2.2.2.1 < i.1 ∧ i.2.2.1 ≠ i.2.2.2.1 ∧ i.2.2.2.2.1.length = i.1 ∧
-    score i i.2.2.1 = 0 ∧ score i i.2.2.2.1 = 0
-
-/-- There is a path from `s` to `t` in the complete graph whose total travel time is at most
-`T` and whose visited vertices have total score at least `S`. -/
-def OrienteeringFeasible (i : OrienteeringInstance) : Prop :=
-  ∃ (u v : Fin i.1) (W : (⊤ : SimpleGraph (Fin i.1)).Walk u v),
-    (u : ℕ) = i.2.2.1 ∧ (v : ℕ) = i.2.2.2.1 ∧ W.IsPath ∧
-      (W.darts.map fun d => travelTime i d.fst d.snd).sum ≤ i.2.2.2.2.2.1 ∧
-      i.2.2.2.2.2.2 ≤ (W.support.map fun w : Fin i.1 => score i w).sum
-
-open Classical in
-/-- ORIENTEERING as a decision problem over bitstrings. -/
-noncomputable def orienteeringDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := OrienteeringInstance) x with
-  | some i => decide (WellFormed i ∧ OrienteeringFeasible i)
-  | none => false
 
 /-- **ORIENTEERING is NP-complete.** Source: Golden, Levy and Vohra (1987) (problem, NP-hardness);
 Garey and Johnson (1979), [GT39] (reduction in the module docstring). -/

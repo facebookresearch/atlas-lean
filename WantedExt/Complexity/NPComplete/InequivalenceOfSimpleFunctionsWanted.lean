@@ -25,8 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.InequivalenceOfSimpleFunctionsDefs
 
 @[expose] public section
 
@@ -63,80 +62,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Expressions over the simple functions, with variables `xₖ` at the leaves. -/
-inductive SimpleExpr where
-  /-- The variable `xₖ`. -/
-  | var (k : ℕ)
-  /-- `s(e) = e + 1`. -/
-  | succ (e : SimpleExpr)
-  /-- `p(e) = max {e - 1, 0}`. -/
-  | pred (e : SimpleExpr)
-  /-- `plus(e, e') = e + e'`. -/
-  | plus (e e' : SimpleExpr)
-  /-- `div(e, t) = ⌊e / t⌋`. -/
-  | div (e : SimpleExpr) (t : ℕ)
-  /-- `mod(e, t) = e - t · ⌊e / t⌋`. -/
-  | mod (e : SimpleExpr) (t : ℕ)
-  /-- `w(e, e') = if e' = 0 then e else 0`. -/
-  | w (e e' : SimpleExpr)
-  /-- `selectᵢⁿ(e₁, …, eₙ) = eᵢ`, with `n` the length of the argument list. -/
-  | select (i : ℕ) (es : List SimpleExpr)
-
-/-- The value of an expression under the assignment `a` of non-negative integers to the
-variables (`a k` is the value of `xₖ`). -/
-def SimpleExpr.eval (a : ℕ → ℕ) : SimpleExpr → ℕ
-  | .var k => a k
-  | .succ e => e.eval a + 1
-  | .pred e => e.eval a - 1
-  | .plus e e' => e.eval a + e'.eval a
-  | .div e t => e.eval a / t
-  | .mod e t => e.eval a % t
-  | .w e e' => if e'.eval a = 0 then e.eval a else 0
-  | .select i es => (es.map fun e => e.eval a).getD (i - 1) 0
-
-/-- The prefix token list of an expression (see the module docstring). -/
-def SimpleExpr.tokens : SimpleExpr → List (ℕ × ℕ × ℕ)
-  | .var k => [(0, k, 0)]
-  | .succ e => (1, 0, 0) :: e.tokens
-  | .pred e => (2, 0, 0) :: e.tokens
-  | .plus e e' => (3, 0, 0) :: (e.tokens ++ e'.tokens)
-  | .div e t => (4, t, 0) :: e.tokens
-  | .mod e t => (5, t, 0) :: e.tokens
-  | .w e e' => (6, 0, 0) :: (e.tokens ++ e'.tokens)
-  | .select i es => (7, i, es.length) :: (es.map fun e => e.tokens).flatten
-
-/-- An instance: the number `|X|` of variables, and the prefix token lists of `f` and `g`. -/
-abbrev InequivalenceOfSimpleFunctionsInstance :=
-  ℕ × List (ℕ × ℕ × ℕ) × List (ℕ × ℕ × ℕ)
-
-/-- A token list is the prefix token list of an expression over the variables
-`x₀, …, x_{nX-1}` whose `div` and `mod` divisors `t` are positive and whose selectors
-`selectᵢᵐ` have `1 ≤ i ≤ m`. -/
-def IsExpr (nX : ℕ) (ts : List (ℕ × ℕ × ℕ)) : Prop :=
-  (∃ e : SimpleExpr, e.tokens = ts) ∧
-    ∀ t ∈ ts, (t.1 = 0 → t.2.1 < nX) ∧ (t.1 = 4 ∨ t.1 = 5 → 0 < t.2.1) ∧
-      (t.1 = 7 → 1 ≤ t.2.1 ∧ t.2.1 ≤ t.2.2)
-
-/-- Well-formedness of an instance: both token lists are expressions over `X` (`IsExpr`). -/
-def WellFormed (i : InequivalenceOfSimpleFunctionsInstance) : Prop :=
-  IsExpr i.1 i.2.1 ∧ IsExpr i.1 i.2.2
-
-/-- Some assignment of non-negative integers to the variables gives `f` and `g` different
-values. -/
-def InequivalenceOfSimpleFunctionsFeasible (i : InequivalenceOfSimpleFunctionsInstance) :
-    Prop :=
-  ∃ f g : SimpleExpr, f.tokens = i.2.1 ∧ g.tokens = i.2.2 ∧
-    ∃ a : ℕ → ℕ, f.eval a ≠ g.eval a
-
-open Classical in
-/-- INEQUIVALENCE OF SIMPLE FUNCTIONS as a decision problem over bitstrings. -/
-noncomputable def inequivalenceOfSimpleFunctionsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := InequivalenceOfSimpleFunctionsInstance) x with
-  | some i => decide (WellFormed i ∧ InequivalenceOfSimpleFunctionsFeasible i)
-  | none => false
 
 /-- **INEQUIVALENCE OF SIMPLE FUNCTIONS is NP-complete.** Source: Garey and Johnson (1979),
 [PO15]; Tsichritzis (1970); Constable, Hunt and Sahni (1980). -/

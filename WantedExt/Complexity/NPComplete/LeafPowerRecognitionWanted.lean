@@ -22,11 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Acyclic
-public import Mathlib.Combinatorics.SimpleGraph.Metric
+public import CSLibExt.Complexity.NPComplete.LeafPowerRecognitionDefs
 
 @[expose] public section
 
@@ -74,41 +70,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`) and edge list. -/
-abbrev LeafPowerRecognitionInstance := ℕ × List (ℕ × ℕ)
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : LeafPowerRecognitionInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range). -/
-def WellFormed (i : LeafPowerRecognitionInstance) : Prop :=
-  i.2.Nodup ∧ ∀ e ∈ i.2, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2
-
-/-- `T` is a leaf root of `G` with threshold `θ`, the vertices of `G` being the leaves `f v` of
-`T`: `T` is acyclic and preconnected (a tree, or empty), `f` is injective, the leaves of `T` (the
-vertices with at most one neighbour) are exactly the values of `f`, and two distinct vertices of
-`G` are adjacent exactly when their leaves are at distance at most `θ` in `T`. -/
-def IsLeafRoot {n m : ℕ} (G : SimpleGraph (Fin n)) (T : SimpleGraph (Fin m))
-    (f : Fin n → Fin m) (θ : ℕ) : Prop :=
-  T.IsAcyclic ∧ T.Preconnected ∧ Function.Injective f ∧
-    (∀ x, (T.neighborSet x).Subsingleton ↔ x ∈ Set.range f) ∧
-    ∀ u v, u ≠ v → (G.Adj u v ↔ T.dist (f u) (f v) ≤ θ)
-
-/-- The graph of the instance is a leaf power: it has a leaf root for some threshold. -/
-def LeafPowerRecognitionFeasible (i : LeafPowerRecognitionInstance) : Prop :=
-  ∃ (m : ℕ) (T : SimpleGraph (Fin m)) (f : Fin i.1 → Fin m) (θ : ℕ), IsLeafRoot (Graph i) T f θ
-
-open Classical in
-/-- LEAF POWER RECOGNITION as a decision problem over bitstrings. -/
-noncomputable def leafPowerRecognitionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := LeafPowerRecognitionInstance) x with
-  | some i => decide (WellFormed i ∧ LeafPowerRecognitionFeasible i)
-  | none => false
 
 /-- **LEAF POWER RECOGNITION is NP-complete.** Source: Dupré la Tour, Lafond and Ndiaye (2026),
 Corollary 1.2; ISGCI, class `gc_649`. -/

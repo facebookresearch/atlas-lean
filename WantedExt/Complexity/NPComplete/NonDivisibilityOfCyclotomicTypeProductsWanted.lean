@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Algebra.Polynomial.Basic
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.NonDivisibilityOfCyclotomicTypeProductsDefs
 
 @[expose] public section
 
@@ -57,31 +55,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the sequences `⟨a₁, …, aₘ⟩` and `⟨b₁, …, bₙ⟩`. -/
-abbrev NonDivisibilityOfCyclotomicTypeProductsInstance := List ℕ × List ℕ
-
-/-- The product `∏ (z^a - 1)` over the entries `a` of a list, in `ℤ[z]`. -/
-noncomputable def binomialProduct (l : List ℕ) : Polynomial ℤ :=
-  (l.map fun a => Polynomial.X ^ a - 1).prod
-
-/-- Well-formedness of an instance: every `aᵢ` and every `bⱼ` is positive. -/
-def WellFormed (i : NonDivisibilityOfCyclotomicTypeProductsInstance) : Prop :=
-  (∀ a ∈ i.1, 0 < a) ∧ ∀ b ∈ i.2, 0 < b
-
-/-- `∏ᵢ (z^{aᵢ} - 1)` does not divide `∏ⱼ (z^{bⱼ} - 1)` in `ℤ[z]`. -/
-def NonDivisibilityOfCyclotomicTypeProductsFeasible
-    (i : NonDivisibilityOfCyclotomicTypeProductsInstance) : Prop :=
-  ¬ binomialProduct i.1 ∣ binomialProduct i.2
-
-open Classical in
-/-- NON-DIVISIBILITY OF CYCLOTOMIC-TYPE PRODUCTS as a decision problem over bitstrings. -/
-noncomputable def nonDivisibilityOfCyclotomicTypeProductsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := NonDivisibilityOfCyclotomicTypeProductsInstance) x with
-  | some i => decide (WellFormed i ∧ NonDivisibilityOfCyclotomicTypeProductsFeasible i)
-  | none => false
 
 /-- **NON-DIVISIBILITY OF CYCLOTOMIC-TYPE PRODUCTS is NP-complete.** Source: Garey and
 Johnson (1979), [AN6], comment; Plaisted (1976). -/

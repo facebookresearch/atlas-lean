@@ -18,12 +18,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Coloring.EdgeLabeling
-public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
-public import Mathlib.Combinatorics.SimpleGraph.Paths
+public import CSLibExt.Complexity.NPComplete.RainbowConnectionTwoDefs
 
 @[expose] public section
 
@@ -57,39 +52,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`) and edge list. -/
-abbrev RainbowConnectionTwoInstance := ℕ × List (ℕ × ℕ)
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : RainbowConnectionTwoInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range), and the graph is
-connected. -/
-def WellFormed (i : RainbowConnectionTwoInstance) : Prop :=
-  (i.2.Nodup ∧ ∀ e ∈ i.2, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2) ∧
-    (Graph i).Connected
-
-/-- The edge coloring `c` makes `G` rainbow connected: every two vertices are joined by a path
-whose edges have pairwise distinct colors. -/
-def IsRainbowConnected {n : ℕ} {G : SimpleGraph (Fin n)} {K : Type*} (c : G.EdgeLabeling K) :
-    Prop :=
-  ∀ u v : Fin n, ∃ p : G.Walk u v, p.IsPath ∧ (p.darts.map fun d => c.get d.fst d.snd d.adj).Nodup
-
-/-- Some coloring of the edges with `2` colors makes the graph rainbow connected. -/
-def RainbowConnectionTwoFeasible (i : RainbowConnectionTwoInstance) : Prop :=
-  ∃ c : (Graph i).EdgeLabeling (Fin 2), IsRainbowConnected c
-
-open Classical in
-/-- RAINBOW CONNECTION NUMBER AT MOST 2 as a decision problem over bitstrings. -/
-noncomputable def rainbowConnectionTwoDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := RainbowConnectionTwoInstance) x with
-  | some i => decide (WellFormed i ∧ RainbowConnectionTwoFeasible i)
-  | none => false
 
 /-- **RAINBOW CONNECTION NUMBER AT MOST 2 is NP-complete.** Source: Chakraborty, Fischer,
 Matsliah, and Yuster (2011). -/
