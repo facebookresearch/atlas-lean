@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import WantedExt.Complexity.NPComplete.UnboundedParallelBatchingReleaseWeightedTardinessWanted
+public import CSLibExt.Complexity.NPComplete.UnboundedParallelBatchingReleaseWeightedLateJobsDefs
 
 @[expose] public section
 
@@ -72,25 +69,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Some parallel-batching schedule starts every job (at the start `S (B j)` of its batch) no
-earlier than its release date and has total weight of late jobs (`d_j < C_j`) at most `K`. -/
-def UnboundedParallelBatchingReleaseWeightedLateJobsFeasible
-    (i : UnboundedParallelBatchingReleaseWeightedTardinessInstance) : Prop :=
-  ∃ (B : Job i → ℕ) (S : ℕ → ℕ), IsBatchSequence (proc i) B S ∧
-    (∀ j, release i j ≤ S (B j)) ∧
-    ∑ j ∈ Finset.univ.filter (fun j => dueDate i j < completion (proc i) B S j), weight i j ≤
-      i.2
-
-open Classical in
-/-- UNBOUNDED PARALLEL-BATCHING WEIGHTED NUMBER OF LATE JOBS WITH RELEASE DATES as a decision
-problem over bitstrings. -/
-noncomputable def unboundedParallelBatchingReleaseWeightedLateJobsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := UnboundedParallelBatchingReleaseWeightedTardinessInstance) x with
-  | some i => decide (WellFormed i ∧ UnboundedParallelBatchingReleaseWeightedLateJobsFeasible i)
-  | none => false
 
 /-- **UNBOUNDED PARALLEL-BATCHING WEIGHTED NUMBER OF LATE JOBS WITH RELEASE DATES
 (`1|p-batch;r_i|Σw_iU_i`) is NP-complete.** Source: Brucker et al. (1998); Brucker and Knust,

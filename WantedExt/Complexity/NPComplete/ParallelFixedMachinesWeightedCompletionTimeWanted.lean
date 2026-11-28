@@ -23,9 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.SchedulingToMinimizeWeightedCompletionTimeWanted
+public import CSLibExt.Complexity.NPComplete.ParallelFixedMachinesWeightedCompletionTimeDefs
 
 @[expose] public section
 
@@ -68,22 +66,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance for the fixed number `m` of processors: it is a well-formed
-SCHEDULING TO MINIMIZE WEIGHTED COMPLETION TIME instance (`0 < m`, positive lengths and
-weights, `0 < K`) with exactly `m` processors. -/
-def WellFormed (m : ℕ) (i : SchedulingToMinimizeWeightedCompletionTimeInstance) : Prop :=
-  SchedulingToMinimizeWeightedCompletionTime.WellFormed i ∧ i.1 = m
-
-open Classical in
-/-- `Pm||Σw_iC_i` for the fixed number `m` of processors, as a decision problem over
-bitstrings. -/
-noncomputable def parallelFixedMachinesWeightedCompletionTimeDec (m : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SchedulingToMinimizeWeightedCompletionTimeInstance) x with
-  | some i => decide (WellFormed m i ∧ SchedulingToMinimizeWeightedCompletionTimeFeasible i)
-  | none => false
 
 /-- **SCHEDULING TO MINIMIZE WEIGHTED COMPLETION TIME is NP-complete for every fixed number
 `m ≥ 2` of processors (`Pm||Σw_iC_i`).** Source: Lenstra, Rinnooy Kan and Brucker (1977),

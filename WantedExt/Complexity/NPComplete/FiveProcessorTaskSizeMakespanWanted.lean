@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.RCPSPWanted
+public import CSLibExt.Complexity.NPComplete.FiveProcessorTaskSizeMakespanDefs
 
 @[expose] public section
 
@@ -69,20 +67,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed RESOURCE-CONSTRAINED PROJECT SCHEDULING
-instance with no precedence pairs and capacity `5` (the five processors), every task having a
-positive processing time and size `1 ≤ size_i ≤ 5`. -/
-def WellFormed (i : RCPSPInstance) : Prop :=
-  RCPSP.WellFormed i ∧ i.2.1 = [] ∧ i.2.2.1 = 5 ∧ ∀ t ∈ i.1, 0 < t.1 ∧ 1 ≤ t.2 ∧ t.2 ≤ 5
-
-open Classical in
-/-- `P5|size_i|C_max` as a decision problem over bitstrings. -/
-noncomputable def fiveProcessorTaskSizeMakespanDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := RCPSPInstance) x with
-  | some i => decide (WellFormed i ∧ RCPSPFeasible i)
-  | none => false
 
 /-- **FIVE-PROCESSOR TASKS, MAKESPAN `P5|size_i|C_max` is NP-complete.** Source: Du and Leung
 (1989), as recorded in the Brucker-Knust classification. -/

@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
+public import CSLibExt.Complexity.NPComplete.FixedIntervalSchedulingEligibleMachinesDefs
 
 @[expose] public section
 
@@ -57,41 +55,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- A job: start time `s`, finish time `f`, weight `w`, and the list of its eligible machines. -/
-abbrev Job := ℕ × ℕ × ℕ × List ℕ
-
-/-- An instance: the number `m` of machines, the jobs in order, and the bound `W`. -/
-abbrev FixedIntervalSchedulingEligibleMachinesInstance := ℕ × List Job × ℕ
-
-/-- Well-formedness of an instance: every job has `s < f`, and every eligible machine index of
-every job is below `m`. -/
-def WellFormed (i : FixedIntervalSchedulingEligibleMachinesInstance) : Prop :=
-  ∀ job ∈ i.2.1, job.1 < job.2.1 ∧ ∀ k ∈ job.2.2.2, k < i.1
-
-/-- Two jobs conflict when their intervals intersect: each starts before the other finishes. -/
-def Conflict (a b : Job) : Prop :=
-  a.1 < b.2.1 ∧ b.1 < a.2.1
-
-/-- Some schedule `σ` (job `j` goes to machine `σ j`, or is rejected when `σ j = none`) maps
-every scheduled job to one of its eligible machines, maps no two distinct conflicting jobs to
-the same machine, and schedules jobs of total weight at least `W`. -/
-def FixedIntervalSchedulingEligibleMachinesFeasible
-    (i : FixedIntervalSchedulingEligibleMachinesInstance) : Prop :=
-  ∃ σ : Fin i.2.1.length → Option (Fin i.1),
-    (∀ j : Fin i.2.1.length, ∀ k : Fin i.1, σ j = some k → (k : ℕ) ∈ (i.2.1.get j).2.2.2) ∧
-    (∀ j j' : Fin i.2.1.length, j ≠ j' → ∀ k : Fin i.1, σ j = some k → σ j' = some k →
-      ¬ Conflict (i.2.1.get j) (i.2.1.get j')) ∧
-    i.2.2 ≤ ∑ j with (σ j).isSome, (i.2.1.get j).2.2.1
-
-open Classical in
-/-- FIXED-INTERVAL SCHEDULING ON ELIGIBLE MACHINES as a decision problem over bitstrings. -/
-noncomputable def fixedIntervalSchedulingEligibleMachinesDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := FixedIntervalSchedulingEligibleMachinesInstance) x with
-  | some i => decide (WellFormed i ∧ FixedIntervalSchedulingEligibleMachinesFeasible i)
-  | none => false
 
 /-- **FIXED-INTERVAL SCHEDULING ON ELIGIBLE MACHINES is NP-complete.** Source: Arkin and
 Silverberg (1987); Hermelin, Itzhaki, Molter, and Shabtay (2022). -/

@@ -22,10 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
-public import CSLibExt.Complexity.NPComplete.SequencingToMinimizeWeightedTardinessDefs
+public import CSLibExt.Complexity.NPComplete.DeadlineWeightedCompletionDefs
 
 @[expose] public section
 
@@ -59,27 +56,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-open SequencingToMinimizeWeightedTardiness in
-/-- Some one-processor schedule `σ` meets every deadline, `σ(t) + l(t) ≤ d(t)`, and has
-weighted completion time `∑ t, (σ(t) + l(t)) · w(t)` at most `K`. -/
-def DeadlineWeightedCompletionFeasible (i : SequencingToMinimizeWeightedTardinessInstance) :
-    Prop :=
-  ∃ σ : Task i → ℕ, IsOneProcessorSchedule (taskLength i) σ ∧
-    (∀ t, σ t + taskLength i t ≤ deadline i t) ∧
-    ∑ t, (σ t + taskLength i t) * weight i t ≤ i.2
-
-open Classical in
-/-- SEQUENCING TO MINIMIZE WEIGHTED COMPLETION TIME WITH DEADLINES as a decision problem over
-bitstrings. -/
-noncomputable def deadlineWeightedCompletionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SequencingToMinimizeWeightedTardiness.SequencingToMinimizeWeightedTardinessInstance)
-      x with
-  | some i => decide (SequencingToMinimizeWeightedTardiness.WellFormed i ∧
-      DeadlineWeightedCompletionFeasible i)
-  | none => false
 
 /-- **SEQUENCING TO MINIMIZE WEIGHTED COMPLETION TIME WITH DEADLINES is NP-complete.** Source:
 Garey and Johnson (1979), [SS4], comment; Lenstra, Rinnooy Kan, and Brucker (1977),

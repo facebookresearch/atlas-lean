@@ -22,9 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.ResourceConstrainedSchedulingForestPrecedenceWanted
+public import CSLibExt.Complexity.NPComplete.ResourceConstrainedSchedulingChainsUnitResourceDefs
 
 @[expose] public section
 
@@ -72,28 +70,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- The partial order is a set of chains: no task has more than one immediate successor, and no
-task has more than one immediate predecessor. -/
-def IsChains (i : PrecedenceResourceSchedulingInstance) : Prop :=
-  (∀ t a b, ImmediatePredecessor i t a → ImmediatePredecessor i t b → a = b) ∧
-    ∀ t a b, ImmediatePredecessor i a t → ImmediatePredecessor i b t → a = b
-
-/-- Well-formedness of an instance: it is well-formed for RESOURCE CONSTRAINED SCHEDULING with a
-partial order, `m = 2`, `r = 1`, the resource has size `B_1 = 1`, and the partial order is a set
-of chains. -/
-def WellFormed (i : PrecedenceResourceSchedulingInstance) : Prop :=
-  PrecedenceWellFormed i ∧ i.1.1 = 2 ∧ i.1.2.1 = 1 ∧ bound i.1 0 = 1 ∧ IsChains i
-
-open Classical in
-/-- RESOURCE CONSTRAINED SCHEDULING with two processors, chains and a unit resource as a decision
-problem over bitstrings. -/
-noncomputable def resourceConstrainedSchedulingChainsUnitResourceDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PrecedenceResourceSchedulingInstance) x with
-  | some i => decide (WellFormed i ∧ PrecedenceFeasible i)
-  | none => false
 
 /-- **RESOURCE CONSTRAINED SCHEDULING with two processors, chains and a unit resource is
 NP-complete.** Source: Błażewicz, Lenstra and Rinnooy Kan (1983), Theorem 7; Garey and Johnson

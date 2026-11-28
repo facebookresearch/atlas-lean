@@ -24,9 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.PrecedenceWeightedCompletionWanted
+public import CSLibExt.Complexity.NPComplete.PrecedenceUnitWeightCompletionDefs
 
 @[expose] public section
 
@@ -55,32 +53,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance, as in `PrecedenceWeightedCompletionWanted`: the jobs (processing time `l(t)`,
-weight `w(t)`), the precedence pairs, and the bound `K`. -/
-abbrev PrecedenceUnitWeightCompletionInstance :=
-  PrecedenceWeightedCompletion.PrecedenceWeightedCompletionInstance
-
-/-- Well-formedness of an instance: the base instance is well-formed, every job has a positive
-processing time and weight `1`, and `K` is positive. -/
-def WellFormed (i : PrecedenceUnitWeightCompletionInstance) : Prop :=
-  PrecedenceWeightedCompletion.WellFormed i ∧ (∀ j ∈ i.1, 0 < j.1 ∧ j.2 = 1) ∧ 0 < i.2.2
-
-/-- A precedence-respecting ordering of weighted completion sum at most `K`, exactly as in
-`PrecedenceWeightedCompletionWanted`. -/
-def PrecedenceUnitWeightCompletionFeasible (i : PrecedenceUnitWeightCompletionInstance) :
-    Prop :=
-  PrecedenceWeightedCompletion.PrecedenceWeightedCompletionFeasible i
-
-open Classical in
-/-- SEQUENCING TO MINIMIZE WEIGHTED COMPLETION TIME with unit weights as a decision problem
-over bitstrings. -/
-noncomputable def precedenceUnitWeightCompletionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PrecedenceUnitWeightCompletionInstance) x with
-  | some i => decide (WellFormed i ∧ PrecedenceUnitWeightCompletionFeasible i)
-  | none => false
 
 /-- **SEQUENCING TO MINIMIZE WEIGHTED COMPLETION TIME with unit weights is NP-complete.**
 Source: Garey and Johnson (1979), [SS4]; Lenstra and Rinnooy Kan (1978); Lawler (1978). -/

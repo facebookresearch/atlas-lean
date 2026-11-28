@@ -23,11 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
-public import Mathlib.Logic.Relation
-public import CSLibExt.Complexity.NPComplete.SequencingToMinimizeWeightedTardinessDefs
+public import CSLibExt.Complexity.NPComplete.ChainsUnitReleaseWeightedCompletionDefs
 
 @[expose] public section
 
@@ -75,57 +71,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: one pair `(rⱼ, wⱼ)` of release date and weight per job, the list of arcs
-`(j, k)` of the precedence digraph, and the bound `K`. -/
-abbrev ChainsUnitReleaseWeightedCompletionInstance := List (ℕ × ℕ) × List (ℕ × ℕ) × ℕ
-
-/-- The jobs of the instance, `Fin n` for `n` listed pairs `(rⱼ, wⱼ)`. -/
-abbrev Job (i : ChainsUnitReleaseWeightedCompletionInstance) : Type := Fin i.1.length
-
-/-- The release date `rⱼ` of job `j`. -/
-def releaseDate (i : ChainsUnitReleaseWeightedCompletionInstance) (j : Job i) : ℕ :=
-  (i.1.get j).1
-
-/-- The weight `wⱼ` of job `j`. -/
-def weight (i : ChainsUnitReleaseWeightedCompletionInstance) (j : Job i) : ℕ :=
-  (i.1.get j).2
-
-/-- The arc relation of the precedence digraph: the pair `(j, k)` is listed. -/
-def Arc (i : ChainsUnitReleaseWeightedCompletionInstance) (j k : Job i) : Prop :=
-  ((j : ℕ), (k : ℕ)) ∈ i.2.1
-
-/-- The precedence relation `Jⱼ → Jₖ`: there is a directed path from `Jⱼ` to `Jₖ`. -/
-def Precedes (i : ChainsUnitReleaseWeightedCompletionInstance) (j k : Job i) : Prop :=
-  Relation.TransGen (Arc i) j k
-
-/-- Well-formedness of an instance: every arc joins two jobs, no job is the tail of two listed
-arcs (outdegree at most one), no job is the head of two listed arcs (indegree at most one), and
-the digraph is acyclic. -/
-def WellFormed (i : ChainsUnitReleaseWeightedCompletionInstance) : Prop :=
-  (∀ a ∈ i.2.1, a.1 < i.1.length ∧ a.2 < i.1.length) ∧
-    (i.2.1.map Prod.fst).Nodup ∧ (i.2.1.map Prod.snd).Nodup ∧
-    ∀ j, ¬ Precedes i j j
-
-/-- Some one-processor schedule `σ` of unit-time jobs starts every job no earlier than its
-release date, completes `Jⱼ` before `Jₖ` starts whenever `Jⱼ → Jₖ`, and has total weighted
-completion time `∑ⱼ wⱼ (σ(j) + 1)` at most `K`. -/
-def ChainsUnitReleaseWeightedCompletionFeasible
-    (i : ChainsUnitReleaseWeightedCompletionInstance) : Prop :=
-  ∃ σ : Job i → ℕ, IsOneProcessorSchedule (fun _ => 1) σ ∧
-    (∀ j, releaseDate i j ≤ σ j) ∧
-    (∀ j k, Precedes i j k → σ j + 1 ≤ σ k) ∧
-    ∑ j, weight i j * (σ j + 1) ≤ i.2.2
-
-open Classical in
-/-- SINGLE-MACHINE WEIGHTED COMPLETION TIME with chains, unit processing times and release dates
-as a decision problem over bitstrings. -/
-noncomputable def chainsUnitReleaseWeightedCompletionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ChainsUnitReleaseWeightedCompletionInstance) x with
-  | some i => decide (WellFormed i ∧ ChainsUnitReleaseWeightedCompletionFeasible i)
-  | none => false
 
 /-- **SINGLE-MACHINE WEIGHTED COMPLETION TIME with chains, unit processing times and release
 dates is NP-complete.** Source: Lenstra and Rinnooy Kan (1980), Theorem 3 (NP-hardness). -/

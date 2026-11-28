@@ -22,10 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.TotalCompletionTimeWithReleaseTimesWanted
+public import CSLibExt.Complexity.NPComplete.TwoProcessorReleaseTotalCompletionDefs
 
 @[expose] public section
 
@@ -68,27 +65,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Some two-machine schedule (start times `σ`, machines `μ`) processes two different jobs on
-the same machine in disjoint intervals, starts every job no earlier than its release date, and
-has total completion time `∑_i (σ(i) + p_i)` at most `K`. -/
-def TwoProcessorReleaseTotalCompletionFeasible (i : TotalCompletionTimeWithReleaseTimesInstance) :
-    Prop :=
-  ∃ (σ : Task i → ℕ) (μ : Task i → Fin 2),
-    (∀ t t', t ≠ t' → μ t = μ t' →
-      σ t + taskLength i t ≤ σ t' ∨ σ t' + taskLength i t' ≤ σ t) ∧
-    (∀ t, releaseTime i t ≤ σ t) ∧
-    ∑ t, (σ t + taskLength i t) ≤ i.2
-
-open Classical in
-/-- `P2|r_i|ΣC_i` as a decision problem over bitstrings. -/
-noncomputable def twoProcessorReleaseTotalCompletionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TotalCompletionTimeWithReleaseTimesInstance) x with
-  | some i => decide (TotalCompletionTimeWithReleaseTimes.WellFormed i ∧
-      TwoProcessorReleaseTotalCompletionFeasible i)
-  | none => false
 
 /-- **TWO PARALLEL MACHINES WITH RELEASE DATES, TOTAL COMPLETION TIME `P2|r_i|ΣC_i` is
 NP-complete.** Source: Brucker and Knust, *Complexity results for scheduling problems*; Lenstra,

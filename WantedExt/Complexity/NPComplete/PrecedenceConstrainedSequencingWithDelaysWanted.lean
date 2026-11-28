@@ -25,10 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Logic.Relation
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.SequencingToMinimizeWeightedTardinessDefs
+public import CSLibExt.Complexity.NPComplete.PrecedenceConstrainedSequencingWithDelaysDefs
 
 @[expose] public section
 
@@ -65,44 +62,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the delays `[d(t₀), …, d(t_{n-1})]` of the tasks, the edges `(i, j)` of the
-precedence graph, the bound `D` and the bound `K`. -/
-abbrev PrecedenceConstrainedSequencingWithDelaysInstance := List ℕ × List (ℕ × ℕ) × ℕ × ℕ
-
-/-- The tasks of the instance, `Fin n` for `n` listed delays. -/
-abbrev Task (i : PrecedenceConstrainedSequencingWithDelaysInstance) : Type := Fin i.1.length
-
-/-- The edge relation of the precedence graph: `t → t'` when the pair `(t, t')` is listed. -/
-def Edge (i : PrecedenceConstrainedSequencingWithDelaysInstance) (t t' : Task i) : Prop :=
-  ((t : ℕ), (t' : ℕ)) ∈ i.2.1
-
-/-- The delay `d(t)` of task `t`. -/
-def delay (i : PrecedenceConstrainedSequencingWithDelaysInstance) (t : Task i) : ℕ :=
-  i.1.get t
-
-/-- Well-formedness of an instance: every listed edge joins two tasks, the edge relation is
-acyclic, `D` is positive, every delay is at most `D`, and `K` is positive. -/
-def WellFormed (i : PrecedenceConstrainedSequencingWithDelaysInstance) : Prop :=
-  (∀ e ∈ i.2.1, e.1 < i.1.length ∧ e.2 < i.1.length) ∧
-    (∀ t : Task i, ¬ Relation.TransGen (Edge i) t t) ∧
-    0 < i.2.2.1 ∧ (∀ d ∈ i.1, d ≤ i.2.2.1) ∧ 0 < i.2.2.2
-
-/-- Some one-processor schedule of the unit-time tasks (start times `S(t) = σ(t) + 1`) obeys
-every delay (`t → t'` implies `σ(t) + d(t) < σ(t')`) and has finish time at most `K`. -/
-def PrecedenceConstrainedSequencingWithDelaysFeasible
-    (i : PrecedenceConstrainedSequencingWithDelaysInstance) : Prop :=
-  ∃ σ : Task i → ℕ, IsOneProcessorSchedule (fun _ => 1) σ ∧
-    (∀ t t', Edge i t t' → σ t + delay i t < σ t') ∧ ∀ t, σ t + 1 ≤ i.2.2.2
-
-open Classical in
-/-- PRECEDENCE CONSTRAINED SEQUENCING WITH DELAYS as a decision problem over bitstrings. -/
-noncomputable def precedenceConstrainedSequencingWithDelaysDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PrecedenceConstrainedSequencingWithDelaysInstance) x with
-  | some i => decide (WellFormed i ∧ PrecedenceConstrainedSequencingWithDelaysFeasible i)
-  | none => false
 
 /-- **PRECEDENCE CONSTRAINED SEQUENCING WITH DELAYS is NP-complete.** Source: Crescenzi and
 Kann, MINIMUM PRECEDENCE CONSTRAINED SEQUENCING WITH DELAYS; Bernstein, Rodeh and Gertner (1989);

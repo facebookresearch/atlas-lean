@@ -20,10 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Order.Defs.Unbundled
-public import WantedExt.Complexity.NPComplete.TwoProcessorTreePrecedenceCompletionTimeWanted
+public import CSLibExt.Complexity.NPComplete.TwoProcessorUnitChainsWeightedCompletionDefs
 
 @[expose] public section
 
@@ -77,26 +74,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: `m = 2`, every processing time is `1`, every listed pair
-names two jobs, the listed pairs form a strict partial order, and the order is a set of chains
-(at most one immediate successor and at most one immediate predecessor per job). Weights and
-`K` are arbitrary natural numbers. -/
-def WellFormed (i : TwoProcessorTreePrecedenceCompletionTimeInstance) : Prop :=
-  i.1 = 2 ∧ (∀ p ∈ i.2.1, p.1 = 1) ∧
-    (∀ p ∈ i.2.2.2, p.1 < i.2.1.length ∧ p.2 < i.2.1.length) ∧
-    IsStrictOrder (TwoProcessorTreePrecedenceCompletionTime.Task i) (Prec i) ∧
-    IsInTree i ∧ IsOutTree i
-
-open Classical in
-/-- TWO-PROCESSOR UNIT-TIME CHAINS SCHEDULING TO MINIMIZE WEIGHTED COMPLETION TIME as a decision
-problem over bitstrings. -/
-noncomputable def twoProcessorUnitChainsWeightedCompletionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TwoProcessorTreePrecedenceCompletionTimeInstance) x with
-  | some i => decide (WellFormed i ∧ TwoProcessorTreePrecedenceCompletionTimeFeasible i)
-  | none => false
 
 /-- **TWO-PROCESSOR UNIT-TIME CHAINS SCHEDULING TO MINIMIZE WEIGHTED COMPLETION TIME
 (`P2|pᵢ = 1; chains|∑wᵢCᵢ`) is NP-complete.** Source: Timkovsky (2003); Brucker (2007),

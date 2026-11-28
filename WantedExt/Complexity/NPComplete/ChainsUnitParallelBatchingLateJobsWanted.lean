@@ -26,9 +26,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.TardyTasksUnitChainsWanted
+public import CSLibExt.Complexity.NPComplete.ChainsUnitParallelBatchingLateJobsDefs
 
 @[expose] public section
 
@@ -74,34 +72,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: an instance of SEQUENCING TO MINIMIZE TARDY TASKS with unit lengths and chains
-(due dates, the pairs `(t, t')` with `t` preceding `t'`, the bound `K`) and the batch capacity
-`b`. -/
-abbrev ChainsUnitParallelBatchingLateJobsInstance := TardyTasksUnitChainsInstance × ℕ
-
-/-- Well-formedness of an instance: it is well-formed for SEQUENCING TO MINIMIZE TARDY TASKS with
-unit lengths and chains (positive due dates, `0 < K ≤ n`, a strict partial order consisting of
-chains), and `0 < b < n`. -/
-def WellFormed (i : ChainsUnitParallelBatchingLateJobsInstance) : Prop :=
-  TardyTasksUnitChains.WellFormed i.1 ∧ 0 < i.2 ∧ i.2 < i.1.1.length
-
-/-- Some batch schedule `σ` (batch start time of each job) puts at most `b` jobs in each batch,
-obeys the precedence constraints and has at most `K` late jobs, those with `σ(t) + 1 > d(t)`. -/
-def ChainsUnitParallelBatchingLateJobsFeasible
-    (i : ChainsUnitParallelBatchingLateJobsInstance) : Prop :=
-  ∃ σ : Task i.1 → ℕ, (∀ u, (Finset.univ.filter fun t => σ t = u).card ≤ i.2) ∧
-    (∀ t t', Prec i.1 t t' → σ t + 1 ≤ σ t') ∧
-    (Finset.univ.filter fun t => deadline i.1 t < σ t + 1).card ≤ i.1.2.2
-
-open Classical in
-/-- `1|chains;p_i=1;p-batch;b<n|ΣU_i` as a decision problem over bitstrings. -/
-noncomputable def chainsUnitParallelBatchingLateJobsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ChainsUnitParallelBatchingLateJobsInstance) x with
-  | some i => decide (WellFormed i ∧ ChainsUnitParallelBatchingLateJobsFeasible i)
-  | none => false
 
 /-- **PARALLEL BATCHING `1|chains;p_i=1;p-batch;b<n|ΣU_i` is NP-complete.** Source: Brucker and
 Knust's classification (reduction from `1|chains;p_i=1|ΣU_i`, Lenstra and Rinnooy Kan 1980). -/

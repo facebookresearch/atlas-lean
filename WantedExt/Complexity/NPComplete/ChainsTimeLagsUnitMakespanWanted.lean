@@ -24,10 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Logic.Relation
-public import CSLibExt.Complexity.NPComplete.SequencingToMinimizeWeightedTardinessDefs
+public import CSLibExt.Complexity.NPComplete.ChainsTimeLagsUnitMakespanDefs
 
 @[expose] public section
 
@@ -74,46 +71,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the processing times `p₀, …, pₙ₋₁` (one per job), the list of triples
-`(i, j, lᵢⱼ)` of time-lagged pairs, and the bound `K`. -/
-abbrev ChainsTimeLagsUnitMakespanInstance := List ℕ × List (ℕ × ℕ × ℕ) × ℕ
-
-/-- The jobs of the instance, `Fin n` for `n` listed processing times. -/
-abbrev Job (i : ChainsTimeLagsUnitMakespanInstance) : Type := Fin i.1.length
-
-/-- The processing time `pⱼ` of job `j`. -/
-def processingTime (i : ChainsTimeLagsUnitMakespanInstance) (j : Job i) : ℕ :=
-  i.1.get j
-
-/-- The pair relation: some triple `(j, k, l)` is listed. -/
-def Arc (i : ChainsTimeLagsUnitMakespanInstance) (j k : Job i) : Prop :=
-  ∃ l, ((j : ℕ), (k : ℕ), l) ∈ i.2.1
-
-/-- Well-formedness of an instance: every processing time is `1`, every listed pair joins two
-jobs, no job is the first job of two listed pairs, no job is the second job of two listed pairs,
-and the pairs have no cycle. -/
-def WellFormed (i : ChainsTimeLagsUnitMakespanInstance) : Prop :=
-  (∀ p ∈ i.1, p = 1) ∧ (∀ a ∈ i.2.1, a.1 < i.1.length ∧ a.2.1 < i.1.length) ∧
-    (i.2.1.map Prod.fst).Nodup ∧ (i.2.1.map fun a => a.2.1).Nodup ∧
-    ∀ j, ¬ Relation.TransGen (Arc i) j j
-
-/-- Some one-processor schedule `σ` satisfies every time lag, `σ(j) + pⱼ + l ≤ σ(k)` for each
-listed triple `(j, k, l)`, and has makespan `max (σ(j) + pⱼ)` at most `K`. -/
-def ChainsTimeLagsUnitMakespanFeasible (i : ChainsTimeLagsUnitMakespanInstance) : Prop :=
-  ∃ σ : Job i → ℕ, IsOneProcessorSchedule (processingTime i) σ ∧
-    (∀ j k : Job i, ∀ l, ((j : ℕ), (k : ℕ), l) ∈ i.2.1 → σ j + processingTime i j + l ≤ σ k) ∧
-    ∀ j, σ j + processingTime i j ≤ i.2.2
-
-open Classical in
-/-- SINGLE-MACHINE MAKESPAN with chains, time lags and unit processing times as a decision
-problem over bitstrings. -/
-noncomputable def chainsTimeLagsUnitMakespanDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ChainsTimeLagsUnitMakespanInstance) x with
-  | some i => decide (WellFormed i ∧ ChainsTimeLagsUnitMakespanFeasible i)
-  | none => false
 
 /-- **SINGLE-MACHINE MAKESPAN with chains, time lags and unit processing times is NP-complete.**
 Source: Yu, Hoogeveen and Lenstra (2004), Theorem 24 (NP-hardness, chains of two jobs); Yu

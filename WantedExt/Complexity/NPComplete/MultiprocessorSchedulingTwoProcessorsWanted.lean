@@ -24,9 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MultiprocessorSchedulingWanted
+public import CSLibExt.Complexity.NPComplete.MultiprocessorSchedulingTwoProcessorsDefs
 
 @[expose] public section
 
@@ -55,31 +53,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance, as in `MultiprocessorSchedulingWanted`: the task lengths `l(t)`, the number `m`
-of processors, and the deadline `D`. -/
-abbrev MultiprocessorSchedulingTwoProcessorsInstance :=
-  MultiprocessorScheduling.MultiprocessorSchedulingInstance
-
-/-- Well-formedness of an instance: the MULTIPROCESSOR SCHEDULING instance is well-formed and
-the number of processors is `m = 2`. -/
-def WellFormed (i : MultiprocessorSchedulingTwoProcessorsInstance) : Prop :=
-  MultiprocessorScheduling.WellFormed i ∧ i.2.1 = 2
-
-/-- Some `m`-processor schedule meets the overall deadline, exactly as in
-`MultiprocessorSchedulingWanted`. -/
-def MultiprocessorSchedulingTwoProcessorsFeasible
-    (i : MultiprocessorSchedulingTwoProcessorsInstance) : Prop :=
-  MultiprocessorScheduling.MultiprocessorSchedulingFeasible i
-
-open Classical in
-/-- MULTIPROCESSOR SCHEDULING with two processors as a decision problem over bitstrings. -/
-noncomputable def multiprocessorSchedulingTwoProcessorsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MultiprocessorSchedulingTwoProcessorsInstance) x with
-  | some i => decide (WellFormed i ∧ MultiprocessorSchedulingTwoProcessorsFeasible i)
-  | none => false
 
 /-- **MULTIPROCESSOR SCHEDULING with two processors is NP-complete.** Source: Garey and Johnson
 (1979), [SS8] and Section 3.2.1; Lenstra, Rinnooy Kan, and Brucker (1977), Theorem 3(a);

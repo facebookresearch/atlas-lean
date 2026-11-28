@@ -22,9 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.CodeGenerationOnAOneRegisterMachineWanted
+public import CSLibExt.Complexity.NPComplete.OneRegisterCodeGenerationSharedLeafArcsDefs
 
 @[expose] public section
 
@@ -52,35 +50,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance, as in `CodeGenerationOnAOneRegisterMachineWanted`: vertex count, arc list, bound
-`K`. -/
-abbrev OneRegisterCodeGenerationSharedLeafArcsInstance :=
-  CodeGenerationOnAOneRegisterMachine.CodeGenerationOnAOneRegisterMachineInstance
-
-/-- Well-formedness of an instance: the instance of CODE GENERATION ON A ONE-REGISTER MACHINE is
-well-formed, and every vertex with more than one incoming arc has arcs only to leaves. -/
-def WellFormed (i : OneRegisterCodeGenerationSharedLeafArcsInstance) : Prop :=
-  CodeGenerationOnAOneRegisterMachine.WellFormed i ∧
-    ∀ v, 1 < {w | (Graph i).Adj w v}.ncard →
-      ∀ u, (Graph i).Adj v u →
-        ∀ w, ¬ (Graph i).Adj u w
-
-/-- A program of at most `K` instructions computing all roots, exactly as in
-`CodeGenerationOnAOneRegisterMachineWanted`. -/
-def OneRegisterCodeGenerationSharedLeafArcsFeasible
-    (i : OneRegisterCodeGenerationSharedLeafArcsInstance) : Prop :=
-  CodeGenerationOnAOneRegisterMachine.CodeGenerationOnAOneRegisterMachineFeasible i
-
-open Classical in
-/-- CODE GENERATION ON A ONE-REGISTER MACHINE (shared vertices have arcs only to leaves) as a
-decision problem over bitstrings. -/
-noncomputable def oneRegisterCodeGenerationSharedLeafArcsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := OneRegisterCodeGenerationSharedLeafArcsInstance) x with
-  | some i => decide (WellFormed i ∧ OneRegisterCodeGenerationSharedLeafArcsFeasible i)
-  | none => false
 
 /-- **CODE GENERATION ON A ONE-REGISTER MACHINE (shared vertices have arcs only to leaves) is
 NP-complete.** Source: Garey and Johnson (1979), [PO4]; Aho, Johnson and Ullman (1977). -/

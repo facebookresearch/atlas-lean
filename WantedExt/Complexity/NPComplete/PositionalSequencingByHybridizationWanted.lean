@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Bioinformatics.Assembly.DeBruijn
+public import CSLibExt.Complexity.NPComplete.PositionalSequencingByHybridizationDefs
 
 @[expose] public section
 
@@ -59,35 +57,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the length `p` and the spectrum as a list of pairs `(s, P(s))` of a string and
-its allowed positions. -/
-abbrev PositionalSequencingByHybridizationInstance := ℕ × List (List ℕ × List ℕ)
-
-/-- Well-formedness of an instance: `p` is positive; every string of the spectrum has length `p`
-and letters among `0, 1, 2, 3`, and its allowed positions are below `|S|`; and copies of the same
-string have the same allowed positions (each copy's positions are allowed for every other copy,
-so the sets are equal). -/
-def WellFormed (i : PositionalSequencingByHybridizationInstance) : Prop :=
-  0 < i.1 ∧
-    (∀ e ∈ i.2, e.1.length = i.1 ∧ (∀ c ∈ e.1, c < 4) ∧ ∀ j ∈ e.2, j < i.2.length) ∧
-    ∀ e ∈ i.2, ∀ e' ∈ i.2, e.1 = e'.1 → ∀ j ∈ e.2, j ∈ e'.2
-
-/-- Some string `X` over `{A, C, G, T}` has `S` as its `p`-spectrum, and the substring starting
-at each position `j` has `j` among its allowed positions. -/
-def PositionalSequencingByHybridizationFeasible
-    (i : PositionalSequencingByHybridizationInstance) : Prop :=
-  ∃ X : List ℕ, (∀ c ∈ X, c < 4) ∧ (kmers i.1 X).Perm (i.2.map Prod.fst) ∧
-    ∀ j < X.length + 1 - i.1, ∀ e ∈ i.2, e.1 = (X.drop j).take i.1 → j ∈ e.2
-
-open Classical in
-/-- POSITIONAL SEQUENCING BY HYBRIDIZATION as a decision problem over bitstrings. -/
-noncomputable def positionalSequencingByHybridizationDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PositionalSequencingByHybridizationInstance) x with
-  | some i => decide (WellFormed i ∧ PositionalSequencingByHybridizationFeasible i)
-  | none => false
 
 /-- **POSITIONAL SEQUENCING BY HYBRIDIZATION is NP-complete.** Source: Ben-Dor, Pe'er, Shamir and
 Sharan (2001). -/

@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.BoundedParallelBatchingReleaseCompletionWanted
+public import CSLibExt.Complexity.NPComplete.BoundedParallelBatchingReleaseMakespanDefs
 
 @[expose] public section
 
@@ -65,25 +63,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Some parallel-batching schedule has at most `b` jobs in every batch, starts every job (at the
-start `S (B j)` of its batch) no earlier than its release date, and completes every job by
-`K`. -/
-def BoundedParallelBatchingReleaseMakespanFeasible
-    (i : BoundedParallelBatchingReleaseCompletionInstance) : Prop :=
-  ∃ (B : Fin (numJobs i) → ℕ) (S : ℕ → ℕ), IsBatchSequence (proc i) B S ∧
-    (∀ k, (Finset.univ.filter (fun j => B j = k)).card ≤ i.1) ∧
-    (∀ j, release i j ≤ S (B j)) ∧ ∀ j, completion (proc i) B S j ≤ i.2.2
-
-open Classical in
-/-- BOUNDED PARALLEL-BATCHING MAKESPAN WITH RELEASE DATES as a decision problem over
-bitstrings. -/
-noncomputable def boundedParallelBatchingReleaseMakespanDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := BoundedParallelBatchingReleaseCompletionInstance) x with
-  | some i => decide (WellFormed i ∧ BoundedParallelBatchingReleaseMakespanFeasible i)
-  | none => false
 
 /-- **BOUNDED PARALLEL-BATCHING MAKESPAN WITH RELEASE DATES (`1|p-batch;r_i;b<n|C_max`) is
 NP-complete.** Source: Brucker et al. (1998); Brucker and Knust, class bat_p. -/

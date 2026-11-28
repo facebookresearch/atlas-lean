@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.ResourceConstrainedSchedulingWanted
+public import CSLibExt.Complexity.NPComplete.ResourceConstrainedSchedulingPrecedenceZeroOrBoundDefs
 
 @[expose] public section
 
@@ -67,50 +65,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance of RESOURCE CONSTRAINED SCHEDULING with a partial order: a RESOURCE
-CONSTRAINED SCHEDULING instance and the list of the pairs `(t, t')` with `t < t'`. -/
-abbrev PrecedenceResourceSchedulingInstance :=
-  ResourceConstrainedSchedulingInstance × List (ℕ × ℕ)
-
-/-- The precedence relation: `t < t'` when the pair `(t, t')` is listed. -/
-def Prec (i : PrecedenceResourceSchedulingInstance) (t t' : Task i.1) : Prop :=
-  ((t : ℕ), (t' : ℕ)) ∈ i.2
-
-/-- Well-formedness of RESOURCE CONSTRAINED SCHEDULING with a partial order: the
-RESOURCE CONSTRAINED SCHEDULING instance is well-formed (`0 < m`, `0 < r`, `r` positive bounds,
-rows of length `r` with `R_k(t) ≤ B_k`, `0 < D`), every listed pair names two tasks, and the
-listed pairs form a strict partial order. -/
-def PrecedenceWellFormed (i : PrecedenceResourceSchedulingInstance) : Prop :=
-  ResourceConstrainedScheduling.WellFormed i.1 ∧
-    (∀ p ∈ i.2, p.1 < i.1.2.2.2.1.length ∧ p.2 < i.1.2.2.2.1.length) ∧
-    IsStrictOrder (Task i.1) (Prec i)
-
-/-- Some `m`-processor schedule of the unit-length tasks meets the deadline, obeys the
-precedence constraints and, at every time, keeps the total requirement of the running tasks
-within each resource bound. -/
-def PrecedenceFeasible (i : PrecedenceResourceSchedulingInstance) : Prop :=
-  ∃ σ : Task i.1 → ℕ, (∀ t, σ t + 1 ≤ i.1.2.2.2.2) ∧
-    (∀ u, (running i.1 σ u).card ≤ i.1.1) ∧
-    (∀ t t', Prec i t t' → σ t + 1 ≤ σ t') ∧
-    ∀ u, ∀ k < i.1.2.1, ∑ t ∈ running i.1 σ u, req i.1 t k ≤ bound i.1 k
-
-/-- Well-formedness of an instance: it is well-formed for RESOURCE CONSTRAINED SCHEDULING with a
-partial order, `m = 2`, `r = 1`, and every task requires either `0` or all `B_1` of the
-resource. -/
-def WellFormed (i : PrecedenceResourceSchedulingInstance) : Prop :=
-  PrecedenceWellFormed i ∧ i.1.1 = 2 ∧ i.1.2.1 = 1 ∧
-    ∀ t : Task i.1, req i.1 t 0 = 0 ∨ req i.1 t 0 = bound i.1 0
-
-open Classical in
-/-- RESOURCE CONSTRAINED SCHEDULING with precedence and 0-or-B requirements as a decision
-problem over bitstrings. -/
-noncomputable def resourceConstrainedSchedulingPrecedenceZeroOrBoundDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PrecedenceResourceSchedulingInstance) x with
-  | some i => decide (WellFormed i ∧ PrecedenceFeasible i)
-  | none => false
 
 /-- **RESOURCE CONSTRAINED SCHEDULING with an arbitrary partial order, `m = 2`, `r = 1` and
 every requirement `0` or `B_1` is NP-complete.** Source: Garey and Johnson (1979), [SS10],

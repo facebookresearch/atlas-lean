@@ -25,10 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
-public import CSLibExt.Complexity.NPComplete.MultiPurposeJobShopThreeJobsDefs
+public import CSLibExt.Complexity.NPComplete.MultipurposeParallelTwoMachinesReleaseTotalCompletionDefs
 
 @[expose] public section
 
@@ -74,32 +71,6 @@ NP-completeness is stated in the same form as the proved results in
 `CSLibExt.Computability.Complexity.Karp`: membership in `MetaMathlibExt.ComplexityTheory.NP`, plus a
 polynomial-time many-one reduction from every language in `NP` (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: an MPM job-shop instance (machines, jobs as lists of operations `(pᵢ, μᵢ)`, the
-bound `K`) and the release dates `rᵢ`, job `j` having the `j`-th listed release date. -/
-abbrev MultipurposeParallelTwoMachinesReleaseTotalCompletionInstance := MPMJobShopInstance × List ℕ
-
-/-- Well-formedness of an instance: a well-formed MPM job-shop instance with `m = 2` machines in
-which every job has exactly one operation, and one release date per job. -/
-def WellFormed (i : MultipurposeParallelTwoMachinesReleaseTotalCompletionInstance) : Prop :=
-  MPMWellFormed 2 i.1 ∧ (∀ job ∈ i.1.2.1, job.length = 1) ∧ i.2.length = i.1.2.1.length
-
-/-- Some MPM schedule of the jobs starts every job no earlier than its release date and has total
-completion time `Σ (σ t + p_t)` at most `K`. -/
-def MultipurposeParallelTwoMachinesReleaseTotalCompletionFeasible
-    (i : MultipurposeParallelTwoMachinesReleaseTotalCompletionInstance) : Prop :=
-  ∃ a σ : Operation i.1 → ℕ, IsMPMJobShopSchedule i.1 a σ ∧
-    (∀ t, i.2.getD t.1 0 ≤ σ t) ∧ (∑ t, (σ t + opLength i.1 t)) ≤ i.1.2.2
-
-open Classical in
-/-- `PMPM2|rᵢ|ΣCᵢ` as a decision problem over bitstrings. -/
-noncomputable def multipurposeParallelTwoMachinesReleaseTotalCompletionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MultipurposeParallelTwoMachinesReleaseTotalCompletionInstance) x with
-  | some i =>
-    decide (WellFormed i ∧ MultipurposeParallelTwoMachinesReleaseTotalCompletionFeasible i)
-  | none => false
 
 /-- **MPM PARALLEL MACHINES `PMPM2|rᵢ|ΣCᵢ` is NP-complete.** Source: Brucker and Knust's
 classification ("Single-machine problem": Lenstra, Rinnooy Kan and Brucker (1977), `1|r_i|ΣC_i`);

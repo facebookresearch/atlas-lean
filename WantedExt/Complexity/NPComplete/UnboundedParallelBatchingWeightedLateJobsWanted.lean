@@ -20,10 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.UnboundedParallelBatchingReleaseWeightedLateJobsWanted
-public import WantedExt.Complexity.NPComplete.UnboundedParallelBatchingWeightedTardinessWanted
+public import CSLibExt.Complexity.NPComplete.UnboundedParallelBatchingWeightedLateJobsDefs
 
 @[expose] public section
 
@@ -67,16 +64,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-open Classical in
-/-- UNBOUNDED PARALLEL-BATCHING WEIGHTED NUMBER OF LATE JOBS as a decision problem over
-bitstrings. -/
-noncomputable def unboundedParallelBatchingWeightedLateJobsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := UnboundedParallelBatchingReleaseWeightedTardinessInstance) x with
-  | some i => decide (WellFormed i ∧ UnboundedParallelBatchingReleaseWeightedLateJobsFeasible i)
-  | none => false
 
 /-- **UNBOUNDED PARALLEL-BATCHING WEIGHTED NUMBER OF LATE JOBS (`1|p-batch|Σw_iU_i`) is
 NP-complete.** Source: Brucker et al. (1998); Brucker and Knust, class bat_p. -/

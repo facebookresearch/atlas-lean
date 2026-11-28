@@ -25,10 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MultipurposeParallelMachinesMakespanWanted
-public import WantedExt.Complexity.NPComplete.MultipurposeParallelTwoMachinesWeightedCompletionWanted
+public import CSLibExt.Complexity.NPComplete.MultipurposeParallelMachinesWeightedCompletionDefs
 
 @[expose] public section
 
@@ -82,21 +79,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed `PMPM||C_max` instance (`m ≥ 1`, nonempty
-machine sets in `{1, …, m}`, single-operation jobs) and one weight per job. -/
-def WellFormed (i : MultipurposeParallelTwoMachinesWeightedCompletionInstance) : Prop :=
-  MultipurposeParallelMachinesMakespan.WellFormed i.1 ∧ i.2.length = i.1.2.1.length
-
-open Classical in
-/-- `PMPM||Σw_iC_i` as a decision problem over bitstrings. -/
-noncomputable def multipurposeParallelMachinesWeightedCompletionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MultipurposeParallelTwoMachinesWeightedCompletionInstance) x with
-  | some i =>
-    decide (WellFormed i ∧ MultipurposeParallelTwoMachinesWeightedCompletionFeasible i)
-  | none => false
 
 /-- **`PMPM||Σw_iC_i` is NP-complete.** Source: Garey and Johnson (1979), [SS13] (Lageweg and
 Lenstra, 1977), via the case `μᵢ = {M₁, …, M_m}`; Brucker (2007), Chapter 10; Brucker and Knust,

@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.PrecedenceWeightedCompletionWanted
+public import CSLibExt.Complexity.NPComplete.PrecedenceWeightedCompletionUnitLengthsDefs
 
 @[expose] public section
 
@@ -58,22 +56,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance of the restriction: the instance is well-formed for
-`PrecedenceWeightedCompletion`, every job has processing time `1` and a positive weight, and
-the bound `K` is positive. -/
-def RestrictedWellFormed (i : PrecedenceWeightedCompletionInstance) : Prop :=
-  WellFormed i ∧ (∀ j ∈ i.1, j.1 = 1 ∧ 0 < j.2) ∧ 0 < i.2.2
-
-open Classical in
-/-- SEQUENCING TO MINIMIZE WEIGHTED COMPLETION TIME with unit task lengths, as a decision
-problem over bitstrings. -/
-noncomputable def precedenceWeightedCompletionUnitLengthsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PrecedenceWeightedCompletionInstance) x with
-  | some i => decide (RestrictedWellFormed i ∧ PrecedenceWeightedCompletionFeasible i)
-  | none => false
 
 /-- **SEQUENCING TO MINIMIZE WEIGHTED COMPLETION TIME remains NP-complete when all task
 lengths are `1`.** Source: Garey and Johnson (1979), [SS4], comment; Lenstra and Rinnooy Kan

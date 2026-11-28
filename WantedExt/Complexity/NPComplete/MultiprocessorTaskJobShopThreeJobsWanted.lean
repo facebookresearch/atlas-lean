@@ -24,9 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.MultiPurposeJobShopThreeJobsDefs
+public import CSLibExt.Complexity.NPComplete.MultiprocessorTaskJobShopThreeJobsDefs
 
 @[expose] public section
 
@@ -77,37 +75,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- `σ` is an MPT job shop schedule: task `t` occupies every machine of `μ_t` during
-`[σ t, σ t + p_t)`; two different tasks of positive length whose machine sets share a machine do
-not overlap; and every task of a job starts no earlier than the previous task of the job
-completes. -/
-def IsMPTJobShopSchedule (i : MPMJobShopInstance) (σ : Operation i → ℕ) : Prop :=
-  (∀ t t', t ≠ t' → (∃ M ∈ eligible i t, M ∈ eligible i t') → 0 < opLength i t →
-      0 < opLength i t' → σ t + opLength i t ≤ σ t' ∨ σ t' + opLength i t' ≤ σ t) ∧
-    ∀ j (k k' : Fin (i.2.1.get j).length), k'.1 = k.1 + 1 →
-      σ ⟨j, k⟩ + opLength i ⟨j, k⟩ ≤ σ ⟨j, k'⟩
-
-/-- Well-formedness of an instance: a well-formed instance with `m = 3` machines (jobs with at
-least one task, nonempty machine sets within `{1, 2, 3}`) and exactly three jobs. -/
-def WellFormed (i : MPMJobShopInstance) : Prop :=
-  MPMWellFormed 3 i ∧ i.2.1.length = 3
-
-/-- Some MPT job shop schedule has makespan at most `K`: the last task of every job, which
-completes after the job's other tasks, completes by `K`. -/
-def MultiprocessorTaskJobShopThreeJobsFeasible (i : MPMJobShopInstance) : Prop :=
-  ∃ σ : Operation i → ℕ, IsMPTJobShopSchedule i σ ∧
-    ∀ j (k : Fin (i.2.1.get j).length), k.1 + 1 = (i.2.1.get j).length →
-      σ ⟨j, k⟩ + opLength i ⟨j, k⟩ ≤ i.2.2
-
-open Classical in
-/-- MULTIPROCESSOR-TASK JOB SHOP JMPT3|n=3|Cmax as a decision problem over bitstrings. -/
-noncomputable def multiprocessorTaskJobShopThreeJobsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MPMJobShopInstance) x with
-  | some i => decide (WellFormed i ∧ MultiprocessorTaskJobShopThreeJobsFeasible i)
-  | none => false
 
 /-- **MULTIPROCESSOR-TASK JOB SHOP JMPT3|n=3|Cmax is NP-complete.** Source: Brucker and Knust's
 classification, citing Sotskov and Shakhlevich (1995); Brucker (2004), Chapter 11 (the model). -/

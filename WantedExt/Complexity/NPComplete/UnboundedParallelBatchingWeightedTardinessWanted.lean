@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.UnboundedParallelBatchingReleaseWeightedTardinessWanted
+public import CSLibExt.Complexity.NPComplete.UnboundedParallelBatchingWeightedTardinessDefs
 
 @[expose] public section
 
@@ -63,20 +61,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: well-formed for `1|p-batch;r_i|Σw_iT_i` (positive processing
-times), and every release date is `0`. -/
-def WellFormed (i : UnboundedParallelBatchingReleaseWeightedTardinessInstance) : Prop :=
-  UnboundedParallelBatchingReleaseWeightedTardiness.WellFormed i ∧ ∀ x ∈ i.1, x.2.1 = 0
-
-open Classical in
-/-- UNBOUNDED PARALLEL-BATCHING WEIGHTED TARDINESS as a decision problem over bitstrings. -/
-noncomputable def unboundedParallelBatchingWeightedTardinessDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := UnboundedParallelBatchingReleaseWeightedTardinessInstance) x with
-  | some i => decide (WellFormed i ∧ UnboundedParallelBatchingReleaseWeightedTardinessFeasible i)
-  | none => false
 
 /-- **UNBOUNDED PARALLEL-BATCHING WEIGHTED TARDINESS (`1|p-batch|Σw_iT_i`) is NP-complete.**
 Source: Brucker et al. (1998); Brucker and Knust, class bat_p. -/

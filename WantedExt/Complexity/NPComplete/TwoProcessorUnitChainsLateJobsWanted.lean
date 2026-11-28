@@ -22,9 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.TardyTasksUnitChainsWanted
+public import CSLibExt.Complexity.NPComplete.TwoProcessorUnitChainsLateJobsDefs
 
 @[expose] public section
 
@@ -70,30 +68,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: every listed pair names two jobs, the listed pairs form a
-strict partial order, and the order consists of chains (every job has at most one immediate
-predecessor and at most one immediate successor). Due dates and `K` are arbitrary natural
-numbers. -/
-def WellFormed (i : TardyTasksUnitChainsInstance) : Prop :=
-  (∀ p ∈ i.2.1, p.1 < i.1.length ∧ p.2 < i.1.length) ∧ IsStrictOrder (Task i) (Prec i) ∧
-    (∀ t a b, ImmediatePredecessor i a t → ImmediatePredecessor i b t → a = b) ∧
-    ∀ t a b, ImmediatePredecessor i t a → ImmediatePredecessor i t b → a = b
-
-/-- Some two-machine schedule of the unit jobs (at most two start at each time `u`) obeys the
-precedence constraints and has at most `K` late jobs, those with `σ(t) + 1 > d(t)`. -/
-def TwoProcessorUnitChainsLateJobsFeasible (i : TardyTasksUnitChainsInstance) : Prop :=
-  ∃ σ : Task i → ℕ, (∀ u, (Finset.univ.filter fun t => σ t = u).card ≤ 2) ∧
-    (∀ t t', Prec i t t' → σ t + 1 ≤ σ t') ∧
-    (Finset.univ.filter fun t => deadline i t < σ t + 1).card ≤ i.2.2
-
-open Classical in
-/-- `P2|chains;p_i=1|ΣU_i` as a decision problem over bitstrings. -/
-noncomputable def twoProcessorUnitChainsLateJobsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := TardyTasksUnitChainsInstance) x with
-  | some i => decide (WellFormed i ∧ TwoProcessorUnitChainsLateJobsFeasible i)
-  | none => false
 
 /-- **TWO PARALLEL MACHINES, UNIT CHAINS, NUMBER OF LATE JOBS `P2|chains;p_i=1|ΣU_i` is
 NP-complete.** Source: Brucker and Knust, *Complexity results for scheduling problems*; Lenstra

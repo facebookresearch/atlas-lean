@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Data.Fintype.Card
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.MultipleChoiceSchedulingWithinIntervalsDefs
 
 @[expose] public section
 
@@ -58,32 +56,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number `m` of processors, the common task length `l`, and for each task the
-list of its permissible intervals `(aᵢ(t), bᵢ(t))`. -/
-abbrev MultipleChoiceSchedulingWithinIntervalsInstance := ℕ × ℕ × List (List (ℕ × ℕ))
-
-/-- Well-formedness of an instance: every permissible interval `[a, b]` has `a ≤ b - l`, i.e.
-`a + l ≤ b`. -/
-def WellFormed (i : MultipleChoiceSchedulingWithinIntervalsInstance) : Prop :=
-  ∀ C ∈ i.2.2, ∀ I ∈ C, I.1 + i.2.1 ≤ I.2
-
-/-- Some starting times `s` run at most `m` tasks at every time and place every task inside one
-of its permissible intervals. -/
-def MultipleChoiceSchedulingWithinIntervalsFeasible
-    (i : MultipleChoiceSchedulingWithinIntervalsInstance) : Prop :=
-  ∃ s : Fin i.2.2.length → ℕ,
-    (∀ u : ℕ, (Finset.univ.filter fun t => s t ≤ u ∧ u < s t + i.2.1).card ≤ i.1) ∧
-      ∀ t : Fin i.2.2.length, ∃ I ∈ i.2.2[t], I.1 ≤ s t ∧ s t + i.2.1 ≤ I.2
-
-open Classical in
-/-- MULTIPLE CHOICE SCHEDULING WITHIN INTERVALS as a decision problem over bitstrings. -/
-noncomputable def multipleChoiceSchedulingWithinIntervalsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MultipleChoiceSchedulingWithinIntervalsInstance) x with
-  | some i => decide (WellFormed i ∧ MultipleChoiceSchedulingWithinIntervalsFeasible i)
-  | none => false
 
 /-- **MULTIPLE CHOICE SCHEDULING WITHIN INTERVALS is NP-complete.** Source: Johnson (1983),
 problem [1]; Simons and Sipser (1984). -/

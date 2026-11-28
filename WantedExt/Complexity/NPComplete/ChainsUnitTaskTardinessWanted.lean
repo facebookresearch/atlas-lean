@@ -24,10 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.PrecedenceUnitTaskTardinessWanted
-public import CSLibExt.Complexity.NPComplete.SequencingToMinimizeWeightedTardinessDefs
+public import CSLibExt.Complexity.NPComplete.ChainsUnitTaskTardinessDefs
 
 @[expose] public section
 
@@ -74,33 +71,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- `t` is an immediate predecessor of `t'` (and `t'` an immediate successor of `t`): `t → t'`,
-and no job `c` has `t → c → t'`. -/
-def ImmediatePredecessor (i : PrecedenceUnitTaskTardinessInstance) (t t' : Task i.1) : Prop :=
-  Prec i t t' ∧ ∀ c, ¬ (Prec i t c ∧ Prec i c t')
-
-/-- The precedence relation is chain-like: no job has more than one immediate predecessor, and
-no job has more than one immediate successor. -/
-def IsChainLike (i : PrecedenceUnitTaskTardinessInstance) : Prop :=
-  (∀ t' a b, ImmediatePredecessor i a t' → ImmediatePredecessor i b t' → a = b) ∧
-    ∀ t a b, ImmediatePredecessor i t a → ImmediatePredecessor i t b → a = b
-
-/-- Well-formedness of an instance: it is a well-formed instance of `1|prec, pⱼ = 1|∑ Tⱼ`
-(unit lengths and weights, positive due dates and `K`, listed pairs naming jobs and forming a
-strict partial order), and the precedence relation is chain-like. -/
-def WellFormed (i : PrecedenceUnitTaskTardinessInstance) : Prop :=
-  PrecedenceUnitTaskTardiness.WellFormed i ∧ IsChainLike i
-
-open Classical in
-/-- SINGLE-MACHINE TOTAL TARDINESS with chains and unit processing times as a decision problem
-over bitstrings. -/
-noncomputable def chainsUnitTaskTardinessDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PrecedenceUnitTaskTardinessInstance) x with
-  | some i => decide (WellFormed i ∧ PrecedenceUnitTaskTardinessFeasible i)
-  | none => false
 
 /-- **SINGLE-MACHINE TOTAL TARDINESS with chains and unit processing times is NP-complete.**
 Source: Leung and Young (1990) (NP-hardness); Lenstra and Rinnooy Kan (1980). -/

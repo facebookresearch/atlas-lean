@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.BoundedParallelBatchingReleaseCompletionWanted
+public import CSLibExt.Complexity.NPComplete.BoundedParallelBatchingMaxLatenessDefs
 
 @[expose] public section
 
@@ -69,32 +67,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- The due date `d_j` of job `j`: the second entry of its pair. -/
-def dueDate (i : BoundedParallelBatchingReleaseCompletionInstance) (j : Fin (numJobs i)) : ℕ :=
-  (i.2.1.get j).2
-
-/-- Well-formedness of an instance: the batch capacity `b` is positive and less than the number
-`n` of jobs, and every processing time is positive. -/
-def WellFormed (i : BoundedParallelBatchingReleaseCompletionInstance) : Prop :=
-  0 < i.1 ∧ i.1 < numJobs i ∧ ∀ job ∈ i.2.1, 0 < job.1
-
-/-- Some parallel-batching schedule has at most `b` jobs in every batch and completes every job
-`j` by `d_j + K`, i.e. has maximum lateness at most `K`. -/
-def BoundedParallelBatchingMaxLatenessFeasible
-    (i : BoundedParallelBatchingReleaseCompletionInstance) : Prop :=
-  ∃ (B : Fin (numJobs i) → ℕ) (S : ℕ → ℕ), IsBatchSequence (proc i) B S ∧
-    (∀ k, (Finset.univ.filter (fun j => B j = k)).card ≤ i.1) ∧
-    ∀ j, completion (proc i) B S j ≤ dueDate i j + i.2.2
-
-open Classical in
-/-- BOUNDED PARALLEL-BATCHING MAXIMUM LATENESS as a decision problem over bitstrings. -/
-noncomputable def boundedParallelBatchingMaxLatenessDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := BoundedParallelBatchingReleaseCompletionInstance) x with
-  | some i => decide (WellFormed i ∧ BoundedParallelBatchingMaxLatenessFeasible i)
-  | none => false
 
 /-- **BOUNDED PARALLEL-BATCHING MAXIMUM LATENESS (`1|p-batch;b<n|L_max`) is NP-complete.**
 Source: Brucker et al. (1998); Brucker and Knust, class bat_p. -/

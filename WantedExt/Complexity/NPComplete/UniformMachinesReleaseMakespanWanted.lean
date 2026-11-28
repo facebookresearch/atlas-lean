@@ -26,10 +26,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MultiprocessorSchedulingSpeedFactorsWanted
-public import Mathlib.Algebra.Order.Field.Rat
+public import CSLibExt.Complexity.NPComplete.UniformMachinesReleaseMakespanDefs
 
 @[expose] public section
 
@@ -79,59 +76,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the processing times `p_i` (job `i` is the `i`-th entry), the speeds (the
-`k`-th entry `(a, b)` is `s_k = a / b`) and the bound `K`, as a
-`MultiprocessorSchedulingSpeedFactors` instance; and the release dates `r_i`, one per job. -/
-abbrev UniformMachinesReleaseMakespanInstance :=
-  MultiprocessorSchedulingSpeedFactorsInstance × List ℕ
-
-/-- The completion time `C_t = S(t) + p_t / s_{μ(t)}` of job `t` started at time `S(t)` on
-machine `μ(t)`. -/
-def completion (i : MultiprocessorSchedulingSpeedFactorsInstance)
-    (μ : Task (toMultiprocessorScheduling i) → Fin i.2.1.length)
-    (S : Task (toMultiprocessorScheduling i) → ℚ) (t : Task (toMultiprocessorScheduling i)) :
-    ℚ :=
-  S t + (taskLength (toMultiprocessorScheduling i) t : ℚ) / speed i (μ t)
-
-/-- Each machine processes at most one job at a time: two different jobs on the same machine
-occupy disjoint intervals `[S(t), C_t)`. -/
-def IsNonOverlapping (i : MultiprocessorSchedulingSpeedFactorsInstance)
-    (μ : Task (toMultiprocessorScheduling i) → Fin i.2.1.length)
-    (S : Task (toMultiprocessorScheduling i) → ℚ) : Prop :=
-  ∀ t u, t ≠ u → μ t = μ u → completion i μ S t ≤ S u ∨ completion i μ S u ≤ S t
-
-/-- The release date `r_t` of job `t` (the `t`-th entry of the release-date list). -/
-def release (i : UniformMachinesReleaseMakespanInstance)
-    (t : Task (toMultiprocessorScheduling i.1)) : ℕ :=
-  i.2.getD t 0
-
-/-- Well-formedness of an instance for the fixed number `m` of machines: every processing time
-is positive, exactly `m` speeds are listed, every speed `a / b` has `0 < a` and `0 < b`, and
-there is one release date per job. -/
-def WellFormed (m : ℕ) (i : UniformMachinesReleaseMakespanInstance) : Prop :=
-  (∀ p ∈ i.1.1, 0 < p) ∧ i.1.2.1.length = m ∧ (∀ s ∈ i.1.2.1, 0 < s.1 ∧ 0 < s.2) ∧
-    i.2.length = i.1.1.length
-
-/-- Some schedule, a machine `μ(t)` and a start time `S(t)` for each job `t`, has makespan at
-most `K`: jobs on the same machine do not overlap, and every job starts no earlier than its
-release date and completes by `K`. -/
-def UniformMachinesReleaseMakespanFeasible (i : UniformMachinesReleaseMakespanInstance) :
-    Prop :=
-  ∃ μ : Task (toMultiprocessorScheduling i.1) → Fin i.1.2.1.length,
-    ∃ S : Task (toMultiprocessorScheduling i.1) → ℚ,
-      IsNonOverlapping i.1 μ S ∧
-        ∀ t, (release i t : ℚ) ≤ S t ∧ completion i.1 μ S t ≤ i.1.2.2
-
-open Classical in
-/-- UNIFORM PARALLEL MACHINE SCHEDULING with release dates on `m` machines (`Qm|r_i|C_max`) as
-a decision problem over bitstrings. -/
-noncomputable def uniformMachinesReleaseMakespanDec (m : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := UniformMachinesReleaseMakespanInstance) x with
-  | some i => decide (WellFormed m i ∧ UniformMachinesReleaseMakespanFeasible i)
-  | none => false
 
 /-- **UNIFORM PARALLEL MACHINE SCHEDULING with release dates (`Qm|r_i|C_max`) is NP-complete
 for every fixed number `m ≥ 2` of machines.** Source: Brucker and Knust, class "Parallel

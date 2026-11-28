@@ -22,10 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import Mathlib.Basic.Real.Basic
+public import CSLibExt.Complexity.NPComplete.EarlinessTardinessRestrictiveCommonDueDateDefs
 
 @[expose] public section
 
@@ -58,43 +55,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the processing times `pᵢ` of the jobs (job `i` is the `i`-th entry), the
-common due date `d`, and the threshold `y`. -/
-abbrev EarlinessTardinessRestrictiveCommonDueDateInstance := List ℕ × ℕ × ℕ
-
-/-- The jobs of the instance, `Fin n` for `n` listed processing times. -/
-abbrev Job (i : EarlinessTardinessRestrictiveCommonDueDateInstance) : Type := Fin i.1.length
-
-/-- The processing time `pᵢ` of job `j`. -/
-def processingTime (i : EarlinessTardinessRestrictiveCommonDueDateInstance) (j : Job i) : ℕ :=
-  i.1.get j
-
-/-- Completion times `C` form a single-machine schedule from time `0` for processing times
-`p`: every job starts at or after time `0`, and of any two distinct jobs one completes before
-the other starts. -/
-def IsSchedule {n : ℕ} (p : Fin n → ℕ) (C : Fin n → ℝ) : Prop :=
-  (∀ j, (p j : ℝ) ≤ C j) ∧ ∀ a b, a ≠ b → C a ≤ C b - p b ∨ C b ≤ C a - p a
-
-/-- Well-formedness of an instance: every processing time is positive, and the common due
-date is restrictive, `d < ∑ pᵢ`. -/
-def WellFormed (i : EarlinessTardinessRestrictiveCommonDueDateInstance) : Prop :=
-  (∀ p ∈ i.1, 0 < p) ∧ i.2.1 < i.1.sum
-
-/-- Some schedule has `∑ᵢ |Cᵢ - d| ≤ y`. -/
-def EarlinessTardinessRestrictiveCommonDueDateFeasible
-    (i : EarlinessTardinessRestrictiveCommonDueDateInstance) : Prop :=
-  ∃ C : Job i → ℝ, IsSchedule (processingTime i) C ∧ ∑ j, |C j - i.2.1| ≤ i.2.2
-
-open Classical in
-/-- EARLINESS-TARDINESS WITH A RESTRICTIVE COMMON DUE DATE as a decision problem over
-bitstrings. -/
-noncomputable def earlinessTardinessRestrictiveCommonDueDateDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := EarlinessTardinessRestrictiveCommonDueDateInstance) x with
-  | some i => decide (WellFormed i ∧ EarlinessTardinessRestrictiveCommonDueDateFeasible i)
-  | none => false
 
 /-- **EARLINESS-TARDINESS WITH A RESTRICTIVE COMMON DUE DATE is NP-complete.** Source: Hall,
 Kubiak, and Sethi (1991); Hoogeveen and van de Velde (1991), Theorem 3. -/

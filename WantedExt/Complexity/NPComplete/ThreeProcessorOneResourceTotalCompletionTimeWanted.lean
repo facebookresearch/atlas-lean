@@ -26,9 +26,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.ThreeProcessorOneResourceSchedulingWanted
+public import CSLibExt.Complexity.NPComplete.ThreeProcessorOneResourceTotalCompletionTimeDefs
 
 @[expose] public section
 
@@ -74,27 +72,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-open ResourceConstrainedScheduling in
-/-- Some `m`-processor schedule of the unit-length tasks keeps, at every time, the total
-requirement of the running tasks within each resource bound, and has total completion time
-`∑_t (σ(t) + 1)` at most `K` (the last component of the instance). -/
-def ThreeProcessorOneResourceTotalCompletionTimeFeasible
-    (i : ResourceConstrainedSchedulingInstance) : Prop :=
-  ∃ σ : Task i → ℕ, (∀ u, (running i σ u).card ≤ i.1) ∧
-    (∀ u, ∀ k < i.2.1, ∑ t ∈ running i σ u, req i t k ≤ bound i k) ∧
-    ∑ t, (σ t + 1) ≤ i.2.2.2.2
-
-open Classical in
-/-- RESOURCE CONSTRAINED SCHEDULING TO MINIMIZE TOTAL COMPLETION TIME with one resource and
-three processors as a decision problem over bitstrings. -/
-noncomputable def threeProcessorOneResourceTotalCompletionTimeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ResourceConstrainedScheduling.ResourceConstrainedSchedulingInstance) x with
-  | some i => decide (ThreeProcessorOneResourceScheduling.WellFormed i ∧
-      ThreeProcessorOneResourceTotalCompletionTimeFeasible i)
-  | none => false
 
 /-- **RESOURCE CONSTRAINED SCHEDULING TO MINIMIZE TOTAL COMPLETION TIME is NP-complete for one
 resource and three processors.** Source: Błażewicz, Lenstra and Rinnooy Kan (1983), Section

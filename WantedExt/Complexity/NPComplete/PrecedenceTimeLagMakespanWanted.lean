@@ -26,10 +26,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Order.Defs.Unbundled
-public import CSLibExt.Complexity.NPComplete.SequencingToMinimizeWeightedTardinessDefs
+public import CSLibExt.Complexity.NPComplete.PrecedenceTimeLagMakespanDefs
 
 @[expose] public section
 
@@ -72,39 +69,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the processing times `[p_1, …, p_n]` of the jobs (all `1`), the pairs `(i, j)`
-with `i → j`, the time lag `l` and the bound `K`. -/
-abbrev PrecedenceTimeLagMakespanInstance := List ℕ × List (ℕ × ℕ) × ℕ × ℕ
-
-/-- The jobs of the instance, `Fin n` for `n` listed jobs. -/
-abbrev Job (i : PrecedenceTimeLagMakespanInstance) : Type := Fin i.1.length
-
-/-- The precedence relation: `j → j'` when the pair `(j, j')` is listed. -/
-def Prec (i : PrecedenceTimeLagMakespanInstance) (j j' : Job i) : Prop :=
-  ((j : ℕ), (j' : ℕ)) ∈ i.2.1
-
-/-- Well-formedness of an instance: every processing time is `1`, every listed pair names two
-jobs, and the listed pairs form a strict partial order. -/
-def WellFormed (i : PrecedenceTimeLagMakespanInstance) : Prop :=
-  (∀ p ∈ i.1, p = 1) ∧ (∀ p ∈ i.2.1, p.1 < i.1.length ∧ p.2 < i.1.length) ∧
-    IsStrictOrder (Job i) (Prec i)
-
-/-- Some one-processor schedule `σ` of the unit-time jobs (start times `σ j`, completion
-times `σ j + 1`) satisfies every time lag (`j → j'` implies `σ j + 1 + l ≤ σ j'`) and has
-makespan at most `K`. -/
-def PrecedenceTimeLagMakespanFeasible (i : PrecedenceTimeLagMakespanInstance) : Prop :=
-  ∃ σ : Job i → ℕ, IsOneProcessorSchedule (fun _ => 1) σ ∧
-    (∀ j j', Prec i j j' → σ j + 1 + i.2.2.1 ≤ σ j') ∧ ∀ j, σ j + 1 ≤ i.2.2.2
-
-open Classical in
-/-- `1|prec(l); pᵢ = 1|C_max` as a decision problem over bitstrings. -/
-noncomputable def precedenceTimeLagMakespanDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PrecedenceTimeLagMakespanInstance) x with
-  | some i => decide (WellFormed i ∧ PrecedenceTimeLagMakespanFeasible i)
-  | none => false
 
 /-- **`1|prec(l); pᵢ = 1|C_max` is NP-complete.** Source: Leung, Vornberger, and Witthoff
 (1984); Timkovsky (2003); Brucker and Knust, *Complexity results for scheduling problems*. -/

@@ -19,10 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import Mathlib.Data.Fintype.Basic
+public import CSLibExt.Complexity.NPComplete.MultiModeRcpspFeasibilityDefs
 
 @[expose] public section
 
@@ -57,32 +54,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number `K` of nonrenewable resources, the activities, each a list of
-modes, each mode the list `[r_{jm0}, …, r_{jm(K-1)}]` of its consumptions, and the list
-`[R_0, …, R_{K-1}]` of availabilities. -/
-abbrev MultiModeRcpspFeasibilityInstance := ℕ × List (List (List ℕ)) × List ℕ
-
-/-- Well-formedness of an instance: `K ≥ 2`, there are `K` availabilities, every activity has
-at least one mode, and every mode lists `K` consumptions. -/
-def WellFormed (i : MultiModeRcpspFeasibilityInstance) : Prop :=
-  2 ≤ i.1 ∧ i.2.2.length = i.1 ∧ ∀ act ∈ i.2.1, act ≠ [] ∧ ∀ m ∈ act, m.length = i.1
-
-/-- There is a mode assignment `μ`, `μ j` a mode of activity `j`, whose total consumption of
-every resource `k` is at most its availability `R_k`. -/
-def MultiModeRcpspFeasibilityFeasible (i : MultiModeRcpspFeasibilityInstance) : Prop :=
-  ∃ μ : Fin i.2.1.length → ℕ, (∀ j, μ j < (i.2.1.get j).length) ∧
-    ∀ k < i.1, ∑ j, ((i.2.1.get j).getD (μ j) []).getD k 0 ≤ i.2.2.getD k 0
-
-open Classical in
-/-- MULTI-MODE RCPSP FEASIBILITY (NONRENEWABLE RESOURCES) as a decision problem over
-bitstrings. -/
-noncomputable def multiModeRcpspFeasibilityDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MultiModeRcpspFeasibilityInstance) x with
-  | some i => decide (WellFormed i ∧ MultiModeRcpspFeasibilityFeasible i)
-  | none => false
 
 /-- **MULTI-MODE RCPSP FEASIBILITY (NONRENEWABLE RESOURCES) is NP-complete.** Source: Kolisch
 and Drexl (1997); Hartmann (2001). -/
