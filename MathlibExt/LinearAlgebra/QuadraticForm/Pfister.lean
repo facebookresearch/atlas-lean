@@ -16,18 +16,21 @@ public import Mathlib.LinearAlgebra.QuadraticForm.Radical
 public import Mathlib.Data.Fintype.Powerset
 
 /-!
-# Subset coordinates of Pfister forms
+# Subset coordinates of diagonal quasi-Pfister forms
 
 Let F be a field, n ∈ ℕ and a₀,…,aₙ₋₁ ∈ Fˣ. For s ⊆ Fin n put wₐ(s) = ∏ᵢ∈s (−aᵢ), and let
-qₐ(x) = ∑ₛ wₐ(s)xₛ² on F^(Finset(Fin n)). This is the diagonal expansion of the n-fold Pfister
-form ⊗ᵢ⟨1,−aᵢ⟩. Its carrier has dimension 2^n, and every diagonal coefficient is nonzero. If 2
-≠ 0 in F, the form has zero radical and is nondegenerate. At n = 0 it is the one-dimensional
-square form.
+qₐ(x) = ∑ₛ wₐ(s)xₛ² on F^(Finset(Fin n)). This is the diagonal quasi-Pfister form associated
+to the bilinear Pfister form ⊗ᵢ⟨1,−aᵢ⟩. It coincides with a quadratic Pfister form if 2 ≠ 0
+in F; in characteristic two it is totally singular, rather than the quadratic Pfister form
+whose last factor is [1,a] = x² + xy + ay². Its carrier has dimension 2^n, and every diagonal
+coefficient is nonzero. If 2 ≠ 0, it has zero radical and is nondegenerate. At n = 0 it is
+the one-dimensional square form.
 
 ## References
 
-* T. Y. Lam, *Introduction to Quadratic Forms over Fields*, Chapter X. * R. Elman, N.
-Karpenko, A. Merkurjev,   *The Algebraic and Geometric Theory of Quadratic Forms*.
+* T. Y. Lam, *Introduction to Quadratic Forms over Fields*, Chapter X.
+* R. Elman, N. Karpenko, A. Merkurjev, *The Algebraic and Geometric Theory of Quadratic
+  Forms*, Sections 9.B and 10.
 -/
 
 @[expose] public section
@@ -85,11 +88,12 @@ theorem pfisterWeight_ne_zero {n : ℕ} (a : Fin n → Fˣ)
   intro i hi
   exact neg_ne_zero.mpr (Units.ne_zero (a i))
 
-/-- **The diagonal Pfister form.**
+/-- **The diagonal quasi-Pfister form.**
 
 Let F be a field, n ∈ ℕ and a₀,…,aₙ₋₁ ∈ Fˣ. For s ⊆ Fin n put wₐ(s) = ∏ᵢ∈s (−aᵢ), and let
-qₐ(x) = ∑ₛ wₐ(s)xₛ² on F^(Finset(Fin n)). The form qₐ is the subset-coordinate expression of
-⊗ᵢ⟨1,−aᵢ⟩ over F, including the zero-fold case.
+qₐ(x) = ∑ₛ wₐ(s)xₛ² on F^(Finset(Fin n)). The form qₐ is the quasi-Pfister form associated
+to the bilinear form ⊗ᵢ⟨1,−aᵢ⟩ over F, including the zero-fold case. It is a quadratic
+Pfister form when 2 ≠ 0 and a totally singular diagonal form in characteristic two.
 -/
 def pfister {n : ℕ} (a : Fin n → Fˣ) :
     QuadraticForm F (Finset (Fin n) → F) :=

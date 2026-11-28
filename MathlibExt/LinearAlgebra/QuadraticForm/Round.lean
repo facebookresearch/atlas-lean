@@ -9,10 +9,10 @@ LICENSE file in the root directory of this source tree.
 -- Author: @toskua, Avocado
 module
 
-public import MathlibExt.LinearAlgebra.QuadraticForm.HalfDimensionalTotallyIsotropic
+public import MathlibExt.LinearAlgebra.QuadraticForm.Isometry
 
 /-!
-# Round forms and binary Pfister factors
+# Round forms and diagonal binary factors
 
 Let F be a field, V an F-vector space, and Q : V → F a quadratic form. Roundness means that,
 for every nonzero c, c is represented by Q if and only if cQ is isometric to Q. Roundness is
@@ -21,7 +21,7 @@ round. Both results apply to arbitrary vector spaces over fields of any characte
 
 ## Reference
 
-* R. Elman, N. Karpenko, A. Merkurjev,   *The Algebraic and Geometric Theory of Quadratic
+* R. Elman, N. Karpenko, A. Merkurjev, *The Algebraic and Geometric Theory of Quadratic
 Forms*, Proposition 9.8.
 -/
 
@@ -32,6 +32,47 @@ set_option autoImplicit false
 noncomputable section
 
 universe u v w
+
+namespace QuadraticMap
+
+variable {F : Type u} [Field F]
+variable {V : Type v} [AddCommGroup V] [Module F V]
+
+/-- **Roundness of a quadratic form over a field.**
+
+Let F be a field and Q a quadratic form on an F-vector space. The form is round when its
+nonzero represented values are exactly its similarity factors: for each c ≠ 0, the existence
+of x with Q(x) = c is equivalent to a linear isometry cQ ≃ Q. Every such c is a unit because
+the coefficient ring is a field.
+-/
+def IsRound (Q : QuadraticForm F V) : Prop :=
+  ∀ c : F, c ≠ 0 →
+    ((∃ x, Q x = c) ↔ (c • Q).Equivalent Q)
+
+namespace IsRound
+
+/-- **Ratios of represented values in a round form.**
+
+Let F be a field, V an F-vector space, and Q : V → F a quadratic form. Roundness means that,
+for every nonzero c, c is represented by Q if and only if cQ is isometric to Q. If Q(x) ≠ 0
+and Q(y) ≠ 0, then (Q(x)/Q(y))Q is isometric to Q.
+-/
+theorem ratio_equivalent {Q : QuadraticForm F V} (hQ : Q.IsRound)
+    {x y : V} (hx : Q x ≠ 0) (hy : Q y ≠ 0) :
+    ((Q x / Q y) • Q).Equivalent Q := by
+  obtain ⟨ex⟩ := (hQ (Q x) hx).mp ⟨x, rfl⟩
+  obtain ⟨ey⟩ := (hQ (Q y) hy).mp ⟨y, rfl⟩
+  let e₀ := ey.symm.smul (Q x / Q y)
+  have hforms :
+      (Q x / Q y) • (Q y • Q) = Q x • Q := by
+    ext z
+    simp only [smul_apply, smul_eq_mul]
+    field_simp
+  exact ⟨(e₀.trans (IsometryEquiv.ofEq hforms)).trans ex⟩
+
+end IsRound
+
+end QuadraticMap
 
 namespace QuadraticMap.IsRound
 
@@ -251,7 +292,7 @@ theorem prod_neg_smul
         simpa [hdx] using hxP
       · let t : F := c * (Q y / Q x)
         have hratioQ : ((Q y / Q x) • Q).Equivalent Q :=
-          hQ.ratio_equivalent Q hy hx
+          hQ.ratio_equivalent hy hx
         obtain ⟨eratio⟩ := hratioQ
         let eSecond : ((-t) • Q).IsometryEquiv ((-c) • Q) := by
           have hsource : (-t) • Q = (-c) • ((Q y / Q x) • Q) := by

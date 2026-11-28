@@ -16,12 +16,12 @@ public import Mathlib.LinearAlgebra.Pi
 public import Mathlib.LinearAlgebra.QuadraticForm.Prod
 
 /-!
-# Successor decomposition of Pfister forms
+# Successor decomposition of diagonal quasi-Pfister forms
 
 Let F be a field and a₀,…,aₙ ∈ Fˣ. Subsets of Fin(n+1) split into those omitting the last
-index and those containing it. In these coordinates, the Pfister form qₐ is isometric to q_b ⊕
-(−aₙ)q_b, where b is the tuple a₀,…,aₙ₋₁. The coordinate decomposition also gives a linear
-equivalence for any module over a semiring.
+index and those containing it. In these coordinates, the diagonal quasi-Pfister form qₐ is
+isometric to q_b ⊕ (−aₙ)q_b, where b is the tuple a₀,…,aₙ₋₁. The coordinate decomposition
+also gives a linear equivalence for any module over a semiring.
 -/
 
 @[expose] public section
@@ -112,7 +112,12 @@ theorem pfisterWeight_upperIndex {F : Type u} [Field F] {n : ℕ}
   · rw [pfisterWeight_lowerIndex]
   · exact last_notMem_pfisterLowerIndex n s
 
-private noncomputable def pfisterLowerPart
+/-- **Removing the last Pfister index.**
+
+For a subset t of Fin(n+1), pull back t along Fin.castSucc. This recovers the subset of
+Fin n underlying either the lower embedding or the upper embedding.
+-/
+noncomputable def pfisterLowerPart
     (n : ℕ) (t : Finset (Fin (n + 1))) : Finset (Fin n) :=
   t.preimage Fin.castSucc (Fin.castSucc_injective n).injOn
 
@@ -161,7 +166,14 @@ private theorem pfisterUpperIndex_lowerPart
   · obtain ⟨j, rfl⟩ := Fin.exists_castSucc_eq.mpr hi
     simp
 
-private noncomputable def pfisterSuccIndexEquiv (n : ℕ) :
+/-- **The successor subset index equivalence.**
+
+Subsets of Fin(n+1) split into two copies of subsets of Fin n, according to whether the
+last index belongs to the subset. The forward maps are pfisterLowerIndex and
+pfisterUpperIndex. This single equivalence supplies both the coordinate splitting and
+its sum reindexing formula.
+-/
+noncomputable def pfisterSuccIndexEquiv (n : ℕ) :
     Sum (Finset (Fin n)) (Finset (Fin n)) ≃
       Finset (Fin (n + 1)) where
   toFun := Sum.elim (pfisterLowerIndex n) (pfisterUpperIndex n)
@@ -220,41 +232,11 @@ noncomputable def pfisterSuccLinearEquiv
     {M : Type v} [AddCommMonoid M] [Module R M]
     (n : ℕ) :
     (Finset (Fin (n + 1)) → M) ≃ₗ[R]
-      (Finset (Fin n) → M) × (Finset (Fin n) → M) := by
-  let e : Sum (Finset (Fin n)) (Finset (Fin n)) ≃
-      Finset (Fin (n + 1)) := {
-    toFun := Sum.elim (pfisterLowerIndex n) (pfisterUpperIndex n)
-    invFun t := if Fin.last n ∈ t then
-        Sum.inr (t.preimage Fin.castSucc (Fin.castSucc_injective n).injOn)
-      else
-        Sum.inl (t.preimage Fin.castSucc (Fin.castSucc_injective n).injOn)
-    left_inv s := by
-      cases s with
-      | inl s =>
-          dsimp only
-          rw [Sum.elim_inl]
-          rw [ite_eq_right (last_notMem_pfisterLowerIndex n s)]
-          exact congrArg Sum.inl (by
-            simpa [pfisterLowerPart] using pfisterLowerPart_lowerIndex n s)
-      | inr s =>
-          dsimp only
-          rw [Sum.elim_inr]
-          rw [ite_eq_left (last_mem_pfisterUpperIndex n s)]
-          exact congrArg Sum.inr (by
-            simpa [pfisterLowerPart] using pfisterLowerPart_upperIndex n s)
-    right_inv t := by
-      by_cases h : Fin.last n ∈ t
-      · dsimp only
-        rw [ite_eq_left h]
-        simpa [pfisterLowerPart] using pfisterUpperIndex_lowerPart n t h
-      · dsimp only
-        rw [ite_eq_right h]
-        simpa [pfisterLowerPart] using pfisterLowerIndex_lowerPart n t h }
-  exact
-    (LinearEquiv.piCongrLeft' R
-        (fun _ : Finset (Fin (n + 1)) => M) e.symm).trans
-      (LinearEquiv.sumArrowLequivProdArrow
-        (Finset (Fin n)) (Finset (Fin n)) R M)
+      (Finset (Fin n) → M) × (Finset (Fin n) → M) :=
+  (LinearEquiv.piCongrLeft' R
+    (fun _ : Finset (Fin (n + 1)) => M) (pfisterSuccIndexEquiv n).symm).trans
+    (LinearEquiv.sumArrowLequivProdArrow
+      (Finset (Fin n)) (Finset (Fin n)) R M)
 
 @[simp]
 theorem pfisterSuccLinearEquiv_apply_fst
@@ -285,8 +267,6 @@ theorem pfisterSuccLinearEquiv_symm_apply_lowerIndex
     (pfisterSuccLinearEquiv R n).symm (x, y)
         (pfisterLowerIndex n s) = x s := by
   simp [pfisterSuccLinearEquiv]
-  congr 1
-  simpa [pfisterLowerPart] using pfisterLowerPart_lowerIndex n s
 
 @[simp]
 theorem pfisterSuccLinearEquiv_symm_apply_upperIndex
@@ -297,10 +277,8 @@ theorem pfisterSuccLinearEquiv_symm_apply_upperIndex
     (pfisterSuccLinearEquiv R n).symm (x, y)
         (pfisterUpperIndex n s) = y s := by
   simp [pfisterSuccLinearEquiv]
-  congr 1
-  simpa [pfisterLowerPart] using pfisterLowerPart_upperIndex n s
 
-/-- **The successor Pfister isometry.**
+/-- **The successor diagonal quasi-Pfister isometry.**
 
 Let F be a field and a₀,…,aₙ ∈ Fˣ, with bᵢ = aᵢ for i < n. Write qₐ(x) = ∑ₛ(∏ᵢ∈s −aᵢ)xₛ² and
 define q_b similarly. Splitting the coordinates by whether their subset contains n gives an

@@ -10,14 +10,16 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.LinearAlgebra.QuadraticForm.PfisterRoundness
+public import MathlibExt.LinearAlgebra.QuadraticForm.HalfDimensionalTotallyIsotropic
 
 /-!
-# Half-dimensional isotropic subspaces of Pfister forms
+# Half-dimensional isotropic subspaces of diagonal quasi-Pfister forms
 
 Let F be a field, n ∈ ℕ and a₀,…,aₙ ∈ Fˣ. Define qₐ(x) = ∑ₛ(∏ᵢ∈s −aᵢ)xₛ² on
 F^(Finset(Fin(n+1))). If qₐ is not anisotropic, there exists a subspace H on which qₐ vanishes
 with dim H = 2^n, half its ambient dimension 2^(n+1). This holds over fields of arbitrary
-characteristic.
+characteristic for these diagonal quasi-Pfister forms, including the totally singular
+characteristic-two case.
 -/
 
 @[expose] public section
@@ -30,7 +32,7 @@ universe u
 
 namespace QuadraticForm
 
-/-- **Half-dimensional total isotropy of an isotropic Pfister form.**
+/-- **Half-dimensional total isotropy of an isotropic diagonal quasi-Pfister form.**
 
 Let F be a field, n ∈ ℕ and a₀,…,aₙ ∈ Fˣ. Define qₐ(x) = ∑ₛ(∏ᵢ∈s −aᵢ)xₛ² on
 F^(Finset(Fin(n+1))). If qₐ is not anisotropic, it has a totally isotropic subspace H
@@ -63,7 +65,7 @@ theorem pfister_hasHalfDimensionalTotallyIsotropicSubspace
           Q c hc hround (fun hlow => ih lower hlow) hprod
       exact hP.map_isometryEquiv e.symm
 
-/-- **A concrete isotropic subspace of a Pfister form.**
+/-- **A concrete isotropic subspace of a diagonal quasi-Pfister form.**
 
 Let F be a field, n ∈ ℕ and a₀,…,aₙ ∈ Fˣ. Define qₐ(x) = ∑ₛ(∏ᵢ∈s −aᵢ)xₛ² on
 F^(Finset(Fin(n+1))). If qₐ is not anisotropic, there exists H ⊆ F^(Finset(Fin(n+1))) with

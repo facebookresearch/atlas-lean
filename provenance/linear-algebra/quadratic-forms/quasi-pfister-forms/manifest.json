@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "source_repository": "https://github.com/fairinternal/formal-math",
+  "source_commit": "50aea3f906434219750e084a5e88ecf073ede59c",
+  "original_archive": {
+    "path": "originals.jsonl",
+    "sha256": "cc63daa5d12966db37f54a6a554d0f6916ce13a734e738a19458dccf63bbae75",
+    "bytes": 45383,
+    "files": 6
+  },
+  "original_files": [
+    {
+      "path": "MathlibExt/LinearAlgebra/QuadraticForm/HalfDimensionalTotallyIsotropic.lean",
+      "original_sha256": "42204ff0e423871655894623105382bbf8dcd638f78305b62f31847fadd4c581",
+      "original_git_blob": "1b7cb82f2700c3dc2543f66c43618a7d67d9ac65",
+      "bytes": 11122,
+      "LF": 306
+    },
+    {
+      "path": "MathlibExt/LinearAlgebra/QuadraticForm/Pfister.lean",
+      "original_sha256": "64863e845198312f51eedca0d6b6b3d3662342d7191f53d01ce8c568d88e0937",
+      "original_git_blob": "4f49aea42ed8af3e6885fefcf3ca018ca04e9180",
+      "bytes": 4159,
+      "LF": 127
+    },
+    {
+      "path": "MathlibExt/LinearAlgebra/QuadraticForm/PfisterIsotropicSubspace.lean",
+      "original_sha256": "9a8e401f764c50fd393de5c125ed71639db3b70677dac3c0dcbb653ed486e6f0",
+      "original_git_blob": "57eebf862682cd367653824efc23ec19ec7e16a5",
+      "bytes": 2765,
+      "LF": 80
+    },
+    {
+      "path": "MathlibExt/LinearAlgebra/QuadraticForm/PfisterRoundness.lean",
+      "original_sha256": "b909510c7f51cabe7344d82956fb118e2c94308ef6bcb7c66aa92b4a300e297c",
+      "original_git_blob": "af6d2ef308bc3ed13371e237bb880a6c21290f69",
+      "bytes": 3719,
+      "LF": 124
+    },
+    {
+      "path": "MathlibExt/LinearAlgebra/QuadraticForm/PfisterSuccessor.lean",
+      "original_sha256": "c937f5c65be9181e975b2119646f8dc46d3ce8267174c6a839ab0d5eac4cd1ac",
+      "original_git_blob": "42c84249dd9a1ba25b4dcf198860daea3d99df51",
+      "bytes": 11147,
+      "LF": 330
+    },
+    {
+      "path": "MathlibExt/LinearAlgebra/QuadraticForm/Round.lean",
+      "original_sha256": "ad18ecf49b5b9145b2c8e466d394ca7ca5255a0f4e2cf310286bedeb1ccbad70",
+      "original_git_blob": "fc70cda99a83724eea06deb7bb878087b2b2a8b0",
+      "bytes": 9966,
+      "LF": 291
+    }
+  ],
+  "revision_bindings": "files.jsonl",
+  "reviewed_repository": "https://github.com/facebookresearch/atlas-lean",
+  "reviewed_commit": "2a509dd817c853c7ff94fc6ffc866df7bc674829",
+  "revision_files": 8,
+  "public_declarations": 41,
+  "retained_public_declarations": 39,
+  "added_public_data_apis": [
+    {
+      "name": "QuadraticForm.pfisterLowerPart",
+      "previous_visibility": "private",
+      "new_visibility": "public",
+      "type": "(n : ℕ) → Finset (Fin (n + 1)) → Finset (Fin n)",
+      "body_changed": false
+    },
+    {
+      "name": "QuadraticForm.pfisterSuccIndexEquiv",
+      "previous_visibility": "private",
+      "new_visibility": "public",
+      "type": "(n : ℕ) → Sum (Finset (Fin n)) (Finset (Fin n)) ≃ Finset (Fin (n + 1))",
+      "body_changed": false
+    }
+  ],
+  "current_concrete_client_sha256": "34f1fa3c0ae8cb4fb6ad6f59c5e2c912e832f0d34567cf2926a812460893448c",
+  "client_revision": {
+    "previous_sha256": "35cb82dd98b1be74f4a96e6f89d270d5cbbf172d649bd4ddf963d2e2ad477f63",
+    "adaptation": "Explicit vector proof binders and proper radical-membership lemma application; statements and rational declarations unchanged"
+  }
+}

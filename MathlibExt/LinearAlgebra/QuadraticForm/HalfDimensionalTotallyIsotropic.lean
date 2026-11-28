@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 -- Author: @toskua, Avocado
 module
 
-public import Mathlib.LinearAlgebra.QuadraticForm.Prod
+public import MathlibExt.LinearAlgebra.QuadraticForm.Round
 
 /-!
 # Half-dimensional totally isotropic subspaces
@@ -89,89 +89,6 @@ theorem smul (c : R) {Q : QuadraticMap R M N} {H : Submodule R M}
 
 end IsTotallyIsotropic
 
-/-- **Roundness of a quadratic map.**
-
-Let R be a commutative semiring, M an R-module and Q : M → R a quadratic map. Q is round when,
-for every c ≠ 0, the existence of x with Q(x) = c is equivalent to the existence of an
-R-linear isometry cQ ≃ Q.
--/
-def IsRound (Q : QuadraticMap R M R) : Prop :=
-  ∀ c : R, c ≠ 0 →
-    ((∃ x, Q x = c) ↔ (c • Q).Equivalent Q)
-
-namespace IsometryEquiv
-
-/-- **Scaling a quadratic isometry.**
-
-Let R be a commutative semiring, M,M′,N R-modules, and Q : M → N and Q′ : M′ → N quadratic
-maps. For an R-linear isometry e : Q ≃ Q′ and any c ∈ R, the same linear equivalence gives an
-isometry cQ ≃ cQ′.
--/
-def smul {Q : QuadraticMap R M N} {Q' : QuadraticMap R M' N}
-    (c : R) (e : Q.IsometryEquiv Q') :
-    (c • Q).IsometryEquiv (c • Q') where
-  toLinearEquiv := e.toLinearEquiv
-  map_app' x := by simp [e.map_app]
-
-/-- **The isometry associated to equality.**
-
-Let R be a commutative semiring, M,N R-modules and Q,Q′ : M → N quadratic maps. If Q = Q′, the
-identity linear equivalence on M gives an isometry Q ≃ Q′.
--/
-def ofEq {Q Q' : QuadraticMap R M N} (h : Q = Q') :
-    Q.IsometryEquiv Q' where
-  toLinearEquiv := LinearEquiv.refl R M
-  map_app' x := by cases h; rfl
-
-/-- **Anisotropy is invariant under isometry.**
-
-Let R be a commutative semiring, M,M′,N R-modules, and Q : M → N and Q′ : M′ → N quadratic
-maps. If e : Q ≃ Q′ is an R-linear isometry, Q is anisotropic if and only if Q′ is
-anisotropic, where anisotropy means Q(x) = 0 implies x = 0.
--/
-theorem anisotropic_iff {Q : QuadraticMap R M N}
-    {Q' : QuadraticMap R M' N} (e : Q.IsometryEquiv Q') :
-    Q.Anisotropic ↔ Q'.Anisotropic := by
-  constructor
-  · intro hQ y hy
-    have hx : Q (e.symm y) = 0 := by
-      rw [← e.map_app]
-      simpa
-    have hzero := hQ _ hx
-    simpa using congrArg e hzero
-  · intro hQ x hx
-    have he0 : Q' (e x) = 0 := by rw [e.map_app, hx]
-    have hex : e x = 0 := hQ _ he0
-    exact e.injective (by simpa using hex)
-
-end IsometryEquiv
-
-namespace IsRound
-
-variable {F : Type u} [Field F]
-variable {V : Type v} [AddCommGroup V] [Module F V]
-
-/-- **Ratios of represented values in a round form.**
-
-Let F be a field, V an F-vector space, and Q : V → F a quadratic form. Roundness means that,
-for every nonzero c, c is represented by Q if and only if cQ is isometric to Q. If Q(x) ≠ 0
-and Q(y) ≠ 0, then (Q(x)/Q(y))Q is isometric to Q.
--/
-theorem ratio_equivalent (Q : QuadraticForm F V) (hQ : Q.IsRound)
-    {x y : V} (hx : Q x ≠ 0) (hy : Q y ≠ 0) :
-    ((Q x / Q y) • Q).Equivalent Q := by
-  obtain ⟨ex⟩ := (hQ (Q x) hx).mp ⟨x, rfl⟩
-  obtain ⟨ey⟩ := (hQ (Q y) hy).mp ⟨y, rfl⟩
-  let e₀ := ey.symm.smul (Q x / Q y)
-  have hforms :
-      (Q x / Q y) • (Q y • Q) = Q x • Q := by
-    ext z
-    simp only [smul_apply, smul_eq_mul]
-    field_simp
-  exact ⟨(e₀.trans (IsometryEquiv.ofEq hforms)).trans ex⟩
-
-end IsRound
-
 end QuadraticMap
 
 namespace QuadraticForm
@@ -243,19 +160,19 @@ namespace HasHalfDimensionalTotallyIsotropicSubspace
 
 Let F be a field, V an F-vector space, and Q : V → F a quadratic form. Say that Q has a
 half-dimensional totally isotropic subspace if V is finite-dimensional and there exists H ⊆ V
-with Q|H = 0 and 2 dim_F H = dim_F V. Let W be a finite-dimensional F-vector space and Q′ a
+with Q|H = 0 and 2 dim_F H = dim_F V. Let W be an F-vector space and Q′ a
 quadratic form on W. If Q has this property and e : Q ≃ Q′ is an isometry, then Q′ has the
 same property.
 -/
 theorem map_isometryEquiv
     {W : Type*} [AddCommGroup W] [Module F W]
-    [FiniteDimensional F W]
     {Q : QuadraticForm F V} {Q' : QuadraticForm F W}
     (hQ : Q.HasHalfDimensionalTotallyIsotropicSubspace)
     (e : Q.IsometryEquiv Q') :
     Q'.HasHalfDimensionalTotallyIsotropicSubspace := by
   obtain ⟨hfinite, H, hHiso, hHdim⟩ := hQ
   let : Module.Finite F V := hfinite
+  let : Module.Finite F W := Module.Finite.equiv e.toLinearEquiv
   refine ⟨inferInstance, H.map e.toLinearEquiv.toLinearMap,
     hHiso.map_isometryEquiv e, ?_⟩
   rw [e.toLinearEquiv.finrank_map_eq, hHdim,
@@ -269,7 +186,7 @@ with Q|H = 0 and 2 dim_F H = dim_F V. If Q has this property, then Q ⊕ (−cQ)
 for every c ∈ F. A suitable subspace is H × H, where H is the subspace for Q.
 -/
 theorem prod_neg_smul_of_left
-    (Q : QuadraticForm F V) (c : F)
+    {Q : QuadraticForm F V} (c : F)
     (hQ : Q.HasHalfDimensionalTotallyIsotropicSubspace) :
     HasHalfDimensionalTotallyIsotropicSubspace
       (Q.prod ((-c) • Q)) := by
@@ -296,17 +213,6 @@ theorem prod_neg_smul_of_equivalent [FiniteDimensional F V]
   omega
 
 end HasHalfDimensionalTotallyIsotropicSubspace
-
-private theorem hasHalfDimensionalTotallyIsotropicSubspace_prod_neg_smul_of_left_or_equivalent
-    [FiniteDimensional F V] (Q : QuadraticForm F V) (c : F)
-    (h : Q.HasHalfDimensionalTotallyIsotropicSubspace ∨
-      (c • Q).Equivalent Q) :
-    HasHalfDimensionalTotallyIsotropicSubspace
-      (Q.prod ((-c) • Q)) := by
-  rcases h with hQ | he
-  · exact hQ.prod_neg_smul_of_left Q c
-  · exact HasHalfDimensionalTotallyIsotropicSubspace.prod_neg_smul_of_equivalent
-      Q c he
 
 /-- **The roundness step for an isotropic product.**
 
@@ -338,25 +244,27 @@ theorem hasHalfDimensionalTotallyIsotropicSubspace_prod_neg_smul_of_not_anisotro
       have hxv : x = 0 := hQ x hxq
       exact hxy0 (Prod.ext hxv hyv)
     have hx : Q x ≠ 0 := hrel.symm ▸ mul_ne_zero hc hy
-    have he := hround.ratio_equivalent Q hx hy
+    have he := hround.ratio_equivalent hx hy
     have hratio : Q x / Q y = c := by
       rw [hrel]
       exact mul_div_cancel_right₀ c hy
     rw [hratio] at he
     exact HasHalfDimensionalTotallyIsotropicSubspace.prod_neg_smul_of_equivalent
       Q c he
-  · exact (hind hQ).prod_neg_smul_of_left Q c
+  · exact (hind hQ).prod_neg_smul_of_left c
 
 /-- **An isotropic line in dimension two.**
 
-Let F be a field, V an F-vector space, and Q : V → F a quadratic form. Assume V is
-finite-dimensional with dim V = 2 and Q is not anisotropic. Then there exists H ⊆ V with Q|H =
-0 and dim H = 1; equivalently, Q has a half-dimensional totally isotropic subspace.
+Let F be a field, V an F-vector space, and Q : V → F a quadratic form. Assume dim V = 2
+and Q is not anisotropic. Then there exists H ⊆ V with Q|H = 0 and dim H = 1; equivalently,
+Q has a half-dimensional totally isotropic subspace. The positive dimension implies that V
+is finite-dimensional.
 -/
 theorem hasHalfDimensionalTotallyIsotropicSubspace_of_not_anisotropic_finrank_two
-    [FiniteDimensional F V] (Q : QuadraticForm F V)
+    (Q : QuadraticForm F V)
     (hdim : Module.finrank F V = 2) (hQ : ¬ Q.Anisotropic) :
     Q.HasHalfDimensionalTotallyIsotropicSubspace := by
+  let : FiniteDimensional F V := FiniteDimensional.of_finrank_pos (by omega)
   obtain ⟨x, hx0, hxQ⟩ :=
     (QuadraticMap.not_anisotropic_iff_exists Q).1 hQ
   refine ⟨inferInstance, Submodule.span F {x}, ?_, ?_⟩

@@ -11,19 +11,23 @@ module
 
 public import MathlibExt.LinearAlgebra.QuadraticForm.Round
 public import MathlibExt.LinearAlgebra.QuadraticForm.PfisterSuccessor
+public import Mathlib.Algebra.Module.Equiv.Basic
 
 /-!
-# Roundness of Pfister forms
+# Roundness of diagonal quasi-Pfister forms
 
 Let F be a field, n ∈ ℕ and a₀,…,aₙ₋₁ ∈ Fˣ. For s ⊆ Fin n put wₐ(s) = ∏ᵢ∈s (−aᵢ), and let
 qₐ(x) = ∑ₛ wₐ(s)xₛ² on F^(Finset(Fin n)). Roundness means that, for every nonzero c, c is
 represented by qₐ if and only if cqₐ is isometric to qₐ. Every qₐ is round over an arbitrary
-field. This includes the zero-fold square form.
+field. These diagonal forms are quasi-Pfister forms, including the zero-fold square form.
+They coincide with quadratic Pfister forms when the characteristic is not two and are
+totally singular in characteristic two.
 
-## Reference
+## References
 
-* R. Elman, N. Karpenko, A. Merkurjev,   *The Algebraic and Geometric Theory of Quadratic
-Forms*, Corollary 9.9.
+* R. Elman, N. Karpenko, A. Merkurjev, *The Algebraic and Geometric Theory of Quadratic
+Forms*, Corollary 10.3 for quasi-Pfister forms in arbitrary characteristic; Corollary 9.9
+for quadratic Pfister forms in characteristic different from two.
 -/
 
 @[expose] public section
@@ -48,21 +52,6 @@ private theorem pfister_oneVector
   rw [pfister_apply]
   simp [pfisterOneVector]
 
-private noncomputable def scalarLinearEquiv (r : F) (hr : r ≠ 0) :
-    F ≃ₗ[F] F := by
-  refine LinearEquiv.ofLinearMap (LinearMap.lsmul F F r)
-    (LinearMap.lsmul F F r⁻¹) ?_ ?_
-  · ext
-    simp [LinearMap.comp_apply, hr]
-  · ext
-    simp [LinearMap.comp_apply, hr]
-
-@[simp]
-private theorem scalarLinearEquiv_apply
-    (r : F) (hr : r ≠ 0) (x : F) :
-    scalarLinearEquiv F r hr x = r * x :=
-  rfl
-
 private theorem pfisterZero_isRound (a : Fin 0 → Fˣ) :
     (pfister F a).IsRound := by
   intro d hd
@@ -82,7 +71,7 @@ private theorem pfisterZero_isRound (a : Fin 0 → Fˣ) :
     have hrd : r * r = d := by
       rw [← hx, hQr]
     let eLin : (Finset (Fin 0) → F) ≃ₗ[F] (Finset (Fin 0) → F) :=
-      LinearEquiv.piCongrRight (fun _ => scalarLinearEquiv F r hr)
+      LinearEquiv.piCongrRight (fun _ => LinearEquiv.smulOfNeZero F F r hr)
     refine ⟨{ toLinearEquiv := eLin, map_app' := ?_ }⟩
     intro z
     change pfister F a (eLin z) = d * pfister F a z
@@ -92,8 +81,8 @@ private theorem pfisterZero_isRound (a : Fin 0 → Fˣ) :
       Subsingleton.elim _ _
     rw [hdefault, pfisterWeight_empty]
     simp only [one_mul]
-    have heval : eLin z ∅ = scalarLinearEquiv F r hr (z ∅) := rfl
-    rw [heval, scalarLinearEquiv_apply, ← hrd]
+    have heval : eLin z ∅ = LinearEquiv.smulOfNeZero F F r hr (z ∅) := rfl
+    rw [heval, LinearEquiv.smulOfNeZero_apply, smul_eq_mul, ← hrd]
     ring
   · rintro ⟨e⟩
     refine ⟨e (pfisterOneVector F 0), ?_⟩
@@ -102,11 +91,12 @@ private theorem pfisterZero_isRound (a : Fin 0 → Fˣ) :
     rw [pfister_oneVector]
     ring
 
-/-- **Every Pfister form is round.**
+/-- **Every diagonal quasi-Pfister form is round.**
 
 Let F be a field, n ∈ ℕ and a₀,…,aₙ₋₁ ∈ Fˣ. For s ⊆ Fin n put wₐ(s) = ∏ᵢ∈s (−aᵢ), and let
 qₐ(x) = ∑ₛ wₐ(s)xₛ² on F^(Finset(Fin n)). For every c ≠ 0, there exists x with qₐ(x) = c if
-and only if cqₐ is isometric to qₐ.
+and only if cqₐ is isometric to qₐ. This is Corollary 10.3 for quasi-Pfister forms over
+arbitrary fields, and agrees with Corollary 9.9 for quadratic Pfister forms when 2 ≠ 0.
 -/
 theorem pfister_isRound {n : ℕ} (a : Fin n → Fˣ) :
     (pfister F a).IsRound := by
