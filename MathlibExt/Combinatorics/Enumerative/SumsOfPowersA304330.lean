@@ -63,6 +63,9 @@ binomial expansion (20) in the signed Legendre–Stirling basis.
   equation (5), Section 2.2, Proposition 12, and Proposition 15.
 * G. E. Andrews, W. Gawronski, and L. L. Littlejohn, *The Legendre-Stirling numbers*,
   Discrete Mathematics 311 (2011), 1255–1272, Theorem 5.5.
+* Haili Guo and Kelun Wang, *Some Properties of the Legendre-Stirling Numbers*,
+  IOP Conference Series: Materials Science and Engineering 466 (2018), 012026,
+  Theorem 2, equation (4).
 * M. W. Coffey and M. C. Lettington, *On Fibonacci Polynomial Expressions for Sums of mth
   Powers, their implications for Faulhaber's Formula and some Theorems of Fermat*,
   arXiv:1510.05402 (2015), Equation (5.1).
