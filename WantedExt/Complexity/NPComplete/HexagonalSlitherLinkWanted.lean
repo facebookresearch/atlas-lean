@@ -70,7 +70,9 @@ reduction from every language in `NP`
 -/
 
 /-- An instance: the clue grid, column by column from the left; entry `r` of column `c` is the
-clue of hexagon `(c, r)`, `0` for no clue and `v + 1` for clue value `v`. -/
+clue of hexagon `(c, r)`, `0` for no clue and `v + 1` for clue value `v`. The raw type is any
+list of columns of any lengths. The rectangle is fixed by the number of columns (`width`) and the
+length of the first column (`height`); `WellFormed` asks every column to have that length. -/
 abbrev HexagonalSlitherLinkInstance := List (List ℕ)
 
 /-- The number of columns `w`. -/
@@ -91,8 +93,9 @@ def sides (c r : ℕ) : List (Sym2 (ℕ × ℕ)) :=
     s((c + 1, y₀ + 1), (c + 1, y₀ + 2)), s((c + 1, y₀ + 2), (c, y₀ + 2)),
     s((c, y₀ + 2), (c, y₀ + 1)), s((c, y₀ + 1), (c, y₀))]
 
-/-- The hexagonal grid with `w` columns of `h` hexagons: two points are adjacent when they are the
-ends of a side of one of its hexagons. -/
+/-- The hexagonal grid with `w` columns of `h` hexagons, as a graph on all of `ℕ × ℕ`: two points
+are adjacent when they are the ends of a side of one of its hexagons. Every pair of naturals is a
+vertex; a point that is not a corner of a grid hexagon is isolated. -/
 def Graph (i : HexagonalSlitherLinkInstance) : SimpleGraph (ℕ × ℕ) :=
   SimpleGraph.fromRel fun p q => ∃ c < width i, ∃ r < height i, s(p, q) ∈ sides c r
 
@@ -101,7 +104,10 @@ def WellFormed (i : HexagonalSlitherLinkInstance) : Prop :=
   0 < width i ∧ 0 < height i ∧ ∀ col ∈ i, col.length = height i
 
 /-- Some cycle `cyc` of the grid has, for every clue hexagon, exactly as many of the hexagon's
-sides among its edges as the clue value. -/
+sides among its edges as the clue value. Only the hexagons `(c, r)` with `c < width` and
+`r < height` are read, the rectangle fixed by the number of columns and the length of the first
+column: entries of a longer column beyond `height` are ignored, and a missing entry of a shorter
+column reads as no clue. -/
 def HexagonalSlitherLinkFeasible (i : HexagonalSlitherLinkInstance) : Prop :=
   ∃ u, ∃ cyc : (Graph i).Walk u u, cyc.IsCycle ∧
     ∀ c < width i, ∀ r < height i, 0 < clue i c r →

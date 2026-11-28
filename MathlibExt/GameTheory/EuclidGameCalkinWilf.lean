@@ -17,6 +17,10 @@ import Mathlib.Tactic.NormNum
 /-!
 # Euclid on the Calkin–Wilf tree
 
+For every row index $k \ge 0$, the number $L_k$ of Euclid P-positions in the Calkin–Wilf tree
+satisfies $L_0 = 1$, $L_1 = 0$, $L_{k+2} = L_{k+1} + 2L_k$, and $3L_k = 2^k + 2(-1)^k$
+(`count_euclidPPosition_calkinWilfRow`).
+
 Each arch top has a unique move to a child of the original position. From that child,
 subtracting once returns to the original position. Counting the left arch tops row by row
 gives `3 * Tₖ = 2 ^ (k - 2) + 2 * (-1) ^ k` for `2 ≤ k` (`count_arch_tops_calkinWilfRow`).
@@ -25,7 +29,7 @@ gives `3 * Tₖ = 2 ^ (k - 2) + 2 * (-1) ^ k` for `2 ≤ k` (`count_arch_tops_ca
 
 * Michael A. Jones and Brittany C. Ohlinger, *Self-Similar Structure of P-Positions
   of the Game Euclid*, The Fibonacci Quarterly 62 (1) (2024), pp. 15–28,
-  Corollary 4.7 and Proposition 5.2.
+  Propositions 4.1 and 4.2, Corollaries 4.6 and 4.7, and Proposition 5.2.
 -/
 
 namespace MetaMathlibExt
@@ -777,6 +781,30 @@ private theorem arch_count (k : ℕ) :
   exact arch_flatMap_count _ _ (fun _ h => row_pos h) (fun _ h => h)
 
 end count_arch_tops_calkinWilfRow
+
+open count_arch_tops_calkinWilfRow euclidPPosition_self_similar in
+/-- **Number of P-positions of Euclid in a row of the Calkin–Wilf tree.** Let $L_k$ be the
+number of P-positions of Euclid in row $k$ of the Calkin–Wilf tree. Then $L_0 = 1$, $L_1 = 0$,
+$L_{k+2} = L_{k+1} + 2L_k$ for every $k$, and $3L_k = 2^k + 2(-1)^k$ for every $k$, that is,
+$L_k = 2^k/3 + 2(-1)^k/3$.
+
+Source: Michael A. Jones and Brittany C. Ohlinger, *Self-Similar Structure of P-Positions
+of the Game Euclid*, The Fibonacci Quarterly 62.1 (2024), Corollary 4.6. -/
+public theorem count_euclidPPosition_calkinWilfRow :
+    (calkinWilfRow 0).countP (fun p => euclidPPosition p.1 p.2) = 1 ∧
+      (calkinWilfRow 1).countP (fun p => euclidPPosition p.1 p.2) = 0 ∧
+      (∀ k, (calkinWilfRow (k + 2)).countP (fun p => euclidPPosition p.1 p.2) =
+        (calkinWilfRow (k + 1)).countP (fun p => euclidPPosition p.1 p.2) +
+          2 * (calkinWilfRow k).countP (fun p => euclidPPosition p.1 p.2)) ∧
+      ∀ k, 3 * ((calkinWilfRow k).countP (fun p => euclidPPosition p.1 p.2) : ℤ) =
+        2 ^ k + 2 * (-1) ^ k := by
+  refine ⟨by decide, by decide, ?_, row_count_formula⟩
+  intro k
+  change (calkinWilfRow (k + 2)).countP outcome =
+    (calkinWilfRow (k + 1)).countP outcome + 2 * (calkinWilfRow k).countP outcome
+  have hsum := row_count_sum k
+  have hstep := row_count_step k
+  omega
 
 open count_arch_tops_calkinWilfRow euclidPPosition_self_similar in
 /-- **Number of arch tops in a row of the Calkin–Wilf tree.** For $k \ge 2$ let $T_k$ be the
