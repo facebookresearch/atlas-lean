@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Mathlib.Data.Fin.VecNotation
+import Mathlib.SetTheory.Cardinal.Finite
 import Mathlib.Tactic.NormNum
 import MathlibExt.Combinatorics.Enumerative.DescendingNaplesDyckPath
 
@@ -48,3 +49,16 @@ example : descendingNaplesCount 3 1 = 9 ∧ (descendingStrictNaplesCount 3 1 : �
 -- At k = n, all descending preferences already park with k - 1.
 example : descendingNaplesCount 3 3 = 10 ∧ descendingStrictNaplesCount 3 3 = 0 := by
   decide
+
+-- Count paths with an Up step after one Down step, then transfer the count to preferences.
+example : Nat.card {f : {f : Fin 3 → Fin 3 // IsParkingFunction 3 f ∧ Antitone f} //
+    ∃ i, f.1 i = 1} = 3 := by
+  rw [Nat.card_congr (decreasingParkingPreferenceEquivPath (1 : Fin 3)),
+    Nat.card_eq_fintype_card, Fintype.card_subtype]
+  decide +kernel
+
+-- The three weakly decreasing parking preferences containing spot 1.
+example : (Finset.univ.filter fun f : Fin 3 → Fin 3 =>
+    IsParkingFunction 3 f ∧ Antitone f ∧ ∃ i, f i = 1) =
+    {![1, 0, 0], ![1, 1, 0], ![2, 1, 0]} := by
+  decide +kernel
