@@ -22,4 +22,4 @@ The mean of $\Pi_{\mathcal{C}} \nu$ is $\int \sum_i z_i h_i(w) \, \nu(dw)$. On $
 
 ## Sources
 
-- M. Rowland, M. G. Bellemare, W. Dabney, R. Munos and Y. W. Teh, *An Analysis of Categorical Distributional Reinforcement Learning*, Proceedings of the 21st International Conference on Artificial Intelligence and Statistics (AISTATS 2018); numbers from arXiv:1802.08163v1, <https://arxiv.org/abs/1802.08163v1>: Section 4.3, the remark after Theorem 2; Appendix A, Proposition 6 (hat functions); Appendix C, proof of Theorem 2.
+- M. Rowland, M. G. Bellemare, W. Dabney, R. Munos and Y. W. Teh, *An Analysis of Categorical Distributional Reinforcement Learning*, Proceedings of the 21st International Conference on Artificial Intelligence and Statistics (AISTATS 2018); numbers from arXiv:1802.08163v1, <https://arxiv.org/abs/1802.08163v1>: Section 4.3, the remark after Theorem 2; appendix Section 7, Proposition 6 (hat functions; the clipped form outside $[z_1, z_K]$ is computed from them, not displayed in the source); appendix Section 9, proof of Theorem 2.

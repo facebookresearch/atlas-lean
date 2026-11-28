@@ -32,5 +32,5 @@ The target $(f_{r_t,\gamma})_\# \eta_t^{(x_{t+1}, a^*_t)}$ is the [law](../../..
 
 ## Sources
 
-- M. Rowland, M. G. Bellemare, W. Dabney, R. Munos and Y. W. Teh, *An Analysis of Categorical Distributional Reinforcement Learning*, Proceedings of the 21st International Conference on Artificial Intelligence and Statistics (AISTATS 2018); numbers from arXiv:1802.08163v1, <https://arxiv.org/abs/1802.08163v1>: Section 3 (Algorithm 1 and eqs. (6)–(7)), Section 4.3 (eq. (9) and the hypotheses (i)–(ii) of Theorem 1), and Appendix B, Algorithm 2.
+- M. Rowland, M. G. Bellemare, W. Dabney, R. Munos and Y. W. Teh, *An Analysis of Categorical Distributional Reinforcement Learning*, Proceedings of the 21st International Conference on Artificial Intelligence and Statistics (AISTATS 2018); numbers from arXiv:1802.08163v1, <https://arxiv.org/abs/1802.08163v1>: Section 3 (Algorithm 1 and eqs. (6)–(7)), Section 4.3 (eq. (9) and the hypotheses (i)–(ii) of Theorem 1), and appendix Section 8, Algorithm 2.
 - M. G. Bellemare, W. Dabney and R. Munos, *A Distributional Perspective on Reinforcement Learning*, Proceedings of the 34th International Conference on Machine Learning (ICML 2017); numbers from arXiv:1707.06887v1, <https://arxiv.org/abs/1707.06887v1>: Section 4.2 and Algorithm 1 (the categorical algorithm).

@@ -32,5 +32,5 @@ For $z_i \le t < z_{i+1}$, $F_{\Pi_{\mathcal{C}} \nu}(t) = \sum_{j \le i} \int h
 
 ## Sources
 
-- M. Rowland, M. G. Bellemare, W. Dabney, R. Munos and Y. W. Teh, *An Analysis of Categorical Distributional Reinforcement Learning*, Proceedings of the 21st International Conference on Artificial Intelligence and Statistics (AISTATS 2018); numbers from arXiv:1802.08163v1, <https://arxiv.org/abs/1802.08163v1>: Section 3.3, eq. (7), and Appendix A, Proposition 6.
+- M. Rowland, M. G. Bellemare, W. Dabney, R. Munos and Y. W. Teh, *An Analysis of Categorical Distributional Reinforcement Learning*, Proceedings of the 21st International Conference on Artificial Intelligence and Statistics (AISTATS 2018); numbers from arXiv:1802.08163v1, <https://arxiv.org/abs/1802.08163v1>: Section 3.3, eq. (7), and appendix Section 7, Proposition 6.
 - M. G. Bellemare, W. Dabney and R. Munos, *A Distributional Perspective on Reinforcement Learning*, Proceedings of the 34th International Conference on Machine Learning (ICML 2017); numbers from arXiv:1707.06887v1, <https://arxiv.org/abs/1707.06887v1>: Section 4.1 (the support $\{z_i\}$), Section 4.2, eq. (7), and Algorithm 1.

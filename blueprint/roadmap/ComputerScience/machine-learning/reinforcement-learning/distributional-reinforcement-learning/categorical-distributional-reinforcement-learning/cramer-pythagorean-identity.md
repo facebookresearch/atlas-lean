@@ -24,4 +24,4 @@ All three laws are supported in $[z_1 - \delta, z_K + \delta]$, so every term is
 
 ## Sources
 
-- M. Rowland, M. G. Bellemare, W. Dabney, R. Munos and Y. W. Teh, *An Analysis of Categorical Distributional Reinforcement Learning*, Proceedings of the 21st International Conference on Artificial Intelligence and Statistics (AISTATS 2018); numbers from arXiv:1802.08163v1, <https://arxiv.org/abs/1802.08163v1>: Section 4.1, Lemma 3 (Pythagorean theorem) and Proposition 1 (orthogonal projection), proofs in Appendix C; Section 4.2, proof of Proposition 4 (use with mass outside $[z_1, z_K]$).
+- M. Rowland, M. G. Bellemare, W. Dabney, R. Munos and Y. W. Teh, *An Analysis of Categorical Distributional Reinforcement Learning*, Proceedings of the 21st International Conference on Artificial Intelligence and Statistics (AISTATS 2018); numbers from arXiv:1802.08163v1, <https://arxiv.org/abs/1802.08163v1>: Section 4.1, Lemma 3 (Pythagorean theorem) and Proposition 1 (orthogonal projection), proofs in appendix Section 9; Section 4.2, proof of Proposition 4 (use with mass outside $[z_1, z_K]$).

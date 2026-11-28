@@ -28,4 +28,4 @@ Every grid law is dominated by $\delta_{z_K}$ and dominates $\delta_{z_1}$, so $
 
 ## Sources
 
-- M. Rowland, M. G. Bellemare, W. Dabney, R. Munos and Y. W. Teh, *An Analysis of Categorical Distributional Reinforcement Learning*, Proceedings of the 21st International Conference on Artificial Intelligence and Statistics (AISTATS 2018); numbers from arXiv:1802.08163v1, <https://arxiv.org/abs/1802.08163v1>: Appendix C, Lemma 5 and Lemma 7 with their proofs (the proof of Theorem 1).
+- M. Rowland, M. G. Bellemare, W. Dabney, R. Munos and Y. W. Teh, *An Analysis of Categorical Distributional Reinforcement Learning*, Proceedings of the 21st International Conference on Artificial Intelligence and Statistics (AISTATS 2018); numbers from arXiv:1802.08163v1, <https://arxiv.org/abs/1802.08163v1>: appendix Section 9, Lemma 5 and Lemma 7 with their proofs (the proof of Theorem 1).

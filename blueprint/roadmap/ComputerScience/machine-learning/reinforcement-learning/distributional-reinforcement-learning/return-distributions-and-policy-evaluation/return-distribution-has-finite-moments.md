@@ -26,4 +26,4 @@ Gerstenberg, Neininger and Spiegel prove the moment transfer for joint kernels (
 ## Sources
 
 - M. G. Bellemare, W. Dabney and R. Munos, *A Distributional Perspective on Reinforcement Learning*, Proceedings of the 34th International Conference on Machine Learning (ICML 2017); numbers from arXiv:1707.06887v1, <https://arxiv.org/abs/1707.06887v1>: Section 3.2 (the space of value distributions with bounded moments) and Section 3.3.1, paragraph after Lemma 3 ("As we assume all moments are bounded").
-- J. Gerstenberg, R. Neininger and D. Spiegel, *On solutions of the distributional Bellman equation*, arXiv:2202.00081v3 (2023), <https://arxiv.org/abs/2202.00081v3>: Theorem 3 (part 3) with its proof in Section 3.2, and Example 2.
+- J. Gerstenberg, R. Neininger and D. Spiegel, *On solutions of the distributional Bellman equation*, Electronic Research Archive 31(8) (2023) 4459–4483, <https://doi.org/10.3934/era.2023228>; numbers from the published version, which agree with arXiv:2202.00081v3: Theorem 3 (part 3) with its proof in Section 3.2, and Example 2.

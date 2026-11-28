@@ -29,5 +29,5 @@ Rowland and coauthors instead couple the Q-learning run with an evaluation run t
 
 ## Sources
 
-- M. Rowland, M. G. Bellemare, W. Dabney, R. Munos and Y. W. Teh, *An Analysis of Categorical Distributional Reinforcement Learning*, Proceedings of the 21st International Conference on Artificial Intelligence and Statistics (AISTATS 2018); numbers from arXiv:1802.08163v1, <https://arxiv.org/abs/1802.08163v1>: Section 4.3, Theorem 2, proved in Appendix C.
+- M. Rowland, M. G. Bellemare, W. Dabney, R. Munos and Y. W. Teh, *An Analysis of Categorical Distributional Reinforcement Learning*, Proceedings of the 21st International Conference on Artificial Intelligence and Statistics (AISTATS 2018); numbers from arXiv:1802.08163v1, <https://arxiv.org/abs/1802.08163v1>: Section 4.3, Theorem 2, proved in appendix Section 9.
 - C. J. C. H. Watkins and P. Dayan, *Technical note: Q-learning*, Machine Learning 8 (1992) 279–292, the Theorem of Section 2. <http://www.gatsby.ucl.ac.uk/~dayan/papers/cjch.pdf>

@@ -27,5 +27,5 @@ $$L_k \preceq \eta_t \preceq U_k \quad \text{for all } t > T_k, \text{ almost su
 
 ## Sources
 
-- M. Rowland, M. G. Bellemare, W. Dabney, R. Munos and Y. W. Teh, *An Analysis of Categorical Distributional Reinforcement Learning*, Proceedings of the 21st International Conference on Artificial Intelligence and Statistics (AISTATS 2018); numbers from arXiv:1802.08163v1, <https://arxiv.org/abs/1802.08163v1>: Appendix C, Lemma 6 and its proof (the proof of Theorem 1).
+- M. Rowland, M. G. Bellemare, W. Dabney, R. Munos and Y. W. Teh, *An Analysis of Categorical Distributional Reinforcement Learning*, Proceedings of the 21st International Conference on Artificial Intelligence and Statistics (AISTATS 2018); numbers from arXiv:1802.08163v1, <https://arxiv.org/abs/1802.08163v1>: appendix Section 9, Lemma 6 and its proof (the proof of Theorem 1).
 - J. N. Tsitsiklis, *Asynchronous stochastic approximation and Q-learning*, Machine Learning 16 (1994) 185–202, Theorem 2 and Lemmas 5–6, which Rowland and coauthors adapt. <https://www.mit.edu/~jnt/Papers/J052-94-jnt-q.pdf>
