@@ -77,16 +77,6 @@ def BPZProfile.star (p₁ p₂ : BPZProfile) : BPZProfile where
     p₁.neutral * p₂.neutral +
       (p₁.auxiliary - p₁.neutral) * (p₂.auxiliary - p₂.neutral)
 
-/-- The four coordinates of the profile product in constructor form. -/
-theorem BPZProfile.star_eq_mk (p₁ p₂ : BPZProfile) :
-    p₁.star p₂ =
-      ⟨(p₁.code - p₁.pairs) * (p₂.code - p₂.pairs) +
-          p₁.auxiliary * p₂.pairs + p₁.pairs * p₂.auxiliary,
-        p₁.neutral * p₂.pairs + p₁.pairs * p₂.neutral,
-        p₁.auxiliary * p₂.auxiliary,
-        p₁.neutral * p₂.neutral + (p₁.auxiliary - p₁.neutral) * (p₂.auxiliary - p₂.neutral)⟩ :=
-  rfl
-
 /-- **Iterated squaring of BPZ profiles.** Write $\star$ for the BPZ profile product. For a
 natural number $k$ and a BPZ profile $p$, the $k$-fold iterated square $S_k(p)$ is defined by
 $S_0(p) = p$ and $S_{k+1}(p) = S_k(p \star p)$; that is, $S_k(p)$ is obtained from $p$ by

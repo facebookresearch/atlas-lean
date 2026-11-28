@@ -275,11 +275,20 @@ private def product (T : PortTuple r) (U : PortTuple s)
     · obtain ⟨p, hp⟩ := T.label_hit x
       exact ⟨.inr (p, y), hp, hs.refl _⟩
 
+private theorem star_eq_mk (p₁ p₂ : BPZProfile) :
+    p₁.star p₂ =
+      ⟨(p₁.code - p₁.pairs) * (p₂.code - p₂.pairs) +
+          p₁.auxiliary * p₂.pairs + p₁.pairs * p₂.auxiliary,
+        p₁.neutral * p₂.pairs + p₁.pairs * p₂.neutral,
+        p₁.auxiliary * p₂.auxiliary,
+        p₁.neutral * p₂.neutral + (p₁.auxiliary - p₁.neutral) * (p₂.auxiliary - p₂.neutral)⟩ :=
+  rfl
+
 private theorem profile_product (T : PortTuple r) (U : PortTuple s)
     (hr : Std.Refl r) (hs : Std.Refl s)
     (hr' : Std.Symm r) (hs' : Std.Symm s) :
     (T.product U hr hs hr' hs').profile = T.profile.star U.profile := by
-  rw [BPZProfile.star_eq_mk]
+  rw [star_eq_mk]
   dsimp only [profile, product, ProductB, ProductP, ProductN, ProductA]
   simp only [Fintype.card_sum, Fintype.card_prod, Nat.cast_add, Nat.cast_mul]
   congr 1 <;> ring
@@ -287,7 +296,12 @@ private theorem profile_product (T : PortTuple r) (U : PortTuple s)
 end Product
 end PortTuple
 
-/-- The 148 starting codewords, as base-11 encodings of length-three words. -/
+/-- **Base code of the Buys–Polak–Zuiddam eleven-cycle construction.** The published base
+code is an independent set of 148 words in the third strong power of the $11$-cycle.
+A word $(a_0, a_1, a_2)$ over $\mathbb{Z}/11\mathbb{Z}$ is encoded as
+$a_0 + 11a_1 + 121a_2$, using the representatives $0, \ldots, 10$ for each digit.
+
+The 148-word cube construction is due to Baumert, McEliece, Rodemich, Rumsey, Stanley and Taylor. -/
 def bpzC11BaseWords : List (Fin 1331) :=
   [
     5, 7, 11, 26, 28, 43, 47, 49, 64, 69, 86, 90, 107, 111,
@@ -303,7 +317,10 @@ def bpzC11BaseWords : List (Fin 1331) :=
     1272, 1277, 1292, 1294, 1298, 1313, 1315, 1330
   ]
 
-/-- The 148 auxiliary words, in the same base-11 encoding. -/
+/-- **Auxiliary words of the Buys–Polak–Zuiddam eleven-cycle construction.** The auxiliary
+set in the starting tuple is an independent set of 148 words in the third strong power of
+the $11$-cycle. A word $(a_0, a_1, a_2)$ over $\mathbb{Z}/11\mathbb{Z}$ is encoded as
+$a_0 + 11a_1 + 121a_2$, using the representatives $0, \ldots, 10$ for each digit. -/
 def bpzC11AuxWords : List (Fin 1331) :=
   [
     10, 19, 28, 37, 46, 55, 63, 72, 81, 90, 99, 108, 117, 122,
@@ -319,7 +336,13 @@ def bpzC11AuxWords : List (Fin 1331) :=
     1260, 1269, 1278, 1287, 1296, 1305, 1314, 1323
   ]
 
-/-- The three starting ports, with each parent first and alternative second. -/
+/-- **Private pairs of the Buys–Polak–Zuiddam eleven-cycle construction.** The three
+ordered pairs $(r, a)$ in the starting tuple in the third strong power of the $11$-cycle.
+The first word $r$ belongs to the 148-word base code, and the distinct second word $a$
+is confusable with $r$ and with no other word of that code. Two words are confusable if
+every coordinate difference modulo $11$ belongs to $\{-1, 0, 1\}$.
+A word $(a_0, a_1, a_2)$ over $\mathbb{Z}/11\mathbb{Z}$ is encoded as
+$a_0 + 11a_1 + 121a_2$, using the representatives $0, \ldots, 10$ for each digit. -/
 def bpzC11Ports : List (Fin 1331 × Fin 1331) :=
   [(5, 1215), (64, 65), (747, 736)]
 
@@ -338,7 +361,10 @@ private theorem confusable_symm {q n : ℕ} : Std.Symm (@Confusable q n) := by
   rw [← neg_sub]
   rcases h i with hi | hi | hi <;> simp [hi]
 
-/-- Decode the three base-11 digits of an encoded word, least significant digit first. -/
+/-- **Base-11 words of length three.** For an integer $a$ with $0 \le a < 1331$, return
+the word $(a_0, a_1, a_2)$ over $\mathbb{Z}/11\mathbb{Z}$ with $a = a_0 + 11a_1 + 121a_2$,
+where each digit is represented by an integer in $\{0, \ldots, 10\}$. The least
+significant digit is first. -/
 def bpzC11Decode (a : Fin 1331) (i : Fin 3) : ZMod 11 := (a.val / 11 ^ i.val : ℕ)
 
 private abbrev rawConf (a b : Fin 1331) : Prop := Confusable (bpzC11Decode a) (bpzC11Decode b)

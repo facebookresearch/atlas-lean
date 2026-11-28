@@ -47,7 +47,11 @@ def IsCycleCode (q : ℕ) {n : ℕ} (A : Finset (Fin n → ZMod q)) : Prop :=
     (∀ i : Fin n, x i = -1 ∨ x i = 0 ∨ x i = 1) →
     x = 0
 
-/-- A finite set is a cycle code exactly when two confusable members are equal. -/
+/-- **Pairwise characterization of independent cycle codes.** For natural numbers $q$ and $n$,
+a finite set $A$ of words of length $n$ over $\mathbb{Z}/q\mathbb{Z}$ is a modular cycle code
+if and only if, for every $a, b \in A$, having $a_i - b_i \in \{-1, 0, 1\}$ at every
+coordinate $i$ implies $a = b$. For $q \ge 3$, this is independence in the $n$-th strong power
+of the cycle graph $C_q$. -/
 theorem isCycleCode_iff_eq_of_confusable {q n : ℕ} {A : Finset (Fin n → ZMod q)} :
     IsCycleCode q A ↔ ∀ a ∈ A, ∀ b ∈ A,
       (∀ i, a i - b i = -1 ∨ a i - b i = 0 ∨ a i - b i = 1) → a = b := by

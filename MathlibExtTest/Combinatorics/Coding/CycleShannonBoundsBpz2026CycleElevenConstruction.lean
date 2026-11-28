@@ -21,6 +21,10 @@ open MathlibExt.Combinatorics.Coding.CycleGraphCode
 private def closeCode (x y : Fin 1331) : Bool :=
   [1, 11, 121].all fun p => ((x.val / p % 11 + 12 - y.val / p % 11) % 11 ≤ 2)
 
+-- 131 = 10 + 11 · 0 + 121 · 1; reversing the digit order changes the word.
+example : bpzC11Decode 131 = ![10, 0, 1] := by
+  decide +kernel
+
 set_option maxRecDepth 4096 in
 example : bpzC11BaseWords.length = 148 ∧ bpzC11AuxWords.length = 148 ∧
     bpzC11BaseWords.Pairwise (fun x y => closeCode x y = false) ∧
