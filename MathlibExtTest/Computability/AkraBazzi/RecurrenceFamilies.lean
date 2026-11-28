@@ -35,3 +35,19 @@ example (R : AkraBazziRecurrence T g a b r) (c : ℝ)
     (hf' : 0 ≤ᶠ[atTop] g) (hg' : 0 ≤ᶠ[atTop] fun _ : ℝ => c * (1 - ∑ i, a i)) :
     AkraBazziRecurrence.GrowsPolynomially (fun x => g x + c * (1 - ∑ i, a i)) :=
   AkraBazziRecurrence.GrowsPolynomially.add R.g_grows_poly growsPolynomially_const hf' hg'
+
+#check @AkraBazziRecurrence.ofFloorCeilFamily
+
+noncomputable example {T : ℕ → ℝ} {g : ℝ → ℝ} {a d : Fin 2 → ℝ} {n₀ : ℕ}
+    (ha : ∀ i, 0 < a i) (hd : ∀ i, 1 < d i) (hn₀ : 0 < n₀)
+    (hcut : ∀ i, d i / (d i - 1) ≤ (n₀ : ℝ))
+    (hgrow : AkraBazziRecurrence.GrowsPolynomially g)
+    (hg0 : ∀ x ≥ 0, 0 ≤ g x)
+    (hbase : ∀ n < n₀, 0 < T n)
+    (hrec : ∀ n, n₀ ≤ n →
+      T n = (∑ i, a i * T ⌊(n : ℝ) / d i⌋₊)
+        + (∑ i, a i * T ⌈(n : ℝ) / d i⌉₊) + g n) :
+    AkraBazziRecurrence T g (Sum.elim a a)
+      (Sum.elim (fun i => (d i)⁻¹) (fun i => (d i)⁻¹))
+      (Sum.elim (fun i n => ⌊(n : ℝ) / d i⌋₊) (fun i n => ⌈(n : ℝ) / d i⌉₊)) :=
+  AkraBazziRecurrence.ofFloorCeilFamily n₀ ha hd hn₀ hcut hgrow hg0 hbase hrec
