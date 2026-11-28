@@ -13,6 +13,7 @@ public import Mathlib.Order.Interval.Finset.Nat
 public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.RingTheory.PowerSeries.Basic
 public import MathlibExt.NumberTheory.NegRFibonacciGeneratingFunction
+public import MathlibExt.NumberTheory.NegRFibonacciPolynomial
 public import MathlibExt.NumberTheory.NegRFibonacciPolynomialSum
 public import MathlibExt.NumberTheory.PQRFibonacciPolynomial
 public import MathlibExt.NumberTheory.RFibonacciPolynomial
@@ -403,94 +404,6 @@ public theorem_wanted sum_pow_mul_rLucasPolynomial {K : Type*} [Field K] {r n : 
           - m ^ (r + 1) * y * ∑ j ∈ Finset.Icc 1 r,
               m ^ (n + j - r) * rLucasPolynomial r s x y (n + j - r))
         / (1 - m * x - m ^ (r + 1) * y) - 1
-
-/-- **Companion sequence of the $(-r)$-Fibonacci polynomials.** Let $A$ be a commutative ring,
-$r$ a natural number, $x \in A$ and $y$ a unit of $A$. The companion sequence
-$V^{(-r)}_n(x, y) \in A$, $n \ge 0$, is defined by $V^{(-r)}_0 = r + 1$ and, if $r \ge 1$, by
-$V^{(-r)}_n = 0$ for $1 \le n < r$, $V^{(-r)}_r = r y^{-1}$ and
-$V^{(-r)}_{n+1} = y^{-1} V^{(-r)}_{n-r+1} - y^{-1} x V^{(-r)}_{n-r}$ for $n \ge r$. If $r = 0$,
-then $V^{(-r)}_n = 0$ for all $n \ge 1$.
-
-The paper takes $r \ge 2$; the case $r = 0$ only makes the definition total.
-
-Source: Abbad and Belbachir, *The r-Fibonacci Polynomial and Its Companion
-Sequences Linked with Some Classical Sequences*, INTEGERS 25 (2025),
-Article A38, Definition 4. -/
-public def negRLucas {A : Type*} [CommRing A] (r : ℕ) (x : A) (y : Aˣ) : ℕ → A
-  | 0 => (r : A) + 1
-  | n + 1 =>
-    if r = 0 ∨ n + 1 < r then 0
-    else if n + 1 = r then (r : A) * ↑y⁻¹
-    else (↑y⁻¹ : A) * negRLucas r x y (n - r + 1) - ↑y⁻¹ * x * negRLucas r x y (n - r)
-termination_by n => n
-decreasing_by all_goals omega
-
-/-- **Zeroth term of the companion sequence $V^{(-r)}$.** Let $A$ be a commutative ring, $r$ a
-natural number, $x \in A$ and $y$ a unit of $A$. The companion sequence of the
-$(-r)$-Fibonacci polynomials satisfies $V^{(-r)}_0(x, y) = r + 1$.
-
-Source: Abbad and Belbachir, *The r-Fibonacci Polynomial and Its Companion
-Sequences Linked with Some Classical Sequences*, INTEGERS 25 (2025),
-Article A38, Definition 4. -/
-public theorem negRLucas_zero {A : Type*} [CommRing A] (r : ℕ) (x : A) (y : Aˣ) :
-    negRLucas r x y 0 = (r : A) + 1 := by
-  rw [negRLucas]
-
-/-- **Vanishing initial terms of the companion sequence $V^{(-r)}$.** Let $A$ be a commutative
-ring, $x \in A$ and $y$ a unit of $A$. For natural numbers $r$ and $n$ with $n + 1 < r$, the
-companion sequence of the $(-r)$-Fibonacci polynomials satisfies $V^{(-r)}_{n+1}(x, y) = 0$;
-that is, $V^{(-r)}_m(x, y) = 0$ for $1 \le m < r$.
-
-Source: Abbad and Belbachir, *The r-Fibonacci Polynomial and Its Companion
-Sequences Linked with Some Classical Sequences*, INTEGERS 25 (2025),
-Article A38, Definition 4. -/
-public theorem negRLucas_succ_of_lt {A : Type*} [CommRing A] {r n : ℕ} (x : A) (y : Aˣ)
-    (h : n + 1 < r) : negRLucas r x y (n + 1) = 0 := by
-  rw [negRLucas]
-  simp [h]
-
-/-- **The $r$-th term of the companion sequence $V^{(-r)}$.** Let $A$ be a commutative ring,
-$r \ge 1$ a natural number, $x \in A$ and $y$ a unit of $A$. The companion sequence of the
-$(-r)$-Fibonacci polynomials satisfies $V^{(-r)}_r(x, y) = r y^{-1}$.
-
-Source: Abbad and Belbachir, *The r-Fibonacci Polynomial and Its Companion
-Sequences Linked with Some Classical Sequences*, INTEGERS 25 (2025),
-Article A38, Definition 4. -/
-public theorem negRLucas_self {A : Type*} [CommRing A] {r : ℕ} (x : A) (y : Aˣ)
-    (hr : 1 ≤ r) : negRLucas r x y r = (r : A) * ↑y⁻¹ := by
-  obtain ⟨n, rfl⟩ : ∃ n, r = n + 1 := ⟨r - 1, by omega⟩
-  rw [negRLucas]
-  simp
-
-/-- **Recurrence for the companion sequence $V^{(-r)}$.** Let $A$ be a commutative ring, $x \in A$
-and $y$ a unit of $A$. For natural numbers $r$ and $n$ with $1 \le r \le n$, the companion
-sequence of the $(-r)$-Fibonacci polynomials satisfies
-$V^{(-r)}_{n+1}(x, y) = y^{-1} V^{(-r)}_{n-r+1}(x, y) - y^{-1} x V^{(-r)}_{n-r}(x, y)$.
-
-Source: Abbad and Belbachir, *The r-Fibonacci Polynomial and Its Companion
-Sequences Linked with Some Classical Sequences*, INTEGERS 25 (2025),
-Article A38, Definition 4. -/
-public theorem negRLucas_succ_of_le {A : Type*} [CommRing A] {r n : ℕ} (x : A) (y : Aˣ)
-    (hr : 1 ≤ r) (h : r ≤ n) :
-    negRLucas r x y (n + 1)
-      = ↑y⁻¹ * negRLucas r x y (n - r + 1) - ↑y⁻¹ * x * negRLucas r x y (n - r) := by
-  rw [negRLucas]
-  simp [show r ≠ 0 by omega, show ¬n + 1 < r by omega, show n + 1 ≠ r by omega]
-
-/-- **The companion sequence in terms of the $(-r)$-Fibonacci polynomials.** Let $A$ be a
-commutative ring, $r \ge 2$ a natural number, $x \in A$ and $y$ a unit of $A$, and let
-$U^{(-r)}_n(x, y)$ be the $(-r)$-Fibonacci polynomials and $V^{(-r)}_n(x, y)$ their companion
-sequence. For every natural number $n \ge r$,
-$V^{(-r)}_n(x, y) = r \, U^{(-r)}_{n+1}(x, y) - x y^{-1} U^{(-r)}_{n-r}(x, y)$.
-
-The paper takes $x$ a unit; the identity holds for every $x$.
-
-Source: Abbad and Belbachir, *The r-Fibonacci Polynomial and Its Companion
-Sequences Linked with Some Classical Sequences*, INTEGERS 25 (2025),
-Article A38, Proposition 1, Equation (8) (`integers-2025-A38-prop-1`). -/
-public theorem_wanted negRLucas_eq {A : Type*} [CommRing A] {r n : ℕ} (hr : 2 ≤ r)
-    (hn : r ≤ n) (x : A) (y : Aˣ) :
-    negRLucas r x y n = r * negRFibonacci r x y (n + 1) - x * ↑y⁻¹ * negRFibonacci r x y (n - r)
 
 /-- **Explicit sum for the companion sequence $V^{(-r)}$.** Let $K$ be a field of
 characteristic zero, $r \ge 2$ and $n \ge 1$ natural numbers, $x \in K$ and $y$ a unit of
