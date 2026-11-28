@@ -44,9 +44,9 @@ private theorem map_one_matrix {I : Type*} (U : Matrix I I ℤ) :
 private theorem map_single_smul {I M : Type*} [DecidableEq I]
     [AddCommGroup M] [Module ℤ M] (i j : I) (m : M) :
     (Matrix.single i j (1 : ℤ)).map (fun c => c • m) = Matrix.single i j m := by
-  change (Matrix.single i j (1 : ℤ)).map (LinearMap.toSpanSingleton ℤ M m) = _
-  simpa only [LinearMap.toSpanSingleton_apply, one_smul] using
-    (Matrix.map_single i j (1 : ℤ) (LinearMap.toSpanSingleton ℤ M m))
+  ext x y
+  by_cases h : i = x ∧ j = y <;>
+    simp [Matrix.map_apply, Matrix.single_apply, h]
 
 private theorem const_fin_one {B : Type*} (x : B) :
     (fun _ : Fin 1 => x) = ![x] := by
@@ -110,15 +110,16 @@ example :
   have h := generalizedTrace_scaled ℤ I2 1 (Matrix.single 0 1 (1 : ℤ))
     ![Matrix.single 0 1 (1 : ℤ)] (2 : ℤ) ![(3 : ℤ)]
   have h0 :
-      (Matrix.single 0 1 (1 : ℤ)).map (fun c => c • (2 : ℤ)) =
-        Matrix.single 0 1 (2 : ℤ) :=
-    map_single_smul 0 1 (2 : ℤ)
+      (Matrix.single (0 : I2) (1 : I2) (1 : ℤ)).map (fun c => c • (2 : ℤ)) =
+        Matrix.single (0 : I2) (1 : I2) (2 : ℤ) :=
+    map_single_smul (I := I2) 0 1 (2 : ℤ)
   have ht :
-      (fun t : Fin 1 => (![Matrix.single 0 1 (1 : ℤ)] t).map
-        (fun c => c • (![(3 : ℤ)] t))) = ![Matrix.single 0 1 (3 : ℤ)] := by
+      (fun t : Fin 1 => (![Matrix.single (0 : I2) (1 : I2) (1 : ℤ)] t).map
+        (fun c => c • (![(3 : ℤ)] t))) =
+          ![Matrix.single (0 : I2) (1 : I2) (3 : ℤ)] := by
     funext t
     fin_cases t
-    exact map_single_smul 0 1 (3 : ℤ)
+    exact map_single_smul (I := I2) 0 1 (3 : ℤ)
   rw [h0, ht] at h
   simpa [Matrix.trace, Matrix.mul_apply, Matrix.single_apply,
     Fin.sum_univ_succ, List.ofFn_succ] using h
@@ -154,12 +155,23 @@ example :
   have h := LinearMap.congr_fun (trace_boundary_comm ℤ A A I2 0)
     (outerCoefficient ⊗ₜ[ℤ] PiTensorProduct.tprod ℤ ![outerAlgebra])
   simp only [LinearMap.comp_apply] at h
-  change zeroCoordinate (_) = _
-  rw [h, matchedTrace, ModuleCat.Algebra.Hochschild.boundary_one_tprod]
-  simp [zeroCoordinate, LinearMap.comp_apply, TensorProduct.map_tmul,
-    TensorPower.zeroEquiv, PiTensorProduct.isEmptyEquiv_apply_tprod,
-    unit2, Matrix.mul_apply, Matrix.single_apply, Fin.sum_univ_succ,
-    smul_eq_mul]
+  calc
+    _ = zeroCoordinate
+        ((ModuleCat.Algebra.Hochschild.boundary ℤ A A 0).hom
+          (generalizedTrace ℤ I2 1
+            (outerCoefficient ⊗ₜ[ℤ] PiTensorProduct.tprod ℤ ![outerAlgebra]))) :=
+      congrArg zeroCoordinate h
+    _ = zeroCoordinate
+        ((ModuleCat.Algebra.Hochschild.boundary ℤ A A 0).hom
+          (unit2 0 1 ⊗ₜ[ℤ] PiTensorProduct.tprod ℤ ![unit2 1 0])) :=
+      congrArg (fun x : A ⊗[ℤ] TensorPower ℤ 1 A =>
+        zeroCoordinate ((ModuleCat.Algebra.Hochschild.boundary ℤ A A 0).hom x)) matchedTrace
+    _ = _ := by
+      rw [ModuleCat.Algebra.Hochschild.boundary_one_tprod]
+      simp [zeroCoordinate, LinearMap.comp_apply, TensorProduct.map_tmul,
+        TensorPower.zeroEquiv, PiTensorProduct.isEmptyEquiv_apply_tprod,
+        unit2, Matrix.mul_apply, Matrix.single_apply, Fin.sum_univ_succ,
+        smul_eq_mul]
 
 example :
     (cornerChainMap ℤ A A (ULift.{1} I2) (ULift.up 0)) ≫
