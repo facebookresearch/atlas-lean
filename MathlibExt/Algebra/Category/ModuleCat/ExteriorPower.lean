@@ -11,6 +11,7 @@ module
 
 public import MathlibExt.LinearAlgebra.ExteriorPower.BaseChange
 public import Mathlib.Algebra.Category.ModuleCat.ChangeOfRings
+public import Mathlib.Algebra.Category.ModuleCat.ExteriorPower
 
 /-!
 # Exterior-power functors and scalar extension
@@ -40,50 +41,13 @@ namespace ModuleCat
 
 variable (R : Type u) [CommRing R]
 
-/-- The exterior-power functor for an independently sized module category.
-
-For `n ∈ ℕ`, this functor sends `ModuleCat.{v} R` to `ModuleCat.{max u v} R` by taking the
-`n`th exterior power, where `R : Type u`. -/
-def exteriorPowerFunctorAt (n : ℕ) :
-    ModuleCat.{v} R ⥤ ModuleCat.{max u v} R where
-  obj M := ModuleCat.of R (⋀[R]^n M)
-  map f := ModuleCat.ofHom (exteriorPower.map n f.hom)
-  map_id M := by
-    apply ModuleCat.hom_ext
-    exact exteriorPower.map_id
-  map_comp f g := by
-    apply ModuleCat.hom_ext
-    exact exteriorPower.map_comp f.hom g.hom
-
 /-- The exterior-power functor in a joint scalar-module universe.
 
 For modules with carrier universe `max u v`, the `n`th exterior-power functor has source and
 target in that same universe. -/
 abbrev exteriorPowerFunctor (n : ℕ) :
     ModuleCat.{max u v} R ⥤ ModuleCat.{max u v} R :=
-  exteriorPowerFunctorAt R n
-
-/-- The exterior-power map on decomposable wedges.
-
-For `f : M → N` and `a : Fin n → M`, the induced exterior map sends the wedge of the `a_i` to
-the wedge of the `f(a_i)`. -/
-@[simp]
-theorem exteriorPowerFunctorAt_map_ιMulti (n : ℕ)
-    {M N : ModuleCat.{v} R} (f : M ⟶ N) (a : Fin n → M) :
-    ((exteriorPowerFunctorAt R n).map f).hom (exteriorPower.ιMulti R n a) =
-      exteriorPower.ιMulti R n (fun i => f.hom (a i)) :=
-  exteriorPower.map_apply_ιMulti f.hom a
-
-/-- The scalar coordinate of an exterior-degree-zero map.
-
-Under the canonical identifications `⋀⁰[R] M ≃ₗ[R] R` and `⋀⁰[R] N ≃ₗ[R] R`, the exterior map
-induced by `f : M → N` has scalar coordinate the identity. -/
-theorem exteriorPowerFunctorAt_map_zero
-    {M N : ModuleCat.{v} R} (f : M ⟶ N) :
-    (exteriorPower.zeroEquiv R N).toLinearMap.comp
-        ((exteriorPowerFunctorAt R 0).map f).hom =
-      (exteriorPower.zeroEquiv R M).toLinearMap :=
-  exteriorPower.zeroEquiv_naturality f.hom
+  ModuleCat.exteriorPower.functor.{max u v, u} R n
 
 /-- The natural comparison in exterior degree one.
 
@@ -159,10 +123,10 @@ scalars of `⋀ⁿ[R] M` to `⋀ⁿ[S]` of the extended module. The common carri
 both scalar rings and `M`. -/
 def exteriorPowerBaseChangeComponent (n : ℕ) (M : ModuleCat.{max u v w} R) :
     (ModuleCat.extendScalars (algebraMap R S)).obj
-        ((exteriorPowerFunctorAt.{u, max u v w} R n).obj M) ≅
-      (exteriorPowerFunctorAt.{w, max u v w} S n).obj
+        ((ModuleCat.exteriorPower.functor.{max u v w, u} R n).obj M) ≅
+      (ModuleCat.exteriorPower.functor.{max u v w, w} S n).obj
         ((ModuleCat.extendScalars (algebraMap R S)).obj M) := by
-  let Q := (exteriorPowerFunctorAt.{u, max u v w} R n).obj M
+  let Q := (ModuleCat.exteriorPower.functor.{max u v w, u} R n).obj M
   let P := (ModuleCat.extendScalars (algebraMap R S)).obj M
   let q : Q ≃ₗ[R] (⋀[R]^n M) :=
     { toFun := fun x => x
@@ -174,7 +138,7 @@ def exteriorPowerBaseChangeComponent (n : ℕ) (M : ModuleCat.{max u v w} R) :
   let eSource := (scalarExtensionToTensorEquiv R S Q).trans
     (TensorProduct.AlgebraTensorModule.congr (LinearEquiv.refl S S) q)
   let ePower : (⋀[S]^n P) ≃ₗ[S]
-      (exteriorPowerFunctorAt.{w, max u v w} S n).obj P :=
+      (ModuleCat.exteriorPower.functor.{max u v w, w} S n).obj P :=
     { toFun := fun x => x
       invFun := fun x => x
       left_inv := fun _ => rfl
@@ -196,7 +160,7 @@ theorem exteriorPowerBaseChangeComponent_hom_tmul_ιMulti (n : ℕ)
       s • exteriorPower.ιMulti S n
         (M := (ModuleCat.extendScalars (algebraMap R S)).obj M)
         (fun i => (1 : S) ⊗ₜ[R, algebraMap R S] a i) := by
-  let Q := (exteriorPowerFunctorAt.{u, max u v w} R n).obj M
+  let Q := (ModuleCat.exteriorPower.functor.{max u v w, u} R n).obj M
   let P := (ModuleCat.extendScalars (algebraMap R S)).obj M
   let q : Q ≃ₗ[R] (⋀[R]^n M) :=
     { toFun := fun x => x
@@ -208,7 +172,7 @@ theorem exteriorPowerBaseChangeComponent_hom_tmul_ιMulti (n : ℕ)
   let eSource := (scalarExtensionToTensorEquiv R S Q).trans
     (TensorProduct.AlgebraTensorModule.congr (LinearEquiv.refl S S) q)
   let ePower : (⋀[S]^n P) ≃ₗ[S]
-      (exteriorPowerFunctorAt.{w, max u v w} S n).obj P :=
+      (ModuleCat.exteriorPower.functor.{max u v w, w} S n).obj P :=
     { toFun := fun x => x
       invFun := fun x => x
       left_inv := fun _ => rfl
@@ -266,17 +230,17 @@ theorem exteriorPowerBaseChangeComponent_inv_word (n : ℕ)
 For every `n ∈ ℕ`, taking the `n`th exterior power over `R` and then extending to `S` is
 naturally isomorphic to extending first and taking the exterior power over `S`. -/
 def exteriorPowerBaseChangeNatIso (n : ℕ) :
-    exteriorPowerFunctorAt.{u, max u v w} R n ⋙
+    ModuleCat.exteriorPower.functor.{max u v w, u} R n ⋙
         ModuleCat.extendScalars (algebraMap R S) ≅
       ModuleCat.extendScalars (algebraMap R S) ⋙
-        exteriorPowerFunctorAt.{w, max u v w} S n := by
+        ModuleCat.exteriorPower.functor.{max u v w, w} S n := by
   let φ := algebraMap R S
   refine NatIso.ofComponents (exteriorPowerBaseChangeComponent.{u, v, w} R S n) ?_
   intro M N f
   dsimp only [Functor.comp_obj]
   apply ModuleCat.hom_ext
-  let Q := (exteriorPowerFunctorAt.{u, max u v w} R n).obj M
-  let T := (exteriorPowerFunctorAt.{w, max u v w} S n).obj
+  let Q := (ModuleCat.exteriorPower.functor.{max u v w, u} R n).obj M
+  let T := (ModuleCat.exteriorPower.functor.{max u v w, w} S n).obj
     ((ModuleCat.extendScalars φ).obj N)
   let SR : ModuleCat.{w} R := (ModuleCat.restrictScalars φ).obj (ModuleCat.of S S)
   let : Module S SR := (ModuleCat.of S S).isModule
@@ -286,10 +250,10 @@ def exteriorPowerBaseChangeNatIso (n : ℕ) :
   let : Module R T := Module.compHom T φ
   let : IsScalarTower R S T := IsScalarTower.of_compHom R S T
   let L := ((ModuleCat.extendScalars φ).map
-      ((exteriorPowerFunctorAt.{u, max u v w} R n).map f) ≫
+      ((ModuleCat.exteriorPower.functor.{max u v w, u} R n).map f) ≫
     (exteriorPowerBaseChangeComponent.{u, v, w} R S n N).hom).hom
   let H := ((exteriorPowerBaseChangeComponent.{u, v, w} R S n M).hom ≫
-    (exteriorPowerFunctorAt.{w, max u v w} S n).map
+    (ModuleCat.exteriorPower.functor.{max u v w, w} S n).map
       ((ModuleCat.extendScalars φ).map f)).hom
   let C := (ModuleCat.extendScalars φ).obj Q
   let eInput : SR ⊗[R] Q ≃ₗ[S] C :=
@@ -311,10 +275,10 @@ def exteriorPowerBaseChangeNatIso (n : ℕ) :
     apply AlternatingMap.ext
     intro a
     let aQ : Q := exteriorPower.ιMulti R n a
-    let QN := (exteriorPowerFunctorAt.{u, max u v w} R n).obj N
+    let QN := (ModuleCat.exteriorPower.functor.{max u v w, u} R n).obj N
     let bQ : QN := exteriorPower.ιMulti R n (fun i => f.hom (a i))
     let u : C := (show S from s) ⊗ₜ[R, φ] aQ
-    let g₀ := (exteriorPowerFunctorAt.{u, max u v w} R n).map f
+    let g₀ := (ModuleCat.exteriorPower.functor.{max u v w, u} R n).map f
     let g₁ := (ModuleCat.extendScalars φ).map f
     let eM := exteriorPowerBaseChangeComponent.{u, v, w} R S n M
     let eN := exteriorPowerBaseChangeComponent.{u, v, w} R S n N
@@ -325,7 +289,7 @@ def exteriorPowerBaseChangeNatIso (n : ℕ) :
     have hF : ((ModuleCat.extendScalars φ).map g₀).hom u =
         (show S from s) ⊗ₜ[R, φ] bQ := by
       have ht := ModuleCat.ExtendScalars.map_tmul φ g₀ (show S from s) aQ
-      have hg : g₀.hom aQ = bQ := exteriorPowerFunctorAt_map_ιMulti R n f a
+      have hg : g₀.hom aQ = bQ := exteriorPower.map_apply_ιMulti f.hom a
       exact ht.trans (congrArg (fun z : QN => (show S from s) ⊗ₜ[R, φ] z) hg)
     have hN : eN.hom.hom ((show S from s) ⊗ₜ[R, φ] bQ) =
         (show S from s) • exteriorPower.ιMulti S n vN :=
@@ -340,12 +304,12 @@ def exteriorPowerBaseChangeNatIso (n : ℕ) :
         ((congrArg eN.hom.hom hF).trans hN)
     have hRight : H u = (show S from s) • exteriorPower.ιMulti S n vN := by
       have ht := ModuleCat.comp_apply eM.hom
-        ((exteriorPowerFunctorAt.{w, max u v w} S n).map g₁) u
-      have hs := ((exteriorPowerFunctorAt.{w, max u v w} S n).map g₁).hom.map_smul
+        ((ModuleCat.exteriorPower.functor.{max u v w, w} S n).map g₁) u
+      have hs := ((ModuleCat.exteriorPower.functor.{max u v w, w} S n).map g₁).hom.map_smul
         (show S from s) (exteriorPower.ιMulti S n vM)
-      have hw := exteriorPowerFunctorAt_map_ιMulti S n g₁ vM
+      have hw := exteriorPower.map_apply_ιMulti g₁.hom vM
       have hv : (fun i => g₁.hom (vM i)) = vN := funext hg₁
-      exact ht.trans ((congrArg ((exteriorPowerFunctorAt S n).map g₁).hom hM).trans
+      exact ht.trans ((congrArg ((ModuleCat.exteriorPower.functor S n).map g₁).hom hM).trans
         (hs.trans ((congrArg (fun z => (show S from s) • z) hw).trans
           (congrArg (fun v => (show S from s) • exteriorPower.ιMulti S n v) hv))))
     change L (eInput (s ⊗ₜ[R] aQ)) = H (eInput (s ⊗ₜ[R] aQ))

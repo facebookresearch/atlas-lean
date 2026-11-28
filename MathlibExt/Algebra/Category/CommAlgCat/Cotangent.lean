@@ -46,7 +46,7 @@ variable (k : Type u) [CommRing k] (A : CommAlgCat.{max u v} k)
 
 For `P → A` in the category of commutative `k`-algebras over `A`, the augmentation equips `A`
 with its `P`-algebra structure. -/
-def cotangentAlgebra (P : Over A) : Algebra P.left A :=
+abbrev cotangentAlgebra (P : Over A) : Algebra P.left A :=
   P.hom.hom.toRingHom.toAlgebra
 
 attribute [local instance] cotangentAlgebra
@@ -54,7 +54,7 @@ attribute [local instance] cotangentAlgebra
 /-- The scalar tower of an augmented algebra.
 
 For a `k`-algebra augmentation `P → A`, the induced actions form the scalar tower `k → P → A`. -/
-def cotangentScalarTower (P : Over A) : IsScalarTower k P.left A :=
+theorem cotangentScalarTower (P : Over A) : IsScalarTower k P.left A :=
   IsScalarTower.of_algHom P.hom.hom
 
 attribute [local instance] cotangentScalarTower
@@ -143,7 +143,7 @@ theorem cotangent_hom_ext (P : Over A) (M : ModuleCat.{t} A)
 
 For `P → A` and an `A`-module `M`, this is the type of `k`-derivations `P → M`. The `P`-action
 on `M` is restriction of its `A`-action along the augmentation. -/
-def cotangentDerivations (P : Over A) (M : ModuleCat.{t} A) : Type _ :=
+def CotangentDerivations (P : Over A) (M : ModuleCat.{t} A) : Type _ :=
   letI : Module P.left M := Module.compHom M P.hom.hom.toRingHom
   letI : Module k M := Module.compHom M (algebraMap k A)
   Derivation k P.left M
@@ -153,7 +153,7 @@ def cotangentDerivations (P : Over A) (M : ModuleCat.{t} A) : Type _ :=
 For every `A`-module `M`, `A`-linear maps `A ⊗[P] Ω[P/k] → M` correspond bijectively to
 `k`-derivations `P → M`, with the coefficient action restricted along `P → A`. -/
 def cotangentHomEquivDerivation (P : Over A) (M : ModuleCat.{t} A) :
-    (cotangent k A P →ₗ[A] M) ≃ cotangentDerivations k A P M := by
+    (cotangent k A P →ₗ[A] M) ≃ CotangentDerivations k A P M := by
   letI : Module P.left M := Module.compHom M P.hom.hom.toRingHom
   letI : Module k M := Module.compHom M (algebraMap k A)
   letI : IsScalarTower P.left A M := IsScalarTower.of_compHom P.left A M
@@ -169,7 +169,7 @@ def cotangentHomEquivDerivation (P : Over A) (M : ModuleCat.{t} A) :
 For a `k`-derivation `D : P → M` with coefficient action induced by `P → A`, this is its value
 `D(p)` at `p ∈ P`. -/
 def cotangentDerivationValue (P : Over A) (M : ModuleCat.{t} A)
-    (D : cotangentDerivations k A P M) (p : P.left) : M :=
+    (D : CotangentDerivations k A P M) (p : P.left) : M :=
   letI : Module P.left M := Module.compHom M P.hom.hom.toRingHom
   letI : Module k M := Module.compHom M (algebraMap k A)
   (show Derivation k P.left M from D) p
