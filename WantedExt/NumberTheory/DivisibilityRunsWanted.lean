@@ -19,25 +19,11 @@ public import MathlibExt.NumberTheory.DivisibilityRunsGibonacciNumberEqFib
 public import MathlibExt.NumberTheory.DivisibilityRunsDivRunCountTwo
 public import MathlibExt.NumberTheory.DivisibilityRunsDivRunCountThree
 public import MathlibExt.NumberTheory.DivisibilityRunsGibonacciGeneralizedTribonacciGrowthBounds
+public import MathlibExt.NumberTheory.DivisibilityRunsNoInfiniteRun
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Divisibility by a Gibonacci sequence forces a Tribonacci sequence to vanish.** Let
-$x, y, a, b, c$ be integers, let $(P_n)_{n \ge 0}$ be the Gibonacci sequence with $P_0 = x$ and
-$P_1 = y$, and let $(Q_n)_{n \ge 0}$ be the generalized Tribonacci sequence with $Q_0 = a$,
-$Q_1 = b$ and $Q_2 = c$. If $P_n \ne 0$ and $P_n \mid Q_n$ for every $n \ge 0$, then $Q_n = 0$
-for every $n \ge 0$.
-
-Source: Smirnov, *Finite Divisibility Runs Between Generalized Fibonacci and
-Tribonacci Sequences*, INTEGERS 26 (2026), Article A122, Theorem 1
-(`integers-2026-A122-thm-1`). -/
-public theorem_wanted generalizedTribonacci_eq_zero_of_dvd (x y a b c : ℤ)
-    (hP : ∀ n : ℕ, gibonacciNumber x y n ≠ 0)
-    (hdiv : ∀ n : ℕ, gibonacciNumber x y n ∣ generalizedTribonacci a b c n) :
-    ∀ n : ℕ, generalizedTribonacci a b c n = 0
-
 
 /-- **Divisibility runs have logarithmic length.** There is a real constant $C > 0$ such that for
 every natural number $B \ge 2$, all integers $x, y, a, b, c \in [-B, B]$ with $(x, y) \ne (0, 0)$
