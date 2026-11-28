@@ -2,3 +2,4 @@
 
 - [Localized haplotype-cluster model and its induced haplotype HMM](localized-haplotype-cluster-model.md)
 - [Diploid HMM of a localized haplotype-cluster model and the Beagle phasing sampler](diploid-hmm-and-beagle-phasing-sampler.md)
+- [Positional Burrows–Wheeler transform](positional-burrows-wheeler-transform/README.md)

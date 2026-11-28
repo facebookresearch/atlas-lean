@@ -3,6 +3,13 @@
 - [Persistence of weakly reversible systems with two-dimensional stoichiometric subspace](persistence-of-weakly-reversible-systems-with-two-dimensional-stoichiometric-subspace.md)
 
 - [Global bounds for positive weakly reversible mass-action trajectories](global-bounded-persistent-weakly-reversible-trajectories.md)
+- [Autocatalytic cores are Metzler unstable-positive feedbacks](autocatalytic-cores-are-metzler-unstable-positive-feedbacks.md)
+- [Boundary reproduction number of a critical siphon](boundary-reproduction-number-of-a-critical-siphon.md)
+- [Flux parametrization of the disguised toric locus](flux-parametrization-of-the-disguised-toric-locus.md)
+- [Maximal weakly reversible realization graph](maximal-weakly-reversible-realization-graph.md)
+- [Network transformations transfer injectivity and multistationarity](network-transformations-transfer-injectivity-and-multistationarity.md)
+- [Network translation and positive dependence of reaction vectors](network-translation-and-positive-dependence.md)
+- [Unstable cores of Child-Selection matrices](unstable-cores-of-child-selection-matrices.md)
 - [Absolute concentration robustness and integral feedback](absolute-concentration-robustness-and-integral-feedback/README.md)
 - [Hamiltonian structure of chemical reaction rate equations](hamiltonian-structure-of-chemical-reaction-rate-equations/README.md)
 - [Hill coefficients of multisite binding](hill-coefficients-of-multisite-binding/README.md)

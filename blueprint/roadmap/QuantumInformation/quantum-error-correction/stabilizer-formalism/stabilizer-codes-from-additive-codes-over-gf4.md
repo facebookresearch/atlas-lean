@@ -26,7 +26,8 @@ $\mathrm{GF}(4)$; Calderbank, Rains, Shor and Sloane state it with $|C| = 2^k$ a
 ## Depends on
 
 - [Symplectic product of Pauli operators](symplectic-product-of-pauli-operators.md)
-- [Pauli group, Clifford group and stabilizer states](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/pauli-group-clifford-group-and-stabilizer-states.md)
+- [The Pauli group on $n$ qubits](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/pauli-group-on-n-qubits.md)
+- [Stabilizer groups and stabilizer states](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/stabilizer-groups-and-stabilizer-states.md)
 - [Distance of a quantum code (lower bound)](../distance-of-a-quantum-code/has-distance-at-least.md)
 - [Weight of a Pauli operator](../distance-of-a-quantum-code/pauli-weight.md)
 
