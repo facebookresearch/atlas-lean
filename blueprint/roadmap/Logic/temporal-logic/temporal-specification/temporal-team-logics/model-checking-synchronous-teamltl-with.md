@@ -10,7 +10,7 @@ Under synchronous team semantics, model checking LTL extended with inclusion ato
 
 Here a set of natural numbers is $\Sigma^1_1$-hard if every set definable by a formula $\exists f\, \forall n\, R(f, n, x)$ of second-order arithmetic, with $f$ ranging over functions $\mathbb N \to \mathbb N$ and $R$ recursive, many-one reduces to it; such a set is not in the arithmetical hierarchy.
 
-TeamLTL with Boolean negation is complete for third-order arithmetic (Lück), while left-flat TeamLTL with Boolean disjunction and generalized atoms has model checking in EXPSPACE (Theorem 15).
+TeamLTL with Boolean negation is complete for third-order arithmetic (Lück), while model checking left-flat TeamLTL$(\varovee, \mathrm{A}^1)$ formulae, with Boolean disjunction and the singleton subteam quantifier, is in EXPSPACE, and in PSPACE in data complexity (Theorem 15); this logic is downward closed and expresses exactly the downward-closed generalized atoms, so atoms such as inclusion atoms are outside it.
 
 ## Depends on
 
@@ -27,7 +27,7 @@ None.
 
 *Part 1.* For a three-counter machine with instructions $I$ and a label $b$, a Kripke structure $K_I$ and a formula $\varphi_{I, b}$ are built so that $\mathrm{Traces}(K_I) \models \varphi_{I, b}$ iff the machine has a lossy computation that visits instruction $b$ infinitely often. A team $T$ encodes the configuration at step $j$ through $T[j, \infty]$: propositions $0, \ldots, n-1$ give the current instruction, and the value of counter $s$ is the number of distinct suffixes $t[j, \infty]$ with $c_s \in t[j]$; inclusion atoms and Boolean disjunctions enforce the transitions.
 
-*Part 2.* The proof is analogous, for non-lossy computations: whether a nondeterministic three-counter machine has a computation visiting a given instruction infinitely often is $\Sigma^1_1$-complete, and a single universal subteam quantifier, in a formula stating that traces that differ once differ at every later position, rules out the losses. Both completeness facts for counter machines, $\Sigma^0_1$ for lossy and $\Sigma^1_1$ for non-lossy recurrence, are taken from the literature the source cites.
+*Part 2.* The proof is analogous, for non-lossy computations: whether a nondeterministic three-counter machine has a computation visiting a given instruction infinitely often is $\Sigma^1_1$-complete, and a single universal subteam quantifier, in a formula stating that traces that differ once differ at every later position, rules out the losses. Both completeness facts for counter machines, $\Sigma^0_1$ for lossy and $\Sigma^1_1$ for non-lossy recurrence, are taken from the literature the source cites. A good expansion adds pages for the analytical hierarchy, its level $\Sigma^1_1$ and completeness under many-one reductions, which the statement uses, for the $\Sigma^0_1$-completeness of lossy recurrence and for the $\Sigma^1_1$-completeness of recurrence for nondeterministic three-counter machines.
 
 ## Sources
 
