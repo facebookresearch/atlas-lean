@@ -55,7 +55,13 @@ theorem richardsonDifference_eq_fourPoint (f : ℝ → ℝ) (x h : ℝ) :
     ring
 
 -- Use the same closed interval to bound every remainder and to take the Taylor coefficients.
+-- The public error proofs supply Mathlib's Lagrange theorem explicitly.
 private theorem exists_uniform_taylor_bound {f : ℝ → ℝ} {a b x : ℝ} {n : ℕ}
+    (lagrange : ∀ {y : ℝ}, x ≠ y → ContDiffOn ℝ n f (uIcc x y) →
+      DifferentiableOn ℝ (iteratedDerivWithin n f (uIcc x y)) (uIoo x y) →
+      ∃ z ∈ uIoo x y, f y - taylorWithinEval f n (uIcc x y) x y =
+        iteratedDerivWithin (n + 1) f (uIcc x y) z * (y - x) ^ (n + 1) /
+          (Nat.factorial (n + 1) : ℝ))
     (hab : a < b) (hx : x ∈ Icc a b) (hf : ContDiffOn ℝ (n + 1) f (Icc a b)) :
     ∃ C ≥ 0, ∀ y ∈ Icc a b,
       |f y - taylorWithinEval f n (Icc a b) x y| ≤ C * |y - x| ^ (n + 1) := by
@@ -80,7 +86,7 @@ private theorem exists_uniform_taylor_bound {f : ℝ → ℝ} {a b x : ℝ} {n :
     simp only [taylor_within_apply]
     refine Finset.sum_congr rfl fun k hk ↦ ?_
     rw [hcoeff k (Finset.mem_range.mp hk).le left_mem_uIcc]
-  obtain ⟨z, hz, he⟩ := taylor_mean_remainder_lagrange hxy hseg.of_succ
+  obtain ⟨z, hz, he⟩ := lagrange hxy hseg.of_succ
     ((hseg.differentiableOn_iteratedDerivWithin (by exact_mod_cast n.lt_succ_self) huv).mono
       uIoo_subset_uIcc_self)
   have hz' := uIoo_subset_uIcc_self hz
@@ -91,13 +97,18 @@ private theorem exists_uniform_taylor_bound {f : ℝ → ℝ} {a b x : ℝ} {n :
 
 -- Subtract the two Taylor residuals before dividing by the positive step.
 private theorem exists_centeredDifference_taylor_bound {f : ℝ → ℝ} {x r : ℝ} {n : ℕ}
+    (lagrange : ∀ {y : ℝ}, x ≠ y → ContDiffOn ℝ n f (uIcc x y) →
+      DifferentiableOn ℝ (iteratedDerivWithin n f (uIcc x y)) (uIoo x y) →
+      ∃ z ∈ uIoo x y, f y - taylorWithinEval f n (uIcc x y) x y =
+        iteratedDerivWithin (n + 1) f (uIcc x y) z * (y - x) ^ (n + 1) /
+          (Nat.factorial (n + 1) : ℝ))
     (hr : 0 < r) (hf : ContDiffOn ℝ (n + 1) f (Icc (x - r) (x + r))) :
     ∃ C ≥ 0, ∀ t, 0 < t → t ≤ r →
       |centeredDifference f x t -
         centeredDifference (taylorWithinEval f n (Icc (x - r) (x + r)) x) x t| ≤ C * t ^ n := by
   have hx : x ∈ Icc (x - r) (x + r) := ⟨by linarith, by linarith⟩
   let p := taylorWithinEval f n (Icc (x - r) (x + r)) x
-  obtain ⟨C, hC, hT⟩ := exists_uniform_taylor_bound (by linarith) hx hf
+  obtain ⟨C, hC, hT⟩ := exists_uniform_taylor_bound lagrange (by linarith) hx hf
   refine ⟨C, hC, ?_⟩
   intro t ht htr
   have hplus : |f (x + t) - p (x + t)| ≤ C * t ^ (n + 1) := by
@@ -163,7 +174,8 @@ theorem exists_abs_deriv_sub_richardsonDifference_le {f : ℝ → ℝ} {x h₀ :
   let a := iteratedDerivWithin 3 f s x / 6
   have hderiv : derivWithin f s x = deriv f x :=
     derivWithin_of_mem_nhds (Icc_mem_nhds_iff.mpr ⟨by linarith, by linarith⟩)
-  obtain ⟨C, hC, hT⟩ := exists_centeredDifference_taylor_bound (n := 4) (by positivity) hf
+  obtain ⟨C, hC, hT⟩ := exists_centeredDifference_taylor_bound (n := 4)
+    taylor_mean_remainder_lagrange (by positivity) hf
   have hD (t : ℝ) (ht : 0 < t) (htr : t ≤ 2 * h₀) :
       |centeredDifference f x t - (deriv f x + a * t ^ 2)| ≤ C * t ^ 4 := by
     specialize hT t ht htr
@@ -197,7 +209,8 @@ theorem exists_abs_deriv_sub_richardsonDifference_twice_le {f : ℝ → ℝ} {x 
   let b := iteratedDerivWithin 5 f s x / 120
   have hderiv : derivWithin f s x = deriv f x :=
     derivWithin_of_mem_nhds (Icc_mem_nhds_iff.mpr ⟨by linarith, by linarith⟩)
-  obtain ⟨C, hC, hT⟩ := exists_centeredDifference_taylor_bound (n := 6) (by positivity) hf
+  obtain ⟨C, hC, hT⟩ := exists_centeredDifference_taylor_bound (n := 6)
+    taylor_mean_remainder_lagrange (by positivity) hf
   have hD (t : ℝ) (ht : 0 < t) (htr : t ≤ 2 * h₀) :
       |centeredDifference f x t - (deriv f x + a * t ^ 2 + b * t ^ 4)| ≤ C * t ^ 6 := by
     specialize hT t ht htr
