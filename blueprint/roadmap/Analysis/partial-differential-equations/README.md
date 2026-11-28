@@ -4,6 +4,7 @@ PDE existence, regularity and qualitative results: Cauchy–Kovalevskaya, heat a
 
 - [Airy equation and Kato smoothing](airy-equation-and-kato-smoothing/README.md)
 - [Bifurcation of Turing pattern branches](bifurcation-of-turing-pattern-branches/README.md)
+- [Bounded classical Burgers initial value uniqueness](bounded-classical-burgers-initial-value-uniquene/README.md)
 - [Cauchy–Kovalevskaya theorem](cauchy-kovalevskaya-theorem/README.md)
 - [Heat equation](heat-equation/README.md)
 - [Heat-kernel Duhamel derivatives](heat-kernel-duhamel-derivatives/README.md)

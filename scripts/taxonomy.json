@@ -10204,6 +10204,7 @@
   "MathlibExt/Analysis/Optimization/QuasiNewton": {"to": "Analysis/numerical-analysis", "title": "Quasi-Newton methods"},
   "MathlibExt/Analysis/Optimization/Raydan": {"to": "Analysis/numerical-analysis", "title": "Barzilai–Borwein step size"},
   "MathlibExt/Analysis/Optimization/TrustRegion": {"to": "Analysis/numerical-analysis", "title": "Trust-region methods"},
+  "MathlibExt/Analysis/PDE/BurgersUniqueness": {"to": "Analysis/partial-differential-equations", "title": "Bounded classical Burgers initial value uniqueness"},
   "MathlibExt/Analysis/PDE/HeatDuhamel": {"to": "Analysis/partial-differential-equations", "title": "Heat-kernel Duhamel integral"},
   "MathlibExt/Analysis/PDE/HeatDuhamelDerivatives": {"to": "Analysis/partial-differential-equations", "title": "Heat-kernel Duhamel derivatives"},
   "MathlibExt/Analysis/PDE/HeatKernel": {"to": "Analysis/partial-differential-equations", "title": "Heat equation"},
