@@ -65,6 +65,30 @@ Sequences 28 (2025), Article 25.3.7, Section 1. -/
 public def restrictedCombinationCount (Q : Finset ℕ) (n k : ℕ) : ℕ :=
   (restrictedCombinations Q n k).card
 
+/-- **Weighted enumeration of restricted combinations.** Summing a weight depending only on
+subset size over all subsets of `{1, …, n}` avoiding the differences in `Q` is the same as
+weighting the restricted combination counts by size. -/
+public theorem sum_restrictedCombinationCount_mul {R : Type*} [Semiring R]
+    (Q : Finset ℕ) (n : ℕ) (w : ℕ → R) :
+    (∑ k ∈ Finset.range (n + 1), (restrictedCombinationCount Q n k : R) * w k) =
+      ∑ s ∈ (Finset.Icc 1 n).powerset.filter
+        (fun s => ∀ a ∈ s, ∀ b ∈ s, a < b → b - a ∉ Q), w s.card := by
+  let u := (Finset.Icc 1 n).powerset.filter (fun s => ∀ a ∈ s, ∀ b ∈ s, a < b → b - a ∉ Q)
+  have hu (s : Finset ℕ) (hs : s ∈ u) : s.card ∈ Finset.range (n + 1) := by
+    have h := Finset.card_le_card (Finset.mem_powerset.mp (Finset.mem_filter.mp hs).1)
+    rw [Nat.card_Icc, Nat.add_sub_cancel] at h
+    exact Finset.mem_range.mpr (Nat.lt_succ_of_le h)
+  change _ = ∑ s ∈ u, w s.card
+  rw [← Finset.sum_fiberwise_of_maps_to' hu w]
+  apply Finset.sum_congr rfl
+  intro k _
+  have hk : u.filter (fun s => s.card = k) = restrictedCombinations Q n k := by
+    ext s
+    simp only [u, restrictedCombinations, Finset.mem_filter, Finset.mem_powerset,
+      Finset.mem_powersetCard]
+    tauto
+  simp only [hk, restrictedCombinationCount, Finset.sum_const, nsmul_eq_mul]
+
 /-- **Restricted-overlap tilings.** Let $Q$ be a finite set of natural numbers and let $q$ be its
 largest element ($q = 0$ if $Q$ is empty). The $Q$-comb is a piece of length $q + 1$ whose cell
 $0$ and cells $j \in Q$ are teeth and whose other cells are gaps. A restricted-overlap tiling of an

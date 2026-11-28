@@ -14,6 +14,17 @@ public import Mathlib.Order.Interval.Finset.Nat
 
 `IsWellBased` is the split condition on a finite set of natural numbers, without a positivity
 requirement. Allen's notion is `IsPositiveWellBased`, which also excludes zero.
+
+## References
+
+* Michael A. Allen, *Connections Between Combinations Without Specified Separations and
+  Strongly Restricted Permutations, Compositions, and Bit Strings*, Journal of Integer
+  Sequences 28 (2025), Article 25.3.7, Section 5.1 (the split and complement formulations,
+  and Theorems 21 and 22 on subword shifts).
+* Sergey Kitaev, *Independent Sets on Path-Schemes*, Journal of Integer Sequences 9 (2006),
+  Article 06.2.2, Section 2 (well-based sequences).
+* A. A. Valyuzhenich, *Some properties of well-based sequences*, Journal of Applied and
+  Industrial Mathematics 5 (2011), 612–614 (the split condition).
 -/
 
 namespace MetaMathlibExt
@@ -37,6 +48,17 @@ Strongly Restricted Permutations, Compositions, and Bit Strings*, Journal of Int
 Sequences 28 (2025), Article 25.3.7, Section 5.1. -/
 public def IsWellBased (Q : Finset ℕ) : Prop :=
   ∀ x ∈ Q, ∀ a, 0 < a → a < x → a ∈ Q ∨ x - a ∈ Q
+
+/-- **Allowed positive gaps are closed under addition.** If `Q` is well based, the sum of two
+positive natural numbers outside `Q` is also outside `Q`. This is the complement formulation
+in Section 5.1 of Allen's *Connections Between Combinations Without Specified Separations and
+Strongly Restricted Permutations, Compositions, and Bit Strings*. -/
+public theorem IsWellBased.add_notMem {Q : Finset ℕ} (hQ : IsWellBased Q) {a b : ℕ}
+    (ha : 0 < a) (hb : 0 < b) (haQ : a ∉ Q) (hbQ : b ∉ Q) : a + b ∉ Q := by
+  intro h
+  rcases hQ (a + b) h a ha (by omega) with h | h
+  · exact haQ h
+  · exact hbQ (by simpa using h)
 
 public def IsPositiveWellBased (Q : Finset ℕ) : Prop :=
   0 ∉ Q ∧ IsWellBased Q
