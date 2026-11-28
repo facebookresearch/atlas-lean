@@ -14,6 +14,7 @@ Logics for proving programs correct: Hoare logic for partial and total correctne
 - [Safe backward rules for heap IMP](safe-backward-rules-for-heap-imp/README.md)
 - [Security judgments and confinement](security-judgments-and-confinement/README.md)
 - [Separation logic](separation-logic/README.md)
+- [Successful array-read credits](successful-array-read-credits/README.md)
 - [Metatheory of separation logic](separation-logic-metatheory/README.md)
 - [Termination-insensitive noninterference](termination-insensitive-noninterference/README.md)
 - [Verification-condition generation](verification-condition-generation/README.md)

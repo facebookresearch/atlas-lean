@@ -105,17 +105,6 @@ public theorem_wanted not_isSquare_discr_truncatedLog {n : ℕ} (hn : 1 ≤ n)
       (n % 4 = 1 ∧ ∃ p e : ℕ, p.Prime ∧ Odd e ∧ n = p ^ e)) :
     ¬ IsSquare (truncatedLogPolynomial n).discr
 
-/-- **An odd prime $p$ does not divide $\mathcal{P}_{p^{2e}}$.** Let $p$ be an odd prime, let
-$e \ge 1$, and let $\mathcal{P}_n$ be the truncated logarithmic resultant product. Then $p$ does
-not divide $\mathcal{P}_{p^{2e}}$.
-
-Source: Cullinan and Gajek-Leonard, *On the Discriminants of Truncated
-Logarithmic Polynomials*, INTEGERS 25 (2025), Article A39, Theorem 2
-(`integers-2025-A39-thm-2`). -/
-public theorem_wanted not_dvd_truncatedLogResultantProduct_of_even_power {p e : ℕ}
-    (hp : p.Prime) (hp2 : p ≠ 2) (he : 1 ≤ e) :
-    ¬ (p : ℤ) ∣ truncatedLogResultantProduct (p ^ (2 * e))
-
 /-- **Nonsquare discriminants of $F_{mq}$ for non-exceptional primes $q > m$.** Let $m$ be a
 natural number, let $E_m$ be the set of exceptional primes for truncated logarithmic
 discriminants, and let $F_n(x) = 1 + x + x^2/2 + \cdots + x^n/n$ be the truncated logarithmic
