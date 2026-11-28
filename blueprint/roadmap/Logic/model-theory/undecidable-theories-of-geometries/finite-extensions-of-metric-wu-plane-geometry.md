@@ -2,9 +2,9 @@
 
 A geometric form of Ziegler's theorem: adding to the axioms of metric Wu planes any finite set of axioms true in the real plane leaves an undecidable theory. In particular the theory of metric Wu planes is undecidable.
 
-**Theorem (Beklemishev, Dmitrieva and Makowsky).** Let $T$ be a finite set of sentences in the vocabulary $\tau_{wu}$ of incidence and orthogonality such that the real plane $\Pi_\mathbb{R} \models T$. Then the theory $T \cup \mathrm{WU}$, where $\mathrm{WU}$ is the first-order theory of [metric Wu planes](metric-wu-planes-and-ordered-origami-planes.md), is undecidable.
+**Theorem (Beklemishev, Dmitrieva and Makowsky).** Let $T$ be a finite set of sentences in the vocabulary $\tau_{wu}$ of incidence and orthogonality such that the real plane $\Pi_\mathbb{R} \models T$. Then the theory $T \cup \mathrm{WU}$, where $\mathrm{WU}$ is the first-order theory of [metric Wu planes](metric-wu-planes-and-ordered-origami-planes.md), is undecidable (Theorem 3 of the source).
 
-**Corollary.** The first-order theory of metric Wu planes is undecidable ($T = \varnothing$).
+**Corollary.** The first-order theory of metric Wu planes is undecidable ($T = \varnothing$; Corollary 2).
 
 ## Depends on
 

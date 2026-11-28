@@ -2,9 +2,9 @@
 
 Every extension of the theory of ordered metric Wu planes by finitely many axioms true in the ordered real plane is undecidable; in particular the theories of Euclidean ordered metric Wu planes and of ordered origami planes are undecidable.
 
-**Theorem (Beklemishev, Dmitrieva and Makowsky).** Let $T$ be a finite set of sentences in the vocabulary $\tau_{o\text{-}wu}$ of incidence, orthogonality and betweenness such that the ordered real plane $\Pi_\mathbb{R} \models T$. Then the extension of the theory of [ordered metric Wu planes](metric-wu-planes-and-ordered-origami-planes.md) by $T$ is undecidable, and so is its fragment in the vocabulary $\tau_{wu}$ without betweenness.
+**Theorem (Beklemishev, Dmitrieva and Makowsky).** Let $T$ be a finite set of sentences in the vocabulary $\tau_{o\text{-}wu}$ of incidence, orthogonality and betweenness such that the ordered real plane $\Pi_\mathbb{R} \models T$. Then the extension $T \cup \mathrm{OWU}$ of the theory $\mathrm{OWU}$ of [ordered metric Wu planes](metric-wu-planes-and-ordered-origami-planes.md) by $T$ is undecidable (Theorem 6 of the source).
 
-**Corollary.** The first-order theories of Euclidean ordered metric Wu planes and of ordered origami planes are undecidable.
+**Corollary.** The first-order theories of Euclidean ordered metric Wu planes and of ordered origami planes are undecidable (Corollaries 3 and 4).
 
 The corollary takes $T$ to be (H*5), respectively (H*5) and (H*6), which hold in $\Pi_\mathbb{R}$.
 
