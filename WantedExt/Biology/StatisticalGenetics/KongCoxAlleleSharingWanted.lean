@@ -40,34 +40,6 @@ namespace WantedExt.Biology.StatisticalGenetics.KongCoxAlleleSharingWanted
 
 variable {V : Type*} [Fintype V]
 
-/-- The null mean `μ = ∑_v P₀(v) S(v)` of the allele-sharing score. -/
-def nullMean (P₀ S : V → ℝ) : ℝ :=
-  ∑ v, P₀ v * S v
-
-/-- The null variance `σ² = ∑_v P₀(v) (S(v) - μ)²` of the allele-sharing score. -/
-def nullVariance (P₀ S : V → ℝ) : ℝ :=
-  ∑ v, P₀ v * (S v - nullMean P₀ S) ^ 2
-
-/-- The normalized score `Z(v) = (S(v) - μ) / σ`. It is meaningful when the null variance `σ²` is
-positive; if `σ² = 0`, Lean's convention `x / 0 = 0` makes `Z(v) = 0`. -/
-noncomputable def normalizedScore (P₀ S : V → ℝ) (v : V) : ℝ :=
-  (S v - nullMean P₀ S) / Real.sqrt (nullVariance P₀ S)
-
-/-- Kong and Cox's linear allele-sharing model `P_δ(v) = P₀(v) (1 + δ γ Z(v))`. -/
-noncomputable def linearModel (P₀ S : V → ℝ) (γ δ : ℝ) (v : V) : ℝ :=
-  P₀ v * (1 + δ * γ * normalizedScore P₀ S v)
-
-/-- The likelihood `L(δ) = ∑_v ℓ(v) P_δ(v)` of observed marker data, where `ℓ(v)` is the
-probability of the data given the inheritance vector `v`. -/
-noncomputable def likelihood (P₀ S ℓ : V → ℝ) (γ δ : ℝ) : ℝ :=
-  ∑ v, ℓ v * linearModel P₀ S γ δ v
-
-/-- The null posterior mean `Z̄ = ∑_v ℓ(v) P₀(v) Z(v) / ∑_v ℓ(v) P₀(v)` of the normalized score
-given the observed data. It is meaningful when `∑_v ℓ(v) P₀(v) ≠ 0`; otherwise Lean's convention
-`x / 0 = 0` makes the value `0`. -/
-noncomputable def posteriorMeanScore (P₀ S ℓ : V → ℝ) : ℝ :=
-  (∑ v, ℓ v * P₀ v * normalizedScore P₀ S v) / ∑ v, ℓ v * P₀ v
-
 /-- **The linear model has total mass one** (Kong and Cox 1997, model (1)). Let `V` be a finite
 set and `P₀ : V → ℝ` with `∑_v P₀(v) = 1`, and let `S : V → ℝ` be a score with positive null
 variance `σ² > 0`. Then for every weight `γ` and every `δ`, `∑_v P₀(v) (1 + δ γ Z(v)) = 1`.
@@ -102,19 +74,6 @@ public theorem_wanted linearModel_neg_of_gt (P₀ S : V → ℝ) (hP₀ : ∀ v,
     (hlt : S v₀ < nullMean P₀ S) (γ δ : ℝ) (hγ : 0 < γ)
     (hb : Real.sqrt (nullVariance P₀ S) < δ * γ * (nullMean P₀ S - S v₀)) :
     linearModel P₀ S γ δ v₀ < 0
-
-/-- **Exact likelihood under missing data** (Kong and Cox 1997, Appendix A). Let `V` be a finite
-set, `P₀ : V → ℝ` with `∑_v P₀(v) = 1`, `S : V → ℝ` a score with positive null variance
-`σ² > 0`, and `ℓ : V → ℝ` the probability of
-the observed marker data given each inheritance vector (it does not depend on `δ`), with
-`L(0) = ∑_v ℓ(v) P₀(v) ≠ 0`. Then for every weight `γ` and every `δ`,
-`L(δ) = L(0) (1 + δ γ Z̄)`, where `Z̄` is the null posterior mean of `Z` given the data.
-
-Source: Kong and Cox (1997), Appendix A. -/
-public theorem_wanted likelihood_eq (P₀ S ℓ : V → ℝ) (hsum : ∑ v, P₀ v = 1)
-    (hvar : 0 < nullVariance P₀ S) (hL : ∑ v, ℓ v * P₀ v ≠ 0) (γ δ : ℝ) :
-    likelihood P₀ S ℓ γ δ =
-      likelihood P₀ S ℓ γ 0 * (1 + δ * γ * posteriorMeanScore P₀ S ℓ)
 
 /-- **Concavity of the pedigree-summed log-likelihood ratio** (Kong and Cox 1997). Let `ι` be a
 finite set of independent pedigrees with weights `γᵢ` and null posterior mean scores `Z̄ᵢ`
