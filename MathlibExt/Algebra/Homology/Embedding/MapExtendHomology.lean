@@ -14,11 +14,12 @@ public import MathlibExt.Algebra.Homology.Embedding.ExtendHomologyFunctor
 public import MathlibExt.Algebra.Homology.Functor
 
 /-!
-# Components of the extension–homology comparison
+# Homology compatibility of mapped extension by zero
 
-For a shape embedding e and a selected degree j'=e(j), the natural
-comparison between homology after extension by zero and original homology
-has the same component as the canonical objectwise homology isomorphism.
+The canonical `mapHomologicalComplexExtendIso` commutes with the native
+extension-homology and functor-homology comparisons. The two theorems give its
+forward and inverse homology squares, at any retained degree and for independent
+complex shapes and category universes.
 -/
 
 @[expose] public section
@@ -82,22 +83,6 @@ private theorem mapHomologicalComplex_mapCyclesIso_hom_iCycles
     ((K.sc i).mapCyclesIso F).hom ≫ F.map (K.iCycles i) =
       ((F.mapHomologicalComplex c).obj K).iCycles i := by
   exact ShortComplex.mapCyclesIso_hom_iCycles (S := K.sc i) F
-
-/--
-Let C have zero morphisms, a zero object and homology for short complexes. Let e:c→c' be a
-shape embedding, K a c-complex, and j,j' degrees with e(j)=j'. The forward component at K of
-the natural extension–homology comparison is exactly (K.extendHomologyIso e hj).hom, from
-H_{j'}(K.extend e) to H_j(K).
--/
-@[deprecated HomologicalComplex.extendHomologyFunctorIso_hom_app
-  +typeChanged (since := "2026-10-21")]
-theorem extendHomologyFunctorIso_hom_app
-    (e : c.Embedding c') (K : HomologicalComplex C c)
-    (j : ι) (j' : ι') (hj : e.f j = j') :
-    (HomologicalComplex.extendHomologyFunctorIso
-      (C := C) e j j' hj).hom.app K =
-      (K.extendHomologyIso e hj).hom := by
-  rfl
 
 set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.isDefEq.respectTransparency false in
