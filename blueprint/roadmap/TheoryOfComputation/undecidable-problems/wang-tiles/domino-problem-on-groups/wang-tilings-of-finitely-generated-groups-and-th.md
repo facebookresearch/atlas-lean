@@ -23,7 +23,7 @@ particular a finitely generated subgroup of a group with decidable domino proble
 For $G = \mathbb{Z}^2 = \langle a, b \mid ab = ba \rangle$ and $\mathcal{A} = \{a, b\}$ these are the classical
 [Wang tiles and valid tilings](../wang-tiles-and-valid-tilings.md), and the domino problem is the
 [tiling problem](../the-tiling-problem-is-undecidable.md). Virtually free groups have a decidable domino problem,
-and a group with undecidable word problem has an undecidable one.
+and a finitely presented group with undecidable word problem has an undecidable one.
 
 ## Depends on
 

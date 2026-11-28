@@ -11,11 +11,11 @@ For every $d\ge2$ and every finite generating set of $\mathbb Z^d$, the infinite
 
 ## Proof depends on
 
-None.
+- [The infinite ribbon problem is undecidable](../the-infinite-ribbon-problem-is-undecidable.md)
 
 ## Expansion
 
-A *snake embedding* of $(G,S)$ into $(H,T)$ is a map $G\to H$ computed on words over $S\cup S^{-1}$ by an invertible-reversible transducer, such that two words have equal images in $H$ exactly when they are equal in $G$. Such an embedding gives many-one reductions of the infinite snake and ouroboros problems on $(G,S)$ to those on $(H,T)$. Two generators of $S$ with trivially intersecting cyclic subgroups span a copy of $\mathbb Z^2$, which receives an obvious snake embedding from $\mathbb Z^2$ with its standard generators, and the problems transfer from a finitely generated subgroup to the whole group. On $\mathbb Z^2$ with standard generators the infinite snake problem is $\Pi^0_1$-complete (Adleman, Kari, Kari and Reishus) and the ouroboros problem is $\Sigma^0_1$-complete (Ebbinghaus; Kari).
+A *snake embedding* of $(G,S)$ into $(H,T)$ is a map $G\to H$ computed on words over $S\cup S^{-1}$ by an invertible-reversible transducer, such that two words have equal images in $H$ exactly when they are equal in $G$. Such an embedding gives many-one reductions of the infinite snake and ouroboros problems on $(G,S)$ to those on $(H,T)$. Two generators of $S$ with trivially intersecting cyclic subgroups span a copy of $\mathbb Z^2$, which receives an obvious snake embedding from $\mathbb Z^2$ with its standard generators, and the problems transfer from a finitely generated subgroup to the whole group. On $\mathbb Z^2$ with standard generators the infinite snake problem is $\Pi^0_1$-complete (Adleman, Kari, Kari and Reishus) and the ouroboros problem is $\Sigma^0_1$-complete (Ebbinghaus; Kari). By the definitions, a bi-infinite snake of Wang tiles on $\mathbb Z^2$ with standard generators (Definition 9 in Appendix B of the source) is exactly an infinite ribbon, and Lemmas 4 and 5 translate between Wang tiles and tileset graphs, so the infinite snake half rests on the linked ribbon theorem. A complete expansion also links a page for the $\Sigma^0_1$-completeness of the ouroboros problem on $\mathbb Z^2$, on which the ouroboros half rests.
 
 ## Sources
 

@@ -9,13 +9,12 @@ the map $f \mapsto \tau(f \cdot x)$ differs from $\pi$; for Cayley graphs this i
 
 **Theorem (Bartholdi).**
 
-1. The domino problem is undecidable on the *long range graph*, with vertex set $\mathbb{Z}$, edges between $n$ and $n + 1$ for all $n$, a loop at $0$, and for all $m \in \mathbb{Z}$ and $s \in \mathbb{N}$ an edge between $2^s(2m - 1)$ and $2^s(2m + 1)$. This graph has linear growth (Theorem B of the source).
+1. The domino problem is undecidable on the *long range graph*, with vertex set $\mathbb{Z}$, edges between $n$ and $n + 1$ for all $n$, a loop at $0$, and for all $m \in \mathbb{Z}$ and $s \in \mathbb{N}$ an edge between $2^s(2m - 1)$ and $2^s(2m + 1)$. (Theorem B of the source). It is the Schreier graph of a self-similar group of linear activity growth: in the transducer generating that group, the number of paths of length $n$ ending at a non-trivial state grows linearly in $n$ (§1.2 of the source).
 2. The domino problem is undecidable on the *Barbieri–Sablik $H$-graph*, a subgraph of the half-plane in which some edges are replaced by loops (Theorem C).
 3. For a substitution $s$ on the square grid, the domino problem on the self-similar structure of $s$ (tilings of the grid in which adjacency is enforced only between black squares of the colorings defined by iterating $s$) is undecidable when $s$ contains an *isthmus*,
    a configuration of blocks forming at least two strips in one direction and one in another; this answers a question of Barbieri and Sablik (Theorem 1.1).
 
-Both graphs of items 1 and 2 are Schreier graphs of self-similar groups produced by small transducers. In contrast, for bounded self-similar groups, whose Schreier graphs include the Sierpiński gasket graphs and those of the Basilica group, the monadic second-order theory
-of the graph, and in particular its domino problem, is decidable.
+Both graphs of items 1 and 2 are Schreier graphs of self-similar groups produced by small transducers. In contrast, the domino problem is decidable on post-critically finite self-similar graphs, Schreier graphs of bounded self-similar groups such as the Sierpiński gasket graphs and those of the Basilica group (Theorem A, = Proposition 4.1), and on such a graph built from an eventually periodic ray the whole monadic second-order theory is decidable (Theorem D, = Theorem 4.2).
 
 ## Depends on
 
@@ -32,6 +31,8 @@ The proofs are uniform: a set of forbidden patterns on the graph *simulates a gr
 gives a domino instance on the graph, so undecidability transfers from $\Delta$. On the long range graph a seeded coloring simulates an octant of the plane, and the tiling problem on the octant reduces to the seeded tiling problem, which in turn is eliminated; on the
 $H$-graph the simulated grid comes from its self-similar structure. For substitutions with an isthmus, the right half of the associated graph is essentially the $H$-graph. A complete expansion links the reduction from the seeded to the unseeded problem and the grid
 simulation of Bartholdi and Salo.
+
+Items 2 and 3 name the $H$-graph and the isthmus condition only informally; a complete expansion defines the $H$-graph by its generating transducer (§5.2 of the source) and the isthmus as in Theorem C and Theorem 1.1 before stating them.
 
 ## Sources
 

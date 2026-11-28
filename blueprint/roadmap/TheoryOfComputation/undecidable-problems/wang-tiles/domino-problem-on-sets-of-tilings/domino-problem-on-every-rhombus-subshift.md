@@ -9,7 +9,7 @@ No computability assumption on $X$ is needed for hardness. When the forbidden pa
 ## Depends on
 
 - [The domino problem on a rhombus subshift](domino-problem-on-a-rhombus-subshift.md)
-- [Co-recognizability by single-tape machines](../../../turing-machines/single-tape/decidable-and-recognizable-predicates-on-single/single-tape-co-recognizable.md)
+- [The arithmetical class $\Pi_n$](../../../degrees-and-hierarchies/arithmetical-hierarchy/is-pi.md)
 - [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
@@ -18,7 +18,7 @@ No computability assumption on $X$ is needed for hardness. When the forbidden pa
 
 ## Expansion
 
-Membership in $\Pi^0_1$ for effective $X$: by compactness a tiling exists iff, for every radius $r$, some patch of radius $r$ is locally allowed, i.e. avoids the color constraints and the first $r$ forbidden patterns, and these finitely many patches are computable. For hardness, a compactness argument gives a subset $\mathcal S'\subseteq\mathcal S$ such that $X'=X\cap X_{\mathcal S'}$ is nonempty and some shape $r\in\mathcal S'$ occurs uniformly recurrently in every tiling of $X'$. Occurrences of $r$ are the crossings of two families of chains of rhombuses (bi-infinite sequences sharing an edge direction), and uniform recurrence lets them be indexed by $\mathbb Z^2$ so that consecutive occurrences along a chain are adjacent. A classical Wang tileset is copied onto the shape $r$; link tiles on the shapes sharing one edge direction with $r$ carry a color along the chain, and all other shapes get a neutral blank color. Hence the classical domino problem, $\Pi^0_1$-complete by Berger's theorem, reduces to $\mathrm{Domino}(X')$. Finally $\mathrm{Domino}(X')$ reduces to $\mathrm{Domino}(X)$ by adding, for each shape outside $\mathcal S'$, one tile with fresh colors, which can never be used. The choice of $\mathcal S'$ need not be computable from $X$; only the reduction for fixed $\mathcal S'$ must be.
+Membership in $\Pi^0_1$ for effective $X$: by compactness a tiling exists iff, for every radius $r$, some patch of radius $r$ is locally allowed, i.e. avoids the color constraints and the first $r$ forbidden patterns, and these finitely many patches are computable. For hardness, a compactness argument gives a subset $\mathcal S'\subseteq\mathcal S$ such that $X'=X\cap X_{\mathcal S'}$ is nonempty and some shape $r\in\mathcal S'$ occurs uniformly recurrently in every tiling of $X'$. Occurrences of $r$ are the crossings of two families of chains of rhombuses (bi-infinite sequences sharing an edge direction), and uniform recurrence lets them be indexed by $\mathbb Z^2$ so that consecutive occurrences along a chain get adjacent $\mathbb Z^2$ coordinates (Lemma 21). A classical Wang tileset is copied onto the shape $r$; link tiles on the shapes sharing one edge direction with $r$ carry a color along the chain, and all other shapes get a neutral blank color. Hence the classical domino problem, $\Pi^0_1$-complete by Berger's theorem, reduces to $\mathrm{Domino}(X')$. Finally $\mathrm{Domino}(X')$ reduces to $\mathrm{Domino}(X)$ by adding, for each shape outside $\mathcal S'$, one tile with a fresh color on each edge, so that no tile can be placed next to it and it can never be used (Theorem 26). The choice of $\mathcal S'$ need not be computable from $X$; only the reduction for fixed $\mathcal S'$ must be.
 
 ## Sources
 

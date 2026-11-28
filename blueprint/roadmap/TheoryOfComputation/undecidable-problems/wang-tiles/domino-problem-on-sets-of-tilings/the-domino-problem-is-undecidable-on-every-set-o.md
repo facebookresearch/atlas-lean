@@ -22,6 +22,7 @@ tilings. The theorem assumes only that $X$ is nonempty and has finite local comp
 ## Proof depends on
 
 - [The tiling problem is undecidable](../the-tiling-problem-is-undecidable.md)
+- [Halting is undecidable](../../../computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halts.md)
 
 ## Expansion
 

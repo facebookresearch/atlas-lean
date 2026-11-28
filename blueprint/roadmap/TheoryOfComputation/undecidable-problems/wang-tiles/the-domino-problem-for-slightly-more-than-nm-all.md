@@ -1,7 +1,7 @@
 # The domino problem for slightly more than nm allowed n×m patterns is undecidable
 
 Emptiness of a two-dimensional subshift of finite type given by at most $nm$ allowed $n \times m$ patterns is decidable, but with only slightly more
-patterns, $nm + f(n)n$ for any unbounded computable $f$, it becomes undecidable, already over the binary alphabet.
+patterns, $nm + f(n)n$ for any unbounded computable $f$ and every fixed height $m \ge 2$ (or for square patterns), it becomes undecidable, already over the binary alphabet.
 
 For a rectangle $D = \{0, \dots, n-1\} \times \{0, \dots, m-1\}$ and a set $P \subseteq A^D$ of allowed $D$-patterns over a finite alphabet $A$, let
 
@@ -33,7 +33,7 @@ low-complexity conjecture, which the same source settles for uniformly recurrent
 
 The proof reduces the domino problem for Wang tiles. A recoding theorem turns a Wang tile set $T$ into, for all large $n$, a set of at most $nm + k(n + m)$ binary
 $n \times m$ patterns whose valid configurations exist exactly when $T$ tiles the plane, with constants $N$ and $k$ computable from $T$. Since $f$ is unbounded and
-computable, one can search for $n \ge N$ with $f(n) \ge k + km/n$ (respectively $f(n) \ge 2k$ for squares), which gives a many-one reduction.
+computable, one can search for $n \ge N$ with $f(n) \ge k + km/n$ (respectively $f(n) \ge 2k$ for squares), which gives a many-one reduction. A complete expansion links a page for the recoding theorem (Theorem 9 of the source), the construction the proof rests on.
 
 ## Sources
 

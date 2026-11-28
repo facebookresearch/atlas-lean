@@ -19,7 +19,7 @@ The statement is existential in the generating set: the source does not claim un
 
 ## Expansion
 
-If $G$ has an element $g$ of infinite order in its center and $G/\langle g\rangle$ is not a torsion group, there is a snake embedding of $\mathbb Z^2$ with its standard generators into $(G,S\cup\{g\})$: one copy of $\mathbb Z$ is $\langle g\rangle$, and the other comes from a periodic point of the skeleton subshift of $(G,S)$, which exists because $G$ is not a torsion group. A finitely generated infinite nilpotent group has a torsion-free central element $g$; no quotient of it is an infinite torsion group, and $G/\langle g\rangle$ is infinite when $G$ is not virtually cyclic. The undecidability for $\mathbb Z^2$ then transfers through the embedding, and to finite-index overgroups.
+If $G$ has an element $g$ of infinite order in its center and $G/\langle g\rangle$ is not a torsion group, there is a snake embedding of $\mathbb Z^2$ with its standard generators into $(G,S\cup\{g\})$: one copy of $\mathbb Z$ is $\langle g\rangle$, and the other comes from a periodic point $w^\infty$ of the skeleton subshift $X_{G/\langle g\rangle,S}$ of the quotient, which exists because $G/\langle g\rangle$ is not a torsion group (Proposition 9 and the proof of Lemma 2 in the appendix of the source), so that no factor of $w^\infty$ evaluates to a power of $g$. A finitely generated infinite nilpotent group has a torsion-free central element $g$; no quotient of it is an infinite torsion group, and $G/\langle g\rangle$ is infinite when $G$ is not virtually cyclic. The undecidability for $\mathbb Z^2$ then transfers through the embedding, and to finite-index overgroups.
 
 ## Sources
 

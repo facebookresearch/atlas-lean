@@ -11,7 +11,7 @@ $cd(T) = n(T) - c(T) \ge 0$ (Definition 2 of the source).
 
 The color deficiency is fixed while
 the number of tiles and colors grows; fixing the number of tiles alone, or of colors alone, would leave only finitely many
-instances. This improves the color deficiency $43$ of Jeandel and Rolin.
+instances. This improves the color deficiency $43$ of Jeandel and Rolin (Theorem 1.2 of their paper).
 
 ## Depends on
 
@@ -34,3 +34,4 @@ the plane exactly when the bars do.
 ## Sources
 
 - C. Yang and Z. Zhang, "Undecidability of tiling the plane with a fixed number of Wang bars", *Journal of the Operations Research Society of China*, published online 2026, doi:10.1007/s40305-025-00666-0; Definition 2 and Corollary 1 of the version arXiv:2404.04504v1 with its proof, and Theorem 3 (the transfer of Jeandel and Rolin).
+- E. Jeandel and N. Rolin, "Fixed parameter undecidability for Wang tilesets", in *Proceedings of AUTOMATA 2012 and JAC 2012*, Electronic Proceedings in Theoretical Computer Science 90, pp. 69–85, 2012, doi:10.4204/EPTCS.90.6; read in arXiv:1208.2769v1: Theorem 1.2 (the domino problem for tilesets of parameter $n - c = 43$ is undecidable).
