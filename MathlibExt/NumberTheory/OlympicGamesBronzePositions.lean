@@ -10,6 +10,7 @@ module
 
 public import MathlibExt.NumberTheory.BeattyOctalGame
 public import MathlibExt.NumberTheory.BronzeMetallicIdentities
+import MathlibExt.NumberTheory.DiophantineApproximation.ThreeGap
 import Mathlib.Tactic.LinearCombination
 
 /-!
@@ -27,6 +28,8 @@ record lows of the fractional parts of $x(\sqrt{13}-3)/2$ for positive integers 
   Infinite Octal Codes*, INTEGERS 24 (2024), Article G3, pp. 1–38, Proposition 3 and Theorem 11.
 * S. Beatty, *Problem 3173*, American Mathematical Monthly 33 (1926), no. 3, p. 159
   (the partition of the positive integers by complementary Beatty sequences).
+* `MathlibExt.NumberTheory.DiophantineApproximation.ThreeGap`: the fractional-part lemmas
+  `threeGap_fract_pos`, `threeGap_fract_sub_of_le`, and `threeGap_fract_sub_of_lt`.
 -/
 
 namespace MetaMathlibExt
@@ -57,9 +60,6 @@ private theorem gamma_irrational : Irrational γ := by
 
 private noncomputable def bronzeFract (x : ℤ) : ℝ := Int.fract ((x : ℝ) * γ)
 
-private theorem bronzeFract_pos {x : ℤ} (hx : 0 < x) : 0 < bronzeFract x :=
-  Int.fract_pos.mpr ((gamma_irrational.intCast_mul hx.ne').ne_int _)
-
 -- Membership in the first sequence means the next integer above xγ is below (x+1)γ.
 private theorem beatty_alpha_iff {x : ℤ} (hx : 0 < x) :
     (∃ k : ℤ, 0 < k ∧ beattySeq α k = x) ↔ 1 - γ < bronzeFract x := by
@@ -70,7 +70,7 @@ private theorem beatty_alpha_iff {x : ℤ} (hx : 0 < x) :
       div_eq_mul_inv _ α, div_eq_mul_inv _ α, alpha_inv, add_mul, one_mul]
   let t : ℝ := (x : ℝ) * γ
   have hpos : 0 < t := mul_pos (by exact_mod_cast hx) gamma_bounds.1
-  have hr : 0 < Int.fract t := bronzeFract_pos hx
+  have hr : 0 < Int.fract t := threeGap_fract_pos γ gamma_irrational hx.ne'
   change (∃ k : ℤ, 0 < k ∧ beattySeq α k = x) ↔ 1 - γ < Int.fract t
   rw [← Int.self_sub_floor]
   constructor
@@ -106,21 +106,6 @@ private theorem beatty_beta_iff {x : ℤ} (hx : 0 < x) :
   rcases h with ⟨ha, hb⟩ | ⟨hb, ha⟩
   · simp [hb, ha.not_ge]
   · simp [hb, le_of_not_gt ha]
-
-private theorem bronzeFract_sub (x y : ℤ) :
-    bronzeFract (x - y) = if bronzeFract y ≤ bronzeFract x then bronzeFract x - bronzeFract y
-      else bronzeFract x - bronzeFract y + 1 := by
-  unfold bronzeFract
-  rw [Int.cast_sub, sub_mul, ← Int.fract_fract_sub_fract]
-  split_ifs with h
-  · exact Int.fract_eq_self.mpr ⟨sub_nonneg.mpr h,
-      by linarith only [Int.fract_lt_one ((x : ℝ) * γ), Int.fract_nonneg ((y : ℝ) * γ)]⟩
-  · rw [← Int.fract_add_one]
-    refine Int.fract_eq_self.mpr ⟨?_, ?_⟩
-    · have hx' := Int.fract_nonneg ((x : ℝ) * γ)
-      have hy' := Int.fract_lt_one ((y : ℝ) * γ)
-      linarith only [hx', hy']
-    · linarith only [lt_of_not_ge h]
 
 private theorem bronze_ge_index (n : ℕ) : (n : ℤ) ≤ B n := by
   induction n using Nat.twoStepInduction with
@@ -223,7 +208,7 @@ private theorem bronze_block_min (n : ℕ) {k : ℤ} (hk₀ : 0 ≤ k) (hk₃ : 
     linear_combination γ * hxR - hzR + (a : ℝ) * hpγ + (b : ℝ) * hqγ
   by_contra! hc
   rw [herr, mul_le_mul_iff_right₀ he] at hc
-  have hpos := bronzeFract_pos hx
+  have hpos : 0 < bronzeFract x := threeGap_fract_pos γ gamma_irrational hx.ne'
   rw [herr, mul_pos_iff_of_pos_left he] at hpos
   have ha : 1 ≤ a := by
     by_contra! ha
@@ -337,8 +322,11 @@ public theorem bronzeGame_pPositions (P : Set ℕ)
       rw [Int.ofNat_sub hyx.le] at hb
       have hsub : 0 < (x : ℤ) - y := by omega
       have hble := (beatty_beta_iff hsub).mp hb
-      rw [bronzeFract_sub, ite_eq_right hxy.not_ge] at hble
-      linarith only [hble, bronze_record_fract_le hyr, bronzeFract_pos hxr.1]
+      have hwrap : bronzeFract ((x : ℤ) - y) = 1 + bronzeFract x - bronzeFract y :=
+        threeGap_fract_sub_of_lt γ x y hxy
+      rw [hwrap] at hble
+      have hpos : 0 < bronzeFract x := threeGap_fract_pos γ gamma_irrational hxr.1.ne'
+      linarith only [hble, bronze_record_fract_le hyr, hpos]
   · intro x hx
     have hxne : x ≠ 0 := fun h => hx (h.symm ▸ hzero)
     have hxpos : 0 < (x : ℤ) := by exact_mod_cast Nat.pos_of_ne_zero hxne
@@ -362,7 +350,10 @@ public theorem bronzeGame_pPositions (P : Set ℕ)
       rw [Int.ofNat_sub hyx.le, hyz]
       have hsub : 0 < (x : ℤ) - z := by omega
       apply (beatty_beta_iff hsub).mpr
-      rw [bronzeFract_sub, ite_eq_left hdiff.le]
-      linarith only [le_of_not_gt ha, bronzeFract_pos hzr.1]
+      have hfrac : bronzeFract ((x : ℤ) - z) = bronzeFract x - bronzeFract z :=
+        threeGap_fract_sub_of_le γ x z hdiff.le
+      rw [hfrac]
+      have hpos : 0 < bronzeFract z := threeGap_fract_pos γ gamma_irrational hzr.1.ne'
+      linarith only [le_of_not_gt ha, hpos]
 
 end MetaMathlibExt

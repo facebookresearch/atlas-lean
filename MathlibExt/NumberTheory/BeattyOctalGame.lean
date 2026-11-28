@@ -13,7 +13,8 @@ public import Mathlib.NumberTheory.Rayleigh
 /-!
 # Moves of Beatty octal games
 
-A heap can be removed entirely at a positive-index term of the first Beatty sequence.
+A heap can be removed entirely exactly when it is nonempty and its size is a positive-index term
+of the first Beatty sequence.
 A positive-index term of the second sequence can be removed from a strictly larger heap,
 provided the number removed is positive. All moves strictly decrease the heap size.
 

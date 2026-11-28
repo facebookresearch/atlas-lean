@@ -17,7 +17,13 @@ public import Mathlib.NumberTheory.Real.Irrational
 
 This file proves that the fractional parts of the first `n` multiples of an irrational real
 number cut the circle into gaps of at most three distinct lengths. If three lengths occur, the
-largest is the sum of the other two.
+largest is the sum of the other two. The fractional-part formulas for differences also apply to
+rational multipliers. Irrationality gives positivity at every nonzero integer index.
+
+## References
+
+* Pascal Alessandri and Valérie Berthé, *Three distance theorems and combinatorics on words*,
+  L'Enseignement Mathématique 44 (1998), pp. 103–132, Section 3 (the three distance theorem).
 -/
 
 @[expose] public section
@@ -43,8 +49,9 @@ private theorem threeGap_fract_ne_zero (α : ℝ) (hα : Irrational α) {m : ℤ
   rintro ⟨z, hz⟩
   exact (hα.intCast_mul hm).ne_int z hz.symm
 
-private theorem threeGap_fract_pos (α : ℝ) (hα : Irrational α) {m : ℤ} (hm : m ≠ 0) :
-    0 < threeGap_fract α m := by
+/-- The fractional part of a nonzero integer multiple of an irrational real number is positive. -/
+theorem threeGap_fract_pos (α : ℝ) (hα : Irrational α) {m : ℤ} (hm : m ≠ 0) :
+    0 < Int.fract ((m : ℝ) * α) := by
   exact lt_of_le_of_ne (Int.fract_nonneg _) (threeGap_fract_ne_zero α hα hm).symm
 
 private theorem threeGap_fract_neg (α : ℝ) (hα : Irrational α) {m : ℤ} (hm : m ≠ 0) :
@@ -91,9 +98,13 @@ private theorem threeGap_fract_add_of_one_le (α : ℝ) (a b : ℤ)
       rw [Int.fract_eq_self]
       constructor <;> linarith
 
-private theorem threeGap_fract_sub_of_le (α : ℝ) (a b : ℤ)
-    (h : threeGap_fract α b ≤ threeGap_fract α a) :
-    threeGap_fract α (a - b) = threeGap_fract α a - threeGap_fract α b := by
+/-- If the fractional part of $b\alpha$ is at most that of $a\alpha$, the fractional part
+of $(a-b)\alpha$ is their difference, for real $\alpha$ and integers $a,b$. -/
+theorem threeGap_fract_sub_of_le (α : ℝ) (a b : ℤ)
+    (h : Int.fract ((b : ℝ) * α) ≤ Int.fract ((a : ℝ) * α)) :
+    Int.fract (((a - b : ℤ) : ℝ) * α) = Int.fract ((a : ℝ) * α) - Int.fract ((b : ℝ) * α) := by
+  change threeGap_fract α b ≤ threeGap_fract α a at h
+  change threeGap_fract α (a - b) = threeGap_fract α a - threeGap_fract α b
   have ha : threeGap_fract α a < 1 := Int.fract_lt_one _
   have hb : 0 ≤ threeGap_fract α b := Int.fract_nonneg _
   calc
@@ -110,9 +121,13 @@ private theorem threeGap_fract_sub_of_le (α : ℝ) (a b : ℤ)
       rw [Int.fract_eq_self]
       constructor <;> linarith
 
-private theorem threeGap_fract_sub_of_lt (α : ℝ) (a b : ℤ)
-    (h : threeGap_fract α a < threeGap_fract α b) :
-    threeGap_fract α (a - b) = 1 + threeGap_fract α a - threeGap_fract α b := by
+/-- If the fractional part of $a\alpha$ is less than that of $b\alpha$, the fractional part
+of $(a-b)\alpha$ is their difference plus one, for real $\alpha$ and integers $a,b$. -/
+theorem threeGap_fract_sub_of_lt (α : ℝ) (a b : ℤ)
+    (h : Int.fract ((a : ℝ) * α) < Int.fract ((b : ℝ) * α)) :
+    Int.fract (((a - b : ℤ) : ℝ) * α) = 1 + Int.fract ((a : ℝ) * α) - Int.fract ((b : ℝ) * α) := by
+  change threeGap_fract α a < threeGap_fract α b at h
+  change threeGap_fract α (a - b) = 1 + threeGap_fract α a - threeGap_fract α b
   have ha : 0 ≤ threeGap_fract α a := Int.fract_nonneg _
   have hb : threeGap_fract α b < 1 := Int.fract_lt_one _
   calc
@@ -139,7 +154,9 @@ private theorem threeGap_fract_injective (α : ℝ) (hα : Irrational α) :
   by_contra hne
   have hsub : a - b ≠ 0 := sub_ne_zero.mpr hne
   have hnz := threeGap_fract_ne_zero α hα hsub
-  rw [threeGap_fract_sub_of_le α a b hab.ge, hab, sub_self] at hnz
+  have hfract : threeGap_fract α (a - b) = threeGap_fract α a - threeGap_fract α b :=
+    threeGap_fract_sub_of_le α a b hab.ge
+  rw [hfract, hab, sub_self] at hnz
   exact hnz rfl
 
 private theorem threeGap_natFract_injective (α : ℝ) (hα : Irrational α) :
@@ -166,14 +183,12 @@ private theorem threeGap_distance_of_lt (α : ℝ) (hα : Irrational α) {j k : 
 private theorem threeGap_distance_eq_sub_of_value_le (α : ℝ) {k j : ℕ}
     (h : threeGap_natFract α k ≤ threeGap_natFract α j) :
     threeGap_distance α k j = threeGap_natFract α j - threeGap_natFract α k := by
-  simpa [threeGap_distance, threeGap_natFract] using
-    threeGap_fract_sub_of_le α (j : ℤ) (k : ℤ) h
+  exact threeGap_fract_sub_of_le α (j : ℤ) (k : ℤ) h
 
 private theorem threeGap_distance_eq_add_sub_of_value_lt (α : ℝ) {k j : ℕ}
     (h : threeGap_natFract α j < threeGap_natFract α k) :
     threeGap_distance α k j = 1 + threeGap_natFract α j - threeGap_natFract α k := by
-  simpa [threeGap_distance, threeGap_natFract] using
-    threeGap_fract_sub_of_lt α (j : ℤ) (k : ℤ) h
+  exact threeGap_fract_sub_of_lt α (j : ℤ) (k : ℤ) h
 
 private theorem threeGap_exists_extrema (n : ℕ) (hn : 2 ≤ n) (α : ℝ) :
     ∃ u v : ℕ,
@@ -408,8 +423,7 @@ private theorem threeGap_exists_successor (n u v k : ℕ) (α : ℝ) (hα : Irra
             unfold threeGap_distance
             rw [heq]
           _ = 1 + threeGap_natFract α u - threeGap_natFract α v := by
-            simpa [threeGap_natFract] using
-              threeGap_fract_sub_of_lt α (u : ℤ) (v : ℤ) hfu_lt_fv
+            exact threeGap_fract_sub_of_lt α (u : ℤ) (v : ℤ) hfu_lt_fv
           _ = threeGap_natFract α u + (1 - threeGap_natFract α v) := by ring
       · intro l hl hlk
         have hlower := threeGap_middle_lower n u v k α hα hu_lt hv hv_lt hku hkv
@@ -425,8 +439,7 @@ private theorem threeGap_exists_successor (n u v k : ℕ) (α : ℝ) (hα : Irra
           calc
             threeGap_fract α ((u : ℤ) - (v : ℤ)) =
                 1 + threeGap_natFract α u - threeGap_natFract α v := by
-              simpa [threeGap_natFract] using
-                threeGap_fract_sub_of_lt α (u : ℤ) (v : ℤ) hfu_lt_fv
+              exact threeGap_fract_sub_of_lt α (u : ℤ) (v : ℤ) hfu_lt_fv
             _ = threeGap_natFract α u + (1 - threeGap_natFract α v) := by ring
         rw [hdist]
         exact hlower
