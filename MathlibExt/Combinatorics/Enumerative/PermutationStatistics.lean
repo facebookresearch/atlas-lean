@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Algebra.BigOperators.Fin
 public import Mathlib.Logic.Equiv.Defs
+public import Mathlib.Logic.Equiv.Fin.Basic
 
 /-!
 # Classical permutation statistics
@@ -28,6 +29,13 @@ Statistics of a permutation `σ` of `Fin n` in one-line notation.
 
 * `permDoubleAscents_add_permDoubleDescents_add_permPeaks_add_permValleys`: every position `i`
   with `i + 2 < n` is exactly one of the four, so the four counts sum to `n - 2`.
+
+## References
+
+* Dan Li and Sergey Kitaev, *King Permutations and Partially Ordered Patterns*,
+  INTEGERS 26 (2026), Article A59, pp. 1–18, Section 1 (extrema statistics).
+* Han, *Joint Distributions of 10 Classical Statistics over Permutations Avoiding Two Patterns of
+  Length 3*, INTEGERS 26 (2026), Article A18, Section 1 (local statistics).
 -/
 
 @[expose] public section
@@ -56,6 +64,20 @@ Source: Dan Li and Sergey Kitaev, *King Permutations and Partially Ordered Patte
 INTEGERS 26 (2026), Article A59, Section 1 (statistics). -/
 def permRightToLeftMaxCount (σ : Equiv.Perm (Fin n)) : ℕ :=
   (Finset.univ.filter fun i : Fin n => ∀ j : Fin n, i < j → σ j < σ i).card
+
+/-- Reversing positions turns right-to-left maxima into left-to-right maxima. -/
+theorem permLeftToRightMaxCount_rev (σ : Equiv.Perm (Fin n)) :
+    permLeftToRightMaxCount (Fin.revPerm.trans σ) = permRightToLeftMaxCount σ := by
+  unfold permLeftToRightMaxCount permRightToLeftMaxCount
+  apply Finset.card_equiv Fin.revPerm
+  intro i
+  simp only [Finset.mem_filter, Finset.mem_univ, true_and, Equiv.trans_apply, Fin.revPerm_apply]
+  constructor
+  · intro h j hj
+    have hj' : j.rev < i := by simpa only [Fin.rev_rev] using Fin.rev_lt_rev.mpr hj
+    simpa only [Fin.rev_rev] using h j.rev hj'
+  · intro h j hj
+    exact h j.rev (Fin.rev_lt_rev.mpr hj)
 
 /-- **Number of left-to-right minima.** For a permutation $\sigma$ of $\{0, 1, \dots, n - 1\}$
 written in one-line notation, $\operatorname{lmin}(\sigma)$ is the number of positions $i$ such

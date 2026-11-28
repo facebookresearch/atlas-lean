@@ -14,6 +14,7 @@ public import Mathlib.Order.Hom.Basic
 public import Mathlib.RingTheory.PowerSeries.Basic
 public import MathlibExt.Combinatorics.Enumerative.PermutationStatistics
 import Mathlib.Logic.Equiv.Fin.Basic
+import MathlibExt.Combinatorics.Enumerative.KingPermutationPatterns
 
 /-!
 # Complement symmetry for flat patterns in king permutations
@@ -40,6 +41,13 @@ Source: Dan Li and Sergey Kitaev, *King Permutations and Partially Ordered Patte
 INTEGERS 26 (2026), Article A59, Section 1.3. -/
 def IsKingPerm {n : ℕ} (σ : Equiv.Perm (Fin n)) : Prop :=
   ∀ i j : Fin n, (j : ℕ) = i + 1 → (σ i : ℕ) + 1 ≠ σ j ∧ (σ j : ℕ) + 1 ≠ σ i
+
+/-- A permutation is king if and only if neither entry in an adjacent pair is one more than
+the other. -/
+theorem isKingPerm_iff {n : ℕ} (σ : Equiv.Perm (Fin n)) :
+    IsKingPerm σ ↔
+      ∀ i j : Fin n, (j : ℕ) = i + 1 → (σ i : ℕ) + 1 ≠ σ j ∧ (σ j : ℕ) + 1 ≠ σ i :=
+  Iff.rfl
 
 /-- **Number of ascents of a permutation.** For a permutation $\sigma$ of $\{0, 1, \dots, n - 1\}$
 written in one-line notation, $\operatorname{asc}(\sigma)$ is the number of positions $i$ with
@@ -69,6 +77,12 @@ Source: Dan Li and Sergey Kitaev, *King Permutations and Partially Ordered Patte
 INTEGERS 26 (2026), Article A59, Section 1.1 and Table 1. -/
 def ContainsFlatPOPBelow {n : ℕ} (σ : Equiv.Perm (Fin n)) (j : Fin 4) : Prop :=
   ∃ f : Fin 4 ↪o Fin n, ∀ m, m ≠ j → σ (f j) < σ (f m)
+
+/-- A flat pattern with bottom label `j` occurs exactly when four increasing positions witness
+that the entry at label `j` is strictly smaller than the other three. -/
+theorem containsFlatPOPBelow_iff {n : ℕ} (σ : Equiv.Perm (Fin n)) (j : Fin 4) :
+    ContainsFlatPOPBelow σ j ↔ ∃ f : Fin 4 ↪o Fin n, ∀ m, m ≠ j → σ (f j) < σ (f m) :=
+  Iff.rfl
 
 /-- **Containing a flat pattern with one top label.** Let $\sigma$ be a permutation of
 $\{0, 1, \dots, n - 1\}$ and let $j \in \{0, 1, 2, 3\}$. Then $\sigma$ contains the flat partially
@@ -110,6 +124,18 @@ noncomputable def kingFlatPOPBelowGF (j : Fin 4) : PowerSeries (MvPolynomial (Fi
         MvPolynomial.X 2 ^ permLeftToRightMaxCount σ * MvPolynomial.X 3 ^ permRightToLeftMaxCount σ
 
 open Classical in
+/-- The coefficient at length `n` sums the statistic monomials of the king permutations of
+length `n` that avoid the flat pattern with bottom label `j`. -/
+theorem coeff_kingFlatPOPBelowGF (j : Fin 4) (n : ℕ) :
+    PowerSeries.coeff n (kingFlatPOPBelowGF j) =
+      ∑ σ ∈ Finset.univ.filter
+          (fun σ : Equiv.Perm (Fin n) => IsKingPerm σ ∧ ¬ ContainsFlatPOPBelow σ j),
+        MvPolynomial.X 0 ^ permAscentCount σ * MvPolynomial.X 1 ^ permDescentCount σ *
+          MvPolynomial.X 2 ^ permLeftToRightMaxCount σ *
+            MvPolynomial.X 3 ^ permRightToLeftMaxCount σ :=
+  PowerSeries.coeff_mk _ _
+
+open Classical in
 /-- **Generating function of king permutations avoiding $Q_{j+1}$.** For $j \in \{0, 1, 2, 3\}$
 let $Q_{j+1}$ be the flat partially ordered pattern of length $4$ whose element number $j + 1$
 lies above each of the other three: a permutation $\sigma$ contains $Q_{j+1}$ if there are
@@ -140,6 +166,46 @@ private def complement {n : ℕ} (σ : Equiv.Perm (Fin n)) : Equiv.Perm (Fin n) 
 private theorem complement_lt {n : ℕ} (σ : Equiv.Perm (Fin n)) (i j : Fin n) :
     complement σ i < complement σ j ↔ σ j < σ i :=
   Fin.rev_lt_rev
+
+open Finset in
+open scoped Classical in
+-- An adjacent pair with left endpoint i and right endpoint j is sent to (j.rev, i.rev).
+private theorem card_filter_adjacent_positionReverse {n : ℕ} (P : Fin n → Fin n → Prop) :
+    (univ.filter fun i : Fin n => ∃ j : Fin n, (j : ℕ) = i + 1 ∧ P i.rev j.rev).card =
+      (univ.filter fun i : Fin n => ∃ j : Fin n, (j : ℕ) = i + 1 ∧ P j i).card := by
+  classical
+  have witness {i : Fin n}
+      (hi : i ∈ univ.filter (fun i : Fin n => ∃ j : Fin n, (j : ℕ) = i + 1 ∧ P i.rev j.rev)) :
+      ∃ j : Fin n, (j : ℕ) = i + 1 ∧ P i.rev j.rev := (mem_filter.mp hi).2
+  refine card_bij (fun _ hi => (witness hi).choose.rev) ?_ ?_ ?_
+  · intro i hi
+    exact mem_filter.mpr ⟨mem_univ _, i.rev, rev_adjacent (witness hi).choose_spec.1,
+      (witness hi).choose_spec.2⟩
+  · intro i hi k hk h
+    have heq : (witness hi).choose = (witness hk).choose := by
+      simpa only [Fin.rev_rev] using congrArg Fin.rev h
+    have hi' := (witness hi).choose_spec.1
+    have hk' := (witness hk).choose_spec.1
+    rw [heq, hk'] at hi'
+    exact Fin.ext (Nat.add_right_cancel hi'.symm)
+  · intro i hi
+    obtain ⟨j, hj, hp⟩ := (mem_filter.mp hi).2
+    have hj' : j.rev ∈
+        univ.filter (fun i : Fin n => ∃ j : Fin n, (j : ℕ) = i + 1 ∧ P i.rev j.rev) :=
+      mem_filter.mpr ⟨mem_univ _, i.rev, rev_adjacent hj, by simpa only [Fin.rev_rev] using hp⟩
+    refine ⟨j.rev, hj', ?_⟩
+    have heq : (witness hj').choose = i.rev :=
+      Fin.ext ((witness hj').choose_spec.1.trans (rev_adjacent hj).symm)
+    rw [heq, Fin.rev_rev]
+
+open Finset in
+/-- The number of ascents after reversing positions equals the original number of descents. -/
+theorem permAscentCount_rev {n : ℕ} (σ : Equiv.Perm (Fin n)) :
+    permAscentCount (Fin.revPerm.trans σ) = permDescentCount σ := by
+  unfold permAscentCount permDescentCount
+  convert card_filter_adjacent_positionReverse (fun i j => σ i < σ j) using 1 <;>
+    congr 1 <;> ext i <;>
+    simp only [mem_filter, Equiv.trans_apply, Fin.revPerm_apply]
 
 private theorem complement_involutive {n : ℕ} :
     Function.Involutive (complement (n := n)) := by
