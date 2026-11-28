@@ -64,3 +64,4 @@
 - [Forward-time theory of strong background selection](forward-time-theory-of-strong-background-selection/README.md)
 - [Ancestral structures of the mutation–selection equation](ancestral-structures-of-the-mutation-selection-equation/README.md)
 - [Mutation–selection with pairwise interaction](mutation-selection-with-pairwise-interaction/README.md)
+- [Markov chain representation of mutation selection equilibria](markov-chain-representation-of-mutation-selection-equilibria/README.md)

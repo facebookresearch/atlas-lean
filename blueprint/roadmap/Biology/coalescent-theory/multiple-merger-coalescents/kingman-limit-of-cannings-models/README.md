@@ -80,3 +80,5 @@
 - [Path-level convergence of rescaled ancestral partition chains in Skorokhod space](path-level-convergence-of-rescaled-ancestral-par.md)
 - [Fast migration gives Kingman's coalescent with an effective population size](separation-of-time-scales-fast-migration-gives-k.md)
 - [Weak convergence of non-neutral genealogies to Kingman's coalescent](weak-convergence-of-non-neutral-genealogies-to-kingman-s-coalescent.md)
+- [Box-filling coalescence processes](box-filling-coalescence-processes/README.md)
+- [Kingman limits of resampling particle genealogies](kingman-limits-of-resampling-particle-genealogies/README.md)
