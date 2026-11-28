@@ -13,15 +13,23 @@ import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring
 
 open MetaMathlibExt
+open scoped FourierTransform
 
--- At spacing two, a shift of -3/2 cycles per unit time is an alias.
-example : sampleSignal 2 (complexExpSignal (1 + (-3 : ℝ) / 2)) =
-    sampleSignal 2 (complexExpSignal 1) := by
-  simpa only [Int.cast_neg, Int.cast_ofNat] using
-    sampleSignal_complexExp_alias (T := 2) (by norm_num) 1 (-3)
+-- At spacing two, a shift of +1 cycle per unit time is an alias.
+example : sampleSignal 2 (fun t ↦ (𝐞 (2 * t) : ℂ)) =
+    sampleSignal 2 (fun t ↦ (𝐞 (1 * t) : ℂ)) := by
+  have h := sampleSignal_complexExp_alias (T := 2) 1 2
+  norm_num at h
+  simpa only [one_mul] using h
+
+-- At spacing two, a shift of -3/2 cycles per unit time is also an alias.
+example : sampleSignal 2 (fun t ↦ (𝐞 ((1 + (-3 : ℝ) / 2) * t) : ℂ)) =
+    sampleSignal 2 (fun t ↦ (𝐞 (1 * t) : ℂ)) := by
+  simpa only [Int.cast_neg, Int.cast_ofNat] using sampleSignal_complexExp_alias (T := 2) 1 (-3)
 
 -- Half a sampling frequency is not an alias of zero.
-example : sampleSignal 1 (complexExpSignal (1 / 2)) ≠ sampleSignal 1 (complexExpSignal 0) := by
+example : sampleSignal 1 (fun t ↦ (𝐞 ((1 / 2) * t) : ℂ)) ≠
+    sampleSignal 1 (fun t ↦ (𝐞 (0 * t) : ℂ)) := by
   intro h
   obtain ⟨k, hk⟩ := (sampleSignal_complexExp_eq_iff (by norm_num)).mp h
   have hmul : (2 * k : ℝ) = 1 := by
@@ -31,10 +39,32 @@ example : sampleSignal 1 (complexExpSignal (1 / 2)) ≠ sampleSignal 1 (complexE
   have hint : (2 * k : ℤ) = 1 := by exact_mod_cast hmul
   omega
 
--- The kernel witness is invisible on the whole grid, but equals one at its midpoint.
+-- At zero spacing an integer shift divided by the step is zero; both sequences are one.
+example : sampleSignal 0 (fun t ↦ (𝐞 ((1 + (3 : ℝ) / 0) * t) : ℂ)) = 1 := by
+  calc
+    _ = sampleSignal 0 (fun t ↦ (𝐞 (1 * t) : ℂ)) := by
+      simpa only [Int.cast_ofNat] using sampleSignal_complexExp_alias (T := 0) 1 3
+    _ = 1 := by
+      funext n
+      simp [sampleSignal]
+
+-- The zero-step witness is not just zero on the grid: it also vanishes away from it.
+example : sampleSignal 0 (samplingKernelSin 0) = 0 ∧ samplingKernelSin 0 5 = 0 :=
+  ⟨sampleSignal_samplingKernelSin, by simp [samplingKernelSin]⟩
+
+-- At spacing two, the kernel witness is zero on the grid and one at the midpoint.
 example : sampleSignal 2 (samplingKernelSin 2) = 0 ∧ samplingKernelSin 2 1 = 1 := by
-  refine ⟨sampleSignal_samplingKernelSin (by norm_num), ?_⟩
+  refine ⟨sampleSignal_samplingKernelSin, ?_⟩
   have hhalf := samplingKernelSin_half_step (T := 2) (by norm_num)
+  norm_num at hhalf ⊢
+  exact hhalf
+
+-- A negative step still aliases a shift of 1/T, and the witness is one at the negative midpoint.
+example : sampleSignal (-2) (fun t ↦ (𝐞 ((-1 / 2) * t) : ℂ)) =
+    sampleSignal (-2) (fun t ↦ (𝐞 (0 * t) : ℂ)) ∧
+    samplingKernelSin (-2) (-1) = 1 := by
+  refine ⟨(sampleSignal_complexExp_eq_iff (by norm_num)).mpr ⟨1, by norm_num⟩, ?_⟩
+  have hhalf := samplingKernelSin_half_step (T := -2) (by norm_num)
   norm_num at hhalf ⊢
   exact hhalf
 

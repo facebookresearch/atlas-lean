@@ -8,19 +8,21 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Analysis.SpecialFunctions.Complex.Log
-public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
-public import Mathlib.Data.ZMod.Basic
-import Mathlib.Tactic.FieldSimp
-import Mathlib.Tactic.Ring
+public import Mathlib.Analysis.Calculus.ContDiff.Defs
+public import Mathlib.Analysis.Complex.Circle
+public import Mathlib.Data.ZMod.Defs
+import Mathlib.Analysis.SpecialFunctions.Complex.Circle
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
+import Mathlib.Data.ZMod.Basic
 
 /-!
 # Aliasing and noninjectivity of uniform sampling
 
-Sampling at times `n * T` identifies complex exponentials whose frequencies differ by
-an integer multiple of `1 / T`. It can also identify distinct smooth bounded signals:
-the sine `sin (π * t / T)` vanishes on the whole sampling lattice. A signal with period
-`N * T` gives an `N`-periodic sample sequence and hence a signal on `ZMod N`.
+For nonzero `T`, sampling at times `n * T` identifies complex exponentials exactly when
+their frequencies differ by an integer multiple of `1 / T`. It also identifies the zero
+signal with the smooth, bounded sine `sin (π * t / T)`. At `T = 0` all sample times
+coincide. A signal with period `N * T` gives an `N`-periodic sample sequence and hence
+a signal on `ZMod N`.
 
 ## References
 
@@ -37,93 +39,104 @@ the sine `sin (π * t / T)` vanishes on the whole sampling lattice. A signal wit
 
 namespace MetaMathlibExt
 
-open scoped ContDiff
+open scoped ContDiff FourierTransform
 
-/-- Sample a complex-valued signal on the integer lattice with spacing `T`. -/
+/-- For a complex-valued signal $x : \mathbb{R} \to \mathbb{C}$ and real step $T$,
+the sampling map is $S_T x : \mathbb{Z} \to \mathbb{C}$, given by $(S_T x)_n = x(nT)$.
+For $T < 0$ the indices run in reverse time, and for $T = 0$ all samples are $x(0)$. -/
 noncomputable def sampleSignal (T : ℝ) (x : ℝ → ℂ) (n : ℤ) : ℂ :=
   x ((n : ℝ) * T)
 
-/-- The complex exponential at frequency `f` in cycles per unit time. -/
-noncomputable def complexExpSignal (f t : ℝ) : ℂ :=
-  Complex.exp ((↑(2 * Real.pi * f * t) : ℂ) * Complex.I)
-
-private lemma ofReal_int_turn (k : ℤ) :
-    (↑((k : ℝ) * (2 * Real.pi)) : ℂ) * Complex.I =
-      (k : ℂ) * (2 * (Real.pi : ℂ) * Complex.I) := by
-  push_cast
-  ring
-
-/-- Shifting a frequency by any integer multiple of `1 / T` leaves all samples unchanged. -/
-theorem sampleSignal_complexExp_alias {T : ℝ} (hT : 0 < T) (f : ℝ) (k : ℤ) :
-    sampleSignal T (complexExpSignal (f + (k : ℝ) / T)) =
-      sampleSignal T (complexExpSignal f) := by
+/-- For real $T,f$ and any integer $k$, the complex exponentials $t \mapsto e^{2\pi i(f+k/T)t}$
+and $t \mapsto e^{2\pi i f t}$ agree at every sample time $nT$, $n \in \mathbb{Z}$.
+Here $f$ is measured in cycles per unit time and the Fourier character has positive sign.
+If $T=0$, the quotient $k/0$ is defined as zero and both sample sequences are constantly $1$. -/
+theorem sampleSignal_complexExp_alias {T : ℝ} (f : ℝ) (k : ℤ) :
+    sampleSignal T (fun t ↦ (𝐞 ((f + (k : ℝ) / T) * t) : ℂ)) =
+      sampleSignal T (fun t ↦ (𝐞 (f * t) : ℂ)) := by
+  by_cases hT : T = 0
+  · simp only [hT, div_zero, add_zero]
   funext n
-  have hphase : 2 * Real.pi * (f + (k : ℝ) / T) * ((n : ℝ) * T) =
-      2 * Real.pi * f * ((n : ℝ) * T) + ((k * n : ℤ) : ℝ) * (2 * Real.pi) := by
-    rw [Int.cast_mul]
-    field_simp [hT.ne']
-  simp only [sampleSignal, complexExpSignal, hphase, Complex.ofReal_add, add_mul,
-    Complex.exp_add, ofReal_int_turn, Complex.exp_int_mul_two_pi_mul_I, mul_one]
+  have hphase : (f + (k : ℝ) / T) * ((n : ℝ) * T) =
+      f * ((n : ℝ) * T) + ((k * n : ℤ) : ℝ) := by
+    rw [add_mul, Int.cast_mul, mul_left_comm ((k : ℝ) / T), div_mul_cancel₀ _ hT,
+      mul_comm (n : ℝ) (k : ℝ)]
+  have hturn : 𝐞 ((k * n : ℤ) : ℝ) = 1 := by
+    rw [Real.fourierChar_apply', Circle.exp_two_pi_mul_int]
+  simp only [sampleSignal, hphase, AddChar.map_add_eq_mul, hturn, mul_one]
 
-/-- Two complex exponentials have the same samples exactly when their frequencies differ
-by an integer multiple of `1 / T`. For necessity, the sample at index `1` suffices. -/
-theorem sampleSignal_complexExp_eq_iff {T f g : ℝ} (hT : 0 < T) :
-    sampleSignal T (complexExpSignal g) = sampleSignal T (complexExpSignal f) ↔
+/-- Let $T \ne 0$ be real, and let $f,g$ be real frequencies in cycles per unit time.
+The positive-sign complex exponentials $t \mapsto e^{2\pi i g t}$ and $t \mapsto e^{2\pi i f t}$
+agree at all times $nT$, $n \in \mathbb{Z}$, if and only if $g = f + k/T$ for some integer $k$.
+Necessity follows from the sample at $n=1$. The hypothesis excludes $T=0$, when all
+frequencies have the same samples regardless of their difference. -/
+theorem sampleSignal_complexExp_eq_iff {T f g : ℝ} (hT : T ≠ 0) :
+    sampleSignal T (fun t ↦ (𝐞 (g * t) : ℂ)) = sampleSignal T (fun t ↦ (𝐞 (f * t) : ℂ)) ↔
       ∃ k : ℤ, g = f + (k : ℝ) / T := by
   constructor
   · intro h
-    have h₁ := congrFun h (1 : ℤ)
-    simp only [sampleSignal, complexExpSignal, Int.cast_one, one_mul] at h₁
-    obtain ⟨k, hk⟩ := Complex.exp_eq_exp_iff_exists_int.mp h₁
-    rw [← ofReal_int_turn, ← add_mul, ← Complex.ofReal_add] at hk
-    have hphase := Complex.ofReal_injective (mul_right_cancel₀ Complex.I_ne_zero hk)
+    have h₁ : 𝐞 (g * T) = 𝐞 (f * T) := Circle.coe_injective (by
+      simpa only [sampleSignal, Int.cast_one, one_mul] using congrFun h (1 : ℤ))
+    simp only [Real.fourierChar_apply'] at h₁
+    obtain ⟨k, hk⟩ := Circle.exp_eq_exp.mp h₁
     have hscaled : g * T = f * T + (k : ℝ) := by
       apply mul_left_cancel₀ (mul_ne_zero two_ne_zero Real.pi_ne_zero)
-      calc
-        2 * Real.pi * (g * T) = 2 * Real.pi * g * T := by ring
-        _ = 2 * Real.pi * f * T + (k : ℝ) * (2 * Real.pi) := hphase
-        _ = 2 * Real.pi * (f * T + (k : ℝ)) := by ring
-    refine ⟨k, mul_right_cancel₀ hT.ne' ?_⟩
-    rwa [add_mul, div_mul_cancel₀ _ hT.ne']
+      rwa [mul_add, mul_comm (2 * Real.pi) (k : ℝ)]
+    refine ⟨k, mul_right_cancel₀ hT ?_⟩
+    rwa [add_mul, div_mul_cancel₀ _ hT]
   · rintro ⟨k, rfl⟩
-    exact sampleSignal_complexExp_alias hT f k
+    exact sampleSignal_complexExp_alias f k
 
-/-- Two signals have the same samples exactly when their difference vanishes on the lattice. -/
+/-- For any real $T$ and signals $x,y : \mathbb{R} \to \mathbb{C}$, the sample sequences
+$n \mapsto x(nT)$ and $n \mapsto y(nT)$ are equal if and only if $x(nT)-y(nT)=0$
+for every integer $n$. At $T=0$ this is just equality at time zero. -/
 theorem sampleSignal_eq_iff {T : ℝ} {x y : ℝ → ℂ} :
     sampleSignal T x = sampleSignal T y ↔ ∀ n : ℤ, (x - y) ((n : ℝ) * T) = 0 := by
   simp only [funext_iff, sampleSignal, Pi.sub_apply, sub_eq_zero]
 
-/-- A real sine, viewed as a complex signal, with zeros at the sampling times for spacing `T`. -/
+/-- For real $T$, the sine signal $s_T : \mathbb{R} \to \mathbb{C}$ is
+$s_T(t) = \sin(\pi t/T)$, with real sine included in $\mathbb{C}$.
+At $T=0$ this is identically zero, since division by zero is defined as zero. -/
 noncomputable def samplingKernelSin (T t : ℝ) : ℂ :=
   ↑(Real.sin (Real.pi * t / T))
 
-/-- The sine witness is smooth. -/
+/-- For every real $T$, the complex-valued signal $t \mapsto \sin(\pi t/T)$ on $\mathbb{R}$
+is smooth (infinitely differentiable over $\mathbb{R}$). At $T=0$ it is identically zero. -/
 theorem contDiff_samplingKernelSin (T : ℝ) : ContDiff ℝ ∞ (samplingKernelSin T) :=
   Complex.ofRealCLM.contDiff.comp
     (Real.contDiff_sin.comp ((contDiff_const.mul contDiff_id).div_const T))
 
-/-- The sine witness is uniformly bounded by one. -/
+/-- For all real $T$ and $t$, the complex norm of the real sine value $\sin(\pi t/T)$ is at most
+$1$. This holds also at $T=0$, when the sine argument is defined as zero. -/
 theorem norm_samplingKernelSin_le_one (T t : ℝ) : ‖samplingKernelSin T t‖ ≤ 1 := by
   rw [samplingKernelSin, Complex.norm_real, Real.norm_eq_abs]
   exact abs_le.mpr ⟨Real.neg_one_le_sin _, Real.sin_le_one _⟩
 
-/-- The sine witness has zero samples at every integer index. -/
-theorem sampleSignal_samplingKernelSin {T : ℝ} (hT : 0 < T) :
-    sampleSignal T (samplingKernelSin T) = 0 := by
+/-- For every real $T$, all the samples at $nT$, $n \in \mathbb{Z}$, of the complex-valued
+signal $t \mapsto \sin(\pi t/T)$ are zero. For nonzero $T$ the sine argument at $nT$ is
+$n\pi$; at $T=0$ it is defined as zero. -/
+theorem sampleSignal_samplingKernelSin {T : ℝ} : sampleSignal T (samplingKernelSin T) = 0 := by
   funext n
+  by_cases hT : T = 0
+  · simp only [sampleSignal, samplingKernelSin, hT, div_zero, Real.sin_zero,
+      Complex.ofReal_zero, Pi.zero_apply]
   have harg : Real.pi * ((n : ℝ) * T) / T = (n : ℝ) * Real.pi := by
-    rw [← mul_assoc, mul_div_cancel_right₀ _ hT.ne', mul_comm]
+    rw [← mul_assoc, mul_div_cancel_right₀ _ hT, mul_comm]
   simp only [sampleSignal, samplingKernelSin, harg, Real.sin_int_mul_pi,
     Complex.ofReal_zero, Pi.zero_apply]
 
-/-- The sine witness is one halfway between the samples at `0` and `T`. -/
-theorem samplingKernelSin_half_step {T : ℝ} (hT : 0 < T) : samplingKernelSin T (T / 2) = 1 := by
+/-- For real $T \ne 0$, the complex-valued signal $t \mapsto \sin(\pi t/T)$ takes the
+value $1$ at $t=T/2$, the midpoint of the sample times $0$ and $T$ for either sign of $T$. -/
+theorem samplingKernelSin_half_step {T : ℝ} (hT : T ≠ 0) : samplingKernelSin T (T / 2) = 1 := by
   have harg : Real.pi * (T / 2) / T = Real.pi / 2 := by
-    field_simp [hT.ne']
+    rw [← mul_div_assoc, ← div_mul_eq_mul_div, mul_div_cancel_right₀ _ hT]
   simp only [samplingKernelSin, harg, Real.sin_pi_div_two, Complex.ofReal_one]
 
-/-- Uniform sampling is not injective even on the set of smooth, uniformly bounded signals. -/
-theorem sampleSignal_not_injOn_smooth_bounded {T : ℝ} (hT : 0 < T) :
+/-- For any real $T \ne 0$, the map $x \mapsto (n \mapsto x(nT))$ ($n \in \mathbb{Z}$) is
+not injective on smooth signals $x : \mathbb{R} \to \mathbb{C}$ with $\|x(t)\| \le C$
+for some real $C$ and every real $t$. The signals $t \mapsto \sin(\pi t/T)$ and zero
+have the same samples but differ at $t=T/2$. -/
+theorem sampleSignal_not_injOn_smooth_bounded {T : ℝ} (hT : T ≠ 0) :
     ¬ Set.InjOn (sampleSignal T)
       {x : ℝ → ℂ | ContDiff ℝ ∞ x ∧ ∃ C : ℝ, ∀ t, ‖x t‖ ≤ C} := by
   intro hinj
@@ -131,25 +144,32 @@ theorem sampleSignal_not_injOn_smooth_bounded {T : ℝ} (hT : 0 < T) :
   have heq : samplingKernelSin T = (0 : ℝ → ℂ) :=
     hinj ⟨contDiff_samplingKernelSin T, ⟨1, norm_samplingKernelSin_le_one T⟩⟩
       ⟨contDiff_const, ⟨0, fun t ↦ by simp⟩⟩
-      ((sampleSignal_samplingKernelSin hT).trans hzero.symm)
+      ((sampleSignal_samplingKernelSin (T := T)).trans hzero.symm)
   have hval := congrFun heq (T / 2)
   rw [samplingKernelSin_half_step hT, Pi.zero_apply] at hval
   exact one_ne_zero hval
 
-/-- Uniform sampling is not injective on continuous signals. -/
-theorem sampleSignal_not_injOn_continuous {T : ℝ} (hT : 0 < T) :
+/-- For any real $T \ne 0$, the map $x \mapsto (n \mapsto x(nT))$ ($n \in \mathbb{Z}$) is
+not injective on continuous signals $x : \mathbb{R} \to \mathbb{C}$: the distinct continuous
+signals $t \mapsto \sin(\pi t/T)$ and zero have the same samples. -/
+theorem sampleSignal_not_injOn_continuous {T : ℝ} (hT : T ≠ 0) :
     ¬ Set.InjOn (sampleSignal T) {x : ℝ → ℂ | Continuous x} := by
   intro hinj
   exact sampleSignal_not_injOn_smooth_bounded hT (hinj.mono (fun _ hx ↦ hx.1.continuous))
 
-/-- A signal with period `N * T` has an integer-indexed sample sequence with period `N`. -/
+/-- Let $T$ be real, $N$ a natural number, and $x : \mathbb{R} \to \mathbb{C}$ satisfy
+$x(t+NT)=x(t)$ for all real $t$. Then its samples satisfy $x((n+N)T)=x(nT)$
+for all integers $n$. For $N=0$ this is vacuous; for $T=0$ the sequence is constant. -/
 theorem sampleSignal_periodic {T : ℝ} {N : ℕ} {x : ℝ → ℂ}
     (hx : Function.Periodic x ((N : ℝ) * T)) : Function.Periodic (sampleSignal T x) (N : ℤ) := by
   intro n
   simpa only [sampleSignal, Int.cast_add, Int.cast_natCast, add_mul] using hx ((n : ℝ) * T)
 
-/-- The samples of a signal with period `N * T` descend uniquely along the canonical cast
-`ℤ → ZMod N`. For positive `N` this gives a signal on a finite cyclic group. -/
+/-- Let $T$ be real, $N$ a natural number, and $x : \mathbb{R} \to \mathbb{C}$ satisfy
+$x(t+NT)=x(t)$ for all real $t$. There is a unique $y : \mathrm{ZMod}\,N \to \mathbb{C}$
+such that $y([n])=x(nT)$ for every integer $n$, where $[n]$ is the canonical integer cast.
+For $N>0$ this is a signal on a finite cyclic group. For $N=0$, `ZMod 0` is the integers,
+and for $T=0$ the descended signal is constantly $x(0)$. -/
 theorem sampleSignal_factors_zmod {T : ℝ} {N : ℕ} {x : ℝ → ℂ}
     (hx : Function.Periodic x ((N : ℝ) * T)) :
     ∃! y : ZMod N → ℂ, ∀ n : ℤ, y (n : ZMod N) = sampleSignal T x n := by
