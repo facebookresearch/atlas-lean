@@ -145,13 +145,15 @@ private theorem hasPattern_132 {n : ℕ} {σ : Equiv.Perm (Fin n)} {i j k : Fin 
     fin_cases a <;> fin_cases b <;> simp [hik, hkj, hik.trans hkj,
       hik.not_gt, hkj.not_gt, (hik.trans hkj).not_gt]
 
-private theorem rev_adjacent {n : ℕ} {i j : Fin n} (h : (j : ℕ) = i + 1) :
+/-- Reversing two consecutive positions makes their reversals consecutive in the opposite order. -/
+public theorem rev_adjacent {n : ℕ} {i j : Fin n} (h : (j : ℕ) = i + 1) :
     (i.rev : ℕ) = (j.rev : ℕ) + 1 := by
   simp only [Fin.val_rev]
   have := j.isLt
   omega
 
-private theorem king_reverse {n : ℕ} {σ : Equiv.Perm (Fin n)}
+/-- Reversing positions preserves the king condition that no adjacent entries differ by one. -/
+public theorem king_reverse {n : ℕ} {σ : Equiv.Perm (Fin n)}
     (hking : ∀ i j : Fin n, (j : ℕ) = i + 1 →
       (σ i : ℕ) + 1 ≠ σ j ∧ (σ j : ℕ) + 1 ≠ σ i) :
     ∀ i j : Fin n, (j : ℕ) = i + 1 →
