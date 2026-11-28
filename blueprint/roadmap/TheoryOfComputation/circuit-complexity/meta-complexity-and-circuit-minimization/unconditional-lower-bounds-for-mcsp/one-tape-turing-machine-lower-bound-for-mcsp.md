@@ -28,7 +28,7 @@ Known unstated proof prerequisites needed before this node is ready for formaliz
 
 ## Proof depends on
 
-None.
+- [Shannon: most Boolean functions need exponential circuits](../../shannon-s-circuit-size-lower-bound/shannon-hard-function.md)
 
 ## Sources
 

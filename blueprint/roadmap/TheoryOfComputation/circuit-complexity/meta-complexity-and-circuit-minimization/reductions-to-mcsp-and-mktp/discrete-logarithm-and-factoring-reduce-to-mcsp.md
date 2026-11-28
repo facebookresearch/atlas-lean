@@ -16,6 +16,10 @@ Kabanets and Cai draw from this the informal Corollary 3: if $\mathrm{MCSP}\in\m
 
 For discrete logarithm, apply the inversion theorem for dense KT-random oracles to $f((p,g),x)=g^x \bmod p$: with the oracle, a randomized machine recovers some discrete logarithm of $g^x$ for a $1/q(n)$ fraction of $x$. Random self-reducibility handles worst-case inputs: run the inverter on $z g^v$ for many random $v$; a success $g^u=zg^v$ gives $i=u-v$, and if every trial fails, $z$ is reported outside the orbit of $g$, which is correct with high probability. For the second theorem, an MCSP algorithm in P/poly gives a P/poly-natural property useful against P/poly (the truth tables of high circuit complexity), and the Razborov–Rudich theorem turns such a property into a distinguisher for every generator in P/poly.
 
+Known unstated proof prerequisites needed before this node is ready for formalization:
+
+- Razborov–Rudich natural proofs barrier for every strong pseudorandom generator of hardness $H(G_k) > 2^{k^{\Omega(1)}}$ (Kabanets–Cai, ECCC TR99-045, Theorem 1; the linked Razborov–Rudich page takes a keyed family with $n^2$-bit keys, which reaches only generators with exponent $\delta > 1/2$)
+
 ## Depends on
 
 - [KT complexity and the minimum KT problem MKTP](kt-complexity-and-mktp.md)
@@ -28,6 +32,7 @@ For discrete logarithm, apply the inversion theorem for dense KT-random oracles 
 - [Dense KT-random oracles invert polynomial-time functions](kt-random-oracles-invert-polynomial-time-functions.md)
 - [Natural property](../../../hierarchy-theorems-and-barriers/natural-proofs-barrier/natural-property.md)
 - [Razborov-Rudich: the natural proofs barrier](../../../hierarchy-theorems-and-barriers/natural-proofs-barrier/razborov-rudich-natural-proofs.md)
+- [Shannon: most Boolean functions need exponential circuits](../../shannon-s-circuit-size-lower-bound/shannon-hard-function.md)
 
 ## Sources
 

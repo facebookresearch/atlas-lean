@@ -27,6 +27,7 @@ Known unstated proof prerequisites needed before this node is ready for formaliz
 
 - [One-way functions imply adaptively secure pseudorandom functions](../../../pseudorandomness-and-one-way-functions/hard-core-predicates-and-stretch/one-way-functions-imply-pseudorandom-functions.md)
 - [Razborov-Rudich: the natural proofs barrier](../../../hierarchy-theorems-and-barriers/natural-proofs-barrier/razborov-rudich-natural-proofs.md)
+- [Shannon: most Boolean functions need exponential circuits](../../shannon-s-circuit-size-lower-bound/shannon-hard-function.md)
 
 ## Sources
 
