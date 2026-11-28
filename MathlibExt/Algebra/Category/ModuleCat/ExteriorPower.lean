@@ -17,8 +17,9 @@ public import Mathlib.Algebra.Category.ModuleCat.ExteriorPower
 # Exterior-power functors and scalar extension
 
 Let `R` be a commutative ring. The exterior-power functor sends an `R`-module `M` to `⋀ⁿ[R] M`
-and a linear map `f` to the map sending `m₁ ∧ ⋯ ∧ mₙ` to `f(m₁) ∧ ⋯ ∧ f(mₙ)`. Degree zero is
-naturally the regular module `R`, and degree one is naturally `M`.
+and a linear map `f` to the map sending `m₁ ∧ ⋯ ∧ mₙ` to `f(m₁) ∧ ⋯ ∧ f(mₙ)`. This file gives
+a degree-one comparison with `M` in the joint universe. Mathlib supplies its same-universe
+degree-zero comparison as `ModuleCat.exteriorPower.natIso₀`.
 
 For a commutative `R`-algebra `S`, exterior base change gives a natural isomorphism `S ⊗[R]
 ⋀ⁿ[R] M ≅ ⋀ⁿ[S] (S ⊗[R] M)`. It sends `s ⊗ (m₁ ∧ ⋯ ∧ mₙ)` to `s • ((1 ⊗ m₁) ∧ ⋯ ∧ (1 ⊗ mₙ))`.
