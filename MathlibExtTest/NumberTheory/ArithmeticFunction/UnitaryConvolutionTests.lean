@@ -43,6 +43,15 @@ example : multiplicativeOfPrimePowers (fun m => (m : ℤ) + 10) 12 = 132 := by
 
 example : multiplicativeOfPrimePowers (fun m => (m : ℤ) + 10) 0 = 0 := by decide
 
+-- The legacy constructor still simplifies at both boundary inputs, even though g 0 = 10.
+example : multiplicativeOfPrimePowers (fun m => (m : ℤ) + 10) 0 = 0 ∧
+    multiplicativeOfPrimePowers (fun m => (m : ℤ) + 10) 1 = 1 := by
+  simp
+
+-- The exponents in 72 = 2³ * 3² contribute 13 and 12, not a single value of g.
+example : multiplicativeOfPrimePowers (fun m => (m : ℤ) + 10) 72 = 156 := by
+  decide +kernel
+
 example {R : Type*} [CommSemiring R] (c : R) {p : ℕ} (hp : p.Prime) (m : ℕ) :
     powOmega c (p ^ m) = c ^ m :=
   powOmega_prime_pow c hp m

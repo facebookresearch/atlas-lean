@@ -11,6 +11,7 @@ module
 public import Mathlib.Analysis.Asymptotics.AsymptoticEquivalent
 public import Mathlib.NumberTheory.AlmostPrime
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
+public import MathlibExt.NumberTheory.PrimeCounting.AlmostPrimeCounting
 import Mathlib.Algebra.IsPrimePow
 import Mathlib.Algebra.Order.Field.GeomSum
 import Mathlib.Analysis.Asymptotics.SpecificAsymptotics
@@ -41,21 +42,6 @@ attribute [local instance] Classical.propDecidable
 
 @[expose] public section
 
-
-open Classical in
-/-- **Counting almost primes.** For natural numbers $k$ and $x$, $\pi_k(x)$ is the number of
-integers $n$ with $1 \le n \le x$ that have exactly $k$ prime factors, counted with multiplicity.
-This is the counting function in Landau's theorem on almost primes.
-
-Source: Rafael Jakimczuk, "Functions of Slow Increase and Integer Sequences,"
-Journal of Integer Sequences 13 (2010),
-`https://cs.uwaterloo.ca/journals/JIS/VOL13/Jakimczuk/jakimczuk8.tex`,
-lines 451-453, file SHA256
-`b4a7154095398fc4a1729bef9ec80c4005190c1d9ad1dd585fbd2fcdd1eae8d7`, text SHA256
-`4af87d665e5485d49e794b3927864d50a1162127411c1427d0f1a379b50b2065`,
-module `WantedExt.NumberTheory.PrimeCounting.LandauAlmostPrimeAsymptoticWanted`. -/
-noncomputable def almostPrimeCounting (k x : ℕ) : ℕ :=
-  ((Finset.Icc 1 x).filter (fun n => Nat.IsAlmostPrime k n)).card
 
 open Classical in
 /-- Sum of `1 / p` over primes `p ∈ [1, N]`. -/
@@ -818,7 +804,7 @@ private theorem lapOmegaTerm (k m : ℕ) (hm : Nat.IsAlmostPrime (k + 1) m) :
     have hcast : ((x.1 * x.2 : ℕ) : ℝ) = (m : ℝ) := by rw [hxx]
     rw [← hcast, Nat.cast_mul, mul_inv_rev, mul_comm]
   have hω : m.primeFactors.card = ArithmeticFunction.cardDistinctFactors m := by
-    rw [ArithmeticFunction.cardDistinctFactors_apply, ← Nat.toFinset_factors]
+    rw [cardDistinctFactors_eq_length_dedup_primeFactorsList, ← Nat.toFinset_factors]
     exact List.card_toFinset _
   rw [Finset.sum_congr rfl hterm, Finset.sum_const, nsmul_eq_mul, div_eq_mul_inv,
     ← hω, lapPrimeAntidiagCard m hm0]
@@ -897,7 +883,7 @@ private theorem lapRecipLower (k N : ℕ) :
     have hω : ArithmeticFunction.cardDistinctFactors m ≤ k + 1 :=
       calc ArithmeticFunction.cardDistinctFactors m
           = m.primeFactorsList.dedup.length :=
-            ArithmeticFunction.cardDistinctFactors_apply
+            cardDistinctFactors_eq_length_dedup_primeFactorsList
         _ ≤ m.primeFactorsList.length :=
             List.Sublist.length_le (List.dedup_sublist _)
         _ = ArithmeticFunction.cardFactors m :=
@@ -1694,7 +1680,7 @@ private theorem lapNonprimeVonMangoldt (m : ℕ) :
   rw [ArithmeticFunction.coe_mul_zeta_apply, Finset.sum_filter]
   apply Finset.sum_congr rfl
   intro d _
-  rw [sub_eq_add_neg, ArithmeticFunction.add_apply, ArithmeticFunction.neg_apply,
+  rw [sub_eq_add_neg, add_apply, neg_apply,
     lapRestrictApply]
   by_cases hd : Nat.Prime d
   · have hd1 : Nat.IsAlmostPrime 1 d := Nat.isAlmostPrime_one_iff.mpr hd
@@ -1707,7 +1693,7 @@ private theorem lapNonprimeDiffZero (n : ℕ) (hnp : Nat.Prime n) :
     ((ArithmeticFunction.vonMangoldt
       - lapRestrictAlmostPrime 1 ArithmeticFunction.vonMangoldt) n) = 0 := by
   have hn1 : Nat.IsAlmostPrime 1 n := Nat.isAlmostPrime_one_iff.mpr hnp
-  rw [sub_eq_add_neg, ArithmeticFunction.add_apply, ArithmeticFunction.neg_apply,
+  rw [sub_eq_add_neg, add_apply, neg_apply,
     lapRestrictApply, ite_eq_left hn1, add_neg_cancel]
 
 /-- The nonprime von Mangoldt difference is `Λ` off primes. -/
@@ -1716,7 +1702,7 @@ private theorem lapNonprimeDiffEq (n : ℕ) (hnp : ¬ Nat.Prime n) :
       - lapRestrictAlmostPrime 1 ArithmeticFunction.vonMangoldt) n)
       = ArithmeticFunction.vonMangoldt n := by
   have hn1 : ¬ Nat.IsAlmostPrime 1 n := fun h => hnp (Nat.isAlmostPrime_one_iff.mp h)
-  rw [sub_eq_add_neg, ArithmeticFunction.add_apply, ArithmeticFunction.neg_apply,
+  rw [sub_eq_add_neg, add_apply, neg_apply,
     lapRestrictApply, ite_eq_right hn1, neg_zero, add_zero]
 
 /-- The nonprime von Mangoldt double sum is `O(N)`. -/
@@ -1785,8 +1771,9 @@ private theorem lapCountingMulLogSubLe (k N : ℕ) :
   have htau : ((almostPrimeCounting (k + 1) N : ℕ):ℝ) * Real.log ((N:ℕ):ℝ)
       = ∑ m ∈ (Finset.Icc 1 N).filter (fun m => Nat.IsAlmostPrime (k + 1) m),
         Real.log ((N:ℕ):ℝ) := by
-    unfold almostPrimeCounting
-    rw [Finset.sum_const, nsmul_eq_mul]
+    rw [almostPrimeCounting_eq_card_filter,
+      ← show Finset.Icc 1 N = Finset.Ioc 0 N from Finset.Icc_succ_left_eq_Ioc 0 N,
+      Finset.sum_const, nsmul_eq_mul]
   have hdiff : ((almostPrimeCounting (k + 1) N : ℕ):ℝ) * Real.log ((N:ℕ):ℝ)
       - (∑ m ∈ (Finset.Icc 1 N).filter (fun m => Nat.IsAlmostPrime (k + 1) m),
         ∑ p ∈ m.primeFactors, Real.log ((p:ℕ):ℝ))
@@ -2033,8 +2020,9 @@ public theorem landau_almostPrimeCounting_isEquivalent (k : ℕ) (hk : 1 ≤ k) 
           exact ⟨by omega, hmp⟩
         · rintro ⟨hmN, hmP⟩
           exact ⟨⟨hmP.one_le, by omega⟩, Nat.isAlmostPrime_one_iff.mpr hmP⟩
-      unfold almostPrimeCounting
-      rw [e1, Nat.count_eq_card_filter_range, hset]
+      rw [almostPrimeCounting_eq_card_filter,
+        ← show Finset.Icc 1 N = Finset.Ioc 0 N from Finset.Icc_succ_left_eq_Ioc 0 N,
+        e1, Nat.count_eq_card_filter_range, hset]
     have eA : (fun x : ℕ => ((almostPrimeCounting 1 x : ℕ):ℝ))
         = (fun x : ℕ => ((Nat.primeCounting x : ℕ):ℝ)) := by
       funext N

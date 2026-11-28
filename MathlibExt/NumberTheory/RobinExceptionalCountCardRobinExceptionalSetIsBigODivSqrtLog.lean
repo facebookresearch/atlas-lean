@@ -15,6 +15,7 @@ import Mathlib.Analysis.Complex.ExponentialBounds
 import Mathlib.NumberTheory.Divisors
 import Mathlib.NumberTheory.Harmonic.Bounds
 public import MathlibExt.NumberTheory.RobinExceptionalCount
+import MathlibExt.NumberTheory.ArithmeticFunction.DivisorSummatoryBound
 
 /-!
 # Failures of Robin's inequality number `O(x / √log x)`
@@ -89,29 +90,6 @@ private theorem sigma_div_eq_sum_inv {n : ℕ} (hn : n ≠ 0) :
   have hkpos : 0 < n / d := Nat.div_pos (Nat.le_of_dvd (Nat.pos_of_ne_zero hn) hdvd) hdpos
   field_simp
   linarith
-
-open Finset in
-/-- Sum of `τ` over `Icc 1 N` is at most `N * (1 + log N)`. -/
-private theorem sum_tau_le (N : ℕ) :
-    ∑ n ∈ Finset.Icc 1 N, ((n.divisors.card : ℕ) : ℝ)
-      ≤ (N : ℝ) * (1 + Real.log N) := by
-  have h : ∑ n ∈ Icc 1 N, n.divisors.card = ∑ d ∈ Icc 1 N, N / d := by
-    rw [show Icc 1 N = Ioc 0 N from Icc_add_one_left_eq_Ioc 0 N]
-    simpa only [ArithmeticFunction.sigma_zero_apply] using
-      ArithmeticFunction.sum_Ioc_sigma0_eq_sum_div N
-  have hR : ∑ n ∈ Icc 1 N, ((n.divisors.card : ℕ) : ℝ) = ∑ d ∈ Icc 1 N, ((N / d : ℕ) : ℝ) := by
-    exact_mod_cast h
-  rw [hR]
-  calc ∑ d ∈ Icc 1 N, ((N / d : ℕ) : ℝ)
-        ≤ ∑ d ∈ Icc 1 N, ((N : ℝ) / (d : ℝ)) :=
-          sum_le_sum fun _ _ => Nat.cast_div_le
-    _ = (N : ℝ) * ∑ d ∈ Icc 1 N, (1 / (d : ℝ)) := by
-          rw [mul_sum]
-          apply sum_congr rfl
-          intro d _
-          rw [mul_one_div]
-    _ ≤ (N : ℝ) * (1 + Real.log N) :=
-          mul_le_mul_of_nonneg_left harmonic_real_le (Nat.cast_nonneg _)
 
 /-- If `τ(n) < Y` then `σ(n) / n < 2 + (3 / 2) * log log x`. -/
 private theorem sigma_div_lt_of_tau_lt {x : ℝ} {n K : ℕ} {Y : ℝ}
@@ -381,7 +359,7 @@ private theorem card_large_le {x : ℝ} {N M : ℕ} {Y : ℝ}
     apply Finset.sum_le_sum_of_subset_of_nonneg hsub2
     intro n _ _
     positivity
-  have hle3 := sum_tau_le N
+  have hle3 := sum_card_divisors_le N
   have hNle : (N : ℝ) ≤ x := by rw [hN]; exact Nat.floor_le hx0.le
   have hNpos : (0 : ℝ) < (N : ℝ) := by
     have h2x : (2 : ℝ) ≤ x := le_of_lt hx2
