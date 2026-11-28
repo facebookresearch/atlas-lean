@@ -80,10 +80,19 @@ public theorem choose_mul_prime_eq_prod_div_prod (p m n : ℕ) (hp : p.Prime) (h
   rw [Finset.prod_mul_distrib, Finset.prod_mul_distrib, mul_div_mul_comm, ← linearFactors,
     mul_div_assoc]
 
-/-- For a prime `p`, an offset `a : ℕ` and `0 < k`, the coefficient with indices
-`((a + k) * p, k * p)` times the product of the first `k` rising-factorial blocks equals
-`(a + k).choose k` times the product of those blocks shifted by `a`. This is the first quotient
-formula of `choose_mul_prime_eq_prod_div_prod` with its denominator cleared. -/
+/-- **Block form of Kehila's quotient formula.** Let $p$ be a prime and let $a$ and $k$ be
+natural numbers with $k \ge 1$. For $c \in \mathbb{N}$ let
+$B(c) = (cp + 1)(cp + 2) \cdots (cp + p - 1)$ be the product of the $p - 1$ integers strictly
+between $cp$ and $(c + 1)p$. Then
+
+$$\binom{(a + k)p}{kp} \prod_{j=0}^{k-1} B(j) = \binom{a + k}{k} \prod_{j=0}^{k-1} B(a + j).$$
+
+The proof of Lemma 6 gives the quotient of these block products. Since
+$B(c) = (p - 1)! \binom{(c + 1)p - 1}{p - 1}$, the identity also follows by clearing the
+first formula's denominator and multiplying both sides by $((p - 1)!)^k$.
+
+Source: Walid Kehila, *An Extension of Wolstenholme's Theorem by Binomial Coefficients*,
+INTEGERS 26 (2026), Article A32, Lemma 6 and its proof. -/
 public theorem choose_mul_prod_ascFactorial (p a k : ℕ) (hp : p.Prime) (hk : 0 < k) :
     ((a + k) * p).choose (k * p) * ∏ j ∈ Finset.range k, (j * p + 1).ascFactorial (p - 1) =
       (a + k).choose k * ∏ j ∈ Finset.range k, ((a + j) * p + 1).ascFactorial (p - 1) := by
