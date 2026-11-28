@@ -8,6 +8,8 @@ $$I(\mu) = \frac{D_{\mathrm{KL}}(\mu \parallel \mu_X \otimes \mu_Y)}{\ln 2} \in 
 
 where $D_{\mathrm{KL}}$ is the Kullback–Leibler divergence in nats.
 
+Equivalently, $\ln 2 \cdot I(\mu) = D_{\mathrm{KL}}(\mu \parallel \mu_X \otimes \mu_Y)$ in $[0, \infty]$, including the value $+\infty$.
+
 ## Sources
 
 - KL divergence from the actual product of the actual marginals.

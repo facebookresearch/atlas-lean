@@ -19,4 +19,8 @@ Lossless compression of information sources by variable-length codes, including 
 - [AEP and typical sets (finite iid)](remaining-clauses-of-aep-and-typical-sets.md)
 
 - [Gaussian rate-distortion function](gaussian-rate-distortion/README.md)
+- [Gaussian rate-distortion converse](gaussian-rate-distortion-converse/README.md)
+- [Gaussian distortion feasibility](gaussian-distortion-feasibility/README.md)
+- [The Gaussian rate-distortion function at every distortion level](the-gaussian-rate-distortion-function-at-every-d/README.md)
+- [Slepian-Wolf core: chain rule and random binning](slepian-wolf-core-chain-rule-and-random-binning/README.md)
 - [Prefix-Free Compression Bounds](prefix-free-compression-bounds/README.md)

@@ -18,7 +18,7 @@ where $\lambda_1 \ge \dots \ge \lambda_n \ge 0$ are the eigenvalues of $R$ and t
 
 ## Proof depends on
 
-- [Expected output quadratic form equals a trace](../../../../InformationTheory/not-yet-classified/part-01/linear-gaussian-all-law-converse/integral-output-quadratic-eq-trace.md): $\mathbb E[y^\top A y] = \operatorname{tr}(A\operatorname{Cov}(y))$ for unbiasedness
+- [Expected output quadratic form equals a trace](../../../../InformationTheory/channel-coding/gaussian-mimo-channel/log-determinant-converse-for-the-linear-gaussian/integral-output-quadratic-eq-trace.md): $\mathbb E[y^\top A y] = \operatorname{tr}(A\operatorname{Cov}(y))$ for unbiasedness
 
 ## Expansion
 

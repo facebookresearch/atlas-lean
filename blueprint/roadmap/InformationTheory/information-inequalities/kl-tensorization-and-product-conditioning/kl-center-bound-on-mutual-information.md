@@ -15,11 +15,11 @@ The identity is the reference-output decomposition of mutual information with th
 ## Depends on
 
 - [Mutual information of a finite joint law](../../entropy-and-mutual-information/conditional-mutual-information/finite-mutual-information.md)
-- [Reference-output decomposition of mutual information](../../not-yet-classified/part-01/reference-output-kl/kl-div-prod-reference-eq-measure-mutual.md)
+- [Reference-output decomposition of mutual information](../gaussian-channels-and-kl-divergence/reference-output-kl-identity/kl-div-prod-reference-eq-measure-mutual.md)
 
 ## Proof depends on
 
-- [Reference-output decomposition of mutual information](../../not-yet-classified/part-01/reference-output-kl/kl-div-prod-reference-eq-measure-mutual.md)
+- [Reference-output decomposition of mutual information](../gaussian-channels-and-kl-divergence/reference-output-kl-identity/kl-div-prod-reference-eq-measure-mutual.md)
 - [Gibbs' inequality](../../entropy-and-mutual-information/shannon-entropy-and-kullback-leibler-divergence/shannon-entropy-le-cross-entropy.md)
 
 ## Sources

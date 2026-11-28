@@ -9,3 +9,7 @@
 - [Dirac Input](dirac-input.md)
 - [Gaussian Input](gaussian-input.md)
 - [Antipodal Law](antipodal-law.md)
+
+## Subtopics
+
+- [Scalar AWGN variational capacity bound](scalar-awgn-variational-capacity-bound/README.md)
