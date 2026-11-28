@@ -4,7 +4,7 @@ Bimodal satisfiability over products of finite linear orders with difference fra
 
 **Theorem (Hampson and Kurucz).** $\mathcal{C}_{\mathrm{lin}}^{\mathrm{fin}} \times \mathcal{C}_{\mathrm{diff}}$-satisfiability, whether a given bimodal formula is satisfied in some model based on the [product](products-of-linear-orders-and-difference-frames.md) of a finite linear order with a difference frame, is recursively enumerable but undecidable.
 
-Consequently satisfiability of one-variable first-order linear temporal logic with counting to two is recursively enumerable but undecidable over the class of all finite linear orders, with constant or decreasing domains (Corollary 3.4 of the source). With expanding domains over finite linear orders the source shows the problem is Ackermann-hard (Corollary 5.4; Theorem 5.3 is its bimodal form, Ackermann-hardness of $\mathcal{C}_{\mathrm{lin}} \times \mathcal{C}_{\mathrm{diff}}$-satisfiability).
+Consequently satisfiability of one-variable first-order linear temporal logic with counting to two is recursively enumerable but undecidable over the class of all finite linear orders, with constant or decreasing domains (Corollary 3.4 of the source). With expanding domains over finite linear orders the source shows the problem is Ackermann-hard (Corollary 5.4; Theorem 5.3 is its bimodal form, for expanding 2-frames over finite linear orders rather than products).
 
 ## Depends on
 
