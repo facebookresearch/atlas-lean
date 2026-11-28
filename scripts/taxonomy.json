@@ -2228,6 +2228,7 @@
   "CSLibExt/MachineLearning/GraphicalModels/GlobalMarkov": {"to": "ComputerScience/machine-learning/probabilistic-graphical-models", "title": "Bayesian networks"},
   "CSLibExt/MachineLearning/GraphicalModels/MarkovBlanket": {"to": "ComputerScience/machine-learning/probabilistic-graphical-models", "title": "Bayesian networks"},
   "CSLibExt/MachineLearning/GraphicalModels/MarkovFactorization": {"to": "ComputerScience/machine-learning/probabilistic-graphical-models", "title": "Bayesian networks"},
+  "CSLibExt/MachineLearning/GraphicalModels/MediationFormula": {"to": "ComputerScience/machine-learning/probabilistic-graphical-models", "title": "Natural direct and indirect effects"},
   "CSLibExt/MachineLearning/GraphicalModels/StructuralCausalModel": {"to": "ComputerScience/machine-learning/probabilistic-graphical-models", "title": "Structural causal models and counterfactuals"},
   "CSLibExt/MachineLearning/GraphicalModels/StructuralCausalModels": {"to": "ComputerScience/machine-learning/probabilistic-graphical-models", "title": "Structural causal models and counterfactuals"},
   "CSLibExt/MachineLearning/GraphicalModels/VariableElimination": {"to": "ComputerScience/machine-learning/probabilistic-graphical-models", "title": "Variable elimination and belief propagation"},
