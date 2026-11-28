@@ -31,8 +31,9 @@ words $t_1 . a . 1 . b . s . b . 1 . a . t_2 . a$ leaves those with $t_1 + t_2 =
 reading $t_1 . a . 1 . b . s . b . 1 . a$ every clock holds $t_1 + s + 2$, $2 + s$, $1 + s$ or $1$, so none of them remembers
 $t_1$. For undecidability, given $L = L(\mathcal{A})$ over $\Sigma$ and a new letter $c$, let $\mathcal{L}$ be the union of
 $L . (\mathcal{R} \times \{c\}) . (\mathcal{R} \times \Sigma)^\star$, the timed words with no $c$ or at least two $c$'s, and
-$(\mathcal{R} \times \Sigma)^\star . 1 . c . R_1$. If $L$ is universal, $\mathcal{L} \bowtie R_2$ is the set of all timed words
-over $\Sigma \cup \{c\}$; otherwise a word $u \notin L$ forces $\mathcal{L} \bowtie R_2$ to contain, after $u . 1 . c$, the
+$(\mathcal{R} \times \Sigma)^\star . 1 . c . R_1$. If $L$ is universal, $\mathcal{L}$ is the set of all timed words over $\Sigma \cup \{c\}$, so $\mathcal{L} \bowtie R_2$ is the set of
+timed words containing a letter $1 . b$ followed later by a letter $s . b$; this is timed regular (the source says it is the set of
+all timed words, which is not the case, since each of its words contains the two $b$'s, but the theorem is unaffected); otherwise a word $u \notin L$ forces $\mathcal{L} \bowtie R_2$ to contain, after $u . 1 . c$, the
 non-regular language above, so it is not timed regular. This reduces the universality problem for timed automata over finite
 timed words, which is undecidable (Alur and Dill).
 

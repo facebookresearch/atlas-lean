@@ -5,8 +5,7 @@ Deciding whether two infinitary rational relations, given by Büchi transducers,
 **Theorem.** The set of pairs $(z, z')$ of (codes of) Büchi transducers such that $R(\mathcal{T}_z) \cap R(\mathcal{T}_{z'}) = \emptyset$,
 in the sense of [infinitary rational relations](infinitary-rational-relations-and-omega-rational.md), is [$\Pi^1_1$-complete](../../../../degrees-and-hierarchies/analytical-hierarchy/analytical-hierarchy.md).
 
-Equivalently, non-emptiness of the intersection of two infinitary rational relations is $\Sigma^1_1$-complete. For relations
-between finite words, disjointness of rational relations is undecidable; the source also
+Equivalently, non-emptiness of the intersection of two infinitary rational relations is $\Sigma^1_1$-complete. The source also
 recalls that universality, equivalence and inclusion of infinitary rational relations are $\Pi^1_2$-complete.
 
 ## Depends on

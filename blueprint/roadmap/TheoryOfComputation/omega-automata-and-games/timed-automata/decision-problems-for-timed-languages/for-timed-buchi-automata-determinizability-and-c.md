@@ -13,9 +13,10 @@ it accepts. Each of the following problems is $\Pi^1_1$-hard:
    Büchi automaton?
 
 The bounded-resource versions, which ask for a witness in $TBA(n, K)$, the timed Büchi automata with at most $n$ clocks and
-constants at most $K$, are $\Pi^1_1$-hard as well. In particular all these problems are undecidable. The source writes
-infinite timed words through the delays between letters and works with the timed Büchi automata of Alur and Dill, whose
-timed words are the ones linked above.
+constants at most $K$, are $\Pi^1_1$-hard as well. In particular all these problems are undecidable. Following the source (Section 2), an infinite timed word is a sequence
+$t_1 a_1 t_2 a_2 \cdots$ of positive delays $t_i$ and letters $a_i$, with no condition that time diverges, and complements
+are taken in the set $(\mathbb{R}_{>0} \times \Sigma)^\omega$ of all such words; the [linked page](../timed-words-and-timed-languages.md)
+instead requires the time stamps to be unbounded, a convention the source does not use.
 
 ## Depends on
 
@@ -28,6 +29,8 @@ timed words are the ones linked above.
 ## Proof depends on
 
 - [Universality of timed automata is undecidable](../universality-of-timed-automata-is-undecidable.md)
+- [Deterministic timed Muller automata are closed under Boolean operations](../deterministic-timed-muller-automata-are-closed-under-boolean.md)
+- [Timed Büchi and timed Muller automata accept the same timed languages](../timed-buchi-and-timed-muller-automata-are-equally-expressive.md)
 
 ## Expansion
 
@@ -38,8 +41,11 @@ $\mathcal{L}$ be the union of $A . (\mathcal{R} \times \{c\}) . (\mathcal{R} \ti
 no $c$ or at least two $c$'s, and $(\mathcal{R} \times \Sigma)^\star . (\mathcal{R} \times \{c\}) . L$. If $L$ is universal,
 $\mathcal{L}$ is universal and is accepted, as is its empty complement, by a deterministic timed Büchi automaton without clocks.
 Otherwise the complement of $\mathcal{L}$ is $A^c . (\mathcal{R} \times \{c\}) . L^c$ with $L^c$ nonempty, which no timed Büchi
-automaton accepts, because it would have to check $A^c$ on the prefix; since deterministic timed Büchi languages are closed
-under complement, $\mathcal{L}$ is not deterministic either.
+automaton accepts, because it would have to check $A^c$ on the prefix. Then $\mathcal{L}$ is not deterministic either: a deterministic timed
+Büchi automaton is a deterministic timed Muller automaton, the languages of deterministic timed Muller automata are closed
+under complement, and timed Muller automata accept only timed $\omega$-regular languages, so the complement of $\mathcal{L}$
+would be timed $\omega$-regular (the source cites Alur and Dill for the closure of deterministic regular timed
+$\omega$-languages under complement).
 
 ## Sources
 

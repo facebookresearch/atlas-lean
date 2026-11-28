@@ -18,7 +18,7 @@ None.
 
 ## Expansion
 
-The proof reduces the mixed modification [Post correspondence problem](../../../../undecidable-problems/post-correspondence-problem/pcp.md), undecidable for alphabets of at least nine letters (Theorem 8 of the source): given morphisms $h, g$, is there a word $x_1 \cdots x_k$ and a choice $h_i, g_i \in \{h, g\}$, not all equal, with $h_1(x_1) \cdots h_k(x_k) = g_1(x_1) \cdots g_k(x_k)$? Words are encoded as numbers in a base, and a four-state PFA with upper-triangular structure, hence linearly ambiguous, assigns to an input a probability determined by the encoded pair of images, so that two distinct inputs have the same acceptance probability iff the instance has a solution.
+The proof reduces the mixed modification [Post correspondence problem](../../../../undecidable-problems/post-correspondence-problem/pcp.md), undecidable for alphabets of at least nine letters (Theorem 8 of the source): given morphisms $h, g$, is there a word $x_1 \cdots x_k$ and a choice $h_i, g_i \in \{h, g\}$, not all equal, with $h_1(x_1) \cdots h_k(x_k) = g_1(x_1) \cdots g_k(x_k)$? Words are encoded as numbers in a base, and a four-state PFA with upper-triangular structure, hence linearly ambiguous, assigns to an input a probability determined by the encoded pair of images, so that two distinct inputs have the same acceptance probability iff the instance has a solution. A good expansion adds and links a page for the undecidability of the mixed modification Post correspondence problem (Theorem 8 of the source).
 
 ## Sources
 

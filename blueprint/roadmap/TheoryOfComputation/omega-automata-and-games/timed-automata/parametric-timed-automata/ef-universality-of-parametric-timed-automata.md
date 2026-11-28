@@ -30,7 +30,8 @@ EF-emptiness proofs, without the final gadget, and adds an error location that t
 large to encode a reached counter value $c$ (that is, $1 - a c < 0$); a second parameter $b$ keeps every reachable symbolic
 state integer-points. If a counter grows unbounded, every valuation $a > 0$ eventually overflows and reaches the error
 location; if the counters stay below $c$, the valuation $a = 1/(c + 1)$, $b = 1$ never does. So the error location is
-reachable for all valuations exactly when the counters are unbounded.
+reachable for all valuations exactly when the counters are unbounded. A good expansion adds and links a page for the
+undecidability of the boundedness problem of two-counter machines.
 
 ## Sources
 

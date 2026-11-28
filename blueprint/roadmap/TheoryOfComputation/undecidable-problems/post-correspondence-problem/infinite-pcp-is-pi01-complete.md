@@ -4,7 +4,7 @@ Deciding whether two morphisms agree on some infinite word is $\Pi^0_1$-complete
 
 Instances are pairs $(h,g)$ of morphisms $h,g:A^*\to B^*$ of free monoids, and $(h,g)$ has an *infinite solution* if some $\omega\in A^\omega$ has $h(u)$ and $g(u)$ comparable (one a prefix of the other) for every finite prefix $u$ of $\omega$; see [the infinite Post correspondence problem](the-infinite-post-correspondence-problem.md).
 
-**Theorem.** The set of instances of the infinite Post correspondence problem ($\omega\mathrm{PCP}$) that have an infinite solution, coded as a set of natural numbers, is $\Pi^0_1$-complete.
+**Theorem.** The set of instances of the infinite Post correspondence problem ($\omega\mathrm{PCP}$) that have an infinite solution, coded as a set of natural numbers, is $\Pi^0_1$-complete: it belongs to the class $\Pi^0_1$, and every $\Pi^0_1$ set of natural numbers is many-one reducible to it, that is, reduces to it by a total computable function.
 
 Consequently $\omega\mathrm{PCP}$ is co-recursively enumerable but not recursively enumerable, while the [Post correspondence problem](pcp.md) itself is $\Sigma^0_1$-complete; both lie at the first level of the arithmetical hierarchy.
 

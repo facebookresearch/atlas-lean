@@ -19,6 +19,7 @@ The source shows that synthesis of a computable uniformizer becomes decidable fo
 
 - [The Post correspondence problem is undecidable](../../../../undecidable-problems/post-correspondence-problem/exists-not-tm2-decidable-pcp.md)
 - [Halting is undecidable](../../../../computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halts.md)
+- [The halting problem is undecidable by multi-stack machines](../../../../computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halting.md)
 
 ## Expansion
 

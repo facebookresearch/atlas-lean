@@ -18,8 +18,9 @@ Without the automaton (or with $L(\mathcal{A}) = \{1, \dots, n\}^\omega$) this i
 **Theorem.** The set of (codes of) instances of $\omega$-PCP(Reg) that have a solution is
 [$\Sigma^1_1$-complete](../../degrees-and-hierarchies/analytical-hierarchy/analytical-hierarchy.md).
 
-The plain infinite Post correspondence problem is undecidable (Ruohonen; Gire), and so is the finite one; restricting
-solutions to a regular ω-language raises the complexity from the arithmetical hierarchy to $\Sigma^1_1$-completeness. The
+The plain infinite Post correspondence problem is undecidable (Ruohonen; Gire), and so is the finite one. The plain infinite problem is
+[$\Pi^0_1$-complete](infinite-pcp-is-pi01-complete.md) (Finkel), at the first level of the arithmetical hierarchy, so restricting solutions to
+a regular ω-language raises the complexity from there to $\Sigma^1_1$-completeness. The
 source does not fix the size of $\Gamma$ in the instances produced by the reduction beyond what the Turing machine requires.
 
 ## Depends on

@@ -29,7 +29,7 @@ philosopher takes the two forks is controllable.
 
 ## Depends on
 
-- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+None.
 
 ## Proof depends on
 

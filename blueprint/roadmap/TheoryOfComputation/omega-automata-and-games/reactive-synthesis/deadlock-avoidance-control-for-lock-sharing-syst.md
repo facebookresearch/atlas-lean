@@ -32,7 +32,7 @@ $P$ transmits a bit $b$ by the pattern $\mathrm{acq}(s_b)\,\mathrm{rel}(p)\,\mat
 and symmetrically for $\bar P$. The environment tells $C$ either to check that the two bit sequences are equal or to guess indices
 $i_1, i_2, \dots$ and check that the sequences are $\alpha_{i_1} \alpha_{i_2} \cdots$ and $\beta_{i_1} \beta_{i_2} \cdots$; any detected
 mismatch leads to a deadlock. Since $P$ and $\bar P$ do not know which check is made, they can avoid deadlocks forever exactly when they
-send an infinite solution.
+send an infinite solution. The linked undecidability result builds instances whose target alphabet has four letters; recoding each target letter by a binary word of length $2$ (an injective morphism of uniform length) gives morphisms into $\{0, 1\}^*$ with the same infinite solutions, which is the form used here.
 
 ## Sources
 

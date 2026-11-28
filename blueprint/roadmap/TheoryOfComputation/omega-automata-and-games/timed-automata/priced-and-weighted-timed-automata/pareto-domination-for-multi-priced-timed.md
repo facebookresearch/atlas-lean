@@ -2,7 +2,7 @@
 
 No algorithm decides whether a timed automaton with several cost and reward observers can reach a target location with accumulated costs at most, and rewards at least, a given vector, although the problem is decidable with at most three observers.
 
-A *multi-priced timed automaton* is a timed automaton (locations, clocks, edges with clock constraints and resets, accepting locations; see [timed automata over finite timed words](../decision-problems-for-timed-languages/timed-automata-over-finite-timed-words.md)) with a finite set $\mathcal Y$ of *observers* and a rate function giving each location a vector of nonnegative integer rates. Along a run, each observer accumulates the time spent in each location multiplied by its rate there. The observers are partitioned into *cost* variables, to be minimized, and *reward* variables, to be maximized; $\gamma'$ *dominates* $\gamma$ if $\gamma'(y)\le\gamma(y)$ for every cost and $\gamma'(y)\ge\gamma(y)$ for every reward. The *Pareto Domination Problem* asks, given the automaton and a target $\gamma\in\mathbb R^{\mathcal Y}$, whether some accepting run accumulates a vector that dominates $\gamma$.
+A *multi-priced timed automaton* is a timed automaton without input letters (an initial location, accepting locations, clocks, and edges with clock constraints and resets, where clock constraints are conjunctions of $x \le k$ and $x \ge k$ with $k \in \mathbb N$, Section 3 of the source; compare [timed automata over finite timed words](../decision-problems-for-timed-languages/timed-automata-over-finite-timed-words.md)) with a finite set $\mathcal Y$ of *observers* and a rate function giving each location a vector of nonnegative integer rates. Along a run, each observer accumulates the time spent in each location multiplied by its rate there. The observers are partitioned into *cost* variables, to be minimized, and *reward* variables, to be maximized; $\gamma'$ *dominates* $\gamma$ if $\gamma'(y)\le\gamma(y)$ for every cost and $\gamma'(y)\ge\gamma(y)$ for every reward. The *Pareto Domination Problem* asks, given the automaton and a target $\gamma\in\mathbb R^{\mathcal Y}$, whether some accepting run accumulates a vector that dominates $\gamma$.
 
 **Theorem.** The Pareto Domination Problem for multi-priced timed automata is undecidable (Theorem 3 of the source); the reduction yields undecidability for some fixed, large number of observers.
 
@@ -18,6 +18,7 @@ By contrast, the problem is decidable for automata with at most three observers,
 ## Proof depends on
 
 - [Davis–Putnam–Robinson–Matiyasevich theorem](../../../undecidable-problems/diophantine-sets-and-hilbert-s-tenth-problem/dprm-theorem.md)
+- [Halting is undecidable](../../../computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halts.md)
 
 ## Expansion
 

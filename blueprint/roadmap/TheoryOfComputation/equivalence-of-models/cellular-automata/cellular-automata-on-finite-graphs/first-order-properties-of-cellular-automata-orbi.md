@@ -11,27 +11,26 @@ $\Sigma^1_1$-hard.
    $\mathcal{CA}(\phi', G)$ is computable if the group is virtually free and $\Sigma^1_1$-hard otherwise (Corollary 3 of the source).
 
 Item 1 is a counterpart, for local interaction rules and dynamical properties, of Trakhtenbrot's theorem. The source also shows that for a fixed $D$ there is a fixed first-order
-sentence whose model checking problem on a connected graph of degree at most $D$ is computable exactly when the graph has finite treewidth.
+sentence whose model checking problem on a connected graph of degree at most $D$, typically infinite, is computable exactly when the graph has finite treewidth: it has a tree decomposition, over a possibly infinite tree, whose bags all have at most $k + 1$ vertices for some $k$.
 
 ## Depends on
 
 - [Cellular automata on labeled graphs and first-order logic on their orbits](cellular-automata-on-labeled-graphs-and-first-or.md)
 - [Cayley digraph](../../../../GraphTheory/algebraic-graph-theory/part-01/directed-cayley-graph.md)
-- [Tree-width at most $k$](../../../../GraphTheory/planar-graphs-and-minors/tree-width/has-treewidth-at-most.md)
 - [Analytical hierarchy](../../../degrees-and-hierarchies/analytical-hierarchy/analytical-hierarchy.md)
 - [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
-- [The tiling problem is undecidable](../../../undecidable-problems/wang-tiles/the-tiling-problem-is-undecidable.md)
+- [The halting problem is undecidable by multi-stack machines](../../../computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halting.md)
 
 ## Expansion
 
 Both items rest on an effective translation of monadic second-order sentences about labeled graphs into pairs of a first-order sentence on orbits and a local rule, uniformly
 enough that a fixed first-order sentence suffices. For item 1, finite rectangular grids, their corners and Turing machine computations written on them as domino colorings are
-definable in monadic second-order logic, so a graph satisfying the translated property exists exactly when the machine halts. For item 2, the Cayley graph of a finitely
+definable in monadic second-order logic, so a graph satisfying the translated property exists exactly when the machine halts from the empty tape at the rightmost cell it has visited, a variant of the halting problem that is undecidable by a direct transformation of machines (proof of Corollary 4). For item 2, the Cayley graph of a finitely
 generated group that is not virtually free contains the infinite grid as a minor (it has a thick end, and Halin's grid theorem applies), and a monadic second-order sentence
-over such a minor encodes the recurring domino problem, which is $\Sigma^1_1$-hard (Harel); for virtually free groups, monadic second-order logic is decidable (Muller and Schupp).
+over such a minor encodes the recurring domino problem, which is $\Sigma^1_1$-hard (Harel); for virtually free groups, monadic second-order logic is decidable (Muller and Schupp). A good expansion adds and links pages for the halting problem of Turing machines from the empty tape, for Harel's $\Sigma^1_1$-hardness of the recurring domino problem and for the two translations (Theorems 4 and 5 of the source).
 
 ## Sources
 

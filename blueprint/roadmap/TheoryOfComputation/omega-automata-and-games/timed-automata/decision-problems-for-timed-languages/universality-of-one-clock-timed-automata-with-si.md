@@ -10,6 +10,8 @@ silent transitions are allowed, and also over infinite timed words with Büchi a
    over the alphabet $\Sigma \cup \{\varepsilon\}$, yields it when its $\varepsilon$-letters are erased.
 2. The universality problem for one-clock nondeterministic [timed Büchi automata](../timed-buchi-automata.md) over infinite timed words is undecidable.
 
+The source uses its own timed words (Section 2 and Section 6): a finite timed word is a sequence $(a_1, t_1) \cdots (a_n, t_n)$ of letters with nonnegative delays (so several letters may occur at the same time), clock constraints compare a clock with a nonnegative integer, and a timed $\omega$-word has strictly increasing time stamps $t_1 < t_2 < \cdots$ with no condition that time diverges. The linked pages use positive delays and unbounded time stamps respectively; the theorem is meant in the source's conventions.
+
 Consequently, emptiness is undecidable for one-clock alternating timed automata over infinite words with Büchi acceptance. In contrast, over finite timed
 words emptiness of one-clock alternating timed automata without silent transitions is decidable, though not primitive recursive, and the same lower bound
 holds for universality of one-clock nondeterministic timed automata.
@@ -30,7 +32,7 @@ For item 1, the proof reduces reachability for perfect channel systems, which is
 the target configuration. For item 2, the proof
 reduces the halting problem of a deterministic Turing machine started on the empty tape, modified so that after accepting it clears its tape and restarts; the
 machine halts exactly when it has an infinite, repeatedly accepting computation, which is encoded as a timed $\omega$-word, and a one-clock Büchi automaton accepts
-exactly the timed $\omega$-words that do not encode such a computation. A complete expansion links a page for the undecidability of reachability in perfect channel systems over at least two letters (Brand and Zafiropulo; Theorem 6 as cited in the source), the result item 1 starts from.
+exactly the timed $\omega$-words that do not encode such a computation. A complete expansion links a page for the undecidability of reachability in perfect channel systems over at least two letters (Brand and Zafiropulo; Theorem 6 as cited in the source), the result item 1 starts from. The linked halting result is for some machine on its inputs; item 2 needs halting from the empty tape (proof of Theorem 7 of the source), and a good expansion also links a page for that form.
 
 ## Sources
 

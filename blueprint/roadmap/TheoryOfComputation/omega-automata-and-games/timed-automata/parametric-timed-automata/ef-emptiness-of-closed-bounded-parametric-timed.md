@@ -10,7 +10,7 @@ EF-emptiness are as in [parametric timed automata](parametric-timed-automata.md)
 
 The encoding for bounded PTAs uses three clocks and one parameter, which can be bounded by $[0, 1]$. For general (unbounded) PTAs the source recalls
 undecidability from Alur, Henzinger and Vardi; the source also shows that EF-emptiness is undecidable for integer-points PTAs, while it
-is decidable for bounded integer-points PTAs and for L/U-PTAs.
+is decidable for bounded integer-points PTAs. EF-emptiness is decidable for L/U-PTAs (Hune, Romijn, Stoelinga and Vaandrager, as the source recalls in Section 1.1.2), and the source proves decidability of EF-emptiness and EF-universality for bounded L/U-PTAs (Theorem 4.15).
 
 ## Depends on
 
@@ -34,4 +34,4 @@ boundary valuations cannot reach the target.
 
 ## Sources
 
-- É. André, D. Lime, O. H. Roux, "Reachability and liveness in parametric timed automata", *Logical Methods in Computer Science* 18(1), article 31, 2022, doi:[10.46298/lmcs-18(1:31)2022](https://doi.org/10.46298/lmcs-18(1:31)2022). Numbering of the version read, arXiv:2004.09171v4: Theorem 4.1 (bounded PTAs), Theorem 4.3 (closed bounded PTAs), Theorem 4.14 (integer-points PTAs), Theorem 4.4 (bounded integer-points PTAs) the summary of Section 6, and Section 1 (the earlier undecidability of EF-emptiness for general PTAs).
+- É. André, D. Lime, O. H. Roux, "Reachability and liveness in parametric timed automata", *Logical Methods in Computer Science* 18(1), article 31, 2022, doi:[10.46298/lmcs-18(1:31)2022](https://doi.org/10.46298/lmcs-18(1:31)2022). Numbering of the version read, arXiv:2004.09171v4: Theorem 4.1 (bounded PTAs), Theorem 4.3 (closed bounded PTAs), Theorem 4.14 (integer-points PTAs), Theorem 4.4 (bounded integer-points PTAs) the summary of Section 6, Theorem 4.15 (bounded L/U-PTAs), and Section 1, including Section 1.1.2 (the earlier undecidability of EF-emptiness for general PTAs and decidability for L/U-PTAs).

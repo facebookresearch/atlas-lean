@@ -8,7 +8,7 @@ For concurrent stochastic games over a lossy channel whose players have almost-s
 
 **Proposition (Stan, Najib, Lin and Abdulla).** When the objectives of the players and the property $\Gamma$ are almost-sure LTL properties, E-Core and A-Core are undecidable (Proposition 17 of the source).
 
-The same paper shows that both problems become decidable when the objectives are almost-sure reachability or safety and $\Gamma$ is an almost-sure conjunction of reachability, safety or Büchi conditions.
+The same paper shows that both problems become decidable when the objectives are almost-sure reachability or safety and $\Gamma = \mathsf{AS}(\varphi)$ for a homogeneous conjunction $\varphi$, of the form $\bigwedge_i \Diamond R_i$, $\bigwedge_i \Box R_i$ or $\bigwedge_i \Box\Diamond R_i$ (Theorem 32).
 
 ## Depends on
 

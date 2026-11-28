@@ -35,8 +35,10 @@ automaton $\mathcal{A}$ with transition probabilities $0$, $\frac{1}{2}$ or $1$,
 alphabet of $\mathcal{A}$ extended with two letters, with two copies of the states of $\mathcal{A}$ and three further states, such
 that some word $w$ has $P_{\mathcal{A}}(w) > \frac{1}{2}$ if and only if some two-tier sequence $(u v^n)^{2^n}$ has acceptance
 probability in $\mathcal{B}$ tending to $1$. Emptiness, whether some word is accepted with probability above $\frac{1}{2}$, is
-undecidable (Paz).
+undecidable (Paz), and the reduction needs it for automata with transition probabilities $0$, $\frac12$ and $1$, which the proof
+of Gimbert and Oualhadj gives (as the source notes before the construction). A good expansion adds and links a page for that
+restricted emptiness result.
 
 ## Sources
 
-- N. Fijalkow, "Profinite techniques for probabilistic automata and the Markov Monoid algorithm", *Theoretical Computer Science* 680:1–14, 2017, doi:10.1016/j.tcs.2017.04.006; Section 5 of the version arXiv:1501.02997v4: Theorem 7, "Undecidability of the two-tier value 1 problem", with its proof, and the discussion of its significance in the conclusion.
+- N. Fijalkow, "Profinite techniques for probabilistic automata and the Markov Monoid algorithm", *Theoretical Computer Science* 680:1–14, 2017, doi:10.1016/j.tcs.2017.04.006; Section 5 of the version arXiv:1501.02997v4: Theorem 7, "Undecidability of the two-tier value 1 problem", with its proof, in Section 5.1, and the discussion of its significance in Section 5.2 ("Combining the Two Results").

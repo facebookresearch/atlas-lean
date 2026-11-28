@@ -2,7 +2,7 @@
 
 No algorithm decides, for priced timed automata whose waiting prices are nonlinear functions of the clocks and the delay, whether a target location is reachable with optimal cost within a given budget.
 
-**Theorem.** The cost-optimal reachability problem for [priced timed automata with nonlinear prices](priced-timed-automata-with-nonlinear-prices.md) is undecidable (Theorem 2.1 of the source). Since a general price function is not a finite object, the statement is meant for the prices of the reduction: no algorithm decides, given a priced timed automaton with four clocks whose waiting prices are polynomials with rational coefficients in the clock values and the delay, given by their coefficients, together with locations $\ell,\ell'$, whether $\mathrm{OptCost}(\ell,\ell')\le 0$.
+**Theorem.** The cost-optimal reachability problem for [priced timed automata with nonlinear prices](priced-timed-automata-with-nonlinear-prices.md) is undecidable (Theorem 2.1 of the source). Since a general price function is not a finite object, the statement is meant for the prices of the reduction: no algorithm decides, given a priced timed automaton with four clocks whose waiting prices are nonnegative polynomials with rational coefficients in the clock values and the delay (as the linked definition and the source require), given by their coefficients, together with locations $\ell,\ell'$, whether $\mathrm{OptCost}(\ell,\ell')\le 0$.
 
 The prices of the reduction are squares of affine expressions in one clock and the delay, such as $(1-x-2t)^2$ and $(1-x-t/2)^2$. For linear and piecewise-linear prices the problem is PSPACE-complete.
 

@@ -15,11 +15,11 @@ The same paper shows that NPAs are strictly more expressive than deterministic p
 
 ## Proof depends on
 
-- [The emptiness problem for probabilistic automata is undecidable](../emptiness-problem-for-probabilistic-automata.md)
+- [Probabilistic automaton emptiness is undecidable for a fixed automaton](probabilistic-automaton-emptiness-is-undecidable.md)
 
 ## Expansion
 
-The proof reduces a threshold problem for deterministic probabilistic automata. Given such an automaton $X$ and $\kappa \in [0, 1]$, one forms an NPA $Y$ whose initial state has output $\kappa$ and, on every letter, may either move to a state that keeps output $\kappa$ forever or enter $X$, and an NPA $Z$ with a single state of output $\kappa$ looping on every letter. Then $Y$ and $Z$ both give weight $\kappa$ to the empty word, and on a word $av$ the automaton $Z$ gives $\kappa$ while $Y$ gives the maximum (or minimum) of $\kappa$ and the weight of $v$ in $X$. So under the max semantics $Y$ and $Z$ are equivalent if and only if $X$ gives every word weight at most $\kappa$, and under the min semantics if and only if $X$ gives every word weight at least $\kappa$. Both threshold problems are undecidable for alphabets with at least two letters (Blondel and Canterini, as the source recalls); the first is the complement of the emptiness problem for probabilistic automata.
+The proof reduces a threshold problem for deterministic probabilistic automata. Given such an automaton $X$ and $\kappa \in [0, 1]$, one forms an NPA $Y$ whose initial state has output $\kappa$ and, on every letter, may either move to a state that keeps output $\kappa$ forever or enter $X$, and an NPA $Z$ with a single state of output $\kappa$ looping on every letter. Then $Y$ and $Z$ both give weight $\kappa$ to the empty word, and on a word $av$ the automaton $Z$ gives $\kappa$ while $Y$ gives the maximum (or minimum) of $\kappa$ and the weight of $v$ in $X$. So under the max semantics $Y$ and $Z$ are equivalent if and only if $X$ gives every word weight at most $\kappa$, and under the min semantics if and only if $X$ gives every word weight at least $\kappa$. Both threshold problems are undecidable for alphabets with at least two letters (Blondel and Canterini, Theorem 2.1, as the source recalls). The first is the complement of the emptiness problem for probabilistic automata with two letters, which Rote's two-letter automata also show undecidable; the second reduces to it by exchanging accepting and non-accepting states, which replaces the weight $x$ of every word by $1 - x$.
 
 ## Sources
 

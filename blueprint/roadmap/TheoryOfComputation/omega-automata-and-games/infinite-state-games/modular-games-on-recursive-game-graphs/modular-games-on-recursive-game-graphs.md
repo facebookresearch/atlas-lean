@@ -28,7 +28,7 @@ of $G$. In the *deterministic* version each $\delta(q, \alpha, \gamma)$ has at m
 
 ## Depends on
 
-- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+None.
 
 ## Proof depends on
 

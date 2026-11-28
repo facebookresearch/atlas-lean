@@ -11,7 +11,7 @@ is $|j|$.
 environment and one data variable of the system, and every local test has distance at most $3$ (Theorem 4.1).
 
 In contrast, the problem becomes decidable when the formula contains no data variable of the environment (*single-sided* games), by a reduction to single-sided games on vector addition systems with states, and
-even with nested formulas that use only past modalities (with nested formulas that use future modalities they are undecidable again); single-sided games with future obligations, $\mathrm{LRV}[\top, \approx, \rightarrow]$, are undecidable again.
+even with nested formulas that use only past modalities. Single-sided games stay undecidable when nested formulas may use the future modality $\mathsf{F}$, even without future obligations (Section 8, by Lemma 8.2 from the reset lossy counter machines of Theorem 8.1), and single-sided games with future obligations, $\mathrm{LRV}[\top, \approx, \rightarrow]$, are undecidable too (Theorem 6.1).
 
 ## Depends on
 
@@ -31,4 +31,4 @@ positions, which needs local tests of distance at most $3$.
 
 ## Sources
 
-- D. Figueira, A. Majumdar and M. Praveen, "Playing with repetitions in data words using energy games", *Logical Methods in Computer Science* 16(3), paper 1, 2020, doi:10.23638/LMCS-16(3:1)2020; read in arXiv:1802.07435v7, whose numbering is used here: Theorem 4.1 with its two-step proof (Lemmas 4.2 and 4.3), the decidability results for single-sided games in Sections 5 and 7 (Corollary 5.4), and Theorem 6.1 on single-sided future games.
+- D. Figueira, A. Majumdar and M. Praveen, "Playing with repetitions in data words using energy games", *Logical Methods in Computer Science* 16(3), paper 1, 2020, doi:10.23638/LMCS-16(3:1)2020; read in arXiv:1802.07435v7, whose numbering is used here: Theorem 4.1 with its two-step proof (Lemmas 4.2 and 4.3), the decidability results for single-sided games in Sections 5 and 7 (Corollary 5.4), Theorem 6.1 on single-sided future games, and Section 8 (Theorem 8.1 and Lemma 8.2) on single-sided games with nested future formulas.

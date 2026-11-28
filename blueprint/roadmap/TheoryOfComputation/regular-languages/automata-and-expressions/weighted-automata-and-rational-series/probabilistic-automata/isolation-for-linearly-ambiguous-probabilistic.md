@@ -25,7 +25,7 @@ $$
 \mathcal{P}(w) = \frac{1}{2} \left( \mathrm{bin}(\varphi_1(w)) + 1 - \mathrm{bin}(\varphi_2(w)) \right)
 $$
 
-for every nonempty word $w$. Then $|\mathcal{P}(w) - \frac{1}{2}| \le \varepsilon$ if and only if $|\mathrm{bin}(\varphi_1(w)) - \mathrm{bin}(\varphi_2(w))| \le 2\varepsilon$, so the threshold $\frac{1}{2}$ is not isolated exactly when the infinite Post correspondence problem has a solution. The reduction thus shows undecidability already for the fixed threshold $\frac{1}{2}$.
+for every nonempty word $w$. Then $|\mathcal{P}(w) - \frac{1}{2}| \le \varepsilon$ if and only if $|\mathrm{bin}(\varphi_1(w)) - \mathrm{bin}(\varphi_2(w))| \le 2\varepsilon$, so the threshold $\frac{1}{2}$ is not isolated exactly when the infinite Post correspondence problem has a solution. The reduction thus shows undecidability already for the fixed threshold $\frac{1}{2}$. The linked undecidability result builds instances whose target alphabet has four letters; recoding each target letter by a binary word of length $2$ (an injective morphism of uniform length) gives morphisms into $\{0, 1\}^*$ with the same infinite solutions, which is the form used here.
 
 ## Sources
 

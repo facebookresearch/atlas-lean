@@ -24,6 +24,7 @@ With $\varepsilon$-free transducers and Call depth bounded by $d \ge 2$, the pro
 ## Proof depends on
 
 - [Halting is undecidable](../../../computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halts.md)
+- [The halting problem is undecidable by multi-stack machines](../../../computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halting.md)
 - [The halting problem is not co-recognizable by multi-stack machines](../../../computability/halting-problem-and-rice-s-theorem/not-tm2-co-recognizable-halting.md)
 
 ## Expansion

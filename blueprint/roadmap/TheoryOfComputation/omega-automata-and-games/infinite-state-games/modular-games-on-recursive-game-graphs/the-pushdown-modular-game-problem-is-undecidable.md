@@ -27,7 +27,8 @@ The proof reduces the emptiness of the intersection of two deterministic context
 graph has a main module in which player 1 chooses between two nodes labeled $a_1$ and $a_2$, both leading to a call of a second module $m$, in
 which player 0 alone generates a word. A modular strategy in $m$ cannot see which choice player 1 made, so it produces the same word
 in both plays. A deterministic pushdown automaton checks the word after $a_1$ against $L_1$ and after $a_2$ against $L_2$, so player 0 has
-a winning modular strategy exactly when $L_1 \cap L_2$ is nonempty.
+a winning modular strategy exactly when $L_1 \cap L_2$ is nonempty. A good expansion adds and links a page for the undecidability of
+emptiness of the intersection of two deterministic context-free languages; the [reduction from the Post correspondence problem](../../../undecidable-problems/intersection-problem-for-context-free-languages/many-one-reducible-pcp-inter.md) is stated for context-free languages, without the determinism this proof needs.
 
 ## Sources
 
