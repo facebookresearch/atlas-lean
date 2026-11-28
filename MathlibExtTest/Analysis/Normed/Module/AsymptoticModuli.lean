@@ -74,3 +74,40 @@ example : asymptoticMidpointModulus (normSeminorm ℝ ℝ) 2 = 1 := by
       _ ≤ ⨆ F, f x F := le_ciSup ⟨1, by rintro _ ⟨F, rfl⟩; exact hle F⟩ F₀
   change (⨅ x : X, ⨆ F, f x F) = 1
   simp only [hsup, ciInf_const]
+
+-- Unit directions for the doubled norm are ±1/2, not ±1.
+-- Using the ambient-unit directions would give a modulus of 3 instead of 1.
+example : asymptoticMidpointModulus ((2 : ℝ≥0) • normSeminorm ℝ ℝ) 2 = 1 := by
+  let N : Seminorm ℝ ℝ := (2 : ℝ≥0) • normSeminorm ℝ ℝ
+  let X := {x : ℝ // N x = 1}
+  let D (F : ClosedFiniteCodimensionalSubmodule ℝ) := {y : ℝ // y ∈ F.val ∧ N y = 1}
+  let F₀ : ClosedFiniteCodimensionalSubmodule ℝ := ⟨⊤, by simp, by infer_instance⟩
+  have hn (z : ℝ) : N z = 2 * |z| := by
+    norm_num [N, smul_apply, NNReal.smul_def, coe_normSeminorm, Real.norm_eq_abs]
+  have hhalf : N (1 / 2) = 1 := by norm_num [hn]
+  have : Nonempty X := ⟨⟨1 / 2, hhalf⟩⟩
+  have : Nonempty (D F₀) := ⟨⟨1 / 2, Submodule.mem_top, hhalf⟩⟩
+  have hunit {z : ℝ} (hz : N z = 1) : z = 1 / 2 ∨ z = -(1 / 2) := by
+    have habs : |z| = 1 / 2 := (eq_div_iff (by norm_num : (2 : ℝ) ≠ 0)).2 <| by
+      rwa [hn, mul_comm] at hz
+    by_cases h : 0 ≤ z
+    · exact Or.inl (by simpa only [abs_of_nonneg h] using habs)
+    · exact Or.inr (neg_eq_iff_eq_neg.mp (by simpa only [abs_of_neg (lt_of_not_ge h)] using habs))
+  have hpoint (x : X) {F : ClosedFiniteCodimensionalSubmodule ℝ} (y : D F) :
+      (N (x.val + (2 : ℝ) • y.val) + N (x.val - (2 : ℝ) • y.val)) / 2 - 1 = 1 := by
+    obtain hx | hx := hunit x.property <;> obtain hy | hy := hunit y.property.2 <;>
+      norm_num [hn, hx, hy, smul_eq_mul]
+  have hsup : (⨆ F, ⨅ _ : D F, (1 : ℝ)) = 1 := by
+    have hle (F : ClosedFiniteCodimensionalSubmodule ℝ) : (⨅ _ : D F, (1 : ℝ)) ≤ 1 := by
+      cases isEmpty_or_nonempty (D F)
+      · rw [Real.iInf_of_isEmpty]
+        exact zero_le_one
+      · rw [ciInf_const]
+    have : Nonempty (ClosedFiniteCodimensionalSubmodule ℝ) := ⟨F₀⟩
+    refine le_antisymm (ciSup_le hle) ?_
+    calc (1 : ℝ) = ⨅ _ : D F₀, (1 : ℝ) := ciInf_const.symm
+      _ ≤ ⨆ F, ⨅ _ : D F, (1 : ℝ) :=
+        le_ciSup (f := fun F ↦ ⨅ _ : D F, (1 : ℝ)) ⟨1, by rintro _ ⟨F, rfl⟩; exact hle F⟩ F₀
+  change (⨅ x : X, ⨆ F, ⨅ y : D F,
+    (N (x.val + (2 : ℝ) • y.val) + N (x.val - (2 : ℝ) • y.val)) / 2 - 1) = 1
+  simp only [hpoint, hsup, ciInf_const]
