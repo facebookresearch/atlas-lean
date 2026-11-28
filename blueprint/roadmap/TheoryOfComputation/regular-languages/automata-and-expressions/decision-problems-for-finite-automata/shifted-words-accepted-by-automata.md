@@ -7,10 +7,11 @@ For a finite automaton reading pairs of letters, it is undecidable whether it ac
 1. (ACCEPTS-SHIFT) there is no algorithm that decides, given an alphabet $\Gamma$, a letter $c \notin \Gamma$ and a finite automaton $M$ over the alphabet $(\Gamma \cup \{c\})^2$, whether $M$ accepts a word $xc^n \times c^n x$ for some $x \in \Gamma^*$ and $n \ge 0$ (Theorem 2 of the source);
 2. (ACCEPTS-GENERAL-SHIFT) there is no algorithm that decides, given a finite automaton $M$ over an alphabet $\Sigma^2$, whether $M$ accepts $x \times y$ for some conjugates $x, y \in \Sigma^*$ (Theorem 7).
 
-Under the extra requirement $n \ge |x|$ the first problem becomes decidable in cubic time (Theorem 4), and whether a deterministic finite automaton accepts two distinct conjugates $uv \ne vu$ is decidable (Theorem 8). As a consequence, it is undecidable whether the set $\mathrm{quo}_k(M) = \{[\pi_1(x)]_k / [\pi_2(x)]_k : x \in L(M)\}$ of quotients of base-$k$ numbers read by an automaton $M$ over $\Sigma_k^2$ contains a power of $k$, both with $k$ part of the input and for every fixed $k \ge 2$ (Theorems 5 and 6).
+Under the extra requirement $n \ge |x|$ the first problem becomes decidable in cubic time (Theorem 4), and whether a deterministic finite automaton accepts two distinct conjugates $uv \ne vu$ is decidable (Theorem 8). As a consequence, it is undecidable whether a $k$-automatic set of rationals contains a power of $k$ (Theorems 5 and 6); see [the companion page](whether-a-k-automatic-set-of-rationals-contains.md), which also fixes the conventions on denominators and exponents. As inputs, finite automata are given as [encoded NFAs](../../../decision-procedures/encoded-finite-automata/encoded-nfa.md), as on that page.
 
 ## Depends on
 
+- [Encoded NFA](../../../decision-procedures/encoded-finite-automata/encoded-nfa.md)
 - [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
@@ -19,7 +20,7 @@ Under the extra requirement $n \ge |x|$ the first problem becomes decidable in c
 
 ## Expansion
 
-The proof of part 1 reduces REWRITE-POWER: given length-preserving string rewriting rules over an alphabet $\Sigma$ with letters $a, b$, is there $n \ge 1$ with $a^n \Rightarrow^* b^n$? Its undecidability comes from simulating Turing machines with length-preserving rewriting (Lemma 1). For $\Gamma = \Sigma \cup \{d\}$, a regular language over pairs is built from the identity pairs $[e, e]$, $e \in \Sigma$, the pairs $[r, \ell]$ for rules $\ell \to r$ written letter by letter, and delimiters $d$ and $c$; a word $xc^n \times c^n x$ in it is forced, by the shift of $x$ by $n$ positions, to spell a rewriting sequence $a^m \Rightarrow \cdots \Rightarrow b^m$ in which each block is the rewriting of the previous one. Part 2 reduces part 1 by modifying the automaton so that, among pairs of conjugates, it can only accept pairs of the shifted form (Theorem 7).
+The proof of part 1 reduces REWRITE-POWER: given length-preserving string rewriting rules over an alphabet $\Sigma$ with letters $a, b$, is there $n \ge 1$ with $a^n \Rightarrow^* b^n$? Its undecidability comes from simulating Turing machines with length-preserving rewriting (Lemma 1). For $\Gamma = \Sigma \cup \{d\}$, a regular language over pairs is built from the identity pairs $[e, e]$, $e \in \Sigma$, the pairs $[r, \ell]$ for rules $\ell \to r$ written letter by letter, and delimiters $d$ and $c$; a word $xc^n \times c^n x$ in it is forced, by the shift of $x$ by $n$ positions, to spell a rewriting sequence $a^m \Rightarrow \cdots \Rightarrow b^m$ in which each block is the rewriting of the previous one. Part 2 reduces part 1 by modifying the automaton so that, among pairs of conjugates, it can only accept pairs of the shifted form (Theorem 7). A good expansion links a page for the undecidability of REWRITE-POWER (Lemma 1 of the source), proved by simulating Turing machines on the blank tape with length-preserving rewriting.
 
 ## Sources
 

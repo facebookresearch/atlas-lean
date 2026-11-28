@@ -31,7 +31,7 @@ per instruction; for example, in the time-bounded case with three clocks $x, y, 
 with $x = 1/(2^{k+c} 3^{k+d})$, $y = 1/2^k$ and $z = 0$, where $c, d$ are the counter values. Achilles simulates the machine by choosing delays, and the tortoise may challenge a step
 by entering a checking component, invoked through a box, that can reach the target exactly when the step was simulated correctly;
 passing variables by value lets the check run without disturbing the simulation, and in the time-bounded cases the encoding is
-arranged so that the delays of successive instructions sum to a bounded total.
+arranged so that the delays of successive instructions sum to a bounded total. A good expansion links pages for the undecidability of halting of two-counter machines started with both counters at $0$, which follows from the linked universality theorem together with the undecidability of halting of Turing machines on the blank tape (the linked halting page states halting for codes on given inputs), and for the correctness of the checking components.
 
 ## Sources
 

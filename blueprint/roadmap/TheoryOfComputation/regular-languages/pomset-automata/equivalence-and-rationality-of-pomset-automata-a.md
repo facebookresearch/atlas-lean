@@ -30,7 +30,7 @@ with one nonterminal per state, and a grammar is turned into an automaton whose 
 its rules, with $\delta(a, a) = \top$ and $\gamma$ splitting parallel and sequential subterms. Ordinary context-free grammars
 on words are context-free pomset grammars without parallel products, so the classical undecidable problems for context-free
 grammars (Bar-Hillel, Perles and Shamir; Greibach) carry over to pomset automata; the source records the two problems above as
-a corollary of this correspondence.
+a corollary of this correspondence. A good expansion links a page for the correspondence between finite pomset automata and context-free pomset grammars, from which the source derives these results.
 
 ## Sources
 

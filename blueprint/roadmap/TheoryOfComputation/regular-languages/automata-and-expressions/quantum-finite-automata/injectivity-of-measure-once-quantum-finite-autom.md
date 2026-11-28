@@ -25,6 +25,7 @@ automata with only rational entries, at the price of a much larger number of sta
 ## Depends on
 
 - [One-way quantum finite automata](one-way-quantum-finite-automata.md)
+- [Orthogonal projection](../../../../QuantumInformation/quantum-foundations/gleason-s-theorem/is-orth-proj.md)
 - [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
@@ -35,14 +36,14 @@ None.
 
 The proof reduces the mixed modification of the [Post correspondence problem](../../../undecidable-problems/post-correspondence-problem/pcp.md): given morphisms $h, g : \Sigma^* \to \Delta^*$ with
 $|\Delta| = 2$, is there a word $x_1 \cdots x_k$ with $h_1(x_1) \cdots h_k(x_k) = g_1(x_1) \cdots g_k(x_k)$ for some choices
-$h_j, g_j \in \{h, g\}$ not all equal? It is undecidable for $|\Sigma| \ge 9$ (Cassaigne, Karhumäki and Harju), also for Claus
+$h_j, g_j \in \{h, g\}$ with $h_j \ne g_j$ for at least one $j$? It is undecidable for $|\Sigma| \ge 9$ (Cassaigne, Karhumäki and Harju), also for Claus
 instances (Halava, Harju and Hirvensalo). Words are embedded injectively into rational unitary $4 \times 4$ matrices through a free
 semigroup of rational quaternions, and the pairs $(x, h(x))$, $(x, g(x))$ give $8 \times 8$ block-diagonal unitary generators, two
 per letter of $\Sigma$; for a Claus instance with $9$ letters one generator can be absorbed into the initial vector, which leaves
 $17$ letters. A product of generators is determined by the absolute values of a few of
 its entries, and a projection and an initial vector with linearly independent square roots as coefficients turn these entries
 into a single acceptance probability. Two distinct words get the same probability exactly when some matrix has two factorizations,
-that is, when the instance has a solution.
+that is, when the instance has a solution. A good expansion links pages for the undecidability of the mixed modification of the Post correspondence problem for nine letters and for Claus instances, and for the injective embedding of words into rational unitary matrices.
 
 ## Sources
 

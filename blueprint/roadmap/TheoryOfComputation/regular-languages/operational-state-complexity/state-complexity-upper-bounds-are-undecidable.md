@@ -14,11 +14,11 @@ The *marked concatenation* of $L_1,\dots,L_n$ is $L_1\sharp L_2\sharp\cdots\shar
 
 ## Proof depends on
 
-None.
+- [Davis–Putnam–Robinson–Matiyasevich theorem](../../undecidable-problems/diophantine-sets-and-hilbert-s-tenth-problem/dprm-theorem.md)
 
 ## Expansion
 
-Tight worst-case state complexities are known for every combination of two basic operations, so the undecidability concerns an infinite family of compositions mixing intersection and marked concatenation, with the composition index part of the input. The survey read states the theorem without proof; a good expansion links the undecidable problem from which Salomaa, Salomaa and Yu reduce, which the survey does not name.
+Tight worst-case state complexities are known for every combination of two basic operations, so the undecidability concerns an infinite family of compositions mixing intersection and marked concatenation, with the composition index part of the input. The survey read states the theorem without proof. The abstract of the original paper of Salomaa, Salomaa and Yu (International Journal of Computer Mathematics 90(6), 2013, 1310–1320, doi:10.1080/00207160.2012.704994) says that the proof relies on the undecidability of Hilbert's tenth problem; a good expansion links that result and the construction of the original paper.
 
 ## Sources
 

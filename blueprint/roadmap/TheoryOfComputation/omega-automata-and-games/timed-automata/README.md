@@ -23,3 +23,4 @@ all Boolean operations. Emptiness is decided by the region construction, in
 - [Recursive timed and hybrid automata](recursive-timed-and-hybrid-automata/README.md)
 - [Timed synthesis games](timed-synthesis-games/README.md)
 - [Weak detectability of labeled timed automata is undecidable](weak-detectability-of-labeled-timed-automata.md)
+- [Time-bounded reachability of rectangular hybrid automata is undecidable](time-bounded-reachability-of-rectangular-hybrid.md)

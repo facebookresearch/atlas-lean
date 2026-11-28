@@ -12,13 +12,17 @@ where
 - $B_i$ is a finite set of boxes and $Y_i : B_i \to \{1, \dots, k\}$ maps each box to the component it invokes; a box $b$ has call ports
   $(b, en)$ for the entries $en$ and return ports $(b, ex)$ for the exits $ex$ of component $Y_i(b)$, and the locations $Q_i$ of
   $\mathcal{H}_i$ are its nodes, call ports and return ports;
-- $A_i$ is a finite set of actions and $\delta_i : Q_i \times A_i \to Q_i$ the transition function, with no transitions out of call ports
-  and exit nodes;
+- $A_i$ is a finite set of actions and $\delta_i : Q_i \times A_i \rightharpoonup Q_i$ a partial transition function, undefined on every call port and
+  exit node (the source writes a function with the condition that call ports and exit nodes have no outgoing transitions; an
+  action is available at a location exactly when $\delta_i$ is defined there);
 - $P_i : B_i \to 2^X$ gives the variables passed by value to each box, the others being passed by reference;
 - $\mathit{Inv}_i : Q_i \to \mathrm{Rect}(X)$ gives invariants and $E_i : Q_i \times A_i \to \mathrm{Rect}(X)$ enabling conditions, where
   rectangular constraints are conjunctions of $x \bowtie c$ with $c \in \mathbb{Z}$;
 - $J_i : A_i \to 2^X$ gives the variables reset to $0$ by each action, and $F_i : Q_i \to \mathbb{N}^{|X|}$ the rate of each variable in
   each location.
+
+As in the source, the sets of nodes, boxes and locations of different components are disjoint, so a location or a box determines its
+component; $Q$, $B$, $\delta$, $P$, $\mathit{Inv}$, $E$, $J$ and $F$ denote the unions over all components.
 
 An RHA is *glitch-free* if every box passes either all variables or none by value, and *hierarchical* if the components can be
 ordered so that no component invokes a component of the same or higher order. A variable is a *clock* if its rate is $1$ in every
@@ -27,18 +31,17 @@ stopwatch automaton* (RSA) has only stopwatches.
 
 **Semantics.** A configuration $(\kappa, q, \nu)$ has a call stack $\kappa \in (B \times \mathbb{R}^X)^*$, a location $q$ and a valuation
 $\nu$ satisfying $\mathit{Inv}(q)$. At a call port $(b, en)$ the automaton pushes $(b, \nu)$ and moves to $en$ without delay; at an exit
-$ex$ it pops $(b, \nu'')$, moves to $(b, ex)$ without delay and restores the variables in $P(b)$ to their values in $\nu''$. Elsewhere a
-timed action $(t, a)$ lets time $t$ pass at rates $F(q)$, with the invariant satisfied throughout and $E(q, a)$ satisfied at the end,
+$ex$ it pops $(b, \nu'')$, moves to $(b, ex)$ without delay and restores the variables in $P(b)$ to their values in $\nu''$. Calls and returns are not local transitions. Elsewhere a
+timed action $(t, a)$ with $\delta(q, a)$ defined lets time $t$ pass at rates $F(q)$, with the invariant satisfied throughout and $E(q, a)$ satisfied at the end,
 then takes the transition $\delta(q, a)$ and resets the variables in $J(a)$.
 
-**Games.** A partition of the locations into those of two players, Achilles and the tortoise, gives a game arena. The *reachability
+**Games.** A partition of the locations into those of two players, Achilles and the tortoise, gives a turn-based game arena: the owner of the current location chooses the next timed action or call. This differs from [timed games](../timed-games.md) on timed automata, where both players propose delays and the faster move is taken. The *reachability
 game problem* asks, for an initial location and valuation with empty stack and a set of final locations, whether Achilles has a
 strategy that reaches a final location against every strategy of the tortoise; under *bounded time*, the final location must be
 reached within total time $T \in \mathbb{N}$. An instance is finite: the automaton, the partition, the final locations, and an initial valuation with rational entries (the source writes $\nu \in \mathbb{R}^{|X|}$, which is not a finite input).
 
 ## Depends on
 
-- [Timed games](../timed-games.md)
 
 ## Proof depends on
 

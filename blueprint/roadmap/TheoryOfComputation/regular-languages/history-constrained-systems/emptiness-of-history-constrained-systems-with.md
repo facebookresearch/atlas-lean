@@ -11,6 +11,7 @@ By contrast, emptiness is decidable, and EXPSPACE-complete, for NFA[Cover-DVASS]
 ## Depends on
 
 - [History-constrained systems](history-constrained-systems.md)
+- [The class EXPSPACE](../../complexity-classes/time-and-space-complexity-classes/expspace.md)
 - [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 - [Pushdown automaton](../../context-free-languages/grammars-and-pushdown-automata/pushdown-automata/pda.md)
 
@@ -22,7 +23,7 @@ By contrast, emptiness is decidable, and EXPSPACE-complete, for NFA[Cover-DVASS]
 
 ## Expansion
 
-Item 1 reduces reachability in two-counter machines. The underlying DFA reads the sequence of counter actions $\mathtt{inc}_i,\mathtt{dec}_i,\mathtt{zero}_i$ and tracks the machine state; two one-state guards $G_1$, $G_2$ follow the two counters, each incrementing and decrementing on its own actions, and every $\mathtt{zero}_i$ transition is guarded by $G_i$, whose reachability acceptance means that counter $i$ is $0$ at that point. Item 2 follows because an HCS with regular underlying automaton can recognize, up to an end marker, the intersection of the guard languages, and emptiness of the intersection of two context-free languages is undecidable.
+Item 1 reduces reachability in two-counter machines. The underlying DFA reads the sequence of counter actions $\mathtt{inc}_i,\mathtt{dec}_i,\mathtt{zero}_i$ and tracks the machine state; two one-state guards $G_1$, $G_2$ follow the two counters, each incrementing and decrementing on its own actions, and every $\mathtt{zero}_i$ transition is guarded by $G_i$, whose reachability acceptance means that counter $i$ is $0$ at that point. Two final zero tests, one per counter, lead to the only accepting state; they force both counters to be $0$ at the end and ensure that a decrement of a counter at $0$, which blocks its guard's run, cannot go undetected (Appendix D.1 of the source). Item 2 follows because an HCS with regular underlying automaton can recognize, up to an end marker, the intersection of the guard languages, and emptiness of the intersection of two context-free languages is undecidable. A good expansion links a page for the undecidability of halting of two-counter machines started with both counters at $0$, which follows from the linked universality theorem together with the undecidability of halting of Turing machines on the blank tape (the linked halting page states halting for codes on given inputs); reachability of $(q, (0,0))$ from $(p, (0,0))$ is that problem after adding a halting state.
 
 ## Sources
 

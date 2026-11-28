@@ -14,7 +14,7 @@ with variables ranging over the positions of a word $u$; ${\uparrow}a(x)$ is tru
 
 ## Depends on
 
-None.
+- [Partially ordered set](../../../Order/ordered-sets/partial-order.md)
 
 ## Proof depends on
 

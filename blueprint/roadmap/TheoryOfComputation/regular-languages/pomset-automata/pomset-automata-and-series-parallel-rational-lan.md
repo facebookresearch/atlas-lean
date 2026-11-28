@@ -6,7 +6,7 @@ them when both accept.
 
 **Pomsets.** A *labeled poset* $\langle C, \le, \lambda \rangle$ has a carrier $C$, a partial order $\le$ on $C$ and a labeling
 $\lambda : C \to \Sigma$; a *pomset* is an isomorphism class of labeled posets, where an isomorphism is a bijection preserving
-labels and order in both directions. Words are the totally ordered pomsets, $1$ is the empty pomset and $a \in \Sigma$ is the
+labels and order in both directions. Words are the finite totally ordered pomsets, $1$ is the empty pomset and $a \in \Sigma$ is the
 pomset with one point labeled $a$. For pomsets $U, V$ with disjoint carriers, the *sequential composition* $U \cdot V$ orders
 every point of $U$ before every point of $V$, and the *parallel composition* $U \parallel V$ adds no order between them. The
 *series-parallel* pomsets $\mathsf{SP}$ form the smallest set containing $1$ and the primitive pomsets and closed under both
@@ -35,7 +35,7 @@ languages of pomset automata that satisfy structural restrictions, finite suppor
 
 ## Depends on
 
-None.
+- [Partially ordered set](../../../Order/ordered-sets/partial-order.md)
 
 ## Proof depends on
 

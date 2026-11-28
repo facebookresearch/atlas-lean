@@ -30,7 +30,7 @@ where words whose second component represents $0$ (including the empty word) con
 
 Item 1 reuses the construction for the problem whether an automaton over pairs accepts a word $x c^n \times c^n x$: after renaming the letters of $\Gamma$ as the digits $1, \dots, \ell$ and $c$ as $0$, and taking $k = \ell + 1$, an accepted word
 represents a power of $k$ exactly when it has the form $x 0^n \times 0^n x$. Both rest on the undecidability of the problem whether a length-preserving string rewriting system rewrites $a^n$ into $b^n$ for some $n \ge 1$ (Lemma 1 of the source).
-Item 2 recodes all words over $\{0, 1\}$ by the morphism $c \mapsto 0^{m+1}$, $a_i \mapsto 1^i 0^{m-i} 1$, which removes the dependence of the base on the alphabet.
+Item 2 recodes all words over $\{0, 1\}$ by the morphism $c \mapsto 0^{m+1}$, $a_i \mapsto 1^i 0^{m-i} 1$, which removes the dependence of the base on the alphabet. A good expansion links a page for the recoding of words over $\{0, 1\}$ that gives item 2, in addition to the linked theorem.
 
 ## Sources
 
