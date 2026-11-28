@@ -27,6 +27,7 @@ public import MathlibExt.NumberTheory.Recurrences.GibonacciLucasMultiplier
 public import MathlibExt.NumberTheory.Recurrences.GibonacciProductSum
 public import MathlibExt.NumberTheory.Recurrences.GibonacciShiftedProduct
 public import MathlibExt.NumberTheory.Recurrences.GibonacciTripleProduct
+public import MathlibExt.NumberTheory.Recurrences.GibonacciTripleProductSeed
 public import MathlibExt.NumberTheory.Recurrences.LucasFibonacciTelescoping
 
 /-!
@@ -306,23 +307,6 @@ public theorem_wanted five_gibonacci_mul_sub_two_gibonacci
       (-1 : ℝ) ^ (k - r + 1) * 2 * (G (r + 1) + G (r - 1)) * (H (s + 1) + H (s - 1)) +
         (-1 : ℝ) ^ (k - r) * 2 *
           (G 0 * (H (r + s) + H (r + s - 2)) + G 1 * (H (r + s + 1) + H (r + s - 1)))
-
-/-- **Seed expansion of a triple gibonacci product.** Let $G, H, I \colon \mathbb{Z} \to \mathbb{R}$
-satisfy $G_{j+2} = G_{j+1} + G_j$, $H_{j+2} = H_{j+1} + H_j$ and $I_{j+2} = I_{j+1} + I_j$ for
-every integer $j$. Then for all integers $k$, $r$, $s$,
-$$G_0 H_0 I_{k+r+s-2} + (G_0 H_1 + G_1 H_0) I_{k+r+s-1} + G_1 H_1 I_{k+r+s}
-= G_{s+1} H_{r+1} I_{k+1} + G_s H_r I_k - G_{s-1} H_{r-1} I_{k-1}.$$
-
-Source: Kunle Adegoke, *Fibonacci Identities via Fibonacci Functions*, Journal of
-Integer Sequences 27 (2024), Article 24.6.2, Proposition 27
-(`jis-2024-24.6.2-prop-27`). -/
-public theorem_wanted gibonacci_triple_product_seed_identity
-    (G H I : ℤ → ℝ) (hG : ∀ j : ℤ, G (j + 2) = G (j + 1) + G j)
-    (hH : ∀ j : ℤ, H (j + 2) = H (j + 1) + H j)
-    (hI : ∀ j : ℤ, I (j + 2) = I (j + 1) + I j) (k r s : ℤ) :
-    G 0 * H 0 * I (k + r + s - 2) + (G 0 * H 1 + G 1 * H 0) * I (k + r + s - 1) +
-        G 1 * H 1 * I (k + r + s) =
-      G (s + 1) * H (r + 1) * I (k + 1) + G s * H r * I k - G (s - 1) * H (r - 1) * I (k - 1)
 
 /-- **Lucas expansion of shifted gibonacci sums.** Let $F_m$ be the Fibonacci numbers, extended
 to all integers $m$ by $F_{m+2} = F_{m+1} + F_m$, and let $L_m = F_{m-1} + F_{m+1}$ be the

@@ -14870,6 +14870,7 @@
   "MathlibExt/NumberTheory/Recurrences/GibonacciShiftedProduct": {"to": "NumberTheory/linear-recurrences/fibonacci-lucas-numbers", "title": "Fibonacci identities via Fibonacci functions"},
   "MathlibExt/NumberTheory/Recurrences/GibonacciSquaresRecurrence": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Gibonacci numbers"},
   "MathlibExt/NumberTheory/Recurrences/GibonacciTripleProduct": {"to": "NumberTheory/linear-recurrences/fibonacci-lucas-numbers", "title": "Fibonacci identities via Fibonacci functions"},
+  "MathlibExt/NumberTheory/Recurrences/GibonacciTripleProductSeed": {"to": "NumberTheory/linear-recurrences/fibonacci-lucas-numbers", "title": "Fibonacci identities via Fibonacci functions"},
   "MathlibExt/NumberTheory/Recurrences/GolombLikeSequence": {"to": "NumberTheory/integer-sequences/iterated-self-referential", "title": "Golomb-like sequences"},
   "MathlibExt/NumberTheory/Recurrences/HigherFibonacciWalks": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Self-convolutions of m-step Fibonacci numbers"},
   "MathlibExt/NumberTheory/Recurrences/HigherFibonacciWalksEvenFibWalkCountEvenLengthEqOddAddFib": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Self-convolutions of m-step Fibonacci numbers"},
