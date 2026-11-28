@@ -1,0 +1,15 @@
+# The box-crossing property at p = 1/2 for every aspect ratio
+
+- [Bxa adj coord diff le](bxa-adj-coord-diff-le.md)
+- [Bxa walk first hit](bxa-walk-first-hit.md)
+- [Bxa connected Within restrict](bxa-connected-within-restrict.md)
+- [Bxa horizontal Crossing mono width](bxa-horizontal-crossing-mono-width.md)
+- [Bxa vertical Crossing mono height](bxa-vertical-crossing-mono-height.md)
+- [Bxa horizontal Crossing Event subset width](bxa-horizontal-crossing-event-subset-wid.md)
+- [Bxa vertical Crossing Event subset height](bxa-vertical-crossing-event-subset-heigh.md)
+- [Bxa horizontal Crossing real mono width](bxa-horizontal-crossing-real-mono-width.md)
+- [Bxa vertical Crossing real mono height](bxa-vertical-crossing-real-mono-height.md)
+- [Bxa floor le nat Mul](bxa-floor-le-nat-mul.md)
+- [Bxa zero lt floor](bxa-zero-lt-floor.md)
+- [Bxa box Crossing Property all](bxa-box-crossing-property-all.md)
+- [Bxa box Crossing Property all of rsw](bxa-box-crossing-property-all-of-rsw.md)

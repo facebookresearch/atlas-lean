@@ -15,7 +15,10 @@ public import Mathlib.Combinatorics.Enumerative.Partition.Basic
 public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.SetTheory.Cardinal.Finite
 public import MathlibExt.Combinatorics.Enumerative.EvenOddCompositions
+public import MathlibExt.Combinatorics.Enumerative.SignedResiduePartCompositions
 public import MathlibExt.Combinatorics.Enumerative.SignedLargePartCompositions
+public import MathlibExt.Combinatorics.Enumerative.SignedMinimumPartCompositions
+public import MathlibExt.Combinatorics.Enumerative.SignedResidueClassCompositions
 
 namespace MetaMathlibExt
 
@@ -39,19 +42,6 @@ public theorem_wanted sum_distincts_neg_one_pow_card (n : ℕ) :
         ∑ p ∈ Nat.Partition.distincts n, (-1 : ℤ) ^ p.parts.card = (-1) ^ j) ∧
       ((∀ j : ℕ, 2 * n ≠ j * (3 * j + 1) ∧ 2 * n ≠ j * (3 * j - 1)) →
         ∑ p ∈ Nat.Partition.distincts n, (-1 : ℤ) ^ p.parts.card = 0)
-
-/-- **Signed count of compositions with parts at least $k$.** Let $k, n \ge 1$. Among the
-compositions of $n + k - 1$ whose parts are all at least $k$, the number with an odd number of
-parts minus the number with an even number of parts equals
-$\sum_{j=0}^{\lfloor (n-1)/k \rfloor} (-1)^j \binom{n-1-j(k-1)}{j}$.
-
-Source: Jia Huang, *Even and Odd Compositions with Restricted Parts*, Journal
-of Integer Sequences 27 (2024), Article 24.6.5, Theorem 8
-(`jis-2024-24.6.5-thm-8`). -/
-public theorem_wanted compositionOddMinusEven_parts_ge (k n : ℕ) (hk : 1 ≤ k) (hn : 1 ≤ n) :
-    compositionOddMinusEven (n + k - 1) (fun c => ∀ a ∈ c.blocks, k ≤ a)
-      = ∑ j ∈ Finset.range ((n - 1) / k + 1),
-          (-1 : ℤ) ^ j * ((n - 1 - j * (k - 1)).choose j : ℤ)
 
 /-- **Nyirenda's identity for distinct parts modulo a multiple of four.** Let $r \ge 1$ and $n$
 be natural numbers, and let $E(n)$ and $O(n)$ be the numbers of partitions of $n$ into distinct
@@ -92,36 +82,6 @@ public theorem_wanted sum_distincts_mod_two_mul_add_one_neg_one_pow_card (r n : 
             a % (2 * r + 1) = 0 ∨ a % (2 * r + 1) = r ∨ a % (2 * r + 1) = r + 1),
           (-1 : ℤ) ^ p.parts.card = 0)
 
-/-- **Signed count of compositions with parts at least $k$ in a residue class.** Let $k, n \ge 1$
-and $r > s \ge 0$. Among the compositions of $n + k - 1$ whose parts are all at least $k$ and
-congruent to $k + s$ modulo $r$, the number with an odd number of parts minus the number with an
-even number of parts is the sum of $(-1)^j \binom{i+j}{i}$ over all $i, j \ge 0$ with
-$ri + j(k+s) + s + 1 = n$ (an empty sum when $n \le s$).
-
-Source: Jia Huang, *Even and Odd Compositions with Restricted Parts*, Journal
-of Integer Sequences 27 (2024), Article 24.6.5, Theorem 10
-(`jis-2024-24.6.5-thm-10`). -/
-public theorem_wanted compositionOddMinusEven_parts_ge_modEq (k n r s : ℕ) (hk : 1 ≤ k)
-    (hn : 1 ≤ n) (hsr : s < r) :
-    compositionOddMinusEven (n + k - 1)
-        (fun c => ∀ a ∈ c.blocks, k ≤ a ∧ a % r = (k + s) % r)
-      = ∑ i ∈ Finset.range (n + 1), ∑ j ∈ Finset.range (n + 1),
-          if r * i + j * (k + s) + s + 1 = n then (-1 : ℤ) ^ j * ((i + j).choose i : ℤ)
-          else 0
-
-/-- **Signed count of residue-class compositions with parts at least $r - s$.** Let $r > s \ge 0$,
-let $k = r - s$ and let $n \ge 1$. Among the compositions of $n + k - 1$ whose parts are all at
-least $k$ and congruent to $k + s$ modulo $r$, the number with an odd number of parts minus the
-number with an even number of parts is $1$ if $n = s + 1$ and $0$ otherwise.
-
-Source: Jia Huang, *Even and Odd Compositions with Restricted Parts*, Journal
-of Integer Sequences 27 (2024), Article 24.6.5, Corollary 12
-(`jis-2024-24.6.5-cor-12`). -/
-public theorem_wanted compositionOddMinusEven_parts_ge_modEq_sub (n r s : ℕ) (hn : 1 ≤ n)
-    (hsr : s < r) :
-    compositionOddMinusEven (n + (r - s) - 1)
-        (fun c => ∀ a ∈ c.blocks, r - s ≤ a ∧ a % r = (r - s + s) % r)
-      = if n = s + 1 then 1 else 0
 
 /-- **Signed count of residue-class compositions with parts at least $2r - s$.** Let $r > s \ge 0$,
 let $k = 2r - s$ and let $n \ge 1$. Among the compositions of $n + k - 1$ whose parts are all at

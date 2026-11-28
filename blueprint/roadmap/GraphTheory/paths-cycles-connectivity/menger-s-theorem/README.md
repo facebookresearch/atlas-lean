@@ -8,3 +8,7 @@
 - [Edge-disjoint paths](is-edge-disjoint-stpaths.md)
 - [Edge cuts separating two vertices](is-stedge-cut.md)
 - [Menger's theorem for edge cuts and edge-disjoint paths](menger-edge-max-min.md)
+- [Erdős Problem 915, edge-disjoint reading](edge-disjoint-paths-from-edge-count.md)
+- [Erdős Problem 915, internally disjoint reading](internally-disjoint-paths-from-edge-coun.md)
+- [Erdős Problem 599 (the Erdős–Menger conjecture)](erdos-menger-conjecture.md)
+- [Menger's theorem for infinite graphs (Aharoni–Berger)](erdos-menger-conjecture-holds.md)

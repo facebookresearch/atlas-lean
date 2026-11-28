@@ -43,4 +43,12 @@ example : -5 ≤ relativePosition abb 4 ∧ relativePosition abb 4 = -4 := by
   change letterPosition abb false 4 = 5 at hb
   exact ⟨bound, by simp [relativePosition, ha, hb]⟩
 
+-- Complementing the word exercises the branch where the initial letter is false.
+example {w : ℕ → Bool} (hw : BothLettersInfinite w) (h₀ : w 0 = false) {c : ℕ}
+    (hc : ∀ i k, (∀ j < k, w (i + j) = w i) → k ≤ c) :
+    letterPosition w false 1 = 0 ∧ -(c : ℤ) ≤ relativePosition w 1 ∧
+      relativePosition w 1 ≤ c := by
+  obtain ⟨_, _, hlo, hhi⟩ := MetaMathlibExt.letterPosition_le_of_run_le' hw hc 1 le_rfl
+  exact ⟨letterPosition_one_of_head h₀, by simpa using hlo, by simpa using hhi⟩
+
 end MetaMathlibExt.letterPosition_le_of_run_le

@@ -58,9 +58,13 @@ def weight (w : Sym2 (Fin n) → ℝ) (T : Finset (Sym2 (Fin n))) : ℝ :=
 def IsSpanningTreeIn (A T : Finset (Sym2 (Fin n))) : Prop :=
   T ⊆ A ∧ (SimpleGraph.fromEdgeSet (T : Set (Sym2 (Fin n)))).IsTree
 
-/-- `T` is a 1-tree with special vertex `v₀` (Held-Karp) that uses only edges of `A`: the edges of
-`T` not at `v₀` form a spanning tree of the other vertices, and exactly two edges of `T` are at
-`v₀`. -/
+/-- `T` is a 1-tree with special vertex `v₀` (Held-Karp) that uses only edges of `A`: the members
+of `T` not at `v₀` form a spanning tree of the other vertices, and exactly two members of `T` are
+at `v₀`. The tree test goes through `SimpleGraph.fromEdgeSet`, which drops diagonal pairs
+`{x, x}`, while the count at `v₀` is taken on the raw set, where `{v₀, v₀}` counts once: with
+`n = 3`, `v₀ = 0` and `A = T`, the set `T = {{0, 1}, {0, 2}, {1, 2}, {1, 1}}` passes. It is a
+loop-free 1-tree when `A` consists of edges of `K_n` (`A ⊆ completeEdges n`), as in
+`IsSuccessiveShortest`. -/
 def IsOneTreeIn (v₀ : Fin n) (A T : Finset (Sym2 (Fin n))) : Prop :=
   T ⊆ A ∧ ((SimpleGraph.fromEdgeSet {e | e ∈ T ∧ v₀ ∉ e}).induce {v | v ≠ v₀}).IsTree ∧
     (T.filter fun e => v₀ ∈ e).card = 2

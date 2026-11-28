@@ -1,0 +1,27 @@
+# Term rewriting
+
+Abstract reduction systems, confluence and termination, reduction and simplification orderings (lexicographic path and Knuth–Bendix orderings), and Knuth–Bendix completion, which has its own chapter. Term rewriting systems and critical pairs themselves are in [Automated deduction](../automated-deduction/README.md).
+
+- [Abstract reduction system](abstract-reduction-system.md)
+- [Terminating relations are normalizing](terminating-relations-are-normalizing.md)
+- [Termination via well-founded orderings](termination-via-well-founded-orderings.md)
+- [Confluence of a relation](confluence-of-a-relation.md)
+- [The Church–Rosser property is equivalent to confluence](church-rosser-property-and-confluence.md)
+- [Newman's lemma](newman-s-lemma.md)
+- [Termination of term rewriting is undecidable](termination-of-term-rewriting-is-undecidable.md)
+- [Reduction ordering](reduction-ordering.md)
+- [Reduction orderings characterize termination](reduction-orderings-characterize-termination.md)
+- [Termination](termination/README.md)
+- [Monotone interpretations give reduction orderings](monotone-interpretations-give-reduction-orderings.md)
+- [Simplification ordering](simplification-ordering.md)
+- [Simplification orderings contain the embedding](simplification-orderings-contain-the-embedding.md)
+- [Kruskal's tree theorem](kruskal-s-tree-theorem.md)
+- [Simplification orderings over a finite signature are well-founded](dershowitz-s-theorem-on-simplification-orderings.md)
+- [Lexicographic path ordering](lexicographic-path-ordering.md)
+- [Variable condition for the lexicographic path ordering](lpo-variable-condition.md)
+- [The lexicographic path ordering is a simplification ordering](lpo-is-a-simplification-ordering.md)
+- [The lexicographic path ordering is total on ground terms](lpo-is-total-on-ground-terms.md)
+- [Knuth–Bendix ordering](knuth-bendix-ordering.md)
+- [The Knuth–Bendix ordering is a simplification ordering](kbo-is-a-simplification-ordering.md)
+- [Knuth–Bendix completion](completion/README.md)
+- [Decision problems for restricted rewrite systems](decision-problems-for-restricted-rewrite-systems/README.md)

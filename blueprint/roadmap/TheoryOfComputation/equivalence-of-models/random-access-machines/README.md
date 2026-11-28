@@ -15,3 +15,4 @@
 - [RAM execution stays at its halted state](ram-exec-n-eq-of-halted.md)
 - [Output membership for RAM machines](mem-ram-eval-of-halted.md)
 - [RAM-decidable predicate](ramdecidable.md)
+- [Cook and Reckhow: additive RAMs and multitape Turing machines simulate each other](additive-rams-and-turing-machines-simulate-each-other.md)

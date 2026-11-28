@@ -86,7 +86,7 @@ theorem MvPowerSeries.exponentialSpecialization_values :
     simp only [MvPowerSeries.coeff_X, PowerSeries.coeff_X, e1]
     split_ifs with h <;> simp [h]
   case b =>
-    rw [MvPowerSeries.coeff_X_pow, if_neg (e2 m)]
+    rw [MvPowerSeries.coeff_X_pow, ite_eq_right (e2 m)]
     simp
   case c =>
     simp only [MvPowerSeries.X,

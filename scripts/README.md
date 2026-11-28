@@ -25,6 +25,11 @@ collision check, then the compiled audit of trust and dependency policies, which
 longer than the collision check. Every check runs and every failure is reported, unless
 `ATLAS_CHECK_FAIL_FAST=1`, which CI sets for merge groups: `scripts/check.sh` then stops
 at the first failing check.
+With `ATLAS_TOOL_TESTS=skip`, `scripts/test_scripts.sh` leaves out the nine tool test suites at
+its end, whose tests read only scripts, workflows and the pins. CI sets it only on a pull request
+whose every changed path is graph data, documentation, a Lean file of the nine libraries or under
+`provenance/` (`scripts/ci_scope.py`); every other run, merge groups and pushes included, runs
+them.
 The compiled audit runs its batches in parallel, as many as the available memory
 holds at 6 GiB each; on a shared machine, `ATLAS_AUDIT_WORKERS=N` sets the count
 (`1` runs them one after another).
@@ -39,6 +44,11 @@ identity without scanning or compiling Lean.
 
 For AlgebraNotes' compact, non-accepted migration ledger and identity validator,
 see [`blueprint/migrations/README.md`](../blueprint/migrations/README.md).
+
+For the regular quality review, which scores a sample of public statements on faithfulness,
+tactics, Mathlib conventions and code quality with an LLM judge, see
+[`quality_review/RUBRICS.md`](quality_review/RUBRICS.md) and `scripts/quality_review.py --help`.
+Its tests run in preflight; repository CI never calls the judge.
 
 For the reproducible, opt-in Tau Ceti quality evaluation of maintained Atlas
 libraries, see [`QUALITY_EVAL.md`](QUALITY_EVAL.md). Its deterministic tests run

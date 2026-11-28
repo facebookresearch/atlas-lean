@@ -15,3 +15,7 @@ Lie algebras and their structure and representations, free Lie algebras, Poisson
 - [Ideal of a Lie algebra](lie-algebra-ideal.md)
 - [Killing form of a Lie algebra](killing-form.md)
 - [Solvable Lie algebra](solvable-lie-algebra.md)
+- [Deligne–Drinfeld freeness and weight completion](deligne-drinfeld-freeness.md)
+- [Invariance of trace forms and of the Killing form](killing-form-associative.md)
+- [Cartan subalgebra](cartan-subalgebra.md)
+- [Simple Lie algebra](simple-lie-algebra.md)

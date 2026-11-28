@@ -1,0 +1,3 @@
+# Threshold block operators act diagonally on product eigenvectors
+
+Let $Q$ be a Hermitian complex $2^m \times 2^m$ matrix with chosen orthonormal eigenvectors $e_j$ and real eigenvalues $\lambda_j$, let $b$ be a string of $k$ Booleans and $(j_0, \dots, j_{k-1})$ a tuple of indices. The threshold block operator for $b$, the tensor product over blocks $i$ of $Q$ where $b_i$ is true and $1 - Q$ where it is false, maps the product eigenvector $e_{j_0} \otimes \dots \otimes e_{j_{k-1}}$ to itself multiplied by $\prod_i c_i$, where $c_i = \lambda_{j_i}$ if $b_i$ is true and $c_i = 1 - \lambda_{j_i}$ otherwise.

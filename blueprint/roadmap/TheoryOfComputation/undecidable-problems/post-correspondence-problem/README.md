@@ -79,3 +79,6 @@
 - [The unary code of an injective indexing is uniquely decodable](unary-hom-injective.md)
 - [PCP over a finite alphabet many-one reduces to PCP over the binary alphabet](many-one-reducible-pcp-bool.md)
 - [The Post correspondence problem is undecidable over the binary alphabet](not-tm2-decidable-pcp-bool.md)
+- [Post embedding with combined directness constraints is Σ⁰₁-complete](post-embedding-with-combined-directness-constrai.md)
+- [The conjugate Post correspondence problem is undecidable](conjugate-post-correspondence-problem-is-undecidable.md)
+- [The reverse Post correspondence problem with a regular filter is undecidable](the-reverse-post-correspondence-problem-with-a-r.md)

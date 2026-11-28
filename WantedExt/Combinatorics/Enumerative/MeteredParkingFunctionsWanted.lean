@@ -12,9 +12,13 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Real.Sqrt
 public import MathlibExt.Combinatorics.Enumerative.ClassicalMeteredParkingFunctions
 public import MathlibExt.Combinatorics.Enumerative.LongMeteredParkingFunctions
+public import MathlibExt.Combinatorics.Enumerative.MeteredParkingDiagonalChoose
 public import MathlibExt.Combinatorics.Enumerative.MeteredParkingLowerBound
+public import MathlibExt.Combinatorics.Enumerative.OneMeteredLuckyLaces
 public import MathlibExt.Combinatorics.Enumerative.OneMeteredParkingFunctions
+public import MathlibExt.Combinatorics.Enumerative.OneMeteredTwoSpots
 public import MathlibExt.Combinatorics.Enumerative.ParkingFunction
+public import MathlibExt.Combinatorics.Enumerative.TwoMeteredParkingFunctions
 
 namespace MetaMathlibExt
 
@@ -44,30 +48,6 @@ public theorem_wanted metered_window_count_ge {m n t : ℕ} {f : Fin m → Fin n
       (Finset.univ.filter fun k : Fin m =>
           j ≤ (k : ℕ) + 1 ∧ (k : ℕ) + 1 ≤ j + t ∧ (f k : ℕ) + 1 ≤ i).card + n
 
-/-- **Metered parking functions with two cars.** For every natural number $t \ge 1$ and every
-natural number $n$, the number of $t$-metered $(2, n)$-parking functions is
-$\mathrm{mpf}_{2,n}(t) = \max(n^2 - 1, 0)$, that is, $n^2 - 1$ for $n \ge 1$ and $0$ for $n = 0$.
-
-Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
-Functions*, INTEGERS 25 (2025), Article A73, Corollary 2 (`integers-2025-A73-cor-2`). -/
-public theorem_wanted meteredParkingCount_two {t : ℕ} (ht : 1 ≤ t) (n : ℕ) :
-    meteredParkingCount t 2 n = n ^ 2 - 1
-
-/-- **Lucky cars of 1-metered parking are the lace starts.** Let $0 < m \le n$ and let
-$\alpha = (a_1, \dots, a_m)$, with each $a_i \in \{1, \dots, n\}$, be any sequence of preferred
-spots of $m$ cars on $n$ spots. Under the $1$-metered parking scheme, car $i$ is lucky (it parks
-in its preferred spot $a_i$) if and only if position $i$ is the first position of one of the
-laces of the lace decomposition $\mathrm{lace}(\alpha)$.
-
-Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
-Functions*, INTEGERS 25 (2025), Article A73, Lemma 1 (`integers-2025-A73-lem-1`). -/
-public theorem_wanted one_metered_lucky_iff_lace_start {m n : ℕ} (hm : 0 < m) (hmn : m ≤ n)
-    (f : Fin m → Fin n) :
-    ((List.ofFn fun i => (f i : ℕ)).zip (meteredOutcome 1 n (List.ofFn fun i => (f i : ℕ)))).map
-        (fun p => decide (p.2 = some p.1)) =
-      (laceDecomposition (List.ofFn fun i => (f i : ℕ))).flatMap
-        fun c => true :: List.replicate (c.length - 1) false
-
 /-- **One-metered parking functions and laces.** Let $0 < m \le n$ and
 $f : \{0, \dots, m-1\} \to \{0, \dots, n-1\}$. Then $f$ is a $1$-metered parking function if and
 only if, in the lace decomposition of $(f(0), \dots, f(m-1))$, the last spot $n - 1$ occurs in
@@ -79,18 +59,6 @@ public theorem_wanted isMeteredParkingFunction_one_iff_lace {m n : ℕ} (hm : 0 
     (f : Fin m → Fin n) :
     IsMeteredParkingFunction 1 f ↔
       ∀ c ∈ laceDecomposition (List.ofFn fun i => (f i : ℕ)), n - 1 ∉ c.tail
-
-/-- **One-metered parking functions with two spots.** Let $m \ge 1$ and
-$f : \{0, \dots, m-1\} \to \{0, 1\}$. Then $f$ is a $1$-metered parking function with $m$ cars and
-$2$ spots if and only if every lace of the lace decomposition of $(f(0), \dots, f(m-1))$ that
-contains the value $1$ has length $1$.
-
-Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
-Functions*, INTEGERS 25 (2025), Article A73, Corollary 3 (`integers-2025-A73-cor-3`). -/
-public theorem_wanted isMeteredParkingFunction_one_two_iff_lace {m : ℕ} (hm : 1 ≤ m)
-    (f : Fin m → Fin 2) :
-    IsMeteredParkingFunction 1 f ↔
-      ∀ c ∈ laceDecomposition (List.ofFn fun i => (f i : ℕ)), 1 ∈ c → c.length = 1
 
 /-- **Equal last-spot counts for 1-metered parking functions.** Let $1 \le m \le j < k \le n$
 and number the spots $1, \dots, n$. The number of $1$-metered $(m, n)$-parking functions whose
@@ -118,39 +86,6 @@ public theorem_wanted one_metered_last_spot_n_card {m n : ℕ} (hm : 1 ≤ m) (h
     (Finset.univ.filter fun f : Fin m → Fin n => IsMeteredParkingFunction 1 f ∧
         (meteredOutcome 1 n (List.ofFn fun i => (f i : ℕ))).getLast? = some (some (n - 1))).card =
       meteredParkingCount 1 (m - 1) n
-
-/-- **Lucas-type recursion for 1-metered parking functions.** Write $\mathrm{mpf}_{m,n}(1)$ for
-the number of $1$-metered $(m, n)$-parking functions. For every natural number $n$,
-$\mathrm{mpf}_{1,n}(1) = n$ and $\mathrm{mpf}_{0,n}(1) = 1$, and for every natural number $m$
-with $1 \le m \le n$,
-$$\mathrm{mpf}_{m+1,n}(1) = n \cdot \mathrm{mpf}_{m,n}(1) - \mathrm{mpf}_{m-1,n}(1),$$
-where the subtraction is taken in the integers.
-
-Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
-Functions*, INTEGERS 25 (2025), Article A73, Theorem 2 (`integers-2025-A73-thm-2`). -/
-public theorem_wanted meteredParkingCount_one_recursion (n : ℕ) :
-    meteredParkingCount 1 1 n = n ∧ meteredParkingCount 1 0 n = 1 ∧
-      ∀ m, 1 ≤ m → m ≤ n →
-        (meteredParkingCount 1 (m + 1) n : ℤ) =
-          n * meteredParkingCount 1 m n - meteredParkingCount 1 (m - 1) n
-
-/-- **1-metered parking functions with as many cars as spots.** For every natural number
-$n > 2$, the number of $1$-metered $(n, n)$-parking functions is
-$$\mathrm{mpf}_{n,n}(1) = \sum_{k=0}^{n} (n-2)^{n-k} \binom{2n+1-k}{k}.$$
-
-Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
-Functions*, INTEGERS 25 (2025), Article A73, Corollary 4 (`integers-2025-A73-cor-4`). -/
-public theorem_wanted meteredParkingCount_one_diag {n : ℕ} (hn : 2 < n) :
-    meteredParkingCount 1 n n =
-      ∑ k ∈ Finset.range (n + 1), (n - 2) ^ (n - k) * (2 * n + 1 - k).choose k
-
-/-- **1-metered parking functions with three cars.** For every natural number $n \ge 2$, the
-number of $1$-metered $(3, n)$-parking functions is $\mathrm{mpf}_{3,n}(1) = n^3 - 2n$.
-
-Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
-Functions*, INTEGERS 25 (2025), Article A73, Proposition 7 (`integers-2025-A73-prop-7`). -/
-public theorem_wanted meteredParkingCount_one_three {n : ℕ} (hn : 2 ≤ n) :
-    meteredParkingCount 1 3 n = n ^ 3 - 2 * n
 
 /-- **Metered parking functions in which every car is lucky.** Let $m \ge 2$, $n \ge 2$ and
 $t \le m - 1$. The number of $t$-metered $(m, n)$-parking functions in which every car parks in

@@ -39,8 +39,8 @@ the zero measure the log-Sobolev inequality would hold vacuously, since no densi
 Mathlib's Kullback–Leibler divergence of general finite measures carries a mass correction.
 
 The theorem of F. Otto and C. Villani (log-Sobolev with constant `α` implies Talagrand with
-constant `2/α`) is stated as a wanted result in `WantedExt/Probability/OttoVillaniWanted.lean`.
-Here we only set up the two predicates and check that they are satisfiable (Dirac masses).
+constant `2/α`) is proved in `MathlibExt.Probability.FunctionalInequalities.OttoVillani`.
+This module defines the two predicates and shows that Dirac masses satisfy them.
 
 ## Main definitions
 

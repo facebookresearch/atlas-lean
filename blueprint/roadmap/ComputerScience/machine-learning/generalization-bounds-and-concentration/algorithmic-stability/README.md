@@ -23,6 +23,12 @@ Stochastic gradient descent on convex, $\beta$-smooth, $L$-Lipschitz losses with
 - [SGM is uniformly stable](is-uniformly-stable-sgm.md)
 - [SGM moves at most $L \sum_t \alpha_t$ from its start](norm-sgm-iterate-sub-start-le.md)
 - [Generalization of SGM in expectation](abs-integral-empirical-risk-sub-risk-sgm.md)
+- [Dataset swap identity](swap-identity.md)
+
+## High-probability generalization from deletion stability
+
+- [Is Deletion Stable](is-deletion-stable.md)
+- [Leave One Out Risk](leave-one-out-risk.md)
 
 ## Related topics
 

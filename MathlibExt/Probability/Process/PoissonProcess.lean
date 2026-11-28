@@ -22,6 +22,7 @@ import Mathlib.Probability.Independence.Integration
 import Mathlib.Probability.ProductMeasure
 import Mathlib.Probability.StrongLaw
 import Mathlib.Tactic.FinCases
+import MathlibExt.Probability.Distributions.PoissonCountSplitting
 
 /-!
 # Poisson processes
@@ -600,29 +601,6 @@ theorem IsPoissonProcess.add {N₁ N₂ : ℝ≥0 → Ω → ℕ} {r₁ r₂ : �
     filter_upwards [hmono] with ω hω
     exact hω s t hst
 
-private lemma poisson_binomial_split (r : ℝ≥0) (p : unitInterval) (j k : ℕ) :
-    poissonMeasure r {j + k} * binomial (j + k) p {k} =
-      poissonMeasure (unitInterval.toNNReal p * r) {k} *
-        poissonMeasure (unitInterval.toNNReal (unitInterval.symm p) * r) {j} := by
-  rw [poissonMeasure_singleton, binomial_singleton,
-    poissonMeasure_singleton, poissonMeasure_singleton,
-    ← ENNReal.ofReal_mul (by positivity), ← ENNReal.ofReal_mul (by positivity)]
-  congr 1
-  simp only [NNReal.coe_mul, unitInterval.coe_toNNReal, unitInterval.symm,
-    Nat.add_sub_cancel_right, pow_add, mul_pow]
-  rw [show ((j + k).choose k : ℝ) =
-      ((j + k).factorial : ℝ) / ((j.factorial : ℝ) * (k.factorial : ℝ)) by
-    apply (eq_div_iff (by positivity : ((j.factorial : ℝ) * (k.factorial : ℝ) : ℝ) ≠ 0)).2
-    exact_mod_cast (by simpa [mul_assoc] using
-      Nat.add_choose_mul_factorial_mul_factorial j k)]
-  have he : Real.exp (-(↑p * ↑r)) * Real.exp (-((1 - ↑p) * ↑r)) =
-      Real.exp (-(r : ℝ)) := by
-    rw [← Real.exp_add]
-    congr 1
-    ring
-  rw [← he]
-  field_simp
-
 private lemma poisson_binomial_mixture (r : ℝ≥0) (p : unitInterval) (k : ℕ) :
     (∑' m, poissonMeasure r {m} * binomial m p {k}) =
       poissonMeasure (unitInterval.toNNReal p * r) {k} := by
@@ -641,7 +619,7 @@ private lemma poisson_binomial_mixture (r : ℝ≥0) (p : unitInterval) (k : ℕ
       exact hm (by simp [hz])
     exact ⟨m - k, Nat.sub_add_cancel hkm⟩
   rw [← hshift]
-  simp_rw [poisson_binomial_split]
+  simp_rw [poissonMeasure_mul_binomial_singleton]
   rw [ENNReal.tsum_mul_left]
   have htotal (q : ℝ≥0) : (∑' j : ℕ, poissonMeasure q {j}) = 1 := by
     rw [← measure_iUnion (by intro i j hij; simpa using hij)

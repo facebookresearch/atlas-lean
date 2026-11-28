@@ -20,6 +20,9 @@ Mathematical control theory of finite-dimensional systems: controllability of li
 - [Human-in-the-loop controller model](human-in-the-loop-controller-model.md)
 - [Conditional correctness of prescient advisories (safety case)](conditional-correctness-of-prescient-advisories.md)
 - [Optimal, robust and adaptive control](optimal-robust-and-adaptive-control/README.md)
+- [Finite-horizon model predictive control](finite-horizon-model-predictive-control/README.md)
+- [Mechanical systems and passivity](mechanical-systems-and-passivity/README.md)
+- [Signals and linear systems](signals-and-linear-systems/README.md)
 
 ## Single-input single-output linear systems
 
