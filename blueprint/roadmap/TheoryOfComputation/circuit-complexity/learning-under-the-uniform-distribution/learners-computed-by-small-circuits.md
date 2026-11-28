@@ -1,6 +1,6 @@
 # Learners computed by small circuits, with adaptive or non-adaptive membership queries
 
-A membership-query learner on $n$ coordinates has a (non-adaptive) circuit of size $S$ with $q$ queries if, for every seed, it queries $q$ points fixed by the seed and computes its hypothesis value $h(x)$ from the $q$ answers and $x$ by a fan-in-two De Morgan circuit with at most $S$ gates. It has an adaptive circuit of size $S$ with $q$ queries if, for every seed, the $i$-th query point is computed from the first $i-1$ answers by a De Morgan circuit and the hypothesis value at $x$ from all answers and $x$, with at most $S$ gates in total. A non-adaptive learner with a circuit of size $S$ is, on every seed, an oracle circuit with at most $S + q + 2$ gates, $q$ of them oracle gates at oracle depth one.
+A membership-query learner on $n$ coordinates has a (non-adaptive) circuit of size $S$ with $q$ queries if, for every seed, it queries $q$ points fixed by the seed and computes its hypothesis value $h(x)$ from the $q$ answers and $x$ by a fan-in-two De Morgan circuit with at most $S$ gates. It has an adaptive circuit of size $S$ with $q$ queries if, for every seed, the $i$-th query point is computed from the first $i-1$ answers by a De Morgan circuit and the hypothesis value at $x$ from all answers and $x$, with at most $S$ gates in total.
 
 ## Depends on
 
