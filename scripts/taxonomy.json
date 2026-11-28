@@ -12064,6 +12064,7 @@
   "MathlibExt/Combinatorics/Matroid/MixedDegrees": {"to": "Combinatorics/matroid-theory", "title": "Hodge theory for matroids"},
   "MathlibExt/Combinatorics/Matroid/Rado": {"to": "Combinatorics/matroid-theory", "title": "Rado's theorem on independent transversals"},
   "MathlibExt/Combinatorics/Matroid/StrongMason": {"to": "Combinatorics/matroid-theory", "title": "Mason's conjectures on independent sets"},
+  "MathlibExt/Combinatorics/Matroid/WeakMason": {"to": "Combinatorics/matroid-theory", "title": "Mason's conjectures on independent sets"},
   "MathlibExt/Combinatorics/MaximumNimFloorNonmultiple": {"to": "GameTheory/combinatorial-games", "title": "Maximum Nim"},
   "MathlibExt/Combinatorics/MaximumNimFloorReduction": {"to": "GameTheory/combinatorial-games", "title": "Maximum Nim"},
   "MathlibExt/Combinatorics/MaximumNimIterates": {"to": "GameTheory/combinatorial-games", "title": "Maximum Nim"},
