@@ -12,7 +12,7 @@ $$
 
 Here $\triangleright$, $\#$ and $\&$ are marker letters (the source writes a dollar sign for $\triangleright$).
 
-In contrast, the same paper shows that reachability is decidable when only runs in which the sequence of messages sent to each channel lies in a given bounded language (input-bounded runs) are considered, and more generally when such runs are further restricted by a regular language.
+In contrast, the same paper shows that reachability is decidable when only runs in which the sequence of messages sent to each channel lies in a given regular bounded language, specified by a finite automaton (input-bounded runs), are considered, and more generally whether such a run can reach a given control state with channel contents in a given rational relation (Definition 3.5, Theorem 3.6).
 
 ## Depends on
 
@@ -29,4 +29,4 @@ The proof simulates a two-counter Minsky machine with one channel. In control st
 
 ## Sources
 
-- Benedikt Bollig, Alain Finkel and Amrita Suresh, *Bounded Reachability Problems are Decidable in FIFO Machines*, Logical Methods in Computer Science 18(1), article 19, 2022, https://doi.org/10.46298/lmcs-18(1:19)2022; the theorem on bounded reachability sets in the section on the input-bounded rational-reachability problem, read in arXiv:2105.06723v4.
+- Benedikt Bollig, Alain Finkel and Amrita Suresh, *Bounded Reachability Problems are Decidable in FIFO Machines*, Logical Methods in Computer Science 18(1), article 19, 2022, https://doi.org/10.46298/lmcs-18(1:19)2022; Theorem 3.1 (bounded reachability sets), Definition 3.5 and Theorem 3.6 (input-bounded rational reachability) in Section 3, read in arXiv:2105.06723v4.
