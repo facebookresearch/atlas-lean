@@ -1,0 +1,5 @@
+# AIM computational algebraic statistics Question 47 (Pistone's design interpolation question)
+
+This is the proposition that for every $d$, every finite design $D \subseteq \mathbb{Q}^d$, every finite set $B$ of exponent vectors with $|B| = |D|$ whose monomials are linearly independent modulo the ideal $I(D)$ of polynomials vanishing on $D$ (no nonzero combination of them vanishes on all of $D$), every finite set $G$ of exponent vectors such that $B$ is exactly the set of exponents not divisible by any $x^g$, $g \in G$ (the standard monomials of $M = \langle x^g : g \in G \rangle$), and every choice of coefficients $c_{g, \alpha} \in \mathbb{Q}$ such that each $f_g = x^g - \sum_{\alpha \in B} c_{g,\alpha} x^\alpha$ ($g \in G$) vanishes on $D$, the common complex zeros of the $f_g$ are exactly the points of $D$.
+
+Source: AIM workshop *Computational algebraic statistics*, problem list, https://aimath.org/WWN/compalgstat/compalgstat.pdf, Question 47 (Pistone), where the question is posed; the list is a historical record of the question, not a source for an answer.

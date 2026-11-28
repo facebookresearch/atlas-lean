@@ -21,6 +21,7 @@ Univariate and multivariate polynomials and formal power series as algebraic obj
 - [Squares of sparse polynomials](squares-of-sparse-polynomials/README.md)
 - [Weighted derivations of monoid algebras](weighted-derivations-of-monoid-algebras/README.md)
 - [Univariate polynomial arithmetic](univariate-polynomial-arithmetic/README.md)
+- [Jacobian conjecture and polynomial automorphisms](jacobian-conjecture-and-polynomial-automorphisms/README.md)
 - [Symmetric polynomials in the roots are polynomials in the coefficients](symmetric-polynomial-in-esymm.md)
 - [Independent commuting derivations with a coordinate-free joint kernel](commuting-locally-nilpotent-derivations.md)
 - [Difference equations in sequences](difference-equations-in-sequences/README.md)

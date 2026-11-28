@@ -15,6 +15,11 @@
 - [Ramification index and inertia degree one and the decomposition field](ramification-idx-inertia-deg-eq-one-iff-2.md)
 - [Fields below the inertia and decomposition fields](ramification-idx-inertia-deg-eq-one-iff-3.md)
 
+## Inertia and roots of unity
+
+
+## Inertia Cyclotomic
+
 ## The tame character of an inertia group
 
 - [Tame character of the inertia group at a maximal ideal](exists-monoid-hom-inertia-residue-field.md)

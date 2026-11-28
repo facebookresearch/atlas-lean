@@ -10,5 +10,6 @@ Monoidal categories equip a category with a tensor product and unit object, with
 - [The Int construction](the-int-construction/README.md)
 - [The relational model of symmetric trace](the-relational-model-of-symmetric-trace/README.md)
 - [Verification functors and feedback invariants](verification-functors-and-feedback-invariants/README.md)
+- [Fusion categories](fusion-categories/README.md)
 - [Tensor inverses are unique up to isomorphism in braided categories](nonempty-iso-of-tensor-iso-tensor-unit.md)
 - [Categories of partitions](categories-of-partitions/README.md)

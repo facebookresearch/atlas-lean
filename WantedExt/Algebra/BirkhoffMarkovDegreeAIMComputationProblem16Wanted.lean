@@ -34,8 +34,8 @@ https://aimath.org/WWN/compalgstat/compalgstat.pdf, Problem 1. UnsolvedMath reco
 The toric ideal is the kernel of `K[p(σ) : σ ∈ S_p] → K[ψ_{jk}]`, `p(σ) ↦ ∏_j ψ_{j σ(j)}`, over an
 arbitrary field `K` (as in Yamaguchi, Ogawa and Takemura). A binomial of degree `≤ d` is `x^u - x^v`
 with `|u|, |v| ≤ d` and the same image. The formalized answer is the Markov degree: for `p ≥ 3` the
-binomials of degree at most `3` generate the ideal and those of degree at most `2` do not (for `p ≤
-2` the ideal is zero). The explicit list of moves is not formalized.
+binomials of degree at most `3` generate the ideal and those of degree at most `2` do not (for
+`p = 1, 2` the ideal is zero). The explicit list of moves is not formalized.
 -/
 
 open MvPolynomial

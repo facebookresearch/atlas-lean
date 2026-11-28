@@ -13,3 +13,4 @@ How primes split, ramify and stay inert in finite extensions of Dedekind domains
 - [Tame ramification and the different](tame-ramification-and-the-different/README.md)
 - [Totally ramified extensions and Eisenstein polynomials](totally-ramified-extensions-and-eisenstein-polyn/README.md)
 - [Unramified extensions and residue field extensions](unramified-extensions-and-residue-field-extensio/README.md)
+- [Galois-invariant ideals in an unramified extension are extended](map-comap-eq-of-unramified-of-galois-inv.md)

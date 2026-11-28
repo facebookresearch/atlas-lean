@@ -1,5 +1,6 @@
 # Unramified extensions and residue field extensions
 
+- [Local unramifiedness from a reduced minimal polynomial](local-unramifiedness-from-a-reduced-minimal-poly/README.md)
 - [Lifting irreducible residue polynomials over a DVR](lifting-irreducible-residue-polynomials-over-a-d/README.md)
 - [Residue-field functoriality and faithfulness for DVR extensions](residue-field-functoriality-and-faithfulness-for/README.md)
 - [Fullness of the residue-field functor for DVR extensions](fullness-of-the-residue-field-functor-for-dvr-ex/README.md)

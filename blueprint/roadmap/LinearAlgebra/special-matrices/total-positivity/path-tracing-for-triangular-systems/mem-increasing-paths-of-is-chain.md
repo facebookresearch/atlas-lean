@@ -1,0 +1,3 @@
+# Directed paths of a strictly lower triangular matrix are increasing
+
+Let $n \in \mathbb{N}$, $R$ a type with zero, and $B$ an $R$-valued matrix indexed by $\{0, \dots, n-1\}$ that is strictly lower triangular ($B_{ij} = 0$ whenever $i \le j$). Let $p$ be a list of nodes with first element $j$ and last element $i$ such that $B_{vu} \ne 0$ for every pair of consecutive nodes $u, v$ of $p$ (a directed path from $j$ to $i$). Then $p$ belongs to the set $\mathcal{P}(j, i)$ of strictly increasing lists of nodes that start at $j$ and end at $i$ (one for each set $S$ with $\{j, i\} \subseteq S \subseteq [j, i]$, listed in increasing order).

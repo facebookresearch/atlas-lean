@@ -95,8 +95,10 @@ system), with rates `du, dp, df` satisfying `K *ᵥ du + Q *ᵥ dp = df`
 and the storage balance `Qᵀ *ᵥ du - C *ᵥ dp = s - H *ᵥ p`, the
 pressure rate solves the Biot storage equation
 `(Qᵀ K⁻¹ Q + C) *ᵥ dp = Qᵀ K⁻¹ df - s + H *ᵥ p`, and `du` is
-recovered from the first equation. This is the dynamic Biot equation
-of the roadmap in the pin's sign convention. -/
+recovered from the first equation. This is block elimination with
+signed forcing: with the left side of the second equation as written,
+the dissipative storage balance of `EarthScience.SatisfiesBiotRateSystem`
+has right-hand side `H *ᵥ p - s`. -/
 theorem biot_rate_equation {n m : Type*} [Fintype n] [Fintype m]
     [DecidableEq n] [DecidableEq m]
     (K : Matrix n n ℝ) (Kinv : Matrix n n ℝ)

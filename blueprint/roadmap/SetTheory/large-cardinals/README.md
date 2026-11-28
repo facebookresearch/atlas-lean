@@ -4,5 +4,6 @@ Cardinals with strong closure or reflection properties, such as inaccessible, Ma
 
 - [Inaccessible cardinals](inaccessible-cardinals/README.md)
 - [Mahlo cardinals](mahlo-cardinals/README.md)
+- [Real-valued measurable cardinals](real-valued-measurable-cardinals/README.md)
 - [Measurable cardinal](measurable-cardinal.md)
 - [Weakly compact cardinal](is-weakly-compact.md)

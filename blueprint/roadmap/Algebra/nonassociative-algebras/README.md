@@ -6,6 +6,7 @@ Lie algebras and their structure and representations, free Lie algebras, Poisson
 - [Ado's theorem](ado-s-theorem/README.md)
 - [Poisson algebras and Poisson ideals](poisson-algebras-and-poisson-ideals/README.md)
 - [Rota–Baxter operators on groups](rota-baxter-operators-on-groups/README.md)
+- [Skew braces](skew-braces/README.md)
 - [Virtual racks and quandles](virtual-racks-and-quandles/README.md)
 - [Witt's formula for free Lie algebras](witt-s-formula-for-free-lie-algebras/README.md)
 - [Universal enveloping algebra of a Lie algebra](universal-enveloping-algebra.md)

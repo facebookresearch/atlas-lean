@@ -13,6 +13,7 @@
 
 ## Algebra
 
+- [On a block chart, rank at most k is rank exactly k](rank-le-iff-rank-eq-of-is-unit-det-to-bl.md)
 - [Dimension count for the rank-k locus](dim-add-codim.md)
 - [Dimension of the tangent space to the rank-k locus](finrank-tangent-space.md)
 - [Dimension of the normal space to the rank-k locus](finrank-normal-space.md)
@@ -26,3 +27,5 @@
 - [Tangent and normal spaces of the rank locus are complementary](is-compl-tangent-space-normal-space.md)
 - [Tangent cone of the rank-at-most-k locus](tangent-cone-at-set-of-rank-le.md)
 - [Local manifold structure of the rank-k matrix locus](exists-local-graph.md)
+- [Tangent and normal dimensions for rank-one 2 × 2 matrices](finrank-normal-space-tangent-space-two-t.md)
+- [A rank-one 2 × 2 matrix](rank-two-two-one-example.md)

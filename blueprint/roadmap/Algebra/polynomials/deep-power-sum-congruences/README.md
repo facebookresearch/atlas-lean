@@ -38,3 +38,5 @@
 - [Multiplicativity of $g_\lambda$ over disjoint parts](p-equiv-class-sum-add-of-disjoint.md)
 - [For odd $p$ the signs in $g_\lambda$ are constant](p-equiv-class-sum-eq-neg-one-pow-smul.md)
 - [$g_\lambda$ is $p$-integral](p-equiv-class-sum-coeff-den-not-dvd.md)
+- [A multiset is determined by its size and positive power sums](eq-of-card-eq-of-forall-sum-pow-eq.md)
+- [Split monic polynomials are determined by the power sums of their roots](eq-of-forall-sum-roots-pow-eq.md)

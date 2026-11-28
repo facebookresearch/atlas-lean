@@ -5,6 +5,10 @@ A real matrix is totally nonnegative (totally positive) if all its minors are no
 - [Totally positive matrices](totally-positive-matrices/README.md)
 - [Total positivity of hyper-Fibonacci Toeplitz matrices](hyper-fibonacci-toeplitz-matrices/README.md)
 - [Total nonnegativity of planar networks](planar-networks/README.md)
+- [Symmetrized product of principal minors over set partitions](symmetrized-fischer-product.md)
+- [AimPL total positivity Problem 1.55 (converse of the Barrett–Johnson inequalities)](barrett-johnson-converse.md)
+- [Converse of the Barrett–Johnson inequalities for totally nonnegative matrices](barrett-johnson-converse-holds.md)
+- [Path tracing for triangular systems](path-tracing-for-triangular-systems/README.md)
 
 ## Related topics
 

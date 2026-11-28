@@ -12,6 +12,7 @@ Galois theory relates a field extension to its group of automorphisms, covering 
 - [Extensions of prime degree with a nontrivial automorphism are Galois](is-galois-and-order-of-eq-finrank-of-fin.md)
 - [Intermediate fields of an abelian extension form a modular lattice](is-modular-lattice-intermediate-field.md)
 - [Hilbert's Theorem 90 for the multiplicative group](multiplicative-hilbert-s-theorem-90.md)
+- [Irreducibility of binomials from a character of the unit group](irreducible-x-pow-sub-c-of-unit-hom.md)
 - [Kummer theory for abelian extensions of exponent dividing n](kummer-theory.md)
 - [Norm in a tensor product with a Galois extension](algebra-map-norm-eq-prod-map-alg-equiv.md)
 - [Normal basis theorem](normal-basis-theorem.md)

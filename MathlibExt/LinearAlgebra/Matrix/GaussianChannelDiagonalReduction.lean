@@ -36,7 +36,8 @@ open scoped ComplexOrder
 
 namespace MathlibExt.LinearAlgebra.Matrix.GaussianChannelDiagonalReduction
 
-/-- Whitened channel Gram matrix `Hᵀ R⁻¹ H`. -/
+/-- Channel Gram matrix `Hᵀ R⁻¹ H`, with `R⁻¹ = 0` for singular `R`; it is the Gram
+matrix of the whitened channel only when `R` is positive definite. -/
 noncomputable def channelGram {m n : Type*} [Fintype m] [DecidableEq m]
     (H : Matrix m n ℝ) (R : Matrix m m ℝ) : Matrix n n ℝ :=
   Hᵀ * R⁻¹ * H
