@@ -36,6 +36,7 @@ The likelihood comes from Girsanov's theorem applied to the first $KL-1$ coordin
 ## Depends on
 
 - [Linkage disequilibrium of a two-locus gamete law](../linkage-diseq.md)
+- [Pairwise linkage disequilibria of two multi-allelic loci](../linkage-diseq-2.md)
 
 ## Sources
 

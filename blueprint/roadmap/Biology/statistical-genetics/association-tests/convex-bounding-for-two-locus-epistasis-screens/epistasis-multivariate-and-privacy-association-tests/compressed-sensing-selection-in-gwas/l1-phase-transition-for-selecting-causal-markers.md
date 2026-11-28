@@ -18,9 +18,9 @@ $$\hat x = \arg\min \tfrac12\|y - A\hat x\|_2^2 + \lambda\|\hat x\|_1, \qquad \l
 
 (after dividing by $n$, this is the source's penalty $10\sqrt{\log p}\,(\sigma_E/\sqrt n)\,\|\hat x\|_1$ on $\tfrac12\|y/\sqrt n - (A/\sqrt n)\hat x\|_2^2$) satisfies
 
-$$\|\hat x - x\|_2^2 \le C^2(1+\alpha)^2\, \sigma_E^2\, \frac{s \log p}{n}, \qquad \alpha = \sqrt{\frac{(1+\beta)\, s \log^5 p}{n}} \le \log^2 p,$$
+$$\|\hat x - x\|_2^2 \le C^2(1+\alpha)^2\, \sigma_E^2\, \frac{s \log p}{n}, \qquad \alpha = \sqrt{\frac{(1+\beta)\, s\, \gamma \log p\, \log n\, \log^2 s}{n}} \le \log^{3/2} p,$$
 
-that is, $\|\hat x - x\|_2^2 \le \sigma_E^2\,\frac sn\,\mathrm{polylog}(p)$, within a polylogarithmic factor of an oracle that knows the support. The bound is a high-probability statement over the random design and noise, not a deterministic one.
+that is, $\|\hat x - x\|_2^2 \le \sigma_E^2\,\frac sn\,\mathrm{polylog}(p)$, within a polylogarithmic factor of an oracle that knows the support. The bound is a high-probability statement over the random design and noise, not a deterministic one. This $\alpha$ is the one of Theorem 1.2 in the published version (the authors' copy dated "November 2010; Revised June 2011"), $\alpha = \sqrt{(1+\beta)\, s\, \mu(F) \log n \log m \log^2 s / m}$, "never greater than $\log^{3/2} n$ in this setup", where the source's $n$, $m$ and $\mu(F)$ are the page's $p$, $n$ and $\gamma$. The preprint arXiv:1011.3854v3 prints instead $\alpha = \sqrt{(1+\beta)\, s \log^5 n / m}$, "never greater than $\log^2 n$", without the coherence; the page follows the published version.
 
 ## Depends on
 
@@ -41,4 +41,4 @@ Although $Ax = y$ has infinitely many solutions when $n < p$, the $L_1$ ball's l
 ## Sources
 
 - S. Vattikuti, J. J. Lee, C. C. Chang, S. D. H. Hsu, C. C. Chow, "Applying compressed sensing to genome-wide association studies", GigaScience 3:10 (2014), Eq 1, Propositions 1–2, Definitions 1–2 and the phase-plane results, <https://doi.org/10.1186/2047-217x-3-10>, PMCID PMC4078394.
-- E. J. Candès and Y. Plan, "A probabilistic and RIPless theory of compressed sensing", *IEEE Transactions on Information Theory* 57 (2011), 7235–7254, <https://doi.org/10.1109/TIT.2011.2161794> (preprint arXiv:1011.3854): Section 1 (isotropy and incoherence properties, the normalized model) and Theorem 1.2 (noisy LASSO bound), the source of Proposition 2.
+- E. J. Candès and Y. Plan, "A probabilistic and RIPless theory of compressed sensing", *IEEE Transactions on Information Theory* 57 (2011), 7235–7254, <https://doi.org/10.1109/TIT.2011.2161794> (revised authors' copy, "November 2010; Revised June 2011"; the earlier preprint arXiv:1011.3854v3 states a different $\alpha$): Section 1 (isotropy and incoherence properties, the normalized model) and Theorem 1.2 (noisy LASSO bound), the source of Proposition 2.
