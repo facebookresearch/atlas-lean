@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Data.Set.Operations
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.CodeGenerationWithAddressExpressionsDefs
 
 @[expose] public section
 
@@ -59,52 +57,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance `(g, B, C, M)`: the list `g` of address expressions `g(I₁), …, g(Iₙ)` (see the
-module docstring), and natural numbers `B`, `C` and `M`. -/
-abbrev CodeGenerationWithAddressExpressionsInstance := List (ℕ × ℕ × ℕ) × ℕ × ℕ × ℕ
-
-/-- An expression of an instruction among `n` instructions: `Iⱼ` (`(0, j, 0)` with `j < n`),
-`Iⱼ + k` (`(1, j, k)`) or `Iⱼ - k` (`(2, j, k)`) with `j < n` and `k ∈ Z⁺`, or `k`
-(`(3, 0, k)`) with `k ∈ Z⁺`. -/
-def IsAddressExpr (n : ℕ) (e : ℕ × ℕ × ℕ) : Prop :=
-  (e.1 = 0 ∧ e.2.1 < n ∧ e.2.2 = 0) ∨ (e.1 = 1 ∧ e.2.1 < n ∧ 0 < e.2.2) ∨
-    (e.1 = 2 ∧ e.2.1 < n ∧ 0 < e.2.2) ∨ (e.1 = 3 ∧ e.2.1 = 0 ∧ 0 < e.2.2)
-
-/-- Well-formedness of an instance: every `g(Iᵢ)` is an expression of the form `Iⱼ`,
-`Iⱼ + k`, `Iⱼ - k` or `k` with `Iⱼ ∈ I` and `k ∈ Z⁺`, and `B`, `C`, `M` are positive. -/
-def WellFormed (i : CodeGenerationWithAddressExpressionsInstance) : Prop :=
-  (∀ e ∈ i.1, IsAddressExpr i.1.length e) ∧ 0 < i.2.1 ∧ 0 < i.2.2.1 ∧ 0 < i.2.2.2
-
-/-- The value `h(Iᵢ)` of the expression `g(Iᵢ)` under the address assignment `f`: `f(Iⱼ)`,
-`f(Iⱼ) + k`, `f(Iⱼ) - k` or `k` for `g(Iᵢ) = Iⱼ`, `Iⱼ + k`, `Iⱼ - k` or `k`. -/
-def addressValue (g : List (ℕ × ℕ × ℕ)) (f : Fin g.length → ℕ) (x : Fin g.length) : ℤ :=
-  let e := g[x]
-  let fj : ℤ := if hj : e.2.1 < g.length then (f ⟨e.2.1, hj⟩ : ℤ) else 0
-  if e.1 = 0 then fj else if e.1 = 1 then fj + e.2.2 else if e.1 = 2 then fj - e.2.2
-  else e.2.2
-
-/-- There is a one-to-one, order-preserving `f : I → {1, …, M}` under which every
-instruction `Iᵢ` has `-C < f(Iᵢ) - h(Iᵢ) < B` (a one-byte instruction) or has `f(Iᵢ) + 1`
-outside the range of `f` and at most `M` (room for a two-byte instruction within the `M`
-bytes of memory). -/
-def CodeGenerationWithAddressExpressionsFeasible
-    (i : CodeGenerationWithAddressExpressionsInstance) : Prop :=
-  ∃ f : Fin i.1.length → ℕ,
-    (∀ x, 1 ≤ f x ∧ f x ≤ i.2.2.2) ∧ Function.Injective f ∧
-      (∀ x y, x < y → f x < f y) ∧
-      ∀ x, (-(i.2.2.1 : ℤ) < (f x : ℤ) - addressValue i.1 f x ∧
-          (f x : ℤ) - addressValue i.1 f x < (i.2.1 : ℤ)) ∨
-        (f x + 1 ≤ i.2.2.2 ∧ f x + 1 ∉ Set.range f)
-
-open Classical in
-/-- CODE GENERATION WITH ADDRESS EXPRESSIONS as a decision problem over bitstrings. -/
-noncomputable def codeGenerationWithAddressExpressionsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := CodeGenerationWithAddressExpressionsInstance) x with
-  | some i => decide (WellFormed i ∧ CodeGenerationWithAddressExpressionsFeasible i)
-  | none => false
 
 /-- **CODE GENERATION WITH ADDRESS EXPRESSIONS is NP-complete.** Source: Garey and Johnson
 (1979), [PO7]; Szymanski (1978). -/

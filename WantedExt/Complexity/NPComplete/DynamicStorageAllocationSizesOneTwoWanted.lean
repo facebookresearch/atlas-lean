@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.DynamicStorageAllocationWanted
+public import CSLibExt.Complexity.NPComplete.DynamicStorageAllocationSizesOneTwoDefs
 
 @[expose] public section
 
@@ -58,30 +56,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance, as in `DynamicStorageAllocationWanted`: the items `(s(a), r(a), d(a))` (size,
-arrival time, departure time) and the storage size `D`. -/
-abbrev DynamicStorageAllocationSizesOneTwoInstance :=
-  DynamicStorageAllocation.DynamicStorageAllocationInstance
-
-/-- Well-formedness of an instance: the instance of DYNAMIC STORAGE ALLOCATION is well-formed,
-and every item has size `1` or `2`. -/
-def WellFormed (i : DynamicStorageAllocationSizesOneTwoInstance) : Prop :=
-  DynamicStorageAllocation.WellFormed i ∧ ∀ a ∈ i.1, a.1 = 1 ∨ a.1 = 2
-
-/-- A feasible allocation of storage, exactly as in `DynamicStorageAllocationWanted`. -/
-def DynamicStorageAllocationSizesOneTwoFeasible
-    (i : DynamicStorageAllocationSizesOneTwoInstance) : Prop :=
-  DynamicStorageAllocation.DynamicStorageAllocationFeasible i
-
-open Classical in
-/-- DYNAMIC STORAGE ALLOCATION with sizes 1 and 2 as a decision problem over bitstrings. -/
-noncomputable def dynamicStorageAllocationSizesOneTwoDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := DynamicStorageAllocationSizesOneTwoInstance) x with
-  | some i => decide (WellFormed i ∧ DynamicStorageAllocationSizesOneTwoFeasible i)
-  | none => false
 
 /-- **DYNAMIC STORAGE ALLOCATION with sizes 1 and 2 is NP-complete.** Source: Garey and Johnson
 (1979), [SR2], comment (the entry cites Stockmeyer, private communication). -/

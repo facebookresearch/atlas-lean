@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MultipleCopyFileAllocationWanted
+public import CSLibExt.Complexity.NPComplete.MultipleCopyFileAllocationUniformCostsDefs
 
 @[expose] public section
 
@@ -59,22 +57,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the instance is well-formed for MULTIPLE COPY FILE
-ALLOCATION, and all vertices have the same usage `u(v)` and the same storage cost `s(v)`. -/
-def WellFormed (i : MultipleCopyFileAllocationInstance) : Prop :=
-  MultipleCopyFileAllocation.WellFormed i ∧
-    ∀ v w : Fin i.1, usage i v = usage i w ∧ storage i v = storage i w
-
-open Classical in
-/-- MULTIPLE COPY FILE ALLOCATION with uniform usages and storage costs as a decision problem
-over bitstrings. -/
-noncomputable def multipleCopyFileAllocationUniformCostsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MultipleCopyFileAllocationInstance) x with
-  | some i => decide (WellFormed i ∧ MultipleCopyFileAllocationFeasible i)
-  | none => false
 
 /-- **MULTIPLE COPY FILE ALLOCATION with uniform usages and storage costs is NP-complete.**
 Source: Garey and Johnson (1979), [SR6], comment (Van Sickle and Chandy, 1977). -/

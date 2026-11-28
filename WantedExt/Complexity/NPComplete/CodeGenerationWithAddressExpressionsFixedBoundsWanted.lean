@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.CodeGenerationWithAddressExpressionsWanted
+public import CSLibExt.Complexity.NPComplete.CodeGenerationWithAddressExpressionsFixedBoundsDefs
 
 @[expose] public section
 
@@ -59,36 +57,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the expressions `g(I₁), …, g(Iₙ)` (encoded as in [PO7]) and the memory bound
-`M`. -/
-abbrev CodeGenerationWithAddressExpressionsFixedBoundsInstance := List (ℕ × ℕ × ℕ) × ℕ
-
-/-- The [PO7] instance with `B = 128` and `C = 127`. -/
-def withBounds (i : CodeGenerationWithAddressExpressionsFixedBoundsInstance) :
-    CodeGenerationWithAddressExpressions.CodeGenerationWithAddressExpressionsInstance :=
-  (i.1, 128, 127, i.2)
-
-/-- Well-formedness of an instance: the [PO7] instance with `B = 128` and `C = 127` is well
-formed (every `g(Iᵢ)` is an expression `Iⱼ`, `Iⱼ + k`, `Iⱼ - k` or `k` with `Iⱼ ∈ I` and
-`k ∈ Z⁺`, and `M` is positive). -/
-def WellFormed (i : CodeGenerationWithAddressExpressionsFixedBoundsInstance) : Prop :=
-  CodeGenerationWithAddressExpressions.WellFormed (withBounds i)
-
-/-- The [PO7] question with `B = 128` and `C = 127`. -/
-def CodeGenerationWithAddressExpressionsFixedBoundsFeasible
-    (i : CodeGenerationWithAddressExpressionsFixedBoundsInstance) : Prop :=
-  CodeGenerationWithAddressExpressionsFeasible (withBounds i)
-
-open Classical in
-/-- CODE GENERATION WITH ADDRESS EXPRESSIONS with `B = 128` and `C = 127` as a decision problem
-over bitstrings. -/
-noncomputable def codeGenerationWithAddressExpressionsFixedBoundsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := CodeGenerationWithAddressExpressionsFixedBoundsInstance) x with
-  | some i => decide (WellFormed i ∧ CodeGenerationWithAddressExpressionsFixedBoundsFeasible i)
-  | none => false
 
 /-- **CODE GENERATION WITH ADDRESS EXPRESSIONS with `B = 128` and `C = 127` is NP-complete.**
 Source: Garey and Johnson (1979), [PO7], comment; Szymanski (1978). -/

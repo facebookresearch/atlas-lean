@@ -24,9 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.CodeGenerationUnfixedVariableLocationsWanted
+public import CSLibExt.Complexity.NPComplete.CodeGenerationUnfixedVariableLocationsFixedBoundDefs
 
 @[expose] public section
 
@@ -60,35 +58,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance `(m, g, M)`: the number `m` of variables, the targets `g(I₁), …, g(Iₙ)`
-(encoded as in [PO8]), and the memory bound `M`. -/
-abbrev CodeGenerationUnfixedVariableLocationsFixedBoundInstance := ℕ × List (ℕ × ℕ) × ℕ
-
-/-- The [PO8] instance with `B = 31`. -/
-def withBound (i : CodeGenerationUnfixedVariableLocationsFixedBoundInstance) :
-    CodeGenerationUnfixedVariableLocations.CodeGenerationUnfixedVariableLocationsInstance :=
-  (i.1, i.2.1, 31, i.2.2)
-
-/-- Well-formedness of an instance: the [PO8] instance with `B = 31` is well formed (every
-`g(Iᵢ)` names an instruction or a variable, and `M` is positive). -/
-def WellFormed (i : CodeGenerationUnfixedVariableLocationsFixedBoundInstance) : Prop :=
-  CodeGenerationUnfixedVariableLocations.WellFormed (withBound i)
-
-/-- The [PO8] question with `B = 31`. -/
-def CodeGenerationUnfixedVariableLocationsFixedBoundFeasible
-    (i : CodeGenerationUnfixedVariableLocationsFixedBoundInstance) : Prop :=
-  CodeGenerationUnfixedVariableLocationsFeasible (withBound i)
-
-open Classical in
-/-- CODE GENERATION WITH UNFIXED VARIABLE LOCATIONS with `B = 31` as a decision problem over
-bitstrings. -/
-noncomputable def codeGenerationUnfixedVariableLocationsFixedBoundDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := CodeGenerationUnfixedVariableLocationsFixedBoundInstance) x with
-  | some i => decide (WellFormed i ∧ CodeGenerationUnfixedVariableLocationsFixedBoundFeasible i)
-  | none => false
 
 /-- **CODE GENERATION WITH UNFIXED VARIABLE LOCATIONS with `B = 31` is NP-complete.** Source:
 Garey and Johnson (1979), [PO8], comment; Robertson (1977). -/
