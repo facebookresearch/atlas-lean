@@ -223,7 +223,8 @@ private theorem main_series :
         rw [← h1]
         ring
 
-/-- The Genocchi–Lucas coefficient is a power of the conjugate golden ratio. -/
+/-- For every natural `n`, the Genocchi–Lucas coefficient is `2 * √5` times the `n`th power of the
+conjugate golden ratio. -/
 private theorem genLucasCoeff_eq (n : ℕ) :
     genLucasCoeff n = 2 * Real.sqrt 5 * fibBeta ^ n := by
   have hψ : ψ = fibBeta := by unfold fibBeta Real.goldenConj; ring
