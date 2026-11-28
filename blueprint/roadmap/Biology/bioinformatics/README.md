@@ -38,6 +38,7 @@ Algorithms and statistical models on biological sequences and data: sequence ali
 - [Statistical models of genomic data](statistical-models-of-genomic-data/README.md)
 - [Sequence design and binding prediction](sequence-design-and-binding-prediction/README.md)
 - [Variant edges in bidirected pangenome graphs](variant-edges-in-bidirected-pangenome-graphs/README.md)
+- [Aberrant splicing detection](aberrant-splicing-detection/README.md)
 ## [String algorithms, indexing and assembly](part-01/README.md)
 - [Abelian complexity of DNA sequences](part-01/abelian-complexity-of-dna-sequences/README.md)
 - [Additional-prefix q-gram filtering](part-01/additional-prefix-q-gram-filtering/README.md)

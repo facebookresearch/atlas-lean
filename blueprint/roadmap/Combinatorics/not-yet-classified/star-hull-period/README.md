@@ -1,0 +1,15 @@
+# Star Hull Period
+
+- [Shp dir add t ne zero](shp-dir-add-t-ne-zero.md)
+- [Shp two t ne zero](shp-two-t-ne-zero.md)
+- [Shp t sub dir ne zero](shp-t-sub-dir-ne-zero.md)
+- [Shp neg rot90 neg rot90](shp-neg-rot90-neg-rot90.md)
+- [Shp two step ne](shp-two-step-ne.md)
+- [Shp period ne two](shp-period-ne-two.md)
+- [Shp period ge three](shp-period-ge-three.md)
+- [Shp star Hull period ge three](shp-star-hull-period-ge-three.md)
+- [Shp star Hull orbit is Cycle](shp-star-hull-orbit-is-cycle.md)
+- [Shp box period ge three](shp-box-period-ge-three.md)
+- [Shp box orbit is Cycle](shp-box-orbit-is-cycle.md)
+- [Shp unit Cell period ge three](shp-unit-cell-period-ge-three.md)
+- [Shp domino period ge three](shp-domino-period-ge-three.md)

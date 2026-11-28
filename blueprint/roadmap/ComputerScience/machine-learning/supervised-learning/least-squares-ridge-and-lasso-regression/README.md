@@ -41,6 +41,10 @@
 - [Soft thresholding solves the one-dimensional lasso](soft-threshold-le.md)
 - [Lasso with an orthonormal design](lasso-soft-threshold-le.md)
 
+## The set of least-squares minimizers
+
+- [Rss Minimizers](rss-minimizers.md)
+
 ## Related topics
 
 - [Linear least squares](../../../../LinearAlgebra/matrix-decompositions/linear-least-squares/README.md)
