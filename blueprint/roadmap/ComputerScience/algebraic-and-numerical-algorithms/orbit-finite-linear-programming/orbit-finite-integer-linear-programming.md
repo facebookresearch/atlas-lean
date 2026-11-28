@@ -23,4 +23,3 @@ The reduction is from reachability for $d$-counter machines with zero tests: eac
 ## Sources
 
 - Arka Ghosh, Piotr Hofman and Sławomir Lasota, "Orbit-finite Linear Programming", Journal of the ACM 72(1), 39 pages, 2025, <https://doi.org/10.1145/3703909>; Theorem 19 (main statement), Theorems 17 and 18, the open questions in Section 10 and the proof in Section 9 of arXiv:2302.00802v4, <https://arxiv.org/abs/2302.00802v4>.
-- Arka Ghosh, Piotr Hofman and Sławomir Lasota, "Orbit-finite linear programming", 38th Annual ACM/IEEE Symposium on Logic in Computer Science (LICS 2023), pp. 1–14, 2023, <https://doi.org/10.1109/LICS56636.2023.10175799>; conference version, not read (the statements rest on the version read of the first source above).

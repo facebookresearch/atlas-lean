@@ -29,4 +29,3 @@ Orbit-finite sets are finitely representable, which makes these systems legitima
 ## Sources
 
 - Arka Ghosh, Piotr Hofman and Sławomir Lasota, "Orbit-finite Linear Programming", Journal of the ACM 72(1), 39 pages, 2025, <https://doi.org/10.1145/3703909>; Sections 2 and 3, Definition 11, and Section 4 (Theorems 17 to 20 and the paragraph "Representation of input", items (1)–(3)) of arXiv:2302.00802v4, <https://arxiv.org/abs/2302.00802v4>.
-- Arka Ghosh, Piotr Hofman and Sławomir Lasota, "Orbit-finite linear programming", 38th Annual ACM/IEEE Symposium on Logic in Computer Science (LICS 2023), pp. 1–14, 2023, <https://doi.org/10.1109/LICS56636.2023.10175799>; conference version, not read (the statements rest on the version read of the first source above).
