@@ -8,4 +8,4 @@ Planning in dynamic epistemic logic, where states are pointed Kripke models, act
 - [Attention models and attention planning tasks](attention-models-and-attention-planning-tasks.md)
 - [Epistemic planning under b-commutativity](epistemic-planning-under-b-commutativity.md)
 - [Epistemic planning under b-commutativity is undecidable for three or more agents](planning-under-b-commutativity-undecidable.md)
-- [Plan existence with attention actions is undecidable](plan-existence-with-attention-actions.md)
+- [Plan existence with attention actions is undecidable, already for actions with trivial questions](plan-existence-with-attention-actions.md)

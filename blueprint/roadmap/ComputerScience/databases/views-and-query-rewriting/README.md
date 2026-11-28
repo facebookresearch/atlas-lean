@@ -11,4 +11,4 @@
 - [Disjunctive mappings and UCQ rewritings over the source](disjunctive-mappings-and-source-rewritings.md)
 - [Disjunctive mapping rewritability is undecidable](disjunctive-mapping-rewritability-undecidable.md)
 - [First-order queries over unary conjunctive views](first-order-unary-conjunctive-view-queries.md)
-- [Satisfiability of first-order queries over unary conjunctive views with inequalities is undecidable](ucv-queries-with-inequality-views-undecidable.md)
+- [Finite satisfiability of first-order queries over unary conjunctive views with inequalities is undecidable](ucv-queries-with-inequality-views-undecidable.md)

@@ -15,7 +15,7 @@ with $R_i \in \sigma$, free tuples $u_i$ of matching arity, and head variable $y
 Three extensions change the view bodies but keep the same first-order layer over the views:
 
 - *unary conjunctive$^{\neq}$ views* allow inequality atoms $x \neq y$ in the body;
-- *unary conjunctive$^{\neg}$ views* allow safe negation in the body: negated atoms whose variables all occur in a positive relational atom of the same body (Section 5 of the source);
+- *unary conjunctive$^{\neg}$ views* allow safe negation in the body: negated atoms each of whose variables occurs in some positive relational atom of the same body, different variables possibly in different atoms, as in $V(x) \leftarrow R(x, y), R(y, z), \neg R(x, z)$ (Section 5 of the source);
 - *unary conjunctive$^{\mathrm{rec}}$ views* allow a view to be defined by several rules, possibly recursive, read as least fixed points.
 
 ## Depends on
@@ -30,7 +30,7 @@ None.
 
 ## Expansion
 
-UCV queries strictly contain the monadic first-order class without equality, because the views may be defined over relations of any arity. Allowing a view body to be any existential positive formula with one free variable adds no expressive power: the body can be put in disjunctive normal form and split into several conjunctive views. Satisfiability of UCV queries, over finite and over arbitrary structures, is decidable, while each of the extensions above makes it undecidable, so the class is maximal in this sense.
+UCV queries strictly contain the monadic first-order class without equality, because the views may be defined over relations of any arity. Allowing a view body to be any existential positive formula with one free variable adds no expressive power: the body can be put in disjunctive normal form and split into several conjunctive views. Satisfiability of UCV queries, over finite and over arbitrary structures, is decidable, while each of the extensions above makes satisfiability undecidable according to the source; for the extension by inequalities, the argument of its proof sketch establishes undecidability of finite satisfiability. So the class is maximal in this sense.
 
 ## Sources
 

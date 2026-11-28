@@ -22,7 +22,7 @@ There is a computable family of hypothesis classes for which the set of indices 
 
 By the fundamental theorem of PAC learning, $\mathcal{H}$ is PAC learnable if and only if $\mathrm{VCdim}(\mathcal{H}) < \infty$. The condition $\mathrm{VCdim}(\mathcal{H}) < d$ reads: for all distinct $x_1, \dots, x_d$ there are labels $y_1, \dots, y_d$ such that for all $h \in \mathcal{H}$ some $h(x_i) \ne y_i$. Only the first and third quantifiers are unbounded, so this is $\Pi^0_1$ uniformly in $d$ and the index, and $\exists d$ makes finiteness $\Sigma^0_2$.
 
-For hardness, let $(h_i)_i$ be a computable enumeration of the hypotheses with finite support and $(W_j)_j$ the standard enumeration of c.e. sets, and put $\mathcal{H}_j = \{ h_i : i \le |W_j| \}$, which always contains $h_0$, (the set $\{ n : n \le |W_j| \}$ is c.e. uniformly in $j$). If $W_j$ is finite, $\mathcal{H}_j$ is finite and has finite VC dimension; otherwise $\mathcal{H}_j$ contains all finitely supported hypotheses and has infinite VC dimension. Hence the index set equals $\mathrm{Fin} = \{ j : W_j \text{ is finite} \}$, which is $\Sigma^0_2$-complete.
+For hardness, let $(h_i)_i$ be a computable enumeration of the hypotheses with finite support and $(W_j)_j$ the standard enumeration of c.e. sets, and put $\mathcal{H}_j = \{ h_i : i \le |W_j| \}$, which always contains $h_0$ (the set $\{ n : n \le |W_j| \}$ is c.e. uniformly in $j$). If $W_j$ is finite, $\mathcal{H}_j$ is finite and has finite VC dimension; otherwise $\mathcal{H}_j$ contains all finitely supported hypotheses and has infinite VC dimension. Hence the index set equals $\mathrm{Fin} = \{ j : W_j \text{ is finite} \}$, which is $\Sigma^0_2$-complete.
 
 ## Sources
 
