@@ -3,7 +3,7 @@
 For every proof system that p-simulates Extended Frege and every polynomial size bound, the Proof Analysis Problem is NP-complete under Levin reductions: Extended Frege proves Resolution lower bounds for satisfiable formulas without revealing satisfying assignments.
 
 1. For every constant $c\in\mathbb N$, 3SAT reduces to $\mathrm{PAP}_{\mathrm{EF}}[n^{c}]$ under polynomial-time many-one Levin reductions.
-2. For every propositional proof system $Q$ that p-simulates Extended Frege and every polynomial $s(n)$, $\mathrm{PAP}_Q[s(n)]$ is NP-complete under polynomial-time many-one Levin reductions. In particular such $Q$ is not analyzable unless $\mathsf P=\mathsf{NP}$, in contrast with Resolution, whose Proof Analysis Problem is in P.
+2. For every propositional proof system $Q$ that p-simulates Extended Frege and every polynomial $s(n)$, $\mathrm{PAP}_Q[s(n)]$ is NP-complete under polynomial-time many-one Levin reductions. In particular such $Q$ is not analyzable unless $\mathsf P=\mathsf{NP}$, in contrast with Resolution, for which $\mathrm{PAP}_{\mathrm{Res}}[n^{2}]$ is in P (whereas unrestricted $\mathrm{PAP}_{\mathrm{Res}}$ is NP-hard).
 
 More generally, $\mathrm{PAP}_S[n^{c}]$ is NP-complete for every system $S$ that is constructively closed under modus ponens, proves that Resolution is closed under restrictions, and has P-uniform proofs $\pi_n:S\vdash\neg\mathrm{Ref}_{n^{c}}(\psi_n)$ for some P-uniform sequence of unsatisfiable formulas $\psi_n$ with $n$ variables and $\mathrm{poly}(n)$ clauses.
 
