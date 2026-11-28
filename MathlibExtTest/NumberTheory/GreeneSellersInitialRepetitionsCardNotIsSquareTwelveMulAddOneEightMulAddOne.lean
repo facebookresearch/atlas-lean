@@ -71,6 +71,12 @@ end
 local instance : Fact (Nat.Prime 5) := ⟨by norm_num⟩
 local instance : Fact (Nat.Prime 11) := ⟨by norm_num⟩
 
+-- Compute the exact qualifying representatives at p = 11 independently of either count.
+example : ((Finset.Icc 1 (11 - 1)).filter fun r =>
+    ¬IsSquare ((12 * r + 1 : ℕ) : ZMod 11) ∧
+      ¬IsSquare ((8 * r + 1 : ℕ) : ZMod 11)) = {5, 7, 9} := by
+  decide
+
 -- At the smallest odd prime the set is empty and the correction vanishes.
 example :
     ((Finset.range 3).filter fun r : ℕ =>
