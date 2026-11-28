@@ -4,7 +4,7 @@
 
 **Proposition (zero growth at stationarity).** For every invariant probability measure $\mu$ the rates $r_i(\mu)$ exist, and if $\mu$ is ergodic and species $i$ is present in the support of $\mu$, then $r_i(\mu) = 0$. If $\max_i r_i(\mu) > 0$ for every invariant measure $\mu$ supported on the extinction set (convex combinations included), the system is stochastically persistent, and under irreducibility it converges in total variation to a unique invariant measure $\pi$ on the coexistence set.
 
-**Corollaries (single species, random carrying capacity $K_t$ i.i.d., $\bar K = \mathbb{E}K_1$).** Let $X_\infty$ denote the stationary population.
+**Corollaries (single species, random carrying capacity $K_t$ i.i.d., $\bar K = \mathbb{E}K_1$).** Where $K_t$ is random, assume $K_1 > 0$ is nondegenerate (not almost surely constant), as the source does for its strict Jensen steps, and let $X_\infty$ denote the stationary population, independent of $K_1$. If $K_1 \equiv \bar K$ were constant, then $X_\infty = \bar K$ and each strict inequality below would fail (Beverton–Holt: all three members equal $\bar K$; Ricker: $1/\mathbb E(1/K_1) = \bar K$).
 1. *Beverton–Holt*, $X_{t+1} = \frac{mK_t}{K_t + (m-1)X_t}X_t$, $m > 1$: $\mathbb{E}\ln(K_1 + (m-1)X_\infty) = \mathbb{E}\ln(mK_1)$, hence
 
 $$\frac{e^{\mathbb{E}\ln(mK_1)} - \bar K}{m-1} \;<\; \mathbb{E}X_\infty \;<\; \bar K,$$

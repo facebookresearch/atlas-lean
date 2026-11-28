@@ -4,3 +4,4 @@ Bayesian variable-selection formulations of region-based rare-variant associatio
 
 - [Global Bayes factor for rare-variant association](global-bayes-factor-for-rare-variant-association.md)
 - [Rare-variant, admixture, family and liability tests](rare-variant-admixture-family-and-liability-tests/README.md)
+- [Multiple testing and Bayesian inference for genetic data](multiple-testing-and-bayesian-inference-for-genetic-data/README.md)

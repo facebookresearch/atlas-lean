@@ -1,0 +1,3 @@
+# Threshold tests under a monotone likelihood ratio satisfy the Neyman–Pearson conditions
+
+Let $L(n, \theta) \ge 0$ for $n \in \mathbb{N}$ and $\theta$ in a set $S \subseteq \mathbb{R}$, with a monotone likelihood ratio on $S$: $L(m, \theta)L(n, \theta') \le L(n, \theta)L(m, \theta')$ whenever $n \le m$ and $\theta \le \theta'$ in $S$. Let $\theta_1 < \theta_2$ in $S$ and $c \in \mathbb{N}$ with $L(c, \theta_1) > 0$, and $k = L(c, \theta_2)/L(c, \theta_1)$. Then $k \ge 0$, every $n$ with $k\,L(n, \theta_1) < L(n, \theta_2)$ satisfies $n > c$, and every $n$ with $L(n, \theta_2) < k\,L(n, \theta_1)$ satisfies $n < c$: the threshold test at $c$ rejects where the likelihood ratio exceeds $k$ and accepts where it falls below.

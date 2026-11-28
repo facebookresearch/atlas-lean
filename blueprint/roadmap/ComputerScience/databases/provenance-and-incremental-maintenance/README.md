@@ -15,3 +15,4 @@
 - [Z-relations and delta rules for incremental maintenance](z-relations-and-delta-rules-for-incremental-maintenance.md)
 - [Counting algorithm for maintaining nonrecursive views](counting-algorithm-for-maintaining-nonrecursive-views.md)
 - [RA+ identities hold over every commutative semiring](ra-identities-hold-over-every-commutative-semiring.md)
+- [Dynamic complexity](dynamic-complexity/README.md)

@@ -4,3 +4,4 @@ Optimal control of linear systems with quadratic cost: the first variation of th
 
 - [First variation and sufficiency for the finite-horizon linear-quadratic problem](first-variation-and-sufficiency-for-the-finite-horizon-linear-quadratic-problem.md)
 - [Infinite-horizon linear-quadratic control and the algebraic Riccati equation](infinite-horizon-linear-quadratic-control-and-the-algebraic-riccati-equation.md)
+- [Linear-quadratic regulation](linear-quadratic-regulation/README.md)
