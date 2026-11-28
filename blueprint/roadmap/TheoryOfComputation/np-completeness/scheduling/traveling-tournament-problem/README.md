@@ -4,7 +4,6 @@
 - [Schedules without repeaters](no-repeaters.md)
 - [Feasible instances of TRAVELING TOURNAMENT WITH AT MOST THREE CONSECUTIVE HOME OR AWAY GAMES](traveling-tournament-three-feasible.md)
 - [TRAVELING TOURNAMENT WITH AT MOST THREE CONSECUTIVE HOME OR AWAY GAMES as a decision problem](traveling-tournament-three-dec.md)
-- [TRAVELING TOURNAMENT WITH AT MOST THREE CONSECUTIVE HOME OR AWAY GAMES is NP-complete](traveling-tournament-three-np-complete.md)
 - [Instances of UNCONSTRAINED TRAVELING TOURNAMENT PROBLEM](traveling-tournament-instance.md)
 - [Well-formed instances of UNCONSTRAINED TRAVELING TOURNAMENT PROBLEM](well-formed.md)
 - [Number of rounds of a double round robin](num-rounds.md)

@@ -2,7 +2,6 @@
 
 - [Well-formed instances of COST-PARAMETRIC LINEAR PROGRAMMING WITH FIXED q](well-formed.md)
 - [COST-PARAMETRIC LINEAR PROGRAMMING WITH FIXED q as a decision problem](cost-parametric-linear-programming-fixed.md)
-- [COST-PARAMETRIC LINEAR PROGRAMMING WITH FIXED q is NP-complete](cost-parametric-linear-programming-fixed-2.md)
 - [Instances of COST-PARAMETRIC LINEAR PROGRAMMING](cost-parametric-linear-programming-insta.md)
 - [Coordinates in J](coords.md)
 - [The rational bound q](q-val.md)

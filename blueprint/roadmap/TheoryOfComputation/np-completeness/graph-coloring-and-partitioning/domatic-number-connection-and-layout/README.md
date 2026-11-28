@@ -8,7 +8,6 @@
 - [Circular-arc graphs](is-circular-arc-graph.md)
 - [Well-formed instances of DOMATIC NUMBER FOR CIRCULAR-ARC GRAPHS](well-formed-2.md)
 - [DOMATIC NUMBER FOR CIRCULAR-ARC GRAPHS as a decision problem](domatic-number-circular-arc-dec.md)
-- [DOMATIC NUMBER FOR CIRCULAR-ARC GRAPHS is NP-complete](domatic-number-circular-arc-np-complete.md)
 - [Instances of DOMATIC NUMBER FOR FIXED K](domatic-number-fixed-kinstance.md)
 - [Domatic number instance with a given bound](with-bound.md)
 - [DOMATIC NUMBER FOR FIXED K as a decision problem](domatic-number-fixed-kdec.md)
