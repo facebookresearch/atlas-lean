@@ -11,6 +11,7 @@ module
 
 public import MathlibExt.Algebra.Homology.ChevalleyEilenberg.CoefficientFunctor
 public import MathlibExt.Algebra.Category.LieModuleCat.End
+public import MathlibExt.CategoryTheory.Preadditive.FunctorEnd
 
 /-!
 # Coefficient-ring actions commuting with the Lie action
