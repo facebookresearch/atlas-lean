@@ -29,7 +29,14 @@ Quotients of nonzero sums of two rational squares are sums of two rational squar
 Applying this to the roots of a cubic gives two-square representations for each entry of a
 rational triple with square elementary symmetric functions. A common square factor scales
 the triple to an integer solution. Choudhry's family (3.3) gives an explicit integer triple
-with this square property for every pair of integer parameters.
+with this square property for every pair of integer parameters. For a triple of integer squares,
+only the sum and the sum of pairwise products need to be checked: the product is already a square.
+
+## References
+
+* Ajai Choudhry, *Three Integers Whose Sum, Product, and the Sum of the Products of the Integers,
+  Taken Two at a Time, Are Perfect Squares*, INTEGERS 26 (2026), Article A35, pp. 1–15,
+  Lemmas 1–3 and Theorem 1, family (3.3). https://math.colgate.edu/~integers/aa35/aa35.pdf
 -/
 
 @[expose] public section
@@ -64,6 +71,19 @@ def HasSquareElementarySymmetricFunctions (a b c : ℤ) : Prop :=
   IsSquare (a + b + c) ∧
     IsSquare (a * b + b * c + c * a) ∧
     IsSquare (a * b * c)
+
+/-- **Square entries reduce the symmetric-square condition to two checks.** If $a$, $b$ and $c$
+are squares of integers, then all three elementary symmetric functions of $a$, $b$ and $c$ are
+squares of integers if and only if both $a + b + c$ and $ab + bc + ca$ are squares of integers. -/
+theorem hasSquareElementarySymmetricFunctions_iff_of_isSquare {a b c : ℤ}
+    (ha : IsSquare a) (hb : IsSquare b) (hc : IsSquare c) :
+    HasSquareElementarySymmetricFunctions a b c ↔
+      IsSquare (a + b + c) ∧ IsSquare (a * b + b * c + c * a) := by
+  constructor
+  · rintro ⟨hsum, hpairs, _⟩
+    exact ⟨hsum, hpairs⟩
+  · rintro ⟨hsum, hpairs⟩
+    exact ⟨hsum, hpairs, (ha.mul hb).mul hc⟩
 
 /-- **Pairwise products preserve square symmetric functions.** If $a$, $b$, $c$ are integers
 such that each of $a + b + c$, $ab + bc + ca$ and $abc$ is the square of an integer, then the
