@@ -30,3 +30,5 @@ rate below the mutual information.
 - [Log-determinant mutual information of a Gaussian-input linear Gaussian channel](log-determinant-mutual-information-of-a-gaussian/README.md)
 - [Log-determinant converse for the linear Gaussian channel under every input law](log-determinant-converse-for-the-linear-gaussian/README.md)
 - [Nearest-codeword decoding](nearest-codeword-decoding/README.md)
+- [Computability of channel capacity](computability-of-channel-capacity/README.md)
+- [Network coding solvability](network-coding-solvability/README.md)
