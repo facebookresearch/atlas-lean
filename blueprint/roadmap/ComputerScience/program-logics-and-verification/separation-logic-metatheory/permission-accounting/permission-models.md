@@ -10,8 +10,6 @@ A *write permission* of such a model is a distinguished $m_W \in P$ that combine
 
 $$m_W \circ m' \text{ is undefined for every } m' \in P.$$
 
-Each concrete model names its write permission ([fractional and counting permission models](fractional-and-counting-permission-models.md)).
-
 For a store $s$ and expressions $E, E'$, the permission-annotated points-to assertion is
 
 $$s, h \models E \overset{m}{\mapsto} E' \iff \mathrm{dom}(h) = \{[\![E]\!]s\} \text{ and } h([\![E]\!]s) = ([\![E']\!]s, m),$$
@@ -28,7 +26,7 @@ and separating conjunction splits a heap $h$ as $h = h_0 \circ h_1$. In the sequ
 
 ## Expansion
 
-Cancellativity of the permissions alone does not make the heaps cancellative. On $P = \{R, RW\}$ let the only defined product be $R \circ R = R$; this operation is commutative, associative and cancellative, and $RW$ combines with nothing. For the one-cell heap $h = [\ell \mapsto (v, R)]$ the lifting gives $h \circ \emptyset = h = h \circ h$, while $\emptyset \neq h$. The share construction excludes exactly this situation: an element with $x \oplus x = x$ is the unit share, which never occurs in an occupied cell, and the condition that non-units never join to the unit keeps the combination of occupied cells inside $S^+$. The fractional permissions $(0, 1]$ and the counting permissions $\mathbb{Z}$ are the non-unit shares of the fractional and counting share models, so heaps over them are separation algebras.
+Each concrete model names its write permission ([fractional and counting permission models](fractional-and-counting-permission-models.md)). Cancellativity of the permissions alone does not make the heaps cancellative. On $P = \{R, RW\}$ let the only defined product be $R \circ R = R$; this operation is commutative, associative and cancellative, and $RW$ combines with nothing. For the one-cell heap $h = [\ell \mapsto (v, R)]$ the lifting gives $h \circ \emptyset = h = h \circ h$, while $\emptyset \neq h$. The share construction excludes exactly this situation: an element with $x \oplus x = x$ is the unit share, which never occurs in an occupied cell, and the condition that non-units never join to the unit keeps the combination of occupied cells inside $S^+$. The fractional permissions $(0, 1]$ and the counting permissions $\mathbb{Z}$ are the non-unit shares of the fractional and counting share models, so heaps over them are separation algebras.
 
 The lifting and the points-to are those of the permission-accounting paper, stated there over a partial commutative semigroup of permissions. This page uses only its exclusion law (14) for the write permission; it does not adopt the paper's further condition (15) on extending permissions to the write permission. Maximality of the write permission means that a heap holding $m_W$ for a cell admits no frame mentioning that cell, which is what keeps mutation and disposal safety monotone and framing. The store-and-heap semantics of the other assertions is the standard one of separation logic.
 

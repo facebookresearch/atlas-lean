@@ -12,7 +12,7 @@ $$X \# r \implies t(q) \ast r \subseteq t(q \ast r) \qquad \text{for all } q, r 
 
 equivalently, if $X \# r$ and $p \subseteq t(q)$ imply $p \ast r \subseteq t(q \ast r)$. The local transformers form $\mathrm{LPT}(X)$, a complete sublattice of $\mathrm{PT}$ in the sense of [complete lattices](../../../../Order/lattices-boolean-algebras/complete-lattice.md): joins and meets of families of local transformers are computed pointwise by union and intersection.
 
-For a command $C$ of the heap language,
+For a command $C$ with a small-step semantics on configurations $C, s, h$ as in the operational form of [safety monotonicity and the frame property](safety-monotonicity-and-the-frame-property.md), such as a command of the heap language,
 
 $$\mathrm{wlp}(C)(q) = \{(s, h) : C, s, h \text{ is safe and every terminal state reached from it satisfies } q\},$$
 
@@ -30,7 +30,7 @@ and $\mathrm{wp}(C)(q)$ is defined in the same way with "must terminate normally
 
 ## Expansion
 
-Closure under joins: $(\bigcup_i t_i(q)) \ast r = \bigcup_i (t_i(q) \ast r) \subseteq \bigcup_i t_i(q \ast r)$, since $\ast$ distributes over unions; closure under meets holds because $\ast$ is monotone, and the empty meet $\lambda q.\, \mathrm{States}$ is local. The three-cell transformer is not local for any $X$: with $q = \mathrm{States}$ and $r$ the set of states whose heap has four cells, $t(q) \ast r$ contains the states with four cells (from the empty heap) while $t(q \ast r)$ contains none. The source further states that $\mathrm{wp}(C)$ and $\mathrm{wlp}(C)$ are both local for $X$ if and only if $C$ satisfies [safety monotonicity, termination monotonicity and the frame property](safety-monotonicity-and-the-frame-property.md) and every terminal store reached from a safe configuration agrees with the initial store on the variables outside $X$, and that no property of unsafe configurations can be recovered, both transformers ignoring them; the conference version states Proposition 2 without proof and refers to Yang's thesis for the tie-up between transformers and relations. Local predicate transformers are the semantic domain of [adaptation completeness of the frame rule](adaptation-completeness-of-the-frame-rule.md).
+Closure under joins: $(\bigcup_i t_i(q)) \ast r = \bigcup_i (t_i(q) \ast r) \subseteq \bigcup_i t_i(q \ast r)$, since $\ast$ distributes over unions; closure under meets holds because $\ast$ is monotone, and the empty meet $\lambda q.\, \mathrm{States}$ is local. The three-cell transformer is not local for any $X$: with $q = \mathrm{States}$ and $r$ the set of states whose heap has four cells, $t(q) \ast r$ contains the states with four cells (from the empty heap) while $t(q \ast r)$ contains none. The source further states, for commands $C$ of its heap language, that $\mathrm{wp}(C)$ and $\mathrm{wlp}(C)$ are both local for $X$ if and only if $C$ satisfies [safety monotonicity, termination monotonicity and the frame property](safety-monotonicity-and-the-frame-property.md) and every terminal store reached from a safe configuration agrees with the initial store on the variables outside $X$, and that no property of unsafe configurations can be recovered, both transformers ignoring them; the conference version states Proposition 2 without proof and refers to Yang's thesis for the tie-up between transformers and relations. Local predicate transformers are the semantic domain of [adaptation completeness of the frame rule](adaptation-completeness-of-the-frame-rule.md).
 
 ## Sources
 

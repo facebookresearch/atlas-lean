@@ -1,6 +1,6 @@
 # Small specifications for non-negative resource
 
-In a separation algebra where no non-unit element has an inverse, every local function either has the specification on its footprints as a complete specification whose domain is contained in every complete domain, or has no complete specification with an inclusion-minimal domain at all. Fractional permissions give the second case.
+In a separation algebra where no non-unit element has an inverse, every local function either has the specification on its footprints as a complete specification whose domain is contained in every complete domain, or has no complete specification with an inclusion-minimal domain at all. Lookup over fractional heaps gives the second case.
 
 A separation algebra $(\Sigma, \bullet, u)$ has *negativity* if some $\sigma \neq u$ has an inverse, $\sigma \bullet \sigma' = u$ for some $\sigma'$, and is *non-negative* otherwise. Every algebra with negativity is non-well-founded. If $\Sigma$ is non-negative, then for every local function $f$ on $\Sigma$, with [footprints](footprints-of-local-functions.md) $F(f)$:
 
