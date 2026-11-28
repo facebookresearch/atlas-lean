@@ -48,6 +48,7 @@ public import Mathlib.Algebra.Group.Even
 public import MathlibExt.NumberTheory.ThreeIntegersSymmetricSquares
 public import MathlibExt.NumberTheory.ThreeIntegersSymmetricSquaresFamily330
 public import MathlibExt.NumberTheory.ThreeIntegersSymmetricSquaresFamily331
+public import MathlibExt.NumberTheory.ThreeIntegersSymmetricSquaresFamily332
 public import MathlibExt.NumberTheory.ThreeIntegersSymmetricSquaresHasSquareElementarySymmetricFunctionsFamily34
 public import MathlibExt.NumberTheory.ThreeIntegersSymmetricSquaresFamily36
 
@@ -97,27 +98,6 @@ private abbrev secondDegreeTwelve (m n : ℤ) : ℤ :=
   m ^ 12 - 10 * m ^ 10 * n ^ 2 + 15 * m ^ 8 * n ^ 4
     - 204 * m ^ 6 * n ^ 6 + 15 * m ^ 4 * n ^ 8
     - 10 * m ^ 2 * n ^ 10 + n ^ 12
-
-/-- **Choudhry's family (3.32) of square triples with square symmetric functions.** For all
-integers $m$ and $n$, let $Q = m^4 - 6 m^2 n^2 + n^4$,
-$P = m^{12} - 26 m^{10} n^2 + 79 m^8 n^4 - 44 m^6 n^6 + 79 m^4 n^8 - 26 m^2 n^{10} + n^{12}$ and
-$R = m^{12} - 10 m^{10} n^2 + 15 m^8 n^4 - 204 m^6 n^6 + 15 m^4 n^8 - 10 m^2 n^{10} + n^{12}$,
-and put $a = 64 m^4 n^4 (m^2 - n^2)^2 P^2$, $b = (m^2 + n^2)^2 Q^2 P^2$ and
-$c = 16 m^2 n^2 (m^2 - n^2)^4 R^2$. Then each of $a$, $b$, $c$, $a + b + c$, $ab + bc + ca$ and
-$abc$ is the square of an integer.
-
-Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the
-Integers, Taken Two at a Time, Are Perfect Squares", Theorem 2, family (3.32). -/
-theorem_wanted hasSquareElementarySymmetricFunctions_family332_and_entries_square
-    (m n : ℤ) :
-    let a := 64 * m ^ 4 * n ^ 4 * (m ^ 2 - n ^ 2) ^ 2
-      * (firstDegreeTwelve m n) ^ 2
-    let b := (m ^ 2 + n ^ 2) ^ 2 * (shiftedQuartic m n) ^ 2
-      * (firstDegreeTwelve m n) ^ 2
-    let c := 16 * m ^ 2 * n ^ 2 * (m ^ 2 - n ^ 2) ^ 4
-      * (secondDegreeTwelve m n) ^ 2
-    HasSquareElementarySymmetricFunctions a b c ∧
-      IsSquare a ∧ IsSquare b ∧ IsSquare c
 
 /-- **Choudhry's family (3.33) of square triples with square symmetric functions.** For all
 integers $m$ and $n$, let $Q = m^4 - 6 m^2 n^2 + n^4$,
