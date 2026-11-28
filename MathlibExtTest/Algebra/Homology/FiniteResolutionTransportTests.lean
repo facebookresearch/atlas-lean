@@ -42,6 +42,7 @@ noncomputable section
 
 open CategoryTheory Limits Preadditive Opposite
 open CategoryTheory.Abelian
+open CategoryTheory.Pretriangulated
 open CochainComplex.HomComplex
 open scoped ZeroObject
 
@@ -103,16 +104,16 @@ private abbrev targetMoved :=
   identityResolution.mapTarget (𝟭 M) (Functor.rightUnitor (𝟭 M))
 
 -- Source transport retains the augmentation on a nonzero integer.
-example : ModuleCat.hom sourceMoved.augmentation₀ (7 : ℤ) = 7 := by
-  change ModuleCat.hom ((𝟙 E) ≫ (𝟙 E)) (7 : ℤ) = 7
+example : ModuleCat.Hom.hom sourceMoved.augmentation₀ (7 : ℤ) = 7 := by
+  change ModuleCat.Hom.hom ((𝟙 E) ≫ (𝟙 E)) (7 : ℤ) = 7
   rfl
 
 -- Target transport uses the inverse source comparison and forward single-complex comparison.
-example : ModuleCat.hom targetMoved.augmentation₀ (7 : ℤ) = 7 := by
-  change ModuleCat.hom ((𝟙 E) ≫ (𝟙 E) ≫ (𝟙 E)) (7 : ℤ) = 7
+example : ModuleCat.Hom.hom targetMoved.augmentation₀ (7 : ℤ) = 7 := by
+  change ModuleCat.Hom.hom ((𝟙 E) ≫ (𝟙 E) ≫ (𝟙 E)) (7 : ℤ) = 7
   rfl
 
-example : ModuleCat.hom ((mapSourceIdentityMap identityResolution).f 0) (13 : ℤ) = 13 ∧
+example : ModuleCat.Hom.hom ((mapSourceIdentityMap identityResolution).f 0) (13 : ℤ) = 13 ∧
     ((𝟭 M).mapHomologicalComplex (.down ℕ)).map
         (mapSourceIdentityMap identityResolution) ≫ identityResolution.augmentation =
       sourceMoved.augmentation := by
@@ -128,16 +129,16 @@ private def signedDifferential : E ⟶ E :=
     (splitResolution.cochainShiftTermIso 1 0).hom
 
 private lemma signedDifferential_eq : signedDifferential = -(𝟙 E) := by
-  simpa [signedDifferential, signedComplex, splitResolution_d] using
+  simpa [signedDifferential, signedComplex, splitResolution_d, Units.smul_def] using
     cochainShiftTermIso_d splitResolution (1 : ℤ) 0
 
 -- The odd shift has a genuinely nonzero negative differential.
-example : ModuleCat.hom signedDifferential (1 : ℤ) = -1 ∧ signedDifferential ≠ 0 := by
+example : ModuleCat.Hom.hom signedDifferential (1 : ℤ) = -1 ∧ signedDifferential ≠ 0 := by
   rw [signedDifferential_eq]
   constructor
   · rfl
   · intro h
-    have h' := congrArg (fun f : E ⟶ E => ModuleCat.hom f (1 : ℤ)) h
+    have h' := congrArg (fun f : E ⟶ E => ModuleCat.Hom.hom f (1 : ℤ)) h
     norm_num at h'
 
 private def shiftedAugmentation : E ⟶ E :=
@@ -147,11 +148,11 @@ private def shiftedAugmentation : E ⟶ E :=
 
 private lemma shiftedAugmentation_eq : shiftedAugmentation = 𝟙 E := by
   dsimp only [shiftedAugmentation]
-  rw [Category.assoc, cochainShiftAugmentation_f]
+  erw [cochainShiftAugmentation_f]
   simp [identityResolution, Tests.identityResolution, augmentation₀,
     HomologicalComplex.XIsoOfEq]
 
-example : ModuleCat.hom shiftedAugmentation (1 : ℤ) = 1 := by
+example : ModuleCat.Hom.hom shiftedAugmentation (1 : ℤ) = 1 := by
   rw [shiftedAugmentation_eq]
   rfl
 
@@ -186,7 +187,7 @@ private abbrev singleZeroX : singleZero.X 0 ≅ E :=
   HomologicalComplex.singleObjXSelf (.up ℤ) 0 E
 
 -- The adjunction unit is the projection, with identity coordinates on the retained term.
-example : ModuleCat.hom
+example : ModuleCat.Hom.hom
     (singleZeroX.inv ≫
       ((ComplexShape.embeddingDownNat.restrictionExtendAdjunction (C := M)).unit.app
         singleZero).f 0 ≫
@@ -227,14 +228,14 @@ private lemma homologyDetection :
       rw [HomologicalComplex.map_ι_comp_homologyColimitIso_hom]
     _ = 𝟙 E := by simp [homologyDetector]
 
-example : ModuleCat.hom
+example : ModuleCat.Hom.hom
     (homologyInjection ≫ (HomologicalComplex.homologyColimitIso diagram 0).hom ≫
       homologyDetector) (1 : ℤ) = 1 ∧ homologyInjection ≠ 0 := by
   constructor
   · rw [homologyDetection]
     rfl
   · intro h
-    have h' := congrArg (fun f : E ⟶ E => ModuleCat.hom f (1 : ℤ)) homologyDetection
+    have h' := congrArg (fun f : E ⟶ E => ModuleCat.Hom.hom f (1 : ℤ)) homologyDetection
     rw [h, zero_comp, zero_comp] at h'
     norm_num at h'
 
@@ -252,7 +253,7 @@ example : Cochain.ofHom doubleFold = Cochain.ofHom twiceFold := by
   congr 1
   simp [doubleFold, twiceFold, comp_zsmul]
 
-example : ModuleCat.hom
+example : ModuleCat.Hom.hom
     (singleZeroX.inv ≫ ((Limits.Sigma.ι family 0) ≫ doubleFold).f 0 ≫ singleZeroX.hom)
     (1 : ℤ) = 2 := by
   simp [doubleFold, HomologicalComplex.zsmul_f_apply, comp_zsmul, zsmul_comp,
@@ -292,7 +293,7 @@ private lemma boundaryNormalized :
   rw [boundaryMap_eq]
   simp [negativeBoundary, Category.assoc]
 
-example : ModuleCat.hom
+example : ModuleCat.Hom.hom
     (singleZeroX.inv ≫ (boundaryMap ≫ shiftCoordinate.hom).f 0 ≫ singleZeroX.hom)
     (1 : ℤ) = -2 := by
   rw [boundaryNormalized]
