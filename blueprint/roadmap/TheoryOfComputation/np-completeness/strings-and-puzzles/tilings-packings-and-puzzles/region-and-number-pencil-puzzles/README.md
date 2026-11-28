@@ -35,7 +35,6 @@
 - [SASHIGANE as a decision problem](sashigane-dec.md)
 - [Feasible instances of SASHIGANE](sashigane-feasible.md)
 - [Instances of SASHIGANE](sashigane-instance.md)
-- [SASHIGANE is NP-complete](sashigane-np-complete.md)
 - [SHIKAKU as a decision problem](shikaku-dec.md)
 - [Feasible instances of SHIKAKU](shikaku-feasible.md)
 - [Instances of SHIKAKU](shikaku-instance.md)

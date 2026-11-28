@@ -7,7 +7,6 @@
 - [Cells of the box](in-box.md)
 - [Points in a cell polygon](in-polygon.md)
 - [TILING A POLYGON WITH L- AND I-TROMINOES as a decision problem](li-tromino-tiling-dec.md)
-- [TILING A POLYGON WITH L- AND I-TROMINOES is NP-complete](li-tromino-tiling-np-complete.md)
 - [Feasible instances of TILING A POLYGON WITH L- AND I-TROMINOES](litromino-tiling-feasible.md)
 - [Instances of TILING A POLYGON WITH L- AND I-TROMINOES](litromino-tiling-instance.md)
 - [PACKING SQUARES INTO A SQUARE as a decision problem](packing-squares-into-square-dec.md)
