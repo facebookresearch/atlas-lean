@@ -12,6 +12,8 @@ public import MathlibExt.NumberTheory.Padics.HilbertSymbol.Isotropic
 public import MathlibExt.NumberTheory.Padics.HilbertSymbol.TernaryPlaces
 public import MathlibExt.NumberTheory.Rat.HasseMinkowskiTernary
 public import MathlibExt.NumberTheory.Rat.PrescribedSquareClasses
+public import MathlibExt.NumberTheory.Rat.LocalGlobal
+public import MathlibExt.LinearAlgebra.QuadraticForm.Isotropic
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.LinearCombination
@@ -57,19 +59,6 @@ section Field
 
 variable {K : Type*} [Field K]
 
-/-- A binary form `a x ^ 2 + b y ^ 2` with `a, b ≠ 0` and a nonzero zero takes every value. -/
-private theorem hmq_binary_eq {a b : K} (h2 : (2 : K) ≠ 0) (ha : a ≠ 0) (hb : b ≠ 0)
-    {x₀ y₀ : K} (h0 : ¬(x₀ = 0 ∧ y₀ = 0)) (hz : a * x₀ ^ 2 + b * y₀ ^ 2 = 0) (t : K) :
-    ∃ x y : K, a * x ^ 2 + b * y ^ 2 = t := by
-  have hx₀ : x₀ ≠ 0 := by
-    rintro rfl
-    refine h0 ⟨rfl, ?_⟩
-    have hb0 : b * y₀ ^ 2 = 0 := by simpa using hz
-    exact pow_eq_zero_iff two_ne_zero |>.1 ((mul_eq_zero.1 hb0).resolve_left hb)
-  refine ⟨(a + t) / (2 * a), y₀ / x₀ * ((t - a) / (2 * a)), ?_⟩
-  field_simp
-  linear_combination (t - a) ^ 2 * hz
-
 /-- From a nonzero zero of `a₁ x₁ ^ 2 + a₂ x₂ ^ 2 + a₃ x₃ ^ 2 + a₄ x₄ ^ 2`, an element `t ≠ 0`
 represented by `a₁ x ^ 2 + a₂ y ^ 2` with `-t` represented by `a₃ x ^ 2 + a₄ y ^ 2`. -/
 private theorem hmq_exists_split {a₁ a₂ a₃ a₄ : K} (h2 : (2 : K) ≠ 0) (h₁ : a₁ ≠ 0)
@@ -83,8 +72,11 @@ private theorem hmq_exists_split {a₁ a₂ a₃ a₄ : K} (h2 : (2 : K) ≠ 0) 
   · have hs' : a₃ * x₃ ^ 2 + a₄ * x₄ ^ 2 = 0 := by linear_combination hz - hs
     by_cases h12 : x₁ = 0 ∧ x₂ = 0
     · have h34 : ¬(x₃ = 0 ∧ x₄ = 0) := fun h34 => hne ⟨h12.1, h12.2, h34.1, h34.2⟩
-      exact ⟨a₁, h₁, ⟨1, 0, by ring⟩, hmq_binary_eq h2 h₃ h₄ h34 hs' _⟩
-    · exact ⟨-a₃, neg_ne_zero.2 h₃, hmq_binary_eq h2 h₁ h₂ h12 hs _, 1, 0, by ring⟩
+      exact ⟨a₁, h₁, ⟨1, 0, by ring⟩,
+        exists_mul_sq_add_mul_sq_eq_of_isotropic h2 h₃ h₄ (fun h => h34 (Prod.mk.inj h)) hs' _⟩
+    · exact ⟨-a₃, neg_ne_zero.2 h₃,
+        exists_mul_sq_add_mul_sq_eq_of_isotropic h2 h₁ h₂ (fun h => h12 (Prod.mk.inj h)) hs _,
+        1, 0, by ring⟩
   · exact ⟨_, hs, ⟨x₁, x₂, rfl⟩, x₃, x₄, by linear_combination hz⟩
 
 /-- If `a x ^ 2 + b z ^ 2` represents `t` and `s = t y ^ 2`, then `a x ^ 2 + b z ^ 2 - s w ^ 2`
@@ -109,16 +101,6 @@ private theorem hmq_padic_ternary {p : ℕ} [Fact p.Prime] (hp : p ≠ 2) {a b c
     fin_cases i
     exacts [h.1, h.2.1, h.2.2]
   · simpa [Fin.sum_univ_three, PadicInt.mkUnits_eq] using hsum
-
-/-- A rational number `q` with `p ∤ |num q| * den q` has `p`-adic norm `1`. -/
-private theorem hmq_norm_eq_one {p : ℕ} [Fact p.Prime] {q : ℚ}
-    (h : ¬p ∣ q.num.natAbs * q.den) : ‖(q : ℚ_[p])‖ = 1 := by
-  have hnum : ¬(p : ℤ) ∣ q.num := fun hd => h (dvd_mul_of_dvd_left (Int.natCast_dvd.1 hd) _)
-  have hden : p.Coprime q.den :=
-    (Nat.Prime.coprime_iff_not_dvd Fact.out).2 fun hd => h (dvd_mul_of_dvd_right hd _)
-  rw [Rat.cast_def, norm_div, Padic.norm_natCast_eq_one_iff.2 hden, div_one]
-  exact le_antisymm (Padic.norm_int_le_one _)
-    (not_lt.1 fun hl => hnum (Padic.norm_intCast_lt_one_iff.1 hl))
 
 /-- A prime `p` outside the prime factors of `|num a| * den a`, `a ≠ 0`, does not divide it. -/
 private theorem hmq_not_dvd {p : ℕ} (hp : p.Prime) {a : ℚ} (ha : a ≠ 0)
@@ -185,9 +167,10 @@ theorem Rat.exists_quaternary_eq_zero_of_forall_local {a₁ a₂ a₃ a₄ : ℚ
     obtain ⟨hp2, ⟨⟨hp₁, hp₂⟩, hp₃⟩, hp₄⟩ := hp
     have hq := habs p hpS hpq
     rw [← Place.embedding_norm_eq_absoluteValue] at hq
-    exact ⟨hp2, hmq_norm_eq_one (hmq_not_dvd p.2 h₁ hp₁),
-      hmq_norm_eq_one (hmq_not_dvd p.2 h₂ hp₂), hmq_norm_eq_one (hmq_not_dvd p.2 h₃ hp₃),
-      hmq_norm_eq_one (hmq_not_dvd p.2 h₄ hp₄), hq⟩
+    exact ⟨hp2, Padic.norm_ratCast_eq_one_of_not_dvd (hmq_not_dvd p.2 h₁ hp₁),
+      Padic.norm_ratCast_eq_one_of_not_dvd (hmq_not_dvd p.2 h₂ hp₂),
+      Padic.norm_ratCast_eq_one_of_not_dvd (hmq_not_dvd p.2 h₃ hp₃),
+      Padic.norm_ratCast_eq_one_of_not_dvd (hmq_not_dvd p.2 h₄ hp₄), hq⟩
   -- the forms `⟨a₁, a₂, -q⟩` and `⟨a₃, a₄, q⟩` at the places other than `p₀`
   have hg₁ : ∀ v : Place, v ≠ .finite p₀ → ∃ x y z : CompletedField v,
       ¬(x = 0 ∧ y = 0 ∧ z = 0) ∧

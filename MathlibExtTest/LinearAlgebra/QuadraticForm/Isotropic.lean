@@ -63,4 +63,15 @@ example (c : ℚ) : ∃ w : Fin 2 → ℚ, QuadraticMap.weightedSumSquares ℚ !
     simpa using congrFun h 0
   · simp [QuadraticMap.weightedSumSquares_apply, Fin.sum_univ_two]
 
+-- `x² - y² + 0·z²` has the zero `(1, 1, 0)` over `ℚ`, with `a₀ = 1 ≠ 0` at the nonzero
+-- coordinate `x₀ = 1`, so it takes the value `7`, although the coefficient of `z` is `0`.
+example : ∃ y : Fin 3 → ℚ, ∑ j, ![1, -1, 0] j * y j ^ 2 = 7 :=
+  exists_sum_mul_sq_eq_of_isotropic (two_ne_zero) (x := ![1, 1, 0]) (i := 0) (by simp) (by simp)
+    (by simp [Fin.sum_univ_three]) 7
+
+-- `x² - 4y²` has the zero `(2, 1)`, so it takes every rational value, `-3` included.
+example : ∃ x y : ℚ, 1 * x ^ 2 + (-4) * y ^ 2 = -3 :=
+  exists_mul_sq_add_mul_sq_eq_of_isotropic two_ne_zero one_ne_zero (by norm_num)
+    (x₀ := 2) (y₀ := 1) (by simp) (by norm_num) (-3)
+
 end MathlibExtTest.QuadraticFormIsotropic

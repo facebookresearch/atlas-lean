@@ -10,6 +10,7 @@ module
 
 public import MathlibExt.NumberTheory.Padics.HilbertSymbol.Isotropic
 public import MathlibExt.NumberTheory.Rat.LocalGlobal
+public import MathlibExt.LinearAlgebra.QuadraticForm.Isotropic
 import Mathlib.NumberTheory.Padics.Hensel
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.LinearCombination
@@ -139,19 +140,6 @@ section Field
 
 variable {K : Type*} [Field K]
 
-/-- A binary form `a x ^ 2 + b y ^ 2` with `a, b ≠ 0` and a nonzero zero takes every value. -/
-private theorem hm5_binary_eq {a b : K} (h2 : (2 : K) ≠ 0) (ha : a ≠ 0) (hb : b ≠ 0)
-    {x₀ y₀ : K} (h0 : ¬(x₀ = 0 ∧ y₀ = 0)) (hz : a * x₀ ^ 2 + b * y₀ ^ 2 = 0) (t : K) :
-    ∃ x y : K, a * x ^ 2 + b * y ^ 2 = t := by
-  have hx₀ : x₀ ≠ 0 := by
-    rintro rfl
-    refine h0 ⟨rfl, ?_⟩
-    have hb0 : b * y₀ ^ 2 = 0 := by simpa using hz
-    exact pow_eq_zero_iff two_ne_zero |>.1 ((mul_eq_zero.1 hb0).resolve_left hb)
-  refine ⟨(a + t) / (2 * a), y₀ / x₀ * ((t - a) / (2 * a)), ?_⟩
-  field_simp
-  linear_combination (t - a) ^ 2 * hz
-
 /-- If `a₀ x₀ ^ 2 + a₁ x₁ ^ 2 + g(z) = 0` nontrivially and `g` has no nonzero zero, there are `x, y`
 with `t = a₀ x ^ 2 + a₁ y ^ 2 ≠ 0` and `-t` represented by `g`. -/
 private theorem hm5_split (h2 : (2 : K) ≠ 0) {a₀ a₁ : K} (h₀ : a₀ ≠ 0) (h₁ : a₁ ≠ 0) {k : ℕ}
@@ -163,23 +151,14 @@ private theorem hm5_split (h2 : (2 : K) ≠ 0) {a₀ a₁ : K} (h₀ : a₀ ≠ 
   classical
   by_cases hs : a₀ * x₀ ^ 2 + a₁ * x₁ ^ 2 = 0
   · have hz0 : z = 0 := haniso z (by linear_combination hz - hs)
-    obtain ⟨x, y, hxy⟩ := hm5_binary_eq h2 h₀ h₁ (fun h => hne ⟨h.1, h.2, hz0⟩) hs (-b j)
+    obtain ⟨x, y, hxy⟩ := exists_mul_sq_add_mul_sq_eq_of_isotropic h2 h₀ h₁
+      (fun h => hne ⟨(Prod.mk.inj h).1, (Prod.mk.inj h).2, hz0⟩) hs (-b j)
     refine ⟨x, y, by rw [hxy]; exact neg_ne_zero.2 hj, Pi.single j 1, ?_⟩
     rw [hxy, neg_neg]
     simp [Pi.single_apply]
   · exact ⟨x₀, x₁, hs, z, by linear_combination hz⟩
 
 end Field
-
-/-- A rational number `q` with `p ∤ |num q| * den q` has `p`-adic norm `1`. -/
-private theorem hm5_norm_eq_one {p : ℕ} [Fact p.Prime] {q : ℚ}
-    (h : ¬p ∣ q.num.natAbs * q.den) : ‖(q : ℚ_[p])‖ = 1 := by
-  have hnum : ¬(p : ℤ) ∣ q.num := fun hd => h (dvd_mul_of_dvd_left (Int.natCast_dvd.1 hd) _)
-  have hden : p.Coprime q.den :=
-    (Nat.Prime.coprime_iff_not_dvd Fact.out).2 fun hd => h (dvd_mul_of_dvd_right hd _)
-  rw [Rat.cast_def, norm_div, Padic.norm_natCast_eq_one_iff.2 hden, div_one]
-  exact le_antisymm (Padic.norm_int_le_one _)
-    (not_lt.1 fun hl => hnum (Padic.norm_intCast_lt_one_iff.1 hl))
 
 /-- Outside `2` and the primes dividing a numerator or a denominator of the `b i`, the diagonal form
 with nonzero coefficients `b` in more than two variables has a nonzero `p`-adic zero. -/
@@ -190,7 +169,7 @@ private theorem hm5_isoAt_of_not_mem {k : ℕ} (hk : 2 < k) (b : Fin k → ℚ) 
   have : Fact p.1.Prime := ⟨p.2⟩
   simp only [Finset.mem_insert, Finset.mem_biUnion, Finset.mem_univ, true_and, not_or,
     not_exists] at hp
-  have hnorm : ∀ i, ‖(b i : ℚ_[p.1])‖ = 1 := fun i => hm5_norm_eq_one fun hd =>
+  have hnorm : ∀ i, ‖(b i : ℚ_[p.1])‖ = 1 := fun i => Padic.norm_ratCast_eq_one_of_not_dvd fun hd =>
     hp.2 i (Nat.mem_primeFactors.2 ⟨p.2, hd,
       mul_ne_zero (Int.natAbs_ne_zero.2 (Rat.num_ne_zero.2 (hb i))) (b i).den_ne_zero⟩)
   obtain ⟨x, hx, hs⟩ := HilbertSymbol.diagonal_unit_isotropic p.1 hp.1 hk

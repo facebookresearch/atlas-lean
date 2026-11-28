@@ -17,7 +17,7 @@ public import Mathlib.Topology.MetricSpace.Pseudo.Pi
 /-!
 # Local-global facts about the rationals
 
-Two inputs to the proof of the Hasse–Minkowski theorem over `ℚ`:
+Two inputs to the proof of the Hasse–Minkowski theorem over `ℚ`, and a `p`-adic fact it uses:
 
 * `Rat.isSquare_of_isSquare_real_of_forall_isSquare_padic`: a rational number that is a square in
   `ℝ` and in every `ℚ_[p]` is a square in `ℚ`. Its arithmetic core is Mathlib's
@@ -25,6 +25,8 @@ Two inputs to the proof of the Hasse–Minkowski theorem over `ℚ`:
 * `Rat.Place.exists_forall_norm_sub_lt` and `Rat.Place.denseRange_embedding_pi`: weak
   approximation for `ℚ`, the density of `ℚ` in a finite product of its completions, stated with
   the places `Rat.Place` and completions `Rat.Place.CompletedField` of `ℚ`.
+* `Padic.norm_ratCast_eq_one_of_not_dvd`: a rational number whose numerator and denominator are
+  prime to `p` has `p`-adic norm `1`.
 
 Sources: A. V. Sutherland, *18.782 Introduction to Arithmetic Geometry*, MIT, Fall 2013, lecture
 notes, Lecture 11, Theorem 11.7, p. 2, and the case `n = 2` of the proof of Theorem 11.12, p. 4;
@@ -63,6 +65,21 @@ theorem isSquare_of_isSquare_real_of_forall_isSquare_padic {r : ℚ} (hreal : Is
   have hv := congrArg Padic.valuation hs
   rw [Padic.valuation_ratCast, Padic.valuation_mul hs0 hs0] at hv
   exact ⟨_, hv⟩
+
+/-- **A rational number prime to $p$ is a $p$-adic unit.** Let $p$ be a prime and let
+$q \in \mathbb{Q}$ with $p$ dividing neither the numerator nor the denominator of $q$, stated as
+$p \nmid |\mathrm{num}(q)| \cdot \mathrm{den}(q)$. Then $|q|_p = 1$ in $\mathbb{Q}_p$.
+
+The numerator is a $p$-adic integer of norm $1$ (`Padic.norm_intCast_lt_one_iff`), and so is the
+denominator (`Padic.norm_natCast_eq_one_iff`). -/
+theorem _root_.Padic.norm_ratCast_eq_one_of_not_dvd {p : ℕ} [Fact p.Prime] {q : ℚ}
+    (h : ¬p ∣ q.num.natAbs * q.den) : ‖(q : ℚ_[p])‖ = 1 := by
+  have hnum : ¬(p : ℤ) ∣ q.num := fun hd => h (dvd_mul_of_dvd_left (Int.natCast_dvd.1 hd) _)
+  have hden : p.Coprime q.den :=
+    (Nat.Prime.coprime_iff_not_dvd Fact.out).2 fun hd => h (dvd_mul_of_dvd_right hd _)
+  rw [Rat.cast_def, norm_div, Padic.norm_natCast_eq_one_iff.2 hden, div_one]
+  exact le_antisymm (Padic.norm_int_le_one _)
+    (not_lt.1 fun hl => hnum (Padic.norm_intCast_lt_one_iff.1 hl))
 
 namespace Place
 

@@ -13,21 +13,29 @@ public import MathlibExt.NumberTheory.Rat.HasseMinkowskiQuaternary
 public import MathlibExt.NumberTheory.Rat.HasseMinkowskiRankFive
 
 /-!
-# The Hasse–Minkowski theorem for diagonal forms over `ℚ`
+# The Hasse–Minkowski theorem over `ℚ`
 
-A diagonal quadratic form $a_1 x_1^2 + \dots + a_n x_n^2$ with rational coefficients has a zero
-other than $0$ in $\mathbb{Q}^n$ if and only if it has one in $\mathbb{R}^n$ and in
-$\mathbb{Q}_p^n$ for every prime $p$ (`Rat.exists_diagonal_eq_zero_iff_forall_local`). If moreover
-every $a_i \neq 0$, then for $c \in \mathbb{Q}$ the equation
-$a_1 x_1^2 + \dots + a_n x_n^2 = c$ is solvable in $\mathbb{Q}^n$ if and only if it is solvable in
-$\mathbb{R}^n$ and in every $\mathbb{Q}_p^n$ (`Rat.exists_diagonal_eq_iff_forall_local`).
+A quadratic form $f(x) = \sum_{i,j=1}^n a_{ij} x_i x_j$ with rational coefficients has a zero other
+than $0$ in $\mathbb{Q}^n$ if and only if it has one in $\mathbb{R}^n$ and in $\mathbb{Q}_p^n$ for
+every prime $p$ (`Rat.exists_quadratic_eq_zero_iff_forall_local`). If moreover $(a_{ij})$ is
+symmetric with $\det(a_{ij}) \neq 0$, then for $c \in \mathbb{Q}$ the equation $f(x) = c$ is
+solvable in $\mathbb{Q}^n$ if and only if it is solvable in $\mathbb{R}^n$ and in every
+$\mathbb{Q}_p^n$ (`Rat.exists_quadratic_eq_iff_forall_local`).
 
-The proof is the induction on $n$ of A. V. Sutherland, *18.782 Introduction to Arithmetic
+Both are first proved for diagonal forms $a_1 x_1^2 + \dots + a_n x_n^2$
+(`Rat.exists_diagonal_eq_zero_iff_forall_local`, and `Rat.exists_diagonal_eq_iff_forall_local`
+when every $a_i \neq 0$). The general forms reduce to these:
+`QuadraticForm.equivalent_weightedSumSquares` diagonalizes the form over $\mathbb{Q}$, and the
+rational change of variables, with its inverse, is carried to $\mathbb{R}$ and to each
+$\mathbb{Q}_p$.
+
+The diagonal case is the induction on $n$ of A. V. Sutherland, *18.782 Introduction to Arithmetic
 Geometry*, MIT, Fall 2013, Lecture 11, proof of Theorem 11.12, pp. 4–5: a zero coefficient gives a
 zero at once; otherwise $n = 1$ has no local zero, and the cases $n = 2, 3, 4$ and the step to
 $n \geq 5$ are `Rat.exists_binary_eq_zero_of_forall_local`,
 `Rat.exists_ternary_eq_zero_of_forall_local`, `Rat.exists_quaternary_eq_zero_of_forall_local` and
-`Rat.exists_diagonal_eq_zero_of_rank_ge_five`.
+`Rat.exists_diagonal_eq_zero_of_rank_ge_five`. Represented values reduce to zeros of
+$f - c z^2$, by the argument in the proof of Lemma 10.2 (Lecture 10, p. 1).
 -/
 
 @[expose] public section
@@ -80,25 +88,6 @@ private theorem hmd_fin4_iff (c : Fin 4 → K) :
     refine ⟨![x₁, x₂, x₃, x₄], fun h' => hne ?_, by simpa [Fin.sum_univ_four] using h⟩
     exact ⟨by simpa using congrFun h' 0, by simpa using congrFun h' 1,
       by simpa using congrFun h' 2, by simpa using congrFun h' 3⟩
-
-/-- A diagonal form with nonzero coefficients and a nonzero zero takes every value. -/
-private theorem hmd_represents (h2 : (2 : K) ≠ 0) {n : ℕ} (c : Fin n → K) (hc : ∀ i, c i ≠ 0)
-    {x : Fin n → K} (hx : x ≠ 0) (h : ∑ i, c i * x i ^ 2 = 0) (t : K) :
-    ∃ y : Fin n → K, ∑ i, c i * y i ^ 2 = t := by
-  obtain ⟨i, hi⟩ := Function.ne_iff.1 hx
-  have hi' : x i ≠ 0 := by simpa using hi
-  set l := (t - c i) / (2 * c i * x i) with hl
-  have hl' : 2 * l * (c i * x i) = t - c i := by
-    rw [hl]
-    field_simp [hc i, hi']
-  refine ⟨fun j => l * x j + (Pi.single i (1 : K) : Fin n → K) j, ?_⟩
-  have e : ∀ j, c j * (l * x j + (Pi.single i (1 : K) : Fin n → K) j) ^ 2 =
-      l ^ 2 * (c j * x j ^ 2) + 2 * l * (c j * x j * (Pi.single i (1 : K) : Fin n → K) j) +
-        c j * (Pi.single i (1 : K) : Fin n → K) j ^ 2 := fun j => by ring
-  simp only [e, Finset.sum_add_distrib, ← Finset.mul_sum, h, mul_zero, zero_add]
-  simp only [Pi.single_apply, mul_ite, mul_one, mul_zero, ite_pow, one_pow,
-    zero_pow two_ne_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
-  linear_combination hl'
 
 private theorem hmd_map_ne_zero {L : Type*} [Field L] [CharZero L] {n : ℕ} {x : Fin n → ℚ}
     (hx : x ≠ 0) : (fun i => (x i : L)) ≠ 0 := by
@@ -181,17 +170,18 @@ $a_1, \dots, a_n$ be nonzero rational numbers and let $c$ be a rational number. 
 $a_1 x_1^2 + \dots + a_n x_n^2 = c$ has a solution $x \in \mathbb{Q}^n$ if and only if it has a
 solution $x \in \mathbb{R}^n$ and a solution $x \in \mathbb{Q}_p^n$ for every prime $p$.
 
-The source takes $c \neq 0$; the Lean statement does not need it, as for $c = 0$ the point $x = 0$
-is a solution over every field.
+The value $c = 0$ is allowed: then $x = 0$ is a solution over every field.
 
 The proof applies `Rat.exists_diagonal_eq_zero_iff_forall_local` to
 $-c z^2 + a_1 x_1^2 + \dots + a_n x_n^2$: a rational zero with $z \neq 0$ gives a solution, and a
-zero with $z = 0$ is a nonzero zero of the form, which then takes every value.
+zero with $z = 0$ is a nonzero zero of the form, which then takes every value
+(`exists_sum_mul_sq_eq_of_isotropic`).
 
-Source: A. V. Sutherland, *18.782 Introduction to Arithmetic Geometry*, MIT, Fall 2013, Lecture
-11, Theorem 11.12, pp. 4–5, and Lecture 10, Lemma 10.2 and its proof, p. 1, for the passage
-between zeros and represented values,
-<https://math.mit.edu/classes/18.782/2013fa/LectureNotes11.pdf>. -/
+The statement follows from A. V. Sutherland, *18.782 Introduction to Arithmetic Geometry*, MIT,
+Fall 2013, Lecture 11, Theorem 11.12, p. 4, which is about representing $0$,
+<https://math.mit.edu/classes/18.782/2013fa/LectureNotes11.pdf>, by the argument in the proof of
+Lemma 10.2, Lecture 10, p. 1: a nondegenerate form that represents $0$ represents every element,
+<https://math.mit.edu/classes/18.782/2013fa/LectureNotes10.pdf>. -/
 theorem exists_diagonal_eq_iff_forall_local {n : ℕ} (a : Fin n → ℚ) (ha : ∀ i, a i ≠ 0) (c : ℚ) :
     (∃ x : Fin n → ℚ, ∑ i, a i * x i ^ 2 = c) ↔
       (∃ x : Fin n → ℝ, ∑ i, (a i : ℝ) * x i ^ 2 = c) ∧
@@ -230,7 +220,9 @@ theorem exists_diagonal_eq_iff_forall_local {n : ℕ} (a : Fin n → ℚ) (ha : 
       rw [hz] at h
       simp only [ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, mul_zero,
         zero_add] at h
-      exact hmd_represents two_ne_zero a ha hx h c
+      obtain ⟨i, hi⟩ := Function.ne_iff.1 hx
+      exact exists_sum_mul_sq_eq_of_isotropic two_ne_zero (x := Fin.tail y) (ha i)
+        (by simpa using hi) h c
     · refine ⟨fun i => y i.succ / y 0, ?_⟩
       have e : ∑ i, a i * (y i.succ / y 0) ^ 2 = (∑ i, a i * y i.succ ^ 2) / y 0 ^ 2 := by
         rw [Finset.sum_div]
@@ -424,15 +416,16 @@ $\det(a_{ij}) \neq 0$, and let $c \in \mathbb{Q}$. Then $f(x) = c$ has a solutio
 $x \in \mathbb{Q}^n$ if and only if it has a solution $x \in \mathbb{R}^n$ and a solution
 $x \in \mathbb{Q}_p^n$ for every prime $p$.
 
-The source takes $c \neq 0$; the Lean statement does not need it, as $x = 0$ solves $f(x) = 0$.
+The value $c = 0$ is allowed: then $x = 0$ is a solution over every field.
 
 The proof diagonalizes $f$ over $\mathbb{Q}$ to $w_1 y_1^2 + \dots + w_n y_n^2$, where every
 $w_k \neq 0$ as $\det(a_{ij}) \neq 0$, and applies `Rat.exists_diagonal_eq_iff_forall_local`.
 
-Source: A. V. Sutherland, *18.782 Introduction to Arithmetic Geometry*, MIT, Fall 2013, Lecture
-11, Theorem 11.12, pp. 4–5, and Lecture 10, Lemma 10.2 and its proof, p. 1, for the passage
-between zeros and represented values,
-<https://math.mit.edu/classes/18.782/2013fa/LectureNotes11.pdf>. -/
+The statement follows from A. V. Sutherland, *18.782 Introduction to Arithmetic Geometry*, MIT,
+Fall 2013, Lecture 11, Theorem 11.12, p. 4, which is about representing $0$,
+<https://math.mit.edu/classes/18.782/2013fa/LectureNotes11.pdf>, by the argument in the proof of
+Lemma 10.2, Lecture 10, p. 1: a nondegenerate form that represents $0$ represents every element,
+<https://math.mit.edu/classes/18.782/2013fa/LectureNotes10.pdf>. -/
 theorem exists_quadratic_eq_iff_forall_local {n : ℕ} (A : Matrix (Fin n) (Fin n) ℚ)
     (hA : A.IsSymm) (hdet : A.det ≠ 0) (c : ℚ) :
     (∃ x : Fin n → ℚ, ∑ i, ∑ j, A i j * x i * x j = c) ↔
