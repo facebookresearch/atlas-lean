@@ -2,7 +2,7 @@
 
 Let $K$ be a linearly ordered
 field with a floor function, let $p$ and $p' \ge 2p$ be natural numbers and let $q$, $q'$ and
-$q_{\max}$ be integers with $q' \le 2q$. Write
+$q_{\max}$ be integers with $q' \le 2q$. Write $\mathrm{fl}_{p,q}(0) = 0$ and, for $z \ne 0$,
 $\mathrm{fl}_{p,q}(z) = \operatorname{rne}(z / 2^e) \cdot 2^e$ with
 $e = \max(\lfloor \log_2 |z| \rfloor - (p - 1), q)$, where $\operatorname{rne}$ rounds to the
 nearest integer with ties to the even one; for $p \ge 1$, this is rounding to nearest, ties to

@@ -208,7 +208,8 @@ units digit, round to the nearest integer with ties to even, and scale back. -/
 def fl (x : K) : K := rne (x / 2 ^ ulpExp p x) * 2 ^ ulpExp p x
 
 /-- **Round to nearest, ties to even, with gradual underflow.** For a natural number $p$, an
-integer $q$ and an element $x$ of a linearly ordered field with a floor function, let
+integer $q$ and an element $x$ of a linearly ordered field with a floor function, set
+$\mathrm{fl}_{p,q}(0) = 0$. For $x \ne 0$, let
 $e = \max(\lfloor \log_2 |x| \rfloor - (p - 1), q)$: the exponent of the last place of $x$ at
 precision $p$, but at least $q$. Let $\mathrm{fl}_{p,q}(x) = \operatorname{rne}(x / 2^e) \cdot 2^e$,
 where $\operatorname{rne}$ rounds to the nearest integer with ties to the even one. For $p \ge 1$,

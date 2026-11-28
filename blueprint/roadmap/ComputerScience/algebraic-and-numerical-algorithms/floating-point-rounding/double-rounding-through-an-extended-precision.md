@@ -25,7 +25,8 @@ such an $x \ge 0$ with $\mathrm{fl}_p(\mathrm{fl}_{2p+1}(\sqrt{x})) \ne \mathrm{
 
 Formats with gradual underflow need further conditions on the two minimum exponents. Write $\mathrm{fl}_{p,q}$ for
 rounding to nearest, ties to even, with $p$-bit significands, gradual underflow below the least exponent $q$, and
-unbounded exponent: it rounds $x$ at the exponent $\max(\lfloor \log_2 |x| \rfloor - (p - 1), q)$. For every $p \ge 1$,
+unbounded exponent: it sends $0$ to $0$ and rounds nonzero $x$ at the exponent
+$\max(\lfloor \log_2 |x| \rfloor - (p - 1), q)$. For every $p \ge 1$,
 all integers $q$, $q'$ and $q_{\max}$, and all real numbers $x$ and $y$ of the format with $p$-bit significands and
 last-place exponents in $[q, q_{\max}]$, that is, $x = m_x 2^{e_x}$ and $y = m_y 2^{e_y}$ for some integers with
 $|m_x|, |m_y| < 2^p$ and $q \le e_x, e_y \le q_{\max}$ (these need not be the canonical exponents of the last place),
