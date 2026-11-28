@@ -2272,6 +2272,7 @@
   "CSLibExt/MachineLearning/GraphicalModels/StructuralCausalModels": {"to": "ComputerScience/machine-learning/probabilistic-graphical-models", "title": "Structural causal models and counterfactuals"},
   "CSLibExt/MachineLearning/GraphicalModels/VariableElimination": {"to": "ComputerScience/machine-learning/probabilistic-graphical-models", "title": "Variable elimination and belief propagation"},
   "CSLibExt/MachineLearning/Hedge": {"to": "ComputerScience/machine-learning/online-learning-and-boosting", "title": "Hedge algorithm"},
+  "CSLibExt/MachineLearning/IndividualFairness": {"to": "ComputerScience/machine-learning", "title": "Algorithmic fairness"},
   "CSLibExt/MachineLearning/InformationTheory/InformationGain": {"to": "ComputerScience/machine-learning/supervised-learning", "title": "Information gain in decision trees"},
   "CSLibExt/MachineLearning/InformationTheory/LogLoss": {"to": "ComputerScience/machine-learning/supervised-learning", "title": "Cross-entropy loss"},
   "CSLibExt/MachineLearning/KMeans": {"to": "ComputerScience/machine-learning/unsupervised-learning", "title": "k-means clustering"},

@@ -1,7 +1,7 @@
 # Diagonals reading disjoint sets of letters are independent
 
 Let `p` and `q` be
-[probability vectors](../../../../ComputerScience/machine-learning/bayesian-inference-and-sampling/expectation-maximization-algorithm/is-dist.md)
+[probability vectors](../../../../Probability/not-yet-classified/is-dist.md)
 on a finite alphabet, `s` a real score on pairs of letters and `m`, `n`, `i ≤ m` and `j ≤ n`
 natural numbers. For independent words `u` and `v` of `m` and `n` independent letters with laws
 `p` and `q`, consider the [diagonal of offset](diag.md) `-i`, which starts at the cell `(i, 0)`,

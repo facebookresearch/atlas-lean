@@ -2,6 +2,7 @@
 
 Topics added since this subject's fields were last revised.
 
+- [Probability distributions on a finite set](is-dist.md)
 - [Confounding Bounds](confounding-bounds/README.md)
 - [Confounding EValue](confounding-evalue/README.md)
 - [Confounding Standardization](confounding-standardization/README.md)
@@ -142,6 +143,7 @@ Topics added since this subject's fields were last revised.
 - [Discrete Jordan Separation Variant](part-17/discrete-jordan-separation-variant/README.md)
 - [Far Dart Contour](part-17/far-dart-contour/README.md)
 - [Fieller Ratio](part-17/fieller-ratio/README.md)
+- [Finite Transport](part-17/finite-transport/README.md)
 - [Finite Witness Union Bound](part-17/finite-witness-union-bound/README.md)
 - [FKSharp Diff Ineq](part-17/fksharp-diff-ineq/README.md)
 - [Holley FKG](part-17/holley-fkg/README.md)

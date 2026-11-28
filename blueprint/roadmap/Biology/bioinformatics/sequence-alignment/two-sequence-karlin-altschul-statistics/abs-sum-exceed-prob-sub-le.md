@@ -1,7 +1,7 @@
 # Finite-size estimate of the expected number of exceeding diagonals
 
 Let `p` and `q` be
-[probability vectors](../../../../ComputerScience/machine-learning/bayesian-inference-and-sampling/expectation-maximization-algorithm/is-dist.md)
+[probability vectors](../../../../Probability/not-yet-classified/is-dist.md)
 on a finite alphabet, `s` a real score on pairs of letters, `θ ≥ 0` a root of
 `∑_{a, b} p_a q_b e^{θ s(a, b)} = 1` ([pair law](pair-law.md), [pair score](pair-score.md)), `K`
 real, `ε ≥ 0`, `ℓ`, `m` and `n` natural numbers with `ℓ ≤ m` and `ℓ ≤ n`, and `t > 0`. Suppose
