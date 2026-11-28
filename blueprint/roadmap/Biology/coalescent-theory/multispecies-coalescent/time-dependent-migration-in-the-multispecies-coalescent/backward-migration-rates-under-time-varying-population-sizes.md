@@ -18,7 +18,7 @@ $$\int_\tau^{\tau + w} h(s)\,ds = -\log(1 - U), \qquad U \sim \mathrm{Uniform}(0
 
 with an independent $U$ for each event.
 
-On intervals where $\nu_a, \nu_b, m$ are linear, the migration rate $f_{a \to b}$ has the form $\frac{(a_1 + b_1 t)(a_2 + b_2 t)}{a_3 + b_3 t} = c_0 + c_1 t + \frac{c_2}{a_3 + b_3 t}$ and integrates in closed form. When population $B$ splits into $B_1, B_2$, migration between $A$ and $B_1 \cup B_2$ proceeds as if the $B$'s were one population, with immigrants from $A$ divided in proportion to the sizes of $B_1$ and $B_2$.
+On intervals where $\nu_a, \nu_b, m$ are linear, the migration rate $f_{a \to b}$ has the form $\frac{(a_1 + b_1 t)(a_2 + b_2 t)}{a_3 + b_3 t}$. If $b_3 \ne 0$, polynomial division gives $c_0 + c_1 t + \frac{c_2}{a_3 + b_3 t}$ for constants $c_0, c_1, c_2$ (the source's Eq. 5); if $b_3 = 0$ (constant $\nu_a$), it is a polynomial in $t$ of degree at most $2$ (quadratic when $b_1 b_2 \ne 0$). In either case it integrates in closed form. When population $B$ splits into $B_1, B_2$, migration between $A$ and $B_1 \cup B_2$ proceeds as if the $B$'s were one population, with immigrants from $A$ divided in proportion to the sizes of $B_1$ and $B_2$.
 
 ## Depends on
 

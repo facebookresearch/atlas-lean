@@ -15,7 +15,7 @@ $$P[G_{i-1}, \ell_{i-1} \mid G_i, \ell_i, T] = \sum_{j=0}^{m_i} \frac{e^{-\lambd
 
 4. All $g_i$, $k_{i,j,z}$, $\lambda_{i,j}$ and transition probabilities can be computed in $O(n^5)$ time, so $P[G \mid T]$ is computable in $O(n^5)$ time.
 
-Consequently the probability of an unranked gene tree topology is computable in polynomial time whenever it has polynomially many rankings.
+Consequently, since the probability of an unranked gene tree topology is the sum of the probabilities of its rankings, it is computable in polynomial time whenever the topology has polynomially many rankings. The source states this consequence in its Abstract, Background and Conclusions (subsection "Computing probabilities of unranked gene tree topologies"), not as a numbered result; Remark 6 gives the count $(n-1)!/\prod_{i=1}^{n-1}(c_i - 1)$ of rankings, with $c_i$ the number of leaves below internal vertex $i$, citing earlier work for its proof, and notes that it grows faster than polynomially for balanced trees.
 
 ## Depends on
 
@@ -33,4 +33,4 @@ Ranking fixes which pair coalesces at each step, so within an interval the proce
 
 ## Sources
 
-- T. Stadler and J. H. Degnan, "A polynomial time algorithm for calculating the probability of a ranked gene tree given a species tree", *Algorithms for Molecular Biology* (2012), Table 1 (notation), Theorems 1–3 (Eqs. 1–4), Corollaries 4–5 and Section "An algorithm". <https://doi.org/10.1186/1748-7188-7-7> (PMC3637458)
+- T. Stadler and J. H. Degnan, "A polynomial time algorithm for calculating the probability of a ranked gene tree given a species tree", *Algorithms for Molecular Biology* (2012), Table 1 (notation), Theorems 1–3 (Eqs. 1–4), Corollaries 4–5 and Section "An algorithm" (items 1–4); Remark 6, Abstract, Background and Conclusions (the unranked consequence). <https://doi.org/10.1186/1748-7188-7-7> (PMC3637458)

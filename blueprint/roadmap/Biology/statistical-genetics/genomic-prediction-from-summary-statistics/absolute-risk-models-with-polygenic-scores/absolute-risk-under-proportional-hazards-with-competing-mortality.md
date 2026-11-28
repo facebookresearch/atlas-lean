@@ -10,7 +10,7 @@ $$R_{a, a+s}(Z) = \int_a^{a+s} I(u \mid Z)\exp\Big(-\int_a^u \big\{I(v \mid Z) +
 
 It is the cumulative incidence of disease in the presence of the competing risk of death: the probability of developing the disease at age $u$ having remained free of both disease and death until $u$, integrated over the interval.
 
-When relative risks are estimated from cohort or case–control studies and the overall population incidence $\bar I(a)$ is known from registries, the baseline hazard is recovered from the fact that $\bar I(a)$ is the average of the covariate-specific incidence over the population distribution $F_a$ of risk factors at age $a$: $\bar I(a) = I_0(a)\int\exp\big(\sum_k\beta_k z_k\big)\,dF_a(z)$.
+When relative risks are estimated from cohort or case–control studies and the overall population incidence $\bar I(a)$ is known from registries, the baseline hazard is recovered from the fact that $\bar I(a)$ is the average of the covariate-specific incidence over the distribution $F_a$ of risk factors in the at-risk population at age $a$, that is, among members of the underlying population who are disease-free and alive at age $a$ (not the whole population): $\bar I(a) = I_0(a)\int\exp\big(\sum_k\beta_k z_k\big)\,dF_a(z)$. For a relatively rare disease with fixed risk factors (such as SNPs) that have modest effects on disease and competing mortality, $F_a$ can be taken to be constant in $a$.
 
 ## Remarks
 
