@@ -21,6 +21,7 @@ public import MathlibExt.NumberTheory.GoldenRatioLeftFactorialLambertKurepaParti
 public import MathlibExt.NumberTheory.GoldenRatioLeftFactorialLambertKurepaPartialIntegralLambertSequenceBounds
 public import MathlibExt.NumberTheory.LambertSequencePartialExpSum
 public import MathlibExt.NumberTheory.GoldenRatioLeftFactorialLambertLambertSequenceLtGoldenFactorialExponent
+public import MathlibExt.NumberTheory.GoldenRatioLogCounts
 
 /-!
 # The golden ratio, factorials, and the Lambert `W` function
@@ -54,41 +55,6 @@ open Real
 
 @[expose] public section
 
-/-- **Alternating-sign Fibonacci sequence.** The alternating-sign Fibonacci sequence
-(OEIS A181716) is the integer sequence $(d_m)_{m \ge 0}$ defined by $d_0 = 0$, $d_1 = 1$ and
-$d_{m+2} = d_{m+1} + d_m + (-1)^{m+2}$ for every natural number $m$.
-
-Source: Petojević, Gorjanac Ranitović, Rastovac and Mandić, *The Golden Ratio,
-Factorials, and the Lambert W Function*, Journal of Integer Sequences 27 (2024),
-Article 24.5.7, Section 2.2 (definition before Lemma 3). -/
-public def alternatingSignFibonacci : ℕ → ℤ
-  | 0 => 0
-  | 1 => 1
-  | m + 2 => alternatingSignFibonacci (m + 1) + alternatingSignFibonacci m + (-1) ^ (m + 2)
-
-/-- **Recurrence of the alternating-sign Fibonacci sequence.** For every natural number $m$,
-the alternating-sign Fibonacci sequence $d$ satisfies $d_{m+2} = d_{m+1} + d_m + (-1)^{m+2}$.
-
-Source: Petojević, Gorjanac Ranitović, Rastovac and Mandić, *The Golden Ratio,
-Factorials, and the Lambert W Function*, Journal of Integer Sequences 27 (2024),
-Article 24.5.7, Section 2.2. -/
-public theorem alternatingSignFibonacci_add_two (m : ℕ) :
-    alternatingSignFibonacci (m + 2) =
-      alternatingSignFibonacci (m + 1) + alternatingSignFibonacci m + (-1) ^ (m + 2) :=
-  rfl
-
-/-- **First values of the alternating-sign Fibonacci sequence.** The alternating-sign Fibonacci
-sequence $d$ satisfies $d_0 = 0$, $d_1 = 1$, $d_2 = 2$, $d_3 = 2$ and $d_4 = 5$.
-
-Source: Petojević, Gorjanac Ranitović, Rastovac and Mandić, *The Golden Ratio,
-Factorials, and the Lambert W Function*, Journal of Integer Sequences 27 (2024),
-Article 24.5.7, Example 5. -/
-public theorem alternatingSignFibonacci_small_values :
-    alternatingSignFibonacci 0 = 0 ∧ alternatingSignFibonacci 1 = 1 ∧
-      alternatingSignFibonacci 2 = 2 ∧ alternatingSignFibonacci 3 = 2 ∧
-      alternatingSignFibonacci 4 = 5 := by
-  refine ⟨rfl, rfl, ?_, ?_, ?_⟩ <;> norm_num [alternatingSignFibonacci]
-
 /-- **Kurepa's partial integral vanishes at zero.** For every natural number $n$, Kurepa's partial
 integral $K_n(x) = \int_0^x e^{-t} \sum_{k=0}^{n-1} t^k \, dt$ satisfies $K_n(0) = 0$.
 
@@ -97,19 +63,6 @@ Factorials, and the Lambert W Function*, Journal of Integer Sequences 27 (2024),
 Article 24.5.7, Section 1. -/
 public theorem kurepaPartialIntegral_zero (n : ℕ) : kurepaPartialIntegral n 0 = 0 := by
   simp [kurepaPartialIntegral]
-
-/-- **Counting integers by their golden-ratio logarithm.** Let $d$ be the integer sequence with
-$d(0) = 0$, $d(1) = 1$ and $d(m) = d(m-1) + d(m-2) + (-1)^m$ for $m \ge 2$, and let $\varphi$ be
-the golden ratio. For every integer $m \ge 1$, the number of positive integers $n$ with
-$\lfloor \log_\varphi n \rfloor = m$ equals $d(m)$.
-
-Source: Petojević, Gorjanac Ranitović, Rastovac and Mandić, *The Golden Ratio,
-Factorials, and the Lambert W Function*, Journal of Integer Sequences 27 (2024),
-Article 24.5.7, Lemma 3 (`jis-2024-24.5.7-lem-3`). -/
-public theorem_wanted ncard_floor_logb_goldenRatio_eq_alternatingSignFibonacci (m : ℕ)
-    (hm : 1 ≤ m) :
-    (({n : ℕ | 1 ≤ n ∧ ⌊Real.logb goldenRatio n⌋₊ = m}.ncard : ℕ) : ℤ) =
-      alternatingSignFibonacci m
 
 /-- **Existence of the Lambert sequences.** Let $h(y) = y e^y$ be the Lambert map. For every
 natural number $n \ge 4$ and every real number $c$ with $0 < c \le 1$ there is a real number
