@@ -36,6 +36,10 @@ Algorithms with error analysis: bisection and Newton's method, Euler and Rungeâ€
 - [Upwind scheme](upwind-scheme/README.md)
 - [Finite-volume schemes for transport](finite-volume-schemes-for-transport/README.md)
 - [Operator splitting](operator-splitting/README.md)
+- [Discretization error budgets for a bar and lumped cooling](discretization-error-budgets-for-a-bar-and-lumpe/README.md)
+- [Mechanical integrators: symplectic versus explicit Euler](mechanical-integrators-symplectic-versus-explici/README.md)
+- [Rational certificates for explicit Euler cooling traces](rational-certificates-for-explicit-euler-cooling/README.md)
+- [Upwind advection of a traveling wave and its nodal error](upwind-advection-of-a-traveling-wave-and-its-nod/README.md)
 
 ## Related topics
 

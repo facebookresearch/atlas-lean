@@ -4,6 +4,7 @@ Analytic behaviour of complex polynomials: location of zeros (Eneström–Kakeya
 
 - [Flat Littlewood polynomials](flat-littlewood-polynomials/README.md)
 - [Sendov's conjecture](sendov-s-conjecture/README.md)
+- [Sublevel sets of real-rooted polynomials (Erdős problem 1038)](sublevel-sets-of-real-rooted-polynomials-erd-s-p/README.md)
 - [Complementary polynomial on the unit circle](exists-complementary-polynomial-on-unit.md)
 - [Eneström–Kakeya theorem](enestrom-kakeya-zero-localization.md)
 - [Eneström–Kakeya bound for nonnegative nondecreasing coefficients](norm-le-one-of-aeval-eq-zero-of-monotone.md)

@@ -1,0 +1,10 @@
+# Convexity of lemniscate components (Erdős problem 1047)
+
+- [Closed sublevel set of a complex polynomial](sublevel-set.md)
+- [Strict sublevel set of a complex polynomial](strict-sublevel-set.md)
+- [Connected components of a planar set](components-in.md)
+- [Convexity of components of polynomial sublevel sets](conjecture.md)
+- [Negation of the sublevel-set convexity conjecture](disproved-conjecture.md)
+- [Goodman's non-convex sublevel set](goodman.md)
+- [Polynomial sublevel sets can have non-convex components](conjecture-refuted.md)
+- [Goodman's sublevel set has a non-convex component](goodman-holds.md)

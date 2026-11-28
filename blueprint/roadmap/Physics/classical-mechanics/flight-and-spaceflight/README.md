@@ -10,5 +10,6 @@ attitude with reaction wheels, and mission resource ledgers.
 - [Rocket and electric propulsion](rocket-and-electric-propulsion/README.md)
 - [Six-degree-of-freedom flight dynamics, trim and linearization](six-degree-of-freedom-flight-dynamics-trim-and-l/README.md)
 - [Spacecraft attitude and reaction wheels](spacecraft-attitude-and-reaction-wheels/README.md)
+- [Spacecraft radiator temperature bounds and battery loss heat](spacecraft-radiator-temperature-bounds-and-batte/README.md)
 
 - [Minimum-effort intercept guidance is proportional navigation](minimum-effort-intercept-guidance-is-proportional-navigation.md)

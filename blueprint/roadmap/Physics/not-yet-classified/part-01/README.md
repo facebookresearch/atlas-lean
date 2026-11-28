@@ -3,7 +3,6 @@
 - [ACInjection Loss Balance](acinjection-loss-balance/README.md)
 - [ACVoltage Certificate](acvoltage-certificate/README.md)
 - [Adder Setup Certificate](adder-setup-certificate/README.md)
-- [Advection Error](advection-error/README.md)
 - [Aeroelastic Models](aeroelastic-models/README.md)
 - [Arc Port Signs](arc-port-signs/README.md)
 - [Balanced Fault Current](balanced-fault-current/README.md)

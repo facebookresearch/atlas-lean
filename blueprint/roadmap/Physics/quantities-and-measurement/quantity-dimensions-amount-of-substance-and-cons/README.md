@@ -1,0 +1,69 @@
+# Quantity dimensions, amount of substance, and constants
+
+## ISQ dimensions of amount-based quantities
+
+- [Dimensionless dimension](dimensionless-dim.md)
+- [Dimension of energy](energy-dim.md)
+- [Dimension of thermodynamic temperature](temperature-dim.md)
+- [Dimension of the molar gas constant](gas-constant-dim.md)
+- [Exponents of the energy dimension](energy-dim-exponent.md)
+- [Exponents of the temperature dimension](temperature-dim-exponent.md)
+- [Exponents of the gas constant dimension](gas-constant-dim-exponent.md)
+- [Concentration times molar mass is mass density](concentration-dim-mul-molar-mass-dim.md)
+- [Molar energy times amount is energy](molar-energy-dim-mul-amount.md)
+- [Diffusivity times time is area](diffusivity-dim-mul-time.md)
+- [Stress times volume is energy](stress-dim-mul-length-pow-three.md)
+- [Gas constant times amount and temperature is energy](gas-constant-dim-mul-amount-mul-temperat.md)
+- [Distinct base quantities have distinct dimensions](single-injective.md)
+- [Amount of substance is not dimensionless](amount-dim-ne-one.md)
+- [Amount, length, mass, time and temperature dimensions are distinct](base-dims-nodup.md)
+
+## Unit conversion and the projection boundary
+
+- [Change-of-units factor is positive](dim-scale-pos.md)
+- [Change-of-units factor in reverse is the inverse](dim-scale-symm.md)
+- [Converting a coordinate and back is the identity](dim-scale-round-trip.md)
+- [Change of units preserves ratios](dim-scale-ratio.md)
+- [Dimensionless coordinates do not rescale](dim-scale-one-mul.md)
+- [Change-of-units factor of a base dimension](dim-scale-single.md)
+- [Change-of-units factor of an inverse dimension](dim-scale-inv.md)
+- [Change-of-units factor of a product dimension](dim-scale-mul.md)
+- [Projection to the charge-based system forgets amount](from-isqhom-amount-dim.md)
+- [Projection to the charge-based system is not injective](from-isqhom-not-injective.md)
+
+## The constants bridge between counts and amounts
+
+- [Dimension of a dimensioned quantity](dim-of.md)
+- [Dimension of the Avogadro constant](avogadro-dim.md)
+- [Dimension of the Boltzmann constant](boltzmann-dim.md)
+- [Amount of substance of a particle count](amount-of-count.md)
+- [Particle count of an amount of substance](count-of-amount.md)
+- [Coordinate of the amount of a particle count](amount-of-count-val.md)
+- [Coordinate of the particle count of an amount](count-of-amount-val.md)
+- [Amount of a nonnegative count is nonnegative](amount-of-count-nonneg.md)
+- [Count of the amount of a count](count-of-amount-amount-of-count.md)
+- [Amount of the count of an amount](amount-of-count-count-of-amount.md)
+- [Amount of a count has the amount dimension](dim-of-amount-of-count.md)
+- [Molar gas constant from the Avogadro and Boltzmann constants](gas-constant.md)
+- [Coordinate of the molar gas constant](gas-constant-val.md)
+- [Molar gas constant is positive](gas-constant-pos.md)
+- [Molar energy of a per-particle energy](molar-energy.md)
+- [Coordinate of the molar energy](molar-energy-val.md)
+- [Molar energy divided by the Avogadro constant](molar-energy-div.md)
+- [Avogadro constant times molar energy over Avogadro constant](molar-energy-div-molar-energy.md)
+- [Particle count is unchanged by a change of units](count-of-amount-dim-scale.md)
+- [Amount of a count rescales by the amount factor](amount-of-count-dim-scale.md)
+- [Molar gas constant rescales by its own factor](gas-constant-dim-scale.md)
+- [Molar energy rescales by its own factor](molar-energy-dim-scale.md)
+
+## Temperature and dimensionless arguments of log and exp
+
+- [Scaling a Celsius reading does not scale its kelvin value](celsius-to-kelvin-mul-ne.md)
+- [Doubling 20 degrees Celsius does not double its kelvin value](celsius-to-kelvin-two-mul-twenty-ne.md)
+- [Inverse temperature is positive](inverse-temperature-pos.md)
+- [Coordinate formula for the logarithm of a ratio](log-ratio-val.md)
+- [Molar energy over gas constant times temperature is dimensionless](molar-energy-dim-div-gas-constant-dim-mu.md)
+- [Boltzmann factor of a molar energy](exp-scaled-energy.md)
+- [Coordinate formula for the Boltzmann factor](exp-scaled-energy-val.md)
+- [Boltzmann factor is unchanged by a change of units](exp-scaled-energy-dim-scale.md)
+- [Boltzmann factor in per-particle form](exp-scaled-energy-molar-energy-gas-const.md)
