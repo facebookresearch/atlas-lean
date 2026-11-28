@@ -1,4 +1,4 @@
-# The gapped promise problem for the synchronous value of the 3-coloring game is undecidable
+# The gapped promise problem for the quantum synchronous 3-coloring value q/qa is undecidable
 
 In the quantum and quantum-approximate models, no algorithm decides, given a graph and a threshold $\alpha$ that may depend on the graph, whether the synchronous value of the graph's 3-coloring game equals 1 or is less than $\alpha$, given that one holds.
 

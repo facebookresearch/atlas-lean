@@ -1,6 +1,5 @@
 # Membership in fixed-size quantum-approximate and commuting-operator correlation sets is undecidable for all large enough sizes
 
-
 There is a size threshold beyond which membership in the set of quantum-approximate correlations, and in the set of commuting-operator correlations, is undecidable even with the numbers of questions and answers held fixed. The input is a single correlation with real algebraic entries.
 
 **Correlations of a fixed size.** For integers $n_A, n_B, m_A, m_B \geq 1$, a correlation of size $(n_A, n_B, m_A, m_B)$ is a family $P = \{P(a, b \mid x, y)\}$ indexed by $0 \leq a < m_A$, $0 \leq b < m_B$, $0 \leq x < n_A$ and $0 \leq y < n_B$. Here Alice performs one of $n_A$ measurements with $m_A$ outcomes and Bob one of $n_B$ measurements with $m_B$ outcomes. For $t \in \{qa, qc\}$, $C_t(n_A, n_B, m_A, m_B)$ denotes the set of [quantum-approximate or commuting-operator correlations](quantum-correlation-sets-q-qs-qa-qc.md) of that size: limits of finite-dimensional tensor-product correlations, and correlations $\langle\psi, A^x_a B^y_b \psi\rangle$ of commuting measurement families on a single Hilbert space, respectively. Let $\mathbb{K} = \overline{\mathbb{Q}} \cap \mathbb{R}$ be the field of real algebraic numbers.

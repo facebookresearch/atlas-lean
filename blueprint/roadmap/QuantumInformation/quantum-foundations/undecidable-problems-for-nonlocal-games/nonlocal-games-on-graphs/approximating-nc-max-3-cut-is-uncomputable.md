@@ -17,7 +17,7 @@ The identity $\operatorname{NC\text{-}Max\text{-}3\text{-}Cut}(G) = |E|\, \omega
 
 ## Proof depends on
 
-- [The gapped promise problem for the synchronous value of the 3-coloring game is undecidable](gapped-3-coloring-game-value-is-undecidable.md)
+- [The gapped promise problem for the quantum synchronous 3-coloring value q/qa is undecidable](gapped-3-coloring-game-value-is-undecidable.md)
 
 ## Sources
 
