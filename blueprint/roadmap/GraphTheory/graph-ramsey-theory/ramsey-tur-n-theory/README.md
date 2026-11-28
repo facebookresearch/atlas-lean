@@ -5,3 +5,5 @@
 - [Ramsey–Turán problem for $K_4$ (Erdős Problem 22)](conjecture-2.md)
 - [The empty graph meets the Ramsey–Turán edge bound for $K_4$](test-bot.md)
 - [Resolution of Erdős Problem 22 (Fox–Loh–Zhao)](conjecture-holds.md)
+- [Erdős Problem 615 (Ramsey–Turán problem for $K_4$)](ramsey-turan-kfour-log-independence.md)
+- [Resolution of Erdős Problem 615](ramsey-turan-kfour-log-independence-refu.md)

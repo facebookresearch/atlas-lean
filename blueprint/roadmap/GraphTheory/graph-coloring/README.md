@@ -27,6 +27,16 @@ Vertex, edge, list and fractional colorings of graphs and the chromatic number, 
 
 ## [Part 2 of 2](part-02/README.md)
 
+- [Acyclic colourings](part-02/acyclic-colourings/README.md)
+- [Choosability](part-02/choosability/README.md)
+- [Cochromatic number](part-02/cochromatic-number/README.md)
+- [Cycle-plus-triangles theorem](part-02/cycle-plus-triangles-theorem/README.md)
+- [Even-hole-free graphs](part-02/even-hole-free-graphs/README.md)
+- [Graphs of uncountable chromatic number](part-02/graphs-of-uncountable-chromatic-number/README.md)
+- [Hedetniemi's conjecture](part-02/hedetniemi-s-conjecture/README.md)
+- [Nearly bipartite graphs](part-02/nearly-bipartite-graphs/README.md)
+- [Property B of sparse set families](part-02/property-b-of-sparse-set-families/README.md)
+- [Strong coloring](part-02/strong-coloring/README.md)
 - [Five color theorem](part-02/five-color-theorem.md)
 - [Mycielski's theorem](part-02/mycielski-theorem.md)
 - [Linear list-chromatic bound in clique-minor order](linear-list-chromatic-hadwiger-bound.md)

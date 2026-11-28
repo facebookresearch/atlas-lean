@@ -1,0 +1,8 @@
+# Resolution of Erdős Problem 637
+
+For every real $C > 0$ there is a real $c > 0$ such that for all sufficiently large $n$, every simple graph $G$ on the vertex set $\{0, \dots, n-1\}$ whose clique number $\omega(G)$ and independence number $\alpha(G)$ are both less than $C \log n$ (with $\log$ the natural logarithm) has a vertex set $U$ with $|U| \ge c\,n$ such that the subgraph induced by $U$ has at least $c\sqrt{n}$ distinct vertex degrees, degrees being taken inside the induced subgraph. That is, the proposition [Erdős Problem 637 (induced subgraphs with many distinct degrees)](ramsey-graph-induced-many-degrees.md) holds.
+
+## Sources
+
+- T. F. Bloom, Erdős Problems, Problem #637, https://www.erdosproblems.com/637.
+- B. Bukh and B. Sudakov, Induced subgraphs of Ramsey graphs with many distinct degrees, J. Combin. Theory Ser. B 97 (2007), 612–619.
