@@ -16,10 +16,8 @@ representation with finite image, which Rankin's bound makes irreducible (§8). 
 two characters (§8.1).
 
 - [Modular forms of type (k, ε) on Γ₀(N)](modular-forms-of-type-k-epsilon.md)
-- [Integral lattice of cusp forms on Γ₁(N) and algebraicity of their Hecke eigenvalues](integral-lattice-of-cusp-forms-and-algebraicity-of-hecke-eigenvalues.md)
+- [Steps of the analytic input: the integral lattice, Rankin's bound and the Rankin–Selberg series](analytic-input-steps/README.md)
 - [Semisimple Galois representations with the same Frobenius polynomials are isomorphic](semisimple-galois-representations-with-equal-frobenius-polynomials.md)
-- [Rankin–Selberg series of a primitive form](rankin-selberg-series-of-a-primitive-form.md)
-- [Rankin's bound for the mean square of Hecke eigenvalues](rankin-bound-for-the-mean-square-of-hecke-eigenvalues.md)
 - [Eigenvalues of a weight-one cusp form take finitely many values outside a set of small upper density](weight-one-eigenvalues-are-finitely-many-outside-a-sparse-set.md)
 - [λ-adic representations attached to eigenforms of weight at least two](lambda-adic-representations-of-eigenforms-of-weight-at-least-two.md)
 - [Eisenstein series congruent to 1 modulo ℓ](eisenstein-series-congruent-to-one-modulo-l.md)

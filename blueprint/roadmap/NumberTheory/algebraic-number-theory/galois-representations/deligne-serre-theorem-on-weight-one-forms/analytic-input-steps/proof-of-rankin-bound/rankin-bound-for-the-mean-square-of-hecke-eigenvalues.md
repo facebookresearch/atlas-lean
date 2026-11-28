@@ -2,7 +2,7 @@
 
 Let $N \ge 1$, let $\varepsilon$ be a Dirichlet character mod $N$ and $k \ge 1$ an integer with
 $\varepsilon(-1) = (-1)^k$, and let $f \ne 0$ be a cusp form of
-[type $(k, \varepsilon)$ on $\Gamma_0(N)$](modular-forms-of-type-k-epsilon.md) that is an eigenvector of the Hecke
+[type $(k, \varepsilon)$ on $\Gamma_0(N)$](../../modular-forms-of-type-k-epsilon.md) that is an eigenvector of the Hecke
 operators $T_p$, $p \nmid N$, with eigenvalues $a_p$. Then the series $\sum_{p \nmid N} |a_p|^2 p^{-s}$, over the primes
 not dividing $N$, converges for every real $s > k$, and
 
@@ -26,7 +26,7 @@ and compare
 $$L(s) = \prod_{p \nmid M} \det(1 - \varphi_p \otimes \overline{\varphi}_p\, p^{-s})^{-1} = H(s)\, \zeta(2s - 2k + 2) \sum_{n \ge 1} |b_n|^2 n^{-s},
 \qquad H(s) = \prod_{p \mid M} (1 - p^{-2s + 2k - 2})(1 - |b_p|^2 p^{-s}),$$
 
-with the [Rankin–Selberg series](rankin-selberg-series-of-a-primitive-form.md) of $f_0$. Since $|b_p| < p^{k/2}$ for
+with the [Rankin–Selberg series](../proof-of-the-rankin-selberg-continuation/rankin-selberg-series-of-a-primitive-form.md) of $f_0$. Since $|b_p| < p^{k/2}$ for
 $p \mid M$ (§1.8, for $f_0$ at level $M$), $H$ is holomorphic and nonzero on $\operatorname{Re}(s) \ge k$, so $L$ is
 holomorphic there except for a simple pole at $s = k$, and nonzero for real $s > k$. The Dirichlet series
 $g(s) = \sum_{m \ge 1} \sum_{p \nmid M} |\operatorname{Tr}(\varphi_p^m)|^2 p^{-ms}/m$ has nonnegative coefficients and
@@ -38,29 +38,16 @@ it converges for real $s > k$ and satisfies the same bound.
 
 ## Depends on
 
-- [Modular forms of type (k, ε) on Γ₀(N)](modular-forms-of-type-k-epsilon.md), for cusp forms of type $(k, \varepsilon)$ and the operators $T_p$
+- [Modular forms of type (k, ε) on Γ₀(N)](../../modular-forms-of-type-k-epsilon.md), for cusp forms of type $(k, \varepsilon)$ and the operators $T_p$
 
 ## Proof depends on
 
-- [Rankin–Selberg series of a primitive form](rankin-selberg-series-of-a-primitive-form.md), applied to $f_0$ at level $M$, for the continuation of $\zeta(2s-2k+2)\sum |b_n|^2 n^{-s}$ to $\operatorname{Re}(s) > k - 1$, holomorphic there except for a simple pole at $s = k$
-- [Landau's theorem on Dirichlet series with non-negative coefficients](../../../zeta-l-functions/dirichlet-l-functions/analytic-continuation-of-dirichlet-series/landau-theorem-dirichlet-series.md), for the convergence of $g(s)$ on $\operatorname{Re}(s) > k$ (Landau's lemma, [21], p. 112, as cited by Deligne–Serre)
-
-## Expansion
-
-This node is still to be broken down. A good expansion states and links:
-
-- the decomposition of §1.9 of a form of type $(k, \varepsilon)$ on $\Gamma_0(N)$ into an Eisenstein series and the forms
-  $f_i(d_i z)$, for primitive cusp forms $f_i$ of type $(k, \varepsilon)$ on $\Gamma_0(N_i)$, $N_i$ a divisor of $N$ such
-  that $\varepsilon$ can be defined mod $N_i$ and $d_i$ a divisor of $N/N_i$, and the consequence that a cusp form that
-  is an eigenvector of the $T_p$, $p \nmid N$, has the eigenvalues $a_p$, $p \nmid N$, of a primitive form of some level
-  $M$ dividing $N$;
-- the Euler product (1.7.2) of a primitive form of level $M$, from its being an eigenvector of the $T_p$, $p \nmid M$,
-  and the $U_p$, $p \mid M$, with $b_1 = 1$ (§1.7);
-- the absolute values of the coefficients $b_p$, $p \mid M$, of a primitive form of level $M$ (§1.8, citing Li [12] and
-  Ogg [14], as cited there), which give $|b_p| < p^{k/2}$;
-- the identity $L(s) = H(s)\,\zeta(2s - 2k + 2) \sum |b_n|^2 n^{-s}$, which Deligne–Serre derive from
-  $\lambda_p \overline{\lambda}_p \mu_p \overline{\mu}_p = p^{2k-2}$ for the eigenvalues $\lambda_p, \mu_p$ of $\varphi_p$ (citing
-  Jacquet [10], p. 33, Li [12] and Ogg [15], as cited there).
+- [A Hecke eigenform of type (k, ε) has the eigenvalues of a primitive form](eigenforms-have-the-eigenvalues-of-a-primitive-form.md), for the divisor $M$ of $N$, the character $\varepsilon_M$ and the primitive form $f_0$ of level $M$ with $b_p = a_p$ for $p \nmid N$ (§1.9)
+- [Hecke relations and Euler product of a primitive form](euler-product-of-a-primitive-form.md), applied to $f_0$ at level $M$, for the Euler product (1.7.2)
+- [Absolute values of the eigenvalues of a primitive form at the primes dividing the level](eigenvalues-of-a-primitive-form-at-primes-dividing-the-level.md), applied to $f_0$ at level $M$, for $|b_p| < p^{k/2}$ when $p \mid M$ (§1.8)
+- [Rankin's Euler product for the squared coefficients of a primitive form](rankin-euler-product-identity.md), applied to $f_0$ at level $M$, for the identity $L(s) = H(s)\, \zeta(2s - 2k + 2) \sum |b_n|^2 n^{-s}$ on $\operatorname{Re}(s) > k$
+- [Rankin–Selberg series of a primitive form](../proof-of-the-rankin-selberg-continuation/rankin-selberg-series-of-a-primitive-form.md), applied to $f_0$ at level $M$, for the continuation of $\zeta(2s-2k+2)\sum |b_n|^2 n^{-s}$ to $\operatorname{Re}(s) > k - 1$, holomorphic there except for a simple pole at $s = k$
+- [Landau's theorem on Dirichlet series with non-negative coefficients](../../../../../zeta-l-functions/dirichlet-l-functions/analytic-continuation-of-dirichlet-series/landau-theorem-dirichlet-series.md), for the convergence of $g(s)$ on $\operatorname{Re}(s) > k$ (Landau's lemma, [21], p. 112, as cited by Deligne–Serre)
 
 ## Sources
 

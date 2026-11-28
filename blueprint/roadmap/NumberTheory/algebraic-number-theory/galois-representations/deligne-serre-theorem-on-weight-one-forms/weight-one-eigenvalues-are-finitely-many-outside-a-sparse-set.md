@@ -16,7 +16,7 @@ $$\operatorname{dens.sup} X_\eta \le \eta \qquad \text{and} \qquad a_p \in Y_\et
 Deligne and Serre write the last condition for all $p \notin X_\eta$, the eigenvalues being defined for $p \nmid N$ only.
 
 Proof (Deligne–Serre, p. 520). By the
-[integral lattice of cusp forms](integral-lattice-of-cusp-forms-and-algebraicity-of-hecke-eigenvalues.md) (parts 3
+[integral lattice of cusp forms](analytic-input-steps/proof-of-the-integral-lattice-of-cusp-forms/integral-lattice-of-cusp-forms-and-algebraicity-of-hecke-eigenvalues.md) (parts 3
 and 4) the $a_p$ are algebraic integers of a number field $K$, of degree $r$ over $\mathbb{Q}$, and for every embedding
 $\sigma$ of $K$ into $\mathbb{C}$, extended to an automorphism of $\mathbb{C}$, the numbers $\sigma(a_p)$ are the eigenvalues
 of the $T_p$ on the cusp form $\sigma(f) \ne 0$ of type $(1, \sigma \circ \varepsilon)$. For a real number $c > 0$ (Deligne
@@ -24,7 +24,7 @@ and Serre allow $c \ge 0$, but the division by $c$ below needs $c > 0$) let $Y(c
 of $K$ with $|\sigma(a)|^2 \le c$ for every embedding $\sigma$; it is finite, since the minimal
 polynomials of its elements are monic of degree at most $r$ with integer coefficients bounded in terms of $c$ and $r$.
 Let $X(c)$ be the set of primes $p \nmid N$ with $a_p \notin Y(c)$. Summing (5.1.1) of
-[Rankin's bound](rankin-bound-for-the-mean-square-of-hecke-eigenvalues.md) over the $r$ forms $\sigma(f)$ gives
+[Rankin's bound](analytic-input-steps/proof-of-rankin-bound/rankin-bound-for-the-mean-square-of-hecke-eigenvalues.md) over the $r$ forms $\sigma(f)$ gives
 
 $$\sum_\sigma \sum_{p \nmid N} |\sigma(a_p)|^2 p^{-s} \le r \log\bigl(1/(s-1)\bigr) + O(1) \qquad (s \to 1),$$
 
@@ -37,8 +37,8 @@ $\operatorname{dens.sup} X(c) \le r/c$. Take $c \ge r/\eta$, $X_\eta = X(c)$ and
 
 ## Proof depends on
 
-- [Integral lattice of cusp forms on Γ₁(N) and algebraicity of their Hecke eigenvalues](integral-lattice-of-cusp-forms-and-algebraicity-of-hecke-eigenvalues.md), for the number field $K$ containing the $a_p$ and for the conjugate eigenforms $\sigma(f)$
-- [Rankin's bound for the mean square of Hecke eigenvalues](rankin-bound-for-the-mean-square-of-hecke-eigenvalues.md), applied to each $\sigma(f)$ in weight $k = 1$
+- [Integral lattice of cusp forms on Γ₁(N) and algebraicity of their Hecke eigenvalues](analytic-input-steps/proof-of-the-integral-lattice-of-cusp-forms/integral-lattice-of-cusp-forms-and-algebraicity-of-hecke-eigenvalues.md), for the number field $K$ containing the $a_p$ and for the conjugate eigenforms $\sigma(f)$
+- [Rankin's bound for the mean square of Hecke eigenvalues](analytic-input-steps/proof-of-rankin-bound/rankin-bound-for-the-mean-square-of-hecke-eigenvalues.md), applied to each $\sigma(f)$ in weight $k = 1$
 
 ## Sources
 

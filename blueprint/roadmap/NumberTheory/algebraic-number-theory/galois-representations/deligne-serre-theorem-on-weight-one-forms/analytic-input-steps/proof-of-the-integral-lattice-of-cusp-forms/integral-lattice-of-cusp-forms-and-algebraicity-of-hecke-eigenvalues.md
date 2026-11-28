@@ -26,36 +26,31 @@ characteristic $0$ in the sense of their §2.1; for a subfield $K$ of $\mathbb{C
 $S$ whose $q$-expansion coefficients lie in $K$, and §2.4 identifies $S_{\mathbb{C}}$, the operators $T_p$ and the $R_d$
 with the classical ones above (formula (2.5.1) for $T_p$).
 
+Deligne and Serre prove it on p. 512. The forms of $S$ with rational coefficients
+[span $S$](rational-structure-on-cusp-forms.md), and each of them, with its transforms $f|R_d$,
+[has bounded denominators](bounded-denominators-of-rational-cusp-forms.md), so a nonzero multiple of it lies in $L$;
+this makes $L$ [a lattice](integral-cusp-forms-form-a-lattice.md) with $K \otimes_{\mathbb{Z}} L$ the forms with
+coefficients in $K$. The operators $T_p$ and $R_d$ [preserve $L$](hecke-operators-preserve-the-integral-lattice.md), by
+their action on $q$-expansions. Each $T_p$ thus acts on $L$ by an integer matrix, so its eigenvalues are algebraic
+integers, one operator at a time; that they all lie in one finite extension of $\mathbb{Q}$ (item 3) comes from the $T_p$
+commuting with one another (§2.3), which lets their eigenvalues be read off from finitely many homomorphisms to
+$\mathbb{C}$ of the commutative ring they generate, each with values in a number field. Item 4 follows, as an
+automorphism of $\mathbb{C}$ acting on the coefficients fixes $L$ and so commutes with operators defined on $L$.
+
 ## Depends on
 
-- [Cusp form](../../../modular-forms-q-series/modular-forms/cusp-form.md), for the cusp forms of weight $k$ on $\Gamma_1(N)$ that make up $S$
-- [Congruence subgroup $\Gamma_1(N)$](../../../modular-forms-q-series/modular-forms/congruence-subgroup-gamma1.md), for the group of $S$
-- [Congruence subgroup $\Gamma_0(N)$](../../../modular-forms-q-series/modular-forms/congruence-subgroup-gamma0.md), for the operators $R_d$
-- [Free module](../../../../LinearAlgebra/bases-and-dimension/free-module.md), for the free $\mathbb{Z}$-module $L$
-- [Eigenvalues of a linear map](../../../../LinearAlgebra/eigenvalues-and-canonical-forms/eigenvalues-and-eigenspaces/eigenvalues-and-eigenvectors/eigenvalues.md), for the eigenvalues of the $T_p$ on $S$
+- [Cusp form](../../../../../modular-forms-q-series/modular-forms/cusp-form.md), for the cusp forms of weight $k$ on $\Gamma_1(N)$ that make up $S$
+- [Congruence subgroup $\Gamma_1(N)$](../../../../../modular-forms-q-series/modular-forms/congruence-subgroup-gamma1.md), for the group of $S$
+- [Congruence subgroup $\Gamma_0(N)$](../../../../../modular-forms-q-series/modular-forms/congruence-subgroup-gamma0.md), for the operators $R_d$
+- [Free module](../../../../../../LinearAlgebra/bases-and-dimension/free-module.md), for the free $\mathbb{Z}$-module $L$
+- [Eigenvalues of a linear map](../../../../../../LinearAlgebra/eigenvalues-and-canonical-forms/eigenvalues-and-eigenspaces/eigenvalues-and-eigenvectors/eigenvalues.md), for the eigenvalues of the $T_p$ on $S$
 
 ## Proof depends on
 
-Its proof uses the inputs listed under Expansion.
-
-## Expansion
-
-This node is still to be broken down. A good expansion states and links:
-
-- the bounded denominators of the $q$-expansions $(f|R_d)_\infty$ of a cusp form $f$ defined over $\mathbb{Q}$, which
-  Deligne and Serre deduce from the Tate curve being defined over $\mathbb{Z}((q)) \otimes \mathbb{Q}$ (Remarque 2.8; their
-  reference [7], VII, as cited there), or, for $k \ge 2$, from Shimura's theorem 3.5.2 ([24], as cited in Remarque 2.8)
-  after multiplying a form of weight $1$ by $\Delta$;
-- the base change $S_K = K \otimes_{\mathbb{Q}} S_{\mathbb{Q}}$ (2.6.1), from the interpretation of $S_K$ as the sections of an
-  invertible sheaf on the algebraic stack of $\Gamma_1(N)$ ([7], VII, 3.2, as cited in §2.6), and the criterion of §2.6 for a
-  form to be defined over a subfield;
-- the stability of $L$ under the $T_p$, from formula (2.5.1), and the passage from (2.7.1) and (2.7.2) to (2.7.3) and
-  (2.7.4): each $T_p$ acts on the finite free $\mathbb{Z}$-module $L$, so its eigenvalues are roots of a monic integer
-  polynomial, which makes them algebraic integers one operator at a time; the one finite extension of $\mathbb{Q}$ of
-  (2.7.3) comes from the $T_p$ commuting with one another (§2.3): they generate a finite-dimensional commutative
-  $\mathbb{Q}$-algebra of endomorphisms of $\mathbb{Q} \otimes L$, which has finitely many residue fields, all number
-  fields, and each eigenvalue of a $T_p$ is the image of $T_p$ under a homomorphism of that algebra to $\mathbb{C}$,
-  which factors through one of them; and $\sigma$ commutes with operators defined on $L$.
+- [Cusp forms on Γ₁(N) with integral q-expansions form a lattice](integral-cusp-forms-form-a-lattice.md), for items 1 and 2 except the stability of $L$
+- [The Hecke operators on cusp forms on Γ₁(N) commute and preserve the integral lattice](hecke-operators-preserve-the-integral-lattice.md), for the stability of $L$ under the $T_p$ and $R_d$ in item 1
+- [The Hecke eigenvalues on cusp forms on Γ₁(N) are algebraic integers of one number field](hecke-eigenvalues-are-algebraic-integers.md), for item 3
+- [Galois conjugates of Hecke eigenforms on Γ₁(N)](galois-conjugates-of-hecke-eigenforms.md), for item 4
 
 ## Sources
 
