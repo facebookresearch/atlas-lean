@@ -6,7 +6,7 @@ No algorithm decides, given polynomial equations with integer coefficients defin
 
 **Theorem (Kanel-Belov and Chilikov).** Over $\mathbb{R}$, the problem of embeddability of the affine line $\mathbb{A}^1$ in an arbitrary algebraic variety $\mathscr{B}$ given by generators and relations is undecidable; hence the general embedding problem over $\mathbb{R}$ is undecidable (Theorem 3.5 of arXiv:2008.09788v2).
 
-In the complex case the source shows that there is a positive integer $s$ for which the embeddability of the affine space $\mathbb{A}^s$ over $K$ in an arbitrary algebraic variety $\mathscr{B}$ given by generators and relations is undecidable (Theorem 3.7 of arXiv:2008.09788v2); the section treats $\mathbb{C}$, and the source notes that the proof is valid for any field $K$ of characteristic zero.
+For affine spaces the source shows, over a field $K$ of characteristic zero, that there is a positive integer $s$ for which the embeddability of the affine space $\mathbb{A}^s$ over $K$ in an arbitrary algebraic variety $\mathscr{B}$ given by generators and relations is undecidable (Theorem 3.7 of arXiv:2008.09788v2). The section works over $\mathbb{C}$, the special case $K = \mathbb{C}$, and notes that the proof is valid for any field $K$ of characteristic zero.
 
 ## Depends on
 
@@ -16,6 +16,8 @@ In the complex case the source shows that there is a positive integer $s$ for wh
 ## Proof depends on
 
 - [Davis–Putnam–Robinson–Matiyasevich theorem](../../../TheoryOfComputation/undecidable-problems/diophantine-sets-and-hilbert-s-tenth-problem/dprm-theorem.md)
+- [Some multi-stack machine has an undecidable halting set](../../../TheoryOfComputation/computability/halting-problem-and-rice-s-theorem/exists-not-tm2-decidable-tm2-halts-on.md)
+- [Lagrange's four-square theorem](../../../NumberTheory/quadratic-forms-sums-of-squares/sums-of-squares/lagrange-four-square-theorem.md)
 
 ## Expansion
 
@@ -25,9 +27,9 @@ $$
 X_i^2 - (T^2 - 1) Y_i^2 = 1, \qquad Y_i - (T - 1) Z_i = V_i, \qquad V_i U_i = 1
 $$
 
-has, over polynomials in $t$ with $\deg T > 0$, only solutions in which each $V_i$ is a constant integer $N_i$, and for each choice of integers $N_i$ an explicit polynomial solution. Over $\mathbb{R}$, adding $T = S^2 + 2$ excludes $T = \pm 1$, so every polynomial solution is either constant or corresponds to integers $N_1, \dots, N_d$. Adding $Q(\sigma, V_1, \dots, V_s) = 0$ for a parametric polynomial $Q$ whose integer solvability is undecidable (Matiyasevich) gives a variety $\mathscr{B}'_{\sigma}$ that contains an embedded line when $Q(\sigma, \cdot) = 0$ has an integer solution and is zero-dimensional otherwise. Over $\mathbb{C}$ the case $T = \pm 1$ cannot be excluded this way, and the source links many copies of the system to show the claim for some affine space $\mathbb{A}^s$. A complete expansion links a page for the description of the polynomial solutions of the Pell equation $X^2 - (T^2 - 1)Y^2 = 1$ over $\mathbb{F}[t]$ (Denef), which has none.
+has, over polynomials in $t$ with $\deg T > 0$, only solutions in which each $V_i$ is a nonzero constant integer $N_i$ ($V_i U_i = 1$ rules out $N_i = 0$; Lemma 3.3), and for each choice of nonzero integers $N_i$ an explicit polynomial solution. Over $\mathbb{R}$, adding $T = S^2 + 2$ excludes $T = \pm 1$, so every polynomial solution is either constant or corresponds to nonzero integers $N_1, \dots, N_d$. Adding $Q(\sigma, V_1, \dots, V_s) = 0$ for a parametric polynomial $Q$ whose solvability in nonzero integers is undecidable gives a variety $\mathscr{B}'_{\sigma}$ that contains an embedded line when $Q(\sigma, \cdot) = 0$ has a solution in nonzero integers, and otherwise admits no nonconstant polynomial map from the line (Lemmas 3.3 and 3.4), so no embedded line; it need not be zero-dimensional. Solvability in nonzero integers is undecidable: the halting set of a suitable machine is Diophantine over the natural numbers (Matiyasevich), Lagrange's four-square theorem passes to integers, and every integer is a difference of two nonzero integers. Over $\mathbb{C}$ the case $T = \pm 1$ cannot be excluded this way, and the source links many copies of the system to show the claim for some affine space $\mathbb{A}^s$. A complete expansion links a page for the description of the polynomial solutions of the Pell equation $X^2 - (T^2 - 1)Y^2 = 1$ over $\mathbb{F}[t]$ (Denef).
 
 ## Sources
 
-- A. Kanel-Belov, A. Chilikov, I. Ivanov-Pogodaev, S. Malev, E. Plotkin, J.-T. Yu and W. Zhang, "Nonstandard Analysis, Deformation Quantization and Some Logical Aspects of (Non)Commutative Algebraic Geometry", *Mathematics* 8(10), 2020, article 1694, doi:[10.3390/math8101694](https://doi.org/10.3390/math8101694); read as arXiv:2008.09788v2 ([arXiv](https://arxiv.org/abs/2008.09788v2)), whose numbering is used: Section 3.2 (the real and complex cases), Theorems 3.5 and 3.7.
+- A. Kanel-Belov, A. Chilikov, I. Ivanov-Pogodaev, S. Malev, E. Plotkin, J.-T. Yu and W. Zhang, "Nonstandard Analysis, Deformation Quantization and Some Logical Aspects of (Non)Commutative Algebraic Geometry", *Mathematics* 8(10), 2020, article 1694, doi:[10.3390/math8101694](https://doi.org/10.3390/math8101694); read as arXiv:2008.09788v2 ([arXiv](https://arxiv.org/abs/2008.09788v2)), whose numbering is used: Section 3.2 (the real and complex cases), Lemmas 3.3 and 3.4, Theorems 3.5 and 3.7.
 - A. Ya. Kanel'-Belov and A. A. Chilikov, "On the Algorithmic Undecidability of the Embeddability Problem for Algebraic Varieties over a Field of Characteristic Zero", *Mathematical Notes* 106:299–302, 2019, doi:[10.1134/S0001434619070332](https://doi.org/10.1134/S0001434619070332), the original announcement; not read, cited beside the source above.
