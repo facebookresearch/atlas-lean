@@ -476,9 +476,9 @@ noncomputable def cantileverDeflection (EI L q P x : ℝ) : ℝ :=
   q * x ^ 2 * (6 * L ^ 2 - 4 * L * x + x ^ 2) / (24 * EI) +
     P * x ^ 2 * (3 * L - x) / (6 * EI)
 
-/-- The clamped-free cantilever problem on a beam of positive length `L`: `w` is `C⁴`,
-satisfies `EI * w'''' = q` on `(0, L)`, and meets the clamped conditions at `0` and the free-end
-moment and shear conditions at `L`. -/
+/-- The clamped-free cantilever problem with tip force `P` on a beam of positive length `L`: `w`
+is `C⁴` on all of `ℝ`, satisfies `EI * w'''' = q` on `(0, L)`, and meets the end conditions
+`w 0 = 0`, `w' 0 = 0`, `EI * w'' L = 0` and `-(EI * w''' L) = P`. -/
 structure IsCantileverSolution (EI L q P : ℝ) (w : ℝ → ℝ) : Prop where
   span_pos : 0 < L
   contDiff : ContDiff ℝ 4 w

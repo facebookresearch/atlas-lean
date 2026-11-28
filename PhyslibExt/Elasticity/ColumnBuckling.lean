@@ -115,8 +115,8 @@ lemma clampedClampedMode_length {L : ℝ} (hL : L ≠ 0) :
   have hph : 2 * Real.pi * L / L = 2 * Real.pi := by field_simp
   simp only [clampedClampedMode, hph, Real.cos_two_pi, sub_self]
 
-/-- Nonzero midspan displacement: the clamped-clamped mode takes the
-value `2` at `x = L / 2`. -/
+/-- Nonzero midspan displacement: for `L ≠ 0`, the clamped-clamped mode `1 - cos (2πx / L)`
+takes the value `2` at `x = L / 2`. -/
 lemma clampedClampedMode_midspan {L : ℝ} (hL : L ≠ 0) :
     clampedClampedMode L (L / 2) = 2 := by
   have hph : 2 * Real.pi * (L / 2) / L = Real.pi := by
@@ -235,8 +235,8 @@ noncomputable def clampedFreeMode (L : ℝ) (x : ℝ) : ℝ :=
 lemma clampedFreeMode_zero (L : ℝ) : clampedFreeMode L 0 = 0 := by
   simp [clampedFreeMode]
 
-/-- Nonzero tip displacement: the clamped-free mode takes the value `1`
-at the free end `x = L`. -/
+/-- Nonzero tip displacement: for `L ≠ 0`, the clamped-free mode `1 - cos (πx / (2L))` takes
+the value `1` at the free end `x = L`. -/
 lemma clampedFreeMode_tip {L : ℝ} (hL : L ≠ 0) :
     clampedFreeMode L L = 1 := by
   unfold clampedFreeMode

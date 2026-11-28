@@ -140,7 +140,8 @@ private lemma lj_upow_twelve (σ r₀ : ℝ) (hσ : 0 < σ)
   rw [h12, lj_upow_six σ r₀ hσ hr₀]
   norm_num
 
-/-- Lennard-Jones energy at its minimum: `φ(r₀) = -ε`. -/
+/-- Lennard-Jones energy at its minimum: for `ε > 0`, `σ > 0` and `r₀ = 2^(1/6) σ`, the
+potential `φ(r) = 4ε((σ/r)^12 - (σ/r)^6)` has `φ(r₀) = -ε`. -/
 
 lemma lennardJones_eq_at_min (ε σ r₀ : ℝ) (hε : 0 < ε) (hσ : 0 < σ)
     (hr₀ : r₀ = Real.rpow 2 (1 / 6) * σ) :
@@ -157,7 +158,8 @@ private lemma lj_hasDerivAt (ε σ r : ℝ) (hr : r ≠ 0) :
     (hasDerivAt_const r σ).div (hasDerivAt_id' r) hr
   exact ((hbase.pow 12).sub (hbase.pow 6)).const_mul (4 * ε)
 
-/-- Lennard-Jones equilibrium condition: `φ'(r₀) = 0`. -/
+/-- Lennard-Jones equilibrium condition: for `ε > 0`, `σ > 0` and `r₀ = 2^(1/6) σ`, the
+potential `φ(r) = 4ε((σ/r)^12 - (σ/r)^6)` has `φ'(r₀) = 0`. -/
 
 lemma lennardJones_deriv_at_min (ε σ r₀ : ℝ) (hε : 0 < ε) (hσ : 0 < σ)
     (hr₀ : r₀ = Real.rpow 2 (1 / 6) * σ) :
@@ -174,7 +176,8 @@ lemma lennardJones_deriv_at_min (ε σ r₀ : ℝ) (hε : 0 < ε) (hσ : 0 < σ)
   rw [hD] at h
   exact h
 
-/-- Lennard-Jones stiffness: `S₀ = φ''(r₀)`. -/
+/-- Lennard-Jones stiffness: for `ε > 0`, `σ > 0` and `r₀ = 2^(1/6) σ`, the potential
+`φ(r) = 4ε((σ/r)^12 - (σ/r)^6)` has bond stiffness `S₀ = φ''(r₀) = 72 ε / (2^(1/3) σ²)`. -/
 
 lemma lennardJones_second_deriv_at_min (ε σ r₀ : ℝ) (hε : 0 < ε) (hσ : 0 < σ)
     (hr₀ : r₀ = Real.rpow 2 (1 / 6) * σ) :
@@ -322,10 +325,12 @@ lemma madelung_one_dim :
 
 /-! ## C. Bond modulus estimate -/
 
-/-- Model estimate of an elastic modulus from bond stiffness, not a theorem about real solids. -/
+/-- Model estimate `S₀ / r₀` of an elastic modulus from a bond stiffness `S₀` and an equilibrium
+spacing `r₀` (with `S₀ / 0 = 0`); a model estimate, not a theorem about real solids. -/
 noncomputable def bondModulusEstimate (S₀ r₀ : ℝ) : ℝ := S₀ / r₀
 
-/-- The bond-model estimate at Lennard-Jones stiffness and spacing. -/
+/-- For `ε > 0` and `σ > 0`, the bond-model estimate at the Lennard-Jones stiffness
+`S₀ = 72 ε / (2^(1/3) σ²)` and spacing `r₀ = 2^(1/6) σ` equals `72 ε / (√2 σ³)`. -/
 
 lemma bondModulusEstimate_lennardJones (ε σ : ℝ) (hε : 0 < ε) (hσ : 0 < σ) :
     bondModulusEstimate (72 * ε / (Real.rpow 2 (1 / 3) * σ ^ 2)) (Real.rpow 2 (1 / 6) * σ) =
@@ -349,9 +354,11 @@ lemma bondModulusEstimate_lennardJones (ε σ : ℝ) (hε : 0 < ε) (hσ : 0 < �
 
 /-! ## D. Born-Lande lattice energy -/
 
-/-- Born-Lande lattice energy: `N_A` Avogadro number, `M` Madelung constant, `zPlus`/`zMinus`
-cation/anion charge numbers, `e` elementary charge, `eps0` vacuum permittivity, `r₀` equilibrium
-spacing, `n` the empirical Born exponent. Attractive lattice energy is negative. -/
+/-- Born-Lande lattice energy `-(N_A M zPlus zMinus e² / (4π eps0 r₀)) (1 - 1/n)`, for all real
+parameters, with division by `0` read as `0`: `N_A` Avogadro number, `M` Madelung constant,
+`zPlus`/`zMinus` cation/anion charge numbers, `e` elementary charge, `eps0` vacuum permittivity,
+`r₀` equilibrium spacing, `n` the empirical Born exponent. It is negative when all parameters
+are positive and `1 < n` (`bornLandeEnergy_neg_of_pos`). -/
 noncomputable def bornLandeEnergy (N_A M zPlus zMinus e eps0 r₀ n : ℝ) : ℝ :=
   -(N_A * M * zPlus * zMinus * e ^ 2 / (4 * Real.pi * eps0 * r₀)) * (1 - 1 / n)
 

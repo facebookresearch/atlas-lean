@@ -220,8 +220,8 @@ lemma effectiveStiffness_pos_iff {K q S e CLα : ℝ} (hc : 0 < S * e * CLα) :
   unfold effectiveStiffness divergencePressure
   rw [sub_pos, lt_div_iff₀ hc]
 
-/-- Below the divergence pressure the only twist balancing the moment with zero rigid
-angle is `θ = 0`. -/
+/-- For `0 < S e CLα`, below the divergence pressure the only twist balancing the moment with
+zero rigid angle is `θ = 0`. -/
 lemma eq_zero_of_restoringMoment_eq_zero {K q S e CLα θ : ℝ} (hc : 0 < S * e * CLα)
     (hq : q < divergencePressure K S e CLα) (hθ : restoringMoment K q S e CLα 0 θ = 0) :
     θ = 0 := by
@@ -234,7 +234,8 @@ lemma eq_zero_of_restoringMoment_eq_zero {K q S e CLα θ : ℝ} (hc : 0 < S * e
   have heq' : effectiveStiffness K q S e CLα * θ = 0 := heq.symm
   exact (mul_eq_zero.mp heq').resolve_left hne
 
-/-- At the divergence pressure every twist balances the moment with zero rigid angle. -/
+/-- For `S e CLα ≠ 0`, at the divergence pressure every twist balances the moment with zero
+rigid angle. -/
 lemma restoringMoment_divergencePressure {K S e CLα : ℝ} (hc : S * e * CLα ≠ 0)
     (θ : ℝ) : restoringMoment K (divergencePressure K S e CLα) S e CLα 0 θ = 0 := by
   have heq := restoringMoment_eq K (divergencePressure K S e CLα) S e CLα 0 θ
@@ -254,8 +255,9 @@ lemma exists_neutral_displacement {K S e CLα : ℝ} (hK : 0 < K) (hc : 0 < S * 
 
 /-! ## D. Nonpositive and zero aerodynamic factor -/
 
-/-- Nonpositive factor branch: the division formula gives no positive pressure, and the
-effective stiffness stays positive at every nonnegative dynamic pressure. -/
+/-- Nonpositive factor branch: for `0 < K` and `S e CLα ≤ 0`, the division formula gives no
+positive pressure, and the effective stiffness stays positive at every nonnegative dynamic
+pressure. -/
 lemma coupling_nonpos {K S e CLα : ℝ} (hK : 0 < K) (hc : S * e * CLα ≤ 0) :
     divergencePressure K S e CLα ≤ 0 ∧
       ∀ q : ℝ, 0 ≤ q → 0 < effectiveStiffness K q S e CLα := by
@@ -267,8 +269,8 @@ lemma coupling_nonpos {K S e CLα : ℝ} (hK : 0 < K) (hc : S * e * CLα ≤ 0) 
     have hqc : q * (S * e * CLα) ≤ 0 := mul_nonpos_of_nonneg_of_nonpos hq hc
     linarith
 
-/-- Zero factor: the division formula evaluates to `0` and no dynamic pressure makes
-the effective stiffness vanish. -/
+/-- Zero factor: for `0 < K` and `S e CLα = 0`, the division formula evaluates to `0` and no
+dynamic pressure makes the effective stiffness vanish. -/
 lemma coupling_zero {K S e CLα : ℝ} (hK : 0 < K) (hc : S * e * CLα = 0) :
     divergencePressure K S e CLα = 0 ∧ ¬ ∃ q : ℝ, effectiveStiffness K q S e CLα = 0 := by
   constructor
@@ -552,8 +554,8 @@ lemma growingMode_norm_growing :
   rw [h]
   exact ⟨Real.exp_strictMono, Real.tendsto_exp_atTop⟩
 
-/-- Net power input on the growing trajectory: the circulatory port power `16 e^(2t)` exceeds
-the damping loss `10 e^(2t)` by `6 e^(2t)`. -/
+/-- Net power input on the growing trajectory: at every time `t` the circulatory port power minus
+the damping loss is `6 e^(2t)`. -/
 lemma growingMode_net_power (t : ℝ) :
     circulatoryForce 8 (growingMode t) ⬝ᵥ deriv growingMode t -
         2 * (deriv growingMode t ⬝ᵥ deriv growingMode t) = 6 * Real.exp (2 * t) := by
