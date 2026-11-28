@@ -42,4 +42,9 @@ example :
     ¬(Place.infinite.absoluteValue).IsEquiv (Place.finite ⟨3, Nat.prime_three⟩).absoluteValue :=
   absoluteValue_not_isEquiv (by simp)
 
+-- `3/5` has numerator and denominator prime to `2`, so it is a `2`-adic unit.
+example : ‖((3 / 5 : ℚ) : ℚ_[2])‖ = 1 :=
+  Padic.norm_ratCast_eq_one_of_not_dvd (by norm_num [Rat.num_div_eq_of_coprime,
+    Rat.den_div_eq_of_coprime])
+
 end MathlibExtTest.RatLocalGlobal
