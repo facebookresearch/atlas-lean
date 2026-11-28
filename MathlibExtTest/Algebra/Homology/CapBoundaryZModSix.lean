@@ -58,7 +58,8 @@ private theorem step_square (n : ℕ) : step (n + 1) ≫ step n = 0 := by
   change stepScalar n * (stepScalar (n + 1) * x) = 0
   have hs : stepScalar n * stepScalar (n + 1) = 0 := by
     have hn : n % 2 = 0 ∨ n % 2 = 1 := by omega
-    rcases hn with hn | hn <;> norm_num [R, stepScalar, Nat.add_mod, hn]
+    rcases hn with hn | hn <;> norm_num [R, stepScalar, Nat.add_mod, hn] <;>
+      exact (by decide : (6 : ZMod 6) = 0)
   rw [← mul_assoc, hs, zero_mul]
 
 private abbrev K : ChainComplex (ModuleCat.{0} R) ℕ :=
@@ -71,8 +72,14 @@ private def unitAction :
 
 private theorem action_eq (q : ℕ) :
     chainGradedPairingDegreeZeroAction R unitAction q = (λ_ (K.X q)).hom := by
+  have hu :
+      ιTensorObj ((ChainComplex.single₀ (ModuleCat.{0} R)).obj M) K
+          0 q q (Nat.zero_add q) ≫ (HomologicalComplex.leftUnitor K).hom.f q =
+        ((singleObjXSelf (ComplexShape.down ℕ) 0 M).hom ▷ K.X q) ≫
+          (λ_ (K.X q)).hom := by
+    simpa only using! (ιTensorObj_leftUnitor_hom K q)
   dsimp only [unitAction, chainGradedPairingDegreeZeroAction]
-  rw [ιTensorObj_leftUnitor_hom]
+  rw [hu]
   simp [Category.assoc]
 
 private def P : CochainChainGradedPairing C T K :=
@@ -83,9 +90,16 @@ private def cell (p q : ℕ) (x y : R) : T.X (p + q) :=
 
 private theorem pair_cell (p q : ℕ) (φ : K.X p ⟶ M) (x y : R) :
     (P.pair p q).hom (φ ⊗ₜ[R] cell p q x y) = φ.hom x * y := by
-  dsimp only [P]
-  rw [linearHomCochainChainGradedPairing_pair, linearHomCochainChainPair_tmul]
-  simp only [HomologicalComplex.id_f, Category.id_comp]
+  have hr : @Eq R
+      ((linearHomCochainChainPair R (𝟙 T)
+          (chainGradedPairingDegreeZeroAction R unitAction) p q).hom
+        (φ ⊗ₜ[R] cell p q x y))
+      ((linearHomCochainChainPairDesc R
+          (chainGradedPairingDegreeZeroAction R unitAction) p q φ).hom
+        (cell p q x y)) := by
+    simpa only [HomologicalComplex.id_f, Category.id_comp] using!
+      (linearHomCochainChainPair_tmul R (𝟙 T)
+        (chainGradedPairingDegreeZeroAction R unitAction) p q φ (cell p q x y))
   have h := ιTensorObj_comp_linearHomCochainChainPairDesc R
     (chainGradedPairingDegreeZeroAction R unitAction) p q p q rfl φ
   have hv := congrArg
@@ -95,23 +109,39 @@ private theorem pair_cell (p q : ℕ) (φ : K.X p ⟶ M) (x y : R) :
       (chainGradedPairingDegreeZeroAction R unitAction) p q φ).hom (cell p q x y) =
     (TensorProduct.lid R R)
       (TensorProduct.map φ.hom LinearMap.id (x ⊗ₜ[R] y)) at hv
-  simpa only [TensorProduct.map_tmul, LinearMap.id_apply, TensorProduct.lid_tmul] using hv
+  have hd : @Eq R
+      ((linearHomCochainChainPairDesc R
+          (chainGradedPairingDegreeZeroAction R unitAction) p q φ).hom (cell p q x y))
+      (φ.hom x * y) := by
+    simpa only [TensorProduct.map_tmul, LinearMap.id_apply, TensorProduct.lid_tmul] using! hv
+  simpa only [P, linearHomCochainChainGradedPairing_pair] using! hr.trans hd
 
 private theorem wrong_cell (φ : K.X 2 ⟶ M) :
     (P.pair 2 1).hom (φ ⊗ₜ[R] cell 1 2 1 1) = 0 := by
-  dsimp only [P]
-  rw [linearHomCochainChainGradedPairing_pair, linearHomCochainChainPair_tmul]
-  simp only [HomologicalComplex.id_f, Category.id_comp]
+  have hr : @Eq R
+      ((linearHomCochainChainPair R (𝟙 T)
+          (chainGradedPairingDegreeZeroAction R unitAction) 2 1).hom
+        (φ ⊗ₜ[R] cell 1 2 1 1))
+      ((linearHomCochainChainPairDesc R
+          (chainGradedPairingDegreeZeroAction R unitAction) 2 1 φ).hom
+        (cell 1 2 1 1)) := by
+    simpa only [HomologicalComplex.id_f, Category.id_comp] using!
+      (linearHomCochainChainPair_tmul R (𝟙 T)
+        (chainGradedPairingDegreeZeroAction R unitAction) 2 1 φ (cell 1 2 1 1))
   have h := ιTensorObj_comp_linearHomCochainChainPairDesc R
     (chainGradedPairingDegreeZeroAction R unitAction) 2 1 1 2 rfl φ
   have hv := congrArg
     (fun f : MonoidalCategory.tensorObj (K.X 1) (K.X 2) ⟶ K.X 1 => f.hom ((1 : R) ⊗ₜ[R] (1 : R))) h
-  simpa only [dite_eq_right (by decide : (1 : ℕ) ≠ 2), ModuleCat.hom_comp,
-    LinearMap.comp_apply, ModuleCat.hom_zero, LinearMap.zero_apply] using hv
+  have hd : @Eq R
+      ((linearHomCochainChainPairDesc R
+          (chainGradedPairingDegreeZeroAction R unitAction) 2 1 φ).hom (cell 1 2 1 1)) 0 := by
+    simpa only [dite_eq_right (by decide : (1 : ℕ) ≠ 2), ModuleCat.hom_comp,
+      LinearMap.comp_apply, ModuleCat.hom_zero, LinearMap.zero_apply] using! hv
+  simpa only [P, linearHomCochainChainGradedPairing_pair] using! hr.trans hd
 
 private def phi : K.X 1 ⟶ M := 𝟙 M
 private def z : T.X 3 := cell 1 2 1 1
-private def input : MonoidalCategory.tensorObj (C.X 1) (T.X 3) := phi ⊗ₜ[R] z
+private def input : (C.X 1) ⊗[R] (T.X 3) := phi ⊗ₜ[R] z
 private def leftMap : MonoidalCategory.tensorObj (C.X 1) (T.X 3) ⟶ K.X 1 := P.pair 1 2 ≫ K.d 2 1
 private def firstMap : MonoidalCategory.tensorObj (C.X 1) (T.X 3) ⟶ K.X 1 :=
   (𝟙 (C.X 1) ⊗ₘ T.d 3 2) ≫ P.pair 1 1
@@ -137,7 +167,7 @@ private theorem first_value : firstMap.hom input = (4 : R) := by
   rw [left_value, second_value, sub_zero, neg_one_zsmul] at h
   have hn : firstMap.hom input = -(2 : R) := by
     simpa only [neg_neg] using (congrArg (fun x : R => -x) h).symm
-  convert hn using 1 <;> norm_num
+  exact hn.trans (by decide : -(2 : ZMod 6) = 4)
 
 example : (P.pair 1 2).hom input = (1 : R) := by
   change (P.pair 1 2).hom (phi ⊗ₜ[R] cell 1 2 1 1) = 1
