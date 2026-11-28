@@ -25,8 +25,8 @@ projections are `joinProjections` from `NormalForms`.
   `X ∪ Y` and with the second on `U \ Y`.
 * `join_project_eq_iff_mvd`: a relation is the join of its projections onto `R₁` and `R₂` if and
   only if `R₁ ∩ R₂ ↠ R₁` holds in it over `R₁ ∪ R₂`. `losslessJoin_iff_mvd` is the version for
-  the relations satisfying a set of functional dependencies, and `mvd_implied_iff_derives`
-  combines it with `losslessJoin_iff` (Abiteboul–Hull–Vianu, Proposition 8.3.3).
+  the relations satisfying a set of functional dependencies, and, with `losslessJoin_iff`, this
+  is Abiteboul–Hull–Vianu, Proposition 8.3.3.
 * `MVD.holdsIn_of_holdsIn_fd`: a functional dependency `X → Y` implies `X ↠ Y` (rule FMVD1).
   `MVD.holdsIn_of_rhs_subset` and `MVD.holdsIn_of_union_eq`: the trivial multivalued
   dependencies; `MVD.holdsIn_compl`: complementation (rule MVD0).
@@ -41,6 +41,8 @@ projections are `joinProjections` from `NormalForms`.
   Transactions on Database Systems 2(3), 1977.
 * S. Abiteboul, R. Hull and V. Vianu, *Foundations of Databases*, Addison-Wesley, 1995,
   Section 8.3 and Section 11.2.
+* R. Fagin, _Normal forms and relational database operators_, Proc. ACM SIGMOD 1979.
+  (Project-join normal form.)
 -/
 
 @[expose] public section
@@ -76,6 +78,32 @@ omit [Fintype A] in
 dependency $X \twoheadrightarrow Y$ is the binary join dependency
 $\bowtie[X \cup Y, X \cup (U \setminus Y)]$. -/
 def MVD.toJD (U : Finset A) (m : MVD A) : JD A := ⟨[m.lhs ∪ m.rhs, m.lhs ∪ (U \ m.rhs)]⟩
+
+/-- A join dependency is **over** the schema `U` when the union of its schemes is `U`
+(Abiteboul–Hull–Vianu, Definition 8.3.1). Over the empty schema, the empty join dependency is
+over `U`; over a nonempty `U` it is not. -/
+def JD.IsOver (j : JD A) (U : Finset A) : Prop :=
+  j.schemes.foldr (· ∪ ·) ∅ = U
+
+omit [Fintype A] in
+/-- The join dependency of a multivalued dependency with both sides in `U` is over `U`. -/
+theorem MVD.toJD_isOver {U : Finset A} {m : MVD A} (hl : m.lhs ⊆ U) (hr : m.rhs ⊆ U) :
+    (m.toJD U).IsOver U := by
+  obtain ⟨X, Y⟩ := m
+  unfold JD.IsOver MVD.toJD
+  ext a
+  simp only [List.foldr_cons, List.foldr_nil, Finset.union_empty, Finset.mem_union,
+    Finset.mem_sdiff]
+  constructor
+  · rintro ((hx | hy) | hx | ⟨haU, -⟩)
+    · exact hl hx
+    · exact hr hy
+    · exact hl hx
+    · exact haU
+  · intro haU
+    by_cases hy : a ∈ Y
+    · exact Or.inl (Or.inr hy)
+    · exact Or.inr (Or.inr ⟨haU, hy⟩)
 
 /-- **A multivalued dependency holds in a relation.** Over a schema $U$, the multivalued
 dependency $X \twoheadrightarrow Y$ holds in a finite set $r$ of tuples when
@@ -242,7 +270,8 @@ theorem join_project_eq_iff_mvd {R₁ R₂ : Finset A} {r : Finset (Tuple A D)} 
 functional dependencies and $R_1$, $R_2$ sets of attributes. The decomposition of
 $R_1 \cup R_2$ into $R_1$ and $R_2$ is lossless for $F$ with values in $D$ if and only if
 $R_1 \cap R_2 \twoheadrightarrow R_1$ holds over $R_1 \cup R_2$ in every relation over
-$R_1 \cup R_2$ with values in $D$ that satisfies $F$ on $R_1 \cup R_2$. -/
+$R_1 \cup R_2$ with values in $D$ that satisfies $F$ on $R_1 \cup R_2$. Together with
+`losslessJoin_iff` this is Abiteboul–Hull–Vianu, Proposition 8.3.3. -/
 theorem losslessJoin_iff_mvd {F : Finset (FD A)} {R₁ R₂ : Finset A} :
     LosslessJoin D F R₁ R₂ ↔ ∀ r : Finset (Tuple A D), IsOver (R₁ ∪ R₂) r →
       SatisfiesOn F (R₁ ∪ R₂) r → MVD.HoldsIn (R₁ ∪ R₂) ⟨R₁ ∩ R₂, R₁⟩ r := by
@@ -255,19 +284,6 @@ theorem losslessJoin_iff_mvd {F : Finset (FD A)} {R₁ R₂ : Finset A} :
     exact join_project_eq_iff_mvd.mp (h r hr hF)
   · intro h r hr hF
     exact join_project_eq_iff_mvd.mpr (h r hr hF)
-
-/-- **Multivalued dependencies implied by functional dependencies** (Abiteboul–Hull–Vianu,
-Proposition 8.3.3). Let $F$ be a finite set of functional dependencies, let $R_1$ and $R_2$ be
-schemes whose union is the set of all attributes, and let $D$ contain two distinct values. Then
-$R_1 \cap R_2 \twoheadrightarrow R_1$ holds in every relation over $R_1 \cup R_2$ with values in
-$D$ satisfying $F$ on $R_1 \cup R_2$ if and only if $F$ derives $R_1 \cap R_2 \to R_1$ or
-$R_1 \cap R_2 \to R_2$. -/
-theorem mvd_implied_iff_derives {F : Finset (FD A)} {R₁ R₂ : Finset A} {d₀ d₁ : D}
-    (hd : d₀ ≠ d₁) (hR : R₁ ∪ R₂ = Finset.univ) :
-    (∀ r : Finset (Tuple A D), IsOver (R₁ ∪ R₂) r → SatisfiesOn F (R₁ ∪ R₂) r →
-      MVD.HoldsIn (R₁ ∪ R₂) ⟨R₁ ∩ R₂, R₁⟩ r) ↔
-      Derives F ⟨R₁ ∩ R₂, R₁⟩ ∨ Derives F ⟨R₁ ∩ R₂, R₂⟩ := by
-  exact losslessJoin_iff_mvd.symm.trans (losslessJoin_iff hd hR)
 
 /-- **A functional dependency implies the multivalued dependency** (rule FMVD1). Let $r$ be a
 relation over $U$ and $X, Y \subseteq U$. If $X \to Y$ holds in $r$, then $X \twoheadrightarrow Y$
@@ -308,8 +324,9 @@ theorem MVD.holdsIn_of_union_eq {U X Y : Finset A} {r : Finset (Tuple A D)} (hr 
   · exact hagree a haX
   · exact absurd haY (Finset.mem_sdiff.mp ha).2
 
-/-- **Complementation** (rule MVD0). If $Y \subseteq U$, then $X \twoheadrightarrow Y$ holds in a
-finite set $r$ of tuples over $U$ if and only if $X \twoheadrightarrow U \setminus Y$ does. -/
+/-- **Complementation** (rule MVD0). If `Y` is contained in `U` (no hypothesis on `r` is
+needed), then the multivalued dependency from `X` to `Y` holds in a finite set `r` of tuples if
+and only if the one from `X` to `U \ Y` does. -/
 theorem MVD.holdsIn_compl {U X Y : Finset A} {r : Finset (Tuple A D)} (hY : Y ⊆ U) :
     MVD.HoldsIn U ⟨X, Y⟩ r ↔ MVD.HoldsIn U ⟨X, U \ Y⟩ r := by
   have hU : U \ (U \ Y) = Y := Finset.sdiff_sdiff_eq_self hY
@@ -318,45 +335,53 @@ theorem MVD.holdsIn_compl {U X Y : Finset A} {r : Finset (Tuple A D)} (hY : Y �
 /-! ### Implication and normal forms -/
 
 variable (D) in
-/-- **Implication of a functional dependency.** A finite set $F$ of functional dependencies and a
-finite set $J$ of join dependencies imply the functional dependency $f$ over the schema $U$, for
-values in $D$, when $f$ holds in every relation over $U$ with values in $D$ that satisfies every
-dependency of $F$ and every join dependency of $J$. -/
+/-- **Implication of a functional dependency.** A finite set `F` of functional dependencies and a
+finite set `J` of join dependencies imply the functional dependency `f` over the schema `U`, for
+values in `D`, when `f` holds in every relation over `U` with values in `D` that satisfies `F` on
+`U` (through `SatisfiesOn`, as in `LosslessJoin`) and every join dependency of `J`. For `D = ℕ`
+this is the implication of Abiteboul–Hull–Vianu over their countably infinite domain
+(Section 3.1); if `D` has at most one value, every functional dependency holds everywhere. -/
 def ImpliesFD (U : Finset A) (F : Finset (FD A)) (J : Finset (JD A)) (f : FD A) : Prop :=
-  ∀ r : Finset (Tuple A D), IsOver U r → Satisfies (↑r : Set (Tuple A D)) F →
+  ∀ r : Finset (Tuple A D), IsOver U r → SatisfiesOn F U r →
     (∀ j ∈ J, j.HoldsIn r) → f.HoldsIn (↑r : Set (Tuple A D))
 
 variable (D) in
-/-- **Implication of a join dependency.** A finite set $F$ of functional dependencies and a
-finite set $J$ of join dependencies imply the join dependency $j$ over the schema $U$, for
-values in $D$, when $j$ holds in every relation over $U$ with values in $D$ that satisfies every
-dependency of $F$ and every join dependency of $J$. -/
+/-- **Implication of a join dependency.** A finite set `F` of functional dependencies and a
+finite set `J` of join dependencies imply the join dependency `j` over the schema `U`, for
+values in `D`, when `j` holds in every relation over `U` with values in `D` that satisfies `F` on
+`U` (through `SatisfiesOn`) and every join dependency of `J`. For `D = ℕ` this is the implication
+of Abiteboul–Hull–Vianu over their countably infinite domain (Section 3.1). -/
 def ImpliesJD (U : Finset A) (F : Finset (FD A)) (J : Finset (JD A)) (j : JD A) : Prop :=
-  ∀ r : Finset (Tuple A D), IsOver U r → Satisfies (↑r : Set (Tuple A D)) F →
+  ∀ r : Finset (Tuple A D), IsOver U r → SatisfiesOn F U r →
     (∀ j' ∈ J, j'.HoldsIn r) → j.HoldsIn r
 
 variable (D) in
-/-- **Fourth normal form.** The schema $U$ with functional dependencies $F$ and join dependencies
-$J$ (multivalued dependencies enter $J$ through `MVD.toJD`) is in fourth normal form, for values
-in $D$, when (a) for all $X, Y \subseteq U$ with $Y \not\subseteq X$, if $X \to Y$ is implied
-then $X \to U$ is implied, and (b) for all $X, Y \subseteq U$ with $Y \not\subseteq X$ and
-$X \cup Y \neq U$, if $X \twoheadrightarrow Y$ is implied then $X \to U$ is implied
-(Abiteboul–Hull–Vianu, Definition 11.2.2, with the nontriviality condition $X \cup Y \neq U$ of
-Fagin). -/
+/-- **Fourth normal form.** The schema `U` with functional dependencies `F` and join dependencies
+`J` (multivalued dependencies enter `J` through `MVD.toJD`) is in fourth normal form, for values
+in `D`, when every join dependency of `J` is over `U`, and (a) for all `X, Y` contained in `U`
+with `Y` not contained in `X`, if the functional dependency from `X` to `Y` is implied then the
+one from `X` to `U` is implied, and (b) for all such `X, Y` with `X ∪ Y ≠ U`, if the multivalued
+dependency from `X` to `Y` is implied then the functional dependency from `X` to `U` is implied
+(Abiteboul–Hull–Vianu, Definition 11.2.2). The condition `X ∪ Y ≠ U` in (b) is Fagin's
+nontriviality condition: without it, the trivial multivalued dependency from the empty set to `U`
+would force the empty set to be a key of every nonempty schema, so every instance would have at
+most one tuple. -/
 def IsFourthNF (U : Finset A) (F : Finset (FD A)) (J : Finset (JD A)) : Prop :=
+  (∀ j ∈ J, j.IsOver U) ∧
   (∀ X ⊆ U, ∀ Y ⊆ U, ¬ Y ⊆ X → ImpliesFD D U F J ⟨X, Y⟩ → ImpliesFD D U F J ⟨X, U⟩) ∧
-    ∀ X ⊆ U, ∀ Y ⊆ U, ¬ Y ⊆ X → X ∪ Y ≠ U → ImpliesJD D U F J (MVD.toJD U ⟨X, Y⟩) →
-      ImpliesFD D U F J ⟨X, U⟩
+  ∀ X ⊆ U, ∀ Y ⊆ U, ¬ Y ⊆ X → X ∪ Y ≠ U → ImpliesJD D U F J (MVD.toJD U ⟨X, Y⟩) →
+  ImpliesFD D U F J ⟨X, U⟩
 
 variable (D) in
-/-- **Project-join normal form.** The schema $U$ with functional dependencies $F$ and join
-dependencies $J$ is in project-join normal form, for values in $D$, when every join dependency
-implied by $F$ and $J$ holds in every relation over $U$ with values in $D$ that satisfies every
-key dependency $X \to U$ (with $X \subseteq U$) implied by $F$ and $J$ (Abiteboul–Hull–Vianu,
-Exercise 11.6). -/
+/-- **Project-join normal form.** The schema `U` with functional dependencies `F` and join
+dependencies `J` is in project-join normal form, for values in `D`, when every join dependency of
+`J` is over `U`, and every join dependency over `U` that is implied by `F` and `J` holds in every
+relation over `U` with values in `D` that satisfies every key dependency from some `X` contained
+in `U` to `U` implied by `F` and `J` (Abiteboul–Hull–Vianu, Exercise 11.6; Fagin 1979). -/
 def IsPJNF (U : Finset A) (F : Finset (FD A)) (J : Finset (JD A)) : Prop :=
-  ∀ j : JD A, ImpliesJD D U F J j → ∀ r : Finset (Tuple A D), IsOver U r →
-    (∀ X ⊆ U, ImpliesFD D U F J ⟨X, U⟩ → FD.HoldsIn ⟨X, U⟩ (↑r : Set (Tuple A D))) →
-      j.HoldsIn r
+  (∀ j ∈ J, j.IsOver U) ∧
+  ∀ j : JD A, j.IsOver U → ImpliesJD D U F J j → ∀ r : Finset (Tuple A D), IsOver U r →
+  (∀ X ⊆ U, ImpliesFD D U F J ⟨X, U⟩ → FD.HoldsIn ⟨X, U⟩ (↑r : Set (Tuple A D))) →
+  j.HoldsIn r
 
 end Cslib.Databases
