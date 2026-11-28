@@ -13,3 +13,6 @@
 - [Counter-machine decidable predicates](counter-decidable.md)
 - [Two-counter machines are universal](two-counter-machines-are-universal.md)
 - [Recurring computations of two-counter machines are Σ¹₁-hard](recurring-computations-of-two-counter-machines.md)
+- [Decision problems for reversible two-counter automata are not semidecidable](reversible-two-counter-automata-problems.md)
+- [Dense-choice counter machines](dense-choice-counter-machines.md)
+- [State reachability for dense-choice counter machines with four bounded counters is undecidable](state-reachability-for-dense-choice-counter-mach.md)

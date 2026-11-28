@@ -42,20 +42,22 @@ variable (ι₁ : (CochainComplex.single₀ C).obj S.X₁ ⟶ P.X₁)
 /-- In an abelian category `C`, let `S : X₁ → X₂ → X₃` be a
 short complex and `P₁ → P₂ → P₃` a short complex of nonnegative
 cochain complexes. Choose coaugmentations `ι_k : X_k[0] → P_k`
-whose degree-zero squares commute with both sequence maps. The three degree-zero components give a morphism from `S`
+whose degree-zero squares commute with both sequence maps. The three degree-zero components give a
+morphism from `S`
 to the degree-zero row of the transposed cochain complex of
 short complexes. -/
-def cochainFlipCoaugmentationZero : S ⟶ P.cochainFlip.X 0 :=
+def cochainFlipCoaugmentationZero : S ⟶ P.flip.X 0 :=
   ShortComplex.homMk (ι₁.f 0) (ι₂.f 0) (ι₃.f 0) hf hg
 
 /-- In an abelian category `C`, let `S : X₁ → X₂ → X₃` be a
 short complex and `P₁ → P₂ → P₃` a short complex of nonnegative
 cochain complexes. Choose coaugmentations `ι_k : X_k[0] → P_k`
-whose degree-zero squares commute with both sequence maps. The three closed coaugmentation maps combine into a
+whose degree-zero squares commute with both sequence maps. The three closed coaugmentation maps
+combine into a
 cochain map `S[0] → P.flip` in the category of short complexes. -/
 def cochainFlipCoaugmentation :
-    (CochainComplex.single₀ (ShortComplex C)).obj S ⟶ P.cochainFlip :=
-  (CochainComplex.fromSingle₀Equiv P.cochainFlip S).symm
+    (CochainComplex.single₀ (ShortComplex C)).obj S ⟶ P.flip :=
+  (CochainComplex.fromSingle₀Equiv P.flip S).symm
     ⟨cochainFlipCoaugmentationZero ι₁ ι₂ ι₃ hf hg, by
       apply ShortComplex.hom_ext
       · exact (CochainComplex.fromSingle₀Equiv P.X₁ S.X₁ ι₁).property
@@ -65,7 +67,8 @@ def cochainFlipCoaugmentation :
 /-- In an abelian category `C`, let `S : X₁ → X₂ → X₃` be a
 short complex and `P₁ → P₂ → P₃` a short complex of nonnegative
 cochain complexes. Choose coaugmentations `ι_k : X_k[0] → P_k`
-whose degree-zero squares commute with both sequence maps. The degree-zero component of the combined coaugmentation
+whose degree-zero squares commute with both sequence maps. The degree-zero component of the
+combined coaugmentation
 is the diagram map with components `ι₁⁰,ι₂⁰,ι₃⁰`. -/
 theorem cochainFlipCoaugmentation_f_zero :
     (cochainFlipCoaugmentation ι₁ ι₂ ι₃ hf hg).f 0 =
@@ -75,13 +78,14 @@ theorem cochainFlipCoaugmentation_f_zero :
 /-- In an abelian category `C`, let `S : X₁ → X₂ → X₃` be a
 short complex and `P₁ → P₂ → P₃` a short complex of nonnegative
 cochain complexes. Choose coaugmentations `ι_k : X_k[0] → P_k`
-whose degree-zero squares commute with both sequence maps. If every `ι_k` is a quasi-isomorphism, the degree-zero
+whose degree-zero squares commute with both sequence maps. If every `ι_k` is a quasi-isomorphism,
+the degree-zero
 coaugmentation `S → P.flip⁰` is mono in `ShortComplex C`. -/
 theorem cochainFlipCoaugmentation_mono [_root_.QuasiIso ι₁] [_root_.QuasiIso ι₂]
     [_root_.QuasiIso ι₃] :
     Mono ((cochainFlipCoaugmentation ι₁ ι₂ ι₃ hf hg).f 0) := by
   rw [cochainFlipCoaugmentation_f_zero]
-  exact @mono_of_components C _ _ S (P.cochainFlip.X 0)
+  exact @mono_of_components C _ _ S (P.flip.X 0)
     (cochainFlipCoaugmentationZero ι₁ ι₂ ι₃ hf hg)
     (CochainComplex.coaugmentation_exact_and_mono ι₁).2
     (CochainComplex.coaugmentation_exact_and_mono ι₂).2
@@ -90,12 +94,13 @@ theorem cochainFlipCoaugmentation_mono [_root_.QuasiIso ι₁] [_root_.QuasiIso 
 /-- In an abelian category `C`, let `S : X₁ → X₂ → X₃` be a
 short complex and `P₁ → P₂ → P₃` a short complex of nonnegative
 cochain complexes. Choose coaugmentations `ι_k : X_k[0] → P_k`
-whose degree-zero squares commute with both sequence maps. If every `ι_k` is a quasi-isomorphism, the first row
+whose degree-zero squares commute with both sequence maps. If every `ι_k` is a quasi-isomorphism,
+the first row
 `S → P.flip⁰ → P.flip¹` is exact in `ShortComplex C`. -/
 theorem cochainFlipCoaugmentation_exact [_root_.QuasiIso ι₁] [_root_.QuasiIso ι₂]
     [_root_.QuasiIso ι₃] :
     (ShortComplex.mk ((cochainFlipCoaugmentation ι₁ ι₂ ι₃ hf hg).f 0)
-      (P.cochainFlip.d 0 1)
+      (P.flip.d 0 1)
       (by rw [HomologicalComplex.Hom.comm, HomologicalComplex.single_obj_d, zero_comp])).Exact := by
   simp only [cochainFlipCoaugmentation_f_zero]
   exact exact_of_components _
@@ -107,13 +112,14 @@ omit hf hg in
 /-- In an abelian category `C`, let `S : X₁ → X₂ → X₃` be a
 short complex and `P₁ → P₂ → P₃` a short complex of nonnegative
 cochain complexes. Choose coaugmentations `ι_k : X_k[0] → P_k`
-whose degree-zero squares commute with both sequence maps. If every `ι_k` is a quasi-isomorphism, the row
+whose degree-zero squares commute with both sequence maps. If every `ι_k` is a quasi-isomorphism,
+the row
 `P.flipⁿ → P.flip^(n+1) → P.flip^(n+2)` is exact at its middle
 object in `ShortComplex C` for every `n`. -/
 theorem cochainFlip_exact_succ [_root_.QuasiIso ι₁] [_root_.QuasiIso ι₂]
     [_root_.QuasiIso ι₃] (n : ℕ) :
-    (ShortComplex.mk (P.cochainFlip.d n (n + 1)) (P.cochainFlip.d (n + 1) (n + 2))
-      (P.cochainFlip.d_comp_d n (n + 1) (n + 2))).Exact :=
+    (ShortComplex.mk (P.flip.d n (n + 1)) (P.flip.d (n + 1) (n + 2))
+      (P.flip.d_comp_d n (n + 1) (n + 2))).Exact :=
   exact_of_components _
     (CochainComplex.coaugmentation_exact_succ ι₁ n)
     (CochainComplex.coaugmentation_exact_succ ι₂ n)

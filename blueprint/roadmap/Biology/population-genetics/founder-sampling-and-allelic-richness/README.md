@@ -14,3 +14,5 @@
 ## Estimating diversity from samples
 
 - [Estimators of Shannon genetic diversity](estimators-of-shannon-genetic-diversity/README.md)
+- [Founder events in endogamous groups](founder-events-in-endogamous-groups/README.md)
+- [IBD score for founder events](ibd-score-for-founder-events/README.md)

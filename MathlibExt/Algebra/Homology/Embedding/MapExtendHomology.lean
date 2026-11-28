@@ -135,6 +135,11 @@ private theorem mapHomologicalComplexExtendIso_cycles
 
 set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.isDefEq.respectTransparency false in
+/-- Let C and D have zero morphisms, zero objects and chosen homology, and let
+F : C → D preserve zero morphisms and homology. For a shape embedding e : c → c',
+a c-complex K and retained degrees e(j) = j', the degree-j' homology map of the
+mapped-extension comparison commutes with the extension-homology and
+functor-homology comparisons, followed by F of the extension comparison. -/
 theorem mapHomologicalComplexExtendIso_homology
     (F : C ⥤ D) [F.PreservesZeroMorphisms] [F.PreservesHomology]
     (e : c.Embedding c') (K : HomologicalComplex C c)
@@ -167,6 +172,11 @@ theorem mapHomologicalComplexExtendIso_homology
 
 set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.isDefEq.respectTransparency false in
+/-- Let C and D have zero morphisms, zero objects and chosen homology, and let
+F : C → D preserve zero morphisms and homology. For a shape embedding e : c → c',
+a c-complex K and retained degrees e(j) = j', the inverses of the extension-homology
+and functor-homology comparisons commute with the degree-j' homology map of the
+inverse mapped-extension comparison. -/
 theorem mapHomologicalComplexExtendIso_homology_inv
     (F : C ⥤ D) [F.PreservesZeroMorphisms] [F.PreservesHomology]
     (e : c.Embedding c') (K : HomologicalComplex C c)
