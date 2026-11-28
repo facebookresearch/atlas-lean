@@ -35,6 +35,10 @@ open Module Module.DirectLimit
 
 namespace DirectedStagesTests
 
+-- These test-local priorities retain the exact native scalar dictionaries on ℕ tensor carriers.
+local attribute [instance 10000] Semiring.toModule PiTensorProduct.instModule
+  TensorProduct.instModule Module.DirectLimit.module
+
 private abbrev I := ℕ × ℕ
 private abbrev G (_ : I) := ℕ
 private def constantMap (_i _j : I) (_h : _i ≤ _j) : ℕ →ₗ[ℕ] ℕ := LinearMap.id
@@ -71,18 +75,30 @@ example :
         Module.DirectLimit.of ℕ I G constantMap b 3 := by
   rw [← TensorProduct.diagonalStage_eq constantMap constantMap a b c (by decide) (by decide)]
   rw [← TensorProduct.directLimitDiagonal_tmul_of_of, LinearEquiv.symm_apply_apply]
+  rfl
 
 private def killedMap (i j : I) (_h : i ≤ j) : ℕ →ₗ[ℕ] ℕ :=
   if i.1 = 0 ∧ 0 < j.1 then 0 else LinearMap.id
 
 private instance : DirectedSystem G (killedMap · · ·) where
   map_self {i} x := by
-    simp [killedMap]
+    by_cases hi : i.1 = 0 <;> simp [killedMap, hi]
   map_map {k j i} hij hjk x := by
     have h₁ : i.1 ≤ j.1 := hij.1
     have h₂ : j.1 ≤ k.1 := hjk.1
-    by_cases hi : i.1 = 0 <;> by_cases hj : j.1 = 0 <;> by_cases hk : k.1 = 0
-    all_goals simp [killedMap, hi, hj, hk] <;> omega
+    by_cases hi : i.1 = 0
+    · by_cases hj : j.1 = 0
+      · by_cases hk : k.1 = 0
+        · simp [killedMap, hi, hj, hk]
+        · have hkpos : 0 < k.1 := Nat.pos_of_ne_zero hk
+          simp [killedMap, hi, hj, hkpos]
+      · have hjpos : 0 < j.1 := Nat.pos_of_ne_zero hj
+        have hkpos : 0 < k.1 := lt_of_lt_of_le hjpos h₂
+        simp [killedMap, hi, hj, hjpos, hkpos]
+    · have hipos : 0 < i.1 := Nat.pos_of_ne_zero hi
+      have hjpos : 0 < j.1 := lt_of_lt_of_le hipos h₁
+      have hkpos : 0 < k.1 := lt_of_lt_of_le hjpos h₂
+      simp [killedMap, hi, ne_of_gt hjpos, hjpos, hkpos]
 
 private abbrev start : I := (0, 0)
 private abbrev later : I := (1, 0)
@@ -121,8 +137,9 @@ example : ∃ j : I, ∃ h : start ≤ j, ∀ q : Fin 2,
   intro q
   split_ifs
   · exact stage_class_zero
-  · have h := Module.DirectLimit.of_f (R := ℕ) (ι := I) (G := G) (f := killedMap)
-      (i := start) (j := later) (by decide : start ≤ later) (2 : G start)
+  · have h : Module.DirectLimit.of ℕ I G killedMap later
+        (killedMap start later (by decide) (2 : G start)) =
+        Module.DirectLimit.of ℕ I G killedMap start 2 := Module.DirectLimit.of_f
     simpa [killedMap, start, later] using h.symm
 
 private abbrev emptyFamily (_ : Fin 0) (_ : I) := ℕ
@@ -207,7 +224,10 @@ example : ∃ j : I, ∃ h : start ≤ j,
   have h := PiTensorProduct.map_tprod
     (fun _ : Fin 2 => Module.DirectLimit.of ℕ I G killedMap start)
     (fun _ : Fin 2 => (1 : ℕ))
-  rw [nativePowerElement, h]
+  rw [nativePowerElement]
+  change PiTensorProduct.map (fun _ : Fin 2 => Module.DirectLimit.of ℕ I G killedMap start)
+    (PiTensorProduct.tprod ℕ (fun _ : Fin 2 => (1 : ℕ))) = 0
+  rw [h]
   have hzero : (fun _ : Fin 2 => Module.DirectLimit.of ℕ I G killedMap start 1) =
       (fun _ => (0 : Module.DirectLimit G killedMap)) := by
     funext q
