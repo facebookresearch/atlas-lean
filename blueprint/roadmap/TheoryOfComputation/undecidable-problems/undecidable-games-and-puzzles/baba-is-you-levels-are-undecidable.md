@@ -10,7 +10,7 @@ The source notes that other small modifications should suffice as well, for inst
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

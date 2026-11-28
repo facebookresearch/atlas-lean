@@ -9,6 +9,7 @@ When $s$ is strictly positive the limit always exists, so the undecidability nee
 ## Depends on
 
 - [Bilinear systems and their growth rate](bilinear-systems-and-their-growth-rate.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

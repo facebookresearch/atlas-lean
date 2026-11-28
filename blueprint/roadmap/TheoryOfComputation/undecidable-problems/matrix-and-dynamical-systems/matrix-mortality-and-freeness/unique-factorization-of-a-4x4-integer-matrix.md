@@ -2,13 +2,13 @@
 
 No algorithm decides, given finitely many $4 \times 4$ integer matrices and a matrix $M$ in the semigroup they generate, whether $M$ can be written as a product of generators in more than one way.
 
-**Theorem (Ko and Potapov).** Let $G = \{M_1, \dots, M_n\} \subseteq \mathbb{Z}^{4 \times 4}$ be a finite set of matrices and $S = \langle G \rangle$ the semigroup they generate under matrix multiplication. A *factorization* of $M \in S$ over $G$ is a finite nonempty sequence $(i_1, \dots, i_k)$ of indices with $M = M_{i_1} M_{i_2} \cdots M_{i_k}$. There is no algorithm that decides, given $G$ and a matrix $M \in S$, whether $M$ has more than one factorization over $G$.
+**Theorem (Ko and Potapov).** Let $G = \{M_1, \dots, M_n\} \subseteq \mathbb{Z}^{4 \times 4}$ be a finite set of matrices and $S = \langle G \rangle$ the semigroup they generate under matrix multiplication. A *factorization* of $M \in S$ over $G$ is a finite nonempty sequence $(i_1, \dots, i_k)$ of indices with $M = M_{i_1} M_{i_2} \cdots M_{i_k}$. There is no algorithm that decides, given $G$ and a matrix $M \in S$, whether $M$ has more than one factorization over $G$ (Theorem 13 of the source). This is a promise problem: inputs are pairs with $M \in S$, as in the source's Problem 3, and no answer is required for $M \notin S$; all entries are integers, so instances are finite.
 
-The same problem for matrices in $\mathrm{SL}(2, \mathbb{Z})$ is decidable (and NP-hard), by representing the matrices equal to $M$ as a context-free language of words and counting the factorizations of the words it shares with the generator language (Theorem 12 of the source). Deciding whether a given matrix has infinitely many factorizations, the recurrent matrix problem, is undecidable over $\mathbb{Z}^{4 \times 4}$ (Bell and Potapov) but decidable in $\mathrm{SL}(2, \mathbb{Z})$ (Theorem 15).
+The same problem for matrices in $\mathrm{SL}(2, \mathbb{Z})$ is decidable (and [NP](../../../complexity-classes/the-classes-p-np-and-conp/np.md)-hard), by representing the matrices equal to $M$ as a [context-free language](../../../context-free-languages/grammars-and-pushdown-automata/context-free-languages.md) of words and counting the factorizations of the words it shares with the generator language (Theorem 12 of the source). Deciding whether a given matrix has infinitely many factorizations, the recurrent matrix problem, is undecidable over $\mathbb{Z}^{4 \times 4}$ (Bell and Potapov) but decidable in $\mathrm{SL}(2, \mathbb{Z})$ (Theorem 15).
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

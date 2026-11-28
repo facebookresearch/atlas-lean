@@ -2,7 +2,7 @@
 
 For one-dimensional cellular automata it is undecidable whether all finite configurations evolve to the quiescent configuration, and hence undecidable whether an automaton lies in each of the first three classes of the Culik–Yu formalization of Wolfram's classification, even when choosing only between the first two.
 
-**Classes.** Let $A=(S,N,f)$ be a one-dimensional [cellular automaton](../cellular-automata-on-z-d.md) with global map $G$. A state $s$ is *stable* if $f(s,\dots,s)=s$; a configuration is *$s$-finite* if all but finitely many cells are in state $s$, and a distinguished stable state $q$ is the *quiescent* state, with *finite* configurations the $q$-finite ones (see [finite, periodic and Garden-of-Eden configurations](../finite-periodic-and-garden-of-eden-configurations.md)). A configuration $c$ *evolves to* $c'$ if $G^i(c)=c'$ for some $i\ge0$. Culik and Yu define:
+**Classes.** Let $A=(S,N,f)$ be a one-dimensional [cellular automaton](../cellular-automata-on-z-d.md) with global map $G$, given as an instance by its finite state set $S$, its finite neighborhood $N\subseteq\mathbb Z$ and the table of its local rule $f$. A state $s$ is *stable* if $f(s,\dots,s)=s$; a configuration is *$s$-finite* if all but finitely many cells are in state $s$, and a distinguished stable state $q$ is the *quiescent* state, with *finite* configurations the $q$-finite ones (see [finite, periodic and Garden-of-Eden configurations](../finite-periodic-and-garden-of-eden-configurations.md)). A configuration $c$ *evolves to* $c'$ if $G^i(c)=c'$ for some $i\ge0$. Culik and Yu define:
 
 - $A$ is in *Class One* if there is a stable state $s$ such that every $s$-finite configuration evolves to the homogeneous configuration of $s$;
 - $A$ is in *Class Two* if there is a stable state $s$ such that every $s$-finite configuration has an ultimately periodic evolution $c,G(c),G^2(c),\dots$;
@@ -23,6 +23,7 @@ The source notes that its results other than those on limit languages extend eas
 
 - [Cellular automata on $\mathbb{Z}^d$](../cellular-automata-on-z-d.md)
 - [Finite, periodic and Garden-of-Eden configurations](../finite-periodic-and-garden-of-eden-configurations.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -20,6 +20,7 @@ Rozenberg), and the source leaves the cases of three and four pairs open.
 ## Depends on
 
 - [The Post correspondence problem](pcp.md)
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

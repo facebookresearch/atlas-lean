@@ -9,6 +9,7 @@ The problem is recursively enumerable, since a machine can simulate the sandpile
 ## Depends on
 
 - [Periodic-plus-finite abelian sandpiles on ℤ³](periodic-plus-finite-abelian-sandpiles-on-z3.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

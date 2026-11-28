@@ -12,10 +12,9 @@ $$
 \sup_{\mu\in\mathcal M^{\mathcal B}_{\mathcal F}(\epsilon)}d_B(\mu,\mathcal M_{\mathcal F})\le f(\epsilon)\quad\text{for every }\epsilon\in[0,1].
 $$
 
-**Theorem.** Let $P_{\mathrm{stab}}$ be the set of finite families $\mathcal F$ of forbidden patterns whose SFT is stable.
-1. There is a computable map $M\mapsto P_1(M)$ from Turing machines to SFTs with $P_1(M)\in P_{\mathrm{stab}}$ iff $M$ does not halt on the empty input; hence $P_{\mathrm{stab}}$ is $\Pi_1$-hard and undecidable.
-2. There is a computable map $M\mapsto P_2(M)$ with $P_2(M)\in P_{\mathrm{stab}}$ iff $M$ halts on every input; hence $P_{\mathrm{stab}}$ is $\Pi_2$-hard.
-3. $P_{\mathrm{stab}}$ is in $\Pi_4$.
+**Theorem.** Let $P_{\mathrm{stab}}$ be the set of finite families $\mathcal F$ of forbidden patterns whose SFT is stable, each family given with its finite alphabet and dimension $d$ and its patterns as finite tables. There is a computable map $M\mapsto P_2(M)$ from Turing machines to SFTs with $P_2(M)\in P_{\mathrm{stab}}$ iff $M$ halts on every input; hence $P_{\mathrm{stab}}$ is $\Pi_2$-hard (Theorem 5.11 of the source).
+
+The source proves this after a simpler reduction $M\mapsto P_1(M)$ with $P_1(M)\in P_{\mathrm{stab}}$ iff $M$ does not halt on the empty input, so that $P_{\mathrm{stab}}$ is $\Pi_1$-hard and undecidable (Theorem 5.1), and it shows that $P_{\mathrm{stab}}$ is in $\Pi_4$ (Theorem 6.8).
 
 The SFTs produced by the reductions are two-dimensional. A further reduction gives $S_1(M)\in P_{\mathrm{stab}}$ iff $M$ halts on the empty input, so $P_{\mathrm{stab}}$ is also $\Sigma_1$-hard (Proposition 5.7 of the source).
 
@@ -23,6 +22,7 @@ The SFTs produced by the reductions are two-dimensional. A further reduction giv
 
 - [Subshifts and the aperiodic domino problem](../../wang-tiles/aperiodic-domino-problem/subshifts-and-the-aperiodic-domino-problem.md)
 - [The arithmetical class $\Pi_n$](../../../degrees-and-hierarchies/arithmetical-hierarchy/is-pi.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -10,7 +10,7 @@ $$
 \mathrm{COF}=\{e\in\mathbb N : \mathbb N\setminus W_e\text{ is finite}\}
 $$
 
-is $\Sigma^0_3$-m-complete.
+is $\Sigma^0_3$-m-complete (Proposition 40.3 of the notes).
 
 ## Depends on
 

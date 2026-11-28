@@ -14,6 +14,7 @@ integer matrices the decidability of mortality was open when the source below wa
 ## Depends on
 
 - [The matrix mortality problem](the-matrix-mortality-problem.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -2,13 +2,14 @@
 
 No algorithm decides, for a bilinear map and starting vector with coefficients and entries of arbitrary signs, whether some combination of copies of the vector equals the zero vector.
 
-**Theorem.** When no sign condition is imposed on the coefficients of $*$ or on the entries of $s$, it is undecidable whether a [bilinear system](bilinear-systems-and-their-growth-rate.md) $(*,s)$ can produce the zero vector, that is, whether some combination of instances of $s$ is $0$.
+**Theorem.** When no sign condition is imposed on the coefficients of $*$ or on the entries of $s$, it is undecidable whether a [bilinear system](bilinear-systems-and-their-growth-rate.md) $(*,s)$ can produce the zero vector, that is, whether some combination of instances of $s$ is $0$. The coefficients $c_{ijk}$ and the entries of $s$ are rational, given as fractions of integers; the reduction below produces integer ones, so the problem is undecidable already for integer inputs.
 
 This answers a question of Rosenfeld.
 
 ## Depends on
 
 - [Bilinear systems and their growth rate](bilinear-systems-and-their-growth-rate.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

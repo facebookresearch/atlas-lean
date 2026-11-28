@@ -2,13 +2,16 @@
 
 No algorithm decides, given a constrained homogeneous random walk in the nonnegative orthant and a starting point, whether the walk is stable, even when every transition probability is 0 or 1; the same holds for single-station queueing systems under generalized priority policies.
 
-**Theorem (Gamarnik).** There is no algorithm that decides, given the dimension $d$, the rational transition probabilities $p(\Lambda,\Delta)$ of a [constrained homogeneous random walk](constrained-homogeneous-random-walks.md) in $\mathbb Z_+^d$ and a starting point $a\in\mathbb Z_+^d$, whether the walk started at $a$ is stable. This remains undecidable when all the probabilities are $0$ or $1$, i.e. for deterministic walks.
+For $C>0$ let $X_C=\{z\in\mathbb Z_+^d:\sum_iz_i< C\}$. The walk *started at* $a\in\mathbb Z_+^d$ is *stable* if there is $C>0$ such that, with probability $1$, the walk with $Q(0)=a$ visits $X_C$ infinitely often; this is the formulation of Poonen's survey, the one in which the starting point is part of the instance. Gamarnik's Definition 1 of the 2007 paper (*positive recurrence*) also requires the expected hitting time of $X_C$ to be finite from every state, and does not depend on a starting point. The dimension $d\ge0$ is part of the input, and the transition probabilities are rational numbers, given as fractions of integers.
 
-The same holds, by the earlier paper as summarized in the later one (Section 7 of the copy read), for the stability of a single-station queueing system with several part types, each visiting the station a fixed number of times, operating under a *generalized priority* policy, i.e. a policy whose scheduling decision is a fixed function of which buffers are nonempty.
+**Theorem (Gamarnik).** There is no algorithm that decides, given the dimension $d$, the rational transition probabilities $p(\Lambda,\Delta)$ of a [constrained homogeneous random walk](constrained-homogeneous-random-walks.md) in $\mathbb Z_+^d$ and a starting point $a\in\mathbb Z_+^d$, whether the walk started at $a$ is stable in this sense. This remains undecidable when all the probabilities are $0$ or $1$, i.e. for deterministic walks.
+
+The same holds, by the 2002 paper as summarized in Section 7 of the 2007 paper, for the stability of a single-station queueing system with several part types, each visiting the station a fixed number of times, operating under a *generalized priority* policy, i.e. a policy whose scheduling decision is a fixed function of which buffers are nonempty.
 
 ## Depends on
 
 - [Constrained homogeneous random walks in the orthant](constrained-homogeneous-random-walks.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -16,7 +19,7 @@ The same holds, by the earlier paper as summarized in the later one (Section 7 o
 
 ## Expansion
 
-Gamarnik shows that deterministic constrained walks can simulate any Turing machine, through counter machines. The undecidable property behind the reduction is the stability of counter machines: whether a two-counter machine started in a given configuration with both counters zero keeps both counters bounded, which is undecidable by a simple reduction from the halting problem (as recalled by Gamarnik and Katz). A good expansion links pages for the stability of counter machines and for the simulation by walks; neither has one yet.
+Gamarnik shows that deterministic constrained walks can simulate any Turing machine, through counter machines. The undecidable property behind the reduction is the stability of counter machines: whether a two-counter machine started in a given configuration with both counters zero keeps both counters bounded, which is undecidable by a simple reduction from the halting problem (as recalled by Gamarnik and Katz). A good expansion links pages for the stability of counter machines and for the simulation by walks.
 
 ## Sources
 

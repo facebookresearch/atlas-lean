@@ -9,6 +9,7 @@ In higher dimension fewer matrices suffice: for every $h\in\mathbb N$, $\mathrm{
 ## Depends on
 
 - [The freeness problem for semigroups](the-freeness-problem-for-semigroups.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

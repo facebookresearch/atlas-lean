@@ -8,3 +8,4 @@ Undecidable questions about the long-term dynamics of cellular automata: limit s
 - [Properties of limit set dynamics that force stability or a unique subshift attractor are undecidable](stable-properties-of-limit-set-dynamics-are.md)
 - [Sensitivity and equicontinuity classes of cellular automata are recursively inseparable in every dimension above one](sensitivity-and-equicontinuity-classes-of-cellul.md)
 - [Sensitivity of three-dimensional cellular automata is Σ⁰₃-hard](sensitivity-of-three-dimensional-cellular-automa.md)
+- [Sensitivity and equicontinuity of cellular automata](sensitivity-and-equicontinuity-of-cellular-automata.md)

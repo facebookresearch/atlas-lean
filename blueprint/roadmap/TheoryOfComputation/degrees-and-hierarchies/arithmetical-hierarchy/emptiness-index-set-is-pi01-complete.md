@@ -10,7 +10,7 @@ $$
 \mathrm{EMP}=\{e\in\mathbb N : W_e=\emptyset\}
 $$
 
-is $\Pi^0_1$-m-complete.
+is $\Pi^0_1$-m-complete (Proposition 40.1 of the notes).
 
 So the emptiness problem is exactly as hard as the complement of the halting problem: it is co-recursively enumerable, and the complement of every recursively enumerable set reduces to it.
 
@@ -18,6 +18,7 @@ So the emptiness problem is exactly as hard as the complement of the halting pro
 
 - [The arithmetical class $\Pi_n$](is-pi.md)
 - [Codes with empty domain](../../computability/emptiness-and-equivalence-problems-for-programs/empty-code.md)
+- [Co-recognizability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-co-recognizable.md)
 
 ## Proof depends on
 

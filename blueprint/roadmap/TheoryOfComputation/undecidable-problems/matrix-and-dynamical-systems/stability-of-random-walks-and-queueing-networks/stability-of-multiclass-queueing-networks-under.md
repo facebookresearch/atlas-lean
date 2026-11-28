@@ -10,7 +10,7 @@ The networks used have buffers of size $0$ or $\infty$ and possibly zero service
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -18,7 +18,7 @@ None.
 
 ## Expansion
 
-The reduction is from stability of counter machines, i.e. whether both counters stay bounded from a given configuration $(s^*,0,0)$, which is undecidable by a reduction from the halting problem of two-counter machines; one first passes to *simplified* counter machines, whose counter updates depend only on the new state (Proposition 1). Each counter is modeled by a Rybko–Stolyar subnetwork whose workload carries the counter's value, and further subnetworks implement the control states, the zero tests and the increments and decrements, so that the network is stable iff the simplified machine is stable (Theorem 3). The reduction from halting to counter-machine stability has no page.
+The reduction is from stability of counter machines, i.e. whether both counters stay bounded from a given configuration $(s^*,0,0)$, which is undecidable by a reduction from the halting problem of two-counter machines; one first passes to *simplified* counter machines, whose counter updates depend only on the new state (Proposition 1). Each counter is modeled by a Rybko–Stolyar subnetwork whose workload carries the counter's value, and further subnetworks implement the control states, the zero tests and the increments and decrements, so that the network is stable iff the simplified machine is stable (Theorem 3). A good expansion links the undecidability of stability of counter machines, by its reduction from the halting problem of two-counter machines.
 
 ## Sources
 

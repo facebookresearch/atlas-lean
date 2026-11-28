@@ -8,6 +8,8 @@ Fix an acceptable numbering $(\varphi_e)_{e\in\mathbb N}$ of the partial computa
 1. The [totality index set](../../computability/totality-problem-for-programs/total-code.md) $\mathrm{TOT}=\{e : W_e=\mathbb N\}$ is $\Pi^0_2$-m-complete.
 2. The [finiteness index set](../../computability/finiteness-problem-for-programs/finite-code.md) $\mathrm{FIN}=\{e : W_e\text{ is finite}\}$ is $\Sigma^0_2$-m-complete.
 
+(Proposition 40.2 of the notes.)
+
 Neither set is recognizable nor co-recognizable ([totality is not recognizable](../../computability/totality-problem-for-programs/not-tm2-recognizable-total.md), [totality is not co-recognizable](../../computability/totality-problem-for-programs/not-tm2-co-recognizable-total.md)); the theorem locates both exactly in the hierarchy.
 
 ## Depends on

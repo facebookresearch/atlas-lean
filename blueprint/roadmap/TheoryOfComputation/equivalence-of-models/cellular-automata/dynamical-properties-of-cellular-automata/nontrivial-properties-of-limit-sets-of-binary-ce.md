@@ -13,7 +13,7 @@ the set of configurations reachable arbitrarily late; $F$ is surjective exactly 
 $F$ satisfies it when $\Omega_F \in \mathcal{P}$.
 
 **Theorem.** Let $\mathcal{P}$ be a property of limit sets satisfied by the limit set of at least one nonsurjective cellular automaton on $\{0, 1\}$, but not by the limit sets of all of them.
-Then it is undecidable, given a cellular automaton $F$ on $\{0, 1\}$, whether $\Omega_F \in \mathcal{P}$.
+Then it is undecidable, given a cellular automaton $F$ on $\{0, 1\}$ by its radius and the finite table of its local rule, whether $\Omega_F \in \mathcal{P}$ (Theorem 4.3 of the source).
 
 Since surjectivity of one-dimensional cellular automata is decidable, surjectivity is the only nontrivial decidable property of limit sets of binary cellular
 automata, and the same holds for every fixed alphabet with at least two letters. This refines Kari's Rice theorem for limit sets of cellular automata with arbitrary state sets.
@@ -21,6 +21,7 @@ automata, and the same holds for every fixed alphabet with at least two letters.
 ## Depends on
 
 - [Cellular automata on $\mathbb{Z}^d$](../cellular-automata-on-z-d.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -35,4 +36,4 @@ suffices. A decision procedure for $\mathcal{P}$ would then decide nilpotency of
 
 ## Sources
 
-- P. Guillon and G. Richard, "Revisiting the Rice theorem of cellular automata", in *27th International Symposium on Theoretical Aspects of Computer Science (STACS 2010)*, LIPIcs 5, pp. 441–452, 2010, doi:10.4230/LIPIcs.STACS.2010.2474; read in arXiv:1001.0253v4: the main theorem of Section 4 (Rice Theorem) with its two lemmas, the definitions of Section 1, the nilpotency theorem of Section 2 and the binary simulation of Section 3.
+- P. Guillon and G. Richard, "Revisiting the Rice theorem of cellular automata", in *27th International Symposium on Theoretical Aspects of Computer Science (STACS 2010)*, LIPIcs 5, pp. 441–452, 2010, doi:10.4230/LIPIcs.STACS.2010.2474; read in arXiv:1001.0253v4: Theorem 4.3 of Section 4 (Rice Theorem) with Lemmas 4.1 and 4.2 and the remark after it, Definitions 1.1–1.3 of Section 1, Theorem 2.2 (nilpotency) of Section 2 and the binary simulation of Section 3, with the numbering of that version.

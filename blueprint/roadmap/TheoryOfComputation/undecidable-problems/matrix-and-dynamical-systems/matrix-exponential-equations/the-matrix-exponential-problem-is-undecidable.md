@@ -9,6 +9,7 @@ The undecidability holds for the basic version of the problem (real matrices, no
 ## Depends on
 
 - [The matrix-exponential problem](the-matrix-exponential-problem.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -20,4 +21,4 @@ The reduction is from Hilbert's tenth problem, through MEP with additional const
 
 ## Sources
 
-- Joël Ouaknine, Amaury Pouly, João Sousa-Pinto and James Worrell, "Solvability of Matrix-Exponential Equations", in *Proceedings of the 31st Annual ACM/IEEE Symposium on Logic in Computer Science (LICS 2016)*, ACM, 2016, pp. 798–806, doi:[10.1145/2933575.2934538](https://doi.org/10.1145/2933575.2934538); numbering of arXiv:1601.05002v2 ([arXiv](https://arxiv.org/abs/1601.05002v2)): Section 5 (undecidability of the non-commutative case): the definitions of the constraint classes and of MEP with constraints, the propositions reducing constrained MEP to MEP, and the theorem of the subsection on the reduction from Hilbert's tenth problem; the semigroup variant is the theorem in the conclusion.
+- Joël Ouaknine, Amaury Pouly, João Sousa-Pinto and James Worrell, "Solvability of Matrix-Exponential Equations", in *Proceedings of the 31st Annual ACM/IEEE Symposium on Logic in Computer Science (LICS 2016)*, ACM, 2016, pp. 798–806, doi:[10.1145/2933575.2934538](https://doi.org/10.1145/2933575.2934538); numbering of arXiv:1601.05002v2 ([arXiv](https://arxiv.org/abs/1601.05002v2)): Section 5 (undecidability of the non-commutative case): Definitions 8 and 9 (the constraint classes and MEP with constraints), Propositions 2 to 6 (reducing constrained MEP to MEP), and Theorem 15 in Section 5.2 (the reduction from Hilbert's tenth problem); the semigroup variant is Theorem 16, with Definition 10, in the conclusion.

@@ -12,6 +12,7 @@ Consequently there is no algorithm that decides, given $F$, whether $F$ restrict
 ## Depends on
 
 - [Cellular automata on $\mathbb{Z}^d$](../cellular-automata-on-z-d.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

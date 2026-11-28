@@ -10,7 +10,7 @@ As deciding whether a winning move exists is no harder than playing optimally, o
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -18,7 +18,7 @@ None.
 
 ## Expansion
 
-The construction embeds Rogozhin's universal Turing machine with $2$ states and $18$ symbols, played out between two players Alice and Bob. The tape is a set of creature tokens whose power and toughness give their distance from the head (a $2/2$ token under the head, larger tokens further away), green tokens to the left of the head and white ones to the right, with $18$ creature types standing for the $18$ symbols. The controller is a collection of copies of cards such as Rotlung Reanimator and Xathrid Necromancer, whose triggered abilities ("whenever a creature of a given type dies, create a token") act as the conditional instructions of the machine once their creature types and colors are rewritten by Artificial Evolution and Glamerdye; reading a cell is done by Infest, which kills the unique token of toughness $2$, whose type triggers one controller card to create the token for the new symbol, and the head moves by putting $+1/+1$ counters on the tokens on one side and $-1/-1$ counters on those on the other; phasing switches between the two states. Every trigger and choice is forced. If the machine halts, Alice wins; otherwise the game is an unbreakable deterministic loop, a draw. Since the universal machine simulates every Turing machine, the halting problem reduces to the outcome of such games. A good expansion links a page for Rogozhin's small universal Turing machine; none exists yet.
+The construction embeds Rogozhin's universal Turing machine with $2$ states and $18$ symbols, played out between two players Alice and Bob. The tape is a set of creature tokens whose power and toughness give their distance from the head (a $2/2$ token under the head, larger tokens further away), green tokens to the left of the head and white ones to the right, with $18$ creature types standing for the $18$ symbols. The controller is a collection of copies of cards such as Rotlung Reanimator and Xathrid Necromancer, whose triggered abilities ("whenever a creature of a given type dies, create a token") act as the conditional instructions of the machine once their creature types and colors are rewritten by Artificial Evolution and Glamerdye; reading a cell is done by Infest, which kills the unique token of toughness $2$, whose type triggers one controller card to create the token for the new symbol, and the head moves by putting $+1/+1$ counters on the tokens on one side and $-1/-1$ counters on those on the other; phasing switches between the two states. Every trigger and choice is forced. If the machine halts, Alice wins; otherwise the game is an unbreakable deterministic loop, a draw. Since the universal machine simulates every Turing machine, the halting problem reduces to the outcome of such games. A good expansion links a page for Rogozhin's small universal Turing machine.
 
 ## Sources
 

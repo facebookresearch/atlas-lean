@@ -10,7 +10,7 @@ $$
 \mathrm{REC}=\{e\in\mathbb N : W_e\text{ is computable}\}
 $$
 
-is $\Sigma^0_3$-m-complete.
+is $\Sigma^0_3$-m-complete (Proposition 40.4 of the notes).
 
 ## Depends on
 

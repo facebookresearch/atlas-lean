@@ -22,6 +22,7 @@ are only two rules, and in the construction one of them is the trivial rule $b \
 ## Depends on
 
 - [Tag systems and cyclic tag systems](tag-systems-and-cyclic-tag-systems.md)
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

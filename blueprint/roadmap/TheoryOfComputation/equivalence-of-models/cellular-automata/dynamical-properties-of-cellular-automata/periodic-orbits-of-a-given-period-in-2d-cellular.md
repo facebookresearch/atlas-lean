@@ -2,7 +2,7 @@
 
 For every period p, no algorithm decides whether a given two-dimensional cellular automaton has a configuration that returns to itself after p steps, although every cellular automaton has some periodic configuration of period at most its number of states.
 
-**Setting.** Let $F$ be a two-dimensional [cellular automaton](../cellular-automata-on-z-d.md) with a finite set $A$ of states, acting on configurations $c\in A^{\mathbb Z\times\mathbb Z}$. For $p\ge1$ its *period-$p$ set* is
+**Setting.** Let $F$ be a two-dimensional [cellular automaton](../cellular-automata-on-z-d.md) with a finite set $A$ of states, acting on configurations $c\in A^{\mathbb Z\times\mathbb Z}$; as an instance it is given by $A$, a finite neighborhood and the table of its local rule. For $p\ge1$ its *period-$p$ set* is
 
 $$
 \Pi^p=\{c\in A^{\mathbb Z\times\mathbb Z}\mid F^p(c)=c\},
@@ -10,13 +10,14 @@ $$
 
 and its *periodic set* is $\Pi=\bigcup_{p\ge1}\Pi^p$. A *local lattice language* (LLL) is the set of configurations of $A^{\mathbb Z\times\mathbb Z}$ in which every block of a given finite shape belongs to a given finite set of allowed blocks.
 
-**Theorem (Lindgren, Moore and Nordahl).** For every LLL and every $p\ge1$ there is a cellular automaton whose period-$p$ set is that LLL. Therefore it is undecidable whether an arbitrary two-dimensional cellular automaton has a periodic orbit of a particular period $p$, that is, whether $\Pi^p$ is nonempty.
+**Theorem (Lindgren, Moore and Nordahl).** For every LLL and every $p\ge1$ there is a cellular automaton whose period-$p$ set is that LLL. Therefore, for each fixed $p\ge1$, it is undecidable, given a two-dimensional cellular automaton, whether it has a configuration $c$ with $F^p(c)=c$, that is, whether $\Pi^p$ is nonempty. (Configurations of least period dividing $p$ count; the source's period-$p$ set is defined by $F^p(c)=c$.)
 
 Since homogeneous configurations are mapped to homogeneous configurations, a cellular automaton with $k$ states always has a periodic orbit of some period $p\le k$, so the question whether $\Pi$ is nonempty is trivial. Conversely, the period-$p$ set of a cellular automaton of radius $r$ is itself an LLL, of range $2pr+1$.
 
 ## Depends on
 
 - [Cellular automata on $\mathbb{Z}^d$](../cellular-automata-on-z-d.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

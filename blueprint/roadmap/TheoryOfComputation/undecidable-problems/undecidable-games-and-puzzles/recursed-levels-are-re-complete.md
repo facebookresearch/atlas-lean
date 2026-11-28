@@ -10,7 +10,8 @@ Membership in RE holds because the game can be simulated from an initial state a
 
 ## Depends on
 
-None.
+- [Recognizability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
