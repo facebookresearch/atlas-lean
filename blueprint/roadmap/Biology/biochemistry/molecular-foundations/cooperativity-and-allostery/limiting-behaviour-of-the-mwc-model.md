@@ -9,7 +9,7 @@ In the Monod–Wyman–Changeux model the fraction of molecules in the relaxed s
 1. $Y(0)=0$ and $Y(\alpha)\to1$ as $\alpha\to\infty$.
 2. The relaxed-state fraction has the limits
 
-$$p_R(0)=\frac{1}{1+L},\qquad \lim_{\alpha\to\infty}p_R(\alpha)=\frac{1}{1+Lc^{\,n}},$$
+$$p_R(0)=\frac{1}{1+L},\qquad \lim_{\alpha\to\infty}p_R(\alpha)=\frac{1}{1+Lc^{\,n}}.$$
 
 When $0<c<1$ and $R$ is the active state, the two limits are the basal activity ("leakiness") and the maximal activity, and their difference $\frac{1}{1+Lc^n}-\frac{1}{1+L}>0$ is the dynamic range of a single molecule; for $c>1$ the roles of minimum and maximum are exchanged and the signed difference is negative.
 3. For each fixed $\alpha\ge0$: as $L\to0$, $Y\to\alpha/(1+\alpha)=x/(K_R+x)$; as $L\to\infty$, $Y\to c\alpha/(1+c\alpha)=x/(K_T+x)$.
@@ -34,11 +34,11 @@ None.
 
 ## Expansion
 
-Proof: for item 2, write $1/p_R=1+L\big((1+c\alpha)/(1+\alpha)\big)^n$; the ratio $(1+c\alpha)/(1+\alpha)$ starts at $1$, tends to $c$, and has derivative $(c-1)/(1+\alpha)^2$, which gives the limits. Derived here and not stated in the cited sources: by the sign of that derivative $p_R$ is strictly increasing in $\alpha$ if $0<c<1$, constant if $c=1$ and strictly decreasing if $c>1$. For item 1 divide $Y$ by $\alpha^n$: numerator and denominator both tend to $1+Lc^n$. Items 3–5 follow by direct substitution, using $\alpha(1+\alpha)^{n-1}/(1+\alpha)^n=\alpha/(1+\alpha)$; item 5 is a ratio of affine functions of $\alpha$, hence hyperbolic. Marzen et al. state item 2 for a two-site channel (their Eqs. 15–16, with $L=e^{-\beta\varepsilon}$ and $c=K_d^{(O)}/K_d^{(C)}$); the $n$-site form is the same computation applied to their Eq. 8.
+Proof: for item 2, write $1/p_R=1+L\big((1+c\alpha)/(1+\alpha)\big)^n$; the ratio $(1+c\alpha)/(1+\alpha)$ starts at $1$, tends to $c$, and has derivative $(c-1)/(1+\alpha)^2$, which gives the limits. Derived here and not stated in the cited sources: by the sign of that derivative $p_R$ is strictly increasing in $\alpha$ if $0<c<1$, constant if $c=1$ and strictly decreasing if $c>1$. For item 1 divide $Y$ by $\alpha^n$: numerator and denominator both tend to $1+Lc^n$. Items 3–5 follow by direct substitution, using $\alpha(1+\alpha)^{n-1}/(1+\alpha)^n=\alpha/(1+\alpha)$; item 5 is a ratio of affine functions of $\alpha$, hence hyperbolic. All items follow from Marzen et al.'s Eq. 8 (and the corresponding binding curve) by direct computation; they state item 2 for a two-site channel (their Eqs. 14–16, with $L=e^{-\beta\varepsilon}$ and $c=K_d^{(O)}/K_d^{(C)}$).
 
 Remaining decomposition before the page can be marked ready: each item is elementary, but the page relies on the MWC definition page, whose own decomposition (see its Expansion) must be completed first; "hyperbolic" in item 5 should be stated as an explicit Möbius form.
 
 ## Sources
 
 - S. Marzen, H. G. Garcia and R. Phillips, "Statistical mechanics of Monod–Wyman–Changeux (MWC) models", *Journal of Molecular Biology* (2013); author manuscript read at [pmc.ncbi.nlm.nih.gov](https://pmc.ncbi.nlm.nih.gov/articles/PMC3786005/), Eq. 8 ($n$-site activity), Eqs. 14–16 (open probability of a two-site channel and its limits $p_{\mathrm{open}}^{\min}=1/(1+e^{-\beta\varepsilon})$ and $p_{\mathrm{open}}^{\max}=1/(1+e^{-\beta\varepsilon}(K_d^{(O)}/K_d^{(C)})^2)$) and Eq. 18 (population dynamic range).
-- H. Jakubowski and P. Flatt, *Fundamentals of Biochemistry*, LibreTexts, Section 5.11 "Derivation of the MWC Equation", subsection "Limiting-cases" (a)–(f), [bio.libretexts.org](https://bio.libretexts.org/Bookshelves/Biochemistry/Fundamentals_of_Biochemistry_%28Jakubowski_and_Flatt%29/01%3A_Unit_I-_Structure_and_Catalysis/05%3A_Protein_Function/5.11%3A_Derivation_of_the_MWC_Equation).
+- H. Jakubowski and P. Flatt, *Fundamentals of Biochemistry*, LibreTexts, Section 5.11 "Derivation of the MWC Equation", subsection "Limiting-cases" (a)–(f) (teaching reference only: the page states that it was written largely with an AI model), [bio.libretexts.org](https://bio.libretexts.org/Bookshelves/Biochemistry/Fundamentals_of_Biochemistry_%28Jakubowski_and_Flatt%29/01%3A_Unit_I-_Structure_and_Catalysis/05%3A_Protein_Function/5.11%3A_Derivation_of_the_MWC_Equation).

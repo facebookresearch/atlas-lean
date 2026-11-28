@@ -1,6 +1,6 @@
 # Mesh size of a swollen network
 
-In the Peppas group's model the mesh size $\xi$ of a swollen network is the root-mean-square junction spacing: the unperturbed end-to-end length of a network chain, reduced by the phantom factor $(1 - 2/f)^{1/2}$ and multiplied by the swelling factor $\phi_s^{-1/3}$.
+In the Peppas group's model the mesh size $\xi$ of a swollen network is the distance between junctions, which their formula gives as a root-mean-square length: the unperturbed end-to-end length of a network chain, reduced by the phantom factor $(1 - 2/f)^{1/2}$ and multiplied by the swelling factor $\phi_s^{-1/3}$.
 
 For a network with junction functionality $f > 2$, degree of polymerization $N_j$ between junctions, $\lambda$ backbone bonds of mean length $\bar l$ per repeat unit and Flory characteristic ratio $C_\infty$, swollen to polymer volume fraction $\phi_s \in (0,1)$, Richbourg, Ravikumar and Peppas define
 

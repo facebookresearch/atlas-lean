@@ -6,7 +6,7 @@ In Förster theory the donor-to-acceptor transfer rate falls as the inverse sixt
 
 $$k_F=k_D\left(\frac{R_0}{r}\right)^{6},\qquad R_0^6=\frac{9000\,(\ln10)\,\kappa^2\,Q_D\,J}{128\,\pi^5\,n^4\,N_A},$$
 
-where $Q_D$ is the donor quantum yield, $n>0$ the refractive index of the medium, $N_A$ Avogadro's constant, $\kappa^2\in[0,4]$ an orientation factor, and $J$ the spectral overlap integral. In the standard normalization
+where $Q_D$ is the donor quantum yield, $n>0$ the refractive index of the medium, $N_A$ Avogadro's constant, $\kappa^2\in[0,4]$ an orientation factor (the range as stated by Visser, Vysotski and Lee), and $J$ the spectral overlap integral. In the standard normalization
 
 $$J=\int f_D(\lambda)\,\varepsilon_A(\lambda)\,\lambda^4\,d\lambda,$$
 
@@ -43,4 +43,4 @@ Remaining decomposition before the page can be marked ready: (i) the Förster ra
 ## Sources
 
 - B. Schuler, "Single-molecule FRET of protein structure and dynamics – a primer", *Journal of Nanobiotechnology* 11 (Suppl. 1) (2013), S2, [doi.org](https://doi.org/10.1186/1477-3155-11-S1-S2); open-access copies read: [link.springer.com](https://link.springer.com/article/10.1186/1477-3155-11-S1-S2) and [pmc.ncbi.nlm.nih.gov](https://pmc.ncbi.nlm.nih.gov/articles/PMC4029180/), section "Förster resonance energy transfer (FRET)", Eqs. 1–4 (rate law, $R_0^6$, orientation factor, efficiency) and Fig. 1, and the lifetime relation $E=1-\tau_{DA}/\tau_D$ for a single fixed distance in the section on single-molecule measurements.
-- A. J. W. G. Visser, E. S. Vysotski and J. Lee, "Critical transfer distance determination between FRET pairs", Photobiological Sciences Online (read at [photobiology.info](https://photobiology.info/Experiments/Biolum-Expt.html)), section "Recapitulation of Relevant Equations", Eq. 3 (rendered as an image; the text states the overlap convention: donor spectrum normalized to unit integral, acceptor molar absorptivity in M$^{-1}$cm$^{-1}$, wavelength in nm, $J$ in M$^{-1}$cm$^{-1}$nm$^4$).
+- A. J. W. G. Visser, E. S. Vysotski and J. Lee, "Critical transfer distance determination between FRET pairs", Photobiological Sciences Online (read at [photobiology.info](https://photobiology.info/Experiments/Biolum-Expt.html)), section "Recapitulation of Relevant Equations", Eq. 3 (rendered as an image; the text states the overlap convention: donor spectrum normalized to unit integral, acceptor molar absorptivity in M$^{-1}$cm$^{-1}$, wavelength in nm, $J$ in M$^{-1}$cm$^{-1}$nm$^4$), and the description of the Excel procedure, where the orientation factor $\kappa^2$ "can adopt any value between 0 and 4".

@@ -8,7 +8,7 @@ $$W_s(F) = \tfrac12 NkT\left(\lambda_1^2 + \lambda_2^2 + \lambda_3^2 - 3 - 2\log
 
 For an isochoric simple shear of the dry network this gives shear modulus $NkT$, the value Hong et al. state.
 
-Phantom model (Panyukov's review). For a perfect phantom network of Gaussian strands, all junctions having the same functionality $f > 2$, Panyukov writes the elastic free energy per unit volume as quadratic in the stretches $\lambda_\alpha = L_\alpha/L_{0\alpha}$ of the network dimensions relative to the state of preparation,
+Phantom model (Panyukov's review). For a perfect, monodisperse phantom network of Gaussian strands, all junctions having the same functionality $f > 2$, Panyukov writes the elastic free energy per unit volume as quadratic in the stretches $\lambda_\alpha = L_\alpha/L_{0\alpha}$ of the network dimensions relative to the state of preparation,
 
 $$F_{ph} = G\sum_{\alpha}\frac{\lambda_\alpha^{2} - 1}{2},$$
 
@@ -37,4 +37,4 @@ Needed before theorem pages: the Gaussian end-to-end distribution of a long free
 ## Sources
 
 - W. Hong, X. Zhao, J. Zhou and Z. Suo, "A theory of coupled diffusion and large deformation in polymeric gels", Journal of the Mechanics and Physics of Solids 56, 1779–1793 (2008), <https://doi.org/10.1016/j.jmps.2007.11.010>; author-hosted copy read at <https://suo.seas.harvard.edu/sites/g/files/omnuum4271/files/suo/files/200.pdf>: Section 3, Eq. (21), and Section 5, which states the small-strain shear modulus $NkT$ and representative values $NkT = 10^4$–$10^7$ N/m²
-- S. Panyukov, "Theory of Flexible Polymer Networks: Elasticity and Heterogeneities", Polymers 12(4), 767 (2020), <https://doi.org/10.3390/polym12040767>; open-access copy read at <https://www.mdpi.com/2073-4360/12/4/767>: Section 2: Eq. (1) (phantom free energy with stretches from the preparation state), Eq. (4) (affine modulus $G = kT\nu$) and Eq. (23) (perfect phantom network, $G = kT\nu(1 - 2/f)$), with the sentence comparing (23) and (4)
+- S. Panyukov, "Theory of Flexible Polymer Networks: Elasticity and Heterogeneities", Polymers 12(4), 767 (2020), <https://doi.org/10.3390/polym12040767>; open-access copy read at <https://www.mdpi.com/2073-4360/12/4/767>: Section 2: Eq. (1) (phantom free energy with stretches from the preparation state), Eq. (4) (affine modulus $G = kT\nu$) and Section 2.4 (monodisperse networks), Eqs. (20)–(23) (perfect phantom network, $G = kT\nu(1 - 2/f)$), with the sentence comparing (23) and (4)

@@ -18,13 +18,15 @@ Undergraduate to graduate membrane biophysics. The solubility–diffusion pictur
 
 ## Depends on
 
-None. The items above are empirical or conditional on the stated slab model; the GHK current page is linked for the analogous ionic definition, not as a proof of the experiment.
+None.
 
 ## Proof depends on
 
 None.
 
 ## Expansion
+
+The statements are empirical or conditional on the stated slab model; the GHK current page is linked in the text for the analogous ionic permeability definition, not as a prerequisite or a proof.
 
 Remaining decomposition before any statement here can become a theorem page: (i) a definition page for steady one-dimensional Fick diffusion in a homogeneous slab with interface partitioning, on which $P=\beta D_m/a$ is a lemma; (ii) the abstract's common ratio constrains only the combination $(\beta/K_{\mathrm{hc}})(D_m/D)/a$; separate solute-independent proportionality of $\beta$ to $K_{\mathrm{hc}}$ and of $D_m$ to $D$ would be sufficient for it but is not implied, and the water and urea deviations show the common ratio fails for some molecules; (iii) an uncertainty decomposition covering measurement error in $P_d$ (unstirred layers), the choice of reference solvent for partitioning, and membrane heterogeneity. Only the abstract of Finkelstein's paper was accessible as text, so the numbers above are restricted to what the abstract states.
 

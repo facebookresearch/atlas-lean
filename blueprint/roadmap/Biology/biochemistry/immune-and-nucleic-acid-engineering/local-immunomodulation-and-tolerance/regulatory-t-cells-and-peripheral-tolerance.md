@@ -7,7 +7,7 @@ Conventions and caveats for this folder:
 - *Marker gates are study-specific.* Where a study reports CD4+FoxP3+ cells as Treg, that is the operational phenotype of that assay. In humans, stimulated conventional CD4+ T cells also transiently express FOXP3, so a FOXP3 gate alone does not identify a stable suppressive lineage; in mice, expression is reported as restricted to Treg.
 - *Assayed effectors.* "Effector T cells" in a given figure means the gate that study used - for example CD4+FoxP3- cells in a rat skin assay - not conventional T cells in general.
 - *CCL22 is preferential, not exclusive.* It is described as a chemoattractant for Treg; nothing read here establishes that it attracts Treg only.
-- *IL-2* is described in this context as a Treg survival factor; its effects on other lymphocytes are dose- and context-dependent, which is part of the argument for local rather than systemic administration.
+- *IL-2* is described in this context as a Treg survival factor.
 - *Local* means at the tissue site of antigen encounter. The stated contrast is with systemic immunosuppression, which also suppresses the regulatory arm and carries infection and malignancy risk.
 
 ## Context
