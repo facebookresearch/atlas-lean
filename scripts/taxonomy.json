@@ -15906,6 +15906,7 @@
   "MathlibExt/Analysis/Calculus/MonotonePointwiseUniform": {"to": "Analysis/sequences-and-series/convergence", "title": "Dini's second theorem on monotone functions"},
   "WantedExt/Analysis/Calculus/ScottishBook66Wanted": {"to": "Analysis/real-functions/multivariable-calculus", "title": "Existence of mixed partial derivatives"},
   "WantedExt/Analysis/Calculus/TaylorCoefficientCompositionWanted": {"to": "NumberTheory/zeta-l-functions/multiple-zeta-values", "title": "Multiple zeta values"},
+  "WantedExt/Analysis/ChoquetWanted": {"to": "Analysis/banach-spaces/duality-and-weak-topologies", "title": "Choquet theory"},
   "WantedExt/Analysis/Complex/WatsonInverseFactorial": {"to": "Analysis/asymptotic-analysis", "title": "Watson's inverse factorial expansion"},
   "WantedExt/Analysis/ContinuumLimsupConstantWanted": {"to": "Analysis/complex-analysis/entire-functions", "title": "Growth of entire functions along continua"},
   "WantedExt/Analysis/Control/FeedbackCapabilityWanted": {"to": "Analysis/control-theory", "title": "Capability and limits of feedback"},
