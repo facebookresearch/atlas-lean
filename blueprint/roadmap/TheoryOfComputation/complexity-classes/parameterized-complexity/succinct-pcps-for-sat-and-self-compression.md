@@ -24,6 +24,7 @@ For item 1, let the verifier have proof size $n^C$, $q=O(1)$ queries and randomn
 
 - [OR-SAT is not compressible unless NP ⊆ coNP/poly](or-sat-is-not-compressible-unless-np-in-conp-poly.md)
 - [The PCP theorem: NP = PCP(O(log n), O(1))](../../pcp-and-inapproximability/pcp-theorem.md)
+- [Cook–Levin theorem: SAT is NP-complete](../../np-completeness/cook-levin/cook-levin-sat-np-complete.md)
 
 ## Sources
 

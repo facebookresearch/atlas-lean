@@ -18,6 +18,8 @@ Item 1 rests on an equivalence between uniform lower bounds and deterministic He
 
 - [Heavy element avoidance problem](heavy-element-avoidance-problem.md)
 - [Pseudodeterministic algorithms for search problems (Gat–Goldwasser)](pseudodeterministic-algorithm-for-search-problem.md)
+- [The class $\mathsf{AC}^0(m)$](../../../complexity-classes/time-and-space-complexity-classes/ac0-mod.md)
+- [Log-space computable functions](../../../complexity-classes/time-and-space-complexity-classes/log-space-computable.md)
 
 ## Proof depends on
 

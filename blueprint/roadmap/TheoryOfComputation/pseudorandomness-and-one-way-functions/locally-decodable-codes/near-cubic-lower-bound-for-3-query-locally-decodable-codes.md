@@ -21,6 +21,7 @@ Pass to normal form: for each $i$ there is a 3-uniform hypergraph matching $\mat
 ## Proof depends on
 
 - [Smooth decoders yield large decoding matchings](smooth-decoders-yield-decoding-matchings.md)
+- [Matrix Bernstein inequality, Hermitian case](../../../Probability/concentration-inequalities/matrix-concentration-inequalities/matrix-bernstein.md)
 
 ## Sources
 

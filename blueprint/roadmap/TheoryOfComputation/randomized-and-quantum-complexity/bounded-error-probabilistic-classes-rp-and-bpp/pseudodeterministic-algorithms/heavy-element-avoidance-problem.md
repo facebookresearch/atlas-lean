@@ -22,6 +22,7 @@ For fact 3, a probabilistic machine $M$ with error at most $1/4$ on input $x$ de
 ## Depends on
 
 - [BPP](../../../complexity-classes/time-and-space-complexity-classes/bpp.md)
+- [Log-space uniform circuit families](../../../complexity-classes/time-and-space-complexity-classes/uniform-circuit-family.md)
 
 ## Proof depends on
 

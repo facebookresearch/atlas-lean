@@ -18,6 +18,7 @@ Run the smart $\mathsf{FP}^{\mathsf{prMA}}/1$ range-avoidance algorithm on the t
 
 - [Circuit complexity of a Boolean function and truth tables](../minimum-circuit-size-problem/circuit-complexity-of-a-boolean-function.md)
 - [The class MA (Merlin–Arthur)](../../complexity-classes/time-and-space-complexity-classes/ma.md)
+- [Deterministic time classes on multi-tape machines](../../complexity-classes/time-and-space-classes-on-multi-tape-machines/dtime.md)
 - [Smart prMA algorithm with one advice bit for range avoidance](smart-prma-algorithm-for-range-avoidance.md)
 
 ## Proof depends on
