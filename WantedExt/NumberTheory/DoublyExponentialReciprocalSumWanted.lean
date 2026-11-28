@@ -18,6 +18,7 @@ public import MathlibExt.NumberTheory.DoublyExponentialReciprocalSumExistsTailEq
 public import MathlibExt.NumberTheory.DoublyExponentialReciprocalSumEventuallyPseudoGreedyGapEqZero
 public import MathlibExt.NumberTheory.DoublyExponentialReciprocalSumSylvester
 public import MathlibExt.NumberTheory.DoublyExponentialReciprocalSumEqRoundInvRemainderAdd
+public import MathlibExt.NumberTheory.DoublyExponentialReciprocalSumCountableExceptions
 
 /-!
 # Reciprocal sums of doubly exponential sequences
@@ -35,20 +36,6 @@ open Filter Topology
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Doubly exponential floors are Type 2 irrationality sequences for all but countably many
-bases.** For all real numbers $\alpha > 1$ outside a countable set, the sequence
-$(\lfloor \alpha^{2^{n+1}} \rfloor)_{n \ge 0}$ is a Type 2 irrationality sequence: for every
-sequence $(b_n)_{n \ge 0}$ of positive integers with $b_n / \lfloor \alpha^{2^{n+1}} \rfloor \to 1$,
-the series $\sum_n 1 / b_n$ does not converge to a rational number.
-
-Source: Junnosuke Koizumi, *Irrationality of the Reciprocal Sum of Doubly Exponential
-Sequences*, INTEGERS 26 (2026), Article A28, Theorem 2 and the definition of Type 2
-irrationality sequences preceding it (`integers-2026-A28-thm-2`). -/
-public theorem_wanted countable_not_type2IrrationalitySequence_floor_pow_two_pow :
-    Set.Countable {α : ℝ | 1 < α ∧ ¬∀ b : ℕ → ℕ, (∀ n, 0 < b n) →
-      Tendsto (fun n => (b n : ℝ) / ⌊α ^ 2 ^ (n + 1)⌋₊) atTop (𝓝 1) →
-        ∀ q : ℚ, ¬HasSum (fun n => 1 / (b n : ℝ)) q}
 
 /-- **Structure of the pseudo-greedy expansion of a rational.** Let $p$ and $q$ be positive
 integers, let $r = p/q$, and let $(x_n)$, $(a_n)$ and $(\varepsilon_n)$ be the remainder
