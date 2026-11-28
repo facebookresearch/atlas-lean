@@ -109,11 +109,12 @@ example : ModuleCat.Hom.hom sourceMoved.augmentation₀ (7 : ℤ) = 7 := by
   rfl
 
 -- Target transport uses the inverse source comparison and forward single-complex comparison.
-example : ModuleCat.Hom.hom targetMoved.augmentation₀ (7 : ℤ) = 7 := by
+example : ModuleCat.Hom.hom targetMoved.augmentation₀ (7 : ℤ) = (7 : ℤ) := by
   change ModuleCat.Hom.hom ((𝟙 E) ≫ (𝟙 E) ≫ (𝟙 E)) (7 : ℤ) = 7
   rfl
 
-example : ModuleCat.Hom.hom ((mapSourceIdentityMap identityResolution).f 0) (13 : ℤ) = 13 ∧
+example : ModuleCat.Hom.hom ((mapSourceIdentityMap identityResolution).f 0) (13 : ℤ) =
+    (13 : ℤ) ∧
     ((𝟭 M).mapHomologicalComplex (.down ℕ)).map
         (mapSourceIdentityMap identityResolution) ≫ identityResolution.augmentation =
       sourceMoved.augmentation := by
@@ -129,7 +130,8 @@ private def signedDifferential : E ⟶ E :=
     (splitResolution.cochainShiftTermIso 1 0).hom
 
 private lemma signedDifferential_eq : signedDifferential = -(𝟙 E) := by
-  simpa [signedDifferential, signedComplex, splitResolution_d, Units.smul_def] using
+  simpa [signedDifferential, signedComplex, splitResolution_d, Units.smul_def,
+    neg_one_smul] using
     cochainShiftTermIso_d splitResolution (1 : ℤ) 0
 
 -- The odd shift has a genuinely nonzero negative differential.
@@ -150,7 +152,7 @@ private lemma shiftedAugmentation_eq : shiftedAugmentation = 𝟙 E := by
   dsimp only [shiftedAugmentation]
   erw [cochainShiftAugmentation_f]
   simp [identityResolution, Tests.identityResolution, augmentation₀,
-    HomologicalComplex.XIsoOfEq]
+    HomologicalComplex.XIsoOfEq, eqToIso]
 
 example : ModuleCat.Hom.hom shiftedAugmentation (1 : ℤ) = 1 := by
   rw [shiftedAugmentation_eq]
@@ -195,7 +197,8 @@ example : ModuleCat.Hom.hom
         (show ComplexShape.embeddingDownNat.f 0 = 0 by simp)).hom ≫ singleZeroX.hom)
     (7 : ℤ) = 7 := by
   rw [← HomologicalComplex.πStupidTrunc_eq_unit,
-    HomologicalComplex.πStupidTrunc_f_eq]
+    HomologicalComplex.πStupidTrunc_f_eq (K := singleZero)
+      (e := ComplexShape.embeddingDownNat) (p := 0) (q := 0) (by simp)]
   simp only [Category.assoc, Iso.inv_hom_id_assoc, Iso.inv_hom_id]
   rfl
 
@@ -236,7 +239,7 @@ example : ModuleCat.Hom.hom
     rfl
   · intro h
     have h' := congrArg (fun f : E ⟶ E => ModuleCat.Hom.hom f (1 : ℤ)) homologyDetection
-    rw [h, zero_comp, zero_comp] at h'
+    rw [h, zero_comp] at h'
     norm_num at h'
 
 private def doubleFold : (∐ family) ⟶ singleZero :=
@@ -283,8 +286,8 @@ private def boundaryMap : singleZero ⟶ singleOne⟦(1 : ℤ)⟧ :=
 
 private lemma boundaryMap_eq : boundaryMap = negativeBoundary := by
   dsimp only [boundaryMap]
-  rw [Cocycle.mappedShiftedHom_boundary]
-  dsimp only [Cocycle.mappedShiftedHom]
+  erw [Cocycle.mappedShiftedHom_boundary]
+  dsimp only [Cocycle.mappedShiftedHom, ShiftedHom.map]
   rw [Cocycle.equivHomShift_symm_postcomp_rightUnshift]
   simp [identityCocycle, boundaryTriangle]
 
