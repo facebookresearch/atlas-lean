@@ -89,7 +89,7 @@ public theorem negPellG_dvd_iff (d : ℕ) (hd : 1 < d)
     have hprod : negPellG d n ∣ negPellF d k * negPellG d r := by
       simpa only [add_sub_cancel_right] using dvd_sub hdiv (hk.mul_right (negPellF d r))
     -- The signed norm gives an inverse for the first coordinate modulo `negPellG d n`.
-    have hnorm := negPell_norm_of_solvable d hd hneg k
+    have hnorm := negPell_norm_of_solvable d hneg k
     have hsigned : negPellG d n ∣ (-1 : ℤ) ^ k * negPellG d r := by
       rw [← hnorm, sub_mul]
       have hsq := (hk.mul_right (negPellG d k)).mul_left (d : ℤ)

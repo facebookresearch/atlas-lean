@@ -75,7 +75,7 @@ public theorem bisector_equation_form_nine (d m n : ℕ) (hd : 1 < d)
   have hoddI : Odd i := hoddR.mul ⟨n - 1, by omega⟩
   have hoddJ : Odd j := hoddR.mul ⟨n, rfl⟩
   have hnorm (t : ℕ) (ht : Odd t) : f t ^ 2 + 1 = (d : ℤ) * g t ^ 2 := by
-    have h := negPell_norm_of_solvable d hd hneg t
+    have h := negPell_norm_of_solvable d hneg t
     rw [ht.neg_one_pow] at h
     change f t ^ 2 - (d : ℤ) * g t ^ 2 = -1 at h
     linear_combination h

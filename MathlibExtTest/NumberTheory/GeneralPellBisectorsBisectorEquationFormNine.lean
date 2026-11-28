@@ -34,17 +34,28 @@ private theorem powersTwo : (negPellF 2 3 = 7 ∧ negPellG 2 3 = 5) ∧
   have h8 : negPellF 2 8 = 577 ∧ negPellG 2 8 = 408 := next h7
   exact ⟨h3, h6, (next h8).1⟩
 
--- Compute both addition coordinates directly by the one-step recurrence, not `negPell_add`.
+-- Compute both addition coordinates at unequal indices independently of `negPell_add`.
 example :
-    negPellF 2 (3 + 3) = negPellF 2 3 * negPellF 2 3 + 2 * negPellG 2 3 * negPellG 2 3 ∧
-    negPellG 2 (3 + 3) = negPellF 2 3 * negPellG 2 3 + negPellG 2 3 * negPellF 2 3 := by
-  change negPellF 2 6 = _ ∧ negPellG 2 6 = _
-  norm_num [powersTwo.1.1, powersTwo.1.2, powersTwo.2.1.1, powersTwo.2.1.2]
+    negPellF 2 (1 + 2) = negPellF 2 1 * negPellF 2 2 + 2 * negPellG 2 1 * negPellG 2 2 ∧
+    negPellG 2 (1 + 2) = negPellF 2 1 * negPellG 2 2 + negPellG 2 1 * negPellF 2 2 := by
+  have h2 : negPellF 2 2 = 3 ∧ negPellG 2 2 = 2 :=
+    step negPellFund_two.2 negPellFund_two.1 negPellF_two_one
+  change negPellF 2 3 = _ ∧ negPellG 2 3 = _
+  norm_num [negPellF_two_one.1, negPellF_two_one.2, h2.1, h2.2, powersTwo.1.1, powersTwo.1.2]
+
+example :
+    negPellF 2 (1 + 2) = negPellF 2 1 * negPellF 2 2 + 2 * negPellG 2 1 * negPellG 2 2 ∧
+    negPellG 2 (1 + 2) = negPellF 2 1 * negPellG 2 2 + negPellG 2 1 * negPellF 2 2 :=
+  negPell_add 2 1 2
 
 -- Check the norm at an odd and an even power independently of `negPell_norm_of_solvable`.
 example : (negPellF 2 3 ^ 2 - 2 * negPellG 2 3 ^ 2 = -1) ∧
     (negPellF 2 6 ^ 2 - 2 * negPellG 2 6 ^ 2 = 1) := by
   norm_num [powersTwo.1.1, powersTwo.1.2, powersTwo.2.1.1, powersTwo.2.1.2]
+
+-- The public norm lemma needs only a solution, including `(0, 1)` at `d = 1`.
+example (n : ℕ) : negPellF 1 n ^ 2 - negPellG 1 n ^ 2 = (-1 : ℤ) ^ n := by
+  simpa only [Nat.cast_one, one_mul] using negPell_norm_of_solvable 1 ⟨0, 1, by decide⟩ n
 
 -- Example 4(b), with `m = 2` and `n = 1`: the divisor is `5`, not a unit.
 example :

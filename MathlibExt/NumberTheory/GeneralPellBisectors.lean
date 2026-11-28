@@ -476,12 +476,8 @@ theorem negPellF_two_one : negPellF 2 1 = 1 ∧ negPellG 2 1 = 1 := by
 
 namespace negPellG_le_negPellF
 
-/-- The fundamental solution is positive and solves the equation, given an
-integral solution. -/
-private theorem fund {d : ℕ} (hd : 1 < d)
-    (hneg : ∃ x y : ℤ, x ^ 2 - d * y ^ 2 = -1) :
-    0 < negPellFundY d ∧ 0 < negPellFundX d ∧
-      negPellFundX d ^ 2 + 1 = d * negPellFundY d ^ 2 := by
+private theorem fund_spec {d : ℕ} (hneg : ∃ x y : ℤ, x ^ 2 - d * y ^ 2 = -1) :
+    0 < negPellFundY d ∧ negPellFundX d ^ 2 + 1 = d * negPellFundY d ^ 2 := by
   obtain ⟨x, y, hxy⟩ := hneg
   have hy0 : y ≠ 0 := by
     rintro rfl
@@ -492,8 +488,15 @@ private theorem fund {d : ℕ} (hd : 1 < d)
     rw [Int.natCast_natAbs, Int.natCast_natAbs, sq_abs, sq_abs]
     exact h1
   have hnat' : x.natAbs ^ 2 + 1 = d * y.natAbs ^ 2 := by exact_mod_cast hnat
-  have hspec := negPellFund_spec (d := d)
-    ⟨y.natAbs, Int.natAbs_pos.mpr hy0, x.natAbs, hnat'⟩
+  exact negPellFund_spec ⟨y.natAbs, Int.natAbs_pos.mpr hy0, x.natAbs, hnat'⟩
+
+/-- The fundamental solution is positive and solves the equation, given an
+integral solution. -/
+private theorem fund {d : ℕ} (hd : 1 < d)
+    (hneg : ∃ x y : ℤ, x ^ 2 - d * y ^ 2 = -1) :
+    0 < negPellFundY d ∧ 0 < negPellFundX d ∧
+      negPellFundX d ^ 2 + 1 = d * negPellFundY d ^ 2 := by
+  have hspec := fund_spec hneg
   refine ⟨hspec.1, ?_, hspec.2⟩
   rcases Nat.eq_zero_or_pos (negPellFundX d) with h0 | hpos
   · exfalso
@@ -580,16 +583,18 @@ private theorem growth {d : ℕ} (hd : 1 < d)
 
 end negPellG_le_negPellF
 
-/-- **Signed norm of a negative Pell power.** If $d > 1$ and $x^2 - d y^2 = -1$ has an integer
-solution, the coordinates of the $n$-th power of its fundamental solution satisfy
-$f_n^2 - d g_n^2 = (-1)^n$ for every natural number $n$.
+/-- **Signed norm of a negative Pell power.** If $d$ is a natural number and
+$x^2 - d y^2 = -1$ has an integer solution, the coordinates of the $n$-th power of the
+fundamental solution satisfy $f_n^2 - d g_n^2 = (-1)^n$ for every natural number $n$.
+The fundamental solution has the least positive second coordinate and a nonnegative first
+coordinate. The identity also holds at $d = 1$, where the fundamental solution is $(0, 1)$.
 
 Source: Takashi Hirotsu, *General Pell's Equations and Angle Bisectors between Planar Lines with
 Rational Slopes*, INTEGERS 24 (2024), Article A111, Proposition 5, equation (24). -/
-theorem negPell_norm_of_solvable (d : ℕ) (hd : 1 < d)
+theorem negPell_norm_of_solvable (d : ℕ)
     (hneg : ∃ x y : ℤ, x ^ 2 - d * y ^ 2 = -1) (n : ℕ) :
     negPellF d n ^ 2 - d * negPellG d n ^ 2 = (-1) ^ n :=
-  negPellG_le_negPellF.norm (negPellG_le_negPellF.fund hd hneg).2.2 n
+  negPellG_le_negPellF.norm (negPellG_le_negPellF.fund_spec hneg).2 n
 
 /-- **Comparison of the negative Pell sequences.** Let $d > 1$ be a natural number such that
 $x^2 - d y^2 = -1$ has an integer solution, let $(X, Y)$ be its fundamental solution (the one with
