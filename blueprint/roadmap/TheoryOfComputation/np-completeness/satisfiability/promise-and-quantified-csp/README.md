@@ -15,3 +15,5 @@
 - [Krokhin–Opršal–Wrochna–Živný: adjunction reductions for approximate graph colouring](kowz-adjunction-approximate-colouring.md)
 - [Existence of cyclic or WNU polymorphisms of a promise template is undecidable](cyclic-and-wnu-polymorphisms-of-promise-templates.md)
 - [Whether BLP or AIP solves a promise CSP is undecidable](whether-blp-or-aip-solves-a-pcsp-is-undecidable.md)
+- [Minion characterization of promise CSPs decided by the basic SDP](basic-sdp-minion-characterization-of-promise-csps.md)
+- [Robust algorithms for promise CSPs with majority or alternating-threshold polymorphisms](robust-algorithms-for-promise-csps-with-majority-or-alternating-threshold-polymorphisms.md)
