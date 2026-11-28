@@ -38,6 +38,12 @@ Source: Peter Kagey, William Keehn, *Counting Tilings of the n × m Grid, Cylind
 @[expose] public def cellF (n m : ℕ) (c : ZMod n × ZMod m) : ZMod n × ZMod m :=
   (-1 - c.1, c.2)
 
+/-- **Coordinates of a reflected cell.** For all $n,m \in \mathbb{N}$ and all
+$c = (x,y) \in \mathbb{Z}/n\mathbb{Z} \times \mathbb{Z}/m\mathbb{Z}$, the cell map $f$
+satisfies $f(c)=(-1-x,y)$. -/
+public theorem cellF_apply (n m : ℕ) (c : ZMod n × ZMod m) :
+    cellF n m c = (-1 - c.1, c.2) := rfl
+
 /-- **Tile designs fixed by a power of a permutation.** For a finite set $T$ of tile designs, a
 permutation $\sigma$ of $T$ and a natural number $k$, this is the number of designs $d \in T$ with
 $\sigma^k(d) = d$.
@@ -50,6 +56,13 @@ Source: Peter Kagey, William Keehn, *Counting Tilings of the n × m Grid, Cylind
 @[expose] public def tileFixedCount {T : Type*} [Fintype T] [DecidableEq T]
     (σ : Equiv.Perm T) (k : ℕ) : ℕ :=
   Fintype.card {d : T // (σ ^ k) d = d}
+
+/-- **Designs fixed by a permutation.** For a finite set $T$ with decidable equality and a
+permutation $\sigma$ of $T$, the tile fixed count at exponent $1$ is
+$\left|\{d \in T \mid \sigma(d) = d\}\right|$. -/
+public theorem tileFixedCount_one {T : Type*} [Fintype T] [DecidableEq T] (σ : Equiv.Perm T) :
+    tileFixedCount σ 1 = Fintype.card {d : T // σ d = d} := by
+  simp only [tileFixedCount, pow_one]
 
 namespace rectangularGrid_f_even
 

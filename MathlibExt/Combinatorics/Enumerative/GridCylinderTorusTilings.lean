@@ -107,6 +107,14 @@ Source: Peter Kagey, William Keehn, *Counting Tilings of the n × m Grid, Cylind
     [Fintype T] [DecidableEq T] (φ : α → α) (σ : Equiv.Perm T) : ℕ :=
   Fintype.card {F : α → T // ∀ c, F (φ c) = σ (F c)}
 
+/-- **Cardinality formula for fixed tilings.** For finite sets of cells $\alpha$ and designs $T$
+with decidable equality, a map $\varphi : \alpha \to \alpha$, and a permutation $\sigma$ of $T$,
+the fixed-tiling count is $\left|\{F : \alpha \to T \mid \forall c \in \alpha,\,
+F(\varphi(c)) = \sigma(F(c))\}\right|$. -/
+public theorem fixedTilingCount_eq_card {α T : Type*} [Fintype α] [DecidableEq α]
+    [Fintype T] [DecidableEq T] (φ : α → α) (σ : Equiv.Perm T) :
+    fixedTilingCount φ σ = Fintype.card {F : α → T // ∀ c, F (φ c) = σ (F c)} := rfl
+
 /-- **Cylinder shift sum.** Let $T$ be a finite set of tile designs, let $n, m \ge 1$, let $g$ be
 a map from the cells $\mathbb{Z}/n \times \mathbb{Z}/m$ to themselves, and let $\sigma$ be a
 permutation of $T$. The cylinder shift sum of $g$ and $\sigma$ is the sum, over all shifts
@@ -123,6 +131,17 @@ Source: Peter Kagey, William Keehn, *Counting Tilings of the n × m Grid, Cylind
     (cellG : ZMod n × ZMod m → ZMod n × ZMod m) (σ : Equiv.Perm T) : ℕ :=
   ∑ a : ZMod n,
     fixedTilingCount (fun c => cellG (c.1 + a, c.2)) σ
+
+/-- **Expansion of the cylinder shift sum.** Let $n,m\ge 1$, let $T$ be a finite set of designs
+with decidable equality, and put $C = \mathbb{Z}/n\mathbb{Z} \times \mathbb{Z}/m\mathbb{Z}$.
+For $g : C \to C$ and a permutation $\sigma$ of $T$, the cylinder shift sum is
+$\sum_{a \in \mathbb{Z}/n\mathbb{Z}} \operatorname{Fix}(g_a,\sigma)$, where
+$g_a(x,y)=g(x+a,y)$ and $\operatorname{Fix}(g_a,\sigma)$ is the number of fixed tilings. -/
+public theorem cylinderShiftSum_eq_sum {T : Type*} [Fintype T] [DecidableEq T]
+    (n m : ℕ) [NeZero n] [NeZero m]
+    (cellG : ZMod n × ZMod m → ZMod n × ZMod m) (σ : Equiv.Perm T) :
+    cylinderShiftSum n m cellG σ =
+      ∑ a : ZMod n, fixedTilingCount (fun c => cellG (c.1 + a, c.2)) σ := rfl
 
 /-- **Torus shift sum.** Let $n, m \ge 1$, let $T$ be a finite set of tile designs, let $g$ be a
 map from $\mathbb{Z}/n \times \mathbb{Z}/m$ (the cells of the $n \times m$ torus) to itself and

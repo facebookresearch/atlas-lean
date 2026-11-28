@@ -9,29 +9,35 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Combinatorics.Enumerative.GridReflectionTilings
-import all MathlibExt.Combinatorics.Enumerative.SquareGridR2Odd
+import MathlibExt.Combinatorics.Enumerative.SquareGridR2Odd
 import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Data.Fintype.Sum
 import Mathlib.Logic.Equiv.Fin.Basic
 import Mathlib.Tactic.Ring
 
 /-!
-# Reflection-fixed tilings of a cylinder of even width
+# Reflection-fixed tilings of a cylinder
 
-For positive dimensions `n` and `m` with `n` even, and a finite set of tile designs with
-an involutive permutation `σ`, `cylinder_f_even` counts fixed tilings summed over all
-horizontal shifts before reflection. Even shifts leave no fixed columns; odd shifts leave two.
-A pair of reflected cells takes any tile, while a fixed cell takes a tile fixed by `σ`.
+For positive dimensions $n$ and $m$, let $T$ be a finite set of tile designs with decidable
+equality and let $\sigma$ be a permutation of $T$ with $\sigma^2=1$. The two formulas count
+tilings $F : \mathbb{Z}/n\mathbb{Z} \times \mathbb{Z}/m\mathbb{Z} \to T$ satisfying
+$F(-1-x-a,y)=\sigma(F(x,y))$ at every cell, summed over the horizontal shifts
+$a \in \mathbb{Z}/n\mathbb{Z}$. For `cylinder_f_even` ($n$ even), even shifts leave no fixed
+columns and odd shifts leave two, where the parity refers to the least nonnegative
+representative of $a$. For `cylinder_f_odd` ($n$ odd), every shift leaves exactly one fixed
+column. A reflected pair takes any design, while a fixed cell takes a design fixed by $\sigma$.
 
 ## References
 
 * Peter Kagey and William Keehn, *Counting Tilings of the n × m Grid, Cylinder, and Torus*,
   Journal of Integer Sequences 27 (2024), Article 24.6.1, Theorem 20 (p. 12), Lemma 25
-  (pp. 16–17), and Theorem 30, Equation (26a) (pp. 19–20).
+  (pp. 16–17), and Theorem 30, Equations (26a) and (26b) (pp. 19–20).
   <https://cs.uwaterloo.ca/journals/JIS/VOL27/Kagey/kagey6.html>
 * `MathlibExt.Combinatorics.Enumerative.SquareGridR2Odd`: the proof reuses
   `squareGrid_r2_odd.restrictEquiv` to choose tiles on one representative per pair and on
   the fixed cells.
+* `MathlibExt.Combinatorics.Enumerative.GridCylinderTorusTilings`: the odd case uses
+  `reflection_shift_solutions_odd` to identify the unique fixed column.
 -/
 
 namespace MetaMathlibExt
@@ -113,17 +119,18 @@ private theorem fixedTilingCount_shiftedReflection {T : Type*} [Fintype T] [Deci
   simp only [C, Fintype.card_prod, ZMod.card] at htotal
   have hrep : Fintype.card (Subtype p) = (n * m - k * m) / 2 := by omega
   have hshift (c : C) : cellF n m (c.1 + a, c.2) = φ c := by
+    rw [cellF_apply]
     refine Prod.ext ?_ rfl
-    dsimp [cellF, φ, r]
+    dsimp [φ, r]
     ring
   simp_rw [hshift]
+  rw [fixedTilingCount_eq_card, tileFixedCount_one]
   calc
-    fixedTilingCount φ σ = Fintype.card
+    Fintype.card {F : C → T // ∀ c, F (φ c) = σ (F c)} = Fintype.card
         ((Subtype p → T) × (Subtype q → {d : T // σ d = d})) :=
       Fintype.card_congr (squareGrid_r2_odd.restrictEquiv φ hφ p hp hflip σ hσ)
     _ = _ := by
       rw [Fintype.card_prod, Fintype.card_fun, Fintype.card_fun, hrep, hcard]
-      simp [tileFixedCount]
 
 /-- **Fixed cylinder tilings of the reflection f, n even.** Let $T$ be a finite set of tile
 designs, let $\sigma$ be a permutation of $T$ with $\sigma^2 = 1$, and let $n, m \ge 1$ with $n$
@@ -153,7 +160,7 @@ public theorem cylinder_f_even {T : Type*} [Fintype T] [DecidableEq T]
     rw [fixedTilingCount_shiftedReflection n m a σ htiles, card_fixedColumns hn]
     split_ifs <;> simp [A, B]
   suffices hsum : 2 * (∑ a : ZMod n, if Even a.val then A else B) = n * (A + B) by
-    simpa only [cylinderShiftSum, hcount] using hsum
+    simpa only [cylinderShiftSum_eq_sum, hcount] using hsum
   -- Index the two parities by the second coordinate of `Fin k × Fin 2`.
   obtain ⟨k, hk⟩ : ∃ k, n = k * 2 := by
     obtain ⟨k, hk⟩ := hn
@@ -167,5 +174,35 @@ public theorem cylinder_f_even {T : Type*} [Fintype T] [DecidableEq T]
     simp [e, hfin, finProdFinEquiv, Nat.mul_comm, Nat.add_comm]
   rw [← e.sum_comp, Fintype.sum_prod_type]
   simp [he, Fin.sum_univ_two, Nat.even_add_one, hk, Nat.mul_assoc, Nat.mul_left_comm]
+
+/-- **Cylinder fixed-tiling count for the reflection $f$ when $n$ is odd.** Let $T$ be a finite set
+of tile designs, let $n, m \ge 1$ with $n$ odd, and let $\sigma$ be a permutation of $T$ with
+$\sigma^2 = 1$. Let $f$ be the cell map $(x, y) \mapsto (-1 - x, y)$ of
+$\mathbb{Z}/n \times \mathbb{Z}/m$, and let $t$ be the number of designs fixed by $\sigma$. Then
+the cylinder shift sum of $f$ and $\sigma$ equals $n \cdot |T|^{(nm - m)/2} \cdot t^m$.
+
+Source: Peter Kagey, William Keehn, *Counting Tilings of the n × m Grid, Cylinder, and Torus*,
+        Journal of Integer Sequences 27 (2024), Article 24.6.1, Theorem 30. -/
+public theorem cylinder_f_odd {T : Type*} [Fintype T] [DecidableEq T]
+    (n m : ℕ) [NeZero n] [NeZero m] (σ : Equiv.Perm T) (hσ : σ ^ 2 = 1)
+    (hn : Odd n) :
+    cylinderShiftSum n m (cellF n m) σ =
+      n * Fintype.card T ^ ((n * m - m) / 2) * tileFixedCount σ 1 ^ m := by
+  classical
+  have htiles : Function.Involutive σ := fun t => by
+    simpa [sq] using DFunLike.congr_fun hσ t
+  have hcount (a : ZMod n) :
+      fixedTilingCount (fun c => cellF n m (c.1 + a, c.2)) σ =
+        Fintype.card T ^ ((n * m - m) / 2) * tileFixedCount σ 1 ^ m := by
+    let x₀ : ZMod n := (((n + 1) / 2 : ℕ) : ZMod n) * (-1 - a)
+    have hmem (x : ZMod n) : -1 - x - a = x ↔ x = x₀ :=
+      eq_comm.trans (by simpa only [Set.mem_ofPred_eq, Set.mem_singleton_iff, x₀]
+        using Set.ext_iff.mp (reflection_shift_solutions_odd n a hn) x)
+    have hcard : Fintype.card {x : ZMod n // -1 - x - a = x} = 1 :=
+      (Fintype.card_congr (Equiv.subtypeEquivRight hmem)).trans (Fintype.card_subtype_eq x₀)
+    rw [fixedTilingCount_shiftedReflection n m a σ htiles]
+    simp only [hcard, one_mul]
+  rw [cylinderShiftSum_eq_sum, Finset.sum_const_nat (fun a _ => hcount a)]
+  simp only [Finset.card_univ, ZMod.card, Nat.mul_assoc]
 
 end MetaMathlibExt

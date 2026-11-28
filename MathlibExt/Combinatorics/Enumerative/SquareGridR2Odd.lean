@@ -13,17 +13,36 @@ public import MathlibExt.Combinatorics.Enumerative.GridReflectionTilings
 /-!
 # Square-grid tilings fixed by the half-turn for odd $n$
 
-`MetaMathlibExt.squareGrid_r2_odd` counts the tilings of an odd square grid fixed by the
-half-turn: with one fixed cell, the remaining cells form pairs, and the fixed cell must
-carry a tile fixed by the design permutation.
+For positive odd $n$, a finite set $T$ of tile designs with decidable equality and a
+permutation $\sigma$ of $T$ with $\sigma^2=1$, `MetaMathlibExt.squareGrid_r2_odd` counts the
+tilings of the $n \times n$ grid fixed by the half-turn and $\sigma$. The nonfixed cells form
+pairs, and the unique fixed cell must carry a tile fixed by $\sigma$.
+
+The restriction bijection applies to any involutions on cells with decidable equality and
+on tile designs, given a decidable choice of one representative from each pair of nonfixed
+cells and no representative at fixed cells.
+
+## References
+
+* Peter Kagey and William Keehn, *Counting Tilings of the n × m Grid, Cylinder, and Torus*,
+  Journal of Integer Sequences 27 (2024), Article 24.6.1, Theorem 20 (p. 12) and
+  Theorem 24 (pp. 14–15).
 -/
 
 namespace MetaMathlibExt
 
 namespace squareGrid_r2_odd
 
-/-- Restriction to representatives of the half-turn pairs, plus the fixed tiles. -/
-private def restrictEquiv {α T : Type*} [DecidableEq α] (φ : α → α) (hφ : Function.Involutive φ)
+/-- **Tilings fixed by an involution via orbit representatives.** Let $\alpha$ be a type of
+cells with decidable equality and let $T$ be a type of tile designs. Let
+$\varphi : \alpha \to \alpha$ and a permutation $\sigma$ of $T$ both be involutions. Let
+$p$ be a decidable predicate on $\alpha$ with $\neg p(c)$ when $\varphi(c)=c$ and
+$p(\varphi(c)) \iff \neg p(c)$ when $\varphi(c)\ne c$. Restriction gives a bijection
+
+$$\{F : \alpha \to T \mid \forall c,\, F(\varphi(c))=\sigma(F(c))\} \simeq
+(\{c \mid p(c)\} \to T) \times (\{c \mid \varphi(c)=c\} \to \{d \mid \sigma(d)=d\}).$$
+-/
+public def restrictEquiv {α T : Type*} [DecidableEq α] (φ : α → α) (hφ : Function.Involutive φ)
     (p : α → Prop) [DecidablePred p]
     (hfixed : ∀ c, φ c = c → ¬ p c)
     (hflip : ∀ c, φ c ≠ c → (p (φ c) ↔ ¬ p c))
