@@ -27,3 +27,4 @@ Boolean circuits as a model of computation, including arithmetic circuits built 
 - [Arrival times of a circuit with gate delays](arrival-times-of-a-circuit-with-gate-delays/README.md)
 - [Contamination delays and hold-time certificates](contamination-delays-and-hold-time-certificates/README.md)
 - [Static mux hazard under transport delay](static-mux-hazard-under-transport-delay/README.md)
+- [Monotone circuits for bipartite perfect matching](monotone-perfect-matching-lower-bound/README.md)
