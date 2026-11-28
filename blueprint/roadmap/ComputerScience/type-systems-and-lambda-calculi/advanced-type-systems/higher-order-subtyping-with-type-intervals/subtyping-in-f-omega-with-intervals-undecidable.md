@@ -35,7 +35,7 @@ None.
 
 The "if" direction is direct: by bound projection, applying the kind of the K-variable to $\ulcorner s \urcorner$ and $\ulcorner t \urcorner$ gives $K \cdot \ulcorner s \urcorner \cdot \ulcorner t \urcorner \le \ulcorner s \urcorner$, and the mirrored variable gives the converse; similarly for S, so every conversion step becomes a pair of subtyping steps. The "only if" direction is the hard part, because subtyping derivations may pass through types that encode no SK term, such as $\top$. The proof first proves the result for the canonical system, which removes β- and η-steps and is equivalent to the declarative one. It then passes to a reduced canonical system without the rules irrelevant to the encoding (higher-order operators, arrow and universal subtyping, variable subsumption), decodes reduced derivations into an order on SK terms extended with $\bot$ and $\top$, and eliminates $\bot$ and $\top$ with a pair of parallel reduction relations to recover an SK conversion. SK convertibility is undecidable because combinatory logic is Turing-complete; the use of SK terms follows Castellan, Clairambault and Dybjer. The culprit is equality reflection through bound projection: the kinds of the four extra variables of $\Sigma_{SK}$ assert the SK equations as interval bounds. The source remarks that even with consistent bounds enforced, subtyping would likely remain undecidable because of the strong rule for universal types, as in full $F_{<:}$. The result is mechanized in Agda.
 
-A good expansion links the undecidability of convertibility of SK terms in combinatory logic, which has no page on main yet.
+A good expansion links the undecidability of convertibility of SK terms in combinatory logic.
 
 ## Sources
 

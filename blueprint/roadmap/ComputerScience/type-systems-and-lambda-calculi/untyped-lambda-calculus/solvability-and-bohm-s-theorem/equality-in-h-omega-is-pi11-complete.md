@@ -32,7 +32,7 @@ $\mathcal H$ is the theory extending $\lambda\beta$ by $M = \Omega$ for all clos
 
 The source's earlier work shows that $\lambda\beta$ closed under the $\omega$-rule is not recursively enumerable (true $\Pi^0_2$ sentences reduce to it) and not even arithmetical.
 
-A good expansion links the $\Pi^1_1$-completeness of well-founded recursive trees (Rogers; Theorem 8.1 of the source) and Barendregt's construction of the terms $B_0$, $B_1$ (Lemmas 8.2–8.4 of the source), which have no pages on main yet.
+A good expansion links the $\Pi^1_1$-completeness of well-founded recursive trees (Rogers; Theorem 8.1 of the source) and Barendregt's construction of the terms $B_0$, $B_1$ (Lemmas 8.2–8.4 of the source).
 
 ## Sources
 

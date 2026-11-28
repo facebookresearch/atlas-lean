@@ -2,7 +2,7 @@
 
 No algorithm decides, given a context and two types of the calculus $D_{<:}$, whether the first type is a subtype of the second; the result holds also for the normal-form rules without the bad-bounds rule.
 
-**Theorem.** The subtyping problem of [the calculus $D_{<:}$](the-calculus-d-sub.md) (given $\Gamma$, $S$ and $U$, is $\Gamma \vdash S <: U$ derivable?) is undecidable. It remains undecidable for the normal-form presentation of $D_{<:}$ subtyping with the bad-bounds rule removed.
+**Theorem.** The subtyping problem of [the calculus $D_{<:}$](the-calculus-d-sub.md) (given $\Gamma$, $S$ and $U$, is $\Gamma \vdash S <: U$ derivable?) is undecidable. It remains undecidable for the normal-form presentation of $D_{<:}$ subtyping with the bad-bounds rule removed. The normal form keeps Top, Bot, Refl, Bnd and All, replaces Sel1 and Sel2 by Sel1' (from $\Gamma \vdash \Gamma(x) <: \{A : S .. \top\}$ infer $\Gamma \vdash S <: x.A$) and Sel2' (from $\Gamma \vdash \Gamma(x) <: \{A : \bot .. U\}$ infer $\Gamma \vdash x.A <: U$), and replaces Trans by the bad-bounds rule BB (from $\Gamma \vdash \Gamma(x) <: \{A : S .. \top\}$ and $\Gamma \vdash \Gamma(x) <: \{A : \bot .. U\}$ for some $x$ infer $\Gamma \vdash S <: U$); with BB it derives exactly the judgments of the original rules.
 
 ## Depends on
 
