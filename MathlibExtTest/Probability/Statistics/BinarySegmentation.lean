@@ -14,8 +14,10 @@ import Mathlib.Tactic.NormNum
 
 /-! Tests for binary segmentation: the segments of an induced partition, the CUSUM statistics of a
 two-point and a three-point data vector, two runs of the algorithm (the second step falling back on
-the value of `sign 0` at a tie), the two-point selection event of the source's expansion, and an
-instance of the polyhedral selection theorem with feasible locations. -/
+the value of `sign 0` at a zero CUSUM), a tie between two split points that the tie-breaking rule
+decides, the two-point selection event of the page's expansion, runs that stop once no split point
+is free, empty selection events of infeasible locations, and an instance of the polyhedral
+selection theorem with feasible locations. -/
 
 namespace MathlibExtTest.Probability.Statistics.BinarySegmentation
 
@@ -25,6 +27,11 @@ open Finset Matrix MathlibExt.Probability.Statistics.BinarySegmentation
 noncomputable def lowestTie : TieBreak where
   pick _ S := if h : S.Nonempty then S.min' h else 0
   pick_mem _ S h := by simpa [h] using S.min'_mem h
+
+/-- Another tie-breaking rule: pick the largest tied split point. -/
+noncomputable def highestTie : TieBreak where
+  pick _ S := if h : S.Nonempty then S.max' h else 0
+  pick_mem _ S h := by simpa [h] using S.max'_mem h
 
 /-- With changepoints `2` and `5` on `{1, …, 8}`, the split point `4` lies in the segment
 `{3, 4, 5}`, the split point `1` in `{1, 2}` and the split point `7` in `{6, 7, 8}`. -/
@@ -50,8 +57,8 @@ theorem cusum_three_two : cusum ![0, 0, 1] 1 2 3 = √(2 / 3) := by
 theorem cusum_three_one : cusum ![0, 0, 1] 1 1 3 = √(2 / 3) * (1 / 2) := by
   norm_num [cusum, segmentMean, Finset.sum_filter, Fin.sum_univ_three]
 
-/-- The data `(0, 0, 1)`: on the second segment `{1, 2}` of the split after `2`, the split after
-the first point has CUSUM `0`. -/
+/-- The data `(0, 0, 1)`: on the left segment `{1, 2}` after the split at `2`, which the second
+step searches, the split after the first point has CUSUM `0`. -/
 theorem cusum_three_one_left : cusum ![0, 0, 1] 1 1 2 = 0 := by
   norm_num [cusum, segmentMean, Finset.sum_filter, Fin.sum_univ_three]
 
@@ -99,8 +106,46 @@ example (rule : TieBreak) (sign0 : ℤˣ) :
   simp only [step, hB, hbest, hpick, hzero, direction, lt_irrefl, ite_false, List.cons_append,
     List.nil_append]
 
-/-- The source's two-point example: with `n = 2`, `k = 1`, `b₁ = 1` and `d₁ = +1`, the selection
-event lies between `{y₁ < y₂}` and `{y₁ ≤ y₂}`, so the sign row alone cuts it down from `ℝ²`. -/
+/-- The data `(0, 1, 0)`: the two split points tie, with opposite CUSUMs `±√(2/3) / 2`. -/
+theorem bestSplits_tie : bestSplits ![0, 1, 0] ∅ = {1, 2} ∧
+    splitCusum ![0, 1, 0] ∅ 1 = √(2 / 3) * (1 / 2) ∧
+    splitCusum ![0, 1, 0] ∅ 2 = -(√(2 / 3) * (1 / 2)) := by
+  have h1 : splitCusum ![0, 1, 0] ∅ 1 = √(2 / 3) * (1 / 2) := by
+    rw [splitCusum, show segmentStart ∅ 1 = 1 by decide, show segmentEnd 3 ∅ 1 = 3 by decide]
+    norm_num [cusum, segmentMean, Finset.sum_filter, Fin.sum_univ_three]
+  have h2 : splitCusum ![0, 1, 0] ∅ 2 = -(√(2 / 3) * (1 / 2)) := by
+    rw [splitCusum, show segmentStart ∅ 2 = 1 by decide, show segmentEnd 3 ∅ 2 = 3 by decide]
+    norm_num [cusum, segmentMean, Finset.sum_filter, Fin.sum_univ_three]
+  refine ⟨?_, h1, h2⟩
+  rw [bestSplits, show freeSplits 3 ∅ = {1, 2} by decide]
+  refine Finset.filter_true_of_mem fun b hb c hc => ?_
+  simp only [mem_insert, mem_singleton] at hb hc
+  rcases hb with rfl | rfl <;> rcases hc with rfl | rfl <;> simp [h1, h2]
+
+/-- At that tie the rule decides: picking the lowest split point gives the split after the first
+point, upwards. -/
+example (sign0 : ℤˣ) : model lowestTie sign0 ![0, 1, 0] 1 = [(1, 1)] := by
+  obtain ⟨hbest, h1, -⟩ := bestSplits_tie
+  have hpick : lowestTie.pick [] {1, 2} = 1 := by decide
+  rw [model_succ_of_lt lowestTie sign0 _ (by norm_num)]
+  simp only [model, step, List.map_nil, List.toFinset_nil, hbest, hpick, h1, List.nil_append,
+    List.cons.injEq, Prod.mk.injEq, true_and, and_true]
+  exact direction_eq_of_pos_mul (by simp only [Units.val_one, Int.cast_one, one_mul]; positivity)
+
+/-- Picking the highest split point gives the split after the second point, downwards. -/
+example (sign0 : ℤˣ) : model highestTie sign0 ![0, 1, 0] 1 = [(2, -1)] := by
+  obtain ⟨hbest, -, h2⟩ := bestSplits_tie
+  have hpick : highestTie.pick [] {1, 2} = 2 := by decide
+  rw [model_succ_of_lt highestTie sign0 _ (by norm_num)]
+  simp only [model, step, List.map_nil, List.toFinset_nil, hbest, hpick, h2, List.nil_append,
+    List.cons.injEq, Prod.mk.injEq, true_and, and_true]
+  exact direction_eq_of_pos_mul (by
+    simp only [Units.val_neg, Units.val_one, Int.cast_neg, Int.cast_one, neg_mul, one_mul, neg_neg]
+    positivity)
+
+/-- The two-point example of the page's expansion: with `n = 2`, `k = 1`, `b₁ = 1` and `d₁ = +1`,
+the selection event lies between `{y₁ < y₂}` and `{y₁ ≤ y₂}`. The source's comparison rows number
+`2 (n - 2) = 0` here, so the sign row alone cuts the event down from `ℝ²`. -/
 example (rule : TieBreak) (sign0 : ℤˣ) :
     {y : Fin 2 → ℝ | y 0 < y 1} ⊆ selectionEvent 2 rule sign0 ![1] ![1] ∧
       selectionEvent 2 rule sign0 ![1] ![1] ⊆ {y : Fin 2 → ℝ | y 0 ≤ y 1} := by

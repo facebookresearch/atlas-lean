@@ -28,14 +28,14 @@ found so far at the split point of largest `|g_{(s,b,e)}ᵀ y|`, where `{s, …,
 of that partition containing `b` and `b + 1`, and records the location `b̂_ℓ` and the direction
 `d̂_ℓ = sign(g_{(s,b̂_ℓ,e)}ᵀ y)`, with a fixed rule for ties and a fixed value of `sign 0`.
 
-For fixed locations `b_{1:k}` and directions `d_{1:k}`, the event that binary segmentation
-selects them lies between the open and the closed convex polyhedral cones `{y : Γ y > 0}` and
-`{y : Γ y ≥ 0}` of an explicit matrix `Γ`, whatever the tie-breaking rule. So it agrees with the
-closed cone outside the hyperplanes of the rows of `Γ`, that is almost everywhere, though it need
-not equal it. Step `ℓ` contributes the sign row `d_ℓ g_ℓ` and, for every
-competing split point `c`, the two rows `d_ℓ g_ℓ ∓ g_c`, where `g_ℓ` and `g_c` are the CUSUM
-contrasts of `b_ℓ` and `c` in their segments. This corrects the statement of Hyun, Lin, G'Sell
-and Tibshirani (2021, Proposition 1), as the implementation notes explain.
+For feasible locations `b_{1:k}` (distinct elements of `{1, …, n - 1}`) and directions
+`d_{1:k}`, the event that binary segmentation selects them lies between the open and the closed
+convex polyhedral cones `{y : Γ y > 0}` and `{y : Γ y ≥ 0}` of an explicit matrix `Γ`, whatever
+the tie-breaking rule. So it agrees with the closed cone outside the hyperplanes of the rows of
+`Γ`, that is almost everywhere, though it need not equal it. Step `ℓ` contributes the sign row
+`d_ℓ g_ℓ` and, for every competing split point `c`, the two rows `d_ℓ g_ℓ ∓ g_c`, where `g_ℓ` and
+`g_c` are the CUSUM contrasts of `b_ℓ` and `c` in their segments. This corrects the statement of
+Hyun, Lin, G'Sell and Tibshirani (2021, Proposition 1), as the implementation notes explain.
 
 ## Main definitions
 
@@ -75,9 +75,9 @@ with `2 ∑_{ℓ=1}^{k} (n - ℓ - 1)` rows, the comparison rows only, and does 
 Ties break that equality: on a tie the tie-breaking rule may pick another split point, or the
 direction of a zero CUSUM statistic is the fixed value of `sign 0`, while `Γ y ≥ 0` still holds.
 A step with no competitor (`n - ℓ = 1`) has no comparison rows, so without a sign row its
-direction would be unconstrained. So this module proves the two-sided inclusion
-`{y : Γ y > 0} ⊆ {y : M^{BS}_{1:k}(y) = {b_{1:k}, d_{1:k}}} ⊆ {y : Γ y ≥ 0}`, with one sign row per
-step, which gives `∑_{ℓ=1}^{k} (2 (n - ℓ - 1) + 1)` rows.
+direction would be unconstrained. So, for feasible locations, this module proves the two-sided
+inclusion `{y : Γ y > 0} ⊆ {y : M^{BS}_{1:k}(y) = {b_{1:k}, d_{1:k}}} ⊆ {y : Γ y ≥ 0}`, with one
+sign row per step, which gives `∑_{ℓ=1}^{k} (2 (n - ℓ - 1) + 1)` rows.
 
 Locations are natural numbers, positions are numbered from `1`, and position `i` of
 `y : Fin n → ℝ` is the coordinate `y ⟨i - 1, _⟩`. Directions are units of `ℤ`, that is `±1`.
@@ -185,7 +185,8 @@ theorem cusumContrast_pos_iff {s b e : ℕ} (hsb : s ≤ b) (hbe : b < e) (j : F
     · rw [ite_eq_right hA, ite_eq_right hB, sub_zero, mul_zero]
       exact iff_of_false (lt_irrefl 0) hA
 
-/- Contrasts of different split points are not parallel: `g_{(s',b',e')} ≠ ± g_{(s,b,e)}`. -/
+/- Contrasts of different split points are neither equal nor opposite:
+`g_{(s',b',e')} ≠ ± g_{(s,b,e)}`. -/
 theorem cusumContrast_ne_smul {s b e s' b' e' : ℕ} (hs : 1 ≤ s) (hsb : s ≤ b) (hbe : b < e)
     (hen : e ≤ n) (hs' : 1 ≤ s') (hsb' : s' ≤ b') (hbe' : b' < e') (hen' : e' ≤ n)
     (hbb' : b ≠ b') (u : ℤˣ) :
@@ -324,9 +325,10 @@ noncomputable def direction (sign0 : ℤˣ) (t : ℝ) : ℤˣ :=
   if 0 < t then 1 else if t < 0 then -1 else sign0
 
 /-- One step of binary segmentation after the history `H` of locations and directions selected so
-far: the location `b` that the tie-breaking rule picks among the split points maximising
-`|g_{(s,b,e)}ᵀ y|` over the segments `{s, …, e}` of the partition induced by the locations of
-`H`, and its direction `sign(g_{(s,b,e)}ᵀ y)`. -/
+far, when a split point is still free: the location `b` that the tie-breaking rule picks among
+the split points maximising `|g_{(s,b,e)}ᵀ y|` over the segments `{s, …, e}` of the partition
+induced by the locations of `H`, and its direction `sign(g_{(s,b,e)}ᵀ y)`. When no split point is
+free, `b` is whatever the rule returns on the empty set; `model` takes no step then. -/
 noncomputable def step (rule : TieBreak) (sign0 : ℤˣ) (y : Fin n → ℝ) (H : List (ℕ × ℤˣ)) :
     ℕ × ℤˣ :=
   let B := (H.map Prod.fst).toFinset
