@@ -23,6 +23,8 @@ Here $\varepsilon$ is fixed and only the queries are input. Non-triviality is ne
 
 The source of undecidability is a variant of Hilbert's tenth problem, with polynomials represented by unions of conjunctive queries as in the work of Ioannidis and Ramakrishnan. The authors' CQ-ization replaces such a union by a single conjunctive query whose homomorphism count on a database depends in a controlled way on the count of the union, which avoids the anti-cheating gadgets of earlier proofs. For Corollary 5, with a fresh unary relation $P$, the queries $\alpha_s = \mathfrak{m} \ne \mathfrak{v} \wedge P(\mathfrak{m}) \wedge P(\mathfrak{v}) \wedge P(z) \wedge P(z')$ and $\alpha_b = P(z) \wedge P(z') \wedge z \ne z'$ satisfy $\alpha_s(D) \le 2\,\alpha_b(D)$ for every $D$, with equality when the only $P$-facts are $P(\mathfrak{m})$ and $P(\mathfrak{v})$, so $2\beta_s \le \beta_b$ on non-trivial databases if and only if $\beta_s \wedge \alpha_s$ is bag-contained in $\beta_b \wedge \alpha_b$.
 
+A good expansion links a page for the CQ-ization of a union of conjunctive queries, with the controlled dependence of its homomorphism count on the count of the union.
+
 ## Sources
 
 - Jerzy Marcinkowski and Piotr Ostropolski-Nalewaja, "Bag Semantics Query Containment: The CQ vs. UCQ Case and Other Stories", Proceedings of the ACM on Management of Data 3(5), 24 pages, 2025, <https://doi.org/10.1145/3767711>; Theorem 3 (main statement) with its proof in Section 10, Corollaries 4 and 5 with the proof of Corollary 5 in Section 3, and Section 2 of arXiv:2503.07219v3 (the copy read), <https://arxiv.org/abs/2503.07219v3>.

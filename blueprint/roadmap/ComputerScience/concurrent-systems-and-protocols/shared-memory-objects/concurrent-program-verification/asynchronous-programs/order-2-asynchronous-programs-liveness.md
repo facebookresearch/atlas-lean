@@ -6,7 +6,7 @@ For asynchronous programs whose handlers post tasks according to languages of hi
 
 **Theorem (Majumdar, Thinniyam and Zetzsche).**
 
-1. For every full trio $\mathcal{C}$, configuration reachability, fair non-termination and fair starvation for asynchronous programs over $\mathcal{C}$ are all decidable or all undecidable, and if they are decidable then it is decidable whether a language of $\mathcal{C}$ over $\{a, b\}$ contains a word with as many $a$s as $b$s.
+1. For every effective full trio $\mathcal{C}$, configuration reachability, fair non-termination and fair starvation for asynchronous programs over $\mathcal{C}$ are all decidable or all undecidable, and if they are decidable then it is decidable whether a language of $\mathcal{C}$ over $\{a, b\}$ contains a word with as many $a$s as $b$s.
 2. For asynchronous programs over the languages of higher-order recursion schemes (word schemes), configuration reachability, fair non-termination and fair starvation are undecidable already at order 2 (Corollary 5.3).
 
 For asynchronous programs over the languages of order-2 pushdown automata (the indexed languages) the same undecidability follows directly from clause 1 and the undecidability of the $Z$-intersection problem for indexed languages (Zetzsche); the source translates order-2 pushdown automata into order-2 word schemes in one direction only and does not claim that the two classes coincide.
@@ -26,4 +26,4 @@ Clause 1 is proved by mutual reductions between the three problems and a reducti
 
 ## Sources
 
-- Rupak Majumdar, Ramanathan S. Thinniyam and Georg Zetzsche, *General Decidability Results for Asynchronous Shared-Memory Programs: Higher-Order and Beyond*, Logical Methods in Computer Science 18(4), 2022, https://doi.org/10.46298/lmcs-18(4:2)2022; the definitions of asynchronous programs and of their decision problems, the equivalence theorem for configuration reachability, fair termination and fair starvation, and the corollary for higher-order recursion schemes, read in arXiv:2101.08611v4. Locators in arXiv:2101.08611v4: Section 2 (full trios), Theorem 4.4 and Corollary 5.3.
+- Rupak Majumdar, Ramanathan S. Thinniyam and Georg Zetzsche, *General Decidability Results for Asynchronous Shared-Memory Programs: Higher-Order and Beyond*, Logical Methods in Computer Science 18(4), 2022, https://doi.org/10.46298/lmcs-18(4:2)2022; the definitions of asynchronous programs and of their decision problems, the equivalence theorem for configuration reachability, fair termination and fair starvation, and the corollary for higher-order recursion schemes, read in arXiv:2101.08611v4. Locators in arXiv:2101.08611v4: Section 2 (full trios; asynchronous programs, Definition 2.2), Section 3 (fair runs, starvation, Definitions 3.1 and 3.2), Theorem 4.4 and Corollary 5.3.
