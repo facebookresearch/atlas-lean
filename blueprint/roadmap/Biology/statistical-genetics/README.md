@@ -8,6 +8,7 @@ Statistical methods for genome-wide association studies, heritability estimation
 - [BOLT-LMM mixed-model association](bolt-lmm-mixed-model-association/README.md)
 - [Gene constraint scores (pLI and LOEUF)](gene-constraint-scores-pli-and-loeuf/README.md)
 - [Imputation of association summary statistics](imputation-of-association-summary-statistics/README.md)
+- [Lander–Green multipoint pedigree likelihood](lander-green-multipoint-pedigree-likelihood/README.md)
 - [Latent causal variable model](latent-causal-variable-model/README.md)
 - [LD-score regression](ld-score-regression/README.md)
 - [Liability-scale heritability from LD-score regression](liability-scale-heritability-from-ld-score-regre/README.md)

@@ -22,10 +22,10 @@ for positive finite functions $c_1, c_2, \nu$ on $[0, \infty)$; $\nu$ is the pop
 
 ## Depends on
 
-- [Cannings model of a haploid population](../cannings-models/cannings-model.md)
-- [The Λ-coalescent rate matrix on partitions of a finite sample](../../coalescents/the-coalescent-rate-matrix-on-partitions-of-a-fi.md)
-- [Total merger rate of a Λ-coalescent](../../coalescents/total-merger-rate.md)
-- [Coalescence probability of a Cannings model](../cannings-models/coal-prob.md)
+- [Cannings model of a haploid population](../../cannings-models/cannings-model.md)
+- [The Λ-coalescent rate matrix on partitions of a finite sample](../../../coalescents/the-coalescent-rate-matrix-on-partitions-of-a-fi.md)
+- [Total merger rate of a Λ-coalescent](../../../coalescents/total-merger-rate.md)
+- [Coalescence probability of a Cannings model](../../cannings-models/coal-prob.md)
 
 ## Expansion
 

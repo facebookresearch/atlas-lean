@@ -16,4 +16,3 @@ frequency spectrum under multiple mergers.
 - [Λ-coalescents from seasonal dormancy](lambda-coalescents-from-seasonal-dormancy/README.md)
 - [Pareto-sampling coalescents](pareto-sampling-coalescents/README.md)
 - [Site frequency spectrum of the Bolthausen–Sznitman coalescent](site-frequency-spectrum-of-the-bolthausen-sznitman-coalescent/README.md)
-- [Time-changed Λ-coalescents under population size change](time-changed-lambda-coalescents/README.md)

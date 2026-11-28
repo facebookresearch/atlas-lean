@@ -19,12 +19,12 @@ where $(\Pi_t)$ is the $\Lambda$-$n$-coalescent; added individuals may be alloca
 ## Depends on
 
 - [Modified Moran model with variable population size](modified-moran-model-with-variable-population-size.md)
-- [The Λ-coalescent rate matrix on partitions of a finite sample](../../coalescents/the-coalescent-rate-matrix-on-partitions-of-a-fi.md)
-- [Coalescence probability of a Cannings model](../cannings-models/coal-prob.md)
+- [The Λ-coalescent rate matrix on partitions of a finite sample](../../../coalescents/the-coalescent-rate-matrix-on-partitions-of-a-fi.md)
+- [Coalescence probability of a Cannings model](../../cannings-models/coal-prob.md)
 
 ## Proof depends on
 
-- [Möhle–Sagitov conditions for a Λ-coalescent limit](../coalescent-limits-of-cannings-models/mohle-sagitov-lambda.md)
+- [Möhle–Sagitov conditions for a Λ-coalescent limit](../mohle-sagitov-lambda.md)
 
 ## Expansion
 

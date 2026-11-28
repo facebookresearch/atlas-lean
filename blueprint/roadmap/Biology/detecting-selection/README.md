@@ -24,5 +24,3 @@ Statistical tests of neutrality and genome scans for selection based on polymorp
 - [Localizing the favored mutation in a sweep](localizing-the-favored-mutation-in-a-sweep/README.md)
 - [Excess synonymous constraint](excess-synonymous-constraint/README.md)
 - [Site-specific conservation scores from rate scaling](site-specific-conservation-scores-from-rate-scaling/README.md)
-- [Derived-allele accumulation ratio](derived-allele-accumulation-ratio/README.md)
-- [Polygenic adaptation from GWAS allele frequencies](polygenic-adaptation-from-gwas-allele-frequencies/README.md)
