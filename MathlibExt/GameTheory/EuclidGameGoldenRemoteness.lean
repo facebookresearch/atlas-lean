@@ -22,10 +22,11 @@ For a Calkin–Wilf vertex $m/n$ in row $k$ with $m>n$, if $(m,n)$ is a next-pla
 and its Smith remoteness equals $k$, then $\varphi<m/n<\varphi+1$. The row index is
 an upper bound for the length of play, since every move ascends at least one row.
 
-The proof uses the golden cone of P-positions. At an N-position, optimal play can
-move to a P-position. A move that skips more than one row would give remoteness
-strictly less than $k$, so the first move must subtract just one copy of the smaller
-entry. Applying the cone bound to that follower gives the upper inequality.
+The proof uses the golden cone of P-positions. A winning move from an N-position in row $k$
+reaches a P-position. If that move skips more than one row, its destination has remoteness at
+most $k-2$, so the starting remoteness is at most $k-1$. Thus, when the starting remoteness is
+$k$, every winning move subtracts just one copy of the smaller entry. Applying the cone bound
+to that follower gives the upper inequality.
 
 ## References
 
