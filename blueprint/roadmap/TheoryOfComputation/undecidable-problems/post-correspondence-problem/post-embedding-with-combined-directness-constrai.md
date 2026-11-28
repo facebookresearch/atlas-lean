@@ -38,7 +38,7 @@ source proves decidable through Higman's lemma and a length function theorem.
 ## Expansion
 
 Item 2 reduces the Post correspondence problem: from an instance $(u, v)$ one builds an instance with two marker letters and a set $R'$ of suffixes whose images have different lengths, which is deterministic context-free and Presburger-definable, so that
-codirectness on $R'$ forces equal lengths and hence equality $u(\sigma) = v(\sigma)$. Item 1 reduces the reachability problem for length-preserving semi-Thue systems. A good expansion links pages for the $\Sigma^0_1$-completeness of that reachability problem and of the Post correspondence problem, which the hardness parts use (Theorems 18 and 20 of the source).
+codirectness on $R'$ forces equal lengths and hence equality $u(\sigma) = v(\sigma)$. Item 1 reduces the reachability problem for length-preserving semi-Thue systems between two given regular languages $P_1, P_2$: do some $x \in P_1$ and $y \in P_2$ satisfy $x \to^* y$? (Between two given words, length-preserving reachability is decidable, since only finitely many words of that length exist.) A good expansion links pages for the $\Sigma^0_1$-completeness of that reachability problem and of the Post correspondence problem, which the hardness parts use (Theorems 18 and 20 of the source).
 
 ## Sources
 

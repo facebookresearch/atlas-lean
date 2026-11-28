@@ -19,7 +19,6 @@
 - [Equivalence of context-free grammars is not recognizable](exists-not-tm2-recognizable-language-eq.md)
 - [Inclusion of context-free languages is not recognizable](exists-not-tm2-recognizable-language-le.md)
 - [Density of lexicographic orders of context-free languages is undecidable](density-of-lexicographic-orders-of-cfls-is.md)
-- [Inclusion of simple languages is undecidable](inclusion-of-simple-deterministic-languages-is.md)
 - [Piecewise testability of context-free languages is undecidable](piecewise-testability-of-context-free-languages.md)
 - [The pumping problem for context-free grammars is Π⁰₁-complete](the-pumping-problem-for-context-free-grammars.md)
 - [Whether a context-free language is an XML-language is undecidable](being-an-xml-language-is-undecidable-for-cfls.md)
