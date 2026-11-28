@@ -6,8 +6,6 @@
 - [Feasible flow on an arc network](is-arc-feasible.md)
 - [Flow value of an aggregated arc vector](flow-value-aggregate-eq-neg-mul-vec.md)
 - [Proportional lift of an endpoint-pair flow to the arcs](proportional-lift.md)
-- [Proportional lift on a zero-capacity endpoint class](proportional-lift-zero.md)
-- [Proportional lift on a nonzero-capacity endpoint class](proportional-lift-nonzero.md)
 - [Proportional lift aggregates back to the flow](aggregate-proportional-lift.md)
 - [Proportional lift preserves flow value](flow-value-proportional-lift.md)
 - [Cut capacity of aggregated arc capacities](cut-capacity-aggregate-eq-sum-leaving.md)
