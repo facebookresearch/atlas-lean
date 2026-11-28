@@ -14,6 +14,7 @@ public import Mathlib.Combinatorics.Enumerative.Partition.Basic
 public import Mathlib.NumberTheory.LegendreSymbol.Basic
 public import Mathlib.Data.Int.Interval
 public import MathlibExt.Combinatorics.Enumerative.Partition.KTupleRegularPartitions
+public import MathlibExt.Combinatorics.Enumerative.Partition.KTupleRegularPartitionPrimePower
 public import MathlibExt.Combinatorics.Enumerative.Partition.QEulerProductCongruence
 public import MathlibExt.Combinatorics.Enumerative.Partition.SignedEulerProduct
 import Mathlib
@@ -211,25 +212,6 @@ f22/f4.
 public theorem_wanted qEulerProduct_two_square_identity :
     qEulerProduct 2 ^ 2 = qEulerProduct 4 *
       (1 + 2 * positiveUnilateralSeries (fun n => 2 * n ^ 2) (fun n => (-1 : ℤ) ^ n))
-
-/--
-**Prime-power congruences for $k$-tuples of $\ell$-regular partitions.** Write $T_{\ell,k}(n)$
-for the number of $k$-tuples of $\ell$-regular partitions with total $n$. Let $p$ be a prime,
-let $m$, $\ell$ and $s$ be positive integers, let $\alpha \ge s$ and $r$ be natural numbers
-with $1 \le r \le p^s - 1$. Then for every natural number $n$,
-$$T_{\ell,p^\alpha m}(p^s n + r) \equiv 0 \pmod{p^{\alpha - s + 1}}.$$
-
-Since $s$ is positive, the hypothesis $\alpha \ge s$ also gives $\alpha \ge 1$.
-
-Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia,
-and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Theorem 3, equation
-thm.gen1.1.
--/
-public theorem_wanted kTupleRegularPartition_primePower_congruent (p m ℓ α s r n : ℕ)
-    (hp : Nat.Prime p) (hm : 0 < m) (hℓ : 0 < ℓ) (hs : 0 < s) (hsα : s ≤ α) (hr₁ : 1 ≤ r) (hrp : r ≤
-        p ^ s - 1) :
-    Nat.ModEq (p ^ (α - s + 1))
-      (kTupleRegularPartitionCount ℓ (p ^ α * m) (p ^ s * n + r)) 0
 
 end
 
