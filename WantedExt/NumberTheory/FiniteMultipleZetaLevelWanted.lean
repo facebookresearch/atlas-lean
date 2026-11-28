@@ -142,50 +142,6 @@ public theorem_wanted exists_odd_not_dvd_bernoulli_num_le {p : ℕ} (hp : p.Prim
     ∃ k, Odd k ∧ 3 ≤ k ∧ ¬ (p : ℤ) ∣ (bernoulli' (p - k)).num ∧
       k ≤ if p % 4 = 1 then (p - 3) / 2 else (p - 5) / 2
 
-/-- **Finite multiple zeta value of level $N$ with a color map.** Let $p$ and $N$ be natural
-numbers, $k = (k_1, \dots, k_r)$ a tuple of natural numbers, and $c$ a color map, which sends
-each $a \in \mathbb{Z}/N\mathbb{Z}$ either to $\emptyset$ or to a tuple in
-$(\mathbb{Z}/N\mathbb{Z})^r$. The $p$-component
-$\zeta^c_{\mathcal{A},N}(k)_p \in \mathbb{Z}/p\mathbb{Z}$ is the colored finite multiple harmonic
-sum $\zeta^{\alpha}_{p,N}(k)$ when $c(p \bmod N) = \alpha$ is a tuple, and $0$ when
-$c(p \bmod N) = \emptyset$.
-
-Color maps are taken on all of $\mathbb{Z}/N\mathbb{Z}$; only their values at units matter for all
-but finitely many $p$.
-
-Source: Seki, *Regular Primes, Non-Wieferich Primes, and Finite Multiple Zeta Values of
-Level N*, INTEGERS 24 (2024), Article A22, Definition 2.1 (finite multiple zeta values of
-level `N` with color map). -/
-noncomputable def finiteMZVColored (p N : ℕ) {r : ℕ} (k : Fin r → ℕ)
-    (c : ZMod N → Option (Fin r → ZMod N)) : ZMod p :=
-  match c (p : ZMod N) with
-  | none => 0
-  | some α => coloredFiniteMZV p N k α
-
-/-- **The empty color map gives zero.** For all natural numbers $p$ and $N$ and every tuple
-$k = (k_1, \dots, k_r)$ of natural numbers, if $c$ is the color map sending every
-$a \in \mathbb{Z}/N\mathbb{Z}$ to $\emptyset$, then the $p$-component $\zeta^c_{\mathcal{A},N}(k)_p$
-of the finite multiple zeta value of level $N$ with color map $c$ is $0$.
-
-Source: Seki, *Regular Primes, Non-Wieferich Primes, and Finite Multiple Zeta Values of
-Level N*, INTEGERS 24 (2024), Article A22, Definition 2.1. -/
-theorem finiteMZVColored_none (p N : ℕ) {r : ℕ} (k : Fin r → ℕ) :
-    finiteMZVColored p N k (fun _ => none) = 0 :=
-  rfl
-
-/-- **A constant color map gives the colored harmonic sum.** For all natural numbers $p$ and $N$,
-every tuple $k = (k_1, \dots, k_r)$ of natural numbers and every
-$\alpha \in (\mathbb{Z}/N\mathbb{Z})^r$, if $c$ is the color map sending every
-$a \in \mathbb{Z}/N\mathbb{Z}$ to $\alpha$, then the $p$-component $\zeta^c_{\mathcal{A},N}(k)_p$
-of the finite multiple zeta value of level $N$ with color map $c$ equals the colored finite
-multiple harmonic sum $\zeta^{\alpha}_{p,N}(k)$.
-
-Source: Seki, *Regular Primes, Non-Wieferich Primes, and Finite Multiple Zeta Values of
-Level N*, INTEGERS 24 (2024), Article A22, Definition 2.1. -/
-theorem finiteMZVColored_some (p N : ℕ) {r : ℕ} (k : Fin r → ℕ) (α : Fin r → ZMod N) :
-    finiteMZVColored p N k (fun _ => some α) = coloredFiniteMZV p N k α :=
-  rfl
-
 /-- **Reversal for finite multiple zeta values of level $N$.** Let $N \ge 1$, let
 $k = (k_1, \dots, k_r)$ be a tuple of natural numbers of weight $w = k_1 + \dots + k_r$, and let
 $c$ be a color map, which sends each $a \in \mathbb{Z}/N\mathbb{Z}$ either to $\emptyset$ or to a
@@ -204,33 +160,6 @@ public theorem_wanted finiteMZVColored_eq_neg_one_pow_mul_reverse {N r : ℕ} (h
     ∀ᶠ p in atTop, p.Prime →
       finiteMZVColored p N k c = (-1) ^ (∑ i, k i) *
         finiteMZVColored p N (k ∘ Fin.rev) (fun a => (c a).map fun β i => a - β (Fin.rev i))
-
-/-- **Raising the level of finite multiple zeta values.** Let $N$ and $M$ be positive integers
-with $N \mid M$, let $k = (k_1, \dots, k_r)$ be an index of positive integers of weight
-$w = k_1 + \dots + k_r$, and let $c$ be a color map from $\mathbb{Z}/N\mathbb{Z}$ to
-$(\mathbb{Z}/N\mathbb{Z})^r \cup \{\varnothing\}$. Write $\zeta^{c}_{p,N}(k)$ for the
-$p$-component of the finite multiple zeta value of level $N$ with color map $c$. Then there are
-rationals $q_1, \dots, q_n$, indices $k^{(1)}, \dots, k^{(n)}$ of positive integers, each of
-weight $w$, and color maps $c_1, \dots, c_n$ of level $M$ (each $c_i$ from
-$\mathbb{Z}/M\mathbb{Z}$ to $(\mathbb{Z}/M\mathbb{Z})^{r_i} \cup \{\varnothing\}$, where $r_i$
-is the depth of $k^{(i)}$) such that for all sufficiently large primes $p$
-$$
-\zeta^{c}_{p,N}(k) = \sum_{i=1}^{n} q_i \, \zeta^{c_i}_{p,M}(k^{(i)}) \quad \text{in }
-\mathbb{Z}/p\mathbb{Z},
-$$
-where a rational $q = a/b$ in lowest terms with $b > 0$ is read modulo $p$ as $a b^{-1}$.
-
-Source: Seki, *Regular Primes, Non-Wieferich Primes, and Finite Multiple Zeta Values of
-Level N*, INTEGERS 24 (2024), Article A22, Lemma 2 (`integers-2024-A22-lem-2`). -/
-public theorem_wanted exists_finiteMZVColored_eq_sum_of_dvd {N M : ℕ} (hN : 0 < N) (hM : 0 < M)
-    (hNM : N ∣ M) {r : ℕ} (k : Fin r → ℕ) (hk : ∀ i, 0 < k i)
-    (c : ZMod N → Option (Fin r → ZMod N)) :
-    ∃ (n : ℕ) (q : Fin n → ℚ) (s : Fin n → ℕ) (k' : (i : Fin n) → Fin (s i) → ℕ)
-      (c' : (i : Fin n) → ZMod M → Option (Fin (s i) → ZMod M)),
-      (∀ i j, 0 < k' i j) ∧ (∀ i, ∑ j, k' i j = ∑ j, k j) ∧
-        ∀ᶠ p in atTop, p.Prime →
-          finiteMZVColored p N k c = ∑ i, ((q i).num : ZMod p) * ((q i).den : ZMod p)⁻¹ *
-            finiteMZVColored p M (k' i) (c' i)
 
 /-- **Criterion for a uniform bound on the least non-Wieferich base.** The following are
 equivalent:

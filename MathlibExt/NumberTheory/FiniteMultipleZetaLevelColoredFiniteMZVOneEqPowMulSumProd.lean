@@ -18,6 +18,7 @@ import Mathlib.Data.Fintype.Fin
 import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Algebra.BigOperators.Group.Finset.Sigma
 import Mathlib.Data.Fintype.BigOperators
+import Mathlib.Data.Fintype.EquivFin
 import Lean.Elab.Tactic.Omega
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
@@ -27,8 +28,19 @@ import Mathlib.Tactic.Ring
 
 Colored finite multiple harmonic sums and their decomposition into consecutive level pieces.
 
-Source: Shin-ichiro Seki, *Regular Primes, Non-Wieferich Primes, and Finite
-Multiple Zeta Values of Level N*, INTEGERS 24 (2024), Article A22 (arXiv:2310.06809).
+For positive levels $N \mid M$, a level-$N$ color map and an index with positive entries
+also give a sum of level-$M$ values with the same index and coefficients $1$. Each
+increasing tuple is counted by its unique tuple of residues modulo $M$, provided those
+residues reduce to the colors selected modulo $N$. The equality is pointwise for every
+prime, including primes dividing the levels: the color maps here are defined on all
+residues, extending the source's maps on units without changing the eventual identity.
+The same partition includes the empty index, of weight zero.
+
+## References
+
+* Shin-ichiro Seki, *Regular Primes, Non-Wieferich Primes, and Finite Multiple Zeta Values of
+  Level N*, INTEGERS 24 (2024), Article A22, pp. 1–14, Section 2.2 (Definition 1,
+  pp. 3–4; Proposition 1 (ii), pp. 5–6; and Lemma 2, p. 6).
 -/
 
 namespace MetaMathlibExt
@@ -56,6 +68,76 @@ noncomputable def coloredFiniteMZV (p N : ℕ) {r : ℕ} (k : Fin r → ℕ) (α
       (fun m : Fin r → Fin p => StrictMono m ∧
         ∀ i, 0 < (m i : ℕ) ∧ ((m i : ℕ) : ZMod N) = α i),
     ∏ i, (((m i : ℕ) : ZMod p)⁻¹) ^ k i
+
+/-- **Finite multiple zeta value of level $N$ with a color map.** Let $p$ and $N$ be natural
+numbers, $k = (k_1, \dots, k_r)$ a tuple of natural numbers, and $c$ a color map, which sends
+each $a \in \mathbb{Z}/N\mathbb{Z}$ either to $\emptyset$ or to a tuple in
+$(\mathbb{Z}/N\mathbb{Z})^r$. The $p$-component
+$\zeta^c_{\mathcal{A},N}(k)_p \in \mathbb{Z}/p\mathbb{Z}$ is the colored finite multiple harmonic
+sum $\zeta^{\alpha}_{p,N}(k)$ when $c(p \bmod N) = \alpha$ is a tuple, and $0$ when
+$c(p \bmod N) = \emptyset$.
+
+Color maps are taken on all of $\mathbb{Z}/N\mathbb{Z}$; only their values at units matter for all
+but finitely many $p$.
+
+Source: Seki, *Regular Primes, Non-Wieferich Primes, and Finite Multiple Zeta Values of
+Level N*, INTEGERS 24 (2024), Article A22, Definition 2.1 (finite multiple zeta values of
+level `N` with color map). -/
+noncomputable def finiteMZVColored (p N : ℕ) {r : ℕ} (k : Fin r → ℕ)
+    (c : ZMod N → Option (Fin r → ZMod N)) : ZMod p :=
+  match c (p : ZMod N) with
+  | none => 0
+  | some α => coloredFiniteMZV p N k α
+
+/-- **The empty color map gives zero.** For all natural numbers $p$ and $N$ and every tuple
+$k = (k_1, \dots, k_r)$ of natural numbers, if $c$ is the color map sending every
+$a \in \mathbb{Z}/N\mathbb{Z}$ to $\emptyset$, then the $p$-component $\zeta^c_{\mathcal{A},N}(k)_p$
+of the finite multiple zeta value of level $N$ with color map $c$ is $0$.
+
+Source: Seki, *Regular Primes, Non-Wieferich Primes, and Finite Multiple Zeta Values of
+Level N*, INTEGERS 24 (2024), Article A22, Definition 2.1. -/
+theorem finiteMZVColored_none (p N : ℕ) {r : ℕ} (k : Fin r → ℕ) :
+    finiteMZVColored p N k (fun _ => none) = 0 :=
+  rfl
+
+/-- **A constant color map gives the colored harmonic sum.** For all natural numbers $p$ and $N$,
+every tuple $k = (k_1, \dots, k_r)$ of natural numbers and every
+$\alpha \in (\mathbb{Z}/N\mathbb{Z})^r$, if $c$ is the color map sending every
+$a \in \mathbb{Z}/N\mathbb{Z}$ to $\alpha$, then the $p$-component $\zeta^c_{\mathcal{A},N}(k)_p$
+of the finite multiple zeta value of level $N$ with color map $c$ equals the colored finite
+multiple harmonic sum $\zeta^{\alpha}_{p,N}(k)$.
+
+Source: Seki, *Regular Primes, Non-Wieferich Primes, and Finite Multiple Zeta Values of
+Level N*, INTEGERS 24 (2024), Article A22, Definition 2.1. -/
+theorem finiteMZVColored_some (p N : ℕ) {r : ℕ} (k : Fin r → ℕ) (α : Fin r → ZMod N) :
+    finiteMZVColored p N k (fun _ => some α) = coloredFiniteMZV p N k α :=
+  rfl
+
+/-- **Finite multiple zeta values as a sum with a color-map test.** A tuple in `Fin p`
+contributes its inverse-power product exactly when it is strictly increasing, all its entries are
+positive, and its tuple of residues is selected by the color map at the residue of `p`.
+This formula uses decidable tests on finite types, including for the empty index. -/
+public theorem finiteMZVColored_eq_sum_ite (p N : ℕ) {r : ℕ} (k : Fin r → ℕ)
+    (c : ZMod N → Option (Fin r → ZMod N)) :
+    finiteMZVColored p N k c =
+      ∑ m : Fin r → Fin p,
+        if (∀ i j, i < j → m i < m j) ∧ (∀ i, 0 < (m i : ℕ)) ∧
+            some (fun i => ((m i : ℕ) : ZMod N)) = c (p : ZMod N) then
+          ∏ i, (((m i : ℕ) : ZMod p)⁻¹) ^ k i
+        else 0 := by
+  classical
+  rw [finiteMZVColored]
+  cases c (p : ZMod N) with
+  | none => simp
+  | some α =>
+    change coloredFiniteMZV p N k α = _
+    unfold coloredFiniteMZV
+    rw [Finset.sum_filter]
+    apply Finset.sum_congr rfl
+    intro m _
+    apply if_congr ?_ rfl rfl
+    simp only [Option.some.injEq, funext_iff, forall_and]
+    rfl
 
 private def cutVal (N r : ℕ) (i : Fin (N - 1) → Fin (r + 1)) (t : ℕ) : ℕ :=
   if t = 0 then 0 else if h : t - 1 < N - 1 then (i ⟨t - 1, h⟩ : ℕ) else r
@@ -706,6 +788,56 @@ public theorem coloredFiniteMZV_one_eq_pow_mul_sum_prod {N : ℕ} (hN : 0 < N)
     (fun i => ∏ j : Fin N, coloredFiniteMZV p N
       (fun t : Fin (slice κ N i j).length => (slice κ N i j).get t)
       (fun _ => -(j.val : ZMod N) * p))).symm
+
+/-- **Raising the level of finite multiple zeta values.** Let $N$ and $M$ be positive integers
+with $N \mid M$, let $k = (k_1, \dots, k_r)$ be an index of positive integers of weight
+$w = k_1 + \dots + k_r$, and let $c$ be a color map from $\mathbb{Z}/N\mathbb{Z}$ to
+$(\mathbb{Z}/N\mathbb{Z})^r \cup \{\varnothing\}$. Write $\zeta^{c}_{p,N}(k)$ for the
+$p$-component of the finite multiple zeta value of level $N$ with color map $c$. Then there are
+rationals $q_1, \dots, q_n$, indices $k^{(1)}, \dots, k^{(n)}$ of positive integers, each of
+weight $w$, and color maps $c_1, \dots, c_n$ of level $M$ (each $c_i$ from
+$\mathbb{Z}/M\mathbb{Z}$ to $(\mathbb{Z}/M\mathbb{Z})^{r_i} \cup \{\varnothing\}$, where $r_i$
+is the depth of $k^{(i)}$) such that for all sufficiently large primes $p$
+$$
+\zeta^{c}_{p,N}(k) = \sum_{i=1}^{n} q_i \, \zeta^{c_i}_{p,M}(k^{(i)}) \quad \text{in }
+\mathbb{Z}/p\mathbb{Z},
+$$
+where a rational $q = a/b$ in lowest terms with $b > 0$ is read modulo $p$ as $a b^{-1}$.
+
+Source: Seki, *Regular Primes, Non-Wieferich Primes, and Finite Multiple Zeta Values of
+Level N*, INTEGERS 24 (2024), Article A22, Lemma 2 (`integers-2024-A22-lem-2`). -/
+public theorem exists_finiteMZVColored_eq_sum_of_dvd {N M : ℕ} (hN : 0 < N) (hM : 0 < M)
+    (hNM : N ∣ M) {r : ℕ} (k : Fin r → ℕ) (hk : ∀ i, 0 < k i)
+    (c : ZMod N → Option (Fin r → ZMod N)) :
+    ∃ (n : ℕ) (q : Fin n → ℚ) (s : Fin n → ℕ) (k' : (i : Fin n) → Fin (s i) → ℕ)
+      (c' : (i : Fin n) → ZMod M → Option (Fin (s i) → ZMod M)),
+      (∀ i j, 0 < k' i j) ∧ (∀ i, ∑ j, k' i j = ∑ j, k j) ∧
+        ∀ᶠ p in atTop, p.Prime →
+          finiteMZVColored p N k c = ∑ i, ((q i).num : ZMod p) * ((q i).den : ZMod p)⁻¹ *
+            finiteMZVColored p M (k' i) (c' i) := by
+  obtain ⟨N, rfl⟩ := Nat.exists_eq_succ_of_ne_zero hN.ne'
+  let : NeZero M := ⟨hM.ne'⟩
+  let ρ : ZMod M →+* ZMod (N + 1) := ZMod.castHom hNM (ZMod (N + 1))
+  let liftColor (β : Fin r → ZMod M) (a : ZMod M) : Option (Fin r → ZMod M) :=
+    if some (fun i => ρ (β i)) = c (ρ a) then some β else none
+  let e := Fintype.equivFin (Fin r → ZMod M)
+  refine ⟨_, fun _ => 1, fun _ => r, fun _ => k, fun i => liftColor (e.symm i),
+    fun _ => hk, fun _ => rfl, Eventually.of_forall fun p _ => ?_⟩
+  simp only [Rat.num_one, Rat.den_one, Int.cast_one, Nat.cast_one, ZMod.inv_one, one_mul]
+  rw [e.symm.sum_comp (fun β => finiteMZVColored p M k (liftColor β))]
+  simp only [finiteMZVColored_eq_sum_ite]
+  rw [Finset.sum_comm (s := (Finset.univ : Finset (Fin r → ZMod M)))]
+  apply Finset.sum_congr rfl
+  intro m _
+  -- Only the tuple of actual residues modulo `M` can contribute for this `m`.
+  let βm : Fin r → ZMod M := fun i => (m i : ℕ)
+  rw [Finset.sum_eq_single_of_mem βm (Finset.mem_univ _)]
+  · by_cases h : some (fun i => ((m i : ℕ) : ZMod (N + 1))) = c (p : ZMod (N + 1)) <;>
+      simp [liftColor, βm, map_natCast, h]
+  · intro β _ hβ
+    have hne : (fun i => ((m i : ℕ) : ZMod M)) ≠ β := Ne.symm hβ
+    by_cases h : some (fun i => ρ (β i)) = c (p : ZMod (N + 1)) <;>
+      simp [liftColor, map_natCast, h, hne]
 
 end
 end MetaMathlibExt
