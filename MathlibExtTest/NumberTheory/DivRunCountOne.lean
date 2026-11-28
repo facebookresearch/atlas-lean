@@ -25,7 +25,13 @@ example : divRunCount 2 1 = 1980 := by
   rw [divRunCount_one]
   decide
 
--- At radius three the concrete error lies between consecutive integers, below the uniform bound.
+-- The public asymptotic bound applies at the smallest allowed radius.
+example : ∃ K : ℝ,
+    |(divRunCount 2 1 : ℝ) - 32 * 2 ^ 4 * Real.log 2| ≤ K * 2 ^ 4 := by
+  obtain ⟨K, hK⟩ := divRunCount_one_asymptotic
+  exact ⟨K, by simpa only [Nat.cast_ofNat] using hK 2 (by decide)⟩
+
+-- Independently check the numerical error at radius three, including the bound with K = 238.
 example :
     let error := |(divRunCount 3 1 : ℝ) - 32 * 3 ^ 4 * Real.log 3|
     6028 < error ∧ error < 6029 ∧ error ≤ 238 * 3 ^ 4 := by
