@@ -98,8 +98,15 @@ $\sum_{m=r}^{k} \frac{2^{r+1}}{(2m+2)!\,(m+1)}\, R(k+1, m+1)\, \mathrm{Ps}_{m+1}
     (2 ^ (r + 1) / ((Nat.factorial (2 * m + 2) : ℚ) * (m + 1))) *
       (arrayR (k + 1) (m + 1) : ℚ) * (MetaMathlibExt.legendreStirlingFirst (m + 1) (r + 1) : ℚ)
 
-/-- The Faulhaber coefficient `faulhaberC k r` written with the unshifted column index `m`
-for the A304330 array and the Legendre–Stirling numbers. -/
+/-- **Odd Faulhaber coefficients with unshifted column indices.** For all natural numbers $k$
+and $r$, the Faulhaber coefficient $c_{k,r}$ satisfies
+
+$$c_{k,r} = \sum_{m=r+1}^{k+1} \frac{2^{r+1}}{(2m)!\,m}\,R(k+1,m)\,\mathrm{Ps}_m^{(r+1)}.$$
+
+Here $R(p,m) = \sum_{j=0}^{m}(-1)^j\binom{2m}{j}(m-j)^{2p}$ is the A304330 array and
+$\mathrm{Ps}_m^{(s)}$ is the coefficient of $X^s$ in $\prod_{j=0}^{m-1}(X-j(j+1))$.
+The sum is empty when $r > k$. This reindexes equation (19) of José L. Cereceda's
+*Sums of Powers of Integers and the Sequence A304330*. -/
 theorem faulhaberC_eq_sum_succ (k r : ℕ) :
     faulhaberC k r = ∑ m ∈ Icc (r + 1) (k + 1),
       (2 ^ (r + 1) / (((2 * m).factorial : ℚ) * m)) *

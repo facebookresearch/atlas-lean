@@ -75,6 +75,17 @@ example : ((3 + 2 : ℕ).choose (2 * 2) : ℚ) =
   rw [show Icc 1 (2 : ℕ) = {1, 2} by decide]
   norm_num [one_three_eq, ls_two_one, legendreStirlingFirst_diag, Nat.choose, Nat.factorial]
 
+-- Below the binomial support, `n = 1, m = 2` has nonzero `S₁(n)` and numerator `−2·2 + 2² = 0`.
+example : ((3 : ℕ).choose 4 : ℚ) =
+    (∑ r ∈ Icc 1 2, (legendreStirlingFirst 2 r : ℚ) * (2 * powerSum 1 1) ^ r) /
+      (Nat.factorial 4 : ℚ) := by
+  have hs : powerSum 1 1 = 1 := by
+    rw [show (1 : ℕ) = 2 * 1 - 1 by decide, powerSum_odd_eq_sum 1 le_rfl 1]
+    norm_num [arrayR_one_one, Nat.choose_self]
+  rw [show Icc 1 (2 : ℕ) = {1, 2} by decide]
+  norm_num [hs, ls_two_one, legendreStirlingFirst_diag,
+    show (3 : ℕ).choose 4 = 0 by decide]
+
 -- The first cancellation has two nonzero terms, `1/2` and `-1/2`.
 example : (∑ m ∈ Icc 1 2, (1 / (((2 * m).factorial : ℚ) * m)) *
     (arrayR 2 m : ℚ) * (legendreStirlingFirst m 1 : ℚ)) = 0 := by

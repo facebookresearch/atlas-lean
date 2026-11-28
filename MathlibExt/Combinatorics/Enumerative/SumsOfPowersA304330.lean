@@ -1120,10 +1120,13 @@ private theorem two_mul_powerSum_one (n : ℕ) :
     simp only [powerSum, sum_Icc_succ_top (Nat.succ_pos n), pow_one, Nat.cast_succ] at ih ⊢
     linear_combination ih
 
-/-- For positive `m` and natural `n`, the binomial coefficient `choose (n + m) (2 * m)` is
-expanded in powers of twice `S₁(n)`, with signed first-kind Legendre–Stirling coefficients
-scaled by `(2m)!`. This is equation (20) of Cereceda's *Sums of Powers of Integers and the
-Sequence A304330*. -/
+/-- **Binomial coefficients in the signed Legendre–Stirling basis.** For natural numbers $n$
+and $m \ge 1$, let $S_1(n) = n(n+1)/2$ and let $\mathrm{Ps}_m^{(r)}$ denote the coefficient of
+$X^r$ in $\prod_{j=0}^{m-1}(X-j(j+1))$. Then
+
+$$\binom{n+m}{2m} = \frac{1}{(2m)!}\sum_{r=1}^{m}\mathrm{Ps}_m^{(r)}\,(2S_1(n))^r.$$
+
+Source: José L. Cereceda, *Sums of Powers of Integers and the Sequence A304330*, equation (20). -/
 theorem choose_eq_legendreStirlingFirst_sum (n m : ℕ) (hm : 1 ≤ m) :
     ((n + m).choose (2 * m) : ℚ) =
       (∑ r ∈ Icc 1 m, (legendreStirlingFirst m r : ℚ) * (2 * powerSum 1 n) ^ r) /
