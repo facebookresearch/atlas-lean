@@ -113,9 +113,10 @@ theorem starRepCount_le_add_mul (n N k : ℕ) :
 
 -- Below the product of the first two generators, a fixed third coefficient
 -- allows at most one second coefficient. Compute it with a modular inverse.
-private def inverse (n : ℕ) : ℕ := 3 * n * (n - 1) ^ 2
-
-private def secondCoeff (n remaining : ℕ) : ℕ := (remaining * inverse n) % star n
+-- Local notation shares the formula without making the exposed evaluator depend on private
+-- definitions, which would block kernel computation in an importing module.
+local notation "inverse" => (fun n : ℕ => 3 * n * (n - 1) ^ 2)
+local notation "secondCoeff" => (fun n remaining : ℕ => (remaining * inverse n) % star n)
 
 /-- The computable candidate count for `N` below `S_n S_{n+1}`. For each third coefficient,
 use the inverse of `S_{n+1}` modulo `S_n` to find the only possible second coefficient and
@@ -123,8 +124,7 @@ count it if its contribution fits. -/
 def starRepCountCandidates (n N : ℕ) : ℕ :=
   (List.range (N / star (n + 2) + 1)).countP fun z =>
     let remaining := N - z * star (n + 2)
-    let y := (remaining * (3 * n * (n - 1) ^ 2)) % star n
-    decide (y * star (n + 1) ≤ remaining)
+    decide (secondCoeff n remaining * star (n + 1) ≤ remaining)
 
 /-- Below `S_n S_{n+1}`, the candidate count equals the number of representing triples. -/
 theorem starRepCount_eq_countCandidates (n N : ℕ)
