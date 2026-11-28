@@ -92,7 +92,7 @@ incident co-infection can make $a$ positive. Applications:
 The equilibrium count in such models is often read off a quadratic, see
 [Quadratic endemic-equilibrium condition for backward bifurcation](quadratic-endemic-equilibrium-condition-for-backward-bifurcation.md).
 Under a backward bifurcation the
-[Castillo-Chavez–Feng–Huang criterion](../global-stability-of-disease-free-equilibria/castillo-chavez-feng-huang-global-stability-criterion.md)
+Castillo-Chavez–Feng–Huang global stability criterion
 cannot apply for $\mathcal{R}_0$ slightly below $1$.
 
 ## Sources

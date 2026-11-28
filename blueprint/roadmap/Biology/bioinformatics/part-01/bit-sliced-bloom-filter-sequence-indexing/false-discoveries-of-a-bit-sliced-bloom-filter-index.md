@@ -18,6 +18,13 @@ With the standard Bloom filter optimum for $n = K_{\max}$ inserted elements, $m 
 
 $$m = -\frac{K_{\max}\, \ln(q_{\max}/N)}{L_{\min} (\ln 2)^2}, \qquad \eta = -\frac{\ln(q_{\max}/N)}{L_{\min} \ln 2} .$$
 
+## Depends on
+
+- [Bloom filter](../../../../ComputerScience/data-structures/hashing/bloom-filter/bloom-filter.md)
+- [Exponential approximation of the Bloom filter false-positive rate](../../../../ComputerScience/data-structures/hashing/bloom-filter/exp-approx.md)
+- [The optimal number of hash functions](../../../../ComputerScience/data-structures/hashing/bloom-filter/exp-approx-optimal.md)
+- [Exponential approximation at the optimal number of hash functions](../../../../ComputerScience/data-structures/hashing/bloom-filter/exp-approx-at-optimum.md)
+
 ## Expansion
 
 The bound $N p^L$ is a union over datasets of the event that all $L$ independent single-$k$-mer tests fail; it is an upper bound because a filter holding fewer than $K_{\max}$ elements has a smaller false positive rate. Because the exponent is the number of query $k$-mers, a false positive rate as large as $p \approx 0.25$ per lookup still yields negligible false discoveries for a $31$-mer query of moderate length, which is what allows a small $\eta$ and a compact matrix. Two caveats limit the model: datasets from closely related genomes have correlated filters, so false positives are not independent across columns; and any path through a genome's de Bruijn graph whose $k$-mers all occur in the genome (possible when the query contains repeated $k$-mers) is reported present although it is not a substring of the genome. Adding a dataset appends a column, so the index grows incrementally without rebuilding.

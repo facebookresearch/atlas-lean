@@ -23,11 +23,7 @@ with livestock recruitment $A$, vaccination rate $\nu$, vaccine waning $\delta$,
 
 ## Depends on
 
-- [Next-generation operator in a periodic environment](../../next-generation-matrix-and-the-basic-reproductio/periodic-next-generation-operator.md)
-
-## Proof depends on
-
-- [Local stability of the disease-free periodic solution](../../next-generation-matrix-and-the-basic-reproductio/local-stability-of-the-disease-free-periodic-solution.md)
+- [Threshold dynamics of compartmental epidemic models in periodic environments](../../next-generation-matrix-and-the-basic-reproductio/threshold-dynamics-in-periodic-environments.md)
 
 ## Expansion
 

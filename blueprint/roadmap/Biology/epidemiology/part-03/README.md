@@ -14,7 +14,6 @@
 - [SAIR model on heterogeneous networks](sair-model-on-heterogeneous-networks/README.md)
 - [SI infection on a dynamic partnership network](si-infection-on-a-dynamic-partnership-network/README.md)
 - [SIS epidemics on hypergraphs](sis-epidemics-on-hypergraphs/README.md)
-- [Stochastic epidemic models with environmental noise](stochastic-epidemic-models-with-environmental-noise/README.md)
 - [Stochastic SEIRS with white-noise transmission](stochastic-seirs-with-white-noise-transmission/README.md)
 - [Stochastic SIRS with nonlinear incidence](stochastic-sirs-with-nonlinear-incidence/README.md)
 - [Transmission trees on a fixed phylogeny](transmission-trees-on-a-fixed-phylogeny/README.md)

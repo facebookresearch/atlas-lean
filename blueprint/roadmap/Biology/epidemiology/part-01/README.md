@@ -11,7 +11,6 @@
 - [Fast periodic switching interventions](fast-periodic-switching-interventions/README.md)
 - [Fractional-order epidemic models](fractional-order-epidemic-models/README.md)
 - [Geometric approach to global stability](geometric-approach-to-global-stability/README.md)
-- [Global stability of disease-free equilibria](global-stability-of-disease-free-equilibria/README.md)
 - [Pulse vaccination strategy](pulse-vaccination-strategy/README.md)
 - [Residence-tracked metapopulation models](residence-tracked-metapopulation-models/README.md)
 - [Sensitivity of the reproduction number](sensitivity-of-the-reproduction-number/README.md)

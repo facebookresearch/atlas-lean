@@ -16,7 +16,6 @@
 - [Phenotypic equilibrium in multitype cell populations](phenotypic-equilibrium-in-multitype-cell-populations/README.md)
 - [Ribosome flow model](ribosome-flow-model/README.md)
 - [Slow promoter kinetics and multimodality](slow-promoter-kinetics-and-multimodality/README.md)
-- [State-space reconstruction causal inference](state-space-reconstruction-causal-inference/README.md)
 - [Statistical model checking of biochemical models](statistical-model-checking-of-biochemical-models/README.md)
 - [Steady-state constrained parameter estimation](steady-state-constrained-parameter-estimation/README.md)
 - [Temporal-logic robustness of biochemical models](temporal-logic-robustness-of-biochemical-models/README.md)

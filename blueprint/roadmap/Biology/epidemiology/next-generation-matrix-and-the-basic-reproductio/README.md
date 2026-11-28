@@ -12,8 +12,5 @@
 - [Threshold theorem, instability half, spectral form](exists-re-pos-jacobian-of-one-lt-r0.md)
 
 - [Spectral bound and reproduction number for infinite-dimensional population structure](spectral-bound-and-reproduction-number-for-infinite-dimensional-structure.md)
+- [Threshold dynamics of compartmental epidemic models in periodic environments](threshold-dynamics-in-periodic-environments.md)
 - [SIR model with imperfect testing and quarantine](sir-model-with-imperfect-testing-and-quarantine.md)
-- [Next-generation operator in a periodic environment](periodic-next-generation-operator.md)
-- [Periodic reproduction number and the monodromy matrix](periodic-reproduction-number-and-the-monodromy-matrix.md)
-- [Local stability of the disease-free periodic solution](local-stability-of-the-disease-free-periodic-solution.md)
-- [Averaged and periodic reproduction numbers](averaged-and-periodic-reproduction-numbers.md)
