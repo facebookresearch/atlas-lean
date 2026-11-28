@@ -2346,6 +2346,7 @@
   "CSLibExt/MachineLearning/NeuralNetworks/GraphMessagePassing": {"to": "ComputerScience/machine-learning/supervised-learning", "title": "Message-passing graph neural networks"},
   "CSLibExt/MachineLearning/NeuralNetworks/ResidualNetworkFlow": {"to": "ComputerScience/machine-learning/supervised-learning", "title": "Residual networks as discretised flows"},
   "CSLibExt/MachineLearning/OnlineNewtonPotential": {"to": "ComputerScience/machine-learning/online-learning-and-boosting", "title": "Online learning and boosting"},
+  "CSLibExt/MachineLearning/OnlineClassification": {"to": "ComputerScience/machine-learning/online-learning-and-boosting", "title": "Online learning and boosting"},
   "CSLibExt/MachineLearning/PACLearning/BernoulliTrials": {"to": "ComputerScience/machine-learning/pac-learning", "title": "Valiant's Bernoulli-trial bound"},
   "CSLibExt/MachineLearning/PACLearning/FundamentalTheorem": {"to": "ComputerScience/machine-learning/pac-learning", "title": "Fundamental theorem of PAC learning"},
   "CSLibExt/MachineLearning/PACLearning/Boosting": {"to": "ComputerScience/machine-learning/pac-learning", "title": "Weak learnability"},
