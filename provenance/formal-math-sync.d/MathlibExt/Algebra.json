@@ -403,6 +403,96 @@
       "rationale": "Import the reusable general homological algebra API with Atlas copyright and mathematical documentation, preserving its public hypotheses and eliminating source-campaign commentary. Expand declaration and module docstrings into self-contained mathematical statements with their exact hypotheses, objects, maps, signs and conventions; move implementation prose to ordinary comments. All noncomment Lean tokens, declaration names/privacy and proofs are unchanged.",
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "62eb1394c525d1d5952e12aa36786c9eba427cac0ee9bb6de0ed48fd5a5a3a40"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/FilteredColimitStageQuasiIso.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "d9c34fb5998f897a5609b3f2c73f7a50b6074f3928628273f85ccd9a5b282117",
+      "rationale": "General complex/functor, homology-sequence, quasi-isomorphism and categorical cokernel/product API retained from the immutable recorded source. Atlas mathematical documentation and all original authors/license, hypotheses, independent worlds, maps, signs and proof tokens are preserved. This source is diverged from the current global Formal-Math pin; only necessary 100-column whitespace wraps were applied. Hosted Native verification remains pending.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "96560377415dc25509966f245092713133605b66889f725a562056238c7a209a"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/FunctorComplex.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "ab5176eb02b55ea725c2a3718a1f8ebba4a7200c6d0ecebed7929c0b5db8c2a1",
+      "rationale": "General complex/functor, homology-sequence, quasi-isomorphism and categorical cokernel/product API retained from the immutable recorded source. Atlas mathematical documentation and all original authors/license, hypotheses, independent worlds, maps, signs and proof tokens are preserved. This source is diverged from the current global Formal-Math pin; only necessary 100-column whitespace wraps were applied. Hosted Native verification remains pending.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "6f64ea90f3b6ee2804ea93fef42a3db35dbb377411f52e0dd5dcf3e922c718b3"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/HomogeneousSubcomplex.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "95a420301dd0808d716e55fcf5a072a0e8c3d8c698b773d9847afbd622aee439",
+      "rationale": "General complex/functor, homology-sequence, quasi-isomorphism and categorical cokernel/product API retained from the immutable recorded source. Atlas mathematical documentation and all original authors/license, hypotheses, independent worlds, maps, signs and proof tokens are preserved. This source is diverged from the current global Formal-Math pin; only necessary 100-column whitespace wraps were applied. Hosted Native verification remains pending.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "1cbf3a89ad551729765ec0580439f2ad4a815d9e6b93c3a82a9f765f44dea3b1"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/HomologicalComplexBiprodMaps.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "d7832b80b5354db2fe118cf7200b6e0eea7596b2ea21764a954e9f58b4a6d4c7",
+      "rationale": "General complex/functor, homology-sequence, quasi-isomorphism and categorical cokernel/product API retained from the immutable recorded source. Atlas mathematical documentation and all original authors/license, hypotheses, independent worlds, maps, signs and proof tokens are preserved. This source is diverged from the current global Formal-Math pin; only necessary 100-column whitespace wraps were applied. Hosted Native verification remains pending.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "3aca9aee9e8a224aaeecf664e11fb5d8871e39fe808ffe9e5a3c5e0c846b1a93"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/HomologySequenceIsoTransport.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "b75243d234d4b162f3c253f7981d09797598e78e2a856cdd918e82df4e09a82c",
+      "rationale": "General complex/functor, homology-sequence, quasi-isomorphism and categorical cokernel/product API retained from the immutable recorded source. Atlas mathematical documentation and all original authors/license, hypotheses, independent worlds, maps, signs and proof tokens are preserved. This source is diverged from the current global Formal-Math pin; only necessary 100-column whitespace wraps were applied. Hosted Native verification remains pending.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "dd70852ccda453e7190560c269dee08fee4798c5b9a39552b57bdd1288bd3fcd"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/ModuleProductExact.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "7df4e21fa9249ad6d9737e6516ceb773c88ea4a53a8c6b598b172de75cfb1a41",
+      "rationale": "General complex/functor, homology-sequence, quasi-isomorphism and categorical cokernel/product API retained from the immutable recorded source. Atlas mathematical documentation and all original authors/license, hypotheses, independent worlds, maps, signs and proof tokens are preserved. This source is diverged from the current global Formal-Math pin; only necessary 100-column whitespace wraps were applied. Hosted Native verification remains pending.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "22237306d94b2705024977f70a4c170ac8235960782903a0ca10bf8e39950af3"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/Opposite/MapFunctor.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "ce406ac6c90e5937859469c1a28022e6429210321aadfaaab8e3287656afbc87",
+      "rationale": "General complex/functor, homology-sequence, quasi-isomorphism and categorical cokernel/product API retained from the immutable recorded source. Atlas mathematical documentation and all original authors/license, hypotheses, independent worlds, maps, signs and proof tokens are preserved. This source is diverged from the current global Formal-Math pin; only necessary 100-column whitespace wraps were applied. Hosted Native verification remains pending.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "2648bb619343b232c8b8237ba3a5d1ad071aa6277d4823f6374ca08cf036d52c"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/ProjectiveImageQuasiIso.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "d726558a17ee6ddf384354d77a8f14ab6327b6e37db6c6cf677f5de5c1a1e4df",
+      "rationale": "General complex/functor, homology-sequence, quasi-isomorphism and categorical cokernel/product API retained from the immutable recorded source. Atlas mathematical documentation and all original authors/license, hypotheses, independent worlds, maps, signs and proof tokens are preserved. This source is diverged from the current global Formal-Math pin; only necessary 100-column whitespace wraps were applied. Hosted Native verification remains pending.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "d54074f2c16afabfb51f32265fd019ba5acd2ca407fb3ce42e57e0f774c33278"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/ShortComplex/CokernelCompFunctor.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "ea38fbad4335ef28c696dca2eb7f20952da33fec3f8d093dbdae005babfaf9db",
+      "rationale": "General complex/functor, homology-sequence, quasi-isomorphism and categorical cokernel/product API retained from the immutable recorded source. Atlas mathematical documentation and all original authors/license, hypotheses, independent worlds, maps, signs and proof tokens are preserved. This source is diverged from the current global Formal-Math pin; only necessary 100-column whitespace wraps were applied. Hosted Native verification remains pending.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "a73d17bfada16a5ec4b92f710eac8062e467257dda39a60afa48310bad61d40b"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/ReducedCarrierColimitSupport.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "c540fa5866ff5a08dd162dadc4fe0879bf7afb9e7483bbd6f018c95a7755b74b",
+      "rationale": "General complex/functor, homology-sequence, quasi-isomorphism and categorical cokernel/product API retained from the immutable recorded source. Atlas mathematical documentation and all original authors/license, hypotheses, independent worlds, maps, signs and proof tokens are preserved. This source is diverged from the current global Formal-Math pin; only necessary 100-column whitespace wraps were applied. Hosted Native verification remains pending.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "8458bf5a7d82209a681c8ea2d230436272a86f2e13ccecc3f65ce30d31f50234"
     }
   ]
 }
