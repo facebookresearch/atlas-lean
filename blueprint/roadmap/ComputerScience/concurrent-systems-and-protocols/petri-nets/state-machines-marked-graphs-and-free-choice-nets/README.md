@@ -1,0 +1,27 @@
+# Structure theory of state machines, marked graphs and free-choice nets
+
+Efficient structure theory for three classes of nets: liveness, boundedness and reachability in state machines and marked graphs, Genrich's theorem, and for free-choice nets clusters, allocations, both halves of Commoner's liveness theorem, S-components, Hack's boundedness theorem, the rank theorem and the complexity of liveness and reachability.
+
+- [Connected and strongly connected nets](connected-and-strongly-connected-nets.md)
+- [State machines conserve the number of tokens](state-machines-conserve-tokens.md)
+- [Bounds of live state machines](bounds-of-live-state-machines.md)
+- [Reachability in live state machines](reachability-in-live-state-machines.md)
+- [S-invariants of connected state machines](s-invariants-of-state-machines.md)
+- [T-invariants of connected marked graphs](t-invariants-of-marked-graphs.md)
+- [Bounded places of live marked graphs](boundedness-of-live-marked-graphs.md)
+- [Reachability in live marked graphs](reachability-in-live-marked-graphs.md)
+- [Liveness, deadlock-freedom and infinite runs coincide for strongly connected marked graphs](liveness-deadlock-freedom-and-infinite-runs-coincide-for-marked-graphs.md)
+- [Genrich's theorem on live and safe markings of marked graphs](genrich-s-theorem.md)
+- [Extended free-choice nets](extended-free-choice-nets.md)
+- [Clusters of a net](clusters-of-a-net.md)
+- [Allocations of clusters](allocations-of-clusters.md)
+- [Circuit-free allocations avoiding the maximal trap](circuit-free-allocations-avoiding-the-maximal-trap.md)
+- [Allocation lemma for live free-choice nets](allocation-lemma-for-free-choice-nets.md)
+- [The siphon–trap property implies liveness for free-choice nets](siphon-trap-property-implies-liveness-for-free-choice-nets.md)
+- [Live free-choice nets have the siphon–trap property](live-free-choice-nets-have-the-siphon-trap-property.md)
+- [Non-liveness of free-choice nets is NP-complete](non-liveness-of-free-choice-nets-is-np-complete.md)
+- [S-components of a net](s-components.md)
+- [Hack's boundedness theorem for free-choice nets](hack-s-boundedness-theorem.md)
+- [Rank theorem for free-choice nets](rank-theorem-for-free-choice-nets.md)
+- [Reachability in live and bounded free-choice nets is NP-hard](reachability-in-live-bounded-free-choice-nets-is-np-hard.md)
+- [Reachability in live, bounded and cyclic free-choice nets](reachability-in-cyclic-free-choice-nets.md)

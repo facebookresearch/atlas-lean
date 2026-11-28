@@ -49,3 +49,5 @@
 - [Variance of a single-chromosome ancestry fraction](variance-of-genome-wide-ancestry-fraction-in-the.md)
 - [Cross-population covariance of linkage disequilibrium after a split](cross-population-covariance-of-linkage-disequilibrium-after-a-split.md)
 - [LD moments immediately after admixture of populations already in LD](ld-moments-immediately-after-admixture-of-linked-sources.md)
+- [DATES ancestry covariance for dating admixture](dates-ancestry-covariance.md)
+- [Dating archaic gene flow from LD decay](dating-archaic-gene-flow-from-ld-decay/README.md)
