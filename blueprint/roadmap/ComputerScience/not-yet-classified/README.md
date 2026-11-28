@@ -27,6 +27,7 @@ Topics added since this subject's fields were last revised.
 - [Halving](halving/README.md)
 - [Hammersley Clifford](hammersley-clifford/README.md)
 - [Identification Bridge](identification-bridge/README.md)
+- [Identification Soundness](identification-soundness/README.md)
 - [Item Response EM](item-response-em/README.md)
 - [Item Response Weight Step](item-response-weight-step/README.md)
 - [Iterated Learning](iterated-learning/README.md)
