@@ -8,9 +8,26 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import Mathlib.Analysis.Convex.Strict.Extreme
+import Mathlib.Tactic.NormNum
 import MathlibExt.Analysis.Convex.Choquet
 
 open MeasureTheory Set
+open MathlibExt.Analysis.ChoquetWanted.Analysis (choquet)
+
+-- The existence theorem does not require second countability of the ambient space.
+example {X : Type*} [NormedAddCommGroup X] [NormedSpace ℝ X] [CompleteSpace X]
+    [MeasurableSpace X] [BorelSpace X] (x : X) :
+    ∃ μ : Measure X, IsProbabilityMeasure μ ∧ μ ({x} : Set X)ᶜ = 0 ∧ x = ∫ y, y ∂μ := by
+  simpa only [extremePoints_singleton] using
+    choquet {x} isCompact_singleton (convex_singleton x) (mem_singleton x)
+
+-- The midpoint has a representing measure carried by the two endpoints.
+example : ∃ μ : Measure ℝ, IsProbabilityMeasure μ ∧
+    μ ({0, 1} : Set ℝ)ᶜ = 0 ∧ (1 / 2 : ℝ) = ∫ y, y ∂μ := by
+  have hx : (1 / 2 : ℝ) ∈ Icc 0 1 := by norm_num
+  simpa only [extremePoints_Icc zero_le_one] using
+    choquet (Icc 0 1) isCompact_Icc (convex_Icc 0 1) hx
 
 -- The singleton case works without a second-countability hypothesis on the ambient space.
 example {X : Type*} [NormedAddCommGroup X] [NormedSpace ℝ X] [CompleteSpace X]

@@ -21,6 +21,7 @@ public import MathlibExt.NumberTheory.GoldenRatioLeftFactorialLambertKurepaParti
 public import MathlibExt.NumberTheory.GoldenRatioLeftFactorialLambertKurepaPartialIntegralLambertSequenceBounds
 public import MathlibExt.NumberTheory.GoldenRatioLeftFactorialLambertTwoParameterBounds
 public import MathlibExt.NumberTheory.LambertSequencePartialExpSum
+public import MathlibExt.NumberTheory.GoldenRatioLeftFactorialLambertLambertSequenceLtGoldenFactorialExponent
 
 /-!
 # The golden ratio, factorials, and the Lambert `W` function
@@ -33,6 +34,8 @@ The statement `kurepaPartialIntegral_goldenFactorialExponent_bounds` is proved, 
 `MathlibExt.NumberTheory.GoldenRatioLeftFactorialLambertKurepaPartialIntegralGoldenFactorialExponentBounds`.
 The statement `kurepaPartialIntegral_lambertSequence_bounds` is proved in
 `MathlibExt.NumberTheory.GoldenRatioLeftFactorialLambertKurepaPartialIntegralLambertSequenceBounds`.
+The statement `lambertSequence_lt_goldenFactorialExponent` is proved in
+`MathlibExt.NumberTheory.GoldenRatioLeftFactorialLambertLambertSequenceLtGoldenFactorialExponent`.
 
 The paper's real sequence `a n = -(n - 1) W₋₁(-(1/(n-1)) (4/7)^(1/(n-1)))` uses the
 lower real branch `W₋₁` of the Lambert `W` function. That branch is not defined in the
@@ -108,25 +111,6 @@ public theorem_wanted ncard_floor_logb_goldenRatio_eq_alternatingSignFibonacci (
     (hm : 1 ≤ m) :
     (({n : ℕ | 1 ≤ n ∧ ⌊Real.logb goldenRatio n⌋₊ = m}.ncard : ℕ) : ℤ) =
       alternatingSignFibonacci m
-
-/-- **The golden factorial exponent exceeds the Lambert sequence.** Let $n > 4$ be an integer, let
-$h(y) = y e^y$ be the Lambert map, and let $a$ be a real number with $a \ge n - 1$ and
-$$h\left(-\frac{a}{n-1}\right) = -\frac{1}{n-1}\left(\frac{4}{7}\right)^{1/(n-1)}.$$
-Then $a < \alpha(n)$, where $\alpha(n)$ is the least positive integer $m$ with $n! \le \varphi^m$
-and $\varphi$ is the golden ratio.
-
-The two conditions on $a$ say exactly that
-$a = -(n-1)\, W_{-1}\left(-\frac{1}{n-1}\left(\frac{4}{7}\right)^{1/(n-1)}\right)$, where $W_{-1}$
-is the lower real branch of the Lambert $W$ function; this is the paper's $a(n)$.
-
-Source: Petojević, Gorjanac Ranitović, Rastovac and Mandić, *The Golden Ratio,
-Factorials, and the Lambert W Function*, Journal of Integer Sequences 27 (2024),
-Article 24.5.7, Theorem 6 (`jis-2024-24.5.7-thm-6`). -/
-public theorem_wanted lambertSequence_lt_goldenFactorialExponent (n : ℕ) (hn : 4 < n)
-    (a : ℝ) (ha : (n : ℝ) - 1 ≤ a)
-    (hW : lambertMap (-a / ((n : ℝ) - 1)) =
-      -(1 / ((n : ℝ) - 1)) * (4 / 7 : ℝ) ^ (1 / ((n : ℝ) - 1))) :
-    a < goldenFactorialExponent n
 
 /-- **Floor formulas for the left factorial.** Let $!n = \sum_{k=0}^{n-1} k!$ be the left
 factorial, let $K_n(x) = \int_0^x e^{-t} \sum_{k=0}^{n-1} t^k \, dt$ be Kurepa's partial integral,
