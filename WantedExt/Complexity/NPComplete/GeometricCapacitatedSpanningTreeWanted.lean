@@ -64,7 +64,10 @@ reduction from every language in `NP`
 
 /-- An instance `(P, p₀, r, c, B)`: the points (encoded as in GEOMETRIC TRAVELING SALESMAN),
 the index of `p₀`, the requirements `r(p)` of the points in order, the capacity `c`, and the
-bound `B`. -/
+bound `B`. The raw type is any such tuple of lists and naturals: the point list may be empty or
+repeat a point, the index may be out of range, the requirement list may have any length, and
+`c` and `B` may be `0`; `WellFormed` asks for nonempty distinct points, an index in range, one
+requirement per point and positive `c` and `B`. -/
 abbrev GeometricCapacitatedSpanningTreeInstance :=
   List ((ℕ × ℕ) × (ℕ × ℕ)) × ℕ × List ℕ × ℕ × ℕ
 
@@ -72,7 +75,9 @@ abbrev GeometricCapacitatedSpanningTreeInstance :=
 def points (i : GeometricCapacitatedSpanningTreeInstance) : List (ℤ × ℤ) :=
   i.1.map GeometricTravelingSalesman.point
 
-/-- The discretized Euclidean distance between the points with indices `a` and `b`. -/
+/-- The discretized Euclidean distance between the points with indices `a` and `b`: the
+ceiling `⌈((x₁ - x₂)² + (y₁ - y₂)²)^(1/2)⌉` of their Euclidean distance, a natural number
+(`GeometricTravelingSalesman.discreteDist`). -/
 noncomputable def pointDist (i : GeometricCapacitatedSpanningTreeInstance) (a b : Fin i.1.length) :
     ℕ :=
   GeometricTravelingSalesman.discreteDist ((points i).getD a (0, 0)) ((points i).getD b (0, 0))

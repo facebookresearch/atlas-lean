@@ -65,7 +65,10 @@ reduction from every language in `NP`
 -/
 
 /-- An instance: the points of `V`, each a pair of integer coordinates, each coordinate an
-integer `a - b` given as the pair `(a, b)`. -/
+integer `a - b` given as the pair `(a, b)`. The raw type is any list of such pairs: a site may be
+listed more than once, also through different pairs for the same integer (`(1, 0)` and `(2, 1)`
+both give `1`); `WellFormed` asks the listed sites to be pairwise distinct, so that the list
+enumerates the set `V`. -/
 abbrev GridGraphHamiltonianCircuitInstance := List ((ℕ × ℕ) × (ℕ × ℕ))
 
 /-- The site of `ℤ²` encoded by a pair of coordinate pairs. -/
@@ -81,15 +84,19 @@ instance (x y : StatMech.Lattice.Site 2) :
 def WellFormed (i : GridGraphHamiltonianCircuitInstance) : Prop :=
   (i.map site).Nodup
 
-/-- The edges of the grid graph: the pairs `(u, v)` with `u < v < |V|` whose sites are adjacent
-in the infinite grid `hypercubicLattice 2`. -/
+/-- The edges of the grid graph: the pairs `(u, v)` of list positions with `u < v` below the length
+of the list (`|V|` under `WellFormed`) whose sites are adjacent in the infinite grid
+`hypercubicLattice 2`. -/
 def gridEdges (i : GridGraphHamiltonianCircuitInstance) : List (ℕ × ℕ) :=
   (List.range i.length).flatMap fun u =>
     ((List.range i.length).filter fun v =>
       decide (u < v ∧ (StatMech.Lattice.hypercubicLattice 2).Adj (site (i.getD u ((0, 0), (0, 0))))
         (site (i.getD v ((0, 0), (0, 0)))))).map fun v => (u, v)
 
-/-- The grid graph as a HAMILTONIAN CIRCUIT instance: `|V|` vertices and the grid edges. -/
+/-- The grid graph as a HAMILTONIAN CIRCUIT instance: one vertex per entry of the list and the
+grid edges. The vertex count is the length of the list, so a repeated site counts once per
+occurrence (its copies are distinct vertices, not adjacent to each other); under `WellFormed`
+the count is `|V|`. -/
 def toHamiltonianInstance (i : GridGraphHamiltonianCircuitInstance) :
     HamiltonianCycleUndirectedInstance :=
   (i.length, gridEdges i)
