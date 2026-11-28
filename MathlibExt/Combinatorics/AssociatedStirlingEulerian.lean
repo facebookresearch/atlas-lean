@@ -13,6 +13,17 @@ public import Mathlib.Data.Fintype.Perm
 public import Mathlib.Data.Finset.Card
 public import MathlibExt.Combinatorics.Enumerative.Stirling
 public import Mathlib.RingTheory.PowerSeries.Basic
+import Mathlib.Algebra.BigOperators.Ring.Finset
+
+/-!
+# Associated Stirling–Eulerian numbers
+
+## References
+
+* Imboa-Navalona Manjaka Rakotoson and Fanja Rakotondrajao, *Associated Stirling Eulerian
+  Numbers and Their $q$-Analogues*, Journal of Integer Sequences 28 (2025), Article 25.5.7,
+  Section 1 for the excedance statistic.
+-/
 
 namespace MetaMathlibExt
 
@@ -27,6 +38,11 @@ Source: Concept `jis_term_6573e30b9007548081ca6e28`; source JIS VOL28/Rakotoson/
 Lines 130-132; URL https://cs.uwaterloo.ca/journals/JIS/VOL28/Rakotoson/rakoto12.tex. -/
 def excedanceCount (n : ℕ) (σ : Equiv.Perm (Fin n)) : ℕ :=
   (Finset.univ.filter (fun i : Fin n => i < σ i)).card
+
+/-- The excedance count is the sum of the indicators of the excedance positions. -/
+theorem excedanceCount_eq_sum (n : ℕ) (σ : Equiv.Perm (Fin n)) :
+    excedanceCount n σ = ∑ i : Fin n, if i < σ i then 1 else 0 := by
+  simp [excedanceCount, Finset.sum_boole]
 
 /-- **Permutations with all cycles of length at most $r$.** A permutation $\sigma$ of
 $\{0, 1, \dots, n-1\}$ is an $r$-minus-associated cycle permutation when every cycle of $\sigma$,

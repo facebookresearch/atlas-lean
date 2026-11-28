@@ -8,10 +8,13 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Algebra.Polynomial.Coeff
 public import Mathlib.Data.Finset.Insert
 public import Mathlib.Logic.Equiv.Defs
 public import Mathlib.SetTheory.Cardinal.Finite
+public import MathlibExt.Combinatorics.AssociatedStirlingEulerian
 public import MathlibExt.NumberTheory.Recurrences.HonsbergerFibonacciP
+import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Data.Fintype.BigOperators
 import Mathlib.Data.Fintype.Perm
 import Mathlib.Data.Fintype.Sum
@@ -22,18 +25,23 @@ import Lean.Elab.Tactic.Omega
 /-!
 # Counting strongly restricted permutations
 
-A permutation whose displacements are `-m`, `0`, and `j * m` acts independently on each
-residue class modulo `m`. In a single class, the first position is either fixed or starts
-an entire cycle of length `j + 1`. Removing this first block gives the Fibonacci recurrence.
+For natural numbers `m`, `j`, `i`, `r`, and `k` with `1 ≤ j` and `r < m`, permutations of
+`Fin (i * m + r)` with displacements in `{-m, 0, j * m}` act independently on each residue
+class modulo `m`. In a nonempty class, the first position is either fixed or starts a cycle
+of length `j + 1` with exactly one excedance. Removing the first block gives the Fibonacci
+recurrence for the total count and the `(1, j + 1)`-bonacci polynomial recurrence for the
+count by number of excedances. The count with exactly `k` excedances is the coefficient of
+`X ^ k` in the product of the residue-class polynomials. Both counts use the same
+`fixedEquiv`, `jumpEquiv`, and `multiplePermEquiv` decompositions in this module.
 
 ## References
 
 * Michael A. Allen, *Connections Between Combinations Without Specified Separations and
   Strongly Restricted Permutations, Compositions, and Bit Strings*, Journal of Integer
-  Sequences 28 (2025), Article 25.3.7, Corollary 14, equation (7).
+  Sequences 28 (2025), Article 25.3.7, Section 3.2, Corollary 14, equations (7) and (8).
 * Michael A. Allen, *On a Two-Parameter Family of Generalizations of Pascal's Triangle*,
-  Journal of Integer Sequences 25 (2022), Article 22.9.8, Corollary 11 (the residue-class
-  enumeration of restricted combinations used in the published proof).
+  Journal of Integer Sequences 25 (2022), Article 22.9.8, Corollaries 10 and 11 (the
+  residue-class enumeration of restricted combinations used in the published proof).
 * Kenneth Edwards and Michael A. Allen, *Strongly restricted permutations and tiling with
   fences*, Discrete Applied Mathematics 187 (2015), 82–90 (the fence bijection recalled as
   Lemma 12 in Allen's 2025 paper).
@@ -379,6 +387,16 @@ private noncomputable def multiplePermEquiv (m i r j : ℕ) (hr : r < m) :
         apply (fiberStep_iff hr x (p x)).mp
         simpa using hp (residueEquiv hr x)
 
+private theorem prod_residueSize {R : Type*} [CommMonoid R] {m i r : ℕ} (hr : r < m)
+    (f : ℕ → R) : (∏ a : Fin m, f (residueSize i r a)) = f i ^ (m - r) * f (i + 1) ^ r := by
+  let e := splitLine (show r + (m - r) = m by omega)
+  rw [← e.prod_comp, Fintype.prod_sum_type]
+  have hleft (a : Fin r) : residueSize i r (e (.inl a)) = i + 1 := by
+    simp [residueSize, e, a.isLt]
+  have hright (a : Fin (m - r)) : residueSize i r (e (.inr a)) = i := by
+    simp [residueSize, e]
+  simp only [hleft, hright, Finset.prod_const, Finset.card_univ, Fintype.card_fin, mul_comm]
+
 /-- **Counting strongly restricted permutations with displacements $-m$, $0$, $jm$.** Let
 $m, j, i, r$ be natural numbers with $j \ge 1$ and $r < m$, and let $F_j$ be the Fibonacci
 $j$-numbers: $F_j(0) = 0$, $F_j(n) = 1$ for $1 \le n \le j$, and
@@ -403,12 +421,193 @@ public theorem card_strongPerms_multiples_eq_fibonacciP
       ∀ x : Fin (i * m + r), Allowed m j x (p x)} = _
   rw [← Nat.card_congr (multiplePermEquiv m i r j hr), Nat.card_pi]
   simp only [card_linePerm _ _ hj]
-  let e := splitLine (show r + (m - r) = m by omega)
-  rw [← e.prod_comp, Fintype.prod_sum_type]
-  have hleft (a : Fin r) : residueSize i r (e (.inl a)) = i + 1 := by
-    simp [residueSize, e, a.isLt]
-  have hright (a : Fin (m - r)) : residueSize i r (e (.inr a)) = i := by
-    simp [residueSize, e]
-  simp only [hleft, hright, Finset.prod_const, Finset.card_univ, Fintype.card_fin, mul_comm]
+  exact prod_residueSize hr (fun n => fibonacciP j (n + 1))
+
+/-- **The $(1,t)$-bonacci polynomials.** Fix a natural number $s$ and put $t = s + 1$. The
+$(1,t)$-bonacci polynomials $f^{(t)}_n(x)$, $n \ge 0$, are the polynomials with natural-number
+coefficients defined by $f^{(t)}_0(x) = 1$ and, for every $n \ge 0$,
+$f^{(t)}_{n+1}(x) = f^{(t)}_n(x) + x \, f^{(t)}_{n-s}(x)$ if $s \le n$ and
+$f^{(t)}_{n+1}(x) = f^{(t)}_n(x)$ if $n < s$.
+
+Equivalently, $f^{(t)}_n(x) = f^{(t)}_{n-1}(x) + x \, f^{(t)}_{n-t}(x) + \delta_{n,0}$ with
+$f^{(t)}_n(x) = 0$ for $n < 0$.
+
+Source: Michael A. Allen, *Connections Between Combinations Without Specified Separations and
+Strongly Restricted Permutations, Compositions, and Bit Strings*, Journal of Integer
+Sequences 28 (2025), Article 25.3.7, Section 3.2. -/
+@[expose] public noncomputable def oneTBonacciPolynomial (s : ℕ) : ℕ → Polynomial ℕ
+  | 0 => 1
+  | n + 1 =>
+    oneTBonacciPolynomial s n +
+      Polynomial.X * (if s ≤ n then oneTBonacciPolynomial s (n - s) else 0)
+termination_by n => n
+decreasing_by all_goals omega
+
+/-- **Initial value of the $(1,t)$-bonacci polynomials.** For every natural number $s$, the
+$(1,s+1)$-bonacci polynomial of index $0$ is $f^{(s+1)}_0(x) = 1$.
+
+Source: Michael A. Allen, *Connections Between Combinations Without Specified Separations and
+Strongly Restricted Permutations, Compositions, and Bit Strings*, Journal of Integer
+Sequences 28 (2025), Article 25.3.7, Section 3.2. -/
+public theorem oneTBonacciPolynomial_zero (s : ℕ) : oneTBonacciPolynomial s 0 = 1 := by
+  rw [oneTBonacciPolynomial]
+
+/-- **Recurrence for the $(1,t)$-bonacci polynomials.** For all natural numbers $s$ and $n$ with
+$s \le n$, the $(1,s+1)$-bonacci polynomials $f^{(s+1)}_m(x)$, $m \ge 0$, satisfy
+$f^{(s+1)}_{n+1}(x) = f^{(s+1)}_n(x) + x \, f^{(s+1)}_{n-s}(x)$.
+
+Source: Michael A. Allen, *Connections Between Combinations Without Specified Separations and
+Strongly Restricted Permutations, Compositions, and Bit Strings*, Journal of Integer
+Sequences 28 (2025), Article 25.3.7, Section 3.2. -/
+public theorem oneTBonacciPolynomial_succ_of_le (s n : ℕ) (h : s ≤ n) :
+    oneTBonacciPolynomial s (n + 1) =
+      oneTBonacciPolynomial s n + Polynomial.X * oneTBonacciPolynomial s (n - s) := by
+  rw [oneTBonacciPolynomial]
+  simp [h]
+
+/-- **The $(1,t)$-bonacci polynomials below the recurrence range.** For all natural numbers $s$
+and $n$ with $n < s$, the $(1,s+1)$-bonacci polynomials $f^{(s+1)}_m(x)$, $m \ge 0$, satisfy
+$f^{(s+1)}_{n+1}(x) = f^{(s+1)}_n(x)$.
+
+Source: Michael A. Allen, *Connections Between Combinations Without Specified Separations and
+Strongly Restricted Permutations, Compositions, and Bit Strings*, Journal of Integer
+Sequences 28 (2025), Article 25.3.7, Section 3.2. -/
+public theorem oneTBonacciPolynomial_succ_of_lt (s n : ℕ) (h : n < s) :
+    oneTBonacciPolynomial s (n + 1) = oneTBonacciPolynomial s n := by
+  rw [oneTBonacciPolynomial]
+  simp [show ¬ s ≤ n by omega]
+
+private theorem excedanceCount_appendLine {j k l n : ℕ} (h : k + l = n)
+    (p : LinePerm j k) (q : LinePerm j l) :
+    excedanceCount n (appendLine h p q).val.val =
+      excedanceCount k p.val + excedanceCount l q.val := by
+  rw [excedanceCount_eq_sum, excedanceCount_eq_sum, excedanceCount_eq_sum]
+  change (∑ x : Fin n, if x < (splitLine h).permCongr (Equiv.sumCongr p.val q.val) x
+    then 1 else 0) = _
+  rw [← (splitLine h).sum_comp, Fintype.sum_sum_type]
+  simp only [Equiv.permCongr_apply, Equiv.symm_apply_apply, Equiv.sumCongr_apply, Sum.map_inl,
+    Sum.map_inr, Fin.lt_def, splitLine_left_val, splitLine_right_val, Nat.add_lt_add_iff_left]
+
+private theorem excedanceCount_cycleLine {j : ℕ} (hj : 1 ≤ j) :
+    excedanceCount (j + 1) (cycleLine j).val = 1 := by
+  rw [excedanceCount_eq_sum]
+  have h (x : Fin (j + 1)) : x < (cycleLine j).val x ↔ x = 0 := by
+    rw [Fin.lt_def, ← Fin.val_eq_zero_iff]
+    change x.val < (if x.val = 0 then j else x.val - 1) ↔ x.val = 0
+    split <;> omega
+  simp [h]
+
+open scoped Classical in
+private noncomputable def lineExcedancePolynomial (j n : ℕ) : Polynomial ℕ :=
+  ∑ p : LinePerm j n, Polynomial.X ^ excedanceCount n p.val
+
+private theorem lineExcedancePolynomial_eq (j n : ℕ) (hj : 1 ≤ j) :
+    lineExcedancePolynomial j n = oneTBonacciPolynomial j n := by
+  classical
+  induction n using Nat.strong_induction_on with
+  | _ n ih =>
+    cases n with
+    | zero =>
+      let : Unique (LinePerm j 0) :=
+        ⟨⟨identityLine j 0⟩, fun p => Subtype.ext (Equiv.ext fun x => Fin.elim0 x)⟩
+      simp [lineExcedancePolynomial, excedanceCount_eq_sum, oneTBonacciPolynomial_zero]
+    | succ n =>
+      let fixed := fixedEquiv j (n + 1) (Nat.succ_pos n)
+      have hfixed (p : LinePerm j n) :
+          excedanceCount (n + 1) (fixed p).val.val = excedanceCount n p.val := by
+        change excedanceCount (n + 1) (appendLine _ (identityLine j 1) p).val.val = _
+        rw [excedanceCount_appendLine]
+        simp [excedanceCount_eq_sum, identityLine]
+      by_cases h : j ≤ n
+      · let t := n + 1 - (j + 1)
+        let jump := jumpEquiv hj (Nat.lt_succ_of_le h)
+        let e := (fixed.sumCongr jump).trans (Equiv.sumCompl (FixesFirst (Nat.succ_pos n)))
+        have hjump (p : LinePerm j t) :
+            excedanceCount (n + 1) (jump p).val.val = 1 + excedanceCount t p.val := by
+          change excedanceCount (n + 1) (appendLine _ (cycleLine j) p).val.val = _
+          rw [excedanceCount_appendLine, excedanceCount_cycleLine hj]
+        rw [lineExcedancePolynomial, ← e.sum_comp, Fintype.sum_sum_type]
+        change (∑ p : LinePerm j n,
+          (Polynomial.X : Polynomial ℕ) ^ excedanceCount (n + 1) (fixed p).val.val) +
+          (∑ p : LinePerm j t, Polynomial.X ^ excedanceCount (n + 1) (jump p).val.val) = _
+        simp only [hfixed, hjump, pow_add, pow_one, ← Finset.mul_sum]
+        change lineExcedancePolynomial j n + Polynomial.X * lineExcedancePolynomial j t = _
+        rw [ih n (by omega), ih t (by dsimp [t]; omega),
+          oneTBonacciPolynomial_succ_of_le j n h, show t = n - j from Nat.succ_sub_succ_eq_sub n j]
+      · have hall (p : LinePerm j (n + 1)) : FixesFirst (Nat.succ_pos n) p := by
+          rcases first_fixed_or_jump p (Nat.succ_pos n) with h₀ | h₀
+          · exact h₀
+          · have := (p.val ⟨0, Nat.succ_pos n⟩).isLt
+            omega
+        let e := fixed.trans (Equiv.subtypeUnivEquiv hall)
+        rw [lineExcedancePolynomial, ← e.sum_comp]
+        change (∑ p : LinePerm j n,
+          (Polynomial.X : Polynomial ℕ) ^ excedanceCount (n + 1) (fixed p).val.val) = _
+        simp only [hfixed]
+        exact (ih n (by omega)).trans (oneTBonacciPolynomial_succ_of_lt j n (by omega)).symm
+
+private theorem excedanceCount_multiplePermEquiv {m j i r : ℕ} (hr : r < m)
+    (p : ∀ a : Fin m, LinePerm j (residueSize i r a)) :
+    excedanceCount (i * m + r) (multiplePermEquiv m i r j hr p).val =
+      ∑ a : Fin m, excedanceCount (residueSize i r a) (p a).val := by
+  rw [excedanceCount_eq_sum, ← (residueEquiv hr).sum_comp, Fintype.sum_sigma]
+  apply Finset.sum_congr rfl
+  intro a _
+  rw [excedanceCount_eq_sum]
+  apply Finset.sum_congr rfl
+  intro x _
+  let e := residueEquiv (i := i) hr
+  change (if e ⟨a, x⟩ < e.permCongr (Equiv.sigmaCongrRight fun b => (p b).val) (e ⟨a, x⟩)
+    then 1 else 0) = _
+  simp only [Equiv.permCongr_apply, Equiv.symm_apply_apply, Equiv.sigmaCongrRight_apply,
+    Fin.lt_def, e, residueEquiv_val, Nat.add_lt_add_iff_right,
+    Nat.mul_lt_mul_right (Nat.zero_lt_of_lt hr)]
+
+open scoped Classical in
+private theorem sum_excedanceWeights (m j i r : ℕ) (hj : 1 ≤ j) (hr : r < m) :
+    (∑ p : {p : Equiv.Perm (Fin (i * m + r)) // ∀ x : Fin (i * m + r), Allowed m j x (p x)},
+      (Polynomial.X : Polynomial ℕ) ^ excedanceCount (i * m + r) p.val) =
+      oneTBonacciPolynomial j i ^ (m - r) * oneTBonacciPolynomial j (i + 1) ^ r := by
+  classical
+  rw [← (multiplePermEquiv m i r j hr).sum_comp]
+  simp only [excedanceCount_multiplePermEquiv hr, ← Finset.prod_pow_eq_pow_sum]
+  rw [← Fintype.prod_sum (fun (a : Fin m) (p : LinePerm j (residueSize i r a)) =>
+    (Polynomial.X : Polynomial ℕ) ^ excedanceCount (residueSize i r a) p.val)]
+  change (∏ a : Fin m, lineExcedancePolynomial j (residueSize i r a)) = _
+  simp only [lineExcedancePolynomial_eq _ _ hj, prod_residueSize hr]
+
+/-- **Excedances of strongly restricted permutations with displacements $-m$, $0$, $jm$.** Let
+$m, j, i, r, k$ be natural numbers with $j \ge 1$ and $r < m$, and let $f_n(x)$ be the
+$(1, j+1)$-bonacci polynomials with natural-number coefficients: $f_0(x) = 1$, and
+$f_{n+1}(x) = f_n(x) + x f_{n-j}(x)$ if $n \ge j$, $f_{n+1}(x) = f_n(x)$ if $n < j$. Then the
+number of permutations $\pi$ of $\{0, 1, \dots, im + r - 1\}$ with $\pi(a) - a \in \{-m, 0, jm\}$
+for every $a$ and with exactly $k$ excedances (points $a$ with $\pi(a) > a$) equals the
+coefficient of $x^k$ in $f_i(x)^{m-r} f_{i+1}(x)^r$.
+
+Source: Michael A. Allen, *Connections Between Combinations Without Specified Separations and
+Strongly Restricted Permutations, Compositions, and Bit Strings*, Journal of Integer
+Sequences 28 (2025), Article 25.3.7, Corollary 14. -/
+public theorem card_strongPerms_multiples_excedance_eq_coeff
+    (m j i r k : ℕ) (hj : 1 ≤ j) (hr : r < m) :
+    Nat.card {π : Equiv.Perm (Fin (i * m + r)) //
+        (∀ x, ((π x : ℕ) : ℤ) - (x : ℕ) ∈ ({-(m : ℤ), 0, ((j * m : ℕ) : ℤ)} : Finset ℤ)) ∧
+        excedanceCount (i * m + r) π = k} =
+      ((oneTBonacciPolynomial j i) ^ (m - r) * (oneTBonacciPolynomial j (i + 1)) ^ r).coeff k := by
+  classical
+  let P := {p : Equiv.Perm (Fin (i * m + r)) // ∀ x : Fin (i * m + r), Allowed m j x (p x)}
+  let count (p : P) := excedanceCount (i * m + r) p.val
+  let e : {p : P // count p = k} ≃
+      {p : Equiv.Perm (Fin (i * m + r)) // (∀ x : Fin (i * m + r), Allowed m j x (p x)) ∧
+        excedanceCount (i * m + r) p = k} :=
+    Equiv.subtypeSubtypeEquivSubtypeInter
+      (fun (p : Equiv.Perm (Fin (i * m + r))) => ∀ x : Fin (i * m + r), Allowed m j x (p x))
+      (fun p => excedanceCount (i * m + r) p = k)
+  change Nat.card {p : Equiv.Perm (Fin (i * m + r)) //
+    (∀ x : Fin (i * m + r), Allowed m j x (p x)) ∧ excedanceCount (i * m + r) p = k} = _
+  rw [← Nat.card_congr e, ← sum_excedanceWeights m j i r hj hr, Polynomial.finsetSum_coeff]
+  simp only [Polynomial.coeff_X_pow]
+  rw [Nat.card_eq_fintype_card, Fintype.card_subtype, Finset.sum_boole]
+  congr 1
+  exact Finset.filter_congr fun _ _ => eq_comm
 
 end MetaMathlibExt
