@@ -18,8 +18,10 @@ public import Cslib.Algorithms.Lean.Query.Sort.Merge.Bounds
 # Sorting and selection library audit
 
 Lane-facing restatements of the library sorting and selection results.
-For each algorithm the adapter records exactly what the library proves:
-the correctness statement and the per-input cost bound, with the charged
+For each algorithm the adapter records the correctness statement and
+the per-input cost bound the library proves, with one selection: the
+radix adapter leaves out the provider's numeric-order conjunct. The
+charged
 primitive named in each module's own `Cost model` note. No new sorting
 proofs are added here.
 
@@ -37,7 +39,8 @@ no worst-case functional and no machine-time claim.
 The library proves the upper bounds adapted above. A matching
 lower bound exists in cslib's query model:
 `Cslib.Query.mergeSort_lowerBound` gives worst-case query complexity
-at least `⌈log₂(n!)⌉` for the same underlying `List.mergeSortM`,
+at least `⌈log₂(n!)⌉` (over infinite element types) for the same underlying
+`List.mergeSortM`,
 which is `Ω(n log n)`. It is stated in the `FreeM` query-cost
 model, not in `TimeM` ticks, and no bridge between the two charge
 models is claimed here. No expected-cost refinement of these
@@ -68,7 +71,8 @@ theorem mergeSort_comparisons_le {α : Type} [LinearOrder α] (xs : List α) :
     (mergeSort xs).time ≤ xs.length * Nat.clog 2 xs.length := by
   exact (mergeSort_time_le xs).trans (timeMergeSortRec_le xs.length)
 
-/-- **Counting sort is correct.** `countingSort` returns a sorted stable permutation of its input. -/
+/-- **Counting sort is correct.** `countingSort` returns a sorted stable permutation of its
+input. -/
 theorem countingSort_stable_sorted_perm {α : Type u} {k : Nat} (key : α → Fin k)
     (input : Array α) :
     List.Pairwise (fun x y => key x ≤ key y) (countingSort key input).ret.toList ∧
@@ -85,7 +89,9 @@ theorem countingSort_linear_time {α : Type u} {k : Nat} (key : α → Fin k)
     (countingSort key input).time ≤ 7 * input.size + 3 * k := by
   exact countingSort_time key input
 
-/-- **Radix sort is correct.** `radixSort` returns a sorted stable permutation of its input. -/
+/-- **Radix sort is correct.** `radixSort` returns a sorted stable permutation of its input.
+The provider's fourth conjunct (order by the base-`b` number the digits spell) is not restated
+here. -/
 theorem radixSort_stable_sorted_perm {α : Type u} {b d : Nat}
     (digits : α → _root_.Vector (Fin b) d) (input : Array α) (hb : 2 ≤ b) :
     List.Pairwise (fun x y => digits x ≤ digits y) (radixSort digits input hb).ret.toList ∧
