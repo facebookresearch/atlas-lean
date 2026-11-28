@@ -105,6 +105,11 @@ of `T_ℓ`).
 public def tripleRegularPartitionCount (ℓ n : ℕ) : ℕ :=
   kTupleRegularPartitionCount ℓ 3 n
 
+/-- **Triples as tuples of length three.** For all natural numbers $\ell$ and $n$, the number
+of triples of $\ell$-regular partitions of total size $n$ is $T_{\ell,3}(n)$. -/
+public theorem tripleRegularPartitionCount_eq_kTupleRegularPartitionCount (ℓ n : ℕ) :
+    tripleRegularPartitionCount ℓ n = kTupleRegularPartitionCount ℓ 3 n := rfl
+
 /-- **Zero has one $\ell$-regular partition.** For every natural number $\ell$, the number of
 $\ell$-regular partitions of $0$ is $1$; the only one is the empty partition.
 

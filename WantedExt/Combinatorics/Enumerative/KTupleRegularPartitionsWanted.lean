@@ -15,6 +15,7 @@ public import Mathlib.NumberTheory.LegendreSymbol.Basic
 public import Mathlib.Data.Int.Interval
 public import MathlibExt.Combinatorics.Enumerative.Partition.KTupleRegularPartitions
 public import MathlibExt.Combinatorics.Enumerative.Partition.KTupleRegularPartitionPrimePower
+public import MathlibExt.Combinatorics.Enumerative.Partition.NathSaikiaSarmaTripartitionCongruence
 public import MathlibExt.Combinatorics.Enumerative.Partition.QEulerProductCongruence
 public import MathlibExt.Combinatorics.Enumerative.Partition.SignedEulerProduct
 import Mathlib
@@ -105,26 +106,6 @@ T29n24.
 public theorem_wanted tripleTwo_mod_twentyFour (t n N : ℕ) (ht : 0 < t)
     (hcoprime : Nat.gcd t 6 = 1) (hN : N = 33 ∨ N = 57) :
     Nat.ModEq 24 (tripleRegularPartitionCount 2 (9 * n + (N * t ^ 2 - 1) / 8)) 0
-
-/--
-**The Nath–Saikia–Sarma conjecture.** Let $T_2(n)$ be the number of triples of 2-regular
-partitions (partitions with no even part) whose sizes add up to $n$. Let $p \ge 5$ be a prime
-with Legendre symbol $\left(\frac{-2}{p}\right) = -1$, and let $t$ be a positive integer with
-$\gcd(t, 6) = 1$ and $p \mid t$. Then for every natural number $n$ and every $j$ with
-$1 \le j \le p - 1$,
-$$T_2\left(9t^2 n + \frac{9t^2 j}{p} + \frac{57t^2 - 1}{8}\right) \equiv 0 \pmod{6}.$$
-Both fractions are integers under these hypotheses.
-
-Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia,
-and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Corollary 1
-(Conjecture conj.nss).
--/
-public theorem_wanted nathSaikiaSarma_conjecture (p t n j : ℕ) [Fact (Nat.Prime p)]
-    (hp : 5 ≤ p) (hlegendre : legendreSym p (-2) = -1) (ht : 0 < t)
-    (hcoprime : Nat.gcd t 6 = 1) (hpt : p ∣ t) (hj₁ : 1 ≤ j) (hjp : j ≤ p - 1) :
-    Nat.ModEq 6
-      (tripleRegularPartitionCount 2
-        (9 * t ^ 2 * n + 9 * t ^ 2 * j / p + (57 * t ^ 2 - 1) / 8)) 0
 
 /--
 **Congruences modulo 8 and 24 for triples of 2-regular partitions.** Let $T_2(n)$ be the
