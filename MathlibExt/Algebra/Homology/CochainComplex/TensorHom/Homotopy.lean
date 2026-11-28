@@ -15,9 +15,8 @@ public import Mathlib.Algebra.Homology.BifunctorHomotopy
 /-!
 # Tensor products preserve cochain homotopies
 
-Over a commutative ring, a homotopy in either integer cochain factor gives
-a homotopy of the full tensor maps. Homotopies in both factors combine
-to compare their simultaneous tensor maps, with the standard signed
+Over a commutative ring, homotopies of both integer cochain factors combine
+to give a homotopy between their full tensor maps, with the standard signed
 tensor differential.
 -/
 

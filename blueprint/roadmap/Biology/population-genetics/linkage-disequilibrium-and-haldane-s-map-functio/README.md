@@ -58,3 +58,4 @@
 - [Moran model with single-crossover recombination](moran-model-with-single-crossover-recombination/README.md)
 - [Single-crossover recombination](single-crossover-recombination/README.md)
 - [Similarity-dependent homologous recombination in bacteria](similarity-dependent-homologous-recombination-in-bacteria/README.md)
+- [Multilocus index of association](multilocus-index-of-association/README.md)

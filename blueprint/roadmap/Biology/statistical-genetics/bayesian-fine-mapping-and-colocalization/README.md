@@ -75,3 +75,8 @@
 - [Posterior number of causal variants at a locus](posterior-number-of-causal-variants-at-a-locus.md)
 - [Profile likelihood of a single causal variant from association z-scores](profile-likelihood-of-a-single-causal-variant.md)
 - [Multivariate adaptive shrinkage](multivariate-adaptive-shrinkage/README.md)
+- [Conditional posterior of association with a second disease](conditional-posterior-of-association-with-a-second-disease.md)
+- [Functionally informed prior causal probabilities (PolyFun)](functionally-informed-prior-causal-probabilities-polyfun.md)
+- [PAINTOR: annotation-informed fine-mapping of causal variants across loci](paintor-annotation-informed-fine-mapping.md)
+- [Polygenic localization](polygenic-localization.md)
+- [Functionally informed eQTL fine-mapping](functionally-informed-eqtl-fine-mapping/README.md)

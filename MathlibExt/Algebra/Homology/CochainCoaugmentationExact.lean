@@ -19,8 +19,7 @@ public import Mathlib.Algebra.Homology.ShortComplex.ShortExact
 In an abelian category, a coaugmentation `X[0] → I` that is a
 quasi-isomorphism in degree zero gives an exact row `X → I⁰ → I¹`
 and a monic first map. A full coaugmentation quasi-isomorphism also
-gives exactness of all positive rows. Compatibility with a map of
-cochain complexes is determined by the degree-zero coaugmentation equation.
+gives exactness of all positive rows.
 -/
 @[expose] public section
 noncomputable section

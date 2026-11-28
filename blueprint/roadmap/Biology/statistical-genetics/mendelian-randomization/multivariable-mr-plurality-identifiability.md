@@ -17,8 +17,8 @@ has full column rank $L$ (so $m_0 \ge L$), and
 
 $$|V^*| > \max_{c \in \mathbb{R}^L,\ c \ne 0} \bigl|\{ i : r_i^* = b_{X i}^\top c \}\bigr| .$$
 
-**Theorem.** Given $\{(b_{Y i}, b_{X i})\}_{i=1}^m$, the parameters $(\theta^*, r^*)$ are identifiable (the admissible
-solution is unique) if and only if the multivariable plurality assumption holds.
+**Theorem.** Given $\{(b_{Y i}, b_{X i})\}_{i=1}^m$, the parameters $(\theta^*, r^*)$ are identifiable (there is a unique
+admissible solution and it equals the ground truth $(\theta^*, r^*)$) if and only if the multivariable plurality assumption holds.
 
 For $L = 1$ the condition reduces to the univariable plurality rule
 $|V^*| > \max_{c \ne 0} |\{ i : r_i^*/b_{X_1 i} = c \}|$: no group of invalid instruments sharing a common
