@@ -9,6 +9,7 @@ Since matching modulo $E$ reduces to $E$-unification with constants, by replacin
 ## Depends on
 
 - [E-unification problems](equational-unification-problems.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -15,6 +15,7 @@ $$
 ## Depends on
 
 - [β-reduction](../../../ComputerScience/type-systems-and-lambda-calculi/untyped-lambda-calculus/beta-reduction-and-confluence/beta-reduction.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

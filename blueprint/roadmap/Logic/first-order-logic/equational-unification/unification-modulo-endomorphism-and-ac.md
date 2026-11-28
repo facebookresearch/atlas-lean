@@ -15,6 +15,7 @@ By contrast, solvability of unification problems with constants is decidable for
 ## Depends on
 
 - [E-unification problems](equational-unification-problems.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

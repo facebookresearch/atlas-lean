@@ -10,6 +10,7 @@ By contrast, unification modulo the theory of Boolean rings is decidable: NP-com
 
 - [E-unification problems](equational-unification-problems.md)
 - [Commutative ring with identity: a ring whose multiplication is commutative and has an identity element 1](../../../Algebra/rings-and-fields/commutative-ring-with-identity.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

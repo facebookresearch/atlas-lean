@@ -9,6 +9,7 @@ The proof uses a signature containing a constant $a$ and a binary symbol $g$ wit
 ## Depends on
 
 - [Second-order unification problems](second-order-unification-problems.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

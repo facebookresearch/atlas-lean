@@ -10,6 +10,7 @@ In contrast, $D^l_{f,g}$-unification with constants is decidable in polynomial t
 
 - [E-unification problems](equational-unification-problems.md)
 - [Peano arithmetic](../peano-arithmetic-and-robinson-s-q/patheory.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

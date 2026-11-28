@@ -14,7 +14,7 @@ $$
 
 *Unification with free constants* modulo $\mathcal E_1$ asks, given finitely many equations between terms built from these symbols, variables and additional free constants, whether some substitution makes both sides of every equation equal modulo $\mathcal E_1$ (see [equational unification problems](equational-unification-problems.md)).
 
-**Theorem (Kapur, Marshall and Narendran).** Unification modulo $\mathcal E_1$ with free constants is undecidable.
+**Theorem (Kapur, Marshall and Narendran).** Unification modulo $\mathcal E_1$ with free constants is undecidable (Theorem 5.8 of the source).
 
 By contrast, for the partial theory of exponentiation in which no property is assumed of the multiplication operators, the source gives a terminating unification algorithm, so that unification problem is decidable.
 
@@ -22,6 +22,7 @@ By contrast, for the partial theory of exponentiation in which no property is as
 
 - [Equational unification problems](equational-unification-problems.md)
 - [Abelian group](../../../GroupTheory/group-basics/abelian-group.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -33,4 +34,4 @@ The proof reduces Hilbert's tenth problem. With a free constant $b$, the natural
 
 ## Sources
 
-- D. Kapur, A. Marshall and P. Narendran, "Unification modulo a partial theory of exponentiation", in *Proceedings of the 24th International Workshop on Unification (UNIF 2010)*, Electronic Proceedings in Theoretical Computer Science 42, pp. 12–23, 2010, doi:[10.4204/EPTCS.42.2](https://doi.org/10.4204/EPTCS.42.2); read in arXiv:1012.4891v1 ([arXiv](https://arxiv.org/abs/1012.4891v1)): the convergent system for $\mathcal E_1$ and the undecidability theorem with its lemmas in the section "Undecidability of unification of partial exponentiation with two Abelian group operators", and the decidability result of the preceding section.
+- D. Kapur, A. Marshall and P. Narendran, "Unification modulo a partial theory of exponentiation", in *Proceedings of the 24th International Workshop on Unification (UNIF 2010)*, Electronic Proceedings in Theoretical Computer Science 42, pp. 12–23, 2010, doi:[10.4204/EPTCS.42.2](https://doi.org/10.4204/EPTCS.42.2); read in arXiv:1012.4891v1 ([arXiv](https://arxiv.org/abs/1012.4891v1)): the convergent system for $\mathcal E_1$ and Theorem 5.8 with Lemmas 5.3 to 5.7 in Section 5 (Undecidability of unification of partial exponentiation with two Abelian group operators), and Theorem 4.6 and Algorithm 1 of Section 4 (decidability of the partial theory).

@@ -12,6 +12,7 @@ Levy and Veanes also translate arbitrary second-order equations into equations w
 ## Depends on
 
 - [Higher-order unification and its order](higher-order-unification-and-its-order.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

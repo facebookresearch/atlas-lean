@@ -22,6 +22,11 @@ So Trakhtenbrot's theorem carries over to $\epsilon$-logic for $\epsilon>0$; by 
 ## Depends on
 
 - [Probability measure](../../../Probability/foundations/probability-measures/is-probability-measure.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Recognizability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
+- [Co-recognizability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-co-recognizable.md)
+- [The arithmetical class $\Sigma_n$](../../../TheoryOfComputation/degrees-and-hierarchies/arithmetical-hierarchy/is-sigma.md)
+- [The arithmetical class $\Pi_n$](../../../TheoryOfComputation/degrees-and-hierarchies/arithmetical-hierarchy/is-pi.md)
 
 ## Proof depends on
 
@@ -34,4 +39,4 @@ Membership in $\Sigma^0_1$ (respectively $\Pi^0_1$) holds because finite $\epsil
 
 ## Sources
 
-- G. Yang, "Computabilities of validity and satisfiability in probability logics over finite and countable models", *Journal of Applied Non-Classical Logics* 25(4), pp. 324–372, 2015, doi:[10.1080/11663081.2016.1139967](https://doi.org/10.1080/11663081.2016.1139967); read in arXiv:1410.3059v2 ([arXiv](https://arxiv.org/abs/1410.3059v2)), whose numbering is used: the definitions of ε-logic and ε-models in the preliminaries and of finite and countable satisfiability and validity, Theorem 3.4.4, Corollary 3.4.9, Corollaries 3.5.3 and 3.5.4, Theorem 3.5.9 and Corollary 3.5.10, and the summary tables of the introduction.
+- G. Yang, "Computabilities of validity and satisfiability in probability logics over finite and countable models", *Journal of Applied Non-Classical Logics* 25(4), pp. 324–372, 2015, doi:[10.1080/11663081.2016.1139967](https://doi.org/10.1080/11663081.2016.1139967); read in arXiv:1410.3059v2 ([arXiv](https://arxiv.org/abs/1410.3059v2)), whose numbering is used: Definitions 2.1.2 to 2.1.6 (ε-logic, ε-models, ε-validity and ε-satisfiability) and Definitions 2.3.1 and 2.3.5 (finite and countable models, satisfiability and validity), Theorem 3.4.4, Corollary 3.4.9, Corollaries 3.5.3 and 3.5.4, Theorem 3.5.9 and Corollary 3.5.10, and the summary tables of the introduction.

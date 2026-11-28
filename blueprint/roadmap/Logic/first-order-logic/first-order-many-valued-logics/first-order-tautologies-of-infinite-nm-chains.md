@@ -13,6 +13,8 @@ For finite NM-chains, the first-order tautologies are recursively axiomatizable 
 
 - [First-order nilpotent minimum logic over NM-chains](first-order-nilpotent-minimum-logic.md)
 - [Complete lattice](../../../Order/lattices-boolean-algebras/complete-lattice.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Recognizability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
 
 ## Proof depends on
 

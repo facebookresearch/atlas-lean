@@ -9,6 +9,7 @@ Other known undecidable fragments include problems with two function variables a
 ## Depends on
 
 - [Second-order unification problems](second-order-unification-problems.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -9,6 +9,7 @@ For general unification no such gap exists, since a system $\{s_i =^?_E t_i\}_{i
 ## Depends on
 
 - [E-unification problems](equational-unification-problems.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

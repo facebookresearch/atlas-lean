@@ -9,6 +9,7 @@ Without associativity the problem becomes decidable: $D_{f,g}$-unification with 
 ## Depends on
 
 - [E-unification problems](equational-unification-problems.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

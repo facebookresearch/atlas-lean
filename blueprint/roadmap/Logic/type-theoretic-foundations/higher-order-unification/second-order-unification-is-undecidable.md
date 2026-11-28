@@ -9,6 +9,7 @@ The theorem sharpens the undecidability of third-order unification (Huet; Lucche
 ## Depends on
 
 - [Higher-order unification and its order](higher-order-unification-and-its-order.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -12,6 +12,7 @@ Here $L_\emptyset(Q)$ is first-order logic with equality and no other non-logica
 ## Depends on
 
 - [Henkin quantifiers](henkin-quantifiers.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
