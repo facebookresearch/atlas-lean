@@ -34,7 +34,8 @@ index sets `I : Finset ι`, so repeated values are distinguished. The record tex
 these notions: a perfect cover of a group of order `2^n` is a set of `n` nonzero elements
 with distinct subset sums (Lemma 16), a perfect `m`-cover covers each element `m` times
 (Lemmas 5 and 8), and `C(G)` is the number of perfect covers of `G`. The relation `a ∼ b`
-("`b` is an odd multiple of `a`") and the operator `𝒯` are taken from the paper's Section 3.
+("`b` is an odd multiple of `a`") and the operator `𝒯` are introduced in the paper's Section 2
+(pp. 6 and 8, respectively).
 -/
 
 namespace MetaMathlibExt
@@ -255,23 +256,6 @@ cover is empty. -/
 public theorem_wanted exists_addOrderOf_eq_two_of_isPerfectCover {m n : ℕ} (hmn : 0 < m + n)
     {S : Finset (ZMod (2 ^ m) × ZMod (2 ^ n))} (hS : IsPerfectCover S) :
     ∃ x ∈ S, addOrderOf x = 2
-
-/-- **Perfect covers with exactly one odd element.** Let $H$ be an abelian group of order $2^m$,
-let $n \ge 1$ and let $G = H \oplus \mathbb{Z}_{2^n}$. Call an element of $G$ odd when its
-$\mathbb{Z}_{2^n}$-coordinate, taken as a representative in $\{0, 1, \dots, 2^n - 1\}$, is odd.
-Then the number of perfect covers of $G$ with exactly one odd element is
-$2^m \cdot 2^{n-1} \cdot C(H \oplus \mathbb{Z}_{2^{n-1}})$, where $C(K)$ denotes the number of
-perfect covers of a group $K$.
-
-Source: John Greene and Clayton Higgins, *Maximal Subset Sums in a Group of Order a Power
-of 2*, Journal of Integer Sequences 28 (2025), Article 25.7.8, Lemma 21
-(`jis-2025-25.7.8-lem-21`). "`y_1` odd, all other `y_i` even" is read as "exactly one odd
-`y`" for the unordered set; `y` odd means `y.val` odd; `n ≥ 1` added (`ℤ_{2^{n-1}}`). -/
-public theorem_wanted card_perfectCover_one_odd {H : Type*} [AddCommGroup H] [DecidableEq H]
-    [Fintype H] {m n : ℕ} (hH : Fintype.card H = 2 ^ m) (hn : 1 ≤ n) :
-    Nat.card {S : Finset (H × ZMod (2 ^ n)) // IsPerfectCover S ∧
-        (S.filter fun x => Odd x.2.val).card = 1} =
-      2 ^ m * 2 ^ (n - 1) * count (H × ZMod (2 ^ (n - 1)))
 
 /-- **Spans of the odd and even entries of a perfect cover.** Let $m$, $n$ and $k$ be natural
 numbers with $k + 1 \le m + n$, and let $s = (s_1, \dots, s_{m+n})$, $s_i = (x_i, y_i)$, be a
