@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.LinearAlgebra.Matrix.SchurComplement
+public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
 
 /-!
 # Closed-loop transfer maps of negative feedback
@@ -23,8 +23,8 @@ ring, in particular over `ℂ`; no claim is made about stability as the frequenc
 * K. J. Åström and R. M. Murray, *Feedback Systems: An Introduction for Scientists and
   Engineers*, 2nd ed., electronic version v3.1.5 (2020-07-24), §12.1, equation (12.2),
   [official chapter](https://www.cds.caltech.edu/~murray/books/AM05/pdf/fbs-loopsyn_24Jul2020.pdf).
-  This is the SISO source for `S`, `T` and `CS`. The rectangular identities below are derived
-  extensions, using the Weinstein–Aronszajn determinant identity for the two loop matrices.
+  Equation (12.2) gives the SISO maps `S`, `T` and `CS`, and Table 12.1 gives their roles in the
+  response to the reference input. The theorem below derives the rectangular extension.
 -/
 
 public section
@@ -35,27 +35,6 @@ namespace MetaMathlibExt.Matrix
 
 variable {p m R : Type*} [Fintype p] [DecidableEq p] [Fintype m] [CommRing R]
 
-/-- The output-side loop matrix `1 + G * K` is invertible if and only if the input-side loop
-matrix `1 + K * G` is invertible, even when `G` and `K` are rectangular. -/
-theorem isUnit_one_add_mul_iff [DecidableEq m] (G : Matrix p m R) (K : Matrix m p R) :
-    IsUnit (1 + G * K) ↔ IsUnit (1 + K * G) := by
-  rw [Matrix.isUnit_iff_isUnit_det, Matrix.isUnit_iff_isUnit_det, Matrix.det_one_add_mul_comm]
-
-/-- The control map can be evaluated in either order: apply the output-side inverse before `K`,
-or apply the input-side inverse after `K`. The two identities act on different index types. -/
-theorem mul_nonsing_inv_one_add_mul [DecidableEq m] (G : Matrix p m R) (K : Matrix m p R)
-    (h : IsUnit (1 + G * K)) :
-    K * (1 + G * K)⁻¹ = (1 + K * G)⁻¹ * K := by
-  have hGK := (Matrix.isUnit_iff_isUnit_det _).mp h
-  have hKG := (Matrix.isUnit_iff_isUnit_det _).mp ((isUnit_one_add_mul_iff G K).mp h)
-  have hpush : (1 + K * G) * K = K * (1 + G * K) := by
-    rw [Matrix.add_mul, Matrix.mul_add, Matrix.one_mul, Matrix.mul_one, Matrix.mul_assoc]
-  calc
-    K * (1 + G * K)⁻¹ = (1 + K * G)⁻¹ * ((1 + K * G) * (K * (1 + G * K)⁻¹)) :=
-      (Matrix.nonsing_inv_mul_cancel_left _ _ hKG).symm
-    _ = (1 + K * G)⁻¹ * K := by
-      rw [← Matrix.mul_assoc (1 + K * G), hpush, Matrix.mul_nonsing_inv_cancel_right _ _ hGK]
-
 /-- At a fixed frequency, let `G` and `K` be the evaluated plant and controller matrices.
 If `1 + G * K` is invertible, then for each reference `r` the negative-feedback equations
 `e = r - y`, `u = K *ᵥ e`, `y = G *ᵥ u` have exactly one solution `(e, u, y)`. Its components
@@ -63,7 +42,7 @@ are `S *ᵥ r`, `(K * S) *ᵥ r`, and `T *ᵥ r`, with sensitivity `S = (1 + G *
 complementary sensitivity `T = (G * K) * S = S * (G * K)`. They satisfy `S + T = 1`.
 This is the rectangular version of the `S`, `CS`, and `T` maps in Åström–Murray, §12.1,
 equation (12.2). -/
-theorem closed_loop_transfer_exists_unique (G : Matrix p m R) (K : Matrix m p R)
+theorem closed_loop_transfer_existsUnique (G : Matrix p m R) (K : Matrix m p R)
     (h : IsUnit (1 + G * K)) (r : p → R) :
     let S := (1 + G * K)⁻¹
     let T := (G * K) * S

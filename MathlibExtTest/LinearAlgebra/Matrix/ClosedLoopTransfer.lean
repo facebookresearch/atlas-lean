@@ -37,37 +37,16 @@ example :
     (S *ᵥ ![5, 3], (controller * S) *ᵥ ![5, 3], (plant * controller * S) *ᵥ ![5, 3]) =
       (![2, 1], ![3, 2, 10], ![3, 2]) := by
   obtain ⟨hunique, hformula, _, _⟩ :=
-    closed_loop_transfer_exists_unique plant controller plant_loop_isUnit ![5, 3]
+    closed_loop_transfer_existsUnique plant controller plant_loop_isUnit ![5, 3]
   apply hunique.unique hformula
   refine ⟨?_, ?_, ?_⟩ <;> funext i <;> fin_cases i <;>
     norm_num [plant, controller, Matrix.mulVec, dotProduct, Fin.sum_univ_two, Fin.sum_univ_three]
-
-/-- The output and input loops are `2 × 2` and `3 × 3`, respectively. -/
-example : IsUnit (1 + controller * plant) ∧
-    controller * (1 + plant * controller)⁻¹ = (1 + controller * plant)⁻¹ * controller :=
-  ⟨(isUnit_one_add_mul_iff plant controller).mp plant_loop_isUnit,
-    mul_nonsing_inv_one_add_mul plant controller plant_loop_isUnit⟩
-
-private def squarePlant : Matrix (Fin 2) (Fin 2) ℚ := !![1, 1; 0, 1]
-private def squareController : Matrix (Fin 2) (Fin 2) ℚ := !![2, 0; 0, 3]
-
-/-- Even when both products have the same shape, `G * K` and `K * G` need not agree. -/
-example : squarePlant * squareController ≠ squareController * squarePlant ∧
-    squareController * (1 + squarePlant * squareController)⁻¹ =
-      (1 + squareController * squarePlant)⁻¹ * squareController := by
-  refine ⟨?_, mul_nonsing_inv_one_add_mul squarePlant squareController ?_⟩
-  · have h01 : (squarePlant * squareController) 0 1 ≠ (squareController * squarePlant) 0 1 :=
-      by norm_num [squarePlant, squareController, Matrix.mul_apply, Fin.sum_univ_two]
-    exact fun h => h01 (congrArg (fun M : Matrix (Fin 2) (Fin 2) ℚ => M 0 1) h)
-  · rw [Matrix.isUnit_iff_isUnit_det, isUnit_iff_ne_zero, Matrix.det_fin_two]
-    norm_num [squarePlant, squareController, Matrix.add_apply, Matrix.one_apply,
-      Matrix.mul_apply, Fin.sum_univ_two]
 
 /-- The feedback equation has a unique solution also for complex-valued transfer matrices. -/
 example (G : Matrix (Fin 2) (Fin 3) ℂ) (K : Matrix (Fin 3) (Fin 2) ℂ)
     (h : IsUnit (1 + G * K)) (r : Fin 2 → ℂ) :
     ∃! x : (Fin 2 → ℂ) × (Fin 3 → ℂ) × (Fin 2 → ℂ),
       x.1 = r - x.2.2 ∧ x.2.1 = K *ᵥ x.1 ∧ x.2.2 = G *ᵥ x.2.1 :=
-  (closed_loop_transfer_exists_unique G K h r).1
+  (closed_loop_transfer_existsUnique G K h r).1
 
 end MathlibExtTest.ClosedLoopTransfer
