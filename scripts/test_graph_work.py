@@ -13,6 +13,11 @@ def article_id(name):
     return "af_" + hashlib.sha256(name.encode()).hexdigest()[:24]
 
 
+# An import's record of the result it imported (docs/mathgraph-import.md, Annotations).
+SEED = {"source": "mathgraph", "node": "mg_" + "0" * 24, "revision": "0" * 40}
+PENDING = [{"key": "prerequisite", "kind": "proof", "reason": "under-review"}]
+
+
 class GraphWorkTests(unittest.TestCase):
     def setUp(self):
         tmp = tempfile.TemporaryDirectory()
@@ -37,15 +42,24 @@ class GraphWorkTests(unittest.TestCase):
         (self.links / "roadmap.jsonl").write_text("".join(json.dumps(row) + "\n" for row in rows))
 
     def test_separates_expansion_from_imported_prerequisites(self):
-        pending = [{"key": "prerequisite", "kind": "proof", "reason": "under-review"}]
-        self.save(self.row("b.md", own={"pending": pending}), self.row("a.md"))
+        self.save(self.row("b.md", own={"seed": SEED, "pending": PENDING}), self.row("a.md"))
         before = (self.links / "roadmap.jsonl").read_bytes()
         report = graph_work.inventory()
         self.assertEqual([item["kind"] for item in report], ["expand", "review-pending-prerequisites"])
         self.assertEqual(report[0]["path"], "blueprint/roadmap/a.md")
         self.assertEqual(report[0]["article_id"], article_id("a.md"))
-        self.assertEqual(report[1]["pending"], pending)
+        self.assertEqual(report[1]["pending"], PENDING)
         self.assertEqual((self.links / "roadmap.jsonl").read_bytes(), before)
+
+    def test_pending_prerequisites_need_an_imports_record(self):
+        for own in ({"pending": PENDING}, {"seed": {**SEED, "source": "elsewhere"}, "pending": PENDING},
+                    {"seed": SEED, "pending": [None]}, {"seed": SEED, "pending": [{**PENDING[0], "reason": "later"}]},
+                    {"seed": SEED, "pending": "prerequisite"}):
+            with self.subTest(own=own):
+                self.save(self.row("topic.md", own=own))
+                with self.assertRaisesRegex(ValueError, r"^blueprint/roadmap/topic\.md: its pending prerequisites are "
+                                                        r"not an import's: "):
+                    graph_work.inventory()
 
     def test_omits_unmarked_folders_held_pages_and_credited_declarations(self):
         self.save(self.row("unmarked.md", flag=False), self.row("README.md"),
@@ -89,8 +103,14 @@ class GraphWorkTests(unittest.TestCase):
     def test_a_listed_annotation_autoform_leaves_out_fails(self):
         row = json.dumps(self.row("topic.md"))
         (self.links / "roadmap.jsonl").write_text(f'{row[:-1]}, "id": "{article_id("other")}"}}\n')
-        with self.assertRaisesRegex(ValueError, r"^blueprint/roadmap/topic\.md: Autoform leaves its annotation out: "
-                                                r"duplicate key 'id'"):
+        with self.assertRaisesRegex(ValueError, r"^blueprint/roadmap/topic\.md: Autoform leaves its annotation at "
+                                                r"blueprint/links/roadmap\.jsonl:1 out: duplicate key 'id'"):
+            graph_work.inventory()
+
+    def test_a_row_that_is_not_json_fails_with_its_file_and_line(self):
+        self.save(self.row("a.md"))
+        (self.links / "second.jsonl").write_text(json.dumps(self.row("b.md")) + "\n\n{\n")
+        with self.assertRaisesRegex(ValueError, r"^blueprint/links/second\.jsonl:3: the row is not JSON: "):
             graph_work.inventory()
 
     def test_missing_marked_page_fails(self):

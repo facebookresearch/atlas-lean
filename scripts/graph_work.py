@@ -7,6 +7,7 @@ formalization queue remains the published tasks.json and next_task.py.
 from __future__ import annotations
 
 import argparse
+import functools
 import json
 import os
 from collections.abc import Iterator
@@ -21,21 +22,57 @@ def extension(row: dict, namespace: str) -> dict:
     return value if isinstance(value, dict) else {}
 
 
-def annotation_lines() -> Iterator[tuple[Path, str, dict]]:
-    """Each row of the links files with its file and its line as written, read as sync_wiki.read_annotations reads
-    them (read_rows)."""
+def annotation_lines() -> Iterator[tuple[str, str, dict]]:
+    """Each row of the links files, where it is (`file:line` from the repository's root) and its line as written,
+    read as sync_wiki.read_annotations reads them (read_rows), its lines numbered as Autoform numbers them."""
     for links in sorted(sync.LINKS.glob("*.jsonl")):
-        text = links.read_text(encoding="utf-8").replace("\r\n", "\n").replace("\r", "\n")
-        for line in text.split("\n"):
-            if line.strip():
-                yield links, line, json.loads(line)
+        name = links.relative_to(sync.wiki.ROOT).as_posix()
+        try:
+            text = links.read_text(encoding="utf-8")
+        except UnicodeDecodeError as error:
+            raise ValueError(f"{name}: it is not UTF-8: {error}") from None
+        for number, line in enumerate(text.replace("\r\n", "\n").replace("\r", "\n").split("\n"), 1):
+            if not line.strip():
+                continue
+            # As sync_wiki.location names a row, with the file's name worked out once.
+            where = f"{name}:{number}"
+            try:
+                row = json.loads(line)
+            except json.JSONDecodeError as error:
+                raise ValueError(f"{where}: the row is not JSON: {error.msg} at column {error.colno}") from None
+            yield where, line, row
 
 
-def shown(page: Path | None, links: Path, problem: str | None) -> str:
-    """An annotation as an error names it: its page, from the repository's root, or its file and why it has none."""
+def shown(page: Path | None, where: str, problem: str | None) -> str:
+    """An annotation as an error names it: its page, from the repository's root, or where it is and why it has none."""
     if page is not None:
         return page.relative_to(sync.wiki.ROOT).as_posix()
-    return f"an annotation in {links.relative_to(sync.wiki.ROOT).as_posix()} ({problem})"
+    return f"the annotation at {where} ({problem})"
+
+
+@functools.cache
+def import_validator():
+    """The importer's own check of an imported page's record: the seed and the pending list its manifest row gives
+    and its annotation keeps (docs/mathgraph-import.md, Annotations), with the manifest's schema and validator."""
+    from . import import_mathgraph as imports
+
+    schema = imports.MANIFEST_SCHEMA
+    return imports.WHOLE_STRING_VALIDATOR({
+        "$defs": schema["$defs"],
+        "type": "object",
+        "required": ["seed", "pending"],
+        "properties": {name: schema["properties"][name] for name in ("seed", "pending")},
+    })
+
+
+def import_problem(own: dict) -> str | None:
+    """Why a page's pending prerequisites are not an import's, as the importer's schema finds (import_validator), or
+    None: a seed of mathgraph, and pending entries of a key, a kind and a public reason."""
+    errors = sorted(import_validator().iter_errors(own), key=lambda error: [str(part) for part in error.absolute_path])
+    if not errors:
+        return None
+    at = "/".join(str(part) for part in errors[0].absolute_path)
+    return f"{at}: {errors[0].message}" if at else errors[0].message
 
 
 def inventory() -> list[dict]:
@@ -46,24 +83,24 @@ def inventory() -> list[dict]:
     items: dict[str, dict] = {}
     listed: dict[str, str] = {}  # each listed path's page, as the keys of `annotations` name it
     annotations: dict[str, int] = {}  # how many annotations are about each page
-    with_id: dict[str, list[tuple[Path | None, Path, str | None]]] = {}  # the annotations that have each id
-    for links, line, row in annotation_lines():
+    with_id: dict[str, list[tuple[Path | None, str, str | None]]] = {}  # the annotations that have each id
+    for where, line, row in annotation_lines():
         effective = sync.effective(row)
         if effective is None:
-            raise ValueError("cannot read an annotation with the wiki's defaults")
+            raise ValueError(f"{where}: cannot read the annotation with the wiki's defaults")
         page, problem = sync.subject_of(effective)
         if page is not None:
             key = os.fspath(page)
             annotations[key] = annotations.get(key, 0) + 1
         if isinstance(row.get("id"), str):
-            with_id.setdefault(row["id"], []).append((page, links, problem))
+            with_id.setdefault(row["id"], []).append((page, where, problem))
         if extension(effective, "org.autoform").get("not_ready") is not True:
             continue
         own = extension(effective, "org.atlas-wiki")
         if "held" in own or sync.legacy_pair(row) or sync.owner_of(row, effective)[0] != "none":
             continue
         if page is None or not page.is_file():
-            raise ValueError(f"cannot read a marked article: {problem or page}")
+            raise ValueError(f"{where}: cannot read a marked article: {problem or page}")
         if page.name == "README.md":
             continue
         path = page.relative_to(sync.wiki.ROOT).as_posix()
@@ -71,13 +108,14 @@ def inventory() -> list[dict]:
         try:
             companion.loads(line)
         except (companion.LoadError, RecursionError) as error:
-            raise ValueError(f"{path}: Autoform leaves its annotation out: {error}") from None
+            raise ValueError(f"{path}: Autoform leaves its annotation at {where} out: {error}") from None
         article_id = row.get("id")
         if not isinstance(article_id, str) or not sync.ARTICLE_ID.fullmatch(article_id):
             raise ValueError(f"{path}: expected an article ID of the form af_ followed by 24 lowercase hex digits")
+        # Only an import lists pending prerequisites, beside the seed of the result it imported.
+        if "pending" in own and (invalid := import_problem(own)):
+            raise ValueError(f"{path}: its pending prerequisites are not an import's: {invalid}")
         pending = own.get("pending", [])
-        if not isinstance(pending, list):
-            raise ValueError(f"{path}: pending prerequisites must be a list")
         items[path] = {
             "path": path,
             "article_id": article_id,
