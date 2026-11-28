@@ -34,6 +34,7 @@ retrospective studies of disease", J. Natl. Cancer Inst. 22 (1959) 719–748, pp
 module
 
 public import Batteries.Util.ProofWanted
+public import Domains.Biology.StatisticalGenetics.AssociationTests.MantelHaenszel
 public import Mathlib.Algebra.BigOperators.Fin
 public import Mathlib.Algebra.Order.AbsoluteValue.Basic
 public import Mathlib.Basic.Real.Basic
@@ -55,14 +56,6 @@ makes the value `0`. -/
 noncomputable def countVariance (A B C D : ℝ) : ℝ :=
   (A + B) * (C + D) * (A + C) * (B + D) /
     ((A + B + C + D) ^ 2 * (A + B + C + D - 1))
-
-/-- The Mantel–Haenszel summary odds ratio `R = ∑_k (A_k D_k / T_k) / ∑_k (B_k C_k / T_k)`, a
-cross-product estimator of a common odds ratio (not a risk ratio: for one table with
-`(A, B, C, D) = (4, 2, 1, 3)` it is `6`, while the risk ratio is `2`). It is meaningful when every
-total `T_k` and the denominator `∑_k B_k C_k / T_k` are positive; a zero denominator gives `0` by
-Lean's convention `x / 0 = 0`. -/
-noncomputable def summaryOddsRatio {K : ℕ} (A B C D : Fin K → ℝ) : ℝ :=
-  (∑ k, A k * D k / (A k + B k + C k + D k)) / ∑ k, B k * C k / (A k + B k + C k + D k)
 
 /-- The Mantel–Haenszel summary chi-square `(∑_k A_k - ∑_k E(A_k))² / ∑_k V(A_k)`, without the
 continuity correction. It is meaningful when `∑_k V(A_k) > 0`; if that sum is `0`, Lean's convention
@@ -103,16 +96,6 @@ public theorem_wanted summaryOddsRatio_eq_weighted {K : ℕ} (hK : 0 < K) (A B C
     summaryOddsRatio A B C D =
       (∑ k, B k * C k / (A k + B k + C k + D k) * (A k * D k / (B k * C k))) /
         ∑ k, B k * C k / (A k + B k + C k + D k)
-
-/-- **`R` recovers a common odds ratio** (Mantel and Haenszel 1959, p. 736). For `K` strata with
-real cells and positive totals `T_k`, if every stratum has `A_k D_k = ψ B_k C_k` for one `ψ` and
-`∑_k B_k C_k / T_k > 0`, then `R = ψ`.
-
-Source: Mantel and Haenszel (1959), p. 736. -/
-public theorem_wanted summaryOddsRatio_eq_of_common {K : ℕ} (A B C D : Fin K → ℝ) (ψ : ℝ)
-    (hT : ∀ k, 0 < A k + B k + C k + D k) (hψ : ∀ k, A k * D k = ψ * (B k * C k))
-    (hpos : 0 < ∑ k, B k * C k / (A k + B k + C k + D k)) :
-    summaryOddsRatio A B C D = ψ
 
 /-- **`R = 1` exactly when observed equals expected** (Mantel and Haenszel 1959, p. 736). For `K`
 strata with real cells, positive totals `T_k` and `∑_k B_k C_k / T_k > 0`, `R = 1` if and only
