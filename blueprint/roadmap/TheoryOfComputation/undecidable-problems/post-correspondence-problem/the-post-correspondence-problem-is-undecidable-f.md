@@ -30,7 +30,7 @@ Rozenberg), and the source leaves the cases of three and four pairs open.
 
 The proof reduces the halting problem for a restricted family of binary tag systems: deletion number $\beta$, alphabet
 $\{b, c\}$, rules $b \to b$ and $c \to u_0 u_1 \cdots u_l b$, started on the word $u_{\beta - 1} \cdots u_l b$. This
-restricted halting problem is undecidable by the construction behind the binary tag system theorem. The symbols are encoded
+restricted halting problem is undecidable by Lemma 9 of the source, a modification of the construction behind the binary tag system theorem that restricts the inputs; the linked theorem on binary tag systems does not state this restricted form, and a good expansion links a page for Lemma 9. The symbols are encoded
 as $\langle b \rangle = 1 0^\beta 1$ and $\langle c \rangle = 1$, and the instance has five pairs over $\{0, 1\}$: the pair
 $(1,\ 1 \langle u_0 \rangle \cdots \langle u_l \rangle 1 0)$, which starts the match and simulates the rule for $c$, a pair
 with top word $1 0^\beta 1$ that simulates the rule $b \to b$, two pairs that match an encoded $b$ or $c$ while extending a

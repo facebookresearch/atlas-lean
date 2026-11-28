@@ -15,7 +15,7 @@ Membership in RE holds because the game can be simulated from an initial state a
 
 ## Proof depends on
 
-- [The Post correspondence problem is undecidable](../post-correspondence-problem/exists-not-tm2-decidable-pcp.md)
+- [MPCP is undecidable](../post-correspondence-problem/exists-not-tm2-decidable-mpcp.md)
 
 ## Expansion
 

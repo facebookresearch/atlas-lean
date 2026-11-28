@@ -4,7 +4,7 @@ No algorithm decides, given a periodic configuration of chips on $\mathbb{Z}^3$ 
 
 **Theorem.** The *p+f vertex prediction problem* for [periodic-plus-finite abelian sandpiles on ℤ³](periodic-plus-finite-abelian-sandpiles-on-z3.md), which asks for a given p+f sandpile whether the origin topples at least once, is undecidable.
 
-The problem is recursively enumerable, since a machine can simulate the sandpile and stop when the origin topples (an open-problem remark of the source); the source also notes that with a universal Turing machine the periodic part can be fixed once and for all, so that the problem stays undecidable when only the finitely many added chips are the input.
+The problem is recursively enumerable, since a machine can simulate the sandpile and stop when the origin topples (the open-problem paragraph after Theorem 4 of the source; by the abelian property, the origin topples in some legal toppling sequence iff $N(0) \ge 1$); the source also notes that with a universal Turing machine the periodic part can be fixed once and for all, so that the problem stays undecidable when only the finitely many added chips are the input.
 
 ## Depends on
 

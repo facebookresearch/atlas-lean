@@ -25,6 +25,8 @@ $$
 
 Then $s*s=(\mathbf I,0,1)$, $s*(s*s)=(A,0,0)$ and $(s*s)*s=(B,0,0)$, and for combinations of more than three instances the extra coordinates vanish, so the matrix part is a product of matrices from $\{\mathbf I,A,B\}$. Hence some combination is zero iff the pair is mortal.
 
+With $A$ and $B$ integer matrices, every coefficient of $*$ is $0$, $1$ or an entry of $A-\mathbf I$ or $B-\mathbf I$, and $s$ is a $0/1$ vector; the integer-input form of the theorem is read off this construction in the proof of Theorem 2 of the source.
+
 ## Sources
 
 - Vuong Bui, "Growth of bilinear maps III: Decidability", *Theoretical Computer Science* 1056, 2025, article 115515, doi:[10.1016/j.tcs.2025.115515](https://doi.org/10.1016/j.tcs.2025.115515); read in arXiv:2201.09850v3 ([arXiv](https://arxiv.org/abs/2201.09850v3)), whose numbering is used: Theorem 2 and its proof (Section 3).

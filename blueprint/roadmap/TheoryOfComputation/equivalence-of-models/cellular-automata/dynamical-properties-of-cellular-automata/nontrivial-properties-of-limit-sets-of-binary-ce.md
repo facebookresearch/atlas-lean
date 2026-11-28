@@ -1,7 +1,7 @@
 # Nontrivial properties of limit sets of binary cellular automata are undecidable
 
 For one-dimensional cellular automata on two states, every property of the limit set that holds for some but not all nonsurjective
-automata is undecidable; together with the decidability of surjectivity, surjectivity is the only decidable nontrivial limit set property.
+automata is undecidable; together with the decidability of surjectivity, surjectivity is, up to complement, the only decidable nontrivial limit set property.
 
 Let $F : \{0, 1\}^{\mathbb{Z}} \to \{0, 1\}^{\mathbb{Z}}$ be a one-dimensional [cellular automaton](../cellular-automata-on-z-d.md) on two states. Its *limit set* is
 
@@ -15,8 +15,8 @@ $F$ satisfies it when $\Omega_F \in \mathcal{P}$.
 **Theorem.** Let $\mathcal{P}$ be a property of limit sets satisfied by the limit set of at least one nonsurjective cellular automaton on $\{0, 1\}$, but not by the limit sets of all of them.
 Then it is undecidable, given a cellular automaton $F$ on $\{0, 1\}$ by its radius and the finite table of its local rule, whether $\Omega_F \in \mathcal{P}$ (Theorem 4.3 of the source).
 
-Since surjectivity of one-dimensional cellular automata is decidable, surjectivity is the only nontrivial decidable property of limit sets of binary cellular
-automata, and the same holds for every fixed alphabet with at least two letters. This refines Kari's Rice theorem for limit sets of cellular automata with arbitrary state sets.
+Since surjectivity of one-dimensional cellular automata is decidable, surjectivity is, up to complement, the only nontrivial decidable property of limit sets of binary cellular
+automata (the source's phrasing omits "up to complement"), and the same holds for every fixed alphabet with at least two letters. This refines Kari's Rice theorem for limit sets of cellular automata with arbitrary state sets.
 
 ## Depends on
 

@@ -4,7 +4,7 @@ For every $d \ge 3$, deciding whether a given sofic subshift of $\Sigma^{\mathbb
 
 **Theorem.** Let $d \ge 3$. The [aperiodic domino problem](aperiodic-domino-problem.md) for $\mathbb{Z}^d$ sofic subshifts, whose input is an SFT $X$ given by a finite family of forbidden patterns together with a letter-to-letter map $\pi$ and whose question is whether $\pi(X)$ contains a configuration with no nonzero period, is [$\Sigma^1_1$-complete](../../../degrees-and-hierarchies/analytical-class-sigma-1-1.md) under many-one reductions.
 
-In dimension $2$ the problem is $\Pi^0_1$-complete for SFTs, sofic and effective subshifts alike, so the complexity jumps between dimensions $2$ and $3$; for SFTs the jump is at the next dimension (see [the SFT case](aperiodic-domino-problem-for-sfts.md)), and the three-dimensional SFT case is left open by the source.
+In dimension $2$ the problem is $\Pi^0_1$-complete for SFTs, sofic and effective subshifts alike, so the complexity jumps between dimensions $2$ and $3$; for SFTs, $\Sigma^1_1$-completeness is known from dimension $4$ (see [the SFT case](aperiodic-domino-problem-for-sfts.md)), and the three-dimensional SFT case is open; the source conjectures it to be arithmetical.
 
 ## Depends on
 

@@ -2,7 +2,7 @@
 
 The set of indices of programs whose domain is cofinite, that is, which fail to halt on only finitely many inputs, is $\Sigma^0_3$-complete under many-one reductions.
 
-Fix an acceptable numbering $(\varphi_e)_{e\in\mathbb N}$ of the partial computable functions, write $W_e=\mathrm{dom}(\varphi_e)$, and use many-one reductions $\le_m$ and $\Gamma$-m-completeness as on the page on the [emptiness index set](emptiness-index-set-is-pi01-complete.md).
+Fix the standard numbering $(\varphi_e)_{e\in\mathbb N}$ of codes of the partial computable functions, as on the linked definition pages (the notes use their own fixed universal numbering, and the results do not depend on the choice), write $W_e=\mathrm{dom}(\varphi_e)$, and use many-one reductions $\le_m$ and $\Gamma$-m-completeness as on the page on the [emptiness index set](emptiness-index-set-is-pi01-complete.md).
 
 **Theorem.** The set
 

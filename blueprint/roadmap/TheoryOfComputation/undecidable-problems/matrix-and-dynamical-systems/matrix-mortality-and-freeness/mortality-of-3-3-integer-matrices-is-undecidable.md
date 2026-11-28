@@ -31,3 +31,4 @@ has a solution.
 ## Sources
 
 - C. Choffrut and J. Karhumäki, "Some decision problems on integer matrices", *RAIRO – Theoretical Informatics and Applications* 39(1):125–131, 2005, doi:10.1051/ita:2005007: Section 1 (undecidability of mortality in dimension 3, citing Paterson) and Section 2 (the faithful representation of a product of two free monoids in $3 \times 3$ matrices). Read in the open-access copy https://www.numdam.org/item/10.1051/ita:2005007.pdf (the published version).
+- M. S. Paterson, "Unsolvability in 3 × 3 matrices", *Studies in Applied Mathematics* 49(1), 1970, pp. 105–107 (the original proof, cited by the source above; not read here).

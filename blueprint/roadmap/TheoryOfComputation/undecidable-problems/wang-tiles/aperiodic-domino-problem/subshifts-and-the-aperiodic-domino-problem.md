@@ -14,7 +14,7 @@ A *subshift* is a set of the form $X_{\mathcal{F}}$; equivalently, a closed subs
 - *sofic* if $Y = \pi(X)$ for an SFT $X \subseteq {\Sigma'}^{\mathbb{Z}^d}$ and a letter-to-letter map $\pi : \Sigma' \to \Sigma$ applied at every cell;
 - *effective* if $Y = X_{\mathcal{F}}$ for a recursively enumerable family $\mathcal{F}$.
 
-Every SFT is sofic and every sofic subshift is effective. A vector $p \in \mathbb{Z}^d$ is *broken at* $i$ in $x$ if $x_{i+p} \ne x_i$, and $x$ is (strongly) *aperiodic* if every nonzero $p \in \mathbb{Z}^d$ is broken at some position, that is, $\sigma^p(x) \ne x$ for all $p \ne 0$.
+Every SFT is sofic and every sofic subshift is effective. A vector $p \in \mathbb{Z}^d$ is *broken at* $i$ in $x$ if $x_{i+p} \ne x_i$, and $x$ is (strongly) *aperiodic* if every nonzero $p \in \mathbb{Z}^d$ is broken at some position, that is, $\sigma^p(x) \ne x$ for all $p \ne 0$. (Definition 1 of the source prints "every vector"; the restriction to nonzero vectors follows Section 1, which speaks of colorings with no nonzero period.)
 
 ## Depends on
 
