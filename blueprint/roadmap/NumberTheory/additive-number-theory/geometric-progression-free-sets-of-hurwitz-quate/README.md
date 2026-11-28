@@ -10,6 +10,8 @@
 - [Bounds on the supremum of upper densities of geometric-progression-free Hurwitz sets](s-sup-upper-density-hurwitz-gp-free-boun.md)
 - [Squarefree norms and the lower density of the quaternion greedy set](quaternion-greedy-squarefree-norm-and-lo.md)
 - [The quaternion greedy set is not determined by norms](quaternion-greedy-ne-norm-preimage.md)
+- [The norm of a Hurwitz quaternion is a natural number](hurwitz-norm-sq-nat.md)
+- [The norm of $ar^2$ factors as $\mathrm{Nm}(a)\,\mathrm{Nm}(r)^2$ in the natural numbers](hurwitz-norm-sq-eq-mul-sq.md)
 - [The quaternion greedy set and the norm preimage of Rankin's set differ infinitely](quaternion-greedy-diff-rankin-infinite.md)
 - [Hurwitz quaternions of square norm that are not a unit times a square](exists-hurwitz-norm-sq-not-unit-mul-sq.md)
 - [Quaternions of prime-square norm separating the greedy set from Rankin's set](quaternion-greedy-mem-of-not-unit-mul-sq.md)
