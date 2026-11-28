@@ -21,7 +21,7 @@ Moreover, no computable function bounds the length of a highest-weighted string 
 
 ## Depends on
 
-- [Softmax](../../not-yet-classified/basic/part-06/softmax.md)
+- [Softmax](../attention-and-low-rank-adaptation/softmax-attention-basics/softmax.md)
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on

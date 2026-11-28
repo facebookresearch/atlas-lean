@@ -11,7 +11,7 @@ The same paper proves that every recursively enumerable counting property is a p
 ## Depends on
 
 - [Transformer layers, numeric regimes and decoding conventions](transformer-layers-numeric-regimes-and-decoding-conventions.md)
-- [Softmax](../../not-yet-classified/basic/part-06/softmax.md)
+- [Softmax](../attention-and-low-rank-adaptation/softmax-attention-basics/softmax.md)
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
