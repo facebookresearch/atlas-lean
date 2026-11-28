@@ -24,8 +24,8 @@ import MathlibExt.NumberTheory.ModularForms.QParamProduct
 # Lu's Eisenstein congruences
 
 For even weights $k \ge 12$ with $k \ne 14$, the coefficients of $G_k$ are congruent to those
-of a linear combination of $\Delta^i E_{k-12i}$, with multipliers determined by the first $m$
-positive coefficients, where $m$ is the dimension of the space of cusp forms. The modulus is the
+of a linear combination of $\Delta^i E_{k-12i}$, with multipliers determined by the coefficients
+of $q, \dots, q^m$, where $m$ is the dimension of the space of cusp forms. The modulus is the
 largest divisor of the absolute numerator of the constant term of $G_k$ coprime to the corresponding
 numerators at weights $k-12i$ for $1 \le i \le \lfloor k/12 \rfloor$ (using $1$ at weights $0$
 and $2$).
@@ -47,15 +47,58 @@ powers of the discriminant and coefficients found by successive elimination.
   pp. 2283–2291, proof of Theorem 1 (the integral form subtracted from the Eisenstein series).
 * Fred Diamond and Jerry Shurman, *A First Course in Modular Forms*, Graduate Texts in
   Mathematics 228, Springer-Verlag, 2005, Section 3.5 (level-one dimension formula).
-* The general proof reuses the integral comparison and order argument of
-  `coefficient_congruence_three` and `qExpansion_eq_zero_of_order` in
-  `MathlibExt/NumberTheory/EisensteinRamanujanCongruence.lean`.
 -/
 
 open PowerSeries
 open scoped PowerSeries.WithPiTopology
 
 namespace MetaMathlibExt
+
+private lemma coeff_two_mul_powerSeries {R : Type*} [CommRing R] (A B : R⟦X⟧) :
+    coeff 2 (A * B) = coeff 0 A * coeff 2 B + coeff 1 A * coeff 1 B + coeff 2 A * coeff 0 B := by
+  have h : Finset.antidiagonal 2 = {(0, 2), (1, 1), (2, 0)} := by decide
+  rw [coeff_mul, h]
+  simp [add_assoc]
+
+/-- Every natural power of Euler's pentagonal series has constant coefficient $1$. -/
+public lemma constantCoeff_pentagonalSeries_pow (R : Type*) [CommRing R] (m : ℕ) :
+    constantCoeff (pentagonalSeries R ^ m) = 1 := by
+  rw [map_pow, ← coeff_zero_eq_constantCoeff_apply,
+    show (0 : ℕ) = pentagonal 0 by norm_num [pentagonal_def], coeff_pentagonalSeries_pentagonal]
+  simp
+
+/-- The coefficient of $q$ in the $m$-th power of Euler's pentagonal series is $-m$. -/
+public lemma coeff_one_pentagonalSeries_pow (R : Type*) [CommRing R] (m : ℕ) :
+    coeff 1 (pentagonalSeries R ^ m) = -(m : R) := by
+  have h : coeff 1 (pentagonalSeries R) = -1 := by
+    rw [show (1 : ℕ) = pentagonal 1 by norm_num [pentagonal_def],
+      coeff_pentagonalSeries_pentagonal, Int.negOnePow_one]
+    simp
+  have h₀ : constantCoeff (pentagonalSeries R) = 1 := by
+    simpa only [pow_one] using constantCoeff_pentagonalSeries_pow R 1
+  rw [coeff_one_pow, h, h₀]
+  simp
+
+/-- The coefficient of $q^2$ in the $m$-th power of Euler's pentagonal series is
+$\binom{m}{2}-m$, with the subtraction taken in the coefficient ring. -/
+public lemma coeff_two_pentagonalSeries_pow (R : Type*) [CommRing R] (m : ℕ) :
+    coeff 2 (pentagonalSeries R ^ m) = (m.choose 2 : R) - (m : R) := by
+  have h₀ : coeff 0 (pentagonalSeries R) = 1 := by
+    simpa only [pow_one, ← coeff_zero_eq_constantCoeff_apply] using
+      constantCoeff_pentagonalSeries_pow R 1
+  have h₁ : coeff 1 (pentagonalSeries R) = -1 := by
+    simpa only [pow_one, Nat.cast_one] using coeff_one_pentagonalSeries_pow R 1
+  have h₂ : coeff 2 (pentagonalSeries R) = -1 := by
+    rw [show (2 : ℕ) = pentagonal (-1) by norm_num [pentagonal_def],
+      coeff_pentagonalSeries_pentagonal, Int.negOnePow_neg, Int.negOnePow_one]
+    simp
+  induction m with
+  | zero => simp [coeff_one]
+  | succ m ih =>
+    rw [pow_succ, coeff_two_mul_powerSeries, h₀, h₁, h₂, coeff_zero_eq_constantCoeff_apply,
+      constantCoeff_pentagonalSeries_pow, coeff_one_pentagonalSeries_pow, ih]
+    simp only [Nat.choose_succ_succ' m 1, Nat.choose_one_right, Nat.cast_add, Nat.cast_succ]
+    ring
 
 namespace eisenstein_congr_delta_mul_eisenstein_dim_one
 
@@ -278,60 +321,11 @@ private lemma coeff_cancelCoeff (j n : ℕ) (B A : ℚ⟦X⟧) :
   change coeff n (A - coeff j A • B) = _
   rw [map_sub, coeff_smul, smul_eq_mul]
 
-private lemma coeff_two_mul_rat (A B : ℚ⟦X⟧) :
-    coeff 2 (A * B) = coeff 0 A * coeff 2 B + coeff 1 A * coeff 1 B + coeff 2 A * coeff 0 B := by
-  have h : Finset.antidiagonal 2 = {(0, 2), (1, 1), (2, 0)} := by decide
-  rw [coeff_mul, h]
-  simp [add_assoc]
-
 private abbrev deltaRat : ℚ⟦X⟧ := deltaZ.map (Int.castRingHom ℚ)
 
 private abbrev deltaUnit : ℚ⟦X⟧ := pentagonalSeries ℚ ^ 24
 
 private lemma deltaRat_eq_X_mul : deltaRat = X * deltaUnit := map_deltaZ ℚ
-
-/-- The constant coefficient of the unit factor $\prod_{j\ge1}(1-q^j)^{24}$ of
-Ramanujan's discriminant is $1$. -/
-public lemma ramanujan_discriminant_unit_coeff_zero :
-    coeff 0 (pentagonalSeries ℚ ^ 24) = 1 := by
-  have hp : coeff 0 (pentagonalSeries ℚ) = 1 := by
-    rw [show (0 : ℕ) = pentagonal 0 by norm_num [pentagonal_def], coeff_pentagonalSeries_pentagonal]
-    decide
-  rw [coeff_zero_eq_constantCoeff_apply, map_pow, ← coeff_zero_eq_constantCoeff_apply, hp, one_pow]
-
-/-- The coefficients of degrees $1$ and $2$ in the unit factor $\prod_{j\ge1}(1-q^j)^{24}$
-of Ramanujan's discriminant are $-24$ and $252$, respectively. -/
-public lemma ramanujan_discriminant_unit_coeff_one_two :
-    coeff 1 (pentagonalSeries ℚ ^ 24) = -24 ∧ coeff 2 (pentagonalSeries ℚ ^ 24) = 252 := by
-  let P := pentagonalSeries ℚ
-  have hp₀ : coeff 0 P = 1 := by
-    dsimp [P]
-    rw [show (0 : ℕ) = pentagonal 0 by norm_num [pentagonal_def], coeff_pentagonalSeries_pentagonal]
-    decide
-  have hp₁ : coeff 1 P = -1 := by
-    dsimp [P]
-    rw [show (1 : ℕ) = pentagonal 1 by norm_num [pentagonal_def], coeff_pentagonalSeries_pentagonal]
-    decide
-  have hp₂ : coeff 2 P = -1 := by
-    dsimp [P]
-    have h : (2 : ℕ) = pentagonal (-1) := by norm_num [pentagonal_def]
-    rw [h, coeff_pentagonalSeries_pentagonal]
-    decide
-  have hpow (m : ℕ) : coeff 1 (P ^ m) = -(m : ℚ) ∧
-      coeff 2 (P ^ m) = (m : ℚ) * ((m : ℚ) - 3) / 2 := by
-    induction m with
-    | zero => simp [coeff_one]
-    | succ m ih =>
-      have hm : coeff 0 (P ^ m) = 1 := by
-        rw [coeff_zero_eq_constantCoeff_apply, map_pow, ← coeff_zero_eq_constantCoeff_apply, hp₀,
-          one_pow]
-      rw [pow_succ, coeff_one_mul, coeff_two_mul_rat, ← coeff_zero_eq_constantCoeff_apply P,
-        ← coeff_zero_eq_constantCoeff_apply (P ^ m), hm, hp₀, hp₁, hp₂, ih.1, ih.2]
-      push_cast
-      constructor <;> ring
-  have h24 := hpow 24
-  norm_num at h24
-  exact h24
 
 private def eisensteinRat (w : ℕ) : ℚ⟦X⟧ := (sigma w 0)⁻¹ • PowerSeries.mk (sigma w)
 
@@ -358,8 +352,7 @@ private lemma coeff_basisRat_le (k i n : ℕ) (hn : n ≤ i)
     (hc : sigma (k - 12 * i) 0 ≠ 0) : coeff n (basisRat k i) = if n = i then 1 else 0 := by
   rcases hn.eq_or_lt with rfl | hn
   · rw [coeff_basisRat, ite_eq_left le_rfl, Nat.sub_self, coeff_zero_eq_constantCoeff_apply,
-      map_mul, map_pow, ← coeff_zero_eq_constantCoeff_apply deltaUnit,
-      ramanujan_discriminant_unit_coeff_zero,
+      map_mul, map_pow, constantCoeff_pentagonalSeries_pow,
       ← coeff_zero_eq_constantCoeff_apply (eisensteinRat _), coeff_eisensteinRat, div_self hc]
     simp
   · simp [coeff_basisRat, hn.ne, not_le.mpr hn]
@@ -369,25 +362,30 @@ private lemma basisRat_first_coeffs {k : ℕ} (hk : 36 ≤ k)
     coeff 2 (basisRat k 1) = 1 / sigma (k - 12) 0 - 24 ∧
     coeff 3 (basisRat k 1) = 252 + (2 ^ (k - 13) - 23) / sigma (k - 12) 0 ∧
     coeff 3 (basisRat k 2) = 1 / sigma (k - 24) 0 - 48 := by
-  have h₁ := ramanujan_discriminant_unit_coeff_one_two.1
-  have h₂ := ramanujan_discriminant_unit_coeff_one_two.2
+  have h₁ : coeff 1 deltaUnit = -24 := coeff_one_pentagonalSeries_pow ℚ 24
+  have h₂ : coeff 2 deltaUnit = 252 := by
+    rw [coeff_two_pentagonalSeries_pow, show (24 : ℕ).choose 2 = 276 by decide]
+    norm_num
   have hw₁ : k - 12 ≠ 0 := by omega
   have hw₂ : k - 24 ≠ 0 := by omega
   have hE₁ : coeff 0 (eisensteinRat (k - 12)) = 1 := by simp [coeff_eisensteinRat, hs₁]
   have hE₂ : coeff 0 (eisensteinRat (k - 24)) = 1 := by simp [coeff_eisensteinRat, hs₂]
   have hD₂ : coeff 1 (deltaUnit ^ 2) = -48 := by
-    norm_num [coeff_one_pow, h₁, ← coeff_zero_eq_constantCoeff_apply,
-      ramanujan_discriminant_unit_coeff_zero]
+    change coeff 1 ((pentagonalSeries ℚ ^ 24) ^ 2) = -48
+    rw [← pow_mul, coeff_one_pentagonalSeries_pow]
+    norm_num
   have hD₀ : constantCoeff (deltaUnit ^ 2) = 1 := by
-    simp [← coeff_zero_eq_constantCoeff_apply deltaUnit, ramanujan_discriminant_unit_coeff_zero]
+    change constantCoeff ((pentagonalSeries ℚ ^ 24) ^ 2) = 1
+    rw [← pow_mul, constantCoeff_pentagonalSeries_pow]
   constructor
-  · norm_num [coeff_basisRat, coeff_one_mul, ← coeff_zero_eq_constantCoeff_apply, h₁, hE₁,
-      ramanujan_discriminant_unit_coeff_zero, coeff_eisensteinRat, sigma_one hw₁]
+  · norm_num [coeff_basisRat, coeff_one_mul, h₁, hE₁, constantCoeff_pentagonalSeries_pow,
+      ← coeff_zero_eq_constantCoeff_apply (eisensteinRat (k - 12)),
+      coeff_eisensteinRat, sigma_one hw₁]
     ring
   constructor
-  · norm_num [coeff_basisRat, coeff_two_mul_rat, h₁, h₂, hE₁,
-      ramanujan_discriminant_unit_coeff_zero, coeff_eisensteinRat, sigma_one hw₁,
-      sigma_prime hw₁ Nat.prime_two,
+  · norm_num [coeff_basisRat, coeff_two_mul_powerSeries, h₁, h₂, hE₁,
+      coeff_zero_eq_constantCoeff_apply deltaUnit, constantCoeff_pentagonalSeries_pow,
+      coeff_eisensteinRat, sigma_one hw₁, sigma_prime hw₁ Nat.prime_two,
       show k - 12 - 1 = k - 13 by omega]
     ring
   · norm_num [coeff_basisRat, coeff_one_mul, hD₂, hD₀, ← coeff_zero_eq_constantCoeff_apply
@@ -658,20 +656,6 @@ private lemma coefficient_congruence_three (k : ℕ)
   rw [hEq, coeff_smul, smul_eq_mul, mul_comm, mul_div_assoc]
   exact (coprimeDenRing N).mul_mem hT hcN
 
-private lemma coeff_one_pentagonal : coeff 1 (pentagonalSeries ℤ) = -1 := by
-  have h1 : pentagonal 1 = 1 := by norm_num [pentagonal_def]
-  rw [← h1, coeff_pentagonalSeries_pentagonal]
-  decide
-
-private lemma const_pow_pentagonal (m : ℕ) :
-    constantCoeff (pentagonalSeries ℤ ^ m) = 1 := by
-  rw [map_pow, constantCoeff_pentagonalSeries_int, one_pow]
-
-private lemma coeff_one_pow_pentagonal (m : ℕ) :
-    coeff 1 (pentagonalSeries ℤ ^ m) = -(m : ℤ) := by
-  rw [coeff_one_pow, coeff_one_pentagonal, constantCoeff_pentagonalSeries_int, one_pow, mul_one,
-    mul_neg_one]
-
 private lemma deltaZ_sq_mul (Z : ℤ⟦X⟧) :
     deltaZ ^ 2 * Z = X * (X * (pentagonalSeries ℤ ^ 48 * Z)) := by
   change (X * pentagonalSeries ℤ ^ 24) ^ 2 * Z = _
@@ -817,8 +801,8 @@ private lemma eisenstein_two_step {k w₁ w₂ : ℕ} (hkw : k = 12 + w₁) (hw 
     simpa [coeff_zero_eq_constantCoeff_apply] using hZ₂
   have hA2 : coeff 2 (deltaZ * L_A) = coeff 1 L_A - 24 := by
     change coeff (1 + 1) ((X * pentagonalSeries ℤ ^ 24) * L_A) = _
-    rw [mul_assoc, coeff_succ_X_mul, coeff_one_mul, const_pow_pentagonal,
-      coeff_one_pow_pentagonal, hAc0]
+    rw [mul_assoc, coeff_succ_X_mul, coeff_one_mul, constantCoeff_pentagonalSeries_pow,
+      coeff_one_pentagonalSeries_pow, hAc0]
     push_cast
     ring
   have hs1 : sigma k 1 = 1 := sigma_one hk0
@@ -1173,6 +1157,8 @@ private lemma inv_mem_subring_of_det_one {ι : Type*} [Fintype ι] [DecidableEq 
   rw [Matrix.inv_def, hdet, Ring.inverse_one, one_smul, ← hD, ← RingHom.map_adjugate]
   exact (D.adjugate i j).property
 
+-- As in `coefficient_congruence_three`, compare with an integral form and use
+-- `qExpansion_eq_zero_of_order` to identify the residual expansion.
 private lemma coefficient_congruence_general (k m N : ℕ) (hk : 12 ≤ k) (he : Even k)
     (hkm : 12 * m ≤ k) (hw : k - 12 * m ∈ ({0, 4, 6, 8, 10, 14} : Finset ℕ))
     (hinner : ∀ i : Fin m, k - 12 * (i.val + 1) = 0 ∨ 3 ≤ k - 12 * (i.val + 1))

@@ -11,8 +11,6 @@ module
 import Mathlib.LinearAlgebra.Matrix.Notation
 import MathlibExt.NumberTheory.EisensteinRamanujanCongruence
 
-open MetaMathlibExt.eisenstein_congr_delta_mul_eisenstein_dim_one
-  (ramanujan_discriminant_unit_coeff_zero ramanujan_discriminant_unit_coeff_one_two)
 open PowerSeries
 open scoped PowerSeries.WithPiTopology
 
@@ -152,9 +150,9 @@ private lemma delta_eq_X_mul : delta = X * pentagonalSeries ℚ ^ 24 := by
 
 private lemma b_first_coeffs (k : ℕ) (h : sigma₀ (k - 12) 0 ≠ 0) :
     b k 1 1 = 1 ∧ b k 1 2 = sigma₀ (k - 12) 1 / sigma₀ (k - 12) 0 - 24 := by
-  have hP := ramanujan_discriminant_unit_coeff_zero
-  have hP₁ := ramanujan_discriminant_unit_coeff_one_two.1
-  rw [coeff_zero_eq_constantCoeff_apply] at hP
+  have hP := MetaMathlibExt.constantCoeff_pentagonalSeries_pow ℚ 24
+  have hP₁ : coeff 1 (pentagonalSeries ℚ ^ 24) = -24 :=
+    MetaMathlibExt.coeff_one_pentagonalSeries_pow ℚ 24
   simp only [b, pow_one, mul_one, delta_eq_X_mul, mul_assoc]
   constructor
   · rw [show (1 : ℕ) = 0 + 1 by decide, coeff_succ_X_mul,
@@ -287,23 +285,23 @@ example :
       show (24 : ℕ) - 12 = 12 by decide]
     have h : Finset.antidiagonal 2 = {(0, 2), (1, 1), (2, 0)} := by decide
     rw [show (3 : ℕ) = 2 + 1 by decide, coeff_succ_X_mul, coeff_mul, h]
-    norm_num [ramanujan_discriminant_unit_coeff_zero, ramanujan_discriminant_unit_coeff_one_two.1,
-      ramanujan_discriminant_unit_coeff_one_two.2, hE, hE₁, hE₂]
+    norm_num [coeff_zero_eq_constantCoeff_apply, MetaMathlibExt.constantCoeff_pentagonalSeries_pow,
+      MetaMathlibExt.coeff_one_pentagonalSeries_pow, MetaMathlibExt.coeff_two_pentagonalSeries_pow,
+      show (24 : ℕ).choose 2 = 276 by decide, hE, hE₁, hE₂]
   have hunit : PowerSeries.mk (sigma₀ 0) = (1 : ℚ⟦X⟧) := by
     ext j
     simp [sigma₀, coeff_one]
   have hb₂ (j : ℕ) : b 24 2 j = coeff j ((X : ℚ⟦X⟧) ^ 2 * (pentagonalSeries ℚ ^ 24) ^ 2) := by
     simp only [b, show (24 : ℕ) - 12 * 2 = 0 by decide, hunit, mul_one,
       show sigma₀ 0 0 = 1 by decide, div_one, delta_eq_X_mul, mul_pow]
-  have hP : constantCoeff (pentagonalSeries ℚ ^ 24) = 1 :=
-    (coeff_zero_eq_constantCoeff_apply _).symm.trans ramanujan_discriminant_unit_coeff_zero
+  have hP := MetaMathlibExt.constantCoeff_pentagonalSeries_pow ℚ 24
   have hb₂₁ : b 24 2 1 = 0 := by rw [hb₂, coeff_X_pow_mul']; norm_num
   have hb₂₂ : b 24 2 2 = 1 := by
     rw [hb₂, coeff_X_pow_mul']
     norm_num [coeff_zero_eq_constantCoeff_apply, hP]
   have hb₂₃ : b 24 2 3 = -48 := by
     rw [hb₂, coeff_X_pow_mul']
-    norm_num [coeff_one_pow, ramanujan_discriminant_unit_coeff_one_two.1, hP]
+    norm_num [← pow_mul, MetaMathlibExt.coeff_one_pentagonalSeries_pow]
   have hC : C = !![1, 48936 / 691; 0, 1] := by
     ext i j
     fin_cases i <;> fin_cases j <;> simp [C, hb₁₁, hb₁₂', hb₂₁, hb₂₂]
@@ -362,6 +360,15 @@ example : 37 ∣ weightNumerator 68 ∧ 37 ∣ weightNumerator 32 ∧ ¬ 37 ∣ 
     have hcop : (modulus 68).Coprime (weightNumerator 32) :=
       (Finset.mem_filter.mp hdmod).2 3 (by decide)
     exact fun h => (by decide : ¬ Nat.Coprime 37 37) ((hcop.of_dvd_left h).of_dvd_right h32)
+
+-- These clients use the same one-term matrix and modulus as the independent checks above.
+example : ((sigma₀ 12 2 - matrixSumAt 12 1 2) / modulus 12).den.Coprime (modulus 12) :=
+  MetaMathlibExt.eisenstein_congr_sum_delta_pow_mul_eisenstein 12 (by decide) (by decide)
+    (by decide) 2
+
+example : ((sigma₀ 26 2 - matrixSumAt 26 1 2) / modulus 26).den.Coprime (modulus 26) :=
+  MetaMathlibExt.eisenstein_congr_sum_delta_pow_mul_eisenstein 26 (by decide) (by decide)
+    (by decide) 2
 
 -- Match the public statement before specializing n: simplifying at n = 0 would hide the matrix.
 -- Check both the constant term and a coefficient beyond the first m positive coefficients.
