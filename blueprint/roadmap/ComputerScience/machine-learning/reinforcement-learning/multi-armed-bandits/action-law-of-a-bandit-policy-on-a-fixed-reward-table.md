@@ -29,4 +29,4 @@ the marginal statement for $m = n - 1$, and induction on $n - m$ gives it for ev
 
 ## Sources
 
-- T. Lattimore and Cs. Szepesvári, *Bandit Algorithms*, Cambridge University Press, 2020 (author copy), §11.1 (oblivious adversarial bandits and regret) and §11.2 (losses $y_{ti} = 1 - x_{ti}$). <https://tor-lattimore.com/downloads/book/book.pdf>
+- T. Lattimore and Cs. Szepesvári, *Bandit Algorithms*, Cambridge University Press, 2020 (author copy), §11.1 (oblivious adversarial bandits and regret), the display at the start of §11.2 ($P_{ti} = \mathbb{P}(A_t = i \mid A_1, X_1, \dots, A_{t-1}, X_{t-1})$, the conditional law of the arm played in round $t$ given the history) and Theorem 3.3 (Ionescu–Tulcea: the law of the first $n$ coordinates is the product $K_1 \otimes \dots \otimes K_n$ of the kernels). <https://tor-lattimore.com/downloads/book/book.pdf>

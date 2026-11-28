@@ -32,8 +32,8 @@ Section 11.1).
   probability mass function on `Fin n → Fin k`, built by drawing one arm after the other.
 * `regret π x`: the regret `R_n(π, x)`, with the expectation `PMF.expect` under `actionLaw π x`.
 
-`expect_actionLaw_succ` computes an expectation under the action law of `n + 1` rounds from the
-one of `n` rounds.
+`expect_actionLaw_succ` computes the expectation of a real function of the arms under the action
+law of `n + 1` rounds from the action law of `n` rounds.
 
 ## Conventions
 
@@ -110,7 +110,8 @@ theorem actionLaw_succ (π : Policy k) (x : Fin (n + 1) → Fin k → ℝ) :
     actionLaw π x = (actionLaw π (Fin.init x)).bind fun a ↦
       (π n (history (Fin.init x) a)).map fun i ↦ (Fin.snoc a i : Fin (n + 1) → Fin k) := rfl
 
-/- The expectation of a function under a `PMF.bind`, on finite types. -/
+/- On finite measurable spaces with measurable singletons, the expectation of a real-valued
+function under `p.bind f` is the expectation under `p` of its expectations under the `f a`. -/
 private theorem expect_bind {α β : Type*} [Finite α] [Finite β] [MeasurableSpace α]
     [MeasurableSingletonClass α] [MeasurableSpace β] [MeasurableSingletonClass β]
     (p : PMF α) (f : α → PMF β) (g : β → ℝ) :
@@ -124,8 +125,9 @@ private theorem expect_bind {α β : Type*} [Finite α] [Finite β] [MeasurableS
     (PMF.apply_ne_top _ _), Finset.sum_mul]
   exact Finset.sum_congr rfl fun a _ ↦ by rw [ENNReal.toReal_mul, mul_assoc]
 
-/- An expectation under the action law of `n + 1` rounds is the expectation, under the action law
-of the first `n` rounds, of the expectation over the arm of the last round. -/
+/- For a real-valued function `f` of the arms of `n + 1` rounds, its expectation under the action
+law is the expectation, under the action law of the first `n` rounds, of its expectation over the
+arm of the last round. -/
 theorem expect_actionLaw_succ (π : Policy k) (x : Fin (n + 1) → Fin k → ℝ)
     (f : (Fin (n + 1) → Fin k) → ℝ) :
     (actionLaw π x).expect f = (actionLaw π (Fin.init x)).expect fun a ↦
