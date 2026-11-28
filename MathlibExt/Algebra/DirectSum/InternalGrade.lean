@@ -22,8 +22,9 @@ is an internal homogeneous component. Each summand is linearly equivalent to its
 these ranges decompose the total direct sum: the i-th decomposition coordinate of x, viewed in
 the total module, is the element supported at i with value x i.
 
-Finite generation of a summand transfers to its coordinate range. The same constructions are
-specialized to modules over a ring. For a graded semiring A indexed by an additive monoid I
+Finite generation of a summand transfers to its coordinate range by the native range instance.
+The semiring construction also applies to modules over rings. For a graded semiring A indexed by an
+additive monoid I
 and a graded module M indexed by an I-set J, the coordinate ranges carry the graded action:
 degree i acting on degree j has degree i +ᵥ j.
 
@@ -63,16 +64,10 @@ theorem mem_internalGrade_iff (x : ⨁ i, M i) (i : ι) :
   change (∃ y : M i, DirectSum.lof A ι M i y = x) ↔ _
   simp only [DirectSum.lof_eq_of]
 
-private theorem lof_injective (i : ι) :
-    Function.Injective (DirectSum.lof A ι M i) := by
-  intro x y h
-  have hi := congrArg (fun z : ⨁ i, M i ↦ z i) h
-  simpa using hi
-
 private noncomputable def lofEquivInternalGrade (i : ι) :
     M i ≃ₗ[A] internalGrade A ι M i :=
   LinearEquiv.ofInjective (DirectSum.lof A ι M i)
-    (lof_injective A ι M i)
+    (by exact DirectSum.of_injective (β := M) i)
 
 /-- For a semiring A, an index type ι with decidable equality and A-semimodules M i, the inclusion
 at i induces the A-linear equivalence M i ≃ₗ[A] internalGrade A ι M i. It sends y to the
@@ -154,76 +149,9 @@ theorem coe_decompose_internalGrade (x : ⨁ i, M i) (i : ι) :
     internalGrade A ι M i) : ⨁ i, M i) = _
   rfl
 
-/-- For a semiring A, an index type ι with decidable equality and A-semimodules M i, if M i is
-finitely generated over A, then the submodule internalGrade A ι M i is finitely generated over
-A. The hypothesis concerns the chosen summand i. -/
-theorem internalGrade_finite (i : ι) [Module.Finite A (M i)] :
-    Module.Finite A (internalGrade A ι M i) :=
-  Module.Finite.of_surjective
-    (DirectSum.lof A ι M i).rangeRestrict
-    (DirectSum.lof A ι M i).surjective_rangeRestrict
-
 end Coordinates
 
-section ModuleCoordinates
 
-universe uA uι uM
-
-variable (A : Type uA) [Ring A]
-variable (ι : Type uι) [DecidableEq ι]
-variable (M : ι → Type uM)
-  [∀ i, AddCommGroup (M i)] [∀ i, Module A (M i)]
-
-/-- For a ring A, an index type ι with decidable equality and A-modules M i, moduleInternalGrade A
-ι M i is the submodule of ⨁ j, M j equal to the range of the A-linear inclusion of M i. It
-specializes the semimodule coordinate-range construction. -/
-abbrev moduleInternalGrade (i : ι) : Submodule A (⨁ i, M i) :=
-  internalGrade A ι M i
-
-/-- For a ring A, an index type ι with decidable equality and A-modules M i, x ∈
-moduleInternalGrade A ι M i if and only if there exists y : M i such that DirectSum.of M i y =
-x. -/
-theorem mem_moduleInternalGrade_iff (x : ⨁ i, M i) (i : ι) :
-    x ∈ moduleInternalGrade A ι M i ↔
-      ∃ y : M i, DirectSum.of M i y = x :=
-  mem_internalGrade_iff A ι M x i
-
-/-- For a ring A, an index type ι with decidable equality and A-modules M i, the A-linear
-equivalence M i ≃ₗ[A] moduleInternalGrade A ι M i sends y to its inclusion in the total direct
-sum, viewed as an element of the coordinate submodule. -/
-noncomputable abbrev moduleInternalGradeEquiv (i : ι) :
-    M i ≃ₗ[A] moduleInternalGrade A ι M i :=
-  internalGradeEquiv A ι M i
-
-/-- For a ring A, an index type ι with decidable equality and A-modules M i, coercing
-moduleInternalGradeEquiv A ι M i y into ⨁ j, M j yields DirectSum.of M i y for every y : M i. -/
-theorem coe_moduleInternalGradeEquiv_apply (i : ι) (x : M i) :
-    ((moduleInternalGradeEquiv A ι M i x :
-      moduleInternalGrade A ι M i) : ⨁ i, M i) = DirectSum.of M i x :=
-  coe_internalGradeEquiv_apply A ι M i x
-
-/-- For a ring A, an index type ι with decidable equality and A-modules M i, the family
-moduleInternalGrade A ι M is an internal direct-sum decomposition of ⨁ i, M i. Its summation
-and decomposition maps are those induced by the coordinate inclusions. -/
-noncomputable abbrev moduleInternalGradeDecomposition :
-    DirectSum.Decomposition (moduleInternalGrade A ι M) :=
-  internalGradeDecomposition A ι M
-
-/-- For a ring A, an index type ι with decidable equality and A-modules M i, the i-th component of
-the decomposition of x into moduleInternalGrade A ι M, viewed in the total module, is
-DirectSum.of M i (x i). -/
-theorem coe_decompose_moduleInternalGrade (x : ⨁ i, M i) (i : ι) :
-    ((DirectSum.decompose (moduleInternalGrade A ι M) x i :
-      moduleInternalGrade A ι M i) : ⨁ i, M i) = DirectSum.of M i (x i) :=
-  coe_decompose_internalGrade A ι M x i
-
-/-- For a ring A, an index type ι with decidable equality and A-modules M i, a finitely generated
-summand M i gives a finitely generated A-module moduleInternalGrade A ι M i. -/
-theorem moduleInternalGrade_finite (i : ι) [Module.Finite A (M i)] :
-    Module.Finite A (moduleInternalGrade A ι M i) :=
-  internalGrade_finite A ι M i
-
-end ModuleCoordinates
 
 section GradedSMul
 
