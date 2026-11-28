@@ -60,5 +60,7 @@ example : Nat.card {w : {w : DyckWord // w.semilength = 3} //
     Nat.card_eq_fintype_card, Fintype.card_subtype]
   decide +kernel
 
-example : dyckStepHeight [U, D, D] = -1 ∧ dyckStepHeight [U, U, D] = 1 := by
+-- The height uses only the requested prefix, or the entire word if the index is larger.
+example : dyckStepHeight [U, D, D] 3 = -1 ∧ dyckStepHeight [U, U, D] 2 = 2 ∧
+    dyckStepHeight [U, U, D] 5 = 1 := by
   decide +kernel
