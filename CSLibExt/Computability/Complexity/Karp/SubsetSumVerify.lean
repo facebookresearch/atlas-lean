@@ -212,6 +212,22 @@ def ssCheck (x w : List Bool) : Bool :=
   | some (as, t) => (pick as w).sum == t
   | none => false
 
+/-- The sum selected by a mask from a list of ones is the number of entries selected by the
+same mask from any list of that length. -/
+theorem count_pick (as : List ℕ) (w : List Bool) :
+    (pick (List.replicate as.length 1) w).sum = (pick as w).length := by
+  induction as generalizing w with
+  | nil => rfl
+  | cons a as ih =>
+    cases h : (w.head?).getD false <;>
+      simp [pick, List.replicate_succ, h, ih, Nat.add_comm]
+
+/-- On a canonically encoded instance, the verifier accepts exactly when the masked sum
+matches the target. -/
+theorem ssCheck_encode (as : List ℕ) (t : ℕ) (w : List Bool) :
+    ssCheck (encodeSS as t) w = true ↔ (pick as w).sum = t := by
+  simp [ssCheck, decodeSS_eq_some.mpr (rfl : encodeSS as t = _)]
+
 theorem pick_sublist : ∀ (as : List ℕ) (w : List Bool), (pick as w).Sublist as
   | [], _ => List.Sublist.slnil
   | a :: as, w => by

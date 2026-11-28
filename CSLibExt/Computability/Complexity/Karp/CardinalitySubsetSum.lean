@@ -10,12 +10,12 @@ module
 
 public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
-import Mathlib.Tactic.FinCases
 import CSLibExt.Computability.Complexity.FramedCNF.NormalizeMachine
 import CSLibExt.Computability.Complexity.PairProjection
 import CSLibExt.Computability.Complexity.BoolClosure
 import CSLibExt.Computability.Complexity.Karp.SubsetSumComplete
 import CSLibExt.Computability.Complexity.PolynomialEncoding.ListNat
+import CSLibExt.Computability.Complexity.PolynomialEncoding.StreamScan
 import CSLibExt.Computability.Complexity.PolynomialEncoding.UnaryNat
 
 /-!
@@ -55,174 +55,12 @@ noncomputable def cardinalitySubsetSumDec :
 
 open ComplexityTheory BitstringEncoding Computability Turing Function TM2Program
 open Cslib.Complexity Cslib.Complexity.Karp
+open Cslib.Complexity.PolynomialEncoding.StreamScan
+open SSVerify (count_pick ssCheck_encode)
 
 private abbrev Bits := List Bool
 
 /-! ### Polynomial-time streaming passes on the raw input -/
-
-private def scan {Q : Type} (step : Q → Bool → Q × Bits) (finish : Q → Bits)
-    (q : Q) : Bits → Bits
-  | [] => finish q
-  | b :: x => (step q b).2 ++ scan step finish (step q b).1 x
-
-/-- A finite-state scan stores output in reverse order and reverses it once at the end.
-Each transition emits a bounded number of bits because the state and input alphabets are finite. -/
-private theorem polyScan {Q : Type} [Finite Q]
-    (step : Q → Bool → Q × Bits) (finish : Q → Bits) (q₀ : Q) :
-    IsPolyTime (scan step finish q₀) := by
-  classical
-  let := Fintype.ofFinite Q
-  let prog : Q ⊕ Bool → TM2.Stmt (fun _ : Fin 3 => Bool) (Q ⊕ Bool) Bool
-    | .inl q =>
-      .peek 0 (fun _ o => o.isNone) <| .branch id
-        (emit 1 (finish q) (.inr false))
-        (.pop 0 (fun _ o => o.getD false) <| .branch id
-          (emit 1 (step q true).2 (.inl (step q true).1))
-          (emit 1 (step q false).2 (.inl (step q false).1)))
-    | .inr false => moveB 1 2 some id (.inr false) (.inr true)
-    | .inr true => .halt
-  let comp : Host.Comp := {
-    K := Fin 3, Γ := fun _ => Bool, L := Q ⊕ Bool, prog := prog,
-    ks := [0, 1, 2], ks_nodup := by decide, mem_ks := by decide }
-  let st (x r o : Bits) : Fin 3 → Bits := ![x, r, o]
-  have up0 (x r o l : Bits) : update (st x r o) 0 l = st l r o := by
-    funext k
-    fin_cases k <;> rfl
-  have up1 (x r o l : Bits) : update (st x r o) 1 l = st x l o := by
-    funext k
-    fin_cases k <;> rfl
-  have hr (x : Bits) (q : Q) (v : Bool) (r : Bits) :
-      Run prog (x.length + 1) ⟨some (.inl q), v, st x r []⟩
-        ⟨some (.inr false), true, st [] ((scan step finish q x).reverse ++ r) []⟩ := by
-    induction x generalizing q v r with
-    | nil =>
-      apply Run.single
-      simp [prog, TM2.stepAux, emit, stepAux_pushList, scan, up1, st]
-    | cons b x ih =>
-      have h := ih (step q b).1 b ((step q b).2.reverse ++ r)
-      simp only [scan, List.reverse_append, List.append_assoc]
-      refine Run.head ?_ h
-      cases b <;>
-        simp [TM2.step, prog, TM2.stepAux, emit, stepAux_pushList, up0, up1, st]
-  let B := Finset.univ.sup fun q : Q =>
-    max (finish q).length (max (step q true).2.length (step q false).2.length)
-  have bound (x : Bits) (q : Q) : (scan step finish q x).length ≤ (x.length + 1) * B := by
-    have h (q : Q) : max (finish q).length
-        (max (step q true).2.length (step q false).2.length) ≤ B :=
-      Finset.le_sup (f := fun q : Q =>
-        max (finish q).length (max (step q true).2.length (step q false).2.length))
-        (Finset.mem_univ q)
-    induction x generalizing q with
-    | nil => simpa [scan] using (le_max_left _ _).trans (h q)
-    | cons b x ih =>
-      have hb : (step q b).2.length ≤ B := by cases b <;> have := h q <;> omega
-      have hi := ih (step q b).1
-      simp only [scan, List.length_append, List.length_cons, Nat.succ_mul] at hi ⊢
-      omega
-  apply Host.isPolyTime_reduction (c := comp) (cX := 0) (cO := 2)
-    (gX := id) (start := .inl q₀) (done := .inr true) (Equiv.refl Bool) _
-    ((Polynomial.X + 1) * (Polynomial.C B + 1) + 1) rfl
-  intro x
-  let y := scan step finish q₀ x
-  have h₁ := hr x q₀ false []
-  simp only [List.append_nil] at h₁
-  obtain ⟨v, S, h₂, _, ho, _⟩ := moveB_run (M := prog)
-    (self := Sum.inr false) (next := .inr true) (a := (1 : Fin 3)) (b := 2)
-    (d := some) (g := id) rfl (by decide) y.reverse y.reverse [] true
-    (st [] y.reverse []) (by simp [st]) rfl rfl
-  have hi : update (fun _ : Fin 3 => ([] : Bits)) 0 x = st x [] [] := by
-    funext k
-    fin_cases k <;> rfl
-  refine ⟨v, S, ?_, ?_⟩
-  · change RunLe prog _ ⟨_, _, update _ 0 (x.map id)⟩ _
-    rw [List.map_id, hi]
-    apply (h₁.trans h₂).le
-    have := bound x q₀
-    simp [y, Nat.mul_add] at *
-    omega
-  · simpa [y, st, comp] using ho
-
-private theorem polyPair {f g : Bits → Bits} (hf : IsPolyTime f) (hg : IsPolyTime g) :
-    IsPolyTime (fun x => (f x, g x)) :=
-  ((isPolyTime_dup.comp hg.map_fst).comp isPolyTime_swap).comp hf.map_fst
-
-/-- Transfer a raw-string computation to encoded inputs and outputs. -/
-private theorem polyEncoded {α β : Type} [BitstringEncoding α] [BitstringEncoding β]
-    {f : Bits → Bits} (hf : IsPolyTime f) {g : α → β}
-    (he : ∀ a, f (bitEncode a) = bitEncode (g a)) : IsPolyTime g := by
-  obtain ⟨m⟩ := Preimage.raw_computable hf
-  refine ⟨{ m with outputsFun := fun a => ?_ }⟩
-  have h := m.outputsFun (bitEncode a)
-  simp only [he] at h
-  exact h
-
-/-- Read the first delimited field, then copy the suffix. Each output can be enabled separately. -/
-private def splitStep (left right : Bool) : Option Bool → Bool → Option Bool × Bits
-  | none, b => (none, if right then [b] else [])
-  | some false, b => (if b then some true else none, [])
-  | some true, b => (some false, if left then [b] else [])
-
-private def field (left right : Bool) := scan (splitStep left right) (fun _ => []) (some false)
-
-private theorem polyField (left right : Bool) : IsPolyTime (field left right) :=
-  polyScan _ _ _
-
-private theorem field_delimit (left right : Bool) (p r : Bits) :
-    field left right (delimit p ++ r) = (if left then p else []) ++ (if right then r else []) := by
-  have tail : scan (splitStep left right) (fun _ => []) none r = if right then r else [] := by
-    induction r with
-    | nil => cases right <;> rfl
-    | cons b r ih => cases right <;> simp_all [scan, splitStep]
-  induction p with
-  | nil => simpa [field, delimit, scan, splitStep] using tail
-  | cons b p ih =>
-    cases left <;> simp_all [field, delimit, scan, splitStep]
-
-private theorem polyAppend {f g : Bits → Bits} (hf : IsPolyTime f) (hg : IsPolyTime g) :
-    IsPolyTime (fun x => f x ++ g x) := by
-  apply (polyPair hf hg).comp (g := fun p : Bits × Bits => p.1 ++ p.2)
-  apply polyEncoded (polyField true true)
-  rintro ⟨x, y⟩
-  change field _ _ (delimit (bitEncode x) ++ bitEncode y) = bitEncode (x ++ y)
-  simp [field_delimit, DenseSAT.Converter.bitEncode_list, DenseSAT.Converter.encSnd]
-
-private theorem polyDelimit : IsPolyTime delimit := by
-  let step (_ : Unit) (b : Bool) : Unit × Bits := ((), [true, b])
-  have h : scan step (fun _ => [false]) () = delimit := by
-    funext x
-    induction x with
-    | nil => rfl
-    | cons b x ih => simp [scan, step, delimit, ih]
-  exact h ▸ polyScan step (fun _ => [false]) ()
-
-private def unframeBits := scan
-  (fun (payload b : Bool) => if payload then (false, [b]) else (b, [])) (fun _ => []) false
-
-private theorem unframeBits_encode (x : Bits) : unframeBits (bitEncode x) = x := by
-  rw [DenseSAT.Converter.bitEncode_list]
-  induction x with
-  | nil => rfl
-  | cons b x ih => simpa [unframeBits, DenseSAT.Converter.encSnd, scan] using ih
-
-private theorem polyCombinePair {f g : Bits × Bits → Bool} (hf : IsPolyTime f)
-    (hg : IsPolyTime g) : IsPolyTime (fun q => f q && g q) := by
-  let unpack (s : Bits) := (unframeBits (field true false s), unframeBits (field false true s))
-  have hu : IsPolyTime unframeBits := polyScan _ _ _
-  have hp : IsPolyTime unpack :=
-    polyPair ((polyField _ _).comp hu) ((polyField _ _).comp hu)
-  have hid (q : Bits × Bits) : unpack (bitEncode q) = q := by
-    rcases q with ⟨x, y⟩
-    change (unframeBits (field _ _ (delimit (bitEncode x) ++ bitEncode y)),
-      unframeBits (field _ _ (delimit (bitEncode x) ++ bitEncode y))) = _
-    simp [field_delimit, unframeBits_encode]
-  have hr := IsPolyTime.combine Bool.and (hp.comp hf) (hp.comp hg)
-  obtain ⟨m⟩ := hr
-  obtain ⟨mach⟩ := tm2ComputableInPolyTime_comp (f := id)
-    (g := fun s => f (unpack s) && g (unpack s)) DenseSAT.EncodeBits.computable m
-  refine ⟨{ mach with outputsFun := fun q => ?_ }⟩
-  have h := mach.outputsFun (bitEncode q)
-  simp only [comp_apply, id_eq, hid] at h
-  exact h
 
 private theorem polyFramedLength : IsPolyTime (fun x : Bits => delimit (encodeNat x.length)) := by
   let c := PolynomialEncoding.UnaryNat.component true
@@ -238,148 +76,29 @@ private theorem polyFramedLength : IsPolyTime (fun x : Bits => delimit (encodeNa
 
 /-! ### Reading framed lists and checking the instance syntax -/
 
-/-- The state records whether a payload bit is due and whether its last bit was zero.
-The latter determines whether the binary decoder supplies an implicit final one. -/
-private def blockStep (bit : Bool → Bits) (close : Bool → Bits)
-    (q : Bool × Bool) (b : Bool) : (Bool × Bool) × Bits :=
-  if q.1 then ((false, !b), bit b)
-  else if b then ((true, q.2), []) else ((false, false), close q.2)
-
-private def blocks (bit : Bool → Bits) (close : Bool → Bits) :=
-  scan (blockStep bit close) (fun _ => []) (false, false)
-
-private theorem blocks_frame (bit : Bool → Bits) (close : Bool → Bits) (p r : Bits)
-    (last : Bool) :
-    scan (blockStep bit close) (fun _ => []) (false, last) (delimit p ++ r) =
-      p.flatMap bit ++ close ((p.getLast?.map (!·)).getD last) ++ blocks bit close r := by
-  induction p generalizing last with
-  | nil => simp [scan, delimit, blocks, blockStep]
-  | cons b p ih =>
-    simp only [delimit, List.cons_append, scan, blockStep, Bool.false_eq_true, ↓reduceIte,
-      List.nil_append, List.flatMap_cons, List.append_assoc, ih]
-    cases p with
-    | nil => rfl
-    | cons c cs =>
-      obtain ⟨d, hd⟩ := Option.isSome_iff_exists.mp
-        (show (c :: cs).getLast?.isSome by simp)
-      simp [hd]
-
-private def normList := blocks (fun b => [true, b])
-  (fun extra => if extra then [true, true, false] else [false])
-
-private def marks (mark : Bits) := blocks (fun _ => []) (fun _ => mark)
+private def normList := blocks [] (fun b => [true, b])
+  (fun last => if last = some false then [true, true, false] else [false])
 
 private theorem normList_frames (ps : List Bits) :
     normList (ps.map delimit).flatten = bitEncode (ps.map decodeNat) := by
   rw [PolynomialEncoding.encode_decoded_nat_blocks]
   induction ps with
-  | nil => rfl
+  | nil => simp [normList]
   | cons p ps ih =>
     simp only [List.map_cons, List.flatten_cons]
-    unfold normList blocks at ih ⊢
-    rw [blocks_frame]
-    change _ ++ _ ++ scan _ _ _ _ = _
-    rw [← ih]
-    simp only [List.append_assoc]
-    rw [DenseSAT.Converter.delimit_eq, FramedCNF.normalizeNat]
-    cases hl : p.getLast? with
+    unfold normList at ih ⊢
+    rw [blocks_frame, ih, DenseSAT.Converter.delimit_eq, FramedCNF.normalizeNat]
+    cases h : p.getLast? with
     | none => simp
     | some b => cases b <;> simp [List.append_assoc]
-
-private theorem marks_frames (ps : List Bits) (mark : Bits) :
-    marks mark (ps.map delimit).flatten = (List.replicate ps.length mark).flatten := by
-  induction ps with
-  | nil => rfl
-  | cons p ps ih =>
-    simp only [List.map_cons, List.flatten_cons, List.length_cons, List.replicate_succ]
-    change scan _ _ _ (delimit p ++ _) = _
-    rw [blocks_frame]
-    have hempty : p.flatMap (fun _ => ([] : Bits)) = [] := by induction p <;> simp_all
-    simp [hempty, ← ih, marks]
-
-/-- State 0 begins a frame, 1 expects a marker inside a frame, and 2 expects a payload bit.
-State 3 skips the suffix after the first complete frame in single-frame mode. -/
-private def synStep (many : Bool) (q : Fin 4) (b : Bool) : Fin 4 × Bits :=
-  (if q = 3 then 3 else if q = 2 then 1 else if b then 2 else if many then 0 else 3, [])
-
-private def syntaxFlag (many : Bool) (q : Fin 4) :=
-  scan (synStep many) (fun s => [decide (s = if many then 0 else 3)]) q
-
-private theorem syntax_frame (many : Bool) (p r : Bits) (q : Fin 4) (hq : q < 2) :
-    syntaxFlag many q (delimit p ++ r) = syntaxFlag many (if many then 0 else 3) r := by
-  induction p generalizing q with
-  | nil => fin_cases q <;> simp_all [syntaxFlag, scan, synStep, delimit]
-  | cons b p ih =>
-    have h := ih 1 (by decide)
-    fin_cases q <;> simp_all [delimit, syntaxFlag, scan, synStep]
-
-private theorem syntax_bad (many : Bool) (x : Bits) (h : undelimit x = none)
-    (q : Fin 4) (hq : q < 2) (hne : many = true → q = 0 → x ≠ []) :
-    syntaxFlag many q x = [false] := by
-  induction x using undelimit.induct generalizing q with
-  | case1 r => simp [undelimit] at h
-  | case2 b r ih =>
-    have hr : undelimit r = none := by simpa [undelimit] using h
-    have hi := ih hr 1 (by decide) (by simp)
-    fin_cases q <;> simp_all [syntaxFlag, scan, synStep]
-  | case3 x h₁ h₂ =>
-    have hx : x = [] ∨ x = [true] := by
-      cases x with
-      | nil => simp
-      | cons b xs => cases b <;> cases xs <;> simp_all
-    rcases hx with rfl | rfl <;> fin_cases q <;> cases many <;>
-      simp_all [syntaxFlag, scan, synStep]
-
-private theorem syntax_one (x : Bits) : syntaxFlag false 0 x = [(undelimit x).isSome] := by
-  cases h : undelimit x with
-  | none => exact syntax_bad false x h 0 (by decide) (by simp)
-  | some pair =>
-    obtain ⟨p, r⟩ := pair
-    rw [(Cslib.CookLevin.undelimit_eq_some_iff _ _ _).mp h, syntax_frame _ _ _ _ (by decide)]
-    clear h
-    induction r with
-    | nil => rfl
-    | cons b r ih => simpa [syntaxFlag, scan, synStep] using ih
-
-private theorem syntax_list_aux (fuel : ℕ) (x : Bits) (hx : x.length ≤ fuel) :
-    syntaxFlag true 0 x = [(undelimitBlocksAux fuel x).isSome] := by
-  induction fuel generalizing x with
-  | zero => obtain rfl : x = [] := List.eq_nil_of_length_eq_zero (by omega); rfl
-  | succ n ih =>
-    cases x with
-    | nil => rfl
-    | cons b x =>
-      unfold undelimitBlocksAux
-      cases h : undelimit (b :: x) with
-      | none => exact syntax_bad true _ h _ (by decide) (by simp)
-      | some pair =>
-        obtain ⟨p, r⟩ := pair
-        have he := (Cslib.CookLevin.undelimit_eq_some_iff _ _ _).mp h
-        rw [he, syntax_frame _ _ _ _ (by decide)]
-        have hr : r.length ≤ n := by
-          rw [he, List.length_append, length_delimit] at hx
-          omega
-        simpa using ih r hr
 
 private def valid (x : Bits) :=
   (undelimit x).isSome && (undelimit (field false true x)).isSome &&
     (undelimitBlocks (field true false x)).isSome
 
-private theorem polyValid : IsPolyTime valid := by
-  have head : IsPolyTime (fun x : Bits => x.headD false) :=
-    isPolyTime_dup.comp (isPolyTime_heads fun a _ => a)
-  have h₁ : IsPolyTime (fun x : Bits => (undelimit x).isSome) := by
-    have h := (polyScan (synStep false) _ (0 : Fin 4)).comp head
-      (f := syntaxFlag false 0)
-    simpa [Function.comp_def, syntax_one] using h
-  have hl : IsPolyTime (fun x : Bits => (undelimitBlocks x).isSome) := by
-    have h := (polyScan (synStep true) _ (0 : Fin 4)).comp head
-      (f := syntaxFlag true 0)
-    have he (x : Bits) : syntaxFlag true 0 x = [(undelimitBlocks x).isSome] :=
-      syntax_list_aux x.length x le_rfl
-    simpa [Function.comp_def, he] using h
-  exact (h₁.combine Bool.and ((polyField false true).comp h₁)).combine Bool.and
-    ((polyField true false).comp hl)
+private theorem polyValid : IsPolyTime valid :=
+  (polyUndelimitIsSome.combine Bool.and ((polyField false true).comp polyUndelimitIsSome)).combine
+    Bool.and ((polyField true false).comp polyUndelimitBlocksIsSome)
 
 private def rawInstance (ps : List Bits) (k t : Bits) : Bits :=
   delimit (ps.map delimit).flatten ++ (delimit k ++ t)
@@ -437,7 +156,7 @@ private theorem polyCheckInput (count : Bool) : IsPolyTime (checkInput count) :=
   apply polyAppend
     ((((polyField false true).comp (polyField count (!count))).comp
       FramedCNF.NormalizeMachine.isPolyTime_normalizeNat).comp polyDelimit)
-  cases count <;> exact (polyField true false).comp (polyScan _ _ _)
+  cases count <;> exact (polyField true false).comp (polyBlocks _ _ _)
 
 private theorem checkInput_raw (count : Bool) (ps : List Bits) (k t : Bits) :
     checkInput count (rawInstance ps k t) =
@@ -456,18 +175,6 @@ private def verify (q : Bits × Bits) : Bool :=
 private theorem polyVerify : IsPolyTime verify := by
   have each (c : Bool) := (polyCheckInput c).map_fst.comp isPolyTime_ssCheck
   exact polyCombinePair (polyCombinePair (isPolyTime_fst.comp polyValid) (each false)) (each true)
-
-private theorem count_pick (as : List ℕ) (w : Bits) :
-    (SSVerify.pick (List.replicate as.length 1) w).sum = (SSVerify.pick as w).length := by
-  induction as generalizing w with
-  | nil => rfl
-  | cons a as ih =>
-    cases h : (w.head?).getD false <;>
-      simp [SSVerify.pick, List.replicate_succ, h, ih, Nat.add_comm]
-
-private theorem ssCheck_encode (as : List ℕ) (t : ℕ) (w : Bits) :
-    SSVerify.ssCheck (encodeSS as t) w = true ↔ (SSVerify.pick as w).sum = t := by
-  simp [SSVerify.ssCheck, SSVerify.decodeSS_eq_some.mpr (rfl : encodeSS as t = _)]
 
 private theorem membership : cardinalitySubsetSumDec ∈ NP := by
   refine ⟨Polynomial.X, verify, polyVerify, fun x => ?_⟩
@@ -517,7 +224,7 @@ private def pad (x : Bits) : Bits :=
 
 private theorem polyPad : IsPolyTime pad := by
   have hi := polyField false true
-  have hz : IsPolyTime (fun x => marks [false] (field false true x)) := hi.comp (polyScan _ _ _)
+  have hz : IsPolyTime (fun x => marks [false] (field false true x)) := hi.comp (polyBlocks _ _ _)
   exact polyAppend ((polyAppend hi hz).comp polyDelimit)
     (polyAppend (hz.comp polyFramedLength) (polyField true false))
 
