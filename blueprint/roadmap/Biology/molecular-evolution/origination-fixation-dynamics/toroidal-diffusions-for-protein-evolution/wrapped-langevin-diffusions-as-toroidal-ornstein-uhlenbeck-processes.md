@@ -1,10 +1,10 @@
 # Wrapped Langevin diffusions as toroidal Ornstein–Uhlenbeck processes
 
-**Setting.** Protein backbone conformations are described by dihedral angles $(\phi,\psi)\in\mathbb T^2=[-\pi,\pi)^2$. To model how these angles evolve along a phylogeny one needs ergodic, time-reversible diffusions on the torus $\mathbb T^p$ with a prescribed stationary density. For a density $f$ on $\mathbb R^p$ and diffusion matrix $V=\sigma\sigma^{\top}$, the *Langevin diffusion* has drift
+**Setting.** Protein backbone conformations are described by dihedral angles $(\phi,\psi)\in\mathbb T^2=[-\pi,\pi)^2$. To model how these angles evolve along a phylogeny one needs ergodic, time-reversible diffusions on the torus $\mathbb T^p$ with a prescribed stationary density. For a strictly positive density $f$ on $\mathbb R^p$ (with respect to Lebesgue measure) and diffusion matrix $V=\sigma\sigma^{\top}$, the *Langevin diffusion* $d\mathbf X_t=b(\mathbf X_t)\,dt+\sigma(\mathbf X_t)\,d\mathbf W_t$ has drift
 
-$$b_i(\mathbf x)=\tfrac12\sum_jV_{ij}(\mathbf x)\,\partial_{x_j}\log f(\mathbf x)+\det V(\mathbf x)^{1/2}\sum_j\partial_{x_j}\big(V_{ij}(\mathbf x)\det V(\mathbf x)^{-1/2}\big),$$
+$$b_i(\mathbf x)=\tfrac12\sum_jV_{ij}(\mathbf x)\,\partial_{x_j}\log f(\mathbf x)+\tfrac12\sum_j\partial_{x_j}V_{ij}(\mathbf x)=\frac1{2f(\mathbf x)}\sum_j\partial_{x_j}\big(V_{ij}(\mathbf x)f(\mathbf x)\big),$$
 
-which reduces to $d\mathbf X_t=\tfrac12\boldsymbol\Sigma\nabla\log f(\mathbf X_t)\,dt+\boldsymbol\Sigma^{1/2}d\mathbf W_t$ when $V\equiv\boldsymbol\Sigma$.
+the drift for which the stationary probability flux $b_if-\tfrac12\sum_j\partial_{x_j}(V_{ij}f)$ vanishes. In Kent's Riemannian form this is $b_i=\tfrac12\sum_jV_{ij}\,\partial_{x_j}\log\tilde f+\tfrac12\det V^{1/2}\sum_j\partial_{x_j}\big(V_{ij}\det V^{-1/2}\big)$ with $\tilde f=f\det V^{1/2}$ the density with respect to the volume measure $\det V^{-1/2}\,d\mathbf x$. The source prints the second Riemannian term without the factor $\tfrac12$ and with $\tilde f$ replaced by $f$; that version agrees with the drift above for $p=1$ and for constant $V$, but not in general for $p\ge2$. The drift reduces to $d\mathbf X_t=\tfrac12\boldsymbol\Sigma\nabla\log f(\mathbf X_t)\,dt+\boldsymbol\Sigma^{1/2}d\mathbf W_t$ when $V\equiv\boldsymbol\Sigma$.
 
 **Theorem.**
 

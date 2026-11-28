@@ -6,10 +6,15 @@ $$N\theta(x)\,\alpha(y,x)\,Q(x,dy) \;+\; N^2\lambda(x,y)\,\alpha(y,x)\,\mu_t(dy)
 
 the first term from mutation (rate $\theta$, kernel $Q$) and the second from migrants drawn from the current metapopulation trait distribution $\mu_t$ with migration rate $\lambda$.
 
+**Assumptions.** In a deme with label $r\in[0,1]$, an individual of trait $x$ is replaced by a copy of a deme-mate of trait $y$ at rate $c(r,x,y)>0$, mutates at rate $\gamma\theta(r,x)$ and is replaced by a migrant of trait $y$ from deme $r'$ at rate $\gamma\lambda((r,x),(r',y))/K$; the slow time scale is the rare mutation and migration limit $\gamma\to0$ from initially monomorphic demes. The results below hold under the source's two standing assumptions.
+
+- *(Assumption 1, bounded rates.)* The maps $c$, $\theta$ and $\lambda$ are non-negative and measurable, and there is $C>0$ with $c(r,x,y)\le C$, $\theta(r,x)\le C$ and $\lambda((r,x),(r',y))\le C$ for all $(r,r',x,y)\in[0,1]^2\times(\mathbb{R}^d)^2$.
+- *(Assumption 2, convergent initial data and continuous rates.)* The initial empirical (label, trait) distributions $\nu^K_0$ converge in law to some $\nu_0$ as $K\to\infty$; for each of the finitely many tagged demes, the scaled label $\ell^K_j/K$ and the initial trait converge to a limit $(r^j,X^j_0)$; and $\theta$, the product $\lambda\alpha$ and the kernel $Q$ are continuous.
+
 **Theorem.**
 
-1. (*Propagation of chaos.*) As $K\to\infty$, the empirical trait distribution converges in law to the solution of a nonlinear (McKean–Vlasov) equation started from the limit of the initial empirical distributions; the limit is deterministic when that initial limit is deterministic (for example for i.i.d. initial traits), and in a homogeneous metapopulation with i.i.d. initial traits, finitely many tagged demes become independent copies of a time-inhomogeneous pure-jump Markov process driven by the limiting distribution.
-2. (*Replicator dynamics.*) Without mutation, if the metapopulation is homogeneous and initially carries finitely many traits $x^1,\dots,x^n$ with mean weights $\bar w^i_t$, then
+1. (*Propagation of chaos.*) Under Assumptions 1 and 2, as $K\to\infty$, the empirical trait distribution converges in law to the solution of a nonlinear (McKean–Vlasov) equation started from the limit of the initial empirical distributions; the limit is deterministic when that initial limit is deterministic (for example for i.i.d. initial traits), and in a homogeneous metapopulation with i.i.d. initial traits, finitely many tagged demes become independent copies of a time-inhomogeneous pure-jump Markov process driven by the limiting distribution.
+2. (*Replicator dynamics.*) For the limit equation of part 1 without mutation (its small-mutation limit, which under the source's moment and regularity Assumptions 3 and 4 removes the mutation term), if the metapopulation is homogeneous and initially carries finitely many traits $x^1,\dots,x^n$ with mean weights $\bar w^i_t$, then
 
 $$\frac{d\bar w^i_t}{dt} = \bar w^i_t \sum_{j=1}^n a_{ij}\,\bar w^j_t, \qquad a_{ij} = G(x^i,x^j),$$
 

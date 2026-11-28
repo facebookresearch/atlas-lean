@@ -10,11 +10,15 @@ with $f_0 \equiv 0$ and $f_n(a, 0) = \delta_{n,1}\delta(a)$. The expected total 
 
 $$\tilde F(s) = \frac{\tilde\phi(s)}{1 - \tilde\phi(s)}, \qquad \tilde\phi(s) = \int_0^\infty e^{-sa}\phi(a)\,da .$$
 
-If $G$ is the largest real root of the Euler–Lotka equation
+Assume the seeding rate $\phi \ge 0$ is locally integrable and not almost everywhere zero, and that the Euler–Lotka equation
 
-$$\int_0^\infty \phi(a)\,e^{-Ga}\,da = 1,$$
+$$\int_0^\infty \phi(a)\,e^{-Ga}\,da = 1$$
 
-then $f(a,t) \sim A\,e^{G(t-a)}$ for large $t$ and some $A > 0$, the number of lesions $N(t) = \int_0^\infty f(a,t)\,da$ grows like $e^{Gt}$, and so does $V_{\mathrm{tot}}(t)$ whenever $\int_0^\infty V(a)e^{-Ga}\,da < \infty$.
+has a real root $G$; it is unique, because $\tilde\phi$ is strictly decreasing where it is finite. Assume the seeding is supercritical, $G > 0$, which (given the root) is equivalent to $\int_0^\infty \phi(a)\,da > 1$. The tilted kernel $\phi_G(a) = \phi(a)e^{-Ga}$ is a probability density on $[0,\infty)$; assume its mean $m = \int_0^\infty a\,\phi(a)e^{-Ga}\,da$ is finite. Then the number of lesions $N(t) = \int_0^\infty f(a,t)\,da = 1 + \int_0^t F$ satisfies
+
+$$N(t) \sim \frac{e^{Gt}}{G\,m} \qquad (t \to \infty).$$
+
+If moreover $\phi_G$ is continuous almost everywhere and dominated by a nonincreasing integrable function (so that it is directly Riemann integrable), then $F(t) \sim e^{Gt}/m$, i.e. $f(a,t) \sim A\,e^{G(t-a)}$ for each fixed age $a$ with $A = 1/m$. If the lesion volume $V$ is nondecreasing and absolutely continuous with $V(0) = 0$ and $\int_0^\infty V(a)e^{-Ga}\,da < \infty$, then $V_{\mathrm{tot}}(t) \sim \frac{e^{Gt}}{m}\int_0^\infty V(a)e^{-Ga}\,da$. Without supercriticality the conclusion fails: if $\int_0^\infty \phi < 1$, then $N(t)$ stays bounded, converging to $1/(1 - \int_0^\infty \phi)$.
 
 ## Depends on
 
@@ -24,10 +28,11 @@ then $f(a,t) \sim A\,e^{G(t-a)}$ for large $t$ and some $A > 0$, the number of l
 
 - [Renewal equation for exponential growth](../../epidemiology/euler-lotka-equation-and-the-reproduction-number/renewal-exp-iff.md)
 - [Laplace transform of a causal convolution](../../../Analysis/harmonic-analysis/integral-transforms/laplace-transform/laplace-transform-of-a-causal-convolution.md)
+- [Nonlattice constant identification](../../../Probability/point-processes/renewal-limits-nonlattice-constants-versus-latti/tendsto-scaled-of-key-renewal.md)
 
 ## Proof sketch
 
-The transport equation only ages lesions, so the density along characteristics is the birth rate at time $t - a$, plus the initial lesion travelling along $a = t$. Inserting this form in the boundary condition gives the renewal equation $F(t) = \phi(t) + \int_0^t \phi(a)F(t-a)\,da$, whose Laplace transform is $\tilde F = \tilde\phi + \tilde\phi\tilde F$. Singularities of $\tilde F$ are at the roots of $\tilde\phi(s) = 1$; the rightmost one, $G$, dominates the inverse transform and fixes the exponential growth rate. The hierarchical structure (type $n$ is fed only by types $n$ and $n-1$) lets the multi-driver system be solved type by type in the same way (Methods of the source).
+The transport equation only ages lesions, so the density along characteristics is the birth rate at time $t - a$, plus the initial lesion travelling along $a = t$. Inserting this form in the boundary condition gives the renewal equation $F(t) = \phi(t) + \int_0^t \phi(a)F(t-a)\,da$, whose Laplace transform is $\tilde F = \tilde\phi + \tilde\phi\tilde F$. Singularities of $\tilde F$ are at the roots of $\tilde\phi(s) = 1$; the rightmost one, $G$, dominates the inverse transform and fixes the exponential growth rate. To make this rigorous, integrate the renewal equation: $N = 1 + \phi * N$, so $e^{-Gt}N(t)$ solves the renewal equation with input $e^{-Gt}$ (nonincreasing and integrable because $G > 0$) for the nonlattice probability density $\phi_G$, and the key renewal theorem gives the limit $\int_0^\infty e^{-Gt}\,dt/m = 1/(Gm)$. The same argument with input $\phi_G$ gives $e^{-Gt}F(t) \to 1/m$, and writing $V_{\mathrm{tot}}(t) = \int_0^t V'(a)\,N(t-a)\,da$ (an integration by parts using $V(0) = 0$) and dominated convergence gives the volume asymptotics. The hierarchical structure (type $n$ is fed only by types $n$ and $n-1$) lets the multi-driver system be solved type by type in the same way (Methods of the source).
 
 ## Sources
 
