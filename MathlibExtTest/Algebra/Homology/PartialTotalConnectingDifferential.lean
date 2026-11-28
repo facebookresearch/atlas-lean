@@ -267,6 +267,12 @@ private lemma connecting_model (f : verticalRow ⟶ verticalRow) :
       𝟙 (((R₀ f).extend e).homology 0) := HomologicalComplex.homologyMap_id _ _
   rw [hs, hk, hr]
   simp only [Category.id_comp]
+  exact congrArg
+    (fun g : ((K₀ f).extend e).homology 0 ⟶ ((R₀ f).extend e).homology 0 =>
+      ((R₁ f).extendHomologyIso e (j := 1) (j' := -1) rfl).inv ≫
+        ((B f).partialTotalStepCochainShortExact 1).δ (-1) 0 (by decide) ≫
+        g ≫ ((R₀ f).extendHomologyIso e (j := 0) (j' := 0) rfl).hom)
+    (Category.id_comp (HomologicalComplex.homologyMap (quotient₀ f) 0))
 
 /-- The actual adjacent-row connecting map in rational coordinates is the horizontal map. -/
 theorem connecting_coordinate (f : verticalRow ⟶ verticalRow) :

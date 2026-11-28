@@ -64,11 +64,25 @@ example :
 
 example :
     (emLiteralAugmented alg).left.map (SimplexCategory.δ (0 : Fin 2)).op
-      (some none : Option (Option Bool)) = none := rfl
+      (some none : Option (Option Bool)) = none := by
+  have h := (emLiteralBarIso alg).hom.naturality (SimplexCategory.δ (0 : Fin 2)).op
+  have hf : (emLiteralAugmented alg).left.map (SimplexCategory.δ (0 : Fin 2)).op =
+      (resolutionBar alg).map (SimplexCategory.δ (0 : Fin 2)).op := by
+    simpa only [emLiteralBarIso_hom_app, Category.comp_id, Category.id_comp,
+      emUnderlyingBar] using h
+  rw [hf, resolutionBar_map_δ_op]
+  rfl
 
 example :
     (emLiteralAugmented alg).left.map (SimplexCategory.δ (1 : Fin 2)).op
-      (some none : Option (Option Bool)) = some false := rfl
+      (some none : Option (Option Bool)) = some false := by
+  have h := (emLiteralBarIso alg).hom.naturality (SimplexCategory.δ (1 : Fin 2)).op
+  have hf : (emLiteralAugmented alg).left.map (SimplexCategory.δ (1 : Fin 2)).op =
+      (resolutionBar alg).map (SimplexCategory.δ (1 : Fin 2)).op := by
+    simpa only [emLiteralBarIso_hom_app, Category.comp_id, Category.id_comp,
+      emUnderlyingBar] using h
+  rw [hf, resolutionBar_map_δ_op]
+  rfl
 
 example :
     (emLiteralResolutionIso alg).hom.left.app (Opposite.op (SimplexCategory.mk 1))
