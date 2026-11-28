@@ -22,4 +22,4 @@ The reduction is from a variant of the Post correspondence problem. Inspecting t
 
 ## Sources
 
-- Rajeev Alur, Kousha Etessami and Mihalis Yannakakis, "Realizability and verification of MSC graphs", *Theoretical Computer Science* 331(1):97–114, 2005, doi:10.1016/j.tcs.2004.09.034; read in the authors' open-access copy at <https://www.cis.upenn.edu/~alur/Icalp01.pdf>, which carries the journal text: Theorem 1, Lemma 2 and their proofs in Section 3.1 of that copy.
+- Rajeev Alur, Kousha Etessami and Mihalis Yannakakis, "Realizability and verification of MSC graphs", *Theoretical Computer Science* 331(1):97–114, 2005, doi:10.1016/j.tcs.2004.09.034; read in the authors' open-access copy at <https://www.cis.upenn.edu/~alur/Icalp01.pdf>, the authors' manuscript of the journal version: Theorem 1, Lemma 2 and their proofs in Section 3.1 of that copy.
