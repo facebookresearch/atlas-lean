@@ -1,6 +1,11 @@
 # Testing and runtime verification
 
 - [Safety and co-safety properties are monitorable](safety-and-co-safety-properties-are-monitorable.md)
+- [Bounded-exhaustive checking is exact under exact support](all-iff-forall-le.md)
+- [Passing a bounded check implies bounded validity](forall-le-of-all.md)
+- [Exact-support enumerations are monotone in the bound](mem-of-mem-le.md)
+- [Budget-split product enumeration](enum-prod.md)
+- [Membership in the budget-split product enumeration](mem-enum-prod-iff.md)
 
 - [Subsumption between control-flow coverage criteria](subsumption-between-control-flow-coverage.md)
 - [Characterization sets of finite-state machines](characterization-sets-of-minimal-finite-state.md)

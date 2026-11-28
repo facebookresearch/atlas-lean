@@ -414,7 +414,7 @@
      {"slug": "diffusion-and-flow-generative-models", "title": "Diffusion and flow-based generative models", "description": "Linear algebra of diffusion and flow-based generative models: for Gaussian data, the score and the optimal denoiser are spectral functions of the data covariance and the probability-flow ODE is a linear system with commuting coefficients whose flow map is an explicit affine map; for any differentiable velocity field, the divergence in the log-density computations of flow models is the trace of a Jacobian. These pages are AI-authored expositions of published results without Lean formalization; each names what it relies on, and how, under Informally uses, and marks results not stated in its sources as derived."},
      {"slug": "generalization-bounds-and-concentration", "title": "Generalization bounds and concentration", "description": "Uniform deviation bounds between the empirical and the expected risk, obtained from concentration inequalities: for a finite class, Hoeffding's inequality and a union bound; for a general class, McDiarmid's bounded-differences inequality concentrates the supremum of the deviations around its mean, and Rademacher averages control its expectation. The finite-class bound, the reduction of empirical risk minimization to a uniform deviation bound and the dimension-free Rademacher average of a ball of linear predictors are formalized; the two pages marked as expositions are AI-authored expositions of published results without Lean formalization."},
      {"slug": "distribution-shift-and-robustness", "title": "Distribution shift and robustness", "description": "Robustness of learned predictors to input perturbations and to shifts between the training and test distributions: adversarial risk with Lipschitz-margin certificates, the certified radius of a Gaussian-smoothed classifier, and domain adaptation bounds."},
-     {"slug": "hidden-markov-and-kalman-laws", "title": "Laws of hidden Markov and Kalman models", "description": "Probability laws of sequence models: the joint law of the hidden states and observations of a normalized hidden Markov model, the normalization of its observation likelihood, and sequential Gaussian conditioning of a linear Kalman model over a history of observations. The forward-backward, Viterbi and Baum–Welch recursions and the Kalman filter step are under [probabilistic graphical models](../probabilistic-graphical-models/README.md)."}
+     {"slug": "hidden-markov-and-kalman-laws", "title": "Laws of hidden Markov and Kalman models", "description": "Laws and formulas of sequence models: the joint law of the hidden states and observations of a normalized hidden Markov model, the normalization of its observation likelihood, and the batch conditioning formulas of a scalar linear Kalman model over two observations, which the recursive filter reproduces. The forward-backward, Viterbi and Baum–Welch recursions and the Kalman filter step are under [probabilistic graphical models](../probabilistic-graphical-models/README.md)."}
     ]}
    ]
   },
@@ -2353,14 +2353,14 @@
   "CSLibExt/Security/AccessControl/RBAC0": {"to": "ComputerScience/computer-security", "title": "Role-based access control"},
   "CSLibExt/Security/InformationFlow/LowEquivalence": {"to": "ComputerScience/computer-security", "title": "Information flow"},
   "CSLibExt/Security/Unwinding": {"to": "ComputerScience/computer-security", "title": "Information flow"},
-  "CSLibExt/Security/Noninterference/Basic": {"to": "ComputerScience/program-logics-and-verification", "title": "Security judgments and confinement"},
-  "CSLibExt/Security/Noninterference/Soundness": {"to": "ComputerScience/program-logics-and-verification", "title": "Termination-insensitive noninterference"},
-  "CSLibExt/Security/Noninterference/Typing": {"to": "ComputerScience/program-logics-and-verification", "title": "Security judgments and confinement"},
-  "CSLibExt/Security/QuantitativeInformationFlow": {"to": "ComputerScience/program-logics-and-verification", "title": "Min-entropy leakage"},
-  "CSLibExt/Specs/InsertionSort": {"to": "ComputerScience/program-logics-and-verification", "title": "Insertion sort satisfies the sorting contract"},
+  "CSLibExt/Security/Noninterference/Basic": {"to": "ComputerScience/computer-security", "title": "Security judgments and confinement"},
+  "CSLibExt/Security/Noninterference/Soundness": {"to": "ComputerScience/computer-security", "title": "Termination-insensitive noninterference"},
+  "CSLibExt/Security/Noninterference/Typing": {"to": "ComputerScience/computer-security", "title": "Security judgments and confinement"},
+  "CSLibExt/Security/QuantitativeInformationFlow": {"to": "ComputerScience/computer-security", "title": "Min-entropy leakage"},
+  "CSLibExt/Specs/InsertionSort": {"to": "ComputerScience/program-logics-and-verification", "title": "Ordered insertion and insertion sort"},
   "CSLibExt/Specs/SelectionSort": {"to": "ComputerScience/program-logics-and-verification", "title": "Selection sort satisfies the sorting contract"},
   "CSLibExt/Specs/Sorting": {"to": "ComputerScience/program-logics-and-verification", "title": "A relational sorting contract"},
-  "CSLibExt/Testing/BoundedExhaustive": {"to": "ComputerScience/program-logics-and-verification", "title": "Bounded-exhaustive checking"},
+  "CSLibExt/Testing/BoundedExhaustive": {"to": "ComputerScience/program-logics-and-verification", "title": "Testing and runtime verification"},
   "Domains/MaterialsScience/Quantities/Composition": {"to": "Chemistry/amounts-and-stoichiometry", "title": "Arrhenius coordinates and composition percentages"},
   "Mathlib/Algebra/AddConstMap": {"to": "Algebra/algebraic-identities", "title": "Maps intertwining translations"},
   "Mathlib/Algebra/AffineMonoid": {"to": "GroupTheory/semigroups-and-monoids", "title": "Affine monoids"},

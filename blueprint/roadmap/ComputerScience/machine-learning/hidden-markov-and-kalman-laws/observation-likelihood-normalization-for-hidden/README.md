@@ -11,6 +11,6 @@
 - [HMM joint law sums to one](sum-joint-eq-one.md)
 - [Hidden Markov observation likelihoods sum to one](sum-likelihood-eq-one.md)
 - [Forward variables of a normalized hidden Markov model sum to one](sum-forward-eq-one.md)
-- [Joint law of a hidden Markov model on paths and observation strings](joint-prob.md)
+- [Joint weight of a hidden Markov model on paths and observation strings](joint-prob.md)
 - [The hidden Markov joint law sums to one](sum-joint-prob-eq-one.md)
-- [Likelihood is the marginal of the joint law](likelihood-eq-sum-joint-prob.md)
+- [Likelihood is the sum of the joint weights](likelihood-eq-sum-joint-prob.md)
