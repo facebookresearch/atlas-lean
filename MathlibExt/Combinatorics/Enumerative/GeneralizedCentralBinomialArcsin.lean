@@ -21,6 +21,11 @@ public import Mathlib.Analysis.SpecialFunctions.Trigonometric.InverseDeriv
 The coefficient recurrences define Zurita's polynomials and constants.
 `hasDerivAt_zurita_antiderivative_one` proves the first arcsine antiderivative and
 `hasDerivAt_zurita_antiderivative_two` proves the second on $(0,1)$.
+
+## References
+
+- Rimer Zurita, *Power Series Associated with Reciprocals of Generalized Central Binomial
+  Coefficients*, INTEGERS 26 (2026), Article A2, pp. 1–21, Definitions 1–4 and Lemmas 1–2.
 -/
 
 open Finset
@@ -162,6 +167,10 @@ Source: Rimer Zurita, *Power Series Associated with Reciprocals of Generalized C
 Coefficients*, INTEGERS 26 (2026), Article A2, Definition 3. -/
 noncomputable def zuritaM (n : ℕ) (x : ℝ) : ℝ :=
   ∑ k ∈ range n, (zuritaMCoeff n k : ℝ) * x ^ k
+
+/-- Evaluation of $M_{n-1}$ as the finite sum of its first $n$ terms. -/
+theorem zuritaM_eq_sum_range (n : ℕ) (x : ℝ) :
+    zuritaM n x = ∑ k ∈ range n, (zuritaMCoeff n k : ℝ) * x ^ k := rfl
 
 /-- **Zurita's polynomial $N_{n-2}$.** For a natural number $n$, let $m_0, m_1, \dots$ be Zurita's
 coefficients, given by $m_0 = 2/(2n - 1)$ and $m_k = \frac{2(k - n)}{2k - 2n + 1}\, m_{k-1}$ for
@@ -353,6 +362,24 @@ private theorem m_identity (m : ℕ) (x : ℝ) :
       rw [pow_succ x (l + 1)]
       linear_combination ih (by omega) + x ^ (l + 1) * m_step m l hl
   simpa [zuritaM] using partial_sum m le_rfl
+
+/-- The coefficient recurrence for $M_{n-1}$ (cleared of denominators), including the
+constant term. -/
+public theorem zuritaMCoeff_weighted (n k : ℕ) (hk : k < n) :
+    ((n : ℝ) - k - 1 / 2) * (zuritaMCoeff n k : ℝ) =
+      if k = 0 then 1 else ((n : ℝ) - k) * (zuritaMCoeff n (k - 1) : ℝ) := by
+  obtain ⟨m, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (by omega : n ≠ 0)
+  cases k with
+  | zero =>
+    simp only [Nat.cast_zero, sub_zero, ite_true, zuritaMCoeff]
+    push_cast
+    have hm := Nat.cast_nonneg (α := ℝ) m
+    field_simp (disch := linarith)
+  | succ k =>
+    simp only [Nat.succ_ne_zero, ite_false, Nat.succ_sub_one]
+    have h := m_step m k (by omega)
+    push_cast at h ⊢
+    linear_combination -h
 
 -- The final coefficient of M gives d, and all earlier coefficients come from N.
 private theorem n_identity (m : ℕ) (x : ℝ) :
