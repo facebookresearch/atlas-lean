@@ -32,6 +32,12 @@ Each digit of a finite iterate depends on a finite prefix of the input, so it su
 analyze addition of natural numbers. The proof splits each input at the upper window of
 four zeros. To bound how far a carry from the two upper tails can descend, it translates
 their indices down and uses the conjugate of the golden ratio to control normalization.
+
+## References
+
+* Yohan Hosten, *On the Variation of the Sum of Digits in the Zeckendorf Representation:
+  An Algorithm to Compute the Distribution and Mixing Properties*, Journal of Integer Sequences 27
+  (2024), Article 24.3.2, pp. 1–48, Section 2.2, Corollary 9, Lemma 10, and Corollary 14.
 -/
 
 namespace MetaMathlibExt
@@ -51,6 +57,24 @@ An Algorithm to Compute the Distribution and Mixing Properties*, Journal of Inte
 (2024), Article 24.3.2, Section 2.2 (arXiv:2309.14285v2). -/
 public def zeckAdic : Set (ℕ → Bool) :=
   {x | x 0 = false ∧ x 1 = false ∧ ∀ k, x k = false ∨ x (k + 1) = false}
+
+/-- **Admissible Zeckendorf digits from index two.** A binary sequence $x$ belongs to the set
+$\mathbb{X}$ of Zeckendorf-adic integers if and only if $x_0 = x_1 = 0$ and, for every $k \ge 2$,
+$x_k = 1$ implies $x_{k+1} = 0$. -/
+public theorem mem_zeckAdic_iff {x : ℕ → Bool} :
+    x ∈ zeckAdic ↔ x 0 = false ∧ x 1 = false ∧ ∀ k ≥ 2, x k = true → x (k + 1) = false := by
+  constructor
+  · rintro ⟨h0, h1, h⟩
+    exact ⟨h0, h1, fun k _ hk => (h k).resolve_left (by simp [hk])⟩
+  · rintro ⟨h0, h1, h⟩
+    refine ⟨h0, h1, fun k => ?_⟩
+    by_cases hk : 2 ≤ k
+    · cases hd : x k
+      · exact Or.inl rfl
+      · exact Or.inr (h k hk hd)
+    · interval_cases k
+      · exact Or.inl h0
+      · exact Or.inl h1
 
 /-- **Zeckendorf digit sequence of a natural number.** Let $F_k$ be the Fibonacci numbers
 ($F_0 = 0$, $F_1 = F_2 = 1$). Every $n \in \mathbb{N}$ has a unique Zeckendorf representation
@@ -188,9 +212,16 @@ private theorem rep_ext {l s : List ℕ} (hl : l.IsZeckendorfRep) (hs : s.IsZeck
 private abbrev stop (x : ℕ → Bool) (k : ℕ) :=
   2 ≤ k ∧ x k = false ∧ x (k + 1) = false
 
-private theorem digit_step {x : ℕ → Bool} {k : ℕ} :
+/-- **The one-step Zeckendorf odometer digit rule.** Let $T$ be the Zeckendorf odometer. For a
+binary sequence $x$ and $k \in \mathbb{N}$, $(T x)_k = 1$ if and only if either $k$ is the least
+index $i \ge 2$ with $x_i = x_{i+1} = 0$, or $x_k = 1$ and there is such an index $i < k$. -/
+public theorem _root_.MetaMathlibExt.zeckOdometer_apply_eq_true_iff
+    {x : ℕ → Bool} {k : ℕ} :
     zeckOdometer x k = true ↔
-      (stop x k ∧ ∀ i < k, ¬stop x i) ∨ (x k = true ∧ ∃ i < k, stop x i) := by
+      ((2 ≤ k ∧ x k = false ∧ x (k + 1) = false) ∧
+        ∀ i < k, ¬(2 ≤ i ∧ x i = false ∧ x (i + 1) = false)) ∨
+      (x k = true ∧ ∃ i < k, 2 ≤ i ∧ x i = false ∧ x (i + 1) = false) := by
+  change _ ↔ (stop x k ∧ ∀ i < k, ¬stop x i) ∨ (x k = true ∧ ∃ i < k, stop x i)
   classical
   unfold zeckOdometer
   split
@@ -220,7 +251,10 @@ private theorem iterate_local {x y : ℕ → Bool} (r k : ℕ)
     have hs (i : ℕ) (hi : i ≤ j) : stop x i ↔ stop y i := by
       simp only [stop, h i (by omega), h (i + 1) (by omega)]
     apply Bool.eq_iff_iff.mpr
-    rw [digit_step, digit_step, hs j le_rfl, h j (by omega)]
+    rw [zeckOdometer_apply_eq_true_iff, zeckOdometer_apply_eq_true_iff]
+    change ((stop x j ∧ ∀ i < j, ¬stop x i) ∨ (x j = true ∧ ∃ i < j, stop x i)) ↔
+      (stop y j ∧ ∀ i < j, ¬stop y i) ∨ (y j = true ∧ ∃ i < j, stop y i)
+    rw [hs j le_rfl, h j (by omega)]
     grind only
 
 private theorem prefix_before_stop {x : ℕ → Bool} (hx : x ∈ zeckAdic) {n : ℕ}
