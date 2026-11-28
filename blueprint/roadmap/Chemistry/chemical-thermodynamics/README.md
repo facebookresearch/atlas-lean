@@ -13,3 +13,4 @@ Equilibrium thermodynamics of gases and chemical systems: equations of state and
 - [Rankine cycle](rankine-cycle/README.md)
 - [Thermochemistry and Hess's law](thermochemistry-and-hess-s-law/README.md)
 - [Equilibrium-stage separations](equilibrium-stage-separations/README.md)
+- [Biochemical thermodynamics at specified pH and pMg](biochemical-transformed-thermodynamics/README.md)
