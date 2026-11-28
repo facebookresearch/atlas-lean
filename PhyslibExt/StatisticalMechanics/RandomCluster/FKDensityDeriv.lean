@@ -224,14 +224,6 @@ lemma fdd_free_is_leftDeriv_of_leftContinuous (N : ℕ)
 
 /-! ## D. Wired densities and right derivatives -/
 
-/-- The wired `q = 2` density of every edge of `Λ_N` at `p = logistic(t)` is the right derivative
-of
-`g` at `t`.
--/
-def fdd_WiredDensityIsRightDeriv (N : ℕ) (g : ℝ → ℝ) : Prop :=
-  ∀ (e' : Sym2 (boxVerts d N)) (t : ℝ),
-    wiredEdgeDensity d 2 (edgeIncl d N e') (fsc_logistic t) = pressureRightDeriv g t
-
 /-- The wired `q = 2` density of every edge of `Λ_N` at `p = logistic(t)` is at most the right
 derivative of `g` at `t`.
 -/
