@@ -42,7 +42,9 @@ The standard algebraic equivalences used by query optimizers:
 * `project_project`, `project_project_of_subset` (**cascade of projections**);
 * `select_project`: selection commutes with a projection that keeps its attributes;
 * `select_union`, `select_sdiff`, `project_union`;
-* `join_eq_inter`: on a common schema the join is the intersection.
+* `join_eq_inter`: on a common schema the join is the intersection;
+* `Expr.select_comm`, `Expr.select_union`, `Expr.select_diff`, `Expr.project_union`,
+  `Expr.select_project`, `Expr.select_join_right`: distribution laws as query rewrites.
 
 `Expr` is the syntax of relational algebra queries over named base relations, with its
 evaluation `Expr.eval` on a database and its schema inference `Expr.schema`; `Expr.eval_isOver`
@@ -692,6 +694,81 @@ theorem project_project {sch : N → Finset A} {e : Expr N A D} {S T T' : Finset
     Equiv sch (project T (project T' e)) (project T e) :=
   ⟨T, by simp [schema, he, hT', hT], by simp [schema, he, hT.trans hT'],
     fun _ _ => project_project_of_subset hT _⟩
+
+/-- **Selections commute as a query rewrite.** Fix a schema `sch`. Let `e` be a well-formed query
+with schema `S`, and let `c` and `c'` be selection conditions whose attributes lie in `S`. Then
+`select c (select c' e)` is equivalent to `select c' (select c e)`: both are well-formed with the
+same schema, and they have equal values on every database conforming to `sch`. -/
+theorem select_comm {sch : N → Finset A} {e : Expr N A D} {S : Finset A}
+    (he : e.schema sch = some S) {c c' : Cond A D} (hc : c.attrs ⊆ S) (hc' : c'.attrs ⊆ S) :
+    Equiv sch (select c (select c' e)) (select c' (select c e)) := by
+  refine ⟨S, by simp [schema, he, hc, hc'], by simp [schema, he, hc, hc'], ?_⟩
+  intro db _
+  exact Databases.select_comm _ _ _
+
+/-- **Selection distributes over union as a query rewrite.** Fix a schema `sch`. Let `e` and `e'`
+be well-formed queries with the same schema `S`, and let `c` be a selection condition whose
+attributes lie in `S`. Then `select c (union e e')` is equivalent to
+`union (select c e) (select c e')`: both are well-formed with the same schema, and they have equal
+values on every database conforming to `sch`. -/
+theorem select_union {sch : N → Finset A} {e e' : Expr N A D} {S : Finset A}
+    (he : e.schema sch = some S) (he' : e'.schema sch = some S)
+    {c : Cond A D} (hc : c.attrs ⊆ S) :
+    Equiv sch (select c (union e e')) (union (select c e) (select c e')) := by
+  refine ⟨S, by simp [schema, he, he', hc], by simp [schema, he, he', hc], ?_⟩
+  intro db _
+  exact Databases.select_union _ _ _
+
+/-- **Selection distributes over difference as a query rewrite.** Fix a schema `sch`. Let `e` and
+`e'` be well-formed queries with the same schema `S`, and let `c` be a selection condition whose
+attributes lie in `S`. Then `select c (diff e e')` is equivalent to
+`diff (select c e) (select c e')`: both are well-formed with the same schema, and they have equal
+values on every database conforming to `sch`. -/
+theorem select_diff {sch : N → Finset A} {e e' : Expr N A D} {S : Finset A}
+    (he : e.schema sch = some S) (he' : e'.schema sch = some S)
+    {c : Cond A D} (hc : c.attrs ⊆ S) :
+    Equiv sch (select c (diff e e')) (diff (select c e) (select c e')) := by
+  refine ⟨S, by simp [schema, he, he', hc], by simp [schema, he, he', hc], ?_⟩
+  intro db _
+  exact select_sdiff _ _ _
+
+/-- **Projection distributes over union as a query rewrite.** Fix a schema `sch`. Let `e` and `e'`
+be well-formed queries with the same schema `S`, and let `T` be a subset of `S`. Then
+`project T (union e e')` is equivalent to `union (project T e) (project T e')`: both are
+well-formed with the same schema, and they have equal values on every database conforming to
+`sch`. -/
+theorem project_union {sch : N → Finset A} {e e' : Expr N A D} {S T : Finset A}
+    (he : e.schema sch = some S) (he' : e'.schema sch = some S) (hT : T ⊆ S) :
+    Equiv sch (project T (union e e')) (union (project T e) (project T e')) := by
+  refine ⟨T, by simp [schema, he, he', hT], by simp [schema, he, he', hT], ?_⟩
+  intro db _
+  exact Databases.project_union _ _ _
+
+/-- **Selection commutes with projection as a query rewrite.** Fix a schema `sch`. Let `e` be a
+well-formed query with schema `S`, let `T` be a subset of `S`, and let `c` be a selection
+condition whose attributes lie in `T` (the projection keeps them). Then `select c (project T e)`
+is equivalent to `project T (select c e)`: both are well-formed with the same schema, and they
+have equal values on every database conforming to `sch`. -/
+theorem select_project {sch : N → Finset A} {e : Expr N A D} {S T : Finset A}
+    (he : e.schema sch = some S) (hT : T ⊆ S) {c : Cond A D} (hc : c.attrs ⊆ T) :
+    Equiv sch (select c (project T e)) (project T (select c e)) := by
+  refine ⟨T, by simp [schema, he, hT, hc], by simp [schema, he, hT, hc.trans hT], ?_⟩
+  intro db _
+  exact Databases.select_project _ _ hc
+
+/-- **Selection pushdown into the right operand of a join, as a query rewrite.** Fix a schema
+`sch`. Let `e` and `e'` be well-formed queries with schemas `S` and `S'`, and let `c` be a
+selection condition whose attributes lie in `S'`, the right operand's schema. Then
+`select c (join e e')` is equivalent to `join e (select c e')`: both are well-formed with the same
+schema, and they have equal values on every database conforming to `sch`. -/
+theorem select_join_right {sch : N → Finset A} {e e' : Expr N A D} {S S' : Finset A}
+    (he : e.schema sch = some S) (he' : e'.schema sch = some S') (c : Cond A D)
+    (hc : c.attrs ⊆ S') :
+    Equiv sch (select c (join e e')) (join e (select c e')) := by
+  refine ⟨S ∪ S', by simp [schema, he, he', hc.trans Finset.subset_union_right],
+    by simp [schema, he, he', hc], ?_⟩
+  intro db hdb
+  exact Databases.select_join_right _ _ (eval_isOver hdb e' he') hc
 
 end Expr
 
