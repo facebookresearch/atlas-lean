@@ -144,3 +144,27 @@ example : nthNonValue (fun j => j + ∑ i ∈ Finset.Icc 1 j, i ^ 2) 6 = 8 :=
 -- For cubes and n = 4, (k + 1) * n is exactly 2^4.
 example : nthNonValue (fun j => j + ∑ i ∈ Finset.Icc 1 j, i ^ 3) 4 = 5 :=
   (nthNonValue_add_sumPow 3 (by decide) 4 (by decide)).trans (by decide)
+
+private def pentagonal (j : ℕ) : ℕ := (5 - 2) * j * (j - 1) / 2 + j
+
+-- Since pentagonal j ≥ j, indices above 6 cannot contribute values in this interval.
+example : Finset.Icc 1 6 \ (Finset.Icc 1 6).image pentagonal = {2, 3, 4, 6} := by decide
+
+-- Independently compute the non-values using the finite counting formula, not the square root.
+example : nthNonValue pentagonal 1 = 2 ∧ nthNonValue pentagonal 3 = 4 ∧
+    nthNonValue pentagonal 4 = 6 := by
+  have hgap (j : ℕ) (hj : 1 ≤ j) : pentagonal j + j ≤ pentagonal (j + 1) := by
+    obtain ⟨i, rfl⟩ : ∃ i, j = i + 1 := ⟨j - 1, by omega⟩
+    simp only [pentagonal, show 5 - 2 = 3 by decide, Nat.add_sub_cancel]
+    rw [show 3 * (i + 1 + 1) * (i + 1) = 3 * (i + 1) * i + 6 * (i + 1) by ring]
+    omega
+  have h := nthNonValue_eq_one_step pentagonal (by decide) hgap
+  exact ⟨(h 1 (by decide)).trans (by decide), (h 3 (by decide)).trans (by decide),
+    (h 4 (by decide)).trans (by decide)⟩
+
+-- The formula covers a zero square root, equality at the threshold, and a strict crossing at s = 1.
+example : nthNonValue pentagonal 1 = 2 ∧ nthNonValue pentagonal 3 = 4 ∧
+    nthNonValue pentagonal 4 = 6 := by
+  have h := nthNonValue_polygonal 5 (by decide)
+  exact ⟨(h 1 (by decide)).trans (by norm_num), (h 3 (by decide)).trans (by norm_num),
+    (h 4 (by decide)).trans (by norm_num)⟩

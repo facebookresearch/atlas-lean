@@ -42,18 +42,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Formula for the non-polygonal numbers.** Let $k \ge 3$, and for $j \ge 1$ let
-$T(k, j) = (k - 2) j (j - 1)/2 + j$ be the $k$-gonal numbers. For every integer $n \ge 1$, put
-$s = \lfloor \sqrt{2n/(k - 2)} \rfloor$. Then the $n$-th positive integer that is not of the form
-$T(k, j)$ with $j \ge 1$ equals $n + s + 1$ if $(k - 2) s (s + 1) < 2n$, and $n + s$ otherwise.
-
-Source: Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025),
-Article A95, Theorem 4, Equation (3). -/
-public theorem_wanted nthNonValue_polygonal (k : ℕ) (hk : 3 ≤ k) (n : ℕ) (hn : 1 ≤ n) :
-    let s := Nat.sqrt (2 * n / (k - 2))
-    nthNonValue (fun j => (k - 2) * j * (j - 1) / 2 + j) n =
-      if (k - 2) * s * (s + 1) < 2 * n then n + s + 1 else n + s
-
 /-- **Rounding formula for the non-$k$-gonal numbers, $3 \le k \le 10$.** Let $3 \le k \le 10$;
 the $k$-gonal numbers are $(k - 2) j (j - 1)/2 + j$ for $j \ge 1$. For every $n \ge 1$, the $n$-th
 positive integer that is not a $k$-gonal number equals
