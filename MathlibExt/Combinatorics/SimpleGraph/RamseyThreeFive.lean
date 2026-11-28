@@ -16,20 +16,49 @@ Authors: P. Manrique, H. Xia, S. Szeider.
 The theorem statement restates the value R(3,5) = 14 in the “Known values” table at
 commit e2e19eef093a77882da57f348def029533ec2d5e for the repository's graph Ramsey number.
 -/
+
+/-
+Portions of this file are adapted from:
+
+`lean/ComparatorChallenges/CycleCliqueRamsey.lean` (openai/math,
+https://github.com/openai/math), revision `3344da59991ed94f9ba711217b29c1d760badfa6`.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+The source file and the applicable license files name no copyright holder or authors.
+Authors: OpenAI (project attribution in lean/formalization.yaml).
+-/
 module
 
 public import MathlibExt.Combinatorics.SimpleGraph.Ramsey
 import Mathlib.Combinatorics.SimpleGraph.Circulant
 import Mathlib.Combinatorics.SimpleGraph.Clique
+import Mathlib.Combinatorics.SimpleGraph.CycleGraph
 import Mathlib.Combinatorics.SimpleGraph.DegreeSum
 import MathlibExt.Combinatorics.SimpleGraph.RamseyErdosLowerBound
 
 /-!
-# The Ramsey number R(3, 5)
+# The Ramsey numbers R(3, 3) and R(3, 5)
+
+Every graph on six vertices contains a triangle in the graph or its complement.
+The five-cycle and its complement have no triangles, so six is sharp.
 
 Every triangle-free graph on fourteen vertices has five independent vertices.
 The circulant graph on thirteen vertices with jumps one and five shows that this bound is sharp.
-Together these give `graphRamsey_three_five`.
+Together these give `SimpleGraph.graphRamsey_three_three` and `graphRamsey_three_five`.
+
+## References
+
+* R. E. Greenwood and A. M. Gleason, [*Combinatorial Relations and Chromatic
+  Graphs*](https://doi.org/10.4153/CJM-1955-001-4), Canadian Journal of Mathematics 7 (1955),
+  1–7, Theorem 1 for R(3, 3) and §3 for R(3, 5). The six-vertex argument in §1 comes from
+  the March 1953 William Lowell Putnam Mathematical Competition, as reported by L. E. Bush,
+  *The William Lowell Putnam Mathematical Competition*, American Mathematical Monthly 60 (1953),
+  539–542.
+* OpenAI, [`OAI.CycleClique.thm_main`](https://github.com/openai/math/blob/3344da59991ed94f9ba711217b29c1d760badfa6/lean/ComparatorChallenges/CycleCliqueRamsey.lean#L23-L27),
+  exceptional (3, 3) case. The two formulations agree because the three-cycle is the complete
+  graph on three vertices (`SimpleGraph.cycleGraph_three_eq_top`).
+* The Lean proof of `SimpleGraph.graphRamsey_three_three` reuses `card_lt_six` and
+  `cliqueFree_of_sublists` and follows the infimum argument of `graphRamsey_three_five`
+  in this module (`MathlibExt.Combinatorics.SimpleGraph.RamseyThreeFive`).
 -/
 
 namespace MathlibExt.Combinatorics.SimpleGraph.SmallRamseyNumbersWanted
@@ -141,3 +170,34 @@ public theorem graphRamsey_three_five : graphRamsey 3 5 = 14 := by
   exact not_ramsey_at_thirteen (classicalRamsey_mono (by omega : n ≤ 13) hn)
 
 end MathlibExt.Combinatorics.SimpleGraph.SmallRamseyNumbersWanted
+
+namespace SimpleGraph
+
+open MathlibExt.Combinatorics.SimpleGraph.SmallRamseyNumbersWanted
+  (card_lt_six cliqueFree_of_sublists)
+open MathlibExt.Combinatorics.RamseyErdosLowerBound (classicalRamsey_mono)
+
+/-- **The triangle–triangle Ramsey number is six.** Every graph on six vertices contains a
+triangle or has a triangle in its complement. Five vertices do not suffice, as the cycle on
+five vertices and its complement are both triangle-free. This is the exceptional triangle case
+of the cycle–clique Ramsey formula, since the cycle on three vertices is the complete graph.
+
+Source: [cycle–clique Ramsey numbers, exceptional $(3,3)$ case](https://github.com/openai/math/blob/3344da59991ed94f9ba711217b29c1d760badfa6/lean/ComparatorChallenges/CycleCliqueRamsey.lean#L23-L27). -/
+public theorem graphRamsey_three_three : graphRamsey 3 3 = 6 := by
+  have h₆ : classicalRamsey 3 3 6 := by
+    intro G
+    rw [← not_cliqueFree_iff_top_isContained, ← not_cliqueFree_iff_top_isContained]
+    by_contra! h
+    exact (Nat.lt_irrefl 6) (by simpa only [Fintype.card_fin] using card_lt_six h.1 h.2)
+  have h₅ : ¬ classicalRamsey 3 3 5 := by
+    intro h
+    have ht : (cycleGraph 5).CliqueFree 3 := cliqueFree_of_sublists _ (by decide +kernel)
+    have hc : (cycleGraph 5)ᶜ.CliqueFree 3 := cliqueFree_of_sublists _ (by decide +kernel)
+    exact (h (cycleGraph 5)).elim (fun h => h.not_cliqueFree ht) (fun h => h.not_cliqueFree hc)
+  rw [graphRamsey_eq_sInf]
+  apply le_antisymm (Nat.sInf_le h₆)
+  refine le_csInf ⟨6, h₆⟩ fun n hn => ?_
+  by_contra! h
+  exact h₅ (classicalRamsey_mono (by omega : n ≤ 5) hn)
+
+end SimpleGraph
