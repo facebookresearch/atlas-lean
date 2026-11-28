@@ -14,6 +14,7 @@ Assume finite divergence and let $d = \|\rho-\sigma\|_1$, attained as $\operator
 
 ## Depends on
 
+- [Density matrices, pure states and reduced states](../density-matrices-and-fidelity/density-matrices-and-reduced-states.md)
 - [Support inclusion and Umegaki relative entropy](umegaki-relative-entropy.md)
 - [Trace norm and trace distance](../density-matrices-and-fidelity/trace-norm-and-trace-distance.md)
 
