@@ -13,7 +13,7 @@ Constant-free equations always have periodic solutions, such as the morphism sen
 
 ## Proof depends on
 
-- [Satisfiability of word equations is NP-hard](../satisfiability/word-equation-satisfiability-is-np-hard.md)
+- [Satisfiability of unary word-equation systems is NP-hard](../satisfiability/word-equation-satisfiability-is-np-hard.md)
 - [NP-hardness transfers along reductions](../../../np-completeness/satisfiability/3-satisfiability/np-hard-of-poly-many-one-red.md)
 - [Commuting words are powers of a common word](../../word-equations-with-length/commuting-words-are-powers-of-a-common-word.md)
 - [Unique primitive root of a word](unique-primitive-root.md)
@@ -21,7 +21,7 @@ Constant-free equations always have periodic solutions, such as the morphism sen
 
 ## Expansion
 
-Let $S$ be a system over variables $\Xi$ and the single constant $0$. Introduce two new variables $a, b$, replace each occurrence of $0$ by $a^2 b^2$, and add the equations $x\, a^2 b^2 = a^2 b^2\, x$ and $xy = yx$ for all $x, y \in \Xi$. A solution $\alpha$ of $S$ gives the nonperiodic solution $a \mapsto 0$, $b \mapsto 1$, $x \mapsto \tau(\sigma(\alpha(x)))$, where $\sigma(0) = a^2 b^2$ and $\tau$ renames $a, b$ to $0, 1$. Conversely, let $\beta$ be a nonperiodic solution. The added equations make the words $\beta(x)$ for $x \in \Xi$ and $\beta(a^2 b^2)$ commute pairwise. If they are all empty, then $\beta(a) = \beta(b) = \varepsilon$ and $\beta$ is periodic; otherwise they all lie in $R^*$ for one primitive word $R$. If $\beta(ab) = \beta(ba)$, then $\beta(a)$ and $\beta(b)$ are powers of a common word, and $\beta(a^2 b^2)$, if nonempty, has the same primitive root as that word, so $\beta(a), \beta(b) \in R^*$ and $\beta$ would be periodic; if $\beta(a^2 b^2)$ is empty, then $\beta(a) = \beta(b) = \varepsilon$, again periodic; so $\beta(ab) \neq \beta(ba)$, and since $a^2 b^2$ is primitive with two occurrences of each letter, $\beta(a^2 b^2)$ is primitive, hence equals $R$. Identifying $R$ with $0$ turns $\beta$ into a solution of $S$. NP-hardness of the unary problem completes the reduction.
+Let $S$ be a system over variables $\Xi$ and the single constant $0$. Introduce two new variables $a, b$, replace each occurrence of $0$ by $a^2 b^2$, and add the equations $x\, a^2 b^2 = a^2 b^2\, x$ and $xy = yx$ for all $x, y \in \Xi$. A solution $\alpha$ of $S$ gives the nonperiodic solution $a \mapsto 0$, $b \mapsto 1$, $x \mapsto \tau(\sigma(\alpha(x)))$, where $\sigma(0) = a^2 b^2$ and $\tau$ renames $a, b$ to $0, 1$. Conversely, let $\beta$ be a nonperiodic solution. The added equations make the words $\beta(x)$ for $x \in \Xi$ and $\beta(a^2 b^2)$ commute pairwise. If they are all empty, then $\beta(a) = \beta(b) = \varepsilon$ and $\beta$ is periodic; otherwise they all lie in $R^*$ for one primitive word $R$. If $\beta(ab) = \beta(ba)$, then $\beta(a)$ and $\beta(b)$ are powers of a common word, and $\beta(a^2 b^2)$, if nonempty, has the same primitive root as that word, so $\beta(a), \beta(b) \in R^*$ and $\beta$ would be periodic; if $\beta(a^2 b^2)$ is empty, then $\beta(a) = \beta(b) = \varepsilon$, again periodic; so $\beta(ab) \neq \beta(ba)$, and since $a^2 b^2$ is primitive with two occurrences of each letter, $\beta(a^2 b^2)$ is primitive, hence equals $R$. Identifying $R$ with $0$ turns $\beta$ into a solution of $S$. NP-hardness of the unary problem completes the reduction; if necessary, add a fresh variable $z$ and the tautological equation $z=z$ first to meet $n \ge 1$.
 
 ## Sources
 
