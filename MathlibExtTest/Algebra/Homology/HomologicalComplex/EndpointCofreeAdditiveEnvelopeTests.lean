@@ -29,6 +29,7 @@ open CategoryTheory CategoryTheory.Limits HomologicalComplex
 namespace MathlibExtTest.EndpointCofreeAdditiveEnvelope
 
 private abbrev C := Mat_ (SingleObj ℤ)
+private instance : HasBinaryBiproducts C := hasBinaryBiproducts_of_finite_biproducts
 private def N : C where
   ι := Fin 1
   X _ := PUnit.unit
@@ -61,15 +62,17 @@ private lemma detected_eq : detected = 𝟙 N := by
     biprod.inl_fst, Category.comp_id, Iso.inv_hom_id]
 
 example : detected (0 : Fin 1) (0 : Fin 1) = (1 : ℤ) := by
-  rw [detected_eq]
-  simp [Mat_.id_def]
+  rw [detected_eq, Mat_.id_apply_self]
+  rfl
 
 example : D.d 0 1 ≠ 0 := by
   intro hz
   have hzero : detected = 0 := by simp [detected, hz]
   have h := congrArg (fun f : N ⟶ N => f (0 : Fin 1) (0 : Fin 1))
     (detected_eq.symm.trans hzero)
-  simpa [Mat_.id_def] using h
+  rw [Mat_.id_apply_self] at h
+  change (1 : ℤ) = 0 at h
+  exact (by decide : (1 : ℤ) ≠ 0) h
 
 example : D.d 0 1 ≫ D.d 1 0 = 0 := D.d_comp_d 0 1 0
 
