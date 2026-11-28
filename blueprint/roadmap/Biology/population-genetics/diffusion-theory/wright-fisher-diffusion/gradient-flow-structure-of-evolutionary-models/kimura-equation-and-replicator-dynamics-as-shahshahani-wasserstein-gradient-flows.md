@@ -1,6 +1,6 @@
 # Kimura equation and replicator dynamics as Shahshahani–Wasserstein gradient flows
 
-**Setting.** For two types with frequency $x \in [0,1]$, let $\Theta(x) = x(1-x)$ (more generally a coefficient vanishing linearly at $0$ and $1$) and let $V:[0,1]\to\mathbb R$ be the fitness potential, assumed smooth up to the boundary, as throughout the source (its well-posedness and regularity results take $\Theta,V\in C^k([0,1])$, and its JKO convergence theorem rests on "our smoothness assumptions on the potential $V$"). The **Kimura equation**, the diffusion limit of the Moran process with diffusion coefficient $\kappa > 0$, is
+**Setting.** For two types with frequency $x \in [0,1]$, let $\Theta(x) = x(1-x)$ (more generally a smooth coefficient $\Theta \in C^k([0, 1])$ ($k \ge 2$) positive on $(0, 1)$ with simple zeros at $0$ and $1$, $\partial_x\Theta(0) > 0$ and $\partial_x\Theta(1) < 0$ (the source's (36))) and let $V:[0,1]\to\mathbb R$ be the fitness potential, assumed smooth up to the boundary, as throughout the source (its well-posedness and regularity results take $\Theta,V\in C^k([0,1])$, and its JKO convergence theorem rests on "our smoothness assumptions on the potential $V$"). The **Kimura equation**, the diffusion limit of the Moran process with diffusion coefficient $\kappa > 0$, is
 
 $$ \partial_t p = \frac{\kappa}{2}\partial^2_{xx}\big(\Theta p\big) + \partial_x\big(\Theta\,\partial_xV\,p\big), \qquad t > 0,\ x \in [0,1], $$
 
@@ -22,6 +22,9 @@ Section 6 argues, without a complete proof, that these structures are compatible
 
 ## Depends on
 
+- [Minimizing movement step](../../../../../MeasureTheory/optimal-transport/wasserstein-gradient-flows-and-the-jko-scheme/minimizing-movements/is-minimizing-movement-step.md)
+- [Minimizing movement scheme](../../../../../MeasureTheory/optimal-transport/wasserstein-gradient-flows-and-the-jko-scheme/minimizing-movements/is-minimizing-movement.md)
+- [Quadratic Wasserstein distance](../../../../../MeasureTheory/optimal-transport/wasserstein-distances/wasserstein-distance/wasserstein.md)
 - [Gradient-flow structure of absorbing evolutionary Markov chains via the Q-process](gradient-flow-structure-of-absorbing-evolutionary-markov-chains-via-the-q-process.md)
 - [Backward generator of the Wright–Fisher diffusion with selection](../generator.md)
 
