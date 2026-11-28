@@ -4,7 +4,7 @@ The counting bound $n^{O(w)}$ on resolution length in terms of width $w$ is tigh
 
 **Theorem (main theorem).** Let $w = w(n)$ satisfy $w = O(n^c)$ for some constant $c < 1/2$. There are 3-CNF formulas $F_{n,w}$ with $O(w n)$ clauses over $O(n)$ variables such that $F_{n,w}$ has a resolution refutation in simultaneous size $n^{O(w)}$, width $O(w)$ and space $O(w)$, and any refutation of $F_{n,w}$ in resolution, polynomial calculus resolution (PCR) or Sherali-Adams has size $n^{\Omega(w)}$.
 
-**Resolution version.** Let $k = k(n)$ be integer-valued with $k(n) \le n / (4 \log n)$. The 3-CNF versions $F_{n,k}$ of the relativized pigeonhole formulas $\mathrm{RPHP}^k_{n,k-1}$, with $O(n^2)$ variables and $O(k n^2)$ clauses, have tree-like resolution refutations of size $O(k^k n^k)$, width $2k+1$ and space $2k+3$, while every resolution refutation of $F_{n,k}$ has size
+**Resolution version.** Let $k = k(n)$ be integer-valued with $2 \le k(n) \le n / (4 \log n)$, as the linked family requires $k \ge 2$ and $n \ge k$. The 3-CNF versions $F_{n,k}$ of the relativized pigeonhole formulas $\mathrm{RPHP}^k_{n,k-1}$, with $O(n^2)$ variables and $O(k n^2)$ clauses, have tree-like resolution refutations of size $O(k^k n^k)$, width $2k+1$ and space $2k+3$, while every resolution refutation of $F_{n,k}$ has size
 
 $$
 \Omega\Bigl(\frac{n^{k-1}}{(4k \log n)^k}\Bigr).
@@ -12,7 +12,7 @@ $$
 
 For $k(n) = O(n^c)$ with $c < 1$ the upper bound is $n^{O(k)}$ and the lower bound is $n^{\Omega(k)}$.
 
-**Corollary.** There are formulas over $n$ variables refutable in resolution width $w$ on which every resolution-based CDCL solver needs time $n^{\Omega(w)}$, so the $n^{O(w)}$ running-time bound of Atserias, Fichte and Thurley for CDCL on formulas of resolution width $w$ is optimal up to constants in the exponent.
+**Corollary.** There are formulas over $n$ variables refutable in resolution width $w$ on which every resolution-based CDCL solver needs time $n^{\Omega(w)}$, unconditionally, since no such solver runs faster than the shortest resolution refutation. Atserias, Fichte and Thurley showed that on formulas of resolution width $w$ a CDCL solver with random decisions needs time $n^{O(w)}$ with high probability; this upper bound is therefore optimal up to constants in the exponent.
 
 ## Expansion
 

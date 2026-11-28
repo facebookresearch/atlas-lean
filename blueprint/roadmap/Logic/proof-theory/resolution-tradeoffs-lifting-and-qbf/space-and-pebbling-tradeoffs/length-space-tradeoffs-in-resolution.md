@@ -9,7 +9,7 @@ Fix $K \ge 1$. Each item gives explicitly constructible CNF formulas $F_n$ of si
 3. **Robust trade-offs for medium space.** $F_n$ is refutable in total space $O(\log^2 n)$, and in length $O(n)$ with total space $O(n / \log n)$, but every semantic resolution refutation in clause space $o(n / \log n)$ has length $n^{\Omega(\log \log n)}$.
 4. **Exponential trade-offs for nearly linear space.** For every sufficiently large constant $K'$ there are such formulas $F_n$ and a constant $K'' \ll K'$ such that $F_n$ has refutations in total space $K'' n / \log n$, and refutations in simultaneous length $O(n)$ and total space $O(n)$, but every semantic resolution refutation in clause space at most $K' n / \log n$ has length $\exp(n^{\Omega(1)})$.
 
-Items 1-3 extend to $k$-DNF resolution for $k \le K$, with the space thresholds replaced by their $(k+1)$-st roots, and all hidden constants depend only on $K$ (and on $\epsilon$ and $g$ in item 2).
+Items 1-3 extend to $k$-DNF resolution for $k \le K$, with the same syntactic resolution upper bounds and the following semantic formula-space lower-bound thresholds: in item 1, every semantic $k$-DNF resolution refutation in formula space at most $s(n)$ has length $\Omega((n/s(n)^{k+1})^2)$; in item 2, every one in formula space $O((n/g(n)^2)^{1/(3(k+1)) - \epsilon})$ has superpolynomial length; in item 3, every one in formula space $o((n/\log n)^{1/(k+1)})$ has length $n^{\Omega(\log \log n)}$. All hidden constants depend only on $K$ (and on $\epsilon$ and $g$ in item 2).
 
 ## Expansion
 
