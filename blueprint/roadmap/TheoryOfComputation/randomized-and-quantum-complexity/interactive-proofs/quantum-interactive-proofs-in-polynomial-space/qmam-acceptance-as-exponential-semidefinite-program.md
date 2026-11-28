@@ -1,16 +1,16 @@
 # Optimal QMAM acceptance probability as an exponential-size semidefinite program
 
-For a QMAM protocol on inputs of length $n$, the maximum acceptance probability over all provers equals the optimal value of a semidefinite program over density operators on $\mathsf{X}\mathsf{Y}$ (dimension $D = 2^{\mathrm{poly}(n)}$) of the form
+For a single-coin QMAM protocol on inputs of length $n$ (Arthur's public message is one uniform bit $b$, and $\Pi_b$ is his accepting measurement operator for $b$; single-coin protocols suffice for $\mathrm{QIP}$ by Marriott–Watrous, Theorem 5.4), the maximum acceptance probability over all provers equals the optimal value of a semidefinite program over density operators on $\mathsf{X}\mathsf{Y}$ (dimension $D = 2^{\mathrm{poly}(n)}$) of the form
 
 $$
 \max_{\rho_0, \rho_1} \ \tfrac12 \left( \langle \Pi_0, \rho_0 \rangle + \langle \Pi_1, \rho_1 \rangle \right) \quad \text{subject to } \mathrm{Tr}_{\mathsf{Y}} \rho_0 = \mathrm{Tr}_{\mathsf{Y}} \rho_1,
 $$
 
-whose input matrices $\Pi_0, \Pi_1$ have entries computable by $\mathrm{NC}(\mathrm{poly})$ circuits from the verifier's description.
+whose input matrices $\Pi_0, \Pi_1$, the accepting operators for $b = 0, 1$, have entries computable by $\mathrm{NC}(\mathrm{poly})$ circuits from the verifier's description.
 
 ## Proof sketch
 
-Merlin's first message fixes the reduced state of $\mathsf{X}$; by Uhlmann's theorem, after seeing $b$ Merlin can transform any purification so that the joint state of $\mathsf{X}\mathsf{Y}$ is any $\rho_b$ with that reduced state. Averaging the acceptance probabilities over $b$ gives the stated program. The projectors are products of polynomially many gates, each a sparse $D \times D$ matrix, so their entries are computed by iterated matrix multiplication in polynomial depth.
+Merlin's first message fixes the reduced state of $\mathsf{X}$; by Uhlmann's theorem, after seeing $b$ Merlin can transform any purification so that the joint state of $\mathsf{X}\mathsf{Y}$ is any $\rho_b$ with that reduced state. Averaging the acceptance probabilities over the uniform bit $b$ gives the stated program. The projectors are products of polynomially many gates, each a sparse $D \times D$ matrix, so their entries are computed by iterated matrix multiplication in polynomial depth.
 
 ## Depends on
 
@@ -25,3 +25,4 @@ Merlin's first message fixes the reduced state of $\mathsf{X}$; by Uhlmann's the
 
 - Rahul Jain, Zhengfeng Ji, Sarvagya Upadhyay, John Watrous, "QIP = PSPACE", Journal of the ACM 58(6) (2011), STOC (2010); arXiv:0907.4737.
 - Rahul Jain, Sarvagya Upadhyay, John Watrous, "Two-message quantum interactive proofs are in PSPACE", FOCS (2009); arXiv:0905.1300.
+- Chris Marriott and John Watrous, "Quantum Arthur-Merlin Games", Computational Complexity 14(2), 122-152, 2005; arXiv:cs/0506068 (Theorem 5.4).

@@ -4,7 +4,7 @@ Let $\mathbb{F}$ be a field of characteristic $0$ or of characteristic greater t
 
 - the resultant $\operatorname{Res}(f, g)$ and the discriminant $\operatorname{Disc}(f)$ are in $\mathrm{AC}^0_{\mathbb{F}}$, and so are the entries of the adjugate $\operatorname{adj}\operatorname{Syl}(f, g)$;
 - when $\gcd(f, g) = 1$, the Bézout coefficients $u, v$ with $uf + vg = 1$, the inverse $\operatorname{Syl}(f, g)^{-1}$ of the Sylvester matrix and the inverse of the Bézout matrix are in $\mathrm{AC}^0_{\mathbb{F}}$;
-- for arbitrary nonzero $f, g$, the Bézout coefficients $u, v$ with $uf + vg = \gcd(f, g)$ and the squarefree decomposition of $f$ are computable piecewise in $\mathrm{AC}^0_{\mathbb{F}}$.
+- for arbitrary nonzero $f, g$, the Bézout coefficients $u, v$ with $uf + vg = \gcd(f, g)$ and the squarefree decomposition of $f$ are computable piecewise in $\mathrm{AC}^0_{\mathbb{F}}$; for the squarefree decomposition of $f$, characteristic $0$ or greater than $\deg f$ suffices (Lemma 7.6).
 
 ## Proof sketch
 

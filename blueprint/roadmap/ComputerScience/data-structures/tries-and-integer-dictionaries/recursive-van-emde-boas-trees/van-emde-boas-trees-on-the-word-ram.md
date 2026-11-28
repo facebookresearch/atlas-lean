@@ -4,7 +4,7 @@ There is one word-RAM program that, for every depth $d$, initializes an empty va
 
 ## Proof sketch
 
-The initializer computes the universe sizes and spans by the layout recurrence, tabulates split sizes and child spans per depth, and writes all headers by a depth-first traversal with per-depth counters, in $O(u)$ instructions. Each operation descends at most $d + 1$ records, using the tabulated offsets to locate the summary and the required cluster in $O(1)$ instructions per level, so a fixed register count and no depth-dependent code suffice.
+The initializer computes the universe sizes and spans by the layout recurrence, tabulates split sizes and child spans per depth, and writes all headers by a depth-first traversal with per-depth counters, in $O(u)$ instructions. Insertion and strict successor make one non-trivial recursive call per level by the recursion-depth page. Membership, which that page does not cover, is a single descent: at depth $0$ the stored minimum and maximum are the whole set, and at depth $d + 1$ the element $x = h\sqrt{u_{d+1}} + \ell$ is a member if and only if it equals the stored minimum or maximum or $\ell$ is a member of cluster $h$, since every element other than the minimum is stored in its cluster; so it too makes at most one recursive call per level. Each operation therefore descends at most $d + 1$ records, using the tabulated offsets to locate the summary and the required cluster in $O(1)$ instructions per level, so a fixed register count and no depth-dependent code suffice.
 
 ## Depends on
 

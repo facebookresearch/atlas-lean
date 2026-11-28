@@ -11,7 +11,7 @@ For $\mathsf C=\mathsf{CZK}$ this is the converse of the Goldreich–Micali–Wi
 
 ## Proof sketch
 
-Items 2, 3, 4 are successively weaker. The core is item 4 implies item 1: by Ostrovsky–Wigderson, $\mathsf C\not\subseteq\mathsf{i.o.P/poly}$ gives an auxiliary-input one-way function, and a generalization of Nanashima's reduction shows that a zero-knowledge scheme for $\mathrm{Gap}_\epsilon\mathrm{MCSP}$ on average, run against the simulator of the auxiliary-input one-way function, either inverts it or produces a standard one-way function. Zero knowledge is used to argue that the verifier's view, which can be simulated, reveals nothing that distinguishes YES instances drawn from the function's outputs from random truth tables.
+Items 2, 3, 4 are successively weaker, and item 1 implies item 2 because a one-way function secure against $\mathsf{P/poly}$ gives $\mathsf{NP}\not\subseteq\mathsf{i.o.P/poly}$ and, by Goldreich–Micali–Wigderson (Nguyen–Ong–Vadhan for $\mathsf{SZKA}$), $\mathsf{NP}\subseteq\mathsf C$. The core is item 4 implies item 1, which does not go through Ostrovsky–Wigderson's auxiliary-input one-way function. Let $\Pi\in\mathsf C\setminus\mathsf{i.o.P/poly}$. By the SZK/OWF characterization of Vadhan and Ong–Vadhan, $\Pi$ has the BBR/OWF property: there are polynomial-time auxiliary-input functions $\{f_x\}$ and $\{g_x\}$ and a set $I$ of instances such that $\{f_x\}_{x\in I}$ is one-way against $\mathsf{P/poly}$ almost everywhere on $I$, while on every other instance $\Pi$ is solved by a polynomial-time reduction given any oracle that inverts $g_x$. The distributional problem $(\mathrm{Gap}_\epsilon\mathrm{MCSP},\mathcal U)$ is AIOWF-hard: an errorless average-case algorithm for it yields an inverter for every polynomial-time auxiliary-input function, since it tells random truth tables from those of the auxiliary-input pseudorandom functions built from that function, which have small circuit complexity. Combining the two, $\Pi\notin\mathsf{i.o.P/poly}$ implies that $(\mathrm{Gap}_\epsilon\mathrm{MCSP},\mathcal U)$ is hard on errorless average for $\mathsf{P/poly}$ at all large lengths (a non-black-box worst-case to average-case reduction, which uses the efficiency of the assumed average-case solver). Finally, a generalization of Nanashima's reduction turns this errorless average-case hardness into a one-way function secure against $\mathsf{P/poly}$, using the errorless average-case form of the BBR/OWF property that $(\mathrm{Gap}_\epsilon\mathrm{MCSP},\mathcal U)\in\mathsf{AvgC}$ provides.
 
 ## Depends on
 
@@ -21,10 +21,12 @@ Items 2, 3, 4 are successively weaker. The core is item 4 implies item 1: by Ost
 
 ## Proof depends on
 
+- [Goldreich–Micali–Wigderson: zero-knowledge proofs for NP from one-way functions](../../../ComputerScience/cryptography/signatures-and-protocols/commitment-schemes/commitments-and-zero-knowledge-for-np/gmw-zero-knowledge-for-np.md)
 - [Computational knowledge complexity k(n) of an interactive proof](computational-knowledge-complexity.md)
 - [Auxiliary-input one-way functions](auxiliary-input-one-way-functions.md)
 - [Ilango–Ren–Santhanam: one-way functions exist iff GapMCSP is average-case hard on some locally samplable distribution](irs-owf-iff-gapmcsp-hard-on-local-distribution.md)
 
 ## Sources
 
-- Shuichi Hirahara and Mikito Nanashima, "One-Way Functions and Zero Knowledge", STOC (2024), ECCC TR24-063.
+- Shuichi Hirahara and Mikito Nanashima, "One-Way Functions and Zero Knowledge", STOC (2024), ECCC TR24-063 (Theorem 2.1; Section 3.2: Definitions 3.1 and 3.3, Lemmas 3.2 and 3.4; Section 5.4).
+- Minh-Huyen Nguyen, Shien Jin Ong and Salil Vadhan, "Statistical Zero-Knowledge Arguments for NP from Any One-Way Function", Proceedings of the 47th Annual IEEE Symposium on Foundations of Computer Science (FOCS), 2006.

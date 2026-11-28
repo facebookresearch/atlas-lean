@@ -1,6 +1,6 @@
 # Quantum commitments from pseudorandom states
 
-If pseudorandom quantum state generators with output length $n\ge c\lambda$ for a constant $c>1$ exist ($\lambda$ the key length), then there exist non-interactive quantum bit commitments (for classical bits) that are computationally hiding and statistically binding; the construction uses only single-copy security of the generator. Since PRS exist relative to a quantum oracle where $\mathsf{BQP}=\mathsf{QMA}$, and single-copy PRS relative to a classical oracle where $\mathsf{P}=\mathsf{NP}$, quantum commitments may exist even if no quantum-secure classical cryptographic primitive exists. Pseudorandom function-like states likewise imply a one-time-secure encryption scheme for classical messages longer than the key, with quantum ciphertexts (the quantum pseudo one-time pad), and statistically binding commitments, and hence secure computation.
+If pseudorandom quantum state generators with output length $n\ge c\lambda$ for a constant $c>1$ exist ($\lambda$ the key length), then there exist non-interactive quantum bit commitments (for classical bits) that are computationally hiding and statistically binding; the construction uses only single-copy security of the generator. Since PRS exist relative to a quantum oracle where $\mathsf{BQP}=\mathsf{QMA}$, and single-copy PRS with output length $n\ge c\lambda$, $c>1$, relative to a classical oracle where $\mathsf{P}=\mathsf{NP}$ (the oracle construction allows any polynomial output length $n(\lambda) > \lambda$), quantum commitments may exist even if no quantum-secure classical cryptographic primitive exists. Pseudorandom function-like states likewise imply a one-time-secure encryption scheme for classical messages longer than the key, with quantum ciphertexts (the quantum pseudo one-time pad), and statistically binding commitments, and hence secure computation.
 
 ## Proof sketch
 
@@ -19,4 +19,4 @@ Let $|\phi_k\rangle$ be the $n$-qubit output on key $k\in\{0,1\}^{\lambda}$ and 
 
 - Tomoyuki Morimae, Takashi Yamakawa, "Quantum Commitments and Signatures without One-Way Functions", CRYPTO (2022), arXiv:2112.06369.
 - Prabhanjan Ananth, Luowen Qian, Henry Yuen, "Cryptography from Pseudorandom Quantum States", CRYPTO (2022), arXiv:2112.10020.
-- William Kretschmer, Luowen Qian, Makrand Sinha, Avishay Tal, "Quantum Cryptography in Algorithmica", STOC (2023), arXiv:2212.00879.
+- William Kretschmer, Luowen Qian, Makrand Sinha, Avishay Tal, "Quantum Cryptography in Algorithmica", STOC (2023), arXiv:2212.00879 (Theorem 1, Definition 7 and Theorem 22).

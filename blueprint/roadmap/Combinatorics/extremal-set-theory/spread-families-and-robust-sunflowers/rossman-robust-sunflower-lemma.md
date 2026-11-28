@@ -4,7 +4,7 @@ For $0 < \alpha < 1$, $0 < \beta \le 1/e$ (equivalently $\log(1/\beta) \ge 1$), 
 
 ## Proof sketch
 
-Rossman's bound follows from Janson's inequality applied inside links of maximal size, in the style of the Erdős-Rado induction. The spread-lemma bound follows by passing to a spread link and applying the spread lemma with density $\alpha$ and failure probability $\beta$.
+Rossman's bound follows from Janson's inequality applied inside links of maximal size, in the style of the Erdős-Rado induction. For the spread-lemma bound let $\kappa = C\log(\ell/\beta)/\alpha$ and $|\mathcal{F}| > \kappa^{\ell}$. Take $S$ of maximum size with $|\mathcal{F}_S| > \kappa^{\ell-|S|}$ for the link $\mathcal{F}_S = \{F \setminus S : F \in \mathcal{F}, F \supseteq S\}$; as for the sunflower bound, $|S| < \ell$ and the link is a family of $k = \ell - |S|$ element sets, $\kappa$-spread in the absolute sense, with more than $\kappa^{k}$ members. The subfamily $\{F \in \mathcal{F} : F \supseteq S\}$ has at least two members, so its kernel $K \supseteq S$ is not a member and $F \setminus K \subseteq F \setminus S$; it is an $(\alpha, \beta)$-robust sunflower once an $\alpha$-random set contains a member of the link with probability greater than $1 - \beta$. For $k \ge 2$ this is the binomial form of the spread lemma with $\delta = \min(\alpha, 1/2)$ and $\varepsilon = \beta$ (an $\alpha$-random set contains a $\delta$-random one, and $\kappa \ge B\delta^{-1}\log(k/\beta)$ for $C \ge 2B$); for $k = 1$ the link has more than $\kappa$ singletons and misses an $\alpha$-random set with probability at most $(1-\alpha)^{\kappa} \le e^{-\alpha\kappa} < \beta$.
 
 ## Depends on
 
@@ -13,7 +13,6 @@ Rossman's bound follows from Janson's inequality applied inside links of maximal
 ## Proof depends on
 
 - [Spread lemma: random sets of moderate density contain members of spread families](spread-lemma-random-sets-contain-members-of-spread-families.md)
-- [Sunflower-free families have spread links](sunflower-free-families-have-spread-restrictions.md)
 
 ## Sources
 

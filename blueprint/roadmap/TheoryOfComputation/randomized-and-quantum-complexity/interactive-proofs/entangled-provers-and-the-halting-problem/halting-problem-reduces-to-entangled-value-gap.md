@@ -1,6 +1,6 @@
 # The halting problem reduces to the entangled value gap problem
 
-There is a computable map sending a Turing machine $M$ to a synchronous game $G_M$ (with conditionally linear questions) such that
+There is a computable map sending a Turing machine $M$ to a two-prover one-round game $G_M$ (with conditionally linear questions) such that
 
 - if $M$ halts on the empty input then $\omega^*(G_M) = 1$;
 - if $M$ does not halt then $\omega^*(G_M) \le 1/2$.
@@ -12,7 +12,6 @@ By the recursion theorem build a normal form verifier $\mathcal{V}^M$ that on in
 ## Depends on
 
 - [Conditionally linear question distributions](conditionally-linear-question-distributions.md)
-- [Synchronous two-prover games](synchronous-two-prover-games.md)
 - [Uniformly generated families of two-prover one-round games](uniformly-generated-game-families.md)
 
 ## Proof depends on
@@ -23,4 +22,4 @@ By the recursion theorem build a normal form verifier $\mathcal{V}^M$ that on in
 
 ## Sources
 
-- Zhengfeng Ji, Anand Natarajan, Thomas Vidick, John Wright, Henry Yuen, "MIP* = RE", Communications of the ACM 64(11) (2021); arXiv:2001.04383.
+- Zhengfeng Ji, Anand Natarajan, Thomas Vidick, John Wright, Henry Yuen, "MIP* = RE", Communications of the ACM 64(11) (2021); arXiv:2001.04383 (Section 12.2: Figure 16, Lemma 12.3 and Theorem 12.6).
