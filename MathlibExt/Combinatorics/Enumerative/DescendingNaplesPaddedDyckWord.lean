@@ -62,44 +62,50 @@ Article A44, Section 3. -/
 @[expose] public def dyckStepHeight (l : List DyckStep) (j : ℕ) : ℤ :=
   ((l.take j).count DyckStep.U : ℤ) - ((l.take j).count DyckStep.D : ℤ)
 
-/-- The height after `j` steps is the signed difference of the Up and Down counts in that prefix. -/
+/-- **Prefix height as a difference of counts.** The height after $j$ steps is the number of
+Up steps minus the number of Down steps in the first $j$ steps of the word. -/
 public theorem dyckStepHeight_eq (l : List DyckStep) (j : ℕ) :
     dyckStepHeight l j = ((l.take j).count U : ℤ) - ((l.take j).count D : ℤ) := rfl
 
-/-- The height before taking any steps is zero. -/
+/-- **Height before the first step.** Every word of Dyck steps has height $0$ after zero steps. -/
 @[simp] public theorem dyckStepHeight_zero (l : List DyckStep) : dyckStepHeight l 0 = 0 := by
   simp [dyckStepHeight]
 
-/-- Taking an initial Up step adds one to the height after the remaining `j` steps. -/
+/-- **Prefix height after an initial Up step.** Prepending an Up step to a word increases the
+height after $j + 1$ steps by $1$ relative to the original height after $j$ steps. -/
 @[simp] public theorem dyckStepHeight_cons_U (l : List DyckStep) (j : ℕ) :
     dyckStepHeight (U :: l) (j + 1) = dyckStepHeight l j + 1 := by
   simp [dyckStepHeight]
   omega
 
-/-- A prefix of a concatenation takes up to `j` steps from the first word and the remaining
-`j - l.length` steps from the second. Its height adds the contributions of those prefixes. -/
+/-- **Prefix height of a concatenation.** The height of the concatenation of words $l$ and $r$
+after $j$ steps is the sum of the height of $l$ after $j$ steps and the height of $r$ after
+$\max(0,j-|l|)$ steps. -/
 @[simp] public theorem dyckStepHeight_append (l r : List DyckStep) (j : ℕ) :
     dyckStepHeight (l ++ r) j = dyckStepHeight l j + dyckStepHeight r (j - l.length) := by
   simp only [dyckStepHeight_eq, List.take_append, List.count_append, Int.natCast_add]
   omega
 
-/-- The final height of a word is its Up count minus its Down count, as integers. -/
+/-- **Final height as a difference of counts.** The final height of a word is its number of Up
+steps minus its number of Down steps, as integers. -/
 public theorem dyckStepHeight_full_eq (l : List DyckStep) :
     dyckStepHeight l l.length = (l.count U : ℤ) - (l.count D : ℤ) := by
   simp [dyckStepHeight]
 
-/-- The empty word has zero height at every index. -/
+/-- **Height of the empty word.** At every index $j$, the empty word has height $0$. -/
 public theorem dyckStepHeight_nil (j : ℕ) : dyckStepHeight [] j = 0 := by
   simp [dyckStepHeight]
 
-/-- Prepending an Up step increases the final height by one. -/
+/-- **Final height after prepending an Up step.** Prepending an Up step increases the final
+height of a word by $1$. -/
 public theorem dyckStepHeight_full_cons_U (l : List DyckStep) :
     dyckStepHeight (U :: l) (U :: l).length = dyckStepHeight l l.length + 1 := by
   rw [dyckStepHeight_full_eq, dyckStepHeight_full_eq]
   simp
   omega
 
-/-- The final height of a concatenation is the sum of the two final heights. -/
+/-- **Final height of a concatenation.** For words $l$ and $r$, the final height of their
+concatenation is the sum of the final heights of $l$ and $r$. -/
 public theorem dyckStepHeight_full_append (l r : List DyckStep) :
     dyckStepHeight (l ++ r) (l ++ r).length =
       dyckStepHeight l l.length + dyckStepHeight r r.length := by
@@ -333,8 +339,8 @@ private lemma steps_column_iff {n : ℕ} (p : Fin (2 * n) → Bool) (j : ℕ) :
       omega
 
 /-- **Dyck words of decreasing parking functions with a prescribed preference.** For every
-`j : Fin n`, weakly decreasing parking functions of length `n` that contain preference `j`
-are in bijection with Dyck words of semilength `n` having an Up step preceded by exactly `j.val`
+spot $0 \le j < n$, weakly decreasing parking functions of length $n$ that contain preference $j$
+are in bijection with Dyck words of semilength $n$ having an Up step preceded by exactly $j$
 Down steps.
 
 Source: Steve Butler et al., *Lucky Cars and Lucky Spots in Parking Functions*,

@@ -50,8 +50,8 @@ def nextFreeSpot {n : ℕ} (occ : Finset (Fin n)) (a : Fin n) : Fin n :=
     (Finset.univ.filter (fun s : Fin n => a ≤ s ∧ s ∉ occ)).min' h
   else a
 
-/-- The greedy rule never assigns a spot before the car's preference, including when it falls
-back to the preference because every spot at or after it is occupied. -/
+/-- **Lower bound on the next free spot.** If a car prefers spot $a$, the greedy rule assigns it
+a spot at or after $a$. This includes the fallback to $a$ when every eligible spot is occupied. -/
 theorem le_nextFreeSpot {n : ℕ} (occ : Finset (Fin n)) (a : Fin n) :
     a ≤ nextFreeSpot occ a := by
   unfold nextFreeSpot
@@ -59,7 +59,8 @@ theorem le_nextFreeSpot {n : ℕ} (occ : Finset (Fin n)) (a : Fin n) :
   · exact (Finset.mem_filter.mp (Finset.min'_mem _ h)).2.1
   · exact le_rfl
 
-/-- An unoccupied preferred spot is the next free spot. -/
+/-- **Unoccupied preferred spot.** If the preferred spot $a$ is not occupied, then $a$ is the
+next free spot. -/
 theorem nextFreeSpot_of_notMem {m : ℕ} {occ : Finset (Fin m)} {a : Fin m}
     (ha : a ∉ occ) : nextFreeSpot occ a = a := by
   have hmem : a ∈ Finset.univ.filter (fun q : Fin m => a ≤ q ∧ q ∉ occ) := by simp [ha]
@@ -140,8 +141,9 @@ private lemma car_index_lt_room_of_antitone {n : ℕ} {f : Fin n → Fin n}
   change (f i).val - 1 + 1 ≤ n - 1 - i.val at h
   omega
 
-/-- Distinct cars in a weakly decreasing parking function take distinct spots under the greedy
-rule: each car has more eligible spots than there are preceding cars. -/
+/-- **Distinct greedy spots for decreasing preferences.** For a weakly decreasing parking
+function, the greedy rule assigns distinct spots to distinct cars: each car has more eligible
+spots than there are preceding cars. -/
 theorem parkSpots_injective_of_antitone {n : ℕ} {f : Fin n → Fin n}
     (hf : IsParkingFunction n f) (hdec : Antitone f) : Function.Injective (parkSpots f) := by
   have hroom (i : ℕ) (hi : i < (List.ofFn f).length) :
@@ -165,7 +167,8 @@ For a parking function a free spot always exists. -/
 def IsLuckyCar {n : ℕ} (f : Fin n → Fin n) (i : Fin n) : Prop :=
   parkSpots f i = f i
 
-/-- A car is lucky exactly when its assigned spot is its preferred spot. -/
+/-- **Criterion for a lucky car.** For a preference map $f$, car $i$ is lucky exactly when
+its assigned spot is $f(i)$. -/
 theorem isLuckyCar_iff_parkSpots_eq {n : ℕ} (f : Fin n → Fin n) (i : Fin n) :
     IsLuckyCar f i ↔ parkSpots f i = f i := Iff.rfl
 
@@ -187,8 +190,9 @@ private lemma getD_parkSpotsFrom_of_lt_before {n : ℕ} (l : List (Fin n)) (i : 
         exact ⟨(ha.trans_le (le_nextFreeSpot occ a)).ne, hfree⟩)
         (fun k hk => hprev (k + 1) (Nat.succ_lt_succ hk))
 
-/-- If the preferences are weakly decreasing and some car prefers spot `j`, a car preferring
-`j` is lucky. The first such car finds `j` free because all earlier preferences are larger.
+/-- **A preferred spot is lucky in decreasing order.** If the preferences are weakly decreasing
+and some car prefers spot $j$, a car preferring $j$ is lucky. The first such car finds $j$ free
+because all earlier preferences are larger.
 
 Source: Steve Butler et al., *Lucky Cars and Lucky Spots in Parking Functions*,
 Journal of Integer Sequences 29 (2026), Article 26.1.1, Section 4.2. -/
@@ -252,8 +256,9 @@ noncomputable def qDec (n : ℕ) (i j : Fin n) : ℕ :=
     IsParkingFunction n f ∧ Antitone f ∧ f i = j ∧
       IsLuckyCar f i }
 
-/-- `qDec n i j` counts the weakly decreasing parking functions in which car `i` prefers `j`
-and is lucky. -/
+/-- **Cardinality of decreasing lucky-car counts.** The number $q^{\mathrm{dec}}_n(i,j)$ is the
+cardinality of the set of weakly decreasing parking functions of length $n$ in which car $i$
+prefers spot $j$ and is lucky. -/
 theorem qDec_eq_card (n : ℕ) (i j : Fin n) :
     qDec n i j = Nat.card {f : Fin n → Fin n //
       IsParkingFunction n f ∧ Antitone f ∧ f i = j ∧ IsLuckyCar f i} := rfl

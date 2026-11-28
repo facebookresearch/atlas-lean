@@ -516,10 +516,10 @@ end descendingNaplesCount_eq_card_kDyckPath
 
 open descendingNaplesCount_eq_card_kDyckPath in
 /-- **Decreasing parking functions with a prescribed preferred spot and Dyck paths.** For
-`j : Fin n`, the weakly decreasing parking functions of length `n` that contain preference `j`
-correspond to paths of `2 * n` steps that stay nonnegative, end at height zero, end with a Down
-step, and contain an Up step preceded by exactly `j.val` Down steps. If a step is at index `t`
-with starting height `h`, the number of earlier Down steps is `(t - h) / 2`.
+$0 \le j < n$, the weakly decreasing parking functions of length $n$ that contain preference $j$
+correspond to paths of $2n$ steps that stay nonnegative, end at height $0$, end with a Down
+step, and contain an Up step preceded by exactly $j$ Down steps. If a step is at zero-based index
+$t$ with starting height $h$, the number of earlier Down steps is $(t-h)/2$.
 
 Source: Steve Butler et al., *Lucky Cars and Lucky Spots in Parking Functions*,
 Journal of Integer Sequences 29 (2026), Article 26.1.1, Section 4. -/
