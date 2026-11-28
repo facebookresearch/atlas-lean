@@ -34,3 +34,7 @@ example : ⟪radixSort
     [(0, 5), (1, 0), (1, 2)] := by decide
 
 example : (medianOfMedians [5, 1, 4, 2, 3] 2).ret = some 3 := by decide
+
+#check Cslib.Algorithms.Lean.TimeM.clog_factorial_le
+
+example : Nat.clog 2 (Nat.factorial 5) ≤ 5 * Nat.clog 2 5 := by decide

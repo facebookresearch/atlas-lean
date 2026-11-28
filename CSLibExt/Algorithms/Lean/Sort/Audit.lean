@@ -12,6 +12,7 @@ public import CSLibExt.Algorithms.Lean.Sort.Counting
 public import CSLibExt.Algorithms.Lean.Sort.Radix
 public import CSLibExt.Algorithms.Lean.Selection.MedianOfMedians
 public import Cslib.Algorithms.Lean.MergeSort.MergeSort
+public import Cslib.Algorithms.Lean.Query.Sort.Merge.Bounds
 
 /-!
 # Sorting and selection library audit
@@ -33,10 +34,14 @@ no worst-case functional and no machine-time claim.
 
 ## Gate report
 
-The library proves the upper bounds adapted below. A matching
-information-theoretic `Ω(n log n)` comparison lower bound for merge
-sort is not in the library, and no expected-cost refinement of these
-per-input bounds is claimed here.
+The library proves the upper bounds adapted above. A matching
+lower bound exists in cslib's query model:
+`Cslib.Query.mergeSort_lowerBound` gives worst-case query complexity
+at least `⌈log₂(n!)⌉` for the same underlying `List.mergeSortM`,
+which is `Ω(n log n)`. It is stated in the `FreeM` query-cost
+model, not in `TimeM` ticks, and no bridge between the two charge
+models is claimed here. No expected-cost refinement of these
+per-input bounds is claimed.
 
 ## References
 
@@ -72,7 +77,7 @@ theorem countingSort_linear_time {α : Type u} {k : Nat} (key : α → Fin k)
 
 /-- **Radix sort linear bound.** `radixSort` on `n` records with `d` base-`b` digits charges at
 most `d * (7 * n + 3 * b)` operations. -/
-theorem radixSort_linear_time {α : Type u} {b d : Nat} (digits : α → Vector (Fin b) d)
+theorem radixSort_linear_time {α : Type u} {b d : Nat} (digits : α → _root_.Vector (Fin b) d)
     (input : Array α) (hb : 2 ≤ b) :
     (radixSort digits input hb).time ≤ d * (7 * input.size + 3 * b) := by
   exact radixSort_time digits input hb
@@ -83,5 +88,11 @@ theorem medianOfMedians_linear_time {α : Type u} [LinearOrder α] (xs : List α
     (k : Nat) :
     (medianOfMedians xs k).time ≤ 80 * xs.length := by
   exact medianOfMedians_time xs k
+
+/-- **Ceil-log factorial bound.** `clog_factorial_le` restates
+`Cslib.Query.clog_factorial_le_mul_clog`. -/
+theorem clog_factorial_le (n : Nat) :
+    Nat.clog 2 (Nat.factorial n) ≤ n * Nat.clog 2 n := by
+  exact Cslib.Query.clog_factorial_le_mul_clog n
 
 end Cslib.Algorithms.Lean.TimeM
