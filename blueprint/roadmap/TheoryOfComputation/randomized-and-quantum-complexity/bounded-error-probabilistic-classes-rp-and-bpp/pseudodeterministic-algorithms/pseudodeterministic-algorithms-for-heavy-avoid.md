@@ -24,7 +24,7 @@ Item 1 rests on an equivalence between uniform lower bounds and deterministic He
 ## Proof depends on
 
 - [Time-bounded Kolmogorov complexity K^t and Levin's Kt](../../../kolmogorov-complexity/time-bounded-kolmogorov-complexity/time-bounded-kolmogorov-complexity-and-levin-kt.md)
-- [Probabilistic time-bounded Kolmogorov complexity pK^t and its conditional form](../../../kolmogorov-complexity/probabilistic-kolmogorov-and-symmetry-of-information/pkt-probabilistic-time-bounded-kolmogorov-complexity.md)
+- [Efficient coding theorem for rKt](../../../kolmogorov-complexity/resource-bounded-meta-complexity/randomized-levin-complexity/efficient-coding-theorem-for-rkt.md)
 
 ## Sources
 
