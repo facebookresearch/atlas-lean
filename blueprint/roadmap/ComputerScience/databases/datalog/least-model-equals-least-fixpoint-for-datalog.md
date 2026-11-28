@@ -10,12 +10,15 @@ Since only finitely many facts over the active domain exist, naive iteration of 
 after at most as many steps as there are possible intensional facts, a number polynomial in the size of
 the active domain for fixed $P$.
 
-## Expansion
+## Depends on
 
-This node states a precise result. A good expansion adds a page for each of the following
-prerequisites and links it under the dependency sections below:
+- [Datalog programs and the immediate consequence operator](datalog-programs-and-the-immediate-consequence-operator.md)
 
-- Statement prerequisite: Datalog programs and the immediate consequence operator.
+## Proof depends on
+
+- [The immediate consequence operator is monotone](fixpoint-semantics/the-immediate-consequence-operator-is-monotone.md)
+- [Models of a Datalog program are the pre-fixpoints of its immediate consequence operator](fixpoint-semantics/models-of-a-datalog-program-are-pre-fixpoints-of-tp.md)
+- [A Datalog program has a minimum model containing its input](fixpoint-semantics/a-datalog-program-has-a-minimum-model-containing-its-input.md)
 
 ## Sources
 

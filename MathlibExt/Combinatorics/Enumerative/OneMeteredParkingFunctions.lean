@@ -15,9 +15,9 @@ import Mathlib.Tactic.LinearCombination
 /-!
 # 1-metered parking functions
 
-This file proves `meteredParkingCount_one_binet`, a Binet formula for the number
-`meteredParkingCount 1 m n` of 1-metered `(m, n)`-parking functions when `m ≤ n + 1` and
-`2 < n`.
+This file proves the Lucas-type recursion `meteredParkingCount_one_recursion` for the number
+`meteredParkingCount 1 m n` of 1-metered `(m, n)`-parking functions, and the Binet formula
+`meteredParkingCount_one_binet` when `m ≤ n + 1` and `2 < n`.
 
 In the 1-metered scheme a car parks in its preferred spot unless the previous car holds that spot;
 then it parks in the next spot, or fails if there is none. Counting the 1-metered parking functions
@@ -372,6 +372,31 @@ private theorem binet_of_recursion (N : ℕ) {n s : ℝ} (hn : 3 ≤ n) (hs2 : s
   ring
 
 end meteredParkingCount_one_binet
+
+/-- **Lucas-type recursion for 1-metered parking functions.** Write $\mathrm{mpf}_{m,n}(1)$ for
+the number of $1$-metered $(m, n)$-parking functions. For every natural number $n$,
+$\mathrm{mpf}_{1,n}(1) = n$ and $\mathrm{mpf}_{0,n}(1) = 1$, and for every natural number $m$
+with $1 \le m \le n$,
+$$\mathrm{mpf}_{m+1,n}(1) = n \cdot \mathrm{mpf}_{m,n}(1) - \mathrm{mpf}_{m-1,n}(1),$$
+where the subtraction is taken in the integers.
+
+Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
+Functions*, INTEGERS 25 (2025), Article A73, Theorem 2 (`integers-2025-A73-thm-2`). -/
+public theorem meteredParkingCount_one_recursion (n : ℕ) :
+    meteredParkingCount 1 1 n = n ∧ meteredParkingCount 1 0 n = 1 ∧
+      ∀ m, 1 ≤ m → m ≤ n →
+        (meteredParkingCount 1 (m + 1) n : ℤ) =
+          n * meteredParkingCount 1 m n - meteredParkingCount 1 (m - 1) n := by
+  refine ⟨?_, meteredParkingCount_one_binet.count_zero n, ?_⟩
+  · cases n with
+    | zero =>
+      rw [meteredParkingCount, Finset.card_eq_zero, Finset.filter_eq_empty_iff]
+      intro f _ _
+      exact Fin.elim0 (f 0)
+    | succ n => exact meteredParkingCount_one_binet.count_one (Nat.succ_pos n)
+  · intro m hm hmn
+    apply eq_sub_iff_add_eq.mpr
+    exact_mod_cast meteredParkingCount_one_binet.count_recursion hm hmn
 
 /-- **Binet formula for 1-metered parking functions.** Let $m, n$ be natural numbers with
 $m \le n + 1$ and $n > 2$. Then the number $\mathrm{mpf}_{m,n}(1)$ of $1$-metered
