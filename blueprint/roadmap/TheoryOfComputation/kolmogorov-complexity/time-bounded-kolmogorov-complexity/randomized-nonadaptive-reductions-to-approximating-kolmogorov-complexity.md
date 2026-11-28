@@ -19,6 +19,9 @@ Fix the reduction $M$ and an input $x$, let $\pi(q)$ be the probability over the
 
 - [Kolmogorov complexity](../k.md)
 - [The class AM (Arthur–Merlin)](../../complexity-classes/time-and-space-complexity-classes/am.md)
+- [The class coAM](../../complexity-classes/time-and-space-complexity-classes/co-am.md)
+- [The complexity class NEXP](../../complexity-classes/time-and-space-complexity-classes/nexp.md)
+- [The polynomial hierarchy](../../complexity-classes/time-and-space-complexity-classes/ph.md)
 
 ## Proof depends on
 

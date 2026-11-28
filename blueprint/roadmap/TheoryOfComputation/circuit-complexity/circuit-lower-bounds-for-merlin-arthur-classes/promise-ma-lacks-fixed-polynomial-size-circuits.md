@@ -11,11 +11,12 @@ Because Promise-MA is contained in Promise-AM, Promise-$\mathsf{ZPP}^{\mathsf{NP
 
 ## Expansion
 
-Item 1 turns advice into input. Let $M$ take $cn$ advice bits and let $b_n$ be the correct advice. An input of length $(c+1)n$, read as $xb$ with $|x|=n$ and $|b|=cn$, is a yes-instance if $M$ with advice $b$ satisfies the promise and accepts $x$, a no-instance if it satisfies the promise and rejects, and outside the promise otherwise; other lengths are outside the promise. Every string $xb_n$ lies in the promise, so a circuit of size $m^k/2^{(c+1)k}$ for the promise problem at length $m=(c+1)n$, with $b_n$ hardwired, decides $L$ at length $n$ with size at most $n^k/2$. Item 2 follows by applying item 1 to the hard $\mathsf{MA}/1$ language.
+Item 1 turns advice into input. Let $M$ take $cn$ advice bits and let $b_n$ be the correct advice. An input of length $(c+1)n$, read as $xb$ with $|x|=n$ and $|b|=cn$, is a yes-instance if $M$ with advice $b$ satisfies the promise and accepts $x$, a no-instance if it satisfies the promise and rejects, and outside the promise otherwise; other lengths are outside the promise. Every string $xb_n$ lies in the promise, so a circuit of size $m^k/(2(c+1)^k)$ for the promise problem at length $m=(c+1)n$, with $b_n$ hardwired, decides $L$ at length $n$ with size at most $n^k/2$. Item 2 follows by applying item 1 to the hard $\mathsf{MA}/1$ language.
 
 ## Depends on
 
 - [The class MA (Merlin–Arthur)](../../complexity-classes/time-and-space-complexity-classes/ma.md)
+- [Circuit complexity of a Boolean function and truth tables](../minimum-circuit-size-problem/circuit-complexity-of-a-boolean-function.md)
 
 ## Proof depends on
 

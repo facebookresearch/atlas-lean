@@ -28,4 +28,4 @@ None.
 
 ## Sources
 
-- Lance Fortnow and Rahul Santhanam, "Infeasibility of Instance Compression and Succinct PCPs for NP", *Journal of Computer and System Sciences* 77(1), 2011, https://doi.org/10.1016/j.jcss.2010.06.007 (Definitions 2.1 to 2.10, Proposition 2.11, Theorem 2.12, Proposition 2.13, Theorem 1.2).
+- Lance Fortnow and Rahul Santhanam, "Infeasibility of Instance Compression and Succinct PCPs for NP", *Journal of Computer and System Sciences* 77(1), 2011, pp. 91–106, https://doi.org/10.1016/j.jcss.2010.06.007, read in the authors' version of March 19, 2010 <https://lance.fortnow.com/papers/files/compress.pdf>, whose numbering is cited (Definitions 2.1 to 2.10, Proposition 2.11, Theorem 2.12, Proposition 2.13, Theorem 1.2).

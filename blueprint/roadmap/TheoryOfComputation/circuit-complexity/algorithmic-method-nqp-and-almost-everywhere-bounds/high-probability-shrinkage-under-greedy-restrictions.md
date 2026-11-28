@@ -24,7 +24,7 @@ With $l_i=\log L(F_i)$, the centered increments of $l_i$ form a supermartingale 
 
 ## Depends on
 
-None.
+- [Circuit complexity of a Boolean function and truth tables](../minimum-circuit-size-problem/circuit-complexity-of-a-boolean-function.md)
 
 ## Proof depends on
 

@@ -6,7 +6,7 @@ A language $L$ is in $\mathsf{MA}/1$ if there are a polynomial-time Merlin–Art
 
 1. $\mathsf{MA}/1\not\subseteq\mathrm{SIZE}(n^k)$;
 2. $(\mathsf{MA}\cap\mathsf{coMA})/1\not\subseteq\mathrm{SIZE}(n^k)$, where one machine with one advice sequence certifies both membership and non-membership;
-3. $(\mathsf{MA}\cap\mathsf{coMA})/1\not\subseteq\mathrm{heur}_{1/2+1/n^k}\text{-}\mathrm{SIZE}(n^k)$, that is, no family of size-$n^k$ circuits agrees with the hard language on more than a $1/2+1/n^k$ fraction of the inputs of each length.
+3. $(\mathsf{MA}\cap\mathsf{coMA})/1\not\subseteq\mathrm{heur}_{1/2+1/n^k}\text{-}\mathrm{SIZE}(n^k)$, where a language $L$ is in $\mathrm{heur}_q\text{-}\mathrm{SIZE}(s)$ if for each $n$ there is a circuit $C_n$ of size at most $s(n)$ that solves $L|_n$ on at least a $q(n)$ fraction of the inputs of length $n$.
 
 The proof neither relativizes nor naturalizes.
 
@@ -27,4 +27,4 @@ Otherwise let $s(n)$ be the minimum circuit size of $L$ at length $n$ and pad: $
 
 ## Sources
 
-- Rahul Santhanam, "Circuit Lower Bounds for Merlin-Arthur Classes", *SIAM Journal on Computing*, 2009, https://doi.org/10.1137/070702680 (Theorems 1, 3 and 16, Lemmas 12, 15 and 20, Sections 3 and 4; numbering of the ECCC Report TR07-005 edition read).
+- Rahul Santhanam, "Circuit Lower Bounds for Merlin-Arthur Classes", *SIAM Journal on Computing*, 2009, https://doi.org/10.1137/070702680 (Definition 5, Theorems 1, 3 and 16, Lemmas 12, 15 and 20, Sections 3 and 4; numbering of the ECCC Report TR07-005 edition read).

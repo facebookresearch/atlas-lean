@@ -15,6 +15,8 @@ Derandomizing the reduction directly fails, because the consistency test it must
 ## Depends on
 
 - [Time-bounded Kolmogorov complexity K^t and Levin's Kt](time-bounded-kolmogorov-complexity-and-levin-kt.md)
+- [The class E](../../complexity-classes/time-and-space-complexity-classes/e.md)
+- [The complexity class NP](../../complexity-classes/the-classes-p-np-and-conp/np.md)
 
 ## Proof depends on
 

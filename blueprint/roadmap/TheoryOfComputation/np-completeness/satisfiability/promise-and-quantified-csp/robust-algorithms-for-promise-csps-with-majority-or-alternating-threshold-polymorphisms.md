@@ -18,6 +18,8 @@ Both algorithms round the basic SDP relaxation without inspecting the predicates
 
 - [Promise constraint satisfaction PCSP(A,B) for a pair of finite templates](promise-csp-of-a-template-pair.md)
 - [The polymorphism minion Pol(A,B) of a promise template](polymorphism-minion-of-a-promise-template.md)
+- [The Unique Games Conjecture](../../../pcp-and-inapproximability/pcp-constructions/the-unique-games-conjecture.md)
+- [The complexity class NP](../../../complexity-classes/the-classes-p-np-and-conp/np.md)
 
 ## Proof depends on
 

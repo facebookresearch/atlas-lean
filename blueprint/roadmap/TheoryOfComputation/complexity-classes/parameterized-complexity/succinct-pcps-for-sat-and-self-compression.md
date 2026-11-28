@@ -16,6 +16,9 @@ For item 1, let the verifier have proof size $n^C$, $q=O(1)$ queries and randomn
 ## Depends on
 
 - [Instance compression of parametric problems](instance-compression-of-parametric-problems.md)
+- [OR-SAT is not compressible unless NP ⊆ coNP/poly](or-sat-is-not-compressible-unless-np-in-conp-poly.md)
+- [The complexity class NP](../the-classes-p-np-and-conp/np.md)
+- [The polynomial hierarchy](../time-and-space-complexity-classes/ph.md)
 
 ## Proof depends on
 
@@ -24,4 +27,4 @@ For item 1, let the verifier have proof size $n^C$, $q=O(1)$ queries and randomn
 
 ## Sources
 
-- Lance Fortnow and Rahul Santhanam, "Infeasibility of Instance Compression and Succinct PCPs for NP", *Journal of Computer and System Sciences* 77(1), 2011, https://doi.org/10.1016/j.jcss.2010.06.007 (Definition 4.1, Theorems 4.2, 4.3, 4.5 and 4.6, Corollaries 4.4 and 4.7, Theorem 3.3).
+- Lance Fortnow and Rahul Santhanam, "Infeasibility of Instance Compression and Succinct PCPs for NP", *Journal of Computer and System Sciences* 77(1), 2011, pp. 91–106, https://doi.org/10.1016/j.jcss.2010.06.007, read in the authors' version of March 19, 2010 <https://lance.fortnow.com/papers/files/compress.pdf>, whose numbering is cited (Definition 4.1, Theorems 4.2, 4.3, 4.5 and 4.6, Corollaries 4.4 and 4.7, Theorem 3.3).

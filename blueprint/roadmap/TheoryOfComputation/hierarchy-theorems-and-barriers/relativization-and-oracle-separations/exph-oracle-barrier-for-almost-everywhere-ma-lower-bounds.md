@@ -16,6 +16,9 @@ Item 1 follows Santhanam's win-win argument with a $\mathsf{PSPACE}$-complete la
 
 - [Bounded relativization](bounded-relativization.md)
 - [The class MA (Merlin–Arthur)](../../complexity-classes/time-and-space-complexity-classes/ma.md)
+- [Circuit complexity of a Boolean function and truth tables](../../circuit-complexity/minimum-circuit-size-problem/circuit-complexity-of-a-boolean-function.md)
+- [Deterministic logarithmic space](../../complexity-classes/time-and-space-complexity-classes/log-space.md)
+- [The complexity class NP](../../complexity-classes/the-classes-p-np-and-conp/np.md)
 
 ## Proof depends on
 
