@@ -29,18 +29,25 @@ open CategoryTheory MonoidalCategory
 namespace CategoryTheory.SumRelCat
 universe u
 variable {X Y U : SumRelCat.{u}}
-/-- A finite execution that eventually leaves through the external output. -/
+/-- `FeedbackPath f s y`: a finite execution of `f` that starts at any state `s : X ⊕ U`, an
+external input `Sum.inl x` or a hidden state `Sum.inr u`, takes finitely many edges into the
+hidden summand and then leaves through the external output `y`. -/
 inductive FeedbackPath (f : X ⊗ U ⟶ Y ⊗ U) : Sum X U → Y → Prop
   /-- Exit immediately through the external output. -/
   | output {s y} : (s, Sum.inl y) ∈ f.rel → FeedbackPath f s y
   /-- Enter the feedback summand and continue a finite execution. -/
   | step {s v y} : (s, Sum.inr v) ∈ f.rel →
       FeedbackPath f (Sum.inr v) y → FeedbackPath f s y
-/-- Relational feedback includes exactly the terminating finite executions. -/
+/-- The feedback of `f` is a relation on external endpoints: it relates an external input
+`x : X` to an external output `y : Y` exactly when a finite execution of `f` from `Sum.inl x`
+leaves at `y`, that is, `FeedbackPath f (Sum.inl x) y`. -/
 def feedback (f : X ⊗ U ⟶ Y ⊗ U) : X ⟶ Y :=
   .ofRel {p | FeedbackPath f (Sum.inl p.1) p.2}
 
-/-- An execution consists of a direct edge or entry, finitely many hidden edges, and exit. -/
+/-- For every starting state `s : X ⊕ U`, not only an external input, an execution from `s` to
+`y` is either a direct edge from `s` to `Sum.inl y`, or an edge from `s` to a hidden state `a`,
+a reflexive-transitive chain of hidden edges from `a` to `b`, and an exit edge from
+`Sum.inr b` to `Sum.inl y`. -/
 theorem feedbackPath_iff (f : X ⊗ U ⟶ Y ⊗ U) (s : Sum X U) (y : Y) :
     FeedbackPath f s y ↔ (s, Sum.inl y) ∈ f.rel ∨
       ∃ a b : U, (s, Sum.inr a) ∈ f.rel ∧
@@ -111,7 +118,9 @@ theorem FeedbackPath.least {f : X ⊗ U ⟶ Y ⊗ U} {Q : Sum X U → Y → Prop
   | output h => exact output _ _ h
   | step h _ ih => exact step _ _ _ h ih
 
-/-- Even cycles cannot produce an output when the relation has no exit edge. -/
+/-- If `f` has no edge from any state `s : X ⊕ U` into an external output `Sum.inl y` (no
+direct edge from an input, not only no exit edge from a hidden state), then the feedback is
+empty, even when `f` has cycles on the hidden summand. -/
 theorem feedback_eq_empty_of_no_exit (f : X ⊗ U ⟶ Y ⊗ U)
     (h : ∀ s y, (s, Sum.inl y) ∉ f.rel) : (feedback f).rel = ∅ := by
   apply Set.eq_empty_iff_forall_notMem.mpr

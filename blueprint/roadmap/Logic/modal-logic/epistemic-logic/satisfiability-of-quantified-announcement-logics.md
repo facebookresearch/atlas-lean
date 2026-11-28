@@ -1,0 +1,26 @@
+# Satisfiability of quantified announcement logics is undecidable
+
+For two or more agents, satisfiability is undecidable for arbitrary public announcement logic APAL, group announcement logic GAL and coalition announcement logic CAL; with a single agent all three are decidable.
+
+**Theorem (Ågotnes, van Ditmarsch and French).** Let the set $A$ of agents have at least two elements. Then the satisfiability problem for each of the [logics APAL, GAL and CAL](quantified-public-announcement-logics.md) over $A$ is undecidable: no algorithm decides, given a formula of the respective language, whether it holds at some world of some model with an equivalence relation for each agent. When $|A| = 1$, all three satisfiability problems are decidable.
+
+The proof shows more: Lemmas 6.2 and 6.3 reduce the tiling problem to each satisfiability problem: a finite set of tiles tiles the plane iff the formula built from it is satisfiable. As the tiling problem is co-r.e.-complete (Section 3 of the source), each satisfiability problem is co-r.e.-hard, so none of them is recursively enumerable; equivalently, the sets of validities are not co-recursively enumerable. Whether the sets of validities are recursively enumerable is not settled by this: the known complete axiomatizations of APAL and GAL are infinitary, and the existence of finitary axiomatizations of APAL, GAL and CAL is open (Galimullin and Kuijer, Section 1). Undecidability of APAL was first shown by French and van Ditmarsch (2008) and of GAL by Ågotnes, van Ditmarsch and French (2014); the source treats all three uniformly and is the first proof for CAL. The version read corrects an error in the published proof of the group case (the definition of the formula $c_{ga}(X)$), pointed out by Asami; the statement is unchanged.
+
+## Depends on
+
+- [Arbitrary, group and coalition announcement logics](quantified-public-announcement-logics.md)
+- [Epistemic models](model.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+
+## Proof depends on
+
+- [The tiling problem is undecidable](../../../TheoryOfComputation/undecidable-problems/wang-tiles/the-tiling-problem-is-undecidable.md)
+
+## Expansion
+
+Given a finite set $\Gamma$ of tiles, the proof builds for each logic a formula that is satisfiable iff $\Gamma$ tiles $\mathbb{N} \times \mathbb{N}$ (Lemmas 6.2 and 6.3). The construction has three steps: force any model of the formula to contain a grid-like structure, a checkerboard whose squares are labeled by the four card suits in a regular pattern, with the agents' relations linking each square to its neighbors; define a formula that plays the role of common knowledge over this grid; and use atoms for tiles to say that it is common knowledge that adjacent tiles have matching sides. The quantified announcements are what close the grid: a failure of the grid shape would be exposed by some announcement (for GAL and CAL, one known to the announcing agents) that the formula rules out. The single-agent case reduces to epistemic logic: there the arbitrary announcement operator is definable (Balbiani et al.), and the group and coalition operators are handled similarly.
+
+## Sources
+
+- T. Ågotnes, H. van Ditmarsch and T. French, "The undecidability of quantified announcements", *Studia Logica* 104(4):597–640, 2016, doi:10.1007/s11225-016-9657-0; read as the corrected version arXiv:2405.15671v2, <https://arxiv.org/abs/2405.15671v2>: Theorem 6.4 of arXiv:2405.15671v2, with Lemmas 6.2 and 6.3, and the summary of results in Section 1.
+- R. Galimullin and L. B. Kuijer, "Satisfiability of arbitrary public announcement logic with common knowledge is Σ¹₁-hard", in *Proceedings of the Conference on Theoretical Aspects of Rationality and Knowledge (TARK 2023)*, Electronic Proceedings in Theoretical Computer Science 379, 2023, pp. 260–271, <https://doi.org/10.4204/EPTCS.379.21>; read as arXiv:2307.05060v1, <https://arxiv.org/abs/2307.05060v1>: Section 1 and Table 1 (the status of axiomatizations of APAL, GAL and CAL).

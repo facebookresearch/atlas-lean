@@ -19,6 +19,7 @@ public import MathlibExt.GameTheory.ChocolateBarNSPropertyExistsOfLtFoldlXor
 public import MathlibExt.GameTheory.ChocolateBarNSPropertyImageXorEq
 public import MathlibExt.GameTheory.ChocolateBarNSPropertyExistsOfLtXorXor
 public import MathlibExt.GameTheory.ChocolateBarNSPropertyImageXorXorEq
+public import MathlibExt.GameTheory.ChocolateBarNSPropertyGrundy
 public import MathlibExt.GameTheory.NimPassIndicator
 
 /-! # The NS property of chocolate-bar games (Miyadera, Manabe, Singh)
@@ -42,52 +43,6 @@ a position of Grundy number `0` (Theorem 1 (i), the classical Sprague-Grundy the
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Grundy number of a chocolate bar.** Let $f_1, \dots, f_s : \mathbb{N} \to \mathbb{N}$. For
-coordinates $x = (x_1, \dots, x_s) \in \mathbb{N}^s$ and a width $z \in \mathbb{N}$, the position
-$(x, z)$ stands for the chocolate bar $\mathrm{CB}(f_1, \dots, f_s, x_1, \dots, x_s, z)$, whose
-column at width $w \le z$ extends $\min(f_t(w), x_t) + 1$ cells along axis $t$. A move either
-lowers one coordinate $x_i$ to some $u < x_i$, keeping the width $z$, or cuts the width to some
-$w < z$, which replaces every $x_t$ by $\min(x_t, f_t(w))$. The Grundy number of $(x, z)$ is the
-mex (least natural number not attained) of the Grundy numbers of the positions reachable from
-$(x, z)$ in one move. It is defined for all $(x, z)$; the bars themselves are the positions with
-$x_t \le f_t(z)$ for all $t$.
-
-Source: Ryohei Miyadera, Hikaru Manabe and Aditi Singh, *Generalizations of
-Two-Dimensional and Three-Dimensional Chocolate Bar Games*, INTEGERS 25 (2025),
-Article G3, Definitions 2, 8, 9 and 10 (two functions) and Section 4, before Theorem 5
-(four functions). -/
-public noncomputable def chocolateBarGrundy {s : ℕ} (f : Fin s → ℕ → ℕ) (x : Fin s → ℕ)
-    (z : ℕ) : ℕ :=
-  sInf {m | (∀ i u, u < x i → chocolateBarGrundy f (Function.update x i u) z ≠ m) ∧
-    ∀ w, w < z → chocolateBarGrundy f (fun t ↦ min (x t) (f t w)) w ≠ m}
-termination_by z + ∑ t, x t
-decreasing_by
-  · have hlt : ∑ t, Function.update x i u t < ∑ t, x t := by
-      refine Finset.sum_lt_sum (fun j _ ↦ ?_) ⟨i, Finset.mem_univ _, by simpa⟩
-      by_cases hj : j = i
-      · subst hj; simp only [Function.update_self]; omega
-      · simp [Function.update_of_ne hj]
-    omega
-  · have hle : ∑ t, min (x t) (f t w) ≤ ∑ t, x t :=
-      Finset.sum_le_sum fun _ _ ↦ min_le_left _ _
-    omega
-
-/-- **Mex recursion for the Grundy number of a chocolate bar.** Let $f_1, \dots, f_s$ be
-functions $\mathbb{N} \to \mathbb{N}$ and write $G(x, z)$ for the Grundy number of the chocolate
-bar with coordinates $x = (x_1, \dots, x_s) \in \mathbb{N}^s$ and width $z \in \mathbb{N}$. For
-all $x$ and $z$, $G(x, z)$ is the least natural number $m$ such that $m \ne G(x', z)$ for every
-$x'$ obtained from $x$ by replacing one coordinate $x_i$ with some $u < x_i$, and
-$m \ne G(x^{(w)}, w)$ for every $w < z$, where $x^{(w)}_t = \min(x_t, f_t(w))$ for all $t$.
-
-Source: Ryohei Miyadera, Hikaru Manabe and Aditi Singh, *Generalizations of
-Two-Dimensional and Three-Dimensional Chocolate Bar Games*, INTEGERS 25 (2025),
-Article G3, Definitions 9 and 10. -/
-public theorem chocolateBarGrundy_eq {s : ℕ} (f : Fin s → ℕ → ℕ) (x : Fin s → ℕ) (z : ℕ) :
-    chocolateBarGrundy f x z =
-      sInf {m | (∀ i u, u < x i → chocolateBarGrundy f (Function.update x i u) z ≠ m) ∧
-        ∀ w, w < z → chocolateBarGrundy f (fun t ↦ min (x t) (f t w)) w ≠ m} := by
-  rw [chocolateBarGrundy]
 
 /-- **The single bitter square has Grundy number zero.** For all functions
 $f_1, \dots, f_s : \mathbb{N} \to \mathbb{N}$, the chocolate bar
@@ -217,20 +172,6 @@ public theorem_wanted sections_hasNSProperty_iff_heightChocolateBarGrundy_eq_xor
     ((∀ n, HasNSProperty (F n)) ∧ ∀ n, HasNSProperty fun w ↦ F w n) ↔
       ∀ w x y, y ≤ F w x →
         heightChocolateBarGrundy (fun v ↦ F (v 0) (v 1)) ![w, x] y = w ^^^ x ^^^ y
-
-/-- **Nim-sum Grundy numbers of chocolate bars with two functions.** Let
-$g, h : \mathbb{N} \to \mathbb{N}$ be monotone. Then $g$ and $h$ both have the NS property if and
-only if, for all natural numbers $x, y, z$ with $x \le g(z)$ and $y \le h(z)$, the Grundy number
-of the chocolate bar $\mathrm{CB}(g, h, x, y, z)$ equals $x \oplus y \oplus z$, where $\oplus$ is
-nim-sum (bitwise exclusive or).
-
-Source: Ryohei Miyadera, Hikaru Manabe and Aditi Singh, *Generalizations of
-Two-Dimensional and Three-Dimensional Chocolate Bar Games*, INTEGERS 25 (2025),
-Article G3, Theorem 4 (`integers-2025-G3-thm-4`). -/
-public theorem_wanted hasNSProperty_and_iff_chocolateBarGrundy_eq_xor {g h : ℕ → ℕ}
-    (hg : Monotone g) (hh : Monotone h) :
-    HasNSProperty g ∧ HasNSProperty h ↔
-      ∀ x y z, x ≤ g z → y ≤ h z → chocolateBarGrundy ![g, h] ![x, y] z = x ^^^ y ^^^ z
 
 /-- **Nim-sum Grundy numbers of chocolate bars with four functions.** Let
 $f_1, f_2, f_3, f_4 : \mathbb{N} \to \mathbb{N}$ be monotone. Then all four have the NS property if
