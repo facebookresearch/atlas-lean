@@ -41,7 +41,8 @@ open CochainComplex Opposite
 namespace MathlibExtTest.ReducedTwistingHom
 
 private def unitProduct (D : Type*) [Category D] [MonoidalCategory D]
-    [HasBinaryProducts D] : LimitCone (pair (Mon.mk (𝟙_ D)) (Mon.mk (𝟙_ D))) :=
+    [HasBinaryProduct (𝟙_ D) (𝟙_ D)] :
+    LimitCone (pair (Mon.mk (𝟙_ D)) (Mon.mk (𝟙_ D))) :=
   let F := pair (Mon.mk (𝟙_ D)) (Mon.mk (𝟙_ D))
   let c₀ : BinaryFan (𝟙_ D) (𝟙_ D) :=
     BinaryFan.mk (prod.fst : (𝟙_ D) ⨯ (𝟙_ D) ⟶ 𝟙_ D) prod.snd
@@ -54,7 +55,9 @@ private def unitProduct (D : Type*) [Category D] [MonoidalCategory D]
 private abbrev M := ModuleCat.{0} ℤ
 
 local instance : ∀ (X Y : GradedObject ℤ M), GradedObject.HasTensor X Y := by
-  intros
+  intro X Y
+  dsimp only [GradedObject.HasTensor, GradedObject.HasMap]
+  intro i
   infer_instance
 
 local instance : ∀ (X : M), PreservesColimit (Functor.empty.{0} M)
@@ -81,7 +84,7 @@ local instance : ∀ (W X Y Z : GradedObject ℤ M),
   infer_instance
 
 private abbrev H := CochainComplex M ℤ
-private abbrev I : H := HomologicalComplex.tensorUnit M (ComplexShape.up ℤ)
+private abbrev I : H := 𝟙_ H
 private abbrev algebra : Mon H := (unitProduct H).cone.pt
 private abbrev oppositeAlgebra : Mon Hᵒᵖ := (unitProduct Hᵒᵖ).cone.pt
 private abbrev A : H := algebra.X
@@ -111,19 +114,26 @@ private abbrev scalarCochain : HomComplex.Cochain C A 0 :=
   HomComplex.Cochain.ofHom scalarMap
 
 private lemma first_zero : ι₀ ≫ scalarMap = 0 := by
-  change (prod.fst : oppositeAlgebra.X ⟶ op I).unop ≫
-    (prod.lift (0 : I ⟶ A).op secondScalar.op).unop = 0
-  rw [← unop_comp, prod.lift_fst]
-  rfl
+  change ((prod.lift (0 : I ⟶ A).op secondScalar.op) ≫ prod.fst).unop = 0
+  exact congrArg (fun f : op A ⟶ op I => f.unop)
+    (prod.lift_fst (0 : I ⟶ A).op secondScalar.op)
 
 private lemma scalar_first_zero : scalarMap ≫ p₀ = 0 := by
   apply Quiver.Hom.op_inj
-  apply prod.hom_ext <;> simp [scalarMap, secondScalar, ← op_comp, Category.assoc]
+  rw [op_comp]
+  dsimp only [scalarMap]
+  apply prod.hom_ext
+  · simp [Category.assoc]
+  · simp only [Category.assoc, prod.lift_snd, zero_comp]
+    change (secondScalar ≫ p₀).op = 0
+    simp [secondScalar]
 
 private lemma second_coordinate : ι₁ ≫ scalarMap ≫ p₁ = (2 : ℤ) • 𝟙 I := by
-  change (prod.snd : oppositeAlgebra.X ⟶ op I).unop ≫
-    (prod.lift (0 : I ⟶ A).op secondScalar.op).unop ≫ p₁ = _
-  rw [← unop_comp, prod.lift_snd]
+  have hs : ι₁ ≫ scalarMap = secondScalar := by
+    change ((prod.lift (0 : I ⟶ A).op secondScalar.op) ≫ prod.snd).unop = _
+    exact congrArg (fun f : op A ⟶ op I => f.unop)
+      (prod.lift_snd (0 : I ⟶ A).op secondScalar.op)
+  rw [← Category.assoc, hs]
   simp [secondScalar]
 
 example : CochainComplex.IsReducedCochain ι₀ p₀ scalarCochain := by
@@ -159,7 +169,7 @@ private lemma original_coordinate : probe p₁ scalarCochain = 2 :=
 
 private lemma original_first_zero : probe p₀ scalarCochain = 0 := by
   apply probe_coordinate
-  rw [Category.assoc, scalar_first_zero, comp_zero]
+  rw [scalar_first_zero, comp_zero]
   simp
 
 example : scalarCochain ≠ 0 := by
@@ -182,7 +192,8 @@ example : CochainComplex.twistedCobarDifferential zeroMC.tau scalarCochain = 0 :
 example :
     ((CochainComplex.twistedHomComplexModule zeroMC.tau zeroMC.isMC).d 0 1).hom
       scalarCochain = 0 := by
-  simp [CochainComplex.twistedHomComplexModule_d_apply, zeroMC, scalarCochain,
+  change CochainComplex.twistedDifferentialLinear zeroMC.tau 0 1 scalarCochain = 0
+  simp [CochainComplex.twistedDifferentialLinear, zeroMC, scalarCochain,
     CochainComplex.twistedDifferential, CochainComplex.conv_zero_left,
     CochainComplex.conv_zero_right]
 
@@ -203,7 +214,7 @@ private lemma swapped_coordinate : probe p₀ (HomComplex.Cochain.ofHom (scalarM
 example : swap ≠ 𝟙 A := by
   intro h
   have hv := swapped_coordinate
-  rw [h, comp_id] at hv
+  rw [h, Category.comp_id] at hv
   change probe p₀ scalarCochain = 2 at hv
   rw [original_first_zero] at hv
   norm_num at hv
@@ -258,10 +269,12 @@ example : oddCochain ≠ 0 := by
 
 example : ((HomComplex.δ (-1) 0 oddCochain).v (-1) (-1) (by decide)).hom (1 : ℤ) = 2 := by
   rw [HomComplex.δ_v (-1) 0 (by decide) oddCochain (-1) (-1) (by decide) (-2) 0 rfl rfl]
-  norm_num [oddCochain, HomComplex.Cochain.single, step_value, twice]
+  rw [step_value]
+  norm_num [oddCochain, HomComplex.Cochain.single, twice]
 
 example : ((HomComplex.δ (-1) 0 oddCochain).v 0 0 (by decide)).hom (1 : ℤ) = 2 := by
   rw [HomComplex.δ_v (-1) 0 (by decide) oddCochain 0 0 (by decide) (-1) 1 rfl rfl]
-  norm_num [oddCochain, HomComplex.Cochain.single, step_value, twice]
+  rw [step_value]
+  norm_num [oddCochain, HomComplex.Cochain.single, twice]
 
 end MathlibExtTest.ReducedTwistingHom
