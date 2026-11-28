@@ -14,8 +14,8 @@ import Mathlib.Data.Nat.Factorial.BigOperators
 import Mathlib.Data.Nat.Prime.Factorial
 import Mathlib.Tactic.LinearCombination
 import MathlibExt.Combinatorics.Enumerative.DelannoyConstructions
-import all MathlibExt.NumberTheory.DelannoyHarmonicCongruence
-import all MathlibExt.NumberTheory.DelannoyPrimeCube
+import MathlibExt.NumberTheory.DelannoyHarmonicCongruence
+import MathlibExt.NumberTheory.DelannoyPrimeCube
 
 /-!
 # Delannoy triangle entries in row `n * p - 1` modulo a prime cube
@@ -35,25 +35,25 @@ The coefficient is determined by the case `n = 2`, using the Fermat quotient of 
   We use `delannoy_eq_sum_choose_mul_choose_two_pow` from `DelannoyConstructions`, which
   formalizes the same sum from Steven Edwards and William Griffiths, *Delannoy Constructions*,
   Journal of Integer Sequences 27 (2024), Article 24.1.8, Theorem 8.
-* The lagged harmonic sum vanishes by `finiteHarmonic_eq_neg_comp` and `finiteDilog_eval_neg_one`
-  from `DelannoyHarmonicCongruence`. The case `n = 2` is `delannoy_two_mul.2` (the second
-  congruence of `delannoy_two_mul`) in `DelannoyPrimeCube`, which also supplies `cube_zero`
-  and `unit_of_lt`.
+* The lagged harmonic sum vanishes by `sum_lagged_harmonic_two_pow_div_eq_zero` in
+  `DelannoyHarmonicCongruence`. The second congruence of `delannoy_two_mul` in `DelannoyPrimeCube`
+  evaluates the case `n = 2`. That module also supplies `cube_zero` and `unit_of_lt`.
 -/
 
 namespace MathlibExt.NumberTheory.DelannoyTriangleWanted
 
 open Finset
 
--- Convert the falling factorial in the generalized binomial expansion to `Nat.choose`.
+private abbrev R (p : ℕ) := ZMod (p ^ 3)
+
+-- Convert the falling factorial in the generalized binomial expansion to `Nat.choose`,
+-- retaining only the constant and linear coefficients explicitly.
 private theorem choose_cast_eq_expansion {p s k : ℕ} (hp : p.Prime) (hp5 : 5 ≤ p)
     (hs : 0 < s) (hk : k < p) :
-    ((s * p - 1).choose k : R p) =
-      (-1) ^ k * (1 - (s : R p) * (p : R p) * harmonicMod (p ^ 3) k +
-        (s : R p) ^ 2 * (p : R p) ^ 2 * (2 : R p)⁻¹ *
-          (harmonicMod (p ^ 3) k ^ 2 - harmonic2Mod (p ^ 3) k)) := by
+    ∃ c : R p, ((s * p - 1).choose k : R p) =
+      (-1) ^ k * (1 - (s : R p) * (p : R p) * harmonicMod (p ^ 3) k + (p : R p) ^ 2 * c) := by
   rcases eq_or_ne k 0 with rfl | hk0
-  · simp [harmonicMod, harmonic2Mod]
+  · exact ⟨0, by simp [harmonicMod_eq_sum]⟩
   have hsp : p ≤ s * p := Nat.le_mul_of_pos_left p hs
   have hprod : ∏ i ∈ Icc 1 k, ((s : R p) * p - (i : R p)) =
       ((s * p - 1).descFactorial k : R p) := by
@@ -70,7 +70,10 @@ private theorem choose_cast_eq_expansion {p s k : ℕ} (hp : p.Prime) (hp5 : 5 �
     ((hp.coprime_factorial_of_lt hk).symm.pow_right 3)
   rw [hprod, Nat.descFactorial_eq_factorial_mul_choose, Nat.cast_mul, mul_right_comm,
     hfac, one_mul] at h
-  exact h
+  refine ⟨(s : R p) ^ 2 * (2 : R p)⁻¹ *
+    (harmonicMod (p ^ 3) k ^ 2 - harmonic2Mod (p ^ 3) k), ?_⟩
+  rw [h]
+  ring
 
 private def delannoyWeight (p j : ℕ) : R p := 2 ^ (j + 1) * ((j + 1 : ℕ) : R p)⁻¹
 
@@ -90,17 +93,11 @@ private theorem summand_expansion {p s j : ℕ} (hp : p.Prime) (hp5 : 5 ≤ p)
     rw [mul_right_comm, h, mul_assoc, ZMod.mul_inv_of_unit _ hu, mul_one]
   let H := harmonicMod (p ^ 3) (j + 1)
   let J := harmonicMod (p ^ 3) j
-  let A := (2 : R p)⁻¹ * (H ^ 2 - harmonic2Mod (p ^ 3) (j + 1))
-  let B := (s : R p) ^ 2 * (2 : R p)⁻¹ * (J ^ 2 - harmonic2Mod (p ^ 3) j)
-  have hA : ((p - 1).choose (j + 1) : R p) =
+  obtain ⟨A, hA⟩ : ∃ A : R p, ((p - 1).choose (j + 1) : R p) =
       (-1) ^ (j + 1) * (1 - (p : R p) * H + (p : R p) ^ 2 * A) := by
-    simpa only [one_mul, Nat.cast_one, one_pow, H, A, mul_assoc] using
+    simpa only [one_mul, Nat.cast_one, H] using
       choose_cast_eq_expansion hp hp5 (s := 1) Nat.one_pos (k := j + 1) (by omega)
-  have hB : ((s * p - 1).choose j : R p) =
-      (-1) ^ j * (1 - (s : R p) * p * J + (p : R p) ^ 2 * B) := by
-    rw [choose_cast_eq_expansion hp hp5 hs (by omega : j < p)]
-    dsimp [B, J]
-    ring
+  obtain ⟨B, hB⟩ := choose_cast_eq_expansion hp hp5 hs (by omega : j < p)
   have hsign : (-1 : R p) ^ (j + 1) * (-1) ^ j = -1 := by
     rw [pow_succ (-1 : R p) j, mul_right_comm _ (-1 : R p), ← mul_pow]
     simp
@@ -118,7 +115,7 @@ private theorem summand_expansion {p s j : ℕ} (hp : p.Prime) (hp5 : 5 ≤ p)
       linear_combination -(s : R p) * delannoyWeight p j *
         (A + B + H * s * J - p * (H * B + s * J * A) + (p : R p) ^ 2 * A * B) * cube_zero p
 
--- After reduction modulo `p`, the lagged sum is the negative finite dilogarithm at `-1`.
+-- Reduce the lagged harmonic sum modulo `p` before lifting its vanishing to the cube.
 private theorem lagged_sum_zero {p : ℕ} (hp : p.Prime) (hp5 : 5 ≤ p) :
     (p : R p) ^ 2 * ∑ j ∈ range (p - 1), harmonicMod (p ^ 3) j * delannoyWeight p j = 0 := by
   let : Fact p.Prime := ⟨hp⟩
@@ -131,22 +128,18 @@ private theorem lagged_sum_zero {p : ℕ} (hp : p.Prime) (hp5 : 5 ≤ p) :
     simpa only [map_mul, map_natCast, map_one] using
       congrArg f (ZMod.mul_inv_of_unit _ (unit_of_lt hp hk hkp))
   let x := ∑ j ∈ range (p - 1), harmonicMod (p ^ 3) j * delannoyWeight p j
-  have hx : f x = (finiteHarmonic p).eval 2 := by
-    simp only [x, map_sum, finiteHarmonic, Polynomial.eval_finsetSum, Polynomial.eval_mul,
-      Polynomial.eval_C, Polynomial.eval_pow, Polynomial.eval_X, delannoyWeight, map_mul,
-      map_pow, map_ofNat]
+  have hx : f x = ∑ j ∈ range (p - 1), harmonicMod p j * (2 : ZMod p) ^ (j + 1) *
+      ((j + 1 : ℕ) : ZMod p)⁻¹ := by
+    simp only [x, map_sum, delannoyWeight, map_mul, map_pow, map_ofNat]
     refine sum_congr rfl fun j hj => ?_
     have hj' := mem_range.mp hj
     have hh : f (harmonicMod (p ^ 3) j) = harmonicMod p j := by
-      simp only [harmonicMod, map_sum]
+      rw [harmonicMod_eq_sum (p ^ 3) j, harmonicMod_eq_sum p j, map_sum]
       refine sum_congr rfl fun i hi => ?_
       have hi' := mem_Icc.mp hi
       exact hf i (by omega) (by omega)
-    rw [hh, hf (j + 1) (by omega) (by omega)]
-    ring
-  have hz : f x = 0 := by
-    rw [hx, finiteHarmonic_eq_neg_comp p hp5, Polynomial.eval_neg, Polynomial.eval_comp]
-    simp [show (1 : ZMod p) - 2 = -1 by ring, finiteDilog_eval_neg_one p hp5]
+    rw [hh, hf (j + 1) (by omega) (by omega), mul_assoc]
+  have hz := hx.trans (sum_lagged_harmonic_two_pow_div_eq_zero p hp hp5)
   -- A residue in the kernel is a multiple of `p`, so multiplication by `p²` kills it.
   have hv : (x.val : ZMod p) = 0 := by
     rwa [← map_natCast f, ZMod.natCast_zmod_val]

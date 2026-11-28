@@ -18,7 +18,13 @@ import Mathlib.Tactic.LinearCombination
 # Two Delannoy triangle entries modulo a prime cube
 
 The theorem `delannoy_two_mul` evaluates the central entry in row `2 * p` and its
-neighbor in row `2 * p - 1` using the Fermat quotient of two.
+neighbor in row `2 * p - 1` modulo `p ^ 3` for primes `p ≥ 5`, using the Fermat
+quotient of two (with the coprimality witness required by `Int.fermatQuotient`).
+
+## References
+
+* Chahinaze Djadi and Hacène Belbachir, *Congruence Properties for the Delannoy Triangle
+  Coefficients*, Journal of Integer Sequences 29 (2026), Article 26.5.2, Theorem 1.
 -/
 
 namespace MathlibExt.NumberTheory.DelannoyTriangleWanted
@@ -29,11 +35,15 @@ private abbrev R (p : ℕ) := ZMod (p ^ 3)
 
 private def frac (p k : ℕ) : R p := p * (k : R p)⁻¹
 
-private theorem cube_zero (p : ℕ) : (p : R p) ^ 3 = 0 := by
-  simp [← Nat.cast_pow, R]
+/-- **The cube of $p$ vanishes modulo $p^3$.** For any natural number $p$, its residue in
+`ZMod (p ^ 3)` has cube zero. -/
+public theorem cube_zero (p : ℕ) : (p : ZMod (p ^ 3)) ^ 3 = 0 := by
+  simp [← Nat.cast_pow]
 
-private theorem unit_of_lt {p k : ℕ} (hp : p.Prime) (hk : 0 < k) (hkp : k < p) :
-    IsUnit (k : R p) :=
+/-- **Positive integers below a prime are units modulo its cube.** If $p$ is prime and
+$0 < k < p$, the residue of $k$ is a unit in `ZMod (p ^ 3)`. -/
+public theorem unit_of_lt {p k : ℕ} (hp : p.Prime) (hk : 0 < k) (hkp : k < p) :
+    IsUnit (k : ZMod (p ^ 3)) :=
   (ZMod.isUnit_natCast_iff_not_dvd_pow hp (by decide)).2 (Nat.not_dvd_of_pos_of_lt hk hkp)
 
 private theorem frac_mul {p k : ℕ} (hp : p.Prime) (hk : 0 < k) (hkp : k < p) :

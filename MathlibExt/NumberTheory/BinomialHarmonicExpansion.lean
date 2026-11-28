@@ -18,7 +18,13 @@ import Mathlib.Tactic.LinearCombination
 # A binomial expansion modulo a prime cube
 
 The harmonic sums of orders one and two give the linear and quadratic terms of
-`choose_mul_sub_one_mod`, the expansion of the generalized binomial coefficient modulo `p ^ 3`.
+`choose_mul_sub_one_mod`, the expansion modulo `p ^ 3` for odd primes `p`, integer
+multipliers `s`, and coefficient indices `1 ≤ k ≤ p - 1`.
+
+## References
+
+* Chahinaze Djadi and Hacène Belbachir, *Congruence Properties for the Delannoy Triangle
+  Coefficients*, Journal of Integer Sequences 29 (2026), Article 26.5.2, Lemma 5.
 -/
 
 namespace MathlibExt.NumberTheory.DelannoyTriangleWanted
@@ -29,6 +35,12 @@ $i^{-1}$ is the inverse of $i$ modulo $m$ when $i$ is coprime to $m$; for other 
 conventional value that Mathlib assigns to the inverse of a non-unit. -/
 @[expose] public def harmonicMod (m k : ℕ) : ZMod m :=
   ∑ i ∈ Finset.Icc 1 k, (i : ZMod m)⁻¹
+
+/-- **Finite sum for a harmonic number modulo $m$.** For natural numbers $m$ and $k$,
+$H_k$ modulo $m$ is the sum of the inverses of $1, \ldots, k$ in $\mathbb{Z}/m\mathbb{Z}$,
+using the inverse convention of `ZMod` for nonunits. -/
+public theorem harmonicMod_eq_sum (m k : ℕ) :
+    harmonicMod m k = ∑ i ∈ Finset.Icc 1 k, (i : ZMod m)⁻¹ := rfl
 
 /-- **Harmonic numbers of order two modulo $m$.** For natural numbers $m$ and $k$, the
 harmonic number $H_{k,2}$ of order two modulo $m$ is the residue $\sum_{i=1}^{k} (i^2)^{-1}$
