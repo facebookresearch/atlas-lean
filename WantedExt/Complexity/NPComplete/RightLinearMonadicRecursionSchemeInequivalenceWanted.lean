@@ -22,9 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.StrongInequivalenceForMonadicRecursionSchemesWanted
+public import CSLibExt.Complexity.NPComplete.RightLinearMonadicRecursionSchemeInequivalenceDefs
 
 @[expose] public section
 
@@ -57,40 +55,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance, as in `StrongInequivalenceForMonadicRecursionSchemesWanted`: `|F|`, `|P|`, `|G|`,
-the index `k₀` of `f₀`, and the two schemes. -/
-abbrev RightLinearMonadicRecursionSchemeInequivalenceInstance :=
-  StrongInequivalenceForMonadicRecursionSchemesInstance
-
-/-- A word is right linear: a defined symbol occurs only as its rightmost character (the last
-list entry). -/
-def RightLinear (w : List (Bool × ℕ)) : Prop :=
-  ∀ j (h : j < w.length), w[j].1 = true → j + 1 = w.length
-
-/-- Well-formedness of an instance: the instance of STRONG INEQUIVALENCE FOR MONADIC RECURSION
-SCHEMES is well-formed, the first scheme defines `f₀ x = if p x then x else x` for some
-predicate `p`, and every branch of the second scheme is right linear. -/
-def WellFormed (i : RightLinearMonadicRecursionSchemeInequivalenceInstance) : Prop :=
-  StrongInequivalenceForMonadicRecursionSchemes.WellFormed i ∧
-    (∃ j, i.2.2.2.2.1[i.2.2.2.1]? = some (j, [], [])) ∧
-    ∀ d ∈ i.2.2.2.2.2, RightLinear d.2.1 ∧ RightLinear d.2.2
-
-/-- The two schemes are strongly inequivalent, exactly as in
-`StrongInequivalenceForMonadicRecursionSchemesWanted`. -/
-def RightLinearMonadicRecursionSchemeInequivalenceFeasible
-    (i : RightLinearMonadicRecursionSchemeInequivalenceInstance) : Prop :=
-  StrongInequivalenceForMonadicRecursionSchemesFeasible i
-
-open Classical in
-/-- STRONG INEQUIVALENCE FOR MONADIC RECURSION SCHEMES (identity versus right linear) as a decision
-problem over bitstrings. -/
-noncomputable def rightLinearMonadicRecursionSchemeInequivalenceDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := RightLinearMonadicRecursionSchemeInequivalenceInstance) x with
-  | some i => decide (WellFormed i ∧ RightLinearMonadicRecursionSchemeInequivalenceFeasible i)
-  | none => false
 
 /-- **STRONG INEQUIVALENCE FOR MONADIC RECURSION SCHEMES (identity versus right linear) is
 NP-complete.** Source: Garey and Johnson (1979), [PO17]; Constable, Hunt and Sahni (1980). -/

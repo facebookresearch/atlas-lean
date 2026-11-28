@@ -22,9 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Databases.FunctionalDependencies
+public import CSLibExt.Complexity.NPComplete.AdditionalKeyDefs
 
 @[expose] public section
 
@@ -64,45 +62,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number `n` of attribute names (`A = Fin n`), the functional
-dependencies `F` as pairs of lists of names, the subset `R`, and the known keys `K`. -/
-abbrev AdditionalKeyInstance := ℕ × List (List ℕ × List ℕ) × List ℕ × List (List ℕ)
-
-/-- The set of attribute names of `Fin n` listed in `l`. -/
-def attrs (n : ℕ) (l : List ℕ) : Finset (Fin n) :=
-  Finset.univ.filter fun a => (a : ℕ) ∈ l
-
-/-- The functional dependencies of the instance, as CSLibExt dependencies on `Fin n`. -/
-def deps (n : ℕ) (F : List (List ℕ × List ℕ)) : Finset (Cslib.Databases.FD (Fin n)) :=
-  (F.map fun p => (⟨attrs n p.1, attrs n p.2⟩ : Cslib.Databases.FD (Fin n))).toFinset
-
-/-- `R'` is a key for the relational scheme `⟨R, F⟩`: a subset of `R` with `(R', R) ∈ F*`, no
-proper subset of which has this property. -/
-def IsKey {n : ℕ} (F : Finset (Cslib.Databases.FD (Fin n))) (R R' : Finset (Fin n)) : Prop :=
-  R' ⊆ R ∧ Cslib.Databases.Derives F ⟨R', R⟩ ∧ ∀ R'' ⊂ R', ¬ Cslib.Databases.Derives F ⟨R'', R⟩
-
-/-- Well-formedness of an instance: every dependency is a pair of subsets of `A`, `R ⊆ A`,
-and every member of `K` is a subset of `A` that is a key for `⟨R, F⟩`. -/
-def WellFormed (i : AdditionalKeyInstance) : Prop :=
-  (∀ p ∈ i.2.1, (∀ a ∈ p.1, a < i.1) ∧ ∀ a ∈ p.2, a < i.1) ∧ (∀ a ∈ i.2.2.1, a < i.1) ∧
-    ∀ k ∈ i.2.2.2, (∀ a ∈ k, a < i.1) ∧ IsKey (deps i.1 i.2.1) (attrs i.1 i.2.2.1) (attrs i.1 k)
-
-/-- Some `R' ⊆ R` outside `K` has `(R', R) ∈ F*`, and no proper subset `R'' ⊂ R'` has
-`(R'', R) ∈ F*`. -/
-def AdditionalKeyFeasible (i : AdditionalKeyInstance) : Prop :=
-  ∃ R' : Finset (Fin i.1), R' ⊆ attrs i.1 i.2.2.1 ∧ R' ∉ i.2.2.2.map (attrs i.1) ∧
-    Cslib.Databases.Derives (deps i.1 i.2.1) ⟨R', attrs i.1 i.2.2.1⟩ ∧
-    ∀ R'' ⊂ R', ¬ Cslib.Databases.Derives (deps i.1 i.2.1) ⟨R'', attrs i.1 i.2.2.1⟩
-
-open Classical in
-/-- ADDITIONAL KEY as a decision problem over bitstrings. -/
-noncomputable def additionalKeyDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := AdditionalKeyInstance) x with
-  | some i => decide (WellFormed i ∧ AdditionalKeyFeasible i)
-  | none => false
 
 /-- **ADDITIONAL KEY is NP-complete.** Source: Garey and Johnson (1979), [SR27]; Beeri and
 Bernstein (1979). -/

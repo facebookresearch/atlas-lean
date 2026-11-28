@@ -24,9 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Databases.ConjunctiveQueries
+public import CSLibExt.Complexity.NPComplete.UnionOfConjunctiveQueriesContainmentDefs
 
 @[expose] public section
 
@@ -67,52 +65,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the conjunctive queries of `U₁` and of `U₂`, each as its head tuple and its
-body atoms `(relation, argument tuple)`. -/
-abbrev UnionOfConjunctiveQueriesContainmentInstance :=
-  List (List ℕ × List (ℕ × List ℕ)) × List (List ℕ × List (ℕ × List ℕ))
-
-/-- The conjunctive query with head `q.1` and body `q.2`. -/
-def toCQ (q : List ℕ × List (ℕ × List ℕ)) : CQ := ⟨q.1, q.2⟩
-
-/-- The conjunctive queries of `U₁`. -/
-def union₁ (i : UnionOfConjunctiveQueriesContainmentInstance) : List CQ := i.1.map toCQ
-
-/-- The conjunctive queries of `U₂`. -/
-def union₂ (i : UnionOfConjunctiveQueriesContainmentInstance) : List CQ := i.2.map toCQ
-
-/-- Containment of unions of conjunctive queries, at the level of assignments: on every
-database `D`, every satisfying assignment `σ` of a conjunctive query `Q` of `U₁` is matched by a
-satisfying assignment `τ` of some conjunctive query `Q'` of `U₂` producing the same head tuple.
-This reads `U₁(D) ⊆ U₂(D)` for the answer-set semantics. -/
-def UnionContained (U₁ U₂ : List CQ) : Prop :=
-  ∀ (D : DB) (σ : Assign), ∀ Q ∈ U₁, Satisfies D Q σ →
-    ∃ Q' ∈ U₂, ∃ τ : Assign, Satisfies D Q' τ ∧ Q'.head.map τ = Q.head.map σ
-
-/-- Well-formedness of an instance: both unions have at least one conjunctive query, all heads
-have the same arity, every relation name occurs with one arity in the atoms of all the queries,
-and every head variable of each query occurs in an atom of that query. -/
-def WellFormed (i : UnionOfConjunctiveQueriesContainmentInstance) : Prop :=
-  union₁ i ≠ [] ∧ union₂ i ≠ [] ∧
-    (∀ Q ∈ union₁ i ++ union₂ i, ∀ Q' ∈ union₁ i ++ union₂ i, Q.head.length = Q'.head.length) ∧
-    (∀ Q ∈ union₁ i ++ union₂ i, ∀ Q' ∈ union₁ i ++ union₂ i, ∀ a ∈ Q.body, ∀ b ∈ Q'.body,
-      a.1 = b.1 → a.2.length = b.2.length) ∧
-    ∀ Q ∈ union₁ i ++ union₂ i, ∀ x ∈ Q.head, ∃ a ∈ Q.body, x ∈ a.2
-
-/-- `U₁` is contained in `U₂`. -/
-def UnionOfConjunctiveQueriesContainmentFeasible
-    (i : UnionOfConjunctiveQueriesContainmentInstance) : Prop :=
-  UnionContained (union₁ i) (union₂ i)
-
-open Classical in
-/-- UNION OF CONJUNCTIVE QUERIES CONTAINMENT as a decision problem over bitstrings. -/
-noncomputable def unionOfConjunctiveQueriesContainmentDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := UnionOfConjunctiveQueriesContainmentInstance) x with
-  | some i => decide (WellFormed i ∧ UnionOfConjunctiveQueriesContainmentFeasible i)
-  | none => false
 
 /-- **UNION OF CONJUNCTIVE QUERIES CONTAINMENT is NP-complete.** Source: Sagiv and Yannakakis
 (1980); Abo Khamis, Kolaitis, Ngo and Suciu (2020), Section 1. -/

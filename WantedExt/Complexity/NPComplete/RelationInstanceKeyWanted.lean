@@ -23,9 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Databases.FunctionalDependencies
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.RelationInstanceKeyDefs
 
 @[expose] public section
 
@@ -59,37 +57,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number `m` of attributes, the rows of the relation (each a list of values),
-and the bound `K`. -/
-abbrev RelationInstanceKeyInstance := ℕ × List (List ℕ) × ℕ
-
-/-- Well-formedness of an instance: every row has exactly `m` values. -/
-def WellFormed (i : RelationInstanceKeyInstance) : Prop :=
-  ∀ t ∈ i.2.1, t.length = i.1
-
-/-- The tuple of a row: attribute `a` has value `t[a]`. -/
-def tuple (i : RelationInstanceKeyInstance) (t : List ℕ) : Fin i.1 → ℕ :=
-  fun a => t.getD a 0
-
-/-- The relation `r`: the set of tuples of the rows. -/
-def relation (i : RelationInstanceKeyInstance) : Set (Fin i.1 → ℕ) :=
-  {u | ∃ t ∈ i.2.1, u = tuple i t}
-
-/-- Some set `X` of at most `K` attributes is a key of `r`: the dependency `X → U` holds in `r`,
-so no two distinct tuples of `r` agree on `X`. -/
-def RelationInstanceKeyFeasible (i : RelationInstanceKeyInstance) : Prop :=
-  ∃ X : Finset (Fin i.1), X.card ≤ i.2.2 ∧
-    (Cslib.Databases.FD.mk X Finset.univ).HoldsIn (relation i)
-
-open Classical in
-/-- KEY OF A RELATION INSTANCE as a decision problem over bitstrings. -/
-noncomputable def relationInstanceKeyDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := RelationInstanceKeyInstance) x with
-  | some i => decide (WellFormed i ∧ RelationInstanceKeyFeasible i)
-  | none => false
 
 /-- **KEY OF A RELATION INSTANCE is NP-complete.** Source: Beeri, Dowd, Fagin and Statman
 (1984). -/

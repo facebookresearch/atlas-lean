@@ -23,8 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.StrongInequivalenceForMonadicRecursionSchemesDefs
 
 @[expose] public section
 
@@ -63,77 +62,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- A recursion scheme: for each defined symbol `gₖ`, its defining statement `(j, α, β)`,
-read `gₖ x = if pⱼ x then α x else β x`; a symbol of `F ∪ G` is `(false, k)` for `aₖ ∈ F` and
-`(true, k)` for `gₖ ∈ G`. -/
-abbrev RecursionScheme := List (ℕ × List (Bool × ℕ) × List (Bool × ℕ))
-
-/-- An instance: `|F|`, `|P|`, `|G|`, the index `k₀` of `f₀ = g_{k₀}`, and the two schemes. -/
-abbrev StrongInequivalenceForMonadicRecursionSchemesInstance :=
-  ℕ × ℕ × ℕ × ℕ × RecursionScheme × RecursionScheme
-
-/-- A word over `F ∪ G` (with `|F| = nF`, `|G| = nG`) containing at most one occurrence of a
-symbol from `G`. -/
-def IsLinearWord (nF nG : ℕ) (w : List (Bool × ℕ)) : Prop :=
-  (∀ s ∈ w, (s.1 = false → s.2 < nF) ∧ (s.1 = true → s.2 < nG)) ∧
-    w.countP (fun s => s.1) ≤ 1
-
-/-- A linear monadic recursion scheme over `F`, `P` and `G`: one defining statement
-`gₖ x = if pⱼ x then α x else β x` for each `gₖ ∈ G`, with `pⱼ ∈ P` and `α`, `β` linear
-words. -/
-def IsScheme (nF nP nG : ℕ) (S : RecursionScheme) : Prop :=
-  S.length = nG ∧ ∀ d ∈ S, d.1 < nP ∧ IsLinearWord nF nG d.2.1 ∧ IsLinearWord nF nG d.2.2
-
-/-- Well-formedness of an instance: `f₀ ∈ G` (`k₀ < |G|`), and both schemes are linear
-monadic recursion schemes over `F`, `P` and `G`. -/
-def WellFormed (i : StrongInequivalenceForMonadicRecursionSchemesInstance) : Prop :=
-  i.2.2.2.1 < i.2.2.1 ∧ IsScheme i.1 i.2.1 i.2.2.1 i.2.2.2.2.1 ∧
-    IsScheme i.1 i.2.1 i.2.2.1 i.2.2.2.2.2
-
-/-- `Computes S F P w x y`: under the interpretation `F` of the symbols of `F` and `P` of the
-predicates, the word `w` applied to `x` is defined by the scheme `S` with value `y`. The
-empty word is the identity; `aₖ w` applies `F k` to the value of `w`; `gₖ w` applies the
-defining statement `gₖ x = if pⱼ x then α x else β x` of `S` to the value of `w`. -/
-inductive Computes {D : Type} (S : RecursionScheme) (F : ℕ → D → D) (P : ℕ → D → Bool) :
-    List (Bool × ℕ) → D → D → Prop where
-  /-- The empty word is the identity. -/
-  | nil (x : D) : Computes S F P [] x x
-  /-- A symbol `aₖ` of `F` is applied after the rest of the word. -/
-  | base (k : ℕ) (w : List (Bool × ℕ)) (x y : D) :
-      Computes S F P w x y → Computes S F P ((false, k) :: w) x (F k y)
-  /-- A defined symbol `gₖ` is applied after the rest of the word, by its defining
-  statement in `S`. -/
-  | defined (k j : ℕ) (α β w : List (Bool × ℕ)) (x y z : D) :
-      S[k]? = some (j, α, β) → Computes S F P w x y →
-        Computes S F P (if P j y then α else β) y z → Computes S F P ((true, k) :: w) x z
-
-/-- The value `f₀(x₀) = g_{k₀}(x₀)` defined by the scheme `S` is `v`. -/
-def DefinesValue {D : Type} (S : RecursionScheme) (F : ℕ → D → D) (P : ℕ → D → Bool)
-    (k₀ : ℕ) (x₀ v : D) : Prop :=
-  Computes S F P [(true, k₀)] x₀ v
-
-/-- Under some domain, interpretation and initial value, the values of `f₀(x₀)` defined by
-`S₁` and `S₂` differ, or exactly one of them is defined. -/
-def StrongInequivalenceForMonadicRecursionSchemesFeasible
-    (i : StrongInequivalenceForMonadicRecursionSchemesInstance) : Prop :=
-  ∃ (D : Type) (F : ℕ → D → D) (P : ℕ → D → Bool) (x₀ : D),
-    (∃ v w, DefinesValue i.2.2.2.2.1 F P i.2.2.2.1 x₀ v ∧
-        DefinesValue i.2.2.2.2.2 F P i.2.2.2.1 x₀ w ∧ v ≠ w) ∨
-      ((∃ v, DefinesValue i.2.2.2.2.1 F P i.2.2.2.1 x₀ v) ∧
-        ¬ ∃ w, DefinesValue i.2.2.2.2.2 F P i.2.2.2.1 x₀ w) ∨
-      ((¬ ∃ v, DefinesValue i.2.2.2.2.1 F P i.2.2.2.1 x₀ v) ∧
-        ∃ w, DefinesValue i.2.2.2.2.2 F P i.2.2.2.1 x₀ w)
-
-open Classical in
-/-- STRONG INEQUIVALENCE FOR MONADIC RECURSION SCHEMES as a decision problem over
-bitstrings. -/
-noncomputable def strongInequivalenceForMonadicRecursionSchemesDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := StrongInequivalenceForMonadicRecursionSchemesInstance) x with
-  | some i => decide (WellFormed i ∧ StrongInequivalenceForMonadicRecursionSchemesFeasible i)
-  | none => false
 
 /-- **STRONG INEQUIVALENCE FOR MONADIC RECURSION SCHEMES is NP-complete.** Source: Garey and
 Johnson (1979), [PO17]; Constable, Hunt and Sahni (1980). -/

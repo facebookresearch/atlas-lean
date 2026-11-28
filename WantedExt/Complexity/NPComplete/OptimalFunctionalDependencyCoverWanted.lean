@@ -19,11 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Databases.FunctionalDependencies
-public import CSLibExt.Databases.NormalForms
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MinimumCardinalityKeyWanted
+public import CSLibExt.Complexity.NPComplete.OptimalFunctionalDependencyCoverDefs
 
 @[expose] public section
 
@@ -59,34 +55,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number of attributes `a` (attributes `0, ..., a - 1`), the functional
-dependencies (pairs of attribute lists `(X, Y)` for `X → Y`), and the bound `K`. -/
-abbrev OptimalFunctionalDependencyCoverInstance := ℕ × List (List ℕ × List ℕ) × ℕ
-
-/-- Well-formedness of an instance: every dependency mentions only attributes of `U`. -/
-def WellFormed (i : OptimalFunctionalDependencyCoverInstance) : Prop :=
-  ∀ f ∈ i.2.1, (∀ x ∈ f.1, x < i.1) ∧ ∀ x ∈ f.2, x < i.1
-
-/-- The size of a set of functional dependencies: its number of attribute symbols. -/
-def size {A : Type*} (G : Finset (Cslib.Databases.FD A)) : ℕ :=
-  ∑ g ∈ G, (g.lhs.card + g.rhs.card)
-
-/-- Some set `G` of functional dependencies over `U`, equivalent to `F` and of size at most
-`K`. -/
-def OptimalFunctionalDependencyCoverFeasible
-    (i : OptimalFunctionalDependencyCoverInstance) : Prop :=
-  ∃ G : Finset (Cslib.Databases.FD (Fin i.1)),
-    Cslib.Databases.Equivalent (MinimumCardinalityKey.deps i) G ∧ size G ≤ i.2.2
-
-open Classical in
-/-- OPTIMAL COVER OF FUNCTIONAL DEPENDENCIES as a decision problem over bitstrings. -/
-noncomputable def optimalFunctionalDependencyCoverDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := OptimalFunctionalDependencyCoverInstance) x with
-  | some i => decide (WellFormed i ∧ OptimalFunctionalDependencyCoverFeasible i)
-  | none => false
 
 /-- **OPTIMAL COVER OF FUNCTIONAL DEPENDENCIES is NP-complete.** Source: Maier (1980). -/
 public theorem_wanted optimalFunctionalDependencyCover_npComplete :

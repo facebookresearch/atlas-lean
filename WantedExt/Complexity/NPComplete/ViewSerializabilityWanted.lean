@@ -22,9 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MultiversionSerializabilityWanted
+public import CSLibExt.Complexity.NPComplete.ViewSerializabilityDefs
 
 @[expose] public section
 
@@ -80,29 +78,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- The values that the reads of transaction `t` obtain in `S` under the standard
-interpretation, in schedule order. -/
-def readValues (S : Schedule) (t : ℕ) : List Value :=
-  ((List.range S.length).filter fun p => (action S p).1 == t && !(action S p).2.2).map
-    fun p => (values S (standard S)).getD p (.init 0)
-
-/-- Some serial schedule of the `n` transactions agrees with `S` on the final value of every
-variable and on the value of every read. -/
-def ViewSerializabilityFeasible (i : MultiversionSerializabilityInstance) : Prop :=
-  ∃ π : List ℕ, π.Perm (List.range i.1) ∧
-    (∀ x : ℕ, finalValue i.2 (standard i.2) x =
-      finalValue (serial i.2 π) (standard (serial i.2 π)) x) ∧
-    ∀ t : ℕ, readValues i.2 t = readValues (serial i.2 π) t
-
-open Classical in
-/-- VIEW SERIALIZABILITY as a decision problem over bitstrings. -/
-noncomputable def viewSerializabilityDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MultiversionSerializabilityInstance) x with
-  | some i => decide (WellFormed i ∧ ViewSerializabilityFeasible i)
-  | none => false
 
 /-- **VIEW SERIALIZABILITY is NP-complete.** Source: Johnson (1983), Section 3; Yannakakis
 (1984); Papadimitriou (1979). -/

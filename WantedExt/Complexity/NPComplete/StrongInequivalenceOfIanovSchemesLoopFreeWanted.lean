@@ -24,10 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Logic.Relation
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.StrongInequivalenceOfIanovSchemesWanted
+public import CSLibExt.Complexity.NPComplete.StrongInequivalenceOfIanovSchemesLoopFreeDefs
 
 @[expose] public section
 
@@ -70,37 +67,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- The control-flow relation of a scheme on `0`-based instruction indices: an assignment
-`x ← f_r(x)` at index `c` passes control to `c + 1`, and a test
-`if p_r(x) then goto Iⱼ else goto Iₖ` at index `c` passes control to `j - 1` or `k - 1`. -/
-def Next (S : StrongInequivalenceOfIanovSchemes.IanovScheme) (c d : ℕ) : Prop :=
-  (∃ r, S[c]? = some (0, r, 0, 0) ∧ d = c + 1) ∨
-    ∃ r j k, S[c]? = some (1, r, j, k) ∧ (d = j - 1 ∨ d = k - 1)
-
-/-- A scheme contains no loop: no instruction can reach itself along `Next`. -/
-def LoopFree (S : StrongInequivalenceOfIanovSchemes.IanovScheme) : Prop :=
-  ∀ c, ¬ Relation.TransGen (Next S) c c
-
-/-- Well-formedness of an instance: it is a well-formed STRONG INEQUIVALENCE OF IANOV SCHEMES
-instance (both lists are schemes over `F` and `P`), neither scheme contains a loop, and the
-second scheme is the trivial scheme `halt`. -/
-def WellFormed
-    (i : StrongInequivalenceOfIanovSchemes.StrongInequivalenceOfIanovSchemesInstance) : Prop :=
-  StrongInequivalenceOfIanovSchemes.WellFormed i ∧ LoopFree i.2.2.1 ∧ LoopFree i.2.2.2 ∧
-    i.2.2.2 = [(2, 0, 0, 0)]
-
-open Classical in
-/-- STRONG INEQUIVALENCE OF IANOV SCHEMES for a loop-free scheme and the trivial scheme as a
-decision problem over bitstrings. -/
-noncomputable def strongInequivalenceOfIanovSchemesLoopFreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := StrongInequivalenceOfIanovSchemes.StrongInequivalenceOfIanovSchemesInstance) x with
-  | some i =>
-      decide (WellFormed i ∧
-        StrongInequivalenceOfIanovSchemes.StrongInequivalenceOfIanovSchemesFeasible i)
-  | none => false
 
 /-- **STRONG INEQUIVALENCE OF IANOV SCHEMES is NP-complete for a loop-free scheme and the
 trivial scheme.** Source: Garey and Johnson (1979), [PO16]; Constable, Hunt and Sahni
