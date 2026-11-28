@@ -25,11 +25,13 @@ namespace MathlibExt.Probability.Causality.MissingOutcomes
 
 variable {Ω 𝒳 : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
 
-/-- **Missing at random** (Rubin 1976), for a discrete covariate: the response event `R` is
-conditionally independent of the outcome `Y` given `X`, stated through joint probabilities,
-`P(R, Y ∈ B, X = x) P(X = x) = P(R, X = x) P(Y ∈ B, X = x)`. It holds vacuously when every
-level set `{X = x}` is null (an atomless `X`); interpret it as conditional independence only
-for a covariate with countably many values. -/
+/-- **Missing at random** (Rubin 1976), for a discrete covariate, stated through joint
+probabilities: `P(R, Y ∈ B, X = x) P(X = x) = P(R, X = x) P(Y ∈ B, X = x)` for every measurable
+`B` and every `x`. Under a finite measure, for a covariate with countably many values and
+measurable singletons, this is conditional independence of the response event `R` and the
+outcome `Y` given `X`; countability is a sufficient setting, not a necessary one. On a part of
+the space where the law of `X` is diffuse every level set `{X = x}` is null, so the identity
+holds there vacuously and need not detect conditional dependence. -/
 def MissingAtRandom (μ : Measure Ω) (R : Set Ω) (Y : Ω → ℝ) (X : Ω → 𝒳) : Prop :=
   CondIndepDiscrete μ R Y X
 

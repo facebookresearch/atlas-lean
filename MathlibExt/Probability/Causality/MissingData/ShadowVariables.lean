@@ -54,7 +54,7 @@ determined by the observed-data law.
   integral equation, and under completeness they are its only solution.
 * `eq_of_map_shadowObs_eq` (**identification**): two shadow laws with the same observed-data law,
   one of them complete, are equal. `integral_eq_of_map_shadowObs_eq`: in particular every
-  outcome mean is identified.
+  outcome integral is identified, a mean when the two measures are probability measures.
 * `exists_ne_map_shadowObs_eq_of_not_shadowComplete` (**completeness is necessary**): at a shadow
   law with `0 < P(R = true | Y = y) < 1` for every `y` that is not complete, a different shadow
   law has the same observed-data law.
@@ -354,9 +354,10 @@ theorem eq_of_map_shadowObs_eq [Fintype 𝒴] [Finite 𝒵] {P Q : Measure (Bool
       hodds, h1]
   · exact h1 y z
 
-/-- **Every outcome mean is identified**: under the hypotheses of `eq_of_map_shadowObs_eq`, the
-mean of `f(Y)` is the same under both laws. Contrast `exists_map_obsRY_eq_integral_eq`, where
-without a shadow variable the identified set of the mean is all of `ℝ`. -/
+/-- **Every outcome integral is identified**: under the hypotheses of `eq_of_map_shadowObs_eq`,
+the integral of `f(Y)` is the same under both finite measures; it is the mean of `f(Y)` when they
+are probability measures. Contrast `exists_map_obsRY_eq_integral_eq`, where without a shadow
+variable the identified set of the mean is all of `ℝ`. -/
 theorem integral_eq_of_map_shadowObs_eq [Fintype 𝒴] [Finite 𝒵]
     {P Q : Measure (Bool × 𝒴 × 𝒵)}
     [IsFiniteMeasure P] [IsFiniteMeasure Q] (hP : ShadowVariable P) (hQ : ShadowVariable Q)

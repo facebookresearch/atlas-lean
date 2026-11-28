@@ -478,9 +478,11 @@ lemma weakestLink_survival_eq_pow {n : ℕ} {link : ℕ → ℝ → ℝ} {S syst
     rw [Finset.prod_range_succ, ih fun i hi => hlink i (by omega), hlink m (by omega), pow_succ]
 
 /-- Mutually independent link strengths `T i` satisfy the joint-survival hypothesis of
-`weakestLink_survival_eq_pow`: the probability that each of the first `n` links survives the
-load `x` is the product of the individual survival probabilities. This uses independence only,
-and no form of the hazard. -/
+`weakestLink_survival_eq_pow`: the mass of the event that each of the first `n` links survives
+the load `x` is the product of the individual masses. No measurability of the `T i` is assumed,
+so these are outer masses of possibly non-measurable preimages, read as real numbers; they are
+the joint and individual survival probabilities when those preimages are measurable. This uses
+independence only, and no form of the hazard. -/
 lemma measureReal_forall_lt_eq_prod {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
     {T : ℕ → Ω → ℝ} (hT : iIndepFun T P) (n : ℕ) (x : ℝ) :
     P.real {ω | ∀ i < n, x < T i ω} = ∏ i ∈ Finset.range n, P.real {ω | x < T i ω} := by
@@ -534,7 +536,8 @@ is not part of this file and is not claimed. -/
 noncomputable def voidProbability (kappa volume : ℝ) : ℝ :=
   Real.exp (-kappa * volume)
 
-/-- A region of zero volume is void with probability `1`. -/
+/-- At zero volume the void-probability formula is `1` for every real `kappa`; reading it as the
+probability that a region of zero volume is void needs an intensity `0 ≤ kappa`. -/
 lemma voidProbability_zero (kappa : ℝ) : voidProbability kappa 0 = 1 := by
   simp [voidProbability]
 

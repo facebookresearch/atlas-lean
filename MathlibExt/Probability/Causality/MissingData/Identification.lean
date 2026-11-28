@@ -99,15 +99,16 @@ noncomputable def completeCaseMean (μ : Measure Ω) (R : Set Ω) (Y : Ω → �
   (∫ ω, R.indicator Y ω ∂μ) / μ.real R
 
 /-- The **inverse-response-weighted integral** `∫ 1_R Y / π(X) dμ` of an outcome `Y` observed on
-the response event `R`, where `π(x) = P(R | X = x)` is the response probability given the
-always-observed discrete covariate `X` (Horvitz & Thompson 1952). For a probability measure
+the response event `R`, where `π(x) = μ(R ∩ {X = x}) / μ(X = x)` is the exact-fibre response
+ratio of the always-observed covariate `X` (Horvitz & Thompson 1952). For a probability measure
 `μ` it is the inverse-response-weighted mean `E[1_R Y / π(X)]`. For other measures it is a
 weighted integral, not a mean: `π` does not change when `μ` is multiplied by a positive finite
-constant, so doubling `μ` doubles the value. Here `π` is the exact-fibre
-ratio `propensity μ R X` of real-valued measures, `0` on a set of infinite measure, so it is the
-response probability only on measurable fibres of positive finite mass; the integral is a
-Bochner integral, `0` for a non-integrable integrand. An observed-data estimand
-(`ipwMean_congr`). -/
+constant, so doubling `μ` doubles the value. Here `π` is the ratio `propensity μ R X` of
+real-valued measures, `0` on a set of infinite measure (an outer measure for a non-measurable
+set). It is the response probability `P(R | X = x)` only when the fibre `{X = x}` is measurable
+with positive finite mass and `R ∩ {X = x}` is measurable (in particular when `R` is
+measurable). The integral is a Bochner integral, `0` for a non-integrable integrand. An
+observed-data estimand (`ipwMean_congr`). -/
 noncomputable def ipwMean {β : Type*} (μ : Measure Ω) (R : Set Ω) (X : Ω → β) (Y : Ω → ℝ) : ℝ :=
   ∫ ω, R.indicator (fun ω => Y ω / propensity μ R X (X ω)) ω ∂μ
 
@@ -116,8 +117,8 @@ theorem completeCaseMean_congr {R : Set Ω} {Y Y' : Ω → ℝ} (h : Set.EqOn Y 
     completeCaseMean μ R Y = completeCaseMean μ R Y' := by
   rw [completeCaseMean, completeCaseMean, Set.indicator_congr h]
 
-/-- The inverse-response-weighted mean depends on the outcome only through its values on the
-respondents. -/
+/-- The inverse-response-weighted integral depends on the outcome only through its values on
+the respondents. -/
 theorem ipwMean_congr {β : Type*} {R : Set Ω} {X : Ω → β} {Y Y' : Ω → ℝ}
     (h : Set.EqOn Y Y' R) : ipwMean μ R X Y = ipwMean μ R X Y' := by
   rw [ipwMean, ipwMean, Set.indicator_congr fun ω hω => by rw [h hω]]

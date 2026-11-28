@@ -157,8 +157,9 @@ structure AIPWAssumptions (μ : Measure Ω) (T : Set Ω) (X : Ω → 𝒳) (Y Y�
 
 /-- **Correct propensity: the augmentation has conditional mean zero.** If the candidate
 propensity is the true one, `e(X) = μ[1_T | σ(X)]` a.s., then for every bounded measurable
-`h`, `E[(1_T - e(X)) h(X) | X] = 0`. With `h = m₁ / e + m₀ / (1 - e)` this is the term that
-`aipwScore_eq_ipw_sub` subtracts from the IPW contrast. -/
+`h`, `E[(1_T - e(X)) h(X) | X] = 0`. Where `e(x) ∉ {0, 1}`, with `h = m₁ / e + m₀ / (1 - e)` this
+is the term that `aipwScore_eq_ipw_sub` subtracts from the IPW contrast; that theorem assumes
+`e (X ω) ≠ 0` and `e (X ω) ≠ 1`. -/
 theorem condExp_propensityResidual_mul [IsFiniteMeasure μ] {T : Set Ω} (hT : MeasurableSet T)
     {X : Ω → 𝒳} (hX : Measurable X) {e h : 𝒳 → ℝ} (he : Measurable e) (hh : Measurable h)
     {C : ℝ} (hC : ∀ x, ‖h x‖ ≤ C)

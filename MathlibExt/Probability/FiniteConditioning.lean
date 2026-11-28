@@ -54,8 +54,11 @@ noncomputable def cellMass {α C : Type*} [Fintype α] [DecidableEq C] (p : α �
     (c : C) : ℝ :=
   ∑ x ∈ univ.filter (fun x => G x = c), p x
 
-/-- The cell mean `E[Y | G = c] = (∑ x ∈ {G = c}, p x * Y x) / P(G = c)`. On a cell of mass
-`0` Lean's `x / 0 = 0` gives the value `0`; no statement in this file depends on that value. -/
+/-- The cell mean: the weighted sum `∑ x ∈ {G = c}, p x * Y x` divided by `cellMass p G c`. On a
+cell of mass `0` Lean's `x / 0 = 0` gives the value `0`; no statement in this file depends on
+that value. For nonnegative weights `p` and a cell of positive mass it is the conditional
+expectation `E[Y | G = c]` under the law proportional to `p`. With signed weights it is only a
+weighted quotient: the weights `(2, -1)` with the values `(0, 1)` on one cell give `-1`. -/
 noncomputable def cellMean {α C : Type*} [Fintype α] [DecidableEq C] (p : α → ℝ) (G : α → C)
     (Y : α → ℝ) (c : C) : ℝ :=
   (∑ x ∈ univ.filter (fun x => G x = c), p x * Y x) / cellMass p G c
