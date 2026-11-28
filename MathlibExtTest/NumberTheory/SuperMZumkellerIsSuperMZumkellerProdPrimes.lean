@@ -25,4 +25,14 @@ example : IsSuperMZumkeller 210 := by
   rw [← h210]
   exact isSuperMZumkeller_prod_primes _ (by decide) (by decide)
 
+-- The smallest positive odd exponent, k = 1.
+example : IsSuperMZumkeller 30 :=
+  isSuperMZumkeller_two_pow_mul_two_primes 1 ⟨0, rfl⟩ 3 5
+    (by decide) (by decide) (by decide) (by decide) (by decide)
+
+-- An odd exponent greater than one; the two odd primes need not be in increasing order.
+example : IsSuperMZumkeller 280 :=
+  isSuperMZumkeller_two_pow_mul_two_primes 3 ⟨1, rfl⟩ 7 5
+    (by decide) (by decide) (by decide) (by decide) (by decide)
+
 end MathlibExtTest.NumberTheory.SuperMZumkellerIsSuperMZumkellerProdPrimes

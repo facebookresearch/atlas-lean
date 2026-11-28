@@ -15,8 +15,12 @@ public import Mathlib.Order.Lattice.Nat
 public import MathlibExt.Data.Nat.DyadicBlock
 public import MathlibExt.GameTheory.ChocolateBarNSProperty
 public import MathlibExt.GameTheory.ChocolateBarNSPropertyExistsOfLtXor
+public import MathlibExt.GameTheory.ChocolateBarNSPropertyExistsOfLtFoldlXor
 public import MathlibExt.GameTheory.ChocolateBarNSPropertyImageXorEq
 public import MathlibExt.GameTheory.ChocolateBarNSPropertyExistsOfLtXorXor
+public import MathlibExt.GameTheory.ChocolateBarNSPropertyImageXorXorEq
+public import MathlibExt.GameTheory.ChocolateBarNSPropertyGrundy
+public import MathlibExt.GameTheory.NimPassIndicator
 
 /-! # The NS property of chocolate-bar games (Miyadera, Manabe, Singh)
 
@@ -39,82 +43,6 @@ a position of Grundy number `0` (Theorem 1 (i), the classical Sprague-Grundy the
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Mex step for chocolate bars with many functions.** Let $m$ be a natural number, let
-$f_1, \dots, f_m : \mathbb{N} \to \mathbb{N}$ have the NS property, and let
-$x_1, \dots, x_m, z, c$ be natural numbers with $x_t \le f_t(z)$ for all $t$ and
-$c < x_1 \oplus \cdots \oplus x_m \oplus z$, where $\oplus$ is nim-sum (bitwise exclusive or).
-Then either there are an index $i$ and some $u < x_i$ such that $c$ is the nim-sum
-$x_1 \oplus \cdots \oplus x_m \oplus z$ with $x_i$ replaced by $u$, or there is some $w < z$
-with $c = \min(x_1, f_1(w)) \oplus \cdots \oplus \min(x_m, f_m(w)) \oplus w$.
-
-Source: Ryohei Miyadera, Hikaru Manabe and Aditi Singh, *Generalizations of
-Two-Dimensional and Three-Dimensional Chocolate Bar Games*, INTEGERS 25 (2025),
-Article G3, Lemma 4 (`integers-2025-G3-lem-4`). -/
-public theorem_wanted exists_of_lt_foldl_xor {m : ℕ} {f : Fin m → ℕ → ℕ}
-    (hf : ∀ t, HasNSProperty (f t)) {x : Fin m → ℕ} {z c : ℕ} (hx : ∀ t, x t ≤ f t z)
-    (hc : c < (List.ofFn x).foldl (· ^^^ ·) 0 ^^^ z) :
-    (∃ i, ∃ u < x i, c = (List.ofFn (Function.update x i u)).foldl (· ^^^ ·) 0 ^^^ z) ∨
-      ∃ w < z, c = (List.ofFn fun t ↦ min (x t) (f t w)).foldl (· ^^^ ·) 0 ^^^ w
-
-/-- **Nim-sum image identity for two NS functions.** Let $g, h : \mathbb{N} \to \mathbb{N}$ have
-the NS property and let $x, y, z \in \mathbb{N}$ with $x \le g(z)$ and $y \le h(z)$. Writing
-$\oplus$ for the nim-sum (bitwise exclusive or) of natural numbers, the sets
-$\{x \oplus y \oplus w : w < z\}$ and $\{\min(g(w), x) \oplus \min(h(w), y) \oplus w : w < z\}$
-are equal, where $w$ ranges over the natural numbers.
-
-Source: Ryohei Miyadera, Hikaru Manabe and Aditi Singh, *Generalizations of
-Two-Dimensional and Three-Dimensional Chocolate Bar Games*, INTEGERS 25 (2025),
-Article G3, Lemma 5, equation (19) (`integers-2025-G3-lem-5`). -/
-public theorem_wanted HasNSProperty.image_xor_xor_eq {g h : ℕ → ℕ} (hg : HasNSProperty g)
-    (hh : HasNSProperty h) {x y z : ℕ} (hx : x ≤ g z) (hy : y ≤ h z) :
-    {c | ∃ w < z, c = x ^^^ y ^^^ w} = {c | ∃ w' < z, c = min (g w') x ^^^ min (h w') y ^^^ w'}
-
-/-- **Grundy number of a chocolate bar.** Let $f_1, \dots, f_s : \mathbb{N} \to \mathbb{N}$. For
-coordinates $x = (x_1, \dots, x_s) \in \mathbb{N}^s$ and a width $z \in \mathbb{N}$, the position
-$(x, z)$ stands for the chocolate bar $\mathrm{CB}(f_1, \dots, f_s, x_1, \dots, x_s, z)$, whose
-column at width $w \le z$ extends $\min(f_t(w), x_t) + 1$ cells along axis $t$. A move either
-lowers one coordinate $x_i$ to some $u < x_i$, keeping the width $z$, or cuts the width to some
-$w < z$, which replaces every $x_t$ by $\min(x_t, f_t(w))$. The Grundy number of $(x, z)$ is the
-mex (least natural number not attained) of the Grundy numbers of the positions reachable from
-$(x, z)$ in one move. It is defined for all $(x, z)$; the bars themselves are the positions with
-$x_t \le f_t(z)$ for all $t$.
-
-Source: Ryohei Miyadera, Hikaru Manabe and Aditi Singh, *Generalizations of
-Two-Dimensional and Three-Dimensional Chocolate Bar Games*, INTEGERS 25 (2025),
-Article G3, Definitions 2, 8, 9 and 10 (two functions) and Section 4, before Theorem 5
-(four functions). -/
-public noncomputable def chocolateBarGrundy {s : ℕ} (f : Fin s → ℕ → ℕ) (x : Fin s → ℕ)
-    (z : ℕ) : ℕ :=
-  sInf {m | (∀ i u, u < x i → chocolateBarGrundy f (Function.update x i u) z ≠ m) ∧
-    ∀ w, w < z → chocolateBarGrundy f (fun t ↦ min (x t) (f t w)) w ≠ m}
-termination_by z + ∑ t, x t
-decreasing_by
-  · have hlt : ∑ t, Function.update x i u t < ∑ t, x t := by
-      refine Finset.sum_lt_sum (fun j _ ↦ ?_) ⟨i, Finset.mem_univ _, by simpa⟩
-      by_cases hj : j = i
-      · subst hj; simp only [Function.update_self]; omega
-      · simp [Function.update_of_ne hj]
-    omega
-  · have hle : ∑ t, min (x t) (f t w) ≤ ∑ t, x t :=
-      Finset.sum_le_sum fun _ _ ↦ min_le_left _ _
-    omega
-
-/-- **Mex recursion for the Grundy number of a chocolate bar.** Let $f_1, \dots, f_s$ be
-functions $\mathbb{N} \to \mathbb{N}$ and write $G(x, z)$ for the Grundy number of the chocolate
-bar with coordinates $x = (x_1, \dots, x_s) \in \mathbb{N}^s$ and width $z \in \mathbb{N}$. For
-all $x$ and $z$, $G(x, z)$ is the least natural number $m$ such that $m \ne G(x', z)$ for every
-$x'$ obtained from $x$ by replacing one coordinate $x_i$ with some $u < x_i$, and
-$m \ne G(x^{(w)}, w)$ for every $w < z$, where $x^{(w)}_t = \min(x_t, f_t(w))$ for all $t$.
-
-Source: Ryohei Miyadera, Hikaru Manabe and Aditi Singh, *Generalizations of
-Two-Dimensional and Three-Dimensional Chocolate Bar Games*, INTEGERS 25 (2025),
-Article G3, Definitions 9 and 10. -/
-public theorem chocolateBarGrundy_eq {s : ℕ} (f : Fin s → ℕ → ℕ) (x : Fin s → ℕ) (z : ℕ) :
-    chocolateBarGrundy f x z =
-      sInf {m | (∀ i u, u < x i → chocolateBarGrundy f (Function.update x i u) z ≠ m) ∧
-        ∀ w, w < z → chocolateBarGrundy f (fun t ↦ min (x t) (f t w)) w ≠ m} := by
-  rw [chocolateBarGrundy]
 
 /-- **The single bitter square has Grundy number zero.** For all functions
 $f_1, \dots, f_s : \mathbb{N} \to \mathbb{N}$, the chocolate bar
@@ -190,17 +118,6 @@ public theorem heightChocolateBarGrundy_zero {s : ℕ} (F : (Fin s → ℕ) → 
   exact Nat.sInf_eq_zero.mpr (Or.inl ⟨fun _ u hu ↦ absurd hu (Nat.not_lt_zero u),
     fun v hv ↦ absurd hv (Nat.not_lt_zero v)⟩)
 
-/-- **Pass indicator of Nim with a restricted pass.** For $s$ piles with thresholds
-$m_0, \dots, m_{s-1}$ and pile sizes $x_0, \dots, x_{s-1}$ (natural numbers), the pass
-indicator is $1$ if $m_j \le x_j$ for some pile $j$ (the pass may be used), and $0$ if
-$x_j < m_j$ for every pile $j$.
-
-Source: Ryohei Miyadera, Hikaru Manabe and Aditi Singh, *Generalizations of
-Two-Dimensional and Three-Dimensional Chocolate Bar Games*, INTEGERS 25 (2025),
-Article G3, Lemma 10 and Corollary 2 (the function `F`). -/
-public def nimPassIndicator {s : ℕ} (m x : Fin s → ℕ) : ℕ :=
-  if ∃ j, m j ≤ x j then 1 else 0
-
 /-- **The Nim pass indicator is at most one.** For every $s \in \mathbb{N}$ and all
 $m, x \in \mathbb{N}^s$, the pass indicator of $m$ at $x$ is at most $1$; that is, it takes values
 in $\{0, 1\}$.
@@ -256,20 +173,6 @@ public theorem_wanted sections_hasNSProperty_iff_heightChocolateBarGrundy_eq_xor
       ∀ w x y, y ≤ F w x →
         heightChocolateBarGrundy (fun v ↦ F (v 0) (v 1)) ![w, x] y = w ^^^ x ^^^ y
 
-/-- **Nim-sum Grundy numbers of chocolate bars with two functions.** Let
-$g, h : \mathbb{N} \to \mathbb{N}$ be monotone. Then $g$ and $h$ both have the NS property if and
-only if, for all natural numbers $x, y, z$ with $x \le g(z)$ and $y \le h(z)$, the Grundy number
-of the chocolate bar $\mathrm{CB}(g, h, x, y, z)$ equals $x \oplus y \oplus z$, where $\oplus$ is
-nim-sum (bitwise exclusive or).
-
-Source: Ryohei Miyadera, Hikaru Manabe and Aditi Singh, *Generalizations of
-Two-Dimensional and Three-Dimensional Chocolate Bar Games*, INTEGERS 25 (2025),
-Article G3, Theorem 4 (`integers-2025-G3-thm-4`). -/
-public theorem_wanted hasNSProperty_and_iff_chocolateBarGrundy_eq_xor {g h : ℕ → ℕ}
-    (hg : Monotone g) (hh : Monotone h) :
-    HasNSProperty g ∧ HasNSProperty h ↔
-      ∀ x y z, x ≤ g z → y ≤ h z → chocolateBarGrundy ![g, h] ![x, y] z = x ^^^ y ^^^ z
-
 /-- **Nim-sum Grundy numbers of chocolate bars with four functions.** Let
 $f_1, f_2, f_3, f_4 : \mathbb{N} \to \mathbb{N}$ be monotone. Then all four have the NS property if
 and only if, for all natural numbers $x_1, x_2, x_3, x_4, z$ with $x_t \le f_t(z)$ for every $t$,
@@ -322,22 +225,6 @@ public theorem_wanted indicator_sections_iff_heightChocolateBarGrundy_eq_xor {s 
     (∀ (x : Fin s → ℕ) i, ∃ m, Even m ∧
         (fun t ↦ F (Function.update x i t)) = (Set.Ici m).indicator 1) ↔
       ∀ x y, y ≤ F x → heightChocolateBarGrundy F x y = (List.ofFn x).foldl (· ^^^ ·) 0 ^^^ y
-
-/-- **Sections of the Nim pass indicator with the NS property.** Let $s \in \mathbb{N}$ and
-$m \in \mathbb{N}^s$ with $m_i > 0$ for every $i < s$, and let $F : \mathbb{N}^s \to \mathbb{N}$ be
-the pass indicator of $m$: $F(x) = 1$ if $m_j \le x_j$ for some $j$, and $F(x) = 0$ otherwise.
-For $x \in \mathbb{N}^s$, $i < s$ and $t \in \mathbb{N}$ write $x[i \mapsto t]$ for $x$ with its
-$i$-th coordinate replaced by $t$. Then the following are equivalent: (a) for all
-$x \in \mathbb{N}^s$ and $i < s$, the function $t \mapsto F(x[i \mapsto t])$ has the NS property;
-(b) $m_i$ is even for every $i < s$.
-
-Source: Ryohei Miyadera, Hikaru Manabe and Aditi Singh, *Generalizations of
-Two-Dimensional and Three-Dimensional Chocolate Bar Games*, INTEGERS 25 (2025),
-Article G3, Lemma 10 (`integers-2025-G3-lem-10`). -/
-public theorem_wanted nimPassIndicator_sections_hasNSProperty_iff {s : ℕ} {m : Fin s → ℕ}
-    (hm : ∀ i, 0 < m i) :
-    (∀ (x : Fin s → ℕ) i, HasNSProperty fun t ↦ nimPassIndicator m (Function.update x i t)) ↔
-      ∀ i, Even (m i)
 
 /-- **Nim with a restricted pass.** Let $s \in \mathbb{N}$ and $m \in \mathbb{N}^s$ with $m_i > 0$
 for every $i < s$, and let $F : \mathbb{N}^s \to \mathbb{N}$ be the pass indicator of $m$:

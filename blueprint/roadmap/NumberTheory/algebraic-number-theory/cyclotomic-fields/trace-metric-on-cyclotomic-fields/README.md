@@ -14,6 +14,7 @@
 - [The cyclotomic box of radius zero](cyclotomic-box-zero.md)
 - [The zero vector lies in every box](zero-mem-cyclotomic-box.md)
 - [The zeroth moment of the trace distance is one](cyclotomic-dist-moment-zero.md)
+- [Trace of a point with rational coordinates](trace-sum-mul-zeta-pow-succ.md)
 - [Galois invariance of the trace metric](cyclotomic-trace-dist-alg-equiv.md)
 - [The trace norm is a norm](cyclotomic-trace-norm-is-norm.md)
 - [Krasner-type lemma for the cyclotomic trace metric](adjoin-le-adjoin-of-cyclotomic-trace-dis.md)

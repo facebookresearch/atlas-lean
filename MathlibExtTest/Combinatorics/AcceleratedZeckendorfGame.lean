@@ -107,3 +107,44 @@ example (hlose : ∀ i < 3, 3 * i ≤ 9 → AccelZeckLosing (single 3 i + single
   simp at htwo
 
 end MetaMathlibExt.accelZeck_odd_unique_losing_move
+
+namespace MetaMathlibExt
+
+open Finsupp
+
+-- Six ones give three legal openings. Combining all three pairs is the unique winning one.
+example : (∃! t, AccelZeckMove (single 1 6) t ∧ AccelZeckLosing t) ∧
+    AccelZeckMove (single 1 6) (single 2 3) ∧ AccelZeckLosing (single 2 3) := by
+  have hterminal : AccelZeckLosing (single 1 1 + single 4 1) := by
+    apply accelZeckLosing_of_terminal
+    rintro t ⟨m, hm, ⟨i, hi, h₁, h₂, -⟩ | ⟨h, -⟩ | ⟨h, -⟩ | ⟨i, hi, h, -⟩⟩
+    · simp only [Finsupp.add_apply, single_apply] at h₁ h₂
+      split_ifs at h₁ h₂ <;> omega
+    · simp at h
+      omega
+    · simp at h
+      omega
+    · simp only [Finsupp.add_apply, single_apply] at h
+      split_ifs at h <;> omega
+  have hreply : AccelZeckWinning (single 2 1 + single 1 1 + single 3 1) := by
+    refine .intro _ _ ⟨1, by decide, Or.inl ⟨3, by decide, by simp, by simp, ?_⟩⟩ hterminal
+    ext i
+    simp only [Finsupp.add_apply, Finsupp.tsub_apply, single_apply]
+    split_ifs <;> omega
+  have hlose : AccelZeckLosing (single 2 3) := by
+    refine .intro _ ?_
+    rintro t ⟨m, hm, ⟨i, hi, h₁, h₂, -⟩ | ⟨h, -⟩ | ⟨h, rfl⟩ | ⟨i, hi, h, -⟩⟩
+    · simp only [single_apply] at h₁ h₂
+      split_ifs at h₁ h₂ <;> omega
+    · simp at h
+      omega
+    · have hle : 2 * m ≤ 3 := by simpa using h
+      obtain rfl : m = 1 := by omega
+      simpa [← single_tsub] using hreply
+    · simp only [single_apply] at h
+      split_ifs at h <;> omega
+  have hopen : AccelZeckMove (single 1 6) (single 2 3) := by
+    exact ⟨3, by decide, Or.inr (Or.inl ⟨by simp, by simp⟩)⟩
+  exact ⟨accelZeck_unique_winning_first_move 6 (.intro _ _ hopen hlose), hopen, hlose⟩
+
+end MetaMathlibExt

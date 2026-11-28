@@ -7,9 +7,10 @@
 .github/workflows/ci.yml and blueprint-pages.yml run it on pull requests only: merge groups, pushes,
 scheduled and manual runs run every check without asking. It prints one line per check it can skip:
 
-- `build=false` when every changed path is one that the build never reads: graph data (blueprint/
-  and the graph's data files in scripts/), or documentation (Markdown outside blueprint/, scripts/
-  and .github/, and the agent guidance in .agents/ and .claude/);
+- `build=false` when every changed path is one that the build never reads: graph data (blueprint/,
+  the graph's data files in scripts/ and the card move ledger's fragments, the .jsonl files directly
+  in scripts/card-moves.d/), or documentation (Markdown outside blueprint/, scripts/ and .github/,
+  and the agent guidance in .agents/ and .claude/);
 - `tool_tests=false` when every changed path is graph data, documentation, a Lean source of the
   nine libraries or provenance/: the tool tests of scripts/test_scripts.sh read only scripts,
   workflows and the pins;
@@ -37,8 +38,17 @@ GRAPH_FILES = frozenset({
 })
 
 
+# The folder of the card move ledger's fragments: each fragment, a .jsonl file directly in it, is graph data, as the
+# frozen file in GRAPH_FILES is; anything else below it is not.
+FRAGMENTS = "scripts/card-moves.d/"
+
+
+def fragment(path: str) -> bool:
+    return path.startswith(FRAGMENTS) and path.count("/") == 2 and path.endswith(".jsonl")
+
+
 def graph(path: str) -> bool:
-    return path.startswith("blueprint/") or path in GRAPH_FILES
+    return path.startswith("blueprint/") or path in GRAPH_FILES or fragment(path)
 
 
 LIBRARIES = ("MathlibExt", "MathlibExtTest", "CSLibExt", "CSLibExtTest", "PhyslibExt", "PhyslibExtTest",
