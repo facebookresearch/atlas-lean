@@ -25,6 +25,7 @@ public import MathlibExt.NumberTheory.BinomidIndexAdd
 public import MathlibExt.NumberTheory.BinomidIndexBinomidUpperAverageEqISup
 public import MathlibExt.NumberTheory.BinomidIndexApplyPeriodEqApplyZero
 public import MathlibExt.NumberTheory.BinomidIndexBinomidShiftImageInterEqZero
+public import MathlibExt.NumberTheory.BinomidIndexBinomidAverageCondition
 
 namespace MetaMathlibExt
 
@@ -106,15 +107,6 @@ public theorem_wanted IsLexMinimalExtensionOf.exists_nomid_eq_one {η : ℕ → 
     (hn : m < n) :
     ∃ k, 1 ≤ k ∧ k < n ∧
       generalizedBinomialCoefficient (fun i => p ^ η (i - 1)) k (n - k) = 1
-
-/-- **Lex-minimal extensions satisfy the Average Condition.** Every lex-minimal extension
-satisfies the Average Condition.
-
-Source: Caalim and Tanaka, *Lexicographically Minimal Extension of a Finite
-Binomid Index*, INTEGERS 24 (2024), Article A53, Lemma 3
-(`integers-2024-A53-lem-3`). -/
-public theorem_wanted IsLexMinimalExtension.binomidAverageCondition {η : ℕ → ℕ}
-    (hη : IsLexMinimalExtension η) : BinomidAverageCondition η
 
 /-- **The Average Condition gives eventually periodic lex-minimal extensions.** If an
 infinite binomid index $e = (e_1, e_2, \dots)$ satisfies the Average Condition, then $e$ is
