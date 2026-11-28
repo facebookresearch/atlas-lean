@@ -20,7 +20,7 @@ None.
 
 None.
 
-## Expansion
+## Remarks
 
 The family $\{\lvert\Psi_{N_h,N_v}\rangle\}$ describes states on arbitrarily large patches, and through them on the infinite plane. For a meaningful limit, properties in the bulk must become independent of the boundary condition, apart from selecting a symmetry-broken sector. If $\lvert\Psi_{N_h,N_v}\rangle = 0$ for every boundary condition, the tensor describes no normalizable state on that patch. One-dimensional matrix product states are the special case of a chain.
 
