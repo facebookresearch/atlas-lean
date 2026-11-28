@@ -3,6 +3,7 @@
 Time and space hierarchy theorems and diagonalization against time-bounded machines, separations such as P ≠ EXP, and barriers to separating classes: relativization (Baker–Gill–Solovay, oracle separations), natural proofs and algebrization.
 
 - [Algebrization barrier](algebrization-barrier/README.md)
+- [Alternation-trading proofs](alternation-trading-proofs/README.md)
 - [Natural proofs barrier](natural-proofs-barrier/README.md)
 - [Relativization and oracle separations](relativization-and-oracle-separations/README.md)
 - [Space hierarchy theorem](space-hierarchy-theorem/README.md)
