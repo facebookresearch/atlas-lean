@@ -12,3 +12,6 @@
 - [Complexity of HyperCTL* model checking](model-checking-hyperctl-star-by-alternation-depth.md)
 - [HyperLTL model checking is PSPACE-hard in the system size](hyperltl-model-checking-is-pspace-hard-in-the-system.md)
 - [HyperCTL* satisfiability is undecidable](hyperctl-star-satisfiability-is-undecidable.md)
+- [Model checking hyperlogics with pushdown automata is undecidable](model-checking-hyperlogics-with-pushdown-automata.md)
+- [Model checking HyperMTL with a quantifier alternation is undecidable](model-checking-hypermtl-with-a-quantifier.md)
+- [Temporal team logics](temporal-team-logics/README.md)
