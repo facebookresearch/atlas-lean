@@ -14,11 +14,11 @@ $$\rho_{\mathrm{evo}} \approx \frac{\langle \gamma\omega \rangle_{\mathrm{fixed}
 
 which is negative for every symmetric distribution $p_{\mathrm{mut}}$ with uncorrelated $\gamma$ and $\omega$.
 
-The SSWM adaptation speeds per cycle are
+Assume that the mutational effects are centered and uncorrelated under $p_{\mathrm{mut}}$, $\langle \gamma \rangle_{\mathrm{mut}} = \langle \omega \rangle_{\mathrm{mut}} = \langle \gamma\omega \rangle_{\mathrm{mut}} = 0$, and that the population's average yield does not change and stays at its ancestral value $Y_0$. Then the SSWM adaptation speeds per cycle are
 
 $$W_{\mathrm{growth}} = \sigma_\gamma^2 r_0 \ln D \cdot \mu R Y_0 \frac{\ln D}{D-1}, \qquad W_{\mathrm{lag}} = -\frac{\sigma_\omega^2}{r_0} \cdot \mu R Y_0 \frac{\ln D}{D-1},$$
 
-where $\sigma_\gamma, \sigma_\omega$ are the standard deviations of the mutational effects, $\mu$ the per-division mutation probability, and $r_0, Y_0$ the ancestral growth rate and yield, so that $W_{\mathrm{growth}}/W_{\mathrm{lag}} = -r_0^2 (\sigma_\gamma^2/\sigma_\omega^2) \ln D$ is independent of $R$ and $\mu$.
+where $\sigma_\gamma, \sigma_\omega$ are the standard deviations of the mutational effects under $p_{\mathrm{mut}}$, $\mu$ the per-division mutation probability, and $r_0, Y_0$ the ancestral growth rate and yield, so that $W_{\mathrm{growth}}/W_{\mathrm{lag}} = -r_0^2 (\sigma_\gamma^2/\sigma_\omega^2) \ln D$ is independent of $R$ and $\mu$.
 
 ## Proof sketch
 
@@ -31,4 +31,4 @@ Selection keeps mutations with $\gamma \ln D - \omega > 0$, so among fixed mutat
 
 ## Sources
 
-- J. Lin, M. Manhart and A. Amir, "Evolution of microbial growth traits under serial dilution", Genetics (2020), <https://doi.org/10.1534/genetics.120.303149>, PMCID PMC7337084. Equations 8–11 and Figure 5.
+- J. Lin, M. Manhart and A. Amir, "Evolution of microbial growth traits under serial dilution", Genetics (2020), <https://doi.org/10.1534/genetics.120.303149>, PMCID PMC7337084. Equations 8–11 and Figures 3E and 5. The constant-yield assumption is stated with Equation 8; zero-mean, uncorrelated mutational effects are the paper's default setting (symmetric uniform $p_{\mathrm{mut}}$, and the remark that measured trait changes show very small correlations, "consistent with our assumptions").
