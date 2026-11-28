@@ -1,0 +1,20 @@
+# Tree-metrizable HGT networks with many reticulations
+
+**Definitions.** A *tree metric* on $X$ is a distance realized by path lengths in a weighted tree; by Buneman's four-point condition, $d$ is a tree metric iff for all $x_1,x_2,x_3,x_4\in X$ two of the sums $d(x_1,x_2)+d(x_3,x_4)$, $d(x_1,x_3)+d(x_2,x_4)$, $d(x_1,x_4)+d(x_2,x_3)$ are equal and at least the third. An *HGT network* on $X$ is a rooted acyclic digraph with a root of out-degree $2$, leaves labelled by $X$, tree vertices (in-degree $1$, out-degree $2$) and reticulation vertices (in-degree $2$, out-degree $1$), whose arcs split into tree arcs, forming an *underlying tree* $T_N$, and reticulation (transfer) arcs between arcs of $T_N$; each reticulation arc ends at a reticulation vertex, each reticulation vertex has exactly one incoming reticulation arc, every interior vertex has at least one outgoing tree arc, and transfers are time-consistent: there is a time function $t\colon V\to\mathbb R$ with $t(u)<t(v)$ for every tree arc $(u,v)$ and $t(u)=t(v)$ for every reticulation arc $(u,v)$ (Definition 2.3). Two arcs $a_1,a_2$ of $T_N$ are *HGT-connected*, written $a_1-a_2$, if both are subdivided and a reticulation arc joins the subdivision vertices, in either direction (Definition 6.1); a leaf is HGT-connected to another leaf when their pendant (leaf) arcs are. Given arc weights and reticulation probabilities, each displayed tree occurs with some probability and $d_N$ is the resulting expected path-length distance. $N$ is *$T$-metrizable* if some choice of weights and probabilities makes $d_N$ a tree metric of the unweighted tree $T$. A reticulation arc is *non-trivial* if it joins two non-adjacent arcs of $T_N$.
+
+A *caterpillar network* on $n>3$ leaves has caterpillar underlying tree with leaves $x_1,\dots,x_n$ (unique cherry $x_1x_2$) and, for each $1\le i<n-1$, a reticulation arc from the pendant arc of $x_i$ to that of $x_n$, attached to $x_n$ in order.
+
+**Theorems.**
+1. *(Replacement.)* For a tree-metrizable network $N$, a tree $T$ and a leaf $\ell$ of $N$, the leaf-graft $N\#_\ell T$ (root of $T$ identified with $\ell$) is tree-metrizable iff $N$ is. Hence non-trivial level-$2$ tree-metrizable networks exist on $n$ leaves for all $n\ge4$, including networks that are $T$-metrizable for a tree $T$ other than their underlying tree.
+2. *(Caterpillars.)* Every caterpillar network is tree-metrizable on every tree it displays; it has $n-2$ non-trivial reticulations.
+3. *(Height.)* For every tree $T$ of height $h>2$ there is a $T$-metrizable network with underlying tree $T$ and $h-1$ non-trivial reticulations.
+4. *(Quartets.)* A network on $\{x_1,x_2,x_3,x_4\}$ with underlying quartet $x_1x_2|x_3x_4$ displays all three quartet topologies iff some leaf is HGT-connected to both leaves on the other side (e.g. $x_1$–$x_3$ and $x_1$–$x_4$).
+5. *(Level 2.)* In a level-$2$ tree-metrizable network, any minimal support network of a biconnected component has a caterpillar underlying tree, unless it contains the root or all its reticulation arcs join adjacent arcs of the underlying tree.
+
+## Expansion
+
+Since $d_N$ is a probability-weighted average of displayed-tree metrics, it is a tree metric exactly when the four-point condition survives the averaging on every quartet; parameters can then be tuned so that the averaged distances coincide with path lengths of one tree. Leaf-grafting a tree onto a leaf adds the same pendant lengths to all distances involving that leaf, so four-point conditions on new quartets reduce to old ones, giving the replacement theorem. In a caterpillar network every transfer ends on the pendant arc of $x_n$, so each displayed tree only moves $x_n$ along the caterpillar spine; with suitable probabilities the averaged position of $x_n$ realizes any of the displayed trees.
+
+## Sources
+
+- M. Hendriksen, A. Francis, "Tree-metrizable HGT networks", arXiv:1908.08647 (2019), Definitions 2.1, 2.3, 2.5, 2.7, 4.1, 5.2 and 6.1, Theorem 2.2, Theorem 4.3, Corollary 4.4, Theorem 5.4, Corollary 5.5, Theorems 6.2 and 6.5, <https://doi.org/10.48550/arXiv.1908.08647>.

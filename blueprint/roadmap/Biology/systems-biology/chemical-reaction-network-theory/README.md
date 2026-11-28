@@ -13,3 +13,5 @@
 - [Monomolecular networks are not nondegenerately multistationary](monomolecular-networks-are-not-nondegenerately-multistationary.md)
 - [Steady-state invariants of glued reaction networks](steady-state-invariants-of-glued-reaction-networks.md)
 - [Topological criterion for autocatalysis in diluted reaction networks](topological-criterion-for-autocatalysis-in-diluted-networks.md)
+- [Laplacian formulation of detailed-balanced reaction networks](laplacian-formulation-of-detailed-balanced-reaction-networks/README.md)
+- [Synthesis–degradation dynamics on Laplacian digraphs](synthesis-degradation-dynamics-on-laplacian-digraphs/README.md)

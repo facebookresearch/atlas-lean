@@ -1,0 +1,17 @@
+# Minmax decomposition characterizes forward paths between RNA branching configurations
+
+**Model.** A plane tree with $n$ edges models the branching of an RNA secondary structure at low resolution: edges are helices, vertices are loops, the root is the external loop. Encode a plane tree $T \in \mathcal T_n$ by its noncrossing perfect matching of $\{1,\dots,2n\}$ (each edge $(i,j)$, $i<j$, from the contour walk), call an edge *odd* if its left endpoint $i$ is odd, and let $c(T)$ be the number of odd edges. A *pairing exchange* replaces two pairs of the matching by the other noncrossing pairing of the same four endpoints; it changes $c(T)$ by exactly $\pm 1$ (a *forward* move if $+1$, *backward* if $-1$). The resulting configuration graph is $\mathcal G_n$. There are unique trees $\mathrm{bt}_n$ with $c = 1$ and $\mathrm{tp}_n$ with $c = n$, so every tree has a forward path of length $n - c(T)$ to $\mathrm{tp}_n$ and a backward path of length $c(T) - 1$ to $\mathrm{bt}_n$.
+
+**Minmax decomposition.** $T$ has a *minmax decomposition* with $T'$, written $T \preceq T'$, if there is a partition $\mathcal P$ of the indices into blocks inducing aligned subtrees such that on every block $P$ ($|P| = p$) either $T|_P \cong \mathrm{bt}_p$ and $T'|_P \cong \mathrm{tp}_p$ with parity preserved, or $T|_P \cong \mathrm{tp}_p$ and $T'|_P \cong \mathrm{bt}_p$ with parity reversed: $T$ and $T'$ split into pairs of complementary "star" subtrees.
+
+**Theorem.** There is a forward path from $T$ to $T'$ in $\mathcal G_n$ if and only if $T \preceq T'$. The relation $\preceq$ is a partial order on $\mathcal T_n$, and there is an order-preserving bijection from $(\mathcal T_n,\preceq)$ to the lattice $NC_n$ of noncrossing partitions of $\{1,\dots,n\}$.
+
+**Corollaries (meets and joins).** If $T \preceq T'$, the minimal tree partition of $\mathrm{bt}_n$ and $T'$ is a tree partition of $T$ and $T'$. For any $T, T'$ there is a unique $S$ with $c(S)$ minimal such that $T \preceq S$ and $T' \preceq S$, and a unique $S$ with $c(S)$ maximal such that $S \preceq T$ and $S \preceq T'$; both are characterized by tree partitions on which $S$ restricts to $\mathrm{tp}$ or $\mathrm{bt}$ according to the parity of the block.
+
+## Expansion
+
+Plane trees with $n$ edges are in bijection with noncrossing perfect matchings of $2n$ boundary labels, and a pairing exchange breaks apart and re-pairs two edges, mimicking the competition between alternative helices in RNA design. Since each move changes $c(T)$ by one, a forward path from $T$ to $T'$ has length $c(T') - c(T)$, and the proof tracks how a tree partition of the start and end evolves along such a path; conversely, on each block of a minmax decomposition the canonical forward path from $\mathrm{bt}_p$ to $\mathrm{tp}_p$ can be run independently. When $T \not\preceq T'$, paths pass through common upper or lower bounds, which is where the paper's bounds on branching skew (a coarse energy approximation) and on geodesic length begin.
+
+## Sources
+
+- Christine Heitsch, Chi N. Y. Huynh and Greg Johnston, "On a barrier height problem for RNA branching", arXiv:2303.12227 (2023), Theorem 1 (forward paths and minmax decompositions), Theorem 2 and Corollary 5 (tree partitions), Corollary 3 and Theorem 4 (common upper bounds), Corollaries 6–7 (common lower bounds), Theorem 8 (bijection with noncrossing partitions), <https://doi.org/10.48550/arXiv.2303.12227>.

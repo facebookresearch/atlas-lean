@@ -29,3 +29,4 @@
 - [Equal-rates GTR chain is the Jukes–Cantor model](ctmc-transition-gtr-rate-jukes-cantor.md)
 - [Jukes–Cantor matrix is a rate matrix](is-rate-matrix-jc-rate-matrix.md)
 - [K80 with κ = 1 is the Jukes–Cantor model](k80-rate-one.md)
+- [Phylosymmetric algebras](phylosymmetric-algebras/README.md)

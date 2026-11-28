@@ -11,3 +11,4 @@
 
 - [Spatial, Allee, tumour, and eco-evolutionary population dynamics](spatial-and-game-population-dynamics/README.md)
 - [Interacting species](interacting-species/README.md)
+- [Deterministic population and community models](deterministic-population-and-community-models/README.md)

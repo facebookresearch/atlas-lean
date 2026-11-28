@@ -28,3 +28,6 @@ Mathematical models for tumour sequencing data: purity and copy number, cancer c
 - [Phenotype-structured models of tumour evolution](phenotype-structured-models-of-tumour-evolution/README.md)
 - [Phenotypic switching in tumours](phenotypic-switching-in-tumours/README.md)
 - [Random segregation of extrachromosomal DNA](random-segregation-of-extrachromosomal-dna/README.md)
+- [Clonal evolution and mutation accumulation](clonal-evolution-and-mutation-accumulation/README.md)
+- [Tumour growth, invasion and treatment models](tumour-growth-invasion-and-treatment-models/README.md)
+- [Multi-state perfect phylogeny mixtures](multi-state-perfect-phylogeny-mixtures/README.md)
