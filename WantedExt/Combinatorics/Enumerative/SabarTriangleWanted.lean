@@ -23,8 +23,8 @@ public import Mathlib.Order.Interval.Finset.Nat
 /-!
 # Sabar's triangle `s(n, i)`: harmonic, Fine and generalized Catalan numbers
 
-Statements from Sabar Taoufik, *A New Triangle of Numbers: Properties and Observations*,
-INTEGERS 26 (2026), Article A27.
+This module only re-exports proved results from Sabar Taoufik,
+*A New Triangle of Numbers: Properties and Observations*, INTEGERS 26 (2026), Article A27.
 
 The triangle is `s(n, i) = ∑_{j=i+1}^{n} (-1)^{n-j} C(j, i)` for `0 ≤ i ≤ n - 1` (OEIS A341091),
 `MetaMathlibExt.sabarNumber` (MathlibExt). The Fine numbers `f_n` (`1, 0, 1, 2, 6, 18, …`,
@@ -39,8 +39,9 @@ of convergence of the hypergeometric series) is not stated; see the audit table.
 Proved in `MathlibExt.Combinatorics.Enumerative.SabarTriangle`, which this module imports: the
 definition `sabarNumber` with its checks `sabarNumber_rows_five_ten` and
 `sabarNumber_recurrence_small`, the reciprocal binomial sum identity
-`sum_inv_choose_succ_eq_one_add_sum_sabarNumber`, and the alternating sum for harmonic numbers
-`sum_sabarNumber_div_succ_eq_harmonic`.
+`sum_inv_choose_succ_eq_one_add_sum_sabarNumber`, the alternating sum for harmonic numbers
+`sum_sabarNumber_div_succ_eq_harmonic`, and the central-entry formulas
+`sabarNumber_central_eq_fineNumber` and `sabarNumber_central_eq_whittGeneralizedCatalan`.
 
 The weighted binomial sum identity `sum_choose_mul_two_pow_add_succ` is proved in
 `MathlibExt.Combinatorics.Enumerative.SabarWeightedBinomialSum`, also imported here.

@@ -82,7 +82,8 @@ is checked directly.
 ## Implementation notes
 
 `sabarNumber`, `sabarNumber_rows_five_ten`, `sabarNumber_recurrence_small`,
-`sum_inv_choose_succ_eq_one_add_sum_sabarNumber` and `sum_sabarNumber_div_succ_eq_harmonic`
+`sum_inv_choose_succ_eq_one_add_sum_sabarNumber`, `sum_sabarNumber_div_succ_eq_harmonic`,
+`sabarNumber_central_eq_fineNumber` and `sabarNumber_central_eq_whittGeneralizedCatalan`
 keep the full names, statements and docstrings they had in
 `WantedExt.Combinatorics.Enumerative.SabarTriangleWanted`, which imports this module.
 -/
@@ -108,7 +109,8 @@ public def sabarNumber (n i : ℕ) : ℤ :=
 $$s(m+d+1,m)=\binom{m+d+1}{m}-s(m+d,m).$$
 
 Source: Sabar Taoufik, *A New Triangle of Numbers: Properties and Observations*, INTEGERS 26
-(2026), Article A27, Section 2 (the first identity after the definition of the triangle). -/
+(2026), Article A27, Section 2 (the second identity after the definition of the triangle,
+$\binom{n}{i} = s(n, i) + s(n-1, i)$, with $n = m + d + 1$ and $i = m$). -/
 public lemma sabarNumber_add_succ (m d : ℕ) :
     sabarNumber (m + d + 1) m = ((m + d + 1).choose m : ℤ) - sabarNumber (m + d) m := by
   unfold sabarNumber
