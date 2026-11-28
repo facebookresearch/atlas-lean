@@ -23,6 +23,9 @@ Attributes are `0, 1, 2 : Fin 3` (think `A`, `B`, `C`) and values are natural nu
 * Projection, renaming, union and difference compute the expected relations.
 * Schema inference accepts the join and rejects a union of relations with different schemas;
   query equivalence requires both queries to be well-formed.
+* The rewrites `Expr.select_comm`, `Expr.select_union`, `Expr.select_diff`,
+  `Expr.project_union`, `Expr.select_project`, `Expr.select_join_right` on a three-relation
+  schema.
 -/
 
 @[expose] public section
@@ -127,5 +130,47 @@ example : ¬ Expr.Equiv sch (.project {0, 1} (.project {0} (.rel 0)))
 example : (Expr.project {0, 1} (.project {0} (.rel 0)) : Expr (Fin 2) (Fin 3) ℕ).eval db =
     (Expr.project {0} (.rel 0) : Expr (Fin 2) (Fin 3) ℕ).eval db := by
   decide
+
+/-- A three-relation schema for the rewrite examples below. -/
+def sch3 : Fin 3 → Finset (Fin 4) := ![{0, 1}, {1, 2}, {2, 3}]
+
+/-- Each new query rewrite applies on this schema (apply the named theorem). -/
+example : Expr.Equiv sch3
+    (.select (.eqConst 1 2) (.union (.rel 1) (.project {1, 2} (.join (.rel 1) (.rel 2)))))
+    (.union (.select (.eqConst 1 2) (.rel 1))
+      (.select (.eqConst 1 2) (.project {1, 2} (.join (.rel 1) (.rel 2)))) :
+      Expr (Fin 3) (Fin 4) ℕ) := by
+  -- Expr.select_union
+  exact Expr.select_union (S := {1, 2}) (by decide) (by decide) (by decide)
+
+example : Expr.Equiv sch3
+    (.select (.eqConst 1 2) (.diff (.rel 1) (.project {1, 2} (.join (.rel 1) (.rel 2)))))
+    (.diff (.select (.eqConst 1 2) (.rel 1))
+      (.select (.eqConst 1 2) (.project {1, 2} (.join (.rel 1) (.rel 2)))) :
+      Expr (Fin 3) (Fin 4) ℕ) := by
+  -- Expr.select_diff
+  exact Expr.select_diff (S := {1, 2}) (by decide) (by decide) (by decide)
+
+example : Expr.Equiv sch3
+    (.project {1} (.union (.rel 1) (.project {1, 2} (.join (.rel 1) (.rel 2)))))
+    (.union (.project {1} (.rel 1)) (.project {1} (.project {1, 2} (.join (.rel 1) (.rel 2)))) :
+      Expr (Fin 3) (Fin 4) ℕ) := by
+  -- Expr.project_union
+  exact Expr.project_union (S := {1, 2}) (by decide) (by decide) (by decide)
+
+example : Expr.Equiv sch3 (.select (.eqConst 0 1) (.select (.eqAttr 1 1) (.rel 0)))
+    (.select (.eqAttr 1 1) (.select (.eqConst 0 1) (.rel 0)) : Expr (Fin 3) (Fin 4) ℕ) := by
+  -- Expr.select_comm
+  exact Expr.select_comm (S := {0, 1}) (by decide) (by decide) (by decide)
+
+example : Expr.Equiv sch3 (.select (.eqConst 1 2) (.project {1} (.rel 0)))
+    (.project {1} (.select (.eqConst 1 2) (.rel 0)) : Expr (Fin 3) (Fin 4) ℕ) := by
+  -- Expr.select_project
+  exact Expr.select_project (S := {0, 1}) (by decide) (by decide) (by decide)
+
+example : Expr.Equiv sch3 (.select (.eqConst 3 7) (.join (.rel 1) (.rel 2)))
+    (.join (.rel 1) (.select (.eqConst 3 7) (.rel 2)) : Expr (Fin 3) (Fin 4) ℕ) := by
+  -- Expr.select_join_right
+  exact Expr.select_join_right (S := {1, 2}) (S' := {2, 3}) (by decide) (by decide) _ (by decide)
 
 end Cslib.Databases.RelationalAlgebraTests
