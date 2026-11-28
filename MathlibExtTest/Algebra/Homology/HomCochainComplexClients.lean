@@ -170,7 +170,8 @@ example :
           ((HomologicalComplex.singleObjXSelf (ComplexShape.down ℕ) 1 Z).inv.hom (2 : ℤ)) =
       ((6 : ℤ), (0 : ℤ)) := by
   change includeFirst.hom (three.hom (2 : ℤ)) = ((6 : ℤ), (0 : ℤ))
-  norm_num [includeFirst, three, LinearMap.inl_apply]
+  norm_num [includeFirst, three]
+  exact LinearMap.inl_apply (6 : ℤ)
 
 private def negativeIso : singleChain ≅ singleChain :=
   singleFunctor.mapIso ((LinearEquiv.neg ℤ : ℤ ≃ₗ[ℤ] ℤ).toModuleIso)
