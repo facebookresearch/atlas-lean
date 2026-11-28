@@ -17,6 +17,9 @@ The second moment grows linearly. On one point the unique permutation has moment
 so the same error constant also bounds the discrepancy there.
 
 The mean divided by `log n` tends to `e^{-γ}`, and in particular the mean tends to infinity.
+
+The variance test checks power decay of the normalized error from the Buchstab integral
+for every `n ≥ 1`, including the one-point case where the variance is zero.
 -/
 
 namespace MetaMathlibExt.SmallestCycleMomentTest

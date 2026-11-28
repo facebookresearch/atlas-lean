@@ -48,16 +48,18 @@ the tail probabilities with `e^{-H_{k-1}}`. The recurrence also bounds the `m`-t
 probabilities are at most `1 / k`. Hence the mean differs from `∑_{k ≤ n} e^{-H_{k-1}}`, which is
 asymptotic to `e^{-γ} log n`, by `O(log log n)`.
 
+The variance proof uses this module's `smallest_cycle_moment_asymp` at order two and
+`smallest_cycle_mean_asymp` to bound the squared mean.
+
 ## References
 
 - Claude Gravel and Daniel Panario, *Evaluating the Generalized Buchstab Function and Revisiting
   the Variance of the Distribution of the Smallest Components of Combinatorial Objects*,
   INTEGERS 24 (2024), Article A7, pp. 1–18, Theorems 1 and 2.
 - D. Panario and B. Richmond, *Smallest Components in Decomposable Structures: Exp-Log Class*,
-  Algorithmica 29 (2001), pp. 205–226, Section 4, Theorem 5 (earlier moment asymptotics).
-
-The variance proof uses this module's `smallest_cycle_moment_asymp` at order two and
-`smallest_cycle_mean_asymp` to bound the squared mean.
+  Algorithmica 29 (2001), pp. 205–226, Section 4, Theorem 5. Its variance integral for
+  permutations starts at `2`; Gravel and Panario, Remark 1, restore the omitted contribution
+  from `[1, 2)`.
 -/
 
 open Function Equiv Equiv.Perm Finset
@@ -1429,14 +1431,10 @@ public theorem smallest_cycle_variance_asymp (ω : ℝ → ℝ)
   have hm := hmoment n hn
   simp only [show (2 : ℕ) - 1 = 1 by decide, pow_one, Nat.cast_ofNat] at hm
   rw [mul_comm (2 : ℝ) (n : ℝ), mul_assoc (n : ℝ) 2] at hm
-  have htriangle (a : ℝ) : |a - mean n ^ 2| ≤ |a| + mean n ^ 2 := by
-    rw [sub_eq_add_neg]
-    exact (abs_add_le _ _).trans_eq
-      (congrArg (|a| + ·) ((abs_neg _).trans (abs_of_nonneg (sq_nonneg (mean n)))))
   change |(_ - mean n ^ 2) - _| ≤ _
   rw [sub_right_comm]
   calc
-    _ ≤ _ := htriangle _
+    _ ≤ _ := (abs_sub _ (mean n ^ 2)).trans_eq (by rw [abs_of_nonneg (sq_nonneg (mean n))])
     _ ≤ C * (n : ℝ) * (n : ℝ) ^ (-ε) + K * (n : ℝ) ^ (1 / 2 : ℝ) := add_le_add hm hs
     _ ≤ C * (n : ℝ) * (n : ℝ) ^ (-δ) + K * ((n : ℝ) * (n : ℝ) ^ (-δ)) :=
       add_le_add (mul_le_mul_of_nonneg_left hdecay (mul_nonneg hC hnpos.le))
