@@ -9,7 +9,7 @@
 - [Nested metric temporal logic](nested-metric-temporal-logic.md)
 - [Priced timed automata](priced-timed-automata.md)
 - [Weighted MTL](weighted-mtl.md)
-- [Bounded variability of MTL over dense time is undecidable](bounded-variability-of-mtl-over-dense-time-is.md)
+- [Bounded variability of MTL over dense time for a given bound is undecidable](bounded-variability-of-mtl-over-dense-time-is.md)
 - [Coverability is undecidable for branch-well-structured transition systems](coverability-for-branch-well-structured-systems.md)
 - [Model checking parametric timed CTL over one-clock parametric timed automata is undecidable](parametric-timed-ctl-model-checking-is-undecidable.md)
 - [Model checking State Clock Logic over interrupt timed automata is undecidable](state-clock-logic-over-interrupt-timed-automata.md)
