@@ -268,8 +268,8 @@
       "path": "MathlibExt/LinearAlgebra/ExteriorPower/ProductFiltration/AssociatedGradedMap.lean",
       "backport": "pending",
       "disposition": "diverged",
-      "published_sha256": "e146b564e2d06843238b8a0e25f91649065bd4097558f65251a5eb6cec58d28f",
-      "rationale": "Use canonical native exterior-degree and scalar-extension coordinates; remove the noncanonical local AddCommGroup instances without changing public maps or universes. Give precise mathematical coordinate/filtration docstrings, retaining all code tokens of that canonical implementation. Native verification pending.",
+      "published_sha256": "e2d62cd1a94e384caa9a7650256b4c9b6f95ca1bde00bf4d977f321c3e4dfc1a",
+      "rationale": "Use canonical native exterior-degree and scalar-extension coordinates; remove the noncanonical local AddCommGroup instances without changing public maps or universes. Give precise mathematical coordinate/filtration docstrings, retaining all code tokens of that canonical implementation. Native verification pending. Bind the canonical native Submodule.addCommGroup data explicitly to R and the exterior/stage carriers in each scope. Bind source/target carriers and submodules in native mkQ/mapQ/representative formulas and quotient induction, addressing the completed11630 opaque-subtype elaboration timeouts. Preserve every original graded map, all degrees, hypotheses and independent source/target worlds; no Module-derived group reconstruction or resource settings. Native recheck pending.",
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "014ba040c2561d04c59335166ba68a51271e89ef2b29105dd984d8d8244d89d5"
     },
