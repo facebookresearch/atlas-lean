@@ -108,10 +108,12 @@ private theorem exp_le_one_add_add_sq {x : ℝ} (hx : x ≤ 7 / 4) :
           nlinarith [mul_nonneg hy0 h34, mul_nonneg (mul_nonneg hy0 hy0) h34,
             mul_nonneg (mul_nonneg (mul_nonneg hy0 hy0) hy0) h34]
 
-/-- One-column exponential moment of the Tardos weight (Tardos 2008, Section 3,
-proof of Theorem 1): if `p ≤ 1`, `0 ≤ α` and `α² ≤ 3 p`, then
-`E[exp (α U)] ≤ 1 + α²` for the weight `U` of a `Bernoulli(p)` bit. Tardos's
-constants `α = 1 / (10 c)` and `p ≥ 1 / (300 c)` satisfy `α² ≤ 3 p` for `c ≥ 1`. -/
+/-- One-column exponential moment of the Tardos weight, generalizing the
+computation in Tardos 2008, Section 3 (proof of Theorem 1), where the constant
+`α = 1 / (10 c)` is fixed before the moment is factored: here, for arbitrary
+`p ≤ 1`, `0 ≤ α` with `α² ≤ 3 p`, `E[exp (α U)] ≤ 1 + α²` for the weight `U` of
+a `Bernoulli(p)` bit. Tardos's constants `α = 1 / (10 c)` and `p ≥ 1 / (300 c)`
+satisfy `α² ≤ 3 p` for `c ≥ 1`. -/
 theorem tardosWeight_exp_mean_le {p α : ℝ} (hp1 : p ≤ 1) (hα : 0 ≤ α)
     (hαp : α ^ 2 ≤ 3 * p) :
     p * Real.exp (α * tardosWeight p true) + (1 - p) * Real.exp (α * tardosWeight p false) ≤
@@ -218,8 +220,8 @@ theorem sum_biasCodebookPMF_mul_exp_tardosScore {n d : ℕ} (p : Fin d → unitI
 user `i` on a fixed word `y` with threshold `Z`, when the codebook is drawn
 from `biasCodebookPMF p`, `0 ≤ α` and every bias is at least `α² / 3`: the
 probability is at most `(1 + α²) ^ m * exp (-α Z)`, where `m` counts the ones
-of `y` (Tardos 2008, Section 3, proof of Theorem 1, before the choice of
-constants). The word `y` does not depend on the codebook, which models an
+of `y`. This generalizes the Markov step in Tardos 2008, Section 3 (proof of
+Theorem 1), which fixes `α = 1 / (10 c)` before applying Markov's inequality. The word `y` does not depend on the codebook, which models an
 innocent user whose row the pirates never see. -/
 theorem tardosAccuses_prob_le {n d : ℕ} (p : Fin d → unitInterval) {α : ℝ} (hα : 0 ≤ α)
     (hαp : ∀ j, α ^ 2 ≤ 3 * (p j : ℝ)) (Z : ℝ) (y : Word d) (i : Fin n) :
@@ -278,8 +280,9 @@ theorem tardosAccuses_prob_le {n d : ℕ} (p : Fin d → unitInterval) {α : ℝ
               Finset.prod_const _
 
 /-- Tardos (2008), Theorem 1, conditioned on the biases and the pirated word as
-in its proof (Section 3): with `c ≥ 1`, `0 < ε < 1`, `k ≥ log (1 / ε)`
-(Tardos takes `k = ⌈log (1 / ε)⌉`), length `d = 100 c² k`, threshold
+in its proof (Section 3): with integers `c ≥ 1` and `k` satisfying
+`k ≥ log (1 / ε)` (Tardos takes the integer `k = ⌈log (1 / ε)⌉`), `0 < ε < 1`,
+length `d = 100 c² k`, threshold
 `Z = 20 c k` and every bias at least `1 / (300 c)`, the probability over
 `biasCodebookPMF p` that the Tardos rule accuses user `i` on a fixed word `y`
 is below `ε`. -/
