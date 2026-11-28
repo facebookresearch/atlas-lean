@@ -29,4 +29,4 @@ Elliptic curves given by Weierstrass equations, their points over finite fields 
 - [Centred place gate](is-centred.md)
 - [Trivial $p$-torsion on a nodal cubic in characteristic $p$](eq-zero-of-prime-smul-eq-zero-of-is-node.md)
 - [Kernel ideal data for rationally represented point maps](kernel-ideal-set.md)
-- [Faltings height of an elliptic curve in terms of its discriminant and periods](faltings-height-of-an-elliptic-curve.md)
+- [Faltings height of elliptic curves](faltings-height-of-elliptic-curves/README.md)
