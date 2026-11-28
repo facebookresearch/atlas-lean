@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import MathlibExt.NumberTheory.BinomidPartialSum
 import MathlibExt.NumberTheory.LexMinimalExtensionMonoid
 
 open MetaMathlibExt
@@ -113,3 +114,61 @@ example (B : Set (Unit → ℕ)) :
     ext i
     simp
   exact hx ▸ AddSubmonoid.nsmul_mem _ (AddSubmonoid.subset_closure rfl) _
+
+private abbrev knapsackPrefix (η : ℕ → ℕ) (c : ℕ) : ℕ := ∑ i ∈ Finset.range c, η i
+
+private abbrev knapsackWeight (n : ℕ → ℕ) : ℕ := ∑ i ∈ Finset.Icc 1 2, n i * i
+
+private abbrev knapsackValue (η n : ℕ → ℕ) : ℕ :=
+  ∑ i ∈ Finset.Icc 1 2, n i * knapsackPrefix η i
+
+-- Compute both optima independently using the prefix [0, 2]. At capacity two, one item of
+-- weight two suffices; at capacity five, it is used twice and a weight-one item fills the slack.
+example {η : ℕ → ℕ} (hη : IsLexMinimalExtensionOf η 2) (h₀ : η 0 = 0) (h₁ : η 1 = 2)
+    (c : ℕ) (hc : c = 2 ∨ c = 5) :
+    ∃ n : ℕ → ℕ, knapsackWeight n = c ∧ knapsackValue η n = knapsackPrefix η c ∧
+      ∀ k : ℕ → ℕ, knapsackWeight k ≤ c → knapsackValue η k ≤ knapsackValue η n := by
+  have hS1 : knapsackPrefix η 1 = 0 := by simp [knapsackPrefix, h₀]
+  have hS2 : knapsackPrefix η 2 = 2 := by simp [knapsackPrefix, Finset.sum_range_succ, h₀, h₁]
+  have hI : Finset.Icc 1 2 = ({1, 2} : Finset ℕ) := by decide
+  have hW (n : ℕ → ℕ) : knapsackWeight n = n 1 + n 2 * 2 := by simp [knapsackWeight, hI]
+  have hV (n : ℕ → ℕ) : knapsackValue η n = n 2 * 2 := by simp [knapsackValue, hI, hS1, hS2]
+  rcases hc with rfl | rfl
+  · let n : ℕ → ℕ := fun i => if i = 2 then 1 else 0
+    refine ⟨n, by norm_num [hW, n], by norm_num [hV, hS2, n], ?_⟩
+    intro k hk
+    rw [hW] at hk
+    norm_num [hV, n]
+    omega
+  · have hrec (j : ℕ) (hj : 2 < j) : knapsackPrefix η j =
+        (Finset.Ico 1 j).sup (fun i => knapsackPrefix η (j - i) + knapsackPrefix η i) :=
+      (isBinomidIndex_iff_partialSum η).2 2 hη j hj
+    have hI3 : Finset.Ico 1 3 = ({1, 2} : Finset ℕ) := by decide
+    have hI4 : Finset.Ico 1 4 = ({1, 2, 3} : Finset ℕ) := by decide
+    have hI5 : Finset.Ico 1 5 = ({1, 2, 3, 4} : Finset ℕ) := by decide
+    have hS3 : knapsackPrefix η 3 = 2 := by
+      rw [hrec 3 (by decide), hI3]
+      norm_num [Finset.sup_insert, hS1, hS2]
+    have hS4 : knapsackPrefix η 4 = 4 := by
+      rw [hrec 4 (by decide), hI4]
+      norm_num [Finset.sup_insert, hS1, hS2, hS3]
+    have hS5 : knapsackPrefix η 5 = 4 := by
+      rw [hrec 5 (by decide), hI5]
+      norm_num [Finset.sup_insert, hS1, hS2, hS3, hS4]
+    let n : ℕ → ℕ := fun i => if i = 1 then 1 else if i = 2 then 2 else 0
+    refine ⟨n, by norm_num [hW, n], by norm_num [hV, hS5, n], ?_⟩
+    intro k hk
+    rw [hW] at hk
+    norm_num [hV, n]
+    omega
+
+-- The zero sequence satisfies the binomid prefix/suffix inequality directly.
+example : ∑ _ ∈ Finset.range 2, (0 : ℕ) ≤ ∑ _ ∈ Finset.Ico 1 3, (0 : ℕ) := by simp
+
+example : IsBinomidIndex (fun _ => 0) := (isLexMinimalExtensionOf_zero 1).isBinomidIndex
+
+-- A concrete client: with only unit weights, exact filling forces three copies.
+example : ∃ n : ℕ → ℕ, n 1 = 3 := by
+  obtain ⟨n, hw, _⟩ := (isLexMinimalExtensionOf_zero 1).exists_knapsack
+    (c := 3) (by decide) (by decide)
+  exact ⟨n, by simpa using hw⟩

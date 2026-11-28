@@ -11,6 +11,7 @@ module
 public import Mathlib.Algebra.GCDMonoid.Finset
 public import Mathlib.Algebra.Group.Submonoid.Basic
 import Mathlib.Algebra.Group.Submonoid.BigOperators
+import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.NumberTheory.FrobeniusNumber
 import Mathlib.Order.Int.LeastGreatest
 public import MathlibExt.NumberTheory.BinomidIndex
@@ -22,6 +23,19 @@ We use zero-based indexing for the binomid indices of Caalim and Tanaka. The gcd
 maximizing prefix lengths divides every length attaining the same average in a lex-minimal
 extension. For a nonempty prefix, this gcd is the least positive eventual period. We also show
 that the atoms of an atom-generated submonoid of natural-valued functions form its unique basis.
+
+For a lex-minimal extension of a prefix of length $m \ge 1$ and a capacity $c \ge 1$, the $c$-th
+partial sum is the optimal unbounded knapsack value, attained at total weight $c$, with the
+first $m$ partial sums as values and their lengths as weights.
+
+## References
+
+* Jonathan Caalim and Yu-ichi Tanaka, *Generalized Binomial Coefficients and the Monoid of
+  Lexicographically Minimal Extensions*, INTEGERS 26 (2026), Article A113, pp. 1–14.
+  The knapsack result is Proposition 2 (pp. 4–5), which uses Proposition 1 for the tight split.
+* Jonathan Caalim and Yu-ichi Tanaka, *Lexicographically Minimal Extension of a Finite Binomid
+  Index*, INTEGERS 24 (2024), Article A53, pp. 1–13, Lemma 1 (p. 5): the partial-sum criterion
+  and recurrence behind Proposition 1 of the later paper.
 -/
 
 namespace MetaMathlibExt
@@ -121,6 +135,56 @@ private theorem exists_tight_split {η : ℕ → ℕ} {m r : ℕ}
     · exact (hearly j h).not_gt hlt
     · exact (not_lt_of_gt hdrop) hlt
     · exact (hj n h).not_gt hdrop
+
+/-- **Partial sums of a lex-minimal extension solve a knapsack problem.** Let $m \ge 1$, let
+$\eta = (e_1, e_2, \dots)$ be the lex-minimal extension of its first $m$ entries, and write
+$S_i = e_1 + \dots + e_i$. Then for every $c \ge 1$ there are nonnegative integers
+$n_1, \dots, n_m$ with $\sum_{i=1}^m n_i i = c$ and $S_c = \sum_{i=1}^m n_i S_i$ that solve the
+unbounded knapsack problem with values $S_i$, weights $i$ and capacity $c$: all nonnegative
+integers $n'_1, \dots, n'_m$ with $\sum_{i=1}^m n'_i i \le c$ satisfy
+$\sum_{i=1}^m n'_i S_i \le \sum_{i=1}^m n_i S_i$.
+
+Source: Caalim and Tanaka, *Generalized Binomial Coefficients and the Monoid
+of Lexicographically Minimal Extensions*, INTEGERS 26 (2026), Article A113,
+Proposition 2 (`integers-2026-A113-prop-2`). -/
+public theorem exists_knapsack {η : ℕ → ℕ} {m : ℕ}
+    (hη : IsLexMinimalExtensionOf η m) (hm : 1 ≤ m) {c : ℕ} (hc : 1 ≤ c) :
+    ∃ n : ℕ → ℕ, ∑ i ∈ Finset.Icc 1 m, n i * i = c ∧
+      ∑ l ∈ Finset.range c, η l
+        = ∑ i ∈ Finset.Icc 1 m, n i * ∑ l ∈ Finset.range i, η l ∧
+      ∀ n' : ℕ → ℕ, ∑ i ∈ Finset.Icc 1 m, n' i * i ≤ c →
+        ∑ i ∈ Finset.Icc 1 m, n' i * ∑ l ∈ Finset.range i, η l
+          ≤ ∑ i ∈ Finset.Icc 1 m, n i * ∑ l ∈ Finset.range i, η l := by
+  have hexact (d : ℕ) (hd : 1 ≤ d) : ∃ n : ℕ → ℕ, ∑ i ∈ Finset.Icc 1 m, n i * i = d ∧
+      prefixSum η d = ∑ i ∈ Finset.Icc 1 m, n i * prefixSum η i := by
+    induction d using Nat.strong_induction_on with
+    | ind d ih =>
+      by_cases hdm : d ≤ m
+      · have hdmem : d ∈ Finset.Icc 1 m := Finset.mem_Icc.mpr ⟨hd, hdm⟩
+        refine ⟨fun i => if i = d then 1 else 0, ?_, ?_⟩ <;>
+          simp [ite_mul, hdmem]
+      · obtain ⟨a, b, ha, hb, rfl, hs⟩ := hη.exists_tight_split hm (lt_of_not_ge hdm)
+        obtain ⟨n₁, hw₁, hv₁⟩ := ih a (Nat.lt_add_of_pos_right hb) ha
+        obtain ⟨n₂, hw₂, hv₂⟩ := ih b (Nat.lt_add_of_pos_left ha) hb
+        refine ⟨fun i => n₁ i + n₂ i, ?_, ?_⟩
+        · simp only [add_mul, Finset.sum_add_distrib, hw₁, hw₂]
+        · simpa only [add_mul, Finset.sum_add_distrib, ← hv₁, ← hv₂] using hs.symm
+  obtain ⟨n, hw, hv⟩ := hexact c hc
+  refine ⟨n, hw, hv, fun n' hn' => ?_⟩
+  rw [← hv]
+  -- In the dual order, the prefix sums are subadditive, including the empty sum.
+  have hsum (s : Finset ℕ) (w : ℕ → ℕ) :
+      ∑ i ∈ s, prefixSum η (w i) ≤ prefixSum η (∑ i ∈ s, w i) :=
+    Finset.le_sum_of_subadditive (N := ℕᵒᵈ) (prefixSum η) (by exact le_rfl)
+      (prefixSum_superadditive hη.isBinomidIndex) s w
+  calc
+    _ ≤ ∑ i ∈ Finset.Icc 1 m, prefixSum η (n' i * i) := by
+      apply Finset.sum_le_sum
+      intro i _
+      simpa only [Finset.sum_const, Finset.card_range, smul_eq_mul] using
+        hsum (Finset.range (n' i)) (fun _ => i)
+    _ ≤ prefixSum η (∑ i ∈ Finset.Icc 1 m, n' i * i) := hsum _ _
+    _ ≤ prefixSum η c := Finset.sum_le_sum_of_subset (Finset.range_mono hn')
 
 private theorem prefixSum_bound_and_dvd {η : ℕ → ℕ} {m j : ℕ}
     (hη : IsLexMinimalExtensionOf η m) (hj : j ∈ maxAverageIndices η m) {k : ℕ} (hk : 0 < k) :
