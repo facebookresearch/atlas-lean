@@ -65,6 +65,7 @@ example :
         ULift.up (6 : ℤ) ∧
       (β_ Z1 Z1).hom ((ULift.up (2 : ℤ)) ⊗ₜ[ℤ] (ULift.up (3 : ℤ))) =
         (ULift.up (3 : ℤ)) ⊗ₜ[ℤ] (ULift.up (2 : ℤ)) := by
+  letI : Linear ℤ (ModuleCat.{1} ℤ) := ModuleCat.instLinear (S := ℤ)
   letI : MonoidalPreadditive (ModuleCat.{1} ℤ) := inferInstance
   letI : MonoidalLinear ℤ (ModuleCat.{1} ℤ) :=
     ModuleCat.UniverseTensor.monoidalLinear.{0, 1} (R := ℤ)
@@ -120,8 +121,7 @@ example :
         (DirectSum.mem_internalGrade_iff ℤ ℕ GF _ _).mpr ⟨a2, rfl⟩
       exact SetLike.GradedSMul.smul_mem h3 h2
     · constructor
-      · rw [DirectSum.Gmodule.of_smul_of GF GF a3 a2]
-        rfl
+      · exact DirectSum.Gmodule.of_smul_of GF GF (i := 1) (j := 2) a3 a2
       · exact Module.Finite.range (DirectSum.lof ℤ ℕ GF 1)
 
 private abbrev semiZ : SemiSimplicialObject (ModuleCat.{0} ℤ) :=
@@ -201,7 +201,7 @@ example : classTriangle (7 : ℤ) = (7 : ℤ) := by
         (AlgebraicTopology.AlternatingFaceMapComplex.homologyZeroIsoCoequalizer simpZ).hom) ≫
           coequalizerToZ from (Category.assoc _ _ _).symm]
     rw [AlgebraicTopology.AlternatingFaceMapComplex.homologyZeroIsoCoequalizer_class]
-    exact coequalizer.π_desc _ _ _ _
+    exact coequalizer.π_desc _ _
   exact congrArg (fun f : Z0 ⟶ Z0 => f (7 : ℤ)) h
 
 private def zDouble : Z0 ⟶ Z0 := ModuleCat.ofHom ((2 : ℤ) • LinearMap.id)
