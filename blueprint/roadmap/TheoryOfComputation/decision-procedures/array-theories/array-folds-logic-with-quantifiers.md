@@ -1,4 +1,4 @@
-# Array folds logic with an ∃*∀* quantifier prefix is undecidable
+# Array folds logic with an ∃\*∀\* quantifier prefix is undecidable
 
 Adding a universally quantified index to array folds logic, that is allowing formulas with an $\exists^*\forall^*$ prefix, makes its satisfiability undecidable, although the quantifier-free logic is PSPACE-complete.
 
@@ -14,10 +14,11 @@ The quantifier-free fragment, where all variables are implicitly existential, is
 ## Proof depends on
 
 - [Davis–Putnam–Robinson–Matiyasevich theorem](../../undecidable-problems/diophantine-sets-and-hilbert-s-tenth-problem/dprm-theorem.md)
+- [Some multi-stack machine has an undecidable halting set](../../computability/halting-problem-and-rice-s-theorem/exists-not-tm2-decidable-tm2-halts-on.md)
 
 ## Expansion
 
-The reduction is from Hilbert's tenth problem over the natural numbers, undecidable by the DPRM theorem. Addition is already available, so it suffices to define multiplication $x=y\cdot z$ by an $\exists^*\forall^*$ formula. The formula requires $|a|=x$, uses one fold to say that $a$ is a $0$–$1$ array with exactly $z$ ones, and, for every index $j$ with $0\le j<|a|$, a fold starting at $j$ that counts exactly one $1$ among the positions $j,\dots,j+y$. This forces $a$ to consist of $z$ blocks $0\cdots01$ of length $y$, so $x=y\cdot z$.
+The reduction is from Hilbert's tenth problem over the natural numbers, undecidable by the DPRM theorem applied to an undecidable recursively enumerable set. Addition is already available, so it suffices to define multiplication $x=y\cdot z$ by an $\exists^*\forall^*$ formula. The source's formula requires $|a|=x$, uses one fold to say that $a$ is a $0$–$1$ array with exactly $z$ ones, and, for every index $j$ with $0\le j<|a|$, uses a fold starting at $j$ to say that exactly one $1$ occurs among the positions $j,\dots,j+y$ that lie in the array. As printed this does not force $x=y\cdot z$: for $a=(0,0,1)$, $x=3$, $y=2$ and $z=1$ every window holds exactly one $1$, yet $3\ne2\cdot1$, because windows that run past the end of the array are not checked. A good expansion replaces the window test by an encoding that pins both array boundaries, for example: either $y=0$ and $x=0$, or $y>0$, $|a|=x$, $a$ is a $0$–$1$ array with exactly $z$ ones, $x>0$ implies $a[x-1]=1$, and for all $j$ with $0\le j<x$, $a[j]=1$ holds exactly when $j+1=y$ or ($j+1>y$ and $a[j-y]=1$). Then the ones sit exactly at the positions $j$ with $y\mid j+1$, the last one forces $y\mid x$, and counting them gives $x=y\cdot z$.
 
 ## Sources
 
