@@ -32,7 +32,7 @@ namespace HomologicalComplex
 
 variable {C : Type u} [Category.{v} C] [HasZeroMorphisms C] [HasZeroObject C]
 
-local notation "e₊" => ComplexShape.positiveNatEmbedding
+local notation "e₊" => ChainComplex.kernelTailEmbedding
 
 variable (K : ChainComplex C ℕ)
 
