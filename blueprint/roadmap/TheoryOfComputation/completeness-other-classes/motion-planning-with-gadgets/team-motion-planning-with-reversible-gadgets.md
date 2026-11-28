@@ -24,7 +24,7 @@ same gadgets is EXPTIME-complete instead.
 
 ## Proof depends on
 
-None.
+- [König's lemma for finitely branching graphs](../../../ComputerScience/concurrent-systems-and-protocols/petri-nets/decision-procedures/konig-s-lemma-for-finitely-branching-graphs.md)
 
 ## Expansion
 

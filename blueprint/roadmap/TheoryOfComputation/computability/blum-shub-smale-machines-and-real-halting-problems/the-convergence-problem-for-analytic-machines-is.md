@@ -10,7 +10,7 @@ $$
 \mathbb{K} = \{(\langle \mathcal{M} \rangle, \vec x) : \mathcal{M} \text{ on input } \vec x \text{ produces a convergent infinite sequence}\}
 $$
 
-be the *convergence problem* for [analytic machines](analytic-machines.md); a machine that prints only finitely many vectors counts as divergent (Definition 3.10 of the source). Then:
+be the *convergence problem* for [analytic machines](analytic-machines.md); a machine that prints only finitely many vectors counts as divergent (Definition 3.10 of the source), and machines are encoded by constant-free codes $\langle \mathcal{M} \rangle$ as for $\mathbb{H}$. Then:
 
 1. the complement of $\mathbb{K}$ is BSS many-one reducible to $\mathbb{H}^{\mathbb{H}^{\mathbb{H}}}$;
 2. conversely, $\mathbb{H}^{\mathbb{H}^{\mathbb{H}}}$ is BSS many-one reducible to the complement of $\mathbb{K}$.
@@ -27,12 +27,12 @@ shown earlier by diagonalization.
 
 ## Proof depends on
 
-None.
+- [The boundedness problem for analytic machines is not decidable relative to the real halting problem](the-boundedness-problem-for-analytic-machines-is.md)
 
 ## Expansion
 
 Both parts use Cucker's characterization: a set is BSS many-one reducible to $\mathbb{H}^{\mathbb{H}^{\mathbb{H}}}$ exactly when it has the form
-$\{\vec x : \exists u\ \forall v\ \exists w\ (\vec x, u, v, w) \in W\}$ with $u, v, w \in \mathbb{N}$ and $W$ BSS-decidable. A real sequence fails to converge exactly when
+$\{\vec x : \exists u\ \forall v\ \exists w\ (\vec x, u, v, w) \in W\}$ with $u, v, w \in \mathbb{N}$ and $W$ BSS-decidable. A machine's output fails to converge exactly when it is finite, or its dimensions are not eventually constant, or it is an infinite sequence that is not Cauchy; each of these can be written in the $\exists\forall\exists$ form below. An infinite real sequence is not Cauchy exactly when
 $\exists k\ \forall K\ \exists n, m \ge K$ with $|y_n - y_m| \ge 1/k$, and whether a machine prints such $y_n, y_m$ within $\ell$ steps is BSS-decidable, which gives the
 first part. For the second, given a set of that form, run for every $u$ in parallel a procedure that keeps printing $0$ and prints $2^{-u}$ each
 time it finds a witness $w$ for the next $v$. If $\forall v\ \exists w$ holds for some $u$, the output has the two accumulation points $0$ and $2^{-u}$ and

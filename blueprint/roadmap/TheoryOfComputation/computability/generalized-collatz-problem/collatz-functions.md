@@ -14,7 +14,7 @@ The classical [Collatz map](../../../NumberTheory/integer-sequences/iterated-sel
 
 ## Depends on
 
-- [The Collatz map](../../../NumberTheory/integer-sequences/iterated-self-referential/collatz-problem/collatz-step.md)
+None.
 
 ## Proof depends on
 

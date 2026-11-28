@@ -12,14 +12,14 @@ whether $\vec x \in S$, and *BSS-semidecidable* if some BSS machine halts exactl
 a vector lies in a fixed oracle set. A set $S$ is *BSS many-one reducible* to $T$, written $S \preceq T$, if $S = f^{-1}(T)$ for some BSS-computable total
 function $f : \mathbb{R}^* \to \mathbb{R}^*$.
 
-**Real halting problems.** Machines are encoded by finite real vectors $\langle \mathcal{M} \rangle$, recording the program and its real constants. The *BSS
+**Real halting problems.** A *constant-free* BSS machine is one whose program uses no real constants; it is encoded by a finite discrete code $\langle \mathcal{M} \rangle$, and real constants can be passed as part of the input. The *BSS
 halting problem* is
 
 $$
-\mathbb{H} = \{(\langle \mathcal{M} \rangle, \vec x) : \text{the BSS machine } \mathcal{M} \text{ halts on input } \vec x\},
+\mathbb{H} = \{(\langle \mathcal{M} \rangle, \vec x) : \text{the constant-free BSS machine } \mathcal{M} \text{ halts on input } \vec x \in \mathbb{R}^*\},
 $$
 
-and its iterates are $\mathbb{H}^{\mathbb{H}}$, the set of $(\langle \mathcal{M} \rangle, \vec x)$ such that the oracle BSS machine $\mathcal{M}^{\mathbb{H}}$ halts on $\vec x$, and likewise
+as in Example 1.5(a) of the source, and its iterates are $\mathbb{H}^{\mathbb{H}}$, the set of $(\langle \mathcal{M} \rangle, \vec x)$ such that the constant-free oracle BSS machine $\mathcal{M}^{\mathbb{H}}$ halts on $\vec x$, and likewise
 $\mathbb{H}^{\mathbb{H}^{\mathbb{H}}}$ with oracle $\mathbb{H}^{\mathbb{H}}$. A set is semidecidable by a BSS machine with oracle $\mathbb{H}$ exactly when it is BSS many-one reducible to $\mathbb{H}^{\mathbb{H}}$
 (Cucker).
 
@@ -33,4 +33,4 @@ None.
 
 ## Sources
 
-- T. Gärtner and M. Ziegler, "Real analytic machines and degrees", *Logical Methods in Computer Science* 7(3), paper 11, 2011, doi:10.2168/LMCS-7(3:11)2011; read in arXiv:1006.0398v3: Section 1.4 (BSS machines and Definition 1.2), Section 1.5 (the arithmetical hierarchy for BSS machines, Fact 1.3, with the iterated halting problem).
+- T. Gärtner and M. Ziegler, "Real analytic machines and degrees", *Logical Methods in Computer Science* 7(3), paper 11, 2011, doi:10.2168/LMCS-7(3:11)2011; read in arXiv:1006.0398v3: Section 1.4 (BSS machines and Definition 1.2), Section 1.5 (the arithmetical hierarchy for BSS machines, Fact 1.3, with the iterated halting problem), and Example 1.5(a) (the halting problem of constant-free machines).

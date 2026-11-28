@@ -1,4 +1,5 @@
-# Verifying an Ω(n log n) time bound for one-tape machines is undecidable
+# Verifying a time bound T(n) ≥ n+1 of order Ω(n log n) for one-tape machines is undecidable
+
 
 For a time bound $T$ with $T(n) \ge n + 1$ for all $n$ and $T(n) = \Omega(n \log n)$, no algorithm decides whether a given
 one-tape Turing machine runs in time $T(n)$.

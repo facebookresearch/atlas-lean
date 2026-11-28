@@ -17,7 +17,7 @@ None.
 
 ## Expansion
 
-Hardness is shown by reduction from the uniform halting problem for Turing machines, halting from every initial or intermediate configuration, which is $\Pi^0_2$-complete by a result of Herman that the source recalls (Theorem 2.4 there). A Turing machine is translated into a Fractran program in which pairwise distinct primes record the state, the symbol under the head and the two halves of the tape in their exponents, and a fixed finite sequence of Fractran steps simulates one machine step. The difficulty the source deals with is that the program must halt on every positive integer, including those that do not encode a configuration in the intended form, exactly when the machine halts from every configuration.
+Hardness is shown by reduction from the uniform halting problem for Turing machines, halting from every initial or intermediate configuration, which is $\Pi^0_2$-complete by a result of Herman that the source recalls (Theorem 2.4 there). A Turing machine is translated into a Fractran program in which pairwise distinct primes record the state, the symbol under the head and the two halves of the tape in their exponents, and one machine step is simulated by finitely many Fractran steps, whose number may depend on the tape contents (Lemma 2.8). The difficulty the source deals with is that the program must halt on every positive integer, including those that do not encode a configuration in the intended form, exactly when the machine halts from every configuration.
 
 ## Sources
 

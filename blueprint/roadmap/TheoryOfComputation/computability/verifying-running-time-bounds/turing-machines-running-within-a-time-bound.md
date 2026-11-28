@@ -5,7 +5,7 @@ verification problems ask, for a given machine, whether it runs in time $T(n)$, 
 class.
 
 **Machines.** Machines are deterministic. A *multi-tape* Turing machine has a read-only input tape and finitely many work
-tapes, with states including an accepting and a rejecting halting state. A *one-tape* Turing machine has a single both-way
+tapes, all of them both-way infinite, with states including an accepting and a rejecting halting state. A *one-tape* Turing machine has a single both-way
 infinite read-write tape that also contains the input, and its head moves left or right at every step. On an input $w$ a
 machine either halts (accepting or rejecting) or runs forever; every machine makes at least one step on every input.
 

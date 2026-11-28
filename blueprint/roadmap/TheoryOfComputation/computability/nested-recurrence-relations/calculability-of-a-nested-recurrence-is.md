@@ -2,7 +2,7 @@
 
 For one explicit nested recurrence built from addition, subtraction and recursion only, no algorithm decides, given finitely many initial values, whether the recurrence then defines a value at every natural number.
 
-**Definitions.** Let a sequence $A$ be given by finitely many *initial conditions*, prescribed values $A(n)$ for finitely many $n$, together with a recurrence for the other arguments. The sequence is *calculable* if for every $n \ge 0$ either $A(n)$ is an initial condition, or the calculation of $A(n)$ by the recurrence invokes $A$ only on arguments in $\{0, 1, \dots, n - 1\}$ (all of them calculable in turn). For example, Hofstadter's sequence $Q(n) = Q(n - Q(n-1)) + Q(n - Q(n-2))$ with $Q(1) = Q(2) = 1$ is not known to be calculable.
+**Definitions.** Let a sequence $A$ be given by finitely many *initial conditions*, prescribed values $A(n)$ for finitely many $n$, together with a recurrence for the other arguments. The sequence is *calculable* if for every $n \ge 0$ either $A(n)$ is an initial condition, or the calculation of $A(n)$ by the recurrence invokes $A$ only on arguments in $\{0, 1, \dots, n - 1\}$ (all of them calculable in turn). For example, Hofstadter's sequence $Q(n) = Q(n - Q(n-1)) + Q(n - Q(n-2))$ with $Q(1) = Q(2) = 1$, defined on the positive integers, is not known to be calculable.
 
 **Theorem (Celaya and Ruskey).** For the nested recurrence
 

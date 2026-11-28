@@ -16,7 +16,7 @@ $$
 $\Pi^0_1$-complete set $\{x \mid \varphi_x(0)\uparrow\}$, the complement of the [halting set](../../degrees-and-hierarchies/turing-reducibility/halting-set.md), many-one reduces to it by a total computable function.
 
 The source also shows that no total recursive function decides, for indices $x$ and $y$, whether
-$\varphi_x(z) \le \varphi_y(z)$ wherever $\varphi_x(z)$ is defined; that the least index of a total bound cannot be computed;
+$\varphi_x(z) \le \varphi_y(z)$ wherever $\varphi_x(z)$ is defined; that no total recursive $G$ maps every $x$ to the least $y$ with $\varphi_x(z) \le \varphi_y(z)$ whenever $\varphi_x(z)$ is defined (and to $0$ if there is none), the minimization in Corollary 1 not requiring $\varphi_y$ to be total;
 that some partial recursive functions have no recursive sup-interpretation at all; and that the set of indices of partial
 recursive functions that have a recursive sup-interpretation is in $\Sigma^0_3$ (without a matching lower bound).
 

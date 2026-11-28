@@ -9,7 +9,7 @@ $$
 \mathbb{B} = \{(\langle \mathcal{M} \rangle, \vec x) : \mathcal{M} \text{ on input } \vec x \text{ produces a bounded sequence}\}
 $$
 
-be the *boundedness problem* for [analytic machines](analytic-machines.md), where a finite output sequence counts as bounded.
+be the *boundedness problem* for [analytic machines](analytic-machines.md), where a finite output sequence counts as bounded and machines are encoded by constant-free codes $\langle \mathcal{M} \rangle$ as for $\mathbb{H}$, any real constants being part of the input.
 
 1. A BSS machine with oracle access to $\mathbb{H}$ can semidecide $\mathbb{B}$.
 2. No BSS machine with oracle access to $\mathbb{H}$ decides $\mathbb{B}$. More precisely, $\mathbb{H}^{\mathbb{H}} \preceq \mathbb{B}$.
