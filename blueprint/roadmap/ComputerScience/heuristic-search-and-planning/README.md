@@ -21,11 +21,11 @@ Search and decision procedures from artificial intelligence: A* search, game-tre
 - [Monte Carlo tree search](monte-carlo-tree-search/README.md)
 - [Trajectory generation and time scaling](trajectory-generation-and-time-scaling/README.md)
 - [Feedback plans and navigation functions](feedback-plans-and-navigation-functions/README.md)
+- [Epistemic planning](epistemic-planning/README.md)
+- [Timeline-based planning](timeline-based-planning/README.md)
 
 ## Related topics
 
 - [Reinforcement learning theory](../machine-learning/reinforcement-learning/README.md)
 
 - [Behavior trees](behavior-trees/README.md)
-- [Epistemic planning](epistemic-planning/README.md)
-- [Timeline-based planning](timeline-based-planning/README.md)
