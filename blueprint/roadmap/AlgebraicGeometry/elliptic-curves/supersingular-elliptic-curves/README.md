@@ -5,3 +5,5 @@
 - [Supersingular curves have trivial prime-power torsion](pow-torsion.md)
 - [Supersingular `j`-invariants lie in the field with `q ^ 2` elements](j-pow-q-sq-eq-j-of-forall-q-zsmul-eq-zer.md)
 - [Finitely many supersingular `j`-invariants](ss-jset-finite.md)
+
+- [Supersingular curves have small embedding degree](supersingular-curves-have-embedding-degree-at-most-six.md)
