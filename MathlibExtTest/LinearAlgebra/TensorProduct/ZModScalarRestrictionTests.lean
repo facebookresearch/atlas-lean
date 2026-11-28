@@ -100,7 +100,8 @@ private def targetDetector : L' ⊗[R] N' →ₗ[R] R :=
       (ULift.moduleEquiv : N' ≃ₗ[R] R).toLinearMap)
 
 private theorem top_coordinate : targetDetector (top (x ⊗ₜ[ℤ] y)) = 2 := by
-  norm_num [targetDetector, top, forward, f, g, x, y]
+  change (2 : R) * (3 * 3) = 2
+  norm_num [R]
 
 example : targetDetector (bottom (x ⊗ₜ[ℤ] y)) = 2 := by
   rw [← naturality]
@@ -120,10 +121,10 @@ example : bottom (x ⊗ₜ[ℤ] y) ≠ 0 := by
   exact (by decide : (2 : R) ≠ 0) h'
 
 private def liftedForward : L ⊗[E] N ≃ₗ[ℤ] L ⊗[ℤ] N :=
-  ScalarRestriction.liftedZModIntegerTensorEquiv 4 L N
+  ScalarRestriction.liftedZModIntegerTensorEquiv.{0, 1, 4} 4 L N
 
 example : liftedForward (x ⊗ₜ[E] y) = x ⊗ₜ[ℤ] y :=
-  ScalarRestriction.liftedZModIntegerTensorEquiv_tmul 4 L N x y
+  ScalarRestriction.liftedZModIntegerTensorEquiv_tmul.{0, 1, 4} 4 L N x y
 
 example : (x ⊗ₜ[E] y : L ⊗[E] N) ≠ 0 := by
   intro h
@@ -132,10 +133,14 @@ example : (x ⊗ₜ[E] y : L ⊗[E] N) ≠ 0 := by
     map_zero] at h'
   exact integer_class_ne_zero h'
 
+private instance : Module (ZMod 0) ℤ :=
+  AddCommGroup.zmodModule (n := 0) (fun z : ℤ => zero_nsmul z)
+
 example :
     (TensorProduct.lid ℤ ℤ)
       (TensorProduct.zmodRestrictIntEquiv 0 ℤ ℤ ((5 : ℤ) ⊗ₜ[ℤ] (7 : ℤ))) = 35 := by
   rw [TensorProduct.zmodRestrictIntEquiv_apply_tmul]
+  change (5 : ℤ) * 7 = 35
   norm_num
 
 end ZModScalarRestrictionTests
