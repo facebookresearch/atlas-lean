@@ -16,6 +16,7 @@ A formula is true in a model when it is true at every world under every assignme
 ## Depends on
 
 - [Partially ordered set](../../../Order/ordered-sets/partial-order.md)
+- [Kripke soundness and completeness of intuitionistic first-order logic](../intuitionistic-first-order-logic/kripke-soundness-and-completeness-of-iqc.md)
 
 ## Proof depends on
 
