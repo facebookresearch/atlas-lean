@@ -17,5 +17,4 @@ Reduction theory, discriminants and class numbers of binary forms, quaternary fo
 - [Genus theory bound on the prime divisors of a fundamental discriminant](genus-two-power-dvd-class-number.md)
 - [Fowler's lower bound for class numbers of fundamental discriminants](fowler-class-number-log-lower-bound.md)
 - [Class number formula for imaginary quadratic orders](class-number-formula-for-orders.md)
-- [Totient lower bounds for class numbers of imaginary quadratic orders](totient-le-class-number-of-order.md)
 - [Fowler's bound on imaginary quadratic order discriminants](sqrt-abs-discriminant-le-of-gauss-class.md)

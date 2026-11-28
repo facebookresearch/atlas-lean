@@ -18,11 +18,8 @@ $\mathcal{O}$, so $h(f^2 D)$ is the class number of $\mathcal{O}$, as in the sou
 
 ## Expansion
 
-A good expansion has pages for the correspondence between the proper equivalence classes of
-primitive positive definite forms of discriminant $f^2 D$ and the proper ideal classes of the order
-$\mathcal{O}$ of conductor $f$ (Cox, Theorem 7.7), which identifies $h(f^2 D)$ with the class number
-of $\mathcal{O}$; for the unit index $[\mathcal{O}_K^\times : \mathcal{O}^\times]$; and for the steps
-of Cox's proof of Theorem 7.24, which compares the class groups of $\mathcal{O}$ and
+A good expansion has pages for the unit index $[\mathcal{O}_K^\times : \mathcal{O}^\times]$ and for
+the steps of Cox's proof of Theorem 7.24, which compares the class groups of $\mathcal{O}$ and
 $\mathcal{O}_K$ through $(\mathcal{O}_K / f\mathcal{O}_K)^\times$ and $(\mathbb{Z}/f\mathbb{Z})^\times$.
 Each page states its result precisely, with its locator in Cox.
 
@@ -31,6 +28,10 @@ Each page states its result precisely, with its locator in Cox.
 - [Gauss class number of a discriminant](kronecker-s-class-number-sums/gauss-class-number.md)
 - [Fundamental imaginary quadratic discriminant](../../algebraic-number-theory/quadratic-fields/imaginary-quadratic-discriminants/is-fundamental-imaginary-quadratic-discr.md)
 - [Kronecker symbol](../../congruences/power-residues-reciprocity/kronecker-symbol-and-quadratic-characters/kronecker-sym.md)
+
+## Proof depends on
+
+- [Form classes and proper ideal classes of an imaginary quadratic order](form-classes-and-proper-ideal-classes/form-classes-equiv-proper-ideal-classes.md), for $h(f^2 D) = h(\mathcal{O})$ and $h(D) = h(\mathcal{O}_K)$ (Cox, Theorem 7.7)
 
 ## Sources
 
