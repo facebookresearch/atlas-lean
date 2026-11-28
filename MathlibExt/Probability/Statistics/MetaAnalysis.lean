@@ -223,6 +223,14 @@ theorem hasLaw_stoufferStatistic {μ : Measure Ω} [IsProbabilityMeasure μ] {w 
 noncomputable def inverseVarianceWeights (v : Fin k → ℝ) (i : Fin k) : ℝ :=
   (v i)⁻¹ / ∑ j, (v j)⁻¹
 
+/-- **Normalized inverse-variance average.** A weighted sum with the normalized
+inverse-variance weights is the unnormalized inverse-variance sum divided by the total weight. -/
+theorem sum_inverseVarianceWeights_mul (v X : Fin k → ℝ) :
+    (∑ i, inverseVarianceWeights v i * X i) =
+      (∑ i, (v i)⁻¹ * X i) / ∑ i, (v i)⁻¹ := by
+  rw [Finset.sum_div]
+  exact Finset.sum_congr rfl fun i _ => by rw [inverseVarianceWeights, div_mul_eq_mul_div]
+
 private theorem sum_inv_pos {v : Fin k → ℝ} (hv : ∀ i, 0 < v i) (hk : 0 < k) :
     0 < ∑ j, (v j)⁻¹ :=
   Finset.sum_pos (fun i _ => inv_pos.2 (hv i)) ⟨⟨0, hk⟩, Finset.mem_univ _⟩
