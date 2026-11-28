@@ -21,13 +21,13 @@ If some heavy $g$ misses the first sample, then by the Chernoff lower tail a sec
 ## Depends on
 
 - [Epsilon-net of a sample for a class of events](epsilon-net-of-a-sample.md)
-- [Growth function](../../../../not-yet-classified/growth-function/growth-function.md)
+- [Growth function](../growth-function-and-sauer-closed-form/growth-function.md)
 - [The VC dimension is at most the size of the ground set](../../../../../Combinatorics/extremal-set-theory/vc-dim-le-card.md)
 
 ## Proof depends on
 
 - [Double-sample symmetrization: ghost samples and coordinate swaps](double-sample-symmetrization.md)
-- [Sauer bound for the growth function](../../../../not-yet-classified/growth-function/growth-function-le-sum.md)
+- [Sauer bound for the growth function](../growth-function-and-sauer-closed-form/growth-function-le-sum.md)
 
 ## Sources
 

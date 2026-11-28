@@ -6,7 +6,7 @@ For $R \subseteq X$, a configuration $\Delta$ is *active* with respect to $R$ if
 
 ## Related topics
 
-- [Free configuration space](../../not-yet-classified/configuration-space/c-free.md): the configuration space of motion planning, a different notion.
+- [Free configuration space](../../heuristic-search-and-planning/robot-motion-planning/configuration-spaces-for-motion-planning/c-free.md): the configuration space of motion planning, a different notion.
 
 ## Sources
 

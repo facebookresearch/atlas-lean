@@ -14,8 +14,8 @@ Induct on $n$ by splitting off the first point. A labeling of the remaining poin
 
 ## Depends on
 
-- [N-shattering](../../../../not-yet-classified/natarajan/nshatters.md)
-- [Natarajan dimension at most d](../../../../not-yet-classified/natarajan/ndim-le.md)
+- [N-shattering](../natarajan-dimension-and-the-natarajan-lemma/nshatters.md)
+- [Natarajan dimension at most d](../natarajan-dimension-and-the-natarajan-lemma/ndim-le.md)
 
 ## Sources
 

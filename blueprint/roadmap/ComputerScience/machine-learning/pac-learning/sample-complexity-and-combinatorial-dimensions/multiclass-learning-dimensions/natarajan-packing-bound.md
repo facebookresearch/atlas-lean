@@ -14,7 +14,7 @@ Run the subsampling argument of Dudley's bound: some $r$ positions with $2\ln|P|
 
 ## Depends on
 
-- [N-shattering](../../../../not-yet-classified/natarajan/nshatters.md)
+- [N-shattering](../natarajan-dimension-and-the-natarajan-lemma/nshatters.md)
 - [Dudley's packing bound for classes of bounded VC dimension](../packing-and-one-inclusion-graphs/dudley-packing-bound-for-vc-classes.md)
 
 ## Proof depends on

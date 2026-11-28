@@ -23,6 +23,8 @@ Mistake and regret bounds for sequential prediction: perceptron, weighted majori
 - [Online convex optimization algorithms](online-convex-optimization-algorithms/README.md)
 - [Regret in the experts setting](regret-in-the-experts-setting/README.md)
 - [Swap and internal regret](swap-and-internal-regret/README.md)
+- [Anytime online gradient descent](anytime-online-gradient-descent/README.md)
+- [Lower bound for online convex optimization](lower-bound-for-online-convex-optimization/README.md)
 
 ## Related topics
 

@@ -1,10 +1,10 @@
 # Testing and runtime verification
 
 - [Safety and co-safety properties are monitorable](safety-and-co-safety-properties-are-monitorable.md)
+- [Bounded-exhaustive checking](bounded-exhaustive-checking/README.md)
 
 - [Subsumption between control-flow coverage criteria](subsumption-between-control-flow-coverage.md)
 - [Characterization sets of finite-state machines](characterization-sets-of-minimal-finite-state.md)
-- [Sized enumerators and bounded exhaustive property testing](sized-enumerators-and-bounded-exhaustive.md)
 - [Substitution lemma for arithmetic expressions](substitution-lemma-for-arithmetic-expressions.md)
 - [Substitution lemma for Boolean expressions](substitution-lemma-for-boolean-expressions.md)
 - [Counted executions erase to big-step executions](counted-executions-erase-to-big-step-executions.md)

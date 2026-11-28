@@ -27,8 +27,8 @@ Derived (not stated in the cited sources): combining Corollary 6 and Theorem 10 
 
 - [Graph dimension of a multiclass concept class](graph-dimension.md)
 - [DS dimension characterizes multiclass PAC learnability](../../ds-dimension-characterizes-multiclass-pac-learnability.md)
-- [Natarajan dimension at most d](../../../../not-yet-classified/natarajan/ndim-le.md)
-- [N-shattering](../../../../not-yet-classified/natarajan/nshatters.md)
+- [Natarajan dimension at most d](../natarajan-dimension-and-the-natarajan-lemma/ndim-le.md)
+- [N-shattering](../natarajan-dimension-and-the-natarajan-lemma/nshatters.md)
 
 ## Proof depends on
 

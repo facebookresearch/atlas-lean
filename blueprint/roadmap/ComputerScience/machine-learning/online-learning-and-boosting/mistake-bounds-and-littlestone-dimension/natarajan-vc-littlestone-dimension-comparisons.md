@@ -11,7 +11,7 @@ Domain-size bound (derived; no cited source states it): if $X$ is finite, $\math
 ## Depends on
 
 - [Littlestone's theorem for arbitrary label sets: optimal mistake bound equals the multiclass Littlestone dimension](multiclass-littlestone-theorem.md)
-- [N-shattering](../../../not-yet-classified/natarajan/nshatters.md)
+- [N-shattering](../../pac-learning/sample-complexity-and-combinatorial-dimensions/natarajan-dimension-and-the-natarajan-lemma/nshatters.md)
 
 ## Sources
 

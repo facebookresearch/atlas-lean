@@ -1,0 +1,18 @@
+# Sequential Kalman conditioning over observation histories
+
+- [Scalar Kalman predict step: mean](predict-mean-fin-one.md)
+- [Scalar Kalman predict step: variance](predict-cov-fin-one.md)
+- [Scalar Kalman gain](gain-fin-one.md)
+- [Scalar Kalman update step: mean](update-mean-fin-one.md)
+- [Scalar Kalman update step: variance](update-cov-fin-one.md)
+- [Prior-mean formula for the final state](batch-mean-x.md)
+- [Prior-variance formula for the final state](batch-var-x.md)
+- [Prior-mean formula for the observation pair](batch-mean-y.md)
+- [Covariance-matrix formula for the observation pair](batch-cov-y.md)
+- [Cross-covariance formula for the final state and the observations](batch-cov-xy.md)
+- [Batch conditioning formula for the mean of the final state](batch-mean.md)
+- [Batch conditioning formula for the variance of the final state](batch-var.md)
+- [Innovation variance is positive](innov-pos.md)
+- [Closed form of the updated variance](update-var-eq.md)
+- [Determinant of the observation covariance is positive](det-pos.md)
+- [Recursive Kalman filtering equals batch conditioning for two observations](recursive-eq-batch.md)

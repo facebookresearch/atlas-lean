@@ -1,0 +1,16 @@
+# Observation-likelihood normalization for hidden Markov models
+
+- [Normalized hidden Markov model](normalized.md)
+- [Normalized hidden Markov models have nonnegative weights](to-nonneg.md)
+- [Extending a finite observation string to a stream](extend.md)
+- [Nonnegative path weights in a normalized HMM](path-prob-nonneg-extend.md)
+- [Splitting a sum over strings at the last entry](sum-snoc-obs.md)
+- [Extension of an appended string agrees with the prefix extension](extend-snoc-apply.md)
+- [Path weight depends only on the observed prefix](path-prob-congr.md)
+- [Extension of an appended string reads the new symbol](extend-snoc-last.md)
+- [HMM joint law sums to one](sum-joint-eq-one.md)
+- [Hidden Markov observation likelihoods sum to one](sum-likelihood-eq-one.md)
+- [Forward variables of a normalized hidden Markov model sum to one](sum-forward-eq-one.md)
+- [Joint weight of a hidden Markov model on paths and observation strings](joint-prob.md)
+- [The hidden Markov joint law sums to one](sum-joint-prob-eq-one.md)
+- [Likelihood is the sum of the joint weights](likelihood-eq-sum-joint-prob.md)

@@ -13,7 +13,7 @@ Then $N$ is an $\varepsilon$-net for $x$ with probability at least $1 - \varphi$
 ## Proof depends on
 
 - [Chebyshev's inequality](../../../Probability/moments/chebyshev-s-inequality/meas-ge-le-variance-div-sq.md)
-- [Sauer-Shelah bound on traces](../../not-yet-classified/growth/card-trace-family-le-sum-vc-dim.md)
+- [Sauer-Shelah bound on traces](../../machine-learning/pac-learning/sample-complexity-and-combinatorial-dimensions/finite-traces-of-a-concept-class/card-trace-family-le-sum-vc-dim.md)
 
 ## Related topics
 

@@ -17,11 +17,11 @@ The loss of $h$ at $(x, y)$ is $(1 - y'\,\sigma_h(x))/2$ with $y' = \pm 1$, and 
 - [Rademacher generalization bound for bounded function classes](rademacher-generalization-bound.md)
 - [Rademacher complexity of a VC class, explicit rate](../rademacher-complexity/rademacher-complexity-sign-patterns-le-v.md)
 - [Massart's finite-class lemma](../rademacher-complexity/rademacher-complexity-le-of-finite.md)
-- [Growth function](../../../not-yet-classified/growth-function/growth-function.md)
+- [Growth function](../../pac-learning/sample-complexity-and-combinatorial-dimensions/growth-function-and-sauer-closed-form/growth-function.md)
 
 ## Proof depends on
 
-- [Sauer bound for the growth function](../../../not-yet-classified/growth-function/growth-function-le-sum.md)
+- [Sauer bound for the growth function](../../pac-learning/sample-complexity-and-combinatorial-dimensions/growth-function-and-sauer-closed-form/growth-function-le-sum.md)
 - [Two-sided Hoeffding inequality for averages of bounded variables](../../../../Probability/concentration-inequalities/hoeffding-s-inequality/measure-real-abs-avg-sub-ge-le.md)
 
 ## Sources

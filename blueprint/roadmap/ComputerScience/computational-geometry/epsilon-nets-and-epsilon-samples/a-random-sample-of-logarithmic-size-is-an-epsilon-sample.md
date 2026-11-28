@@ -8,7 +8,7 @@ There is a constant $c$ with the following property. Let $(x, R)$ be a finite ra
 
 ## Proof depends on
 
-- [Sauer-Shelah bound on traces](../../not-yet-classified/growth/card-trace-family-le-sum-vc-dim.md)
+- [Sauer-Shelah bound on traces](../../machine-learning/pac-learning/sample-complexity-and-combinatorial-dimensions/finite-traces-of-a-concept-class/card-trace-family-le-sum-vc-dim.md)
 - [Hoeffding's bound for sampling without replacement](../../../Probability/concentration-inequalities/hoeffding-s-inequality/card-sample-tail-le.md)
 
 ## Sources

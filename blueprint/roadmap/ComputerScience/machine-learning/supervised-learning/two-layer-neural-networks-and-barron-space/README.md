@@ -15,6 +15,8 @@ approximable by networks of bounded path norm, and the a priori estimate of the 
 of the path-norm regularized estimator, which combines approximation and estimation into a
 width-independent $O(n^{-1/2})$ bound, complete the picture.
 
+- [Empirical neural tangent kernel](empirical-neural-tangent-kernel/README.md)
+
 ## Barron space
 
 - [The unit cube](unit-cube.md)
