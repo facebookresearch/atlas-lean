@@ -2,6 +2,7 @@
 
 General bounded operators: Douglas lemma, direct sums, strong and weak operator convergence, uniform boundedness, Hellinger–Toeplitz, invariant subspaces (Lomonosov), hypercyclicity criteria, Wold decomposition.
 
+- [Chaotic semigroups and operators](chaotic-semigroups-and-operators/README.md)
 - [Density of invertible operators](density-of-invertible-operators/README.md)
 - [Direct sums of operators](direct-sums-of-operators/README.md)
 - [Douglas factorization lemma](douglas-factorization-lemma/README.md)

@@ -1,0 +1,5 @@
+# Heat transform at time 1/4
+
+For a function $g : \mathbb{C} \to \mathbb{C}$ and $z \in \mathbb{C}$, the heat transform is $H_{1/4} g(z) = \pi^{-1} \int_{\mathbb{C}} g(w)\, e^{-|z-w|^2}\,dA(w)$.
+
+The integral is a Lebesgue (Bochner) integral, read as $0$ when $w \mapsto g(w)\, e^{-|z-w|^2}$ is not integrable. For an arbitrary $g$ this is not the classical heat transform: for $g(w) = e^{|w|^2}$ and $z = 0$ the integrand is identically $1$, its classical integral diverges, and the definition gives $0$. Under the admissibility hypothesis of the [Berger–Coburn conjecture](conjecture.md), that $g$ is measurable with $g\,k_a \in L^2(d\mu)$ for every [coherent state](coherent.md) $k_a$, the integral converges absolutely for every $z$ and has its classical meaning. Indeed $|k_a(w)|^2 e^{-|w|^2/2} = e^{-|w-a|^2/2}$, so admissibility says $\int |g(w)|^2 e^{-|w-a|^2/2}\,dA(w) < \infty$ for every $a$, and the Cauchy–Schwarz inequality with $a = z$ bounds $\int |g(w)|\, e^{-|z-w|^2}\,dA(w)$ by the square root of that integral times $\bigl(\int e^{-3|z-w|^2/2}\,dA(w)\bigr)^{1/2}$.

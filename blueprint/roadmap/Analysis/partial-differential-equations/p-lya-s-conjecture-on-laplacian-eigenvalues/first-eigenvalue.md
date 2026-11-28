@@ -1,0 +1,5 @@
+# Rayleigh-quotient infimum of a divergence-form operator
+
+For a set $\Omega \subseteq \mathbb{R}^d$ and a function $\sigma$, the quantity $\lambda(\Omega, \sigma)$ is the infimum, taken in $\mathbb{R}$, of the Rayleigh quotients $\int \sigma |\nabla u|^2 / \int u^2$ over the nonzero smooth functions $u$ whose compact support lies in $\Omega$. The integrals are Bochner integrals, read as $0$ when not integrable. The infimum of the empty family is read as $0$: for instance $\lambda(\varnothing, \sigma) = 0$. The value need not be an eigenvalue: on all of $\mathbb{R}^d$ with $\sigma = 1$, rescaling a fixed bump makes the quotients tend to $0$, which is not a Dirichlet eigenvalue there.
+
+For a nonempty bounded open domain $\Omega$ and a bounded measurable conductivity $\sigma$ bounded below by a positive constant, as in the two-phase design problem, the test functions are dense in $H^1_0(\Omega)$ and the quotient is continuous there, so $\lambda(\Omega, \sigma)$ is the first Dirichlet eigenvalue of $-\operatorname{div}(\sigma \nabla u)$ on $\Omega$.

@@ -58,3 +58,7 @@
 - [Majorant bound off an exceptional set](wiman-majorant-bound-off-exceptional-set.md)
 - [The maximum term tends to infinity along logarithmic radii](tendsto-wiman-maximum-term-exp-at-top.md)
 - [Wiman's inequality with exponent $2/3$ at arbitrarily large radii](exists-wiman-radius-two-thirds.md)
+- [Maximum term of a power series](max-term.md)
+- [Maximum modulus of a power series](max-modulus.md)
+- [Erdős Problem 227 on the ratio of maximum term and maximum modulus](maximum-term-ratio-limit-is-zero.md)
+- [Clunie–Hayman theorem on the ratio of maximum term and maximum modulus](maximum-term-ratio-limit-is-zero-refuted.md)

@@ -2,7 +2,10 @@
 
 Harmonic and subharmonic functions in the plane and in R^n, the maximum principle, harmonic conjugates, the Newton and logarithmic potentials and fundamental solutions of the Laplacian.
 
+- [Analytic capacity](analytic-capacity/README.md)
+- [Capacity and asymmetry](capacity-and-asymmetry/README.md)
 - [Equilibrium points of logarithmic potentials](equilibrium-points-of-logarithmic-potentials/README.md)
+- [Equilibrium points of Newtonian potentials](equilibrium-points-of-newtonian-potentials/README.md)
 - [Fundamental solutions of the Laplacian](fundamental-solutions-of-the-laplacian/README.md)
 - [Harmonic extension to a half-space](harmonic-extension-to-a-half-space/README.md)
 - [Harmonic functions vanishing on the edges of a cube](harmonic-functions-vanishing-on-the-edges-of-a-c/README.md)

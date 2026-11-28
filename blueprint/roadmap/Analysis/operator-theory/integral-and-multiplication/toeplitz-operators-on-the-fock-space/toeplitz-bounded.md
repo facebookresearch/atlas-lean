@@ -1,0 +1,5 @@
+# Bounded Toeplitz forms on coherent states
+
+For a function $g : \mathbb{C} \to \mathbb{C}$, $T_g$ is bounded when there is a constant $C$ with $\bigl|\int g\, f\, \bar\varphi\,d\mu\bigr| \le C \|f\|\, \|\varphi\|$ for all finite linear combinations $f = \sum_i c_i k_{a_i}$ and $\varphi = \sum_j d_j k_{b_j}$ of [coherent states](coherent.md), where $\mu$ is the [Gaussian measure](fock-measure.md) and $\|\cdot\|$ is the norm of $L^2(d\mu)$.
+
+The integral is a Lebesgue (Bochner) integral, read as $0$ when $g f \bar\varphi$ is not $\mu$-integrable, so for an arbitrary $g$ the inequality need not concern the classical form $\langle T_g f, \varphi \rangle$. Under the admissibility hypothesis of the [Berger–Coburn conjecture](conjecture.md), that $g$ is measurable with $g\,k_a \in L^2(d\mu)$ for every $a$, each such $g f$ lies in $L^2(d\mu)$, so $g f \bar\varphi$ is integrable by the Cauchy–Schwarz inequality and the integral is the classical form $\langle T_g f, \varphi \rangle = \int g f \bar\varphi\,d\mu$. The inequality then says that $T_g$ extends from the span of the coherent states, which is dense in the Fock space, to a bounded operator.

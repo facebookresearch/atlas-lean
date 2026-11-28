@@ -42,9 +42,9 @@ namespace MathlibExt.Analysis.Fourier.ApproximateIdentityRealWanted
 open MeasureTheory Filter Topology Real
 open scoped Convolution
 
-/-- **Approximate identity in `L¹(ℝ)`** (FourierAnalysis notes, Section 1, Theorem 4). If
-`K ∈ L¹(ℝ)` has `∫ K = 1` and `K_ε(x) = ε⁻¹ K(x / ε)`, then `‖K_ε * f - f‖₁ → 0` as `ε → 0⁺` for
-every `f ∈ L¹(ℝ)`. -/
+/-- **Approximate identity in `L¹(ℝ)`** (FourierAnalysis notes, Section 1, Theorem 4). If the
+real-valued `K ∈ L¹(ℝ)` has `∫ K = 1` and `K_ε(x) = ε⁻¹ K(x / ε)`, then `‖K_ε * f - f‖₁ → 0` as
+`ε → 0⁺` for every complex-valued `f ∈ L¹(ℝ)`. -/
 public theorem_wanted tendsto_eLpNorm_convolution_rescale_sub {K : ℝ → ℝ} (hK : Integrable K)
     (hK_int : ∫ x, K x = 1) {f : ℝ → ℂ} (hf : Integrable f) :
     Tendsto (fun ε : ℝ => eLpNorm

@@ -1,0 +1,3 @@
+# Newtonian capacity
+
+For a set $E \subseteq \mathbb{R}^N$, the capacity $\operatorname{cap} E$ is the infimum, taken in $\mathbb{R}$, of the Dirichlet energies $\int |\nabla u|^2$ of the smooth compactly supported functions $u$ with $u \ge 1$ on $E$. When there is no such $u$, as for every unbounded $E$ and in particular $E = \mathbb{R}^N$, the infimum of the empty set is read as $0$, which is not the classical capacity. For bounded $E$ in dimension $N \ge 3$, the setting of Fraenkel's question, the infimum is the classical Newtonian capacity of the closure of $E$ in this normalization (each such $u$ is continuous, so $u \ge 1$ on the closure).

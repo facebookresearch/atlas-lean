@@ -4,6 +4,7 @@ Fourier analysis on finite abelian groups and the Boolean cube: DFT and FFT, Pla
 
 - [Fourier analysis on the Boolean cube](fourier-analysis-on-the-boolean-cube/README.md)
 - [Fourier transform on finite abelian groups](fourier-transform-on-finite-abelian-groups/README.md)
+- [Discrete Carleson operators](discrete-carleson-operators/README.md)
 - [Donoho–Stark uncertainty principle](donoho-stark-uncertainty-principle/README.md)
 - [Influences and the noise operator on the Boolean cube](influences-and-the-noise-operator-on-the-boolean/README.md)
 - [Riesz–Thorin interpolation theorem](riesz-thorin-interpolation-theorem/README.md)

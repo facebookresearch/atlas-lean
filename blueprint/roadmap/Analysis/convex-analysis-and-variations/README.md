@@ -3,6 +3,7 @@
 Convex functions and sets in analysis and optimization: first-order and second-order conditions for convexity and optimality, Lagrange duality (weak duality, Slater's condition and strong duality, sufficiency of the KKT conditions, the duality gap of the barrier method), Newton's method for minimization, ADMM, Fenchel conjugates, polar sets, Moreau decomposition, convex projections, KKT conditions, gradient descent and mirror descent rates, the ellipsoid method, Stampacchia, Tikhonov regularization, Euler–Lagrange, mountain pass and Ekeland principles; linear programming goes to convex geometry. Ridge regression, Tikhonov regularization of a finite-dimensional least-squares problem, is under [least squares, ridge and lasso regression](../../ComputerScience/machine-learning/supervised-learning/least-squares-ridge-and-lasso-regression/README.md) in Machine learning.
 
 - [Accelerated gradient methods](accelerated-gradient-methods/README.md)
+- [Curvature of the central path in linear programming](curvature-of-the-central-path-in-linear-programm/README.md)
 - [Alternating direction method of multipliers](alternating-direction-method-of-multipliers/README.md)
 - [Ekeland variational principle](ekeland-variational-principle/README.md)
 - [Ellipsoid method](ellipsoid-method/README.md)
@@ -13,6 +14,7 @@ Convex functions and sets in analysis and optimization: first-order and second-o
 - [Lagrange duality](lagrange-duality/README.md)
 - [Lipschitz regularization by inf-convolution](lipschitz-regularization-by-inf-convolution/README.md)
 - [Lower complexity bounds for first-order methods](lower-complexity-bounds-for-first-order-methods/README.md)
+- [Minimizers of attractive–repulsive energies](minimizers-of-attractive-repulsive-energies/README.md)
 - [Mirror descent](mirror-descent/README.md)
 - [Mirror-prox method](mirror-prox-method/README.md)
 - [Moreau decomposition](moreau-decomposition/README.md)

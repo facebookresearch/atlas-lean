@@ -9,6 +9,7 @@ Classical inequalities for sums, sequences, means and integrals of real or compl
 - [Hilbert's inequality](hilbert-s-inequality/README.md)
 - [Kantorovich, Bhatia–Davis and Popoviciu inequalities](kantorovich-bhatia-davis-and-popoviciu-inequalit/README.md)
 - [Landau–Kolmogorov inequality](landau-kolmogorov-inequality/README.md)
+- [Turán's power sum method](tur-n-s-power-sum-method/README.md)
 - [Power sum inequalities for monotone sequences](power-sum-inequalities-for-monotone-sequences/README.md)
 - [A bound on a difference of reciprocals](one-div-one-add-sub-one-div-one-add-mul.md)
 - [An elementary inequality for $x \le u(v + \log x)$](le-two-mul-mul-log-add-of-le-mul-add-log.md)

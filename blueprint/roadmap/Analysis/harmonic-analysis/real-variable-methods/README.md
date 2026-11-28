@@ -5,6 +5,7 @@ Dyadic intervals and stopping times, the dyadic and Hardy–Littlewood maximal f
 These are the methods of C. Fefferman and E. M. Stein (*Some maximal inequalities*, Amer. J. Math. 93 (1971), 107–115; *$H^p$ spaces of several variables*, Acta Math. 129 (1972), 137–193) and of E. M. Stein's *Harmonic Analysis* (Princeton University Press, 1993): estimates proved by decomposing space, rather than frequency, into dyadic pieces selected by stopping times.
 
 - [Dyadic maximal function](dyadic-maximal-function/README.md)
+- [Multilinear singular integral forms](multilinear-singular-integral-forms/README.md)
 - [Bounded mean oscillation](bounded-mean-oscillation/README.md)
 
 ## Related topics

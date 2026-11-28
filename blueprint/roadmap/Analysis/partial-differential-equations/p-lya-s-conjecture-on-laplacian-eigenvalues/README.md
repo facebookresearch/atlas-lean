@@ -19,3 +19,7 @@
 - [Pólya eigenvalue benchmark](polya-eigenvalue-benchmark.md)
 - [Neumann Pólya benchmark](neumann-polya-eigenvalue-benchmark.md)
 - [Neumann and Dirichlet Pólya benchmarks agree after an index shift](neumann-polya-eigenvalue-benchmark-succ.md)
+- [Rayleigh-quotient infimum of a divergence-form operator](first-eigenvalue.md)
+- [Two-phase conductivity](two-phase.md)
+- [Existence of optimal two-phase designs for the first eigenvalue](two-phase-optimal-design-exists.md)
+- [Optimal two-phase designs for the first Dirichlet eigenvalue do not always exist](two-phase-optimal-design-exists-refuted.md)

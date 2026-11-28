@@ -7,6 +7,7 @@ Fine structure of real functions: Blumberg's theorem, continuous nowhere-differe
 - [Exponential functional equation](exponential-functional-equation/README.md)
 - [Functions with continuous differences](functions-with-continuous-differences/README.md)
 - [Hyers–Ulam stability](hyers-ulam-stability/README.md)
+- [Uniform distribution and dilates of sets](uniform-distribution-and-dilates-of-sets/README.md)
 - [Modulus of continuity](modulus-of-continuity/README.md)
 - [Pointwise and uniform Hölder conditions](pointwise-and-uniform-h-lder-conditions/README.md)
 - [Rising sun lemma](rising-sun-lemma/README.md)

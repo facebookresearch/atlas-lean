@@ -2,12 +2,16 @@
 
 Conformal and univalent maps: Riemann mapping, Koebe and Bloch theorems, Schwarz–Pick and half-plane self-maps, starlike and univalent coefficient problems, Loewner equation, holomorphic motions.
 
+- [Classical problems on univalent functions](classical-problems-on-univalent-functions/README.md)
+- [Collingwood's problem on asymptotic values](collingwood-s-problem-on-asymptotic-values/README.md)
 - [Hadamard products of univalent functions](hadamard-products-of-univalent-functions/README.md)
 - [Holomorphic maps from the disc into a strip](holomorphic-maps-from-the-disc-into-a-strip/README.md)
 - [Holomorphic motions](holomorphic-motions/README.md)
 - [Holomorphic self-maps of the upper half-plane](holomorphic-self-maps-of-the-upper-half-plane/README.md)
 - [Koebe quarter theorem](koebe-quarter-theorem/README.md)
 - [Loewner equation](loewner-equation/README.md)
+- [Preimages of regular curves under conformal maps](preimages-of-regular-curves-under-conformal-maps/README.md)
+- [Product structure of quasiconformal maps](product-structure-of-quasiconformal-maps/README.md)
 - [Radius of convexity of starlike functions](radius-of-convexity-of-starlike-functions/README.md)
 - [Riemann mapping theorem](riemann-mapping-theorem/README.md)
 - [Robertson's conjecture on odd univalent functions](robertson-s-conjecture-on-odd-univalent-function/README.md)

@@ -2,8 +2,10 @@
 
 The Fourier transform on R^n and Schwartz functions: convolution, Bochner, Hausdorff–Young, Heisenberg and fractal uncertainty, band-limited functions and Bernstein inequalities, sampling and Fourier interpolation, Kakeya sets, Beurling–Ahlfors and other singular integrals.
 
+- [Approximate identities](approximate-identities/README.md)
 - [Bernstein inequalities for band-limited functions](bernstein-inequalities-for-band-limited-function/README.md)
 - [Beurling–Ahlfors transform](beurling-ahlfors-transform/README.md)
+- [Cohn–Elkies magic functions](cohn-elkies-magic-functions/README.md)
 - [Fourier interpolation in dimensions 8 and 24](fourier-interpolation-in-dimensions-8-and-24/README.md)
 - [Fourier transform of dilations](fourier-transform-of-dilations/README.md)
 - [Fourier–Laplace transform](fourier-laplace-transform/README.md)
