@@ -22,11 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import Mathlib.Data.Fintype.Defs
-public import CSLibExt.Complexity.NPComplete.SequencingToMinimizeWeightedTardinessDefs
+public import CSLibExt.Complexity.NPComplete.TotalCompletionTimeWithReleaseTimesDefs
 
 @[expose] public section
 
@@ -60,43 +56,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the tasks, task `t` being the `t`-th pair `(l(t), r(t))` of length and release
-time, and the bound `K`. -/
-abbrev TotalCompletionTimeWithReleaseTimesInstance := List (ℕ × ℕ) × ℕ
-
-/-- The tasks of the instance, `Fin n` for `n` listed pairs. -/
-abbrev Task (i : TotalCompletionTimeWithReleaseTimesInstance) : Type := Fin i.1.length
-
-/-- The length `l(t)` of task `t`. -/
-def taskLength (i : TotalCompletionTimeWithReleaseTimesInstance) (t : Task i) : ℕ :=
-  (i.1.get t).1
-
-/-- The release time `r(t)` of task `t`. -/
-def releaseTime (i : TotalCompletionTimeWithReleaseTimesInstance) (t : Task i) : ℕ :=
-  (i.1.get t).2
-
-/-- Well-formedness of an instance: every task length is positive, and `K` is positive. -/
-def WellFormed (i : TotalCompletionTimeWithReleaseTimesInstance) : Prop :=
-  (∀ x ∈ i.1, 0 < x.1) ∧ 0 < i.2
-
-/-- Some one-processor schedule starts every task no earlier than its release time and has
-total completion time `∑ₜ (σ(t) + l(t))` at most `K`. -/
-def TotalCompletionTimeWithReleaseTimesFeasible
-    (i : TotalCompletionTimeWithReleaseTimesInstance) : Prop :=
-  ∃ σ : Task i → ℕ, IsOneProcessorSchedule (taskLength i) σ ∧
-    (∀ t, releaseTime i t ≤ σ t) ∧
-    ∑ t, (σ t + taskLength i t) ≤ i.2
-
-open Classical in
-/-- SEQUENCING TO MINIMIZE TOTAL COMPLETION TIME WITH RELEASE TIMES as a decision problem over
-bitstrings. -/
-noncomputable def totalCompletionTimeWithReleaseTimesDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TotalCompletionTimeWithReleaseTimesInstance) x with
-  | some i => decide (WellFormed i ∧ TotalCompletionTimeWithReleaseTimesFeasible i)
-  | none => false
 
 /-- **SEQUENCING TO MINIMIZE TOTAL COMPLETION TIME WITH RELEASE TIMES is NP-complete.**
 Source: Garey and Johnson (1979), [SS4]; Lenstra, Rinnooy Kan, and Brucker (1977),

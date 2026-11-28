@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.TwoProcessorTreePrecedenceCompletionTimeWanted
+public import CSLibExt.Complexity.NPComplete.TwoProcessorChainsTotalCompletionTimeDefs
 
 @[expose] public section
 
@@ -72,24 +70,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: it is well-formed for the two-processor tree-precedence
-problem (`m = 2`, positive lengths and equal positive weights, `0 < K`, the listed pairs name
-tasks and form a strict partial order), the order is a set of chains (at most one immediate
-successor and at most one immediate predecessor per task), and every weight is `1`. -/
-def WellFormed (i : TwoProcessorTreePrecedenceCompletionTimeInstance) : Prop :=
-  TwoProcessorTreePrecedenceCompletionTime.WellFormed i ∧ IsInTree i ∧ IsOutTree i ∧
-    ∀ p ∈ i.2.1, p.2 = 1
-
-open Classical in
-/-- TWO-PROCESSOR CHAINS SCHEDULING TO MINIMIZE TOTAL COMPLETION TIME as a decision problem
-over bitstrings. -/
-noncomputable def twoProcessorChainsTotalCompletionTimeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TwoProcessorTreePrecedenceCompletionTimeInstance) x with
-  | some i => decide (WellFormed i ∧ TwoProcessorTreePrecedenceCompletionTimeFeasible i)
-  | none => false
 
 /-- **TWO-PROCESSOR CHAINS SCHEDULING TO MINIMIZE TOTAL COMPLETION TIME (`P2|chains|∑Cᵢ`) is
 NP-complete.** Source: Du, Leung and Young (1991); Brucker (2007), Table 5.3. -/

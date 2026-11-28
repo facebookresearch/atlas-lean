@@ -23,9 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Data.Fintype.Defs
+public import CSLibExt.Complexity.NPComplete.MultiprocessorSchedulingDefs
 
 @[expose] public section
 
@@ -53,42 +51,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the task lengths `l(t)` (task `t` is the `t`-th entry), the number `m` of
-processors, and the deadline `D`. -/
-abbrev MultiprocessorSchedulingInstance := List ℕ × ℕ × ℕ
-
-/-- The tasks of the instance, `Fin n` for `n` listed lengths. -/
-abbrev Task (i : MultiprocessorSchedulingInstance) : Type := Fin i.1.length
-
-/-- The length `l(t)` of task `t`. -/
-def taskLength (i : MultiprocessorSchedulingInstance) (t : Task i) : ℕ :=
-  i.1.get t
-
-/-- The tasks running at time `u` under `σ`: those with `σ(t) ≤ u < σ(t) + l(t)`. -/
-def running (i : MultiprocessorSchedulingInstance) (σ : Task i → ℕ) (u : ℕ) :
-    Finset (Task i) :=
-  Finset.univ.filter fun t => σ t ≤ u ∧ u < σ t + taskLength i t
-
-/-- Well-formedness of an instance: every task length is positive, and `m` and `D` are
-positive. -/
-def WellFormed (i : MultiprocessorSchedulingInstance) : Prop :=
-  (∀ l ∈ i.1, 0 < l) ∧ 0 < i.2.1 ∧ 0 < i.2.2
-
-/-- Some `m`-processor schedule meets the overall deadline: at every time `u` at most `m`
-tasks run, and every task ends by `D`. -/
-def MultiprocessorSchedulingFeasible (i : MultiprocessorSchedulingInstance) : Prop :=
-  ∃ σ : Task i → ℕ, (∀ u, (running i σ u).card ≤ i.2.1) ∧
-    ∀ t, σ t + taskLength i t ≤ i.2.2
-
-open Classical in
-/-- MULTIPROCESSOR SCHEDULING as a decision problem over bitstrings. -/
-noncomputable def multiprocessorSchedulingDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MultiprocessorSchedulingInstance) x with
-  | some i => decide (WellFormed i ∧ MultiprocessorSchedulingFeasible i)
-  | none => false
 
 /-- **MULTIPROCESSOR SCHEDULING is NP-complete.** Source: Garey and Johnson (1979), [SS8];
 Garey and Johnson (1978); Lenstra, Rinnooy Kan, and Brucker (1977), Theorem 3(a). -/

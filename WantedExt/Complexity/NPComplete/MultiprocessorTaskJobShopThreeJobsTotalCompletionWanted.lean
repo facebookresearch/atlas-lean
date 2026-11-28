@@ -24,10 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
-public import WantedExt.Complexity.NPComplete.MultiprocessorTaskJobShopThreeJobsWanted
+public import CSLibExt.Complexity.NPComplete.MultiprocessorTaskJobShopThreeJobsTotalCompletionDefs
 
 @[expose] public section
 
@@ -72,22 +69,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Some MPT job shop schedule has total completion time at most `K`: values `C j`, each at
-least the completion time of the last task of job `j`, sum to at most `K`. -/
-def MultiprocessorTaskJobShopThreeJobsTotalCompletionFeasible (i : MPMJobShopInstance) : Prop :=
-  ∃ (σ : Operation i → ℕ) (C : Fin i.2.1.length → ℕ), IsMPTJobShopSchedule i σ ∧
-    (∀ j (k : Fin (i.2.1.get j).length), k.1 + 1 = (i.2.1.get j).length →
-      σ ⟨j, k⟩ + opLength i ⟨j, k⟩ ≤ C j) ∧ ∑ j, C j ≤ i.2.2
-
-open Classical in
-/-- MULTIPROCESSOR-TASK JOB SHOP JMPT3|n=3|ΣC_i as a decision problem over bitstrings. -/
-noncomputable def multiprocessorTaskJobShopThreeJobsTotalCompletionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MPMJobShopInstance) x with
-  | some i => decide (WellFormed i ∧ MultiprocessorTaskJobShopThreeJobsTotalCompletionFeasible i)
-  | none => false
 
 /-- **MULTIPROCESSOR-TASK JOB SHOP JMPT3|n=3|ΣC_i is NP-complete.** Source: Brucker and Knust's
 classification, citing Sotskov and Shakhlevich (1995); Brucker (2004), Chapter 11 (the model). -/

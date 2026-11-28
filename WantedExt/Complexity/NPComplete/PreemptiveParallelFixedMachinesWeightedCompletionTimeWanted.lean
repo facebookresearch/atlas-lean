@@ -25,10 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.ParallelFixedMachinesWeightedCompletionTimeWanted
-public import WantedExt.Complexity.NPComplete.PreemptiveWeightedCompletionTimeWanted
+public import CSLibExt.Complexity.NPComplete.PreemptiveParallelFixedMachinesWeightedCompletionTimeDefs
 
 @[expose] public section
 
@@ -76,16 +73,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-open Classical in
-/-- `Pm|pmtn|Σw_iC_i` for the fixed number `m` of processors, as a decision problem over
-bitstrings. -/
-noncomputable def preemptiveParallelFixedMachinesWeightedCompletionTimeDec (m : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SchedulingToMinimizeWeightedCompletionTimeInstance) x with
-  | some i => decide (WellFormed m i ∧ PreemptiveWeightedCompletionTimeFeasible i)
-  | none => false
 
 /-- **PREEMPTIVE SCHEDULING TO MINIMIZE WEIGHTED COMPLETION TIME is NP-complete for every fixed
 number `m ≥ 2` of processors (`Pm|pmtn|Σw_iC_i`).** Source: McNaughton (1959); Lenstra,

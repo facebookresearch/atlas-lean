@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.ResourceConstrainedSchedulingWanted
+public import CSLibExt.Complexity.NPComplete.ThreeProcessorOneResourceSchedulingDefs
 
 @[expose] public section
 
@@ -56,24 +54,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: it is a well-formed RESOURCE CONSTRAINED SCHEDULING instance
-(`0 < m`, `0 < r`, `r` positive bounds, every task has `r` requirements with `R_k(t) ≤ B_k`,
-`0 < D`), with `m = 3` processors and `r = 1` resource. -/
-def WellFormed (i : ResourceConstrainedScheduling.ResourceConstrainedSchedulingInstance) :
-    Prop :=
-  ResourceConstrainedScheduling.WellFormed i ∧ i.1 = 3 ∧ i.2.1 = 1
-
-open Classical in
-/-- RESOURCE CONSTRAINED SCHEDULING with one resource and three processors as a decision problem
-over bitstrings. -/
-noncomputable def threeProcessorOneResourceSchedulingDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ResourceConstrainedScheduling.ResourceConstrainedSchedulingInstance) x with
-  | some i => decide (WellFormed i ∧
-      ResourceConstrainedScheduling.ResourceConstrainedSchedulingFeasible i)
-  | none => false
 
 /-- **RESOURCE CONSTRAINED SCHEDULING is NP-complete for one resource and three processors.**
 Source: Garey and Johnson (1979), [SS10], comment; Garey and Johnson (1975). -/

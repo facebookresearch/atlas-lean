@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import WantedExt.Complexity.NPComplete.BoundedParallelBatchingReleaseCompletionWanted
+public import CSLibExt.Complexity.NPComplete.UnboundedParallelBatchingReleaseWeightedTardinessDefs
 
 @[expose] public section
 
@@ -70,54 +67,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the jobs as quadruples `(p_j, r_j, d_j, w_j)` of processing time, release date,
-due date and weight, and the bound `K`. -/
-abbrev UnboundedParallelBatchingReleaseWeightedTardinessInstance :=
-  List (ℕ × ℕ × ℕ × ℕ) × ℕ
-
-/-- The jobs of the instance, `Fin n` for `n` listed quadruples. -/
-abbrev Job (i : UnboundedParallelBatchingReleaseWeightedTardinessInstance) : Type :=
-  Fin i.1.length
-
-/-- The processing time `p_j` of job `j`. -/
-def proc (i : UnboundedParallelBatchingReleaseWeightedTardinessInstance) (j : Job i) : ℕ :=
-  (i.1.get j).1
-
-/-- The release date `r_j` of job `j`. -/
-def release (i : UnboundedParallelBatchingReleaseWeightedTardinessInstance) (j : Job i) : ℕ :=
-  (i.1.get j).2.1
-
-/-- The due date `d_j` of job `j`. -/
-def dueDate (i : UnboundedParallelBatchingReleaseWeightedTardinessInstance) (j : Job i) : ℕ :=
-  (i.1.get j).2.2.1
-
-/-- The weight `w_j` of job `j`. -/
-def weight (i : UnboundedParallelBatchingReleaseWeightedTardinessInstance) (j : Job i) : ℕ :=
-  (i.1.get j).2.2.2
-
-/-- Well-formedness of an instance: every processing time is positive. -/
-def WellFormed (i : UnboundedParallelBatchingReleaseWeightedTardinessInstance) : Prop :=
-  ∀ x ∈ i.1, 0 < x.1
-
-/-- Some parallel-batching schedule starts every job (at the start `S (B j)` of its batch) no
-earlier than its release date and has total weighted tardiness `∑_j w_j (C_j - d_j)`
-(truncated subtraction) at most `K`. -/
-def UnboundedParallelBatchingReleaseWeightedTardinessFeasible
-    (i : UnboundedParallelBatchingReleaseWeightedTardinessInstance) : Prop :=
-  ∃ (B : Job i → ℕ) (S : ℕ → ℕ), IsBatchSequence (proc i) B S ∧
-    (∀ j, release i j ≤ S (B j)) ∧
-    ∑ j, weight i j * (completion (proc i) B S j - dueDate i j) ≤ i.2
-
-open Classical in
-/-- UNBOUNDED PARALLEL-BATCHING WEIGHTED TARDINESS WITH RELEASE DATES as a decision problem over
-bitstrings. -/
-noncomputable def unboundedParallelBatchingReleaseWeightedTardinessDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := UnboundedParallelBatchingReleaseWeightedTardinessInstance) x with
-  | some i => decide (WellFormed i ∧ UnboundedParallelBatchingReleaseWeightedTardinessFeasible i)
-  | none => false
 
 /-- **UNBOUNDED PARALLEL-BATCHING WEIGHTED TARDINESS WITH RELEASE DATES
 (`1|p-batch;r_i|Σw_iT_i`) is NP-complete.** Source: Brucker et al. (1998); Brucker and Knust,

@@ -23,10 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
-public import CSLibExt.Complexity.NPComplete.MultiPurposeJobShopThreeJobsDefs
+public import CSLibExt.Complexity.NPComplete.MultiPurposeJobShopThreeJobsTotalCompletionDefs
 
 @[expose] public section
 
@@ -76,31 +73,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed MPM job shop instance with `m = 3` machines
-(every job nonempty, every operation with a nonempty set of eligible machines in `{1, 2, 3}`) and
-exactly three jobs. -/
-def WellFormed (i : MPMJobShopInstance) : Prop :=
-  MPMWellFormed 3 i ∧ i.2.1.length = 3
-
-/-- Some MPM job shop schedule has `Σ_j C_j ≤ K`, where `C j` is the completion time of the last
-operation of job `j`. -/
-def MultiPurposeJobShopThreeJobsTotalCompletionFeasible (i : MPMJobShopInstance) :
-    Prop :=
-  ∃ a σ : Operation i → ℕ, IsMPMJobShopSchedule i a σ ∧
-    ∃ C : Fin i.2.1.length → ℕ,
-      (∀ j (k : Fin (i.2.1.get j).length), k.1 + 1 = (i.2.1.get j).length →
-        C j = σ ⟨j, k⟩ + opLength i ⟨j, k⟩) ∧
-      ∑ j : Fin i.2.1.length, C j ≤ i.2.2
-
-open Classical in
-/-- MULTIPURPOSE-MACHINE JOB SHOP `JMPM3|n=3|ΣC_i` as a decision problem over bitstrings. -/
-noncomputable def multiPurposeJobShopThreeJobsTotalCompletionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := MPMJobShopInstance) x with
-  | some i =>
-      decide (WellFormed i ∧ MultiPurposeJobShopThreeJobsTotalCompletionFeasible i)
-  | none => false
 
 /-- **MULTIPURPOSE-MACHINE JOB SHOP `JMPM3|n=3|ΣC_i` is NP-complete.** Source: Sotskov and
 Shakhlevich (1995); Brucker and Knust, scheduling classification, class `mpm_shop`. -/

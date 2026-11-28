@@ -20,11 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Hamiltonian
-public import MathlibExt.Combinatorics.SimpleGraph.Planarity
+public import CSLibExt.Complexity.NPComplete.PlanarHamiltonianCompletionDefs
 
 @[expose] public section
 
@@ -57,37 +53,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the vertex list `[0, …, n - 1]` (explicit, so that isolated vertices count
-toward the input size, as in `HamiltonianCompletionWanted`) and the edge list. -/
-abbrev PlanarHamiltonianCompletionInstance := List ℕ × List (ℕ × ℕ)
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : PlanarHamiltonianCompletionInstance) : SimpleGraph (Fin i.1.length) :=
-  Cslib.Complexity.Karp.edgeGraph i.1.length i.2
-
-/-- Well-formedness of an instance: the vertex list is `[0, …, n - 1]`, the edge list is
-simple on `Fin n` (no loops, no repeated or reversed edges), and the graph is planar. -/
-def WellFormed (i : PlanarHamiltonianCompletionInstance) : Prop :=
-  i.1 = List.range i.1.length ∧
-    (i.2.Nodup ∧ ∀ e ∈ i.2, e.1 < i.1.length ∧ e.2 < i.1.length ∧ e.1 ≠ e.2 ∧
-      (e.2, e.1) ∉ i.2) ∧
-    (Graph i).IsPlanar
-
-/-- Edges can be added to `G` (no new vertices) so that the result is planar and has a
-Hamiltonian cycle. -/
-def PlanarHamiltonianCompletionFeasible (i : PlanarHamiltonianCompletionInstance) : Prop :=
-  ∃ H : SimpleGraph (Fin i.1.length), Graph i ≤ H ∧ H.IsPlanar ∧
-    ∃ v, ∃ p : H.Walk v v, p.IsHamiltonianCycle
-
-open Classical in
-/-- PLANAR HAMILTONIAN COMPLETION as a decision problem over bitstrings. -/
-noncomputable def planarHamiltonianCompletionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PlanarHamiltonianCompletionInstance) x with
-  | some i => decide (WellFormed i ∧ PlanarHamiltonianCompletionFeasible i)
-  | none => false
 
 /-- **PLANAR HAMILTONIAN COMPLETION is NP-complete.** Source: Johnson (1982); Wigderson
 (1982). -/

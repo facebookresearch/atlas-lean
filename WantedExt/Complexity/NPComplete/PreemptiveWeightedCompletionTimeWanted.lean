@@ -24,9 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.SchedulingToMinimizeWeightedCompletionTimeWanted
+public import CSLibExt.Complexity.NPComplete.PreemptiveWeightedCompletionTimeDefs
 
 @[expose] public section
 
@@ -72,42 +70,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- The pieces of every task form a preemptive subdivision: each piece `(s, d)` (start `s`,
-length `d`) has `d > 0`, the lengths of a task's pieces sum to its length, and each piece starts
-no earlier than the previous piece of the same task ends. -/
-def IsPreemptiveSubdivision (i : SchedulingToMinimizeWeightedCompletionTimeInstance)
-    (pieces : Task i → List (ℕ × ℕ)) : Prop :=
-  ∀ t, (∀ p ∈ pieces t, 0 < p.2) ∧ ((pieces t).map Prod.snd).sum = taskLength i t ∧
-    (pieces t).IsChain fun p q => p.1 + p.2 ≤ q.1
-
-/-- The number of pieces, over all tasks, running at time `u`. -/
-def runningPieces (i : SchedulingToMinimizeWeightedCompletionTimeInstance)
-    (pieces : Task i → List (ℕ × ℕ)) (u : ℕ) : ℕ :=
-  ∑ t, (pieces t).countP fun p => p.1 ≤ u ∧ u < p.1 + p.2
-
-/-- The completion time of task `t`: the end of its last piece. -/
-def completionTime (i : SchedulingToMinimizeWeightedCompletionTimeInstance)
-    (pieces : Task i → List (ℕ × ℕ)) (t : Task i) : ℕ :=
-  (((pieces t).getLast?).map fun p => p.1 + p.2).getD 0
-
-/-- Some `m`-processor preemptive schedule has weighted sum of completion times at most `K`. -/
-def PreemptiveWeightedCompletionTimeFeasible
-    (i : SchedulingToMinimizeWeightedCompletionTimeInstance) : Prop :=
-  ∃ pieces : Task i → List (ℕ × ℕ), IsPreemptiveSubdivision i pieces ∧
-    (∀ u, runningPieces i pieces u ≤ i.1) ∧
-    ∑ t, completionTime i pieces t * weight i t ≤ i.2.2
-
-open Classical in
-/-- PREEMPTIVE SCHEDULING TO MINIMIZE WEIGHTED COMPLETION TIME as a decision problem over
-bitstrings. -/
-noncomputable def preemptiveWeightedCompletionTimeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SchedulingToMinimizeWeightedCompletionTimeInstance) x with
-  | some i => decide (SchedulingToMinimizeWeightedCompletionTime.WellFormed i ∧
-      PreemptiveWeightedCompletionTimeFeasible i)
-  | none => false
 
 /-- **PREEMPTIVE SCHEDULING TO MINIMIZE WEIGHTED COMPLETION TIME is NP-complete.** Source: Garey
 and Johnson (1979), [SS13]; McNaughton (1959); Lenstra, Rinnooy Kan and Brucker (1977). -/

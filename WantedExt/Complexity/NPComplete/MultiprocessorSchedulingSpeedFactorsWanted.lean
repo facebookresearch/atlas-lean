@@ -22,11 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MultiprocessorSchedulingWanted
-public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
-public import Mathlib.Algebra.Order.Field.Rat
+public import CSLibExt.Complexity.NPComplete.MultiprocessorSchedulingSpeedFactorsDefs
 
 @[expose] public section
 
@@ -67,43 +63,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the task lengths `l(t)` (task `t` is the `t`-th entry), the speed factors (the
-`i`-th entry `(a, b)` is `s(i) = a / b`; `m` is their number), and the bound `K`. -/
-abbrev MultiprocessorSchedulingSpeedFactorsInstance := List ℕ × List (ℕ × ℕ) × ℕ
-
-/-- The underlying `MultiprocessorScheduling` instance: the task lengths, `m` and `K`. -/
-def toMultiprocessorScheduling (i : MultiprocessorSchedulingSpeedFactorsInstance) :
-    MultiprocessorSchedulingInstance :=
-  (i.1, i.2.1.length, i.2.2)
-
-/-- The speed factor `s(p)` of processor `p`. -/
-def speed (i : MultiprocessorSchedulingSpeedFactorsInstance) (p : Fin i.2.1.length) : ℚ :=
-  ((i.2.1.get p).1 : ℚ) / (i.2.1.get p).2
-
-/-- Well-formedness of an instance: the `MultiprocessorScheduling` conditions (positive lengths,
-`m ≥ 1`, `K ≥ 1`); every speed factor `a / b` has `0 < b ≤ a`, so `s(i) ≥ 1`; and the first one
-is `1`. -/
-def WellFormed (i : MultiprocessorSchedulingSpeedFactorsInstance) : Prop :=
-  MultiprocessorScheduling.WellFormed (toMultiprocessorScheduling i) ∧
-    (∀ s ∈ i.2.1, 0 < s.2 ∧ s.2 ≤ s.1) ∧ ∀ s ∈ i.2.1.head?, s.1 = s.2
-
-/-- Some assignment `f` of tasks to processors has finish time at most `K`: for every processor
-`p`, the total length of the tasks assigned to `p`, divided by `s(p)`, is at most `K`. -/
-def MultiprocessorSchedulingSpeedFactorsFeasible
-    (i : MultiprocessorSchedulingSpeedFactorsInstance) : Prop :=
-  ∃ f : Task (toMultiprocessorScheduling i) → Fin i.2.1.length, ∀ p,
-    (∑ t ∈ Finset.univ.filter (fun t => f t = p),
-        (taskLength (toMultiprocessorScheduling i) t : ℚ)) / speed i p ≤ i.2.2
-
-open Classical in
-/-- MULTIPROCESSOR SCHEDULING WITH SPEED FACTORS as a decision problem over bitstrings. -/
-noncomputable def multiprocessorSchedulingSpeedFactorsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MultiprocessorSchedulingSpeedFactorsInstance) x with
-  | some i => decide (WellFormed i ∧ MultiprocessorSchedulingSpeedFactorsFeasible i)
-  | none => false
 
 /-- **MULTIPROCESSOR SCHEDULING WITH SPEED FACTORS is NP-complete.** Source: Crescenzi and
 Kann, MINIMUM MULTIPROCESSOR SCHEDULING WITH SPEED FACTORS; Garey and Johnson (1978); Garey and

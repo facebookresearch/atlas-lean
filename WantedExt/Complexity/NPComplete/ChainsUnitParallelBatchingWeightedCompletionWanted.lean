@@ -28,9 +28,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.TwoProcessorUnitChainsWeightedCompletionWanted
+public import CSLibExt.Complexity.NPComplete.ChainsUnitParallelBatchingWeightedCompletionDefs
 
 @[expose] public section
 
@@ -91,22 +89,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: with its batch capacity replaced by `2`, it is well formed
-for `P2|p_i=1;chains|Σw_iC_i` (unit processing times, the listed pairs name jobs and form a
-strict partial order consisting of chains), and the batch capacity satisfies `0 < b < n`. -/
-def WellFormed (i : TwoProcessorTreePrecedenceCompletionTimeInstance) : Prop :=
-  TwoProcessorUnitChainsWeightedCompletion.WellFormed (2, i.2) ∧ 0 < i.1 ∧
-    i.1 < i.2.1.length
-
-open Classical in
-/-- `1|chains;p_i=1;p-batch;b<n|Σw_iC_i` as a decision problem over bitstrings. -/
-noncomputable def chainsUnitParallelBatchingWeightedCompletionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TwoProcessorTreePrecedenceCompletionTimeInstance) x with
-  | some i => decide (WellFormed i ∧ TwoProcessorTreePrecedenceCompletionTimeFeasible i)
-  | none => false
 
 /-- **PARALLEL BATCHING `1|chains;p_i=1;p-batch;b<n|Σw_iC_i` is NP-complete.** Source: Brucker
 and Knust's classification (reduction from the parallel machine problem

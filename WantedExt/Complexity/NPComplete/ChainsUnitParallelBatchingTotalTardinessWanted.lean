@@ -25,10 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import WantedExt.Complexity.NPComplete.ChainsUnitTaskTardinessWanted
+public import CSLibExt.Complexity.NPComplete.ChainsUnitParallelBatchingTotalTardinessDefs
 
 @[expose] public section
 
@@ -79,35 +76,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: an instance of `1|chains, p_j = 1|ΣT_j` (job triples `(l(t), w(t), d(t))`, the
-bound `K`, the pairs `(t, t')` with `t` preceding `t'`) and the batch capacity `b`. -/
-abbrev ChainsUnitParallelBatchingTotalTardinessInstance :=
-  PrecedenceUnitTaskTardinessInstance × ℕ
-
-/-- Well-formedness of an instance: it is well-formed for `1|chains, p_j = 1|ΣT_j` (unit lengths
-and weights, positive due dates and `K`, a chain-like strict partial order), and `0 < b < n`. -/
-def WellFormed (i : ChainsUnitParallelBatchingTotalTardinessInstance) : Prop :=
-  ChainsUnitTaskTardiness.WellFormed i.1 ∧ 0 < i.2 ∧ i.2 < i.1.1.1.length
-
-/-- Some batch schedule `σ` (batch start time of each job) puts at most `b` jobs in each batch,
-obeys the precedence constraints and has total tardiness at most `K`: the sum, over the jobs
-with `σ(t) + l(t) > d(t)`, of `(σ(t) + l(t) - d(t)) · w(t)`. -/
-def ChainsUnitParallelBatchingTotalTardinessFeasible
-    (i : ChainsUnitParallelBatchingTotalTardinessInstance) : Prop :=
-  ∃ σ : Task i.1.1 → ℕ, (∀ u, (Finset.univ.filter fun t => σ t = u).card ≤ i.2) ∧
-    (∀ t t', Prec i.1 t t' → σ t + taskLength i.1.1 t ≤ σ t') ∧
-    ∑ t ∈ Finset.univ.filter (fun t => deadline i.1.1 t < σ t + taskLength i.1.1 t),
-      (σ t + taskLength i.1.1 t - deadline i.1.1 t) * weight i.1.1 t ≤ i.1.1.2
-
-open Classical in
-/-- `1|chains;p_i=1;p-batch;b<n|ΣT_i` as a decision problem over bitstrings. -/
-noncomputable def chainsUnitParallelBatchingTotalTardinessDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ChainsUnitParallelBatchingTotalTardinessInstance) x with
-  | some i => decide (WellFormed i ∧ ChainsUnitParallelBatchingTotalTardinessFeasible i)
-  | none => false
 
 /-- **PARALLEL BATCHING `1|chains;p_i=1;p-batch;b<n|ΣT_i` is NP-complete.** Source: Brucker and
 Knust's classification (reduction from `1|chains;p_i=1|ΣT_i`, Leung and Young 1990). -/

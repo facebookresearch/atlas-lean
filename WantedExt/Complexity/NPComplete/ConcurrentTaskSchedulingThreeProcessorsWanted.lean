@@ -26,9 +26,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.ResourceConstrainedSchedulingPrecedenceZeroOrBoundWanted
+public import CSLibExt.Complexity.NPComplete.ConcurrentTaskSchedulingThreeProcessorsDefs
 
 @[expose] public section
 
@@ -70,23 +68,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: it is well-formed for RESOURCE CONSTRAINED SCHEDULING with a
-partial order (unit tasks, a strict partial order, a positive deadline), with `m = 3`
-processors, `r = 1` resource of bound `B_1 = 3` (the processors), and every task's degree of
-concurrency `R_1(t)` equal to `1` or `2`. -/
-def WellFormed (i : PrecedenceResourceSchedulingInstance) : Prop :=
-  PrecedenceWellFormed i ∧ i.1.1 = 3 ∧ i.1.2.1 = 1 ∧ bound i.1 0 = 3 ∧
-    ∀ t : Task i.1, req i.1 t 0 = 1 ∨ req i.1 t 0 = 2
-
-open Classical in
-/-- CONCURRENT TASK SCHEDULING ON THREE PROCESSORS as a decision problem over bitstrings. -/
-noncomputable def concurrentTaskSchedulingThreeProcessorsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PrecedenceResourceSchedulingInstance) x with
-  | some i => decide (WellFormed i ∧ PrecedenceFeasible i)
-  | none => false
 
 /-- **CONCURRENT TASK SCHEDULING ON THREE PROCESSORS is NP-complete.** Source: Lloyd (1981);
 Garey and Johnson (1979), [SS9] (every degree `1`), [SS10]. -/

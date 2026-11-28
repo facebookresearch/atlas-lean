@@ -27,10 +27,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
-public import WantedExt.Complexity.NPComplete.MultipurposeParallelTwoMachinesMakespanWanted
+public import CSLibExt.Complexity.NPComplete.MultipurposeParallelTwoMachinesWeightedCompletionDefs
 
 @[expose] public section
 
@@ -82,37 +79,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: a `PMPM2||C_max` instance (the MPM job-shop instance, whose bound component is
-`K`) and the weights, job `j` having the `j`-th listed weight `w_j`. -/
-abbrev MultipurposeParallelTwoMachinesWeightedCompletionInstance := MPMJobShopInstance × List ℕ
-
-/-- The weight `w_j` of job `j`. -/
-def weight (i : MultipurposeParallelTwoMachinesWeightedCompletionInstance)
-    (j : Fin i.1.2.1.length) : ℕ :=
-  i.2.getD j 0
-
-/-- Well-formedness of an instance: a well-formed `PMPM2||C_max` instance (two machines,
-nonempty machine sets in `{1, 2}`, single-operation jobs) and one weight per job. -/
-def WellFormed (i : MultipurposeParallelTwoMachinesWeightedCompletionInstance) : Prop :=
-  MultipurposeParallelTwoMachinesMakespan.WellFormed i.1 ∧ i.2.length = i.1.2.1.length
-
-/-- Some MPM schedule of the jobs has total weighted completion time at most `K`: the sum, over
-the operations `t` (one per job), of `w_j · (σ t + p_t)` for the job `j` of `t`. -/
-def MultipurposeParallelTwoMachinesWeightedCompletionFeasible
-    (i : MultipurposeParallelTwoMachinesWeightedCompletionInstance) : Prop :=
-  ∃ a σ : Operation i.1 → ℕ, IsMPMJobShopSchedule i.1 a σ ∧
-    (∑ t : Operation i.1, weight i t.1 * (σ t + opLength i.1 t)) ≤ i.1.2.2
-
-open Classical in
-/-- `PMPM2||Σw_iC_i` as a decision problem over bitstrings. -/
-noncomputable def multipurposeParallelTwoMachinesWeightedCompletionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MultipurposeParallelTwoMachinesWeightedCompletionInstance) x with
-  | some i =>
-    decide (WellFormed i ∧ MultipurposeParallelTwoMachinesWeightedCompletionFeasible i)
-  | none => false
 
 /-- **`PMPM2||Σw_iC_i` is NP-complete.** Source: Garey and Johnson (1979), [SS13] (`m = 2`), and
 Lenstra, Rinnooy Kan and Brucker (1977), via the case `μᵢ = {M₁, M₂}`; Bruno, Coffman and Sethi

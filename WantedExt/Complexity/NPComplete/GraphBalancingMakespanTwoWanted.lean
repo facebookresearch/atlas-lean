@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
+public import CSLibExt.Complexity.NPComplete.GraphBalancingMakespanTwoDefs
 
 @[expose] public section
 
@@ -59,37 +57,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the vertex count `n` and the edge list (an entry `(u, v, w)` is an edge with
-endpoints `u`, `v` and weight `w`). -/
-abbrev GraphBalancingMakespanTwoInstance := ℕ × List (ℕ × ℕ × ℕ)
-
-/-- Well-formedness of an instance: every edge has endpoints below `n` and weight `1` or `2`. -/
-def WellFormed (i : GraphBalancingMakespanTwoInstance) : Prop :=
-  ∀ e ∈ i.2, e.1 < i.1 ∧ e.2.1 < i.1 ∧ (e.2.2 = 1 ∨ e.2.2 = 2)
-
-/-- The head of edge `e` under the choice `b`: its second endpoint when `b = true`, its first
-endpoint when `b = false`. -/
-def head (e : ℕ × ℕ × ℕ) (b : Bool) : ℕ :=
-  if b then e.2.1 else e.1
-
-/-- The load of vertex `v` under the orientation `o`: the total weight of the edges whose head
-is `v`. -/
-def load (i : GraphBalancingMakespanTwoInstance) (o : Fin i.2.length → Bool) (v : ℕ) : ℕ :=
-  ∑ j : Fin i.2.length, if head (i.2.get j) (o j) = v then (i.2.get j).2.2 else 0
-
-/-- Some orientation gives every vertex load at most `2`. -/
-def GraphBalancingMakespanTwoFeasible (i : GraphBalancingMakespanTwoInstance) : Prop :=
-  ∃ o : Fin i.2.length → Bool, ∀ v < i.1, load i o v ≤ 2
-
-open Classical in
-/-- GRAPH BALANCING (makespan 2, weights 1 and 2) as a decision problem over bitstrings. -/
-noncomputable def graphBalancingMakespanTwoDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := GraphBalancingMakespanTwoInstance) x with
-  | some i => decide (WellFormed i ∧ GraphBalancingMakespanTwoFeasible i)
-  | none => false
 
 /-- **GRAPH BALANCING (makespan 2, weights 1 and 2) is NP-complete.** Source: Ebenlendr, Krčál,
 and Sgall (2014); Asahiro, Miyano, and Ono (2011), Theorem 13. -/

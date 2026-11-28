@@ -25,11 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.UniformMachinesReleaseMakespanWanted
-public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
-public import Mathlib.Algebra.Order.Field.Rat
+public import CSLibExt.Complexity.NPComplete.UniformMachinesWeightedLateJobsDefs
 
 @[expose] public section
 
@@ -79,50 +75,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: a `UniformMachinesReleaseMakespan` instance read as the processing times
-`p_i`, the speeds (the `k`-th entry `(a, b)` is `s_k = a / b`), the bound `K` and the due dates
-`d_i`, one per job; and the weights `w_i`, one per job. -/
-abbrev UniformMachinesWeightedLateJobsInstance :=
-  UniformMachinesReleaseMakespanInstance × List ℕ
-
-/-- The due date `d_t` of job `t` (the `t`-th entry of the due-date list). -/
-def dueDate (i : UniformMachinesWeightedLateJobsInstance)
-    (t : Task (toMultiprocessorScheduling i.1.1)) : ℕ :=
-  i.1.2.getD t 0
-
-/-- The weight `w_t` of job `t` (the `t`-th entry of the weight list). -/
-def weight (i : UniformMachinesWeightedLateJobsInstance)
-    (t : Task (toMultiprocessorScheduling i.1.1)) : ℕ :=
-  i.2.getD t 0
-
-/-- Well-formedness of an instance for the fixed number `m` of machines: the
-`UniformMachinesReleaseMakespan` conditions (positive processing times, exactly `m` positive
-speeds, one due date per job), one weight per job, and positive due dates, weights and `K`. -/
-def WellFormed (m : ℕ) (i : UniformMachinesWeightedLateJobsInstance) : Prop :=
-  UniformMachinesReleaseMakespan.WellFormed m i.1 ∧ i.2.length = i.1.1.1.length ∧
-    (∀ d ∈ i.1.2, 0 < d) ∧ (∀ w ∈ i.2, 0 < w) ∧ 0 < i.1.1.2.2
-
-/-- Some schedule, a machine `μ(t)` and a start time `S(t) ≥ 0` for each job `t`, where jobs on
-the same machine do not overlap, has total weight of late jobs (those with `C_t > d_t`) at
-most `K`. -/
-def UniformMachinesWeightedLateJobsFeasible (i : UniformMachinesWeightedLateJobsInstance) :
-    Prop :=
-  ∃ μ : Task (toMultiprocessorScheduling i.1.1) → Fin i.1.1.2.1.length,
-    ∃ S : Task (toMultiprocessorScheduling i.1.1) → ℚ,
-      IsNonOverlapping i.1.1 μ S ∧ (∀ t, 0 ≤ S t) ∧
-        ∑ t ∈ Finset.univ.filter (fun t => (dueDate i t : ℚ) < completion i.1.1 μ S t),
-          weight i t ≤ i.1.1.2.2
-
-open Classical in
-/-- UNIFORM PARALLEL MACHINE SCHEDULING on `m` machines, weighted number of late jobs
-(`Qm||Σw_iU_i`), as a decision problem over bitstrings. -/
-noncomputable def uniformMachinesWeightedLateJobsDec (m : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := UniformMachinesWeightedLateJobsInstance) x with
-  | some i => decide (WellFormed m i ∧ UniformMachinesWeightedLateJobsFeasible i)
-  | none => false
 
 /-- **UNIFORM PARALLEL MACHINE SCHEDULING, weighted number of late jobs (`Qm||Σw_iU_i`), is
 NP-complete for every fixed number `m ≥ 1` of machines.** Source: Garey and Johnson (1979),

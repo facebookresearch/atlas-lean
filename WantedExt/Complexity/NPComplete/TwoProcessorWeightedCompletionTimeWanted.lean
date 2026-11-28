@@ -23,9 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.SchedulingToMinimizeWeightedCompletionTimeWanted
+public import CSLibExt.Complexity.NPComplete.TwoProcessorWeightedCompletionTimeDefs
 
 @[expose] public section
 
@@ -62,22 +60,6 @@ reduction from every language in `NP`
 open SchedulingToMinimizeWeightedCompletionTime
   (SchedulingToMinimizeWeightedCompletionTimeInstance
     SchedulingToMinimizeWeightedCompletionTimeFeasible)
-
-/-- Well-formedness of an instance: it is a well-formed SCHEDULING TO MINIMIZE WEIGHTED
-COMPLETION TIME instance (`0 < m`, positive lengths and weights, `0 < K`) with `m = 2`
-processors. -/
-def WellFormed (i : SchedulingToMinimizeWeightedCompletionTimeInstance) : Prop :=
-  SchedulingToMinimizeWeightedCompletionTime.WellFormed i ∧ i.1 = 2
-
-open Classical in
-/-- TWO-PROCESSOR SCHEDULING TO MINIMIZE WEIGHTED COMPLETION TIME as a decision problem over
-bitstrings. -/
-noncomputable def twoProcessorWeightedCompletionTimeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SchedulingToMinimizeWeightedCompletionTimeInstance) x with
-  | some i => decide (WellFormed i ∧ SchedulingToMinimizeWeightedCompletionTimeFeasible i)
-  | none => false
 
 /-- **TWO-PROCESSOR SCHEDULING TO MINIMIZE WEIGHTED COMPLETION TIME is NP-complete.** Source:
 Garey and Johnson (1979), [SS13], comment; Lenstra, Rinnooy Kan and Brucker (1977); Bruno,

@@ -25,9 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MultiprocessorSchedulingWanted
+public import CSLibExt.Complexity.NPComplete.ParallelFixedMachinesReleaseDatesMakespanDefs
 
 @[expose] public section
 
@@ -70,39 +68,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: a MULTIPROCESSOR SCHEDULING instance (the task lengths, the number `m` of
-processors, the deadline `D`) and the release dates, task `t` having the `t`-th listed release
-date `r(t)`. -/
-abbrev ParallelFixedMachinesReleaseDatesMakespanInstance :=
-  MultiprocessorSchedulingInstance × List ℕ
-
-/-- The release date `r(t)` of task `t`. -/
-def releaseDate (i : ParallelFixedMachinesReleaseDatesMakespanInstance) (t : Task i.1) : ℕ :=
-  i.2.getD t 0
-
-/-- Well-formedness of an instance for the fixed number `m` of processors: it is a well-formed
-MULTIPROCESSOR SCHEDULING instance (positive lengths, `m` and `D`) with exactly `m` processors,
-and there is one release date per task. -/
-def WellFormed (m : ℕ) (i : ParallelFixedMachinesReleaseDatesMakespanInstance) : Prop :=
-  MultiprocessorScheduling.WellFormed i.1 ∧ i.1.2.1 = m ∧ i.2.length = i.1.1.length
-
-/-- Some `m`-processor schedule (at every time `u` at most `m` tasks run) starts every task no
-earlier than its release date and completes every task by `D`. -/
-def ParallelFixedMachinesReleaseDatesMakespanFeasible
-    (i : ParallelFixedMachinesReleaseDatesMakespanInstance) : Prop :=
-  ∃ σ : Task i.1 → ℕ, (∀ u, (running i.1 σ u).card ≤ i.1.2.1) ∧
-    (∀ t, releaseDate i t ≤ σ t) ∧ ∀ t, σ t + taskLength i.1 t ≤ i.1.2.2
-
-open Classical in
-/-- `Pm|r_i|Cmax` for the fixed number `m` of processors, as a decision problem over
-bitstrings. -/
-noncomputable def parallelFixedMachinesReleaseDatesMakespanDec (m : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ParallelFixedMachinesReleaseDatesMakespanInstance) x with
-  | some i => decide (WellFormed m i ∧ ParallelFixedMachinesReleaseDatesMakespanFeasible i)
-  | none => false
 
 /-- **MULTIPROCESSOR SCHEDULING WITH RELEASE DATES is NP-complete for every fixed number `m ≥ 2`
 of processors (`Pm|r_i|Cmax`).** Source: Lenstra, Rinnooy Kan and Brucker (1977), Theorems 3(a)

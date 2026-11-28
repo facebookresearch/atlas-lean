@@ -22,11 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Hamiltonian
-public import Mathlib.Data.Set.Card
+public import CSLibExt.Complexity.NPComplete.HamiltonianCompletionDefs
 
 @[expose] public section
 
@@ -61,39 +57,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex list (well-formed when it is `[0, 1, ..., n - 1]`; vertices `Fin n`),
-edge list, bound `K`. -/
-abbrev HamiltonianCompletionInstance := List ℕ × List (ℕ × ℕ) × ℕ
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : HamiltonianCompletionInstance) : SimpleGraph (Fin i.1.length) :=
-  Cslib.Complexity.Karp.edgeGraph i.1.length i.2.1
-
-/-- Well-formedness of an instance: the vertex list is `[0, 1, ..., n - 1]` with `n` its length,
-the edge list describes a simple graph on `Fin n` (no duplicate edges in either orientation, no
-self-loops, endpoints in range), and `0 < K ≤ |V| = n`. -/
-def WellFormed (i : HamiltonianCompletionInstance) : Prop :=
-  i.1 = List.range i.1.length ∧
-    (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1.length ∧ e.2 < i.1.length ∧ e.1 ≠ e.2 ∧
-      (e.2, e.1) ∉ i.2.1) ∧
-    0 < i.2.2 ∧ i.2.2 ≤ i.1.length
-
-/-- Some simple graph `H ≥ G` on the same vertices has at most `K` edges outside `G` and a
-Hamiltonian cycle. -/
-def HamiltonianCompletionFeasible (i : HamiltonianCompletionInstance) : Prop :=
-  ∃ H : SimpleGraph (Fin i.1.length), Graph i ≤ H ∧
-    (H.edgeSet \ (Graph i).edgeSet).ncard ≤ i.2.2 ∧
-    ∃ v, ∃ p : H.Walk v v, p.IsHamiltonianCycle
-
-open Classical in
-/-- HAMILTONIAN COMPLETION as a decision problem over bitstrings. -/
-noncomputable def hamiltonianCompletionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := HamiltonianCompletionInstance) x with
-  | some i => decide (WellFormed i ∧ HamiltonianCompletionFeasible i)
-  | none => false
 
 /-- **HAMILTONIAN COMPLETION is NP-complete.** Source: Garey and Johnson (1979), [GT34];
 Karp (1972); Gamarnik and Sviridenko (2005). -/

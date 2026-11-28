@@ -25,9 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.UniformMachinesWeightedLateJobsWanted
+public import CSLibExt.Complexity.NPComplete.ParallelMachinesWeightedLateJobsDefs
 
 @[expose] public section
 
@@ -74,22 +72,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance for the fixed number `m` of machines: a well-formed
-`Qm||Σw_iU_i` instance (positive processing times, due dates, weights and `K`; exactly `m`
-speeds; one due date and one weight per job) in which every speed is `(1, 1)`, that is `1`. -/
-def WellFormed (m : ℕ) (i : UniformMachinesWeightedLateJobsInstance) : Prop :=
-  UniformMachinesWeightedLateJobs.WellFormed m i ∧ ∀ s ∈ i.1.1.2.1, s = (1, 1)
-
-open Classical in
-/-- IDENTICAL PARALLEL MACHINE SCHEDULING on `m` machines, weighted number of late jobs
-(`Pm||Σw_iU_i`), as a decision problem over bitstrings. -/
-noncomputable def parallelMachinesWeightedLateJobsDec (m : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := UniformMachinesWeightedLateJobsInstance) x with
-  | some i => decide (WellFormed m i ∧ UniformMachinesWeightedLateJobsFeasible i)
-  | none => false
 
 /-- **IDENTICAL PARALLEL MACHINE SCHEDULING, weighted number of late jobs (`Pm||Σw_iU_i`), is
 NP-complete for every fixed number `m ≥ 1` of machines.** Source: Garey and Johnson (1979),

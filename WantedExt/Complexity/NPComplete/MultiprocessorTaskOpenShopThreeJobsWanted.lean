@@ -25,9 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.MultiPurposeJobShopThreeJobsDefs
+public import CSLibExt.Complexity.NPComplete.MultiprocessorTaskOpenShopThreeJobsDefs
 
 @[expose] public section
 
@@ -79,31 +77,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- `σ` is an MPT open-shop schedule: task `t` occupies every machine of `μ_t` during
-`[σ t, σ t + p_t)`; two different tasks of positive length that share a machine, or that belong to
-the same job, do not overlap. -/
-def IsMPTOpenShopSchedule (i : MPMJobShopInstance) (σ : Operation i → ℕ) : Prop :=
-  ∀ t t', t ≠ t' → ((∃ M ∈ eligible i t, M ∈ eligible i t') ∨ t.1 = t'.1) →
-    0 < opLength i t → 0 < opLength i t' →
-      σ t + opLength i t ≤ σ t' ∨ σ t' + opLength i t' ≤ σ t
-
-/-- Well-formedness of an instance: a well-formed instance with its own machine count `m` (jobs with
-at least one task, nonempty machine sets within `{1, …, m}`) and exactly three jobs. -/
-def WellFormed (i : MPMJobShopInstance) : Prop :=
-  MPMWellFormed i.1 i ∧ i.2.1.length = 3
-
-/-- Some MPT open-shop schedule completes every task by `K`. -/
-def MultiprocessorTaskOpenShopThreeJobsFeasible (i : MPMJobShopInstance) : Prop :=
-  ∃ σ : Operation i → ℕ, IsMPTOpenShopSchedule i σ ∧ ∀ t, σ t + opLength i t ≤ i.2.2
-
-open Classical in
-/-- MULTIPROCESSOR-TASK OPEN SHOP OMPT|n=3|Cmax as a decision problem over bitstrings. -/
-noncomputable def multiprocessorTaskOpenShopThreeJobsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := MPMJobShopInstance) x with
-  | some i => decide (WellFormed i ∧ MultiprocessorTaskOpenShopThreeJobsFeasible i)
-  | none => false
 
 /-- **MULTIPROCESSOR-TASK OPEN SHOP OMPT|n=3|Cmax is NP-complete.** Source: Garey and Johnson
 (1979), [SS14]; Gonzalez and Sahni (1976); Brucker and Knust's classification; Brucker (2004),

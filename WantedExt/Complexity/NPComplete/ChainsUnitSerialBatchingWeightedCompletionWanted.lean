@@ -24,10 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
-public import WantedExt.Complexity.NPComplete.ChainsSerialBatchingCompletionTimeWanted
+public import CSLibExt.Complexity.NPComplete.ChainsUnitSerialBatchingWeightedCompletionDefs
 
 @[expose] public section
 
@@ -73,40 +70,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: an instance of `1|chains; s-batch|∑ Cᵢ` (the processing times, the pairs
-`(i, j)` with `i → j`, the set-up time `s` and the bound `K`) and the weights
-`w₀, …, wₙ₋₁`. -/
-abbrev ChainsUnitSerialBatchingWeightedCompletionInstance :=
-  ChainsSerialBatchingCompletionTimeInstance × List ℕ
-
-/-- The weight `wⱼ` of job `j`. -/
-def weight (i : ChainsUnitSerialBatchingWeightedCompletionInstance) (j : Job i.1) : ℕ :=
-  i.2.getD j 0
-
-/-- Well-formedness of an instance: it is a well-formed instance of `1|chains; s-batch|∑ Cᵢ`
-(listed pairs naming jobs and forming a strict partial order that consists of chains), every
-processing time is `1`, and there is one weight per job. -/
-def WellFormed (i : ChainsUnitSerialBatchingWeightedCompletionInstance) : Prop :=
-  ChainsSerialBatchingCompletionTime.WellFormed i.1 ∧ (∀ p ∈ i.1.1, p = 1) ∧
-    i.2.length = i.1.1.length
-
-/-- Some batching compatible with the precedence constraints (`j → j'` implies that `j'` is not
-in an earlier batch than `j`) has total weighted completion time at most `K`. -/
-def ChainsUnitSerialBatchingWeightedCompletionFeasible
-    (i : ChainsUnitSerialBatchingWeightedCompletionInstance) : Prop :=
-  ∃ β : Job i.1 → ℕ, (∀ j j', Prec i.1 j j' → β j ≤ β j') ∧
-    ∑ j, weight i j * completionTime i.1 β j ≤ i.1.2.2.2
-
-open Classical in
-/-- SERIAL BATCHING WITH CHAINS AND UNIT PROCESSING TIMES TO MINIMIZE TOTAL WEIGHTED COMPLETION
-TIME as a decision problem over bitstrings. -/
-noncomputable def chainsUnitSerialBatchingWeightedCompletionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ChainsUnitSerialBatchingWeightedCompletionInstance) x with
-  | some i => decide (WellFormed i ∧ ChainsUnitSerialBatchingWeightedCompletionFeasible i)
-  | none => false
 
 /-- **SERIAL BATCHING WITH CHAINS AND UNIT PROCESSING TIMES TO MINIMIZE TOTAL WEIGHTED
 COMPLETION TIME is NP-complete.** Source: Albers and Brucker (1993) (NP-hardness); Brucker
