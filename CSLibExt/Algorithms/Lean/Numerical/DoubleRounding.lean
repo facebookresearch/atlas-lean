@@ -27,8 +27,8 @@ each operation either is exact at `p'` bits or stays far enough from the midpoin
 
 ## Main results
 
-* `fl_fl_eq_of_near`: double rounding of `z` is innocuous when `z` is a midpoint or lies within
-  `1/2 - 2^(-d-1)` of a `p`-bit number, in units of its last place, where `d = p' - p ≥ 1`.
+* `fl_fl_eq_of_near`: double rounding of `z` is innocuous when `z` is a midpoint or lies less than
+  `1/2 - 2^(-d-1)` from a `p`-bit number, in units of its last place, where `d = p' - p ≥ 1`.
 * `fl_fl_add`, `fl_fl_mul`, `fl_fl_div`, `fl_fl_sqrt`: with unbounded exponents, double rounding is
   innocuous for `+` (and `-`) if `p' ≥ 2p + 1`, for `×` and `/` if `p' ≥ 2p`, and for `√` if
   `p' ≥ 2p + 2`.
@@ -174,7 +174,7 @@ private theorem fl_eq_of_le_of_le (hp : 1 ≤ p) {x : K} {e : ℤ}
 /-! ## The double-rounding criterion -/
 
 /- Rounding `M · 2^d` to an integer, dividing by `2^d` and rounding again gives `rne M` when `M` is
-a half-integer or lies within `1/2 - 2^(-d-1)` of an integer. -/
+a half-integer or lies less than `1/2 - 2^(-d-1)` from an integer. -/
 private theorem rne_rne_mul_two_pow_div {d : ℕ} (hd : 1 ≤ d) {M : K}
     (h : (∃ k : ℤ, M = k + 1 / 2) ∨ ∃ k : ℤ, |M - k| < 1 / 2 - 1 / 2 ^ (d + 1)) :
     rne ((rne (M * 2 ^ d) : K) / 2 ^ d) = rne M := by
@@ -321,8 +321,9 @@ private theorem abs_lt_of_eq_int_mul {k g : ℤ} {n : ℕ} {z : K} (hk : z = k *
   rw [← Int.cast_abs] at h'
   exact_mod_cast h'
 
-/- When the smaller operand of a sum lies below the last place of `p + d` bits, the sum is
-within `1/2 - 2^(-d-1)` of a `p`-bit number, at the scale of its last place. -/
+/- When one operand of a sum is `my · 2^ey` with `|my| < 2^p` and `2^ey` below the last place of
+`p + d` bits of the sum, the sum lies less than `1/2 - 2^(-d-1)` from a multiple of its last place
+at `p` bits, in units of that last place. -/
 private theorem exists_abs_sub_lt_of_add (hp : 1 ≤ p) {d : ℕ} (hd : p + 1 ≤ d) {mx my ex ey : ℤ}
     (hmx : |mx| < 2 ^ p) (hmy : |my| < 2 ^ p) {z : K}
     (hz_def : z = mx * 2 ^ ex + my * 2 ^ ey) (hz : z ≠ 0) (hey : ey < ulpExp p z - d) :
@@ -737,8 +738,8 @@ private theorem flIn_eq_of_abs_le (hp : 1 ≤ p) {q e : ℤ} {w : K} (hqe : q �
 
 /- The double-rounding criterion with gradual underflow: when the exponent of the last place of
 `z` in the extended format is `d ≥ 1` below that in the target format, and `z` is a midpoint or
-within `1/2 - 2^(-d-1)` of a number of the target format at that scale, double rounding of `z` is
-innocuous. -/
+lies less than `1/2 - 2^(-d-1)` from a multiple of the last place in the target format, in units of
+that last place, double rounding of `z` is innocuous. -/
 private theorem flIn_flIn_eq_of_near (hp : 1 ≤ p) {p' : ℕ} {q q' : ℤ} {d : ℕ} (hd : 1 ≤ d) {z : K}
     (he : max (ulpExp p' z) q' = max (ulpExp p z) q - d)
     (h : (∃ k : ℤ, z / 2 ^ max (ulpExp p z) q = k + 1 / 2) ∨
@@ -849,7 +850,9 @@ field with a floor function, let $p \ge 1$ and $p' \ge 2p + 1$ be natural number
 $q'$ and $q_{\max}$ be integers with $q' \le q$. Write $\mathrm{fl}_{p,q}$ for rounding to
 nearest, ties to even, with $p$-bit significands, gradual underflow below the least exponent $q$
 and unbounded exponent. For all numbers $x, y \in K$ of the binary format with $p$-bit
-significands and last-place exponents in $[q, q_{\max}]$,
+significands and last-place exponents in $[q, q_{\max}]$, that is,
+$x = m_x 2^{e_x}$ and $y = m_y 2^{e_y}$ for some integers with $|m_x|, |m_y| < 2^p$ and
+$q \le e_x, e_y \le q_{\max}$ (these need not be the canonical exponents of the last place),
 $\mathrm{fl}_{p,q}(\mathrm{fl}_{p',q'}(x + y)) = \mathrm{fl}_{p,q}(x + y)$. -/
 theorem flIn_flIn_add (hp : 1 ≤ p) {p' : ℕ} (hp' : 2 * p + 1 ≤ p') {q q' qmax : ℤ}
     (hq : q' ≤ q) {x y : K} (hx : IsFloatIn p q qmax x) (hy : IsFloatIn p q qmax y) :
@@ -876,7 +879,9 @@ $e = \max(\lfloor \log_2 |z| \rfloor - (p - 1), q)$, where $\operatorname{rne}$ 
 nearest integer with ties to the even one; for $p \ge 1$, this is rounding to nearest, ties to
 even, with $p$-bit significands, gradual underflow below the least exponent $q$ and unbounded
 exponent. For all numbers $x, y \in K$ of the binary format with $p$-bit significands and
-last-place exponents in $[q, q_{\max}]$,
+last-place exponents in $[q, q_{\max}]$, that is,
+$x = m_x 2^{e_x}$ and $y = m_y 2^{e_y}$ for some integers with $|m_x|, |m_y| < 2^p$ and
+$q \le e_x, e_y \le q_{\max}$ (these need not be the canonical exponents of the last place),
 $\mathrm{fl}_{p,q}(\mathrm{fl}_{p',q'}(xy)) = \mathrm{fl}_{p,q}(xy)$.
 
 For $p = 0$ the format holds only $0$, so $x = y = 0$ and both sides are $0$. -/
@@ -907,7 +912,9 @@ field with a floor function, let $p \ge 1$ and $p' \ge 2p$ be natural numbers an
 and $q_{\max}$ be integers with $q' \le q - p - 2$. Write $\mathrm{fl}_{p,q}$ for rounding to
 nearest, ties to even, with $p$-bit significands, gradual underflow below the least exponent $q$
 and unbounded exponent. For all numbers $x, y \in K$ of the binary format with $p$-bit
-significands and last-place exponents in $[q, q_{\max}]$,
+significands and last-place exponents in $[q, q_{\max}]$, that is,
+$x = m_x 2^{e_x}$ and $y = m_y 2^{e_y}$ for some integers with $|m_x|, |m_y| < 2^p$ and
+$q \le e_x, e_y \le q_{\max}$ (these need not be the canonical exponents of the last place),
 $\mathrm{fl}_{p,q}(\mathrm{fl}_{p',q'}(x / y)) = \mathrm{fl}_{p,q}(x / y)$.
 
 For $y = 0$ both sides are $0$, with the convention $x / 0 = 0$. -/
@@ -959,7 +966,9 @@ $p' \ge 2p + 2$ be natural numbers and let $q$, $q'$ and $q_{\max}$ be integers 
 $q' \le q - p - 2$. Write $\mathrm{fl}_{p,q}$ for rounding to nearest, ties to even, with $p$-bit
 significands, gradual underflow below the least exponent $q$ and unbounded exponent. For every real
 number $x$ of the binary format with $p$-bit significands and last-place exponents in
-$[q, q_{\max}]$, $\mathrm{fl}_{p,q}(\mathrm{fl}_{p',q'}(\sqrt{x})) = \mathrm{fl}_{p,q}(\sqrt{x})$.
+$[q, q_{\max}]$, that is, $x = m_x 2^{e_x}$ for some integers with $|m_x| < 2^p$ and
+$q \le e_x \le q_{\max}$ (this need not be the canonical exponent of the last place),
+$\mathrm{fl}_{p,q}(\mathrm{fl}_{p',q'}(\sqrt{x})) = \mathrm{fl}_{p,q}(\sqrt{x})$.
 
 For $x < 0$ both sides are $0$, with the convention $\sqrt{x} = 0$. -/
 theorem flIn_flIn_sqrt (hp : 1 ≤ p) {p' : ℕ} (hp' : 2 * p + 2 ≤ p') {q q' qmax : ℤ}
@@ -1514,13 +1523,16 @@ $p$-bit floating-point number when it is $m \cdot 2^e$ for integers $m$ and $e$ 
 4. *Gradual underflow.* Write $\mathrm{fl}_{p,q}$ for rounding to nearest, ties to even, with
    $p$-bit significands, gradual underflow below the least exponent $q$ and unbounded exponent
    (`flIn`). For every $p \ge 1$, all integers $q$, $q'$, $q_{\max}$ and all real numbers $x$, $y$
-   of the binary format with $p$-bit significands and last-place exponents in $[q, q_{\max}]$:
+   of the binary format with $p$-bit significands and last-place exponents in $[q, q_{\max}]$,
+   that is, $x = m_x 2^{e_x}$ and $y = m_y 2^{e_y}$ for some integers with $|m_x|, |m_y| < 2^p$
+   and $q \le e_x, e_y \le q_{\max}$ (these need not be the canonical exponents of the last
+   place):
    $\mathrm{fl}_{p,q}(\mathrm{fl}_{p',q'}(x \pm y)) = \mathrm{fl}_{p,q}(x \pm y)$ if
    $p' \ge 2p + 1$ and $q' \le q$; the same holds for $xy$ if $p' \ge 2p$ and $q' \le 2q$, for
    $x / y$ if $p' \ge 2p$, $q' \le q - p - 2$ and $y \ne 0$, and for $\sqrt{x}$ if $p' \ge 2p + 2$,
    $q' \le q - p - 2$ and $x \ge 0$.
-5. *Some condition on $q'$ is needed.* $16$ and $3$ are numbers of the format with $2$-bit
-   significands and last-place exponents in $[0, 3]$, yet
+5. *Some condition on $q'$ is needed.* $16 = 2 \cdot 2^3$ and $3 = 3 \cdot 2^0$ are numbers of the
+   format with $2$-bit significands and last-place exponents in $[0, 3]$, yet
    $\mathrm{fl}_{2,0}(\mathrm{fl}_{4,0}(16 / 3)) = 4$ while $\mathrm{fl}_{2,0}(16 / 3) = 6$,
    although $p' = 4 = 2p$ and $q' = q = 0$.
 6. *Binary32 through binary64.* For all real binary32 numbers $x$ and $y$ (the numbers
