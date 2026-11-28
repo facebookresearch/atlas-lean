@@ -6,7 +6,7 @@
 
 1. *Universal cover.* The map $U^*(N) \to N$ sending each root path to its last vertex is a folding map; every $X$-morphism $g : T' \to N$ from a pseudo MUL-tree lifts through any folding map $f : T \to N$ to an $X$-morphism $\tilde g$ with $f \circ \tilde g = g$, uniquely when $g$ is rooted. Hence any pseudo MUL-tree with a folding map onto $N$ is isomorphic to $U^*(N)$.
 2. *Hardness of displaying.* Deciding whether a binary phylogenetic tree is displayed by a network is NP-complete even for binary, compressed tree-sibling networks, and hence for stable networks.
-3. *Weak displaying.* $T$ is weakly displayed by $N$ if and only if there is a *locally separated reconciliation* between $T$ and $N$: a map $r$ sending each leaf $x$ of $T$ to the leaf $x$ of $N$ ($r(x) = x$), every vertex of $T$ to a vertex of $V_{tr}(N)$, the tree vertices of $N$, and arcs of $T$ to directed paths of $N$ with at least one arc, such that for every vertex $v$ of $T$ with children $v_1, v_2$ the paths assigned to $(v, v_1)$ and $(v, v_2)$ start with different arcs.
+3. *Weak displaying.* $T$ is weakly displayed by $N$ if and only if there is a *locally separated reconciliation* between $T$ and $N$: a map $r$ from the vertices of $T$ to $V_{tr}(N)$, the tree vertices of $N$ together with its root, with $r(x) = x$ for every leaf $x$, assigning to each arc $(u, v)$ of $T$ a directed path of $N$ from $r(u)$ to $r(v)$, such that for every vertex $v$ of $T$ with children $v_1, v_2$ the paths assigned to $(v, v_1)$ and $(v, v_2)$ each contain at least one arc and start with different arcs.
 4. *Algorithm.* Weak displaying of a binary tree $T$ by $N$ can be decided by dynamic programming in $O(|X| \cdot |V(N)| \cdot \max_{v \in V(N)} |ch(v)|)$ time.
 
 ## Depends on

@@ -15,7 +15,7 @@ Resistance thus arises spontaneously at rate $\epsilon$ and is induced by the dr
 
 **Theorem (eventual resistance).** For every such $u$ and initial condition in $\mathcal{T} \setminus \{(0,0)\}$, $(S(t), R(t)) \to (0, 1)$ as $t \to \infty$. The origin $(0,0)$ is an equilibrium for every $u$.
 
-**Identifiability.** If only the tumour volume $V = S + R$ and its time derivatives near $t = 0$ are observed, all parameters, including the induction rate $\alpha$, are structurally identifiable using a small set of designed controls $u$.
+**Identifiability.** If treatment starts from a purely sensitive tumour, $S(0) = S_0 \in (0, 1)$ and $R(0) = 0$, and $d > 0$ and $p_r < 1$ as in the source's model, then $V = S + R$ and its time derivatives at $t = 0$, observed under a small set of designed controls $u$ (the source's Eq. (A13)), determine all of $d$, $\epsilon$, $p_r$, and $\alpha$ (structural identifiability).
 
 ## Expansion
 
@@ -23,4 +23,4 @@ The axes behave well: $S = 0$ forces $\dot S = 0$, and $R = 0$ forces $\dot R \g
 
 ## Sources
 
-- J. M. Greene, J. L. Gevertz, E. D. Sontag, "Mathematical approach to differentiate spontaneous and induced evolution to drug resistance during cancer treatment", JCO Clinical Cancer Informatics 3 (2019) 1–20, Eqs. (1)–(5), Appendix Eqs. (A1)–(A3), Theorems 1–2, and the structural identifiability appendix, <https://doi.org/10.1200/cci.18.00087>, PMCID PMC6873992.
+- J. M. Greene, J. L. Gevertz, E. D. Sontag, "Mathematical approach to differentiate spontaneous and induced evolution to drug resistance during cancer treatment", JCO Clinical Cancer Informatics 3 (2019) 1–20, Eqs. (1)–(5), Appendix Eqs. (A1)–(A3), Theorems 1–2, and the structural identifiability appendix (Eqs. (A13)–(A17)), <https://doi.org/10.1200/cci.18.00087>, PMCID PMC6873992.

@@ -16,11 +16,13 @@ $$
 {}^{FFM}J^{\alpha_1,\alpha_2}_{0,t}g(t)=\frac{\alpha_1\alpha_2}{AB(\alpha_1)\Gamma(\alpha_1)}\int_0^t s^{\alpha_2-1}g(s)(t-s)^{\alpha_1-1}ds+\frac{\alpha_2(1-\alpha_1)}{AB(\alpha_1)}t^{\alpha_2-1}g(t).
 $$
 
-**Integral form of the epidemic Cauchy problem.** A compartmental model ${}^{FFM}D^{\alpha_1,\alpha_2}_{0,t}x(t)=g(t,x(t))$, $x(0)=x_0$, is turned into an integral equation by integrating: every solution of the Cauchy problem satisfies
+**Integral form of the epidemic Cauchy problem.** For $\alpha_2 = 1$ (the ABC Cauchy problem ${}^{ABC}_{\;\;0}D_t^{\alpha_1}x(t)=g(t,x(t))$, $x(0)=x_0$), every $W^{1,2}$ solution satisfies
 
 $$
-x(t)=x_0+\frac{1-\alpha_1}{AB(\alpha_1)}\,\alpha_2 t^{\alpha_2-1}g(t,x(t))+\frac{\alpha_1\alpha_2}{AB(\alpha_1)\Gamma(\alpha_1)}\int_0^t \tau^{\alpha_2-1}g(\tau,x(\tau))(t-\tau)^{\alpha_1-1}d\tau .
+x(t)=x_0+\frac{1-\alpha_1}{AB(\alpha_1)}\,g(t,x(t))+\frac{\alpha_1}{AB(\alpha_1)\Gamma(\alpha_1)}\int_0^t g(\tau,x(\tau))(t-\tau)^{\alpha_1-1}d\tau .
 $$
+
+For $0 < \alpha_2 < 1$, with the operator ${}^{FFM}D^{\alpha_1,\alpha_2}_{0,t}x = {}^{ABC}_{\;\;0}D_t^{\alpha_1}H$ where $H(t)=\int_0^t x'(\tau)\,\frac{\tau^{1-\alpha_2}}{\alpha_2}\,d\tau$, integrating the Cauchy problem ${}^{FFM}D^{\alpha_1,\alpha_2}_{0,t}x(t)=g(t,x(t))$ yields $H(t)=\frac{1-\alpha_1}{AB(\alpha_1)}g(t,x(t))+\frac{\alpha_1}{AB(\alpha_1)\Gamma(\alpha_1)}\int_0^t g(\tau,x(\tau))(t-\tau)^{\alpha_1-1}d\tau$. (Khan et al., Section 5, Eq. (16), prints $x(t)=x_0+\frac{1-\alpha_1}{AB(\alpha_1)}\alpha_2 t^{\alpha_2-1}g(t,x(t))+\frac{\alpha_1\alpha_2}{AB(\alpha_1)\Gamma(\alpha_1)}\int_0^t \tau^{\alpha_2-1}g(\tau,x(\tau))(t-\tau)^{\alpha_1-1}d\tau$ as the working equation for its numerical scheme; this page separates the two because the weight $1/(\alpha_2\tau^{\alpha_2-1})$ sits inside the convolution and cannot be pulled out as $\alpha_2 t^{\alpha_2-1}$ when $\alpha_2 < 1$.)
 
 The converse is not claimed: for $\alpha_2=1$ the ABC derivative of a $W^{1,2}$ function tends to $0$ as $t\to0$, so a solution of the Cauchy problem needs $g(0,x_0)=0$, while the integral equation has continuous solutions with $g(0,x(0))\ne0$.
 
@@ -32,7 +34,7 @@ The source applies this to an eight-compartment COVID-19 model $(S,E,I,A,Q,H,R,M
 
 ## Expansion
 
-By the chain rule for the fractal derivative, $\frac{dg}{dt^{\alpha_2}}=\frac{g'(t)}{\alpha_2 t^{\alpha_2-1}}$, so the fractal-fractional problem is equivalent to the ABC problem ${}^{ABC}_{\;\;0}D_t^{\alpha_1}x=K(t,x)$ with $K(t,x)=\alpha_2t^{\alpha_2-1}g(t,x)$. Applying the Atangana–Baleanu integral $\frac{1-\alpha_1}{AB(\alpha_1)}K+\frac{\alpha_1}{AB(\alpha_1)\Gamma(\alpha_1)}\int_0^t K(\tau)(t-\tau)^{\alpha_1-1}d\tau$ yields the displayed equation; the source discretizes it with a three-point Newton interpolation of $K$ on each subinterval. For $\alpha_2=1$ (the ABC problem with normalization $B(\alpha_1)$ in place of $AB(\alpha_1)$), Picard iterates of the integral equation converge to a unique solution on $[0,b]$ when $\frac{1-\alpha_1}{B(\alpha_1)}\eta_i+\frac{b^{\alpha_1}}{B(\alpha_1)\Gamma(\alpha_1)}\eta_i<1$ for the Lipschitz constants $\eta_i$ of the right-hand sides, and the solution is Hyers–Ulam stable (Li et al., Theorems 3–4).
+By the chain rule for the fractal derivative, $\frac{dx}{dt^{\alpha_2}}=\frac{x'(t)}{\alpha_2 t^{\alpha_2-1}}$, so ${}^{FFM}D^{\alpha_1,\alpha_2}_{0,t}x = {}^{ABC}_{\;\;0}D_t^{\alpha_1}H$ with $H'(\tau)=x'(\tau)/(\alpha_2\tau^{\alpha_2-1})$ and $H(0)=0$. Applying the Atangana–Baleanu integral to $g$ gives the identity for $H(t)$ above (which coincides with $x(t)-x_0$ when $\alpha_2=1$). For its numerical scheme at $\alpha_2<1$, the source works directly with Eq. (16), setting $K(t,x)=\alpha_2 t^{\alpha_2-1}g(t,x)$ and discretizing the Atangana–Baleanu integral of $K$ by three-point Newton interpolation on each subinterval. For $\alpha_2=1$ (the ABC problem with normalization $B(\alpha_1)$ in place of $AB(\alpha_1)$), Picard iterates of the integral equation converge to a unique solution on $[0,b]$ when $\frac{1-\alpha_1}{B(\alpha_1)}\eta_i+\frac{b^{\alpha_1}}{B(\alpha_1)\Gamma(\alpha_1)}\eta_i<1$ for the Lipschitz constants $\eta_i$ of the right-hand sides, and the solution is Hyers–Ulam stable (Li et al., Theorems 3–4).
 
 ## Sources
 
