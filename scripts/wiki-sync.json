@@ -106828,6 +106828,7 @@
 "ProbabilityTheory.gaussianUpperTail_mem_Ioo": "8627bca795c0914c",
 "ProbabilityTheory.gaussian_linear_tail": "8879979e3f15cd91",
 "ProbabilityTheory.gaussian_linear_tail_zero": "497e1c94ea1c7d43",
+"ProbabilityTheory.gaussian_variance_estimators_mse": "afacfbfdbda4af6f",
 "ProbabilityTheory.gemMeasure": "5d137f8adc57f6ce",
 "ProbabilityTheory.gemMeasure_eq_map_sethuraman": "71b28d2ff2d3327d",
 "ProbabilityTheory.ghostSupDeviation": "85e14594a22353b4",

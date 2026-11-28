@@ -15826,6 +15826,7 @@
   "MathlibExt/Probability/Statistics/FunctionalDeltaKMGrid": {"to": "Probability/nonparametric-survival", "title": "Product integrals and the functional delta method"},
   "MathlibExt/Probability/Statistics/GaussMarkov": {"to": "Probability/linear-models-multivariate", "title": "Gauss–Markov theorem"},
   "MathlibExt/Probability/Statistics/GaussianGraphicalModel": {"to": "Probability/linear-models-multivariate", "title": "Gaussian graphical models"},
+  "MathlibExt/Probability/Statistics/GaussianVarianceMSE": {"to": "Probability/statistical-estimation", "title": "Bias and mean squared error of estimators"},
   "MathlibExt/Probability/Statistics/GeneralizedLeastSquares": {"to": "Probability/linear-models-multivariate", "title": "Generalized least squares"},
   "MathlibExt/Probability/Statistics/GillJohansenOuter": {"to": "Probability/nonparametric-survival", "title": "Product integrals and the functional delta method"},
   "MathlibExt/Probability/Statistics/GlivenkoCantelli": {"to": "Probability/nonparametric-survival", "title": "Glivenko–Cantelli theorem"},
