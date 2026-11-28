@@ -26,6 +26,10 @@ $e = \lfloor \log_2 |z| \rfloor - (p - 1)$ is [the exponent of the last place](u
 ## Depends on
 
 - [Total IEEE-style operation semantics with special values and exceptions](total-ieee-style-operation-semantics-with-special-values-and.md)
+- [Binary floating-point format](binary-format.md)
+- [IEEE values of a binary format](value.md)
+- [Basic operations](operation.md)
+- [Rounding modes](rounding-mode.md)
 - [Floating-point numbers of a bounded format](is-float-in.md)
 - [Round to nearest, ties to even](fl.md)
 - [Largest finite number](max-finite.md)

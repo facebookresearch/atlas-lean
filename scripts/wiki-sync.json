@@ -14633,7 +14633,7 @@
 "Cslib.Algorithms.Lean.FloatingPoint.IEEE.RoundingMode.round": "dfe4cf0566136ca9",
 "Cslib.Algorithms.Lean.FloatingPoint.IEEE.RoundingMode.roundInt": "41a61fb7a87ae0e7",
 "Cslib.Algorithms.Lean.FloatingPoint.IEEE.Value": "6a5cd9d6d01beb92",
-"Cslib.Algorithms.Lean.FloatingPoint.IEEE.Value.compare": "2625793e9c4090d8",
+"Cslib.Algorithms.Lean.FloatingPoint.IEEE.Value.compare": "b86d5ce3dd81a504",
 "Cslib.Algorithms.Lean.FloatingPoint.IEEE.eval_add_comm": "b26195d5640b3e4a",
 "Cslib.Algorithms.Lean.FloatingPoint.IEEE.eval_mul_comm": "bd04249e99a5db4f",
 "Cslib.Algorithms.Lean.FloatingPoint.IEEE.not_add_assoc": "b416e9c9eabd4385",
