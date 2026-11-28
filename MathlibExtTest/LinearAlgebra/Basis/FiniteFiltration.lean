@@ -177,17 +177,20 @@ example : ambientBasis ⟨(0 : Fin 2), 0⟩ = Pi.single 0 1 := by
   exact (Module.Basis.ofFiltration_apply
     flag rfl GradeIndex 2 flag_le gradedBasis rfl ⟨(0 : Fin 2), (0 : Fin 1)⟩).trans first_vector
 
+theorem flag_zero : flag 0 = ⊥ := rfl
+theorem flag_two_top : flag 2 = ⊤ := rfl
+
 -- Default simp compares the two public constructors on the proper nonempty flag.
 example (i : Fin 1) (a : Fin 1) :
     ((Module.Basis.ofFiltrationStage (R := ℚ) (M := V)
-        flag rfl GradeIndex 2 flag_le gradedBasis ⟨i.castSucc, a⟩ : flag 2) : V) =
+        flag flag_zero GradeIndex 2 flag_le gradedBasis ⟨i.castSucc, a⟩ : flag 2) : V) =
       ((Module.Basis.ofFiltrationStage (R := ℚ) (M := V)
-        flag rfl GradeIndex 1 (fun j => flag_le j.castSucc)
+        flag flag_zero GradeIndex 1 (fun j => flag_le j.castSucc)
           (fun j => gradedBasis j.castSucc) ⟨i, a⟩ : flag 1) : V) ∧
     Module.Basis.ofFiltration (R := ℚ) (M := V)
-        flag rfl GradeIndex 2 flag_le gradedBasis rfl ⟨i.castSucc, a⟩ =
+        flag flag_zero GradeIndex 2 flag_le gradedBasis flag_two_top ⟨i.castSucc, a⟩ =
       ((Module.Basis.ofFiltrationStage (R := ℚ) (M := V)
-        flag rfl GradeIndex 2 flag_le gradedBasis ⟨i.castSucc, a⟩ : flag 2) : V) := by
+        flag flag_zero GradeIndex 2 flag_le gradedBasis ⟨i.castSucc, a⟩ : flag 2) : V) := by
   simp
 
 end MathlibExtTest.FiniteFiltration
