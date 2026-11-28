@@ -369,7 +369,7 @@ theorem logTeichmuller_mem_aCris {ε : PreTilt 𝓞_ℂ_[p] p} (h : ε.untilt = 
     rw [hd, Nat.cast_mul, Nat.cast_pow]
   rw [logTeichmuller, logOneAdd]
   refine AdicCompletion.evalPowerSeries_eq_of_coeff_mul_pow_eq _ _ _ _ _ fun n => ?_
-  rw [coeff_dividedPowerSeries_mul_pow, logSeries, PowerSeries.coeff_mk, PowerSeries.coeff_mk]
+  rw [coeff_dividedPowerSeries_mul_pow, coeff_logSeries, PowerSeries.coeff_mk]
   by_cases hn : n = 0
   · simp [hn]
   rw [ite_eq_right hn, ite_eq_right hn, ← hc, algebraMap_inv_natCast_eq p hn, dividedPower]

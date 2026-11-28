@@ -27,14 +27,15 @@ public import MathlibExt.RingTheory.Perfectoid.MaximalPeriodRing
 /-!
 # The transcendence of `log [p̃]`
 
-Let `u = log [p̃] = log([p̃]/p) ∈ B_dR^+` (`PadicComplexInt.logPTilde`), where `p̃ = p♭` is a
-chosen element of the tilt of `𝓞_ℂ_[p]` with `p̃♯ = p`. We prove:
+Let `p` be a prime and `u = log [p̃] = log([p̃]/p) ∈ B_dR^+` (`PadicComplexInt.logPTilde`), for the
+normalization `log p = 0` (Fontaine, Exposé II, §4.2.2 p. 85 and §4.2.5 c) p. 86), where `p̃ = p♭`
+is a chosen element of the tilt of `𝓞_ℂ_[p]` with `p̃♯ = p`. We prove:
 
 * **Fontaine's Lemme 4.3.1**: `u` is not in the fraction field of `B_max` inside the field `B_dR`
   (`PadicComplexInt.mul_algebraMap_logPTilde_ne`): there are no `a ≠ 0` and `b` in `B_max` with
   `a u = b`. Following Fontaine's proof (§4.3.2), every element of `B_max` is a quotient of two
   elements of `A_max ⊆ S = W(𝓞_ℂ_[p]♭)⟦ξ/p⟧`, and `a u ∉ S` for every nonzero `a ∈ S`
-  (`AdicCompletion.mul_evalPowerSeries_logOneSubSeries_not_mem`).
+  (`AdicCompletion.mul_evalPowerSeries_logOneSubSeries_notMem`).
 * **The transcendence of `log [p̃]`**: `u` is transcendental over `B_max`
   (`PadicComplexInt.transcendental_logPTilde`), equivalently the evaluation
   `B_max[X] → B_dR`, `X ↦ log [p̃]`, is injective (`PadicComplexInt.aeval_logPTilde_injective`).
@@ -169,8 +170,8 @@ private theorem galoisRestrict_coeff_relation (B : Subalgebra ℚ_[p] 𝔹)
     Polynomial.coeff_map] at hc
   linear_combination hc
 
-/-- **Fontaine's Galois argument** (Exposé II, §4.3.3): let `B` be a `ℚ_[p]`-subalgebra of `B_dR`
-stable under `Gal(ℚ̄_p/ℚ_p)`, and let `u ∈ B_dR` satisfy `σ(u) - u ∈ B` for every `σ`. If `u` is
+/-- **Fontaine's Galois argument** (Exposé II, §4.3.3): let `p` be a prime, `B` a `ℚ_[p]`-subalgebra
+of `B_dR` stable under `Gal(ℚ̄_p/ℚ_p)`, and `u ∈ B_dR` with `σ(u) - u ∈ B` for every `σ`. If `u` is
 not in the fraction field of `B` (there are no `a ≠ 0` and `b` in `B` with `a u = b`), then `u` is
 transcendental over `B`. -/
 theorem transcendental_of_forall_mul_ne (B : Subalgebra ℚ_[p] 𝔹)
@@ -315,22 +316,19 @@ private theorem eq_zero_of_algebraMap_xi_mul_eq_zero (x : AdicCompletion 𝕀 �
   have h : algebraMap 𝔸 𝔹⁺ (xi p) * (show 𝔹⁺ from x) = 0 := hx
   exact (mul_eq_zero.mp h).resolve_left (algebraMap_xi_ne_zero p)
 
-/-- `log [p̃] = log(1 - ξ/p) = -Σ_{n ≥ 1} (ξ/p)ⁿ/n`. -/
+/-- `log [p̃] = log(1 - ξ/p) = -Σ_{n ≥ 1} (ξ/p)ⁿ/n`: the value of `log(1 + X)` at `-ξ/p` is that of
+`log(1 - X)` at `ξ/p`. -/
 private theorem logPTilde_eq_evalPowerSeries :
     logPTilde p = AdicCompletion.evalPowerSeries 𝕀 (xiDivP_mem_ker p)
       (AdicCompletion.logOneSubSeries fun n => algebraMap ℚ_[p] 𝔸ₚ (n : ℚ_[p])⁻¹) := by
+  rw [AdicCompletion.logOneSubSeries_eq_map_rescale_log]
   refine AdicCompletion.evalPowerSeries_eq_of_coeff_mul_pow_eq _ _ _ _ _ fun k => ?_
-  simp only [logSeries, AdicCompletion.logOneSubSeries, PowerSeries.coeff_mk]
-  split_ifs
-  · simp
-  · have h1 : ((-1 : 𝔸ₚ) ^ (k + 1)) * (-1) ^ k = -1 := by
-      rw [← pow_add]
-      exact Odd.neg_one_pow ⟨k, by ring⟩
-    rw [neg_pow]
-    linear_combination (algebraMap ℚ_[p] 𝔸ₚ (k : ℚ_[p])⁻¹ * xiDivP p ^ k) * h1
+  rw [logSeries, PowerSeries.coeff_map, PowerSeries.coeff_map, PowerSeries.coeff_rescale, map_mul,
+    map_pow, map_neg, map_one, neg_pow (xiDivP p)]
+  ring
 
-/-- **Fontaine's Lemme 4.3.1, for `B_max`**: `log [p̃]` is not in the fraction field of `B_max`
-inside `B_dR`: if `a, b ∈ B_max` and `a ≠ 0`, then `a · log [p̃] ≠ b`. -/
+/-- **Fontaine's Lemme 4.3.1, for `B_max`**: for a prime `p`, `log [p̃]` is not in the fraction
+field of `B_max` inside `B_dR`: if `a, b ∈ B_max` and `a ≠ 0`, then `a · log [p̃] ≠ b`. -/
 theorem mul_algebraMap_logPTilde_ne {a b : 𝔹} (ha : a ∈ bMax p) (hb : b ∈ bMax p)
     (ha0 : a ≠ 0) : a * algebraMap 𝔹⁺ 𝔹 (logPTilde p) ≠ b := by
   intro he
@@ -351,9 +349,8 @@ theorem mul_algebraMap_logPTilde_ne {a b : 𝔹} (ha : a ∈ bMax p) (hb : b ∈
     rw [hrel]
     exact mem_evalPowerSeriesRange_of_mem_aMax p (mul_mem hy2 hz1)
   rw [logPTilde_eq_evalPowerSeries] at hmem
-  exact AdicCompletion.mul_evalPowerSeries_logOneSubSeries_not_mem 𝔸 𝕀 p (xiDivP_mem_ker p)
+  exact AdicCompletion.mul_evalPowerSeries_logOneSubSeries_notMem 𝔸 𝕀 p (xiDivP_mem_ker p)
     (xi p) (natCast_mul_xiDivP p) (natCast_mul_algebraMap_inv p hp.out.ne_zero)
-    (algebraMap_mem_ker_fontaineThetaInvertP p (fontaineTheta_xi p))
     (fun n => algebraMap ℚ_[p] 𝔸ₚ (n : ℚ_[p])⁻¹) (fun _ hn => natCast_mul_algebraMap_inv p hn)
     (exists_algebraMap_mul_natCast_eq p)
     (fun k a h => mem_span_xi_pow_of_algebraMap_mem p k a
@@ -364,8 +361,9 @@ theorem mul_algebraMap_logPTilde_ne {a b : 𝔹} (ha : a ∈ bMax p) (hb : b ∈
 /-! ### The transcendence of `log [p̃]` -/
 
 /-- **The transcendence of `log [p̃]`** (Fontaine, *Le corps des périodes p-adiques*, Exposé II,
-§4.3.3, there over `B_cris`): `log [p̃] = log([p̃]/p)` is transcendental over `B_max`, inside the
-field `B_dR`. -/
+§4.3.3, there over `B_cris`): for a prime `p`, `log [p̃] = log([p̃]/p)` (for the normalization
+`log p = 0`, Exposé II, §4.2.2 p. 85 and §4.2.5 c) p. 86) is transcendental over `B_max`, inside
+the field `B_dR`. -/
 theorem transcendental_logPTilde : Transcendental (bMax p) (algebraMap 𝔹⁺ 𝔹 (logPTilde p)) :=
   transcendental_of_forall_mul_ne p (bMax p)
     (fun σ x hx => bMax_le_comap p σ hx)
@@ -376,7 +374,7 @@ theorem transcendental_logPTilde : Transcendental (bMax p) (algebraMap 𝔹⁺ �
       rw [galoisBDeRham_algebraMap, galoisBDeRhamPlus_logPTilde p σ hu hu1, map_add, add_comm])
     fun a ha b hb ha0 => mul_algebraMap_logPTilde_ne p ha hb ha0
 
-/-- **The evaluation `B_max[X] → B_dR` at `log [p̃]` is injective.** -/
+/-- **The evaluation `B_max[X] → B_dR` at `log [p̃]` is injective**, for a prime `p`. -/
 theorem aeval_logPTilde_injective :
     Function.Injective (aeval (R := bMax p) (algebraMap 𝔹⁺ 𝔹 (logPTilde p))) :=
   transcendental_iff_injective.mp (transcendental_logPTilde p)
