@@ -5,3 +5,5 @@
 - [Howson property for Thompson's group $F$](thompson-fhowson.md)
 - [Thompson's group $F$ does not have the Howson property](thompson-fhowson-refuted.md)
 - [Thompson’s group F has no invariant mean](thompson-f-invariant-mean-nonexistence.md)
+- [Groups of piecewise affine permutations meeting the continuous ones in a group F(r, Λ, A) with Λ ≠ {1} have hereditarily undecidable theory](thompson-type-groups-hereditarily-undecidable.md)
+- [The Diophantine problem in Thompson's groups F and T is undecidable](diophantine-problem-thompson-f-undecidable.md)

@@ -11,6 +11,7 @@ Eigenvalues, eigenspaces and characteristic polynomials of matrices and endomorp
 - [Kernels lemma](kernels-lemma-for-coprime-polynomials/README.md)
 - [Newton's identities for traces of matrix powers](newton-s-identities-for-traces-of-matrix-powers/README.md)
 - [Smith normal form](smith-normal-form/README.md)
+- [Trace dispersion of real symmetric matrices](trace-dispersion-of-real-symmetric-matrices/README.md)
 - [Triangularization](triangularization/README.md)
 - [Eigenvalues of the inverse matrix](eigenvalues-of-the-inverse/README.md)
 - [Spectral theorem for normal matrices](spectral-theorem-for-normal-matrices/README.md)
@@ -20,3 +21,4 @@ Eigenvalues, eigenspaces and characteristic polynomials of matrices and endomorp
 - [Eigenvalues and eigenspaces](eigenvalues-and-eigenspaces/README.md)
 - [Existence of eigenvalues](existence-of-eigenvalues/README.md)
 - [A finitely generated torsion-free module over a principal ideal domain is free](finite-torsion-free-module-pid-free.md)
+- [Joint spectral radius and switched linear systems](joint-spectral-radius-and-switched-systems/README.md)

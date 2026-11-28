@@ -7,17 +7,11 @@ obtaining bits $(a, b)$. Each outcome occurs with probability $1/4$, independent
 Bob applies $X^b$ and then $Z^a$ to his qubit, its state is $\alpha|0\rangle + \beta|1\rangle$. The protocol uses
 one shared entangled pair and two bits of classical communication.
 
-## Expansion
-
-This node states a precise result. A good expansion adds a page for each of the following
-prerequisites and links it under the dependency sections below:
-
-- Statement prerequisite: Measurements (POVM, projective) and the Born rule.
-
 ## Depends on
 
 - [Bell basis and maximally entangled states](bell-basis-and-maximally-entangled-states.md)
 - [Unitary evolution and elementary gates](unitary-evolution-and-elementary-gates.md)
+- [Positive-operator-valued measurements and the Born rule](../quantum-operations/povms-and-measurement-readout/povm-and-born-rule.md)
 
 ## Sources
 
