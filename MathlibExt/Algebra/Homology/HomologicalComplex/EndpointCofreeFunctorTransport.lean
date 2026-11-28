@@ -93,9 +93,12 @@ theorem endpointCofreeFunctorTransportDegreeIso_fst (I : GradedObject ι C) (i :
     (endpointCofreeFunctorTransportDegreeIso F c I i).hom ≫
         endpointCofreeProjection (c := c) (fun j => F.obj (I j)) i =
       F.map (endpointCofreeProjection (c := c) I i) := by
-  simp only [endpointCofreeFunctorTransportDegreeIso, Iso.trans_hom, biprod.mapIso,
-    Iso.refl_hom, endpointCofreeProjection, Category.assoc, biprod.map_fst,
-    Category.comp_id, Functor.mapBiprod_hom, biprod.lift_fst]
+  change ((F.mapBiprod (I i) (endpointCofreeNextTerm (c := c) I i)).hom ≫
+      biprod.map (𝟙 (F.obj (I i)))
+        (endpointCofreeNextTermFunctorIso F c I i).hom) ≫ biprod.fst =
+    F.map biprod.fst
+  rw [Category.assoc, biprod.map_fst, Category.comp_id,
+    Functor.mapBiprod_hom, biprod.lift_fst]
 
 /-- The second coefficient of the degreewise comparison is the image of the
 old second projection followed by the optional-coefficient comparison. -/
@@ -105,9 +108,12 @@ theorem endpointCofreeFunctorTransportDegreeIso_snd (I : GradedObject ι C) (i :
         endpointCofreeSecondProjection (c := c) (fun j => F.obj (I j)) i =
       F.map (endpointCofreeSecondProjection (c := c) I i) ≫
         (endpointCofreeNextTermFunctorIso F c I i).hom := by
-  simp only [endpointCofreeFunctorTransportDegreeIso, Iso.trans_hom, biprod.mapIso,
-    Iso.refl_hom, endpointCofreeSecondProjection, Category.assoc, biprod.map_snd,
-    Functor.mapBiprod_hom, biprod.lift_snd_assoc]
+  change ((F.mapBiprod (I i) (endpointCofreeNextTerm (c := c) I i)).hom ≫
+      biprod.map (𝟙 (F.obj (I i)))
+        (endpointCofreeNextTermFunctorIso F c I i).hom) ≫ biprod.snd =
+    F.map biprod.snd ≫ (endpointCofreeNextTermFunctorIso F c I i).hom
+  rw [Category.assoc, biprod.map_snd, ← Category.assoc,
+    Functor.mapBiprod_hom, biprod.lift_snd]
 
 /-- The complex comparison into the cofree image family is the existing cofree
 map with first coefficients F applied to the original first projections. -/
@@ -179,7 +185,7 @@ instance endpointCofreeFunctorTransportHom_isIso (I : GradedObject ι C) :
     IsIso (endpointCofreeFunctorTransportHom F c I) := by
   letI : ∀ i, IsIso ((endpointCofreeFunctorTransportHom F c I).f i) := fun i => by
     rw [endpointCofreeFunctorTransportHom_f]
-    infer_instance
+    exact Iso.isIso_hom (endpointCofreeFunctorTransportDegreeIso F c I i)
   exact Hom.isIso_of_components _
 
 /-- Applying F degreewise to the cofree complex is naturally isomorphic to
@@ -199,28 +205,29 @@ def endpointCofreeFunctorTransportIso :
         ((endpointCofreeFunctorTransportHom F c I).f i ≫
           (endpointCofreeMap (c := c) (fun j => F.map (a j))).f i) ≫
             endpointCofreeProjection (c := c) (fun j => F.obj (J j)) i
-      calc
-        _ = F.map ((endpointCofreeMap (c := c) a).f i) ≫
-            F.map (endpointCofreeProjection (c := c) J i) :=
-          (Category.assoc _ _ _).trans (congrArg
-            (F.map ((endpointCofreeMap (c := c) a).f i) ≫ ·)
-            (endpointCofreeFunctorTransportHom_fst F c J i))
-        _ = F.map ((endpointCofreeMap (c := c) a).f i ≫
-            endpointCofreeProjection (c := c) J i) := (F.map_comp _ _).symm
-        _ = F.map (endpointCofreeProjection (c := c) I i ≫ a i) :=
-          congrArg F.map (endpointCofreeMap_fst (c := c) a i)
-        _ = F.map (endpointCofreeProjection (c := c) I i) ≫ F.map (a i) :=
-          F.map_comp _ _
-        _ = ((endpointCofreeFunctorTransportHom F c I).f i ≫
-            endpointCofreeProjection (c := c) (fun j => F.obj (I j)) i) ≫
-              F.map (a i) := congrArg (· ≫ F.map (a i))
-          (endpointCofreeFunctorTransportHom_fst F c I i).symm
-        _ = (endpointCofreeFunctorTransportHom F c I).f i ≫
-            (endpointCofreeProjection (c := c) (fun j => F.obj (I j)) i ≫
-              F.map (a i)) := Category.assoc _ _ _
-        _ = _ := (congrArg ((endpointCofreeFunctorTransportHom F c I).f i ≫ ·)
-          (endpointCofreeMap_fst (c := c) (fun j => F.map (a j)) i).symm).trans
-            (Category.assoc _ _ _).symm)
+      have hleft :
+          (F.map ((endpointCofreeMap (c := c) a).f i) ≫
+            (endpointCofreeFunctorTransportHom F c J).f i) ≫
+              endpointCofreeProjection (c := c) (fun j => F.obj (J j)) i =
+            F.map (endpointCofreeProjection (c := c) I i ≫ a i) :=
+        ((Category.assoc _ _ _).trans (congrArg
+          (F.map ((endpointCofreeMap (c := c) a).f i) ≫ ·)
+          (endpointCofreeFunctorTransportHom_fst F c J i))).trans
+            (((F.map_comp _ _).symm).trans
+              (congrArg F.map (endpointCofreeMap_fst (c := c) a i)))
+      have hright :
+          ((endpointCofreeFunctorTransportHom F c I).f i ≫
+            (endpointCofreeMap (c := c) (fun j => F.map (a j))).f i) ≫
+              endpointCofreeProjection (c := c) (fun j => F.obj (J j)) i =
+            F.map (endpointCofreeProjection (c := c) I i ≫ a i) :=
+        ((Category.assoc _ _ _).trans (congrArg
+          ((endpointCofreeFunctorTransportHom F c I).f i ≫ ·)
+          (endpointCofreeMap_fst (c := c) (fun j => F.map (a j)) i))).trans
+            (((Category.assoc _ _ _).symm).trans
+              ((congrArg (· ≫ F.map (a i))
+                (endpointCofreeFunctorTransportHom_fst F c I i)).trans
+                  (F.map_comp _ _).symm))
+      exact hleft.trans hright.symm)
 
 /-- The natural comparison has the canonical transported first projection in
 every degree. -/
@@ -228,8 +235,10 @@ every degree. -/
 theorem endpointCofreeFunctorTransportIso_fst (I : GradedObject ι C) (i : ι) :
     ((endpointCofreeFunctorTransportIso F c).hom.app I).f i ≫
         endpointCofreeProjection (c := c) (fun j => F.obj (I j)) i =
-      F.map (endpointCofreeProjection (c := c) I i) :=
-  endpointCofreeFunctorTransportHom_fst F c I i
+      F.map (endpointCofreeProjection (c := c) I i) := by
+  change (endpointCofreeFunctorTransportHom F c I).f i ≫
+    endpointCofreeProjection (c := c) (fun j => F.obj (I j)) i = _
+  exact endpointCofreeFunctorTransportHom_fst F c I i
 
 /-- Applying F to the cofree unit and then the comparison gives the cofree unit
 of the degreewise image complex. -/

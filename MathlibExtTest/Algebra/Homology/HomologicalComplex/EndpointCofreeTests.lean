@@ -226,7 +226,9 @@ example :
           (Injective.ι N).hom (ULift.up (2 : ZMod 6)) := by
     rw [endpointCofreeHom_naturality K a coefficientDouble, endpointCofreeHom_fst]
     change (2 : ℤ) • (Injective.ι N).hom (ULift.up (1 : ZMod 6)) = _
-    rw [← (Injective.ι N).hom.map_smul, two_one]
+    exact ((Injective.ι N).hom.map_smul (2 : ℤ)
+      (ULift.up (1 : ZMod 6) : V)).symm.trans
+        (congrArg (Injective.ι N).hom two_one)
   exact ⟨hvalue, by rw [hvalue]; exact cover_ne_zero (by decide : (2 : ZMod 6) ≠ 0)⟩
 
 end NatBoundary
@@ -244,9 +246,11 @@ private abbrev step (i : ZMod 2) : N ⟶ N :=
 private lemma step_square {i j : ZMod 2} (hij : c.Rel i j) : step i ≫ step j = 0 := by
   fin_cases i <;> fin_cases j
   · exact False.elim ((by decide : ¬ c.Rel 0 0) hij)
-  · simpa [step]
+  · change step (0 : ZMod 2) ≫ step (1 : ZMod 2) = 0
+    simpa only [step, if_pos rfl, if_neg (by decide : (1 : ZMod 2) ≠ 0)]
       using two_three
-  · simpa [step]
+  · change step (1 : ZMod 2) ≫ step (0 : ZMod 2) = 0
+    simpa only [step, if_pos rfl, if_neg (by decide : (1 : ZMod 2) ≠ 0)]
       using three_two
   · exact False.elim ((by decide : ¬ c.Rel 1 1) hij)
 
@@ -333,9 +337,15 @@ example :
       (biprod.inr : endpointCofreeNextTerm (c := c) I 0 ⟶ D.X 0) ≫
         D.d 0 1 ≫ endpointCofreeProjection (c := c) I 1 = 𝟙 J := by
   rw [endpointCofree_d I rel_zero_one]
-  simp only [endpointCofreeSecondProjection, endpointCofreeInclusion,
-    endpointCofreeProjection, Category.assoc, biprod.inr_snd_assoc,
-    biprod.inl_fst, Category.comp_id, Category.id_comp, Iso.inv_hom_id]
+  change (endpointCofreeNextTermIso I rel_zero_one).inv ≫
+    (biprod.inr : endpointCofreeNextTerm (c := c) I 0 ⟶
+      I 0 ⊞ endpointCofreeNextTerm (c := c) I 0) ≫
+    ((biprod.snd : I 0 ⊞ endpointCofreeNextTerm (c := c) I 0 ⟶
+      endpointCofreeNextTerm (c := c) I 0) ≫
+      (endpointCofreeNextTermIso I rel_zero_one).hom ≫ biprod.inl) ≫
+    (biprod.fst : I 1 ⊞ endpointCofreeNextTerm (c := c) I 1 ⟶ I 1) = 𝟙 J
+  simp only [Category.assoc, biprod.inr_snd_assoc, biprod.inl_fst,
+    Category.comp_id, Iso.inv_hom_id]
 
 end Cyclic
 
