@@ -28,6 +28,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Algebra.Order.Ring.Rat
 public import Mathlib.Data.Fintype.Basic
+public import MathlibExt.NumberTheory.ShortEgyptianFractions
 
 @[expose] public section
 
@@ -52,14 +53,5 @@ Source: [*Short Egyptian fractions*, existence conjunct](https://github.com/open
 public theorem_wanted exists_expansion_of_proper_rational (a b : ℕ) (ha : 1 ≤ a) (hab : a < b) :
     ∃ ns : List ℕ, ns.Pairwise (· < ·) ∧ (∀ n ∈ ns, 2 ≤ n) ∧
       (ns.map fun n => (1 : ℚ) / n).sum = (a : ℚ) / b
-
-/-- **Pointwise denominator bounds for an Egyptian expansion of one.** Suppose a strictly
-increasing $k$-tuple of positive integer denominators has reciprocal sum $1$. The denominator
-at index $i$ is at most $k^{2^i}$, with indices starting at $0$.
-
-Source: [*Short Egyptian fractions*, pointwise denominator bound](https://github.com/openai/math/blob/3344da59991ed94f9ba711217b29c1d760badfa6/lean/ComparatorChallenges/EgyptianFractions.lean#L64-L70). -/
-public theorem_wanted denominator_le_pow_in_expansion_one {k : ℕ} {n : Fin k → ℕ}
-    (hn : ∀ i, 1 ≤ n i) (hmono : StrictMono n) (hsum : (∑ i : Fin k, (1 : ℚ) / n i) = 1)
-    (i : Fin k) : n i ≤ k ^ (2 ^ i.val)
 
 end EgyptianFraction
