@@ -9,274 +9,289 @@ LICENSE file in the root directory of this source tree.
 module
 
 import CSLibExt.MachineLearning.GeneralizationBounds.StabilityHighProbability
-import Mathlib.Probability.UniformOn
+import Mathlib.Analysis.Complex.ExponentialBounds
 
-open MeasureTheory Real ProbabilityTheory
+/-!
+# Tests for the `κ / m` deletion-stability corollary
 
-namespace CSLibExt.MachineLearning.GeneralizationBounds
+Closed instantiations of `IsDeletionStable.one_sub_le_measureReal_risk_le_div` (the `β = κ / m`
+corollary of Bousquet–Elisseeff Theorem 12): a constant family, the Bool empirical-mean family
+with its numeric instance, and the degenerate zero loss, plus an axiom audit.
+-/
 
--- T1: a constant algorithm family is `0`-remove-one stable.
-example {𝒵 H : Type*} (L : H → 𝒵 → ℝ) (h : H) (n : ℕ) :
-    IsRemoveOneUniformlyStable L (fun _ _ => h) n 0 := by
+open MeasureTheory Real
+open CSLibExt.MachineLearning.GeneralizationBounds
+
+namespace CSLibExtTest.StabilityHighProbability
+
+-- T1: constant size-indexed family with `κ = 0`; only the `M` correction remains.
+private noncomputable def constLoss : Unit → Unit → ℝ := fun _ _ => 1 / 2
+
+private def constFam (k : ℕ) (_ : Fin k → Unit) : Unit := ()
+
+example (ν : Measure Unit) [IsProbabilityMeasure ν] (n : ℕ) {δ : ℝ}
+    (hδ : δ ∈ Set.Ioo 0 1) :
+    1 - δ ≤ (Measure.pi fun _ : Fin (n + 1) => ν).real
+      {S | risk constLoss ν (constFam (n + 1) S) ≤
+        empiricalRisk constLoss S (constFam (n + 1) S) +
+        √(log (1 / δ) / (2 * ((n : ℝ) + 1)))} := by
+  have hmeas : Measurable fun p : (Fin (n + 1) → Unit) × Unit =>
+      constLoss (constFam (n + 1) p.1) p.2 := measurable_of_finite _
+  have hmeas' : Measurable fun p : (Fin n → Unit) × Unit =>
+      constLoss (constFam n p.1) p.2 := measurable_of_finite _
+  have hbdd : ∀ S z, constLoss (constFam (n + 1) S) z ∈ Set.Icc 0 1 :=
+    fun S z => Set.mem_Icc.mpr ⟨by norm_num [constLoss], by norm_num [constLoss]⟩
+  have hbdd' : ∀ S z, constLoss (constFam n S) z ∈ Set.Icc 0 1 :=
+    fun S z => Set.mem_Icc.mpr ⟨by norm_num [constLoss], by norm_num [constLoss]⟩
+  have hstab : IsDeletionStable constLoss (constFam (n + 1)) (constFam n)
+      (0 / ((n : ℝ) + 1)) := by
+    intro S i z
+    simp [constLoss]
+  have h := IsDeletionStable.one_sub_le_measureReal_risk_le_div (ν := ν) hmeas
+    hmeas' hbdd hbdd' hstab hδ
+  simpa using h
+
+-- T2: empirical-mean family on `Bool` with truncated absolute loss.
+private def bit (b : Bool) : ℝ := if b then 1 else 0
+
+private noncomputable def meanFit (k : ℕ) (S : Fin k → Bool) : ℝ :=
+  (1 / (k : ℝ)) * ∑ i, bit (S i)
+
+private noncomputable def truncLoss (h : ℝ) (b : Bool) : ℝ :=
+  min 1 ‖h - bit b‖
+
+private theorem lipschitz_truncLoss (c a b : ℝ) :
+    |min 1 ‖a - c‖ - min 1 ‖b - c‖| ≤ |a - b| := by
+  have hmin : ∀ x y : ℝ, |min (1 : ℝ) x - min 1 y| ≤ |x - y| := by
+    intro x y
+    rcases le_total x 1 with hx | hx <;> rcases le_total y 1 with hy | hy
+    · rw [min_eq_right hx, min_eq_right hy]
+    · rw [min_eq_right hx, min_eq_left hy,
+        abs_of_nonpos (show x - 1 ≤ 0 by linarith),
+        abs_of_nonpos (show x - y ≤ 0 by linarith)]
+      linarith
+    · rw [min_eq_left hx, min_eq_right hy,
+        abs_of_nonneg (show (0 : ℝ) ≤ 1 - y by linarith),
+        abs_of_nonneg (show (0 : ℝ) ≤ x - y by linarith)]
+      linarith
+    · rw [min_eq_left hx, min_eq_left hy, sub_self, abs_zero]
+      exact abs_nonneg _
+  have hnorm : |‖a - c‖ - ‖b - c‖| ≤ |a - b| := by
+    rw [Real.norm_eq_abs, Real.norm_eq_abs]
+    have h := abs_abs_sub_abs_le_abs_sub (a - c) (b - c)
+    rwa [show (a - c) - (b - c) = a - b from by ring] at h
+  exact (hmin _ _).trans hnorm
+
+private theorem stableMean (n : ℕ) :
+    IsDeletionStable truncLoss (meanFit (n + 1)) (meanFit n)
+      (1 / ((n : ℝ) + 1)) := by
+  have hb0 : ∀ b : Bool, 0 ≤ bit b := fun b => by cases b <;> norm_num [bit]
+  have hb1 : ∀ b : Bool, bit b ≤ 1 := fun b => by cases b <;> norm_num [bit]
   intro S i z
+  have hlip : |truncLoss (meanFit (n + 1) S) z -
+      truncLoss (meanFit n (i.removeNth S)) z| ≤
+      |meanFit (n + 1) S - meanFit n (i.removeNth S)| := by
+    have h := lipschitz_truncLoss (bit z) (meanFit (n + 1) S)
+      (meanFit n (i.removeNth S))
+    simpa [truncLoss] using h
+  refine hlip.trans ?_
+  have hsum : ∑ j, bit (S j) =
+      bit (S i) + ∑ j, bit ((i.removeNth S) j) := by
+    exact Fin.sum_univ_succAbove _ i
+  have hT0 : 0 ≤ ∑ j, bit ((i.removeNth S) j) :=
+    Finset.sum_nonneg fun j _ => hb0 _
+  have hTn : ∑ j, bit ((i.removeNth S) j) ≤ (n : ℝ) := by
+    calc ∑ j, bit ((i.removeNth S) j) ≤ ∑ _j : Fin n, 1 :=
+          Finset.sum_le_sum fun j _ => hb1 _
+      _ = (n : ℝ) := by simp
+  have hcast : ((n + 1 : ℕ) : ℝ) = (n : ℝ) + 1 := by norm_cast
+  have hfull : meanFit (n + 1) S =
+      (bit (S i) + ∑ j, bit ((i.removeNth S) j)) / ((n : ℝ) + 1) := by
+    simp only [meanFit, hsum, hcast]
+    ring
+  have hshort : meanFit n (i.removeNth S) =
+      (∑ j, bit ((i.removeNth S) j)) / (n : ℝ) := by
+    simp only [meanFit]
+    ring
+  have hx01 : bit (S i) = 0 ∨ bit (S i) = 1 := by
+    cases S i <;> simp [bit]
+  rcases Nat.eq_zero_or_pos n with rfl | hnpos
+  · have h0 : meanFit 0 (i.removeNth S) = 0 := by simp [meanFit]
+    have hempty : ∑ j : Fin 0, bit ((i.removeNth S) j) = 0 := by simp
+    rw [hfull, h0, hempty]
+    rcases hx01 with hx | hx <;> rw [hx] <;> norm_num
+  · have hn0 : (n : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr hnpos.ne'
+    have hm0 : (0 : ℝ) < (n : ℝ) + 1 := by positivity
+    have hm0' : ((n : ℝ) + 1) ≠ 0 := hm0.ne'
+    have hid : (bit (S i) + ∑ j, bit ((i.removeNth S) j)) / ((n : ℝ) + 1) -
+        (∑ j, bit ((i.removeNth S) j)) / (n : ℝ) =
+        ((n : ℝ) * bit (S i) - ∑ j, bit ((i.removeNth S) j)) /
+          ((n : ℝ) * ((n : ℝ) + 1)) := by
+      field_simp
+      ring
+    have hnum : |(n : ℝ) * bit (S i) - ∑ j, bit ((i.removeNth S) j)| ≤ n := by
+      rcases hx01 with hx | hx
+      · rw [hx, mul_zero, zero_sub, abs_neg, abs_of_nonneg hT0]
+        exact hTn
+      · rw [hx, mul_one, abs_of_nonneg (sub_nonneg.mpr hTn)]
+        linarith [hT0]
+    have hden0 : (0 : ℝ) < (n : ℝ) * ((n : ℝ) + 1) :=
+      mul_pos (by exact_mod_cast hnpos) hm0
+    rw [hfull, hshort, hid, abs_div, abs_of_pos hden0,
+      div_le_div_iff₀ hden0 hm0, one_mul]
+    exact mul_le_mul_of_nonneg_right hnum hm0.le
+
+private theorem measMean (k : ℕ) :
+    Measurable fun p : (Fin k → Bool) × Bool =>
+      truncLoss (meanFit k p.1) p.2 :=
+  measurable_of_finite _
+
+private theorem bddTrunc (k : ℕ) (S : Fin k → Bool) (b : Bool) :
+    truncLoss (meanFit k S) b ∈ Set.Icc 0 1 :=
+  ⟨le_min zero_le_one (norm_nonneg _), min_le_left 1 _⟩
+
+example (ν : Measure Bool) [IsProbabilityMeasure ν] (n : ℕ) {δ : ℝ}
+    (hδ : δ ∈ Set.Ioo 0 1) :
+    1 - δ ≤ (Measure.pi fun _ : Fin (n + 1) => ν).real
+      {S | risk truncLoss ν (meanFit (n + 1) S) ≤
+        empiricalRisk truncLoss S (meanFit (n + 1) S) +
+        2 * 1 / ((n : ℝ) + 1) +
+        (4 * 1 + 1) * √(log (1 / δ) / (2 * ((n : ℝ) + 1)))} :=
+  IsDeletionStable.one_sub_le_measureReal_risk_le_div (ν := ν) (measMean (n + 1))
+    (measMean n) (bddTrunc (n + 1)) (bddTrunc n) (stableMean n) hδ
+
+-- T2 numeric: `n = 199`, `δ = 1 / 20`, uniform law on `Bool`.
+private noncomputable def boolUniform : Measure Bool :=
+  (1 / 2 : ENNReal) • (Measure.dirac false + Measure.dirac true)
+
+private theorem boolUniform_univ : boolUniform Set.univ = 1 := by
+  simp only [boolUniform, smul_apply, add_apply, smul_eq_mul,
+    Measure.dirac_apply_of_mem (Set.mem_univ false),
+    Measure.dirac_apply_of_mem (Set.mem_univ true)]
+  norm_num
+  exact ENNReal.inv_mul_cancel (by simp) (by simp)
+
+private theorem boolUniform_true : boolUniform {true} = 1 / 2 := by
+  simp [boolUniform, smul_apply, add_apply, smul_eq_mul]
+
+private theorem boolUniform_false : boolUniform {false} = 1 / 2 := by
+  simp [boolUniform, smul_apply, add_apply, smul_eq_mul]
+
+private instance : IsProbabilityMeasure boolUniform := ⟨boolUniform_univ⟩
+
+private theorem boolUniform_real_true : boolUniform.real {true} = 1 / 2 := by
+  rw [measureReal_def, boolUniform_true]
   simp
 
--- T1b: at `β = 0` the main bound keeps only the `M` square-root term.
-example (ν : Measure ℝ) [IsProbabilityMeasure ν] (n : ℕ) {δ : ℝ} (hδ0 : 0 < δ)
-    (hδ1 : δ < 1) :
+private theorem boolUniform_real_false : boolUniform.real {false} = 1 / 2 := by
+  rw [measureReal_def, boolUniform_false]
+  simp
+
+private theorem risk_allFalse :
+    risk truncLoss boolUniform (meanFit (199 + 1) fun _ => false) = 1 / 2 := by
+  have hfit : meanFit (199 + 1) (fun _ : Fin (199 + 1) => false) = 0 := by
+    simp [meanFit, bit]
+  have hinter : (fun b => truncLoss 0 b) = bit := by
+    funext b
+    cases b <;> norm_num [truncLoss, bit]
+  have h_int : Integrable bit boolUniform :=
+    Integrable.of_bound (measurable_of_finite _).aestronglyMeasurable 1
+      (Filter.Eventually.of_forall fun b => by cases b <;> simp [bit])
+  rw [hfit]
+  show ∫ b, truncLoss 0 b ∂boolUniform = 1 / 2
+  rw [hinter, MeasureTheory.integral_fintype h_int, Fintype.sum_bool,
+    boolUniform_real_true, boolUniform_real_false]
+  simp [bit, smul_eq_mul]
+
+private theorem emp_allFalse :
+    empiricalRisk truncLoss (fun _ : Fin (199 + 1) => false)
+        (meanFit (199 + 1) fun _ => false) = 0 := by
+  have hfit : meanFit (199 + 1) (fun _ : Fin (199 + 1) => false) = 0 := by
+    simp [meanFit, bit]
+  have h0 : ∀ i : Fin (199 + 1),
+      truncLoss 0 ((fun _ : Fin (199 + 1) => false) i) = 0 := by
+    intro i
+    norm_num [truncLoss, bit]
+  rw [hfit]
+  simp only [empiricalRisk]
+  rw [Finset.sum_eq_zero (fun i _ => h0 i)]
+  simp
+
+private theorem log20_lt_three : Real.log 20 < 3 := by
+  have e1 : (2.715 : ℝ) < Real.exp 1 :=
+    lt_of_lt_of_le (by norm_num) Real.exp_one_gt_d9.le
+  have hcube : (20 : ℝ) < (Real.exp 1) ^ 3 :=
+    lt_of_lt_of_le (by norm_num) (pow_le_pow_left₀ (by norm_num) e1.le 3)
+  have hexp : Real.exp 3 = (Real.exp 1) ^ 3 := by
+    rw [show (3 : ℝ) = 1 + 1 + 1 by norm_num, Real.exp_add, Real.exp_add]
+    ring
+  have h20 : (20 : ℝ) < Real.exp 3 := by rw [hexp]; exact hcube
+  have hexp_iff : Real.exp (Real.log 20) < Real.exp 3 ↔ Real.log 20 < 3 :=
+    Real.exp_lt_exp
+  rw [Real.exp_log (by norm_num)] at hexp_iff
+  exact hexp_iff.mp h20
+
+private theorem corr_lt_half :
+    (1 : ℝ) / 100 + 5 * √(Real.log 20 / 400) < 1 / 2 := by
+  have hlogpos : (0 : ℝ) < Real.log 20 := by
+    have h := Real.log_lt_log (show (0 : ℝ) < 1 by norm_num)
+      (show (1 : ℝ) < 20 by norm_num)
+    rwa [Real.log_one] at h
+  have hU : Real.log 20 / 400 < 3 / 400 := by linarith [log20_lt_three]
+  have hsqrt : √(Real.log 20 / 400) < √((3 : ℝ) / 400) :=
+    Real.sqrt_lt_sqrt (div_nonneg hlogpos.le (by norm_num)) hU
+  have hval : √((3 : ℝ) / 400) < 49 / 500 := by
+    rw [Real.sqrt_lt (by norm_num) (by norm_num)]
+    norm_num
+  linarith [hsqrt, hval]
+
+example : 1 - 1 / 20 ≤ (Measure.pi fun _ : Fin (199 + 1) => boolUniform).real
+    {S | risk truncLoss boolUniform (meanFit (199 + 1) S) ≤
+      empiricalRisk truncLoss S (meanFit (199 + 1) S) + 1 / 100 +
+      5 * √(log 20 / 400)} := by
+  have hδ : (1 / 20 : ℝ) ∈ Set.Ioo 0 1 := by norm_num [Set.mem_Ioo]
+  have h := IsDeletionStable.one_sub_le_measureReal_risk_le_div (ν := boolUniform)
+    (measMean (199 + 1)) (measMean 199) (bddTrunc (199 + 1)) (bddTrunc 199)
+    (stableMean 199) hδ
+  have e_offset : (2 : ℝ) * 1 / (((199 : ℕ) : ℝ) + 1) = 1 / 100 := by norm_num
+  have e_width : (4 : ℝ) * 1 + 1 = 5 := by norm_num
+  have e_log : Real.log (1 / (1 / 20 : ℝ)) = Real.log 20 := by norm_num
+  have e_den : (2 : ℝ) * (((199 : ℕ) : ℝ) + 1) = 400 := by norm_num
+  convert h using 2
+  ext S
+  simp only [Set.mem_ofPred_eq, e_offset, e_width, e_log, e_den]
+
+example : (fun _ : Fin (199 + 1) => false) ∉
+    {S | risk truncLoss boolUniform (meanFit (199 + 1) S) ≤
+      empiricalRisk truncLoss S (meanFit (199 + 1) S) + 1 / 100 +
+      5 * √(log 20 / 400)} := by
+  simp only [Set.mem_ofPred_eq, risk_allFalse, emp_allFalse]
+  linarith [corr_lt_half]
+
+-- T3: degenerate zero loss with `κ = 0` and `M = 0`.
+private def zeroLoss : Unit → Unit → ℝ := fun _ _ => 0
+
+example (ν : Measure Unit) [IsProbabilityMeasure ν] (n : ℕ) {δ : ℝ}
+    (hδ : δ ∈ Set.Ioo 0 1) :
     1 - δ ≤ (Measure.pi fun _ : Fin (n + 1) => ν).real
-      {S | risk (fun (w : ℝ) (z : ℝ) => min 1 |w - z|) ν 0 ≤
-        empiricalRisk (fun (w : ℝ) (z : ℝ) => min 1 |w - z|) S 0 +
-        √(log (1 / δ) / (2 * ((n : ℝ) + 1)))} := by
-  have hstab : IsRemoveOneUniformlyStable (fun (w : ℝ) (z : ℝ) => min 1 |w - z|)
-      (fun _ _ => (0 : ℝ)) n 0 := by
+      {S | risk zeroLoss ν (constFam (n + 1) S) ≤
+        empiricalRisk zeroLoss S (constFam (n + 1) S)} := by
+  have hmeas : Measurable fun p : (Fin (n + 1) → Unit) × Unit =>
+      zeroLoss (constFam (n + 1) p.1) p.2 := measurable_of_finite _
+  have hmeas' : Measurable fun p : (Fin n → Unit) × Unit =>
+      zeroLoss (constFam n p.1) p.2 := measurable_of_finite _
+  have hbdd : ∀ S z, zeroLoss (constFam (n + 1) S) z ∈ Set.Icc 0 0 :=
+    fun S z => Set.mem_Icc.mpr ⟨by simp [zeroLoss], by simp [zeroLoss]⟩
+  have hbdd' : ∀ S z, zeroLoss (constFam n S) z ∈ Set.Icc 0 0 :=
+    fun S z => Set.mem_Icc.mpr ⟨by simp [zeroLoss], by simp [zeroLoss]⟩
+  have hstab : IsDeletionStable zeroLoss (constFam (n + 1)) (constFam n)
+      (0 / ((n : ℝ) + 1)) := by
     intro S i z
-    simp
-  have hmeas : Measurable fun _p : (Fin (n + 1) → ℝ) × ℝ =>
-      (fun (w : ℝ) (z : ℝ) => min 1 |w - z|)
-        ((fun _ _ => (0 : ℝ)) (n + 1) _p.1) _p.2 := by
-    fun_prop
-  have hbdd : ∀ (S : Fin (n + 1) → ℝ) (z : ℝ),
-      0 ≤ (fun (w : ℝ) (z : ℝ) => min 1 |w - z|)
-        ((fun _ _ => (0 : ℝ)) (n + 1) S) z ∧
-      (fun (w : ℝ) (z : ℝ) => min 1 |w - z|)
-        ((fun _ _ => (0 : ℝ)) (n + 1) S) z ≤ 1 := by
-    intro S z
-    show 0 ≤ min 1 |(0 : ℝ) - z| ∧ min 1 |(0 : ℝ) - z| ≤ 1
-    exact ⟨le_min zero_le_one (abs_nonneg _), min_le_left _ _⟩
-  have hmain := one_sub_le_measureReal_risk_le_of_isRemoveOneUniformlyStable (ν := ν)
-    (M := 1) hmeas hbdd hstab hδ0 hδ1
-  simp only [mul_zero, zero_add, add_zero, one_mul] at hmain
-  exact hmain
+    simp [zeroLoss]
+  have h := IsDeletionStable.one_sub_le_measureReal_risk_le_div (ν := ν) hmeas
+    hmeas' hbdd hbdd' hstab hδ
+  simpa using h
 
--- Loss for the Bool mean test.
-private def boolTestLoss : ℝ → Bool → ℝ :=
-  fun h b => min 1 ‖h - (if b then 1 else 0)‖
+end CSLibExtTest.StabilityHighProbability
 
--- Empirical-mean algorithm family on Bool samples; the size-`0` value is `0`.
-private noncomputable def boolTestMean : (k : ℕ) → (Fin k → Bool) → ℝ :=
-  fun k S => (1 / (k : ℝ)) * ∑ i, (if S i then (1 : ℝ) else 0)
-
-private theorem abs_min_one_sub_le (a b : ℝ) : |min 1 a - min 1 b| ≤ |a - b| := by
-  rcases le_total a 1 with ha | ha <;> rcases le_total b 1 with hb | hb
-  · rw [min_eq_right ha, min_eq_right hb]
-  · rw [min_eq_right ha, min_eq_left hb, abs_of_nonpos (by linarith : a - 1 ≤ 0),
-      abs_of_nonpos (by linarith : a - b ≤ 0)]
-    linarith
-  · rw [min_eq_left ha, min_eq_right hb, abs_of_nonneg (by linarith : 0 ≤ 1 - b),
-      abs_of_nonneg (by linarith : 0 ≤ a - b)]
-    linarith
-  · rw [min_eq_left ha, min_eq_left hb, sub_self, abs_zero]
-    exact abs_nonneg _
-
-private theorem boolTestLoss_lip (a b : ℝ) (z : Bool) :
-    |boolTestLoss a z - boolTestLoss b z| ≤ |a - b| := by
-  simp only [boolTestLoss]
-  refine (abs_min_one_sub_le _ _).trans ?_
-  refine (abs_norm_sub_norm_le _ _).trans ?_
-  have hsub : (a - (if z then (1 : ℝ) else 0)) - (b - (if z then (1 : ℝ) else 0)) =
-      a - b := by ring
-  rw [hsub, Real.norm_eq_abs]
-
-private theorem ind_sum_split (n : ℕ) (S : Fin (n + 1) → Bool) (i : Fin (n + 1)) :
-    (∑ j, (if S j then (1 : ℝ) else 0)) = (if S i then (1 : ℝ) else 0) +
-      ∑ _j : Fin n, (if Fin.removeNth i S _j then (1 : ℝ) else 0) :=
-  Fin.sum_univ_succAbove _ i
-
-private theorem ind_nonneg (b : Bool) : (0 : ℝ) ≤ (if b then 1 else 0) := by
-  cases b <;> simp
-
-private theorem ind_le_one (b : Bool) : (if b then (1 : ℝ) else 0) ≤ 1 := by
-  cases b <;> simp
-
-private theorem ind_sum_nonneg (n : ℕ) (S : Fin (n + 1) → Bool) (i : Fin (n + 1)) :
-    0 ≤ ∑ _j : Fin n, (if Fin.removeNth i S _j then (1 : ℝ) else 0) :=
-  Finset.sum_nonneg fun _j _ => ind_nonneg _
-
-private theorem ind_sum_le (n : ℕ) (S : Fin (n + 1) → Bool) (i : Fin (n + 1)) :
-    ∑ _j : Fin n, (if Fin.removeNth i S _j then (1 : ℝ) else 0) ≤ (n : ℝ) := by
-  calc ∑ _j : Fin n, (if Fin.removeNth i S _j then (1 : ℝ) else 0)
-      ≤ ∑ _j : Fin n, (1 : ℝ) := Finset.sum_le_sum fun _j _ => ind_le_one _
-    _ = (n : ℝ) := by simp
-
-private theorem boolTestMean_stable (n : ℕ) :
-    IsRemoveOneUniformlyStable boolTestLoss boolTestMean n (1 / ((n : ℝ) + 1)) := by
-  cases n with
-  | zero =>
-    intro S i z
-    have hT : (∑ _j : Fin 0, (if Fin.removeNth i S _j then (1 : ℝ) else 0)) = 0 := by
-      simp
-    have hsplit := ind_sum_split 0 S i
-    rw [hT, add_zero] at hsplit
-    have hxi0 : (0 : ℝ) ≤ (if S i then 1 else 0) := ind_nonneg _
-    have hxi1 : (if S i then (1 : ℝ) else 0) ≤ 1 := ind_le_one _
-    have c1 : ((0 + 1 : ℕ) : ℝ) = 1 := by norm_num
-    have hmeans : |boolTestMean (0 + 1) S - boolTestMean 0 (Fin.removeNth i S)| ≤
-        1 / (((0 : ℕ) : ℝ) + 1) := by
-      simp only [boolTestMean, hsplit, hT]
-      rw [Nat.cast_zero, c1, zero_add, div_one, div_zero, mul_zero, sub_zero, one_mul,
-        abs_of_nonneg hxi0]
-      exact hxi1
-    have hLip := boolTestLoss_lip (boolTestMean (0 + 1) S)
-      (boolTestMean 0 (Fin.removeNth i S)) z
-    exact hLip.trans hmeans
-  | succ m =>
-    intro S i z
-    have hsplit := ind_sum_split (m + 1) S i
-    have hT0 := ind_sum_nonneg (m + 1) S i
-    have hTn := ind_sum_le (m + 1) S i
-    have hxi : (if S i then (1 : ℝ) else 0) = 0 ∨
-        (if S i then (1 : ℝ) else 0) = 1 := by
-      generalize S i = b
-      cases b <;> simp
-    set a : ℝ := ((m + 1 : ℕ) : ℝ) with hadef
-    set T : ℝ := ∑ _j : Fin (m + 1),
-      (if Fin.removeNth i S _j then (1 : ℝ) else 0)
-    set xi : ℝ := (if S i then (1 : ℝ) else 0)
-    have hN : (0 : ℝ) < a := by
-      rw [hadef]
-      exact Nat.cast_pos.mpr (Nat.succ_pos m)
-    have ha0 : a ≠ 0 := ne_of_gt hN
-    have ha10 : a + 1 ≠ 0 := ne_of_gt (by positivity)
-    have hcast : (((m + 1) + 1 : ℕ) : ℝ) = a + 1 := by
-      rw [hadef, Nat.cast_add, Nat.cast_one]
-    have hD : (0 : ℝ) < a * (a + 1) := mul_pos hN (by linarith)
-    have hmeans : |boolTestMean ((m + 1) + 1) S -
-        boolTestMean (m + 1) (Fin.removeNth i S)| ≤ 1 / (a + 1) := by
-      simp only [boolTestMean, hsplit, hcast, ← hadef]
-      have hid : (1 / (a + 1)) * (xi + T) - (1 / a) * T =
-          (a * xi - T) / (a * (a + 1)) := by
-        field_simp
-        ring
-      rw [hid, abs_div, abs_of_pos hD, div_le_iff₀ hD]
-      have hDD : (1 / (a + 1)) * (a * (a + 1)) = a := by
-        field_simp
-      rw [hDD]
-      rcases hxi with h0 | h1
-      · rw [h0, mul_zero, zero_sub, abs_neg, abs_of_nonneg hT0]
-        exact hTn
-      · rw [h1, mul_one, abs_of_nonneg (show (0 : ℝ) ≤ a - T by linarith)]
-        linarith
-    have hLip := boolTestLoss_lip (boolTestMean ((m + 1) + 1) S)
-      (boolTestMean (m + 1) (Fin.removeNth i S)) z
-    exact hLip.trans hmeans
-
-private theorem boolTestMean_meas (n : ℕ) :
-    Measurable fun _p : (Fin (n + 1) → Bool) × Bool =>
-      boolTestLoss (boolTestMean (n + 1) _p.1) _p.2 :=
-  measurable_of_countable _
-
-private theorem boolTestMean_bdd (n : ℕ) (S : Fin (n + 1) → Bool) (z : Bool) :
-    0 ≤ boolTestLoss (boolTestMean (n + 1) S) z ∧
-      boolTestLoss (boolTestMean (n + 1) S) z ≤ 1 := by
-  simp only [boolTestLoss]
-  exact ⟨le_min zero_le_one (norm_nonneg _), min_le_left _ _⟩
-
-private theorem boolTestMean_abs (k : ℕ) (S : Fin k → Bool) (z : Bool) :
-    |boolTestLoss (boolTestMean k S) z| ≤ 1 := by
-  simp only [boolTestLoss]
-  rw [abs_of_nonneg (le_min zero_le_one (norm_nonneg _))]
-  exact min_le_left _ _
-
--- T2a: the Bool mean algorithm is `1/(n+1)`-remove-one stable for every `n`.
-example (n : ℕ) :
-    IsRemoveOneUniformlyStable boolTestLoss boolTestMean n (1 / ((n : ℝ) + 1)) :=
-  boolTestMean_stable n
-
--- T2b: the `κ = 1` division corollary at sample size `100` and `δ = 1/20`.
-example : 1 - 1 / 20 ≤
-    (Measure.pi fun _ : Fin (99 + 1) => uniformOn (Set.univ : Set Bool)).real
-      {S | risk boolTestLoss (uniformOn (Set.univ : Set Bool)) (boolTestMean (99 + 1) S) ≤
-        empiricalRisk boolTestLoss S (boolTestMean (99 + 1) S) + 1 / 50 +
-        5 * √(log 20 / 200)} := by
-  have hstab := boolTestMean_stable 99
-  have hmeas := boolTestMean_meas 99
-  have hbdd := boolTestMean_bdd 99
-  have hmain := one_sub_le_measureReal_risk_le_of_isRemoveOneUniformlyStable_div
-    (ν := uniformOn (Set.univ : Set Bool)) (κ := 1) (M := 1) hmeas hbdd hstab
-    (δ := 1 / 20) (by norm_num) (by norm_num)
-  have e99 : ((99 : ℕ) : ℝ) + 1 = 100 := by norm_num
-  have g1 : 2 * (1 : ℝ) / 100 = 1 / 50 := by norm_num
-  have g2 : (4 : ℝ) * 1 + 1 = 5 := by norm_num
-  have g3 : (1 : ℝ) / (1 / 20) = 20 := by norm_num
-  have g4 : (2 : ℝ) * 100 = 200 := by norm_num
-  rw [e99, g1, g2, g3, g4] at hmain
-  exact hmain
-
--- T3 bridge at size `100`, with constant `2 * (1/100)`.
-private theorem boolTestMean_replace100 :
-    IsUniformlyStable boolTestLoss (boolTestMean 100) (2 * (1 / 100)) := by
-  have hstab := boolTestMean_stable 99
-  have hrep := isUniformlyStable_two_mul_of_isRemoveOneUniformlyStable hstab
-  have e99 : ((99 : ℕ) : ℝ) + 1 = 100 := by norm_num
-  have n99 : 99 + 1 = 100 := rfl
-  rw [n99, e99] at hrep
-  exact hrep
-
--- T3a: replace-one stability `2 * (1/100)` from T2 at sample size `100`.
-example : IsUniformlyStable boolTestLoss (boolTestMean 100) (2 * (1 / 100)) :=
-  boolTestMean_replace100
-
--- T3b: the expected empirical-minus-risk gap is at most `1/50`.
-example : |∫ S, (empiricalRisk boolTestLoss S (boolTestMean 100 S) -
-      risk boolTestLoss (uniformOn (Set.univ : Set Bool)) (boolTestMean 100 S))
-      ∂(Measure.pi fun _ : Fin 100 => uniformOn (Set.univ : Set Bool))| ≤ 1 / 50 := by
-  have hmeas : Measurable fun _p : (Fin 100 → Bool) × Bool =>
-      boolTestLoss (boolTestMean 100 _p.1) _p.2 :=
-    measurable_of_countable _
-  have hbdd : ∀ S z, |boolTestLoss (boolTestMean 100 S) z| ≤ (1 : ℝ) :=
-    fun S z => boolTestMean_abs 100 S z
-  have hgap := abs_integral_empiricalRisk_sub_risk_le
-    (ν := uniformOn (Set.univ : Set Bool)) (M := 1) hmeas hbdd boolTestMean_replace100
-  have g6 : 2 * (1 / (100 : ℝ)) = 1 / 50 := by norm_num
-  rw [g6] at hgap
-  exact hgap
-
--- T4a: the tail bound with zero loss, `M = 0` and `β = 0`.
-example (ν : Measure ℝ) [IsProbabilityMeasure ν] (n : ℕ) {ε : ℝ} (hε : 0 ≤ ε) :
-    (Measure.pi fun _ : Fin (n + 1) => ν).real
-        {S | ε + 2 * 0 < risk (fun _ _ => (0 : ℝ)) ν ((fun _ _ => (0 : ℝ)) (n + 1) S) -
-          empiricalRisk (fun _ _ => (0 : ℝ)) S ((fun _ _ => (0 : ℝ)) (n + 1) S)} ≤
-      exp (-2 * ((n : ℝ) + 1) * ε ^ 2 / (4 * ((n : ℝ) + 1) * 0 + 0) ^ 2) := by
-  have hstab : IsRemoveOneUniformlyStable (fun (_ : ℝ) (_ : ℝ) => (0 : ℝ))
-      (fun _ _ => (0 : ℝ)) n 0 := by
-    intro S i z
-    simp
-  have hmeas : Measurable fun _p : (Fin (n + 1) → ℝ) × ℝ =>
-      (fun _ _ => (0 : ℝ)) ((fun _ _ => (0 : ℝ)) (n + 1) _p.1) _p.2 :=
-    measurable_const
-  have hbdd : ∀ (S : Fin (n + 1) → ℝ) (z : ℝ),
-      0 ≤ (fun _ _ => (0 : ℝ)) ((fun _ _ => (0 : ℝ)) (n + 1) S) z ∧
-      (fun _ _ => (0 : ℝ)) ((fun _ _ => (0 : ℝ)) (n + 1) S) z ≤ 0 :=
-    fun S z => ⟨le_refl _, le_refl _⟩
-  exact measureReal_lt_risk_sub_empiricalRisk_le_of_isRemoveOneUniformlyStable (ν := ν)
-    (M := 0) hmeas hbdd hstab hε
-
--- T4b: the main bound with zero loss, `M = 0` and `β = 0`.
-example (ν : Measure ℝ) [IsProbabilityMeasure ν] (n : ℕ) {δ : ℝ} (hδ0 : 0 < δ)
-    (hδ1 : δ < 1) :
-    1 - δ ≤ (Measure.pi fun _ : Fin (n + 1) => ν).real
-      {S | risk (fun _ _ => (0 : ℝ)) ν ((fun _ _ => (0 : ℝ)) (n + 1) S) ≤
-        empiricalRisk (fun _ _ => (0 : ℝ)) S ((fun _ _ => (0 : ℝ)) (n + 1) S) + 2 * 0 +
-        (4 * ((n : ℝ) + 1) * 0 + 0) * √(log (1 / δ) / (2 * ((n : ℝ) + 1)))} := by
-  have hstab : IsRemoveOneUniformlyStable (fun (_ : ℝ) (_ : ℝ) => (0 : ℝ))
-      (fun _ _ => (0 : ℝ)) n 0 := by
-    intro S i z
-    simp
-  have hmeas : Measurable fun _p : (Fin (n + 1) → ℝ) × ℝ =>
-      (fun _ _ => (0 : ℝ)) ((fun _ _ => (0 : ℝ)) (n + 1) _p.1) _p.2 :=
-    measurable_const
-  have hbdd : ∀ (S : Fin (n + 1) → ℝ) (z : ℝ),
-      0 ≤ (fun _ _ => (0 : ℝ)) ((fun _ _ => (0 : ℝ)) (n + 1) S) z ∧
-      (fun _ _ => (0 : ℝ)) ((fun _ _ => (0 : ℝ)) (n + 1) S) z ≤ 0 :=
-    fun S z => ⟨le_refl _, le_refl _⟩
-  exact one_sub_le_measureReal_risk_le_of_isRemoveOneUniformlyStable (ν := ν) (M := 0)
-    hmeas hbdd hstab hδ0 hδ1
-
-#print axioms abs_sub_le_two_mul_of_isRemoveOneUniformlyStable
-#print axioms isUniformlyStable_two_mul_of_isRemoveOneUniformlyStable
-#print axioms measureReal_lt_risk_sub_empiricalRisk_le_of_isRemoveOneUniformlyStable
-#print axioms one_sub_le_measureReal_risk_le_of_isRemoveOneUniformlyStable
-#print axioms one_sub_le_measureReal_risk_le_of_isRemoveOneUniformlyStable_div
-
-end CSLibExt.MachineLearning.GeneralizationBounds
+#print axioms IsDeletionStable.one_sub_le_measureReal_risk_le_div
