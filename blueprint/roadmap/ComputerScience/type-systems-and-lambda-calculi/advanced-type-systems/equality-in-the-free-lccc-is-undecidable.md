@@ -26,4 +26,4 @@ All clauses reduce from convertibility of closed terms of combinatory logic. In 
 
 ## Sources
 
-- Simon Castellan, Pierre Clairambault and Peter Dybjer, *Undecidability of Equality in the Free Locally Cartesian Closed Category (Extended version)*, Logical Methods in Computer Science 13(4), 2017, https://doi.org/10.23638/LMCS-13(4:22)2017; the undecidability theorems of the introduction and the bifreeness theorem at the end of the paper, read in arXiv:1504.03995v3. Locators in arXiv:1504.03995v3: Theorems 2.1, 2.2, 2.3 and 4.25.
+- Simon Castellan, Pierre Clairambault and Peter Dybjer, *Undecidability of Equality in the Free Locally Cartesian Closed Category (Extended version)*, Logical Methods in Computer Science 13(4), 2017, https://doi.org/10.23638/LMCS-13(4:22)2017; the undecidability theorems of Section 2 and the bifreeness theorem at the end of the paper, read in arXiv:1504.03995v3. Locators in arXiv:1504.03995v3: Theorems 2.1, 2.2, 2.3 and 4.25.

@@ -15,7 +15,7 @@ Boolean PCF extended with a primitive that generates fresh symbols and an equali
 
 ## Expansion
 
-The encoding of a Minsky machine represents numbers by symbols. A symbol $\ell_{\mathit{zero}}$ represents $0$, and the program threads a decrement function $d$ through all program points. Incrementing $x$ generates a fresh symbol $y$ and returns it together with the updated decrement function $\lambda z.\ \mathbf{if}\ z = y\ \mathbf{then}\ x\ \mathbf{else}\ d(z)$. A zero test compares with $\ell_{\mathit{zero}}$, and a decrement applies $d$. A number other than $0$ may be represented by several symbols, which is harmless because the machine only tests for zero. Halting becomes $\mathbf{fail}$, so the machine halts iff the program reaches $\mathbf{fail}$.
+The encoding of a Minsky machine represents numbers by symbols. A symbol $\ell_{\mathit{zero}}$ represents $0$, and the program threads a decrement function $d$ through all program points. Incrementing $x$ generates a fresh symbol $y$ and returns it together with the updated decrement function $\lambda z.\ \mathbf{if}\ z = y\ \mathbf{then}\ x\ \mathbf{else}\ d(z)$. A zero test compares with $\ell_{\mathit{zero}}$, and a decrement applies $d$. A number other than $0$ may be represented by several symbols, which is harmless because the machine only tests for zero. Halting becomes $\mathbf{fail}$, so the machine halts iff the program reaches $\mathbf{fail}$. A good expansion adds a page that defines the extended language with its operational semantics and a lemma stating that the encoding of a two-counter machine reaches $\mathbf{fail}$ exactly when the machine halts (Section 3.3 of the source).
 
 ## Sources
 

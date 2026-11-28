@@ -8,16 +8,16 @@ Type checking for DFuzz, the linear indexed type system for differential privacy
 
 ## Depends on
 
-- [PCF terms](../../programming-language-semantics/pcf-and-computational-adequacy/tm.md)
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
 - [Davis–Putnam–Robinson–Matiyasevich theorem](../../../TheoryOfComputation/undecidable-problems/diophantine-sets-and-hilbert-s-tenth-problem/dprm-theorem.md)
+- [Some multi-stack machine has an undecidable halting set](../../../TheoryOfComputation/computability/halting-problem-and-rice-s-theorem/exists-not-tm2-decidable-tm2-halts-on.md)
 
 ## Expansion
 
-By Hilbert's tenth problem it is undecidable, given polynomials $P, Q$ in $n$ variables with coefficients in $\mathbb{N}$, whether $P(\vec{i}) \ge Q(\vec{i})$ for all $\vec{i} \in \mathbb{N}^n$ (Lemma 9 of the source): $P$ has a zero in $\mathbb{N}^n$ iff not $P^+(\vec{i}) \ge P^-(\vec{i}) + 1$ for all $\vec{i}$, where $P^2 = P^+ - P^-$ with $P^\pm$ having nonnegative coefficients. With $\tau_Q = \forall \vec{i}.\, !_0\, \mathbb{N}^n[\vec{i}] \multimap\, !_{Q(\vec{i})} \mathbb{R} \multimap \mathbb{R}$ and $\tau_P$ likewise, $\tau_Q \sqsubseteq \tau_P$ holds iff $P \ge Q$ on $\mathbb{N}^n$. A recursive function using dependent pattern matching multiplies a real by $Q(\vec{v})$; its minimal type is $\tau_Q$, so checking it against $\tau_P$ decides the inequality. The undecidability carries over to the extension EDFuzz, for which the source gives a type checking algorithm relative to an oracle for subtyping constraints.
+By Hilbert's tenth problem it is undecidable, given polynomials $P, Q$ in $n$ variables with coefficients in $\mathbb{N}$, whether $P(\vec{i}) \ge Q(\vec{i})$ for all $\vec{i} \in \mathbb{N}^n$ (Lemma 9 of the source): $P$ has a zero in $\mathbb{N}^n$ iff not $P^+(\vec{i}) \ge P^-(\vec{i}) + 1$ for all $\vec{i}$, where $P^2 = P^+ - P^-$ with $P^\pm$ having nonnegative coefficients. With $\tau_Q = \forall \vec{i}.\, !_0\, \mathbb{N}^n[\vec{i}] \multimap\, !_{Q(\vec{i})} \mathbb{R} \multimap \mathbb{R}$ and $\tau_P$ likewise, $\tau_Q \sqsubseteq \tau_P$ holds iff $P \ge Q$ on $\mathbb{N}^n$. A recursive function using dependent pattern matching multiplies a real by $Q(\vec{v})$; its minimal type is $\tau_Q$, so checking it against $\tau_P$ decides the inequality. The undecidability carries over to the extension EDFuzz, for which the source gives a type checking algorithm relative to an oracle for subtyping constraints. A good expansion adds pages for the undecidability of Hilbert's tenth problem (from the DPRM theorem and the undecidability of halting) and for Lemma 9 of the source.
 
 ## Sources
 

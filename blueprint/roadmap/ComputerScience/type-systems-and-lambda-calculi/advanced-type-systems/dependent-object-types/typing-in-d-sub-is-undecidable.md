@@ -15,7 +15,7 @@ No algorithm decides, given a context, a term and a type of the calculus $D_{<:}
 
 ## Expansion
 
-The proof reduces $F_{<:}^-$ subtyping, as for [subtyping in $D_{<:}$](subtyping-in-d-sub-is-undecidable.md): $\Gamma \vdash S <: U$ in $F_{<:}^-$ is mapped to the typing problem $\langle \Gamma \rangle \vdash \{A = \langle S \rangle\} : \{A : \bot .. \langle U \rangle\}$. Only Typ-I and Sub apply to the type tag, so a derivation gives $\{A : \langle S \rangle .. \langle S \rangle\} <: \{A : \bot .. \langle U \rangle\}$ in an invertible context, hence $\langle S \rangle <: \langle U \rangle$ and $S <: U$. In general $D_{<:}$ typing does not reduce to $D_{<:}$ subtyping in this way, since with bad bounds $\{A = S\}$ can have type $\{A : \bot .. U\}$ although $S <: U$ fails.
+The proof reduces $F_{<:}^-$ subtyping, as for [subtyping in $D_{<:}$](subtyping-in-d-sub-is-undecidable.md): $\Gamma \vdash S <: U$ in $F_{<:}^-$ is mapped to the typing problem $\langle \Gamma \rangle \vdash \{A = \langle S \rangle\} : \{A : \bot .. \langle U \rangle\}$. Only Typ-I and Sub apply to the type tag, so a derivation gives $\{A : \langle S \rangle .. \langle S \rangle\} <: \{A : \bot .. \langle U \rangle\}$ in an invertible context, hence $\langle S \rangle <: \langle U \rangle$ and $S <: U$. In general $D_{<:}$ typing does not reduce to $D_{<:}$ subtyping in this way, since with bad bounds $\{A = S\}$ can have type $\{A : \bot .. U\}$ although $S <: U$ fails. A good expansion adds pages for the normal form of $D_{<:}$ subtyping with its transitivity and equivalence theorems and for inversion of subtyping in invertible contexts (Section 4 of the source).
 
 ## Sources
 
