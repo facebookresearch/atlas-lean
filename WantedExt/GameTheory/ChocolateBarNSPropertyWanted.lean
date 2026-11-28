@@ -21,6 +21,7 @@ public import MathlibExt.GameTheory.ChocolateBarNSPropertyExistsOfLtXorXor
 public import MathlibExt.GameTheory.ChocolateBarNSPropertyImageXorXorEq
 public import MathlibExt.GameTheory.ChocolateBarNSPropertyGrundy
 public import MathlibExt.GameTheory.NimPassIndicator
+public import MathlibExt.GameTheory.NimPassGrundy
 
 /-! # The NS property of chocolate-bar games (Miyadera, Manabe, Singh)
 
@@ -58,53 +59,6 @@ public theorem chocolateBarGrundy_zero {s : ℕ} (f : Fin s → ℕ → ℕ) :
   exact Nat.sInf_eq_zero.mpr (Or.inl ⟨fun _ u hu ↦ absurd hu (Nat.not_lt_zero u),
     fun w hw ↦ absurd hw (Nat.not_lt_zero w)⟩)
 
-/-- **Grundy number of a chocolate bar with a height function.** Let $s \in \mathbb{N}$ and
-$F : \mathbb{N}^s \to \mathbb{N}$. The $(s + 1)$-dimensional chocolate bar
-$\mathrm{CB}(F, x_1, \dots, x_s, y)$ has, at each $u = (u_1, \dots, u_s)$ with $u_t \le x_t$ for
-all $t$, a column of height $\min(F(u), y) + 1$. A move either lowers one coordinate $x_i$ to some
-$a < x_i$, which clamps the height to $\min(F(x'), y)$ for the new position $x'$, or lowers the
-height $y$ to some $v < y$. The Grundy number of $\mathrm{CB}(F, x_1, \dots, x_s, y)$ is the mex
-(least natural number not attained) of the Grundy numbers of the positions reachable in one
-move. It is defined for all $x \in \mathbb{N}^s$ and $y \in \mathbb{N}$; the bars themselves are
-the positions with $y \le F(x)$.
-
-Source: Ryohei Miyadera, Hikaru Manabe and Aditi Singh, *Generalizations of
-Two-Dimensional and Three-Dimensional Chocolate Bar Games*, INTEGERS 25 (2025),
-Article G3, Definitions 15, 16 and 17 (and Definition 13 with second function `0`). -/
-public noncomputable def heightChocolateBarGrundy {s : ℕ} (F : (Fin s → ℕ) → ℕ)
-    (x : Fin s → ℕ) (y : ℕ) : ℕ :=
-  sInf {m | (∀ i u, u < x i → heightChocolateBarGrundy F (Function.update x i u)
-      (min (F (Function.update x i u)) y) ≠ m) ∧
-    ∀ v, v < y → heightChocolateBarGrundy F x v ≠ m}
-termination_by (∑ t, x t) + y
-decreasing_by
-  · have hlt : ∑ t, Function.update x i u t < ∑ t, x t := by
-      refine Finset.sum_lt_sum (fun j _ ↦ ?_) ⟨i, Finset.mem_univ _, by simpa⟩
-      by_cases hj : j = i
-      · subst hj; simp only [Function.update_self]; omega
-      · simp [Function.update_of_ne hj]
-    have := min_le_right (F (Function.update x i u)) y
-    omega
-  · omega
-
-/-- **Mex recursion for chocolate bars with a height function.** Let $s \in \mathbb{N}$ and
-$F : \mathbb{N}^s \to \mathbb{N}$, and write $G(x, y)$ for the Grundy number of the chocolate bar
-$\mathrm{CB}(F, x_1, \dots, x_s, y)$. For all $x \in \mathbb{N}^s$ and $y \in \mathbb{N}$,
-$G(x, y)$ is the least natural number $m$ such that $m \ne G(x', \min(F(x'), y))$ for every $x'$
-obtained from $x$ by lowering one coordinate $x_i$ to some $u < x_i$, and $m \ne G(x, v)$ for
-every $v < y$.
-
-Source: Ryohei Miyadera, Hikaru Manabe and Aditi Singh, *Generalizations of
-Two-Dimensional and Three-Dimensional Chocolate Bar Games*, INTEGERS 25 (2025),
-Article G3, Definition 17. -/
-public theorem heightChocolateBarGrundy_eq {s : ℕ} (F : (Fin s → ℕ) → ℕ) (x : Fin s → ℕ)
-    (y : ℕ) :
-    heightChocolateBarGrundy F x y =
-      sInf {m | (∀ i u, u < x i → heightChocolateBarGrundy F (Function.update x i u)
-          (min (F (Function.update x i u)) y) ≠ m) ∧
-        ∀ v, v < y → heightChocolateBarGrundy F x v ≠ m} := by
-  rw [heightChocolateBarGrundy]
-
 /-- **The single bitter cube has Grundy number zero.** For every $s \in \mathbb{N}$ and every
 $F : \mathbb{N}^s \to \mathbb{N}$, the chocolate bar $\mathrm{CB}(F, 0, \dots, 0, 0)$ has no move,
 so its Grundy number is $0$.
@@ -117,16 +71,6 @@ public theorem heightChocolateBarGrundy_zero {s : ℕ} (F : (Fin s → ℕ) → 
   rw [heightChocolateBarGrundy_eq]
   exact Nat.sInf_eq_zero.mpr (Or.inl ⟨fun _ u hu ↦ absurd hu (Nat.not_lt_zero u),
     fun v hv ↦ absurd hv (Nat.not_lt_zero v)⟩)
-
-/-- **The Nim pass indicator is at most one.** For every $s \in \mathbb{N}$ and all
-$m, x \in \mathbb{N}^s$, the pass indicator of $m$ at $x$ is at most $1$; that is, it takes values
-in $\{0, 1\}$.
-
-Source: Ryohei Miyadera, Hikaru Manabe and Aditi Singh, *Generalizations of
-Two-Dimensional and Three-Dimensional Chocolate Bar Games*, INTEGERS 25 (2025),
-Article G3, Lemma 10 (the function `F`). -/
-public theorem nimPassIndicator_le_one {s : ℕ} (m x : Fin s → ℕ) : nimPassIndicator m x ≤ 1 := by
-  unfold nimPassIndicator; split_ifs <;> omega
 
 /-- **The pass is unavailable from the empty position.** Let $s \in \mathbb{N}$ and
 $m \in \mathbb{N}^s$ with $m_i > 0$ for every $i < s$. Then the pass indicator of $m$ takes the
@@ -225,26 +169,6 @@ public theorem_wanted indicator_sections_iff_heightChocolateBarGrundy_eq_xor {s 
     (∀ (x : Fin s → ℕ) i, ∃ m, Even m ∧
         (fun t ↦ F (Function.update x i t)) = (Set.Ici m).indicator 1) ↔
       ∀ x y, y ≤ F x → heightChocolateBarGrundy F x y = (List.ofFn x).foldl (· ^^^ ·) 0 ^^^ y
-
-/-- **Nim with a restricted pass.** Let $s \in \mathbb{N}$ and $m \in \mathbb{N}^s$ with $m_i > 0$
-for every $i < s$, and let $F : \mathbb{N}^s \to \mathbb{N}$ be the pass indicator of $m$:
-$F(x) = 1$ if $m_j \le x_j$ for some $j$, and $F(x) = 0$ otherwise. Write $\oplus$ for nim-sum.
-Then the following are equivalent: (a) for all $x \in \mathbb{N}^s$ and $p \in \mathbb{N}$ with
-$p \le F(x)$, the Grundy number of the chocolate bar $\mathrm{CB}(F, x_0, \dots, x_{s-1}, p)$ is
-$x_0 \oplus \cdots \oplus x_{s-1} \oplus p$; (b) $m_i$ is even for every $i < s$.
-
-The bar is Nim on $s$ piles with a one-time pass usable only while $F(x) = 1$: removing stones
-from a pile, reaching $x'$, replaces $p$ by $\min(F(x'), p)$, and the pass lowers $p$ from $1$
-to $0$.
-
-Source: Ryohei Miyadera, Hikaru Manabe and Aditi Singh, *Generalizations of
-Two-Dimensional and Three-Dimensional Chocolate Bar Games*, INTEGERS 25 (2025),
-Article G3, Corollary 2 (`integers-2025-G3-cor-2`). -/
-public theorem_wanted nimPassGrundy_eq_xor_iff {s : ℕ} {m : Fin s → ℕ} (hm : ∀ i, 0 < m i) :
-    (∀ (x : Fin s → ℕ) p, p ≤ nimPassIndicator m x →
-        heightChocolateBarGrundy (nimPassIndicator m) x p =
-          (List.ofFn x).foldl (· ^^^ ·) 0 ^^^ p) ↔
-      ∀ i, Even (m i)
 
 end
 
