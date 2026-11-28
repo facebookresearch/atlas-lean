@@ -12,6 +12,7 @@ By contrast, the first-order theory of non-abelian free groups is decidable (Kha
 - [Center of a group](../../group-basics/group-center.md)
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 - [Complete theory of a first-order structure](../../../Logic/first-order-logic/theory-of-structure.md)
+- [The first-order language of groups](../../../Logic/model-theory/first-order-language-of-groups/group-language.md)
 
 ## Proof depends on
 

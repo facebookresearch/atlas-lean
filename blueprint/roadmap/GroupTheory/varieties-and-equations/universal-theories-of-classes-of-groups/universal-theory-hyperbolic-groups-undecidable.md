@@ -14,6 +14,8 @@ By contrast, the universal theory of each single hyperbolic group is decidable (
 - [Word-hyperbolic groups](../../geometric-group-theory/hyperbolic-groups/is-hyperbolic.md)
 - [Group](../../group-basics/group.md)
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [The first-order language of groups](../../../Logic/model-theory/first-order-language-of-groups/group-language.md)
+- [Complete theory of a first-order structure](../../../Logic/first-order-logic/theory-of-structure.md)
 
 ## Proof depends on
 

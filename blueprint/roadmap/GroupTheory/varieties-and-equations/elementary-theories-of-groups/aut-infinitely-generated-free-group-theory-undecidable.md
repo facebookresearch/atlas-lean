@@ -9,6 +9,7 @@ Let $F$ be a free group of infinite rank $\varkappa$. The source proves that the
 - [Group](../../group-basics/group.md)
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 - [Complete theory of a first-order structure](../../../Logic/first-order-logic/theory-of-structure.md)
+- [The first-order language of groups](../../../Logic/model-theory/first-order-language-of-groups/group-language.md)
 
 ## Proof depends on
 

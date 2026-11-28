@@ -20,6 +20,7 @@ The same paper proves undecidability for every finitely generated non-abelian fr
 - [Commutator subgroup of a group](../../commutators-and-engel-conditions/commutator-subgroup.md)
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 - [Varieties of groups](../axiomatizable-classes-of-groups/is-variety.md)
+- [Solution set of a system of equations](../equationally-noetherian-groups/solutions-2.md)
 
 ## Proof depends on
 

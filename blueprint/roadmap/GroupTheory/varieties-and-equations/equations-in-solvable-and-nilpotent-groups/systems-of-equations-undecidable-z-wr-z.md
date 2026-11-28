@@ -14,6 +14,7 @@ By contrast, systems of quadratic equations are decidable in $A \wr \mathbb{Z}$ 
 - [Restricted wreath product](../../soluble-finite-groups/solubility-nilpotency-and-subnormality/restricted-wreath.md)
 - [Abelian group](../../group-basics/abelian-group.md)
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Solution set of a system of equations](../equationally-noetherian-groups/solutions-2.md)
 
 ## Proof depends on
 

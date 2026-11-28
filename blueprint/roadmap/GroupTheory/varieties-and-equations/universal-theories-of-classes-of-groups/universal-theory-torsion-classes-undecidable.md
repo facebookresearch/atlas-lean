@@ -12,6 +12,8 @@ Theorem 1.2 is a corollary of a more general statement: if a class $\mathcal{C}$
 - [Group](../../group-basics/group.md)
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 - [Varieties of groups](../axiomatizable-classes-of-groups/is-variety.md)
+- [The first-order language of groups](../../../Logic/model-theory/first-order-language-of-groups/group-language.md)
+- [Complete theory of a first-order structure](../../../Logic/first-order-logic/theory-of-structure.md)
 
 ## Proof depends on
 
@@ -19,7 +21,7 @@ None.
 
 ## Expansion
 
-The proof of Theorem 2.4 combines two results the source quotes. Kharlampovich: for $n = pq$ with $p \ge 3$ prime and $q$ having an odd divisor at least $665$, some quotient $B(m, n)/N$ of a free Burnside group by the normal closure of finitely many elements has undecidable word problem (Theorem 2.3 of the source). Olshanskii and Sapir, simplified by Ivanov: for odd sufficiently large $n$, $B(m, n)$ embeds as a Q-subgroup (one with the congruence extension property) in a finitely presented group $G$ (Theorem 2.1 of the source). With a finite presentation $\langle x_1, \dots, x_s \mid U_1, \dots, U_p \rangle$ of $G_1 = G / \langle\!\langle N \rangle\!\rangle$, a word $V$ in the generators of $B(m, n)/N$ is trivial exactly when the universal sentence $\forall \bar x\, (U_1 = 1 \wedge \dots \wedge U_p = 1 \to \hat V(\bar x) = 1)$ lies in $\mathrm{Th}_\forall(\mathcal{C})$: if it does, it holds in a quotient of $G/G^n$ that lies in $\mathfrak{B}_n$ and contains a copy of $B(m, n)/N$, so $V = 1$; if it fails in some group of $\mathcal{C}$, then $V \ne 1$. Clause (a), for torsion groups, is Slobodskoi's result. A good expansion links pages for the theorems of Kharlampovich and of Olshanskii and Sapir.
+The proof of Theorem 2.4 combines two results the source quotes. Kharlampovich: for $n = pq$ with $p \ge 3$ prime and $q$ having an odd divisor at least $665$, some quotient $B(m, n)/N$ of a free Burnside group by the normal closure of finitely many elements has undecidable word problem (Theorem 2.3 of the source). Olshanskii and Sapir, simplified by Ivanov: for odd sufficiently large $n$, $B(m, n)$ embeds in a finitely presented group $G$ such that (a) $B(m, n)$ is a Q-subgroup (one with the congruence extension property) of $G$, and (b) the natural map $\varepsilon\colon G \to H = G/G^n$ is injective on $B(m, n)$ and $\varepsilon(B(m, n))$ is a Q-subgroup of $H$ (Theorem 2.1 of the source). With a finite presentation $\langle x_1, \dots, x_s \mid U_1, \dots, U_p \rangle$ of $G_1 = G / \langle\!\langle N \rangle\!\rangle$, a word $V$ in the generators of $B(m, n)/N$ is trivial exactly when the universal sentence $\forall \bar x\, (U_1 = 1 \wedge \dots \wedge U_p = 1 \to \hat V(\bar x) = 1)$ lies in $\mathrm{Th}_\forall(\mathcal{C})$: if it does, it holds in $H_1 = H/\langle \varepsilon(N) \rangle^H$, which lies in $\mathfrak{B}_n$ and, by part (b), contains the image of $\varepsilon(B(m, n))$, a copy of $\varepsilon(B(m, n))/\varepsilon(N) \cong B(m, n)/N$, so $V = 1$; if it fails in some group of $\mathcal{C}$, then $V \ne 1$. Clause (a), for torsion groups, is Slobodskoi's result. A good expansion links pages for the theorems of Kharlampovich and of Olshanskii and Sapir.
 
 ## Sources
 
